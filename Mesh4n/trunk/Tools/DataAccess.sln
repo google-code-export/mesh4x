@@ -1,0 +1,177 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F97E38B5-06FB-4F6F-AF8D-2BE30947E195}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+	ProjectSection(SolutionItems) = preProject
+		DataAccess.vsmdi = DataAccess.vsmdi
+		localtestrun.testrunconfig = localtestrun.testrunconfig
+	EndProjectSection
+	ProjectSection(FolderStartupServices) = postProject
+		{B4F97281-0DBD-4835-9ED8-7DFB966E87FF} = {B4F97281-0DBD-4835-9ED8-7DFB966E87FF}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{3D6C891F-92B2-4E28-984C-9096CED3D2E2}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+	ProjectSection(FolderStartupServices) = postProject
+		{B4F97281-0DBD-4835-9ED8-7DFB966E87FF} = {B4F97281-0DBD-4835-9ED8-7DFB966E87FF}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Source", "Source", "{8752E9E7-A349-4738-9E21-CCD022D03A98}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+	ProjectSection(FolderStartupServices) = postProject
+		{B4F97281-0DBD-4835-9ED8-7DFB966E87FF} = {B4F97281-0DBD-4835-9ED8-7DFB966E87FF}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CFUnitTester", "CFUnitTester", "{FEE83A55-A44E-4022-AA7A-71DB3855AF44}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+	ProjectSection(FolderStartupServices) = postProject
+		{B4F97281-0DBD-4835-9ED8-7DFB966E87FF} = {B4F97281-0DBD-4835-9ED8-7DFB966E87FF}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuiTestRunner", "CFUnitTester\GuiTestRunner\GuiTestRunner.csproj", "{EDD25FDB-37FD-4365-B2A8-BE0C6D395BDC}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestRunner", "CFUnitTester\TestRunner\TestRunner.csproj", "{1C9AE3CD-C7F3-4A1D-9096-646549157B1A}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTesting", "CFUnitTester\UnitTesting\UnitTesting.csproj", "{3385C4E6-0657-48E3-8437-6BF4A51B2315}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccess.Tests", "DataAccess\UnitTests\DataAccess.Tests.csproj", "{8CA9DE8C-F9FD-4746-A51E-1DBC9D6D2A34}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccess.Tests.CF", "DataAccess\UnitTests\DataAccess.Tests.CF.csproj", "{CCDC131F-B26C-4BAC-9999-94255EB4D869}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mobile.DataAccess", "DataAccess\Src\Mobile.DataAccess.csproj", "{50A1C64A-8AB3-4FF3-BE8A-EE24A8E75691}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestUtilities", "TestUtilities\TestUtilities.csproj", "{32F04FAC-C884-40E8-AF00-763BF8AF8D19}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 8
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://tfs03.codeplex.com/
+		SccProjectUniqueName0 = CFUnitTester\\GuiTestRunner\\GuiTestRunner.csproj
+		SccProjectTopLevelParentUniqueName0 = DataAccess.sln
+		SccProjectName0 = CFUnitTester/GuiTestRunner
+		SccLocalPath0 = CFUnitTester\\GuiTestRunner
+		SccProjectUniqueName1 = CFUnitTester\\TestRunner\\TestRunner.csproj
+		SccProjectTopLevelParentUniqueName1 = DataAccess.sln
+		SccProjectName1 = CFUnitTester/TestRunner
+		SccLocalPath1 = CFUnitTester\\TestRunner
+		SccProjectUniqueName2 = CFUnitTester\\UnitTesting\\UnitTesting.csproj
+		SccProjectTopLevelParentUniqueName2 = DataAccess.sln
+		SccProjectName2 = CFUnitTester/UnitTesting
+		SccLocalPath2 = CFUnitTester\\UnitTesting
+		SccProjectUniqueName3 = DataAccess\\UnitTests\\DataAccess.Tests.csproj
+		SccProjectTopLevelParentUniqueName3 = DataAccess.sln
+		SccProjectName3 = DataAccess/UnitTests
+		SccLocalPath3 = DataAccess\\UnitTests
+		SccProjectUniqueName4 = DataAccess\\UnitTests\\DataAccess.Tests.CF.csproj
+		SccProjectTopLevelParentUniqueName4 = DataAccess.sln
+		SccProjectName4 = DataAccess/UnitTests
+		SccLocalPath4 = DataAccess\\UnitTests
+		SccProjectUniqueName5 = DataAccess\\Src\\Mobile.DataAccess.csproj
+		SccProjectTopLevelParentUniqueName5 = DataAccess.sln
+		SccProjectName5 = DataAccess/Src
+		SccLocalPath5 = DataAccess\\Src
+		SccProjectUniqueName6 = TestUtilities\\TestUtilities.csproj
+		SccProjectTopLevelParentUniqueName6 = DataAccess.sln
+		SccProjectName6 = TestUtilities
+		SccLocalPath6 = TestUtilities
+		SccLocalPath7 = .
+	EndGlobalSection
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = DataAccess.vsmdi
+	EndGlobalSection
+	GlobalSection(TextTemplating) = postSolution
+		TextTemplating = 1
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EDD25FDB-37FD-4365-B2A8-BE0C6D395BDC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EDD25FDB-37FD-4365-B2A8-BE0C6D395BDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EDD25FDB-37FD-4365-B2A8-BE0C6D395BDC}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{EDD25FDB-37FD-4365-B2A8-BE0C6D395BDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EDD25FDB-37FD-4365-B2A8-BE0C6D395BDC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EDD25FDB-37FD-4365-B2A8-BE0C6D395BDC}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{1C9AE3CD-C7F3-4A1D-9096-646549157B1A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C9AE3CD-C7F3-4A1D-9096-646549157B1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C9AE3CD-C7F3-4A1D-9096-646549157B1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C9AE3CD-C7F3-4A1D-9096-646549157B1A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3385C4E6-0657-48E3-8437-6BF4A51B2315}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3385C4E6-0657-48E3-8437-6BF4A51B2315}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3385C4E6-0657-48E3-8437-6BF4A51B2315}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3385C4E6-0657-48E3-8437-6BF4A51B2315}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8CA9DE8C-F9FD-4746-A51E-1DBC9D6D2A34}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CA9DE8C-F9FD-4746-A51E-1DBC9D6D2A34}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CA9DE8C-F9FD-4746-A51E-1DBC9D6D2A34}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CA9DE8C-F9FD-4746-A51E-1DBC9D6D2A34}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCDC131F-B26C-4BAC-9999-94255EB4D869}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCDC131F-B26C-4BAC-9999-94255EB4D869}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCDC131F-B26C-4BAC-9999-94255EB4D869}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCDC131F-B26C-4BAC-9999-94255EB4D869}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50A1C64A-8AB3-4FF3-BE8A-EE24A8E75691}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50A1C64A-8AB3-4FF3-BE8A-EE24A8E75691}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50A1C64A-8AB3-4FF3-BE8A-EE24A8E75691}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50A1C64A-8AB3-4FF3-BE8A-EE24A8E75691}.Release|Any CPU.Build.0 = Release|Any CPU
+		{32F04FAC-C884-40E8-AF00-763BF8AF8D19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{32F04FAC-C884-40E8-AF00-763BF8AF8D19}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{32F04FAC-C884-40E8-AF00-763BF8AF8D19}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{32F04FAC-C884-40E8-AF00-763BF8AF8D19}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F97E38B5-06FB-4F6F-AF8D-2BE30947E195} = {3D6C891F-92B2-4E28-984C-9096CED3D2E2}
+		{FEE83A55-A44E-4022-AA7A-71DB3855AF44} = {3D6C891F-92B2-4E28-984C-9096CED3D2E2}
+		{8CA9DE8C-F9FD-4746-A51E-1DBC9D6D2A34} = {3D6C891F-92B2-4E28-984C-9096CED3D2E2}
+		{CCDC131F-B26C-4BAC-9999-94255EB4D869} = {3D6C891F-92B2-4E28-984C-9096CED3D2E2}
+		{32F04FAC-C884-40E8-AF00-763BF8AF8D19} = {3D6C891F-92B2-4E28-984C-9096CED3D2E2}
+		{50A1C64A-8AB3-4FF3-BE8A-EE24A8E75691} = {8752E9E7-A349-4738-9E21-CCD022D03A98}
+		{EDD25FDB-37FD-4365-B2A8-BE0C6D395BDC} = {FEE83A55-A44E-4022-AA7A-71DB3855AF44}
+		{1C9AE3CD-C7F3-4A1D-9096-646549157B1A} = {FEE83A55-A44E-4022-AA7A-71DB3855AF44}
+		{3385C4E6-0657-48E3-8437-6BF4A51B2315} = {FEE83A55-A44E-4022-AA7A-71DB3855AF44}
+	EndGlobalSection
+EndGlobal

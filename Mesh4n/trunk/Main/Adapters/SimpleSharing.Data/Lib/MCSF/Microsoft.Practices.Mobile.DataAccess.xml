@@ -1,0 +1,428 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.Practices.Mobile.DataAccess</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.Practices.Mobile.DataAccess.SqlDatabase">
+            <summary>
+            	This is a specific instance of <see cref="T:Microsoft.Practices.Mobile.DataAccess.Database"/> that provides access to SQL Server Mobile
+            	databases.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Practices.Mobile.DataAccess.Database">
+            <summary>
+            	This class provides the foundation for simplified access to a database. It contains a number
+            	of helper methods that make working with the database easier.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.DataAccess.Database.#ctor(System.String,Microsoft.Practices.Mobile.DataAccess.DbProviderFactory)">
+            <summary>
+            	The base constructor that derived classes must call.
+            </summary>
+            <param name="connectionString">
+            	The connection string that will be used to connect to the database.
+            </param>
+            <param name="dbProviderFactory">
+            	An object that can create the different database objects need to execute
+            	commands.
+            </param>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.DataAccess.Database.Dispose">
+            <summary>
+            	Closes the current connection. You should call this method when you are completely
+            	done using this database instance. Methods will fail after you've disposed of this
+            	instance.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.DataAccess.Database.CreateConnection">
+            <summary>
+            	Creates a new, unopened connection instance for this database.
+            </summary>
+            <returns>
+            An unopened <see cref="T:System.Data.Common.DbConnection"/> for this database.
+            </returns>
+            <seealso cref="T:System.Data.Common.DbConnection"/>        
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.DataAccess.Database.BuildParameterName(System.String)">
+            <summary>
+            Builds a value parameter name for the current database.
+            </summary>
+            <param name="name">The name of the parameter.</param>
+            <returns>A correctly formated parameter name.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.DataAccess.Database.CreateParameter(System.String)">
+            <summary>
+            	Creates a new parameter and sets the name of the parameter.
+            </summary>
+            <param name="name">The name of the parameter.</param>
+            <returns>
+            	A new <see cref="T:System.Data.Common.DbParameter"/> instance of the correct type for this database.</returns>
+            <remarks>
+            	The database will automatically add the correct prefix, like "@" for SQL Server, to the
+            	parameter name. In other words, you can just supply the name without a prefix.
+            </remarks>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.DataAccess.Database.CreateParameter(System.String,System.Object)">
+            <summary>
+            	Creates a new parameter and sets the name of the parameter.
+            </summary>
+            <param name="name">The name of the parameter.</param>
+            <param name="value">
+            	The value you want assigned to thsi parameter. A null value will be converted to
+            	a <see cref="T:System.DBNull"/> value in the parameter.
+            </param>
+            <returns>
+            	A new <see cref="T:System.Data.Common.DbParameter"/> instance of the correct type for this database.</returns>
+            <remarks>
+            	The database will automatically add the correct prefix, like "@" for SQL Server, to the
+            	parameter name. In other words, you can just supply the name without a prefix.
+            </remarks>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.DataAccess.Database.CreateParameter(System.String,System.Data.DbType,System.Int32,System.Object)">
+            <summary>
+            	Creates a new parameter and sets the name of the parameter.
+            </summary>
+            <param name="name">The name of the parameter.</param>
+            <param name="type">The type of the parameter.</param>
+            <param name="size">The size of this parameter.</param>
+            <param name="value">
+            	The value you want assigned to this parameter. A null value will be converted to
+            	a <see cref="T:System.DBNull"/> value in the parameter.
+            </param>
+            <returns>
+            	A new <see cref="T:System.Data.Common.DbParameter"/> instance of the correct type for this database.</returns>
+            <remarks>
+            	The database will automatically add the correct prefix, like "@" for SQL Server, to the
+            	parameter name. In other words, you can just supply the name without a prefix.
+            </remarks>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.DataAccess.Database.ExecuteNonQuery(System.Data.Common.DbCommand,System.Data.Common.DbParameter[])">
+            <summary>
+            	Executes an SQL query with an optional set of parameters.
+            </summary>
+            <param name="command">The command to execute.</param>
+            <param name="parameters">Zero or more parameters for the query.</param>
+            <returns>The number of rows affected.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.DataAccess.Database.ExecuteNonQuery(System.String,System.Data.Common.DbParameter[])">
+            <summary>
+            	Executes an SQL query with an optional set of parameters.
+            </summary>
+            <param name="sqlCommand">The SQL statement to execute.</param>
+            <param name="parameters">Zero or more parameters for the query.</param>
+            <returns>The number of rows affected.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.DataAccess.Database.ExecuteReader(System.Data.Common.DbCommand,System.Data.Common.DbParameter[])">
+            <summary>
+            	Execute a command and return a <see cref="T:System.Data.Common.DbDataReader"/> that contains the rows
+            	returned.
+            </summary>
+            <param name="command">The command to execute.</param>
+            <param name="parameters">Zero or more parameters for the query.</param>
+            <returns>A <see cref="T:System.Data.Common.DbDataReader"/> that contains the rows returned by the query.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.DataAccess.Database.ExecuteReader(System.String,System.Data.Common.DbParameter[])">
+            <summary>
+            	Execute a command and return a <see cref="T:System.Data.Common.DbDataReader"/> that contains the rows
+            	returned.
+            </summary>
+            <param name="sqlCommand">The SQL query to execute.</param>
+            <param name="parameters">Zero or more parameters for the query.</param>
+            <returns>A <see cref="T:System.Data.Common.DbDataReader"/> that contains the rows returned by the query.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.DataAccess.Database.ExecuteScalar(System.Data.Common.DbCommand,System.Data.Common.DbParameter[])">
+            <summary>
+            <para>
+            	Executes the <paramref name="command"/> and returns the first column of the first
+            	row in the result set returned by the query. Extra columns or rows are ignored.
+            </para>
+            </summary>
+            <param name="command">
+            <para>
+            	The command that contains the query to execute.
+            </para>
+            </param>
+            <param name="parameters">Zero or more parameters for the query.</param>
+            <returns>
+            <para>
+            	The first column of the first row in the result set.
+            </para>
+            </returns>
+            <seealso cref="M:System.Data.IDbCommand.ExecuteScalar"/>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.DataAccess.Database.ExecuteScalar(System.String,System.Data.Common.DbParameter[])">
+            <summary>
+            	Executes the <paramref name="command"/> and returns the first column of the first
+            	row in the result set returned by the query. Extra columns or rows are ignored.
+            </summary>
+            <param name="sqlCommand">The SQL statement to execute.</param>
+            <param name="parameters">Zero or more parameters for the query.</param>
+            <returns>
+            <para>
+            	The first column of the first row in the result set.
+            </para>
+            </returns>
+            <seealso cref="M:System.Data.IDbCommand.ExecuteScalar"/>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.DataAccess.Database.GetConnection">
+            <summary>
+            <para>Returns the shared connection, and opens it the first time.</para>
+            </summary>
+            <returns>The opened connection.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.DataAccess.Database.PrepareCommand(System.Data.Common.DbCommand,System.Data.Common.DbConnection)">
+            <summary>
+            <para>
+            	Assigns a <paramref name="connection"/> to the <paramref name="command"/> and 
+            	discovers parameters if needed.
+            </para>
+            </summary>
+            <param name="command">The command that contains the query to prepare.</param>
+            <param name="connection">The connection to assign to the command.</param>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.DataAccess.Database.PrepareCommand(System.Data.Common.DbCommand,System.Data.Common.DbConnection,System.Data.Common.DbParameter[])">
+            <summary>
+            	Prepares a <see cref="T:System.Data.Common.DbCommand"/> object for use. This involves setting the connection
+            	and adding any parameters to the command.
+            </summary>
+            <param name="command">The command object you want prepared.</param>
+            <param name="connection">The connection to use with the command.</param>
+            <param name="parameters">Zero or more parameters to add to the command.</param>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.DataAccess.Database.TableExists(System.String)">
+            <summary>
+            	Checks to see if a specific table is in the database.
+            </summary>
+            <param name="tableName">Name of the table to look for.</param>
+            <returns>True if table exists and false if it doesn't.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.DataAccess.Database.GetNullable(System.Object)">
+            <summary>
+            	This is a simple helper method that will convert a DBNull value into
+            	a null value.
+            </summary>
+            <param name="value">The value you want to check for DBNull</param>
+            <returns>Null if <paramref name="value"/> is DBNull.Value, or <paramref name="value"/>.</returns>
+        </member>
+        <member name="P:Microsoft.Practices.Mobile.DataAccess.Database.ConnectionString">
+            <summary>
+            	Gets the connection string for this instance.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Mobile.DataAccess.Database.DbProviderFactory">
+            <summary>
+            	The specific <see cref="P:Microsoft.Practices.Mobile.DataAccess.Database.DbProviderFactory"/> instance provided by a subclass of
+            	this class.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.DataAccess.ISqlDatabase.CreateParameter(System.String,System.Data.SqlDbType,System.Int32,System.Object)">
+            <summary>
+            	This method allows you to use SQL Server CE-specific parameter types.
+            </summary>
+            <param name="name">Name of the parameter, with a prefix (such as '@').</param>
+            <param name="type">The SQL-specific type for the parameter.</param>
+            <param name="size">
+            	Length of the paramter. This is ignored for variable-length parameters, or value
+            	types such as int.
+            </param>
+            <param name="value">The value you want assigned to this parameter.</param>
+            <returns>A new <see cref="T:System.Data.SqlServerCe.SqlCeParameter"/> instance initialized for you.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.DataAccess.ISqlDatabase.ExecuteResultSet(System.Data.SqlServerCe.SqlCeCommand,System.Data.SqlServerCe.ResultSetOptions,System.Data.Common.DbParameter[])">
+            <summary>
+            	If you're using SQL Server CE, you'll get much better performance using result
+            	sets instead of data readers. This method executes a command and returns the data
+            	in a <see cref="T:System.Data.SqlServerCe.SqlCeResultSet"/>.
+            </summary>
+            <remarks>
+            	Make sure you call the <see cref="!:SqlCeResultSet.Dispose()"/> method when you're done
+            	using the result set. The best practice would be to put the call to this method inside
+            	a C# using statement, or the equivalent in other languages.
+            </remarks>
+            <param name="command">
+            	A <see cref="T:System.Data.SqlServerCe.SqlCeCommand"/> object initialized with the command you want to execute.
+            </param>
+            <param name="options">Any options you want to specify for running this command.</param>
+            <param name="parameters">Zero or more parameters to the command.</param>
+            <returns>The result set. Make sure you dipose this result set when you're finished.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.DataAccess.ISqlDatabase.ExecuteResultSet(System.String,System.Data.SqlServerCe.ResultSetOptions,System.Data.Common.DbParameter[])">
+            <summary>
+            	If you're using SQL Server CE, you'll get much better performance using result
+            	sets instead of data readers. This method executes a command and returns the data
+            	in a <see cref="T:System.Data.SqlServerCe.SqlCeResultSet"/>.
+            </summary>
+            <remarks>
+            	Make sure you call the <see cref="!:SqlCeResultSet.Dispose()"/> method when you're done
+            	using the result set. The best practice would be to put the call to this method inside
+            	a C# using statement, or the equivalent in other languages.
+            </remarks>
+            <param name="sqlCommand">A SQL statement that you want to run, which returns a set of rows.</param>
+            <param name="options">Any options you want to specify for running this command.</param>
+            <param name="parameters">Zero or more parameters to the command.</param>
+            <returns>The result set. Make sure you dispose of this result set when you're finished.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.DataAccess.SqlDatabase.#ctor(System.String)">
+            <summary>
+            	This is the only public constructor for this class.
+            </summary>
+            <param name="connectionString">The connection string to connect to your database.</param>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.DataAccess.SqlDatabase.BuildParameterName(System.String)">
+            <summary>
+            	Builds a value parameter name for the current database by ensuring there is an '@' at the
+            	start of the name.
+            </summary>
+            <param name="name">The name of the parameter.</param>
+            <returns>A correctly formated parameter name, which starts with an '@'.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.DataAccess.SqlDatabase.CreateParameter(System.String,System.Data.SqlDbType,System.Int32,System.Object)">
+            <summary>
+            	Allows creating a parameter with a SQL Mobile-specific type.
+            </summary>
+            <param name="name">Name of the parameter</param>
+            <param name="type">The SQL Mobile type of the parameter</param>
+            <param name="size">Size of the paramater</param>
+            <param name="value">The value to set for this parameter</param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.DataAccess.SqlDatabase.ExecuteResultSet(System.Data.SqlServerCe.SqlCeCommand,System.Data.SqlServerCe.ResultSetOptions,System.Data.Common.DbParameter[])">
+            <summary>
+            	Executes and SQL command that returns a <see cref="T:System.Data.SqlServerCe.SqlCeResultSet"/> that can be
+            	scrollable and/or updateable. Make sure you dispose of the result set when you're done.
+            </summary>
+            <param name="command">
+            	The command object that contains the command that will be executed.
+            </param>
+            <param name="options">
+            	Options that control what capabilities the result set will have, such as updatable or scrollable.
+            </param>
+            <param name="parameters">
+            	An optional set of DbParameter objects that provide additional parameters required by the command.
+            </param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.DataAccess.SqlDatabase.ExecuteResultSet(System.String,System.Data.SqlServerCe.ResultSetOptions,System.Data.Common.DbParameter[])">
+            <summary>
+            	Executes and SQL command that returns a <see cref="T:System.Data.SqlServerCe.SqlCeResultSet"/> that can be
+            	scrollable and/or updateable. Make sure you dispose of the result set when you're done.
+            </summary>
+            <param name="sqlCommand">
+            	The SQL query that will be executed.
+            </param>
+            <param name="options">
+            	Options that control what capabilities the result set will have, such as updatable or scrollable.
+            </param>
+            <param name="parameters">
+            	An optional set of DbParameter objects that provide additional parameters required by the SQL command.
+            </param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.DataAccess.SqlDatabase.TableExists(System.String)">
+            <summary>
+            	Checks to see if a table exists in the open database.
+            </summary>
+            <param name="tableName">Name of the table.</param>
+            <returns>true if the table exists, otherwise false.</returns>
+        </member>
+        <member name="T:Microsoft.Practices.Mobile.DataAccess.Guard">
+            <summary>
+            Common guard clauses
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.DataAccess.Guard.ArgumentNotNull(System.Object,System.String)">
+            <summary>
+            Checks an argument to ensure it isn't null
+            </summary>
+            <param name="argumentValue">The argument value to check.</param>
+            <param name="argumentName">The name of the argument.</param>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.DataAccess.Guard.ArgumentNotNullOrEmptyString(System.String,System.String)">
+            <summary>
+            Checks a string argument to ensure it isn't null or empty
+            </summary>
+            <param name="argumentValue">The argument value to check.</param>
+            <param name="argumentName">The name of the argument.</param>
+        </member>
+        <member name="T:Microsoft.Practices.Mobile.DataAccess.DbProviderFactory">
+            <summary>
+            	This is the base class for subclasses that create database-specific objects
+            	used by the <see cref="T:Microsoft.Practices.Mobile.DataAccess.Database"/> class. For example, <see cref="T:Microsoft.Practices.Mobile.DataAccess.SqlClientFactory"/>
+            	creates SQL-specific objects.
+            </summary>
+            <remarks>
+            	You might expect the methods in this class to be abstract since subclasses need
+            	to return actual instances. However, returning null makes it easier to create
+            	mock instances for testing purposes where the mock database doesn't actually
+            	call any of these methods.
+            </remarks>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.DataAccess.DbProviderFactory.CreateCommand">
+            <summary>
+            	This method is called by <see cref="T:Microsoft.Practices.Mobile.DataAccess.Database"/> when it needs a <see cref="T:System.Data.Common.DbCommand"/>
+            	object to execute a command.
+            </summary>
+            <returns>A new, database-specific instance of <see cref="T:System.Data.Common.DbCommand"/>.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.DataAccess.DbProviderFactory.CreateConnection">
+            <summary>
+            	This method is called by <see cref="T:Microsoft.Practices.Mobile.DataAccess.Database"/> when it needs a connection
+            	for executing a command.
+            </summary>
+            <returns>A new, database-specific instance of <see cref="T:System.Data.Common.DbConnection"/></returns>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.DataAccess.DbProviderFactory.CreateParameter">
+            <summary>
+            	This method is called by <see cref="T:Microsoft.Practices.Mobile.DataAccess.Database"/> when it needs to add parameters to
+            	a command object.
+            </summary>
+            <returns>A new, database-specific instance of <see cref="T:System.Data.Common.DbParameter"/></returns>
+        </member>
+        <member name="T:Microsoft.Practices.Mobile.DataAccess.SqlClientFactory">
+            <summary>
+            	An instance of this class creates SQL Server CE-specific objects that the
+            	<see cref="T:Microsoft.Practices.Mobile.DataAccess.Database"/> class needs to work with SQL Server CE database files.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.DataAccess.SqlClientFactory.CreateCommand">
+            <summary>
+            	Creates a new, empty <see cref="T:System.Data.SqlServerCe.SqlCeCommand"/> instance.
+            </summary>
+            <returns>Returns a new instance.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.DataAccess.SqlClientFactory.CreateConnection">
+            <summary>
+            	Creates a new, empty <see cref="T:System.Data.SqlServerCe.SqlCeConnection"/> instance.
+            </summary>
+            <returns>Returns a new instance.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.DataAccess.SqlClientFactory.CreateParameter">
+            <summary>
+            	Creates a new, empty <see cref="T:System.Data.SqlServerCe.SqlCeParameter"/> instance.
+            </summary>
+            <returns>Returns a new instance.</returns>
+        </member>
+        <member name="T:Microsoft.Practices.Mobile.DataAccess.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Mobile.DataAccess.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Mobile.DataAccess.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Mobile.DataAccess.Properties.Resources.StringCannotBeEmpty">
+            <summary>
+              Looks up a localized string similar to The string cannot be empty..
+            </summary>
+        </member>
+    </members>
+</doc>

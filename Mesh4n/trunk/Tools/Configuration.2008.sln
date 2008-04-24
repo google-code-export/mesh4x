@@ -1,0 +1,140 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{82BCDA23-A327-491B-B5E5-D692B30514C4}"
+	ProjectSection(FolderStartupServices) = postProject
+		{B4F97281-0DBD-4835-9ED8-7DFB966E87FF} = {B4F97281-0DBD-4835-9ED8-7DFB966E87FF}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CFUnitTester", "CFUnitTester", "{4F92C7E2-49F7-4346-936B-2BAD8C0D2B18}"
+	ProjectSection(FolderStartupServices) = postProject
+		{B4F97281-0DBD-4835-9ED8-7DFB966E87FF} = {B4F97281-0DBD-4835-9ED8-7DFB966E87FF}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Source", "Source", "{80EE6364-5BEB-4BAB-861B-5FB0F197FA5A}"
+	ProjectSection(FolderStartupServices) = postProject
+		{B4F97281-0DBD-4835-9ED8-7DFB966E87FF} = {B4F97281-0DBD-4835-9ED8-7DFB966E87FF}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuiTestRunner", "CFUnitTester\GuiTestRunner\GuiTestRunner.csproj", "{EDD25FDB-37FD-4365-B2A8-BE0C6D395BDC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestRunner", "CFUnitTester\TestRunner\TestRunner.csproj", "{1C9AE3CD-C7F3-4A1D-9096-646549157B1A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTesting", "CFUnitTester\UnitTesting\UnitTesting.csproj", "{3385C4E6-0657-48E3-8437-6BF4A51B2315}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mobile.Configuration", "Configuration\Src\Mobile.Configuration.csproj", "{3E601F92-35BC-4259-ABA6-02256AA77F99}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Configuration.Tests", "Configuration\UnitTests\Configuration.Tests.csproj", "{93D88B95-9309-4CAB-8F41-7186F643B4EB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Configuration.Tests.CF", "Configuration\UnitTests\Configuration.Tests.CF.csproj", "{442B6529-5357-4F9C-A6C8-A05729EEA2FA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestUtilities", "TestUtilities\TestUtilities.csproj", "{32F04FAC-C884-40E8-AF00-763BF8AF8D19}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9232DB22-08D5-4E9B-82E0-730E19BDC84E}"
+	ProjectSection(SolutionItems) = preProject
+		configuration.vsmdi = configuration.vsmdi
+		localtestrun.testrunconfig = localtestrun.testrunconfig
+	EndProjectSection
+	ProjectSection(FolderStartupServices) = postProject
+		{B4F97281-0DBD-4835-9ED8-7DFB966E87FF} = {B4F97281-0DBD-4835-9ED8-7DFB966E87FF}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mobile.PasswordAuthentication", "PasswordAuthentication\Src\Mobile.PasswordAuthentication.csproj", "{7C078FBC-AB3F-4C6D-9E0A-211407A71325}"
+EndProject
+Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 9
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://tfs03.codeplex.com/
+		SccProjectUniqueName0 = CFUnitTester\\GuiTestRunner\\GuiTestRunner.csproj
+		SccProjectTopLevelParentUniqueName0 = Configuration.2008.sln
+		SccProjectName0 = CFUnitTester/GuiTestRunner
+		SccLocalPath0 = CFUnitTester\\GuiTestRunner
+		SccProjectUniqueName1 = CFUnitTester\\TestRunner\\TestRunner.csproj
+		SccProjectTopLevelParentUniqueName1 = Configuration.2008.sln
+		SccProjectName1 = CFUnitTester/TestRunner
+		SccLocalPath1 = CFUnitTester\\TestRunner
+		SccProjectUniqueName2 = CFUnitTester\\UnitTesting\\UnitTesting.csproj
+		SccProjectTopLevelParentUniqueName2 = Configuration.2008.sln
+		SccProjectName2 = CFUnitTester/UnitTesting
+		SccLocalPath2 = CFUnitTester\\UnitTesting
+		SccProjectUniqueName3 = PasswordAuthentication\\Src\\Mobile.PasswordAuthentication.csproj
+		SccProjectTopLevelParentUniqueName3 = Configuration.2008.sln
+		SccProjectName3 = PasswordAuthentication/Src
+		SccLocalPath3 = PasswordAuthentication\\Src
+		SccLocalPath4 = .
+		SccProjectUniqueName5 = Configuration\\Src\\Mobile.Configuration.csproj
+		SccProjectTopLevelParentUniqueName5 = Configuration.2008.sln
+		SccProjectName5 = Configuration/Src
+		SccLocalPath5 = Configuration\\Src
+		SccProjectUniqueName6 = Configuration\\UnitTests\\Configuration.Tests.CF.csproj
+		SccProjectTopLevelParentUniqueName6 = Configuration.2008.sln
+		SccProjectName6 = Configuration/UnitTests
+		SccLocalPath6 = Configuration\\UnitTests
+		SccProjectUniqueName7 = Configuration\\UnitTests\\Configuration.Tests.csproj
+		SccProjectTopLevelParentUniqueName7 = Configuration.2008.sln
+		SccProjectName7 = Configuration/UnitTests
+		SccLocalPath7 = Configuration\\UnitTests
+		SccProjectUniqueName8 = TestUtilities\\TestUtilities.csproj
+		SccProjectTopLevelParentUniqueName8 = Configuration.2008.sln
+		SccProjectName8 = TestUtilities
+		SccLocalPath8 = TestUtilities
+	EndGlobalSection
+	GlobalSection(TextTemplating) = postSolution
+		TextTemplating = 1
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EDD25FDB-37FD-4365-B2A8-BE0C6D395BDC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EDD25FDB-37FD-4365-B2A8-BE0C6D395BDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EDD25FDB-37FD-4365-B2A8-BE0C6D395BDC}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{EDD25FDB-37FD-4365-B2A8-BE0C6D395BDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EDD25FDB-37FD-4365-B2A8-BE0C6D395BDC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EDD25FDB-37FD-4365-B2A8-BE0C6D395BDC}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{1C9AE3CD-C7F3-4A1D-9096-646549157B1A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C9AE3CD-C7F3-4A1D-9096-646549157B1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C9AE3CD-C7F3-4A1D-9096-646549157B1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C9AE3CD-C7F3-4A1D-9096-646549157B1A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3385C4E6-0657-48E3-8437-6BF4A51B2315}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3385C4E6-0657-48E3-8437-6BF4A51B2315}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3385C4E6-0657-48E3-8437-6BF4A51B2315}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3385C4E6-0657-48E3-8437-6BF4A51B2315}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E601F92-35BC-4259-ABA6-02256AA77F99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E601F92-35BC-4259-ABA6-02256AA77F99}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E601F92-35BC-4259-ABA6-02256AA77F99}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E601F92-35BC-4259-ABA6-02256AA77F99}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93D88B95-9309-4CAB-8F41-7186F643B4EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93D88B95-9309-4CAB-8F41-7186F643B4EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93D88B95-9309-4CAB-8F41-7186F643B4EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93D88B95-9309-4CAB-8F41-7186F643B4EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{442B6529-5357-4F9C-A6C8-A05729EEA2FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{442B6529-5357-4F9C-A6C8-A05729EEA2FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{442B6529-5357-4F9C-A6C8-A05729EEA2FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{442B6529-5357-4F9C-A6C8-A05729EEA2FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{32F04FAC-C884-40E8-AF00-763BF8AF8D19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{32F04FAC-C884-40E8-AF00-763BF8AF8D19}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{32F04FAC-C884-40E8-AF00-763BF8AF8D19}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{32F04FAC-C884-40E8-AF00-763BF8AF8D19}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C078FBC-AB3F-4C6D-9E0A-211407A71325}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C078FBC-AB3F-4C6D-9E0A-211407A71325}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C078FBC-AB3F-4C6D-9E0A-211407A71325}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C078FBC-AB3F-4C6D-9E0A-211407A71325}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{4F92C7E2-49F7-4346-936B-2BAD8C0D2B18} = {82BCDA23-A327-491B-B5E5-D692B30514C4}
+		{93D88B95-9309-4CAB-8F41-7186F643B4EB} = {82BCDA23-A327-491B-B5E5-D692B30514C4}
+		{442B6529-5357-4F9C-A6C8-A05729EEA2FA} = {82BCDA23-A327-491B-B5E5-D692B30514C4}
+		{32F04FAC-C884-40E8-AF00-763BF8AF8D19} = {82BCDA23-A327-491B-B5E5-D692B30514C4}
+		{7C078FBC-AB3F-4C6D-9E0A-211407A71325} = {82BCDA23-A327-491B-B5E5-D692B30514C4}
+		{EDD25FDB-37FD-4365-B2A8-BE0C6D395BDC} = {4F92C7E2-49F7-4346-936B-2BAD8C0D2B18}
+		{1C9AE3CD-C7F3-4A1D-9096-646549157B1A} = {4F92C7E2-49F7-4346-936B-2BAD8C0D2B18}
+		{3385C4E6-0657-48E3-8437-6BF4A51B2315} = {4F92C7E2-49F7-4346-936B-2BAD8C0D2B18}
+		{3E601F92-35BC-4259-ABA6-02256AA77F99} = {80EE6364-5BEB-4BAB-861B-5FB0F197FA5A}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,130 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.20706</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{442B6529-5357-4F9C-A6C8-A05729EEA2FA}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Microsoft.Practices.Mobile.Configuration.Tests.CF</RootNamespace>
+    <AssemblyName>Microsoft.Practices.Mobile.Configuration.Tests.CF</AssemblyName>
+    <WarningLevel>4</WarningLevel>
+    <ProjectTypeGuids>{4D628B5B-2FBC-4AA6-8C16-197242AEB884};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <PlatformFamilyName>PocketPC</PlatformFamilyName>
+    <PlatformID>4118C335-430C-497f-BE48-11C3316B135E</PlatformID>
+    <OSVersion>5.01</OSVersion>
+    <DeployDirSuffix>GuiTestRunner</DeployDirSuffix>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <FormFactorID>
+    </FormFactorID>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <NativePlatformName>Windows Mobile 5.0 Pocket PC SDK</NativePlatformName>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug.CF\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;PocketPC</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <GenerateSerializationAssemblies>off</GenerateSerializationAssemblies>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugSymbols>false</DebugSymbols>
+    <Optimize>true</Optimize>
+    <OutputPath>.\bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <GenerateSerializationAssemblies>off</GenerateSerializationAssemblies>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="AppConfig.cs" />
+    <Compile Include="ConfigurationElementCollectionFixture.cs" />
+    <Compile Include="ConfigurationFixture.cs" />
+    <Compile Include="ConfigurationManagerFixture.cs" />
+    <Compile Include="ConfigurationSectionCollectionFixture.cs" />
+    <Compile Include="ConfigurationSectionRepositoryFixture.cs" />
+    <Compile Include="ConfigurationStorageOverrideFixture.cs" />
+    <Compile Include="ConfigurationXmlRepositoryFixture.cs" />
+    <Compile Include="CryptographyBlockFixture.cs" />
+    <Compile Include="EncryptedSectionFixture.cs" />
+    <Compile Include="Mocks\IsolatedStorageStatePersistenceService.cs" />
+    <Compile Include="Mocks\IStatePersistenceService.cs" />
+    <Compile Include="Mocks\MenuItemElement.cs" />
+    <Compile Include="Mocks\MenuItemElementCollection.cs" />
+    <Compile Include="Mocks\MockCustomSection.cs" />
+    <Compile Include="Mocks\MockEndpointClasses.cs" />
+    <Compile Include="Mocks\MockParametersElement.cs" />
+    <Compile Include="Mocks\MockServiceElement.cs" />
+    <Compile Include="Mocks\MockServiceElementCollection.cs" />
+    <Compile Include="Mocks\MockSettingsSection.cs" />
+    <Compile Include="Mocks\MockSeveralAttributeTypesElement.cs" />
+    <Compile Include="Mocks\MockShellItemsSection.cs" />
+    <Compile Include="Mocks\SimpleElement.cs" />
+    <Compile Include="Mocks\SimpleSection.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RijndaelConfigurationProviderFixture.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Tools\CFUnitTester\UnitTesting\UnitTesting.csproj">
+      <Project>{3385C4E6-0657-48E3-8437-6BF4A51B2315}</Project>
+      <Name>UnitTesting</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Tools\TestUtilities\TestUtilities.csproj">
+      <Project>{32F04FAC-C884-40E8-AF00-763BF8AF8D19}</Project>
+      <Name>TestUtilities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\PasswordAuthentication\Src\Mobile.PasswordAuthentication.csproj">
+      <Project>{7C078FBC-AB3F-4C6D-9E0A-211407A71325}</Project>
+      <Name>Mobile.PasswordAuthentication</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Src\Mobile.Configuration.csproj">
+      <Project>{3E601F92-35BC-4259-ABA6-02256AA77F99}</Project>
+      <Name>Mobile.Configuration</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="App-with-empty-sectionname.config" />
+    <EmbeddedResource Include="App-with-empty-sectiontype.config" />
+    <EmbeddedResource Include="App-with-unknown-attributes.config" />
+    <EmbeddedResource Include="App-without-sectionname.config" />
+    <EmbeddedResource Include="App-without-sectiontype.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="App.CF.Config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=969db8053d3322ac, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Program Files\Microsoft.NET\SDK\CompactFramework\v2.0\WindowsCE\mscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=969db8053d3322ac, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Program Files\Microsoft.NET\SDK\CompactFramework\v2.0\WindowsCE\System.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml, Version=2.0.0.0, Culture=neutral, PublicKeyToken=969db8053d3322ac, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Program Files\Microsoft.NET\SDK\CompactFramework\v2.0\WindowsCE\System.Xml.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />
+  <Import Condition="'$(TargetFrameworkVersion)' == 'v3.5'" Project="$(MSBuildBinPath)\Microsoft.CompactFramework.CSharp.targets" />
+</Project>

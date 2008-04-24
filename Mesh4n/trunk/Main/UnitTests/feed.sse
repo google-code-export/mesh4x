@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<rss xmlns:sx="http://feedsync.org/2007/feedsync" version="2.0">
+    <channel>
+        <title>SimpleSharing</title>
+        <description>Test feed for SimpleSharing.NET library</description>
+        <link>http://sse.mslivelabs.com/</link>
+        <link rel="self" href="http://sse.mslivelabs.com/feed.sse?i=293578659bbf40bfb8aa0b9102c36766&amp;c=1" xmlns="http://www.w3.org/2005/Atom" />
+        <lastBuildDate>Fri, 29 Jun 2007 17:43:38 GMT</lastBuildDate>
+        <sx:sharing since="00633187355700230000" until="00633187358181930000" expires="2007-07-08T16:50:29Z" version="0.93" />
+        <item>
+            <sx:sync id="529a0d9d-d008-4ed2-b2d7-ccfc18da7cab" updates="2" deleted="false" noconflicts="false">
+                <sx:history sequence="2" when="2007-06-29T10:43:38Z" />
+                <sx:history sequence="1" when="2007-06-29T10:40:18Z" by="dcazzulino@hotmail.com" />
+            </sx:sync>
+            <title>Bar</title>
+            <author>SSE Web Feed Editor</author>
+            <link>bar</link>
+            <link rel="edit" type="text/xml" href="http://sse.mslivelabs.com/feed.sse?i=293578659bbf40bfb8aa0b9102c36766&amp;c=1&amp;alt=Rss&amp;item=529a0d9d-d008-4ed2-b2d7-ccfc18da7cab" xmlns="http://www.w3.org/2005/Atom" />
+        </item>
+        <item>
+            <sx:sync id="423e2738-6728-4ae4-99e4-69af30894ee2" updates="2" deleted="false" noconflicts="false">
+                <sx:history sequence="2" when="2007-06-29T10:43:17Z" />
+                <sx:history sequence="1" when="2007-06-29T10:40:11Z" by="dcazzulino@hotmail.com" />
+            </sx:sync>
+            <title>Foo</title>
+            <author>SSE Web Feed Editor</author>
+            <link>foo</link>
+            <link rel="edit" type="text/xml" href="http://sse.mslivelabs.com/feed.sse?i=293578659bbf40bfb8aa0b9102c36766&amp;c=1&amp;alt=Rss&amp;item=423e2738-6728-4ae4-99e4-69af30894ee2" xmlns="http://www.w3.org/2005/Atom" />
+        </item>
+    </channel>
+</rss>

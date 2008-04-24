@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.20706</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{8CA9DE8C-F9FD-4746-A51E-1DBC9D6D2A34}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Microsoft.Practices.Mobile.DataAccess.Tests</RootNamespace>
+    <AssemblyName>DataAccess.Tests</AssemblyName>
+    <WarningLevel>4</WarningLevel>
+    <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>.\bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugSymbols>false</DebugSymbols>
+    <Optimize>true</Optimize>
+    <OutputPath>.\bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\..\..\..\WINDOWS\assembly\GAC_MSIL\Microsoft.VisualStudio.QualityTools.UnitTestFramework\8.0.0.0__b03f5f7f11d50a3a\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.SqlServerCe, Version=9.0.242.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <HintPath>..\..\..\Lib\MCSF\System.Data.SqlServerCe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DataAccessFixture.cs" />
+    <Compile Include="Mocks\MockCommand.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Mocks\MockConnection.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Mocks\MockDatabase.cs" />
+    <Compile Include="Mocks\MockParameter.cs" />
+    <Compile Include="Mocks\MockProvider.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SqlDatabaseFixture.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="MockDatastore.sdf" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Tools\TestUtilities\TestUtilities.csproj">
+      <Project>{32F04FAC-C884-40E8-AF00-763BF8AF8D19}</Project>
+      <Name>TestUtilities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Src\Mobile.DataAccess.csproj">
+      <Project>{50A1C64A-8AB3-4FF3-BE8A-EE24A8E75691}</Project>
+      <Name>Mobile.DataAccess</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />
+</Project>

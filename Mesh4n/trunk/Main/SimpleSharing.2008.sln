@@ -1,0 +1,181 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8E28D357-213F-4239-8F14-60423045A4AF}"
+	ProjectSection(SolutionItems) = preProject
+		localtestrun.2008.testrunconfig = localtestrun.2008.testrunconfig
+		SimpleSharing.2008.vsmdi = SimpleSharing.2008.vsmdi
+	EndProjectSection
+	ProjectSection(FolderStartupServices) = postProject
+		{B4F97281-0DBD-4835-9ED8-7DFB966E87FF} = {B4F97281-0DBD-4835-9ED8-7DFB966E87FF}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Source", "Source", "{873DA134-5545-49B2-BBA0-3045B81AC44D}"
+	ProjectSection(FolderStartupServices) = postProject
+		{B4F97281-0DBD-4835-9ED8-7DFB966E87FF} = {B4F97281-0DBD-4835-9ED8-7DFB966E87FF}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{F835F3C1-E7CE-4ADB-AE1E-532C0585377C}"
+	ProjectSection(FolderStartupServices) = postProject
+		{B4F97281-0DBD-4835-9ED8-7DFB966E87FF} = {B4F97281-0DBD-4835-9ED8-7DFB966E87FF}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CFUnitTester", "CFUnitTester", "{AECE55BB-0B4C-412E-9D3B-2938EB616A73}"
+	ProjectSection(FolderStartupServices) = postProject
+		{B4F97281-0DBD-4835-9ED8-7DFB966E87FF} = {B4F97281-0DBD-4835-9ED8-7DFB966E87FF}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Adapters", "Adapters", "{8ABC36C1-491D-48D3-9A9A-A4D16620F137}"
+	ProjectSection(FolderStartupServices) = postProject
+		{B4F97281-0DBD-4835-9ED8-7DFB966E87FF} = {B4F97281-0DBD-4835-9ED8-7DFB966E87FF}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleSharing", "Source\SimpleSharing.csproj", "{5A747B6C-D230-4D59-9321-83B48C4553CF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleSharing.Tests", "UnitTests\SimpleSharing.Tests.csproj", "{6634F9B2-94CB-4D65-8AD7-E38D6F503057}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTesting", "..\Tools\CFUnitTester\UnitTesting\UnitTesting.csproj", "{3385C4E6-0657-48E3-8437-6BF4A51B2315}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestRunner", "..\Tools\CFUnitTester\TestRunner\TestRunner.csproj", "{1C9AE3CD-C7F3-4A1D-9096-646549157B1A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuiTestRunner", "..\Tools\CFUnitTester\GuiTestRunner\GuiTestRunner.csproj", "{EDD25FDB-37FD-4365-B2A8-BE0C6D395BDC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleSharing.CF", "Source\SimpleSharing.CF.csproj", "{6AB67AF4-83D3-449E-83D0-A88C343801AE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleSharing.Tests.CF", "UnitTests\SimpleSharing.Tests.CF.csproj", "{F3D077E0-0FD6-4914-A55C-3FC14F36276A}"
+EndProject
+Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 8
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://tfs03.codeplex.com/
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = Source\\SimpleSharing.CF.csproj
+		SccProjectTopLevelParentUniqueName1 = SimpleSharing.2008.sln
+		SccProjectName1 = Source
+		SccLocalPath1 = Source
+		SccProjectUniqueName2 = Source\\SimpleSharing.csproj
+		SccProjectTopLevelParentUniqueName2 = SimpleSharing.2008.sln
+		SccProjectName2 = Source
+		SccLocalPath2 = Source
+		SccProjectUniqueName3 = UnitTests\\SimpleSharing.Tests.CF.csproj
+		SccProjectTopLevelParentUniqueName3 = SimpleSharing.2008.sln
+		SccProjectName3 = UnitTests
+		SccLocalPath3 = UnitTests
+		SccProjectUniqueName4 = UnitTests\\SimpleSharing.Tests.csproj
+		SccProjectTopLevelParentUniqueName4 = SimpleSharing.2008.sln
+		SccProjectName4 = UnitTests
+		SccLocalPath4 = UnitTests
+		SccProjectUniqueName5 = ..\\Tools\\CFUnitTester\\GuiTestRunner\\GuiTestRunner.csproj
+		SccProjectTopLevelParentUniqueName5 = SimpleSharing.2008.sln
+		SccProjectName5 = ../Tools/CFUnitTester/GuiTestRunner
+		SccLocalPath5 = ..\\Tools\\CFUnitTester\\GuiTestRunner
+		SccProjectUniqueName6 = ..\\Tools\\CFUnitTester\\TestRunner\\TestRunner.csproj
+		SccProjectTopLevelParentUniqueName6 = SimpleSharing.2008.sln
+		SccProjectName6 = ../Tools/CFUnitTester/TestRunner
+		SccLocalPath6 = ..\\Tools\\CFUnitTester\\TestRunner
+		SccProjectUniqueName7 = ..\\Tools\\CFUnitTester\\UnitTesting\\UnitTesting.csproj
+		SccProjectTopLevelParentUniqueName7 = SimpleSharing.2008.sln
+		SccProjectName7 = ../Tools/CFUnitTester/UnitTesting
+		SccLocalPath7 = ..\\Tools\\CFUnitTester\\UnitTesting
+	EndGlobalSection
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = SimpleSharing.2008.vsmdi
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|.NET = Debug|.NET
+		Debug|Any CPU = Debug|Any CPU
+		Debug|Mixed Platforms = Debug|Mixed Platforms
+		Release|.NET = Release|.NET
+		Release|Any CPU = Release|Any CPU
+		Release|Mixed Platforms = Release|Mixed Platforms
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5A747B6C-D230-4D59-9321-83B48C4553CF}.Debug|.NET.ActiveCfg = Debug|Any CPU
+		{5A747B6C-D230-4D59-9321-83B48C4553CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A747B6C-D230-4D59-9321-83B48C4553CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A747B6C-D230-4D59-9321-83B48C4553CF}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{5A747B6C-D230-4D59-9321-83B48C4553CF}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{5A747B6C-D230-4D59-9321-83B48C4553CF}.Release|.NET.ActiveCfg = Release|Any CPU
+		{5A747B6C-D230-4D59-9321-83B48C4553CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A747B6C-D230-4D59-9321-83B48C4553CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A747B6C-D230-4D59-9321-83B48C4553CF}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{5A747B6C-D230-4D59-9321-83B48C4553CF}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{6634F9B2-94CB-4D65-8AD7-E38D6F503057}.Debug|.NET.ActiveCfg = Debug|Any CPU
+		{6634F9B2-94CB-4D65-8AD7-E38D6F503057}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6634F9B2-94CB-4D65-8AD7-E38D6F503057}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6634F9B2-94CB-4D65-8AD7-E38D6F503057}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{6634F9B2-94CB-4D65-8AD7-E38D6F503057}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{6634F9B2-94CB-4D65-8AD7-E38D6F503057}.Release|.NET.ActiveCfg = Release|Any CPU
+		{6634F9B2-94CB-4D65-8AD7-E38D6F503057}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6634F9B2-94CB-4D65-8AD7-E38D6F503057}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6634F9B2-94CB-4D65-8AD7-E38D6F503057}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{6634F9B2-94CB-4D65-8AD7-E38D6F503057}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{3385C4E6-0657-48E3-8437-6BF4A51B2315}.Debug|.NET.ActiveCfg = Debug|Any CPU
+		{3385C4E6-0657-48E3-8437-6BF4A51B2315}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3385C4E6-0657-48E3-8437-6BF4A51B2315}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{3385C4E6-0657-48E3-8437-6BF4A51B2315}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{3385C4E6-0657-48E3-8437-6BF4A51B2315}.Release|.NET.ActiveCfg = Release|Any CPU
+		{3385C4E6-0657-48E3-8437-6BF4A51B2315}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3385C4E6-0657-48E3-8437-6BF4A51B2315}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3385C4E6-0657-48E3-8437-6BF4A51B2315}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{3385C4E6-0657-48E3-8437-6BF4A51B2315}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{1C9AE3CD-C7F3-4A1D-9096-646549157B1A}.Debug|.NET.ActiveCfg = Debug|Any CPU
+		{1C9AE3CD-C7F3-4A1D-9096-646549157B1A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C9AE3CD-C7F3-4A1D-9096-646549157B1A}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{1C9AE3CD-C7F3-4A1D-9096-646549157B1A}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{1C9AE3CD-C7F3-4A1D-9096-646549157B1A}.Release|.NET.ActiveCfg = Release|Any CPU
+		{1C9AE3CD-C7F3-4A1D-9096-646549157B1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C9AE3CD-C7F3-4A1D-9096-646549157B1A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C9AE3CD-C7F3-4A1D-9096-646549157B1A}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{1C9AE3CD-C7F3-4A1D-9096-646549157B1A}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{EDD25FDB-37FD-4365-B2A8-BE0C6D395BDC}.Debug|.NET.ActiveCfg = Debug|Any CPU
+		{EDD25FDB-37FD-4365-B2A8-BE0C6D395BDC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EDD25FDB-37FD-4365-B2A8-BE0C6D395BDC}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{EDD25FDB-37FD-4365-B2A8-BE0C6D395BDC}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{EDD25FDB-37FD-4365-B2A8-BE0C6D395BDC}.Debug|Mixed Platforms.Deploy.0 = Debug|Any CPU
+		{EDD25FDB-37FD-4365-B2A8-BE0C6D395BDC}.Release|.NET.ActiveCfg = Release|Any CPU
+		{EDD25FDB-37FD-4365-B2A8-BE0C6D395BDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EDD25FDB-37FD-4365-B2A8-BE0C6D395BDC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EDD25FDB-37FD-4365-B2A8-BE0C6D395BDC}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{EDD25FDB-37FD-4365-B2A8-BE0C6D395BDC}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{EDD25FDB-37FD-4365-B2A8-BE0C6D395BDC}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{EDD25FDB-37FD-4365-B2A8-BE0C6D395BDC}.Release|Mixed Platforms.Deploy.0 = Release|Any CPU
+		{6AB67AF4-83D3-449E-83D0-A88C343801AE}.Debug|.NET.ActiveCfg = Debug|Any CPU
+		{6AB67AF4-83D3-449E-83D0-A88C343801AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6AB67AF4-83D3-449E-83D0-A88C343801AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6AB67AF4-83D3-449E-83D0-A88C343801AE}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{6AB67AF4-83D3-449E-83D0-A88C343801AE}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{6AB67AF4-83D3-449E-83D0-A88C343801AE}.Release|.NET.ActiveCfg = Release|Any CPU
+		{6AB67AF4-83D3-449E-83D0-A88C343801AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6AB67AF4-83D3-449E-83D0-A88C343801AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6AB67AF4-83D3-449E-83D0-A88C343801AE}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{6AB67AF4-83D3-449E-83D0-A88C343801AE}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{F3D077E0-0FD6-4914-A55C-3FC14F36276A}.Debug|.NET.ActiveCfg = Debug|Any CPU
+		{F3D077E0-0FD6-4914-A55C-3FC14F36276A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3D077E0-0FD6-4914-A55C-3FC14F36276A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3D077E0-0FD6-4914-A55C-3FC14F36276A}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{F3D077E0-0FD6-4914-A55C-3FC14F36276A}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{F3D077E0-0FD6-4914-A55C-3FC14F36276A}.Release|.NET.ActiveCfg = Release|Any CPU
+		{F3D077E0-0FD6-4914-A55C-3FC14F36276A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3D077E0-0FD6-4914-A55C-3FC14F36276A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3D077E0-0FD6-4914-A55C-3FC14F36276A}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{F3D077E0-0FD6-4914-A55C-3FC14F36276A}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5A747B6C-D230-4D59-9321-83B48C4553CF} = {873DA134-5545-49B2-BBA0-3045B81AC44D}
+		{6AB67AF4-83D3-449E-83D0-A88C343801AE} = {873DA134-5545-49B2-BBA0-3045B81AC44D}
+		{AECE55BB-0B4C-412E-9D3B-2938EB616A73} = {F835F3C1-E7CE-4ADB-AE1E-532C0585377C}
+		{6634F9B2-94CB-4D65-8AD7-E38D6F503057} = {F835F3C1-E7CE-4ADB-AE1E-532C0585377C}
+		{F3D077E0-0FD6-4914-A55C-3FC14F36276A} = {F835F3C1-E7CE-4ADB-AE1E-532C0585377C}
+		{3385C4E6-0657-48E3-8437-6BF4A51B2315} = {AECE55BB-0B4C-412E-9D3B-2938EB616A73}
+		{1C9AE3CD-C7F3-4A1D-9096-646549157B1A} = {AECE55BB-0B4C-412E-9D3B-2938EB616A73}
+		{EDD25FDB-37FD-4365-B2A8-BE0C6D395BDC} = {AECE55BB-0B4C-412E-9D3B-2938EB616A73}
+	EndGlobalSection
+	GlobalSection(TextTemplating) = postSolution
+		TextTemplating = 1
+	EndGlobalSection
+EndGlobal

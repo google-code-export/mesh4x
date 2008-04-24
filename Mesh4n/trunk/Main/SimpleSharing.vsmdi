@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Tests>
+  <edtdocversion branch="retail" build="50727" revision="312" />
+  <TestCategory type="Microsoft.VisualStudio.TestTools.Common.TestCategory">
+    <id type="Microsoft.VisualStudio.TestTools.Common.TestCategoryId">
+      <id type="System.Guid">8c43106b-9dc1-4907-a29f-aa66a61bf5b6</id>
+    </id>
+    <name type="System.String">Lists of Tests</name>
+    <description type="System.String" />
+    <enabled type="System.Boolean">True</enabled>
+    <parentCategoryId type="Microsoft.VisualStudio.TestTools.Common.TestCategoryId">
+      <id type="System.Guid">00000000-0000-0000-0000-000000000000</id>
+    </parentCategoryId>
+    <runConfiguration type="Microsoft.VisualStudio.TestTools.Common.Link">
+      <id type="System.Guid">7ad81d3f-941c-4261-94b0-b909187fa14e</id>
+      <name type="System.String">Local Test Run</name>
+      <storage type="System.String">localtestrun.testrunconfig</storage>
+      <type type="System.Type, mscorlib">Microsoft.VisualStudio.TestTools.Common.TestRunConfiguration</type>
+      <enabled type="System.Boolean">True</enabled>
+    </runConfiguration>
+  </TestCategory>
+  <TestCategory type="Microsoft.VisualStudio.TestTools.Common.TestCategory">
+    <id type="Microsoft.VisualStudio.TestTools.Common.TestCategoryId">
+      <id type="System.Guid">8c84fa94-04c1-424b-9868-57a2d4851a1d</id>
+    </id>
+    <name type="System.String">Tests Not in a List</name>
+    <description type="System.String" />
+    <enabled type="System.Boolean">True</enabled>
+    <parentCategoryId type="Microsoft.VisualStudio.TestTools.Common.TestCategoryId">
+      <id type="System.Guid">00000000-0000-0000-0000-000000000000</id>
+    </parentCategoryId>
+    <testLinks type="System.Collections.Hashtable">
+      <key type="System.Guid">f1c73dbc-1260-9c51-1eb5-811962f8897b</key>
+      <value type="Microsoft.VisualStudio.TestTools.Common.Link">
+        <id type="System.Guid">f1c73dbc-1260-9c51-1eb5-811962f8897b</id>
+        <name type="System.String">ShouldSyncItems</name>
+        <storage type="System.String">unittests\bin\debug\simplesharing.tests.dll</storage>
+        <type type="System.Type, mscorlib">Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</type>
+        <enabled type="System.Boolean">True</enabled>
+      </value>
+      <key type="System.Guid">1cb67313-2790-73e4-954c-9115c53308f8</key>
+      <value type="Microsoft.VisualStudio.TestTools.Common.Link">
+        <id type="System.Guid">1cb67313-2790-73e4-954c-9115c53308f8</id>
+        <name type="System.String">ShouldPutFeed</name>
+        <storage type="System.String">unittests\bin\debug\simplesharing.tests.dll</storage>
+        <type type="System.Type, mscorlib">Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</type>
+        <enabled type="System.Boolean">True</enabled>
+      </value>
+      <key type="System.Guid">886d4ac8-3ec6-d628-e6dc-cf11ce1bf23a</key>
+      <value type="Microsoft.VisualStudio.TestTools.Common.Link">
+        <id type="System.Guid">886d4ac8-3ec6-d628-e6dc-cf11ce1bf23a</id>
+        <name type="System.String">ShouldUploadEmptyItems</name>
+        <storage type="System.String">unittests\bin\debug\simplesharing.tests.dll</storage>
+        <type type="System.Type, mscorlib">Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</type>
+        <enabled type="System.Boolean">True</enabled>
+      </value>
+      <key type="System.Guid">9257bc7f-904f-a6cf-2294-b2f11bace0d9</key>
+      <value type="Microsoft.VisualStudio.TestTools.Common.Link">
+        <id type="System.Guid">9257bc7f-904f-a6cf-2294-b2f11bace0d9</id>
+        <name type="System.String">ShouldUpdateItems</name>
+        <storage type="System.String">unittests\bin\debug\simplesharing.tests.dll</storage>
+        <type type="System.Type, mscorlib">Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</type>
+        <enabled type="System.Boolean">True</enabled>
+      </value>
+    </testLinks>
+  </TestCategory>
+</Tests>

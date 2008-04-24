@@ -1,0 +1,833 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.Practices.Mobile.Configuration</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.Practices.Mobile.Configuration.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Mobile.Configuration.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Mobile.Configuration.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Mobile.Configuration.Properties.Resources.BlockVersionMismatch">
+            <summary>
+              Looks up a localized string similar to The version number in the encrypted data isn&apos;t correct..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Mobile.Configuration.Properties.Resources.ConfigurationFailure">
+            <summary>
+              Looks up a localized string similar to Configuration system failed to initialize.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Mobile.Configuration.Properties.Resources.DuplicationSectionData">
+            <summary>
+              Looks up a localized string similar to Duplication section data found, and not allowed..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Mobile.Configuration.Properties.Resources.EncryptedMissingName">
+            <summary>
+              Looks up a localized string similar to The &lt;EncryptedSection&gt; xml element is missing a name attributed..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Mobile.Configuration.Properties.Resources.ExceptionByteArrayValueMustBeGreaterThanZeroBytes">
+            <summary>
+              Looks up a localized string similar to Byte array value must not be empty..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Mobile.Configuration.Properties.Resources.InvalidHexString">
+            <summary>
+              Looks up a localized string similar to Invalid hex string..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Mobile.Configuration.Properties.Resources.MissingAttribute">
+            <summary>
+              Looks up a localized string similar to Missing a required attribute: &apos;{0}&apos;.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Mobile.Configuration.Properties.Resources.MissingElement">
+            <summary>
+              Looks up a localized string similar to Required element is missing: &apos;{0}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Mobile.Configuration.Properties.Resources.MissingSectionData">
+            <summary>
+              Looks up a localized string similar to The section data is missing fo &apos;{0}&apos;. Unlike the desktop, this implementation requires that section data exists..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Mobile.Configuration.Properties.Resources.RequiredAttributeEmpty">
+            <summary>
+              Looks up a localized string similar to Required attribute &apos;{0}&apos; must have a value..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Mobile.Configuration.Properties.Resources.StringCannotBeEmpty">
+            <summary>
+              Looks up a localized string similar to String cannot be empty..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Mobile.Configuration.Properties.Resources.TypeLoadError">
+            <summary>
+              Looks up a localized string similar to Cannot load the type: {0}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Mobile.Configuration.Properties.Resources.UnrecognizedAttribute">
+            <summary>
+              Looks up a localized string similar to Unrecognized attribute &apos;{0}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Mobile.Configuration.Properties.Resources.UnrecognizedElement">
+            <summary>
+              Looks up a localized string similar to Unrecognized element &apos;{0}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Mobile.Configuration.Properties.Resources.UnsupportedPropertyType">
+            <summary>
+              Looks up a localized string similar to An unsupported property type exists..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Mobile.Configuration.Properties.Resources.WrongConvertedType">
+            <summary>
+              Looks up a localized string similar to Deserialized value cannot be assigned to target property type {0}..
+            </summary>
+        </member>
+        <member name="T:Microsoft.Practices.Mobile.Configuration.ConfigurationElement">
+            <summary>
+            	<para>
+            		This class is a replacement for the System.Configuration class built into the full
+            		.NET framework. We've implemented just enough to supply the needs of CAB.
+            	</para>
+            	<para>
+            		There are basically two forms that an element can take: either a leaf node, which will
+            		have attributes, or collection, which contains child nodes. Leaf nodes should be
+            		subclasses of this class, whereas collections should be subclasses of
+            		ConfigurationElementCollection, which is a direct subclass of this class.
+            	</para>
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.ConfigurationElement.OnDeserializeUnrecognizedElement(System.String,System.Xml.XmlReader)">
+            <summary>
+            	Called while deserializing a ConfigurationElement when it encounters an XML element
+            	that it doesn't recognize (for example, as a property of the subclass).
+            </summary>
+            <param name="elementName">Name of the element that it couldn't find</param>
+            <param name="reader">The <see cref="!:XMLReader"/> positioned on the unknown element.</param>
+            <returns>false indicates it is unknown and hasn't been read.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.ConfigurationElement.OnDeserializeUnrecognizedAttribute(System.String,System.String)">
+            <summary>Gets a value indicating whether an unknown attribute is encountered during deserialization.</summary>
+            <returns>true when an unknown attribute is encountered while deserializing.</returns>
+            <param name="name">The name of the unrecognized attribute.</param>
+            <param name="value">The value of the unrecognized attribute.</param>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.ConfigurationElement.DeserializeValue(System.Type,System.String)">
+            <summary>
+            Deserializes a scalar value present in the XML, converting it to the appropriate target type.
+            </summary>
+            <param name="targetType">The type for the returned value.</param>
+            <param name="serializedValue">The string value to deserialize.</param>
+        </member>
+        <member name="P:Microsoft.Practices.Mobile.Configuration.ConfigurationElement.Item(System.String)">
+            <summary>
+            	Gets or sets a property of this element.
+            </summary>
+            <param name="propertyName">Name of the item.</param>
+            <returns>The property, or null if the element doesn't exist.</returns>
+        </member>
+        <member name="T:Microsoft.Practices.Mobile.Configuration.ConfigurationPropertyAttribute">
+            <summary>
+            	Allows you to mark properties in subclasses of <see cref="T:Microsoft.Practices.Mobile.Configuration.ConfigurationElement"/> so they
+            	will automatically be deserialized by the <see cref="T:Microsoft.Practices.Mobile.Configuration.Configuration"/> class.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Mobile.Configuration.ConfigurationPropertyAttribute.Name">
+            <summary>
+            	The name to use for this property in the <see cref="T:Microsoft.Practices.Mobile.Configuration.ConfigurationElement"/>'s
+            	collection of elements.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Mobile.Configuration.ConfigurationPropertyAttribute.IsDefaultCollection">
+            <summary>
+            	Provided for compatibility with the full framework, but ignored.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Mobile.Configuration.ConfigurationPropertyAttribute.IsKey">
+            <summary>
+            	Provided for compatibility with the full framework, but ignored.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Mobile.Configuration.ConfigurationPropertyAttribute.IsRequired">
+            <summary>
+            	When your class is deserized from the configuration XML, the <see cref="!:ConfigurationElemet"/>
+            	class will make sure this property is present in the data and throw an error if it isn't.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Practices.Mobile.Configuration.CryptographyBlock">
+            <summary>
+            	This class helps manage data that needs to be encrypted and stored. When you encrypt data,
+            	you need to save the initialization vector along with the encrypted data (they key should
+            	not be store, or at least somewhere else.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.CryptographyBlock.#ctor(System.Security.Cryptography.SymmetricAlgorithm,System.Byte[])">
+            <summary>
+            	The constructor.
+            </summary>
+            <param name="algorithm">
+            	An instance of a symmetric algorithm that will be used to encrypt/decrypt data.
+            </param>
+            <param name="key">The key to use for encyrption/decryption.</param>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.CryptographyBlock.Decrypt(System.Byte[])">
+            <summary>
+            	Decrypts a block of data that was originally encrypted with this class' <see cref="M:Microsoft.Practices.Mobile.Configuration.CryptographyBlock.Encrypt(System.Byte[],System.Byte[])"/>
+            	method.
+            </summary>
+            <param name="encryptedBlock">The block of data to decrypt.</param>
+            <returns></returns>
+            <exception cref="T:System.ArgumentNullException">If the parameter is null</exception>
+            <exception cref="T:System.Security.Cryptography.CryptographicException">This exception will be thrown if there is a problem with the encrypted data.</exception>
+            <exception cref="!:ArgumentOutOfRange">Thrown if the data supplied is shorter than the required header.</exception>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.CryptographyBlock.Encrypt(System.Byte[],System.Byte[])">
+            <summary>
+            	Encrypts a block of data and returns a block that includes a version number,
+            	the initialization vector, and the encrypted block.
+            </summary>
+            <param name="data">The data to encrypt.</param>
+            <param name="iv">The initialization vector to use for encrypting the data.</param>
+            <returns>A block with all the data required to decrypt, except for the key.</returns>
+            <exception cref="T:System.ArgumentNullException">If one of the parameters is null</exception>
+        </member>
+        <member name="T:Microsoft.Practices.Mobile.Configuration.RijndaelConfigurationProvider">
+            <summary>
+            	This class supports configuration sections that have been encrypted with another program using
+            	the Rijndael algorithm.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Practices.Mobile.Configuration.ProtectedConfigurationProvider">
+            <summary>
+            	This is the base class for providers that can decrypt sections of the configuration XML.
+            	Right now the only subclass is <see cref="T:Microsoft.Practices.Mobile.Configuration.RijndaelConfigurationProvider"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.ProtectedConfigurationProvider.Decrypt(System.String)">
+            <summary>
+            	This method is called with the encrypted string and must return the decrypted string.
+            </summary>
+            <param name="encryptedSection">The encrypted string.</param>
+            <returns>The decrypted string.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.RijndaelConfigurationProvider.#ctor(System.Byte[])">
+            <summary>
+            	This class can be used by the <see cref="T:Microsoft.Practices.Mobile.Configuration.ConfigurationManager"/> class to decrypt encrypted sections
+            	of the XML file. You'll need to create an instance of this class and assign it to the
+            	<see cref="P:Microsoft.Practices.Mobile.Configuration.ConfigurationManager.ProtectedConfigurationProvider"/> property before loading any
+            	sections.
+            </summary>
+            <param name="key">The key to use when decrypting data.</param>
+            <exception cref="T:System.ArgumentNullException">Thown if the <paramref name="key"/> parameter is null.</exception>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.RijndaelConfigurationProvider.Decrypt(System.String)">
+            <summary>
+            	This method decrypts section data, which is saved in the XML file as a base-64 encrypted string.
+            </summary>
+            <param name="encryptedSection">The encrypted data, base-64 encoded.</param>
+            <returns></returns>
+            <exception cref="T:System.Security.Cryptography.CryptographicException">This exception will be thrown if there is a problem with the encrypted data.</exception>
+            <exception cref="!:ArgumentOutOfRange">Thrown if the data supplied is shorter than the required header.</exception>
+        </member>
+        <member name="T:Microsoft.Practices.Mobile.Configuration.ConfigurationXmlRepository">
+            <summary>
+            	This subclass of <see cref="T:Microsoft.Practices.Mobile.Configuration.ConfigurationSectionRepository"/> parses XML from an
+            	<see cref="T:System.Xml.XmlReader"/> and saves it in the list of section data.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Practices.Mobile.Configuration.ConfigurationSectionRepository">
+            <summary>
+            	The Configuration class obtains configuration section XML and type information from
+            	an instance of this class. You can supply a subclass that obtains this information
+            	from any source, not just an XML file. The subclass <see cref="T:Microsoft.Practices.Mobile.Configuration.ConfigurationXmlRepository"/>
+            	provides section information from any <see cref="!:XmlReader"/> source.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.ConfigurationSectionRepository.#ctor">
+            <summary>
+            	The constructor.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.ConfigurationSectionRepository.Add(System.String,System.String,System.String)">
+            <summary>
+            	Allows you to add section information to the in-memory list maintained by this
+            	instance.
+            </summary>
+            <param name="sectionName">Name used to retrieve the section information.</param>
+            <param name="typeString">
+            	A "type, assembly" string used to create an instance of a ConfigurationSection subclass.
+            </param>
+            <param name="sectionXml">
+            	The XML data used to initialize the ConfigurationSection instance.
+            </param>
+            <exception cref="!:ArguemntNullException">
+            	Throws this exception if either of the <paramref name="sectionname"/> or <paramref name="typeString"/>
+            	parameters is null.
+            </exception>
+            <exception cref="!:ArguemntException">
+            	Throws this exception if either of the <paramref name="sectionname"/> or <paramref name="typeString"/>
+            	parameters is empty.
+            </exception>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.ConfigurationSectionRepository.GetSectionInfo(System.String)">
+            <summary>
+            	Returns either information about a configuration section, or null if a section
+            	with that name doesn't exist in this repository.
+            </summary>
+            <param name="sectionName">Name of the section to look for.</param>
+            <returns>The information about a section, or null if the section doesn't exist.</returns>
+        </member>
+        <member name="P:Microsoft.Practices.Mobile.Configuration.ConfigurationSectionRepository.Sections">
+            <summary>
+            	Provide subclasses access to the list of sections currently instantiated.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.ConfigurationXmlRepository.#ctor(System.Xml.XmlReader)">
+            <summary>
+            	Consturctor that takes an <see cref="T:System.Xml.XmlReader"/> instance as the source of
+            	configuration data. The format must conform to the App.Config requirements.
+            </summary>
+            <param name="xml"></param>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.ConfigurationXmlRepository.LoadConfigSection(System.Xml.XmlReader)">
+            <summary>
+            	Reads the 
+            </summary>
+            <param name="xml"></param>
+        </member>
+        <member name="T:Microsoft.Practices.Mobile.Configuration.ConfigurationSection">
+            <summary>
+            	Base class for custom configuration section types.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Practices.Mobile.Configuration.ConfigurationElementCollection">
+            <summary>
+            	Manages a list of <see cref="T:Microsoft.Practices.Mobile.Configuration.ConfigurationElement"/> instances.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.ConfigurationElementCollection.CreateNewElement">
+            <summary>
+            	Override this method to create a new elemnt of the correct type for your collection
+            	subclass.
+            </summary>
+            <returns>
+            	A new instance of the <see cref="T:Microsoft.Practices.Mobile.Configuration.ConfigurationElement"/> subclass that is the correct
+            	type for your collection.
+            </returns>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.ConfigurationElementCollection.GetElementKey(Microsoft.Practices.Mobile.Configuration.ConfigurationElement)">
+            <summary>
+            	Override this method to return a value that will identify an element. This string
+            	is the same value you'll use in the indexer to retrieve an element.
+            </summary>
+            <param name="element"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.ConfigurationElementCollection.GetEnumerator">
+            <summary>
+            	Provides access to the list of elements in this collection.
+            </summary>
+            <returns>A new enumerator.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.ConfigurationElementCollection.OnDeserializeUnrecognizedElement(System.String,System.Xml.XmlReader)">
+            <summary>
+            	This method is called by the base class when it encounters an element it doesn't
+            	recognize during deserialization of the XML. This method handles the add element 
+            	to add an element to this collection.
+            </summary>
+            <param name="elementName">Name of the element. This method only looks for "add".</param>
+            <param name="reader">The XML data for this element.</param>
+            <returns>
+            	true if this method processed the element, and false if it didn't recognize the
+            	element.
+            </returns>
+            <exception cref="T:Microsoft.Practices.Mobile.Configuration.ConfigurationErrorsException">
+            	Thrown if there is an error processing the XML for this element.
+            </exception>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.ConfigurationElementCollection.BaseGet(System.Object)">
+            <summary>
+            	Gets an element from the collection.
+            </summary>
+            <param name="key">The name of the element to retrieve.</param>
+            <returns>A <see cref="T:Microsoft.Practices.Mobile.Configuration.ConfigurationElement"/> instance.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.ConfigurationElementCollection.BaseAdd(Microsoft.Practices.Mobile.Configuration.ConfigurationElement)">
+            <summary>
+            	Call this method to add an element to this collection.
+            </summary>
+            <param name="element">The element you want to add to the collection.</param>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.ConfigurationElementCollection.BaseRemove(System.Object)">
+            <summary>
+            	Call this method to remove an element from the list based on it's name.
+            </summary>
+            <param name="key">The name of the element to remove.</param>
+        </member>
+        <member name="P:Microsoft.Practices.Mobile.Configuration.ConfigurationElementCollection.Count">
+            <summary>
+            	Gets the number of elements in this collection.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Practices.Mobile.Configuration.ConfigurationSectionCollection">
+            <summary>
+            	A collection of <see cref="T:Microsoft.Practices.Mobile.Configuration.ConfigurationSection"/> objects.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.ConfigurationSectionCollection.Add(System.String,Microsoft.Practices.Mobile.Configuration.ConfigurationSection)">
+            <summary>
+            	Adds a new section to this collection.
+            </summary>
+            <param name="name">Name of the section to add.</param>
+            <param name="section">The section to add.</param>
+            <exception cref="T:Microsoft.Practices.Mobile.Configuration.ConfigurationErrorsException">
+            	Throws this exception if the name is null or empty.
+            </exception>
+        </member>
+        <member name="P:Microsoft.Practices.Mobile.Configuration.ConfigurationSectionCollection.Item(System.String)">
+            <summary>
+            	Gets or sets a section, which is an instance of <see cref="T:Microsoft.Practices.Mobile.Configuration.ConfigurationSection"/>.
+            </summary>
+            <param name="sectionName">Name of the section to get or set.</param>
+            <returns>The section retrieved from this collection, or null if it doesn't exist.</returns>
+        </member>
+        <member name="T:Microsoft.Practices.Mobile.Configuration.ConfigurationErrorsException">
+            <summary>
+            	This is the most commen error thrown by the Configuration methods.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Practices.Mobile.Configuration.ConfigurationException">
+            <summary>
+            An exception thrown by the configuration classes.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.ConfigurationException.#ctor">
+            <summary>
+            Initializes a new instance of the System.Exception class.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.ConfigurationException.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the System.Exception class with a specified error message.
+            </summary>
+            <param name="message">The message that describes the error.</param>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.ConfigurationException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the System.Exception class with a specified error message 
+            and a reference to the inner exception that is the cause of this exception.
+            </summary>
+            <param name="message">The error message that explains the reason for the exception.</param>
+            <param name="innerException">The exception that is the cause of the current exception, 
+            or a null reference if no inner exception is specified.</param>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.Configuration.#ctor(Microsoft.Practices.Mobile.Configuration.ConfigurationSectionRepository,Microsoft.Practices.Mobile.Configuration.Configuration)">
+            <summary>
+            	The constructor that allows you to specify a repository and a parent.
+            </summary>
+            <param name="repository">
+            	This is a <see cref="T:Microsoft.Practices.Mobile.Configuration.ConfigurationSectionRepository"/> instance or subclass instance
+            	that provides access to the section information used to create <see cref="T:Microsoft.Practices.Mobile.Configuration.ConfigurationSection"/>
+            	instances.
+            </param>
+            <param name="parent">
+            	Where to look for configuration sections if this Configuration object doesn't have
+            	a section.
+            </param>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.Configuration.#ctor(Microsoft.Practices.Mobile.Configuration.ConfigurationSectionRepository)">
+            <summary>
+            	The constructor that allows you to specify the source of section information.
+            </summary>
+            <param name="repository">
+            	An instance of <see cref="T:Microsoft.Practices.Mobile.Configuration.ConfigurationSectionRepository"/>, or a subclass, that
+            	provides the data for sections.
+            </param>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.Configuration.#ctor(System.Xml.XmlReader,Microsoft.Practices.Mobile.Configuration.Configuration)">
+            <summary>
+            	Constructor that takes an <see cref="T:System.Xml.XmlReader"/> as the source of configuration
+            	data, as well as parent that will be searched for sections not found in directly
+            	in this instance. The format of the data must be the same as App.Config.
+            </summary>
+            <param name="xml">
+            	The source of the XML data for the configuration information (sections and configuration
+            	data).
+            </param>
+            <param name="parent"></param>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.Configuration.#ctor(System.Xml.XmlReader)">
+            <summary>
+            	Constructor that takes an <see cref="T:System.Xml.XmlReader"/> as the source of configuration
+            	data. The format of the data must be the same as App.Config.
+            </summary>
+            <param name="xml">
+            	The source of the XML data for the configuration information (sections and configuration
+            	data).
+            </param>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.Configuration.GetSection(System.String)">
+            <summary>
+            	Retrieves a section instance. If you supplied a parent <see cref="T:Microsoft.Practices.Mobile.Configuration.Configuration"/>
+            	instance to the constructor, it will search in the parent instance for sections
+            	it can't find in this instance.
+            </summary>
+            <param name="sectionName">Name of the section to find.</param>
+            <returns>
+            	An instance of <see cref="T:Microsoft.Practices.Mobile.Configuration.ConfigurationSection"/>, or a subclass, instantiated
+            	from the section data. Returns null if a section with that name doesn't exist.
+            </returns>
+        </member>
+        <member name="P:Microsoft.Practices.Mobile.Configuration.Configuration.ProtectedConfigurationProvider">
+            <summary>
+            	Gets or sets the object that will be used to decrypt sections that have been encrypted.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Practices.Mobile.Configuration.Guard">
+            <summary>
+            Common guard clauses
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.Guard.ArgumentNotNull(System.Object,System.String)">
+            <summary>
+            Checks an argument to ensure it isn't null
+            </summary>
+            <param name="argumentValue">The argument value to check.</param>
+            <param name="argumentName">The name of the argument.</param>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.Guard.ArgumentNotNullOrEmptyString(System.String,System.String)">
+            <summary>
+            Checks a string argument to ensure it isn't null or empty
+            </summary>
+            <param name="argumentValue">The argument value to check.</param>
+            <param name="argumentName">The name of the argument.</param>
+        </member>
+        <member name="T:Microsoft.Practices.Mobile.Configuration.DirectoryUtils">
+            <summary>
+            <para>
+            	The Compact Framework doesn't provide this class, which is in System.Configuration
+            </para>
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Mobile.Configuration.DirectoryUtils.BaseDirectory">
+            <summary>
+            	Because the Windows Mobile doesn't have a current directory, this little helper
+            	method provides a way to get to the directory for this assembly.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.ConfigurationManager.GetSection(System.String)">
+            <summary>
+            	This method provides you access to a "section" of the App.config file. This is done
+            	with two pieces. First, a section element in configuration/configSections defines
+            	the type and assembly for a subclass of ConfigurationSection that can process
+            	the XML for a "section". Second, an XML node (with children) with the same name
+            	as the section that your subclass of ConfigurationSection will process.
+            </summary>
+            <param name="sectionName">
+            	Name of the section that we want to retrieve. There must be a matching &lt;section&gt;
+            	element under configuration/configSections, as well as an XML element with this name
+            	under the XML root, in the App.config file.
+            </param>
+            <returns>
+            	A subclass of ConfigurationSection that you use to parse your custom section.
+            </returns>
+            <exception cref="T:Microsoft.Practices.Mobile.Configuration.ConfigurationErrorsException">
+            	Throws this exception if there was an error creating the instance of the section.
+            </exception>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.ConfigurationManager.ClearCache">
+            <summary>
+            	This method is provided primarliy to help with unit testing. It allows us to reload
+            	configuration data each time so we can check for errors that occur during loading.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.ConfigurationManager.CreateFromTypeString(System.String)">
+            <summary>
+            	Given a string that contains type information, create an instance of the object, which
+            	must be a subclass of <see cref="T:Microsoft.Practices.Mobile.Configuration.ConfigurationSection"/>.
+            </summary>
+            <param name="typeString">The string that contains the type information for a class.</param>
+            <returns>A new instance of the type.</returns>
+            <exception cref="T:Microsoft.Practices.Mobile.Configuration.ConfigurationErrorsException">
+            	Throws this exception if the type string is null or empty. Or if there was an error
+            	creating an instance of the type.
+            </exception>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.ConfigurationManager.GetConfiguration(System.Xml.XmlReader)">
+            <summary>
+            	Creates a new <see cref="P:Microsoft.Practices.Mobile.Configuration.ConfigurationManager.Configuration"/> instance loaded with the data in <paramref name="xml"/>.
+            </summary>
+            <param name="xml">
+            	Source of the configuration data, which must have the same format as the App.Config file.
+            </param>
+            <returns>A new <see cref="P:Microsoft.Practices.Mobile.Configuration.ConfigurationManager.Configuration"/> instance.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.ConfigurationManager.GetSectionFromXml(System.Type,System.Xml.XmlReader)">
+            <summary>
+            	Creates an instance using <paramref name="sectionType"/> as the type. This type must be
+            	a subclass of <see cref="T:Microsoft.Practices.Mobile.Configuration.ConfigurationSection"/>. It then loads the XML section information
+            	into this new instance.
+            </summary>
+            <param name="sectionType">Type of the <see cref="T:Microsoft.Practices.Mobile.Configuration.ConfigurationSection"/> subclass to create.</param>
+            <param name="xml">
+            	Source of the XML section data used to deserialize the subclass of <see cref="T:Microsoft.Practices.Mobile.Configuration.ConfigurationSection"/>.
+            </param>
+            <returns>A new section with the section data loaded.</returns>
+            <exception cref="T:Microsoft.Practices.Mobile.Configuration.ConfigurationErrorsException">
+            	Throws this exception if there was an error creating or deserializing the type.
+            </exception>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.ConfigurationManager.GetSectionFromXml(System.Type,System.Xml.XmlReader,Microsoft.Practices.Mobile.Configuration.ProtectedConfigurationProvider)">
+            <summary>
+            	Creates an instance using <paramref name="sectionType"/> as the type. This type must be
+            	a subclass of <see cref="T:Microsoft.Practices.Mobile.Configuration.ConfigurationSection"/>. It then loads the XML section information
+            	into this new instance.
+            </summary>
+            <param name="sectionType">Type of the <see cref="T:Microsoft.Practices.Mobile.Configuration.ConfigurationSection"/> subclass to create.</param>
+            <param name="xml">
+            	Source of the XML section data used to deserialize the subclass of <see cref="T:Microsoft.Practices.Mobile.Configuration.ConfigurationSection"/>.
+            </param>
+            <param name="provider">The provider that will be used to decrypte sections that are encrypted.</param>
+            <returns>A new section with the section data loaded.</returns>
+            <exception cref="T:Microsoft.Practices.Mobile.Configuration.ConfigurationErrorsException">
+            	Throws this exception if there was an error creating or deserializing the type.
+            </exception>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.ConfigurationManager.GetSectionFromXml(Microsoft.Practices.Mobile.Configuration.ConfigurationSection,System.Xml.XmlReader)">
+            <summary>
+            	Initializes an existing instance of <see cref="T:Microsoft.Practices.Mobile.Configuration.ConfigurationSection"/> with the section
+            	data from <paramref name="xml"/>.
+            </summary>
+            <param name="section">The existing instance to deserialize.</param>
+            <param name="xml">The section data to load into <paramref name="section"/>.</param>
+            <exception cref="T:Microsoft.Practices.Mobile.Configuration.ConfigurationErrorsException">
+            	Throws this exception if there was an error creating or deserializing the type.
+            </exception>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.ConfigurationManager.GetSectionFromXml(Microsoft.Practices.Mobile.Configuration.ConfigurationSection,System.Xml.XmlReader,Microsoft.Practices.Mobile.Configuration.ProtectedConfigurationProvider)">
+            <summary>
+            	Initializes an existing instance of <see cref="T:Microsoft.Practices.Mobile.Configuration.ConfigurationSection"/> with the section
+            	data from <paramref name="xml"/>.
+            </summary>
+            <param name="section">The existing instance to deserialize.</param>
+            <param name="xml">The section data to load into <paramref name="section"/>.</param>
+            <param name="provider">The provider that will be used to decrypte sections that are encrypted.</param>
+            <exception cref="T:Microsoft.Practices.Mobile.Configuration.ConfigurationErrorsException">
+            	Throws this exception if there was an error creating or deserializing the type.
+            </exception>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.ConfigurationManager.InitEncryptedSection(Microsoft.Practices.Mobile.Configuration.ConfigurationSection,System.Xml.XmlReader,Microsoft.Practices.Mobile.Configuration.ProtectedConfigurationProvider)">
+            <summary>
+            </summary>
+            <param name="section"></param>
+            <param name="xml"></param>
+        </member>
+        <member name="P:Microsoft.Practices.Mobile.Configuration.ConfigurationManager.Configuration">
+            <summary>
+            	Gets or sets the Configuration object that provides the sections. You can set this at
+            	application start if you want the static methods of this class to read data from a
+            	source other than App.Config.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Mobile.Configuration.ConfigurationManager.ProtectedConfigurationProvider">
+            <summary>
+            	Gets or sets the instance of <see cref="P:Microsoft.Practices.Mobile.Configuration.ConfigurationManager.ProtectedConfigurationProvider"/> that handles
+            	decrypting encrypted sections in the config XML.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Practices.Mobile.Configuration.CryptographyUtility">
+            <summary>
+            <para>Common Cryptography methods.</para>
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.CryptographyUtility.CompareBytes(System.Byte[],System.Byte[])">
+            <summary>
+            <para>Determine if two byte arrays are equal.</para>
+            </summary>
+            <param name="byte1">
+            <para>The first byte array to compare.</para>
+            </param>
+            <param name="byte2">
+            <para>The byte array to compare to the first.</para>
+            </param>
+            <returns>
+            <para><see langword="true"/> if the two byte arrays are equal; otherwise <see langword="false"/>.</para>
+            </returns>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.CryptographyUtility.GetBytesFromHexString(System.String)">
+            <summary>
+            <para>Returns a byte array from a string representing a hexidecimal number.</para>
+            </summary>
+            <param name="hexidecimalNumber">
+            <para>The string containing a valid hexidecimal number.</para>
+            </param>
+            <returns><para>The byte array representing the hexidecimal.</para></returns>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.CryptographyUtility.GetHexStringFromBytes(System.Byte[])">
+            <summary>
+            <para>Returns a string from a byte array represented as a hexidecimal number (eg: 0F351A).</para>
+            </summary>
+            <param name="bytes">
+            <para>The byte array to convert to forat as a hexidecimal number.</para>
+            </param>
+            <returns>
+            <para>The formatted representation of the bytes as a hexidcimal number.</para>
+            </returns>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.CryptographyUtility.CombineBytes(System.Byte[],System.Byte[])">
+            <summary>
+            <para>Combines two byte arrays into one.</para>
+            </summary>
+            <param name="buffer1"><para>The prefixed bytes.</para></param>
+            <param name="buffer2"><para>The suffixed bytes.</para></param>
+            <returns><para>The combined byte arrays.</para></returns>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.CryptographyUtility.GetRandomBytes(System.Int32)">
+            <summary>
+            Creates a cryptographically strong random set of bytes.
+            </summary>
+            <param name="size">The size of the byte array to generate.</param>
+            <returns>The computed bytes.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.CryptographyUtility.GetRandomBytes(System.Byte[])">
+            <summary>
+            <para>Fills a byte array with a cryptographically strong random set of bytes.</para>
+            </summary>
+            <param name="bytes"><para>The byte array to fill.</para></param>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.CryptographyUtility.ZeroOutBytes(System.Byte[])">
+            <summary>
+            <para>Fills <paramref name="bytes"/> zeros.</para>
+            </summary>
+            <param name="bytes">
+            <para>The byte array to fill.</para>
+            </param>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.CryptographyUtility.Transform(System.Security.Cryptography.ICryptoTransform,System.Byte[])">
+            <summary>
+            Transforms an array of bytes according to the given cryptographic transform.
+            </summary>
+            <param name="transform"><see cref="T:System.Security.Cryptography.ICryptoTransform"/> used to transform the given <paramref name="buffer"/>.</param>
+            <param name="buffer">Buffer to transform. It is the responsibility of the caller to clear this array when finished.</param>
+            <returns>Transformed array of bytes. It is the responsibility of the caller to clear this byte array
+            if necessary.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.CryptographyUtility.GetString(System.Byte[])">
+            <summary>
+            	Provides a standard way to get a string from a set of Unicode bytes.
+            </summary>
+            <param name="bytes">The raw Unicode bytes.</param>
+            <returns>The string derived from the bytes.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.CryptographyUtility.GetBytes(System.String)">
+            <summary>
+            	Converts a string into a Unicode byte array.
+            </summary>
+            <param name="text">The string to convert to a byte array.</param>
+            <returns>An array of Unicode bytes.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.CryptographyUtility.GetBytes(System.UInt32)">
+            <summary>
+            	This is a helper method that converts an unsigned integer into an array of bytes.
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Microsoft.Practices.Mobile.Configuration.SubArray`1">
+            <summary>
+            	Provides easier access to segments of a larger array.
+            </summary>
+            <typeparam name="T">The type of the array elements.</typeparam>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.SubArray`1.#ctor(`0[],System.Int32,System.Int32)">
+            <summary>
+            	Creates a new instance that refers to part of a larger array.
+            </summary>
+            <param name="array">The full array.</param>
+            <param name="offset">Offset into the full array for the first element of this subset.</param>
+            <param name="count">Length of the subset.</param>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.SubArray`1.#ctor(`0[],System.Int32)">
+            <summary>
+            	Creates a new subset that refers to the array starting at <paramref name="offset"/> and
+            	continuing to the end of the array.
+            </summary>
+            <param name="array"></param>
+            <param name="offset"></param>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.SubArray`1.op_Implicit(Microsoft.Practices.Mobile.Configuration.SubArray{`0})~`0[]">
+            <summary>
+            	Allows you to use the sub-array in places where an array of type <typeparamref name="T"/>.</summary>
+            <param name="sa"></param>
+            <returns>Sub array.</returns>
+        </member>
+        <member name="P:Microsoft.Practices.Mobile.Configuration.SubArray`1.Count">
+            <summary>
+            	Number of elements in the sub array.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Mobile.Configuration.SubArray`1.Item(System.Int32)">
+            <summary>
+            	Gets an element of the array.
+            </summary>
+            <param name="index">Index into the array. 0 refers to the first element in the subset.</param>
+            <returns>One element from the array.</returns>
+            <exception cref="T:System.ArgumentOutOfRangeException">If the <paramref name="index"/> is outside the sub-range.</exception>
+        </member>
+        <member name="P:Microsoft.Practices.Mobile.Configuration.SubArray`1.Array">
+            <summary>
+            	Returns a copy of the sub array.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Practices.Mobile.Configuration.ConfigurationSectionInfo">
+            <summary>
+            	This class is used by <see cref="!:ConfigurtionSectionRepository"/>  to return information
+            	about a configuration section.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Mobile.Configuration.ConfigurationSectionInfo.#ctor(System.String,System.String,System.String)">
+            <summary>
+            	The constructor for this read-only data object.
+            </summary>
+            <param name="typeString">String used to create an instance of a class.</param>
+            <param name="sectionXml">The XML data used to create an instance of the type.</param>
+        </member>
+        <member name="P:Microsoft.Practices.Mobile.Configuration.ConfigurationSectionInfo.IsEncrypted">
+            <summary>
+            	Gets or sets whether this section is encrypted.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Mobile.Configuration.ConfigurationSectionInfo.SectionName">
+            <summary>
+            	Gets the name of the section.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Mobile.Configuration.ConfigurationSectionInfo.SectionXml">
+            <summary>
+            	Gets the XML for the section data.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Mobile.Configuration.ConfigurationSectionInfo.TypeString">
+            <summary>
+            	Gets the string that contains "type, assembly" used to create an instance of the type.
+            </summary>
+        </member>
+    </members>
+</doc>
