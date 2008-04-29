@@ -1,0 +1,16 @@
+#How to build an adapter for a specific storage or transport
+
+= Introduction =
+
+The mesh4x sync framework allows daat meshes that store information on multiple endpoints and works over multiple protocols. As data meshes are symmetric, building an adapter for one or the other is quite similar. 
+
+= Details =
+
+Building an adapter
+
+- Decide which language you will build your adapter in. 
+- Get the sync libraries of that language from the source tree
+- (Futures idea: Get the adapter automated functionality tests?)
+- Create a project implementing the right interfaces
+- Code away! you need to map the content of the items to your adapter
+- Make sure the integration tests pass
