@@ -12,7 +12,6 @@ import org.junit.Test;
 
 import com.mesh4j.sync.filter.NullFilter;
 import com.mesh4j.sync.model.Content;
-import com.mesh4j.sync.model.History;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.Sync;
 import com.mesh4j.sync.test.utils.TestHelper;
@@ -103,7 +102,7 @@ public class HibernateRepositoryTests {
 	@Test
 	public void shouldNotMerge(){
 		List<Item> itemsSource = new ArrayList<Item>();
-		Item item = new Item(null, new Sync());
+		Item item = new Item(null, new Sync("132"));
 		itemsSource.add(item);
 		
 		List<Item> result = repo.merge(itemsSource);
@@ -118,12 +117,12 @@ public class HibernateRepositoryTests {
 		
 		String id0 = TestHelper.newID();
 		Content content0 = makeNewUser(id0);
-		Item item0 = new Item(content0, new Sync(id0).addHistory(new History("jmt", twoDaysAgo, 1)));
+		Item item0 = new Item(content0, new Sync(id0).update("jmt", twoDaysAgo));
 		repo.add(item0);
 		
 		String id1 = TestHelper.newID();
 		Content content1 = makeNewUser(id1);
-		Item item1 = new Item(content1, new Sync(id1).addHistory(new History("jmt", now, 1)));
+		Item item1 = new Item(content1, new Sync(id1).update("jmt", now));
 		repo.add(item1);
 		
 		List<Item> results = repo.getAll(sinceDate, new NullFilter<Item>());
