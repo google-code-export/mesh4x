@@ -77,18 +77,6 @@ public class Sync implements Cloneable{
 		return conflicts;
 	}
 
-	/// <summary>
-	/// Adds the conflict history immediately after the topmost history.
-	/// </summary>
-	/// <remarks>Used for conflict resolution only.</remarks>
-	public Sync addConflictHistory(History history)
-	{
-		History topmost = updatesHistory.pop();
-		updatesHistory.push(history);
-		updatesHistory.push(topmost);
-		return this;
-	}
-	
 	private Sync increaseUpdates() {
 		this.updates = this.updates + 1;
 		return this;
@@ -241,6 +229,11 @@ public class Sync implements Cloneable{
 			}
 		}
 		return false;
+	}
+
+	public Sync addConflict(Item item) {
+		this.getConflicts().add(item);
+		return this;
 	}
 
 }

@@ -3,11 +3,11 @@ package com.mesh4j.sync.filter;
 import com.mesh4j.sync.Filter;
 import com.mesh4j.sync.model.Item;
 
-public class ConflictsFilter<T extends Item> implements Filter<T> {
+public class ConflictsFilter implements Filter<Item> {
 
 	@Override
-	public boolean applies(T obj) {
-		return obj.getSync().getConflicts().size() > 0;
+	public boolean applies(Item obj) {
+		return obj.hasSyncConflicts();
 	}
 
 }

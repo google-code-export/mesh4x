@@ -26,7 +26,7 @@ public class MessageTranslator {
 		return messageText;
 	}
 
-	public static String translate(String key, String args) {
+	public static String translate(String key, Object ... args) {
 		String resourceValue = translate(key);
 		String message = MessageFormat.format(resourceValue, args);
 		return message; 

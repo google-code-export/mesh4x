@@ -15,7 +15,7 @@ public abstract class AbstractRepository implements Repository{
 
 	// CONSTANTS
 	private final static NullFilter<Item> NULL_FILTER = new NullFilter<Item>();
-	private final static ConflictsFilter<Item> CONFLICTS_FILTER = new ConflictsFilter<Item>();
+	private final static ConflictsFilter CONFLICTS_FILTER = new ConflictsFilter();
 
 	// BUSINESS METHODS
 	public abstract boolean supportsMerge();

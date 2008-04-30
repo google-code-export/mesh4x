@@ -140,4 +140,9 @@ public class HibernateRepositoryTests {
 		}
 		return false;
 	}
+	
+	@Test
+	public void shouldReturnFriendlyName() {
+		Assert.assertFalse(HibernateRepository.class.getName() == repo.getFriendlyName());
+	}
 }

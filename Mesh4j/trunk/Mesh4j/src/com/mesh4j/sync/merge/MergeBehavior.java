@@ -301,7 +301,13 @@ public class MergeBehavior {
 				}
 				else
 				{
-					Sr.addConflictHistory(Hc);
+					/// <summary>
+					/// Adds the conflict history immediately after the topmost history.
+					/// </summary>
+					/// <remarks>Used for conflict resolution only.</remarks>
+					History topmost = Sr.getUpdatesHistory().pop();
+					Sr.getUpdatesHistory().push(Hc);
+					Sr.getUpdatesHistory().push(topmost);
 				}
 			}
 		}

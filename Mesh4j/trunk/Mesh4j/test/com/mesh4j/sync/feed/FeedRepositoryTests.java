@@ -132,7 +132,12 @@ public class FeedRepositoryTests {
 	
 	}
 
-//	public String getFriendlyName() {	
+	@Test
+	public void shouldReturnFriendlyName() {
+		FeedRepository repo =  new FeedRepository();
+		Assert.assertFalse(FeedRepository.class.getName() == repo.getFriendlyName());
+	}
+	
 //	public void shouldNotUpdate(){
 
 }
