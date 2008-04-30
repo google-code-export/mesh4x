@@ -8,7 +8,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.mesh4j.sync.filter.NullFilter;
-import com.mesh4j.sync.model.History;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.Sync;
 import com.mesh4j.sync.test.utils.TestHelper;
@@ -118,8 +117,8 @@ public class FeedRepositoryTests {
 		Date twoDaysAgo = TestHelper.nowSubtractDays(2);
 		Date now = TestHelper.now();
 		
-		Item item0 = new Item(null, new Sync("suncId123").addHistory(new History("jmt", twoDaysAgo, 1)));
-		Item item1 = new Item(null, new Sync("suncId123").addHistory(new History("jmt", now, 1)));
+		Item item0 = new Item(null, new Sync("suncId123").update("jmt", twoDaysAgo));
+		Item item1 = new Item(null, new Sync("suncId123").update("jmt", now));
 		
 		Feed feed = new Feed();
 		feed.addItem(item0);

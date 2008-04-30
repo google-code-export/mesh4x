@@ -16,6 +16,19 @@ import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.Sync;
 import com.mesh4j.sync.security.Security;
 
+import static com.mesh4j.sync.feed.SyndicationFormat.SX_PREFIX;
+import static com.mesh4j.sync.feed.SyndicationFormat.SX_ELEMENT_SYNC;
+import static com.mesh4j.sync.feed.SyndicationFormat.SX_ELEMENT_HISTORY;
+import static com.mesh4j.sync.feed.SyndicationFormat.SX_ELEMENT_CONFLICTS;
+import static com.mesh4j.sync.feed.SyndicationFormat.SX_ATTRIBUTE_SYNC_ID;
+import static com.mesh4j.sync.feed.SyndicationFormat.SX_ATTRIBUTE_SYNC_UPDATES;
+import static com.mesh4j.sync.feed.SyndicationFormat.SX_ATTRIBUTE_SYNC_DELETED;
+import static com.mesh4j.sync.feed.SyndicationFormat.SX_ATTRIBUTE_SYNC_NO_CONFLICTS;
+import static com.mesh4j.sync.feed.SyndicationFormat.SX_ATTRIBUTE_HISTORY_SEQUENCE;
+import static com.mesh4j.sync.feed.SyndicationFormat.SX_ATTRIBUTE_HISTORY_WHEN;
+import static com.mesh4j.sync.feed.SyndicationFormat.SX_ATTRIBUTE_HISTORY_BY;
+import static com.mesh4j.sync.feed.SyndicationFormat.SX_ELEMENT_AUTHOR;
+
 public class FeedWriter {
 
 	// MODEL VARIABLES
@@ -67,12 +80,13 @@ public class FeedWriter {
 		History lastUpdate = item.getLastUpdate();
 		if (lastUpdate != null && lastUpdate.getBy() != null)
 		{
-			String by = lastUpdate.getBy();
-			itemElement.addElement("author", by);
+			Element author = itemElement.addElement(SX_ELEMENT_AUTHOR);
+			author.addText(lastUpdate.getBy());
 		}
 		else
 		{
-			itemElement.addElement("author", Security.getAuthenticatedUser());
+			Element author = itemElement.addElement(SX_ELEMENT_AUTHOR);
+			author.addText(Security.getAuthenticatedUser());
 		}
 		
 		if(item.getSync() != null){
@@ -96,11 +110,11 @@ public class FeedWriter {
 	public void writeSync(Element rootElement, Sync sync) throws DocumentException
 	{		
 		// <sx:sync>
-		Element syncElement = rootElement.addElement("sx:sync");
-		syncElement.addAttribute("id", sync.getId());
-		syncElement.addAttribute("updates", String.valueOf(sync.getUpdates()));
-		syncElement.addAttribute("deleted", String.valueOf(sync.isDeleted()));
-		syncElement.addAttribute("noConflicts", String.valueOf(sync.isNoConflicts()));
+		Element syncElement = rootElement.addElement(SX_ELEMENT_SYNC, SX_PREFIX);
+		syncElement.addAttribute(SX_ATTRIBUTE_SYNC_ID, sync.getId());
+		syncElement.addAttribute(SX_ATTRIBUTE_SYNC_UPDATES, String.valueOf(sync.getUpdates()));
+		syncElement.addAttribute(SX_ATTRIBUTE_SYNC_DELETED, String.valueOf(sync.isDeleted()));
+		syncElement.addAttribute(SX_ATTRIBUTE_SYNC_NO_CONFLICTS, String.valueOf(sync.isNoConflicts()));
 
 		for(History history : sync.getUpdatesHistory())
 		{
@@ -108,7 +122,7 @@ public class FeedWriter {
 		}
 		
 		if (sync.getConflicts().size() > 0) {
-			Element conflictsElement = syncElement.addElement("sx:conflicts");
+			Element conflictsElement = syncElement.addElement(SX_ELEMENT_CONFLICTS, SX_PREFIX);
 			for (Item item : sync.getConflicts()) {
 				write(conflictsElement, item);
 			}
@@ -117,12 +131,12 @@ public class FeedWriter {
 		
 	public void writeHistory(Element rootElement, History history)
 	{
-		Element historyElement = rootElement.addElement("sx:history");
-		historyElement.addAttribute("sequence", String.valueOf(history.getSequence()));
+		Element historyElement = rootElement.addElement(SX_ELEMENT_HISTORY, SX_PREFIX);
+		historyElement.addAttribute(SX_ATTRIBUTE_HISTORY_SEQUENCE, String.valueOf(history.getSequence()));
 		if (history.getWhen() != null){
-			historyElement.addAttribute("when", this.parseDate(history.getWhen()));
+			historyElement.addAttribute(SX_ATTRIBUTE_HISTORY_WHEN, this.parseDate(history.getWhen()));
 		}
-		historyElement.addAttribute("by", history.getBy());
+		historyElement.addAttribute(SX_ATTRIBUTE_HISTORY_BY, history.getBy());
 	}
 	
 

@@ -1,8 +1,8 @@
-package com.mesh4j.sync;
+package com.mesh4j.sync.merge;
 
 import com.mesh4j.sync.model.Item;
 
-public class ItemMergeResult {
+public class MergeResult {
 
 	// MODEL VARIABLES
 	private Item original;
@@ -11,7 +11,7 @@ public class ItemMergeResult {
 	private MergeOperation operation;
 
 	// BUSINESS METHODS
-	public ItemMergeResult(Item original, Item incoming, Item proposed,
+	public MergeResult(Item original, Item incoming, Item proposed,
 			MergeOperation operation) {
 		this.original = original;
 		this.incoming = incoming;

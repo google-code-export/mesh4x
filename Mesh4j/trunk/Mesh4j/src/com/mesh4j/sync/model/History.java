@@ -24,7 +24,7 @@ public class History implements Cloneable {
 	public History(String by, Date when) {
 		this(by, when, 1);
 	}
-
+	
 	public History(String by, Date when, int sequence) {
 
 		if ((by == null || by.length() == 0) && when == null)

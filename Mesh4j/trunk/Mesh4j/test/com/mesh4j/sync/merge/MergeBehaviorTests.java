@@ -1,12 +1,10 @@
-package com.mesh4j.sync.behavior;
+package com.mesh4j.sync.merge;
 
 import java.util.Date;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.mesh4j.sync.ItemMergeResult;
-import com.mesh4j.sync.MergeOperation;
 import com.mesh4j.sync.feed.ItemXMLContent;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.Sync;
@@ -16,11 +14,11 @@ public class MergeBehaviorTests {
 
 	@Test
 	public void ShouldWinLatestUpdateWithoutConflicts() {
-		Sync sa = getBehaviors().create(TestHelper.newID(), "kzu", TestHelper.now(),
+		Sync sa = new Sync(TestHelper.newID(), "kzu", TestHelper.now(),
 				false);
 		Sync sb = sa.clone();
 
-		sb = getBehaviors().update(sb, "vga", TestHelper.nowAddSeconds(5), false);
+		sb = sb.update("vga", TestHelper.nowAddSeconds(5), false);
 
 		Item originalItem = new Item(new ItemXMLContent(sb.getId(), "a", "a",
 				TestHelper.makeElement("<payload/>")), sa);
@@ -28,7 +26,7 @@ public class MergeBehaviorTests {
 		Item incomingItem = new Item(new ItemXMLContent(sb.getId(), "b", "b",
 				TestHelper.makeElement("<payload/>")), sb);
 
-		ItemMergeResult result = getBehaviors().merge(originalItem, incomingItem);
+		MergeResult result = MergeBehavior.merge(originalItem, incomingItem);
 
 		Assert.assertEquals(MergeOperation.Updated, result.getOperation());
 		Assert
@@ -40,7 +38,7 @@ public class MergeBehaviorTests {
 
 	@Test
 	public void ShouldNoOpForEqualItem() {
-		Sync sa = getBehaviors().create(TestHelper.newID(), "kzu", TestHelper.now(),
+		Sync sa = new Sync(TestHelper.newID(), "kzu", TestHelper.now(),
 				false);
 		Sync sb = sa.clone();
 
@@ -49,7 +47,7 @@ public class MergeBehaviorTests {
 		Item incomingItem = new Item(new ItemXMLContent(sb.getId(), "a", "a",
 				TestHelper.makeElement("<payload/>")), sb);
 
-		ItemMergeResult result = getBehaviors().merge(originalItem, incomingItem);
+		MergeResult result = MergeBehavior.merge(originalItem, incomingItem);
 
 		Assert.assertEquals(MergeOperation.None, result.getOperation());
 	}
@@ -57,11 +55,11 @@ public class MergeBehaviorTests {
 	@Test
 	public void ShouldAddWithoutConflicts() {
 		Sync sa = new Sync(TestHelper.newID());
-		getBehaviors().update(sa, "kzu", TestHelper.now(), false);
+		sa.update("kzu", TestHelper.now(), false);
 
 		Item incomingItem = new Item(new ItemXMLContent(TestHelper.newID(), "a", "a",
 				TestHelper.makeElement("<payload/>")), sa);
-		ItemMergeResult result = getBehaviors().merge(null, incomingItem);
+		MergeResult result = MergeBehavior.merge(null, incomingItem);
 
 		Assert.assertEquals(MergeOperation.Added, result.getOperation());
 	}
@@ -77,24 +75,24 @@ public class MergeBehaviorTests {
 
 		Item incomingItem = new Item(new ItemXMLContent(sb.getId(), "b", "b",
 				TestHelper.makeElement("<payload/>")), sb);
-		getBehaviors().merge(originalItem, incomingItem);
+		MergeBehavior.merge(originalItem, incomingItem);
 	}
 
 	@Test
 	public void ShouldWinLatestUpdateWithConflicts() {
-		Sync sa = getBehaviors().create(TestHelper.newID(), "kzu", TestHelper
+		Sync sa = new Sync(TestHelper.newID(), "kzu", TestHelper
 				.nowSubtractSeconds(10), false);
 
 		Sync sb = sa.clone();
-		sb = getBehaviors().update(sb, "vga", TestHelper.nowAddSeconds(50), false);
-		sa = getBehaviors().update(sa, "kzu", TestHelper.nowAddSeconds(100), false);
+		sb = sb.update("vga", TestHelper.nowAddSeconds(50), false);
+		sa = sa.update("kzu", TestHelper.nowAddSeconds(100), false);
 
 		Item originalItem = new Item(new ItemXMLContent(sb.getId(), "a", "a",
 				TestHelper.makeElement("<payload/>")), sa);
 
 		Item incomingItem = new Item(new ItemXMLContent(sb.getId(), "b", "b",
 				TestHelper.makeElement("<payload/>")), sb);
-		ItemMergeResult result = getBehaviors().merge(originalItem, incomingItem);
+		MergeResult result = MergeBehavior.merge(originalItem, incomingItem);
 
 		Assert.assertEquals(MergeOperation.Conflict, result.getOperation());
 		Assert
@@ -109,12 +107,12 @@ public class MergeBehaviorTests {
 	@Test
 	public void ShouldWinLatestUpdateWithConflictsPreserved() {
 		Sync sa = new Sync(TestHelper.newID());
-		sa = getBehaviors().update(sa, "kzu", TestHelper.now(), false);
+		sa = sa.update("kzu", TestHelper.now(), false);
 
 		Sync sb = sa.clone();
 
-		sb = getBehaviors().update(sb, "vga", TestHelper.nowAddSeconds(50), false);
-		sa = getBehaviors().update(sa, "kzu", TestHelper.nowAddSeconds(100), false);
+		sb = sb.update("vga", TestHelper.nowAddSeconds(50), false);
+		sa = sa.update("kzu", TestHelper.nowAddSeconds(100), false);
 
 		Item originalItem = new Item(new ItemXMLContent(sb.getId(), "a", "a",
 				TestHelper.makeElement("<payload/>")), sa);
@@ -122,7 +120,7 @@ public class MergeBehaviorTests {
 		Item incomingItem = new Item(new ItemXMLContent(sb.getId(), "b", "b",
 				TestHelper.makeElement("<payload/>")), sb);
 
-		ItemMergeResult result = getBehaviors().merge(originalItem, incomingItem);
+		MergeResult result = MergeBehavior.merge(originalItem, incomingItem);
 		Assert.assertEquals(MergeOperation.Conflict, result.getOperation());
 		Assert
 				.assertEquals("a", ((ItemXMLContent)result.getProposed().getContent())
@@ -134,7 +132,7 @@ public class MergeBehaviorTests {
 
 		// Merge the winner with conflict with the local no-conflict one.
 		// Should be an update.
-		result = getBehaviors().merge(originalItem, result.getProposed());
+		result = MergeBehavior.merge(originalItem, result.getProposed());
 
 		Assert.assertEquals(MergeOperation.Conflict, result.getOperation());
 		Assert
@@ -149,17 +147,13 @@ public class MergeBehaviorTests {
 	@Test
 	public void ShouldMergeNoneIfEqualItem() {
 		Date now = TestHelper.now();
-		Sync sa = getBehaviors().create(TestHelper.newID(), "kzu", now, false);
-		Sync sb = getBehaviors().update(sa, "kzu", now, false);
+		Sync sa = new Sync(TestHelper.newID(), "kzu", now, false);
+		Sync sb = sa.update("kzu", now, false);
 
 		Item originalItem = new Item(new ItemXMLContent(sb.getId(), "a", "a",
 				TestHelper.makeElement("<payload/>")), sa);
 
-		getBehaviors().merge(originalItem, originalItem);
+		MergeBehavior.merge(originalItem, originalItem);
 
-	}
-
-	private Behaviors getBehaviors() {
-		return Behaviors.INSTANCE;
 	}
 }

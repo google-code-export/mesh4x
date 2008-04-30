@@ -3,9 +3,9 @@ package com.mesh4j.sync;
 import java.util.Date;
 import java.util.List;
 
-import com.mesh4j.sync.behavior.Behaviors;
 import com.mesh4j.sync.filter.ConflictsFilter;
 import com.mesh4j.sync.filter.NullFilter;
+import com.mesh4j.sync.merge.MergeBehavior;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.security.Security;
 import com.mesh4j.sync.utils.DateHelper;
@@ -58,7 +58,7 @@ public abstract class AbstractRepository implements Repository{
 
 		if (resolveConflicts)
 		{
-			item = Behaviors.INSTANCE.resolveConflicts(item, Security.getAuthenticatedUser(), new Date(), item.getSync().isDeleted());
+			item = MergeBehavior.resolveConflicts(item, Security.getAuthenticatedUser(), new Date(), item.getSync().isDeleted());
 		}
 		
 		update(item);

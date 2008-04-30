@@ -1,5 +1,7 @@
 package com.mesh4j.sync.model;
 
+import java.util.Date;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -45,7 +47,7 @@ public class SyncTests {
 	@Test
 	public void ShouldNotEqualIfDifferentUpdates() {
 		Sync s1 = new Sync(TestHelper.newID());
-		Sync s2 = new Sync(s1.getId(), 2);
+		Sync s2 = new Sync(s1.getId()).update("jmt", new Date());
 
 		Assert.assertNotSame(s1, s2);
 		Assert.assertFalse(s1 == s2);
@@ -80,9 +82,9 @@ public class SyncTests {
 		Sync s1 = new Sync(TestHelper.newID());
 		Sync s2 = s1.clone();
 
-		History history = new History("foo");
-		s1.addHistory(history);
-		s2.addHistory(history);
+		Date when = TestHelper.now();
+		s1.update("foo", when);
+		s2.update("foo", when);
 
 		Assert.assertEquals(s1, s2);
 	}
@@ -92,8 +94,9 @@ public class SyncTests {
 		Sync s1 = new Sync(TestHelper.newID());
 		Sync s2 = s1.clone();
 
-		s1.addHistory(new History("kzu"));
-		s2.addHistory(new History("vga"));
+		Date when = TestHelper.now();
+		s1.update("kzu", when);
+		s2.update("vga", when);
 
 		Assert.assertNotSame(s1, s2);
 		Assert.assertFalse(s1 == s2);

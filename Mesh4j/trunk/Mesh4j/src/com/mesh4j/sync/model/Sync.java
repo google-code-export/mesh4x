@@ -5,8 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Stack;
 
-import com.mesh4j.sync.behavior.Behaviors;
-import com.mesh4j.sync.utils.IdGenerator;
+import com.mesh4j.sync.translator.MessageTranslator;
 import com.mesh4j.sync.validations.Guard;
 
 public class Sync implements Cloneable{
@@ -20,21 +19,25 @@ public class Sync implements Cloneable{
 	private List<Item> conflicts = new ArrayList<Item>();
 	
 	// BUSINESS METHODS	
-	public Sync()
-	{
-		this(IdGenerator.newID());
-	}
 	
-	public Sync(String id, int updates)
+	public Sync(String id)
 	{
 		Guard.argumentNotNullOrEmptyString(id, "id");
 		this.id = id;
-		this.updates = updates;
+		this.updates = 0;
+	}
+	
+	public Sync(String id, String by, Date when, boolean deleteItem) 
+	{
+		Guard.argumentNotNullOrEmptyString(id, "id");
+		if (by == null && when == null){
+			throw new IllegalArgumentException(MessageTranslator.translate("MustProvideWhenOrBy"));
+		}
+			
+		this.id = id; 
+		this.basicUpdate(by, when, deleteItem);
 	}
 
-	public Sync(String id){
-		this(id, 0);
-	}
 
 	public String getId()
 	{
@@ -74,22 +77,6 @@ public class Sync implements Cloneable{
 		return conflicts;
 	}
 
-	public Sync update(String by, Date when)
-	{
-		return Behaviors.INSTANCE.update(this, by, when, false);
-	}
-
-	public Sync update(String by, Date when, boolean deleteItem)
-	{
-		return Behaviors.INSTANCE.update(this, by, when, deleteItem);
-	}
-
-	public Sync addHistory(History history)
-	{
-		this.getUpdatesHistory().push(history);
-		return this;
-	}
-
 	/// <summary>
 	/// Adds the conflict history immediately after the topmost history.
 	/// </summary>
@@ -102,7 +89,7 @@ public class Sync implements Cloneable{
 		return this;
 	}
 	
-	public Sync increaseUpdates() {
+	private Sync increaseUpdates() {
 		this.updates = this.updates + 1;
 		return this;
 	}
@@ -139,7 +126,6 @@ public class Sync implements Cloneable{
 		return false;
 	}
 	
-	
 	private static boolean areEqualsHistories(Stack<History> updatesHistory, Stack<History> updatesHistory1){
 		if (updatesHistory == updatesHistory1) return true;
 		if (updatesHistory != null && updatesHistory1 != null)
@@ -171,8 +157,9 @@ public class Sync implements Cloneable{
 	}
 	
 	public Sync clone(){
-		Sync newSync = new Sync(this.id, this.updates);
+		Sync newSync = new Sync(this.id);
 		newSync.deleted = this.deleted;
+		newSync.updates = this.updates;
 
 		ArrayList<History> newHistory = new ArrayList<History>();
 		newHistory.addAll(this.updatesHistory);
@@ -188,6 +175,72 @@ public class Sync implements Cloneable{
 		}
 
 		return newSync;
+	}
+	
+	// BEHAVIORs
+	public Sync delete(String by, Date when)
+	{
+		Guard.argumentNotNullOrEmptyString(by, "by");
+		Guard.argumentNotNull(when, "when");
+		
+		//Deleted attribute set to true because it is a deletion (3.2.4 from spec)
+		return this.update(by, when, true);
+	}
+
+	// 3.2
+	// 3.2
+	public Sync update(String by, Date when, int sequence)
+	{
+		// 3.2.1
+		this.increaseUpdates();
+
+		// 3.2.2 & 3.2.2.a.i
+		History history = new History(by, when, sequence); 
+
+		// 3.2.3
+		this.getUpdatesHistory().push(history);
+
+		return this;
+	}
+	
+	public Sync update(String by, Date when)
+	{
+		return this.update(by, when, false);
+	}
+	
+	public Sync update(String by, Date when, boolean deleteItem)
+	{
+		//Sync sync = this.clone();
+		Sync sync = this;
+		sync.basicUpdate(by, when, deleteItem);
+		return sync;
+	}
+	
+	private void basicUpdate(String by, Date when, boolean deleteItem)
+	{
+		// 3.2.1
+		this.increaseUpdates();
+
+		// 3.2.2 & 3.2.2.a.i
+		History history = new History(by, when, this.getUpdates()); 
+
+		// 3.2.3
+		this.getUpdatesHistory().push(history);
+
+		// 3.2.4
+		this.setDeleted(deleteItem);
+	}
+	
+	public boolean isSubsumedBy(Sync sync) {
+		History Hx = this.getLastUpdate();
+		for(History Hy : sync.getUpdatesHistory())
+		{
+			if (Hx.IsSubsumedBy(Hy))
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

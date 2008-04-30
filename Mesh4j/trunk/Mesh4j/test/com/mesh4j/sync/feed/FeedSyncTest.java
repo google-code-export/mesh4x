@@ -7,7 +7,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.mesh4j.sync.SyncEngine;
-import com.mesh4j.sync.model.History;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.Sync;
 import com.mesh4j.sync.test.utils.TestHelper;
@@ -40,9 +39,9 @@ public class FeedSyncTest {
 	public void shouldMergeItems(){
 		Date now = TestHelper.now();
 		
-		Item item0 = new Item(null, new Sync("SyncId0").addHistory(new History("jmt", now, 1)));
-		Item item1 = new Item(null, new Sync("SyncId1").addHistory(new History("jmt", now, 1)));
-		Item item2 = new Item(null, new Sync("SyncId2").addHistory(new History("jmt", now, 1)));
+		Item item0 = new Item(null, new Sync("SyncId0").update("jmt", now));
+		Item item1 = new Item(null, new Sync("SyncId1").update("jmt", now));
+		Item item2 = new Item(null, new Sync("SyncId2").update("jmt", now));
 		
 		Feed feed1 = new Feed();
 		feed1.addItem(item0);

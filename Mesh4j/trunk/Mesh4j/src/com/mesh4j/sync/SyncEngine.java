@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.mesh4j.sync.behavior.MergeBehavior;
+import com.mesh4j.sync.merge.MergeBehavior;
+import com.mesh4j.sync.merge.MergeResult;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.observer.ItemObservable;
 import com.mesh4j.sync.observer.ItemObserver;
@@ -17,8 +18,6 @@ import com.mesh4j.sync.validations.Guard;
  */
 public class SyncEngine {
 
-	private final static MergeBehavior MERGE_BEHAVIOR = new MergeBehavior();
-
 	// MODEL VARIABLES
 	private ItemObservable itemReceivedObservable = new ItemObservable();
 	private ItemObservable itemSentObservable = new ItemObservable();
@@ -27,7 +26,7 @@ public class SyncEngine {
 	private Repository target;
 
 	// BUSINESS METHODS
-	public SyncEngine(Repository source, Repository target) {
+	public SyncEngine(Repository source, Repository target) {   // TODO (JMT) spike SyncEngine<T>
 		super();
 
 		Guard.argumentNotNull(source, "left");
@@ -106,7 +105,7 @@ public class SyncEngine {
 		List<Item> outgoingItems = this.enumerateItemsProgress(sourceItems, this.itemSentObservable);
 
 		if (!target.supportsMerge()) {
-			List<ItemMergeResult> outgoingToMerge = this.mergeItems(outgoingItems, target);
+			List<MergeResult> outgoingToMerge = this.mergeItems(outgoingItems, target);
 			if (behavior == PreviewBehavior.Right || behavior == PreviewBehavior.Both) {
 				outgoingToMerge = previewer.preview(target, outgoingToMerge);
 			}
@@ -119,7 +118,7 @@ public class SyncEngine {
 		List<Item> incomingItems = this.enumerateItemsProgress(targetItmes, this.itemReceivedObservable);
 
 		if (!source.supportsMerge()) {
-			List<ItemMergeResult> incomingToMerge = this.mergeItems(incomingItems, source);
+			List<MergeResult> incomingToMerge = this.mergeItems(incomingItems, source);
 			if (behavior == PreviewBehavior.Left || behavior == PreviewBehavior.Both) {
 				incomingToMerge = previewer.preview(source, incomingToMerge);
 			}
@@ -132,13 +131,13 @@ public class SyncEngine {
 		}
 	}
 
-	private List<ItemMergeResult> mergeItems(List<Item> items,
+	private List<MergeResult> mergeItems(List<Item> items,
 			Repository repository) {
 
-		ArrayList<ItemMergeResult> mergeResult = new ArrayList<ItemMergeResult>();
+		ArrayList<MergeResult> mergeResult = new ArrayList<MergeResult>();
 		for (Item incoming : items) {
 			Item original = repository.get(incoming.getSyncId());
-			ItemMergeResult result = MERGE_BEHAVIOR.merge(original, incoming);
+			MergeResult result = MergeBehavior.merge(original, incoming);
 
 			if (result.isMergeNone()) {
 				mergeResult.add(result);
@@ -147,7 +146,7 @@ public class SyncEngine {
 		return mergeResult;
 	}
 
-	private List<Item> importItems(List<ItemMergeResult> items,
+	private List<Item> importItems(List<MergeResult> items,
 			Repository repository) {
 		// Straight import of data in merged results.
 		// Conflicting items are saved and also
@@ -161,7 +160,7 @@ public class SyncEngine {
 		// actually import items, which is undesirable.
 		ArrayList<Item> conflicts = new ArrayList<Item>();
 
-		for (ItemMergeResult result : items) {
+		for (MergeResult result : items) {
 			if (result.isMergeNone() && result.getProposed() != null
 					&& result.getProposed().hasSyncConflicts()) {
 				conflicts.add(result.getProposed());

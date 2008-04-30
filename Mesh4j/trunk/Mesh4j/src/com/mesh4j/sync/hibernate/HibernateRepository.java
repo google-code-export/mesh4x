@@ -35,6 +35,12 @@ public class HibernateRepository extends AbstractRepository {
 
 	// CONSTANTS
 	private final static String SYNC_INFO = "SyncInfo";
+	private final static String SYNC_INFO_ATTR_SYNC_ID = "sync_id";
+	private final static String SYNC_INFO_ATTR_ENTITY_ID = "entity_id";
+	private final static String SYNC_INFO_ATTR_ENTITY = "entity_name";
+	private final static String SYNC_INFO_ATTR_LAST_UPDATE = "last_update";
+	private final static String SYNC_INFO_ATTR_SYNC_DATA = "sync_data";
+	
 	private final static Log Logger = LogFactory.getLog(HibernateRepository.class);
 
 	// MODEL VARIABLE
@@ -53,12 +59,12 @@ public class HibernateRepository extends AbstractRepository {
 		Configuration hibernateConfiguration = new Configuration();
 		hibernateConfiguration.addFile(fileMapping);	
 		
-		File syncMapping = new File(this.getClass().getResource("SyncInfo.hbm.xml").getFile());
+		File syncMapping = new File(this.getClass().getResource("SyncInfo.hbm.xml").getFile());   // TODO (JMT) inject sync info mapping name
 		hibernateConfiguration.addFile(syncMapping);
 		
 		this.sessionFactory = hibernateConfiguration.buildSessionFactory();
 		ClassMetadata classMetadata = this.getClassMetadata();
-		this.entityName = classMetadata.getEntityName();
+		this.entityName = classMetadata.getEntityName();						// TODO (JMT) set node attribute value
 		this.entityIDAttributeName = classMetadata.getIdentifierPropertyName();
 		
 		this.newSession();
@@ -97,7 +103,7 @@ public class HibernateRepository extends AbstractRepository {
 			session.flush();
 			trx.commit();
 		} catch (DocumentException e) {
-			Logger.error(e.getMessage(), e);
+			Logger.error(e.getMessage(), e); // TODO (JMT) throws an exception
 			trx.rollback();
 		}
 	}
@@ -150,7 +156,7 @@ public class HibernateRepository extends AbstractRepository {
 		Item item = null;
 		try {
 			item = this.makeItem(syncElement, entityElement);
-		} catch (DocumentException e) {
+		} catch (DocumentException e) {// TODO (JMT) throws an exception
 			Logger.error(e.getMessage(), e);
 		}
 		
@@ -180,8 +186,9 @@ public class HibernateRepository extends AbstractRepository {
 		for (Element entityElement : entities) {
 			
 			String entityID = entityElement.element(this.entityIDAttributeName).getText();
-			//Element syncElement = (Element) session.get(SYNC_INFO, entityID);
-			String syncQuery ="FROM " + SYNC_INFO + " WHERE entity_name = '" + this.entityName + "' and entity_id = '"+ entityID +"' ";
+
+			String syncQuery ="FROM " + SYNC_INFO + 
+				" WHERE " + SYNC_INFO_ATTR_ENTITY + " = '" + this.entityName + "' and " + SYNC_INFO_ATTR_ENTITY_ID + " = '"+ entityID +"' ";
 			Element syncElement = (Element) session.createQuery(syncQuery).uniqueResult();
 
 			try {
@@ -197,7 +204,7 @@ public class HibernateRepository extends AbstractRepository {
 					result.add(item);
 				}
 			} catch (DocumentException e) {
-				Logger.error(e.getMessage(), e); // TOD (JMT)
+				Logger.error(e.getMessage(), e); // TODO (JMT) throws an exception
 			}
 		}
 		return result;
@@ -226,38 +233,38 @@ public class HibernateRepository extends AbstractRepository {
 	}
 
 	protected Element getEntityElement(Element syncElement) {
-		String entityID = syncElement.element("entity_id").getText();
+		String entityID = syncElement.element(SYNC_INFO_ATTR_ENTITY_ID).getText();
 		Element entityElement = (Element) session.get(this.entityName, entityID);
 		return entityElement;
 	}
 	
 	protected Element convertSync2Element(Sync sync, String entityID) throws DocumentException {
-		// TODO (JMT) create sync parsers out of writers
 		FeedWriter writer = new FeedWriter(RssSyndicationFormat.INSTANCE);
-		Element syncElementRoot = DocumentHelper.createElement("SyncInfo");
-		syncElementRoot.addElement("sync_id").addText(sync.getId());
-		syncElementRoot.addElement("entity_name").addText(this.entityName);
-		syncElementRoot.addElement("entity_id").addText(entityID);
-		syncElementRoot.addElement("last_update").addText(DateHelper.formatRFC822(new Date()));
+		Element syncElementRoot = DocumentHelper.createElement(SYNC_INFO);
+		syncElementRoot.addElement(SYNC_INFO_ATTR_SYNC_ID).addText(sync.getId());
+		syncElementRoot.addElement(SYNC_INFO_ATTR_ENTITY).addText(this.entityName);
+		syncElementRoot.addElement(SYNC_INFO_ATTR_ENTITY_ID).addText(entityID);
+		syncElementRoot.addElement(SYNC_INFO_ATTR_LAST_UPDATE).addText(DateHelper.formatRFC822(new Date()));
 		
-		Element syncData = DocumentHelper.createElement("payload");
-		syncData.addNamespace("sx", "http://www.microsoft.com/schemas/sse");
+		Element syncData = DocumentHelper.createElement(RssSyndicationFormat.ATTRIBUTE_PAYLOAD);
+		syncData.addNamespace(RssSyndicationFormat.SX_PREFIX, RssSyndicationFormat.NAMESPACE);
 		writer.writeSync(syncData, sync);
-		String syncAsXML = syncData.asXML();
-		syncElementRoot.addElement("sync_data").addText(syncAsXML);
+		
+		String syncAsXML = syncData.element(RssSyndicationFormat.SX_ELEMENT_SYNC).asXML();
+		syncElementRoot.addElement(SYNC_INFO_ATTR_SYNC_DATA).addText(syncAsXML);
 		
 		return syncElementRoot;
 	}
 	
 	protected Sync convertElement2Sync(Element syncInfoElement) throws DocumentException {
-		// TODO (JMT) create sync parsers out of readers
-		Element syncData = syncInfoElement.element("sync_data");
-		Element syncElement = DocumentHelper.parseText(syncData.getText()).getRootElement().element("sync");
+		Element syncData = syncInfoElement.element(SYNC_INFO_ATTR_SYNC_DATA);
+		Element syncElement = DocumentHelper.parseText(syncData.getText()).getRootElement();
+		//Element syncElement = DocumentHelper.parseText(syncData.getText()).getRootElement().element(RssSyndicationFormat.SX_ELEMENT_SYNC);
 		
 		FeedReader reader = new FeedReader(RssSyndicationFormat.INSTANCE);
 		Sync sync = reader.readSync(syncElement);
 		if(sync == null){
-			String entityID = syncElement.element("entity_id").getText();
+			String entityID = syncElement.element(SYNC_INFO_ATTR_ENTITY_ID).getText();
 			sync = saveNewSync(entityID);
 		}
 		return sync;
@@ -275,6 +282,6 @@ public class HibernateRepository extends AbstractRepository {
 	}
 
 	protected Sync makeNewSync() {
-		return new Sync(IdGenerator.newID()).update(Security.getAuthenticatedUser(), new Date());
+		return new Sync(IdGenerator.newID(), Security.getAuthenticatedUser(), new Date(), false);
 	}
 }

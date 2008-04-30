@@ -31,7 +31,6 @@ public class Item implements Cloneable{
 		return this.content;
 	}
 
-
 	public String getSyncId() {
 		return this.getSync().getId();
 	}
@@ -44,18 +43,6 @@ public class Item implements Cloneable{
 		return this.getSync().getLastUpdate();
 	}
 
-	public boolean isSubsumedBy(Item item) {
-		History Hx = this.getLastUpdate();
-		for(History Hy : item.getSync().getUpdatesHistory())
-		{
-			if (Hx.IsSubsumedBy(Hy))
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-	
 	public boolean equals(Object obj)
 	{
 		if (this == obj) return true;

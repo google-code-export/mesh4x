@@ -42,8 +42,7 @@ public class ItemTests {
 	@Test
 	public void ShouldNotEqualDifferentSync() {
 		Item obj1 = new Item(new ItemXMLContent(TestHelper.newID(), "foo", "bar",
-				TestHelper.makeElement("<payload/>")), new Sync(TestHelper
-				.newID()));
+				TestHelper.makeElement("<payload/>")), new Sync(TestHelper.newID()));
 		Item obj2 = new Item(obj1.getContent(), new Sync(TestHelper.newID()));
 
 		this.assertNotEquals(obj1, obj2);
@@ -52,8 +51,7 @@ public class ItemTests {
 	@Test
 	public void ShouldNotEqualDifferentItem() {
 		Item obj1 = new Item(new ItemXMLContent(TestHelper.newID(), "foo", "bar",
-				TestHelper.makeElement("<payload/>")), new Sync(TestHelper
-				.newID()));
+				TestHelper.makeElement("<payload/>")), new Sync(TestHelper.newID()));
 		Item obj2 = new Item(new ItemXMLContent(TestHelper.newID(), "foo", "bar",
 				TestHelper.makeElement("<payload id='2'/>")), obj1.getSync());
 
@@ -63,8 +61,7 @@ public class ItemTests {
 	@Test
 	public void ShouldNotEqualWithOneNullXmlItem() {
 		Item obj1 = new Item(new ItemXMLContent(TestHelper.newID(), "foo", "bar",
-				TestHelper.makeElement("<payload/>")), new Sync(TestHelper
-				.newID()));
+				TestHelper.makeElement("<payload/>")), new Sync(TestHelper.newID()));
 		Item obj2 = new Item(null, obj1.getSync());
 
 		this.assertNotEquals(obj1, obj2);

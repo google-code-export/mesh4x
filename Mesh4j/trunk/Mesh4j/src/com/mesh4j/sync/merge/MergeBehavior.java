@@ -1,10 +1,13 @@
-package com.mesh4j.sync.behavior;
+package com.mesh4j.sync.merge;
 
+// TODO (JMT) remove merge behavior ?
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 
-import com.mesh4j.sync.ItemMergeResult;
-import com.mesh4j.sync.MergeOperation;
+import com.mesh4j.sync.model.History;
 import com.mesh4j.sync.model.Item;
+import com.mesh4j.sync.model.Sync;
 import com.mesh4j.sync.translator.MessageTranslator;
 import com.mesh4j.sync.validations.Guard;
 
@@ -42,12 +45,10 @@ import com.mesh4j.sync.validations.Guard;
 /// </summary>
 public class MergeBehavior {
 	
-	public static final MergeBehavior INSTANCE = new MergeBehavior();
-
 	/// <summary>
 	/// Merges the two items applying the SSE algorithm.
 	/// </summary>
-	public ItemMergeResult merge(Item originalItem, Item incomingItem) 
+	public static MergeResult merge(Item originalItem, Item incomingItem) 
 	{
 		Guard.argumentNotNull(incomingItem, "incomingItem");
 
@@ -55,7 +56,7 @@ public class MergeBehavior {
 
 		if (originalItem == null)
 		{
-			return new ItemMergeResult(null, incoming, incoming, MergeOperation.Added);
+			return new MergeResult(null, incoming, incoming, MergeOperation.Added);
 		}
 
 		Item original = originalItem.clone();
@@ -70,7 +71,7 @@ public class MergeBehavior {
 		return mergeItems(original, incoming);
 	}
 	
-	private ItemMergeResult mergeItems(Item localItem, Item incomingItem)
+	private static MergeResult mergeItems(Item localItem, Item incomingItem)
 	{
 		MergeProcessParameters mergeProcessParameters = new MergeProcessParameters();
 		
@@ -102,7 +103,7 @@ public class MergeBehavior {
 		if (mergeProcessParameters.getWinner() == null)
 		{
 			//There is no need to update the local item
-			return new ItemMergeResult(localItem, incomingItem, null, MergeOperation.None);
+			return new MergeResult(localItem, incomingItem, null, MergeOperation.None);
 		}
 
 		//3.3.10
@@ -120,15 +121,15 @@ public class MergeBehavior {
 
 		if (mergeProcessParameters.getWinner().getSync().getConflicts().size() > 0)
 		{
-			return new ItemMergeResult(localItem, incomingItem, mergeProcessParameters.getWinner(), MergeOperation.Conflict);
+			return new MergeResult(localItem, incomingItem, mergeProcessParameters.getWinner(), MergeOperation.Conflict);
 		}
 		else
 		{
 			if (mergeProcessParameters.getWinner().getSync().equals(localItem.getSync()))
 			{
-				return new ItemMergeResult(localItem, incomingItem, null, MergeOperation.None);
+				return new MergeResult(localItem, incomingItem, null, MergeOperation.None);
 			} else {
-				return new ItemMergeResult(localItem, incomingItem, mergeProcessParameters.getWinner(), MergeOperation.Updated);
+				return new MergeResult(localItem, incomingItem, mergeProcessParameters.getWinner(), MergeOperation.Updated);
 			}
 		}
 	}
@@ -153,7 +154,7 @@ public class MergeBehavior {
 			boolean isSubsumed = false;
 			for (Item y : mergeProcessParameters.getInnerCollection())
 			{
-				if (x.isSubsumedBy(y))
+				if (x.getSync().isSubsumedBy(y.getSync()))
 				{
 					isSubsumed = true;
 					resOuter.remove(x);
@@ -253,43 +254,62 @@ public class MergeBehavior {
 		}
 	}
 	
-	private class MergeProcessParameters{
+	// 3.4
+	public static Item resolveConflicts(Item resolvedItem, String by, Date when, boolean deleteItem)
+	{
+		//3.4	Conflict Resolution Behavior
+		//Merging Conflict Items 
+		//1.	Set R as a reference the resolved item
+		//2.	Set Ry as a reference to the sx:sync sub-element for R
+		//3.	For each item sub-element C of the sx:conflicts element that has been resolved:
+		//	a.	Set Sc as a reference to the sx:sync sub-element for C
+		//	b.	Remove C from the sx:conflicts element.
+		//	b.	For each sx:history sub-element Hc of Sc:
+		//		i.	For each sx:history sub-element Hr of Sr:
+		//			aa.	Compare Hc with Hr to see if Hc can be subsumed2 by Hr – if so then process the next item sub-element
+		//		ii.	Add Hr as a sub-element of Sr, immediately after the topmost sx:history sub-element of Sr.
+		//3. If the sx:conflicts element contains no sub-elements, the sx:conflicts element SHOULD be removed.
+
+		Item R = resolvedItem.clone();
+		Sync Sr = R.getSync();
 		
-		private ArrayList<Item> outerCollection = new ArrayList<Item>();
-		private ArrayList<Item> innerCollection = new ArrayList<Item>();
-		private ArrayList<Item> mergedCollection = new ArrayList<Item>();
-		private Item winner;
+		ArrayList<Item> conflictItems = new ArrayList<Item>();
+		conflictItems.addAll(Sr.getConflicts());
 		
-		public ArrayList<Item> getOuterCollection() {
-			return outerCollection;
-		}
-		public void setOuterCollection(ArrayList<Item> outerCollection) {
-			this.outerCollection = outerCollection;
-		}
-		public ArrayList<Item> getInnerCollection() {
-			return innerCollection;
-		}
-		public void setInnerCollection(ArrayList<Item> innerCollection) {
-			this.innerCollection = innerCollection;
-		}
-		public Item getWinner() {
-			return winner;
-		}
-		public void setWinner(Item winner) {
-			this.winner = winner;
-		}
-		public ArrayList<Item> getMergedCollection() {
-			return mergedCollection;
-		}
-		public void setMergedCollection(ArrayList<Item> mergedCollection) {
-			this.mergedCollection = mergedCollection;
-		}
-		public void interchangeInnerWithOuter(){
-			ArrayList<Item> aux = this.getInnerCollection();
-			this.setInnerCollection(this.getOuterCollection());
-			this.setOuterCollection(aux);
+		for (Item C : conflictItems)
+		{
+			Sync Sc = C.getSync();
+			Sr.removeConflict(C);
 			
+			ArrayList<History> allConflictUpdatesHistories = new ArrayList<History>(Sc.getUpdatesHistory());
+			Collections.reverse(allConflictUpdatesHistories);
+			
+			for (History Hc : allConflictUpdatesHistories)
+			{
+				boolean isSubsumed = false;
+				for (History Hr : Sr.getUpdatesHistory())
+				{
+					if (Hc.IsSubsumedBy(Hr))
+					{
+						isSubsumed = true;
+						break;
+					}
+				}
+				if (isSubsumed)
+				{
+					break;
+				}
+				else
+				{
+					Sr.addConflictHistory(Hc);
+				}
+			}
 		}
+
 		
+		Sync updatedSync = Sr.clone();
+		updatedSync.update(by, when, deleteItem);
+
+		return new Item(R.getContent(), updatedSync);
 	}
 }

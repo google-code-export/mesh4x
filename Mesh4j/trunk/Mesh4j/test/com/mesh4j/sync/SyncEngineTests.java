@@ -9,9 +9,9 @@ import java.util.Set;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.mesh4j.sync.behavior.Behaviors;
 import com.mesh4j.sync.feed.ItemXMLContent;
 import com.mesh4j.sync.filter.DeletedFilter;
+import com.mesh4j.sync.merge.MergeResult;
 import com.mesh4j.sync.model.History;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.Sync;
@@ -52,14 +52,25 @@ public class SyncEngineTests {
 		Item a = createItem("fizz", TestHelper.newID(), new History("kzu"));
 		Item b = createItem("buzz", TestHelper.newID(), new History("vga"));
 
-		MockRepository left = new MockRepository(new Item[] {
-				new Item(a.getContent(), a.getSync().update("kzu",
-						TestHelper.now())), b });
+		MockRepository left = new MockRepository(
+			new Item[] {
+				new Item(
+					a.getContent(), 
+					a.getSync().clone().update("kzu", TestHelper.now())
+				), 
+				b 
+			}
+		);
 
-		MockRepository right = new MockRepository(new Item[] {
+		MockRepository right = new MockRepository(
+			new Item[] {
 				a,
-				new Item(b.getContent(), b.getSync().update("vga",
-						TestHelper.now())) });
+				new Item(
+					b.getContent(), 
+					b.getSync().clone().update("vga", TestHelper.now())
+				) 
+			}
+		);
 
 		SyncEngine engine = new SyncEngine(left, right);
 
@@ -80,7 +91,7 @@ public class SyncEngineTests {
 		MockRepository left = new MockRepository(new Item[] { a, b });
 		MockRepository right = new MockRepository(new Item[] {
 				a,
-				new Item(b.getContent(), b.getSync().update("vga",
+				new Item(b.getContent(), b.getSync().clone().update("vga",
 						TestHelper.now(), true)) });
 
 		SyncEngine engine = new SyncEngine(left, right);
@@ -117,12 +128,10 @@ public class SyncEngineTests {
 		Item a = createItem("fizz", TestHelper.newID(), new History("kzu"));
 		TestHelper.sleep(1000);
 
-		MockRepository left = new MockRepository(new Item(a.getContent(), a
-				.getSync().update("kzu", TestHelper.now())));
+		MockRepository left = new MockRepository(new Item(a.getContent(), a.getSync().clone().update("kzu", TestHelper.now())));
 		TestHelper.sleep(1000);
 
-		MockRepository right = new MockRepository(new Item(a.getContent(), a
-				.getSync().update("vga", TestHelper.now())));
+		MockRepository right = new MockRepository(new Item(a.getContent(), a.getSync().clone().update("vga", TestHelper.now())));
 
 		SyncEngine engine = new SyncEngine(left, right);
 
@@ -143,7 +152,7 @@ public class SyncEngineTests {
 		SyncEngine engine = new SyncEngine(left, right);
 
 		String id = TestHelper.newID();
-		Sync sync = getBehaviors().create(id, by, TestHelper.nowSubtractMinutes(2),
+		Sync sync = new Sync(id, by, TestHelper.nowSubtractMinutes(2),
 				false);
 		Item item = new Item(new ItemXMLContent(id, "foo", "bar", TestHelper
 				.makeElement("<foo id='bar'/>")), sync);
@@ -156,18 +165,14 @@ public class SyncEngineTests {
 		// Local editing.
 		ItemXMLContent xmlItem = (ItemXMLContent) item.getContent();
 		item = new Item(new ItemXMLContent(id, "changed", ((ItemXMLContent)item.getContent())
-				.getDescription(), xmlItem.getPayload()), getBehaviors()
-				.update(item.getSync(), by, TestHelper.nowSubtractMinutes(1),
-						false));
+				.getDescription(), xmlItem.getPayload()), item.getSync().clone().update(by, TestHelper.nowSubtractMinutes(1), false));
 
 		left.update(item);
 
 		// Conflicting remote editing.
 		xmlItem = (ItemXMLContent) item.getContent();
 		incomingItem = new Item(new ItemXMLContent(id, "remote", ((ItemXMLContent)item.getContent())
-				.getDescription(), xmlItem.getPayload()), getBehaviors()
-				.update(incomingItem.getSync(), "REMOTE\\kzu",
-						TestHelper.now(), false));
+				.getDescription(), xmlItem.getPayload()), incomingItem.getSync().clone().update("REMOTE\\kzu", TestHelper.now(), false));
 
 		right.update(incomingItem);
 
@@ -231,16 +236,14 @@ public class SyncEngineTests {
 		String by = "jmt";
 
 		String id = TestHelper.newID();
-		Sync sync = getBehaviors().create(id, by, TestHelper.nowSubtractMinutes(2),
-				false);
+		Sync sync = new Sync(id, by, TestHelper.nowSubtractMinutes(2), false);
 		Item item = new Item(new ItemXMLContent(id, "foo", "bar", TestHelper
 				.makeElement("<foo id='bar'/>")), sync);
 
 		left.add(item);
 
 		id = TestHelper.newID();
-		sync = getBehaviors()
-				.create(id, by, TestHelper.nowSubtractMinutes(2), false);
+		sync = new Sync(id, by, TestHelper.nowSubtractMinutes(2), false);
 		item = new Item(new ItemXMLContent(id, "foo", "bar", TestHelper
 				.makeElement("<foo id='bar'/>")), sync);
 
@@ -279,12 +282,12 @@ public class SyncEngineTests {
 		String by = "jmt";
 			
 		String id = TestHelper.newID();
-		Sync sync = getBehaviors().create(id, by, nowSubtract2Minutes, false);
+		Sync sync = new Sync(id, by, nowSubtract2Minutes, false);
 		Item item = new Item(new ItemXMLContent(id, "foo", "bar", TestHelper.makeElement("<foo id='bar'/>")), sync);
 		left.add(item);
 
 		id = TestHelper.newID();
-		sync = getBehaviors().create(id, by, nowSubtract2Days, false);
+		sync = new Sync(id, by, nowSubtract2Days, false);
 		item = new Item(new ItemXMLContent(id, "foo", "bar", TestHelper.makeElement("<foo id='bar'/>")), sync);
 		right.add(item);
 
@@ -315,17 +318,13 @@ public class SyncEngineTests {
 			History[] otherHistory) {
 		ItemXMLContent xml = new ItemXMLContent(TestHelper.newID(), title, null, TestHelper
 				.makeElement("<payload/>"));
-		Sync sync = getBehaviors().create(id, history.getBy(), history.getWhen(),
+		Sync sync = new Sync(id, history.getBy(), history.getWhen(),
 				false);
 		for (History h : otherHistory) {
-			sync = sync.update(h.getBy(), h.getWhen());
+			sync.update(h.getBy(), h.getWhen());
 		}
 
 		return new Item(xml, sync);
-	}
-
-	private Behaviors getBehaviors() {
-		return Behaviors.INSTANCE;
 	}
 
 	private class MockMergeRepository implements Repository {
@@ -391,8 +390,8 @@ public class SyncEngineTests {
 		private Set<String> repositories = new HashSet<String>();
 
 		@Override
-		public List<ItemMergeResult> preview(Repository targetRepository,
-				List<ItemMergeResult> mergedItems) {
+		public List<MergeResult> preview(Repository targetRepository,
+				List<MergeResult> mergedItems) {
 
 			repositories.add(targetRepository.getFriendlyName());
 			return mergedItems;

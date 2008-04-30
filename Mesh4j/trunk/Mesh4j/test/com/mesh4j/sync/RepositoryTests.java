@@ -7,7 +7,6 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.mesh4j.sync.behavior.Behaviors;
 import com.mesh4j.sync.feed.ItemXMLContent;
 import com.mesh4j.sync.filter.NullFilter;
 import com.mesh4j.sync.model.Content;
@@ -70,8 +69,7 @@ public class RepositoryTests {
 	public void ShouldAddAndGetItem() {
 		Repository repository = createRepository();
 		ItemXMLContent xml = new ItemXMLContent(TestHelper.newID(), "foo", "bar", TestHelper.makeElement("<payload></payload>"));
-		Sync sync = getBehaviors().create(xml.getId(), "kzu", TestHelper.now(),
-				false);
+		Sync sync = new Sync(xml.getId(), "kzu", TestHelper.now(), false);
 		Item item = new Item(xml, sync);
 
 		repository.add(item);
@@ -89,10 +87,6 @@ public class RepositoryTests {
 		Assert.assertTrue(item.getSync().equals(saved.getSync()));
 	}
 
-	private Behaviors getBehaviors() {
-		return Behaviors.INSTANCE;
-	}
-
 	@Test
 	public void ShouldGetAllItems() {
 		Repository repository = createRepository();
@@ -100,13 +94,12 @@ public class RepositoryTests {
 		String by = "DeviceAuthor.Current";
 		String id = TestHelper.newID();
 		Item item = new Item(new ItemXMLContent(id, "foo", "bar", TestHelper
-				.makeElement("<payload />")), getBehaviors().create(id, by,
-				TestHelper.now(), false));
+				.makeElement("<payload />")), new Sync(id, by, TestHelper.now(), false));
 		repository.add(item);
 
 		id = TestHelper.newID();
 		item = new Item(new ItemXMLContent(id, "foo", "bar", TestHelper
-				.makeElement("<payload />")), getBehaviors().create(id, by,
+				.makeElement("<payload />")), new Sync(id, by,
 				TestHelper.now(), false));
 		repository.add(item);
 
@@ -121,12 +114,12 @@ public class RepositoryTests {
 		String by = "DeviceAuthor.Current";
 		String id = TestHelper.newID();
 		Item item = new Item(new ItemXMLContent(id, "foo", "bar", TestHelper
-				.makeElement("<payload />")), getBehaviors().create(id, by,
+				.makeElement("<payload />")), new Sync(id, by,
 				TestHelper.now(), false));
 		repo.add(item);
 
 		item = new Item(new ItemXMLContent(id, "foo", "bar", TestHelper
-				.makeElement("<payload />")), getBehaviors().create(id, by,
+				.makeElement("<payload />")), new Sync(id, by,
 				TestHelper.now(), false));
 		repo.add(item);
 	}
@@ -138,13 +131,13 @@ public class RepositoryTests {
 
 		String id = TestHelper.newID();
 		Item item = new Item(new ItemXMLContent(id, "foo", "bar", TestHelper
-				.makeElement("<payload />")), getBehaviors().create(id, by,
+				.makeElement("<payload />")), new Sync(id, by,
 				TestHelper.nowSubtractDays(1), false));
 		repo.add(item);
 
 		id = TestHelper.newID();
 		item = new Item(new ItemXMLContent(id, "foo", "bar", TestHelper
-				.makeElement("<payload />")), getBehaviors().create(id, by,
+				.makeElement("<payload />")), new Sync(id, by,
 				TestHelper.now(), false));
 		repo.add(item);
 
@@ -160,13 +153,13 @@ public class RepositoryTests {
 
 		String id = TestHelper.newID();
 		Item item = new Item(new ItemXMLContent(id, "foo", "bar", TestHelper
-				.makeElement("<payload />")), getBehaviors().create(id, by,
+				.makeElement("<payload />")), new Sync(id, by,
 				TestHelper.nowSubtractDays(1), false));
 		repo.add(item);
 
 		id = TestHelper.newID();
 		item = new Item(new ItemXMLContent(id, "foo", "bar", TestHelper
-				.makeElement("<payload />")), getBehaviors().create(id, by,
+				.makeElement("<payload />")), new Sync(id, by,
 				TestHelper.now(), false));
 		repo.add(item);
 
@@ -181,13 +174,13 @@ public class RepositoryTests {
 
 		String id = TestHelper.newID();
 		Content modelItem =new ItemXMLContent(id, "foo", "bar", TestHelper.makeElement("<payload />"));
-		Sync sync = getBehaviors().create(id, by, null, false);
+		Sync sync = new Sync(id, by, null, false);
 		Item item = new Item(modelItem, sync);
 		repo.add(item);
 
 		id = TestHelper.newID();
 		modelItem = new ItemXMLContent(id, "foo", "bar", TestHelper.makeElement("<payload />"));
-		sync = getBehaviors().create(id, by, TestHelper.now(), false);
+		sync = new Sync(id, by, TestHelper.now(), false);
 		item = new Item(modelItem, sync);
 		repo.add(item);
 
@@ -214,7 +207,7 @@ public class RepositoryTests {
 
 		String id = TestHelper.newID();
 		Item item = new Item(new ItemXMLContent(id, "foo", "bar", TestHelper
-				.makeElement("<payload />")), getBehaviors().create(id, by,
+				.makeElement("<payload />")), new Sync(id, by,
 				TestHelper.now(), false));
 		repo.add(item);
 
@@ -222,7 +215,7 @@ public class RepositoryTests {
 
 		String id2 = TestHelper.newID();
 		item = new Item(new ItemXMLContent(id2, "foo", "bar", TestHelper
-				.makeElement("<payload />")), getBehaviors().create(id2, by,
+				.makeElement("<payload />")), new Sync(id2, by,
 				TestHelper.now(), false));
 		repo.add(item);
 
@@ -239,7 +232,7 @@ public class RepositoryTests {
 
 		ItemXMLContent item = new ItemXMLContent(TestHelper.newID(), "foo", "bar", TestHelper
 				.makeElement("<payload />"));
-		Sync sync = getBehaviors().create(item.getId(), "kzu", created, false);
+		Sync sync = new Sync(item.getId(), "kzu", created, false);
 
 		Repository repo = createRepository();
 		repo.add(new Item(item, sync));
@@ -272,15 +265,12 @@ public class RepositoryTests {
 		MockRepository repo = new MockRepository();
 
 		String id = TestHelper.newID();
-		Sync sync = getBehaviors().create(id, "kzu", TestHelper.nowSubtractDays(1),
-				false);
+		Sync sync = new Sync(id, "kzu", TestHelper.nowSubtractDays(1), false);
 
-		Item item = new Item(new NullContent(id), getBehaviors().update(sync,
-				"kzu", TestHelper.nowSubtractHours(2), false));
+		Item item = new Item(new NullContent(id), sync.update("kzu", TestHelper.nowSubtractHours(2), false));
 		sync.getConflicts().add(
 				new Item(new ItemXMLContent(TestHelper.newID(), "foo", "bar",
-						TestHelper.makeElement("<payload/>")), getBehaviors()
-						.update(sync, "kzu", TestHelper.nowSubtractHours(4),
+						TestHelper.makeElement("<payload/>")), sync.clone().update("kzu", TestHelper.nowSubtractHours(4),
 								false)));
 
 		repo.add(item);
@@ -299,15 +289,14 @@ public class RepositoryTests {
 		String by = "jmt";
 
 		Item item = new Item(new ItemXMLContent(id, "foo", "bar", TestHelper
-				.makeElement("<payload/>")), getBehaviors().create(id, by,
+				.makeElement("<payload/>")), new Sync(id, by,
 				TestHelper.nowSubtractMinutes(5), false));
 		repo.add(item);
 
 		// Introduce a conflict.
 		ItemXMLContent xml = (ItemXMLContent) item.getContent().clone();
 		xml.setTitle("Conflict");
-		Sync updatedSync = getBehaviors().update(item.getSync(), "Conflict",
-				TestHelper.now(), false);
+		Sync updatedSync = item.getSync().clone().update("Conflict", TestHelper.now(), false);
 		item.getSync().getConflicts().add(new Item(xml, updatedSync));
 
 		((ItemXMLContent) item.getContent()).setTitle("Resolved");
@@ -326,15 +315,14 @@ public class RepositoryTests {
 		String by = "jmt";
 
 		Item item = new Item(new ItemXMLContent(id, "foo", "bar", TestHelper
-				.makeElement("<payload/>")), getBehaviors().create(id, by,
+				.makeElement("<payload/>")), new Sync(id, by,
 				TestHelper.nowSubtractMinutes(5), false));
 		repo.add(item);
 
 		// Introduce a conflict.
 		ItemXMLContent xml = (ItemXMLContent) item.getContent().clone();
 		xml.setTitle("Conflict");
-		Sync updatedSync = getBehaviors().update(item.getSync(), "Conflict",
-				TestHelper.now(), false);
+		Sync updatedSync = item.getSync().clone().update("Conflict", TestHelper.now(), false);
 		item.getSync().getConflicts().add(new Item(xml, updatedSync));
 
 		((ItemXMLContent) item.getContent()).setTitle("Resolved");
@@ -356,21 +344,19 @@ public class RepositoryTests {
 		String by = "jmt";
 
 		Item item = new Item(new ItemXMLContent(id, "foo", "bar", TestHelper
-				.makeElement("<payload/>")), getBehaviors().create(id, by,
-				TestHelper.nowSubtractMinutes(5), false));
+				.makeElement("<payload/>")), new Sync(id, by, TestHelper.nowSubtractMinutes(5), false));
 		repo.add(item);
 
 		// Introduce a conflict.
 		ItemXMLContent xml = (ItemXMLContent) item.getContent().clone();
 		xml.setTitle("Conflict");
-		Sync updatedSync = getBehaviors().update(item.getSync(), "Conflict",
+		Sync updatedSync = item.getSync().clone().update("Conflict",
 				TestHelper.now(), false);
 		item.getSync().getConflicts().add(new Item(xml, updatedSync));
 
 		((ItemXMLContent) item.getContent()).setTitle("Resolved");
 
-		Sync deletedSync = getBehaviors().delete(item.getSync(), "Deleted",
-				TestHelper.now());
+		Sync deletedSync = item.getSync().clone().delete("Deleted", TestHelper.now());
 
 		repo.update(new Item(item.getContent(), deletedSync), true);
 

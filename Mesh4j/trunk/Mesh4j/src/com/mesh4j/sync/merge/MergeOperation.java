@@ -1,4 +1,4 @@
-package com.mesh4j.sync;
+package com.mesh4j.sync.merge;
 
 public enum MergeOperation {
 

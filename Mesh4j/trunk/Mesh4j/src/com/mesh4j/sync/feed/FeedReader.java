@@ -14,10 +14,20 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.xml.sax.InputSource;
 
-import com.mesh4j.sync.model.History;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.Sync;
+import com.mesh4j.sync.security.Security;
 import com.mesh4j.sync.utils.IdGenerator;
+
+import static com.mesh4j.sync.feed.SyndicationFormat.ATTRIBUTE_PAYLOAD;
+import static com.mesh4j.sync.feed.SyndicationFormat.SX_ELEMENT_SYNC;
+import static com.mesh4j.sync.feed.SyndicationFormat.SX_ATTRIBUTE_SYNC_ID;
+import static com.mesh4j.sync.feed.SyndicationFormat.SX_ELEMENT_HISTORY;
+import static com.mesh4j.sync.feed.SyndicationFormat.SX_ATTRIBUTE_HISTORY_SEQUENCE;
+import static com.mesh4j.sync.feed.SyndicationFormat.SX_ATTRIBUTE_HISTORY_WHEN;
+import static com.mesh4j.sync.feed.SyndicationFormat.SX_ATTRIBUTE_HISTORY_BY;
+import static com.mesh4j.sync.feed.SyndicationFormat.SX_ATTRIBUTE_ITEM_TITLE;
+import static com.mesh4j.sync.feed.SyndicationFormat.SX_ATTRIBUTE_ITEM_DESCRIPTION;
 
 public class FeedReader {
 	
@@ -26,7 +36,6 @@ public class FeedReader {
 	
 	// BUSINESS METHODS
 
-	// TODO (JMT) delete harcodes and create enum for namespaces, elements and atributes 
 	public FeedReader(SyndicationFormat syndicationFormat){
 		super();
 		this.syndicationFormat = syndicationFormat;
@@ -64,7 +73,7 @@ public class FeedReader {
 
 	public Feed read(Document document) {
 		Feed feed = new Feed();
-		Element payload = DocumentHelper.createElement("payload");
+		Element payload = DocumentHelper.createElement(ATTRIBUTE_PAYLOAD);
 		
 		Element root = document.getRootElement();
 		List<Element> elements = getRootElements(root);
@@ -83,13 +92,13 @@ public class FeedReader {
 
 	@SuppressWarnings("unchecked")
 	public Item readItem(Element itemElement) {
-		Element payload = DocumentHelper.createElement("payload");
+		Element payload = DocumentHelper.createElement(ATTRIBUTE_PAYLOAD);
 		
 		Sync sync = null;
 		
 		List<Element> elements = itemElement.elements();
 		for (Element element : elements) {
-			if("sync".equals(element.getName())){
+			if(SX_ELEMENT_SYNC.equals(element.getName())){
 				sync = readSync(element);
 		} else {
 				payload.add(element.detach());
@@ -97,11 +106,11 @@ public class FeedReader {
 		}
 		
 		if(sync == null){
-			sync = new Sync(makeNewSyncID()); 
+			sync = new Sync(makeNewSyncID(), Security.getAuthenticatedUser(), new Date(), false); 
 		}
 		
-		String title = itemElement.elementText("title");
-		String description = itemElement.elementText("description");
+		String title = itemElement.elementText(SX_ATTRIBUTE_ITEM_TITLE);
+		String description = itemElement.elementText(SX_ATTRIBUTE_ITEM_DESCRIPTION);
 		ItemXMLContent modelItem = new ItemXMLContent(sync.getId(), title, description, payload);
 		return new Item(modelItem, sync);
 	}
@@ -112,28 +121,21 @@ public class FeedReader {
 
 	@SuppressWarnings("unchecked")
 	public Sync readSync(Element syncElement) {
-		String syncID = syncElement.attributeValue("id");
-		int updates = Integer.valueOf(syncElement.attributeValue("updates"));
+		String syncID = syncElement.attributeValue(SX_ATTRIBUTE_SYNC_ID);
+		//int updates = Integer.valueOf(syncElement.attributeValue(SX_ATTRIBUTE_SYNC_UPDATES));
 		
-		Sync sync = new Sync(syncID, updates);
-		
+		Sync sync = new Sync(syncID);
+	
 		List<Element> elements = syncElement.elements();
-		for (Element element : elements) {
-			if("history".equals(element.getName())){
-				History history = readHistory(element);
-				sync.addHistory(history);
+		for (Element historyElement : elements) {
+			if(SX_ELEMENT_HISTORY.equals(historyElement.getName())){
+				int sequence = Integer.valueOf(historyElement.attributeValue(SX_ATTRIBUTE_HISTORY_SEQUENCE));
+				Date when = this.parseDate(historyElement.attributeValue(SX_ATTRIBUTE_HISTORY_WHEN));
+				String by = historyElement.attributeValue(SX_ATTRIBUTE_HISTORY_BY);
+				sync.update(by, when, sequence);
 			} 
 		}
 		return sync;
-	}
-
-	public History readHistory(Element historyElement) {
-		int sequence = Integer.valueOf(historyElement.attributeValue("sequence"));
-		Date when = this.parseDate(historyElement.attributeValue("when"));
-		String by = historyElement.attributeValue("by");
-		
-		History history =  new History(by, when, sequence);
-		return history;
 	}
 	
 	protected boolean isFeedItem(Element element){
