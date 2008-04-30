@@ -59,7 +59,7 @@ public class HibernateRepository extends AbstractRepository {
 		Configuration hibernateConfiguration = new Configuration();
 		hibernateConfiguration.addFile(fileMapping);	
 		
-		File syncMapping = new File(this.getClass().getResource("SyncInfo.hbm.xml").getFile());   // TODO (JMT) inject sync info mapping name
+		File syncMapping = new File(this.getClass().getResource("SyncInfo.hbm.xml").getFile());   // TODO (JMT) inject sync info mapping name -> Spring?
 		hibernateConfiguration.addFile(syncMapping);
 		
 		this.sessionFactory = hibernateConfiguration.buildSessionFactory();
