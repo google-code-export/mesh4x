@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 
-namespace SimpleSharing
+namespace Mesh4n
 {
 	// TODO: review the need for this class.
 	public class NullXmlItem : IXmlItem

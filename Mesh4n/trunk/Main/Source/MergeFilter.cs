@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace SimpleSharing
+namespace Mesh4n
 {
 	/// <summary>
 	/// Contains a callback function to filter items according the value of behaviors 

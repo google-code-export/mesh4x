@@ -11,7 +11,7 @@ using System.Xml.XPath;
 using System.IO;
 using System.Threading;
 
-namespace SimpleSharing.Tests
+namespace Mesh4n.Tests
 {
 	[TestClass]
 	public class MergeBehaviorFixture : TestFixtureBase

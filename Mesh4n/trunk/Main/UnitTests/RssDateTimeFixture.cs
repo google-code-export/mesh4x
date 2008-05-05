@@ -10,7 +10,7 @@ using System.Text;
 using System.Globalization;
 using System.IO;
 
-namespace SimpleSharing.Tests
+namespace Mesh4n.Tests
 {
 	[TestClass]
 	public class RssDateTimeFixture : TestFixtureBase

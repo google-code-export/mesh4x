@@ -5,7 +5,7 @@ using Microsoft.Practices.Mobile.TestTools.UnitTesting;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 #endif
 
-namespace SimpleSharing.Tests
+namespace Mesh4n.Tests
 {
 	[TestClass]
 	public class XmlItemFixture : TestFixtureBase

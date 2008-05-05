@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Xml;
 using System.IO;
 
-namespace SimpleSharing.Tests
+namespace Mesh4n.Tests
 {
 	[TestClass]
 	public class FeedReaderFixture : TestFixtureBase

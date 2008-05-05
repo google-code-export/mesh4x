@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-[assembly: AssemblyTitle("SimpleSharing")]
+[assembly: AssemblyTitle("Mesh4n")]
 [assembly: AssemblyDescription("MVPXML Implementation of the SSE standard")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyProduct("SimpleSharing")]
+[assembly: AssemblyProduct("Mesh4n")]

@@ -14,7 +14,7 @@ using System.Xml.XPath;
 using System.Collections;
 using System.Reflection;
 
-namespace SimpleSharing.Tests
+namespace Mesh4n.Tests
 {
 	public abstract class TestFixtureBase
 	{

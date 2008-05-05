@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 using System.Reflection;
 using System.Xml;
 
-namespace SimpleSharing
+namespace Mesh4n
 {
 	public class DynamicXmlItem : XmlItem
 	{

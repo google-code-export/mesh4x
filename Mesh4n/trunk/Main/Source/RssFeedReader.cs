@@ -7,7 +7,7 @@ using System.Xml.XPath;
 using System.Globalization;
 using System.IO;
 
-namespace SimpleSharing
+namespace Mesh4n
 {
 	public class RssFeedReader : FeedReader
 	{

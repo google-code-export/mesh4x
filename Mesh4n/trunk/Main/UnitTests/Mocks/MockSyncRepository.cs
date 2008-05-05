@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Configuration;
 
-namespace SimpleSharing.Tests
+namespace Mesh4n.Tests
 {
 
 	public class MockSyncRepository : ISyncRepository

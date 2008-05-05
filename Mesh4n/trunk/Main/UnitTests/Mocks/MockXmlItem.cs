@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
-using SimpleSharing;
+using Mesh4n;
 
-namespace SimpleSharing.Tests
+namespace Mesh4n.Tests
 {
 	public class MockXmlItem : IXmlItem
 	{

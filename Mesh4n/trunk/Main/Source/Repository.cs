@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel;
 
-namespace SimpleSharing
+namespace Mesh4n
 {
 	/// <summary>
 	/// Base implementation of <see cref="IRepository"/> that provides support for 

@@ -1,7 +1,7 @@
 using System;
 using System.Xml;
 
-namespace SimpleSharing
+namespace Mesh4n
 {
 	public interface IXmlItem : ICloneable<IXmlItem>, IEquatable<IXmlItem>
 	{

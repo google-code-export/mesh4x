@@ -4,7 +4,7 @@
   <Timeouts runTimeout="0" testTimeout="300000" agentNotRespondingTimeout="300000" deploymentTimeout="300000" />
   <Deployment>
     <DeploymentItem filename="UnitTests\Customers.xml" />
-    <DeploymentItem filename="Adapters\Access\SimpleSharing.Access.Tests\MockDatabase.accdb" />
+    <DeploymentItem filename="Adapters\Access\Mesh4n.Access.Tests\MockDatabase.accdb" />
     <DeploymentItem filename="UnitTests\Feed.xml" />
     <DeploymentItem filename="UnitTests\feed.sse" />
   </Deployment>

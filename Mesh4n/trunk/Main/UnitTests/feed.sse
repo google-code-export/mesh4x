@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <rss xmlns:sx="http://feedsync.org/2007/feedsync" version="2.0">
     <channel>
-        <title>SimpleSharing</title>
-        <description>Test feed for SimpleSharing.NET library</description>
+        <title>Mesh4n</title>
+        <description>Test feed for Mesh4n.NET library</description>
         <link>http://sse.mslivelabs.com/</link>
         <link rel="self" href="http://sse.mslivelabs.com/feed.sse?i=293578659bbf40bfb8aa0b9102c36766&amp;c=1" xmlns="http://www.w3.org/2005/Atom" />
         <lastBuildDate>Fri, 29 Jun 2007 17:43:38 GMT</lastBuildDate>

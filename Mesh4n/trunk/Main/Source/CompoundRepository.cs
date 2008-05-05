@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
 
-namespace SimpleSharing
+namespace Mesh4n
 {
 	/// <summary>
 	/// A repository that splits its data between an <see cref="IXmlRepository"/> containing 
@@ -35,7 +35,6 @@ namespace SimpleSharing
 
 			this.xmlRepo = xmlRepo;
 			this.syncRepo = syncRepo;
-			Initialize();
 
 			Tracer.TraceData(this, TraceEventType.Information, "{0} / {1} initialized", xmlRepo.GetType().FullName,
 				syncRepo.GetType().FullName);
@@ -47,7 +46,7 @@ namespace SimpleSharing
 		public IXmlRepository XmlRepository 
 		{ 
 			get { return xmlRepo; }
-			set { xmlRepo = value; RaiseXmlRepositoryChanged(); }
+			set { xmlRepo = value; }
 		}
 
 		/// <summary>
@@ -56,7 +55,7 @@ namespace SimpleSharing
 		public ISyncRepository SyncRepository 
 		{ 
 			get { return syncRepo; }
-			set { syncRepo = value; RaiseSyncRepositoryChanged(); }
+			set { syncRepo = value; }
 		}
 
 		/// <summary>
@@ -74,8 +73,6 @@ namespace SimpleSharing
 		public Item Get(string id)
 		{
 			Guard.ArgumentNotNullOrEmptyString(id, "id");
-
-			EnsureInitialized();
 
 			Tracer.TraceData(this, TraceEventType.Verbose, "Getting item with ID {0}", id);
 
@@ -143,8 +140,6 @@ namespace SimpleSharing
 		private IEnumerable<Item> GetAllImpl(DateTime? since, Predicate<Item> filter)
 		{
 			Guard.ArgumentNotNull(filter, "filter");
-
-			EnsureInitialized();
 
 			// Search deleted items.
 			// TODO: Is there a better way than iterating every sync?
@@ -258,8 +253,6 @@ namespace SimpleSharing
 		/// </summary>
 		public IEnumerable<Item> GetConflicts()
 		{
-			EnsureInitialized();
-
 			Tracer.TraceData(this, TraceEventType.Verbose, "Getting all conflicts");
 
 			foreach (Sync sync in syncRepo.GetConflicts())
@@ -296,8 +289,6 @@ namespace SimpleSharing
 		{
 			Guard.ArgumentNotNull(item, "item");
 
-			EnsureInitialized();
-
 			Tracer.TraceData(this, TraceEventType.Verbose, "Adding item with ID {0}", item.Sync.Id);
 
 			if (!item.Sync.Deleted)
@@ -323,8 +314,6 @@ namespace SimpleSharing
 		{
 			Guard.ArgumentNotNullOrEmptyString(id, "id");
 
-			EnsureInitialized();
-
 			Tracer.TraceData(this, TraceEventType.Verbose, "Deleting item with ID {0}", id);
 
 			xmlRepo.Remove(id);
@@ -347,8 +336,6 @@ namespace SimpleSharing
 		public void Update(Item item)
 		{
 			Guard.ArgumentNotNull(item, "item");
-
-			EnsureInitialized();
 
 			Tracer.TraceData(this, TraceEventType.Verbose, "Updating item with ID {0}", item.Sync.Id);
 
@@ -378,8 +365,6 @@ namespace SimpleSharing
 		public Item Update(Item item, bool resolveConflicts)
 		{
 			Guard.ArgumentNotNull(item, "item");
-
-			EnsureInitialized();
 
 			Tracer.TraceData(this, TraceEventType.Verbose, "Updating item with ID {0} before resolving conflicts", item.Sync.Id);
 
@@ -475,24 +460,6 @@ namespace SimpleSharing
 				return true;
 			else
 				return sync.LastUpdate.When.Value >= since;
-		}
-
-		//private void TraceData(TraceEventType severity, 
-
-		// TODO: XamlBinding - Implement instance validation here
-		private void DoValidate()
-		{
-			if (xmlRepo == null)
-				throw new ArgumentNullException("XmlRepository", Properties.Resources.UnitializedXmlRepository);
-
-			if (syncRepo == null)
-				throw new ArgumentNullException("SyncRepository", Properties.Resources.UnitializedSyncRepository);
-		}
-
-		// TODO: XamlBinding - Implement initialization here
-		protected virtual void DoInitialize()
-		{
-
 		}
 	}
 }

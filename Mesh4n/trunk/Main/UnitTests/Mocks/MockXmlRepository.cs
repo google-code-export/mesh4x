@@ -6,7 +6,7 @@ using System.IO;
 using System.Configuration;
 using System.Xml;
 
-namespace SimpleSharing.Tests
+namespace Mesh4n.Tests
 {
 	public class MockXmlRepository : IXmlRepository
 	{

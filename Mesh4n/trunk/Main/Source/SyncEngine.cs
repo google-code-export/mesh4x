@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace SimpleSharing
+namespace Mesh4n
 {
 	/// <summary>
 	/// Main class that performs synchronization between two repositories.

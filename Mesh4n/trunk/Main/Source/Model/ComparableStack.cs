@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace SimpleSharing
+namespace Mesh4n
 {
 	[Serializable]
 	public class ComparableStack<T> : Stack<T>, IEquatable<ComparableStack<T>>

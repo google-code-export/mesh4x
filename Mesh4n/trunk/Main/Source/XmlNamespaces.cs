@@ -1,4 +1,4 @@
-namespace SimpleSharing
+namespace Mesh4n
 {
 	/// <summary>
 	/// Provides public constants for well-known XML namespaces.

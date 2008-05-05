@@ -11,7 +11,7 @@ using System.IO;
 using System.Xml.XPath;
 using System.Text.RegularExpressions;
 
-namespace SimpleSharing.Tests
+namespace Mesh4n.Tests
 {
 	[TestClass]
 	public class RssWriterFixture : TestFixtureBase

@@ -4,7 +4,7 @@ using System.Text;
 using System.Globalization;
 using System.Diagnostics;
 
-namespace SimpleSharing
+namespace Mesh4n
 {
 	internal static class Guard
 	{

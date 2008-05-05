@@ -6,7 +6,7 @@ using System.Xml.XPath;
 using System.IO;
 using System.Xml;
 
-namespace SimpleSharing
+namespace Mesh4n
 {
 	public class SerializerXmlItem<TData> : DynamicXmlItem
 	{

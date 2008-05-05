@@ -6,11 +6,11 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using SimpleSharing;
+using Mesh4n;
 using System.Xml;
 using System.Threading;
 
-namespace SimpleSharing.Tests
+namespace Mesh4n.Tests
 {
 	/// <summary>
 	/// Base class for fixtures of implementations of <see cref="IXmlRepository"/>.

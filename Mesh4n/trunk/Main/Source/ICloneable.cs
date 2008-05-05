@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace SimpleSharing
+namespace Mesh4n
 {
 	/// <summary>
 	/// Supports cloning, which creates a new instance of a class with 

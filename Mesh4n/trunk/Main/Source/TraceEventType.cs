@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel;
 
-namespace SimpleSharing
+namespace Mesh4n
 {
 	/// <summary>
 	/// Copied from full .NET as it doesn't exist on CF.

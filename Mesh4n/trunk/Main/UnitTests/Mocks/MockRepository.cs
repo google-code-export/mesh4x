@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace SimpleSharing.Tests
+namespace Mesh4n.Tests
 {
 	public class MockRepository : Repository
 	{

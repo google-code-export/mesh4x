@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml.XPath;
 
-namespace SimpleSharing
+namespace Mesh4n
 {
 	[Serializable]
 	public class Item : ICloneable<Item>

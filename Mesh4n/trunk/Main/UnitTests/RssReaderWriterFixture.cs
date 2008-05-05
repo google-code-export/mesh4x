@@ -10,7 +10,7 @@ using System.Xml;
 using System.IO;
 using System.Xml.XPath;
 
-namespace SimpleSharing.Tests
+namespace Mesh4n.Tests
 {
 	[TestClass]
 	public class RssReaderWriterFixture : TestFixtureBase

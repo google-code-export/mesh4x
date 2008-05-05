@@ -4,7 +4,7 @@ using System.Text;
 using System.Xml;
 using System.Diagnostics;
 
-namespace SimpleSharing
+namespace Mesh4n
 {
 	/// <summary>
 	/// Base <see cref="XmlReader"/> that can be use to create new readers by 

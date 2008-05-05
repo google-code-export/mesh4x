@@ -10,7 +10,7 @@ using System.Xml;
 using System.IO;
 using System.Reflection;
 
-namespace SimpleSharing.Tests
+namespace Mesh4n.Tests
 {
 	[TestClass]
 	public class RssReaderFixture : TestFixtureBase
@@ -261,7 +261,7 @@ namespace SimpleSharing.Tests
 
 				List<Item> items = new List<Item>(i);
 
-				Assert.AreEqual("SimpleSharing", feed.Title);
+				Assert.AreEqual("Mesh4n", feed.Title);
 				Assert.AreEqual("http://sse.mslivelabs.com/", feed.Link);
 				Assert.AreEqual(2, items.Count);
 				Assert.AreEqual(2, items[0].Sync.Updates);

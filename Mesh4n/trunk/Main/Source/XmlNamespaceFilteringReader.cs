@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 
-namespace SimpleSharing
+namespace Mesh4n
 {
 	public class XmlNamespaceFilteringReader : XmlWrappingReader
 	{

@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using System;
 
-namespace SimpleSharing.Tests.Model
+namespace Mesh4n.Tests.Model
 {
 	[TestClass]
 	public class ItemFixture : TestFixtureBase

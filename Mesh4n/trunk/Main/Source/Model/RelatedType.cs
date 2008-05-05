@@ -1,6 +1,6 @@
 using System;
 
-namespace SimpleSharing
+namespace Mesh4n
 {
 	[Serializable]
 	public enum RelatedType

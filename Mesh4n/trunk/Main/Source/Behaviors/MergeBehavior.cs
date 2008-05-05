@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
 
-namespace SimpleSharing
+namespace Mesh4n
 {
 	/// <summary>
 	///3.3	Merge Behavior

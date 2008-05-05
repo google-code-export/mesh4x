@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace SimpleSharing
+namespace Mesh4n
 {
 	[Serializable]
 	public class Sync : ICloneable<Sync>, IEquatable<Sync>

@@ -1,7 +1,7 @@
 using System;
 using System.Xml;
 
-namespace SimpleSharing
+namespace Mesh4n
 {
     [Serializable]
     public class XmlItem : IXmlItem

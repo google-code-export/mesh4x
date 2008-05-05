@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Xml;
 
-namespace SimpleSharing.Tests
+namespace Mesh4n.Tests
 {
 	[TestClass]
 	public class DynamicXmlItemFixture

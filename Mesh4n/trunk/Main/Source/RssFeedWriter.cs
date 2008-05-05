@@ -5,7 +5,7 @@ using System.Xml;
 using System.Globalization;
 using System.Text.RegularExpressions;
 
-namespace SimpleSharing
+namespace Mesh4n
 {
 	public class RssFeedWriter : FeedWriter
 	{

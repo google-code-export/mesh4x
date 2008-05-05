@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace SimpleSharing
+namespace Mesh4n
 {
 	/// <summary>
 	/// Delegate signature for a method that can perform preview/filter behavior 

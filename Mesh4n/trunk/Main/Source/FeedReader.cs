@@ -5,7 +5,7 @@ using System.Xml;
 using System.IO;
 using System.Globalization;
 
-namespace SimpleSharing
+namespace Mesh4n
 {
 	/// <summary>
 	/// Base class for feed readers.

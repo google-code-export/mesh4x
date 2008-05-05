@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Globalization;
 
-namespace SimpleSharing
+namespace Mesh4n
 {
 	/// <summary>
 	/// Parses and renders <see cref="DateTime"/> instances in a format 

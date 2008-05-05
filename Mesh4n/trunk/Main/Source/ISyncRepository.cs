@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace SimpleSharing
+namespace Mesh4n
 {
 	[Obsolete("Use IRepository interface directly")]
 	public interface ISyncRepository

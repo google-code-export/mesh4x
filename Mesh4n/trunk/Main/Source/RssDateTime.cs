@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 using System.Globalization;
 using System.Xml.Serialization;
 
-namespace SimpleSharing
+namespace Mesh4n
 {
 	/// <summary>
 	/// RSS/SSE date time, that complies with RFC 822 date format 

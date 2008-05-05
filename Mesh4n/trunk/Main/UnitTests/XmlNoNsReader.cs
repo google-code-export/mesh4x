@@ -4,7 +4,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Schema;
 
-namespace SimpleSharing.Tests
+namespace Mesh4n.Tests
 {
 	internal class XmlNoNsReader : XmlWrappingReader
 	{
