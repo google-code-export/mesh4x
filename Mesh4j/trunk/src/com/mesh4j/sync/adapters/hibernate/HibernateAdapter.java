@@ -22,7 +22,7 @@ import com.mesh4j.sync.security.Security;
 import com.mesh4j.sync.translator.MessageTranslator;
 import com.mesh4j.sync.validations.Guard;
 
-public class HibernateRepository extends AbstractRepositoryAdapter implements SessionProvider {
+public class HibernateAdapter extends AbstractRepositoryAdapter implements SessionProvider {
 	
 	// MODEL VARIABLES
 	private SyncDAO syncDAO;
@@ -31,11 +31,11 @@ public class HibernateRepository extends AbstractRepositoryAdapter implements Se
 	private Session currentSession;
 	
 	// BUSINESS METHODs
-	public HibernateRepository(String fileMappingName){
+	public HibernateAdapter(String fileMappingName){
 		this(new File(fileMappingName));		
 	}
 	
-	public HibernateRepository(File entityMapping){
+	public HibernateAdapter(File entityMapping){
 		
 		this.initializeHibernate(SyncDAO.getMapping(), entityMapping);
 		
@@ -278,7 +278,7 @@ public class HibernateRepository extends AbstractRepositoryAdapter implements Se
 
 	@Override
 	public String getFriendlyName() {		
-		return MessageTranslator.translate(HibernateRepository.class.getName());
+		return MessageTranslator.translate(HibernateAdapter.class.getName());
 	}
 
 	@Override

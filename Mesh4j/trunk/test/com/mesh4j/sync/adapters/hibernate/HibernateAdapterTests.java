@@ -11,7 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.mesh4j.sync.adapters.hibernate.EntityContent;
-import com.mesh4j.sync.adapters.hibernate.HibernateRepository;
+import com.mesh4j.sync.adapters.hibernate.HibernateAdapter;
 import com.mesh4j.sync.filter.NullFilter;
 import com.mesh4j.sync.model.Content;
 import com.mesh4j.sync.model.Item;
@@ -19,14 +19,14 @@ import com.mesh4j.sync.model.Sync;
 import com.mesh4j.sync.test.utils.TestHelper;
 
 
-public class HibernateRepositoryTests {
+public class HibernateAdapterTests {
 
-	private HibernateRepository repo;
+	private HibernateAdapter repo;
 	
 	@Before
 	public void setUp(){
 		if(repo == null ){
-			repo = new HibernateRepository(HibernateRepositoryTests.class.getResource("User.hbm.xml").getFile());
+			repo = new HibernateAdapter(HibernateAdapterTests.class.getResource("User.hbm.xml").getFile());
 		}
 		
 	}
@@ -161,6 +161,6 @@ System.out.println(itemLoaded.getContent().getPayload().asXML());
 	
 	@Test
 	public void shouldReturnFriendlyName() {
-		Assert.assertFalse(HibernateRepository.class.getName() == repo.getFriendlyName());
+		Assert.assertFalse(HibernateAdapter.class.getName() == repo.getFriendlyName());
 	}
 }

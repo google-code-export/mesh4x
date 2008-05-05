@@ -4,11 +4,11 @@ import org.junit.Assert;
 
 import com.mesh4j.sync.AbstractSyncEngineTest;
 import com.mesh4j.sync.RepositoryAdapter;
-import com.mesh4j.sync.adapters.hibernate.HibernateRepository;
+import com.mesh4j.sync.adapters.hibernate.HibernateAdapter;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.test.utils.MockRepository;
 
-public class HibernateSyncEngineRightRepoTest extends AbstractSyncEngineTest {
+public class HibernateSyncEngineRightTest extends AbstractSyncEngineTest {
 
 	@Override
 	protected RepositoryAdapter makeLeftRepository(Item... items) {
@@ -17,7 +17,7 @@ public class HibernateSyncEngineRightRepoTest extends AbstractSyncEngineTest {
 
 	@Override
 	protected RepositoryAdapter makeRightRepository(Item... items) {
-		HibernateRepository repo = new HibernateRepository(this.getClass().getResource("User.hbm.xml").getFile());
+		HibernateAdapter repo = new HibernateAdapter(this.getClass().getResource("User.hbm.xml").getFile());
 		
 		repo.deleteAll();		
 		Assert.assertEquals(0, repo.getAll().size());

@@ -20,7 +20,7 @@ import com.mesh4j.sync.adapters.feed.FeedWriter;
 import com.mesh4j.sync.adapters.feed.XMLContent;
 import com.mesh4j.sync.adapters.feed.atom.AtomSyndicationFormat;
 import com.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
-import com.mesh4j.sync.adapters.hibernate.HibernateRepository;
+import com.mesh4j.sync.adapters.hibernate.HibernateAdapter;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.Sync;
 import com.mesh4j.sync.security.Security;
@@ -42,7 +42,7 @@ public class InterRepositoriesTests {
 		
 		FeedAdapter feedRepo = new FeedAdapter(feed);
 				
-		HibernateRepository	hibernateRepo = new HibernateRepository(InterRepositoriesTests.class.getResource("User.hbm.xml").getFile());
+		HibernateAdapter	hibernateRepo = new HibernateAdapter(InterRepositoriesTests.class.getResource("User.hbm.xml").getFile());
 		
 		List<Item> allItems = hibernateRepo.getAll();
 		
@@ -63,7 +63,7 @@ public class InterRepositoriesTests {
 		
 		FeedAdapter feedRepo = new FeedAdapter();
 		
-		HibernateRepository	hibernateRepo = new HibernateRepository(InterRepositoriesTests.class.getResource("User.hbm.xml").getFile());
+		HibernateAdapter	hibernateRepo = new HibernateAdapter(InterRepositoriesTests.class.getResource("User.hbm.xml").getFile());
 		
 		List<Item> allItems = hibernateRepo.getAll();
 		
@@ -97,7 +97,7 @@ public class InterRepositoriesTests {
 		FeedAdapter feedRepo = new FeedAdapter(feed);
 				
 		File fileMapping = new File(this.getClass().getResource("User.hbm.xml").getFile());
-		HibernateRepository	hibernateRepo = new HibernateRepository(fileMapping);
+		HibernateAdapter	hibernateRepo = new HibernateAdapter(fileMapping);
 		
 		hibernateRepo.deleteAll();
 		
@@ -123,7 +123,7 @@ public class InterRepositoriesTests {
 		FeedAdapter feedRepo = new FeedAdapter(feed);
 				
 		File fileMapping = new File(this.getClass().getResource("User.hbm.xml").getFile());
-		HibernateRepository	hibernateRepo = new HibernateRepository(fileMapping);
+		HibernateAdapter	hibernateRepo = new HibernateAdapter(fileMapping);
 		
 		hibernateRepo.deleteAll();
 		
