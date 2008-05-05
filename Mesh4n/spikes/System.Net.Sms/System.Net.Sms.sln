@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sms", "Source\Sms.csproj", "{6CD12DAA-EAC6-4298-AC01-A8A0FD53FD33}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sms.UnitTests", "UnitTests\Sms.UnitTests.csproj", "{4E0F5E6F-EE08-4BAD-BE98-887FB6B6263A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6CD12DAA-EAC6-4298-AC01-A8A0FD53FD33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CD12DAA-EAC6-4298-AC01-A8A0FD53FD33}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6CD12DAA-EAC6-4298-AC01-A8A0FD53FD33}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CD12DAA-EAC6-4298-AC01-A8A0FD53FD33}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4E0F5E6F-EE08-4BAD-BE98-887FB6B6263A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E0F5E6F-EE08-4BAD-BE98-887FB6B6263A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E0F5E6F-EE08-4BAD-BE98-887FB6B6263A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E0F5E6F-EE08-4BAD-BE98-887FB6B6263A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
