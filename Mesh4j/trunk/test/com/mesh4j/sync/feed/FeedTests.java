@@ -124,4 +124,22 @@ public class FeedTests {
 
 	}
 	
+	
+	@Test
+	public void shouldGetItemBySyncIDReturnsNull(){
+		Feed feed = new Feed();
+		Item item = feed.getItemBySyncId("1232");
+		Assert.assertNull(item);
+	}
+	
+	@Test
+	public void shouldGetItemBySyncIDReturnsItem(){
+		Item item0 = new Item(null, new Sync("1232")); 
+		Item item1 = new Item(null, new Sync("1233"));
+		
+		Feed feed = new Feed(item0, item1);
+		Item item = feed.getItemBySyncId("1232");
+		Assert.assertNotNull(item);
+		Assert.assertSame(item0, item);
+	}
 }

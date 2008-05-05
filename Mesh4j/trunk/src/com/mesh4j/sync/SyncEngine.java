@@ -160,7 +160,7 @@ public class SyncEngine {
 		// actually import items, which is undesirable.
 		ArrayList<Item> conflicts = new ArrayList<Item>();
 
-		for (MergeResult result : items) {
+		for (MergeResult result : items) {			
 			if (result.isMergeNone() && result.getProposed() != null
 					&& result.getProposed().hasSyncConflicts()) {
 				conflicts.add(result.getProposed());

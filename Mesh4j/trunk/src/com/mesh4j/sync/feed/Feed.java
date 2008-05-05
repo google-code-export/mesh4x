@@ -14,6 +14,16 @@ public class Feed {
 	private Element payload;
 		
 	// BUSINES METHODS
+	public Feed(){
+		super();
+	}
+	
+	public Feed(Item ...items){
+		super();
+		for (Item item : items) {
+			this.addItem(item);
+		}
+	}
 	
 	public Feed addItem(Item item) {
 		this.feedItems.add(item);
@@ -35,6 +45,15 @@ public class Feed {
 	}
 	public void setPayload(Element payload) {
 		this.payload = payload;		
+	}
+
+	public Item getItemBySyncId(String syncId) {
+		for (Item item : this.feedItems) {
+			if(item.getSyncId().equals(syncId)){
+				return item;
+			}
+		}
+		return null;
 	}
 
 }

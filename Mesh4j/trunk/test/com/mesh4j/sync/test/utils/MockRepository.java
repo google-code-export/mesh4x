@@ -24,12 +24,7 @@ public class MockRepository extends AbstractRepository {
 		super();
 	}
 
-	public MockRepository(Item item)
-	{
-		super();
-		items.put(item.getSyncId(), item);
-	}
-	public MockRepository(Item[] allItems)
+	public MockRepository(Item ... allItems)
 	{
 		
 		super();

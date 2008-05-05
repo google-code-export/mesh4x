@@ -99,10 +99,7 @@ public class InterRepositoriesTests {
 		File fileMapping = new File(this.getClass().getResource("User.hbm.xml").getFile());
 		HibernateRepository	hibernateRepo = new HibernateRepository(fileMapping);
 		
-		List<Item> all = hibernateRepo.getAll();
-		for (Item item : all) {
-			hibernateRepo.delete(item.getSyncId());
-		}
+		hibernateRepo.deleteAll();
 		
 		SyncEngine engine = new SyncEngine(feedRepo, hibernateRepo);
 		List<Item> conflicts = engine.synchronize();
@@ -128,10 +125,7 @@ public class InterRepositoriesTests {
 		File fileMapping = new File(this.getClass().getResource("User.hbm.xml").getFile());
 		HibernateRepository	hibernateRepo = new HibernateRepository(fileMapping);
 		
-		List<Item> all = hibernateRepo.getAll();
-		for (Item item : all) {
-			hibernateRepo.delete(item.getSyncId());
-		}
+		hibernateRepo.deleteAll();
 		
 		SyncEngine engine = new SyncEngine(feedRepo, hibernateRepo);
 		List<Item> conflicts = engine.synchronize();

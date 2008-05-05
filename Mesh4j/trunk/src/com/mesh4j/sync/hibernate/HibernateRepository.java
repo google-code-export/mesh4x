@@ -3,15 +3,10 @@ package com.mesh4j.sync.hibernate;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.dom4j.DocumentException;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
-import org.hibernate.EntityMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -20,194 +15,265 @@ import org.hibernate.metadata.ClassMetadata;
 
 import com.mesh4j.sync.AbstractRepository;
 import com.mesh4j.sync.Filter;
-import com.mesh4j.sync.feed.FeedReader;
-import com.mesh4j.sync.feed.FeedWriter;
-import com.mesh4j.sync.feed.rss.RssSyndicationFormat;
-import com.mesh4j.sync.model.Content;
 import com.mesh4j.sync.model.Item;
+import com.mesh4j.sync.model.NullContent;
 import com.mesh4j.sync.model.Sync;
 import com.mesh4j.sync.security.Security;
 import com.mesh4j.sync.translator.MessageTranslator;
-import com.mesh4j.sync.utils.DateHelper;
-import com.mesh4j.sync.utils.IdGenerator;
+import com.mesh4j.sync.validations.Guard;
 
-public class HibernateRepository extends AbstractRepository {
-
-	// CONSTANTS
-	private final static String SYNC_INFO = "SyncInfo";
-	private final static String SYNC_INFO_ATTR_SYNC_ID = "sync_id";
-	private final static String SYNC_INFO_ATTR_ENTITY_ID = "entity_id";
-	private final static String SYNC_INFO_ATTR_ENTITY = "entity_name";
-	private final static String SYNC_INFO_ATTR_LAST_UPDATE = "last_update";
-	private final static String SYNC_INFO_ATTR_SYNC_DATA = "sync_data";
+public class HibernateRepository extends AbstractRepository implements SessionProvider {
 	
-	private final static Log Logger = LogFactory.getLog(HibernateRepository.class);
-
-	// MODEL VARIABLE
+	// MODEL VARIABLES
+	private SyncDAO syncDAO;
+	private EntityDAO entityDAO;
 	private SessionFactory sessionFactory;
-	private Session session;
-	private String entityName;
-	private String entityIDAttributeName;
+	private Session currentSession;
 	
-	// BUSINESS METHODS
+	// BUSINESS METHODs
 	public HibernateRepository(String fileMappingName){
 		this(new File(fileMappingName));		
 	}
 	
-	public HibernateRepository(File fileMapping){
+	public HibernateRepository(File entityMapping){
 		
-		Configuration hibernateConfiguration = new Configuration();
-		hibernateConfiguration.addFile(fileMapping);	
+		this.initializeHibernate(SyncDAO.getMapping(), entityMapping);
 		
-		File syncMapping = new File(this.getClass().getResource("SyncInfo.hbm.xml").getFile());   // TODO (JMT) inject sync info mapping name -> Spring?
-		hibernateConfiguration.addFile(syncMapping);
+		this.syncDAO = new SyncDAO(this);
 		
-		this.sessionFactory = hibernateConfiguration.buildSessionFactory();
 		ClassMetadata classMetadata = this.getClassMetadata();
-		this.entityName = classMetadata.getEntityName();						// TODO (JMT) set node attribute value
-		this.entityIDAttributeName = classMetadata.getIdentifierPropertyName();
-		
-		this.newSession();
+		String entityName = classMetadata.getEntityName();						// TODO (JMT) set node attribute value
+		String entityIDNode = classMetadata.getIdentifierPropertyName();
+		this.entityDAO = new EntityDAO(entityName, entityIDNode, this);
+	}
+
+	private void initializeHibernate(File syncMapping, File entityMapping) {
+		Configuration hibernateConfiguration = new Configuration();
+		hibernateConfiguration.addFile(entityMapping);	
+		hibernateConfiguration.addFile(syncMapping);		
+		this.sessionFactory = hibernateConfiguration.buildSessionFactory();
 	}
 	
 	@SuppressWarnings("unchecked")
 	private ClassMetadata getClassMetadata(){
 		Map<String, ClassMetadata> map = sessionFactory.getAllClassMetadata();
 		for (String entityName : map.keySet()) {
-			if(!SYNC_INFO.equals(entityName)){
+			if(!syncDAO.getEntityName().equals(entityName)){
 				ClassMetadata classMetadata = map.get(entityName);
 				return classMetadata;
 			}
 		}
 		return null;
 	}
-	
-	public void newSession() {
-		if(this.session != null){
-			session.clear();
-			this.session.close();
-		}
-		Session session = sessionFactory.openSession();
-		this.session = session.getSession(EntityMode.DOM4J);		
-	}
 
+	// TODO (JMT) use dbCommand or AOP (Transaction annotation with Spring)
 	@Override
 	public void add(Item item) {
-		Transaction trx = session.beginTransaction();
-		try {
-			Element entityElement = ItemHibernateContent.normalizeContent(entityName, item.getContent());
-			String entityID = entityElement.element(this.entityIDAttributeName).getText();
-			session.save(entityName, entityElement);
-			Element syncElement = this.convertSync2Element(item.getSync(), entityID);
-			session.save(SYNC_INFO, syncElement);
-			session.flush();
-			trx.commit();
-		} catch (DocumentException e) {
-			Logger.error(e.getMessage(), e); // TODO (JMT) throws an exception
-			trx.rollback();
+		
+		Guard.argumentNotNull(item, "item");
+
+		EntityContent entity = entityDAO.normalizeContent(item.getContent());
+		
+		Session session =  newSession();
+		Transaction tx = session.beginTransaction();
+		
+		if (!item.isDeleted())
+		{
+			entityDAO.save(entity);
 		}
+		SyncInfo syncInfo = new SyncInfo(item.getSync(), entity);
+		syncDAO.save(syncInfo);
+		
+		tx.commit();
+		closeSession();	
 	}
 
 	@Override
-	public void delete(String id) {
-
-		Element syncElement = getSyncElement(id);
-		Element entityElement = getEntityElement(syncElement);
+	public void delete(String syncId) {
 		
-		Transaction trx = session.beginTransaction();
-		session.delete(this.entityName, entityElement);
-		session.delete(SYNC_INFO, syncElement);
-		session.flush();
-		trx.commit();
+		Guard.argumentNotNullOrEmptyString(syncId, "id");
+
+		Session session = newSession();
+		SyncInfo syncInfo = syncDAO.get(syncId);
+		closeSession();
+		
+		session = newSession();
+		Transaction tx = session.beginTransaction();
+		if (syncInfo != null)
+		{
+			syncInfo.getSync().delete(Security.getAuthenticatedUser(), new Date());
+			syncDAO.save(syncInfo);
+			
+			entityDAO.delete(syncInfo.getEntityId());
+		}
+		
+		tx.commit();
+		closeSession();
 	}
 	
-
 	@Override
 	public void update(Item item) {
-		Element entityElement = ItemHibernateContent.normalizeContent(entityName, item.getContent());
-		String entityID = entityElement.element(this.entityIDAttributeName).getText();
-		Element syncElement;
-		try {
-			syncElement = this.convertSync2Element(item.getSync(), entityID);
-		} catch (DocumentException e) {
-			Logger.error(e.getMessage(), e);
-			return;   // TODO (JMT) throws an exception
-		}
 		
-		session.clear();
-		Transaction trx = session.beginTransaction();
-		session.saveOrUpdate(entityName, entityElement);		
-		session.update(SYNC_INFO, syncElement);
-		session.flush();
-		trx.commit();
+		Guard.argumentNotNull(item, "item");
+		
+		if (item.isDeleted())
+		{
+			Session session = newSession();
+			SyncInfo syncInfo = syncDAO.get(item.getSyncId());
+			if(syncInfo != null){
+				syncInfo.updateSync(item.getSync());
+				EntityContent entity = entityDAO.get(syncInfo.getEntityId());
+				closeSession();
+				
+				session = newSession();
+				Transaction tx = session.beginTransaction();
+				if(entity != null){
+					entityDAO.delete(entity);
+				}
+				syncDAO.save(syncInfo);
+				tx.commit();
+			}
+			closeSession();
+		}
+		else
+		{
+			Session session = newSession();
+			Transaction tx = session.beginTransaction();
+			EntityContent entity = entityDAO.normalizeContent(item.getContent());
+			entityDAO.save(entity);
+			SyncInfo syncInfo = new SyncInfo(item.getSync(), entity);
+			syncDAO.save(syncInfo);	
+			tx.commit();
+			closeSession();
+		}
 	}
 
 	@Override
-	public Item get(String id) {
-		Element syncElement = this.getSyncElement(id);
-		if(syncElement == null){
+	public Item get(String syncId) {
+		
+		Guard.argumentNotNullOrEmptyString(syncId, "id");
+
+		newSession();
+		SyncInfo syncInfo = syncDAO.get(syncId);
+		
+		if(syncInfo == null){
 			return null;
 		}
 		
-		Element entityElement = this.getEntityElement(syncElement); 
-		if(entityElement == null){
-			return null;
-		}
-		Item item = null;
-		try {
-			item = this.makeItem(syncElement, entityElement);
-		} catch (DocumentException e) {// TODO (JMT) throws an exception
-			Logger.error(e.getMessage(), e);
-		}
+		EntityContent entity = entityDAO.get(syncInfo.getEntityId());
+		closeSession();
 		
-		return item;
+		this.updateSync(entity, syncInfo);
+		
+		
+		if(syncInfo.isDeleted()){
+			NullContent nullEntity = new NullContent(syncInfo.getSyncId());
+			return new Item(nullEntity, syncInfo.getSync());
+		} else {
+			return new Item(entity, syncInfo.getSync());			
+		}
 	}
 
-	private Item makeItem(Element syncElement, Element entityElement) throws DocumentException {		
-		Sync sync = this.convertElement2Sync(syncElement);		
-		return makeItem(sync, entityElement);
+	private void updateSync(EntityContent entity, SyncInfo syncInfo){
+		Session session = newSession();
+		Transaction tx = session.beginTransaction();
+		
+		Sync sync = syncInfo.getSync();
+		if (entity != null && sync == null)
+		{
+			// Add sync on-the-fly.
+			sync = new Sync(syncInfo.getSyncId(), Security.getAuthenticatedUser(), new Date(), false);
+			syncInfo.updateSync(sync);
+			syncDAO.save(syncInfo);
+		}
+		else if (entity == null && sync != null)
+		{
+			if (!sync.isDeleted())
+			{
+				sync.delete(Security.getAuthenticatedUser(), new Date());
+				syncDAO.save(syncInfo);
+			}
+		}
+		else
+		{
+			/// Ensures the Sync information is current WRT the 
+			/// item actual data. If it's not, a new 
+			/// update will be added. Used when exporting/retrieving 
+			/// items from the local stores.
+			if (!syncInfo.isDeleted() && syncInfo.contentHasChanged(entity))
+			{
+				sync.update(Security.getAuthenticatedUser(), new Date(), sync.isDeleted());
+				syncInfo.setEntityVersion(entity.getEntityVersion());
+				syncDAO.save(syncInfo);
+			}
+		}
+		tx.commit();
+		closeSession();
 	}
 
-	private Item makeItem(Sync sync, Element entityElement) throws DocumentException {
-		Content content = new ItemHibernateContent(entityElement);
-		Item item = new Item(content, sync);
-		return item;
-	}
-	
-	@SuppressWarnings("unchecked")
 	@Override
 	protected List<Item> getAll(Date since, Filter<Item> filter) {
+	
 		ArrayList<Item> result = new ArrayList<Item>();
 		
-		// TODO (JMT) improve query
-		String hqlQuery ="FROM " + this.entityName;
-		List<Element> entities = session.createQuery(hqlQuery).list();
+		Session session = newSession();
+		List<EntityContent> entities = entityDAO.getAll();
+		List<SyncInfo> syncInfos = syncDAO.getAll(entityDAO.getEntityName());
+		closeSession();
+		
+		Map<String, SyncInfo> syncInfoAsMapByEntity = this.makeSyncMapByEntity(syncInfos);
  
-		for (Element entityElement : entities) {
+		for (EntityContent entity : entities) {
 			
-			String entityID = entityElement.element(this.entityIDAttributeName).getText();
+			SyncInfo syncInfo = syncInfoAsMapByEntity.get(entity.getEntityId());			
 
-			String syncQuery ="FROM " + SYNC_INFO + 
-				" WHERE " + SYNC_INFO_ATTR_ENTITY + " = '" + this.entityName + "' and " + SYNC_INFO_ATTR_ENTITY_ID + " = '"+ entityID +"' ";
-			Element syncElement = (Element) session.createQuery(syncQuery).uniqueResult();
+			Sync sync;
+			if(syncInfo == null){
+				sync = new Sync(syncDAO.newSyncID(), Security.getAuthenticatedUser(), new Date(), false);
+				
+				SyncInfo newSyncInfo = new SyncInfo(sync, entity);
+				
+				session = newSession();
+				Transaction tx = session.beginTransaction();
+				syncDAO.save(newSyncInfo);
+				tx.commit();
+				closeSession();
+				
+			} else {
+				sync = syncInfo.getSync();
+				syncInfos.remove(syncInfo);
+			}
+			Item item = new Item(entity, sync);
+			
+			if(appliesFilter(item, since, filter)){
+				result.add(item);
+			}
 
-			try {
-				Item item;
-				if(syncElement == null){
-					Sync sync = saveNewSync(entityID);
-					item = makeItem(sync, entityElement);
-				} else {
-					item = makeItem(syncElement, entityElement);
-				}
-				boolean dateOk = since == null || (item.getSync().getLastUpdate() == null || since.compareTo(item.getSync().getLastUpdate().getWhen()) <= 0);  // TODO (JMT) create db filter
-				if(filter.applies(item) && dateOk){
-					result.add(item);
-				}
-			} catch (DocumentException e) {
-				Logger.error(e.getMessage(), e); // TODO (JMT) throws an exception
+		}
+
+		for (SyncInfo syncInfo : syncInfos) {
+			Item item = new Item(
+				new NullContent(syncInfo.getSync().getId()),
+				syncInfo.getSync());
+			
+			if(appliesFilter(item, since, filter)){
+				result.add(item);
 			}
 		}
 		return result;
+	}
+
+	private Map<String, SyncInfo> makeSyncMapByEntity(List<SyncInfo> syncInfos) {
+		HashMap<String, SyncInfo> syncInfoMap = new HashMap<String, SyncInfo>();
+		for (SyncInfo syncInfo : syncInfos) {
+			syncInfoMap.put(syncInfo.getEntityId(), syncInfo);
+		}
+		return syncInfoMap;
+	}
+
+	private boolean appliesFilter(Item item, Date since, Filter<Item> filter) {
+		boolean dateOk = since == null || (item.getSync().getLastUpdate() == null || since.compareTo(item.getSync().getLastUpdate().getWhen()) <= 0);  // TODO (JMT) create db filter
+		return filter.applies(item) && dateOk;
 	}
 
 	@Override
@@ -222,66 +288,39 @@ public class HibernateRepository extends AbstractRepository {
 	
 	@Override
 	public List<Item> merge(List<Item> items) {
-		return items; // Nothing to do, see HibernateRepository>>supportsMerge()
+		throw new UnsupportedOperationException();
 	}
 	
-	// TODO (JMT) verify close connection
-
-	protected Element getSyncElement(String id) {
-		Element syncInfo = (Element) session.get(SYNC_INFO, id);
-		return syncInfo;
-	}
-
-	protected Element getEntityElement(Element syncElement) {
-		String entityID = syncElement.element(SYNC_INFO_ATTR_ENTITY_ID).getText();
-		Element entityElement = (Element) session.get(this.entityName, entityID);
-		return entityElement;
-	}
-	
-	protected Element convertSync2Element(Sync sync, String entityID) throws DocumentException {
-		FeedWriter writer = new FeedWriter(RssSyndicationFormat.INSTANCE);
-		Element syncElementRoot = DocumentHelper.createElement(SYNC_INFO);
-		syncElementRoot.addElement(SYNC_INFO_ATTR_SYNC_ID).addText(sync.getId());
-		syncElementRoot.addElement(SYNC_INFO_ATTR_ENTITY).addText(this.entityName);
-		syncElementRoot.addElement(SYNC_INFO_ATTR_ENTITY_ID).addText(entityID);
-		syncElementRoot.addElement(SYNC_INFO_ATTR_LAST_UPDATE).addText(DateHelper.formatRFC822(new Date()));
+	public void deleteAll() {
+		Session session = newSession();
 		
-		Element syncData = DocumentHelper.createElement(RssSyndicationFormat.ATTRIBUTE_PAYLOAD);
-		syncData.addNamespace(RssSyndicationFormat.SX_PREFIX, RssSyndicationFormat.NAMESPACE);
-		writer.writeSync(syncData, sync);
-		
-		String syncAsXML = syncData.element(RssSyndicationFormat.SX_ELEMENT_SYNC).asXML();
-		syncElementRoot.addElement(SYNC_INFO_ATTR_SYNC_DATA).addText(syncAsXML);
-		
-		return syncElementRoot;
-	}
-	
-	protected Sync convertElement2Sync(Element syncInfoElement) throws DocumentException {
-		Element syncData = syncInfoElement.element(SYNC_INFO_ATTR_SYNC_DATA);
-		Element syncElement = DocumentHelper.parseText(syncData.getText()).getRootElement();
-		//Element syncElement = DocumentHelper.parseText(syncData.getText()).getRootElement().element(RssSyndicationFormat.SX_ELEMENT_SYNC);
-		
-		FeedReader reader = new FeedReader(RssSyndicationFormat.INSTANCE);
-		Sync sync = reader.readSync(syncElement);
-		if(sync == null){
-			String entityID = syncElement.element(SYNC_INFO_ATTR_ENTITY_ID).getText();
-			sync = saveNewSync(entityID);
-		}
-		return sync;
-	}
-
-	private Sync saveNewSync(String entityID) throws DocumentException {
-		Sync sync = this.makeNewSync();
-		Element syncElement = this.convertSync2Element(sync, entityID);
-
 		Transaction trx = session.beginTransaction();
-		session.save(SYNC_INFO, syncElement);
-		session.flush();
+		String hqlDelete = "delete " + syncDAO.getEntityName();
+		session.createQuery( hqlDelete ).executeUpdate();
+		
+		hqlDelete = "delete " + entityDAO.getEntityName();
+		session.createQuery( hqlDelete ).executeUpdate();
+		
 		trx.commit();
-		return sync;
+		closeSession();
+		
 	}
 
-	protected Sync makeNewSync() {
-		return new Sync(IdGenerator.newID(), Security.getAuthenticatedUser(), new Date(), false);
+	private void closeSession() {
+		if(currentSession != null){
+			currentSession.close();
+			currentSession = null;
+		}
+		
+	}
+
+	private Session newSession() {
+		currentSession = this.sessionFactory.openSession();
+		return currentSession;
+	}
+
+	@Override
+	public Session getCurrentSession() {
+		return currentSession;
 	}
 }

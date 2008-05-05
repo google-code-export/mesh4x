@@ -56,7 +56,7 @@ public class History implements Cloneable {
 		History Hy = history;
 
 		if (Hx.getBy() != null && Hx.getBy().trim().length() > 0) {
-			return Hx.getBy() == Hy.getBy()
+			return Hx.getBy().equals(Hy.getBy())
 					&& Hy.getSequence() >= Hx.getSequence();
 		} else if (Hy.getBy() == null || Hy.getBy().trim().length() == 0) {
 			boolean okWhen =

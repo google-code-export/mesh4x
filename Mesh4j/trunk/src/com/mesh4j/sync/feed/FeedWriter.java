@@ -1,5 +1,18 @@
 package com.mesh4j.sync.feed;
 
+import static com.mesh4j.sync.feed.SyndicationFormat.SX_ATTRIBUTE_HISTORY_BY;
+import static com.mesh4j.sync.feed.SyndicationFormat.SX_ATTRIBUTE_HISTORY_SEQUENCE;
+import static com.mesh4j.sync.feed.SyndicationFormat.SX_ATTRIBUTE_HISTORY_WHEN;
+import static com.mesh4j.sync.feed.SyndicationFormat.SX_ATTRIBUTE_SYNC_DELETED;
+import static com.mesh4j.sync.feed.SyndicationFormat.SX_ATTRIBUTE_SYNC_ID;
+import static com.mesh4j.sync.feed.SyndicationFormat.SX_ATTRIBUTE_SYNC_NO_CONFLICTS;
+import static com.mesh4j.sync.feed.SyndicationFormat.SX_ATTRIBUTE_SYNC_UPDATES;
+import static com.mesh4j.sync.feed.SyndicationFormat.SX_ELEMENT_AUTHOR;
+import static com.mesh4j.sync.feed.SyndicationFormat.SX_ELEMENT_CONFLICTS;
+import static com.mesh4j.sync.feed.SyndicationFormat.SX_ELEMENT_HISTORY;
+import static com.mesh4j.sync.feed.SyndicationFormat.SX_ELEMENT_SYNC;
+import static com.mesh4j.sync.feed.SyndicationFormat.SX_PREFIX;
+
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
@@ -15,19 +28,6 @@ import com.mesh4j.sync.model.History;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.Sync;
 import com.mesh4j.sync.security.Security;
-
-import static com.mesh4j.sync.feed.SyndicationFormat.SX_PREFIX;
-import static com.mesh4j.sync.feed.SyndicationFormat.SX_ELEMENT_SYNC;
-import static com.mesh4j.sync.feed.SyndicationFormat.SX_ELEMENT_HISTORY;
-import static com.mesh4j.sync.feed.SyndicationFormat.SX_ELEMENT_CONFLICTS;
-import static com.mesh4j.sync.feed.SyndicationFormat.SX_ATTRIBUTE_SYNC_ID;
-import static com.mesh4j.sync.feed.SyndicationFormat.SX_ATTRIBUTE_SYNC_UPDATES;
-import static com.mesh4j.sync.feed.SyndicationFormat.SX_ATTRIBUTE_SYNC_DELETED;
-import static com.mesh4j.sync.feed.SyndicationFormat.SX_ATTRIBUTE_SYNC_NO_CONFLICTS;
-import static com.mesh4j.sync.feed.SyndicationFormat.SX_ATTRIBUTE_HISTORY_SEQUENCE;
-import static com.mesh4j.sync.feed.SyndicationFormat.SX_ATTRIBUTE_HISTORY_WHEN;
-import static com.mesh4j.sync.feed.SyndicationFormat.SX_ATTRIBUTE_HISTORY_BY;
-import static com.mesh4j.sync.feed.SyndicationFormat.SX_ELEMENT_AUTHOR;
 
 public class FeedWriter {
 

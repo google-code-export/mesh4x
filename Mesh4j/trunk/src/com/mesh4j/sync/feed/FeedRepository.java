@@ -11,7 +11,7 @@ import com.mesh4j.sync.model.NullContent;
 import com.mesh4j.sync.translator.MessageTranslator;
 import com.mesh4j.sync.validations.Guard;
 
-// TODO (JMT) lazy loading for feed items
+// TODO (JMT) incremental loading for feed items, xml pull parser?
 public class FeedRepository extends AbstractRepository{
 
 	// MODEL VARIABLES

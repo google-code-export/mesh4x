@@ -220,7 +220,7 @@ public class Sync implements Cloneable{
 	}
 	
 	public boolean isSubsumedBy(Sync sync) {
-		History Hx = this.getLastUpdate();
+		History Hx = this.getLastUpdate(); 
 		for(History Hy : sync.getUpdatesHistory())
 		{
 			if (Hx.IsSubsumedBy(Hy))

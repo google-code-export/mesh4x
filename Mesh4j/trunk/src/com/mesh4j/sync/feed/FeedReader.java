@@ -1,5 +1,18 @@
 package com.mesh4j.sync.feed;
 
+import static com.mesh4j.sync.feed.SyndicationFormat.ATTRIBUTE_PAYLOAD;
+import static com.mesh4j.sync.feed.SyndicationFormat.SX_ATTRIBUTE_HISTORY_BY;
+import static com.mesh4j.sync.feed.SyndicationFormat.SX_ATTRIBUTE_HISTORY_SEQUENCE;
+import static com.mesh4j.sync.feed.SyndicationFormat.SX_ATTRIBUTE_HISTORY_WHEN;
+import static com.mesh4j.sync.feed.SyndicationFormat.SX_ATTRIBUTE_ITEM_DESCRIPTION;
+import static com.mesh4j.sync.feed.SyndicationFormat.SX_ATTRIBUTE_ITEM_TITLE;
+import static com.mesh4j.sync.feed.SyndicationFormat.SX_ATTRIBUTE_SYNC_DELETED;
+import static com.mesh4j.sync.feed.SyndicationFormat.SX_ATTRIBUTE_SYNC_ID;
+import static com.mesh4j.sync.feed.SyndicationFormat.SX_ATTRIBUTE_SYNC_NO_CONFLICTS;
+import static com.mesh4j.sync.feed.SyndicationFormat.SX_ELEMENT_CONFLICTS;
+import static com.mesh4j.sync.feed.SyndicationFormat.SX_ELEMENT_HISTORY;
+import static com.mesh4j.sync.feed.SyndicationFormat.SX_ELEMENT_SYNC;
+
 import java.io.File;
 import java.io.InputStream;
 import java.io.Reader;
@@ -18,16 +31,6 @@ import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.Sync;
 import com.mesh4j.sync.security.Security;
 import com.mesh4j.sync.utils.IdGenerator;
-
-import static com.mesh4j.sync.feed.SyndicationFormat.ATTRIBUTE_PAYLOAD;
-import static com.mesh4j.sync.feed.SyndicationFormat.SX_ELEMENT_SYNC;
-import static com.mesh4j.sync.feed.SyndicationFormat.SX_ATTRIBUTE_SYNC_ID;
-import static com.mesh4j.sync.feed.SyndicationFormat.SX_ELEMENT_HISTORY;
-import static com.mesh4j.sync.feed.SyndicationFormat.SX_ATTRIBUTE_HISTORY_SEQUENCE;
-import static com.mesh4j.sync.feed.SyndicationFormat.SX_ATTRIBUTE_HISTORY_WHEN;
-import static com.mesh4j.sync.feed.SyndicationFormat.SX_ATTRIBUTE_HISTORY_BY;
-import static com.mesh4j.sync.feed.SyndicationFormat.SX_ATTRIBUTE_ITEM_TITLE;
-import static com.mesh4j.sync.feed.SyndicationFormat.SX_ATTRIBUTE_ITEM_DESCRIPTION;
 
 public class FeedReader {
 	
@@ -123,9 +126,18 @@ public class FeedReader {
 	public Sync readSync(Element syncElement) {
 		String syncID = syncElement.attributeValue(SX_ATTRIBUTE_SYNC_ID);
 		//int updates = Integer.valueOf(syncElement.attributeValue(SX_ATTRIBUTE_SYNC_UPDATES));
+		boolean deleted = Boolean.parseBoolean(syncElement.attributeValue(SX_ATTRIBUTE_SYNC_DELETED));
+		boolean noConflicts = Boolean.parseBoolean(syncElement.attributeValue(SX_ATTRIBUTE_SYNC_NO_CONFLICTS));
+		//syncElement.asXML()
 		
 		Sync sync = new Sync(syncID);
-	
+		sync.setDeleted(deleted);
+		if(noConflicts){
+			sync.markWithoutConflicts();
+		} else {
+			sync.markWithConflicts();
+		}
+		
 		List<Element> elements = syncElement.elements();
 		for (Element historyElement : elements) {
 			if(SX_ELEMENT_HISTORY.equals(historyElement.getName())){
@@ -134,6 +146,15 @@ public class FeedReader {
 				String by = historyElement.attributeValue(SX_ATTRIBUTE_HISTORY_BY);
 				sync.update(by, when, sequence);
 			} 
+		}
+		
+		Element conflicts = syncElement.element(SX_ELEMENT_CONFLICTS);
+		if(conflicts != null){
+			List<Element> conflicItems = conflicts.elements();
+			for (Element itemElement : conflicItems) {
+				Item item = readItem(itemElement);
+				sync.addConflict(item);
+			}
 		}
 		return sync;
 	}

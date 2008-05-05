@@ -6,14 +6,14 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.mesh4j.sync.AbstractSyncEngineTest;
+import com.mesh4j.sync.Repository;
 import com.mesh4j.sync.SyncEngine;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.Sync;
 import com.mesh4j.sync.test.utils.TestHelper;
 
-public class FeedSyncTest {
-
-	// TODO (JMT) test
+public class FeedSyncTest extends AbstractSyncEngineTest{
 	
 	@Test
 	public void shouldSyncTwoFeedRepositories(){
@@ -119,4 +119,17 @@ public class FeedSyncTest {
 		Assert.assertEquals(1, conflictItems.size());
 				
 	}
+
+	@Override
+	protected Repository makeLeftRepository(Item... items) {
+		Feed feed = new Feed(items);
+		return new FeedRepository(feed);
+	}
+	
+	@Override
+	protected Repository makeRightRepository(Item... items) {
+		Feed feed = new Feed(items);
+		return new FeedRepository(feed);
+	}
+
 }

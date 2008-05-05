@@ -87,4 +87,8 @@ public class Item implements Cloneable{
 
 		return new Item(contentClone, cloneSync);
 	}
+
+	public boolean isDeleted() {
+		return this.getSync() != null && this.getSync().isDeleted();
+	}
 }

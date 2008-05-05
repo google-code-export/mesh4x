@@ -44,6 +44,7 @@ public abstract class AbstractRepository implements Repository{
 
 	public List<Item> getAllSince(Date since, Filter<Item> filter)
 	{
+		Guard.argumentNotNull(filter, "filter");
 		return getAll(since == null ? since : DateHelper.normalize(since), filter);
 	}
 

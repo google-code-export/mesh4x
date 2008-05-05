@@ -25,15 +25,13 @@ public class HibernateRepositoryTests {
 	public void setUp(){
 		if(repo == null ){
 			repo = new HibernateRepository(HibernateRepositoryTests.class.getResource("User.hbm.xml").getFile());
-		} else {
-			repo.newSession();
 		}
 		
 	}
 	
 	private Content makeNewUser(String id) throws DocumentException {
-		Element element = TestHelper.makeElement("<user><name>"+id+"</name><pass>123</pass><id>"+id+"</id></user>");
-		Content user = new ItemHibernateContent(element);
+		Element element = TestHelper.makeElement("<user><id>"+id+"</id><name>"+id+"</name><pass>123</pass></user>");
+		Content user = new EntityContent(element, "user", id);
 		return user;
 	}
 	
@@ -46,14 +44,33 @@ public class HibernateRepositoryTests {
 	}
 	
 	@Test
-	public void shouldGetItem() throws DocumentException{
+	public void shouldDeleteAll() throws DocumentException{
 		String id = TestHelper.newID();
 		Content content = makeNewUser(id);
 		Item item = new Item(content, new Sync(id));
 		repo.add(item);
 		
+		Assert.assertTrue(repo.getAll().size() > 0);
+		
+		repo.deleteAll();
+		Assert.assertTrue(repo.getAll().size() == 0);
+	}
+	
+	
+	@Test
+	public void shouldGetItem() throws DocumentException{
+		String id = TestHelper.newID();
+		Content content = makeNewUser(id);
+System.out.println(content.getPayload().asXML());
+		Item item = new Item(content, new Sync(id));
+		repo.add(item);
+		
 		Item itemLoaded = repo.get(id);
 		Assert.assertNotNull(itemLoaded);
+		
+System.out.println(item.getContent().getPayload().asXML());
+System.out.println(itemLoaded.getContent().getPayload().asXML());
+		
 		Assert.assertTrue(item.equals(itemLoaded));		
 	}
 	
@@ -70,7 +87,7 @@ public class HibernateRepositoryTests {
 		repo.delete(id);
 		
 		itemLoaded = repo.get(id);
-		Assert.assertNull(itemLoaded);			
+		Assert.assertTrue(itemLoaded.getSync().isDeleted());			
 	}
 	
 	@Test
@@ -87,6 +104,7 @@ public class HibernateRepositoryTests {
 		payload.element("pass").clearContent();
 		payload.element("pass").addText("555");
 		
+		item.getSync().update("jmt", new Date());		
 		repo.update(item);
 		
 		itemLoaded = repo.get(id);
@@ -99,14 +117,12 @@ public class HibernateRepositoryTests {
 		Assert.assertFalse(repo.supportsMerge());		
 	}
 	
-	@Test
+	@Test(expected=UnsupportedOperationException.class)
 	public void shouldNotMerge(){
 		List<Item> itemsSource = new ArrayList<Item>();
 		Item item = new Item(null, new Sync("132"));
 		itemsSource.add(item);
-		
-		List<Item> result = repo.merge(itemsSource);
-		Assert.assertSame(itemsSource, result);		
+		repo.merge(itemsSource);	
 	}
 
 	@Test
