@@ -65,7 +65,7 @@ public class SyncEngineTests extends AbstractSyncEngineTest {
 
 	}
 
-	private class MockMergeRepository implements Repository {
+	private class MockMergeRepository implements RepositoryAdapter {
 
 		private boolean mergeCalled;
 
@@ -124,12 +124,12 @@ public class SyncEngineTests extends AbstractSyncEngineTest {
 	}
 
 	@Override
-	protected Repository makeLeftRepository(Item... items) {
+	protected RepositoryAdapter makeLeftRepository(Item... items) {
 		return new MockRepository(items);
 	}
 	
 	@Override
-	protected Repository makeRightRepository(Item... items) {
+	protected RepositoryAdapter makeRightRepository(Item... items) {
 		return new MockRepository(items);
 	}
 
@@ -138,7 +138,7 @@ public class SyncEngineTests extends AbstractSyncEngineTest {
 		private Set<String> repositories = new HashSet<String>();
 
 		@Override
-		public List<MergeResult> preview(Repository targetRepository,
+		public List<MergeResult> preview(RepositoryAdapter targetRepository,
 				List<MergeResult> mergedItems) {
 
 			repositories.add(targetRepository.getFriendlyName());

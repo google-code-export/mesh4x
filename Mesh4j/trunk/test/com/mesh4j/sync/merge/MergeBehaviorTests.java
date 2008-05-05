@@ -5,7 +5,7 @@ import java.util.Date;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.mesh4j.sync.feed.ItemXMLContent;
+import com.mesh4j.sync.adapters.feed.XMLContent;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.Sync;
 import com.mesh4j.sync.test.utils.TestHelper;
@@ -20,17 +20,17 @@ public class MergeBehaviorTests {
 
 		sb = sb.update("vga", TestHelper.nowAddSeconds(5), false);
 
-		Item originalItem = new Item(new ItemXMLContent(sb.getId(), "a", "a",
+		Item originalItem = new Item(new XMLContent(sb.getId(), "a", "a",
 				TestHelper.makeElement("<payload/>")), sa);
 
-		Item incomingItem = new Item(new ItemXMLContent(sb.getId(), "b", "b",
+		Item incomingItem = new Item(new XMLContent(sb.getId(), "b", "b",
 				TestHelper.makeElement("<payload/>")), sb);
 
 		MergeResult result = MergeBehavior.merge(originalItem, incomingItem);
 
 		Assert.assertEquals(MergeOperation.Updated, result.getOperation());
 		Assert
-				.assertEquals("b", ((ItemXMLContent)result.getProposed().getContent())
+				.assertEquals("b", ((XMLContent)result.getProposed().getContent())
 						.getTitle());
 		Assert.assertEquals("vga", result.getProposed().getSync()
 				.getLastUpdate().getBy());
@@ -42,9 +42,9 @@ public class MergeBehaviorTests {
 				false);
 		Sync sb = sa.clone();
 
-		Item originalItem = new Item(new ItemXMLContent(sb.getId(), "a", "a",
+		Item originalItem = new Item(new XMLContent(sb.getId(), "a", "a",
 				TestHelper.makeElement("<payload/>")), sa);
-		Item incomingItem = new Item(new ItemXMLContent(sb.getId(), "a", "a",
+		Item incomingItem = new Item(new XMLContent(sb.getId(), "a", "a",
 				TestHelper.makeElement("<payload/>")), sb);
 
 		MergeResult result = MergeBehavior.merge(originalItem, incomingItem);
@@ -57,7 +57,7 @@ public class MergeBehaviorTests {
 		Sync sa = new Sync(TestHelper.newID());
 		sa.update("kzu", TestHelper.now(), false);
 
-		Item incomingItem = new Item(new ItemXMLContent(TestHelper.newID(), "a", "a",
+		Item incomingItem = new Item(new XMLContent(TestHelper.newID(), "a", "a",
 				TestHelper.makeElement("<payload/>")), sa);
 		MergeResult result = MergeBehavior.merge(null, incomingItem);
 
@@ -70,10 +70,10 @@ public class MergeBehaviorTests {
 
 		Sync sb = sa.clone();
 
-		Item originalItem = new Item(new ItemXMLContent(sb.getId(), "a", "a",
+		Item originalItem = new Item(new XMLContent(sb.getId(), "a", "a",
 				TestHelper.makeElement("<payload/>")), sa);
 
-		Item incomingItem = new Item(new ItemXMLContent(sb.getId(), "b", "b",
+		Item incomingItem = new Item(new XMLContent(sb.getId(), "b", "b",
 				TestHelper.makeElement("<payload/>")), sb);
 		MergeBehavior.merge(originalItem, incomingItem);
 	}
@@ -87,16 +87,16 @@ public class MergeBehaviorTests {
 		sb = sb.update("vga", TestHelper.nowAddSeconds(50), false);
 		sa = sa.update("kzu", TestHelper.nowAddSeconds(100), false);
 
-		Item originalItem = new Item(new ItemXMLContent(sb.getId(), "a", "a",
+		Item originalItem = new Item(new XMLContent(sb.getId(), "a", "a",
 				TestHelper.makeElement("<payload/>")), sa);
 
-		Item incomingItem = new Item(new ItemXMLContent(sb.getId(), "b", "b",
+		Item incomingItem = new Item(new XMLContent(sb.getId(), "b", "b",
 				TestHelper.makeElement("<payload/>")), sb);
 		MergeResult result = MergeBehavior.merge(originalItem, incomingItem);
 
 		Assert.assertEquals(MergeOperation.Conflict, result.getOperation());
 		Assert
-				.assertEquals("a", ((ItemXMLContent)result.getProposed().getContent())
+				.assertEquals("a", ((XMLContent)result.getProposed().getContent())
 						.getTitle());
 		Assert.assertEquals("kzu", result.getProposed().getSync()
 				.getLastUpdate().getBy());
@@ -114,16 +114,16 @@ public class MergeBehaviorTests {
 		sb = sb.update("vga", TestHelper.nowAddSeconds(50), false);
 		sa = sa.update("kzu", TestHelper.nowAddSeconds(100), false);
 
-		Item originalItem = new Item(new ItemXMLContent(sb.getId(), "a", "a",
+		Item originalItem = new Item(new XMLContent(sb.getId(), "a", "a",
 				TestHelper.makeElement("<payload/>")), sa);
 
-		Item incomingItem = new Item(new ItemXMLContent(sb.getId(), "b", "b",
+		Item incomingItem = new Item(new XMLContent(sb.getId(), "b", "b",
 				TestHelper.makeElement("<payload/>")), sb);
 
 		MergeResult result = MergeBehavior.merge(originalItem, incomingItem);
 		Assert.assertEquals(MergeOperation.Conflict, result.getOperation());
 		Assert
-				.assertEquals("a", ((ItemXMLContent)result.getProposed().getContent())
+				.assertEquals("a", ((XMLContent)result.getProposed().getContent())
 						.getTitle());
 		Assert.assertEquals("kzu", result.getProposed().getSync()
 				.getLastUpdate().getBy());
@@ -136,7 +136,7 @@ public class MergeBehaviorTests {
 
 		Assert.assertEquals(MergeOperation.Conflict, result.getOperation());
 		Assert
-				.assertEquals("a", ((ItemXMLContent)result.getProposed().getContent())
+				.assertEquals("a", ((XMLContent)result.getProposed().getContent())
 						.getTitle());
 		Assert.assertEquals("kzu", result.getProposed().getSync()
 				.getLastUpdate().getBy());
@@ -150,7 +150,7 @@ public class MergeBehaviorTests {
 		Sync sa = new Sync(TestHelper.newID(), "kzu", now, false);
 		Sync sb = sa.update("kzu", now, false);
 
-		Item originalItem = new Item(new ItemXMLContent(sb.getId(), "a", "a",
+		Item originalItem = new Item(new XMLContent(sb.getId(), "a", "a",
 				TestHelper.makeElement("<payload/>")), sa);
 
 		MergeBehavior.merge(originalItem, originalItem);

@@ -5,14 +5,14 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 
-import com.mesh4j.sync.AbstractRepository;
+import com.mesh4j.sync.AbstractRepositoryAdapter;
 import com.mesh4j.sync.Filter;
 import com.mesh4j.sync.model.History;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.NullContent;
 import com.mesh4j.sync.validations.Guard;
 
-public class MockRepository extends AbstractRepository {
+public class MockRepository extends AbstractRepositoryAdapter {
 
 	// MODEL VARIABLES
 	private String name;

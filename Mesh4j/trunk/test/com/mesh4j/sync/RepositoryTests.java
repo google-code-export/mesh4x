@@ -7,7 +7,7 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.mesh4j.sync.feed.ItemXMLContent;
+import com.mesh4j.sync.adapters.feed.XMLContent;
 import com.mesh4j.sync.filter.NullFilter;
 import com.mesh4j.sync.model.Content;
 import com.mesh4j.sync.model.Item;
@@ -18,57 +18,57 @@ import com.mesh4j.sync.test.utils.TestHelper;
 
 public class RepositoryTests {
 
-	protected Repository createRepository() {
+	protected RepositoryAdapter createRepository() {
 		return new MockRepository();
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldThrowGetNullId() {
-		Repository repository = createRepository();
+		RepositoryAdapter repository = createRepository();
 		repository.get(null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldThrowGetEmptyId() {
-		Repository repository = createRepository();
+		RepositoryAdapter repository = createRepository();
 		repository.get("");
 	}
 
 	@Test
 	public void ShouldGetNullIfNotExists() {
-		Repository repository = createRepository();
+		RepositoryAdapter repository = createRepository();
 		Item item = repository.get(TestHelper.newID());
 		Assert.assertNull(item);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldThrowAddNullItem() {
-		Repository repository = createRepository();
+		RepositoryAdapter repository = createRepository();
 		repository.add(null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldThrowDeleteNullId() {
-		Repository repository = createRepository();
+		RepositoryAdapter repository = createRepository();
 		repository.delete(null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldThrowDeleteEmptyId() {
-		Repository repository = createRepository();
+		RepositoryAdapter repository = createRepository();
 		repository.delete("");
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldThrowUpdateNullItem() {
-		Repository repository = createRepository();
+		RepositoryAdapter repository = createRepository();
 		repository.update(null);
 	}
 
 	@Test
 	public void ShouldAddAndGetItem() {
-		Repository repository = createRepository();
-		ItemXMLContent xml = new ItemXMLContent(TestHelper.newID(), "foo", "bar", TestHelper.makeElement("<payload></payload>"));
+		RepositoryAdapter repository = createRepository();
+		XMLContent xml = new XMLContent(TestHelper.newID(), "foo", "bar", TestHelper.makeElement("<payload></payload>"));
 		Sync sync = new Sync(xml.getId(), "kzu", TestHelper.now(), false);
 		Item item = new Item(xml, sync);
 
@@ -78,8 +78,8 @@ public class RepositoryTests {
 
 		Assert.assertNotNull(saved);
 		
-		ItemXMLContent itemContent = (ItemXMLContent) item.getContent();
-		ItemXMLContent savedContent = (ItemXMLContent) saved.getContent();
+		XMLContent itemContent = (XMLContent) item.getContent();
+		XMLContent savedContent = (XMLContent) saved.getContent();
 		
 		Assert.assertEquals(itemContent.getTitle(), savedContent.getTitle());
 		Assert.assertEquals(itemContent.getDescription(), savedContent.getDescription());
@@ -89,16 +89,16 @@ public class RepositoryTests {
 
 	@Test
 	public void ShouldGetAllItems() {
-		Repository repository = createRepository();
+		RepositoryAdapter repository = createRepository();
 
 		String by = "DeviceAuthor.Current";
 		String id = TestHelper.newID();
-		Item item = new Item(new ItemXMLContent(id, "foo", "bar", TestHelper
+		Item item = new Item(new XMLContent(id, "foo", "bar", TestHelper
 				.makeElement("<payload />")), new Sync(id, by, TestHelper.now(), false));
 		repository.add(item);
 
 		id = TestHelper.newID();
-		item = new Item(new ItemXMLContent(id, "foo", "bar", TestHelper
+		item = new Item(new XMLContent(id, "foo", "bar", TestHelper
 				.makeElement("<payload />")), new Sync(id, by,
 				TestHelper.now(), false));
 		repository.add(item);
@@ -109,16 +109,16 @@ public class RepositoryTests {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldThrowAddDuplicateItemId() {
-		Repository repo = createRepository();
+		RepositoryAdapter repo = createRepository();
 
 		String by = "DeviceAuthor.Current";
 		String id = TestHelper.newID();
-		Item item = new Item(new ItemXMLContent(id, "foo", "bar", TestHelper
+		Item item = new Item(new XMLContent(id, "foo", "bar", TestHelper
 				.makeElement("<payload />")), new Sync(id, by,
 				TestHelper.now(), false));
 		repo.add(item);
 
-		item = new Item(new ItemXMLContent(id, "foo", "bar", TestHelper
+		item = new Item(new XMLContent(id, "foo", "bar", TestHelper
 				.makeElement("<payload />")), new Sync(id, by,
 				TestHelper.now(), false));
 		repo.add(item);
@@ -126,17 +126,17 @@ public class RepositoryTests {
 
 	@Test
 	public void ShouldGetAllSinceDate() {
-		Repository repo = createRepository();
+		RepositoryAdapter repo = createRepository();
 		String by = "DeviceAuthor.Current";
 
 		String id = TestHelper.newID();
-		Item item = new Item(new ItemXMLContent(id, "foo", "bar", TestHelper
+		Item item = new Item(new XMLContent(id, "foo", "bar", TestHelper
 				.makeElement("<payload />")), new Sync(id, by,
 				TestHelper.nowSubtractDays(1), false));
 		repo.add(item);
 
 		id = TestHelper.newID();
-		item = new Item(new ItemXMLContent(id, "foo", "bar", TestHelper
+		item = new Item(new XMLContent(id, "foo", "bar", TestHelper
 				.makeElement("<payload />")), new Sync(id, by,
 				TestHelper.now(), false));
 		repo.add(item);
@@ -148,17 +148,17 @@ public class RepositoryTests {
 
 	@Test
 	public void ShouldGetAllIfNullSince() {
-		Repository repo = createRepository();
+		RepositoryAdapter repo = createRepository();
 		String by = "DeviceAuthor.Current";
 
 		String id = TestHelper.newID();
-		Item item = new Item(new ItemXMLContent(id, "foo", "bar", TestHelper
+		Item item = new Item(new XMLContent(id, "foo", "bar", TestHelper
 				.makeElement("<payload />")), new Sync(id, by,
 				TestHelper.nowSubtractDays(1), false));
 		repo.add(item);
 
 		id = TestHelper.newID();
-		item = new Item(new ItemXMLContent(id, "foo", "bar", TestHelper
+		item = new Item(new XMLContent(id, "foo", "bar", TestHelper
 				.makeElement("<payload />")), new Sync(id, by,
 				TestHelper.now(), false));
 		repo.add(item);
@@ -169,17 +169,17 @@ public class RepositoryTests {
 
 	@Test
 	public void ShouldGetAllIfNullWhen() {
-		Repository repo = createRepository();
+		RepositoryAdapter repo = createRepository();
 		String by = "byUser";
 
 		String id = TestHelper.newID();
-		Content modelItem =new ItemXMLContent(id, "foo", "bar", TestHelper.makeElement("<payload />"));
+		Content modelItem =new XMLContent(id, "foo", "bar", TestHelper.makeElement("<payload />"));
 		Sync sync = new Sync(id, by, null, false);
 		Item item = new Item(modelItem, sync);
 		repo.add(item);
 
 		id = TestHelper.newID();
-		modelItem = new ItemXMLContent(id, "foo", "bar", TestHelper.makeElement("<payload />"));
+		modelItem = new XMLContent(id, "foo", "bar", TestHelper.makeElement("<payload />"));
 		sync = new Sync(id, by, TestHelper.now(), false);
 		item = new Item(modelItem, sync);
 		repo.add(item);
@@ -190,23 +190,23 @@ public class RepositoryTests {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldThrowGetAllNullFilter() {
-		Repository repository = createRepository();
+		RepositoryAdapter repository = createRepository();
 		repository.getAll(null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldThrowGetAllSinceWithNullFilter() {
-		Repository repository = createRepository();
+		RepositoryAdapter repository = createRepository();
 		repository.getAllSince(TestHelper.now(), null);
 	}
 
 	@Test
 	public void ShouldGetAllPassFilter() {
-		Repository repo = createRepository();
+		RepositoryAdapter repo = createRepository();
 		String by = "jmt";
 
 		String id = TestHelper.newID();
-		Item item = new Item(new ItemXMLContent(id, "foo", "bar", TestHelper
+		Item item = new Item(new XMLContent(id, "foo", "bar", TestHelper
 				.makeElement("<payload />")), new Sync(id, by,
 				TestHelper.now(), false));
 		repo.add(item);
@@ -214,7 +214,7 @@ public class RepositoryTests {
 		Filter<Item> filter = new IdFilter(id);
 
 		String id2 = TestHelper.newID();
-		item = new Item(new ItemXMLContent(id2, "foo", "bar", TestHelper
+		item = new Item(new XMLContent(id2, "foo", "bar", TestHelper
 				.makeElement("<payload />")), new Sync(id2, by,
 				TestHelper.now(), false));
 		repo.add(item);
@@ -230,11 +230,11 @@ public class RepositoryTests {
 		Date created = TestHelper.makeDate(2007, 9, 18, 12, 56, 23, 0);
 		Date since = TestHelper.makeDate(2007, 9, 18, 12, 56, 23, 500);
 
-		ItemXMLContent item = new ItemXMLContent(TestHelper.newID(), "foo", "bar", TestHelper
+		XMLContent item = new XMLContent(TestHelper.newID(), "foo", "bar", TestHelper
 				.makeElement("<payload />"));
 		Sync sync = new Sync(item.getId(), "kzu", created, false);
 
-		Repository repo = createRepository();
+		RepositoryAdapter repo = createRepository();
 		repo.add(new Item(item, sync));
 
 		List<Item> items = repo.getAllSince(since);
@@ -269,7 +269,7 @@ public class RepositoryTests {
 
 		Item item = new Item(new NullContent(id), sync.update("kzu", TestHelper.nowSubtractHours(2), false));
 		sync.getConflicts().add(
-				new Item(new ItemXMLContent(TestHelper.newID(), "foo", "bar",
+				new Item(new XMLContent(TestHelper.newID(), "foo", "bar",
 						TestHelper.makeElement("<payload/>")), sync.clone().update("kzu", TestHelper.nowSubtractHours(4),
 								false)));
 
@@ -284,48 +284,48 @@ public class RepositoryTests {
 
 	@Test
 	public void ShouldSaveUpdatedItemOnResolveConflicts() {
-		Repository repo = createRepository();
+		RepositoryAdapter repo = createRepository();
 		String id = TestHelper.newID();
 		String by = "jmt";
 
-		Item item = new Item(new ItemXMLContent(id, "foo", "bar", TestHelper
+		Item item = new Item(new XMLContent(id, "foo", "bar", TestHelper
 				.makeElement("<payload/>")), new Sync(id, by,
 				TestHelper.nowSubtractMinutes(5), false));
 		repo.add(item);
 
 		// Introduce a conflict.
-		ItemXMLContent xml = (ItemXMLContent) item.getContent().clone();
+		XMLContent xml = (XMLContent) item.getContent().clone();
 		xml.setTitle("Conflict");
 		Sync updatedSync = item.getSync().clone().update("Conflict", TestHelper.now(), false);
 		item.getSync().getConflicts().add(new Item(xml, updatedSync));
 
-		((ItemXMLContent) item.getContent()).setTitle("Resolved");
+		((XMLContent) item.getContent()).setTitle("Resolved");
 
 		repo.update(item, true);
 
 		Item storedItem = repo.get(item.getSyncId());
 
-		Assert.assertEquals("Resolved", ((ItemXMLContent) storedItem.getContent()).getTitle());
+		Assert.assertEquals("Resolved", ((XMLContent) storedItem.getContent()).getTitle());
 	}
 
 	@Test
 	public void ShouldSaveUpdatedItemOnResolveConflicts2() {
-		Repository repo = createRepository();
+		RepositoryAdapter repo = createRepository();
 		String id = TestHelper.newID();
 		String by = "jmt";
 
-		Item item = new Item(new ItemXMLContent(id, "foo", "bar", TestHelper
+		Item item = new Item(new XMLContent(id, "foo", "bar", TestHelper
 				.makeElement("<payload/>")), new Sync(id, by,
 				TestHelper.nowSubtractMinutes(5), false));
 		repo.add(item);
 
 		// Introduce a conflict.
-		ItemXMLContent xml = (ItemXMLContent) item.getContent().clone();
+		XMLContent xml = (XMLContent) item.getContent().clone();
 		xml.setTitle("Conflict");
 		Sync updatedSync = item.getSync().clone().update("Conflict", TestHelper.now(), false);
 		item.getSync().getConflicts().add(new Item(xml, updatedSync));
 
-		((ItemXMLContent) item.getContent()).setTitle("Resolved");
+		((XMLContent) item.getContent()).setTitle("Resolved");
 
 		repo.update(item, true);
 
@@ -334,27 +334,27 @@ public class RepositoryTests {
 		Assert
 				.assertEquals(
 						"An update with resolve conflicts was issued, but the stored item Title was not the updated one from the resolved conflict.",
-						"Resolved", ((ItemXMLContent) storedItem.getContent()).getTitle());
+						"Resolved", ((XMLContent) storedItem.getContent()).getTitle());
 	}
 
 	@Test
 	public void ShouldResolveConflictsPreserveDeletedState() {
-		Repository repo = createRepository();
+		RepositoryAdapter repo = createRepository();
 		String id = TestHelper.newID();
 		String by = "jmt";
 
-		Item item = new Item(new ItemXMLContent(id, "foo", "bar", TestHelper
+		Item item = new Item(new XMLContent(id, "foo", "bar", TestHelper
 				.makeElement("<payload/>")), new Sync(id, by, TestHelper.nowSubtractMinutes(5), false));
 		repo.add(item);
 
 		// Introduce a conflict.
-		ItemXMLContent xml = (ItemXMLContent) item.getContent().clone();
+		XMLContent xml = (XMLContent) item.getContent().clone();
 		xml.setTitle("Conflict");
 		Sync updatedSync = item.getSync().clone().update("Conflict",
 				TestHelper.now(), false);
 		item.getSync().getConflicts().add(new Item(xml, updatedSync));
 
-		((ItemXMLContent) item.getContent()).setTitle("Resolved");
+		((XMLContent) item.getContent()).setTitle("Resolved");
 
 		Sync deletedSync = item.getSync().clone().delete("Deleted", TestHelper.now());
 
@@ -373,7 +373,7 @@ public class RepositoryTests {
 						saved.getSync().isDeleted());
 	}
 
-	private class SimpleRepository extends AbstractRepository {
+	private class SimpleRepository extends AbstractRepositoryAdapter {
 		private Date since;
 		private Filter<Item> filter;
 

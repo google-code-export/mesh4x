@@ -22,11 +22,11 @@ public class SyncEngine {
 	private ItemObservable itemReceivedObservable = new ItemObservable();
 	private ItemObservable itemSentObservable = new ItemObservable();
 
-	private Repository source;
-	private Repository target;
+	private RepositoryAdapter source;
+	private RepositoryAdapter target;
 
 	// BUSINESS METHODS
-	public SyncEngine(Repository source, Repository target) {   // TODO (JMT) spike SyncEngine<T>
+	public SyncEngine(RepositoryAdapter source, RepositoryAdapter target) {   // TODO (JMT) spike SyncEngine<T>
 		super();
 
 		Guard.argumentNotNull(source, "left");
@@ -132,7 +132,7 @@ public class SyncEngine {
 	}
 
 	private List<MergeResult> mergeItems(List<Item> items,
-			Repository repository) {
+			RepositoryAdapter repository) {
 
 		ArrayList<MergeResult> mergeResult = new ArrayList<MergeResult>();
 		for (Item incoming : items) {
@@ -147,7 +147,7 @@ public class SyncEngine {
 	}
 
 	private List<Item> importItems(List<MergeResult> items,
-			Repository repository) {
+			RepositoryAdapter repository) {
 		// Straight import of data in merged results.
 		// Conflicting items are saved and also
 		// are returned for conflict resolution by the user or

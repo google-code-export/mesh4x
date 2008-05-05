@@ -3,7 +3,7 @@ package com.mesh4j.sync.model;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.mesh4j.sync.feed.ItemXMLContent;
+import com.mesh4j.sync.adapters.feed.XMLContent;
 import com.mesh4j.sync.test.utils.TestHelper;
 
 public class ItemTests {
@@ -17,13 +17,13 @@ public class ItemTests {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldThrowNullSync() {
-		new Item(new ItemXMLContent(TestHelper.newID(), "a", "b", TestHelper
+		new Item(new XMLContent(TestHelper.newID(), "a", "b", TestHelper
 				.makeElement("<c/>")), null);
 	}
 
 	@Test
 	public void ShouldEqualSameObject() {
-		Item obj1 = new Item(new ItemXMLContent(TestHelper.newID(), "a", "b",
+		Item obj1 = new Item(new XMLContent(TestHelper.newID(), "a", "b",
 				TestHelper.makeElement("<c/>")), new Sync(TestHelper.newID()));
 		Item obj2 = obj1;
 
@@ -32,7 +32,7 @@ public class ItemTests {
 
 	@Test
 	public void ShouldNotEqualNull() {
-		Item obj1 = new Item(new ItemXMLContent(TestHelper.newID(), "a", "b",
+		Item obj1 = new Item(new XMLContent(TestHelper.newID(), "a", "b",
 				TestHelper.makeElement("<c/>")), new Sync(TestHelper.newID()));
 		Item obj2 = null;
 
@@ -41,7 +41,7 @@ public class ItemTests {
 
 	@Test
 	public void ShouldNotEqualDifferentSync() {
-		Item obj1 = new Item(new ItemXMLContent(TestHelper.newID(), "foo", "bar",
+		Item obj1 = new Item(new XMLContent(TestHelper.newID(), "foo", "bar",
 				TestHelper.makeElement("<payload/>")), new Sync(TestHelper.newID()));
 		Item obj2 = new Item(obj1.getContent(), new Sync(TestHelper.newID()));
 
@@ -50,9 +50,9 @@ public class ItemTests {
 
 	@Test
 	public void ShouldNotEqualDifferentItem() {
-		Item obj1 = new Item(new ItemXMLContent(TestHelper.newID(), "foo", "bar",
+		Item obj1 = new Item(new XMLContent(TestHelper.newID(), "foo", "bar",
 				TestHelper.makeElement("<payload/>")), new Sync(TestHelper.newID()));
-		Item obj2 = new Item(new ItemXMLContent(TestHelper.newID(), "foo", "bar",
+		Item obj2 = new Item(new XMLContent(TestHelper.newID(), "foo", "bar",
 				TestHelper.makeElement("<payload id='2'/>")), obj1.getSync());
 
 		this.assertNotEquals(obj1, obj2);
@@ -60,7 +60,7 @@ public class ItemTests {
 
 	@Test
 	public void ShouldNotEqualWithOneNullXmlItem() {
-		Item obj1 = new Item(new ItemXMLContent(TestHelper.newID(), "foo", "bar",
+		Item obj1 = new Item(new XMLContent(TestHelper.newID(), "foo", "bar",
 				TestHelper.makeElement("<payload/>")), new Sync(TestHelper.newID()));
 		Item obj2 = new Item(null, obj1.getSync());
 
@@ -80,9 +80,9 @@ public class ItemTests {
 		Sync s1 = new Sync(TestHelper.newID());
 		Sync s2 = new Sync(s1.getId());
 
-		Item obj1 = new Item(new ItemXMLContent(s1.getId(), "foo", "bar", TestHelper
+		Item obj1 = new Item(new XMLContent(s1.getId(), "foo", "bar", TestHelper
 				.makeElement("<payload/>")), s1);
-		Item obj2 = new Item(new ItemXMLContent(s1.getId(), "foo", "bar", TestHelper
+		Item obj2 = new Item(new XMLContent(s1.getId(), "foo", "bar", TestHelper
 				.makeElement("<payload/>")), s2);
 
 		this.assertEquals(obj1, obj2);
@@ -96,16 +96,16 @@ public class ItemTests {
 		Sync s2 = new Sync(id);
 
 		Item obj1 = new Item(
-				new ItemXMLContent(id, "foo", "bar", TestHelper.makeElement("<payload/>")), s1);
+				new XMLContent(id, "foo", "bar", TestHelper.makeElement("<payload/>")), s1);
 		Item obj2 = new Item(
-				new ItemXMLContent(id, "foo", "bar", TestHelper.makeElement("<payload/>")), s2);
+				new XMLContent(id, "foo", "bar", TestHelper.makeElement("<payload/>")), s2);
 
 		Assert.assertEquals(obj1.hashCode(), obj2.hashCode());
 	}
 
 	@Test
 	public void ShouldEqualClonedItem() {
-		Item obj1 = new Item(new ItemXMLContent(TestHelper.newID(), "a", "b",
+		Item obj1 = new Item(new XMLContent(TestHelper.newID(), "a", "b",
 				TestHelper.makeElement("<c/>")), new Sync(TestHelper.newID()));
 		Item obj2 = obj1.clone();
 
@@ -114,7 +114,7 @@ public class ItemTests {
 
 	@Test
 	public void ShouldEqualClonedCloneableItem() {
-		Item obj1 = new Item(new ItemXMLContent(TestHelper.newID(), "a", "b",
+		Item obj1 = new Item(new XMLContent(TestHelper.newID(), "a", "b",
 				TestHelper.makeElement("<c/>")), new Sync(TestHelper.newID()));
 		Item obj2 = obj1.clone();
 

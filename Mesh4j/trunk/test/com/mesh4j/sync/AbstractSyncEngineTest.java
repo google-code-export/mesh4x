@@ -7,7 +7,7 @@ import org.dom4j.Element;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.mesh4j.sync.feed.ItemXMLContent;
+import com.mesh4j.sync.adapters.feed.XMLContent;
 import com.mesh4j.sync.filter.DeletedFilter;
 import com.mesh4j.sync.model.History;
 import com.mesh4j.sync.model.Item;
@@ -20,8 +20,8 @@ public abstract class AbstractSyncEngineTest {
 	
 	@Test
 	public void ShouldAddNewItems() {
-		Repository left = this.makeLeftRepository(createItem("fizz", TestHelper.newID(), new History("kzu")));
-		Repository right = this.makeRightRepository(createItem("buzz", TestHelper.newID(), new History("vga")));
+		RepositoryAdapter left = this.makeLeftRepository(createItem("fizz", TestHelper.newID(), new History("kzu")));
+		RepositoryAdapter right = this.makeRightRepository(createItem("buzz", TestHelper.newID(), new History("vga")));
 
 		SyncEngine engine = new SyncEngine(left, right);
 
@@ -32,15 +32,15 @@ public abstract class AbstractSyncEngineTest {
 		Assert.assertEquals(2, right.getAll().size());
 	}
 
-	protected abstract Repository makeLeftRepository(Item ... items);
-	protected abstract Repository makeRightRepository(Item ... items);
+	protected abstract RepositoryAdapter makeLeftRepository(Item ... items);
+	protected abstract RepositoryAdapter makeRightRepository(Item ... items);
 
 	@Test
 	public void ShouldMergeChangesBothWays() {
 		Item a = createItem("fizz", TestHelper.newID(), new History("kzu"));
 		Item b = createItem("buzz", TestHelper.newID(), new History("vga"));
 
-		Repository left = this.makeLeftRepository(
+		RepositoryAdapter left = this.makeLeftRepository(
 			new Item(
 				a.getContent(), 
 				a.getSync().clone().update("kzu", TestHelper.now())
@@ -48,7 +48,7 @@ public abstract class AbstractSyncEngineTest {
 			b 
 		);
 
-		Repository right = this.makeRightRepository(
+		RepositoryAdapter right = this.makeRightRepository(
 			a,
 			new Item(
 				b.getContent(), 
@@ -71,8 +71,8 @@ public abstract class AbstractSyncEngineTest {
 		Item b = createItem("buzz", TestHelper.newID(), new History("vga"));
 		Item bDeleted = new Item(b.getContent(), b.getSync().clone().update("vga", TestHelper.now(), true));
 		
-		Repository left = this.makeLeftRepository(a, b);
-		Repository right = this.makeRightRepository(
+		RepositoryAdapter left = this.makeLeftRepository(a, b);
+		RepositoryAdapter right = this.makeRightRepository(
 				a,
 				bDeleted
 		);
@@ -92,8 +92,8 @@ public abstract class AbstractSyncEngineTest {
 		Item a = createItem("fizz", TestHelper.newID(), new History("kzu", TestHelper.nowSubtractDays(1)));
 		Item b = createItem("buzz", TestHelper.newID(), new History("vga", TestHelper.nowSubtractDays(1)));
 
-		Repository left = this.makeLeftRepository(a);
-		Repository right = this.makeRightRepository(b);
+		RepositoryAdapter left = this.makeLeftRepository(a);
+		RepositoryAdapter right = this.makeRightRepository(b);
 
 		SyncEngine engine = new SyncEngine(left, right);
 
@@ -110,10 +110,10 @@ public abstract class AbstractSyncEngineTest {
 		Item a = createItem("fizz", TestHelper.newID(), new History("kzu"));
 		
 		TestHelper.sleep(1000);
-		Repository left = this.makeLeftRepository(new Item(a.getContent(), a.getSync().clone().update("kzu", TestHelper.now())));
+		RepositoryAdapter left = this.makeLeftRepository(new Item(a.getContent(), a.getSync().clone().update("kzu", TestHelper.now())));
 		
 		TestHelper.sleep(1000);
-		Repository right = this.makeRightRepository(new Item(a.getContent(), a.getSync().clone().update("vga", TestHelper.now())));
+		RepositoryAdapter right = this.makeRightRepository(new Item(a.getContent(), a.getSync().clone().update("vga", TestHelper.now())));
 
 		SyncEngine engine = new SyncEngine(left, right);
 
@@ -126,8 +126,8 @@ public abstract class AbstractSyncEngineTest {
 
 	@Test
 	public void ShouldImportUpdateWithConflictLeft() {
-		Repository left = this.makeLeftRepository();
-		Repository right = this.makeRightRepository();
+		RepositoryAdapter left = this.makeLeftRepository();
+		RepositoryAdapter right = this.makeRightRepository();
 		
 		String by = "jmt";
 		SyncEngine engine = new SyncEngine(left, right);
@@ -135,7 +135,7 @@ public abstract class AbstractSyncEngineTest {
 		String id = TestHelper.newID();
 		Sync sync = new Sync(id, by, TestHelper.nowSubtractMinutes(2), false);
 		Element element = TestHelper.makeElement("<user><id>"+id+"</id><name>"+id+"</name><pass>123</pass></user>");
-		Item item = new Item(new ItemXMLContent(id, "foo", "bar", element), sync);
+		Item item = new Item(new XMLContent(id, "foo", "bar", element), sync);
 
 		left.add(item);
 		right.add(item);
@@ -143,16 +143,16 @@ public abstract class AbstractSyncEngineTest {
 		Item incomingItem = item.clone();
 
 		// Local editing.
-		ItemXMLContent xmlItem = (ItemXMLContent) item.getContent();
-		item = new Item(new ItemXMLContent(id, "changed", ((ItemXMLContent)item.getContent())
+		XMLContent xmlItem = (XMLContent) item.getContent();
+		item = new Item(new XMLContent(id, "changed", ((XMLContent)item.getContent())
 				.getDescription(), xmlItem.getPayload()), item.getSync().clone().update(by, TestHelper.nowSubtractMinutes(1), false));
 
 		left.update(item);
 
 		// Conflicting remote editing.
-		xmlItem = (ItemXMLContent) item.getContent();
+		xmlItem = (XMLContent) item.getContent();
 		element = TestHelper.makeElement("<user><id>"+id+"</id><name>remote</name><pass>123</pass></user>");
-		incomingItem = new Item(new ItemXMLContent(id, "remote", ((ItemXMLContent)item.getContent())
+		incomingItem = new Item(new XMLContent(id, "remote", ((XMLContent)item.getContent())
 				.getDescription(), element), incomingItem.getSync().clone().update("REMOTE\\kzu", TestHelper.now(), false));
 
 		right.update(incomingItem);
@@ -171,8 +171,8 @@ public abstract class AbstractSyncEngineTest {
 
 	@Test
 	public void ShouldReportImportProgress() {
-		Repository left = this.makeLeftRepository();
-		Repository right = this.makeRightRepository();
+		RepositoryAdapter left = this.makeLeftRepository();
+		RepositoryAdapter right = this.makeRightRepository();
 		
 		SyncEngine engine = new SyncEngine(left, right);
 		String by = "jmt";
@@ -180,14 +180,14 @@ public abstract class AbstractSyncEngineTest {
 		String id = TestHelper.newID();
 		Sync sync = new Sync(id, by, TestHelper.nowSubtractMinutes(2), false);
 		Element element = TestHelper.makeElement("<user><id>"+id+"</id><name>"+id+"</name><pass>123</pass></user>");
-		Item item = new Item(new ItemXMLContent(id, "foo", "bar", element), sync);
+		Item item = new Item(new XMLContent(id, "foo", "bar", element), sync);
 
 		left.add(item);
 
 		id = TestHelper.newID();
 		sync = new Sync(id, by, TestHelper.nowSubtractMinutes(2), false);
 		element = TestHelper.makeElement("<user><id>"+id+"</id><name>"+id+"</name><pass>123</pass></user>");
-		item = new Item(new ItemXMLContent(id, "foo", "bar", element), sync);
+		item = new Item(new XMLContent(id, "foo", "bar", element), sync);
 
 		right.add(item);
 
@@ -210,8 +210,8 @@ public abstract class AbstractSyncEngineTest {
 	@Test
 	public void ShouldNotSendReceivedItemIfModifiedBeforeSince() {
 		
-		Repository left = this.makeLeftRepository();
-		Repository right = this.makeRightRepository();
+		RepositoryAdapter left = this.makeLeftRepository();
+		RepositoryAdapter right = this.makeRightRepository();
 		
 		SyncEngine engine = new SyncEngine(left, right);
 
@@ -227,13 +227,13 @@ public abstract class AbstractSyncEngineTest {
 		String id = TestHelper.newID();
 		Sync sync = new Sync(id, by, nowSubtract2Minutes, false);
 		Element element = TestHelper.makeElement("<user><id>"+id+"</id><name>"+id+"</name><pass>123</pass></user>");
-		Item item = new Item(new ItemXMLContent(id, "foo", "bar", element), sync);
+		Item item = new Item(new XMLContent(id, "foo", "bar", element), sync);
 		left.add(item);
 
 		id = TestHelper.newID();
 		sync = new Sync(id, by, nowSubtract2Days, false);
 		element = TestHelper.makeElement("<user><id>"+id+"</id><name>"+id+"</name><pass>123</pass></user>");
-		item = new Item(new ItemXMLContent(id, "foo", "bar", element), sync);
+		item = new Item(new XMLContent(id, "foo", "bar", element), sync);
 		right.add(item);
 
 		MockItemReceivedObserver itemReceivedObserver = new MockItemReceivedObserver();
@@ -263,7 +263,7 @@ public abstract class AbstractSyncEngineTest {
 			History[] otherHistory) {
 		
 		Element e = TestHelper.makeElement("<user><id>"+id+"</id><name>"+title+"</name><pass>123</pass></user>");
-		ItemXMLContent xml = new ItemXMLContent(TestHelper.newID(), title, null, e);
+		XMLContent xml = new XMLContent(TestHelper.newID(), title, null, e);
 		Sync sync = new Sync(id, history.getBy(), history.getWhen(),
 				false);
 		for (History h : otherHistory) {

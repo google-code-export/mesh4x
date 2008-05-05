@@ -7,7 +7,7 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.mesh4j.sync.feed.ItemXMLContent;
+import com.mesh4j.sync.adapters.feed.XMLContent;
 import com.mesh4j.sync.model.Content;
 import com.mesh4j.sync.model.History;
 import com.mesh4j.sync.model.Item;
@@ -30,7 +30,7 @@ public class BehaviorTests {
 	@Test
 	public void mergeShouldAddWithoutConflict()  {
 		Sync sync = new Sync(TestHelper.newID(), "mypc\\user", TestHelper.now(), false);
-		Content modelItem = new ItemXMLContent(sync.getId(), "foo", "bar",
+		Content modelItem = new XMLContent(sync.getId(), "foo", "bar",
 				TestHelper.makeElement("<foo id='bar'/>"));
 		Item remoteItem = new Item(modelItem, sync);
 		MergeResult result = MergeBehavior.merge(null, remoteItem);
@@ -41,17 +41,17 @@ public class BehaviorTests {
 	@Test
 	public void mergeShouldUpdateWithoutConflict()  {
 		Sync sync = new Sync(TestHelper.newID(), "mypc\\user", TestHelper.nowSubtractMinutes(1), false);
-		Item originalItem = new Item(new ItemXMLContent(sync.getId(), "foo", "bar", TestHelper.makeElement("<foo id='bar'/>")), sync);
+		Item originalItem = new Item(new XMLContent(sync.getId(), "foo", "bar", TestHelper.makeElement("<foo id='bar'/>")), sync);
 
 		// Simulate editing.
 		sync = originalItem.getSync().clone().update("REMOTE\\kzu", TestHelper.now(), false);
-		Item incomingItem = new Item(new ItemXMLContent(sync.getId(), "changed", ((ItemXMLContent)originalItem.getContent()).getDescription(), ((ItemXMLContent)originalItem.getContent()).getPayload()), sync);
+		Item incomingItem = new Item(new XMLContent(sync.getId(), "changed", ((XMLContent)originalItem.getContent()).getDescription(), ((XMLContent)originalItem.getContent()).getPayload()), sync);
 
 		MergeResult result = MergeBehavior.merge(originalItem, incomingItem);
 
 		Assert.assertEquals(MergeOperation.Updated, result.getOperation());
 		Assert.assertNotNull(result.getProposed());
-		Assert.assertEquals("changed", ((ItemXMLContent)result.getProposed().getContent())
+		Assert.assertEquals("changed", ((XMLContent)result.getProposed().getContent())
 				.getTitle());
 		Assert.assertEquals("REMOTE\\kzu", result.getProposed().getSync()
 				.getLastUpdate().getBy());
@@ -60,7 +60,7 @@ public class BehaviorTests {
 	@Test
 	public void mergeShouldDeleteWithoutConflict()  {
 		Sync sync = new Sync(TestHelper.newID(), "mypc\\user", TestHelper.nowSubtractMinutes(1), false);
-		Item originalItem = new Item(new ItemXMLContent(sync.getId(), "foo", "bar", TestHelper.makeElement("<foo id='bar'/>")), sync);
+		Item originalItem = new Item(new XMLContent(sync.getId(), "foo", "bar", TestHelper.makeElement("<foo id='bar'/>")), sync);
 
 		// Simulate editing.
 		Sync incomingSync = sync.clone().update("REMOTE\\kzu", TestHelper.now(), true);
@@ -79,7 +79,7 @@ public class BehaviorTests {
 	public void mergeShouldConflictOnDeleteWithConflict()  {
 		Sync localSync = new Sync(TestHelper.newID(), "mypc\\user",
 				TestHelper.nowSubtractMinutes(2), false);
-		Item originalItem = new Item(new ItemXMLContent(localSync.getId(), "foo",
+		Item originalItem = new Item(new XMLContent(localSync.getId(), "foo",
 				"bar", TestHelper.makeElement("<foo id='bar'/>")), localSync);
 
 		Item incomingItem = originalItem.clone();
@@ -87,8 +87,8 @@ public class BehaviorTests {
 		// Local editing.
 		localSync = originalItem.getSync().update("mypc\\user",
 				TestHelper.nowSubtractMinutes((1)), false);
-		originalItem = new Item(new ItemXMLContent(localSync.getId(), "changed",
-				((ItemXMLContent)originalItem.getContent()).getDescription(), ((ItemXMLContent) originalItem
+		originalItem = new Item(new XMLContent(localSync.getId(), "changed",
+				((XMLContent)originalItem.getContent()).getDescription(), ((XMLContent) originalItem
 						.getContent()).getPayload()), localSync);
 
 		// Remote editing.
@@ -110,7 +110,7 @@ public class BehaviorTests {
 	public void mergeShouldNoOpWithNoChanges()  {
 		Sync sync = new Sync(TestHelper.newID(), "mypc\\user",
 				TestHelper.now(), false);
-		Item item = new Item(new ItemXMLContent(sync.getId(), "foo", "bar", TestHelper
+		Item item = new Item(new XMLContent(sync.getId(), "foo", "bar", TestHelper
 				.makeElement("<foo id='bar'/>")), sync);
 
 		// Do a merge with the same item.
@@ -125,15 +125,15 @@ public class BehaviorTests {
 			 {
 		Sync sync = new Sync(TestHelper.newID(), "mypc\\user",
 				TestHelper.nowSubtractMinutes((1)), false);
-		Item originalItem = new Item(new ItemXMLContent(sync.getId(), "foo", "bar",
+		Item originalItem = new Item(new XMLContent(sync.getId(), "foo", "bar",
 				TestHelper.makeElement("<foo id='bar'/>")), sync);
 
 		Item incomingItem = originalItem.clone();
 
 		// Simulate editing.
 		sync = originalItem.getSync().update("mypc\\user", TestHelper.now(), false);
-		originalItem = new Item(new ItemXMLContent(sync.getId(), "changed",
-				((ItemXMLContent)originalItem.getContent()).getDescription(), ((ItemXMLContent)originalItem
+		originalItem = new Item(new XMLContent(sync.getId(), "changed",
+				((XMLContent)originalItem.getContent()).getDescription(), ((XMLContent)originalItem
 						.getContent()).getPayload()), sync);
 
 		// Merge with the older incoming item.
@@ -147,21 +147,21 @@ public class BehaviorTests {
 	public void mergeShouldIncomingWinWithConflict()  {
 		Sync localSync = new Sync(TestHelper.newID(), "mypc\\user",
 				TestHelper.nowSubtractMinutes((2)), false);
-		Item originalItem = new Item(new ItemXMLContent(localSync.getId(), "foo",
+		Item originalItem = new Item(new XMLContent(localSync.getId(), "foo",
 				"bar", TestHelper.makeElement("<foo id='bar'/>")), localSync);
 
 		Item incomingItem = originalItem.clone();
 
 		// Local editing.
 		localSync = originalItem.getSync().update("mypc\\user", TestHelper.nowSubtractMinutes((1)), false);
-		originalItem = new Item(new ItemXMLContent(localSync.getId(), "changed",
-				((ItemXMLContent)originalItem.getContent()).getDescription(), ((ItemXMLContent)originalItem
+		originalItem = new Item(new XMLContent(localSync.getId(), "changed",
+				((XMLContent)originalItem.getContent()).getDescription(), ((XMLContent)originalItem
 						.getContent()).getPayload()), localSync);
 
 		// Remote editing.
 		Sync remoteSync = incomingItem.getSync().update("REMOTE\\kzu", TestHelper.now(), false);
-		incomingItem = new Item(new ItemXMLContent(localSync.getId(), "changed2",
-				((ItemXMLContent)originalItem.getContent()).getDescription(), ((ItemXMLContent)originalItem
+		incomingItem = new Item(new XMLContent(localSync.getId(), "changed2",
+				((XMLContent)originalItem.getContent()).getDescription(), ((XMLContent)originalItem
 						.getContent()).getPayload()), remoteSync);
 
 		// Merge conflicting changed incoming item.
@@ -181,18 +181,18 @@ public class BehaviorTests {
 	@Test
 	public void mergeShouldLocalWinWithConflict()  {
 		Sync localSync = new Sync(TestHelper.newID(), "mypc\\user", TestHelper.nowSubtractMinutes((2)), false);
-		Item originalItem = new Item(new ItemXMLContent(localSync.getId(), "foo", "bar", TestHelper.makeElement("<foo id='bar'/>")), localSync);
+		Item originalItem = new Item(new XMLContent(localSync.getId(), "foo", "bar", TestHelper.makeElement("<foo id='bar'/>")), localSync);
 
 		// Remote editing.
 		Sync remoteSync = localSync.clone().update("REMOTE\\kzu", TestHelper.nowSubtractMinutes((1)), false);
-		Item incomingItem = new Item(new ItemXMLContent(localSync.getId(), "changed2",
-				((ItemXMLContent)originalItem.getContent()).getDescription(), ((ItemXMLContent)originalItem
+		Item incomingItem = new Item(new XMLContent(localSync.getId(), "changed2",
+				((XMLContent)originalItem.getContent()).getDescription(), ((XMLContent)originalItem
 						.getContent()).getPayload()), remoteSync);
 
 		// Local editing.
 		localSync.update("mypc\\user", TestHelper.now(), false);
-		originalItem = new Item(new ItemXMLContent(localSync.getId(), "changed",
-				((ItemXMLContent)originalItem.getContent()).getDescription(), ((ItemXMLContent)originalItem
+		originalItem = new Item(new XMLContent(localSync.getId(), "changed",
+				((XMLContent)originalItem.getContent()).getDescription(), ((XMLContent)originalItem
 						.getContent()).getPayload()), localSync);
 
 		// Merge conflicting changed incoming item.
@@ -213,11 +213,11 @@ public class BehaviorTests {
 	public void mergeShouldConflictWithDeletedLocalItem()  {
 		String by = "jmt";
 		Sync localSync = new Sync(TestHelper.newID(), by, TestHelper.nowSubtractMinutes((3)), false);
-		Item originalItem = new Item(new ItemXMLContent(localSync.getId(), "foo", "bar", TestHelper.makeElement("<foo id='bar'/>")), localSync);
+		Item originalItem = new Item(new XMLContent(localSync.getId(), "foo", "bar", TestHelper.makeElement("<foo id='bar'/>")), localSync);
 
 		// Remote editing.
 		Sync remoteSync = localSync.clone().update("REMOTE\\kzu", TestHelper.nowSubtractMinutes((1)), false);
-		Item incomingItem = new Item(new ItemXMLContent(remoteSync.getId(), "changed2", "changed233", TestHelper.makeElement("<foo id='barwqeqq'/>")), remoteSync);
+		Item incomingItem = new Item(new XMLContent(remoteSync.getId(), "changed2", "changed233", TestHelper.makeElement("<foo id='barwqeqq'/>")), remoteSync);
 
 		localSync.delete(by, TestHelper.now());
 
@@ -379,7 +379,7 @@ public class BehaviorTests {
 
 	@Test
 	public void resolveShouldNotUpdateArgument() {
-		Item item = new Item(new ItemXMLContent(TestHelper.newID(), "foo", "bar",
+		Item item = new Item(new XMLContent(TestHelper.newID(), "foo", "bar",
 				TestHelper.makeElement("<payload/>")), new Sync(
 				TestHelper.newID(), "one", TestHelper.now(), false));
 
@@ -390,7 +390,7 @@ public class BehaviorTests {
 
 	@Test
 	public void resolveShouldUpdateEvenIfNoConflicts() {
-		Item item = new Item(new ItemXMLContent(TestHelper.newID(), "foo", "bar",
+		Item item = new Item(new XMLContent(TestHelper.newID(), "foo", "bar",
 				TestHelper.makeElement("<payload/>")), new Sync(
 				TestHelper.newID(), "one", TestHelper.now(), false));
 
@@ -403,7 +403,7 @@ public class BehaviorTests {
 
 	@Test
 	public void resolveShouldAddConflictItemHistoryWithoutIncrementingUpdates() {
-		ItemXMLContent xml = new ItemXMLContent(TestHelper.newID(), "foo", "bar", TestHelper
+		XMLContent xml = new XMLContent(TestHelper.newID(), "foo", "bar", TestHelper
 				.makeElement("<payload/>"));
 		Sync sync = new Sync(TestHelper.newID(), "one", TestHelper
 				.nowSubtractMinutes((10)), false);
@@ -421,7 +421,7 @@ public class BehaviorTests {
 
 	@Test
 	public void resolveShouldRemoveConflicts() {
-		ItemXMLContent xml = new ItemXMLContent(TestHelper.newID(), "foo", "bar", TestHelper
+		XMLContent xml = new XMLContent(TestHelper.newID(), "foo", "bar", TestHelper
 				.makeElement("<payload/>"));
 		Sync sync = new Sync(TestHelper.newID(), "one", TestHelper
 				.nowSubtractMinutes(10), false);
@@ -438,7 +438,7 @@ public class BehaviorTests {
 	@Test
 	public void resolveShouldNotAddConflictItemHistoryIfSubsumed()
 			 {
-		ItemXMLContent xml = new ItemXMLContent(TestHelper.newID(), "foo", "bar", TestHelper
+		XMLContent xml = new XMLContent(TestHelper.newID(), "foo", "bar", TestHelper
 				.makeElement("<payload/>"));
 		Sync sync = new Sync(TestHelper.newID(), "one", TestHelper.now(), false);
 		Sync conflictSync = sync.clone();

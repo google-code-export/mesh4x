@@ -19,6 +19,6 @@ public interface PreviewImportHandler {
 	/// Merge preview can only be performed on repositories that do not provide built-in merging capabilities. 
 	/// In such a case, there's no way for the <see cref="SyncEngine"/> to perform a preview of the merge operation.
 	/// </remarks>
-	public List<MergeResult> preview(Repository targetRepository, List<MergeResult> mergedItems);
+	public List<MergeResult> preview(RepositoryAdapter targetRepository, List<MergeResult> mergedItems);
 
 }
