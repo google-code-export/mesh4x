@@ -68,7 +68,7 @@
     </Compile>
     <Compile Include="Behaviors\Behaviors.cs" />
     <Compile Include="Behaviors\MergeBehavior.cs" />
-    <Compile Include="CompoundRepository.cs" />
+    <Compile Include="CompoundRepositoryAdapter.cs" />
     <Compile Include="DataEventArgs.cs" />
     <Compile Include="DeviceAuthor.cs" />
     <Compile Include="DynamicXmlItem.cs" />
@@ -77,7 +77,7 @@
     <Compile Include="Flag.cs" />
     <Compile Include="Guard.cs" />
     <Compile Include="ICloneable.cs" />
-    <Compile Include="IRepository.cs" />
+    <Compile Include="IRepositoryAdapter.cs" />
     <Compile Include="ISyncRepository.cs" />
     <Compile Include="ItemEventArgs.cs" />
     <Compile Include="ItemFilter.cs" />

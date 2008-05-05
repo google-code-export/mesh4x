@@ -12,7 +12,7 @@ namespace Mesh4n.Tests
 	[TestClass]
 	public class RepositoryFixture : TestFixtureBase
 	{
-		protected virtual IRepository CreateRepository()
+		protected virtual IRepositoryAdapter CreateRepository()
 		{
 			return new MockRepository();
 		}
@@ -39,7 +39,7 @@ namespace Mesh4n.Tests
 		[TestMethod]
 		public void ShouldGetNullIfNotExists()
 		{
-			IRepository repo = CreateRepository();
+			IRepositoryAdapter repo = CreateRepository();
 
 			Item i = repo.Get(Guid.NewGuid().ToString());
 
@@ -77,7 +77,7 @@ namespace Mesh4n.Tests
 		[TestMethod]
 		public void ShouldAddAndGetItem()
 		{
-			IRepository repo = CreateRepository();
+			IRepositoryAdapter repo = CreateRepository();
 			XmlItem xml = CreateItem(Guid.NewGuid().ToString());
 			Sync sync = Behaviors.Create(xml.Id, "kzu", DateTime.Now, false);
 			sync.Tag = xml.Tag;
@@ -97,7 +97,7 @@ namespace Mesh4n.Tests
 		[TestMethod]
 		public void ShouldGetAllItems()
 		{
-			IRepository repo = CreateRepository();
+			IRepositoryAdapter repo = CreateRepository();
 
 			string id = Guid.NewGuid().ToString();
 			Item item = new Item(CreateItem(id),
@@ -116,7 +116,7 @@ namespace Mesh4n.Tests
 		[TestMethod]
 		public void ShouldThrowAddDuplicateItemId()
 		{
-			IRepository repo = CreateRepository();
+			IRepositoryAdapter repo = CreateRepository();
 
 			string id = Guid.NewGuid().ToString();
 			Item item = new Item(CreateItem(id),
@@ -131,7 +131,7 @@ namespace Mesh4n.Tests
 		[TestMethod]
 		public void ShouldGetAllSinceDate()
 		{
-			IRepository repo = CreateRepository();
+			IRepositoryAdapter repo = CreateRepository();
 
 			string id = Guid.NewGuid().ToString();
 			Item item = new Item(CreateItem(id),
@@ -149,7 +149,7 @@ namespace Mesh4n.Tests
 		[TestMethod]
 		public void ShouldGetAllIfNullSince()
 		{
-			IRepository repo = CreateRepository();
+			IRepositoryAdapter repo = CreateRepository();
 
 			string id = Guid.NewGuid().ToString();
 			Item item = new Item(CreateItem(id),
@@ -167,7 +167,7 @@ namespace Mesh4n.Tests
 		[TestMethod]
 		public void ShouldGetAllIfNullWhen()
 		{
-			IRepository repo = CreateRepository();
+			IRepositoryAdapter repo = CreateRepository();
 
 			string id = Guid.NewGuid().ToString();
 			Item item = new Item(CreateItem(id),
@@ -186,7 +186,7 @@ namespace Mesh4n.Tests
 		[TestMethod]
 		public void ShouldThrowGetAllNullFilter()
 		{
-			IRepository repo = CreateRepository();
+			IRepositoryAdapter repo = CreateRepository();
 
 			Count(repo.GetAll(null));
 		}
@@ -201,7 +201,7 @@ namespace Mesh4n.Tests
 		[TestMethod]
 		public void ShouldGetAllPassFilter()
 		{
-			IRepository repo = CreateRepository();
+			IRepositoryAdapter repo = CreateRepository();
 
 			string id = Guid.NewGuid().ToString();
 			Item item = new Item(CreateItem(id),
@@ -230,7 +230,7 @@ namespace Mesh4n.Tests
 			Sync sync = Behaviors.Create(item.Id, "kzu", created, false);
 			sync.Tag = item.Tag;
 
-			IRepository repo = CreateRepository();
+			IRepositoryAdapter repo = CreateRepository();
 			repo.Add(new Item(item, sync));
 
 			Assert.AreEqual(1, Count(repo.GetAllSince(since)));
@@ -284,7 +284,7 @@ namespace Mesh4n.Tests
 		[TestMethod]
 		public void ShouldSaveUpdatedItemOnResolveConflicts()
 		{
-			IRepository repo = CreateRepository();
+			IRepositoryAdapter repo = CreateRepository();
 			string id = Guid.NewGuid().ToString();
 			Item item = new Item(CreateItem(id),
 				Behaviors.Create(id, DeviceAuthor.Current, DateTime.Now.Subtract(TimeSpan.FromMinutes(5)), false));
@@ -308,7 +308,7 @@ namespace Mesh4n.Tests
 		[TestMethod]
 		public void ShouldSaveUpdatedItemOnResolveConflicts2()
 		{
-			IRepository repo = CreateRepository();
+			IRepositoryAdapter repo = CreateRepository();
 			string id = Guid.NewGuid().ToString();
 			Item item = new Item(CreateItem(id),
 				Behaviors.Create(id, DeviceAuthor.Current, DateTime.Now.Subtract(TimeSpan.FromMinutes(5)), false));
@@ -332,7 +332,7 @@ namespace Mesh4n.Tests
 		[TestMethod]
 		public void ShouldResolveConflictsPreserveDeletedState()
 		{
-			IRepository repo = CreateRepository();
+			IRepositoryAdapter repo = CreateRepository();
 			string id = Guid.NewGuid().ToString();
 			Item item = new Item(CreateItem(id),
 				Behaviors.Create(id, DeviceAuthor.Current, DateTime.Now.Subtract(TimeSpan.FromMinutes(5)), false));
@@ -362,7 +362,7 @@ namespace Mesh4n.Tests
 			return true;
 		}
 
-		class SimpleRepository : Repository
+		class SimpleRepository : RepositoryAdapter
 		{
 			public DateTime? Since;
 			public Predicate<Item> Filter;

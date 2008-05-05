@@ -4,7 +4,6 @@ using System.Text;
 
 namespace Mesh4n
 {
-	[Obsolete("Use IRepository interface directly")]
 	public interface ISyncRepository
 	{
 		Sync Get(string id);

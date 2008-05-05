@@ -9,8 +9,7 @@ namespace Mesh4n
 	/// A repository that splits its data between an <see cref="IXmlRepository"/> containing 
 	/// the actual data, and an <see cref="ISyncRepository"/> containing the SSE metadata.
 	/// </summary>
-	[Obsolete("Use IRepository interface directly")]
-	public partial class CompoundRepository : IRepository
+	public partial class CompoundRepositoryAdapter : IRepositoryAdapter
 	{
 		IXmlRepository xmlRepo;
 		ISyncRepository syncRepo;
@@ -18,7 +17,7 @@ namespace Mesh4n
 		/// <summary>
 		/// Default constructor
 		/// </summary>
-		public CompoundRepository()
+		public CompoundRepositoryAdapter()
 		{
 		}
 
@@ -28,7 +27,7 @@ namespace Mesh4n
 		/// <param name="xmlRepo">Repository for the actual entity data.</param>
 		/// <param name="syncRepo">Repository for the SSE metadata.</param>
 		/// <exception cref="ArgumentNullException"><paramref name="xmlRepo"/> or <paramref name="syncRepo"/> are null.</exception>
-		public CompoundRepository(IXmlRepository xmlRepo, ISyncRepository syncRepo)
+		public CompoundRepositoryAdapter(IXmlRepository xmlRepo, ISyncRepository syncRepo)
 		{
 			Guard.ArgumentNotNull(xmlRepo, "xmlRepo");
 			Guard.ArgumentNotNull(syncRepo, "syncRepo");
@@ -68,7 +67,7 @@ namespace Mesh4n
 		}
 
 		/// <summary>
-		/// See <see cref="IRepository.Get"/>.
+		/// See <see cref="IRepositoryAdapter.Get"/>.
 		/// </summary>
 		public Item Get(string id)
 		{
@@ -91,7 +90,7 @@ namespace Mesh4n
 		}
 
 		/// <summary>
-		/// See <see cref="IRepository.GetAll"/>.
+		/// See <see cref="IRepositoryAdapter.GetAll"/>.
 		/// </summary>
 		public IEnumerable<Item> GetAll()
 		{
@@ -101,7 +100,7 @@ namespace Mesh4n
 		}
 
 		/// <summary>
-		/// See <see cref="IRepository.GetAll(Predicate{Item})"/>.
+		/// See <see cref="IRepositoryAdapter.GetAll(Predicate{Item})"/>.
 		/// </summary>
 		public IEnumerable<Item> GetAll(Predicate<Item> filter)
 		{
@@ -113,7 +112,7 @@ namespace Mesh4n
 		}
 
 		/// <summary>
-		/// See <see cref="IRepository.GetAllSince"/>.
+		/// See <see cref="IRepositoryAdapter.GetAllSince"/>.
 		/// </summary>
 		public IEnumerable<Item> GetAllSince(DateTime? since)
 		{
@@ -123,7 +122,7 @@ namespace Mesh4n
 		}
 
 		/// <summary>
-		/// See <see cref="IRepository.GetAllSince(DateTime?, Predicate{Item})"/>.
+		/// See <see cref="IRepositoryAdapter.GetAllSince(DateTime?, Predicate{Item})"/>.
 		/// </summary>
 		public IEnumerable<Item> GetAllSince(DateTime? since, Predicate<Item> filter)
 		{
@@ -249,7 +248,7 @@ namespace Mesh4n
 		}
 
 		/// <summary>
-		/// See <see cref="IRepository.GetConflicts"/>.
+		/// See <see cref="IRepositoryAdapter.GetConflicts"/>.
 		/// </summary>
 		public IEnumerable<Item> GetConflicts()
 		{
@@ -283,7 +282,7 @@ namespace Mesh4n
 
 
 		/// <summary>
-		/// See <see cref="IRepository.Add"/>.
+		/// See <see cref="IRepositoryAdapter.Add"/>.
 		/// </summary>
 		public void Add(Item item)
 		{
@@ -308,7 +307,7 @@ namespace Mesh4n
 		}
 
 		/// <summary>
-		/// See <see cref="IRepository.Delete"/>.
+		/// See <see cref="IRepositoryAdapter.Delete"/>.
 		/// </summary>
 		public void Delete(string id)
 		{
@@ -331,7 +330,7 @@ namespace Mesh4n
 		}
 
 		/// <summary>
-		/// See <see cref="IRepository.Update"/>.
+		/// See <see cref="IRepositoryAdapter.Update"/>.
 		/// </summary>
 		public void Update(Item item)
 		{
@@ -360,7 +359,7 @@ namespace Mesh4n
 		}
 
 		/// <summary>
-		/// See <see cref="IRepository.Update(Item, bool)"/>.
+		/// See <see cref="IRepositoryAdapter.Update(Item, bool)"/>.
 		/// </summary>
 		public Item Update(Item item, bool resolveConflicts)
 		{
@@ -390,7 +389,7 @@ namespace Mesh4n
 		}
 
 		/// <summary>
-		/// See <see cref="IRepository.FriendlyName"/>.
+		/// See <see cref="IRepositoryAdapter.FriendlyName"/>.
 		/// </summary>
 		public virtual string FriendlyName
 		{

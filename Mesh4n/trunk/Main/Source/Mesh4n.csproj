@@ -69,7 +69,7 @@
     <Compile Include="Behaviors\MergeBehavior.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CompoundRepository.cs">
+    <Compile Include="CompoundRepositoryAdapter.cs">
     </Compile>
     <Compile Include="DataEventArgs.cs" />
     <Compile Include="FeedReader.cs">
@@ -80,7 +80,7 @@
     <Compile Include="MergeFilterBehaviors.cs" />
     <Compile Include="MergeFilterHandler.cs" />
     <Compile Include="Flag.cs" />
-    <Compile Include="IRepository.cs" />
+    <Compile Include="IRepositoryAdapter.cs" />
     <Compile Include="ItemEventArgs.cs">
       <SubType>Code</SubType>
     </Compile>

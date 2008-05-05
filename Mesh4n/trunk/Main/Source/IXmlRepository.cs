@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 namespace Mesh4n
 {
-	[Obsolete("Use IRepository interface directly")]
 	public interface IXmlRepository
 	{
 		void Add(IXmlItem item, out object tag);

@@ -75,7 +75,7 @@ namespace Mesh4n.Tests
 		public void ShouldWriteFeedWithDeletedItem()
 		{
 			IXmlRepository xmlRepo = new MockXmlRepository().AddTwoItems();
-			IRepository repo = new CompoundRepository(xmlRepo, new MockSyncRepository());
+			IRepositoryAdapter repo = new CompoundRepositoryAdapter(xmlRepo, new MockSyncRepository());
 
 			Item item = GetFirst<Item>(repo.GetAll());
 			xmlRepo.Remove(item.XmlItem.Id);

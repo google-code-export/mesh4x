@@ -5,9 +5,9 @@ using System.Text;
 namespace Mesh4n
 {
 	/// <summary>
-	/// Main repository interface for an SSE adapter.
+	/// Main repository interface for an feedsync adapter.
 	/// </summary>
-	public interface IRepository
+	public interface IRepositoryAdapter
 	{
 		/// <summary>
 		/// Whether the repository performs its own merge behavior, or 

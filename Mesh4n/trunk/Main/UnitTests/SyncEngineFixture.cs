@@ -266,24 +266,24 @@ namespace Mesh4n.Tests
 			bool right = false;
 			bool none = false;
 			int both = 0;
-			MergeFilterHandler leftHandler = delegate(IRepository targetRepository, IEnumerable<ItemMergeResult> mergedItems)
+			MergeFilterHandler leftHandler = delegate(IRepositoryAdapter targetRepository, IEnumerable<ItemMergeResult> mergedItems)
 			{
 				Assert.AreEqual("left", targetRepository.FriendlyName);
 				left = true;
 				return mergedItems;
 			};
-			MergeFilterHandler rightHandler = delegate(IRepository targetRepository, IEnumerable<ItemMergeResult> mergedItems)
+			MergeFilterHandler rightHandler = delegate(IRepositoryAdapter targetRepository, IEnumerable<ItemMergeResult> mergedItems)
 			{
 				Assert.AreEqual("right", targetRepository.FriendlyName);
 				right = true;
 				return mergedItems;
 			};
-			MergeFilterHandler bothHandler = delegate(IRepository targetRepository, IEnumerable<ItemMergeResult> mergedItems)
+			MergeFilterHandler bothHandler = delegate(IRepositoryAdapter targetRepository, IEnumerable<ItemMergeResult> mergedItems)
 			{
 				both++;
 				return mergedItems;
 			};
-			MergeFilterHandler noneHandler = delegate(IRepository targetRepository, IEnumerable<ItemMergeResult> mergedItems)
+			MergeFilterHandler noneHandler = delegate(IRepositoryAdapter targetRepository, IEnumerable<ItemMergeResult> mergedItems)
 			{
 				none = true;
 				return mergedItems;
@@ -436,11 +436,11 @@ namespace Mesh4n.Tests
 			return new Item(xml, sync);
 		}
 
-		class MockMergeRepository : IRepository
+		class MockMergeRepository : IRepositoryAdapter
 		{
 			public bool MergeCalled;
 
-			#region IRepository Members
+			#region IRepositoryAdapter Members
 
 			public string FriendlyName
 			{
@@ -497,7 +497,7 @@ namespace Mesh4n.Tests
 
 			#endregion
 
-			#region IRepository Members
+			#region IRepositoryAdapter Members
 
 			public IEnumerable<Item> GetAll(Predicate<Item> filter)
 			{

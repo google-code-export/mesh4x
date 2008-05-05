@@ -12,13 +12,13 @@ namespace Mesh4n
 		public event EventHandler<ItemEventArgs> ItemReceived;
 		public event EventHandler<ItemEventArgs> ItemSent;
 
-		IRepository source;
-		IRepository target;
+		IRepositoryAdapter source;
+		IRepositoryAdapter target;
 
 		/// <summary>
 		/// Initializes the engine with the two repositories to synchronize.
 		/// </summary>
-		public SyncEngine(IRepository source, IRepository target)
+		public SyncEngine(IRepositoryAdapter source, IRepositoryAdapter target)
 		{
 			Guard.ArgumentNotNull(source, "left");
 			Guard.ArgumentNotNull(target, "right");
@@ -176,7 +176,7 @@ namespace Mesh4n
 			}
 		}
 
-		private IEnumerable<ItemMergeResult> MergeItems(IEnumerable<Item> items, IRepository repository)
+		private IEnumerable<ItemMergeResult> MergeItems(IEnumerable<Item> items, IRepositoryAdapter repository)
 		{
 			foreach (Item incoming in items)
 			{
@@ -188,7 +188,7 @@ namespace Mesh4n
 			}
 		}
 
-		private IList<Item> Import(IEnumerable<ItemMergeResult> items, IRepository repository)
+		private IList<Item> Import(IEnumerable<ItemMergeResult> items, IRepositoryAdapter repository)
 		{
 			// Straight import of data in merged results. 
 			// Conflicting items are saved and also 

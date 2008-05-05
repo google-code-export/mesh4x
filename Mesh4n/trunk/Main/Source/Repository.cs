@@ -6,18 +6,18 @@ using System.ComponentModel;
 namespace Mesh4n
 {
 	/// <summary>
-	/// Base implementation of <see cref="IRepository"/> that provides support for 
+	/// Base implementation of <see cref="IRepositoryAdapter"/> that provides support for 
 	/// <see cref="ISupportInitialize"/> for XAML-friendly serialization and validation.
 	/// </summary>
-	public abstract class Repository : IRepository
+	public abstract class RepositoryAdapter : IRepositoryAdapter
 	{
 		/// <summary>
-		/// See <see cref="IRepository.SupportsMerge"/>.
+		/// See <see cref="IRepositoryAdapter.SupportsMerge"/>.
 		/// </summary>
 		public abstract bool SupportsMerge { get; }
 
 		/// <summary>
-		/// See <see cref="IRepository.Get"/>.
+		/// See <see cref="IRepositoryAdapter.Get"/>.
 		/// </summary>
 		public abstract Item Get(string id);
 
@@ -27,7 +27,7 @@ namespace Mesh4n
 		}
 
 		/// <summary>
-		/// See <see cref="IRepository.GetAll"/>.
+		/// See <see cref="IRepositoryAdapter.GetAll"/>.
 		/// </summary>
 		public IEnumerable<Item> GetAll()
 		{
@@ -35,7 +35,7 @@ namespace Mesh4n
 		}
 
 		/// <summary>
-		/// See <see cref="IRepository.GetAll(Predicate{Item})"/>.
+		/// See <see cref="IRepositoryAdapter.GetAll(Predicate{Item})"/>.
 		/// </summary>
 		public IEnumerable<Item> GetAll(Predicate<Item> filter)
 		{
@@ -43,7 +43,7 @@ namespace Mesh4n
 		}
 
 		/// <summary>
-		/// See <see cref="IRepository.GetAllSince(DateTime?)"/>.
+		/// See <see cref="IRepositoryAdapter.GetAllSince(DateTime?)"/>.
 		/// </summary>
 		public IEnumerable<Item> GetAllSince(DateTime? since)
 		{
@@ -51,7 +51,7 @@ namespace Mesh4n
 		}
 
 		/// <summary>
-		/// See <see cref="IRepository.GetAllSince(DateTime?, Predicate{Item})"/>.
+		/// See <see cref="IRepositoryAdapter.GetAllSince(DateTime?, Predicate{Item})"/>.
 		/// </summary>
 		public IEnumerable<Item> GetAllSince(DateTime? since, Predicate<Item> filter)
 		{
@@ -61,7 +61,7 @@ namespace Mesh4n
 		protected abstract IEnumerable<Item> GetAll(DateTime? since, Predicate<Item> filter);
 
 		/// <summary>
-		/// See <see cref="IRepository.GetConflicts"/>. Default implementation retrieves 
+		/// See <see cref="IRepositoryAdapter.GetConflicts"/>. Default implementation retrieves 
 		/// all items and filters out those without conflicts.
 		/// </summary>
 		public virtual IEnumerable<Item> GetConflicts()
@@ -73,22 +73,22 @@ namespace Mesh4n
 		}
 
 		/// <summary>
-		/// See <see cref="IRepository.Add"/>.
+		/// See <see cref="IRepositoryAdapter.Add"/>.
 		/// </summary>
 		public abstract void Add(Item item);
 
 		/// <summary>
-		/// See <see cref="IRepository.Delete"/>.
+		/// See <see cref="IRepositoryAdapter.Delete"/>.
 		/// </summary>
 		public abstract void Delete(string id);
 
 		/// <summary>
-		/// See <see cref="IRepository.Update"/>.
+		/// See <see cref="IRepositoryAdapter.Update"/>.
 		/// </summary>
 		public abstract void Update(Item item);
 
 		/// <summary>
-		/// See <see cref="IRepository.Update(Item, bool)"/>. Default implementation 
+		/// See <see cref="IRepositoryAdapter.Update(Item, bool)"/>. Default implementation 
 		/// uses <see cref="Behaviors.ResolveConflicts"/> to generate a new update 
 		/// that resolves all conflicts, with the <see cref="DeviceAuthor.Current"/> and 
 		/// <see cref="DateTime.Now"/> as the by/when information.
@@ -108,12 +108,12 @@ namespace Mesh4n
 		}
 
 		/// <summary>
-		/// See <see cref="IRepository.Merge"/>.
+		/// See <see cref="IRepositoryAdapter.Merge"/>.
 		/// </summary>
 		public abstract IEnumerable<Item> Merge(IEnumerable<Item> items);
 
 		/// <summary>
-		/// See <see cref="IRepository.FriendlyName"/>.
+		/// See <see cref="IRepositoryAdapter.FriendlyName"/>.
 		/// </summary>
 		public abstract string FriendlyName { get; }
 	}

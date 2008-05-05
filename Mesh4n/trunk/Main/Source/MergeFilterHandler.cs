@@ -16,5 +16,5 @@ namespace Mesh4n
 	/// Merge preview can only be performed on repositories that do not provide built-in merging capabilities. 
 	/// In such a case, there's no way for the <see cref="SyncEngine"/> to perform a preview of the merge operation.
 	/// </remarks>
-	public delegate IEnumerable<ItemMergeResult> MergeFilterHandler(IRepository targetRepository, IEnumerable<ItemMergeResult> mergedItems);
+	public delegate IEnumerable<ItemMergeResult> MergeFilterHandler(IRepositoryAdapter targetRepository, IEnumerable<ItemMergeResult> mergedItems);
 }
