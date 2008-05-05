@@ -4,7 +4,7 @@ namespace SimpleSharing.Data
     using System.ComponentModel;
     
     
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("XamlBindingTool", "1.0.0.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("XamlBindingTool", "1.1.0.0")]
     public partial class DbRepository : ISupportInitialize, ISupportInitializeNotification, IChangeTracking, INotifyPropertyChanged
     {
         

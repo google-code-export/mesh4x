@@ -1,8 +1,8 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{99CD956C-0F9E-4BA3-9A88-3E4489864378}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -24,6 +24,12 @@
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\..\..\Mvp-Xml.Net20.Public.snk</AssemblyOriginatorKeyFile>
     <DelaySign>true</DelaySign>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <NativePlatformName>Windows Mobile 5.0 Pocket PC SDK</NativePlatformName>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -62,17 +68,14 @@
     <Reference Include="mscorlib" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Data.SqlServerCe, Version=3.0.3600.0, Culture=neutral, PublicKeyToken=3be235df1c8d2ad3, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib\MCSF\System.Data.SqlServerCe.dll</HintPath>
-    </Reference>
+    <Reference Include="System.Data.SqlServerCe, Version=3.5.0.0, Culture=neutral, PublicKeyToken=3be235df1c8d2ad3, processorArchitecture=MSIL" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-		<Compile Include="..\Source\Properties\AssemblyInfo.cs">
-			<Link>Properties\AssemblyInfo.cs</Link>
-		</Compile>
-		<Compile Include="..\..\..\GlobalAssemblyInfo.cs">
+    <Compile Include="..\Source\Properties\AssemblyInfo.cs">
+      <Link>Properties\AssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\GlobalAssemblyInfo.cs">
       <Link>GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="..\Source\DbFactory.cs">
@@ -141,4 +144,5 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <Import Condition="'$(TargetFrameworkVersion)' == 'v3.5'" Project="$(MSBuildBinPath)\Microsoft.CompactFramework.CSharp.targets" />
 </Project>

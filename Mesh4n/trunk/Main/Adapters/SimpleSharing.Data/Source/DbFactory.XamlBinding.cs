@@ -4,7 +4,7 @@ namespace SimpleSharing.Data
     using System.ComponentModel;
     
     
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("XamlBindingTool", "1.0.0.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("XamlBindingTool", "1.1.0.0")]
     public partial class DbFactory : ISupportInitialize, ISupportInitializeNotification, IChangeTracking, INotifyPropertyChanged
     {
         
@@ -93,7 +93,6 @@ namespace SimpleSharing.Data
         [EditorBrowsableAttribute(EditorBrowsableState.Never)]
         protected virtual void InitializeNested()
         {
-            ISupportInitialize initializable;
         }
         
         void ISupportInitialize.BeginInit()
