@@ -179,6 +179,14 @@ namespace Mesh4n.Tests
 			return navigator.SelectSingleNode(xpath, ns).Value;
 		}
 
+		protected static string EvaluateInnerString(XmlNode navigator, string xpath)
+		{
+			XmlNamespaceManager ns = new XmlNamespaceManager(navigator.OwnerDocument.NameTable);
+			ns.AddNamespace(Schema.DefaultPrefix, Schema.Namespace);
+
+			return navigator.SelectSingleNode(xpath, ns).InnerText;
+		}
+
 		protected static T GetFirst<T>(IEnumerable<T> items)
 		{
 			foreach (T item in items)

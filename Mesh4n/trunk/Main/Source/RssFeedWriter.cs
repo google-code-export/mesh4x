@@ -48,7 +48,7 @@ namespace Mesh4n
 		protected override void WriteStartItem(Item item, XmlWriter writer)
 		{
 			writer.WriteStartElement("item");
-			if (!item.Sync.Deleted)
+			if (item.Sync == null || !item.Sync.Deleted)
 			{
 				writer.WriteElementString("title", item.XmlItem.Title);
 				writer.WriteElementString("description", item.XmlItem.Description);
@@ -71,7 +71,8 @@ namespace Mesh4n
 					item.Sync.LastUpdate.By));
 			}
 
-			if (item.Sync.LastUpdate != null &&
+			if (item.Sync != null &&
+				item.Sync.LastUpdate != null &&
 				item.Sync.LastUpdate.By != null)
 			{
 				string by = item.Sync.LastUpdate.By;

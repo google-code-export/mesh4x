@@ -88,6 +88,19 @@ namespace Mesh4n
 			updatesHistory.Push(history);
 		}
 
+		public bool IsSubsumedBy(Sync sync)
+		{
+			History Hx = this.LastUpdate;
+			foreach (History Hy in sync.UpdatesHistory)
+			{
+				if (Hx.IsSubsumedBy(Hy))
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
 		/// <summary>
 		/// Adds the conflict history immediately after the topmost history.
 		/// </summary>

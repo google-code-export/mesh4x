@@ -161,7 +161,7 @@ namespace Mesh4n
 				bool isSubsumed = false;
 				foreach (Item y in innerCollection)
 				{
-					if (x.IsSubsumedBy(y))
+					if (x.Sync.IsSubsumedBy(y.Sync))
 					{
 						isSubsumed = true;
 						resOuter.Remove(x);

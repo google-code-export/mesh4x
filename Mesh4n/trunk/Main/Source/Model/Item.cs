@@ -13,8 +13,6 @@ namespace Mesh4n
 
 		public Item(IXmlItem xmlItem, Sync sync)
 		{
-			Guard.ArgumentNotNull(sync, "sync");
-
 			if (xmlItem == null)
 				this.xmlItem = new NullXmlItem(sync.Id);
 			else
@@ -31,19 +29,6 @@ namespace Mesh4n
 		public IXmlItem XmlItem
 		{
 			get { return this.xmlItem; }
-		}
-
-		public bool IsSubsumedBy(Item item)
-		{
-			History Hx = this.sync.LastUpdate;
-			foreach (History Hy in item.sync.UpdatesHistory)
-			{
-				if (Hx.IsSubsumedBy(Hy))
-				{
-					return true;
-				}
-			}
-			return false;
 		}
 
 		#region Equality

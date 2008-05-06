@@ -21,13 +21,6 @@ namespace Mesh4n.Tests.Model
 			new Item(null, new Sync(Guid.NewGuid().ToString()));
 		}
 
-		[ExpectedException(typeof(ArgumentNullException))]
-		[TestMethod]
-		public void ShouldThrowNullSync()
-		{
-			new Item(new XmlItem("a", "b", GetElement("<c/>"), DateTime.Now), null);
-		}
-
 		[TestMethod]
 		public void ShouldEqualSameObject()
 		{

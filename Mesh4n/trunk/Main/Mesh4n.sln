@@ -61,6 +61,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mesh4n.Adapters.HttpService
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mesh4n.Adapters.HttpService.Tests", "Adapters\HttpService\Tests\Mesh4n.Adapters.HttpService.Tests.csproj", "{B0FF2BC2-E5AF-48FD-8DDE-4F466AAA4CBE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mesh4n.Adapters.HttpService.ConsoleHost", "Adapters\HttpService\ConsoleHost\Mesh4n.Adapters.HttpService.ConsoleHost.csproj", "{E00EB140-28A9-4BBD-833B-E4B0FBFF4D10}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
 		SccNumberOfProjects = 8
@@ -238,6 +240,16 @@ Global
 		{B0FF2BC2-E5AF-48FD-8DDE-4F466AAA4CBE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B0FF2BC2-E5AF-48FD-8DDE-4F466AAA4CBE}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{B0FF2BC2-E5AF-48FD-8DDE-4F466AAA4CBE}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{E00EB140-28A9-4BBD-833B-E4B0FBFF4D10}.Debug|.NET.ActiveCfg = Debug|Any CPU
+		{E00EB140-28A9-4BBD-833B-E4B0FBFF4D10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E00EB140-28A9-4BBD-833B-E4B0FBFF4D10}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E00EB140-28A9-4BBD-833B-E4B0FBFF4D10}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{E00EB140-28A9-4BBD-833B-E4B0FBFF4D10}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{E00EB140-28A9-4BBD-833B-E4B0FBFF4D10}.Release|.NET.ActiveCfg = Release|Any CPU
+		{E00EB140-28A9-4BBD-833B-E4B0FBFF4D10}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E00EB140-28A9-4BBD-833B-E4B0FBFF4D10}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E00EB140-28A9-4BBD-833B-E4B0FBFF4D10}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{E00EB140-28A9-4BBD-833B-E4B0FBFF4D10}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -259,6 +271,7 @@ Global
 		{9F77C3B0-5DD7-4B75-816E-69BCB44AA29E} = {E2FD283C-7899-42F3-B386-099168D0DF05}
 		{2BB365F9-5CBB-4CD9-82DC-0264E937BB48} = {A1FEE1B0-A01C-41FE-86D3-1F5B1D95ED39}
 		{B0FF2BC2-E5AF-48FD-8DDE-4F466AAA4CBE} = {A1FEE1B0-A01C-41FE-86D3-1F5B1D95ED39}
+		{E00EB140-28A9-4BBD-833B-E4B0FBFF4D10} = {A1FEE1B0-A01C-41FE-86D3-1F5B1D95ED39}
 	EndGlobalSection
 	GlobalSection(TextTemplating) = postSolution
 		TextTemplating = 1
