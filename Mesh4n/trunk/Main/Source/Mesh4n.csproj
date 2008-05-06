@@ -69,7 +69,7 @@
     <Compile Include="Behaviors\MergeBehavior.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CompoundRepositoryAdapter.cs">
+    <Compile Include="CompoundSyncAdapter.cs">
     </Compile>
     <Compile Include="DataEventArgs.cs" />
     <Compile Include="FeedReader.cs">
@@ -80,7 +80,7 @@
     <Compile Include="MergeFilterBehaviors.cs" />
     <Compile Include="MergeFilterHandler.cs" />
     <Compile Include="Flag.cs" />
-    <Compile Include="IRepositoryAdapter.cs" />
+    <Compile Include="ISyncAdapter.cs" />
     <Compile Include="ItemEventArgs.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -110,7 +110,7 @@
     <Compile Include="XmlItem.cs" />
     <Compile Include="Guard.cs" />
     <Compile Include="ICloneable.cs" />
-    <Compile Include="IXmlRepository.cs" />
+    <Compile Include="IContentAdapter.cs" />
     <Compile Include="ISyncRepository.cs" />
     <Compile Include="IXmlItem.cs" />
     <Compile Include="Model\ComparableList.cs">

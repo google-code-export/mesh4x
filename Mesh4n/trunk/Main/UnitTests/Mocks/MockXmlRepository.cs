@@ -8,7 +8,7 @@ using System.Xml;
 
 namespace Mesh4n.Tests
 {
-	public class MockXmlRepository : IXmlRepository
+	public class MockXmlRepository : IContentAdapter
 	{
         Dictionary<string, IXmlItem> items = new Dictionary<string, IXmlItem>();
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Mesh4n
 {
-	public interface IXmlRepository
+	public interface IContentAdapter
 	{
 		void Add(IXmlItem item, out object tag);
 		bool Contains(string id);

@@ -18,7 +18,7 @@ namespace Mesh4n.Tests
 	[TestClass]
 	public class XmlRepositoryFixture : TestFixtureBase
 	{
-		protected virtual IXmlRepository CreateRepository()
+		protected virtual IContentAdapter CreateRepository()
 		{
 			return new MockXmlRepository();
 		}
@@ -35,7 +35,7 @@ namespace Mesh4n.Tests
 		public void ShouldContainAfterAdd()
 		{
 			IXmlItem item = new MockXmlItem();
-			IXmlRepository repo = CreateRepository();
+			IContentAdapter repo = CreateRepository();
 
 			object tag = null;
 			repo.Add(item, out tag);
@@ -47,7 +47,7 @@ namespace Mesh4n.Tests
 		public void ShouldGetAddedItem()
 		{
 			IXmlItem item = new MockXmlItem();
-			IXmlRepository repo = CreateRepository();
+			IContentAdapter repo = CreateRepository();
 			object tag = null;
 			repo.Add(item, out tag);
 
@@ -95,7 +95,7 @@ namespace Mesh4n.Tests
 		[TestMethod]
 		public void ShouldEnumerateAllItems()
 		{
-			IXmlRepository repo = CreateRepository();
+			IContentAdapter repo = CreateRepository();
 			object tag = null;
 			repo.Add(new MockXmlItem(), out tag);
 			repo.Add(new MockXmlItem(), out tag);
@@ -111,7 +111,7 @@ namespace Mesh4n.Tests
 		{
 			object tag = null;
 
-			IXmlRepository repo = CreateRepository();
+			IContentAdapter repo = CreateRepository();
 			repo.Add(new MockXmlItem(), out tag);
 			Thread.Sleep(1000);
 
@@ -130,7 +130,7 @@ namespace Mesh4n.Tests
 		[TestMethod]
 		public void ShouldRemoveFalseIfNonExitingId()
 		{
-			IXmlRepository repo = CreateRepository();
+			IContentAdapter repo = CreateRepository();
 
 			bool removed = repo.Remove("1");
 
@@ -142,7 +142,7 @@ namespace Mesh4n.Tests
 		{
 			object tag = null;
 
-			IXmlRepository repo = CreateRepository();
+			IContentAdapter repo = CreateRepository();
 			IXmlItem item = new MockXmlItem();
 			repo.Add(item, out tag);
 
@@ -155,7 +155,7 @@ namespace Mesh4n.Tests
 		public void ShouldNotReturnSameItemInstanceButEqual()
 		{
 			object tag = null;
-			IXmlRepository repo = CreateRepository();
+			IContentAdapter repo = CreateRepository();
 			IXmlItem item = new MockXmlItem();
 			repo.Add(item, out tag);
 
@@ -169,7 +169,7 @@ namespace Mesh4n.Tests
 		{
 			object tag = null;
 
-			IXmlRepository repo = CreateRepository();
+			IContentAdapter repo = CreateRepository();
 			IXmlItem item = new MockXmlItem();
 			repo.Add(item, out tag);
 

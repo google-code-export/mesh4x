@@ -7,7 +7,7 @@ namespace Mesh4n
 	/// <summary>
 	/// Main repository interface for an feedsync adapter.
 	/// </summary>
-	public interface IRepositoryAdapter
+	public interface ISyncAdapter
 	{
 		/// <summary>
 		/// Whether the repository performs its own merge behavior, or 

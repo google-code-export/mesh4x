@@ -7,17 +7,17 @@ namespace Mesh4n
 {
 	/// <summary>
 	/// A repository that splits its data between an <see cref="IXmlRepository"/> containing 
-	/// the actual data, and an <see cref="ISyncRepository"/> containing the SSE metadata.
+	/// the actual data, and an <see cref="ISyncAdapter"/> containing the SSE metadata.
 	/// </summary>
-	public partial class CompoundRepositoryAdapter : IRepositoryAdapter
+	public partial class CompoundSyncAdapter : ISyncAdapter
 	{
-		IXmlRepository xmlRepo;
+		IContentAdapter xmlRepo;
 		ISyncRepository syncRepo;
 
 		/// <summary>
 		/// Default constructor
 		/// </summary>
-		public CompoundRepositoryAdapter()
+		public CompoundSyncAdapter()
 		{
 		}
 
@@ -27,7 +27,7 @@ namespace Mesh4n
 		/// <param name="xmlRepo">Repository for the actual entity data.</param>
 		/// <param name="syncRepo">Repository for the SSE metadata.</param>
 		/// <exception cref="ArgumentNullException"><paramref name="xmlRepo"/> or <paramref name="syncRepo"/> are null.</exception>
-		public CompoundRepositoryAdapter(IXmlRepository xmlRepo, ISyncRepository syncRepo)
+		public CompoundSyncAdapter(IContentAdapter xmlRepo, ISyncRepository syncRepo)
 		{
 			Guard.ArgumentNotNull(xmlRepo, "xmlRepo");
 			Guard.ArgumentNotNull(syncRepo, "syncRepo");
@@ -42,7 +42,7 @@ namespace Mesh4n
 		/// <summary>
 		/// Gets the repository for the actual entity data.
 		/// </summary>
-		public IXmlRepository XmlRepository 
+		public IContentAdapter XmlRepository 
 		{ 
 			get { return xmlRepo; }
 			set { xmlRepo = value; }
@@ -67,7 +67,7 @@ namespace Mesh4n
 		}
 
 		/// <summary>
-		/// See <see cref="IRepositoryAdapter.Get"/>.
+		/// See <see cref="ISyncAdapter.Get"/>.
 		/// </summary>
 		public Item Get(string id)
 		{
@@ -90,7 +90,7 @@ namespace Mesh4n
 		}
 
 		/// <summary>
-		/// See <see cref="IRepositoryAdapter.GetAll"/>.
+		/// See <see cref="ISyncAdapter.GetAll"/>.
 		/// </summary>
 		public IEnumerable<Item> GetAll()
 		{
@@ -100,7 +100,7 @@ namespace Mesh4n
 		}
 
 		/// <summary>
-		/// See <see cref="IRepositoryAdapter.GetAll(Predicate{Item})"/>.
+		/// See <see cref="ISyncAdapter.GetAll(Predicate{Item})"/>.
 		/// </summary>
 		public IEnumerable<Item> GetAll(Predicate<Item> filter)
 		{
@@ -112,7 +112,7 @@ namespace Mesh4n
 		}
 
 		/// <summary>
-		/// See <see cref="IRepositoryAdapter.GetAllSince"/>.
+		/// See <see cref="ISyncAdapter.GetAllSince"/>.
 		/// </summary>
 		public IEnumerable<Item> GetAllSince(DateTime? since)
 		{
@@ -122,7 +122,7 @@ namespace Mesh4n
 		}
 
 		/// <summary>
-		/// See <see cref="IRepositoryAdapter.GetAllSince(DateTime?, Predicate{Item})"/>.
+		/// See <see cref="ISyncAdapter.GetAllSince(DateTime?, Predicate{Item})"/>.
 		/// </summary>
 		public IEnumerable<Item> GetAllSince(DateTime? since, Predicate<Item> filter)
 		{
@@ -248,7 +248,7 @@ namespace Mesh4n
 		}
 
 		/// <summary>
-		/// See <see cref="IRepositoryAdapter.GetConflicts"/>.
+		/// See <see cref="ISyncAdapter.GetConflicts"/>.
 		/// </summary>
 		public IEnumerable<Item> GetConflicts()
 		{
@@ -282,7 +282,7 @@ namespace Mesh4n
 
 
 		/// <summary>
-		/// See <see cref="IRepositoryAdapter.Add"/>.
+		/// See <see cref="ISyncAdapter.Add"/>.
 		/// </summary>
 		public void Add(Item item)
 		{
@@ -307,7 +307,7 @@ namespace Mesh4n
 		}
 
 		/// <summary>
-		/// See <see cref="IRepositoryAdapter.Delete"/>.
+		/// See <see cref="ISyncAdapter.Delete"/>.
 		/// </summary>
 		public void Delete(string id)
 		{
@@ -330,7 +330,7 @@ namespace Mesh4n
 		}
 
 		/// <summary>
-		/// See <see cref="IRepositoryAdapter.Update"/>.
+		/// See <see cref="ISyncAdapter.Update"/>.
 		/// </summary>
 		public void Update(Item item)
 		{
@@ -359,7 +359,7 @@ namespace Mesh4n
 		}
 
 		/// <summary>
-		/// See <see cref="IRepositoryAdapter.Update(Item, bool)"/>.
+		/// See <see cref="ISyncAdapter.Update(Item, bool)"/>.
 		/// </summary>
 		public Item Update(Item item, bool resolveConflicts)
 		{
@@ -389,7 +389,7 @@ namespace Mesh4n
 		}
 
 		/// <summary>
-		/// See <see cref="IRepositoryAdapter.FriendlyName"/>.
+		/// See <see cref="ISyncAdapter.FriendlyName"/>.
 		/// </summary>
 		public virtual string FriendlyName
 		{

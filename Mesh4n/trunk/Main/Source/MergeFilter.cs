@@ -59,7 +59,7 @@ namespace Mesh4n
 			set { behaviors = value; }
 		}
 
-		private IEnumerable<ItemMergeResult> NullFilterHandler(IRepositoryAdapter targetRepository,
+		private IEnumerable<ItemMergeResult> NullFilterHandler(ISyncAdapter targetRepository,
 			IEnumerable<ItemMergeResult> mergedItems)
 		{
 			return mergedItems;

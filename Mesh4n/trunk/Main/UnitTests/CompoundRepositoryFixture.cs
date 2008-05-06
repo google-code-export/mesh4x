@@ -13,7 +13,7 @@ namespace Mesh4n.Tests
 	[TestClass]
 	public class CompoundRepositoryFixture : RepositoryFixture
 	{
-		IXmlRepository xmlRepo;
+		IContentAdapter xmlRepo;
 		ISyncRepository syncRepo;
 
 		[TestInitialize]
@@ -23,29 +23,29 @@ namespace Mesh4n.Tests
 			syncRepo = new MockSyncRepository();
 		}
 
-		protected override IRepositoryAdapter CreateRepository()
+		protected override ISyncAdapter CreateRepository()
 		{
-			return new CompoundRepositoryAdapter(xmlRepo, syncRepo);
+			return new CompoundSyncAdapter(xmlRepo, syncRepo);
 		}
 
 		[ExpectedException(typeof(ArgumentNullException))]
 		[TestMethod]
 		public void ShouldThrowIfNullXmlRepo()
 		{
-			new CompoundRepositoryAdapter(null, syncRepo);
+			new CompoundSyncAdapter(null, syncRepo);
 		}
 
 		[ExpectedException(typeof(ArgumentNullException))]
 		[TestMethod]
 		public void ShouldThrowIfNullSyncRepo()
 		{
-			new CompoundRepositoryAdapter(xmlRepo, null);
+			new CompoundSyncAdapter(xmlRepo, null);
 		}
 
 		[TestMethod]
 		public void ShouldNotSupportMerge()
 		{
-			CompoundRepositoryAdapter repo = new CompoundRepositoryAdapter(xmlRepo, syncRepo);
+			CompoundSyncAdapter repo = new CompoundSyncAdapter(xmlRepo, syncRepo);
 
 			Assert.IsFalse(repo.SupportsMerge);
 		}
@@ -53,7 +53,7 @@ namespace Mesh4n.Tests
 		[TestMethod]
 		public void ShouldExposeInnerRepositories()
 		{
-			CompoundRepositoryAdapter repo = new CompoundRepositoryAdapter(xmlRepo, syncRepo);
+			CompoundSyncAdapter repo = new CompoundSyncAdapter(xmlRepo, syncRepo);
 
 			Assert.AreSame(xmlRepo, repo.XmlRepository);
 			Assert.AreSame(syncRepo, repo.SyncRepository);
@@ -71,7 +71,7 @@ namespace Mesh4n.Tests
 			sync.Tag = tag;
 			syncRepo.Save(sync);
 
-			IRepositoryAdapter repo = new CompoundRepositoryAdapter(xmlRepo, syncRepo);
+			ISyncAdapter repo = new CompoundSyncAdapter(xmlRepo, syncRepo);
 
 			Item i = repo.Get(item.Id);
 
@@ -98,7 +98,7 @@ namespace Mesh4n.Tests
 			xmlRepo.Update(item, out tag);
 			item.Tag = tag;
 
-			IRepositoryAdapter repo = new CompoundRepositoryAdapter(xmlRepo, syncRepo);
+			ISyncAdapter repo = new CompoundSyncAdapter(xmlRepo, syncRepo);
 
 			Item i = repo.Get(item.Id);
 
@@ -115,7 +115,7 @@ namespace Mesh4n.Tests
 
 			item.Tag = tag;
 
-			IRepositoryAdapter repo = new CompoundRepositoryAdapter(xmlRepo, syncRepo);
+			ISyncAdapter repo = new CompoundSyncAdapter(xmlRepo, syncRepo);
 
 			Item i = repo.Get(item.Id);
 
@@ -133,7 +133,7 @@ namespace Mesh4n.Tests
 			//xmlRepo.Add(item);
 			syncRepo.Save(sync);
 
-			IRepositoryAdapter repo = new CompoundRepositoryAdapter(xmlRepo, syncRepo);
+			ISyncAdapter repo = new CompoundSyncAdapter(xmlRepo, syncRepo);
 
 			Item i = repo.Get(item.Id);
 
@@ -162,7 +162,7 @@ namespace Mesh4n.Tests
 			sync.Tag = tag;
 			syncRepo.Save(sync);
 
-			IRepositoryAdapter repo = new CompoundRepositoryAdapter(xmlRepo, syncRepo);
+			ISyncAdapter repo = new CompoundSyncAdapter(xmlRepo, syncRepo);
 
 			List<Item> items = new List<Item>(repo.GetAll());
 
@@ -190,7 +190,7 @@ namespace Mesh4n.Tests
 
 			xmlRepo.Update(item, out tag);
 
-			IRepositoryAdapter repo = new CompoundRepositoryAdapter(xmlRepo, syncRepo);
+			ISyncAdapter repo = new CompoundSyncAdapter(xmlRepo, syncRepo);
 
 			List<Item> items = new List<Item>(repo.GetAll());
 
@@ -215,7 +215,7 @@ namespace Mesh4n.Tests
 			sync.Tag = item.Tag;
 			syncRepo.Save(sync);
 
-			IRepositoryAdapter repo = new CompoundRepositoryAdapter(xmlRepo, syncRepo);
+			ISyncAdapter repo = new CompoundSyncAdapter(xmlRepo, syncRepo);
 
 			List<Item> items = new List<Item>(repo.GetAll());
 
@@ -243,7 +243,7 @@ namespace Mesh4n.Tests
 			sync = Behaviors.Create(Guid.NewGuid().ToString(), "kzu", DateTime.Now, false);
 			syncRepo.Save(sync);
 
-			IRepositoryAdapter repo = new CompoundRepositoryAdapter(xmlRepo, syncRepo);
+			ISyncAdapter repo = new CompoundSyncAdapter(xmlRepo, syncRepo);
 
 			List<Item> items = new List<Item>(repo.GetAll());
 
@@ -271,7 +271,7 @@ namespace Mesh4n.Tests
 			sync.Tag = tag;
 			syncRepo.Save(sync);
 
-			IRepositoryAdapter repo = new CompoundRepositoryAdapter(xmlRepo, syncRepo);
+			ISyncAdapter repo = new CompoundSyncAdapter(xmlRepo, syncRepo);
 
 			List<Item> items = new List<Item>(repo.GetAllSince(since));
 
@@ -281,7 +281,7 @@ namespace Mesh4n.Tests
 		[TestMethod]
 		public void ShouldGetUpdatedAfterSince()
 		{
-			IRepositoryAdapter repo = new CompoundRepositoryAdapter(xmlRepo, syncRepo);
+			ISyncAdapter repo = new CompoundSyncAdapter(xmlRepo, syncRepo);
 
 			XmlItem item = new XmlItem(Guid.NewGuid().ToString(), "foo", "bar", GetElement("<payload />"));
 			Sync sync = Behaviors.Create(item.Id, "kzu", DateTime.Now.Subtract(TimeSpan.FromMinutes(5)), false);
@@ -314,7 +314,7 @@ namespace Mesh4n.Tests
 		[TestMethod]
 		public void ShouldAddItem()
 		{
-			IRepositoryAdapter repo = new CompoundRepositoryAdapter(xmlRepo, syncRepo);
+			ISyncAdapter repo = new CompoundSyncAdapter(xmlRepo, syncRepo);
 
 			XmlItem xml = new XmlItem(Guid.NewGuid().ToString(), "foo", "bar", GetElement("<payload />"));
 			Sync sync = Behaviors.Create(xml.Id, "kzu", DateTime.Now.Subtract(TimeSpan.FromMinutes(5)), false);
@@ -330,7 +330,7 @@ namespace Mesh4n.Tests
 		[TestMethod]
 		public void ShouldAddItemSaveItemHash()
 		{
-			IRepositoryAdapter repo = new CompoundRepositoryAdapter(xmlRepo, syncRepo);
+			ISyncAdapter repo = new CompoundSyncAdapter(xmlRepo, syncRepo);
 
 			XmlItem xml = new XmlItem(Guid.NewGuid().ToString(), "foo", "bar", GetElement("<payload />"));
 			Sync sync = Behaviors.Create(xml.Id, "kzu", DateTime.Now.Subtract(TimeSpan.FromMinutes(5)), false);
@@ -347,7 +347,7 @@ namespace Mesh4n.Tests
 		[TestMethod]
 		public void ShouldAddOnlySyncForDeletedItem()
 		{
-			IRepositoryAdapter repo = new CompoundRepositoryAdapter(xmlRepo, syncRepo);
+			ISyncAdapter repo = new CompoundSyncAdapter(xmlRepo, syncRepo);
 
 			XmlItem xml = new XmlItem(Guid.NewGuid().ToString(), "foo", "bar", GetElement("<payload />"));
 			Sync sync = Behaviors.Create(xml.Id, "kzu", DateTime.Now.Subtract(TimeSpan.FromMinutes(5)), false);
@@ -365,7 +365,7 @@ namespace Mesh4n.Tests
 		[TestMethod]
 		public void ShouldDeleteItem()
 		{
-			IRepositoryAdapter repo = new CompoundRepositoryAdapter(xmlRepo, syncRepo);
+			ISyncAdapter repo = new CompoundSyncAdapter(xmlRepo, syncRepo);
 
 			XmlItem xml = new XmlItem(Guid.NewGuid().ToString(), "foo", "bar", GetElement("<payload />"));
 			Sync sync = Behaviors.Create(xml.Id, "kzu", DateTime.Now.Subtract(TimeSpan.FromMinutes(5)), false);
@@ -386,13 +386,13 @@ namespace Mesh4n.Tests
 		[TestMethod]
 		public void ShouldThrowUpdateNullItem()
 		{
-			new CompoundRepositoryAdapter(xmlRepo, syncRepo).Update(null);
+			new CompoundSyncAdapter(xmlRepo, syncRepo).Update(null);
 		}
 
 		[TestMethod]
 		public void ShouldUpdateItem()
 		{
-			IRepositoryAdapter repo = new CompoundRepositoryAdapter(xmlRepo, syncRepo);
+			ISyncAdapter repo = new CompoundSyncAdapter(xmlRepo, syncRepo);
 
 			XmlItem xml = new XmlItem(Guid.NewGuid().ToString(), "foo", "bar", GetElement("<payload />"));
 			Sync sync = Behaviors.Create(xml.Id, "kzu", DateTime.Now.Subtract(TimeSpan.FromMinutes(5)), false);
@@ -418,7 +418,7 @@ namespace Mesh4n.Tests
 		[TestMethod]
 		public void ShouldUpdateAndGetItem()
 		{
-			IRepositoryAdapter repo = new CompoundRepositoryAdapter(xmlRepo, syncRepo);
+			ISyncAdapter repo = new CompoundSyncAdapter(xmlRepo, syncRepo);
 
 			XmlItem xml = new XmlItem(Guid.NewGuid().ToString(), "foo", "bar", GetElement("<payload />"));
 			Sync sync = Behaviors.Create(xml.Id, "kzu", DateTime.Now.Subtract(TimeSpan.FromMinutes(5)), false);
@@ -448,7 +448,7 @@ namespace Mesh4n.Tests
 		[TestMethod]
 		public void ShouldUpdateSaveItemHash()
 		{
-			IRepositoryAdapter repo = new CompoundRepositoryAdapter(xmlRepo, syncRepo);
+			ISyncAdapter repo = new CompoundSyncAdapter(xmlRepo, syncRepo);
 
 			XmlItem xml = new XmlItem(Guid.NewGuid().ToString(), "foo", "bar", GetElement("<payload />"));
 			Sync sync = Behaviors.Create(xml.Id, "kzu", DateTime.Now.Subtract(TimeSpan.FromMinutes(5)), false);
@@ -476,7 +476,7 @@ namespace Mesh4n.Tests
 		[TestMethod]
 		public void ShouldGetConflicts()
 		{
-			IRepositoryAdapter repo = new CompoundRepositoryAdapter(xmlRepo, syncRepo);
+			ISyncAdapter repo = new CompoundSyncAdapter(xmlRepo, syncRepo);
 
 			XmlItem xml = new XmlItem(Guid.NewGuid().ToString(), "foo", "bar", GetElement("<payload />"));
 			Sync sync = Behaviors.Create(xml.Id, "kzu", DateTime.Now.Subtract(TimeSpan.FromMinutes(5)), false);
@@ -510,8 +510,8 @@ namespace Mesh4n.Tests
 		public void ShouldUpdateSyncLocalItemsOnUpdate()
 		{
 			ISyncRepository syncRepo = new MockSyncRepository();
-			IXmlRepository xmlRepo = new MockXmlRepository();
-			IRepositoryAdapter repo = new CompoundRepositoryAdapter(xmlRepo, syncRepo);
+			IContentAdapter xmlRepo = new MockXmlRepository();
+			ISyncAdapter repo = new CompoundSyncAdapter(xmlRepo, syncRepo);
 
 			string id = Guid.NewGuid().ToString();
 			Sync sync = Behaviors.Create(id, DeviceAuthor.Current, DateTime.Now.Subtract(TimeSpan.FromMinutes(1)), false);
@@ -544,8 +544,8 @@ namespace Mesh4n.Tests
 		public void ShouldUpdateSyncDeletedOnGetConflictsIfItemIsDeleted()
 		{
 			ISyncRepository syncRepo = new MockSyncRepository();
-			IXmlRepository xmlRepo = new MockXmlRepository().AddOneItem();
-			IRepositoryAdapter repo = new CompoundRepositoryAdapter(xmlRepo, syncRepo);
+			IContentAdapter xmlRepo = new MockXmlRepository().AddOneItem();
+			ISyncAdapter repo = new CompoundSyncAdapter(xmlRepo, syncRepo);
 
 			// Cause the item to be Sync'ed.
 			Item item = GetFirst<Item>(repo.GetAll());

@@ -365,7 +365,7 @@ namespace Mesh4n.Tests
 		{
 			MockSyncRepository localSync = new MockSyncRepository();
 			MockXmlRepository localXml = new MockXmlRepository();
-			IRepositoryAdapter repo = new CompoundRepositoryAdapter(localXml, localSync);
+			ISyncAdapter repo = new CompoundSyncAdapter(localXml, localSync);
 
 			localXml.AddTwoItems();
 
