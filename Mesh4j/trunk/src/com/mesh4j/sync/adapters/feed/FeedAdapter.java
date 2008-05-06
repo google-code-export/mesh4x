@@ -6,7 +6,6 @@ import java.util.List;
 
 import com.mesh4j.sync.AbstractRepositoryAdapter;
 import com.mesh4j.sync.Filter;
-import com.mesh4j.sync.adapters.feed.FeedAdapterTests;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.NullContent;
 import com.mesh4j.sync.translator.MessageTranslator;

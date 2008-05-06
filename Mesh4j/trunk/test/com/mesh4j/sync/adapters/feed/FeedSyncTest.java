@@ -9,8 +9,6 @@ import org.junit.Test;
 import com.mesh4j.sync.AbstractSyncEngineTest;
 import com.mesh4j.sync.RepositoryAdapter;
 import com.mesh4j.sync.SyncEngine;
-import com.mesh4j.sync.adapters.feed.Feed;
-import com.mesh4j.sync.adapters.feed.FeedAdapter;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.Sync;
 import com.mesh4j.sync.test.utils.TestHelper;

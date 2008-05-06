@@ -4,8 +4,7 @@ import org.dom4j.Element;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.mesh4j.sync.adapters.hibernate.EntityContent;
-import com.mesh4j.sync.adapters.hibernate.EntityDAO;
+import com.mesh4j.sync.adapters.EntityContent;
 import com.mesh4j.sync.model.Content;
 import com.mesh4j.sync.test.utils.TestHelper;
 

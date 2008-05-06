@@ -12,7 +12,6 @@ import org.junit.Test;
 import com.mesh4j.sync.adapters.feed.Feed;
 import com.mesh4j.sync.adapters.feed.FeedReader;
 import com.mesh4j.sync.adapters.feed.FeedWriter;
-import com.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 
 public class RssFeedWriterTests {
 

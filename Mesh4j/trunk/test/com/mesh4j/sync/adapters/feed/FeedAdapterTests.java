@@ -7,8 +7,6 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.mesh4j.sync.adapters.feed.Feed;
-import com.mesh4j.sync.adapters.feed.FeedAdapter;
 import com.mesh4j.sync.filter.NullFilter;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.Sync;

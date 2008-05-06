@@ -15,12 +15,20 @@ import org.hibernate.metadata.ClassMetadata;
 
 import com.mesh4j.sync.AbstractRepositoryAdapter;
 import com.mesh4j.sync.Filter;
+import com.mesh4j.sync.adapters.EntityContent;
+import com.mesh4j.sync.adapters.SyncInfo;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.NullContent;
 import com.mesh4j.sync.model.Sync;
+import com.mesh4j.sync.parsers.SyncInfoParser;
 import com.mesh4j.sync.security.Security;
 import com.mesh4j.sync.translator.MessageTranslator;
 import com.mesh4j.sync.validations.Guard;
+
+/**
+ * Use CompoundRepositoryAdapter
+ */
+@Deprecated
 
 public class HibernateAdapter extends AbstractRepositoryAdapter implements SessionProvider {
 	
@@ -39,7 +47,7 @@ public class HibernateAdapter extends AbstractRepositoryAdapter implements Sessi
 		
 		this.initializeHibernate(SyncDAO.getMapping(), entityMapping);
 		
-		this.syncDAO = new SyncDAO(this);
+		this.syncDAO = new SyncDAO(this, new SyncInfoParser());
 		
 		ClassMetadata classMetadata = this.getClassMetadata();
 		String entityName = classMetadata.getEntityName();						// TODO (JMT) set node attribute value
@@ -75,17 +83,26 @@ public class HibernateAdapter extends AbstractRepositoryAdapter implements Sessi
 		EntityContent entity = entityDAO.normalizeContent(item.getContent());
 		
 		Session session =  newSession();
-		Transaction tx = session.beginTransaction();
-		
-		if (!item.isDeleted())
-		{
-			entityDAO.save(entity);
+		Transaction tx = null;
+		try{
+			tx = session.beginTransaction();
+			
+			if (!item.isDeleted())
+			{
+				entityDAO.save(entity);
+			}
+			SyncInfo syncInfo = new SyncInfo(item.getSync(), entity);
+			syncDAO.save(syncInfo);
+			
+			tx.commit();
+		}catch (RuntimeException e) {
+			if (tx != null) {
+				tx.rollback();
+			}
+			throw e;
+		}finally{
+			closeSession();
 		}
-		SyncInfo syncInfo = new SyncInfo(item.getSync(), entity);
-		syncDAO.save(syncInfo);
-		
-		tx.commit();
-		closeSession();	
 	}
 
 	@Override
@@ -98,17 +115,26 @@ public class HibernateAdapter extends AbstractRepositoryAdapter implements Sessi
 		closeSession();
 		
 		session = newSession();
-		Transaction tx = session.beginTransaction();
-		if (syncInfo != null)
-		{
-			syncInfo.getSync().delete(Security.getAuthenticatedUser(), new Date());
-			syncDAO.save(syncInfo);
+		Transaction tx = null;
+		try{
+			tx = session.beginTransaction();
+			if (syncInfo != null)
+			{
+				syncInfo.getSync().delete(Security.getAuthenticatedUser(), new Date());
+				syncDAO.save(syncInfo);
+				
+				entityDAO.delete(syncInfo.getEntityId());
+			}
 			
-			entityDAO.delete(syncInfo.getEntityId());
+			tx.commit();
+		}catch (RuntimeException e) {
+			if (tx != null) {
+				tx.rollback();
+			}
+			throw e;
+		}finally{
+			closeSession();
 		}
-		
-		tx.commit();
-		closeSession();
 	}
 	
 	@Override
@@ -120,31 +146,51 @@ public class HibernateAdapter extends AbstractRepositoryAdapter implements Sessi
 		{
 			Session session = newSession();
 			SyncInfo syncInfo = syncDAO.get(item.getSyncId());
+			closeSession();
 			if(syncInfo != null){
+				session = newSession();
 				syncInfo.updateSync(item.getSync());
 				EntityContent entity = entityDAO.get(syncInfo.getEntityId());
 				closeSession();
 				
 				session = newSession();
-				Transaction tx = session.beginTransaction();
-				if(entity != null){
-					entityDAO.delete(entity);
+				Transaction tx = null;
+				try{
+					tx = session.beginTransaction();
+					if(entity != null){
+						entityDAO.delete(entity);
+					}
+					syncDAO.save(syncInfo);
+					tx.commit();
+				}catch (RuntimeException e) {
+					if (tx != null) {
+						tx.rollback();
+					}
+					throw e;
+				}finally{
+					closeSession();
 				}
-				syncDAO.save(syncInfo);
-				tx.commit();
 			}
-			closeSession();
 		}
 		else
 		{
 			Session session = newSession();
-			Transaction tx = session.beginTransaction();
-			EntityContent entity = entityDAO.normalizeContent(item.getContent());
-			entityDAO.save(entity);
-			SyncInfo syncInfo = new SyncInfo(item.getSync(), entity);
-			syncDAO.save(syncInfo);	
-			tx.commit();
-			closeSession();
+			Transaction tx = null;
+			try{
+				tx = session.beginTransaction();
+				EntityContent entity = entityDAO.normalizeContent(item.getContent());
+				entityDAO.save(entity);
+				SyncInfo syncInfo = new SyncInfo(item.getSync(), entity);
+				syncDAO.save(syncInfo);	
+				tx.commit();
+			}catch (RuntimeException e) {
+				if (tx != null) {
+					tx.rollback();
+				}
+				throw e;
+			}finally{
+				closeSession();
+			}
 		}
 	}
 
@@ -176,39 +222,48 @@ public class HibernateAdapter extends AbstractRepositoryAdapter implements Sessi
 
 	private void updateSync(EntityContent entity, SyncInfo syncInfo){
 		Session session = newSession();
-		Transaction tx = session.beginTransaction();
+		Transaction tx = null;
+		try{
+			tx = session.beginTransaction();
 		
-		Sync sync = syncInfo.getSync();
-		if (entity != null && sync == null)
-		{
-			// Add sync on-the-fly.
-			sync = new Sync(syncInfo.getSyncId(), Security.getAuthenticatedUser(), new Date(), false);
-			syncInfo.updateSync(sync);
-			syncDAO.save(syncInfo);
-		}
-		else if (entity == null && sync != null)
-		{
-			if (!sync.isDeleted())
+			Sync sync = syncInfo.getSync();
+			if (entity != null && sync == null)
 			{
-				sync.delete(Security.getAuthenticatedUser(), new Date());
+				// Add sync on-the-fly.
+				sync = new Sync(syncInfo.getSyncId(), Security.getAuthenticatedUser(), new Date(), false);
+				syncInfo.updateSync(sync);
 				syncDAO.save(syncInfo);
 			}
-		}
-		else
-		{
-			/// Ensures the Sync information is current WRT the 
-			/// item actual data. If it's not, a new 
-			/// update will be added. Used when exporting/retrieving 
-			/// items from the local stores.
-			if (!syncInfo.isDeleted() && syncInfo.contentHasChanged(entity))
+			else if (entity == null && sync != null)
 			{
-				sync.update(Security.getAuthenticatedUser(), new Date(), sync.isDeleted());
-				syncInfo.setEntityVersion(entity.getEntityVersion());
-				syncDAO.save(syncInfo);
+				if (!sync.isDeleted())
+				{
+					sync.delete(Security.getAuthenticatedUser(), new Date());
+					syncDAO.save(syncInfo);
+				}
 			}
+			else
+			{
+				/// Ensures the Sync information is current WRT the 
+				/// item actual data. If it's not, a new 
+				/// update will be added. Used when exporting/retrieving 
+				/// items from the local stores.
+				if (!syncInfo.isDeleted() && syncInfo.contentHasChanged(entity))
+				{
+					sync.update(Security.getAuthenticatedUser(), new Date(), sync.isDeleted());
+					syncInfo.setEntityVersion(entity.getEntityVersion());
+					syncDAO.save(syncInfo);
+				}
+			}
+			tx.commit();
+		}catch (RuntimeException e) {
+			if (tx != null) {
+				tx.rollback();
+			}
+			throw e;
+		}finally{
+			closeSession();
 		}
-		tx.commit();
-		closeSession();
 	}
 
 	@Override
@@ -234,14 +289,24 @@ public class HibernateAdapter extends AbstractRepositoryAdapter implements Sessi
 				SyncInfo newSyncInfo = new SyncInfo(sync, entity);
 				
 				session = newSession();
-				Transaction tx = session.beginTransaction();
-				syncDAO.save(newSyncInfo);
-				tx.commit();
-				closeSession();
+				Transaction tx = null;
+				try{
+					tx = session.beginTransaction();
+					syncDAO.save(newSyncInfo);
+					tx.commit();
+				}catch (RuntimeException e) {
+					if (tx != null) {
+						tx.rollback();
+					}
+					throw e;
+				}finally{
+					closeSession();
+				}	
 				
 			} else {
 				sync = syncInfo.getSync();
 				syncInfos.remove(syncInfo);
+				updateSync(entity, syncInfo);
 			}
 			Item item = new Item(entity, sync);
 			
@@ -252,6 +317,7 @@ public class HibernateAdapter extends AbstractRepositoryAdapter implements Sessi
 		}
 
 		for (SyncInfo syncInfo : syncInfos) {
+			updateSync(null, syncInfo);
 			Item item = new Item(
 				new NullContent(syncInfo.getSync().getId()),
 				syncInfo.getSync());
@@ -293,17 +359,24 @@ public class HibernateAdapter extends AbstractRepositoryAdapter implements Sessi
 	
 	public void deleteAll() {
 		Session session = newSession();
-		
-		Transaction trx = session.beginTransaction();
-		String hqlDelete = "delete " + syncDAO.getEntityName();
-		session.createQuery( hqlDelete ).executeUpdate();
-		
-		hqlDelete = "delete " + entityDAO.getEntityName();
-		session.createQuery( hqlDelete ).executeUpdate();
-		
-		trx.commit();
-		closeSession();
-		
+		Transaction tx = null;
+		try{
+			tx = session.beginTransaction();
+			String hqlDelete = "delete " + syncDAO.getEntityName();
+			session.createQuery( hqlDelete ).executeUpdate();
+			
+			hqlDelete = "delete " + entityDAO.getEntityName();
+			session.createQuery( hqlDelete ).executeUpdate();
+			
+			tx.commit();
+		}catch (RuntimeException e) {
+			if (tx != null) {
+				tx.rollback();
+			}
+			throw e;
+		}finally{
+			closeSession();
+		}		
 	}
 
 	private void closeSession() {

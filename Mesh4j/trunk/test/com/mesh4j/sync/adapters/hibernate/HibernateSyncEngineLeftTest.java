@@ -4,7 +4,6 @@ import org.junit.Assert;
 
 import com.mesh4j.sync.AbstractSyncEngineTest;
 import com.mesh4j.sync.RepositoryAdapter;
-import com.mesh4j.sync.adapters.hibernate.HibernateAdapter;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.test.utils.MockRepository;
 

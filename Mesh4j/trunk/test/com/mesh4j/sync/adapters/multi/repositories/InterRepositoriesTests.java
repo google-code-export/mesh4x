@@ -14,8 +14,8 @@ import org.junit.Test;
 
 import com.mesh4j.sync.SyncEngine;
 import com.mesh4j.sync.adapters.feed.Feed;
-import com.mesh4j.sync.adapters.feed.FeedReader;
 import com.mesh4j.sync.adapters.feed.FeedAdapter;
+import com.mesh4j.sync.adapters.feed.FeedReader;
 import com.mesh4j.sync.adapters.feed.FeedWriter;
 import com.mesh4j.sync.adapters.feed.XMLContent;
 import com.mesh4j.sync.adapters.feed.atom.AtomSyndicationFormat;

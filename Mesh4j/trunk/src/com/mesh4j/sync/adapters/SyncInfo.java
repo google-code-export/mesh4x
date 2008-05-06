@@ -1,4 +1,4 @@
-package com.mesh4j.sync.adapters.hibernate;
+package com.mesh4j.sync.adapters;
 
 import com.mesh4j.sync.model.Sync;
 

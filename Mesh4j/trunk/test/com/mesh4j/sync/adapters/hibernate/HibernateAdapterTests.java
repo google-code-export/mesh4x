@@ -10,8 +10,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.mesh4j.sync.adapters.hibernate.EntityContent;
-import com.mesh4j.sync.adapters.hibernate.HibernateAdapter;
+import com.mesh4j.sync.adapters.EntityContent;
 import com.mesh4j.sync.filter.NullFilter;
 import com.mesh4j.sync.model.Content;
 import com.mesh4j.sync.model.Item;

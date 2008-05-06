@@ -7,8 +7,13 @@ import org.dom4j.Element;
 import org.hibernate.EntityMode;
 import org.hibernate.Session;
 
+import com.mesh4j.sync.adapters.EntityContent;
 import com.mesh4j.sync.model.Content;
 
+/**
+ * Use CompoundRepositoryAdapter with an HibernateContentAdapter 
+ */
+@Deprecated
 public class EntityDAO {
 
 	// MODEL VARIABLES
@@ -73,29 +78,7 @@ public class EntityDAO {
 	}
 
 	public EntityContent normalizeContent(Content content){
-		if(content instanceof EntityContent){
-			EntityContent entity = (EntityContent)content;
-			entity.refreshEntityVersion();
-			return entity;
-		}else{
-			Element entityElement = null;
-			if(this.entityName.equals(content.getPayload().getName())){
-				entityElement = content.getPayload();
-			}else{
-				entityElement = content.getPayload().element(this.entityName);
-			}
-			if(entityElement == null){
-				return null;
-			}else{
-				Element idElement = entityElement.element(this.entityIDNode);
-				if(idElement == null){
-					return null;
-				} else {
-					String entityID = idElement.getText();
-					return new EntityContent(entityElement, this.entityName, entityID);
-				}
-			}
-		}
+		return EntityContent.normalizeContent(content, this.entityName, this.entityIDNode);
 	}
 	
 	public String getEntityName() {

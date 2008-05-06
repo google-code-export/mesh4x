@@ -8,7 +8,6 @@ import org.junit.Test;
 
 import com.mesh4j.sync.adapters.feed.Feed;
 import com.mesh4j.sync.adapters.feed.FeedReader;
-import com.mesh4j.sync.adapters.feed.atom.AtomSyndicationFormat;
 
 public class AtomFeedReaderTests {
 

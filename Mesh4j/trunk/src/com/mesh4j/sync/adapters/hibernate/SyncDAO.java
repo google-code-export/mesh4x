@@ -1,5 +1,8 @@
 package com.mesh4j.sync.adapters.hibernate;
 
+import static com.mesh4j.sync.parsers.SyncInfoParser.SYNC_INFO;
+import static com.mesh4j.sync.parsers.SyncInfoParser.SYNC_INFO_ATTR_ENTITY_NAME;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,37 +10,33 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.DocumentException;
-import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.hibernate.EntityMode;
 import org.hibernate.Session;
 
-import com.mesh4j.sync.adapters.feed.FeedReader;
-import com.mesh4j.sync.adapters.feed.FeedWriter;
-import com.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
-import com.mesh4j.sync.model.Sync;
+import com.mesh4j.sync.adapters.SyncInfo;
+import com.mesh4j.sync.parsers.SyncInfoParser;
 import com.mesh4j.sync.utils.IdGenerator;
 
+/**
+ * Use CompoundRepositoryAdapter with a SyncHibernateRepository 
+ */
+@Deprecated
 
 public class SyncDAO {
 
-	// CONSTANTS
-	private final static String SYNC_INFO = "SyncInfo";
-	private final static String SYNC_INFO_ATTR_SYNC_ID = "sync_id";
-	private final static String SYNC_INFO_ATTR_ENTITY_ID = "entity_id";
-	private final static String SYNC_INFO_ATTR_ENTITY_NAME = "entity_name";
-	private final static String SYNC_INFO_ATTR_ENTITY_VERSION = "entity_version";
-	private final static String SYNC_INFO_ATTR_SYNC_DATA = "sync_data";
-	
+	// CONSTANTS	
 	private final static Log Logger = LogFactory.getLog(SyncDAO.class);
 	
 	// MODEL VARIABLES
 	private SessionProvider sessionProvider;
+	private SyncInfoParser syncInfoParser;
 	
 	// BUSINESS METHODS
-	public SyncDAO(SessionProvider sessionProvider) {
+	public SyncDAO(SessionProvider sessionProvider, SyncInfoParser syncInfoParser) {
 		super();
 		this.sessionProvider = sessionProvider;
+		this.syncInfoParser = syncInfoParser;
 	}
 	
 	public SyncInfo get(String syncId) {
@@ -49,7 +48,7 @@ public class SyncDAO {
 		
 		SyncInfo syncInfo = null;
 		try {
-			syncInfo = this.convertElement2SyncInfo(syncInfoElement);
+			syncInfo = syncInfoParser.convertElement2SyncInfo(syncInfoElement);
 		} catch (DocumentException e) {
 			Logger.error(e.getMessage(), e); // TODO (JMT) throws an exception
 		}
@@ -59,7 +58,7 @@ public class SyncDAO {
 	public void save(SyncInfo syncInfo) {
 		Element syncInfoElement;
 		try {
-			syncInfoElement = this.convertSyncInfo2Element(syncInfo);
+			syncInfoElement = syncInfoParser.convertSyncInfo2Element(syncInfo);
 		} catch (DocumentException e) {
 			Logger.error(e.getMessage(), e); // TODO (JMT) throws an exception
 			return;
@@ -79,7 +78,7 @@ public class SyncDAO {
 		for (Element syncInfoElement : syncElements) {
 			SyncInfo syncInfo;
 			try {
-				syncInfo = convertElement2SyncInfo(syncInfoElement);
+				syncInfo = syncInfoParser.convertElement2SyncInfo(syncInfoElement);
 				result.add(syncInfo);
 			} catch (DocumentException e) {
 				Logger.error(e.getMessage(), e); // TODO (JMT) throws an exception
@@ -91,47 +90,6 @@ public class SyncDAO {
 
 	public String newSyncID() {
 		return IdGenerator.newID();
-	}
-	
-	protected SyncInfo convertElement2SyncInfo(Element syncInfoElement) throws DocumentException {
-		Sync sync = this.convertElement2Sync(syncInfoElement);
-		String entityName = syncInfoElement.element(SYNC_INFO_ATTR_ENTITY_NAME).getText();
-		String entityId = syncInfoElement.element(SYNC_INFO_ATTR_ENTITY_ID).getText();
-		int entityVersion = Integer.parseInt(syncInfoElement.element(SYNC_INFO_ATTR_ENTITY_VERSION).getText());
-		SyncInfo syncInfo = new SyncInfo(sync, entityName, entityId, entityVersion);
-		return syncInfo;
-	}
-	
-	protected Sync convertElement2Sync(Element syncInfoElement) throws DocumentException {
-		Element syncData = syncInfoElement.element(SYNC_INFO_ATTR_SYNC_DATA);
-		Element syncElement = DocumentHelper.parseText(syncData.getText()).getRootElement();
-		
-		FeedReader reader = new FeedReader(RssSyndicationFormat.INSTANCE);
-		Sync sync = reader.readSync(syncElement);
-		return sync;
-	}
-	
-	protected Element convertSyncInfo2Element(SyncInfo syncInfo) throws DocumentException {
-		Element syncElementRoot = DocumentHelper.createElement(SYNC_INFO);
-		syncElementRoot.addElement(SYNC_INFO_ATTR_SYNC_ID).addText(syncInfo.getSyncId());
-		syncElementRoot.addElement(SYNC_INFO_ATTR_ENTITY_NAME).addText(syncInfo.getEntityName());
-		syncElementRoot.addElement(SYNC_INFO_ATTR_ENTITY_ID).addText(syncInfo.getEntityId());
-		syncElementRoot.addElement(SYNC_INFO_ATTR_ENTITY_VERSION).addText(String.valueOf(syncInfo.getEntityVersion()));
-		
-		String syncAsXML = convertSync2XML(syncInfo.getSync());
-		syncElementRoot.addElement(SYNC_INFO_ATTR_SYNC_DATA).addText(syncAsXML);
-		
-		return syncElementRoot;
-	}
-
-	private String convertSync2XML(Sync sync) throws DocumentException {
-		FeedWriter writer = new FeedWriter(RssSyndicationFormat.INSTANCE);
-		Element syncData = DocumentHelper.createElement(RssSyndicationFormat.ATTRIBUTE_PAYLOAD);
-		syncData.addNamespace(RssSyndicationFormat.SX_PREFIX, RssSyndicationFormat.NAMESPACE);
-		writer.writeSync(syncData, sync);
-		
-		String syncAsXML = syncData.element(RssSyndicationFormat.SX_ELEMENT_SYNC).asXML();
-		return syncAsXML;
 	}
 
 	public static File getMapping() {

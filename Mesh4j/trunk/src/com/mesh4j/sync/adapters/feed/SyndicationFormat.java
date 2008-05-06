@@ -21,12 +21,12 @@ public interface SyndicationFormat {
 	Element addFeedItemElement(Element root);
 
 	// / <summary>
-	// / Namespace of the SSE elements.
+	// / Namespace of the FeedSync elements.
 	// / </summary>
 	public static final String NAMESPACE = "http://feedsync.org/2007/feedsync";
 
 	// / <summary>
-	// / Default prefix used for SSE elements.
+	// / Default prefix used for FeedSync elements.
 	// / </summary>
 	public static final String SX_PREFIX = "sx";
 

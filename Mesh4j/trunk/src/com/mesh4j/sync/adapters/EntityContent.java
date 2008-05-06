@@ -1,4 +1,4 @@
-package com.mesh4j.sync.adapters.hibernate;
+package com.mesh4j.sync.adapters;
 
 import org.dom4j.Element;
 
@@ -69,5 +69,31 @@ public class EntityContent implements Content{
 
 	public int getEntityVersion() {
 		return entityVersion;
+	}
+	
+	public static EntityContent normalizeContent(Content content, String entityNode, String entityIDNode){
+		if(content instanceof EntityContent){
+			EntityContent entity = (EntityContent)content;
+			entity.refreshEntityVersion();
+			return entity;
+		}else{
+			Element entityElement = null;
+			if(entityNode.equals(content.getPayload().getName())){
+				entityElement = content.getPayload();
+			}else{
+				entityElement = content.getPayload().element(entityNode);
+			}
+			if(entityElement == null){
+				return null;
+			}else{
+				Element idElement = entityElement.element(entityIDNode);
+				if(idElement == null){
+					return null;
+				} else {
+					String entityID = idElement.getText();
+					return new EntityContent(entityElement, entityNode, entityID);
+				}
+			}
+		}
 	}
 }
