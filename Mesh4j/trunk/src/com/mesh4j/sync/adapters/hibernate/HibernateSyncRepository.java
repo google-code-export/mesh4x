@@ -24,17 +24,17 @@ import com.mesh4j.sync.parsers.SyncInfoParser;
 import com.mesh4j.sync.utils.IdGenerator;
 
 // TODO (JMT) tests
-public class SyncHibernateRepository implements SyncRepository{
+public class HibernateSyncRepository implements SyncRepository{
 
 	// CONSTANTS	
-	private final static Log Logger = LogFactory.getLog(SyncHibernateRepository.class);
+	private final static Log Logger = LogFactory.getLog(HibernateSyncRepository.class);
 	
 	// MODEL VARIABLES
 	private SyncInfoParser syncInfoParser;
 	private SessionFactory sessionFactory;
 	
 	// BUSINESS METHODS
-	public SyncHibernateRepository(SyncInfoParser syncInfoParser) {
+	public HibernateSyncRepository(SyncInfoParser syncInfoParser) {
 		super();
 		this.syncInfoParser = syncInfoParser;
 		initializeHibernate();
