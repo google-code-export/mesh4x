@@ -127,6 +127,7 @@ public class KMLContentAdapter implements ContentAdapter{
 				
 		boolean dirty = false;
 		List<Element> elements = this.selectElements("//kml:Placemark");
+		elements.addAll(this.selectElements("//Placemark"));
 		
 		for (Element element : elements) {
 			String id = element.attributeValue(ATTRIBUTE_ID);
