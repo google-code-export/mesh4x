@@ -4,23 +4,30 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{B03988C0-5E00-42A0-BA58-53DE73157208}</ProjectGuid>
+    <ProjectGuid>{99CD956C-0F9E-4BA3-9A88-3E4489864378}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Mesh4n.Adapters.Data.Tests</RootNamespace>
-    <AssemblyName>Mesh4n.Adapters.Data.CF.Tests</AssemblyName>
+    <RootNamespace>Mesh4n.Adapters.Data</RootNamespace>
+    <AssemblyName>Mesh4n.Adapters.Data.CF</AssemblyName>
     <ProjectTypeGuids>{4D628B5B-2FBC-4AA6-8C16-197242AEB884};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <PlatformFamilyName>PocketPC</PlatformFamilyName>
     <PlatformID>4118C335-430C-497f-BE48-11C3316B135E</PlatformID>
     <OSVersion>5.01</OSVersion>
-    <DeployDirSuffix>SimpleSharing.Data.Tests.CF</DeployDirSuffix>
+    <DeployDirSuffix>SimpleSharing.Data.CF</DeployDirSuffix>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FormFactorID>
     </FormFactorID>
-    <SccProjectName>SAK</SccProjectName>
-    <SccLocalPath>SAK</SccLocalPath>
-    <SccAuxPath>SAK</SccAuxPath>
-    <SccProvider>SAK</SccProvider>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+    <SignAssembly>false</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\..\..\..\Mesh4n.snk</AssemblyOriginatorKeyFile>
+    <DelaySign>false</DelaySign>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>2.0</OldToolsVersion>
@@ -69,31 +76,47 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\UnitTests\DbSyncRepositoryFixture.cs">
-      <Link>DbSyncRepositoryFixture.cs</Link>
+    <Compile Include="..\Source\Properties\AssemblyInfo.cs">
+      <Link>Properties\AssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\..\..\GlobalAssemblyInfo.cs">
+      <Link>GlobalAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\Source\DbFactory.cs">
+      <Link>DbFactory.cs</Link>
+    </Compile>
+    <Compile Include="..\Source\DbRepository.cs">
+      <Link>DbRepository.cs</Link>
+    </Compile>
+    <Compile Include="..\Source\DbSyncRepository.cs">
+      <Link>DbSyncRepository.cs</Link>
+    </Compile>
+    <Compile Include="..\Source\Properties\Resources.Designer.cs">
+      <Link>Properties\Resources.Designer.cs</Link>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="..\Source\SqlDbFactory.cs">
+      <Link>SqlDbFactory.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Tools\CFUnitTester\UnitTesting\UnitTesting.csproj">
-      <Project>{3385C4E6-0657-48E3-8437-6BF4A51B2315}</Project>
-      <Name>UnitTesting</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\Source\Mesh4n.CF.csproj">
       <Project>{6AB67AF4-83D3-449E-83D0-A88C343801AE}</Project>
       <Name>Mesh4n.CF</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\UnitTests\Mesh4n.Tests.CF.csproj">
-      <Project>{F3D077E0-0FD6-4914-A55C-3FC14F36276A}</Project>
-      <Name>Mesh4n.Tests.CF</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Source.CF\Mesh4n.Adapters.Data.CF.csproj">
-      <Project>{99CD956C-0F9E-4BA3-9A88-3E4489864378}</Project>
-      <Name>Mesh4n.Adapters.Data.CF</Name>
-    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\Source\Properties\Resources.resx">
+      <Link>Properties\Resources.resx</Link>
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Condition="'$(TargetFrameworkVersion)' == 'v1.0'" Project="$(MSBuildBinPath)\Microsoft.CompactFramework.CSharp.v1.targets" />
   <Import Condition="'$(TargetFrameworkVersion)' == 'v2.0'" Project="$(MSBuildBinPath)\Microsoft.CompactFramework.CSharp.targets" />
