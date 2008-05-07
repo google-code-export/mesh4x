@@ -12,6 +12,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Namespace;
+import org.dom4j.QName;
 import org.dom4j.io.SAXReader;
 import org.jaxen.JaxenException;
 import org.jaxen.SimpleNamespaceContext;
@@ -31,6 +32,7 @@ public class KMLContentAdapter implements ContentAdapter{
 	private static final String ATTRIBUTE_NAME = "name";
 	//private static final String KML_ELEMENT_PLACEMARK = "Placemark";
 	private static final String KML_ELEMENT_FOLDER = "Folder";
+	private static final String KML_ELEMENT_FOLDER_NAME = "name";
 	private static final String KML_ELEMENT_DOCUMENT = "Document";
 	private static final String SHARED_FOLDER_NAME = "Shared Items";
 	private static final String KML_PREFIX = "kml";
@@ -58,8 +60,8 @@ public class KMLContentAdapter implements ContentAdapter{
 
 	@SuppressWarnings("unchecked")
 	private Element getSharedFolder() {
-		List<Element> folders = this.selectElements("//Folder");
-		folders.addAll(this.selectElements("//kml:Folder"));		// FIXME (JMT)
+		List<Element> folders = this.selectElements("//kml:Folder");
+
 		for (Element folder : folders) {
 			Element folderName = folder.element(ATTRIBUTE_NAME);
 			if(folderName != null && SHARED_FOLDER_NAME.equals(folderName.getText())){
@@ -67,19 +69,20 @@ public class KMLContentAdapter implements ContentAdapter{
 			}
 		}
 		
+		Namespace ns = DocumentHelper.createNamespace(KML_PREFIX, KML_URI);				
 		Element root = this.kmlDocument.getRootElement();
 		Element document = root.element(KML_ELEMENT_DOCUMENT);
 		if(document == null){
-			document = DocumentHelper.createElement(KML_ELEMENT_DOCUMENT);
-			Namespace ns = DocumentHelper.createNamespace(KML_PREFIX, KML_URI);
-			document.add(ns);
+			QName docQName = DocumentHelper.createQName(KML_ELEMENT_DOCUMENT, ns);
+			document = DocumentHelper.createElement(docQName);
 			root.add(document);
 		}
 		
-		Element folder = DocumentHelper.createElement(KML_ELEMENT_FOLDER);
-		Namespace ns = DocumentHelper.createNamespace(KML_PREFIX, KML_URI);
-		folder.add(ns);
-		Element elementName = DocumentHelper.createElement(ATTRIBUTE_NAME);
+		QName folderQName = DocumentHelper.createQName(KML_ELEMENT_FOLDER, ns);
+		Element folder = DocumentHelper.createElement(folderQName);
+
+		QName folderNameQName = DocumentHelper.createQName(KML_ELEMENT_FOLDER_NAME, ns);
+		Element elementName = DocumentHelper.createElement(folderNameQName);
 		elementName.addText(SHARED_FOLDER_NAME);
 		folder.add(elementName);
 		document.add(folder);
