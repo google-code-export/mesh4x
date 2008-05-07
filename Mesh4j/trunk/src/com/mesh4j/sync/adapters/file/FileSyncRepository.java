@@ -8,6 +8,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
@@ -15,12 +16,13 @@ import com.mesh4j.sync.adapters.EntityContent;
 import com.mesh4j.sync.adapters.SyncInfo;
 import com.mesh4j.sync.adapters.compound.SyncRepository;
 import com.mesh4j.sync.parsers.SyncInfoParser;
+import com.mesh4j.sync.utils.XMLHelper;
 import com.mesh4j.sync.validations.Guard;
 
-public class SyncFileRepository implements SyncRepository{
+public class FileSyncRepository implements SyncRepository{
 
 	private static final String ATTRIBUTE_ID = "ID";
-	private final static Log Logger = LogFactory.getLog(SyncFileRepository.class);
+	private final static Log Logger = LogFactory.getLog(FileSyncRepository.class);
 	
 	// MODEL VARIABLES
 	private File syncInfoFile;
@@ -28,15 +30,30 @@ public class SyncFileRepository implements SyncRepository{
 	private SyncInfoParser syncInfoParser;
 
 	// BUSINESS METHODS
-	public SyncFileRepository(File syncInfoFile) throws DocumentException {
+	public FileSyncRepository(String syncInfoFileName) throws DocumentException {
+		this(new File(syncInfoFileName));
+	}
+	
+	public FileSyncRepository(File syncInfoFile) throws DocumentException {
 
 		Guard.argumentNotNull(syncInfoFile, "syncInfoFile");
 
-		SAXReader saxReader = new SAXReader();
 		this.syncInfoFile = syncInfoFile;
+		
+		this.initializeFile(syncInfoFile);
+		
+		SAXReader saxReader = new SAXReader();
 		this.syncDocument = saxReader.read(this.syncInfoFile);
 		
 		this.syncInfoParser = new SyncInfoParser();
+	}
+
+	private void initializeFile(File file) {
+		if(!file.exists()){
+			Element rootElement = DocumentHelper.createElement("Syncs");
+			Document document = DocumentHelper.createDocument(rootElement);
+			XMLHelper.write(document, file);
+		}		
 	}
 
 	@Override

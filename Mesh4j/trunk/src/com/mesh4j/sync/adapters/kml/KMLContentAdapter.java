@@ -11,6 +11,7 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.dom4j.Namespace;
 import org.dom4j.io.SAXReader;
 import org.jaxen.JaxenException;
 import org.jaxen.SimpleNamespaceContext;
@@ -18,9 +19,9 @@ import org.jaxen.dom4j.Dom4jXPath;
 
 import com.mesh4j.sync.adapters.EntityContent;
 import com.mesh4j.sync.adapters.compound.ContentAdapter;
-import com.mesh4j.sync.adapters.file.XMLHelper;
 import com.mesh4j.sync.model.Content;
 import com.mesh4j.sync.utils.IdGenerator;
+import com.mesh4j.sync.utils.XMLHelper;
 
 public class KMLContentAdapter implements ContentAdapter{
 	
@@ -32,6 +33,8 @@ public class KMLContentAdapter implements ContentAdapter{
 	private static final String KML_ELEMENT_FOLDER = "Folder";
 	private static final String KML_ELEMENT_DOCUMENT = "Document";
 	private static final String SHARED_FOLDER_NAME = "Shared Items";
+	private static final String KML_PREFIX = "kml";
+	private static final String KML_URI = "http://earth.google.com/kml/2.2";
 		
 	// MODEL VARIABLES
 	private File kmlFile;
@@ -55,23 +58,30 @@ public class KMLContentAdapter implements ContentAdapter{
 
 	@SuppressWarnings("unchecked")
 	private Element getSharedFolder() {
-		Element root = this.kmlDocument.getRootElement();
-		Element document = root.element(KML_ELEMENT_DOCUMENT);
-		if(document == null){
-			document = DocumentHelper.createElement(KML_ELEMENT_DOCUMENT);
-			root.add(document);
-		}
-		
-		List<Element> folders = document.elements(KML_ELEMENT_FOLDER);
+		List<Element> folders = this.selectElements("//Folder");
+		folders.addAll(this.selectElements("//kml:Folder"));		// FIXME (JMT)
 		for (Element folder : folders) {
-			String folderName = folder.attributeValue(ATTRIBUTE_NAME);
-			if(SHARED_FOLDER_NAME.equals(folderName)){
+			Element folderName = folder.element(ATTRIBUTE_NAME);
+			if(folderName != null && SHARED_FOLDER_NAME.equals(folderName.getText())){
 				return folder;
 			}
 		}
 		
+		Element root = this.kmlDocument.getRootElement();
+		Element document = root.element(KML_ELEMENT_DOCUMENT);
+		if(document == null){
+			document = DocumentHelper.createElement(KML_ELEMENT_DOCUMENT);
+			Namespace ns = DocumentHelper.createNamespace(KML_PREFIX, KML_URI);
+			document.add(ns);
+			root.add(document);
+		}
+		
 		Element folder = DocumentHelper.createElement(KML_ELEMENT_FOLDER);
-		folder.addAttribute(ATTRIBUTE_NAME, SHARED_FOLDER_NAME);
+		Namespace ns = DocumentHelper.createNamespace(KML_PREFIX, KML_URI);
+		folder.add(ns);
+		Element elementName = DocumentHelper.createElement(ATTRIBUTE_NAME);
+		elementName.addText(SHARED_FOLDER_NAME);
+		folder.add(elementName);
 		document.add(folder);
 		return folder;
 	}
@@ -139,7 +149,7 @@ public class KMLContentAdapter implements ContentAdapter{
 		List<Element> elements = new ArrayList<Element>();
 		try {
 			HashMap<String, String> map = new HashMap<String, String>();
-			map.put( "kml", "http://earth.google.com/kml/2.2");
+			map.put(KML_PREFIX, KML_URI);
 			
 			Dom4jXPath xpath = new Dom4jXPath(xpathExpression);
 			xpath.setNamespaceContext(new SimpleNamespaceContext(map));
@@ -158,7 +168,7 @@ public class KMLContentAdapter implements ContentAdapter{
 
 	@Override
 	public String getEntityName() {
-		return this.kmlFile.getName();
+		return KML_PREFIX;
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-package com.mesh4j.sync.adapters.file;
+package com.mesh4j.sync.utils;
 
 import java.io.File;
 import java.io.FileWriter;
