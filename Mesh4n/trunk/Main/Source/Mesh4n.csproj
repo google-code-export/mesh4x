@@ -91,7 +91,7 @@
     <Compile Include="Model\ComparableStack.cs" />
     <Compile Include="NullXmlItem.cs" />
     <Compile Include="ObjectDumper.cs" />
-    <Compile Include="Repository.cs" />
+    <Compile Include="SyncAdapter.cs" />
     <Compile Include="RssDateTime.cs" />
     <Compile Include="RssFeedReader.cs">
       <SubType>Code</SubType>

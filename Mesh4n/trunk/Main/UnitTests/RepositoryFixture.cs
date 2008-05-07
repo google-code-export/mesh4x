@@ -362,7 +362,7 @@ namespace Mesh4n.Tests
 			return true;
 		}
 
-		class SimpleRepository : RepositoryAdapter
+		class SimpleRepository : SyncAdapter
 		{
 			public DateTime? Since;
 			public Predicate<Item> Filter;

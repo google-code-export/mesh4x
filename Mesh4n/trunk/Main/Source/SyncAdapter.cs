@@ -9,7 +9,7 @@ namespace Mesh4n
 	/// Base implementation of <see cref="ISyncAdapter"/> that provides support for 
 	/// <see cref="ISupportInitialize"/> for XAML-friendly serialization and validation.
 	/// </summary>
-	public abstract class RepositoryAdapter : ISyncAdapter
+	public abstract class SyncAdapter : ISyncAdapter
 	{
 		/// <summary>
 		/// See <see cref="ISyncAdapter.SupportsMerge"/>.

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Mesh4n.Tests
 {
-	public class MockRepository : RepositoryAdapter
+	public class MockRepository : SyncAdapter
 	{
 		public string name;
 		public Dictionary<string, Item> Items = new Dictionary<string, Item>();
