@@ -68,5 +68,41 @@ namespace Mesh4n.Adapters.HttpService.Properties {
                 return ResourceManager.GetString("InvalidConfigurationFile", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The provided type {0} does not implement the IFeedConfigurationManager interface.
+        /// </summary>
+        internal static string InvalidConfigurationManagerType {
+            get {
+                return ResourceManager.GetString("InvalidConfigurationManagerType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The provided type {0} does not implement the ISyncAdapter interface.
+        /// </summary>
+        internal static string InvalidSyncAdapterType {
+            get {
+                return ResourceManager.GetString("InvalidSyncAdapterType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to List of available feedsync feeds.
+        /// </summary>
+        internal static string MainFeedDescription {
+            get {
+                return ResourceManager.GetString("MainFeedDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to FeedSync Feeds.
+        /// </summary>
+        internal static string MainFeedTitle {
+            get {
+                return ResourceManager.GetString("MainFeedTitle", resourceCulture);
+            }
+        }
     }
 }

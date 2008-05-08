@@ -2,30 +2,49 @@
 using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel;
+using System.Configuration;
+using Mesh4n.Adapters.HttpService.Properties;
 
 namespace Mesh4n.Adapters.HttpService.Configuration
 {
-	public class FeedConfigurationEntry : ISupportInitialize
+	public class FeedConfigurationEntry
 	{
 		private string name;
 		private string title;
 		private string description;
+		private Type syncAdapterType;
 		private ISyncAdapter syncAdapter;
-		private string syncAdapterType;
 
-		public FeedConfigurationEntry()
+		protected FeedConfigurationEntry()
 		{
 		}
 
 		public FeedConfigurationEntry(string name, string title, string description, 
+			Type syncAdapterType)
+		{
+			Guard.ArgumentNotNullOrEmptyString(name, "name");
+			Guard.ArgumentNotNullOrEmptyString(title, "title");
+			Guard.ArgumentNotNullOrEmptyString(description, "description");
+
+			this.name = name;
+			this.title = title;
+			this.description = description;
+			this.syncAdapterType = syncAdapterType;
+
+			this.syncAdapter = this.CreateSyncAdapterInstance(this.syncAdapterType);
+		}
+
+		public FeedConfigurationEntry(string name, string title, string description,
 			ISyncAdapter syncAdapter)
 		{
+			Guard.ArgumentNotNullOrEmptyString(name, "name");
+			Guard.ArgumentNotNullOrEmptyString(title, "title");
+			Guard.ArgumentNotNullOrEmptyString(description, "description");
+
 			this.name = name;
 			this.title = title;
 			this.description = description;
 			this.syncAdapter = syncAdapter;
-
-			Validate();
 		}
 
 		public string Name
@@ -45,8 +64,9 @@ namespace Mesh4n.Adapters.HttpService.Configuration
 			get { return description; }
 			set { description = value; }
 		}
-
-		public string SyncAdapterType
+		
+		[TypeConverter(typeof(TypeNameConverter))]
+		public Type SyncAdapterType
 		{
 			get { return syncAdapterType; }
 			set { syncAdapterType = value; }
@@ -55,26 +75,17 @@ namespace Mesh4n.Adapters.HttpService.Configuration
 		public ISyncAdapter SyncAdapter
 		{
 			get { return syncAdapter; }
+			protected set { syncAdapter = value; }
 		}
 
-		protected virtual void Validate()
+		protected ISyncAdapter CreateSyncAdapterInstance(Type type)
 		{
-			Guard.ArgumentNotNullOrEmptyString(name, "Name");
-			Guard.ArgumentNotNullOrEmptyString(title, "Title");
-			Guard.ArgumentNotNullOrEmptyString(description, "Description");
-			Guard.ArgumentNotNull(syncAdapter, "SyncAdapter");
-		}
+			object adapter = Activator.CreateInstance(type);
+			if (!(adapter is ISyncAdapter))
+				throw new ArgumentException(string.Format(Resources.InvalidSyncAdapterType,
+					type.AssemblyQualifiedName));
 
-		public void BeginInit()
-		{
-		}
-
-		public void EndInit()
-		{
-			Type type = Type.GetType(this.SyncAdapterType, true, true);
-			this.syncAdapter = (ISyncAdapter)Activator.CreateInstance(type);
-
-			Validate();
+			return (ISyncAdapter)adapter;
 		}
 	}
 }

@@ -120,4 +120,16 @@
   <data name="InvalidConfigurationFile" xml:space="preserve">
     <value>Configuration file {0} has invalid content. {1}</value>
   </data>
+  <data name="InvalidConfigurationManagerType" xml:space="preserve">
+    <value>The provided type {0} does not implement the IFeedConfigurationManager interface</value>
+  </data>
+  <data name="InvalidSyncAdapterType" xml:space="preserve">
+    <value>The provided type {0} does not implement the ISyncAdapter interface</value>
+  </data>
+  <data name="MainFeedDescription" xml:space="preserve">
+    <value>List of available feedsync feeds</value>
+  </data>
+  <data name="MainFeedTitle" xml:space="preserve">
+    <value>FeedSync Feeds</value>
+  </data>
 </root>

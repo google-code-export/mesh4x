@@ -24,8 +24,16 @@ namespace Mesh4n.Tests
 		[TestMethod]
 		public void ShouldThrowIfNullRightRepo()
 		{
-			new SyncEngine(new MockRepository(), null);
+			new SyncEngine(new MockRepository(), (MockRepository)null);
 		}
+
+		[ExpectedException(typeof(ArgumentNullException))]
+		[TestMethod]
+		public void ShouldThrowIfNullIncomingItems()
+		{
+			new SyncEngine(new MockRepository(), (IEnumerable<Item>)null);
+		}
+
 
 		[TestMethod]
 		public void ShouldAddNewItems()
@@ -42,6 +50,22 @@ namespace Mesh4n.Tests
 			Assert.AreEqual(0, conflicts.Count);
 			Assert.AreEqual(2, left.Items.Count);
 			Assert.AreEqual(2, right.Items.Count);
+		}
+
+		[TestMethod]
+		public void ShouldAddNewItemsWithOneWaySynchronization()
+		{
+			Item item = CreateItem("fizz", Guid.NewGuid().ToString(), new History("kzu"));
+
+			MockRepository source = new MockRepository(
+				CreateItem("buzz", Guid.NewGuid().ToString(), new History("vga")));
+
+			SyncEngine engine = new SyncEngine(source, new Item[] { item });
+
+			IList<Item> conflicts = engine.Synchronize();
+
+			Assert.AreEqual(0, conflicts.Count);
+			Assert.AreEqual(2, source.Items.Count);
 		}
 
 		[TestMethod]
@@ -144,6 +168,24 @@ namespace Mesh4n.Tests
 		}
 
 		[TestMethod]
+		public void ShouldMergeChangesOneWay()
+		{
+			Item a = CreateItem("fizz", Guid.NewGuid().ToString(), new History("kzu"));
+			Item b = CreateItem("buzz", Guid.NewGuid().ToString(), new History("vga"));
+
+			MockRepository left = new MockRepository(
+				new Item(b.XmlItem, b.Sync.Update("kzu", DateTime.Now)),
+				a);
+
+			SyncEngine engine = new SyncEngine(left, new Item[] { a, b });
+
+			IList<Item> conflicts = engine.Synchronize();
+
+			Assert.AreEqual(0, conflicts.Count);
+			Assert.AreEqual(2, left.Items[b.Sync.Id].Sync.Updates);
+		}
+
+		[TestMethod]
 		public void ShouldMarkItemDeleted()
 		{
 			Item a = CreateItem("fizz", Guid.NewGuid().ToString(), new History("kzu"));
@@ -200,6 +242,26 @@ namespace Mesh4n.Tests
 			Assert.AreEqual(1, conflicts.Count);
 			Assert.AreEqual(1, left.Items[a.Sync.Id].Sync.Conflicts.Count);
 			Assert.AreEqual(1, right.Items[a.Sync.Id].Sync.Conflicts.Count);
+		}
+
+		[TestMethod]
+		public void ShouldGenerateConflictOneWay()
+		{
+			Item a = CreateItem("fizz", Guid.NewGuid().ToString(), new History("kzu"));
+			Thread.Sleep(1000);
+
+			MockRepository left = new MockRepository(
+				new Item(a.XmlItem, a.Sync.Update("kzu", DateTime.Now)));
+			Thread.Sleep(1000);
+
+			Item item = new Item(a.XmlItem, a.Sync.Update("vga", DateTime.Now));
+
+			SyncEngine engine = new SyncEngine(left, new Item[] { item });
+
+			IList<Item> conflicts = engine.Synchronize();
+
+			Assert.AreEqual(1, conflicts.Count);
+			Assert.AreEqual(1, left.Items[a.Sync.Id].Sync.Conflicts.Count);
 		}
 
 		[TestMethod]

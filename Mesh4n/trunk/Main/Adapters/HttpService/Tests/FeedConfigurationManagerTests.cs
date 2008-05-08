@@ -40,11 +40,11 @@ namespace Mesh4n.Adapters.HttpService.Tests
 		{
 			FeedConfigurationManager manager = GetManagerInstance("feeds.xaml");
 
-			FeedConfigurationEntry entry1 = new FeedConfigurationEntry("entry1",
-				"title 1", "description 1", new MockSyncAdapter());
+			FeedConfigurationEntry entry1 = new XamlFeedConfigurationEntry("entry1",
+				"title 1", "description 1", typeof(MockSyncAdapter));
 
-			FeedConfigurationEntry entry2 = new FeedConfigurationEntry("entry2",
-				"title 2", "description 2", new MockSyncAdapter());
+			FeedConfigurationEntry entry2 = new XamlFeedConfigurationEntry("entry2",
+				"title 2", "description 2", typeof(MockSyncAdapter));
 
 			FeedConfiguration configuration = new FeedConfiguration();
 			configuration.Add(entry1.Name, entry1);
@@ -70,8 +70,8 @@ namespace Mesh4n.Adapters.HttpService.Tests
 		{
 			FeedConfigurationManager manager = GetManagerInstance("feeds.xaml");
 
-			FeedConfigurationEntry entry = new FeedConfigurationEntry("entry1",
-				"title 1", "description 1", new MockSyncAdapter());
+			FeedConfigurationEntry entry = new XamlFeedConfigurationEntry("entry1",
+				"title 1", "description 1", typeof(MockSyncAdapter));
 
 			FeedConfiguration configuration = new FeedConfiguration();
 			configuration.Add(entry.Name, entry);
@@ -93,8 +93,8 @@ namespace Mesh4n.Adapters.HttpService.Tests
 		{
 			FeedConfigurationManager manager = GetManagerInstance("feeds.xaml");
 
-			FeedConfigurationEntry entry1 = new FeedConfigurationEntry("entry1",
-				"title 1", "description 1", new MockSyncAdapter());
+			FeedConfigurationEntry entry1 = new XamlFeedConfigurationEntry("entry1",
+				"title 1", "description 1", typeof(MockSyncAdapter));
 
 			FeedConfiguration configuration = new FeedConfiguration();
 			configuration.Add(entry1.Name, entry1);

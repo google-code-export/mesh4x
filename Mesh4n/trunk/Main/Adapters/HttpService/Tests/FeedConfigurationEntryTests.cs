@@ -17,49 +17,49 @@ namespace Mesh4n.Adapters.HttpService.Tests
 		[ExpectedException(typeof(ArgumentNullException))]
 		public void ShouldThrowIfNullName()
 		{
-			new FeedConfigurationEntry(null, "title", "desc", new MockSyncAdapter());
+			new FeedConfigurationEntry(null, "title", "desc", typeof(MockSyncAdapter));
 		}
 
 		[TestMethod]
 		[ExpectedException(typeof(ArgumentException))]
 		public void ShouldThrowIfEmptyName()
 		{
-			new FeedConfigurationEntry("", "title", "desc", new MockSyncAdapter());
+			new FeedConfigurationEntry("", "title", "desc", typeof(MockSyncAdapter));
 		}
 
 		[TestMethod]
 		[ExpectedException(typeof(ArgumentNullException))]
 		public void ShouldThrowIfNullTitle()
 		{
-			new FeedConfigurationEntry("name", null, "desc", new MockSyncAdapter());
+			new FeedConfigurationEntry("name", null, "desc", typeof(MockSyncAdapter));
 		}
 
 		[TestMethod]
 		[ExpectedException(typeof(ArgumentException))]
 		public void ShouldThrowIfEmptyTitle()
 		{
-			new FeedConfigurationEntry("name", "", "desc", new MockSyncAdapter());
+			new FeedConfigurationEntry("name", "", "desc", typeof(MockSyncAdapter));
 		}
 
 		[TestMethod]
 		[ExpectedException(typeof(ArgumentNullException))]
 		public void ShouldThrowIfNullDescription()
 		{
-			new FeedConfigurationEntry("name", "title", null, new MockSyncAdapter());
+			new FeedConfigurationEntry("name", "title", null, typeof(MockSyncAdapter));
 		}
 
 		[TestMethod]
 		[ExpectedException(typeof(ArgumentException))]
 		public void ShouldThrowIfEmptyDescription()
 		{
-			new FeedConfigurationEntry("name", "title", "", new MockSyncAdapter());
+			new FeedConfigurationEntry("name", "title", "", typeof(MockSyncAdapter));
 		}
 
 		[TestMethod]
-		[ExpectedException(typeof(ArgumentNullException))]
-		public void ShouldThrowIfNullRepository()
+		[ExpectedException(typeof(ArgumentException))]
+		public void ShouldThrowIfNotISyncAdapterType()
 		{
-			new FeedConfigurationEntry("name", "title", "desc", null);
+			new FeedConfigurationEntry("name", "title", "description", typeof(object));
 		}
 	}
 }

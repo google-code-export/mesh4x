@@ -16,9 +16,13 @@ namespace Mesh4n
 
 		public RssFeedWriter(XmlWriter writer) : base(writer) { }
 
-		protected override void WriteStartFeed(Feed feed, XmlWriter writer)
+		public RssFeedWriter(XmlWriter writer, bool shouldWriteStartElement) : base(writer, shouldWriteStartElement) { }
+
+		protected override void WriteStartFeed(Feed feed, XmlWriter writer, bool shouldWriteStartElement)
 		{
-			writer.WriteStartElement("rss");
+			if(shouldWriteStartElement)
+				writer.WriteStartElement("rss");
+
 			writer.WriteAttributeString("version", "2.0");
 			writer.WriteStartElement("channel");
 			if(!String.IsNullOrEmpty(feed.Title))
@@ -39,9 +43,11 @@ namespace Mesh4n
 			}
 		}
 
-		protected override void WriteEndFeed(Feed feed, XmlWriter writer)
+		protected override void WriteEndFeed(Feed feed, XmlWriter writer, bool shouldWriteStartElement)
 		{
-			writer.WriteEndElement();
+			if(shouldWriteStartElement)
+				writer.WriteEndElement();
+
 			writer.WriteEndElement();
 		}
 

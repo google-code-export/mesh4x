@@ -8,12 +8,20 @@ namespace Mesh4n
 	public abstract class FeedWriter
 	{
 		XmlWriter writer;
+		bool shouldWriteStartElement = true;
+
 		public event EventHandler ItemWritten;
 
 		public FeedWriter(XmlWriter writer)
+			: this (writer, true)
+		{
+		}
+
+		public FeedWriter(XmlWriter writer, bool shouldWriteStartElement)
 		{
 			Guard.ArgumentNotNull(writer, "writer");
 
+			this.shouldWriteStartElement = shouldWriteStartElement;
 			this.writer = new XmlSharingWriter(writer);
 		}
 
@@ -55,23 +63,25 @@ namespace Mesh4n
 			if (feed != null)
 			{
 				// write feed root element: rss | atom
-				WriteStartFeed(feed, writer);
+				WriteStartFeed(feed, writer, shouldWriteStartElement);
 				WriteSharing(feed.Sharing);
 			}
 
-			if (items == null) return;
-
-			foreach (Item item in items)
+			if (items != null)
 			{
-				Write(item);
-				if (ItemWritten != null)
-					ItemWritten(this, EventArgs.Empty);
+
+				foreach (Item item in items)
+				{
+					Write(item);
+					if (ItemWritten != null)
+						ItemWritten(this, EventArgs.Empty);
+				}
 			}
 
 			if (feed != null)
 			{
 				// close feed root
-				WriteEndFeed(feed, writer);
+				WriteEndFeed(feed, writer, shouldWriteStartElement);
 			}
 		}
 
@@ -79,7 +89,10 @@ namespace Mesh4n
 		{
 			// <item>
 			WriteStartItem(item, writer);
-			WriteSync(item.Sync);
+			
+			if(item.Sync != null)
+				WriteSync(item.Sync);
+			
 			// </item>
 			WriteEndItem(item, writer);
 		}
@@ -168,8 +181,8 @@ namespace Mesh4n
 			}
 		}
 
-		protected abstract void WriteStartFeed(Feed feed, XmlWriter writer);
-		protected abstract void WriteEndFeed(Feed feed, XmlWriter writer);
+		protected abstract void WriteStartFeed(Feed feed, XmlWriter writer, bool shouldWriteStartElement);
+		protected abstract void WriteEndFeed(Feed feed, XmlWriter writer, bool shouldWriteStartElement);
 		protected abstract void WriteStartItem(Item item, XmlWriter writer);
 		protected abstract void WriteEndItem(Item item, XmlWriter writer);
 	}

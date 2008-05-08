@@ -5,6 +5,7 @@ using System.Text;
 using System.Configuration;
 using Mesh4n.Adapters.HttpService.Configuration;
 using System.Collections.Specialized;
+using Mesh4n.Adapters.HttpService.Properties;
 
 namespace Mesh4n.Adapters.HttpService
 {
@@ -31,8 +32,14 @@ namespace Mesh4n.Adapters.HttpService
 			SyncServiceConfigurationSection section = GetSection();
 			
 			Type type = Type.GetType(section.ConfigurationManager.TypeName, true, true);
-			IFeedConfigurationManager manager = (IFeedConfigurationManager)Activator.CreateInstance(type);
-			
+			IFeedConfigurationManager manager = (IFeedConfigurationManager)Activator.CreateInstance(type) as IFeedConfigurationManager;
+
+			if (manager == null)
+			{
+				throw new ArgumentException(string.Format(
+					Resources.InvalidConfigurationManagerType, type.AssemblyQualifiedName));
+			}
+
 			manager.Initialize(section.ConfigurationManager.Attributes);
 
 			return manager;

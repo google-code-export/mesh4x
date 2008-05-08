@@ -37,8 +37,8 @@ namespace Mesh4n.Tests
   </item>
  </channel>
 </rss>";
-
-			FeedReader reader = new RssFeedReader(GetReader(xml));
+			XmlReader xmlReader = GetReader(xml);
+			FeedReader reader = new RssFeedReader(xmlReader);
 
 			Feed feed;
 			IEnumerable<Item> i;

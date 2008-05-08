@@ -11,7 +11,6 @@ namespace Mesh4n
 {
 	public class RssFeedReader : FeedReader
 	{
-		[Obsolete("Use FeedReader.Create")]
 		public RssFeedReader(XmlReader reader)
 			: base(reader)
 		{
@@ -35,8 +34,8 @@ namespace Mesh4n
 			if (reader.ReadState == ReadState.Initial) reader.MoveToContent();
 
 			// Check root, then move, then check again for channel.
-			if (reader.LocalName == "rss")
-			{
+			//if (reader.LocalName == "rss")
+			//{
 				if (reader.Read())
 				{
 					if (reader.MoveToContent() == XmlNodeType.Element &&
@@ -76,7 +75,7 @@ namespace Mesh4n
 						return new Feed(title, link, description, payload);
 					}
 				}
-			}
+			//}
 
 			return null;
 		}

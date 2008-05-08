@@ -24,7 +24,7 @@ namespace Mesh4n.Adapters.HttpService.Tests
 
 		public IEnumerable<Item> GetAll()
 		{
-			return null;
+			throw new NotImplementedException();
 		}
 
 		public IEnumerable<Item> GetAll(Predicate<Item> filter)

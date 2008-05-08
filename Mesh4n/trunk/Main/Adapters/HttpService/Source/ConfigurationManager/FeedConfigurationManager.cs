@@ -35,6 +35,7 @@ namespace Mesh4n.Adapters.HttpService.Configuration
 			{
 				XmlWriterSettings settings = new XmlWriterSettings();
 				settings.Indent = true;
+				settings.NewLineOnAttributes = true;
 				settings.CloseOutput = true;
 
 				using (XmlWriter writer = XmlWriter.Create(stream, settings))

@@ -13,6 +13,7 @@ namespace Mesh4n
 		public event EventHandler<ItemEventArgs> ItemSent;
 
 		ISyncAdapter source;
+		IEnumerable<Item> incomingItems;
 		ISyncAdapter target;
 
 		/// <summary>
@@ -20,11 +21,23 @@ namespace Mesh4n
 		/// </summary>
 		public SyncEngine(ISyncAdapter source, ISyncAdapter target)
 		{
-			Guard.ArgumentNotNull(source, "left");
-			Guard.ArgumentNotNull(target, "right");
+			Guard.ArgumentNotNull(source, "source");
+			Guard.ArgumentNotNull(target, "target");
 
 			this.source = source;
 			this.target = target;
+		}
+
+		/// <summary>
+		/// Initializes the engine with items and a repository for one-way synchronization.
+		/// </summary>
+		public SyncEngine(ISyncAdapter source, IEnumerable<Item> incomingItems)
+		{
+			Guard.ArgumentNotNull(source, "source");
+			Guard.ArgumentNotNull(incomingItems, "incomingItems");
+
+			this.incomingItems = incomingItems;
+			this.source = source;
 		}
 
 		/// <summary>
@@ -137,27 +150,38 @@ namespace Mesh4n
 			Guard.ArgumentNotNull(mergeFilter, "mergeFilter");
 			Guard.ArgumentNotNull(itemFilter, "itemFilter");
 
-			IEnumerable<Item> outgoingItems = EnumerateItemsProgress(
-				(since == null) ? source.GetAll(itemFilter.Left) : source.GetAllSince(since, itemFilter.Left),
-				RaiseItemSent);
-
-			if (!target.SupportsMerge)
+			if (target != null)
 			{
-				IEnumerable<ItemMergeResult> outgoingToMerge = MergeItems(outgoingItems, target);
-				if ((mergeFilter.Behaviors & MergeFilterBehaviors.Right) == MergeFilterBehaviors.Right)
+				IEnumerable<Item> outgoingItems = EnumerateItemsProgress(
+					(since == null) ? source.GetAll(itemFilter.Left) : source.GetAllSince(since, itemFilter.Left),
+					RaiseItemSent);
+
+				if (!target.SupportsMerge)
 				{
-					outgoingToMerge = mergeFilter.Handler(target, outgoingToMerge);
+					IEnumerable<ItemMergeResult> outgoingToMerge = MergeItems(outgoingItems, target);
+					if ((mergeFilter.Behaviors & MergeFilterBehaviors.Right) == MergeFilterBehaviors.Right)
+					{
+						outgoingToMerge = mergeFilter.Handler(target, outgoingToMerge);
+					}
+					Import(outgoingToMerge, target);
 				}
-				Import(outgoingToMerge, target);
+				else
+				{
+					target.Merge(outgoingItems);
+				}
+			}
+
+			IEnumerable<Item> incomingItems;
+			if (target != null)
+			{
+				incomingItems = EnumerateItemsProgress((since == null) ? target.GetAll(itemFilter.Right) : target.GetAllSince(since, itemFilter.Right),
+					RaiseItemReceived);
 			}
 			else
 			{
-				target.Merge(outgoingItems);
+				incomingItems = EnumerateItemsProgress(this.incomingItems,
+					RaiseItemReceived);
 			}
-
-			IEnumerable<Item> incomingItems = EnumerateItemsProgress(
-				(since == null) ? target.GetAll(itemFilter.Right) : target.GetAllSince(since, itemFilter.Right),
-				RaiseItemReceived);
 
 			if (!source.SupportsMerge)
 			{
