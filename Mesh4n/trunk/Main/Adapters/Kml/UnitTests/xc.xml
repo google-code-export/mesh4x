@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<xc:commands version="1.0" xmlns:xc="http://mesh4x.org/2008/xmlcommands">
+	<!--
+	<xc:node match="1">
+		<xc:remove match="1" />
+	</xc:node>
+	-->
+	<xc:remove path="1" child="1" />
+	
+	<!--
+	<xc:node match="1">
+		<xc:node match="3">
+			<xc:add>The famous foo!</xc:add>
+		</xc:node>
+	</xc:node>
+	-->
+	<xc:add path="1/3">The famous foo!</xc:add>
+
+	<!--
+	<xd:add>
+		<icon url="http://mesh4x.org/icon.png">An icon</icon>
+	</xd:add>
+	-->
+	<xc:add path="1">
+		<icon url="http://mesh4x.org/icon.png">An icon</icon>
+	</xc:add>
+
+	<!--
+	<xd:add type="2" name="id" ns="http://www.w3.org/XML/1998/namespace" prefix="xml">asdf</xd:add>
+	-->
+	<xc:add path="1" type="2" name="id" ns="http://www.w3.org/XML/1998/namespace" prefix="xml">asdf</xc:add>
+
+	<!--
+	<xc:node match="1">
+		<xc:node match="3">
+			<xc:add>The famous foo!</xc:add>
+		</xc:node>
+		<xc:node match="1">
+			<xc:change match="1">FooBar</xc:change>
+		</xc:node>
+	</xc:node>
+	-->
+	<xc:change path="1/1/1">FooBar</xc:change>
+	
+
+</xc:commands>

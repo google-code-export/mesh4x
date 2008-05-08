@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<xd:xmldiff version="1.0" srcDocHash="18300876791797067925" options="IgnoreChildOrder IgnorePrefixes IgnoreDtd " fragments="no" xmlns:xd="http://schemas.microsoft.com/xmltools/2002/xmldiff">
+	<xd:node match="1">
+		<xd:remove match="1" />
+	</xd:node>
+	<xd:node match="1">
+		<xd:node match="3">
+			<xd:add>The famous foo!</xd:add>
+		</xd:node>
+		<xd:node match="1">
+			<xd:change match="1">FooBar</xd:change>
+		</xd:node>
+	</xd:node>
+</xd:xmldiff>
