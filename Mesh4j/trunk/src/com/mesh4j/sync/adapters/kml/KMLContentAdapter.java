@@ -8,7 +8,6 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
-import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Namespace;
@@ -22,6 +21,7 @@ import com.mesh4j.sync.adapters.EntityContent;
 import com.mesh4j.sync.adapters.compound.IContentAdapter;
 import com.mesh4j.sync.model.IContent;
 import com.mesh4j.sync.utils.IdGenerator;
+import com.mesh4j.sync.utils.StringHelper;
 import com.mesh4j.sync.utils.XMLHelper;
 
 public class KMLContentAdapter implements IContentAdapter{
@@ -53,11 +53,11 @@ public class KMLContentAdapter implements IContentAdapter{
 	private Element kmlSharedFolderElement;
 	
 	// BUSINESS METHODS
-	public KMLContentAdapter(String kmlFile) throws DocumentException {
+	public KMLContentAdapter(String kmlFile) throws Exception {
 		this(new File(kmlFile));
 	}
 	
-	public KMLContentAdapter(File kmlFile) throws DocumentException {
+	public KMLContentAdapter(File kmlFile) throws Exception{
 		super();
 		this.kmlFile = kmlFile;
 		
@@ -77,7 +77,7 @@ public class KMLContentAdapter implements IContentAdapter{
 		this.kmlDocumentElement = document;
 	}
 	
-	private void initializeFolderElement() {
+	private void initializeFolderElement() throws JaxenException {
 		List<Element> folders = this.selectElements("//kml:Folder");
 		for (Element folder : folders) {
 			Element folderName = folder.element(KML_ELEMENT_NAME);
@@ -101,7 +101,7 @@ public class KMLContentAdapter implements IContentAdapter{
 			if(KML_ELEMENT_PLACEMARK.equals(newPayload.getName())){
 				this.kmlSharedFolderElement.add(newPayload);	
 			} else {
-				this.insertBeforeFirst(KML_ELEMENT_NAME, newPayload);
+				this.insertAfterFirst(KML_ELEMENT_NAME, newPayload);
 			}
 		} else {
 			if(KML_ELEMENT_PLACEMARK.equals(newPayload.getName())){
@@ -133,20 +133,18 @@ public class KMLContentAdapter implements IContentAdapter{
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void insertBeforeFirst(String elementName, Element newPayload) {
+	private void insertAfterFirst(String elementName, Element newPayload) {
 		Element kmlElement = this.kmlDocument.getRootElement();
 		Element newDocumentElement = kmlElement.addElement(KML_ELEMENT_DOCUMENT, KML_URI);
 		
 		List<Element> elements = this.kmlDocumentElement.elements();
 		boolean mustAdd = true;
 		for (Element element : elements) {
-			if(elementName.equals(element.getName())){
-				if(mustAdd){
-					newDocumentElement.add(newPayload);
-					mustAdd = false;
-				}
-			}
 			newDocumentElement.add(element.createCopy());
+			if(elementName.equals(element.getName()) && mustAdd){
+				newDocumentElement.add(newPayload);
+				mustAdd = false;
+			}
 		}
 		kmlElement.remove(this.kmlDocumentElement);
 		this.kmlDocumentElement = newDocumentElement;
@@ -192,66 +190,105 @@ public class KMLContentAdapter implements IContentAdapter{
 	public List<EntityContent> getAll() {
 		
 		ArrayList<EntityContent> result = new ArrayList<EntityContent>();
-				
-		boolean dirty = false;
-		List<Element> elements = this.selectElements("//kml:Placemark");
-		
-		for (Element element : elements) {
-			String id = element.attributeValue(XML_ID_QNAME);
-			if(id == null){
-				id = makeNewID();
-				element.addNamespace(XML_PREFIX, XML_URI);
-				element.addAttribute(XML_ID_QNAME, id);
-				dirty = true;
-			}
-			EntityContent entityContent = new EntityContent(element, this.getEntityName(), id);
-			result.add(entityContent);
-		}
-		
-		elements = this.selectElements("//kml:Style");
-		elements.addAll(this.selectElements("//kml:StyleMap"));
-		
-		for (Element element : elements) {
-			String id = element.attributeValue(XML_ID_QNAME);
-			if(id == null){
-				id = element.attributeValue("id");
-				element.addNamespace(XML_PREFIX, XML_URI);
-				element.addAttribute(XML_ID_QNAME, id);
-				dirty = true;
-			}else{
-				String kmlId = element.attributeValue("id");
-				if(!kmlId.equals(id)){
-					id = kmlId;
+		ArrayList<String> syncIds = new ArrayList<String>();
+		try{	
+			boolean dirty = false;
+			List<Element> elements = this.selectElements("//kml:Placemark");
+			
+			for (Element element : elements) {
+				String id = element.attributeValue(XML_ID_QNAME);
+				if(id == null){
+					id = makeNewID();
 					element.addNamespace(XML_PREFIX, XML_URI);
 					element.addAttribute(XML_ID_QNAME, id);
-					dirty = true;					
+					dirty = true;
+				}
+				EntityContent entityContent = new EntityContent(element, this.getEntityName(), id);
+				result.add(entityContent);
+				syncIds.add(id);
+			}
+			
+			elements = this.selectElements("//kml:Style");
+			
+			HashMap<String, String> styleIdsToReplace = new HashMap<String, String>();
+			for (Element element : elements) {
+				String id = element.attributeValue(XML_ID_QNAME);
+				if(id == null){
+					id = makeNewID();
+					element.addNamespace(XML_PREFIX, XML_URI);
+					element.addAttribute(XML_ID_QNAME, id);
+					dirty = true;
+					String kmlID = element.attributeValue("id");
+					styleIdsToReplace.put(kmlID, kmlID+"_"+id);
+				}
+				EntityContent entityContent = new EntityContent(element, this.getEntityName(), id);
+				result.add(entityContent);
+				syncIds.add(id);
+			}
+	
+			elements = this.selectElements("//kml:StyleMap");
+			
+			HashMap<String, String> styleMapIdsToReplace = new HashMap<String, String>();
+			for (Element element : elements) {
+				String id = element.attributeValue(XML_ID_QNAME);
+				if(id == null){
+					id = makeNewID();
+					element.addNamespace(XML_PREFIX, XML_URI);
+					element.addAttribute(XML_ID_QNAME, id);
+					dirty = true;
+					String kmlID = element.attributeValue("id");
+					styleMapIdsToReplace.put(kmlID, kmlID+"_"+id);
+				}
+				EntityContent entityContent = new EntityContent(element, this.getEntityName(), id);
+				result.add(entityContent);
+				syncIds.add(id);
+			}
+			
+			if(dirty){
+				if(!styleMapIdsToReplace.isEmpty() || !styleIdsToReplace.isEmpty()){
+					String xml = this.kmlDocument.asXML();
+					
+					for (String kmlID : styleMapIdsToReplace.keySet()) {
+						String newID = styleMapIdsToReplace.get(kmlID);
+						xml = StringHelper.replace(xml, kmlID, newID);
+					}
+					for (String kmlID : styleIdsToReplace.keySet()) {
+						String newID = styleIdsToReplace.get(kmlID);
+						xml = StringHelper.replace(xml, kmlID, newID);
+					}					
+					
+					this.kmlDocument = DocumentHelper.parseText(xml);
+					this.initializeDocumentElement();
+					this.initializeFolderElement();
+				}
+				this.flush();
+				
+				result = new ArrayList<EntityContent>();
+				
+				for (String syncID : syncIds) {
+					Element element = this.getElementById(syncID);
+					EntityContent entityContent = new EntityContent(element, this.getEntityName(), syncID);
+					result.add(entityContent);
 				}
 			}
-			EntityContent entityContent = new EntityContent(element, this.getEntityName(), id);
-			result.add(entityContent);
-		}
-
-		if(dirty){
-			this.flush();
-		}
+		} catch (Exception e) {
+			Logger.error(e.getMessage(), e);
+			return new ArrayList<EntityContent>();	// TODO (JMT) Throws runtime exception
+		}	
 		return result;
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<Element> selectElements(String xpathExpression) {
+	private List<Element> selectElements(String xpathExpression) throws JaxenException {
 		List<Element> elements = new ArrayList<Element>();
-		try {
-			HashMap<String, String> map = new HashMap<String, String>();
-			map.put(KML_PREFIX, KML_URI);
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put(KML_PREFIX, KML_URI);
 			
-			Dom4jXPath xpath = new Dom4jXPath(xpathExpression);
-			xpath.setNamespaceContext(new SimpleNamespaceContext(map));
+		Dom4jXPath xpath = new Dom4jXPath(xpathExpression);
+		xpath.setNamespaceContext(new SimpleNamespaceContext(map));
 		  
-			elements = xpath.selectNodes(this.kmlDocument);
+		elements = xpath.selectNodes(this.kmlDocument);
 		  
-		} catch (JaxenException e) {
-			Logger.error(e.getMessage(), e);   // TODO (JMT) throws runtime exception ?
-		}
 		return elements;
 	}
 
@@ -272,5 +309,4 @@ public class KMLContentAdapter implements IContentAdapter{
 	private void flush() {
 		XMLHelper.write(this.kmlDocument, this.kmlFile);
 	}	
-
 }

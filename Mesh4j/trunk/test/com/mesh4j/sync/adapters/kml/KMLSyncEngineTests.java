@@ -13,7 +13,7 @@ import com.mesh4j.sync.security.NullSecurity;
 public class KMLSyncEngineTests {
 
 	@Test
-	public void spike() throws DocumentException{
+	public void spike() throws Exception{
 		File kmlFile1 = new File("D:\\temp_dev\\files\\kml\\samples1.kml");
 		File syncFile1 = new File("D:\\temp_dev\\files\\kml\\samples1_sync.xml");
 		KMLContentAdapter kmlAdapter1 = new KMLContentAdapter(kmlFile1);
