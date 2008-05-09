@@ -65,7 +65,7 @@ public class SyncEngineTests extends AbstractSyncEngineTest {
 
 	}
 
-	private class MockMergeRepository implements RepositoryAdapter {
+	private class MockMergeRepository implements IRepositoryAdapter {
 
 		private boolean mergeCalled;
 
@@ -110,11 +110,11 @@ public class SyncEngineTests extends AbstractSyncEngineTest {
 		public void add(Item item) {
 		}
 
-		public List<Item> getAll(Filter<Item> filter) {
+		public List<Item> getAll(IFilter<Item> filter) {
 			return new ArrayList<Item>();
 		}
 
-		public List<Item> getAllSince(Date since, Filter<Item> filter) {
+		public List<Item> getAllSince(Date since, IFilter<Item> filter) {
 			return new ArrayList<Item>();
 		}
 
@@ -124,21 +124,21 @@ public class SyncEngineTests extends AbstractSyncEngineTest {
 	}
 
 	@Override
-	protected RepositoryAdapter makeLeftRepository(Item... items) {
+	protected IRepositoryAdapter makeLeftRepository(Item... items) {
 		return new MockRepository(items);
 	}
 	
 	@Override
-	protected RepositoryAdapter makeRightRepository(Item... items) {
+	protected IRepositoryAdapter makeRightRepository(Item... items) {
 		return new MockRepository(items);
 	}
 
-	private class MockPreviewImportHandler implements PreviewImportHandler {
+	private class MockPreviewImportHandler implements IPreviewImportHandler {
 
 		private Set<String> repositories = new HashSet<String>();
 
 		@Override
-		public List<MergeResult> preview(RepositoryAdapter targetRepository,
+		public List<MergeResult> preview(IRepositoryAdapter targetRepository,
 				List<MergeResult> mergedItems) {
 
 			repositories.add(targetRepository.getFriendlyName());

@@ -5,9 +5,10 @@ import java.util.Date;
 import java.util.List;
 
 import com.mesh4j.sync.AbstractRepositoryAdapter;
-import com.mesh4j.sync.Filter;
+import com.mesh4j.sync.IFilter;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.NullContent;
+import com.mesh4j.sync.security.ISecurity;
 import com.mesh4j.sync.translator.MessageTranslator;
 import com.mesh4j.sync.validations.Guard;
 
@@ -16,15 +17,20 @@ public class FeedAdapter extends AbstractRepositoryAdapter{
 
 	// MODEL VARIABLES
 	private Feed feed;
+	private ISecurity security;
 	
 	// BUSINESS METHODS
-	public FeedAdapter(){
-		this(new Feed());
+	public FeedAdapter(ISecurity security){
+		this(new Feed(), security);
 	}
 	
-	public FeedAdapter(Feed feed){
-		super();
+	public FeedAdapter(Feed feed, ISecurity security){
+		
+		Guard.argumentNotNull(feed, "feed");
+		Guard.argumentNotNull(security, "security");
+		
 		this.feed = feed;
+		this.security = security;
 	}
 	
 	@Override
@@ -51,7 +57,7 @@ public class FeedAdapter extends AbstractRepositoryAdapter{
 	}
 
 	@Override
-	protected List<Item> getAll(Date since, Filter<Item> filter) {
+	protected List<Item> getAll(Date since, IFilter<Item> filter) {
 		ArrayList<Item> result = new ArrayList<Item>();
 		for (Item item : this.feed.getItems()) {
 			boolean dateOk = since == null || since.compareTo(item.getSync().getLastUpdate().getWhen()) <= 0; 
@@ -99,6 +105,11 @@ public class FeedAdapter extends AbstractRepositoryAdapter{
 	
 	public Feed getFeed(){
 		return this.feed;
+	}
+
+	@Override
+	public String getAuthenticatedUser() {
+		return this.security.getAuthenticatedUser();
 	}
 
 }

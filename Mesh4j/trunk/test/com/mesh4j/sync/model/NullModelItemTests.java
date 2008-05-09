@@ -20,8 +20,8 @@ public class NullModelItemTests {
 		@Test
 		public void ShouldEqualHash()
 		{
-			Content item1 = new NullContent("1");
-			Content item2 = new NullContent("1");
+			IContent item1 = new NullContent("1");
+			IContent item2 = new NullContent("1");
 
 			Assert.assertEquals(item1.hashCode(), item2.hashCode());
 		}
@@ -29,8 +29,8 @@ public class NullModelItemTests {
 		@Test
 		public void ShouldNotEqualDifferentId()
 		{
-			Content item1 = new NullContent("1");
-			Content item2 = new NullContent("2");
+			IContent item1 = new NullContent("1");
+			IContent item2 = new NullContent("2");
 
 			Assert.assertNotSame(item1, item2);
 			Assert.assertNotSame(item1.hashCode(), item2.hashCode());
@@ -39,8 +39,8 @@ public class NullModelItemTests {
 		@Test
 		public void ShouldNotEqualDifferentHash()
 		{
-			Content item1 = new NullContent("1");
-			Content item2 = new NullContent("12");
+			IContent item1 = new NullContent("1");
+			IContent item2 = new NullContent("12");
 			
 			Assert.assertNotSame(item1.hashCode(), item2.hashCode());
 		}
@@ -48,7 +48,7 @@ public class NullModelItemTests {
 		@Test
 		public void ShouldNotEqualNull()
 		{
-			Content item1 = new NullContent("1");
+			IContent item1 = new NullContent("1");
 
 			Assert.assertNotSame(item1, null);
 		}

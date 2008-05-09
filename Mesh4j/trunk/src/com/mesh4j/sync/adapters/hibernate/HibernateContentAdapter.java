@@ -14,10 +14,10 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.metadata.ClassMetadata;
 
 import com.mesh4j.sync.adapters.EntityContent;
-import com.mesh4j.sync.adapters.compound.ContentAdapter;
-import com.mesh4j.sync.model.Content;
+import com.mesh4j.sync.adapters.compound.IContentAdapter;
+import com.mesh4j.sync.model.IContent;
 
-public class HibernateContentAdapter implements ContentAdapter {
+public class HibernateContentAdapter implements IContentAdapter {
 
 	// MODEL VARIABLES
 	private String entityName;
@@ -31,7 +31,7 @@ public class HibernateContentAdapter implements ContentAdapter {
 		this.initializeHibernate(entityMapping);
 		
 		ClassMetadata classMetadata = this.getClassMetadata();
-		this.entityName = classMetadata.getEntityName();						// TODO (JMT) set node attribute value
+		this.entityName = classMetadata.getEntityName();
 		this.entityIDNode = classMetadata.getIdentifierPropertyName();
 	}
 
@@ -120,7 +120,7 @@ public class HibernateContentAdapter implements ContentAdapter {
 		return result;
 	}
 
-	public EntityContent normalizeContent(Content content){
+	public EntityContent normalizeContent(IContent content){
 		return EntityContent.normalizeContent(content, this.entityName, this.entityIDNode);
 	}
 	

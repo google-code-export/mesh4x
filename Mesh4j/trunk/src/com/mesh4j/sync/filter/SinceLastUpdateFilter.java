@@ -2,11 +2,11 @@ package com.mesh4j.sync.filter;
 
 import java.util.Date;
 
-import com.mesh4j.sync.Filter;
+import com.mesh4j.sync.IFilter;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.validations.Guard;
 
-public class SinceLastUpdateFilter implements Filter<Item>{
+public class SinceLastUpdateFilter implements IFilter<Item>{
 
 	// Model variables
 	private Date since;

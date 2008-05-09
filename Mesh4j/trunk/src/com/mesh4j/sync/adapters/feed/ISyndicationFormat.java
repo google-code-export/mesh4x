@@ -6,7 +6,7 @@ import java.util.List;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
-public interface SyndicationFormat {
+public interface ISyndicationFormat {
 
 	boolean isFeedItem(Element element);
 

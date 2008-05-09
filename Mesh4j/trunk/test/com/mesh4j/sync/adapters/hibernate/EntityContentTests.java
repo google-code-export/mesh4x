@@ -5,7 +5,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.mesh4j.sync.adapters.EntityContent;
-import com.mesh4j.sync.model.Content;
+import com.mesh4j.sync.model.IContent;
 import com.mesh4j.sync.test.utils.TestHelper;
 
 public class EntityContentTests {
@@ -62,7 +62,7 @@ public class EntityContentTests {
 		MyContent c = new MyContent(e);
 		EntityDAO dao = new EntityDAO("foo", "id", null);
 		
-		Content cn = dao.normalizeContent(c);
+		IContent cn = dao.normalizeContent(c);
 		Assert.assertNotSame(e, cn.getPayload());
 		Assert.assertNotNull(cn.getPayload());
 		Assert.assertEquals("<foo><id>1</id></foo>", cn.getPayload().asXML());
@@ -79,7 +79,7 @@ public class EntityContentTests {
 
 	
 	@SuppressWarnings("unused")
-	private class MyContent implements Content{
+	private class MyContent implements IContent{
 		
 		private Element e;
 		
@@ -90,7 +90,7 @@ public class EntityContentTests {
 			return e;
 		}
 		
-		public Content clone(){
+		public IContent clone(){
 			return new MyContent(e);
 		}
 	}

@@ -1,8 +1,8 @@
 package com.mesh4j.sync.filter;
 
-import com.mesh4j.sync.Filter;
+import com.mesh4j.sync.IFilter;
 
-public class NullFilter<T> implements Filter<T> {
+public class NullFilter<T> implements IFilter<T> {
 
 	@Override
 	public boolean applies(T obj) {

@@ -1,17 +1,17 @@
 package com.mesh4j.sync.adapters.feed;
 
-import static com.mesh4j.sync.adapters.feed.SyndicationFormat.ATTRIBUTE_PAYLOAD;
-import static com.mesh4j.sync.adapters.feed.SyndicationFormat.SX_ATTRIBUTE_HISTORY_BY;
-import static com.mesh4j.sync.adapters.feed.SyndicationFormat.SX_ATTRIBUTE_HISTORY_SEQUENCE;
-import static com.mesh4j.sync.adapters.feed.SyndicationFormat.SX_ATTRIBUTE_HISTORY_WHEN;
-import static com.mesh4j.sync.adapters.feed.SyndicationFormat.SX_ATTRIBUTE_ITEM_DESCRIPTION;
-import static com.mesh4j.sync.adapters.feed.SyndicationFormat.SX_ATTRIBUTE_ITEM_TITLE;
-import static com.mesh4j.sync.adapters.feed.SyndicationFormat.SX_ATTRIBUTE_SYNC_DELETED;
-import static com.mesh4j.sync.adapters.feed.SyndicationFormat.SX_ATTRIBUTE_SYNC_ID;
-import static com.mesh4j.sync.adapters.feed.SyndicationFormat.SX_ATTRIBUTE_SYNC_NO_CONFLICTS;
-import static com.mesh4j.sync.adapters.feed.SyndicationFormat.SX_ELEMENT_CONFLICTS;
-import static com.mesh4j.sync.adapters.feed.SyndicationFormat.SX_ELEMENT_HISTORY;
-import static com.mesh4j.sync.adapters.feed.SyndicationFormat.SX_ELEMENT_SYNC;
+import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.ATTRIBUTE_PAYLOAD;
+import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_HISTORY_BY;
+import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_HISTORY_SEQUENCE;
+import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_HISTORY_WHEN;
+import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_ITEM_DESCRIPTION;
+import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_ITEM_TITLE;
+import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_SYNC_DELETED;
+import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_SYNC_ID;
+import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_SYNC_NO_CONFLICTS;
+import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ELEMENT_CONFLICTS;
+import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ELEMENT_HISTORY;
+import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ELEMENT_SYNC;
 
 import java.io.File;
 import java.io.InputStream;
@@ -29,19 +29,24 @@ import org.xml.sax.InputSource;
 
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.Sync;
-import com.mesh4j.sync.security.Security;
+import com.mesh4j.sync.security.ISecurity;
 import com.mesh4j.sync.utils.IdGenerator;
+import com.mesh4j.sync.validations.Guard;
 
 public class FeedReader {
 	
 	// MODEL VARIABLES
-	SyndicationFormat syndicationFormat;
+	ISyndicationFormat syndicationFormat;
+	ISecurity security;
 	
 	// BUSINESS METHODS
 
-	public FeedReader(SyndicationFormat syndicationFormat){
-		super();
+	public FeedReader(ISyndicationFormat syndicationFormat, ISecurity security){
+		Guard.argumentNotNull(syndicationFormat, "syndicationFormat");
+		Guard.argumentNotNull(security, "security");
+		
 		this.syndicationFormat = syndicationFormat;
+		this.security = security;
 	}
 	
 	public Feed read(URL url) throws DocumentException{
@@ -109,17 +114,13 @@ public class FeedReader {
 		}
 		
 		if(sync == null){
-			sync = new Sync(makeNewSyncID(), Security.getAuthenticatedUser(), new Date(), false); 
+			sync = new Sync(makeNewSyncID(), this.getAuthenticatedUser(), new Date(), false); 
 		}
 		
 		String title = itemElement.elementText(SX_ATTRIBUTE_ITEM_TITLE);
 		String description = itemElement.elementText(SX_ATTRIBUTE_ITEM_DESCRIPTION);
 		XMLContent modelItem = new XMLContent(sync.getId(), title, description, payload);
 		return new Item(modelItem, sync);
-	}
-
-	protected String makeNewSyncID() {
-		return IdGenerator.newID();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -168,5 +169,13 @@ public class FeedReader {
 	
 	protected Date parseDate(String dateAsString){
 		return this.syndicationFormat.parseDate(dateAsString);
+	}
+	
+	private String getAuthenticatedUser() {
+		return this.security.getAuthenticatedUser();
+	}
+
+	protected String makeNewSyncID() {
+		return IdGenerator.newID();
 	}
 }

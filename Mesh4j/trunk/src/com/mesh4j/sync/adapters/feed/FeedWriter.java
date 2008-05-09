@@ -1,17 +1,17 @@
 package com.mesh4j.sync.adapters.feed;
 
-import static com.mesh4j.sync.adapters.feed.SyndicationFormat.SX_ATTRIBUTE_HISTORY_BY;
-import static com.mesh4j.sync.adapters.feed.SyndicationFormat.SX_ATTRIBUTE_HISTORY_SEQUENCE;
-import static com.mesh4j.sync.adapters.feed.SyndicationFormat.SX_ATTRIBUTE_HISTORY_WHEN;
-import static com.mesh4j.sync.adapters.feed.SyndicationFormat.SX_ATTRIBUTE_SYNC_DELETED;
-import static com.mesh4j.sync.adapters.feed.SyndicationFormat.SX_ATTRIBUTE_SYNC_ID;
-import static com.mesh4j.sync.adapters.feed.SyndicationFormat.SX_ATTRIBUTE_SYNC_NO_CONFLICTS;
-import static com.mesh4j.sync.adapters.feed.SyndicationFormat.SX_ATTRIBUTE_SYNC_UPDATES;
-import static com.mesh4j.sync.adapters.feed.SyndicationFormat.SX_ELEMENT_AUTHOR;
-import static com.mesh4j.sync.adapters.feed.SyndicationFormat.SX_ELEMENT_CONFLICTS;
-import static com.mesh4j.sync.adapters.feed.SyndicationFormat.SX_ELEMENT_HISTORY;
-import static com.mesh4j.sync.adapters.feed.SyndicationFormat.SX_ELEMENT_SYNC;
-import static com.mesh4j.sync.adapters.feed.SyndicationFormat.SX_PREFIX;
+import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_HISTORY_BY;
+import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_HISTORY_SEQUENCE;
+import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_HISTORY_WHEN;
+import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_SYNC_DELETED;
+import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_SYNC_ID;
+import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_SYNC_NO_CONFLICTS;
+import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_SYNC_UPDATES;
+import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ELEMENT_AUTHOR;
+import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ELEMENT_CONFLICTS;
+import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ELEMENT_HISTORY;
+import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ELEMENT_SYNC;
+import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_PREFIX;
 
 import java.io.IOException;
 import java.util.Date;
@@ -23,22 +23,27 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.io.XMLWriter;
 
-import com.mesh4j.sync.model.Content;
 import com.mesh4j.sync.model.History;
+import com.mesh4j.sync.model.IContent;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.Sync;
-import com.mesh4j.sync.security.Security;
+import com.mesh4j.sync.security.ISecurity;
+import com.mesh4j.sync.validations.Guard;
 
 public class FeedWriter {
 
 	// MODEL VARIABLES
-	SyndicationFormat syndicationFormat;
+	ISyndicationFormat syndicationFormat;
+	ISecurity security;
 	
 	// BUSINESS METHODS
 
-	public FeedWriter(SyndicationFormat syndicationFormat){
-		super();
+	public FeedWriter(ISyndicationFormat syndicationFormat, ISecurity security){
+		Guard.argumentNotNull(syndicationFormat, "syndicationFormat");
+		Guard.argumentNotNull(security, "security");
+		
 		this.syndicationFormat = syndicationFormat;
+		this.security = security;
 	}
 	
 	public void write(XMLWriter writer, Feed feed) throws IOException, DocumentException{
@@ -86,7 +91,7 @@ public class FeedWriter {
 		else
 		{
 			Element author = itemElement.addElement(SX_ELEMENT_AUTHOR);
-			author.addText(Security.getAuthenticatedUser());
+			author.addText(this.getAuthenticatedUser());
 		}
 		
 		if(item.getSync() != null){
@@ -94,7 +99,7 @@ public class FeedWriter {
 		}
 	}	
 	
-	private void writeContent(Element itemElement, Content content) throws DocumentException {
+	private void writeContent(Element itemElement, IContent content) throws DocumentException {
 		Element xmlContent = XMLContent.normalizeContent(content);
 		writePayload(itemElement, xmlContent);
 	}
@@ -143,6 +148,10 @@ public class FeedWriter {
 	protected void write(XMLWriter writer, Document document) throws IOException {
         writer.write( document );
         writer.close();
+	}
+	
+	private String getAuthenticatedUser() {
+		return this.security.getAuthenticatedUser();
 	}
 	
 }

@@ -6,10 +6,11 @@ import java.util.Hashtable;
 import java.util.List;
 
 import com.mesh4j.sync.AbstractRepositoryAdapter;
-import com.mesh4j.sync.Filter;
+import com.mesh4j.sync.IFilter;
 import com.mesh4j.sync.model.History;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.NullContent;
+import com.mesh4j.sync.security.NullSecurity;
 import com.mesh4j.sync.validations.Guard;
 
 public class MockRepository extends AbstractRepositoryAdapter {
@@ -70,7 +71,7 @@ public class MockRepository extends AbstractRepositoryAdapter {
 			return null;
 	}
 
-	protected List<Item> getAll(Date since, Filter<Item> filter)
+	protected List<Item> getAll(Date since, IFilter<Item> filter)
 	{
 		Guard.argumentNotNull(filter, "filter");
 
@@ -116,5 +117,10 @@ public class MockRepository extends AbstractRepositoryAdapter {
 
 	public Hashtable<String, Item> getItems() {
 		return items;
+	}
+
+	@Override
+	public String getAuthenticatedUser() {
+		return NullSecurity.INSTANCE.getAuthenticatedUser();
 	}
 }

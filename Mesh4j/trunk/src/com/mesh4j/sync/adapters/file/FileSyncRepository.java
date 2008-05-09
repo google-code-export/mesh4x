@@ -14,12 +14,14 @@ import org.dom4j.io.SAXReader;
 
 import com.mesh4j.sync.adapters.EntityContent;
 import com.mesh4j.sync.adapters.SyncInfo;
-import com.mesh4j.sync.adapters.compound.SyncRepository;
+import com.mesh4j.sync.adapters.compound.ISyncRepository;
+import com.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import com.mesh4j.sync.parsers.SyncInfoParser;
+import com.mesh4j.sync.security.ISecurity;
 import com.mesh4j.sync.utils.XMLHelper;
 import com.mesh4j.sync.validations.Guard;
 
-public class FileSyncRepository implements SyncRepository{
+public class FileSyncRepository implements ISyncRepository{
 
 	private static final String ATTRIBUTE_ID = "ID";
 	private final static Log Logger = LogFactory.getLog(FileSyncRepository.class);
@@ -30,13 +32,14 @@ public class FileSyncRepository implements SyncRepository{
 	private SyncInfoParser syncInfoParser;
 
 	// BUSINESS METHODS
-	public FileSyncRepository(String syncInfoFileName) throws DocumentException {
-		this(new File(syncInfoFileName));
+	public FileSyncRepository(String syncInfoFileName, ISecurity security) throws DocumentException {
+		this(new File(syncInfoFileName), security);
 	}
 	
-	public FileSyncRepository(File syncInfoFile) throws DocumentException {
+	public FileSyncRepository(File syncInfoFile, ISecurity security) throws DocumentException {
 
 		Guard.argumentNotNull(syncInfoFile, "syncInfoFile");
+		Guard.argumentNotNull(security, "security");
 
 		this.syncInfoFile = syncInfoFile;
 		
@@ -45,7 +48,7 @@ public class FileSyncRepository implements SyncRepository{
 		SAXReader saxReader = new SAXReader();
 		this.syncDocument = saxReader.read(this.syncInfoFile);
 		
-		this.syncInfoParser = new SyncInfoParser();
+		this.syncInfoParser = new SyncInfoParser(RssSyndicationFormat.INSTANCE, security);
 	}
 
 	private void initializeFile(File file) {
@@ -103,7 +106,7 @@ public class FileSyncRepository implements SyncRepository{
 				syncInfoElement.addAttribute(ATTRIBUTE_ID, syncInfo.getSyncId());
 			}
 		} catch (DocumentException e) {
-			Logger.error(e.getMessage(), e);  // TODO Throws Exception
+			Logger.error(e.getMessage(), e);  // TODO (JMT) throws runtime exception ?
 			return;
 		}
 		

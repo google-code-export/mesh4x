@@ -8,8 +8,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.mesh4j.sync.adapters.feed.XMLContent;
-import com.mesh4j.sync.model.Content;
 import com.mesh4j.sync.model.History;
+import com.mesh4j.sync.model.IContent;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.NullContent;
 import com.mesh4j.sync.model.Sync;
@@ -30,7 +30,7 @@ public class BehaviorTests {
 	@Test
 	public void mergeShouldAddWithoutConflict()  {
 		Sync sync = new Sync(TestHelper.newID(), "mypc\\user", TestHelper.now(), false);
-		Content modelItem = new XMLContent(sync.getId(), "foo", "bar",
+		IContent modelItem = new XMLContent(sync.getId(), "foo", "bar",
 				TestHelper.makeElement("<foo id='bar'/>"));
 		Item remoteItem = new Item(modelItem, sync);
 		MergeResult result = MergeBehavior.merge(null, remoteItem);

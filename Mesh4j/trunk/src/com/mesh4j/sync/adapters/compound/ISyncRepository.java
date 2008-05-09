@@ -5,7 +5,7 @@ import java.util.List;
 import com.mesh4j.sync.adapters.EntityContent;
 import com.mesh4j.sync.adapters.SyncInfo;
 
-public interface SyncRepository {
+public interface ISyncRepository {
 
 	void save(SyncInfo syncInfo);
 

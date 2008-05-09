@@ -14,14 +14,15 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.metadata.ClassMetadata;
 
 import com.mesh4j.sync.AbstractRepositoryAdapter;
-import com.mesh4j.sync.Filter;
+import com.mesh4j.sync.IFilter;
 import com.mesh4j.sync.adapters.EntityContent;
 import com.mesh4j.sync.adapters.SyncInfo;
+import com.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.NullContent;
 import com.mesh4j.sync.model.Sync;
 import com.mesh4j.sync.parsers.SyncInfoParser;
-import com.mesh4j.sync.security.Security;
+import com.mesh4j.sync.security.ISecurity;
 import com.mesh4j.sync.translator.MessageTranslator;
 import com.mesh4j.sync.validations.Guard;
 
@@ -30,27 +31,35 @@ import com.mesh4j.sync.validations.Guard;
  */
 @Deprecated
 
-public class HibernateAdapter extends AbstractRepositoryAdapter implements SessionProvider {
+public class HibernateAdapter extends AbstractRepositoryAdapter implements ISessionProvider {
 	
 	// MODEL VARIABLES
 	private SyncDAO syncDAO;
 	private EntityDAO entityDAO;
 	private SessionFactory sessionFactory;
 	private Session currentSession;
+	private ISecurity security;
 	
 	// BUSINESS METHODs
-	public HibernateAdapter(String fileMappingName){
-		this(new File(fileMappingName));		
+	public HibernateAdapter(String fileMappingName, ISecurity security){
+		this(new File(fileMappingName), security);		
 	}
 	
-	public HibernateAdapter(File entityMapping){
+	public HibernateAdapter(File entityMapping, ISecurity security){
+		
+		Guard.argumentNotNull(security, "security");
+		if(!entityMapping.exists() || !entityMapping.canRead()){
+			throw new IllegalArgumentException("Invalid file mapping");
+		}
+		
+		this.security = security;
 		
 		this.initializeHibernate(SyncDAO.getMapping(), entityMapping);
 		
-		this.syncDAO = new SyncDAO(this, new SyncInfoParser());
+		this.syncDAO = new SyncDAO(this, new SyncInfoParser(RssSyndicationFormat.INSTANCE, this.security));
 		
 		ClassMetadata classMetadata = this.getClassMetadata();
-		String entityName = classMetadata.getEntityName();						// TODO (JMT) set node attribute value
+		String entityName = classMetadata.getEntityName();
 		String entityIDNode = classMetadata.getIdentifierPropertyName();
 		this.entityDAO = new EntityDAO(entityName, entityIDNode, this);
 	}
@@ -74,7 +83,7 @@ public class HibernateAdapter extends AbstractRepositoryAdapter implements Sessi
 		return null;
 	}
 
-	// TODO (JMT) use dbCommand or AOP (Transaction annotation with Spring)
+	// TODO (JMT) REFACTORING: use dbCommand or AOP (Transaction annotation with Spring)
 	@Override
 	public void add(Item item) {
 		
@@ -120,7 +129,7 @@ public class HibernateAdapter extends AbstractRepositoryAdapter implements Sessi
 			tx = session.beginTransaction();
 			if (syncInfo != null)
 			{
-				syncInfo.getSync().delete(Security.getAuthenticatedUser(), new Date());
+				syncInfo.getSync().delete(this.getAuthenticatedUser(), new Date());
 				syncDAO.save(syncInfo);
 				
 				entityDAO.delete(syncInfo.getEntityId());
@@ -230,7 +239,7 @@ public class HibernateAdapter extends AbstractRepositoryAdapter implements Sessi
 			if (entity != null && sync == null)
 			{
 				// Add sync on-the-fly.
-				sync = new Sync(syncInfo.getSyncId(), Security.getAuthenticatedUser(), new Date(), false);
+				sync = new Sync(syncInfo.getSyncId(), this.getAuthenticatedUser(), new Date(), false);
 				syncInfo.updateSync(sync);
 				syncDAO.save(syncInfo);
 			}
@@ -238,7 +247,7 @@ public class HibernateAdapter extends AbstractRepositoryAdapter implements Sessi
 			{
 				if (!sync.isDeleted())
 				{
-					sync.delete(Security.getAuthenticatedUser(), new Date());
+					sync.delete(this.getAuthenticatedUser(), new Date());
 					syncDAO.save(syncInfo);
 				}
 			}
@@ -250,7 +259,7 @@ public class HibernateAdapter extends AbstractRepositoryAdapter implements Sessi
 				/// items from the local stores.
 				if (!syncInfo.isDeleted() && syncInfo.contentHasChanged(entity))
 				{
-					sync.update(Security.getAuthenticatedUser(), new Date(), sync.isDeleted());
+					sync.update(this.getAuthenticatedUser(), new Date(), sync.isDeleted());
 					syncInfo.setEntityVersion(entity.getEntityVersion());
 					syncDAO.save(syncInfo);
 				}
@@ -267,7 +276,7 @@ public class HibernateAdapter extends AbstractRepositoryAdapter implements Sessi
 	}
 
 	@Override
-	protected List<Item> getAll(Date since, Filter<Item> filter) {
+	protected List<Item> getAll(Date since, IFilter<Item> filter) {
 	
 		ArrayList<Item> result = new ArrayList<Item>();
 		
@@ -284,7 +293,7 @@ public class HibernateAdapter extends AbstractRepositoryAdapter implements Sessi
 
 			Sync sync;
 			if(syncInfo == null){
-				sync = new Sync(syncDAO.newSyncID(), Security.getAuthenticatedUser(), new Date(), false);
+				sync = new Sync(syncDAO.newSyncID(), this.getAuthenticatedUser(), new Date(), false);
 				
 				SyncInfo newSyncInfo = new SyncInfo(sync, entity);
 				
@@ -337,7 +346,7 @@ public class HibernateAdapter extends AbstractRepositoryAdapter implements Sessi
 		return syncInfoMap;
 	}
 
-	private boolean appliesFilter(Item item, Date since, Filter<Item> filter) {
+	private boolean appliesFilter(Item item, Date since, IFilter<Item> filter) {
 		boolean dateOk = since == null || (item.getSync().getLastUpdate() == null || since.compareTo(item.getSync().getLastUpdate().getWhen()) <= 0);  // TODO (JMT) create db filter
 		return filter.applies(item) && dateOk;
 	}
@@ -395,5 +404,10 @@ public class HibernateAdapter extends AbstractRepositoryAdapter implements Sessi
 	@Override
 	public Session getCurrentSession() {
 		return currentSession;
+	}
+	
+	@Override
+	public String getAuthenticatedUser() {
+		return this.security.getAuthenticatedUser();
 	}
 }

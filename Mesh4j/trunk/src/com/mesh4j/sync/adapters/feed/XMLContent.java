@@ -3,9 +3,9 @@ package com.mesh4j.sync.adapters.feed;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
-import com.mesh4j.sync.model.Content;
+import com.mesh4j.sync.model.IContent;
 
-public class XMLContent implements Content {
+public class XMLContent implements IContent {
 
 	// MODEL VARIABLES
 	private String id;
@@ -71,7 +71,7 @@ public class XMLContent implements Content {
 		return resultingPayload.hashCode();
     }
 
-	public static Element normalizeContent(Content content) {
+	public static Element normalizeContent(IContent content) {
 		if(content instanceof XMLContent){
 			return content.getPayload();
 		}

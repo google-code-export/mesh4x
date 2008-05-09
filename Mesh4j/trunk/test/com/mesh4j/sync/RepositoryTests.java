@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import com.mesh4j.sync.adapters.feed.XMLContent;
 import com.mesh4j.sync.filter.NullFilter;
-import com.mesh4j.sync.model.Content;
+import com.mesh4j.sync.model.IContent;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.NullContent;
 import com.mesh4j.sync.model.Sync;
@@ -18,56 +18,56 @@ import com.mesh4j.sync.test.utils.TestHelper;
 
 public class RepositoryTests {
 
-	protected RepositoryAdapter createRepository() {
+	protected IRepositoryAdapter createRepository() {
 		return new MockRepository();
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldThrowGetNullId() {
-		RepositoryAdapter repository = createRepository();
+		IRepositoryAdapter repository = createRepository();
 		repository.get(null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldThrowGetEmptyId() {
-		RepositoryAdapter repository = createRepository();
+		IRepositoryAdapter repository = createRepository();
 		repository.get("");
 	}
 
 	@Test
 	public void ShouldGetNullIfNotExists() {
-		RepositoryAdapter repository = createRepository();
+		IRepositoryAdapter repository = createRepository();
 		Item item = repository.get(TestHelper.newID());
 		Assert.assertNull(item);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldThrowAddNullItem() {
-		RepositoryAdapter repository = createRepository();
+		IRepositoryAdapter repository = createRepository();
 		repository.add(null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldThrowDeleteNullId() {
-		RepositoryAdapter repository = createRepository();
+		IRepositoryAdapter repository = createRepository();
 		repository.delete(null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldThrowDeleteEmptyId() {
-		RepositoryAdapter repository = createRepository();
+		IRepositoryAdapter repository = createRepository();
 		repository.delete("");
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldThrowUpdateNullItem() {
-		RepositoryAdapter repository = createRepository();
+		IRepositoryAdapter repository = createRepository();
 		repository.update(null);
 	}
 
 	@Test
 	public void ShouldAddAndGetItem() {
-		RepositoryAdapter repository = createRepository();
+		IRepositoryAdapter repository = createRepository();
 		XMLContent xml = new XMLContent(TestHelper.newID(), "foo", "bar", TestHelper.makeElement("<payload></payload>"));
 		Sync sync = new Sync(xml.getId(), "kzu", TestHelper.now(), false);
 		Item item = new Item(xml, sync);
@@ -89,7 +89,7 @@ public class RepositoryTests {
 
 	@Test
 	public void ShouldGetAllItems() {
-		RepositoryAdapter repository = createRepository();
+		IRepositoryAdapter repository = createRepository();
 
 		String by = "DeviceAuthor.Current";
 		String id = TestHelper.newID();
@@ -109,7 +109,7 @@ public class RepositoryTests {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldThrowAddDuplicateItemId() {
-		RepositoryAdapter repo = createRepository();
+		IRepositoryAdapter repo = createRepository();
 
 		String by = "DeviceAuthor.Current";
 		String id = TestHelper.newID();
@@ -126,7 +126,7 @@ public class RepositoryTests {
 
 	@Test
 	public void ShouldGetAllSinceDate() {
-		RepositoryAdapter repo = createRepository();
+		IRepositoryAdapter repo = createRepository();
 		String by = "DeviceAuthor.Current";
 
 		String id = TestHelper.newID();
@@ -148,7 +148,7 @@ public class RepositoryTests {
 
 	@Test
 	public void ShouldGetAllIfNullSince() {
-		RepositoryAdapter repo = createRepository();
+		IRepositoryAdapter repo = createRepository();
 		String by = "DeviceAuthor.Current";
 
 		String id = TestHelper.newID();
@@ -169,11 +169,11 @@ public class RepositoryTests {
 
 	@Test
 	public void ShouldGetAllIfNullWhen() {
-		RepositoryAdapter repo = createRepository();
+		IRepositoryAdapter repo = createRepository();
 		String by = "byUser";
 
 		String id = TestHelper.newID();
-		Content modelItem =new XMLContent(id, "foo", "bar", TestHelper.makeElement("<payload />"));
+		IContent modelItem =new XMLContent(id, "foo", "bar", TestHelper.makeElement("<payload />"));
 		Sync sync = new Sync(id, by, null, false);
 		Item item = new Item(modelItem, sync);
 		repo.add(item);
@@ -190,19 +190,19 @@ public class RepositoryTests {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldThrowGetAllNullFilter() {
-		RepositoryAdapter repository = createRepository();
+		IRepositoryAdapter repository = createRepository();
 		repository.getAll(null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldThrowGetAllSinceWithNullFilter() {
-		RepositoryAdapter repository = createRepository();
+		IRepositoryAdapter repository = createRepository();
 		repository.getAllSince(TestHelper.now(), null);
 	}
 
 	@Test
 	public void ShouldGetAllPassFilter() {
-		RepositoryAdapter repo = createRepository();
+		IRepositoryAdapter repo = createRepository();
 		String by = "jmt";
 
 		String id = TestHelper.newID();
@@ -211,7 +211,7 @@ public class RepositoryTests {
 				TestHelper.now(), false));
 		repo.add(item);
 
-		Filter<Item> filter = new IdFilter(id);
+		IFilter<Item> filter = new IdFilter(id);
 
 		String id2 = TestHelper.newID();
 		item = new Item(new XMLContent(id2, "foo", "bar", TestHelper
@@ -234,7 +234,7 @@ public class RepositoryTests {
 				.makeElement("<payload />"));
 		Sync sync = new Sync(item.getId(), "kzu", created, false);
 
-		RepositoryAdapter repo = createRepository();
+		IRepositoryAdapter repo = createRepository();
 		repo.add(new Item(item, sync));
 
 		List<Item> items = repo.getAllSince(since);
@@ -254,7 +254,7 @@ public class RepositoryTests {
 	public void ShouldGetAllWithFilterPassToImplementation() {
 		SimpleRepository repo = new SimpleRepository();
 
-		Filter<Item> filter = new NullFilter<Item>();
+		IFilter<Item> filter = new NullFilter<Item>();
 		repo.getAll(filter);
 
 		Assert.assertEquals(filter, repo.getFilter());
@@ -284,7 +284,7 @@ public class RepositoryTests {
 
 	@Test
 	public void ShouldSaveUpdatedItemOnResolveConflicts() {
-		RepositoryAdapter repo = createRepository();
+		IRepositoryAdapter repo = createRepository();
 		String id = TestHelper.newID();
 		String by = "jmt";
 
@@ -310,7 +310,7 @@ public class RepositoryTests {
 
 	@Test
 	public void ShouldSaveUpdatedItemOnResolveConflicts2() {
-		RepositoryAdapter repo = createRepository();
+		IRepositoryAdapter repo = createRepository();
 		String id = TestHelper.newID();
 		String by = "jmt";
 
@@ -339,7 +339,7 @@ public class RepositoryTests {
 
 	@Test
 	public void ShouldResolveConflictsPreserveDeletedState() {
-		RepositoryAdapter repo = createRepository();
+		IRepositoryAdapter repo = createRepository();
 		String id = TestHelper.newID();
 		String by = "jmt";
 
@@ -375,14 +375,14 @@ public class RepositoryTests {
 
 	private class SimpleRepository extends AbstractRepositoryAdapter {
 		private Date since;
-		private Filter<Item> filter;
+		private IFilter<Item> filter;
 
 		public boolean supportsMerge() {
 			throw new UnsupportedOperationException(
 					"The method or operation is not implemented.");
 		}
 
-		public Filter<Item> getFilter() {
+		public IFilter<Item> getFilter() {
 			return filter;
 		}
 
@@ -395,7 +395,7 @@ public class RepositoryTests {
 					"The method or operation is not implemented.");
 		}
 
-		protected List<Item> getAll(Date since, Filter<Item> filter) {
+		protected List<Item> getAll(Date since, IFilter<Item> filter) {
 			this.since = since;
 			this.filter = filter;
 
@@ -427,12 +427,13 @@ public class RepositoryTests {
 					"The method or operation is not implemented.");
 		}
 
-		protected String getCurrentAuthor() {
-			return "JMT";
+		@Override
+		public String getAuthenticatedUser() {
+			return "TEST_USER";
 		}
 	}
 	
-	private class IdFilter implements Filter<Item>{
+	private class IdFilter implements IFilter<Item>{
 		private String itemId;
 		
 		public IdFilter(String id)

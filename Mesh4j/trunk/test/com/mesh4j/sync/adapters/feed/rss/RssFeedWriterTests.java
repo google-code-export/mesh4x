@@ -12,6 +12,7 @@ import org.junit.Test;
 import com.mesh4j.sync.adapters.feed.Feed;
 import com.mesh4j.sync.adapters.feed.FeedReader;
 import com.mesh4j.sync.adapters.feed.FeedWriter;
+import com.mesh4j.sync.security.NullSecurity;
 
 public class RssFeedWriterTests {
 
@@ -21,12 +22,12 @@ public class RssFeedWriterTests {
 		File file = new File(this.getClass().getResource("rss.xml").getFile());
 		Assert.assertTrue(file.exists());
 		
-		FeedReader reader = new FeedReader(RssSyndicationFormat.INSTANCE);
+		FeedReader reader = new FeedReader(RssSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
 		Feed feed = reader.read(file);
 		
 		XMLWriter xmlWriter = new XMLWriter(new FileWriter("c:\\rss1.xml"));
 
-		FeedWriter writer = new FeedWriter(RssSyndicationFormat.INSTANCE);
+		FeedWriter writer = new FeedWriter(RssSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
 		writer.write(xmlWriter, feed);
 		
 		File file2 =  new File("c:\\rss1.xml");

@@ -4,20 +4,21 @@ import java.util.Vector;
 
 import com.mesh4j.sync.model.Item;
 
-public class ItemObservable {
-	private Vector<ItemObserver> observers = new Vector<ItemObserver>();
+public class ObservableItem {
+	
+	private Vector<IObserverItem> observers = new Vector<IObserverItem>();
 
 	public void notifyObservers(Item item) {
-		ItemObserver[] arrLocal;
+		IObserverItem[] arrLocal;
 		synchronized (this) {
-			arrLocal = observers.toArray(new ItemObserver[0]);
+			arrLocal = observers.toArray(new IObserverItem[0]);
 			for (int i = arrLocal.length - 1; i >= 0; i--){
 				(arrLocal[i]).notifyItemNovelty(item);
 			}
 		}
 	}
 
-	public synchronized void addObserver(ItemObserver observer) {
+	public synchronized void addObserver(IObserverItem observer) {
 		if (observer == null)
 			throw new NullPointerException();
 		if (!observers.contains(observer)) {
@@ -25,7 +26,7 @@ public class ItemObservable {
 		}
 	}
 
-	public synchronized void removeObserver(ItemObserver observer) {
+	public synchronized void removeObserver(IObserverItem observer) {
 		observers.removeElement(observer);
 	}
 

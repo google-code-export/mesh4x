@@ -12,7 +12,7 @@ public class NullPreviewHandlerTests {
 
 	@Test
 	public void shouldMerge(){
-		RepositoryAdapter targetRepository = null;
+		IRepositoryAdapter targetRepository = null;
 		List<MergeResult> mergedItems = new ArrayList<MergeResult>();
 		
 		Assert.assertSame(mergedItems, NullPreviewHandler.INSTANCE.preview(targetRepository, mergedItems));

@@ -10,13 +10,14 @@ import org.junit.Test;
 import com.mesh4j.sync.filter.NullFilter;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.Sync;
+import com.mesh4j.sync.security.NullSecurity;
 import com.mesh4j.sync.test.utils.TestHelper;
 
 public class FeedAdapterTests {
 
 	@Test
 	public void  shouldBeReturnNewFeed(){
-		FeedAdapter repo = new FeedAdapter();
+		FeedAdapter repo = new FeedAdapter(NullSecurity.INSTANCE);
 		Feed feed = repo.getFeed();
 		
 		Assert.assertNotNull(feed);
@@ -27,7 +28,7 @@ public class FeedAdapterTests {
 	public void shouldBeReturnFeed(){
 		Feed feedSource = new Feed();
 		
-		FeedAdapter repo = new FeedAdapter(feedSource);
+		FeedAdapter repo = new FeedAdapter(feedSource, NullSecurity.INSTANCE);
 		Feed feed = repo.getFeed();
 		
 		Assert.assertNotNull(feed);
@@ -36,14 +37,14 @@ public class FeedAdapterTests {
 	
 	@Test
 	public void shouldNotSupportMerge(){
-		FeedAdapter repo = new FeedAdapter();
+		FeedAdapter repo = new FeedAdapter(NullSecurity.INSTANCE);
 
 		Assert.assertFalse(repo.supportsMerge());		
 	}
 	
 	@Test
 	public void shouldNotMerge(){
-		FeedAdapter repo = new FeedAdapter();
+		FeedAdapter repo = new FeedAdapter(NullSecurity.INSTANCE);
 		
 		List<Item> itemsSource = new ArrayList<Item>();
 		Item item = new Item(null, new Sync("suncId123"));
@@ -57,7 +58,7 @@ public class FeedAdapterTests {
 	public void shouldBeAddItem(){
 		Item item = new Item(null, new Sync("suncId123"));
 		
-		FeedAdapter repo = new FeedAdapter();
+		FeedAdapter repo = new FeedAdapter(NullSecurity.INSTANCE);
 		repo.add(item);
 		
 		Feed feed = repo.getFeed();
@@ -74,7 +75,7 @@ public class FeedAdapterTests {
 		Feed feed = new Feed();
 		feed.addItem(item);
 		
-		FeedAdapter repo = new FeedAdapter(feed);
+		FeedAdapter repo = new FeedAdapter(feed, NullSecurity.INSTANCE);
 		repo.delete(item.getSyncId());
 				
 		Assert.assertEquals(0, feed.getItems().size());
@@ -88,7 +89,7 @@ public class FeedAdapterTests {
 		Feed feed = new Feed();
 		feed.addItem(item);
 		
-		FeedAdapter repo = new FeedAdapter(feed);
+		FeedAdapter repo = new FeedAdapter(feed, NullSecurity.INSTANCE);
 		Item resultItem = repo.get(item.getSyncId());
 				
 		Assert.assertSame(item, resultItem);
@@ -103,7 +104,7 @@ public class FeedAdapterTests {
 		feed.addItem(item0);
 		feed.addItem(item1);
 		
-		FeedAdapter repo = new FeedAdapter(feed);
+		FeedAdapter repo = new FeedAdapter(feed, NullSecurity.INSTANCE);
 		List<Item> results = repo.getAll(null, new NullFilter<Item>());
 				
 		Assert.assertEquals(2, results.size());
@@ -124,7 +125,7 @@ public class FeedAdapterTests {
 		feed.addItem(item0);
 		feed.addItem(item1);
 		
-		FeedAdapter repo = new FeedAdapter(feed);
+		FeedAdapter repo = new FeedAdapter(feed, NullSecurity.INSTANCE);
 		List<Item> results = repo.getAll(sinceDate, new NullFilter<Item>());
 				
 		Assert.assertEquals(1, results.size());
@@ -134,7 +135,7 @@ public class FeedAdapterTests {
 
 	@Test
 	public void shouldReturnFriendlyName() {
-		FeedAdapter repo =  new FeedAdapter();
+		FeedAdapter repo =  new FeedAdapter(NullSecurity.INSTANCE);
 		Assert.assertFalse(FeedAdapter.class.getName() == repo.getFriendlyName());
 	}
 	

@@ -29,11 +29,11 @@ public class SyncDAO {
 	private final static Log Logger = LogFactory.getLog(SyncDAO.class);
 	
 	// MODEL VARIABLES
-	private SessionProvider sessionProvider;
+	private ISessionProvider sessionProvider;
 	private SyncInfoParser syncInfoParser;
 	
 	// BUSINESS METHODS
-	public SyncDAO(SessionProvider sessionProvider, SyncInfoParser syncInfoParser) {
+	public SyncDAO(ISessionProvider sessionProvider, SyncInfoParser syncInfoParser) {
 		super();
 		this.sessionProvider = sessionProvider;
 		this.syncInfoParser = syncInfoParser;
@@ -50,7 +50,7 @@ public class SyncDAO {
 		try {
 			syncInfo = syncInfoParser.convertElement2SyncInfo(syncInfoElement);
 		} catch (DocumentException e) {
-			Logger.error(e.getMessage(), e); // TODO (JMT) throws an exception
+			Logger.error(e.getMessage(), e); // TODO (JMT) throws runtime exception ?
 		}
 		return syncInfo;
 	}
@@ -60,7 +60,7 @@ public class SyncDAO {
 		try {
 			syncInfoElement = syncInfoParser.convertSyncInfo2Element(syncInfo);
 		} catch (DocumentException e) {
-			Logger.error(e.getMessage(), e); // TODO (JMT) throws an exception
+			Logger.error(e.getMessage(), e); // TODO (JMT) throws runtime exception ?
 			return;
 		}
 		
@@ -81,7 +81,7 @@ public class SyncDAO {
 				syncInfo = syncInfoParser.convertElement2SyncInfo(syncInfoElement);
 				result.add(syncInfo);
 			} catch (DocumentException e) {
-				Logger.error(e.getMessage(), e); // TODO (JMT) throws an exception
+				Logger.error(e.getMessage(), e); // TODO (JMT) throws runtime exception ?
 			}
 		}
 		return result;
@@ -93,7 +93,7 @@ public class SyncDAO {
 	}
 
 	public static File getMapping() {
-		File syncMapping = new File(SyncDAO.class.getResource("SyncInfo.hbm.xml").getFile());   // TODO (JMT) inject sync info mapping name -> Spring?
+		File syncMapping = new File(SyncDAO.class.getResource("SyncInfo.hbm.xml").getFile());   // TODO (JMT) REFACTORING: Spring, inject sync info mapping name
 		return syncMapping;
 	}
 

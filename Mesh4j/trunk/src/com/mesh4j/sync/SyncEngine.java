@@ -7,8 +7,8 @@ import java.util.List;
 import com.mesh4j.sync.merge.MergeBehavior;
 import com.mesh4j.sync.merge.MergeResult;
 import com.mesh4j.sync.model.Item;
-import com.mesh4j.sync.observer.ItemObservable;
-import com.mesh4j.sync.observer.ItemObserver;
+import com.mesh4j.sync.observer.IObserverItem;
+import com.mesh4j.sync.observer.ObservableItem;
 import com.mesh4j.sync.validations.Guard;
 
 /**
@@ -19,14 +19,14 @@ import com.mesh4j.sync.validations.Guard;
 public class SyncEngine {
 
 	// MODEL VARIABLES
-	private ItemObservable itemReceivedObservable = new ItemObservable();
-	private ItemObservable itemSentObservable = new ItemObservable();
+	private ObservableItem itemReceived = new ObservableItem();
+	private ObservableItem itemSent = new ObservableItem();
 
-	private RepositoryAdapter source;
-	private RepositoryAdapter target;
+	private IRepositoryAdapter source;
+	private IRepositoryAdapter target;
 
 	// BUSINESS METHODS
-	public SyncEngine(RepositoryAdapter source, RepositoryAdapter target) {   // TODO (JMT) spike SyncEngine<T>
+	public SyncEngine(IRepositoryAdapter source, IRepositoryAdapter target) {   // TODO (JMT) SPIKE: SyncEngine<T>
 		super();
 
 		Guard.argumentNotNull(source, "left");
@@ -61,7 +61,7 @@ public class SyncEngine {
 	// / changes from the target repository are incorporated into the source.
 	// / </remarks>
 	// / <returns>The list of items that had conflicts.</returns>
-	public List<Item> synchronize(PreviewImportHandler previewer,
+	public List<Item> synchronize(IPreviewImportHandler previewer,
 			PreviewBehavior behavior) {
 		return synchronize(null, previewer, behavior);
 	}
@@ -96,13 +96,13 @@ public class SyncEngine {
 	// / changes from the target repository are incorporated into the source.
 	// / </remarks>
 	// / <returns>The list of items that had conflicts.</returns>
-	public List<Item> synchronize(Date since, PreviewImportHandler previewer,
+	public List<Item> synchronize(Date since, IPreviewImportHandler previewer,
 			PreviewBehavior behavior) {
 
 		Guard.argumentNotNull(previewer, "previewer");
 
 		List<Item> sourceItems = (since == null) ? source.getAll() : source.getAllSince(since);
-		List<Item> outgoingItems = this.enumerateItemsProgress(sourceItems, this.itemSentObservable);
+		List<Item> outgoingItems = this.enumerateItemsProgress(sourceItems, this.itemSent);
 
 		if (!target.supportsMerge()) {
 			List<MergeResult> outgoingToMerge = this.mergeItems(outgoingItems, target);
@@ -115,7 +115,7 @@ public class SyncEngine {
 		}
 
 		List<Item> targetItmes = (since == null) ? target.getAll() : target.getAllSince(since);
-		List<Item> incomingItems = this.enumerateItemsProgress(targetItmes, this.itemReceivedObservable);
+		List<Item> incomingItems = this.enumerateItemsProgress(targetItmes, this.itemReceived);
 
 		if (!source.supportsMerge()) {
 			List<MergeResult> incomingToMerge = this.mergeItems(incomingItems, source);
@@ -132,7 +132,7 @@ public class SyncEngine {
 	}
 
 	private List<MergeResult> mergeItems(List<Item> items,
-			RepositoryAdapter repository) {
+			IRepositoryAdapter repository) {
 
 		ArrayList<MergeResult> mergeResult = new ArrayList<MergeResult>();
 		for (Item incoming : items) {
@@ -147,7 +147,7 @@ public class SyncEngine {
 	}
 
 	private List<Item> importItems(List<MergeResult> items,
-			RepositoryAdapter repository) {
+			IRepositoryAdapter repository) {
 		// Straight import of data in merged results.
 		// Conflicting items are saved and also
 		// are returned for conflict resolution by the user or
@@ -181,7 +181,7 @@ public class SyncEngine {
 	}
 
 	private List<Item> enumerateItemsProgress(List<Item> items,
-			ItemObservable observable) {
+			ObservableItem observable) {
 		ArrayList<Item> result = new ArrayList<Item>();
 		for (Item item : items) {
 			result.add(item);
@@ -190,27 +190,27 @@ public class SyncEngine {
 		return result;
 	}
 
-	public void registerItemReceivedObserver(ItemObserver ... observers) {
-		for (ItemObserver itemObserver : observers) {
-			this.itemReceivedObservable.addObserver(itemObserver);	
+	public void registerItemReceivedObserver(IObserverItem ... observers) {
+		for (IObserverItem itemObserver : observers) {
+			this.itemReceived.addObserver(itemObserver);	
 		}
 	}
 
-	public void removeItemReceivedObserver(ItemObserver ... observers) {
-		for (ItemObserver itemObserver : observers) {
-			this.itemReceivedObservable.removeObserver(itemObserver);
+	public void removeItemReceivedObserver(IObserverItem ... observers) {
+		for (IObserverItem itemObserver : observers) {
+			this.itemReceived.removeObserver(itemObserver);
 		}
 	}
 
-	public void registerItemSentObserver(ItemObserver ... observers) {
-		for (ItemObserver itemObserver : observers) {
-			this.itemSentObservable.addObserver(itemObserver);
+	public void registerItemSentObserver(IObserverItem ... observers) {
+		for (IObserverItem itemObserver : observers) {
+			this.itemSent.addObserver(itemObserver);
 		}
 	}
 
-	public void removeItemSentObserver(ItemObserver ... observers) {
-		for (ItemObserver itemObserver : observers) {
-			this.itemSentObservable.removeObserver(itemObserver);
+	public void removeItemSentObserver(IObserverItem ... observers) {
+		for (IObserverItem itemObserver : observers) {
+			this.itemSent.removeObserver(itemObserver);
 		}
 	}
 

@@ -7,10 +7,10 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.Namespace;
 
-import com.mesh4j.sync.adapters.feed.SyndicationFormat;
+import com.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import com.mesh4j.sync.utils.DateHelper;
 
-public class AtomSyndicationFormat implements SyndicationFormat {
+public class AtomSyndicationFormat implements ISyndicationFormat {
 
 	public static final AtomSyndicationFormat INSTANCE = new AtomSyndicationFormat();
 

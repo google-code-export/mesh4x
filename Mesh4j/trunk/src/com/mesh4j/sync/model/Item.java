@@ -5,11 +5,11 @@ import com.mesh4j.sync.validations.Guard;
 public class Item implements Cloneable{
 	
 	// MODEL VARIABLES
-	private Content content;
+	private IContent content;
 	private Sync sync;
 
 	// BUSINESS METHODS	
-	public Item(Content content, Sync sync)
+	public Item(IContent content, Sync sync)
 	{
 		Guard.argumentNotNull(sync, "sync");
 
@@ -26,7 +26,7 @@ public class Item implements Cloneable{
 		return sync;
 	}
 
-	public Content getContent()
+	public IContent getContent()
 	{
 		return this.content;
 	}
@@ -76,7 +76,7 @@ public class Item implements Cloneable{
 	}
 
 	public Item clone() {
-		Content contentClone = null;
+		IContent contentClone = null;
 		Sync cloneSync = null;
 		if (content != null) {
 			contentClone = content.clone();

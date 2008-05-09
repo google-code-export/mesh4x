@@ -8,7 +8,7 @@ import org.hibernate.EntityMode;
 import org.hibernate.Session;
 
 import com.mesh4j.sync.adapters.EntityContent;
-import com.mesh4j.sync.model.Content;
+import com.mesh4j.sync.model.IContent;
 
 /**
  * Use CompoundRepositoryAdapter with an HibernateContentAdapter 
@@ -19,11 +19,11 @@ public class EntityDAO {
 	// MODEL VARIABLES
 	private String entityName;
 	private String entityIDNode;
-	private SessionProvider sessionProvider;
+	private ISessionProvider sessionProvider;
 	
 	// BUSINESS METHODS
 	
-	public EntityDAO(String entityName, String entityIDNode, SessionProvider sessionProvider) {
+	public EntityDAO(String entityName, String entityIDNode, ISessionProvider sessionProvider) {
 		super();
 		this.entityName = entityName;
 		this.entityIDNode = entityIDNode;
@@ -77,7 +77,7 @@ public class EntityDAO {
 		return result;
 	}
 
-	public EntityContent normalizeContent(Content content){
+	public EntityContent normalizeContent(IContent content){
 		return EntityContent.normalizeContent(content, this.entityName, this.entityIDNode);
 	}
 	

@@ -8,7 +8,7 @@ import org.apache.commons.logging.LogFactory;
 
 public class MessageTranslator {
 	
-	// TODO (JMT) Factory or DI, inject file name -> Spring?
+	// TODO (JMT) REFACTORING: Spring, inject file name
 
 	private static final Log Logger = LogFactory.getLog(MessageTranslator.class);
 	private static final ResourceBundle Resources = ResourceBundle.getBundle("mesh4j_resources");

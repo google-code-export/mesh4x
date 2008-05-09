@@ -7,31 +7,34 @@ import java.util.List;
 import java.util.Map;
 
 import com.mesh4j.sync.AbstractRepositoryAdapter;
-import com.mesh4j.sync.Filter;
+import com.mesh4j.sync.IFilter;
 import com.mesh4j.sync.adapters.EntityContent;
 import com.mesh4j.sync.adapters.SyncInfo;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.NullContent;
 import com.mesh4j.sync.model.Sync;
-import com.mesh4j.sync.security.Security;
+import com.mesh4j.sync.security.ISecurity;
 import com.mesh4j.sync.translator.MessageTranslator;
 import com.mesh4j.sync.validations.Guard;
 
 public class CompoundRepositoryAdapter extends AbstractRepositoryAdapter {
 
 	// MODEL VARIABLES
-	private SyncRepository syncRepository;
-	private ContentAdapter contentAdapter;
+	private ISyncRepository syncRepository;
+	private IContentAdapter contentAdapter;
+	private ISecurity security;
 	
 	// BUSINESS METHODS
-	public CompoundRepositoryAdapter(SyncRepository syncRepository,
-			ContentAdapter contentRepository) {
+	public CompoundRepositoryAdapter(ISyncRepository syncRepository,
+			IContentAdapter contentRepository, ISecurity security) {
 		
 		Guard.argumentNotNull(contentRepository, "contentRepo");
 		Guard.argumentNotNull(syncRepository, "syncRepo");
+		Guard.argumentNotNull(security, "security");
 		
 		this.syncRepository = syncRepository;
 		this.contentAdapter = contentRepository;
+		this.security = security;
 	}
 	
 	@Override
@@ -58,7 +61,7 @@ public class CompoundRepositoryAdapter extends AbstractRepositoryAdapter {
 		
 		if (syncInfo != null)
 		{
-			syncInfo.getSync().delete(Security.getAuthenticatedUser(), new Date());
+			syncInfo.getSync().delete(this.getAuthenticatedUser(), new Date());
 			syncRepository.save(syncInfo);
 			
 			EntityContent content = contentAdapter.get(syncInfo.getEntityId());
@@ -124,7 +127,7 @@ public class CompoundRepositoryAdapter extends AbstractRepositoryAdapter {
 		if (entity != null && sync == null)
 		{
 			// Add sync on-the-fly.
-			sync = new Sync(syncInfo.getSyncId(), Security.getAuthenticatedUser(), new Date(), false);
+			sync = new Sync(syncInfo.getSyncId(), this.getAuthenticatedUser(), new Date(), false);
 			syncInfo.updateSync(sync);
 			syncRepository.save(syncInfo);
 		}
@@ -132,7 +135,7 @@ public class CompoundRepositoryAdapter extends AbstractRepositoryAdapter {
 		{
 			if (!sync.isDeleted())
 			{
-				sync.delete(Security.getAuthenticatedUser(), new Date());
+				sync.delete(this.getAuthenticatedUser(), new Date());
 				syncRepository.save(syncInfo);
 			}
 		}
@@ -144,7 +147,7 @@ public class CompoundRepositoryAdapter extends AbstractRepositoryAdapter {
 			/// items from the local stores.
 			if (!syncInfo.isDeleted() && syncInfo.contentHasChanged(entity))
 			{
-				sync.update(Security.getAuthenticatedUser(), new Date(), sync.isDeleted());
+				sync.update(this.getAuthenticatedUser(), new Date(), sync.isDeleted());
 				syncInfo.setEntityVersion(entity.getEntityVersion());
 				syncRepository.save(syncInfo);
 			}
@@ -152,7 +155,7 @@ public class CompoundRepositoryAdapter extends AbstractRepositoryAdapter {
 	}
 
 	@Override
-	protected List<Item> getAll(Date since, Filter<Item> filter) {
+	protected List<Item> getAll(Date since, IFilter<Item> filter) {
 	
 		ArrayList<Item> result = new ArrayList<Item>();
 		
@@ -167,7 +170,7 @@ public class CompoundRepositoryAdapter extends AbstractRepositoryAdapter {
 
 			Sync sync;
 			if(syncInfo == null){
-				sync = new Sync(syncRepository.newSyncID(entity), Security.getAuthenticatedUser(), new Date(), false);
+				sync = new Sync(syncRepository.newSyncID(entity), this.getAuthenticatedUser(), new Date(), false);
 				
 				SyncInfo newSyncInfo = new SyncInfo(sync, entity);
 				
@@ -207,8 +210,8 @@ public class CompoundRepositoryAdapter extends AbstractRepositoryAdapter {
 		return syncInfoMap;
 	}
 
-	private boolean appliesFilter(Item item, Date since, Filter<Item> filter) {
-		boolean dateOk = since == null || (item.getSync().getLastUpdate() == null || since.compareTo(item.getSync().getLastUpdate().getWhen()) <= 0);  // TODO (JMT) create db filter
+	private boolean appliesFilter(Item item, Date since, IFilter<Item> filter) {
+		boolean dateOk = since == null || (item.getSync().getLastUpdate() == null || since.compareTo(item.getSync().getLastUpdate().getWhen()) <= 0);
 		return filter.applies(item) && dateOk;
 	}
 
@@ -225,6 +228,11 @@ public class CompoundRepositoryAdapter extends AbstractRepositoryAdapter {
 	@Override
 	public List<Item> merge(List<Item> items) {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public String getAuthenticatedUser() {
+		return this.security.getAuthenticatedUser();
 	}
 
 }

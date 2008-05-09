@@ -7,10 +7,11 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.mesh4j.sync.AbstractSyncEngineTest;
-import com.mesh4j.sync.RepositoryAdapter;
+import com.mesh4j.sync.IRepositoryAdapter;
 import com.mesh4j.sync.SyncEngine;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.Sync;
+import com.mesh4j.sync.security.NullSecurity;
 import com.mesh4j.sync.test.utils.TestHelper;
 
 public class FeedSyncTest extends AbstractSyncEngineTest{
@@ -22,8 +23,8 @@ public class FeedSyncTest extends AbstractSyncEngineTest{
 		Feed feed = new Feed();
 		feed.addItem(item);
 		
-		FeedAdapter source = new FeedAdapter();
-		FeedAdapter target = new FeedAdapter(feed);
+		FeedAdapter source = new FeedAdapter(NullSecurity.INSTANCE);
+		FeedAdapter target = new FeedAdapter(feed, NullSecurity.INSTANCE);
 		
 		SyncEngine syncEngine = new SyncEngine(source, target);
 		List<Item> conflictItems = syncEngine.synchronize();
@@ -50,8 +51,8 @@ public class FeedSyncTest extends AbstractSyncEngineTest{
 		Feed feed2 = new Feed();
 		feed2.addItem(item2);
 		
-		FeedAdapter source = new FeedAdapter(feed1);
-		FeedAdapter target = new FeedAdapter(feed2);
+		FeedAdapter source = new FeedAdapter(feed1, NullSecurity.INSTANCE);
+		FeedAdapter target = new FeedAdapter(feed2, NullSecurity.INSTANCE);
 		
 		SyncEngine syncEngine = new SyncEngine(source, target);
 		List<Item> conflictItems = syncEngine.synchronize();
@@ -82,8 +83,8 @@ public class FeedSyncTest extends AbstractSyncEngineTest{
 		Feed feed2 = new Feed();
 		feed2.addItem(item01);
 		
-		FeedAdapter source = new FeedAdapter(feed1);
-		FeedAdapter target = new FeedAdapter(feed2);
+		FeedAdapter source = new FeedAdapter(feed1, NullSecurity.INSTANCE);
+		FeedAdapter target = new FeedAdapter(feed2, NullSecurity.INSTANCE);
 		
 		SyncEngine syncEngine = new SyncEngine(source, target);
 		List<Item> conflictItems = syncEngine.synchronize();
@@ -110,8 +111,8 @@ public class FeedSyncTest extends AbstractSyncEngineTest{
 		Feed feed2 = new Feed();
 		feed2.addItem(item01);
 		
-		FeedAdapter source = new FeedAdapter(feed1);
-		FeedAdapter target = new FeedAdapter(feed2);
+		FeedAdapter source = new FeedAdapter(feed1, NullSecurity.INSTANCE);
+		FeedAdapter target = new FeedAdapter(feed2, NullSecurity.INSTANCE);
 		
 		SyncEngine syncEngine = new SyncEngine(source, target);
 		List<Item> conflictItems = syncEngine.synchronize();
@@ -121,15 +122,15 @@ public class FeedSyncTest extends AbstractSyncEngineTest{
 	}
 
 	@Override
-	protected RepositoryAdapter makeLeftRepository(Item... items) {
+	protected IRepositoryAdapter makeLeftRepository(Item... items) {
 		Feed feed = new Feed(items);
-		return new FeedAdapter(feed);
+		return new FeedAdapter(feed, NullSecurity.INSTANCE);
 	}
 	
 	@Override
-	protected RepositoryAdapter makeRightRepository(Item... items) {
+	protected IRepositoryAdapter makeRightRepository(Item... items) {
 		Feed feed = new Feed(items);
-		return new FeedAdapter(feed);
+		return new FeedAdapter(feed, NullSecurity.INSTANCE);
 	}
 
 }

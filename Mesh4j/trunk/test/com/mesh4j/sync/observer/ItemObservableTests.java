@@ -9,15 +9,15 @@ public class ItemObservableTests {
 
 	@Test(expected=NullPointerException.class)
 	public void shouldValidateNullObserver(){
-		ItemObservable io = new ItemObservable();
+		ObservableItem io = new ObservableItem();
 		
 		io.addObserver(null);
 	}
 	
 	@Test
 	public void shouldAddObserver(){
-		ItemObservable io = new ItemObservable();
-		ItemObserver o = new ItemObserver(){
+		ObservableItem io = new ObservableItem();
+		IObserverItem o = new IObserverItem(){
 			@Override
 			public void notifyItemNovelty(Item item) {
 			}
@@ -28,8 +28,8 @@ public class ItemObservableTests {
 	
 	@Test
 	public void shouldRemoveObserver(){
-		ItemObservable io = new ItemObservable();
-		ItemObserver o = new ItemObserver(){
+		ObservableItem io = new ObservableItem();
+		IObserverItem o = new IObserverItem(){
 			@Override
 			public void notifyItemNovelty(Item item) {
 			}
@@ -42,19 +42,19 @@ public class ItemObservableTests {
 	
 	@Test
 	public void shouldRemoveNullObserver(){
-		ItemObservable io = new ItemObservable();		
+		ObservableItem io = new ObservableItem();		
 		io.removeObserver(null);
 	}
 	
 	@Test
 	public void shouldNotNotify(){
-		ItemObservable io = new ItemObservable();
+		ObservableItem io = new ObservableItem();
 		io.notifyObservers(null);
 	}
 	
 	@Test
 	public void shouldNotify(){
-		ItemObservable io = new ItemObservable();
+		ObservableItem io = new ObservableItem();
 		MyItemObserver o = new MyItemObserver();
 		
 		io.addObserver(o);
@@ -65,7 +65,7 @@ public class ItemObservableTests {
 	
 	@Test
 	public void shouldNotNotifyIfRemoveObserver(){
-		ItemObservable io = new ItemObservable();
+		ObservableItem io = new ObservableItem();
 		MyItemObserver o = new MyItemObserver();
 		
 		io.addObserver(o);
@@ -82,7 +82,7 @@ public class ItemObservableTests {
 		Assert.assertFalse(o.ok);
 	}
 	
-	private class MyItemObserver implements ItemObserver{
+	private class MyItemObserver implements IObserverItem{
 		public boolean ok = false;
 		@Override
 		public void notifyItemNovelty(Item item) {

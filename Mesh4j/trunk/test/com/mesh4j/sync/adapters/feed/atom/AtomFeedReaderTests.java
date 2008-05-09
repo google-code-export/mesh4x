@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import com.mesh4j.sync.adapters.feed.Feed;
 import com.mesh4j.sync.adapters.feed.FeedReader;
+import com.mesh4j.sync.security.NullSecurity;
 
 public class AtomFeedReaderTests {
 
@@ -17,7 +18,7 @@ public class AtomFeedReaderTests {
 		File file = new File(this.getClass().getResource("atom.xml").getFile());
 		Assert.assertTrue(file.exists());
 		
-		FeedReader reader = new FeedReader(AtomSyndicationFormat.INSTANCE);
+		FeedReader reader = new FeedReader(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
 		Feed feed = reader.read(file);
 		Assert.assertNotNull(feed); // TODO (JMT) test
 	}

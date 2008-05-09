@@ -7,11 +7,10 @@ import com.mesh4j.sync.filter.ConflictsFilter;
 import com.mesh4j.sync.filter.NullFilter;
 import com.mesh4j.sync.merge.MergeBehavior;
 import com.mesh4j.sync.model.Item;
-import com.mesh4j.sync.security.Security;
 import com.mesh4j.sync.utils.DateHelper;
 import com.mesh4j.sync.validations.Guard;
 
-public abstract class AbstractRepositoryAdapter implements RepositoryAdapter{
+public abstract class AbstractRepositoryAdapter implements IRepositoryAdapter{
 
 	// CONSTANTS
 	private final static NullFilter<Item> NULL_FILTER = new NullFilter<Item>();
@@ -20,19 +19,20 @@ public abstract class AbstractRepositoryAdapter implements RepositoryAdapter{
 	// BUSINESS METHODS
 	public abstract boolean supportsMerge();
 	public abstract Item get(String id);
-	protected abstract List<Item> getAll(Date since, Filter<Item> filter);
+	protected abstract List<Item> getAll(Date since, IFilter<Item> filter);
 	public abstract void add(Item item);
 	public abstract void delete(String id);
 	public abstract void update(Item item);
 	public abstract List<Item> merge(List<Item> items);
 	public abstract String getFriendlyName();
+	public abstract String getAuthenticatedUser();
 
 	public List<Item> getAll()
 	{
 		return getAllSince(null, NULL_FILTER);
 	}
 
-	public List<Item> getAll(Filter<Item> filter)
+	public List<Item> getAll(IFilter<Item> filter)
 	{
 		return getAllSince(null, filter);
 	}
@@ -42,7 +42,7 @@ public abstract class AbstractRepositoryAdapter implements RepositoryAdapter{
 		return getAllSince(since, NULL_FILTER);
 	}
 
-	public List<Item> getAllSince(Date since, Filter<Item> filter)
+	public List<Item> getAllSince(Date since, IFilter<Item> filter)
 	{
 		Guard.argumentNotNull(filter, "filter");
 		return getAll(since == null ? since : DateHelper.normalize(since), filter);
@@ -59,7 +59,7 @@ public abstract class AbstractRepositoryAdapter implements RepositoryAdapter{
 
 		if (resolveConflicts)
 		{
-			item = MergeBehavior.resolveConflicts(item, Security.getAuthenticatedUser(), new Date(), item.getSync().isDeleted());
+			item = MergeBehavior.resolveConflicts(item, this.getAuthenticatedUser(), new Date(), item.getSync().isDeleted());
 		}
 		
 		update(item);

@@ -19,12 +19,12 @@ import org.hibernate.cfg.Configuration;
 
 import com.mesh4j.sync.adapters.EntityContent;
 import com.mesh4j.sync.adapters.SyncInfo;
-import com.mesh4j.sync.adapters.compound.SyncRepository;
+import com.mesh4j.sync.adapters.compound.ISyncRepository;
 import com.mesh4j.sync.parsers.SyncInfoParser;
 import com.mesh4j.sync.utils.IdGenerator;
 
-// TODO (JMT) tests
-public class HibernateSyncRepository implements SyncRepository{
+// TODO (JMT) test
+public class HibernateSyncRepository implements ISyncRepository{
 
 	// CONSTANTS	
 	private final static Log Logger = LogFactory.getLog(HibernateSyncRepository.class);
@@ -60,7 +60,7 @@ public class HibernateSyncRepository implements SyncRepository{
 		try {
 			syncInfo = syncInfoParser.convertElement2SyncInfo(syncInfoElement);
 		} catch (DocumentException e) {
-			Logger.error(e.getMessage(), e); // TODO (JMT) throws an exception
+			Logger.error(e.getMessage(), e); // TODO (JMT) throws runtime exception ?
 		}
 		return syncInfo;
 	}
@@ -103,7 +103,7 @@ public class HibernateSyncRepository implements SyncRepository{
 		try {
 			syncInfoElement = syncInfoParser.convertSyncInfo2Element(syncInfo);
 		} catch (DocumentException e) {
-			Logger.error(e.getMessage(), e); // TODO (JMT) throws an exception
+			Logger.error(e.getMessage(), e); // TODO (JMT) throws runtime exception ?
 			return null;
 		}
 		return syncInfoElement;
@@ -139,7 +139,7 @@ public class HibernateSyncRepository implements SyncRepository{
 	}
 
 	private File getMapping() {
-		File syncMapping = new File(this.getClass().getResource("SyncInfo.hbm.xml").getFile());   // TODO (JMT) inject sync info mapping name -> Spring?
+		File syncMapping = new File(this.getClass().getResource("SyncInfo.hbm.xml").getFile());   // TODO (JMT) REFACTORING: Spring, inject sync info mapping name
 		return syncMapping;
 	}
 

@@ -5,7 +5,7 @@ import org.dom4j.Element;
 
 import com.mesh4j.sync.validations.Guard;
 
-public class NullContent implements Content {
+public class NullContent implements IContent {
 	
 	private static final Element PAYLOAD = DocumentHelper.createElement("payload");
 	private String id;
@@ -22,7 +22,7 @@ public class NullContent implements Content {
 		return PAYLOAD;
 	}
 	
-	public Content clone(){
+	public IContent clone(){
 		return this;
 	}
 	

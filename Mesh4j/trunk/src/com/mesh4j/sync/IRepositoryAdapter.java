@@ -10,7 +10,7 @@ import com.mesh4j.sync.model.Item;
  * 
  * @author jtondato
  */
-public interface RepositoryAdapter {
+public interface IRepositoryAdapter {
 	
 	/// <summary>
 	/// Whether the repository performs its own merge behavior, or 
@@ -34,7 +34,7 @@ public interface RepositoryAdapter {
 	/// Gets all the items in the repository, including deleted ones, and filters 
 	/// the result using the given filter predicate.
 	/// </summary>
-	List<Item> getAll(Filter<Item> filter);
+	List<Item> getAll(IFilter<Item> filter);
 
 	/// <summary>
 	/// Gets all the items in the repository that were added, changed or removed after the given date.
@@ -47,7 +47,7 @@ public interface RepositoryAdapter {
 	/// and filters the result using the given filter predicate.
 	/// </summary>
 	/// <param name="since">Optional date to retrieve items since.</param>
-	List<Item> getAllSince(Date since, Filter<Item> filter);
+	List<Item> getAllSince(Date since, IFilter<Item> filter);
 
 	/// <summary>
 	/// Returns the items with conflicts.

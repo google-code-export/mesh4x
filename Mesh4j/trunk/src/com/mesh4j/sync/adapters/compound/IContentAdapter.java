@@ -3,11 +3,11 @@ package com.mesh4j.sync.adapters.compound;
 import java.util.List;
 
 import com.mesh4j.sync.adapters.EntityContent;
-import com.mesh4j.sync.model.Content;
+import com.mesh4j.sync.model.IContent;
 
-public interface ContentAdapter {
+public interface IContentAdapter {
 
-	EntityContent normalizeContent(Content content);
+	EntityContent normalizeContent(IContent content);
 
 	void save(EntityContent entity);
 

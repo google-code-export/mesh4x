@@ -2,10 +2,10 @@ package com.mesh4j.sync.adapters;
 
 import org.dom4j.Element;
 
-import com.mesh4j.sync.model.Content;
+import com.mesh4j.sync.model.IContent;
 
 
-public class EntityContent implements Content{
+public class EntityContent implements IContent{
 	
 	// MODEL VARIABLES
 	private String entityName;
@@ -38,8 +38,8 @@ public class EntityContent implements Content{
         			&& this.getEntityId().equals(otherXmlItem.getEntityId())
         			&& this.getEntityVersion() == otherXmlItem.getEntityVersion()
         			&& this.getPayload().asXML().equals(otherXmlItem.getPayload().asXML());
-        	} else if(obj instanceof Content){
-        		Content otherXmlItem = (Content) obj;
+        	} else if(obj instanceof IContent){
+        		IContent otherXmlItem = (IContent) obj;
         		return this.getPayload().asXML().equals(otherXmlItem.getPayload().asXML());
         	}
         }
@@ -71,7 +71,7 @@ public class EntityContent implements Content{
 		return entityVersion;
 	}
 	
-	public static EntityContent normalizeContent(Content content, String entityNode, String entityIDNode){
+	public static EntityContent normalizeContent(IContent content, String entityNode, String entityIDNode){
 		if(content instanceof EntityContent){
 			EntityContent entity = (EntityContent)content;
 			entity.refreshEntityVersion();

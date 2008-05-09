@@ -12,9 +12,10 @@ import org.junit.Test;
 
 import com.mesh4j.sync.adapters.EntityContent;
 import com.mesh4j.sync.filter.NullFilter;
-import com.mesh4j.sync.model.Content;
+import com.mesh4j.sync.model.IContent;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.Sync;
+import com.mesh4j.sync.security.NullSecurity;
 import com.mesh4j.sync.test.utils.TestHelper;
 
 
@@ -25,21 +26,21 @@ public class HibernateAdapterTests {
 	@Before
 	public void setUp(){
 		if(repo == null ){
-			repo = new HibernateAdapter(HibernateAdapterTests.class.getResource("User.hbm.xml").getFile());
+			repo = new HibernateAdapter(HibernateAdapterTests.class.getResource("User.hbm.xml").getFile(), NullSecurity.INSTANCE);
 		}
 		
 	}
 	
-	private Content makeNewUser(String id) throws DocumentException {
+	private IContent makeNewUser(String id) throws DocumentException {
 		Element element = TestHelper.makeElement("<user><id>"+id+"</id><name>"+id+"</name><pass>123</pass></user>");
-		Content user = new EntityContent(element, "user", id);
+		IContent user = new EntityContent(element, "user", id);
 		return user;
 	}
 	
 	@Test
 	public void shouldAddItem() throws DocumentException{
 		String id = TestHelper.newID();
-		Content content = makeNewUser(id);
+		IContent content = makeNewUser(id);
 		Item item = new Item(content, new Sync(id));
 		repo.add(item);
 	}
@@ -47,7 +48,7 @@ public class HibernateAdapterTests {
 	@Test
 	public void shouldDeleteAll() throws DocumentException{
 		String id = TestHelper.newID();
-		Content content = makeNewUser(id);
+		IContent content = makeNewUser(id);
 		Item item = new Item(content, new Sync(id));
 		repo.add(item);
 		
@@ -61,7 +62,7 @@ public class HibernateAdapterTests {
 	@Test
 	public void shouldGetItem() throws DocumentException{
 		String id = TestHelper.newID();
-		Content content = makeNewUser(id);
+		IContent content = makeNewUser(id);
 System.out.println(content.getPayload().asXML());
 		Item item = new Item(content, new Sync(id));
 		repo.add(item);
@@ -78,7 +79,7 @@ System.out.println(itemLoaded.getContent().getPayload().asXML());
 	@Test
 	public void shouldDeleteItem() throws DocumentException{
 		String id = TestHelper.newID();
-		Content content = makeNewUser(id);
+		IContent content = makeNewUser(id);
 		Item item = new Item(content, new Sync(id));
 		repo.add(item);
 		
@@ -94,7 +95,7 @@ System.out.println(itemLoaded.getContent().getPayload().asXML());
 	@Test
 	public void shouldUpdateItem() throws DocumentException{
 		String id = TestHelper.newID();
-		Content content = makeNewUser(id);
+		IContent content = makeNewUser(id);
 		Item item = new Item(content, new Sync(id));
 		repo.add(item);
 		
@@ -133,12 +134,12 @@ System.out.println(itemLoaded.getContent().getPayload().asXML());
 		Date now = TestHelper.now();
 		
 		String id0 = TestHelper.newID();
-		Content content0 = makeNewUser(id0);
+		IContent content0 = makeNewUser(id0);
 		Item item0 = new Item(content0, new Sync(id0).update("jmt", twoDaysAgo));
 		repo.add(item0);
 		
 		String id1 = TestHelper.newID();
-		Content content1 = makeNewUser(id1);
+		IContent content1 = makeNewUser(id1);
 		Item item1 = new Item(content1, new Sync(id1).update("jmt", now));
 		repo.add(item1);
 		
@@ -149,7 +150,7 @@ System.out.println(itemLoaded.getContent().getPayload().asXML());
 		Assert.assertTrue(containsContent(results, item1.getContent()));		
 	}
 
-	private boolean containsContent(List<Item> results, Content content) {
+	private boolean containsContent(List<Item> results, IContent content) {
 		for (Item item : results) {
 			if(item.getContent().equals(content)){
 				return true;

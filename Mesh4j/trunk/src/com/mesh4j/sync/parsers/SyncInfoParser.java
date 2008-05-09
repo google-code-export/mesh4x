@@ -7,8 +7,11 @@ import org.dom4j.Element;
 import com.mesh4j.sync.adapters.SyncInfo;
 import com.mesh4j.sync.adapters.feed.FeedReader;
 import com.mesh4j.sync.adapters.feed.FeedWriter;
+import com.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import com.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import com.mesh4j.sync.model.Sync;
+import com.mesh4j.sync.security.ISecurity;
+import com.mesh4j.sync.validations.Guard;
 
 public class SyncInfoParser {
 
@@ -19,9 +22,21 @@ public class SyncInfoParser {
 	public final static String SYNC_INFO_ATTR_ENTITY_NAME = "entity_name";
 	private final static String SYNC_INFO_ATTR_ENTITY_VERSION = "entity_version";
 	private final static String SYNC_INFO_ATTR_SYNC_DATA = "sync_data";
+	
+	// MODEL VARIABLES
+	private ISyndicationFormat format;
+	private ISecurity security;
 
 	//BUSINESS METHODS 
 	
+	public SyncInfoParser(ISyndicationFormat format, ISecurity security) {
+		Guard.argumentNotNull(format, "format");
+		Guard.argumentNotNull(security, "security");
+		
+		this.format = format;
+		this.security = security;
+	}
+
 	public SyncInfo convertElement2SyncInfo(Element syncInfoElement) throws DocumentException {
 		Sync sync = this.convertElement2Sync(syncInfoElement);
 		String entityName = syncInfoElement.element(SYNC_INFO_ATTR_ENTITY_NAME).getText();
@@ -35,7 +50,7 @@ public class SyncInfoParser {
 		Element syncData = syncInfoElement.element(SYNC_INFO_ATTR_SYNC_DATA);
 		Element syncElement = DocumentHelper.parseText(syncData.getText()).getRootElement();
 		
-		FeedReader reader = new FeedReader(RssSyndicationFormat.INSTANCE);
+		FeedReader reader = new FeedReader(this.format, this.security);
 		Sync sync = reader.readSync(syncElement);
 		return sync;
 	}
@@ -54,7 +69,7 @@ public class SyncInfoParser {
 	}
 
 	public String convertSync2XML(Sync sync) throws DocumentException {
-		FeedWriter writer = new FeedWriter(RssSyndicationFormat.INSTANCE);
+		FeedWriter writer = new FeedWriter(this.format, this.security);
 		Element syncData = DocumentHelper.createElement(RssSyndicationFormat.ATTRIBUTE_PAYLOAD);
 		syncData.addNamespace(RssSyndicationFormat.SX_PREFIX, RssSyndicationFormat.NAMESPACE);
 		writer.writeSync(syncData, sync);
