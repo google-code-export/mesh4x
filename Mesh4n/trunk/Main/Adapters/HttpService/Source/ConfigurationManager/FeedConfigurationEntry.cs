@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.ComponentModel;
-using System.Configuration;
-using Mesh4n.Adapters.HttpService.Properties;
-
+﻿
 namespace Mesh4n.Adapters.HttpService.Configuration
 {
 	public class FeedConfigurationEntry

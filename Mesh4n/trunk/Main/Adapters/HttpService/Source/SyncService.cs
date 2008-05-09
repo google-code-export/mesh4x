@@ -1,17 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.ServiceModel.Activation;
-using Mesh4n.Adapters.HttpService.Configuration;
-using System.ServiceModel;
-using System.ServiceModel.Channels;
-using Mesh4n.Adapters.HttpService.Properties;
-using System.ServiceModel.Web;
-using Mesh4n.Adapters.HttpService.WebContext;
-using System.Net;
 using System.Globalization;
-using Mesh4n.Adapters.HttpService.ExceptionHandling;
+using System.Net;
+using System.ServiceModel;
+using System.ServiceModel.Activation;
+using System.ServiceModel.Web;
+using Mesh4n.Adapters.HttpService.Configuration;
+using Mesh4n.Adapters.HttpService.Properties;
 
 namespace Mesh4n.Adapters.HttpService
 {

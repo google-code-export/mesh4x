@@ -63,6 +63,10 @@
     <Compile Include="ConfigurationManager\XamlFeedConfigurationEntryTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Lib\netfx\ServiceModel\ServiceModel.csproj">
+      <Project>{ECECCF97-761E-43D3-9178-D22BCB5AC37B}</Project>
+      <Name>ServiceModel</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Source\Mesh4n.csproj">
       <Project>{5A747B6C-D230-4D59-9321-83B48C4553CF}</Project>
       <Name>Mesh4n</Name>

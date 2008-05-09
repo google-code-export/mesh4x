@@ -70,6 +70,31 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kml", "Adapters\Kml\Source\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kml.Tests", "Adapters\Kml\UnitTests\Kml.Tests.csproj", "{20FB53D7-5EA9-4EC1-BE5E-31E9602CAF0B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lib", "Lib", "{07368F68-5FDD-4474-93D3-97B7521CEB5E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceModel", "..\Lib\netfx\ServiceModel\ServiceModel.csproj", "{ECECCF97-761E-43D3-9178-D22BCB5AC37B}"
+EndProject
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "SyncService", "http://localhost/SyncService", "{CB2565DB-22D5-40DB-9DC8-4B603CE9E774}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFramework = "3.5"
+		ProjectReferences = "{2BB365F9-5CBB-4CD9-82DC-0264E937BB48}|Mesh4n.Adapters.HttpService.dll;{5A747B6C-D230-4D59-9321-83B48C4553CF}|Mesh4n.dll;{ECECCF97-761E-43D3-9178-D22BCB5AC37B}|NetFx.ServiceModel.dll;"
+		Debug.AspNetCompiler.VirtualPath = "/SyncService"
+		Debug.AspNetCompiler.PhysicalPath = "Adapters\HttpService\WebHost\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\SyncService\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/SyncService"
+		Release.AspNetCompiler.PhysicalPath = "Adapters\HttpService\WebHost\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\SyncService\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		SlnRelativePath = "Adapters\HttpService\WebHost\"
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
 		SccNumberOfProjects = 8
@@ -276,6 +301,26 @@ Global
 		{20FB53D7-5EA9-4EC1-BE5E-31E9602CAF0B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{20FB53D7-5EA9-4EC1-BE5E-31E9602CAF0B}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{20FB53D7-5EA9-4EC1-BE5E-31E9602CAF0B}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{ECECCF97-761E-43D3-9178-D22BCB5AC37B}.Debug|.NET.ActiveCfg = Debug|Any CPU
+		{ECECCF97-761E-43D3-9178-D22BCB5AC37B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ECECCF97-761E-43D3-9178-D22BCB5AC37B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ECECCF97-761E-43D3-9178-D22BCB5AC37B}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{ECECCF97-761E-43D3-9178-D22BCB5AC37B}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{ECECCF97-761E-43D3-9178-D22BCB5AC37B}.Release|.NET.ActiveCfg = Release|Any CPU
+		{ECECCF97-761E-43D3-9178-D22BCB5AC37B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ECECCF97-761E-43D3-9178-D22BCB5AC37B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ECECCF97-761E-43D3-9178-D22BCB5AC37B}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{ECECCF97-761E-43D3-9178-D22BCB5AC37B}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{CB2565DB-22D5-40DB-9DC8-4B603CE9E774}.Debug|.NET.ActiveCfg = Debug|.NET
+		{CB2565DB-22D5-40DB-9DC8-4B603CE9E774}.Debug|.NET.Build.0 = Debug|.NET
+		{CB2565DB-22D5-40DB-9DC8-4B603CE9E774}.Debug|Any CPU.ActiveCfg = Debug|.NET
+		{CB2565DB-22D5-40DB-9DC8-4B603CE9E774}.Debug|Mixed Platforms.ActiveCfg = Debug|.NET
+		{CB2565DB-22D5-40DB-9DC8-4B603CE9E774}.Debug|Mixed Platforms.Build.0 = Debug|.NET
+		{CB2565DB-22D5-40DB-9DC8-4B603CE9E774}.Release|.NET.ActiveCfg = Debug|.NET
+		{CB2565DB-22D5-40DB-9DC8-4B603CE9E774}.Release|.NET.Build.0 = Debug|.NET
+		{CB2565DB-22D5-40DB-9DC8-4B603CE9E774}.Release|Any CPU.ActiveCfg = Debug|.NET
+		{CB2565DB-22D5-40DB-9DC8-4B603CE9E774}.Release|Mixed Platforms.ActiveCfg = Debug|.NET
+		{CB2565DB-22D5-40DB-9DC8-4B603CE9E774}.Release|Mixed Platforms.Build.0 = Debug|.NET
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -299,8 +344,10 @@ Global
 		{2BB365F9-5CBB-4CD9-82DC-0264E937BB48} = {A1FEE1B0-A01C-41FE-86D3-1F5B1D95ED39}
 		{B0FF2BC2-E5AF-48FD-8DDE-4F466AAA4CBE} = {A1FEE1B0-A01C-41FE-86D3-1F5B1D95ED39}
 		{E00EB140-28A9-4BBD-833B-E4B0FBFF4D10} = {A1FEE1B0-A01C-41FE-86D3-1F5B1D95ED39}
+		{CB2565DB-22D5-40DB-9DC8-4B603CE9E774} = {A1FEE1B0-A01C-41FE-86D3-1F5B1D95ED39}
 		{F270D44E-2295-4768-8141-F3E05D4F555B} = {B16FE232-3F23-4945-A185-222AA7674DDD}
 		{20FB53D7-5EA9-4EC1-BE5E-31E9602CAF0B} = {B16FE232-3F23-4945-A185-222AA7674DDD}
+		{ECECCF97-761E-43D3-9178-D22BCB5AC37B} = {07368F68-5FDD-4474-93D3-97B7521CEB5E}
 	EndGlobalSection
 	GlobalSection(TextTemplating) = postSolution
 		TextTemplating = 1

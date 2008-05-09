@@ -21,7 +21,10 @@ namespace ConsoleHost
 
 		protected override IEnumerable<Item> GetAll(DateTime? since, Predicate<Item> filter)
 		{
-			return null;
+			string id = Guid.NewGuid().ToString();
+			Item item = new Item(new XmlItem(id, "title", "description", null), Behaviors.Create(id, "pci", DateTime.Now, false));
+
+			return new Item[] { item };
 		}
 
 		public override void Add(Item item)

@@ -64,15 +64,7 @@
     <Compile Include="ConfigurationManager\FeedConfigurationEntry.cs" />
     <Compile Include="ConfigurationManager\FeedConfigurationManager.cs" />
     <Compile Include="ConfigurationManager\XamlFeedConfigurationEntry.cs" />
-    <Compile Include="ExceptionHandling\ErrorHanderBehavior.cs" />
-    <Compile Include="ExceptionHandling\ErrorHandler.cs" />
-    <Compile Include="ExceptionHandling\ErrorHandlerExtensionElement.cs" />
-    <Compile Include="ExceptionHandling\ServiceException.cs" />
     <Compile Include="SupportedFormats.cs" />
-    <Compile Include="WebContext\IIncomingWebRequestContext.cs" />
-    <Compile Include="WebContext\IncomingWebRequestContextWrapper.cs" />
-    <Compile Include="WebContext\IOutgoingWebResponseContext.cs" />
-    <Compile Include="WebContext\IWebOperationContext.cs" />
     <Compile Include="SyncService.cs" />
     <Compile Include="SyncServiceConfigurationSection.cs" />
     <Compile Include="ConfigurationManager\IFeedConfigurationManager.cs" />
@@ -83,10 +75,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="WebContext\OutgoingWebResponseContextWrapper.cs" />
-    <Compile Include="WebContext\WebOperationContextWrapper.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Lib\netfx\ServiceModel\ServiceModel.csproj">
+      <Project>{ECECCF97-761E-43D3-9178-D22BCB5AC37B}</Project>
+      <Name>ServiceModel</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Source\Mesh4n.csproj">
       <Project>{5A747B6C-D230-4D59-9321-83B48C4553CF}</Project>
       <Name>Mesh4n</Name>

@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.IO;
-using System.Windows.Markup;
-using Mesh4n.Adapters.HttpService.Properties;
-using System.Xml;
 using System.Collections.Specialized;
 using System.Configuration;
+using System.IO;
+using System.Windows.Markup;
+using System.Xml;
+using Mesh4n.Adapters.HttpService.Properties;
 
 namespace Mesh4n.Adapters.HttpService.Configuration
 {
@@ -30,14 +29,20 @@ namespace Mesh4n.Adapters.HttpService.Configuration
 			if(String.IsNullOrEmpty(attributes["configurationPath"]))
 				throw new ConfigurationErrorsException(Resources.NullOrEmptyConfigurationPath);
 
-			DirectoryInfo di = new DirectoryInfo(attributes["configurationPath"]);
+			string path = attributes["configurationPath"];
+			if (!Path.IsPathRooted(path))
+			{
+				path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, path); 
+			}
 			
+			DirectoryInfo di = new DirectoryInfo(path);
+
 			if (!di.Exists)
 			{
 				Directory.CreateDirectory(di.FullName);
 			}
 
-			this.configurationPath = attributes["configurationPath"];
+			this.configurationPath = path;
 		}
 
 		public void Save(FeedConfigurationEntry entry)

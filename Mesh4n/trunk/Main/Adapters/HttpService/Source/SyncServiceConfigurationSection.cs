@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Collections.Specialized;
 using System.Configuration;
 using Mesh4n.Adapters.HttpService.Configuration;
-using System.Collections.Specialized;
 using Mesh4n.Adapters.HttpService.Properties;
 
 namespace Mesh4n.Adapters.HttpService

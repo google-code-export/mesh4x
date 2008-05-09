@@ -7,11 +7,10 @@ using Mesh4n.Adapters.HttpService.Configuration;
 using System.ServiceModel.Channels;
 using System.ServiceModel;
 using Moq;
-using Mesh4n.Adapters.HttpService.WebContext;
 using Mesh4n.Tests;
 using System.Net;
 using System.Globalization;
-using Mesh4n.Adapters.HttpService.ExceptionHandling;
+using System.ServiceModel.Web;
 
 namespace Mesh4n.Adapters.HttpService.Tests
 {
