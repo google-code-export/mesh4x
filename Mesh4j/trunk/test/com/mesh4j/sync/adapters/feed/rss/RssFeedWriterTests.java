@@ -36,6 +36,10 @@ public class RssFeedWriterTests {
 		Feed feed2 = reader.read(file2);
 		Assert.assertNotNull(feed2);
 		// TODO (JMT) test
+		// TODO (JMT) MOCK File ?
+		xmlWriter = new XMLWriter(new FileWriter("c:\\rss2.xml"));
+		Feed newFeed = new Feed(feed2.getItems());
+		writer.write(xmlWriter, newFeed);
 		
 	}
 	

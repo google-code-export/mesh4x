@@ -1,5 +1,6 @@
 package com.mesh4j.sync.adapters.feed;
 
+import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.NAMESPACE;
 import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_HISTORY_BY;
 import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_HISTORY_SEQUENCE;
 import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_HISTORY_WHEN;
@@ -21,6 +22,8 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.dom4j.Namespace;
+import org.dom4j.QName;
 import org.dom4j.io.XMLWriter;
 
 import com.mesh4j.sync.model.History;
@@ -115,7 +118,9 @@ public class FeedWriter {
 	public void writeSync(Element rootElement, Sync sync) throws DocumentException
 	{		
 		// <sx:sync>
-		Element syncElement = rootElement.addElement(SX_ELEMENT_SYNC, SX_PREFIX);
+		Namespace ns = DocumentHelper.createNamespace(SX_PREFIX, NAMESPACE);
+		QName syncQName = DocumentHelper.createQName(SX_ELEMENT_SYNC, ns);
+		Element syncElement = rootElement.addElement(syncQName);
 		syncElement.addAttribute(SX_ATTRIBUTE_SYNC_ID, sync.getId());
 		syncElement.addAttribute(SX_ATTRIBUTE_SYNC_UPDATES, String.valueOf(sync.getUpdates()));
 		syncElement.addAttribute(SX_ATTRIBUTE_SYNC_DELETED, String.valueOf(sync.isDeleted()));

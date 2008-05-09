@@ -6,6 +6,7 @@ import java.util.List;
 import org.dom4j.Element;
 
 import com.mesh4j.sync.model.Item;
+import com.mesh4j.sync.validations.Guard;
 
 public class Feed {
 
@@ -18,6 +19,11 @@ public class Feed {
 		super();
 	}
 	
+	public Feed(List<Item> items){
+		super();
+		Guard.argumentNotNull(items, "items");
+		this.feedItems = items;
+	}
 	public Feed(Item ...items){
 		super();
 		for (Item item : items) {

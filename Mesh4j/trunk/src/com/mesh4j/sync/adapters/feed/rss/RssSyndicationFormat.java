@@ -12,17 +12,20 @@ import com.mesh4j.sync.utils.DateHelper;
 
 public class RssSyndicationFormat implements ISyndicationFormat {
 
+	private static final String RSS_ELEMENT_ROOT = "rss";
+	private static final String RSS_ELEMENT_ITEM = "item";
+	private static final String RSS_ELEMENT_CHANNEL = "channel";
 	public static final RssSyndicationFormat INSTANCE = new RssSyndicationFormat();
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Element> getRootElements(Element root) {
-		return root.element("channel").elements();
+		return root.element(RSS_ELEMENT_CHANNEL).elements();
 	}
 
 	@Override
 	public boolean isFeedItem(Element element) {
-		return "item".equals(element.getName());
+		return RSS_ELEMENT_ITEM.equals(element.getName());
 	}
 
 	@Override
@@ -38,16 +41,16 @@ public class RssSyndicationFormat implements ISyndicationFormat {
 
 	@Override
 	public Element addRootElement(Document document) {
-		Element rootElement = document.addElement("rss");
-		rootElement.add(new Namespace("sx", "http://www.microsoft.com/schemas/sse"));
+		Element rootElement = document.addElement(RSS_ELEMENT_ROOT);
+		rootElement.add(new Namespace(SX_PREFIX, NAMESPACE));
 		rootElement.addAttribute("version", "2.0");
-		Element channel = rootElement.addElement("channel");
+		Element channel = rootElement.addElement(RSS_ELEMENT_CHANNEL);
 		return channel;
 	}
 
 	@Override
 	public Element addFeedItemElement(Element root) {
-		Element item = root.addElement("item");
+		Element item = root.addElement(RSS_ELEMENT_ITEM);
 		return item;
 	}
 

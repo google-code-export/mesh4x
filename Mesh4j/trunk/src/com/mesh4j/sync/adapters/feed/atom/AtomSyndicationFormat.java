@@ -12,6 +12,8 @@ import com.mesh4j.sync.utils.DateHelper;
 
 public class AtomSyndicationFormat implements ISyndicationFormat {
 
+	private static final String ATOM_ELEMENT_FEED = "feed";
+	private static final String ATOM_ELEMENT_ENTRY = "entry";
 	public static final AtomSyndicationFormat INSTANCE = new AtomSyndicationFormat();
 
 	@SuppressWarnings("unchecked")
@@ -22,7 +24,7 @@ public class AtomSyndicationFormat implements ISyndicationFormat {
 
 	@Override
 	public boolean isFeedItem(Element element) {
-		return "entry".equals(element.getName());
+		return ATOM_ELEMENT_ENTRY.equals(element.getName());
 	}
 
 	@Override
@@ -37,14 +39,14 @@ public class AtomSyndicationFormat implements ISyndicationFormat {
 
 	@Override
 	public Element addRootElement(Document document) {
-		Element rootElement = document.addElement("feed");
-		rootElement.add(new Namespace("sx", "http://www.microsoft.com/schemas/sse"));
+		Element rootElement = document.addElement(ATOM_ELEMENT_FEED);
+		rootElement.add(new Namespace(SX_PREFIX, NAMESPACE));
 		return rootElement;
 	}
 
 	@Override
 	public Element addFeedItemElement(Element root) {
-		Element item = root.addElement("entry");
+		Element item = root.addElement(ATOM_ELEMENT_ENTRY);
 		return item;
 	}
 }

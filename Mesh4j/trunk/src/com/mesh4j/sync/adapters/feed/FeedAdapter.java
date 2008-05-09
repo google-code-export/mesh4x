@@ -70,7 +70,7 @@ public class FeedAdapter extends AbstractRepositoryAdapter{
 
 	@Override
 	public String getFriendlyName() {
-		return MessageTranslator.translate(FeedAdapterTests.class.getName());
+		return MessageTranslator.translate(this.getClass().getName());
 	}
 	
 	@Override
