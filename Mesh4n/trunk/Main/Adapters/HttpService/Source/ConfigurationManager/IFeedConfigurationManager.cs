@@ -8,7 +8,8 @@ namespace Mesh4n.Adapters.HttpService.Configuration
 	public interface IFeedConfigurationManager
 	{
 		void Initialize(NameValueCollection attributes);
-		void Save(FeedConfiguration configuration);
-		FeedConfiguration Load();
+		void Save(FeedConfigurationEntry entry);
+		FeedConfigurationEntry Load(string feedName);
+		IEnumerable<FeedConfigurationEntry> LoadAll();
 	}
 }

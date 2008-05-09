@@ -24,51 +24,47 @@ namespace Mesh4n.Adapters.HttpService.Tests
 		[TestMethod]
 		public void ShouldGetRssFeeds()
 		{
-			FeedConfiguration configuration = new FeedConfiguration();
-			configuration.Add("entry1",
-			    new FeedConfigurationEntry("Foo", "Foo Title", "Foo Description", typeof(MockSyncAdapter)));
+			FeedConfigurationEntry entry = new FeedConfigurationEntry("Foo", "Foo Title", "Foo Description", new MockSyncAdapter());
+			List<FeedConfigurationEntry> entries = new List<FeedConfigurationEntry>();
+			entries.Add(entry);
 
-			Mock<IFeedConfigurationManager> managerMock = new Mock<IFeedConfigurationManager>(MockBehavior.Strict);
-			managerMock.Expect(manager => manager.Load()).Returns(configuration).Verifiable();
+			Mock<IFeedConfigurationManager> managerMock = new Mock<IFeedConfigurationManager>();
+			managerMock.Expect(manager => manager.LoadAll()).Returns(entries);
 
-			SyncService syncService = new SyncService { ConfigurationManager = managerMock.Object };
+			SyncService syncService = new SyncService (managerMock.Object, null);
 			FeedFormatter feed = syncService.GetRssFeeds();
 
 			Assert.IsNotNull(feed);
 			Assert.IsInstanceOfType(feed, typeof(RssFeedFormatter));
-			managerMock.Verify();
 		}
 
 		[TestMethod]
 		public void ShouldGetFeedsWithSpecifiedFormat()
 		{
-			FeedConfiguration configuration = new FeedConfiguration();
-			configuration.Add("entry1",
-				new XamlFeedConfigurationEntry("Foo", "Foo Title", "Foo Description", typeof(MockSyncAdapter)));
+			FeedConfigurationEntry entry = new FeedConfigurationEntry("Foo", "Foo Title", "Foo Description", new MockSyncAdapter());
+			List<FeedConfigurationEntry> entries = new List<FeedConfigurationEntry>();
+			entries.Add(entry);
 
 			Mock<IFeedConfigurationManager> managerMock = new Mock<IFeedConfigurationManager>();
-			managerMock.Expect<FeedConfiguration>(manager => manager.Load()).Returns(configuration).Verifiable();
+			managerMock.Expect(manager => manager.LoadAll()).Returns(entries);
 
-			SyncService syncService = new SyncService { ConfigurationManager = managerMock.Object };
+			SyncService syncService = new SyncService(managerMock.Object, null);
 			FeedFormatter feed = syncService.GetFeeds(SupportedFormats.Rss20);
 
 			Assert.IsNotNull(feed);
 			Assert.IsInstanceOfType(feed, typeof(RssFeedFormatter));
-			managerMock.Verify();
 		}
 
 		[TestMethod]
 		public void ShouldGetEmptyFeed()
 		{
-			FeedConfiguration configuration = new FeedConfiguration();
+			List<FeedConfigurationEntry> entries = new List<FeedConfigurationEntry>();
 
 			Mock<IFeedConfigurationManager> managerMock = new Mock<IFeedConfigurationManager>();
-			managerMock.Expect<FeedConfiguration>(manager => manager.Load()).Returns(configuration).Verifiable();
+			managerMock.Expect(manager => manager.LoadAll()).Returns(entries);
 
-			SyncService syncService = new SyncService { ConfigurationManager = managerMock.Object };
+			SyncService syncService = new SyncService(managerMock.Object, null);
 			FeedFormatter feed = syncService.GetFeeds(SupportedFormats.Rss20);
-
-			managerMock.Verify();
 
 			Assert.IsNotNull(feed);
 		}
@@ -76,16 +72,13 @@ namespace Mesh4n.Adapters.HttpService.Tests
 		[TestMethod]
 		public void ShouldReturnBadRequestIfInvalidFormat()
 		{
-			Mock<IWebOperationContext> webContextMock = new Mock<IWebOperationContext>();
-			Mock<IOutgoingWebResponseContext> responseContextMock = new Mock<IOutgoingWebResponseContext>();
+			WebContextMock webContextMock = new WebContextMock();
+			webContextMock.OutgoingWebResponseContext.ExpectSet(responseContext => responseContext.StatusCode).Callback(sc => Assert.AreEqual(HttpStatusCode.BadRequest, sc));
 
-			webContextMock.ExpectGet(webContext => webContext.OutgoingResponse).Returns(responseContextMock.Object);
-			responseContextMock.ExpectSet(responseContext => responseContext.StatusCode).Callback(sc => Assert.AreEqual(HttpStatusCode.BadRequest, sc));
-			
-			SyncService syncService = new SyncService { OperationContext = webContextMock.Object };
+			SyncService syncService = new SyncService(null, webContextMock.Object);
 			FeedFormatter feed = syncService.GetFeeds("FooFormat");
 
-			responseContextMock.VerifyAll();
+			webContextMock.OutgoingWebResponseContext.VerifyAll();
 			Assert.IsNull(feed);
 		}
 
@@ -101,22 +94,16 @@ namespace Mesh4n.Adapters.HttpService.Tests
 			Mock<ISyncAdapter> mockAdapter = new Mock<ISyncAdapter>();
 			mockAdapter.Expect(adapter => adapter.GetAll()).Returns(items).Verifiable();
 
-			FeedConfiguration configuration = new FeedConfiguration();
-			configuration.Add("entry", new FeedConfigurationEntry("Foo", "Foo Title", "Foo Description", mockAdapter.Object));
+			FeedConfigurationEntry entry = new FeedConfigurationEntry("Foo", "Foo Title", "Foo Description", mockAdapter.Object);
 
 			Mock<IFeedConfigurationManager> managerMock = new Mock<IFeedConfigurationManager>();
-			managerMock.Expect(manager => manager.Load()).Returns(configuration);
+			managerMock.Expect(manager => manager.Load("Foo")).Returns(entry);
 
-			Mock<IWebOperationContext> webContextMock = new Mock<IWebOperationContext>();
-			Mock<IIncomingWebRequestContext> requestContextMock = new Mock<IIncomingWebRequestContext>();
-			Mock<IOutgoingWebResponseContext> responseContextMock = new Mock<IOutgoingWebResponseContext>();
-			
-			webContextMock.ExpectGet(webContext => webContext.IncomingRequest).Returns(requestContextMock.Object);
-			webContextMock.ExpectGet(webContext => webContext.OutgoingResponse).Returns(responseContextMock.Object);
-			requestContextMock.ExpectGet(requestContext => requestContext.Headers).Returns(new WebHeaderCollection()).Verifiable();
+			WebContextMock webContextMock = new WebContextMock();
+			webContextMock.IncomingWebRequestContext.ExpectGet(requestContext => requestContext.Headers).Returns(new WebHeaderCollection()).Verifiable();
 
-			SyncService syncService = new SyncService { ConfigurationManager = managerMock.Object, OperationContext = webContextMock.Object };
-			FeedFormatter feed = syncService.GetFeed("entry", SupportedFormats.Rss20);
+			SyncService syncService = new SyncService(managerMock.Object, webContextMock.Object);
+			FeedFormatter feed = syncService.GetFeed("Foo", SupportedFormats.Rss20);
 
 			Assert.IsNotNull(feed);
 			Assert.IsNotNull(feed.Feed);
@@ -124,7 +111,7 @@ namespace Mesh4n.Adapters.HttpService.Tests
 			Assert.AreEqual(3, Count(feed.Items));
 
 			mockAdapter.Verify();
-			requestContextMock.Verify();
+			webContextMock.IncomingWebRequestContext.Verify();
 			
 		}
 
@@ -139,29 +126,22 @@ namespace Mesh4n.Adapters.HttpService.Tests
 
 			Mock<ISyncAdapter> mockAdapter = new Mock<ISyncAdapter>();
 			mockAdapter.Expect(adapter => adapter.GetAllSince(It.IsAny<DateTime>())).Returns(items).Verifiable();
-			
-			FeedConfiguration configuration = new FeedConfiguration();
-			configuration.Add("entry", new FeedConfigurationEntry("Foo", "Foo Title", "Foo Description", mockAdapter.Object));
+
+			FeedConfigurationEntry entry = new FeedConfigurationEntry("Foo", "Foo Title", "Foo Description", mockAdapter.Object);
 
 			Mock<IFeedConfigurationManager> managerMock = new Mock<IFeedConfigurationManager>();
-			managerMock.Expect(manager => manager.Load()).Returns(configuration);
+			managerMock.Expect(manager => manager.Load("Foo")).Returns(entry);
 
-			Mock<IWebOperationContext> webContextMock = new Mock<IWebOperationContext>();
-			Mock<IIncomingWebRequestContext> requestContextMock = new Mock<IIncomingWebRequestContext>();
-			Mock<IOutgoingWebResponseContext> responseContextMock = new Mock<IOutgoingWebResponseContext>();
-
+			WebContextMock webContextMock = new WebContextMock();
 			WebHeaderCollection webHeaderCollection = new WebHeaderCollection();
 			webHeaderCollection.Add(HttpRequestHeader.IfModifiedSince, DateTime.Now.ToUniversalTime().ToString("R", CultureInfo.InvariantCulture));
 						
-			webContextMock.ExpectGet(webContext => webContext.IncomingRequest).Returns(requestContextMock.Object);
-			webContextMock.ExpectGet(webContext => webContext.OutgoingResponse).Returns(responseContextMock.Object);
-			requestContextMock.ExpectGet(requestContext => requestContext.Headers).Returns(webHeaderCollection).Verifiable();
+			webContextMock.IncomingWebRequestContext.ExpectGet(requestContext => requestContext.Headers).Returns(webHeaderCollection).Verifiable();
 
-			SyncService syncService = new SyncService { ConfigurationManager = managerMock.Object, OperationContext = webContextMock.Object };
-			FeedFormatter feed = syncService.GetFeed("entry", SupportedFormats.Rss20);
+			SyncService syncService = new SyncService(managerMock.Object, webContextMock.Object);
+			FeedFormatter feed = syncService.GetFeed("Foo", SupportedFormats.Rss20);
 
-			requestContextMock.Verify();
-
+			webContextMock.IncomingWebRequestContext.Verify();
 			Assert.IsNotNull(feed);
 			Assert.IsNotNull(feed.Feed);
 			Assert.IsNotNull(feed.Items);
@@ -177,29 +157,25 @@ namespace Mesh4n.Adapters.HttpService.Tests
 			Mock<ISyncAdapter> mockAdapter = new Mock<ISyncAdapter>();
 			mockAdapter.Expect(adapter => adapter.GetAllSince(It.IsAny<DateTime>())).Returns(items).Verifiable();
 
-			FeedConfiguration configuration = new FeedConfiguration();
-			configuration.Add("entry", new FeedConfigurationEntry("Foo", "Foo Title", "Foo Description", mockAdapter.Object));
+			FeedConfigurationEntry entry = new FeedConfigurationEntry("Foo", "Foo Title", "Foo Description", mockAdapter.Object);
 
 			Mock<IFeedConfigurationManager> managerMock = new Mock<IFeedConfigurationManager>();
-			managerMock.Expect(manager => manager.Load()).Returns(configuration);
+			managerMock.Expect(manager => manager.Load("Foo")).Returns(entry);
 
-			Mock<IWebOperationContext> webContextMock = new Mock<IWebOperationContext>();
-			Mock<IIncomingWebRequestContext> requestContextMock = new Mock<IIncomingWebRequestContext>();
-			Mock<IOutgoingWebResponseContext> responseContextMock = new Mock<IOutgoingWebResponseContext>();
+			WebContextMock webContextMock = new WebContextMock();
 
 			WebHeaderCollection webHeaderCollection = new WebHeaderCollection();
 			webHeaderCollection.Add(HttpRequestHeader.IfModifiedSince, DateTime.Now.ToUniversalTime().ToString("R", CultureInfo.InvariantCulture));
 
-			webContextMock.ExpectGet(webContext => webContext.IncomingRequest).Returns(requestContextMock.Object);
-			webContextMock.ExpectGet(webContext => webContext.OutgoingResponse).Returns(responseContextMock.Object);
-			requestContextMock.ExpectGet(requestContext => requestContext.Headers).Returns(webHeaderCollection);
-			responseContextMock.ExpectSet(responseContext => responseContext.StatusCode).Callback(sc => Assert.AreEqual(HttpStatusCode.NotModified, sc));
-			responseContextMock.ExpectSet(responseContext => responseContext.SuppressEntityBody).Callback(seb => Assert.AreEqual(true, seb));
-			SyncService syncService = new SyncService { ConfigurationManager = managerMock.Object, OperationContext = webContextMock.Object };
-			FeedFormatter feed = syncService.GetFeed("entry", SupportedFormats.Rss20);
+			webContextMock.IncomingWebRequestContext.ExpectGet(requestContext => requestContext.Headers).Returns(webHeaderCollection);
+			webContextMock.OutgoingWebResponseContext.ExpectSet(responseContext => responseContext.StatusCode).Callback(sc => Assert.AreEqual(HttpStatusCode.NotModified, sc));
+			webContextMock.OutgoingWebResponseContext.ExpectSet(responseContext => responseContext.SuppressEntityBody).Callback(seb => Assert.AreEqual(true, seb));
+			
+			SyncService syncService = new SyncService(managerMock.Object, webContextMock.Object);
+			FeedFormatter feed = syncService.GetFeed("Foo", SupportedFormats.Rss20);
 
 			mockAdapter.Verify();
-			responseContextMock.VerifyAll();
+			webContextMock.OutgoingWebResponseContext.VerifyAll();
 			Assert.IsNull(feed);
 			
 		}
@@ -212,26 +188,20 @@ namespace Mesh4n.Adapters.HttpService.Tests
 			Mock<ISyncAdapter> mockAdapter = new Mock<ISyncAdapter>();
 			mockAdapter.Expect(adapter => adapter.GetAll()).Returns(items);
 
-			FeedConfiguration configuration = new FeedConfiguration();
-			configuration.Add("entry", new FeedConfigurationEntry("Foo", "Foo Title", "Foo Description", mockAdapter.Object));
+			FeedConfigurationEntry entry = new FeedConfigurationEntry("Foo", "Foo Title", "Foo Description", mockAdapter.Object);
 
 			Mock<IFeedConfigurationManager> managerMock = new Mock<IFeedConfigurationManager>();
-			managerMock.Expect(manager => manager.Load()).Returns(configuration);
+			managerMock.Expect(manager => manager.Load("Foo")).Returns(entry);
 
-			Mock<IWebOperationContext> webContextMock = new Mock<IWebOperationContext>();
-			Mock<IIncomingWebRequestContext> requestContextMock = new Mock<IIncomingWebRequestContext>();
-			Mock<IOutgoingWebResponseContext> responseContextMock = new Mock<IOutgoingWebResponseContext>();
+			WebContextMock webContextMock = new WebContextMock();
+			webContextMock.IncomingWebRequestContext.ExpectGet(requestContext => requestContext.Headers).Returns(new WebHeaderCollection());
+			webContextMock.OutgoingWebResponseContext.ExpectSet(responseContext => responseContext.LastModified);
+			webContextMock.OutgoingWebResponseContext.ExpectSet(responseContext => responseContext.ETag);
 
-			webContextMock.ExpectGet(webContext => webContext.IncomingRequest).Returns(requestContextMock.Object);
-			webContextMock.ExpectGet(webContext => webContext.OutgoingResponse).Returns(responseContextMock.Object);
-			requestContextMock.ExpectGet(requestContext => requestContext.Headers).Returns(new WebHeaderCollection());
-			responseContextMock.ExpectSet(responseContext => responseContext.LastModified);
-			responseContextMock.ExpectSet(responseContext => responseContext.ETag);
+			SyncService syncService = new SyncService(managerMock.Object, webContextMock.Object);
+			FeedFormatter feed = syncService.GetFeed("Foo", SupportedFormats.Rss20);
 
-			SyncService syncService = new SyncService { ConfigurationManager = managerMock.Object, OperationContext = webContextMock.Object };
-			FeedFormatter feed = syncService.GetFeed("entry", SupportedFormats.Rss20);
-
-			responseContextMock.VerifyAll();
+			webContextMock.OutgoingWebResponseContext.VerifyAll();
 		}
 
 		[TestMethod]
@@ -244,14 +214,13 @@ namespace Mesh4n.Adapters.HttpService.Tests
 			Mock<ISyncAdapter> mockAdapter = new Mock<ISyncAdapter>();
 			mockAdapter.Expect(adapter => adapter.Get(id)).Returns(item);
 
-			FeedConfiguration configuration = new FeedConfiguration();
-			configuration.Add("entry", new FeedConfigurationEntry("Foo", "Foo Title", "Foo Description", mockAdapter.Object));
+			FeedConfigurationEntry entry = new FeedConfigurationEntry("Foo", "Foo Title", "Foo Description", mockAdapter.Object);
 
 			Mock<IFeedConfigurationManager> managerMock = new Mock<IFeedConfigurationManager>();
-			managerMock.Expect(manager => manager.Load()).Returns(configuration);
+			managerMock.Expect(manager => manager.Load("Foo")).Returns(entry);
 
-			SyncService syncService = new SyncService { ConfigurationManager = managerMock.Object };
-			FeedFormatter feed = syncService.GetItem("entry", id, SupportedFormats.Rss20);
+			SyncService syncService = new SyncService(managerMock.Object, null);
+			FeedFormatter feed = syncService.GetItem("Foo", id, SupportedFormats.Rss20);
 
 			Assert.IsNotNull(feed);
 			Assert.IsNotNull(feed.Feed);
@@ -267,24 +236,18 @@ namespace Mesh4n.Adapters.HttpService.Tests
 			Mock<ISyncAdapter> mockAdapter = new Mock<ISyncAdapter>();
 			mockAdapter.Expect(adapter => adapter.Get(It.IsAny<string>()));
 
-			FeedConfiguration configuration = new FeedConfiguration();
-			configuration.Add("entry", new FeedConfigurationEntry("Foo", "Foo Title", "Foo Description", mockAdapter.Object));
+			FeedConfigurationEntry entry = new FeedConfigurationEntry("Foo", "Foo Title", "Foo Description", mockAdapter.Object);
 
 			Mock<IFeedConfigurationManager> managerMock = new Mock<IFeedConfigurationManager>();
-			managerMock.Expect(manager => manager.Load()).Returns(configuration);
+			managerMock.Expect(manager => manager.Load("Foo")).Returns(entry);
 
-			Mock<IWebOperationContext> webContextMock = new Mock<IWebOperationContext>();
-			Mock<IIncomingWebRequestContext> requestContextMock = new Mock<IIncomingWebRequestContext>();
-			Mock<IOutgoingWebResponseContext> responseContextMock = new Mock<IOutgoingWebResponseContext>();
+			WebContextMock webContextMock = new WebContextMock();
+			webContextMock.OutgoingWebResponseContext.ExpectSet(responseContext => responseContext.StatusCode).Callback(sc => Assert.AreEqual(HttpStatusCode.NotFound, sc));
 
-			webContextMock.ExpectGet(webContext => webContext.IncomingRequest).Returns(requestContextMock.Object);
-			webContextMock.ExpectGet(webContext => webContext.OutgoingResponse).Returns(responseContextMock.Object);
-			responseContextMock.ExpectSet(responseContext => responseContext.StatusCode).Callback(sc => Assert.AreEqual(HttpStatusCode.NotFound, sc));
+			SyncService syncService = new SyncService(managerMock.Object, webContextMock.Object);
+			FeedFormatter feed = syncService.GetItem("Foo", id, SupportedFormats.Rss20);
 
-			SyncService syncService = new SyncService { ConfigurationManager = managerMock.Object, OperationContext=webContextMock.Object };
-			FeedFormatter feed = syncService.GetItem("entry", id, SupportedFormats.Rss20);
-
-			responseContextMock.VerifyAll();
+			webContextMock.OutgoingWebResponseContext.VerifyAll();
 			Assert.IsNull(feed);
 		}
 
@@ -307,16 +270,15 @@ namespace Mesh4n.Adapters.HttpService.Tests
 			mockAdapter.Expect(adapter => adapter.Add(items[1])).Verifiable();
 			mockAdapter.Expect(adapter => adapter.Add(items[2])).Verifiable();
 
-			FeedConfiguration configuration = new FeedConfiguration();
-			configuration.Add("entry", new FeedConfigurationEntry("Foo", "Foo Title", "Foo Description", mockAdapter.Object));
+			FeedConfigurationEntry entry = new FeedConfigurationEntry("Foo", "Foo Title", "Foo Description", mockAdapter.Object);
 
 			Mock<IFeedConfigurationManager> managerMock = new Mock<IFeedConfigurationManager>();
-			managerMock.Expect(manager => manager.Load()).Returns(configuration);
+			managerMock.Expect(manager => manager.Load("Foo")).Returns(entry);
 
 			FeedFormatter feedFormatter = new RssFeedFormatter(new Feed(), items);
-			
-			SyncService syncService = new SyncService { ConfigurationManager = managerMock.Object };
-			FeedFormatter conflictsFormatter = syncService.PostFeed("entry", SupportedFormats.Rss20, feedFormatter);
+
+			SyncService syncService = new SyncService(managerMock.Object, null);
+			FeedFormatter conflictsFormatter = syncService.PostFeed("Foo", SupportedFormats.Rss20, feedFormatter);
 
 			Assert.IsNotNull(conflictsFormatter);
 			Assert.IsNotNull(conflictsFormatter.Feed);
@@ -335,16 +297,15 @@ namespace Mesh4n.Adapters.HttpService.Tests
 			Mock<ISyncAdapter> mockAdapter = new Mock<ISyncAdapter>();
 			mockAdapter.Expect(adapter => adapter.Add(item)).Verifiable();
 
-			FeedConfiguration configuration = new FeedConfiguration();
-			configuration.Add("entry", new FeedConfigurationEntry("Foo", "Foo Title", "Foo Description", mockAdapter.Object));
+			FeedConfigurationEntry entry = new FeedConfigurationEntry("Foo", "Foo Title", "Foo Description", mockAdapter.Object);
 
 			Mock<IFeedConfigurationManager> managerMock = new Mock<IFeedConfigurationManager>();
-			managerMock.Expect(manager => manager.Load()).Returns(configuration);
+			managerMock.Expect(manager => manager.Load("Foo")).Returns(entry);
 
 			FeedFormatter feedFormatter = new RssFeedFormatter(new Feed(), new Item[] { item });
 
-			SyncService syncService = new SyncService { ConfigurationManager = managerMock.Object };
-			FeedFormatter conflictsFormatter = syncService.PostItem("entry", id, SupportedFormats.Rss20, feedFormatter);
+			SyncService syncService = new SyncService(managerMock.Object, null);
+			FeedFormatter conflictsFormatter = syncService.PostItem("Foo", id, SupportedFormats.Rss20, feedFormatter);
 
 			Assert.IsNotNull(conflictsFormatter);
 			Assert.IsNotNull(conflictsFormatter.Feed);
@@ -357,76 +318,86 @@ namespace Mesh4n.Adapters.HttpService.Tests
 		[TestMethod]
 		public void ShouldBadRequestIfDifferentIdWhenPostItem()
 		{
-			Mock<IWebOperationContext> webContextMock = new Mock<IWebOperationContext>();
-			Mock<IOutgoingWebResponseContext> responseContextMock = new Mock<IOutgoingWebResponseContext>();
-
-			webContextMock.ExpectGet(webContext => webContext.OutgoingResponse).Returns(responseContextMock.Object);
-			responseContextMock.ExpectSet(responseContext => responseContext.StatusCode).Callback(sc => Assert.AreEqual(HttpStatusCode.BadRequest, sc));
+			WebContextMock webContextMock = new WebContextMock();
+			webContextMock.OutgoingWebResponseContext.ExpectSet(responseContext => responseContext.StatusCode).Callback(sc => Assert.AreEqual(HttpStatusCode.BadRequest, sc));
 
 			FeedFormatter feedFormatter = new RssFeedFormatter(new Feed(), new Item[] {});
 
-			SyncService syncService = new SyncService { OperationContext = webContextMock.Object };
+			SyncService syncService = new SyncService(null, webContextMock.Object);
 			FeedFormatter conflictsFormatter = syncService.PostItem("entry", Guid.NewGuid().ToString(), SupportedFormats.Rss20, feedFormatter);
 
-			responseContextMock.VerifyAll();
+			webContextMock.OutgoingWebResponseContext.VerifyAll();
 			Assert.IsNull(conflictsFormatter);
 		}
 
 		[TestMethod]
 		public void ShouldThrowIfInvalidFormatWhenPostItem()
 		{
-			Mock<IWebOperationContext> webContextMock = new Mock<IWebOperationContext>();
-			Mock<IOutgoingWebResponseContext> responseContextMock = new Mock<IOutgoingWebResponseContext>();
-
-			webContextMock.ExpectGet(webContext => webContext.OutgoingResponse).Returns(responseContextMock.Object);
-			responseContextMock.ExpectSet(responseContext => responseContext.StatusCode).Callback(sc => Assert.AreEqual(HttpStatusCode.BadRequest, sc));
+			WebContextMock webContextMock = new WebContextMock();
+			webContextMock.OutgoingWebResponseContext.ExpectSet(responseContext => responseContext.StatusCode).Callback(sc => Assert.AreEqual(HttpStatusCode.BadRequest, sc));
 
 			FeedFormatter feedFormatter = new RssFeedFormatter(new Feed(), new Item[] {});
 
-			SyncService syncService = new SyncService { OperationContext = webContextMock.Object };
+			SyncService syncService = new SyncService(null, webContextMock.Object);
 			FeedFormatter conflictsFormatter = syncService.PostItem("entry", Guid.NewGuid().ToString(), "FooFormat", feedFormatter);
 
-			webContextMock.VerifyAll();
+			webContextMock.OutgoingWebResponseContext.VerifyAll();
 			Assert.IsNull(conflictsFormatter);
 		}
 
 		[TestMethod]
 		public void ShouldThrowIfInvalidFormatWhenPostFeed()
 		{
-			Mock<IWebOperationContext> webContextMock = new Mock<IWebOperationContext>();
-			Mock<IOutgoingWebResponseContext> responseContextMock = new Mock<IOutgoingWebResponseContext>();
-
-			webContextMock.ExpectGet(webContext => webContext.OutgoingResponse).Returns(responseContextMock.Object);
-			responseContextMock.ExpectSet(responseContext => responseContext.StatusCode).Callback(sc => Assert.AreEqual(HttpStatusCode.BadRequest, sc));
+			WebContextMock webContextMock = new WebContextMock();
+			webContextMock.OutgoingWebResponseContext.ExpectSet(responseContext => responseContext.StatusCode).Callback(sc => Assert.AreEqual(HttpStatusCode.BadRequest, sc));
 
 			FeedFormatter feedFormatter = new RssFeedFormatter(new Feed(), new Item[] {});
 
-			SyncService syncService = new SyncService { OperationContext = webContextMock.Object };
+			SyncService syncService = new SyncService(null, webContextMock.Object);
 			FeedFormatter conflictsFormatter = syncService.PostFeed("entry", "FooFormat", feedFormatter);
 
-			webContextMock.VerifyAll();
+			webContextMock.OutgoingWebResponseContext.VerifyAll();
 			Assert.IsNull(conflictsFormatter);
 		}
 
 		[TestMethod]
 		public void ShouldThrowIfInvalidFeedName()
 		{
-			Mock<IWebOperationContext> webContextMock = new Mock<IWebOperationContext>();
-			Mock<IOutgoingWebResponseContext> responseContextMock = new Mock<IOutgoingWebResponseContext>();
-
-			webContextMock.ExpectGet(webContext => webContext.OutgoingResponse).Returns(responseContextMock.Object);
-			responseContextMock.ExpectSet(responseContext => responseContext.StatusCode).Callback(sc => Assert.AreEqual(HttpStatusCode.NotFound, sc));
+			WebContextMock webContextMock = new WebContextMock();
+			webContextMock.OutgoingWebResponseContext.ExpectSet(responseContext => responseContext.StatusCode).Callback(sc => Assert.AreEqual(HttpStatusCode.NotFound, sc));
 
 			Mock<IFeedConfigurationManager> managerMock = new Mock<IFeedConfigurationManager>();
-			managerMock.Expect<FeedConfiguration>(manager => manager.Load()).Returns(new FeedConfiguration());
+			managerMock.Expect(manager => manager.Load(It.IsAny<string>()));
 
-			SyncService syncService = new SyncService{ ConfigurationManager = managerMock.Object, OperationContext = webContextMock.Object };
-			FeedFormatter feed = syncService.GetFeed("entry1", SupportedFormats.Rss20);
+			SyncService syncService = new SyncService(managerMock.Object, webContextMock.Object);
+			FeedFormatter feed = syncService.GetFeed("MyNewFeed", SupportedFormats.Rss20);
 
-			responseContextMock.VerifyAll();
+			webContextMock.OutgoingWebResponseContext.VerifyAll();
 			Assert.IsNull(feed);
-
-
 		}
+
+		public class WebContextMock : Mock<IWebOperationContext>
+		{
+			Mock<IIncomingWebRequestContext> requestContextMock = new Mock<IIncomingWebRequestContext>();
+			Mock<IOutgoingWebResponseContext> responseContextMock = new Mock<IOutgoingWebResponseContext>();
+
+			public WebContextMock()
+				: base()
+			{
+				this.ExpectGet(webContext => webContext.OutgoingResponse).Returns(responseContextMock.Object);
+				this.ExpectGet(webContext => webContext.IncomingRequest).Returns(requestContextMock.Object);
+			}
+
+			public Mock<IIncomingWebRequestContext> IncomingWebRequestContext
+			{
+				get { return requestContextMock; }
+			}
+
+			public Mock<IOutgoingWebResponseContext> OutgoingWebResponseContext
+			{
+				get { return responseContextMock; }
+			}
+		}
+
 	}
 }

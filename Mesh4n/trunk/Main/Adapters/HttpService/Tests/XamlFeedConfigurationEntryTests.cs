@@ -23,7 +23,7 @@ namespace Mesh4n.Adapters.HttpService.Tests
 			{
 				Title = "title",
 				Description = "description",
-				SyncAdapterType = typeof(MockSyncAdapter)
+				SyncAdapter = new MockSyncAdapter()
 			};
 
 			((ISupportInitialize)entry).EndInit();
@@ -38,7 +38,7 @@ namespace Mesh4n.Adapters.HttpService.Tests
 				Name= String.Empty,
 				Title = "title",
 				Description = "description",
-				SyncAdapterType = typeof(MockSyncAdapter)
+				SyncAdapter = new MockSyncAdapter()
 			};
 
 			((ISupportInitialize)entry).EndInit();
@@ -51,7 +51,7 @@ namespace Mesh4n.Adapters.HttpService.Tests
 			{
 				Name = "name",
 				Description = "description",
-				SyncAdapterType = typeof(MockSyncAdapter)
+				SyncAdapter = new MockSyncAdapter()
 			};
 
 			((ISupportInitialize)entry).EndInit();
@@ -66,7 +66,7 @@ namespace Mesh4n.Adapters.HttpService.Tests
 				Name = "name",
 				Title = String.Empty,
 				Description = "description",
-				SyncAdapterType = typeof(MockSyncAdapter)
+				SyncAdapter = new MockSyncAdapter()
 			};
 
 			((ISupportInitialize)entry).EndInit();
@@ -79,7 +79,7 @@ namespace Mesh4n.Adapters.HttpService.Tests
 			{
 				Name = "name",
 				Title = "title",
-				SyncAdapterType = typeof(MockSyncAdapter)
+				SyncAdapter = new MockSyncAdapter()
 			};
 
 			((ISupportInitialize)entry).EndInit();
@@ -94,26 +94,25 @@ namespace Mesh4n.Adapters.HttpService.Tests
 				Name = "name",
 				Title = "title",
 				Description = String.Empty,
-				SyncAdapterType = typeof(MockSyncAdapter)
+				SyncAdapter = new MockSyncAdapter()
 			};
 
 			((ISupportInitialize)entry).EndInit();
 		}
 
 		[TestMethod]
-		public void ShouldInitializeAdapterInstance()
+		[ExpectedException(typeof(ArgumentNullException))]
+		public void ShouldThrowIfNullAdapter()
 		{
 			XamlFeedConfigurationEntry entry = new XamlFeedConfigurationEntry
 			{
 				Name = "name",
 				Title = "title",
-				Description = "description",
-				SyncAdapterType = typeof(MockSyncAdapter)
+				Description = "description"
 			};
 
- 			((ISupportInitialize)entry).EndInit();
-
-			Assert.IsNotNull(entry.SyncAdapter);
+			((ISupportInitialize)entry).EndInit();
 		}
+		
 	}
 }

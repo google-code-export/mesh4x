@@ -53,7 +53,6 @@
   <ItemGroup>
     <Compile Include="FeedConfigurationEntryTests.cs" />
     <Compile Include="FeedConfigurationManagerTests.cs" />
-    <Compile Include="MockConfigurationManager.cs" />
     <Compile Include="RssFeedFormatterTests.cs" />
     <Compile Include="SyncServiceConfigurationSectionTests.cs" />
     <Compile Include="MockSyncAdapter.cs" />

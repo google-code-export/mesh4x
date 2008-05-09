@@ -123,6 +123,9 @@
   <data name="InvalidConfigurationManagerType" xml:space="preserve">
     <value>The provided type {0} does not implement the IFeedConfigurationManager interface</value>
   </data>
+  <data name="InvalidConfigurationPath" xml:space="preserve">
+    <value>The configuration path must be a folder. Configured path {0}</value>
+  </data>
   <data name="InvalidSyncAdapterType" xml:space="preserve">
     <value>The provided type {0} does not implement the ISyncAdapter interface</value>
   </data>
@@ -131,5 +134,8 @@
   </data>
   <data name="MainFeedTitle" xml:space="preserve">
     <value>FeedSync Feeds</value>
+  </data>
+  <data name="NullOrEmptyConfigurationPath" xml:space="preserve">
+    <value>A configuration folder must be specified for the sync service. </value>
   </data>
 </root>

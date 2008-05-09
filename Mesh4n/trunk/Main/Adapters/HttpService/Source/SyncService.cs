@@ -26,18 +26,12 @@ namespace Mesh4n.Adapters.HttpService
 			this.operationContext = new WebOperationContextWrapper(WebOperationContext.Current);
 		}
 
-		public IFeedConfigurationManager ConfigurationManager
+		public SyncService(IFeedConfigurationManager configurationManager, IWebOperationContext context)
 		{
-			get { return configurationManager; }
-			set { configurationManager = value; }
+			this.configurationManager = configurationManager;
+			this.operationContext = context;
 		}
 
-		public IWebOperationContext OperationContext
-		{
-			get { return operationContext; }
-			set { operationContext = value; }
-		}
-		
 		public FeedFormatter GetFeeds(string format)
 		{
 			if(!IsValidFormat(format))
@@ -46,10 +40,8 @@ namespace Mesh4n.Adapters.HttpService
 				return null;
 			}
 			
-			FeedConfiguration configuration = configurationManager.Load();
-
 			List<Item> items = new List<Item>();
-			foreach (FeedConfigurationEntry entry in configuration.Values)
+			foreach (FeedConfigurationEntry entry in configurationManager.LoadAll())
 			{
 				Item item = new Item(new XmlItem(entry.Title, entry.Description, null), null);
 				items.Add(item);
@@ -73,7 +65,7 @@ namespace Mesh4n.Adapters.HttpService
 				return null;
 			}
 
-			FeedConfigurationEntry entry = FindConfigurationEntry(name);
+			FeedConfigurationEntry entry = configurationManager.Load(name);
 			if (entry == null)
 			{
 				this.operationContext.OutgoingResponse.StatusCode = HttpStatusCode.NotFound;
@@ -118,7 +110,7 @@ namespace Mesh4n.Adapters.HttpService
 				return null;
 			}
 
-			FeedConfigurationEntry entry = FindConfigurationEntry(name);
+			FeedConfigurationEntry entry = configurationManager.Load(name);
 			if (entry == null)
 			{
 				this.operationContext.OutgoingResponse.StatusCode = HttpStatusCode.NotFound;
@@ -157,7 +149,7 @@ namespace Mesh4n.Adapters.HttpService
 				return null;
 			}
 
-			FeedConfigurationEntry entry = FindConfigurationEntry(name);
+			FeedConfigurationEntry entry = configurationManager.Load(name);
 			if (entry == null)
 			{
 				this.operationContext.OutgoingResponse.StatusCode = HttpStatusCode.NotFound;
@@ -218,17 +210,6 @@ namespace Mesh4n.Adapters.HttpService
 		protected virtual bool IsValidFormat(string format)
 		{
 			return format == SupportedFormats.Rss20;
-		}
-
-		private FeedConfigurationEntry FindConfigurationEntry(string name)
-		{
-			FeedConfiguration configuration = configurationManager.Load();
-			if (!configuration.ContainsKey(name))
-			{
-				return null;
-			}
-			
-			return configuration[name];
 		}
 
 		private DateTime? GetSinceDate(IWebOperationContext context)

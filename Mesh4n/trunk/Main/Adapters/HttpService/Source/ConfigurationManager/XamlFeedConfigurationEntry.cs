@@ -13,9 +13,8 @@ namespace Mesh4n.Adapters.HttpService.Configuration
 		{
 		}
 
-		public XamlFeedConfigurationEntry(string name, string title, string description, 
-			Type syncAdapterType)
-			:base(name, title, description, syncAdapterType)
+		public XamlFeedConfigurationEntry(string name, string title, string description, ISyncAdapter syncAdapter)
+			:base(name, title, description, syncAdapter)
 		{
 		}
 
@@ -30,8 +29,7 @@ namespace Mesh4n.Adapters.HttpService.Configuration
 			Guard.ArgumentNotNullOrEmptyString(this.Name, "Name");
 			Guard.ArgumentNotNullOrEmptyString(this.Title, "Title");
 			Guard.ArgumentNotNullOrEmptyString(this.Description, "Description");
-
-			base.SyncAdapter = CreateSyncAdapterInstance(this.SyncAdapterType);
+			Guard.ArgumentNotNull(this.SyncAdapter, "SyncAdapter");
 		}
 
 		#endregion

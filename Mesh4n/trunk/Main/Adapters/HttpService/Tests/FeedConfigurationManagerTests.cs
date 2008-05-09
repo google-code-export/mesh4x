@@ -5,22 +5,33 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 using Mesh4n.Adapters.HttpService.Configuration;
 using System.Collections.Specialized;
+using System.Configuration;
+using Mesh4n.Tests;
 
 namespace Mesh4n.Adapters.HttpService.Tests
 {
 	[TestClass]
-	public class FeedConfigurationManagerTests
+	public class FeedConfigurationManagerTests : TestFixtureBase
 	{
-		[ExpectedException(typeof(ArgumentNullException))]
+		const string FeedsFolder = "feeds";
+
+		[TestInitialize]
+		public void TestInitialize()
+		{
+			if (Directory.Exists(FeedsFolder))
+				Directory.Delete(FeedsFolder, true);
+		}
+		
 		[TestMethod]
+		[ExpectedException(typeof(ConfigurationErrorsException))]
 		public void ShouldThrowIfPathIsNull()
 		{
 			NameValueCollection attributes = new NameValueCollection();
 			new FeedConfigurationManager().Initialize(attributes);
 		}
 
-		[ExpectedException(typeof(ArgumentException))]
 		[TestMethod]
+		[ExpectedException(typeof(ConfigurationErrorsException))]
 		public void ShouldThrowIfPathIsEmpty()
 		{
 			NameValueCollection attributes = new NameValueCollection();
@@ -31,57 +42,50 @@ namespace Mesh4n.Adapters.HttpService.Tests
 		[TestMethod]
 		public void ShouldInitializePath()
 		{
-			FeedConfigurationManager manager = GetManagerInstance("feeds.xaml");
-			Assert.AreEqual("feeds.xaml", manager.ConfigurationPath);
+			FeedConfigurationManager manager = GetManagerInstance(FeedsFolder);
+			Assert.AreEqual(FeedsFolder, manager.ConfigurationPath);
 		}
 
 		[TestMethod]
 		public void ShouldGetAllEntries()
 		{
-			FeedConfigurationManager manager = GetManagerInstance("feeds.xaml");
+			FeedConfigurationManager manager = GetManagerInstance(FeedsFolder);
 
 			FeedConfigurationEntry entry1 = new XamlFeedConfigurationEntry("entry1",
-				"title 1", "description 1", typeof(MockSyncAdapter));
+				"title 1", "description 1", new MockSyncAdapter());
 
 			FeedConfigurationEntry entry2 = new XamlFeedConfigurationEntry("entry2",
-				"title 2", "description 2", typeof(MockSyncAdapter));
+				"title 2", "description 2", new MockSyncAdapter());
 
-			FeedConfiguration configuration = new FeedConfiguration();
-			configuration.Add(entry1.Name, entry1);
-			configuration.Add(entry2.Name, entry2);
+			manager.Save(entry1);
+			manager.Save(entry2);
 
-			manager.Save(configuration);
-
-			configuration = manager.Load();
+			IEnumerable<FeedConfigurationEntry> entries = manager.LoadAll();
 			
-			Assert.AreEqual(2, configuration.Count);
+			Assert.AreEqual(2, Count(entries));
 		}
 
-		[ExpectedException(typeof(ArgumentNullException))]
 		[TestMethod]
+		[ExpectedException(typeof(ArgumentNullException))]
 		public void ShouldThrowIfSaveJobIsNull()
 		{
-			FeedConfigurationManager manager = GetManagerInstance("feeds.xaml");
+			FeedConfigurationManager manager = GetManagerInstance(FeedsFolder);
 			manager.Save(null);
 		}
 
 		[TestMethod]
 		public void ShouldSaveAndLoadEntry()
 		{
-			FeedConfigurationManager manager = GetManagerInstance("feeds.xaml");
+			FeedConfigurationManager manager = GetManagerInstance(FeedsFolder);
 
 			FeedConfigurationEntry entry = new XamlFeedConfigurationEntry("entry1",
-				"title 1", "description 1", typeof(MockSyncAdapter));
+				"title 1", "description 1", new MockSyncAdapter());
 
-			FeedConfiguration configuration = new FeedConfiguration();
-			configuration.Add(entry.Name, entry);
+			manager.Save(entry);
+						
+			entry = manager.Load("entry1");
 			
-			manager.Save(configuration);
-
-			configuration = manager.Load();
-			Assert.AreEqual(1, configuration.Count);
-
-			entry = configuration["entry1"];
+			Assert.IsNotNull(entry);
 			Assert.AreEqual("entry1", entry.Name);
 			Assert.AreEqual("title 1", entry.Title);
 			Assert.AreEqual("description 1", entry.Description);
@@ -91,28 +95,47 @@ namespace Mesh4n.Adapters.HttpService.Tests
 		[TestMethod]
 		public void ShouldOverwriteExistingConfiguration()
 		{
-			FeedConfigurationManager manager = GetManagerInstance("feeds.xaml");
+			FeedConfigurationManager manager = GetManagerInstance(FeedsFolder);
 
 			FeedConfigurationEntry entry1 = new XamlFeedConfigurationEntry("entry1",
-				"title 1", "description 1", typeof(MockSyncAdapter));
+				"title 1", "description 1", new MockSyncAdapter());
 
-			FeedConfiguration configuration = new FeedConfiguration();
-			configuration.Add(entry1.Name, entry1);
+			manager.Save(entry1);
+
+			entry1 = new XamlFeedConfigurationEntry("entry1",
+				"title new", "description new", new MockSyncAdapter());
 			
-			manager.Save(configuration);
+			manager.Save(entry1);
 
-			manager.Save(new FeedConfiguration());
-			Assert.AreEqual(0, manager.Load().Count);
+			entry1 = manager.Load("entry1");
+			
+			Assert.IsNotNull(entry1);
+			Assert.AreEqual("title new", entry1.Title);
+			Assert.AreEqual("description new", entry1.Description);
+			Assert.IsInstanceOfType(entry1.SyncAdapter, typeof(MockSyncAdapter));
 		}
 
-		[ExpectedException(typeof(ArgumentException))]
 		[TestMethod]
+		[ExpectedException(typeof(ArgumentException))]
 		public void ShouldThrowIfInvalidFileContents()
 		{
-			FeedConfigurationManager manager = GetManagerInstance("feeds.xaml");
-			File.WriteAllText("feeds.xaml", "<invalid xml\"");
+			FeedConfigurationManager manager = GetManagerInstance(FeedsFolder);
+			Directory.CreateDirectory(Path.Combine(FeedsFolder, "myFeed"));
 
-			manager.Load();
+			File.WriteAllText(Path.Combine(FeedsFolder, "myFeed\\MyFeed.xaml"), "<invalid xml\"");
+
+			manager.Load("myFeed");
+		}
+
+		[TestMethod]
+		[ExpectedException(typeof(ArgumentException))]
+		public void ShouldThrowIfNotSaveXamlFeedConfigurationEntry()
+		{
+			FeedConfigurationManager manager = GetManagerInstance(FeedsFolder);
+			FeedConfigurationEntry entry1 = new FeedConfigurationEntry("entry1",
+				"title 1", "description 1", new MockSyncAdapter());
+
+			manager.Save(entry1);
 		}
 
 		protected virtual FeedConfigurationManager GetManagerInstance(string path)

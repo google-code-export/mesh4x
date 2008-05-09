@@ -79,6 +79,15 @@ namespace Mesh4n.Adapters.HttpService.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The configuration path must be a folder. Configured path {0}.
+        /// </summary>
+        internal static string InvalidConfigurationPath {
+            get {
+                return ResourceManager.GetString("InvalidConfigurationPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The provided type {0} does not implement the ISyncAdapter interface.
         /// </summary>
         internal static string InvalidSyncAdapterType {
@@ -102,6 +111,15 @@ namespace Mesh4n.Adapters.HttpService.Properties {
         internal static string MainFeedTitle {
             get {
                 return ResourceManager.GetString("MainFeedTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A configuration folder must be specified for the sync service. .
+        /// </summary>
+        internal static string NullOrEmptyConfigurationPath {
+            get {
+                return ResourceManager.GetString("NullOrEmptyConfigurationPath", resourceCulture);
             }
         }
     }

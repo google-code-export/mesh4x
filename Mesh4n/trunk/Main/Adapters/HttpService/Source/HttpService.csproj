@@ -62,7 +62,6 @@
       <Link>Guard.cs</Link>
     </Compile>
     <Compile Include="ConfigurationManager\FeedConfigurationEntry.cs" />
-    <Compile Include="ConfigurationManager\FeedConfiguration.cs" />
     <Compile Include="ConfigurationManager\FeedConfigurationManager.cs" />
     <Compile Include="ConfigurationManager\XamlFeedConfigurationEntry.cs" />
     <Compile Include="SupportedFormats.cs" />

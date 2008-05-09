@@ -12,26 +12,10 @@ namespace Mesh4n.Adapters.HttpService.Configuration
 		private string name;
 		private string title;
 		private string description;
-		private Type syncAdapterType;
 		private ISyncAdapter syncAdapter;
 
 		protected FeedConfigurationEntry()
 		{
-		}
-
-		public FeedConfigurationEntry(string name, string title, string description, 
-			Type syncAdapterType)
-		{
-			Guard.ArgumentNotNullOrEmptyString(name, "name");
-			Guard.ArgumentNotNullOrEmptyString(title, "title");
-			Guard.ArgumentNotNullOrEmptyString(description, "description");
-
-			this.name = name;
-			this.title = title;
-			this.description = description;
-			this.syncAdapterType = syncAdapterType;
-
-			this.syncAdapter = this.CreateSyncAdapterInstance(this.syncAdapterType);
 		}
 
 		public FeedConfigurationEntry(string name, string title, string description,
@@ -40,7 +24,8 @@ namespace Mesh4n.Adapters.HttpService.Configuration
 			Guard.ArgumentNotNullOrEmptyString(name, "name");
 			Guard.ArgumentNotNullOrEmptyString(title, "title");
 			Guard.ArgumentNotNullOrEmptyString(description, "description");
-
+			Guard.ArgumentNotNull(syncAdapter, "syncAdapter");
+			
 			this.name = name;
 			this.title = title;
 			this.description = description;
@@ -65,27 +50,10 @@ namespace Mesh4n.Adapters.HttpService.Configuration
 			set { description = value; }
 		}
 		
-		[TypeConverter(typeof(TypeNameConverter))]
-		public Type SyncAdapterType
-		{
-			get { return syncAdapterType; }
-			set { syncAdapterType = value; }
-		}
-
 		public ISyncAdapter SyncAdapter
 		{
 			get { return syncAdapter; }
-			protected set { syncAdapter = value; }
-		}
-
-		protected ISyncAdapter CreateSyncAdapterInstance(Type type)
-		{
-			object adapter = Activator.CreateInstance(type);
-			if (!(adapter is ISyncAdapter))
-				throw new ArgumentException(string.Format(Resources.InvalidSyncAdapterType,
-					type.AssemblyQualifiedName));
-
-			return (ISyncAdapter)adapter;
+			set { syncAdapter = value; }
 		}
 	}
 }

@@ -24,9 +24,18 @@ internal static class Guard
 		ArgumentNotNull(value, argumentName);
 
 		if (value.Length == 0)
-			throw new ArgumentException(String.Format(
-				CultureInfo.CurrentCulture,
-				"Value cannot be null or an empty string."),
+			throw new ArgumentException("Value cannot be null or an empty string.",
 				argumentName);
+	}
+
+	public static void ArgumentIsInstanceOfType(object value, Type type, string argumentName)
+	{
+		if (!type.IsInstanceOfType(value))
+		{
+			throw new ArgumentException(string.Format(
+				CultureInfo.InvariantCulture,
+				"Value is not instance of type {0}",
+				type.Name), argumentName);
+		}
 	}
 }
