@@ -43,7 +43,7 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 		this.shell.setText("Mesh Example");
 		
 		Label label = new Label (shell, SWT.NONE);
-		label.setText ("Right endpoint: ");
+		label.setText ("Endpoint 1: ");
 		
 		sourceFile = new Text (shell, SWT.BORDER);
 		//sourceFile.setLayoutData (new RowData (300, SWT.DEFAULT));
@@ -61,7 +61,7 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 		buttonSource.setText("...");
 		
 		Label labelTarget = new Label (shell, SWT.NONE);
-		labelTarget.setText ("Left endpoint: ");
+		labelTarget.setText ("Endpoint 2: ");
 		
 		targetFile = new Text (shell, SWT.BORDER);
 		//targetFile.setLayoutData (new RowData (300, SWT.DEFAULT));
@@ -83,17 +83,17 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 			public void widgetSelected(SelectionEvent e) {
 				boolean okSource = validateFile(getSourceKmlFileName());
 				if(!okSource){
-					consoleView.append("\nPlease verify that rightendpoint is a valid kml file to continue !!!");
+					consoleView.append("\nPlease verify that endpoint 1 is a valid kml file to continue !!!");
 				}
 
 				boolean okTarget = validateFile(getTargetKmlFileName());
 				if(!okTarget){
-					consoleView.append("\nPlease verify that left endpoint is a valid kml file to continue !!!");
+					consoleView.append("\nPlease verify that endpoint 2 is a valid kml file to continue !!!");
 				}
 				
 				if(okSource && okTarget){
 					if(getSourceKmlFileName().equals(getTargetKmlFileName())){
-						consoleView.append("\nPlease verify that right and left endpoints are differents kml file to continue !!!");
+						consoleView.append("\nPlease verify that endpoint 1 and endpoint 2 are differents kml files to continue !!!");
 					} else {
 						synchronizeItemsInNewThread();
 					}
@@ -159,10 +159,10 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 							public void run() {
 								if (consoleView.isDisposed()) return;
 								consoleView.append("\nStart running synchronize: ");
-								consoleView.append("\n\tRight endpoint kml file: " + getSourceKmlFileName());
-								consoleView.append("\n\tRight endpoint sync file:" + getSourceSyncFileName());
-								consoleView.append("\n\tLeft endpoint kml file: " + getTargetKmlFileName());
-								consoleView.append("\n\tLeft endpoint sync file: " + getTargetSyncFileName());
+								consoleView.append("\n\tEndpoint 1 kml file: " + getSourceKmlFileName());
+								consoleView.append("\n\tEndpoint 1 sync file:" + getSourceSyncFileName());
+								consoleView.append("\n\tEndpoint 2 kml file: " + getTargetKmlFileName());
+								consoleView.append("\n\tEndpoint 2 sync file: " + getTargetSyncFileName());
 							}
 						});
 						
