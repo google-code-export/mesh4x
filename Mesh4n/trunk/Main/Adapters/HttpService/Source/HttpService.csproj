@@ -64,13 +64,15 @@
     <Compile Include="ConfigurationManager\FeedConfigurationEntry.cs" />
     <Compile Include="ConfigurationManager\FeedConfigurationManager.cs" />
     <Compile Include="ConfigurationManager\XamlFeedConfigurationEntry.cs" />
+    <Compile Include="ExceptionHandling\ErrorHanderBehavior.cs" />
+    <Compile Include="ExceptionHandling\ErrorHandler.cs" />
+    <Compile Include="ExceptionHandling\ErrorHandlerExtensionElement.cs" />
+    <Compile Include="ExceptionHandling\ServiceException.cs" />
     <Compile Include="SupportedFormats.cs" />
-    <Compile Include="FeedFormatter.cs" />
     <Compile Include="WebContext\IIncomingWebRequestContext.cs" />
     <Compile Include="WebContext\IncomingWebRequestContextWrapper.cs" />
     <Compile Include="WebContext\IOutgoingWebResponseContext.cs" />
     <Compile Include="WebContext\IWebOperationContext.cs" />
-    <Compile Include="RssFeedFormatter.cs" />
     <Compile Include="SyncService.cs" />
     <Compile Include="SyncServiceConfigurationSection.cs" />
     <Compile Include="ConfigurationManager\IFeedConfigurationManager.cs" />

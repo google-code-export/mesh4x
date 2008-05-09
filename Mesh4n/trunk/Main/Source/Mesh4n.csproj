@@ -76,6 +76,7 @@
     <Compile Include="CompoundSyncAdapter.cs">
     </Compile>
     <Compile Include="DataEventArgs.cs" />
+    <Compile Include="FeedFormatter.cs" />
     <Compile Include="FeedReader.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -91,6 +92,7 @@
     <Compile Include="Model\ComparableStack.cs" />
     <Compile Include="NullXmlItem.cs" />
     <Compile Include="ObjectDumper.cs" />
+    <Compile Include="RssFeedFormatter.cs" />
     <Compile Include="SyncAdapter.cs" />
     <Compile Include="RssDateTime.cs" />
     <Compile Include="RssFeedReader.cs">

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
@@ -8,12 +7,12 @@ using System.Xml;
 using Mesh4n.Tests;
 using System.Xml.Serialization;
 
-namespace Mesh4n.Adapters.HttpService.Tests
+namespace Mesh4n.Tests
 {
 	[TestClass]
-	public class RssFeedFormatterTests : TestFixtureBase
+	public class RssFeedFormatterFixture : TestFixtureBase
 	{
-		public RssFeedFormatterTests()
+		public RssFeedFormatterFixture()
 		{
 		}
 
@@ -21,6 +20,7 @@ namespace Mesh4n.Adapters.HttpService.Tests
 		public void ShouldWriteCompleteFeed()
 		{
 			List<Item> items = new List<Item>();
+
 
 			string id = Guid.NewGuid().ToString();
 			items.Add(new Item(new NullXmlItem(id), Behaviors.Create(id, "kzu", DateTime.Now.Subtract(TimeSpan.FromDays(3)), false)));

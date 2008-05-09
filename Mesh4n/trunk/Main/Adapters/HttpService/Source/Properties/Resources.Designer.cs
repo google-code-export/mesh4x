@@ -61,6 +61,33 @@ namespace Mesh4n.Adapters.HttpService.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The item id in the URI is not the same as the item id in the payload. Uri {0}, Payload {1}.
+        /// </summary>
+        internal static string DifferentIds {
+            get {
+                return ResourceManager.GetString("DifferentIds", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The request does not contain any item to merge..
+        /// </summary>
+        internal static string EmptyRequest {
+            get {
+                return ResourceManager.GetString("EmptyRequest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The feed {0} was not found.
+        /// </summary>
+        internal static string FeedNotFound {
+            get {
+                return ResourceManager.GetString("FeedNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Configuration file {0} has invalid content. {1}.
         /// </summary>
         internal static string InvalidConfigurationFile {
@@ -97,6 +124,15 @@ namespace Mesh4n.Adapters.HttpService.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The item {0} was not found.
+        /// </summary>
+        internal static string ItemNotFound {
+            get {
+                return ResourceManager.GetString("ItemNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to List of available feedsync feeds.
         /// </summary>
         internal static string MainFeedDescription {
@@ -111,6 +147,24 @@ namespace Mesh4n.Adapters.HttpService.Properties {
         internal static string MainFeedTitle {
             get {
                 return ResourceManager.GetString("MainFeedTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There are not available items for the specified date.
+        /// </summary>
+        internal static string NoAvailableItems {
+            get {
+                return ResourceManager.GetString("NoAvailableItems", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The specified format {0} is not supported by the service..
+        /// </summary>
+        internal static string NotSupportedFormat {
+            get {
+                return ResourceManager.GetString("NotSupportedFormat", resourceCulture);
             }
         }
         

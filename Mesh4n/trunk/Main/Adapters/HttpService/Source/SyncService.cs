@@ -11,6 +11,7 @@ using System.ServiceModel.Web;
 using Mesh4n.Adapters.HttpService.WebContext;
 using System.Net;
 using System.Globalization;
+using Mesh4n.Adapters.HttpService.ExceptionHandling;
 
 namespace Mesh4n.Adapters.HttpService
 {
@@ -34,11 +35,7 @@ namespace Mesh4n.Adapters.HttpService
 
 		public FeedFormatter GetFeeds(string format)
 		{
-			if(!IsValidFormat(format))
-			{
-				this.operationContext.OutgoingResponse.StatusCode = HttpStatusCode.BadRequest;
-				return null;
-			}
+			ValidateFormat(format);
 			
 			List<Item> items = new List<Item>();
 			foreach (FeedConfigurationEntry entry in configurationManager.LoadAll())
@@ -59,17 +56,13 @@ namespace Mesh4n.Adapters.HttpService
 
 		public FeedFormatter GetFeed(string name, string format)
 		{
-			if (!IsValidFormat(format))
-			{
-				this.operationContext.OutgoingResponse.StatusCode = HttpStatusCode.BadRequest;
-				return null;
-			}
+			ValidateFormat(format);
 
 			FeedConfigurationEntry entry = configurationManager.Load(name);
 			if (entry == null)
 			{
-				this.operationContext.OutgoingResponse.StatusCode = HttpStatusCode.NotFound;
-				return null;
+				throw new ServiceException(string.Format(CultureInfo.InvariantCulture,
+					Resources.FeedNotFound, name), HttpStatusCode.NotFound);
 			}
 
 			DateTime? since = GetSinceDate(this.operationContext);
@@ -80,10 +73,7 @@ namespace Mesh4n.Adapters.HttpService
 				items = entry.SyncAdapter.GetAllSince(since.Value);
 				if (items == null || !items.GetEnumerator().MoveNext())
 				{
-					this.operationContext.OutgoingResponse.StatusCode = HttpStatusCode.NotModified; 
-					this.operationContext.OutgoingResponse.SuppressEntityBody = true;
-
-					return null;
+					throw new ServiceException(Resources.NoAvailableItems, HttpStatusCode.NotModified);
 				}
 			}
 			else
@@ -104,25 +94,21 @@ namespace Mesh4n.Adapters.HttpService
 
 		public FeedFormatter GetItem(string name, string itemId, string format)
 		{
-			if (!IsValidFormat(format))
-			{
-				this.operationContext.OutgoingResponse.StatusCode = HttpStatusCode.BadRequest;
-				return null;
-			}
+			ValidateFormat(format);
 
 			FeedConfigurationEntry entry = configurationManager.Load(name);
 			if (entry == null)
 			{
-				this.operationContext.OutgoingResponse.StatusCode = HttpStatusCode.NotFound;
-				return null;
+				throw new ServiceException(string.Format(CultureInfo.InvariantCulture,
+					Resources.FeedNotFound, name), HttpStatusCode.NotFound);
 			}
 			
 			Item item = entry.SyncAdapter.Get(itemId);
 
 			if (item == null)
 			{
-				this.operationContext.OutgoingResponse.StatusCode = HttpStatusCode.NotFound;
-				return null;
+				throw new ServiceException(string.Format(CultureInfo.InvariantCulture,
+					Resources.ItemNotFound, itemId), HttpStatusCode.NotFound);
 			}
 			else
 			{
@@ -143,17 +129,13 @@ namespace Mesh4n.Adapters.HttpService
 
 		public FeedFormatter PostFeed(string name, string format, FeedFormatter formatter)
 		{
-			if (!IsValidFormat(format))
-			{
-				this.operationContext.OutgoingResponse.StatusCode = HttpStatusCode.BadRequest;
-				return null;
-			}
+			ValidateFormat(format);
 
 			FeedConfigurationEntry entry = configurationManager.Load(name);
 			if (entry == null)
 			{
-				this.operationContext.OutgoingResponse.StatusCode = HttpStatusCode.NotFound;
-				return null;
+				throw new ServiceException(string.Format(CultureInfo.InvariantCulture,
+					Resources.FeedNotFound, name), HttpStatusCode.NotFound);
 			}
 
 			SyncEngine syncEngine = new SyncEngine(entry.SyncAdapter, formatter.Items);
@@ -166,24 +148,19 @@ namespace Mesh4n.Adapters.HttpService
 
 		public FeedFormatter PostItem(string name, string itemId, string format, FeedFormatter formatter)
 		{
-			if (!IsValidFormat(format))
-			{
-				this.operationContext.OutgoingResponse.StatusCode = HttpStatusCode.BadRequest;
-				return null;
-			}
+			ValidateFormat(format);
 
 			IEnumerator<Item> enumerator = formatter.Items.GetEnumerator();
 			if (!enumerator.MoveNext())
 			{
-				this.operationContext.OutgoingResponse.StatusCode = HttpStatusCode.BadRequest;
-				return null;
+				throw new ServiceException(Resources.EmptyRequest, HttpStatusCode.BadRequest);
 			}
 
 			Item item = enumerator.Current;
 			if (item.XmlItem.Id != itemId)
 			{
-				this.operationContext.OutgoingResponse.StatusCode = HttpStatusCode.BadRequest;
-				return null;
+				throw new ServiceException(string.Format(CultureInfo.InvariantCulture,
+					Resources.DifferentIds, itemId, item.XmlItem.Id), HttpStatusCode.BadRequest);
 			}
 
 			return PostFeed(name, format, formatter);
@@ -207,9 +184,13 @@ namespace Mesh4n.Adapters.HttpService
 			return new Feed(title, link, description);
 		}
 
-		protected virtual bool IsValidFormat(string format)
+		protected virtual void ValidateFormat(string format)
 		{
-			return format == SupportedFormats.Rss20;
+			if (format != SupportedFormats.Rss20)
+			{
+				throw new ServiceException(string.Format(CultureInfo.InvariantCulture,
+					Resources.NotSupportedFormat, format), HttpStatusCode.BadRequest);
+			}
 		}
 
 		private DateTime? GetSinceDate(IWebOperationContext context)

@@ -48,17 +48,19 @@
     <Reference Include="System.ServiceModel">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.ServiceModel.Web">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FeedConfigurationEntryTests.cs" />
-    <Compile Include="FeedConfigurationManagerTests.cs" />
-    <Compile Include="RssFeedFormatterTests.cs" />
+    <Compile Include="ConfigurationManager\FeedConfigurationEntryTests.cs" />
+    <Compile Include="ConfigurationManager\FeedConfigurationManagerTests.cs" />
     <Compile Include="SyncServiceConfigurationSectionTests.cs" />
     <Compile Include="MockSyncAdapter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SyncServiceTests.cs" />
-    <Compile Include="XamlFeedConfigurationEntryTests.cs" />
+    <Compile Include="ConfigurationManager\XamlFeedConfigurationEntryTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Source\Mesh4n.csproj">
