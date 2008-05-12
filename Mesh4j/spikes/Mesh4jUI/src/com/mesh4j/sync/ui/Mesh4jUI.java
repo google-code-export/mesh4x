@@ -34,6 +34,7 @@ import com.mesh4j.sync.adapters.file.FileSyncRepository;
 import com.mesh4j.sync.adapters.kml.KMLContentAdapter;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.security.NullSecurity;
+import com.mesh4j.sync.validations.MeshException;
 
 public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 
@@ -216,13 +217,13 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 			} else {
 				return "Conflicts";
 			}
-		} catch (Exception e) {
+		} catch (MeshException e) {
 			Logger.error(e.getMessage(), e);
 			return "Unexpected error";
 		}
 	}
 
-	private IRepositoryAdapter makeRepositoryAdapter(String endpoint) throws Exception {
+	private IRepositoryAdapter makeRepositoryAdapter(String endpoint) {
 		if(isURL(endpoint)){
 			return new URLFeedAdapter(endpoint, RssSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
 		} else {
@@ -254,7 +255,7 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 	
 	private boolean validate(String endpointValue, String endpointHeader){
 		if(endpointValue ==  null || endpointValue.trim().length() == 0){
-			consoleView.append("\nPlease complete " + endpointHeader + " , it is required to continue (Example file: C:\\MyFile.kml, Example URL: http://localhost:7777/feeds/MockFeed).");
+			consoleView.append("\nPlease complete " + endpointHeader + " , it is required to continue (Example file: C:\\MyFile.kml, Example URL: http://localhost:7777/feeds/KML).");
 			return false;
 		}
 		if(isURL(endpointValue)){
@@ -269,7 +270,7 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 		try {
 			newURL = new URL(url);
 		} catch (MalformedURLException e) {
-			consoleView.append("\nPlease verify "+ endpointHeader + ": the url is not a valid URL (Example: http://localhost:7777/feeds/MockFeed).");
+			consoleView.append("\nPlease verify "+ endpointHeader + ": the url is not a valid URL (Example: http://localhost:7777/feeds/KML).");
 			return false;
 		}
 		try {
