@@ -33,11 +33,11 @@ namespace Mesh4n.Adapters.HttpService
 		RssFeedFormatter GetRssItem(string name, string itemId);
 
 		[OperationContract]
-		[WebGet(UriTemplate = "/feeds/{name}?format={format}")]
+		[WebGet(UriTemplate = "/feeds/{name}/conflicts?format={format}")]
 		FeedFormatter GetConflicts(string name, string format);
 
 		[OperationContract]
-		[WebGet(UriTemplate = "/feeds/{name}")]
+		[WebGet(UriTemplate = "/feeds/{name}/conflicts")]
 		RssFeedFormatter GetRssConflicts(string name);
 		
 		[OperationContract]
