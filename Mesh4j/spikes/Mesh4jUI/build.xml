@@ -9,18 +9,16 @@
 		<mkdir dir="dist"/>
 		<jar destfile="dist/mesh4j-KML-DemoApp.jar" manifest="META-INF/MANIFEST.MF">
 			<fileset dir="bin" />
-			<fileset dir="." includesfile="hibernate.properties"/>
-			<fileset dir="." includesfile="log4j.properties"/>
-			<fileset dir="." includesfile="mesh4j_resources.properties"/>
-			<fileset dir="." includesfile="mesh4j_table_mysql.sql"/>
 		</jar>
 	</target>
 	
 	<target name="dist" depends="jars">
-		<zip destfile="dist/mesh4j-KML-DemoApp-1.0.0.zip">
-			<zipfileset prefix="mesh4j-KML-DemoApp-1.0.0" dir="dist" includes="mesh4j-KML-DemoApp.jar"/>
-			<zipfileset prefix="mesh4j-KML-DemoApp-1.0.0" dir="." includes="lib/**/*"/>
-			<zipfileset prefix="mesh4j-KML-DemoApp-1.0.0" dir="." includes="swt-win32-3138.dll"/>
+		<zip destfile="dist/mesh4j-KML-DemoApp-1.0.1.zip">
+			<zipfileset prefix="mesh4j-KML-DemoApp-1.0.1" dir="dist" includes="mesh4j-KML-DemoApp.jar"/>
+			<zipfileset prefix="mesh4j-KML-DemoApp-1.0.1" dir="." includes="lib/**/*"/>
+			<zipfileset prefix="mesh4j-KML-DemoApp-1.0.1" dir="." includes="swt-win32-3138.dll"/>
+			<zipfileset prefix="mesh4j-KML-DemoApp-1.0.1/lib" dir="." includes="log4j.properties"/>
+			<zipfileset prefix="mesh4j-KML-DemoApp-1.0.1/lib" dir="." includes="mesh4j_resources.properties"/>
 		</zip>
 	</target>
 </project>

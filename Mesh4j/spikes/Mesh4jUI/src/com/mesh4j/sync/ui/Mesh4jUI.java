@@ -1,8 +1,16 @@
 package com.mesh4j.sync.ui;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -16,8 +24,12 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import com.mesh4j.sync.IRepositoryAdapter;
 import com.mesh4j.sync.SyncEngine;
 import com.mesh4j.sync.adapters.compound.CompoundRepositoryAdapter;
+import com.mesh4j.sync.adapters.compound.IContentAdapter;
+import com.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
+import com.mesh4j.sync.adapters.feed.url.URLFeedAdapter;
 import com.mesh4j.sync.adapters.file.FileSyncRepository;
 import com.mesh4j.sync.adapters.kml.KMLContentAdapter;
 import com.mesh4j.sync.model.Item;
@@ -25,10 +37,12 @@ import com.mesh4j.sync.security.NullSecurity;
 
 public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 
+	private final static Log Logger = LogFactory.getLog(Mesh4jUI.class);
+	
 	private Display display;
 	private Shell shell;
-	private Text sourceFile;
-	private Text targetFile;
+	private Text endpoint1;
+	private Text endpoint2;
 	private Text consoleView;
 	
 	public static void main (String [] args) {
@@ -45,16 +59,15 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 		Label label = new Label (shell, SWT.NONE);
 		label.setText ("Endpoint 1: ");
 		
-		sourceFile = new Text (shell, SWT.BORDER);
-		//sourceFile.setLayoutData (new RowData (300, SWT.DEFAULT));
-		sourceFile.setLayoutData (new GridData(300, 15));
+		endpoint1 = new Text (shell, SWT.BORDER);
+		endpoint1.setLayoutData (new GridData(300, 15));
 		
 		Button buttonSource = new Button(shell, SWT.PUSH);
 		buttonSource.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				String selectedFileName = openFileDialog(sourceFile.getText());
+				String selectedFileName = openFileDialog(endpoint1.getText());
 				if(selectedFileName != null){
-					sourceFile.setText(selectedFileName);
+					endpoint1.setText(selectedFileName);
 				}
 			}
 		});
@@ -63,16 +76,15 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 		Label labelTarget = new Label (shell, SWT.NONE);
 		labelTarget.setText ("Endpoint 2: ");
 		
-		targetFile = new Text (shell, SWT.BORDER);
-		//targetFile.setLayoutData (new RowData (300, SWT.DEFAULT));
-		targetFile.setLayoutData (new GridData(300, 15));
+		endpoint2 = new Text (shell, SWT.BORDER);
+		endpoint2.setLayoutData (new GridData(300, 15));
 		
 		Button buttonTarget = new Button(shell, SWT.PUSH);
 		buttonTarget.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				String selectedFileName = openFileDialog(targetFile.getText());
+				String selectedFileName = openFileDialog(endpoint2.getText());
 				if(selectedFileName != null){
-					targetFile.setText(selectedFileName);
+					endpoint2.setText(selectedFileName);
 				}
 			}
 		});
@@ -80,26 +92,15 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 		
 		Button buttonSynchronize = new Button(shell, SWT.PUSH);
 		buttonSynchronize.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				boolean okSource = validateFile(getSourceKmlFileName());
-				if(!okSource){
-					consoleView.append("\nPlease verify that endpoint 1 is a valid kml file to continue !!!");
-				}
-
-				boolean okTarget = validateFile(getTargetKmlFileName());
-				if(!okTarget){
-					consoleView.append("\nPlease verify that endpoint 2 is a valid kml file to continue !!!");
-				}
-				
-				if(okSource && okTarget){
-					if(getSourceKmlFileName().equals(getTargetKmlFileName())){
-						consoleView.append("\nPlease verify that endpoint 1 and endpoint 2 are differents kml files to continue !!!");
-					} else {
+			public void widgetSelected(SelectionEvent e) {				
+				boolean ok = validateEndpoints();
+					if(ok){
 						synchronizeItemsInNewThread();
 					}
 				}
 			}
-		});
+		);
+		
 		buttonSynchronize.setText("Synchronize");
 		
 		Button buttonClean = new Button(shell, SWT.PUSH);
@@ -109,6 +110,14 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 			}
 		});
 		buttonClean.setText("Clean");
+		
+		Button buttonLog = new Button(shell, SWT.PUSH);
+		buttonLog.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				viewLog();
+			}
+		});
+		buttonLog.setText("Log");
 		
 		consoleView = new Text(shell, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		consoleView.setLayoutData(new GridData(300, 300));
@@ -130,25 +139,25 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 		String name = "";
 	
 		if(fileName != null && fileName.trim().length() > 0){
-			File file = new File(fileName);
-			path = file.getPath();
-			name = file.getName();
+			if(isFile(fileName)){
+				File file = new File(fileName);
+				path = file.getPath();
+				name = file.getName();
+			}
 		}
 		
 		FileDialog dialog = new FileDialog (shell, SWT.OPEN);
 		dialog.setFilterNames (new String [] {"Kml", "All Files (*.*)"});
-		dialog.setFilterExtensions (new String [] {"*.kml", "*.*"}); //Windows wild cards
-		dialog.setFilterPath (path); //Windows path
+		dialog.setFilterExtensions (new String [] {"*.kml", "*.*"});
+		dialog.setFilterPath (path);
 		dialog.setFileName (name);
 		String fileNameSelected = dialog.open();
 		return fileNameSelected;
 	}
 	
 	private void synchronizeItemsInNewThread(){
-		final String sourceKmlFileName = this.getSourceKmlFileName();
-		final String sourceSyncFileName = this.getSourceSyncFileName();
-		final String targetKmlFileName = this.getTargetKmlFileName();
-		final String targetSyncFileName = this.getTargetSyncFileName();
+		final String endpoint1 = this.getEndpoint1();
+		final String endpoint2 = this.getEndpoint2();
 		
 		Runnable longJob = new Runnable() {
 			boolean done = false;
@@ -159,14 +168,12 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 							public void run() {
 								if (consoleView.isDisposed()) return;
 								consoleView.append("\nStart running synchronize: ");
-								consoleView.append("\n\tEndpoint 1 kml file: " + getSourceKmlFileName());
-								consoleView.append("\n\tEndpoint 1 sync file:" + getSourceSyncFileName());
-								consoleView.append("\n\tEndpoint 2 kml file: " + getTargetKmlFileName());
-								consoleView.append("\n\tEndpoint 2 sync file: " + getTargetSyncFileName());
+								consoleView.append("\n\tEndpoint 1: " + endpoint1);
+								consoleView.append("\n\tEndpoint 2: " + endpoint2);
 							}
 						});
 						
-						final String syncResult = synchronizeItems(sourceKmlFileName, sourceSyncFileName, targetKmlFileName, targetSyncFileName);
+						final String syncResult = synchronizeItems(endpoint1, endpoint2);
 						
 						if (display.isDisposed()) return;						
 						display.syncExec(new Runnable() {
@@ -189,17 +196,18 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 		BusyIndicator.showWhile(display, longJob);
 	}
 	
-	private String synchronizeItems(String sourceKmlFileName, String sourceSyncFileName, String targetKmlFileName, String targetSyncFileName){
-		
+	private String getEndpoint1() {
+		return this.endpoint1.getText();
+	}
+	
+	private String getEndpoint2() {
+		return this.endpoint2.getText();
+	}
+
+	private String synchronizeItems(String endpoint1, String endpoint2){
 		try{
-			FileSyncRepository sourceSyncRepo = new FileSyncRepository(sourceSyncFileName, NullSecurity.INSTANCE);
-			KMLContentAdapter sourceKmlContent = new KMLContentAdapter(sourceKmlFileName);
-			
-			FileSyncRepository targetSyncRepo = new FileSyncRepository(targetSyncFileName, NullSecurity.INSTANCE);
-			KMLContentAdapter targetKmlContent = new KMLContentAdapter(targetKmlFileName);
-			
-			CompoundRepositoryAdapter sourceRepo = new CompoundRepositoryAdapter(sourceSyncRepo, sourceKmlContent, NullSecurity.INSTANCE);
-			CompoundRepositoryAdapter targetRepo = new CompoundRepositoryAdapter(targetSyncRepo, targetKmlContent, NullSecurity.INSTANCE);
+			IRepositoryAdapter sourceRepo = makeRepositoryAdapter(endpoint1);
+			IRepositoryAdapter targetRepo = makeRepositoryAdapter(endpoint2);
 			
 			SyncEngine syncEngine = new SyncEngine(sourceRepo, targetRepo);
 			List<Item> conflicts = syncEngine.synchronize();
@@ -209,34 +217,108 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 				return "Conflicts";
 			}
 		} catch (Exception e) {
-			return "Unexpected error: " + e.getMessage();
+			Logger.error(e.getMessage(), e);
+			return "Unexpected error";
 		}
 	}
 
-	private String getTargetKmlFileName() {
-		return this.targetFile.getText();
+	private IRepositoryAdapter makeRepositoryAdapter(String endpoint) throws Exception {
+		if(isURL(endpoint)){
+			return new URLFeedAdapter(endpoint, RssSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		} else {
+			String endpointSync = getSyncFileName(endpoint);
+			FileSyncRepository sourceSyncRepo = new FileSyncRepository(endpointSync, NullSecurity.INSTANCE);
+			IContentAdapter sourceContent = new KMLContentAdapter(endpoint);
+			return  new CompoundRepositoryAdapter(sourceSyncRepo, sourceContent, NullSecurity.INSTANCE);
+		}
 	}
 
-	private String getTargetSyncFileName() {
-		String kmlName = this.targetFile.getText();
-		String syncFileName = kmlName.substring(0, kmlName.length()-4) + "_sync.xml";
+	private String getSyncFileName(String endpointFileName) {
+		String syncFileName = endpointFileName.substring(0, endpointFileName.length()-4) + "_sync.xml";
 		return syncFileName;
 	}
 
-	private String getSourceKmlFileName() {
-		return this.sourceFile.getText();
-	}
+	private boolean validateEndpoints() {
+		boolean okEndpoint1 = validate(getEndpoint1(), "Endpoint1");
+		boolean okEndpoint2 = validate(getEndpoint2(), "Endpoint2");		
+		
+		if(okEndpoint1 && okEndpoint2){
+			if(getEndpoint1().equals(getEndpoint2())){
+				consoleView.append("\nPlease verify that endpoint 1 and endpoint 2 are differents to continue !!!");
+				return false;
+			}
+		}
+		return okEndpoint1 && okEndpoint2;
 
-	private String getSourceSyncFileName() {
-		String kmlName = this.sourceFile.getText();
-		String syncFileName = kmlName.substring(0, kmlName.length()-4) + "_sync.xml";
-		return syncFileName;
 	}
 	
-	public boolean validateFile(String fileName){
+	private boolean validate(String endpointValue, String endpointHeader){
+		if(endpointValue ==  null || endpointValue.trim().length() == 0){
+			consoleView.append("\nPlease complete " + endpointHeader + " , it is required to continue (Example file: C:\\MyFile.kml, Example URL: http://localhost:7777/feeds/MockFeed).");
+			return false;
+		}
+		if(isURL(endpointValue)){
+			return validateURL(endpointValue, endpointHeader);
+		} else{
+			return validateFile(endpointValue, endpointHeader);
+		}
+	}
+
+	private boolean validateURL(String url, String endpointHeader){
+		URL newURL;
+		try {
+			newURL = new URL(url);
+		} catch (MalformedURLException e) {
+			consoleView.append("\nPlease verify "+ endpointHeader + ": the url is not a valid URL (Example: http://localhost:7777/feeds/MockFeed).");
+			return false;
+		}
+		try {
+			URLConnection conn = newURL.openConnection();
+			conn.connect();
+		} catch (IOException e) {
+			consoleView.append("\nPlease verify "+ endpointHeader + ": connection failed.");
+			return false;
+		}
+		return true;
+	}
+			
+	private boolean validateFile(String fileName, String endpointHeader){
+		if(!(fileName != null && fileName.trim().length() > 5 && fileName.endsWith(".kml"))){
+			consoleView.append("\nPlease verify "+ endpointHeader + ": complete with a kml file (example C:\\MyFile.kml).");
+			return false;
+		}
+		
 		File file = new File(fileName);
-		boolean okTarget = fileName != null && fileName.trim().length() > 5 && fileName.endsWith(".kml")  && file.exists() && file.canRead();
-		return okTarget;
+		if(!file.exists()){
+			consoleView.append("\nPlease verify "+ endpointHeader + ": the file does not exist.");
+			return false;
+		}		
+		return true;
+	}
+	
+	private boolean isFile(String endpointValue) {
+		return !isURL(endpointValue);
+	}
+	
+	private boolean isURL(String endpointValue) {
+		return endpointValue.startsWith("http");
+	}
+	
+	private void viewLog(){
+		String fileName = "mesh4j.log";
+		try {
+			consoleView.append("\n\nLog:\n");
+			FileReader reader = new FileReader(fileName);
+			BufferedReader br = new BufferedReader(reader);
+			String line;
+			while((line = br.readLine()) != null) {
+				consoleView.append(line);
+				consoleView.append("\n");
+			}
+			reader.close(); 
+		} catch (Exception e) {
+			consoleView.append("\n\nError reading mesh4j.log\n");
+		}
 	}
 }
 
