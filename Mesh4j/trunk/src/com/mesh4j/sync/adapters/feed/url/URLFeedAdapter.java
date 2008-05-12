@@ -173,7 +173,7 @@ public class URLFeedAdapter implements IRepositoryAdapter {
 	    HttpURLConnection conn = null;
 	    String result = null;
 	    try{
-	    	conn = (HttpURLConnection) url.openConnection();
+	    	conn = (HttpURLConnection) this.url.openConnection();
 		    writeData(content, conn);		    
 		    result = readData(conn);
 	    } catch(Exception e){
