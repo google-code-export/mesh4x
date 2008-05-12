@@ -55,6 +55,10 @@
       <Project>{5A747B6C-D230-4D59-9321-83B48C4553CF}</Project>
       <Name>Mesh4n</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Database\Source\Data.csproj">
+      <Project>{9F77C3B0-5DD7-4B75-816E-69BCB44AA29E}</Project>
+      <Name>Data</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Source\HttpService.csproj">
       <Project>{2BB365F9-5CBB-4CD9-82DC-0264E937BB48}</Project>
       <Name>HttpService</Name>
@@ -64,7 +68,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Feeds\MockFeed\MockFeed.xaml">
+    <None Include="Feeds\KML\KML.xaml">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
