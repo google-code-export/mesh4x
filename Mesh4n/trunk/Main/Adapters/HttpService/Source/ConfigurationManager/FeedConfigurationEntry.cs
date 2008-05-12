@@ -1,4 +1,5 @@
-﻿
+﻿using System;
+
 namespace Mesh4n.Adapters.HttpService.Configuration
 {
 	public class FeedConfigurationEntry
