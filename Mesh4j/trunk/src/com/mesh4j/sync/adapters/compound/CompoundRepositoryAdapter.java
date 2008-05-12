@@ -10,6 +10,7 @@ import com.mesh4j.sync.AbstractRepositoryAdapter;
 import com.mesh4j.sync.IFilter;
 import com.mesh4j.sync.adapters.EntityContent;
 import com.mesh4j.sync.adapters.SyncInfo;
+import com.mesh4j.sync.filter.SinceLastUpdateFilter;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.NullContent;
 import com.mesh4j.sync.model.Sync;
@@ -211,7 +212,7 @@ public class CompoundRepositoryAdapter extends AbstractRepositoryAdapter {
 	}
 
 	private boolean appliesFilter(Item item, Date since, IFilter<Item> filter) {
-		boolean dateOk = since == null || (item.getSync().getLastUpdate() == null || since.compareTo(item.getSync().getLastUpdate().getWhen()) <= 0);
+		boolean dateOk = SinceLastUpdateFilter.applies(item, since);
 		return filter.applies(item) && dateOk;
 	}
 

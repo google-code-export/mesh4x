@@ -21,12 +21,17 @@ public class SinceLastUpdateFilter implements IFilter<Item>{
 	
 	@Override
 	public boolean applies(Item item) {
-		if(item.getSync().getLastUpdate() == null || item.getSync().getLastUpdate().getWhen() == null){
+		return applies(item, this.since);
+	}
+	
+	public static boolean applies(Item item, Date since) {
+		if(since == null || item.getSync().getLastUpdate() == null || item.getSync().getLastUpdate().getWhen() == null){
 			return true;
 		} else {
 			Date lastUpdate = item.getSync().getLastUpdate().getWhen();
-			return this.since.compareTo(lastUpdate) <= 0;
+			return since.compareTo(lastUpdate) <= 0;
 		}
 	}
+
 
 }

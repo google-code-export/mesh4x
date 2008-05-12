@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.mesh4j.sync.AbstractRepositoryAdapter;
 import com.mesh4j.sync.IFilter;
+import com.mesh4j.sync.filter.SinceLastUpdateFilter;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.NullContent;
 import com.mesh4j.sync.security.ISecurity;
@@ -60,7 +61,7 @@ public class FeedAdapter extends AbstractRepositoryAdapter{
 	protected List<Item> getAll(Date since, IFilter<Item> filter) {
 		ArrayList<Item> result = new ArrayList<Item>();
 		for (Item item : this.feed.getItems()) {
-			boolean dateOk = since == null || since.compareTo(item.getSync().getLastUpdate().getWhen()) <= 0; 
+			boolean dateOk = SinceLastUpdateFilter.applies(item, since);
 			if(filter.applies(item) && dateOk){
 				result.add(item);
 			}

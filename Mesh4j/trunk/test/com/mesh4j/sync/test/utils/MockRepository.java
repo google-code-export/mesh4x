@@ -7,7 +7,7 @@ import java.util.List;
 
 import com.mesh4j.sync.AbstractRepositoryAdapter;
 import com.mesh4j.sync.IFilter;
-import com.mesh4j.sync.model.History;
+import com.mesh4j.sync.filter.SinceLastUpdateFilter;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.NullContent;
 import com.mesh4j.sync.security.NullSecurity;
@@ -78,13 +78,9 @@ public class MockRepository extends AbstractRepositoryAdapter {
 		ArrayList<Item> allItems = new ArrayList<Item>();
 		for(Item item : items.values())
 		{
-			History lastUpdate = item.getLastUpdate();
-			if ((since == null || 
-					lastUpdate == null || 
-					lastUpdate.getWhen() == null || 
-					lastUpdate.getWhen().compareTo(since)>= 0)
-				&& filter.applies(item))
+			if (SinceLastUpdateFilter.applies(item, since) && filter.applies(item)){
 				allItems.add(item.clone());
+			}
 		}
 		return allItems;
 	}

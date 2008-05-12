@@ -18,6 +18,7 @@ import com.mesh4j.sync.IFilter;
 import com.mesh4j.sync.adapters.EntityContent;
 import com.mesh4j.sync.adapters.SyncInfo;
 import com.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
+import com.mesh4j.sync.filter.SinceLastUpdateFilter;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.NullContent;
 import com.mesh4j.sync.model.Sync;
@@ -346,8 +347,9 @@ public class HibernateAdapter extends AbstractRepositoryAdapter implements ISess
 		return syncInfoMap;
 	}
 
-	private boolean appliesFilter(Item item, Date since, IFilter<Item> filter) {
-		boolean dateOk = since == null || (item.getSync().getLastUpdate() == null || since.compareTo(item.getSync().getLastUpdate().getWhen()) <= 0);  // TODO (JMT) create db filter
+	private boolean appliesFilter(Item item, Date since, IFilter<Item> filter) {  
+		// TODO (JMT) create db filter
+		boolean dateOk = SinceLastUpdateFilter.applies(item, since);
 		return filter.applies(item) && dateOk;
 	}
 
