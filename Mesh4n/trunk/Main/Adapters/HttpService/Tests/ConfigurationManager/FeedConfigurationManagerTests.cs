@@ -40,10 +40,10 @@ namespace Mesh4n.Adapters.HttpService.Tests
 		}
 
 		[Test]
-		public void ShouldInitializePath()
+		public void ShouldInitializeWithAbsolutePath()
 		{
 			FeedConfigurationManager manager = GetManagerInstance(FeedsFolder);
-			Assert.AreEqual(FeedsFolder, manager.ConfigurationPath);
+			Assert.AreEqual(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, FeedsFolder), manager.ConfigurationPath);
 		}
 
 		[Test]

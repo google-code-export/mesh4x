@@ -32,7 +32,7 @@ namespace Mesh4n.Adapters.HttpService.Tests
 			managerMock.Expect(manager => manager.LoadAll()).Returns(entries);
 
 			SyncService syncService = new SyncService (managerMock.Object, null);
-			FeedFormatter feed = syncService.GetRssFeeds();
+			RssFeedFormatter feed = syncService.GetRssFeeds();
 
 			Assert.IsNotNull(feed);
 			Assert.IsInstanceOfType(typeof(RssFeedFormatter), feed);
@@ -219,8 +219,84 @@ namespace Mesh4n.Adapters.HttpService.Tests
 
 			Assert.IsNotNull(feed);
 			Assert.IsNotNull(feed.Feed);
+			Assert.AreEqual("/feeds/Foo/" + id, feed.Feed.Link);
 			Assert.IsNotNull(feed.Items);
 			Assert.AreEqual(1, Count(feed.Items));
+		}
+
+		[Test]
+		public void ShouldGetRssItem()
+		{
+			string id = Guid.NewGuid().ToString();
+
+			Item item = new Item(new NullXmlItem(id), null);
+
+			Mock<ISyncAdapter> mockAdapter = new Mock<ISyncAdapter>();
+			mockAdapter.Expect(adapter => adapter.Get(id)).Returns(item);
+
+			FeedConfigurationEntry entry = new FeedConfigurationEntry("Foo", "Foo Title", "Foo Description", mockAdapter.Object);
+
+			Mock<IFeedConfigurationManager> managerMock = new Mock<IFeedConfigurationManager>();
+			managerMock.Expect(manager => manager.Load("Foo")).Returns(entry);
+
+			SyncService syncService = new SyncService(managerMock.Object, null);
+			RssFeedFormatter feed = syncService.GetRssItem("Foo", id);
+
+			Assert.IsNotNull(feed);
+			Assert.IsNotNull(feed.Feed);
+			Assert.AreEqual("/feeds/Foo/" + id, feed.Feed.Link);
+			Assert.IsNotNull(feed.Items);
+			Assert.AreEqual(1, Count(feed.Items));
+		}
+
+		[Test]
+		public void ShouldGetConflicts()
+		{
+			List<Item> conflicts = new List<Item>();
+			conflicts.Add(new Item(new NullXmlItem(Guid.NewGuid().ToString()), null));
+			conflicts.Add(new Item(new NullXmlItem(Guid.NewGuid().ToString()), null));
+
+			Mock<ISyncAdapter> mockAdapter = new Mock<ISyncAdapter>();
+			mockAdapter.Expect(adapter => adapter.GetConflicts()).Returns(conflicts);
+
+			FeedConfigurationEntry entry = new FeedConfigurationEntry("Foo", "Foo Title", "Foo Description", mockAdapter.Object);
+
+			Mock<IFeedConfigurationManager> managerMock = new Mock<IFeedConfigurationManager>();
+			managerMock.Expect(manager => manager.Load("Foo")).Returns(entry);
+
+			SyncService syncService = new SyncService(managerMock.Object, null);
+			FeedFormatter feed = syncService.GetConflicts("Foo", SupportedFormats.Rss20);
+
+			Assert.IsNotNull(feed);
+			Assert.IsNotNull(feed.Feed);
+			Assert.AreEqual("/feeds/Foo/conflicts", feed.Feed.Link);
+			Assert.IsNotNull(feed.Items);
+			Assert.AreEqual(2, Count(feed.Items));
+		}
+
+		[Test]
+		public void ShouldGetRssConflicts()
+		{
+			List<Item> conflicts = new List<Item>();
+			conflicts.Add(new Item(new NullXmlItem(Guid.NewGuid().ToString()), null));
+			conflicts.Add(new Item(new NullXmlItem(Guid.NewGuid().ToString()), null));
+
+			Mock<ISyncAdapter> mockAdapter = new Mock<ISyncAdapter>();
+			mockAdapter.Expect(adapter => adapter.GetConflicts()).Returns(conflicts);
+
+			FeedConfigurationEntry entry = new FeedConfigurationEntry("Foo", "Foo Title", "Foo Description", mockAdapter.Object);
+
+			Mock<IFeedConfigurationManager> managerMock = new Mock<IFeedConfigurationManager>();
+			managerMock.Expect(manager => manager.Load("Foo")).Returns(entry);
+
+			SyncService syncService = new SyncService(managerMock.Object, null);
+			RssFeedFormatter feed = syncService.GetRssConflicts("Foo");
+
+			Assert.IsNotNull(feed);
+			Assert.IsNotNull(feed.Feed);
+			Assert.AreEqual("/feeds/Foo/conflicts", feed.Feed.Link);
+			Assert.IsNotNull(feed.Items);
+			Assert.AreEqual(2, Count(feed.Items));
 		}
 
 		[Test]
