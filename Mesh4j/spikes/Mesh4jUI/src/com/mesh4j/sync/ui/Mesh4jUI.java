@@ -219,7 +219,7 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 
 	private String getTargetSyncFileName() {
 		String kmlName = this.targetFile.getText();
-		String syncFileName = kmlName.substring(0, kmlName.length()-3) + "_sync.xml";
+		String syncFileName = kmlName.substring(0, kmlName.length()-4) + "_sync.xml";
 		return syncFileName;
 	}
 
@@ -229,7 +229,7 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 
 	private String getSourceSyncFileName() {
 		String kmlName = this.sourceFile.getText();
-		String syncFileName = kmlName.substring(0, kmlName.length()-3) + "_sync.xml";
+		String syncFileName = kmlName.substring(0, kmlName.length()-4) + "_sync.xml";
 		return syncFileName;
 	}
 	
