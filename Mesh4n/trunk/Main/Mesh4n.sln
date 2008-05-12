@@ -3,7 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8E28D357-213F-4239-8F14-60423045A4AF}"
 	ProjectSection(SolutionItems) = preProject
-		Guard.cs = Guard.cs
 		localtestrun.2008.testrunconfig = localtestrun.2008.testrunconfig
 		..\Mesh4n.snk = ..\Mesh4n.snk
 		Mesh4n.vsmdi = Mesh4n.vsmdi

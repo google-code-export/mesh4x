@@ -40,6 +40,11 @@ namespace Mesh4n
 			items = ReadItemsImpl(feed);
 		}
 
+		public void Read(out IEnumerable<Item> items)
+		{
+			items = ReadItemsImpl(null);
+		}
+
 		protected abstract XmlQualifiedName ItemName { get; }
 
 		protected abstract Feed ReadFeed(XmlReader reader);

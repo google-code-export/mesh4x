@@ -60,9 +60,9 @@ namespace Mesh4n
 		/// <summary>
 		/// Permanently deletes the item from the repository, if supported by the implementation.
 		/// </summary>
-		/// <param name="id">The item SSE identifier.</param>
+		/// <param name="id">The item feedsync identifier.</param>
 		/// <remarks>
-		/// In order to perform an SSE delete, use <see cref="Behaviors.Delete"/> on 
+		/// In order to perform an feedsync delete, use <see cref="Behaviors.Delete"/> on 
 		/// the <see cref="Item.Sync"/>, and perform an <see cref="Update"/> instead of 
 		/// trying to delete directly from the repository.
 		/// <para>

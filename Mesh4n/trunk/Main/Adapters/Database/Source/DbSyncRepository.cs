@@ -212,15 +212,15 @@ namespace Mesh4n.Adapters.Data
 		protected string FormatSql(string cmd, string tableName, params string[] parms)
 		{
 			string[] names = new string[1 + (parms != null ? parms.Length : 0)];
-			names[0] = FormatTableName(tableName);
+			names[0] = FormatTableName(repositoryId, tableName);
 			if (parms != null)
 			{
 				int index = 1;
-				
+
 #if !PocketPC
 				if (this.Database is GenericDatabase)
 				{
-					for (index = 1; index < parms.Length + 1; index++ )
+					for (index = 1; index < parms.Length + 1; index++)
 						names[index] = "?";
 				}
 				else
