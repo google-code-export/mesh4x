@@ -17,6 +17,10 @@ namespace Mesh4n.Adapters.Data
 		
 		string repositoryId;
 
+		public GenericSyncAdapter() : base()
+		{
+		}
+
 		public GenericSyncAdapter(DbFactory factory) 
 			: this(factory, null)
 		{

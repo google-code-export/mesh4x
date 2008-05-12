@@ -21,6 +21,10 @@ namespace Mesh4n.Adapters.Data
 		Database database;
 		DbFactory dbFactory;
 
+		protected DbRepository()
+		{
+		}
+
 		protected DbRepository(DbFactory factory)
 		{
 			if (factory == null)
