@@ -47,7 +47,7 @@ public class URLAdapterTests {
 		Assert.assertEquals(1, items.size());
 		
 		Item item = items.get(0);
-		item.getContent().getPayload().setText("CIBRAXXXX");
+		item.getContent().getPayload().setText("example");
 		item.getSync().update("jmt", TestHelper.now());
 		
 		List<Item> result = this.urlAdapter.merge(items);
