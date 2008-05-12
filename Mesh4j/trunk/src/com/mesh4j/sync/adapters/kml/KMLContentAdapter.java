@@ -22,6 +22,7 @@ import com.mesh4j.sync.adapters.compound.IContentAdapter;
 import com.mesh4j.sync.model.IContent;
 import com.mesh4j.sync.utils.IdGenerator;
 import com.mesh4j.sync.utils.XMLHelper;
+import com.mesh4j.sync.validations.MeshException;
 
 public class KMLContentAdapter implements IContentAdapter{
 	
@@ -50,19 +51,25 @@ public class KMLContentAdapter implements IContentAdapter{
 	private Element kmlSharedFolderElement;
 	
 	// BUSINESS METHODS
-	public KMLContentAdapter(String kmlFile) throws Exception {
+	public KMLContentAdapter(String kmlFile){
 		this(new File(kmlFile));
 	}
 	
-	public KMLContentAdapter(File kmlFile) throws Exception{
+	public KMLContentAdapter(File kmlFile){
 		super();
-		this.kmlFile = kmlFile;
 		
-		SAXReader saxReader = new SAXReader();
-		this.kmlDocument = saxReader.read(this.kmlFile);
+		try{
+			this.kmlFile = kmlFile;
+			
+			SAXReader saxReader = new SAXReader();
+			this.kmlDocument = saxReader.read(this.kmlFile);
+			
+			this.initializeDocumentElement();
+			this.initializeFolderElement();
+		} catch(Exception e){
+			throw new MeshException(e);
+		}
 		
-		this.initializeDocumentElement();
-		this.initializeFolderElement();
 	}
 
 	private void initializeDocumentElement() {
@@ -118,8 +125,8 @@ public class KMLContentAdapter implements IContentAdapter{
 			xpath.setNamespaceContext(new SimpleNamespaceContext(map));
 			return (Element) xpath.selectSingleNode(this.kmlDocument);
 		} catch (JaxenException e) {
-			Logger.error(e.getMessage(), e); // TODO (JMT) throws runtime exception ?
-			return null;
+			Logger.error(e.getMessage(), e);
+			throw new MeshException(e);
 		}
 	}
 
@@ -193,7 +200,7 @@ public class KMLContentAdapter implements IContentAdapter{
 			}
 		} catch (Exception e) {
 			Logger.error(e.getMessage(), e);
-			return new ArrayList<EntityContent>();	// TODO (JMT) Throws runtime exception
+			throw new MeshException(e);			
 		}	
 		return result;
 	}

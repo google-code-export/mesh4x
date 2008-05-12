@@ -20,6 +20,7 @@ import com.mesh4j.sync.parsers.SyncInfoParser;
 import com.mesh4j.sync.security.ISecurity;
 import com.mesh4j.sync.utils.XMLHelper;
 import com.mesh4j.sync.validations.Guard;
+import com.mesh4j.sync.validations.MeshException;
 
 public class FileSyncRepository implements ISyncRepository{
 
@@ -32,11 +33,11 @@ public class FileSyncRepository implements ISyncRepository{
 	private SyncInfoParser syncInfoParser;
 
 	// BUSINESS METHODS
-	public FileSyncRepository(String syncInfoFileName, ISecurity security) throws DocumentException {
+	public FileSyncRepository(String syncInfoFileName, ISecurity security){
 		this(new File(syncInfoFileName), security);
 	}
 	
-	public FileSyncRepository(File syncInfoFile, ISecurity security) throws DocumentException {
+	public FileSyncRepository(File syncInfoFile, ISecurity security){
 
 		Guard.argumentNotNull(syncInfoFile, "syncInfoFile");
 		Guard.argumentNotNull(security, "security");
@@ -46,7 +47,11 @@ public class FileSyncRepository implements ISyncRepository{
 		this.initializeFile(syncInfoFile);
 		
 		SAXReader saxReader = new SAXReader();
-		this.syncDocument = saxReader.read(this.syncInfoFile);
+		try {
+			this.syncDocument = saxReader.read(this.syncInfoFile);
+		} catch (DocumentException e) {
+			throw new MeshException(e);
+		}
 		
 		this.syncInfoParser = new SyncInfoParser(RssSyndicationFormat.INSTANCE, security);
 	}
@@ -68,8 +73,8 @@ public class FileSyncRepository implements ISyncRepository{
 			try {
 				return syncInfoParser.convertElement2SyncInfo(syncInfoElement);
 			} catch (DocumentException e) {
-				Logger.error(e.getMessage(), e);  // TODO (JMT) throws runtime exception ?
-				return null;
+				Logger.error(e.getMessage(), e);
+				throw new MeshException(e);
 			}
 		}
 	}
@@ -85,7 +90,8 @@ public class FileSyncRepository implements ISyncRepository{
 				SyncInfo syncInfo = syncInfoParser.convertElement2SyncInfo(syncInfoElement);
 				result.add(syncInfo);
 			} catch (DocumentException e) {
-				Logger.error(e.getMessage(), e);  // TODO (JMT) throws runtime exception ?
+				Logger.error(e.getMessage(), e);
+				throw new MeshException(e);
 			}
 		}
 		return result;
@@ -106,8 +112,8 @@ public class FileSyncRepository implements ISyncRepository{
 				syncInfoElement.addAttribute(ATTRIBUTE_ID, syncInfo.getSyncId());
 			}
 		} catch (DocumentException e) {
-			Logger.error(e.getMessage(), e);  // TODO (JMT) throws runtime exception ?
-			return;
+			Logger.error(e.getMessage(), e);
+			throw new MeshException(e);
 		}
 		
 		Element original = this.syncDocument.elementByID(syncInfo.getSyncId());

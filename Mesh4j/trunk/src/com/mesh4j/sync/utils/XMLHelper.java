@@ -9,6 +9,8 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.io.XMLWriter;
 
+import com.mesh4j.sync.validations.MeshException;
+
 public class XMLHelper {
 	
 	private final static Log Logger = LogFactory.getLog(XMLHelper.class);
@@ -19,14 +21,16 @@ public class XMLHelper {
 			writer = new XMLWriter(new FileWriter(file));
 			writer.write(document);
 		} catch (IOException e) {
-			Logger.error(e.getMessage(), e);  // TODO (JMT) throws runtime exception ?
+			Logger.error(e.getMessage(), e);
+			throw new MeshException(e);
 		}finally{
 			try{
 				if(writer != null){
 					writer.close();
 				}
 			} catch (IOException e) {
-				Logger.error(e.getMessage(), e);  // TODO (JMT) throws runtime exception ?
+				Logger.error(e.getMessage(), e); 
+				throw new MeshException(e);
 			}
 		}
 	}		

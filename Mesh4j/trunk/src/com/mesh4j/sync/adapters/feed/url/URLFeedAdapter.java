@@ -34,6 +34,7 @@ import com.mesh4j.sync.security.ISecurity;
 import com.mesh4j.sync.translator.MessageTranslator;
 import com.mesh4j.sync.utils.DateHelper;
 import com.mesh4j.sync.validations.Guard;
+import com.mesh4j.sync.validations.MeshException;
 
 public class URLFeedAdapter implements IRepositoryAdapter {
 
@@ -47,12 +48,16 @@ public class URLFeedAdapter implements IRepositoryAdapter {
 	private FeedWriter feedWriter;
 	
 	// BUSINESS METHODS
-	public URLFeedAdapter(String url, ISyndicationFormat syndicationFormat, ISecurity security) throws MalformedURLException {
+	public URLFeedAdapter(String url, ISyndicationFormat syndicationFormat, ISecurity security){
 		Guard.argumentNotNullOrEmptyString(url, "url");
 		Guard.argumentNotNull(syndicationFormat, "syndicationFormat");
 		Guard.argumentNotNull(security, "security");
 		
-		this.url = new URL(url);
+		try {
+			this.url = new URL(url);
+		} catch (MalformedURLException e) {
+			throw new MeshException(e);
+		}
 		this.feedReader = new FeedReader(syndicationFormat, security);
 		this.feedWriter = new FeedWriter(syndicationFormat, security);
 	}
@@ -76,8 +81,8 @@ public class URLFeedAdapter implements IRepositoryAdapter {
 			feed = feedReader.read(documentResult);
 			return feed.getItems();
 		} catch (DocumentException e) {
-			Logger.error(e.getMessage(), e);  // TODO (JMT) throws runtime exception
-			return new ArrayList<Item>();
+			Logger.error(e.getMessage(), e); 
+			throw new MeshException(e);
 		}
 	}
 	
@@ -125,7 +130,8 @@ public class URLFeedAdapter implements IRepositoryAdapter {
 				}
 			}
 		} catch (DocumentException e) {
-			Logger.error(e.getMessage(), e);		// TODO (JMT) Throws runtime exception
+			Logger.error(e.getMessage(), e);
+			throw new MeshException(e);
 		}
 		return result;
 	}
@@ -149,7 +155,8 @@ public class URLFeedAdapter implements IRepositoryAdapter {
 			conn.setIfModifiedSince(since.getTime());
 			result = readData(conn);
 	    } catch(Exception e){
-	    	Logger.error(e.getMessage(), e);	// TODO (JMT) throws runtime exception
+	    	Logger.error(e.getMessage(), e);
+	    	throw new MeshException(e);
 	    }		
 		return result;
 	}
@@ -177,7 +184,8 @@ public class URLFeedAdapter implements IRepositoryAdapter {
 		    writeData(content, conn);		    
 		    result = readData(conn);
 	    } catch(Exception e){
-	    	Logger.error(e.getMessage(), e);	// TODO (JMT) throws runtime exception
+	    	Logger.error(e.getMessage(), e);
+	    	throw new MeshException(e);
 	    } finally{
 	    	if(conn != null){
 	    		conn.disconnect();

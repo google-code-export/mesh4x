@@ -17,6 +17,7 @@ import org.hibernate.Session;
 import com.mesh4j.sync.adapters.SyncInfo;
 import com.mesh4j.sync.parsers.SyncInfoParser;
 import com.mesh4j.sync.utils.IdGenerator;
+import com.mesh4j.sync.validations.MeshException;
 
 /**
  * Use CompoundRepositoryAdapter with a SyncHibernateRepository 
@@ -50,7 +51,8 @@ public class SyncDAO {
 		try {
 			syncInfo = syncInfoParser.convertElement2SyncInfo(syncInfoElement);
 		} catch (DocumentException e) {
-			Logger.error(e.getMessage(), e); // TODO (JMT) throws runtime exception ?
+			Logger.error(e.getMessage(), e);
+			throw new MeshException(e);
 		}
 		return syncInfo;
 	}
@@ -60,8 +62,8 @@ public class SyncDAO {
 		try {
 			syncInfoElement = syncInfoParser.convertSyncInfo2Element(syncInfo);
 		} catch (DocumentException e) {
-			Logger.error(e.getMessage(), e); // TODO (JMT) throws runtime exception ?
-			return;
+			Logger.error(e.getMessage(), e);
+			throw new MeshException(e);
 		}
 		
 		Session session = getSession();		
@@ -81,7 +83,8 @@ public class SyncDAO {
 				syncInfo = syncInfoParser.convertElement2SyncInfo(syncInfoElement);
 				result.add(syncInfo);
 			} catch (DocumentException e) {
-				Logger.error(e.getMessage(), e); // TODO (JMT) throws runtime exception ?
+				Logger.error(e.getMessage(), e);
+				throw new MeshException(e);
 			}
 		}
 		return result;

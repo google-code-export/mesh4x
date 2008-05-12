@@ -22,6 +22,7 @@ import com.mesh4j.sync.adapters.SyncInfo;
 import com.mesh4j.sync.adapters.compound.ISyncRepository;
 import com.mesh4j.sync.parsers.SyncInfoParser;
 import com.mesh4j.sync.utils.IdGenerator;
+import com.mesh4j.sync.validations.MeshException;
 
 // TODO (JMT) test
 public class HibernateSyncRepository implements ISyncRepository{
@@ -60,7 +61,8 @@ public class HibernateSyncRepository implements ISyncRepository{
 		try {
 			syncInfo = syncInfoParser.convertElement2SyncInfo(syncInfoElement);
 		} catch (DocumentException e) {
-			Logger.error(e.getMessage(), e); // TODO (JMT) throws runtime exception ?
+			Logger.error(e.getMessage(), e);
+			throw new MeshException(e);
 		}
 		return syncInfo;
 	}
@@ -103,8 +105,8 @@ public class HibernateSyncRepository implements ISyncRepository{
 		try {
 			syncInfoElement = syncInfoParser.convertSyncInfo2Element(syncInfo);
 		} catch (DocumentException e) {
-			Logger.error(e.getMessage(), e); // TODO (JMT) throws runtime exception ?
-			return null;
+			Logger.error(e.getMessage(), e);
+			throw new MeshException(e);
 		}
 		return syncInfoElement;
 	}
