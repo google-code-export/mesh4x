@@ -1,61 +1,61 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Mesh4n.Adapters.HttpService.Configuration;
+using NUnit.Framework;
 
 namespace Mesh4n.Adapters.HttpService.Tests
 {
-	[TestClass]
+	[TestFixture]
 	public class FeedConfigurationEntryTests
 	{
 		public FeedConfigurationEntryTests()
 		{
 		}
 
-		[TestMethod]
+		[Test]
 		[ExpectedException(typeof(ArgumentNullException))]
 		public void ShouldThrowIfNullName()
 		{
 			new FeedConfigurationEntry(null, "title", "desc", new MockSyncAdapter());
 		}
 
-		[TestMethod]
+		[Test]
 		[ExpectedException(typeof(ArgumentException))]
 		public void ShouldThrowIfEmptyName()
 		{
 			new FeedConfigurationEntry("", "title", "desc", new MockSyncAdapter());
 		}
 
-		[TestMethod]
+		[Test]
 		[ExpectedException(typeof(ArgumentNullException))]
 		public void ShouldThrowIfNullTitle()
 		{
 			new FeedConfigurationEntry("name", null, "desc", new MockSyncAdapter());
 		}
 
-		[TestMethod]
+		[Test]
 		[ExpectedException(typeof(ArgumentException))]
 		public void ShouldThrowIfEmptyTitle()
 		{
 			new FeedConfigurationEntry("name", "", "desc", new MockSyncAdapter());
 		}
 
-		[TestMethod]
+		[Test]
 		[ExpectedException(typeof(ArgumentNullException))]
 		public void ShouldThrowIfNullDescription()
 		{
 			new FeedConfigurationEntry("name", "title", null, new MockSyncAdapter());
 		}
 
-		[TestMethod]
+		[Test]
 		[ExpectedException(typeof(ArgumentException))]
 		public void ShouldThrowIfEmptyDescription()
 		{
 			new FeedConfigurationEntry("name", "title", "", new MockSyncAdapter());
 		}
 
-		[TestMethod]
+		[Test]
 		[ExpectedException(typeof(ArgumentNullException))]
 		public void ShouldThrowIfNullAdapter()
 		{

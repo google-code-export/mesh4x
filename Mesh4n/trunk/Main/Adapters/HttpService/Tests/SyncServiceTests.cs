@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Mesh4n.Adapters.HttpService.Configuration;
 using System.ServiceModel.Channels;
 using System.ServiceModel;
@@ -11,17 +10,18 @@ using Mesh4n.Tests;
 using System.Net;
 using System.Globalization;
 using System.ServiceModel.Web;
+using NUnit.Framework;
 
 namespace Mesh4n.Adapters.HttpService.Tests
 {
-	[TestClass]
+	[TestFixture]
 	public class SyncServiceTests : TestFixtureBase
 	{
 		public SyncServiceTests()
 		{
 		}
 
-		[TestMethod]
+		[Test]
 		public void ShouldGetRssFeeds()
 		{
 			FeedConfigurationEntry entry = new FeedConfigurationEntry("Foo", "Foo Title", "Foo Description", new MockSyncAdapter());
@@ -35,10 +35,10 @@ namespace Mesh4n.Adapters.HttpService.Tests
 			FeedFormatter feed = syncService.GetRssFeeds();
 
 			Assert.IsNotNull(feed);
-			Assert.IsInstanceOfType(feed, typeof(RssFeedFormatter));
+			Assert.IsInstanceOfType(typeof(RssFeedFormatter), feed);
 		}
 
-		[TestMethod]
+		[Test]
 		public void ShouldGetFeedsWithSpecifiedFormat()
 		{
 			FeedConfigurationEntry entry = new FeedConfigurationEntry("Foo", "Foo Title", "Foo Description", new MockSyncAdapter());
@@ -52,10 +52,10 @@ namespace Mesh4n.Adapters.HttpService.Tests
 			FeedFormatter feed = syncService.GetFeeds(SupportedFormats.Rss20);
 
 			Assert.IsNotNull(feed);
-			Assert.IsInstanceOfType(feed, typeof(RssFeedFormatter));
+			Assert.IsInstanceOfType(typeof(RssFeedFormatter), feed);
 		}
 
-		[TestMethod]
+		[Test]
 		public void ShouldGetEmptyFeed()
 		{
 			List<FeedConfigurationEntry> entries = new List<FeedConfigurationEntry>();
@@ -69,7 +69,7 @@ namespace Mesh4n.Adapters.HttpService.Tests
 			Assert.IsNotNull(feed);
 		}
 
-		[TestMethod]
+		[Test]
 		[ExpectedException(typeof(ServiceException))]
 		public void ShouldReturnBadRequestIfInvalidFormat()
 		{
@@ -77,7 +77,7 @@ namespace Mesh4n.Adapters.HttpService.Tests
 			FeedFormatter feed = syncService.GetFeeds("FooFormat");
 		}
 
-		[TestMethod]
+		[Test]
 		public void ShouldGetCompleteFeed()
 		{
 			List<Item> items = new List<Item>();
@@ -110,7 +110,7 @@ namespace Mesh4n.Adapters.HttpService.Tests
 			
 		}
 
-		[TestMethod]
+		[Test]
 		public void ShouldGetPartialFeedWhenIfModifiedSinceHeaderExists()
 		{
 			List<Item> items = new List<Item>();
@@ -144,7 +144,7 @@ namespace Mesh4n.Adapters.HttpService.Tests
 			
 		}
 
-		[TestMethod]
+		[Test]
 		public void ShouldReturnNullAndSetHeadersIfNoItemsExistWhenGetPartialFeed()
 		{
 			List<Item> items = new List<Item>();
@@ -175,7 +175,7 @@ namespace Mesh4n.Adapters.HttpService.Tests
 			
 		}
 
-		[TestMethod]
+		[Test]
 		public void ShouldSetETagAndLastModifiedHeadersWhenGetFeed()
 		{
 			List<Item> items = new List<Item>();
@@ -199,7 +199,7 @@ namespace Mesh4n.Adapters.HttpService.Tests
 			webContextMock.OutgoingWebResponseContext.VerifyAll();
 		}
 
-		[TestMethod]
+		[Test]
 		public void ShouldGetItem()
 		{
 			string id = Guid.NewGuid().ToString();
@@ -223,7 +223,7 @@ namespace Mesh4n.Adapters.HttpService.Tests
 			Assert.AreEqual(1, Count(feed.Items));
 		}
 
-		[TestMethod]
+		[Test]
 		[ExpectedException(typeof(ServiceException))]
 		public void ShouldReturnNullAndSetHeadersIfItemNotFound()
 		{
@@ -241,7 +241,7 @@ namespace Mesh4n.Adapters.HttpService.Tests
 			FeedFormatter feed = syncService.GetItem("Foo", id, SupportedFormats.Rss20);
 		}
 
-		[TestMethod]
+		[Test]
 		public void ShouldPostFeed()
 		{
 			List<Item> items = new List<Item>();
@@ -278,7 +278,7 @@ namespace Mesh4n.Adapters.HttpService.Tests
 			mockAdapter.Verify();
 		}
 
-		[TestMethod]
+		[Test]
 		public void ShouldPostItem()
 		{
 			string id = Guid.NewGuid().ToString();
@@ -305,7 +305,7 @@ namespace Mesh4n.Adapters.HttpService.Tests
 			mockAdapter.Verify();
 		}
 
-		[TestMethod]
+		[Test]
 		[ExpectedException(typeof(ServiceException))]
 		public void ShouldBadRequestIfDifferentIdWhenPostItem()
 		{
@@ -315,7 +315,7 @@ namespace Mesh4n.Adapters.HttpService.Tests
 			FeedFormatter conflictsFormatter = syncService.PostItem("entry", Guid.NewGuid().ToString(), SupportedFormats.Rss20, feedFormatter);
 		}
 
-		[TestMethod]
+		[Test]
 		[ExpectedException(typeof(ServiceException))]
 		public void ShouldThrowIfInvalidFormatWhenPostItem()
 		{
@@ -325,7 +325,7 @@ namespace Mesh4n.Adapters.HttpService.Tests
 			FeedFormatter conflictsFormatter = syncService.PostItem("entry", Guid.NewGuid().ToString(), "FooFormat", feedFormatter);
 		}
 
-		[TestMethod]
+		[Test]
 		[ExpectedException(typeof(ServiceException))]
 		public void ShouldThrowIfInvalidFormatWhenPostFeed()
 		{
@@ -335,7 +335,7 @@ namespace Mesh4n.Adapters.HttpService.Tests
 			FeedFormatter conflictsFormatter = syncService.PostFeed("entry", "FooFormat", feedFormatter);
 		}
 
-		[TestMethod]
+		[Test]
 		[ExpectedException(typeof(ServiceException))]
 		public void ShouldThrowIfInvalidFeedName()
 		{

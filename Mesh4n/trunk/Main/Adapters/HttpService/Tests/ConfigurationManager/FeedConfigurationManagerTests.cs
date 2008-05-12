@@ -1,28 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 using Mesh4n.Adapters.HttpService.Configuration;
 using System.Collections.Specialized;
 using System.Configuration;
 using Mesh4n.Tests;
+using NUnit.Framework;
 
 namespace Mesh4n.Adapters.HttpService.Tests
 {
-	[TestClass]
+	[TestFixture]
 	public class FeedConfigurationManagerTests : TestFixtureBase
 	{
 		const string FeedsFolder = "feeds";
 
-		[TestInitialize]
+		[TestFixtureSetUp]
 		public void TestInitialize()
 		{
 			if (Directory.Exists(FeedsFolder))
 				Directory.Delete(FeedsFolder, true);
 		}
 		
-		[TestMethod]
+		[Test]
 		[ExpectedException(typeof(ConfigurationErrorsException))]
 		public void ShouldThrowIfPathIsNull()
 		{
@@ -30,7 +30,7 @@ namespace Mesh4n.Adapters.HttpService.Tests
 			new FeedConfigurationManager().Initialize(attributes);
 		}
 
-		[TestMethod]
+		[Test]
 		[ExpectedException(typeof(ConfigurationErrorsException))]
 		public void ShouldThrowIfPathIsEmpty()
 		{
@@ -39,14 +39,14 @@ namespace Mesh4n.Adapters.HttpService.Tests
 			new FeedConfigurationManager().Initialize(attributes);
 		}
 
-		[TestMethod]
+		[Test]
 		public void ShouldInitializePath()
 		{
 			FeedConfigurationManager manager = GetManagerInstance(FeedsFolder);
 			Assert.AreEqual(FeedsFolder, manager.ConfigurationPath);
 		}
 
-		[TestMethod]
+		[Test]
 		public void ShouldGetAllEntries()
 		{
 			FeedConfigurationManager manager = GetManagerInstance(FeedsFolder);
@@ -65,7 +65,7 @@ namespace Mesh4n.Adapters.HttpService.Tests
 			Assert.AreEqual(2, Count(entries));
 		}
 
-		[TestMethod]
+		[Test]
 		[ExpectedException(typeof(ArgumentNullException))]
 		public void ShouldThrowIfSaveJobIsNull()
 		{
@@ -73,7 +73,7 @@ namespace Mesh4n.Adapters.HttpService.Tests
 			manager.Save(null);
 		}
 
-		[TestMethod]
+		[Test]
 		public void ShouldSaveAndLoadEntry()
 		{
 			FeedConfigurationManager manager = GetManagerInstance(FeedsFolder);
@@ -89,10 +89,10 @@ namespace Mesh4n.Adapters.HttpService.Tests
 			Assert.AreEqual("entry1", entry.Name);
 			Assert.AreEqual("title 1", entry.Title);
 			Assert.AreEqual("description 1", entry.Description);
-			Assert.IsInstanceOfType(entry.SyncAdapter, typeof(MockSyncAdapter));
+			Assert.IsInstanceOfType(typeof(MockSyncAdapter), entry.SyncAdapter);
 		}
 
-		[TestMethod]
+		[Test]
 		public void ShouldOverwriteExistingConfiguration()
 		{
 			FeedConfigurationManager manager = GetManagerInstance(FeedsFolder);
@@ -112,10 +112,10 @@ namespace Mesh4n.Adapters.HttpService.Tests
 			Assert.IsNotNull(entry1);
 			Assert.AreEqual("title new", entry1.Title);
 			Assert.AreEqual("description new", entry1.Description);
-			Assert.IsInstanceOfType(entry1.SyncAdapter, typeof(MockSyncAdapter));
+			Assert.IsInstanceOfType(typeof(MockSyncAdapter), entry1.SyncAdapter);
 		}
 
-		[TestMethod]
+		[Test]
 		[ExpectedException(typeof(ArgumentException))]
 		public void ShouldThrowIfInvalidFileContents()
 		{
@@ -127,7 +127,7 @@ namespace Mesh4n.Adapters.HttpService.Tests
 			manager.Load("myFeed");
 		}
 
-		[TestMethod]
+		[Test]
 		[ExpectedException(typeof(ArgumentException))]
 		public void ShouldThrowIfNotSaveXamlFeedConfigurationEntry()
 		{

@@ -1,20 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Configuration;
 using Mesh4n.Adapters.HttpService.Configuration;
+using NUnit.Framework;
 
 namespace Mesh4n.Adapters.HttpService.Tests
 {
-	[TestClass]
+	[TestFixture]
 	public class SyncServiceConfigurationSectionTests
 	{
 		public SyncServiceConfigurationSectionTests()
 		{
 		}
 
-		[TestMethod]
+		[Test]
 		public void ShouldLoadConfigurationFromFile()
 		{
 			SyncServiceConfigurationSection configurationSection = 
@@ -27,20 +27,20 @@ namespace Mesh4n.Adapters.HttpService.Tests
 			Assert.IsNotNull(configurationSection.ConfigurationManager.Attributes["configurationPath"]);
 		}
 
-		[TestMethod]
+		[Test]
 		public void ShouldGetSectionInstance()
 		{
 			SyncServiceConfigurationSection configurationSection = SyncServiceConfigurationSection.GetSection();
 			Assert.IsNotNull(configurationSection);
 		}
 
-		[TestMethod]
+		[Test]
 		public void ShouldGetFeedManagerInstance()
 		{
 			IFeedConfigurationManager manager = SyncServiceConfigurationSection.GetConfigurationManager();
 			
 			Assert.IsNotNull(manager);
-			Assert.IsInstanceOfType(manager, typeof(FeedConfigurationManager));
+			Assert.IsInstanceOfType(typeof(FeedConfigurationManager), manager);
 		}
 	}
 }

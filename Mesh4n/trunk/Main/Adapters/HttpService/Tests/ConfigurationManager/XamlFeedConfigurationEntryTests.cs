@@ -2,20 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Mesh4n.Adapters.HttpService.Configuration;
 using System.ComponentModel;
+using NUnit.Framework;
 
 namespace Mesh4n.Adapters.HttpService.Tests
 {
-	[TestClass]
+	[TestFixture]
 	public class XamlFeedConfigurationEntryTests
 	{
 		public XamlFeedConfigurationEntryTests()
 		{
 		}
 
-		[TestMethod]
+		[Test]
 		[ExpectedException(typeof(ArgumentNullException))]
 		public void ShouldThrowIfNullName()
 		{
@@ -29,7 +29,7 @@ namespace Mesh4n.Adapters.HttpService.Tests
 			((ISupportInitialize)entry).EndInit();
 		}
 
-		[TestMethod]
+		[Test]
 		[ExpectedException(typeof(ArgumentException))]
 		public void ShouldThrowIfEmptyName()
 		{
@@ -57,7 +57,7 @@ namespace Mesh4n.Adapters.HttpService.Tests
 			((ISupportInitialize)entry).EndInit();
 		}
 
-		[TestMethod]
+		[Test]
 		[ExpectedException(typeof(ArgumentException))]
 		public void ShouldThrowIfEmptyTitle()
 		{
@@ -85,7 +85,7 @@ namespace Mesh4n.Adapters.HttpService.Tests
 			((ISupportInitialize)entry).EndInit();
 		}
 
-		[TestMethod]
+		[Test]
 		[ExpectedException(typeof(ArgumentException))]
 		public void ShouldThrowIfEmptyDescription()
 		{
@@ -100,7 +100,7 @@ namespace Mesh4n.Adapters.HttpService.Tests
 			((ISupportInitialize)entry).EndInit();
 		}
 
-		[TestMethod]
+		[Test]
 		[ExpectedException(typeof(ArgumentNullException))]
 		public void ShouldThrowIfNullAdapter()
 		{
