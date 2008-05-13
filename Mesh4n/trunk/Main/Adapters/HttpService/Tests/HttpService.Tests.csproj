@@ -31,11 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Moq, Version=2.5.3029.17367, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
+    <Reference Include="nunit.framework, Version=2.4.7.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Lib\Moq.dll</HintPath>
     </Reference>
-    <Reference Include="nunit.framework, Version=2.4.7.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core">
@@ -57,6 +55,8 @@
     <Compile Include="ConfigurationManager\FeedConfigurationCacheTests.cs" />
     <Compile Include="ConfigurationManager\FeedConfigurationEntryTests.cs" />
     <Compile Include="ConfigurationManager\FeedConfigurationManagerTests.cs" />
+    <Compile Include="KmlFormatterFixture.cs" />
+    <Compile Include="MockWebContext.cs" />
     <Compile Include="SyncServiceConfigurationSectionTests.cs" />
     <Compile Include="MockSyncAdapter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -64,6 +64,10 @@
     <Compile Include="ConfigurationManager\XamlFeedConfigurationEntryTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Lib\Moq\Source\Moq.csproj">
+      <Project>{1C91AC30-5977-4BE5-BA67-8EB186C03514}</Project>
+      <Name>Moq</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\Lib\netfx\ServiceModel\ServiceModel.csproj">
       <Project>{ECECCF97-761E-43D3-9178-D22BCB5AC37B}</Project>
       <Name>ServiceModel</Name>
@@ -83,6 +87,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Test.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

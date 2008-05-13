@@ -94,41 +94,9 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "SyncService", "http://local
 		SlnRelativePath = "Adapters\HttpService\WebHost\"
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Moq", "..\Lib\Moq\Source\Moq.csproj", "{1C91AC30-5977-4BE5-BA67-8EB186C03514}"
+EndProject
 Global
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 8
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = https://tfs03.codeplex.com/
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = Source\\SimpleSharing.CF.csproj
-		SccProjectTopLevelParentUniqueName1 = SimpleSharing.2008.sln
-		SccProjectName1 = Source
-		SccLocalPath1 = Source
-		SccProjectUniqueName2 = Source\\SimpleSharing.csproj
-		SccProjectTopLevelParentUniqueName2 = SimpleSharing.2008.sln
-		SccProjectName2 = Source
-		SccLocalPath2 = Source
-		SccProjectUniqueName3 = UnitTests\\SimpleSharing.Tests.CF.csproj
-		SccProjectTopLevelParentUniqueName3 = SimpleSharing.2008.sln
-		SccProjectName3 = UnitTests
-		SccLocalPath3 = UnitTests
-		SccProjectUniqueName4 = UnitTests\\SimpleSharing.Tests.csproj
-		SccProjectTopLevelParentUniqueName4 = SimpleSharing.2008.sln
-		SccProjectName4 = UnitTests
-		SccLocalPath4 = UnitTests
-		SccProjectUniqueName5 = ..\\Tools\\CFUnitTester\\GuiTestRunner\\GuiTestRunner.csproj
-		SccProjectTopLevelParentUniqueName5 = SimpleSharing.2008.sln
-		SccProjectName5 = ../Tools/CFUnitTester/GuiTestRunner
-		SccLocalPath5 = ..\\Tools\\CFUnitTester\\GuiTestRunner
-		SccProjectUniqueName6 = ..\\Tools\\CFUnitTester\\TestRunner\\TestRunner.csproj
-		SccProjectTopLevelParentUniqueName6 = SimpleSharing.2008.sln
-		SccProjectName6 = ../Tools/CFUnitTester/TestRunner
-		SccLocalPath6 = ..\\Tools\\CFUnitTester\\TestRunner
-		SccProjectUniqueName7 = ..\\Tools\\CFUnitTester\\UnitTesting\\UnitTesting.csproj
-		SccProjectTopLevelParentUniqueName7 = SimpleSharing.2008.sln
-		SccProjectName7 = ../Tools/CFUnitTester/UnitTesting
-		SccLocalPath7 = ..\\Tools\\CFUnitTester\\UnitTesting
-	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = Mesh4n.vsmdi
 	EndGlobalSection
@@ -320,6 +288,16 @@ Global
 		{CB2565DB-22D5-40DB-9DC8-4B603CE9E774}.Release|Any CPU.ActiveCfg = Debug|.NET
 		{CB2565DB-22D5-40DB-9DC8-4B603CE9E774}.Release|Mixed Platforms.ActiveCfg = Debug|.NET
 		{CB2565DB-22D5-40DB-9DC8-4B603CE9E774}.Release|Mixed Platforms.Build.0 = Debug|.NET
+		{1C91AC30-5977-4BE5-BA67-8EB186C03514}.Debug|.NET.ActiveCfg = Debug|Any CPU
+		{1C91AC30-5977-4BE5-BA67-8EB186C03514}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C91AC30-5977-4BE5-BA67-8EB186C03514}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C91AC30-5977-4BE5-BA67-8EB186C03514}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{1C91AC30-5977-4BE5-BA67-8EB186C03514}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{1C91AC30-5977-4BE5-BA67-8EB186C03514}.Release|.NET.ActiveCfg = Release|Any CPU
+		{1C91AC30-5977-4BE5-BA67-8EB186C03514}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C91AC30-5977-4BE5-BA67-8EB186C03514}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C91AC30-5977-4BE5-BA67-8EB186C03514}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{1C91AC30-5977-4BE5-BA67-8EB186C03514}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -347,6 +325,41 @@ Global
 		{F270D44E-2295-4768-8141-F3E05D4F555B} = {B16FE232-3F23-4945-A185-222AA7674DDD}
 		{20FB53D7-5EA9-4EC1-BE5E-31E9602CAF0B} = {B16FE232-3F23-4945-A185-222AA7674DDD}
 		{ECECCF97-761E-43D3-9178-D22BCB5AC37B} = {07368F68-5FDD-4474-93D3-97B7521CEB5E}
+		{1C91AC30-5977-4BE5-BA67-8EB186C03514} = {07368F68-5FDD-4474-93D3-97B7521CEB5E}
+	EndGlobalSection
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 8
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://tfs03.codeplex.com/
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = Source\\SimpleSharing.CF.csproj
+		SccProjectTopLevelParentUniqueName1 = SimpleSharing.2008.sln
+		SccProjectName1 = Source
+		SccLocalPath1 = Source
+		SccProjectUniqueName2 = Source\\SimpleSharing.csproj
+		SccProjectTopLevelParentUniqueName2 = SimpleSharing.2008.sln
+		SccProjectName2 = Source
+		SccLocalPath2 = Source
+		SccProjectUniqueName3 = UnitTests\\SimpleSharing.Tests.CF.csproj
+		SccProjectTopLevelParentUniqueName3 = SimpleSharing.2008.sln
+		SccProjectName3 = UnitTests
+		SccLocalPath3 = UnitTests
+		SccProjectUniqueName4 = UnitTests\\SimpleSharing.Tests.csproj
+		SccProjectTopLevelParentUniqueName4 = SimpleSharing.2008.sln
+		SccProjectName4 = UnitTests
+		SccLocalPath4 = UnitTests
+		SccProjectUniqueName5 = ..\\Tools\\CFUnitTester\\GuiTestRunner\\GuiTestRunner.csproj
+		SccProjectTopLevelParentUniqueName5 = SimpleSharing.2008.sln
+		SccProjectName5 = ../Tools/CFUnitTester/GuiTestRunner
+		SccLocalPath5 = ..\\Tools\\CFUnitTester\\GuiTestRunner
+		SccProjectUniqueName6 = ..\\Tools\\CFUnitTester\\TestRunner\\TestRunner.csproj
+		SccProjectTopLevelParentUniqueName6 = SimpleSharing.2008.sln
+		SccProjectName6 = ../Tools/CFUnitTester/TestRunner
+		SccLocalPath6 = ..\\Tools\\CFUnitTester\\TestRunner
+		SccProjectUniqueName7 = ..\\Tools\\CFUnitTester\\UnitTesting\\UnitTesting.csproj
+		SccProjectTopLevelParentUniqueName7 = SimpleSharing.2008.sln
+		SccProjectName7 = ../Tools/CFUnitTester/UnitTesting
+		SccLocalPath7 = ..\\Tools\\CFUnitTester\\UnitTesting
 	EndGlobalSection
 	GlobalSection(TextTemplating) = postSolution
 		TextTemplating = 1
