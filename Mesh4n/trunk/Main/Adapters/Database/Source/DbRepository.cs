@@ -168,7 +168,7 @@ namespace Mesh4n.Adapters.Data
 				DataTable userTables = connection.GetSchema("Tables");
 				foreach (DataRow row in userTables.Rows)
 				{
-					if (tableName == row["TABLE_NAME"].ToString())
+					if (tableName.Equals(row["TABLE_NAME"].ToString(), StringComparison.InvariantCultureIgnoreCase))
 						return true;
 				}
 
