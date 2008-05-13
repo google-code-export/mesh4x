@@ -20,7 +20,7 @@ public class FeedAdapterTests {
 
 	@Test
 	public void  shouldBeReturnNewFeed(){
-		File file = new File(IdGenerator.newID()+".xml");
+		File file = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
 		FeedAdapter repo = new FeedAdapter(file, RssSyndicationFormat.INSTANCE, NullSecurity.INSTANCE, new Feed());
 		Feed feed = repo.getFeed();
 		
@@ -32,7 +32,7 @@ public class FeedAdapterTests {
 	public void shouldBeReturnFeed(){
 		Feed feedSource = new Feed();
 		
-		File file = new File(IdGenerator.newID()+".xml");
+		File file = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
 		FeedAdapter repo = new FeedAdapter(file, RssSyndicationFormat.INSTANCE, NullSecurity.INSTANCE, feedSource);
 
 		Feed feed = repo.getFeed();
@@ -43,7 +43,7 @@ public class FeedAdapterTests {
 	
 	@Test
 	public void shouldNotSupportMerge(){
-		File file = new File(IdGenerator.newID()+".xml");
+		File file = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
 		FeedAdapter repo = new FeedAdapter(file, RssSyndicationFormat.INSTANCE, NullSecurity.INSTANCE, new Feed());
 
 		Assert.assertFalse(repo.supportsMerge());		
@@ -51,7 +51,7 @@ public class FeedAdapterTests {
 	
 	@Test(expected=UnsupportedOperationException.class)
 	public void shouldNotMerge(){
-		File file = new File(IdGenerator.newID()+".xml");
+		File file = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
 		FeedAdapter repo = new FeedAdapter(file, RssSyndicationFormat.INSTANCE, NullSecurity.INSTANCE, new Feed());
 				
 		repo.merge(new ArrayList<Item>());
@@ -61,7 +61,7 @@ public class FeedAdapterTests {
 	public void shouldBeAddItem(){
 		Item item = new Item(null, new Sync("suncId123"));
 		
-		File file = new File(IdGenerator.newID()+".xml");
+		File file = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
 		FeedAdapter repo = new FeedAdapter(file, RssSyndicationFormat.INSTANCE, NullSecurity.INSTANCE, new Feed());
 
 		repo.add(item);
@@ -80,7 +80,7 @@ public class FeedAdapterTests {
 		Feed feed = new Feed();
 		feed.addItem(item);
 		
-		File file = new File(IdGenerator.newID()+".xml");
+		File file = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
 		FeedAdapter repo = new FeedAdapter(file, RssSyndicationFormat.INSTANCE, NullSecurity.INSTANCE, feed);
 
 		repo.delete(item.getSyncId());
@@ -96,7 +96,7 @@ public class FeedAdapterTests {
 		Feed feed = new Feed();
 		feed.addItem(item);
 		
-		File file = new File(IdGenerator.newID()+".xml");
+		File file = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
 		FeedAdapter repo = new FeedAdapter(file, RssSyndicationFormat.INSTANCE, NullSecurity.INSTANCE, feed);
 
 		Item resultItem = repo.get(item.getSyncId());
@@ -113,7 +113,7 @@ public class FeedAdapterTests {
 		feed.addItem(item0);
 		feed.addItem(item1);
 		
-		File file = new File(IdGenerator.newID()+".xml");
+		File file = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
 		FeedAdapter repo = new FeedAdapter(file, RssSyndicationFormat.INSTANCE, NullSecurity.INSTANCE, feed);
 
 		List<Item> results = repo.getAll(null, new NullFilter<Item>());
@@ -136,7 +136,7 @@ public class FeedAdapterTests {
 		feed.addItem(item0);
 		feed.addItem(item1);
 		
-		File file = new File(IdGenerator.newID()+".xml");
+		File file = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
 		FeedAdapter repo = new FeedAdapter(file, RssSyndicationFormat.INSTANCE, NullSecurity.INSTANCE, feed);
 
 		List<Item> results = repo.getAll(sinceDate, new NullFilter<Item>());
@@ -148,7 +148,7 @@ public class FeedAdapterTests {
 
 	@Test
 	public void shouldReturnFriendlyName() {
-		File file = new File(IdGenerator.newID()+".xml");
+		File file = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
 		FeedAdapter repo = new FeedAdapter(file, RssSyndicationFormat.INSTANCE, NullSecurity.INSTANCE, new Feed());
 
 		Assert.assertFalse(FeedAdapter.class.getName() == repo.getFriendlyName());
