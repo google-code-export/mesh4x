@@ -10,9 +10,7 @@ namespace Mesh4n
 	public abstract class FeedFormatter : IXmlSerializable
 	{
 		Feed feed;
-		// HACK: It must be a List, otherwise the XmlSerializer will close the reader before the items
-		// are read from the enumeration.
-		List<Item> items; 
+		IEnumerable<Item> items; 
 
 		public FeedFormatter()
 		{
@@ -21,7 +19,7 @@ namespace Mesh4n
 		public FeedFormatter(Feed feed, IEnumerable<Item> items)
 		{
 			this.feed = feed;
-			this.items = items;
+			this.items = new List<Item>(items);
 		}
 
 		public Feed Feed
@@ -50,6 +48,10 @@ namespace Mesh4n
 
 			FeedReader feedReader = CreateFeedReader(reader);
 			feedReader.Read(out feed, out items);
+
+			// HACK: It must be a List, otherwise the XmlSerializer will close the reader before the items
+			// are read from the enumeration.
+			items = new List<Item>(items);
 		}
 
 		public void WriteXml(System.Xml.XmlWriter writer)
@@ -57,7 +59,7 @@ namespace Mesh4n
 			Guard.ArgumentNotNull(writer, "writer");
 			
 			FeedWriter feedWriter = CreateFeedWriter(writer);
-			feedWriter.Write(this.feed, this.items);
+			feedWriter.Write(this.feed, new List<Item>(this.items));
 		}
 
 	}
