@@ -1,4 +1,4 @@
-package com.mesh4j.sync.adapters.feed.url;
+package com.mesh4j.sync.adapters.http;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,10 +35,9 @@ import com.mesh4j.sync.utils.DateHelper;
 import com.mesh4j.sync.validations.Guard;
 import com.mesh4j.sync.validations.MeshException;
 
-// TODO (JMT) Rename to HttpFeedAdapter
-public class URLFeedAdapter implements IRepositoryAdapter {
+public class HttpSyncAdapter implements IRepositoryAdapter {
 
-	private final static Log Logger = LogFactory.getLog(URLFeedAdapter.class);
+	private final static Log Logger = LogFactory.getLog(HttpSyncAdapter.class);
 	private final static NullFilter<Item> NULL_FILTER = new NullFilter<Item>();
 	private final static ConflictsFilter CONFLICTS_FILTER = new ConflictsFilter();
 	
@@ -48,7 +47,7 @@ public class URLFeedAdapter implements IRepositoryAdapter {
 	private FeedWriter feedWriter;
 	
 	// BUSINESS METHODS
-	public URLFeedAdapter(String url, ISyndicationFormat syndicationFormat, ISecurity security){
+	public HttpSyncAdapter(String url, ISyndicationFormat syndicationFormat, ISecurity security){
 		Guard.argumentNotNullOrEmptyString(url, "url");
 		Guard.argumentNotNull(syndicationFormat, "syndicationFormat");
 		Guard.argumentNotNull(security, "security");
@@ -115,7 +114,7 @@ public class URLFeedAdapter implements IRepositoryAdapter {
 				feed = feedReader.read(this.url);
 			} else {
 				String xml = GETSince(since);
-				if(xml == null){
+				if(xml == null || xml.trim().length() == 0){
 					return result;
 				}
 				Document documentFeed = DocumentHelper.parseText(xml);

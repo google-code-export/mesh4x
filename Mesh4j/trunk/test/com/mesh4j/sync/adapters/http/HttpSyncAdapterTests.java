@@ -1,4 +1,4 @@
-package com.mesh4j.sync.adapters.feed.url;
+package com.mesh4j.sync.adapters.http;
 
 import java.net.MalformedURLException;
 import java.util.List;
@@ -19,29 +19,28 @@ import com.mesh4j.sync.security.NullSecurity;
 import com.mesh4j.sync.test.utils.TestHelper;
 import com.mesh4j.sync.utils.IdGenerator;
 
-
-public class URLAdapterTests {
+public class HttpSyncAdapterTests {
 
 	// MODEL VARIABLES
-	private URLFeedAdapter urlAdapter;
+	private HttpSyncAdapter httpAdapter;
 	
 	// BUSINESS METHODS
 	
 	@Before
 	public void setUp() throws MalformedURLException{
 		String path = "http://localhost:7777/feeds/KML";
-		this.urlAdapter = new URLFeedAdapter(path, RssSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		this.httpAdapter = new HttpSyncAdapter(path, RssSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
 	}
 		
 	@Test
 	public void shouldExecuteGetAll(){
-		List<Item> items = this.urlAdapter.getAll();
+		List<Item> items = this.httpAdapter.getAll();
 		Assert.assertEquals(0, items.size());
 	}
 	
 	@Test
 	public void shouldExecuteGetAllSince(){
-		List<Item> items = this.urlAdapter.getAllSince(TestHelper.now());
+		List<Item> items = this.httpAdapter.getAllSince(TestHelper.now());
 		Assert.assertEquals(0, items.size());
 	}
 
@@ -70,7 +69,7 @@ public class URLAdapterTests {
 		FeedReader reader = new FeedReader(RssSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
 		Feed feed = reader.read(DocumentHelper.parseText(xml));
 				
-		List<Item> result = this.urlAdapter.merge(feed.getItems());
+		List<Item> result = this.httpAdapter.merge(feed.getItems());
 		Assert.assertEquals(0, result.size());
 	}
 	
