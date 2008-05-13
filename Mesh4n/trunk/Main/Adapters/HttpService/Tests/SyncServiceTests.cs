@@ -82,9 +82,14 @@ namespace Mesh4n.Adapters.HttpService.Tests
 		{
 			List<Item> items = new List<Item>();
 
-			items.Add(new Item(new NullXmlItem(Guid.NewGuid().ToString()), null));
-			items.Add(new Item(new NullXmlItem(Guid.NewGuid().ToString()), null));
-			items.Add(new Item(new NullXmlItem(Guid.NewGuid().ToString()), null));
+			string id = Guid.NewGuid().ToString();
+			items.Add(new Item(new NullXmlItem(id), Behaviors.Create(id, "pci", DateTime.Now, false)));
+
+			id = Guid.NewGuid().ToString();
+			items.Add(new Item(new NullXmlItem(id), Behaviors.Create(id, "pci", DateTime.Now, false)));
+
+			id = Guid.NewGuid().ToString();
+			items.Add(new Item(new NullXmlItem(id), Behaviors.Create(id, "pci", DateTime.Now, false)));
 
 			Mock<ISyncAdapter> mockAdapter = new Mock<ISyncAdapter>();
 			mockAdapter.Expect(adapter => adapter.GetAll()).Returns(items).Verifiable();
@@ -98,12 +103,13 @@ namespace Mesh4n.Adapters.HttpService.Tests
 			webContextMock.IncomingWebRequestContext.ExpectGet(requestContext => requestContext.Headers).Returns(new WebHeaderCollection()).Verifiable();
 
 			SyncService syncService = new SyncService(managerMock.Object, webContextMock.Object);
-			FeedFormatter feed = syncService.GetFeed("Foo", SupportedFormats.Rss20);
+			Message feed = syncService.GetFeed("Foo", SupportedFormats.Rss20);
+			RssFeedFormatter formatter = feed.GetBody<RssFeedFormatter>();
 
-			Assert.IsNotNull(feed);
-			Assert.IsNotNull(feed.Feed);
-			Assert.IsNotNull(feed.Items);
-			Assert.AreEqual(3, Count(feed.Items));
+			Assert.IsNotNull(formatter);
+			Assert.IsNotNull(formatter.Feed);
+			Assert.IsNotNull(formatter.Items);
+			Assert.AreEqual(3, Count(formatter.Items));
 
 			mockAdapter.Verify();
 			webContextMock.IncomingWebRequestContext.Verify();
@@ -115,9 +121,14 @@ namespace Mesh4n.Adapters.HttpService.Tests
 		{
 			List<Item> items = new List<Item>();
 
-			items.Add(new Item(new NullXmlItem(Guid.NewGuid().ToString()), null));
-			items.Add(new Item(new NullXmlItem(Guid.NewGuid().ToString()), null));
-			items.Add(new Item(new NullXmlItem(Guid.NewGuid().ToString()), null));
+			string id = Guid.NewGuid().ToString();
+			items.Add(new Item(new NullXmlItem(id), Behaviors.Create(id, "pci", DateTime.Now, false)));
+
+			id = Guid.NewGuid().ToString();
+			items.Add(new Item(new NullXmlItem(id), Behaviors.Create(id, "pci", DateTime.Now, false)));
+
+			id = Guid.NewGuid().ToString();
+			items.Add(new Item(new NullXmlItem(id), Behaviors.Create(id, "pci", DateTime.Now, false)));
 
 			Mock<ISyncAdapter> mockAdapter = new Mock<ISyncAdapter>();
 			mockAdapter.Expect(adapter => adapter.GetAllSince(It.IsAny<DateTime>())).Returns(items).Verifiable();
@@ -134,17 +145,20 @@ namespace Mesh4n.Adapters.HttpService.Tests
 			webContextMock.IncomingWebRequestContext.ExpectGet(requestContext => requestContext.Headers).Returns(webHeaderCollection).Verifiable();
 
 			SyncService syncService = new SyncService(managerMock.Object, webContextMock.Object);
-			FeedFormatter feed = syncService.GetFeed("Foo", SupportedFormats.Rss20);
+			Message feed = syncService.GetFeed("Foo", SupportedFormats.Rss20);
+
+			RssFeedFormatter formatter = feed.GetBody<RssFeedFormatter>();
 
 			webContextMock.IncomingWebRequestContext.Verify();
-			Assert.IsNotNull(feed);
-			Assert.IsNotNull(feed.Feed);
-			Assert.IsNotNull(feed.Items);
-			Assert.AreEqual(3, Count(feed.Items));
+			Assert.IsNotNull(formatter);
+			Assert.IsNotNull(formatter.Feed);
+			Assert.IsNotNull(formatter.Items);
+			Assert.AreEqual(3, Count(formatter.Items));
 			
 		}
 
 		[Test]
+		[ExpectedException(typeof(ServiceException))]
 		public void ShouldReturnNullAndSetHeadersIfNoItemsExistWhenGetPartialFeed()
 		{
 			List<Item> items = new List<Item>();
@@ -167,7 +181,7 @@ namespace Mesh4n.Adapters.HttpService.Tests
 			webContextMock.OutgoingWebResponseContext.ExpectSet(responseContext => responseContext.SuppressEntityBody).Callback(seb => Assert.AreEqual(true, seb));
 			
 			SyncService syncService = new SyncService(managerMock.Object, webContextMock.Object);
-			FeedFormatter feed = syncService.GetFeed("Foo", SupportedFormats.Rss20);
+			Message feed = syncService.GetFeed("Foo", SupportedFormats.Rss20);
 
 			mockAdapter.Verify();
 			webContextMock.OutgoingWebResponseContext.VerifyAll();
@@ -194,7 +208,7 @@ namespace Mesh4n.Adapters.HttpService.Tests
 			webContextMock.OutgoingWebResponseContext.ExpectSet(responseContext => responseContext.ETag);
 
 			SyncService syncService = new SyncService(managerMock.Object, webContextMock.Object);
-			FeedFormatter feed = syncService.GetFeed("Foo", SupportedFormats.Rss20);
+			Message feed = syncService.GetFeed("Foo", SupportedFormats.Rss20);
 
 			webContextMock.OutgoingWebResponseContext.VerifyAll();
 		}
@@ -344,7 +358,7 @@ namespace Mesh4n.Adapters.HttpService.Tests
 			FeedFormatter feedFormatter = new RssFeedFormatter(new Feed(), items);
 
 			SyncService syncService = new SyncService(managerMock.Object, null);
-			FeedFormatter conflictsFormatter = syncService.PostFeed("Foo", SupportedFormats.Rss20, feedFormatter);
+			FeedFormatter conflictsFormatter = syncService.PostFeed("Foo", feedFormatter);
 
 			Assert.IsNotNull(conflictsFormatter);
 			Assert.IsNotNull(conflictsFormatter.Feed);
@@ -371,7 +385,7 @@ namespace Mesh4n.Adapters.HttpService.Tests
 			FeedFormatter feedFormatter = new RssFeedFormatter(new Feed(), new Item[] { item });
 
 			SyncService syncService = new SyncService(managerMock.Object, null);
-			FeedFormatter conflictsFormatter = syncService.PostItem("Foo", id, SupportedFormats.Rss20, feedFormatter);
+			FeedFormatter conflictsFormatter = syncService.PostItem("Foo", id, feedFormatter);
 
 			Assert.IsNotNull(conflictsFormatter);
 			Assert.IsNotNull(conflictsFormatter.Feed);
@@ -388,27 +402,7 @@ namespace Mesh4n.Adapters.HttpService.Tests
 			FeedFormatter feedFormatter = new RssFeedFormatter(new Feed(), new Item[] {});
 
 			SyncService syncService = new SyncService(null, null);
-			FeedFormatter conflictsFormatter = syncService.PostItem("entry", Guid.NewGuid().ToString(), SupportedFormats.Rss20, feedFormatter);
-		}
-
-		[Test]
-		[ExpectedException(typeof(ServiceException))]
-		public void ShouldThrowIfInvalidFormatWhenPostItem()
-		{
-			FeedFormatter feedFormatter = new RssFeedFormatter(new Feed(), new Item[] {});
-
-			SyncService syncService = new SyncService(null, null);
-			FeedFormatter conflictsFormatter = syncService.PostItem("entry", Guid.NewGuid().ToString(), "FooFormat", feedFormatter);
-		}
-
-		[Test]
-		[ExpectedException(typeof(ServiceException))]
-		public void ShouldThrowIfInvalidFormatWhenPostFeed()
-		{
-			FeedFormatter feedFormatter = new RssFeedFormatter(new Feed(), new Item[] {});
-
-			SyncService syncService = new SyncService(null, null);
-			FeedFormatter conflictsFormatter = syncService.PostFeed("entry", "FooFormat", feedFormatter);
+			FeedFormatter conflictsFormatter = syncService.PostItem("entry", Guid.NewGuid().ToString(), feedFormatter);
 		}
 
 		[Test]
@@ -419,7 +413,7 @@ namespace Mesh4n.Adapters.HttpService.Tests
 			managerMock.Expect(manager => manager.Load(It.IsAny<string>()));
 
 			SyncService syncService = new SyncService(managerMock.Object, null);
-			FeedFormatter feed = syncService.GetFeed("MyNewFeed", SupportedFormats.Rss20);
+			Message feed = syncService.GetFeed("MyNewFeed", SupportedFormats.Rss20);
 		}
 
 		public class WebContextMock : Mock<IWebOperationContext>

@@ -66,8 +66,8 @@
     <Compile Include="ConfigurationManager\FeedConfigurationEntry.cs" />
     <Compile Include="ConfigurationManager\FeedConfigurationManager.cs" />
     <Compile Include="ConfigurationManager\XamlFeedConfigurationEntry.cs" />
-    <Compile Include="FeedMessageConverter.cs" />
-    <Compile Include="IMessageFormatter.cs" />
+    <Compile Include="MessageFormatters\FeedMessageFormatter.cs" />
+    <Compile Include="MessageFormatters\IMessageFormatter.cs" />
     <Compile Include="SupportedFormats.cs" />
     <Compile Include="SyncService.cs" />
     <Compile Include="SyncServiceConfigurationSection.cs" />

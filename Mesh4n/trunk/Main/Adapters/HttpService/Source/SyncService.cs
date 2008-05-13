@@ -7,6 +7,8 @@ using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
 using Mesh4n.Adapters.HttpService.Configuration;
 using Mesh4n.Adapters.HttpService.Properties;
+using System.ServiceModel.Channels;
+using Mesh4n.Adapters.HttpService.MessageFormatters;
 
 namespace Mesh4n.Adapters.HttpService
 {
@@ -49,7 +51,7 @@ namespace Mesh4n.Adapters.HttpService
 			return (RssFeedFormatter)GetFeeds(SupportedFormats.Rss20);
 		}
 
-		public FeedFormatter GetFeed(string name, string format)
+		public Message GetFeed(string name, string format)
 		{
 			ValidateFormat(format);
 
@@ -79,12 +81,15 @@ namespace Mesh4n.Adapters.HttpService
 			SetSinceDate(this.operationContext, DateTime.Now);
 			
 			Feed feed = CreateFeed(entry.Title, entry.Description, "/feeds/" + name);
-			return CreateFeedFormatter(feed, items, format);
+
+			IMessageFormatter formatter = GetFormatter(format);
+
+			return formatter.Format(entry.Name, feed, items, this.operationContext);
 		}
 
-		public RssFeedFormatter GetRssFeed(string name)
+		public Message GetRssFeed(string name)
 		{
-			return (RssFeedFormatter)GetFeed(name, SupportedFormats.Rss20);
+			return GetFeed(name, SupportedFormats.Rss20);
 		}
 
 		public FeedFormatter GetItem(string name, string itemId, string format)
@@ -140,10 +145,8 @@ namespace Mesh4n.Adapters.HttpService
 			return (RssFeedFormatter)GetConflicts(name, SupportedFormats.Rss20);
 		}
 		
-		public FeedFormatter PostFeed(string name, string format, FeedFormatter formatter)
+		public FeedFormatter PostFeed(string name, FeedFormatter formatter)
 		{
-			ValidateFormat(format);
-
 			FeedConfigurationEntry entry = configurationManager.Load(name);
 			if (entry == null)
 			{
@@ -156,18 +159,11 @@ namespace Mesh4n.Adapters.HttpService
 
 			Feed feed = CreateFeed(entry.Title, entry.Description, "/feeds/" + name);
 			
-			return CreateFeedFormatter(feed, conflicts, format);
+			return CreateFeedFormatter(feed, conflicts, formatter.GetType());
 		}
 
-		public RssFeedFormatter PostRssFeed(string name, RssFeedFormatter formatter)
+		public FeedFormatter PostItem(string name, string itemId, FeedFormatter formatter)
 		{
-			return (RssFeedFormatter)PostFeed(name, SupportedFormats.Rss20, formatter);
-		}
-
-		public FeedFormatter PostItem(string name, string itemId, string format, FeedFormatter formatter)
-		{
-			ValidateFormat(format);
-
 			IEnumerator<Item> enumerator = formatter.Items.GetEnumerator();
 			if (!enumerator.MoveNext())
 			{
@@ -181,17 +177,28 @@ namespace Mesh4n.Adapters.HttpService
 					Resources.DifferentIds, itemId, item.XmlItem.Id), HttpStatusCode.BadRequest);
 			}
 
-			return PostFeed(name, format, formatter);
+			return PostFeed(name, formatter);
 		}
 
-		public RssFeedFormatter PostRssItem(string name, string itemId, RssFeedFormatter formatter)
+		protected virtual IMessageFormatter GetFormatter(string format)
 		{
-			return (RssFeedFormatter)PostItem(name, itemId, SupportedFormats.Rss20, formatter);
+			if (format == SupportedFormats.Rss20)
+				return new FeedMessageFormatter();
+
+			return null;
 		}
 
 		protected virtual FeedFormatter CreateFeedFormatter(Feed feed, IEnumerable<Item> items, string format)
 		{
 			if(format == SupportedFormats.Rss20)
+				return new RssFeedFormatter(feed, items);
+
+			return null;
+		}
+
+		protected virtual FeedFormatter CreateFeedFormatter(Feed feed, IEnumerable<Item> items, Type feedFormatterType)
+		{
+			if (feedFormatterType == typeof(RssFeedFormatter))
 				return new RssFeedFormatter(feed, items);
 
 			return null;
