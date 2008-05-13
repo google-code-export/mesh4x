@@ -49,6 +49,7 @@
     <Reference Include="System.ServiceModel.Web">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
@@ -61,6 +62,7 @@
     <Compile Include="..\..\..\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="ConfigurationManager\FeedConfigurationCache.cs" />
     <Compile Include="ConfigurationManager\FeedConfigurationEntry.cs" />
     <Compile Include="ConfigurationManager\FeedConfigurationManager.cs" />
     <Compile Include="ConfigurationManager\XamlFeedConfigurationEntry.cs" />

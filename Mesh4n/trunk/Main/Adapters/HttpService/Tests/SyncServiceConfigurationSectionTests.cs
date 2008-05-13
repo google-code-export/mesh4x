@@ -17,7 +17,7 @@ namespace Mesh4n.Adapters.HttpService.Tests
 		[Test]
 		public void ShouldLoadConfigurationFromFile()
 		{
-			SyncServiceConfigurationSection configurationSection = 
+			SyncServiceConfigurationSection configurationSection =
 				(SyncServiceConfigurationSection)ConfigurationManager.GetSection(SyncServiceConfigurationSection.SectionName);
 
 			Assert.IsNotNull(configurationSection);

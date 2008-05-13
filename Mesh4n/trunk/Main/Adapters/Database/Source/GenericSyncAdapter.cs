@@ -8,10 +8,11 @@ using System.Xml;
 using System.IO;
 using Microsoft.Practices.EnterpriseLibrary.Data.SqlCe;
 using System.Data.SqlTypes;
+using System.ComponentModel;
 
 namespace Mesh4n.Adapters.Data
 {
-	public class GenericSyncAdapter : DbRepository, ISyncAdapter
+	public class GenericSyncAdapter : DbRepository, ISyncAdapter, ISupportInitialize
 	{
 		private const string RepositoryPrefix = "Mesh4n_";
 		
@@ -76,18 +77,25 @@ namespace Mesh4n.Adapters.Data
 			DbDataReader reader = null;
 			try
 			{
-				if (since.HasValue)
+				try
 				{
-					since = Timestamp.Normalize(since.Value);
-					
-					reader = ExecuteReader(
-						FormatSql(@"SELECT * FROM [{0}] WHERE LastUpdate >= {1} OR LastUpdate IS NULL", "Sync", "sd"),
-						CreateParameter("sd", DbType.DateTime, 0, since));
+					if (since.HasValue)
+					{
+						since = Timestamp.Normalize(since.Value);
+
+						reader = ExecuteReader(
+							FormatSql(@"SELECT * FROM [{0}] WHERE LastUpdate >= {1} OR LastUpdate IS NULL", "Sync", "sd"),
+							CreateParameter("sd", DbType.DateTime, 0, since));
+					}
+					else
+					{
+						reader = ExecuteReader(
+							FormatSql(@"SELECT * FROM [{0}]", "Sync"));
+					}
 				}
-				else
+				catch (Exception ex)
 				{
-					reader = ExecuteReader(
-						FormatSql(@"SELECT * FROM [{0}]", "Sync"));
+					string s = ex.Message;
 				}
 
 				while (reader.Read())
@@ -350,7 +358,16 @@ namespace Mesh4n.Adapters.Data
 			return sw.ToString();
 		}
 
-		
-		
+		public void BeginInit()
+		{
+		}
+
+		public void EndInit()
+		{
+			ExecuteDb(delegate(DbConnection cn)
+			{
+				InitializeSchema(cn);
+			});
+		}
 	}
 }

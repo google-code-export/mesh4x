@@ -10,6 +10,8 @@ namespace Mesh4n.Adapters.HttpService
 	{
 		public const string SectionName = "feedSyncService";
 
+		private static volatile IFeedConfigurationManager managerInstance = null;
+
 		/// <summary>
 		/// Gets the configuration manager configuration
 		/// </summary>
@@ -26,20 +28,29 @@ namespace Mesh4n.Adapters.HttpService
 
 		public static IFeedConfigurationManager GetConfigurationManager()
 		{
-			SyncServiceConfigurationSection section = GetSection();
-			
-			Type type = Type.GetType(section.ConfigurationManager.TypeName, true, true);
-			IFeedConfigurationManager manager = (IFeedConfigurationManager)Activator.CreateInstance(type) as IFeedConfigurationManager;
-
-			if (manager == null)
+			if (managerInstance == null)
 			{
-				throw new ArgumentException(string.Format(
-					Resources.InvalidConfigurationManagerType, type.AssemblyQualifiedName));
+				lock (typeof(SyncServiceConfigurationSection))
+				{
+					if (managerInstance == null)
+					{
+						SyncServiceConfigurationSection section = GetSection();
+
+						Type type = Type.GetType(section.ConfigurationManager.TypeName, true, true);
+						managerInstance = (IFeedConfigurationManager)Activator.CreateInstance(type) as IFeedConfigurationManager;
+
+						if (managerInstance == null)
+						{
+							throw new ArgumentException(string.Format(
+								Resources.InvalidConfigurationManagerType, type.AssemblyQualifiedName));
+						}
+
+						managerInstance.Initialize(section.ConfigurationManager.Attributes);
+					}
+				}
 			}
 
-			manager.Initialize(section.ConfigurationManager.Attributes);
-
-			return manager;
+			return managerInstance;      
 		}
 	}
 

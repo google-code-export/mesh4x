@@ -54,6 +54,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConfigurationManager\FeedConfigurationCacheTests.cs" />
     <Compile Include="ConfigurationManager\FeedConfigurationEntryTests.cs" />
     <Compile Include="ConfigurationManager\FeedConfigurationManagerTests.cs" />
     <Compile Include="SyncServiceConfigurationSectionTests.cs" />

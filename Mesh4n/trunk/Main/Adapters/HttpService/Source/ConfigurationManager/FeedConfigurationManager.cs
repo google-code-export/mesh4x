@@ -14,9 +14,16 @@ namespace Mesh4n.Adapters.HttpService.Configuration
 		const string SerializerExtension = "xaml";
 
 		private string configurationPath;
+		private IFeedConfigurationCache cache;
 
 		public FeedConfigurationManager()
 		{
+			this.cache = new FeedConfigurationCache();
+		}
+
+		public FeedConfigurationManager(IFeedConfigurationCache cache)
+		{
+			this.cache = cache;
 		}
 
 		public string ConfigurationPath
@@ -57,13 +64,18 @@ namespace Mesh4n.Adapters.HttpService.Configuration
 		public FeedConfigurationEntry Load(string feedName)
 		{
 			Guard.ArgumentNotNullOrEmptyString(feedName, "feedName");
-			
-			string configPath = GetSettingsFile(feedName);
-			if (File.Exists(configPath))
+
+			FeedConfigurationEntry entry = this.cache.GetEntry(feedName);
+			if (entry == null)
 			{
-				return DeserializeFeedEntry(configPath);
+				string configPath = GetSettingsFile(feedName);
+				if (File.Exists(configPath))
+				{
+					entry = DeserializeFeedEntry(configPath);
+					this.cache.AddEntry(configPath, entry);
+				}
 			}
-			return null;
+			return entry;
 		}
 
 		public IEnumerable<FeedConfigurationEntry> LoadAll()
@@ -74,6 +86,9 @@ namespace Mesh4n.Adapters.HttpService.Configuration
 			foreach (string file in files)
 			{
 				FeedConfigurationEntry configurationEntry = DeserializeFeedEntry(file);
+				
+				this.cache.AddEntry(file, configurationEntry);
+
 				yield return configurationEntry;
 			}
 		}
