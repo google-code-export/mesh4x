@@ -10,7 +10,9 @@ namespace Mesh4n
 	public abstract class FeedFormatter : IXmlSerializable
 	{
 		Feed feed;
-		IEnumerable<Item> items;
+		// HACK: It must be a List, otherwise the XmlSerializer will close the reader before the items
+		// are read from the enumeration.
+		List<Item> items; 
 
 		public FeedFormatter()
 		{
