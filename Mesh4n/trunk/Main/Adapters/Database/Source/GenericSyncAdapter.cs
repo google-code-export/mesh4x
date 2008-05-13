@@ -16,7 +16,7 @@ namespace Mesh4n.Adapters.Data
 	{
 		private const string RepositoryPrefix = "Mesh4n_";
 		
-		string repositoryId;
+		string replicaId;
 
 		public GenericSyncAdapter() : base()
 		{
@@ -27,10 +27,10 @@ namespace Mesh4n.Adapters.Data
 		{
 		}
 
-		public GenericSyncAdapter(DbFactory factory, string repositoryId) 
+		public GenericSyncAdapter(DbFactory factory, string replicaId) 
 			: base(factory)
 		{
-			this.repositoryId = repositoryId;
+			this.replicaId = replicaId;
 
 			ExecuteDb(delegate(DbConnection cn)
 			{
@@ -38,10 +38,10 @@ namespace Mesh4n.Adapters.Data
 			});
 		}
 
-		public string RepositoryId
+		public string ReplicaId
 		{
-			get { return repositoryId; }
-			set { repositoryId = value; }
+			get { return replicaId; }
+			set { replicaId = value; }
 		}
 
 		public bool SupportsMerge
@@ -77,26 +77,21 @@ namespace Mesh4n.Adapters.Data
 			DbDataReader reader = null;
 			try
 			{
-				try
+				
+				if (since.HasValue)
 				{
-					if (since.HasValue)
-					{
-						since = Timestamp.Normalize(since.Value);
+					since = Timestamp.Normalize(since.Value);
 
-						reader = ExecuteReader(
-							FormatSql(@"SELECT * FROM [{0}] WHERE LastUpdate >= {1} OR LastUpdate IS NULL", "Sync", "sd"),
-							CreateParameter("sd", DbType.DateTime, 0, since));
-					}
-					else
-					{
-						reader = ExecuteReader(
-							FormatSql(@"SELECT * FROM [{0}]", "Sync"));
-					}
+					reader = ExecuteReader(
+						FormatSql(@"SELECT * FROM [{0}] WHERE LastUpdate >= {1} OR LastUpdate IS NULL", "Sync", "sd"),
+						CreateParameter("sd", DbType.DateTime, 0, since));
 				}
-				catch (Exception ex)
+				else
 				{
-					string s = ex.Message;
+					reader = ExecuteReader(
+						FormatSql(@"SELECT * FROM [{0}]", "Sync"));
 				}
+				
 
 				while (reader.Read())
 				{
@@ -258,9 +253,9 @@ namespace Mesh4n.Adapters.Data
 			return true;
 		}
 
-		protected void InitializeSchema(DbConnection cn)
+		protected virtual void InitializeSchema(DbConnection cn)
 		{
-			if (!TableExists(cn, FormatTableName(repositoryId, "Sync")))
+			if (!TableExists(cn, FormatTableName(replicaId, "Sync")))
 			{
 				ExecuteNonQuery(FormatSql(@"
 						CREATE TABLE [{0}](
@@ -275,7 +270,7 @@ namespace Mesh4n.Adapters.Data
 		protected string FormatSql(string cmd, string tableName, params string[] parms)
 		{
 			string[] names = new string[1 + (parms != null ? parms.Length : 0)];
-			names[0] = FormatTableName(repositoryId, tableName);
+			names[0] = FormatTableName(replicaId, tableName);
 			if (parms != null)
 			{
 				int index = 1;
@@ -300,11 +295,11 @@ namespace Mesh4n.Adapters.Data
 			return String.Format(cmd, names);
 		}
 
-		private string FormatTableName(string repositoryId, string tableName)
+		private string FormatTableName(string replicaId, string tableName)
 		{
-			if (!String.IsNullOrEmpty(repositoryId))
+			if (!String.IsNullOrEmpty(replicaId))
 			{
-				return RepositoryPrefix + repositoryId + "_" + tableName;
+				return RepositoryPrefix + replicaId + "_" + tableName;
 			}
 			else
 			{

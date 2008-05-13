@@ -49,7 +49,7 @@ namespace Mesh4n.Adapters.HttpService.Tests
 		[Test]
 		public void ShouldGetAllEntries()
 		{
-			FeedConfigurationManager manager = GetManagerInstance("c:\\feeds");
+			FeedConfigurationManager manager = GetManagerInstance(FeedsFolder);
 
 			FeedConfigurationEntry entry1 = new XamlFeedConfigurationEntry("entry1",
 				"title 1", "description 1", new MockRepository());
