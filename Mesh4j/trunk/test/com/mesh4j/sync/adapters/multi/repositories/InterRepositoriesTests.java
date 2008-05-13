@@ -15,7 +15,6 @@ import org.junit.Test;
 import com.mesh4j.sync.SyncEngine;
 import com.mesh4j.sync.adapters.feed.Feed;
 import com.mesh4j.sync.adapters.feed.FeedAdapter;
-import com.mesh4j.sync.adapters.feed.FeedReader;
 import com.mesh4j.sync.adapters.feed.FeedWriter;
 import com.mesh4j.sync.adapters.feed.XMLContent;
 import com.mesh4j.sync.adapters.feed.atom.AtomSyndicationFormat;
@@ -25,11 +24,15 @@ import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.Sync;
 import com.mesh4j.sync.security.NullSecurity;
 import com.mesh4j.sync.test.utils.TestHelper;
+import com.mesh4j.sync.utils.IdGenerator;
 
 public class InterRepositoriesTests {
 
 	@Test
 	public void shouldSyncFeed2Hibernate() throws DocumentException{
+		
+		File rssFile = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
+
 		String id1 = TestHelper.newID();
 		String id2 = TestHelper.newID();
 		
@@ -40,7 +43,7 @@ public class InterRepositoriesTests {
 			.addItem(new Item(new XMLContent(id1, id1, id1, e1), new Sync(id1).update(NullSecurity.INSTANCE.getAuthenticatedUser(), new Date())))
 			.addItem(new Item(new XMLContent(id2, id2, id2, e2), new Sync(id2).update(NullSecurity.INSTANCE.getAuthenticatedUser(), new Date())));
 		
-		FeedAdapter feedRepo = new FeedAdapter(feed, NullSecurity.INSTANCE);
+		FeedAdapter feedRepo = new FeedAdapter(rssFile, RssSyndicationFormat.INSTANCE, NullSecurity.INSTANCE, feed);
 				
 		HibernateAdapter hibernateRepo = new HibernateAdapter(InterRepositoriesTests.class.getResource("User.hbm.xml").getFile(), NullSecurity.INSTANCE);
 		
@@ -61,7 +64,9 @@ public class InterRepositoriesTests {
 	@Test
 	public void shouldSyncHibernate2Feed() throws IOException, DocumentException{
 		
-		FeedAdapter feedRepo = new FeedAdapter(NullSecurity.INSTANCE);
+		File rssFile = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
+
+		FeedAdapter feedRepo = new FeedAdapter(rssFile, RssSyndicationFormat.INSTANCE, NullSecurity.INSTANCE, new Feed());
 		
 		HibernateAdapter	hibernateRepo = new HibernateAdapter(InterRepositoriesTests.class.getResource("User.hbm.xml").getFile(), NullSecurity.INSTANCE);
 		
@@ -78,26 +83,19 @@ public class InterRepositoriesTests {
 		
 		Assert.assertTrue(hibernateRepo.getAll().size() == allItems.size());
 		
-		XMLWriter xmlWriter = new XMLWriter(new FileWriter("c:\\atomUserFeed1.xml"));
+		XMLWriter xmlWriter = new XMLWriter(new FileWriter(TestHelper.fileName("atomUserFeed1.xml")));
 		FeedWriter feedWriter = new FeedWriter(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
 		feedWriter.write(xmlWriter, feed);
-		
-		XMLWriter xmlWriterRss = new XMLWriter(new FileWriter("c:\\rssUserFeed1.xml"));
-		FeedWriter rssFeedWriter = new FeedWriter(RssSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
-		rssFeedWriter.write(xmlWriterRss, feed);
 	}
 	
 	@Test
 	public void shouldSyncRssFeed2Hibernate() throws DocumentException{
 
 		File rssFile = new File(this.getClass().getResource("rssUserFeed.xml").getFile());
-		FeedReader rssFeedReader = new FeedReader(RssSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
-
-		Feed feed = rssFeedReader.read(rssFile);
-		FeedAdapter feedRepo = new FeedAdapter(feed, NullSecurity.INSTANCE);
+		FeedAdapter feedRepo = new FeedAdapter(rssFile, RssSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
 				
 		File fileMapping = new File(this.getClass().getResource("User.hbm.xml").getFile());
-		HibernateAdapter	hibernateRepo = new HibernateAdapter(fileMapping, NullSecurity.INSTANCE);
+		HibernateAdapter hibernateRepo = new HibernateAdapter(fileMapping, NullSecurity.INSTANCE);
 		
 		hibernateRepo.deleteAll();
 		
@@ -108,7 +106,7 @@ public class InterRepositoriesTests {
 		Assert.assertEquals(0, conflicts.size());
 		
 		Assert.assertTrue(hibernateRepo.getAll().size() == 1);
-		Assert.assertTrue(feed.getItems().size() == 1);
+		Assert.assertTrue(feedRepo.getFeed().getItems().size() == 1);
 		
 		
 	}
@@ -117,10 +115,7 @@ public class InterRepositoriesTests {
 	public void shouldSyncAtomFeed2Hibernate() throws DocumentException{
 
 		File rssFile = new File(this.getClass().getResource("atomUserFeed.xml").getFile());
-		FeedReader rssFeedReader = new FeedReader(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
-
-		Feed feed = rssFeedReader.read(rssFile);
-		FeedAdapter feedRepo = new FeedAdapter(feed, NullSecurity.INSTANCE);
+		FeedAdapter feedRepo = new FeedAdapter(rssFile, AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
 				
 		File fileMapping = new File(this.getClass().getResource("User.hbm.xml").getFile());
 		HibernateAdapter	hibernateRepo = new HibernateAdapter(fileMapping, NullSecurity.INSTANCE);
@@ -134,8 +129,7 @@ public class InterRepositoriesTests {
 		Assert.assertEquals(0, conflicts.size());
 		
 		Assert.assertTrue(hibernateRepo.getAll().size() == 1);
-		Assert.assertTrue(feed.getItems().size() == 1);
-		
+		Assert.assertTrue(feedRepo.getFeed().getItems().size() == 1);
 		
 	}
 

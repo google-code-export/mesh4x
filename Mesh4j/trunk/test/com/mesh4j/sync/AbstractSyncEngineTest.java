@@ -134,7 +134,7 @@ public abstract class AbstractSyncEngineTest {
 
 		String id = TestHelper.newID();
 		Sync sync = new Sync(id, by, TestHelper.nowSubtractMinutes(2), false);
-		Element element = TestHelper.makeElement("<user><id>"+id+"</id><name>"+id+"</name><pass>123</pass></user>");
+		Element element = TestHelper.makeElement("<payload><user><id>"+id+"</id><name>"+id+"</name><pass>123</pass></user></payload>");
 		Item item = new Item(new XMLContent(id, "foo", "bar", element), sync);
 
 		left.add(item);
@@ -151,7 +151,7 @@ public abstract class AbstractSyncEngineTest {
 
 		// Conflicting remote editing.
 		xmlItem = (XMLContent) item.getContent();
-		element = TestHelper.makeElement("<user><id>"+id+"</id><name>remote</name><pass>123</pass></user>");
+		element = TestHelper.makeElement("<payload><user><id>"+id+"</id><name>remote</name><pass>123</pass></user></payload>");
 		incomingItem = new Item(new XMLContent(id, "remote", ((XMLContent)item.getContent())
 				.getDescription(), element), incomingItem.getSync().clone().update("REMOTE\\kzu", TestHelper.now(), false));
 
@@ -161,13 +161,15 @@ public abstract class AbstractSyncEngineTest {
 
 		Assert.assertEquals(1, conflicts.size());
 		Assert.assertEquals(1, left.getAll().size());
-		Assert.assertEquals("remote", left.get(id).getContent().getPayload().element("name").getText());
+		Assert.assertEquals("remote", getUserName(left.get(id)));
 		Assert.assertEquals("REMOTE\\kzu", left.get(id).getSync()
 				.getLastUpdate().getBy());
 
 		Assert.assertEquals(1, left.getConflicts().size());
 		Assert.assertEquals(1, right.getConflicts().size());
 	}
+
+	protected abstract String getUserName(Item item);
 
 	@Test
 	public void ShouldReportImportProgress() {
@@ -179,14 +181,14 @@ public abstract class AbstractSyncEngineTest {
 
 		String id = TestHelper.newID();
 		Sync sync = new Sync(id, by, TestHelper.nowSubtractMinutes(2), false);
-		Element element = TestHelper.makeElement("<user><id>"+id+"</id><name>"+id+"</name><pass>123</pass></user>");
+		Element element = TestHelper.makeElement("<payload><user><id>"+id+"</id><name>"+id+"</name><pass>123</pass></user></payload>");
 		Item item = new Item(new XMLContent(id, "foo", "bar", element), sync);
 
 		left.add(item);
 
 		id = TestHelper.newID();
 		sync = new Sync(id, by, TestHelper.nowSubtractMinutes(2), false);
-		element = TestHelper.makeElement("<user><id>"+id+"</id><name>"+id+"</name><pass>123</pass></user>");
+		element = TestHelper.makeElement("<payload><user><id>"+id+"</id><name>"+id+"</name><pass>123</pass></user></payload>");
 		item = new Item(new XMLContent(id, "foo", "bar", element), sync);
 
 		right.add(item);
@@ -226,13 +228,13 @@ public abstract class AbstractSyncEngineTest {
 			
 		String id = TestHelper.newID();
 		Sync sync = new Sync(id, by, nowSubtract2Minutes, false);
-		Element element = TestHelper.makeElement("<user><id>"+id+"</id><name>"+id+"</name><pass>123</pass></user>");
+		Element element = TestHelper.makeElement("<payload><user><id>"+id+"</id><name>"+id+"</name><pass>123</pass></user></payload>");
 		Item item = new Item(new XMLContent(id, "foo", "bar", element), sync);
 		left.add(item);
 
 		id = TestHelper.newID();
 		sync = new Sync(id, by, nowSubtract2Days, false);
-		element = TestHelper.makeElement("<user><id>"+id+"</id><name>"+id+"</name><pass>123</pass></user>");
+		element = TestHelper.makeElement("<payload><user><id>"+id+"</id><name>"+id+"</name><pass>123</pass></user></payload>");
 		item = new Item(new XMLContent(id, "foo", "bar", element), sync);
 		right.add(item);
 
@@ -262,7 +264,7 @@ public abstract class AbstractSyncEngineTest {
 	private Item createItem(String title, String id, History history,
 			History[] otherHistory) {
 		
-		Element e = TestHelper.makeElement("<user><id>"+id+"</id><name>"+title+"</name><pass>123</pass></user>");
+		Element e = TestHelper.makeElement("<payload><user><id>"+id+"</id><name>"+title+"</name><pass>123</pass></user></payload>");
 		XMLContent xml = new XMLContent(TestHelper.newID(), title, null, e);
 		Sync sync = new Sync(id, history.getBy(), history.getWhen(),
 				false);

@@ -15,6 +15,8 @@ import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ELEMENT_SYNC;
 import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_PREFIX;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -71,7 +73,7 @@ public class FeedWriter {
 	public void writePayload(Element root, Element payload) throws DocumentException {
 		List<Element> payloadElements = payload.elements(); 
 		for (Element payloadElement : payloadElements) {
-			root.add(payloadElement.detach());
+			root.add(payloadElement.createCopy());
 		}
 	}
 
@@ -126,7 +128,10 @@ public class FeedWriter {
 		syncElement.addAttribute(SX_ATTRIBUTE_SYNC_DELETED, String.valueOf(sync.isDeleted()));
 		syncElement.addAttribute(SX_ATTRIBUTE_SYNC_NO_CONFLICTS, String.valueOf(sync.isNoConflicts()));
 
-		for(History history : sync.getUpdatesHistory())
+		ArrayList<History> allUpdatesHistories = new ArrayList<History>(sync.getUpdatesHistory());
+		Collections.reverse(allUpdatesHistories);
+		
+		for(History history : allUpdatesHistories)
 		{
 			writeHistory(syncElement, history);
 		}
@@ -141,7 +146,9 @@ public class FeedWriter {
 		
 	public void writeHistory(Element rootElement, History history)
 	{
-		Element historyElement = rootElement.addElement(SX_ELEMENT_HISTORY, SX_PREFIX);
+		Namespace ns = DocumentHelper.createNamespace(SX_PREFIX, NAMESPACE);
+		QName syncQName = DocumentHelper.createQName(SX_ELEMENT_HISTORY, ns);
+		Element historyElement = rootElement.addElement(syncQName);
 		historyElement.addAttribute(SX_ATTRIBUTE_HISTORY_SEQUENCE, String.valueOf(history.getSequence()));
 		if (history.getWhen() != null){
 			historyElement.addAttribute(SX_ATTRIBUTE_HISTORY_WHEN, this.parseDate(history.getWhen()));

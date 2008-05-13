@@ -106,6 +106,10 @@ public class TestHelper {
 			e.printStackTrace();
 		}			
 	}
+	
+	public static String fileName(String name){
+		return "D:\\temp_dev\\mesh4j\\"+name;
+	}
 
 	
 }

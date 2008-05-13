@@ -3,13 +3,12 @@ package com.mesh4j.sync.adapters.feed.url;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -36,6 +35,7 @@ import com.mesh4j.sync.utils.DateHelper;
 import com.mesh4j.sync.validations.Guard;
 import com.mesh4j.sync.validations.MeshException;
 
+// TODO (JMT) Rename to HttpFeedAdapter
 public class URLFeedAdapter implements IRepositoryAdapter {
 
 	private final static Log Logger = LogFactory.getLog(URLFeedAdapter.class);
@@ -149,19 +149,31 @@ public class URLFeedAdapter implements IRepositoryAdapter {
 	
 	protected String GETSince(Date since){
 		String result = null;
-		URLConnection conn = null;
+		HttpURLConnection conn = null;
 	    try{
-			conn = this.url.openConnection();
+			conn = (HttpURLConnection) this.url.openConnection();
 			conn.setIfModifiedSince(since.getTime());
 			result = readData(conn);
 	    } catch(Exception e){
-	    	Logger.error(e.getMessage(), e);
-	    	throw new MeshException(e);
+			if(conn != null){
+				try {
+					int responseCode = conn.getResponseCode();
+					if(responseCode == HttpURLConnection.HTTP_INTERNAL_ERROR){
+						return null;
+					}
+				} catch (IOException e1) {
+					Logger.error(e.getMessage(), e);
+					throw new MeshException(e);
+				}
+			} else {
+				Logger.error(e.getMessage(), e);
+				throw new MeshException(e);
+			}
 	    }		
 		return result;
 	}
 
-	private String readData(URLConnection conn) throws UnsupportedEncodingException, IOException {
+	private String readData(HttpURLConnection conn) throws UnsupportedEncodingException, IOException {
 		InputStream is = conn.getInputStream();		
 		StringBuffer result = new StringBuffer();
 		Reader reader = new InputStreamReader(is, "UTF-8");
@@ -199,15 +211,13 @@ public class URLFeedAdapter implements IRepositoryAdapter {
 		conn.setRequestMethod("POST");
 		conn.setRequestProperty("Content-Length", Integer.toString(content.length()));
 		conn.setRequestProperty("Content-Type", "text/xml");
-		OutputStream os = null;
+		OutputStreamWriter out = null;
 		try{
-			os = conn.getOutputStream();
-			os.write(content.getBytes("UTF-8"));
-		} catch(Exception e){
-			throw e;
+			out = new OutputStreamWriter(conn.getOutputStream());
+			out.write(content);
 		} finally {
-			if(os != null){
-				os.close();
+			if(out != null){
+				out.close();
 			}
 		}
 	}

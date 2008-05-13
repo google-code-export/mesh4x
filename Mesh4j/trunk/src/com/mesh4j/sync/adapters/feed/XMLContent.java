@@ -76,9 +76,14 @@ public class XMLContent implements IContent {
 			return content.getPayload();
 		}
 		Element payload = DocumentHelper.createElement("payload");
-		payload.add(content.getPayload().detach());
+		content.addToFeedPayload(payload);
 		return payload;
 	}
+	
+	public void addToFeedPayload(Element rootPayload){
+		// nothing to do
+	}
+
 
 
 }

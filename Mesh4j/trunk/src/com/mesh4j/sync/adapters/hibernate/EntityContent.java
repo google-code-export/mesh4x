@@ -1,13 +1,16 @@
-package com.mesh4j.sync.adapters;
+package com.mesh4j.sync.adapters.hibernate;
 
+import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
+import com.mesh4j.sync.adapters.IIdentifiableContent;
+import com.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import com.mesh4j.sync.model.IContent;
 
 
-public class EntityContent implements IContent{
+public class EntityContent implements IIdentifiableContent{
 	
-	// MODEL VARIABLES
+	// MODEL VARIABLESs
 	private String entityName;
 	private String entityId;
 	private Element payload;
@@ -34,9 +37,9 @@ public class EntityContent implements IContent{
         	if(obj instanceof EntityContent){
         		EntityContent otherXmlItem = (EntityContent) obj;
         		return
-        			this.getEntityName().equals(otherXmlItem.getEntityName())
-        			&& this.getEntityId().equals(otherXmlItem.getEntityId())
-        			&& this.getEntityVersion() == otherXmlItem.getEntityVersion()
+        			this.getType().equals(otherXmlItem.getType())
+        			&& this.getId().equals(otherXmlItem.getId())
+        			&& this.getVersion() == otherXmlItem.getVersion()
         			&& this.getPayload().asXML().equals(otherXmlItem.getPayload().asXML());
         	} else if(obj instanceof IContent){
         		IContent otherXmlItem = (IContent) obj;
@@ -55,11 +58,11 @@ public class EntityContent implements IContent{
 		this.entityVersion = this.getPayload().asXML().hashCode();		
 	}
 
-	public String getEntityName() {
+	public String getType() {
 		return entityName;
 	}
 
-	public String getEntityId() {
+	public String getId() {
 		return entityId;
 	}
 
@@ -67,7 +70,7 @@ public class EntityContent implements IContent{
 		return payload;
 	}
 
-	public int getEntityVersion() {
+	public int getVersion() {
 		return entityVersion;
 	}
 	
@@ -95,5 +98,18 @@ public class EntityContent implements IContent{
 				}
 			}
 		}
+	}
+
+	public void addToFeedPayload(Element rootPayload){
+			
+		Element titleElement = DocumentHelper.createElement(ISyndicationFormat.SX_ATTRIBUTE_ITEM_TITLE);
+		titleElement.setText(this.entityName);
+		rootPayload.add(titleElement);
+		
+		Element descriptionElement = DocumentHelper.createElement(ISyndicationFormat.SX_ATTRIBUTE_ITEM_DESCRIPTION);
+		descriptionElement.setText("Entity id: " + this.entityId + " version: " + this.entityVersion);
+		rootPayload.add(descriptionElement);
+		
+		rootPayload.add(this.getPayload().createCopy());
 	}
 }

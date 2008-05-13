@@ -21,5 +21,7 @@ public class AtomFeedReaderTests {
 		FeedReader reader = new FeedReader(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
 		Feed feed = reader.read(file);
 		Assert.assertNotNull(feed); // TODO (JMT) test
+		
+		Assert.assertEquals(3, feed.getItems().get(0).getLastUpdate().getSequence());
 	}
 }

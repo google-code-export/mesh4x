@@ -10,7 +10,8 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.junit.Test;
 
-import com.mesh4j.sync.adapters.EntityContent;
+import com.mesh4j.sync.adapters.IIdentifiableContent;
+import com.mesh4j.sync.adapters.hibernate.EntityContent;
 import com.mesh4j.sync.utils.IdGenerator;
 
 public class KMLContentAdapterTests {
@@ -22,24 +23,24 @@ public class KMLContentAdapterTests {
 		File kmlFile = new File("D:\\temp_dev\\files\\tests\\samples0.kml");
 				
 		KMLContentAdapter kmlAdapter = new KMLContentAdapter(kmlFile);
-		List<EntityContent> entities = kmlAdapter.getAll();
+		List<IIdentifiableContent> entities = kmlAdapter.getAll();
 		Assert.assertFalse(entities.isEmpty());
 		
 		String id = IdGenerator.newID();
 		Element style = makeNewStyle(id, "aaaaaaaaa");
 		kmlAdapter.save(new EntityContent(style, "kml", id));
 		
-		EntityContent content = kmlAdapter.get(id);
+		KMLContent content = kmlAdapter.get(id);
 		Assert.assertNotNull(content);
-		Assert.assertEquals(id, content.getEntityId());
+		Assert.assertEquals(id, content.getId());
 		Assert.assertEquals(style.asXML(), content.getPayload().asXML());
 		
 		Element style1 = makeNewStyle(id, "ffffff44");
-		kmlAdapter.save(new EntityContent(style1, "kml", id));
+		kmlAdapter.save(new KMLContent(style1, id));
 		
 		content = kmlAdapter.get(id);
 		Assert.assertNotNull(content);
-		Assert.assertEquals(id, content.getEntityId());
+		Assert.assertEquals(id, content.getId());
 		Assert.assertEquals(style1.asXML(), content.getPayload().asXML());
 		
 	}

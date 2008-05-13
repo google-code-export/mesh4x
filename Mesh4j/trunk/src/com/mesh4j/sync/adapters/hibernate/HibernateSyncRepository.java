@@ -17,7 +17,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 
-import com.mesh4j.sync.adapters.EntityContent;
+import com.mesh4j.sync.adapters.IIdentifiableContent;
 import com.mesh4j.sync.adapters.SyncInfo;
 import com.mesh4j.sync.adapters.compound.ISyncRepository;
 import com.mesh4j.sync.parsers.SyncInfoParser;
@@ -136,7 +136,7 @@ public class HibernateSyncRepository implements ISyncRepository{
 		return syncElements;
 	}
 
-	public String newSyncID(EntityContent content) {
+	public String newSyncID(IIdentifiableContent content) {
 		return IdGenerator.newID();
 	}
 

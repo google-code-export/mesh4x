@@ -155,4 +155,9 @@ public class SyncEngineTests extends AbstractSyncEngineTest {
 
 	}
 
+	@Override
+	protected String getUserName(Item item) {
+		return item.getContent().getPayload().element("user").element("name").getText();
+	}
+
 }

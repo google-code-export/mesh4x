@@ -8,7 +8,7 @@ import java.util.Map;
 
 import com.mesh4j.sync.AbstractRepositoryAdapter;
 import com.mesh4j.sync.IFilter;
-import com.mesh4j.sync.adapters.EntityContent;
+import com.mesh4j.sync.adapters.IIdentifiableContent;
 import com.mesh4j.sync.adapters.SyncInfo;
 import com.mesh4j.sync.filter.SinceLastUpdateFilter;
 import com.mesh4j.sync.model.Item;
@@ -43,13 +43,13 @@ public class CompoundRepositoryAdapter extends AbstractRepositoryAdapter {
 		
 		Guard.argumentNotNull(item, "item");
 
-		EntityContent entity = contentAdapter.normalizeContent(item.getContent());
+		IIdentifiableContent content = contentAdapter.normalizeContent(item.getContent());
 		
 		if (!item.isDeleted())
 		{
-			contentAdapter.save(entity);
+			contentAdapter.save(content);
 		}
-		SyncInfo syncInfo = new SyncInfo(item.getSync(), entity);
+		SyncInfo syncInfo = new SyncInfo(item.getSync(), content);
 		syncRepository.save(syncInfo);
 	}
 
@@ -65,7 +65,7 @@ public class CompoundRepositoryAdapter extends AbstractRepositoryAdapter {
 			syncInfo.getSync().delete(this.getAuthenticatedUser(), new Date());
 			syncRepository.save(syncInfo);
 			
-			EntityContent content = contentAdapter.get(syncInfo.getEntityId());
+			IIdentifiableContent content = contentAdapter.get(syncInfo.getId());
 			if(content != null){
 				contentAdapter.delete(content);
 			}
@@ -82,19 +82,19 @@ public class CompoundRepositoryAdapter extends AbstractRepositoryAdapter {
 			SyncInfo syncInfo = syncRepository.get(item.getSyncId());
 			if(syncInfo != null){
 				syncInfo.updateSync(item.getSync());
-				EntityContent entity = contentAdapter.get(syncInfo.getEntityId());
+				IIdentifiableContent content = contentAdapter.get(syncInfo.getId());
 
-				if(entity != null){
-					contentAdapter.delete(entity);
+				if(content != null){
+					contentAdapter.delete(content);
 				}
 				syncRepository.save(syncInfo);
 			}
 		}
 		else
 		{
-			EntityContent entity = contentAdapter.normalizeContent(item.getContent());
-			contentAdapter.save(entity);
-			SyncInfo syncInfo = new SyncInfo(item.getSync(), entity);
+			IIdentifiableContent content = contentAdapter.normalizeContent(item.getContent());
+			contentAdapter.save(content);
+			SyncInfo syncInfo = new SyncInfo(item.getSync(), content);
 			syncRepository.save(syncInfo);	
 		}
 	}
@@ -110,29 +110,29 @@ public class CompoundRepositoryAdapter extends AbstractRepositoryAdapter {
 			return null;
 		}
 		
-		EntityContent entity = contentAdapter.get(syncInfo.getEntityId());
+		IIdentifiableContent content = contentAdapter.get(syncInfo.getId());
 		
-		this.updateSync(entity, syncInfo);
+		this.updateSync(content, syncInfo);
 		
 		if(syncInfo.isDeleted()){
-			NullContent nullEntity = new NullContent(syncInfo.getSyncId());
-			return new Item(nullEntity, syncInfo.getSync());
+			NullContent nullContent = new NullContent(syncInfo.getSyncId());
+			return new Item(nullContent, syncInfo.getSync());
 		} else {
-			return new Item(entity, syncInfo.getSync());			
+			return new Item(content, syncInfo.getSync());			
 		}
 	}
 
-	private void updateSync(EntityContent entity, SyncInfo syncInfo){
+	private void updateSync(IIdentifiableContent content, SyncInfo syncInfo){
 	
 		Sync sync = syncInfo.getSync();
-		if (entity != null && sync == null)
+		if (content != null && sync == null)
 		{
 			// Add sync on-the-fly.
 			sync = new Sync(syncInfo.getSyncId(), this.getAuthenticatedUser(), new Date(), false);
 			syncInfo.updateSync(sync);
 			syncRepository.save(syncInfo);
 		}
-		else if (entity == null && sync != null)
+		else if (content == null && sync != null)
 		{
 			if (!sync.isDeleted())
 			{
@@ -146,10 +146,10 @@ public class CompoundRepositoryAdapter extends AbstractRepositoryAdapter {
 			/// item actual data. If it's not, a new 
 			/// update will be added. Used when exporting/retrieving 
 			/// items from the local stores.
-			if (!syncInfo.isDeleted() && syncInfo.contentHasChanged(entity))
+			if (!syncInfo.isDeleted() && syncInfo.contentHasChanged(content))
 			{
 				sync.update(this.getAuthenticatedUser(), new Date(), sync.isDeleted());
-				syncInfo.setEntityVersion(entity.getEntityVersion());
+				syncInfo.setVersion(content.getVersion());
 				syncRepository.save(syncInfo);
 			}
 		}
@@ -160,29 +160,29 @@ public class CompoundRepositoryAdapter extends AbstractRepositoryAdapter {
 	
 		ArrayList<Item> result = new ArrayList<Item>();
 		
-		List<EntityContent> entities = contentAdapter.getAll();
-		List<SyncInfo> syncInfos = syncRepository.getAll(contentAdapter.getEntityName());
+		List<IIdentifiableContent> contents = contentAdapter.getAll();
+		List<SyncInfo> syncInfos = syncRepository.getAll(contentAdapter.getType());
 		
 		Map<String, SyncInfo> syncInfoAsMapByEntity = this.makeSyncMapByEntity(syncInfos);
  
-		for (EntityContent entity : entities) {
+		for (IIdentifiableContent content : contents) {
 			
-			SyncInfo syncInfo = syncInfoAsMapByEntity.get(entity.getEntityId());			
+			SyncInfo syncInfo = syncInfoAsMapByEntity.get(content.getId());			
 
 			Sync sync;
 			if(syncInfo == null){
-				sync = new Sync(syncRepository.newSyncID(entity), this.getAuthenticatedUser(), new Date(), false);
+				sync = new Sync(syncRepository.newSyncID(content), this.getAuthenticatedUser(), new Date(), false);
 				
-				SyncInfo newSyncInfo = new SyncInfo(sync, entity);
+				SyncInfo newSyncInfo = new SyncInfo(sync, content);
 				
 				syncRepository.save(newSyncInfo);
 				
 			} else {
 				sync = syncInfo.getSync();
-				updateSync(entity, syncInfo);
+				updateSync(content, syncInfo);
 				syncInfos.remove(syncInfo);
 			}
-			Item item = new Item(entity, sync);
+			Item item = new Item(content, sync);
 			
 			if(appliesFilter(item, since, filter)){
 				result.add(item);
@@ -206,7 +206,7 @@ public class CompoundRepositoryAdapter extends AbstractRepositoryAdapter {
 	private Map<String, SyncInfo> makeSyncMapByEntity(List<SyncInfo> syncInfos) {
 		HashMap<String, SyncInfo> syncInfoMap = new HashMap<String, SyncInfo>();
 		for (SyncInfo syncInfo : syncInfos) {
-			syncInfoMap.put(syncInfo.getEntityId(), syncInfo);
+			syncInfoMap.put(syncInfo.getId(), syncInfo);
 		}
 		return syncInfoMap;
 	}

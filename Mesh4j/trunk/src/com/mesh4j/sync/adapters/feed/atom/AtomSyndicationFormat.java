@@ -49,4 +49,8 @@ public class AtomSyndicationFormat implements ISyndicationFormat {
 		Element item = root.addElement(ATOM_ELEMENT_ENTRY);
 		return item;
 	}
+
+	public static boolean isAtom(Document document) {
+		return "feed".equals(document.getRootElement().getName());
+	}
 }

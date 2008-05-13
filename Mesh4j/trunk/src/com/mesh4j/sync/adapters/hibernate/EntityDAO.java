@@ -7,7 +7,6 @@ import org.dom4j.Element;
 import org.hibernate.EntityMode;
 import org.hibernate.Session;
 
-import com.mesh4j.sync.adapters.EntityContent;
 import com.mesh4j.sync.model.IContent;
 
 /**
@@ -46,7 +45,7 @@ public class EntityDAO {
 	}
 
 	public void delete(EntityContent entity) {
-		this.delete(entity.getEntityId());
+		this.delete(entity.getId());
 	}
 	
 	public void delete(String entityId) {

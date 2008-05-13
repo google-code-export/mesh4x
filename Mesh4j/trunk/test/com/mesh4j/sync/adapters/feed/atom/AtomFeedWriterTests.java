@@ -13,6 +13,7 @@ import com.mesh4j.sync.adapters.feed.Feed;
 import com.mesh4j.sync.adapters.feed.FeedReader;
 import com.mesh4j.sync.adapters.feed.FeedWriter;
 import com.mesh4j.sync.security.NullSecurity;
+import com.mesh4j.sync.test.utils.TestHelper;
 
 public class AtomFeedWriterTests {
 
@@ -25,12 +26,12 @@ public class AtomFeedWriterTests {
 		FeedReader reader = new FeedReader(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
 		Feed feed = reader.read(file);
 		
-		XMLWriter xmlWriter = new XMLWriter(new FileWriter("c:\\atom1.xml"));
+		XMLWriter xmlWriter = new XMLWriter(new FileWriter(TestHelper.fileName("atom1.xml")));
 		
 		FeedWriter writer = new FeedWriter(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
 		writer.write(xmlWriter, feed);
 		
-		File file2 =  new File("c:\\atom1.xml");
+		File file2 =  new File(TestHelper.fileName("atom1.xml"));
 		Assert.assertTrue(file2.exists());
 		
 		Feed feed2 = reader.read(file2);

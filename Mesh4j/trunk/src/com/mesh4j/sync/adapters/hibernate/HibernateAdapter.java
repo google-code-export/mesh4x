@@ -15,7 +15,6 @@ import org.hibernate.metadata.ClassMetadata;
 
 import com.mesh4j.sync.AbstractRepositoryAdapter;
 import com.mesh4j.sync.IFilter;
-import com.mesh4j.sync.adapters.EntityContent;
 import com.mesh4j.sync.adapters.SyncInfo;
 import com.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import com.mesh4j.sync.filter.SinceLastUpdateFilter;
@@ -133,7 +132,7 @@ public class HibernateAdapter extends AbstractRepositoryAdapter implements ISess
 				syncInfo.getSync().delete(this.getAuthenticatedUser(), new Date());
 				syncDAO.save(syncInfo);
 				
-				entityDAO.delete(syncInfo.getEntityId());
+				entityDAO.delete(syncInfo.getId());
 			}
 			
 			tx.commit();
@@ -160,7 +159,7 @@ public class HibernateAdapter extends AbstractRepositoryAdapter implements ISess
 			if(syncInfo != null){
 				session = newSession();
 				syncInfo.updateSync(item.getSync());
-				EntityContent entity = entityDAO.get(syncInfo.getEntityId());
+				EntityContent entity = entityDAO.get(syncInfo.getId());
 				closeSession();
 				
 				session = newSession();
@@ -216,7 +215,7 @@ public class HibernateAdapter extends AbstractRepositoryAdapter implements ISess
 			return null;
 		}
 		
-		EntityContent entity = entityDAO.get(syncInfo.getEntityId());
+		EntityContent entity = entityDAO.get(syncInfo.getId());
 		closeSession();
 		
 		this.updateSync(entity, syncInfo);
@@ -261,7 +260,7 @@ public class HibernateAdapter extends AbstractRepositoryAdapter implements ISess
 				if (!syncInfo.isDeleted() && syncInfo.contentHasChanged(entity))
 				{
 					sync.update(this.getAuthenticatedUser(), new Date(), sync.isDeleted());
-					syncInfo.setEntityVersion(entity.getEntityVersion());
+					syncInfo.setVersion(entity.getVersion());
 					syncDAO.save(syncInfo);
 				}
 			}
@@ -290,7 +289,7 @@ public class HibernateAdapter extends AbstractRepositoryAdapter implements ISess
  
 		for (EntityContent entity : entities) {
 			
-			SyncInfo syncInfo = syncInfoAsMapByEntity.get(entity.getEntityId());			
+			SyncInfo syncInfo = syncInfoAsMapByEntity.get(entity.getId());			
 
 			Sync sync;
 			if(syncInfo == null){
@@ -342,7 +341,7 @@ public class HibernateAdapter extends AbstractRepositoryAdapter implements ISess
 	private Map<String, SyncInfo> makeSyncMapByEntity(List<SyncInfo> syncInfos) {
 		HashMap<String, SyncInfo> syncInfoMap = new HashMap<String, SyncInfo>();
 		for (SyncInfo syncInfo : syncInfos) {
-			syncInfoMap.put(syncInfo.getEntityId(), syncInfo);
+			syncInfoMap.put(syncInfo.getId(), syncInfo);
 		}
 		return syncInfoMap;
 	}

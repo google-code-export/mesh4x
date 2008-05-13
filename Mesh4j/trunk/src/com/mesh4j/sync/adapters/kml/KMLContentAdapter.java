@@ -17,7 +17,7 @@ import org.jaxen.JaxenException;
 import org.jaxen.SimpleNamespaceContext;
 import org.jaxen.dom4j.Dom4jXPath;
 
-import com.mesh4j.sync.adapters.EntityContent;
+import com.mesh4j.sync.adapters.IIdentifiableContent;
 import com.mesh4j.sync.adapters.compound.IContentAdapter;
 import com.mesh4j.sync.model.IContent;
 import com.mesh4j.sync.utils.IdGenerator;
@@ -38,10 +38,12 @@ public class KMLContentAdapter implements IContentAdapter{
 	private static final String KML_ELEMENT_NAME = "name";
 	private static final String SHARED_ITEMS = "Shared Items";
 	private static final String KML_ELEMENT_DOCUMENT = "Document";
-	private static final String KML_ELEMENT_PLACEMARK = "Placemark";
+	public static final String KML_ELEMENT_PLACEMARK = "Placemark";
+	public static final String KML_ELEMENT_STYLE = "Style";
+	public static final String KML_ELEMENT_STYLE_MAP = "StyleMap";
 	
 	private static final Namespace XML_NS = DocumentHelper.createNamespace(XML_PREFIX, XML_URI);
-	private static final QName XML_ID_QNAME = DocumentHelper.createQName("id", XML_NS);
+	public static final QName XML_ID_QNAME = DocumentHelper.createQName("id", XML_NS);
 
 		
 	// MODEL VARIABLES
@@ -98,9 +100,9 @@ public class KMLContentAdapter implements IContentAdapter{
 	}
 	
 	@Override
-	public void save(EntityContent entity) {
-		Element newPayload = entity.getPayload().createCopy();
-		Element element = this.getElementById(entity.getEntityId());
+	public void save(IIdentifiableContent content) {
+		Element newPayload = content.getPayload().createCopy();
+		Element element = this.getElementById(content.getId());
 		if(element == null){
 			if(KML_ELEMENT_PLACEMARK.equals(newPayload.getName())){
 				this.kmlSharedFolderElement.add(newPayload);	
@@ -115,13 +117,13 @@ public class KMLContentAdapter implements IContentAdapter{
 		this.flush();
 	}
  	
-	private Element getElementById(String entityId)  {
+	private Element getElementById(String elementId)  {
 		HashMap<String, String> map = new HashMap<String, String>();
 		map.put(XML_PREFIX, XML_URI);
 		map.put(KML_PREFIX, KML_URI);
 		
 		try {
-			Dom4jXPath xpath = new Dom4jXPath("//kml:*[@xml:id='"+entityId+"']");
+			Dom4jXPath xpath = new Dom4jXPath("//kml:*[@xml:id='"+elementId+"']");
 			xpath.setNamespaceContext(new SimpleNamespaceContext(map));
 			return (Element) xpath.selectSingleNode(this.kmlDocument);
 		} catch (JaxenException e) {
@@ -131,8 +133,8 @@ public class KMLContentAdapter implements IContentAdapter{
 	}
 
 	@Override
-	public void delete(EntityContent entity) {
-		Element element = this.getElementById(entity.getEntityId());
+	public void delete(IIdentifiableContent content) {
+		Element element = this.getElementById(content.getId());
 		if(element != null){
 			element.getParent().remove(element);
 		}
@@ -140,20 +142,20 @@ public class KMLContentAdapter implements IContentAdapter{
 	}
 
 	@Override
-	public EntityContent get(String entityId) {
-		Element element = this.getElementById(entityId);
+	public KMLContent get(String id) {
+		Element element = this.getElementById(id);
 		if(element == null){
 			return null;
 		} else {
-			return new EntityContent(element, this.getEntityName(), entityId);
+			return new KMLContent(element, id);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<EntityContent> getAll() {
+	public List<IIdentifiableContent> getAll() {
 		
-		ArrayList<EntityContent> result = new ArrayList<EntityContent>();
+		ArrayList<IIdentifiableContent> result = new ArrayList<IIdentifiableContent>();
 		try{	
 			boolean dirty = false;
 
@@ -166,8 +168,8 @@ public class KMLContentAdapter implements IContentAdapter{
 					element.addAttribute(XML_ID_QNAME, id);
 					dirty = true;
 				}
-				EntityContent entityContent = new EntityContent(element, this.getEntityName(), id);
-				result.add(entityContent);
+				KMLContent content = new KMLContent(element, id);
+				result.add(content);
 			}
 			
 			elements = this.selectElements("//kml:Style");
@@ -191,8 +193,8 @@ public class KMLContentAdapter implements IContentAdapter{
 					}
 					dirty = true;
 				}
-				EntityContent entityContent = new EntityContent(element, this.getEntityName(), id);
-				result.add(entityContent);
+				KMLContent content = new KMLContent(element, id);
+				result.add(content);
 			}
 			
 			if(dirty){
@@ -224,16 +226,21 @@ public class KMLContentAdapter implements IContentAdapter{
 	}
 
 	@Override
-	public String getEntityName() {
+	public String getType() {
 		return KML_PREFIX;
 	}
 
 	@Override
-	public EntityContent normalizeContent(IContent content) {
-		return EntityContent.normalizeContent(content, this.getEntityName(), "id");
+	public IIdentifiableContent normalizeContent(IContent content) {
+		return KMLContent.normalizeContent(content);
 	}
 	
 	private void flush() {
 		XMLHelper.write(this.kmlDocument, this.kmlFile);
+	}
+
+	public static void prepareKMLToSync(String kmlFileToPrepare) {
+		KMLContentAdapter adapter = new KMLContentAdapter(kmlFileToPrepare);
+		adapter.getAll();		
 	}	
 }

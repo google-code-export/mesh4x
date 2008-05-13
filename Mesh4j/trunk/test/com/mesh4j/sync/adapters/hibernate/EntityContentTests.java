@@ -4,7 +4,6 @@ import org.dom4j.Element;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.mesh4j.sync.adapters.EntityContent;
 import com.mesh4j.sync.model.IContent;
 import com.mesh4j.sync.test.utils.TestHelper;
 
@@ -92,6 +91,10 @@ public class EntityContentTests {
 		
 		public IContent clone(){
 			return new MyContent(e);
+		}
+		@Override
+		public void addToFeedPayload(Element rootPayload) {
+			rootPayload.add(this.e.createCopy());			
 		}
 	}
 	

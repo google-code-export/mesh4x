@@ -30,5 +30,10 @@ public class HibernateSyncEngineLeftTest extends AbstractSyncEngineTest {
 		return repo;
 	}
 
+	@Override
+	protected String getUserName(Item item) {
+		return item.getContent().getPayload().element("name").getText();
+	}
+
 
 }

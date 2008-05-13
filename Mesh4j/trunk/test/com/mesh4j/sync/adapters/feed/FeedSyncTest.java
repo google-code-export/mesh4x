@@ -1,30 +1,42 @@
 package com.mesh4j.sync.adapters.feed;
 
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 
+import org.dom4j.Element;
 import org.junit.Assert;
 import org.junit.Test;
 
 import com.mesh4j.sync.AbstractSyncEngineTest;
 import com.mesh4j.sync.IRepositoryAdapter;
 import com.mesh4j.sync.SyncEngine;
+import com.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.Sync;
 import com.mesh4j.sync.security.NullSecurity;
 import com.mesh4j.sync.test.utils.TestHelper;
+import com.mesh4j.sync.utils.IdGenerator;
 
 public class FeedSyncTest extends AbstractSyncEngineTest{
 	
 	@Test
 	public void shouldSyncTwoFeedRepositories(){
-		Item item = new Item(null, new Sync("SyncId123"));
+		
+		
+		Element element = TestHelper.makeElement("<payload><user><id>SyncId123</id><name>SyncId123</name><pass>123</pass></user></payload>");
+		
+		XMLContent content = new XMLContent("SyncId123", "SyncId123", "SyncId123", element);
+		Item item = new Item(content, new Sync("SyncId123", "jmt", TestHelper.now(), false));
 		
 		Feed feed = new Feed();
 		feed.addItem(item);
 		
-		FeedAdapter source = new FeedAdapter(NullSecurity.INSTANCE);
-		FeedAdapter target = new FeedAdapter(feed, NullSecurity.INSTANCE);
+		File fileSource = new File(IdGenerator.newID()+".xml");
+		FeedAdapter source = new FeedAdapter(fileSource, RssSyndicationFormat.INSTANCE, NullSecurity.INSTANCE, feed);
+		
+		File fileTarget = new File(IdGenerator.newID()+".xml");
+		FeedAdapter target = new FeedAdapter(fileTarget, RssSyndicationFormat.INSTANCE, NullSecurity.INSTANCE, new Feed());
 		
 		SyncEngine syncEngine = new SyncEngine(source, target);
 		List<Item> conflictItems = syncEngine.synchronize();
@@ -51,8 +63,11 @@ public class FeedSyncTest extends AbstractSyncEngineTest{
 		Feed feed2 = new Feed();
 		feed2.addItem(item2);
 		
-		FeedAdapter source = new FeedAdapter(feed1, NullSecurity.INSTANCE);
-		FeedAdapter target = new FeedAdapter(feed2, NullSecurity.INSTANCE);
+		File fileSource = new File(IdGenerator.newID()+".xml");
+		FeedAdapter source = new FeedAdapter(fileSource, RssSyndicationFormat.INSTANCE, NullSecurity.INSTANCE, feed1);
+		
+		File fileTarget = new File(IdGenerator.newID()+".xml");
+		FeedAdapter target = new FeedAdapter(fileTarget, RssSyndicationFormat.INSTANCE, NullSecurity.INSTANCE, feed2);
 		
 		SyncEngine syncEngine = new SyncEngine(source, target);
 		List<Item> conflictItems = syncEngine.synchronize();
@@ -83,8 +98,11 @@ public class FeedSyncTest extends AbstractSyncEngineTest{
 		Feed feed2 = new Feed();
 		feed2.addItem(item01);
 		
-		FeedAdapter source = new FeedAdapter(feed1, NullSecurity.INSTANCE);
-		FeedAdapter target = new FeedAdapter(feed2, NullSecurity.INSTANCE);
+		File fileSource = new File(IdGenerator.newID()+".xml");
+		FeedAdapter source = new FeedAdapter(fileSource, RssSyndicationFormat.INSTANCE, NullSecurity.INSTANCE, feed1);
+		
+		File fileTarget = new File(IdGenerator.newID()+".xml");
+		FeedAdapter target = new FeedAdapter(fileTarget, RssSyndicationFormat.INSTANCE, NullSecurity.INSTANCE, feed2);
 		
 		SyncEngine syncEngine = new SyncEngine(source, target);
 		List<Item> conflictItems = syncEngine.synchronize();
@@ -111,8 +129,11 @@ public class FeedSyncTest extends AbstractSyncEngineTest{
 		Feed feed2 = new Feed();
 		feed2.addItem(item01);
 		
-		FeedAdapter source = new FeedAdapter(feed1, NullSecurity.INSTANCE);
-		FeedAdapter target = new FeedAdapter(feed2, NullSecurity.INSTANCE);
+		File fileSource = new File(IdGenerator.newID()+".xml");
+		FeedAdapter source = new FeedAdapter(fileSource, RssSyndicationFormat.INSTANCE, NullSecurity.INSTANCE, feed1);
+		
+		File fileTarget = new File(IdGenerator.newID()+".xml");
+		FeedAdapter target = new FeedAdapter(fileTarget, RssSyndicationFormat.INSTANCE, NullSecurity.INSTANCE, feed2);
 		
 		SyncEngine syncEngine = new SyncEngine(source, target);
 		List<Item> conflictItems = syncEngine.synchronize();
@@ -124,13 +145,20 @@ public class FeedSyncTest extends AbstractSyncEngineTest{
 	@Override
 	protected IRepositoryAdapter makeLeftRepository(Item... items) {
 		Feed feed = new Feed(items);
-		return new FeedAdapter(feed, NullSecurity.INSTANCE);
+		File file = new File(IdGenerator.newID()+".xml");
+		return new FeedAdapter(file, RssSyndicationFormat.INSTANCE, NullSecurity.INSTANCE, feed);
 	}
 	
 	@Override
 	protected IRepositoryAdapter makeRightRepository(Item... items) {
 		Feed feed = new Feed(items);
-		return new FeedAdapter(feed, NullSecurity.INSTANCE);
+		File file = new File(IdGenerator.newID()+".xml");
+		return new FeedAdapter(file, RssSyndicationFormat.INSTANCE, NullSecurity.INSTANCE, feed);
+	}
+
+	@Override
+	protected String getUserName(Item item) {
+		return item.getContent().getPayload().element("user").element("name").getText();
 	}
 
 }

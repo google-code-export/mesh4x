@@ -17,6 +17,8 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.Reader;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -140,14 +142,22 @@ public class FeedReader {
 		}
 		
 		List<Element> elements = syncElement.elements();
+		ArrayList<Element> historyElements = new ArrayList<Element>();
 		for (Element historyElement : elements) {
 			if(SX_ELEMENT_HISTORY.equals(historyElement.getName())){
-				int sequence = Integer.valueOf(historyElement.attributeValue(SX_ATTRIBUTE_HISTORY_SEQUENCE));
-				Date when = this.parseDate(historyElement.attributeValue(SX_ATTRIBUTE_HISTORY_WHEN));
-				String by = historyElement.attributeValue(SX_ATTRIBUTE_HISTORY_BY);
-				sync.update(by, when, sequence);
+				historyElements.add(historyElement);
 			} 
 		}
+
+		Collections.reverse(historyElements);
+		for (Element historyElement : historyElements) {
+			int sequence = Integer.valueOf(historyElement.attributeValue(SX_ATTRIBUTE_HISTORY_SEQUENCE));
+			Date when = this.parseDate(historyElement.attributeValue(SX_ATTRIBUTE_HISTORY_WHEN));
+			String by = historyElement.attributeValue(SX_ATTRIBUTE_HISTORY_BY);
+			sync.update(by, when, sequence);
+		}
+		
+		
 		
 		Element conflicts = syncElement.element(SX_ELEMENT_CONFLICTS);
 		if(conflicts != null){

@@ -12,7 +12,7 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
-import com.mesh4j.sync.adapters.EntityContent;
+import com.mesh4j.sync.adapters.IIdentifiableContent;
 import com.mesh4j.sync.adapters.SyncInfo;
 import com.mesh4j.sync.adapters.compound.ISyncRepository;
 import com.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
@@ -63,7 +63,7 @@ public class FileSyncRepository implements ISyncRepository{
 			XMLHelper.write(document, file);
 		}		
 	}
-
+	
 	@Override
 	public SyncInfo get(String syncId) {
 		Element syncInfoElement = syncDocument.elementByID(syncId);
@@ -98,8 +98,8 @@ public class FileSyncRepository implements ISyncRepository{
 	}
 
 	@Override
-	public String newSyncID(EntityContent content) {
-		return content.getEntityId();
+	public String newSyncID(IIdentifiableContent content) {
+		return content.getId();
 	}
 
 	@Override
@@ -126,5 +126,5 @@ public class FileSyncRepository implements ISyncRepository{
 
 	private void flush() {
 		XMLHelper.write(this.syncDocument, this.syncInfoFile);
-	}		
+	}
 }

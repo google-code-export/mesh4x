@@ -1,42 +1,104 @@
 package com.mesh4j.sync.adapters.feed;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.io.SAXReader;
+import org.dom4j.io.XMLWriter;
+
 import com.mesh4j.sync.AbstractRepositoryAdapter;
 import com.mesh4j.sync.IFilter;
+import com.mesh4j.sync.adapters.feed.atom.AtomSyndicationFormat;
+import com.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import com.mesh4j.sync.filter.SinceLastUpdateFilter;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.NullContent;
 import com.mesh4j.sync.security.ISecurity;
 import com.mesh4j.sync.translator.MessageTranslator;
 import com.mesh4j.sync.validations.Guard;
+import com.mesh4j.sync.validations.MeshException;
 
 // TODO (JMT) incremental loading for feed items, xml pull parser?
 public class FeedAdapter extends AbstractRepositoryAdapter{
 
 	// MODEL VARIABLES
+	private File feedFile;
 	private Feed feed;
+	private FeedReader feedReader;
+	private FeedWriter feedWriter;
 	private ISecurity security;
 	
 	// BUSINESS METHODS
-	public FeedAdapter(ISecurity security){
-		this(new Feed(), security);
+	public FeedAdapter(String fileName, ISecurity security){
+		Guard.argumentNotNull(fileName, "fileName");
+		Guard.argumentNotNull(security, "security");
+
+		this.feedFile = new File(fileName);
+		
+		SAXReader reader = new SAXReader();
+		Document document;
+		try {
+			document = reader.read(this.feedFile);
+		} catch (DocumentException e) {
+			throw new MeshException(e);
+		}
+
+		ISyndicationFormat syndicationFormat = RssSyndicationFormat.INSTANCE;
+		if(AtomSyndicationFormat.isAtom(document)){
+			syndicationFormat = AtomSyndicationFormat.INSTANCE;
+		}
+		
+		this.security = security;
+		this.feedReader = new FeedReader(syndicationFormat, security);
+		this.feedWriter = new FeedWriter(syndicationFormat, security);
+		
+		this.feed = this.feedReader.read(document);
 	}
 	
-	public FeedAdapter(Feed feed, ISecurity security){
+	public FeedAdapter(File file, ISyndicationFormat syndicationFormat, ISecurity security){
 		
-		Guard.argumentNotNull(feed, "feed");
+		Guard.argumentNotNull(file, "file");
+		Guard.argumentNotNull(syndicationFormat, "syndicationFormat");
 		Guard.argumentNotNull(security, "security");
 		
-		this.feed = feed;
+		this.feedFile = file;
 		this.security = security;
+		this.feedReader = new FeedReader(syndicationFormat, security);
+		this.feedWriter = new FeedWriter(syndicationFormat, security);
+		try {
+			this.feed = this.feedReader.read(file);
+		} catch (DocumentException e) {
+			throw new MeshException(e);
+		}
+	}
+	
+	public FeedAdapter(File file, ISyndicationFormat syndicationFormat, ISecurity security, Feed feed){
+		
+		Guard.argumentNotNull(file, "file");
+		Guard.argumentNotNull(syndicationFormat, "syndicationFormat");
+		Guard.argumentNotNull(security, "security");
+		Guard.argumentNotNull(feed, "feed");
+		
+		this.feedFile = file;
+		this.security = security;
+		this.feedReader = new FeedReader(syndicationFormat, security);
+		this.feedWriter = new FeedWriter(syndicationFormat, security);
+		this.feed = feed;
+		
+		if(!file.exists()){
+			this.flush();
+		}
 	}
 	
 	@Override
 	public void add(Item item) {
-		this.feed.addItem(item);		
+		this.feed.addItem(item);
+		this.flush();
 	}
 
 	@Override
@@ -44,6 +106,7 @@ public class FeedAdapter extends AbstractRepositoryAdapter{
 		Item item = this.get(id);
 		if(item != null){
 			this.feed.deleteItem(item);
+			this.flush();
 		}		
 	}
 
@@ -81,8 +144,7 @@ public class FeedAdapter extends AbstractRepositoryAdapter{
 
 	@Override
 	public List<Item> merge(List<Item> items) {
-		// Nothing to do, see FeedAdapter.supportsMerge()
-		return items;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -101,9 +163,19 @@ public class FeedAdapter extends AbstractRepositoryAdapter{
 			}
 			
 			this.feed.addItem(newItem);
+			this.flush();
 		}
 	}
 	
+	private void flush() {
+		try {
+			XMLWriter writer = new XMLWriter(new FileWriter(this.feedFile));
+			this.feedWriter.write(writer, this.feed);	
+		} catch (Exception e) {
+			throw new MeshException(e);
+		}
+	}
+
 	public Feed getFeed(){
 		return this.feed;
 	}

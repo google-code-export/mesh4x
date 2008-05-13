@@ -58,9 +58,9 @@ public class SyncInfoParser {
 	public Element convertSyncInfo2Element(SyncInfo syncInfo) throws DocumentException {
 		Element syncElementRoot = DocumentHelper.createElement(SYNC_INFO);
 		syncElementRoot.addElement(SYNC_INFO_ATTR_SYNC_ID).addText(syncInfo.getSyncId());
-		syncElementRoot.addElement(SYNC_INFO_ATTR_ENTITY_NAME).addText(syncInfo.getEntityName());
-		syncElementRoot.addElement(SYNC_INFO_ATTR_ENTITY_ID).addText(syncInfo.getEntityId());
-		syncElementRoot.addElement(SYNC_INFO_ATTR_ENTITY_VERSION).addText(String.valueOf(syncInfo.getEntityVersion()));
+		syncElementRoot.addElement(SYNC_INFO_ATTR_ENTITY_NAME).addText(syncInfo.getType());
+		syncElementRoot.addElement(SYNC_INFO_ATTR_ENTITY_ID).addText(syncInfo.getId());
+		syncElementRoot.addElement(SYNC_INFO_ATTR_ENTITY_VERSION).addText(String.valueOf(syncInfo.getVersion()));
 		
 		String syncAsXML = convertSync2XML(syncInfo.getSync());
 		syncElementRoot.addElement(SYNC_INFO_ATTR_SYNC_DATA).addText(syncAsXML);

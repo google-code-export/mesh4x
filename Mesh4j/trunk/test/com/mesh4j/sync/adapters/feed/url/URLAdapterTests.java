@@ -1,27 +1,20 @@
 package com.mesh4j.sync.adapters.feed.url;
 
 import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import junit.framework.Assert;
 
-import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
 import org.jaxen.JaxenException;
-import org.jaxen.SimpleNamespaceContext;
-import org.jaxen.dom4j.Dom4jXPath;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.mesh4j.sync.adapters.feed.XMLContent;
+import com.mesh4j.sync.adapters.feed.Feed;
+import com.mesh4j.sync.adapters.feed.FeedReader;
 import com.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
-import com.mesh4j.sync.model.IContent;
 import com.mesh4j.sync.model.Item;
-import com.mesh4j.sync.model.Sync;
 import com.mesh4j.sync.security.NullSecurity;
 import com.mesh4j.sync.test.utils.TestHelper;
 import com.mesh4j.sync.utils.IdGenerator;
@@ -61,8 +54,9 @@ public class URLAdapterTests {
 		String xml ="<?xml version=\"1.0\" encoding=\"utf-8\"?>"+
 		"<rss version=\"2.0\" xmlns:sx=\"http://feedsync.org/2007/feedsync\">"+
 		 "<channel> "+			
-			"<item  xmlns=\"http://feedsync.org/2007/feedsync\">"+
+			"<item>"+
 		   "<title>Buy groceries</title>"+
+		   "<user><name>jose</name></user>"+
 		   "<description>Get milk, eggs, butter and bread</description>"+
 		   "<sx:sync id=\""+ newID +"\" updates=\"3\">"+
 		    "<sx:history sequence=\"3\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/>"+
@@ -73,31 +67,13 @@ public class URLAdapterTests {
 		  "</channel>"+
 		 "</rss>";
 		
-		Element payload = selectElements("//sx:sync", DocumentHelper.parseText(xml)).get(0);
-		IContent content = new XMLContent(newID, "test", "test", payload);
-		Item item = new Item(content, new Sync(newID, "jmt", TestHelper.now(), false));
-		
-		ArrayList<Item> items = new ArrayList<Item>();
-		items.add(item);
-		
-		List<Item> result = this.urlAdapter.merge(items);
+		FeedReader reader = new FeedReader(RssSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		Feed feed = reader.read(DocumentHelper.parseText(xml));
+				
+		List<Item> result = this.urlAdapter.merge(feed.getItems());
 		Assert.assertEquals(0, result.size());
 	}
 	
 	// TODO (JMT) test
-	
-	@SuppressWarnings("unchecked")
-	private List<Element> selectElements(String xpathExpression, Document document) throws JaxenException {
-		List<Element> elements = new ArrayList<Element>();
-		HashMap<String, String> map = new HashMap<String, String>();
-		map.put("sx", "http://feedsync.org/2007/feedsync");
-			
-		Dom4jXPath xpath = new Dom4jXPath(xpathExpression);
-		xpath.setNamespaceContext(new SimpleNamespaceContext(map));
-		  
-		elements = xpath.selectNodes(document);
-		  
-		return elements;
-	}
 	
 }

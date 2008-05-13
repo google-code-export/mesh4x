@@ -7,4 +7,7 @@ public interface IContent extends Cloneable{
 	Element getPayload();
 	
 	IContent clone();
+
+	void addToFeedPayload(Element rootPayload);
+
 }

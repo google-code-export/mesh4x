@@ -2,21 +2,21 @@ package com.mesh4j.sync.adapters.compound;
 
 import java.util.List;
 
-import com.mesh4j.sync.adapters.EntityContent;
+import com.mesh4j.sync.adapters.IIdentifiableContent;
 import com.mesh4j.sync.model.IContent;
 
 public interface IContentAdapter {
 
-	EntityContent normalizeContent(IContent content);
+	IIdentifiableContent normalizeContent(IContent content);
 
-	void save(EntityContent entity);
+	void save(IIdentifiableContent entity);
 
-	EntityContent get(String entityId);
+	IIdentifiableContent get(String entityId);
 
-	void delete(EntityContent entity);
+	void delete(IIdentifiableContent entity);
 
-	List<EntityContent> getAll();
+	List<IIdentifiableContent> getAll();
 
-	String getEntityName();
+	String getType();
 
 }

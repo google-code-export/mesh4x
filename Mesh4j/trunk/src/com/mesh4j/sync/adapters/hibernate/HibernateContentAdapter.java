@@ -13,7 +13,7 @@ import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.metadata.ClassMetadata;
 
-import com.mesh4j.sync.adapters.EntityContent;
+import com.mesh4j.sync.adapters.IIdentifiableContent;
 import com.mesh4j.sync.adapters.compound.IContentAdapter;
 import com.mesh4j.sync.model.IContent;
 
@@ -61,13 +61,13 @@ public class HibernateContentAdapter implements IContentAdapter {
 		}
 	}
 
-	public void save(EntityContent entity) {
+	public void save(IIdentifiableContent content) {
 		Session session =  this.sessionFactory.openSession();
 		Transaction tx = null;
 		try{
 			tx = session.beginTransaction();
 			Session dom4jSession = session.getSession(EntityMode.DOM4J);
-			dom4jSession.saveOrUpdate(entity.getPayload().createCopy());
+			dom4jSession.saveOrUpdate(content.getPayload().createCopy());
 			tx.commit();
 		}catch (RuntimeException e) {
 			if (tx != null) {
@@ -79,10 +79,10 @@ public class HibernateContentAdapter implements IContentAdapter {
 		}
 	}
 
-	public void delete(EntityContent entity) {
+	public void delete(IIdentifiableContent content) {
 		Session session =  this.sessionFactory.openSession();
 		Session dom4jSession = session.getSession(EntityMode.DOM4J);
-		Element entityElement = (Element) dom4jSession.get(this.entityName, entity.getEntityId());
+		Element entityElement = (Element) dom4jSession.get(this.entityName, content.getId());
 		if(entityElement == null){
 			session.close();
 			return;
@@ -104,14 +104,14 @@ public class HibernateContentAdapter implements IContentAdapter {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<EntityContent> getAll() {
+	public List<IIdentifiableContent> getAll() {
 		String hqlQuery ="FROM " + this.entityName;
 		Session session = this.sessionFactory.openSession();
 		Session dom4jSession = session.getSession(EntityMode.DOM4J);		
 		List<Element> entities = dom4jSession.createQuery(hqlQuery).list();
 		session.close();
 		
-		ArrayList<EntityContent> result = new ArrayList<EntityContent>();
+		ArrayList<IIdentifiableContent> result = new ArrayList<IIdentifiableContent>();
 		for (Element entityElement : entities) {
 			String entityID = entityElement.element(this.entityIDNode).getText();
 			EntityContent entity = new EntityContent(entityElement, this.entityName, entityID);
@@ -124,7 +124,7 @@ public class HibernateContentAdapter implements IContentAdapter {
 		return EntityContent.normalizeContent(content, this.entityName, this.entityIDNode);
 	}
 	
-	public String getEntityName() {
+	public String getType() {
 		return entityName;
 	}
 	

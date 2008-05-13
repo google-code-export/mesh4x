@@ -49,4 +49,8 @@ public class NullContent implements IContent {
 	public String getId() {
 		return id;
 	}
+	
+	public void addToFeedPayload(Element rootPayload){
+		// nothing to do
+	}
 }
