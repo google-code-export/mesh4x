@@ -1,11 +1,13 @@
 package com.mesh4j.sync.ui;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -39,15 +41,20 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 
 	private final static Log Logger = LogFactory.getLog(Mesh4jUI.class);
 	
+	// MODEL VARIABLES
 	private Display display;
 	private Shell shell;
 	private Text endpoint1;
 	private Text endpoint2;
 	private Text consoleView;
 	private Text kmlToPrepareToSync;
+	private String defaultEndpoint1;
+	private String defaultEndpoint2;
 	
+	// BUSINESS METHODS
 	public static void main (String [] args) {
 		Mesh4jUI meshUI = new Mesh4jUI();
+		meshUI.initializeDefaults();
 		meshUI.openMesh();
 	}
 	
@@ -62,6 +69,7 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 		
 		endpoint1 = new Text (shell, SWT.BORDER);
 		endpoint1.setLayoutData (new GridData(600, 15));
+		endpoint1.setText(this.defaultEndpoint1);
 		
 		Button buttonSource = new Button(shell, SWT.PUSH);
 		buttonSource.addSelectionListener(new SelectionAdapter() {
@@ -79,6 +87,7 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 		
 		endpoint2 = new Text (shell, SWT.BORDER);
 		endpoint2.setLayoutData (new GridData(600, 15));
+		endpoint2.setText(this.defaultEndpoint2);
 		
 		Button buttonTarget = new Button(shell, SWT.PUSH);
 		buttonTarget.addSelectionListener(new SelectionAdapter() {
@@ -429,6 +438,22 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 		} catch (MeshException e) {
 			Logger.error(e.getMessage(), e);
 			return "Unexpected error";
+		}
+	}
+	
+	private void initializeDefaults(){
+		try {
+			FileReader reader = new FileReader("mesh4j.properties");
+			Properties prop = new Properties();
+			prop.load(reader);
+			this.defaultEndpoint1 = prop.getProperty("default.kml.file", "");
+			File file = new File(this.defaultEndpoint1);
+			if(file.exists()){
+				this.defaultEndpoint1 = file.getAbsolutePath();
+			}			
+			this.defaultEndpoint2 = prop.getProperty("default.feed.url", "");
+		} catch (Exception e) {
+			Logger.error(e.getMessage(), e);
 		}
 	}
 }

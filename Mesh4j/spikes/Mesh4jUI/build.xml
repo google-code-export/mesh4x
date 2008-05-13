@@ -17,6 +17,8 @@
 			<zipfileset prefix="mesh4j-KML-DemoApp-0.1.2" dir="dist" includes="mesh4j-KML-DemoApp.jar"/>
 			<zipfileset prefix="mesh4j-KML-DemoApp-0.1.2" dir="." includes="lib/**/*"/>
 			<zipfileset prefix="mesh4j-KML-DemoApp-0.1.2" dir="." includes="swt-win32-3138.dll"/>
+			<zipfileset prefix="mesh4j-KML-DemoApp-0.1.2" dir="." includes="mesh4j.properties"/>
+			<zipfileset prefix="mesh4j-KML-DemoApp-0.1.2" dir="." includes="default.kml"/>
 			<zipfileset prefix="mesh4j-KML-DemoApp-0.1.2/lib" dir="." includes="log4j.properties"/>
 			<zipfileset prefix="mesh4j-KML-DemoApp-0.1.2/lib" dir="." includes="mesh4j_resources.properties"/>
 		</zip>
