@@ -30,8 +30,8 @@ import com.mesh4j.sync.adapters.compound.CompoundRepositoryAdapter;
 import com.mesh4j.sync.adapters.compound.IContentAdapter;
 import com.mesh4j.sync.adapters.feed.FeedAdapter;
 import com.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
-import com.mesh4j.sync.adapters.feed.url.URLFeedAdapter;
 import com.mesh4j.sync.adapters.file.FileSyncRepository;
+import com.mesh4j.sync.adapters.http.HttpSyncAdapter;
 import com.mesh4j.sync.adapters.kml.KMLContentAdapter;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.security.NullSecurity;
@@ -274,7 +274,7 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 
 	private IRepositoryAdapter makeRepositoryAdapter(String endpoint) {
 		if(isURL(endpoint)){
-			return new URLFeedAdapter(endpoint, RssSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+			return new HttpSyncAdapter(endpoint, RssSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
 		} else {
 			if(isFeed(endpoint)){
 				return new FeedAdapter(endpoint, NullSecurity.INSTANCE);
