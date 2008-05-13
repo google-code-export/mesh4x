@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<XamlFeedConfigurationEntry
+  Name="KML"
+  Title="KML Feed"
+  Description="KML Entries" 
+  xmlns="clr-namespace:Mesh4n.Adapters.HttpService.Configuration;assembly=Mesh4n.Adapters.HttpService" 
+  xmlns:mad="clr-namespace:Mesh4n.Adapters.Data;assembly=Mesh4n.Adapters.Data">
+	<XamlFeedConfigurationEntry.SyncAdapter>
+		<mad:GenericSyncAdapter
+      RepositoryId="KML">
+			<mad:GenericSyncAdapter.DatabaseFactory>
+				<mad:SqlDbFactory
+          ConnectionString="Data Source=localhost;Initial Catalog=MockDatabase;User id=sa;password=Password11" />
+			</mad:GenericSyncAdapter.DatabaseFactory>
+		</mad:GenericSyncAdapter>
+	</XamlFeedConfigurationEntry.SyncAdapter>
+</XamlFeedConfigurationEntry>
