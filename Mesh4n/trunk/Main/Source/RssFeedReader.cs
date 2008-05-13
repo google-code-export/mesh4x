@@ -77,7 +77,7 @@ namespace Mesh4n
 				}
 			//}
 
-			return null;
+			return new Feed();
 		}
 
 		protected override IXmlItem ReadItem(XmlReader reader)
