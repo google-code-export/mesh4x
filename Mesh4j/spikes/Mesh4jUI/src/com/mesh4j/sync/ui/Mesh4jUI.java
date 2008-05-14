@@ -266,7 +266,7 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 			} else {
 				return "Conflicts";
 			}
-		} catch (MeshException e) {
+		} catch (RuntimeException e) {
 			Logger.error(e.getMessage(), e);
 			return "Unexpected error";
 		}
