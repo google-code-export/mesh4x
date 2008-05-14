@@ -55,8 +55,8 @@
     <Compile Include="ConfigurationManager\FeedConfigurationCacheTests.cs" />
     <Compile Include="ConfigurationManager\FeedConfigurationEntryTests.cs" />
     <Compile Include="ConfigurationManager\FeedConfigurationManagerTests.cs" />
-    <Compile Include="KmlNetworkFormatterFixture.cs" />
-    <Compile Include="KmlFormatterFixture.cs" />
+    <Compile Include="MessageFormatters\KmlNetworkFormatterFixture.cs" />
+    <Compile Include="MessageFormatters\KmlFormatterFixture.cs" />
     <Compile Include="MockWebContext.cs" />
     <Compile Include="SyncServiceConfigurationSectionTests.cs" />
     <Compile Include="MockSyncAdapter.cs" />

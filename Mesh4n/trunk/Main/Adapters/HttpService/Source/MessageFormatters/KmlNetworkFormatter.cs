@@ -16,21 +16,25 @@ namespace Mesh4n.Adapters.HttpService.MessageFormatters
 			context.OutgoingResponse.Headers.Add("Content-Disposition",
 				"attachment; filename=" + feedName + "-network.kml");
 
-			return Message.CreateMessage(MessageVersion.None, "", new KmlWriter(feedName, feed, items));
+			Uri href = new Uri(context.IncomingRequest.UriTemplateMatch.BaseUri, "/feeds/" + feedName + "?format=kml");
+
+			return Message.CreateMessage(MessageVersion.None, "", new KmlWriter(feedName, href, feed, items));
 		}
 
 		class KmlWriter : BodyWriter
 		{
 			string feedName;
 			Feed feed;
+			Uri href;
 			IEnumerable<Item> items;
 
-			public KmlWriter(string feedName, Feed feed, IEnumerable<Item> items)
+			public KmlWriter(string feedName, Uri href, Feed feed, IEnumerable<Item> items)
 				: base(false)
 			{
 				this.feedName = feedName;
 				this.feed = feed;
 				this.items = items;
+				this.href = href;
 			}
 
 			protected override void OnWriteBodyContents(XmlDictionaryWriter writer)
@@ -44,7 +48,7 @@ namespace Mesh4n.Adapters.HttpService.MessageFormatters
 				//<Url>
 				writer.WriteStartElement(KmlNames.ElementNames.Url, KmlNames.NamespaceURI);
 
-				writer.WriteElementString(KmlNames.ElementNames.Href, KmlNames.NamespaceURI, "/feeds/" + feedName + "?format=kml");
+				writer.WriteElementString(KmlNames.ElementNames.Href, KmlNames.NamespaceURI, href.AbsoluteUri);
 				writer.WriteElementString(KmlNames.ElementNames.RefreshMode, KmlNames.NamespaceURI, "onInterval");
 				writer.WriteElementString(KmlNames.ElementNames.RefreshInterval, KmlNames.NamespaceURI, "5");
 

@@ -8,6 +8,7 @@ using System.ServiceModel.Web;
 using System.Xml;
 using System.IO;
 using Mesh4n.Adapters.HttpService.MessageFormatters;
+using System.Net;
 
 namespace Mesh4n.Adapters.HttpService.Tests
 {
@@ -24,6 +25,8 @@ namespace Mesh4n.Adapters.HttpService.Tests
 				.Callback(ct => Assert.AreEqual(KmlNames.ContentType, ct))
 				.Verifiable();
 
+			context.IncomingRequest.Object.UriTemplateMatch.BaseUri = new Uri("http://localhost");
+
 			var message = formatter.Format(
 				"foo", 
 				new Feed("foo", "http://foo", "bar"),
@@ -31,6 +34,7 @@ namespace Mesh4n.Adapters.HttpService.Tests
 				context.Object);
 
 			Assert.IsNotNull(message);
+			Assert.AreEqual("attachment; filename=foo-network.kml", context.OutgoingResponse.Object.Headers["Content-Disposition"]);
 
 			context.Verify();
 		}
@@ -45,23 +49,12 @@ namespace Mesh4n.Adapters.HttpService.Tests
 				.Callback(ct => Assert.AreEqual(KmlNames.ContentType, ct))
 				.Verifiable();
 
+			context.IncomingRequest.Object.UriTemplateMatch.BaseUri = new Uri("http://localhost");
+
 			var message = formatter.Format(
 				"foo",
 				new Feed("foo", "http://foo", "bar"),
-				new []
-				{
-					new Item(new XmlItem("1", "itemTitle", "itemDescription", 
-						GetElement(@"
-<payload>
-	<title>itemTitle</title>
-	<Placemark xmlns='http://earth.google.com/kml/2.2'>
-		<name>Simple placemark</name>
-		<description>Simple description</description>
-	</Placemark>
-</payload>
-")),
-						Behaviors.Create("1", "kzu", DateTime.Now, false))
-				},
+				new Item[] {},
 				context.Object);
 
 			Assert.IsNotNull(message);

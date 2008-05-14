@@ -21,8 +21,10 @@ namespace Mesh4n.Adapters.HttpService.Tests
 
 			WebHeaderCollection requestHeaders = new WebHeaderCollection();
 			WebHeaderCollection responseHeaders = new WebHeaderCollection();
-	
+			UriTemplateMatch uriTemplateMatch = new UriTemplateMatch();
+
 			requestContextMock.ExpectGet(requestContext => requestContext.Headers).Returns(requestHeaders);
+			requestContextMock.ExpectGet(requestContext => requestContext.UriTemplateMatch).Returns(uriTemplateMatch);
 			responseContextMock.ExpectGet(responseContext => responseContext.Headers).Returns(responseHeaders);
 		}
 

@@ -187,9 +187,16 @@ namespace Mesh4n.Adapters.HttpService
 
 		protected virtual IMessageFormatter GetFormatter(string format)
 		{
-			if (format == SupportedFormats.Rss20)
-				return new FeedMessageFormatter();
-
+			switch (format.ToLowerInvariant())
+			{
+				case SupportedFormats.Rss20:
+					return new FeedMessageFormatter();
+				case SupportedFormats.Kml:
+					return new KmlFormatter();
+				case SupportedFormats.KmlNetwork:
+					return new KmlNetworkFormatter();
+			}
+			
 			return null;
 		}
 
@@ -216,7 +223,9 @@ namespace Mesh4n.Adapters.HttpService
 
 		protected virtual void ValidateFormat(string format)
 		{
-			if (format != SupportedFormats.Rss20)
+			if (format != SupportedFormats.Rss20 &&
+				format != SupportedFormats.Kml &&
+				format != SupportedFormats.KmlNetwork)
 			{
 				throw new ServiceException(string.Format(CultureInfo.InvariantCulture,
 					Resources.NotSupportedFormat, format), HttpStatusCode.BadRequest);
