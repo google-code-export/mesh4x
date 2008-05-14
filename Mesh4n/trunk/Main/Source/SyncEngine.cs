@@ -195,7 +195,7 @@ namespace Mesh4n
 			}
 			else
 			{
-				// If repository supports its own SSE merge behavior, don't apply it locally.
+				// If repository supports its own feedsync merge behavior, don't apply it locally.
 				return new List<Item>(source.Merge(incomingItems));
 			}
 		}

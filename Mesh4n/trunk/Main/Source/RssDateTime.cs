@@ -12,7 +12,7 @@ using System.Xml.Serialization;
 namespace Mesh4n
 {
 	/// <summary>
-	/// RSS/SSE date time, that complies with RFC 822 date format 
+	/// RSS/feedsync date time, that complies with RFC 822 date format 
 	/// but with 4 digit year.
 	/// </summary>
 	/// <remarks>

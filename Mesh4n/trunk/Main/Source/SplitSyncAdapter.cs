@@ -7,7 +7,7 @@ namespace Mesh4n
 {
 	/// <summary>
 	/// A repository that splits its data between an <see cref="IXmlRepository"/> containing 
-	/// the actual data, and an <see cref="ISyncAdapter"/> containing the SSE metadata.
+	/// the actual data, and an <see cref="ISyncAdapter"/> containing the feedsync metadata.
 	/// </summary>
 	public partial class SplitSyncAdapter : ISyncAdapter
 	{
@@ -25,7 +25,7 @@ namespace Mesh4n
 		/// Initializes the repository with the two split repositories.
 		/// </summary>
 		/// <param name="xmlRepo">Repository for the actual entity data.</param>
-		/// <param name="syncRepo">Repository for the SSE metadata.</param>
+		/// <param name="syncRepo">Repository for the feedsync metadata.</param>
 		/// <exception cref="ArgumentNullException"><paramref name="xmlRepo"/> or <paramref name="syncRepo"/> are null.</exception>
 		public SplitSyncAdapter(IContentAdapter xmlRepo, ISyncRepository syncRepo)
 		{
@@ -49,7 +49,7 @@ namespace Mesh4n
 		}
 
 		/// <summary>
-		/// Gets the repository for the SSE metadata.
+		/// Gets the repository for the feedsync metadata.
 		/// </summary>
 		public ISyncRepository SyncRepository 
 		{ 

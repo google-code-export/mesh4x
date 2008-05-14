@@ -7,12 +7,12 @@ namespace Mesh4n
 	public static class Schema
 	{
 		/// <summary>
-		/// Namespace of the SSE elements.
+		/// Namespace of the feedsync elements.
 		/// </summary>
 		public const string Namespace = "http://feedsync.org/2007/feedsync";
 
 		/// <summary>
-		/// Default prefix used for SSE elements.
+		/// Default prefix used for feedsync elements.
 		/// </summary>
 		public const string DefaultPrefix = "sx";
 

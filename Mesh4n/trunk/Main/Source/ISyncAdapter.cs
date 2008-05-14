@@ -18,7 +18,7 @@ namespace Mesh4n
 		/// <summary>
 		/// Tries to retrieve an item with the given <paramref name="id"/>.
 		/// </summary>
-		/// <param name="id">SSE identifier for the item</param>
+		/// <param name="id">feedsync identifier for the item</param>
 		/// <returns>An <see cref="Item"/> if the item was found in the repository; <see langword="null"/> otherwise.</returns>
 		Item Get(string id);
 
@@ -87,7 +87,7 @@ namespace Mesh4n
 		/// only save the item any potential conflicts it may have.</param>
 		/// <returns>The updated item if conflicts were resolved, otherwise, the same <paramref name="item"/>.</returns>
 		/// <remarks>
-		/// See 3.4 on SSE spec.
+		/// See 3.4 on feedsync spec.
 		/// </remarks>
 		Item Update(Item item, bool resolveConflicts);
 

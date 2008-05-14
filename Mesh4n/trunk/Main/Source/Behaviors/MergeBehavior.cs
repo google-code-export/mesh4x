@@ -40,7 +40,7 @@ namespace Mesh4n
 	internal class MergeBehavior
 	{
 		/// <summary>
-		/// Merges the two items applying the SSE algorithm.
+		/// Merges the two items applying the feedsync algorithm.
 		/// </summary>
 		public ItemMergeResult Merge(Item originalItem, Item incomingItem)
 		{
@@ -85,7 +85,7 @@ namespace Mesh4n
 
 		private MergeOperation MergeItems(Item localItem, Item incomingItem, out Item proposedItem)
 		{
-			Tracer.TraceData(this, TraceEventType.Verbose, "Applying SSE merge algorithm");
+			Tracer.TraceData(this, TraceEventType.Verbose, "Applying feedsync merge algorithm");
 			proposedItem = null;
 
 			//3.3.2

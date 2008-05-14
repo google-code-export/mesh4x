@@ -125,7 +125,7 @@ namespace Mesh4n
 			foreach (History history in sync.UpdatesHistory)
 			{
 				// By may be null or empty if not specified.
-				// SSE allows either By or When to be specified.
+				// feedsync allows either By or When to be specified.
 				if (String.IsNullOrEmpty(history.By))
 				{
 					// Can't purge without a By
