@@ -52,7 +52,7 @@ namespace Mesh4n.Adapters.HttpService.Tests
 			FeedConfigurationManager manager = GetManagerInstance(FeedsFolder);
 
 			FeedConfigurationEntry entry1 = new XamlFeedConfigurationEntry("entry1",
-				"title 1", "description 1", new MockRepository());
+				"title 1", "description 1", new MockSyncAdapter());
 
 			FeedConfigurationEntry entry2 = new XamlFeedConfigurationEntry("entry2",
 				"title 2", "description 2", new MockSyncAdapter());
@@ -113,6 +113,23 @@ namespace Mesh4n.Adapters.HttpService.Tests
 			Assert.AreEqual("title new", entry1.Title);
 			Assert.AreEqual("description new", entry1.Description);
 			Assert.IsInstanceOfType(typeof(MockSyncAdapter), entry1.SyncAdapter);
+		}
+
+		[Test]
+		public void ShouldRemoveExistingConfiguration()
+		{
+			FeedConfigurationManager manager = GetManagerInstance(FeedsFolder);
+
+			FeedConfigurationEntry entry1 = new XamlFeedConfigurationEntry("entry1",
+				"title 1", "description 1", new MockSyncAdapter());
+
+			manager.Save(entry1);
+
+			manager.Delete(entry1.Name);
+
+			entry1 = manager.Load("entry1");
+
+			Assert.IsNull(entry1);
 		}
 
 		[Test]

@@ -52,15 +52,6 @@ namespace Mesh4n.Adapters.HttpService.Configuration
 			this.configurationPath = path;
 		}
 
-		public void Save(FeedConfigurationEntry entry)
-		{
-			Guard.ArgumentNotNull(entry, "entry");
-			Guard.ArgumentIsInstanceOfType(entry, typeof(XamlFeedConfigurationEntry), "entry");
-
-			string configPath = GetSettingsFile(entry.Name);
-			SerializeSettings(configPath, entry);
-		}
-
 		public FeedConfigurationEntry Load(string feedName)
 		{
 			Guard.ArgumentNotNullOrEmptyString(feedName, "feedName");
@@ -91,6 +82,30 @@ namespace Mesh4n.Adapters.HttpService.Configuration
 
 				yield return configurationEntry;
 			}
+		}
+
+		public void Save(FeedConfigurationEntry entry)
+		{
+			Guard.ArgumentNotNull(entry, "entry");
+			Guard.ArgumentIsInstanceOfType(entry, typeof(XamlFeedConfigurationEntry), "entry");
+
+			string configPath = GetSettingsFile(entry.Name);
+			SerializeSettings(configPath, entry);
+
+			this.cache.RemoveEntry(entry.Name);
+		}
+
+		public void Delete(string feedName)
+		{
+			Guard.ArgumentNotNullOrEmptyString(feedName, "feedName");
+
+			string configFolder = GetSettingsFolder(feedName);
+			if (Directory.Exists(configFolder))
+			{
+				Directory.Delete(configFolder, true);
+			}
+
+			this.cache.RemoveEntry(feedName);
 		}
 
 		private FeedConfigurationEntry DeserializeFeedEntry(string filePath)
@@ -131,14 +146,15 @@ namespace Mesh4n.Adapters.HttpService.Configuration
 			}
 		}
 
-		public string GetSettingsFile(string feedName)
+		protected string GetSettingsFile(string feedName)
 		{
-			return Path.Combine(this.configurationPath,
-				Path.Combine(
-					feedName,
-					Path.ChangeExtension(feedName, SerializerExtension)
-				)
-			);
+			return Path.Combine(GetSettingsFolder(feedName),
+					Path.ChangeExtension(feedName, SerializerExtension));
+		}
+
+		protected string GetSettingsFolder(string feedName)
+		{
+			return Path.Combine(this.configurationPath, feedName);
 		}
 	}
 }

@@ -11,6 +11,7 @@ namespace Mesh4n.Adapters.HttpService.Configuration
 	{
 		void AddEntry(string file, FeedConfigurationEntry entry);
 		FeedConfigurationEntry GetEntry(string feedName);
+		void RemoveEntry(string feedName);
 	}
 
 	internal class FeedConfigurationCache : IFeedConfigurationCache
@@ -27,6 +28,11 @@ namespace Mesh4n.Adapters.HttpService.Configuration
 		public FeedConfigurationEntry GetEntry(string feedName)
 		{
 			return (FeedConfigurationEntry)HttpRuntime.Cache[feedName];
+		}
+
+		public void RemoveEntry(string feedName)
+		{
+			HttpRuntime.Cache.Remove(feedName);
 		}
 	}
 }

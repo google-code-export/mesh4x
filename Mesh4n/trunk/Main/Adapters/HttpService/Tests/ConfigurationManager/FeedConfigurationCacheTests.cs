@@ -46,5 +46,35 @@ namespace Mesh4n.Adapters.HttpService.Tests.Configuration
 			FeedConfigurationEntry cachedEntry = cache.GetEntry("foo");
 			Assert.IsNull(cachedEntry);
 		}
+
+		[Test]
+		public void ShouldRemoveEntry()
+		{
+			string fileName = Path.GetFullPath(Guid.NewGuid().ToString() + ".txt");
+
+			FeedConfigurationEntry entry = new FeedConfigurationEntry("foo", "foo title", "foo description", new MockSyncAdapter());
+
+			FeedConfigurationCache cache = new FeedConfigurationCache();
+			cache.AddEntry(fileName, entry);
+
+			cache.RemoveEntry(entry.Name);
+
+			Assert.IsNull(cache.GetEntry(entry.Name));
+		}
+
+		[Test]
+		public void ShouldNotFailIfRemoveTwice()
+		{
+			string fileName = Path.GetFullPath(Guid.NewGuid().ToString() + ".txt");
+
+			FeedConfigurationEntry entry = new FeedConfigurationEntry("foo", "foo title", "foo description", new MockSyncAdapter());
+
+			FeedConfigurationCache cache = new FeedConfigurationCache();
+			cache.AddEntry(fileName, entry);
+
+			cache.RemoveEntry(entry.Name);
+			cache.RemoveEntry(entry.Name);
+		}
+
 	}
 }
