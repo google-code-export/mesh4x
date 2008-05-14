@@ -59,7 +59,7 @@ namespace Mesh4n.Tests
 		{
 			MockSyncRepository syncRepo = new MockSyncRepository();
 			MockXmlRepository xmlRepo = new MockXmlRepository();
-			ISyncAdapter repo = new CompoundSyncAdapter(xmlRepo, syncRepo);
+			ISyncAdapter repo = new SplitSyncAdapter(xmlRepo, syncRepo);
 
 			string id = Guid.NewGuid().ToString();
 			repo.Add(new Item(new NullXmlItem(id), Behaviors.Create(id, "kzu", DateTime.Now.Subtract(TimeSpan.FromDays(3)), false)));
@@ -120,7 +120,7 @@ namespace Mesh4n.Tests
 		{
 			MockSyncRepository syncRepo = new MockSyncRepository();
 			MockXmlRepository xmlRepo = new MockXmlRepository();
-			ISyncAdapter repo = new CompoundSyncAdapter(xmlRepo, syncRepo);
+			ISyncAdapter repo = new SplitSyncAdapter(xmlRepo, syncRepo);
 
 			string id = Guid.NewGuid().ToString();
 			repo.Add(new Item(new NullXmlItem(id), Behaviors.Create(id, "kzu", DateTime.Now.Subtract(TimeSpan.FromDays(3)), false)));
@@ -162,7 +162,7 @@ namespace Mesh4n.Tests
 		public void ShouldWriteFeedWithDeletedItem()
 		{
 			IContentAdapter xmlRepo = new MockXmlRepository().AddOneItem();
-			ISyncAdapter repo = new CompoundSyncAdapter(xmlRepo, new MockSyncRepository());
+			ISyncAdapter repo = new SplitSyncAdapter(xmlRepo, new MockSyncRepository());
 
 			Item item = GetFirst<Item>(repo.GetAll());
 			xmlRepo.Remove(item.XmlItem.Id);

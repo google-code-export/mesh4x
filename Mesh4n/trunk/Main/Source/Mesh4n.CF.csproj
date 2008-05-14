@@ -72,10 +72,10 @@
     </Compile>
     <Compile Include="Behaviors\Behaviors.cs" />
     <Compile Include="Behaviors\MergeBehavior.cs" />
-    <Compile Include="CompoundSyncAdapter.cs" />
     <Compile Include="DataEventArgs.cs" />
     <Compile Include="DeviceAuthor.cs" />
     <Compile Include="DynamicXmlItem.cs" />
+    <Compile Include="FeedFormatter.cs" />
     <Compile Include="FeedReader.cs" />
     <Compile Include="FeedWriter.cs" />
     <Compile Include="Flag.cs" />
@@ -110,10 +110,12 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="RssDateTime.cs" />
+    <Compile Include="RssFeedFormatter.cs" />
     <Compile Include="RssFeedReader.cs" />
     <Compile Include="RssFeedWriter.cs" />
     <Compile Include="Schema.cs" />
     <Compile Include="SerializerXmlItem.cs" />
+    <Compile Include="SplitSyncAdapter.cs" />
     <Compile Include="SyncAdapter.cs" />
     <Compile Include="SyncEngine.cs" />
     <Compile Include="Timestamp.cs" />

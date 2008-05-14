@@ -9,7 +9,7 @@ namespace Mesh4n
 	/// A repository that splits its data between an <see cref="IXmlRepository"/> containing 
 	/// the actual data, and an <see cref="ISyncAdapter"/> containing the SSE metadata.
 	/// </summary>
-	public partial class CompoundSyncAdapter : ISyncAdapter
+	public partial class SplitSyncAdapter : ISyncAdapter
 	{
 		IContentAdapter xmlRepo;
 		ISyncRepository syncRepo;
@@ -17,7 +17,7 @@ namespace Mesh4n
 		/// <summary>
 		/// Default constructor
 		/// </summary>
-		public CompoundSyncAdapter()
+		public SplitSyncAdapter()
 		{
 		}
 
@@ -27,7 +27,7 @@ namespace Mesh4n
 		/// <param name="xmlRepo">Repository for the actual entity data.</param>
 		/// <param name="syncRepo">Repository for the SSE metadata.</param>
 		/// <exception cref="ArgumentNullException"><paramref name="xmlRepo"/> or <paramref name="syncRepo"/> are null.</exception>
-		public CompoundSyncAdapter(IContentAdapter xmlRepo, ISyncRepository syncRepo)
+		public SplitSyncAdapter(IContentAdapter xmlRepo, ISyncRepository syncRepo)
 		{
 			Guard.ArgumentNotNull(xmlRepo, "xmlRepo");
 			Guard.ArgumentNotNull(syncRepo, "syncRepo");

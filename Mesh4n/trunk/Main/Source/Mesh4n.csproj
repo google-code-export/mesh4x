@@ -57,7 +57,7 @@
     <Compile Include="Behaviors\MergeBehavior.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CompoundSyncAdapter.cs">
+    <Compile Include="SplitSyncAdapter.cs">
     </Compile>
     <Compile Include="DataEventArgs.cs" />
     <Compile Include="FeedFormatter.cs" />
