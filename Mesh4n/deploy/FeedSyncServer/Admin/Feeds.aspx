@@ -13,11 +13,16 @@
     <asp:Repeater runat="server" ID="rptFeeds">
 		<ItemTemplate>
 			<li><a href="Feed.aspx?Feed=<%# DataBinder.Eval(Container.DataItem, "Name") %>">
-      <%# DataBinder.Eval(Container.DataItem, "Name") %></a></li>
+      <%# DataBinder.Eval(Container.DataItem, "Name") %></a>&nbsp;&nbsp;
+		<a href="../Service.svc/feeds/<%# DataBinder.Eval(Container.DataItem, "Name") %>">(RSS)</a>
+      </li>
+      
 		</ItemTemplate>
 	</asp:Repeater>
 		<br /><br />
-		<asp:HyperLink runat="server" NavigateUrl="~/Admin/CreateFeed.aspx">Create a new feed</asp:HyperLink>
+		<asp:HyperLink runat="server" NavigateUrl="~/Admin/CreateFeed.aspx">Create a new feed</asp:HyperLink><br />
+		<asp:LinkButton runat="server" ID="lnkRemoveAll" Text="Remove All Feeds" 
+			onclick="lnkRemoveAll_Click"></asp:LinkButton>
     </div>
     </form>
 </body>

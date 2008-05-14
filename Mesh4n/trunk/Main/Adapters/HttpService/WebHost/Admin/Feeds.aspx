@@ -13,7 +13,10 @@
     <asp:Repeater runat="server" ID="rptFeeds">
 		<ItemTemplate>
 			<li><a href="Feed.aspx?Feed=<%# DataBinder.Eval(Container.DataItem, "Name") %>">
-      <%# DataBinder.Eval(Container.DataItem, "Name") %></a></li>
+      <%# DataBinder.Eval(Container.DataItem, "Name") %></a>&nbsp;&nbsp;
+		<a href="../Service.svc/feeds/<%# DataBinder.Eval(Container.DataItem, "Name") %>">(RSS)</a>
+      </li>
+      
 		</ItemTemplate>
 	</asp:Repeater>
 		<br /><br />
