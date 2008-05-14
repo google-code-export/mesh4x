@@ -22,12 +22,30 @@ namespace WebHost.Admin
 		{
 			if (!Page.IsPostBack)
 			{
-				IFeedConfigurationManager manager = SyncServiceConfigurationSection.GetConfigurationManager();
-				IEnumerable<FeedConfigurationEntry> entries = manager.LoadAll();
-
-				this.rptFeeds.DataSource = entries;
-				this.rptFeeds.DataBind();
+				BindEntriesToRepeater();
 			}
+		}
+
+		private void BindEntriesToRepeater()
+		{
+			IFeedConfigurationManager manager = SyncServiceConfigurationSection.GetConfigurationManager();
+			IEnumerable<FeedConfigurationEntry> entries = manager.LoadAll();
+
+			this.rptFeeds.DataSource = entries;
+			this.rptFeeds.DataBind();
+		}
+
+		protected void lnkRemoveAll_Click(object sender, EventArgs e)
+		{
+			IFeedConfigurationManager manager = SyncServiceConfigurationSection.GetConfigurationManager();
+			IEnumerable<FeedConfigurationEntry> entries = manager.LoadAll();
+
+			foreach (FeedConfigurationEntry entry in entries)
+			{
+				manager.Delete(entry.Name);
+			}
+
+			BindEntriesToRepeater();
 		}
 	}
 }

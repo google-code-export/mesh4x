@@ -17,7 +17,9 @@
 		</ItemTemplate>
 	</asp:Repeater>
 		<br /><br />
-		<asp:HyperLink runat="server" NavigateUrl="~/Admin/CreateFeed.aspx">Create a new feed</asp:HyperLink>
+		<asp:HyperLink runat="server" NavigateUrl="~/Admin/CreateFeed.aspx">Create a new feed</asp:HyperLink><br />
+		<asp:LinkButton runat="server" ID="lnkRemoveAll" Text="Remove All Feeds" 
+			onclick="lnkRemoveAll_Click"></asp:LinkButton>
     </div>
     </form>
 </body>
