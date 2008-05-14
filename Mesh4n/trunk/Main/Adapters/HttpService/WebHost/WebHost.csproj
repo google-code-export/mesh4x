@@ -43,8 +43,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Admin\CreateFeed.aspx" />
+    <Content Include="Admin\Feed.aspx" />
     <Content Include="Admin\Feeds.aspx" />
-    <Content Include="Admin\Message.aspx" />
     <Content Include="Service.svc" />
     <Content Include="Web.config" />
   </ItemGroup>
@@ -56,19 +56,19 @@
     <Compile Include="Admin\CreateFeed.aspx.Designer.cs">
       <DependentUpon>CreateFeed.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Admin\Feed.aspx.cs">
+      <DependentUpon>Feed.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Feed.aspx.designer.cs">
+      <DependentUpon>Feed.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Admin\Feeds.aspx.cs">
       <DependentUpon>Feeds.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Admin\Feeds.aspx.Designer.cs">
       <DependentUpon>Feeds.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Admin\Message.aspx.cs">
-      <DependentUpon>Message.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Admin\Message.aspx.Designer.cs">
-      <DependentUpon>Message.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -114,14 +114,12 @@
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
-
-	<PropertyGroup>
-		<PostBuildEvent>
+  <PropertyGroup>
+    <PostBuildEvent>
 			xcopy "$(ProjectDir)*.*" "$(SolutionDir)\..\..\deploy\FeedSyncServer\" /S /I /Y /D /Q
 		</PostBuildEvent>
-	</PropertyGroup>
-	<Target Name="AfterBuild">
-		<Exec Command="$(FrameworkDir)\aspnet_compiler -p $(ProjectDir) -v /" />
-	</Target>
-
+  </PropertyGroup>
+  <Target Name="AfterBuild">
+    <Exec Command="$(FrameworkDir)\aspnet_compiler -p $(ProjectDir) -v /" />
+  </Target>
 </Project>

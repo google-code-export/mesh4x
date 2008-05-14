@@ -7,6 +7,7 @@
     <title>Create a new feed</title>
 </head>
 <body>
+	<h1>Create a new feed</h1>
     <form id="form1" runat="server">
     <div>
 		<table border="0" cellpadding="0" cellspacing="0">
@@ -55,6 +56,7 @@
 			</tr>
 		</table>
     </div>
+    <br /><asp:HyperLink ID="HyperLink1" runat="server" NavigateUrl="~/Admin/Feeds.aspx">Go back to the feeds list</asp:HyperLink>
     </form>
 </body>
 </html>

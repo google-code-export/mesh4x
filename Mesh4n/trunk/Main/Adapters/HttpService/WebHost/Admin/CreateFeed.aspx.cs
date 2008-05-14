@@ -34,7 +34,7 @@ namespace WebHost.Admin
 			IFeedConfigurationManager manager = SyncServiceConfigurationSection.GetConfigurationManager();
 			manager.Save(entry);
 
-			Response.Redirect("Message.aspx?feed=" + txtFeedName.Text, false);
+			Response.Redirect("~/Admin/Feed.aspx?feed=" + txtFeedName.Text, false);
 		}
 	}
 }

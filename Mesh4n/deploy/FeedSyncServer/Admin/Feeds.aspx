@@ -4,14 +4,20 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
-    <title>Feeds</title>
+    <title>Available Feeds</title>
 </head>
 <body>
     <form id="form1" runat="server">
+<h1>Available Feeds</h1>
     <div>
-		<asp:HyperLink ID="lnkRssFeed" runat="server" NavigateUrl="../Service.svc/feeds/{0}">Rss</asp:HyperLink><br />
-		<asp:HyperLink ID="lnkKmlFeed" runat="server" NavigateUrl="../Service.svc/feeds/{0}?format=kml">Kml</asp:HyperLink><br />
-		<asp:HyperLink ID="lnkKmlNetworkFeed" runat="server" NavigateUrl="../Service.svc/feeds/{0}?format=kmlNet">Kml Network</asp:HyperLink><br />
+    <asp:Repeater runat="server" ID="rptFeeds">
+		<ItemTemplate>
+			<li><a href="Feed.aspx?Feed=<%# DataBinder.Eval(Container.DataItem, "Name") %>">
+      <%# DataBinder.Eval(Container.DataItem, "Name") %></a></li>
+		</ItemTemplate>
+	</asp:Repeater>
+		<br /><br />
+		<asp:HyperLink runat="server" NavigateUrl="~/Admin/CreateFeed.aspx">Create a new feed</asp:HyperLink>
     </div>
     </form>
 </body>

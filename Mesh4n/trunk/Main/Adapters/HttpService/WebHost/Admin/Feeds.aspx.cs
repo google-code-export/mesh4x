@@ -9,6 +9,9 @@ using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
+using Mesh4n.Adapters.HttpService.Configuration;
+using Mesh4n.Adapters.HttpService;
+using System.Collections.Generic;
 
 namespace WebHost.Admin
 {
@@ -17,11 +20,14 @@ namespace WebHost.Admin
 	{
 		protected void Page_Load(object sender, EventArgs e)
 		{
-			string feedName = Request.QueryString["feed"];
+			if (!Page.IsPostBack)
+			{
+				IFeedConfigurationManager manager = SyncServiceConfigurationSection.GetConfigurationManager();
+				IEnumerable<FeedConfigurationEntry> entries = manager.LoadAll();
 
-			lnkRssFeed.NavigateUrl = string.Format(lnkRssFeed.NavigateUrl, feedName);
-			lnkKmlFeed.NavigateUrl = string.Format(lnkKmlFeed.NavigateUrl, feedName);
-			lnkKmlNetworkFeed.NavigateUrl = string.Format(lnkKmlNetworkFeed.NavigateUrl, feedName);
+				this.rptFeeds.DataSource = entries;
+				this.rptFeeds.DataBind();
+			}
 		}
 	}
 }

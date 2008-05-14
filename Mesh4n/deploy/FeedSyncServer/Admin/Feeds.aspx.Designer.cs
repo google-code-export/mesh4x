@@ -23,30 +23,12 @@ namespace WebHost.Admin {
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
         
         /// <summary>
-        /// lnkRssFeed control.
+        /// rptFeeds control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.HyperLink lnkRssFeed;
-        
-        /// <summary>
-        /// lnkKmlFeed control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HyperLink lnkKmlFeed;
-        
-        /// <summary>
-        /// lnkKmlNetworkFeed control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HyperLink lnkKmlNetworkFeed;
+        protected global::System.Web.UI.WebControls.Repeater rptFeeds;
     }
 }
