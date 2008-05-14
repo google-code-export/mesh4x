@@ -75,7 +75,9 @@ namespace Mesh4n.Adapters.HttpService
 				items = entry.SyncAdapter.GetAllSince(since.Value);
 				if (items == null || !items.GetEnumerator().MoveNext())
 				{
-					throw new ServiceException(Resources.NoAvailableItems, HttpStatusCode.NotModified);
+					//throw new ServiceException(Resources.NoAvailableItems, HttpStatusCode.NotModified);
+					this.operationContext.OutgoingResponse.StatusCode = HttpStatusCode.NotModified;
+					this.operationContext.OutgoingResponse.SuppressEntityBody = false;
 				}
 			}
 			else
