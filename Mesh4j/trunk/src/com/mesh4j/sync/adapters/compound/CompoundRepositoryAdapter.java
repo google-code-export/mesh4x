@@ -43,13 +43,15 @@ public class CompoundRepositoryAdapter extends AbstractRepositoryAdapter {
 		
 		Guard.argumentNotNull(item, "item");
 
-		IIdentifiableContent content = contentAdapter.normalizeContent(item.getContent());
-		
+		SyncInfo syncInfo = null;
 		if (!item.isDeleted())
 		{
+			IIdentifiableContent content = contentAdapter.normalizeContent(item.getContent());
 			contentAdapter.save(content);
-		}
-		SyncInfo syncInfo = new SyncInfo(item.getSync(), content);
+			syncInfo = new SyncInfo(item.getSync(), content);
+		} else {
+			syncInfo = new SyncInfo(item.getSync(), contentAdapter.getType(), item.getContent().getId(), item.getContent().getPayload().asXML().hashCode());	
+		}		
 		syncRepository.save(syncInfo);
 	}
 

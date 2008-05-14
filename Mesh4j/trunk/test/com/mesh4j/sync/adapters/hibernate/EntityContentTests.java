@@ -96,6 +96,10 @@ public class EntityContentTests {
 		public void addToFeedPayload(Element rootPayload) {
 			rootPayload.add(this.e.createCopy());			
 		}
+		
+		public String getId(){
+			return String.valueOf(e.asXML().hashCode());
+		}
 	}
 	
 }
