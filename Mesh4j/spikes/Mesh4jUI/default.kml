@@ -2,9 +2,8 @@
 <kml xmlns="http://earth.google.com/kml/2.2">
 <Document>
 	<name>default.kml</name>
-	
-	
-	
-	
-<Folder><name>Shared Items</name></Folder><StyleMap id="msn_ylw-pushpin_517d2ff4-6cbf-4e72-823d-b97b3b2c30eb" xml:id="517d2ff4-6cbf-4e72-823d-b97b3b2c30eb"><Pair><key>normal</key><styleUrl>#sn_ylw-pushpin_7bd50fc9-bf7f-4394-b271-954d77a36708</styleUrl></Pair><Pair><key>highlight</key><styleUrl>#sh_ylw-pushpin_9fbf3bac-1df8-419e-aa11-099db8fcf12f</styleUrl></Pair></StyleMap><Style id="sn_ylw-pushpin_7bd50fc9-bf7f-4394-b271-954d77a36708" xml:id="7bd50fc9-bf7f-4394-b271-954d77a36708"><IconStyle><color>ff0000ff</color><scale>1.1</scale><Icon><href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href></Icon><hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/></IconStyle><LabelStyle><color>ff0000ff</color></LabelStyle></Style><Style id="sh_ylw-pushpin_9fbf3bac-1df8-419e-aa11-099db8fcf12f" xml:id="9fbf3bac-1df8-419e-aa11-099db8fcf12f"><IconStyle><color>ff0000ff</color><scale>1.3</scale><Icon><href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href></Icon><hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/></IconStyle><LabelStyle><color>ff0000ff</color></LabelStyle></Style><Placemark xml:id="6c7bdd8b-bd02-4313-acf5-b30f1c51b6ff"><name>default</name><visibility>0</visibility><LookAt><longitude>-95.26548319412237</longitude><latitude>38.95938957105111</latitude><altitude>0</altitude><range>11001000</range><tilt>0</tilt><heading>3.697394817201339e-014</heading></LookAt><styleUrl>#msn_ylw-pushpin_517d2ff4-6cbf-4e72-823d-b97b3b2c30eb</styleUrl><Point><coordinates>-95.26548319412237,38.95938957105111,0</coordinates></Point></Placemark></Document>
+	<Folder>
+		<name>Shared Items</name>
+	</Folder>
+</Document>
 </kml>
