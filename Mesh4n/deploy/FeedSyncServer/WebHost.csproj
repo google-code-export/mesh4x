@@ -47,6 +47,7 @@
     <Content Include="Admin\Feeds.aspx" />
     <Content Include="Default.aspx" />
     <Content Include="Service.svc" />
+    <Content Include="style.css" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -110,12 +111,11 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>False</UseIIS>
+          <UseIIS>True</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>1495</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>
-          </IISUrl>
+          <IISUrl>http://localhost/SyncService</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
         </WebProjectProperties>
@@ -123,11 +123,11 @@
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>
-    <PostBuildEvent>
+    <PostBuildEvent Condition="'$(Configuration)'=='Release'">
 			xcopy "$(ProjectDir)*.*" "$(SolutionDir)\..\..\deploy\FeedSyncServer\" /S /I /Y /D /Q
 		</PostBuildEvent>
   </PropertyGroup>
-  <Target Name="AfterBuild">
+  <Target Name="AfterBuild" Condition="'$(Configuration)'=='Release'">
     <Exec Command="$(FrameworkDir)\aspnet_compiler -p $(ProjectDir) -v /" />
   </Target>
 </Project>
