@@ -45,6 +45,7 @@
     <Content Include="Admin\CreateFeed.aspx" />
     <Content Include="Admin\Feed.aspx" />
     <Content Include="Admin\Feeds.aspx" />
+    <Content Include="Default.aspx" />
     <Content Include="Service.svc" />
     <Content Include="Web.config" />
   </ItemGroup>
@@ -69,6 +70,13 @@
     </Compile>
     <Compile Include="Admin\Feeds.aspx.Designer.cs">
       <DependentUpon>Feeds.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
