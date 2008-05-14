@@ -16,7 +16,7 @@ namespace Mesh4n.Adapters.HttpService.MessageFormatters
 			context.OutgoingResponse.Headers.Add("Content-Disposition",
 				"attachment; filename=" + feedName + "-network.kml");
 
-			Uri href = new Uri(context.IncomingRequest.UriTemplateMatch.BaseUri, "/feeds/" + feedName + "?format=kml");
+			Uri href = new Uri(context.IncomingRequest.UriTemplateMatch.BaseUri + "/feeds/" + feedName + "?format=kml");
 
 			return Message.CreateMessage(MessageVersion.None, "", new KmlWriter(feedName, href, feed, items));
 		}
