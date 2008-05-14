@@ -1,1 +1,106 @@
-<?xml version="1.0" encoding="utf-8"?><kml xmlns="http://earth.google.com/kml/2.2"><Document><name>Test5</name><StyleMap id="msn_homegardenbusiness_3fd973ed-e6c1-4723-ba12-2c8e08020bcf" xml:id="3fd973ed-e6c1-4723-ba12-2c8e08020bcf"><Pair><key>normal</key><styleUrl>#sn_homegardenbusiness0</styleUrl></Pair><Pair><key>highlight</key><styleUrl>#sh_homegardenbusiness0</styleUrl></Pair></StyleMap><Placemark xml:id="634dd8eb-cf0d-4b00-baa4-a86d4582446a"><name>Clinic1</name><LookAt><longitude>96.14786862296717</longitude><latitude>16.35109511557477</latitude><altitude>0</altitude><range>572512.8802054591</range><tilt>0</tilt><heading>0.0886626500928461</heading></LookAt><styleUrl>#msn_homegardenbusiness_819271ef-92ea-406c-91ec-6e00d0db6956</styleUrl><Point><coordinates>96.14786862296718,16.35109511557477,0</coordinates></Point></Placemark><Placemark xml:id="64b98b38-4519-4881-a6f5-4efcd764723e"><name>Clinic3</name><LookAt><longitude>96.02539909956387</longitude><latitude>16.65162090198037</latitude><altitude>0</altitude><range>333184.347559673</range><tilt>0</tilt><heading>-0.000774251472683897</heading><altitudeMode>relativeToGround</altitudeMode></LookAt><styleUrl>#msn_homegardenbusiness_dc60d17b-93c5-4dde-a3c5-bbb2d1d72e19</styleUrl><Point><coordinates>95.9130448815299,16.446430354935,0</coordinates></Point></Placemark><Style id="sh_homegardenbusiness0" xml:id="7739ed7d-2210-4044-81d1-4e0c076abdbd"><IconStyle><scale>1.4</scale><Icon><href>http://maps.google.com/mapfiles/kml/shapes/homegardenbusiness.png</href></Icon><hotSpot x="0.5" y="0" xunits="fraction" yunits="fraction"/></IconStyle><ListStyle/></Style><StyleMap id="msn_homegardenbusiness_819271ef-92ea-406c-91ec-6e00d0db6956" xml:id="819271ef-92ea-406c-91ec-6e00d0db6956"><Pair><key>normal</key><styleUrl>#sn_homegardenbusiness</styleUrl></Pair><Pair><key>highlight</key><styleUrl>#sh_homegardenbusiness</styleUrl></Pair></StyleMap><Placemark xml:id="d5176e08-27fb-41c2-b51b-84611870c1b5"><name>Clinic2</name><LookAt><longitude>96.16258354672426</longitude><latitude>16.15886715629874</latitude><altitude>0</altitude><range>572519.9102898999</range><tilt>0</tilt><heading>0.09250069429437967</heading><altitudeMode>relativeToGround</altitudeMode></LookAt><styleUrl>#msn_homegardenbusiness_3fd973ed-e6c1-4723-ba12-2c8e08020bcf</styleUrl><Point><coordinates>95.9105219042508,16.95046184936534,0</coordinates></Point></Placemark><StyleMap id="msn_homegardenbusiness_dc60d17b-93c5-4dde-a3c5-bbb2d1d72e19" xml:id="dc60d17b-93c5-4dde-a3c5-bbb2d1d72e19"><Pair><key>normal</key><styleUrl>#sn_homegardenbusiness</styleUrl></Pair><Pair><key>highlight</key><styleUrl>#sh_homegardenbusiness</styleUrl></Pair></StyleMap><Style id="sn_homegardenbusiness0" xml:id="f1864a7e-ce0d-4b7d-aef4-6ff231003735"><IconStyle><scale>1.2</scale><Icon><href>http://maps.google.com/mapfiles/kml/shapes/homegardenbusiness.png</href></Icon><hotSpot x="0.5" y="0" xunits="fraction" yunits="fraction"/></IconStyle><ListStyle/></Style></Document></kml>
+<?xml version="1.0" encoding="utf-8"?>
+<kml xmlns="http://earth.google.com/kml/2.2">
+	<Document>
+		<name>Test5</name>
+		<StyleMap id="msn_homegardenbusiness_3fd973ed-e6c1-4723-ba12-2c8e08020bcf" xml:id="3fd973ed-e6c1-4723-ba12-2c8e08020bcf">
+			<Pair>
+				<key>normal</key>
+				<styleUrl>#sn_homegardenbusiness0</styleUrl>
+			</Pair>
+			<Pair>
+				<key>highlight</key>
+				<styleUrl>#sh_homegardenbusiness0</styleUrl>
+			</Pair>
+		</StyleMap>
+		<Style id="sh_homegardenbusiness0" xml:id="7739ed7d-2210-4044-81d1-4e0c076abdbd">
+			<IconStyle>
+				<scale>1.4</scale>
+				<Icon>
+					<href>http://maps.google.com/mapfiles/kml/shapes/homegardenbusiness.png</href>
+				</Icon>
+				<hotSpot x="0.5" y="0" xunits="fraction" yunits="fraction"/>
+			</IconStyle>
+			<ListStyle/>
+		</Style>
+		<StyleMap id="msn_homegardenbusiness_819271ef-92ea-406c-91ec-6e00d0db6956" xml:id="819271ef-92ea-406c-91ec-6e00d0db6956">
+			<Pair>
+				<key>normal</key>
+				<styleUrl>#sn_homegardenbusiness</styleUrl>
+			</Pair>
+			<Pair>
+				<key>highlight</key>
+				<styleUrl>#sh_homegardenbusiness</styleUrl>
+			</Pair>
+		</StyleMap>
+		<StyleMap id="msn_homegardenbusiness_dc60d17b-93c5-4dde-a3c5-bbb2d1d72e19" xml:id="dc60d17b-93c5-4dde-a3c5-bbb2d1d72e19">
+			<Pair>
+				<key>normal</key>
+				<styleUrl>#sn_homegardenbusiness</styleUrl>
+			</Pair>
+			<Pair>
+				<key>highlight</key>
+				<styleUrl>#sh_homegardenbusiness</styleUrl>
+			</Pair>
+		</StyleMap>
+		<Style id="sn_homegardenbusiness0" xml:id="f1864a7e-ce0d-4b7d-aef4-6ff231003735">
+			<IconStyle>
+				<scale>1.2</scale>
+				<Icon>
+					<href>http://maps.google.com/mapfiles/kml/shapes/homegardenbusiness.png</href>
+				</Icon>
+				<hotSpot x="0.5" y="0" xunits="fraction" yunits="fraction"/>
+			</IconStyle>
+			<ListStyle/>
+		</Style>
+		<Folder>
+			<name>Shared Items</name>
+			<Placemark xml:id="634dd8eb-cf0d-4b00-baa4-a86d4582446a">
+				<name>Clinic1</name>
+				<LookAt>
+					<longitude>96.14786862296717</longitude>
+					<latitude>16.35109511557477</latitude>
+					<altitude>0</altitude>
+					<range>572512.8802054591</range>
+					<tilt>0</tilt>
+					<heading>0.0886626500928461</heading>
+				</LookAt>
+				<styleUrl>#msn_homegardenbusiness_819271ef-92ea-406c-91ec-6e00d0db6956</styleUrl>
+				<Point>
+					<coordinates>96.14786862296718,16.35109511557477,0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark xml:id="64b98b38-4519-4881-a6f5-4efcd764723e">
+				<name>Clinic3</name>
+				<LookAt>
+					<longitude>96.02539909956387</longitude>
+					<latitude>16.65162090198037</latitude>
+					<altitude>0</altitude>
+					<range>333184.347559673</range>
+					<tilt>0</tilt>
+					<heading>-0.000774251472683897</heading>
+					<altitudeMode>relativeToGround</altitudeMode>
+				</LookAt>
+				<styleUrl>#msn_homegardenbusiness_dc60d17b-93c5-4dde-a3c5-bbb2d1d72e19</styleUrl>
+				<Point>
+					<coordinates>95.9130448815299,16.446430354935,0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark xml:id="d5176e08-27fb-41c2-b51b-84611870c1b5">
+				<name>Clinic2</name>
+				<LookAt>
+					<longitude>96.16258354672426</longitude>
+					<latitude>16.15886715629874</latitude>
+					<altitude>0</altitude>
+					<range>572519.9102898999</range>
+					<tilt>0</tilt>
+					<heading>0.09250069429437967</heading>
+					<altitudeMode>relativeToGround</altitudeMode>
+				</LookAt>
+				<styleUrl>#msn_homegardenbusiness_3fd973ed-e6c1-4723-ba12-2c8e08020bcf</styleUrl>
+				<Point>
+					<coordinates>95.9105219042508,16.95046184936534,0</coordinates>
+				</Point>
+			</Placemark>
+		</Folder>
+	</Document>
+</kml>
