@@ -12,20 +12,20 @@ using Mesh4n.Adapters.HttpService.MessageFormatters;
 namespace Mesh4n.Adapters.HttpService.Tests
 {
 	[TestFixture]
-	public class KmlFormatterFixture
+	public class KmlNetworkFormatterFixture
 	{
 		[Test]
 		public void ShouldSetContentTypeKml()
 		{
 			var context = new MockWebContext();
-			var formatter = new KmlFormatter();
+			var formatter = new KmlNetworkFormatter();
 
 			context.OutgoingResponse.ExpectSet(ctx => ctx.ContentType)
 				.Callback(ct => Assert.AreEqual(KmlNames.ContentType, ct))
 				.Verifiable();
 
 			var message = formatter.Format(
-				"foo",
+				"foo", 
 				new Feed("foo", "http://foo", "bar"),
 				new Item[0],
 				context.Object);
@@ -36,17 +36,17 @@ namespace Mesh4n.Adapters.HttpService.Tests
 		}
 
 		[Test]
-		public void ShouldIgnoreNonKmlPayload()
+		public void ShouldRenderNetworkLink()
 		{
 			var context = new MockWebContext();
-			var formatter = new KmlFormatter();
+			var formatter = new KmlNetworkFormatter();
 
 			context.OutgoingResponse.ExpectSet(ctx => ctx.ContentType)
 				.Callback(ct => Assert.AreEqual(KmlNames.ContentType, ct))
 				.Verifiable();
 
 			var message = formatter.Format(
-				"foo", 
+				"foo",
 				new Feed("foo", "http://foo", "bar"),
 				new []
 				{

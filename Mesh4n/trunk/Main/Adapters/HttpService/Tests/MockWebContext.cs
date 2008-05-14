@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Moq;
 using System.ServiceModel.Web;
+using System.Net;
 
 namespace Mesh4n.Adapters.HttpService.Tests
 {
@@ -17,6 +18,12 @@ namespace Mesh4n.Adapters.HttpService.Tests
 		{
 			this.ExpectGet(webContext => webContext.OutgoingResponse).Returns(responseContextMock.Object);
 			this.ExpectGet(webContext => webContext.IncomingRequest).Returns(requestContextMock.Object);
+
+			WebHeaderCollection requestHeaders = new WebHeaderCollection();
+			WebHeaderCollection responseHeaders = new WebHeaderCollection();
+	
+			requestContextMock.ExpectGet(requestContext => requestContext.Headers).Returns(requestHeaders);
+			responseContextMock.ExpectGet(responseContext => responseContext.Headers).Returns(responseHeaders);
 		}
 
 		public Mock<IIncomingWebRequestContext> IncomingRequest

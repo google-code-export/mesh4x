@@ -9,6 +9,8 @@ using Mesh4n.Adapters.HttpService.Configuration;
 using Mesh4n.Adapters.HttpService.Properties;
 using System.ServiceModel.Channels;
 using Mesh4n.Adapters.HttpService.MessageFormatters;
+using System.Xml;
+using System.IO;
 
 namespace Mesh4n.Adapters.HttpService
 {
@@ -37,7 +39,10 @@ namespace Mesh4n.Adapters.HttpService
 			List<Item> items = new List<Item>();
 			foreach (FeedConfigurationEntry entry in configurationManager.LoadAll())
 			{
-				Item item = new Item(new XmlItem(entry.Title, entry.Description, null), null);
+				Item item = new Item(new XmlItem(entry.Title, entry.Description,
+					 GetElement(String.Format(
+						"<payload><link>{0}</link></payload>", 
+						"/feeds/" + entry.Name))), null);
 				items.Add(item);
 			}
 
@@ -239,5 +244,20 @@ namespace Mesh4n.Adapters.HttpService
 				: time.ToUniversalTime().ToString("R", CultureInfo.InvariantCulture);
 
 		}
+
+		private XmlElement GetElement(string xml)
+		{
+			XmlDocument doc = new XmlDocument();
+			doc.Load(XmlReader.Create(new StringReader(xml), readerSettings));
+
+			return doc.DocumentElement;
+		}
+
+		static readonly XmlReaderSettings readerSettings = new XmlReaderSettings
+		{ 
+			IgnoreWhitespace = true,
+			CheckCharacters = true,
+			ConformanceLevel = ConformanceLevel.Auto,
+		};
 	}
 }
