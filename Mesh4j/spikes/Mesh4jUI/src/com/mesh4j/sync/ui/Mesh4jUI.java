@@ -1,13 +1,11 @@
 package com.mesh4j.sync.ui;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
-import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,6 +32,8 @@ import com.mesh4j.sync.adapters.file.FileSyncRepository;
 import com.mesh4j.sync.adapters.http.HttpSyncAdapter;
 import com.mesh4j.sync.adapters.kml.KMLContentAdapter;
 import com.mesh4j.sync.model.Item;
+import com.mesh4j.sync.properties.PropertiesProvider;
+import com.mesh4j.sync.security.ISecurity;
 import com.mesh4j.sync.security.NullSecurity;
 import com.mesh4j.sync.validations.MeshException;
 
@@ -50,6 +50,7 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 	private Text kmlToPrepareToSync;
 	private String defaultEndpoint1;
 	private String defaultEndpoint2;
+	private ISecurity security = NullSecurity.INSTANCE;
 	
 	// BUSINESS METHODS
 	public static void main (String [] args) {
@@ -274,15 +275,15 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 
 	private IRepositoryAdapter makeRepositoryAdapter(String endpoint) {
 		if(isURL(endpoint)){
-			return new HttpSyncAdapter(endpoint, RssSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+			return new HttpSyncAdapter(endpoint, RssSyndicationFormat.INSTANCE, this.security);
 		} else {
 			if(isFeed(endpoint)){
-				return new FeedAdapter(endpoint, NullSecurity.INSTANCE);
+				return new FeedAdapter(endpoint, this.security);
 			}else{
 				String endpointSync = getSyncFileName(endpoint);
-				FileSyncRepository sourceSyncRepo = new FileSyncRepository(endpointSync, NullSecurity.INSTANCE);
+				FileSyncRepository sourceSyncRepo = new FileSyncRepository(endpointSync, this.security);
 				IContentAdapter sourceContent = new KMLContentAdapter(endpoint);
-				return new CompoundRepositoryAdapter(sourceSyncRepo, sourceContent, NullSecurity.INSTANCE);
+				return new CompoundRepositoryAdapter(sourceSyncRepo, sourceContent, this.security);
 			}
 		}
 	}
@@ -442,19 +443,10 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 	}
 	
 	private void initializeDefaults(){
-		try {
-			FileReader reader = new FileReader("mesh4j.properties");
-			Properties prop = new Properties();
-			prop.load(reader);
-			this.defaultEndpoint1 = prop.getProperty("default.kml.file", "");
-			File file = new File(this.defaultEndpoint1);
-			if(file.exists()){
-				this.defaultEndpoint1 = file.getAbsolutePath();
-			}			
-			this.defaultEndpoint2 = prop.getProperty("default.feed.url", "");
-		} catch (Exception e) {
-			Logger.error(e.getMessage(), e);
-		}
+		PropertiesProvider prop = new PropertiesProvider();
+		this.defaultEndpoint1 = prop.getDefaultEnpoint1();					
+		this.defaultEndpoint2 = prop.getDefaultEnpoint2();			
+		this.security = prop.getSecurity();
 	}
 }
 
