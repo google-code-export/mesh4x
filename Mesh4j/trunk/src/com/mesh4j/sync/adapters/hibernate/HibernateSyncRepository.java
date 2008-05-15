@@ -17,14 +17,13 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 
-import com.mesh4j.sync.adapters.IIdentifiableContent;
 import com.mesh4j.sync.adapters.SyncInfo;
 import com.mesh4j.sync.adapters.compound.ISyncRepository;
+import com.mesh4j.sync.model.IContent;
 import com.mesh4j.sync.parsers.SyncInfoParser;
 import com.mesh4j.sync.utils.IdGenerator;
 import com.mesh4j.sync.validations.MeshException;
 
-// TODO (JMT) test
 public class HibernateSyncRepository implements ISyncRepository{
 
 	// CONSTANTS	
@@ -136,7 +135,7 @@ public class HibernateSyncRepository implements ISyncRepository{
 		return syncElements;
 	}
 
-	public String newSyncID(IIdentifiableContent content) {
+	public String newSyncID(IContent content) {
 		return IdGenerator.newID();
 	}
 

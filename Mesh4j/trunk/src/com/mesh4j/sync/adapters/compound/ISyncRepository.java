@@ -2,8 +2,8 @@ package com.mesh4j.sync.adapters.compound;
 
 import java.util.List;
 
-import com.mesh4j.sync.adapters.IIdentifiableContent;
 import com.mesh4j.sync.adapters.SyncInfo;
+import com.mesh4j.sync.model.IContent;
 
 public interface ISyncRepository {
 
@@ -13,5 +13,5 @@ public interface ISyncRepository {
 
 	List<SyncInfo> getAll(String entityName);
 
-	String newSyncID(IIdentifiableContent content);
+	String newSyncID(IContent content);
 }

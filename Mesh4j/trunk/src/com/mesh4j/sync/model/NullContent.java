@@ -15,7 +15,6 @@ public class NullContent implements IContent {
 		Guard.argumentNotNullOrEmptyString(id, "id");
 		this.id = id;
 	}
-
 	
 	@Override
 	public Element getPayload() {
@@ -52,5 +51,10 @@ public class NullContent implements IContent {
 	
 	public void addToFeedPayload(Element rootPayload){
 		// nothing to do
+	}
+
+	@Override
+	public int getVersion() {
+		return this.getPayload().asXML().hashCode();
 	}
 }

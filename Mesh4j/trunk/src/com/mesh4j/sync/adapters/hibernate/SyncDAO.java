@@ -19,11 +19,6 @@ import com.mesh4j.sync.parsers.SyncInfoParser;
 import com.mesh4j.sync.utils.IdGenerator;
 import com.mesh4j.sync.validations.MeshException;
 
-/**
- * Use CompoundRepositoryAdapter with a SyncHibernateRepository 
- */
-@Deprecated
-
 public class SyncDAO {
 
 	// CONSTANTS	

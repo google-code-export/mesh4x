@@ -1,5 +1,6 @@
 package com.mesh4j.sync.adapters;
 
+import com.mesh4j.sync.model.IContent;
 import com.mesh4j.sync.model.Sync;
 
 public class SyncInfo {
@@ -13,10 +14,6 @@ public class SyncInfo {
 	
 	// BUSINESS METHODS
 
-	public SyncInfo(Sync sync, IIdentifiableContent entity) {
-		this(sync, entity.getType(), entity.getId(), entity.getVersion());
-	}
-	
 	public SyncInfo(Sync sync, String type, String id, int version) {
 		super();
 		this.sync = sync;
@@ -30,7 +27,7 @@ public class SyncInfo {
 		return this.sync != null && this.sync.isDeleted();
 	}
 	
-	public boolean contentHasChanged(IIdentifiableContent content) {
+	public boolean contentHasChanged(IContent content) {
 		return this.version != content.getVersion();
 	}
 

@@ -9,10 +9,6 @@ import org.hibernate.Session;
 
 import com.mesh4j.sync.model.IContent;
 
-/**
- * Use CompoundRepositoryAdapter with an HibernateContentAdapter 
- */
-@Deprecated
 public class EntityDAO {
 
 	// MODEL VARIABLES

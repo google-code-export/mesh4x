@@ -1,5 +1,6 @@
 package com.mesh4j.sync.test.utils;
 
+import java.io.File;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
@@ -8,6 +9,9 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+
+import com.mesh4j.sync.utils.IdGenerator;
+import com.mesh4j.sync.utils.XMLHelper;
 
 public class TestHelper {
 	
@@ -109,6 +113,12 @@ public class TestHelper {
 	
 	public static String fileName(String name){
 		return "D:\\temp_dev\\mesh4j\\"+name;
+	}
+
+	public static File makeNewXMLFile(String xml) {
+		File file = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
+		XMLHelper.write(xml, file);
+		return file;
 	}
 
 	

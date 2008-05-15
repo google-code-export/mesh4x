@@ -12,10 +12,10 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
-import com.mesh4j.sync.adapters.IIdentifiableContent;
 import com.mesh4j.sync.adapters.SyncInfo;
 import com.mesh4j.sync.adapters.compound.ISyncRepository;
 import com.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
+import com.mesh4j.sync.model.IContent;
 import com.mesh4j.sync.parsers.SyncInfoParser;
 import com.mesh4j.sync.security.ISecurity;
 import com.mesh4j.sync.utils.XMLHelper;
@@ -98,7 +98,7 @@ public class FileSyncRepository implements ISyncRepository{
 	}
 
 	@Override
-	public String newSyncID(IIdentifiableContent content) {
+	public String newSyncID(IContent content) {
 		return content.getId();
 	}
 

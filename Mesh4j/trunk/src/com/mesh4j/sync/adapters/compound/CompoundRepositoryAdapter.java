@@ -8,9 +8,9 @@ import java.util.Map;
 
 import com.mesh4j.sync.AbstractRepositoryAdapter;
 import com.mesh4j.sync.IFilter;
-import com.mesh4j.sync.adapters.IIdentifiableContent;
 import com.mesh4j.sync.adapters.SyncInfo;
 import com.mesh4j.sync.filter.SinceLastUpdateFilter;
+import com.mesh4j.sync.model.IContent;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.NullContent;
 import com.mesh4j.sync.model.Sync;
@@ -43,15 +43,11 @@ public class CompoundRepositoryAdapter extends AbstractRepositoryAdapter {
 		
 		Guard.argumentNotNull(item, "item");
 
-		SyncInfo syncInfo = null;
 		if (!item.isDeleted())
 		{
-			IIdentifiableContent content = contentAdapter.normalizeContent(item.getContent());
-			contentAdapter.save(content);
-			syncInfo = new SyncInfo(item.getSync(), content);
-		} else {
-			syncInfo = new SyncInfo(item.getSync(), contentAdapter.getType(), item.getContent().getId(), item.getContent().getPayload().asXML().hashCode());	
+			contentAdapter.save(item.getContent());
 		}		
+		SyncInfo syncInfo = new SyncInfo(item.getSync(), contentAdapter.getType(), item.getContent().getId(), item.getContent().getVersion());
 		syncRepository.save(syncInfo);
 	}
 
@@ -67,7 +63,7 @@ public class CompoundRepositoryAdapter extends AbstractRepositoryAdapter {
 			syncInfo.getSync().delete(this.getAuthenticatedUser(), new Date());
 			syncRepository.save(syncInfo);
 			
-			IIdentifiableContent content = contentAdapter.get(syncInfo.getId());
+			IContent content = contentAdapter.get(syncInfo.getId());
 			if(content != null){
 				contentAdapter.delete(content);
 			}
@@ -84,7 +80,7 @@ public class CompoundRepositoryAdapter extends AbstractRepositoryAdapter {
 			SyncInfo syncInfo = syncRepository.get(item.getSyncId());
 			if(syncInfo != null){
 				syncInfo.updateSync(item.getSync());
-				IIdentifiableContent content = contentAdapter.get(syncInfo.getId());
+				IContent content = contentAdapter.get(syncInfo.getId());
 
 				if(content != null){
 					contentAdapter.delete(content);
@@ -94,9 +90,9 @@ public class CompoundRepositoryAdapter extends AbstractRepositoryAdapter {
 		}
 		else
 		{
-			IIdentifiableContent content = contentAdapter.normalizeContent(item.getContent());
+			IContent content = item.getContent();
 			contentAdapter.save(content);
-			SyncInfo syncInfo = new SyncInfo(item.getSync(), content);
+			SyncInfo syncInfo = new SyncInfo(item.getSync(), contentAdapter.getType(), content.getId(), content.getVersion());
 			syncRepository.save(syncInfo);	
 		}
 	}
@@ -112,7 +108,7 @@ public class CompoundRepositoryAdapter extends AbstractRepositoryAdapter {
 			return null;
 		}
 		
-		IIdentifiableContent content = contentAdapter.get(syncInfo.getId());
+		IContent content = contentAdapter.get(syncInfo.getId());
 		
 		this.updateSync(content, syncInfo);
 		
@@ -124,7 +120,7 @@ public class CompoundRepositoryAdapter extends AbstractRepositoryAdapter {
 		}
 	}
 
-	private void updateSync(IIdentifiableContent content, SyncInfo syncInfo){
+	private void updateSync(IContent content, SyncInfo syncInfo){
 	
 		Sync sync = syncInfo.getSync();
 		if (content != null && sync == null)
@@ -162,12 +158,12 @@ public class CompoundRepositoryAdapter extends AbstractRepositoryAdapter {
 	
 		ArrayList<Item> result = new ArrayList<Item>();
 		
-		List<IIdentifiableContent> contents = contentAdapter.getAll();
+		List<IContent> contents = contentAdapter.getAll();
 		List<SyncInfo> syncInfos = syncRepository.getAll(contentAdapter.getType());
 		
 		Map<String, SyncInfo> syncInfoAsMapByEntity = this.makeSyncMapByEntity(syncInfos);
  
-		for (IIdentifiableContent content : contents) {
+		for (IContent content : contents) {
 			
 			SyncInfo syncInfo = syncInfoAsMapByEntity.get(content.getId());			
 
@@ -175,7 +171,7 @@ public class CompoundRepositoryAdapter extends AbstractRepositoryAdapter {
 			if(syncInfo == null){
 				sync = new Sync(syncRepository.newSyncID(content), this.getAuthenticatedUser(), new Date(), false);
 				
-				SyncInfo newSyncInfo = new SyncInfo(sync, content);
+				SyncInfo newSyncInfo = new SyncInfo(sync, contentAdapter.getType(), content.getId(), content.getVersion());
 				
 				syncRepository.save(newSyncInfo);
 				

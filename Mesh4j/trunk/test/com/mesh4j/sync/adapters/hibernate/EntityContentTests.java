@@ -100,6 +100,10 @@ public class EntityContentTests {
 		public String getId(){
 			return String.valueOf(e.asXML().hashCode());
 		}
+		@Override
+		public int getVersion() {
+			return e.asXML().hashCode();
+		}
 	}
 	
 }

@@ -3,74 +3,20 @@ package com.mesh4j.sync.adapters.kml;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
-import com.mesh4j.sync.adapters.IIdentifiableContent;
 import com.mesh4j.sync.adapters.feed.ISyndicationFormat;
+import com.mesh4j.sync.model.Content;
 import com.mesh4j.sync.model.IContent;
 
-public class KMLContent implements IIdentifiableContent{
-	
-	// MODEL VARIABLESs
-	private String id;
-	private Element payload;
-	private int version;
-	
-	// BUSINESS METHODS
+public class KMLContent extends Content{
+		
 	public KMLContent(Element payload, String id) {
-		super();
-		this.payload = payload;
-		this.id = id;
-		this.version = payload.asXML().hashCode();
+		super(payload, id);
 	}
 
 	public KMLContent clone(){
-		return new KMLContent(payload, id);
+		return new KMLContent(this.getPayload(), this.getId());
 	}
-	
-    public boolean equals(Object obj)
-    {
-        if (this == obj) return true;
-        if (obj != null)
-        {
-        	if(obj instanceof KMLContent){
-        		KMLContent otherXmlItem = (KMLContent) obj;
-        		return
-        			this.getType().equals(otherXmlItem.getType())
-        			&& this.getId().equals(otherXmlItem.getId())
-        			&& this.getVersion() == otherXmlItem.getVersion()
-        			&& this.getPayload().asXML().equals(otherXmlItem.getPayload().asXML());
-        	} else if(obj instanceof IContent){
-        		IContent otherXmlItem = (IContent) obj;
-        		return this.getPayload().asXML().equals(otherXmlItem.getPayload().asXML());
-        	}
-        }
-        return false;
-    }
-
-    public int hashCode()
-    {
-		String resultingPayload = payload.asXML();
-		return this.id.hashCode() + this.version + resultingPayload.hashCode();
-    }
-	public void refreshVersion() {
-		this.version = this.getPayload().asXML().hashCode();		
-	}
-
-	public String getType() {
-		return "kml";
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public Element getPayload() {
-		return payload;
-	}
-
-	public int getVersion() {
-		return version;
-	}
-	
+		
 	public static KMLContent normalizeContent(IContent content){
 		if(content instanceof KMLContent){
 			KMLContent entity = (KMLContent)content;
@@ -79,23 +25,27 @@ public class KMLContent implements IIdentifiableContent{
 		}else{
 			Element kmlElement = null;
 			String elementName = content.getPayload().getName();
-			if(KMLContentAdapter.KML_ELEMENT_PLACEMARK.equals(elementName)
-					|| KMLContentAdapter.KML_ELEMENT_STYLE.equals(elementName)
-					|| KMLContentAdapter.KML_ELEMENT_STYLE_MAP.equals(elementName)){
+			if(KmlNames.KML_ELEMENT_PLACEMARK.equals(elementName)
+					|| KmlNames.KML_ELEMENT_STYLE.equals(elementName)
+					|| KmlNames.KML_ELEMENT_STYLE_MAP.equals(elementName)
+					|| KmlNames.KML_ELEMENT_FOLDER.equals(elementName)){
 				kmlElement = content.getPayload();
 			}else{
-				kmlElement = content.getPayload().element(KMLContentAdapter.KML_ELEMENT_PLACEMARK);
+				kmlElement = content.getPayload().element(KmlNames.KML_ELEMENT_PLACEMARK);
 				if(kmlElement == null){
-					kmlElement = content.getPayload().element(KMLContentAdapter.KML_ELEMENT_STYLE);
+					kmlElement = content.getPayload().element(KmlNames.KML_ELEMENT_STYLE);
 					if(kmlElement == null){
-						kmlElement = content.getPayload().element(KMLContentAdapter.KML_ELEMENT_STYLE_MAP);
+						kmlElement = content.getPayload().element(KmlNames.KML_ELEMENT_STYLE_MAP);
+						if(kmlElement == null){
+							kmlElement = content.getPayload().element(KmlNames.KML_ELEMENT_FOLDER);
+						}
 					}
 				}
 			}
 			if(kmlElement == null){
 				return null;
 			}else{
-				String id = kmlElement.attributeValue(KMLContentAdapter.XML_ID_QNAME);
+				String id = kmlElement.attributeValue(KmlNames.XML_ID_QNAME);
 				if(id == null){
 					return null;
 				} else {
@@ -112,7 +62,7 @@ public class KMLContent implements IIdentifiableContent{
 		rootPayload.add(titleElement);
 		
 		Element descriptionElement = DocumentHelper.createElement(ISyndicationFormat.SX_ATTRIBUTE_ITEM_DESCRIPTION);
-		descriptionElement.setText("Id: " + this.id + " version: " + this.version);
+		descriptionElement.setText("Id: " + this.getId() + " version: " + this.getVersion());
 		rootPayload.add(descriptionElement);
 		
 		rootPayload.add(this.getPayload().createCopy());

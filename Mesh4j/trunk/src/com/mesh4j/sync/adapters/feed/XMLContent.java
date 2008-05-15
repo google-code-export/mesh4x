@@ -3,34 +3,24 @@ package com.mesh4j.sync.adapters.feed;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
+import com.mesh4j.sync.model.Content;
 import com.mesh4j.sync.model.IContent;
 
-public class XMLContent implements IContent {
+public class XMLContent extends Content {
 
 	// MODEL VARIABLES
-	private String id;
 	private String title;
 	private String description;
-	private Element payload;
 	
 	// BUSINESS METHODS
 	public XMLContent(String id, String title, String description, Element payload) {
-		this.id = id;
+		super(payload, id);
 		this.title = title;
 		this.description = description;
-		this.payload = payload;
 	}
 
 	public String getDescription() {
 		return description;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public Element getPayload() {
-		return payload;
 	}
 
 	public String getTitle() {
@@ -38,7 +28,7 @@ public class XMLContent implements IContent {
 	}
 	
 	public XMLContent clone(){
-		return new XMLContent(id, title, description, payload);		
+		return new XMLContent(this.getId(), title, description, this.getPayload());		
 	}
 
 	public void setTitle(String title) {
@@ -57,6 +47,8 @@ public class XMLContent implements IContent {
 	                (this.getDescription() == null && otherXmlItem.getDescription() == null ||
 	                	this.getDescription() != null && this.getDescription().equals(otherXmlItem.getDescription())) &&
 	                this.getPayload().asXML().equals(otherXmlItem.getPayload().asXML());
+        	} else{
+        		return super.equals(obj);
         	}
         }
         return false;
@@ -64,11 +56,8 @@ public class XMLContent implements IContent {
 
     public int hashCode()
     {
-		String resultingPayload = id.toString() +
-			((title != null) ? title : "") +
-			((description != null) ? description : "") +
-			payload.asXML();
-		return resultingPayload.hashCode();
+		String result = ((title != null) ? title : "") + ((description != null) ? description : "");
+		return super.hashCode() + result.hashCode();
     }
 
 	public static Element normalizeContent(IContent content) {
@@ -80,10 +69,9 @@ public class XMLContent implements IContent {
 		return payload;
 	}
 	
+	@Override
 	public void addToFeedPayload(Element rootPayload){
 		// nothing to do
 	}
-
-
 
 }

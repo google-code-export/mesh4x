@@ -3,30 +3,23 @@ package com.mesh4j.sync.adapters.hibernate;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
-import com.mesh4j.sync.adapters.IIdentifiableContent;
 import com.mesh4j.sync.adapters.feed.ISyndicationFormat;
+import com.mesh4j.sync.model.Content;
 import com.mesh4j.sync.model.IContent;
 
-
-public class EntityContent implements IIdentifiableContent{
+public class EntityContent extends Content{
 	
 	// MODEL VARIABLESs
 	private String entityName;
-	private String entityId;
-	private Element payload;
-	private int entityVersion;
 	
 	// BUSINESS METHODS
 	public EntityContent(Element payload, String entityName, String entityID) {
-		super();
-		this.payload = payload;
+		super(payload, entityID);
 		this.entityName = entityName;
-		this.entityId = entityID;
-		this.entityVersion = payload.asXML().hashCode();
 	}
 
 	public EntityContent clone(){
-		return new EntityContent(payload, entityName, entityId);
+		return new EntityContent(this.getPayload(), entityName, this.getId());
 	}
 	
     public boolean equals(Object obj)
@@ -41,9 +34,8 @@ public class EntityContent implements IIdentifiableContent{
         			&& this.getId().equals(otherXmlItem.getId())
         			&& this.getVersion() == otherXmlItem.getVersion()
         			&& this.getPayload().asXML().equals(otherXmlItem.getPayload().asXML());
-        	} else if(obj instanceof IContent){
-        		IContent otherXmlItem = (IContent) obj;
-        		return this.getPayload().asXML().equals(otherXmlItem.getPayload().asXML());
+        	} else {
+        		return super.equals(obj);
         	}
         }
         return false;
@@ -51,33 +43,18 @@ public class EntityContent implements IIdentifiableContent{
 
     public int hashCode()
     {
-		String resultingPayload = payload.asXML();
-		return this.entityName.hashCode() + this.entityId.hashCode() + this.entityVersion + resultingPayload.hashCode();
+		String result = this.getPayload().asXML();
+		return this.entityName.hashCode() + this.getId().hashCode() + this.getVersion() + result.hashCode();
     }
-	public void refreshEntityVersion() {
-		this.entityVersion = this.getPayload().asXML().hashCode();		
-	}
 
 	public String getType() {
 		return entityName;
-	}
-
-	public String getId() {
-		return entityId;
-	}
-
-	public Element getPayload() {
-		return payload;
-	}
-
-	public int getVersion() {
-		return entityVersion;
 	}
 	
 	public static EntityContent normalizeContent(IContent content, String entityNode, String entityIDNode){
 		if(content instanceof EntityContent){
 			EntityContent entity = (EntityContent)content;
-			entity.refreshEntityVersion();
+			entity.refreshVersion();
 			return entity;
 		}else{
 			Element entityElement = null;
@@ -100,6 +77,7 @@ public class EntityContent implements IIdentifiableContent{
 		}
 	}
 
+	@Override
 	public void addToFeedPayload(Element rootPayload){
 			
 		Element titleElement = DocumentHelper.createElement(ISyndicationFormat.SX_ATTRIBUTE_ITEM_TITLE);
@@ -107,7 +85,7 @@ public class EntityContent implements IIdentifiableContent{
 		rootPayload.add(titleElement);
 		
 		Element descriptionElement = DocumentHelper.createElement(ISyndicationFormat.SX_ATTRIBUTE_ITEM_DESCRIPTION);
-		descriptionElement.setText("Entity id: " + this.entityId + " version: " + this.entityVersion);
+		descriptionElement.setText("Entity id: " + this.getId() + " version: " + this.getVersion());
 		rootPayload.add(descriptionElement);
 		
 		rootPayload.add(this.getPayload().createCopy());

@@ -12,4 +12,6 @@ public interface IContent extends Cloneable{
 
 	void addToFeedPayload(Element rootPayload);
 
+	int getVersion();
+
 }

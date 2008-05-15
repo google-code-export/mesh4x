@@ -7,6 +7,8 @@ import java.io.IOException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
 import org.dom4j.io.XMLWriter;
 
 import com.mesh4j.sync.validations.MeshException;
@@ -33,5 +35,16 @@ public class XMLHelper {
 				throw new MeshException(e);
 			}
 		}
+	}
+
+	public static void write(String xml, File file) {
+		Document document;
+		try {
+			document = DocumentHelper.parseText(xml);
+		} catch (DocumentException e) {
+			Logger.error(e.getMessage(), e); 
+			throw new MeshException(e);
+		}
+		write(document, file);		
 	}		
 }

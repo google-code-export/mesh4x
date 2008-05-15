@@ -26,11 +26,6 @@ import com.mesh4j.sync.security.ISecurity;
 import com.mesh4j.sync.translator.MessageTranslator;
 import com.mesh4j.sync.validations.Guard;
 
-/**
- * Use CompoundRepositoryAdapter
- */
-@Deprecated
-
 public class HibernateAdapter extends AbstractRepositoryAdapter implements ISessionProvider {
 	
 	// MODEL VARIABLES
@@ -96,11 +91,15 @@ public class HibernateAdapter extends AbstractRepositoryAdapter implements ISess
 		try{
 			tx = session.beginTransaction();
 			
+			
+			SyncInfo syncInfo = null;
 			if (!item.isDeleted())
 			{
 				entityDAO.save(entity);
-			}
-			SyncInfo syncInfo = new SyncInfo(item.getSync(), entity);
+				syncInfo = new SyncInfo(item.getSync(), entity.getType(), entity.getId(), entity.getVersion());
+			} else {
+				syncInfo = new SyncInfo(item.getSync(), entityDAO.getEntityName(), item.getContent().getId(), item.getContent().getPayload().asXML().hashCode());	
+			}		
 			syncDAO.save(syncInfo);
 			
 			tx.commit();
@@ -189,7 +188,7 @@ public class HibernateAdapter extends AbstractRepositoryAdapter implements ISess
 				tx = session.beginTransaction();
 				EntityContent entity = entityDAO.normalizeContent(item.getContent());
 				entityDAO.save(entity);
-				SyncInfo syncInfo = new SyncInfo(item.getSync(), entity);
+				SyncInfo syncInfo = new SyncInfo(item.getSync(), entity.getType(), entity.getId(), entity.getVersion());
 				syncDAO.save(syncInfo);	
 				tx.commit();
 			}catch (RuntimeException e) {
@@ -295,7 +294,7 @@ public class HibernateAdapter extends AbstractRepositoryAdapter implements ISess
 			if(syncInfo == null){
 				sync = new Sync(syncDAO.newSyncID(), this.getAuthenticatedUser(), new Date(), false);
 				
-				SyncInfo newSyncInfo = new SyncInfo(sync, entity);
+				SyncInfo newSyncInfo = new SyncInfo(sync, entity.getType(), entity.getId(), entity.getVersion());
 				
 				session = newSession();
 				Transaction tx = null;
