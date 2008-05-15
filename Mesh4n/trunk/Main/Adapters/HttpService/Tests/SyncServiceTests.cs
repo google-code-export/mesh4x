@@ -158,8 +158,7 @@ namespace Mesh4n.Adapters.HttpService.Tests
 		}
 
 		[Test]
-		[ExpectedException(typeof(ServiceException))]
-		public void ShouldReturnNullAndSetHeadersIfNoItemsExistWhenGetPartialFeed()
+		public void ShouldReturnEmptyFeedAndSetHeadersIfNoItemsExistWhenGetPartialFeed()
 		{
 			List<Item> items = new List<Item>();
 
@@ -185,7 +184,7 @@ namespace Mesh4n.Adapters.HttpService.Tests
 
 			mockAdapter.Verify();
 			webContextMock.OutgoingWebResponseContext.VerifyAll();
-			Assert.IsNull(feed);
+			Assert.IsNotNull(feed);
 			
 		}
 
