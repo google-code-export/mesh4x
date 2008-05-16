@@ -158,8 +158,8 @@ public class CompoundRepositoryAdapter extends AbstractRepositoryAdapter {
 	
 		ArrayList<Item> result = new ArrayList<Item>();
 		
-		List<IContent> contents = contentAdapter.getAll();
-		List<SyncInfo> syncInfos = syncRepository.getAll(contentAdapter.getType());
+		List<IContent> contents = contentAdapter.getAll(since);
+		List<SyncInfo> syncInfos = syncRepository.getAll(since, contentAdapter.getType());
 		
 		Map<String, SyncInfo> syncInfoAsMapByEntity = this.makeSyncMapByEntity(syncInfos);
  

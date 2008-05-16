@@ -2,6 +2,7 @@ package com.mesh4j.sync.adapters.hibernate;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -105,7 +106,7 @@ public class HibernateContentAdapter implements IContentAdapter {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<IContent> getAll() {
+	public List<IContent> getAll(Date since) {
 		String hqlQuery ="FROM " + this.entityName;
 		Session session = this.sessionFactory.openSession();
 		Session dom4jSession = session.getSession(EntityMode.DOM4J);		

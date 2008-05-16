@@ -5,6 +5,7 @@ import static com.mesh4j.sync.parsers.SyncInfoParser.SYNC_INFO_ATTR_ENTITY_NAME;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -111,7 +112,7 @@ public class HibernateSyncRepository implements ISyncRepository{
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<SyncInfo> getAll(String entityName) {
+	public List<SyncInfo> getAll(Date since, String entityName) {
 		List<Element> syncElements = getAllSyncInfo(entityName);
 		
 		ArrayList<SyncInfo> result = new ArrayList<SyncInfo>(); 

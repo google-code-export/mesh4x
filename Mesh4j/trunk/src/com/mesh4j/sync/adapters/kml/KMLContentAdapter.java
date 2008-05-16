@@ -2,18 +2,18 @@ package com.mesh4j.sync.adapters.kml;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.jaxen.JaxenException;
-import org.jaxen.SimpleNamespaceContext;
-import org.jaxen.dom4j.Dom4jXPath;
 
 import com.mesh4j.sync.adapters.compound.IContentAdapter;
 import com.mesh4j.sync.model.IContent;
@@ -21,6 +21,7 @@ import com.mesh4j.sync.utils.IdGenerator;
 import com.mesh4j.sync.utils.XMLHelper;
 import com.mesh4j.sync.validations.MeshException;
 
+// TODO (JMT) REFACTORING
 public class KMLContentAdapter implements IContentAdapter{
 	
 	private static final Log Logger = LogFactory.getLog(KMLContentAdapter.class);
@@ -75,7 +76,10 @@ public class KMLContentAdapter implements IContentAdapter{
 	}
 	
 	private boolean initializeFolderElement() throws JaxenException {
-		List<Element> folders = this.selectElements("//kml:Folder");
+		HashMap<String, String> namespaces = new HashMap<String, String>();
+		namespaces.put(KmlNames.KML_PREFIX, KmlNames.KML_URI);
+		
+		List<Element> folders = XMLHelper.selectElements("//kml:Folder", this.kmlDocument, namespaces);
 		for (Element folder : folders) {
 			Element folderName = folder.element(KmlNames.KML_ELEMENT_NAME);
 			if(folderName != null && SHARED_ITEMS.equals(folderName.getText())){
@@ -99,7 +103,7 @@ public class KMLContentAdapter implements IContentAdapter{
 		Element element = this.getElementById(kmlContent.getId());
 		if(element == null){
 			Element parent = this.kmlDocumentElement; 
-			if(KmlNames.KML_ELEMENT_PLACEMARK.equals(newPayload.getName())){
+			if(KmlNames.KML_ELEMENT_PLACEMARK.equals(newPayload.getName()) || KmlNames.KML_ELEMENT_FOLDER.equals(newPayload.getName())){
 				parent = this.kmlSharedFolderElement; 
 				String parentId = newPayload.attributeValue(KmlNames.PARENT_ID_QNAME);
 				if(parentId != null){
@@ -148,17 +152,25 @@ public class KMLContentAdapter implements IContentAdapter{
 		} else {
 			folderNameElement.setText(folderName);
 		}
+		
+		String parentId = updatedElement.attributeValue(KmlNames.PARENT_ID_QNAME);
+		if(parentId != null){
+			Element newParent = getElementById(parentId);
+			if(newParent != null){
+				Element newFolder = element.createCopy();
+				element.getParent().remove(element);
+				newParent.add(newFolder);
+			}
+		}
 	}
  	
 	private Element getElementById(String elementId)  {
-		HashMap<String, String> map = new HashMap<String, String>();
-		map.put(KmlNames.XML_PREFIX, KmlNames.XML_URI);
-		map.put(KmlNames.KML_PREFIX, KmlNames.KML_URI);
+		HashMap<String, String> namespaces = new HashMap<String, String>();
+		namespaces.put(KmlNames.XML_PREFIX, KmlNames.XML_URI);
+		namespaces.put(KmlNames.KML_PREFIX, KmlNames.KML_URI);
 		
 		try {
-			Dom4jXPath xpath = new Dom4jXPath("//kml:*[@xml:id='"+elementId+"']");
-			xpath.setNamespaceContext(new SimpleNamespaceContext(map));
-			return (Element) xpath.selectSingleNode(this.kmlDocument);
+			return XMLHelper.selectSingleNode("//kml:*[@xml:id='"+elementId+"']", this.kmlDocument, namespaces);
 		} catch (JaxenException e) {
 			Logger.error(e.getMessage(), e);
 			throw new MeshException(e);
@@ -186,6 +198,13 @@ public class KMLContentAdapter implements IContentAdapter{
 				Element newFolder = DocumentHelper.createDocument().addElement(KmlNames.KML_ELEMENT_FOLDER, KmlNames.KML_URI);
 				newFolder.addNamespace(KmlNames.XML_PREFIX, KmlNames.XML_URI);
 				newFolder.addAttribute(KmlNames.XML_ID_QNAME, id);
+				
+				String parentId = element.attributeValue(KmlNames.PARENT_ID_QNAME);
+				if(parentId != null){
+					newFolder.addNamespace(KmlNames.XLINK_PREFIX, KmlNames.XLINK_URI);
+					newFolder.addAttribute(KmlNames.PARENT_ID_QNAME, parentId);
+				}
+				
 				if(folderNameElement != null){
 					Element newFolderNameElement = newFolder.addElement(KmlNames.KML_ELEMENT_NAME, KmlNames.KML_URI);
 					newFolderNameElement.addText(folderNameElement.getText());
@@ -199,26 +218,16 @@ public class KMLContentAdapter implements IContentAdapter{
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<IContent> getAll() {		
+	public List<IContent> getAll(Date since) {		
+		return getAll();
+	}
+
+	public List<IContent> getAll() {
 		RefreshResult refreshResult = this.refreshContent();
 		if(refreshResult.isDirty()){
 			this.flush();
 		}
 		return refreshResult.getContents();
-	}
-
-	@SuppressWarnings("unchecked")
-	private List<Element> selectElements(String xpathExpression) throws JaxenException {
-		List<Element> elements = new ArrayList<Element>();
-		HashMap<String, String> map = new HashMap<String, String>();
-		map.put(KmlNames.KML_PREFIX, KmlNames.KML_URI);
-			
-		Dom4jXPath xpath = new Dom4jXPath(xpathExpression);
-		xpath.setNamespaceContext(new SimpleNamespaceContext(map));
-		  
-		elements = xpath.selectNodes(this.kmlDocument);
-		  
-		return elements;
 	}
 
 	private String makeNewID() {
@@ -247,8 +256,12 @@ public class KMLContentAdapter implements IContentAdapter{
 	private RefreshResult refreshContent() {
 		boolean dirty = false;
 		ArrayList<IContent> result = new ArrayList<IContent>();
+		
+		HashMap<String, String> namespaces = new HashMap<String, String>();
+		namespaces.put(KmlNames.KML_PREFIX, KmlNames.KML_URI);
+		
 		try{	
-			List<Element> elements = this.selectElements("//kml:Folder");
+			List<Element> elements = XMLHelper.selectElements("//kml:Folder", this.kmlDocument, namespaces);
 			for (Element element : elements) {
 				Element folderNameElement = element.element(KmlNames.KML_ELEMENT_NAME);
 				String folderName = folderNameElement.getText(); 
@@ -260,10 +273,33 @@ public class KMLContentAdapter implements IContentAdapter{
 						element.addAttribute(KmlNames.XML_ID_QNAME, id);
 						dirty = true;
 					}
+					
+					String parentId = element.getParent().attributeValue(KmlNames.XML_ID_QNAME);
+					if(parentId != null){
+						String myParentID = element.attributeValue(KmlNames.PARENT_ID_QNAME);
+						if(myParentID == null){
+							element.addNamespace(KmlNames.XLINK_PREFIX, KmlNames.XLINK_URI);
+							element.addAttribute(KmlNames.PARENT_ID_QNAME, parentId);
+							dirty = true;
+						} else if(!parentId.equals(myParentID)){
+							element.attribute(KmlNames.PARENT_ID_QNAME).setValue(parentId);
+							dirty = true;
+						}
+					} else {
+						Attribute attr = element.attribute(KmlNames.PARENT_ID_QNAME);
+						if(attr != null){
+							element.remove(attr);
+						}
+					}
+					
 					folderName = element.element(KmlNames.KML_ELEMENT_NAME).getText();
 					Element newFolder = DocumentHelper.createDocument().addElement(KmlNames.KML_ELEMENT_FOLDER, KmlNames.KML_URI);
 					newFolder.addNamespace(KmlNames.XML_PREFIX, KmlNames.XML_URI);
 					newFolder.addAttribute(KmlNames.XML_ID_QNAME, id);
+					if(parentId != null){
+						newFolder.addNamespace(KmlNames.XLINK_PREFIX, KmlNames.XLINK_URI);
+						newFolder.addAttribute(KmlNames.PARENT_ID_QNAME, parentId);
+					}					
 					folderNameElement = newFolder.addElement(KmlNames.KML_ELEMENT_NAME, KmlNames.KML_URI);
 					folderNameElement.addText(folderName);
 					KMLContent content = new KMLContent(newFolder, id);
@@ -271,8 +307,8 @@ public class KMLContentAdapter implements IContentAdapter{
 				}
 			}
 			
-			elements = this.selectElements("//kml:Style");
-			elements.addAll(this.selectElements("//kml:StyleMap"));			
+			elements = XMLHelper.selectElements("//kml:Style", this.kmlDocument, namespaces);
+			elements.addAll(XMLHelper.selectElements("//kml:StyleMap", this.kmlDocument, namespaces));			
 			for (Element element : elements) {
 				String id = element.attributeValue(KmlNames.XML_ID_QNAME);
 				if(id == null){
@@ -286,7 +322,7 @@ public class KMLContentAdapter implements IContentAdapter{
 					String kmlIDRef = "#"+kmlID;
 					String newKmlIDRef = "#"+kmlID+"_"+id;
 					
-					List<Element> references = this.selectElements("//kml:styleUrl[text()='"+ kmlIDRef +"']");
+					List<Element> references = XMLHelper.selectElements("//kml:styleUrl[text()='"+ kmlIDRef +"']", this.kmlDocument, namespaces);
 					for (Element refElement : references) {
 						refElement.setText(newKmlIDRef);
 					}
@@ -296,7 +332,7 @@ public class KMLContentAdapter implements IContentAdapter{
 				result.add(content);
 			}
 			
-			elements = this.selectElements("//kml:Placemark");			
+			elements = XMLHelper.selectElements("//kml:Placemark", this.kmlDocument, namespaces);			
 			for (Element element : elements) {
 				String id = element.attributeValue(KmlNames.XML_ID_QNAME);
 				if(id == null){
@@ -316,6 +352,11 @@ public class KMLContentAdapter implements IContentAdapter{
 					} else if(!parentId.equals(myParentID)){
 						element.attribute(KmlNames.PARENT_ID_QNAME).setValue(parentId);
 						dirty = true;
+					}
+				} else {
+					Attribute attr = element.attribute(KmlNames.PARENT_ID_QNAME);
+					if(attr != null){
+						element.remove(attr);
 					}
 				}
 				

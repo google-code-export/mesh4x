@@ -3,13 +3,21 @@ package com.mesh4j.sync.utils;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
+import org.jaxen.JaxenException;
+import org.jaxen.SimpleNamespaceContext;
+import org.jaxen.dom4j.Dom4jXPath;
 
 import com.mesh4j.sync.validations.MeshException;
 
@@ -47,4 +55,27 @@ public class XMLHelper {
 		}
 		write(document, file);		
 	}		
+	
+	@SuppressWarnings("unchecked")
+	public static List<Element> selectElements(String xpathExpression, Document document, Map<String, String> namespaces) throws JaxenException {
+		List<Element> elements = new ArrayList<Element>();
+			
+		Dom4jXPath xpath = new Dom4jXPath(xpathExpression);
+		xpath.setNamespaceContext(new SimpleNamespaceContext(namespaces));
+		  
+		elements = xpath.selectNodes(document);
+		  
+		return elements;
+	}
+	
+	public static Element selectSingleNode(String xpathExpression, Document document, Map<String, String> namespaces) throws JaxenException {
+		Dom4jXPath xpath = new Dom4jXPath(xpathExpression);
+		xpath.setNamespaceContext(new SimpleNamespaceContext(namespaces));
+		return (Element) xpath.selectSingleNode(document);
+	}
+
+	public static Document readDocument(File file) throws DocumentException {
+		SAXReader reader = new SAXReader();
+		return reader.read(file);
+	}
 }

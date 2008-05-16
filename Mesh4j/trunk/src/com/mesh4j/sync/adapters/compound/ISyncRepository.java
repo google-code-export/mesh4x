@@ -1,5 +1,6 @@
 package com.mesh4j.sync.adapters.compound;
 
+import java.util.Date;
 import java.util.List;
 
 import com.mesh4j.sync.adapters.SyncInfo;
@@ -11,7 +12,7 @@ public interface ISyncRepository {
 
 	SyncInfo get(String syncId);
 
-	List<SyncInfo> getAll(String entityName);
+	List<SyncInfo> getAll(Date since, String entityName);
 
 	String newSyncID(IContent content);
 }
