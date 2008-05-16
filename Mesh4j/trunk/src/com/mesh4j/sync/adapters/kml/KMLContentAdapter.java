@@ -21,7 +21,6 @@ import com.mesh4j.sync.utils.IdGenerator;
 import com.mesh4j.sync.utils.XMLHelper;
 import com.mesh4j.sync.validations.MeshException;
 
-// TODO (JMT) REFACTORING
 public class KMLContentAdapter implements IContentAdapter{
 	
 	private static final Log Logger = LogFactory.getLog(KMLContentAdapter.class);
@@ -133,7 +132,7 @@ public class KMLContentAdapter implements IContentAdapter{
 		}
 		this.flush();
 	}
-
+	// TODO (JMT) REFACTORING: if this class is not replaced with KMLAdapter is necessary to improve the process of elements (create a parser per element)
 	private void updateFolderElements(Element element, Element updatedElement) {
 		Element updatedName = updatedElement.element(KmlNames.KML_ELEMENT_NAME);
 		if(updatedName == null){

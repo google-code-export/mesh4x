@@ -1023,8 +1023,6 @@ public class KMLSyncEngineTests {
 		Element folder1 = XMLHelper.selectSingleNode("//kml:*[@xml:id='"+folderID1+"']", doc, namespaces);
 		Element folder2 = XMLHelper.selectSingleNode("//kml:*[@xml:id='"+folderID2+"']", doc, namespaces);
 		Assert.assertEquals(folder1, folder2.getParent());
-		String xmlDoc1 = doc.asXML();
-		
 		
 		items = repo2.getAll();
 		Assert.assertNotNull(items);
@@ -1034,8 +1032,6 @@ public class KMLSyncEngineTests {
 		Assert.assertEquals(id, items.get(3).getContent().getPayload().attributeValue(KmlNames.XML_ID_QNAME));
 		Assert.assertEquals(folderID1, items.get(1).getContent().getPayload().attributeValue(KmlNames.PARENT_ID_QNAME));
 		Assert.assertEquals(folderID2, items.get(3).getContent().getPayload().attributeValue(KmlNames.PARENT_ID_QNAME));
-//		Assert.assertEquals(items.get(1).getContent().getPayload().getParent().attributeValue(KmlNames.XML_ID_QNAME), items.get(1).getContent().getPayload().attributeValue(KmlNames.PARENT_ID_QNAME));
-//		Assert.assertEquals(items.get(2).getContent().getPayload().getParent().attributeValue(KmlNames.XML_ID_QNAME), items.get(2).getContent().getPayload().attributeValue(KmlNames.PARENT_ID_QNAME));
 		Assert.assertEquals(id2, items.get(2).getContent().getPayload().attributeValue(KmlNames.XML_ID_QNAME));
 		Assert.assertNull(items.get(2).getContent().getPayload().attributeValue(KmlNames.PARENT_ID_QNAME));
 		
@@ -1043,7 +1039,6 @@ public class KMLSyncEngineTests {
 		folder1 = XMLHelper.selectSingleNode("//kml:*[@xml:id='"+folderID1+"']", doc, namespaces);
 		folder2 = XMLHelper.selectSingleNode("//kml:*[@xml:id='"+folderID2+"']", doc, namespaces);
 		Assert.assertEquals(folder1, folder2.getParent());
-		String xmlDoc2 = doc.asXML();
 	}
 	
 	@Test
