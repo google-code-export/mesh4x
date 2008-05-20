@@ -34,6 +34,7 @@ public class KMLAdapter extends AbstractRepositoryAdapter {
 	// TODO (JMT) Supports kmz extension
 	// TODO (JMT) Purge and clean mesh4x data to kml file.
 	// TODO (JMT) XML Canonalization (C14N) 
+	// TODO (JMT) Add protocol to supports prepereToSync/flush concepts (SyncEngine ?)
 	
 	// MODEL VARIABLES
 	private ISecurity security;
@@ -53,8 +54,6 @@ public class KMLAdapter extends AbstractRepositoryAdapter {
 		this.meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, security);
 		
 		this.kmlFile = new File(fileName);
-		this.kmlDocument = read(this.kmlFile);
-		this.kmlDocumentElement = this.kmlDocument.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT);
 		this.prepareKMLToSync();
 	}
 	
@@ -129,8 +128,12 @@ public class KMLAdapter extends AbstractRepositoryAdapter {
 		Guard.argumentNotNullOrEmptyString(id, "id");
 
 		SyncInfo syncInfo = this.meshParser.getSyncInfo(this.kmlDocumentElement, id);
-		if (syncInfo != null){
+		if (syncInfo != null && !syncInfo.isDeleted()){
 			syncInfo.getSync().delete(this.getAuthenticatedUser(), new Date());
+			this.meshParser.refreshSyncInfo(this.kmlDocumentElement, syncInfo);
+		}else if(syncInfo == null){
+			Sync sync = new Sync(id, this.security.getAuthenticatedUser(), new Date(), true);
+			syncInfo = new SyncInfo(sync, this.meshParser.getType(), id, new NullContent(id).getVersion());
 			this.meshParser.refreshSyncInfo(this.kmlDocumentElement, syncInfo);
 		}
 			
@@ -204,7 +207,10 @@ public class KMLAdapter extends AbstractRepositoryAdapter {
 		}
 	}	
 	
-	private RefreshItemsResult refreshContent() {	
+	private RefreshItemsResult refreshContent() {
+		this.kmlDocument = read(this.kmlFile);
+		this.kmlDocumentElement = this.kmlDocument.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT);
+		
 		RefreshItemsResult refreshResult = new RefreshItemsResult();
 		
 		boolean dirty = this.meshParser.prepateSyncRepository(this.kmlDocumentElement);
@@ -329,4 +335,5 @@ public class KMLAdapter extends AbstractRepositoryAdapter {
 	protected String newID() {
 		return IdGenerator.newID();
 	}
+	
 }
