@@ -57,21 +57,27 @@ public class XMLHelper {
 	}		
 	
 	@SuppressWarnings("unchecked")
-	public static List<Element> selectElements(String xpathExpression, Document document, Map<String, String> namespaces) throws JaxenException {
-		List<Element> elements = new ArrayList<Element>();
-			
-		Dom4jXPath xpath = new Dom4jXPath(xpathExpression);
-		xpath.setNamespaceContext(new SimpleNamespaceContext(namespaces));
-		  
-		elements = xpath.selectNodes(document);
-		  
-		return elements;
+	public static List<Element> selectElements(String xpathExpression, Element root, Map<String, String> namespaces){
+		try{
+			List<Element> elements = new ArrayList<Element>();				
+			Dom4jXPath xpath = new Dom4jXPath(xpathExpression);
+			xpath.setNamespaceContext(new SimpleNamespaceContext(namespaces));
+			  
+			elements = xpath.selectNodes(root);			  
+			return elements;
+		} catch (JaxenException e) {
+			throw new MeshException(e);
+		}
 	}
 	
-	public static Element selectSingleNode(String xpathExpression, Document document, Map<String, String> namespaces) throws JaxenException {
-		Dom4jXPath xpath = new Dom4jXPath(xpathExpression);
-		xpath.setNamespaceContext(new SimpleNamespaceContext(namespaces));
-		return (Element) xpath.selectSingleNode(document);
+	public static Element selectSingleNode(String xpathExpression, Element root, Map<String, String> namespaces) {
+		try{
+			Dom4jXPath xpath = new Dom4jXPath(xpathExpression);
+			xpath.setNamespaceContext(new SimpleNamespaceContext(namespaces));
+			return (Element) xpath.selectSingleNode(root);
+		} catch (JaxenException e) {
+			throw new MeshException(e);
+		}
 	}
 
 	public static Document readDocument(File file) throws DocumentException {

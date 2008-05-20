@@ -4,7 +4,10 @@ import java.util.Date;
 import java.util.List;
 
 import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.dom4j.Namespace;
+import org.dom4j.QName;
 
 public interface ISyndicationFormat {
 
@@ -30,6 +33,8 @@ public interface ISyndicationFormat {
 	// / </summary>
 	public static final String SX_PREFIX = "sx";
 
+	public static final Namespace SX_NS = DocumentHelper.createNamespace(SX_PREFIX, NAMESPACE);
+
 	public static final String SX_ELEMENT_SHARING = "sharing";
 	public static final String SX_ELEMENT_RELATED = "related";
 	public static final String SX_ELEMENT_SYNC = "sync";
@@ -37,6 +42,8 @@ public interface ISyndicationFormat {
 	public static final String SX_ELEMENT_CONFLICTS = "conflicts";
 	
 	public static final String SX_ELEMENT_AUTHOR = "author";
+	
+	public static final QName SX_QNAME_SYNC = DocumentHelper.createQName(SX_ELEMENT_SYNC, SX_NS);
 
 	// sx:sharing
 	public static final String SX_ATTRIBUTE_SHARING_SINCE = "since";
@@ -52,6 +59,9 @@ public interface ISyndicationFormat {
 	public static final String SX_ATTRIBUTE_SYNC_UPDATES = "updates";
 	public static final String SX_ATTRIBUTE_SYNC_DELETED = "deleted";
 	public static final String SX_ATTRIBUTE_SYNC_NO_CONFLICTS = "noconflicts";
+	
+	public static final QName SX_QNAME_SYNC_ID = DocumentHelper.createQName(SX_ATTRIBUTE_SYNC_ID, SX_NS);
+	
 	// sx:history
 	public static final String SX_ATTRIBUTE_HISTORY_SEQUENCE = "sequence";
 	public static final String SX_ATTRIBUTE_HISTORY_WHEN = "when";

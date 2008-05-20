@@ -13,10 +13,13 @@ public interface KmlNames {
 	public static final String KML_ELEMENT = "kml";
 	public static final String KML_ELEMENT_FOLDER = "Folder";
 	public static final String KML_ELEMENT_NAME = "name";
+	public static final String KML_ELEMENT_DESCRIPTION = "description";
 	public static final String KML_ELEMENT_DOCUMENT = "Document";
 	public static final String KML_ELEMENT_PLACEMARK = "Placemark";
 	public static final String KML_ELEMENT_STYLE = "Style";
 	public static final String KML_ELEMENT_STYLE_MAP = "StyleMap";
+	public static final QName KML_ATTRIBUTE_ID_QNAME = DocumentHelper.createQName("id", KML_NS);
+	public static final String KML_ATTRIBUTE_ID = "id";
 	public static final QName FOLDER_QNAME = DocumentHelper.createQName("Folder", KML_NS);
 	
 	public static final String XML_PREFIX = "xml";
@@ -33,10 +36,11 @@ public interface KmlNames {
 	public static final String MESH_PREFIX = "mesh4x";
 	public static final String MESH_URI = "http://mesh4x.org/kml";
 	public static final Namespace MESH_NS = DocumentHelper.createNamespace(MESH_PREFIX, MESH_URI);
-	//public static final QName MESH_QNAME_ID = DocumentHelper.createQName("id", MESH_NS);
-	//public static final QName MESH_QNAME_PARENT_ID = DocumentHelper.createQName("parentId", MESH_NS);
+	public static final QName MESH_QNAME_SYNC_ID = DocumentHelper.createQName("id", MESH_NS);
+	public static final QName MESH_QNAME_PARENT_ID = DocumentHelper.createQName("parentId", MESH_NS);
 	public static final QName MESH_QNAME_SYNC = DocumentHelper.createQName("sync", MESH_NS);;
-	public static final String MESH_ID = "id";
-	public static final String MESH_PARENT_ID = "parentId";
+	//public static final String MESH_ID = "id";
+	//public static final String MESH_PARENT_ID = "parentId";
+	public static final String MESH_VERSION = "version";
 	
 }

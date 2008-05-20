@@ -55,7 +55,13 @@ public class SyncInfoParser {
 		return sync;
 	}
 	
-	public Element convertSyncInfo2Element(SyncInfo syncInfo) throws DocumentException {
+	public Sync convertSyncElement2Sync(Element syncElement){
+		FeedReader reader = new FeedReader(this.format, this.security);
+		Sync sync = reader.readSync(syncElement);
+		return sync;
+	}
+	
+	public Element convertSyncInfo2Element(SyncInfo syncInfo) {
 		Element syncElementRoot = DocumentHelper.createElement(SYNC_INFO);
 		syncElementRoot.addElement(SYNC_INFO_ATTR_SYNC_ID).addText(syncInfo.getSyncId());
 		syncElementRoot.addElement(SYNC_INFO_ATTR_ENTITY_NAME).addText(syncInfo.getType());
@@ -68,7 +74,18 @@ public class SyncInfoParser {
 		return syncElementRoot;
 	}
 
-	public String convertSync2XML(Sync sync) throws DocumentException {
+	public Element convertSync2Element(Sync sync) {
+		FeedWriter writer = new FeedWriter(this.format, this.security);
+		Element syncData = DocumentHelper.createElement(ISyndicationFormat.ATTRIBUTE_PAYLOAD);
+		syncData.addNamespace(ISyndicationFormat.SX_PREFIX, ISyndicationFormat.NAMESPACE);
+		writer.writeSync(syncData, sync);
+		
+		Element syncElement = syncData.element(ISyndicationFormat.SX_ELEMENT_SYNC);
+		syncElement.detach();
+		return syncElement;
+	}
+	
+	public String convertSync2XML(Sync sync) {
 		FeedWriter writer = new FeedWriter(this.format, this.security);
 		Element syncData = DocumentHelper.createElement(RssSyndicationFormat.ATTRIBUTE_PAYLOAD);
 		syncData.addNamespace(RssSyndicationFormat.SX_PREFIX, RssSyndicationFormat.NAMESPACE);

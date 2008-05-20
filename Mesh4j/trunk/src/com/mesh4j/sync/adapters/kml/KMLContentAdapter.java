@@ -78,7 +78,7 @@ public class KMLContentAdapter implements IContentAdapter{
 		HashMap<String, String> namespaces = new HashMap<String, String>();
 		namespaces.put(KmlNames.KML_PREFIX, KmlNames.KML_URI);
 		
-		List<Element> folders = XMLHelper.selectElements("//kml:Folder", this.kmlDocument, namespaces);
+		List<Element> folders = XMLHelper.selectElements("//kml:Folder", this.kmlDocumentElement, namespaces);
 		for (Element folder : folders) {
 			Element folderName = folder.element(KmlNames.KML_ELEMENT_NAME);
 			if(folderName != null && SHARED_ITEMS.equals(folderName.getText())){
@@ -132,6 +132,7 @@ public class KMLContentAdapter implements IContentAdapter{
 		}
 		this.flush();
 	}
+	
 	// TODO (JMT) REFACTORING: if this class is not replaced with KMLAdapter is necessary to improve the process of elements (create a parser per element)
 	private void updateFolderElements(Element element, Element updatedElement) {
 		Element updatedName = updatedElement.element(KmlNames.KML_ELEMENT_NAME);
@@ -167,13 +168,7 @@ public class KMLContentAdapter implements IContentAdapter{
 		HashMap<String, String> namespaces = new HashMap<String, String>();
 		namespaces.put(KmlNames.XML_PREFIX, KmlNames.XML_URI);
 		namespaces.put(KmlNames.KML_PREFIX, KmlNames.KML_URI);
-		
-		try {
-			return XMLHelper.selectSingleNode("//kml:*[@xml:id='"+elementId+"']", this.kmlDocument, namespaces);
-		} catch (JaxenException e) {
-			Logger.error(e.getMessage(), e);
-			throw new MeshException(e);
-		}
+		return XMLHelper.selectSingleNode("//kml:*[@xml:id='"+elementId+"']", this.kmlDocumentElement, namespaces);
 	}
 
 	@Override
@@ -260,7 +255,7 @@ public class KMLContentAdapter implements IContentAdapter{
 		namespaces.put(KmlNames.KML_PREFIX, KmlNames.KML_URI);
 		
 		try{	
-			List<Element> elements = XMLHelper.selectElements("//kml:Folder", this.kmlDocument, namespaces);
+			List<Element> elements = XMLHelper.selectElements("//kml:Folder", this.kmlDocumentElement, namespaces);
 			for (Element element : elements) {
 				Element folderNameElement = element.element(KmlNames.KML_ELEMENT_NAME);
 				String folderName = folderNameElement.getText(); 
@@ -306,8 +301,8 @@ public class KMLContentAdapter implements IContentAdapter{
 				}
 			}
 			
-			elements = XMLHelper.selectElements("//kml:Style", this.kmlDocument, namespaces);
-			elements.addAll(XMLHelper.selectElements("//kml:StyleMap", this.kmlDocument, namespaces));			
+			elements = XMLHelper.selectElements("//kml:Style", this.kmlDocumentElement, namespaces);
+			elements.addAll(XMLHelper.selectElements("//kml:StyleMap", this.kmlDocumentElement, namespaces));			
 			for (Element element : elements) {
 				String id = element.attributeValue(KmlNames.XML_ID_QNAME);
 				if(id == null){
@@ -321,7 +316,7 @@ public class KMLContentAdapter implements IContentAdapter{
 					String kmlIDRef = "#"+kmlID;
 					String newKmlIDRef = "#"+kmlID+"_"+id;
 					
-					List<Element> references = XMLHelper.selectElements("//kml:styleUrl[text()='"+ kmlIDRef +"']", this.kmlDocument, namespaces);
+					List<Element> references = XMLHelper.selectElements("//kml:styleUrl[text()='"+ kmlIDRef +"']", this.kmlDocumentElement, namespaces);
 					for (Element refElement : references) {
 						refElement.setText(newKmlIDRef);
 					}
@@ -331,7 +326,7 @@ public class KMLContentAdapter implements IContentAdapter{
 				result.add(content);
 			}
 			
-			elements = XMLHelper.selectElements("//kml:Placemark", this.kmlDocument, namespaces);			
+			elements = XMLHelper.selectElements("//kml:Placemark", this.kmlDocumentElement, namespaces);			
 			for (Element element : elements) {
 				String id = element.attributeValue(KmlNames.XML_ID_QNAME);
 				if(id == null){
@@ -373,15 +368,17 @@ public class KMLContentAdapter implements IContentAdapter{
 		
 		private boolean dirty = false;
 		private List<IContent> contents = new ArrayList<IContent>();
-		
-		protected RefreshResult(boolean dirty, List<IContent> contents){
+
+		protected RefreshResult(boolean dirty, List<IContent> contents) {
 			this.dirty = dirty;
 			this.contents = contents;
 		}
-		protected boolean isDirty(){
+
+		protected boolean isDirty() {
 			return dirty;
 		}
-		protected List<IContent> getContents(){
+
+		protected List<IContent> getContents() {
 			return contents;
 		}
 	}

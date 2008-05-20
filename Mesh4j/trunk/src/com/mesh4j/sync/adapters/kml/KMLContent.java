@@ -8,7 +8,7 @@ import com.mesh4j.sync.model.Content;
 import com.mesh4j.sync.model.IContent;
 
 public class KMLContent extends Content{
-		
+
 	public KMLContent(Element payload, String id) {
 		super(payload, id);
 	}

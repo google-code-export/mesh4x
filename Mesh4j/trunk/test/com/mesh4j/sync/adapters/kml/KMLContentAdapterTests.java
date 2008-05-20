@@ -13,4 +13,5 @@ public class KMLContentAdapterTests {
 	public void spike() throws Exception{
 		KMLContentAdapter.prepareKMLToSync(TestHelper.fileName(IdGenerator.newID()+".xml"));		
 	}
+
 }

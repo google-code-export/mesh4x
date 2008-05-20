@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.mesh4j.sync.IFilter;
 import com.mesh4j.sync.model.Item;
+import com.mesh4j.sync.model.Sync;
 import com.mesh4j.sync.validations.Guard;
 
 public class SinceLastUpdateFilter implements IFilter<Item>{
@@ -25,13 +26,15 @@ public class SinceLastUpdateFilter implements IFilter<Item>{
 	}
 	
 	public static boolean applies(Item item, Date since) {
-		if(since == null || item.getSync().getLastUpdate() == null || item.getSync().getLastUpdate().getWhen() == null){
+		return applies(item.getSync(), since);
+	}
+
+	public static boolean applies(Sync sync, Date since) {
+		if(since == null || sync.getLastUpdate() == null || sync.getLastUpdate().getWhen() == null){
 			return true;
 		} else {
-			Date lastUpdate = item.getSync().getLastUpdate().getWhen();
+			Date lastUpdate = sync.getLastUpdate().getWhen();
 			return since.compareTo(lastUpdate) <= 0;
 		}
 	}
-
-
 }

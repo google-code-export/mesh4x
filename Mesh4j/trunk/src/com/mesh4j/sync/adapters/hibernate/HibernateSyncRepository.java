@@ -101,13 +101,7 @@ public class HibernateSyncRepository implements ISyncRepository{
 	}
 
 	private Element convertSyncInfo2Element(SyncInfo syncInfo) {
-		Element syncInfoElement;
-		try {
-			syncInfoElement = syncInfoParser.convertSyncInfo2Element(syncInfo);
-		} catch (DocumentException e) {
-			Logger.error(e.getMessage(), e);
-			throw new MeshException(e);
-		}
+		Element syncInfoElement = syncInfoParser.convertSyncInfo2Element(syncInfo);
 		return syncInfoElement;
 	}
 

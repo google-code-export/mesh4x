@@ -70,7 +70,7 @@ public class FeedWriter {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void writePayload(Element root, Element payload) throws DocumentException {
+	public void writePayload(Element root, Element payload) {
 		List<Element> payloadElements = payload.elements(); 
 		for (Element payloadElement : payloadElements) {
 			root.add(payloadElement.createCopy());
@@ -81,7 +81,7 @@ public class FeedWriter {
 		return this.syndicationFormat.addRootElement(document);
 	}
 
-	public void write(Element root, Item item) throws DocumentException
+	public void write(Element root, Item item) 
 	{
 		Element itemElement = this.addFeedItemElement(root);
 		
@@ -104,7 +104,7 @@ public class FeedWriter {
 		}
 	}	
 	
-	private void writeContent(Element itemElement, IContent content) throws DocumentException {
+	private void writeContent(Element itemElement, IContent content) {
 		Element xmlContent = XMLContent.normalizeContent(content);
 		writePayload(itemElement, xmlContent);
 	}
@@ -117,8 +117,7 @@ public class FeedWriter {
 		return this.syndicationFormat.formatDate(date);
 	}
 
-	public void writeSync(Element rootElement, Sync sync) throws DocumentException
-	{		
+	public void writeSync(Element rootElement, Sync sync) {		
 		// <sx:sync>
 		Namespace ns = DocumentHelper.createNamespace(SX_PREFIX, NAMESPACE);
 		QName syncQName = DocumentHelper.createQName(SX_ELEMENT_SYNC, ns);

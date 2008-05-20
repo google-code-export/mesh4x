@@ -1020,8 +1020,8 @@ public class KMLSyncEngineTests {
 		namespaces.put(KmlNames.XML_PREFIX, KmlNames.XML_URI);
 		namespaces.put(KmlNames.KML_PREFIX, KmlNames.KML_URI);
 		
-		Element folder1 = XMLHelper.selectSingleNode("//kml:*[@xml:id='"+folderID1+"']", doc, namespaces);
-		Element folder2 = XMLHelper.selectSingleNode("//kml:*[@xml:id='"+folderID2+"']", doc, namespaces);
+		Element folder1 = XMLHelper.selectSingleNode("//kml:*[@xml:id='"+folderID1+"']", doc.getRootElement(), namespaces);
+		Element folder2 = XMLHelper.selectSingleNode("//kml:*[@xml:id='"+folderID2+"']", doc.getRootElement(), namespaces);
 		Assert.assertEquals(folder1, folder2.getParent());
 		
 		items = repo2.getAll();
@@ -1036,8 +1036,8 @@ public class KMLSyncEngineTests {
 		Assert.assertNull(items.get(2).getContent().getPayload().attributeValue(KmlNames.PARENT_ID_QNAME));
 		
 		doc = XMLHelper.readDocument(file2);
-		folder1 = XMLHelper.selectSingleNode("//kml:*[@xml:id='"+folderID1+"']", doc, namespaces);
-		folder2 = XMLHelper.selectSingleNode("//kml:*[@xml:id='"+folderID2+"']", doc, namespaces);
+		folder1 = XMLHelper.selectSingleNode("//kml:*[@xml:id='"+folderID1+"']", doc.getRootElement(), namespaces);
+		folder2 = XMLHelper.selectSingleNode("//kml:*[@xml:id='"+folderID2+"']", doc.getRootElement(), namespaces);
 		Assert.assertEquals(folder1, folder2.getParent());
 	}
 	
@@ -1136,8 +1136,8 @@ public class KMLSyncEngineTests {
 		namespaces.put(KmlNames.KML_PREFIX, KmlNames.KML_URI);
 		
 		Document doc = XMLHelper.readDocument(file1);
-		Element folder1 = XMLHelper.selectSingleNode("//kml:*[@xml:id='"+folderID1+"']", doc, namespaces);
-		Element folder2 = XMLHelper.selectSingleNode("//kml:*[@xml:id='"+folderID2+"']", doc, namespaces);
+		Element folder1 = XMLHelper.selectSingleNode("//kml:*[@xml:id='"+folderID1+"']", doc.getRootElement(), namespaces);
+		Element folder2 = XMLHelper.selectSingleNode("//kml:*[@xml:id='"+folderID2+"']", doc.getRootElement(), namespaces);
 		Assert.assertTrue(folder1.equals(folder2.getParent()));
 
 		// FILE 2
@@ -1179,11 +1179,11 @@ public class KMLSyncEngineTests {
 		Assert.assertEquals(folderID2, contents.get(3).getPayload().attributeValue(KmlNames.PARENT_ID_QNAME));		
 				
 		doc = XMLHelper.readDocument(file2);
-		folder1 = XMLHelper.selectSingleNode("//kml:*[@xml:id='"+folderID1+"']", doc, namespaces);
-		folder2 = XMLHelper.selectSingleNode("//kml:*[@xml:id='"+folderID2+"']", doc, namespaces);
+		folder1 = XMLHelper.selectSingleNode("//kml:*[@xml:id='"+folderID1+"']", doc.getRootElement(), namespaces);
+		folder2 = XMLHelper.selectSingleNode("//kml:*[@xml:id='"+folderID2+"']", doc.getRootElement(), namespaces);
 		Assert.assertFalse(folder1.equals(folder2.getParent()));
 
-		Element folder3 = XMLHelper.selectSingleNode("//kml:*[@xml:id='"+folderID3+"']", doc, namespaces);
+		Element folder3 = XMLHelper.selectSingleNode("//kml:*[@xml:id='"+folderID3+"']", doc.getRootElement(), namespaces);
 		Assert.assertTrue(folder3.equals(folder2.getParent()));
 		
 		// Sync
@@ -1192,20 +1192,20 @@ public class KMLSyncEngineTests {
 		Assert.assertTrue(conflicts.isEmpty());
 		
 		doc = XMLHelper.readDocument(file2);
-		folder1 = XMLHelper.selectSingleNode("//kml:*[@xml:id='"+folderID1+"']", doc, namespaces);
-		folder2 = XMLHelper.selectSingleNode("//kml:*[@xml:id='"+folderID2+"']", doc, namespaces);
+		folder1 = XMLHelper.selectSingleNode("//kml:*[@xml:id='"+folderID1+"']", doc.getRootElement(), namespaces);
+		folder2 = XMLHelper.selectSingleNode("//kml:*[@xml:id='"+folderID2+"']", doc.getRootElement(), namespaces);
 		Assert.assertFalse(folder1.equals(folder2.getParent()));
 
-		folder3 = XMLHelper.selectSingleNode("//kml:*[@xml:id='"+folderID3+"']", doc, namespaces);
+		folder3 = XMLHelper.selectSingleNode("//kml:*[@xml:id='"+folderID3+"']", doc.getRootElement(), namespaces);
 		Assert.assertTrue(folder3.equals(folder2.getParent()));
 		
 		
 		doc = XMLHelper.readDocument(file1);
-		folder1 = XMLHelper.selectSingleNode("//kml:*[@xml:id='"+folderID1+"']", doc, namespaces);
-		folder2 = XMLHelper.selectSingleNode("//kml:*[@xml:id='"+folderID2+"']", doc, namespaces);
+		folder1 = XMLHelper.selectSingleNode("//kml:*[@xml:id='"+folderID1+"']", doc.getRootElement(), namespaces);
+		folder2 = XMLHelper.selectSingleNode("//kml:*[@xml:id='"+folderID2+"']", doc.getRootElement(), namespaces);
 		Assert.assertFalse(folder1.equals(folder2.getParent()));
 
-		folder3 = XMLHelper.selectSingleNode("//kml:*[@xml:id='"+folderID3+"']", doc, namespaces);
+		folder3 = XMLHelper.selectSingleNode("//kml:*[@xml:id='"+folderID3+"']", doc.getRootElement(), namespaces);
 		Assert.assertTrue(folder3.equals(folder2.getParent()));
 
 	}

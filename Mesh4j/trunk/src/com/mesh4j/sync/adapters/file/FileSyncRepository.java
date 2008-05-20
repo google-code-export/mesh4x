@@ -105,18 +105,12 @@ public class FileSyncRepository implements ISyncRepository{
 
 	@Override
 	public void save(SyncInfo syncInfo) {
-		Element syncInfoElement;
-		try {
-			syncInfoElement = syncInfoParser.convertSyncInfo2Element(syncInfo);
-			String id = syncInfoElement.attributeValue(ATTRIBUTE_ID);
-			if(id == null){
-				syncInfoElement.addAttribute(ATTRIBUTE_ID, syncInfo.getSyncId());
-			}
-		} catch (DocumentException e) {
-			Logger.error(e.getMessage(), e);
-			throw new MeshException(e);
+		Element syncInfoElement = syncInfoParser.convertSyncInfo2Element(syncInfo);
+		String id = syncInfoElement.attributeValue(ATTRIBUTE_ID);
+		if(id == null){
+			syncInfoElement.addAttribute(ATTRIBUTE_ID, syncInfo.getSyncId());
 		}
-		
+	
 		Element original = this.syncDocument.elementByID(syncInfo.getSyncId());
 		if(original != null){
 			this.syncDocument.getRootElement().remove(original);
