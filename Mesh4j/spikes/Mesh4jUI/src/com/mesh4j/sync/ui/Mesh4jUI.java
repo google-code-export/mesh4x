@@ -24,13 +24,10 @@ import org.eclipse.swt.widgets.Text;
 
 import com.mesh4j.sync.IRepositoryAdapter;
 import com.mesh4j.sync.SyncEngine;
-import com.mesh4j.sync.adapters.compound.CompoundRepositoryAdapter;
-import com.mesh4j.sync.adapters.compound.IContentAdapter;
 import com.mesh4j.sync.adapters.feed.FeedAdapter;
 import com.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
-import com.mesh4j.sync.adapters.file.FileSyncRepository;
 import com.mesh4j.sync.adapters.http.HttpSyncAdapter;
-import com.mesh4j.sync.adapters.kml.KMLContentAdapter;
+import com.mesh4j.sync.adapters.kml.KMLAdapter;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.properties.PropertiesProvider;
 import com.mesh4j.sync.security.ISecurity;
@@ -280,17 +277,9 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 			if(isFeed(endpoint)){
 				return new FeedAdapter(endpoint, this.security);
 			}else{
-				String endpointSync = getSyncFileName(endpoint);
-				FileSyncRepository sourceSyncRepo = new FileSyncRepository(endpointSync, this.security);
-				IContentAdapter sourceContent = new KMLContentAdapter(endpoint);
-				return new CompoundRepositoryAdapter(sourceSyncRepo, sourceContent, this.security);
+				return new KMLAdapter(endpoint, this.security);
 			}
 		}
-	}
-
-	private String getSyncFileName(String endpointFileName) {
-		String syncFileName = endpointFileName.substring(0, endpointFileName.length()-4) + "_sync.xml";
-		return syncFileName;
 	}
 
 	private boolean validateEndpoints() {
@@ -434,7 +423,7 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 	
 	private String prepareKMLToSync(String kmlFile){
 		try{
-			KMLContentAdapter.prepareKMLToSync(kmlFile);
+			KMLAdapter.prepareKMLToSync(kmlFile, this.security);
 			return "Successfully";
 		} catch (MeshException e) {
 			Logger.error(e.getMessage(), e);
