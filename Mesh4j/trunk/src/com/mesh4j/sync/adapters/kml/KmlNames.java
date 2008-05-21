@@ -32,7 +32,7 @@ public interface KmlNames {
 	public static final Namespace XLINK_NS = DocumentHelper.createNamespace(XLINK_PREFIX, XLINK_URI);
 	public static final QName PARENT_ID_QNAME = DocumentHelper.createQName("href", XLINK_NS);
 	
-	public static final String KML_EXTENDED_DATA_ELEMENT = "ExtendedData";
+	public static final String KML_ELEMENT_EXTENDED_DATA = "ExtendedData";
 	public static final String MESH_PREFIX = "mesh4x";
 	public static final String MESH_URI = "http://mesh4x.org/kml";
 	public static final Namespace MESH_NS = DocumentHelper.createNamespace(MESH_PREFIX, MESH_URI);

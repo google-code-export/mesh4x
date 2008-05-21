@@ -30,10 +30,10 @@ import com.mesh4j.sync.validations.MeshException;
 
 public class KMLAdapter extends AbstractRepositoryAdapter {
 	
-	// TODO (JMT) Folder Hierarchy, wrapper for properties per element to import/export
+	// TODO (JMT) Xml view for element properties to import/export
 	// TODO (JMT) Supports kmz extension
 	// TODO (JMT) Purge and clean mesh4x data to kml file.
-	// TODO (JMT) XML Canonalization (C14N) 
+	// TODO (JMT) XML Canonalization (C14N) for versioning
 	// TODO (JMT) Add protocol to supports prepereToSync/flush concepts (SyncEngine ?)
 	
 	// MODEL VARIABLES
@@ -108,12 +108,8 @@ public class KMLAdapter extends AbstractRepositoryAdapter {
 			SyncInfo syncInfo = this.meshParser.getSyncInfo(this.kmlDocumentElement, item.getSyncId());
 			if(syncInfo != null){
 				syncInfo.updateSync(item.getSync());
-				this.meshParser.refreshSyncInfo(this.kmlDocumentElement, syncInfo);
-				
-				Element payload = this.meshParser.getElementByMeshId(this.kmlDocumentElement, syncInfo.getId());
-				if(payload != null){
-					payload.getParent().remove(payload);
-				}
+				this.meshParser.refreshSyncInfo(this.kmlDocumentElement, syncInfo);				
+				this.meshParser.removeElement(this.kmlDocumentElement, syncInfo.getId());
 			}
 		}else{
 			SyncInfo syncInfo = new SyncInfo(item.getSync(), this.meshParser.getType(), item.getContent().getId(), item.getContent().getVersion());
@@ -135,12 +131,9 @@ public class KMLAdapter extends AbstractRepositoryAdapter {
 			Sync sync = new Sync(id, this.security.getAuthenticatedUser(), new Date(), true);
 			syncInfo = new SyncInfo(sync, this.meshParser.getType(), id, new NullContent(id).getVersion());
 			this.meshParser.refreshSyncInfo(this.kmlDocumentElement, syncInfo);
-		}
+		}		
+		this.meshParser.removeElement(this.kmlDocumentElement, id);
 			
-		Element element = this.meshParser.getElementByMeshId(this.kmlDocumentElement, id);
-		if(element != null){
-			element.getParent().remove(element);
-		}
 		this.flush();
 	}
 
@@ -157,10 +150,7 @@ public class KMLAdapter extends AbstractRepositoryAdapter {
 			NullContent nullContent = new NullContent(syncInfo.getSyncId());
 			return new Item(nullContent, syncInfo.getSync());
 		} else {
-			Element payload = this.meshParser.getElementByMeshId(this.kmlDocumentElement, id);
-//			if(this.meshParser.isFolder(payload)){
-//				payload = this.meshParser.normalizeFolder(payload);
-//			}
+			Element payload = this.meshParser.getElement(this.kmlDocumentElement, id);
 			KMLContent content = new KMLContent(payload, id);
 			return new Item(content, syncInfo.getSync());		
 		}
@@ -175,17 +165,8 @@ public class KMLAdapter extends AbstractRepositoryAdapter {
 		
 		List<Item> result = new ArrayList<Item>();
 		for (Item item : refreshResult.getItems()) {
-			Item itemToSync = null;
-//			if(this.meshParser.isFolder(item.getContent().getPayload())){
-//				Element payload = this.meshParser.normalizeFolder(item.getContent().getPayload());
-//				KMLContent content = new KMLContent(payload, item.getSyncId());
-//				itemToSync = new Item(content, item.getSync());		
-//			} else {
-				itemToSync = item;
-//			}
-			
-			if(appliesFilter(itemToSync, since, filter)){
-				result.add(itemToSync);
+			if(appliesFilter(item, since, filter)){
+				result.add(item);
 			}
 		}
 		return result;
@@ -193,7 +174,8 @@ public class KMLAdapter extends AbstractRepositoryAdapter {
 	
 	private boolean appliesFilter(Item item, Date since, IFilter<Item> filter) {
 		boolean dateOk = SinceLastUpdateFilter.applies(item, since);
-		return filter.applies(item) && dateOk;
+		boolean filterOK = filter.applies(item); 
+		return filterOK && dateOk;
 	}
 	
 	public static void prepareKMLToSync(String fileName, ISecurity security) {
@@ -229,12 +211,12 @@ public class KMLAdapter extends AbstractRepositoryAdapter {
 				if(syncID == null){
 					syncID = this.newID();
 				}
-				content = new KMLContent(element, syncID);
+				content = new KMLContent(this.meshParser.normalize(element), syncID);
 				Sync sync = new Sync(this.newID(), this.getAuthenticatedUser(), new Date(), false);
 				syncInfo = new SyncInfo(sync, KmlNames.KML_PREFIX, content.getId(), content.getVersion());
 				dirty = true;
 			} else {
-				content = new KMLContent(element, syncID);
+				content = new KMLContent(this.meshParser.normalize(element), syncID);
 				dirty = updateSync(content, syncInfo);
 				syncs.remove(syncInfo);
 			}

@@ -166,13 +166,13 @@ public class MeshKMLParserTest {
 		Document kmlDocument = DocumentHelper.parseText(kmlAsXML);
 		Element documentElement = kmlDocument.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT);
 		Assert.assertNotNull(documentElement);
-		Element extendedData = documentElement.element(KmlNames.KML_EXTENDED_DATA_ELEMENT);
+		Element extendedData = documentElement.element(KmlNames.KML_ELEMENT_EXTENDED_DATA);
 		Assert.assertNull(extendedData);
 		
 		MeshKMLParser parser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
 		parser.prepateSyncRepository(documentElement);
 		
-		extendedData = documentElement.element(KmlNames.KML_EXTENDED_DATA_ELEMENT);
+		extendedData = documentElement.element(KmlNames.KML_ELEMENT_EXTENDED_DATA);
 		Assert.assertNotNull(extendedData);
 		Assert.assertNotNull(extendedData.getNamespaceForPrefix(KmlNames.MESH_PREFIX));
 	}
@@ -187,7 +187,7 @@ public class MeshKMLParserTest {
 
 		MeshKMLParser parser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
 		parser.prepateSyncRepository(documentElement);
-		Element extendedData = documentElement.element(KmlNames.KML_EXTENDED_DATA_ELEMENT);
+		Element extendedData = documentElement.element(KmlNames.KML_ELEMENT_EXTENDED_DATA);
 		Assert.assertNotNull(extendedData);
 		Assert.assertNotNull(extendedData.getNamespaceForPrefix(KmlNames.MESH_PREFIX));
 
@@ -401,21 +401,21 @@ public class MeshKMLParserTest {
 
 		}
 				
-		Element element = parser.getElementByMeshId(syncRoot, "4");
+		Element element = parser.getElement(syncRoot, "4");
 		Assert.assertEquals("2", parser.getMeshParentId(element));
 		
 		Element elementParent = parser.getElementByMeshId(syncRoot, "2");
 		Assert.assertNotNull(elementParent);
 		Assert.assertEquals(elementParent, element.getParent());
 		
-		element = parser.getElementByMeshId(syncRoot, "5");
+		element = parser.getElement(syncRoot, "5");
 		Assert.assertEquals("1", parser.getMeshParentId(element));
 		
 		elementParent = parser.getElementByMeshId(syncRoot, "1");
 		Assert.assertNotNull(elementParent);
 		Assert.assertEquals(elementParent, element.getParent());
 		
-		element = parser.getElementByMeshId(syncRoot, "3");
+		element = parser.getElement(syncRoot, "3");
 		Assert.assertEquals(null, parser.getMeshParentId(element));
 	}
 	
@@ -430,35 +430,35 @@ public class MeshKMLParserTest {
 		new MeshKMLParser(AtomSyndicationFormat.INSTANCE, null);
 	}
 	
-	// GetElementByMeshId
+	// getElement
 	@Test
-	public void shouldGetElementByMeshIdReturnNullWhenIDDoesNotExists(){
+	public void shouldgetElementReturnNullWhenIDDoesNotExists(){
 		String id = "1";
 		Element rootElement = DocumentHelper.createElement("payload");
 		
 		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
-		Element result = meshParser.getElementByMeshId(rootElement, id);
+		Element result = meshParser.getElement(rootElement, id);
 		Assert.assertNull(result);
 	}
 	
 	@Test
-	public void shouldGetElementByMeshIdReturnElement() throws DocumentException{
+	public void shouldgetElementReturnElement() throws DocumentException{
 		String id = "3";
 		Element rootElement = DocumentHelper.parseText(xmlWithHierarchy).getRootElement();
 		
 		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
-		Element result = meshParser.getElementByMeshId(rootElement, id);
+		Element result = meshParser.getElement(rootElement, id);
 		Assert.assertNotNull(result);
 		Assert.assertEquals("Placemark", result.getName());
 	}
 	
 	@Test(expected=MeshException.class)
-	public void shouldGetElementByMeshIdThrowsMeshException(){
+	public void shouldgetElementThrowsMeshException(){
 		String id = "\'2";
 		Element rootElement = null;
 		
 		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
-		meshParser.getElementByMeshId(rootElement, id);
+		meshParser.getElement(rootElement, id);
 	}
 	
 	// getMeshSyncId
@@ -1090,7 +1090,7 @@ public class MeshKMLParserTest {
 		
 		meshParser.addElement(syncRoot, newElement.createCopy(), syncInfo);
 		
-		Element element = meshParser.getElementByMeshId(syncRoot, syncID);
+		Element element = meshParser.getElement(syncRoot, syncID);
 		Assert.assertNotNull(element);
 		Assert.assertEquals(null, meshParser.getMeshParentId(element));
 		
@@ -1157,7 +1157,7 @@ public class MeshKMLParserTest {
 		
 		meshParser.addElement(syncRoot, newElement.createCopy(), syncInfo);
 		
-		Element element = meshParser.getElementByMeshId(syncRoot, syncID);
+		Element element = meshParser.getElement(syncRoot, syncID);
 		Assert.assertNotNull(element);
 		Assert.assertEquals(null, meshParser.getMeshParentId(element));
 		
@@ -1224,7 +1224,7 @@ public class MeshKMLParserTest {
 		
 		meshParser.addElement(syncRoot, newElement.createCopy(), syncInfo);
 		
-		Element element = meshParser.getElementByMeshId(syncRoot, syncID);
+		Element element = meshParser.getElement(syncRoot, syncID);
 		Assert.assertNotNull(element);
 		Assert.assertEquals("1", meshParser.getMeshParentId(element));
 		Assert.assertEquals("Folder", element.getParent().getName());
@@ -1301,7 +1301,7 @@ public class MeshKMLParserTest {
 		
 		meshParser.updateElement(syncRoot, newElement.createCopy(), syncInfo);
 		
-		Element element = meshParser.getElementByMeshId(syncRoot, syncID);
+		Element element = meshParser.getElement(syncRoot, syncID);
 		Assert.assertNotNull(element);
 		Assert.assertEquals("1", meshParser.getMeshParentId(element));
 		Assert.assertEquals("Folder", element.getParent().getName());
@@ -1374,9 +1374,9 @@ public class MeshKMLParserTest {
 		int version = newElement.asXML().hashCode();
 		syncInfo = new SyncInfo(sync, "kml", syncID, version);
 		
-		meshParser.updateElement(syncRoot, newElement.createCopy(), syncInfo);
+		meshParser.updateElement(syncRoot, newElement, syncInfo);
 		
-		Element element = meshParser.getElementByMeshId(syncRoot, syncID);
+		Element element = meshParser.getElement(syncRoot, syncID);
 		Assert.assertNotNull(element);
 		Assert.assertEquals(null, meshParser.getMeshParentId(element));
 		Assert.assertEquals("Document", element.getParent().getName());
@@ -1460,7 +1460,7 @@ public class MeshKMLParserTest {
 		
 		meshParser.updateElement(syncRoot, newElement.createCopy(), syncInfo);
 		
-		Element element = meshParser.getElementByMeshId(syncRoot, syncID);
+		Element element = meshParser.getElement(syncRoot, syncID);
 		Assert.assertNotNull(element);
 		Assert.assertEquals("2", meshParser.getMeshParentId(element));
 		Assert.assertEquals("Folder", element.getParent().getName());
@@ -1508,5 +1508,24 @@ public class MeshKMLParserTest {
 	public void shouldGetType(){
 		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
 		Assert.assertEquals(KmlNames.KML_PREFIX, meshParser.getType());
+	}
+	
+	// getElement
+	@Test
+	public void shouldGetElement(){
+		Assert.assertNotNull(null);
+		// TODO (JMT) tests
+	}
+	
+	// normalize
+	@Test
+	public void shouldNormalize(){
+		Assert.assertNotNull(null);
+	}
+	
+	// removeElemet
+	@Test
+	public void shouldRemoveElement(){
+		Assert.assertNotNull(null);
 	}
 }

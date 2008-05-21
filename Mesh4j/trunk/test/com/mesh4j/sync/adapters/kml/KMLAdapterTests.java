@@ -279,13 +279,30 @@ public class KMLAdapterTests {
 		
 		KMLAdapter kmlAdapter = new KMLAdapter(file.getAbsolutePath(), NullSecurity.INSTANCE);
 		List<Item> items = kmlAdapter.getAll();
+		Assert.assertNotNull(items);
+		Assert.assertFalse(items.isEmpty());
+		Assert.assertEquals(9, items.size());
+		
 		for (Item item : items) {
 			String syncID = meshParser.getMeshSyncId(item.getContent().getPayload());
 			Assert.assertNotNull(syncID);
 			Assert.assertEquals(syncID, item.getSyncId());
 			
-			String myParentID =  meshParser.getMeshSyncId(item.getContent().getPayload().getParent());
-			String parentID = meshParser.getMeshParentId(item.getContent().getPayload());
+			String parentID =  meshParser.getMeshSyncId(item.getContent().getPayload());
+			Assert.assertNotNull(parentID);
+		}
+		
+		SAXReader reader = new SAXReader();
+		Document document = reader.read(file);		
+		Assert.assertNotNull(document);
+		
+		List<Element> elements = this.meshParser.getElementsToSync(document);
+		for (Element element : elements) {
+			String syncID = meshParser.getMeshSyncId(element);
+			Assert.assertNotNull(syncID);
+			
+			String myParentID =  meshParser.getMeshSyncId(element.getParent());
+			String parentID = meshParser.getMeshParentId(element);
 			Assert.assertEquals(parentID, myParentID);
 
 		}
@@ -314,7 +331,6 @@ public class KMLAdapterTests {
 		Assert.assertEquals(elementType, payload.getName());
 		Assert.assertEquals(syncID, meshParser.getMeshSyncId(payload));
 		Assert.assertEquals(parentID, meshParser.getMeshParentId(payload));
-// TODO		Assert.assertEquals(kmlID, payload.attributeValue(KmlNames.KML_ATTRIBUTE_ID_QNAME));
 		if(name != null){
 			Assert.assertEquals(name, payload.element("name").getText());
 		}
@@ -859,21 +875,81 @@ public class KMLAdapterTests {
 	public void shouldDeleteAddSyncDeleteDataBecauseItemDoesNotExist(){
 		File file = TestHelper.makeNewXMLFile(xmlWithMeshInfo);			
 		KMLAdapter kmlAdapter = new KMLAdapter(file.getAbsolutePath(), NullSecurity.INSTANCE);
-		kmlAdapter.delete("");		
+		
+		String syncID = IdGenerator.newID();
+		Item item = kmlAdapter.get(syncID);
+		Assert.assertNull(item);
+		
+		kmlAdapter.delete(syncID);
+		
+		item = kmlAdapter.get(syncID);
+		Assert.assertNotNull(item);
+		Assert.assertEquals(syncID, item.getSyncId());
+		Assert.assertTrue(item.getSync().isDeleted());
+		Assert.assertTrue(item.getContent() instanceof NullContent);
+		Assert.assertEquals(1, item.getSync().getUpdates());
 	}
 	
 	@Test
 	public void shouldDeleteWithoutEffectBecauseItemWasDeleted(){
-		File file = TestHelper.makeNewXMLFile(xmlWithMeshInfo);			
+		
+		String localXML = 
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
+			"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
+			"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+			"<name>dummy</name>"+
+		   	"<ExtendedData>"+
+			"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"+
+	      	"<sx:sync id=\"1\" updates=\"3\" deleted=\"true\" noconflicts=\"false\">"+
+	      	"<sx:history sequence=\"3\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/>"+
+	      	"<sx:history sequence=\"2\" when=\"2005-05-21T10:43:33Z\" by=\"REO1750\"/>"+
+	      	"<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"+
+	     	"</sx:sync>"+
+			"</mesh4x:sync>"+	   	
+	      	"</ExtendedData>"+      	
+			"</Document>"+
+			"</kml>";
+		
+		File file = TestHelper.makeNewXMLFile(localXML);			
 		KMLAdapter kmlAdapter = new KMLAdapter(file.getAbsolutePath(), NullSecurity.INSTANCE);
-		kmlAdapter.delete("");
+		
+		Item item = kmlAdapter.get("1");
+		Assert.assertNotNull(item);
+		Assert.assertEquals("1", item.getSyncId());
+		Assert.assertTrue(item.getSync().isDeleted());
+		Assert.assertTrue(item.getContent() instanceof NullContent);
+		Assert.assertEquals(3, item.getSync().getUpdates());
+		
+		kmlAdapter.delete("1");
+		
+		item = kmlAdapter.get("1");
+		Assert.assertNotNull(item);
+		Assert.assertEquals("1", item.getSyncId());
+		Assert.assertTrue(item.getSync().isDeleted());
+		Assert.assertTrue(item.getContent() instanceof NullContent);
+		Assert.assertEquals(3, item.getSync().getUpdates());
 	}
 
 	@Test
 	public void shouldDelete(){
 		File file = TestHelper.makeNewXMLFile(xmlWithMeshInfo);			
 		KMLAdapter kmlAdapter = new KMLAdapter(file.getAbsolutePath(), NullSecurity.INSTANCE);
-		kmlAdapter.delete("");
+		
+		Item item = kmlAdapter.get("3");
+		Assert.assertNotNull(item);
+		Assert.assertEquals("3", item.getSyncId());
+		Assert.assertFalse(item.getSync().isDeleted());
+		Assert.assertEquals(4, item.getSync().getUpdates());
+		
+		kmlAdapter.delete("3");
+		
+		item = kmlAdapter.get("3");
+		Assert.assertNotNull(item);
+		Assert.assertEquals("3", item.getSyncId());
+		Assert.assertTrue(item.getSync().isDeleted());
+		Assert.assertTrue(item.getContent() instanceof NullContent);
+		Assert.assertEquals(5, item.getSync().getUpdates());
+		
 	}
 	
 	// UPDATE
@@ -888,20 +964,103 @@ public class KMLAdapterTests {
 	public void shouldUpdateDeletedItem(){
 		File file = TestHelper.makeNewXMLFile(xmlWithMeshInfo);			
 		KMLAdapter kmlAdapter = new KMLAdapter(file.getAbsolutePath(), NullSecurity.INSTANCE);
-		kmlAdapter.update(null);
+		
+		String syncID = "3";
+		Item item = kmlAdapter.get(syncID);
+		Assert.assertNotNull(item);
+		Assert.assertEquals(syncID, item.getSyncId());
+		Assert.assertFalse(item.getSync().isDeleted());
+		
+		Sync sync = item.getSync(); 
+		sync.update("JMT", TestHelper.now(), true);
+		
+		item = new Item(new NullContent(syncID), sync);
+		kmlAdapter.update(item);
+		
+		item = kmlAdapter.get(syncID);
+		Assert.assertNotNull(item);
+		Assert.assertEquals(syncID, item.getSyncId());
+		Assert.assertTrue(item.getSync().isDeleted());
+		Assert.assertTrue(item.getContent() instanceof NullContent);
 	}
 	
 	@Test
 	public void shouldUpdateDeletedItemRefreshSyncDataBecauseItemWasDeleted(){
-		File file = TestHelper.makeNewXMLFile(xmlWithMeshInfo);			
+		String localXML = 
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
+			"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
+			"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+			"<name>dummy</name>"+
+		   	"<ExtendedData>"+
+			"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"+
+	      	"<sx:sync id=\"1\" updates=\"3\" deleted=\"true\" noconflicts=\"false\">"+
+	      	"<sx:history sequence=\"3\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/>"+
+	      	"<sx:history sequence=\"2\" when=\"2005-05-21T10:43:33Z\" by=\"REO1750\"/>"+
+	      	"<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"+
+	     	"</sx:sync>"+
+			"</mesh4x:sync>"+	   	
+	      	"</ExtendedData>"+      	
+			"</Document>"+
+			"</kml>";
+		
+		File file = TestHelper.makeNewXMLFile(localXML);			
 		KMLAdapter kmlAdapter = new KMLAdapter(file.getAbsolutePath(), NullSecurity.INSTANCE);
-		kmlAdapter.update(null);
+		
+		Item item = kmlAdapter.get("1");
+		Assert.assertNotNull(item);
+		Assert.assertEquals("1", item.getSyncId());
+		Assert.assertTrue(item.getSync().isDeleted());
+		Assert.assertTrue(item.getContent() instanceof NullContent);
+		Assert.assertEquals(3, item.getSync().getUpdates());
+		
+		item.getSync().update("jmt", TestHelper.now(), true);
+		kmlAdapter.update(item);
+		
+		item = kmlAdapter.get("1");
+		Assert.assertNotNull(item);
+		Assert.assertEquals("1", item.getSyncId());
+		Assert.assertTrue(item.getSync().isDeleted());
+		Assert.assertTrue(item.getContent() instanceof NullContent);
+		Assert.assertEquals(4, item.getSync().getUpdates());
 	}
 	
 	@Test
-	public void shouldUpdateItem(){
+	public void shouldUpdateItem() throws DocumentException{
 		File file = TestHelper.makeNewXMLFile(xmlWithMeshInfo);			
 		KMLAdapter kmlAdapter = new KMLAdapter(file.getAbsolutePath(), NullSecurity.INSTANCE);
-		kmlAdapter.update(null);
+		
+		String syncID = "3";
+		Item item = kmlAdapter.get(syncID);
+		Assert.assertNotNull(item);
+		Assert.assertEquals(syncID, item.getSyncId());
+		Assert.assertFalse(item.getSync().isDeleted());
+		Assert.assertEquals(4, item.getSync().getUpdates());
+		
+		String localXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
+		"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
+		"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+		"	<Placemark mesh4x:id=\"3\" mesh4x:parentId=\"2\">"+
+		"		<name>MuMu</name>"+
+		"	</Placemark>"+
+		"</Document>"+
+		"</kml>";
+		
+		Element payload = DocumentHelper.parseText(localXML)
+			.getRootElement()
+			.element("Document")
+			.element("Placemark");
+		
+		KMLContent content = new KMLContent(payload, syncID);
+		item = new Item(content, item.getSync().update("jmt", TestHelper.now(), false));
+		kmlAdapter.update(item);
+		
+		item = kmlAdapter.get(syncID);
+		Assert.assertNotNull(item);
+		Assert.assertEquals(syncID, item.getSyncId());
+		Assert.assertFalse(item.getSync().isDeleted());
+		Assert.assertEquals(5, item.getSync().getUpdates());
+		Assert.assertEquals("MuMu", item.getContent().getPayload().element("name").getText());
+		
+		
 	}
 }

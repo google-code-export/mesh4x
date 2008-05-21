@@ -13,36 +13,13 @@ import org.dom4j.Namespace;
 import com.mesh4j.sync.adapters.SyncInfo;
 import com.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import com.mesh4j.sync.model.Sync;
+import com.mesh4j.sync.parsers.IXMLView;
 import com.mesh4j.sync.parsers.SyncInfoParser;
+import com.mesh4j.sync.parsers.XMLView;
 import com.mesh4j.sync.security.ISecurity;
 import com.mesh4j.sync.utils.XMLHelper;
 import com.mesh4j.sync.validations.Guard;
 import com.mesh4j.sync.validations.MeshException;
-
-/**
- * 
- *  <ExtendedData xmlns:mesh4x="http://mesh4x.org/kml" >
- *		<mesh4x:sync parentId="3" xmlns:sx="http://feedsync.org/2007/feedsync">
- *      	<sx:sync id="2" updates="3">
- *      		<sx:history sequence="3" when="2005-05-21T11:43:33Z" by="JEO2000"/>
- *      		<sx:history sequence="2" when="2005-05-21T10:43:33Z" by="REO1750"/>
- *      		<sx:history sequence="1" when="2005-05-21T09:43:33Z" by="REO1750"/>
- *      		<sx:conflicts>
- *					<Placemark>
- *          		...
- *					</Placemark
- *      		</sx:conflicts>
- *     		</sx:sync>
- *		<mesh4x:sync>
- * *		<mesh4x:sync parentId="root" xmlns:sx="http://feedsync.org/2007/feedsync">
- *      	<sx:sync id="3" updates="1">
- *      		<sx:history sequence="1" when="2005-05-21T09:43:33Z" by="REO1750"/>
- *     		</sx:sync>
- *		<mesh4x:sync>
- *  </ExtendedData>
- *   
- * @author jtondato
- */
 
 public class MeshKMLParser {
 	
@@ -56,6 +33,7 @@ public class MeshKMLParser {
 	
 	// MODEL VARIABLES
 	private SyncInfoParser syncParser;
+	private Map<String, IXMLView> xmlViews = new HashMap<String, IXMLView>();
 	
 	// BUSINESS METHODS
 
@@ -64,38 +42,57 @@ public class MeshKMLParser {
 		Guard.argumentNotNull(security, "security");
 		
 		this.syncParser = new SyncInfoParser(syndicationFormat, security);
+
+		XMLView folderParser = new XMLView();
+		folderParser.addAttribute(KmlNames.MESH_QNAME_SYNC_ID);
+		folderParser.addAttribute(KmlNames.MESH_QNAME_PARENT_ID);
+		folderParser.addAttribute(KmlNames.KML_ATTRIBUTE_ID_QNAME);
+		folderParser.addElement(KmlNames.KML_ELEMENT_NAME);
+		folderParser.addElement(KmlNames.KML_ELEMENT_DESCRIPTION);
+		folderParser.addElement(KmlNames.KML_ELEMENT_EXTENDED_DATA);
+		
+		XMLView dummyParser = new XMLView();
+		xmlViews.put(KmlNames.KML_ELEMENT_FOLDER, folderParser);
+		xmlViews.put(KmlNames.KML_ELEMENT_STYLE_MAP, dummyParser);
+		xmlViews.put(KmlNames.KML_ELEMENT_STYLE, dummyParser);
+		xmlViews.put(KmlNames.KML_ELEMENT_PLACEMARK, dummyParser);
 	}
 
 	public void addElement(Element rootElement, Element newElement, SyncInfo syncInfo) {
-		String parentID = getMeshParentId(newElement);
-		
+		Element normalizedElement = this.normalize(newElement);		
+
+		String parentID = getMeshParentId(normalizedElement);		
 		Element parent = getElementByMeshId(rootElement, parentID);
 		if(parent == null){
 			parent = rootElement;
 		}
+		parent.add(normalizedElement);
 		
-//		if(isFolder(newElement)){
-//			Element folder = normalizeFolder(newElement);
-//			parent.add(folder);
-//			refresh(rootElement, folder, syncInfo);
-//		} else {
-			parent.add(newElement);
-			refresh(rootElement, newElement, syncInfo);
-//		}
+		this.refresh(rootElement, normalizedElement, syncInfo);
 	}
 	
-//	public boolean isFolder(Element newElement) {
-//		return KmlNames.KML_ELEMENT_FOLDER.equals(newElement.getName());
-//	}
-
 	public void updateElement(Element rootElement, Element newElement, SyncInfo syncInfo) {
-//		if(isFolder(newElement)){
-//			updateFolder(rootElement, newElement, syncInfo);
-//		} else {
-			Element currentElement = this.getElementByMeshId(rootElement, syncInfo.getSyncId());
+		Element currentElement = this.getElementByMeshId(rootElement, syncInfo.getSyncId());
+				
+		String parentID = getMeshParentId(newElement);
+		String actualParentID = getMeshSyncId(currentElement.getParent());
+		boolean parentHasChanged = 
+			(parentID == null && actualParentID != null) || 
+			(parentID != null && actualParentID == null) || 
+			(parentID != null && actualParentID != null && !parentID.equals(actualParentID));
+		
+		if(parentHasChanged){
 			currentElement.getParent().remove(currentElement);
-			addElement(rootElement, newElement, syncInfo);
-//		}
+			
+			Element parent = getElementByMeshId(rootElement, parentID);
+			if(parent == null){
+				parent = rootElement;
+			}
+			parent.add(currentElement);
+		}
+		
+		this.updateFrom(currentElement, newElement);
+		this.refresh(rootElement, currentElement, syncInfo);
 	}
 	
 	public void refresh(Element rootElement, Element element, SyncInfo syncInfo) {
@@ -110,7 +107,7 @@ public class MeshKMLParser {
 		}		
 		
 		String parentID = getMeshSyncId(element.getParent());
-		refreshParent(element, parentID);
+		refreshParentID(element, parentID);
 
 		refreshVersion(meshElement, String.valueOf(syncInfo.getVersion()));
 		refreshSync(meshElement, syncInfo.getSync());
@@ -166,7 +163,7 @@ public class MeshKMLParser {
 		meshElement.add(syncElement);
 	}
 	
-	private void refreshParent(Element element, String parentID) {		
+	private void refreshParentID(Element element, String parentID) {		
 		Attribute parentIDAttr = element.attribute(KmlNames.MESH_QNAME_PARENT_ID);					
 		if(parentID == null){
 			if(parentIDAttr != null){
@@ -193,6 +190,7 @@ public class MeshKMLParser {
 	public String getMeshSyncId(Element element) {
 		return element.attributeValue(KmlNames.MESH_QNAME_SYNC_ID);
 	}
+	
 	public String getMeshParentId(Element element) {
 		return element.attributeValue(KmlNames.MESH_QNAME_PARENT_ID);
 	}		
@@ -239,7 +237,7 @@ public class MeshKMLParser {
 		
 		Element extendedDataElement = getExtendedData(syncRepositoryRoot);
 		if(extendedDataElement == null){
-			extendedDataElement = syncRepositoryRoot.addElement(KmlNames.KML_EXTENDED_DATA_ELEMENT);
+			extendedDataElement = syncRepositoryRoot.addElement(KmlNames.KML_ELEMENT_EXTENDED_DATA);
 			dirty = true;
 		}
 		
@@ -252,10 +250,16 @@ public class MeshKMLParser {
 	}
 	
 	private Element getExtendedData(Element element){
-		return element.element(KmlNames.KML_EXTENDED_DATA_ELEMENT);
+		return element.element(KmlNames.KML_ELEMENT_EXTENDED_DATA);
 	}
 	
-	public Element getElementByMeshId(Element rootElement, String id)  {
+	public Element getElement(Element rootElement, String id)  {
+		Element element = this.getElementByMeshId(rootElement, id);
+		Element result = this.normalize(element);
+		return result;
+	}
+	
+	protected Element getElementByMeshId(Element rootElement, String id)  {
 		return XMLHelper.selectSingleNode("//kml:*[@mesh4x:id='"+id+"']", rootElement, SEARCH_NAMESPACES);
 	}
 	
@@ -323,7 +327,14 @@ public class MeshKMLParser {
 		return KmlNames.KML_PREFIX;
 	}
 	
-	protected List<Element> getElementsToSync(Document document) {
+	public void removeElement(Element rootElement, String syncID){
+		Element element = this.getElementByMeshId(rootElement, syncID);
+		if(element != null){
+			element.getParent().remove(element);
+		}
+	}
+	
+	public List<Element> getElementsToSync(Document document) {
 		List<Element> elements = XMLHelper.selectElements("//kml:StyleMap", document.getRootElement(), SEARCH_NAMESPACES);
 		elements.addAll(XMLHelper.selectElements("//kml:Style", document.getRootElement(), SEARCH_NAMESPACES));
 		elements.addAll(XMLHelper.selectElements("//kml:Folder", document.getRootElement(), SEARCH_NAMESPACES));
@@ -331,84 +342,18 @@ public class MeshKMLParser {
 		return elements;
 	}
 
-//	protected Element normalizeFolder(Element element) {
-//		String syncID = this.getMeshSyncId(element);
-//		String parentID = this.getMeshSyncId(element);
-//			
-//		Element newFolder = DocumentHelper.createDocument().addElement(KmlNames.KML_ELEMENT_FOLDER, KmlNames.KML_URI);
-//		newFolder.addNamespace(KmlNames.MESH_PREFIX, KmlNames.MESH_URI);
-//			
-//		if(syncID != null){
-//			newFolder.addAttribute(KmlNames.MESH_QNAME_SYNC_ID, syncID);
-//		}
-//			
-//		if(parentID != null){
-//			newFolder.addAttribute(KmlNames.MESH_QNAME_PARENT_ID, parentID);
-//		}
-//	
-//		Element folderNameElement = element.element(KmlNames.KML_ELEMENT_NAME);
-//		if(folderNameElement != null){
-//			Element newFolderNameElement = newFolder.addElement(KmlNames.KML_ELEMENT_NAME, KmlNames.KML_URI);
-//			newFolderNameElement.addText(folderNameElement.getText());
-//		}
-//			
-//		Element folderDescriptionElement = element.element(KmlNames.KML_ELEMENT_DESCRIPTION);
-//		if(folderDescriptionElement != null){
-//			Element newFolderDescriptionElement = newFolder.addElement(KmlNames.KML_ELEMENT_DESCRIPTION, KmlNames.KML_URI);
-//			newFolderDescriptionElement.addText(folderDescriptionElement.getText());
-//		}
-//		return newFolder;
-//
-//	}
-//	
-//	protected void updateFolder(Element rootElement, Element newElement, SyncInfo syncInfo) {
-//		Element folder = getElementByMeshId(rootElement, syncInfo.getSyncId());
-//		
-//		Element updatedName = newElement.element(KmlNames.KML_ELEMENT_NAME);		
-//		Element folderNameElement = folder.element(KmlNames.KML_ELEMENT_NAME);
-//		if(folderNameElement == null){
-//			if(updatedName != null){
-//				folderNameElement = folder.addElement(KmlNames.KML_ELEMENT_NAME, KmlNames.KML_URI);
-//				folderNameElement.addText(updatedName.getText());
-//			}
-//		} else{
-//			if(updatedName != null){
-//				folderNameElement.setText(updatedName.getText());
-//			} else {
-//				folder.remove(folderNameElement);
-//			}
-//		}
-//		
-//		Element updatedDesc = newElement.element(KmlNames.KML_ELEMENT_DESCRIPTION);
-//		Element folderDescElement = folder.element(KmlNames.KML_ELEMENT_DESCRIPTION);
-//		if(folderDescElement == null){
-//			if(updatedDesc != null){
-//				folderDescElement = folder.addElement(KmlNames.KML_ELEMENT_DESCRIPTION, KmlNames.KML_URI);
-//				folderDescElement.addText(updatedDesc.getText());
-//			}
-//		} else{
-//			if(updatedDesc != null){
-//				folderDescElement.setText(updatedDesc.getText());
-//			} else {
-//				folder.remove(folderDescElement);
-//			}
-//		}
-//
-//		String myParentID = getMeshParentId(folder);
-//		String parentId = getMeshParentId(newElement);
-//		
-//		boolean equalsParentID = (myParentID == null && parentId == null) || (myParentID != null && myParentID.equals(parentId));
-//		if(!equalsParentID){
-//			Element newParent = getElementByMeshId(rootElement, parentId);
-//			if(newParent != null){
-//				Element newFolder = folder.createCopy();
-//				folder.getParent().remove(folder);
-//				newParent.add(newFolder);
-//				refresh(rootElement, newFolder, syncInfo);
-//				return;
-//			}
-//		}
-//		refresh(rootElement, folder, syncInfo);
-//
-//	}
+	
+	private void updateFrom(Element currentElement, Element newElement) {
+		IXMLView xmlView = this.xmlViews.get(currentElement.getName());
+		xmlView.update(currentElement, newElement);		
+	}
+	
+	public Element normalize(Element element) {
+		if(element == null){
+			return null;
+		} else {
+			IXMLView parser = this.xmlViews.get(element.getName());
+			return parser.normalize(element);
+		}
+	}
 }
