@@ -1477,8 +1477,6 @@ public class MeshKMLParserTest {
 		Assert.assertTrue(sync.equals(syncInfo.getSync()));		
 	}
 		
-	// TODO (JMT) refresh references
-	
 	// getElementsToSync
 	@Test
 	public void shouldGetElementsToSync() throws DocumentException{
@@ -1510,22 +1508,227 @@ public class MeshKMLParserTest {
 		Assert.assertEquals(KmlNames.KML_PREFIX, meshParser.getType());
 	}
 	
-	// getElement
-	@Test
-	public void shouldGetElement(){
-		Assert.assertNotNull(null);
-		// TODO (JMT) tests
-	}
-	
 	// normalize
 	@Test
-	public void shouldNormalize(){
-		Assert.assertNotNull(null);
+	public void shouldNormalizeStyleMap() throws DocumentException{
+		String elementXML = 
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
+			"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
+			"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+			"<name>dummy</name>"+
+			"<StyleMap id=\"msn_ylw-pushpin_4\" mesh4x:id=\"4\">"+
+			"	<Pair>"+
+			"		<key>normal</key>"+
+			"		<styleUrl>#sn_ylw-pushpin</styleUrl>"+
+			"	</Pair>"+
+			"	<Pair>"+
+			"		<key>highlight</key>"+
+			"		<styleUrl>#sh_ylw-pushpin</styleUrl>"+
+			"	</Pair>"+
+			"</StyleMap>"+
+			"</Document>"+
+			"</kml>";
+	
+		Element element = DocumentHelper.parseText(elementXML)
+			.getRootElement()
+			.element(KmlNames.KML_ELEMENT_DOCUMENT)
+			.element(KmlNames.KML_ELEMENT_STYLE_MAP);
+		
+		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		Element normalizedElement = meshParser.normalize(element);
+		
+		Assert.assertNotNull(normalizedElement);
+		Assert.assertSame(element, normalizedElement);		
 	}
 	
+	@Test
+	public void shouldNormalizeStyle() throws DocumentException{
+		String elementXML = 
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
+			"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
+			"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+			"<name>dummy</name>"+
+			"<Style id=\"sn_ylw-pushpin_5\" mesh4x:id=\"5\">"+
+			"	<IconStyle>"+
+			"		<color>ff00ff55</color>"+
+			"		<scale>1.1</scale>"+
+			"		<Icon>"+
+			"			<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>"+
+			"		</Icon>"+
+			"		<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>"+
+			"	</IconStyle>"+
+			"	<LabelStyle>"+
+			"		<color>ff00ff55</color>"+
+			"	</LabelStyle>"+
+			"</Style>"+	
+			"</Document>"+
+			"</kml>";
+	
+		Element element = DocumentHelper.parseText(elementXML)
+			.getRootElement()
+			.element(KmlNames.KML_ELEMENT_DOCUMENT)
+			.element(KmlNames.KML_ELEMENT_STYLE);
+		
+		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		Element normalizedElement = meshParser.normalize(element);
+		
+		Assert.assertNotNull(normalizedElement);
+		Assert.assertSame(element, normalizedElement);		
+	}
+	
+	@Test
+	public void shouldNormalizeFolderLevelRoot() throws DocumentException{
+		String elementXML = 
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
+			"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
+			"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+			"<name>dummy</name>"+
+	      	"<Folder mesh4x:id=\"1\">"+
+	      	"	<name>Folder1</name>"+
+	      	"	<Folder mesh4x:id=\"2\">"+
+	      	"		<name>Folder2</name>"+
+			"		<Placemark mesh4x:id=\"3\" mesh4x:parentId=\"2\">"+
+			"			<name>B</name>"+
+			"		</Placemark>"+
+			"	</Folder>"+
+			"</Folder>"+
+			"</Document>"+
+			"</kml>";
+	
+		Element element = DocumentHelper.parseText(elementXML)
+			.getRootElement()
+			.element(KmlNames.KML_ELEMENT_DOCUMENT)
+			.element(KmlNames.KML_ELEMENT_FOLDER);
+		
+		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		Element normalizedElement = meshParser.normalize(element);
+		
+		Assert.assertNotNull(normalizedElement);
+		Assert.assertNotSame(element, normalizedElement);
+		Assert.assertEquals(1, normalizedElement.elements().size());
+		Assert.assertEquals("Folder1", normalizedElement.element("name").getText());
+		Assert.assertEquals("1", meshParser.getMeshSyncId(normalizedElement));
+		Assert.assertEquals(null, meshParser.getMeshParentId(normalizedElement));
+	}
+	
+	@Test
+	public void shouldNormalizeFolderLevel1() throws DocumentException{
+		String elementXML = 
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
+			"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
+			"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+			"<name>dummy</name>"+
+	      	"<Folder mesh4x:id=\"1\">"+
+	      	"	<name>Folder1</name>"+
+	      	"	<Folder mesh4x:id=\"2\" mesh4x:parentId=\"1\">"+
+	      	"		<name>Folder2</name>"+
+			"		<Placemark mesh4x:id=\"3\" mesh4x:parentId=\"2\">"+
+			"			<name>B</name>"+
+			"		</Placemark>"+
+			"	</Folder>"+
+			"</Folder>"+
+			"</Document>"+
+			"</kml>";
+	
+		Element element = DocumentHelper.parseText(elementXML)
+			.getRootElement()
+			.element(KmlNames.KML_ELEMENT_DOCUMENT)
+			.element(KmlNames.KML_ELEMENT_FOLDER)
+			.element(KmlNames.KML_ELEMENT_FOLDER);
+		
+		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		Element normalizedElement = meshParser.normalize(element);
+		
+		Assert.assertNotNull(normalizedElement);
+		Assert.assertNotSame(element, normalizedElement);
+		Assert.assertEquals(1, normalizedElement.elements().size());
+		Assert.assertEquals("Folder2", normalizedElement.element("name").getText());
+		Assert.assertEquals("2", meshParser.getMeshSyncId(normalizedElement));
+		Assert.assertEquals("1", meshParser.getMeshParentId(normalizedElement));
+		
+	}
+	
+	@Test
+	public void shouldNormalizePlacemark() throws DocumentException{
+		String elementXML = 
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
+			"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
+			"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+			"<name>dummy</name>"+
+			"<Placemark mesh4x:id=\"3\" mesh4x:parentId=\"2\">"+
+			"<name>C</name>"+
+			"</Placemark>"+
+			"</Document>"+
+			"</kml>";
+	
+		Element element = DocumentHelper.parseText(elementXML)
+			.getRootElement()
+			.element(KmlNames.KML_ELEMENT_DOCUMENT)
+			.element(KmlNames.KML_ELEMENT_PLACEMARK);
+		
+		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		Element normalizedElement = meshParser.normalize(element);
+		
+		Assert.assertNotNull(normalizedElement);
+		Assert.assertSame(element, normalizedElement);	
+	}
+	
+	@Test
+	public void shouldNormalizeReturnNull(){
+		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		Assert.assertNull(meshParser.normalize(null));
+	}
+	
+	@Test
+	public void shouldNormalizeReturnsSameElementBecauseNoXMLViewIsDefinedForElement(){
+		Element element = DocumentHelper.createElement("FOO");
+		
+		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		Assert.assertSame(element, meshParser.normalize(element));
+	}
+
 	// removeElemet
 	@Test
-	public void shouldRemoveElement(){
+	public void shouldRemoveElement() throws DocumentException{
+		
+		String elementXML = 
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
+			"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
+			"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+			"<name>dummy</name>"+
+			"<Placemark mesh4x:id=\"3\">"+
+			"<name>C</name>"+
+			"</Placemark>"+
+			"</Document>"+
+			"</kml>";
+	
+		Element rootElement = DocumentHelper.parseText(elementXML)
+			.getRootElement()
+			.element(KmlNames.KML_ELEMENT_DOCUMENT);
+		
+		String syncID = "3";
+			
+		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		
+		Assert.assertNotNull(rootElement.element("Placemark"));
+		Assert.assertNotNull(syncID, meshParser.getMeshSyncId(rootElement.element("Placemark")));
+		meshParser.removeElement(rootElement, syncID);
+		Assert.assertNull(rootElement.element("Placemark"));
+	}
+	
+	@Test
+	public void shouldRemoveElementNoEffectBecauseItemDoesNotExist(){
+		Element element = DocumentHelper.createElement("Document");
+		
+		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		meshParser.removeElement(element, IdGenerator.newID());
+	}
+	
+	
+	// verify refresh references
+	@Test
+	public void shouldRefreshReferences(){
 		Assert.assertNotNull(null);
+		// TODO (JMT) test: refresh references
 	}
 }

@@ -52,6 +52,7 @@ public class MeshKMLParser {
 		folderParser.addElement(KmlNames.KML_ELEMENT_EXTENDED_DATA);
 		
 		XMLView dummyParser = new XMLView();
+		
 		xmlViews.put(KmlNames.KML_ELEMENT_FOLDER, folderParser);
 		xmlViews.put(KmlNames.KML_ELEMENT_STYLE_MAP, dummyParser);
 		xmlViews.put(KmlNames.KML_ELEMENT_STYLE, dummyParser);
@@ -353,7 +354,11 @@ public class MeshKMLParser {
 			return null;
 		} else {
 			IXMLView parser = this.xmlViews.get(element.getName());
-			return parser.normalize(element);
+			if(parser == null){
+				return element;
+			} else {
+				return parser.normalize(element);
+			}
 		}
 	}
 }

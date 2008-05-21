@@ -8,6 +8,6 @@ public class XMLViewTests {
 	@Test
 	public void shouldNormalize(){
 		// TODO (JMT) tests
-		Assert.assertTrue(false);
+		Assert.assertTrue(false); 
 	}
 }
