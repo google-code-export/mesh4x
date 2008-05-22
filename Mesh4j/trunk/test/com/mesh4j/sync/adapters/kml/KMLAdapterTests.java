@@ -1,7 +1,6 @@
 package com.mesh4j.sync.adapters.kml;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -14,11 +13,12 @@ import org.jaxen.JaxenException;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.mesh4j.sync.ISupportMerge;
 import com.mesh4j.sync.adapters.feed.atom.AtomSyndicationFormat;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.NullContent;
 import com.mesh4j.sync.model.Sync;
-import com.mesh4j.sync.security.NullSecurity;
+import com.mesh4j.sync.security.NullIdentityProvider;
 import com.mesh4j.sync.test.utils.TestHelper;
 import com.mesh4j.sync.utils.IdGenerator;
 import com.mesh4j.sync.utils.XMLHelper;
@@ -26,7 +26,7 @@ import com.mesh4j.sync.validations.MeshException;
 
 public class KMLAdapterTests {
 
-	MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+	MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 	
 	private static String xml ="<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+
 	"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
@@ -220,7 +220,7 @@ public class KMLAdapterTests {
 	@Test	
 	public void shouldCreateFileIfDoesNotExist() throws DocumentException{
 		String fileName = TestHelper.fileName(IdGenerator.newID()+".kml");
-		new KMLAdapter(fileName, NullSecurity.INSTANCE);
+		new KMLAdapter(fileName, NullIdentityProvider.INSTANCE);
 		
 		File file = new File(fileName);
 		Assert.assertTrue(file.exists());
@@ -246,7 +246,7 @@ public class KMLAdapterTests {
 		
 		File file = TestHelper.makeNewXMLFile(xml);		
 		
-		KMLAdapter.prepareKMLToSync(file.getAbsolutePath(), NullSecurity.INSTANCE);
+		KMLAdapter.prepareKMLToSync(file.getAbsolutePath(), NullIdentityProvider.INSTANCE);
 		
 		Document document = XMLHelper.readDocument(file);
 		Element syncRepositoryRoot = document.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT);
@@ -277,7 +277,7 @@ public class KMLAdapterTests {
 		
 		File file = TestHelper.makeNewXMLFile(xml);		
 		
-		KMLAdapter kmlAdapter = new KMLAdapter(file.getAbsolutePath(), NullSecurity.INSTANCE);
+		KMLAdapter kmlAdapter = new KMLAdapter(file.getAbsolutePath(), NullIdentityProvider.INSTANCE);
 		List<Item> items = kmlAdapter.getAll();
 		Assert.assertNotNull(items);
 		Assert.assertFalse(items.isEmpty());
@@ -313,7 +313,7 @@ public class KMLAdapterTests {
 				
 		File file = TestHelper.makeNewXMLFile(xmlWithMeshInfo);		
 		
-		KMLAdapter kmlAdapter = new KMLAdapter(file.getAbsolutePath(), NullSecurity.INSTANCE);
+		KMLAdapter kmlAdapter = new KMLAdapter(file.getAbsolutePath(), NullIdentityProvider.INSTANCE);
 		
 		assertGetItemPayload(kmlAdapter, "4", null, "StyleMap", "msn_ylw-pushpin_4", null);
 		assertGetItemPayload(kmlAdapter, "5", null, "Style", "sn_ylw-pushpin_5", null);
@@ -426,7 +426,7 @@ public class KMLAdapterTests {
 		
 		File file = TestHelper.makeNewXMLFile(localXML);		
 		
-		KMLAdapter kmlAdapter = new KMLAdapter(file.getAbsolutePath(), NullSecurity.INSTANCE);
+		KMLAdapter kmlAdapter = new KMLAdapter(file.getAbsolutePath(), NullIdentityProvider.INSTANCE);
 		Item item = kmlAdapter.get("3");
 		Assert.assertNotNull(item);
 		Assert.assertEquals(null, meshParser.getMeshParentId(item.getContent().getPayload()));
@@ -530,7 +530,7 @@ public class KMLAdapterTests {
 		
 		File file = TestHelper.makeNewXMLFile(localXML);		
 		
-		KMLAdapter kmlAdapter = new KMLAdapter(file.getAbsolutePath(), NullSecurity.INSTANCE);
+		KMLAdapter kmlAdapter = new KMLAdapter(file.getAbsolutePath(), NullIdentityProvider.INSTANCE);
 		
 		String localXMLUpdated = 
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
@@ -638,12 +638,12 @@ public class KMLAdapterTests {
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldNotAcceptNullFileName(){
-		new KMLAdapter(null, NullSecurity.INSTANCE);
+		new KMLAdapter(null, NullIdentityProvider.INSTANCE);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldNotAcceptEmptyFileName(){
-		new KMLAdapter("", NullSecurity.INSTANCE);
+		new KMLAdapter("", NullIdentityProvider.INSTANCE);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
@@ -653,42 +653,36 @@ public class KMLAdapterTests {
 	
 	@Test(expected=MeshException.class)
 	public void shouldThrowsExceptionBecauseFileHasNotElements(){
-		new KMLAdapter(getFileWithOutElements(), NullSecurity.INSTANCE);
+		new KMLAdapter(getFileWithOutElements(), NullIdentityProvider.INSTANCE);
 	}
 	
 	@Test(expected=MeshException.class)
 	public void shouldThrowsExceptionIfFileExistButHasNotKMLElement(){
-		new KMLAdapter(getFileWithOutKMLElement(), NullSecurity.INSTANCE);
+		new KMLAdapter(getFileWithOutKMLElement(), NullIdentityProvider.INSTANCE);
 	}
 
 	@Test(expected=MeshException.class)
 	public void shouldThrowsExceptionIfFileExistHasKMLElementButHasNotDocumentElement(){
-		new KMLAdapter(getFileWithOutDocumentElement(), NullSecurity.INSTANCE);
+		new KMLAdapter(getFileWithOutDocumentElement(), NullIdentityProvider.INSTANCE);
 	}
 		
 	@Test
 	public void shouldReturnsAuthenticatedUser(){
-		KMLAdapter kmlAdapter = new KMLAdapter(getDummyFileName(), NullSecurity.INSTANCE);
+		KMLAdapter kmlAdapter = new KMLAdapter(getDummyFileName(), NullIdentityProvider.INSTANCE);
 		String user = kmlAdapter.getAuthenticatedUser();
 		Assert.assertNotNull(user);
-		Assert.assertEquals(user, NullSecurity.INSTANCE.getAuthenticatedUser());
+		Assert.assertEquals(user, NullIdentityProvider.INSTANCE.getAuthenticatedUser());
 	}
 
 	@Test
 	public void shouldNotSupportMerge(){
-		KMLAdapter kmlAdapter = new KMLAdapter(getDummyFileName(), NullSecurity.INSTANCE);
-		Assert.assertFalse(kmlAdapter.supportsMerge());	
-	}
-	
-	@Test(expected=UnsupportedOperationException.class)
-	public void shouldMergeThrowsUnsupportedOperationException(){
-		KMLAdapter kmlAdapter = new KMLAdapter(getDummyFileName(), NullSecurity.INSTANCE);
-		kmlAdapter.merge(new ArrayList<Item>());
+		KMLAdapter kmlAdapter = new KMLAdapter(getDummyFileName(), NullIdentityProvider.INSTANCE);
+		Assert.assertFalse(kmlAdapter instanceof ISupportMerge);	
 	}
 	
 	@Test
 	public void shouldReturnsFriendlyName(){
-		KMLAdapter kmlAdapter = new KMLAdapter(getDummyFileName(), NullSecurity.INSTANCE);
+		KMLAdapter kmlAdapter = new KMLAdapter(getDummyFileName(), NullIdentityProvider.INSTANCE);
 		String name = kmlAdapter.getFriendlyName();
 		Assert.assertNotNull(name);
 		Assert.assertEquals(name, "KML Adapter");		
@@ -720,7 +714,7 @@ public class KMLAdapterTests {
 	@Test
 	public void shouldGetReturnNullBecauseItemDoesNotExist(){
 		File file = TestHelper.makeNewXMLFile(xml);			
-		KMLAdapter kmlAdapter = new KMLAdapter(file.getAbsolutePath(), NullSecurity.INSTANCE);
+		KMLAdapter kmlAdapter = new KMLAdapter(file.getAbsolutePath(), NullIdentityProvider.INSTANCE);
 		Item item = kmlAdapter.get(IdGenerator.newID());
 		Assert.assertNull(item);
 	}
@@ -728,7 +722,7 @@ public class KMLAdapterTests {
 	@Test
 	public void shouldGetReturnsItem(){
 		File file = TestHelper.makeNewXMLFile(xmlWithMeshInfo);			
-		KMLAdapter kmlAdapter = new KMLAdapter(file.getAbsolutePath(), NullSecurity.INSTANCE);
+		KMLAdapter kmlAdapter = new KMLAdapter(file.getAbsolutePath(), NullIdentityProvider.INSTANCE);
 		assertGetItemPayload(kmlAdapter, "2", "1", "Folder", null, "Folder2");
 	}
 	
@@ -752,7 +746,7 @@ public class KMLAdapterTests {
 			"</kml>";
 		
 		File file = TestHelper.makeNewXMLFile(localXML);			
-		KMLAdapter kmlAdapter = new KMLAdapter(file.getAbsolutePath(), NullSecurity.INSTANCE);
+		KMLAdapter kmlAdapter = new KMLAdapter(file.getAbsolutePath(), NullIdentityProvider.INSTANCE);
 
 		Item item = kmlAdapter.get("1");
 		Assert.assertNotNull(item);
@@ -779,7 +773,7 @@ public class KMLAdapterTests {
 			"</kml>";
 		
 		File file = TestHelper.makeNewXMLFile(localXML);			
-		KMLAdapter kmlAdapter = new KMLAdapter(file.getAbsolutePath(), NullSecurity.INSTANCE);
+		KMLAdapter kmlAdapter = new KMLAdapter(file.getAbsolutePath(), NullIdentityProvider.INSTANCE);
 
 		Item item = kmlAdapter.get("1");
 		Assert.assertNotNull(item);
@@ -792,7 +786,7 @@ public class KMLAdapterTests {
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldGetTrowsExceptionBecauseParameterIsNull(){
 		File file = TestHelper.makeNewXMLFile(xmlWithMeshInfo);			
-		KMLAdapter kmlAdapter = new KMLAdapter(file.getAbsolutePath(), NullSecurity.INSTANCE);
+		KMLAdapter kmlAdapter = new KMLAdapter(file.getAbsolutePath(), NullIdentityProvider.INSTANCE);
 		kmlAdapter.get(null);
 	}
 	
@@ -800,14 +794,14 @@ public class KMLAdapterTests {
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldAddTrowsExceptionBecauseParameterIsNull(){
 		File file = TestHelper.makeNewXMLFile(xmlWithMeshInfo);			
-		KMLAdapter kmlAdapter = new KMLAdapter(file.getAbsolutePath(), NullSecurity.INSTANCE);
+		KMLAdapter kmlAdapter = new KMLAdapter(file.getAbsolutePath(), NullIdentityProvider.INSTANCE);
 		kmlAdapter.add(null);
 	}
 	
 	@Test
 	public void shouldAdd() throws DocumentException{
 		File file = TestHelper.makeNewXMLFile(xmlWithMeshInfo);			
-		KMLAdapter kmlAdapter = new KMLAdapter(file.getAbsolutePath(), NullSecurity.INSTANCE);
+		KMLAdapter kmlAdapter = new KMLAdapter(file.getAbsolutePath(), NullIdentityProvider.INSTANCE);
 		
 		String syncID = IdGenerator.newID();
 		String parentID = "1";
@@ -839,7 +833,7 @@ public class KMLAdapterTests {
 	@Test
 	public void shouldAddDeletedItem(){
 		File file = TestHelper.makeNewXMLFile(xmlWithMeshInfo);			
-		KMLAdapter kmlAdapter = new KMLAdapter(file.getAbsolutePath(), NullSecurity.INSTANCE);
+		KMLAdapter kmlAdapter = new KMLAdapter(file.getAbsolutePath(), NullIdentityProvider.INSTANCE);
 		
 		String syncID = IdGenerator.newID();
 		
@@ -860,21 +854,21 @@ public class KMLAdapterTests {
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldDeleteTrowsExceptionBecauseParameterIsNull(){
 		File file = TestHelper.makeNewXMLFile(xmlWithMeshInfo);			
-		KMLAdapter kmlAdapter = new KMLAdapter(file.getAbsolutePath(), NullSecurity.INSTANCE);
+		KMLAdapter kmlAdapter = new KMLAdapter(file.getAbsolutePath(), NullIdentityProvider.INSTANCE);
 		kmlAdapter.delete(null);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldDeleteTrowsExceptionBecauseParameterIsStringEmpty(){
 		File file = TestHelper.makeNewXMLFile(xmlWithMeshInfo);			
-		KMLAdapter kmlAdapter = new KMLAdapter(file.getAbsolutePath(), NullSecurity.INSTANCE);
+		KMLAdapter kmlAdapter = new KMLAdapter(file.getAbsolutePath(), NullIdentityProvider.INSTANCE);
 		kmlAdapter.delete("");
 	}
 	
 	@Test
 	public void shouldDeleteAddSyncDeleteDataBecauseItemDoesNotExist(){
 		File file = TestHelper.makeNewXMLFile(xmlWithMeshInfo);			
-		KMLAdapter kmlAdapter = new KMLAdapter(file.getAbsolutePath(), NullSecurity.INSTANCE);
+		KMLAdapter kmlAdapter = new KMLAdapter(file.getAbsolutePath(), NullIdentityProvider.INSTANCE);
 		
 		String syncID = IdGenerator.newID();
 		Item item = kmlAdapter.get(syncID);
@@ -911,7 +905,7 @@ public class KMLAdapterTests {
 			"</kml>";
 		
 		File file = TestHelper.makeNewXMLFile(localXML);			
-		KMLAdapter kmlAdapter = new KMLAdapter(file.getAbsolutePath(), NullSecurity.INSTANCE);
+		KMLAdapter kmlAdapter = new KMLAdapter(file.getAbsolutePath(), NullIdentityProvider.INSTANCE);
 		
 		Item item = kmlAdapter.get("1");
 		Assert.assertNotNull(item);
@@ -933,7 +927,7 @@ public class KMLAdapterTests {
 	@Test
 	public void shouldDelete(){
 		File file = TestHelper.makeNewXMLFile(xmlWithMeshInfo);			
-		KMLAdapter kmlAdapter = new KMLAdapter(file.getAbsolutePath(), NullSecurity.INSTANCE);
+		KMLAdapter kmlAdapter = new KMLAdapter(file.getAbsolutePath(), NullIdentityProvider.INSTANCE);
 		
 		Item item = kmlAdapter.get("3");
 		Assert.assertNotNull(item);
@@ -956,14 +950,14 @@ public class KMLAdapterTests {
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldUpdateTrowsExceptionBecauseParameterIsNull(){
 		File file = TestHelper.makeNewXMLFile(xmlWithMeshInfo);			
-		KMLAdapter kmlAdapter = new KMLAdapter(file.getAbsolutePath(), NullSecurity.INSTANCE);
+		KMLAdapter kmlAdapter = new KMLAdapter(file.getAbsolutePath(), NullIdentityProvider.INSTANCE);
 		kmlAdapter.update(null);
 	}
 	
 	@Test
 	public void shouldUpdateDeletedItem(){
 		File file = TestHelper.makeNewXMLFile(xmlWithMeshInfo);			
-		KMLAdapter kmlAdapter = new KMLAdapter(file.getAbsolutePath(), NullSecurity.INSTANCE);
+		KMLAdapter kmlAdapter = new KMLAdapter(file.getAbsolutePath(), NullIdentityProvider.INSTANCE);
 		
 		String syncID = "3";
 		Item item = kmlAdapter.get(syncID);
@@ -1004,7 +998,7 @@ public class KMLAdapterTests {
 			"</kml>";
 		
 		File file = TestHelper.makeNewXMLFile(localXML);			
-		KMLAdapter kmlAdapter = new KMLAdapter(file.getAbsolutePath(), NullSecurity.INSTANCE);
+		KMLAdapter kmlAdapter = new KMLAdapter(file.getAbsolutePath(), NullIdentityProvider.INSTANCE);
 		
 		Item item = kmlAdapter.get("1");
 		Assert.assertNotNull(item);
@@ -1027,7 +1021,7 @@ public class KMLAdapterTests {
 	@Test
 	public void shouldUpdateItem() throws DocumentException{
 		File file = TestHelper.makeNewXMLFile(xmlWithMeshInfo);			
-		KMLAdapter kmlAdapter = new KMLAdapter(file.getAbsolutePath(), NullSecurity.INSTANCE);
+		KMLAdapter kmlAdapter = new KMLAdapter(file.getAbsolutePath(), NullIdentityProvider.INSTANCE);
 		
 		String syncID = "3";
 		Item item = kmlAdapter.get(syncID);

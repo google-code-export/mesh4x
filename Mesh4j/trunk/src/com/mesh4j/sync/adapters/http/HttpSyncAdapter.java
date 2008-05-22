@@ -20,7 +20,8 @@ import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 
 import com.mesh4j.sync.IFilter;
-import com.mesh4j.sync.IRepositoryAdapter;
+import com.mesh4j.sync.ISupportMerge;
+import com.mesh4j.sync.ISyncAdapter;
 import com.mesh4j.sync.adapters.feed.Feed;
 import com.mesh4j.sync.adapters.feed.FeedReader;
 import com.mesh4j.sync.adapters.feed.FeedWriter;
@@ -29,13 +30,13 @@ import com.mesh4j.sync.filter.ConflictsFilter;
 import com.mesh4j.sync.filter.NullFilter;
 import com.mesh4j.sync.filter.SinceLastUpdateFilter;
 import com.mesh4j.sync.model.Item;
-import com.mesh4j.sync.security.ISecurity;
+import com.mesh4j.sync.security.IIdentityProvider;
 import com.mesh4j.sync.translator.MessageTranslator;
 import com.mesh4j.sync.utils.DateHelper;
 import com.mesh4j.sync.validations.Guard;
 import com.mesh4j.sync.validations.MeshException;
 
-public class HttpSyncAdapter implements IRepositoryAdapter {
+public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 
 	private final static Log Logger = LogFactory.getLog(HttpSyncAdapter.class);
 	private final static NullFilter<Item> NULL_FILTER = new NullFilter<Item>();
@@ -47,25 +48,20 @@ public class HttpSyncAdapter implements IRepositoryAdapter {
 	private FeedWriter feedWriter;
 	
 	// BUSINESS METHODS
-	public HttpSyncAdapter(String url, ISyndicationFormat syndicationFormat, ISecurity security){
+	public HttpSyncAdapter(String url, ISyndicationFormat syndicationFormat, IIdentityProvider identityProvider){
 		Guard.argumentNotNullOrEmptyString(url, "url");
 		Guard.argumentNotNull(syndicationFormat, "syndicationFormat");
-		Guard.argumentNotNull(security, "security");
+		Guard.argumentNotNull(identityProvider, "identityProvider");
 		
 		try {
 			this.url = new URL(url);
 		} catch (MalformedURLException e) {
 			throw new MeshException(e);
 		}
-		this.feedReader = new FeedReader(syndicationFormat, security);
-		this.feedWriter = new FeedWriter(syndicationFormat, security);
+		this.feedReader = new FeedReader(syndicationFormat, identityProvider);
+		this.feedWriter = new FeedWriter(syndicationFormat, identityProvider);
 	}
 
-	@Override
-	public boolean supportsMerge() {
-		return true;
-	}
-	
 	@Override
 	public List<Item> merge(List<Item> items) {
 		try {

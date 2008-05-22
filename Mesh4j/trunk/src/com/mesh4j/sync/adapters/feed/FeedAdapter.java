@@ -11,32 +11,32 @@ import org.dom4j.DocumentException;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 
-import com.mesh4j.sync.AbstractRepositoryAdapter;
+import com.mesh4j.sync.AbstractSyncAdapter;
 import com.mesh4j.sync.IFilter;
 import com.mesh4j.sync.adapters.feed.atom.AtomSyndicationFormat;
 import com.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import com.mesh4j.sync.filter.SinceLastUpdateFilter;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.NullContent;
-import com.mesh4j.sync.security.ISecurity;
+import com.mesh4j.sync.security.IIdentityProvider;
 import com.mesh4j.sync.translator.MessageTranslator;
 import com.mesh4j.sync.validations.Guard;
 import com.mesh4j.sync.validations.MeshException;
 
 // TODO (JMT) incremental loading for feed items, xml pull parser?
-public class FeedAdapter extends AbstractRepositoryAdapter{
+public class FeedAdapter extends AbstractSyncAdapter{
 
 	// MODEL VARIABLES
 	private File feedFile;
 	private Feed feed;
 	private FeedReader feedReader;
 	private FeedWriter feedWriter;
-	private ISecurity security;
+	private IIdentityProvider identityProvider;
 	
 	// BUSINESS METHODS
-	public FeedAdapter(String fileName, ISecurity security){
+	public FeedAdapter(String fileName, IIdentityProvider identityProvider){
 		Guard.argumentNotNull(fileName, "fileName");
-		Guard.argumentNotNull(security, "security");
+		Guard.argumentNotNull(identityProvider, "identityProvider");
 
 		this.feedFile = new File(fileName);
 		
@@ -53,23 +53,23 @@ public class FeedAdapter extends AbstractRepositoryAdapter{
 			syndicationFormat = AtomSyndicationFormat.INSTANCE;
 		}
 		
-		this.security = security;
-		this.feedReader = new FeedReader(syndicationFormat, security);
-		this.feedWriter = new FeedWriter(syndicationFormat, security);
+		this.identityProvider = identityProvider;
+		this.feedReader = new FeedReader(syndicationFormat, identityProvider);
+		this.feedWriter = new FeedWriter(syndicationFormat, identityProvider);
 		
 		this.feed = this.feedReader.read(document);
 	}
 	
-	public FeedAdapter(File file, ISyndicationFormat syndicationFormat, ISecurity security){
+	public FeedAdapter(File file, ISyndicationFormat syndicationFormat, IIdentityProvider identityProvider){
 		
 		Guard.argumentNotNull(file, "file");
 		Guard.argumentNotNull(syndicationFormat, "syndicationFormat");
-		Guard.argumentNotNull(security, "security");
+		Guard.argumentNotNull(identityProvider, "identityProvider");
 		
 		this.feedFile = file;
-		this.security = security;
-		this.feedReader = new FeedReader(syndicationFormat, security);
-		this.feedWriter = new FeedWriter(syndicationFormat, security);
+		this.identityProvider = identityProvider;
+		this.feedReader = new FeedReader(syndicationFormat, identityProvider);
+		this.feedWriter = new FeedWriter(syndicationFormat, identityProvider);
 		try {
 			this.feed = this.feedReader.read(file);
 		} catch (DocumentException e) {
@@ -77,17 +77,17 @@ public class FeedAdapter extends AbstractRepositoryAdapter{
 		}
 	}
 	
-	public FeedAdapter(File file, ISyndicationFormat syndicationFormat, ISecurity security, Feed feed){
+	public FeedAdapter(File file, ISyndicationFormat syndicationFormat, IIdentityProvider identityProvider, Feed feed){
 		
 		Guard.argumentNotNull(file, "file");
 		Guard.argumentNotNull(syndicationFormat, "syndicationFormat");
-		Guard.argumentNotNull(security, "security");
+		Guard.argumentNotNull(identityProvider, "identityProvider");
 		Guard.argumentNotNull(feed, "feed");
 		
 		this.feedFile = file;
-		this.security = security;
-		this.feedReader = new FeedReader(syndicationFormat, security);
-		this.feedWriter = new FeedWriter(syndicationFormat, security);
+		this.identityProvider = identityProvider;
+		this.feedReader = new FeedReader(syndicationFormat, identityProvider);
+		this.feedWriter = new FeedWriter(syndicationFormat, identityProvider);
 		this.feed = feed;
 		
 		if(!file.exists()){
@@ -138,16 +138,6 @@ public class FeedAdapter extends AbstractRepositoryAdapter{
 	}
 	
 	@Override
-	public boolean supportsMerge() {
-		return false;
-	}
-
-	@Override
-	public List<Item> merge(List<Item> items) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
 	public void update(Item item) {
 		Guard.argumentNotNull(item, "item");
 
@@ -182,7 +172,7 @@ public class FeedAdapter extends AbstractRepositoryAdapter{
 
 	@Override
 	public String getAuthenticatedUser() {
-		return this.security.getAuthenticatedUser();
+		return this.identityProvider.getAuthenticatedUser();
 	}
 
 }

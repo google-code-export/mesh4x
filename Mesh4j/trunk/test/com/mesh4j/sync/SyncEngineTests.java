@@ -38,6 +38,39 @@ public class SyncEngineTests extends AbstractSyncEngineTest {
 	}
 	
 	@Test
+	public void ShouldCallSyncAwareIfRepositorySupportsIt() {
+		MockSyncAwareRepository left = new MockSyncAwareRepository();
+		MockSyncAwareRepository right = new MockSyncAwareRepository();
+		SyncEngine engine = new SyncEngine(left, right);
+
+		engine.synchronize();
+
+		Assert.assertTrue(left.beginSyncCalled());
+		Assert.assertTrue(left.endSyncCalled());
+		Assert.assertTrue(right.beginSyncCalled());
+		Assert.assertTrue(right.endSyncCalled());
+	}
+	
+	@Test
+	public void ShouldThrowExceptionIfSycnEngineCallMergeIfRepositoryDoNotSupportsIt() {
+		MockNotSupportMergeRepository left = new MockNotSupportMergeRepository();
+		MockNotSupportMergeRepository right = new MockNotSupportMergeRepository();
+		SyncEngine engine = new SyncEngine(left, right);
+
+		engine.synchronize();
+	}
+	
+	@Test
+	public void ShouldThrowExceptionIfSycnEngineCallSyncAwareIfRepositoryDoNotSupportsIt() {
+		MockNotSupportSyncAwareRepository left = new MockNotSupportSyncAwareRepository();
+		MockNotSupportSyncAwareRepository right = new MockNotSupportSyncAwareRepository();
+		SyncEngine engine = new SyncEngine(left, right);
+
+		engine.synchronize();
+	}
+	
+	
+	@Test
 	public void ShouldCallImportPreviewHandler() {
 
 		MockPreviewImportHandler previewHandler = new MockPreviewImportHandler();
@@ -65,16 +98,12 @@ public class SyncEngineTests extends AbstractSyncEngineTest {
 
 	}
 
-	private class MockMergeRepository implements IRepositoryAdapter {
+	private class MockMergeRepository implements ISyncAdapter, ISupportMerge {
 
-		private boolean mergeCalled;
+		private boolean mergeCalled = false;
 
 		public String getFriendlyName() {
 			return "MockMerge";
-		}
-
-		public boolean supportsMerge() {
-			return true;
 		}
 
 		public Item get(String id) {
@@ -124,12 +153,12 @@ public class SyncEngineTests extends AbstractSyncEngineTest {
 	}
 
 	@Override
-	protected IRepositoryAdapter makeLeftRepository(Item... items) {
+	protected ISyncAdapter makeLeftRepository(Item... items) {
 		return new MockRepository(items);
 	}
 	
 	@Override
-	protected IRepositoryAdapter makeRightRepository(Item... items) {
+	protected ISyncAdapter makeRightRepository(Item... items) {
 		return new MockRepository(items);
 	}
 
@@ -138,7 +167,7 @@ public class SyncEngineTests extends AbstractSyncEngineTest {
 		private Set<String> repositories = new HashSet<String>();
 
 		@Override
-		public List<MergeResult> preview(IRepositoryAdapter targetRepository,
+		public List<MergeResult> preview(ISyncAdapter targetRepository,
 				List<MergeResult> mergedItems) {
 
 			repositories.add(targetRepository.getFriendlyName());
@@ -152,12 +181,172 @@ public class SyncEngineTests extends AbstractSyncEngineTest {
 		public void reset() {
 			this.repositories.clear();
 		}
-
 	}
 
 	@Override
 	protected String getUserName(Item item) {
 		return item.getContent().getPayload().element("user").element("name").getText();
 	}
+	
+	private class MockSyncAwareRepository implements ISyncAdapter, ISyncAware {
 
+		private boolean beginSyncCalled = false;
+		private boolean endSyncCalled = false;
+
+		public String getFriendlyName() {
+			return "MockSyncAware";
+		}
+
+		public Item get(String id) {
+			return null;
+		}
+
+		public List<Item> getAll() {
+			return new ArrayList<Item>();
+		}
+
+		public List<Item> getAllSince(Date since) {
+			return new ArrayList<Item>();
+		}
+
+		public List<Item> getConflicts() {
+			return new ArrayList<Item>();
+		}
+
+		public void delete(String id) {
+		}
+
+		public void update(Item item) {
+		}
+
+		public void update(Item item, boolean resolveConflicts) {
+		}
+
+		public void add(Item item) {
+		}
+
+		public List<Item> getAll(IFilter<Item> filter) {
+			return new ArrayList<Item>();
+		}
+
+		public List<Item> getAllSince(Date since, IFilter<Item> filter) {
+			return new ArrayList<Item>();
+		}
+
+		public boolean beginSyncCalled() {
+			return beginSyncCalled;
+		}
+		
+		public boolean endSyncCalled() {
+			return endSyncCalled;
+		}
+
+		@Override
+		public void beginSync() {
+			beginSyncCalled = true;			
+		}
+
+		@Override
+		public void endSync() {
+			endSyncCalled = true;			
+		}
+	}
+	
+	private class MockNotSupportSyncAwareRepository implements ISyncAdapter{
+
+		public String getFriendlyName() {
+			return "MockNoSyncAware";
+		}
+
+		public Item get(String id) {
+			return null;
+		}
+
+		public List<Item> getAll() {
+			return new ArrayList<Item>();
+		}
+
+		public List<Item> getAllSince(Date since) {
+			return new ArrayList<Item>();
+		}
+
+		public List<Item> getConflicts() {
+			return new ArrayList<Item>();
+		}
+
+		public void delete(String id) {
+		}
+
+		public void update(Item item) {
+		}
+
+		public void update(Item item, boolean resolveConflicts) {
+		}
+
+		public void add(Item item) {
+		}
+
+		public List<Item> getAll(IFilter<Item> filter) {
+			return new ArrayList<Item>();
+		}
+
+		public List<Item> getAllSince(Date since, IFilter<Item> filter) {
+			return new ArrayList<Item>();
+		}
+
+		public void beginSync() {
+			throw new UnsupportedOperationException();			
+		}
+
+		public void endSync() {
+			throw new UnsupportedOperationException();		
+		}
+	}
+
+	private class MockNotSupportMergeRepository implements ISyncAdapter {
+
+		public String getFriendlyName() {
+			return "MockNotSupportMerge";
+		}
+
+		public Item get(String id) {
+			return null;
+		}
+
+		public List<Item> getAll() {
+			return new ArrayList<Item>();
+		}
+
+		public List<Item> getAllSince(Date since) {
+			return new ArrayList<Item>();
+		}
+
+		public List<Item> getConflicts() {
+			return new ArrayList<Item>();
+		}
+
+		public void delete(String id) {
+		}
+
+		public void update(Item item) {
+		}
+
+		public void update(Item item, boolean resolveConflicts) {
+		}
+
+		public List<Item> merge(List<Item> items) {
+			throw new UnsupportedOperationException();
+		}
+
+		public void add(Item item) {
+		}
+
+		public List<Item> getAll(IFilter<Item> filter) {
+			return new ArrayList<Item>();
+		}
+
+		public List<Item> getAllSince(Date since, IFilter<Item> filter) {
+			return new ArrayList<Item>();
+		}
+	}
 }

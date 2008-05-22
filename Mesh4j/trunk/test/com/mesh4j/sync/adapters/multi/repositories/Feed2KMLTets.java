@@ -8,12 +8,12 @@ import org.dom4j.io.SAXReader;
 import org.junit.Test;
 
 import com.mesh4j.sync.SyncEngine;
-import com.mesh4j.sync.adapters.compound.CompoundRepositoryAdapter;
 import com.mesh4j.sync.adapters.feed.FeedAdapter;
 import com.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import com.mesh4j.sync.adapters.file.FileSyncRepository;
 import com.mesh4j.sync.adapters.kml.KMLContentAdapter;
-import com.mesh4j.sync.security.NullSecurity;
+import com.mesh4j.sync.adapters.split.SplitAdapter;
+import com.mesh4j.sync.security.NullIdentityProvider;
 import com.mesh4j.sync.test.utils.TestHelper;
 import com.mesh4j.sync.utils.XMLHelper;
 
@@ -25,11 +25,11 @@ public class Feed2KMLTets {
 		File file = makeFileFromTemplate("FeedKML.xml");
 		File kmlFile = makeFileFromTemplate("KML.kml");
 		
-		FeedAdapter feedAdapter =  new FeedAdapter(file, RssSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		FeedAdapter feedAdapter =  new FeedAdapter(file, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		
 		KMLContentAdapter kmlContentAdapter = new KMLContentAdapter(kmlFile);
-		FileSyncRepository syncRepo = new FileSyncRepository(TestHelper.fileName("KML_SYNC.xml"), NullSecurity.INSTANCE);
-		CompoundRepositoryAdapter kmlAdapter = new CompoundRepositoryAdapter(syncRepo, kmlContentAdapter, NullSecurity.INSTANCE);
+		FileSyncRepository syncRepo = new FileSyncRepository(TestHelper.fileName("KML_SYNC.xml"), NullIdentityProvider.INSTANCE);
+		SplitAdapter kmlAdapter = new SplitAdapter(syncRepo, kmlContentAdapter, NullIdentityProvider.INSTANCE);
 		
 		SyncEngine syncEngine = new SyncEngine(feedAdapter, kmlAdapter);
 		syncEngine.synchronize();		

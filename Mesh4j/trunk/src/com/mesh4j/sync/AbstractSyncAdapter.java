@@ -10,20 +10,18 @@ import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.utils.DateHelper;
 import com.mesh4j.sync.validations.Guard;
 
-public abstract class AbstractRepositoryAdapter implements IRepositoryAdapter{
+public abstract class AbstractSyncAdapter implements ISyncAdapter{
 
 	// CONSTANTS
 	private final static NullFilter<Item> NULL_FILTER = new NullFilter<Item>();
 	private final static ConflictsFilter CONFLICTS_FILTER = new ConflictsFilter();
 
 	// BUSINESS METHODS
-	public abstract boolean supportsMerge();
 	public abstract Item get(String id);
 	protected abstract List<Item> getAll(Date since, IFilter<Item> filter);
 	public abstract void add(Item item);
 	public abstract void delete(String id);
 	public abstract void update(Item item);
-	public abstract List<Item> merge(List<Item> items);
 	public abstract String getFriendlyName();
 	public abstract String getAuthenticatedUser();
 

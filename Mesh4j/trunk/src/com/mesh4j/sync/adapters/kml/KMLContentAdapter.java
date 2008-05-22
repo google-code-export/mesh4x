@@ -15,7 +15,7 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.jaxen.JaxenException;
 
-import com.mesh4j.sync.adapters.compound.IContentAdapter;
+import com.mesh4j.sync.adapters.split.IContentAdapter;
 import com.mesh4j.sync.model.IContent;
 import com.mesh4j.sync.utils.IdGenerator;
 import com.mesh4j.sync.utils.XMLHelper;

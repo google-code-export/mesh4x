@@ -13,7 +13,7 @@ import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.metadata.ClassMetadata;
 
-import com.mesh4j.sync.AbstractRepositoryAdapter;
+import com.mesh4j.sync.AbstractSyncAdapter;
 import com.mesh4j.sync.IFilter;
 import com.mesh4j.sync.adapters.SyncInfo;
 import com.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
@@ -22,36 +22,36 @@ import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.NullContent;
 import com.mesh4j.sync.model.Sync;
 import com.mesh4j.sync.parsers.SyncInfoParser;
-import com.mesh4j.sync.security.ISecurity;
+import com.mesh4j.sync.security.IIdentityProvider;
 import com.mesh4j.sync.translator.MessageTranslator;
 import com.mesh4j.sync.validations.Guard;
 
-public class HibernateAdapter extends AbstractRepositoryAdapter implements ISessionProvider {
+public class HibernateAdapter extends AbstractSyncAdapter implements ISessionProvider {
 	
 	// MODEL VARIABLES
 	private SyncDAO syncDAO;
 	private EntityDAO entityDAO;
 	private SessionFactory sessionFactory;
 	private Session currentSession;
-	private ISecurity security;
+	private IIdentityProvider identityProvider;
 	
 	// BUSINESS METHODs
-	public HibernateAdapter(String fileMappingName, ISecurity security){
-		this(new File(fileMappingName), security);		
+	public HibernateAdapter(String fileMappingName, IIdentityProvider identityProvider){
+		this(new File(fileMappingName), identityProvider);		
 	}
 	
-	public HibernateAdapter(File entityMapping, ISecurity security){
+	public HibernateAdapter(File entityMapping, IIdentityProvider identityProvider){
 		
-		Guard.argumentNotNull(security, "security");
+		Guard.argumentNotNull(identityProvider, "identityProvider");
 		if(!entityMapping.exists() || !entityMapping.canRead()){
 			throw new IllegalArgumentException("Invalid file mapping");
 		}
 		
-		this.security = security;
+		this.identityProvider = identityProvider;
 		
 		this.initializeHibernate(SyncDAO.getMapping(), entityMapping);
 		
-		this.syncDAO = new SyncDAO(this, new SyncInfoParser(RssSyndicationFormat.INSTANCE, this.security));
+		this.syncDAO = new SyncDAO(this, new SyncInfoParser(RssSyndicationFormat.INSTANCE, this.identityProvider));
 		
 		ClassMetadata classMetadata = this.getClassMetadata();
 		String entityName = classMetadata.getEntityName();
@@ -217,7 +217,7 @@ public class HibernateAdapter extends AbstractRepositoryAdapter implements ISess
 		EntityContent entity = entityDAO.get(syncInfo.getId());
 		closeSession();
 		
-		this.updateSync(entity, syncInfo);
+		this.updateSyncIfChanged(entity, syncInfo);
 		
 		
 		if(syncInfo.isDeleted()){
@@ -228,7 +228,7 @@ public class HibernateAdapter extends AbstractRepositoryAdapter implements ISess
 		}
 	}
 
-	private void updateSync(EntityContent entity, SyncInfo syncInfo){
+	private void updateSyncIfChanged(EntityContent entity, SyncInfo syncInfo){
 		Session session = newSession();
 		Transaction tx = null;
 		try{
@@ -314,7 +314,7 @@ public class HibernateAdapter extends AbstractRepositoryAdapter implements ISess
 			} else {
 				sync = syncInfo.getSync();
 				syncInfos.remove(syncInfo);
-				updateSync(entity, syncInfo);
+				updateSyncIfChanged(entity, syncInfo);
 			}
 			Item item = new Item(entity, sync);
 			
@@ -325,7 +325,7 @@ public class HibernateAdapter extends AbstractRepositoryAdapter implements ISess
 		}
 
 		for (SyncInfo syncInfo : syncInfos) {
-			updateSync(null, syncInfo);
+			updateSyncIfChanged(null, syncInfo);
 			Item item = new Item(
 				new NullContent(syncInfo.getSync().getId()),
 				syncInfo.getSync());
@@ -356,16 +356,6 @@ public class HibernateAdapter extends AbstractRepositoryAdapter implements ISess
 		return MessageTranslator.translate(HibernateAdapter.class.getName());
 	}
 
-	@Override
-	public boolean supportsMerge() {
-		return false;
-	}
-	
-	@Override
-	public List<Item> merge(List<Item> items) {
-		throw new UnsupportedOperationException();
-	}
-	
 	public void deleteAll() {
 		Session session = newSession();
 		Transaction tx = null;
@@ -408,6 +398,6 @@ public class HibernateAdapter extends AbstractRepositoryAdapter implements ISess
 	
 	@Override
 	public String getAuthenticatedUser() {
-		return this.security.getAuthenticatedUser();
+		return this.identityProvider.getAuthenticatedUser();
 	}
 }

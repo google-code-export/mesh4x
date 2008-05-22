@@ -14,11 +14,11 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
 import com.mesh4j.sync.adapters.SyncInfo;
-import com.mesh4j.sync.adapters.compound.ISyncRepository;
 import com.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
+import com.mesh4j.sync.adapters.split.ISyncRepository;
 import com.mesh4j.sync.model.IContent;
 import com.mesh4j.sync.parsers.SyncInfoParser;
-import com.mesh4j.sync.security.ISecurity;
+import com.mesh4j.sync.security.IIdentityProvider;
 import com.mesh4j.sync.utils.XMLHelper;
 import com.mesh4j.sync.validations.Guard;
 import com.mesh4j.sync.validations.MeshException;
@@ -34,14 +34,14 @@ public class FileSyncRepository implements ISyncRepository{
 	private SyncInfoParser syncInfoParser;
 
 	// BUSINESS METHODS
-	public FileSyncRepository(String syncInfoFileName, ISecurity security){
-		this(new File(syncInfoFileName), security);
+	public FileSyncRepository(String syncInfoFileName, IIdentityProvider identityProvider){
+		this(new File(syncInfoFileName), identityProvider);
 	}
 	
-	public FileSyncRepository(File syncInfoFile, ISecurity security){
+	public FileSyncRepository(File syncInfoFile, IIdentityProvider identityProvider){
 
 		Guard.argumentNotNull(syncInfoFile, "syncInfoFile");
-		Guard.argumentNotNull(security, "security");
+		Guard.argumentNotNull(identityProvider, "identityProvider");
 
 		this.syncInfoFile = syncInfoFile;
 		
@@ -54,7 +54,7 @@ public class FileSyncRepository implements ISyncRepository{
 			throw new MeshException(e);
 		}
 		
-		this.syncInfoParser = new SyncInfoParser(RssSyndicationFormat.INSTANCE, security);
+		this.syncInfoParser = new SyncInfoParser(RssSyndicationFormat.INSTANCE, identityProvider);
 	}
 
 	private void initializeFile(File file) {

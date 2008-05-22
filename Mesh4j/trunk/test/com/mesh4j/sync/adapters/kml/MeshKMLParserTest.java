@@ -15,7 +15,7 @@ import com.mesh4j.sync.adapters.SyncInfo;
 import com.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import com.mesh4j.sync.adapters.feed.atom.AtomSyndicationFormat;
 import com.mesh4j.sync.model.Sync;
-import com.mesh4j.sync.security.NullSecurity;
+import com.mesh4j.sync.security.NullIdentityProvider;
 import com.mesh4j.sync.test.utils.TestHelper;
 import com.mesh4j.sync.utils.IdGenerator;
 import com.mesh4j.sync.utils.XMLHelper;
@@ -169,7 +169,7 @@ public class MeshKMLParserTest {
 		Element extendedData = documentElement.element(KmlNames.KML_ELEMENT_EXTENDED_DATA);
 		Assert.assertNull(extendedData);
 		
-		MeshKMLParser parser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		MeshKMLParser parser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		parser.prepateSyncRepository(documentElement);
 		
 		extendedData = documentElement.element(KmlNames.KML_ELEMENT_EXTENDED_DATA);
@@ -185,7 +185,7 @@ public class MeshKMLParserTest {
 		Document kmlDocument = DocumentHelper.parseText(kmlAsXML);
 		Element documentElement = kmlDocument.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT);
 
-		MeshKMLParser parser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		MeshKMLParser parser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		parser.prepateSyncRepository(documentElement);
 		Element extendedData = documentElement.element(KmlNames.KML_ELEMENT_EXTENDED_DATA);
 		Assert.assertNotNull(extendedData);
@@ -230,7 +230,7 @@ public class MeshKMLParserTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void shouldReadMeshData() throws DocumentException, JaxenException{
-		MeshKMLParser parser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		MeshKMLParser parser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		
 		Document document = DocumentHelper.parseText(xml);
 		Element documentElement = document.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT);
@@ -308,7 +308,7 @@ public class MeshKMLParserTest {
 			"</kml>";
 		
 		Document document = DocumentHelper.parseText(localXML);
-		MeshKMLParser parser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		MeshKMLParser parser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		List<Element> elements = parser.getElementsToSync(document);
 		
 		Element syncRoot = document.getRootElement().element("Document");
@@ -385,7 +385,7 @@ public class MeshKMLParserTest {
 				"</kml>";
 		
 		Document document = DocumentHelper.parseText(localXML);
-		MeshKMLParser parser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		MeshKMLParser parser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		List<Element> elements = parser.getElementsToSync(document);		
 		Element syncRoot = document.getRootElement().element("Document");
 		parser.prepateSyncRepository(syncRoot);
@@ -422,7 +422,7 @@ public class MeshKMLParserTest {
 	// Constructor
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldDoesNotAcceptNullSyndicationFormat() {
-		new MeshKMLParser(null, NullSecurity.INSTANCE);
+		new MeshKMLParser(null, NullIdentityProvider.INSTANCE);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
@@ -436,7 +436,7 @@ public class MeshKMLParserTest {
 		String id = "1";
 		Element rootElement = DocumentHelper.createElement("payload");
 		
-		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		Element result = meshParser.getElement(rootElement, id);
 		Assert.assertNull(result);
 	}
@@ -446,7 +446,7 @@ public class MeshKMLParserTest {
 		String id = "3";
 		Element rootElement = DocumentHelper.parseText(xmlWithHierarchy).getRootElement();
 		
-		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		Element result = meshParser.getElement(rootElement, id);
 		Assert.assertNotNull(result);
 		Assert.assertEquals("Placemark", result.getName());
@@ -457,7 +457,7 @@ public class MeshKMLParserTest {
 		String id = "\'2";
 		Element rootElement = null;
 		
-		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		meshParser.getElement(rootElement, id);
 	}
 	
@@ -466,7 +466,7 @@ public class MeshKMLParserTest {
 	public void shouldGetMeshSyncIdReturnsNullWhenAttributeDoesNotExist(){
 		Element element = DocumentHelper.createElement("payload");
 		
-		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		
 		String result = meshParser.getMeshSyncId(element);
 		Assert.assertNull(result);
@@ -476,7 +476,7 @@ public class MeshKMLParserTest {
 	public void shouldGetMeshSyncId() throws DocumentException{
 		Element placemark = DocumentHelper.parseText(xml).getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT).element(KmlNames.KML_ELEMENT_PLACEMARK);
 		
-		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		
 		String result = meshParser.getMeshSyncId(placemark);
 		Assert.assertNotNull(result);
@@ -488,7 +488,7 @@ public class MeshKMLParserTest {
 	public void shouldGetMeshParentIdReturnsNullWhenAttributeDoesNotExist(){
 		Element element = DocumentHelper.createElement("payload");
 		
-		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		
 		String result = meshParser.getMeshParentId(element);
 		Assert.assertNull(result);
@@ -503,7 +503,7 @@ public class MeshKMLParserTest {
 			.element(KmlNames.KML_ELEMENT_FOLDER)
 			.element(KmlNames.KML_ELEMENT_PLACEMARK);
 		
-		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		
 		String result = meshParser.getMeshParentId(placemark);
 		Assert.assertNotNull(result);
@@ -517,7 +517,7 @@ public class MeshKMLParserTest {
 		Element syncRoot = doc.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT);
 		Element element = syncRoot.element(KmlNames.KML_ELEMENT_PLACEMARK);
 		
-		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		boolean isValid = meshParser.isValid(syncRoot, element);
 		Assert.assertFalse(isValid);
 	}
@@ -539,7 +539,7 @@ public class MeshKMLParserTest {
 		Element syncRoot = doc.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT);
 		Element element = syncRoot.element(KmlNames.KML_ELEMENT_PLACEMARK);
 		
-		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		boolean isValid = meshParser.isValid(syncRoot, element);
 		Assert.assertFalse(isValid);
 	}
@@ -563,7 +563,7 @@ public class MeshKMLParserTest {
 		Element syncRoot = doc.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT);
 		Element element = syncRoot.element(KmlNames.KML_ELEMENT_PLACEMARK);
 		
-		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		boolean isValid = meshParser.isValid(syncRoot, element);
 		Assert.assertFalse(isValid);
 	}
@@ -595,7 +595,7 @@ public class MeshKMLParserTest {
 		Element syncRoot = doc.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT);
 		Element element = syncRoot.element(KmlNames.KML_ELEMENT_PLACEMARK);
 		
-		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		boolean isValid = meshParser.isValid(syncRoot, element);
 		Assert.assertFalse(isValid);
 	}
@@ -629,7 +629,7 @@ public class MeshKMLParserTest {
 		Element syncRoot = doc.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT);
 		Element element = syncRoot.element(KmlNames.KML_ELEMENT_FOLDER).element(KmlNames.KML_ELEMENT_PLACEMARK);
 		
-		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		boolean isValid = meshParser.isValid(syncRoot, element);
 		Assert.assertFalse(isValid);
 	}
@@ -662,7 +662,7 @@ public class MeshKMLParserTest {
 		Element syncRoot = doc.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT);
 		Element element = syncRoot.element(KmlNames.KML_ELEMENT_FOLDER).element(KmlNames.KML_ELEMENT_PLACEMARK);
 		
-		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		boolean isValid = meshParser.isValid(syncRoot, element);
 		Assert.assertFalse(isValid);
 	}
@@ -695,7 +695,7 @@ public class MeshKMLParserTest {
 		Element syncRoot = doc.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT);
 		Element element = syncRoot.element(KmlNames.KML_ELEMENT_FOLDER).element(KmlNames.KML_ELEMENT_PLACEMARK);
 		
-		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		boolean isValid = meshParser.isValid(syncRoot, element);
 		Assert.assertFalse(isValid);
 	}
@@ -728,7 +728,7 @@ public class MeshKMLParserTest {
 		Element syncRoot = doc.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT);
 		Element element = syncRoot.element(KmlNames.KML_ELEMENT_FOLDER).element(KmlNames.KML_ELEMENT_PLACEMARK);
 		
-		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		boolean isValid = meshParser.isValid(syncRoot, element);
 		Assert.assertTrue(isValid);
 	}
@@ -760,7 +760,7 @@ public class MeshKMLParserTest {
 		Element syncRoot = doc.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT);
 		Element element = syncRoot.element(KmlNames.KML_ELEMENT_PLACEMARK);
 		
-		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		boolean isValid = meshParser.isValid(syncRoot, element);
 		Assert.assertTrue(isValid);
 	}
@@ -791,7 +791,7 @@ public class MeshKMLParserTest {
 		Document doc = DocumentHelper.parseText(localXML);
 		Element syncRoot = doc.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT);
 				
-		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		SyncInfo syncInfo = meshParser.getSyncInfo(syncRoot, "1");
 		Assert.assertNull(syncInfo);
 	}
@@ -821,7 +821,7 @@ public class MeshKMLParserTest {
 		Document doc = DocumentHelper.parseText(localXML);
 		Element syncRoot = doc.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT);
 				
-		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		SyncInfo syncInfo = meshParser.getSyncInfo(syncRoot, "2");
 		Assert.assertNotNull(syncInfo);
 		
@@ -855,7 +855,7 @@ public class MeshKMLParserTest {
 		Document doc = DocumentHelper.parseText(localXML);
 		Element syncRoot = doc.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT);
 				
-		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		List<SyncInfo> syncInfos = meshParser.getAllSyncs(syncRoot);
 		Assert.assertNotNull(syncInfos);
 		Assert.assertEquals(0, syncInfos.size());
@@ -877,7 +877,7 @@ public class MeshKMLParserTest {
 		Document doc = DocumentHelper.parseText(localXML);
 		Element syncRoot = doc.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT);
 				
-		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		List<SyncInfo> syncInfos = meshParser.getAllSyncs(syncRoot);
 		Assert.assertNotNull(syncInfos);
 		Assert.assertEquals(0, syncInfos.size());
@@ -918,7 +918,7 @@ public class MeshKMLParserTest {
 		Document doc = DocumentHelper.parseText(localXML);
 		Element syncRoot = doc.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT);
 				
-		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		List<SyncInfo> syncInfos = meshParser.getAllSyncs(syncRoot);
 		Assert.assertNotNull(syncInfos);
 		Assert.assertEquals(2, syncInfos.size());
@@ -960,7 +960,7 @@ public class MeshKMLParserTest {
 		
 		Document doc = DocumentHelper.parseText(localXML);
 		Element syncRoot = doc.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT);				
-		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		
 		List<SyncInfo> syncInfos = meshParser.getAllSyncs(syncRoot);
 		Assert.assertNotNull(syncInfos);
@@ -1019,7 +1019,7 @@ public class MeshKMLParserTest {
 		
 		Document doc = DocumentHelper.parseText(localXML);
 		Element syncRoot = doc.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT);				
-		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		
 		List<SyncInfo> syncInfos = meshParser.getAllSyncs(syncRoot);
 		Assert.assertNotNull(syncInfos);
@@ -1061,7 +1061,7 @@ public class MeshKMLParserTest {
 		
 		Document doc = DocumentHelper.parseText(localXML);
 		Element syncRoot = doc.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT);				
-		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		
 		List<SyncInfo> syncInfos = meshParser.getAllSyncs(syncRoot);
 		Assert.assertNotNull(syncInfos);
@@ -1128,7 +1128,7 @@ public class MeshKMLParserTest {
 		
 		Document doc = DocumentHelper.parseText(localXML);
 		Element syncRoot = doc.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT);				
-		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		
 		List<SyncInfo> syncInfos = meshParser.getAllSyncs(syncRoot);
 		Assert.assertNotNull(syncInfos);
@@ -1195,7 +1195,7 @@ public class MeshKMLParserTest {
 		
 		Document doc = DocumentHelper.parseText(localXML);
 		Element syncRoot = doc.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT);				
-		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		
 		List<SyncInfo> syncInfos = meshParser.getAllSyncs(syncRoot);
 		Assert.assertNotNull(syncInfos);
@@ -1271,7 +1271,7 @@ public class MeshKMLParserTest {
 		
 		Document doc = DocumentHelper.parseText(localXML);
 		Element syncRoot = doc.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT);				
-		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 
 		String syncID = "2";
 		SyncInfo syncInfo = meshParser.getSyncInfo(syncRoot, syncID);
@@ -1346,7 +1346,7 @@ public class MeshKMLParserTest {
 		
 		Document doc = DocumentHelper.parseText(localXML);
 		Element syncRoot = doc.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT);				
-		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 
 		String syncID = "2";
 		SyncInfo syncInfo = meshParser.getSyncInfo(syncRoot, syncID);
@@ -1430,7 +1430,7 @@ public class MeshKMLParserTest {
 		
 		Document doc = DocumentHelper.parseText(localXML);
 		Element syncRoot = doc.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT);				
-		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 
 		String syncID = "3";
 		SyncInfo syncInfo = meshParser.getSyncInfo(syncRoot, syncID);
@@ -1481,7 +1481,7 @@ public class MeshKMLParserTest {
 	@Test
 	public void shouldGetElementsToSync() throws DocumentException{
 		Document doc = DocumentHelper.parseText(xmlWithHierarchy);
-		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		List<Element> elements = meshParser.getElementsToSync(doc);
 		
 		Assert.assertNotNull(elements);
@@ -1504,7 +1504,7 @@ public class MeshKMLParserTest {
 	//getType
 	@Test
 	public void shouldGetType(){
-		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		Assert.assertEquals(KmlNames.KML_PREFIX, meshParser.getType());
 	}
 	
@@ -1534,7 +1534,7 @@ public class MeshKMLParserTest {
 			.element(KmlNames.KML_ELEMENT_DOCUMENT)
 			.element(KmlNames.KML_ELEMENT_STYLE_MAP);
 		
-		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		Element normalizedElement = meshParser.normalize(element);
 		
 		Assert.assertNotNull(normalizedElement);
@@ -1569,7 +1569,7 @@ public class MeshKMLParserTest {
 			.element(KmlNames.KML_ELEMENT_DOCUMENT)
 			.element(KmlNames.KML_ELEMENT_STYLE);
 		
-		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		Element normalizedElement = meshParser.normalize(element);
 		
 		Assert.assertNotNull(normalizedElement);
@@ -1600,7 +1600,7 @@ public class MeshKMLParserTest {
 			.element(KmlNames.KML_ELEMENT_DOCUMENT)
 			.element(KmlNames.KML_ELEMENT_FOLDER);
 		
-		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		Element normalizedElement = meshParser.normalize(element);
 		
 		Assert.assertNotNull(normalizedElement);
@@ -1636,7 +1636,7 @@ public class MeshKMLParserTest {
 			.element(KmlNames.KML_ELEMENT_FOLDER)
 			.element(KmlNames.KML_ELEMENT_FOLDER);
 		
-		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		Element normalizedElement = meshParser.normalize(element);
 		
 		Assert.assertNotNull(normalizedElement);
@@ -1666,7 +1666,7 @@ public class MeshKMLParserTest {
 			.element(KmlNames.KML_ELEMENT_DOCUMENT)
 			.element(KmlNames.KML_ELEMENT_PLACEMARK);
 		
-		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		Element normalizedElement = meshParser.normalize(element);
 		
 		Assert.assertNotNull(normalizedElement);
@@ -1675,7 +1675,7 @@ public class MeshKMLParserTest {
 	
 	@Test
 	public void shouldNormalizeReturnNull(){
-		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		Assert.assertNull(meshParser.normalize(null));
 	}
 	
@@ -1683,7 +1683,7 @@ public class MeshKMLParserTest {
 	public void shouldNormalizeReturnsSameElementBecauseNoXMLViewIsDefinedForElement(){
 		Element element = DocumentHelper.createElement("FOO");
 		
-		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		Assert.assertSame(element, meshParser.normalize(element));
 	}
 
@@ -1708,7 +1708,7 @@ public class MeshKMLParserTest {
 		
 		String syncID = "3";
 			
-		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		
 		Assert.assertNotNull(rootElement.element("Placemark"));
 		Assert.assertNotNull(syncID, meshParser.getMeshSyncId(rootElement.element("Placemark")));
@@ -1720,7 +1720,7 @@ public class MeshKMLParserTest {
 	public void shouldRemoveElementNoEffectBecauseItemDoesNotExist(){
 		Element element = DocumentHelper.createElement("Document");
 		
-		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		MeshKMLParser meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		meshParser.removeElement(element, IdGenerator.newID());
 	}
 	
@@ -1728,7 +1728,6 @@ public class MeshKMLParserTest {
 	// verify refresh references
 	@Test
 	public void shouldRefreshReferences(){
-		Assert.assertNotNull(null);
 		// TODO (JMT) test: refresh references
 	}
 }

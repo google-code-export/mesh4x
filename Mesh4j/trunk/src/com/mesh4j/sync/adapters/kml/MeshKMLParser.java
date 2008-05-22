@@ -16,7 +16,7 @@ import com.mesh4j.sync.model.Sync;
 import com.mesh4j.sync.parsers.IXMLView;
 import com.mesh4j.sync.parsers.SyncInfoParser;
 import com.mesh4j.sync.parsers.XMLView;
-import com.mesh4j.sync.security.ISecurity;
+import com.mesh4j.sync.security.IIdentityProvider;
 import com.mesh4j.sync.utils.XMLHelper;
 import com.mesh4j.sync.validations.Guard;
 import com.mesh4j.sync.validations.MeshException;
@@ -37,11 +37,11 @@ public class MeshKMLParser {
 	
 	// BUSINESS METHODS
 
-	public MeshKMLParser(ISyndicationFormat syndicationFormat, ISecurity security) {
+	public MeshKMLParser(ISyndicationFormat syndicationFormat, IIdentityProvider identityProvider) {
 		Guard.argumentNotNull(syndicationFormat, "syndicationFormat");
-		Guard.argumentNotNull(security, "security");
+		Guard.argumentNotNull(identityProvider, "identityProvider");
 		
-		this.syncParser = new SyncInfoParser(syndicationFormat, security);
+		this.syncParser = new SyncInfoParser(syndicationFormat, identityProvider);
 
 		XMLView folderParser = new XMLView();
 		folderParser.addAttribute(KmlNames.MESH_QNAME_SYNC_ID);
@@ -116,9 +116,6 @@ public class MeshKMLParser {
 	
 	@SuppressWarnings("unchecked")
 	private Element getMeshElement(Element syncRepository, String syncID){
-		// TODO (JMT) use xPath
-//			Element syncElement = XMLHelper.selectSingleNode("//sx:sync[id='"+syncID+"']", syncRepository, SEARCH_NAMESPACES);
-//			return syncElement == null ? null : syncElement.getParent();
 		List<Element> elements = syncRepository.elements();
 		for (Element element : elements) {
 			if(KmlNames.MESH_QNAME_SYNC.equals(element.getQName())){
@@ -288,7 +285,6 @@ public class MeshKMLParser {
 			return result;
 		}
 		
-		// TODO (JMT) use xPath
 		List<Element> elements = syncRepository.elements();
 		for (Element element : elements) {
 			if(KmlNames.MESH_QNAME_SYNC.equals(element.getQName())){

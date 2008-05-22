@@ -1,4 +1,4 @@
-package com.mesh4j.sync.adapters.compound;
+package com.mesh4j.sync.adapters.split;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -6,36 +6,38 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.mesh4j.sync.AbstractRepositoryAdapter;
+import com.mesh4j.sync.AbstractSyncAdapter;
 import com.mesh4j.sync.IFilter;
+import com.mesh4j.sync.ISyncAware;
 import com.mesh4j.sync.adapters.SyncInfo;
 import com.mesh4j.sync.filter.SinceLastUpdateFilter;
 import com.mesh4j.sync.model.IContent;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.NullContent;
 import com.mesh4j.sync.model.Sync;
-import com.mesh4j.sync.security.ISecurity;
+import com.mesh4j.sync.security.IIdentityProvider;
 import com.mesh4j.sync.translator.MessageTranslator;
 import com.mesh4j.sync.validations.Guard;
 
-public class CompoundRepositoryAdapter extends AbstractRepositoryAdapter {
+public class SplitAdapter extends AbstractSyncAdapter implements ISyncAware{
 
 	// MODEL VARIABLES
 	private ISyncRepository syncRepository;
 	private IContentAdapter contentAdapter;
-	private ISecurity security;
+	private IIdentityProvider identityProvider;
 	
 	// BUSINESS METHODS
-	public CompoundRepositoryAdapter(ISyncRepository syncRepository,
-			IContentAdapter contentRepository, ISecurity security) {
+	
+	public SplitAdapter(ISyncRepository syncRepository,
+			IContentAdapter contentRepository, IIdentityProvider identityProvider) {
 		
 		Guard.argumentNotNull(contentRepository, "contentRepo");
 		Guard.argumentNotNull(syncRepository, "syncRepo");
-		Guard.argumentNotNull(security, "security");
+		Guard.argumentNotNull(identityProvider, "identityProvider");
 		
 		this.syncRepository = syncRepository;
 		this.contentAdapter = contentRepository;
-		this.security = security;
+		this.identityProvider = identityProvider;
 	}
 	
 	@Override
@@ -110,7 +112,7 @@ public class CompoundRepositoryAdapter extends AbstractRepositoryAdapter {
 		
 		IContent content = contentAdapter.get(syncInfo.getId());
 		
-		this.updateSync(content, syncInfo);
+		this.updateSyncIfChanged(content, syncInfo);
 		
 		if(syncInfo.isDeleted()){
 			NullContent nullContent = new NullContent(syncInfo.getSyncId());
@@ -120,7 +122,7 @@ public class CompoundRepositoryAdapter extends AbstractRepositoryAdapter {
 		}
 	}
 
-	private void updateSync(IContent content, SyncInfo syncInfo){
+	private void updateSyncIfChanged(IContent content, SyncInfo syncInfo){
 	
 		Sync sync = syncInfo.getSync();
 		if (content != null && sync == null)
@@ -177,7 +179,7 @@ public class CompoundRepositoryAdapter extends AbstractRepositoryAdapter {
 				
 			} else {
 				sync = syncInfo.getSync();
-				updateSync(content, syncInfo);
+				updateSyncIfChanged(content, syncInfo);
 				syncInfos.remove(syncInfo);
 			}
 			Item item = new Item(content, sync);
@@ -189,7 +191,7 @@ public class CompoundRepositoryAdapter extends AbstractRepositoryAdapter {
 		}
 
 		for (SyncInfo syncInfo : syncInfos) {
-			updateSync(null, syncInfo);
+			updateSyncIfChanged(null, syncInfo);
 			Item item = new Item(
 				new NullContent(syncInfo.getSync().getId()),
 				syncInfo.getSync());
@@ -216,22 +218,33 @@ public class CompoundRepositoryAdapter extends AbstractRepositoryAdapter {
 
 	@Override
 	public String getFriendlyName() {		
-		return MessageTranslator.translate(CompoundRepositoryAdapter.class.getName());
-	}
-
-	@Override
-	public boolean supportsMerge() {
-		return false;
-	}
-	
-	@Override
-	public List<Item> merge(List<Item> items) {
-		throw new UnsupportedOperationException();
+		return MessageTranslator.translate(SplitAdapter.class.getName());
 	}
 
 	@Override
 	public String getAuthenticatedUser() {
-		return this.security.getAuthenticatedUser();
+		return this.identityProvider.getAuthenticatedUser();
+	}
+	
+	@Override
+	public void beginSync(){
+		if(this.contentAdapter instanceof ISyncAware){
+			((ISyncAware)this.contentAdapter).beginSync();
+		}
+		
+		if(this.syncRepository instanceof ISyncAware){
+			((ISyncAware)this.syncRepository).beginSync();
+		}
 	}
 
+	@Override
+	public void endSync(){
+		if(this.contentAdapter instanceof ISyncAware){
+			((ISyncAware)this.contentAdapter).endSync();
+		}
+		
+		if(this.syncRepository instanceof ISyncAware){
+			((ISyncAware)this.syncRepository).endSync();
+		}		
+	}
 }

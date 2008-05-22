@@ -15,7 +15,7 @@ import com.mesh4j.sync.adapters.feed.Feed;
 import com.mesh4j.sync.adapters.feed.FeedReader;
 import com.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import com.mesh4j.sync.model.Item;
-import com.mesh4j.sync.security.NullSecurity;
+import com.mesh4j.sync.security.NullIdentityProvider;
 import com.mesh4j.sync.test.utils.TestHelper;
 import com.mesh4j.sync.utils.IdGenerator;
 
@@ -29,7 +29,7 @@ public class HttpSyncAdapterTests {
 	@Before
 	public void setUp() throws MalformedURLException{
 		String path = "http://localhost:7777/feeds/KML";
-		this.httpAdapter = new HttpSyncAdapter(path, RssSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		this.httpAdapter = new HttpSyncAdapter(path, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 	}
 		
 	@Test
@@ -66,7 +66,7 @@ public class HttpSyncAdapterTests {
 		  "</channel>"+
 		 "</rss>";
 		
-		FeedReader reader = new FeedReader(RssSyndicationFormat.INSTANCE, NullSecurity.INSTANCE);
+		FeedReader reader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		Feed feed = reader.read(DocumentHelper.parseText(xml));
 				
 		List<Item> result = this.httpAdapter.merge(feed.getItems());

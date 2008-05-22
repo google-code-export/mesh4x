@@ -32,23 +32,23 @@ import com.mesh4j.sync.model.History;
 import com.mesh4j.sync.model.IContent;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.Sync;
-import com.mesh4j.sync.security.ISecurity;
+import com.mesh4j.sync.security.IIdentityProvider;
 import com.mesh4j.sync.validations.Guard;
 
 public class FeedWriter {
 
 	// MODEL VARIABLES
 	ISyndicationFormat syndicationFormat;
-	ISecurity security;
+	IIdentityProvider identityProvider;
 	
 	// BUSINESS METHODS
 
-	public FeedWriter(ISyndicationFormat syndicationFormat, ISecurity security){
+	public FeedWriter(ISyndicationFormat syndicationFormat, IIdentityProvider identityProvider){
 		Guard.argumentNotNull(syndicationFormat, "syndicationFormat");
-		Guard.argumentNotNull(security, "security");
+		Guard.argumentNotNull(identityProvider, "identityProvider");
 		
 		this.syndicationFormat = syndicationFormat;
-		this.security = security;
+		this.identityProvider = identityProvider;
 	}
 	
 	public void write(XMLWriter writer, Feed feed) throws IOException, DocumentException{
@@ -162,7 +162,7 @@ public class FeedWriter {
 	}
 	
 	private String getAuthenticatedUser() {
-		return this.security.getAuthenticatedUser();
+		return this.identityProvider.getAuthenticatedUser();
 	}
 	
 }

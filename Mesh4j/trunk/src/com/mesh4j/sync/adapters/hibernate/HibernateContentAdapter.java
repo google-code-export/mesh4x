@@ -14,7 +14,7 @@ import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.metadata.ClassMetadata;
 
-import com.mesh4j.sync.adapters.compound.IContentAdapter;
+import com.mesh4j.sync.adapters.split.IContentAdapter;
 import com.mesh4j.sync.model.IContent;
 
 public class HibernateContentAdapter implements IContentAdapter {

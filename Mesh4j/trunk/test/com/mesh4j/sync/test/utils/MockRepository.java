@@ -5,15 +5,15 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 
-import com.mesh4j.sync.AbstractRepositoryAdapter;
+import com.mesh4j.sync.AbstractSyncAdapter;
 import com.mesh4j.sync.IFilter;
 import com.mesh4j.sync.filter.SinceLastUpdateFilter;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.NullContent;
-import com.mesh4j.sync.security.NullSecurity;
+import com.mesh4j.sync.security.NullIdentityProvider;
 import com.mesh4j.sync.validations.Guard;
 
-public class MockRepository extends AbstractRepositoryAdapter {
+public class MockRepository extends AbstractSyncAdapter {
 
 	// MODEL VARIABLES
 	private String name;
@@ -44,11 +44,6 @@ public class MockRepository extends AbstractRepositoryAdapter {
 	public String getFriendlyName()
 	{
 		return name;
-	}
-
-	public boolean supportsMerge()
-	{
-		return false;
 	}
 
 	public void add(Item item)
@@ -106,17 +101,12 @@ public class MockRepository extends AbstractRepositoryAdapter {
 		items.put(item.getSyncId(), i);
 	}
 
-	public List<Item> merge(List<Item> items)
-	{
-		throw new UnsupportedOperationException();
-	}
-
 	public Hashtable<String, Item> getItems() {
 		return items;
 	}
 
 	@Override
 	public String getAuthenticatedUser() {
-		return NullSecurity.INSTANCE.getAuthenticatedUser();
+		return NullIdentityProvider.INSTANCE.getAuthenticatedUser();
 	}
 }

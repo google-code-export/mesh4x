@@ -28,6 +28,7 @@ public class XMLHelper {
 	public static void write(Document document, File file) {
 		XMLWriter writer = null;
 		try {
+			document.normalize();
 			writer = new XMLWriter(new FileWriter(file));
 			writer.write(document);
 		} catch (IOException e) {

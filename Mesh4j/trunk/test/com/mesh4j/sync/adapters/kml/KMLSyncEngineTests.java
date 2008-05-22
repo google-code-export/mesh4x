@@ -13,12 +13,12 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.mesh4j.sync.SyncEngine;
-import com.mesh4j.sync.adapters.compound.CompoundRepositoryAdapter;
 import com.mesh4j.sync.adapters.file.FileSyncRepository;
+import com.mesh4j.sync.adapters.split.SplitAdapter;
 import com.mesh4j.sync.model.IContent;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.NullContent;
-import com.mesh4j.sync.security.NullSecurity;
+import com.mesh4j.sync.security.NullIdentityProvider;
 import com.mesh4j.sync.test.utils.TestHelper;
 import com.mesh4j.sync.utils.IdGenerator;
 import com.mesh4j.sync.utils.XMLHelper;
@@ -57,8 +57,8 @@ public class KMLSyncEngineTests {
 		File file1 = TestHelper.makeNewXMLFile(xml1);
 		File fileSync1 = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
 		KMLContentAdapter kmlAdapter1 = new KMLContentAdapter(file1);
-		FileSyncRepository syncRepo1 = new FileSyncRepository(fileSync1, NullSecurity.INSTANCE);
-		CompoundRepositoryAdapter repo1 = new CompoundRepositoryAdapter(syncRepo1, kmlAdapter1, NullSecurity.INSTANCE);
+		FileSyncRepository syncRepo1 = new FileSyncRepository(fileSync1, NullIdentityProvider.INSTANCE);
+		SplitAdapter repo1 = new SplitAdapter(syncRepo1, kmlAdapter1, NullIdentityProvider.INSTANCE);
 		
 		List<IContent> contents = kmlAdapter1.getAll();
 		Assert.assertNotNull(contents);
@@ -69,8 +69,8 @@ public class KMLSyncEngineTests {
 		File file2 = TestHelper.makeNewXMLFile(xml2);		
 		KMLContentAdapter kmlAdapter2 = new KMLContentAdapter(file2);
 		File fileSync2 = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
-		FileSyncRepository syncRepo2 = new FileSyncRepository(fileSync2, NullSecurity.INSTANCE);
-		CompoundRepositoryAdapter repo2 = new CompoundRepositoryAdapter(syncRepo2, kmlAdapter2, NullSecurity.INSTANCE);
+		FileSyncRepository syncRepo2 = new FileSyncRepository(fileSync2, NullIdentityProvider.INSTANCE);
+		SplitAdapter repo2 = new SplitAdapter(syncRepo2, kmlAdapter2, NullIdentityProvider.INSTANCE);
 
 		contents = kmlAdapter2.getAll();
 		Assert.assertNotNull(contents);
@@ -129,8 +129,8 @@ public class KMLSyncEngineTests {
 		File file1 = TestHelper.makeNewXMLFile(xml1);
 		File fileSync1 = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
 		KMLContentAdapter kmlAdapter1 = new KMLContentAdapter(file1);
-		FileSyncRepository syncRepo1 = new FileSyncRepository(fileSync1, NullSecurity.INSTANCE);
-		CompoundRepositoryAdapter repo1 = new CompoundRepositoryAdapter(syncRepo1, kmlAdapter1, NullSecurity.INSTANCE);
+		FileSyncRepository syncRepo1 = new FileSyncRepository(fileSync1, NullIdentityProvider.INSTANCE);
+		SplitAdapter repo1 = new SplitAdapter(syncRepo1, kmlAdapter1, NullIdentityProvider.INSTANCE);
 		
 		List<IContent> contents = kmlAdapter1.getAll();
 		Assert.assertNotNull(contents);
@@ -141,8 +141,8 @@ public class KMLSyncEngineTests {
 		File file2 = TestHelper.makeNewXMLFile(xml2);		
 		KMLContentAdapter kmlAdapter2 = new KMLContentAdapter(file2);
 		File fileSync2 = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
-		FileSyncRepository syncRepo2 = new FileSyncRepository(fileSync2, NullSecurity.INSTANCE);
-		CompoundRepositoryAdapter repo2 = new CompoundRepositoryAdapter(syncRepo2, kmlAdapter2, NullSecurity.INSTANCE);
+		FileSyncRepository syncRepo2 = new FileSyncRepository(fileSync2, NullIdentityProvider.INSTANCE);
+		SplitAdapter repo2 = new SplitAdapter(syncRepo2, kmlAdapter2, NullIdentityProvider.INSTANCE);
 
 		contents = kmlAdapter2.getAll();
 		Assert.assertNotNull(contents);
@@ -195,8 +195,8 @@ public class KMLSyncEngineTests {
 		File file1 = TestHelper.makeNewXMLFile(xml1);
 		File fileSync1 = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
 		KMLContentAdapter kmlAdapter1 = new KMLContentAdapter(file1);
-		FileSyncRepository syncRepo1 = new FileSyncRepository(fileSync1, NullSecurity.INSTANCE);
-		CompoundRepositoryAdapter repo1 = new CompoundRepositoryAdapter(syncRepo1, kmlAdapter1, NullSecurity.INSTANCE);
+		FileSyncRepository syncRepo1 = new FileSyncRepository(fileSync1, NullIdentityProvider.INSTANCE);
+		SplitAdapter repo1 = new SplitAdapter(syncRepo1, kmlAdapter1, NullIdentityProvider.INSTANCE);
 		
 		List<IContent> contents = kmlAdapter1.getAll();
 		Assert.assertNotNull(contents);
@@ -207,8 +207,8 @@ public class KMLSyncEngineTests {
 		File file2 = TestHelper.makeNewXMLFile(xml2);		
 		KMLContentAdapter kmlAdapter2 = new KMLContentAdapter(file2);
 		File fileSync2 = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
-		FileSyncRepository syncRepo2 = new FileSyncRepository(fileSync2, NullSecurity.INSTANCE);
-		CompoundRepositoryAdapter repo2 = new CompoundRepositoryAdapter(syncRepo2, kmlAdapter2, NullSecurity.INSTANCE);
+		FileSyncRepository syncRepo2 = new FileSyncRepository(fileSync2, NullIdentityProvider.INSTANCE);
+		SplitAdapter repo2 = new SplitAdapter(syncRepo2, kmlAdapter2, NullIdentityProvider.INSTANCE);
 
 		contents = kmlAdapter2.getAll();
 		Assert.assertNotNull(contents);
@@ -274,8 +274,8 @@ public class KMLSyncEngineTests {
 		File file1 = TestHelper.makeNewXMLFile(xml1);
 		File fileSync1 = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
 		KMLContentAdapter kmlAdapter1 = new KMLContentAdapter(file1);
-		FileSyncRepository syncRepo1 = new FileSyncRepository(fileSync1, NullSecurity.INSTANCE);
-		CompoundRepositoryAdapter repo1 = new CompoundRepositoryAdapter(syncRepo1, kmlAdapter1, NullSecurity.INSTANCE);
+		FileSyncRepository syncRepo1 = new FileSyncRepository(fileSync1, NullIdentityProvider.INSTANCE);
+		SplitAdapter repo1 = new SplitAdapter(syncRepo1, kmlAdapter1, NullIdentityProvider.INSTANCE);
 		
 		List<IContent> contents = kmlAdapter1.getAll();
 		Assert.assertNotNull(contents);
@@ -286,8 +286,8 @@ public class KMLSyncEngineTests {
 		File file2 = TestHelper.makeNewXMLFile(xml2);		
 		KMLContentAdapter kmlAdapter2 = new KMLContentAdapter(file2);
 		File fileSync2 = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
-		FileSyncRepository syncRepo2 = new FileSyncRepository(fileSync2, NullSecurity.INSTANCE);
-		CompoundRepositoryAdapter repo2 = new CompoundRepositoryAdapter(syncRepo2, kmlAdapter2, NullSecurity.INSTANCE);
+		FileSyncRepository syncRepo2 = new FileSyncRepository(fileSync2, NullIdentityProvider.INSTANCE);
+		SplitAdapter repo2 = new SplitAdapter(syncRepo2, kmlAdapter2, NullIdentityProvider.INSTANCE);
 
 		contents = kmlAdapter2.getAll();
 		Assert.assertNotNull(contents);
@@ -346,8 +346,8 @@ public class KMLSyncEngineTests {
 		File file1 = TestHelper.makeNewXMLFile(xml1);
 		File fileSync1 = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
 		KMLContentAdapter kmlAdapter1 = new KMLContentAdapter(file1);
-		FileSyncRepository syncRepo1 = new FileSyncRepository(fileSync1, NullSecurity.INSTANCE);
-		CompoundRepositoryAdapter repo1 = new CompoundRepositoryAdapter(syncRepo1, kmlAdapter1, NullSecurity.INSTANCE);
+		FileSyncRepository syncRepo1 = new FileSyncRepository(fileSync1, NullIdentityProvider.INSTANCE);
+		SplitAdapter repo1 = new SplitAdapter(syncRepo1, kmlAdapter1, NullIdentityProvider.INSTANCE);
 		
 		List<IContent> contents = kmlAdapter1.getAll();
 		Assert.assertNotNull(contents);
@@ -358,8 +358,8 @@ public class KMLSyncEngineTests {
 		File file2 = TestHelper.makeNewXMLFile(xml1);		
 		KMLContentAdapter kmlAdapter2 = new KMLContentAdapter(file2);
 		File fileSync2 = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
-		FileSyncRepository syncRepo2 = new FileSyncRepository(fileSync2, NullSecurity.INSTANCE);
-		CompoundRepositoryAdapter repo2 = new CompoundRepositoryAdapter(syncRepo2, kmlAdapter2, NullSecurity.INSTANCE);
+		FileSyncRepository syncRepo2 = new FileSyncRepository(fileSync2, NullIdentityProvider.INSTANCE);
+		SplitAdapter repo2 = new SplitAdapter(syncRepo2, kmlAdapter2, NullIdentityProvider.INSTANCE);
 
 		contents = kmlAdapter2.getAll();
 		Assert.assertNotNull(contents);
@@ -438,8 +438,8 @@ public class KMLSyncEngineTests {
 		File file1 = TestHelper.makeNewXMLFile(xml1);
 		File fileSync1 = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
 		KMLContentAdapter kmlAdapter1 = new KMLContentAdapter(file1);
-		FileSyncRepository syncRepo1 = new FileSyncRepository(fileSync1, NullSecurity.INSTANCE);
-		CompoundRepositoryAdapter repo1 = new CompoundRepositoryAdapter(syncRepo1, kmlAdapter1, NullSecurity.INSTANCE);
+		FileSyncRepository syncRepo1 = new FileSyncRepository(fileSync1, NullIdentityProvider.INSTANCE);
+		SplitAdapter repo1 = new SplitAdapter(syncRepo1, kmlAdapter1, NullIdentityProvider.INSTANCE);
 		
 		List<IContent> contents = kmlAdapter1.getAll();
 		Assert.assertNotNull(contents);
@@ -450,8 +450,8 @@ public class KMLSyncEngineTests {
 		File file2 = TestHelper.makeNewXMLFile(xml1);		
 		KMLContentAdapter kmlAdapter2 = new KMLContentAdapter(file2);
 		File fileSync2 = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
-		FileSyncRepository syncRepo2 = new FileSyncRepository(fileSync2, NullSecurity.INSTANCE);
-		CompoundRepositoryAdapter repo2 = new CompoundRepositoryAdapter(syncRepo2, kmlAdapter2, NullSecurity.INSTANCE);
+		FileSyncRepository syncRepo2 = new FileSyncRepository(fileSync2, NullIdentityProvider.INSTANCE);
+		SplitAdapter repo2 = new SplitAdapter(syncRepo2, kmlAdapter2, NullIdentityProvider.INSTANCE);
 
 		contents = kmlAdapter2.getAll();
 		Assert.assertNotNull(contents);
@@ -539,8 +539,8 @@ public class KMLSyncEngineTests {
 		File file1 = TestHelper.makeNewXMLFile(xml1);
 		File fileSync1 = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
 		KMLContentAdapter kmlAdapter1 = new KMLContentAdapter(file1);
-		FileSyncRepository syncRepo1 = new FileSyncRepository(fileSync1, NullSecurity.INSTANCE);
-		CompoundRepositoryAdapter repo1 = new CompoundRepositoryAdapter(syncRepo1, kmlAdapter1, NullSecurity.INSTANCE);
+		FileSyncRepository syncRepo1 = new FileSyncRepository(fileSync1, NullIdentityProvider.INSTANCE);
+		SplitAdapter repo1 = new SplitAdapter(syncRepo1, kmlAdapter1, NullIdentityProvider.INSTANCE);
 		
 		List<IContent> contents = kmlAdapter1.getAll();
 		Assert.assertNotNull(contents);
@@ -551,8 +551,8 @@ public class KMLSyncEngineTests {
 		File file2 = TestHelper.makeNewXMLFile(xml1);		
 		KMLContentAdapter kmlAdapter2 = new KMLContentAdapter(file2);
 		File fileSync2 = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
-		FileSyncRepository syncRepo2 = new FileSyncRepository(fileSync2, NullSecurity.INSTANCE);
-		CompoundRepositoryAdapter repo2 = new CompoundRepositoryAdapter(syncRepo2, kmlAdapter2, NullSecurity.INSTANCE);
+		FileSyncRepository syncRepo2 = new FileSyncRepository(fileSync2, NullIdentityProvider.INSTANCE);
+		SplitAdapter repo2 = new SplitAdapter(syncRepo2, kmlAdapter2, NullIdentityProvider.INSTANCE);
 
 		contents = kmlAdapter2.getAll();
 		Assert.assertNotNull(contents);
@@ -644,8 +644,8 @@ public class KMLSyncEngineTests {
 		File file1 = TestHelper.makeNewXMLFile(xml1);
 		File fileSync1 = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
 		KMLContentAdapter kmlAdapter1 = new KMLContentAdapter(file1);
-		FileSyncRepository syncRepo1 = new FileSyncRepository(fileSync1, NullSecurity.INSTANCE);
-		CompoundRepositoryAdapter repo1 = new CompoundRepositoryAdapter(syncRepo1, kmlAdapter1, NullSecurity.INSTANCE);
+		FileSyncRepository syncRepo1 = new FileSyncRepository(fileSync1, NullIdentityProvider.INSTANCE);
+		SplitAdapter repo1 = new SplitAdapter(syncRepo1, kmlAdapter1, NullIdentityProvider.INSTANCE);
 		
 		List<IContent> contents = kmlAdapter1.getAll();
 		Assert.assertNotNull(contents);
@@ -656,8 +656,8 @@ public class KMLSyncEngineTests {
 		File file2 = TestHelper.makeNewXMLFile(xml1);		
 		KMLContentAdapter kmlAdapter2 = new KMLContentAdapter(file2);
 		File fileSync2 = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
-		FileSyncRepository syncRepo2 = new FileSyncRepository(fileSync2, NullSecurity.INSTANCE);
-		CompoundRepositoryAdapter repo2 = new CompoundRepositoryAdapter(syncRepo2, kmlAdapter2, NullSecurity.INSTANCE);
+		FileSyncRepository syncRepo2 = new FileSyncRepository(fileSync2, NullIdentityProvider.INSTANCE);
+		SplitAdapter repo2 = new SplitAdapter(syncRepo2, kmlAdapter2, NullIdentityProvider.INSTANCE);
 
 		contents = kmlAdapter2.getAll();
 		Assert.assertNotNull(contents);
@@ -754,8 +754,8 @@ public class KMLSyncEngineTests {
 		File file1 = TestHelper.makeNewXMLFile(xml1);
 		File fileSync1 = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
 		KMLContentAdapter kmlAdapter1 = new KMLContentAdapter(file1);
-		FileSyncRepository syncRepo1 = new FileSyncRepository(fileSync1, NullSecurity.INSTANCE);
-		CompoundRepositoryAdapter repo1 = new CompoundRepositoryAdapter(syncRepo1, kmlAdapter1, NullSecurity.INSTANCE);
+		FileSyncRepository syncRepo1 = new FileSyncRepository(fileSync1, NullIdentityProvider.INSTANCE);
+		SplitAdapter repo1 = new SplitAdapter(syncRepo1, kmlAdapter1, NullIdentityProvider.INSTANCE);
 		
 		List<IContent> contents = kmlAdapter1.getAll();
 		Assert.assertNotNull(contents);
@@ -769,8 +769,8 @@ public class KMLSyncEngineTests {
 		File file2 = TestHelper.makeNewXMLFile(xml1);		
 		KMLContentAdapter kmlAdapter2 = new KMLContentAdapter(file2);
 		File fileSync2 = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
-		FileSyncRepository syncRepo2 = new FileSyncRepository(fileSync2, NullSecurity.INSTANCE);
-		CompoundRepositoryAdapter repo2 = new CompoundRepositoryAdapter(syncRepo2, kmlAdapter2, NullSecurity.INSTANCE);
+		FileSyncRepository syncRepo2 = new FileSyncRepository(fileSync2, NullIdentityProvider.INSTANCE);
+		SplitAdapter repo2 = new SplitAdapter(syncRepo2, kmlAdapter2, NullIdentityProvider.INSTANCE);
 
 		contents = kmlAdapter2.getAll();
 		Assert.assertNotNull(contents);
@@ -943,8 +943,8 @@ public class KMLSyncEngineTests {
 		
 		File fileSync1 = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
 		KMLContentAdapter kmlAdapter1 = new KMLContentAdapter(file1);
-		FileSyncRepository syncRepo1 = new FileSyncRepository(fileSync1, NullSecurity.INSTANCE);
-		CompoundRepositoryAdapter repo1 = new CompoundRepositoryAdapter(syncRepo1, kmlAdapter1, NullSecurity.INSTANCE);
+		FileSyncRepository syncRepo1 = new FileSyncRepository(fileSync1, NullIdentityProvider.INSTANCE);
+		SplitAdapter repo1 = new SplitAdapter(syncRepo1, kmlAdapter1, NullIdentityProvider.INSTANCE);
 		
 		List<IContent> contents = kmlAdapter1.getAll();
 		Assert.assertNotNull(contents);
@@ -985,8 +985,8 @@ public class KMLSyncEngineTests {
 		
 		KMLContentAdapter kmlAdapter2 = new KMLContentAdapter(file2);
 		File fileSync2 = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
-		FileSyncRepository syncRepo2 = new FileSyncRepository(fileSync2, NullSecurity.INSTANCE);
-		CompoundRepositoryAdapter repo2 = new CompoundRepositoryAdapter(syncRepo2, kmlAdapter2, NullSecurity.INSTANCE);
+		FileSyncRepository syncRepo2 = new FileSyncRepository(fileSync2, NullIdentityProvider.INSTANCE);
+		SplitAdapter repo2 = new SplitAdapter(syncRepo2, kmlAdapter2, NullIdentityProvider.INSTANCE);
 
 		contents = kmlAdapter2.getAll();
 		Assert.assertNotNull(contents);
@@ -1118,8 +1118,8 @@ public class KMLSyncEngineTests {
 		
 		File fileSync1 = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
 		KMLContentAdapter kmlAdapter1 = new KMLContentAdapter(file1);
-		FileSyncRepository syncRepo1 = new FileSyncRepository(fileSync1, NullSecurity.INSTANCE);
-		CompoundRepositoryAdapter repo1 = new CompoundRepositoryAdapter(syncRepo1, kmlAdapter1, NullSecurity.INSTANCE);
+		FileSyncRepository syncRepo1 = new FileSyncRepository(fileSync1, NullIdentityProvider.INSTANCE);
+		SplitAdapter repo1 = new SplitAdapter(syncRepo1, kmlAdapter1, NullIdentityProvider.INSTANCE);
 		
 		List<IContent> contents = kmlAdapter1.getAll();
 		Assert.assertNotNull(contents);
@@ -1146,8 +1146,8 @@ public class KMLSyncEngineTests {
 		
 		KMLContentAdapter kmlAdapter2 = new KMLContentAdapter(file2);
 		File fileSync2 = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
-		FileSyncRepository syncRepo2 = new FileSyncRepository(fileSync2, NullSecurity.INSTANCE);
-		CompoundRepositoryAdapter repo2 = new CompoundRepositoryAdapter(syncRepo2, kmlAdapter2, NullSecurity.INSTANCE);
+		FileSyncRepository syncRepo2 = new FileSyncRepository(fileSync2, NullIdentityProvider.INSTANCE);
+		SplitAdapter repo2 = new SplitAdapter(syncRepo2, kmlAdapter2, NullIdentityProvider.INSTANCE);
 
 		// Sync
 		SyncEngine syncEngine = new SyncEngine(repo1, repo2);
@@ -1160,7 +1160,7 @@ public class KMLSyncEngineTests {
 		XMLHelper.write(xml2, file2);
 		
 		kmlAdapter2 = new KMLContentAdapter(file2);
-		repo2 = new CompoundRepositoryAdapter(syncRepo2, kmlAdapter2, NullSecurity.INSTANCE);
+		repo2 = new SplitAdapter(syncRepo2, kmlAdapter2, NullIdentityProvider.INSTANCE);
 		
 		contents = kmlAdapter2.getAll();
 		Assert.assertNotNull(contents);

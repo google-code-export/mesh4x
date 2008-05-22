@@ -10,14 +10,8 @@ import com.mesh4j.sync.model.Item;
  * 
  * @author jtondato
  */
-public interface IRepositoryAdapter {
+public interface ISyncAdapter {
 	
-	/// <summary>
-	/// Whether the repository performs its own merge behavior, or 
-	/// it must be provided by the <see cref="SyncEngine"/>.
-	/// </summary>
-	boolean supportsMerge();
-
 	/// <summary>
 	/// Tries to retrieve an item with the given <paramref name="id"/>.
 	/// </summary>
@@ -93,15 +87,6 @@ public interface IRepositoryAdapter {
 	/// See 3.4 on SSE spec.
 	/// </remarks>
 	void update(Item item, boolean resolveConflicts);
-
-	/// <summary>
-	/// Merges the list of items in the repository, and returns any conflicting 
-	/// items that were saved.
-	/// </summary>
-	/// <param name="items">The items to merge.</param>
-	/// <returns>List of conflicts resulting from the merge. Items with conflicts are 
-	/// persisted to the repository, and the winner determines the item payload.</returns>
-	List<Item> merge(List<Item> items);
 
 	/// <summary>
 	/// Friendly name of the repository, useful for showing 

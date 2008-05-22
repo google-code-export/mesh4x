@@ -1,6 +1,5 @@
 package com.mesh4j.sync.adapters.hibernate;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -10,11 +9,12 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.mesh4j.sync.ISupportMerge;
 import com.mesh4j.sync.filter.NullFilter;
 import com.mesh4j.sync.model.IContent;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.Sync;
-import com.mesh4j.sync.security.NullSecurity;
+import com.mesh4j.sync.security.NullIdentityProvider;
 import com.mesh4j.sync.test.utils.TestHelper;
 
 
@@ -25,7 +25,7 @@ public class HibernateAdapterTests {
 	@Before
 	public void setUp(){
 		if(repo == null ){
-			repo = new HibernateAdapter(HibernateAdapterTests.class.getResource("User.hbm.xml").getFile(), NullSecurity.INSTANCE);
+			repo = new HibernateAdapter(HibernateAdapterTests.class.getResource("User.hbm.xml").getFile(), NullIdentityProvider.INSTANCE);
 		}
 		
 	}
@@ -115,17 +115,9 @@ System.out.println(itemLoaded.getContent().getPayload().asXML());
 	
 	@Test
 	public void shouldNotSupportMerge(){
-		Assert.assertFalse(repo.supportsMerge());		
+		Assert.assertFalse(repo instanceof ISupportMerge);		
 	}
 	
-	@Test(expected=UnsupportedOperationException.class)
-	public void shouldNotMerge(){
-		List<Item> itemsSource = new ArrayList<Item>();
-		Item item = new Item(null, new Sync("132"));
-		itemsSource.add(item);
-		repo.merge(itemsSource);	
-	}
-
 	@Test
 	public void shouldGetAll() throws DocumentException{
 		Date sinceDate = TestHelper.nowSubtractDays(1);

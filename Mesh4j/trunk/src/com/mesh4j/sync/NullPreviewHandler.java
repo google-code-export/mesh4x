@@ -9,7 +9,7 @@ public class NullPreviewHandler implements IPreviewImportHandler {
 	public static final NullPreviewHandler INSTANCE = new NullPreviewHandler();
 
 	@Override
-	public List<MergeResult> preview(IRepositoryAdapter targetRepository,
+	public List<MergeResult> preview(ISyncAdapter targetRepository,
 			List<MergeResult> mergedItems) {
 		return mergedItems;
 	}

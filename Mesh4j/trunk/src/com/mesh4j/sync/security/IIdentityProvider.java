@@ -1,6 +1,6 @@
 package com.mesh4j.sync.security;
 
-public interface ISecurity {
+public interface IIdentityProvider {
 
 	String getAuthenticatedUser();
 

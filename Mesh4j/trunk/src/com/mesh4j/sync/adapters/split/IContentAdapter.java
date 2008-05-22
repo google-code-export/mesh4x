@@ -1,4 +1,4 @@
-package com.mesh4j.sync.adapters.compound;
+package com.mesh4j.sync.adapters.split;
 
 import java.util.Date;
 import java.util.List;

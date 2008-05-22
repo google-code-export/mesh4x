@@ -18,56 +18,56 @@ import com.mesh4j.sync.test.utils.TestHelper;
 
 public class RepositoryTests {
 
-	protected IRepositoryAdapter createRepository() {
+	protected ISyncAdapter createRepository() {
 		return new MockRepository();
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldThrowGetNullId() {
-		IRepositoryAdapter repository = createRepository();
+		ISyncAdapter repository = createRepository();
 		repository.get(null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldThrowGetEmptyId() {
-		IRepositoryAdapter repository = createRepository();
+		ISyncAdapter repository = createRepository();
 		repository.get("");
 	}
 
 	@Test
 	public void ShouldGetNullIfNotExists() {
-		IRepositoryAdapter repository = createRepository();
+		ISyncAdapter repository = createRepository();
 		Item item = repository.get(TestHelper.newID());
 		Assert.assertNull(item);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldThrowAddNullItem() {
-		IRepositoryAdapter repository = createRepository();
+		ISyncAdapter repository = createRepository();
 		repository.add(null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldThrowDeleteNullId() {
-		IRepositoryAdapter repository = createRepository();
+		ISyncAdapter repository = createRepository();
 		repository.delete(null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldThrowDeleteEmptyId() {
-		IRepositoryAdapter repository = createRepository();
+		ISyncAdapter repository = createRepository();
 		repository.delete("");
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldThrowUpdateNullItem() {
-		IRepositoryAdapter repository = createRepository();
+		ISyncAdapter repository = createRepository();
 		repository.update(null);
 	}
 
 	@Test
 	public void ShouldAddAndGetItem() {
-		IRepositoryAdapter repository = createRepository();
+		ISyncAdapter repository = createRepository();
 		XMLContent xml = new XMLContent(TestHelper.newID(), "foo", "bar", TestHelper.makeElement("<payload></payload>"));
 		Sync sync = new Sync(xml.getId(), "kzu", TestHelper.now(), false);
 		Item item = new Item(xml, sync);
@@ -89,7 +89,7 @@ public class RepositoryTests {
 
 	@Test
 	public void ShouldGetAllItems() {
-		IRepositoryAdapter repository = createRepository();
+		ISyncAdapter repository = createRepository();
 
 		String by = "DeviceAuthor.Current";
 		String id = TestHelper.newID();
@@ -109,7 +109,7 @@ public class RepositoryTests {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldThrowAddDuplicateItemId() {
-		IRepositoryAdapter repo = createRepository();
+		ISyncAdapter repo = createRepository();
 
 		String by = "DeviceAuthor.Current";
 		String id = TestHelper.newID();
@@ -126,7 +126,7 @@ public class RepositoryTests {
 
 	@Test
 	public void ShouldGetAllSinceDate() {
-		IRepositoryAdapter repo = createRepository();
+		ISyncAdapter repo = createRepository();
 		String by = "DeviceAuthor.Current";
 
 		String id = TestHelper.newID();
@@ -148,7 +148,7 @@ public class RepositoryTests {
 
 	@Test
 	public void ShouldGetAllIfNullSince() {
-		IRepositoryAdapter repo = createRepository();
+		ISyncAdapter repo = createRepository();
 		String by = "DeviceAuthor.Current";
 
 		String id = TestHelper.newID();
@@ -169,7 +169,7 @@ public class RepositoryTests {
 
 	@Test
 	public void ShouldGetAllIfNullWhen() {
-		IRepositoryAdapter repo = createRepository();
+		ISyncAdapter repo = createRepository();
 		String by = "byUser";
 
 		String id = TestHelper.newID();
@@ -190,19 +190,19 @@ public class RepositoryTests {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldThrowGetAllNullFilter() {
-		IRepositoryAdapter repository = createRepository();
+		ISyncAdapter repository = createRepository();
 		repository.getAll(null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldThrowGetAllSinceWithNullFilter() {
-		IRepositoryAdapter repository = createRepository();
+		ISyncAdapter repository = createRepository();
 		repository.getAllSince(TestHelper.now(), null);
 	}
 
 	@Test
 	public void ShouldGetAllPassFilter() {
-		IRepositoryAdapter repo = createRepository();
+		ISyncAdapter repo = createRepository();
 		String by = "jmt";
 
 		String id = TestHelper.newID();
@@ -234,7 +234,7 @@ public class RepositoryTests {
 				.makeElement("<payload />"));
 		Sync sync = new Sync(item.getId(), "kzu", created, false);
 
-		IRepositoryAdapter repo = createRepository();
+		ISyncAdapter repo = createRepository();
 		repo.add(new Item(item, sync));
 
 		List<Item> items = repo.getAllSince(since);
@@ -284,7 +284,7 @@ public class RepositoryTests {
 
 	@Test
 	public void ShouldSaveUpdatedItemOnResolveConflicts() {
-		IRepositoryAdapter repo = createRepository();
+		ISyncAdapter repo = createRepository();
 		String id = TestHelper.newID();
 		String by = "jmt";
 
@@ -310,7 +310,7 @@ public class RepositoryTests {
 
 	@Test
 	public void ShouldSaveUpdatedItemOnResolveConflicts2() {
-		IRepositoryAdapter repo = createRepository();
+		ISyncAdapter repo = createRepository();
 		String id = TestHelper.newID();
 		String by = "jmt";
 
@@ -339,7 +339,7 @@ public class RepositoryTests {
 
 	@Test
 	public void ShouldResolveConflictsPreserveDeletedState() {
-		IRepositoryAdapter repo = createRepository();
+		ISyncAdapter repo = createRepository();
 		String id = TestHelper.newID();
 		String by = "jmt";
 
@@ -373,14 +373,9 @@ public class RepositoryTests {
 						saved.getSync().isDeleted());
 	}
 
-	private class SimpleRepository extends AbstractRepositoryAdapter {
+	private class SimpleRepository extends AbstractSyncAdapter {
 		private Date since;
 		private IFilter<Item> filter;
-
-		public boolean supportsMerge() {
-			throw new UnsupportedOperationException(
-					"The method or operation is not implemented.");
-		}
 
 		public IFilter<Item> getFilter() {
 			return filter;
@@ -413,11 +408,6 @@ public class RepositoryTests {
 		}
 
 		public void update(Item item) {
-			throw new UnsupportedOperationException(
-					"The method or operation is not implemented.");
-		}
-
-		public List<Item> merge(List<Item> items) {
 			throw new UnsupportedOperationException(
 					"The method or operation is not implemented.");
 		}

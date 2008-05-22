@@ -31,7 +31,7 @@ import org.xml.sax.InputSource;
 
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.Sync;
-import com.mesh4j.sync.security.ISecurity;
+import com.mesh4j.sync.security.IIdentityProvider;
 import com.mesh4j.sync.utils.IdGenerator;
 import com.mesh4j.sync.validations.Guard;
 
@@ -39,16 +39,16 @@ public class FeedReader {
 	
 	// MODEL VARIABLES
 	ISyndicationFormat syndicationFormat;
-	ISecurity security;
+	IIdentityProvider identityProvider;
 	
 	// BUSINESS METHODS
 
-	public FeedReader(ISyndicationFormat syndicationFormat, ISecurity security){
+	public FeedReader(ISyndicationFormat syndicationFormat, IIdentityProvider identityProvider){
 		Guard.argumentNotNull(syndicationFormat, "syndicationFormat");
-		Guard.argumentNotNull(security, "security");
+		Guard.argumentNotNull(identityProvider, "identityProvider");
 		
 		this.syndicationFormat = syndicationFormat;
-		this.security = security;
+		this.identityProvider = identityProvider;
 	}
 	
 	public Feed read(URL url) throws DocumentException{
@@ -182,7 +182,7 @@ public class FeedReader {
 	}
 	
 	private String getAuthenticatedUser() {
-		return this.security.getAuthenticatedUser();
+		return this.identityProvider.getAuthenticatedUser();
 	}
 
 	protected String makeNewSyncID() {

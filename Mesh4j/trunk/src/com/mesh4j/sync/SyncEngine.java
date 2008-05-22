@@ -22,11 +22,11 @@ public class SyncEngine {
 	private ObservableItem itemReceived = new ObservableItem();
 	private ObservableItem itemSent = new ObservableItem();
 
-	private IRepositoryAdapter source;
-	private IRepositoryAdapter target;
+	private ISyncAdapter source;
+	private ISyncAdapter target;
 
 	// BUSINESS METHODS
-	public SyncEngine(IRepositoryAdapter source, IRepositoryAdapter target) {   // TODO (JMT) SPIKE: SyncEngine<T>
+	public SyncEngine(ISyncAdapter source, ISyncAdapter target) {   // TODO (JMT) SPIKE: SyncEngine<T>
 		super();
 
 		Guard.argumentNotNull(source, "left");
@@ -101,38 +101,46 @@ public class SyncEngine {
 
 		Guard.argumentNotNull(previewer, "previewer");
 
-		List<Item> sourceItems = (since == null) ? source.getAll() : source.getAllSince(since);
-		List<Item> outgoingItems = this.enumerateItemsProgress(sourceItems, this.itemSent);
-
-		if (!target.supportsMerge()) {
-			List<MergeResult> outgoingToMerge = this.mergeItems(outgoingItems, target);
-			if (behavior == PreviewBehavior.Right || behavior == PreviewBehavior.Both) {
-				outgoingToMerge = previewer.preview(target, outgoingToMerge);
+		this.beginSync();
+		List<Item> result = null;
+		try{
+			List<Item> sourceItems = (since == null) ? source.getAll() : source.getAllSince(since);
+			List<Item> outgoingItems = this.enumerateItemsProgress(sourceItems, this.itemSent);
+	
+			if (target instanceof ISupportMerge) {
+				ISupportMerge targetMerge = (ISupportMerge) target;
+				targetMerge.merge(outgoingItems);
+			} else {
+				List<MergeResult> outgoingToMerge = this.mergeItems(outgoingItems, target);
+				if (behavior == PreviewBehavior.Right || behavior == PreviewBehavior.Both) {
+					outgoingToMerge = previewer.preview(target, outgoingToMerge);
+				}
+				this.importItems(outgoingToMerge, target);
 			}
-			this.importItems(outgoingToMerge, target);
-		} else {
-			target.merge(outgoingItems);
-		}
-
-		List<Item> targetItmes = (since == null) ? target.getAll() : target.getAllSince(since);
-		List<Item> incomingItems = this.enumerateItemsProgress(targetItmes, this.itemReceived);
-
-		if (!source.supportsMerge()) {
-			List<MergeResult> incomingToMerge = this.mergeItems(incomingItems, source);
-			if (behavior == PreviewBehavior.Left || behavior == PreviewBehavior.Both) {
-				incomingToMerge = previewer.preview(source, incomingToMerge);
+	
+			List<Item> targetItmes = (since == null) ? target.getAll() : target.getAllSince(since);
+			List<Item> incomingItems = this.enumerateItemsProgress(targetItmes, this.itemReceived);
+	
+			if (source instanceof ISupportMerge) {
+				// If repository supports its own SSE merge behavior, don't apply it locally.
+				ISupportMerge sourceMerge = (ISupportMerge) source;
+				result = sourceMerge.merge(incomingItems);				
+			} else {
+				List<MergeResult> incomingToMerge = this.mergeItems(incomingItems, source);
+				if (behavior == PreviewBehavior.Left || behavior == PreviewBehavior.Both) {
+					incomingToMerge = previewer.preview(source, incomingToMerge);
+				}
+	
+				result = this.importItems(incomingToMerge, source);
 			}
-
-			return this.importItems(incomingToMerge, source);
-		} else {
-			// If repository supports its own SSE merge behavior, don't apply it
-			// locally.
-			return new ArrayList<Item>(source.merge(incomingItems));
-		}
+		} finally {
+			this.endSync();	
+		}	
+		return result;
 	}
 
 	private List<MergeResult> mergeItems(List<Item> items,
-			IRepositoryAdapter repository) {
+			ISyncAdapter repository) {
 
 		ArrayList<MergeResult> mergeResult = new ArrayList<MergeResult>();
 		for (Item incoming : items) {
@@ -147,7 +155,7 @@ public class SyncEngine {
 	}
 
 	private List<Item> importItems(List<MergeResult> items,
-			IRepositoryAdapter repository) {
+			ISyncAdapter repository) {
 		// Straight import of data in merged results.
 		// Conflicting items are saved and also
 		// are returned for conflict resolution by the user or
@@ -213,5 +221,24 @@ public class SyncEngine {
 			this.itemSent.removeObserver(itemObserver);
 		}
 	}
+	
+	private void beginSync(){
+		if(this.source instanceof ISyncAware){
+			((ISyncAware)this.source).beginSync();
+		}
+		
+		if(this.target instanceof ISyncAware){
+			((ISyncAware)this.target).beginSync();
+		}
+	}
 
+	private void endSync(){
+		if(this.source instanceof ISyncAware){
+			((ISyncAware)this.source).endSync();
+		}
+		
+		if(this.target instanceof ISyncAware){
+			((ISyncAware)this.target).endSync();
+		}		
+	}
 }

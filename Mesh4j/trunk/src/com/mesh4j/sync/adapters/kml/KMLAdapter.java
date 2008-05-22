@@ -12,7 +12,7 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
-import com.mesh4j.sync.AbstractRepositoryAdapter;
+import com.mesh4j.sync.AbstractSyncAdapter;
 import com.mesh4j.sync.IFilter;
 import com.mesh4j.sync.adapters.SyncInfo;
 import com.mesh4j.sync.adapters.feed.atom.AtomSyndicationFormat;
@@ -21,14 +21,14 @@ import com.mesh4j.sync.model.IContent;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.NullContent;
 import com.mesh4j.sync.model.Sync;
-import com.mesh4j.sync.security.ISecurity;
+import com.mesh4j.sync.security.IIdentityProvider;
 import com.mesh4j.sync.translator.MessageTranslator;
 import com.mesh4j.sync.utils.IdGenerator;
 import com.mesh4j.sync.utils.XMLHelper;
 import com.mesh4j.sync.validations.Guard;
 import com.mesh4j.sync.validations.MeshException;
 
-public class KMLAdapter extends AbstractRepositoryAdapter {
+public class KMLAdapter extends AbstractSyncAdapter {
 	
 	// TODO (JMT) Xml view for element properties to import/export
 	// TODO (JMT) Supports kmz extension
@@ -37,21 +37,21 @@ public class KMLAdapter extends AbstractRepositoryAdapter {
 	// TODO (JMT) Add protocol to supports prepereToSync/flush concepts (SyncEngine ?)
 	
 	// MODEL VARIABLES
-	private ISecurity security;
+	private IIdentityProvider identityProvider;
 	private Document kmlDocument;
 	private Element kmlDocumentElement;
 	private File kmlFile;
 	private MeshKMLParser meshParser;
 	
 	// BUSINESS METHODS
-	public KMLAdapter(String fileName, ISecurity security){
+	public KMLAdapter(String fileName, IIdentityProvider identityProvider){
 		super();
 		
 		Guard.argumentNotNullOrEmptyString(fileName, "fileName");
-		Guard.argumentNotNull(security, "security");
+		Guard.argumentNotNull(identityProvider, "identityProvider");
 		
-		this.security = security;
-		this.meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, security);
+		this.identityProvider = identityProvider;
+		this.meshParser = new MeshKMLParser(AtomSyndicationFormat.INSTANCE, identityProvider);
 		
 		this.kmlFile = new File(fileName);
 		this.prepareKMLToSync();
@@ -128,7 +128,7 @@ public class KMLAdapter extends AbstractRepositoryAdapter {
 			syncInfo.getSync().delete(this.getAuthenticatedUser(), new Date());
 			this.meshParser.refreshSyncInfo(this.kmlDocumentElement, syncInfo);
 		}else if(syncInfo == null){
-			Sync sync = new Sync(id, this.security.getAuthenticatedUser(), new Date(), true);
+			Sync sync = new Sync(id, this.getAuthenticatedUser(), new Date(), true);
 			syncInfo = new SyncInfo(sync, this.meshParser.getType(), id, new NullContent(id).getVersion());
 			this.meshParser.refreshSyncInfo(this.kmlDocumentElement, syncInfo);
 		}		
@@ -178,8 +178,8 @@ public class KMLAdapter extends AbstractRepositoryAdapter {
 		return filterOK && dateOk;
 	}
 	
-	public static void prepareKMLToSync(String fileName, ISecurity security) {
-		new KMLAdapter(fileName, security);
+	public static void prepareKMLToSync(String fileName, IIdentityProvider identityProvider) {
+		new KMLAdapter(fileName, identityProvider);
 	}	
 	
 	public void prepareKMLToSync() {
@@ -217,7 +217,7 @@ public class KMLAdapter extends AbstractRepositoryAdapter {
 				dirty = true;
 			} else {
 				content = new KMLContent(this.meshParser.normalize(element), syncID);
-				dirty = updateSync(content, syncInfo);
+				dirty = updateSyncIfChanged(content, syncInfo);
 				syncs.remove(syncInfo);
 			}
 			
@@ -227,7 +227,7 @@ public class KMLAdapter extends AbstractRepositoryAdapter {
 		}
 		
 		for (SyncInfo syncInfo : syncs) {
-			dirty = updateSync(null, syncInfo);
+			dirty = updateSyncIfChanged(null, syncInfo);
 			refreshResult.updateDirty(dirty);
 			
 			this.meshParser.refreshSyncInfo(this.kmlDocumentElement, syncInfo);
@@ -239,7 +239,7 @@ public class KMLAdapter extends AbstractRepositoryAdapter {
 		
 	}
 	
-	private boolean updateSync(IContent content, SyncInfo syncInfo){		
+	private boolean updateSyncIfChanged(IContent content, SyncInfo syncInfo){		
 		Sync sync = syncInfo.getSync();
 		if (content == null && sync != null){
 			if (!sync.isDeleted()){
@@ -276,18 +276,8 @@ public class KMLAdapter extends AbstractRepositoryAdapter {
 	}
 
 	@Override
-	public boolean supportsMerge() {
-		return false;
-	}
-	
-	@Override
-	public List<Item> merge(List<Item> items) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
 	public String getAuthenticatedUser() {
-		return this.security.getAuthenticatedUser();
+		return this.identityProvider.getAuthenticatedUser();
 	}
 	
 	private class RefreshItemsResult {

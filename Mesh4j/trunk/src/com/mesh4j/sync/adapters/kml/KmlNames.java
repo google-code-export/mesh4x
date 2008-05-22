@@ -43,4 +43,5 @@ public interface KmlNames {
 	//public static final String MESH_PARENT_ID = "parentId";
 	public static final String MESH_VERSION = "version";
 	
+	public static final String KMZ_DEFAULT_ENTRY_NAME_TO_KML = "doc.kml";
 }

@@ -20,8 +20,8 @@ public abstract class AbstractSyncEngineTest {
 	
 	@Test
 	public void ShouldAddNewItems() {
-		IRepositoryAdapter left = this.makeLeftRepository(createItem("fizz", TestHelper.newID(), new History("kzu")));
-		IRepositoryAdapter right = this.makeRightRepository(createItem("buzz", TestHelper.newID(), new History("vga")));
+		ISyncAdapter left = this.makeLeftRepository(createItem("fizz", TestHelper.newID(), new History("kzu")));
+		ISyncAdapter right = this.makeRightRepository(createItem("buzz", TestHelper.newID(), new History("vga")));
 
 		SyncEngine engine = new SyncEngine(left, right);
 
@@ -32,15 +32,15 @@ public abstract class AbstractSyncEngineTest {
 		Assert.assertEquals(2, right.getAll().size());
 	}
 
-	protected abstract IRepositoryAdapter makeLeftRepository(Item ... items);
-	protected abstract IRepositoryAdapter makeRightRepository(Item ... items);
+	protected abstract ISyncAdapter makeLeftRepository(Item ... items);
+	protected abstract ISyncAdapter makeRightRepository(Item ... items);
 
 	@Test
 	public void ShouldMergeChangesBothWays() {
 		Item a = createItem("fizz", TestHelper.newID(), new History("kzu"));
 		Item b = createItem("buzz", TestHelper.newID(), new History("vga"));
 
-		IRepositoryAdapter left = this.makeLeftRepository(
+		ISyncAdapter left = this.makeLeftRepository(
 			new Item(
 				a.getContent(), 
 				a.getSync().clone().update("kzu", TestHelper.now())
@@ -48,7 +48,7 @@ public abstract class AbstractSyncEngineTest {
 			b 
 		);
 
-		IRepositoryAdapter right = this.makeRightRepository(
+		ISyncAdapter right = this.makeRightRepository(
 			a,
 			new Item(
 				b.getContent(), 
@@ -71,8 +71,8 @@ public abstract class AbstractSyncEngineTest {
 		Item b = createItem("buzz", TestHelper.newID(), new History("vga"));
 		Item bDeleted = new Item(b.getContent(), b.getSync().clone().update("vga", TestHelper.now(), true));
 		
-		IRepositoryAdapter left = this.makeLeftRepository(a, b);
-		IRepositoryAdapter right = this.makeRightRepository(
+		ISyncAdapter left = this.makeLeftRepository(a, b);
+		ISyncAdapter right = this.makeRightRepository(
 				a,
 				bDeleted
 		);
@@ -92,8 +92,8 @@ public abstract class AbstractSyncEngineTest {
 		Item a = createItem("fizz", TestHelper.newID(), new History("kzu", TestHelper.nowSubtractDays(1)));
 		Item b = createItem("buzz", TestHelper.newID(), new History("vga", TestHelper.nowSubtractDays(1)));
 
-		IRepositoryAdapter left = this.makeLeftRepository(a);
-		IRepositoryAdapter right = this.makeRightRepository(b);
+		ISyncAdapter left = this.makeLeftRepository(a);
+		ISyncAdapter right = this.makeRightRepository(b);
 
 		SyncEngine engine = new SyncEngine(left, right);
 
@@ -110,10 +110,10 @@ public abstract class AbstractSyncEngineTest {
 		Item a = createItem("fizz", TestHelper.newID(), new History("kzu"));
 		
 		TestHelper.sleep(1000);
-		IRepositoryAdapter left = this.makeLeftRepository(new Item(a.getContent(), a.getSync().clone().update("kzu", TestHelper.now())));
+		ISyncAdapter left = this.makeLeftRepository(new Item(a.getContent(), a.getSync().clone().update("kzu", TestHelper.now())));
 		
 		TestHelper.sleep(1000);
-		IRepositoryAdapter right = this.makeRightRepository(new Item(a.getContent(), a.getSync().clone().update("vga", TestHelper.now())));
+		ISyncAdapter right = this.makeRightRepository(new Item(a.getContent(), a.getSync().clone().update("vga", TestHelper.now())));
 
 		SyncEngine engine = new SyncEngine(left, right);
 
@@ -126,8 +126,8 @@ public abstract class AbstractSyncEngineTest {
 
 	@Test
 	public void ShouldImportUpdateWithConflictLeft() {
-		IRepositoryAdapter left = this.makeLeftRepository();
-		IRepositoryAdapter right = this.makeRightRepository();
+		ISyncAdapter left = this.makeLeftRepository();
+		ISyncAdapter right = this.makeRightRepository();
 		
 		String by = "jmt";
 		SyncEngine engine = new SyncEngine(left, right);
@@ -173,8 +173,8 @@ public abstract class AbstractSyncEngineTest {
 
 	@Test
 	public void ShouldReportImportProgress() {
-		IRepositoryAdapter left = this.makeLeftRepository();
-		IRepositoryAdapter right = this.makeRightRepository();
+		ISyncAdapter left = this.makeLeftRepository();
+		ISyncAdapter right = this.makeRightRepository();
 		
 		SyncEngine engine = new SyncEngine(left, right);
 		String by = "jmt";
@@ -212,8 +212,8 @@ public abstract class AbstractSyncEngineTest {
 	@Test
 	public void ShouldNotSendReceivedItemIfModifiedBeforeSince() {
 		
-		IRepositoryAdapter left = this.makeLeftRepository();
-		IRepositoryAdapter right = this.makeRightRepository();
+		ISyncAdapter left = this.makeLeftRepository();
+		ISyncAdapter right = this.makeRightRepository();
 		
 		SyncEngine engine = new SyncEngine(left, right);
 
