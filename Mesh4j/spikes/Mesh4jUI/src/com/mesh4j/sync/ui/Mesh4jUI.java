@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.MessageFormat;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -22,7 +23,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import com.mesh4j.sync.IRepositoryAdapter;
+import com.mesh4j.sync.ISyncAdapter;
 import com.mesh4j.sync.SyncEngine;
 import com.mesh4j.sync.adapters.feed.FeedAdapter;
 import com.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
@@ -30,8 +31,8 @@ import com.mesh4j.sync.adapters.http.HttpSyncAdapter;
 import com.mesh4j.sync.adapters.kml.KMLAdapter;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.properties.PropertiesProvider;
-import com.mesh4j.sync.security.ISecurity;
-import com.mesh4j.sync.security.NullSecurity;
+import com.mesh4j.sync.security.IIdentityProvider;
+import com.mesh4j.sync.security.NullIdentityProvider;
 import com.mesh4j.sync.validations.MeshException;
 
 public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
@@ -47,7 +48,7 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 	private Text kmlToPrepareToSync;
 	private String defaultEndpoint1;
 	private String defaultEndpoint2;
-	private ISecurity security = NullSecurity.INSTANCE;
+	private IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
 	
 	// BUSINESS METHODS
 	public static void main (String [] args) {
@@ -254,30 +255,30 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 
 	private String synchronizeItems(String endpoint1, String endpoint2){
 		try{
-			IRepositoryAdapter sourceRepo = makeRepositoryAdapter(endpoint1);
-			IRepositoryAdapter targetRepo = makeRepositoryAdapter(endpoint2);
+			ISyncAdapter sourceRepo = makeRepositoryAdapter(endpoint1);
+			ISyncAdapter targetRepo = makeRepositoryAdapter(endpoint2);
 			
 			SyncEngine syncEngine = new SyncEngine(sourceRepo, targetRepo);
 			List<Item> conflicts = syncEngine.synchronize();
 			if(conflicts.isEmpty()){
-				return "Successfully";
+				return "Synchronized succesfully.";
 			} else {
-				return "Conflicts";
+				return MessageFormat.format("Synchronized succesfully. {0} conflicts may need to be resolved.", conflicts.size());
 			}
 		} catch (RuntimeException e) {
 			Logger.error(e.getMessage(), e);
-			return "Unexpected error";
+			return "Synchronized failed. Please check the log file (mesh4j.log).";
 		}
 	}
 
-	private IRepositoryAdapter makeRepositoryAdapter(String endpoint) {
+	private ISyncAdapter makeRepositoryAdapter(String endpoint) {
 		if(isURL(endpoint)){
-			return new HttpSyncAdapter(endpoint, RssSyndicationFormat.INSTANCE, this.security);
+			return new HttpSyncAdapter(endpoint, RssSyndicationFormat.INSTANCE, this.identityProvider);
 		} else {
 			if(isFeed(endpoint)){
-				return new FeedAdapter(endpoint, this.security);
+				return new FeedAdapter(endpoint, this.identityProvider);
 			}else{
-				return new KMLAdapter(endpoint, this.security);
+				return new KMLAdapter(endpoint, this.identityProvider);
 			}
 		}
 	}
@@ -423,7 +424,7 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 	
 	private String prepareKMLToSync(String kmlFile){
 		try{
-			KMLAdapter.prepareKMLToSync(kmlFile, this.security);
+			KMLAdapter.prepareKMLToSync(kmlFile, this.identityProvider);
 			return "Successfully";
 		} catch (MeshException e) {
 			Logger.error(e.getMessage(), e);
@@ -435,7 +436,7 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 		PropertiesProvider prop = new PropertiesProvider();
 		this.defaultEndpoint1 = prop.getDefaultEnpoint1();					
 		this.defaultEndpoint2 = prop.getDefaultEnpoint2();			
-		this.security = prop.getSecurity();
+		this.identityProvider = prop.getIdentityProvider();
 	}
 }
 

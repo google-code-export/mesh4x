@@ -4,8 +4,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.Properties;
 
-import com.mesh4j.sync.security.ISecurity;
-import com.mesh4j.sync.security.LocalSecurity;
+import com.mesh4j.sync.security.IIdentityProvider;
+import com.mesh4j.sync.security.LoggedInIdentityProvider;
 import com.mesh4j.sync.validations.MeshException;
 
 public class PropertiesProvider {
@@ -44,10 +44,10 @@ public class PropertiesProvider {
 		return this.properties.getProperty("default.feed.url", "");
 	}
 
-	public ISecurity getSecurity() {
+	public IIdentityProvider getIdentityProvider() {
 		try{
-			String securityClassName =  this.properties.getProperty("sync.security", LocalSecurity.class.getName());
-			ISecurity security = makeNewInstance(securityClassName);
+			String identityProviderClassName =  this.properties.getProperty("sync.identity.provider", LoggedInIdentityProvider.class.getName());
+			IIdentityProvider security = makeNewInstance(identityProviderClassName);
 			return security;
 		} catch (Exception e) {
 			throw new MeshException(e);
@@ -55,9 +55,9 @@ public class PropertiesProvider {
 	}
 
 	@SuppressWarnings("unchecked")
-	private ISecurity makeNewInstance(String securityClassName) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-		Class clazz = Class.forName(securityClassName);
-		ISecurity security = (ISecurity)clazz.newInstance();
-		return security;
+	private IIdentityProvider makeNewInstance(String identityProviderClassName) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+		Class clazz = Class.forName(identityProviderClassName);
+		IIdentityProvider identityProvider = (IIdentityProvider)clazz.newInstance();
+		return identityProvider;
 	}
 }
