@@ -28,7 +28,9 @@ import com.mesh4j.sync.SyncEngine;
 import com.mesh4j.sync.adapters.feed.FeedAdapter;
 import com.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import com.mesh4j.sync.adapters.http.HttpSyncAdapter;
+import com.mesh4j.sync.adapters.kml.IKMLMeshDomLoader;
 import com.mesh4j.sync.adapters.kml.KMLAdapter;
+import com.mesh4j.sync.adapters.kml.KMLMeshDOMLoaderFactory;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.properties.PropertiesProvider;
 import com.mesh4j.sync.security.IIdentityProvider;
@@ -174,12 +176,12 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 	}
 	
 	private String openFileDialogKML(String fileName){
-		String fileNameSelected = openFileDialog(fileName, new String [] {"Kml"}, new String [] {"*.kml"});
+		String fileNameSelected = openFileDialog(fileName, new String [] {"Kml", "Kmz"}, new String [] {"*.kml", "*.kmz"});
 		return fileNameSelected;
 	}
 	
 	private String openFileDialog(String fileName){
-		String fileNameSelected = openFileDialog(fileName, new String [] {"Kml", "Feed", "All Files (*.*)"}, new String [] {"*.kml", "*.xml", "*.*"});
+		String fileNameSelected = openFileDialog(fileName, new String [] {"Kml", "Kmz", "Feed", "All Files (*.*)"}, new String [] {"*.kml", "*.kmz", "*.xml", "*.*"});
 		return fileNameSelected;
 	}
 	
@@ -278,7 +280,8 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 			if(isFeed(endpoint)){
 				return new FeedAdapter(endpoint, this.identityProvider);
 			}else{
-				return new KMLAdapter(endpoint, this.identityProvider);
+				IKMLMeshDomLoader loader = KMLMeshDOMLoaderFactory.createDOMLoader(endpoint, this.identityProvider);
+				return new KMLAdapter(loader);
 			}
 		}
 	}
@@ -299,7 +302,7 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 	
 	private boolean validate(String endpointValue, String endpointHeader){
 		if(endpointValue ==  null || endpointValue.trim().length() == 0){
-			consoleView.append("\nPlease complete " + endpointHeader + " , it is required to continue (Example kml file: C:\\MyFile.kml, Example feed file: C:\\MyFeed.xml, Example URL: http://localhost:7777/feeds/KML).");
+			consoleView.append("\nPlease complete " + endpointHeader + " , it is required to continue (Example kml file: C:\\MyFile.kml, Example kmz file: C:\\MyFile.kmz, Example feed file: C:\\MyFeed.xml, Example URL: http://localhost:7777/feeds/KML).");
 			return false;
 		}
 		if(isURL(endpointValue)){
@@ -328,8 +331,9 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 	}
 			
 	private boolean validateFile(String fileName, String endpointHeader){
-		if(!(fileName != null && fileName.trim().length() > 5 && (fileName.endsWith(".kml") || fileName.endsWith(".xml")))){
-			consoleView.append("\nPlease verify "+ endpointHeader + ": complete with a kml file (example C:\\MyFile.kml) or feed file (example c:\\MyFeed.xml).");
+		if(!(fileName != null && fileName.trim().length() > 5 
+				&& (fileName.toUpperCase().endsWith(".KMZ") || fileName.toUpperCase().endsWith(".KML") || fileName.toUpperCase().endsWith(".XML")))){
+			consoleView.append("\nPlease verify "+ endpointHeader + ": complete with a kml file (example C:\\MyFile.kml or C:\\MyFile.kmz) or feed file (example c:\\MyFeed.xml).");
 			return false;
 		}
 		
@@ -342,8 +346,12 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 	}
 	
 	private boolean validateKMLFile(String fileName, String header){
-		if(!(fileName != null && fileName.trim().length() > 5 && (fileName.endsWith(".kml")))){
-			consoleView.append("\nPlease verify "+ header + ": complete with a kml file (example C:\\MyFile.kml).");
+		if(
+			!(fileName != null && fileName.trim().length() > 5 && 
+			(fileName.trim().toUpperCase().endsWith(".KML") || fileName.trim().toUpperCase().endsWith(".KMZ"))
+			)
+		){
+			consoleView.append("\nPlease verify "+ header + ": complete with a kml file (example C:\\MyFile.kml or C:\\MyFile.kmz).");
 			return false;
 		}
 		
@@ -364,7 +372,7 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 	}
 
 	private boolean isFeed(String endpointValue) {
-		return endpointValue.endsWith("xml");
+		return endpointValue.toUpperCase().endsWith("XML");
 	}
 	
 //	private void viewLog(){
@@ -424,11 +432,12 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 	
 	private String prepareKMLToSync(String kmlFile){
 		try{
-			KMLAdapter.prepareKMLToSync(kmlFile, this.identityProvider);
-			return "Successfully";
+			IKMLMeshDomLoader loader = KMLMeshDOMLoaderFactory.createDOMLoader(kmlFile, this.identityProvider);
+			KMLAdapter.prepareKMLToSync(loader);
+			return "Prepare kml to sync successfully";
 		} catch (MeshException e) {
 			Logger.error(e.getMessage(), e);
-			return "Unexpected error";
+			return "Prepare kml to sync failed. Please check the log file (mesh4j.log).";
 		}
 	}
 	
