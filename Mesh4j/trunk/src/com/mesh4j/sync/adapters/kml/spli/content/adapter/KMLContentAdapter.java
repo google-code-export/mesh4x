@@ -1,4 +1,4 @@
-package com.mesh4j.sync.adapters.kml;
+package com.mesh4j.sync.adapters.kml.spli.content.adapter;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -15,6 +15,8 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.jaxen.JaxenException;
 
+import com.mesh4j.sync.adapters.kml.KMLContent;
+import com.mesh4j.sync.adapters.kml.KmlNames;
 import com.mesh4j.sync.adapters.split.IContentAdapter;
 import com.mesh4j.sync.model.IContent;
 import com.mesh4j.sync.utils.IdGenerator;

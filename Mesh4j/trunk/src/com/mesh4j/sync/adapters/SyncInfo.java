@@ -1,7 +1,10 @@
 package com.mesh4j.sync.adapters;
 
+import java.util.Date;
+
 import com.mesh4j.sync.model.IContent;
 import com.mesh4j.sync.model.Sync;
+import com.mesh4j.sync.security.IIdentityProvider;
 
 public class SyncInfo {
 	
@@ -60,4 +63,17 @@ public class SyncInfo {
 		this.syncId = sync.getId();
 	}
 	
+	public void updateSyncIfChanged(IContent content, IIdentityProvider identityProvider){		
+		Sync sync = this.getSync();
+		if (content == null && sync != null){
+			if (!sync.isDeleted()){
+				sync.delete(identityProvider.getAuthenticatedUser(), new Date());
+			}
+		}else{
+			if (!this.isDeleted() && this.contentHasChanged(content)){
+				sync.update(identityProvider.getAuthenticatedUser(), new Date(), sync.isDeleted());
+				this.setVersion(content.getVersion());
+			}
+		}
+	}
 }

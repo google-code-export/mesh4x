@@ -7,39 +7,99 @@ import org.dom4j.QName;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class XMLViewTests {
+public class XMLViewElementTests {
+
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldNotSupportNullType(){
+		new XMLViewElement(null);
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldNotSupportEmptyType(){
+		new XMLViewElement("");
+	}
+	
+	@Test
+	public void shouldReturnType(){
+		XMLViewElement view = new XMLViewElement("Folder");
+		Assert.assertEquals("Folder", view.getType());
+	}
 
 	@Test
-	public void shouldNormalizeReturnsNullBecauseElementIsNull(){
-		XMLView view = new XMLView();
+	public void shouldNormalizeReturnNullBecauseElementIsNull(){
+		XMLViewElement view = new XMLViewElement("Folder");
 		Assert.assertNull(view.normalize(null));
 	}
 	
 	@Test
-	public void shouldNormalizeReturnsSameElementBecauseNoViewForElement(){
-		XMLView view = new XMLView();
+	public void shouldNormalizeReturnNullBecauseElementHasInvalidType(){
+		XMLViewElement view = new XMLViewElement("Folder");
 		
-		Element element = DocumentHelper.createElement("Foo");
-		Assert.assertEquals(element, view.normalize(element));
+		Element element = DocumentHelper.createElement("FOO");
+		Assert.assertNull(view.normalize(element));
 	}
 	
 	@Test
-	public void shouldNormalize() throws DocumentException{
-		XMLViewElement elementView = new XMLViewElement("Document");
+	public void shouldNormalizeReturnsSameElementBecauseNotConfigurationWasDefined(){
+		XMLViewElement view = new XMLViewElement("Folder");
+		
+		Element element = DocumentHelper.createElement("Folder");
+		Assert.assertSame(element, view.normalize(element));
+	}
+
+	@Test
+	public void shoudNormalizeReturnEmptyElement() throws DocumentException{
+		XMLViewElement view = new XMLViewElement("Document");
+		view.addAttribute(DocumentHelper.createQName("fooAttribute", DocumentHelper.createNamespace("foo", "http:\\foo.org")));
+		view.addAttribute("myAttribute");
+		view.addElement(DocumentHelper.createQName("barAttribute", DocumentHelper.createNamespace("bar", "http:\\bar.org")));
+		view.addElement("Bar");
+		view.addElement("FooBar", "http:\\foobar.org");
+		
+		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
+		"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
+		"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+		"<name>dummy</name>"+
+	   	"<ExtendedData>"+
+		"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"2096103467\">"+
+      	"<sx:sync id=\"1\" updates=\"3\" deleted=\"false\" noconflicts=\"false\">"+
+      	"<sx:history sequence=\"3\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/>"+
+      	"<sx:history sequence=\"2\" when=\"2005-05-21T10:43:33Z\" by=\"REO1750\"/>"+
+      	"<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"+
+     	"</sx:sync>"+
+		"</mesh4x:sync>"+
+      	"</ExtendedData>"+
+		"<Placemark mesh4x:id=\"1\">"+
+		"<name>B</name>"+
+		"</Placemark>"+
+		"</Document>"+
+		"</kml>";
+		
+		Element element = DocumentHelper.parseText(xml).getRootElement().element("Document");
+		Element normalizedElement = view.normalize(element);
+		
+		Assert.assertNotNull(normalizedElement);
+		Assert.assertFalse(normalizedElement.attributeIterator().hasNext());
+		Assert.assertFalse(normalizedElement.elementIterator().hasNext());
+	}
+	
+	@Test
+	public void shoudNormalize() throws DocumentException{
+		XMLViewElement view = new XMLViewElement("Document");
 		
 		QName attr1 = DocumentHelper.createQName("fooAttribute", DocumentHelper.createNamespace("foo", "http:\\foo.org"));
-		elementView.addAttribute(attr1);
+		view.addAttribute(attr1);
 		
 		String attr2 = "myAttribute";
-		elementView.addAttribute(attr2);
+		view.addAttribute(attr2);
 		
 		QName ele1 = DocumentHelper.createQName("BAR", DocumentHelper.createNamespace("bar", "http:\\bar.org"));
-		elementView.addElement(ele1);
+		view.addElement(ele1);
 		
 		String ele2 = "BarFoo";
-		elementView.addElement(ele2);
+		view.addElement(ele2);
 		
-		XMLView view = new XMLView(elementView);
+		//view.addElement("FooBar", "http:\\foobar.org");
 		
 		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
 		"<Document xmlns:foo=\"http:\\foo.org\" xmlns:bar=\"http:\\bar.org\" xmlns:fooBar=\"http:\\foobar.org\" myAttribute=\"2\" foo:fooAttribute=\"1\">"+
@@ -83,31 +143,33 @@ public class XMLViewTests {
 		Assert.assertNotNull(normalizedElement.element(ele2));
 		Assert.assertNotNull(normalizedElement.element(ele2).element("name"));
 		Assert.assertEquals("C", normalizedElement.element(ele2).element("name").getText());
+
 	}
 	
 	@Test
 	public void shouldUpdateNotEffectBecauseElementIsNull(){
-		XMLView view = new XMLView();
+		XMLViewElement view = new XMLViewElement("Foo");
+		view.addElement("Bar");
 		
 		Element element = DocumentHelper.createElement("Foo");
 		view.update(null, element);
 	}
 	
 	@Test
-	public void shouldUpdateNotEffectBecauseNewElementIsNull(){
-		XMLView view = new XMLView();
+	public void shouldUpdateNotEffectBecauseElementSourceIsNull(){
+		XMLViewElement view = new XMLViewElement("Foo");
+		view.addElement("Bar");
 		
 		Element element = DocumentHelper.createElement("Foo");
 		view.update(element, null);
-
+		
 		Assert.assertFalse(element.attributeIterator().hasNext());
 		Assert.assertFalse(element.elementIterator().hasNext());
-
 	}
 	
 	@Test
 	public void shouldUpdateNotEffectBecauseElementHasInvalidType(){
-		XMLView view = new XMLView();
+		XMLViewElement view = new XMLViewElement("Folder");
 		
 		Element element = DocumentHelper.createElement("Foo");
 		Element elementSource = DocumentHelper.createElement("Foolder");
@@ -117,31 +179,53 @@ public class XMLViewTests {
 		Assert.assertFalse(element.elementIterator().hasNext());
 
 	}
-		
+	
 	@Test
-	public void shouldUpdateNoEffectBecauseNotConfigurationWasDefined() throws DocumentException{
-		XMLView view = new XMLView();
+	public void shouldUpdateNotEffectBecauseElementSourceHasInvalidType(){
+		XMLViewElement view = new XMLViewElement("Folder");
+		
+		Element element = DocumentHelper.createElement("Folder");
+		Element elementSource = DocumentHelper.createElement("Foo");
+		view.update(element, elementSource);
+		
+		Assert.assertFalse(element.attributeIterator().hasNext());
+		Assert.assertFalse(element.elementIterator().hasNext());
+
+	}
+	
+	@Test
+	public void shouldUpdateUpdateAllBecauseNotConfigurationWasDefined() throws DocumentException{
+		XMLViewElement view = new XMLViewElement("Document");
+		
 		
 		String xml = "<Document xmlns:foo=\"http://foo.org\" myAttribute=\"2\" foo:fooAttribute=\"1\"><name>dummy</name><ExtendedData><MESH xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"2096103467\"><sx:sync id=\"1\" updates=\"3\" deleted=\"false\" noconflicts=\"false\"><sx:history sequence=\"3\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/><sx:history sequence=\"2\" when=\"2005-05-21T10:43:33Z\" by=\"REO1750\"/><sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/></sx:sync></MESH></ExtendedData><Placemark foo:id=\"1\"><name>B</name></Placemark><bar:BAR xmlns:bar=\"http://bar.org\"><name>B</name></bar:BAR><BarFoo><name>C</name></BarFoo></Document>";
-		Element elementSource = DocumentHelper.parseText(xml).getRootElement();
-
+		
 		Element element = DocumentHelper.createElement("Document");
+		element.normalize();
+		
+		Element elementSource = DocumentHelper.parseText(xml).getRootElement();
+		elementSource.normalize();
+		
+		Assert.assertFalse(elementSource.asXML().equals(element.asXML()));
 
 		view.update(element, elementSource);		
 
-		Assert.assertFalse(element.attributeIterator().hasNext());
-		Assert.assertFalse(element.elementIterator().hasNext());
+		element.normalize();
+		elementSource.normalize();
+		Assert.assertEquals(elementSource.asXML(), element.asXML());
+
+
 	}
 
 	@Test
 	public void shoudUpdateNoEffectBecauseNoElementsMatches() throws DocumentException{
 		
-		XMLViewElement elementView = new XMLViewElement("Document");
-		elementView.addAttribute(DocumentHelper.createQName("fooAttribute", DocumentHelper.createNamespace("foo", "http:\\foo.org")));
-		elementView.addAttribute("myAttribute");
-		elementView.addElement(DocumentHelper.createQName("barAttribute", DocumentHelper.createNamespace("bar", "http:\\bar.org")));
-		elementView.addElement("Bar");
-		elementView.addElement("FooBar", "http:\\foobar.org");
+		XMLViewElement view = new XMLViewElement("Document");
+		view.addAttribute(DocumentHelper.createQName("fooAttribute", DocumentHelper.createNamespace("foo", "http:\\foo.org")));
+		view.addAttribute("myAttribute");
+		view.addElement(DocumentHelper.createQName("barAttribute", DocumentHelper.createNamespace("bar", "http:\\bar.org")));
+		view.addElement("Bar");
+		view.addElement("FooBar", "http:\\foobar.org");
 		
 		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
 		"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
@@ -164,8 +248,6 @@ public class XMLViewTests {
 		
 		Element element = DocumentHelper.createElement("Document");
 		Element elementSource = DocumentHelper.parseText(xml).getRootElement().element("Document");
-		
-		XMLView view = new XMLView(elementView);
 		view.update(element, elementSource);
 		
 		Assert.assertFalse(element.attributeIterator().hasNext());
@@ -174,19 +256,19 @@ public class XMLViewTests {
 	
 	@Test
 	public void shoudUpdate() throws DocumentException{
-		XMLViewElement elementView = new XMLViewElement("Document");
+		XMLViewElement view = new XMLViewElement("Document");
 		
 		QName attr1 = DocumentHelper.createQName("fooAttribute", DocumentHelper.createNamespace("foo", "http:\\foo.org"));
-		elementView.addAttribute(attr1);
+		view.addAttribute(attr1);
 		
 		String attr2 = "myAttribute";
-		elementView.addAttribute(attr2);
+		view.addAttribute(attr2);
 		
 		QName ele1 = DocumentHelper.createQName("BAR", DocumentHelper.createNamespace("bar", "http:\\bar.org"));
-		elementView.addElement(ele1);
+		view.addElement(ele1);
 		
 		String ele2 = "BarFoo";
-		elementView.addElement(ele2);
+		view.addElement(ele2);
 		
 		//view.addElement("FooBar", "http:\\foobar.org");
 		
@@ -215,8 +297,6 @@ public class XMLViewTests {
 		
 		Element element = DocumentHelper.createElement("Document");
 		Element elementSource = DocumentHelper.parseText(xml).getRootElement();
-		
-		XMLView view = new XMLView(elementView);
 		view.update(element, elementSource);
 		
 		Assert.assertNotNull(element.attributeValue(attr1));

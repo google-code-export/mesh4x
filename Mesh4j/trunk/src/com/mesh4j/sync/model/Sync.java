@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Stack;
 
-import com.mesh4j.sync.translator.MessageTranslator;
 import com.mesh4j.sync.validations.Guard;
 
 public class Sync implements Cloneable{
@@ -31,7 +30,7 @@ public class Sync implements Cloneable{
 	{
 		Guard.argumentNotNullOrEmptyString(id, "id");
 		if (by == null && when == null){
-			throw new IllegalArgumentException(MessageTranslator.translate("MustProvideWhenOrBy"));
+			Guard.throwsArgumentException("MustProvideWhenOrBy");
 		}
 			
 		this.id = id; 

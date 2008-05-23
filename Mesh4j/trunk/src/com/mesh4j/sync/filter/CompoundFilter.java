@@ -2,7 +2,7 @@ package com.mesh4j.sync.filter;
 
 import com.mesh4j.sync.IFilter;
 import com.mesh4j.sync.model.Item;
-import com.mesh4j.sync.translator.MessageTranslator;
+import com.mesh4j.sync.validations.Guard;
 
 public class CompoundFilter implements IFilter<Item> {
 
@@ -14,7 +14,7 @@ public class CompoundFilter implements IFilter<Item> {
 	public CompoundFilter(IFilter<Item> ... filters) {
 		super();
 		if(filters.length == 0){
-			throw new IllegalArgumentException(MessageTranslator.translate("Arg_Empty_Filters"));
+			Guard.throwsArgumentException("Arg_Empty_Filters");
 		}
 		this.filters = filters;
 	}

@@ -2,8 +2,8 @@ package com.mesh4j.sync.model;
 
 import java.util.Date;
 
-import com.mesh4j.sync.translator.MessageTranslator;
 import com.mesh4j.sync.utils.DateHelper;
+import com.mesh4j.sync.validations.Guard;
 
 public class History implements Cloneable {
 
@@ -28,9 +28,9 @@ public class History implements Cloneable {
 	public History(String by, Date when, int sequence) {
 
 		if ((by == null || by.length() == 0) && when == null)
-			throw new IllegalArgumentException(MessageTranslator.translate("Arg_EitherWhenOrByMustBeSpecified"));
+			Guard.throwsArgumentException("Arg_EitherWhenOrByMustBeSpecified");
 		if (sequence <= 0)
-			throw new IllegalArgumentException(MessageTranslator.translate("Arg_SequenceMustBeGreaterThanZero"));
+			Guard.throwsArgumentException("Arg_SequenceMustBeGreaterThanZero");
 
 		this.by = by;
 		if (when != null) {

@@ -16,8 +16,11 @@ import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
+import com.mesh4j.sync.adapters.kml.KmlNames;
 import com.mesh4j.sync.utils.IdGenerator;
 import com.mesh4j.sync.utils.XMLHelper;
+import com.mesh4j.sync.utils.ZipUtils;
+import com.mesh4j.sync.validations.MeshException;
 
 public class TestHelper {
 
@@ -123,7 +126,11 @@ public class TestHelper {
 	}
 
 	public static File makeNewXMLFile(String xml) {
-		File file = new File(TestHelper.fileName(IdGenerator.newID() + ".xml"));
+		return makeNewXMLFile(xml, ".xml");
+	}
+	
+	public static File makeNewXMLFile(String xml, String fileExtension) {
+		File file = new File(TestHelper.fileName(IdGenerator.newID() + fileExtension));
 		XMLHelper.write(xml, file);
 		return file;
 	}
@@ -153,6 +160,25 @@ public class TestHelper {
 			output.write(contents);
 		} finally {
 			output.close();
+		}
+	}
+
+	public static File makeNewKMZFile(String xml) {
+		File file = new File(fileName(IdGenerator.newID() + ".kmz"));
+		try {
+			ZipUtils.write(file, KmlNames.KMZ_DEFAULT_ENTRY_NAME_TO_KML, xml);
+		} catch (IOException e) {
+			throw new MeshException(e);
+		}
+		return file;
+	}
+
+	public static Document readKMZDocument(File file) {
+		try{
+			String xml = ZipUtils.getTextEntryContent(file, KmlNames.KMZ_DEFAULT_ENTRY_NAME_TO_KML);
+			return DocumentHelper.parseText(xml);
+		} catch(Exception e){
+			throw new MeshException(e);
 		}
 	}
 }

@@ -1,4 +1,4 @@
-package com.mesh4j.sync.adapters.kml;
+package com.mesh4j.sync.adapters.kml.spli.content.adapter;
 
 import java.io.File;
 import java.util.HashMap;
@@ -16,6 +16,8 @@ import org.jaxen.dom4j.Dom4jXPath;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.mesh4j.sync.adapters.kml.KMLContent;
+import com.mesh4j.sync.adapters.kml.KmlNames;
 import com.mesh4j.sync.model.IContent;
 import com.mesh4j.sync.test.utils.TestHelper;
 import com.mesh4j.sync.utils.IdGenerator;

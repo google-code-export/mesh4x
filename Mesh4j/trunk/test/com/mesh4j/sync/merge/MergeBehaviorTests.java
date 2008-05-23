@@ -9,6 +9,7 @@ import com.mesh4j.sync.adapters.feed.XMLContent;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.Sync;
 import com.mesh4j.sync.test.utils.TestHelper;
+import com.mesh4j.sync.validations.MeshException;
 
 public class MergeBehaviorTests {
 
@@ -64,7 +65,7 @@ public class MergeBehaviorTests {
 		Assert.assertEquals(MergeOperation.Added, result.getOperation());
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = MeshException.class)
 	public void ShouldThrowIfSyncNoHistory() {
 		Sync sa = new Sync(TestHelper.newID());
 

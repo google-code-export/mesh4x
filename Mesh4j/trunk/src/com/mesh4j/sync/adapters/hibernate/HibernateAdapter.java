@@ -37,14 +37,26 @@ public class HibernateAdapter extends AbstractSyncAdapter implements ISessionPro
 	
 	// BUSINESS METHODs
 	public HibernateAdapter(String fileMappingName, IIdentityProvider identityProvider){
-		this(new File(fileMappingName), identityProvider);		
+		super();
+		
+		Guard.argumentNotNull(identityProvider, "identityProvider");
+		Guard.argumentNotNullOrEmptyString(fileMappingName, "fileMappingName");
+		
+		initialize(new File(fileMappingName), identityProvider);
 	}
 	
 	public HibernateAdapter(File entityMapping, IIdentityProvider identityProvider){
-		
+		super();
+		initialize(entityMapping, identityProvider);
+	}
+
+	private void initialize(File entityMapping,
+			IIdentityProvider identityProvider) {
 		Guard.argumentNotNull(identityProvider, "identityProvider");
+		Guard.argumentNotNull(entityMapping, "entityMapping");
+		
 		if(!entityMapping.exists() || !entityMapping.canRead()){
-			throw new IllegalArgumentException("Invalid file mapping");
+			Guard.throwsArgumentException("Arg_InvalidHibernateFileMapping", entityMapping.getName());
 		}
 		
 		this.identityProvider = identityProvider;

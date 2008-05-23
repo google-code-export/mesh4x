@@ -3,7 +3,7 @@ package com.mesh4j.sync.parsers;
 import org.dom4j.Element;
 import org.dom4j.QName;
 
-public interface IXMLView {
+public interface IXMLViewElement {
 	
 	void addElement(String name);
 	void addElement(String name, String uri);
@@ -15,6 +15,8 @@ public interface IXMLView {
 	Element normalize(Element element);
 	
 	void update(Element currentElement, Element newElement);
+	
+	String getType();
 
 
 

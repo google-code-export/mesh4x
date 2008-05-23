@@ -27,4 +27,20 @@ public class Guard {
 		if (value.length() == 0)
 			throw new IllegalArgumentException(MessageTranslator.translate("ArgumentCanNotBeNullOrEmpty", argumentName));
 	}
+	
+	public static void throwsArgumentException(String key, Object... args){
+		throw new IllegalArgumentException(MessageTranslator.translate(key, args));
+	}
+	
+	public static void throwsArgumentException(String key){
+		throw new IllegalArgumentException(MessageTranslator.translate(key));
+	}
+	
+	public static void throwsException(String key, Object... args){
+		throw new MeshException(MessageTranslator.translate(key, args));
+	}
+	
+	public static void throwsException(String key){
+		throw new MeshException(MessageTranslator.translate(key));
+	}
 }

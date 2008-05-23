@@ -56,10 +56,15 @@ public class SyncInfoParser {
 	}
 	
 	public Sync convertSyncElement2Sync(Element syncElement){
-		FeedReader reader = new FeedReader(this.format, this.identityProvider);
+		return convertSyncElement2Sync(syncElement, this.format, this.identityProvider);
+	}
+	
+	public static Sync convertSyncElement2Sync(Element syncElement, ISyndicationFormat format, IIdentityProvider identityProvider){
+		FeedReader reader = new FeedReader(format, identityProvider);
 		Sync sync = reader.readSync(syncElement);
 		return sync;
 	}
+
 	
 	public Element convertSyncInfo2Element(SyncInfo syncInfo) {
 		Element syncElementRoot = DocumentHelper.createElement(SYNC_INFO);
@@ -75,7 +80,11 @@ public class SyncInfoParser {
 	}
 
 	public Element convertSync2Element(Sync sync) {
-		FeedWriter writer = new FeedWriter(this.format, this.identityProvider);
+		return convertSync2Element(sync, this.format, this.identityProvider);
+	}
+	
+	public static Element convertSync2Element(Sync sync, ISyndicationFormat format, IIdentityProvider identityProvider) {
+		FeedWriter writer = new FeedWriter(format, identityProvider);
 		Element syncData = DocumentHelper.createElement(ISyndicationFormat.ATTRIBUTE_PAYLOAD);
 		syncData.addNamespace(ISyndicationFormat.SX_PREFIX, ISyndicationFormat.NAMESPACE);
 		writer.writeSync(syncData, sync);

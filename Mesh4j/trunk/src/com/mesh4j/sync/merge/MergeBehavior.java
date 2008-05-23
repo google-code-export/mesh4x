@@ -8,7 +8,6 @@ import java.util.Date;
 import com.mesh4j.sync.model.History;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.Sync;
-import com.mesh4j.sync.translator.MessageTranslator;
 import com.mesh4j.sync.validations.Guard;
 
 /// <summary>
@@ -65,7 +64,7 @@ public class MergeBehavior {
 		if (original.getLastUpdate() == null ||
 			incoming.getLastUpdate() == null)
 		{
-			throw new IllegalArgumentException(MessageTranslator.translate("SyncHistoryRequired"));
+			Guard.throwsException("SyncHistoryRequired");
 		}
 
 		return mergeItems(original, incoming);

@@ -1,4 +1,4 @@
-package com.mesh4j.sync.adapters.kml;
+package com.mesh4j.sync.adapters.kml.spli.content.adapter;
 
 import org.junit.Test;
 

@@ -13,6 +13,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
+import com.mesh4j.sync.validations.Guard;
+
 public class ZipUtils {
 
 	public static String getTextEntryContent(String fileName, String entryName) throws IOException{
@@ -31,7 +33,8 @@ public class ZipUtils {
 			}
 			return writer.toString();
 		} else {
-			throw new IllegalArgumentException("entryName");
+			Guard.throwsArgumentException("Arg_InvalidZipEntryName", file.getName(), entryName);
+			return ""; // ONLY for java compilation
 		}
 	} 
 		
