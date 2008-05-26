@@ -1,0 +1,12 @@
+#summary URL of test service for syncing
+
+= Introduction =
+
+http://sync.instedd.org
+
+
+= Details =
+
+You can create a feed. Protocol isn't documented but there is a java adapter (HttpSyncAdapter or something like that) that talks to the service
+
+-- bab
