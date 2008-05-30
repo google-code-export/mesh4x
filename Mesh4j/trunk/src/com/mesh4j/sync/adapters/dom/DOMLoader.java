@@ -1,22 +1,22 @@
-package com.mesh4j.sync.adapters.kml;
+package com.mesh4j.sync.adapters.dom;
 
 import java.io.File;
 
-import com.mesh4j.sync.parsers.XMLView;
+import com.mesh4j.sync.parsers.IXMLView;
 import com.mesh4j.sync.security.IIdentityProvider;
 import com.mesh4j.sync.validations.Guard;
 
-public abstract class KMLMeshDOMLoader implements IKMLMeshDomLoader {
+public abstract class DOMLoader implements IDOMLoader {
 
 	// MODEL VARIABLES
 	private File file;
-	private IKMLMeshDocument kmlDocument;
+	private IMeshDOM dom;
 	private IIdentityProvider identityProvider;
-	private XMLView xmlView;
+	private IXMLView xmlView;
 	
 	// BUSINESS METHODS
 
-	public KMLMeshDOMLoader(String fileName, IIdentityProvider identityProvider, XMLView xmlView) {
+	public DOMLoader(String fileName, IIdentityProvider identityProvider, IXMLView xmlView) {
 		Guard.argumentNotNullOrEmptyString(fileName, "fileName");
 		Guard.argumentNotNull(identityProvider, "identityProvider");
 		Guard.argumentNotNull(xmlView, "xmlView");
@@ -28,30 +28,30 @@ public abstract class KMLMeshDOMLoader implements IKMLMeshDomLoader {
 
 	public void read() {
 		if(!file.exists()){
-			this.kmlDocument = this.createDocument(this.file.getName());
+			this.dom = this.createDocument(this.file.getName());
 		}else{
-			this.kmlDocument = this.load();
+			this.dom = this.load();
 		}
-		this.kmlDocument.updateMeshStatus();
+		this.dom.updateMeshStatus();
 	}
 
-	protected abstract IKMLMeshDocument createDocument(String name);
+	protected abstract IMeshDOM createDocument(String name);
 	
 
 	public void write() {
-		this.kmlDocument.normalize();
+		this.dom.normalize();
 		this.flush();
 	}
 	
 	protected abstract void flush();
 	
-	protected abstract IKMLMeshDocument load();
+	protected abstract IMeshDOM load();
 
-	public IKMLMeshDocument getDocument() {
-		return this.kmlDocument;
+	public IMeshDOM getDOM() {
+		return this.dom;
 	}
 	
-	protected File getFile(){
+	public File getFile(){
 		return this.file;
 	}
 	
@@ -59,7 +59,7 @@ public abstract class KMLMeshDOMLoader implements IKMLMeshDomLoader {
 		return identityProvider;
 	}
 	
-	protected XMLView getXMLView(){
+	public IXMLView getXMLView(){
 		return xmlView;
 	}
 	

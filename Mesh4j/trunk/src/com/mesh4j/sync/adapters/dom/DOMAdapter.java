@@ -1,4 +1,4 @@
-package com.mesh4j.sync.adapters.kml;
+package com.mesh4j.sync.adapters.dom;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -12,24 +12,25 @@ import com.mesh4j.sync.AbstractSyncAdapter;
 import com.mesh4j.sync.IFilter;
 import com.mesh4j.sync.ISyncAware;
 import com.mesh4j.sync.adapters.SyncInfo;
+import com.mesh4j.sync.adapters.kml.KMLContent;
 import com.mesh4j.sync.filter.SinceLastUpdateFilter;
+import com.mesh4j.sync.model.IContent;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.NullContent;
 import com.mesh4j.sync.model.Sync;
 import com.mesh4j.sync.security.IIdentityProvider;
-import com.mesh4j.sync.translator.MessageTranslator;
 import com.mesh4j.sync.validations.Guard;
 
-public class KMLAdapter extends AbstractSyncAdapter implements ISyncAware {
+public class DOMAdapter  extends AbstractSyncAdapter implements ISyncAware {
 	
 	// TODO (JMT) Purge and clean mesh4x data to kml file.
 	// TODO (JMT) XML Canonalization (C14N) for versioning
 	
 	// MODEL VARIABLES
-	private IKMLMeshDomLoader domLoader;
+	private IDOMLoader domLoader;
 	
 	// BUSINESS METHODS
-	public KMLAdapter(IKMLMeshDomLoader domLoader){
+	public DOMAdapter(IDOMLoader domLoader){
 		Guard.argumentNotNull(domLoader, "domLoader");
 		this.domLoader = domLoader;
 	}
@@ -37,14 +38,20 @@ public class KMLAdapter extends AbstractSyncAdapter implements ISyncAware {
 	@Override
 	public void add(Item item) {
 		Guard.argumentNotNull(item, "item");
-
-		SyncInfo syncInfo = new SyncInfo(item.getSync(), this.getMeshKmlDocument().getType(), item.getContent().getId(), item.getContent().getVersion());
+		
 		if (item.isDeleted()){
-			this.getMeshKmlDocument().refreshSync(syncInfo);
-		}else{
-			KMLContent kmlContent = KMLContent.normalizeContent(item.getContent());
-			this.getMeshKmlDocument().addElement(kmlContent.getPayload().createCopy(), syncInfo);
+			SyncInfo syncInfo = new SyncInfo(item.getSync(), this.getDOM().getType(), item.getContent().getId(), item.getContent().getVersion());
+			this.getDOM().updateSync(syncInfo);	
+		} else {
+			IContent content = this.getDOM().normalizeContent(item.getContent());
+			Element elementAdded = this.getDOM().addElement(content.getPayload().createCopy());
+			if(elementAdded != null){
+				KMLContent contentAdded = new KMLContent(elementAdded, item.getSyncId());
+				SyncInfo syncInfo = new SyncInfo(item.getSync(), this.getDOM().getType(), contentAdded.getId(), contentAdded.getVersion());
+				this.getDOM().updateSync(syncInfo);	
+			}
 		}
+		
 	}
 	
 	@Override
@@ -52,16 +59,19 @@ public class KMLAdapter extends AbstractSyncAdapter implements ISyncAware {
 		Guard.argumentNotNull(item, "item");
 		
 		if (item.isDeleted()){
-			SyncInfo syncInfo = this.getMeshKmlDocument().getSync(item.getSyncId());
+			SyncInfo syncInfo = this.getDOM().getSync(item.getSyncId());
 			if(syncInfo != null){
 				syncInfo.updateSync(item.getSync());
-				this.getMeshKmlDocument().refreshSync(syncInfo);				
-				this.getMeshKmlDocument().removeElement(syncInfo.getId());
+				this.getDOM().deleteElement(syncInfo.getId());
+				this.getDOM().updateSync(syncInfo);
 			}
 		}else{
-			SyncInfo syncInfo = new SyncInfo(item.getSync(), this.getMeshKmlDocument().getType(), item.getContent().getId(), item.getContent().getVersion());
-			KMLContent kmlContent = KMLContent.normalizeContent(item.getContent());
-			this.getMeshKmlDocument().updateElement(kmlContent.getPayload().createCopy(), syncInfo);
+			IContent content = this.getDOM().normalizeContent(item.getContent());
+			Element elementUpdated = this.getDOM().updateElement(content.getPayload().createCopy());
+			KMLContent contentUpdated = new KMLContent(elementUpdated, item.getSyncId());
+			
+			SyncInfo syncInfo = new SyncInfo(item.getSync(), this.getDOM().getType(), contentUpdated.getId(), contentUpdated.getVersion());
+			this.getDOM().updateSync(syncInfo);
 		}
 	} 
 
@@ -69,23 +79,22 @@ public class KMLAdapter extends AbstractSyncAdapter implements ISyncAware {
 	public void delete(String id) {
 		Guard.argumentNotNullOrEmptyString(id, "id");
 
-		SyncInfo syncInfo = this.getMeshKmlDocument().getSync(id);
+		SyncInfo syncInfo = this.getDOM().getSync(id);
 		if (syncInfo != null && !syncInfo.isDeleted()){
 			syncInfo.getSync().delete(this.getAuthenticatedUser(), new Date());
-			this.getMeshKmlDocument().refreshSync(syncInfo);
 		}else if(syncInfo == null){
 			Sync sync = new Sync(id, this.getAuthenticatedUser(), new Date(), true);
-			syncInfo = new SyncInfo(sync, this.getMeshKmlDocument().getType(), id, new NullContent(id).getVersion());
-			this.getMeshKmlDocument().refreshSync(syncInfo);
+			syncInfo = new SyncInfo(sync, this.getDOM().getType(), id, new NullContent(id).getVersion());
 		}		
-		this.getMeshKmlDocument().removeElement(id);
+		this.getDOM().deleteElement(id);
+		this.getDOM().updateSync(syncInfo);
 	}
 
 	@Override
 	public Item get(String id) {
 		Guard.argumentNotNullOrEmptyString(id, "id");
 
-		SyncInfo syncInfo = this.getMeshKmlDocument().getSync(id);
+		SyncInfo syncInfo = this.getDOM().getSync(id);
 		if(syncInfo == null){
 			return null;
 		}
@@ -94,8 +103,8 @@ public class KMLAdapter extends AbstractSyncAdapter implements ISyncAware {
 			NullContent nullContent = new NullContent(syncInfo.getSyncId());
 			return new Item(nullContent, syncInfo.getSync());
 		} else {
-			Element payload = this.getMeshKmlDocument().getElement(id);
-			KMLContent content = new KMLContent(payload, id);
+			Element payload = this.getDOM().getElement(id);
+			IContent content = this.getDOM().createContent(payload, id);
 			return new Item(content, syncInfo.getSync());		
 		}
 	}
@@ -105,13 +114,13 @@ public class KMLAdapter extends AbstractSyncAdapter implements ISyncAware {
 		
 		ArrayList<Item> result = new ArrayList<Item>();
 		
-		List<Element> elements = this.getMeshKmlDocument().getElementsToSync();
-		Map<String, SyncInfo> syncByID = this.convertToMapByID(this.getMeshKmlDocument().getAllSyncs());
+		List<Element> elements = this.getDOM().getAllElements();
+		Map<String, SyncInfo> syncByID = this.convertToMapByID(this.getDOM().getAllSyncs());
 		
 		for (Element element : elements) {
-			String syncID = this.getMeshKmlDocument().getMeshSyncId(element);
+			String syncID = this.getDOM().getMeshSyncId(element);
 			SyncInfo syncInfo = syncByID.get(syncID);
-			KMLContent content = new KMLContent(this.getMeshKmlDocument().normalize(element), syncID);
+			IContent content = this.getDOM().createContent(this.getDOM().normalize(element), syncID);
 			syncByID.remove(syncID);
 
 			Item item = new Item(content, syncInfo.getSync());
@@ -144,19 +153,11 @@ public class KMLAdapter extends AbstractSyncAdapter implements ISyncAware {
 		return filterOK && dateOk;
 	}
 	
-	public static void prepareKMLToSync(IKMLMeshDomLoader domLoader) {
-		KMLAdapter kmlAdapter = new KMLAdapter(domLoader);
-		kmlAdapter.beginSync();
-		kmlAdapter.endSync();
+	public void prepareDOMToSync() {
+		this.beginSync();
+		this.endSync();
 	}	
 		
-	// UNSUPPORTED OPERATIONS
-	
-	@Override
-	public String getFriendlyName() {		
-		return MessageTranslator.translate(KMLAdapter.class.getName());
-	}
-
 	@Override
 	public String getAuthenticatedUser() {
 		return getIdentityProvider().getAuthenticatedUser();
@@ -176,8 +177,21 @@ public class KMLAdapter extends AbstractSyncAdapter implements ISyncAware {
 		this.domLoader.write();
 	}
 	
-	private IKMLMeshDocument getMeshKmlDocument() {
-		return this.domLoader.getDocument();
+	public IMeshDOM getDOM() {
+		return this.domLoader.getDOM();
 	}
 	
+	@Override
+	public String getFriendlyName() {		
+		return this.domLoader.getFriendlyName();
+	}
+
+	public String getMeshSyncId(Element element) {
+		return this.getDOM().getMeshSyncId(element);
+	}
+
+	// UTILS
+	public boolean isValid(Element element) {
+		return this.getDOM().isValid(element);
+	}
 }

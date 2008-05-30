@@ -14,7 +14,7 @@ public abstract class Content implements IContent{
 	// BUSINESS METHODS
 	public Content(Element payload, String id) {
 		Guard.argumentNotNull(payload, "payload");
-		Guard.argumentNotNull(id, "id");
+		Guard.argumentNotNullOrEmptyString(id, "id");
 		
 		this.payload = payload;
 		this.id = id;

@@ -1,24 +1,28 @@
 package com.mesh4j.sync.parsers;
 
+import java.util.List;
+
+import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.QName;
 
 public interface IXMLViewElement {
-	
-	void addElement(String name);
-	void addElement(String name, String uri);
-	void addElement(QName qName);
-	
-	void addAttribute(QName qName);
-	void addAttribute(String name);
+
+	QName getQName();
 	
 	Element normalize(Element element);
 	
-	void update(Element currentElement, Element newElement);
+	Element update(Document document, Element element, Element newElement);
 	
-	String getType();
+	Element add(Document document, Element element);
 
+	void delete(Document document, Element element);
 
+	List<Element> getAllElements(Document document);
 
+	String getName();
 
+	Element refresh(Document document, Element element);
+
+	boolean isValid(Document document, Element element);
 }

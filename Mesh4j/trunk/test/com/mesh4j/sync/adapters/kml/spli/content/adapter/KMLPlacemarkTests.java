@@ -17,7 +17,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.mesh4j.sync.adapters.kml.KMLContent;
-import com.mesh4j.sync.adapters.kml.KmlNames;
 import com.mesh4j.sync.model.IContent;
 import com.mesh4j.sync.test.utils.TestHelper;
 import com.mesh4j.sync.utils.IdGenerator;
@@ -66,7 +65,7 @@ public class KMLPlacemarkTests {
 		KMLContent content = kmlAdapter.get(id);
 		Assert.assertNotNull(content);
 		Assert.assertEquals("a", content.getPayload().element("name").getText());
-		Assert.assertEquals(id, content.getPayload().attributeValue(KmlNames.XML_ID_QNAME));
+		Assert.assertEquals(id, content.getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME));
 		
 		List<IContent> items = kmlAdapter.getAll();
 		Assert.assertEquals(4, items.size());
@@ -101,7 +100,7 @@ public class KMLPlacemarkTests {
 		content = kmlAdapter.get(id);
 		Assert.assertNotNull(content);
 		Assert.assertEquals("zz", content.getPayload().element("name").getText());
-		Assert.assertEquals(id, content.getPayload().attributeValue(KmlNames.XML_ID_QNAME));
+		Assert.assertEquals(id, content.getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME));
 		
 		items = kmlAdapter.getAll();
 		Assert.assertEquals(4, items.size());
@@ -303,8 +302,8 @@ public class KMLPlacemarkTests {
 		List<IContent> items = kmlAdapter.getAll();
 		
 		Assert.assertEquals(2, items.size());
-		String xmlID1 = items.get(0).getPayload().attributeValue(KmlNames.XML_ID_QNAME);
-		String xmlID2 = items.get(1).getPayload().attributeValue(KmlNames.XML_ID_QNAME);
+		String xmlID1 = items.get(0).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
+		String xmlID2 = items.get(1).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
 		
 		Assert.assertNotNull(xmlID1);
 		Assert.assertNotNull(xmlID2);
@@ -391,7 +390,7 @@ public class KMLPlacemarkTests {
 		Assert.assertNotNull(addedContent);
 		
 		Element addedPlacemark = addedContent.getPayload();
-		String xmlID = addedPlacemark.attributeValue(KmlNames.XML_ID_QNAME);
+		String xmlID = addedPlacemark.attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
 		Assert.assertEquals(id, xmlID);
 		Assert.assertEquals("new", addedPlacemark.element("name").getText());
 				
@@ -399,13 +398,13 @@ public class KMLPlacemarkTests {
 		Assert.assertEquals(3, items.size());
 		
 		addedPlacemark = items.get(2).getPayload();
-		xmlID = addedPlacemark.attributeValue(KmlNames.XML_ID_QNAME);
+		xmlID = addedPlacemark.attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
 		Assert.assertEquals(id, xmlID);
 		Assert.assertNotNull(xmlID);
 		Assert.assertEquals("new", addedPlacemark.element("name").getText());
 				
-		String xmlID1 = items.get(0).getPayload().attributeValue(KmlNames.XML_ID_QNAME);
-		String xmlID2 = items.get(1).getPayload().attributeValue(KmlNames.XML_ID_QNAME);		
+		String xmlID1 = items.get(0).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
+		String xmlID2 = items.get(1).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);		
 		Assert.assertNotNull(xmlID1);
 		Assert.assertEquals("a", items.get(0).getPayload().element("name").getText());
 		Assert.assertNotNull(xmlID2);
@@ -463,8 +462,8 @@ public class KMLPlacemarkTests {
 		KMLContent content = (KMLContent)items.get(0);
 		
 		Assert.assertEquals(2, items.size());
-		String xmlID1 = items.get(0).getPayload().attributeValue(KmlNames.XML_ID_QNAME);
-		String xmlID2 = items.get(1).getPayload().attributeValue(KmlNames.XML_ID_QNAME);
+		String xmlID1 = items.get(0).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
+		String xmlID2 = items.get(1).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
 		
 		Assert.assertNotNull(xmlID1);
 		Assert.assertNotNull(xmlID2);
@@ -477,7 +476,7 @@ public class KMLPlacemarkTests {
 		
 		items = kmlAdapter.getAll();
 		Assert.assertEquals(1, items.size());
-		xmlID1 = items.get(0).getPayload().attributeValue(KmlNames.XML_ID_QNAME);		
+		xmlID1 = items.get(0).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);		
 		Assert.assertNotNull(xmlID1);
 		Assert.assertFalse(id.equals(xmlID1));
 		Assert.assertEquals("b", items.get(0).getPayload().element("name").getText());
@@ -534,8 +533,8 @@ public class KMLPlacemarkTests {
 		Document document = saxReader.read(file);
 		
 		HashMap<String, String> map = new HashMap<String, String>();
-		map.put(KmlNames.XML_PREFIX, KmlNames.XML_URI);
-		map.put(KmlNames.KML_PREFIX, KmlNames.KML_URI);
+		map.put(KMLContentAdapterNames.XML_PREFIX, KMLContentAdapterNames.XML_URI);
+		map.put(KMLContentAdapterNames.KML_PREFIX, KMLContentAdapterNames.KML_URI);
 
 		Dom4jXPath xpath = new Dom4jXPath("//kml:*[@xml:id]");
 		xpath.setNamespaceContext(new SimpleNamespaceContext(map));
@@ -543,8 +542,8 @@ public class KMLPlacemarkTests {
 		
 		Assert.assertNotNull(elements);
 		Assert.assertEquals(2, elements.size());
-		String xmlID1 = elements.get(0).attributeValue(KmlNames.XML_ID_QNAME);
-		String xmlID2 = elements.get(1).attributeValue(KmlNames.XML_ID_QNAME);
+		String xmlID1 = elements.get(0).attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
+		String xmlID2 = elements.get(1).attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
 		
 		Assert.assertNotNull(xmlID1);
 		Assert.assertNotNull(xmlID2);

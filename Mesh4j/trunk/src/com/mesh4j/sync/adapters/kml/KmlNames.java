@@ -20,28 +20,13 @@ public interface KmlNames {
 	public static final String KML_ELEMENT_STYLE_MAP = "StyleMap";
 	public static final QName KML_ATTRIBUTE_ID_QNAME = DocumentHelper.createQName("id", KML_NS);
 	public static final String KML_ATTRIBUTE_ID = "id";
-	public static final QName FOLDER_QNAME = DocumentHelper.createQName("Folder", KML_NS);
-	
-	public static final String XML_PREFIX = "xml";
-	public static final String XML_URI = "http://www.w3.org/XML/1998/namespace";
-	public static final Namespace XML_NS = DocumentHelper.createNamespace(XML_PREFIX, XML_URI);
-	public static final QName XML_ID_QNAME = DocumentHelper.createQName("id", XML_NS);
-		
-	public static final String XLINK_PREFIX = "xlink";
-	public static final String XLINK_URI = "http://www.w3.org/1999/xlink";
-	public static final Namespace XLINK_NS = DocumentHelper.createNamespace(XLINK_PREFIX, XLINK_URI);
-	public static final QName PARENT_ID_QNAME = DocumentHelper.createQName("href", XLINK_NS);
+	public static final QName KML_QNAME_FOLDER = DocumentHelper.createQName("Folder", KML_NS);
+	public static final QName KML_QNAME_PLACEMARK = DocumentHelper.createQName("Placemark", KML_NS);
+	public static final QName KML_QNAME_STYLE = DocumentHelper.createQName("Style", KML_NS);
+	public static final QName KML_QNAME_STYLE_MAP = DocumentHelper.createQName("StyleMap", KML_NS);
 	
 	public static final String KML_ELEMENT_EXTENDED_DATA = "ExtendedData";
-	public static final String MESH_PREFIX = "mesh4x";
-	public static final String MESH_URI = "http://mesh4x.org/kml";
-	public static final Namespace MESH_NS = DocumentHelper.createNamespace(MESH_PREFIX, MESH_URI);
-	public static final QName MESH_QNAME_SYNC_ID = DocumentHelper.createQName("id", MESH_NS);
-	public static final QName MESH_QNAME_PARENT_ID = DocumentHelper.createQName("parentId", MESH_NS);
-	public static final QName MESH_QNAME_SYNC = DocumentHelper.createQName("sync", MESH_NS);;
-	//public static final String MESH_ID = "id";
-	//public static final String MESH_PARENT_ID = "parentId";
-	public static final String MESH_VERSION = "version";
 	
 	public static final String KMZ_DEFAULT_ENTRY_NAME_TO_KML = "doc.kml";
+
 }

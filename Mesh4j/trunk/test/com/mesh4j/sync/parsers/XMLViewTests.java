@@ -1,237 +1,204 @@
 package com.mesh4j.sync.parsers;
 
-import org.dom4j.DocumentException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.QName;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.mesh4j.sync.adapters.dom.MeshNames;
+import com.mesh4j.sync.adapters.kml.KmlNames;
+
 public class XMLViewTests {
 
-	@Test
-	public void shouldNormalizeReturnsNullBecauseElementIsNull(){
-		XMLView view = new XMLView();
-		Assert.assertNull(view.normalize(null));
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldCreateXMLViewFailsIfNoElementViewAreGiving(){
+		new XMLView();
 	}
 	
 	@Test
-	public void shouldNormalizeReturnsSameElementBecauseNoViewForElement(){
-		XMLView view = new XMLView();
+	public void shouldGetViewElements(){
+		IXMLViewElement view1 = new XMLViewElement(KmlNames.KML_QNAME_PLACEMARK);
+		IXMLViewElement view2 = new XMLViewElement(KmlNames.KML_QNAME_FOLDER);
 		
-		Element element = DocumentHelper.createElement("Foo");
-		Assert.assertEquals(element, view.normalize(element));
+		XMLView view = new XMLView(view1, view2);
+		List<IXMLViewElement> viewElements = view.getXMLViewElements();
+		
+		Assert.assertNotNull(viewElements);
+		Assert.assertEquals(2, viewElements.size());
+		Assert.assertSame(view1, viewElements.get(0));
+		Assert.assertSame(view2, viewElements.get(1));
 	}
 	
 	@Test
-	public void shouldNormalize() throws DocumentException{
-		XMLViewElement elementView = new XMLViewElement("Document");
+	public void shouldGetNamespaces(){
+		IXMLViewElement view1 = new XMLViewElement(KmlNames.KML_QNAME_PLACEMARK);
+		IXMLViewElement view2 = new XMLViewElement(MeshNames.MESH_QNAME_HIERARCHY);
 		
-		QName attr1 = DocumentHelper.createQName("fooAttribute", DocumentHelper.createNamespace("foo", "http:\\foo.org"));
-		elementView.addAttribute(attr1);
-		
-		String attr2 = "myAttribute";
-		elementView.addAttribute(attr2);
-		
-		QName ele1 = DocumentHelper.createQName("BAR", DocumentHelper.createNamespace("bar", "http:\\bar.org"));
-		elementView.addElement(ele1);
-		
-		String ele2 = "BarFoo";
-		elementView.addElement(ele2);
-		
-		XMLView view = new XMLView(elementView);
-		
-		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
-		"<Document xmlns:foo=\"http:\\foo.org\" xmlns:bar=\"http:\\bar.org\" xmlns:fooBar=\"http:\\foobar.org\" myAttribute=\"2\" foo:fooAttribute=\"1\">"+
-		"<name>dummy</name>"+
-	   	"<ExtendedData>"+
-		"<MESH xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"2096103467\">"+
-      	"<sx:sync id=\"1\" updates=\"3\" deleted=\"false\" noconflicts=\"false\">"+
-      	"<sx:history sequence=\"3\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/>"+
-      	"<sx:history sequence=\"2\" when=\"2005-05-21T10:43:33Z\" by=\"REO1750\"/>"+
-      	"<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"+
-     	"</sx:sync>"+
-		"</MESH>"+
-      	"</ExtendedData>"+
-		"<Placemark foo:id=\"1\">"+
-		"<name>B</name>"+
-		"</Placemark>"+
-		"<bar:BAR>"+
-		"<name>B</name>"+
-		"</bar:BAR>"+
-		"<BarFoo>"+
-		"<name>C</name>"+
-		"</BarFoo>"+
-		"</Document>";
-		
-		Element element = DocumentHelper.parseText(xml).getRootElement();
-		Element normalizedElement = view.normalize(element);
-		
-		Assert.assertNotNull(normalizedElement);
-		Assert.assertFalse(element == normalizedElement);
-		
-		Assert.assertNotNull(normalizedElement.attributeValue(attr1));
-		Assert.assertEquals("1", normalizedElement.attributeValue(attr1));
-		
-		Assert.assertNotNull(normalizedElement.attributeValue(attr2));
-		Assert.assertEquals("2", normalizedElement.attributeValue(attr2));
-		
-		Assert.assertNotNull(normalizedElement.element(ele1));
-		Assert.assertNotNull(normalizedElement.element(ele1).element("name"));
-		Assert.assertEquals("B", normalizedElement.element(ele1).element("name").getText());
-		
-		Assert.assertNotNull(normalizedElement.element(ele2));
-		Assert.assertNotNull(normalizedElement.element(ele2).element("name"));
-		Assert.assertEquals("C", normalizedElement.element(ele2).element("name").getText());
+		XMLView view = new XMLView(view1, view2);
+		Map<String, String> ns = view.getNameSpaces();
+		Assert.assertNotNull(ns);
+		Assert.assertEquals(2, ns.size());
+		Assert.assertEquals(KmlNames.KML_QNAME_PLACEMARK.getNamespaceURI(), ns.get(KmlNames.KML_QNAME_PLACEMARK.getNamespacePrefix()));
+		Assert.assertEquals(MeshNames.MESH_QNAME_HIERARCHY.getNamespaceURI(), ns.get(MeshNames.MESH_QNAME_HIERARCHY.getNamespacePrefix()));
 	}
 	
 	@Test
-	public void shouldUpdateNotEffectBecauseElementIsNull(){
-		XMLView view = new XMLView();
+	public void shouldGetAllElements(){
+		MockXMLViewElement view1 = new MockXMLViewElement("Folder");
+		MockXMLViewElement view2 = new MockXMLViewElement("Placemark");
 		
-		Element element = DocumentHelper.createElement("Foo");
-		view.update(null, element);
+		XMLView view = new XMLView(view1, view2);
+		List<Element> elements = view.getAllElements(DocumentHelper.createDocument());
+		
+		Assert.assertNotNull(elements);
+		Assert.assertEquals(2, elements.size());
+		Assert.assertEquals(view1.getElement(), elements.get(0));
+		Assert.assertEquals(view2.getElement(), elements.get(1));
+	}
+
+	@Test
+	public void shouldNormalize(){
+		MockXMLViewElement view1 = new MockXMLViewElement("Folder");
+		XMLView view = new XMLView(view1);
+		
+		Assert.assertSame(view1.getElement(), view.normalize(view1.getElement()));		
+		Assert.assertNull(view.normalize(null));		
+		Assert.assertNull(view.normalize(DocumentHelper.createElement("Placemark")));
 	}
 	
 	@Test
-	public void shouldUpdateNotEffectBecauseNewElementIsNull(){
-		XMLView view = new XMLView();
+	public void shouldRefreshAndNormalize(){
+		MockXMLViewElement view1 = new MockXMLViewElement("Folder");
+		XMLView view = new XMLView(view1);
 		
-		Element element = DocumentHelper.createElement("Foo");
-		view.update(element, null);
+		Assert.assertSame(view1.getElement(), view.refreshAndNormalize(null, view1.getElement()));		
+		Assert.assertNull(view.refreshAndNormalize(null, null));		
+		Assert.assertNull(view.refreshAndNormalize(null, DocumentHelper.createElement("Placemark")));
+	}
+	
+	@Test
+	public void shouldAdd(){
+		MockXMLViewElement view1 = new MockXMLViewElement("Folder");
+		XMLView view = new XMLView(view1);
+		
+		Document document = DocumentHelper.createDocument(DocumentHelper.createElement("kml"));
+		Assert.assertSame(view1.getElement(), view.add(document, view1.getElement()));
+		Assert.assertSame(view1.getElement(), document.getRootElement().element(view1.getName()));
+		Assert.assertNull(view.add(null, null));		
+		Assert.assertNull(view.add(null, DocumentHelper.createElement("Placemark")));
+	}
+	
+	@Test
+	public void shouldUpdate(){
+		MockXMLViewElement view1 = new MockXMLViewElement("Folder");
+		XMLView view = new XMLView(view1);
+		
+		Element newElement = DocumentHelper.createElement("Folder");
+		Assert.assertSame(newElement, view.update(null, view1.getElement(), newElement));
+		Assert.assertNull(view.update(null, null, null));		
+		Assert.assertNull(view.update(null, DocumentHelper.createElement("Placemark"), null));
+	}
+	
+	@Test
+	public void shouldDelete(){
+		MockXMLViewElement view1 = new MockXMLViewElement("Folder");
+		XMLView view = new XMLView(view1);
+		
+		Document document = DocumentHelper.createDocument(DocumentHelper.createElement("kml"));
+		document.getRootElement().add(view1.getElement());
+		Assert.assertNotNull(document.getRootElement().element(view1.getName()));
+		
+		view.delete(document, view1.getElement());
+		Assert.assertNull(document.getRootElement().element(view1.getName()));
 
-		Assert.assertFalse(element.attributeIterator().hasNext());
-		Assert.assertFalse(element.elementIterator().hasNext());
+		document.getRootElement().add(view1.getElement());
+		Assert.assertNotNull(document.getRootElement().element(view1.getName()));
+		view.delete(document, null);		
+		Assert.assertNotNull(document.getRootElement().element(view1.getName()));
+		
+		Assert.assertNotNull(document.getRootElement().element(view1.getName()));
+		view.delete(document, DocumentHelper.createElement("Placemark"));		
+		Assert.assertNotNull(document.getRootElement().element(view1.getName()));
 
 	}
 	
 	@Test
-	public void shouldUpdateNotEffectBecauseElementHasInvalidType(){
-		XMLView view = new XMLView();
+	public void shouldIsValid(){
+		MockXMLViewElement view1 = new MockXMLViewElement("Folder");
+		XMLView view = new XMLView(view1);
 		
-		Element element = DocumentHelper.createElement("Foo");
-		Element elementSource = DocumentHelper.createElement("Foolder");
-		view.update(element, elementSource);
-		
-		Assert.assertFalse(element.attributeIterator().hasNext());
-		Assert.assertFalse(element.elementIterator().hasNext());
-
-	}
-		
-	@Test
-	public void shouldUpdateNoEffectBecauseNotConfigurationWasDefined() throws DocumentException{
-		XMLView view = new XMLView();
-		
-		String xml = "<Document xmlns:foo=\"http://foo.org\" myAttribute=\"2\" foo:fooAttribute=\"1\"><name>dummy</name><ExtendedData><MESH xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"2096103467\"><sx:sync id=\"1\" updates=\"3\" deleted=\"false\" noconflicts=\"false\"><sx:history sequence=\"3\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/><sx:history sequence=\"2\" when=\"2005-05-21T10:43:33Z\" by=\"REO1750\"/><sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/></sx:sync></MESH></ExtendedData><Placemark foo:id=\"1\"><name>B</name></Placemark><bar:BAR xmlns:bar=\"http://bar.org\"><name>B</name></bar:BAR><BarFoo><name>C</name></BarFoo></Document>";
-		Element elementSource = DocumentHelper.parseText(xml).getRootElement();
-
-		Element element = DocumentHelper.createElement("Document");
-
-		view.update(element, elementSource);		
-
-		Assert.assertFalse(element.attributeIterator().hasNext());
-		Assert.assertFalse(element.elementIterator().hasNext());
-	}
-
-	@Test
-	public void shoudUpdateNoEffectBecauseNoElementsMatches() throws DocumentException{
-		
-		XMLViewElement elementView = new XMLViewElement("Document");
-		elementView.addAttribute(DocumentHelper.createQName("fooAttribute", DocumentHelper.createNamespace("foo", "http:\\foo.org")));
-		elementView.addAttribute("myAttribute");
-		elementView.addElement(DocumentHelper.createQName("barAttribute", DocumentHelper.createNamespace("bar", "http:\\bar.org")));
-		elementView.addElement("Bar");
-		elementView.addElement("FooBar", "http:\\foobar.org");
-		
-		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
-		"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
-		"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
-		"<name>dummy</name>"+
-	   	"<ExtendedData>"+
-		"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"2096103467\">"+
-      	"<sx:sync id=\"1\" updates=\"3\" deleted=\"false\" noconflicts=\"false\">"+
-      	"<sx:history sequence=\"3\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/>"+
-      	"<sx:history sequence=\"2\" when=\"2005-05-21T10:43:33Z\" by=\"REO1750\"/>"+
-      	"<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"+
-     	"</sx:sync>"+
-		"</mesh4x:sync>"+
-      	"</ExtendedData>"+
-		"<Placemark mesh4x:id=\"1\">"+
-		"<name>B</name>"+
-		"</Placemark>"+
-		"</Document>"+
-		"</kml>";
-		
-		Element element = DocumentHelper.createElement("Document");
-		Element elementSource = DocumentHelper.parseText(xml).getRootElement().element("Document");
-		
-		XMLView view = new XMLView(elementView);
-		view.update(element, elementSource);
-		
-		Assert.assertFalse(element.attributeIterator().hasNext());
-		Assert.assertFalse(element.elementIterator().hasNext());
+		Assert.assertTrue(view.isValid(null, view1.getElement()));
+		Assert.assertFalse(view.isValid(null, null));		
+		Assert.assertFalse(view.isValid(null, DocumentHelper.createElement("Placemark")));
 	}
 	
-	@Test
-	public void shoudUpdate() throws DocumentException{
-		XMLViewElement elementView = new XMLViewElement("Document");
+	private class MockXMLViewElement implements IXMLViewElement{
 		
-		QName attr1 = DocumentHelper.createQName("fooAttribute", DocumentHelper.createNamespace("foo", "http:\\foo.org"));
-		elementView.addAttribute(attr1);
-		
-		String attr2 = "myAttribute";
-		elementView.addAttribute(attr2);
-		
-		QName ele1 = DocumentHelper.createQName("BAR", DocumentHelper.createNamespace("bar", "http:\\bar.org"));
-		elementView.addElement(ele1);
-		
-		String ele2 = "BarFoo";
-		elementView.addElement(ele2);
-		
-		//view.addElement("FooBar", "http:\\foobar.org");
-		
-		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
-		"<Document xmlns:foo=\"http:\\foo.org\" xmlns:bar=\"http:\\bar.org\" xmlns:fooBar=\"http:\\foobar.org\" myAttribute=\"2\" foo:fooAttribute=\"1\">"+
-		"<name>dummy</name>"+
-	   	"<ExtendedData>"+
-		"<MESH xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"2096103467\">"+
-      	"<sx:sync id=\"1\" updates=\"3\" deleted=\"false\" noconflicts=\"false\">"+
-      	"<sx:history sequence=\"3\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/>"+
-      	"<sx:history sequence=\"2\" when=\"2005-05-21T10:43:33Z\" by=\"REO1750\"/>"+
-      	"<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"+
-     	"</sx:sync>"+
-		"</MESH>"+
-      	"</ExtendedData>"+
-		"<Placemark foo:id=\"1\">"+
-		"<name>B</name>"+
-		"</Placemark>"+
-		"<bar:BAR>"+
-		"<name>B</name>"+
-		"</bar:BAR>"+
-		"<BarFoo>"+
-		"<name>C</name>"+
-		"</BarFoo>"+
-		"</Document>";
-		
-		Element element = DocumentHelper.createElement("Document");
-		Element elementSource = DocumentHelper.parseText(xml).getRootElement();
-		
-		XMLView view = new XMLView(elementView);
-		view.update(element, elementSource);
-		
-		Assert.assertNotNull(element.attributeValue(attr1));
-		Assert.assertEquals("1", element.attributeValue(attr1));
-		
-		Assert.assertNotNull(element.attributeValue(attr2));
-		Assert.assertEquals("2", element.attributeValue(attr2));
-		
-		Assert.assertNotNull(element.element(ele1));
-		Assert.assertNotNull(element.element(ele1).element("name"));
-		Assert.assertEquals("B", element.element(ele1).element("name").getText());
-		
-		Assert.assertNotNull(element.element(ele2));
-		Assert.assertNotNull(element.element(ele2).element("name"));
-		Assert.assertEquals("C", element.element(ele2).element("name").getText());
+		private Element element;
 
+		private MockXMLViewElement(String elementName){
+			super();
+			this.element = DocumentHelper.createElement(elementName);
+		}
+		
+		public Element getElement() {
+			return this.element;
+		}
+
+		@Override
+		public Element add(Document document, Element element) {
+			document.getRootElement().add(element);
+			return element;
+		}
+
+		@Override
+		public void delete(Document document, Element element) {
+			document.getRootElement().remove(element);
+		}
+
+		@Override
+		public List<Element> getAllElements(Document document) {
+			ArrayList<Element> result = new ArrayList<Element>();
+			result.add(this.element);
+			return result;
+		}
+
+		@Override
+		public String getName() {			
+			return this.element.getName();
+		}
+
+		@Override
+		public QName getQName() {
+			return this.element.getQName();
+		}
+
+		@Override
+		public boolean isValid(Document document, Element element) {
+			return true;
+		}
+
+		@Override
+		public Element normalize(Element element) {
+			return element;
+		}
+
+		@Override
+		public Element refresh(Document document, Element element) {
+			return element;
+		}
+
+		@Override
+		public Element update(Document document, Element element,
+				Element newElement) {
+			return newElement;
+		}
+		
 	}
 }

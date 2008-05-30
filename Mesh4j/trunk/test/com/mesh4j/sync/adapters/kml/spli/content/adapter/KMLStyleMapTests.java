@@ -17,7 +17,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.mesh4j.sync.adapters.kml.KMLContent;
-import com.mesh4j.sync.adapters.kml.KmlNames;
 import com.mesh4j.sync.model.IContent;
 import com.mesh4j.sync.test.utils.TestHelper;
 import com.mesh4j.sync.utils.IdGenerator;
@@ -75,7 +74,7 @@ public class KMLStyleMapTests {
 		
 		KMLContent content = kmlAdapter.get(id);
 		Assert.assertNotNull(content);
-		String xmlID1 = content.getPayload().attributeValue(KmlNames.XML_ID_QNAME);
+		String xmlID1 = content.getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
 		Assert.assertEquals("msn_ylw-pushpin_"+xmlID1, content.getPayload().attributeValue("id"));
 		
 		List<IContent> items = kmlAdapter.getAll();
@@ -104,7 +103,7 @@ public class KMLStyleMapTests {
 		
 		content = kmlAdapter.get(id);
 		Assert.assertNotNull(content);
-		xmlID1 = content.getPayload().attributeValue(KmlNames.XML_ID_QNAME);
+		xmlID1 = content.getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
 		Assert.assertEquals("msn_NEW-pushpin_"+xmlID1, content.getPayload().attributeValue("id"));
 		
 		items = kmlAdapter.getAll();
@@ -177,7 +176,7 @@ public class KMLStyleMapTests {
 		KMLContent content = kmlAdapter.get(id);
 		
 		Assert.assertNotNull(content);
-		String xmlID = content.getPayload().attributeValue(KmlNames.XML_ID_QNAME);
+		String xmlID = content.getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
 		Assert.assertEquals("msn_ylw-pushpin_"+xmlID, content.getPayload().attributeValue("id"));
 
 	}
@@ -217,8 +216,8 @@ public class KMLStyleMapTests {
 		List<IContent> items = kmlAdapter.getAll();
 		
 		Assert.assertEquals(2, items.size());
-		String xmlID1 = items.get(0).getPayload().attributeValue(KmlNames.XML_ID_QNAME);
-		String xmlID2 = items.get(1).getPayload().attributeValue(KmlNames.XML_ID_QNAME);
+		String xmlID1 = items.get(0).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
+		String xmlID2 = items.get(1).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
 		
 		Assert.assertEquals("msn_ylw-pushpin_"+xmlID1, items.get(0).getPayload().attributeValue("id"));
 		Assert.assertEquals("msh_ylw-pushpin_"+xmlID2, items.get(1).getPayload().attributeValue("id"));
@@ -284,7 +283,7 @@ public class KMLStyleMapTests {
 		Assert.assertNotNull(addedContent);
 		
 		Element addedStyleMap = addedContent.getPayload();
-		String xmlID = addedStyleMap.attributeValue(KmlNames.XML_ID_QNAME);
+		String xmlID = addedStyleMap.attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
 		String kmlID = addedStyleMap.attributeValue("id");
 		Assert.assertEquals("new_"+id, kmlID);
 		Assert.assertEquals(id, xmlID);
@@ -293,13 +292,13 @@ public class KMLStyleMapTests {
 		Assert.assertEquals(3, items.size());
 		
 		addedStyleMap = items.get(2).getPayload();
-		xmlID = addedStyleMap.attributeValue(KmlNames.XML_ID_QNAME);
+		xmlID = addedStyleMap.attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
 		kmlID = addedStyleMap.attributeValue("id");
 		Assert.assertEquals("new_"+id, kmlID);
 		Assert.assertEquals(id, xmlID);
 				
-		String xmlID1 = items.get(0).getPayload().attributeValue(KmlNames.XML_ID_QNAME);
-		String xmlID2 = items.get(1).getPayload().attributeValue(KmlNames.XML_ID_QNAME);		
+		String xmlID1 = items.get(0).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
+		String xmlID2 = items.get(1).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);		
 		Assert.assertEquals("msn_ylw-pushpin_"+xmlID1, items.get(0).getPayload().attributeValue("id"));
 		Assert.assertEquals("msh_ylw-pushpin_"+xmlID2, items.get(1).getPayload().attributeValue("id"));
 
@@ -343,8 +342,8 @@ public class KMLStyleMapTests {
 		KMLContent content = (KMLContent)items.get(0);
 		
 		Assert.assertEquals(2, items.size());
-		String xmlID1 = items.get(0).getPayload().attributeValue(KmlNames.XML_ID_QNAME);
-		String xmlID2 = items.get(1).getPayload().attributeValue(KmlNames.XML_ID_QNAME);
+		String xmlID1 = items.get(0).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
+		String xmlID2 = items.get(1).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
 		Assert.assertEquals(id, xmlID1);
 		Assert.assertEquals("msn_ylw-pushpin_"+xmlID1, items.get(0).getPayload().attributeValue("id"));
 		Assert.assertEquals("msh_ylw-pushpin_"+xmlID2, items.get(1).getPayload().attributeValue("id"));
@@ -354,7 +353,7 @@ public class KMLStyleMapTests {
 		items = kmlAdapter.getAll();
 		Assert.assertEquals(1, items.size());
 		Assert.assertFalse(id.equals(xmlID2));
-		xmlID2 = items.get(0).getPayload().attributeValue(KmlNames.XML_ID_QNAME);
+		xmlID2 = items.get(0).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
 		Assert.assertEquals("msh_ylw-pushpin_"+xmlID2, items.get(0).getPayload().attributeValue("id"));
 
 	}
@@ -397,8 +396,8 @@ public class KMLStyleMapTests {
 		Document document = saxReader.read(file);
 		
 		HashMap<String, String> map = new HashMap<String, String>();
-		map.put(KmlNames.XML_PREFIX, KmlNames.XML_URI);
-		map.put(KmlNames.KML_PREFIX, KmlNames.KML_URI);
+		map.put(KMLContentAdapterNames.XML_PREFIX, KMLContentAdapterNames.XML_URI);
+		map.put(KMLContentAdapterNames.KML_PREFIX, KMLContentAdapterNames.KML_URI);
 
 		Dom4jXPath xpath = new Dom4jXPath("//kml:*[@xml:id]");
 		xpath.setNamespaceContext(new SimpleNamespaceContext(map));
@@ -406,8 +405,8 @@ public class KMLStyleMapTests {
 		
 		Assert.assertNotNull(elements);
 		Assert.assertEquals(2, elements.size());
-		String xmlID1 = elements.get(0).attributeValue(KmlNames.XML_ID_QNAME);
-		String xmlID2 = elements.get(1).attributeValue(KmlNames.XML_ID_QNAME);		
+		String xmlID1 = elements.get(0).attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
+		String xmlID2 = elements.get(1).attributeValue(KMLContentAdapterNames.XML_ID_QNAME);		
 		Assert.assertEquals("msn_ylw-pushpin_"+xmlID1, elements.get(0).attributeValue("id"));
 		Assert.assertEquals("msh_ylw-pushpin_"+xmlID2, elements.get(1).attributeValue("id"));
 

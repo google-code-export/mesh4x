@@ -63,17 +63,20 @@ public class SyncInfo {
 		this.syncId = sync.getId();
 	}
 	
-	public void updateSyncIfChanged(IContent content, IIdentityProvider identityProvider){		
+	public boolean updateSyncIfChanged(IContent content, IIdentityProvider identityProvider){		
 		Sync sync = this.getSync();
 		if (content == null && sync != null){
 			if (!sync.isDeleted()){
 				sync.delete(identityProvider.getAuthenticatedUser(), new Date());
+				return true;
 			}
 		}else{
 			if (!this.isDeleted() && this.contentHasChanged(content)){
 				sync.update(identityProvider.getAuthenticatedUser(), new Date(), sync.isDeleted());
 				this.setVersion(content.getVersion());
+				return true;
 			}
 		}
+		return false;
 	}
 }

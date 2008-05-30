@@ -1,8 +1,8 @@
-package com.mesh4j.sync.adapters.kml;
+package com.mesh4j.sync.adapters.dom;
 
 import com.mesh4j.sync.security.IIdentityProvider;
 
-public interface IKMLMeshDomLoader {
+public interface IDOMLoader {
 
 	IIdentityProvider getIdentityProvider();
 
@@ -10,6 +10,8 @@ public interface IKMLMeshDomLoader {
 
 	void write();
 
-	IKMLMeshDocument getDocument();
+	IMeshDOM getDOM();
+
+	String getFriendlyName();
 
 }

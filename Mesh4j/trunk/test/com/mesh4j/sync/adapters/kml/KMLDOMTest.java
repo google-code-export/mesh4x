@@ -10,20 +10,21 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.mesh4j.sync.adapters.SyncInfo;
+import com.mesh4j.sync.adapters.dom.MeshNames;
 import com.mesh4j.sync.model.Sync;
 import com.mesh4j.sync.security.NullIdentityProvider;
 import com.mesh4j.sync.test.utils.TestHelper;
 import com.mesh4j.sync.utils.IdGenerator;
 
 
-public class KMLMeshDocumentTest {
+public class KMLDOMTest {
 
 	private static final String xml = 
 		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
 		"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
-		"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+		"<Document>"+
 		"<name>dummy</name>"+
-	   	"<ExtendedData>"+
+	   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
 		"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"+
       	"<sx:sync id=\"1\" updates=\"3\" deleted=\"false\" noconflicts=\"false\">"+
       	"<sx:history sequence=\"3\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/>"+
@@ -32,7 +33,7 @@ public class KMLMeshDocumentTest {
      	"</sx:sync>"+
 		"</mesh4x:sync>"+
       	"</ExtendedData>"+
-		"<Placemark mesh4x:id=\"1\">"+
+		"<Placemark xml:id=\"1\">"+
 		"<name>B</name>"+
 		"</Placemark>"+
 		"</Document>"+
@@ -41,7 +42,7 @@ public class KMLMeshDocumentTest {
 	private static final String xmlWithoutMesh = 
 		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
 		"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
-		"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+		"<Document>"+
 		"<name>dummy</name>"+
 		"<Placemark>"+
 		"<name>B</name>"+
@@ -52,9 +53,9 @@ public class KMLMeshDocumentTest {
 	private static final String xmlWithHierarchy = 
 		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
 		"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
-		"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+		"<Document>"+
 		"<name>dummy</name>"+
-	   	"<ExtendedData>"+
+	   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
 		"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"+
       	"<sx:sync id=\"1\" updates=\"3\" deleted=\"false\" noconflicts=\"false\">"+
       	"<sx:history sequence=\"3\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/>"+
@@ -96,9 +97,15 @@ public class KMLMeshDocumentTest {
       	"<sx:history sequence=\"2\" when=\"2005-05-21T10:43:33Z\" by=\"REO1750\"/>"+
       	"<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"+
      	"</sx:sync>"+
-		"</mesh4x:sync>"+	
+		"</mesh4x:sync>"+
+		"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"3\">"+
+      	"<sx:sync id=\"7\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"+
+      	"<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"+
+     	"</sx:sync>"+
+		"</mesh4x:sync>"+
+		"<mesh4x:hierrachy xml:id=\"7\" mesh4x:parentId=\"2\" mesh4x:childId=\"3\"/>"+
       	"</ExtendedData>"+      	
-		"<StyleMap id=\"msn_ylw-pushpin_4\" mesh4x:id=\"4\">"+
+		"<StyleMap id=\"msn_ylw-pushpin_4\" xml:id=\"4\">"+
 		"	<Pair>"+
 		"		<key>normal</key>"+
 		"		<styleUrl>#sn_ylw-pushpin</styleUrl>"+
@@ -108,7 +115,7 @@ public class KMLMeshDocumentTest {
 		"		<styleUrl>#sh_ylw-pushpin</styleUrl>"+
 		"	</Pair>"+
 		"</StyleMap>"+
-		"<Style id=\"sn_ylw-pushpin_5\" mesh4x:id=\"5\">"+
+		"<Style id=\"sn_ylw-pushpin_5\" xml:id=\"5\">"+
 		"	<IconStyle>"+
 		"		<color>ff00ff55</color>"+
 		"		<scale>1.1</scale>"+
@@ -121,7 +128,7 @@ public class KMLMeshDocumentTest {
 		"		<color>ff00ff55</color>"+
 		"	</LabelStyle>"+
 		"</Style>"+	
-		"<Style id=\"sn_ylw-pushpin_6\" mesh4x:id=\"6\">"+
+		"<Style id=\"sn_ylw-pushpin_6\" xml:id=\"6\">"+
 		"	<IconStyle>"+
 		"		<color>ff00ff55</color>"+
 		"		<scale>1.1</scale>"+
@@ -134,11 +141,11 @@ public class KMLMeshDocumentTest {
 		"		<color>ff00ff55</color>"+
 		"	</LabelStyle>"+
 		"</Style>"+	
-      	"<Folder mesh4x:id=\"1\">"+
+      	"<Folder xml:id=\"1\">"+
       	"	<name>Folder1</name>"+
-      	"	<Folder mesh4x:id=\"2\">"+
+      	"	<Folder xml:id=\"2\">"+
       	"		<name>Folder2</name>"+
-		"		<Placemark mesh4x:id=\"3\" mesh4x:parentId=\"2\">"+
+		"		<Placemark xml:id=\"3\">"+
 		"			<name>B</name>"+
 		"		</Placemark>"+
 		"	</Folder>"+
@@ -151,33 +158,33 @@ public class KMLMeshDocumentTest {
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldNotAcceptNullDocument() {
 		Document doc = null;
-		new KMLMeshDocument(doc, NullIdentityProvider.INSTANCE, KMLMeshDOMLoaderFactory.getDefaultXMLView());
+		new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldNotAcceptNullName() {
 		String name = null;
-		new KMLMeshDocument(name, NullIdentityProvider.INSTANCE, KMLMeshDOMLoaderFactory.getDefaultXMLView());
+		new KMLDOM(name, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldNotAcceptEmptyName() {
 		String name = "";
-		new KMLMeshDocument(name, NullIdentityProvider.INSTANCE, KMLMeshDOMLoaderFactory.getDefaultXMLView());
+		new KMLDOM(name, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldNotAcceptNullIdentityProvider() {
 		Document doc = DocumentHelper.createDocument();
-		new KMLMeshDocument(doc, null, KMLMeshDOMLoaderFactory.getDefaultXMLView());		
-		new KMLMeshDocument("myName", null, KMLMeshDOMLoaderFactory.getDefaultXMLView());
+		new KMLDOM(doc, null, DOMLoaderFactory.createKMLView());		
+		new KMLDOM("myName", null, DOMLoaderFactory.createKMLView());
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldNotAcceptNullXMLView() {
 		Document doc = DocumentHelper.createDocument();
-		new KMLMeshDocument(doc, NullIdentityProvider.INSTANCE, null);		
-		new KMLMeshDocument("myName", NullIdentityProvider.INSTANCE, null);
+		new KMLDOM(doc, NullIdentityProvider.INSTANCE, null);		
+		new KMLDOM("myName", NullIdentityProvider.INSTANCE, null);
 	}
 	
 	// getElement
@@ -186,7 +193,7 @@ public class KMLMeshDocumentTest {
 		String id = IdGenerator.newID();
 		Document doc = DocumentHelper.parseText(xmlWithHierarchy);
 		
-		KMLMeshDocument meshParser = new KMLMeshDocument(doc, NullIdentityProvider.INSTANCE, KMLMeshDOMLoaderFactory.getDefaultXMLView());
+		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
 
 		Element result = meshParser.getElement(id);
 		Assert.assertNull(result);
@@ -197,7 +204,7 @@ public class KMLMeshDocumentTest {
 		String id = "3";
 		Document doc = DocumentHelper.parseText(xmlWithHierarchy);
 		
-		KMLMeshDocument meshParser = new KMLMeshDocument(doc, NullIdentityProvider.INSTANCE, KMLMeshDOMLoaderFactory.getDefaultXMLView());
+		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
 		Element result = meshParser.getElement(id);
 		Assert.assertNotNull(result);
 		Assert.assertEquals("Placemark", result.getName());
@@ -208,7 +215,7 @@ public class KMLMeshDocumentTest {
 	public void shouldGetMeshSyncIdReturnsNullWhenAttributeDoesNotExist() throws DocumentException{
 		Document doc = DocumentHelper.parseText(xmlWithHierarchy);
 		
-		KMLMeshDocument meshParser = new KMLMeshDocument(doc, NullIdentityProvider.INSTANCE, KMLMeshDOMLoaderFactory.getDefaultXMLView());
+		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
 		
 		Element element = DocumentHelper.createElement("payload");
 		String result = meshParser.getMeshSyncId(element);
@@ -220,7 +227,7 @@ public class KMLMeshDocumentTest {
 
 		Element placemark = DocumentHelper.parseText(xml).getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT).element(KmlNames.KML_ELEMENT_PLACEMARK);
 		Document doc = DocumentHelper.parseText(xml);		
-		KMLMeshDocument meshParser = new KMLMeshDocument(doc, NullIdentityProvider.INSTANCE, KMLMeshDOMLoaderFactory.getDefaultXMLView());
+		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
 		
 		String result = meshParser.getMeshSyncId(placemark);
 		Assert.assertNotNull(result);
@@ -233,9 +240,8 @@ public class KMLMeshDocumentTest {
 		Element element = DocumentHelper.createElement("payload");
 		
 		Document doc = DocumentHelper.parseText(xml);		
-		KMLMeshDocument meshParser = new KMLMeshDocument(doc, NullIdentityProvider.INSTANCE, KMLMeshDOMLoaderFactory.getDefaultXMLView());
-		
-		String result = meshParser.getMeshParentId(element);
+	
+		String result = HierarchyXMLViewElement.getMeshParentId(doc, element);
 		Assert.assertNull(result);
 	}
 	
@@ -249,9 +255,9 @@ public class KMLMeshDocumentTest {
 			.element(KmlNames.KML_ELEMENT_PLACEMARK);
 		
 		Document doc = DocumentHelper.parseText(xmlWithHierarchy);		
-		KMLMeshDocument meshParser = new KMLMeshDocument(doc, NullIdentityProvider.INSTANCE, KMLMeshDOMLoaderFactory.getDefaultXMLView());
 		
-		String result = meshParser.getMeshParentId(placemark);
+		String result = HierarchyXMLViewElement.getMeshParentId(doc, placemark);
+
 		Assert.assertNotNull(result);
 		Assert.assertEquals("2", result);
 	}
@@ -262,9 +268,9 @@ public class KMLMeshDocumentTest {
 		 String localXML = 
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
 				"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
-				"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+				"<Document>"+
 				"<name>dummy</name>"+
-			   	"<ExtendedData>"+
+			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
 			   	"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"+
 		      	"<sx:sync id=\"2\" updates=\"3\" deleted=\"false\" noconflicts=\"false\">"+
 		      	"<sx:history sequence=\"3\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/>"+
@@ -273,7 +279,7 @@ public class KMLMeshDocumentTest {
 		     	"</sx:sync>"+
 				"</mesh4x:sync>"+
 		      	"</ExtendedData>"+
-				"<Placemark mesh4x:id=\"2\">"+
+				"<Placemark xml:id=\"2\">"+
 				"<name>B</name>"+
 				"</Placemark>"+
 				"</Document>"+
@@ -281,7 +287,7 @@ public class KMLMeshDocumentTest {
 		
 		Document doc = DocumentHelper.parseText(localXML);
 				
-		KMLMeshDocument meshParser = new KMLMeshDocument(doc, NullIdentityProvider.INSTANCE, KMLMeshDOMLoaderFactory.getDefaultXMLView());
+		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
 		SyncInfo syncInfo = meshParser.getSync("1");
 		Assert.assertNull(syncInfo);
 	}
@@ -291,9 +297,9 @@ public class KMLMeshDocumentTest {
 		 String localXML = 
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
 				"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
-				"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+				"<Document>"+
 				"<name>dummy</name>"+
-			   	"<ExtendedData>"+
+			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
 			   	"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"+
 		      	"<sx:sync id=\"2\" updates=\"3\" deleted=\"false\" noconflicts=\"false\">"+
 		      	"<sx:history sequence=\"3\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/>"+
@@ -302,7 +308,7 @@ public class KMLMeshDocumentTest {
 		     	"</sx:sync>"+
 				"</mesh4x:sync>"+
 		      	"</ExtendedData>"+
-				"<Placemark mesh4x:id=\"2\">"+
+				"<Placemark xml:id=\"2\">"+
 				"<name>B</name>"+
 				"</Placemark>"+
 				"</Document>"+
@@ -310,7 +316,7 @@ public class KMLMeshDocumentTest {
 		
 		Document doc = DocumentHelper.parseText(localXML);
 				
-		KMLMeshDocument meshParser = new KMLMeshDocument(doc, NullIdentityProvider.INSTANCE, KMLMeshDOMLoaderFactory.getDefaultXMLView());
+		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
 		SyncInfo syncInfo = meshParser.getSync("2");
 		Assert.assertNotNull(syncInfo);
 		
@@ -331,11 +337,11 @@ public class KMLMeshDocumentTest {
 		 String localXML = 
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
 				"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
-				"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+				"<Document>"+
 				"<name>dummy</name>"+
-			   	"<ExtendedData>"+
+			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
 		      	"</ExtendedData>"+
-				"<Placemark mesh4x:id=\"2\">"+
+				"<Placemark xml:id=\"2\">"+
 				"<name>B</name>"+
 				"</Placemark>"+
 				"</Document>"+
@@ -343,7 +349,7 @@ public class KMLMeshDocumentTest {
 		
 		Document doc = DocumentHelper.parseText(localXML);
 						
-		KMLMeshDocument meshParser = new KMLMeshDocument(doc, NullIdentityProvider.INSTANCE, KMLMeshDOMLoaderFactory.getDefaultXMLView());
+		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
 		List<SyncInfo> syncInfos = meshParser.getAllSyncs();
 		Assert.assertNotNull(syncInfos);
 		Assert.assertEquals(0, syncInfos.size());
@@ -354,9 +360,9 @@ public class KMLMeshDocumentTest {
 		 String localXML = 
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
 				"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
-				"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+				"<Document>"+
 				"<name>dummy</name>"+
-				"<Placemark mesh4x:id=\"2\">"+
+				"<Placemark xml:id=\"2\">"+
 				"<name>B</name>"+
 				"</Placemark>"+
 				"</Document>"+
@@ -364,7 +370,7 @@ public class KMLMeshDocumentTest {
 		
 		Document doc = DocumentHelper.parseText(localXML);
 				
-		KMLMeshDocument meshParser = new KMLMeshDocument(doc, NullIdentityProvider.INSTANCE, KMLMeshDOMLoaderFactory.getDefaultXMLView());
+		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
 		List<SyncInfo> syncInfos = meshParser.getAllSyncs();
 		Assert.assertNotNull(syncInfos);
 		Assert.assertEquals(0, syncInfos.size());
@@ -375,9 +381,9 @@ public class KMLMeshDocumentTest {
 		 String localXML = 
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
 				"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
-				"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+				"<Document>"+
 				"<name>dummy</name>"+
-			   	"<ExtendedData>"+
+			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
 			   	"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"+
 		      	"<sx:sync id=\"1\" updates=\"3\" deleted=\"false\" noconflicts=\"false\">"+
 		      	"<sx:history sequence=\"3\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/>"+
@@ -393,10 +399,10 @@ public class KMLMeshDocumentTest {
 		     	"</sx:sync>"+
 				"</mesh4x:sync>"+
 		      	"</ExtendedData>"+
-				"<Placemark mesh4x:id=\"1\">"+
+				"<Placemark xml:id=\"1\">"+
 				"<name>B</name>"+
 				"</Placemark>"+
-				"<Placemark mesh4x:id=\"2\">"+
+				"<Placemark xml:id=\"2\">"+
 				"<name>B</name>"+
 				"</Placemark>"+
 				"</Document>"+
@@ -404,7 +410,7 @@ public class KMLMeshDocumentTest {
 		
 		Document doc = DocumentHelper.parseText(localXML);
 				
-		KMLMeshDocument meshParser = new KMLMeshDocument(doc, NullIdentityProvider.INSTANCE, KMLMeshDOMLoaderFactory.getDefaultXMLView());
+		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
 		List<SyncInfo> syncInfos = meshParser.getAllSyncs();
 		Assert.assertNotNull(syncInfos);
 		Assert.assertEquals(2, syncInfos.size());
@@ -417,9 +423,9 @@ public class KMLMeshDocumentTest {
 		 String localXML = 
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
 				"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
-				"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+				"<Document>"+
 				"<name>dummy</name>"+
-			   	"<ExtendedData>"+
+			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
 			   	"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"+
 		      	"<sx:sync id=\"1\" updates=\"3\" deleted=\"false\" noconflicts=\"false\">"+
 		      	"<sx:history sequence=\"3\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/>"+
@@ -435,17 +441,17 @@ public class KMLMeshDocumentTest {
 		     	"</sx:sync>"+
 				"</mesh4x:sync>"+
 		      	"</ExtendedData>"+
-				"<Placemark mesh4x:id=\"1\">"+
+				"<Placemark xml:id=\"1\">"+
 				"<name>B</name>"+
 				"</Placemark>"+
-				"<Placemark mesh4x:id=\"2\">"+
+				"<Placemark xml:id=\"2\">"+
 				"<name>B</name>"+
 				"</Placemark>"+
 				"</Document>"+
 				"</kml>";
 		
 		Document doc = DocumentHelper.parseText(localXML);
-		KMLMeshDocument meshParser = new KMLMeshDocument(doc, NullIdentityProvider.INSTANCE, KMLMeshDOMLoaderFactory.getDefaultXMLView());
+		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
 		
 		List<SyncInfo> syncInfos = meshParser.getAllSyncs();
 		Assert.assertNotNull(syncInfos);
@@ -453,7 +459,7 @@ public class KMLMeshDocumentTest {
 		
 		Sync sync = new Sync("3", "jmt", TestHelper.now(), true);
 		SyncInfo syncInfo = new SyncInfo(sync, "kml", "3", 1);
-		meshParser.refreshSync(syncInfo);
+		meshParser.updateSync(syncInfo);
 		
 		syncInfos = meshParser.getAllSyncs();
 		Assert.assertNotNull(syncInfos);
@@ -475,9 +481,9 @@ public class KMLMeshDocumentTest {
 		 String localXML = 
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
 				"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
-				"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+				"<Document>"+
 				"<name>dummy</name>"+
-			   	"<ExtendedData>"+
+			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
 			   	"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"+
 		      	"<sx:sync id=\"1\" updates=\"3\" deleted=\"false\" noconflicts=\"false\">"+
 		      	"<sx:history sequence=\"3\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/>"+
@@ -493,17 +499,17 @@ public class KMLMeshDocumentTest {
 		     	"</sx:sync>"+
 				"</mesh4x:sync>"+
 		      	"</ExtendedData>"+
-				"<Placemark mesh4x:id=\"1\">"+
+				"<Placemark xml:id=\"1\">"+
 				"<name>B</name>"+
 				"</Placemark>"+
-				"<Placemark mesh4x:id=\"2\">"+
+				"<Placemark xml:id=\"2\">"+
 				"<name>B</name>"+
 				"</Placemark>"+
 				"</Document>"+
 				"</kml>";
 		
 		Document doc = DocumentHelper.parseText(localXML);
-		KMLMeshDocument meshParser = new KMLMeshDocument(doc, NullIdentityProvider.INSTANCE, KMLMeshDOMLoaderFactory.getDefaultXMLView());
+		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
 		
 		List<SyncInfo> syncInfos = meshParser.getAllSyncs();
 		Assert.assertNotNull(syncInfos);
@@ -511,7 +517,7 @@ public class KMLMeshDocumentTest {
 		
 		Sync sync = new Sync("2", "jmt", TestHelper.now(), true);
 		SyncInfo syncInfo = new SyncInfo(sync, "kml", "2", 3);
-		meshParser.refreshSync(syncInfo);
+		meshParser.updateSync(syncInfo);
 		
 		syncInfos = meshParser.getAllSyncs();
 		Assert.assertNotNull(syncInfos);
@@ -537,7 +543,7 @@ public class KMLMeshDocumentTest {
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
 				"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 				"<Document>"+
-			   	"<ExtendedData>"+
+			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
 		      	"</ExtendedData>"+
 				"<name>example</name>"+
 				"</Document>"+
@@ -545,7 +551,7 @@ public class KMLMeshDocumentTest {
 		
 		Document doc = DocumentHelper.parseText(localXML);
 				
-		KMLMeshDocument meshParser = new KMLMeshDocument(doc, NullIdentityProvider.INSTANCE, KMLMeshDOMLoaderFactory.getDefaultXMLView());
+		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
 		
 		List<SyncInfo> syncInfos = meshParser.getAllSyncs();
 		Assert.assertNotNull(syncInfos);
@@ -559,9 +565,9 @@ public class KMLMeshDocumentTest {
 		String elementXML = 
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
 				"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
-				"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+				"<Document>"+
 				"<name>dummy</name>"+
-				"<Placemark mesh4x:id=\"1\">"+
+				"<Placemark xml:id=\"1\">"+
 				"<name>B</name>"+
 				"</Placemark>"+
 				"</Document>"+
@@ -572,11 +578,13 @@ public class KMLMeshDocumentTest {
 			.element(KmlNames.KML_ELEMENT_DOCUMENT)
 			.element(KmlNames.KML_ELEMENT_PLACEMARK);
 		
-		meshParser.addElement(newElement.createCopy(), syncInfo);
+		meshParser.addElement(newElement.createCopy());
+		meshParser.updateSync(syncInfo);
 		
 		Element element = meshParser.getElement(syncID);
 		Assert.assertNotNull(element);
-		Assert.assertEquals(null, meshParser.getMeshParentId(element));
+		
+		Assert.assertEquals(null, HierarchyXMLViewElement.getMeshParentId(doc, element));
 		
 		syncInfo = meshParser.getSync(syncID);
 		Assert.assertNotNull(syncInfo);		
@@ -593,17 +601,17 @@ public class KMLMeshDocumentTest {
 		 String localXML = 
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
 				"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
-				"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+				"<Document>"+
 				"<name>example</name>"+
-			   	"<ExtendedData>"+
+			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
 			   	"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"+
 		      	"<sx:sync id=\"1\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"+
 		      	"<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"+
 		     	"</sx:sync>"+
 				"</mesh4x:sync>"+
 		      	"</ExtendedData>"+
-		      	"<Folder mesh4x:id=\"1\" >"+
-				"<Placemark mesh4x:id=\"2\" mesh4x:parentId=\"1\">"+
+		      	"<Folder xml:id=\"1\" >"+
+				"<Placemark xml:id=\"2\">"+
 				"<name>B</name>"+
 				"</Placemark>"+
 				"</Folder>"+
@@ -612,7 +620,7 @@ public class KMLMeshDocumentTest {
 		
 		Document doc = DocumentHelper.parseText(localXML);
 			
-		KMLMeshDocument meshParser = new KMLMeshDocument(doc, NullIdentityProvider.INSTANCE, KMLMeshDOMLoaderFactory.getDefaultXMLView());
+		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
 		
 		List<SyncInfo> syncInfos = meshParser.getAllSyncs();
 		Assert.assertNotNull(syncInfos);
@@ -626,9 +634,9 @@ public class KMLMeshDocumentTest {
 		String elementXML = 
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
 				"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
-				"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+				"<Document>"+
 				"<name>dummy</name>"+
-				"<Placemark mesh4x:id=\"3\" mesh4x:parentId=\"33\">"+
+				"<Placemark xml:id=\"3\">"+
 				"<name>C</name>"+
 				"</Placemark>"+
 				"</Document>"+
@@ -639,11 +647,13 @@ public class KMLMeshDocumentTest {
 			.element(KmlNames.KML_ELEMENT_DOCUMENT)
 			.element(KmlNames.KML_ELEMENT_PLACEMARK);
 		
-		meshParser.addElement(newElement.createCopy(), syncInfo);
+		meshParser.addElement(newElement.createCopy());
+		meshParser.updateSync(syncInfo);
 		
 		Element element = meshParser.getElement(syncID);
 		Assert.assertNotNull(element);
-		Assert.assertEquals(null, meshParser.getMeshParentId(element));
+		
+		Assert.assertEquals(null, HierarchyXMLViewElement.getMeshParentId(doc, element));
 		
 		syncInfo = meshParser.getSync(syncID);
 		Assert.assertNotNull(syncInfo);		
@@ -660,17 +670,17 @@ public class KMLMeshDocumentTest {
 		 String localXML = 
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
 				"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
-				"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+				"<Document>"+
 				"<name>example</name>"+
-			   	"<ExtendedData>"+
+			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
 			   	"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"+
 		      	"<sx:sync id=\"1\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"+
 		      	"<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"+
 		     	"</sx:sync>"+
 				"</mesh4x:sync>"+
 		      	"</ExtendedData>"+
-		      	"<Folder mesh4x:id=\"1\" >"+
-				"<Placemark mesh4x:id=\"2\" mesh4x:parentId=\"1\">"+
+		      	"<Folder xml:id=\"1\" >"+
+				"<Placemark xml:id=\"2\">"+
 				"<name>B</name>"+
 				"</Placemark>"+
 				"</Folder>"+
@@ -679,7 +689,7 @@ public class KMLMeshDocumentTest {
 		
 		Document doc = DocumentHelper.parseText(localXML);
 		
-		KMLMeshDocument meshParser = new KMLMeshDocument(doc, NullIdentityProvider.INSTANCE, KMLMeshDOMLoaderFactory.getDefaultXMLView());
+		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
 		
 		List<SyncInfo> syncInfos = meshParser.getAllSyncs();
 		Assert.assertNotNull(syncInfos);
@@ -688,14 +698,13 @@ public class KMLMeshDocumentTest {
 		String syncID = "3";
 		Sync sync = new Sync(syncID, "jmt", TestHelper.now(), true);
 		SyncInfo syncInfo = new SyncInfo(sync, "kml", syncID, 1);
-
 		
 		String elementXML = 
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
 				"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
-				"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+				"<Document>"+
 				"<name>dummy</name>"+
-				"<Placemark mesh4x:id=\"3\" mesh4x:parentId=\"1\">"+
+				"<Placemark xml:id=\"3\">"+
 				"<name>C</name>"+
 				"</Placemark>"+
 				"</Document>"+
@@ -706,11 +715,38 @@ public class KMLMeshDocumentTest {
 			.element(KmlNames.KML_ELEMENT_DOCUMENT)
 			.element(KmlNames.KML_ELEMENT_PLACEMARK);
 		
-		meshParser.addElement(newElement.createCopy(), syncInfo);
+		meshParser.addElement(newElement.createCopy());
+		meshParser.updateSync(syncInfo);
 		
 		Element element = meshParser.getElement(syncID);
 		Assert.assertNotNull(element);
-		Assert.assertEquals("1", meshParser.getMeshParentId(element));
+		
+		Assert.assertEquals(null,HierarchyXMLViewElement.getMeshParentId(doc, element));
+		Assert.assertEquals("Document", element.getParent().getName());
+		
+		String hierrachyXML = 
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
+			"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
+			"<Document>"+
+			"<name>dummy</name>"+
+			"<mesh4x:hierarchy xmlns:mesh4x=\"http://mesh4x.org/kml\" xml:id=\"33\" mesh4x:parentId=\"1\" mesh4x:childId=\"3\"/>"+
+			"</Document>"+
+			"</kml>";
+	
+		Element hierrachyElement = DocumentHelper.parseText(hierrachyXML)
+			.getRootElement()
+			.element(KmlNames.KML_ELEMENT_DOCUMENT)
+			.element(MeshNames.MESH_QNAME_HIERARCHY);
+	
+		Sync hierrachySync = new Sync("33", "jmt", TestHelper.now(), true);
+		SyncInfo hierrachySyncInfo = new SyncInfo(hierrachySync, "kml", "33", 1);
+
+		meshParser.addElement(hierrachyElement.createCopy());
+		meshParser.updateSync(hierrachySyncInfo);
+		
+		element = meshParser.getElement(syncID);
+		Assert.assertNotNull(element);
+		Assert.assertEquals("1", HierarchyXMLViewElement.getMeshParentId(doc, element));
 		Assert.assertEquals("Folder", element.getParent().getName());
 		
 		syncInfo = meshParser.getSync(syncID);
@@ -722,6 +758,15 @@ public class KMLMeshDocumentTest {
 		Assert.assertNotNull(syncInfo.getSync());
 		Assert.assertTrue(sync.equals(syncInfo.getSync()));
 		
+		syncInfo = meshParser.getSync("33");
+		Assert.assertNotNull(syncInfo);
+		Assert.assertEquals("33", syncInfo.getId());
+		Assert.assertEquals("33", syncInfo.getSyncId());
+		Assert.assertEquals("kml", syncInfo.getType());
+		Assert.assertEquals(1, syncInfo.getVersion());
+		Assert.assertNotNull(syncInfo.getSync());
+		Assert.assertTrue(hierrachySync.equals(syncInfo.getSync()));
+		
 	}
 	
 	//updateElement(Element rootElement, Element newElement, SyncInfo syncInfo)
@@ -731,9 +776,9 @@ public class KMLMeshDocumentTest {
 		 String localXML = 
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
 				"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
-				"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+				"<Document>"+
 				"<name>example</name>"+
-			   	"<ExtendedData>"+
+			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
 			   	"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"+
 		      	"<sx:sync id=\"1\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"+
 		      	"<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"+
@@ -745,8 +790,8 @@ public class KMLMeshDocumentTest {
 		     	"</sx:sync>"+
 				"</mesh4x:sync>"+
 		      	"</ExtendedData>"+
-		      	"<Folder mesh4x:id=\"1\" >"+
-				"<Placemark mesh4x:id=\"2\" mesh4x:parentId=\"1\">"+
+		      	"<Folder xml:id=\"1\" >"+
+				"<Placemark xml:id=\"2\">"+
 				"<name>B</name>"+
 				"</Placemark>"+
 				"</Folder>"+
@@ -755,8 +800,9 @@ public class KMLMeshDocumentTest {
 		
 		Document doc = DocumentHelper.parseText(localXML);
 			
-		KMLMeshDocument meshParser = new KMLMeshDocument(doc, NullIdentityProvider.INSTANCE, KMLMeshDOMLoaderFactory.getDefaultXMLView());
-
+		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		meshParser.updateMeshStatus();
+		
 		String syncID = "2";
 		SyncInfo syncInfo = meshParser.getSync(syncID);
 		Assert.assertNotNull(syncInfo);
@@ -767,9 +813,9 @@ public class KMLMeshDocumentTest {
 		String elementXML = 
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
 				"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
-				"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+				"<Document>"+
 				"<name>dummy</name>"+
-				"<Placemark mesh4x:id=\"2\" mesh4x:parentId=\"1\">"+
+				"<Placemark xml:id=\"2\">"+
 				"<name>C</name>"+
 				"</Placemark>"+
 				"</Document>"+
@@ -783,11 +829,13 @@ public class KMLMeshDocumentTest {
 		int version = newElement.asXML().hashCode();
 		syncInfo = new SyncInfo(sync, "kml", syncID, version);
 		
-		meshParser.updateElement(newElement.createCopy(), syncInfo);
+		meshParser.updateElement(newElement.createCopy());
+		meshParser.updateSync(syncInfo);
 		
 		Element element = meshParser.getElement(syncID);
 		Assert.assertNotNull(element);
-		Assert.assertEquals("1", meshParser.getMeshParentId(element));
+		
+		Assert.assertEquals("1", HierarchyXMLViewElement.getMeshParentId(doc, element));
 		Assert.assertEquals("Folder", element.getParent().getName());
 		Assert.assertEquals("C", element.element("name").getText());
 		
@@ -806,84 +854,9 @@ public class KMLMeshDocumentTest {
 		 String localXML = 
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
 				"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
-				"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+				"<Document>"+
 				"<name>example</name>"+
-			   	"<ExtendedData>"+
-			   	"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"+
-		      	"<sx:sync id=\"1\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"+
-		      	"<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"+
-		     	"</sx:sync>"+
-				"</mesh4x:sync>"+
-			   	"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"+
-		      	"<sx:sync id=\"2\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"+
-		      	"<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"+
-		     	"</sx:sync>"+
-				"</mesh4x:sync>"+
-		      	"</ExtendedData>"+
-		      	"<Folder mesh4x:id=\"1\" >"+
-				"<Placemark mesh4x:id=\"2\" mesh4x:parentId=\"1\">"+
-				"<name>B</name>"+
-				"</Placemark>"+
-				"</Folder>"+
-				"</Document>"+
-				"</kml>";
-		
-		Document doc = DocumentHelper.parseText(localXML);
-
-		KMLMeshDocument meshParser = new KMLMeshDocument(doc, NullIdentityProvider.INSTANCE, KMLMeshDOMLoaderFactory.getDefaultXMLView());
-
-		String syncID = "2";
-		SyncInfo syncInfo = meshParser.getSync(syncID);
-		Assert.assertNotNull(syncInfo);
-
-		Sync sync = syncInfo.getSync();
-		sync.update("jmt",  TestHelper.now());
-		
-		String elementXML = 
-				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
-				"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
-				"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
-				"<name>dummy</name>"+
-				"<Placemark mesh4x:id=\"2\">"+
-				"<name>C</name>"+
-				"</Placemark>"+
-				"</Document>"+
-				"</kml>";
-		
-		Element newElement = DocumentHelper.parseText(elementXML)
-			.getRootElement()
-			.element(KmlNames.KML_ELEMENT_DOCUMENT)
-			.element(KmlNames.KML_ELEMENT_PLACEMARK);
-
-		int version = newElement.asXML().hashCode();
-		syncInfo = new SyncInfo(sync, "kml", syncID, version);
-		
-		meshParser.updateElement(newElement, syncInfo);
-		
-		Element element = meshParser.getElement(syncID);
-		Assert.assertNotNull(element);
-		Assert.assertEquals(null, meshParser.getMeshParentId(element));
-		Assert.assertEquals("Document", element.getParent().getName());
-		Assert.assertEquals("C", element.element("name").getText());
-		
-		syncInfo = meshParser.getSync(syncID);
-		Assert.assertNotNull(syncInfo);		
-		Assert.assertEquals(syncID, syncInfo.getId());
-		Assert.assertEquals(syncID, syncInfo.getSyncId());
-		Assert.assertEquals("kml", syncInfo.getType());
-		Assert.assertEquals(version, syncInfo.getVersion());
-		Assert.assertNotNull(syncInfo.getSync());
-		Assert.assertTrue(sync.equals(syncInfo.getSync()));		
-	}
-	
-	@Test
-	public void shouldUpdateElementMoveFromFolderOneToFolderTwo() throws DocumentException{
-		 String localXML = 
-				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
-				"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
-				"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
-				"<name>example</name>"+
-			   	"<ExtendedData>"+
+			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
 			   	"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"+
 		      	"<sx:sync id=\"1\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"+
 		      	"<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"+
@@ -899,14 +872,113 @@ public class KMLMeshDocumentTest {
 		      	"<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"+
 		     	"</sx:sync>"+
 				"</mesh4x:sync>"+
+				"<mesh4x:hierarchy xml:id=\"3\" mesh4x:parentId=\"1\" mesh4x:childId=\"2\" />"+
 		      	"</ExtendedData>"+
-		      	"<Folder mesh4x:id=\"1\" >"+
-		      	"<name>FolderONE</name>"+
-				"<Placemark mesh4x:id=\"3\" mesh4x:parentId=\"1\">"+
+		      	"<Folder xml:id=\"1\" >"+
+				"<Placemark xml:id=\"2\">"+
 				"<name>B</name>"+
 				"</Placemark>"+
 				"</Folder>"+
-				"<Folder mesh4x:id=\"2\" >"+
+				"</Document>"+
+				"</kml>";
+		
+		Document doc = DocumentHelper.parseText(localXML);
+
+		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		meshParser.updateMeshStatus();
+		
+		String syncID = "2";
+		SyncInfo syncInfo = meshParser.getSync(syncID);
+		Assert.assertNotNull(syncInfo);
+
+		String elementXML = 
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
+				"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
+				"<Document>"+
+				"<name>dummy</name>"+
+				"<mesh4x:hierarchy xmlns:mesh4x=\"http://mesh4x.org/kml\" xml:id=\"3\" mesh4x:childId=\"2\" />"+
+				"</Document>"+
+				"</kml>";
+		
+		Element newElement = DocumentHelper.parseText(elementXML)
+			.getRootElement()
+			.element(KmlNames.KML_ELEMENT_DOCUMENT)
+			.element(MeshNames.MESH_QNAME_HIERARCHY);
+
+		String hierarchySyncID = "3";
+		SyncInfo hierarchySyncInfo = meshParser.getSync(hierarchySyncID);
+		
+		Sync hierarchySync = syncInfo.getSync();
+		hierarchySync.update("jmt",  TestHelper.now());
+
+		int version = newElement.asXML().hashCode();
+		syncInfo = new SyncInfo(hierarchySync, "kml", hierarchySyncID, version);
+		
+		SyncInfo originalSyncInfo = meshParser.getSync(syncID);
+		Assert.assertNotNull(originalSyncInfo);
+		
+		meshParser.updateElement(newElement);
+		meshParser.updateSync(hierarchySyncInfo);
+		
+		Element element = meshParser.getElement(syncID);
+		Assert.assertNotNull(element);
+		
+		Assert.assertEquals(null, HierarchyXMLViewElement.getMeshParentId(doc, element));
+		Assert.assertEquals("Document", element.getParent().getName());
+		
+		syncInfo = meshParser.getSync(syncID);
+		Assert.assertNotNull(syncInfo);		
+		Assert.assertEquals(originalSyncInfo.getId(), syncInfo.getId());
+		Assert.assertEquals(originalSyncInfo.getSyncId(), syncInfo.getSyncId());
+		Assert.assertEquals(originalSyncInfo.getType(), syncInfo.getType());
+		Assert.assertEquals(originalSyncInfo.getVersion(), syncInfo.getVersion());
+		Assert.assertNotNull(syncInfo.getSync());
+		Assert.assertTrue(originalSyncInfo.getSync().equals(syncInfo.getSync()));		
+	}
+	
+	@Test
+	public void shouldUpdateElementMoveFromFolderOneToFolderTwo() throws DocumentException{
+		 String localXML = 
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
+				"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
+				"<Document>"+
+				"<name>example</name>"+
+			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+			   	"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"+
+		      	"<sx:sync id=\"1\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"+
+		      	"<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"+
+		     	"</sx:sync>"+
+				"</mesh4x:sync>"+
+			   	"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"+
+		      	"<sx:sync id=\"2\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"+
+		      	"<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"+
+		     	"</sx:sync>"+
+				"</mesh4x:sync>"+
+			   	"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"+
+		      	"<sx:sync id=\"3\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"+
+		      	"<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"+
+		     	"</sx:sync>"+
+				"</mesh4x:sync>"+
+			   	"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"+
+		      	"<sx:sync id=\"4\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"+
+		      	"<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"+
+		     	"</sx:sync>"+
+				"</mesh4x:sync>"+
+				"<mesh4x:hierarchy xml:id=\"4\" mesh4x:parentId=\"1\" mesh4x:childId=\"3\" />"+
+			   	"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"+
+		      	"<sx:sync id=\"5\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"+
+		      	"<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"+
+		     	"</sx:sync>"+
+				"</mesh4x:sync>"+
+				"<mesh4x:hierarchy xml:id=\"5\" mesh4x:childId=\"2\" />"+
+		      	"</ExtendedData>"+
+		      	"<Folder xml:id=\"1\" >"+
+		      	"<name>FolderONE</name>"+
+				"<Placemark xml:id=\"3\">"+
+				"<name>B</name>"+
+				"</Placemark>"+
+				"</Folder>"+
+				"<Folder xml:id=\"2\" >"+
 				"<name>FolderTwo</name>"+
 				"</Folder>"+
 				"</Document>"+
@@ -914,47 +986,46 @@ public class KMLMeshDocumentTest {
 		
 		Document doc = DocumentHelper.parseText(localXML);
 		
-		KMLMeshDocument meshParser = new KMLMeshDocument(doc, NullIdentityProvider.INSTANCE, KMLMeshDOMLoaderFactory.getDefaultXMLView());
+		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
 
-		String syncID = "3";
-		SyncInfo syncInfo = meshParser.getSync(syncID);
+		SyncInfo syncInfo = meshParser.getSync("4");
 		Assert.assertNotNull(syncInfo);
 
 		Sync sync = syncInfo.getSync();
 		sync.update("jmt",  TestHelper.now());
 		
 		String elementXML = 
-				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
-				"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
-				"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
-				"<name>dummy</name>"+
-				"<Placemark mesh4x:id=\"3\" mesh4x:parentId=\"2\">"+
-				"<name>C</name>"+
-				"</Placemark>"+
-				"</Document>"+
-				"</kml>";
-		
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
+			"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
+			"<Document>"+
+			"<name>dummy</name>"+
+			"<mesh4x:hierarchy xmlns:mesh4x=\"http://mesh4x.org/kml\" xml:id=\"4\" mesh4x:parentId=\"2\"  mesh4x:childId=\"3\" />"+
+			"</Document>"+
+			"</kml>";
+	
 		Element newElement = DocumentHelper.parseText(elementXML)
 			.getRootElement()
 			.element(KmlNames.KML_ELEMENT_DOCUMENT)
-			.element(KmlNames.KML_ELEMENT_PLACEMARK);
-
+			.element(MeshNames.MESH_QNAME_HIERARCHY);
+		
+	
 		int version = newElement.asXML().hashCode();
-		syncInfo = new SyncInfo(sync, "kml", syncID, version);
+		syncInfo = new SyncInfo(sync, "kml", "4", version);
 		
-		meshParser.updateElement(newElement.createCopy(), syncInfo);
+		meshParser.updateElement(newElement.createCopy());
+		meshParser.updateSync(syncInfo);
 		
-		Element element = meshParser.getElement(syncID);
+		Element element = meshParser.getElement("3");
 		Assert.assertNotNull(element);
-		Assert.assertEquals("2", meshParser.getMeshParentId(element));
+		
+		Assert.assertEquals("2", HierarchyXMLViewElement.getMeshParentId(doc, element));
 		Assert.assertEquals("Folder", element.getParent().getName());
 		Assert.assertEquals("FolderTwo", element.getParent().element("name").getText());
-		Assert.assertEquals("C", element.element("name").getText());
 		
-		syncInfo = meshParser.getSync(syncID);
+		syncInfo = meshParser.getSync("4");
 		Assert.assertNotNull(syncInfo);		
-		Assert.assertEquals(syncID, syncInfo.getId());
-		Assert.assertEquals(syncID, syncInfo.getSyncId());
+		Assert.assertEquals("4", syncInfo.getId());
+		Assert.assertEquals("4", syncInfo.getSyncId());
 		Assert.assertEquals("kml", syncInfo.getType());
 		Assert.assertEquals(version, syncInfo.getVersion());
 		Assert.assertNotNull(syncInfo.getSync());
@@ -965,8 +1036,8 @@ public class KMLMeshDocumentTest {
 	@Test
 	public void shouldGetElementsToSync() throws DocumentException{
 		Document doc = DocumentHelper.parseText(xmlWithHierarchy);
-		KMLMeshDocument meshParser = new KMLMeshDocument(doc, NullIdentityProvider.INSTANCE, KMLMeshDOMLoaderFactory.getDefaultXMLView());
-		List<Element> elements = meshParser.getElementsToSync();
+		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		List<Element> elements = meshParser.getAllElements();
 		
 		Assert.assertNotNull(elements);
 		Assert.assertEquals(6, elements.size());
@@ -989,7 +1060,7 @@ public class KMLMeshDocumentTest {
 	@Test
 	public void shouldGetType(){
 		Document doc = DocumentHelper.createDocument();
-		KMLMeshDocument meshParser = new KMLMeshDocument(doc, NullIdentityProvider.INSTANCE, KMLMeshDOMLoaderFactory.getDefaultXMLView());
+		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
 		Assert.assertEquals(KmlNames.KML_PREFIX, meshParser.getType());
 	}
 	
@@ -999,9 +1070,9 @@ public class KMLMeshDocumentTest {
 		String elementXML = 
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
 			"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
-			"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+			"<Document>"+
 			"<name>dummy</name>"+
-			"<StyleMap id=\"msn_ylw-pushpin_4\" mesh4x:id=\"4\">"+
+			"<StyleMap id=\"msn_ylw-pushpin_4\" xml:id=\"4\">"+
 			"	<Pair>"+
 			"		<key>normal</key>"+
 			"		<styleUrl>#sn_ylw-pushpin</styleUrl>"+
@@ -1020,7 +1091,7 @@ public class KMLMeshDocumentTest {
 			.element(KmlNames.KML_ELEMENT_DOCUMENT)
 			.element(KmlNames.KML_ELEMENT_STYLE_MAP);
 		
-		KMLMeshDocument meshParser = new KMLMeshDocument(doc, NullIdentityProvider.INSTANCE, KMLMeshDOMLoaderFactory.getDefaultXMLView());
+		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
 		Element normalizedElement = meshParser.normalize(element);
 		
 		Assert.assertNotNull(normalizedElement);
@@ -1032,9 +1103,9 @@ public class KMLMeshDocumentTest {
 		String elementXML = 
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
 			"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
-			"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+			"<Document>"+
 			"<name>dummy</name>"+
-			"<Style id=\"sn_ylw-pushpin_5\" mesh4x:id=\"5\">"+
+			"<Style id=\"sn_ylw-pushpin_5\" xml:id=\"5\">"+
 			"	<IconStyle>"+
 			"		<color>ff00ff55</color>"+
 			"		<scale>1.1</scale>"+
@@ -1056,7 +1127,7 @@ public class KMLMeshDocumentTest {
 			.element(KmlNames.KML_ELEMENT_DOCUMENT)
 			.element(KmlNames.KML_ELEMENT_STYLE);
 		
-		KMLMeshDocument meshParser = new KMLMeshDocument(doc, NullIdentityProvider.INSTANCE, KMLMeshDOMLoaderFactory.getDefaultXMLView());
+		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
 		Element normalizedElement = meshParser.normalize(element);
 		
 		Assert.assertNotNull(normalizedElement);
@@ -1068,13 +1139,13 @@ public class KMLMeshDocumentTest {
 		String elementXML = 
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
 			"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
-			"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+			"<Document>"+
 			"<name>dummy</name>"+
-	      	"<Folder mesh4x:id=\"1\">"+
+	      	"<Folder xml:id=\"1\">"+
 	      	"	<name>Folder1</name>"+
-	      	"	<Folder mesh4x:id=\"2\">"+
+	      	"	<Folder xml:id=\"2\">"+
 	      	"		<name>Folder2</name>"+
-			"		<Placemark mesh4x:id=\"3\" mesh4x:parentId=\"2\">"+
+			"		<Placemark xml:id=\"3\">"+
 			"			<name>B</name>"+
 			"		</Placemark>"+
 			"	</Folder>"+
@@ -1088,7 +1159,7 @@ public class KMLMeshDocumentTest {
 			.element(KmlNames.KML_ELEMENT_DOCUMENT)
 			.element(KmlNames.KML_ELEMENT_FOLDER);
 		
-		KMLMeshDocument meshParser = new KMLMeshDocument(doc, NullIdentityProvider.INSTANCE, KMLMeshDOMLoaderFactory.getDefaultXMLView());
+		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
 		Element normalizedElement = meshParser.normalize(element);
 		
 		Assert.assertNotNull(normalizedElement);
@@ -1096,7 +1167,8 @@ public class KMLMeshDocumentTest {
 		Assert.assertEquals(1, normalizedElement.elements().size());
 		Assert.assertEquals("Folder1", normalizedElement.element("name").getText());
 		Assert.assertEquals("1", meshParser.getMeshSyncId(normalizedElement));
-		Assert.assertEquals(null, meshParser.getMeshParentId(normalizedElement));
+		
+		Assert.assertEquals(null, HierarchyXMLViewElement.getMeshParentId(doc, normalizedElement));
 	}
 	
 	@Test
@@ -1104,13 +1176,13 @@ public class KMLMeshDocumentTest {
 		String elementXML = 
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
 			"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
-			"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+			"<Document>"+
 			"<name>dummy</name>"+
-	      	"<Folder mesh4x:id=\"1\">"+
+	      	"<Folder xml:id=\"1\">"+
 	      	"	<name>Folder1</name>"+
-	      	"	<Folder mesh4x:id=\"2\" mesh4x:parentId=\"1\">"+
+	      	"	<Folder xml:id=\"2\">"+
 	      	"		<name>Folder2</name>"+
-			"		<Placemark mesh4x:id=\"3\" mesh4x:parentId=\"2\">"+
+			"		<Placemark xml:id=\"3\">"+
 			"			<name>B</name>"+
 			"		</Placemark>"+
 			"	</Folder>"+
@@ -1119,13 +1191,16 @@ public class KMLMeshDocumentTest {
 			"</kml>";
 	
 		Document doc = DocumentHelper.parseText(elementXML);
-		Element element = doc
-			.getRootElement()
-			.element(KmlNames.KML_ELEMENT_DOCUMENT)
-			.element(KmlNames.KML_ELEMENT_FOLDER)
-			.element(KmlNames.KML_ELEMENT_FOLDER);
 		
-		KMLMeshDocument meshParser = new KMLMeshDocument(doc, NullIdentityProvider.INSTANCE, KMLMeshDOMLoaderFactory.getDefaultXMLView());
+		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		meshParser.updateMeshStatus();
+		
+		Element element = doc
+		.getRootElement()
+		.element(KmlNames.KML_ELEMENT_DOCUMENT)
+		.element(KmlNames.KML_ELEMENT_FOLDER)
+		.element(KmlNames.KML_ELEMENT_FOLDER);
+		
 		Element normalizedElement = meshParser.normalize(element);
 		
 		Assert.assertNotNull(normalizedElement);
@@ -1133,7 +1208,8 @@ public class KMLMeshDocumentTest {
 		Assert.assertEquals(1, normalizedElement.elements().size());
 		Assert.assertEquals("Folder2", normalizedElement.element("name").getText());
 		Assert.assertEquals("2", meshParser.getMeshSyncId(normalizedElement));
-		Assert.assertEquals("1", meshParser.getMeshParentId(normalizedElement));
+		
+		Assert.assertEquals("1", HierarchyXMLViewElement.getMeshParentId(doc, normalizedElement));
 		
 	}
 	
@@ -1142,9 +1218,9 @@ public class KMLMeshDocumentTest {
 		String elementXML = 
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
 			"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
-			"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+			"<Document>"+
 			"<name>dummy</name>"+
-			"<Placemark mesh4x:id=\"3\" mesh4x:parentId=\"2\">"+
+			"<Placemark xml:id=\"3\">"+
 			"<name>C</name>"+
 			"</Placemark>"+
 			"</Document>"+
@@ -1156,7 +1232,7 @@ public class KMLMeshDocumentTest {
 			.element(KmlNames.KML_ELEMENT_DOCUMENT)
 			.element(KmlNames.KML_ELEMENT_PLACEMARK);
 		
-		KMLMeshDocument meshParser = new KMLMeshDocument(doc, NullIdentityProvider.INSTANCE, KMLMeshDOMLoaderFactory.getDefaultXMLView());
+		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
 		Element normalizedElement = meshParser.normalize(element);
 		
 		Assert.assertNotNull(normalizedElement);
@@ -1166,17 +1242,17 @@ public class KMLMeshDocumentTest {
 	@Test
 	public void shouldNormalizeReturnNull(){
 		Document doc = DocumentHelper.createDocument();
-		KMLMeshDocument meshParser = new KMLMeshDocument(doc, NullIdentityProvider.INSTANCE, KMLMeshDOMLoaderFactory.getDefaultXMLView());
+		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
 		Assert.assertNull(meshParser.normalize(null));
 	}
 	
 	@Test
-	public void shouldNormalizeReturnsSameElementBecauseNoXMLViewIsDefinedForElement(){
+	public void shouldNormalizeReturnsNullBecauseNoXMLViewIsDefinedForElement(){
 		Document doc = DocumentHelper.createDocument();
 		Element element = DocumentHelper.createElement("FOO");
 		
-		KMLMeshDocument meshParser = new KMLMeshDocument(doc, NullIdentityProvider.INSTANCE, KMLMeshDOMLoaderFactory.getDefaultXMLView());
-		Assert.assertSame(element, meshParser.normalize(element));
+		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		Assert.assertNull(meshParser.normalize(element));
 	}
 
 	// removeElemet
@@ -1186,9 +1262,9 @@ public class KMLMeshDocumentTest {
 		String elementXML = 
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
 			"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
-			"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+			"<Document>"+
 			"<name>dummy</name>"+
-			"<Placemark mesh4x:id=\"3\">"+
+			"<Placemark xml:id=\"3\">"+
 			"<name>C</name>"+
 			"</Placemark>"+
 			"</Document>"+
@@ -1201,11 +1277,11 @@ public class KMLMeshDocumentTest {
 		
 		String syncID = "3";
 			
-		KMLMeshDocument meshParser = new KMLMeshDocument(doc, NullIdentityProvider.INSTANCE, KMLMeshDOMLoaderFactory.getDefaultXMLView());
+		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
 	
 		Assert.assertNotNull(rootElement.element("Placemark"));
 		Assert.assertNotNull(syncID, meshParser.getMeshSyncId(rootElement.element("Placemark")));
-		meshParser.removeElement(syncID);
+		meshParser.deleteElement(syncID);
 		Assert.assertNull(rootElement.element("Placemark"));
 	}
 	
@@ -1213,8 +1289,8 @@ public class KMLMeshDocumentTest {
 	public void shouldRemoveElementNoEffectBecauseItemDoesNotExist() throws DocumentException{
 		Document doc = DocumentHelper.parseText(xml);
 		
-		KMLMeshDocument meshParser = new KMLMeshDocument(doc, NullIdentityProvider.INSTANCE, KMLMeshDOMLoaderFactory.getDefaultXMLView());
-		meshParser.removeElement(IdGenerator.newID());
+		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		meshParser.deleteElement(IdGenerator.newID());
 	}
 	
 	
@@ -1230,8 +1306,9 @@ public class KMLMeshDocumentTest {
 		Document doc = DocumentHelper.parseText(xmlWithoutMesh);
 		Element syncRoot = doc.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT);
 		Element element = syncRoot.element(KmlNames.KML_ELEMENT_PLACEMARK);
+		KMLDOM dom = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
 		
-		boolean isValid = KMLMeshDocument.isValid(doc, element, NullIdentityProvider.INSTANCE);
+		boolean isValid = dom.isValid(element);
 
 		Assert.assertFalse(isValid);
 	}
@@ -1241,9 +1318,9 @@ public class KMLMeshDocumentTest {
 		 String localXML = 
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
 				"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
-				"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+				"<Document>"+
 				"<name>dummy</name>"+
-				"<Placemark mesh4x:id=\"1\">"+
+				"<Placemark xml:id=\"1\">"+
 				"<name>B</name>"+
 				"</Placemark>"+
 				"</Document>"+
@@ -1253,7 +1330,9 @@ public class KMLMeshDocumentTest {
 		Element syncRoot = doc.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT);
 		Element element = syncRoot.element(KmlNames.KML_ELEMENT_PLACEMARK);
 		
-		boolean isValid = KMLMeshDocument.isValid(doc, element, NullIdentityProvider.INSTANCE);
+		KMLDOM dom = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+
+		boolean isValid = dom.isValid(element);
 		Assert.assertFalse(isValid);
 	}
 	
@@ -1262,11 +1341,11 @@ public class KMLMeshDocumentTest {
 		 String localXML = 
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
 				"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
-				"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+				"<Document>"+
 				"<name>dummy</name>"+
-			   	"<ExtendedData>"+
+			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
 		      	"</ExtendedData>"+
-				"<Placemark mesh4x:id=\"1\">"+
+				"<Placemark xml:id=\"1\">"+
 				"<name>B</name>"+
 				"</Placemark>"+
 				"</Document>"+
@@ -1276,7 +1355,9 @@ public class KMLMeshDocumentTest {
 		Element syncRoot = doc.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT);
 		Element element = syncRoot.element(KmlNames.KML_ELEMENT_PLACEMARK);
 		
-		boolean isValid = KMLMeshDocument.isValid(doc, element, NullIdentityProvider.INSTANCE);
+		KMLDOM dom = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+
+		boolean isValid = dom.isValid(element);
 		Assert.assertFalse(isValid);
 	}
 	
@@ -1286,9 +1367,9 @@ public class KMLMeshDocumentTest {
 		 String localXML = 
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
 				"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
-				"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+				"<Document>"+
 				"<name>dummy</name>"+
-			   	"<ExtendedData>"+
+			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
 			   	"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"+
 		      	"<sx:sync id=\"1\" updates=\"3\" deleted=\"false\" noconflicts=\"false\">"+
 		      	"<sx:history sequence=\"eefdewf\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/>"+
@@ -1297,7 +1378,7 @@ public class KMLMeshDocumentTest {
 		     	"</sx:sync>"+
 				"</mesh4x:sync>"+
 		      	"</ExtendedData>"+
-				"<Placemark mesh4x:id=\"1\">"+
+				"<Placemark xml:id=\"1\">"+
 				"<name>B</name>"+
 				"</Placemark>"+
 				"</Document>"+
@@ -1307,7 +1388,9 @@ public class KMLMeshDocumentTest {
 		Element syncRoot = doc.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT);
 		Element element = syncRoot.element(KmlNames.KML_ELEMENT_PLACEMARK);
 		
-		boolean isValid = KMLMeshDocument.isValid(doc, element, NullIdentityProvider.INSTANCE);
+		KMLDOM dom = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+
+		boolean isValid = dom.isValid(element);
 		Assert.assertFalse(isValid);
 	}
 	
@@ -1317,9 +1400,9 @@ public class KMLMeshDocumentTest {
 		 String localXML = 
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
 				"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
-				"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+				"<Document>"+
 				"<name>dummy</name>"+
-			   	"<ExtendedData>"+
+			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
 			   	"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"+
 		      	"<sx:sync id=\"2\" updates=\"3\" deleted=\"false\" noconflicts=\"false\">"+
 		      	"<sx:history sequence=\"3\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/>"+
@@ -1328,8 +1411,8 @@ public class KMLMeshDocumentTest {
 		     	"</sx:sync>"+
 				"</mesh4x:sync>"+
 		      	"</ExtendedData>"+
-		      	"<Folder mesh4x:id=\"1\">"+
-				"<Placemark mesh4x:id=\"2\">"+
+		      	"<Folder xml:id=\"1\">"+
+				"<Placemark xml:id=\"2\">"+
 				"<name>B</name>"+
 				"</Placemark>"+
 				"</Folder>"+
@@ -1340,7 +1423,9 @@ public class KMLMeshDocumentTest {
 		Element syncRoot = doc.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT);
 		Element element = syncRoot.element(KmlNames.KML_ELEMENT_FOLDER).element(KmlNames.KML_ELEMENT_PLACEMARK);
 		
-		boolean isValid = KMLMeshDocument.isValid(doc, element, NullIdentityProvider.INSTANCE);
+		KMLDOM dom = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+
+		boolean isValid = dom.isValid(element);
 		Assert.assertFalse(isValid);
 	}
 
@@ -1349,9 +1434,9 @@ public class KMLMeshDocumentTest {
 		 String localXML = 
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
 				"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
-				"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+				"<Document>"+
 				"<name>dummy</name>"+
-			   	"<ExtendedData>"+
+			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
 			   	"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"+
 		      	"<sx:sync id=\"2\" updates=\"3\" deleted=\"false\" noconflicts=\"false\">"+
 		      	"<sx:history sequence=\"3\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/>"+
@@ -1361,7 +1446,7 @@ public class KMLMeshDocumentTest {
 				"</mesh4x:sync>"+
 		      	"</ExtendedData>"+
 		      	"<Folder>"+
-				"<Placemark mesh4x:id=\"2\" mesh4x:parentId=\"1\">"+
+				"<Placemark xml:id=\"2\">"+
 				"<name>B</name>"+
 				"</Placemark>"+
 				"</Folder>"+
@@ -1372,7 +1457,9 @@ public class KMLMeshDocumentTest {
 		Element syncRoot = doc.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT);
 		Element element = syncRoot.element(KmlNames.KML_ELEMENT_FOLDER).element(KmlNames.KML_ELEMENT_PLACEMARK);
 		
-		boolean isValid = KMLMeshDocument.isValid(doc, element, NullIdentityProvider.INSTANCE);
+		KMLDOM dom = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+
+		boolean isValid = dom.isValid(element);
 		Assert.assertFalse(isValid);
 	}
 	
@@ -1381,9 +1468,9 @@ public class KMLMeshDocumentTest {
 		 String localXML = 
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
 				"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
-				"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+				"<Document>"+
 				"<name>dummy</name>"+
-			   	"<ExtendedData>"+
+			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
 			   	"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"+
 		      	"<sx:sync id=\"2\" updates=\"3\" deleted=\"false\" noconflicts=\"false\">"+
 		      	"<sx:history sequence=\"3\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/>"+
@@ -1392,8 +1479,8 @@ public class KMLMeshDocumentTest {
 		     	"</sx:sync>"+
 				"</mesh4x:sync>"+
 		      	"</ExtendedData>"+
-		      	"<Folder mesh4x:id=\"3\" >"+
-				"<Placemark mesh4x:id=\"2\" mesh4x:parentId=\"1\">"+
+		      	"<Folder xml:id=\"3\" >"+
+				"<Placemark xml:id=\"2\">"+
 				"<name>B</name>"+
 				"</Placemark>"+
 				"</Folder>"+
@@ -1404,7 +1491,9 @@ public class KMLMeshDocumentTest {
 		Element syncRoot = doc.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT);
 		Element element = syncRoot.element(KmlNames.KML_ELEMENT_FOLDER).element(KmlNames.KML_ELEMENT_PLACEMARK);
 		
-		boolean isValid = KMLMeshDocument.isValid(doc, element, NullIdentityProvider.INSTANCE);
+		KMLDOM dom = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+
+		boolean isValid = dom.isValid(element);
 		Assert.assertFalse(isValid);
 	}
 	
@@ -1413,9 +1502,9 @@ public class KMLMeshDocumentTest {
 		 String localXML = 
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
 				"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
-				"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+				"<Document>"+
 				"<name>dummy</name>"+
-			   	"<ExtendedData>"+
+			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
 			   	"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"+
 		      	"<sx:sync id=\"2\" updates=\"3\" deleted=\"false\" noconflicts=\"false\">"+
 		      	"<sx:history sequence=\"3\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/>"+
@@ -1424,8 +1513,8 @@ public class KMLMeshDocumentTest {
 		     	"</sx:sync>"+
 				"</mesh4x:sync>"+
 		      	"</ExtendedData>"+
-		      	"<Folder mesh4x:id=\"1\" >"+
-				"<Placemark mesh4x:id=\"2\" mesh4x:parentId=\"1\">"+
+		      	"<Folder xml:id=\"1\" >"+
+				"<Placemark xml:id=\"2\">"+
 				"<name>B</name>"+
 				"</Placemark>"+
 				"</Folder>"+
@@ -1433,10 +1522,13 @@ public class KMLMeshDocumentTest {
 				"</kml>";
 		
 		Document doc = DocumentHelper.parseText(localXML);
+		KMLDOM dom = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		dom.updateMeshStatus();
+		
 		Element syncRoot = doc.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT);
 		Element element = syncRoot.element(KmlNames.KML_ELEMENT_FOLDER).element(KmlNames.KML_ELEMENT_PLACEMARK);
-		
-		boolean isValid = KMLMeshDocument.isValid(doc, element, NullIdentityProvider.INSTANCE);
+
+		boolean isValid = dom.isValid(element);
 		Assert.assertTrue(isValid);
 	}
 	
@@ -1446,9 +1538,9 @@ public class KMLMeshDocumentTest {
 		 String localXML = 
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
 				"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
-				"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+				"<Document>"+
 				"<name>dummy</name>"+
-			   	"<ExtendedData>"+
+			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
 			   	"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"+
 		      	"<sx:sync id=\"2\" updates=\"3\" deleted=\"false\" noconflicts=\"false\">"+
 		      	"<sx:history sequence=\"3\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/>"+
@@ -1457,17 +1549,20 @@ public class KMLMeshDocumentTest {
 		     	"</sx:sync>"+
 				"</mesh4x:sync>"+
 		      	"</ExtendedData>"+
-				"<Placemark mesh4x:id=\"2\">"+
+				"<Placemark xml:id=\"2\">"+
 				"<name>B</name>"+
 				"</Placemark>"+
 				"</Document>"+
 				"</kml>";
 		
 		Document doc = DocumentHelper.parseText(localXML);
+		
+		KMLDOM dom = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		dom.updateMeshStatus();
+		
 		Element syncRoot = doc.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT);
 		Element element = syncRoot.element(KmlNames.KML_ELEMENT_PLACEMARK);
-		
-		boolean isValid = KMLMeshDocument.isValid(doc, element, NullIdentityProvider.INSTANCE);
+		boolean isValid = dom.isValid(element);
 		Assert.assertTrue(isValid);
 	}
 	

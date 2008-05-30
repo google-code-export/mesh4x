@@ -5,10 +5,12 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.dom4j.Attribute;
+import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.QName;
 
+import com.mesh4j.sync.utils.XMLHelper;
 import com.mesh4j.sync.validations.Guard;
 
 public class XMLViewElement implements IXMLViewElement {
@@ -18,40 +20,45 @@ public class XMLViewElement implements IXMLViewElement {
 	private ArrayList<QName> elementQNames = new ArrayList<QName>();
 	private ArrayList<String> attributeNames = new ArrayList<String>();
 	private ArrayList<QName> attributeQNames = new ArrayList<QName>();
-	private String type;
+	private QName qname;
 	
 	// BUSINESS METHODS
 	
-	public XMLViewElement(String type) {
-		Guard.argumentNotNullOrEmptyString(type, "type");
-		this.type = type;
+	public XMLViewElement(QName qname) {
+		Guard.argumentNotNull(qname, "qname");
+		this.qname = qname;
 	}
 
-	@Override
 	public void addElement(String name) {
 		elementNames.put(name, null);
 	}
 	
-	@Override
 	public void addElement(String name, String uri) {
 		elementNames.put(name, uri);
 	}
 	
-	@Override
 	public void addElement(QName qName) {
 		elementQNames.add(qName);
 	}
 
-	@Override
 	public void addAttribute(String name) {
 		attributeNames.add(name);		
 	}
 	
-	@Override
 	public void addAttribute(QName qName) {
 		attributeQNames.add(qName);		
 	}
 
+	@Override
+	public String getName() {
+		return getQName().getName();
+	}
+	
+	@Override
+	public QName getQName() {
+		return this.qname;
+	}
+	
 	@Override
 	public Element normalize(Element element) {
 		
@@ -59,7 +66,7 @@ public class XMLViewElement implements IXMLViewElement {
 			return null;
 		}
 		
-		if(!this.getType().equals(element.getName())){
+		if(!this.getName().equals(element.getName())){
 			return null;
 		}
 		
@@ -73,89 +80,39 @@ public class XMLViewElement implements IXMLViewElement {
 	}
 
 	@Override
-	public void update(Element element, Element elementSource) {
+	public Element update(Document document, Element element, Element elementSource) {
+		return update(element, elementSource);
+	}
+	
+	private Element update(Element element, Element elementSource) {
 	
 		if(element == null){
-			return;
+			return null;
 		}
 		
 		if(elementSource == null){
-			return;
+			return null;
 		}
 		
-		if(!this.getType().equals(element.getName())){
-			return;
+		if(!this.getName().equals(element.getName())){
+			return null;
 		}
 		
-		if(!this.getType().equals(elementSource.getName())){
-			return;
+		if(!this.getName().equals(elementSource.getName())){
+			return null;
 		}
 		
 		if(hasTranslate()){
 			this.customUpdate(element, elementSource);
+			return element;
 		} else {
-			this.updateAll(element, elementSource);
+			Element parent = element.getParent();
+			parent.remove(element);
+			parent.add(elementSource);
+			return elementSource;
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
-	private void updateAll(Element element, Element elementSource) {
-		
-		List<Attribute> attributes = elementSource.attributes();
-		for (Attribute attribute : attributes) {
-			updateAttribute(element, attribute.getQName(), attribute.getValue());
-		}		
-		
-		List<Element> childrenElements = elementSource.elements();
-		for (Element current : childrenElements) {
-			updateElement(element, current);
-		}
-		
-		ArrayList<Attribute> attributesToRemove = new ArrayList<Attribute>();
-		
-		attributes = element.attributes();
-		for (Attribute attribute : attributes) {
-			if(elementSource.attribute(attribute.getQName()) == null){
-				attributesToRemove.add(attribute);
-			}
-		}
-		
-		for (Attribute attribute : attributesToRemove) {
-			element.remove(attribute);
-		}
-		
-		ArrayList<Element> childToRemove = new ArrayList<Element>();
-		
-		childrenElements = element.elements();
-		for (Element current : childrenElements) {
-			if(elementSource.element(current.getQName()) == null){
-				childToRemove.add(current);
-			}
-		}
-		
-		for (Element current : childToRemove) {
-			element.remove(current);
-		}
-	}
-
-	private void updateElement(Element element, Element newChild) {
-		Element child = element.element(newChild.getQName());
-		if(child != null){
-			element.remove(child);
-		}
-		element.add(newChild.createCopy());
-	}
-
-	private void updateAttribute(Element element, QName attrName, String value) {
-		Attribute attr = element.attribute(attrName);
-		if(attr == null){
-			element.add(attrName.getNamespace());
-			element.addAttribute(attrName, value);
-		} else {
-			attr.setValue(value);
-		}
-	}
-
 	private void customUpdate(Element element, Element elementSource) {
 
 		for (String name : this.elementNames.keySet()) {
@@ -187,6 +144,24 @@ public class XMLViewElement implements IXMLViewElement {
 			}
 		}		
 	}
+	
+	private void updateElement(Element element, Element newChild) {
+		Element child = element.element(newChild.getQName());
+		if(child != null){
+			element.remove(child);
+		}
+		element.add(newChild.createCopy());
+	}
+
+	private void updateAttribute(Element element, QName attrName, String value) {
+		Attribute attr = element.attribute(attrName);
+		if(attr == null){
+			element.add(attrName.getNamespace());
+			element.addAttribute(attrName, value);
+		} else {
+			attr.setValue(value);
+		}
+	}
 
 	private boolean hasTranslate(){
 		return !this.elementNames.isEmpty() 
@@ -196,7 +171,74 @@ public class XMLViewElement implements IXMLViewElement {
 	}
 
 	@Override
-	public String getType() {
-		return this.type;
+	public Element add(Document document, Element element) {
+		
+		if(document == null){
+			return null;
+		}
+		
+		if(element == null){
+			return null;
+		}
+		
+		Element normalizedElement = this.normalize(element);
+		if(normalizedElement == null){
+			return null;
+		}
+		
+		Element root = this.getRootElement(document, element);
+		root.add(normalizedElement);
+		return normalizedElement;
+	}
+
+	protected Element getRootElement(Document document, Element element) {
+		return document.getRootElement();
+	}
+
+	@Override
+	public void delete(Document document, Element element) {
+
+		if(document == null){
+			return;
+		}
+		
+		if(element == null){
+			return;
+		}
+		
+		Element parent = element.getParent();
+		if(parent != null){
+			parent.remove(element);
+		} else {
+			document.remove(element);
+		}
+		
+	}
+
+	@Override
+	public List<Element> getAllElements(Document document) {
+		HashMap<String, String> namespaces = new HashMap<String, String>();
+		namespaces.put(this.getQName().getNamespacePrefix(), this.getQName().getNamespaceURI());
+		
+		String xpathExp = "//"+this.getQName().getNamespacePrefix()+":"+this.getQName().getName();
+		return XMLHelper.selectElements(xpathExp, document.getRootElement(), namespaces);
+	}
+
+	@Override
+	public Element refresh(Document document, Element element) {
+		return element;
+	}
+
+	@Override
+	public boolean isValid(Document document, Element element) {
+		
+		if(document == null){
+			return false;
+		}
+		
+		if(element == null){
+			return false;
+		}
+		return true;
 	}
 }

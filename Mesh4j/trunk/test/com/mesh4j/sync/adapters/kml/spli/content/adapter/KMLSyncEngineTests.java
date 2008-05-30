@@ -15,7 +15,6 @@ import org.junit.Test;
 import com.mesh4j.sync.SyncEngine;
 import com.mesh4j.sync.adapters.file.FileSyncRepository;
 import com.mesh4j.sync.adapters.kml.KMLContent;
-import com.mesh4j.sync.adapters.kml.KmlNames;
 import com.mesh4j.sync.adapters.split.SplitAdapter;
 import com.mesh4j.sync.model.IContent;
 import com.mesh4j.sync.model.Item;
@@ -65,7 +64,7 @@ public class KMLSyncEngineTests {
 		List<IContent> contents = kmlAdapter1.getAll();
 		Assert.assertNotNull(contents);
 		Assert.assertEquals(1, contents.size());
-		String xmlID1 = contents.get(0).getPayload().attributeValue(KmlNames.XML_ID_QNAME);
+		String xmlID1 = contents.get(0).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
 		Assert.assertNotNull(xmlID1);
 		
 		File file2 = TestHelper.makeNewXMLFile(xml2);		
@@ -87,7 +86,7 @@ public class KMLSyncEngineTests {
 		Assert.assertNotNull(items);
 		Assert.assertEquals(1, items.size());
 		
-		String xmlID = items.get(0).getContent().getPayload().attributeValue(KmlNames.XML_ID_QNAME);
+		String xmlID = items.get(0).getContent().getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
 		Assert.assertNotNull(xmlID);
 		Assert.assertTrue(xmlID1.equals(xmlID));
 		Assert.assertEquals("sn_ylw-pushpin_"+xmlID, items.get(0).getContent().getPayload().attributeValue("id"));
@@ -96,7 +95,7 @@ public class KMLSyncEngineTests {
 		Assert.assertNotNull(items);
 		Assert.assertEquals(1, items.size());
 		
-		xmlID = items.get(0).getContent().getPayload().attributeValue(KmlNames.XML_ID_QNAME);
+		xmlID = items.get(0).getContent().getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
 		Assert.assertNotNull(xmlID);
 		Assert.assertTrue(xmlID1.equals(xmlID));
 		Assert.assertEquals("sn_ylw-pushpin_"+xmlID, items.get(0).getContent().getPayload().attributeValue("id"));
@@ -137,7 +136,7 @@ public class KMLSyncEngineTests {
 		List<IContent> contents = kmlAdapter1.getAll();
 		Assert.assertNotNull(contents);
 		Assert.assertEquals(1, contents.size());
-		String xmlID1 = contents.get(0).getPayload().attributeValue(KmlNames.XML_ID_QNAME);
+		String xmlID1 = contents.get(0).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
 		Assert.assertNotNull(xmlID1);
 		
 		File file2 = TestHelper.makeNewXMLFile(xml2);		
@@ -160,7 +159,7 @@ public class KMLSyncEngineTests {
 		Assert.assertNotNull(items);
 		Assert.assertEquals(1, items.size());
 		
-		String xmlID = items.get(0).getContent().getPayload().attributeValue(KmlNames.XML_ID_QNAME);
+		String xmlID = items.get(0).getContent().getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
 		Assert.assertNotNull(xmlID);
 		Assert.assertTrue(xmlID1.equals(xmlID));
 		Assert.assertEquals("msn_ylw-pushpin_"+xmlID, items.get(0).getContent().getPayload().attributeValue("id"));
@@ -169,7 +168,7 @@ public class KMLSyncEngineTests {
 		Assert.assertNotNull(items);
 		Assert.assertEquals(1, items.size());
 		
-		xmlID = items.get(0).getContent().getPayload().attributeValue(KmlNames.XML_ID_QNAME);
+		xmlID = items.get(0).getContent().getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
 		Assert.assertNotNull(xmlID);
 		Assert.assertTrue(xmlID1.equals(xmlID));
 		Assert.assertEquals("msn_ylw-pushpin_"+xmlID, items.get(0).getContent().getPayload().attributeValue("id"));
@@ -203,7 +202,7 @@ public class KMLSyncEngineTests {
 		List<IContent> contents = kmlAdapter1.getAll();
 		Assert.assertNotNull(contents);
 		Assert.assertEquals(1, contents.size());
-		String xmlID1 = contents.get(0).getPayload().attributeValue(KmlNames.XML_ID_QNAME);
+		String xmlID1 = contents.get(0).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
 		Assert.assertNotNull(xmlID1);
 		
 		File file2 = TestHelper.makeNewXMLFile(xml2);		
@@ -226,7 +225,7 @@ public class KMLSyncEngineTests {
 		Assert.assertNotNull(items);
 		Assert.assertEquals(1, items.size());
 		
-		String xmlID = items.get(0).getContent().getPayload().attributeValue(KmlNames.XML_ID_QNAME);
+		String xmlID = items.get(0).getContent().getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
 		Assert.assertNotNull(xmlID);
 		Assert.assertTrue(xmlID1.equals(xmlID));
 		Assert.assertEquals("myFolder", items.get(0).getContent().getPayload().element("name").getText());
@@ -235,7 +234,7 @@ public class KMLSyncEngineTests {
 		Assert.assertNotNull(items);
 		Assert.assertEquals(1, items.size());
 		
-		xmlID = items.get(0).getContent().getPayload().attributeValue(KmlNames.XML_ID_QNAME);
+		xmlID = items.get(0).getContent().getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
 		Assert.assertNotNull(xmlID);
 		Assert.assertTrue(xmlID1.equals(xmlID));
 		Assert.assertEquals("myFolder", items.get(0).getContent().getPayload().element("name").getText());
@@ -282,7 +281,7 @@ public class KMLSyncEngineTests {
 		List<IContent> contents = kmlAdapter1.getAll();
 		Assert.assertNotNull(contents);
 		Assert.assertEquals(1, contents.size());
-		String xmlID1 = contents.get(0).getPayload().attributeValue(KmlNames.XML_ID_QNAME);
+		String xmlID1 = contents.get(0).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
 		Assert.assertNotNull(xmlID1);
 		
 		File file2 = TestHelper.makeNewXMLFile(xml2);		
@@ -305,7 +304,7 @@ public class KMLSyncEngineTests {
 		Assert.assertNotNull(items);
 		Assert.assertEquals(1, items.size());
 		
-		String xmlID = items.get(0).getContent().getPayload().attributeValue(KmlNames.XML_ID_QNAME);
+		String xmlID = items.get(0).getContent().getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
 		Assert.assertNotNull(xmlID);
 		Assert.assertTrue(xmlID1.equals(xmlID));
 		Assert.assertEquals("a", items.get(0).getContent().getPayload().element("name").getText());
@@ -314,7 +313,7 @@ public class KMLSyncEngineTests {
 		Assert.assertNotNull(items);
 		Assert.assertEquals(1, items.size());
 		
-		xmlID = items.get(0).getContent().getPayload().attributeValue(KmlNames.XML_ID_QNAME);
+		xmlID = items.get(0).getContent().getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
 		Assert.assertNotNull(xmlID);
 		Assert.assertTrue(xmlID1.equals(xmlID));
 		Assert.assertEquals("a", items.get(0).getContent().getPayload().element("name").getText());
@@ -354,7 +353,7 @@ public class KMLSyncEngineTests {
 		List<IContent> contents = kmlAdapter1.getAll();
 		Assert.assertNotNull(contents);
 		Assert.assertEquals(1, contents.size());
-		String xmlID1 = contents.get(0).getPayload().attributeValue(KmlNames.XML_ID_QNAME);
+		String xmlID1 = contents.get(0).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
 		Assert.assertNotNull(xmlID1);
 		
 		File file2 = TestHelper.makeNewXMLFile(xml1);		
@@ -366,7 +365,7 @@ public class KMLSyncEngineTests {
 		contents = kmlAdapter2.getAll();
 		Assert.assertNotNull(contents);
 		Assert.assertEquals(1, contents.size());
-		String xmlID2 = contents.get(0).getPayload().attributeValue(KmlNames.XML_ID_QNAME);
+		String xmlID2 = contents.get(0).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
 		Assert.assertNotNull(xmlID2);
 		
 		Assert.assertEquals(id, xmlID1);
@@ -380,13 +379,13 @@ public class KMLSyncEngineTests {
 		contents = kmlAdapter1.getAll();
 		Assert.assertNotNull(contents);
 		Assert.assertEquals(1, contents.size());
-		xmlID1 = contents.get(0).getPayload().attributeValue(KmlNames.XML_ID_QNAME);
+		xmlID1 = contents.get(0).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
 		Assert.assertNotNull(xmlID1);
 		
 		contents = kmlAdapter2.getAll();
 		Assert.assertNotNull(contents);
 		Assert.assertEquals(1, contents.size());
-		xmlID2 = contents.get(0).getPayload().attributeValue(KmlNames.XML_ID_QNAME);
+		xmlID2 = contents.get(0).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
 		Assert.assertNotNull(xmlID2);
 		
 		Assert.assertEquals(id, xmlID1);
@@ -446,7 +445,7 @@ public class KMLSyncEngineTests {
 		List<IContent> contents = kmlAdapter1.getAll();
 		Assert.assertNotNull(contents);
 		Assert.assertEquals(1, contents.size());
-		String xmlID1 = contents.get(0).getPayload().attributeValue(KmlNames.XML_ID_QNAME);
+		String xmlID1 = contents.get(0).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
 		Assert.assertNotNull(xmlID1);
 		
 		File file2 = TestHelper.makeNewXMLFile(xml1);		
@@ -458,7 +457,7 @@ public class KMLSyncEngineTests {
 		contents = kmlAdapter2.getAll();
 		Assert.assertNotNull(contents);
 		Assert.assertEquals(1, contents.size());
-		String xmlID2 = contents.get(0).getPayload().attributeValue(KmlNames.XML_ID_QNAME);
+		String xmlID2 = contents.get(0).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
 		Assert.assertNotNull(xmlID2);
 		
 		Assert.assertEquals(id, xmlID1);
@@ -472,13 +471,13 @@ public class KMLSyncEngineTests {
 		contents = kmlAdapter1.getAll();
 		Assert.assertNotNull(contents);
 		Assert.assertEquals(1, contents.size());
-		xmlID1 = contents.get(0).getPayload().attributeValue(KmlNames.XML_ID_QNAME);
+		xmlID1 = contents.get(0).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
 		Assert.assertNotNull(xmlID1);
 		
 		contents = kmlAdapter2.getAll();
 		Assert.assertNotNull(contents);
 		Assert.assertEquals(1, contents.size());
-		xmlID2 = contents.get(0).getPayload().attributeValue(KmlNames.XML_ID_QNAME);
+		xmlID2 = contents.get(0).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
 		Assert.assertNotNull(xmlID2);
 		
 		Assert.assertEquals(id, xmlID1);
@@ -547,7 +546,7 @@ public class KMLSyncEngineTests {
 		List<IContent> contents = kmlAdapter1.getAll();
 		Assert.assertNotNull(contents);
 		Assert.assertEquals(2, contents.size());
-		String xmlID1 = contents.get(0).getPayload().attributeValue(KmlNames.XML_ID_QNAME);
+		String xmlID1 = contents.get(0).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
 		Assert.assertNotNull(xmlID1);
 		
 		File file2 = TestHelper.makeNewXMLFile(xml1);		
@@ -559,7 +558,7 @@ public class KMLSyncEngineTests {
 		contents = kmlAdapter2.getAll();
 		Assert.assertNotNull(contents);
 		Assert.assertEquals(2, contents.size());
-		String xmlID2 = contents.get(0).getPayload().attributeValue(KmlNames.XML_ID_QNAME);
+		String xmlID2 = contents.get(0).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
 		Assert.assertNotNull(xmlID2);
 		
 		Assert.assertEquals(id, xmlID1);
@@ -573,13 +572,13 @@ public class KMLSyncEngineTests {
 		contents = kmlAdapter1.getAll();
 		Assert.assertNotNull(contents);
 		Assert.assertEquals(2, contents.size());
-		xmlID1 = contents.get(0).getPayload().attributeValue(KmlNames.XML_ID_QNAME);
+		xmlID1 = contents.get(0).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
 		Assert.assertNotNull(xmlID1);
 		
 		contents = kmlAdapter2.getAll();
 		Assert.assertNotNull(contents);
 		Assert.assertEquals(2, contents.size());
-		xmlID2 = contents.get(0).getPayload().attributeValue(KmlNames.XML_ID_QNAME);
+		xmlID2 = contents.get(0).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
 		Assert.assertNotNull(xmlID2);
 		
 		Assert.assertEquals(id, xmlID1);
@@ -652,7 +651,7 @@ public class KMLSyncEngineTests {
 		List<IContent> contents = kmlAdapter1.getAll();
 		Assert.assertNotNull(contents);
 		Assert.assertEquals(2, contents.size());
-		String xmlID1 = contents.get(1).getPayload().attributeValue(KmlNames.XML_ID_QNAME);
+		String xmlID1 = contents.get(1).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
 		Assert.assertNotNull(xmlID1);
 		
 		File file2 = TestHelper.makeNewXMLFile(xml1);		
@@ -664,7 +663,7 @@ public class KMLSyncEngineTests {
 		contents = kmlAdapter2.getAll();
 		Assert.assertNotNull(contents);
 		Assert.assertEquals(2, contents.size());
-		String xmlID2 = contents.get(1).getPayload().attributeValue(KmlNames.XML_ID_QNAME);
+		String xmlID2 = contents.get(1).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
 		Assert.assertNotNull(xmlID2);
 		
 		Assert.assertEquals(id, xmlID1);
@@ -678,13 +677,13 @@ public class KMLSyncEngineTests {
 		contents = kmlAdapter1.getAll();
 		Assert.assertNotNull(contents);
 		Assert.assertEquals(2, contents.size());
-		xmlID1 = contents.get(1).getPayload().attributeValue(KmlNames.XML_ID_QNAME);
+		xmlID1 = contents.get(1).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
 		Assert.assertNotNull(xmlID1);
 		
 		contents = kmlAdapter2.getAll();
 		Assert.assertNotNull(contents);
 		Assert.assertEquals(2, contents.size());
-		xmlID2 = contents.get(1).getPayload().attributeValue(KmlNames.XML_ID_QNAME);
+		xmlID2 = contents.get(1).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
 		Assert.assertNotNull(xmlID2);
 		
 		Assert.assertEquals(id, xmlID1);
@@ -762,11 +761,11 @@ public class KMLSyncEngineTests {
 		List<IContent> contents = kmlAdapter1.getAll();
 		Assert.assertNotNull(contents);
 		Assert.assertEquals(3, contents.size());
-		Assert.assertEquals(folderID1, contents.get(0).getPayload().attributeValue(KmlNames.XML_ID_QNAME));
-		Assert.assertEquals(folderID2, contents.get(1).getPayload().attributeValue(KmlNames.XML_ID_QNAME));
-		Assert.assertEquals(id, contents.get(2).getPayload().attributeValue(KmlNames.XML_ID_QNAME));
-		Assert.assertEquals(folderID1, contents.get(2).getPayload().attributeValue(KmlNames.PARENT_ID_QNAME));
-		Assert.assertEquals(contents.get(2).getPayload().getParent().attributeValue(KmlNames.XML_ID_QNAME), contents.get(2).getPayload().attributeValue(KmlNames.PARENT_ID_QNAME));
+		Assert.assertEquals(folderID1, contents.get(0).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME));
+		Assert.assertEquals(folderID2, contents.get(1).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME));
+		Assert.assertEquals(id, contents.get(2).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME));
+		Assert.assertEquals(folderID1, contents.get(2).getPayload().attributeValue(KMLContentAdapterNames.PARENT_ID_QNAME));
+		Assert.assertEquals(contents.get(2).getPayload().getParent().attributeValue(KMLContentAdapterNames.XML_ID_QNAME), contents.get(2).getPayload().attributeValue(KMLContentAdapterNames.PARENT_ID_QNAME));
 			
 		File file2 = TestHelper.makeNewXMLFile(xml1);		
 		KMLContentAdapter kmlAdapter2 = new KMLContentAdapter(file2);
@@ -777,11 +776,11 @@ public class KMLSyncEngineTests {
 		contents = kmlAdapter2.getAll();
 		Assert.assertNotNull(contents);
 		Assert.assertEquals(3, contents.size());
-		Assert.assertEquals(folderID1, contents.get(0).getPayload().attributeValue(KmlNames.XML_ID_QNAME));
-		Assert.assertEquals(folderID2, contents.get(1).getPayload().attributeValue(KmlNames.XML_ID_QNAME));
-		Assert.assertEquals(id, contents.get(2).getPayload().attributeValue(KmlNames.XML_ID_QNAME));
-		Assert.assertEquals(folderID1, contents.get(2).getPayload().attributeValue(KmlNames.PARENT_ID_QNAME));
-		Assert.assertEquals(contents.get(2).getPayload().getParent().attributeValue(KmlNames.XML_ID_QNAME), contents.get(2).getPayload().attributeValue(KmlNames.PARENT_ID_QNAME));
+		Assert.assertEquals(folderID1, contents.get(0).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME));
+		Assert.assertEquals(folderID2, contents.get(1).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME));
+		Assert.assertEquals(id, contents.get(2).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME));
+		Assert.assertEquals(folderID1, contents.get(2).getPayload().attributeValue(KMLContentAdapterNames.PARENT_ID_QNAME));
+		Assert.assertEquals(contents.get(2).getPayload().getParent().attributeValue(KMLContentAdapterNames.XML_ID_QNAME), contents.get(2).getPayload().attributeValue(KMLContentAdapterNames.PARENT_ID_QNAME));
 					
 		// Move placemark from repo1
 		KMLContent content = kmlAdapter1.get(id);
@@ -817,20 +816,20 @@ public class KMLSyncEngineTests {
 		contents = kmlAdapter1.getAll();
 		Assert.assertNotNull(contents);
 		Assert.assertEquals(3, contents.size());
-		Assert.assertEquals(folderID1, contents.get(0).getPayload().attributeValue(KmlNames.XML_ID_QNAME));
-		Assert.assertEquals(folderID2, contents.get(1).getPayload().attributeValue(KmlNames.XML_ID_QNAME));
-		Assert.assertEquals(id, contents.get(2).getPayload().attributeValue(KmlNames.XML_ID_QNAME));
-		Assert.assertEquals(folderID2, contents.get(2).getPayload().attributeValue(KmlNames.PARENT_ID_QNAME));
-		Assert.assertEquals(contents.get(2).getPayload().getParent().attributeValue(KmlNames.XML_ID_QNAME), contents.get(2).getPayload().attributeValue(KmlNames.PARENT_ID_QNAME));
+		Assert.assertEquals(folderID1, contents.get(0).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME));
+		Assert.assertEquals(folderID2, contents.get(1).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME));
+		Assert.assertEquals(id, contents.get(2).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME));
+		Assert.assertEquals(folderID2, contents.get(2).getPayload().attributeValue(KMLContentAdapterNames.PARENT_ID_QNAME));
+		Assert.assertEquals(contents.get(2).getPayload().getParent().attributeValue(KMLContentAdapterNames.XML_ID_QNAME), contents.get(2).getPayload().attributeValue(KMLContentAdapterNames.PARENT_ID_QNAME));
 
 		contents = kmlAdapter2.getAll();
 		Assert.assertNotNull(contents);
 		Assert.assertEquals(3, contents.size());
-		Assert.assertEquals(folderID1, contents.get(0).getPayload().attributeValue(KmlNames.XML_ID_QNAME));
-		Assert.assertEquals(folderID2, contents.get(1).getPayload().attributeValue(KmlNames.XML_ID_QNAME));
-		Assert.assertEquals(id, contents.get(2).getPayload().attributeValue(KmlNames.XML_ID_QNAME));
-		Assert.assertEquals(folderID1, contents.get(2).getPayload().attributeValue(KmlNames.PARENT_ID_QNAME));
-		Assert.assertEquals(contents.get(2).getPayload().getParent().attributeValue(KmlNames.XML_ID_QNAME), contents.get(2).getPayload().attributeValue(KmlNames.PARENT_ID_QNAME));
+		Assert.assertEquals(folderID1, contents.get(0).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME));
+		Assert.assertEquals(folderID2, contents.get(1).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME));
+		Assert.assertEquals(id, contents.get(2).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME));
+		Assert.assertEquals(folderID1, contents.get(2).getPayload().attributeValue(KMLContentAdapterNames.PARENT_ID_QNAME));
+		Assert.assertEquals(contents.get(2).getPayload().getParent().attributeValue(KMLContentAdapterNames.XML_ID_QNAME), contents.get(2).getPayload().attributeValue(KMLContentAdapterNames.PARENT_ID_QNAME));
 
 		
 		// Sync
@@ -841,20 +840,20 @@ public class KMLSyncEngineTests {
 		List<Item> items = repo1.getAll();
 		Assert.assertNotNull(items);
 		Assert.assertEquals(3, items.size());
-		Assert.assertEquals(folderID1, items.get(0).getContent().getPayload().attributeValue(KmlNames.XML_ID_QNAME));
-		Assert.assertEquals(folderID2, items.get(1).getContent().getPayload().attributeValue(KmlNames.XML_ID_QNAME));
-		Assert.assertEquals(id, items.get(2).getContent().getPayload().attributeValue(KmlNames.XML_ID_QNAME));
-		Assert.assertEquals(folderID2, items.get(2).getContent().getPayload().attributeValue(KmlNames.PARENT_ID_QNAME));
-		Assert.assertEquals(items.get(2).getContent().getPayload().getParent().attributeValue(KmlNames.XML_ID_QNAME), items.get(2).getContent().getPayload().attributeValue(KmlNames.PARENT_ID_QNAME));
+		Assert.assertEquals(folderID1, items.get(0).getContent().getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME));
+		Assert.assertEquals(folderID2, items.get(1).getContent().getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME));
+		Assert.assertEquals(id, items.get(2).getContent().getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME));
+		Assert.assertEquals(folderID2, items.get(2).getContent().getPayload().attributeValue(KMLContentAdapterNames.PARENT_ID_QNAME));
+		Assert.assertEquals(items.get(2).getContent().getPayload().getParent().attributeValue(KMLContentAdapterNames.XML_ID_QNAME), items.get(2).getContent().getPayload().attributeValue(KMLContentAdapterNames.PARENT_ID_QNAME));
 		
 		items = repo2.getAll();
 		Assert.assertNotNull(items);
 		Assert.assertEquals(3, items.size());
-		Assert.assertEquals(folderID1, items.get(0).getContent().getPayload().attributeValue(KmlNames.XML_ID_QNAME));
-		Assert.assertEquals(folderID2, items.get(1).getContent().getPayload().attributeValue(KmlNames.XML_ID_QNAME));
-		Assert.assertEquals(id, items.get(2).getContent().getPayload().attributeValue(KmlNames.XML_ID_QNAME));
-		Assert.assertEquals(folderID2, items.get(2).getContent().getPayload().attributeValue(KmlNames.PARENT_ID_QNAME));
-		Assert.assertEquals(items.get(2).getContent().getPayload().getParent().attributeValue(KmlNames.XML_ID_QNAME), items.get(2).getContent().getPayload().attributeValue(KmlNames.PARENT_ID_QNAME));
+		Assert.assertEquals(folderID1, items.get(0).getContent().getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME));
+		Assert.assertEquals(folderID2, items.get(1).getContent().getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME));
+		Assert.assertEquals(id, items.get(2).getContent().getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME));
+		Assert.assertEquals(folderID2, items.get(2).getContent().getPayload().attributeValue(KMLContentAdapterNames.PARENT_ID_QNAME));
+		Assert.assertEquals(items.get(2).getContent().getPayload().getParent().attributeValue(KMLContentAdapterNames.XML_ID_QNAME), items.get(2).getContent().getPayload().attributeValue(KMLContentAdapterNames.PARENT_ID_QNAME));
 	}
 	
 	@Test
@@ -897,11 +896,11 @@ public class KMLSyncEngineTests {
 		List<IContent> contents = kmlAdapter1.getAll();
 		Assert.assertNotNull(contents);
 		Assert.assertEquals(3, contents.size());
-		Assert.assertEquals(folderID1, contents.get(0).getPayload().attributeValue(KmlNames.XML_ID_QNAME));
-		Assert.assertEquals(folderID2, contents.get(1).getPayload().attributeValue(KmlNames.XML_ID_QNAME));
-		Assert.assertEquals(id, contents.get(2).getPayload().attributeValue(KmlNames.XML_ID_QNAME));
-		Assert.assertEquals(folderID1, contents.get(2).getPayload().attributeValue(KmlNames.PARENT_ID_QNAME));
-		Assert.assertEquals(contents.get(2).getPayload().getParent().attributeValue(KmlNames.XML_ID_QNAME), contents.get(2).getPayload().attributeValue(KmlNames.PARENT_ID_QNAME));
+		Assert.assertEquals(folderID1, contents.get(0).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME));
+		Assert.assertEquals(folderID2, contents.get(1).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME));
+		Assert.assertEquals(id, contents.get(2).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME));
+		Assert.assertEquals(folderID1, contents.get(2).getPayload().attributeValue(KMLContentAdapterNames.PARENT_ID_QNAME));
+		Assert.assertEquals(contents.get(2).getPayload().getParent().attributeValue(KMLContentAdapterNames.XML_ID_QNAME), contents.get(2).getPayload().attributeValue(KMLContentAdapterNames.PARENT_ID_QNAME));
 	}
 	
 	@Test
@@ -951,11 +950,11 @@ public class KMLSyncEngineTests {
 		List<IContent> contents = kmlAdapter1.getAll();
 		Assert.assertNotNull(contents);
 		Assert.assertEquals(3, contents.size());
-		Assert.assertEquals(folderID1, contents.get(0).getPayload().attributeValue(KmlNames.XML_ID_QNAME));
-		Assert.assertEquals(folderID2, contents.get(1).getPayload().attributeValue(KmlNames.XML_ID_QNAME));
-		Assert.assertEquals(id, contents.get(2).getPayload().attributeValue(KmlNames.XML_ID_QNAME));
-		Assert.assertEquals(folderID1, contents.get(1).getPayload().attributeValue(KmlNames.PARENT_ID_QNAME));
-		Assert.assertEquals(folderID2, contents.get(2).getPayload().attributeValue(KmlNames.PARENT_ID_QNAME));
+		Assert.assertEquals(folderID1, contents.get(0).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME));
+		Assert.assertEquals(folderID2, contents.get(1).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME));
+		Assert.assertEquals(id, contents.get(2).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME));
+		Assert.assertEquals(folderID1, contents.get(1).getPayload().attributeValue(KMLContentAdapterNames.PARENT_ID_QNAME));
+		Assert.assertEquals(folderID2, contents.get(2).getPayload().attributeValue(KMLContentAdapterNames.PARENT_ID_QNAME));
 			
 		String id2 = IdGenerator.newID();
 		String xml2 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+
@@ -993,9 +992,9 @@ public class KMLSyncEngineTests {
 		contents = kmlAdapter2.getAll();
 		Assert.assertNotNull(contents);
 		Assert.assertEquals(1, contents.size());
-		Assert.assertEquals(id2, contents.get(0).getPayload().attributeValue(KmlNames.XML_ID_QNAME));
-		Assert.assertNull(contents.get(0).getPayload().attributeValue(KmlNames.PARENT_ID_QNAME));
-		Assert.assertEquals(KmlNames.KML_ELEMENT_DOCUMENT, contents.get(0).getPayload().getParent().getName());
+		Assert.assertEquals(id2, contents.get(0).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME));
+		Assert.assertNull(contents.get(0).getPayload().attributeValue(KMLContentAdapterNames.PARENT_ID_QNAME));
+		Assert.assertEquals(KMLContentAdapterNames.KML_ELEMENT_DOCUMENT, contents.get(0).getPayload().getParent().getName());
 		
 		
 		// Sync
@@ -1006,21 +1005,21 @@ public class KMLSyncEngineTests {
 		List<Item> items = repo1.getAll();
 		Assert.assertNotNull(items);
 		Assert.assertEquals(4, items.size());
-		Assert.assertEquals(folderID1, items.get(0).getContent().getPayload().attributeValue(KmlNames.XML_ID_QNAME));
-		Assert.assertEquals(folderID2, items.get(1).getContent().getPayload().attributeValue(KmlNames.XML_ID_QNAME));
-		Assert.assertEquals(id, items.get(2).getContent().getPayload().attributeValue(KmlNames.XML_ID_QNAME));
-		Assert.assertEquals(folderID1, items.get(1).getContent().getPayload().attributeValue(KmlNames.PARENT_ID_QNAME));
-		Assert.assertEquals(folderID2, items.get(2).getContent().getPayload().attributeValue(KmlNames.PARENT_ID_QNAME));
-//		Assert.assertEquals(items.get(1).getContent().getPayload().getParent().attributeValue(KmlNames.XML_ID_QNAME), items.get(1).getContent().getPayload().attributeValue(KmlNames.PARENT_ID_QNAME));
-//		Assert.assertEquals(items.get(2).getContent().getPayload().getParent().attributeValue(KmlNames.XML_ID_QNAME), items.get(2).getContent().getPayload().attributeValue(KmlNames.PARENT_ID_QNAME));
-		Assert.assertEquals(id2, items.get(3).getContent().getPayload().attributeValue(KmlNames.XML_ID_QNAME));
-		Assert.assertNull(items.get(3).getContent().getPayload().attributeValue(KmlNames.PARENT_ID_QNAME));
+		Assert.assertEquals(folderID1, items.get(0).getContent().getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME));
+		Assert.assertEquals(folderID2, items.get(1).getContent().getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME));
+		Assert.assertEquals(id, items.get(2).getContent().getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME));
+		Assert.assertEquals(folderID1, items.get(1).getContent().getPayload().attributeValue(KMLContentAdapterNames.PARENT_ID_QNAME));
+		Assert.assertEquals(folderID2, items.get(2).getContent().getPayload().attributeValue(KMLContentAdapterNames.PARENT_ID_QNAME));
+//		Assert.assertEquals(items.get(1).getContent().getPayload().getParent().attributeValue(KMLContentAdapterNames.XML_ID_QNAME), items.get(1).getContent().getPayload().attributeValue(KMLContentAdapterNames.PARENT_ID_QNAME));
+//		Assert.assertEquals(items.get(2).getContent().getPayload().getParent().attributeValue(KMLContentAdapterNames.XML_ID_QNAME), items.get(2).getContent().getPayload().attributeValue(KMLContentAdapterNames.PARENT_ID_QNAME));
+		Assert.assertEquals(id2, items.get(3).getContent().getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME));
+		Assert.assertNull(items.get(3).getContent().getPayload().attributeValue(KMLContentAdapterNames.PARENT_ID_QNAME));
 		
 		Document doc = XMLHelper.readDocument(file1);
 		
 		HashMap<String, String> namespaces = new HashMap<String, String>();
-		namespaces.put(KmlNames.XML_PREFIX, KmlNames.XML_URI);
-		namespaces.put(KmlNames.KML_PREFIX, KmlNames.KML_URI);
+		namespaces.put(KMLContentAdapterNames.XML_PREFIX, KMLContentAdapterNames.XML_URI);
+		namespaces.put(KMLContentAdapterNames.KML_PREFIX, KMLContentAdapterNames.KML_URI);
 		
 		Element folder1 = XMLHelper.selectSingleNode("//kml:*[@xml:id='"+folderID1+"']", doc.getRootElement(), namespaces);
 		Element folder2 = XMLHelper.selectSingleNode("//kml:*[@xml:id='"+folderID2+"']", doc.getRootElement(), namespaces);
@@ -1029,13 +1028,13 @@ public class KMLSyncEngineTests {
 		items = repo2.getAll();
 		Assert.assertNotNull(items);
 		Assert.assertEquals(4, items.size());
-		Assert.assertEquals(folderID1, items.get(0).getContent().getPayload().attributeValue(KmlNames.XML_ID_QNAME));
-		Assert.assertEquals(folderID2, items.get(1).getContent().getPayload().attributeValue(KmlNames.XML_ID_QNAME));
-		Assert.assertEquals(id, items.get(3).getContent().getPayload().attributeValue(KmlNames.XML_ID_QNAME));
-		Assert.assertEquals(folderID1, items.get(1).getContent().getPayload().attributeValue(KmlNames.PARENT_ID_QNAME));
-		Assert.assertEquals(folderID2, items.get(3).getContent().getPayload().attributeValue(KmlNames.PARENT_ID_QNAME));
-		Assert.assertEquals(id2, items.get(2).getContent().getPayload().attributeValue(KmlNames.XML_ID_QNAME));
-		Assert.assertNull(items.get(2).getContent().getPayload().attributeValue(KmlNames.PARENT_ID_QNAME));
+		Assert.assertEquals(folderID1, items.get(0).getContent().getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME));
+		Assert.assertEquals(folderID2, items.get(1).getContent().getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME));
+		Assert.assertEquals(id, items.get(3).getContent().getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME));
+		Assert.assertEquals(folderID1, items.get(1).getContent().getPayload().attributeValue(KMLContentAdapterNames.PARENT_ID_QNAME));
+		Assert.assertEquals(folderID2, items.get(3).getContent().getPayload().attributeValue(KMLContentAdapterNames.PARENT_ID_QNAME));
+		Assert.assertEquals(id2, items.get(2).getContent().getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME));
+		Assert.assertNull(items.get(2).getContent().getPayload().attributeValue(KMLContentAdapterNames.PARENT_ID_QNAME));
 		
 		doc = XMLHelper.readDocument(file2);
 		folder1 = XMLHelper.selectSingleNode("//kml:*[@xml:id='"+folderID1+"']", doc.getRootElement(), namespaces);
@@ -1126,16 +1125,16 @@ public class KMLSyncEngineTests {
 		List<IContent> contents = kmlAdapter1.getAll();
 		Assert.assertNotNull(contents);
 		Assert.assertEquals(4, contents.size());
-		Assert.assertEquals(folderID1, contents.get(0).getPayload().attributeValue(KmlNames.XML_ID_QNAME));
-		Assert.assertEquals(folderID2, contents.get(1).getPayload().attributeValue(KmlNames.XML_ID_QNAME));
-		Assert.assertEquals(id, contents.get(3).getPayload().attributeValue(KmlNames.XML_ID_QNAME));
-		Assert.assertEquals(folderID1, contents.get(1).getPayload().attributeValue(KmlNames.PARENT_ID_QNAME));
-		Assert.assertEquals(folderID2, contents.get(3).getPayload().attributeValue(KmlNames.PARENT_ID_QNAME));
-		Assert.assertEquals(folderID3, contents.get(2).getPayload().attributeValue(KmlNames.XML_ID_QNAME));
+		Assert.assertEquals(folderID1, contents.get(0).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME));
+		Assert.assertEquals(folderID2, contents.get(1).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME));
+		Assert.assertEquals(id, contents.get(3).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME));
+		Assert.assertEquals(folderID1, contents.get(1).getPayload().attributeValue(KMLContentAdapterNames.PARENT_ID_QNAME));
+		Assert.assertEquals(folderID2, contents.get(3).getPayload().attributeValue(KMLContentAdapterNames.PARENT_ID_QNAME));
+		Assert.assertEquals(folderID3, contents.get(2).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME));
 		
 		HashMap<String, String> namespaces = new HashMap<String, String>();
-		namespaces.put(KmlNames.XML_PREFIX, KmlNames.XML_URI);
-		namespaces.put(KmlNames.KML_PREFIX, KmlNames.KML_URI);
+		namespaces.put(KMLContentAdapterNames.XML_PREFIX, KMLContentAdapterNames.XML_URI);
+		namespaces.put(KMLContentAdapterNames.KML_PREFIX, KMLContentAdapterNames.KML_URI);
 		
 		Document doc = XMLHelper.readDocument(file1);
 		Element folder1 = XMLHelper.selectSingleNode("//kml:*[@xml:id='"+folderID1+"']", doc.getRootElement(), namespaces);
@@ -1167,18 +1166,18 @@ public class KMLSyncEngineTests {
 		contents = kmlAdapter2.getAll();
 		Assert.assertNotNull(contents);
 		Assert.assertEquals(4, contents.size());
-		Assert.assertEquals(folderID1, contents.get(0).getPayload().attributeValue(KmlNames.XML_ID_QNAME));
+		Assert.assertEquals(folderID1, contents.get(0).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME));
 		
-		String actualFolderID3 = contents.get(1).getPayload().attributeValue(KmlNames.XML_ID_QNAME);
+		String actualFolderID3 = contents.get(1).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
 		Assert.assertEquals(folderID3, actualFolderID3);
 		Assert.assertFalse(folderID1.equals(actualFolderID3));
 		Assert.assertFalse(folderID2.equals(actualFolderID3));
 		Assert.assertFalse(id.equals(actualFolderID3));
 		
-		Assert.assertEquals(folderID2, contents.get(2).getPayload().attributeValue(KmlNames.XML_ID_QNAME));
-		Assert.assertEquals(folderID3, contents.get(2).getPayload().attributeValue(KmlNames.PARENT_ID_QNAME));		
-		Assert.assertEquals(id, contents.get(3).getPayload().attributeValue(KmlNames.XML_ID_QNAME));
-		Assert.assertEquals(folderID2, contents.get(3).getPayload().attributeValue(KmlNames.PARENT_ID_QNAME));		
+		Assert.assertEquals(folderID2, contents.get(2).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME));
+		Assert.assertEquals(folderID3, contents.get(2).getPayload().attributeValue(KMLContentAdapterNames.PARENT_ID_QNAME));		
+		Assert.assertEquals(id, contents.get(3).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME));
+		Assert.assertEquals(folderID2, contents.get(3).getPayload().attributeValue(KMLContentAdapterNames.PARENT_ID_QNAME));		
 				
 		doc = XMLHelper.readDocument(file2);
 		folder1 = XMLHelper.selectSingleNode("//kml:*[@xml:id='"+folderID1+"']", doc.getRootElement(), namespaces);

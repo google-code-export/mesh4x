@@ -3,6 +3,7 @@ package com.mesh4j.sync.adapters.kml;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
+import com.mesh4j.sync.adapters.dom.MeshNames;
 import com.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import com.mesh4j.sync.model.Content;
 import com.mesh4j.sync.model.IContent;
@@ -28,7 +29,8 @@ public class KMLContent extends Content{
 			if(KmlNames.KML_ELEMENT_PLACEMARK.equals(elementName)
 					|| KmlNames.KML_ELEMENT_STYLE.equals(elementName)
 					|| KmlNames.KML_ELEMENT_STYLE_MAP.equals(elementName)
-					|| KmlNames.KML_ELEMENT_FOLDER.equals(elementName)){
+					|| KmlNames.KML_ELEMENT_FOLDER.equals(elementName)
+					|| MeshNames.MESH_QNAME_HIERARCHY.getName().equals(elementName)){
 				kmlElement = content.getPayload();
 			}else{
 				kmlElement = content.getPayload().element(KmlNames.KML_ELEMENT_PLACEMARK);
@@ -38,6 +40,9 @@ public class KMLContent extends Content{
 						kmlElement = content.getPayload().element(KmlNames.KML_ELEMENT_STYLE_MAP);
 						if(kmlElement == null){
 							kmlElement = content.getPayload().element(KmlNames.KML_ELEMENT_FOLDER);
+							if(kmlElement == null){
+								kmlElement = content.getPayload().element(MeshNames.MESH_QNAME_HIERARCHY);
+							}
 						}
 					}
 				}
@@ -45,7 +50,7 @@ public class KMLContent extends Content{
 			if(kmlElement == null){
 				return null;
 			}else{
-				String id = kmlElement.attributeValue(KmlNames.XML_ID_QNAME);
+				String id = kmlElement.attributeValue(MeshNames.MESH_QNAME_SYNC_ID);
 				if(id == null){
 					return null;
 				} else {

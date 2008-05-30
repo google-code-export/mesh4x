@@ -13,7 +13,6 @@ public class MessageTranslatorTests {
 	@Test
 	public void shouldBeReturnsKeyWhenResourceBundleDoesNotExists(){	
 		String key = "JMT";
-		Assert.assertEquals(key, MessageTranslator.translate(key, 1, 2, 3, 4));
-		
+		Assert.assertEquals(key, MessageTranslator.translate(key, 1, 2, 3, 4));		
 	}
 }

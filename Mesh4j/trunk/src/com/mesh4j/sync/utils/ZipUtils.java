@@ -31,8 +31,12 @@ public class ZipUtils {
 			for (int ch = reader.read(); ch!= -1; ch= reader.read()){
 				writer.write(ch);
 			}
+			reader.close();
+			is.close();
+			zipFile.close();
 			return writer.toString();
 		} else {
+			zipFile.close();
 			Guard.throwsArgumentException("Arg_InvalidZipEntryName", file.getName(), entryName);
 			return ""; // ONLY for java compilation
 		}
@@ -78,6 +82,7 @@ public class ZipUtils {
 					while ((n = reader.read()) > 0) {
 						zip.write(n);
 					}
+					reader.close();
 				}
 		        zip.closeEntry();
 			}

@@ -103,39 +103,37 @@ public class SyncEngine {
 
 		this.beginSync();
 		List<Item> result = null;
-		try{
-			List<Item> sourceItems = (since == null) ? source.getAll() : source.getAllSince(since);
-			List<Item> outgoingItems = this.enumerateItemsProgress(sourceItems, this.itemSent);
-	
-			if (target instanceof ISupportMerge) {
-				ISupportMerge targetMerge = (ISupportMerge) target;
-				targetMerge.merge(outgoingItems);
-			} else {
-				List<MergeResult> outgoingToMerge = this.mergeItems(outgoingItems, target);
-				if (behavior == PreviewBehavior.Right || behavior == PreviewBehavior.Both) {
-					outgoingToMerge = previewer.preview(target, outgoingToMerge);
-				}
-				this.importItems(outgoingToMerge, target);
+		List<Item> sourceItems = (since == null) ? source.getAll() : source.getAllSince(since);
+		List<Item> outgoingItems = this.enumerateItemsProgress(sourceItems, this.itemSent);
+
+		if (target instanceof ISupportMerge) {
+			ISupportMerge targetMerge = (ISupportMerge) target;
+			targetMerge.merge(outgoingItems);
+		} else {
+			List<MergeResult> outgoingToMerge = this.mergeItems(outgoingItems, target);
+			if (behavior == PreviewBehavior.Right || behavior == PreviewBehavior.Both) {
+				outgoingToMerge = previewer.preview(target, outgoingToMerge);
 			}
-	
-			List<Item> targetItmes = (since == null) ? target.getAll() : target.getAllSince(since);
-			List<Item> incomingItems = this.enumerateItemsProgress(targetItmes, this.itemReceived);
-	
-			if (source instanceof ISupportMerge) {
-				// If repository supports its own SSE merge behavior, don't apply it locally.
-				ISupportMerge sourceMerge = (ISupportMerge) source;
-				result = sourceMerge.merge(incomingItems);				
-			} else {
-				List<MergeResult> incomingToMerge = this.mergeItems(incomingItems, source);
-				if (behavior == PreviewBehavior.Left || behavior == PreviewBehavior.Both) {
-					incomingToMerge = previewer.preview(source, incomingToMerge);
-				}
-	
-				result = this.importItems(incomingToMerge, source);
+			this.importItems(outgoingToMerge, target);
+		}
+
+		List<Item> targetItmes = (since == null) ? target.getAll() : target.getAllSince(since);
+		List<Item> incomingItems = this.enumerateItemsProgress(targetItmes, this.itemReceived);
+
+		if (source instanceof ISupportMerge) {
+			// If repository supports its own SSE merge behavior, don't apply it locally.
+			ISupportMerge sourceMerge = (ISupportMerge) source;
+			result = sourceMerge.merge(incomingItems);				
+		} else {
+			List<MergeResult> incomingToMerge = this.mergeItems(incomingItems, source);
+			if (behavior == PreviewBehavior.Left || behavior == PreviewBehavior.Both) {
+				incomingToMerge = previewer.preview(source, incomingToMerge);
 			}
-		} finally {
-			this.endSync();	
-		}	
+
+			result = this.importItems(incomingToMerge, source);
+		}
+		this.endSync();	
+			
 		return result;
 	}
 

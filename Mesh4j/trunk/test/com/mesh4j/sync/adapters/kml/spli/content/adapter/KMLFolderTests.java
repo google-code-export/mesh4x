@@ -50,7 +50,7 @@ public class KMLFolderTests {
 		KMLContent content = kmlAdapter.get(id);
 		Assert.assertNotNull(content);
 		Assert.assertEquals("Folder1", content.getPayload().element("name").getText());
-		Assert.assertEquals(id, content.getPayload().attributeValue(KmlNames.XML_ID_QNAME));
+		Assert.assertEquals(id, content.getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME));
 		
 		List<IContent> items = kmlAdapter.getAll();
 		Assert.assertEquals(3, items.size());
@@ -72,7 +72,7 @@ public class KMLFolderTests {
 		content = kmlAdapter.get(id);
 		Assert.assertNotNull(content);
 		Assert.assertEquals("New Folder", content.getPayload().element("name").getText());
-		Assert.assertEquals(id, content.getPayload().attributeValue(KmlNames.XML_ID_QNAME));
+		Assert.assertEquals(id, content.getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME));
 		
 		items = kmlAdapter.getAll();
 		Assert.assertEquals(3, items.size());
@@ -303,7 +303,7 @@ public class KMLFolderTests {
 		
 		Element addedFolder = addedContent.getPayload();
 		Assert.assertEquals("New Folder", addedFolder.element("name").getText());
-		Assert.assertEquals(id, addedFolder.attributeValue(KmlNames.XML_ID_QNAME));
+		Assert.assertEquals(id, addedFolder.attributeValue(KMLContentAdapterNames.XML_ID_QNAME));
 		
 		List<IContent> items = kmlAdapter.getAll();
 		Assert.assertEquals(4, items.size());
@@ -311,7 +311,7 @@ public class KMLFolderTests {
 		addedFolder = items.get(3).getPayload();
 		
 		Assert.assertEquals("New Folder", addedFolder.element("name").getText());
-		Assert.assertEquals(id, addedFolder.attributeValue(KmlNames.XML_ID_QNAME));
+		Assert.assertEquals(id, addedFolder.attributeValue(KMLContentAdapterNames.XML_ID_QNAME));
 				
 		Assert.assertEquals("Folder1", items.get(0).getPayload().element("name").getText());
 		Assert.assertEquals("Folder2", items.get(1).getPayload().element("name").getText());
@@ -346,7 +346,7 @@ public class KMLFolderTests {
 		
 		Assert.assertEquals(3, items.size());
 		Assert.assertEquals("Folder1", content.getPayload().element("name").getText());
-		Assert.assertEquals(id, content.getPayload().attributeValue(KmlNames.XML_ID_QNAME));
+		Assert.assertEquals(id, content.getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME));
 		Assert.assertEquals(id, content.getId());
 		Assert.assertEquals("Folder2", items.get(1).getPayload().element("name").getText());
 		Assert.assertEquals("Folder3", items.get(2).getPayload().element("name").getText());
@@ -385,7 +385,7 @@ public class KMLFolderTests {
 		Document document = saxReader.read(file);
 		
 		HashMap<String, String> map = new HashMap<String, String>();
-		map.put(KmlNames.XML_PREFIX, KmlNames.XML_URI);
+		map.put(KMLContentAdapterNames.XML_PREFIX, KMLContentAdapterNames.XML_URI);
 		map.put(KmlNames.KML_PREFIX, KmlNames.KML_URI);
 
 		Dom4jXPath xpath = new Dom4jXPath("//kml:*[@xml:id]");
@@ -403,9 +403,9 @@ public class KMLFolderTests {
 
 		HashSet<String> ids = new HashSet<String>();
 		
-		ids.add(elements.get(0).attributeValue(KmlNames.XML_ID_QNAME));
-		ids.add(elements.get(1).attributeValue(KmlNames.XML_ID_QNAME));
-		ids.add(elements.get(2).attributeValue(KmlNames.XML_ID_QNAME));
+		ids.add(elements.get(0).attributeValue(KMLContentAdapterNames.XML_ID_QNAME));
+		ids.add(elements.get(1).attributeValue(KMLContentAdapterNames.XML_ID_QNAME));
+		ids.add(elements.get(2).attributeValue(KMLContentAdapterNames.XML_ID_QNAME));
 		Assert.assertEquals(3, ids.size());
 	}
 	

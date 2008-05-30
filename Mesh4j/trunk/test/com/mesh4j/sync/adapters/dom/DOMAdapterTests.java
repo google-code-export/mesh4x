@@ -1,4 +1,4 @@
-package com.mesh4j.sync.adapters.kml;
+package com.mesh4j.sync.adapters.dom;
 
 import java.io.File;
 import java.util.HashMap;
@@ -15,10 +15,10 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.mesh4j.sync.ISupportMerge;
-import com.mesh4j.sync.adapters.dom.DOMAdapter;
-import com.mesh4j.sync.adapters.dom.IDOMLoader;
-import com.mesh4j.sync.adapters.dom.MeshDOM;
-import com.mesh4j.sync.adapters.dom.MeshNames;
+import com.mesh4j.sync.adapters.kml.DOMLoaderFactory;
+import com.mesh4j.sync.adapters.kml.HierarchyXMLViewElement;
+import com.mesh4j.sync.adapters.kml.KMLContent;
+import com.mesh4j.sync.adapters.kml.KmlNames;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.NullContent;
 import com.mesh4j.sync.model.Sync;
@@ -28,7 +28,7 @@ import com.mesh4j.sync.utils.IdGenerator;
 import com.mesh4j.sync.utils.XMLHelper;
 import com.mesh4j.sync.validations.MeshException;
 
-public class KMLAdapterTests {
+public class DOMAdapterTests {
 
 	private static String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 			+ "<kml xmlns=\"http://earth.google.com/kml/2.2\">"
@@ -164,44 +164,8 @@ public class KMLAdapterTests {
 			+ "<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
 			+ "</sx:sync>"
 			+ "</mesh4x:sync>"
-			+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"3\">"
-			+ "<sx:sync id=\"7\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"
-			+ "<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
-			+ "</sx:sync>"
-			+ "</mesh4x:sync>"
-			+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"3\">"
-			+ "<sx:sync id=\"8\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"
-			+ "<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
-			+ "</sx:sync>"
-			+ "</mesh4x:sync>"
-			+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"3\">"
-			+ "<sx:sync id=\"9\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"
-			+ "<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
-			+ "</sx:sync>"
-			+ "</mesh4x:sync>"
-			+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"3\">"
-			+ "<sx:sync id=\"10\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"
-			+ "<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
-			+ "</sx:sync>"
-			+ "</mesh4x:sync>"
-			+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"3\">"
-			+ "<sx:sync id=\"11\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"
-			+ "<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
-			+ "</sx:sync>"
-			+ "</mesh4x:sync>"
-			+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"3\">"
-			+ "<sx:sync id=\"12\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"
-			+ "<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
-			+ "</sx:sync>"
-			+ "</mesh4x:sync>"			
-			+ "<mesh4x:hierarchy xml:id=\"7\" mesh4x:childId=\"1\" />"
-			+ "<mesh4x:hierarchy xml:id=\"8\" mesh4x:childId=\"2\" mesh4x:parentId=\"1\" />"
-			+ "<mesh4x:hierarchy xml:id=\"9\" mesh4x:childId=\"3\" mesh4x:parentId=\"2\" />"
-			+ "<mesh4x:hierarchy xml:id=\"10\" mesh4x:childId=\"4\" />"
-			+ "<mesh4x:hierarchy xml:id=\"11\" mesh4x:childId=\"5\" />"
-			+ "<mesh4x:hierarchy xml:id=\"12\" mesh4x:childId=\"6\" />"			
 			+ "</ExtendedData>"
-			+ "<StyleMap xmlns:mesh4x=\"http://mesh4x.org/kml\" id=\"msn_ylw-pushpin_4\" xml:id=\"4\" mesh4x:originalId=\"msn_ylw-pushpin\" >"
+			+ "<StyleMap xmlns:mesh4x=\"http://mesh4x.org/kml\" id=\"msn_ylw-pushpin_4\" xml:id=\"4\" mesh4x:originalId=\"msn_ylw-pushpin\">"
 			+ "	<Pair>"
 			+ "		<key>normal</key>"
 			+ "		<styleUrl>#sn_ylw-pushpin</styleUrl>"
@@ -211,7 +175,7 @@ public class KMLAdapterTests {
 			+ "		<styleUrl>#sh_ylw-pushpin</styleUrl>"
 			+ "	</Pair>"
 			+ "</StyleMap>"
-			+ "<Style xmlns:mesh4x=\"http://mesh4x.org/kml\" id=\"sn_ylw-pushpin_5\" xml:id=\"5\" mesh4x:originalId=\"sn_ylw-pushpin\" >"
+			+ "<Style xmlns:mesh4x=\"http://mesh4x.org/kml\" id=\"sn_ylw-pushpin_5\" xml:id=\"5\" mesh4x:originalId=\"sn_ylw-pushpin\">"
 			+ "	<IconStyle>"
 			+ "		<color>ff00ff55</color>"
 			+ "		<scale>1.1</scale>"
@@ -224,7 +188,7 @@ public class KMLAdapterTests {
 			+ "		<color>ff00ff55</color>"
 			+ "	</LabelStyle>"
 			+ "</Style>"
-			+ "<Style xmlns:mesh4x=\"http://mesh4x.org/kml\" id=\"sn_ylw-pushpin_6\" xml:id=\"6\" mesh4x:originalId=\"sn_ylw-pushpin\" >"
+			+ "<Style xmlns:mesh4x=\"http://mesh4x.org/kml\" id=\"sn_ylw-pushpin_6\" xml:id=\"6\" mesh4x:originalId=\"sn_ylw-pushpin\">"
 			+ "	<IconStyle>"
 			+ "		<color>ff00ff55</color>"
 			+ "		<scale>1.1</scale>"
@@ -245,16 +209,14 @@ public class KMLAdapterTests {
 			+ "			<name>B</name>"
 			+ "		</Placemark>"
 			+ "	</Folder>"
-			+ "</Folder>" 
-			+ "</Document>" 
-			+ "</kml>";
+			+ "</Folder>" + "</Document>" + "</kml>";
 
 	@Test
 	public void shouldCreateFileIfDoesNotExist() throws DocumentException {
 		String fileName = TestHelper.fileName(IdGenerator.newID() + ".kml");
-		DOMAdapter kmlAdapter = makeNewDOMAdapter(fileName);
-		kmlAdapter.beginSync();
-		kmlAdapter.endSync();
+		DOMAdapter DOMAdapter = makeNewDOMAdapter(fileName);
+		DOMAdapter.beginSync();
+		DOMAdapter.endSync();
 
 		File file = new File(fileName);
 		Assert.assertTrue(file.exists());
@@ -278,37 +240,38 @@ public class KMLAdapterTests {
 	}
 
 	@Test
-	public void shoulPrepareKMLToSync() throws DocumentException,
+	public void shoulPrepareDOMToSync() throws DocumentException,
 			JaxenException {
 
 		File file = TestHelper.makeNewXMLFile(xml, ".kml");
 
 		IDOMLoader domLoader = DOMLoaderFactory.createDOMLoader(file
 				.getAbsolutePath(), NullIdentityProvider.INSTANCE);
-
-		DOMAdapter kmlAdapter = new DOMAdapter(domLoader);
-		kmlAdapter.prepareDOMToSync();
+		
+		DOMAdapter domAdapter = new DOMAdapter(domLoader);
+		domAdapter.prepareDOMToSync();
 
 		Document document = XMLHelper.readDocument(file);
-
+		document.normalize();
+		
 		List<Element> folders = getElements("//kml:Folder", document);
 		for (Element folder : folders) {
-			Assert.assertTrue(kmlAdapter.isValid(folder));
+			Assert.assertTrue(domAdapter.isValid(folder));
 		}
 
 		List<Element> placemarks = getElements("//kml:Placemark", document);
 		for (Element placemark : placemarks) {
-			Assert.assertTrue(kmlAdapter.isValid(placemark));
+			Assert.assertTrue(domAdapter.isValid(placemark));
 		}
 
 		List<Element> styles = getElements("//kml:Style", document);
 		for (Element style : styles) {
-			Assert.assertTrue(kmlAdapter.isValid(style));
+			Assert.assertTrue(domAdapter.isValid(style));
 		}
 
 		List<Element> styleMaps = getElements("//kml:StyleMap", document);
 		for (Element styleMap : styleMaps) {
-			Assert.assertTrue(kmlAdapter.isValid(styleMap));
+			Assert.assertTrue(domAdapter.isValid(styleMap));
 		}
 	}
 
@@ -318,40 +281,37 @@ public class KMLAdapterTests {
 
 		File file = TestHelper.makeNewXMLFile(xml, ".kml");
 
-		DOMAdapter kmlAdapter = makeNewDOMAdapter(file.getAbsolutePath());
-		kmlAdapter.beginSync();
-		List<Item> items = kmlAdapter.getAll();
-		kmlAdapter.endSync();
+		DOMAdapter domAdapter = makeNewDOMAdapter(file.getAbsolutePath());
+		domAdapter.beginSync();
+		List<Item> items = domAdapter.getAll();
+		domAdapter.endSync();
 
 		Assert.assertNotNull(items);
 		Assert.assertFalse(items.isEmpty());
 		Assert.assertEquals(18, items.size());
 
 		for (Item item : items) {
-			String syncID = kmlAdapter.getMeshSyncId(item.getContent().getPayload());
+			String syncID = domAdapter.getMeshSyncId(item.getContent().getPayload());
 			Assert.assertNotNull(syncID);
 			Assert.assertEquals(syncID, item.getSyncId());
-
-			String parentID = kmlAdapter.getMeshSyncId(item.getContent().getPayload());
-			Assert.assertNotNull(parentID);
 		}
 
 		SAXReader reader = new SAXReader();
 		Document document = reader.read(file);
 		Assert.assertNotNull(document);
-
+		
 		List<Element> elements = this.getElementsToSync(document);
 		for (Element element : elements) {
-			String syncID = kmlAdapter.getMeshSyncId(element);
+			String syncID = domAdapter.getMeshSyncId(element);
 			Assert.assertNotNull(syncID);
 
-			String myParentID = kmlAdapter.getMeshSyncId(element.getParent());
+			String myParentID = domAdapter.getMeshSyncId(element.getParent());
 			String parentID = HierarchyXMLViewElement.getMeshParentId(document, element);
 			Assert.assertEquals(parentID, myParentID);
 
 		}
 	}
-	
+
 	public List<Element> getElementsToSync(Document document) {
 		Map<String, String> namespaces = DOMLoaderFactory.createKMLView().getNameSpaces();
 		List<Element> elements = XMLHelper.selectElements("//kml:StyleMap",
@@ -365,46 +325,35 @@ public class KMLAdapterTests {
 		return elements;
 	}
 
-	private List<Element> getElements(String xpathExpression, Document document) throws JaxenException {
-		HashMap<String, String> namespaces = new HashMap<String, String>();
-		namespaces.put(KmlNames.KML_PREFIX, KmlNames.KML_URI);
-		
-		return XMLHelper.selectElements(xpathExpression, document
-		.getRootElement(), namespaces);
-	}
-	
-
 	@Test
 	public void shoulRefreshOldContent() throws DocumentException,
 			JaxenException {
 
 		File file = TestHelper.makeNewXMLFile(xmlWithMeshInfo, ".kml");
 
-		DOMAdapter kmlAdapter = makeNewDOMAdapter(file.getAbsolutePath());
-		kmlAdapter.beginSync();
-		
-		Document document = XMLHelper.readDocument(file);
+		DOMAdapter domAdapter = makeNewDOMAdapter(file.getAbsolutePath());
+		domAdapter.beginSync();
 
-		assertGetItemPayload(kmlAdapter, document, "4", null, "StyleMap",
+		assertGetItemPayload(domAdapter, "4", null, "StyleMap",
 				"msn_ylw-pushpin_4", null);
-		assertGetItemPayload(kmlAdapter, document, "5", null, "Style",
+		assertGetItemPayload(domAdapter, "5", null, "Style",
 				"sn_ylw-pushpin_5", null);
-		assertGetItemPayload(kmlAdapter, document, "6", null, "Style",
+		assertGetItemPayload(domAdapter, "6", null, "Style",
 				"sn_ylw-pushpin_6", null);
-		assertGetItemPayload(kmlAdapter, document, "1", null, "Folder", null, "Folder1");
-		assertGetItemPayload(kmlAdapter, document, "2", "1", "Folder", null, "Folder2");
-		assertGetItemPayload(kmlAdapter, document, "3", "2", "Placemark", null, "B");
+		assertGetItemPayload(domAdapter, "1", null, "Folder", null, "Folder1");
+		assertGetItemPayload(domAdapter, "2", "1", "Folder", null, "Folder2");
+		assertGetItemPayload(domAdapter, "3", "2", "Placemark", null, "B");
 	}
 
-	private void assertGetItemPayload(DOMAdapter kmlAdapter, Document document, String syncID,
+	private void assertGetItemPayload(DOMAdapter domAdapter, String syncID,
 			String parentID, String elementType, String kmlID, String name) {
-		Item item = kmlAdapter.get(syncID);
+		Item item = domAdapter.get(syncID);
 		Assert.assertNotNull(item);
 		Element payload = item.getContent().getPayload();
 		Assert.assertNotNull(payload);
 		Assert.assertEquals(elementType, payload.getName());
-		Assert.assertEquals(syncID, kmlAdapter.getMeshSyncId(payload));
-		Assert.assertEquals(parentID, HierarchyXMLViewElement.getMeshParentId(document, payload));
+//	TODO	Assert.assertEquals(syncID, getMeshSyncId(payload));
+//		Assert.assertEquals(parentID, getMeshParentId(payload));
 		if (name != null) {
 			Assert.assertEquals(name, payload.element("name").getText());
 		}
@@ -419,74 +368,37 @@ public class KMLAdapterTests {
 				+ "<name>dummy</name>"
 				+ "<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"
 				+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"
-				+ "	<sx:sync id=\"1\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"
-				+ "		<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
-				+ "	</sx:sync>"
+				+ "<sx:sync id=\"1\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"
+				+ "<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
+				+ "</sx:sync>"
 				+ "</mesh4x:sync>"
 				+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"3\">"
-				+ "	<sx:sync id=\"2\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"
-				+ "		<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
-				+ "	</sx:sync>"
+				+ "<sx:sync id=\"2\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"
+				+ "<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
+				+ "</sx:sync>"
 				+ "</mesh4x:sync>"
 				+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"3\">"
-				+ "	<sx:sync id=\"3\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"
-				+ "		<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
-				+ "	</sx:sync>"
+				+ "<sx:sync id=\"3\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"
+				+ "<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
+				+ "</sx:sync>"
 				+ "</mesh4x:sync>"
 				+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"3\">"
-				+ "	<sx:sync id=\"4\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"
-				+ "		<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
-				+ "	</sx:sync>"
+				+ "<sx:sync id=\"4\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"
+				+ "<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
+				+ "</sx:sync>"
 				+ "</mesh4x:sync>"
 				+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"3\">"
-				+ "	<sx:sync id=\"5\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"
-				+ "		<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
-				+ "	</sx:sync>"
+				+ "<sx:sync id=\"5\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"
+				+ "<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
+				+ "</sx:sync>"
 				+ "</mesh4x:sync>"
 				+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"3\">"
-				+ "	<sx:sync id=\"6\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"
-				+ "		<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
-				+ "	</sx:sync>"
+				+ "<sx:sync id=\"6\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"
+				+ "<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
+				+ "</sx:sync>"
 				+ "</mesh4x:sync>"
-				+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"3\">"
-				+ "	<sx:sync id=\"7\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"
-				+ "		<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
-				+ "	</sx:sync>"
-				+ "</mesh4x:sync>"
-				+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"3\">"
-				+ "	<sx:sync id=\"8\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"
-				+ "		<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
-				+ "	</sx:sync>"
-				+ "</mesh4x:sync>"
-				+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"3\">"
-				+ "	<sx:sync id=\"9\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"
-				+ "		<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
-				+ "	</sx:sync>"
-				+ "</mesh4x:sync>"
-				+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"3\">"
-				+ "	<sx:sync id=\"10\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"
-				+ "		<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
-				+ "	</sx:sync>"
-				+ "</mesh4x:sync>"
-				+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"3\">"
-				+ "	<sx:sync id=\"11\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"
-				+ "		<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
-				+ "	</sx:sync>"
-				+ "</mesh4x:sync>"
-				+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"3\">"
-				+ "	<sx:sync id=\"12\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"
-				+ "		<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
-				+ "	</sx:sync>"
-				+ "</mesh4x:sync>"			
-				+ "<mesh4x:hierarchy xml:id=\"7\" mesh4x:childId=\"1\" mesh4x:parentId=\"2\" />"
-				+ "<mesh4x:hierarchy xml:id=\"8\" mesh4x:childId=\"2\" />"
-				+ "<mesh4x:hierarchy xml:id=\"9\" mesh4x:childId=\"3\" mesh4x:parentId=\"2\" />"
-				+ "<mesh4x:hierarchy xml:id=\"10\" mesh4x:childId=\"4\" />"
-				+ "<mesh4x:hierarchy xml:id=\"11\" mesh4x:childId=\"5\" />"
-				+ "<mesh4x:hierarchy xml:id=\"12\" mesh4x:childId=\"6\" />"
-
 				+ "</ExtendedData>"
-				+ "<StyleMap xmlns:mesh4x=\"http://mesh4x.org/kml\" id=\"msn_ylw-pushpin_4\" xml:id=\"4\" mesh4x:originalId=\"msn_ylw-pushpin\" >"
+				+ "<StyleMap id=\"msn_ylw-pushpin_4\" xml:id=\"4\">"
 				+ "	<Pair>"
 				+ "		<key>normal</key>"
 				+ "		<styleUrl>#sn_ylw-pushpin</styleUrl>"
@@ -496,7 +408,7 @@ public class KMLAdapterTests {
 				+ "		<styleUrl>#sh_ylw-pushpin</styleUrl>"
 				+ "	</Pair>"
 				+ "</StyleMap>"
-				+ "<Style xmlns:mesh4x=\"http://mesh4x.org/kml\" id=\"sn_ylw-pushpin_5\" xml:id=\"5\"  mesh4x:originalId=\"sn_ylw-pushpin\" >"
+				+ "<Style id=\"sn_ylw-pushpin_5\" xml:id=\"5\">"
 				+ "	<IconStyle>"
 				+ "		<color>ff00ff55</color>"
 				+ "		<scale>1.1</scale>"
@@ -509,7 +421,7 @@ public class KMLAdapterTests {
 				+ "		<color>ff00ff55</color>"
 				+ "	</LabelStyle>"
 				+ "</Style>"
-				+ "<Style xmlns:mesh4x=\"http://mesh4x.org/kml\" id=\"sn_ylw-pushpin_6\" xml:id=\"6\"  mesh4x:originalId=\"sh_ylw-pushpin\" >"
+				+ "<Style id=\"sn_ylw-pushpin_6\" xml:id=\"6\">"
 				+ "	<IconStyle>"
 				+ "		<color>ff00ff55</color>"
 				+ "		<scale>1.1</scale>"
@@ -517,236 +429,243 @@ public class KMLAdapterTests {
 				+ "			<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>"
 				+ "		</Icon>"
 				+ "		<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>"
-				+ "	</IconStyle>" 
-				+ "	<LabelStyle>"
-				+ "		<color>ff00ff55</color>" 
-				+ "	</LabelStyle>" 
-				+ "</Style>"
+				+ "	</IconStyle>" + "	<LabelStyle>"
+				+ "		<color>ff00ff55</color>" + "	</LabelStyle>" + "</Style>"
 				+ "<Folder xml:id=\"1\">"
-				+ "	<name>Folder1</name>" 
-				+ "	<Folder xml:id=\"2\">"
-				+ "		<name>Folder2</name>" 
-				+ "	</Folder>" 
-				+ "</Folder>"
+				+ "	<name>Folder1</name>" + "	<Folder xml:id=\"2\">"
+				+ "		<name>Folder2</name>" + "	</Folder>" + "</Folder>"
 				+ "<Placemark xml:id=\"3\">"
-				+ "	<name>B</name>" 
-				+ "</Placemark>" 
-				+ "</Document>" 
-				+ "</kml>";
+				+ "	<name>B</name>" + "</Placemark>" + "</Document>" + "</kml>";
 
 		File file = TestHelper.makeNewXMLFile(localXML, ".kml");
 
-		DOMAdapter kmlAdapter = makeNewDOMAdapter(file.getAbsolutePath());
-		kmlAdapter.beginSync();
-		kmlAdapter.endSync();
+		DOMAdapter domAdapter = makeNewDOMAdapter(file.getAbsolutePath());
+		domAdapter.beginSync();
+		domAdapter.endSync();
 		
-		Document document = XMLHelper.readDocument(file);
-		Assert.assertNotNull(document);
-
-		Item item = kmlAdapter.get("3");
+		Document doc = XMLHelper.readDocument(file);
+	
+		Item item = domAdapter.get("3");
 		Assert.assertNotNull(item);
-		Assert.assertEquals(null, HierarchyXMLViewElement.getMeshParentId(document, item.getContent()
+		Assert.assertEquals(null, HierarchyXMLViewElement.getMeshParentId(doc, item.getContent()
 				.getPayload()));
 
-		item = kmlAdapter.get("1");
+		item = domAdapter.get("1");
 		Assert.assertNotNull(item);
-		Assert.assertEquals(null, HierarchyXMLViewElement.getMeshParentId(document, item.getContent()
+		Assert.assertEquals(null, HierarchyXMLViewElement.getMeshParentId(doc, item.getContent()
 				.getPayload()));
 
-		item = kmlAdapter.get("2");
+		item = domAdapter.get("2");
 		Assert.assertNotNull(item);
-		Assert.assertEquals("1", HierarchyXMLViewElement.getMeshParentId(document, item.getContent().getPayload()));
+		Assert.assertEquals("1",
+				HierarchyXMLViewElement.getMeshParentId(doc, item.getContent().getPayload()));
 	}
 
 	@Test
-	public void shoulGetAllRefreshContent() throws DocumentException, JaxenException {
+	public void shoulGetAllRefreshContent() throws DocumentException,
+			JaxenException {
 
-		File file = TestHelper.makeNewXMLFile(xmlWithMeshInfo, ".kml");
+		String localXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+				+ "<kml xmlns=\"http://earth.google.com/kml/2.2\">"
+				+ "<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"
+				+ "<name>dummy</name>"
+				+ "<ExtendedData>"
+				+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"
+				+ "<sx:sync id=\"1\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"
+				+ "<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
+				+ "</sx:sync>"
+				+ "</mesh4x:sync>"
+				+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"3\">"
+				+ "<sx:sync id=\"2\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"
+				+ "<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
+				+ "</sx:sync>"
+				+ "</mesh4x:sync>"
+				+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"3\">"
+				+ "<sx:sync id=\"3\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"
+				+ "<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
+				+ "</sx:sync>"
+				+ "</mesh4x:sync>"
+				+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"3\">"
+				+ "<sx:sync id=\"4\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"
+				+ "<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
+				+ "</sx:sync>"
+				+ "</mesh4x:sync>"
+				+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"3\">"
+				+ "<sx:sync id=\"5\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"
+				+ "<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
+				+ "</sx:sync>"
+				+ "</mesh4x:sync>"
+				+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"3\">"
+				+ "<sx:sync id=\"6\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"
+				+ "<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
+				+ "</sx:sync>"
+				+ "</mesh4x:sync>"
+				+ "</ExtendedData>"
+				+ "<StyleMap id=\"msn_ylw-pushpin_4\" xml:id=\"4\">"
+				+ "	<Pair>"
+				+ "		<key>normal</key>"
+				+ "		<styleUrl>#sn_ylw-pushpin</styleUrl>"
+				+ "	</Pair>"
+				+ "	<Pair>"
+				+ "		<key>highlight</key>"
+				+ "		<styleUrl>#sh_ylw-pushpin</styleUrl>"
+				+ "	</Pair>"
+				+ "</StyleMap>"
+				+ "<Style id=\"sn_ylw-pushpin_5\" xml:id=\"5\">"
+				+ "	<IconStyle>"
+				+ "		<color>ff00ff55</color>"
+				+ "		<scale>1.1</scale>"
+				+ "		<Icon>"
+				+ "			<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>"
+				+ "		</Icon>"
+				+ "		<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>"
+				+ "	</IconStyle>"
+				+ "	<LabelStyle>"
+				+ "		<color>ff00ff55</color>"
+				+ "	</LabelStyle>"
+				+ "</Style>"
+				+ "<Style id=\"sn_ylw-pushpin_6\" xml:id=\"6\">"
+				+ "	<IconStyle>"
+				+ "		<color>ff00ff55</color>"
+				+ "		<scale>1.1</scale>"
+				+ "		<Icon>"
+				+ "			<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>"
+				+ "		</Icon>"
+				+ "		<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>"
+				+ "	</IconStyle>" + "	<LabelStyle>"
+				+ "		<color>ff00ff55</color>" + "	</LabelStyle>" + "</Style>"
+				+ "<Folder xml:id=\"2\">" + "	<name>Folder2</name>"
+				+ "	<Folder xml:id=\"1\" mesh4x:parentId=\"2\">"
+				+ "		<name>Folder1</name>"
+				+ "		<Placemark xml:id=\"3\" mesh4x:parentId=\"2\">"
+				+ "			<name>B</name>" + "		</Placemark>" + "	</Folder>"
+				+ "</Folder>" + "</Document>" + "</kml>";
 
-		DOMAdapter kmlAdapter = makeNewDOMAdapter(file.getAbsolutePath());
-		kmlAdapter.beginSync();
+		File file = TestHelper.makeNewXMLFile(localXML, ".kml");
+
+		DOMAdapter domAdapter = makeNewDOMAdapter(file.getAbsolutePath());
+		domAdapter.beginSync();
 
 		String localXMLUpdated = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-			+ "<kml xmlns=\"http://earth.google.com/kml/2.2\">"
-			+ "<Document>"
-			+ "<name>dummy</name>"
-			+ "<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"
-			+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"
-			+ "<sx:sync id=\"1\" updates=\"3\" deleted=\"false\" noconflicts=\"false\">"
-			+ "<sx:history sequence=\"3\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/>"
-			+ "<sx:history sequence=\"2\" when=\"2005-05-21T10:43:33Z\" by=\"REO1750\"/>"
-			+ "<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
-			+ "</sx:sync>"
-			+ "</mesh4x:sync>"
-			+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"3\">"
-			+ "<sx:sync id=\"2\" updates=\"3\" deleted=\"false\" noconflicts=\"false\">"
-			+ "<sx:history sequence=\"3\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/>"
-			+ "<sx:history sequence=\"2\" when=\"2005-05-21T10:43:33Z\" by=\"REO1750\"/>"
-			+ "<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
-			+ "</sx:sync>"
-			+ "</mesh4x:sync>"
-			+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"3\">"
-			+ "<sx:sync id=\"3\" updates=\"3\" deleted=\"false\" noconflicts=\"false\">"
-			+ "<sx:history sequence=\"3\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/>"
-			+ "<sx:history sequence=\"2\" when=\"2005-05-21T10:43:33Z\" by=\"REO1750\"/>"
-			+ "<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
-			+ "</sx:sync>"
-			+ "</mesh4x:sync>"
-			+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"3\">"
-			+ "<sx:sync id=\"4\" updates=\"3\" deleted=\"false\" noconflicts=\"false\">"
-			+ "<sx:history sequence=\"3\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/>"
-			+ "<sx:history sequence=\"2\" when=\"2005-05-21T10:43:33Z\" by=\"REO1750\"/>"
-			+ "<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
-			+ "</sx:sync>"
-			+ "</mesh4x:sync>"
-			+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"3\">"
-			+ "<sx:sync id=\"5\" updates=\"3\" deleted=\"false\" noconflicts=\"false\">"
-			+ "<sx:history sequence=\"3\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/>"
-			+ "<sx:history sequence=\"2\" when=\"2005-05-21T10:43:33Z\" by=\"REO1750\"/>"
-			+ "<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
-			+ "</sx:sync>"
-			+ "</mesh4x:sync>"
-			+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"3\">"
-			+ "<sx:sync id=\"6\" updates=\"3\" deleted=\"false\" noconflicts=\"false\">"
-			+ "<sx:history sequence=\"3\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/>"
-			+ "<sx:history sequence=\"2\" when=\"2005-05-21T10:43:33Z\" by=\"REO1750\"/>"
-			+ "<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
-			+ "</sx:sync>"
-			+ "</mesh4x:sync>"
-			+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"3\">"
-			+ "<sx:sync id=\"7\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"
-			+ "<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
-			+ "</sx:sync>"
-			+ "</mesh4x:sync>"
-			+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"3\">"
-			+ "<sx:sync id=\"8\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"
-			+ "<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
-			+ "</sx:sync>"
-			+ "</mesh4x:sync>"
-			+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"3\">"
-			+ "<sx:sync id=\"9\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"
-			+ "<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
-			+ "</sx:sync>"
-			+ "</mesh4x:sync>"
-			+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"3\">"
-			+ "<sx:sync id=\"10\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"
-			+ "<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
-			+ "</sx:sync>"
-			+ "</mesh4x:sync>"
-			+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"3\">"
-			+ "<sx:sync id=\"11\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"
-			+ "<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
-			+ "</sx:sync>"
-			+ "</mesh4x:sync>"
-			+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"3\">"
-			+ "<sx:sync id=\"12\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"
-			+ "<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
-			+ "</sx:sync>"
-			+ "</mesh4x:sync>"			
-			+ "<mesh4x:hierarchy xml:id=\"7\" mesh4x:childId=\"1\" />"
-			+ "<mesh4x:hierarchy xml:id=\"8\" mesh4x:childId=\"2\" mesh4x:parentId=\"1\" />"
-			+ "<mesh4x:hierarchy xml:id=\"9\" mesh4x:childId=\"3\" mesh4x:parentId=\"2\" />"
-			+ "<mesh4x:hierarchy xml:id=\"10\" mesh4x:childId=\"4\" />"
-			+ "<mesh4x:hierarchy xml:id=\"11\" mesh4x:childId=\"5\" />"
-			+ "<mesh4x:hierarchy xml:id=\"12\" mesh4x:childId=\"6\" />"			
-			+ "</ExtendedData>"
-			+ "<StyleMap xmlns:mesh4x=\"http://mesh4x.org/kml\" id=\"msn_ylw-pushpin_4\" xml:id=\"4\" mesh4x:originalId=\"msn_ylw-pushpin\" >"
-			+ "	<Pair>"
-			+ "		<key>normal</key>"
-			+ "		<styleUrl>#sn_ylw-pushpin</styleUrl>"
-			+ "	</Pair>"
-			+ "	<Pair>"
-			+ "		<key>highlight</key>"
-			+ "		<styleUrl>#sh_ylw-pushpin</styleUrl>"
-			+ "	</Pair>"
-			+ "</StyleMap>"
-			+ "<Style xmlns:mesh4x=\"http://mesh4x.org/kml\" id=\"sn_ylw-pushpin_5\" xml:id=\"5\" mesh4x:originalId=\"sn_ylw-pushpin\" >"
-			+ "	<IconStyle>"
-			+ "		<color>ff00ff55</color>"
-			+ "		<scale>1.1</scale>"
-			+ "		<Icon>"
-			+ "			<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>"
-			+ "		</Icon>"
-			+ "		<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>"
-			+ "	</IconStyle>"
-			+ "	<LabelStyle>"
-			+ "		<color>ff00ff55</color>"
-			+ "	</LabelStyle>"
-			+ "</Style>"
-			+ "<Style xmlns:mesh4x=\"http://mesh4x.org/kml\" id=\"sn_ylw-pushpin_6\" xml:id=\"6\" mesh4x:originalId=\"sn_ylw-pushpin\" >"
-			+ "	<IconStyle>"
-			+ "		<color>ff00ff55</color>"
-			+ "		<scale>1.1</scale>"
-			+ "		<Icon>"
-			+ "			<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>"
-			+ "		</Icon>"
-			+ "		<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>"
-			+ "	</IconStyle>"
-			+ "	<LabelStyle>"
-			+ "		<color>ff00ff55</color>"
-			+ "	</LabelStyle>"
-			+ "</Style>"
-			+ "<Folder xml:id=\"1\" >"
-			+ "	<name>Folder1</name>" 
-			+ "	<Folder xml:id=\"2\">"
-			+ "		<name>Folder2</name>" 
-			+ "	</Folder>" 
-			+ "</Folder>"
-			+ "<Placemark xml:id=\"3\" >"
-			+ "	<name>B</name>" 
-			+ "</Placemark>" 
-			+ "</Document>" 
-			+ "</kml>";
+				+ "<kml xmlns=\"http://earth.google.com/kml/2.2\">"
+				+ "<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"
+				+ "<name>dummy</name>"
+				+ "<ExtendedData>"
+				+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"
+				+ "<sx:sync id=\"1\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"
+				+ "<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
+				+ "</sx:sync>"
+				+ "</mesh4x:sync>"
+				+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"3\">"
+				+ "<sx:sync id=\"2\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"
+				+ "<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
+				+ "</sx:sync>"
+				+ "</mesh4x:sync>"
+				+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"3\">"
+				+ "<sx:sync id=\"3\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"
+				+ "<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
+				+ "</sx:sync>"
+				+ "</mesh4x:sync>"
+				+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"3\">"
+				+ "<sx:sync id=\"4\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"
+				+ "<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
+				+ "</sx:sync>"
+				+ "</mesh4x:sync>"
+				+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"3\">"
+				+ "<sx:sync id=\"5\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"
+				+ "<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
+				+ "</sx:sync>"
+				+ "</mesh4x:sync>"
+				+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"3\">"
+				+ "<sx:sync id=\"6\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"
+				+ "<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
+				+ "</sx:sync>"
+				+ "</mesh4x:sync>"
+				+ "</ExtendedData>"
+				+ "<StyleMap id=\"msn_ylw-pushpin_4\" xml:id=\"4\">"
+				+ "	<Pair>"
+				+ "		<key>normal</key>"
+				+ "		<styleUrl>#sn_ylw-pushpin</styleUrl>"
+				+ "	</Pair>"
+				+ "	<Pair>"
+				+ "		<key>highlight</key>"
+				+ "		<styleUrl>#sh_ylw-pushpin</styleUrl>"
+				+ "	</Pair>"
+				+ "</StyleMap>"
+				+ "<Style id=\"sn_ylw-pushpin_5\" xml:id=\"5\">"
+				+ "	<IconStyle>"
+				+ "		<color>ff00ff55</color>"
+				+ "		<scale>1.1</scale>"
+				+ "		<Icon>"
+				+ "			<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>"
+				+ "		</Icon>"
+				+ "		<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>"
+				+ "	</IconStyle>"
+				+ "	<LabelStyle>"
+				+ "		<color>ff00ff55</color>"
+				+ "	</LabelStyle>"
+				+ "</Style>"
+				+ "<Style id=\"sn_ylw-pushpin_6\" xml:id=\"6\">"
+				+ "	<IconStyle>"
+				+ "		<color>ff00ff55</color>"
+				+ "		<scale>1.1</scale>"
+				+ "		<Icon>"
+				+ "			<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>"
+				+ "		</Icon>"
+				+ "		<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>"
+				+ "	</IconStyle>" + "	<LabelStyle>"
+				+ "		<color>ff00ff55</color>" + "	</LabelStyle>" + "</Style>"
+				+ "<Folder xml:id=\"1\" mesh4x:parentId=\"2\">"
+				+ "	<name>Folder1</name>" + "	<Folder xml:id=\"2\">"
+				+ "		<name>Folder2</name>" + "	</Folder>" + "</Folder>"
+				+ "<Placemark xml:id=\"3\" mesh4x:parentId=\"2\">"
+				+ "	<name>B</name>" + "</Placemark>" + "</Document>" + "</kml>";
 
 		XMLHelper.write(localXMLUpdated, file);
-		kmlAdapter.beginSync();
-		kmlAdapter.endSync();
+		domAdapter.beginSync();
+		domAdapter.endSync();
+		
+		Document doc = XMLHelper.readDocument(file);
 
-		List<Item> items = kmlAdapter.getAll();
+		List<Item> items = domAdapter.getAll();
 		Assert.assertNotNull(items);
 		Assert.assertEquals(12, items.size());
 
-		Document document = XMLHelper.readDocument(file);
-		Assert.assertNotNull(document);
-		
-		Item item = kmlAdapter.get("3");
+		Item item = domAdapter.get("3");
 		Assert.assertNotNull(item);
-		Assert.assertEquals(null, HierarchyXMLViewElement.getMeshParentId(document, item.getContent()
-				.getPayload()));
+		Assert.assertEquals(null, HierarchyXMLViewElement.getMeshParentId(doc, item.getContent().getPayload()));
 
-		item = kmlAdapter.get("1");
+		item = domAdapter.get("1");
 		Assert.assertNotNull(item);
-		Assert.assertEquals(null, HierarchyXMLViewElement.getMeshParentId(document, item.getContent()
-				.getPayload()));
+		Assert.assertEquals(null, HierarchyXMLViewElement.getMeshParentId(doc, item.getContent().getPayload()));
 
-		item = kmlAdapter.get("2");
+		item = domAdapter.get("2");
 		Assert.assertNotNull(item);
-		Assert.assertEquals("1",
-				HierarchyXMLViewElement.getMeshParentId(document, item.getContent().getPayload()));
+		Assert.assertEquals("1", HierarchyXMLViewElement.getMeshParentId(doc, item.getContent().getPayload()));
 	}
 
 	@Test(expected = MeshException.class)
 	public void shouldThrowsExceptionBecauseFileHasNotElements() {
-		DOMAdapter kmlAdapter = makeNewDOMAdapter(getFileWithOutElements());
-		kmlAdapter.beginSync();
+		DOMAdapter domAdapter = makeNewDOMAdapter(getFileWithOutElements());
+		domAdapter.beginSync();
 	}
 
 	@Test(expected = MeshException.class)
 	public void shouldThrowsExceptionIfFileExistButHasNotKMLElement() {
-		DOMAdapter kmlAdapter = makeNewDOMAdapter(getFileWithOutKMLElement());
-		kmlAdapter.beginSync();
+		DOMAdapter domAdapter = makeNewDOMAdapter(getFileWithOutKMLElement());
+		domAdapter.beginSync();
 	}
 
 	@Test(expected = MeshException.class)
 	public void shouldThrowsExceptionIfFileExistHasKMLElementButHasNotDocumentElement() {
-		DOMAdapter kmlAdapter = makeNewDOMAdapter(getFileWithOutDocumentElement());
-		kmlAdapter.beginSync();
+		DOMAdapter domAdapter = makeNewDOMAdapter(getFileWithOutDocumentElement());
+		domAdapter.beginSync();
 	}
 
 	@Test
 	public void shouldReturnsAuthenticatedUser() {
-		DOMAdapter kmlAdapter = makeNewDOMAdapter(getDummyFileName());
-		String user = kmlAdapter.getAuthenticatedUser();
+		DOMAdapter domAdapter = makeNewDOMAdapter(getDummyFileName());
+		String user = domAdapter.getAuthenticatedUser();
 		Assert.assertNotNull(user);
 		Assert.assertEquals(user, NullIdentityProvider.INSTANCE
 				.getAuthenticatedUser());
@@ -754,18 +673,25 @@ public class KMLAdapterTests {
 
 	@Test
 	public void shouldNotSupportMerge() {
-		DOMAdapter kmlAdapter = makeNewDOMAdapter(getDummyFileName());
-		Assert.assertFalse(kmlAdapter instanceof ISupportMerge);
+		DOMAdapter domAdapter = makeNewDOMAdapter(getDummyFileName());
+		Assert.assertFalse(domAdapter instanceof ISupportMerge);
 	}
 
 	@Test
 	public void shouldReturnsFriendlyName() {
-		DOMAdapter kmlAdapter = makeNewDOMAdapter(getDummyFileName());
-		String name = kmlAdapter.getFriendlyName();
+		DOMAdapter domAdapter = makeNewDOMAdapter(getDummyFileName());
+		String name = domAdapter.getFriendlyName();
 		Assert.assertNotNull(name);
 		Assert.assertEquals(name, "KML Adapter");
 	}
 
+	private List<Element> getElements(String xpathExpression, Document document)
+			throws JaxenException {
+		HashMap<String, String> namespaces = new HashMap<String, String>();
+		namespaces.put(KmlNames.KML_PREFIX, KmlNames.KML_URI);
+		return XMLHelper.selectElements(xpathExpression, document
+				.getRootElement(), namespaces);
+	}
 
 	private String getDummyFileName() {
 		return this.getClass().getResource("dummy.kml").getFile();
@@ -790,22 +716,20 @@ public class KMLAdapterTests {
 	@Test
 	public void shouldGetReturnNullBecauseItemDoesNotExist() {
 		File file = TestHelper.makeNewXMLFile(xml, ".kml");
-		DOMAdapter kmlAdapter = makeNewDOMAdapter(file.getAbsolutePath());
-		kmlAdapter.beginSync();
+		DOMAdapter domAdapter = makeNewDOMAdapter(file.getAbsolutePath());
+		domAdapter.beginSync();
 
-		Item item = kmlAdapter.get(IdGenerator.newID());
+		Item item = domAdapter.get(IdGenerator.newID());
 		Assert.assertNull(item);
 	}
 
 	@Test
-	public void shouldGetReturnsItem() throws DocumentException {
+	public void shouldGetReturnsItem() {
 		File file = TestHelper.makeNewXMLFile(xmlWithMeshInfo, ".kml");
-		DOMAdapter kmlAdapter = makeNewDOMAdapter(file.getAbsolutePath());
-		kmlAdapter.beginSync();
-		
-		Document document = XMLHelper.readDocument(file);
+		DOMAdapter domAdapter = makeNewDOMAdapter(file.getAbsolutePath());
+		domAdapter.beginSync();
 
-		assertGetItemPayload(kmlAdapter, document, "2", "1", "Folder", null, "Folder2");
+		assertGetItemPayload(domAdapter, "2", "1", "Folder", null, "Folder2");
 	}
 
 	@Test
@@ -814,7 +738,7 @@ public class KMLAdapterTests {
 				+ "<kml xmlns=\"http://earth.google.com/kml/2.2\">"
 				+ "<Document>"
 				+ "<name>dummy</name>"
-				+ "<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\" >"
+				+ "<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"
 				+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"
 				+ "<sx:sync id=\"1\" updates=\"3\" deleted=\"true\" noconflicts=\"false\">"
 				+ "<sx:history sequence=\"3\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/>"
@@ -824,10 +748,10 @@ public class KMLAdapterTests {
 				+ "</Document>" + "</kml>";
 
 		File file = TestHelper.makeNewXMLFile(localXML, ".kml");
-		DOMAdapter kmlAdapter = makeNewDOMAdapter(file.getAbsolutePath());
-		kmlAdapter.beginSync();
+		DOMAdapter domAdapter = makeNewDOMAdapter(file.getAbsolutePath());
+		domAdapter.beginSync();
 
-		Item item = kmlAdapter.get("1");
+		Item item = domAdapter.get("1");
 		Assert.assertNotNull(item);
 		Assert.assertEquals("1", item.getSyncId());
 		Assert.assertTrue(item.getSync().isDeleted());
@@ -838,9 +762,9 @@ public class KMLAdapterTests {
 	public void shouldGetReturnsNullContentBecauseItemWasDeletedExternally() {
 		String localXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 				+ "<kml xmlns=\"http://earth.google.com/kml/2.2\">"
-				+ "<Document>"
+				+ "<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"
 				+ "<name>dummy</name>"
-				+ "<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\" >"
+				+ "<ExtendedData>"
 				+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"
 				+ "<sx:sync id=\"1\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"
 				+ "<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
@@ -848,10 +772,10 @@ public class KMLAdapterTests {
 				+ "</Document>" + "</kml>";
 
 		File file = TestHelper.makeNewXMLFile(localXML, ".kml");
-		DOMAdapter kmlAdapter = makeNewDOMAdapter(file.getAbsolutePath());
-		kmlAdapter.beginSync();
+		DOMAdapter domAdapter = makeNewDOMAdapter(file.getAbsolutePath());
+		domAdapter.beginSync();
 
-		Item item = kmlAdapter.get("1");
+		Item item = domAdapter.get("1");
 		Assert.assertNotNull(item);
 		Assert.assertEquals("1", item.getSyncId());
 		Assert.assertTrue(item.getSync().isDeleted());
@@ -862,36 +786,35 @@ public class KMLAdapterTests {
 	@Test(expected = IllegalArgumentException.class)
 	public void shouldGetTrowsExceptionBecauseParameterIsNull() {
 		File file = TestHelper.makeNewXMLFile(xmlWithMeshInfo, ".kml");
-		DOMAdapter kmlAdapter = makeNewDOMAdapter(file.getAbsolutePath());
-		kmlAdapter.beginSync();
+		DOMAdapter domAdapter = makeNewDOMAdapter(file.getAbsolutePath());
+		domAdapter.beginSync();
 
-		kmlAdapter.get(null);
+		domAdapter.get(null);
 	}
 
 	// ADD
 	@Test(expected = IllegalArgumentException.class)
 	public void shouldAddTrowsExceptionBecauseParameterIsNull() {
 		File file = TestHelper.makeNewXMLFile(xmlWithMeshInfo, ".kml");
-		DOMAdapter kmlAdapter = makeNewDOMAdapter(file.getAbsolutePath());
-		kmlAdapter.beginSync();
+		DOMAdapter domAdapter = makeNewDOMAdapter(file.getAbsolutePath());
+		domAdapter.beginSync();
 
-		kmlAdapter.add(null);
+		domAdapter.add(null);
 	}
 
 	@Test
 	public void shouldAdd() throws DocumentException {
-		
 		File file = TestHelper.makeNewXMLFile(xmlWithMeshInfo, ".kml");
-		DOMAdapter kmlAdapter = makeNewDOMAdapter(file.getAbsolutePath());
-		kmlAdapter.beginSync();
+		DOMAdapter domAdapter = makeNewDOMAdapter(file.getAbsolutePath());
+		domAdapter.beginSync();
 
 		String syncID = IdGenerator.newID();
+		String parentID = "1";
 
 		String localXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 				+ "<kml xmlns=\"http://earth.google.com/kml/2.2\">"
 				+ "<Document>"
-				+ "<Placemark xml:id=\"" + syncID + "\">" 
-				+ "	<name>MYHouse</name>" + "</Placemark>"
+				+ "<Placemark xml:id=\"" + syncID + "\">" + "	<name>MYHouse</name>" + "</Placemark>"
 				+ "</Document>" + "</kml>";
 
 		Element payload = DocumentHelper.parseText(localXML).getRootElement()
@@ -901,76 +824,25 @@ public class KMLAdapterTests {
 
 		Sync sync = new Sync(syncID, "JMT", TestHelper.now(), false);
 		Item item = new Item(kmlContent, sync);
-		kmlAdapter.add(item);
+		domAdapter.add(item);
 
-		kmlAdapter.endSync();
-		
-		Document document = XMLHelper.readDocument(file);
-		
-		assertGetItemPayload(kmlAdapter, document, syncID, null, "Placemark", null,
+		assertGetItemPayload(domAdapter, syncID, parentID, "Placemark", null,
 				"MYHouse");
-
-		Element hierarchyElement = XMLHelper.selectSingleNode("//mesh4x:*[@mesh4x:childId='"+syncID+"']", document.getRootElement(), MeshDOM.SEARCH_NAMESPACES);
-		Assert.assertNull(hierarchyElement);
-		
-		String hierarchySyncID = IdGenerator.newID();
-	
-		localXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-			+ "<kml xmlns=\"http://earth.google.com/kml/2.2\">"
-			+ "<Document>"
-			+ "<mesh4x:hierarchy xmlns:mesh4x=\"http://mesh4x.org/kml\" xml:id=\""+ hierarchySyncID +"\" mesh4x:parentId=\"1\" mesh4x:childId=\""+syncID+"\" />"
-			+ "</Document>" + "</kml>";
-
-		payload = DocumentHelper.parseText(localXML).getRootElement()
-			.element("Document").element(MeshNames.MESH_QNAME_HIERARCHY);
-
-		kmlContent = new KMLContent(payload, hierarchySyncID);
-		item = new Item(kmlContent, new Sync(hierarchySyncID, "jmt", TestHelper.now(), false));
-		kmlAdapter.add(item);
-
-		item = kmlAdapter.get(hierarchySyncID);
-		Assert.assertNotNull(item);
-		
-		kmlAdapter.endSync();
-		
-		document = XMLHelper.readDocument(file);
-				
-		assertGetItemPayload(kmlAdapter, document, syncID, "1", "Placemark", null, "MYHouse");
-
-		Assert.assertNotNull(kmlAdapter.get(hierarchySyncID));
-		
-		kmlAdapter.endSync();
-		
-		document = XMLHelper.readDocument(file);
-		hierarchyElement = XMLHelper.selectSingleNode("//mesh4x:*[@mesh4x:childId='"+syncID+"']", document.getRootElement(), MeshDOM.SEARCH_NAMESPACES);
-		Assert.assertNotNull(hierarchyElement);
-		
-		hierarchySyncID = hierarchyElement.attributeValue(MeshNames.MESH_QNAME_SYNC_ID);
-		Assert.assertNotNull(hierarchySyncID);
-		
-		String parentID = hierarchyElement.attributeValue(MeshNames.MESH_QNAME_PARENT_ID);
-		Assert.assertNotNull(parentID);
-		Assert.assertEquals("1", parentID);
-		
-		String childID = hierarchyElement.attributeValue(MeshNames.MESH_QNAME_CHILD_ID);
-		Assert.assertNotNull(childID);
-		Assert.assertEquals(syncID, childID);
-		
 	}
 
 	@Test
 	public void shouldAddDeletedItem() {
 		File file = TestHelper.makeNewXMLFile(xmlWithMeshInfo, ".kml");
-		DOMAdapter kmlAdapter = makeNewDOMAdapter(file.getAbsolutePath());
-		kmlAdapter.beginSync();
+		DOMAdapter domAdapter = makeNewDOMAdapter(file.getAbsolutePath());
+		domAdapter.beginSync();
 
 		String syncID = IdGenerator.newID();
 
 		Sync sync = new Sync(syncID, "JMT", TestHelper.now(), true);
 		Item item = new Item(new NullContent(syncID), sync);
-		kmlAdapter.add(item);
+		domAdapter.add(item);
 
-		item = kmlAdapter.get(syncID);
+		item = domAdapter.get(syncID);
 		Assert.assertNotNull(item);
 		Assert.assertEquals(syncID, item.getSyncId());
 		Assert.assertTrue(item.getSync().isDeleted());
@@ -983,34 +855,34 @@ public class KMLAdapterTests {
 	@Test(expected = IllegalArgumentException.class)
 	public void shouldDeleteTrowsExceptionBecauseParameterIsNull() {
 		File file = TestHelper.makeNewXMLFile(xmlWithMeshInfo, ".kml");
-		DOMAdapter kmlAdapter = makeNewDOMAdapter(file.getAbsolutePath());
-		kmlAdapter.beginSync();
+		DOMAdapter domAdapter = makeNewDOMAdapter(file.getAbsolutePath());
+		domAdapter.beginSync();
 
-		kmlAdapter.delete(null);
+		domAdapter.delete(null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void shouldDeleteTrowsExceptionBecauseParameterIsStringEmpty() {
 		File file = TestHelper.makeNewXMLFile(xmlWithMeshInfo, ".kml");
-		DOMAdapter kmlAdapter = makeNewDOMAdapter(file.getAbsolutePath());
-		kmlAdapter.beginSync();
+		DOMAdapter domAdapter = makeNewDOMAdapter(file.getAbsolutePath());
+		domAdapter.beginSync();
 
-		kmlAdapter.delete("");
+		domAdapter.delete("");
 	}
 
 	@Test
 	public void shouldDeleteAddSyncDeleteDataBecauseItemDoesNotExist() {
 		File file = TestHelper.makeNewXMLFile(xmlWithMeshInfo, ".kml");
-		DOMAdapter kmlAdapter = makeNewDOMAdapter(file.getAbsolutePath());
-		kmlAdapter.beginSync();
+		DOMAdapter domAdapter = makeNewDOMAdapter(file.getAbsolutePath());
+		domAdapter.beginSync();
 
 		String syncID = IdGenerator.newID();
-		Item item = kmlAdapter.get(syncID);
+		Item item = domAdapter.get(syncID);
 		Assert.assertNull(item);
 
-		kmlAdapter.delete(syncID);
+		domAdapter.delete(syncID);
 
-		item = kmlAdapter.get(syncID);
+		item = domAdapter.get(syncID);
 		Assert.assertNotNull(item);
 		Assert.assertEquals(syncID, item.getSyncId());
 		Assert.assertTrue(item.getSync().isDeleted());
@@ -1023,9 +895,9 @@ public class KMLAdapterTests {
 
 		String localXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 				+ "<kml xmlns=\"http://earth.google.com/kml/2.2\">"
-				+ "<Document>"
+				+ "<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"
 				+ "<name>dummy</name>"
-				+ "<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\" >"
+				+ "<ExtendedData>"
 				+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"
 				+ "<sx:sync id=\"1\" updates=\"3\" deleted=\"true\" noconflicts=\"false\">"
 				+ "<sx:history sequence=\"3\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/>"
@@ -1035,19 +907,19 @@ public class KMLAdapterTests {
 				+ "</Document>" + "</kml>";
 
 		File file = TestHelper.makeNewXMLFile(localXML, ".kml");
-		DOMAdapter kmlAdapter = makeNewDOMAdapter(file.getAbsolutePath());
-		kmlAdapter.beginSync();
+		DOMAdapter domAdapter = makeNewDOMAdapter(file.getAbsolutePath());
+		domAdapter.beginSync();
 
-		Item item = kmlAdapter.get("1");
+		Item item = domAdapter.get("1");
 		Assert.assertNotNull(item);
 		Assert.assertEquals("1", item.getSyncId());
 		Assert.assertTrue(item.getSync().isDeleted());
 		Assert.assertTrue(item.getContent() instanceof NullContent);
 		Assert.assertEquals(3, item.getSync().getUpdates());
 
-		kmlAdapter.delete("1");
+		domAdapter.delete("1");
 
-		item = kmlAdapter.get("1");
+		item = domAdapter.get("1");
 		Assert.assertNotNull(item);
 		Assert.assertEquals("1", item.getSyncId());
 		Assert.assertTrue(item.getSync().isDeleted());
@@ -1058,18 +930,18 @@ public class KMLAdapterTests {
 	@Test
 	public void shouldDelete() {
 		File file = TestHelper.makeNewXMLFile(xmlWithMeshInfo, ".kml");
-		DOMAdapter kmlAdapter = makeNewDOMAdapter(file.getAbsolutePath());
-		kmlAdapter.beginSync();
+		DOMAdapter domAdapter = makeNewDOMAdapter(file.getAbsolutePath());
+		domAdapter.beginSync();
 
-		Item item = kmlAdapter.get("3");
+		Item item = domAdapter.get("3");
 		Assert.assertNotNull(item);
 		Assert.assertEquals("3", item.getSyncId());
 		Assert.assertFalse(item.getSync().isDeleted());
 		Assert.assertEquals(4, item.getSync().getUpdates());
 
-		kmlAdapter.delete("3");
+		domAdapter.delete("3");
 
-		item = kmlAdapter.get("3");
+		item = domAdapter.get("3");
 		Assert.assertNotNull(item);
 		Assert.assertEquals("3", item.getSyncId());
 		Assert.assertTrue(item.getSync().isDeleted());
@@ -1082,20 +954,20 @@ public class KMLAdapterTests {
 	@Test(expected = IllegalArgumentException.class)
 	public void shouldUpdateTrowsExceptionBecauseParameterIsNull() {
 		File file = TestHelper.makeNewXMLFile(xmlWithMeshInfo, ".kml");
-		DOMAdapter kmlAdapter = makeNewDOMAdapter(file.getAbsolutePath());
-		kmlAdapter.beginSync();
+		DOMAdapter domAdapter = makeNewDOMAdapter(file.getAbsolutePath());
+		domAdapter.beginSync();
 
-		kmlAdapter.update(null);
+		domAdapter.update(null);
 	}
 
 	@Test
 	public void shouldUpdateDeletedItem() {
 		File file = TestHelper.makeNewXMLFile(xmlWithMeshInfo, ".kml");
-		DOMAdapter kmlAdapter = makeNewDOMAdapter(file.getAbsolutePath());
-		kmlAdapter.beginSync();
+		DOMAdapter domAdapter = makeNewDOMAdapter(file.getAbsolutePath());
+		domAdapter.beginSync();
 
 		String syncID = "3";
-		Item item = kmlAdapter.get(syncID);
+		Item item = domAdapter.get(syncID);
 		Assert.assertNotNull(item);
 		Assert.assertEquals(syncID, item.getSyncId());
 		Assert.assertFalse(item.getSync().isDeleted());
@@ -1104,9 +976,9 @@ public class KMLAdapterTests {
 		sync.update("JMT", TestHelper.now(), true);
 
 		item = new Item(new NullContent(syncID), sync);
-		kmlAdapter.update(item);
+		domAdapter.update(item);
 
-		item = kmlAdapter.get(syncID);
+		item = domAdapter.get(syncID);
 		Assert.assertNotNull(item);
 		Assert.assertEquals(syncID, item.getSyncId());
 		Assert.assertTrue(item.getSync().isDeleted());
@@ -1119,7 +991,7 @@ public class KMLAdapterTests {
 				+ "<kml xmlns=\"http://earth.google.com/kml/2.2\">"
 				+ "<Document>"
 				+ "<name>dummy</name>"
-				+ "<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\" >"
+				+ "<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"
 				+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"
 				+ "<sx:sync id=\"1\" updates=\"3\" deleted=\"true\" noconflicts=\"false\">"
 				+ "<sx:history sequence=\"3\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/>"
@@ -1129,10 +1001,10 @@ public class KMLAdapterTests {
 				+ "</Document>" + "</kml>";
 
 		File file = TestHelper.makeNewXMLFile(localXML, ".kml");
-		DOMAdapter kmlAdapter = makeNewDOMAdapter(file.getAbsolutePath());
-		kmlAdapter.beginSync();
+		DOMAdapter domAdapter = makeNewDOMAdapter(file.getAbsolutePath());
+		domAdapter.beginSync();
 
-		Item item = kmlAdapter.get("1");
+		Item item = domAdapter.get("1");
 		Assert.assertNotNull(item);
 		Assert.assertEquals("1", item.getSyncId());
 		Assert.assertTrue(item.getSync().isDeleted());
@@ -1140,9 +1012,9 @@ public class KMLAdapterTests {
 		Assert.assertEquals(3, item.getSync().getUpdates());
 
 		item.getSync().update("jmt", TestHelper.now(), true);
-		kmlAdapter.update(item);
+		domAdapter.update(item);
 
-		item = kmlAdapter.get("1");
+		item = domAdapter.get("1");
 		Assert.assertNotNull(item);
 		Assert.assertEquals("1", item.getSyncId());
 		Assert.assertTrue(item.getSync().isDeleted());
@@ -1153,11 +1025,11 @@ public class KMLAdapterTests {
 	@Test
 	public void shouldUpdateItem() throws DocumentException {
 		File file = TestHelper.makeNewXMLFile(xmlWithMeshInfo, ".kml");
-		DOMAdapter kmlAdapter = makeNewDOMAdapter(file.getAbsolutePath());
-		kmlAdapter.beginSync();
+		DOMAdapter domAdapter = makeNewDOMAdapter(file.getAbsolutePath());
+		domAdapter.beginSync();
 
 		String syncID = "3";
-		Item item = kmlAdapter.get(syncID);
+		Item item = domAdapter.get(syncID);
 		Assert.assertNotNull(item);
 		Assert.assertEquals(syncID, item.getSyncId());
 		Assert.assertFalse(item.getSync().isDeleted());
@@ -1165,8 +1037,8 @@ public class KMLAdapterTests {
 
 		String localXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 				+ "<kml xmlns=\"http://earth.google.com/kml/2.2\">"
-				+ "<Document>"
-				+ "	<Placemark xml:id=\"3\">"
+				+ "<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"
+				+ "	<Placemark xml:id=\"3\" mesh4x:parentId=\"2\">"
 				+ "		<name>MuMu</name>" + "	</Placemark>" + "</Document>"
 				+ "</kml>";
 
@@ -1176,16 +1048,14 @@ public class KMLAdapterTests {
 		KMLContent content = new KMLContent(payload, syncID);
 		item = new Item(content, item.getSync().update("jmt", TestHelper.now(),
 				false));
-		kmlAdapter.update(item);
+		domAdapter.update(item);
 
-		item = kmlAdapter.get(syncID);
+		item = domAdapter.get(syncID);
 		Assert.assertNotNull(item);
 		Assert.assertEquals(syncID, item.getSyncId());
 		Assert.assertFalse(item.getSync().isDeleted());
 		Assert.assertEquals(5, item.getSync().getUpdates());
 		Assert.assertEquals("MuMu", item.getContent().getPayload().element(
 				"name").getText());
-
 	}
-
 }

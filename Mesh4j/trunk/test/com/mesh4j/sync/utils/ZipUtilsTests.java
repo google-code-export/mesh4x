@@ -122,7 +122,7 @@ public class ZipUtilsTests {
 	     	"</sx:sync>"+
 			"</mesh4x:sync>"+
 	      	"</ExtendedData>"+
-			"<Placemark mesh4x:id=\"1\">"+
+			"<Placemark xml:id=\"1\">"+
 			"<name>B</name>"+
 			"</Placemark>"+
 			"</Document>"+
@@ -173,7 +173,7 @@ public class ZipUtilsTests {
 	     	"</sx:sync>"+
 			"</mesh4x:sync>"+
 	      	"</ExtendedData>"+
-			"<Placemark mesh4x:id=\"1\">"+
+			"<Placemark xml:id=\"1\">"+
 			"<name>B</name>"+
 			"</Placemark>"+
 			"</Document>"+
