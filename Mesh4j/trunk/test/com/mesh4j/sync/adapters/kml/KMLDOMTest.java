@@ -1041,19 +1041,19 @@ public class KMLDOMTest {
 		
 		Assert.assertNotNull(elements);
 		Assert.assertEquals(6, elements.size());
-		
-		Assert.assertEquals("StyleMap", elements.get(0).getName());
-		Assert.assertEquals("4", meshParser.getMeshSyncId(elements.get(0)));
-		Assert.assertEquals("Style", elements.get(1).getName());
-		Assert.assertEquals("5", meshParser.getMeshSyncId(elements.get(1)));
-		Assert.assertEquals("Style", elements.get(2).getName());
-		Assert.assertEquals("6", meshParser.getMeshSyncId(elements.get(2)));
-		Assert.assertEquals("Folder", elements.get(3).getName());
-		Assert.assertEquals("1", meshParser.getMeshSyncId(elements.get(3)));
-		Assert.assertEquals("Folder", elements.get(4).getName());
-		Assert.assertEquals("2", meshParser.getMeshSyncId(elements.get(4)));
-		Assert.assertEquals("Placemark", elements.get(5).getName());
-		Assert.assertEquals("3", meshParser.getMeshSyncId(elements.get(5)));
+
+		Assert.assertEquals("Folder", elements.get(0).getName());
+		Assert.assertEquals("1", meshParser.getMeshSyncId(elements.get(0)));
+		Assert.assertEquals("Folder", elements.get(1).getName());
+		Assert.assertEquals("2", meshParser.getMeshSyncId(elements.get(1)));
+		Assert.assertEquals("Placemark", elements.get(2).getName());
+		Assert.assertEquals("3", meshParser.getMeshSyncId(elements.get(2)));
+		Assert.assertEquals("StyleMap", elements.get(3).getName());
+		Assert.assertEquals("4", meshParser.getMeshSyncId(elements.get(3)));
+		Assert.assertEquals("Style", elements.get(4).getName());
+		Assert.assertEquals("5", meshParser.getMeshSyncId(elements.get(4)));
+		Assert.assertEquals("Style", elements.get(5).getName());
+		Assert.assertEquals("6", meshParser.getMeshSyncId(elements.get(5)));
 	}
 
 	//getType

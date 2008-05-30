@@ -38,6 +38,6 @@ public class DOMLoaderFactory {
 		KMLViewElement styleMapView = new KMLViewElement(KmlNames.KML_QNAME_STYLE_MAP, hierarchyView);
 		KMLViewElement styleView = new KMLViewElement(KmlNames.KML_QNAME_STYLE, hierarchyView);
 		
-		return new XMLView(hierarchyView, styleMapView, styleView, folderView, placemarkView);
+		return new XMLView(folderView, placemarkView, styleMapView, styleView, hierarchyView);
 	}
 }
