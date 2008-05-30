@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.text.MessageFormat;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -25,16 +24,17 @@ import org.eclipse.swt.widgets.Text;
 
 import com.mesh4j.sync.ISyncAdapter;
 import com.mesh4j.sync.SyncEngine;
+import com.mesh4j.sync.adapters.dom.DOMAdapter;
+import com.mesh4j.sync.adapters.dom.IDOMLoader;
 import com.mesh4j.sync.adapters.feed.FeedAdapter;
 import com.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import com.mesh4j.sync.adapters.http.HttpSyncAdapter;
-import com.mesh4j.sync.adapters.kml.IKMLMeshDomLoader;
-import com.mesh4j.sync.adapters.kml.KMLAdapter;
-import com.mesh4j.sync.adapters.kml.KMLMeshDOMLoaderFactory;
+import com.mesh4j.sync.adapters.kml.DOMLoaderFactory;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.properties.PropertiesProvider;
 import com.mesh4j.sync.security.IIdentityProvider;
 import com.mesh4j.sync.security.NullIdentityProvider;
+import com.mesh4j.sync.ui.translator.Mesh4jUITranslator;
 import com.mesh4j.sync.validations.MeshException;
 
 public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
@@ -63,10 +63,10 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 		this.display = new Display();
 		
 		this.shell = new Shell(display);
-		this.shell.setText("Mesh Example");
+		this.shell.setText(Mesh4jUITranslator.getTitle());
 		
 		Label label = new Label (shell, SWT.NONE);
-		label.setText ("Endpoint 1: ");
+		label.setText (Mesh4jUITranslator.getLabelEndpoint1());
 		
 		endpoint1 = new Text (shell, SWT.BORDER);
 		endpoint1.setLayoutData (new GridData(600, 15));
@@ -112,7 +112,7 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 			}
 		);
 		
-		buttonSynchronize.setText("Synchronize");
+		buttonSynchronize.setText(Mesh4jUITranslator.getLabelSyncronize());
 		
 		Button buttonClean = new Button(shell, SWT.PUSH);
 		buttonClean.addSelectionListener(new SelectionAdapter() {
@@ -120,15 +120,7 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 				consoleView.setText("");
 			}
 		});
-		buttonClean.setText("Clean");
-		
-//		Button buttonLog = new Button(shell, SWT.PUSH);
-//		buttonLog.addSelectionListener(new SelectionAdapter() {
-//			public void widgetSelected(SelectionEvent e) {
-//				viewLog();
-//			}
-//		});
-//		buttonLog.setText("Log");
+		buttonClean.setText(Mesh4jUITranslator.getLabelClean());
 		
 		consoleView = new Text(shell, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		consoleView.setLayoutData(new GridData(600, 300));
@@ -136,7 +128,7 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 		
 		
 		Label labelKmlFile = new Label (shell, SWT.NONE);
-		labelKmlFile.setText ("KML File: ");
+		labelKmlFile.setText(Mesh4jUITranslator.getLabelKMLFile());
 		
 		kmlToPrepareToSync = new Text (shell, SWT.BORDER);
 		kmlToPrepareToSync.setLayoutData (new GridData(600, 15));
@@ -155,14 +147,14 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 		Button buttonPrepareKMLToSync = new Button(shell, SWT.PUSH);
 		buttonPrepareKMLToSync.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {				
-				boolean ok = validateKMLFile(kmlToPrepareToSync.getText(), "Kml file");
+				boolean ok = validateKMLFile(kmlToPrepareToSync.getText(), "KmlFile");
 				if(ok){
 					prepareKMLInNewThread();
 				}
 			}
 		});
 		
-		buttonPrepareKMLToSync.setText("Prepare file to sync");
+		buttonPrepareKMLToSync.setText(Mesh4jUITranslator.getLabelPrepareToSync());
 		
 		shell.setLayout (new GridLayout());
 		shell.pack ();
@@ -174,7 +166,7 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 		display.dispose ();
 
 	}
-	
+
 	private String openFileDialogKML(String fileName){
 		String fileNameSelected = openFileDialog(fileName, new String [] {"Kml", "Kmz"}, new String [] {"*.kml", "*.kmz"});
 		return fileNameSelected;
@@ -218,9 +210,9 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 						display.syncExec(new Runnable() {
 							public void run() {
 								if (consoleView.isDisposed()) return;
-								consoleView.append("\nStart running synchronize: ");
-								consoleView.append("\n\tEndpoint 1: " + endpoint1);
-								consoleView.append("\n\tEndpoint 2: " + endpoint2);
+								consoleView.append("\n"+ Mesh4jUITranslator.getMessageSyncStart());
+								consoleView.append("\n\t"+ Mesh4jUITranslator.getLabelEndpoint1() + endpoint1);
+								consoleView.append("\n\t"+ Mesh4jUITranslator.getLabelEndpoint2() + endpoint2);
 							}
 						});
 						
@@ -230,7 +222,7 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 						display.syncExec(new Runnable() {
 							public void run() {
 								if (consoleView.isDisposed()) return;
-								consoleView.append("\nCompleted running synchronize: " + syncResult);
+								consoleView.append("\n"+ Mesh4jUITranslator.getMessageSyncCompleted(syncResult));
 							}
 						});
 						done = true;
@@ -263,13 +255,13 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 			SyncEngine syncEngine = new SyncEngine(sourceRepo, targetRepo);
 			List<Item> conflicts = syncEngine.synchronize();
 			if(conflicts.isEmpty()){
-				return "Synchronized succesfully.";
+				return Mesh4jUITranslator.getMessageSyncSuccessfully();
 			} else {
-				return MessageFormat.format("Synchronized succesfully. {0} conflicts may need to be resolved.", conflicts.size());
+				return Mesh4jUITranslator.getMessageSyncCompletedWithConflicts(conflicts.size());
 			}
 		} catch (RuntimeException e) {
 			Logger.error(e.getMessage(), e);
-			return "Synchronized failed. Please check the log file (mesh4j.log).";
+			return Mesh4jUITranslator.getMessageSyncFailed();
 		}
 	}
 
@@ -280,8 +272,8 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 			if(isFeed(endpoint)){
 				return new FeedAdapter(endpoint, this.identityProvider);
 			}else{
-				IKMLMeshDomLoader loader = KMLMeshDOMLoaderFactory.createDOMLoader(endpoint, this.identityProvider);
-				return new KMLAdapter(loader);
+				IDOMLoader loader = DOMLoaderFactory.createDOMLoader(endpoint, this.identityProvider);
+				return new DOMAdapter(loader);
 			}
 		}
 	}
@@ -292,17 +284,17 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 		
 		if(okEndpoint1 && okEndpoint2){
 			if(getEndpoint1().equals(getEndpoint2())){
-				consoleView.append("\nPlease verify that endpoint 1 and endpoint 2 are differents to continue !!!");
+				consoleView.append("\n"+ Mesh4jUITranslator.getErrorSameEndpoints());
 				return false;
 			}
 		}
 		return okEndpoint1 && okEndpoint2;
 
 	}
-	
+
 	private boolean validate(String endpointValue, String endpointHeader){
 		if(endpointValue ==  null || endpointValue.trim().length() == 0){
-			consoleView.append("\nPlease complete " + endpointHeader + " , it is required to continue (Example kml file: C:\\MyFile.kml, Example kmz file: C:\\MyFile.kmz, Example feed file: C:\\MyFeed.xml, Example URL: http://localhost:7777/feeds/KML).");
+			consoleView.append("\n"+ Mesh4jUITranslator.getErrorEndpoint(endpointHeader));
 			return false;
 		}
 		if(isURL(endpointValue)){
@@ -317,14 +309,14 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 		try {
 			newURL = new URL(url);
 		} catch (MalformedURLException e) {
-			consoleView.append("\nPlease verify "+ endpointHeader + ": the url is not a valid URL (Example: http://localhost:7777/feeds/KML).");
+			consoleView.append("\n"+ Mesh4jUITranslator.getErrorInvalidURL(endpointHeader));
 			return false;
 		}
 		try {
 			URLConnection conn = newURL.openConnection();
 			conn.connect();
 		} catch (IOException e) {
-			consoleView.append("\nPlease verify "+ endpointHeader + ": connection failed.");
+			consoleView.append("\n"+ Mesh4jUITranslator.getErrorURLConnectionFailed(endpointHeader));
 			return false;
 		}
 		return true;
@@ -333,13 +325,13 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 	private boolean validateFile(String fileName, String endpointHeader){
 		if(!(fileName != null && fileName.trim().length() > 5 
 				&& (fileName.toUpperCase().endsWith(".KMZ") || fileName.toUpperCase().endsWith(".KML") || fileName.toUpperCase().endsWith(".XML")))){
-			consoleView.append("\nPlease verify "+ endpointHeader + ": complete with a kml file (example C:\\MyFile.kml or C:\\MyFile.kmz) or feed file (example c:\\MyFeed.xml).");
+			consoleView.append("\n"+ Mesh4jUITranslator.getErrorFileType(endpointHeader));
 			return false;
 		}
 		
 		File file = new File(fileName);
 		if(!file.exists()){
-			consoleView.append("\nPlease verify "+ endpointHeader + ": the file does not exist.");
+			consoleView.append("\n"+ Mesh4jUITranslator.getErrorFileDoesNotExist(endpointHeader));
 			return false;
 		}		
 		return true;
@@ -351,13 +343,13 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 			(fileName.trim().toUpperCase().endsWith(".KML") || fileName.trim().toUpperCase().endsWith(".KMZ"))
 			)
 		){
-			consoleView.append("\nPlease verify "+ header + ": complete with a kml file (example C:\\MyFile.kml or C:\\MyFile.kmz).");
+			consoleView.append("\n"+ Mesh4jUITranslator.getErrorKMLType(header));
 			return false;
 		}
 		
 		File file = new File(fileName);
 		if(!file.exists()){
-			consoleView.append("\nPlease verify "+ header + ": the file does not exist.");
+			consoleView.append("\n"+ Mesh4jUITranslator.getErrorFileDoesNotExist(header));
 			return false;
 		}		
 		return true;
@@ -375,23 +367,6 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 		return endpointValue.toUpperCase().endsWith("XML");
 	}
 	
-//	private void viewLog(){
-//		String fileName = "mesh4j.log";
-//		try {
-//			consoleView.append("\n\nLog:\n");
-//			FileReader reader = new FileReader(fileName);
-//			BufferedReader br = new BufferedReader(reader);
-//			String line;
-//			while((line = br.readLine()) != null) {
-//				consoleView.append(line);
-//				consoleView.append("\n");
-//			}
-//			reader.close(); 
-//		} catch (Exception e) {
-//			consoleView.append("\n\nError reading mesh4j.log\n");
-//		}
-//	}
-	
 	private void prepareKMLInNewThread(){
 		final String kmlFile = kmlToPrepareToSync.getText();
 		
@@ -403,7 +378,7 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 						display.syncExec(new Runnable() {
 							public void run() {
 								if (consoleView.isDisposed()) return;
-								consoleView.append("\nStart preparing kml: " + kmlFile);
+								consoleView.append("\n"+ Mesh4jUITranslator.getMessagePrepareToSync(kmlFile));
 							}
 						});
 						
@@ -413,7 +388,7 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 						display.syncExec(new Runnable() {
 							public void run() {
 								if (consoleView.isDisposed()) return;
-								consoleView.append("\nCompleted preparing kml: " + result);
+								consoleView.append("\n"+ Mesh4jUITranslator.getMessagePrepareToSyncCompleted(result));
 							}
 						});
 						done = true;
@@ -432,12 +407,13 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 	
 	private String prepareKMLToSync(String kmlFile){
 		try{
-			IKMLMeshDomLoader loader = KMLMeshDOMLoaderFactory.createDOMLoader(kmlFile, this.identityProvider);
-			KMLAdapter.prepareKMLToSync(loader);
-			return "Prepare kml to sync successfully";
+			IDOMLoader loader = DOMLoaderFactory.createDOMLoader(kmlFile, this.identityProvider);
+			DOMAdapter domAdapter = new DOMAdapter(loader);
+			domAdapter.prepareDOMToSync();
+			return Mesh4jUITranslator.getMessagePrepareToSyncSuccessfuly();
 		} catch (MeshException e) {
 			Logger.error(e.getMessage(), e);
-			return "Prepare kml to sync failed. Please check the log file (mesh4j.log).";
+			return Mesh4jUITranslator.getMessagePrepareToSyncFailed();
 		}
 	}
 	
@@ -447,5 +423,6 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 		this.defaultEndpoint2 = prop.getDefaultEnpoint2();			
 		this.identityProvider = prop.getIdentityProvider();
 	}
+	
 }
 

@@ -10,17 +10,19 @@
 		<jar destfile="dist/mesh4j-KML-DemoApp.jar" manifest="META-INF/MANIFEST.MF">
 			<fileset dir="bin" />
 		</jar>
+		<copy todir="dist" file="etc/log4j.properties"/>
+		<copy todir="dist" file="etc/mesh4j_resources.properties"/>
 	</target>
 	
 	<target name="dist" depends="jars">
-		<zip destfile="dist/mesh4j-KML-DemoApp-0.1.5.zip">
-			<zipfileset prefix="mesh4j-KML-DemoApp-0.1.5" dir="dist" includes="mesh4j-KML-DemoApp.jar"/>
-			<zipfileset prefix="mesh4j-KML-DemoApp-0.1.5" dir="." includes="lib/**/*"/>
-			<zipfileset prefix="mesh4j-KML-DemoApp-0.1.5" dir="." includes="swt-win32-3138.dll"/>
-			<zipfileset prefix="mesh4j-KML-DemoApp-0.1.5" dir="." includes="mesh4j.properties"/>
-			<zipfileset prefix="mesh4j-KML-DemoApp-0.1.5" dir="." includes="default.kml"/>
-			<zipfileset prefix="mesh4j-KML-DemoApp-0.1.5/lib" dir="." includes="log4j.properties"/>
-			<zipfileset prefix="mesh4j-KML-DemoApp-0.1.5/lib" dir="." includes="mesh4j_resources.properties"/>
+		<zip destfile="dist/mesh4j-KML-DemoApp-0.1.6.zip">
+			<zipfileset prefix="mesh4j-KML-DemoApp-0.1.6" dir="dist" includes="mesh4j-KML-DemoApp.jar"/>
+			<zipfileset prefix="mesh4j-KML-DemoApp-0.1.6" dir="." includes="lib/**/*"/>
+			<zipfileset prefix="mesh4j-KML-DemoApp-0.1.6" dir="." includes="swt-win32-3138.dll"/>
+			<zipfileset prefix="mesh4j-KML-DemoApp-0.1.6" dir="." includes="mesh4j.properties"/>
+			<zipfileset prefix="mesh4j-KML-DemoApp-0.1.6" dir="." includes="default.kml"/>
+			<zipfileset prefix="mesh4j-KML-DemoApp-0.1.6/lib" dir="dist" includes="log4j.properties"/>
+			<zipfileset prefix="mesh4j-KML-DemoApp-0.1.6/lib" dir="dist" includes="mesh4j_resources.properties"/>
 		</zip>
 	</target>
 </project>
