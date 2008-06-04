@@ -40,10 +40,10 @@ public class DOMLoaderFactory {
 		
 		KMLViewElement placemarkView = new KMLViewElement(KmlNames.KML_QNAME_PLACEMARK, hierarchyView, false);
 		KMLViewElement photoView = new KMLViewElement(KmlNames.KML_QNAME_PHOTO_OVERLAY, hierarchyView, false);
+		KMLViewElement imageView = new KMLViewElement(KmlNames.KML_QNAME_GROUND_OVERLAY, hierarchyView, false);
 		KMLViewElement styleMapView = new KMLViewElement(KmlNames.KML_QNAME_STYLE_MAP, hierarchyView, true);
 		KMLViewElement styleView = new KMLViewElement(KmlNames.KML_QNAME_STYLE, hierarchyView, true);
-		//return new XMLView(folderView, placemarkView, photoView, styleMapView, styleView, hierarchyView);
-		return new XMLView(styleView, styleMapView, folderView, placemarkView, photoView, hierarchyView);
+		return new XMLView(styleView, styleMapView, folderView, placemarkView, photoView, imageView, hierarchyView);
 	}
 	
 	public static XMLView createKMZView(FileManager fileManager){

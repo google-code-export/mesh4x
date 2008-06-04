@@ -42,9 +42,9 @@ public class DOMLoaderFactoryTests {
 		
 		KMLDOMLoader kmlLoader = (KMLDOMLoader)loader;		
 		Assert.assertNotNull(kmlLoader.getXMLView());
-		Assert.assertEquals(6, kmlLoader.getXMLView().getXMLViewElements().size());
+		Assert.assertEquals(7, kmlLoader.getXMLView().getXMLViewElements().size());
 		
-		IXMLViewElement hierarchy = kmlLoader.getXMLView().getXMLViewElements().get(5);
+		IXMLViewElement hierarchy = kmlLoader.getXMLView().getXMLViewElements().get(6);
 		Assert.assertEquals(MeshNames.MESH_QNAME_HIERARCHY, hierarchy.getQName());
 		Assert.assertSame(kmlLoader.getDOM(), ((HierarchyXMLViewElement) hierarchy).getDOM());
 
@@ -63,6 +63,9 @@ public class DOMLoaderFactoryTests {
 		Assert.assertEquals(KmlNames.KML_QNAME_PHOTO_OVERLAY, kmlLoader.getXMLView().getXMLViewElements().get(4).getQName());
 		Assert.assertSame(hierarchy, ((KMLViewElement)kmlLoader.getXMLView().getXMLViewElements().get(4)).getHierarchyElementView());
 
+		Assert.assertEquals(KmlNames.KML_QNAME_GROUND_OVERLAY, kmlLoader.getXMLView().getXMLViewElements().get(5).getQName());
+		Assert.assertSame(hierarchy, ((KMLViewElement)kmlLoader.getXMLView().getXMLViewElements().get(5)).getHierarchyElementView());
+		
 		Assert.assertEquals("j.kml", ((KMLDOMLoader)loader).getFile().getName());
 	}
 	
@@ -76,9 +79,9 @@ public class DOMLoaderFactoryTests {
 
 		KMZDOMLoader kmlLoader = (KMZDOMLoader)loader;		
 		Assert.assertNotNull(kmlLoader.getXMLView());
-		Assert.assertEquals(7, kmlLoader.getXMLView().getXMLViewElements().size());
+		Assert.assertEquals(8, kmlLoader.getXMLView().getXMLViewElements().size());
 
-		IXMLViewElement hierarchy = kmlLoader.getXMLView().getXMLViewElements().get(5);
+		IXMLViewElement hierarchy = kmlLoader.getXMLView().getXMLViewElements().get(6);
 		Assert.assertEquals(MeshNames.MESH_QNAME_HIERARCHY, hierarchy.getQName());
 		Assert.assertSame(kmlLoader.getDOM(), ((HierarchyXMLViewElement) hierarchy).getDOM());
 
@@ -96,8 +99,11 @@ public class DOMLoaderFactoryTests {
 		
 		Assert.assertEquals(KmlNames.KML_QNAME_PHOTO_OVERLAY, kmlLoader.getXMLView().getXMLViewElements().get(4).getQName());
 		Assert.assertSame(hierarchy, ((KMLViewElement)kmlLoader.getXMLView().getXMLViewElements().get(4)).getHierarchyElementView());
-		
-		Assert.assertEquals(MeshNames.MESH_QNAME_FILE, kmlLoader.getXMLView().getXMLViewElements().get(6).getQName());
+
+		Assert.assertEquals(KmlNames.KML_QNAME_GROUND_OVERLAY, kmlLoader.getXMLView().getXMLViewElements().get(5).getQName());
+		Assert.assertSame(hierarchy, ((KMLViewElement)kmlLoader.getXMLView().getXMLViewElements().get(5)).getHierarchyElementView());
+
+		Assert.assertEquals(MeshNames.MESH_QNAME_FILE, kmlLoader.getXMLView().getXMLViewElements().get(7).getQName());
 		
 		Assert.assertEquals("h.kmz", ((KMZDOMLoader)loader).getFile().getName());
 	}

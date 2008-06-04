@@ -18,8 +18,6 @@ import org.junit.Test;
 
 import com.mesh4j.sync.adapters.kml.KMLContent;
 import com.mesh4j.sync.adapters.kml.KmlNames;
-import com.mesh4j.sync.adapters.kml.split.content.adapter.KMLContentAdapter;
-import com.mesh4j.sync.adapters.kml.split.content.adapter.KMLContentAdapterNames;
 import com.mesh4j.sync.model.IContent;
 import com.mesh4j.sync.test.utils.TestHelper;
 import com.mesh4j.sync.utils.IdGenerator;

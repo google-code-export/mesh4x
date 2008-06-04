@@ -75,6 +75,7 @@ public class KMLContentTests {
 		assertNormalizePayload(DocumentHelper.createElement(KmlNames.KML_ELEMENT_STYLE_MAP));
 		assertNormalizePayload(DocumentHelper.createElement(KmlNames.KML_ELEMENT_PLACEMARK));
 		assertNormalizePayload(DocumentHelper.createElement(KmlNames.KML_ELEMENT_PHOTO_OVERLAY));
+		assertNormalizePayload(DocumentHelper.createElement(KmlNames.KML_ELEMENT_GROUND_OVERLAY));
 		assertNormalizePayload(DocumentHelper.createElement(MeshNames.MESH_QNAME_HIERARCHY));
 //		assertNormalizePayload(DocumentHelper.createElement(MeshNames.MESH_QNAME_FILE));
 	}
@@ -100,6 +101,7 @@ public class KMLContentTests {
 		assertNormalizePayloadFails(DocumentHelper.createElement(KmlNames.KML_ELEMENT_STYLE_MAP));
 		assertNormalizePayloadFails(DocumentHelper.createElement(KmlNames.KML_ELEMENT_PLACEMARK));
 		assertNormalizePayloadFails(DocumentHelper.createElement(KmlNames.KML_ELEMENT_PHOTO_OVERLAY));
+		assertNormalizePayloadFails(DocumentHelper.createElement(KmlNames.KML_ELEMENT_GROUND_OVERLAY));
 		assertNormalizePayloadFails(DocumentHelper.createElement(MeshNames.MESH_QNAME_HIERARCHY));
 		assertNormalizePayloadFails(DocumentHelper.createElement(MeshNames.MESH_QNAME_FILE));
 	}
@@ -122,6 +124,7 @@ public class KMLContentTests {
 		assertNormalize(DocumentHelper.createElement(KmlNames.KML_ELEMENT_STYLE_MAP));
 		assertNormalize(DocumentHelper.createElement(KmlNames.KML_ELEMENT_PLACEMARK));
 		assertNormalize(DocumentHelper.createElement(KmlNames.KML_ELEMENT_PHOTO_OVERLAY));
+		assertNormalize(DocumentHelper.createElement(KmlNames.KML_ELEMENT_GROUND_OVERLAY));
 		assertNormalize(DocumentHelper.createElement(MeshNames.MESH_QNAME_HIERARCHY));
 //		assertNormalize(DocumentHelper.createElement(MeshNames.MESH_QNAME_FILE));
 	}
@@ -144,6 +147,7 @@ public class KMLContentTests {
 		assertNormalizeFails(DocumentHelper.createElement(KmlNames.KML_ELEMENT_STYLE_MAP));
 		assertNormalizeFails(DocumentHelper.createElement(KmlNames.KML_ELEMENT_PLACEMARK));
 		assertNormalizeFails(DocumentHelper.createElement(KmlNames.KML_ELEMENT_PHOTO_OVERLAY));
+		assertNormalizeFails(DocumentHelper.createElement(KmlNames.KML_ELEMENT_GROUND_OVERLAY));
 		assertNormalizeFails(DocumentHelper.createElement(MeshNames.MESH_QNAME_HIERARCHY));
 		assertNormalizeFails(DocumentHelper.createElement(MeshNames.MESH_QNAME_FILE));
 	}

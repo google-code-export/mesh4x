@@ -244,7 +244,6 @@ public class KMZDOMLoaderTests {
 	public void shouldWriteKMZWithFiles() throws IOException{
 		File file = new File(TestHelper.fileName("kmzExample_"+IdGenerator.newID()+".kmz"));
 		
-		byte[] file1 = TestHelper.readFileBytes(this.getClass().getResource("kmzExample_doc.kml").getFile());
 		byte[] file2 = TestHelper.readFileBytes(this.getClass().getResource("kmzExample_star.jpg").getFile());
 		byte[] file3 = TestHelper.readFileBytes(this.getClass().getResource("kmzExample_camera_mode.png").getFile());
 		

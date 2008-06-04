@@ -1201,6 +1201,43 @@ public class KMLDOMTest {
 	}
 	
 	@Test
+	public void shouldNormalizeGroundOverlay() throws DocumentException{
+		String elementXML = 
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+			+"<kml xmlns=\"http://earth.google.com/kml/2.2\">"
+			+"<Document>"
+			+"<name>dummy</name>"
+			+"<GroundOverlay>"
+				+"<name>Untitled Image Overlay</name>"
+				+"<visibility>0</visibility>"
+				+"<Icon>"
+					+"<href>KmlWeb/star.jpg</href>"
+					+"<viewBoundScale>0.75</viewBoundScale>"
+				+"</Icon>"
+				+"<LatLonBox>"
+					+"<north>55.54920981373157</north>"
+					+"<south>2.039978829726834</south>"
+					+"<east>-54.44883367420367</east>"
+					+"<west>-136.0821327137962</west>"
+				+"</LatLonBox>"
+			+"</GroundOverlay>"
+			+"</Document>"
+			+"</kml>";
+	
+		Document doc = DocumentHelper.parseText(elementXML);
+		Element element = doc
+			.getRootElement()
+			.element(KmlNames.KML_ELEMENT_DOCUMENT)
+			.element(KmlNames.KML_ELEMENT_GROUND_OVERLAY);
+		
+		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		Element normalizedElement = meshParser.normalize(element);
+		
+		Assert.assertNotNull(normalizedElement);
+		Assert.assertSame(element, normalizedElement);		
+	}
+	
+	@Test
 	public void shouldNormalizeFolderLevelRoot() throws DocumentException{
 		String elementXML = 
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
