@@ -74,7 +74,6 @@ public class KMLDOM extends MeshDOM {
 		elementName.addText(name);
 		
 		prepateSyncRepository(kmlDocument);
-		// TODO kmlDocument.normalize();
 		return kmlDocument;
 	}
 

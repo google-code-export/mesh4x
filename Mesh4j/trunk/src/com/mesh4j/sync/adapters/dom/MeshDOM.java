@@ -180,7 +180,6 @@ public abstract class MeshDOM implements IMeshDOM {
 			updateMeshStatusMarkDeleted(syncInfo);
 			this.updateSync(syncInfo);
 		}
-		this.normalize();
 	}
 	
 	protected Element updateMeshStatus(Element element) {
@@ -206,7 +205,7 @@ public abstract class MeshDOM implements IMeshDOM {
 	}
 	
 	public void normalize(){
-		// TODO this.document.normalize();
+		this.document.normalize();
 	}
 	
 	// INTERNALS

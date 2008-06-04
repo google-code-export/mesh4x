@@ -1,4 +1,4 @@
-package com.mesh4j.sync.adapters.kml.spli.content.adapter;
+package com.mesh4j.sync.adapters.kml.split.content.adapter;
 
 import java.io.File;
 import java.util.HashMap;
@@ -17,11 +17,13 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.mesh4j.sync.adapters.kml.KMLContent;
+import com.mesh4j.sync.adapters.kml.split.content.adapter.KMLContentAdapter;
+import com.mesh4j.sync.adapters.kml.split.content.adapter.KMLContentAdapterNames;
 import com.mesh4j.sync.model.IContent;
 import com.mesh4j.sync.test.utils.TestHelper;
 import com.mesh4j.sync.utils.IdGenerator;
 
-public class KMLStyleMapTests {
+public class KMLStyleTests {
 
 	@Test
 	public void shouldUpdatePacemark() throws DocumentException{
@@ -31,16 +33,19 @@ public class KMLStyleMapTests {
 					"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 					"<Document>"+
 					"<name>a.kml</name>"+
-					"	<StyleMap id=\"msn_ylw-pushpin_"+id+"\" xml:id=\""+id+"\">"+
-					"		<Pair>"+
-					"			<key>normal</key>"+
-					"			<styleUrl>#sn_ylw-pushpin</styleUrl>"+
-					"		</Pair>"+
-					"		<Pair>"+
-					"			<key>highlight</key>"+
-					"			<styleUrl>#sh_ylw-pushpin</styleUrl>"+
-					"		</Pair>"+
-					"	</StyleMap>"+					
+					"	<Style id=\"sn_ylw-pushpin_"+id+"\" xml:id=\""+id+"\">"+
+					"		<IconStyle>"+
+					"			<color>ff00ff55</color>"+
+					"			<scale>1.1</scale>"+
+					"			<Icon>"+
+					"				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>"+
+					"			</Icon>"+
+					"			<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>"+
+					"		</IconStyle>"+
+					"		<LabelStyle>"+
+					"			<color>ff00ff55</color>"+
+					"		</LabelStyle>"+
+					"	</Style>"+				
 					"<Folder xml:id=\""+ IdGenerator.newID() +"\">"+
 					"	<name>Folder1</name>"+
 					"	<Placemark xml:id=\""+IdGenerator.newID()+"\">"+
@@ -75,7 +80,7 @@ public class KMLStyleMapTests {
 		KMLContent content = kmlAdapter.get(id);
 		Assert.assertNotNull(content);
 		String xmlID1 = content.getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
-		Assert.assertEquals("msn_ylw-pushpin_"+xmlID1, content.getPayload().attributeValue("id"));
+		Assert.assertEquals("sn_ylw-pushpin_"+xmlID1, content.getPayload().attributeValue("id"));
 		
 		List<IContent> items = kmlAdapter.getAll();
 		Assert.assertEquals(5, items.size());
@@ -84,40 +89,45 @@ public class KMLStyleMapTests {
 							"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 							"<Document>"+
 							"<name>a.kml</name>"+
-							"	<StyleMap id=\"msn_NEW-pushpin_"+id+"\" xml:id=\""+id+"\">"+
-							"		<Pair>"+
-							"			<key>normal</key>"+
-							"			<styleUrl>#sn_ylw-pushpin</styleUrl>"+
-							"		</Pair>"+
-							"		<Pair>"+
-							"			<key>highlight</key>"+
-							"			<styleUrl>#sh_ylw-pushpin</styleUrl>"+
-							"		</Pair>"+
-							"	</StyleMap>"+
+							"	<Style id=\"sn_NEW-pushpin_"+id+"\" xml:id=\""+id+"\">"+
+							"		<IconStyle>"+
+							"			<color>ff00ff55</color>"+
+							"			<scale>1.1</scale>"+
+							"			<Icon>"+
+							"				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>"+
+							"			</Icon>"+
+							"			<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>"+
+							"		</IconStyle>"+
+							"		<LabelStyle>"+
+							"			<color>ff00ff55</color>"+
+							"		</LabelStyle>"+
+							"	</Style>"+	
 							"</Document>"+
 							"</kml>";
 		
-		Element newElement = DocumentHelper.parseText(newFolderXML).getRootElement().element("Document").element("StyleMap");				
+		Element newElement = DocumentHelper.parseText(newFolderXML).getRootElement().element("Document").element("Style");				
 		content = new KMLContent(newElement, id);
 		kmlAdapter.save(content);
 		
 		content = kmlAdapter.get(id);
 		Assert.assertNotNull(content);
 		xmlID1 = content.getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
-		Assert.assertEquals("msn_NEW-pushpin_"+xmlID1, content.getPayload().attributeValue("id"));
+		Assert.assertEquals("sn_NEW-pushpin_"+xmlID1, content.getPayload().attributeValue("id"));
 		
 		items = kmlAdapter.getAll();
 		Assert.assertEquals(5, items.size());
 	}
 		
+	
 	@Test
-	public void shouldGetStyleMapAsItem(){
+	public void shouldGetStyleAsItem(){
 		String id = IdGenerator.newID();
+		String mapID = IdGenerator.newID();
 		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+
 					"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 					"<Document>"+
 					"<name>a.kml</name>"+
-					"	<StyleMap id=\"msn_ylw-pushpin_"+id+"\" xml:id=\""+id+"\">"+
+					"	<StyleMap id=\"msn_ylw-pushpin_"+mapID+"\" xml:id=\""+mapID+"\">"+
 					"		<Pair>"+
 					"			<key>normal</key>"+
 					"			<styleUrl>#sn_ylw-pushpin</styleUrl>"+
@@ -127,6 +137,19 @@ public class KMLStyleMapTests {
 					"			<styleUrl>#sh_ylw-pushpin</styleUrl>"+
 					"		</Pair>"+
 					"	</StyleMap>"+
+					"	<Style id=\"sn_ylw-pushpin_"+id+"\" xml:id=\""+id+"\">"+
+					"		<IconStyle>"+
+					"			<color>ff00ff55</color>"+
+					"			<scale>1.1</scale>"+
+					"			<Icon>"+
+					"				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>"+
+					"			</Icon>"+
+					"			<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>"+
+					"		</IconStyle>"+
+					"		<LabelStyle>"+
+					"			<color>ff00ff55</color>"+
+					"		</LabelStyle>"+
+					"	</Style>"+					
 					"<Folder xml:id=\""+ IdGenerator.newID() +"\">"+
 					"	<name>Folder1</name>"+
 					"	<Placemark xml:id=\""+IdGenerator.newID()+"\">"+
@@ -177,37 +200,43 @@ public class KMLStyleMapTests {
 		
 		Assert.assertNotNull(content);
 		String xmlID = content.getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
-		Assert.assertEquals("msn_ylw-pushpin_"+xmlID, content.getPayload().attributeValue("id"));
+		Assert.assertEquals("sn_ylw-pushpin_"+xmlID, content.getPayload().attributeValue("id"));
 
 	}
 	
 	@Test
-	public void shouldReturnsStyleMapsAsItems(){
+	public void shouldReturnsStylesAsItems(){
 		
 		String xml ="<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+
 					"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 					"<Document>"+
 					"	<name>a.kml</name>"+
-					"	<StyleMap id=\"msn_ylw-pushpin\">"+
-					"		<Pair>"+
-					"			<key>normal</key>"+
-					"			<styleUrl>#sn_ylw-pushpin</styleUrl>"+
-					"		</Pair>"+
-					"		<Pair>"+
-					"			<key>highlight</key>"+
-					"			<styleUrl>#sh_ylw-pushpin</styleUrl>"+
-					"		</Pair>"+
-					"	</StyleMap>"+
-					"	<StyleMap id=\"msh_ylw-pushpin\">"+
-					"		<Pair>"+
-					"			<key>normal</key>"+
-					"			<styleUrl>#sn_ylw-pushpin</styleUrl>"+
-					"		</Pair>"+
-					"		<Pair>"+
-					"			<key>highlight</key>"+
-					"			<styleUrl>#sh_ylw-pushpin</styleUrl>"+
-					"		</Pair>"+
-					"	</StyleMap>"+
+					"	<Style id=\"sn_ylw-pushpin\">"+
+					"		<IconStyle>"+
+					"			<color>ff00ff55</color>"+
+					"			<scale>1.1</scale>"+
+					"			<Icon>"+
+					"				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>"+
+					"			</Icon>"+
+					"			<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>"+
+					"		</IconStyle>"+
+					"		<LabelStyle>"+
+					"			<color>ff00ff55</color>"+
+					"		</LabelStyle>"+
+					"	</Style>"+
+					"	<Style id=\"sh_ylw-pushpin\">"+
+					"		<IconStyle>"+
+					"			<color>ff00ff55</color>"+
+					"			<scale>1.1</scale>"+
+					"			<Icon>"+
+					"				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>"+
+					"			</Icon>"+
+					"			<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>"+
+					"		</IconStyle>"+
+					"		<LabelStyle>"+
+					"			<color>ff00ff55</color>"+
+					"		</LabelStyle>"+
+					"	</Style>"+
 					"</Document>"+
 					"</kml>";
 		File file = TestHelper.makeNewXMLFile(xml);
@@ -219,37 +248,43 @@ public class KMLStyleMapTests {
 		String xmlID1 = items.get(0).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
 		String xmlID2 = items.get(1).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
 		
-		Assert.assertEquals("msn_ylw-pushpin_"+xmlID1, items.get(0).getPayload().attributeValue("id"));
-		Assert.assertEquals("msh_ylw-pushpin_"+xmlID2, items.get(1).getPayload().attributeValue("id"));
+		Assert.assertEquals("sn_ylw-pushpin_"+xmlID1, items.get(0).getPayload().attributeValue("id"));
+		Assert.assertEquals("sh_ylw-pushpin_"+xmlID2, items.get(1).getPayload().attributeValue("id"));
 	}
 	
 	@Test
-	public void shouldAddNewStyleMap() throws DocumentException{
+	public void shouldAddNewStyle() throws DocumentException{
 		
 		String xml ="<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+
 			"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 			"<Document>"+
 			"	<name>a.kml</name>"+
-			"	<StyleMap id=\"msn_ylw-pushpin\">"+
-			"		<Pair>"+
-			"			<key>normal</key>"+
-			"			<styleUrl>#sn_ylw-pushpin</styleUrl>"+
-			"		</Pair>"+
-			"		<Pair>"+
-			"			<key>highlight</key>"+
-			"			<styleUrl>#sh_ylw-pushpin</styleUrl>"+
-			"		</Pair>"+
-			"	</StyleMap>"+
-			"	<StyleMap id=\"msh_ylw-pushpin\">"+
-			"		<Pair>"+
-			"			<key>normal</key>"+
-			"			<styleUrl>#sn_ylw-pushpin</styleUrl>"+
-			"		</Pair>"+
-			"		<Pair>"+
-			"			<key>highlight</key>"+
-			"			<styleUrl>#sh_ylw-pushpin</styleUrl>"+
-			"		</Pair>"+
-			"	</StyleMap>"+
+			"	<Style id=\"sn_ylw-pushpin\">"+
+			"		<IconStyle>"+
+			"			<color>ff00ff55</color>"+
+			"			<scale>1.1</scale>"+
+			"			<Icon>"+
+			"				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>"+
+			"			</Icon>"+
+			"			<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>"+
+			"		</IconStyle>"+
+			"		<LabelStyle>"+
+			"			<color>ff00ff55</color>"+
+			"		</LabelStyle>"+
+			"	</Style>"+
+			"	<Style id=\"sh_ylw-pushpin\">"+
+			"		<IconStyle>"+
+			"			<color>ff00ff55</color>"+
+			"			<scale>1.1</scale>"+
+			"			<Icon>"+
+			"				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>"+
+			"			</Icon>"+
+			"			<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>"+
+			"		</IconStyle>"+
+			"		<LabelStyle>"+
+			"			<color>ff00ff55</color>"+
+			"		</LabelStyle>"+
+			"	</Style>"+
 			"</Document>"+
 			"</kml>";
 		File file = TestHelper.makeNewXMLFile(xml);
@@ -259,79 +294,88 @@ public class KMLStyleMapTests {
 		String id = IdGenerator.newID();
 		
 		String newXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+
-			"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
-			"<Document>"+
-			"	<name>a.kml</name>"+
-			"	<StyleMap id=\"new_"+id+"\" xml:id=\""+id+"\">"+
-			"		<Pair>"+
-			"			<key>normal</key>"+
-			"			<styleUrl>#sn_ylw-pushpin</styleUrl>"+
-			"		</Pair>"+
-			"		<Pair>"+
-			"			<key>highlight</key>"+
-			"			<styleUrl>#sh_ylw-pushpin</styleUrl>"+
-			"		</Pair>"+
-			"	</StyleMap>"+
-			"</Document>"+
-			"</kml>";
-			
-		Element newElement = DocumentHelper.parseText(newXML).getRootElement().element("Document").element("StyleMap");				
-		KMLContent content = new KMLContent(newElement, id);
+							"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
+							"<Document>"+
+							"	<name>a.kml</name>"+
+							"	<Style id=\"new_pushpin_"+id+"\" xml:id=\""+id+"\">"+
+							"		<IconStyle>"+
+							"			<color>ff00ff55</color>"+
+							"			<scale>1.1</scale>"+
+							"			<Icon>"+
+							"				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>"+
+							"			</Icon>"+
+							"			<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>"+
+							"		</IconStyle>"+
+							"		<LabelStyle>"+
+							"			<color>ff00ff55</color>"+
+							"		</LabelStyle>"+
+							"	</Style>"+
+							"</Document>"+
+							"</kml>";
+		
+		Element newStyleElement = DocumentHelper.parseText(newXML).getRootElement().element("Document").element("Style");				
+		KMLContent content = new KMLContent(newStyleElement, id);
 		kmlAdapter.save(content);
 		
 		KMLContent addedContent = kmlAdapter.get(id);
 		Assert.assertNotNull(addedContent);
 		
-		Element addedStyleMap = addedContent.getPayload();
-		String xmlID = addedStyleMap.attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
-		String kmlID = addedStyleMap.attributeValue("id");
-		Assert.assertEquals("new_"+id, kmlID);
+		Element addedStyle = addedContent.getPayload();
+		String xmlID = addedStyle.attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
+		String kmlID = addedStyle.attributeValue("id");
+		Assert.assertEquals("new_pushpin_"+id, kmlID);
 		Assert.assertEquals(id, xmlID);
 		
 		List<IContent> items = kmlAdapter.getAll();
 		Assert.assertEquals(3, items.size());
 		
-		addedStyleMap = items.get(2).getPayload();
-		xmlID = addedStyleMap.attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
-		kmlID = addedStyleMap.attributeValue("id");
-		Assert.assertEquals("new_"+id, kmlID);
+		addedStyle = items.get(2).getPayload();
+		xmlID = addedStyle.attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
+		kmlID = addedStyle.attributeValue("id");
+		Assert.assertEquals("new_pushpin_"+id, kmlID);
 		Assert.assertEquals(id, xmlID);
 				
 		String xmlID1 = items.get(0).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
 		String xmlID2 = items.get(1).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);		
-		Assert.assertEquals("msn_ylw-pushpin_"+xmlID1, items.get(0).getPayload().attributeValue("id"));
-		Assert.assertEquals("msh_ylw-pushpin_"+xmlID2, items.get(1).getPayload().attributeValue("id"));
+		Assert.assertEquals("sn_ylw-pushpin_"+xmlID1, items.get(0).getPayload().attributeValue("id"));
+		Assert.assertEquals("sh_ylw-pushpin_"+xmlID2, items.get(1).getPayload().attributeValue("id"));
 
 	}
 	
 	@Test
-	public void shouldDeleteStyleMap() throws DocumentException{
+	public void shouldDeleteStyle() throws DocumentException{
 		
 		String id = IdGenerator.newID();
 		String xml ="<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+
 			"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 			"<Document>"+
 			"	<name>a.kml</name>"+
-			"	<StyleMap id=\"msn_ylw-pushpin_"+id+"\" xml:id=\""+id+"\">"+
-			"		<Pair>"+
-			"			<key>normal</key>"+
-			"			<styleUrl>#sn_ylw-pushpin</styleUrl>"+
-			"		</Pair>"+
-			"		<Pair>"+
-			"			<key>highlight</key>"+
-			"			<styleUrl>#sh_ylw-pushpin</styleUrl>"+
-			"		</Pair>"+
-			"	</StyleMap>"+
-			"	<StyleMap id=\"msh_ylw-pushpin\">"+
-			"		<Pair>"+
-			"			<key>normal</key>"+
-			"			<styleUrl>#sn_ylw-pushpin</styleUrl>"+
-			"		</Pair>"+
-			"		<Pair>"+
-			"			<key>highlight</key>"+
-			"			<styleUrl>#sh_ylw-pushpin</styleUrl>"+
-			"		</Pair>"+
-			"	</StyleMap>"+
+			"	<Style id=\"sn_ylw-pushpin_"+id+"\" xml:id=\""+id+"\">"+
+			"		<IconStyle>"+
+			"			<color>ff00ff55</color>"+
+			"			<scale>1.1</scale>"+
+			"			<Icon>"+
+			"				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>"+
+			"			</Icon>"+
+			"			<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>"+
+			"		</IconStyle>"+
+			"		<LabelStyle>"+
+			"			<color>ff00ff55</color>"+
+			"		</LabelStyle>"+
+			"	</Style>"+
+			"	<Style id=\"sh_ylw-pushpin\">"+
+			"		<IconStyle>"+
+			"			<color>ff00ff55</color>"+
+			"			<scale>1.1</scale>"+
+			"			<Icon>"+
+			"				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>"+
+			"			</Icon>"+
+			"			<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>"+
+			"		</IconStyle>"+
+			"		<LabelStyle>"+
+			"			<color>ff00ff55</color>"+
+			"		</LabelStyle>"+
+			"	</Style>"+
 			"</Document>"+
 			"</kml>";
 		File file = TestHelper.makeNewXMLFile(xml);
@@ -345,8 +389,8 @@ public class KMLStyleMapTests {
 		String xmlID1 = items.get(0).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
 		String xmlID2 = items.get(1).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
 		Assert.assertEquals(id, xmlID1);
-		Assert.assertEquals("msn_ylw-pushpin_"+xmlID1, items.get(0).getPayload().attributeValue("id"));
-		Assert.assertEquals("msh_ylw-pushpin_"+xmlID2, items.get(1).getPayload().attributeValue("id"));
+		Assert.assertEquals("sn_ylw-pushpin_"+xmlID1, items.get(0).getPayload().attributeValue("id"));
+		Assert.assertEquals("sh_ylw-pushpin_"+xmlID2, items.get(1).getPayload().attributeValue("id"));
 		
 		kmlAdapter.delete(content);
 		
@@ -354,7 +398,7 @@ public class KMLStyleMapTests {
 		Assert.assertEquals(1, items.size());
 		Assert.assertFalse(id.equals(xmlID2));
 		xmlID2 = items.get(0).getPayload().attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
-		Assert.assertEquals("msh_ylw-pushpin_"+xmlID2, items.get(0).getPayload().attributeValue("id"));
+		Assert.assertEquals("sh_ylw-pushpin_"+xmlID2, items.get(0).getPayload().attributeValue("id"));
 
 	}
 	
@@ -364,31 +408,37 @@ public class KMLStyleMapTests {
 		
 		String id = IdGenerator.newID();
 		String xml ="<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+
-		"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
-		"<Document>"+
-		"	<name>a.kml</name>"+
-		"	<StyleMap id=\"msn_ylw-pushpin_"+id+"\" xml:id=\""+id+"\">"+
-		"		<Pair>"+
-		"			<key>normal</key>"+
-		"			<styleUrl>#sn_ylw-pushpin</styleUrl>"+
-		"		</Pair>"+
-		"		<Pair>"+
-		"			<key>highlight</key>"+
-		"			<styleUrl>#sh_ylw-pushpin</styleUrl>"+
-		"		</Pair>"+
-		"	</StyleMap>"+
-		"	<StyleMap id=\"msh_ylw-pushpin\">"+
-		"		<Pair>"+
-		"			<key>normal</key>"+
-		"			<styleUrl>#sn_ylw-pushpin</styleUrl>"+
-		"		</Pair>"+
-		"		<Pair>"+
-		"			<key>highlight</key>"+
-		"			<styleUrl>#sh_ylw-pushpin</styleUrl>"+
-		"		</Pair>"+
-		"	</StyleMap>"+
-		"</Document>"+
-		"</kml>";
+			"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
+			"<Document>"+
+			"	<name>a.kml</name>"+
+			"	<Style id=\"sn_ylw-pushpin_"+id+"\" xml:id=\""+id+"\">"+
+			"		<IconStyle>"+
+			"			<color>ff00ff55</color>"+
+			"			<scale>1.1</scale>"+
+			"			<Icon>"+
+			"				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>"+
+			"			</Icon>"+
+			"			<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>"+
+			"		</IconStyle>"+
+			"		<LabelStyle>"+
+			"			<color>ff00ff55</color>"+
+			"		</LabelStyle>"+
+			"	</Style>"+
+			"	<Style id=\"sh_ylw-pushpin\">"+
+			"		<IconStyle>"+
+			"			<color>ff00ff55</color>"+
+			"			<scale>1.1</scale>"+
+			"			<Icon>"+
+			"				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>"+
+			"			</Icon>"+
+			"			<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>"+
+			"		</IconStyle>"+
+			"		<LabelStyle>"+
+			"			<color>ff00ff55</color>"+
+			"		</LabelStyle>"+
+			"	</Style>"+
+			"</Document>"+
+			"</kml>";
 		File file = TestHelper.makeNewXMLFile(xml);
 		KMLContentAdapter.prepareKMLToSync(file.getAbsolutePath());
 		
@@ -407,8 +457,8 @@ public class KMLStyleMapTests {
 		Assert.assertEquals(2, elements.size());
 		String xmlID1 = elements.get(0).attributeValue(KMLContentAdapterNames.XML_ID_QNAME);
 		String xmlID2 = elements.get(1).attributeValue(KMLContentAdapterNames.XML_ID_QNAME);		
-		Assert.assertEquals("msn_ylw-pushpin_"+xmlID1, elements.get(0).attributeValue("id"));
-		Assert.assertEquals("msh_ylw-pushpin_"+xmlID2, elements.get(1).attributeValue("id"));
+		Assert.assertEquals("sn_ylw-pushpin_"+xmlID1, elements.get(0).attributeValue("id"));
+		Assert.assertEquals("sh_ylw-pushpin_"+xmlID2, elements.get(1).attributeValue("id"));
 
 		HashSet<String> ids = new HashSet<String>();		
 		ids.add(xmlID1);
@@ -424,20 +474,23 @@ public class KMLStyleMapTests {
 			"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 			"<Document>"+
 			"	<name>a.kml</name>"+
-			"	<StyleMap id=\"msn_ylw-pushpin_"+id+"\" xml:id=\""+id+"\">"+
-			"		<Pair>"+
-			"			<key>normal</key>"+
-			"			<styleUrl>#sn_ylw-pushpin</styleUrl>"+
-			"		</Pair>"+
-			"		<Pair>"+
-			"			<key>highlight</key>"+
-			"			<styleUrl>#sh_ylw-pushpin</styleUrl>"+
-			"		</Pair>"+
-			"	</StyleMap>"+
+			"	<Style id=\"sn_ylw-pushpin_"+id+"\" xml:id=\""+id+"\">"+
+			"		<IconStyle>"+
+			"			<color>ff00ff55</color>"+
+			"			<scale>1.1</scale>"+
+			"			<Icon>"+
+			"				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>"+
+			"			</Icon>"+
+			"			<hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/>"+
+			"		</IconStyle>"+
+			"		<LabelStyle>"+
+			"			<color>ff00ff55</color>"+
+			"		</LabelStyle>"+
+			"	</Style>"+
 			"</Document>"+
 			"</kml>";
 		
-		Element newElement = DocumentHelper.parseText(xml).getRootElement().element("Document").element("StyleMap");				
+		Element newElement = DocumentHelper.parseText(xml).getRootElement().element("Document").element("Style");				
 		KMLContent content = new KMLContent(newElement, id);
 		
 		KMLContent normalizedContent = KMLContent.normalizeContent(content, KMLContentAdapter.XML_VIEW);

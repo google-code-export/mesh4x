@@ -1,4 +1,4 @@
-package com.mesh4j.sync.adapters.kml.spli.content.adapter;
+package com.mesh4j.sync.adapters.kml.split.content.adapter;
 
 import java.io.File;
 import java.util.HashMap;
@@ -17,6 +17,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.mesh4j.sync.adapters.kml.KMLContent;
+import com.mesh4j.sync.adapters.kml.split.content.adapter.KMLContentAdapter;
+import com.mesh4j.sync.adapters.kml.split.content.adapter.KMLContentAdapterNames;
 import com.mesh4j.sync.model.IContent;
 import com.mesh4j.sync.test.utils.TestHelper;
 import com.mesh4j.sync.utils.IdGenerator;

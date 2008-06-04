@@ -1,4 +1,4 @@
-package com.mesh4j.sync.adapters.kml.spli.content.adapter;
+package com.mesh4j.sync.adapters.kml.split.content.adapter;
 
 import org.dom4j.Document;
 import org.dom4j.Element;

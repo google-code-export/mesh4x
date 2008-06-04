@@ -1,4 +1,4 @@
-package com.mesh4j.sync.adapters.kml.spli.content.adapter;
+package com.mesh4j.sync.adapters.kml.split.content.adapter;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -147,7 +147,7 @@ public class KMLContentAdapter implements IContentAdapter{
 		this.flush();
 	}
 	
-	// TODO (JMT) REFACTORING: if this class is not replaced with KMLAdapter is necessary to improve the process of elements (create a parser per element)
+
 	private void updateFolderElements(Element element, Element updatedElement) {
 		Element updatedName = updatedElement.element(KMLContentAdapterNames.KML_ELEMENT_NAME);
 		if(updatedName == null){

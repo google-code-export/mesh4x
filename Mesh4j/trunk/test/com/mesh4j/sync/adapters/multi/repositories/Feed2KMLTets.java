@@ -11,7 +11,7 @@ import com.mesh4j.sync.SyncEngine;
 import com.mesh4j.sync.adapters.feed.FeedAdapter;
 import com.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import com.mesh4j.sync.adapters.file.FileSyncRepository;
-import com.mesh4j.sync.adapters.kml.spli.content.adapter.KMLContentAdapter;
+import com.mesh4j.sync.adapters.kml.split.content.adapter.KMLContentAdapter;
 import com.mesh4j.sync.adapters.split.SplitAdapter;
 import com.mesh4j.sync.security.NullIdentityProvider;
 import com.mesh4j.sync.test.utils.TestHelper;
