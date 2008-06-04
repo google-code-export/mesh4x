@@ -1,6 +1,8 @@
 package com.mesh4j.sync.adapters.kml;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.Map;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -11,7 +13,9 @@ import org.junit.Test;
 import com.mesh4j.sync.adapters.dom.parsers.FileManager;
 import com.mesh4j.sync.security.NullIdentityProvider;
 import com.mesh4j.sync.test.utils.TestHelper;
+import com.mesh4j.sync.utils.Base64Helper;
 import com.mesh4j.sync.utils.IdGenerator;
+import com.mesh4j.sync.utils.ZipUtils;
 import com.mesh4j.sync.validations.MeshException;
 
 public class KMZDOMLoaderTests {
@@ -234,5 +238,70 @@ public class KMZDOMLoaderTests {
 		String name = loader.getFriendlyName();
 		Assert.assertNotNull(name);
 		Assert.assertTrue(name.trim().length() > 0);
+	}
+	
+	@Test
+	public void shouldWriteKMZWithFiles() throws IOException{
+		File file = new File(TestHelper.fileName("kmzExample_"+IdGenerator.newID()+".kmz"));
+		
+		byte[] file1 = TestHelper.readFileBytes(this.getClass().getResource("kmzExample_doc.kml").getFile());
+		byte[] file2 = TestHelper.readFileBytes(this.getClass().getResource("kmzExample_star.jpg").getFile());
+		byte[] file3 = TestHelper.readFileBytes(this.getClass().getResource("kmzExample_camera_mode.png").getFile());
+		
+		FileManager fileManager = new FileManager();
+		
+
+		fileManager.setFileContent("files/star.jpg", Base64Helper.encode(file2));
+		fileManager.setFileContent("files/camera_mode.png", Base64Helper.encode(file3));
+
+		KMZDOMLoader kmzLoader = new KMZDOMLoader(file.getAbsolutePath(), NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMZView(fileManager), fileManager);
+		kmzLoader.read();
+		kmzLoader.write();
+
+		Map<String, byte[]> loadedEntries = ZipUtils.getEntries(file);
+		
+		Assert.assertNotNull(loadedEntries);
+		Assert.assertEquals(3, loadedEntries.size());
+		
+		byte[] fileZip1 = loadedEntries.get("doc.kml");
+		byte[] fileZip2 = loadedEntries.get("files/star.jpg");
+		byte[] fileZip3 = loadedEntries.get("files/camera_mode.png");
+
+		Assert.assertEquals(kmzLoader.getDOM().asXML(), new String(fileZip1));
+		Assert.assertArrayEquals(file2, fileZip2);
+		Assert.assertArrayEquals(file3, fileZip3);
+
+	}
+	
+	@Test
+	public void shouldLoadKMZWithFiles() throws IOException{
+		File file = new File(this.getClass().getResource("kmzExample.kmz").getFile());
+		
+		Map<String, byte[]> loadedEntries = ZipUtils.getEntries(file);
+		
+		Assert.assertNotNull(loadedEntries);
+		Assert.assertEquals(3, loadedEntries.size());
+		
+		byte[] fileZip1 = loadedEntries.get("doc.kml");
+		byte[] fileZip2 = loadedEntries.get("files/star.jpg");
+		byte[] fileZip3 = loadedEntries.get("files/camera_mode.png");
+
+		byte[] file1 = TestHelper.readFileBytes(this.getClass().getResource("kmzExample_doc.kml").getFile());
+		byte[] file2 = TestHelper.readFileBytes(this.getClass().getResource("kmzExample_star.jpg").getFile());
+		byte[] file3 = TestHelper.readFileBytes(this.getClass().getResource("kmzExample_camera_mode.png").getFile());
+	
+		Assert.assertArrayEquals(file1, fileZip1);
+		Assert.assertArrayEquals(file2, fileZip2);
+		Assert.assertArrayEquals(file3, fileZip3);
+		
+		FileManager fileManager = new FileManager();
+		
+		KMZDOMLoader kmzLoader = new KMZDOMLoader(file.getAbsolutePath(), NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMZView(fileManager), fileManager);
+		kmzLoader.read();
+		
+		Assert.assertNotNull(kmzLoader.getDOM().asXML());
+		Assert.assertArrayEquals(file2, Base64Helper.decode(fileManager.getFileContent("files/star.jpg")));
+		Assert.assertArrayEquals(file3, Base64Helper.decode(fileManager.getFileContent("files/camera_mode.png")));
+
 	}
 }
