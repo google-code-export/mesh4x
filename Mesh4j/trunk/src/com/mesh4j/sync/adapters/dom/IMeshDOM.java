@@ -7,6 +7,7 @@ import org.dom4j.Element;
 
 import com.mesh4j.sync.adapters.SyncInfo;
 import com.mesh4j.sync.model.IContent;
+import com.mesh4j.sync.security.IIdentityProvider;
 
 public interface IMeshDOM {
 
@@ -27,6 +28,9 @@ public interface IMeshDOM {
 	
 	IContent createContent(Element element, String syncID);
 	IContent normalizeContent(IContent content);
+
+	IIdentityProvider getIdentityProvider();
+	String newID();
 	
 	// DOM
 	Document toDocument();
@@ -37,4 +41,8 @@ public interface IMeshDOM {
 	// ELEMENT ATTRIBUTES
 	String getMeshSyncId(Element element);
 	boolean isValid(Element element);
+	Element getContentRepository(Document document);
+	Element getSyncRepository(Document document);
+
+	
 }

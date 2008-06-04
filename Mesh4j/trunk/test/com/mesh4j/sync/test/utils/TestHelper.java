@@ -1,11 +1,15 @@
 package com.mesh4j.sync.test.utils;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Writer;
 import java.util.Calendar;
 import java.util.Date;
@@ -152,6 +156,23 @@ public class TestHelper {
 		}
 		return contents.toString();
 
+	}
+	
+	public static byte[] readFileBytes(String fileName) throws IOException {
+		InputStream reader = new FileInputStream(fileName);
+		BufferedInputStream bis = new BufferedInputStream(reader);
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+	    
+	    final int N = 1024;
+	    byte buf[] = new byte[N];
+	    int ln = 0;
+	    while ((ln = bis.read(buf, 0, N)) != -1) {
+	        os.write(buf, 0, ln);
+	    }
+	    bis.close();
+		reader.close();
+		os.flush();
+		return os.toByteArray();
 	}
 
 	public static void writeFile(String fileName, String contents) throws IOException{

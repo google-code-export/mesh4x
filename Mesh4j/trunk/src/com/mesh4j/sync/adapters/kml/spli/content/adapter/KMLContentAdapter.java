@@ -16,8 +16,10 @@ import org.dom4j.io.SAXReader;
 import org.jaxen.JaxenException;
 
 import com.mesh4j.sync.adapters.kml.KMLContent;
+import com.mesh4j.sync.adapters.kml.KmlNames;
 import com.mesh4j.sync.adapters.split.IContentAdapter;
 import com.mesh4j.sync.model.IContent;
+import com.mesh4j.sync.parsers.XMLView;
 import com.mesh4j.sync.utils.IdGenerator;
 import com.mesh4j.sync.utils.XMLHelper;
 import com.mesh4j.sync.validations.MeshException;
@@ -27,6 +29,16 @@ public class KMLContentAdapter implements IContentAdapter{
 	
 	private static final Log Logger = LogFactory.getLog(KMLContentAdapter.class);
 	private static final String SHARED_ITEMS = "Shared Items";
+	
+	public static XMLView XML_VIEW;
+	
+	static{
+		XML_VIEW = new XMLView(
+			new KMLContentViewElement(KmlNames.KML_QNAME_FOLDER),
+			new KMLContentViewElement(KmlNames.KML_QNAME_PLACEMARK),
+			new KMLContentViewElement(KmlNames.KML_QNAME_STYLE_MAP),
+			new KMLContentViewElement(KmlNames.KML_QNAME_STYLE));
+	}
 	
 	// MODEL VARIABLES
 	private File kmlFile;
@@ -98,7 +110,7 @@ public class KMLContentAdapter implements IContentAdapter{
 	
 	@Override
 	public void save(IContent content) {
-		KMLContent kmlContent = KMLContent.normalizeContent(content);
+		KMLContent kmlContent = KMLContent.normalizeContent(content, XML_VIEW);
 		
 		Element newPayload = kmlContent.getPayload().createCopy();
 		Element element = this.getElementById(kmlContent.getId());

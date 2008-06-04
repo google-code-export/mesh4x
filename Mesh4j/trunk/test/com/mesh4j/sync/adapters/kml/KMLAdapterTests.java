@@ -19,6 +19,7 @@ import com.mesh4j.sync.adapters.dom.DOMAdapter;
 import com.mesh4j.sync.adapters.dom.IDOMLoader;
 import com.mesh4j.sync.adapters.dom.MeshDOM;
 import com.mesh4j.sync.adapters.dom.MeshNames;
+import com.mesh4j.sync.adapters.dom.parsers.HierarchyXMLViewElement;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.NullContent;
 import com.mesh4j.sync.model.Sync;

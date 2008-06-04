@@ -1,8 +1,40 @@
 package com.mesh4j.sync.adapters.kml;
 
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
+import org.junit.Test;
+
+import com.mesh4j.sync.utils.XMLHelper;
+
 
 public class MeshKMLParserTest {
 
+	@Test
+	public void  should() throws DocumentException{
+		String xml = 
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
+			"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
+			"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+			"<Style>"+
+				"<name>dsds</name>"+
+			"</Style>"+
+			"<PhotoOverlay>"+
+				"<Style>"+
+					"<name>vwevjbvc</name>"+
+				"</Style>"+
+			"</PhotoOverlay>"+
+			"</Document>"+
+			"</kml>";
+		
+		Document doc = DocumentHelper.parseText(xml);
+		
+		System.out.println(XMLHelper.selectElements("kml:Style", doc.getRootElement().element("Document"), KMLViewElement.SEARCH_NAMESPACES).size());
+		System.out.println(XMLHelper.selectElements("//kml:Style", doc.getRootElement().element("Document"), KMLViewElement.SEARCH_NAMESPACES).size());
+		
+	}
+	
+	
 	// TODO (JMT) Migrate to KMLMeshDOMLoaderTests
 //	private static final String xml = 
 //		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+

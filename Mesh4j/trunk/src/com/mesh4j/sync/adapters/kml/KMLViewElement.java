@@ -10,6 +10,7 @@ import org.dom4j.Element;
 import org.dom4j.QName;
 
 import com.mesh4j.sync.adapters.dom.MeshNames;
+import com.mesh4j.sync.adapters.dom.parsers.HierarchyXMLViewElement;
 import com.mesh4j.sync.parsers.XMLViewElement;
 import com.mesh4j.sync.utils.XMLHelper;
 import com.mesh4j.sync.validations.Guard;
@@ -28,8 +29,8 @@ public class KMLViewElement extends XMLViewElement {
 	private HierarchyXMLViewElement hierarchyViewElement;
 	
 	// BUSINESS METHODS
-	public KMLViewElement(QName qname, HierarchyXMLViewElement hierarchyViewElement) {
-		super(qname);
+	public KMLViewElement(QName qname, HierarchyXMLViewElement hierarchyViewElement, boolean searchOnlyRoot) {
+		super(qname, searchOnlyRoot);
 		
 		Guard.argumentNotNull(hierarchyViewElement, "hierarchyViewElement");
 		this.hierarchyViewElement = hierarchyViewElement;
@@ -45,12 +46,12 @@ public class KMLViewElement extends XMLViewElement {
 			String kmlID = attr.getValue();
 			String syncID = result.attributeValue(MeshNames.MESH_QNAME_SYNC_ID);
 			if(originalID == null && kmlID != null && syncID != null){
-				Element rootElement = this.getRootElement(document, result);
+				Element rootElement = this.getRootElement(document);
 				refreshReferences(result, kmlID, syncID, rootElement, SEARCH_NAMESPACES);
 			}else if (syncID != null && originalID != null && kmlID != null && !kmlID.equals(originalID+"_"+syncID)){
 				// Google Earth and probably others applications copy styles for create new styles, in this case is necessary to change syncID and references.
-				Element rootElement = this.getRootElement(document, result);				
-				syncID = this.hierarchyViewElement.getKmlDOM().newID();
+				Element rootElement = this.getRootElement(document);				
+				syncID = this.hierarchyViewElement.getDOM().newID();
 				result.addAttribute(MeshNames.MESH_QNAME_SYNC_ID, syncID);
 				refreshReferences(result, kmlID, syncID, rootElement, SEARCH_NAMESPACES);	
 			}
@@ -98,7 +99,7 @@ public class KMLViewElement extends XMLViewElement {
 	}
 	
 	@Override
-	protected Element getRootElement(Document document, Element element) {
+	protected Element getRootElement(Document document) {
 		return document.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT);
 	}
 

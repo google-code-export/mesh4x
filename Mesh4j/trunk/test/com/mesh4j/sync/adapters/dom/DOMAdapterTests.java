@@ -15,8 +15,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.mesh4j.sync.ISupportMerge;
+import com.mesh4j.sync.adapters.dom.parsers.HierarchyXMLViewElement;
 import com.mesh4j.sync.adapters.kml.DOMLoaderFactory;
-import com.mesh4j.sync.adapters.kml.HierarchyXMLViewElement;
 import com.mesh4j.sync.adapters.kml.KMLContent;
 import com.mesh4j.sync.adapters.kml.KmlNames;
 import com.mesh4j.sync.model.Item;
@@ -352,8 +352,8 @@ public class DOMAdapterTests {
 		Element payload = item.getContent().getPayload();
 		Assert.assertNotNull(payload);
 		Assert.assertEquals(elementType, payload.getName());
-//	TODO	Assert.assertEquals(syncID, getMeshSyncId(payload));
-//		Assert.assertEquals(parentID, getMeshParentId(payload));
+		Assert.assertEquals(syncID, domAdapter.getMeshSyncId(payload));
+		Assert.assertEquals(parentID, HierarchyXMLViewElement.getMeshParentId(domAdapter.getDOM().toDocument(), payload));
 		if (name != null) {
 			Assert.assertEquals(name, payload.element("name").getText());
 		}
@@ -809,7 +809,6 @@ public class DOMAdapterTests {
 		domAdapter.beginSync();
 
 		String syncID = IdGenerator.newID();
-		String parentID = "1";
 
 		String localXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 				+ "<kml xmlns=\"http://earth.google.com/kml/2.2\">"
@@ -826,7 +825,7 @@ public class DOMAdapterTests {
 		Item item = new Item(kmlContent, sync);
 		domAdapter.add(item);
 
-		assertGetItemPayload(domAdapter, syncID, parentID, "Placemark", null,
+		assertGetItemPayload(domAdapter, syncID, null, "Placemark", null,
 				"MYHouse");
 	}
 

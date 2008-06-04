@@ -12,7 +12,6 @@ import com.mesh4j.sync.AbstractSyncAdapter;
 import com.mesh4j.sync.IFilter;
 import com.mesh4j.sync.ISyncAware;
 import com.mesh4j.sync.adapters.SyncInfo;
-import com.mesh4j.sync.adapters.kml.KMLContent;
 import com.mesh4j.sync.filter.SinceLastUpdateFilter;
 import com.mesh4j.sync.model.IContent;
 import com.mesh4j.sync.model.Item;
@@ -24,7 +23,6 @@ import com.mesh4j.sync.validations.Guard;
 public class DOMAdapter  extends AbstractSyncAdapter implements ISyncAware {
 	
 	// TODO (JMT) Purge and clean mesh4x data to kml file.
-	// TODO (JMT) XML Canonalization (C14N) for versioning
 	
 	// MODEL VARIABLES
 	private IDOMLoader domLoader;
@@ -46,7 +44,7 @@ public class DOMAdapter  extends AbstractSyncAdapter implements ISyncAware {
 			IContent content = this.getDOM().normalizeContent(item.getContent());
 			Element elementAdded = this.getDOM().addElement(content.getPayload().createCopy());
 			if(elementAdded != null){
-				KMLContent contentAdded = new KMLContent(elementAdded, item.getSyncId());
+				IContent contentAdded = this.getDOM().createContent(elementAdded, item.getSyncId());
 				SyncInfo syncInfo = new SyncInfo(item.getSync(), this.getDOM().getType(), contentAdded.getId(), contentAdded.getVersion());
 				this.getDOM().updateSync(syncInfo);	
 			}
@@ -68,7 +66,7 @@ public class DOMAdapter  extends AbstractSyncAdapter implements ISyncAware {
 		}else{
 			IContent content = this.getDOM().normalizeContent(item.getContent());
 			Element elementUpdated = this.getDOM().updateElement(content.getPayload().createCopy());
-			KMLContent contentUpdated = new KMLContent(elementUpdated, item.getSyncId());
+			IContent contentUpdated = this.getDOM().createContent(elementUpdated, item.getSyncId());
 			
 			SyncInfo syncInfo = new SyncInfo(item.getSync(), this.getDOM().getType(), contentUpdated.getId(), contentUpdated.getVersion());
 			this.getDOM().updateSync(syncInfo);

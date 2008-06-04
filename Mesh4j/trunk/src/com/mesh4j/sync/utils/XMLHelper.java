@@ -20,6 +20,7 @@ import org.jaxen.SimpleNamespaceContext;
 import org.jaxen.dom4j.Dom4jXPath;
 
 import com.mesh4j.sync.validations.MeshException;
+import com.sun.org.apache.xml.internal.security.c14n.implementations.Canonicalizer20010315WithComments;
 
 public class XMLHelper {
 	
@@ -28,7 +29,7 @@ public class XMLHelper {
 	public static void write(Document document, File file) {
 		XMLWriter writer = null;
 		try {
-			document.normalize();
+			// TODO document.normalize();
 			writer = new XMLWriter(new FileWriter(file));
 			writer.write(document);
 		} catch (IOException e) {
@@ -84,5 +85,15 @@ public class XMLHelper {
 	public static Document readDocument(File file) throws DocumentException {
 		SAXReader reader = new SAXReader();
 		return reader.read(file);
+	}
+	
+	public static String canonicalizeXML(Element element){
+		try {
+			Canonicalizer20010315WithComments c = new Canonicalizer20010315WithComments();
+			byte[] result = c.engineCanonicalize(element.asXML().getBytes());
+			return new String(result);
+		} catch (Exception e) {
+			throw new MeshException(e);
+		}
 	}
 }

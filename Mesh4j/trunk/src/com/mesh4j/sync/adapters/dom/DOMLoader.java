@@ -39,7 +39,7 @@ public abstract class DOMLoader implements IDOMLoader {
 	
 
 	public void write() {
-		this.dom.normalize();
+		//TODO this.dom.normalize();
 		this.flush();
 	}
 	

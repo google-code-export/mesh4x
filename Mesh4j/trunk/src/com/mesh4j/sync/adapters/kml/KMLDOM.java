@@ -1,7 +1,5 @@
 package com.mesh4j.sync.adapters.kml;
 
-import java.util.Collection;
-
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -11,7 +9,6 @@ import com.mesh4j.sync.adapters.dom.MeshDOM;
 import com.mesh4j.sync.adapters.dom.MeshNames;
 import com.mesh4j.sync.model.IContent;
 import com.mesh4j.sync.parsers.IXMLView;
-import com.mesh4j.sync.parsers.IXMLViewElement;
 import com.mesh4j.sync.security.IIdentityProvider;
 import com.mesh4j.sync.translator.MessageTranslator;
 import com.mesh4j.sync.validations.Guard;
@@ -23,32 +20,20 @@ public class KMLDOM extends MeshDOM {
 	public KMLDOM(Document document, IIdentityProvider identityProvider,
 			IXMLView xmlView) {
 		super(document, identityProvider, xmlView);
-		initialize();
 	}
 	
 	public KMLDOM(String name, IIdentityProvider identityProvider, IXMLView xmlView) {
 		super(createDocument(name), identityProvider, xmlView);
-		initialize();
 	}
 
-	private void initialize() {
-		Collection<IXMLViewElement> elements = this.getXMLView().getXMLViewElements();
-		for (IXMLViewElement viewElement : elements) {
-			if(viewElement instanceof HierarchyXMLViewElement){
-				((HierarchyXMLViewElement)viewElement).setKmlDOM(this);
-			}
-		}
-		
-	}
-	
 	@Override
 	public String getType(){
 		return KmlNames.KML_PREFIX;
 	}
 		
 	@Override
-	protected Element getSyncRepository(){
-		return getContentRepository()
+	public Element getSyncRepository(Document document){
+		return getContentRepository(document)
 			.element(KmlNames.KML_ELEMENT_EXTENDED_DATA);
 	}
 	
@@ -89,7 +74,7 @@ public class KMLDOM extends MeshDOM {
 		elementName.addText(name);
 		
 		prepateSyncRepository(kmlDocument);
-		kmlDocument.normalize();
+		// TODO kmlDocument.normalize();
 		return kmlDocument;
 	}
 
@@ -107,12 +92,12 @@ public class KMLDOM extends MeshDOM {
 
 	@Override
 	public IContent normalizeContent(IContent content) {
-		return KMLContent.normalizeContent(content);
+		return KMLContent.normalizeContent(content, this.getXMLView());
 	}
 
 	@Override
-	protected Element getContentRepository() {
-		return getDocument()
+	public Element getContentRepository(Document document) {
+		return document
 			.getRootElement()
 			.element(KmlNames.KML_ELEMENT_DOCUMENT);
 	}

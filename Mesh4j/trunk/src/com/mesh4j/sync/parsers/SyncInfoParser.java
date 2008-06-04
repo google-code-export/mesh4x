@@ -89,7 +89,7 @@ public class SyncInfoParser {
 		syncData.addNamespace(ISyndicationFormat.SX_PREFIX, ISyndicationFormat.NAMESPACE);
 		writer.writeSync(syncData, sync);
 		
-		Element syncElement = syncData.element(ISyndicationFormat.SX_ELEMENT_SYNC);
+		Element syncElement = syncData.element(ISyndicationFormat.SX_QNAME_SYNC);
 		syncElement.detach();
 		return syncElement;
 	}
@@ -100,7 +100,7 @@ public class SyncInfoParser {
 		syncData.addNamespace(RssSyndicationFormat.SX_PREFIX, RssSyndicationFormat.NAMESPACE);
 		writer.writeSync(syncData, sync);
 		
-		String syncAsXML = syncData.element(RssSyndicationFormat.SX_ELEMENT_SYNC).asXML();
+		String syncAsXML = syncData.element(ISyndicationFormat.SX_QNAME_SYNC).asXML();
 		return syncAsXML;
 	}
 }

@@ -14,7 +14,7 @@ public interface IXMLViewElement {
 	
 	Element update(Document document, Element element, Element newElement);
 	
-	Element add(Document document, Element element);
+	Element add(Document document, Element newElement);
 
 	void delete(Document document, Element element);
 

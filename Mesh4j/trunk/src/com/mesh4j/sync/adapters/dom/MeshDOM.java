@@ -1,6 +1,7 @@
 package com.mesh4j.sync.adapters.dom;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -11,11 +12,13 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 
 import com.mesh4j.sync.adapters.SyncInfo;
+import com.mesh4j.sync.adapters.dom.parsers.IDOMRequied;
 import com.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import com.mesh4j.sync.adapters.feed.atom.AtomSyndicationFormat;
 import com.mesh4j.sync.model.IContent;
 import com.mesh4j.sync.model.Sync;
 import com.mesh4j.sync.parsers.IXMLView;
+import com.mesh4j.sync.parsers.IXMLViewElement;
 import com.mesh4j.sync.parsers.SyncInfoParser;
 import com.mesh4j.sync.security.IIdentityProvider;
 import com.mesh4j.sync.utils.IdGenerator;
@@ -46,6 +49,8 @@ public abstract class MeshDOM implements IMeshDOM {
 		this.document = document;
 		this.identityProvider = identityProvider;
 		this.xmlView = xmlView;
+		
+		this.initialize();
 	}
 
 	@Override
@@ -85,7 +90,7 @@ public abstract class MeshDOM implements IMeshDOM {
 	// SYNC
 	@SuppressWarnings("unchecked")
 	public List<SyncInfo> getAllSyncs(){
-		Element syncRepository = this.getSyncRepository();
+		Element syncRepository = this.getSyncRepository(this.document);
 		if(syncRepository == null){
 			return new ArrayList<SyncInfo>();
 		}
@@ -102,7 +107,7 @@ public abstract class MeshDOM implements IMeshDOM {
 	}
 	
 	public SyncInfo getSync(String syncId){
-		Element syncRepository = getSyncRepository();
+		Element syncRepository = getSyncRepository(this.document);
 		
 		Element meshElement = getMeshElement(syncRepository, syncId);
 		SyncInfo syncInfo = parseSyncInfo(meshElement, this.identityProvider);
@@ -111,7 +116,7 @@ public abstract class MeshDOM implements IMeshDOM {
 	
 
 	public void updateSync(SyncInfo syncInfo){
-		Element syncRepository = getSyncRepository();
+		Element syncRepository = getSyncRepository(this.document);
 		
 		String syncID = syncInfo.getSyncId();
 		
@@ -201,7 +206,7 @@ public abstract class MeshDOM implements IMeshDOM {
 	}
 	
 	public void normalize(){
-		this.document.normalize();
+		// TODO this.document.normalize();
 	}
 	
 	// INTERNALS
@@ -248,12 +253,12 @@ public abstract class MeshDOM implements IMeshDOM {
 		return syncInfo;
 	}
 	
-	protected Document getDocument(){
+	public Document getDocument(){
 		return this.document;
 	}
 	
 	public Element getElementByMeshId(String id)  {
-		Element rootElement = getContentRepository();
+		Element rootElement = getContentRepository(this.document);
 		Element element = XMLHelper.selectSingleNode("//*[@xml:id='"+id+"']", rootElement, this.getSearchNamespaces());
 		return element;
 	}
@@ -272,7 +277,7 @@ public abstract class MeshDOM implements IMeshDOM {
 			return false;
 		}		
 		
-		Element syncRepository = this.getSyncRepository();
+		Element syncRepository = this.getSyncRepository(this.document);
 		 
 		if(syncRepository == null){
 			return false;
@@ -297,10 +302,19 @@ public abstract class MeshDOM implements IMeshDOM {
 		return this.xmlView;
 	}
 	
+	private void initialize() {
+		Collection<IXMLViewElement> elements = this.getXMLView().getXMLViewElements();
+		for (IXMLViewElement viewElement : elements) {
+			if(viewElement instanceof IDOMRequied){
+				((IDOMRequied)viewElement).setDOM(this);
+			}
+		}		
+	}
+	
 	// SUBCLASS RESPONSIBILITY
 	public abstract String getType();
-	protected abstract Element getSyncRepository();
-	protected abstract Element getContentRepository();
+	public abstract Element getSyncRepository(Document document);
+	public abstract Element getContentRepository(Document document);
 	public abstract IContent createContent(Element element, String syncID);
 	public abstract IContent normalizeContent(IContent content);
 

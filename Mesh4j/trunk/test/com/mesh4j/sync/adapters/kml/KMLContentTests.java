@@ -8,6 +8,7 @@ import org.junit.Test;
 import com.mesh4j.sync.adapters.dom.MeshNames;
 import com.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import com.mesh4j.sync.model.IContent;
+import com.mesh4j.sync.model.NullContent;
 
 public class KMLContentTests {
 
@@ -53,13 +54,18 @@ public class KMLContentTests {
 		Assert.assertNotNull(feedPayload.element("payload"));
 	}
 	
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldNormalizeNotAcceptNullXMLView(){
+		KMLContent.normalizeContent(new NullContent("1"), null);
+	}
+	
 	@Test
 	public void shouldNormalizeKMLContent(){
 
 		Element payload = DocumentHelper.createElement("payload");
 		KMLContent content = new KMLContent(payload, "1");
 		
-		Assert.assertSame(content, KMLContent.normalizeContent(content));
+		Assert.assertSame(content, KMLContent.normalizeContent(content, DOMLoaderFactory.createKMLView()));
 	}
 	
 	@Test
@@ -68,7 +74,9 @@ public class KMLContentTests {
 		assertNormalizePayload(DocumentHelper.createElement(KmlNames.KML_ELEMENT_STYLE));
 		assertNormalizePayload(DocumentHelper.createElement(KmlNames.KML_ELEMENT_STYLE_MAP));
 		assertNormalizePayload(DocumentHelper.createElement(KmlNames.KML_ELEMENT_PLACEMARK));
+		assertNormalizePayload(DocumentHelper.createElement(KmlNames.KML_ELEMENT_PHOTO_OVERLAY));
 		assertNormalizePayload(DocumentHelper.createElement(MeshNames.MESH_QNAME_HIERARCHY));
+//		assertNormalizePayload(DocumentHelper.createElement(MeshNames.MESH_QNAME_FILE));
 	}
 	
 	private void assertNormalizePayload(Element element){
@@ -79,7 +87,7 @@ public class KMLContentTests {
 		
 		MockContent content = new MockContent(payload);
 		
-		KMLContent normalizedContent = KMLContent.normalizeContent(content);
+		KMLContent normalizedContent = KMLContent.normalizeContent(content, DOMLoaderFactory.createKMLView());
 		Assert.assertNotNull(normalizedContent);
 		Assert.assertSame(element, normalizedContent.getPayload());
 		Assert.assertEquals("1", normalizedContent.getId());
@@ -91,7 +99,9 @@ public class KMLContentTests {
 		assertNormalizePayloadFails(DocumentHelper.createElement(KmlNames.KML_ELEMENT_STYLE));
 		assertNormalizePayloadFails(DocumentHelper.createElement(KmlNames.KML_ELEMENT_STYLE_MAP));
 		assertNormalizePayloadFails(DocumentHelper.createElement(KmlNames.KML_ELEMENT_PLACEMARK));
+		assertNormalizePayloadFails(DocumentHelper.createElement(KmlNames.KML_ELEMENT_PHOTO_OVERLAY));
 		assertNormalizePayloadFails(DocumentHelper.createElement(MeshNames.MESH_QNAME_HIERARCHY));
+		assertNormalizePayloadFails(DocumentHelper.createElement(MeshNames.MESH_QNAME_FILE));
 	}
 
 	private void assertNormalizePayloadFails(Element element){
@@ -101,7 +111,7 @@ public class KMLContentTests {
 		
 		MockContent content = new MockContent(payload);
 		
-		KMLContent normalizedContent = KMLContent.normalizeContent(content);
+		KMLContent normalizedContent = KMLContent.normalizeContent(content, DOMLoaderFactory.createKMLView());
 		Assert.assertNull(normalizedContent);
 	}
 	
@@ -111,7 +121,9 @@ public class KMLContentTests {
 		assertNormalize(DocumentHelper.createElement(KmlNames.KML_ELEMENT_STYLE));
 		assertNormalize(DocumentHelper.createElement(KmlNames.KML_ELEMENT_STYLE_MAP));
 		assertNormalize(DocumentHelper.createElement(KmlNames.KML_ELEMENT_PLACEMARK));
+		assertNormalize(DocumentHelper.createElement(KmlNames.KML_ELEMENT_PHOTO_OVERLAY));
 		assertNormalize(DocumentHelper.createElement(MeshNames.MESH_QNAME_HIERARCHY));
+//		assertNormalize(DocumentHelper.createElement(MeshNames.MESH_QNAME_FILE));
 	}
 	
 	private void assertNormalize(Element element){
@@ -119,7 +131,7 @@ public class KMLContentTests {
 			
 		MockContent content = new MockContent(element);
 		
-		KMLContent normalizedContent = KMLContent.normalizeContent(content);
+		KMLContent normalizedContent = KMLContent.normalizeContent(content, DOMLoaderFactory.createKMLView());
 		Assert.assertNotNull(normalizedContent);
 		Assert.assertSame(element, normalizedContent.getPayload());
 		Assert.assertEquals("1", normalizedContent.getId());
@@ -131,12 +143,14 @@ public class KMLContentTests {
 		assertNormalizeFails(DocumentHelper.createElement(KmlNames.KML_ELEMENT_STYLE));
 		assertNormalizeFails(DocumentHelper.createElement(KmlNames.KML_ELEMENT_STYLE_MAP));
 		assertNormalizeFails(DocumentHelper.createElement(KmlNames.KML_ELEMENT_PLACEMARK));
+		assertNormalizeFails(DocumentHelper.createElement(KmlNames.KML_ELEMENT_PHOTO_OVERLAY));
 		assertNormalizeFails(DocumentHelper.createElement(MeshNames.MESH_QNAME_HIERARCHY));
+		assertNormalizeFails(DocumentHelper.createElement(MeshNames.MESH_QNAME_FILE));
 	}
 	
 	private void assertNormalizeFails(Element element){
 		MockContent content = new MockContent(element);
-		KMLContent normalizedContent = KMLContent.normalizeContent(content);
+		KMLContent normalizedContent = KMLContent.normalizeContent(content, DOMLoaderFactory.createKMLView());
 		Assert.assertNull(normalizedContent);
 	}
 	

@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import com.mesh4j.sync.adapters.SyncInfo;
 import com.mesh4j.sync.adapters.dom.MeshNames;
+import com.mesh4j.sync.adapters.dom.parsers.HierarchyXMLViewElement;
 import com.mesh4j.sync.model.Sync;
 import com.mesh4j.sync.security.NullIdentityProvider;
 import com.mesh4j.sync.test.utils.TestHelper;
@@ -1042,18 +1043,18 @@ public class KMLDOMTest {
 		Assert.assertNotNull(elements);
 		Assert.assertEquals(6, elements.size());
 
-		Assert.assertEquals("Folder", elements.get(0).getName());
-		Assert.assertEquals("1", meshParser.getMeshSyncId(elements.get(0)));
-		Assert.assertEquals("Folder", elements.get(1).getName());
-		Assert.assertEquals("2", meshParser.getMeshSyncId(elements.get(1)));
-		Assert.assertEquals("Placemark", elements.get(2).getName());
-		Assert.assertEquals("3", meshParser.getMeshSyncId(elements.get(2)));
-		Assert.assertEquals("StyleMap", elements.get(3).getName());
-		Assert.assertEquals("4", meshParser.getMeshSyncId(elements.get(3)));
-		Assert.assertEquals("Style", elements.get(4).getName());
-		Assert.assertEquals("5", meshParser.getMeshSyncId(elements.get(4)));
-		Assert.assertEquals("Style", elements.get(5).getName());
-		Assert.assertEquals("6", meshParser.getMeshSyncId(elements.get(5)));
+		Assert.assertEquals("Style", elements.get(0).getName());
+		Assert.assertEquals("5", meshParser.getMeshSyncId(elements.get(0)));
+		Assert.assertEquals("Style", elements.get(1).getName());
+		Assert.assertEquals("6", meshParser.getMeshSyncId(elements.get(1)));
+		Assert.assertEquals("StyleMap", elements.get(2).getName());
+		Assert.assertEquals("4", meshParser.getMeshSyncId(elements.get(2)));
+		Assert.assertEquals("Folder", elements.get(3).getName());
+		Assert.assertEquals("1", meshParser.getMeshSyncId(elements.get(3)));
+		Assert.assertEquals("Folder", elements.get(4).getName());
+		Assert.assertEquals("2", meshParser.getMeshSyncId(elements.get(4)));
+		Assert.assertEquals("Placemark", elements.get(5).getName());
+		Assert.assertEquals("3", meshParser.getMeshSyncId(elements.get(5)));
 	}
 
 	//getType
@@ -1126,6 +1127,71 @@ public class KMLDOMTest {
 			.getRootElement()
 			.element(KmlNames.KML_ELEMENT_DOCUMENT)
 			.element(KmlNames.KML_ELEMENT_STYLE);
+		
+		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		Element normalizedElement = meshParser.normalize(element);
+		
+		Assert.assertNotNull(normalizedElement);
+		Assert.assertSame(element, normalizedElement);		
+	}
+	
+	@Test
+	public void shouldNormalizePhotoOverlay() throws DocumentException{
+		String elementXML = 
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
+			"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
+			"<Document>"+
+			"<name>dummy</name>"+
+			"<PhotoOverlay>"+
+			"<name>MyPhoto</name>"+
+			"<visibility>0</visibility>"+
+			"<description>Mi foto</description>"+
+			"<Camera>"+
+				"<longitude>-95.26548319399994</longitude>"+
+				"<latitude>38.95938957100002</latitude>"+
+				"<altitude>705.5462440393095</altitude>"+
+				"<heading>-2.385416011097637e-015</heading>"+
+				"<tilt>0</tilt>"+
+				"<roll>-3.975693351829396e-016</roll>"+
+			"</Camera>"+
+			"<Style>"+
+				"<IconStyle>"+
+					"<Icon>"+
+						"<href>files/camera_mode.png</href>"+
+					"</Icon>"+
+				"</IconStyle>"+
+				"<ListStyle>"+
+					"<listItemType>check</listItemType>"+
+					"<ItemIcon>"+
+						"<state>open closed error fetching0 fetching1 fetching2</state>"+
+						"<href>http://maps.google.com/mapfiles/kml/shapes/camera-lv.png</href>"+
+					"</ItemIcon>"+
+					"<bgColor>00ffffff</bgColor>"+
+				"</ListStyle>"+
+			"</Style>"+
+			"<Icon>"+
+				"<href>files/star.jpg</href>"+
+			"</Icon>"+
+			"<ViewVolume>"+
+				"<leftFov>-25.005</leftFov>"+
+				"<rightFov>25.005</rightFov>"+
+				"<bottomFov>-19.23</bottomFov>"+
+				"<topFov>19.23</topFov>"+
+				"<near>57.908</near>"+
+			"</ViewVolume>"+
+			"<Point>"+
+				"<altitudeMode>relativeToGround</altitudeMode>"+
+				"<coordinates>-95.26548319399993,38.95938957100002,705.5462440393095</coordinates>"+
+				"</Point>"+
+			"</PhotoOverlay>"+
+			"</Document>"+
+			"</kml>";
+	
+		Document doc = DocumentHelper.parseText(elementXML);
+		Element element = doc
+			.getRootElement()
+			.element(KmlNames.KML_ELEMENT_DOCUMENT)
+			.element(KmlNames.KML_ELEMENT_PHOTO_OVERLAY);
 		
 		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
 		Element normalizedElement = meshParser.normalize(element);
@@ -1293,12 +1359,6 @@ public class KMLDOMTest {
 		meshParser.deleteElement(IdGenerator.newID());
 	}
 	
-	
-	// verify refresh references
-	@Test
-	public void shouldRefreshReferences(){
-		// TODO (JMT) test: refresh references
-	}
 	
 	//isValid(Element, Element)
 	@Test

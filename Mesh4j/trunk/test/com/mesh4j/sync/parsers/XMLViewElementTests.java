@@ -16,30 +16,30 @@ public class XMLViewElementTests {
 
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldNotSupportNullType(){
-		new XMLViewElement(null);
+		new XMLViewElement(null, true);
 	}
 	
 	@Test
 	public void shouldReturnName(){
-		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_FOLDER);
+		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_FOLDER, false);
 		Assert.assertEquals("Folder", view.getName());
 	}
 	
 	@Test
 	public void shouldReturnQName(){
-		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_FOLDER);
+		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_FOLDER, false);
 		Assert.assertEquals(KmlNames.KML_QNAME_FOLDER, view.getQName());
 	}
 
 	@Test
 	public void shouldNormalizeReturnNullBecauseElementIsNull(){
-		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_FOLDER);
+		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_FOLDER, false);
 		Assert.assertNull(view.normalize(null));
 	}
 	
 	@Test
 	public void shouldNormalizeReturnNullBecauseElementHasInvalidType(){
-		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_FOLDER);
+		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_FOLDER, false);
 		
 		Element element = DocumentHelper.createElement("FOO");
 		Assert.assertNull(view.normalize(element));
@@ -47,7 +47,7 @@ public class XMLViewElementTests {
 	
 	@Test
 	public void shouldNormalizeReturnsSameElementBecauseNotConfigurationWasDefined(){
-		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_FOLDER);
+		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_FOLDER, false);
 		
 		Element element = DocumentHelper.createElement("Folder");
 		Assert.assertSame(element, view.normalize(element));
@@ -55,7 +55,7 @@ public class XMLViewElementTests {
 
 	@Test
 	public void shoudNormalizeReturnEmptyElement() throws DocumentException{
-		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_FOLDER);
+		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_FOLDER, false);
 		view.addAttribute(DocumentHelper.createQName("fooAttribute", DocumentHelper.createNamespace("foo", "http:\\foo.org")));
 		view.addAttribute("myAttribute");
 		view.addElement(DocumentHelper.createQName("barAttribute", DocumentHelper.createNamespace("bar", "http:\\bar.org")));
@@ -91,7 +91,7 @@ public class XMLViewElementTests {
 	
 	@Test
 	public void shoudNormalize() throws DocumentException{
-		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_FOLDER);
+		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_FOLDER, false);
 		
 		QName attr1 = DocumentHelper.createQName("fooAttribute", DocumentHelper.createNamespace("foo", "http:\\foo.org"));
 		view.addAttribute(attr1);
@@ -157,7 +157,7 @@ public class XMLViewElementTests {
 	
 	@Test
 	public void shouldUpdateNotEffectBecauseElementIsNull(){
-		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_FOLDER);
+		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_FOLDER, false);
 		view.addElement("Bar");
 		
 		Element element = DocumentHelper.createElement("Folder");
@@ -166,7 +166,7 @@ public class XMLViewElementTests {
 	
 	@Test
 	public void shouldUpdateNotEffectBecauseElementSourceIsNull(){
-		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_FOLDER);
+		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_FOLDER, false);
 		view.addElement("Bar");
 		
 		Element element = DocumentHelper.createElement("Folder");
@@ -178,7 +178,7 @@ public class XMLViewElementTests {
 	
 	@Test
 	public void shouldUpdateNotEffectBecauseElementHasInvalidType(){
-		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_FOLDER);
+		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_FOLDER, false);
 		
 		Element element = DocumentHelper.createElement("Foo");
 		Element elementSource = DocumentHelper.createElement("Folder");
@@ -191,7 +191,7 @@ public class XMLViewElementTests {
 	
 	@Test
 	public void shouldUpdateNotEffectBecauseElementSourceHasInvalidType(){
-		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_FOLDER);
+		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_FOLDER, false);
 		
 		Element element = DocumentHelper.createElement("Folder");
 		Element elementSource = DocumentHelper.createElement("Foo");
@@ -204,7 +204,7 @@ public class XMLViewElementTests {
 	
 	@Test
 	public void shouldUpdateAllBecauseNotConfigurationWasDefined() throws DocumentException{
-		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_FOLDER);
+		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_FOLDER, false);
 		
 		String xml = "<kml><Folder><name>1</name></Folder></kml>";
 		Element root =  DocumentHelper.parseText(xml).getRootElement();
@@ -231,7 +231,7 @@ public class XMLViewElementTests {
 	@Test
 	public void shoudUpdateNoEffectBecauseNoElementsMatches() throws DocumentException{
 		
-		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_FOLDER);
+		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_FOLDER, false);
 		view.addAttribute(DocumentHelper.createQName("fooAttribute", DocumentHelper.createNamespace("foo", "http:\\foo.org")));
 		view.addAttribute("myAttribute");
 		view.addElement(DocumentHelper.createQName("barAttribute", DocumentHelper.createNamespace("bar", "http:\\bar.org")));
@@ -267,7 +267,7 @@ public class XMLViewElementTests {
 	
 	@Test
 	public void shoudUpdate() throws DocumentException{
-		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_FOLDER);
+		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_FOLDER, false);
 		
 		QName attr1 = DocumentHelper.createQName("fooAttribute", DocumentHelper.createNamespace("foo", "http:\\foo.org"));
 		view.addAttribute(attr1);
@@ -351,7 +351,7 @@ public class XMLViewElementTests {
 	
 	@Test 
 	public void shouldRefresh(){
-		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_FOLDER);
+		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_FOLDER, false);
 		
 		Element element = DocumentHelper.createElement("Folder");
 		Element result = view.refresh(null, element);		
@@ -369,11 +369,39 @@ public class XMLViewElementTests {
 		
 		Document doc = DocumentHelper.parseText(xml);
 		
-		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_FOLDER);
+		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_FOLDER, false);
 		List<Element> elements = view.getAllElements(doc);
 		
 		Assert.assertNotNull(elements);
 		Assert.assertEquals(0, elements.size());
+	}
+	
+	@Test
+	public void shouldGetAllSearchInDocumentRoot() throws DocumentException{
+		String xml = "<root><foo>1</foo><foo>2</foo><bar><foo>3</foo></bar></root>";
+		
+		Document doc = DocumentHelper.parseText(xml);
+		
+		QName qname = DocumentHelper.createQName("foo");
+		XMLViewElement view = new XMLViewElement(qname, true);
+		List<Element> elements = view.getAllElements(doc);
+		
+		Assert.assertNotNull(elements);
+		Assert.assertEquals(2, elements.size());
+	}
+
+	@Test
+	public void shouldGetAllSearchInAllDocument() throws DocumentException{
+		String xml = "<root><foo>1</foo><foo>2</foo><bar><foo>3</foo></bar></root>";
+		
+		Document doc = DocumentHelper.parseText(xml);
+		
+		QName qname = DocumentHelper.createQName("foo");
+		XMLViewElement view = new XMLViewElement(qname, false);
+		List<Element> elements = view.getAllElements(doc);
+		
+		Assert.assertNotNull(elements);
+		Assert.assertEquals(3, elements.size());
 	}
 	
 	@Test
@@ -382,7 +410,7 @@ public class XMLViewElementTests {
 		
 		Document doc = DocumentHelper.parseText(xml);
 		
-		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_PLACEMARK);
+		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_PLACEMARK, false);
 		List<Element> elements = view.getAllElements(doc);
 		
 		Assert.assertNotNull(elements);
@@ -395,7 +423,7 @@ public class XMLViewElementTests {
 		
 		Document doc = DocumentHelper.parseText(xml);
 		
-		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_PLACEMARK);
+		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_PLACEMARK, false);
 		List<Element> elements = view.getAllElements(doc);
 		
 		Assert.assertNotNull(elements);
@@ -408,7 +436,7 @@ public class XMLViewElementTests {
 		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Document><name>1</name></Document>";
 		Document doc = DocumentHelper.parseText(xml);
 		
-		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_PLACEMARK);
+		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_PLACEMARK, false);
 		view.delete(doc, null);
 		
 		Assert.assertNotNull(doc.getRootElement());
@@ -422,7 +450,7 @@ public class XMLViewElementTests {
 		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Document><name>1</name></Document>";
 		Document doc = DocumentHelper.parseText(xml);
 		
-		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_PLACEMARK);
+		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_PLACEMARK, false);
 		view.delete(doc, doc.getRootElement());
 		
 		Assert.assertNull(doc.getRootElement());
@@ -435,7 +463,7 @@ public class XMLViewElementTests {
 		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Document><name>1</name></Document>";
 		Document doc = DocumentHelper.parseText(xml);
 		
-		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_PLACEMARK);
+		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_PLACEMARK, false);
 		view.delete(doc, doc.getRootElement().element("name"));
 		
 		Assert.assertNotNull(doc.getRootElement());
@@ -448,7 +476,7 @@ public class XMLViewElementTests {
 		
 		Document doc = DocumentHelper.createDocument(DocumentHelper.createElement("KML"));
 		
-		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_PLACEMARK);
+		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_PLACEMARK, false);
 		
 		Assert.assertFalse(view.isValid(null, doc.getRootElement()));
 		Assert.assertFalse(view.isValid(doc, null));
@@ -460,7 +488,7 @@ public class XMLViewElementTests {
 		
 		Document doc = DocumentHelper.createDocument(DocumentHelper.createElement("KML"));
 		
-		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_PLACEMARK);
+		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_PLACEMARK, false);
 		
 		view.delete(doc, null);
 		Assert.assertNotNull(doc.getRootElement());
@@ -474,14 +502,14 @@ public class XMLViewElementTests {
 	
 	@Test
 	public void shouldAddFailsBecauseDocumentIsNull() throws DocumentException{
-		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_PLACEMARK);
+		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_PLACEMARK, false);
 		
 		Assert.assertNull(view.add(null, DocumentHelper.createElement("Placemark")));
 	}
 	
 	@Test
 	public void shouldAddFailsBecauseElementIsNull() throws DocumentException{
-		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_PLACEMARK);
+		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_PLACEMARK, false);
 		
 		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Document><name>1</name></Document>";
 		Document doc = DocumentHelper.parseText(xml);
@@ -492,7 +520,7 @@ public class XMLViewElementTests {
 	
 	@Test
 	public void shouldAddFailsBecauseElementIsNotNormalized() throws DocumentException{
-		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_PLACEMARK);
+		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_PLACEMARK, false);
 		
 		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Document><name>1</name></Document>";
 		Document doc = DocumentHelper.parseText(xml);
@@ -505,7 +533,7 @@ public class XMLViewElementTests {
 	
 	@Test
 	public void shouldAdd() throws DocumentException{
-		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_PLACEMARK);
+		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_PLACEMARK, false);
 		
 		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Document><name>1</name></Document>";
 		Document doc = DocumentHelper.parseText(xml);
@@ -522,7 +550,7 @@ public class XMLViewElementTests {
 	
 	@Test
 	public void shouldAddNormalizedElement() throws DocumentException{
-		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_PLACEMARK);
+		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_PLACEMARK, false);
 		view.addElement("name");
 		
 		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Document><name>1</name></Document>";

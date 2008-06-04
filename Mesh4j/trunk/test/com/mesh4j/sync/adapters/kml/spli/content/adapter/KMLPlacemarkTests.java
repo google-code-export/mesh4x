@@ -588,7 +588,7 @@ public class KMLPlacemarkTests {
 		Element newElement = DocumentHelper.parseText(xml).getRootElement().element("Document").element("Placemark");				
 		KMLContent content = new KMLContent(newElement, id);
 		
-		KMLContent normalizedContent = KMLContent.normalizeContent(content);
+		KMLContent normalizedContent = KMLContent.normalizeContent(content, KMLContentAdapter.XML_VIEW);
 		Assert.assertEquals(content, normalizedContent);
 		Assert.assertEquals(content.getId(), normalizedContent.getId());
 	}

@@ -1,6 +1,5 @@
 package com.mesh4j.sync.adapters.feed;
 
-import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.NAMESPACE;
 import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_HISTORY_BY;
 import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_HISTORY_SEQUENCE;
 import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_HISTORY_WHEN;
@@ -9,10 +8,10 @@ import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_SYNC
 import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_SYNC_NO_CONFLICTS;
 import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_SYNC_UPDATES;
 import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ELEMENT_AUTHOR;
-import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ELEMENT_CONFLICTS;
-import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ELEMENT_HISTORY;
-import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ELEMENT_SYNC;
-import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_PREFIX;
+import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ELEMENT_NAME;
+import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_QNAME_CONFLICTS;
+import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_QNAME_HISTORY;
+import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_QNAME_SYNC;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,8 +23,6 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.dom4j.Namespace;
-import org.dom4j.QName;
 import org.dom4j.io.XMLWriter;
 
 import com.mesh4j.sync.model.History;
@@ -91,12 +88,14 @@ public class FeedWriter {
 		if (lastUpdate != null && lastUpdate.getBy() != null)
 		{
 			Element author = itemElement.addElement(SX_ELEMENT_AUTHOR);
-			author.addText(lastUpdate.getBy());
+			Element name = author.addElement(SX_ELEMENT_NAME);
+			name.setText(lastUpdate.getBy());
 		}
 		else
 		{
 			Element author = itemElement.addElement(SX_ELEMENT_AUTHOR);
-			author.addText(this.getAuthenticatedUser());
+			Element name = author.addElement(SX_ELEMENT_NAME);
+			name.setText(this.getAuthenticatedUser());
 		}
 		
 		if(item.getSync() != null){
@@ -119,9 +118,7 @@ public class FeedWriter {
 
 	public void writeSync(Element rootElement, Sync sync) {		
 		// <sx:sync>
-		Namespace ns = DocumentHelper.createNamespace(SX_PREFIX, NAMESPACE);
-		QName syncQName = DocumentHelper.createQName(SX_ELEMENT_SYNC, ns);
-		Element syncElement = rootElement.addElement(syncQName);
+		Element syncElement = rootElement.addElement(SX_QNAME_SYNC);
 		syncElement.addAttribute(SX_ATTRIBUTE_SYNC_ID, sync.getId());
 		syncElement.addAttribute(SX_ATTRIBUTE_SYNC_UPDATES, String.valueOf(sync.getUpdates()));
 		syncElement.addAttribute(SX_ATTRIBUTE_SYNC_DELETED, String.valueOf(sync.isDeleted()));
@@ -136,7 +133,7 @@ public class FeedWriter {
 		}
 		
 		if (sync.getConflicts().size() > 0) {
-			Element conflictsElement = syncElement.addElement(SX_ELEMENT_CONFLICTS, SX_PREFIX);
+			Element conflictsElement = syncElement.addElement(SX_QNAME_CONFLICTS);
 			for (Item item : sync.getConflicts()) {
 				write(conflictsElement, item);
 			}
@@ -145,9 +142,7 @@ public class FeedWriter {
 		
 	public void writeHistory(Element rootElement, History history)
 	{
-		Namespace ns = DocumentHelper.createNamespace(SX_PREFIX, NAMESPACE);
-		QName syncQName = DocumentHelper.createQName(SX_ELEMENT_HISTORY, ns);
-		Element historyElement = rootElement.addElement(syncQName);
+		Element historyElement = rootElement.addElement(SX_QNAME_HISTORY);
 		historyElement.addAttribute(SX_ATTRIBUTE_HISTORY_SEQUENCE, String.valueOf(history.getSequence()));
 		if (history.getWhen() != null){
 			historyElement.addAttribute(SX_ATTRIBUTE_HISTORY_WHEN, this.parseDate(history.getWhen()));

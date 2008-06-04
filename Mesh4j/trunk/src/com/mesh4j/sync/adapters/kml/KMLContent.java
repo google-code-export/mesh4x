@@ -7,6 +7,9 @@ import com.mesh4j.sync.adapters.dom.MeshNames;
 import com.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import com.mesh4j.sync.model.Content;
 import com.mesh4j.sync.model.IContent;
+import com.mesh4j.sync.parsers.IXMLView;
+import com.mesh4j.sync.parsers.IXMLViewElement;
+import com.mesh4j.sync.validations.Guard;
 
 public class KMLContent extends Content{
 
@@ -18,35 +21,16 @@ public class KMLContent extends Content{
 		return new KMLContent(this.getPayload(), this.getId());
 	}
 		
-	public static KMLContent normalizeContent(IContent content){
+	public static KMLContent normalizeContent(IContent content, IXMLView xmlView){
+		Guard.argumentNotNull(content, "content");
+		Guard.argumentNotNull(xmlView, "xmlView");
+		
 		if(content instanceof KMLContent){
 			KMLContent entity = (KMLContent)content;
 			entity.refreshVersion();
 			return entity;
 		}else{
-			Element kmlElement = null;
-			String elementName = content.getPayload().getName();
-			if(KmlNames.KML_ELEMENT_PLACEMARK.equals(elementName)
-					|| KmlNames.KML_ELEMENT_STYLE.equals(elementName)
-					|| KmlNames.KML_ELEMENT_STYLE_MAP.equals(elementName)
-					|| KmlNames.KML_ELEMENT_FOLDER.equals(elementName)
-					|| MeshNames.MESH_QNAME_HIERARCHY.getName().equals(elementName)){
-				kmlElement = content.getPayload();
-			}else{
-				kmlElement = content.getPayload().element(KmlNames.KML_ELEMENT_PLACEMARK);
-				if(kmlElement == null){
-					kmlElement = content.getPayload().element(KmlNames.KML_ELEMENT_STYLE);
-					if(kmlElement == null){
-						kmlElement = content.getPayload().element(KmlNames.KML_ELEMENT_STYLE_MAP);
-						if(kmlElement == null){
-							kmlElement = content.getPayload().element(KmlNames.KML_ELEMENT_FOLDER);
-							if(kmlElement == null){
-								kmlElement = content.getPayload().element(MeshNames.MESH_QNAME_HIERARCHY);
-							}
-						}
-					}
-				}
-			}
+			Element kmlElement = getElement(content, xmlView);
 			if(kmlElement == null){
 				return null;
 			}else{
@@ -58,6 +42,28 @@ public class KMLContent extends Content{
 				}
 			}
 		}
+	}
+
+	private static Element getElement(IContent content, IXMLView xmlView) {
+		
+		Guard.argumentNotNull(xmlView, "xmlView");
+		
+		Element payload = content.getPayload();
+		String elementName = payload.getName();
+		
+		for (IXMLViewElement viewElement : xmlView.getXMLViewElements()){
+			if(viewElement.getName().equals(elementName)){
+				return payload;
+			}
+		}
+		
+		for (IXMLViewElement viewElement : xmlView.getXMLViewElements()){
+			Element element = payload.element(viewElement.getName());
+			if(element != null){
+				return element;
+			}
+		}
+		return null;
 	}
 	
 	public void addToFeedPayload(Element rootPayload){

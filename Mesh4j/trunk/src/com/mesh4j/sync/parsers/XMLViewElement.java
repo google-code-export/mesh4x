@@ -21,12 +21,14 @@ public class XMLViewElement implements IXMLViewElement {
 	private ArrayList<String> attributeNames = new ArrayList<String>();
 	private ArrayList<QName> attributeQNames = new ArrayList<QName>();
 	private QName qname;
+	private boolean searchOnlyRoot = true;
 	
 	// BUSINESS METHODS
 	
-	public XMLViewElement(QName qname) {
+	public XMLViewElement(QName qname, boolean searchOnlyRoot) {
 		Guard.argumentNotNull(qname, "qname");
 		this.qname = qname;
+		this.searchOnlyRoot = searchOnlyRoot;
 	}
 
 	public void addElement(String name) {
@@ -186,12 +188,12 @@ public class XMLViewElement implements IXMLViewElement {
 			return null;
 		}
 		
-		Element root = this.getRootElement(document, element);
+		Element root = this.getRootElement(document);
 		root.add(normalizedElement);
 		return normalizedElement;
 	}
 
-	protected Element getRootElement(Document document, Element element) {
+	protected Element getRootElement(Document document) {
 		return document.getRootElement();
 	}
 
@@ -220,8 +222,23 @@ public class XMLViewElement implements IXMLViewElement {
 		HashMap<String, String> namespaces = new HashMap<String, String>();
 		namespaces.put(this.getQName().getNamespacePrefix(), this.getQName().getNamespaceURI());
 		
-		String xpathExp = "//"+this.getQName().getNamespacePrefix()+":"+this.getQName().getName();
-		return XMLHelper.selectElements(xpathExp, document.getRootElement(), namespaces);
+		StringBuffer sb = new StringBuffer();
+		if(!this.searchOnlyRoot()){
+			sb.append("//");
+		}
+		String prefix = this.getQName().getNamespacePrefix();
+		if(prefix != null && prefix.trim().length() >0){
+			sb.append(this.getQName().getNamespacePrefix());
+			sb.append(":");
+		}
+		sb.append(this.getQName().getName());
+		
+		String xpathExp = sb.toString();
+		return XMLHelper.selectElements(xpathExp, getRootElement(document), namespaces);
+	}
+
+	protected boolean searchOnlyRoot() {
+		return searchOnlyRoot;
 	}
 
 	@Override

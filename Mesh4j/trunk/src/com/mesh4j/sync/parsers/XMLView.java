@@ -122,4 +122,10 @@ public class XMLView implements IXMLView{
 	public List<IXMLViewElement> getXMLViewElements() {
 		return this.xmlViews;
 	}
+
+	public void addXMLViewElement(IXMLViewElement xmlElementView) {
+		if(xmlElementView != null){
+			this.xmlViews.add(xmlElementView);
+		}		
+	}
 }

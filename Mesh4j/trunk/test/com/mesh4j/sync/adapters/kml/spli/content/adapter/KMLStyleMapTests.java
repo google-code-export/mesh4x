@@ -440,7 +440,7 @@ public class KMLStyleMapTests {
 		Element newElement = DocumentHelper.parseText(xml).getRootElement().element("Document").element("StyleMap");				
 		KMLContent content = new KMLContent(newElement, id);
 		
-		KMLContent normalizedContent = KMLContent.normalizeContent(content);
+		KMLContent normalizedContent = KMLContent.normalizeContent(content, KMLContentAdapter.XML_VIEW);
 		Assert.assertEquals(content, normalizedContent);
 	}
 }

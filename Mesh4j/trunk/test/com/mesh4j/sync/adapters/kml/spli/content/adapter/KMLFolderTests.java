@@ -427,7 +427,7 @@ public class KMLFolderTests {
 		Element newFolderElement = DocumentHelper.parseText(newFolderXML).getRootElement().element("Document").element("Folder");				
 		KMLContent content = new KMLContent(newFolderElement, id);
 		
-		KMLContent normalizedContent = KMLContent.normalizeContent(content);
+		KMLContent normalizedContent = KMLContent.normalizeContent(content, KMLContentAdapter.XML_VIEW);
 		Assert.assertEquals(content, normalizedContent);
 	}
 }

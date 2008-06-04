@@ -3,18 +3,18 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" output="testbin" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/dom4j/dom4j-1.6.1.jar"/>
+	<classpathentry kind="lib" path="lib/dom4j/dom4j-1.6.1.jar" sourcepath="D:/Marcelo/java_src/dom4j-1.6.1/src"/>
 	<classpathentry kind="lib" path="lib/hibernate/hibernate3.jar" sourcepath="lib/hibernate/hibernate-3.2.6.ga_src.zip"/>
 	<classpathentry kind="lib" path="lib/jakarta-commons/commons-collections-2.1.1.jar"/>
 	<classpathentry kind="lib" path="lib/jakarta-commons/commons-logging-1.0.4.jar"/>
 	<classpathentry kind="lib" path="lib/log4j/log4j-1.2.11.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="lib/mySql/mysql-connector-java-5.1.6-bin.jar"/>
 	<classpathentry kind="lib" path="lib/antlr/antlr-2.7.6.jar"/>
 	<classpathentry kind="lib" path="lib/asm/asm.jar"/>
 	<classpathentry kind="lib" path="lib/ehcache/ehcache-1.2.3.jar"/>
 	<classpathentry kind="lib" path="lib/j2ee/jta.jar"/>
-	<classpathentry kind="lib" path="lib/jaxen/jaxen-1.1-beta-7.jar"/>
+	<classpathentry kind="lib" path="lib/jaxen/jaxen-1.1-beta-7.jar" sourcepath="D:/Marcelo/java_src/dom4j-1.6.1/src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="etc"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -9,9 +9,9 @@ import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_ITEM
 import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_SYNC_DELETED;
 import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_SYNC_ID;
 import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_SYNC_NO_CONFLICTS;
-import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ELEMENT_CONFLICTS;
-import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ELEMENT_HISTORY;
-import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ELEMENT_SYNC;
+import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_QNAME_CONFLICTS;
+import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_QNAME_HISTORY;
+import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_QNAME_SYNC;
 
 import java.io.File;
 import java.io.InputStream;
@@ -108,9 +108,9 @@ public class FeedReader {
 		
 		List<Element> elements = itemElement.elements();
 		for (Element element : elements) {
-			if(SX_ELEMENT_SYNC.equals(element.getName())){
+			if(SX_QNAME_SYNC.getName().equals(element.getName())){
 				sync = readSync(element);
-		} else {
+			} else {
 				payload.add(element.detach());
 			}
 		}
@@ -144,7 +144,7 @@ public class FeedReader {
 		List<Element> elements = syncElement.elements();
 		ArrayList<Element> historyElements = new ArrayList<Element>();
 		for (Element historyElement : elements) {
-			if(SX_ELEMENT_HISTORY.equals(historyElement.getName())){
+			if(SX_QNAME_HISTORY.getName().equals(historyElement.getName())){
 				historyElements.add(historyElement);
 			} 
 		}
@@ -159,7 +159,7 @@ public class FeedReader {
 		
 		
 		
-		Element conflicts = syncElement.element(SX_ELEMENT_CONFLICTS);
+		Element conflicts = syncElement.element(SX_QNAME_CONFLICTS);
 		if(conflicts != null){
 			List<Element> conflicItems = conflicts.elements();
 			for (Element itemElement : conflicItems) {

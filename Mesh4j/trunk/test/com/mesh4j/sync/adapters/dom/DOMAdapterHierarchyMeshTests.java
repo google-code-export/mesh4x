@@ -21,14 +21,6 @@ import com.mesh4j.sync.utils.XMLHelper;
 
 public class DOMAdapterHierarchyMeshTests {
 
-	// TODO (jmt) tests
-//	public void shouldUpdateNonExistingItem(){
-//	public void shouldAddExistingItem(){
-//	public void update(){
-//	public void remove(){
-//	public void refreshDeletedElement(){
-	
-	
 	@Test
 	public void shouldAddHierarchyOverRoot() throws DocumentException{
 		String localXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"

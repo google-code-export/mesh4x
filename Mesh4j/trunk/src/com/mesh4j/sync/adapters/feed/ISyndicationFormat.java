@@ -35,15 +35,21 @@ public interface ISyndicationFormat {
 
 	public static final Namespace SX_NS = DocumentHelper.createNamespace(SX_PREFIX, NAMESPACE);
 
-	public static final String SX_ELEMENT_SHARING = "sharing";
-	public static final String SX_ELEMENT_RELATED = "related";
-	public static final String SX_ELEMENT_SYNC = "sync";
-	public static final String SX_ELEMENT_HISTORY = "history";
-	public static final String SX_ELEMENT_CONFLICTS = "conflicts";
+//	public static final String SX_ELEMENT_SHARING = "sharing";
+//	public static final String SX_ELEMENT_RELATED = "related";
+//	public static final String SX_ELEMENT_SYNC = "sync";
+//	public static final String SX_ELEMENT_HISTORY = "history";
+//	public static final String SX_ELEMENT_CONFLICTS = "conflicts";
 	
 	public static final String SX_ELEMENT_AUTHOR = "author";
+	public static final String SX_ELEMENT_NAME = "name";
+
+	public static final QName SX_QNAME_SYNC = DocumentHelper.createQName("sync", SX_NS);
+	public static final QName SX_QNAME_SHARING = DocumentHelper.createQName("sharing", SX_NS);
+	public static final QName SX_QNAME_RELATED = DocumentHelper.createQName("related", SX_NS);
+	public static final QName SX_QNAME_HISTORY = DocumentHelper.createQName("history", SX_NS);
+	public static final QName SX_QNAME_CONFLICTS = DocumentHelper.createQName("conflicts", SX_NS);
 	
-	public static final QName SX_QNAME_SYNC = DocumentHelper.createQName(SX_ELEMENT_SYNC, SX_NS);
 
 	// sx:sharing
 	public static final String SX_ATTRIBUTE_SHARING_SINCE = "since";

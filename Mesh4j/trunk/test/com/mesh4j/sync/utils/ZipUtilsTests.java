@@ -2,6 +2,8 @@ package com.mesh4j.sync.utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -198,6 +200,58 @@ public class ZipUtilsTests {
 		docKmlFromKmz.normalize();
 		
 		Assert.assertEquals(docKml.asXML(), docKmlFromKmz.asXML());
+
+	}
+	
+	@Test
+	public void shouldLoadKMZ() throws IOException{
+		File file = new File(this.getClass().getResource("kmzExample.kmz").getFile());
+		Map<String, byte[]> entries = ZipUtils.getEntries(file);
+		
+		Assert.assertNotNull(entries);
+		Assert.assertEquals(3, entries.size());
+		
+		byte[] file1 = TestHelper.readFileBytes(this.getClass().getResource("kmzExample_doc.kml").getFile());
+		byte[] file2 = TestHelper.readFileBytes(this.getClass().getResource("kmzExample_star.jpg").getFile());
+		byte[] file3 = TestHelper.readFileBytes(this.getClass().getResource("kmzExample_camera_mode.png").getFile());
+		
+		byte[] fileZip1 = entries.get("doc.kml");
+		byte[] fileZip2 = entries.get("files/star.jpg");
+		byte[] fileZip3 = entries.get("files/camera_mode.png");
+
+		Assert.assertArrayEquals(file1, fileZip1);
+		Assert.assertArrayEquals(file2, fileZip2);
+		Assert.assertArrayEquals(file3, fileZip3);
+	}
+	
+	@Test
+	public void shouldWriteKMZ() throws IOException{
+		File file = new File(TestHelper.fileName("kmzExample.kmz"));
+		
+		Map<String, byte[]> entries = new HashMap<String, byte[]>();
+		byte[] file1 = TestHelper.readFileBytes(this.getClass().getResource("kmzExample_doc.kml").getFile());
+		byte[] file2 = TestHelper.readFileBytes(this.getClass().getResource("kmzExample_star.jpg").getFile());
+		byte[] file3 = TestHelper.readFileBytes(this.getClass().getResource("kmzExample_camera_mode.png").getFile());
+		
+		entries.put("doc.kml", file1);
+		entries.put("files/star.jpg", file2);
+		entries.put("files/camera_mode.png", file3);
+
+		ZipUtils.write(file, entries);
+		
+
+		Map<String, byte[]> loadedEntries = ZipUtils.getEntries(file);
+		
+		Assert.assertNotNull(loadedEntries);
+		Assert.assertEquals(3, loadedEntries.size());
+		
+		byte[] fileZip1 = loadedEntries.get("doc.kml");
+		byte[] fileZip2 = loadedEntries.get("files/star.jpg");
+		byte[] fileZip3 = loadedEntries.get("files/camera_mode.png");
+
+		Assert.assertArrayEquals(file1, fileZip1);
+		Assert.assertArrayEquals(file2, fileZip2);
+		Assert.assertArrayEquals(file3, fileZip3);
 
 	}
 }

@@ -23,8 +23,8 @@ public class XMLViewTests {
 	
 	@Test
 	public void shouldGetViewElements(){
-		IXMLViewElement view1 = new XMLViewElement(KmlNames.KML_QNAME_PLACEMARK);
-		IXMLViewElement view2 = new XMLViewElement(KmlNames.KML_QNAME_FOLDER);
+		IXMLViewElement view1 = new XMLViewElement(KmlNames.KML_QNAME_PLACEMARK, false);
+		IXMLViewElement view2 = new XMLViewElement(KmlNames.KML_QNAME_FOLDER, false);
 		
 		XMLView view = new XMLView(view1, view2);
 		List<IXMLViewElement> viewElements = view.getXMLViewElements();
@@ -37,8 +37,8 @@ public class XMLViewTests {
 	
 	@Test
 	public void shouldGetNamespaces(){
-		IXMLViewElement view1 = new XMLViewElement(KmlNames.KML_QNAME_PLACEMARK);
-		IXMLViewElement view2 = new XMLViewElement(MeshNames.MESH_QNAME_HIERARCHY);
+		IXMLViewElement view1 = new XMLViewElement(KmlNames.KML_QNAME_PLACEMARK, false);
+		IXMLViewElement view2 = new XMLViewElement(MeshNames.MESH_QNAME_HIERARCHY, false);
 		
 		XMLView view = new XMLView(view1, view2);
 		Map<String, String> ns = view.getNameSpaces();

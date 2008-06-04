@@ -23,4 +23,8 @@ public interface MeshNames {
 	public static QName MESH_QNAME_HIERARCHY =  DocumentHelper.createQName("hierarchy", MESH_NS);
 	public static final QName MESH_QNAME_PARENT_ID = DocumentHelper.createQName("parentId", MESH_NS);
 	public static final QName MESH_QNAME_CHILD_ID = DocumentHelper.createQName("childId", MESH_NS);
+
+	public static QName MESH_QNAME_FILE =  DocumentHelper.createQName("file", MESH_NS);
+	public static final QName MESH_QNAME_FILE_ID = DocumentHelper.createQName("fileId", MESH_NS);
+	public static final QName MESH_QNAME_FILE_CONTENT = DocumentHelper.createQName("fileContent", MESH_NS);
 }

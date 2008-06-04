@@ -1,7 +1,9 @@
-package com.mesh4j.sync.adapters.kml;
+package com.mesh4j.sync.adapters.dom.parsers;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.dom4j.Attribute;
 import org.dom4j.Document;
@@ -9,6 +11,7 @@ import org.dom4j.Element;
 import org.dom4j.QName;
 
 import com.mesh4j.sync.adapters.SyncInfo;
+import com.mesh4j.sync.adapters.dom.IMeshDOM;
 import com.mesh4j.sync.adapters.dom.MeshNames;
 import com.mesh4j.sync.model.IContent;
 import com.mesh4j.sync.model.Sync;
@@ -16,10 +19,10 @@ import com.mesh4j.sync.parsers.IXMLViewElement;
 import com.mesh4j.sync.utils.XMLHelper;
 import com.mesh4j.sync.validations.Guard;
 
-public class HierarchyXMLViewElement implements IXMLViewElement {
+public class HierarchyXMLViewElement implements IXMLViewElement, IDOMRequied {
 
 	// MODEL VARIABLES
-	private KMLDOM kmlDOM;
+	private IMeshDOM dom;
 	
 	// BUSINESS METHODS
 	
@@ -28,13 +31,13 @@ public class HierarchyXMLViewElement implements IXMLViewElement {
 	}
 
 	@Override
-	public Element add(Document document, Element element) {
+	public Element add(Document document, Element newElement) {
 		
-		if(document == null || element == null){
+		if(document == null || newElement == null){
 			return null;
 		}
 		
-		Element normalizedElement = this.normalize(element);
+		Element normalizedElement = this.normalize(newElement);
 		if(normalizedElement == null){
 			return null;
 		}
@@ -42,10 +45,10 @@ public class HierarchyXMLViewElement implements IXMLViewElement {
 		String parentId = normalizedElement.attributeValue(MeshNames.MESH_QNAME_PARENT_ID);
 		String childId = normalizedElement.attributeValue(MeshNames.MESH_QNAME_CHILD_ID);
 		
-		Element defaultRoot = getDocumentElement(document);
+		Element defaultRoot = getContentRepoElement(document);
 		updateParentChildRelationship(defaultRoot, parentId, childId);
 
-		Element syncRepo = getRootElement(document, element);
+		Element syncRepo = getSyncRepoElement(document);
 		syncRepo.add(normalizedElement);
 		return normalizedElement;
 	}
@@ -66,12 +69,14 @@ public class HierarchyXMLViewElement implements IXMLViewElement {
 		}
 	}
 
-	protected Element getRootElement(Document document, Element element) {
-		return getDocumentElement(document).element(KmlNames.KML_ELEMENT_EXTENDED_DATA);
+	protected Element getContentRepoElement(Document document) {
+		Guard.argumentNotNull(this.dom, "dom");
+		return this.dom.getContentRepository(document);
 	}
 	
-	protected static Element getDocumentElement(Document document) {
-		return document.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT);
+	protected Element getSyncRepoElement(Document document) {
+		Guard.argumentNotNull(this.dom, "dom");
+		return this.dom.getSyncRepository(document);
 	}
 
 	@Override
@@ -99,7 +104,7 @@ public class HierarchyXMLViewElement implements IXMLViewElement {
 		
 		String parentId = newElement.attributeValue(MeshNames.MESH_QNAME_PARENT_ID);
 		String childId = newElement.attributeValue(MeshNames.MESH_QNAME_CHILD_ID);
-		Element defaultRoot = getDocumentElement(document);
+		Element defaultRoot = getContentRepoElement(document);
 		
 		updateParentChildRelationship(defaultRoot, parentId, childId);
 		refreshHierarchyAttributes(currentElement, parentId, childId);
@@ -137,10 +142,6 @@ public class HierarchyXMLViewElement implements IXMLViewElement {
 		if(childID == null){
 			return null;
 		}
-//		Element rootElement = getDocumentElement(document).element(KmlNames.KML_ELEMENT_EXTENDED_DATA);
-//		if(rootElement == null){
-//			return null;
-//		}
 		
 		Element hierarchy = getHierarchyElementByChild(document, childID);
 		if(hierarchy == null){
@@ -153,13 +154,13 @@ public class HierarchyXMLViewElement implements IXMLViewElement {
 		if(document == null || id == null){
 			return null;
 		} else {
-			Element element = XMLHelper.selectSingleNode("//*[@mesh4x:childId='"+id+"']", document.getRootElement(), KMLViewElement.SEARCH_NAMESPACES);
+			Element element = XMLHelper.selectSingleNode("//*[@mesh4x:childId='"+id+"']", document.getRootElement(), getNamespacesToSearch(document.getRootElement()));
 			return element;
 		}
 	}
 	
-	private static Element getElementByMeshId(Element rootElement, String id) {
-		Element element = XMLHelper.selectSingleNode("//*[@xml:id='"+id+"']", rootElement, KMLViewElement.SEARCH_NAMESPACES);
+	private Element getElementByMeshId(Element rootElement, String id) {
+		Element element = XMLHelper.selectSingleNode("//*[@xml:id='"+id+"']", rootElement, getNamespacesToSearch(rootElement));
 		return element;
 	}
 	
@@ -182,7 +183,18 @@ public class HierarchyXMLViewElement implements IXMLViewElement {
 
 	@Override
 	public List<Element> getAllElements(Document document) {
-		return XMLHelper.selectElements("//mesh4x:hierarchy", document.getRootElement(), KMLViewElement.SEARCH_NAMESPACES);
+		return XMLHelper.selectElements("//mesh4x:hierarchy", document.getRootElement(), getNamespacesToSearch(document.getRootElement()));
+	}
+
+	private static Map<String, String> getNamespacesToSearch(Element elementRoot) {
+		Map<String, String> ns = new HashMap<String, String>();
+		ns.put(MeshNames.XML_PREFIX, MeshNames.XML_URI);
+		ns.put(MeshNames.MESH_PREFIX, MeshNames.MESH_URI);
+		
+		if(elementRoot.getNamespacePrefix() != null){
+			ns.put(elementRoot.getNamespacePrefix(), elementRoot.getNamespaceURI());
+		}		
+		return ns;
 	}
 
 	@Override
@@ -201,7 +213,7 @@ public class HierarchyXMLViewElement implements IXMLViewElement {
 		}
 	
 		
-		Element rootElement = getDocumentElement(document);
+		Element rootElement = getContentRepoElement(document);
 		String childID = element.attributeValue(MeshNames.MESH_QNAME_CHILD_ID);
 		Element child = getElementByMeshId(rootElement, childID);
 		if(child == null){
@@ -227,21 +239,21 @@ public class HierarchyXMLViewElement implements IXMLViewElement {
 	}
 
 	private void updateSync(Element element) {
-		Guard.argumentNotNull(this.kmlDOM, "KMLDOM");
+		Guard.argumentNotNull(this.dom, "dom");
 		
 		String hierarchySyncID = element.attributeValue(MeshNames.MESH_QNAME_SYNC_ID);
-		IContent content = new KMLContent(element, hierarchySyncID);
-		SyncInfo hierarchySyncInfo = this.kmlDOM.getSync(hierarchySyncID);
+		IContent content = dom.createContent(element, hierarchySyncID);
+		SyncInfo hierarchySyncInfo = this.dom.getSync(hierarchySyncID);
 		if(hierarchySyncInfo == null){
 			hierarchySyncInfo = new SyncInfo(
-					new Sync(hierarchySyncID, this.kmlDOM.getIdentityProvider().getAuthenticatedUser(), new Date(), false), 
-					this.kmlDOM.getType(), 
+					new Sync(hierarchySyncID, this.dom.getIdentityProvider().getAuthenticatedUser(), new Date(), false), 
+					this.dom.getType(), 
 					hierarchySyncID, 
 					content.getVersion());
 		} else { 
-			hierarchySyncInfo.updateSyncIfChanged(content, this.kmlDOM.getIdentityProvider());
+			hierarchySyncInfo.updateSyncIfChanged(content, this.dom.getIdentityProvider());
 		}
-		this.kmlDOM.updateSync(hierarchySyncInfo);
+		this.dom.updateSync(hierarchySyncInfo);
 	}
 	
 	@Override
@@ -250,14 +262,9 @@ public class HierarchyXMLViewElement implements IXMLViewElement {
 			return false;
 		}
 		
-//		String syncID = element.attributeValue(MeshNames.MESH_QNAME_SYNC_ID);
-//		String parentID = element.getParent().attributeValue(MeshNames.MESH_QNAME_SYNC_ID);		
-	//	Element syncRepository = getRootElement(document, element);
-	//	Element hierarchy = getHierarchyElementByChild(document, syncID);
-		
 		String hierarchyParentID = hierarchy.attributeValue(MeshNames.MESH_QNAME_PARENT_ID);
 		String childID = hierarchy.attributeValue(MeshNames.MESH_QNAME_CHILD_ID);
-		Element child = getElementByMeshId(getRootElement(document, hierarchy), childID);
+		Element child = getElementByMeshId(getContentRepoElement(document), childID);
 		if(child == null){
 			return false;
 		}
@@ -271,7 +278,7 @@ public class HierarchyXMLViewElement implements IXMLViewElement {
 	}
  
 	public void createHierarchyIfAbsent(Document document, Element elementChild) {
-		Guard.argumentNotNull(this.kmlDOM, "KMLDOM");
+		Guard.argumentNotNull(this.dom, "dom");
 		if(document == null || elementChild == null){
 			return;
 		}
@@ -281,11 +288,11 @@ public class HierarchyXMLViewElement implements IXMLViewElement {
 			return;
 		}
 		
-		Element rootElement = getRootElement(document, elementChild);
 		Element hierarchyElement = getHierarchyElementByChild(document, childID);
 		if(hierarchyElement == null){
+			Element rootElement = getSyncRepoElement(document);
 			hierarchyElement = rootElement.addElement(MeshNames.MESH_QNAME_HIERARCHY);
-			hierarchyElement.addAttribute(MeshNames.MESH_QNAME_SYNC_ID, this.kmlDOM.newID());
+			hierarchyElement.addAttribute(MeshNames.MESH_QNAME_SYNC_ID, this.dom.newID());
 			String parentID = elementChild.getParent().attributeValue(MeshNames.MESH_QNAME_SYNC_ID);
 			
 			refreshHierarchyAttributes(hierarchyElement, parentID, childID);
@@ -293,13 +300,13 @@ public class HierarchyXMLViewElement implements IXMLViewElement {
 		}		
 	}
 
-	public void setKmlDOM(KMLDOM kmlDOM) {
-		this.kmlDOM = kmlDOM;
+	public void setDOM(IMeshDOM dom) {
+		this.dom = dom;
 	}
 	
-	public KMLDOM getKmlDOM() {
-		return this.kmlDOM;
-	}	
+	public IMeshDOM getDOM() {
+		return this.dom;
+	}
 }
 
 

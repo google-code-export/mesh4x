@@ -7,7 +7,7 @@
 				<name>jdoe45415</name>
 				<pass>a31405d272b94e5d12e9a52a665d3bfe</pass>
 			</user>
-			<author xmlns="jmt"/>
+			<author><name>jmt</name></author>
 			<sx:sync id="d67f67b9-e2b8-41a7-b18e-f79bc5b8959f" updates="1" deleted="false" noConflicts="false">
 				<sx:history sequence="1" when="Tue, 29 Apr 2008 18:07:12 GMT" by="jmt"/>
 			</sx:sync>

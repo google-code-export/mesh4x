@@ -2,6 +2,7 @@ package com.mesh4j.sync.model;
 
 import org.dom4j.Element;
 
+import com.mesh4j.sync.utils.XMLHelper;
 import com.mesh4j.sync.validations.Guard;
 
 public abstract class Content implements IContent{
@@ -45,7 +46,8 @@ public abstract class Content implements IContent{
 		return this.id.hashCode() + this.version + payloadXML.hashCode();
     }
 	public void refreshVersion() {
-		this.version = this.getPayload().asXML().hashCode();		
+		String xml = XMLHelper.canonicalizeXML(this.getPayload());
+		this.version = xml.hashCode();		
 	}
 
 	public String getId() {
