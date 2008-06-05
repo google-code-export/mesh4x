@@ -32,11 +32,11 @@ public class TestHelper {
 	private static Random ID_GENERATOR = new Random();
 
 	public synchronized static String newID() {
-		int currnetID = random();
-		while (LAST_ID == currnetID) {
-			currnetID = random();
+		int currentID = random();
+		while (LAST_ID == currentID) {
+			currentID = random();
 		}
-		LAST_ID = currnetID;
+		LAST_ID = currentID;
 		return String.valueOf(LAST_ID);
 	}
 
