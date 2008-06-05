@@ -1,6 +1,7 @@
 package com.mesh4j.sync.adapters.kml;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -251,7 +252,7 @@ public class KMLAdapterTests {
 			+ "</kml>";
 
 	@Test
-	public void shouldCreateFileIfDoesNotExist() throws DocumentException {
+	public void shouldCreateFileIfDoesNotExist() throws DocumentException, IOException {
 		String fileName = TestHelper.fileName(IdGenerator.newID() + ".kml");
 		DOMAdapter kmlAdapter = makeNewDOMAdapter(fileName);
 		kmlAdapter.beginSync();
@@ -264,12 +265,14 @@ public class KMLAdapterTests {
 		Document document = reader.read(file);
 		Assert.assertNotNull(document);
 
-		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 				+ "<kml xmlns=\"http://earth.google.com/kml/2.2\">"
 				+ "<Document>" + "<name>" + file.getName() + "</name>"
 				+ "<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\"></ExtendedData>" + "</Document>" + "</kml>";
-
-		Assert.assertEquals(xml, document.asXML());
+		Document doc = DocumentHelper.parseText(xml);
+		Assert.assertEquals(
+			XMLHelper.canonicalizeXML(doc), 
+			XMLHelper.canonicalizeXML(document));
 	}
 
 	private DOMAdapter makeNewDOMAdapter(String fileName) {

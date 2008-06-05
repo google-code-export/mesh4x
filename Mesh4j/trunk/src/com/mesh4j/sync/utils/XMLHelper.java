@@ -3,6 +3,7 @@ package com.mesh4j.sync.utils;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 import org.jaxen.JaxenException;
@@ -26,10 +28,38 @@ public class XMLHelper {
 	
 	private final static Log Logger = LogFactory.getLog(XMLHelper.class);
 
+	public static String formatXML(Element element, OutputFormat format) throws IOException{
+		
+		element.normalize();
+		
+		StringWriter sw = new StringWriter();
+		
+        XMLWriter writer = new XMLWriter(sw, format);
+        writer.write( element );
+		
+        sw.flush();
+		String formatXML = sw.toString();
+		return formatXML;
+	}
+	
+	public static String formatXML(Document document, OutputFormat format) throws IOException{
+		document.normalize();
+		
+		StringWriter sw = new StringWriter();
+		
+        XMLWriter writer = new XMLWriter(sw, format);
+        writer.write( document );
+		
+        sw.flush();
+		String formatXML = sw.toString();
+		return formatXML;
+	}
+	
 	public static void write(Document document, File file) {
 		XMLWriter writer = null;
 		try {
-			writer = new XMLWriter(new FileWriter(file));
+			OutputFormat format = OutputFormat.createPrettyPrint();
+			writer = new XMLWriter(new FileWriter(file), format);
 			writer.write(document);
 		} catch (IOException e) {
 			Logger.error(e.getMessage(), e);
@@ -88,8 +118,22 @@ public class XMLHelper {
 	
 	public static String canonicalizeXML(Element element){
 		try {
+			String xml = formatXML(element, OutputFormat.createCompactFormat());
+			
 			Canonicalizer20010315WithComments c = new Canonicalizer20010315WithComments();
-			byte[] result = c.engineCanonicalize(element.asXML().getBytes());
+			byte[] result = c.engineCanonicalize(xml.getBytes());
+			return new String(result);
+		} catch (Exception e) {
+			throw new MeshException(e);
+		}
+	}
+	
+	public static String canonicalizeXML(Document document){
+		try {
+			String xml = formatXML(document, OutputFormat.createCompactFormat());
+			
+			Canonicalizer20010315WithComments c = new Canonicalizer20010315WithComments();
+			byte[] result = c.engineCanonicalize(xml.getBytes());
 			return new String(result);
 		} catch (Exception e) {
 			throw new MeshException(e);

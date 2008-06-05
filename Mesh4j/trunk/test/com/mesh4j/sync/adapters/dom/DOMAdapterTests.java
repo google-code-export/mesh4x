@@ -230,7 +230,8 @@ public class DOMAdapterTests {
 				+ "<Document>" + "<name>" + file.getName() + "</name>"
 				+ "<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\"></ExtendedData>" + "</Document>" + "</kml>";
 
-		Assert.assertEquals(xml, document.asXML());
+		Document expectedDocument = DocumentHelper.parseText(xml);
+		Assert.assertEquals(XMLHelper.canonicalizeXML(expectedDocument), XMLHelper.canonicalizeXML(document));
 	}
 
 	private DOMAdapter makeNewDOMAdapter(String fileName) {

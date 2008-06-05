@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Date;
 
 import org.dom4j.Document;
+import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.junit.Assert;
@@ -36,7 +37,23 @@ public class XMLHelperTests {
 	}
 	
 	@Test
-	public void shouldEncodeFileBytesInXML() throws IOException{
+	public void shouldCanonicalizeXMLNormalizeElements() throws DocumentException, IOException{
+		
+		String localXML1 = "<kml version=\"fnekfj322\" id=\"1\" file=\"33\">   <foo><bar>	<name>jmt</name> </bar>\n	</foo></kml>";		
+		Element element1 = DocumentHelper.parseText(localXML1).getRootElement();
+	
+		String localXML2 = "<kml file=\"33\" id=\"1\" version=\"fnekfj322\">		<foo>	<bar>\n	<name>jmt\n</name>	  </bar>  \n	</foo>  	</kml>";		
+		Element element2 = DocumentHelper.parseText(localXML2).getRootElement();
+	
+		String xml1 = XMLHelper.canonicalizeXML(element1);
+		String xml2 = XMLHelper.canonicalizeXML(element2);
+		
+		Assert.assertEquals(xml1, xml2);
+		Assert.assertEquals(xml1.hashCode(), xml2.hashCode());
+	}
+	
+	@Test
+	public void shouldEncodeFileBytesInXML() throws IOException, DocumentException{
 		byte[] originalBytes = TestHelper.readFileBytes(this.getClass().getResource("kmzExample_star.jpg").getFile());
 		String encoded = Base64Helper.encode(originalBytes);
 		Assert.assertNotNull(encoded);
@@ -49,10 +66,17 @@ public class XMLHelperTests {
 		
 		String xml = XMLHelper.canonicalizeXML(element);
 		Assert.assertNotNull(xml);
-		Assert.assertEquals(element.asXML(), xml);
+		Element canoElement = DocumentHelper.parseText(xml).getRootElement();
+		Assert.assertEquals("kmzExample_star.jpg", canoElement.attributeValue(MeshNames.MESH_QNAME_FILE_ID));
+		Assert.assertNotNull(canoElement.element(MeshNames.MESH_QNAME_FILE_CONTENT));
+		
+		encoded = canoElement.element(MeshNames.MESH_QNAME_FILE_CONTENT).getText();
+		byte[] decodedBytes = Base64Helper.decode(encoded);
+		Assert.assertNotNull(decodedBytes);
+		Assert.assertArrayEquals(originalBytes, decodedBytes);
 		
 		encoded = doc.getRootElement().element(MeshNames.MESH_QNAME_FILE).element(MeshNames.MESH_QNAME_FILE_CONTENT).getText();
-		byte[] decodedBytes = Base64Helper.decode(encoded);
+		decodedBytes = Base64Helper.decode(encoded);
 		Assert.assertNotNull(decodedBytes);
 		Assert.assertArrayEquals(originalBytes, decodedBytes);
 		

@@ -112,8 +112,7 @@ public class KMLDOMLoaderTests {
 		Assert.assertNotNull(loader.getDOM());
 		
 		Document doc = DocumentHelper.parseText(xml);
-		doc.normalize();
-		Assert.assertEquals(doc.asXML(), loader.getDOM().asXML());
+		Assert.assertEquals(XMLHelper.canonicalizeXML(doc), XMLHelper.canonicalizeXML(loader.getDOM().toDocument()));
 	}
 
 	@Test
@@ -218,10 +217,8 @@ public class KMLDOMLoaderTests {
 		loader.write();
 		
 		doc = XMLHelper.readDocument(file);
-		doc.normalize();
-		
-		Assert.assertEquals(doc.asXML(), loader.getDOM().asXML());
 
+		Assert.assertEquals(XMLHelper.canonicalizeXML(doc), XMLHelper.canonicalizeXML(loader.getDOM().toDocument()));
 	}
 	
 	private static final String kmlAsXML = 
