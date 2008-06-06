@@ -59,10 +59,10 @@ public class FileXMLViewElement extends MeshXMLViewElement{
 		if(element != null && !this.manage(element)){
 			Guard.throwsArgumentException("element type", element);
 		}
+		Guard.argumentNotNull(element.getParent(), "parent");
 		
 		String fileName = element.attributeValue(MeshNames.MESH_QNAME_FILE_ID);
 		Guard.argumentNotNull(fileName, "fileName");
-		Guard.argumentNotNull(element.getParent(), "parent");
 		
 		fileManager.removeFileContent(fileName);
 		element.getParent().remove(element);
@@ -179,6 +179,6 @@ public class FileXMLViewElement extends MeshXMLViewElement{
 
 	@Override
 	public boolean manage(Element element) {
-		return MeshNames.MESH_QNAME_FILE.equals(element.getQName());
+		return element != null && MeshNames.MESH_QNAME_FILE.equals(element.getQName());
 	}
 }

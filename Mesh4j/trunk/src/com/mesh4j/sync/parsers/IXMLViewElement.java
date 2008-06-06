@@ -24,7 +24,7 @@ public interface IXMLViewElement {
 
 	void clean(Document document, Element element);
 
-	boolean manage(Element payload);
+	boolean manage(Element element);
 
 	Map<String, String> getNameSpaces();
 }

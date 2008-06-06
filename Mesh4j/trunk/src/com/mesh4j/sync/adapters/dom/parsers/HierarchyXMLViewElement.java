@@ -265,7 +265,7 @@ public class HierarchyXMLViewElement extends MeshXMLViewElement {
 
 	@Override
 	public boolean manage(Element element) {
-		return MeshNames.MESH_QNAME_HIERARCHY.equals(element.getQName());
+		return element != null && MeshNames.MESH_QNAME_HIERARCHY.equals(element.getQName());
 	}
 }
 

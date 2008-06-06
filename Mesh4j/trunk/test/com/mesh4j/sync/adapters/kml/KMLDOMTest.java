@@ -1387,8 +1387,9 @@ public class KMLDOMTest {
 	
 	@Test
 	public void shouldNormalizeReturnsNullBecauseNoXMLViewIsDefinedForElement(){
-		Document doc = DocumentHelper.createDocument();
-		Element element = DocumentHelper.createElement("FOO");
+		Document doc = DocumentHelper.createDocument(DocumentHelper.createElement("kml"));
+		Element element = doc.getRootElement().addElement("NewElement");
+		element.add(KmlNames.KML_NS);
 		
 		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
 		Assert.assertNull(meshParser.normalize(element));

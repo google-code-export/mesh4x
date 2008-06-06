@@ -32,18 +32,6 @@ public class KMLSyncTests {
 		kml.beginSync();
 		
 		XMLHelper.write(kml.getDOM().toDocument(), new File(TestHelper.fileName(fileName)));
-		
-//		Document docA = kml.getDOM().toDocument();
-//		Element elementToMove = docA
-//			.getRootElement()
-//			.element(KmlNames.KML_ELEMENT_DOCUMENT)
-//			.element(KmlNames.KML_ELEMENT_FOLDER)
-//			.element(KmlNames.KML_ELEMENT_PLACEMARK);
-//		
-//		elementToMove.getParent().remove(elementToMove);
-//		docA.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT).add(elementToMove);
-//
-//		XMLHelper.write(kml.getDOM().toDocument(), new File(TestHelper.fileName("kmlSyncTestsPlacemark_sync.kml")));
 	}
 
 	
@@ -172,5 +160,52 @@ public class KMLSyncTests {
 		
 		Assert.assertNotNull(element);
 		Assert.assertEquals("my new name", element.elementText("name"));
+	}
+	
+	@Test
+	public void shouldSyncExtendedData(){
+//		File file = new File(this.getClass().getResource("kmlWithExtendedDataToSync.kml").getFile());
+//		File fileEmpty = new File(this.getClass().getResource("kmlDummyForSync.kml").getFile());
+
+		// generate files			
+		DOMLoader loaderA = DOMLoaderFactory.createDOMLoader(this.getClass().getResource("kmlWithExtendedDataToSync.kml").getFile(), NullIdentityProvider.INSTANCE);
+		DOMAdapter kmlA = new DOMAdapter(loaderA);
+		kmlA.beginSync();
+		XMLHelper.write(kmlA.getDOM().toDocument(), new File(TestHelper.fileName("kmlWithExtendedDataToSync.kml")));
+		
+		List<Item> items = kmlA.getAll();		
+		Assert.assertNotNull(items);
+		Assert.assertEquals(6, items.size());
+		
+		DOMLoader loaderB = DOMLoaderFactory.createDOMLoader(this.getClass().getResource("kmlDummyForSync.kml").getFile(), NullIdentityProvider.INSTANCE);
+		DOMAdapter kmlB = new DOMAdapter(loaderB);
+		kmlB.beginSync();
+		XMLHelper.write(kmlB.getDOM().toDocument(), new File(TestHelper.fileName("kmlDummyForSync.kml")));
+
+		items = kmlB.getAll();		
+		Assert.assertNotNull(items);
+		Assert.assertEquals(0, items.size());
+		
+		// sync
+		DOMLoader loaderAsync = DOMLoaderFactory.createDOMLoader(TestHelper.fileName("kmlWithExtendedDataToSync.kml"), NullIdentityProvider.INSTANCE);
+		DOMAdapter kmlAsync = new DOMAdapter(loaderAsync);
+		
+		DOMLoader loaderBsync = DOMLoaderFactory.createDOMLoader(TestHelper.fileName("kmlDummyForSync.kml"), NullIdentityProvider.INSTANCE);
+		DOMAdapter kmlBsync = new DOMAdapter(loaderBsync);
+		
+		SyncEngine syncEngine = new SyncEngine(kmlAsync, kmlBsync);
+		
+		List<Item> conflicts = syncEngine.synchronize();
+		Assert.assertNotNull(conflicts);
+		Assert.assertEquals(0, conflicts.size());
+
+		items = kmlAsync.getAll();		
+		Assert.assertNotNull(items);
+		Assert.assertEquals(6, items.size());
+		
+		items = kmlBsync.getAll();		
+		Assert.assertNotNull(items);
+		Assert.assertEquals(6, items.size());
+		
 	}
 }

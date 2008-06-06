@@ -42,9 +42,9 @@ public class DOMLoaderFactoryTests {
 		
 		KMLDOMLoader kmlLoader = (KMLDOMLoader)loader;		
 		Assert.assertNotNull(kmlLoader.getXMLView());
-		Assert.assertEquals(8, kmlLoader.getXMLView().getXMLViewElements().size());
+		Assert.assertEquals(9, kmlLoader.getXMLView().getXMLViewElements().size());
 		
-		IXMLViewElement hierarchy = kmlLoader.getXMLView().getXMLViewElements().get(7);
+		IXMLViewElement hierarchy = kmlLoader.getXMLView().getXMLViewElements().get(8);
 		Assert.assertTrue(hierarchy instanceof HierarchyXMLViewElement);
 		Assert.assertSame(kmlLoader.getDOM(), ((HierarchyXMLViewElement) hierarchy).getDOM());
 
@@ -66,8 +66,8 @@ public class DOMLoaderFactoryTests {
 		Assert.assertEquals(KmlNames.KML_QNAME_GROUND_OVERLAY, ((KMLViewElement) kmlLoader.getXMLView().getXMLViewElements().get(5)).getQName());
 		Assert.assertSame(hierarchy, ((KMLViewElement)kmlLoader.getXMLView().getXMLViewElements().get(5)).getHierarchyElementView());
 		
-		Assert.assertEquals(KmlNames.KML_QNAME_SCHEMA, ((KMLViewElement) kmlLoader.getXMLView().getXMLViewElements().get(6)).getQName());
-		Assert.assertSame(hierarchy, ((KMLViewElement)kmlLoader.getXMLView().getXMLViewElements().get(6)).getHierarchyElementView());
+		Assert.assertTrue(kmlLoader.getXMLView().getXMLViewElements().get(6) instanceof KMLSchemaXMLViewElement);
+		Assert.assertTrue(kmlLoader.getXMLView().getXMLViewElements().get(7) instanceof KMLDocumentExtendedDataViewElement);
 		
 		Assert.assertEquals("j.kml", ((KMLDOMLoader)loader).getFile().getName());
 	}
@@ -82,9 +82,9 @@ public class DOMLoaderFactoryTests {
 
 		KMZDOMLoader kmlLoader = (KMZDOMLoader)loader;		
 		Assert.assertNotNull(kmlLoader.getXMLView());
-		Assert.assertEquals(9, kmlLoader.getXMLView().getXMLViewElements().size());
+		Assert.assertEquals(10, kmlLoader.getXMLView().getXMLViewElements().size());
 
-		IXMLViewElement hierarchy = kmlLoader.getXMLView().getXMLViewElements().get(7);
+		IXMLViewElement hierarchy = kmlLoader.getXMLView().getXMLViewElements().get(8);
 		Assert.assertTrue(hierarchy instanceof HierarchyXMLViewElement);
 		Assert.assertSame(kmlLoader.getDOM(), ((HierarchyXMLViewElement) hierarchy).getDOM());
 
@@ -106,10 +106,10 @@ public class DOMLoaderFactoryTests {
 		Assert.assertEquals(KmlNames.KML_QNAME_GROUND_OVERLAY, ((KMLViewElement) kmlLoader.getXMLView().getXMLViewElements().get(5)).getQName());
 		Assert.assertSame(hierarchy, ((KMLViewElement)kmlLoader.getXMLView().getXMLViewElements().get(5)).getHierarchyElementView());
 
-		Assert.assertEquals(KmlNames.KML_QNAME_SCHEMA, ((KMLViewElement) kmlLoader.getXMLView().getXMLViewElements().get(6)).getQName());
-		Assert.assertSame(hierarchy, ((KMLViewElement)kmlLoader.getXMLView().getXMLViewElements().get(6)).getHierarchyElementView());
+		Assert.assertTrue(kmlLoader.getXMLView().getXMLViewElements().get(6) instanceof KMLSchemaXMLViewElement);
+		Assert.assertTrue(kmlLoader.getXMLView().getXMLViewElements().get(7) instanceof KMLDocumentExtendedDataViewElement);
 
-		Assert.assertTrue(kmlLoader.getXMLView().getXMLViewElements().get(8) instanceof FileXMLViewElement);
+		Assert.assertTrue(kmlLoader.getXMLView().getXMLViewElements().get(9) instanceof FileXMLViewElement);
 		
 		Assert.assertEquals("h.kmz", ((KMZDOMLoader)loader).getFile().getName());
 	}

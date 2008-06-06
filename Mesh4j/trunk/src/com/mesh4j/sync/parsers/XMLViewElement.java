@@ -273,6 +273,6 @@ public class XMLViewElement implements IXMLViewElement {
 
 	@Override
 	public boolean manage(Element element) {
-		return element.getName().equals(this.qname.getName());
+		return element != null && element.getName().equals(this.qname.getName());
 	}
 }

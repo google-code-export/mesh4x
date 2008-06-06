@@ -88,6 +88,10 @@ public class KMLContentTests {
 		Element payload = DocumentHelper.createElement("payload");
 		payload.add(element);
 		
+		if(element.getNamespacePrefix() == null || element.getNamespacePrefix().trim().length() == 0){
+			element.add(KmlNames.KML_NS);
+		}
+		
 		MockContent content = new MockContent(payload);
 		
 		KMLContent normalizedContent = KMLContent.normalizeContent(content, DOMLoaderFactory.createKMZView(new FileManager()));

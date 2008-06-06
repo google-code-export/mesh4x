@@ -5,7 +5,32 @@
     <name>a.kml</name>  
     <visibility>0</visibility>  
     <open>1</open>  
-    <ExtendedData xmlns:mesh4x="http://mesh4x.org/kml">
+      <Schema name="TrailHeadType" id="TrailHeadTypeId">     
+    	<SimpleField type="string" name="TrailHeadName">       
+      		<displayName><![CDATA[<b>Trail Head Name</b>]]></displayName>     
+    	</SimpleField>     
+    	<SimpleField type="double" name="TrailLength">       
+      		<displayName><![CDATA[<i>The length in miles</i>]]></displayName>     
+    	</SimpleField>     
+    	<SimpleField type="int" name="ElevationGain">       
+      		<displayName><![CDATA[<i>change in altitude</i>]]></displayName>     
+    	</SimpleField>   
+ 	</Schema> 
+	<ExtendedData xmlns:mesh4x="http://mesh4x.org/kml" xmlns:camp="http://campsites.com">
+      <camp:number>14</camp:number>
+      <camp:parkingSpaces>2</camp:parkingSpaces>
+      <camp:tentSites>4</camp:tentSites>
+      <SchemaData schemaUrl="#TrailHeadTypeId">        
+        <SimpleData name="TrailHeadName">Pi in the sky</SimpleData>         
+        <SimpleData name="TrailLength">3.14159</SimpleData>         
+        <SimpleData name="ElevationGain">10</SimpleData>       
+      </SchemaData>
+      <Data name="holeNumber">
+          <displayName><![CDATA[
+            <b>This is hole </b>
+          ]]></displayName>
+          <value>1</value>
+       </Data>
       <mesh4x:sync version="1195092159"> 
         <sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="1" updates="2" deleted="true" noconflicts="false">  
           <sx:history sequence="1" when="2008-06-05T15:36:27Z" by="vcc-PC_jtondato"/> 
