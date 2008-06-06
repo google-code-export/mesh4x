@@ -47,7 +47,7 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 	private Text endpoint1;
 	private Text endpoint2;
 	private Text consoleView;
-	private Text kmlToPrepareToSync;
+	private Text kmlFileToExternalActions;
 	private String defaultEndpoint1;
 	private String defaultEndpoint2;
 	private IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
@@ -130,15 +130,15 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 		Label labelKmlFile = new Label (shell, SWT.NONE);
 		labelKmlFile.setText(Mesh4jUITranslator.getLabelKMLFile());
 		
-		kmlToPrepareToSync = new Text (shell, SWT.BORDER);
-		kmlToPrepareToSync.setLayoutData (new GridData(600, 15));
+		kmlFileToExternalActions = new Text (shell, SWT.BORDER);
+		kmlFileToExternalActions.setLayoutData (new GridData(600, 15));
 		
 		Button buttonFileDialogKml = new Button(shell, SWT.PUSH);
 		buttonFileDialogKml.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				String selectedFileName = openFileDialogKML(kmlToPrepareToSync.getText());
+				String selectedFileName = openFileDialogKML(kmlFileToExternalActions.getText());
 				if(selectedFileName != null){
-					kmlToPrepareToSync.setText(selectedFileName);
+					kmlFileToExternalActions.setText(selectedFileName);
 				}
 			}
 		});
@@ -147,7 +147,7 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 		Button buttonPrepareKMLToSync = new Button(shell, SWT.PUSH);
 		buttonPrepareKMLToSync.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {				
-				boolean ok = validateKMLFile(kmlToPrepareToSync.getText(), "KmlFile");
+				boolean ok = validateKMLFile(kmlFileToExternalActions.getText(), "KmlFile");
 				if(ok){
 					prepareKMLInNewThread();
 				}
@@ -155,6 +155,29 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 		});
 		
 		buttonPrepareKMLToSync.setText(Mesh4jUITranslator.getLabelPrepareToSync());
+		
+		
+		Button buttonCleanKML = new Button(shell, SWT.PUSH);
+		buttonCleanKML.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {				
+				boolean ok = validateKMLFile(kmlFileToExternalActions.getText(), "KmlFile");
+				if(ok){
+					cleanKMLInNewThread();
+				}
+			}
+		});		
+		buttonCleanKML.setText(Mesh4jUITranslator.getLabelClean());
+		
+		Button buttonPurgueKML = new Button(shell, SWT.PUSH);
+		buttonPurgueKML.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {				
+				boolean ok = validateKMLFile(kmlFileToExternalActions.getText(), "KmlFile");
+				if(ok){
+					purgueKMLInNewThread();
+				}
+			}
+		});		
+		buttonPurgueKML.setText(Mesh4jUITranslator.getLabelPurgue());
 		
 		shell.setLayout (new GridLayout());
 		shell.pack ();
@@ -368,7 +391,7 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 	}
 	
 	private void prepareKMLInNewThread(){
-		final String kmlFile = kmlToPrepareToSync.getText();
+		final String kmlFile = kmlFileToExternalActions.getText();
 		
 		Runnable longJob = new Runnable() {
 			boolean done = false;
@@ -414,6 +437,106 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 		} catch (MeshException e) {
 			Logger.error(e.getMessage(), e);
 			return Mesh4jUITranslator.getMessagePrepareToSyncFailed();
+		}
+	}
+	
+	private void cleanKMLInNewThread(){
+		final String kmlFile = kmlFileToExternalActions.getText();
+		
+		Runnable longJob = new Runnable() {
+			boolean done = false;
+			public void run() {
+				Thread thread = new Thread(new Runnable() {
+					public void run() {
+						display.syncExec(new Runnable() {
+							public void run() {
+								if (consoleView.isDisposed()) return;
+								consoleView.append("\n"+ Mesh4jUITranslator.getMessageCleanKML(kmlFile));
+							}
+						});
+						
+						final String result = cleanKML(kmlFile);
+						
+						if (display.isDisposed()) return;		
+						display.syncExec(new Runnable() {
+							public void run() {
+								if (consoleView.isDisposed()) return;
+								consoleView.append("\n"+ Mesh4jUITranslator.getMessageCleanKMLCompleted(result));
+							}
+						});
+						done = true;
+						display.wake();
+					}
+				});
+				thread.start();
+				while (!done && !shell.isDisposed()) {
+					if (!display.readAndDispatch())
+						display.sleep();
+				}
+			}
+		};
+		BusyIndicator.showWhile(display, longJob);
+	}
+	
+	private String cleanKML(String kmlFile){
+		try{
+			IDOMLoader loader = DOMLoaderFactory.createDOMLoader(kmlFile, this.identityProvider);
+			DOMAdapter domAdapter = new DOMAdapter(loader);
+			domAdapter.clean();
+			return Mesh4jUITranslator.getMessageCleanKMLSuccessfuly();
+		} catch (MeshException e) {
+			Logger.error(e.getMessage(), e);
+			return Mesh4jUITranslator.getMessageCleanKMLFailed();
+		}
+	}
+	
+	private void purgueKMLInNewThread(){
+		final String kmlFile = kmlFileToExternalActions.getText();
+		
+		Runnable longJob = new Runnable() {
+			boolean done = false;
+			public void run() {
+				Thread thread = new Thread(new Runnable() {
+					public void run() {
+						display.syncExec(new Runnable() {
+							public void run() {
+								if (consoleView.isDisposed()) return;
+								consoleView.append("\n"+ Mesh4jUITranslator.getMessagePurgueKML(kmlFile));
+							}
+						});
+						
+						final String result = purgueKML(kmlFile);
+						
+						if (display.isDisposed()) return;		
+						display.syncExec(new Runnable() {
+							public void run() {
+								if (consoleView.isDisposed()) return;
+								consoleView.append("\n"+ Mesh4jUITranslator.getMessagePurgueKMLCompleted(result));
+							}
+						});
+						done = true;
+						display.wake();
+					}
+				});
+				thread.start();
+				while (!done && !shell.isDisposed()) {
+					if (!display.readAndDispatch())
+						display.sleep();
+				}
+			}
+		};
+		BusyIndicator.showWhile(display, longJob);
+	}
+	
+	private String purgueKML(String kmlFile){
+		try{
+			IDOMLoader loader = DOMLoaderFactory.createDOMLoader(kmlFile, this.identityProvider);
+			DOMAdapter domAdapter = new DOMAdapter(loader);
+			domAdapter.purgue();
+			return Mesh4jUITranslator.getMessagePurgueKMLSuccessfuly();
+		} catch (MeshException e) {
+			Logger.error(e.getMessage(), e);
+			return Mesh4jUITranslator.getMessagePurgueKMLFailed();
 		}
 	}
 	
