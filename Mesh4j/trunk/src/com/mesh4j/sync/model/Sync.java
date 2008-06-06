@@ -235,4 +235,16 @@ public class Sync implements Cloneable{
 		return this;
 	}
 
+	public boolean purgue() {
+		if(this.updates > 1){
+			History lastUpdate = getLastUpdate();
+			this.updatesHistory.clear();
+			this.updatesHistory.push(lastUpdate);
+			this.updates = 1;
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 }

@@ -23,7 +23,7 @@ import com.mesh4j.sync.translator.MessageTranslator;
 import com.mesh4j.sync.validations.Guard;
 import com.mesh4j.sync.validations.MeshException;
 
-// TODO (JMT) incremental loading for feed items, xml pull parser?
+// TODO (JMT) Medium: incremental loading for feed items, xml pull parser?
 public class FeedAdapter extends AbstractSyncAdapter{
 
 	// MODEL VARIABLES

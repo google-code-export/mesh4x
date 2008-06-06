@@ -25,4 +25,6 @@ public interface IXMLViewElement {
 	Element refresh(Document document, Element element);
 
 	boolean isValid(Document document, Element element);
+
+	void clean(Document document, Element element);
 }

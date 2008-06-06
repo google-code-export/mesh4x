@@ -104,7 +104,7 @@ public class HierarchyXMLViewElementTests {
 			.element(MeshNames.MESH_QNAME_HIERARCHY);
 		
 		HierarchyXMLViewElement hierarchy = new HierarchyXMLViewElement();
-		hierarchy.setDOM(new MOCKDOM());
+		hierarchy.setDOM(new MockDOM());
 		
 		String oldXML = hierarchyElement.asXML();
 		Assert.assertSame(hierarchyElement, hierarchy.update(document, hierarchyElement, hierarchyElement.createCopy()));
@@ -152,7 +152,7 @@ public class HierarchyXMLViewElementTests {
 			.element(MeshNames.MESH_QNAME_HIERARCHY);
 		
 		HierarchyXMLViewElement hierarchy = new HierarchyXMLViewElement();
-		hierarchy.setDOM(new MOCKDOM());
+		hierarchy.setDOM(new MockDOM());
 		
 		String oldXML = hierarchyElement.asXML();
 		Assert.assertSame(hierarchyElement, hierarchy.update(document, hierarchyElement, hierarchyElement.createCopy()));
@@ -226,7 +226,7 @@ public class HierarchyXMLViewElementTests {
 
 			
 			HierarchyXMLViewElement hierarchy = new HierarchyXMLViewElement();
-			hierarchy.setDOM(new MOCKDOM());
+			hierarchy.setDOM(new MockDOM());
 			
 			String oldXML = hierarchyElement.asXML();
 			Assert.assertSame(hierarchyElement, hierarchy.update(document, hierarchyElement, hierarchyElementUpdated));
@@ -308,7 +308,7 @@ public class HierarchyXMLViewElementTests {
 
 			
 			HierarchyXMLViewElement hierarchy = new HierarchyXMLViewElement();
-			hierarchy.setDOM(new MOCKDOM());
+			hierarchy.setDOM(new MockDOM());
 			
 			String oldXML = hierarchyElement.asXML();
 			Assert.assertSame(hierarchyElement, hierarchy.update(document, hierarchyElement, hierarchyElementUpdated));
@@ -393,7 +393,7 @@ public class HierarchyXMLViewElementTests {
 
 			
 			HierarchyXMLViewElement hierarchy = new HierarchyXMLViewElement();
-			hierarchy.setDOM(new MOCKDOM());
+			hierarchy.setDOM(new MockDOM());
 			
 			String oldXML = hierarchyElement.asXML();
 			Assert.assertSame(hierarchyElement, hierarchy.update(document, hierarchyElement, hierarchyElementUpdated));
@@ -482,7 +482,7 @@ public class HierarchyXMLViewElementTests {
 
 			
 			HierarchyXMLViewElement hierarchy = new HierarchyXMLViewElement();
-			hierarchy.setDOM(new MOCKDOM());
+			hierarchy.setDOM(new MockDOM());
 			
 			Assert.assertSame(hierarchyElementToAdd, hierarchy.add(document, hierarchyElementToAdd));
 						
@@ -553,7 +553,7 @@ public class HierarchyXMLViewElementTests {
 
 			
 			HierarchyXMLViewElement hierarchy = new HierarchyXMLViewElement();
-			hierarchy.setDOM(new MOCKDOM());
+			hierarchy.setDOM(new MockDOM());
 			
 			Assert.assertSame(hierarchyElementToAdd, hierarchy.add(document, hierarchyElementToAdd));
 						
@@ -991,7 +991,7 @@ public class HierarchyXMLViewElementTests {
 			.element(MeshNames.MESH_QNAME_HIERARCHY);
 	
 		HierarchyXMLViewElement hierarchy = new HierarchyXMLViewElement();
-		hierarchy.setDOM(new MOCKDOM());
+		hierarchy.setDOM(new MockDOM());
 			
 		String oldXML = document.asXML();
 		Assert.assertSame(hierarchyElement, hierarchy.refresh(document, hierarchyElement));
@@ -1130,7 +1130,47 @@ public class HierarchyXMLViewElementTests {
 			//Assert.assertTrue(hierarchy.getKmlDOM().getSync("da05747a-1bbf-4fce-8415-9095df0743ac").isDeleted());
 	}
 	
-	private class MOCKDOM implements IMeshDOM {
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldCleanFailsBecauseElementIsNull(){
+		HierarchyXMLViewElement viewElement = new HierarchyXMLViewElement();
+		viewElement.clean(DocumentHelper.createDocument(), null);
+	}
+
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldCleanFailsBecauseElementParentIsNull(){
+		Element element = DocumentHelper.createElement(MeshNames.MESH_QNAME_HIERARCHY);
+		
+		HierarchyXMLViewElement viewElement = new HierarchyXMLViewElement();
+		viewElement.clean(null, element);
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldCleanFailsBecauseElementInvalidElementType() throws DocumentException{
+		String xml = "<foo><bar></bar></foo>";
+		Document document = DocumentHelper.parseText(xml);
+		
+		Element element = document.getRootElement().element("bar");
+		Assert.assertNotNull(element);
+				
+		HierarchyXMLViewElement viewElement = new HierarchyXMLViewElement();
+		viewElement.clean(document, element);
+	}
+	
+	@Test
+	public void shouldClean() throws DocumentException{
+		String xml = "<foo><mesh4x:hierarchy xmlns:mesh4x=\"http://mesh4x.org/kml\"></mesh4x:hierarchy></foo>";
+		Document document = DocumentHelper.parseText(xml);
+
+		Element element = document.getRootElement().element(MeshNames.MESH_QNAME_HIERARCHY);
+		Assert.assertNotNull(element);
+		
+		HierarchyXMLViewElement viewElement = new HierarchyXMLViewElement();
+		viewElement.clean(document, element);
+		
+		Assert.assertNull(document.getRootElement().element(MeshNames.MESH_QNAME_HIERARCHY));
+	}
+	
+	private class MockDOM implements IMeshDOM {
 
 		@Override
 		public Element addElement(Element element) {
@@ -1237,7 +1277,13 @@ public class HierarchyXMLViewElementTests {
 		@Override
 		public void updateSync(SyncInfo syncInfo) {
 		}
-		
+
+		@Override
+		public void clean() {
+		}
+
+		@Override
+		public void purgue() {			
+		}
 	}
-	
 }

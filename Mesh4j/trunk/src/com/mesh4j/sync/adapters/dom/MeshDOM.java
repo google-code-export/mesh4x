@@ -310,6 +310,40 @@ public abstract class MeshDOM implements IMeshDOM {
 		}		
 	}
 	
+	public void clean(){
+		Element syncRepository = getSyncRepository(this.document);
+		
+		List<SyncInfo> syncs = getAllSyncs();
+		for (SyncInfo syncInfo : syncs) {
+			Element meshElement = getMeshElement(syncRepository, syncInfo.getSyncId());
+			meshElement.getParent().remove(meshElement);
+		}
+		
+		syncRepository.remove(MeshNames.MESH_NS);
+		
+		List<Element> elements = getAllElements();
+		for (Element element : elements) {
+			this.xmlView.clean(this.document, element);
+		}
+	}
+	
+	public void purgue(){
+		Element syncRepository = getSyncRepository(this.document);
+		
+		List<SyncInfo> syncs = getAllSyncs();
+		for (SyncInfo syncInfo : syncs) {
+			if(syncInfo.isDeleted()){
+				Element meshElement = getMeshElement(syncRepository, syncInfo.getSyncId());
+				meshElement.getParent().remove(meshElement);
+			} else {
+				if(syncInfo.purgue()){
+					updateSync(syncInfo);
+				}
+			}
+		}
+	}
+
+	
 	// SUBCLASS RESPONSIBILITY
 	public abstract String getType();
 	public abstract Element getSyncRepository(Document document);

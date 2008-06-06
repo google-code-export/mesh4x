@@ -412,4 +412,51 @@ public class KMLViewElementTests {
 		Assert.assertSame(element, placemark.refresh(document, element));
 		Assert.assertEquals(oldXML, document.asXML());
 	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldCleanFailsBecauseElementIsNull(){
+		KMLViewElement viewElement = new KMLViewElement(KmlNames.KML_QNAME_PLACEMARK, new HierarchyXMLViewElement(), false);
+		viewElement.clean(DocumentHelper.createDocument(), null);
+	}
+
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldCleanFailsBecauseElementParentIsNull(){
+		Element element = DocumentHelper.createElement(KmlNames.KML_QNAME_PLACEMARK);
+		
+		KMLViewElement viewElement = new KMLViewElement(KmlNames.KML_QNAME_PLACEMARK, new HierarchyXMLViewElement(), false);
+		viewElement.clean(null, element);
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldCleanFailsBecauseElementInvalidElementType() throws DocumentException{
+		String xml = "<foo><bar></bar></foo>";
+		Document document = DocumentHelper.parseText(xml);
+		
+		Element element = document.getRootElement().element("bar");
+		Assert.assertNotNull(element);
+				
+		KMLViewElement viewElement = new KMLViewElement(KmlNames.KML_QNAME_PLACEMARK, new HierarchyXMLViewElement(), false);
+		viewElement.clean(document, element);
+	}
+	
+	@Test
+	public void shouldClean() throws DocumentException{
+		String xml = "<foo xmlns= \"http://earth.google.com/kml/2.2\"><Placemark xmlns:mesh4x=\"http://mesh4x.org/kml\" xml:id = \"1\" mesh4x:originalId=\"1\" ></Placemark></foo>";
+		Document document = DocumentHelper.parseText(xml);
+
+		Element element = document.getRootElement().element(KmlNames.KML_QNAME_PLACEMARK);
+		Assert.assertNotNull(element);
+		Assert.assertNotNull(element.attributeValue(MeshNames.MESH_QNAME_SYNC_ID));
+		Assert.assertNotNull(element.attributeValue(MeshNames.MESH_QNAME_ORIGINAL_ID));
+		Assert.assertNotNull(element.getNamespaceForPrefix(MeshNames.MESH_PREFIX));
+		
+		KMLViewElement viewElement = new KMLViewElement(KmlNames.KML_QNAME_PLACEMARK, new HierarchyXMLViewElement(), false);
+		viewElement.clean(document, element);
+		
+		element = document.getRootElement().element(KmlNames.KML_QNAME_PLACEMARK);
+		Assert.assertNotNull(element);
+		Assert.assertNull(element.attributeValue(MeshNames.MESH_QNAME_SYNC_ID));
+		Assert.assertNull(element.attributeValue(MeshNames.MESH_QNAME_ORIGINAL_ID));
+		Assert.assertNull(element.getNamespaceForPrefix(MeshNames.MESH_PREFIX));
+	}
 }

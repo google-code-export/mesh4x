@@ -22,8 +22,6 @@ import com.mesh4j.sync.validations.Guard;
 
 public class DOMAdapter  extends AbstractSyncAdapter implements ISyncAware {
 	
-	// TODO (JMT) Purge and clean mesh4x data to kml file.
-	
 	// MODEL VARIABLES
 	private IDOMLoader domLoader;
 	
@@ -191,5 +189,17 @@ public class DOMAdapter  extends AbstractSyncAdapter implements ISyncAware {
 	// UTILS
 	public boolean isValid(Element element) {
 		return this.getDOM().isValid(element);
+	}
+	
+	public void clean(){
+		this.beginSync();
+		this.getDOM().clean();
+		this.endSync();
+	}
+	
+	public void purgue(){
+		this.beginSync();
+		this.getDOM().purgue();
+		this.endSync();
 	}
 }

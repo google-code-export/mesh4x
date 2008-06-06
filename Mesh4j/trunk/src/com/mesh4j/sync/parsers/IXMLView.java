@@ -26,4 +26,6 @@ public interface IXMLView {
 
 	List<IXMLViewElement> getXMLViewElements();
 
+	void clean(Document document, Element element);
+
 }

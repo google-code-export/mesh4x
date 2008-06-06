@@ -3,6 +3,7 @@ package com.mesh4j.sync.adapters.dom.parsers;
 import java.util.List;
 
 import org.dom4j.Document;
+import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.junit.Assert;
@@ -703,6 +704,46 @@ public class FileXMLViewElementTests {
 		Assert.assertEquals("123", all.get(0).element(MeshNames.MESH_QNAME_FILE_CONTENT).getText());
 	}
 	
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldCleanFailsBecauseElementIsNull(){
+		FileXMLViewElement viewElement = new FileXMLViewElement(new FileManager());
+		viewElement.clean(DocumentHelper.createDocument(), null);
+	}
+
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldCleanFailsBecauseElementParentIsNull(){
+		Element element = DocumentHelper.createElement(MeshNames.MESH_QNAME_FILE);
+		
+		FileXMLViewElement viewElement = new FileXMLViewElement(new FileManager());
+		viewElement.clean(null, element);
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldCleanFailsBecauseElementInvalidElementType() throws DocumentException{
+		String xml = "<foo><bar></bar></foo>";
+		Document document = DocumentHelper.parseText(xml);
+		
+		Element element = document.getRootElement().element("bar");
+		Assert.assertNotNull(element);
+				
+		FileXMLViewElement viewElement = new FileXMLViewElement(new FileManager());
+		viewElement.clean(document, element);
+	}
+	
+	@Test
+	public void shouldClean() throws DocumentException{
+		String xml = "<foo><mesh4x:file xmlns:mesh4x=\"http://mesh4x.org/kml\"></mesh4x:file></foo>";
+		Document document = DocumentHelper.parseText(xml);
+
+		Element element = document.getRootElement().element(MeshNames.MESH_QNAME_FILE);
+		Assert.assertNotNull(element);
+		
+		FileXMLViewElement viewElement = new FileXMLViewElement(new FileManager());
+		viewElement.clean(document, element);
+		
+		Assert.assertNull(document.getRootElement().element(MeshNames.MESH_QNAME_FILE));
+	}
+	
 	private class MockDOM implements IMeshDOM{
 
 		@Override
@@ -811,6 +852,13 @@ public class FileXMLViewElementTests {
 		@Override
 		public void updateSync(SyncInfo syncInfo) {
 		}
-		
+
+		@Override
+		public void clean() {
+		}
+
+		@Override
+		public void purgue() {
+		}
 	}
 }

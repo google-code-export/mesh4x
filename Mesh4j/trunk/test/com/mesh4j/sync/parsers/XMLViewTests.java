@@ -138,15 +138,47 @@ public class XMLViewTests {
 		Assert.assertFalse(view.isValid(null, DocumentHelper.createElement("Placemark")));
 	}
 	
+	@Test
+	public void shouldClean(){
+		Document document = DocumentHelper.createDocument();
+		Element folderElement = DocumentHelper.createElement("Folder");
+		
+		MockXMLViewElement view1 = new MockXMLViewElement("Folder");
+		XMLView view = new XMLView(view1);
+		
+		Assert.assertFalse(view1.cleanWasCalled());
+		view.clean(document, folderElement);
+		Assert.assertTrue(view1.cleanWasCalled());
+	}
+	
+	@Test
+	public void shouldNoClean(){
+		Document document = DocumentHelper.createDocument();
+		Element folderElement = DocumentHelper.createElement("Folder");
+		
+		MockXMLViewElement view1 = new MockXMLViewElement("FOO");
+		XMLView view = new XMLView(view1);
+		
+		Assert.assertFalse(view1.cleanWasCalled());
+		view.clean(document, folderElement);
+		Assert.assertFalse(view1.cleanWasCalled());
+	}
+	
+	
 	private class MockXMLViewElement implements IXMLViewElement{
 		
 		private Element element;
+		private boolean cleanWasCalled = false;
 
 		private MockXMLViewElement(String elementName){
 			super();
 			this.element = DocumentHelper.createElement(elementName);
 		}
 		
+		public boolean cleanWasCalled() {
+			return cleanWasCalled;
+		}
+
 		public Element getElement() {
 			return this.element;
 		}
@@ -199,6 +231,10 @@ public class XMLViewTests {
 				Element newElement) {
 			return newElement;
 		}
-		
+
+		@Override
+		public void clean(Document document, Element element) {
+			cleanWasCalled = true;
+		}
 	}
 }

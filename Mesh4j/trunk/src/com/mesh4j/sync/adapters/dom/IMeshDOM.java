@@ -31,6 +31,9 @@ public interface IMeshDOM {
 
 	IIdentityProvider getIdentityProvider();
 	String newID();
+
+	void clean();
+	void purgue();
 	
 	// DOM
 	Document toDocument();
@@ -43,6 +46,5 @@ public interface IMeshDOM {
 	boolean isValid(Element element);
 	Element getContentRepository(Document document);
 	Element getSyncRepository(Document document);
-
 	
 }

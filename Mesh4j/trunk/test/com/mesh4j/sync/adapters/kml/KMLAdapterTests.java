@@ -16,7 +16,9 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.mesh4j.sync.ISupportMerge;
+import com.mesh4j.sync.adapters.SyncInfo;
 import com.mesh4j.sync.adapters.dom.DOMAdapter;
+import com.mesh4j.sync.adapters.dom.DOMLoader;
 import com.mesh4j.sync.adapters.dom.IDOMLoader;
 import com.mesh4j.sync.adapters.dom.MeshDOM;
 import com.mesh4j.sync.adapters.dom.MeshNames;
@@ -1191,5 +1193,122 @@ public class KMLAdapterTests {
 				"name").getText());
 
 	}
+	
+	@Test
+	public void shouldClean() throws DocumentException{
+		
+		String fileName = "kmlWithSyncInfo.kml";
+		File externalFile = new File(TestHelper.fileName(fileName));
+		File localFile = new File(this.getClass().getResource(fileName).getFile());
+		
+		Document doc = XMLHelper.readDocument(localFile);
+		XMLHelper.write(doc, externalFile);
+		
+		DOMLoader loader = DOMLoaderFactory.createDOMLoader(externalFile.getAbsolutePath(), NullIdentityProvider.INSTANCE);
+		DOMAdapter kml = new DOMAdapter(loader);
+		kml.beginSync();
+		
+		Map<String, String> ns = new HashMap<String, String>();
+		ns.put(MeshNames.XML_PREFIX, MeshNames.XML_URI);
+		ns.put(MeshNames.MESH_PREFIX, MeshNames.MESH_URI);
+		ns.put(KmlNames.KML_PREFIX, KmlNames.KML_URI);
+		
+		doc = XMLHelper.readDocument(externalFile);
+		List<Element> elements = XMLHelper.selectElements("//mesh4x:*", doc.getRootElement(), ns);
+		Assert.assertNotNull(elements);
+		Assert.assertEquals(37, elements.size());
+		
+		elements = XMLHelper.selectElements("//*[@mesh4x:originalId!='']", doc.getRootElement(), ns);
+		Assert.assertNotNull(elements);
+		Assert.assertEquals(9, elements.size());
 
+		elements = XMLHelper.selectElements("//*[@xml:id!='']", doc.getRootElement(), ns);
+		Assert.assertNotNull(elements);
+		Assert.assertEquals(24, elements.size());
+		
+		elements = XMLHelper.selectElements("//kml:Style", doc.getRootElement(), ns); 
+		for (Element element : elements) {
+			Assert.assertNotNull(element.getNamespaceForPrefix(MeshNames.MESH_PREFIX));
+		}
+
+		elements = XMLHelper.selectElements("//kml:StyleMap", doc.getRootElement(), ns); 
+		for (Element element : elements) {
+			Assert.assertNotNull(element.getNamespaceForPrefix(MeshNames.MESH_PREFIX));
+		}
+		
+		elements = XMLHelper.selectElements("//kml:ExtendedData", doc.getRootElement(), ns); 
+		for (Element element : elements) {
+			Assert.assertNotNull(element.getNamespaceForPrefix(MeshNames.MESH_PREFIX));
+		}
+		
+		kml.clean();
+		
+		doc = XMLHelper.readDocument(externalFile);
+		elements = XMLHelper.selectElements("//mesh4x:*", doc.getRootElement(), ns);
+		Assert.assertNotNull(elements);
+		Assert.assertEquals(0, elements.size());
+		
+		elements = XMLHelper.selectElements("//*[@mesh4x:originalId!='']", doc.getRootElement(), ns);
+		Assert.assertNotNull(elements);
+		Assert.assertEquals(0, elements.size());
+
+		elements = XMLHelper.selectElements("//*[@xml:is!='']", doc.getRootElement(), ns);
+		Assert.assertNotNull(elements);
+		Assert.assertEquals(0, elements.size());
+		
+		
+		elements = XMLHelper.selectElements("//kml:Style", doc.getRootElement(), ns); 
+		for (Element element : elements) {
+			Assert.assertNull(element.getNamespaceForPrefix(MeshNames.MESH_PREFIX));
+		}
+
+		elements = XMLHelper.selectElements("//kml:StyleMap", doc.getRootElement(), ns); 
+		for (Element element : elements) {
+			Assert.assertNull(element.getNamespaceForPrefix(MeshNames.MESH_PREFIX));
+		}
+		
+		elements = XMLHelper.selectElements("//kml:ExtendedData", doc.getRootElement(), ns); 
+		for (Element element : elements) {
+			Assert.assertNull(element.getNamespaceForPrefix(MeshNames.MESH_PREFIX));
+		}
+	}
+	
+	@Test
+	public void shouldPurgue() throws DocumentException{
+		
+		String fileName = "kmlWithSyncInfo.kml";
+		File externalFile = new File(TestHelper.fileName(fileName));
+		File localFile = new File(this.getClass().getResource(fileName).getFile());
+		
+		Document doc = XMLHelper.readDocument(localFile);
+		XMLHelper.write(doc, externalFile);
+		
+		DOMLoader loader = DOMLoaderFactory.createDOMLoader(externalFile.getAbsolutePath(), NullIdentityProvider.INSTANCE);
+		DOMAdapter kml = new DOMAdapter(loader);
+		kml.beginSync();
+		
+		boolean thereAreMoreOneHistories = false;
+		boolean thereAreDeletes = false;
+		List<SyncInfo> syncs = kml.getDOM().getAllSyncs();
+		for (SyncInfo syncInfo : syncs) {
+			Assert.assertEquals(syncInfo.getSync().getUpdates(), syncInfo.getSync().getUpdatesHistory().size());
+			if(syncInfo.getSync().getUpdates() > 1){
+				thereAreMoreOneHistories  = true;
+			}
+			if(syncInfo.isDeleted()){
+				thereAreDeletes = true;	
+			}
+		}
+		Assert.assertTrue(thereAreMoreOneHistories);
+		Assert.assertTrue(thereAreDeletes);
+		
+		kml.purgue();
+		
+		syncs = kml.getDOM().getAllSyncs();
+		for (SyncInfo syncInfo : syncs) {
+			Assert.assertEquals(syncInfo.getSync().getUpdates(), syncInfo.getSync().getUpdatesHistory().size());
+			Assert.assertEquals(1, syncInfo.getSync().getUpdates());
+			Assert.assertFalse(syncInfo.isDeleted());
+		}
+	}
 }

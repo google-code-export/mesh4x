@@ -102,4 +102,35 @@ public class SyncTests {
 		Assert.assertFalse(s1 == s2);
 		Assert.assertTrue(s1 != s2);
 	}
+	
+	@Test
+	public void shouldNoPurgue(){
+		Sync sync = new Sync("1", "jmt", TestHelper.now(), true);
+		
+		Assert.assertNotNull(sync.getLastUpdate());
+		Assert.assertEquals(1, sync.getUpdates());
+		
+		sync.purgue();
+		
+		Assert.assertNotNull(sync.getLastUpdate());
+		Assert.assertEquals(1, sync.getUpdates());
+	}
+
+	@Test
+	public void shouldPurgue(){
+		Sync sync = new Sync("1", "jmt", TestHelper.now(), false);
+		sync.update("jmt1", TestHelper.now());
+		sync.update("jmt2", TestHelper.now());
+		
+		History history = sync.getLastUpdate();
+		Assert.assertNotNull(history);
+		Assert.assertEquals(3, sync.getUpdates());
+		
+		sync.purgue();
+		
+		Assert.assertEquals(1, sync.getUpdates());			
+		Assert.assertNotNull(sync.getLastUpdate());
+		Assert.assertSame(history, sync.getLastUpdate());
+	
+	}
 }

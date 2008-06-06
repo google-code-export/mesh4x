@@ -128,4 +128,12 @@ public class XMLView implements IXMLView{
 			this.xmlViews.add(xmlElementView);
 		}		
 	}
+
+	@Override
+	public void clean(Document document, Element element) {
+		IXMLViewElement viewElement = this.getViewBy(element);
+		if(viewElement != null){
+			viewElement.clean(document, element);
+		}
+	}
 }

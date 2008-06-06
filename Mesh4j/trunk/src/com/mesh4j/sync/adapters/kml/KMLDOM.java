@@ -16,6 +16,8 @@ import com.mesh4j.sync.validations.MeshException;
 
 public class KMLDOM extends MeshDOM {
 	
+	// TODO (JMT) High: Supports ExtendedData element to sync
+	
 	// Constructor
 	public KMLDOM(Document document, IIdentityProvider identityProvider,
 			IXMLView xmlView) {

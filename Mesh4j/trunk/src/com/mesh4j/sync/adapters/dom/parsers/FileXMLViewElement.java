@@ -33,6 +33,9 @@ public class FileXMLViewElement implements IXMLViewElement, IDOMRequied{
 		Guard.argumentNotNull(dom, "dom");
 		Guard.argumentNotNull(document, "document");
 		Guard.argumentNotNull(newElement, "element");
+		if(newElement != null && !this.getQName().equals(newElement.getQName())){
+			Guard.throwsArgumentException("element type", newElement);
+		}
 		
 		Element syncRepo = this.dom.getSyncRepository(document);
 		Guard.argumentNotNull(syncRepo, "syncRepo");		
@@ -57,6 +60,9 @@ public class FileXMLViewElement implements IXMLViewElement, IDOMRequied{
 	public void delete(Document document, Element element) {
 		Guard.argumentNotNull(document, "document");
 		Guard.argumentNotNull(element, "element");
+		if(element != null && !this.getQName().equals(element.getQName())){
+			Guard.throwsArgumentException("element type", element);
+		}
 		
 		String fileName = element.attributeValue(MeshNames.MESH_QNAME_FILE_ID);
 		Guard.argumentNotNull(fileName, "fileName");
@@ -119,7 +125,6 @@ public class FileXMLViewElement implements IXMLViewElement, IDOMRequied{
 	public boolean isValid(Document document, Element element) {
 		Guard.argumentNotNull(document, "document");
 		Guard.argumentNotNull(element, "element");
-
 		String fileName = element.attributeValue(MeshNames.MESH_QNAME_FILE_ID);
 		return MeshNames.MESH_QNAME_FILE.equals(element.getQName()) && fileName != null;
 	}
@@ -137,6 +142,9 @@ public class FileXMLViewElement implements IXMLViewElement, IDOMRequied{
 	public Element refresh(Document document, Element element) {
 		Guard.argumentNotNull(document, "document");
 		Guard.argumentNotNull(element, "element");
+		if(element != null && !this.getQName().equals(element.getQName())){
+			Guard.throwsArgumentException("element type", element);
+		}
 		
 		String fileName = element.attributeValue(MeshNames.MESH_QNAME_FILE_ID);
 		Guard.argumentNotNull(fileName, "fileName");
@@ -166,6 +174,12 @@ public class FileXMLViewElement implements IXMLViewElement, IDOMRequied{
 		Guard.argumentNotNull(document, "document");
 		Guard.argumentNotNull(element, "element");
 		Guard.argumentNotNull(newElement, "newElement");
+		if(element != null && !this.getQName().equals(element.getQName())){
+			Guard.throwsArgumentException("element type", element);
+		}
+		if(newElement != null && !this.getQName().equals(newElement.getQName())){
+			Guard.throwsArgumentException("element type", newElement);
+		}
 		
 		String fileName = newElement.attributeValue(MeshNames.MESH_QNAME_FILE_ID);
 		Guard.argumentNotNull(fileName, "fileName");
@@ -190,4 +204,15 @@ public class FileXMLViewElement implements IXMLViewElement, IDOMRequied{
 	public void setDOM(IMeshDOM dom) {
 		this.dom = dom;		
 	}	
+	
+	@Override
+	public void clean(Document document, Element element) {
+		Guard.argumentNotNull(element, "element");
+		Guard.argumentNotNull(element.getParent(), "parent");
+		
+		if(element != null && !this.getQName().equals(element.getQName())){
+			Guard.throwsArgumentException("element type", element);
+		}
+		element.getParent().remove(element);
+	}
 }

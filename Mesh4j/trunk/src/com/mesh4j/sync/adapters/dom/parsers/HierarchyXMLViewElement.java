@@ -300,12 +300,24 @@ public class HierarchyXMLViewElement implements IXMLViewElement, IDOMRequied {
 		}		
 	}
 
+	@Override
 	public void setDOM(IMeshDOM dom) {
 		this.dom = dom;
 	}
 	
 	public IMeshDOM getDOM() {
 		return this.dom;
+	}
+	
+	@Override
+	public void clean(Document document, Element element) {
+		Guard.argumentNotNull(element, "element");
+		Guard.argumentNotNull(element.getParent(), "parent");
+		
+		if(element != null && !this.getQName().equals(element.getQName())){
+			Guard.throwsArgumentException("element type", element);
+		}
+		element.getParent().remove(element);
 	}
 }
 

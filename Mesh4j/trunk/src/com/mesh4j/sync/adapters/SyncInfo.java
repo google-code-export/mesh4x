@@ -79,4 +79,8 @@ public class SyncInfo {
 		}
 		return false;
 	}
+
+	public boolean purgue() {
+		return this.sync.purgue();
+	}
 }

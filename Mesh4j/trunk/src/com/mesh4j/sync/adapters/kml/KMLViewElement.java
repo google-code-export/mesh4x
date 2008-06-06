@@ -106,4 +106,21 @@ public class KMLViewElement extends XMLViewElement {
 	public HierarchyXMLViewElement getHierarchyElementView() {
 		return this.hierarchyViewElement;
 	}
+	
+	@Override
+	public void clean(Document document, Element element) {
+		super.clean(document, element);
+		
+		Attribute syncIDAttr = element.attribute(MeshNames.MESH_QNAME_SYNC_ID);
+		if(syncIDAttr != null){
+			element.remove(syncIDAttr);
+		}
+		
+		Attribute originalIDAttr = element.attribute(MeshNames.MESH_QNAME_ORIGINAL_ID);
+		if(originalIDAttr != null){
+			element.remove(originalIDAttr);
+		}
+		
+		element.remove(MeshNames.MESH_NS);
+	}
 }
