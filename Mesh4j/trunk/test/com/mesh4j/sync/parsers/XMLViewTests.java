@@ -7,7 +7,6 @@ import java.util.Map;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.dom4j.QName;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -89,7 +88,7 @@ public class XMLViewTests {
 		
 		Document document = DocumentHelper.createDocument(DocumentHelper.createElement("kml"));
 		Assert.assertSame(view1.getElement(), view.add(document, view1.getElement()));
-		Assert.assertSame(view1.getElement(), document.getRootElement().element(view1.getName()));
+		Assert.assertSame(view1.getElement(), document.getRootElement().element(view1.getElement().getName()));
 		Assert.assertNull(view.add(null, null));		
 		Assert.assertNull(view.add(null, DocumentHelper.createElement("Placemark")));
 	}
@@ -112,19 +111,19 @@ public class XMLViewTests {
 		
 		Document document = DocumentHelper.createDocument(DocumentHelper.createElement("kml"));
 		document.getRootElement().add(view1.getElement());
-		Assert.assertNotNull(document.getRootElement().element(view1.getName()));
+		Assert.assertNotNull(document.getRootElement().element(view1.getElement().getName()));
 		
 		view.delete(document, view1.getElement());
-		Assert.assertNull(document.getRootElement().element(view1.getName()));
+		Assert.assertNull(document.getRootElement().element(view1.getElement().getName()));
 
 		document.getRootElement().add(view1.getElement());
-		Assert.assertNotNull(document.getRootElement().element(view1.getName()));
+		Assert.assertNotNull(document.getRootElement().element(view1.getElement().getName()));
 		view.delete(document, null);		
-		Assert.assertNotNull(document.getRootElement().element(view1.getName()));
+		Assert.assertNotNull(document.getRootElement().element(view1.getElement().getName()));
 		
-		Assert.assertNotNull(document.getRootElement().element(view1.getName()));
+		Assert.assertNotNull(document.getRootElement().element(view1.getElement().getName()));
 		view.delete(document, DocumentHelper.createElement("Placemark"));		
-		Assert.assertNotNull(document.getRootElement().element(view1.getName()));
+		Assert.assertNotNull(document.getRootElement().element(view1.getElement().getName()));
 
 	}
 	
@@ -202,16 +201,6 @@ public class XMLViewTests {
 		}
 
 		@Override
-		public String getName() {			
-			return this.element.getName();
-		}
-
-		@Override
-		public QName getQName() {
-			return this.element.getQName();
-		}
-
-		@Override
 		public boolean isValid(Document document, Element element) {
 			return true;
 		}
@@ -235,6 +224,16 @@ public class XMLViewTests {
 		@Override
 		public void clean(Document document, Element element) {
 			cleanWasCalled = true;
+		}
+
+		@Override
+		public Map<String, String> getNameSpaces() {
+			return null;
+		}
+
+		@Override
+		public boolean manage(Element element) {
+			return this.element.getName().equals(element.getName());
 		}
 	}
 }

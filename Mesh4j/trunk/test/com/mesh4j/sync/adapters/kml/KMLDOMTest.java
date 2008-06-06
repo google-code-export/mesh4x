@@ -16,6 +16,7 @@ import com.mesh4j.sync.model.Sync;
 import com.mesh4j.sync.security.NullIdentityProvider;
 import com.mesh4j.sync.test.utils.TestHelper;
 import com.mesh4j.sync.utils.IdGenerator;
+import com.mesh4j.sync.utils.XMLHelper;
 
 
 public class KMLDOMTest {
@@ -1235,6 +1236,41 @@ public class KMLDOMTest {
 		
 		Assert.assertNotNull(normalizedElement);
 		Assert.assertSame(element, normalizedElement);		
+	}
+	
+	public void shouldNormalizeSchema() throws DocumentException{
+		String elementXML = 
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+			+"<kml xmlns=\"http://earth.google.com/kml/2.2\">"
+			+"<Document>"
+			+"<name>dummy</name>"
+			+"<Schema name=\"TrailHeadType\" id=\"TrailHeadTypeId\">"     
+			+"<SimpleField type=\"string\" name=\"TrailHeadName\">"
+			+"  <displayName><![CDATA[<b>Trail Head Name</b>]]></displayName>"     
+			+"</SimpleField>"
+			+"<SimpleField type=\"double\" name=\"TrailLength\">"       
+			+"  <displayName><![CDATA[<i>Length in miles</i>]]></displayName>"     
+			+"</SimpleField>"
+			+"<SimpleField type=\"int\" name=\"ElevationGain\">"       
+			+"  <displayName><![CDATA[<i>Change in altitude</i>]]></displayName>"     
+			+"</SimpleField>"
+			+"</Schema>"
+			+"</Document>"
+			+"</kml>";
+	
+		Document doc = DocumentHelper.parseText(elementXML);
+		Element element = doc
+			.getRootElement()
+			.element(KmlNames.KML_ELEMENT_DOCUMENT)
+			.element(KmlNames.KML_ELEMENT_SCHEMA);
+		
+		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		Element normalizedElement = meshParser.normalize(element);
+		
+		Assert.assertNotNull(normalizedElement);
+		Assert.assertSame(element, normalizedElement);
+		
+		XMLHelper.canonicalizeXML(element);
 	}
 	
 	@Test

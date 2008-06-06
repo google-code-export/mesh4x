@@ -179,13 +179,6 @@ public class FileXMLViewElementTests {
 		Assert.assertNull(fileManager.getFileContent("a.txt"));
 	}
 	
-	@Test
-	public void shouldGetName(){
-		FileXMLViewElement fileView = new FileXMLViewElement(new FileManager());
-		Assert.assertEquals(MeshNames.MESH_QNAME_FILE, fileView.getQName());
-		Assert.assertEquals(MeshNames.MESH_QNAME_FILE.getName(), fileView.getName());
-	}
-	
 	@Test(expected=IllegalArgumentException.class) 
 	public void shouldIsValidFailsBecauseElementIsNull(){
 		Document doc = DocumentHelper.createDocument(DocumentHelper.createElement("foo"));		

@@ -8,24 +8,16 @@ import java.util.Map;
 import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.Element;
-import org.dom4j.QName;
 
 import com.mesh4j.sync.adapters.SyncInfo;
-import com.mesh4j.sync.adapters.dom.IMeshDOM;
 import com.mesh4j.sync.adapters.dom.MeshNames;
 import com.mesh4j.sync.model.IContent;
 import com.mesh4j.sync.model.Sync;
-import com.mesh4j.sync.parsers.IXMLViewElement;
 import com.mesh4j.sync.utils.XMLHelper;
 import com.mesh4j.sync.validations.Guard;
 
-public class HierarchyXMLViewElement implements IXMLViewElement, IDOMRequied {
+public class HierarchyXMLViewElement extends MeshXMLViewElement {
 
-	// MODEL VARIABLES
-	private IMeshDOM dom;
-	
-	// BUSINESS METHODS
-	
 	public HierarchyXMLViewElement() {
 		super();
 	}
@@ -69,36 +61,12 @@ public class HierarchyXMLViewElement implements IXMLViewElement, IDOMRequied {
 		}
 	}
 
-	protected Element getContentRepoElement(Document document) {
-		Guard.argumentNotNull(this.dom, "dom");
-		return this.dom.getContentRepository(document);
-	}
-	
-	protected Element getSyncRepoElement(Document document) {
-		Guard.argumentNotNull(this.dom, "dom");
-		return this.dom.getSyncRepository(document);
-	}
-
-	@Override
-	public String getName() {
-		return MeshNames.MESH_QNAME_HIERARCHY.getName();
-	}
-
-	@Override
-	public Element normalize(Element element) {
-		if(element != null && !this.getQName().equals(element.getQName())){
-			return null;
-		} else {
-			return element;
-		}
-	}
-
 	@Override
 	public Element update(Document document, Element currentElement, Element newElement) {
 		if(document == null || currentElement == null || newElement == null){
 			return null;
 		}
-		if(!this.getQName().equals(currentElement.getQName()) || !this.getQName().equals(newElement.getQName())){
+		if(!this.manage(currentElement) || !this.manage(newElement)){
 			return null;
 		}
 		
@@ -169,7 +137,7 @@ public class HierarchyXMLViewElement implements IXMLViewElement, IDOMRequied {
 		if(document == null || element == null){
 			return;
 		}
-		if(!this.getQName().equals(element.getQName())){
+		if(!this.manage(element)){
 			return;
 		}
 		
@@ -198,17 +166,12 @@ public class HierarchyXMLViewElement implements IXMLViewElement, IDOMRequied {
 	}
 
 	@Override
-	public QName getQName() {
-		return MeshNames.MESH_QNAME_HIERARCHY;
-	}
-	
-	@Override
 	public Element refresh(Document document, Element element) {
 		if(document == null || element == null){
 			return null;
 		}
 		
-		if(!this.getQName().equals(element.getQName())){
+		if(!this.manage(element)){
 			return null;
 		}
 	
@@ -239,21 +202,21 @@ public class HierarchyXMLViewElement implements IXMLViewElement, IDOMRequied {
 	}
 
 	private void updateSync(Element element) {
-		Guard.argumentNotNull(this.dom, "dom");
+		Guard.argumentNotNull(this.getDOM(), "dom");
 		
 		String hierarchySyncID = element.attributeValue(MeshNames.MESH_QNAME_SYNC_ID);
-		IContent content = dom.createContent(element, hierarchySyncID);
-		SyncInfo hierarchySyncInfo = this.dom.getSync(hierarchySyncID);
+		IContent content = this.getDOM().createContent(element, hierarchySyncID);
+		SyncInfo hierarchySyncInfo = this.getDOM().getSync(hierarchySyncID);
 		if(hierarchySyncInfo == null){
 			hierarchySyncInfo = new SyncInfo(
-					new Sync(hierarchySyncID, this.dom.getIdentityProvider().getAuthenticatedUser(), new Date(), false), 
-					this.dom.getType(), 
+					new Sync(hierarchySyncID, this.getDOM().getIdentityProvider().getAuthenticatedUser(), new Date(), false), 
+					this.getDOM().getType(), 
 					hierarchySyncID, 
 					content.getVersion());
 		} else { 
-			hierarchySyncInfo.updateSyncIfChanged(content, this.dom.getIdentityProvider());
+			hierarchySyncInfo.updateSyncIfChanged(content, this.getDOM().getIdentityProvider());
 		}
-		this.dom.updateSync(hierarchySyncInfo);
+		this.getDOM().updateSync(hierarchySyncInfo);
 	}
 	
 	@Override
@@ -278,7 +241,7 @@ public class HierarchyXMLViewElement implements IXMLViewElement, IDOMRequied {
 	}
  
 	public void createHierarchyIfAbsent(Document document, Element elementChild) {
-		Guard.argumentNotNull(this.dom, "dom");
+		Guard.argumentNotNull(this.getDOM(), "dom");
 		if(document == null || elementChild == null){
 			return;
 		}
@@ -292,7 +255,7 @@ public class HierarchyXMLViewElement implements IXMLViewElement, IDOMRequied {
 		if(hierarchyElement == null){
 			Element rootElement = getSyncRepoElement(document);
 			hierarchyElement = rootElement.addElement(MeshNames.MESH_QNAME_HIERARCHY);
-			hierarchyElement.addAttribute(MeshNames.MESH_QNAME_SYNC_ID, this.dom.newID());
+			hierarchyElement.addAttribute(MeshNames.MESH_QNAME_SYNC_ID, this.getDOM().newID());
 			String parentID = elementChild.getParent().attributeValue(MeshNames.MESH_QNAME_SYNC_ID);
 			
 			refreshHierarchyAttributes(hierarchyElement, parentID, childID);
@@ -301,23 +264,8 @@ public class HierarchyXMLViewElement implements IXMLViewElement, IDOMRequied {
 	}
 
 	@Override
-	public void setDOM(IMeshDOM dom) {
-		this.dom = dom;
-	}
-	
-	public IMeshDOM getDOM() {
-		return this.dom;
-	}
-	
-	@Override
-	public void clean(Document document, Element element) {
-		Guard.argumentNotNull(element, "element");
-		Guard.argumentNotNull(element.getParent(), "parent");
-		
-		if(element != null && !this.getQName().equals(element.getQName())){
-			Guard.throwsArgumentException("element type", element);
-		}
-		element.getParent().remove(element);
+	public boolean manage(Element element) {
+		return MeshNames.MESH_QNAME_HIERARCHY.equals(element.getQName());
 	}
 }
 

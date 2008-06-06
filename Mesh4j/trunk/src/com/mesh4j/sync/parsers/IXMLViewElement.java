@@ -1,15 +1,13 @@
 package com.mesh4j.sync.parsers;
 
 import java.util.List;
+import java.util.Map;
 
 import org.dom4j.Document;
 import org.dom4j.Element;
-import org.dom4j.QName;
 
 public interface IXMLViewElement {
 
-	QName getQName();
-	
 	Element normalize(Element element);
 	
 	Element update(Document document, Element element, Element newElement);
@@ -20,11 +18,13 @@ public interface IXMLViewElement {
 
 	List<Element> getAllElements(Document document);
 
-	String getName();
-
 	Element refresh(Document document, Element element);
 
 	boolean isValid(Document document, Element element);
 
 	void clean(Document document, Element element);
+
+	boolean manage(Element payload);
+
+	Map<String, String> getNameSpaces();
 }

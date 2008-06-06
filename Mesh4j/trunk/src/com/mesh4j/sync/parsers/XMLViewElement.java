@@ -3,6 +3,7 @@ package com.mesh4j.sync.parsers;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.dom4j.Attribute;
 import org.dom4j.Document;
@@ -51,12 +52,6 @@ public class XMLViewElement implements IXMLViewElement {
 		attributeQNames.add(qName);		
 	}
 
-	@Override
-	public String getName() {
-		return getQName().getName();
-	}
-	
-	@Override
 	public QName getQName() {
 		return this.qname;
 	}
@@ -68,7 +63,7 @@ public class XMLViewElement implements IXMLViewElement {
 			return null;
 		}
 		
-		if(!this.getName().equals(element.getName())){
+		if(!this.manage(element)){
 			return null;
 		}
 		
@@ -96,11 +91,11 @@ public class XMLViewElement implements IXMLViewElement {
 			return null;
 		}
 		
-		if(!this.getName().equals(element.getName())){
+		if(!this.manage(element)){
 			return null;
 		}
 		
-		if(!this.getName().equals(elementSource.getName())){
+		if(!this.manage(elementSource)){
 			return null;
 		}
 		
@@ -267,5 +262,17 @@ public class XMLViewElement implements IXMLViewElement {
 		if(element != null && !this.getQName().equals(element.getQName())){
 			Guard.throwsArgumentException("element type", element);
 		}	
+	}
+
+	@Override
+	public Map<String, String> getNameSpaces() {
+		HashMap<String, String> ns = new HashMap<String, String>();
+		ns.put(this.qname.getNamespacePrefix(), this.qname.getNamespaceURI());
+		return ns;
+	}
+
+	@Override
+	public boolean manage(Element element) {
+		return element.getName().equals(this.qname.getName());
 	}
 }

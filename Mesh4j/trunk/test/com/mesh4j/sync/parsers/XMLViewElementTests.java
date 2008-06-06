@@ -23,12 +23,6 @@ public class XMLViewElementTests {
 	}
 	
 	@Test
-	public void shouldReturnName(){
-		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_FOLDER, false);
-		Assert.assertEquals("Folder", view.getName());
-	}
-	
-	@Test
 	public void shouldReturnQName(){
 		XMLViewElement view = new XMLViewElement(KmlNames.KML_QNAME_FOLDER, false);
 		Assert.assertEquals(KmlNames.KML_QNAME_FOLDER, view.getQName());

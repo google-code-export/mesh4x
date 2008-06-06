@@ -90,7 +90,7 @@ public class XMLView implements IXMLView{
 	public Map<String, String> getNameSpaces() {
 		Map<String, String> result = new HashMap<String, String>();
 		for (IXMLViewElement viewElement : this.xmlViews) {
-			result.put(viewElement.getQName().getNamespacePrefix(), viewElement.getQName().getNamespaceURI());
+			result.putAll(viewElement.getNameSpaces());
 		}
 		return result;
 	}
@@ -111,7 +111,7 @@ public class XMLView implements IXMLView{
 		}
 		
 		for (IXMLViewElement view : this.xmlViews) {
-			if(view.getName().equals(element.getName())){
+			if(view.manage(element)){
 				return view;
 			}
 		}

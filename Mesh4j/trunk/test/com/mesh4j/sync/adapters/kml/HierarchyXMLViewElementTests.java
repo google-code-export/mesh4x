@@ -20,13 +20,6 @@ import com.mesh4j.sync.security.NullIdentityProvider;
 public class HierarchyXMLViewElementTests {
 
 	@Test
-	public void shouldReturnQName(){
-		HierarchyXMLViewElement hierarchy = new HierarchyXMLViewElement();
-		Assert.assertEquals(MeshNames.MESH_QNAME_HIERARCHY, hierarchy.getQName());
-		Assert.assertEquals(MeshNames.MESH_QNAME_HIERARCHY.getName(), hierarchy.getName());
-	}
-	
-	@Test
 	public void shouldNormalize(){
 		HierarchyXMLViewElement hierarchy = new HierarchyXMLViewElement();
 		

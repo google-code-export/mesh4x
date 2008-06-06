@@ -1,5 +1,7 @@
 package com.mesh4j.sync.adapters.kml;
 
+import java.util.List;
+
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
@@ -44,23 +46,25 @@ public class KMLContent extends Content{
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private static Element getElement(IContent content, IXMLView xmlView) {
 		
 		Guard.argumentNotNull(xmlView, "xmlView");
 		
 		Element payload = content.getPayload();
-		String elementName = payload.getName();
 		
 		for (IXMLViewElement viewElement : xmlView.getXMLViewElements()){
-			if(viewElement.getName().equals(elementName)){
+			if(viewElement.manage(payload)){
 				return payload;
 			}
 		}
 		
 		for (IXMLViewElement viewElement : xmlView.getXMLViewElements()){
-			Element element = payload.element(viewElement.getName());
-			if(element != null){
-				return element;
+			List<Element> elements = payload.elements();
+			for (Element element : elements) {
+				if(viewElement.manage(element)){
+					return element;
+				}
 			}
 		}
 		return null;

@@ -20,6 +20,7 @@ public interface KmlNames {
 	public static final String KML_ELEMENT_STYLE_MAP = "StyleMap";
 	public static final String KML_ELEMENT_PHOTO_OVERLAY = "PhotoOverlay";
 	public static final String KML_ELEMENT_GROUND_OVERLAY = "GroundOverlay";
+	public static final String KML_ELEMENT_SCHEMA = "Schema";
 	
 	public static final QName KML_ATTRIBUTE_ID_QNAME = DocumentHelper.createQName("id", KML_NS);
 	public static final String KML_ATTRIBUTE_ID = "id";
@@ -28,7 +29,8 @@ public interface KmlNames {
 	public static final QName KML_QNAME_STYLE = DocumentHelper.createQName("Style", KML_NS);
 	public static final QName KML_QNAME_STYLE_MAP = DocumentHelper.createQName("StyleMap", KML_NS);
 	public static final QName KML_QNAME_PHOTO_OVERLAY = DocumentHelper.createQName("PhotoOverlay", KML_NS);
-	public static final QName KML_QNAME_GROUND_OVERLAY = DocumentHelper.createQName("GroundOverlay", KML_NS);	
+	public static final QName KML_QNAME_GROUND_OVERLAY = DocumentHelper.createQName("GroundOverlay", KML_NS);
+	public static final QName KML_QNAME_SCHEMA = DocumentHelper.createQName("Schema", KML_NS);
 	
 	public static final String KML_ELEMENT_EXTENDED_DATA = "ExtendedData";
 	
