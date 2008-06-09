@@ -66,7 +66,7 @@ public class KMLContentTests {
 		Element payload = DocumentHelper.createElement("payload");
 		KMLContent content = new KMLContent(payload, "1");
 		
-		Assert.assertSame(content, KMLContent.normalizeContent(content, DOMLoaderFactory.createKMLView()));
+		Assert.assertSame(content, KMLContent.normalizeContent(content, DOMLoaderFactory.createView(new FileManager())));
 	}
 	
 	@Test
@@ -94,7 +94,7 @@ public class KMLContentTests {
 		
 		MockContent content = new MockContent(payload);
 		
-		KMLContent normalizedContent = KMLContent.normalizeContent(content, DOMLoaderFactory.createKMZView(new FileManager()));
+		KMLContent normalizedContent = KMLContent.normalizeContent(content, DOMLoaderFactory.createView(new FileManager()));
 		Assert.assertNotNull(normalizedContent);
 		Assert.assertSame(element, normalizedContent.getPayload());
 		Assert.assertEquals("1", normalizedContent.getId());
@@ -120,7 +120,7 @@ public class KMLContentTests {
 		
 		MockContent content = new MockContent(payload);
 		
-		KMLContent normalizedContent = KMLContent.normalizeContent(content, DOMLoaderFactory.createKMLView());
+		KMLContent normalizedContent = KMLContent.normalizeContent(content, DOMLoaderFactory.createView(new FileManager()));
 		Assert.assertNull(normalizedContent);
 	}
 	
@@ -142,7 +142,7 @@ public class KMLContentTests {
 			
 		MockContent content = new MockContent(element);
 		
-		KMLContent normalizedContent = KMLContent.normalizeContent(content, DOMLoaderFactory.createKMZView(new FileManager()));
+		KMLContent normalizedContent = KMLContent.normalizeContent(content, DOMLoaderFactory.createView(new FileManager()));
 		Assert.assertNotNull(normalizedContent);
 		Assert.assertSame(element, normalizedContent.getPayload());
 		Assert.assertEquals("1", normalizedContent.getId());
@@ -163,7 +163,7 @@ public class KMLContentTests {
 	
 	private void assertNormalizeFails(Element element){
 		MockContent content = new MockContent(element);
-		KMLContent normalizedContent = KMLContent.normalizeContent(content, DOMLoaderFactory.createKMLView());
+		KMLContent normalizedContent = KMLContent.normalizeContent(content, DOMLoaderFactory.createView(new FileManager()));
 		Assert.assertNull(normalizedContent);
 	}
 	

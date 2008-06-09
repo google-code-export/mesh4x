@@ -12,7 +12,6 @@ import org.junit.Test;
 
 import com.mesh4j.sync.adapters.dom.MeshNames;
 import com.mesh4j.sync.adapters.feed.ISyndicationFormat;
-import com.mesh4j.sync.test.utils.TestHelper;
 
 public class XMLHelperTests {
 
@@ -54,7 +53,7 @@ public class XMLHelperTests {
 	
 	@Test
 	public void shouldEncodeFileBytesInXML() throws IOException, DocumentException{
-		byte[] originalBytes = TestHelper.readFileBytes(this.getClass().getResource("kmzExample_star.jpg").getFile());
+		byte[] originalBytes = FileUtils.read(this.getClass().getResource("kmzExample_star.jpg").getFile());
 		String encoded = Base64Helper.encode(originalBytes);
 		Assert.assertNotNull(encoded);
 

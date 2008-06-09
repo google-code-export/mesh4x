@@ -22,6 +22,7 @@ import com.mesh4j.sync.adapters.dom.DOMLoader;
 import com.mesh4j.sync.adapters.dom.IDOMLoader;
 import com.mesh4j.sync.adapters.dom.MeshDOM;
 import com.mesh4j.sync.adapters.dom.MeshNames;
+import com.mesh4j.sync.adapters.dom.parsers.FileManager;
 import com.mesh4j.sync.adapters.dom.parsers.HierarchyXMLViewElement;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.NullContent;
@@ -359,7 +360,7 @@ public class KMLAdapterTests {
 	}
 	
 	public List<Element> getElementsToSync(Document document) {
-		Map<String, String> namespaces = DOMLoaderFactory.createKMLView().getNameSpaces();
+		Map<String, String> namespaces = DOMLoaderFactory.createView(new FileManager()).getNameSpaces();
 		List<Element> elements = XMLHelper.selectElements("//kml:StyleMap",
 				document.getRootElement(), namespaces);
 		elements.addAll(XMLHelper.selectElements("//kml:Style", document

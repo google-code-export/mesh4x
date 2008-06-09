@@ -5,8 +5,6 @@ import java.io.IOException;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.mesh4j.sync.test.utils.TestHelper;
-
 public class Base64HelperTests {
 
 	@Test
@@ -22,7 +20,7 @@ public class Base64HelperTests {
 	
 	@Test
 	public void shouldEncodeDecodeFile() throws IOException{
-		byte[] originalBytes = TestHelper.readFileBytes(this.getClass().getResource("kmzExample_star.jpg").getFile());
+		byte[] originalBytes = FileUtils.read(this.getClass().getResource("kmzExample_star.jpg").getFile());
 		String encoded = Base64Helper.encode(originalBytes);
 		Assert.assertNotNull(encoded);
 		

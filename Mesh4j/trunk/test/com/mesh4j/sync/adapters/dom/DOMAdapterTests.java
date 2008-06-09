@@ -15,6 +15,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.mesh4j.sync.ISupportMerge;
+import com.mesh4j.sync.adapters.dom.parsers.FileManager;
 import com.mesh4j.sync.adapters.dom.parsers.HierarchyXMLViewElement;
 import com.mesh4j.sync.adapters.kml.DOMLoaderFactory;
 import com.mesh4j.sync.adapters.kml.KMLContent;
@@ -314,7 +315,7 @@ public class DOMAdapterTests {
 	}
 
 	public List<Element> getElementsToSync(Document document) {
-		Map<String, String> namespaces = DOMLoaderFactory.createKMLView().getNameSpaces();
+		Map<String, String> namespaces = DOMLoaderFactory.createView(new FileManager()).getNameSpaces();
 		List<Element> elements = XMLHelper.selectElements("//kml:StyleMap",
 				document.getRootElement(), namespaces);
 		elements.addAll(XMLHelper.selectElements("//kml:Style", document

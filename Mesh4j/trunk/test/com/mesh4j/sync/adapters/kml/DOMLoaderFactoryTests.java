@@ -42,7 +42,7 @@ public class DOMLoaderFactoryTests {
 		
 		KMLDOMLoader kmlLoader = (KMLDOMLoader)loader;		
 		Assert.assertNotNull(kmlLoader.getXMLView());
-		Assert.assertEquals(9, kmlLoader.getXMLView().getXMLViewElements().size());
+		Assert.assertEquals(10, kmlLoader.getXMLView().getXMLViewElements().size());
 		
 		IXMLViewElement hierarchy = kmlLoader.getXMLView().getXMLViewElements().get(8);
 		Assert.assertTrue(hierarchy instanceof HierarchyXMLViewElement);
@@ -68,6 +68,7 @@ public class DOMLoaderFactoryTests {
 		
 		Assert.assertTrue(kmlLoader.getXMLView().getXMLViewElements().get(6) instanceof KMLSchemaXMLViewElement);
 		Assert.assertTrue(kmlLoader.getXMLView().getXMLViewElements().get(7) instanceof KMLDocumentExtendedDataViewElement);
+		Assert.assertTrue(kmlLoader.getXMLView().getXMLViewElements().get(9) instanceof FileXMLViewElement);
 		
 		Assert.assertEquals("j.kml", ((KMLDOMLoader)loader).getFile().getName());
 	}

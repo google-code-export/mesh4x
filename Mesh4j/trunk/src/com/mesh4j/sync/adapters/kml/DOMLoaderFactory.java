@@ -14,21 +14,21 @@ public class DOMLoaderFactory {
 	public static DOMLoader createDOMLoader(String fileName, IIdentityProvider identityProvider){
 		Guard.argumentNotNullOrEmptyString(fileName, "fileName");
 		Guard.argumentNotNull(identityProvider, "identityProvider");
-
 		
 		String localFileName = fileName.trim();
 		if(localFileName.toUpperCase().endsWith(".KMZ")){
 			FileManager fileManager = new FileManager();
-			return new KMZDOMLoader(fileName, identityProvider, createKMZView(fileManager), fileManager);
+			return new KMZDOMLoader(fileName, identityProvider, createView(fileManager), fileManager);
 		} else if (localFileName.toUpperCase().endsWith(".KML")){
-			return new KMLDOMLoader(fileName, identityProvider, createKMLView());
+			FileManager fileManager = new FileManager();
+			return new KMLDOMLoader(fileName, identityProvider, createView(fileManager), fileManager);
 		} else {
 			Guard.throwsArgumentException("Arg_InvalidKMLFileName", fileName);
 			return null; // Only for java compilation
 		}
 	}
 	
-	public static XMLView createKMLView(){
+	public static XMLView createView(FileManager fileManager){
 		HierarchyXMLViewElement hierarchyView = new HierarchyXMLViewElement();
 		
 		KMLViewElement folderView = new KMLViewElement(KmlNames.KML_QNAME_FOLDER, hierarchyView, false);
@@ -45,13 +45,7 @@ public class DOMLoaderFactory {
 		KMLViewElement styleView = new KMLViewElement(KmlNames.KML_QNAME_STYLE, hierarchyView, true);
 		KMLSchemaXMLViewElement schemaView = new KMLSchemaXMLViewElement();
 		KMLDocumentExtendedDataViewElement documentExtendedDataView = new KMLDocumentExtendedDataViewElement();
-		return new XMLView(styleView, styleMapView, folderView, placemarkView, photoView, imageView, schemaView, documentExtendedDataView, hierarchyView);
-	}
-	
-	public static XMLView createKMZView(FileManager fileManager){
-		XMLView xmlView = createKMLView();
 		FileXMLViewElement fileView = new FileXMLViewElement(fileManager);
-		xmlView.addXMLViewElement(fileView);
-		return xmlView;
+		return new XMLView(styleView, styleMapView, folderView, placemarkView, photoView, imageView, schemaView, documentExtendedDataView, hierarchyView, fileView);
 	}
 }

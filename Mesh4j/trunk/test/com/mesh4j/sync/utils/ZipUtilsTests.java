@@ -211,9 +211,9 @@ public class ZipUtilsTests {
 		Assert.assertNotNull(entries);
 		Assert.assertEquals(3, entries.size());
 		
-		byte[] file1 = TestHelper.readFileBytes(this.getClass().getResource("kmzExample_doc.kml").getFile());
-		byte[] file2 = TestHelper.readFileBytes(this.getClass().getResource("kmzExample_star.jpg").getFile());
-		byte[] file3 = TestHelper.readFileBytes(this.getClass().getResource("kmzExample_camera_mode.png").getFile());
+		byte[] file1 = FileUtils.read(this.getClass().getResource("kmzExample_doc.kml").getFile());
+		byte[] file2 = FileUtils.read(this.getClass().getResource("kmzExample_star.jpg").getFile());
+		byte[] file3 = FileUtils.read(this.getClass().getResource("kmzExample_camera_mode.png").getFile());
 		
 		byte[] fileZip1 = entries.get("doc.kml");
 		byte[] fileZip2 = entries.get("files/star.jpg");
@@ -229,9 +229,9 @@ public class ZipUtilsTests {
 		File file = new File(TestHelper.fileName("kmzExample.kmz"));
 		
 		Map<String, byte[]> entries = new HashMap<String, byte[]>();
-		byte[] file1 = TestHelper.readFileBytes(this.getClass().getResource("kmzExample_doc.kml").getFile());
-		byte[] file2 = TestHelper.readFileBytes(this.getClass().getResource("kmzExample_star.jpg").getFile());
-		byte[] file3 = TestHelper.readFileBytes(this.getClass().getResource("kmzExample_camera_mode.png").getFile());
+		byte[] file1 = FileUtils.read(this.getClass().getResource("kmzExample_doc.kml").getFile());
+		byte[] file2 = FileUtils.read(this.getClass().getResource("kmzExample_star.jpg").getFile());
+		byte[] file3 = FileUtils.read(this.getClass().getResource("kmzExample_camera_mode.png").getFile());
 		
 		entries.put("doc.kml", file1);
 		entries.put("files/star.jpg", file2);

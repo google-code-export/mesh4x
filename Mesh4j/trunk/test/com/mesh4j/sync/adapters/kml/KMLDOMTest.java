@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import com.mesh4j.sync.adapters.SyncInfo;
 import com.mesh4j.sync.adapters.dom.MeshNames;
+import com.mesh4j.sync.adapters.dom.parsers.FileManager;
 import com.mesh4j.sync.adapters.dom.parsers.HierarchyXMLViewElement;
 import com.mesh4j.sync.model.Sync;
 import com.mesh4j.sync.security.NullIdentityProvider;
@@ -160,26 +161,31 @@ public class KMLDOMTest {
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldNotAcceptNullDocument() {
 		Document doc = null;
-		new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(new FileManager()));
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldNotAcceptNullName() {
 		String name = null;
-		new KMLDOM(name, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		new KMLDOM(name, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(new FileManager()));
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldNotAcceptEmptyName() {
 		String name = "";
-		new KMLDOM(name, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		new KMLDOM(name, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(new FileManager()));
+	}
+
+	private KMLDOM createDOM(Document document) {
+		FileManager fileManager = new FileManager();
+		return new KMLDOM(document, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(fileManager));
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldNotAcceptNullIdentityProvider() {
 		Document doc = DocumentHelper.createDocument();
-		new KMLDOM(doc, null, DOMLoaderFactory.createKMLView());		
-		new KMLDOM("myName", null, DOMLoaderFactory.createKMLView());
+		new KMLDOM(doc, null, DOMLoaderFactory.createView(new FileManager()));		
+		new KMLDOM("myName", null, DOMLoaderFactory.createView(new FileManager()));
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
@@ -195,7 +201,7 @@ public class KMLDOMTest {
 		String id = IdGenerator.newID();
 		Document doc = DocumentHelper.parseText(xmlWithHierarchy);
 		
-		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		KMLDOM meshParser = createDOM(doc);
 
 		Element result = meshParser.getElement(id);
 		Assert.assertNull(result);
@@ -206,7 +212,7 @@ public class KMLDOMTest {
 		String id = "3";
 		Document doc = DocumentHelper.parseText(xmlWithHierarchy);
 		
-		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		KMLDOM meshParser = createDOM(doc);
 		Element result = meshParser.getElement(id);
 		Assert.assertNotNull(result);
 		Assert.assertEquals("Placemark", result.getName());
@@ -217,7 +223,7 @@ public class KMLDOMTest {
 	public void shouldGetMeshSyncIdReturnsNullWhenAttributeDoesNotExist() throws DocumentException{
 		Document doc = DocumentHelper.parseText(xmlWithHierarchy);
 		
-		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		KMLDOM meshParser = createDOM(doc);
 		
 		Element element = DocumentHelper.createElement("payload");
 		String result = meshParser.getMeshSyncId(element);
@@ -229,7 +235,7 @@ public class KMLDOMTest {
 
 		Element placemark = DocumentHelper.parseText(xml).getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT).element(KmlNames.KML_ELEMENT_PLACEMARK);
 		Document doc = DocumentHelper.parseText(xml);		
-		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		KMLDOM meshParser = createDOM(doc);
 		
 		String result = meshParser.getMeshSyncId(placemark);
 		Assert.assertNotNull(result);
@@ -289,7 +295,7 @@ public class KMLDOMTest {
 		
 		Document doc = DocumentHelper.parseText(localXML);
 				
-		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		KMLDOM meshParser = createDOM(doc);
 		SyncInfo syncInfo = meshParser.getSync("1");
 		Assert.assertNull(syncInfo);
 	}
@@ -318,7 +324,7 @@ public class KMLDOMTest {
 		
 		Document doc = DocumentHelper.parseText(localXML);
 				
-		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		KMLDOM meshParser = createDOM(doc);
 		SyncInfo syncInfo = meshParser.getSync("2");
 		Assert.assertNotNull(syncInfo);
 		
@@ -351,7 +357,7 @@ public class KMLDOMTest {
 		
 		Document doc = DocumentHelper.parseText(localXML);
 						
-		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		KMLDOM meshParser = createDOM(doc);
 		List<SyncInfo> syncInfos = meshParser.getAllSyncs();
 		Assert.assertNotNull(syncInfos);
 		Assert.assertEquals(0, syncInfos.size());
@@ -372,7 +378,7 @@ public class KMLDOMTest {
 		
 		Document doc = DocumentHelper.parseText(localXML);
 				
-		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		KMLDOM meshParser = createDOM(doc);
 		List<SyncInfo> syncInfos = meshParser.getAllSyncs();
 		Assert.assertNotNull(syncInfos);
 		Assert.assertEquals(0, syncInfos.size());
@@ -412,7 +418,7 @@ public class KMLDOMTest {
 		
 		Document doc = DocumentHelper.parseText(localXML);
 				
-		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		KMLDOM meshParser = createDOM(doc);
 		List<SyncInfo> syncInfos = meshParser.getAllSyncs();
 		Assert.assertNotNull(syncInfos);
 		Assert.assertEquals(2, syncInfos.size());
@@ -453,7 +459,7 @@ public class KMLDOMTest {
 				"</kml>";
 		
 		Document doc = DocumentHelper.parseText(localXML);
-		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		KMLDOM meshParser = createDOM(doc);
 		
 		List<SyncInfo> syncInfos = meshParser.getAllSyncs();
 		Assert.assertNotNull(syncInfos);
@@ -511,7 +517,7 @@ public class KMLDOMTest {
 				"</kml>";
 		
 		Document doc = DocumentHelper.parseText(localXML);
-		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		KMLDOM meshParser = createDOM(doc);
 		
 		List<SyncInfo> syncInfos = meshParser.getAllSyncs();
 		Assert.assertNotNull(syncInfos);
@@ -553,7 +559,7 @@ public class KMLDOMTest {
 		
 		Document doc = DocumentHelper.parseText(localXML);
 				
-		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		KMLDOM meshParser = createDOM(doc);
 		
 		List<SyncInfo> syncInfos = meshParser.getAllSyncs();
 		Assert.assertNotNull(syncInfos);
@@ -622,7 +628,7 @@ public class KMLDOMTest {
 		
 		Document doc = DocumentHelper.parseText(localXML);
 			
-		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		KMLDOM meshParser = createDOM(doc);
 		
 		List<SyncInfo> syncInfos = meshParser.getAllSyncs();
 		Assert.assertNotNull(syncInfos);
@@ -691,7 +697,7 @@ public class KMLDOMTest {
 		
 		Document doc = DocumentHelper.parseText(localXML);
 		
-		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		KMLDOM meshParser = createDOM(doc);
 		
 		List<SyncInfo> syncInfos = meshParser.getAllSyncs();
 		Assert.assertNotNull(syncInfos);
@@ -802,7 +808,7 @@ public class KMLDOMTest {
 		
 		Document doc = DocumentHelper.parseText(localXML);
 			
-		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		KMLDOM meshParser = createDOM(doc);
 		meshParser.updateMeshStatus();
 		
 		String syncID = "2";
@@ -886,7 +892,7 @@ public class KMLDOMTest {
 		
 		Document doc = DocumentHelper.parseText(localXML);
 
-		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		KMLDOM meshParser = createDOM(doc);
 		meshParser.updateMeshStatus();
 		
 		String syncID = "2";
@@ -988,7 +994,7 @@ public class KMLDOMTest {
 		
 		Document doc = DocumentHelper.parseText(localXML);
 		
-		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		KMLDOM meshParser = createDOM(doc);
 
 		SyncInfo syncInfo = meshParser.getSync("4");
 		Assert.assertNotNull(syncInfo);
@@ -1038,7 +1044,7 @@ public class KMLDOMTest {
 	@Test
 	public void shouldGetElementsToSync() throws DocumentException{
 		Document doc = DocumentHelper.parseText(xmlWithHierarchy);
-		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		KMLDOM meshParser = createDOM(doc);
 		List<Element> elements = meshParser.getAllElements();
 		
 		Assert.assertNotNull(elements);
@@ -1062,7 +1068,7 @@ public class KMLDOMTest {
 	@Test
 	public void shouldGetType(){
 		Document doc = DocumentHelper.createDocument();
-		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		KMLDOM meshParser = createDOM(doc);
 		Assert.assertEquals(KmlNames.KML_PREFIX, meshParser.getType());
 	}
 	
@@ -1093,7 +1099,7 @@ public class KMLDOMTest {
 			.element(KmlNames.KML_ELEMENT_DOCUMENT)
 			.element(KmlNames.KML_ELEMENT_STYLE_MAP);
 		
-		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		KMLDOM meshParser = createDOM(doc);
 		Element normalizedElement = meshParser.normalize(element);
 		
 		Assert.assertNotNull(normalizedElement);
@@ -1129,7 +1135,7 @@ public class KMLDOMTest {
 			.element(KmlNames.KML_ELEMENT_DOCUMENT)
 			.element(KmlNames.KML_ELEMENT_STYLE);
 		
-		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		KMLDOM meshParser = createDOM(doc);
 		Element normalizedElement = meshParser.normalize(element);
 		
 		Assert.assertNotNull(normalizedElement);
@@ -1194,7 +1200,7 @@ public class KMLDOMTest {
 			.element(KmlNames.KML_ELEMENT_DOCUMENT)
 			.element(KmlNames.KML_ELEMENT_PHOTO_OVERLAY);
 		
-		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		KMLDOM meshParser = createDOM(doc);
 		Element normalizedElement = meshParser.normalize(element);
 		
 		Assert.assertNotNull(normalizedElement);
@@ -1231,7 +1237,7 @@ public class KMLDOMTest {
 			.element(KmlNames.KML_ELEMENT_DOCUMENT)
 			.element(KmlNames.KML_ELEMENT_GROUND_OVERLAY);
 		
-		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		KMLDOM meshParser = createDOM(doc);
 		Element normalizedElement = meshParser.normalize(element);
 		
 		Assert.assertNotNull(normalizedElement);
@@ -1264,7 +1270,7 @@ public class KMLDOMTest {
 			.element(KmlNames.KML_ELEMENT_DOCUMENT)
 			.element(KmlNames.KML_ELEMENT_SCHEMA);
 		
-		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		KMLDOM meshParser = createDOM(doc);
 		Element normalizedElement = meshParser.normalize(element);
 		
 		Assert.assertNotNull(normalizedElement);
@@ -1298,7 +1304,7 @@ public class KMLDOMTest {
 			.element(KmlNames.KML_ELEMENT_DOCUMENT)
 			.element(KmlNames.KML_ELEMENT_FOLDER);
 		
-		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		KMLDOM meshParser = createDOM(doc);
 		Element normalizedElement = meshParser.normalize(element);
 		
 		Assert.assertNotNull(normalizedElement);
@@ -1331,7 +1337,7 @@ public class KMLDOMTest {
 	
 		Document doc = DocumentHelper.parseText(elementXML);
 		
-		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		KMLDOM meshParser = createDOM(doc);
 		meshParser.updateMeshStatus();
 		
 		Element element = doc
@@ -1371,7 +1377,7 @@ public class KMLDOMTest {
 			.element(KmlNames.KML_ELEMENT_DOCUMENT)
 			.element(KmlNames.KML_ELEMENT_PLACEMARK);
 		
-		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		KMLDOM meshParser = createDOM(doc);
 		Element normalizedElement = meshParser.normalize(element);
 		
 		Assert.assertNotNull(normalizedElement);
@@ -1381,7 +1387,7 @@ public class KMLDOMTest {
 	@Test
 	public void shouldNormalizeReturnNull(){
 		Document doc = DocumentHelper.createDocument();
-		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		KMLDOM meshParser = createDOM(doc);
 		Assert.assertNull(meshParser.normalize(null));
 	}
 	
@@ -1391,7 +1397,7 @@ public class KMLDOMTest {
 		Element element = doc.getRootElement().addElement("NewElement");
 		element.add(KmlNames.KML_NS);
 		
-		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		KMLDOM meshParser = createDOM(doc);
 		Assert.assertNull(meshParser.normalize(element));
 	}
 
@@ -1417,7 +1423,7 @@ public class KMLDOMTest {
 		
 		String syncID = "3";
 			
-		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		KMLDOM meshParser = createDOM(doc);
 	
 		Assert.assertNotNull(rootElement.element("Placemark"));
 		Assert.assertNotNull(syncID, meshParser.getMeshSyncId(rootElement.element("Placemark")));
@@ -1429,7 +1435,7 @@ public class KMLDOMTest {
 	public void shouldRemoveElementNoEffectBecauseItemDoesNotExist() throws DocumentException{
 		Document doc = DocumentHelper.parseText(xml);
 		
-		KMLDOM meshParser = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		KMLDOM meshParser = createDOM(doc);
 		meshParser.deleteElement(IdGenerator.newID());
 	}
 	
@@ -1440,7 +1446,7 @@ public class KMLDOMTest {
 		Document doc = DocumentHelper.parseText(xmlWithoutMesh);
 		Element syncRoot = doc.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT);
 		Element element = syncRoot.element(KmlNames.KML_ELEMENT_PLACEMARK);
-		KMLDOM dom = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		KMLDOM dom = createDOM(doc);
 		
 		boolean isValid = dom.isValid(element);
 
@@ -1464,7 +1470,7 @@ public class KMLDOMTest {
 		Element syncRoot = doc.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT);
 		Element element = syncRoot.element(KmlNames.KML_ELEMENT_PLACEMARK);
 		
-		KMLDOM dom = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		KMLDOM dom = createDOM(doc);
 
 		boolean isValid = dom.isValid(element);
 		Assert.assertFalse(isValid);
@@ -1489,7 +1495,7 @@ public class KMLDOMTest {
 		Element syncRoot = doc.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT);
 		Element element = syncRoot.element(KmlNames.KML_ELEMENT_PLACEMARK);
 		
-		KMLDOM dom = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		KMLDOM dom = createDOM(doc);
 
 		boolean isValid = dom.isValid(element);
 		Assert.assertFalse(isValid);
@@ -1522,7 +1528,7 @@ public class KMLDOMTest {
 		Element syncRoot = doc.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT);
 		Element element = syncRoot.element(KmlNames.KML_ELEMENT_PLACEMARK);
 		
-		KMLDOM dom = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		KMLDOM dom = createDOM(doc);
 
 		boolean isValid = dom.isValid(element);
 		Assert.assertFalse(isValid);
@@ -1557,7 +1563,7 @@ public class KMLDOMTest {
 		Element syncRoot = doc.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT);
 		Element element = syncRoot.element(KmlNames.KML_ELEMENT_FOLDER).element(KmlNames.KML_ELEMENT_PLACEMARK);
 		
-		KMLDOM dom = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		KMLDOM dom = createDOM(doc);
 
 		boolean isValid = dom.isValid(element);
 		Assert.assertFalse(isValid);
@@ -1591,7 +1597,7 @@ public class KMLDOMTest {
 		Element syncRoot = doc.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT);
 		Element element = syncRoot.element(KmlNames.KML_ELEMENT_FOLDER).element(KmlNames.KML_ELEMENT_PLACEMARK);
 		
-		KMLDOM dom = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		KMLDOM dom = createDOM(doc);
 
 		boolean isValid = dom.isValid(element);
 		Assert.assertFalse(isValid);
@@ -1625,7 +1631,7 @@ public class KMLDOMTest {
 		Element syncRoot = doc.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT);
 		Element element = syncRoot.element(KmlNames.KML_ELEMENT_FOLDER).element(KmlNames.KML_ELEMENT_PLACEMARK);
 		
-		KMLDOM dom = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		KMLDOM dom = createDOM(doc);
 
 		boolean isValid = dom.isValid(element);
 		Assert.assertFalse(isValid);
@@ -1656,7 +1662,7 @@ public class KMLDOMTest {
 				"</kml>";
 		
 		Document doc = DocumentHelper.parseText(localXML);
-		KMLDOM dom = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		KMLDOM dom = createDOM(doc);
 		dom.updateMeshStatus();
 		
 		Element syncRoot = doc.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT);
@@ -1691,7 +1697,7 @@ public class KMLDOMTest {
 		
 		Document doc = DocumentHelper.parseText(localXML);
 		
-		KMLDOM dom = new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		KMLDOM dom = createDOM(doc);
 		dom.updateMeshStatus();
 		
 		Element syncRoot = doc.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT);

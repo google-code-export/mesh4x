@@ -12,6 +12,7 @@ import org.junit.Test;
 import com.mesh4j.sync.adapters.dom.DOMLoader;
 import com.mesh4j.sync.adapters.dom.IMeshDOM;
 import com.mesh4j.sync.adapters.dom.MeshNames;
+import com.mesh4j.sync.adapters.dom.parsers.FileManager;
 import com.mesh4j.sync.security.NullIdentityProvider;
 import com.mesh4j.sync.test.utils.TestHelper;
 import com.mesh4j.sync.utils.IdGenerator;
@@ -22,42 +23,53 @@ public class KMLDOMLoaderTests {
 
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldNotAccetpNullFileName(){
-		new KMLDOMLoader(null, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		FileManager fileManager = new FileManager();
+		new KMLDOMLoader(null, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(fileManager), fileManager);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldNotAccetpEmptyFileName(){
-		new KMLDOMLoader("", NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		FileManager fileManager = new FileManager();
+		new KMLDOMLoader("", NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(fileManager), fileManager);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldNotAccetpInvalidExtension(){
-		new KMLDOMLoader("a.kmz", NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		FileManager fileManager = new FileManager();
+		new KMLDOMLoader("a.kmz", NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(fileManager), fileManager);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldNotAccetpNullIdentityProvider(){
-		new KMLDOMLoader("a.kml", null, DOMLoaderFactory.createKMLView());
+		FileManager fileManager = new FileManager();
+		new KMLDOMLoader("a.kml", null, DOMLoaderFactory.createView(fileManager), fileManager);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldNotAccetpNullXMLView(){
-		new KMLDOMLoader("a.kml", NullIdentityProvider.INSTANCE, null);
+		FileManager fileManager = new FileManager();
+		new KMLDOMLoader("a.kml", NullIdentityProvider.INSTANCE, null, fileManager);
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldNotAccetpNullFileManager(){
+		FileManager fileManager = new FileManager();
+		new KMLDOMLoader("a.kml", NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(fileManager), null);
 	}
 	
 	@Test(expected=MeshException.class)
 	public void shouldReadThrowsExceptionBecauseFileHasInvalidContent(){
 		String fileName = this.getClass().getResource("templateWithInvalidXML.kml").getFile();
-		 
-		KMLDOMLoader loader = new KMLDOMLoader(fileName, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		FileManager fileManager = new FileManager();
+		KMLDOMLoader loader = new KMLDOMLoader(fileName, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(fileManager), fileManager);
 		loader.read();
 	}
 	
 	@Test
 	public void shouldReturnFriendlyName(){
 		String fileName = this.getClass().getResource("templateWithInvalidXML.kml").getFile();
-		 
-		KMLDOMLoader loader = new KMLDOMLoader(fileName, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		FileManager fileManager = new FileManager();
+		KMLDOMLoader loader = new KMLDOMLoader(fileName, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(fileManager), fileManager);
 		
 		String name = loader.getFriendlyName();
 		Assert.assertNotNull(name);
@@ -68,7 +80,8 @@ public class KMLDOMLoaderTests {
 	public void shouldReadDoNotCreateFile(){
 		String fileName = TestHelper.fileName(IdGenerator.newID()+".kml");
 		 
-		KMLDOMLoader loader = new KMLDOMLoader(fileName, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		FileManager fileManager = new FileManager();
+		KMLDOMLoader loader = new KMLDOMLoader(fileName, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(fileManager), fileManager);
 		loader.read();
 		Assert.assertNotNull(loader.getDOM());
 		
@@ -106,7 +119,8 @@ public class KMLDOMLoaderTests {
 		File file = TestHelper.makeNewXMLFile(xml, ".kml");
 		Assert.assertTrue(file.exists());
 		
-		KMLDOMLoader loader = new KMLDOMLoader(file.getAbsolutePath(), NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		FileManager fileManager = new FileManager();
+		KMLDOMLoader loader = new KMLDOMLoader(file.getAbsolutePath(), NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(fileManager), fileManager);
 		loader.read();
 		
 		Assert.assertNotNull(loader.getDOM());
@@ -140,7 +154,8 @@ public class KMLDOMLoaderTests {
 		File file = TestHelper.makeNewXMLFile(xml, ".kml");
 		Assert.assertTrue(file.exists());
 		
-		KMLDOMLoader loader = new KMLDOMLoader(file.getAbsolutePath(), NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		FileManager fileManager = new FileManager();
+		KMLDOMLoader loader = new KMLDOMLoader(file.getAbsolutePath(), NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(fileManager), fileManager);
 		loader.read();
 		
 		Assert.assertNotNull(loader.getDOM());
@@ -159,7 +174,8 @@ public class KMLDOMLoaderTests {
 		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><kml xmlns=\"http://earth.google.com/kml/2.2\"><Document><name>"
 					+file.getName()+"</name><ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\"></ExtendedData></Document></kml>";
 				 
-		KMLDOMLoader loader = new KMLDOMLoader(fileName, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		FileManager fileManager = new FileManager();
+		KMLDOMLoader loader = new KMLDOMLoader(fileName, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(fileManager), fileManager);
 		loader.read();
 		Assert.assertNotNull(loader.getDOM());
 		
@@ -200,7 +216,8 @@ public class KMLDOMLoaderTests {
 		File file = TestHelper.makeNewXMLFile(xml, ".kml");
 		Assert.assertTrue(file.exists());
 		
-		KMLDOMLoader loader = new KMLDOMLoader(file.getAbsolutePath(), NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+		FileManager fileManager = new FileManager();
+		KMLDOMLoader loader = new KMLDOMLoader(file.getAbsolutePath(), NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(fileManager), fileManager);
 		loader.read();
 		
 		Assert.assertNotNull(loader.getDOM());
@@ -254,7 +271,7 @@ public class KMLDOMLoaderTests {
 		private Document document;
 		
 		public MockLoader(Document doc){
-			super("a.kmj", NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView());
+			super("a.kmj", NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(new FileManager()));
 			this.document = doc;
 		}
 				

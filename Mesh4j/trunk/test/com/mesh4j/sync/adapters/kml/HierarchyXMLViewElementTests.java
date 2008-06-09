@@ -12,6 +12,7 @@ import org.junit.Test;
 import com.mesh4j.sync.adapters.SyncInfo;
 import com.mesh4j.sync.adapters.dom.IMeshDOM;
 import com.mesh4j.sync.adapters.dom.MeshNames;
+import com.mesh4j.sync.adapters.dom.parsers.FileManager;
 import com.mesh4j.sync.adapters.dom.parsers.HierarchyXMLViewElement;
 import com.mesh4j.sync.model.IContent;
 import com.mesh4j.sync.security.IIdentityProvider;
@@ -712,7 +713,7 @@ public class HierarchyXMLViewElementTests {
 		Element elementChild = document.getRootElement();
 				
 		HierarchyXMLViewElement hierarchy = new HierarchyXMLViewElement();
-		hierarchy.setDOM(new KMLDOM(document, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView()));
+		hierarchy.setDOM(new KMLDOM(document, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(new FileManager())));
 		
 		hierarchy.createHierarchyIfAbsent(null, elementChild);
 		Assert.assertEquals(xml, document.asXML());
@@ -767,7 +768,7 @@ public class HierarchyXMLViewElementTests {
 				.element("Folder");
 			
 			HierarchyXMLViewElement hierarchy = new HierarchyXMLViewElement();
-			hierarchy.setDOM(new KMLDOM(document, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView()));
+			hierarchy.setDOM(new KMLDOM(document, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(new FileManager())));
 
 			hierarchy.createHierarchyIfAbsent(document, elementChild);
 			
@@ -854,7 +855,7 @@ public class HierarchyXMLViewElementTests {
 				.element("Placemark");
 			
 			HierarchyXMLViewElement hierarchy = new HierarchyXMLViewElement();
-			hierarchy.setDOM(new KMLDOM(document, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView()));
+			hierarchy.setDOM(new KMLDOM(document, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(new FileManager())));
 			hierarchy.createHierarchyIfAbsent(document, childElement);
 			
 			Assert.assertEquals("1", HierarchyXMLViewElement.getMeshParentId(document, childElement));
@@ -1074,7 +1075,7 @@ public class HierarchyXMLViewElementTests {
 				.element(MeshNames.MESH_QNAME_HIERARCHY);
 			
 			HierarchyXMLViewElement hierarchy = new HierarchyXMLViewElement();
-			hierarchy.setDOM(new KMLDOM(document, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView()));
+			hierarchy.setDOM(new KMLDOM(document, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(new FileManager())));
 			
 			Assert.assertSame(hierarchyElement, hierarchy.refresh(document, hierarchyElement));
 
@@ -1112,7 +1113,7 @@ public class HierarchyXMLViewElementTests {
 				.element(MeshNames.MESH_QNAME_HIERARCHY);
 			
 			HierarchyXMLViewElement hierarchy = new HierarchyXMLViewElement();
-			hierarchy.setDOM(new KMLDOM(document, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createKMLView()));
+			hierarchy.setDOM(new KMLDOM(document, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(new FileManager())));
 			
 			Assert.assertSame(null, hierarchy.refresh(document, hierarchyElement));
 
