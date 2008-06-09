@@ -43,6 +43,17 @@ public class TestHelper {
 		}
 		return i;
 	}
+	
+	public static String newText(int length)
+	{
+		String result = "";
+
+		while (result.length() < length)
+			result += System.nanoTime();
+
+		result = result.substring(0, length);
+		return result;
+	}
 
 	public static Element makeElement(String xmlAsString) {
 		Document doc;
@@ -67,6 +78,12 @@ public class TestHelper {
 	public static Date nowSubtractHours(int i) {
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.HOUR, (-1 * i));
+		return cal.getTime();
+	}
+	
+	public static Date nowAddHours(int i) {
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.HOUR, i);
 		return cal.getTime();
 	}
 
@@ -182,4 +199,5 @@ public class TestHelper {
 			throw new MeshException(e);
 		}
 	}
+
 }
