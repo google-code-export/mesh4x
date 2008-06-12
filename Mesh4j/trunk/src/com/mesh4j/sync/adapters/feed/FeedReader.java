@@ -1,6 +1,6 @@
 package com.mesh4j.sync.adapters.feed;
 
-import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.ATTRIBUTE_PAYLOAD;
+import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.ELEMENT_PAYLOAD;
 import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_HISTORY_BY;
 import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_HISTORY_SEQUENCE;
 import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_HISTORY_WHEN;
@@ -83,7 +83,7 @@ public class FeedReader {
 
 	public Feed read(Document document) {
 		Feed feed = new Feed();
-		Element payload = DocumentHelper.createElement(ATTRIBUTE_PAYLOAD);
+		Element payload = DocumentHelper.createElement(ELEMENT_PAYLOAD);
 		
 		Element root = document.getRootElement();
 		List<Element> elements = getRootElements(root);
@@ -102,7 +102,7 @@ public class FeedReader {
 
 	@SuppressWarnings("unchecked")
 	public Item readItem(Element itemElement) {
-		Element payload = DocumentHelper.createElement(ATTRIBUTE_PAYLOAD);
+		Element payload = DocumentHelper.createElement(ELEMENT_PAYLOAD);
 		
 		Sync sync = null;
 		

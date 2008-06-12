@@ -77,6 +77,6 @@ public interface ISyndicationFormat {
 	public static final String SX_ATTRIBUTE_ITEM_DESCRIPTION = "description";
 	
 	// internal
-	public static final String ATTRIBUTE_PAYLOAD = "payload";
+	public static final String ELEMENT_PAYLOAD = "payload";
 
 }

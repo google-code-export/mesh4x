@@ -12,9 +12,9 @@ import com.mesh4j.sync.utils.DateHelper;
 
 public class RssSyndicationFormat implements ISyndicationFormat {
 
-	private static final String RSS_ELEMENT_ROOT = "rss";
-	private static final String RSS_ELEMENT_ITEM = "item";
-	private static final String RSS_ELEMENT_CHANNEL = "channel";
+	public static final String RSS_ELEMENT_ROOT = "rss";
+	public static final String RSS_ELEMENT_ITEM = "item";
+	public static final String RSS_ELEMENT_CHANNEL = "channel";
 	public static final RssSyndicationFormat INSTANCE = new RssSyndicationFormat();
 
 	@SuppressWarnings("unchecked")

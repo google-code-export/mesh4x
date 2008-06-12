@@ -84,18 +84,25 @@ public class FeedWriter {
 		
 		this.writeContent(itemElement, item.getContent());
 
+		String by = this.getAuthenticatedUser();
 		History lastUpdate = item.getLastUpdate();
-		if (lastUpdate != null && lastUpdate.getBy() != null)
-		{
-			Element author = itemElement.addElement(SX_ELEMENT_AUTHOR);
-			Element name = author.addElement(SX_ELEMENT_NAME);
-			name.setText(lastUpdate.getBy());
+		if (lastUpdate != null && lastUpdate.getBy() != null){
+			by = lastUpdate.getBy();
 		}
-		else
-		{
-			Element author = itemElement.addElement(SX_ELEMENT_AUTHOR);
+		
+		Element author = itemElement.element(SX_ELEMENT_AUTHOR);
+		if(author == null){
+			author = itemElement.addElement(SX_ELEMENT_AUTHOR);
 			Element name = author.addElement(SX_ELEMENT_NAME);
-			name.setText(this.getAuthenticatedUser());
+			name.setText(by);
+		} else {
+			Element name = author.element(SX_ELEMENT_NAME);
+			if(name == null){
+				name = author.addElement(SX_ELEMENT_NAME);
+				name.setText(by);
+			} else if(!name.getTextTrim().equals(by.trim())){
+				name.setText(by);
+			}
 		}
 		
 		if(item.getSync() != null){

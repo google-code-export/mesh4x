@@ -85,7 +85,7 @@ public class SyncInfoParser {
 	
 	public static Element convertSync2Element(Sync sync, ISyndicationFormat format, IIdentityProvider identityProvider) {
 		FeedWriter writer = new FeedWriter(format, identityProvider);
-		Element syncData = DocumentHelper.createElement(ISyndicationFormat.ATTRIBUTE_PAYLOAD);
+		Element syncData = DocumentHelper.createElement(ISyndicationFormat.ELEMENT_PAYLOAD);
 		syncData.addNamespace(ISyndicationFormat.SX_PREFIX, ISyndicationFormat.NAMESPACE);
 		writer.writeSync(syncData, sync);
 		
@@ -96,7 +96,7 @@ public class SyncInfoParser {
 	
 	public String convertSync2XML(Sync sync) {
 		FeedWriter writer = new FeedWriter(this.format, this.identityProvider);
-		Element syncData = DocumentHelper.createElement(RssSyndicationFormat.ATTRIBUTE_PAYLOAD);
+		Element syncData = DocumentHelper.createElement(RssSyndicationFormat.ELEMENT_PAYLOAD);
 		syncData.addNamespace(RssSyndicationFormat.SX_PREFIX, RssSyndicationFormat.NAMESPACE);
 		writer.writeSync(syncData, sync);
 		
