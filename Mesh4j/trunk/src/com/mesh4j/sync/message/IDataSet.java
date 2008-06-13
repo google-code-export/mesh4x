@@ -14,5 +14,5 @@ public interface IDataSet {
 
 	void update(Item item);
 
-	void notifyConflict(Item item);
+	Item get(String syncID);
 }

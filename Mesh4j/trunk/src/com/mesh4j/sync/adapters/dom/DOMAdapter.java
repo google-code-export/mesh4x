@@ -40,11 +40,13 @@ public class DOMAdapter  extends AbstractSyncAdapter implements ISyncAware {
 			this.getDOM().updateSync(syncInfo);	
 		} else {
 			IContent content = this.getDOM().normalizeContent(item.getContent());
-			Element elementAdded = this.getDOM().addElement(content.getPayload().createCopy());
-			if(elementAdded != null){
-				IContent contentAdded = this.getDOM().createContent(elementAdded, item.getSyncId());
-				SyncInfo syncInfo = new SyncInfo(item.getSync(), this.getDOM().getType(), contentAdded.getId(), contentAdded.getVersion());
-				this.getDOM().updateSync(syncInfo);	
+			if(content != null){
+				Element elementAdded = this.getDOM().addElement(content.getPayload().createCopy());
+				if(elementAdded != null){
+					IContent contentAdded = this.getDOM().createContent(elementAdded, item.getSyncId());
+					SyncInfo syncInfo = new SyncInfo(item.getSync(), this.getDOM().getType(), contentAdded.getId(), contentAdded.getVersion());
+					this.getDOM().updateSync(syncInfo);	
+				}
 			}
 		}
 		
@@ -63,11 +65,13 @@ public class DOMAdapter  extends AbstractSyncAdapter implements ISyncAware {
 			}
 		}else{
 			IContent content = this.getDOM().normalizeContent(item.getContent());
-			Element elementUpdated = this.getDOM().updateElement(content.getPayload().createCopy());
-			IContent contentUpdated = this.getDOM().createContent(elementUpdated, item.getSyncId());
-			
-			SyncInfo syncInfo = new SyncInfo(item.getSync(), this.getDOM().getType(), contentUpdated.getId(), contentUpdated.getVersion());
-			this.getDOM().updateSync(syncInfo);
+			if(content != null){
+				Element elementUpdated = this.getDOM().updateElement(content.getPayload().createCopy());
+				IContent contentUpdated = this.getDOM().createContent(elementUpdated, item.getSyncId());
+				
+				SyncInfo syncInfo = new SyncInfo(item.getSync(), this.getDOM().getType(), contentUpdated.getId(), contentUpdated.getVersion());
+				this.getDOM().updateSync(syncInfo);
+			}
 		}
 	} 
 

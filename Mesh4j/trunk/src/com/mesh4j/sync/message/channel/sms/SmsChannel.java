@@ -45,5 +45,4 @@ public class SmsChannel implements IChannel, IMessageReceiver {
 			this.smsConnection.send(msg.getText());
 		}
 	}
-
 }

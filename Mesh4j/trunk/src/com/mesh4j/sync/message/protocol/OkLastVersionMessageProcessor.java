@@ -5,12 +5,11 @@ import java.util.List;
 import com.mesh4j.sync.message.IMessageSyncProtocol;
 
 public class OkLastVersionMessageProcessor implements IMessageProcessor {
-
+	
 	// MODEL VARIABLES
 	private MessageSyncProtocol syncProtocol;
 	
 	// METHODS
-	
 	public OkLastVersionMessageProcessor(MessageSyncProtocol syncProtocol) {
 		super();
 		this.syncProtocol = syncProtocol;
@@ -31,7 +30,7 @@ public class OkLastVersionMessageProcessor implements IMessageProcessor {
 	}
 
 	public String createMessage(String dataSetId) {
-		String header = this.syncProtocol.createMessageHeader(dataSetId, this.getMessageType());
+		String header = MessageFormatter.createMessageHeader(dataSetId, this.getMessageType());
 		return header;
 	}
 	

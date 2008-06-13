@@ -2,6 +2,7 @@ package com.mesh4j.sync.message.encoding;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
@@ -14,38 +15,58 @@ public class ZipBase64Encoding implements IMessageEncoding{
 	public static final ZipBase64Encoding INSTANCE = new ZipBase64Encoding();
 
 	@Override
+	public String encode(String message) {
+		if(message.length() == 0){
+			return message;
+		}
+		byte[] bytes = zip(message);
+		String encodeMsg = Base64Helper.encode(bytes);
+		if(encodeMsg.length() >= message.length()+1){
+			encodeMsg = "o"+message;
+		}else{
+			encodeMsg = "e"+encodeMsg;
+		}
+		return encodeMsg;
+	}
+	
+	@Override
 	public String decode(String message) {
-		try{
-			byte[] zipBytes = Base64Helper.decode(message);
-		
-			ZipInputStream zipInputStream = new ZipInputStream(new ByteArrayInputStream(zipBytes));
-			String result = ZipUtils.getTextEntryContent(zipInputStream, "message");
-			zipInputStream.close();
-
-			return result;
-		} catch(Exception e){
-			throw new MeshException(e);
+		if(message.length() == 0){
+			return message;
+		}
+		String data = message.substring(1, message.length());
+		if(message.startsWith("o")){
+			return data;
+		}else if(message.startsWith("e")){
+			byte[] zipBytes = Base64Helper.decode(data);		
+			return unzip(zipBytes);
+		}else{
+			return "";
 		}
 	}
 
-	@Override
-	public String encode(String message) {
+	private String unzip(byte[] zipBytes) {
 		try{
-			if(message.length() == 0){
-				return message;
-			}
-			
+			ZipInputStream zipInputStream = new ZipInputStream(new ByteArrayInputStream(zipBytes));
+			String result = ZipUtils.getTextEntryContent(zipInputStream, "a");
+			zipInputStream.close();
+			return result;
+		} catch(IOException io){
+			throw new MeshException(io);
+		}			
+	}
+
+	private byte[] zip(String message) {
+		try{
 			ByteArrayOutputStream itemsOS = new ByteArrayOutputStream();
 			ZipOutputStream zipOS = new ZipOutputStream(itemsOS);
-			ZipUtils.write(zipOS, "message", message);
+			ZipUtils.write(zipOS, "a", message);
 			
 			itemsOS.flush();
 			zipOS.close();
-			
-			String itemsAsBase64 = Base64Helper.encode(itemsOS.toByteArray());
-			return itemsAsBase64;
-		} catch(Exception e){
-			throw new MeshException(e);
+			return itemsOS.toByteArray();
+		} catch(IOException io){
+			throw new MeshException(io);
 		}
 	}
 

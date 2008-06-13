@@ -11,6 +11,7 @@ import org.dom4j.Element;
 import org.dom4j.Namespace;
 
 import com.mesh4j.sync.adapters.dom.MeshNames;
+import com.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import com.mesh4j.sync.parsers.IXMLViewElement;
 import com.mesh4j.sync.validations.Guard;
 
@@ -122,7 +123,8 @@ public class KMLDocumentExtendedDataViewElement implements IXMLViewElement {
 				&& !KmlNames.KML_PREFIX.equals(element.getNamespacePrefix())
 				&& !Namespace.NO_NAMESPACE.equals(element.getNamespace())
 				&& (element.getParent() == null ||
-						(element.getParent() != null && KmlNames.KML_ELEMENT_EXTENDED_DATA.equals(element.getParent().getName())))){
+					(element.getParent() != null && KmlNames.KML_ELEMENT_EXTENDED_DATA.equals(element.getParent().getName())) ||
+					(element.getParent() != null && ISyndicationFormat.ELEMENT_PAYLOAD.equals(element.getParent().getName())))){  // TODO (JMT) MeshSMS: Fix KML vs OtherContents
 			return true;
 		}
 		return KmlNames.KML_ELEMENT_DATA.equals(element.getName()) ||

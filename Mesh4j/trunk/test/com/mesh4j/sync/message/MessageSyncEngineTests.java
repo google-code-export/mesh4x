@@ -9,15 +9,14 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.mesh4j.sync.adapters.feed.XMLContent;
-import com.mesh4j.sync.message.channel.sms.ISmsConnection;
 import com.mesh4j.sync.message.channel.sms.SmsChannel;
 import com.mesh4j.sync.message.dataset.DataSetManager;
-import com.mesh4j.sync.message.dataset.InMemoryDataSet;
 import com.mesh4j.sync.message.encoding.ZipBase64Encoding;
 import com.mesh4j.sync.message.protocol.MessageSyncProtocolFactory;
 import com.mesh4j.sync.model.IContent;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.Sync;
+import com.mesh4j.sync.security.NullIdentityProvider;
 import com.mesh4j.sync.utils.IdGenerator;
 
 public class MessageSyncEngineTests {
@@ -47,17 +46,17 @@ public class MessageSyncEngineTests {
 		IChannel channelEndpointB = new SmsChannel(smsConnectionEndpointB, ZipBase64Encoding.INSTANCE);
 		
 		DataSetManager dataSetManagerEndPointA = new DataSetManager();
-		IDataSet dataSetEndPointA = new InMemoryDataSet(dataSetId, itemsA);
+		IDataSet dataSetEndPointA = new MockInMemoryDataSet(dataSetId, itemsA);
 		dataSetManagerEndPointA.addDataSet(dataSetEndPointA);		
 		
-		IMessageSyncProtocol syncProtocolEndPointA = MessageSyncProtocolFactory.createSyncProtocol(dataSetManagerEndPointA);		
+		IMessageSyncProtocol syncProtocolEndPointA = MessageSyncProtocolFactory.createSyncProtocol(dataSetManagerEndPointA, NullIdentityProvider.INSTANCE);		
 		MessageSyncEngine syncEngineEndPointA = new MessageSyncEngine(dataSetManagerEndPointA, syncProtocolEndPointA, channelEndpointA);
 
 		DataSetManager dataSetManagerEndPointB = new DataSetManager();
-		IDataSet dataSetEndPointB = new InMemoryDataSet(dataSetId, itemsB);
+		IDataSet dataSetEndPointB = new MockInMemoryDataSet(dataSetId, itemsB);
 		dataSetManagerEndPointB.addDataSet(dataSetEndPointB);
 		
-		IMessageSyncProtocol syncProtocolEndPointB = MessageSyncProtocolFactory.createSyncProtocol(dataSetManagerEndPointB);		
+		IMessageSyncProtocol syncProtocolEndPointB = MessageSyncProtocolFactory.createSyncProtocol(dataSetManagerEndPointB, NullIdentityProvider.INSTANCE);		
 		MessageSyncEngine syncEngineEndPointB = new MessageSyncEngine(dataSetManagerEndPointB, syncProtocolEndPointB, channelEndpointB);
 		Assert.assertNotNull(syncEngineEndPointB);
 		
@@ -67,42 +66,9 @@ public class MessageSyncEngineTests {
 		syncEngineEndPointA.synchronize(dataSetId);
 	
 		Assert.assertEquals(6, dataSetEndPointA.getItems().size());
-		Assert.assertEquals(3, dataSetEndPointB.getItems().size());
+		Assert.assertEquals(6, dataSetEndPointB.getItems().size());
 	}
 	
-	
-	@SuppressWarnings("unused")
-	private class MockSmsConnection implements ISmsConnection{
-
-		private MockSmsConnection endpoint;
-		private IMessageReceiver messageReceiver;
-		
-		public MockSmsConnection() {
-		}
-		
-		public void setEndPoint(MockSmsConnection endpoint){
-			this.endpoint = endpoint;
-		}
-		
-		@Override
-		public void registerMessageReceiver(IMessageReceiver messageReceiver) {
-			this.messageReceiver = messageReceiver;			
-		}
-
-		@Override
-		public void send(String message) {
-			this.endpoint.receive(message);
-		}
-		
-		public void receive(String message){
-			this.messageReceiver.receiveMessage(message);
-		}
-
-		@Override
-		public int getMaxMessageLenght() {
-			return 30;
-		}
-	}
 	
 	private Item createNewItem() {
 		String syncId = IdGenerator.newID();
