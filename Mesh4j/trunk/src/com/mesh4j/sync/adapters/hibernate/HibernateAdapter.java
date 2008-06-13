@@ -358,7 +358,7 @@ public class HibernateAdapter extends AbstractSyncAdapter implements ISessionPro
 	}
 
 	private boolean appliesFilter(Item item, Date since, IFilter<Item> filter) {  
-		// TODO (JMT) Low: create db filter
+		// TODO (JMT) db filter
 		boolean dateOk = SinceLastUpdateFilter.applies(item, since);
 		return filter.applies(item) && dateOk;
 	}
