@@ -63,7 +63,7 @@ public class CheckForUpdateMessageProcessor implements IMessageProcessor {
 	}
 
 	private boolean canProcess(String message) {
-		String messageType = MessageFormatter.getMessgaeType(message);
+		String messageType = MessageFormatter.getMessageType(message);
 		return this.getMessageType().equals(messageType);
 	}
 

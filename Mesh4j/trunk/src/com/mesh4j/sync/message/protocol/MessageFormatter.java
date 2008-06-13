@@ -16,7 +16,7 @@ public class MessageFormatter {
 		return message.substring(3, 8);
 	}
 	
-	public static String getMessgaeType(String message){
+	public static String getMessageType(String message){
 		return message.substring(2, 3);
 	}
 	
