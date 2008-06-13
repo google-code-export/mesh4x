@@ -8,12 +8,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.StringWriter;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import com.mesh4j.sync.validations.Guard;
@@ -208,5 +210,40 @@ public class ZipUtils {
 	      	fos.close();
 	      	is.close();
 		}
+	}
+	
+	public static void write(ZipOutputStream zip, String entryName, String content) throws IOException{
+		ZipEntry ze = new ZipEntry(entryName);
+		ze.setTime(System.currentTimeMillis());
+		zip.putNextEntry(ze);
+		zip.write(content.getBytes());
+
+        zip.closeEntry();
+        zip.flush();
+	}
+
+	public static Reader getEntryInputStream(ZipInputStream zip, String entryName) throws IOException {
+		for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()){
+			String name = entry.getName();
+			if (name.equals(entryName)) {
+				return new InputStreamReader(zip);
+			}
+		}
+		return null;
+	}
+	
+	public static String getTextEntryContent(ZipInputStream zip, String entryName) throws IOException {
+		for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()){
+			String name = entry.getName();
+			if (name.equals(entryName)) {
+				InputStreamReader reader = new InputStreamReader(zip);
+				StringWriter writer = new StringWriter();
+				for (int ch = reader.read(); ch!= -1; ch= reader.read()){
+					writer.write(ch);
+				}
+				return writer.toString();
+			}
+		}
+		return null;
 	}
 }
