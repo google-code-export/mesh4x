@@ -11,7 +11,7 @@ import org.junit.Test;
 
 import com.mesh4j.sync.utils.XMLHelper;
 
-// TODO (JMT) High: Test
+// TODO (JMT) test
 
 public class KMLDocumentExtendedDataViewElementTests {
 
