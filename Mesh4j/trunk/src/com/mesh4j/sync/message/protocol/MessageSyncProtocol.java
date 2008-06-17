@@ -3,6 +3,7 @@ package com.mesh4j.sync.message.protocol;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.mesh4j.sync.message.IMessage;
 import com.mesh4j.sync.message.IMessageSyncProtocol;
 import com.mesh4j.sync.model.Item;
 
@@ -22,29 +23,26 @@ public class MessageSyncProtocol implements IMessageSyncProtocol {
 	}
 	
 	@Override
-	public List<String> processMessage(String message) {
-		ArrayList<String> response = new ArrayList<String>();
+	public List<IMessage> processMessage(IMessage message) {
+		List<IMessage> response = new ArrayList<IMessage>();
 		if(this.isValidMessageProtocol(message)){
 			for (IMessageProcessor processor : this.messageProcessors) {
-				List<String> messageResponse = processor.process(message);
-				if(!messageResponse.isEmpty()){
-					response.addAll(messageResponse);
-				}
+				List<IMessage> msgResponse = processor.process(message);
+				response.addAll(msgResponse);
 			}
 		}
 		return response;
 	}
 	
 	@Override
-	public String createBeginSyncMessage(String dataSetId, List<Item> items) {
+	public IMessage createBeginSyncMessage(String dataSetId, List<Item> items) {
 		return this.initialMessage.createMessage(dataSetId, items);
 	}
 	
-	private boolean isValidMessageProtocol(String message) {
+	private boolean isValidMessageProtocol(IMessage message) {
 		return message != null 
-			&& message.length() >= MessageFormatter.getHeaderLenght()
-			&& MessageFormatter.getProtocol(message).equals(PREFIX)
-			&& MessageFormatter.getVersion(message).equals(VERSION);
+			&& message.getProtocol().equals(PREFIX)
+			&& message.getProtocolVersion().equals(VERSION);
 	}
 
 	public void setInitialMessage(CheckForUpdateMessageProcessor checkForUpdate) {
@@ -58,6 +56,7 @@ public class MessageSyncProtocol implements IMessageSyncProtocol {
 	
 	public void notifyEndSync(String dataSetId) {
 		// TODO (JMT) MeshSMS: snapshot concept
+		// TODO (JMT) MeshSMS: getAll(since date)
 		// TODO (JMT) MeshSMS: state machine - endSync?
 	}
 

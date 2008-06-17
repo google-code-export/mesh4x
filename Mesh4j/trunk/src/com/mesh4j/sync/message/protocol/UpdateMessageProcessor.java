@@ -1,42 +1,32 @@
 package com.mesh4j.sync.message.protocol;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
-
-import com.mesh4j.sync.adapters.feed.FeedReader;
-import com.mesh4j.sync.adapters.feed.FeedWriter;
-import com.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import com.mesh4j.sync.merge.MergeBehavior;
 import com.mesh4j.sync.merge.MergeResult;
 import com.mesh4j.sync.message.IDataSet;
 import com.mesh4j.sync.message.IDataSetManager;
+import com.mesh4j.sync.message.IMessage;
 import com.mesh4j.sync.message.IMessageSyncProtocol;
+import com.mesh4j.sync.message.Message;
 import com.mesh4j.sync.model.Item;
-import com.mesh4j.sync.security.IIdentityProvider;
-import com.mesh4j.sync.utils.XMLHelper;
-import com.mesh4j.sync.validations.MeshException;
 
 public class UpdateMessageProcessor implements IMessageProcessor {
 
 	// MODEL VARIABLES
 	private MessageSyncProtocol syncProtocol;
 	private IDataSetManager dataSetManager;
-	private FeedReader feedReader;
-	private FeedWriter feedWriter;
+	private IItemEncoding itemEncoding;
 	
 	// METHODS	
 	
-	public UpdateMessageProcessor(MessageSyncProtocol syncProtocol, IDataSetManager dataSetManager
-			, ISyndicationFormat syndicationFormat, IIdentityProvider identityProvider) {
+	public UpdateMessageProcessor(MessageSyncProtocol syncProtocol, 
+			IDataSetManager dataSetManager, IItemEncoding itemEncoding) {
 		super();
 		this.dataSetManager = dataSetManager;
 		this.syncProtocol = syncProtocol;
-		this.feedReader = new FeedReader(syndicationFormat, identityProvider);
-		this.feedWriter = new FeedWriter(syndicationFormat, identityProvider);
+		this.itemEncoding = itemEncoding;
 	}
 
 	@Override
@@ -44,40 +34,50 @@ public class UpdateMessageProcessor implements IMessageProcessor {
 		return "5";
 	}
 	
-	public String createMessage(String dataSetId, String syncId) {
+	public IMessage createMessage(String dataSetId, String syncId) {
 		IDataSet dataSet = this.dataSetManager.getDataSet(dataSetId);
 		Item item = dataSet.get(syncId);
 		return createMessage(dataSetId, item);
 	}
 	
-	public String createMessage(String dataSetId, Item item) {
-		String data = this.encode(item);
-		String msg = MessageFormatter.createMessage(dataSetId, this.getMessageType(), data);
-		return msg;
+	public IMessage createMessage(String dataSetId, Item item) {
+		String data = this.itemEncoding.encode(item);
+		return new Message(
+				MessageSyncProtocol.PREFIX,
+				MessageSyncProtocol.VERSION,
+				getMessageType(),
+				dataSetId,
+				data);
 	}
 	
 	@Override
-	public List<String> process(String message) {
-		if(this.canProcess(message)){
-			String dataSetId = MessageFormatter.getDataSetId(message);
-			String data = MessageFormatter.getData(message);
+	public List<IMessage> process(IMessage message) {
+		if(this.getMessageType().equals(message.getMessageType())){
+			String dataSetId = message.getDataSetId();
+			String data = message.getData();
 			
-			Item incomingItem = this.decode(data);
-			this.merge(dataSetId, incomingItem);
+			Item incomingItem = this.itemEncoding.decode(data);
+			return this.merge(dataSetId, incomingItem);
+		}else {
+			return IMessageSyncProtocol.NO_RESPONSE;
 		}
-		return IMessageSyncProtocol.NO_RESPONSE;
 	}
 	
-	private void merge(String dataSetId, Item incomingItem) {
+	private List<IMessage> merge(String dataSetId, Item incomingItem) {
 		IDataSet dataSet = this.dataSetManager.getDataSet(dataSetId);
 		Item originalItem = dataSet.get(incomingItem.getSyncId());
 		
 		MergeResult result = MergeBehavior.merge(originalItem, incomingItem);
-		if (result.isMergeNone()) {
+		if (!result.isMergeNone()) {
 			Item conflicItem = this.importItem(result, dataSet);
 			if(conflicItem != null){
 				this.syncProtocol.notifyConflict(dataSetId, conflicItem);
 			}
+			return IMessageSyncProtocol.NO_RESPONSE;
+		} else {
+			List<IMessage> response = new ArrayList<IMessage>();
+			response.add(createMessage(dataSetId, result.getOriginal()));
+			return response;
 		}
 	}
 	
@@ -91,37 +91,10 @@ public class UpdateMessageProcessor implements IMessageProcessor {
 				|| result.getOperation().isConflict()) {
 			dataSet.update(result.getProposed());
 		}
-		if (result.isMergeNone() && result.getProposed() != null
+		if (!result.isMergeNone() && result.getProposed() != null
 				&& result.getProposed().hasSyncConflicts()) {
 			return result.getProposed();
 		}
 		return null;
 	}
-
-	private String encode(Item item) {
-		Element root = DocumentHelper.createElement("payload");
-		this.feedWriter.write(root, item);
-		Element itemElement = (Element) root.elements().get(0);
-		
-		String xml = XMLHelper.canonicalizeXML(itemElement);
-		return xml;
-	}
-
-	private Item decode(String data) {
-		try {
-			Document document = DocumentHelper.parseText(data);
-			Element itemElement = document.getRootElement(); 
-			
-			Item item = this.feedReader.readItem(itemElement);
-			return item;
-		} catch (DocumentException e) {
-			throw new MeshException(e);
-		}
-	}
-	
-	private boolean canProcess(String message) {
-		String messageType = MessageFormatter.getMessageType(message);
-		return this.getMessageType().equals(messageType);
-	}
-
 }

@@ -7,10 +7,10 @@ import com.mesh4j.sync.model.Item;
 
 public interface IMessageSyncProtocol {
 
-	public static final List<String> NO_RESPONSE = new ArrayList<String>();
+	public static final List<IMessage> NO_RESPONSE = new ArrayList<IMessage>();
 	
-	String createBeginSyncMessage(String dataSetId, List<Item> items);
+	IMessage createBeginSyncMessage(String dataSetId, List<Item> items);
 
-	List<String> processMessage(String message);
+	List<IMessage> processMessage(IMessage message);
 
 }

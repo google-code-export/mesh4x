@@ -28,18 +28,18 @@ public class MessageSyncEngine implements IMessageReceiver {
 	public void synchronize(String dataSetId) {
 		IDataSet dataSet = this.dataSetManager.getDataSet(dataSetId);
 		
-		List<Item> items = dataSet.getItems();
-		String message = this.syncProtocol.createBeginSyncMessage(dataSetId, items);
+		List<Item> items = dataSet.getAll();
+		IMessage message = this.syncProtocol.createBeginSyncMessage(dataSetId, items);
 		this.channel.send(message);
 	}
 	
 	@Override
-	public void receiveMessage(String message){
-		List<String> response = this.syncProtocol.processMessage(message);
-		if(!response.isEmpty()){
-			for (String msgResponse : response) {
-				this.channel.send(msgResponse);				
-			}
+	public void receiveMessage(IMessage message){
+		List<IMessage> response = this.syncProtocol.processMessage(message);
+		if(response != IMessageSyncProtocol.NO_RESPONSE){
+			for (IMessage msg : response) {
+				this.channel.send(msg);	
+			}			
 		}
 	}
 }

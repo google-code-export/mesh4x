@@ -10,6 +10,7 @@ public class SmsMessageBatch {
 
 	// MODEL VARIABLES
 	private String id = "";
+	private String protocolHeader = "";
 	private int expectedMessageCount = 0;
 	private HashMap<Integer, SmsMessage> messages = new HashMap<Integer, SmsMessage>();
 	private String payload;
@@ -21,7 +22,8 @@ public class SmsMessageBatch {
 		this.id = this.generateNewId();
 	}
 
-	public SmsMessageBatch(String messageBatchId, int expectedMessageCount) {
+	public SmsMessageBatch(String protocolHeader, String messageBatchId, int expectedMessageCount) {
+		this.protocolHeader = protocolHeader;
 		this.id = messageBatchId;
 		this.expectedMessageCount = expectedMessageCount;
 	}
@@ -35,7 +37,7 @@ public class SmsMessageBatch {
 
 		for (int i = 0; i < this.messages.size(); i++) {
 			String msg = this.messages.get(i).getText();
-			tempPayload = tempPayload + msg.substring(11, msg.length());
+			tempPayload = tempPayload + msg.substring(MessageFormatter.getBatchHeaderLenght(), msg.length());
 		}
 		this.payload = tempPayload;
 		return this;
@@ -86,6 +88,12 @@ public class SmsMessageBatch {
 		return this;
 	}
 
+	public SmsMessageBatch setProtocolHeader(String protocolHeader) {
+		this.protocolHeader = protocolHeader;
+		return this;
+	}
+
+	
 	public int getMessagesCount() {
 		return this.messages.size();
 	}
@@ -105,5 +113,9 @@ public class SmsMessageBatch {
 
 	public int getExpectedMessageCount() {
 		return this.expectedMessageCount;
+	}
+
+	public String getProtocolHeader() {
+		return this.protocolHeader;
 	}
 }

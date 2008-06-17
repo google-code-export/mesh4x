@@ -36,7 +36,7 @@ public class MergeResult {
 	}
 
 	public boolean isMergeNone() {
-		return MergeOperation.None != this.operation;
+		return MergeOperation.None == this.operation;
 	}
 
 }

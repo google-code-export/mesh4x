@@ -12,13 +12,13 @@ public class SmsMessageReceiverTests {
 	public SmsMessageBatch createTestBatch(int originalTextlength)
 	{
 		MessageBatchFactory factory = new MessageBatchFactory();
-		return factory.createMessageBatch(TestHelper.newText(originalTextlength));
+		return factory.createMessageBatch("M1", TestHelper.newText(originalTextlength));
 	}
 	
 	public SmsMessageBatch createTestBatch(int msgSize, String originalText)
 	{
 		MessageBatchFactory factory = new MessageBatchFactory(msgSize);
-		return factory.createMessageBatch(originalText);
+		return factory.createMessageBatch("M1", originalText);
 	}
 
 	@Test
@@ -29,7 +29,7 @@ public class SmsMessageReceiverTests {
 
 		SmsReceiver receiver = new SmsReceiver();
 		receiver.receive(batch.getMessage(0));
-
+		
 		Assert.assertEquals(1, receiver.getCompletedBatchesCount());
 	}
 
@@ -47,10 +47,10 @@ public class SmsMessageReceiverTests {
 		String new2 = batch.getMessage(2).getText();
 		String new3 = batch.getMessage(3).getText();
 		
-		String newTxt =  new0.substring(11, new0.length())
-			+ new1.substring(11, new1.length())
-			+ new2.substring(11, new2.length())
-			+ new3.substring(11, new3.length());
+		String newTxt =  new0.substring(MessageFormatter.getBatchHeaderLenght(), new0.length())
+			+ new1.substring(MessageFormatter.getBatchHeaderLenght(), new1.length())
+			+ new2.substring(MessageFormatter.getBatchHeaderLenght(), new2.length())
+			+ new3.substring(MessageFormatter.getBatchHeaderLenght(), new3.length());
 		
 		Assert.assertEquals(txt, newTxt);
 				

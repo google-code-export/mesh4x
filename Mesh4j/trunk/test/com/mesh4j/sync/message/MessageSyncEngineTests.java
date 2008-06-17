@@ -9,9 +9,11 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.mesh4j.sync.adapters.feed.XMLContent;
+import com.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import com.mesh4j.sync.message.channel.sms.SmsChannel;
 import com.mesh4j.sync.message.dataset.DataSetManager;
 import com.mesh4j.sync.message.encoding.ZipBase64Encoding;
+import com.mesh4j.sync.message.protocol.FeedItemEncoding;
 import com.mesh4j.sync.message.protocol.MessageSyncProtocolFactory;
 import com.mesh4j.sync.model.IContent;
 import com.mesh4j.sync.model.Item;
@@ -36,8 +38,8 @@ public class MessageSyncEngineTests {
 		
 		String dataSetId = "12345";
 
-		MockSmsConnection smsConnectionEndpointA = new MockSmsConnection();
-		MockSmsConnection smsConnectionEndpointB = new MockSmsConnection();
+		MockSmsConnection smsConnectionEndpointA = new MockSmsConnection("A");
+		MockSmsConnection smsConnectionEndpointB = new MockSmsConnection("B");
 
 		smsConnectionEndpointA.setEndPoint(smsConnectionEndpointB);
 		smsConnectionEndpointB.setEndPoint(smsConnectionEndpointA);
@@ -49,24 +51,26 @@ public class MessageSyncEngineTests {
 		IDataSet dataSetEndPointA = new MockInMemoryDataSet(dataSetId, itemsA);
 		dataSetManagerEndPointA.addDataSet(dataSetEndPointA);		
 		
-		IMessageSyncProtocol syncProtocolEndPointA = MessageSyncProtocolFactory.createSyncProtocol(dataSetManagerEndPointA, NullIdentityProvider.INSTANCE);		
+		FeedItemEncoding feedItemEncoding = new FeedItemEncoding(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
+
+		IMessageSyncProtocol syncProtocolEndPointA = MessageSyncProtocolFactory.createSyncProtocol(dataSetManagerEndPointA, feedItemEncoding);		
 		MessageSyncEngine syncEngineEndPointA = new MessageSyncEngine(dataSetManagerEndPointA, syncProtocolEndPointA, channelEndpointA);
 
 		DataSetManager dataSetManagerEndPointB = new DataSetManager();
 		IDataSet dataSetEndPointB = new MockInMemoryDataSet(dataSetId, itemsB);
 		dataSetManagerEndPointB.addDataSet(dataSetEndPointB);
 		
-		IMessageSyncProtocol syncProtocolEndPointB = MessageSyncProtocolFactory.createSyncProtocol(dataSetManagerEndPointB, NullIdentityProvider.INSTANCE);		
+		IMessageSyncProtocol syncProtocolEndPointB = MessageSyncProtocolFactory.createSyncProtocol(dataSetManagerEndPointB, feedItemEncoding);		
 		MessageSyncEngine syncEngineEndPointB = new MessageSyncEngine(dataSetManagerEndPointB, syncProtocolEndPointB, channelEndpointB);
 		Assert.assertNotNull(syncEngineEndPointB);
 		
-		Assert.assertEquals(3, dataSetEndPointA.getItems().size());
-		Assert.assertEquals(3, dataSetEndPointB.getItems().size());
+		Assert.assertEquals(3, dataSetEndPointA.getAll().size());
+		Assert.assertEquals(3, dataSetEndPointB.getAll().size());
 		
 		syncEngineEndPointA.synchronize(dataSetId);
 	
-		Assert.assertEquals(6, dataSetEndPointA.getItems().size());
-		Assert.assertEquals(6, dataSetEndPointB.getItems().size());
+		Assert.assertEquals(6, dataSetEndPointA.getAll().size());
+		Assert.assertEquals(6, dataSetEndPointB.getAll().size());
 	}
 	
 	

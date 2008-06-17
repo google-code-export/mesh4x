@@ -2,10 +2,13 @@ package com.mesh4j.sync.message.protocol;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeMap;
 
 import com.mesh4j.sync.message.IDataSet;
 import com.mesh4j.sync.message.IDataSetManager;
+import com.mesh4j.sync.message.IMessage;
 import com.mesh4j.sync.message.IMessageSyncProtocol;
+import com.mesh4j.sync.message.Message;
 import com.mesh4j.sync.model.Item;
 
 public class CheckForUpdateMessageProcessor implements IMessageProcessor {
@@ -31,46 +34,49 @@ public class CheckForUpdateMessageProcessor implements IMessageProcessor {
 		return "1";
 	}
 	
-	public String createMessage(String dataSetId, List<Item> items) {
+	public IMessage createMessage(String dataSetId, List<Item> items) {
 		String data = this.calculateHasCode(items);
-		String msg = MessageFormatter.createMessage(dataSetId, this.getMessageType(), data);
-		return msg;
+		return new Message(
+				MessageSyncProtocol.PREFIX,
+				MessageSyncProtocol.VERSION,
+				getMessageType(),
+				dataSetId,
+				data);
 	}
 
 	@Override
-	public List<String> process(String message) {
-		if(canProcess(message)){
-			String data = MessageFormatter.getData(message);
-			String dataSetId = MessageFormatter.getDataSetId(message);
+	public List<IMessage> process(IMessage message) {
+		if(this.getMessageType().equals(message.getMessageType())){
+			String data = message.getData();
+			String dataSetId = message.getDataSetId();
 			
 			IDataSet dataSet = this.dataSetManager.getDataSet(dataSetId);		
-			List<Item> items = dataSet.getItems();
+			List<Item> items = dataSet.getAll();
 			
-			ArrayList<String> response = new ArrayList<String>();
+			List<IMessage> response = new ArrayList<IMessage>();
 			
 			String itemsHasCode = this.calculateHasCode(items);
 			if(itemsHasCode.equals(data)){
-				String msgResponse = this.okLastVersion.createMessage(dataSetId);
-				response.add(msgResponse);
+				response.add(this.okLastVersion.createMessage(dataSetId));
+				return response;
 			} else {
-				String msgResponse = this.lastVersionStatus.createMessage(dataSetId, items);
-				response.add(msgResponse);
+				response.add(this.lastVersionStatus.createMessage(dataSetId, items));
+				return response;
 			}
-			return response;
+			
 		} else {
 			return IMessageSyncProtocol.NO_RESPONSE;
 		}
 	}
 
-	private boolean canProcess(String message) {
-		String messageType = MessageFormatter.getMessageType(message);
-		return this.getMessageType().equals(messageType);
-	}
-
-
 	private String calculateHasCode(List<Item> items) {
+		TreeMap<String, Item> sortedItems = new TreeMap<String, Item>();
+		for (Item item : items) {
+			sortedItems.put(item.getSyncId(), item);
+		}
+		
 		StringBuffer sb = new StringBuffer();
-		for (Item item : items) {                          // TODO (JMT) MeshSMS: items order by syncID?
+		for (Item item : sortedItems.values()) {
 			sb.append(item.getSyncId());
 			sb.append(item.getLastUpdate().getSequence());
 			sb.append(item.getLastUpdate().getBy());

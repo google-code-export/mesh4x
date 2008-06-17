@@ -4,6 +4,6 @@ public interface IChannel {
 
 	void registerMessageReceiver(IMessageReceiver messageReceiver);
 
-	void send(String message);
+	void send(IMessage message);
 
 }

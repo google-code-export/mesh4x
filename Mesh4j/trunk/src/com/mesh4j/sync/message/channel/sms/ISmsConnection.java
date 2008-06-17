@@ -1,12 +1,10 @@
 package com.mesh4j.sync.message.channel.sms;
 
-import com.mesh4j.sync.message.IMessageReceiver;
-
 public interface ISmsConnection {
 
-	void registerMessageReceiver(IMessageReceiver messageReceiver);
+	void registerSmsMessageReceiver(ISmsMessageReceiver messageText);
 
-	void send(String text);
+	void send(String messageText);
 
 	int getMaxMessageLenght();
 

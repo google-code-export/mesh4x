@@ -1,17 +1,22 @@
 package com.mesh4j.sync.message;
 
 import com.mesh4j.sync.message.channel.sms.ISmsConnection;
+import com.mesh4j.sync.message.channel.sms.ISmsMessageReceiver;
 
 public class MockSmsConnection implements ISmsConnection{
 
 	// MODEL VARIABLES
+	private String name = "Endpoint default";
 	private MockSmsConnection endpoint;
-	private IMessageReceiver messageReceiver;
+	private ISmsMessageReceiver messageReceiver;
 	private int generatedMessagesStatistics = 0;
 	private int generatedMessagesSizeStatistics = 0;
+	private boolean activeTrace = false;
 	
 	// METHODS
-	public MockSmsConnection() {
+	public MockSmsConnection(String name) {
+		super();
+		this.name = name;
 	}
 	
 	public void setEndPoint(MockSmsConnection endpoint){
@@ -19,19 +24,22 @@ public class MockSmsConnection implements ISmsConnection{
 	}
 	
 	@Override
-	public void registerMessageReceiver(IMessageReceiver messageReceiver) {
+	public void registerSmsMessageReceiver(ISmsMessageReceiver messageReceiver) {
 		this.messageReceiver = messageReceiver;			
 	}
 
 	@Override
 	public void send(String message) {
+		if(this.activeTrace){
+			System.out.println(this.name + " send: " + message);
+		}
 		this.generatedMessagesStatistics = this.generatedMessagesStatistics + 1;
 		this.generatedMessagesSizeStatistics = this.generatedMessagesSizeStatistics + message.length();
-		this.endpoint.receive(message);
+		this.endpoint.receiveSms(message);
 	}
 	
-	public void receive(String message){
-		this.messageReceiver.receiveMessage(message);
+	public void receiveSms(String message){
+		this.messageReceiver.receiveSms(message);
 	}
 
 	@Override
@@ -45,5 +53,14 @@ public class MockSmsConnection implements ISmsConnection{
 
 	protected int getGeneratedMessagesSizeStatistics() {
 		return generatedMessagesSizeStatistics;
+	}
+
+	public void resetStatistics() {
+		this.generatedMessagesStatistics = 0;
+		this.generatedMessagesSizeStatistics = 0;		
+	}
+	
+	public void activateTrace(){
+		this.activeTrace = true;
 	}
 }

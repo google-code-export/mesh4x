@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://earth.google.com/kml/2.2">  
+  <Document> 
+    <name>a.kml</name>  
+    <visibility>0</visibility>  
+    <open>1</open>  
+    <Placemark> 
+      <name>a</name>  
+      <visibility>0</visibility>  
+      <LookAt> 
+        <longitude>-95.26548319412237</longitude>  
+        <latitude>38.95938957105111</latitude>  
+        <altitude>0</altitude>  
+        <range>11001000</range>  
+        <tilt>0</tilt>  
+        <heading>3.697394817201339e-014</heading> 
+      </LookAt>  
+      <styleUrl>#msn_ylw-pushpin_65632af6-310b-4b75-afdc-125cc7547291</styleUrl>  
+      <Point> 
+        <coordinates>-95.26548319412237,38.95938957105111,0</coordinates> 
+      </Point> 
+    </Placemark>  
+  </Document> 
+</kml>

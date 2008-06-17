@@ -31,11 +31,6 @@ public class MockInMemoryDataSet implements IDataSet, ISyncAdapter{
 	}
 
 	@Override
-	public List<Item> getItems() {
-		return items;
-	}
-
-	@Override
 	public void update(Item item) {
 		Item itemToUpdate = get(item.getSyncId());
 		if(itemToUpdate != null){
@@ -67,7 +62,7 @@ public class MockInMemoryDataSet implements IDataSet, ISyncAdapter{
 
 	@Override
 	public List<Item> getAll() {
-		return items;
+		return new ArrayList<Item>(this.items);
 	}
 
 	@Override

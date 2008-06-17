@@ -3,16 +3,14 @@ package com.mesh4j.sync.message.channel.sms;
 import java.util.Date;
 import java.util.HashMap;
 
-import com.mesh4j.sync.message.IMessageReceiver;
-
-public class SmsReceiver implements IMessageReceiver {
+public class SmsReceiver implements ISmsMessageReceiver {
 
 	// MODEL VARIABLES
 	private  HashMap<String, SmsMessageBatch> completedBatches = new HashMap<String, SmsMessageBatch>();
 	private  HashMap<String, SmsMessageBatch> ongoingBatches = new HashMap<String, SmsMessageBatch>();
 	private  HashMap<String, DiscardedBatchRecord> discardedBatches = new HashMap<String, DiscardedBatchRecord>();
 
-	private IMessageReceiver messageReceiver;
+	private ISmsMessageReceiver messageReceiver;
 	
 	// BUSINESS METHODS
 
@@ -20,14 +18,14 @@ public class SmsReceiver implements IMessageReceiver {
 		super();
 	}
 	
-	public SmsReceiver(IMessageReceiver messageReceiver) {
+	public SmsReceiver(ISmsMessageReceiver messageReceiver) {
 		super();
 		this.messageReceiver = messageReceiver;
 	}
 
 	public SmsReceiver receive(SmsMessage message) {
 		// do we have the batch?
-		String receivedMessageBatchId = getBatchId(message.getText());
+		String receivedMessageBatchId = MessageFormatter.getBatchId(message.getText());
 		SmsMessageBatch batch = null;
 
 		if (ongoingBatches.containsKey(receivedMessageBatchId)) {
@@ -41,13 +39,16 @@ public class SmsReceiver implements IMessageReceiver {
 			if (this.completedBatches.containsKey(receivedMessageBatchId))
 				return this;
 
-			batch = new SmsMessageBatch(receivedMessageBatchId,
-					getExpectedMessageCountForBatch(message.getText()));
+			String protocolHeader = MessageFormatter.getBatchProtocolHeader(message.getText());
+			batch = new SmsMessageBatch(
+				protocolHeader, 
+				receivedMessageBatchId,
+				MessageFormatter.getBatchExpectedMessageCount(message.getText()));
 			ongoingBatches.put(receivedMessageBatchId, batch);
 
 		}
 
-		int sequence = getMessageSequenceNumber(message.getText());
+		int sequence = MessageFormatter.getBatchMessageSequenceNumber(message.getText());
 
 		SmsMessage batchMsg = batch.getMessage(sequence);
 		if (batchMsg == null) {
@@ -72,7 +73,7 @@ public class SmsReceiver implements IMessageReceiver {
 	
 	private void notifyBathCompleted(SmsMessageBatch batch){
 		if(this.messageReceiver != null){
-			this.messageReceiver.receiveMessage(batch.getPayload());
+			this.messageReceiver.receiveSms(batch.getProtocolHeader() + batch.getPayload());
 		}
 	}
 
@@ -91,18 +92,6 @@ public class SmsReceiver implements IMessageReceiver {
 		return this;
 	}
 
-	@SuppressWarnings("unused")
-	private int getMessageSequenceNumber(String messageText) {
-		return new Integer(messageText.substring(8, 11));
-	}
-
-	private String getBatchId(String messageText) {
-		return messageText.substring(0, 5);
-	}
-
-	private int getExpectedMessageCountForBatch(String messageText) {
-		return new Integer(messageText.substring(5, 8));
-	}
 
 	public int getCompletedBatchesCount() {
 		return this.completedBatches.size();
@@ -136,7 +125,7 @@ public class SmsReceiver implements IMessageReceiver {
 	}
 
 	@Override
-	public void receiveMessage(String message) {
+	public void receiveSms(String message) {
 		SmsMessage smsMessage = new SmsMessage(message, new Date());
 		this.receive(smsMessage);		
 	}

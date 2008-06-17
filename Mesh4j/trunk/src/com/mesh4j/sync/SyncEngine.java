@@ -145,7 +145,7 @@ public class SyncEngine {
 			Item original = repository.get(incoming.getSyncId());
 			MergeResult result = MergeBehavior.merge(original, incoming);
 
-			if (result.isMergeNone()) {
+			if (!result.isMergeNone()) {
 				mergeResult.add(result);
 			}
 		}
@@ -167,7 +167,7 @@ public class SyncEngine {
 		ArrayList<Item> conflicts = new ArrayList<Item>();
 
 		for (MergeResult result : items) {			
-			if (result.isMergeNone() && result.getProposed() != null
+			if (!result.isMergeNone() && result.getProposed() != null
 					&& result.getProposed().hasSyncConflicts()) {
 				conflicts.add(result.getProposed());
 			}

@@ -139,4 +139,12 @@ public class XMLHelper {
 			throw new MeshException(e);
 		}
 	}
+
+	public static Element parseElement(String xml) {
+		try {
+			return DocumentHelper.parseText(xml).getRootElement();
+		} catch (DocumentException e) {
+			throw new MeshException(e);
+		}
+	}
 }

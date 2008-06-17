@@ -8,7 +8,7 @@ public interface IDataSet {
 
 	String getDataSetId();
 	
-	List<Item> getItems();
+	List<Item> getAll();
 	
 	void add(Item item);
 

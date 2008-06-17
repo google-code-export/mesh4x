@@ -1,6 +1,5 @@
 package com.mesh4j.sync.message.channel.sms;
 
-import org.apache.commons.lang.StringUtils;
 
 public class MessageBatchFactory {
 
@@ -17,11 +16,12 @@ public class MessageBatchFactory {
 		this.maxMessageLength = maxMesgLength;
 	}
 
-	public SmsMessageBatch createMessageBatch(String payload) {
+	public SmsMessageBatch createMessageBatch(String protocolHeader, String payload) {
 		SmsMessageBatch newBatch = new SmsMessageBatch();
-
+		
 		int payloadLength = payload.length();
-		String expectedCount = getExpectedCountString(payloadLength);
+		int expected = (payloadLength / maxMessageLength)
+			+ (((payloadLength % maxMessageLength) == 0) ? 0 : 1);
 
 		int i = 0;
 
@@ -31,13 +31,7 @@ public class MessageBatchFactory {
 					((i + maxMessageLength) > payloadLength) ? payloadLength
 							: (maxMessageLength + i));
 
-			// append Id [5] & batch count [3] & position[3] //maybe only
-			// some messages actually need 'count' - like only first?
-
-			String numMessageString = getNumMessageString(msgSequence);
-
-			newMessagetext = newBatch.getId() + expectedCount
-					+ numMessageString + newMessagetext;
+			newMessagetext = MessageFormatter.createBatchMessage(protocolHeader, newBatch.getId(), expected, msgSequence, newMessagetext);
 			SmsMessage newMessage = new SmsMessage(newMessagetext);
 
 			// add to collection
@@ -49,19 +43,7 @@ public class MessageBatchFactory {
 
 		newBatch.setPayload(payload);
 		newBatch.setExpectedMessageCount(newBatch.getMessagesCount());
+		newBatch.setProtocolHeader(protocolHeader);
 		return newBatch;
-	}
-
-	private String getNumMessageString(int numMessage) {
-		// TODO (JMT) MeshSMS: improve encoding
-		return StringUtils.leftPad(String.valueOf(numMessage), 3, '0');
-	}
-
-	private String getExpectedCountString(int payloadLength) {
-		// TODO (JMT) MeshSMS: improve encoding
-		int expected = (payloadLength / maxMessageLength)
-				+ (((payloadLength % maxMessageLength) == 0) ? 0 : 1);
-
-		return StringUtils.leftPad(String.valueOf(expected), 3, '0');
 	}
 }

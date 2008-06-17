@@ -6,6 +6,8 @@ import java.util.StringTokenizer;
 
 import com.mesh4j.sync.message.IDataSet;
 import com.mesh4j.sync.message.IDataSetManager;
+import com.mesh4j.sync.message.IMessage;
+import com.mesh4j.sync.message.Message;
 import com.mesh4j.sync.model.Item;
 
 public class LastVersionStatusMessageProcessor implements IMessageProcessor {
@@ -31,21 +33,26 @@ public class LastVersionStatusMessageProcessor implements IMessageProcessor {
 		return "3";
 	}
 
-	public String createMessage(String dataSetId, List<Item> items) {
+	public IMessage createMessage(String dataSetId, List<Item> items) {
 		String data = this.encode(items);
-		String msg = MessageFormatter.createMessage(dataSetId, this.getMessageType(), data);
-		return msg;
+		return new Message(
+				MessageSyncProtocol.PREFIX,
+				MessageSyncProtocol.VERSION,
+				getMessageType(),
+				dataSetId,
+				data);
 	}
 	
 	@Override
-	public List<String> process(String message) {
-		ArrayList<String> response = new ArrayList<String>();
-		if(canProcess(message)){
-			String dataSetId = MessageFormatter.getDataSetId(message);
+	public List<IMessage> process(IMessage message) {
+		List<IMessage> response = new ArrayList<IMessage>();
+		
+		if(this.getMessageType().equals(message.getMessageType())){
+			String dataSetId = message.getDataSetId();
 			IDataSet dataSet = this.dataSetManager.getDataSet(dataSetId);
-			List<Item> items = dataSet.getItems(); 
+			List<Item> items = dataSet.getAll(); 
 			
-			StringTokenizer st = new StringTokenizer(MessageFormatter.getData(message), ITEM_SEPARATOR);
+			StringTokenizer st = new StringTokenizer(message.getData(), ITEM_SEPARATOR);
 			while(st.hasMoreTokens()){
 				StringTokenizer stItem = new StringTokenizer(st.nextToken(), FIELD_SEPARATOR);
 				String syncID = stItem.nextToken();
@@ -79,11 +86,6 @@ public class LastVersionStatusMessageProcessor implements IMessageProcessor {
 		return null;
 	}
 
-	private boolean canProcess(String message) {
-		String messageType = MessageFormatter.getMessageType(message);
-		return this.getMessageType().equals(messageType);
-	}
-	
 	private String encode(List<Item> items) {
 		StringBuffer sb = new StringBuffer();
 		for (Item item : items) {

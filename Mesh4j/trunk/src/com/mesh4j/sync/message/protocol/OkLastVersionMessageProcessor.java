@@ -2,7 +2,9 @@ package com.mesh4j.sync.message.protocol;
 
 import java.util.List;
 
+import com.mesh4j.sync.message.IMessage;
 import com.mesh4j.sync.message.IMessageSyncProtocol;
+import com.mesh4j.sync.message.Message;
 
 public class OkLastVersionMessageProcessor implements IMessageProcessor {
 	
@@ -21,26 +23,20 @@ public class OkLastVersionMessageProcessor implements IMessageProcessor {
 	}
 
 	@Override
-	public List<String> process(String message) {
-		if(canProcess(message)){
-			String dataSetId = this.getDataSetId(message);
+	public List<IMessage> process(IMessage message) {
+		if(this.getMessageType().equals(message.getMessageType())){
+			String dataSetId = message.getDataSetId();
 			this.syncProtocol.notifyEndSync(dataSetId);
 		}
 		return IMessageSyncProtocol.NO_RESPONSE;
 	}
 
-	public String createMessage(String dataSetId) {
-		String header = MessageFormatter.createMessageHeader(dataSetId, this.getMessageType());
-		return header;
+	public IMessage createMessage(String dataSetId) {
+		return new Message(
+				MessageSyncProtocol.PREFIX,
+				MessageSyncProtocol.VERSION,
+				getMessageType(),
+				dataSetId,
+				"");
 	}
-	
-	protected String getDataSetId(String message) {
-		return message.substring(3, 8);
-	}
-	
-	private boolean canProcess(String message) {
-		String messageType = message.substring(2, 3);
-		return this.getMessageType().equals(messageType);
-	}
-
 }

@@ -3,7 +3,9 @@ package com.mesh4j.sync.message.protocol;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.mesh4j.sync.message.IMessage;
 import com.mesh4j.sync.message.IMessageSyncProtocol;
+import com.mesh4j.sync.message.Message;
 
 public class GetForUpdateMessageProcessor implements IMessageProcessor {
 
@@ -22,27 +24,26 @@ public class GetForUpdateMessageProcessor implements IMessageProcessor {
 		return "4";
 	}
 	
-	public String createMessage(String dataSetId, String syncID) {
-		String msg = MessageFormatter.createMessage(dataSetId, this.getMessageType(), syncID);
-		return msg;
+	public IMessage createMessage(String dataSetId, String syncID) {
+		return new Message(
+				MessageSyncProtocol.PREFIX,
+				MessageSyncProtocol.VERSION,
+				getMessageType(),
+				dataSetId,
+				syncID);
 	}
 
 	@Override
-	public List<String> process(String message) {
-		if(this.canProcess(message)){
-			String dataSetId = MessageFormatter.getDataSetId(message);
-			String syncId = MessageFormatter.getData(message);
+	public List<IMessage> process(IMessage message) {
+		if(this.getMessageType().equals(message.getMessageType())){
+			String dataSetId = message.getDataSetId();
+			String syncId = message.getData();
 			
-			ArrayList<String> response = new ArrayList<String>();
+			List<IMessage> response = new ArrayList<IMessage>();
 			response.add(this.updateMessage.createMessage(dataSetId, syncId));
 			return response;
 		} else {
 			return IMessageSyncProtocol.NO_RESPONSE;
 		}
-	}
-	
-	private boolean canProcess(String message) {
-		String messageType = MessageFormatter.getMessageType(message);
-		return this.getMessageType().equals(messageType);
 	}
 }
