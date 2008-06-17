@@ -1,4 +1,4 @@
-#SummaryThe SMS Adapter allows 2-way synchronization over SMS messages, optimizing for number of messages sent both ways
+#summary The SMS Adapter allows 2-way synchronization over SMS messages, optimizing for number of messages sent both ways
 
 = Introduction =
 
@@ -19,7 +19,7 @@ We just started the effort mid-June 2008, but the broad idea is to have a protoc
 
 The results is a sync that is 2-ways between both endpoints. That is, if record A was changed on the mobile device / PC and record B had changed in the server, after synchronizing both machines have the latest versions of A and B.
 
-Because of the mesh4x adapter architecture, you can use any other existing adapter to decide how/where the synchronized data will get stored. For example, you could use sync to MySQL databases with 
+Because of the mesh4x adapter architecture, you can use any other existing adapter to decide how/where the synchronized data will get stored. For example, you could sync two MySQL databases with each other (using the Hibernate Adapter), or a set of J2ME RMS records with a google spreadsheet (using the corresponding adapters which we dont have yet but invite you to build)
 
 ==Peer-Peer and Client-Server scenarios==
 
