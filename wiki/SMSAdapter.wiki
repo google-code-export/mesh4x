@@ -1,0 +1,30 @@
+#The SMS Adapter allows 2-way synchronization over SMS messages, optimizing for number of messages sent both ways
+
+= Introduction =
+
+One of the common questions we get is how can I share/sync information with some remote machine 2 ways when I don't have an internet connection? 
+
+One answer is: Sync to a file, put the file on a USB drive, get it over to the other side, and get someone else to sync to their other source from the file.
+
+But an alternative if you have cell signal is to synchronize by receiving and sending a bunch of SMS messges, by plugging in a phone to your computer, or directly from a phone with the data.
+
+We are currently working on implementing the sync protocol over SMS messages.
+
+== How it works ==
+
+We just started the effort mid-June 2008, but the broad idea is to have a protocol that:
+1. Checks if a sync is needed and handshakes the protocol behavior with one message each way
+2. Finds out what actually needs to be synced
+3. Syncs only the required entities minimizing the messages needed.
+
+The results is a sync that is 2-ways between both endpoints. That is, if record A was changed on the mobile device / PC and record B had changed in the server, after synchronizing both machines have the latest versions of A and B.
+
+Because of the mesh4x adapter architecture, you can use any other existing adapter to decide how/where the synchronized data will get stored. For example, you could use sync to MySQL databases with 
+
+==Peer-Peer and Client-Server scenarios==
+
+Our hope is to have client and server implementations:
+
+*Server scenario*: so if you wanted to sync to a server, you could send the SMS to a centralized service or to a gateway phone plugged in to a PC and your server would just get standard http sync requests.
+
+*Client Scenario*: You have a PC with a phone plugged in (or a mobile device with the data) and a set of SMS messages get exchanged with another PC/phone that then applies the changes locally.
