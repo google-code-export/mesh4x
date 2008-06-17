@@ -1,0 +1,5 @@
+#The Mesh4x KML adapter allows you to share maps while offline or to a server
+
+Posts about it here:
+http://edjez.instedd.org/2008/05/build-maps-collaboratively-with-new.html
+http://edjez.instedd.org/2008/05/improvements-to-mesh4x-kml-adapter.html
