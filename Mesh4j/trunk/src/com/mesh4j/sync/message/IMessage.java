@@ -5,8 +5,6 @@ public interface IMessage {
 
 	String getProtocol();
 	
-	String getProtocolVersion();
-	
 	String getMessageType();
 	
 	String getDataSetId();

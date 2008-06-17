@@ -41,8 +41,7 @@ public class MessageSyncProtocol implements IMessageSyncProtocol {
 	
 	private boolean isValidMessageProtocol(IMessage message) {
 		return message != null 
-			&& message.getProtocol().equals(PREFIX)
-			&& message.getProtocolVersion().equals(VERSION);
+			&& message.getProtocol().equals(PREFIX);
 	}
 
 	public void setInitialMessage(CheckForUpdateMessageProcessor checkForUpdate) {

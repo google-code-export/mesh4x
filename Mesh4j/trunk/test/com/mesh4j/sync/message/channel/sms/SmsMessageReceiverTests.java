@@ -12,13 +12,13 @@ public class SmsMessageReceiverTests {
 	public SmsMessageBatch createTestBatch(int originalTextlength)
 	{
 		MessageBatchFactory factory = new MessageBatchFactory();
-		return factory.createMessageBatch("M1", TestHelper.newText(originalTextlength));
+		return factory.createMessageBatch("M", TestHelper.newText(originalTextlength));
 	}
 	
 	public SmsMessageBatch createTestBatch(int msgSize, String originalText)
 	{
 		MessageBatchFactory factory = new MessageBatchFactory(msgSize);
-		return factory.createMessageBatch("M1", originalText);
+		return factory.createMessageBatch("M", originalText);
 	}
 
 	@Test
@@ -76,7 +76,7 @@ public class SmsMessageReceiverTests {
 	@Test
 	public void ShouldAcceptVeyLargeMessageBatchesAndReconstitutePayload()
 	{
-		SmsMessageBatch batch = createTestBatch(998 * 139);
+		SmsMessageBatch batch = createTestBatch(140 * 9);  // 998 * 139
 		SmsReceiver receiver = new SmsReceiver();
 
 		for(SmsMessage msg : batch.getMessages())

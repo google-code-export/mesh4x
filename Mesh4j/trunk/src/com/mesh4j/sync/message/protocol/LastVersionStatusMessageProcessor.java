@@ -37,7 +37,6 @@ public class LastVersionStatusMessageProcessor implements IMessageProcessor {
 		String data = this.encode(items);
 		return new Message(
 				MessageSyncProtocol.PREFIX,
-				MessageSyncProtocol.VERSION,
 				getMessageType(),
 				dataSetId,
 				data);

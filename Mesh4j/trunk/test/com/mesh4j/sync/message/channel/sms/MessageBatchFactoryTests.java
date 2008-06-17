@@ -15,7 +15,7 @@ public class MessageBatchFactoryTests {
 	public void ShouldCreateCompleteMessageBatchFromText()
 	{
 		MessageBatchFactory factory = new MessageBatchFactory();
-		SmsMessageBatch batch = factory.createMessageBatch("M1", TestHelper.newText(200));
+		SmsMessageBatch batch = factory.createMessageBatch("M", TestHelper.newText(200));
 
 		Assert.assertEquals(2, batch.getMessagesCount());
 		Assert.assertTrue(batch.isComplete());
@@ -26,7 +26,7 @@ public class MessageBatchFactoryTests {
 		{
 			int textLength = msg.getText().length();
 			Assert.assertTrue(textLength <= expectedLength);
-			Assert.assertEquals(i, new Integer(msg.getText().substring(10, 13)));
+			Assert.assertEquals(i, MessageFormatter.getBatchMessageSequenceNumber(msg.getText()));
 			i++;
 		}
 
@@ -37,7 +37,7 @@ public class MessageBatchFactoryTests {
 	{
 		MessageBatchFactory factory = new MessageBatchFactory();
 		String original = TestHelper.newText(200);
-		SmsMessageBatch batch = factory.createMessageBatch("M1", original);
+		SmsMessageBatch batch = factory.createMessageBatch("M", original);
 
 		Assert.assertTrue(batch.isComplete());
 		batch.reconstitutePayload();

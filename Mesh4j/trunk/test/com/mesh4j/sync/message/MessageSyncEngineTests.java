@@ -12,7 +12,7 @@ import com.mesh4j.sync.adapters.feed.XMLContent;
 import com.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import com.mesh4j.sync.message.channel.sms.SmsChannel;
 import com.mesh4j.sync.message.dataset.DataSetManager;
-import com.mesh4j.sync.message.encoding.ZipBase64Encoding;
+import com.mesh4j.sync.message.encoding.ZipBase64MessageEncoding;
 import com.mesh4j.sync.message.protocol.FeedItemEncoding;
 import com.mesh4j.sync.message.protocol.MessageSyncProtocolFactory;
 import com.mesh4j.sync.model.IContent;
@@ -44,8 +44,8 @@ public class MessageSyncEngineTests {
 		smsConnectionEndpointA.setEndPoint(smsConnectionEndpointB);
 		smsConnectionEndpointB.setEndPoint(smsConnectionEndpointA);
 		
-		IChannel channelEndpointA = new SmsChannel(smsConnectionEndpointA, ZipBase64Encoding.INSTANCE);
-		IChannel channelEndpointB = new SmsChannel(smsConnectionEndpointB, ZipBase64Encoding.INSTANCE);
+		IChannel channelEndpointA = new SmsChannel(smsConnectionEndpointA, ZipBase64MessageEncoding.INSTANCE);
+		IChannel channelEndpointB = new SmsChannel(smsConnectionEndpointB, ZipBase64MessageEncoding.INSTANCE);
 		
 		DataSetManager dataSetManagerEndPointA = new DataSetManager();
 		IDataSet dataSetEndPointA = new MockInMemoryDataSet(dataSetId, itemsA);

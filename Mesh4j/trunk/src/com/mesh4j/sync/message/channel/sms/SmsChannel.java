@@ -40,7 +40,6 @@ public class SmsChannel implements IChannel, ISmsMessageReceiver {
 		
 		Message message = new Message(
 			MessageFormatter.getProtocol(messageText),
-			MessageFormatter.getVersion(messageText),
 			MessageFormatter.getMessageType(decodedData),
 			MessageFormatter.getDataSetId(decodedData),
 			MessageFormatter.getData(decodedData)
@@ -53,7 +52,7 @@ public class SmsChannel implements IChannel, ISmsMessageReceiver {
 		String msg = MessageFormatter.createMessage(message.getMessageType(), message.getDataSetId(), message.getData());
 
 		String encodedData = this.messageEncoding.encode(msg);		
-		String header = MessageFormatter.createMessageHeader(message.getProtocol(), message.getProtocolVersion());
+		String header = message.getProtocol();
 		SmsMessageBatch batch = this.batchFactory.createMessageBatch(header, encodedData);
 		for (SmsMessage smsMessage : batch.getMessages()) {
 			this.smsConnection.send(smsMessage.getText());

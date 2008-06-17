@@ -38,7 +38,6 @@ public class CheckForUpdateMessageProcessor implements IMessageProcessor {
 		String data = this.calculateHasCode(items);
 		return new Message(
 				MessageSyncProtocol.PREFIX,
-				MessageSyncProtocol.VERSION,
 				getMessageType(),
 				dataSetId,
 				data);

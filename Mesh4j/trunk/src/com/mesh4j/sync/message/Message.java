@@ -4,16 +4,14 @@ public class Message implements IMessage {
 
 	// MODEL VARIABLES
 	private String protocol;
-	private String version;
 	private String messageType;
 	private String dataSetId;
 	private String data;
 	
 	// METHODs
-	public Message(String protocol, String version, String messageType, String dataSetId, String data) {
+	public Message(String protocol, String messageType, String dataSetId, String data) {
 		super();
 		this.protocol = protocol;
-		this.version = version;
 		this.messageType = messageType;
 		this.dataSetId = dataSetId;
 		this.data = data;
@@ -38,10 +36,4 @@ public class Message implements IMessage {
 	public String getProtocol() {
 		return this.protocol;
 	}
-
-	@Override
-	public String getProtocolVersion() {
-		return this.version;
-	}
-
 }

@@ -44,7 +44,6 @@ public class UpdateMessageProcessor implements IMessageProcessor {
 		String data = this.itemEncoding.encode(item);
 		return new Message(
 				MessageSyncProtocol.PREFIX,
-				MessageSyncProtocol.VERSION,
 				getMessageType(),
 				dataSetId,
 				data);

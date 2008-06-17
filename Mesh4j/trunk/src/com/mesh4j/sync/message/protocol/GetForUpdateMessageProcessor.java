@@ -27,7 +27,6 @@ public class GetForUpdateMessageProcessor implements IMessageProcessor {
 	public IMessage createMessage(String dataSetId, String syncID) {
 		return new Message(
 				MessageSyncProtocol.PREFIX,
-				MessageSyncProtocol.VERSION,
 				getMessageType(),
 				dataSetId,
 				syncID);

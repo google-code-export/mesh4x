@@ -10,9 +10,9 @@ import com.mesh4j.sync.utils.Base64Helper;
 import com.mesh4j.sync.utils.ZipUtils;
 import com.mesh4j.sync.validations.MeshException;
 
-public class ZipBase64Encoding implements IMessageEncoding{
+public class ZipBase64MessageEncoding implements IMessageEncoding{
 
-	public static final ZipBase64Encoding INSTANCE = new ZipBase64Encoding();
+	public static final ZipBase64MessageEncoding INSTANCE = new ZipBase64MessageEncoding();
 
 	@Override
 	public String encode(String message) {
