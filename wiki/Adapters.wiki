@@ -7,6 +7,7 @@ The Hibernate Adapter allows you to synchronize to any database through the Hibe
 #The Mesh4x KML adapter allows you to synchronize KML / KMZ files, including all their placemarks (pushpins, polygons, lines, etc) styles and for KMZ files the embedded resources (photos, icons).
 
 http://edjez.instedd.org/2008/05/build-maps-collaboratively-with-new.html
+
 http://edjez.instedd.org/2008/05/improvements-to-mesh4x-kml-adapter.html
 
 We have also set up a demo server to show how you can sync to the HTTP sync server and back
