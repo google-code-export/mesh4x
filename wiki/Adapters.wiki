@@ -10,7 +10,7 @@ http://edjez.instedd.org/2008/05/build-maps-collaboratively-with-new.html
 
 http://edjez.instedd.org/2008/05/improvements-to-mesh4x-kml-adapter.html
 
-We have also set up a demo server to show how you can sync to the HTTP sync server and back
+We have also set up a demo server to show how you can sync to the HTTP sync server and back. If you use the KML adapter sample application you can sync between two local KML files, a local KML and an http server we are hosting, or 2 http servers.
 
 ==Split Adapter==
 The Split Adapter can be used by developeers to synchronize with a data soruce that does not have awareness/support of mesh4x synchronziation (like a database whose schema you can't modify). The split adapter keeps track of all versioning metadata, and interacts with the datasource only through an class that has a simple CRUD API.
