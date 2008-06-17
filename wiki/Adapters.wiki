@@ -1,6 +1,6 @@
 #summary List of adapters and what they do
 
-==Hibernate OR/M for Databases==
+==Hibernate OR/M for Databases Adapter==
 The Hibernate Adapter allows you to synchronize to any database through the Hibernate OR/M library, which allows support for pretty much most databases available today. 
 
 ==KML Adapter==
@@ -12,11 +12,16 @@ http://edjez.instedd.org/2008/05/improvements-to-mesh4x-kml-adapter.html
 
 We have also set up a demo server to show how you can sync to the HTTP sync server and back
 
+==Split Adapter==
+The Split Adapter can be used by developeers to synchronize with a data soruce that does not have awareness/support of mesh4x synchronziation (like a database whose schema you can't modify). The split adapter keeps track of all versioning metadata, and interacts with the datasource only through an class that has a simple CRUD API.
+
 ==File Adapter==
 The file adapter allows you to sync from/to a file. The file is really an XML (RSS/Atom) file that you can save on a USB drive and then sync with again.
 
 ==HTTP Adapter==
 The HTTP adapter synchronizes to a server that supports the REST APIs for Feedsync. We have an implementation of such server in the source tree too (it's what you are synchronizing to when using the KML demo)
 
-==Split Adapter==
-The Split Adapter can be used by developeers to synchronize with a data soruce that does not have awareness/support of mesh4x synchronziation (like a database whose schema you can't modify). The split adapter keeps track of all versioning metadata, and interacts with the datasource only through an class that has a simple CRUD API.
+==SMS Adapter==
+The SMSAdapter allows you to synchronize over SMS messages. It implements an optimized version of the FeedSync protocol specifically designed to minimize the number of messages exchanged. For example you could use this to synchronize J2ME RMS records with a PC or server or two PCs (with phones plugged in). Read more here: SMSAdapter 
+
+_Would you like to see a specific adapter not listed here? Please leave a comment below or add it to the Issues List!_
