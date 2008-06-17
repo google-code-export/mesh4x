@@ -1,1 +1,0 @@
-#The Hibernate Adapter allows you to synchronize to any database through the Hibernate OR/M library, which allows support for pretty much most databases available today.
