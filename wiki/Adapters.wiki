@@ -3,7 +3,7 @@
 ==Hibernate OR/M for Databases==
 The Hibernate Adapter allows you to synchronize to any database through the Hibernate OR/M library, which allows support for pretty much most databases available today. 
 
-=KML Adapter=
+==KML Adapter==
 #The Mesh4x KML adapter allows you to synchronize KML / KMZ files, including all their placemarks (pushpins, polygons, lines, etc) styles and for KMZ files the embedded resources (photos, icons).
 
 http://edjez.instedd.org/2008/05/build-maps-collaboratively-with-new.html
