@@ -1,0 +1,11 @@
+#summary SCM Info
+You can checkout a read-only working copy anonymously over HTTP using an SVN client. 
+
+
+Depending on what you want to get, use the following repository URLs:
+
+  * All of mesh4x code (all platforms, trunk, branches, everything): svn checkout http://mesh4x.googlecode.com/svn/
+  * mesh4n (.NET) trunk: svn checkout http://mesh4x.googlecode.com/svn/Mesh4n/trunk
+  * mesh4j (Java) trunk: svn checkout http://mesh4x.googlecode.com/svn/Mesh4j/trunk 
+
+We have rumours contributors are working on Ruby and Javascript too, stay tuned! 
