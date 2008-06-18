@@ -1,11 +1,14 @@
-#summary SCM Info
+#summary How to get and update the code. This appears on the Source tab
+
 You can checkout a read-only working copy anonymously over HTTP using an SVN client. 
 
 ==Readonly Access==
 Use this command to anonymously check out the latest project source code:
 
-{{{All of mesh4x code (all platforms, trunk, branches, everything): 
-svn checkout http://mesh4x.googlecode.com/svn/}}}
+{{{
+# All of mesh4x code (all platforms, trunk, branches, everything): 
+svn checkout http://mesh4x.googlecode.com/svn/
+}}}
 
 {{{
 # Non-members may check out a read-only working copy anonymously over HTTP.
