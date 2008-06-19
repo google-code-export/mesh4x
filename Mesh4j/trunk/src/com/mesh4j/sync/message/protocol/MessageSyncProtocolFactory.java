@@ -10,6 +10,8 @@ public class MessageSyncProtocolFactory {
 
 	public static IMessageSyncProtocol createSyncProtocol() {
 
+		// TODO (JMT) MeshSms: state machine/workflow ?
+		
 		ACKEndSyncMessageProcessor ackEndMessage = new ACKEndSyncMessageProcessor();
 		EndSyncMessageProcessor endMessage = new EndSyncMessageProcessor(ackEndMessage);
 		

@@ -27,6 +27,7 @@ public class GetForMergeMessageProcessor implements IMessageProcessor {
 	}
 	
 	public IMessage createMessage(ISyncSession syncSession, String syncID) {
+		syncSession.waitForAck(syncID);
 		return new Message(
 				IProtocolConstants.PROTOCOL,
 				getMessageType(),

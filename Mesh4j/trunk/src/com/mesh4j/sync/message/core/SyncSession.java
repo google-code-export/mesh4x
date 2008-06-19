@@ -164,7 +164,7 @@ public class SyncSession implements ISyncSession{
 	}
 
 	@Override
-	public void cancel() {
+	public void cancelSync() {
 		this.isOpen = false;
 		this.conflicts = new ArrayList<String>();
 		this.acks = new ArrayList<String>();

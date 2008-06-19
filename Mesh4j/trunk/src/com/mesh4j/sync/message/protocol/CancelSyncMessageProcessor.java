@@ -12,7 +12,7 @@ public class CancelSyncMessageProcessor implements ICancelSyncMessageProcessor {
 
 	@Override
 	public IMessage createMessage(ISyncSession syncSession) {
-		syncSession.cancel();
+		syncSession.cancelSync();
 		return new Message(
 			IProtocolConstants.PROTOCOL,
 			getMessageType(),
@@ -29,7 +29,7 @@ public class CancelSyncMessageProcessor implements ICancelSyncMessageProcessor {
 	@Override
 	public List<IMessage> process(ISyncSession syncSession, IMessage message) {
 		if(!syncSession.isOpen() && this.getMessageType().equals(message.getMessageType())){
-			syncSession.cancel();
+			syncSession.cancelSync();
 		}
 		return IMessageSyncProtocol.NO_RESPONSE;	// TODO (JMT) MeshSms: cancel ack?
 	}

@@ -29,7 +29,7 @@ public class MessageSyncEngine implements IMessageReceiver {
 	public void synchronize(String sourceId, IEndpoint target) {
 		ISyncSession syncSession = this.syncSessionFactory.get(sourceId, target.getEndpointId());
 		if(syncSession != null && syncSession.isOpen()){
-			Guard.throwsException("ERROR_SYNC_MESSAGE_OPEN", sourceId, target.getEndpointId());   // TODO
+			Guard.throwsException("ERROR_MESSAGE_SYNC_SESSION_IS_OPEN", sourceId, target.getEndpointId());
 		}
 		if(syncSession == null){
 			syncSession = this.syncSessionFactory.createSession(sourceId, target);
@@ -43,7 +43,7 @@ public class MessageSyncEngine implements IMessageReceiver {
 	public void cancelSynchronization(String sourceId, IEndpoint target) {
 		ISyncSession syncSession = this.syncSessionFactory.get(sourceId, target.getEndpointId());
 		if(syncSession == null || !syncSession.isOpen()){
-			Guard.throwsException("ERROR_SYNC_MESSAGE_CANCEL", sourceId, target.getEndpointId());   // TODO
+			Guard.throwsException("ERROR_MESSAGE_SYNC_SESSION_IS_NOT_OPEN", sourceId, target.getEndpointId());
 		}
 		IMessage message = this.syncProtocol.cancelSync(syncSession);
 		if(message != null){
@@ -101,5 +101,6 @@ public class MessageSyncEngine implements IMessageReceiver {
 		return null;
 	}
 	
-	// TODO (JMT) MeshSms: ack and messages retries/timeout
+	// TODO (JMT) MeshSms: ack and messages retries/timeout - Timer/Quartz
+	// TODO (JMT) MeshSms: sync session id in messages?
 }

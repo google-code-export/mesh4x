@@ -33,6 +33,7 @@ public class MergeWithACKMessageProcessor implements IMessageProcessor {
 	}
 	
 	public IMessage createMessage(ISyncSession syncSession, Item item) {
+		syncSession.waitForAck(item.getSyncId());
 		String data = ItemEncoding.encode(syncSession, item);
 		return new Message(
 				IProtocolConstants.PROTOCOL,

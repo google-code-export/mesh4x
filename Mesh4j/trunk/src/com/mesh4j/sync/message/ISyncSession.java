@@ -25,12 +25,12 @@ public interface ISyncSession {
 	void beginSync();
 	void beginSync(Date sinceDate);
 	void endSync(Date sinceDate);
+	void cancelSync();
 	
 	Date getLastSyncDate();
 	boolean isOpen();
 	boolean isCompleteSync();
 	List<Item> getSnapshot();
-	void cancel();
 	
 	void waitForAck(String syncId);
 	void notifyAck(String syncId);
