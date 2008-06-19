@@ -31,7 +31,7 @@ public class GetForMergeMessageProcessor implements IMessageProcessor {
 		return new Message(
 				IProtocolConstants.PROTOCOL,
 				getMessageType(),
-				syncSession.getSourceId(),
+				syncSession.getSessionId(),
 				syncID,
 				syncSession.getTarget());
 	}

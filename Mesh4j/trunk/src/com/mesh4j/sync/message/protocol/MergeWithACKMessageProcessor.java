@@ -38,7 +38,7 @@ public class MergeWithACKMessageProcessor implements IMessageProcessor {
 		return new Message(
 				IProtocolConstants.PROTOCOL,
 				getMessageType(),
-				syncSession.getSourceId(),
+				syncSession.getSessionId(),
 				data,
 				syncSession.getTarget());
 	}

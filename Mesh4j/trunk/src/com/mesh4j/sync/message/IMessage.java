@@ -6,12 +6,10 @@ public interface IMessage {
 	
 	String getMessageType();
 	
-	String getSourceId();
+	String getSessionId();
 	
 	String getData();
 
 	IEndpoint getEndpoint();
-	
-	String getEndpointId();
 	
 }

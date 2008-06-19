@@ -7,6 +7,8 @@ import com.mesh4j.sync.model.Item;
 
 public interface ISyncSession {
 	
+	String getSessionId();
+	
 	String getSourceId();
 	IEndpoint getTarget();
 	

@@ -16,7 +16,7 @@ public class CancelSyncMessageProcessor implements ICancelSyncMessageProcessor {
 		return new Message(
 			IProtocolConstants.PROTOCOL,
 			getMessageType(),
-			syncSession.getSourceId(),
+			syncSession.getSessionId(),
 			"",
 			syncSession.getTarget());
 	}

@@ -35,7 +35,7 @@ public class LastVersionStatusMessageProcessor implements IMessageProcessor{
 		return new Message(
 				IProtocolConstants.PROTOCOL,
 				this.getMessageType(),
-				syncSession.getSourceId(),
+				syncSession.getSessionId(),
 				encode(items),
 				syncSession.getTarget());
 	}

@@ -34,29 +34,29 @@ public class SmsChannel implements IChannel, ISmsMessageReceiver {
 	}
 
 	@Override
-	public void receiveSms(String smsNumber, String messageText){
-		String msg = MessageFormatter.getMessage(messageText);
-		String decodedData = this.messageEncoding.decode(msg);
+	public void receiveSms(SmsEndpoint endpoint, String messageText){
+		String encodedData = MessageFormatter.getMessage(messageText);
+		String decodedData = this.messageEncoding.decode(encodedData);
 		
 		Message message = new Message(
 			MessageFormatter.getProtocol(messageText),
 			MessageFormatter.getMessageType(decodedData),
-			MessageFormatter.getDataSetId(decodedData),
+			MessageFormatter.getSessionId(decodedData),
 			MessageFormatter.getData(decodedData),
-			new SmsEndpoint(smsNumber)
+			endpoint
 		);
 		this.messageReceiver.receiveMessage(message);
 	}
 	
 	@Override
 	public void send(IMessage message) {
-		String msg = MessageFormatter.createMessage(message.getMessageType(), message.getSourceId(), message.getData());
+		String msg = MessageFormatter.createMessage(message.getMessageType(), message.getSessionId(), message.getData());
 
 		String encodedData = this.messageEncoding.encode(msg);		
 		String header = message.getProtocol();
 		SmsMessageBatch batch = this.batchFactory.createMessageBatch(header, encodedData);
 		for (SmsMessage smsMessage : batch.getMessages()) {
-			this.smsConnection.send(message.getEndpointId(), smsMessage.getText());
+			this.smsConnection.send((SmsEndpoint)message.getEndpoint(), smsMessage.getText());
 		}
 	}
 }

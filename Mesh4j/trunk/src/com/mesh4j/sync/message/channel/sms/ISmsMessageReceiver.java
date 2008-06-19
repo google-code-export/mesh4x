@@ -2,5 +2,5 @@ package com.mesh4j.sync.message.channel.sms;
 
 public interface ISmsMessageReceiver {
 
-	void receiveSms(String smsNumber, String smsMessageText);
+	void receiveSms(SmsEndpoint endpoint, String smsMessageText);
 }

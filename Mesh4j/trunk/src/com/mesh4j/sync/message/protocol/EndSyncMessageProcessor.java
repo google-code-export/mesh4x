@@ -31,7 +31,7 @@ public class EndSyncMessageProcessor implements IMessageProcessor {
 		return new Message(
 				IProtocolConstants.PROTOCOL,
 				getMessageType(),
-				syncSession.getSourceId(),
+				syncSession.getSessionId(),
 				DateHelper.formatDateTime(new Date()),
 				syncSession.getTarget());
 	}

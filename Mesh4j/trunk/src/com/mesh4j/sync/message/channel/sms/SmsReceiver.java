@@ -23,7 +23,11 @@ public class SmsReceiver implements ISmsMessageReceiver {
 		this.messageReceiver = messageReceiver;
 	}
 
-	public SmsReceiver receive(String smsNumber, SmsMessage message) {
+	public SmsReceiver receive(String endpoint, SmsMessage message) {
+		return receive(new SmsEndpoint(endpoint), message);	
+	}
+	
+	public SmsReceiver receive(SmsEndpoint endpoint, SmsMessage message) {
 		// do we have the batch?
 		String receivedMessageBatchId = MessageFormatter.getBatchId(message.getText());
 		SmsMessageBatch batch = null;
@@ -41,7 +45,7 @@ public class SmsReceiver implements ISmsMessageReceiver {
 
 			String protocolHeader = MessageFormatter.getBatchProtocolHeader(message.getText());
 			batch = new SmsMessageBatch(
-				smsNumber,
+				endpoint,
 				protocolHeader, 
 				receivedMessageBatchId,
 				MessageFormatter.getBatchExpectedMessageCount(message.getText()));
@@ -74,7 +78,7 @@ public class SmsReceiver implements ISmsMessageReceiver {
 	
 	private void notifyBathCompleted(SmsMessageBatch batch){
 		if(this.messageReceiver != null){
-			this.messageReceiver.receiveSms(batch.getSmsNumber(), batch.getProtocolHeader() + batch.getPayload());
+			this.messageReceiver.receiveSms(batch.getEndpoint(), batch.getProtocolHeader() + batch.getPayload());
 		}
 	}
 
@@ -126,9 +130,9 @@ public class SmsReceiver implements ISmsMessageReceiver {
 	}
 
 	@Override
-	public void receiveSms(String smsNumber, String message) {
+	public void receiveSms(SmsEndpoint endpoint, String message) {
 		SmsMessage smsMessage = new SmsMessage(message, new Date());
-		this.receive(smsNumber, smsMessage);		
+		this.receive(endpoint, smsMessage);		
 	}
 
 }

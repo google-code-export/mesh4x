@@ -14,4 +14,9 @@ public interface IMessageSyncProtocol {
 	 boolean isValidMessageProtocol(IMessage message);
 
 	IMessage cancelSync(ISyncSession syncSession);
+
+	ISyncSession createSession(ISyncSessionFactory syncSessionFactory, IMessage message);
+	
+	ISyncSession createSession(ISyncSessionFactory syncSessionFactory,
+			String sourceId, IEndpoint target);
 }

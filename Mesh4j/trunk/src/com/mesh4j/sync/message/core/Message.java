@@ -8,16 +8,16 @@ public class Message implements IMessage {
 	// MODEL VARIABLES
 	private String protocol;
 	private String messageType;
-	private String sourceId;
+	private String sessionId;
 	private String data;
 	private IEndpoint endpoint;
 	
 	// METHODs
-	public Message(String protocol, String messageType, String sourceId, String data, IEndpoint endpoint) {
+	public Message(String protocol, String messageType, String sessionId, String data, IEndpoint endpoint) {
 		super();
 		this.protocol = protocol;
 		this.messageType = messageType;
-		this.sourceId = sourceId;
+		this.sessionId = sessionId;
 		this.data = data;
 		this.endpoint = endpoint;
 	}
@@ -28,8 +28,8 @@ public class Message implements IMessage {
 	}
 
 	@Override
-	public String getSourceId() {
-		return this.sourceId;
+	public String getSessionId() {
+		return this.sessionId;
 	}
 
 	@Override
@@ -45,10 +45,5 @@ public class Message implements IMessage {
 	@Override
 	public IEndpoint getEndpoint() {
 		return endpoint;
-	}
-
-	@Override
-	public String getEndpointId() {
-		return this.getEndpoint().getEndpointId();
 	}
 }

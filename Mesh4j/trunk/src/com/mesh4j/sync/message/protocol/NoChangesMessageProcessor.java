@@ -55,7 +55,7 @@ public class NoChangesMessageProcessor implements IMessageProcessor {
 		return new Message(
 				IProtocolConstants.PROTOCOL,
 				getMessageType(),
-				syncSession.getSourceId(),
+				syncSession.getSessionId(),
 				"",
 				syncSession.getTarget());
 	}

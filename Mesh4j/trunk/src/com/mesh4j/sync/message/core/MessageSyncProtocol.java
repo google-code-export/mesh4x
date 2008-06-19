@@ -3,9 +3,11 @@ package com.mesh4j.sync.message.core;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.mesh4j.sync.message.IEndpoint;
 import com.mesh4j.sync.message.IMessage;
 import com.mesh4j.sync.message.IMessageSyncProtocol;
 import com.mesh4j.sync.message.ISyncSession;
+import com.mesh4j.sync.message.ISyncSessionFactory;
 
 public class MessageSyncProtocol implements IMessageSyncProtocol {
 
@@ -50,5 +52,16 @@ public class MessageSyncProtocol implements IMessageSyncProtocol {
 	@Override
 	public IMessage cancelSync(ISyncSession syncSession) {
 		return this.cancelMessage.createMessage(syncSession);
+	}
+
+	@Override
+	public ISyncSession createSession(ISyncSessionFactory syncSessionFactory, IMessage message) {
+		return this.initialMessage.createSession(syncSessionFactory, message);
+	}
+
+	@Override
+	public ISyncSession createSession(ISyncSessionFactory syncSessionFactory,
+			String sourceId, IEndpoint target) {
+		return this.initialMessage.createSession(syncSessionFactory, sourceId, target);
 	}
 }

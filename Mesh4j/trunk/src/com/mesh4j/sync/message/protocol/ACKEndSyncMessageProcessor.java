@@ -21,7 +21,7 @@ public class ACKEndSyncMessageProcessor implements IMessageProcessor {
 		return new Message(
 				IProtocolConstants.PROTOCOL,
 				getMessageType(),
-				syncSession.getSourceId(),
+				syncSession.getSessionId(),
 				DateHelper.formatDateTime(sinceDate),
 				syncSession.getTarget());
 	}

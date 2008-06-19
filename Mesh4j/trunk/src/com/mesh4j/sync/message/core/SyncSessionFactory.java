@@ -15,17 +15,11 @@ public class SyncSessionFactory implements ISyncSessionFactory {
 	
 	// BUSINESS METHODS
 	@Override
-	public ISyncSession createSession(String sourceId, IEndpoint target) {
+	public ISyncSession createSession(String sessionId, String sourceId, IEndpoint target) {
 		IMessageSyncAdapter syncAdapter = getSyncAdapter(sourceId);
-		
-		String key = makeKey(sourceId, target.getEndpointId());
-		SyncSession session = new SyncSession(syncAdapter, target);
-		this.sessions.put(key, session);
+		SyncSession session = new SyncSession(sessionId, syncAdapter, target);
+		this.sessions.put(sessionId, session);
 		return session;
-	}
-
-	private String makeKey(String sourceId, String endpointId) {
-		return sourceId+"-"+endpointId;
 	}
 
 	private IMessageSyncAdapter getSyncAdapter(String sourceId) {
@@ -34,8 +28,18 @@ public class SyncSessionFactory implements ISyncSessionFactory {
 
 	@Override
 	public ISyncSession get(String sourceId, String targetId) {
-		String key = makeKey(sourceId, targetId);
-		return this.sessions.get(key);
+		for (ISyncSession syncSession : this.sessions.values()) {
+			if(syncSession.getSourceId().equals(sourceId)
+				&& syncSession.getTarget().getEndpointId().equals(targetId)){
+					return syncSession;
+				}
+		}
+		return null;
+	}
+	
+	@Override
+	public ISyncSession get(String sessionId) {
+		return this.sessions.get(sessionId);
 	}
 
 	@Override

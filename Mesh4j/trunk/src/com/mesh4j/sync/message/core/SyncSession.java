@@ -14,6 +14,7 @@ import com.mesh4j.sync.model.Item;
 public class SyncSession implements ISyncSession{
 
 	// MODEL VARIABLES
+	private String sessionId;
 	private IMessageSyncAdapter syncAdapter;
 	private IEndpoint target;
 	private Date lastSyncDate;
@@ -23,8 +24,9 @@ public class SyncSession implements ISyncSession{
 	private ArrayList<String> acks = new ArrayList<String>();
 
 	// METHODS
-	public SyncSession(IMessageSyncAdapter syncAdapter, IEndpoint target) {
+	public SyncSession(String sessionId, IMessageSyncAdapter syncAdapter, IEndpoint target) {
 		super();
+		this.sessionId = sessionId;
 		this.syncAdapter = syncAdapter;
 		this.target = target;
 	}
@@ -169,5 +171,10 @@ public class SyncSession implements ISyncSession{
 		this.conflicts = new ArrayList<String>();
 		this.acks = new ArrayList<String>();
 		this.snapshot = new HashMap<String, Item>();
+	}
+
+	@Override
+	public String getSessionId() {
+		return sessionId;
 	}
 }

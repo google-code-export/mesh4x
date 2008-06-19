@@ -1,30 +1,41 @@
 package com.mesh4j.sync.message.channel.sms;
 
-import org.apache.commons.lang.StringUtils;
+import java.util.StringTokenizer;
+
 
 public class MessageFormatter {
 
+	private final static String ELEMENT_SEPARATOR = "&";
+	
 	public static String getMessageType(String message){
 		return message.substring(0, 1);
 	}
 	
-	public static String getDataSetId(String message) {
-		return message.substring(1, 6);
+	public static String getSessionId(String message) {
+		String data =  message.substring(1, message.length());
+		StringTokenizer st = new StringTokenizer(data, ELEMENT_SEPARATOR);
+		return st.nextToken();
 	}
 
 	public static String getData(String message) {
-		if(message.length() >= 6){
-			return message.substring(6, message.length());
+		String data =  message.substring(1, message.length());
+		StringTokenizer st = new StringTokenizer(data, ELEMENT_SEPARATOR);
+		st.nextToken();			// skip session id
+		if(st.hasMoreTokens()){
+			return st.nextToken();
 		} else {
-			return null;
+			return "";
 		}
 	}
 	
-	public static String createMessage(String messageType, String dataSetId, String data) {
+	public static String createMessage(String messageType, String sessionId, String data) {
 		StringBuffer sb = new StringBuffer();
 		sb.append(messageType);
-		sb.append(StringUtils.leftPad(dataSetId, 5, "0"));
-		sb.append(data);
+		sb.append(sessionId);
+		if(data != null && !data.isEmpty()){
+			sb.append(ELEMENT_SEPARATOR);
+			sb.append(data);
+		}
 		return sb.toString();
 	}
 
