@@ -9,16 +9,13 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.mesh4j.sync.adapters.feed.XMLContent;
-import com.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import com.mesh4j.sync.message.channel.sms.SmsChannel;
-import com.mesh4j.sync.message.dataset.DataSetManager;
-import com.mesh4j.sync.message.encoding.ZipBase64MessageEncoding;
-import com.mesh4j.sync.message.protocol.FeedItemEncoding;
+import com.mesh4j.sync.message.channel.sms.SmsEndpoint;
+import com.mesh4j.sync.message.core.SyncSessionFactory;
 import com.mesh4j.sync.message.protocol.MessageSyncProtocolFactory;
 import com.mesh4j.sync.model.IContent;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.Sync;
-import com.mesh4j.sync.security.NullIdentityProvider;
 import com.mesh4j.sync.utils.IdGenerator;
 
 public class MessageSyncEngineTests {
@@ -27,50 +24,53 @@ public class MessageSyncEngineTests {
 	public void shouldSync(){
 		
 		ArrayList<Item> itemsA = new ArrayList<Item>();
-		itemsA.add(createNewItem());
-		itemsA.add(createNewItem());
-		itemsA.add(createNewItem());
+//		itemsA.add(createNewItem());
+//		itemsA.add(createNewItem());
+//		itemsA.add(createNewItem());
 		
 		ArrayList<Item> itemsB = new ArrayList<Item>();
 		itemsB.add(createNewItem());
-		itemsB.add(createNewItem());
-		itemsB.add(createNewItem());		
+//		itemsB.add(createNewItem());
+//		itemsB.add(createNewItem());		
 		
 		String dataSetId = "12345";
 
-		MockSmsConnection smsConnectionEndpointA = new MockSmsConnection("A");
-		MockSmsConnection smsConnectionEndpointB = new MockSmsConnection("B");
+		MockSmsConnection smsConnectionEndpointA = new MockSmsConnection("sms:123");
+		MockSmsConnection smsConnectionEndpointB = new MockSmsConnection("sms:456");
 
 		smsConnectionEndpointA.setEndPoint(smsConnectionEndpointB);
+		smsConnectionEndpointA.activateTrace();
 		smsConnectionEndpointB.setEndPoint(smsConnectionEndpointA);
+		smsConnectionEndpointB.activateTrace();
 		
-		IChannel channelEndpointA = new SmsChannel(smsConnectionEndpointA, ZipBase64MessageEncoding.INSTANCE);
-		IChannel channelEndpointB = new SmsChannel(smsConnectionEndpointB, ZipBase64MessageEncoding.INSTANCE);
+		IChannel channelEndpointA = new SmsChannel(smsConnectionEndpointA, MockMessageEncoding.INSTANCE);
+		IChannel channelEndpointB = new SmsChannel(smsConnectionEndpointB, MockMessageEncoding.INSTANCE);
 		
-		DataSetManager dataSetManagerEndPointA = new DataSetManager();
-		IDataSet dataSetEndPointA = new MockInMemoryDataSet(dataSetId, itemsA);
-		dataSetManagerEndPointA.addDataSet(dataSetEndPointA);		
+		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocol();		
 		
-		FeedItemEncoding feedItemEncoding = new FeedItemEncoding(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
+		IMessageSyncAdapter endPointA = new MockInMemoryMessageSyncAdapter(dataSetId, itemsA);
+		IMessageSyncAdapter endPointB = new MockInMemoryMessageSyncAdapter(dataSetId, itemsB);
+		
+		ISyncSessionFactory syncSessionFactoryA = new SyncSessionFactory();
+		syncSessionFactoryA.registerSource(endPointA);
+		MessageSyncEngine syncEngineEndPointA = new MessageSyncEngine(syncProtocol, channelEndpointA, syncSessionFactoryA);
 
-		IMessageSyncProtocol syncProtocolEndPointA = MessageSyncProtocolFactory.createSyncProtocol(dataSetManagerEndPointA, feedItemEncoding);		
-		MessageSyncEngine syncEngineEndPointA = new MessageSyncEngine(dataSetManagerEndPointA, syncProtocolEndPointA, channelEndpointA);
-
-		DataSetManager dataSetManagerEndPointB = new DataSetManager();
-		IDataSet dataSetEndPointB = new MockInMemoryDataSet(dataSetId, itemsB);
-		dataSetManagerEndPointB.addDataSet(dataSetEndPointB);
-		
-		IMessageSyncProtocol syncProtocolEndPointB = MessageSyncProtocolFactory.createSyncProtocol(dataSetManagerEndPointB, feedItemEncoding);		
-		MessageSyncEngine syncEngineEndPointB = new MessageSyncEngine(dataSetManagerEndPointB, syncProtocolEndPointB, channelEndpointB);
+		ISyncSessionFactory syncSessionFactoryB = new SyncSessionFactory();
+		syncSessionFactoryB.registerSource(endPointB);
+		MessageSyncEngine syncEngineEndPointB = new MessageSyncEngine(syncProtocol, channelEndpointB, syncSessionFactoryB);
 		Assert.assertNotNull(syncEngineEndPointB);
+				
+		Assert.assertEquals(0, endPointA.getAll().size());
+		Assert.assertEquals(1, endPointB.getAll().size());
 		
-		Assert.assertEquals(3, dataSetEndPointA.getAll().size());
-		Assert.assertEquals(3, dataSetEndPointB.getAll().size());
+		SmsEndpoint endpointA = new SmsEndpoint("sms:123");
+		SmsEndpoint endpointB = new SmsEndpoint("sms:456");
+		syncEngineEndPointA.synchronize(dataSetId, endpointB);
+		Assert.assertFalse(syncSessionFactoryA.get(dataSetId, "sms:456").isOpen());
+		Assert.assertFalse(syncSessionFactoryB.get(dataSetId, "sms:123").isOpen());
 		
-		syncEngineEndPointA.synchronize(dataSetId);
-	
-		Assert.assertEquals(6, dataSetEndPointA.getAll().size());
-		Assert.assertEquals(6, dataSetEndPointB.getAll().size());
+		Assert.assertEquals(1, syncSessionFactoryA.get(dataSetId, endpointB.getEndpointId()).getSnapshot().size());
+		Assert.assertEquals(1, syncSessionFactoryB.get(dataSetId, endpointA.getEndpointId()).getSnapshot().size());
 	}
 	
 	

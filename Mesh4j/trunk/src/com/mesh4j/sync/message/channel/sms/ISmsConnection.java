@@ -4,7 +4,7 @@ public interface ISmsConnection {
 
 	void registerSmsMessageReceiver(ISmsMessageReceiver messageText);
 
-	void send(String messageText);
+	void send(String smsNumber, String messageText);
 
 	int getMaxMessageLenght();
 

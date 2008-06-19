@@ -34,7 +34,7 @@ public abstract class Content implements IContent{
         		return
         			this.getId().equals(otherItem.getId())
         			&& this.getVersion() == otherItem.getVersion()
-        			&& this.getPayload().asXML().equals(otherItem.getPayload().asXML());
+        			&& XMLHelper.canonicalizeXML(this.getPayload()).equals(XMLHelper.canonicalizeXML(otherItem.getPayload()));
         	}
         }
         return false;
@@ -42,7 +42,7 @@ public abstract class Content implements IContent{
 
     public int hashCode()
     {
-		String payloadXML = payload.asXML();
+		String payloadXML = XMLHelper.canonicalizeXML(payload);
 		return this.id.hashCode() + this.version + payloadXML.hashCode();
     }
 	public void refreshVersion() {

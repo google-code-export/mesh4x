@@ -7,26 +7,33 @@ import java.util.StringTokenizer;
 import org.dom4j.Element;
 
 import com.mesh4j.sync.adapters.feed.XMLContent;
+import com.mesh4j.sync.message.ISyncSession;
 import com.mesh4j.sync.model.History;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.NullContent;
 import com.mesh4j.sync.model.Sync;
 import com.mesh4j.sync.utils.XMLHelper;
 
-public class ManualItemEncoding implements IItemEncoding {
+public class ItemEncoding {
 
 	private final static String FIELD_SEPARATOR = "|";
 	private final static String HISTORY_SEPARATOR = "#";
 	private final static String HISTORY_FIELD_SEPARATOR = "$";
 
-	@Override
-	public Item decode(String encodingItem) {
+	public static Item decode(ISyncSession syncSession, String encodingItem) {
 		StringTokenizer st = new StringTokenizer(encodingItem, FIELD_SEPARATOR);
 		
-		String syncID = st.nextToken();
-		Sync sync = new Sync(syncID);
+		Sync sync = null;
 		
-		boolean deleted = Boolean.valueOf(st.nextToken());
+		String syncID = st.nextToken();
+		Item localItem = syncSession.get(syncID);
+		if(localItem == null){
+			sync = new Sync(syncID);
+		} else {
+			sync = localItem.getSync().clone();
+		}
+		
+		boolean deleted = "T".equals(st.nextToken());
 		
 		String historiesString = st.nextToken();
 		StringTokenizer stHistories = new StringTokenizer(historiesString, HISTORY_SEPARATOR);
@@ -53,28 +60,33 @@ public class ManualItemEncoding implements IItemEncoding {
 		}
 	}
 
-	@Override
-	public String encode(Item item) {
+	public static String encode(ISyncSession syncSession, Item item) {
 		StringBuilder sb = new StringBuilder();
 		
 		sb.append(item.getSyncId());
 		sb.append(FIELD_SEPARATOR);
-		sb.append(item.getSync().isDeleted());
+		sb.append(item.getSync().isDeleted() ? "T" : "F");
 		sb.append(FIELD_SEPARATOR);
 		
 		Iterator<History> itHistories = item.getSync().getUpdatesHistory().iterator();
+		boolean addHistory = false; 
 		while (itHistories.hasNext()) {
 			History history = itHistories.next();
-			sb.append(history.getBy());
-			sb.append(HISTORY_FIELD_SEPARATOR);
-			sb.append(history.getWhen().getTime());
-			if(itHistories.hasNext()){
-				sb.append(HISTORY_SEPARATOR);
+			if(syncSession.getLastSyncDate() == null || syncSession.getLastSyncDate().compareTo(history.getWhen()) <= 0){
+				addHistory = true;
+				sb.append(history.getBy());
+				sb.append(HISTORY_FIELD_SEPARATOR);
+				sb.append(history.getWhen().getTime());
+				if(itHistories.hasNext()){
+					sb.append(HISTORY_SEPARATOR);
+				}
 			}
 		}
 		
 		if(!item.isDeleted()){
-			sb.append(FIELD_SEPARATOR);
+			if(addHistory){
+				sb.append(FIELD_SEPARATOR);
+			}
 			sb.append(XMLHelper.canonicalizeXML(item.getContent().getPayload()));
 		}
 

@@ -202,4 +202,17 @@ public class DateHelper {
         return dateFormater.format(date);
     }
     
+    public static String formatDateTime(Date date){
+    	if(date == null){
+    		return "";
+    	}
+    	return String.valueOf(date.getTime());
+    }
+    
+    public static Date parseDateTime(String dateTimeAsString){
+    	if(dateTimeAsString == null || dateTimeAsString.length() == 0){
+    		return null;
+    	}
+    	return new Date(Long.valueOf(dateTimeAsString));
+    }   
 }

@@ -28,7 +28,7 @@ public class SmsMessageReceiverTests {
 		SmsMessageBatch batch = createTestBatch(100);
 
 		SmsReceiver receiver = new SmsReceiver();
-		receiver.receive(batch.getMessage(0));
+		receiver.receive("sms:123", batch.getMessage(0));
 		
 		Assert.assertEquals(1, receiver.getCompletedBatchesCount());
 	}
@@ -57,16 +57,16 @@ public class SmsMessageReceiverTests {
 		SmsReceiver receiver = new SmsReceiver();
 
 				
-		receiver.receive(batch.getMessage(0));
+		receiver.receive("sms:123", batch.getMessage(0));
 		Assert.assertEquals(0, receiver.getCompletedBatchesCount());
 
-		receiver.receive(batch.getMessage(1));
+		receiver.receive("sms:123", batch.getMessage(1));
 		Assert.assertEquals(0, receiver.getCompletedBatchesCount());
 		
-		receiver.receive(batch.getMessage(2));
+		receiver.receive("sms:123", batch.getMessage(2));
 		Assert.assertEquals(0, receiver.getCompletedBatchesCount());
 
-		receiver.receive(batch.getMessage(3));
+		receiver.receive("sms:123", batch.getMessage(3));
 		Assert.assertEquals(1, receiver.getCompletedBatchesCount());
 		
 		Assert.assertEquals(batch.getPayload(), receiver.getCompletedBatch(batch.getId()).getPayload());
@@ -81,7 +81,7 @@ public class SmsMessageReceiverTests {
 
 		for(SmsMessage msg : batch.getMessages())
 		{
-			receiver.receive(msg);
+			receiver.receive("sms:123", msg);
 
 		}
 
@@ -96,10 +96,10 @@ public class SmsMessageReceiverTests {
 		SmsMessageBatch originalbatch = createTestBatch(200);
 		SmsReceiver receiver = new SmsReceiver();
 
-		receiver.receive(originalbatch.getMessage(1));
+		receiver.receive("sms:123", originalbatch.getMessage(1));
 		Assert.assertEquals(0, receiver.getCompletedBatchesCount());
 
-		receiver.receive(originalbatch.getMessage(0));
+		receiver.receive("sms:123", originalbatch.getMessage(0));
 		Assert.assertEquals(1, receiver.getCompletedBatchesCount());
 		Assert.assertEquals(originalbatch.getPayload(), receiver.getCompletedBatch(originalbatch.getId()).getPayload());
 
@@ -111,7 +111,7 @@ public class SmsMessageReceiverTests {
 		SmsMessageBatch batch = createTestBatch(200);
 		SmsReceiver receiver = new SmsReceiver();
 
-		receiver.receive(batch.getMessage(0));
+		receiver.receive("sms:123", batch.getMessage(0));
 		Assert.assertEquals(0, receiver.getCompletedBatchesCount());
 
 
@@ -140,8 +140,8 @@ public class SmsMessageReceiverTests {
 
 
 		receiver
-			.receive(message2)
-			.receive(message1);
+			.receive("sms:123", message2)
+			.receive("sms:123", message1);
 
 		Assert.assertEquals(first, receiver.getOngoingBatch(originalbatch.getId()).getDateTimeFirstMessageReceived());
 		Assert.assertEquals(second, receiver.getOngoingBatch(originalbatch.getId()).getDateTimeLastMessageReceived());
@@ -156,7 +156,7 @@ public class SmsMessageReceiverTests {
 
 		SmsMessage msg = originalbatch.getMessage(3);
 
-		receiver.receive(msg);
+		receiver.receive("sms:123", msg);
 
 		SmsMessageBatch ongoing = receiver.getOngoingBatch(originalbatch.getId());
 
@@ -165,8 +165,8 @@ public class SmsMessageReceiverTests {
 		Assert.assertNotNull(ongoing.getMessage(3));
 
 		receiver
-			.receive(msg)
-			.receive(msg);
+			.receive("sms:123", msg)
+			.receive("sms:123", msg);
 
 		Assert.assertEquals(1, receiver.getOngoingBatchesCount());
 		Assert.assertEquals(originalbatch.getMessagesCount(), ongoing.getExpectedMessageCount());
@@ -182,7 +182,7 @@ public class SmsMessageReceiverTests {
 		SmsMessage msg = originalbatch.getMessage(3);
 
 		SmsMessageBatch ongoing = receiver
-			.receive(msg)
+			.receive("sms:123", msg)
 			.getOngoingBatch(originalbatch.getId());
 
 		Assert.assertEquals(1, receiver.getOngoingBatchesCount());
@@ -193,7 +193,7 @@ public class SmsMessageReceiverTests {
 
 		msg2.setText(msg2.getText().substring(0, msg2.getText().length() - 2) + "**");
 
-		receiver.receive(msg2);
+		receiver.receive("sms:123", msg2);
 
 		Assert.assertEquals(0, receiver.getOngoingBatchesCount());
 		Assert.assertNotNull(receiver.getDiscardedBatch(originalbatch.getId()));
@@ -209,7 +209,7 @@ public class SmsMessageReceiverTests {
 		SmsMessage msg = originalbatch.getMessage(3);
 
 		SmsMessageBatch ongoing = receiver
-			.receive(msg)
+			.receive("sms:123", msg)
 			.getOngoingBatch(originalbatch.getId());
 
 		Assert.assertEquals(1, receiver.getOngoingBatchesCount());
@@ -220,12 +220,12 @@ public class SmsMessageReceiverTests {
 
 		msg2.setText(msg2.getText().substring(0, msg2.getText().length() - 2) + "**");
 
-		receiver.receive(msg2);
+		receiver.receive("sms:123", msg2);
 
 		Assert.assertEquals(0, receiver.getOngoingBatchesCount());
 		Assert.assertNotNull(receiver.getDiscardedBatch(originalbatch.getId()));
 
-		receiver.receive(originalbatch.getMessage(4));
+		receiver.receive("sms:123", originalbatch.getMessage(4));
 
 		Assert.assertEquals(0, receiver.getOngoingBatchesCount());
 		Assert.assertNotNull(receiver.getDiscardedBatch(originalbatch.getId()));
@@ -241,7 +241,7 @@ public class SmsMessageReceiverTests {
 		DiscardedBatchException exc = new DiscardedBatchException("Foo");
 		
 		receiver
-			.receive(originalbatch.getMessage(3))
+			.receive("sms:123", originalbatch.getMessage(3))
 			.discardBatch(originalbatch.getId(), exc);
 
 		Assert.assertNotNull(receiver.getDiscardedBatch(originalbatch.getId()));
@@ -256,7 +256,7 @@ public class SmsMessageReceiverTests {
 		SmsReceiver receiver = new SmsReceiver();
 
 		receiver
-			.receive(originalbatch.getMessage(3))
+			.receive("sms:123", originalbatch.getMessage(3))
 			.discardBatch(originalbatch.getId());
 
 		Assert.assertNotNull(receiver.getDiscardedBatch(originalbatch.getId()));
@@ -273,13 +273,13 @@ public class SmsMessageReceiverTests {
 		SmsReceiver receiver = new SmsReceiver();
 
 		receiver
-			.receive(originalbatch.getMessage(0))
-			.receive(originalbatch.getMessage(1));
+			.receive("sms:123", originalbatch.getMessage(0))
+			.receive("sms:123", originalbatch.getMessage(1));
 
 		Assert.assertNotNull(receiver.getCompletedBatch(originalbatch.getId()));
 		Assert.assertEquals(0, receiver.getOngoingBatchesCount());
 
-		receiver.receive(originalbatch.getMessage(1));
+		receiver.receive("sms:123", originalbatch.getMessage(1));
 
 		Assert.assertNotNull(receiver.getCompletedBatch(originalbatch.getId()));
 		Assert.assertEquals(0, receiver.getOngoingBatchesCount());

@@ -3,7 +3,7 @@ package com.mesh4j.sync.message.channel.sms;
 import com.mesh4j.sync.message.IChannel;
 import com.mesh4j.sync.message.IMessage;
 import com.mesh4j.sync.message.IMessageReceiver;
-import com.mesh4j.sync.message.Message;
+import com.mesh4j.sync.message.core.Message;
 import com.mesh4j.sync.message.encoding.IMessageEncoding;
 
 public class SmsChannel implements IChannel, ISmsMessageReceiver {
@@ -16,7 +16,7 @@ public class SmsChannel implements IChannel, ISmsMessageReceiver {
 	private IMessageReceiver messageReceiver;
 
 	// METHODs
-	// TODO (JMT) MeshSMS: pipeline: msg-(endode)->msgEncoded-(batch)->msg1..msgn-(connection send sms)->ms1..msgn-(batch)->msgEncoded-(decode)->msg
+	// TODO (JMT) MeshSms: pipeline? msg-(endode)->msgEncoded-(batch)->msg1..msgn-(connection send sms)->ms1..msgn-(batch)->msgEncoded-(decode)->msg
 	public SmsChannel(ISmsConnection smsConnection, IMessageEncoding messageEncoding) {
 		super();
 		this.smsConnection = smsConnection;
@@ -34,7 +34,7 @@ public class SmsChannel implements IChannel, ISmsMessageReceiver {
 	}
 
 	@Override
-	public void receiveSms(String messageText){
+	public void receiveSms(String smsNumber, String messageText){
 		String msg = MessageFormatter.getMessage(messageText);
 		String decodedData = this.messageEncoding.decode(msg);
 		
@@ -42,20 +42,21 @@ public class SmsChannel implements IChannel, ISmsMessageReceiver {
 			MessageFormatter.getProtocol(messageText),
 			MessageFormatter.getMessageType(decodedData),
 			MessageFormatter.getDataSetId(decodedData),
-			MessageFormatter.getData(decodedData)
+			MessageFormatter.getData(decodedData),
+			new SmsEndpoint(smsNumber)
 		);
 		this.messageReceiver.receiveMessage(message);
 	}
 	
 	@Override
 	public void send(IMessage message) {
-		String msg = MessageFormatter.createMessage(message.getMessageType(), message.getDataSetId(), message.getData());
+		String msg = MessageFormatter.createMessage(message.getMessageType(), message.getSourceId(), message.getData());
 
 		String encodedData = this.messageEncoding.encode(msg);		
 		String header = message.getProtocol();
 		SmsMessageBatch batch = this.batchFactory.createMessageBatch(header, encodedData);
 		for (SmsMessage smsMessage : batch.getMessages()) {
-			this.smsConnection.send(smsMessage.getText());
+			this.smsConnection.send(message.getEndpointId(), smsMessage.getText());
 		}
 	}
 }

@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.zip.Deflater;
-import java.util.zip.Inflater;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -257,46 +255,4 @@ public class ZipUtilsTests {
 
 	}
 	
-	@Test
-	public void shouldCompressData() throws Exception{
-		String text = "dmkwqfdh1k3n2rf3io2kfnkccwefccvwc2 c24e4c 23245325323535564";
-		byte[] input = text.getBytes();
-		byte[] compressedData = ZipUtils.compress(input);
-		
-		String compressedString = new String(compressedData);
-		Assert.assertTrue(text.length() > compressedString.length());
-		
-		Assert.assertFalse(input.length == compressedData.length);
-		Assert.assertTrue(input.length > compressedData.length);
-		
-		byte[] decompressedData = ZipUtils.decompress(compressedData);
-		Assert.assertEquals(text, new String(decompressedData));
-	}
-	
-	@Test
-	public void spike() throws Exception{
-		 // Encode a String into bytes
-		 String inputString = "blahblahblah\u20AC\u20AC";
-		 byte[] input = inputString.getBytes("UTF-8");
-		 
-		 // Compress the bytes
-		 byte[] output = new byte[100];
-		 Deflater compresser = new Deflater();
-		 compresser.setInput(input);
-		 compresser.finish();
-		 int compressedDataLength = compresser.deflate(output);
-		 
-		 Assert.assertTrue(input.length > compressedDataLength);
-		 
-		 // Decompress the bytes
-		 Inflater decompresser = new Inflater();
-		 decompresser.setInput(output, 0, compressedDataLength);
-		 byte[] result = new byte[100];
-		 int resultLength = decompresser.inflate(result);
-		 decompresser.end();
-		 
-		 // Decode the bytes into a String
-		 String outputString = new String(result, 0, resultLength, "UTF-8");
-		 Assert.assertEquals(inputString, outputString);
-	}
 }

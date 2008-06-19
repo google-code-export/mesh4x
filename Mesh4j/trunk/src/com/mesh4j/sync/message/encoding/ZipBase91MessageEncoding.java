@@ -1,11 +1,11 @@
 package com.mesh4j.sync.message.encoding;
 
-import com.mesh4j.sync.utils.Base64Helper;
+import com.mesh4j.sync.utils.Base91Helper;
 import com.mesh4j.sync.utils.ZipUtils;
 
-public class ZipBase64MessageEncoding implements IMessageEncoding{
+public class ZipBase91MessageEncoding implements IMessageEncoding{
 
-	public static final ZipBase64MessageEncoding INSTANCE = new ZipBase64MessageEncoding();
+	public static final ZipBase91MessageEncoding INSTANCE = new ZipBase91MessageEncoding();
 
 	@Override
 	public String encode(String message) {
@@ -13,7 +13,7 @@ public class ZipBase64MessageEncoding implements IMessageEncoding{
 			return message;
 		}
 		byte[] bytes = ZipUtils.zip(message, "message");
-		String encodeMsg = Base64Helper.encode(bytes);
+		String encodeMsg = Base91Helper.encode(bytes);
 		if(encodeMsg.length() >= message.length()+1){
 			encodeMsg = "n"+message;
 		}else{
@@ -31,14 +31,10 @@ public class ZipBase64MessageEncoding implements IMessageEncoding{
 		if(message.startsWith("n")){
 			return data;
 		}else if(message.startsWith("c")){
-			byte[] zipBytes = Base64Helper.decode(data);		
+			byte[] zipBytes = Base91Helper.decode(data);		
 			return ZipUtils.unzip(zipBytes, "message");
 		}else{
 			return "";
 		}
 	}
-
-
-
-	
 }

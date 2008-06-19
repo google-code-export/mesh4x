@@ -1,37 +1,33 @@
 package com.mesh4j.sync.message;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
-import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
-import org.dom4j.io.OutputFormat;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.mesh4j.sync.SyncEngine;
 import com.mesh4j.sync.adapters.dom.DOMAdapter;
 import com.mesh4j.sync.adapters.kml.DOMLoaderFactory;
 import com.mesh4j.sync.adapters.kml.KMLContent;
 import com.mesh4j.sync.message.channel.sms.SmsChannel;
-import com.mesh4j.sync.message.dataset.DataSetManager;
+import com.mesh4j.sync.message.channel.sms.SmsEndpoint;
+import com.mesh4j.sync.message.core.SyncSessionFactory;
 import com.mesh4j.sync.message.encoding.CompressBase64MessageEncoding;
+import com.mesh4j.sync.message.encoding.CompressBase91MessageEncoding;
 import com.mesh4j.sync.message.encoding.IMessageEncoding;
 import com.mesh4j.sync.message.encoding.ZipBase64MessageEncoding;
-import com.mesh4j.sync.message.protocol.IItemEncoding;
-import com.mesh4j.sync.message.protocol.ManualItemEncoding;
+import com.mesh4j.sync.message.encoding.ZipBase91MessageEncoding;
 import com.mesh4j.sync.message.protocol.MessageSyncProtocolFactory;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.security.NullIdentityProvider;
-import com.mesh4j.sync.test.utils.TestHelper;
-import com.mesh4j.sync.utils.XMLHelper;
 
 public class KmlMessageSyncEngineTests {
 	
-//	@Test
+	// TODO (JMT) MeshSms: test
+	//@Test
 	public void shouldSyncKml() throws DocumentException, IOException{
 		
 		String fileNameA = this.getClass().getResource("kmlWithSyncInfo.kml").getFile(); 
@@ -51,71 +47,68 @@ public class KmlMessageSyncEngineTests {
 		smsConnectionEndpointA.setEndPoint(smsConnectionEndpointB);
 		smsConnectionEndpointB.setEndPoint(smsConnectionEndpointA);
 		
-//		IChannel channelEndpointA = new SmsChannel(smsConnectionEndpointA, ZipBase64Encoding.INSTANCE);		// 164
-//		IChannel channelEndpointB = new SmsChannel(smsConnectionEndpointB, ZipBase64Encoding.INSTANCE);
-//		
-		IChannel channelEndpointA = new SmsChannel(smsConnectionEndpointA, CompressBase64MessageEncoding.INSTANCE);  // 176
+		IChannel channelEndpointA = new SmsChannel(smsConnectionEndpointA, CompressBase64MessageEncoding.INSTANCE);
 		IChannel channelEndpointB = new SmsChannel(smsConnectionEndpointB, CompressBase64MessageEncoding.INSTANCE);
 
-		DataSetManager dataSetManagerEndPointA = new DataSetManager();
-		IDataSet dataSetEndPointA = new MockInMemoryDataSet(dataSetId, kmlAdapterA.getAll());
-		dataSetManagerEndPointA.addDataSet(dataSetEndPointA);		
-		
-//		IItemEncoding itemEncoding = new FeedItemEncoding(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
-		IItemEncoding itemEncoding = new ManualItemEncoding();
-		IMessageSyncProtocol syncProtocolEndPointA = MessageSyncProtocolFactory.createSyncProtocol(dataSetManagerEndPointA, itemEncoding);		
-		MessageSyncEngine syncEngineEndPointA = new MessageSyncEngine(dataSetManagerEndPointA, syncProtocolEndPointA, channelEndpointA);
+		IMessageSyncAdapter endpointA = new MockInMemoryMessageSyncAdapter(dataSetId, kmlAdapterA.getAll());
+				
+		ISyncSessionFactory syncSessionFactoryA = new SyncSessionFactory();
+		syncSessionFactoryA.registerSource(endpointA);
+	
+		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocol();		
+		MessageSyncEngine syncEngineEndPointA = new MessageSyncEngine(syncProtocol, channelEndpointA, syncSessionFactoryA);
 
-		DataSetManager dataSetManagerEndPointB = new DataSetManager();
-		MockInMemoryDataSet dataSetEndPointB = new MockInMemoryDataSet(dataSetId, kmlAdapterB.getAll());
-		dataSetManagerEndPointB.addDataSet(dataSetEndPointB);
+		MockInMemoryMessageSyncAdapter endpointB = new MockInMemoryMessageSyncAdapter(dataSetId, kmlAdapterB.getAll());
 		
-		IMessageSyncProtocol syncProtocolEndPointB = MessageSyncProtocolFactory.createSyncProtocol(dataSetManagerEndPointB, itemEncoding);		
-		MessageSyncEngine syncEngineEndPointB = new MessageSyncEngine(dataSetManagerEndPointB, syncProtocolEndPointB, channelEndpointB);
+		ISyncSessionFactory syncSessionFactoryB = new SyncSessionFactory();
+		syncSessionFactoryB.registerSource(endpointB);
+		MessageSyncEngine syncEngineEndPointB = new MessageSyncEngine(syncProtocol, channelEndpointB, syncSessionFactoryB);
 		Assert.assertNotNull(syncEngineEndPointB);
 		
-		Assert.assertEquals(611, dataSetEndPointA.getAll().size());
-		Assert.assertEquals(0, dataSetEndPointB.getAll().size());
+		Assert.assertEquals(611, endpointA.getAll().size());
+		Assert.assertEquals(0, endpointB.getAll().size());
 		
-		syncEngineEndPointA.synchronize(dataSetId);
+		syncEngineEndPointA.synchronize(dataSetId, new SmsEndpoint("B"));
 	
-		Assert.assertEquals(611, dataSetEndPointA.getAll().size());
-//		Assert.assertEquals(611, dataSetEndPointB.getAll().size());
+		Assert.assertEquals(611, syncSessionFactoryA.get(dataSetId, "B").getSnapshot().size());
+		Assert.assertEquals(611, syncSessionFactoryB.get(dataSetId, "A").getSnapshot().size());
+		Assert.assertFalse(syncSessionFactoryA.get(dataSetId, "B").isOpen());
+		Assert.assertFalse(syncSessionFactoryB.get(dataSetId, "A").isOpen());
 	
 //		Assert.assertEquals(164, smsConnectionEndpointA.getGeneratedMessageStatistics());
 		
 		// Sync KML file
-		File file = new File(TestHelper.fileName("kmlMessage.kml")); 
-		XMLHelper.write(kmlAdapterB.getDOM().toDocument(), file);
-		
-		DOMAdapter kmlAdapter = new DOMAdapter(DOMLoaderFactory.createDOMLoader(file.getAbsolutePath(), NullIdentityProvider.INSTANCE));
-		
-		SyncEngine syncEngine = new SyncEngine(kmlAdapter, dataSetEndPointB);
-		List<Item> conflicts = syncEngine.synchronize();
-		Assert.assertNotNull(conflicts);
-		Assert.assertEquals(0, conflicts.size());
-		
-		kmlAdapter.beginSync();
-		int itemsSize = kmlAdapter.getAll().size();
-		Assert.assertEquals(611, itemsSize);
-		
-		Document document = kmlAdapter.getDOM().toDocument();
-		
-		int xmlCano = XMLHelper.canonicalizeXML(document).length();
-		System.out.println("canon: " + xmlCano + "  messages: " + ((xmlCano / 121) + ((xmlCano % 121) == 0 ? 0 : 1)));
-		
-		int xmlformat = XMLHelper.formatXML(document, OutputFormat.createCompactFormat()).length();
-		System.out.println("format: " + xmlformat + "  messages: " + ((xmlformat / 121) + ((xmlformat % 121) == 0 ? 0 : 1)));
-		
-		System.out.println("items: " + itemsSize);
-		
-		System.out.println("batch A (zip+base64): " 
-				+ smsConnectionEndpointA.getGeneratedMessagesSizeStatistics() 
-				+ " messages: " + smsConnectionEndpointA.getGeneratedMessagesStatistics());
-		
-		System.out.println("batch B (zip+base64): " 
-				+ smsConnectionEndpointB.getGeneratedMessagesSizeStatistics() 
-				+ " messages: " + smsConnectionEndpointB.getGeneratedMessagesStatistics());
+//		File file = new File(TestHelper.fileName("kmlMessage.kml")); 
+//		XMLHelper.write(kmlAdapterB.getDOM().toDocument(), file);
+//		
+//		DOMAdapter kmlAdapter = new DOMAdapter(DOMLoaderFactory.createDOMLoader(file.getAbsolutePath(), NullIdentityProvider.INSTANCE));
+//		
+//		SyncEngine syncEngine = new SyncEngine(kmlAdapter, endPointB);
+//		List<Item> conflicts = syncEngine.synchronize();
+//		Assert.assertNotNull(conflicts);
+//		Assert.assertEquals(0, conflicts.size());
+//		
+//		kmlAdapter.beginSync();
+//		int itemsSize = kmlAdapter.getAll().size();
+//		Assert.assertEquals(611, itemsSize);
+//		
+//		Document document = kmlAdapter.getDOM().toDocument();
+//		
+//		int xmlCano = XMLHelper.canonicalizeXML(document).length();
+//		System.out.println("canon: " + xmlCano + "  messages: " + ((xmlCano / 121) + ((xmlCano % 121) == 0 ? 0 : 1)));
+//		
+//		int xmlformat = XMLHelper.formatXML(document, OutputFormat.createCompactFormat()).length();
+//		System.out.println("format: " + xmlformat + "  messages: " + ((xmlformat / 121) + ((xmlformat % 121) == 0 ? 0 : 1)));
+//		
+//		System.out.println("items: " + itemsSize);
+//		
+//		System.out.println("batch A (zip+base64): " 
+//				+ smsConnectionEndpointA.getGeneratedMessagesSizeStatistics() 
+//				+ " messages: " + smsConnectionEndpointA.getGeneratedMessagesStatistics());
+//		
+//		System.out.println("batch B (zip+base64): " 
+//				+ smsConnectionEndpointB.getGeneratedMessagesSizeStatistics() 
+//				+ " messages: " + smsConnectionEndpointB.getGeneratedMessagesStatistics());
 	}
 	
 // Statistics:
@@ -142,31 +135,35 @@ public class KmlMessageSyncEngineTests {
 
 	@Test
 	public void shouldSyncKmlNoChanges() throws Exception{
-		syncKml(false, false, CompressBase64MessageEncoding.INSTANCE);
+		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocol();
+		syncKml(syncProtocol, false, false, CompressBase91MessageEncoding.INSTANCE);
 	}
 	
 	@Test
 	public void shouldSyncKmlPlacemarkEndpointAChanged() throws Exception{
-		syncKml(true, false, CompressBase64MessageEncoding.INSTANCE);
+		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocol();
+		syncKml(syncProtocol, true, false, CompressBase91MessageEncoding.INSTANCE);
 	}
 
 	@Test
 	public void shouldSyncKmlPlacemarkEndpointBChanged() throws Exception{
-		syncKml(false, true, ZipBase64MessageEncoding.INSTANCE);
+		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocol();
+		syncKml(syncProtocol, false, true, ZipBase64MessageEncoding.INSTANCE);
 		System.out.println("#########################################");
-		syncKml(false, true, CompressBase64MessageEncoding.INSTANCE);
-//		System.out.println("#########################################");
-//		syncKml(false, true, ZipBase91MessageEncoding.INSTANCE);
-//		System.out.println("#########################################");
-//		syncKml(false, true, CompressBase91MessageEncoding.INSTANCE);
+		syncKml(syncProtocol, false, true, CompressBase64MessageEncoding.INSTANCE);
+		System.out.println("#########################################");
+		syncKml(syncProtocol, false, true, ZipBase91MessageEncoding.INSTANCE);
+		System.out.println("#########################################");
+		syncKml(syncProtocol, false, true, CompressBase91MessageEncoding.INSTANCE);
 	}
 	
 	@Test
 	public void shouldSyncKmlPlacemarkConflicts() throws Exception{
-		syncKml(true, true, CompressBase64MessageEncoding.INSTANCE);
+		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocol();
+		syncKml(syncProtocol, true, true, CompressBase64MessageEncoding.INSTANCE);
 	}
 	
-	private void syncKml(boolean updateA, boolean updateB, IMessageEncoding messageEncoding) throws InterruptedException{
+	private void syncKml(IMessageSyncProtocol syncProtocol, boolean updateA, boolean updateB, IMessageEncoding messageEncoding) throws InterruptedException{
 		
 		String fileName = this.getClass().getResource("kmlWithPlacemark.kml").getFile(); 
 		DOMAdapter kmlAdapter = new DOMAdapter(DOMLoaderFactory.createDOMLoader(fileName, NullIdentityProvider.INSTANCE));
@@ -174,7 +171,7 @@ public class KmlMessageSyncEngineTests {
 		
 		// Sync SMS
 		String dataSetId = "12345";
-		
+
 		MockSmsConnection smsConnectionEndpointA = new MockSmsConnection("A");
 		MockSmsConnection smsConnectionEndpointB = new MockSmsConnection("B");
 
@@ -184,31 +181,33 @@ public class KmlMessageSyncEngineTests {
 		IChannel channelEndpointA = new SmsChannel(smsConnectionEndpointA, messageEncoding);
 		IChannel channelEndpointB = new SmsChannel(smsConnectionEndpointB, messageEncoding);
 
-		DataSetManager dataSetManagerEndPointA = new DataSetManager();
-		IDataSet dataSetEndPointA = new MockInMemoryDataSet(dataSetId, kmlAdapter.getAll());
-		dataSetManagerEndPointA.addDataSet(dataSetEndPointA);		
-		
-		IItemEncoding itemEncoding = new ManualItemEncoding();
-		
-		IMessageSyncProtocol syncProtocolEndPointA = MessageSyncProtocolFactory.createSyncProtocol(dataSetManagerEndPointA, itemEncoding);		
-		MessageSyncEngine syncEngineEndPointA = new MessageSyncEngine(dataSetManagerEndPointA, syncProtocolEndPointA, channelEndpointA);
+		MockInMemoryMessageSyncAdapter endpointA = new MockInMemoryMessageSyncAdapter(dataSetId, kmlAdapter.getAll());
+		ISyncSessionFactory syncSessionFactoryA = new SyncSessionFactory();
+		syncSessionFactoryA.registerSource(endpointA);
+		MessageSyncEngine syncEngineEndPointA = new MessageSyncEngine(syncProtocol, channelEndpointA, syncSessionFactoryA);
 
-		DataSetManager dataSetManagerEndPointB = new DataSetManager();
-		MockInMemoryDataSet dataSetEndPointB = new MockInMemoryDataSet(dataSetId, kmlAdapter.getAll());
-		dataSetManagerEndPointB.addDataSet(dataSetEndPointB);
-		
-		IMessageSyncProtocol syncProtocolEndPointB = MessageSyncProtocolFactory.createSyncProtocol(dataSetManagerEndPointB, itemEncoding);		
-		MessageSyncEngine syncEngineEndPointB = new MessageSyncEngine(dataSetManagerEndPointB, syncProtocolEndPointB, channelEndpointB);
+		MockInMemoryMessageSyncAdapter endpointB = new MockInMemoryMessageSyncAdapter(dataSetId, kmlAdapter.getAll());
+		ISyncSessionFactory syncSessionFactoryB = new SyncSessionFactory();
+		syncSessionFactoryB.registerSource(endpointB);
+		MessageSyncEngine syncEngineEndPointB = new MessageSyncEngine(syncProtocol, channelEndpointB, syncSessionFactoryB);
 		Assert.assertNotNull(syncEngineEndPointB);
 		
-		Assert.assertEquals(2, dataSetEndPointA.getAll().size());
-		Assert.assertEquals(2, dataSetEndPointB.getAll().size());
+		Assert.assertEquals(2, endpointA.getAll().size());
+		Assert.assertEquals(2, endpointB.getAll().size());
 
+		syncEngineEndPointA.synchronize(dataSetId, new SmsEndpoint("B"));
+		
+		ISyncSession syncSessionAB = syncSessionFactoryA.get(dataSetId, "B");
+		ISyncSession syncSessionBA = syncSessionFactoryB.get(dataSetId, "A");
+		Assert.assertFalse(syncSessionAB.isOpen());
+		Assert.assertFalse(syncSessionBA.isOpen());
 
+		
 		// A Update item 
+		Item itemA = endpointA.getAll().get(0);
+		String syncIDPlacemark = itemA.getSyncId();
 		if(updateA){
 			Thread.sleep(5000);
-			Item itemA = dataSetEndPointA.getAll().get(0);
 			Element placemarkA = itemA.getContent().getPayload();
 			
 			Element placemarkNameA = placemarkA.element("name");
@@ -224,7 +223,7 @@ public class KmlMessageSyncEngineTests {
 		// B Update item
 		if(updateB){
 			Thread.sleep(5000);
-			Item itemB = dataSetEndPointB.getAll().get(0);
+			Item itemB = endpointB.getAll().get(0);
 			Element placemarkB = itemB.getContent().getPayload();
 			
 			Element placemarkNameB = placemarkB.element("name");
@@ -242,14 +241,11 @@ public class KmlMessageSyncEngineTests {
 		smsConnectionEndpointA.resetStatistics();		
 		smsConnectionEndpointB.resetStatistics();
 			
-		Assert.assertEquals(2, dataSetEndPointA.getAll().size());
-		Assert.assertEquals(2, dataSetEndPointB.getAll().size());
+		Assert.assertEquals(2, endpointA.getAll().size());
+		Assert.assertEquals(2, endpointB.getAll().size());
 	
-		syncEngineEndPointA.synchronize(dataSetId);
+		syncEngineEndPointA.synchronize(dataSetId, new SmsEndpoint("B"));
 	
-		Assert.assertEquals(2, dataSetEndPointA.getAll().size());
-		Assert.assertEquals(2, dataSetEndPointB.getAll().size());
-		
 		System.out.println("batch A: " 
 				+ smsConnectionEndpointA.getGeneratedMessagesSizeStatistics() 
 				+ " messages: " + smsConnectionEndpointA.getGeneratedMessagesStatistics());
@@ -258,5 +254,41 @@ public class KmlMessageSyncEngineTests {
 				+ smsConnectionEndpointB.getGeneratedMessagesSizeStatistics() 
 				+ " messages: " + smsConnectionEndpointB.getGeneratedMessagesStatistics());
 		
+		syncSessionAB = syncSessionFactoryA.get(dataSetId, "B");
+		syncSessionBA = syncSessionFactoryB.get(dataSetId, "A");
+
+		Assert.assertFalse(syncSessionAB.isOpen());
+		Assert.assertFalse(syncSessionBA.isOpen());
+
+		List<Item> snapshotA = syncSessionAB.getSnapshot();
+		List<Item> snapshotB = syncSessionAB.getSnapshot();
+		
+		Assert.assertEquals(2, snapshotA.size());
+		Assert.assertEquals(2, snapshotB.size());
+		
+		Item itemA1 = snapshotA.get(0);
+		Item itemA2 = snapshotA.get(1);
+		Assert.assertFalse(itemA1.equals(itemA2));
+		
+		Item itemB1 = syncSessionBA.get(itemA1.getSyncId());
+		Item itemB2 = syncSessionBA.get(itemA2.getSyncId());
+		
+		if(updateA && updateB){     // conflicts
+			Assert.assertNotNull(itemB1);
+			Assert.assertNotNull(itemB2);
+			if(syncIDPlacemark.equals(itemA1.getSyncId())){
+				Assert.assertFalse(itemA1.equals(itemB1));
+				Assert.assertTrue(itemA2.equals(itemB2));
+			} else {
+				Assert.assertTrue(itemA1.equals(itemB1));
+				Assert.assertFalse(itemA2.equals(itemB2));
+			}
+		} else {
+			Assert.assertNotNull(itemB1);
+			Assert.assertTrue(itemA1.equals(itemB1));				
+			Assert.assertNotNull(itemB2);
+			Assert.assertTrue(itemA2.equals(itemB2));
+			
+		}
 	}
 }

@@ -14,6 +14,7 @@ public class SmsMessageBatch {
 	private int expectedMessageCount = 0;
 	private HashMap<Integer, SmsMessage> messages = new HashMap<Integer, SmsMessage>();
 	private String payload;
+	private String smsNumber = "";
 
 	// BUSINESS METHODS
 
@@ -22,12 +23,17 @@ public class SmsMessageBatch {
 		this.id = this.generateNewId();
 	}
 
-	public SmsMessageBatch(String protocolHeader, String messageBatchId, int expectedMessageCount) {
+	public SmsMessageBatch(String smsNumber, String protocolHeader, String messageBatchId, int expectedMessageCount) {
 		this.protocolHeader = protocolHeader;
 		this.id = messageBatchId;
 		this.expectedMessageCount = expectedMessageCount;
+		this.smsNumber = smsNumber;
 	}
 
+	protected String getSmsNumber() {
+		return smsNumber;
+	}
+	
 	private String generateNewId() {
 		return IdGenerator.newID().substring(0, 5);
 	}

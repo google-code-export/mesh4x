@@ -5,18 +5,17 @@ import java.util.Date;
 import java.util.List;
 
 import com.mesh4j.sync.IFilter;
-import com.mesh4j.sync.ISyncAdapter;
 import com.mesh4j.sync.model.Item;
 
-public class MockInMemoryDataSet implements IDataSet, ISyncAdapter{
+public class MockInMemoryMessageSyncAdapter implements IMessageSyncAdapter{
 
 	// MODEL VARIABLES
-	private String dataSetId;
+	private String sourceId;
 	private List<Item> items = new ArrayList<Item>();
 	
 	// METHODS
-	public MockInMemoryDataSet(String dataSetId, List<Item> items) {
-		this.dataSetId = dataSetId;
+	public MockInMemoryMessageSyncAdapter(String sourceId, List<Item> items) {
+		this.sourceId = sourceId;
 		this.items = items;
 	}
 
@@ -26,8 +25,8 @@ public class MockInMemoryDataSet implements IDataSet, ISyncAdapter{
 	}
 
 	@Override
-	public String getDataSetId() {
-		return dataSetId;
+	public String getSourceId() {
+		return sourceId;
 	}
 
 	@Override

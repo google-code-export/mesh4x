@@ -2,30 +2,39 @@ package com.mesh4j.sync.message.protocol;
 
 import java.util.ArrayList;
 
-import com.mesh4j.sync.message.IDataSetManager;
 import com.mesh4j.sync.message.IMessageSyncProtocol;
+import com.mesh4j.sync.message.core.IMessageProcessor;
+import com.mesh4j.sync.message.core.MessageSyncProtocol;
 
 public class MessageSyncProtocolFactory {
 
-	public static IMessageSyncProtocol createSyncProtocol(IDataSetManager dataSetManager, IItemEncoding itemEncoding) {
+	public static IMessageSyncProtocol createSyncProtocol() {
 
-		MessageSyncProtocol syncProtocol = new MessageSyncProtocol();
+		ACKEndSyncMessageProcessor ackEndMessage = new ACKEndSyncMessageProcessor();
+		EndSyncMessageProcessor endMessage = new EndSyncMessageProcessor(ackEndMessage);
 		
-		UpdateMessageProcessor update = new UpdateMessageProcessor(syncProtocol, dataSetManager, itemEncoding);		
-		GetForUpdateMessageProcessor getForUpdate = new GetForUpdateMessageProcessor(update);		
-		LastVersionStatusMessageProcessor lastVersionStatus = new LastVersionStatusMessageProcessor(dataSetManager, getForUpdate, update);
-		OkLastVersionMessageProcessor okLastVersion = new OkLastVersionMessageProcessor(syncProtocol);
-		CheckForUpdateMessageProcessor checkForUpdate = new CheckForUpdateMessageProcessor(dataSetManager, okLastVersion, lastVersionStatus);
-
+		ACKMergeMessageProcessor ackMergeMessage = new ACKMergeMessageProcessor(endMessage);
+		MergeMessageProcessor mergeMessage = new MergeMessageProcessor(endMessage);
+		MergeWithACKMessageProcessor mergeWithACKMessage = new MergeWithACKMessageProcessor(ackMergeMessage);
+		GetForMergeMessageProcessor getForMergeMessage = new GetForMergeMessageProcessor(mergeMessage);
+		LastVersionStatusMessageProcessor lastVersionMessage = new LastVersionStatusMessageProcessor(getForMergeMessage, mergeWithACKMessage, endMessage);
+		NoChangesMessageProcessor noChangesMessage = new NoChangesMessageProcessor(endMessage, mergeWithACKMessage);
+		BeginSyncMessageProcessor beginMessage = new BeginSyncMessageProcessor(noChangesMessage, lastVersionMessage);
+		CancelSyncMessageProcessor cancelMessage = new CancelSyncMessageProcessor();
+		
 		ArrayList<IMessageProcessor> msgProcessors = new ArrayList<IMessageProcessor>();
-		msgProcessors.add(checkForUpdate);
-		msgProcessors.add(okLastVersion);
-		msgProcessors.add(lastVersionStatus);
-		msgProcessors.add(getForUpdate);
-		msgProcessors.add(update);
+		msgProcessors.add(beginMessage);
+		msgProcessors.add(endMessage);
+		msgProcessors.add(ackEndMessage);
+		msgProcessors.add(ackMergeMessage);
+		msgProcessors.add(mergeMessage);
+		msgProcessors.add(getForMergeMessage);
+		msgProcessors.add(lastVersionMessage);
+		msgProcessors.add(mergeWithACKMessage);
+		msgProcessors.add(noChangesMessage);
+		msgProcessors.add(cancelMessage);
 		
-		syncProtocol.setInitialMessage(checkForUpdate);
-		syncProtocol.setMessageProcessors(msgProcessors);
+		MessageSyncProtocol syncProtocol = new MessageSyncProtocol(IProtocolConstants.PROTOCOL, beginMessage, cancelMessage, msgProcessors);
 		return syncProtocol;
 	}
 

@@ -1,97 +1,139 @@
 package com.mesh4j.sync.message.protocol;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import com.mesh4j.sync.message.IDataSet;
-import com.mesh4j.sync.message.IDataSetManager;
 import com.mesh4j.sync.message.IMessage;
-import com.mesh4j.sync.message.Message;
+import com.mesh4j.sync.message.ISyncSession;
+import com.mesh4j.sync.message.core.IMessageProcessor;
+import com.mesh4j.sync.message.core.Message;
 import com.mesh4j.sync.model.Item;
+import com.mesh4j.sync.utils.DateHelper;
 
-public class LastVersionStatusMessageProcessor implements IMessageProcessor {
-
-	private static final String ITEM_SEPARATOR = "|";
-	private static final String FIELD_SEPARATOR = ":";
+public class LastVersionStatusMessageProcessor implements IMessageProcessor{
 	
 	// MODEL VARIABLES
-	private IDataSetManager dataSetManager;
-	private GetForUpdateMessageProcessor getForUpdateMessage;
-	private UpdateMessageProcessor updateMessage;
+	private GetForMergeMessageProcessor getForMergeMessage;
+	private MergeWithACKMessageProcessor mergeWithACKMessage;
+	private EndSyncMessageProcessor endMessage;
 	
 	// METHODS
-	public LastVersionStatusMessageProcessor(IDataSetManager dataSetManager, GetForUpdateMessageProcessor getForUpdateMessage, UpdateMessageProcessor updateMessage) {
+	public LastVersionStatusMessageProcessor(
+			GetForMergeMessageProcessor getForMergeMessage,
+			MergeWithACKMessageProcessor mergeWithACKMessage,
+			EndSyncMessageProcessor endMessage) {
 		super();
-		this.dataSetManager = dataSetManager;
-		this.getForUpdateMessage = getForUpdateMessage;
-		this.updateMessage = updateMessage;
+		this.getForMergeMessage = getForMergeMessage;
+		this.mergeWithACKMessage = mergeWithACKMessage;
+		this.endMessage = endMessage;
 	}
 	
+	public IMessage createMessage(ISyncSession syncSession, List<Item> items) {
+		return new Message(
+				IProtocolConstants.PROTOCOL,
+				this.getMessageType(),
+				syncSession.getSourceId(),
+				encode(items),
+				syncSession.getTarget());
+	}
+
 	@Override
 	public String getMessageType() {
 		return "3";
 	}
 
-	public IMessage createMessage(String dataSetId, List<Item> items) {
-		String data = this.encode(items);
-		return new Message(
-				MessageSyncProtocol.PREFIX,
-				getMessageType(),
-				dataSetId,
-				data);
-	}
-	
 	@Override
-	public List<IMessage> process(IMessage message) {
-		List<IMessage> response = new ArrayList<IMessage>();
-		
-		if(this.getMessageType().equals(message.getMessageType())){
-			String dataSetId = message.getDataSetId();
-			IDataSet dataSet = this.dataSetManager.getDataSet(dataSetId);
-			List<Item> items = dataSet.getAll(); 
-			
-			StringTokenizer st = new StringTokenizer(message.getData(), ITEM_SEPARATOR);
-			while(st.hasMoreTokens()){
-				StringTokenizer stItem = new StringTokenizer(st.nextToken(), FIELD_SEPARATOR);
-				String syncID = stItem.nextToken();
-				String itemHascode = stItem.nextToken();
-										
-				Item item = getItem(syncID, items);
-				if(item == null){
-					response.add(getForUpdateMessage.createMessage(dataSetId, syncID));
-				} else {
-					items.remove(item);
-					String localHasCode = this.calculateHasCode(item);
-					if(!localHasCode.equals(itemHascode)){
-						response.add(getForUpdateMessage.createMessage(dataSetId, syncID));
-					}
-				}				
-			}
-			
-			for (Item item : items) {
-				response.add(updateMessage.createMessage(dataSetId, item));
+	public List<IMessage> process(ISyncSession syncSession, IMessage message) {
+		List<IMessage> response = new ArrayList<IMessage>();		
+		if(syncSession.isOpen() && this.getMessageType().equals(message.getMessageType())){
+			response.addAll(processIncommingChanges(syncSession, message.getData()));
+			response.addAll(processLocalChanges(syncSession));
+			if(response.isEmpty()){
+				response.add(this.endMessage.createMessage(syncSession));
 			}
 		}
 		return response;
 	}
-	
-	private Item getItem(String syncID, List<Item> items) {
-		for (Item item : items) {
-			if (item.getSyncId().equals(syncID)){
-				return item;
-			}
+
+	private List<IMessage> processLocalChanges(ISyncSession syncSession) {
+		ArrayList<IMessage> response = new ArrayList<IMessage>();
+		List<Item> localChanges = syncSession.getAllWithOutConflicts();
+		for (Item item : localChanges) {
+			response.add(this.mergeWithACKMessage.createMessage(syncSession, item));
 		}
-		return null;
+		return response;
+	}
+
+	private List<IMessage> processIncommingChanges(ISyncSession syncSession, String data) {
+		ArrayList<IMessage> response = new ArrayList<IMessage>();
+		
+		StringTokenizer st = new StringTokenizer(data, IProtocolConstants.ELEMENT_SEPARATOR);
+		while(st.hasMoreTokens()){
+			String itemToSync = st.nextToken();
+			StringTokenizer stFields = new StringTokenizer(itemToSync, IProtocolConstants.FIELD_SEPARATOR);
+			String syncID = stFields.nextToken();
+			String itemHashCode = stFields.nextToken();
+			
+			String deletedBy = null;
+			Date deletedWhen = null;
+			boolean deleted = stFields.hasMoreTokens() && "D".equals(stFields.nextToken());
+			if(deleted){
+				deletedBy = stFields.nextToken();
+				deletedWhen = DateHelper.parseDateTime(stFields.nextToken());
+			}
+			IMessage itemResponse = processIncommingChange(syncSession, syncID, deleted, deletedBy, deletedWhen, itemHashCode);
+			if(itemResponse != null){
+				response.add(itemResponse);				
+			}						
+		}
+		return response;
+	}
+
+	private IMessage processIncommingChange(ISyncSession syncSession, String syncID, boolean delete, String deletedBy, Date deletedWhen, String itemHashCode) {
+		IMessage response = null; 
+		Item localItem = syncSession.get(syncID);
+		if(localItem != null){
+			if(syncSession.hasChanged(syncID)){
+				syncSession.addConflict(syncID);
+			} else{
+				if(delete){
+					syncSession.delete(syncID, deletedBy, deletedWhen);
+				} else {
+					String localHashCode = this.calculateHasCode(localItem);
+					if(!localHashCode.equals(itemHashCode)){
+						response = this.getForMergeMessage.createMessage(syncSession, syncID);
+					}
+				}
+			}
+		} else {
+			response = this.getForMergeMessage.createMessage(syncSession, syncID); 
+		}
+		return response;
 	}
 
 	private String encode(List<Item> items) {
-		StringBuffer sb = new StringBuffer();
-		for (Item item : items) {
+		StringBuilder sb = new StringBuilder();
+	
+		Iterator<Item> it = items.iterator();
+		while (it.hasNext()) {
+			Item item = it.next();
 			sb.append(item.getSyncId());
-			sb.append(FIELD_SEPARATOR);
+			sb.append(IProtocolConstants.FIELD_SEPARATOR);
 			sb.append(this.calculateHasCode(item));
-			sb.append(ITEM_SEPARATOR);
+			if(item.isDeleted()){
+				sb.append(IProtocolConstants.FIELD_SEPARATOR);
+				sb.append("D");
+				sb.append(IProtocolConstants.FIELD_SEPARATOR);
+				sb.append(item.getLastUpdate().getBy());
+				sb.append(IProtocolConstants.FIELD_SEPARATOR);
+				sb.append(DateHelper.formatDateTime(item.getLastUpdate().getWhen()));
+			}
+			if(it.hasNext()){
+				sb.append(IProtocolConstants.ELEMENT_SEPARATOR);
+			}
 		}
 		return sb.toString();
 	}
@@ -104,6 +146,4 @@ public class LastVersionStatusMessageProcessor implements IMessageProcessor {
 		sb.append(item.isDeleted());
 		return String.valueOf(sb.toString().hashCode());		
 	}
-
-
 }

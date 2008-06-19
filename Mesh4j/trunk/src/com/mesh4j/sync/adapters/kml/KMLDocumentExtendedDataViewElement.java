@@ -124,7 +124,7 @@ public class KMLDocumentExtendedDataViewElement implements IXMLViewElement {
 				&& !Namespace.NO_NAMESPACE.equals(element.getNamespace())
 				&& (element.getParent() == null ||
 					(element.getParent() != null && KmlNames.KML_ELEMENT_EXTENDED_DATA.equals(element.getParent().getName())) ||
-					(element.getParent() != null && ISyndicationFormat.ELEMENT_PAYLOAD.equals(element.getParent().getName())))){  // TODO (JMT) MeshSMS: Fix KML vs OtherContents
+					(element.getParent() != null && ISyndicationFormat.ELEMENT_PAYLOAD.equals(element.getParent().getName())))){
 			return true;
 		}
 		return KmlNames.KML_ELEMENT_DATA.equals(element.getName()) ||

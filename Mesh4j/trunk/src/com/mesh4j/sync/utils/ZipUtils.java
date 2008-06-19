@@ -22,6 +22,7 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import com.mesh4j.sync.validations.Guard;
+import com.mesh4j.sync.validations.MeshException;
 
 public class ZipUtils {
 
@@ -309,5 +310,30 @@ public class ZipUtils {
 		// Get the decompressed data
 		byte[] decompressedData = bos.toByteArray();
 		return decompressedData;
+	}
+
+	public static String unzip(byte[] zipBytes, String entryName) {
+		try{
+			ZipInputStream zipInputStream = new ZipInputStream(new ByteArrayInputStream(zipBytes));
+			String result = ZipUtils.getTextEntryContent(zipInputStream, entryName);
+			zipInputStream.close();
+			return result;
+		} catch(IOException io){
+			throw new MeshException(io);
+		}			
+	}
+
+	public static byte[] zip(String message, String entryName) {
+		try{
+			ByteArrayOutputStream itemsOS = new ByteArrayOutputStream();
+			ZipOutputStream zipOS = new ZipOutputStream(itemsOS);
+			ZipUtils.write(zipOS, entryName, message);
+			
+			itemsOS.flush();
+			zipOS.close();
+			return itemsOS.toByteArray();
+		} catch(IOException io){
+			throw new MeshException(io);
+		}
 	}
 }
