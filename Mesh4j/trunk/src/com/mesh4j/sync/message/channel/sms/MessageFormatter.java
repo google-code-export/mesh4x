@@ -20,9 +20,9 @@ public class MessageFormatter {
 	public static String getData(String message) {
 		String data =  message.substring(1, message.length());
 		StringTokenizer st = new StringTokenizer(data, ELEMENT_SEPARATOR);
-		st.nextToken();			// skip session id
+		String sessionID = st.nextToken();
 		if(st.hasMoreTokens()){
-			return st.nextToken();
+			return data.substring(sessionID.length()+1, data.length());
 		} else {
 			return "";
 		}

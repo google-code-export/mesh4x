@@ -21,11 +21,16 @@ public class ItemEncoding {
 	private final static String HISTORY_FIELD_SEPARATOR = "$";
 
 	public static Item decode(ISyncSession syncSession, String encodingItem) {
+		
+		int xmlPos = 3;
+		
 		StringTokenizer st = new StringTokenizer(encodingItem, FIELD_SEPARATOR);
 		
 		Sync sync = null;
 		
 		String syncID = st.nextToken();
+		xmlPos = xmlPos + syncID.length();
+		
 		Item localItem = syncSession.get(syncID);
 		if(localItem == null){
 			sync = new Sync(syncID);
@@ -34,8 +39,11 @@ public class ItemEncoding {
 		}
 		
 		boolean deleted = "T".equals(st.nextToken());
+		xmlPos = xmlPos + 1;
 		
 		String historiesString = st.nextToken();
+		xmlPos = xmlPos + historiesString.length();
+		
 		StringTokenizer stHistories = new StringTokenizer(historiesString, HISTORY_SEPARATOR);
 		while(stHistories.hasMoreTokens()){
 			String historyString = stHistories.nextToken();
@@ -53,7 +61,7 @@ public class ItemEncoding {
 		if(deleted){
 			return new Item(new NullContent(syncID), sync);
 		} else {
-			String xml = st.nextToken();
+			String xml = encodingItem.substring(xmlPos, encodingItem.length());
 			Element payload = XMLHelper.parseElement(xml);
 			XMLContent content = new XMLContent(syncID, "", "", payload);
 			return new Item(content, sync);
