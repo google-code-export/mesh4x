@@ -28,7 +28,7 @@ public class XMLContent extends Content {
 	}
 	
 	public XMLContent clone(){
-		return new XMLContent(this.getId(), title, description, this.getPayload());		
+		return new XMLContent(this.getId(), title, description, this.getPayload().createCopy());		
 	}
 
 	public void setTitle(String title) {
@@ -42,11 +42,10 @@ public class XMLContent extends Content {
         {
         	if(obj instanceof XMLContent){
 	        	XMLContent otherXmlItem = (XMLContent) obj;
-	            return this.getId().equals(otherXmlItem.getId()) &&
+	            return super.equals(obj) &&
 	                this.getTitle().equals(otherXmlItem.getTitle()) &&
 	                (this.getDescription() == null && otherXmlItem.getDescription() == null ||
-	                	this.getDescription() != null && this.getDescription().equals(otherXmlItem.getDescription())) &&
-	                this.getPayload().asXML().equals(otherXmlItem.getPayload().asXML());
+	                	this.getDescription() != null && this.getDescription().equals(otherXmlItem.getDescription()));
         	} else{
         		return super.equals(obj);
         	}

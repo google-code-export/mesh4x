@@ -14,7 +14,7 @@ import com.mesh4j.sync.model.History;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.NullContent;
 import com.mesh4j.sync.model.Sync;
-import com.mesh4j.sync.utils.Diff;
+import com.mesh4j.sync.utils.DiffUtils;
 import com.mesh4j.sync.utils.XMLHelper;
 
 public class ItemEncoding implements IProtocolConstants{
@@ -72,8 +72,7 @@ public class ItemEncoding implements IProtocolConstants{
 			
 			String xml = localItem == null ? "" : XMLHelper.canonicalizeXML(localItem.getContent().getPayload());
 			
-			Diff diff = new Diff();			
-			String xmlResult = diff.appliesDiff(xml, 100, diffs);
+			String xmlResult = DiffUtils.appliesDiff(xml, 100, diffs);
 			Element payload = XMLHelper.parseElement(xmlResult);
 			XMLContent content = new XMLContent(syncID, "", "", payload);
 			return new Item(content, sync);
@@ -109,8 +108,7 @@ public class ItemEncoding implements IProtocolConstants{
 			}
 			String xml = XMLHelper.canonicalizeXML(item.getContent().getPayload());
 			
-			Diff diff = new Diff();
-			Map<Integer, String> diffs = diff.obtainsDiff(xml, 100, diffHashCodes);
+			Map<Integer, String> diffs = DiffUtils.obtainsDiff(xml, 100, diffHashCodes);
 			Iterator<Integer> it = diffs.keySet().iterator();
 			while(it.hasNext()) {
 				int i = it.next();

@@ -6,9 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Diff {
+public class DiffUtils {
 
-	public List<String> split(String text, int blockSize){
+	public static List<String> split(String text, int blockSize){
 		
 		if(text == null || text.length() == 0){
 			return new ArrayList<String>();
@@ -29,7 +29,7 @@ public class Diff {
 		}
 	}
 	
-	public int[] calculateBlockHashCodes(String text, int blockSize){
+	public static int[] calculateBlockHashCodes(String text, int blockSize){
 		List<String> blocks = split(text, blockSize);
 		int[] hashCodes = new int[blocks.size()];
 		
@@ -41,7 +41,7 @@ public class Diff {
 		return hashCodes;
 	}
 	
-	public Map<Integer, String> obtainsDiff(String text, int blockSize, int[] hashCodes){
+	public static Map<Integer, String> obtainsDiff(String text, int blockSize, int[] hashCodes){
 		Map<Integer, String> diffs = new HashMap<Integer, String>();
 		
 		List<String> blocks = split(text, blockSize);
@@ -69,7 +69,7 @@ public class Diff {
 		return diffs;
 	}
 
-	public String appliesDiff(String text, int blockSize, Map<Integer, String> diffs){
+	public static String appliesDiff(String text, int blockSize, Map<Integer, String> diffs){
 		StringBuilder sb = new StringBuilder();
 		
 		List<String> blocks = split(text, blockSize);

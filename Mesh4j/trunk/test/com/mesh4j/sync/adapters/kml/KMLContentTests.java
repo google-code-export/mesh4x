@@ -34,7 +34,7 @@ public class KMLContentTests {
 		KMLContent clone = original.clone();
 		
 		Assert.assertFalse(original == clone);
-		Assert.assertSame(original.getPayload(), clone.getPayload());
+		Assert.assertTrue(original.getPayload().asXML().equals(clone.getPayload().asXML()));
 		Assert.assertEquals(original.getId(), clone.getId());
 		Assert.assertEquals(original.getVersion(), clone.getVersion());
 	}

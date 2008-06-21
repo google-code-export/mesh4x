@@ -19,7 +19,7 @@ public class EntityContent extends Content{
 	}
 
 	public EntityContent clone(){
-		return new EntityContent(this.getPayload(), entityName, this.getId());
+		return new EntityContent(this.getPayload().createCopy(), entityName, this.getId());
 	}
 	
     public boolean equals(Object obj)
@@ -30,10 +30,7 @@ public class EntityContent extends Content{
         	if(obj instanceof EntityContent){
         		EntityContent otherXmlItem = (EntityContent) obj;
         		return
-        			this.getType().equals(otherXmlItem.getType())
-        			&& this.getId().equals(otherXmlItem.getId())
-        			&& this.getVersion() == otherXmlItem.getVersion()
-        			&& this.getPayload().asXML().equals(otherXmlItem.getPayload().asXML());
+        			super.equals(obj) && this.getType().equals(otherXmlItem.getType());
         	} else {
         		return super.equals(obj);
         	}
@@ -41,10 +38,8 @@ public class EntityContent extends Content{
         return false;
     }
 
-    public int hashCode()
-    {
-		String result = this.getPayload().asXML();
-		return this.entityName.hashCode() + this.getId().hashCode() + this.getVersion() + result.hashCode();
+    public int hashCode(){		
+		return super.hashCode() + this.entityName.hashCode();
     }
 
 	public String getType() {

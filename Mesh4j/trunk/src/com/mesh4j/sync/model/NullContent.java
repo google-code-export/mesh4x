@@ -34,7 +34,7 @@ public class NullContent implements IContent {
 				return false;
 			} else {
 				NullContent nullModel = (NullContent) obj;
-				return this.id == nullModel.getId();
+				return this.id.equals(nullModel.getId());
 			}
 		}
 		return false;

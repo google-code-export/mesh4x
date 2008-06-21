@@ -10,6 +10,7 @@ import com.mesh4j.sync.message.IEndpoint;
 import com.mesh4j.sync.message.IMessageSyncAdapter;
 import com.mesh4j.sync.message.ISyncSession;
 import com.mesh4j.sync.model.Item;
+import com.mesh4j.sync.model.NullContent;
 
 public class SyncSession implements ISyncSession{
 
@@ -64,8 +65,9 @@ public class SyncSession implements ISyncSession{
 
 	@Override
 	public void delete(String syncID, String by, Date when){
-		Item item = this.cache.get(syncID);
-		item.getSync().delete(by, when);
+		Item item = this.cache.get(syncID);		
+		Item ItemDeleted = new Item(new NullContent(syncID), item.getSync().clone().delete(by, when));
+		this.cache.put(syncID, ItemDeleted);
 	}
 
 	@Override
@@ -97,17 +99,6 @@ public class SyncSession implements ISyncSession{
 		return items;
 	}
 	
-	@Override
-	public List<Item> getAllWithOutConflicts(){
-		ArrayList<Item> items = new ArrayList<Item>();
-		for (Item item : this.cache.values()) {
-			if(SinceLastUpdateFilter.applies(item, this.lastSyncDate) && !hasConflict(item.getSyncId())){
-				items.add(item);
-			}
-		}
-		return items;
-	}
-
 	@Override
 	public boolean hasConflict(String syncID) {
 		return this.conflicts.contains(syncID);

@@ -94,4 +94,9 @@ public class MockInMemoryMessageSyncAdapter implements IMessageSyncAdapter{
 		
 	}
 
+	public void setItems(List<Item> items) {
+		this.items = items;
+		
+	}
+
 }

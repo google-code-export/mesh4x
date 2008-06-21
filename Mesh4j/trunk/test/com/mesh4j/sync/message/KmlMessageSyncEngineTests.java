@@ -1,14 +1,18 @@
 package com.mesh4j.sync.message;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
+import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
+import org.dom4j.io.OutputFormat;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.mesh4j.sync.SyncEngine;
 import com.mesh4j.sync.adapters.dom.DOMAdapter;
 import com.mesh4j.sync.adapters.kml.DOMLoaderFactory;
 import com.mesh4j.sync.adapters.kml.KMLContent;
@@ -21,11 +25,12 @@ import com.mesh4j.sync.message.encoding.IMessageEncoding;
 import com.mesh4j.sync.message.protocol.MessageSyncProtocolFactory;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.security.NullIdentityProvider;
+import com.mesh4j.sync.test.utils.TestHelper;
+import com.mesh4j.sync.utils.XMLHelper;
 
 public class KmlMessageSyncEngineTests {
 	
-	// TODO (JMT) MeshSms: test
-	@Test
+//	@Test
 	public void shouldSyncKml() throws DocumentException, IOException{
 		
 		String fileNameA = this.getClass().getResource("kmlWithSyncInfo.kml").getFile();
@@ -91,37 +96,40 @@ public class KmlMessageSyncEngineTests {
 		Assert.assertFalse(syncSessionFactoryB.get(dataSetId, "A").isOpen());
 
 		// Sync KML file
-//		File file = new File(TestHelper.fileName("kmlMessage.kml")); 
-//		XMLHelper.write(kmlAdapterB.getDOM().toDocument(), file);
-//		
-//		DOMAdapter kmlAdapter = new DOMAdapter(DOMLoaderFactory.createDOMLoader(file.getAbsolutePath(), NullIdentityProvider.INSTANCE));
-//		
-//		SyncEngine syncEngine = new SyncEngine(kmlAdapter, endPointB);
-//		List<Item> conflicts = syncEngine.synchronize();
-//		Assert.assertNotNull(conflicts);
-//		Assert.assertEquals(0, conflicts.size());
-//		
-//		kmlAdapter.beginSync();
-//		int itemsSize = kmlAdapter.getAll().size();
-//		Assert.assertEquals(611, itemsSize);
-//		
-//		Document document = kmlAdapter.getDOM().toDocument();
-//		
-//		int xmlCano = XMLHelper.canonicalizeXML(document).length();
-//		System.out.println("canon: " + xmlCano + "  messages: " + ((xmlCano / 121) + ((xmlCano % 121) == 0 ? 0 : 1)));
-//		
-//		int xmlformat = XMLHelper.formatXML(document, OutputFormat.createCompactFormat()).length();
-//		System.out.println("format: " + xmlformat + "  messages: " + ((xmlformat / 121) + ((xmlformat % 121) == 0 ? 0 : 1)));
-//		
-//		System.out.println("items: " + itemsSize);
-//		
-//		System.out.println("batch A (zip+base64): " 
-//				+ smsConnectionEndpointA.getGeneratedMessagesSizeStatistics() 
-//				+ " messages: " + smsConnectionEndpointA.getGeneratedMessagesStatistics());
-//		
-//		System.out.println("batch B (zip+base64): " 
-//				+ smsConnectionEndpointB.getGeneratedMessagesSizeStatistics() 
-//				+ " messages: " + smsConnectionEndpointB.getGeneratedMessagesStatistics());
+		ISyncSession syncSession = syncSessionFactoryB.get(dataSetId, "A");
+		endpointB = new MockInMemoryMessageSyncAdapter(dataSetId, syncSession.getSnapshot());
+
+		File file = new File(TestHelper.fileName("kmlMessage.kml")); 
+		XMLHelper.write(kmlAdapterB.getDOM().toDocument(), file);
+		
+		DOMAdapter kmlAdapter = new DOMAdapter(DOMLoaderFactory.createDOMLoader(file.getAbsolutePath(), NullIdentityProvider.INSTANCE));
+		
+		SyncEngine syncEngine = new SyncEngine(kmlAdapter, endpointB);
+		List<Item> conflicts = syncEngine.synchronize();
+		Assert.assertNotNull(conflicts);
+		Assert.assertEquals(0, conflicts.size());
+		
+		kmlAdapter.beginSync();
+		int itemsSize = kmlAdapter.getAll().size();
+		Assert.assertEquals(611, itemsSize);
+		
+		Document document = kmlAdapter.getDOM().toDocument();
+		
+		int xmlCano = XMLHelper.canonicalizeXML(document).length();
+		System.out.println("canon: " + xmlCano + "  messages: " + ((xmlCano / 121) + ((xmlCano % 121) == 0 ? 0 : 1)));
+		
+		int xmlformat = XMLHelper.formatXML(document, OutputFormat.createCompactFormat()).length();
+		System.out.println("format: " + xmlformat + "  messages: " + ((xmlformat / 121) + ((xmlformat % 121) == 0 ? 0 : 1)));
+		
+		System.out.println("items: " + itemsSize);
+		
+		System.out.println("batch A (zip+base64): " 
+				+ smsConnectionEndpointA.getGeneratedMessagesSizeStatistics() 
+				+ " messages: " + smsConnectionEndpointA.getGeneratedMessagesStatistics());
+		
+		System.out.println("batch B (zip+base64): " 
+				+ smsConnectionEndpointB.getGeneratedMessagesSizeStatistics() 
+				+ " messages: " + smsConnectionEndpointB.getGeneratedMessagesStatistics());
 	}
 	
 // Statistics:

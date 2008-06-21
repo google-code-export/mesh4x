@@ -10,7 +10,7 @@ import com.mesh4j.sync.message.ISyncSession;
 import com.mesh4j.sync.message.core.IMessageProcessor;
 import com.mesh4j.sync.message.core.Message;
 import com.mesh4j.sync.model.Item;
-import com.mesh4j.sync.utils.Diff;
+import com.mesh4j.sync.utils.DiffUtils;
 import com.mesh4j.sync.utils.XMLHelper;
 
 public class GetForMergeMessageProcessor implements IMessageProcessor {
@@ -76,8 +76,7 @@ public class GetForMergeMessageProcessor implements IMessageProcessor {
 			
 			String xml = XMLHelper.canonicalizeXML(item.getContent().getPayload());
 			
-			Diff diff = new Diff();
-			int[] hashs = diff.calculateBlockHashCodes(xml, 100);
+			int[] hashs = DiffUtils.calculateBlockHashCodes(xml, 100);
 			for (int j = 0; j < hashs.length; j++) {
 				sb.append(hashs[j]);
 				if(j != hashs.length){

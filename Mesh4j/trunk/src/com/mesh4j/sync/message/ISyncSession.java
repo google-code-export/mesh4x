@@ -22,7 +22,6 @@ public interface ISyncSession {
 	void addConflict(String syncID);
 	
 	List<Item> getAll();
-	List<Item> getAllWithOutConflicts();
 
 	void beginSync();
 	void beginSync(Date sinceDate);

@@ -20,7 +20,7 @@ public class KMLContent extends Content{
 	}
 
 	public KMLContent clone(){
-		return new KMLContent(this.getPayload(), this.getId());
+		return new KMLContent(this.getPayload().createCopy(), this.getId());
 	}
 		
 	public static KMLContent normalizeContent(IContent content, IXMLView xmlView){
