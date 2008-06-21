@@ -45,7 +45,7 @@ public class NoChangesMessageProcessor implements IMessageProcessor {
 		ArrayList<IMessage> response = new ArrayList<IMessage>();
 		List<Item> localChanges = syncSession.getAll();
 		for (Item item : localChanges) {
-			response.add(this.mergeWithACKMessage.createMessage(syncSession, item));
+			response.add(this.mergeWithACKMessage.createMessage(syncSession, item, new int[0]));
 		}
 		return response;
 	}

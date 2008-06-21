@@ -27,13 +27,13 @@ public class MergeMessageProcessor implements IMessageProcessor {
 		return "5";
 	}
 	
-	public IMessage createMessage(ISyncSession syncSession, String syncId) {
+	public IMessage createMessage(ISyncSession syncSession, String syncId, int[] diffHashCodes) {
 		Item item = syncSession.get(syncId);
-		return createMessage(syncSession, item);
+		return createMessage(syncSession, item, diffHashCodes);
 	}
 	
-	public IMessage createMessage(ISyncSession syncSession, Item item) {
-		String data = ItemEncoding.encode(syncSession, item);
+	public IMessage createMessage(ISyncSession syncSession, Item item, int[] diffHashCodes) {
+		String data = ItemEncoding.encode(syncSession, item, diffHashCodes);
 		return new Message(
 				IProtocolConstants.PROTOCOL,
 				getMessageType(),

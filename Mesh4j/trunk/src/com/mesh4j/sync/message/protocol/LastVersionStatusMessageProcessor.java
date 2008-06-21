@@ -62,7 +62,7 @@ public class LastVersionStatusMessageProcessor implements IMessageProcessor{
 		ArrayList<IMessage> response = new ArrayList<IMessage>();
 		List<Item> localChanges = syncSession.getAllWithOutConflicts();
 		for (Item item : localChanges) {
-			response.add(this.mergeWithACKMessage.createMessage(syncSession, item));
+			response.add(this.mergeWithACKMessage.createMessage(syncSession, item, new int[0]));  // TODO (JMT) MeshSms: Diff
 		}
 		return response;
 	}
@@ -104,7 +104,7 @@ public class LastVersionStatusMessageProcessor implements IMessageProcessor{
 				} else {
 					String localHashCode = this.calculateHasCode(localItem);
 					if(!localHashCode.equals(itemHashCode)){
-						response = this.getForMergeMessage.createMessage(syncSession, syncID);
+						response = this.getForMergeMessage.createMessage(syncSession, localItem);
 					}
 				}
 			}

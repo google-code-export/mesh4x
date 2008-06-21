@@ -27,14 +27,14 @@ public class MergeWithACKMessageProcessor implements IMessageProcessor {
 		return "6";
 	}
 	
-	public IMessage createMessage(ISyncSession syncSession, String syncId) {
+	public IMessage createMessage(ISyncSession syncSession, String syncId, int[] diffHashCodes) {
 		Item item = syncSession.get(syncId);
-		return createMessage(syncSession, item);
+		return createMessage(syncSession, item, diffHashCodes);
 	}
 	
-	public IMessage createMessage(ISyncSession syncSession, Item item) {
+	public IMessage createMessage(ISyncSession syncSession, Item item, int[] diffHashCodes) {
 		syncSession.waitForAck(item.getSyncId());
-		String data = ItemEncoding.encode(syncSession, item);
+		String data = ItemEncoding.encode(syncSession, item, diffHashCodes);
 		return new Message(
 				IProtocolConstants.PROTOCOL,
 				getMessageType(),

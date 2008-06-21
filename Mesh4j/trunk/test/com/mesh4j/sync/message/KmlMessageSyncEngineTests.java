@@ -18,8 +18,6 @@ import com.mesh4j.sync.message.core.SyncSessionFactory;
 import com.mesh4j.sync.message.encoding.CompressBase64MessageEncoding;
 import com.mesh4j.sync.message.encoding.CompressBase91MessageEncoding;
 import com.mesh4j.sync.message.encoding.IMessageEncoding;
-import com.mesh4j.sync.message.encoding.ZipBase64MessageEncoding;
-import com.mesh4j.sync.message.encoding.ZipBase91MessageEncoding;
 import com.mesh4j.sync.message.protocol.MessageSyncProtocolFactory;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.security.NullIdentityProvider;
@@ -27,14 +25,15 @@ import com.mesh4j.sync.security.NullIdentityProvider;
 public class KmlMessageSyncEngineTests {
 	
 	// TODO (JMT) MeshSms: test
-	//@Test
+	@Test
 	public void shouldSyncKml() throws DocumentException, IOException{
 		
-		String fileNameA = this.getClass().getResource("kmlWithSyncInfo.kml").getFile(); 
+		String fileNameA = this.getClass().getResource("kmlWithSyncInfo.kml").getFile();
+		String fileNameB = this.getClass().getResource("kmlDummyForSync.kml").getFile(); 
+		
 		DOMAdapter kmlAdapterA = new DOMAdapter(DOMLoaderFactory.createDOMLoader(fileNameA, NullIdentityProvider.INSTANCE));
 		kmlAdapterA.beginSync();
 
-		String fileNameB = this.getClass().getResource("kmlDummyForSync.kml").getFile(); 
 		DOMAdapter kmlAdapterB = new DOMAdapter(DOMLoaderFactory.createDOMLoader(fileNameB, NullIdentityProvider.INSTANCE));
 		kmlAdapterB.beginSync();
 		
@@ -42,13 +41,16 @@ public class KmlMessageSyncEngineTests {
 		String dataSetId = "12345";
 		
 		MockSmsConnection smsConnectionEndpointA = new MockSmsConnection("A");
+		//smsConnectionEndpointA.activateTrace();
+		
 		MockSmsConnection smsConnectionEndpointB = new MockSmsConnection("B");
-
+		//smsConnectionEndpointB.activateTrace();
+		
 		smsConnectionEndpointA.setEndPoint(smsConnectionEndpointB);
 		smsConnectionEndpointB.setEndPoint(smsConnectionEndpointA);
 		
-		IChannel channelEndpointA = new SmsChannel(smsConnectionEndpointA, CompressBase64MessageEncoding.INSTANCE);
-		IChannel channelEndpointB = new SmsChannel(smsConnectionEndpointB, CompressBase64MessageEncoding.INSTANCE);
+		IChannel channelEndpointA = new SmsChannel(smsConnectionEndpointA, CompressBase91MessageEncoding.INSTANCE);
+		IChannel channelEndpointB = new SmsChannel(smsConnectionEndpointB, CompressBase91MessageEncoding.INSTANCE);
 
 		IMessageSyncAdapter endpointA = new MockInMemoryMessageSyncAdapter(dataSetId, kmlAdapterA.getAll());
 				
@@ -70,13 +72,24 @@ public class KmlMessageSyncEngineTests {
 		
 		syncEngineEndPointA.synchronize(dataSetId, new SmsEndpoint("B"));
 	
+		System.out.println("batch A: " 
+				+ smsConnectionEndpointA.getGeneratedMessagesSizeStatistics() 
+				+ " messages: " + smsConnectionEndpointA.getGeneratedMessagesStatistics());
+		
+		System.out.println("batch B: " 
+				+ smsConnectionEndpointB.getGeneratedMessagesSizeStatistics() 
+				+ " messages: " + smsConnectionEndpointB.getGeneratedMessagesStatistics());
+		
+		ISyncSession syncSessionAB = syncSessionFactoryA.get(dataSetId, "B");
+		ISyncSession syncSessionBA = syncSessionFactoryB.get(dataSetId, "A");
+		Assert.assertFalse(syncSessionAB.isOpen());
+		Assert.assertFalse(syncSessionBA.isOpen());
+
 		Assert.assertEquals(611, syncSessionFactoryA.get(dataSetId, "B").getSnapshot().size());
 		Assert.assertEquals(611, syncSessionFactoryB.get(dataSetId, "A").getSnapshot().size());
 		Assert.assertFalse(syncSessionFactoryA.get(dataSetId, "B").isOpen());
 		Assert.assertFalse(syncSessionFactoryB.get(dataSetId, "A").isOpen());
-	
-//		Assert.assertEquals(164, smsConnectionEndpointA.getGeneratedMessageStatistics());
-		
+
 		// Sync KML file
 //		File file = new File(TestHelper.fileName("kmlMessage.kml")); 
 //		XMLHelper.write(kmlAdapterB.getDOM().toDocument(), file);
@@ -148,12 +161,12 @@ public class KmlMessageSyncEngineTests {
 	@Test
 	public void shouldSyncKmlPlacemarkEndpointBChanged() throws Exception{
 		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocol();
-		syncKml(syncProtocol, false, true, ZipBase64MessageEncoding.INSTANCE);
-		System.out.println("#########################################");
-		syncKml(syncProtocol, false, true, CompressBase64MessageEncoding.INSTANCE);
-		System.out.println("#########################################");
-		syncKml(syncProtocol, false, true, ZipBase91MessageEncoding.INSTANCE);
-		System.out.println("#########################################");
+//		syncKml(syncProtocol, false, true, ZipBase64MessageEncoding.INSTANCE);
+//		System.out.println("#########################################");
+//		syncKml(syncProtocol, false, true, CompressBase64MessageEncoding.INSTANCE);
+//		System.out.println("#########################################");
+//		syncKml(syncProtocol, false, true, ZipBase91MessageEncoding.INSTANCE);
+//		System.out.println("#########################################");
 		syncKml(syncProtocol, false, true, CompressBase91MessageEncoding.INSTANCE);
 	}
 	
