@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import com.mesh4j.sync.diff.Diff;
 import com.mesh4j.sync.message.IMessage;
 import com.mesh4j.sync.message.IMessageSyncProtocol;
 import com.mesh4j.sync.message.ISyncSession;
 import com.mesh4j.sync.message.core.IMessageProcessor;
 import com.mesh4j.sync.message.core.Message;
 import com.mesh4j.sync.model.Item;
+import com.mesh4j.sync.utils.Diff;
 import com.mesh4j.sync.utils.XMLHelper;
 
 public class GetForMergeMessageProcessor implements IMessageProcessor {

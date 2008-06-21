@@ -1,4 +1,4 @@
-package com.mesh4j.sync.diff;
+package com.mesh4j.sync.utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;

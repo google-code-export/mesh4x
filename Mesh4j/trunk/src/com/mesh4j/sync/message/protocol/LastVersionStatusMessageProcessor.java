@@ -62,7 +62,7 @@ public class LastVersionStatusMessageProcessor implements IMessageProcessor{
 		ArrayList<IMessage> response = new ArrayList<IMessage>();
 		List<Item> localChanges = syncSession.getAllWithOutConflicts();
 		for (Item item : localChanges) {
-			response.add(this.mergeWithACKMessage.createMessage(syncSession, item, new int[0]));  // TODO (JMT) MeshSms: Diff
+			response.add(this.mergeWithACKMessage.createMessage(syncSession, item));
 		}
 		return response;
 	}

@@ -10,6 +10,8 @@ import com.mesh4j.sync.message.MessageSyncEngine;
 import com.mesh4j.sync.message.core.IMessageProcessor;
 import com.mesh4j.sync.message.core.Message;
 import com.mesh4j.sync.model.Item;
+import com.mesh4j.sync.utils.Diff;
+import com.mesh4j.sync.utils.XMLHelper;
 
 public class MergeWithACKMessageProcessor implements IMessageProcessor {
 
@@ -27,14 +29,12 @@ public class MergeWithACKMessageProcessor implements IMessageProcessor {
 		return "6";
 	}
 	
-	public IMessage createMessage(ISyncSession syncSession, String syncId, int[] diffHashCodes) {
-		Item item = syncSession.get(syncId);
-		return createMessage(syncSession, item, diffHashCodes);
-	}
-	
-	public IMessage createMessage(ISyncSession syncSession, Item item, int[] diffHashCodes) {
+	public IMessage createMessage(ISyncSession syncSession, Item item) {
 		syncSession.waitForAck(item.getSyncId());
+		
+		int[] diffHashCodes = this.getLastSyncDiffsHashCodes(syncSession, item);
 		String data = ItemEncoding.encode(syncSession, item, diffHashCodes);
+		
 		return new Message(
 				IProtocolConstants.PROTOCOL,
 				getMessageType(),
@@ -43,6 +43,20 @@ public class MergeWithACKMessageProcessor implements IMessageProcessor {
 				syncSession.getTarget());
 	}
 	
+	private int[] getLastSyncDiffsHashCodes(ISyncSession syncSession, Item actualItem) {
+		if(!actualItem.isDeleted()){
+			List<Item> items = syncSession.getSnapshot();
+			for (Item item : items) {
+				if(item.getSyncId().equals(actualItem.getSyncId())){
+					String xml = XMLHelper.canonicalizeXML(item.getContent().getPayload());
+					Diff diff = new Diff();
+					return diff.calculateBlockHashCodes(xml, 100);  
+				}
+			}
+		}
+		return new int[0];
+	}
+
 	@Override
 	public List<IMessage> process(ISyncSession syncSession, IMessage message) {
 		if(syncSession.isOpen() && this.getMessageType().equals(message.getMessageType())){

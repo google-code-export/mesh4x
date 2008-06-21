@@ -1,4 +1,4 @@
-package com.mesh4j.sync.diff;
+package com.mesh4j.sync.utils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -6,6 +6,8 @@ import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
+
+import com.mesh4j.sync.utils.Diff;
 
 public class DiffTests {
 

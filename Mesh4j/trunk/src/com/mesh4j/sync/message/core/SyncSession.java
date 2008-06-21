@@ -19,7 +19,8 @@ public class SyncSession implements ISyncSession{
 	private IEndpoint target;
 	private Date lastSyncDate;
 	private boolean isOpen = false;
-	private HashMap<String, Item> snapshot = new HashMap<String, Item>();
+	private HashMap<String, Item> cache = new HashMap<String, Item>();
+	private List<Item> snapshot = new ArrayList<Item>();
 	private ArrayList<String> conflicts = new ArrayList<String>();
 	private ArrayList<String> acks = new ArrayList<String>();
 
@@ -48,22 +49,22 @@ public class SyncSession implements ISyncSession{
 
 	@Override
 	public Item get(String syncId){
-		return this.snapshot.get(syncId);
+		return this.cache.get(syncId);
 	}
 	
 	@Override
 	public void add(Item item){
-		this.snapshot.put(item.getSyncId(), item);
+		this.cache.put(item.getSyncId(), item);
 	}
 	
 	@Override
 	public void update(Item item){
-		this.snapshot.put(item.getSyncId(), item);
+		this.cache.put(item.getSyncId(), item);
 	}
 
 	@Override
 	public void delete(String syncID, String by, Date when){
-		Item item = this.snapshot.get(syncID);
+		Item item = this.cache.get(syncID);
 		item.getSync().delete(by, when);
 	}
 
@@ -88,7 +89,7 @@ public class SyncSession implements ISyncSession{
 	@Override
 	public List<Item> getAll(){		
 		ArrayList<Item> items = new ArrayList<Item>();
-		for (Item item : this.snapshot.values()) {
+		for (Item item : this.cache.values()) {
 			if(SinceLastUpdateFilter.applies(item, this.lastSyncDate)){
 				items.add(item);
 			}
@@ -99,7 +100,7 @@ public class SyncSession implements ISyncSession{
 	@Override
 	public List<Item> getAllWithOutConflicts(){
 		ArrayList<Item> items = new ArrayList<Item>();
-		for (Item item : this.snapshot.values()) {
+		for (Item item : this.cache.values()) {
 			if(SinceLastUpdateFilter.applies(item, this.lastSyncDate) && !hasConflict(item.getSyncId())){
 				items.add(item);
 			}
@@ -123,21 +124,20 @@ public class SyncSession implements ISyncSession{
 		this.isOpen = true;
 		this.conflicts = new ArrayList<String>();
 		this.acks = new ArrayList<String>();
-		takeSnapshot();
-	}
-
-	private void takeSnapshot() {
-		this.snapshot = new HashMap<String, Item>();
+		this.cache = new HashMap<String, Item>();
+		
 		List<Item> items = this.syncAdapter.getAll();
 		for (Item item : items) {
-			this.snapshot.put(item.getSyncId(), item);
+			this.cache.put(item.getSyncId(), item);
 		}
 	}
-	
+
 	@Override
 	public void endSync(Date sinceDate){
 		this.lastSyncDate = sinceDate;
 		this.isOpen = false;
+		
+		this.snapshot = new ArrayList<Item>(this.cache.values());
 	}
 	
 	@Override
@@ -161,20 +161,20 @@ public class SyncSession implements ISyncSession{
 	}
 	
 	@Override
-	public List<Item> getSnapshot(){
-		return new ArrayList<Item>(this.snapshot.values());
-	}
-
-	@Override
 	public void cancelSync() {
 		this.isOpen = false;
 		this.conflicts = new ArrayList<String>();
 		this.acks = new ArrayList<String>();
-		this.snapshot = new HashMap<String, Item>();
+		this.cache = new HashMap<String, Item>();
 	}
 
 	@Override
 	public String getSessionId() {
 		return sessionId;
+	}
+
+	@Override
+	public List<Item> getSnapshot() {
+		return this.snapshot;
 	}
 }

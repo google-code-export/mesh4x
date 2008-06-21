@@ -9,12 +9,12 @@ import java.util.StringTokenizer;
 import org.dom4j.Element;
 
 import com.mesh4j.sync.adapters.feed.XMLContent;
-import com.mesh4j.sync.diff.Diff;
 import com.mesh4j.sync.message.ISyncSession;
 import com.mesh4j.sync.model.History;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.NullContent;
 import com.mesh4j.sync.model.Sync;
+import com.mesh4j.sync.utils.Diff;
 import com.mesh4j.sync.utils.XMLHelper;
 
 public class ItemEncoding implements IProtocolConstants{
