@@ -1,5 +1,8 @@
 #summary How to get and update the code. This appears on the Source tab
 
+Browse Source: http://code.google.com/p/geochat/source/browse
+Recent Changes: http://code.google.com/p/geochat/source/list
+
 You can checkout a read-only working copy anonymously over HTTP using an SVN client. 
 
 ==Readonly Access==
