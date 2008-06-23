@@ -10,18 +10,19 @@ import com.mesh4j.sync.message.MessageSyncEngine;
 import com.mesh4j.sync.message.core.IMessageProcessor;
 import com.mesh4j.sync.message.core.Message;
 import com.mesh4j.sync.model.Item;
-import com.mesh4j.sync.utils.DiffUtils;
 import com.mesh4j.sync.utils.XMLHelper;
 
 public class MergeWithACKMessageProcessor implements IMessageProcessor {
 
 	// MODEL VARIABLES
 	private ACKMergeMessageProcessor ackMessage;
+	private IItemEncoding itemEncoding;
 	
 	// METHODS
-	public MergeWithACKMessageProcessor(ACKMergeMessageProcessor ackMessage) {
+	public MergeWithACKMessageProcessor(IItemEncoding itemEncoding, ACKMergeMessageProcessor ackMessage) {
 		super();
 		this.ackMessage = ackMessage;
+		this.itemEncoding = itemEncoding;
 	}
 
 	@Override
@@ -33,7 +34,7 @@ public class MergeWithACKMessageProcessor implements IMessageProcessor {
 		syncSession.waitForAck(item.getSyncId());
 		
 		int[] diffHashCodes = this.getLastSyncDiffsHashCodes(syncSession, item);
-		String data = ItemEncoding.encode(syncSession, item, diffHashCodes);
+		String data = this.itemEncoding.encode(syncSession, item, diffHashCodes);
 		
 		return new Message(
 				IProtocolConstants.PROTOCOL,
@@ -49,7 +50,7 @@ public class MergeWithACKMessageProcessor implements IMessageProcessor {
 			for (Item item : items) {
 				if(item.getSyncId().equals(actualItem.getSyncId())){
 					String xml = XMLHelper.canonicalizeXML(item.getContent().getPayload());
-					return DiffUtils.calculateBlockHashCodes(xml, 100);  
+					return this.itemEncoding.calculateDiffBlockHashCodes(xml);  
 				}
 			}
 		}
@@ -59,7 +60,7 @@ public class MergeWithACKMessageProcessor implements IMessageProcessor {
 	@Override
 	public List<IMessage> process(ISyncSession syncSession, IMessage message) {
 		if(syncSession.isOpen() && this.getMessageType().equals(message.getMessageType())){
-			Item incomingItem = ItemEncoding.decode(syncSession, message.getData());
+			Item incomingItem = this.itemEncoding.decode(syncSession, message.getData());
 			MessageSyncEngine.merge(syncSession, incomingItem);
 			
 			ArrayList<IMessage> response = new ArrayList<IMessage>();

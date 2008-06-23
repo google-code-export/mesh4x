@@ -17,9 +17,19 @@ import com.mesh4j.sync.model.Sync;
 import com.mesh4j.sync.utils.DiffUtils;
 import com.mesh4j.sync.utils.XMLHelper;
 
-public class ItemEncoding implements IProtocolConstants{
+public class ItemEncoding implements IItemEncoding, IProtocolConstants{
+	
+	// MODEL VARIABLES
+	private int diffBlockSize = 100;
 
-	public static Item decode(ISyncSession syncSession, String encodingItem) {
+	// BUSINESS METHODS
+	public ItemEncoding(int diffBlockSize) {
+		super();
+		this.diffBlockSize = diffBlockSize;
+	}
+
+	@Override
+	public Item decode(ISyncSession syncSession, String encodingItem) {
 		
 		int xmlPos = 3;
 		
@@ -72,14 +82,15 @@ public class ItemEncoding implements IProtocolConstants{
 			
 			String xml = localItem == null ? "" : XMLHelper.canonicalizeXML(localItem.getContent().getPayload());
 			
-			String xmlResult = DiffUtils.appliesDiff(xml, 100, diffs);
+			String xmlResult = DiffUtils.appliesDiff(xml, this.diffBlockSize, diffs);
 			Element payload = XMLHelper.parseElement(xmlResult);
 			XMLContent content = new XMLContent(syncID, "", "", payload);
 			return new Item(content, sync);
 		}
 	}
 
-	public static String encode(ISyncSession syncSession, Item item, int[] diffHashCodes) {
+	@Override
+	public String encode(ISyncSession syncSession, Item item, int[] diffHashCodes) {
 		StringBuilder sb = new StringBuilder();
 		
 		sb.append(item.getSyncId());
@@ -108,7 +119,7 @@ public class ItemEncoding implements IProtocolConstants{
 			}
 			String xml = XMLHelper.canonicalizeXML(item.getContent().getPayload());
 			
-			Map<Integer, String> diffs = DiffUtils.obtainsDiff(xml, 100, diffHashCodes);
+			Map<Integer, String> diffs = DiffUtils.obtainsDiff(xml, this.diffBlockSize, diffHashCodes);
 			Iterator<Integer> it = diffs.keySet().iterator();
 			while(it.hasNext()) {
 				int i = it.next();
@@ -122,6 +133,11 @@ public class ItemEncoding implements IProtocolConstants{
 		}
 
 		return sb.toString();
+	}
+
+	@Override
+	public int[] calculateDiffBlockHashCodes(String xml) {
+		return DiffUtils.calculateBlockHashCodes(xml, this.diffBlockSize);
 	}
 
 }

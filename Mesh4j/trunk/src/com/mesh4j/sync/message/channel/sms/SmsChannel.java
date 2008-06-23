@@ -16,7 +16,6 @@ public class SmsChannel implements IChannel, ISmsMessageReceiver {
 	private IMessageReceiver messageReceiver;
 
 	// METHODs
-	// TODO (JMT) MeshSms: pipeline? msg-(endode)->msgEncoded-(batch)->msg1..msgn-(connection send sms)->ms1..msgn-(batch)->msgEncoded-(decode)->msg
 	public SmsChannel(ISmsConnection smsConnection, IMessageEncoding messageEncoding) {
 		super();
 		this.smsConnection = smsConnection;

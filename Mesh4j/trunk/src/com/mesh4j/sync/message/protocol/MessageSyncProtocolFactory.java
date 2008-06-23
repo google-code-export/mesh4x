@@ -8,17 +8,17 @@ import com.mesh4j.sync.message.core.MessageSyncProtocol;
 
 public class MessageSyncProtocolFactory {
 
-	public static IMessageSyncProtocol createSyncProtocol() {
+	public static IMessageSyncProtocol createSyncProtocol(int diffBlockSize) {
 
-		// TODO (JMT) MeshSms: state machine/workflow ?
+		IItemEncoding itemEncoding = new ItemEncoding(diffBlockSize);
 		
 		ACKEndSyncMessageProcessor ackEndMessage = new ACKEndSyncMessageProcessor();
 		EndSyncMessageProcessor endMessage = new EndSyncMessageProcessor(ackEndMessage);
 		
 		ACKMergeMessageProcessor ackMergeMessage = new ACKMergeMessageProcessor(endMessage);
-		MergeMessageProcessor mergeMessage = new MergeMessageProcessor(endMessage);
-		MergeWithACKMessageProcessor mergeWithACKMessage = new MergeWithACKMessageProcessor(ackMergeMessage);
-		GetForMergeMessageProcessor getForMergeMessage = new GetForMergeMessageProcessor(mergeMessage);
+		MergeMessageProcessor mergeMessage = new MergeMessageProcessor(itemEncoding, endMessage);
+		MergeWithACKMessageProcessor mergeWithACKMessage = new MergeWithACKMessageProcessor(itemEncoding, ackMergeMessage);
+		GetForMergeMessageProcessor getForMergeMessage = new GetForMergeMessageProcessor(itemEncoding, mergeMessage);
 		LastVersionStatusMessageProcessor lastVersionMessage = new LastVersionStatusMessageProcessor(getForMergeMessage, mergeWithACKMessage, endMessage);
 		NoChangesMessageProcessor noChangesMessage = new NoChangesMessageProcessor(endMessage, mergeWithACKMessage);
 		BeginSyncMessageProcessor beginMessage = new BeginSyncMessageProcessor(noChangesMessage, lastVersionMessage);

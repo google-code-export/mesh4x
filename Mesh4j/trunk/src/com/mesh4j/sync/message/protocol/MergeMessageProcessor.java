@@ -14,12 +14,14 @@ import com.mesh4j.sync.model.Item;
 public class MergeMessageProcessor implements IMessageProcessor {
 
 	// MODEL VARIABLES
+	private IItemEncoding itemEncoding;
 	private EndSyncMessageProcessor endMessage;
 	
 	// METHODS
-	public MergeMessageProcessor(EndSyncMessageProcessor endMessage) {
+	public MergeMessageProcessor(IItemEncoding itemEncoding, EndSyncMessageProcessor endMessage) {
 		super();
 		this.endMessage = endMessage;
+		this.itemEncoding = itemEncoding;
 	}
 
 	@Override
@@ -33,7 +35,7 @@ public class MergeMessageProcessor implements IMessageProcessor {
 	}
 	
 	public IMessage createMessage(ISyncSession syncSession, Item item, int[] diffHashCodes) {
-		String data = ItemEncoding.encode(syncSession, item, diffHashCodes);
+		String data = this.itemEncoding.encode(syncSession, item, diffHashCodes);
 		return new Message(
 				IProtocolConstants.PROTOCOL,
 				getMessageType(),
@@ -45,7 +47,7 @@ public class MergeMessageProcessor implements IMessageProcessor {
 	@Override
 	public List<IMessage> process(ISyncSession syncSession, IMessage message) {
 		if(this.getMessageType().equals(message.getMessageType())){
-			Item incomingItem = ItemEncoding.decode(syncSession, message.getData());
+			Item incomingItem = this.itemEncoding.decode(syncSession, message.getData());
 			MessageSyncEngine.merge(syncSession, incomingItem);
 			
 			syncSession.notifyAck(incomingItem.getSyncId());

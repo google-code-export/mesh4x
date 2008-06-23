@@ -47,7 +47,7 @@ public class MessageSyncEngineTests {
 		IChannel channelEndpointA = new SmsChannel(smsConnectionEndpointA, MockMessageEncoding.INSTANCE);
 		IChannel channelEndpointB = new SmsChannel(smsConnectionEndpointB, MockMessageEncoding.INSTANCE);
 		
-		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocol();		
+		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocol(100);		
 		
 		syncSessionFactoryA = new SyncSessionFactory();
 		syncSessionFactoryA.registerSource(endPointA);
@@ -56,7 +56,7 @@ public class MessageSyncEngineTests {
 		syncSessionFactoryB = new SyncSessionFactory();
 		syncSessionFactoryB.registerSource(endPointB);
 		syncEngineEndPointB = new MessageSyncEngine(syncProtocol, channelEndpointB, syncSessionFactoryB);
-
+		Assert.assertNotNull(syncEngineEndPointB);
 	}
 	
 	@Test

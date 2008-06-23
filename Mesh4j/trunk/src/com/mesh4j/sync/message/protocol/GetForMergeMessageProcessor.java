@@ -10,19 +10,20 @@ import com.mesh4j.sync.message.ISyncSession;
 import com.mesh4j.sync.message.core.IMessageProcessor;
 import com.mesh4j.sync.message.core.Message;
 import com.mesh4j.sync.model.Item;
-import com.mesh4j.sync.utils.DiffUtils;
 import com.mesh4j.sync.utils.XMLHelper;
 
 public class GetForMergeMessageProcessor implements IMessageProcessor {
 
 	// MODEL VARIABLES
 	private MergeMessageProcessor mergeMessage;
+	private IItemEncoding itemEncoding;
 	
 	// METHODS	
 	
-	public GetForMergeMessageProcessor(MergeMessageProcessor mergeMessage) {
+	public GetForMergeMessageProcessor(IItemEncoding itemEncoding, MergeMessageProcessor mergeMessage) {
 		super();
 		this.mergeMessage = mergeMessage;
+		this.itemEncoding = itemEncoding;
 	}
 
 	@Override
@@ -76,7 +77,7 @@ public class GetForMergeMessageProcessor implements IMessageProcessor {
 			
 			String xml = XMLHelper.canonicalizeXML(item.getContent().getPayload());
 			
-			int[] hashs = DiffUtils.calculateBlockHashCodes(xml, 100);
+			int[] hashs = this.itemEncoding.calculateDiffBlockHashCodes(xml);
 			for (int j = 0; j < hashs.length; j++) {
 				sb.append(hashs[j]);
 				if(j != hashs.length){

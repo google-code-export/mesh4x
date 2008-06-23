@@ -19,7 +19,6 @@ import com.mesh4j.sync.adapters.kml.KMLContent;
 import com.mesh4j.sync.message.channel.sms.SmsChannel;
 import com.mesh4j.sync.message.channel.sms.SmsEndpoint;
 import com.mesh4j.sync.message.core.SyncSessionFactory;
-import com.mesh4j.sync.message.encoding.CompressBase64MessageEncoding;
 import com.mesh4j.sync.message.encoding.CompressBase91MessageEncoding;
 import com.mesh4j.sync.message.encoding.IMessageEncoding;
 import com.mesh4j.sync.message.protocol.MessageSyncProtocolFactory;
@@ -62,7 +61,7 @@ public class KmlMessageSyncEngineTests {
 		ISyncSessionFactory syncSessionFactoryA = new SyncSessionFactory();
 		syncSessionFactoryA.registerSource(endpointA);
 	
-		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocol();		
+		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocol(100);		
 		MessageSyncEngine syncEngineEndPointA = new MessageSyncEngine(syncProtocol, channelEndpointA, syncSessionFactoryA);
 
 		MockInMemoryMessageSyncAdapter endpointB = new MockInMemoryMessageSyncAdapter(dataSetId, kmlAdapterB.getAll());
@@ -156,19 +155,19 @@ public class KmlMessageSyncEngineTests {
 
 	@Test
 	public void shouldSyncKmlNoChanges() throws Exception{
-		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocol();
+		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocol(100);
 		syncKml(syncProtocol, false, false, CompressBase91MessageEncoding.INSTANCE);
 	}
 	
 	@Test
 	public void shouldSyncKmlPlacemarkEndpointAChanged() throws Exception{
-		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocol();
+		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocol(100);
 		syncKml(syncProtocol, true, false, CompressBase91MessageEncoding.INSTANCE);
 	}
 
 	@Test
 	public void shouldSyncKmlPlacemarkEndpointBChanged() throws Exception{
-		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocol();
+		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocol(100);
 //		syncKml(syncProtocol, false, true, ZipBase64MessageEncoding.INSTANCE);
 //		System.out.println("#########################################");
 //		syncKml(syncProtocol, false, true, CompressBase64MessageEncoding.INSTANCE);
@@ -180,8 +179,8 @@ public class KmlMessageSyncEngineTests {
 	
 	@Test
 	public void shouldSyncKmlPlacemarkConflicts() throws Exception{
-		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocol();
-		syncKml(syncProtocol, true, true, CompressBase64MessageEncoding.INSTANCE);
+		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocol(100);
+		syncKml(syncProtocol, true, true, CompressBase91MessageEncoding.INSTANCE);
 	}
 	
 	private void syncKml(IMessageSyncProtocol syncProtocol, boolean updateA, boolean updateB, IMessageEncoding messageEncoding) throws InterruptedException{

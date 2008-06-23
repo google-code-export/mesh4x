@@ -3,42 +3,24 @@ package com.mesh4j.sync.message.encoding;
 import com.mesh4j.sync.utils.Base64Helper;
 import com.mesh4j.sync.utils.ZipUtils;
 
-public class ZipBase64MessageEncoding implements IMessageEncoding{
+public class ZipBase64MessageEncoding extends AbstractMessageEncoding{
 
 	public static final ZipBase64MessageEncoding INSTANCE = new ZipBase64MessageEncoding();
 
+	private ZipBase64MessageEncoding(){
+		super();
+	}
+	
 	@Override
-	public String encode(String message) {
-		if(message.length() == 0){
-			return message;
-		}
+	public String basicEncode(String message) {
 		byte[] bytes = ZipUtils.zip(message, "message");
 		String encodeMsg = Base64Helper.encode(bytes);
-		if(encodeMsg.length() >= message.length()+1){
-			encodeMsg = "n"+message;
-		}else{
-			encodeMsg = "c"+encodeMsg;
-		}
 		return encodeMsg;
 	}
 	
 	@Override
-	public String decode(String message) {
-		if(message.length() == 0){
-			return message;
-		}
-		String data = message.substring(1, message.length());
-		if(message.startsWith("n")){
-			return data;
-		}else if(message.startsWith("c")){
-			byte[] zipBytes = Base64Helper.decode(data);		
-			return ZipUtils.unzip(zipBytes, "message");
-		}else{
-			return "";
-		}
-	}
-
-
-
-	
+	public String basicDecode(String message) {
+		byte[] zipBytes = Base64Helper.decode(message);		
+		return ZipUtils.unzip(zipBytes, "message");
+	}	
 }

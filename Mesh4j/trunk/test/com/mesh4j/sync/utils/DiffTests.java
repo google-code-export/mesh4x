@@ -7,8 +7,6 @@ import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.mesh4j.sync.utils.DiffUtils;
-
 public class DiffTests {
 
 	@Test
