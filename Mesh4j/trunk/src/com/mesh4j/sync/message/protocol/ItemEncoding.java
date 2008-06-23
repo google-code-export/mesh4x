@@ -31,15 +31,14 @@ public class ItemEncoding implements IItemEncoding, IProtocolConstants{
 	@Override
 	public Item decode(ISyncSession syncSession, String encodingItem) {
 		
-		int xmlPos = 3;
-		
 		StringTokenizer st = new StringTokenizer(encodingItem, ELEMENT_SEPARATOR);
 		
+		String header = st.nextToken();
 		Sync sync = null;
-		
-		String syncID = st.nextToken();
-		xmlPos = xmlPos + syncID.length();
-		
+	
+		String syncID = header.substring(0, 36);
+		boolean deleted = "T".equals(header.substring(36, 37));
+			
 		Item localItem = syncSession.get(syncID);
 		if(localItem == null){
 			sync = new Sync(syncID);
@@ -47,18 +46,14 @@ public class ItemEncoding implements IItemEncoding, IProtocolConstants{
 			sync = localItem.getSync().clone();
 		}
 		
-		boolean deleted = "T".equals(st.nextToken());
-		xmlPos = xmlPos + 1;
-		
-		String historiesString = st.nextToken();
-		xmlPos = xmlPos + historiesString.length();
+		String historiesString = header.substring(37, header.length());
 		
 		StringTokenizer stHistories = new StringTokenizer(historiesString, FIELD_SEPARATOR);
 		while(stHistories.hasMoreTokens()){
 			String historyString = stHistories.nextToken();
-			StringTokenizer stHistory = new StringTokenizer(historyString, SUB_FIELD_SEPARATOR);
-			String by = stHistory.nextToken();
-			long datetime = Long.parseLong(stHistory.nextToken());
+			long datetime = Long.parseLong(historyString.substring(0, 13));
+			String by = historyString.substring(13, historyString.length());
+			
 			Date when = new Date(datetime);
 			if(stHistories.hasMoreTokens()){
 				sync.update(by, when, false);
@@ -70,14 +65,15 @@ public class ItemEncoding implements IItemEncoding, IProtocolConstants{
 		if(deleted){
 			return new Item(new NullContent(syncID), sync);
 		} else {
-			String xmlDiff = encodingItem.substring(xmlPos, encodingItem.length());
+			String xmlDiff = encodingItem.substring(header.length() + 1, encodingItem.length());
 			HashMap<Integer, String> diffs = new HashMap<Integer, String>();
 			
 			StringTokenizer stDiffs = new StringTokenizer(xmlDiff, FIELD_SEPARATOR);
 			while(stDiffs.hasMoreTokens()){
 				String blockDiff = stDiffs.nextToken();
-				String[] blockDiffs = blockDiff.split(SUB_FIELD_SEPARATOR);
-				diffs.put(Integer.valueOf(blockDiffs[0]), blockDiffs[1]);
+				String index = blockDiff.substring(0, 1);
+				String textDiff = blockDiff.substring(1, blockDiff.length());
+				diffs.put(Integer.valueOf(index), textDiff);
 			}
 			
 			String xml = localItem == null ? "" : XMLHelper.canonicalizeXML(localItem.getContent().getPayload());
@@ -92,21 +88,17 @@ public class ItemEncoding implements IItemEncoding, IProtocolConstants{
 	@Override
 	public String encode(ISyncSession syncSession, Item item, int[] diffHashCodes) {
 		StringBuilder sb = new StringBuilder();
-		
 		sb.append(item.getSyncId());
-		sb.append(ELEMENT_SEPARATOR);
 		sb.append(item.getSync().isDeleted() ? "T" : "F");
-		sb.append(ELEMENT_SEPARATOR);
 		
 		Iterator<History> itHistories = item.getSync().getUpdatesHistory().iterator();
 		boolean addHistory = false; 
 		while (itHistories.hasNext()) {
 			History history = itHistories.next();
 			if(syncSession.getLastSyncDate() == null || syncSession.getLastSyncDate().compareTo(history.getWhen()) <= 0){
-				addHistory = true;
-				sb.append(history.getBy());
-				sb.append(SUB_FIELD_SEPARATOR);
+				addHistory = true;				
 				sb.append(history.getWhen().getTime());
+				sb.append(history.getBy());
 				if(itHistories.hasNext()){
 					sb.append(FIELD_SEPARATOR);
 				}
@@ -124,7 +116,6 @@ public class ItemEncoding implements IItemEncoding, IProtocolConstants{
 			while(it.hasNext()) {
 				int i = it.next();
 				sb.append(i);
-				sb.append(SUB_FIELD_SEPARATOR);
 				sb.append(diffs.get(i));
 				if(it.hasNext()){
 					sb.append(FIELD_SEPARATOR);

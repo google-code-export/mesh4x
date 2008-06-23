@@ -31,7 +31,7 @@
           <value>1</value>
        </Data>
       <mesh4x:sync version="1195092159"> 
-        <sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="1" updates="2" deleted="true" noconflicts="false">  
+		<sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="51b50ba9-b506-4d56-a5e8-64c94d368551" updates="2" deleted="true" noconflicts="false">  
           <sx:history sequence="1" when="2008-06-05T15:36:27Z" by="vcc-PC_jtondato"/> 
         </sx:sync> 
       </mesh4x:sync>

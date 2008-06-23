@@ -29,7 +29,7 @@ import com.mesh4j.sync.utils.XMLHelper;
 
 public class KmlMessageSyncEngineTests {
 	
-//	@Test
+	@Test
 	public void shouldSyncKml() throws DocumentException, IOException{
 		
 		String fileNameA = this.getClass().getResource("kmlWithSyncInfo.kml").getFile();

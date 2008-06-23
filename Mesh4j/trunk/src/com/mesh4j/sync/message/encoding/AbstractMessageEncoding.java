@@ -12,7 +12,7 @@ public abstract class AbstractMessageEncoding implements IMessageEncoding {
 		}
 		
 		if(!message.startsWith("n") && !message.startsWith("c")){
-			Guard.throwsArgumentException("DECODE_INVALID_MESSAGE", message);  // TODO oooooooooooooooooooo
+			Guard.throwsArgumentException("ERROR_MESSAGE_SYNC_INVALID_ENCODED_MESSAGE", message);
 		}
 		String data = message.substring(1, message.length());
 		if(message.startsWith("n")){
@@ -20,7 +20,7 @@ public abstract class AbstractMessageEncoding implements IMessageEncoding {
 		}
 		String decodedMsg = this.basicDecode(data);
 		if(decodedMsg == null){
-			Guard.throwsArgumentException("DECODE_INVALID_MESSAGE", message);
+			Guard.throwsArgumentException("ERROR_MESSAGE_SYNC_INVALID_ENCODED_MESSAGE", message);
 		}
 		return decodedMsg;
 		
