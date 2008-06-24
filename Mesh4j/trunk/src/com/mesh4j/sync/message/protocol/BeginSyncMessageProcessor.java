@@ -16,6 +16,7 @@ import com.mesh4j.sync.message.core.Message;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.utils.DateHelper;
 import com.mesh4j.sync.utils.IdGenerator;
+import com.mesh4j.sync.validations.Guard;
 
 public class BeginSyncMessageProcessor implements IMessageProcessor, IBeginSyncMessageProcessor {
 
@@ -37,6 +38,8 @@ public class BeginSyncMessageProcessor implements IMessageProcessor, IBeginSyncM
 
 	@Override
 	public IMessage createMessage(ISyncSession syncSession){
+		Guard.argumentNotNull(syncSession, "syncSession");
+		
 		syncSession.beginSync();
 		String data = encode(syncSession);			
 		return new Message(
@@ -99,13 +102,19 @@ public class BeginSyncMessageProcessor implements IMessageProcessor, IBeginSyncM
 	}
 
 	@Override
-	public ISyncSession createSession(ISyncSessionFactory syncSessionFactory,
-			String sourceId, IEndpoint target) {
+	public ISyncSession createSession(ISyncSessionFactory syncSessionFactory, String sourceId, IEndpoint target) {
+		Guard.argumentNotNull(syncSessionFactory, "syncSessionFactory");
+		Guard.argumentNotNull(target, "target");
+		Guard.argumentNotNullOrEmptyString(sourceId, "sourceId");
+		
 		return syncSessionFactory.createSession(IdGenerator.newID(), sourceId, target);
 	}
 	
 	@Override
 	public ISyncSession createSession(ISyncSessionFactory syncSessionFactory, IMessage message) {
+		Guard.argumentNotNull(syncSessionFactory, "syncSessionFactory");
+		Guard.argumentNotNull(message, "message");
+		
 		if(this.getMessageType().equals(message.getMessageType())){
 			String sourceId = decodeSource(message.getData());
 			return syncSessionFactory.createSession(message.getSessionId(), sourceId, message.getEndpoint());

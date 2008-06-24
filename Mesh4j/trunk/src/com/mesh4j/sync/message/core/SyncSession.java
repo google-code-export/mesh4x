@@ -168,4 +168,9 @@ public class SyncSession implements ISyncSession{
 	public List<Item> getSnapshot() {
 		return this.snapshot;
 	}
+
+	@Override
+	public Date createSyncDate() {
+		return new Date();
+	}
 }

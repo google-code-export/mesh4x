@@ -11,6 +11,7 @@ import com.mesh4j.sync.message.core.IMessageProcessor;
 import com.mesh4j.sync.message.core.Message;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.utils.XMLHelper;
+import com.mesh4j.sync.validations.Guard;
 
 public class GetForMergeMessageProcessor implements IMessageProcessor {
 
@@ -32,11 +33,16 @@ public class GetForMergeMessageProcessor implements IMessageProcessor {
 	}
 	
 	public IMessage createMessage(ISyncSession syncSession, String syncID) {
+		Guard.argumentNotNull(syncSession, "syncSession");
+		Guard.argumentNotNullOrEmptyString(syncID, "syncID");
+		
 		Item item = syncSession.get(syncID);
 		return basicCreateMessage(syncSession, syncID, item);
 	}
 	
 	public IMessage createMessage(ISyncSession syncSession, Item item) {
+		Guard.argumentNotNull(syncSession, "syncSession");
+		Guard.argumentNotNull(item, "item");
 		return basicCreateMessage(syncSession, item.getSyncId(), item);
 	}
 	

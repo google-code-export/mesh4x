@@ -9,6 +9,7 @@ import com.mesh4j.sync.message.ISyncSession;
 import com.mesh4j.sync.message.core.IMessageProcessor;
 import com.mesh4j.sync.message.core.Message;
 import com.mesh4j.sync.model.Item;
+import com.mesh4j.sync.validations.Guard;
 
 public class NoChangesMessageProcessor implements IMessageProcessor {
 
@@ -52,6 +53,8 @@ public class NoChangesMessageProcessor implements IMessageProcessor {
 
 
 	public IMessage createMessage(ISyncSession syncSession) {
+		Guard.argumentNotNull(syncSession, "syncSession");
+
 		return new Message(
 				IProtocolConstants.PROTOCOL,
 				getMessageType(),

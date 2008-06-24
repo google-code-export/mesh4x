@@ -1,7 +1,6 @@
 package com.mesh4j.sync.message.protocol;
 
 import java.util.Date;
-import java.util.List;
 
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -9,7 +8,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.mesh4j.sync.adapters.feed.XMLContent;
-import com.mesh4j.sync.message.IEndpoint;
 import com.mesh4j.sync.message.ISyncSession;
 import com.mesh4j.sync.model.IContent;
 import com.mesh4j.sync.model.Item;
@@ -596,43 +594,4 @@ public class ItemEncodingTests {
 		Assert.assertEquals("de".hashCode(), diffHashs[1]);
 	}
 
-	// MOCKS
-	private class MockSyncSession implements ISyncSession{
-
-		private Date sinceDate;
-		private Item item;
-		
-		public MockSyncSession(Date sinceDate) {
-			super();
-			this.sinceDate = sinceDate;
-		}
-
-		public MockSyncSession(Date sinceDate, Item item) {
-			super();
-			this.sinceDate = sinceDate;
-			this.item = item;
-		}
-
-		@Override public void add(Item item) {}
-		@Override public void addConflict(String syncID) {}
-		@Override public void beginSync() {}
-		@Override public void beginSync(Date sinceDate) {}
-		@Override public void cancelSync() {}
-		@Override public void delete(String syncID, String by, Date when) {}
-		@Override public void endSync(Date sinceDate) {}
-		@Override public Item get(String syncId) {return item;}
-		@Override public List<Item> getAll() {return null;}
-		@Override public Date getLastSyncDate() {return sinceDate;}
-		@Override public String getSessionId() {return null;}
-		@Override public List<Item> getSnapshot() {return null;}
-		@Override public String getSourceId() {return null;}
-		@Override public IEndpoint getTarget() {return null;}
-		@Override public boolean hasChanged(String syncID) {return false;}
-		@Override public boolean hasConflict(String syncId) {return false;}
-		@Override public boolean isCompleteSync() {return false;}
-		@Override public boolean isOpen() {return false;}
-		@Override public void notifyAck(String syncId) {}
-		@Override public void update(Item item) {}
-		@Override public void waitForAck(String syncId) {}
-	}
 }

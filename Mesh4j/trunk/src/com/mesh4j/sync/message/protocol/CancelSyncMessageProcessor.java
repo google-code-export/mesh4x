@@ -7,11 +7,14 @@ import com.mesh4j.sync.message.IMessageSyncProtocol;
 import com.mesh4j.sync.message.ISyncSession;
 import com.mesh4j.sync.message.core.ICancelSyncMessageProcessor;
 import com.mesh4j.sync.message.core.Message;
+import com.mesh4j.sync.validations.Guard;
 
 public class CancelSyncMessageProcessor implements ICancelSyncMessageProcessor {
 
 	@Override
 	public IMessage createMessage(ISyncSession syncSession) {
+		Guard.argumentNotNull(syncSession, "syncSession");
+				
 		syncSession.cancelSync();
 		return new Message(
 			IProtocolConstants.PROTOCOL,

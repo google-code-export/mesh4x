@@ -213,6 +213,10 @@ public class DateHelper {
     	if(dateTimeAsString == null || dateTimeAsString.length() == 0){
     		return null;
     	}
-    	return new Date(Long.valueOf(dateTimeAsString));
+    	try{
+    		return new Date(Long.valueOf(dateTimeAsString));
+    	} catch(NumberFormatException e){
+    		return null;
+    	}
     }   
 }

@@ -10,6 +10,7 @@ import com.mesh4j.sync.message.ISyncSession;
 import com.mesh4j.sync.message.core.IMessageProcessor;
 import com.mesh4j.sync.message.core.Message;
 import com.mesh4j.sync.utils.DateHelper;
+import com.mesh4j.sync.validations.Guard;
 
 public class EndSyncMessageProcessor implements IMessageProcessor {
 
@@ -28,11 +29,13 @@ public class EndSyncMessageProcessor implements IMessageProcessor {
 	}
 	
 	public IMessage createMessage(ISyncSession syncSession){
+		Guard.argumentNotNull(syncSession, "syncSession");
+				
 		return new Message(
 				IProtocolConstants.PROTOCOL,
 				getMessageType(),
 				syncSession.getSessionId(),
-				DateHelper.formatDateTime(new Date()),
+				DateHelper.formatDateTime(syncSession.createSyncDate()),
 				syncSession.getTarget());
 	}
 
@@ -41,11 +44,13 @@ public class EndSyncMessageProcessor implements IMessageProcessor {
 		
 		if(syncSession.isOpen() && this.getMessageType().equals(message.getMessageType())){
 			Date sinceDate = DateHelper.parseDateTime(message.getData());
-			syncSession.endSync(sinceDate);
-			
-			ArrayList<IMessage> response = new ArrayList<IMessage>();
-			response.add(this.ackEndMessage.createMessage(syncSession, sinceDate));
-			return response;
+			if(sinceDate != null){
+				syncSession.endSync(sinceDate);
+				
+				ArrayList<IMessage> response = new ArrayList<IMessage>();
+				response.add(this.ackEndMessage.createMessage(syncSession, sinceDate));
+				return response;
+			}
 		}
 		return IMessageSyncProtocol.NO_RESPONSE;
 	}

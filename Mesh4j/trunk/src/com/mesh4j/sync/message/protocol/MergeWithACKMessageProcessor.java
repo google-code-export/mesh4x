@@ -11,6 +11,7 @@ import com.mesh4j.sync.message.core.IMessageProcessor;
 import com.mesh4j.sync.message.core.Message;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.utils.XMLHelper;
+import com.mesh4j.sync.validations.Guard;
 
 public class MergeWithACKMessageProcessor implements IMessageProcessor {
 
@@ -31,8 +32,10 @@ public class MergeWithACKMessageProcessor implements IMessageProcessor {
 	}
 	
 	public IMessage createMessage(ISyncSession syncSession, Item item) {
-		syncSession.waitForAck(item.getSyncId());
+		Guard.argumentNotNull(syncSession, "syncSession");
+		Guard.argumentNotNull(item, "item");
 		
+		syncSession.waitForAck(item.getSyncId());		
 		int[] diffHashCodes = this.getLastSyncDiffsHashCodes(syncSession, item);
 		String data = this.itemEncoding.encode(syncSession, item, diffHashCodes);
 		
@@ -61,6 +64,7 @@ public class MergeWithACKMessageProcessor implements IMessageProcessor {
 	public List<IMessage> process(ISyncSession syncSession, IMessage message) {
 		if(syncSession.isOpen() && this.getMessageType().equals(message.getMessageType())){
 			Item incomingItem = this.itemEncoding.decode(syncSession, message.getData());
+
 			MessageSyncEngine.merge(syncSession, incomingItem);
 			
 			ArrayList<IMessage> response = new ArrayList<IMessage>();

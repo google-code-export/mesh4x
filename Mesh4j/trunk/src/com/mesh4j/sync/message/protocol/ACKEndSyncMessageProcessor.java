@@ -9,6 +9,7 @@ import com.mesh4j.sync.message.ISyncSession;
 import com.mesh4j.sync.message.core.IMessageProcessor;
 import com.mesh4j.sync.message.core.Message;
 import com.mesh4j.sync.utils.DateHelper;
+import com.mesh4j.sync.validations.Guard;
 
 public class ACKEndSyncMessageProcessor implements IMessageProcessor {
 
@@ -18,6 +19,9 @@ public class ACKEndSyncMessageProcessor implements IMessageProcessor {
 	}
 	
 	public IMessage createMessage(ISyncSession syncSession, Date sinceDate){
+		Guard.argumentNotNull(syncSession, "syncSession");
+		Guard.argumentNotNull(sinceDate, "sinceDate");
+		
 		return new Message(
 				IProtocolConstants.PROTOCOL,
 				getMessageType(),
@@ -31,7 +35,9 @@ public class ACKEndSyncMessageProcessor implements IMessageProcessor {
 		
 		if(syncSession.isOpen() && this.getMessageType().equals(message.getMessageType())){
 			Date sinceDate = DateHelper.parseDateTime(message.getData());
-			syncSession.endSync(sinceDate);
+			if(sinceDate != null){
+				syncSession.endSync(sinceDate);   // TODO (JMT) MeshSms: ACK MANAGMENT - If date parameter is invalid message should be discarded
+			}
 		}
 		return IMessageSyncProtocol.NO_RESPONSE;
 	}

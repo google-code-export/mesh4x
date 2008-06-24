@@ -8,6 +8,7 @@ import com.mesh4j.sync.message.IMessageSyncProtocol;
 import com.mesh4j.sync.message.ISyncSession;
 import com.mesh4j.sync.message.core.IMessageProcessor;
 import com.mesh4j.sync.message.core.Message;
+import com.mesh4j.sync.validations.Guard;
 
 public class ACKMergeMessageProcessor implements IMessageProcessor {
 
@@ -48,6 +49,9 @@ public class ACKMergeMessageProcessor implements IMessageProcessor {
 	}
 
 	public IMessage createMessage(ISyncSession syncSession, String syncId, boolean hasConflict) {
+		Guard.argumentNotNull(syncSession, "syncSession");
+		Guard.argumentNotNullOrEmptyString(syncId, "syncId");
+		
 		String data = (hasConflict ? "T" : "F") + syncId;
 		return new Message(
 				IProtocolConstants.PROTOCOL,

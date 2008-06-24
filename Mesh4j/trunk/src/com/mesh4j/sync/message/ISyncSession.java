@@ -36,4 +36,6 @@ public interface ISyncSession {
 	void waitForAck(String syncId);
 	void notifyAck(String syncId);
 
+	Date createSyncDate();
+
 }
