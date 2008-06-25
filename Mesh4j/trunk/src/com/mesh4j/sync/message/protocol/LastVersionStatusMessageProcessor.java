@@ -37,7 +37,7 @@ public class LastVersionStatusMessageProcessor implements IMessageProcessor{
 		Guard.argumentNotNull(items, "items");
 		
 		if(items.isEmpty()){
-			Guard.throwsArgumentException("xxx");  // TODO ooooooooooooooooooooo
+			Guard.throwsArgumentException("ERROR_MESSAGE_SYNC_LAST_STATUS_EMPTY_ITEMS");
 		}
 		
 		return new Message(
