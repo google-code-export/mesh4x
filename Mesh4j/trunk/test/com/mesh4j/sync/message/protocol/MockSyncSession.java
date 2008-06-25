@@ -53,7 +53,9 @@ public class MockSyncSession implements ISyncSession{
 	@Override public void beginSync() {this.beginWasCalled = true;}
 	@Override public void beginSync(Date sinceDate) {this.beginWasCalled=true;}
 	@Override public void cancelSync() {}
-	@Override public void delete(String syncID, String by, Date when) {}
+	@Override public void delete(String syncID, String by, Date when) {
+		this.item.getSync().delete(by, when);
+	}	
 	@Override public void endSync(Date sinceDate) {
 		this.sinceDate = sinceDate;
 		this.endSyncWasCalled = true;
@@ -110,6 +112,11 @@ public class MockSyncSession implements ISyncSession{
 	
 	public void addToSnapshot(Item item){
 		this.snapshot.add(item);
+	}
+	
+	public void addItem(Item item){
+		this.snapshot.add(item);
+		this.all.add(item);
 	}
 
 	public boolean isPendingAck(String syncId) {

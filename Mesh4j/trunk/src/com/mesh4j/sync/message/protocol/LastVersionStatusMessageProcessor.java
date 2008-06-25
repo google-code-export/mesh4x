@@ -36,6 +36,10 @@ public class LastVersionStatusMessageProcessor implements IMessageProcessor{
 		Guard.argumentNotNull(syncSession, "syncSession");
 		Guard.argumentNotNull(items, "items");
 		
+		if(items.isEmpty()){
+			Guard.throwsArgumentException("xxx");  // TODO ooooooooooooooooooooo
+		}
+		
 		return new Message(
 				IProtocolConstants.PROTOCOL,
 				this.getMessageType(),
@@ -57,13 +61,14 @@ public class LastVersionStatusMessageProcessor implements IMessageProcessor{
 			ArrayList<String> updatedItems = new ArrayList<String>();
 			for (Object[] parameters : changes) {
 				String syncID = (String)parameters[0];
-				String itemHashCode = (String)parameters[1];
-				boolean delete = (Boolean)parameters[2];
-				String deletedBy = (String)parameters[3];
-				Date deletedWhen = (Date)parameters[4];
-	
+
 				Item localItem = syncSession.get(syncID);
 				if(localItem != null){
+					String itemHashCode = (String)parameters[1];
+					boolean delete = (Boolean)parameters[2];
+					String deletedBy = (String)parameters[3];
+					Date deletedWhen = (Date)parameters[4];
+					
 					if(syncSession.hasChanged(syncID)){
 						syncSession.addConflict(syncID);
 						updatedItems.add(syncID);
@@ -75,6 +80,7 @@ public class LastVersionStatusMessageProcessor implements IMessageProcessor{
 							String localHashCode = this.calculateHasCode(localItem);
 							if(!localHashCode.equals(itemHashCode)){
 								response.add(this.getForMergeMessage.createMessage(syncSession, localItem));
+								updatedItems.add(syncID);
 							}
 						}
 					}

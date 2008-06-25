@@ -121,6 +121,7 @@ public class TestHelper {
 		cal.set(Calendar.MINUTE, minute);
 		cal.set(Calendar.SECOND, second);
 		cal.set(Calendar.MILLISECOND, millisecond);
+		cal.set(Calendar.AM_PM, hour <= 12 ? Calendar.AM : Calendar.PM);
 		return cal.getTime();
 	}
 
