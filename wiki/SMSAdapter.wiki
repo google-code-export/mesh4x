@@ -28,3 +28,6 @@ Our hope is to have client and server implementations:
 *Server scenario*: so if you wanted to sync to a server, you could send the SMS to a centralized service or to a gateway phone plugged in to a PC and your server would just get standard http sync requests.
 
 *Client Scenario*: You have a PC with a phone plugged in (or a mobile device with the data) and a set of SMS messages get exchanged with another PC/phone that then applies the changes locally.
+
+==More Information==
+[http://edjez.instedd.org/2008/06/mesh4x-sms-adapter-sync-data-without.html Blog Post]
