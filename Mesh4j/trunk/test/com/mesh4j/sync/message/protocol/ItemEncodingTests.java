@@ -34,7 +34,17 @@ public class ItemEncodingTests {
 		ItemEncoding itemEncoding = new ItemEncoding(100);
 		String encodedItem = itemEncoding.encode(syncSession, item, new int[0]);
 		Assert.assertNotNull(encodedItem);
-		Assert.assertEquals(syncID+"T1214928060000jmt1~1215446460000jmt2~1215705660000jmt3", encodedItem);
+		
+		StringBuffer sb = new StringBuffer();
+		sb.append(syncID);
+		sb.append("T");
+		sb.append(TestHelper.makeDate(2008, 6, 1, 1, 1, 0, 0).getTime());
+		sb.append("jmt1~");
+		sb.append(TestHelper.makeDate(2008, 6, 7, 1, 1, 0, 0).getTime());
+		sb.append("jmt2~");
+		sb.append(TestHelper.makeDate(2008, 6, 10, 1, 1, 0, 0).getTime());
+		sb.append("jmt3");
+		Assert.assertEquals(sb.toString(), encodedItem);
 	}
 	
 	@Test
@@ -51,7 +61,17 @@ public class ItemEncodingTests {
 		ISyncSession syncSession = new MockSyncSession(null);
 		ItemEncoding itemEncoding = new ItemEncoding(100);
 		
-		Item decodedItem = itemEncoding.decode(syncSession, syncID+"T1214928060000jmt1~1215446460000jmt2~1215705660000jmt3");
+		StringBuffer sb = new StringBuffer();
+		sb.append(syncID);
+		sb.append("T");
+		sb.append(TestHelper.makeDate(2008, 6, 1, 1, 1, 0, 0).getTime());
+		sb.append("jmt1~");
+		sb.append(TestHelper.makeDate(2008, 6, 7, 1, 1, 0, 0).getTime());
+		sb.append("jmt2~");
+		sb.append(TestHelper.makeDate(2008, 6, 10, 1, 1, 0, 0).getTime());
+		sb.append("jmt3");
+		
+		Item decodedItem = itemEncoding.decode(syncSession, sb.toString());
 		Assert.assertNotNull(decodedItem);
 		Assert.assertTrue(item.equals(decodedItem));
 	}
@@ -74,7 +94,17 @@ public class ItemEncodingTests {
 		ItemEncoding itemEncoding = new ItemEncoding(100);
 		String encodedItem = itemEncoding.encode(syncSession, item, new int[0]);
 		Assert.assertNotNull(encodedItem);
-		Assert.assertEquals(syncID+"T1214928060000jmt1~1215446460000jmt2~1215705660000jmt3", encodedItem);
+		
+		StringBuffer sb = new StringBuffer();
+		sb.append(syncID);
+		sb.append("T");
+		sb.append(TestHelper.makeDate(2008, 6, 1, 1, 1, 0, 0).getTime());
+		sb.append("jmt1~");
+		sb.append(TestHelper.makeDate(2008, 6, 7, 1, 1, 0, 0).getTime());
+		sb.append("jmt2~");
+		sb.append(TestHelper.makeDate(2008, 6, 10, 1, 1, 0, 0).getTime());
+		sb.append("jmt3");
+		Assert.assertEquals(sb.toString(), encodedItem);
 	}
 	
 	@Test
@@ -93,8 +123,18 @@ public class ItemEncodingTests {
 		
 		ISyncSession syncSession = new MockSyncSession(sinceDate);
 		ItemEncoding itemEncoding = new ItemEncoding(100);
+		
+		StringBuffer sb = new StringBuffer();
+		sb.append(syncID);
+		sb.append("T");
+		sb.append(TestHelper.makeDate(2008, 6, 1, 1, 1, 0, 0).getTime());
+		sb.append("jmt1~");
+		sb.append(TestHelper.makeDate(2008, 6, 7, 1, 1, 0, 0).getTime());
+		sb.append("jmt2~");
+		sb.append(TestHelper.makeDate(2008, 6, 10, 1, 1, 0, 0).getTime());
+		sb.append("jmt3");
 	
-		Item decodedItem = itemEncoding.decode(syncSession, syncID+"T1214928060000jmt1~1215446460000jmt2~1215705660000jmt3");
+		Item decodedItem = itemEncoding.decode(syncSession, sb.toString());
 		Assert.assertNotNull(decodedItem);
 		Assert.assertTrue(item.equals(decodedItem));
 	}
@@ -117,7 +157,15 @@ public class ItemEncodingTests {
 		ItemEncoding itemEncoding = new ItemEncoding(100);
 		String encodedItem = itemEncoding.encode(syncSession, item, new int[0]);
 		Assert.assertNotNull(encodedItem);
-		Assert.assertEquals(syncID+"T1215446460000jmt2~1215705660000jmt3", encodedItem);
+		
+		StringBuffer sb = new StringBuffer();
+		sb.append(syncID);
+		sb.append("T");
+		sb.append(TestHelper.makeDate(2008, 6, 7, 1, 1, 0, 0).getTime());
+		sb.append("jmt2~");
+		sb.append(TestHelper.makeDate(2008, 6, 10, 1, 1, 0, 0).getTime());
+		sb.append("jmt3");
+		Assert.assertEquals(sb.toString(), encodedItem);
 	}
 	
 	@Test
@@ -141,7 +189,15 @@ public class ItemEncodingTests {
 		Item localItem = new Item(localContent, new Sync(syncID, "jmt1", TestHelper.makeDate(2008, 6, 1, 1, 1, 0, 0), false));
 		ISyncSession syncSession = new MockSyncSession(sinceDate, localItem);
 		
-		Item decodedItem = itemEncoding.decode(syncSession, syncID+"T1215446460000jmt2~1215705660000jmt3");
+		StringBuffer sb = new StringBuffer();
+		sb.append(syncID);
+		sb.append("T");
+		sb.append(TestHelper.makeDate(2008, 6, 7, 1, 1, 0, 0).getTime());
+		sb.append("jmt2~");
+		sb.append(TestHelper.makeDate(2008, 6, 10, 1, 1, 0, 0).getTime());
+		sb.append("jmt3");
+		
+		Item decodedItem = itemEncoding.decode(syncSession, sb.toString());
 		Assert.assertNotNull(decodedItem);
 		Assert.assertTrue(item.equals(decodedItem));
 	}
@@ -164,7 +220,13 @@ public class ItemEncodingTests {
 		ItemEncoding itemEncoding = new ItemEncoding(100);
 		String encodedItem = itemEncoding.encode(syncSession, item, new int[0]);
 		Assert.assertNotNull(encodedItem);
-		Assert.assertEquals(syncID+"T1215705660000jmt3", encodedItem);
+		
+		StringBuffer sb = new StringBuffer();
+		sb.append(syncID);
+		sb.append("T");
+		sb.append(TestHelper.makeDate(2008, 6, 10, 1, 1, 0, 0).getTime());
+		sb.append("jmt3");
+		Assert.assertEquals(sb.toString(), encodedItem);
 	}
 	
 	@Test
@@ -191,7 +253,13 @@ public class ItemEncodingTests {
 				.update("jmt2", TestHelper.makeDate(2008, 6, 7, 1, 1, 0, 0)));
 		ISyncSession syncSession = new MockSyncSession(sinceDate, localItem);
 		
-		Item decodedItem = itemEncoding.decode(syncSession, syncID+"T1215705660000jmt3");
+		StringBuffer sb = new StringBuffer();
+		sb.append(syncID);
+		sb.append("T");
+		sb.append(TestHelper.makeDate(2008, 6, 10, 1, 1, 0, 0).getTime());
+		sb.append("jmt3");
+		
+		Item decodedItem = itemEncoding.decode(syncSession, sb.toString());
 		Assert.assertNotNull(decodedItem);
 		Assert.assertTrue(item.equals(decodedItem));
 	}
@@ -212,7 +280,18 @@ public class ItemEncodingTests {
 		ItemEncoding itemEncoding = new ItemEncoding(5);
 		String encodedItem = itemEncoding.encode(syncSession, item, new int[0]);
 		Assert.assertNotNull(encodedItem);
-		Assert.assertEquals(syncID+"F1214928060000jmt1~1215446460000jmt2~1215705660000jmt3|0<foo>~1</foo~2>", encodedItem);
+		
+		StringBuffer sb = new StringBuffer();
+		sb.append(syncID);
+		sb.append("F");
+		sb.append(TestHelper.makeDate(2008, 6, 1, 1, 1, 0, 0).getTime());
+		sb.append("jmt1~");
+		sb.append(TestHelper.makeDate(2008, 6, 7, 1, 1, 0, 0).getTime());
+		sb.append("jmt2~");
+		sb.append(TestHelper.makeDate(2008, 6, 10, 1, 1, 0, 0).getTime());
+		sb.append("jmt3");
+		sb.append("|0<foo>~1</foo~2>");
+		Assert.assertEquals(sb.toString(), encodedItem);
 	}
 	
 	@Test
@@ -231,7 +310,18 @@ public class ItemEncodingTests {
 
 		ISyncSession syncSession = new MockSyncSession(null);
 		
-		Item decodedItem = itemEncoding.decode(syncSession, syncID+"F1214928060000jmt1~1215446460000jmt2~1215705660000jmt3|0<foo>~1</foo~2>");
+		StringBuffer sb = new StringBuffer();
+		sb.append(syncID);
+		sb.append("F");
+		sb.append(TestHelper.makeDate(2008, 6, 1, 1, 1, 0, 0).getTime());
+		sb.append("jmt1~");
+		sb.append(TestHelper.makeDate(2008, 6, 7, 1, 1, 0, 0).getTime());
+		sb.append("jmt2~");
+		sb.append(TestHelper.makeDate(2008, 6, 10, 1, 1, 0, 0).getTime());
+		sb.append("jmt3");
+		sb.append("|0<foo>~1</foo~2>");
+		
+		Item decodedItem = itemEncoding.decode(syncSession, sb.toString());
 		Assert.assertNotNull(decodedItem);
 		Assert.assertTrue(item.equals(decodedItem));
 	}
@@ -249,7 +339,14 @@ public class ItemEncodingTests {
 		ItemEncoding itemEncoding = new ItemEncoding(500);
 		String encodedItem = itemEncoding.encode(syncSession, item, new int[0]);
 		Assert.assertNotNull(encodedItem);
-		Assert.assertEquals(syncID+"F1214928060000jmt1|0<foo></foo>", encodedItem);
+		
+		StringBuffer sb = new StringBuffer();
+		sb.append(syncID);
+		sb.append("F");
+		sb.append(TestHelper.makeDate(2008, 6, 1, 1, 1, 0, 0).getTime());
+		sb.append("jmt1");
+		sb.append("|0<foo></foo>");
+		Assert.assertEquals(sb.toString(), encodedItem);
 	}
 	
 	@Test
@@ -263,7 +360,15 @@ public class ItemEncodingTests {
 		
 		ISyncSession syncSession = new MockSyncSession(null);
 		ItemEncoding itemEncoding = new ItemEncoding(500);
-		Item decodedItem = itemEncoding.decode(syncSession, syncID+"F1214928060000jmt1|0<foo></foo>");
+		
+		StringBuffer sb = new StringBuffer();
+		sb.append(syncID);
+		sb.append("F");
+		sb.append(TestHelper.makeDate(2008, 6, 1, 1, 1, 0, 0).getTime());
+		sb.append("jmt1");
+		sb.append("|0<foo></foo>");
+		
+		Item decodedItem = itemEncoding.decode(syncSession, sb.toString());
 		Assert.assertNotNull(decodedItem);
 		Assert.assertTrue(item.equals(decodedItem));
 	}
@@ -281,7 +386,15 @@ public class ItemEncodingTests {
 		ItemEncoding itemEncoding = new ItemEncoding(11);
 		String encodedItem = itemEncoding.encode(syncSession, item, new int[0]);
 		Assert.assertNotNull(encodedItem);
-		Assert.assertEquals(syncID+"F1214928060000jmt1|0<foo></foo>", encodedItem);
+		
+		StringBuffer sb = new StringBuffer();
+		sb.append(syncID);
+		sb.append("F");
+		sb.append(TestHelper.makeDate(2008, 6, 1, 1, 1, 0, 0).getTime());
+		sb.append("jmt1");
+		sb.append("|0<foo></foo>");
+		
+		Assert.assertEquals(sb.toString(), encodedItem);
 	}
 	
 	@Test
@@ -295,7 +408,15 @@ public class ItemEncodingTests {
 		
 		ISyncSession syncSession = new MockSyncSession(null);
 		ItemEncoding itemEncoding = new ItemEncoding(11);
-		Item decoItem = itemEncoding.decode(syncSession, syncID+"F1214928060000jmt1|0<foo></foo>");
+		
+		StringBuffer sb = new StringBuffer();
+		sb.append(syncID);
+		sb.append("F");
+		sb.append(TestHelper.makeDate(2008, 6, 1, 1, 1, 0, 0).getTime());
+		sb.append("jmt1");
+		sb.append("|0<foo></foo>");
+		
+		Item decoItem = itemEncoding.decode(syncSession, sb.toString());
 		Assert.assertNotNull(decoItem);
 		Assert.assertTrue(item.equals(decoItem));
 	}
@@ -313,7 +434,15 @@ public class ItemEncodingTests {
 		ItemEncoding itemEncoding = new ItemEncoding(3);
 		String encodedItem = itemEncoding.encode(syncSession, item, new int[0]);
 		Assert.assertNotNull(encodedItem);
-		Assert.assertEquals(syncID+"F1214928060000jmt1|0<fo~1o><~2/fo~3o>", encodedItem);
+		
+		StringBuffer sb = new StringBuffer();
+		sb.append(syncID);
+		sb.append("F");
+		sb.append(TestHelper.makeDate(2008, 6, 1, 1, 1, 0, 0).getTime());
+		sb.append("jmt1");
+		sb.append("|0<fo~1o><~2/fo~3o>");
+		
+		Assert.assertEquals(sb.toString(), encodedItem);
 	}
 	
 	@Test
@@ -327,7 +456,15 @@ public class ItemEncodingTests {
 		
 		ISyncSession syncSession = new MockSyncSession(null);
 		ItemEncoding itemEncoding = new ItemEncoding(3);
-		Item decodeItem = itemEncoding.decode(syncSession, syncID+"F1214928060000jmt1|0<fo~1o><~2/fo~3o>");
+		
+		StringBuffer sb = new StringBuffer();
+		sb.append(syncID);
+		sb.append("F");
+		sb.append(TestHelper.makeDate(2008, 6, 1, 1, 1, 0, 0).getTime());
+		sb.append("jmt1");
+		sb.append("|0<fo~1o><~2/fo~3o>");
+		
+		Item decodeItem = itemEncoding.decode(syncSession, sb.toString());
 		Assert.assertNotNull(decodeItem);
 		Assert.assertTrue(item.equals(decodeItem));
 	}
@@ -345,7 +482,15 @@ public class ItemEncodingTests {
 		ItemEncoding itemEncoding = new ItemEncoding(100);
 		String encodedItem = itemEncoding.encode(syncSession, item, new int[]{XMLHelper.canonicalizeXML(payload).hashCode()});
 		Assert.assertNotNull(encodedItem);
-		Assert.assertEquals(syncID+"F1214928060000jmt1|", encodedItem);
+		
+		StringBuffer sb = new StringBuffer();
+		sb.append(syncID);
+		sb.append("F");
+		sb.append(TestHelper.makeDate(2008, 6, 1, 1, 1, 0, 0).getTime());
+		sb.append("jmt1");
+		sb.append("|");
+		
+		Assert.assertEquals(sb.toString(), encodedItem);
 	}
 	
 	@Test
@@ -366,7 +511,15 @@ public class ItemEncodingTests {
 		
 		ISyncSession syncSession = new MockSyncSession(null, localItem);
 		ItemEncoding itemEncoding = new ItemEncoding(100);
-		Item decodedItem = itemEncoding.decode(syncSession, syncID+"F1215446460000jmt2|");
+		
+		StringBuffer sb = new StringBuffer();
+		sb.append(syncID);
+		sb.append("F");
+		sb.append(TestHelper.makeDate(2008, 6, 7, 1, 1, 0, 0).getTime());
+		sb.append("jmt2");
+		sb.append("|");		
+		
+		Item decodedItem = itemEncoding.decode(syncSession, sb.toString());
 		Assert.assertNotNull(decodedItem);
 		
 		Assert.assertTrue(item.equals(decodedItem));
@@ -385,7 +538,15 @@ public class ItemEncodingTests {
 		ItemEncoding itemEncoding = new ItemEncoding(5);
 		String encodedItem = itemEncoding.encode(syncSession, item, new int[]{"<foo>".hashCode(), 33, 35});
 		Assert.assertNotNull(encodedItem);
-		Assert.assertEquals(syncID+"F1214928060000jmt1|1</foo~2>", encodedItem);
+		
+		StringBuffer sb = new StringBuffer();
+		sb.append(syncID);
+		sb.append("F");
+		sb.append(TestHelper.makeDate(2008, 6, 1, 1, 1, 0, 0).getTime());
+		sb.append("jmt1");
+		sb.append("|1</foo~2>");
+		
+		Assert.assertEquals(sb.toString(), encodedItem);
 	}
 	
 	@Test
@@ -425,7 +586,19 @@ public class ItemEncodingTests {
 		ItemEncoding itemEncoding = new ItemEncoding(100);
 		String encodedItem = itemEncoding.encode(syncSession, item, new int[0]);
 		Assert.assertNotNull(encodedItem);
-		Assert.assertEquals(syncID+"F1214928060000jmt1~1215446460000jmt2~1215705660000jmt3|0<foo></foo>", encodedItem);
+		
+		StringBuffer sb = new StringBuffer();
+		sb.append(syncID);
+		sb.append("F");
+		sb.append(TestHelper.makeDate(2008, 6, 1, 1, 1, 0, 0).getTime());
+		sb.append("jmt1~");
+		sb.append(TestHelper.makeDate(2008, 6, 7, 1, 1, 0, 0).getTime());
+		sb.append("jmt2~");
+		sb.append(TestHelper.makeDate(2008, 6, 10, 1, 1, 0, 0).getTime());
+		sb.append("jmt3");
+		sb.append("|0<foo></foo>");
+		
+		Assert.assertEquals(sb.toString(), encodedItem);
 	}
 	
 	@Test
@@ -445,7 +618,19 @@ public class ItemEncodingTests {
 		
 		ISyncSession syncSession = new MockSyncSession(sinceDate);
 		ItemEncoding itemEncoding = new ItemEncoding(100);
-		Item decodedItem = itemEncoding.decode(syncSession, syncID+"F1214928060000jmt1~1215446460000jmt2~1215705660000jmt3|0<foo></foo>");
+		
+		StringBuffer sb = new StringBuffer();
+		sb.append(syncID);
+		sb.append("F");
+		sb.append(TestHelper.makeDate(2008, 6, 1, 1, 1, 0, 0).getTime());
+		sb.append("jmt1~");
+		sb.append(TestHelper.makeDate(2008, 6, 7, 1, 1, 0, 0).getTime());
+		sb.append("jmt2~");
+		sb.append(TestHelper.makeDate(2008, 6, 10, 1, 1, 0, 0).getTime());
+		sb.append("jmt3");
+		sb.append("|0<foo></foo>");
+		
+		Item decodedItem = itemEncoding.decode(syncSession, sb.toString());
 		Assert.assertNotNull(decodedItem);
 		Assert.assertEquals(item, decodedItem);
 	}
@@ -469,7 +654,17 @@ public class ItemEncodingTests {
 		ItemEncoding itemEncoding = new ItemEncoding(100);
 		String encodedItem = itemEncoding.encode(syncSession, item, new int[0]);
 		Assert.assertNotNull(encodedItem);
-		Assert.assertEquals(syncID+"F1215446460000jmt2~1215705660000jmt3|0<foo></foo>", encodedItem);
+		
+		StringBuffer sb = new StringBuffer();
+		sb.append(syncID);
+		sb.append("F");
+		sb.append(TestHelper.makeDate(2008, 6, 7, 1, 1, 0, 0).getTime());
+		sb.append("jmt2~");
+		sb.append(TestHelper.makeDate(2008, 6, 10, 1, 1, 0, 0).getTime());
+		sb.append("jmt3");
+		sb.append("|0<foo></foo>");
+		
+		Assert.assertEquals(sb.toString(), encodedItem);
 	}
 	
 	@Test
@@ -493,7 +688,17 @@ public class ItemEncodingTests {
 		
 		ISyncSession syncSession = new MockSyncSession(sinceDate, localItem);
 		ItemEncoding itemEncoding = new ItemEncoding(100);
-		Item decodedItem = itemEncoding.decode(syncSession, syncID+"F1215446460000jmt2~1215705660000jmt3|0<foo></foo>");
+		
+		StringBuffer sb = new StringBuffer();
+		sb.append(syncID);
+		sb.append("F");
+		sb.append(TestHelper.makeDate(2008, 6, 7, 1, 1, 0, 0).getTime());
+		sb.append("jmt2~");
+		sb.append(TestHelper.makeDate(2008, 6, 10, 1, 1, 0, 0).getTime());
+		sb.append("jmt3");
+		sb.append("|0<foo></foo>");
+		
+		Item decodedItem = itemEncoding.decode(syncSession, sb.toString());
 		Assert.assertNotNull(decodedItem);
 		Assert.assertTrue(item.equals(decodedItem));
 	}
@@ -517,7 +722,15 @@ public class ItemEncodingTests {
 		ItemEncoding itemEncoding = new ItemEncoding(100);
 		String encodedItem = itemEncoding.encode(syncSession, item, new int[0]);
 		Assert.assertNotNull(encodedItem);
-		Assert.assertEquals(syncID+"F1215705660000jmt3|0<foo></foo>", encodedItem);
+		
+		StringBuffer sb = new StringBuffer();
+		sb.append(syncID);
+		sb.append("F");
+		sb.append(TestHelper.makeDate(2008, 6, 10, 1, 1, 0, 0).getTime());
+		sb.append("jmt3");
+		sb.append("|0<foo></foo>");
+		
+		Assert.assertEquals(sb.toString(), encodedItem);
 	}
 	
 	@Test
@@ -543,7 +756,15 @@ public class ItemEncodingTests {
 		
 		ISyncSession syncSession = new MockSyncSession(sinceDate, localItem);
 		ItemEncoding itemEncoding = new ItemEncoding(100);
-		Item decodedItem = itemEncoding.decode(syncSession, syncID+"F1215705660000jmt3|0<foo></foo>");
+		
+		StringBuffer sb = new StringBuffer();
+		sb.append(syncID);
+		sb.append("F");
+		sb.append(TestHelper.makeDate(2008, 6, 10, 1, 1, 0, 0).getTime());
+		sb.append("jmt3");
+		sb.append("|0<foo></foo>");
+		
+		Item decodedItem = itemEncoding.decode(syncSession, sb.toString());
 		Assert.assertNotNull(decodedItem);
 		Assert.assertTrue(item.equals(decodedItem));
 	}

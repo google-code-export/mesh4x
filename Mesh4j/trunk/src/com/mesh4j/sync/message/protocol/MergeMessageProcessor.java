@@ -55,7 +55,7 @@ public class MergeMessageProcessor implements IMessageProcessor {
 	
 	@Override
 	public List<IMessage> process(ISyncSession syncSession, IMessage message) {
-		if(this.getMessageType().equals(message.getMessageType())){
+		if(syncSession.isOpen() && this.getMessageType().equals(message.getMessageType())){
 			Item incomingItem = this.itemEncoding.decode(syncSession, message.getData());
 			MessageSyncEngine.merge(syncSession, incomingItem);
 			

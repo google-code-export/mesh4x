@@ -86,7 +86,7 @@ public class GetForMergeMessageProcessor implements IMessageProcessor {
 			int[] hashs = this.itemEncoding.calculateDiffBlockHashCodes(xml);
 			for (int j = 0; j < hashs.length; j++) {
 				sb.append(hashs[j]);
-				if(j != hashs.length){
+				if(j+1 != hashs.length){
 					sb.append(IProtocolConstants.FIELD_SEPARATOR);
 				}
 			}

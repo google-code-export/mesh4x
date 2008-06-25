@@ -111,4 +111,8 @@ public class MockSyncSession implements ISyncSession{
 	public void addToSnapshot(Item item){
 		this.snapshot.add(item);
 	}
+
+	public boolean isPendingAck(String syncId) {
+		return syncId.equals(this.ackExpected);
+	}
 }

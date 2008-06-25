@@ -14,7 +14,7 @@ public class MockItemEncoding implements IItemEncoding {
 	
 	@Override
 	public int[] calculateDiffBlockHashCodes(String xml) {
-		return new int[]{1};
+		return new int[]{1,2};
 	}
 
 	@Override
