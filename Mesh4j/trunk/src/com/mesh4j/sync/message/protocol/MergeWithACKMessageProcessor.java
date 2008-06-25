@@ -37,13 +37,16 @@ public class MergeWithACKMessageProcessor implements IMessageProcessor {
 		
 		syncSession.waitForAck(item.getSyncId());		
 		int[] diffHashCodes = this.getLastSyncDiffsHashCodes(syncSession, item);
-		String data = this.itemEncoding.encode(syncSession, item, diffHashCodes);
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append(syncSession.isFullProtocol() ? "T" : "F");
+		sb.append(this.itemEncoding.encode(syncSession, item, diffHashCodes));
 		
 		return new Message(
 				IProtocolConstants.PROTOCOL,
 				getMessageType(),
 				syncSession.getSessionId(),
-				data,
+				sb.toString(),
 				syncSession.getTarget());
 	}
 	
@@ -63,15 +66,20 @@ public class MergeWithACKMessageProcessor implements IMessageProcessor {
 	@Override
 	public List<IMessage> process(ISyncSession syncSession, IMessage message) {
 		if(syncSession.isOpen() && this.getMessageType().equals(message.getMessageType())){
-			Item incomingItem = this.itemEncoding.decode(syncSession, message.getData());
+			
+			boolean isFullProtocol= message.getData().startsWith("T");
+			
+			String itemData = message.getData().substring(1, message.getData().length());
+			
+			Item incomingItem = this.itemEncoding.decode(syncSession, itemData);
 
 			MessageSyncEngine.merge(syncSession, incomingItem);
 			
 			ArrayList<IMessage> response = new ArrayList<IMessage>();
 			response.add(this.ackMessage.createMessage(
-					syncSession, 
-					incomingItem.getSyncId(),
-					syncSession.hasConflict(incomingItem.getSyncId())));
+				syncSession, 
+				incomingItem.getSyncId(),
+				isFullProtocol));
 			return response;
 		}
 		return IMessageSyncProtocol.NO_RESPONSE;

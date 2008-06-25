@@ -18,5 +18,5 @@ public interface IMessageSyncProtocol {
 	ISyncSession createSession(ISyncSessionFactory syncSessionFactory, IMessage message);
 	
 	ISyncSession createSession(ISyncSessionFactory syncSessionFactory,
-			String sourceId, IEndpoint target);
+			String sourceId, IEndpoint target, boolean fullProtocol);
 }

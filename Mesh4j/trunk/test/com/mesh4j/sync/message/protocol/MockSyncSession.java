@@ -24,6 +24,7 @@ public class MockSyncSession implements ISyncSession{
 	private Date currentDate = new Date();
 	private String ackExpected;
 	private boolean hasConflict = false;
+	private boolean fullProtocol = true;
 	
 	public MockSyncSession(Date sinceDate) {
 		this(sinceDate, null);
@@ -121,5 +122,19 @@ public class MockSyncSession implements ISyncSession{
 
 	public boolean isPendingAck(String syncId) {
 		return syncId.equals(this.ackExpected);
+	}
+
+	@Override
+	public void addConflict(Item conflicItem) {
+		this.hasConflict = true;		
+	}
+
+	@Override
+	public boolean isFullProtocol() {
+		return fullProtocol;
+	}
+	
+	public void setFullProtocol(boolean fullProtocol) {
+		this.fullProtocol = fullProtocol;
 	}
 }

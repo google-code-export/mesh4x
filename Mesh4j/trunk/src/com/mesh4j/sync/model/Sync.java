@@ -82,7 +82,7 @@ public class Sync implements Cloneable{
 	}
 	
 	public Sync removeConflict(Item item) {
-		this.conflicts.remove(item);	
+		this.conflicts.remove(item);
 		return this;
 	}
 
@@ -106,7 +106,8 @@ public class Sync implements Cloneable{
 				return this.getId().equals(otherSync.getId()) &&
 					(this.getUpdates() == otherSync.getUpdates()) &&
 					(this.isDeleted() == otherSync.isDeleted()) &&
-					(this.isNoConflicts() == otherSync.isNoConflicts()) &&					
+					(this.isNoConflicts() == otherSync.isNoConflicts()) &&
+					(this.conflicts.size() == otherSync.conflicts.size()) &&		
 					areEqualsHistories(this.getUpdatesHistory(), otherSync.getUpdatesHistory());
 			}
 		}
@@ -147,6 +148,7 @@ public class Sync implements Cloneable{
 		Sync newSync = new Sync(this.id);
 		newSync.deleted = this.deleted;
 		newSync.updates = this.updates;
+		newSync.noConflicts = this.noConflicts;
 
 		ArrayList<History> newHistory = new ArrayList<History>();
 		newHistory.addAll(this.updatesHistory);

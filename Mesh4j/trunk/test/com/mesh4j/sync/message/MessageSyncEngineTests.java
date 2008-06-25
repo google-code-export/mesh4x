@@ -70,7 +70,7 @@ public class MessageSyncEngineTests {
 		IMessageSyncAdapter endPointB = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsB);
 		setUp(endPointA, endPointB);
 		
-		sync();		
+		sync(false);		
 		Assert.assertEquals(1, snapshotA.size());
 		Assert.assertEquals(1, snapshotB.size());
 		Assert.assertTrue(snapshotA.get(0).equals(snapshotB.get(0)));
@@ -88,7 +88,7 @@ public class MessageSyncEngineTests {
 		IMessageSyncAdapter endPointB = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsB);
 		setUp(endPointA, endPointB);
 		
-		sync();			
+		sync(false);			
 		Assert.assertEquals(1, snapshotA.size());
 		Assert.assertEquals(1, snapshotB.size());
 		Assert.assertTrue(snapshotA.get(0).equals(snapshotB.get(0)));
@@ -108,7 +108,7 @@ public class MessageSyncEngineTests {
 		MockInMemoryMessageSyncAdapter endPointB = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsB);
 		setUp(endPointA, endPointB);
 		
-		sync();		
+		sync(false);		
 		Assert.assertEquals(1, snapshotA.size());
 		Assert.assertEquals(1, snapshotB.size());
 		Assert.assertTrue(snapshotA.get(0).equals(snapshotB.get(0)));
@@ -119,7 +119,7 @@ public class MessageSyncEngineTests {
 		itemDeleted.getSync().delete("BIA", new Date());
 		endPointB.add(itemDeleted);
 		
-		sync();		
+		sync(false);		
 		Assert.assertEquals(1, snapshotA.size());
 		Assert.assertEquals(1, snapshotB.size());
 		Assert.assertTrue(snapshotA.get(0).isDeleted());
@@ -141,7 +141,7 @@ public class MessageSyncEngineTests {
 		IMessageSyncAdapter endPointB = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsB);
 		setUp(endPointA, endPointB);
 		
-		sync();		
+		sync(false);		
 		Assert.assertEquals(1, snapshotA.size());
 		Assert.assertEquals(1, snapshotB.size());
 		Assert.assertTrue(snapshotA.get(0).equals(snapshotB.get(0)));
@@ -152,7 +152,7 @@ public class MessageSyncEngineTests {
 		itemDeleted.getSync().delete("BIA", new Date());
 		endPointA.add(itemDeleted);
 		
-		sync();				
+		sync(false);				
 		Assert.assertEquals(1, snapshotA.size());
 		Assert.assertEquals(1, snapshotB.size());
 		Assert.assertTrue(snapshotA.get(0).isDeleted());
@@ -173,7 +173,7 @@ public class MessageSyncEngineTests {
 		IMessageSyncAdapter endPointB = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsB);
 		setUp(endPointA, endPointB);
 		
-		sync();		
+		sync(false);		
 		Assert.assertEquals(1, snapshotA.size());
 		Assert.assertEquals(1, snapshotB.size());
 		Assert.assertTrue(snapshotA.get(0).equals(snapshotB.get(0)));
@@ -187,7 +187,7 @@ public class MessageSyncEngineTests {
 		((Content)itemUpdated.getContent()).refreshVersion();
 		endPointB.add(itemUpdated);
 		
-		sync();				
+		sync(false);				
 		Assert.assertEquals(1, snapshotA.size());
 		Assert.assertEquals(1, snapshotB.size());
 		Assert.assertTrue(snapshotA.get(0).equals(snapshotB.get(0)));
@@ -208,7 +208,7 @@ public class MessageSyncEngineTests {
 		IMessageSyncAdapter endPointB = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsB);
 		setUp(endPointA, endPointB);
 		
-		sync();		
+		sync(false);		
 		Assert.assertEquals(1, snapshotA.size());
 		Assert.assertEquals(1, snapshotB.size());
 		Assert.assertTrue(snapshotA.get(0).equals(snapshotB.get(0)));
@@ -222,7 +222,7 @@ public class MessageSyncEngineTests {
 		((Content)itemUpdated.getContent()).refreshVersion();
 		endPointA.add(itemUpdated);
 		
-		sync();				
+		sync(false);				
 		Assert.assertEquals(1, snapshotA.size());
 		Assert.assertEquals(1, snapshotB.size());
 		Assert.assertFalse(snapshotB.get(0).isDeleted());
@@ -232,11 +232,300 @@ public class MessageSyncEngineTests {
 		Assert.assertTrue(snapshotA.get(0).equals(snapshotB.get(0)));
 	}
 	
-	private void sync(){
+	@Test
+	public void shouldSyncConflict() throws InterruptedException{		
+		Item item = createNewItem();
+		
+		ArrayList<Item> itemsA = new ArrayList<Item>();
+		
+		ArrayList<Item> itemsB = new ArrayList<Item>();
+		itemsB.add(item);
+		
+		IMessageSyncAdapter endPointA = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsA);
+		IMessageSyncAdapter endPointB = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsB);
+		setUp(endPointA, endPointB);
+		
+		sync(false);		
+		Assert.assertEquals(1, snapshotA.size());
+		Assert.assertEquals(1, snapshotB.size());
+		Assert.assertTrue(snapshotA.get(0).equals(snapshotB.get(0)));
+		Assert.assertFalse(snapshotA.get(0).isDeleted());
+
+		
+		Item itemUpdated = snapshotA.get(0).clone();
+		Thread.sleep(5000);
+		itemUpdated.getSync().update("BIA", new Date());
+		Element element = itemUpdated.getContent().getPayload().element("bar");
+		element.add(DocumentHelper.createElement("updateXXXX"));
+		((Content)itemUpdated.getContent()).refreshVersion();
+		endPointA.add(itemUpdated);
+		
+		itemUpdated = snapshotB.get(0).clone();
+		Thread.sleep(5000);
+		itemUpdated.getSync().update("JUN", new Date());
+		element = itemUpdated.getContent().getPayload().element("bar");
+		element.add(DocumentHelper.createElement("updateJUN"));
+		((Content)itemUpdated.getContent()).refreshVersion();
+		endPointB.update(itemUpdated);
+		
+		Assert.assertFalse(syncSessionFactoryA.get(SOURCE_ID, TARGET_B).hasConflict(item.getSyncId()));
+		Assert.assertFalse(syncSessionFactoryB.get(SOURCE_ID, TARGET_A).hasConflict(item.getSyncId()));
+		Assert.assertTrue(snapshotA.get(0).equals(snapshotB.get(0)));
+		Assert.assertNotNull(endPointA.get(item.getSyncId()).getContent().getPayload().element("bar").element("updateXXXX"));
+		Assert.assertNotNull(endPointB.get(item.getSyncId()).getContent().getPayload().element("bar").element("updateJUN"));
+		
+		sync(false);				
+		Assert.assertEquals(1, snapshotA.size());
+		Assert.assertEquals(1, snapshotB.size());
+		Assert.assertFalse(snapshotB.get(0).isDeleted());
+		Assert.assertFalse(snapshotA.get(0).isDeleted());
+		Assert.assertNotNull(endPointA.get(item.getSyncId()).getContent().getPayload().element("bar").element("updateXXXX"));
+		Assert.assertNotNull(endPointB.get(item.getSyncId()).getContent().getPayload().element("bar").element("updateJUN"));
+		Assert.assertFalse(snapshotA.get(0).equals(snapshotB.get(0)));
+		Assert.assertTrue(syncSessionFactoryA.get(SOURCE_ID, TARGET_B).hasConflict(item.getSyncId()));
+		Assert.assertFalse(syncSessionFactoryB.get(SOURCE_ID, TARGET_A).hasConflict(item.getSyncId()));
+	}
 	
+	
+	@Test
+	public void shouldSyncConflictFullProtocol() throws InterruptedException{		
+		Item item = createNewItem();
+		
+		ArrayList<Item> itemsA = new ArrayList<Item>();
+		
+		ArrayList<Item> itemsB = new ArrayList<Item>();
+		itemsB.add(item);
+		
+		IMessageSyncAdapter endPointA = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsA);
+		IMessageSyncAdapter endPointB = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsB);
+		setUp(endPointA, endPointB);
+		
+		sync(true);		
+		Assert.assertEquals(1, snapshotA.size());
+		Assert.assertEquals(1, snapshotB.size());
+		Assert.assertTrue(snapshotA.get(0).equals(snapshotB.get(0)));
+		Assert.assertFalse(snapshotA.get(0).isDeleted());
+
+		
+		Item itemUpdated = snapshotA.get(0).clone();
+		Thread.sleep(5000);
+		itemUpdated.getSync().update("BIA", new Date());
+		Element element = itemUpdated.getContent().getPayload().element("bar");
+		element.add(DocumentHelper.createElement("updateXXXX"));
+		((Content)itemUpdated.getContent()).refreshVersion();
+		endPointA.add(itemUpdated);
+		
+		itemUpdated = snapshotB.get(0).clone();
+		Thread.sleep(5000);
+		itemUpdated.getSync().update("JUN", new Date());
+		element = itemUpdated.getContent().getPayload().element("bar");
+		element.add(DocumentHelper.createElement("updateJUN"));
+		((Content)itemUpdated.getContent()).refreshVersion();
+		endPointB.update(itemUpdated);
+		
+		Assert.assertFalse(syncSessionFactoryA.get(SOURCE_ID, TARGET_B).hasConflict(item.getSyncId()));
+		Assert.assertFalse(syncSessionFactoryB.get(SOURCE_ID, TARGET_A).hasConflict(item.getSyncId()));
+		Assert.assertTrue(snapshotA.get(0).equals(snapshotB.get(0)));
+		Assert.assertNotNull(endPointA.get(item.getSyncId()).getContent().getPayload().element("bar").element("updateXXXX"));
+		Assert.assertNotNull(endPointB.get(item.getSyncId()).getContent().getPayload().element("bar").element("updateJUN"));
+		
+		sync(true);				
+		Assert.assertEquals(1, snapshotA.size());
+		Assert.assertEquals(1, snapshotB.size());
+		Assert.assertFalse(snapshotB.get(0).isDeleted());
+		Assert.assertFalse(snapshotA.get(0).isDeleted());
+		Assert.assertNotNull(endPointA.get(item.getSyncId()).getContent().getPayload().element("bar").element("updateXXXX"));
+		Assert.assertNotNull(endPointB.get(item.getSyncId()).getContent().getPayload().element("bar").element("updateJUN"));
+		Assert.assertTrue(syncSessionFactoryA.get(SOURCE_ID, TARGET_B).hasConflict(item.getSyncId()));
+		Assert.assertFalse(syncSessionFactoryB.get(SOURCE_ID, TARGET_A).hasConflict(item.getSyncId()));
+		Assert.assertFalse(snapshotA.get(0).equals(snapshotB.get(0)));
+	}
+	
+	@Test
+	public void shouldSyncNewBFullProtocol(){		
+		ArrayList<Item> itemsA = new ArrayList<Item>();
+		
+		ArrayList<Item> itemsB = new ArrayList<Item>();
+		itemsB.add(createNewItem());
+		
+		IMessageSyncAdapter endPointA = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsA);
+		IMessageSyncAdapter endPointB = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsB);
+		setUp(endPointA, endPointB);
+		
+		sync(true);		
+		Assert.assertEquals(1, snapshotA.size());
+		Assert.assertEquals(1, snapshotB.size());
+		Assert.assertTrue(snapshotA.get(0).equals(snapshotB.get(0)));
+		Assert.assertFalse(snapshotA.get(0).isDeleted());
+	}
+	
+	@Test
+	public void shouldSyncNewAFullProtocol(){		
+		ArrayList<Item> itemsA = new ArrayList<Item>();
+		itemsA.add(createNewItem());
+		
+		ArrayList<Item> itemsB = new ArrayList<Item>();
+		
+		IMessageSyncAdapter endPointA = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsA);
+		IMessageSyncAdapter endPointB = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsB);
+		setUp(endPointA, endPointB);
+		
+		sync(true);			
+		Assert.assertEquals(1, snapshotA.size());
+		Assert.assertEquals(1, snapshotB.size());
+		Assert.assertTrue(snapshotA.get(0).equals(snapshotB.get(0)));
+		Assert.assertFalse(snapshotB.get(0).isDeleted());
+	}
+	
+	@Test
+	public void shouldSyncDeleteBFullProtocol() throws InterruptedException{
+		Item item = createNewItem();
+		
+		ArrayList<Item> itemsA = new ArrayList<Item>();
+		itemsA.add(item);
+		
+		ArrayList<Item> itemsB = new ArrayList<Item>();
+		
+		MockInMemoryMessageSyncAdapter endPointA = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsA);
+		MockInMemoryMessageSyncAdapter endPointB = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsB);
+		setUp(endPointA, endPointB);
+		
+		sync(true);		
+		Assert.assertEquals(1, snapshotA.size());
+		Assert.assertEquals(1, snapshotB.size());
+		Assert.assertTrue(snapshotA.get(0).equals(snapshotB.get(0)));
+		Assert.assertFalse(snapshotA.get(0).isDeleted());
+		
+		Item itemDeleted = new Item(new NullContent(snapshotB.get(0).getSyncId()), snapshotB.get(0).getSync().clone());
+		Thread.sleep(5000);
+		itemDeleted.getSync().delete("BIA", new Date());
+		endPointB.add(itemDeleted);
+		
+		sync(true);		
+		Assert.assertEquals(1, snapshotA.size());
+		Assert.assertEquals(1, snapshotB.size());
+		Assert.assertTrue(snapshotA.get(0).isDeleted());
+		Assert.assertTrue(snapshotB.get(0).isDeleted());
+		Assert.assertTrue(snapshotA.get(0).equals(snapshotB.get(0)));
+
+	}
+	
+	@Test
+	public void shouldSyncDeleteAFullProtocol() throws InterruptedException{		
+		Item item = createNewItem();
+		
+		ArrayList<Item> itemsA = new ArrayList<Item>();
+		
+		ArrayList<Item> itemsB = new ArrayList<Item>();
+		itemsB.add(item);
+		
+		IMessageSyncAdapter endPointA = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsA);
+		IMessageSyncAdapter endPointB = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsB);
+		setUp(endPointA, endPointB);
+		
+		sync(true);		
+		Assert.assertEquals(1, snapshotA.size());
+		Assert.assertEquals(1, snapshotB.size());
+		Assert.assertTrue(snapshotA.get(0).equals(snapshotB.get(0)));
+		Assert.assertFalse(snapshotA.get(0).isDeleted());
+		
+		Item itemDeleted = new Item(new NullContent(snapshotA.get(0).getSyncId()), snapshotA.get(0).getSync().clone());
+		Thread.sleep(5000);
+		itemDeleted.getSync().delete("BIA", new Date());
+		endPointA.add(itemDeleted);
+		
+		sync(true);				
+		Assert.assertEquals(1, snapshotA.size());
+		Assert.assertEquals(1, snapshotB.size());
+		Assert.assertTrue(snapshotA.get(0).isDeleted());
+		Assert.assertTrue(snapshotB.get(0).isDeleted());
+		Assert.assertTrue(snapshotA.get(0).equals(snapshotB.get(0)));
+	}
+	
+	@Test
+	public void shouldSyncUpdateBFullProtocol() throws InterruptedException{		
+		Item item = createNewItem();
+		
+		ArrayList<Item> itemsA = new ArrayList<Item>();
+		itemsA.add(item);
+		
+		ArrayList<Item> itemsB = new ArrayList<Item>();
+				
+		IMessageSyncAdapter endPointA = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsA);
+		IMessageSyncAdapter endPointB = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsB);
+		setUp(endPointA, endPointB);
+		
+		sync(true);		
+		Assert.assertEquals(1, snapshotA.size());
+		Assert.assertEquals(1, snapshotB.size());
+		Assert.assertTrue(snapshotA.get(0).equals(snapshotB.get(0)));
+		Assert.assertFalse(snapshotA.get(0).isDeleted());
+		
+		Item itemUpdated = snapshotB.get(0).clone();
+		Thread.sleep(5000);
+		itemUpdated.getSync().update("BIA", new Date());
+		Element element = itemUpdated.getContent().getPayload().element("bar");
+		element.add(DocumentHelper.createElement("updateXXXX"));
+		((Content)itemUpdated.getContent()).refreshVersion();
+		endPointB.add(itemUpdated);
+		
+		sync(true);				
+		Assert.assertEquals(1, snapshotA.size());
+		Assert.assertEquals(1, snapshotB.size());
+		Assert.assertTrue(snapshotA.get(0).equals(snapshotB.get(0)));
+		Assert.assertFalse(snapshotA.get(0).isDeleted());
+		Assert.assertNotNull(snapshotA.get(0).getContent().getPayload().element("bar").element("updateXXXX"));
+	}
+	
+	@Test
+	public void shouldSyncUpdateAFullProtocol() throws InterruptedException{		
+		Item item = createNewItem();
+		
+		ArrayList<Item> itemsA = new ArrayList<Item>();
+		
+		ArrayList<Item> itemsB = new ArrayList<Item>();
+		itemsB.add(item);
+		
+		IMessageSyncAdapter endPointA = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsA);
+		IMessageSyncAdapter endPointB = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsB);
+		setUp(endPointA, endPointB);
+		
+		sync(true);		
+		Assert.assertEquals(1, snapshotA.size());
+		Assert.assertEquals(1, snapshotB.size());
+		Assert.assertTrue(snapshotA.get(0).equals(snapshotB.get(0)));
+		Assert.assertFalse(snapshotA.get(0).isDeleted());
+		
+		Item itemUpdated = snapshotA.get(0).clone();
+		Thread.sleep(5000);
+		itemUpdated.getSync().update("BIA", new Date());
+		Element element = itemUpdated.getContent().getPayload().element("bar");
+		element.add(DocumentHelper.createElement("updateXXXX"));
+		((Content)itemUpdated.getContent()).refreshVersion();
+		endPointA.add(itemUpdated);
+		
+		sync(true);				
+		Assert.assertEquals(1, snapshotA.size());
+		Assert.assertEquals(1, snapshotB.size());
+		Assert.assertFalse(snapshotB.get(0).isDeleted());
+		Assert.assertFalse(snapshotA.get(0).isDeleted());
+		Assert.assertNotNull(snapshotA.get(0).getContent().getPayload().element("bar").element("updateXXXX"));
+		Assert.assertNotNull(snapshotB.get(0).getContent().getPayload().element("bar").element("updateXXXX"));
+		Assert.assertTrue(snapshotA.get(0).equals(snapshotB.get(0)));
+	}
+	
+	private void sync(boolean fullProtocol){
+	
+		smsConnectionEndpointA.resetStatistics();
+		smsConnectionEndpointB.resetStatistics();
+		
 		SmsEndpoint endpointB = new SmsEndpoint(TARGET_B);
 		
-		syncEngineEndPointA.synchronize(SOURCE_ID, endpointB);
+		if(fullProtocol){
+			syncEngineEndPointA.synchronizeFull(SOURCE_ID, endpointB);
+		} else {
+			syncEngineEndPointA.synchronize(SOURCE_ID, endpointB);
+		}
 		
 		Assert.assertFalse(syncSessionFactoryA.get(SOURCE_ID, TARGET_B).isOpen());
 		Assert.assertFalse(syncSessionFactoryB.get(SOURCE_ID, TARGET_A).isOpen());
@@ -252,7 +541,6 @@ public class MessageSyncEngineTests {
 		snapshotA = syncSessionFactoryA.get(SOURCE_ID, TARGET_B).getSnapshot();
 		snapshotB = syncSessionFactoryB.get(SOURCE_ID, TARGET_A).getSnapshot();
 	}
-	
 	
 	private Item createNewItem() {
 		String syncId = IdGenerator.newID();

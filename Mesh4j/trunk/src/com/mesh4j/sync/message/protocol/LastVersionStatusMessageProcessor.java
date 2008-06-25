@@ -70,24 +70,29 @@ public class LastVersionStatusMessageProcessor implements IMessageProcessor{
 					Date deletedWhen = (Date)parameters[4];
 					
 					if(syncSession.hasChanged(syncID)){
-						syncSession.addConflict(syncID);
-						updatedItems.add(syncID);
+						if(syncSession.isFullProtocol()){
+							response.add(this.getForMergeMessage.createMessage(syncSession, localItem));
+						} else {
+							syncSession.addConflict(syncID);
+						}
 					} else{
 						if(delete){
-							syncSession.delete(syncID, deletedBy, deletedWhen);
-							updatedItems.add(syncID);
+							if(syncSession.isFullProtocol()){
+								response.add(this.getForMergeMessage.createMessage(syncSession, localItem));
+							} else {
+								syncSession.delete(syncID, deletedBy, deletedWhen);
+							}
 						} else {
 							String localHashCode = this.calculateHasCode(localItem);
 							if(!localHashCode.equals(itemHashCode)){
 								response.add(this.getForMergeMessage.createMessage(syncSession, localItem));
-								updatedItems.add(syncID);
 							}
 						}
 					}
+					updatedItems.add(syncID);
 				} else {
 					response.add(this.getForMergeMessage.createMessage(syncSession, syncID)); 
 				}
-
 			}
 			
 			response.addAll(processLocalChanges(syncSession, updatedItems));

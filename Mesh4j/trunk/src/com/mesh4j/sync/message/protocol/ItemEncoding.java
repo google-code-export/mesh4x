@@ -1,5 +1,6 @@
 package com.mesh4j.sync.message.protocol;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -34,16 +35,23 @@ public class ItemEncoding implements IItemEncoding, IProtocolConstants{
 		StringTokenizer st = new StringTokenizer(encodingItem, ELEMENT_SEPARATOR);
 		
 		String header = st.nextToken();
-		Sync sync = null;
-	
+			
 		String syncID = header.substring(0, 36);
 		boolean deleted = "T".equals(header.substring(36, 37));
-			
+		
+		Sync sync = new Sync(syncID);
+		
 		Item localItem = syncSession.get(syncID);
-		if(localItem == null){
-			sync = new Sync(syncID);
-		} else {
-			sync = localItem.getSync().clone();
+		if(localItem != null){
+			ArrayList<History> newHistory = new ArrayList<History>();
+			newHistory.addAll(localItem.getSync().getUpdatesHistory());
+			Iterator<History> itLocalHistories = newHistory.iterator();
+			while(itLocalHistories.hasNext()){
+				History history = itLocalHistories.next();
+				if(syncSession.getLastSyncDate() == null || syncSession.getLastSyncDate().compareTo(history.getWhen()) > 0){
+					sync.update(history.getBy(), history.getWhen());
+				}
+			}
 		}
 		
 		String historiesString = header.substring(37, header.length());

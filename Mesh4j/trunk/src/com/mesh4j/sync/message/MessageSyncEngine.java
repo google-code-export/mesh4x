@@ -32,7 +32,21 @@ public class MessageSyncEngine implements IMessageReceiver {
 			Guard.throwsException("ERROR_MESSAGE_SYNC_SESSION_IS_OPEN", sourceId, target.getEndpointId());
 		}
 		if(syncSession == null){
-			syncSession = this.syncProtocol.createSession(this.syncSessionFactory, sourceId, target);
+			syncSession = this.syncProtocol.createSession(this.syncSessionFactory, sourceId, target, false);
+		}
+		IMessage message = this.syncProtocol.beginSync(syncSession);
+		if(message != null){
+			this.channel.send(message);
+		}
+	}
+	
+	public void synchronizeFull(String sourceId, IEndpoint target) {
+		ISyncSession syncSession = this.syncSessionFactory.get(sourceId, target.getEndpointId());
+		if(syncSession != null && syncSession.isOpen()){
+			Guard.throwsException("ERROR_MESSAGE_SYNC_SESSION_IS_OPEN", sourceId, target.getEndpointId());
+		}
+		if(syncSession == null){
+			syncSession = this.syncProtocol.createSession(this.syncSessionFactory, sourceId, target, true);
 		}
 		IMessage message = this.syncProtocol.beginSync(syncSession);
 		if(message != null){
@@ -77,7 +91,7 @@ public class MessageSyncEngine implements IMessageReceiver {
 		if (!result.isMergeNone()) {
 			Item conflicItem = importItem(result, syncSession);
 			if(conflicItem != null){
-				syncSession.addConflict(incomingItem.getSyncId());
+				syncSession.addConflict(conflicItem);
 			}
 		}
 //		else {   // update is not send
@@ -95,7 +109,7 @@ public class MessageSyncEngine implements IMessageReceiver {
 			syncSession.add(result.getProposed());
 		} else if (result.getOperation().isUpdated()
 				|| result.getOperation().isConflict()) {
-			syncSession.update(result.getProposed());
+			syncSession.update(result.getProposed());			// TODO (JMT) MeshSMS: Conflicts, save a conflict?
 		}
 		if (!result.isMergeNone() && result.getProposed() != null
 				&& result.getProposed().hasSyncConflicts()) {

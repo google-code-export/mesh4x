@@ -22,15 +22,17 @@ public class SyncSession implements ISyncSession{
 	private boolean isOpen = false;
 	private HashMap<String, Item> cache = new HashMap<String, Item>();
 	private List<Item> snapshot = new ArrayList<Item>();
-	private ArrayList<String> conflicts = new ArrayList<String>();
+	private HashMap<String, Item> conflicts = new HashMap<String, Item>();
 	private ArrayList<String> acks = new ArrayList<String>();
+	private boolean fullProtocol = false;
 
 	// METHODS
-	public SyncSession(String sessionId, IMessageSyncAdapter syncAdapter, IEndpoint target) {
+	public SyncSession(String sessionId, IMessageSyncAdapter syncAdapter, IEndpoint target, boolean fullProtocol) {
 		super();
 		this.sessionId = sessionId;
 		this.syncAdapter = syncAdapter;
 		this.target = target;
+		this.fullProtocol = fullProtocol;
 	}
 
 	@Override
@@ -85,7 +87,12 @@ public class SyncSession implements ISyncSession{
 	
 	@Override
 	public void addConflict(String syncID){
-		this.conflicts.add(syncID);
+		this.conflicts.put(syncID, null);
+	}
+	
+	@Override
+	public void addConflict(Item item){
+		this.conflicts.put(item.getSyncId(), item);
 	}
 	
 	@Override
@@ -101,7 +108,7 @@ public class SyncSession implements ISyncSession{
 	
 	@Override
 	public boolean hasConflict(String syncID) {
-		return this.conflicts.contains(syncID);
+		return this.conflicts.keySet().contains(syncID);
 	}
 
 	@Override
@@ -113,7 +120,7 @@ public class SyncSession implements ISyncSession{
 	@Override
 	public void beginSync(){
 		this.isOpen = true;
-		this.conflicts = new ArrayList<String>();
+		this.conflicts = new HashMap<String, Item>();
 		this.acks = new ArrayList<String>();
 		this.cache = new HashMap<String, Item>();
 		
@@ -154,7 +161,7 @@ public class SyncSession implements ISyncSession{
 	@Override
 	public void cancelSync() {
 		this.isOpen = false;
-		this.conflicts = new ArrayList<String>();
+		this.conflicts = new HashMap<String, Item>();
 		this.acks = new ArrayList<String>();
 		this.cache = new HashMap<String, Item>();
 	}
@@ -172,5 +179,10 @@ public class SyncSession implements ISyncSession{
 	@Override
 	public Date createSyncDate() {
 		return new Date();
+	}
+
+	@Override
+	public boolean isFullProtocol() {
+		return fullProtocol;
 	}
 }

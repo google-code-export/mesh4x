@@ -121,6 +121,8 @@ public class LastVersionStatusMessageProcessorTests {
 		MockSyncSession syncSession = new MockSyncSession(null, item);
 		syncSession.addToSnapshot(item);
 		syncSession.setOpen();
+		syncSession.setFullProtocol(false);
+		
 		Assert.assertFalse(syncSession.hasConflict("1"));
 		
 		EndSyncMessageProcessor end = new EndSyncMessageProcessor(null);
@@ -147,6 +149,7 @@ public class LastVersionStatusMessageProcessorTests {
 
 		MockSyncSession syncSession = new MockSyncSession(null, item);
 		syncSession.setOpen();
+		syncSession.setFullProtocol(false);
 		
 		EndSyncMessageProcessor end = new EndSyncMessageProcessor(null);
 		LastVersionStatusMessageProcessor mp = new LastVersionStatusMessageProcessor(null, null, end);
@@ -201,6 +204,7 @@ public class LastVersionStatusMessageProcessorTests {
 		MockSyncSession syncSession = new MockSyncSession(null, item);
 		syncSession.setOpen();
 		syncSession.addItem(item2);
+		syncSession.setFullProtocol(false);
 		
 		MergeWithACKMessageProcessor merge = new MergeWithACKMessageProcessor(new ItemEncoding(100), null);
 		LastVersionStatusMessageProcessor mp = new LastVersionStatusMessageProcessor(null, merge, null);

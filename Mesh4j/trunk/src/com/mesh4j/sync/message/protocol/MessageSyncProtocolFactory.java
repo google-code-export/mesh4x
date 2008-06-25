@@ -15,7 +15,7 @@ public class MessageSyncProtocolFactory {
 		ACKEndSyncMessageProcessor ackEndMessage = new ACKEndSyncMessageProcessor();
 		EndSyncMessageProcessor endMessage = new EndSyncMessageProcessor(ackEndMessage);
 		
-		ACKMergeMessageProcessor ackMergeMessage = new ACKMergeMessageProcessor(endMessage);
+		ACKMergeMessageProcessor ackMergeMessage = new ACKMergeMessageProcessor(itemEncoding, endMessage);
 		MergeMessageProcessor mergeMessage = new MergeMessageProcessor(itemEncoding, endMessage);
 		MergeWithACKMessageProcessor mergeWithACKMessage = new MergeWithACKMessageProcessor(itemEncoding, ackMergeMessage);
 		GetForMergeMessageProcessor getForMergeMessage = new GetForMergeMessageProcessor(itemEncoding, mergeMessage);

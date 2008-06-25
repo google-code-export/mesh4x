@@ -11,6 +11,6 @@ public interface IBeginSyncMessageProcessor extends IMessageProcessor {
 
 	ISyncSession createSession(ISyncSessionFactory syncSessionFactory, IMessage message);
 
-	ISyncSession createSession(ISyncSessionFactory syncSessionFactory, String sourceId, IEndpoint target);
+	ISyncSession createSession(ISyncSessionFactory syncSessionFactory, String sourceId, IEndpoint target, boolean fullProtocol);
 
 }

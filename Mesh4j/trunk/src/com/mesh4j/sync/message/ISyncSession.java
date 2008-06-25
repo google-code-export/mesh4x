@@ -20,6 +20,7 @@ public interface ISyncSession {
 	boolean hasChanged(String syncID);
 	boolean hasConflict(String syncId);
 	void addConflict(String syncID);
+	void addConflict(Item conflicItem);
 	
 	List<Item> getAll();
 
@@ -37,5 +38,7 @@ public interface ISyncSession {
 	void notifyAck(String syncId);
 
 	Date createSyncDate();
+
+	boolean isFullProtocol();
 
 }

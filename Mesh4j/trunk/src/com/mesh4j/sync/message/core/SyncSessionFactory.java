@@ -15,9 +15,9 @@ public class SyncSessionFactory implements ISyncSessionFactory {
 	
 	// BUSINESS METHODS
 	@Override
-	public ISyncSession createSession(String sessionId, String sourceId, IEndpoint target) {
+	public ISyncSession createSession(String sessionId, String sourceId, IEndpoint target, boolean fullProtocol) {
 		IMessageSyncAdapter syncAdapter = getSyncAdapter(sourceId);
-		SyncSession session = new SyncSession(sessionId, syncAdapter, target);
+		SyncSession session = new SyncSession(sessionId, syncAdapter, target, fullProtocol);
 		this.sessions.put(sessionId, session);
 		return session;
 	}

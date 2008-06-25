@@ -8,5 +8,5 @@ public interface ISyncSessionFactory {
 	ISyncSession get(String sessionId);
 	ISyncSession get(String sourceId, String targetId);
 
-	ISyncSession createSession(String sessionId, String sourceId, IEndpoint target);
+	ISyncSession createSession(String sessionId, String sourceId, IEndpoint target, boolean fullProtocol);
 }

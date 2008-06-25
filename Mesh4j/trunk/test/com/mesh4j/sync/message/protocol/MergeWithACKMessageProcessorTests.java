@@ -43,7 +43,7 @@ public class MergeWithACKMessageProcessorTests {
 		IMessage message = p.createMessage(syncSession, itemChanged);
 		
 		Assert.assertNotNull(message);
-		Assert.assertEquals("2", message.getData());
+		Assert.assertEquals("T2", message.getData());
 		Assert.assertEquals(syncSession.getTarget(), message.getEndpoint());
 		Assert.assertEquals(p.getMessageType(), message.getMessageType());
 		Assert.assertEquals(IProtocolConstants.PROTOCOL, message.getProtocol());
@@ -65,7 +65,7 @@ public class MergeWithACKMessageProcessorTests {
 		IMessage message = p.createMessage(syncSession, itemChanged);
 		
 		Assert.assertNotNull(message);
-		Assert.assertEquals("1", message.getData());
+		Assert.assertEquals("T1", message.getData());
 		Assert.assertEquals(syncSession.getTarget(), message.getEndpoint());
 		Assert.assertEquals(p.getMessageType(), message.getMessageType());
 		Assert.assertEquals(IProtocolConstants.PROTOCOL, message.getProtocol());
@@ -83,7 +83,7 @@ public class MergeWithACKMessageProcessorTests {
 		IMessage message = p.createMessage(syncSession, item);
 		
 		Assert.assertNotNull(message);
-		Assert.assertEquals("1", message.getData());
+		Assert.assertEquals("T1", message.getData());
 		Assert.assertEquals(syncSession.getTarget(), message.getEndpoint());
 		Assert.assertEquals(p.getMessageType(), message.getMessageType());
 		Assert.assertEquals(IProtocolConstants.PROTOCOL, message.getProtocol());
@@ -120,10 +120,11 @@ public class MergeWithACKMessageProcessorTests {
 				
 		MockSyncSession syncSession = new MockSyncSession(null, item);
 		syncSession.setOpen();
+		syncSession.setFullProtocol(false);
 		
-		ACKMergeMessageProcessor ack = new ACKMergeMessageProcessor(null);
+		ACKMergeMessageProcessor ack = new ACKMergeMessageProcessor(new ItemEncoding(100), null);
 		MergeWithACKMessageProcessor p = new MergeWithACKMessageProcessor(new MockItemEncoding(itemChanged), ack);
-		Message message = new Message("a", p.getMessageType(), syncSession.getSessionId(), "", syncSession.getTarget());
+		Message message = new Message("a", p.getMessageType(), syncSession.getSessionId(), "F1", syncSession.getTarget());
 		List<IMessage> messages = p.process(syncSession, message);
 		Assert.assertEquals(1, messages.size());
 		
@@ -147,10 +148,11 @@ public class MergeWithACKMessageProcessorTests {
 				
 		MockSyncSession syncSession = new MockSyncSession(null, item);
 		syncSession.setOpen();
+		syncSession.setFullProtocol(false);
 		
-		ACKMergeMessageProcessor ack = new ACKMergeMessageProcessor(null);
+		ACKMergeMessageProcessor ack = new ACKMergeMessageProcessor(new ItemEncoding(100), null);
 		MergeWithACKMessageProcessor p = new MergeWithACKMessageProcessor(new MockItemEncoding(itemChanged), ack);
-		Message message = new Message("a", p.getMessageType(), syncSession.getSessionId(), "", syncSession.getTarget());
+		Message message = new Message("a", p.getMessageType(), syncSession.getSessionId(), "F1", syncSession.getTarget());
 		List<IMessage> messages = p.process(syncSession, message);
 		Assert.assertEquals(1, messages.size());
 		

@@ -102,12 +102,12 @@ public class BeginSyncMessageProcessor implements IMessageProcessor, IBeginSyncM
 	}
 
 	@Override
-	public ISyncSession createSession(ISyncSessionFactory syncSessionFactory, String sourceId, IEndpoint target) {
+	public ISyncSession createSession(ISyncSessionFactory syncSessionFactory, String sourceId, IEndpoint target, boolean fullProtocol) {
 		Guard.argumentNotNull(syncSessionFactory, "syncSessionFactory");
 		Guard.argumentNotNull(target, "target");
 		Guard.argumentNotNullOrEmptyString(sourceId, "sourceId");
 		
-		return syncSessionFactory.createSession(IdGenerator.newID(), sourceId, target);
+		return syncSessionFactory.createSession(IdGenerator.newID(), sourceId, target, fullProtocol);
 	}
 	
 	@Override
@@ -117,7 +117,7 @@ public class BeginSyncMessageProcessor implements IMessageProcessor, IBeginSyncM
 		
 		if(this.getMessageType().equals(message.getMessageType())){
 			String sourceId = decodeSource(message.getData());
-			return syncSessionFactory.createSession(message.getSessionId(), sourceId, message.getEndpoint());
+			return syncSessionFactory.createSession(message.getSessionId(), sourceId, message.getEndpoint(), false);
 		} else {
 			return null;
 		}

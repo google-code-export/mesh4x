@@ -61,7 +61,7 @@ public class MessageSyncProtocol implements IMessageSyncProtocol {
 
 	@Override
 	public ISyncSession createSession(ISyncSessionFactory syncSessionFactory,
-			String sourceId, IEndpoint target) {
-		return this.initialMessage.createSession(syncSessionFactory, sourceId, target);
+			String sourceId, IEndpoint target, boolean fullProtocol) {
+		return this.initialMessage.createSession(syncSessionFactory, sourceId, target, fullProtocol);
 	}
 }

@@ -208,19 +208,19 @@ public class BeginSyncMessageProcessorTests {
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateSessionFailsIfSessionFactoryIsNull(){
 		BeginSyncMessageProcessor mp = new BeginSyncMessageProcessor(null, null);
-		mp.createSession(null, "123", new SmsEndpoint("sms:1"));
+		mp.createSession(null, "123", new SmsEndpoint("sms:1"), false);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateSessionFailsIfSourceIDIsNull(){
 		BeginSyncMessageProcessor mp = new BeginSyncMessageProcessor(null, null);
-		mp.createSession(new SyncSessionFactory(), null, new SmsEndpoint("sms:1"));
+		mp.createSession(new SyncSessionFactory(), null, new SmsEndpoint("sms:1"), false);
 	}
 
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateSessionFailsIfEndPointIsNull(){
 		BeginSyncMessageProcessor mp = new BeginSyncMessageProcessor(null, null);
-		mp.createSession(new SyncSessionFactory(), "123", null);
+		mp.createSession(new SyncSessionFactory(), "123", null, false);
 	}
 	
 	@Test
@@ -233,7 +233,7 @@ public class BeginSyncMessageProcessorTests {
 		SyncSessionFactory sessionFac = new SyncSessionFactory();
 		sessionFac.registerSource(new MockMessageSyncAdapter(sourceID));
 		
-		ISyncSession syncSession = mp.createSession(sessionFac, sourceID, endpoint);
+		ISyncSession syncSession = mp.createSession(sessionFac, sourceID, endpoint, false);
 		
 		Assert.assertNotNull(syncSession);
 		Assert.assertNotNull(syncSession.getSessionId());
