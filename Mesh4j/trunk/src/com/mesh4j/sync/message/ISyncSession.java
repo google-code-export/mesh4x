@@ -41,4 +41,6 @@ public interface ISyncSession {
 
 	boolean isFullProtocol();
 
+	List<Item> getCurrentSnapshot();
+
 }

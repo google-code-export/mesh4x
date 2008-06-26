@@ -56,9 +56,12 @@ public class XMLHelper {
 	}
 	
 	public static void write(Document document, File file) {
+		write(document, file, OutputFormat.createPrettyPrint());
+	}
+	
+	public static void write(Document document, File file, OutputFormat format) {
 		XMLWriter writer = null;
 		try {
-			OutputFormat format = OutputFormat.createPrettyPrint();
 			writer = new XMLWriter(new FileWriter(file), format);
 			writer.write(document);
 		} catch (IOException e) {

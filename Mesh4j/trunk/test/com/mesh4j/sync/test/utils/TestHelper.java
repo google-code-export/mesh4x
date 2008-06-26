@@ -139,10 +139,6 @@ public class TestHelper {
 		}
 	}
 
-	public static String fileName(String name) {
-		return "D:\\temp_dev\\mesh4j\\" + name;
-	}
-
 	public static File makeNewXMLFile(String xml) {
 		return makeNewXMLFile(xml, ".xml");
 	}
@@ -201,4 +197,12 @@ public class TestHelper {
 		}
 	}
 
+	public static String baseDirectoryForTest() {
+		return "c:\\Marcelo\\temp\\";
+	}
+
+	public static String fileName(String name) {
+		return baseDirectoryForTest() + name;
+	}
+	
 }

@@ -137,4 +137,9 @@ public class MockSyncSession implements ISyncSession{
 	public void setFullProtocol(boolean fullProtocol) {
 		this.fullProtocol = fullProtocol;
 	}
+
+	@Override
+	public List<Item> getCurrentSnapshot() {
+		return all;
+	}
 }

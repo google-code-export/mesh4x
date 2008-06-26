@@ -185,4 +185,10 @@ public class SyncSession implements ISyncSession{
 	public boolean isFullProtocol() {
 		return fullProtocol;
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Item> getCurrentSnapshot() {
+		return new ArrayList(this.cache.values());		
+	}
 }
