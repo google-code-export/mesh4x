@@ -17,5 +17,9 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="lib/jakarta-commons/commons-lang.jar"/>
 	<classpathentry kind="lib" path="etc"/>
+	<classpathentry kind="lib" path="lib/smsLib/smslib-3.3.0.jar"/>
+	<classpathentry kind="lib" path="lib/jaf/activation.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta-commons/commons-net-1.4.1.jar"/>
+	<classpathentry kind="lib" path="lib/javamail/mail.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
