@@ -144,6 +144,36 @@ public class LastVersionStatusMessageProcessorTests {
 	}
 	
 	@Test
+	public void shouldProcessMarkConflicItemWhenItemWasChangedFullProtocol(){
+		
+		Item item = new Item(new NullContent("1"), new Sync("1", "jmt", TestHelper.makeDate(2008, 1, 1, 1, 1, 1, 1), false));
+
+		MockSyncSession syncSession = new MockSyncSession(null, item);
+		syncSession.addToSnapshot(item);
+		syncSession.setOpen();
+		syncSession.setFullProtocol(true);
+		
+		Assert.assertFalse(syncSession.hasConflict("1"));
+		
+		GetForMergeMessageProcessor get = new GetForMergeMessageProcessor(new ItemEncoding(100), null);
+		LastVersionStatusMessageProcessor mp = new LastVersionStatusMessageProcessor(get, null, null);
+		
+		Message message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), "1~-73244", syncSession.getTarget());
+		List<IMessage> messages = mp.process(syncSession, message);
+		Assert.assertNotNull(messages);
+		Assert.assertEquals(1, messages.size());
+		
+		IMessage response = messages.get(0);		
+		Assert.assertNotNull(response);
+		Assert.assertNotNull(response.getData());
+		Assert.assertEquals(syncSession.getTarget(), response.getEndpoint());
+		Assert.assertEquals(get.getMessageType(), response.getMessageType());
+		Assert.assertEquals(IProtocolConstants.PROTOCOL, response.getProtocol());
+		Assert.assertEquals(syncSession.getSessionId(), response.getSessionId());
+		Assert.assertFalse(syncSession.hasConflict("1"));
+	}
+	
+	@Test
 	public void shouldProcessDeletedItem(){
 		Item item = new Item(new NullContent("1"), new Sync("1", "jmt", TestHelper.makeDate(2008, 1, 1, 1, 1, 1, 1), false));
 
@@ -170,6 +200,33 @@ public class LastVersionStatusMessageProcessorTests {
 		Assert.assertTrue(item.isDeleted());
 		Assert.assertEquals("jmt", item.getLastUpdate().getBy());
 		Assert.assertEquals("1201834861000", String.valueOf(item.getLastUpdate().getWhen().getTime()));
+	}	
+	
+	@Test
+	public void shouldProcessDeletedItemFullProtocol(){
+		Item item = new Item(new NullContent("1"), new Sync("1", "jmt", TestHelper.makeDate(2008, 1, 1, 1, 1, 1, 1), false));
+
+		MockSyncSession syncSession = new MockSyncSession(null, item);
+		syncSession.setOpen();
+		syncSession.setFullProtocol(true);
+		
+		GetForMergeMessageProcessor get = new GetForMergeMessageProcessor(new ItemEncoding(100), null);
+		LastVersionStatusMessageProcessor mp = new LastVersionStatusMessageProcessor(get, null, null);
+		
+		Message message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), "1~-1269158974~D~jmt~1201834861000", syncSession.getTarget());
+		List<IMessage> messages = mp.process(syncSession, message);
+		Assert.assertNotNull(messages);
+		Assert.assertEquals(1, messages.size());
+		
+		IMessage response = messages.get(0);		
+		Assert.assertNotNull(response);
+		Assert.assertNotNull(response.getData());
+		Assert.assertEquals(syncSession.getTarget(), response.getEndpoint());
+		Assert.assertEquals(get.getMessageType(), response.getMessageType());
+		Assert.assertEquals(IProtocolConstants.PROTOCOL, response.getProtocol());
+		Assert.assertEquals(syncSession.getSessionId(), response.getSessionId());
+		
+		Assert.assertFalse(item.isDeleted());
 	}	
 	
 	@Test

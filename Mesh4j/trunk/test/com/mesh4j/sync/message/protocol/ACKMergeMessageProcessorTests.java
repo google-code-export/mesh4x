@@ -1,5 +1,6 @@
 package com.mesh4j.sync.message.protocol;
 
+import java.util.Date;
 import java.util.List;
 
 import org.junit.Assert;
@@ -8,6 +9,10 @@ import org.junit.Test;
 import com.mesh4j.sync.message.IMessage;
 import com.mesh4j.sync.message.IMessageSyncProtocol;
 import com.mesh4j.sync.message.core.Message;
+import com.mesh4j.sync.model.Item;
+import com.mesh4j.sync.model.NullContent;
+import com.mesh4j.sync.model.Sync;
+import com.mesh4j.sync.test.utils.TestHelper;
 import com.mesh4j.sync.utils.IdGenerator;
 
 public class ACKMergeMessageProcessorTests {
@@ -44,12 +49,32 @@ public class ACKMergeMessageProcessorTests {
 	@Test
 	public void shouldCreateMessageWithConflicts(){
 		MockSyncSession syncSession = new MockSyncSession(null);
+		syncSession.addConflict("1");
 		
 		ACKMergeMessageProcessor mp = new ACKMergeMessageProcessor(new ItemEncoding(100), null);
 		IMessage message = mp.createMessage(syncSession, "1", false);
 
 		Assert.assertNotNull(message);
-		Assert.assertEquals("F1", message.getData());
+		Assert.assertEquals("T1", message.getData());
+		Assert.assertEquals(syncSession.getTarget(), message.getEndpoint());
+		Assert.assertEquals(mp.getMessageType(), message.getMessageType());
+		Assert.assertEquals(IProtocolConstants.PROTOCOL, message.getProtocol());
+		Assert.assertEquals(syncSession.getSessionId(), message.getSessionId());
+	}
+	
+	@Test
+	public void shouldCreateMessageWithConflictsFullProtocol(){
+		
+		Date date = TestHelper.makeDate(2008, 1, 1, 1, 1, 1, 1);
+		Item item = new Item(new NullContent("1"), new Sync("1", "jmt", date, true));
+		MockSyncSession syncSession = new MockSyncSession(null, item);
+		syncSession.addConflict("1");
+		
+		ACKMergeMessageProcessor mp = new ACKMergeMessageProcessor(new ItemEncoding(100), null);
+		IMessage message = mp.createMessage(syncSession, "1", true);
+
+		Assert.assertNotNull(message);
+		Assert.assertEquals("T1T1201834861000jmt", message.getData());
 		Assert.assertEquals(syncSession.getTarget(), message.getEndpoint());
 		Assert.assertEquals(mp.getMessageType(), message.getMessageType());
 		Assert.assertEquals(IProtocolConstants.PROTOCOL, message.getProtocol());
@@ -73,6 +98,25 @@ public class ACKMergeMessageProcessorTests {
 		ACKMergeMessageProcessor mp = new ACKMergeMessageProcessor(new ItemEncoding(100), null);
 		List<IMessage> messages = mp.process(syncSession, new Message("M", "kk", "1", "", null));
 		Assert.assertEquals(IMessageSyncProtocol.NO_RESPONSE, messages);
+	}
+	
+	@Test
+	public void shouldProcessMessageAddConflictFullProtocol(){
+		String syncID = IdGenerator.newID();
+		
+		MockSyncSession syncSession = new MockSyncSession(null);
+		syncSession.setOpen();
+		syncSession.setFullProtocol(true);
+		
+		syncSession.waitForAck(syncID);
+		Assert.assertFalse(syncSession.isCompleteSync());
+		Assert.assertFalse(syncSession.hasConflict(syncID));
+		ACKMergeMessageProcessor mp = new ACKMergeMessageProcessor(new ItemEncoding(100), new EndSyncMessageProcessor(null));
+		List<IMessage> messages = mp.process(syncSession, new Message("M", mp.getMessageType(), syncID, "T"+syncID+"T1201834861000jmt", null));
+		Assert.assertNotNull(messages);
+		
+		Assert.assertTrue(syncSession.hasConflict(syncID));
+		Assert.assertTrue(syncSession.isCompleteSync());
 	}
 	
 	@Test
