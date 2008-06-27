@@ -29,7 +29,7 @@ public class CommTests {
 		return CommPortIdentifier.getPortIdentifiers();
 	}
 
-	@Test
+	//@Test
 	public void tests()
 	{
 		System.out.println("\nSearching for devices...");

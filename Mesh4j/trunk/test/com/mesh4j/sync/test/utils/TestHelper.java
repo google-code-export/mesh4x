@@ -198,7 +198,7 @@ public class TestHelper {
 	}
 
 	public static String baseDirectoryForTest() {
-		return "c:\\Marcelo\\temp\\";
+		return "D:\\temp_dev\\mesh4j\\";
 	}
 
 	public static String fileName(String name) {

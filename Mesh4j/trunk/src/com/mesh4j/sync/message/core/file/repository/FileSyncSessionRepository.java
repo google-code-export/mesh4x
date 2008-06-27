@@ -17,7 +17,6 @@ import com.mesh4j.sync.adapters.feed.FeedReader;
 import com.mesh4j.sync.adapters.feed.FeedWriter;
 import com.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import com.mesh4j.sync.message.ISyncSession;
-import com.mesh4j.sync.message.core.SyncSession;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.security.NullIdentityProvider;
 import com.mesh4j.sync.utils.DateHelper;
