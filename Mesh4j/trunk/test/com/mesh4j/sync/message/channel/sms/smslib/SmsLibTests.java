@@ -5,7 +5,7 @@ import org.smslib.modem.SerialModemGateway;
 
 public class SmsLibTests {
 
-	@Test	
+	//@Test	
 	public void shouldReadMessages() throws Exception{
 		SerialModemGateway gateway = new SerialModemGateway("modem.com1", "COM1", 57600, "Nokia", "6310i");
 		
@@ -13,7 +13,7 @@ public class SmsLibTests {
 		command.execute(gateway);
 	}
 	
-	@Test	
+	//@Test	
 	public void shouldSendMessage() throws Exception{
 		SerialModemGateway gateway = new SerialModemGateway("modem.com1", "COM1", 57600, "Nokia", "6310i");
 
