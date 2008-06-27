@@ -72,11 +72,11 @@ public class KMLContent extends Content{
 	
 	public void addToFeedPayload(Element rootPayload){
 		
-		Element titleElement = DocumentHelper.createElement(ISyndicationFormat.SX_ATTRIBUTE_ITEM_TITLE);
+		Element titleElement = DocumentHelper.createElement(ISyndicationFormat.SX_ELEMENT_ITEM_TITLE);
 		titleElement.setText(this.getPayload().getName());
 		rootPayload.add(titleElement);
 		
-		Element descriptionElement = DocumentHelper.createElement(ISyndicationFormat.SX_ATTRIBUTE_ITEM_DESCRIPTION);
+		Element descriptionElement = DocumentHelper.createElement(ISyndicationFormat.SX_ELEMENT_ITEM_DESCRIPTION);
 		descriptionElement.setText("Id: " + this.getId() + " version: " + this.getVersion());
 		rootPayload.add(descriptionElement);
 		

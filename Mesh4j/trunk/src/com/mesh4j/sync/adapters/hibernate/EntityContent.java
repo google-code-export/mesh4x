@@ -75,11 +75,11 @@ public class EntityContent extends Content{
 	@Override
 	public void addToFeedPayload(Element rootPayload){
 			
-		Element titleElement = DocumentHelper.createElement(ISyndicationFormat.SX_ATTRIBUTE_ITEM_TITLE);
+		Element titleElement = DocumentHelper.createElement(ISyndicationFormat.SX_ELEMENT_ITEM_TITLE);
 		titleElement.setText(this.entityName);
 		rootPayload.add(titleElement);
 		
-		Element descriptionElement = DocumentHelper.createElement(ISyndicationFormat.SX_ATTRIBUTE_ITEM_DESCRIPTION);
+		Element descriptionElement = DocumentHelper.createElement(ISyndicationFormat.SX_ELEMENT_ITEM_DESCRIPTION);
 		descriptionElement.setText("Entity id: " + this.getId() + " version: " + this.getVersion());
 		rootPayload.add(descriptionElement);
 		

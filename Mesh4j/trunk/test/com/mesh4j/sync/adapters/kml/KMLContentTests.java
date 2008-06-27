@@ -48,10 +48,10 @@ public class KMLContentTests {
 		
 		content.addToFeedPayload(feedPayload);
 		
-		Assert.assertNotNull(feedPayload.element(ISyndicationFormat.SX_ATTRIBUTE_ITEM_TITLE));
-		Assert.assertNotNull(feedPayload.element(ISyndicationFormat.SX_ATTRIBUTE_ITEM_TITLE).getText());
-		Assert.assertNotNull(feedPayload.element(ISyndicationFormat.SX_ATTRIBUTE_ITEM_DESCRIPTION));
-		Assert.assertNotNull(feedPayload.element(ISyndicationFormat.SX_ATTRIBUTE_ITEM_DESCRIPTION).getText());
+		Assert.assertNotNull(feedPayload.element(ISyndicationFormat.SX_ELEMENT_ITEM_TITLE));
+		Assert.assertNotNull(feedPayload.element(ISyndicationFormat.SX_ELEMENT_ITEM_TITLE).getText());
+		Assert.assertNotNull(feedPayload.element(ISyndicationFormat.SX_ELEMENT_ITEM_DESCRIPTION));
+		Assert.assertNotNull(feedPayload.element(ISyndicationFormat.SX_ELEMENT_ITEM_DESCRIPTION).getText());
 		Assert.assertNotNull(feedPayload.element("payload"));
 	}
 	

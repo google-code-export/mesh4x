@@ -12,6 +12,8 @@ import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ELEMENT_NAME;
 import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_QNAME_CONFLICTS;
 import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_QNAME_HISTORY;
 import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_QNAME_SYNC;
+import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ELEMENT_ITEM_TITLE;
+import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ELEMENT_ITEM_DESCRIPTION;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -83,7 +85,7 @@ public class FeedWriter {
 		Element itemElement = this.addFeedItemElement(root);
 		
 		this.writeContent(itemElement, item.getContent());
-
+		
 		String by = this.getAuthenticatedUser();
 		History lastUpdate = item.getLastUpdate();
 		if (lastUpdate != null && lastUpdate.getBy() != null){
@@ -113,6 +115,43 @@ public class FeedWriter {
 	private void writeContent(Element itemElement, IContent content) {
 		Element xmlContent = XMLContent.normalizeContent(content);
 		writePayload(itemElement, xmlContent);
+		
+		if(content instanceof XMLContent){
+			XMLContent contextAsXMLContent = (XMLContent) content;
+			if(contextAsXMLContent.getTitle() != null && contextAsXMLContent.getTitle().trim().length() > 0){
+				String title = itemElement.elementText(SX_ELEMENT_ITEM_TITLE);
+				if(title == null){
+					Element titleElement = DocumentHelper.createElement(SX_ELEMENT_ITEM_TITLE);
+					titleElement.setText(contextAsXMLContent.getTitle());
+					itemElement.add(titleElement);
+				} else {
+					Element titleElement = itemElement.element(SX_ELEMENT_ITEM_TITLE);
+					titleElement.setText(contextAsXMLContent.getTitle());
+				}
+			}else{
+				Element titleElement = itemElement.element(SX_ELEMENT_ITEM_TITLE);
+				if(titleElement != null){
+					itemElement.remove(titleElement);
+				}
+			}
+			
+			if(contextAsXMLContent.getDescription() != null && contextAsXMLContent.getDescription().trim().length() > 0){
+				String description = itemElement.elementText(SX_ELEMENT_ITEM_DESCRIPTION);
+				if(description == null){
+					Element descriptionElement = DocumentHelper.createElement(SX_ELEMENT_ITEM_DESCRIPTION);
+					descriptionElement.setText(contextAsXMLContent.getDescription());
+					itemElement.add(descriptionElement);
+				} else {
+					Element descriptionElement = itemElement.element(SX_ELEMENT_ITEM_DESCRIPTION);
+					descriptionElement.setText(contextAsXMLContent.getDescription());
+				}
+			}else{
+				Element descriptionElement = itemElement.element(SX_ELEMENT_ITEM_DESCRIPTION);
+				if(descriptionElement != null){
+					itemElement.remove(descriptionElement);
+				}
+			}
+		}
 	}
 
 	protected Element addFeedItemElement(Element root) {

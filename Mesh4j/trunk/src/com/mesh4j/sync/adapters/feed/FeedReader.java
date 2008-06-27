@@ -4,8 +4,8 @@ import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.ELEMENT_PAYLOAD;
 import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_HISTORY_BY;
 import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_HISTORY_SEQUENCE;
 import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_HISTORY_WHEN;
-import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_ITEM_DESCRIPTION;
-import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_ITEM_TITLE;
+import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ELEMENT_ITEM_DESCRIPTION;
+import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ELEMENT_ITEM_TITLE;
 import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_SYNC_DELETED;
 import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_SYNC_ID;
 import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_SYNC_NO_CONFLICTS;
@@ -123,8 +123,8 @@ public class FeedReader {
 		if(sync.isDeleted()){
 			return new Item(new NullContent(sync.getId()), sync);
 		} else {
-			String title = itemElement.elementText(SX_ATTRIBUTE_ITEM_TITLE);
-			String description = itemElement.elementText(SX_ATTRIBUTE_ITEM_DESCRIPTION);
+			String title = itemElement.elementText(SX_ELEMENT_ITEM_TITLE);
+			String description = itemElement.elementText(SX_ELEMENT_ITEM_DESCRIPTION);
 			XMLContent modelItem = new XMLContent(sync.getId(), title, description, payload);
 			return new Item(modelItem, sync);
 		}

@@ -73,8 +73,8 @@ public interface ISyndicationFormat {
 	public static final String SX_ATTRIBUTE_HISTORY_WHEN = "when";
 	public static final String SX_ATTRIBUTE_HISTORY_BY = "by";
 	
-	public static final String SX_ATTRIBUTE_ITEM_TITLE = "title";
-	public static final String SX_ATTRIBUTE_ITEM_DESCRIPTION = "description";
+	public static final String SX_ELEMENT_ITEM_TITLE = "title";
+	public static final String SX_ELEMENT_ITEM_DESCRIPTION = "description";
 	
 	// internal
 	public static final String ELEMENT_PAYLOAD = "payload";
