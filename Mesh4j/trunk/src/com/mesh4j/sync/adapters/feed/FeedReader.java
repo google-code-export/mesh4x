@@ -30,6 +30,7 @@ import org.dom4j.io.SAXReader;
 import org.xml.sax.InputSource;
 
 import com.mesh4j.sync.model.Item;
+import com.mesh4j.sync.model.NullContent;
 import com.mesh4j.sync.model.Sync;
 import com.mesh4j.sync.security.IIdentityProvider;
 import com.mesh4j.sync.utils.IdGenerator;
@@ -119,10 +120,14 @@ public class FeedReader {
 			sync = new Sync(makeNewSyncID(), this.getAuthenticatedUser(), new Date(), false); 
 		}
 		
-		String title = itemElement.elementText(SX_ATTRIBUTE_ITEM_TITLE);
-		String description = itemElement.elementText(SX_ATTRIBUTE_ITEM_DESCRIPTION);
-		XMLContent modelItem = new XMLContent(sync.getId(), title, description, payload);
-		return new Item(modelItem, sync);
+		if(sync.isDeleted()){
+			return new Item(new NullContent(sync.getId()), sync);
+		} else {
+			String title = itemElement.elementText(SX_ATTRIBUTE_ITEM_TITLE);
+			String description = itemElement.elementText(SX_ATTRIBUTE_ITEM_DESCRIPTION);
+			XMLContent modelItem = new XMLContent(sync.getId(), title, description, payload);
+			return new Item(modelItem, sync);
+		}
 	}
 
 	@SuppressWarnings("unchecked")

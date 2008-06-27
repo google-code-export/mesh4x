@@ -43,7 +43,8 @@ public class XMLContent extends Content {
         	if(obj instanceof XMLContent){
 	        	XMLContent otherXmlItem = (XMLContent) obj;
 	            return super.equals(obj) &&
-	                this.getTitle().equals(otherXmlItem.getTitle()) &&
+	                (this.getTitle() == null && otherXmlItem.getTitle() == null ||
+		                	this.getTitle() != null && this.getTitle().equals(otherXmlItem.getTitle())) &&              
 	                (this.getDescription() == null && otherXmlItem.getDescription() == null ||
 	                	this.getDescription() != null && this.getDescription().equals(otherXmlItem.getDescription()));
         	} else{
