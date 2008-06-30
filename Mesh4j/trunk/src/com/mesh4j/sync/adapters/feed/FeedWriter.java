@@ -8,12 +8,12 @@ import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_SYNC
 import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_SYNC_NO_CONFLICTS;
 import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_SYNC_UPDATES;
 import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ELEMENT_AUTHOR;
+import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ELEMENT_ITEM_DESCRIPTION;
+import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ELEMENT_ITEM_TITLE;
 import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ELEMENT_NAME;
 import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_QNAME_CONFLICTS;
 import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_QNAME_HISTORY;
 import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_QNAME_SYNC;
-import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ELEMENT_ITEM_TITLE;
-import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ELEMENT_ITEM_DESCRIPTION;
 
 import java.io.IOException;
 import java.util.ArrayList;

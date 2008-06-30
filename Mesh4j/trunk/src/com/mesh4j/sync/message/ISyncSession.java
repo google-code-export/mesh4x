@@ -43,4 +43,8 @@ public interface ISyncSession {
 
 	List<Item> getCurrentSnapshot();
 
+	List<String> getAllPendingACKs();
+
+	List<String> getConflictsSyncIDs();
+
 }

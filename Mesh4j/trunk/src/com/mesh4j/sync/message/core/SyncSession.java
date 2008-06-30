@@ -19,7 +19,7 @@ public class SyncSession implements ISyncSession{
 	private IMessageSyncAdapter syncAdapter;
 	private IEndpoint target;
 	private Date lastSyncDate;
-	private boolean isOpen = false;
+	private boolean open = false;
 	private HashMap<String, Item> cache = new HashMap<String, Item>();
 	private List<Item> snapshot = new ArrayList<Item>();
 	private HashMap<String, Item> conflicts = new HashMap<String, Item>();
@@ -37,7 +37,7 @@ public class SyncSession implements ISyncSession{
 
 	@Override
 	public boolean isOpen(){
-		return isOpen;
+		return open;
 	}
 
 	@Override
@@ -119,7 +119,7 @@ public class SyncSession implements ISyncSession{
 
 	@Override
 	public void beginSync(){
-		this.isOpen = true;
+		this.open = true;
 		this.conflicts = new HashMap<String, Item>();
 		this.acks = new ArrayList<String>();
 		this.cache = new HashMap<String, Item>();
@@ -133,9 +133,17 @@ public class SyncSession implements ISyncSession{
 	@Override
 	public void endSync(Date sinceDate){
 		this.lastSyncDate = sinceDate;
-		this.isOpen = false;
+		this.open = false;
 		
 		this.snapshot = new ArrayList<Item>(this.cache.values());
+	}
+	
+	@Override
+	public void cancelSync() {
+		this.open = false;
+		this.conflicts = new HashMap<String, Item>();
+		this.acks = new ArrayList<String>();
+		this.cache = new HashMap<String, Item>();
 	}
 	
 	@Override
@@ -158,14 +166,6 @@ public class SyncSession implements ISyncSession{
 		this.acks.add(syncId);
 	}
 	
-	@Override
-	public void cancelSync() {
-		this.isOpen = false;
-		this.conflicts = new HashMap<String, Item>();
-		this.acks = new ArrayList<String>();
-		this.cache = new HashMap<String, Item>();
-	}
-
 	@Override
 	public String getSessionId() {
 		return sessionId;
@@ -190,5 +190,28 @@ public class SyncSession implements ISyncSession{
 	@Override
 	public List<Item> getCurrentSnapshot() {
 		return new ArrayList(this.cache.values());		
+	}
+
+	@Override
+	public List<String> getAllPendingACKs() {
+		return acks;
+	}
+
+	@Override
+	public List<String> getConflictsSyncIDs() {
+		return new ArrayList<String>(this.conflicts.keySet());
+	}
+	
+
+	protected void setOpen(boolean isOpen){
+		this.open = isOpen;
+	}
+
+	protected void setLastSyncDate(Date lastSyncDate){
+		this.lastSyncDate = lastSyncDate;
+	}
+
+	protected void addToSnapshot(Item item) {
+		this.snapshot.add(item);		
 	}
 }

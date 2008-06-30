@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<rss xmlns:sx="http://feedsync.org/2007/feedsync" version="2.0">
+  <channel>
+    <session sessionId="example6" sourceId="123" endpointId="sms:1" lastSyncDate="" full="true" open="true" /> 
+    <item>
+      <author>
+        <name>jmt</name>
+      </author>
+      <sx:sync id="38db832f-59bd-4a13-98e9-cf7482c24eec" updates="1" deleted="true" noconflicts="false">
+        <sx:history sequence="1" when="Mon, 30 Jun 2008 15:57:19 GMT" by="jmt"/>
+      </sx:sync>
+    </item>
+  </channel>
+</rss>

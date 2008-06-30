@@ -1,11 +1,15 @@
 package com.mesh4j.sync.message.core;
 
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import com.mesh4j.sync.message.IEndpoint;
 import com.mesh4j.sync.message.IMessageSyncAdapter;
 import com.mesh4j.sync.message.ISyncSession;
 import com.mesh4j.sync.message.ISyncSessionFactory;
+import com.mesh4j.sync.message.channel.sms.SmsEndpoint;
+import com.mesh4j.sync.model.Item;
 
 public class SyncSessionFactory implements ISyncSessionFactory {
 
@@ -45,6 +49,37 @@ public class SyncSessionFactory implements ISyncSessionFactory {
 	@Override
 	public void registerSource(IMessageSyncAdapter adapter) {
 		this.adapters.put(adapter.getSourceId(), adapter);
+	}
+
+	@Override
+	public ISyncSession createSession(String sessionId, String sourceId,
+			String endpointId, boolean fullProtocol, boolean isOpen, Date lastSyncDate,
+			List<Item> currentSyncSnapshot, List<Item> lastSyncSnapshot,
+			List<String> conflicts, List<String> acks) {
+		
+		IMessageSyncAdapter syncAdapter = getSyncAdapter(sourceId);
+		SyncSession session = new SyncSession(sessionId, syncAdapter, new SmsEndpoint(endpointId), fullProtocol);
+		session.setOpen(isOpen);
+		session.setLastSyncDate(lastSyncDate);
+		
+		for (Item item : currentSyncSnapshot) {
+			session.add(item);	
+		}
+		
+		for (Item item : lastSyncSnapshot) {
+			session.addToSnapshot(item);	
+		}
+		
+		for (String syncId : acks) {
+			session.waitForAck(syncId);
+		}
+		
+		for (String syncId : conflicts) {
+			session.addConflict(syncId);
+		}		
+		
+		this.sessions.put(sessionId, session);
+		return session;
 	}
 
 }

@@ -22,15 +22,17 @@ public class MockSyncSession implements ISyncSession{
 	private boolean endSyncWasCalled = false;
 	private boolean getAllWasCalled = false;
 	private Date currentDate = new Date();
-	private String ackExpected;
-	private boolean hasConflict = false;
+	private ArrayList<String> acks = new ArrayList<String>();
+	private ArrayList<String> conflicts = new ArrayList<String>();
 	private boolean fullProtocol = true;
 	
 	public MockSyncSession(Date sinceDate) {
-		this(sinceDate, null);
+		this(sinceDate, null, IdGenerator.newID());
 	}
-
 	public MockSyncSession(Date sinceDate, Item item) {
+		this(sinceDate, item, IdGenerator.newID());
+	}
+	public MockSyncSession(Date sinceDate, Item item, String sessionId) {
 		super();
 		this.sinceDate = sinceDate;
 		this.item = item;
@@ -46,11 +48,11 @@ public class MockSyncSession implements ISyncSession{
 			}		
 		};
 		
-		this.sessionID = IdGenerator.newID();
+		this.sessionID = sessionId;
 	}
 
 	@Override public void add(Item item) {}
-	@Override public void addConflict(String syncID) {this.hasConflict = true;}
+	@Override public void addConflict(String syncID) {this.conflicts.add(syncID);}
 	@Override public void beginSync() {this.beginWasCalled = true;}
 	@Override public void beginSync(Date sinceDate) {this.beginWasCalled=true;}
 	@Override public void cancelSync() {}
@@ -79,16 +81,12 @@ public class MockSyncSession implements ISyncSession{
 		}
 		return false;
 	}
-	@Override public boolean hasConflict(String syncId) {return hasConflict;}
+	@Override public boolean hasConflict(String syncId) {return this.conflicts.contains(syncId);}
 	@Override public boolean isOpen() {return open;}
 	@Override public void update(Item item) {}
-	@Override public boolean isCompleteSync() {return this.ackExpected == null;}
-	@Override public void notifyAck(String syncId) {
-		if(syncId.equals(this.ackExpected)){
-			this.ackExpected = null;
-		}
-	}	
-	@Override public void waitForAck(String syncId) {this.ackExpected = syncId;}
+	@Override public boolean isCompleteSync() {return this.acks.isEmpty();}
+	@Override public void notifyAck(String syncId) {this.acks.remove(syncId);}	
+	@Override public void waitForAck(String syncId) {this.acks.add(syncId);}
 
 	public void setOpen() {
 		this.open = true;		
@@ -120,14 +118,10 @@ public class MockSyncSession implements ISyncSession{
 		this.all.add(item);
 	}
 
-	public boolean isPendingAck(String syncId) {
-		return syncId.equals(this.ackExpected);
-	}
+	public boolean isPendingAck(String syncId) {return this.acks.contains(syncId);}
 
 	@Override
-	public void addConflict(Item conflicItem) {
-		this.hasConflict = true;		
-	}
+	public void addConflict(Item conflicItem) {this.conflicts.add(conflicItem.getSyncId());}
 
 	@Override
 	public boolean isFullProtocol() {
@@ -141,5 +135,18 @@ public class MockSyncSession implements ISyncSession{
 	@Override
 	public List<Item> getCurrentSnapshot() {
 		return all;
+	}
+
+	@Override
+	public List<String> getAllPendingACKs() {
+		return acks;
+	}
+
+	@Override
+	public List<String> getConflictsSyncIDs() {
+		return conflicts;
+	}
+	public void setClose() {
+		this.open = false;		
 	}
 }
