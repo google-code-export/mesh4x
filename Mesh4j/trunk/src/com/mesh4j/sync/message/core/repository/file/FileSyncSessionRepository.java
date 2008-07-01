@@ -1,4 +1,4 @@
-package com.mesh4j.sync.message.core.file.repository;
+package com.mesh4j.sync.message.core.repository.file;
 
 import static com.mesh4j.sync.adapters.feed.ISyndicationFormat.ELEMENT_PAYLOAD;
 
@@ -18,15 +18,17 @@ import com.mesh4j.sync.adapters.feed.Feed;
 import com.mesh4j.sync.adapters.feed.FeedReader;
 import com.mesh4j.sync.adapters.feed.FeedWriter;
 import com.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
+import com.mesh4j.sync.message.IEndpoint;
 import com.mesh4j.sync.message.ISyncSession;
-import com.mesh4j.sync.message.ISyncSessionFactory;
+import com.mesh4j.sync.message.core.ISyncSessionRepository;
+import com.mesh4j.sync.message.core.repository.ISyncSessionFactory;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.security.NullIdentityProvider;
 import com.mesh4j.sync.utils.DateHelper;
 import com.mesh4j.sync.validations.Guard;
 import com.mesh4j.sync.validations.MeshException;
 
-public class FileSyncSessionRepository {
+public class FileSyncSessionRepository implements ISyncSessionRepository{
 
 	// CONSTANTS
 	public static final String ATTRIBUTE_OPEN = "open";
@@ -44,12 +46,15 @@ public class FileSyncSessionRepository {
 	private String rootDirectory;
 	private FeedWriter feedWriter;
 	private FeedReader feedReader;
+	private ISyncSessionFactory sessionFactory;
 	
 	// BUSINESS METHODS
 
-	public FileSyncSessionRepository(String rootDirectory) {
+	public FileSyncSessionRepository(String rootDirectory, ISyncSessionFactory sessionFactory) {
 		Guard.argumentNotNullOrEmptyString(rootDirectory, "rootDirectory");
+		Guard.argumentNotNull(sessionFactory, "sessionFactory");
 		
+		this.sessionFactory = sessionFactory;
 		this.rootDirectory = rootDirectory;
 		this.feedWriter = new FeedWriter(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		this.feedReader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
@@ -65,9 +70,10 @@ public class FileSyncSessionRepository {
 		}
 	}
 
+	@Override
 	public void snapshot(ISyncSession syncSession){
 		if(syncSession.getLastSyncDate() == null || syncSession.isOpen()){
-			Guard.throwsException("INVALID_SNAPSHOT_SYNC_SESSION");						// TODO ooooooooooooooooooo
+			Guard.throwsException("INVALID_SNAPSHOT_SYNC_SESSION");
 		}
 		
 		File file = getSnapshotFile(syncSession.getSessionId());
@@ -84,20 +90,21 @@ public class FileSyncSessionRepository {
 		}
 	}
 	
+	@Override
 	public void flush(ISyncSession syncSession){
 		if(!syncSession.isOpen()){
-			Guard.throwsException("INVALID_FLUSH_SYNC_SESSION");						// TODO ooooooooooooooooooo
+			Guard.throwsException("INVALID_FLUSH_SYNC_SESSION");
 		}
 		File file = getCurrentSessionFile(syncSession.getSessionId());
 		List<Item> items = syncSession.getCurrentSnapshot();
 		write(syncSession, file, items, false);
 	}
 
-	public ISyncSession readSession(String sessionId, ISyncSessionFactory syncSessionFactory){
+	public ISyncSession readSession(String sessionId){
 		File fileSnapshot = getSnapshotFile(sessionId);
 		File fileCurrent = getCurrentSessionFile(sessionId);
 		if(!fileCurrent.exists() && !fileSnapshot.exists()){
-			Guard.throwsException("INVALID_SYNC_SESSION");								// TODO ooooooooooooooooooo
+			Guard.throwsException("INVALID_SYNC_SESSION");
 		} 
 		
 		try{
@@ -107,26 +114,32 @@ public class FileSyncSessionRepository {
 				if(fileSnapshot.exists()){
 					Feed feedSnapshot = this.feedReader.read(fileSnapshot);
 					if(!getSessionID(feedSnapshot.getPayload()).equals(sessionId)){
-						Guard.throwsException("INVALID_SYNC_SESSION");								// TODO ooooooooooooooooooo			
+						Guard.throwsException("INVALID_SYNC_SESSION");			
 					}
-					syncSession = this.createSyncSession(feedCurrent.getPayload(), feedCurrent.getItems(), feedSnapshot.getItems(), syncSessionFactory);
+					syncSession = this.createSyncSession(feedCurrent.getPayload(), feedCurrent.getItems(), feedSnapshot.getItems());
 				} else {
-					syncSession = this.createSyncSession(feedCurrent.getPayload(), feedCurrent.getItems(), new ArrayList<Item>(), syncSessionFactory);
+					syncSession = this.createSyncSession(feedCurrent.getPayload(), feedCurrent.getItems(), new ArrayList<Item>());
 				}
 				if(!syncSession.isOpen() || !syncSession.getSessionId().equals(sessionId)){
-					Guard.throwsException("INVALID_SYNC_SESSION");								// TODO ooooooooooooooooooo			
+					Guard.throwsException("INVALID_SYNC_SESSION");			
 				}
 			} else{
 				Feed feedSnapshot = this.feedReader.read(fileSnapshot);
-				syncSession = this.createSyncSession(feedSnapshot.getPayload(), new ArrayList<Item>(), feedSnapshot.getItems(), syncSessionFactory);
+				syncSession = this.createSyncSession(feedSnapshot.getPayload(), new ArrayList<Item>(), feedSnapshot.getItems());
 				if(syncSession.isOpen() || !syncSession.getSessionId().equals(sessionId)){
-					Guard.throwsException("INVALID_SYNC_SESSION");								// TODO ooooooooooooooooooo			
+					Guard.throwsException("INVALID_SYNC_SESSION");			
 				}
 			}
 			return syncSession;
 		}catch(DocumentException e){
 			throw new MeshException(e);
 		}
+	}
+	
+	@Override
+	public void cancel(ISyncSession syncSession) {
+		Guard.argumentNotNull(syncSession, "syncSession");
+		this.deleteCurrentSessionFile(syncSession.getSessionId());		
 	}
 
 	private String getSessionID(Element payload) {
@@ -186,7 +199,7 @@ public class FileSyncSessionRepository {
 	
 	
 	@SuppressWarnings("unchecked")
-	private ISyncSession createSyncSession(Element payload, List<Item> currentSyncSnapshot, List<Item> lastSyncSnapshot, ISyncSessionFactory syncSessionFactory) {
+	private ISyncSession createSyncSession(Element payload, List<Item> currentSyncSnapshot, List<Item> lastSyncSnapshot) {
 		Element syncElement = payload.element(ELEMENT_SYNC_SESSION);
 		String sessionId = syncElement.attributeValue(ATTRIBUTE_SESSION_ID);
 		String sourceId = syncElement.attributeValue(ATTRIBUTE_SOURCE_ID);
@@ -208,7 +221,22 @@ public class FileSyncSessionRepository {
 			conflicts.add(conflictElement.getText());
 		}
 		
-		ISyncSession syncSession = syncSessionFactory.createSession(sessionId, sourceId, endpointId, isFull, isOpen, date, currentSyncSnapshot, lastSyncSnapshot, conflicts, acks);
+		ISyncSession syncSession = this.sessionFactory.createSession(sessionId, sourceId, endpointId, isFull, isOpen, date, currentSyncSnapshot, lastSyncSnapshot, conflicts, acks);
 		return syncSession;
 	}
+	
+	@Override
+	public ISyncSession createSession(String sessionID, String sourceId, IEndpoint target, boolean fullProtocol) {
+		return this.sessionFactory.createSession(sessionID, sourceId, target, fullProtocol);
+	}
+
+	@Override
+	public ISyncSession getSession(String sessionId) {
+		return this.sessionFactory.get(sessionId);
+	}
+
+	@Override
+	public ISyncSession getSession(String sourceId, String endpointId) {
+		return sessionFactory.get(sourceId, endpointId);
+	}	
 }

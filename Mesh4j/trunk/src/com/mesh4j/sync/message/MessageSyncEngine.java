@@ -12,54 +12,30 @@ public class MessageSyncEngine implements IMessageReceiver {
 	// MODEL VARIABLES
 	private IMessageSyncProtocol syncProtocol;
 	private IChannel channel;
-	private ISyncSessionFactory syncSessionFactory;
 
 	// METHODS
-	public MessageSyncEngine(IMessageSyncProtocol protocol, IChannel channel, ISyncSessionFactory sessionFactory){
+	public MessageSyncEngine(IMessageSyncProtocol protocol, IChannel channel){
 		Guard.argumentNotNull(protocol, "protocol");
 		Guard.argumentNotNull(channel, "channel");
-		Guard.argumentNotNull(sessionFactory, "sessionFactory");
 		
 		this.channel = channel;
 		this.channel.registerMessageReceiver(this);
 		this.syncProtocol = protocol;
-		this.syncSessionFactory = sessionFactory;
 	}
 	
 	public void synchronize(String sourceId, IEndpoint target) {
-		ISyncSession syncSession = this.syncSessionFactory.get(sourceId, target.getEndpointId());
-		if(syncSession != null && syncSession.isOpen()){
-			Guard.throwsException("ERROR_MESSAGE_SYNC_SESSION_IS_OPEN", sourceId, target.getEndpointId());
-		}
-		if(syncSession == null){
-			syncSession = this.syncProtocol.createSession(this.syncSessionFactory, sourceId, target, false);
-		}
-		IMessage message = this.syncProtocol.beginSync(syncSession);
+		synchronize(sourceId, target, false);
+	}
+	
+	public void synchronize(String sourceId, IEndpoint target, boolean fullProtocol) {
+		IMessage message = this.syncProtocol.beginSync(sourceId, target, fullProtocol);
 		if(message != null){
 			this.channel.send(message);
 		}
 	}
 	
-	public void synchronizeFull(String sourceId, IEndpoint target) {
-		ISyncSession syncSession = this.syncSessionFactory.get(sourceId, target.getEndpointId());
-		if(syncSession != null && syncSession.isOpen()){
-			Guard.throwsException("ERROR_MESSAGE_SYNC_SESSION_IS_OPEN", sourceId, target.getEndpointId());
-		}
-		if(syncSession == null){
-			syncSession = this.syncProtocol.createSession(this.syncSessionFactory, sourceId, target, true);
-		}
-		IMessage message = this.syncProtocol.beginSync(syncSession);
-		if(message != null){
-			this.channel.send(message);
-		}
-	}
-	
-	public void cancelSynchronization(String sourceId, IEndpoint target) {
-		ISyncSession syncSession = this.syncSessionFactory.get(sourceId, target.getEndpointId());
-		if(syncSession == null || !syncSession.isOpen()){
-			Guard.throwsException("ERROR_MESSAGE_SYNC_SESSION_IS_NOT_OPEN", sourceId, target.getEndpointId());
-		}
-		IMessage message = this.syncProtocol.cancelSync(syncSession);
+	public void cancelSync(String sourceId, IEndpoint target) {
+		IMessage message = this.syncProtocol.cancelSync(sourceId, target);
 		if(message != null){
 			this.channel.send(message);
 		}
@@ -68,14 +44,7 @@ public class MessageSyncEngine implements IMessageReceiver {
 	@Override
 	public void receiveMessage(IMessage message){
 		if(this.syncProtocol.isValidMessageProtocol(message)){
-			ISyncSession syncSession = this.syncSessionFactory.get(message.getSessionId());
-			if(syncSession == null){
-				syncSession = this.syncProtocol.createSession(this.syncSessionFactory, message);
-				if(syncSession == null){
-					return;
-				}
-			}
-			List<IMessage> response = this.syncProtocol.processMessage(syncSession, message);
+			List<IMessage> response = this.syncProtocol.processMessage(message);
 			if(response != IMessageSyncProtocol.NO_RESPONSE){
 				for (IMessage msg : response) {
 					this.channel.send(msg);	

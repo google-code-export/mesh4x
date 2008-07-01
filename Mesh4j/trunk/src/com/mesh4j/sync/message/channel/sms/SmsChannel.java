@@ -8,6 +8,7 @@ import com.mesh4j.sync.message.IMessage;
 import com.mesh4j.sync.message.IMessageReceiver;
 import com.mesh4j.sync.message.core.Message;
 import com.mesh4j.sync.message.encoding.IMessageEncoding;
+import com.mesh4j.sync.validations.Guard;
 import com.mesh4j.sync.validations.MeshException;
 
 public class SmsChannel implements IChannel, ISmsMessageReceiver {
@@ -23,7 +24,9 @@ public class SmsChannel implements IChannel, ISmsMessageReceiver {
 
 	// METHODs
 	public SmsChannel(ISmsConnection smsConnection, IMessageEncoding messageEncoding) {
-		super();
+		Guard.argumentNotNull(smsConnection, "smsConnection");
+		Guard.argumentNotNull(messageEncoding, "messageEncoding");
+		
 		this.smsConnection = smsConnection;
 		
 		this.messageEncoding = messageEncoding;

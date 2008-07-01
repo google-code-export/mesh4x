@@ -7,7 +7,8 @@ import com.mesh4j.sync.message.IEndpoint;
 import com.mesh4j.sync.message.IMessage;
 import com.mesh4j.sync.message.IMessageSyncProtocol;
 import com.mesh4j.sync.message.ISyncSession;
-import com.mesh4j.sync.message.ISyncSessionFactory;
+import com.mesh4j.sync.utils.IdGenerator;
+import com.mesh4j.sync.validations.Guard;
 
 public class MessageSyncProtocol implements IMessageSyncProtocol {
 
@@ -15,14 +16,21 @@ public class MessageSyncProtocol implements IMessageSyncProtocol {
 	private ArrayList<IMessageProcessor> messageProcessors = new ArrayList<IMessageProcessor>();
 	private IBeginSyncMessageProcessor initialMessage;
 	private ICancelSyncMessageProcessor cancelMessage;
+	private ISyncSessionRepository repository;
 	private String protocolPrefix = "";
 	
 	// METHODS
-	public MessageSyncProtocol(String protocolPrefix, IBeginSyncMessageProcessor initialMessage, ICancelSyncMessageProcessor cancelMessage, ArrayList<IMessageProcessor> messageProcessors){
-		super();
+	public MessageSyncProtocol(String protocolPrefix, IBeginSyncMessageProcessor initialMessage, ICancelSyncMessageProcessor cancelMessage, ISyncSessionRepository repository, ArrayList<IMessageProcessor> messageProcessors){
+		Guard.argumentNotNullOrEmptyString(protocolPrefix, "protocolPrefix");
+		Guard.argumentNotNull(initialMessage, "initialMessage");
+		Guard.argumentNotNull(cancelMessage, "cancelMessage");
+		Guard.argumentNotNull(repository, "repository");
+		Guard.argumentNotNull(messageProcessors, "messageProcessors");
+
 		this.protocolPrefix = protocolPrefix;
 		this.initialMessage = initialMessage;
 		this.cancelMessage = cancelMessage;
+		this.repository = repository;
 		this.messageProcessors = messageProcessors;
 	}
 
@@ -33,35 +41,62 @@ public class MessageSyncProtocol implements IMessageSyncProtocol {
 	}
 	
 	@Override
-	public List<IMessage> processMessage(ISyncSession syncSession, IMessage message) {
+	public List<IMessage> processMessage(IMessage message) {		
+		ISyncSession syncSession = this.repository.getSession(message.getSessionId());
+		if(syncSession == null){
+			if(this.initialMessage.getMessageType().equals(message.getMessageType())){
+				String sourceId = this.initialMessage.getSourceId(message.getData());
+				syncSession = this.repository.createSession(message.getSessionId(), sourceId, message.getEndpoint(), false);
+			} else {
+				return NO_RESPONSE;
+			}
+		}
+		
 		List<IMessage> response = new ArrayList<IMessage>();
 		if(this.isValidMessageProtocol(message)){
 			for (IMessageProcessor processor : this.messageProcessors) {
 				List<IMessage> msgResponse = processor.process(syncSession, message);
 				response.addAll(msgResponse);
 			}
+			this.persistChanges(syncSession);
 		}
 		return response;
 	}
 	
-	@Override
-	public IMessage beginSync(ISyncSession syncSession) {
-		return this.initialMessage.createMessage(syncSession);
-	}
 	
 	@Override
-	public IMessage cancelSync(ISyncSession syncSession) {
-		return this.cancelMessage.createMessage(syncSession);
+	public IMessage cancelSync(String sourceId, IEndpoint endpoint) {
+		ISyncSession syncSession = this.repository.getSession(sourceId, endpoint.getEndpointId());
+		if(syncSession == null || !syncSession.isOpen()){
+			Guard.throwsException("ERROR_MESSAGE_SYNC_SESSION_IS_NOT_OPEN", sourceId, endpoint.getEndpointId());
+		}
+		
+		IMessage message = this.cancelMessage.createMessage(syncSession);
+		this.repository.cancel(syncSession);
+		return message;
+	}
+
+
+	private void persistChanges(ISyncSession syncSession) {
+		if(syncSession.isOpen()){
+			this.repository.flush(syncSession);
+		} else {
+			this.repository.snapshot(syncSession);
+		}
 	}
 
 	@Override
-	public ISyncSession createSession(ISyncSessionFactory syncSessionFactory, IMessage message) {
-		return this.initialMessage.createSession(syncSessionFactory, message);
-	}
-
-	@Override
-	public ISyncSession createSession(ISyncSessionFactory syncSessionFactory,
-			String sourceId, IEndpoint target, boolean fullProtocol) {
-		return this.initialMessage.createSession(syncSessionFactory, sourceId, target, fullProtocol);
+	public IMessage beginSync(String sourceId, IEndpoint endpoint, boolean fullProtocol) {
+		ISyncSession syncSession = this.repository.getSession(sourceId, endpoint.getEndpointId());
+		if(syncSession != null && syncSession.isOpen()){
+			Guard.throwsException("ERROR_MESSAGE_SYNC_SESSION_IS_OPEN", sourceId, endpoint.getEndpointId());
+		}
+		if(syncSession == null){
+			syncSession = this.repository.createSession(IdGenerator.newID(), sourceId, endpoint, fullProtocol);
+		}
+		
+		IMessage message = this.initialMessage.createMessage(syncSession);
+		this.persistChanges(syncSession);
+		return message;
 	}
 }

@@ -203,15 +203,15 @@ public class SyncSession implements ISyncSession{
 	}
 	
 
-	protected void setOpen(boolean isOpen){
+	public void setOpen(boolean isOpen){
 		this.open = isOpen;
 	}
 
-	protected void setLastSyncDate(Date lastSyncDate){
+	public void setLastSyncDate(Date lastSyncDate){
 		this.lastSyncDate = lastSyncDate;
 	}
 
-	protected void addToSnapshot(Item item) {
+	public void addToSnapshot(Item item) {
 		this.snapshot.add(item);		
 	}
 }

@@ -18,7 +18,8 @@ import com.mesh4j.sync.adapters.kml.DOMLoaderFactory;
 import com.mesh4j.sync.adapters.kml.KMLContent;
 import com.mesh4j.sync.message.channel.sms.SmsChannel;
 import com.mesh4j.sync.message.channel.sms.SmsEndpoint;
-import com.mesh4j.sync.message.core.SyncSessionFactory;
+import com.mesh4j.sync.message.core.MockSyncSessionRepository;
+import com.mesh4j.sync.message.core.repository.SyncSessionFactory;
 import com.mesh4j.sync.message.encoding.CompressBase91MessageEncoding;
 import com.mesh4j.sync.message.encoding.IMessageEncoding;
 import com.mesh4j.sync.message.protocol.MessageSyncProtocolFactory;
@@ -58,17 +59,18 @@ public class KmlMessageSyncEngineTests {
 
 		IMessageSyncAdapter endpointA = new MockInMemoryMessageSyncAdapter(dataSetId, kmlAdapterA.getAll());
 				
-		ISyncSessionFactory syncSessionFactoryA = new SyncSessionFactory();
+		SyncSessionFactory syncSessionFactoryA = new SyncSessionFactory();
 		syncSessionFactoryA.registerSource(endpointA);
 	
-		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocol(100);		
-		MessageSyncEngine syncEngineEndPointA = new MessageSyncEngine(syncProtocol, channelEndpointA, syncSessionFactoryA);
+		IMessageSyncProtocol syncProtocolA = MessageSyncProtocolFactory.createSyncProtocol(100, new MockSyncSessionRepository(syncSessionFactoryA));		
+		MessageSyncEngine syncEngineEndPointA = new MessageSyncEngine(syncProtocolA, channelEndpointA);
 
 		MockInMemoryMessageSyncAdapter endpointB = new MockInMemoryMessageSyncAdapter(dataSetId, kmlAdapterB.getAll());
 		
-		ISyncSessionFactory syncSessionFactoryB = new SyncSessionFactory();
+		SyncSessionFactory syncSessionFactoryB = new SyncSessionFactory();
 		syncSessionFactoryB.registerSource(endpointB);
-		MessageSyncEngine syncEngineEndPointB = new MessageSyncEngine(syncProtocol, channelEndpointB, syncSessionFactoryB);
+		IMessageSyncProtocol syncProtocolB = MessageSyncProtocolFactory.createSyncProtocol(100, new MockSyncSessionRepository(syncSessionFactoryB));
+		MessageSyncEngine syncEngineEndPointB = new MessageSyncEngine(syncProtocolB, channelEndpointB);
 		Assert.assertNotNull(syncEngineEndPointB);
 		
 		Assert.assertEquals(611, endpointA.getAll().size());
@@ -155,35 +157,26 @@ public class KmlMessageSyncEngineTests {
 
 	@Test
 	public void shouldSyncKmlNoChanges() throws Exception{
-		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocol(100);
-		syncKml(syncProtocol, false, false, CompressBase91MessageEncoding.INSTANCE);
+		syncKml(false, false, CompressBase91MessageEncoding.INSTANCE);
 	}
 	
 	@Test
 	public void shouldSyncKmlPlacemarkEndpointAChanged() throws Exception{
-		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocol(100);
-		syncKml(syncProtocol, true, false, CompressBase91MessageEncoding.INSTANCE);
+		syncKml(true, false, CompressBase91MessageEncoding.INSTANCE);
 	}
 
 	@Test
 	public void shouldSyncKmlPlacemarkEndpointBChanged() throws Exception{
-		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocol(100);
-//		syncKml(syncProtocol, false, true, ZipBase64MessageEncoding.INSTANCE);
-//		System.out.println("#########################################");
-//		syncKml(syncProtocol, false, true, CompressBase64MessageEncoding.INSTANCE);
-//		System.out.println("#########################################");
-//		syncKml(syncProtocol, false, true, ZipBase91MessageEncoding.INSTANCE);
-//		System.out.println("#########################################");
-		syncKml(syncProtocol, false, true, CompressBase91MessageEncoding.INSTANCE);
+		syncKml(false, true, CompressBase91MessageEncoding.INSTANCE);
 	}
 	
 	@Test
 	public void shouldSyncKmlPlacemarkConflicts() throws Exception{
-		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocol(100);
-		syncKml(syncProtocol, true, true, CompressBase91MessageEncoding.INSTANCE);
+		syncKml(true, true, CompressBase91MessageEncoding.INSTANCE);
+
 	}
 	
-	private void syncKml(IMessageSyncProtocol syncProtocol, boolean updateA, boolean updateB, IMessageEncoding messageEncoding) throws InterruptedException{
+	private void syncKml(boolean updateA, boolean updateB, IMessageEncoding messageEncoding) throws InterruptedException{
 		
 		String fileName = this.getClass().getResource("kmlWithPlacemark.kml").getFile(); 
 		DOMAdapter kmlAdapter = new DOMAdapter(DOMLoaderFactory.createDOMLoader(fileName, NullIdentityProvider.INSTANCE));
@@ -202,14 +195,18 @@ public class KmlMessageSyncEngineTests {
 		IChannel channelEndpointB = new SmsChannel(smsConnectionEndpointB, messageEncoding);
 
 		MockInMemoryMessageSyncAdapter endpointA = new MockInMemoryMessageSyncAdapter(dataSetId, kmlAdapter.getAll());
-		ISyncSessionFactory syncSessionFactoryA = new SyncSessionFactory();
+		SyncSessionFactory syncSessionFactoryA = new SyncSessionFactory();
 		syncSessionFactoryA.registerSource(endpointA);
-		MessageSyncEngine syncEngineEndPointA = new MessageSyncEngine(syncProtocol, channelEndpointA, syncSessionFactoryA);
+		
+		IMessageSyncProtocol syncProtocolA = MessageSyncProtocolFactory.createSyncProtocol(100, new MockSyncSessionRepository(syncSessionFactoryA));
+		MessageSyncEngine syncEngineEndPointA = new MessageSyncEngine(syncProtocolA, channelEndpointA);
 
 		MockInMemoryMessageSyncAdapter endpointB = new MockInMemoryMessageSyncAdapter(dataSetId, kmlAdapter.getAll());
-		ISyncSessionFactory syncSessionFactoryB = new SyncSessionFactory();
+		SyncSessionFactory syncSessionFactoryB = new SyncSessionFactory();
 		syncSessionFactoryB.registerSource(endpointB);
-		MessageSyncEngine syncEngineEndPointB = new MessageSyncEngine(syncProtocol, channelEndpointB, syncSessionFactoryB);
+		
+		IMessageSyncProtocol syncProtocolB = MessageSyncProtocolFactory.createSyncProtocol(100, new MockSyncSessionRepository(syncSessionFactoryB));
+		MessageSyncEngine syncEngineEndPointB = new MessageSyncEngine(syncProtocolB, channelEndpointB);
 		Assert.assertNotNull(syncEngineEndPointB);
 		
 		Assert.assertEquals(2, endpointA.getAll().size());
@@ -227,7 +224,7 @@ public class KmlMessageSyncEngineTests {
 		Item itemA = endpointA.getAll().get(0);
 		String syncIDPlacemark = itemA.getSyncId();
 		if(updateA){
-			Thread.sleep(5000);
+			Thread.sleep(1000);
 			Element placemarkA = itemA.getContent().getPayload();
 			
 			Element placemarkNameA = placemarkA.element("name");
@@ -242,7 +239,7 @@ public class KmlMessageSyncEngineTests {
 		
 		// B Update item
 		if(updateB){
-			Thread.sleep(5000);
+			Thread.sleep(1000);
 			Item itemB = endpointB.getAll().get(0);
 			Element placemarkB = itemB.getContent().getPayload();
 			

@@ -5,17 +5,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import com.mesh4j.sync.message.IEndpoint;
 import com.mesh4j.sync.message.IMessage;
 import com.mesh4j.sync.message.IMessageSyncProtocol;
 import com.mesh4j.sync.message.ISyncSession;
-import com.mesh4j.sync.message.ISyncSessionFactory;
 import com.mesh4j.sync.message.core.IBeginSyncMessageProcessor;
 import com.mesh4j.sync.message.core.IMessageProcessor;
 import com.mesh4j.sync.message.core.Message;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.utils.DateHelper;
-import com.mesh4j.sync.utils.IdGenerator;
 import com.mesh4j.sync.validations.Guard;
 
 public class BeginSyncMessageProcessor implements IMessageProcessor, IBeginSyncMessageProcessor {
@@ -96,30 +93,10 @@ public class BeginSyncMessageProcessor implements IMessageProcessor, IBeginSyncM
 		}
 	}
 
-	private String decodeSource(String data) {
+	@Override
+	public String getSourceId(String data) {
 		StringTokenizer st =  new StringTokenizer(data, IProtocolConstants.ELEMENT_SEPARATOR);
 		return st.nextToken();
 	}
 
-	@Override
-	public ISyncSession createSession(ISyncSessionFactory syncSessionFactory, String sourceId, IEndpoint target, boolean fullProtocol) {
-		Guard.argumentNotNull(syncSessionFactory, "syncSessionFactory");
-		Guard.argumentNotNull(target, "target");
-		Guard.argumentNotNullOrEmptyString(sourceId, "sourceId");
-		
-		return syncSessionFactory.createSession(IdGenerator.newID(), sourceId, target, fullProtocol);
-	}
-	
-	@Override
-	public ISyncSession createSession(ISyncSessionFactory syncSessionFactory, IMessage message) {
-		Guard.argumentNotNull(syncSessionFactory, "syncSessionFactory");
-		Guard.argumentNotNull(message, "message");
-		
-		if(this.getMessageType().equals(message.getMessageType())){
-			String sourceId = decodeSource(message.getData());
-			return syncSessionFactory.createSession(message.getSessionId(), sourceId, message.getEndpoint(), false);
-		} else {
-			return null;
-		}
-	}
 }

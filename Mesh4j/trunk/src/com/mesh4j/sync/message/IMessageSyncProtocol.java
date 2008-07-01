@@ -6,17 +6,14 @@ import java.util.List;
 public interface IMessageSyncProtocol {
 
 	public static final List<IMessage> NO_RESPONSE = new ArrayList<IMessage>();
+		
+	boolean isValidMessageProtocol(IMessage message);
+
+	IMessage beginSync(String sourceId, IEndpoint endpoint, boolean fullProtocol);
 	
-	IMessage beginSync(ISyncSession syncSession);
+	List<IMessage> processMessage(IMessage message);
 
-	List<IMessage> processMessage(ISyncSession syncSession, IMessage message);
+	IMessage cancelSync(String sourceId, IEndpoint target);
 
-	 boolean isValidMessageProtocol(IMessage message);
 
-	IMessage cancelSync(ISyncSession syncSession);
-
-	ISyncSession createSession(ISyncSessionFactory syncSessionFactory, IMessage message);
-	
-	ISyncSession createSession(ISyncSessionFactory syncSessionFactory,
-			String sourceId, IEndpoint target, boolean fullProtocol);
 }

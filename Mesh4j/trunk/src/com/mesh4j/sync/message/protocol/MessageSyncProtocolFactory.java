@@ -4,11 +4,12 @@ import java.util.ArrayList;
 
 import com.mesh4j.sync.message.IMessageSyncProtocol;
 import com.mesh4j.sync.message.core.IMessageProcessor;
+import com.mesh4j.sync.message.core.ISyncSessionRepository;
 import com.mesh4j.sync.message.core.MessageSyncProtocol;
 
 public class MessageSyncProtocolFactory {
 
-	public static IMessageSyncProtocol createSyncProtocol(int diffBlockSize) {
+	public static IMessageSyncProtocol createSyncProtocol(int diffBlockSize, ISyncSessionRepository repository) {
 
 		IItemEncoding itemEncoding = new ItemEncoding(diffBlockSize);
 		
@@ -36,7 +37,7 @@ public class MessageSyncProtocolFactory {
 		msgProcessors.add(noChangesMessage);
 		msgProcessors.add(cancelMessage);
 		
-		MessageSyncProtocol syncProtocol = new MessageSyncProtocol(IProtocolConstants.PROTOCOL, beginMessage, cancelMessage, msgProcessors);
+		MessageSyncProtocol syncProtocol = new MessageSyncProtocol(IProtocolConstants.PROTOCOL, beginMessage, cancelMessage, repository, msgProcessors);
 		return syncProtocol;
 	}
 

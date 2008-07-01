@@ -1,4 +1,4 @@
-package com.mesh4j.sync.message.core;
+package com.mesh4j.sync.message.core.repository;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -7,9 +7,10 @@ import java.util.List;
 import com.mesh4j.sync.message.IEndpoint;
 import com.mesh4j.sync.message.IMessageSyncAdapter;
 import com.mesh4j.sync.message.ISyncSession;
-import com.mesh4j.sync.message.ISyncSessionFactory;
 import com.mesh4j.sync.message.channel.sms.SmsEndpoint;
+import com.mesh4j.sync.message.core.SyncSession;
 import com.mesh4j.sync.model.Item;
+import com.mesh4j.sync.validations.Guard;
 
 public class SyncSessionFactory implements ISyncSessionFactory {
 
@@ -18,15 +19,21 @@ public class SyncSessionFactory implements ISyncSessionFactory {
 	private HashMap<String, IMessageSyncAdapter> adapters = new HashMap<String, IMessageSyncAdapter>();
 	
 	// BUSINESS METHODS
+
 	@Override
 	public ISyncSession createSession(String sessionId, String sourceId, IEndpoint target, boolean fullProtocol) {
-		IMessageSyncAdapter syncAdapter = getSyncAdapter(sourceId);
+		Guard.argumentNotNull(sessionId, "sessionId");
+		Guard.argumentNotNullOrEmptyString(sourceId, "sourceId");
+		Guard.argumentNotNull(target, "target");
+		
+		IMessageSyncAdapter syncAdapter = getSource(sourceId);
 		SyncSession session = new SyncSession(sessionId, syncAdapter, target, fullProtocol);
 		this.sessions.put(sessionId, session);
 		return session;
 	}
 
-	private IMessageSyncAdapter getSyncAdapter(String sourceId) {
+	@Override
+	public IMessageSyncAdapter getSource(String sourceId) {
 		return this.adapters.get(sourceId);
 	}
 
@@ -57,7 +64,7 @@ public class SyncSessionFactory implements ISyncSessionFactory {
 			List<Item> currentSyncSnapshot, List<Item> lastSyncSnapshot,
 			List<String> conflicts, List<String> acks) {
 		
-		IMessageSyncAdapter syncAdapter = getSyncAdapter(sourceId);
+		IMessageSyncAdapter syncAdapter = getSource(sourceId);
 		SyncSession session = new SyncSession(sessionId, syncAdapter, new SmsEndpoint(endpointId), fullProtocol);
 		session.setOpen(isOpen);
 		session.setLastSyncDate(lastSyncDate);

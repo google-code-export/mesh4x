@@ -12,7 +12,10 @@ import org.junit.Test;
 import com.mesh4j.sync.adapters.feed.XMLContent;
 import com.mesh4j.sync.message.channel.sms.SmsChannel;
 import com.mesh4j.sync.message.channel.sms.SmsEndpoint;
-import com.mesh4j.sync.message.core.SyncSessionFactory;
+import com.mesh4j.sync.message.core.ISyncSessionRepository;
+import com.mesh4j.sync.message.core.Message;
+import com.mesh4j.sync.message.core.MockSyncSessionRepository;
+import com.mesh4j.sync.message.core.repository.SyncSessionFactory;
 import com.mesh4j.sync.message.protocol.MessageSyncProtocolFactory;
 import com.mesh4j.sync.model.Content;
 import com.mesh4j.sync.model.IContent;
@@ -28,8 +31,8 @@ public class MessageSyncEngineTests {
 	private final static String TARGET_B = "B";
 	private MessageSyncEngine syncEngineEndPointA;
 	private MessageSyncEngine syncEngineEndPointB;
-	private ISyncSessionFactory syncSessionFactoryA;
-	private ISyncSessionFactory syncSessionFactoryB;
+	private ISyncSessionRepository syncSessionRepoA;
+	private ISyncSessionRepository syncSessionRepoB;
 	private MockSmsConnection smsConnectionEndpointA;
 	private MockSmsConnection smsConnectionEndpointB;
 	private List<Item> snapshotA;
@@ -47,15 +50,19 @@ public class MessageSyncEngineTests {
 		IChannel channelEndpointA = new SmsChannel(smsConnectionEndpointA, MockMessageEncoding.INSTANCE);
 		IChannel channelEndpointB = new SmsChannel(smsConnectionEndpointB, MockMessageEncoding.INSTANCE);
 		
-		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocol(100);		
-		
-		syncSessionFactoryA = new SyncSessionFactory();
+		SyncSessionFactory syncSessionFactoryA = new SyncSessionFactory();
 		syncSessionFactoryA.registerSource(endPointA);
-		syncEngineEndPointA = new MessageSyncEngine(syncProtocol, channelEndpointA, syncSessionFactoryA);
+		
+		this.syncSessionRepoA = new MockSyncSessionRepository(syncSessionFactoryA);
+		IMessageSyncProtocol syncProtocolA = MessageSyncProtocolFactory.createSyncProtocol(100, this.syncSessionRepoA);
+		syncEngineEndPointA = new MessageSyncEngine(syncProtocolA, channelEndpointA);
 
-		syncSessionFactoryB = new SyncSessionFactory();
+		SyncSessionFactory syncSessionFactoryB = new SyncSessionFactory();
 		syncSessionFactoryB.registerSource(endPointB);
-		syncEngineEndPointB = new MessageSyncEngine(syncProtocol, channelEndpointB, syncSessionFactoryB);
+
+		this.syncSessionRepoB = new MockSyncSessionRepository(syncSessionFactoryB);
+		IMessageSyncProtocol syncProtocolB = MessageSyncProtocolFactory.createSyncProtocol(100, this.syncSessionRepoB);
+		syncEngineEndPointB = new MessageSyncEngine(syncProtocolB, channelEndpointB);
 		Assert.assertNotNull(syncEngineEndPointB);
 	}
 	
@@ -115,7 +122,7 @@ public class MessageSyncEngineTests {
 		Assert.assertFalse(snapshotA.get(0).isDeleted());
 		
 		Item itemDeleted = new Item(new NullContent(snapshotB.get(0).getSyncId()), snapshotB.get(0).getSync().clone());
-		Thread.sleep(5000);
+		Thread.sleep(1000);
 		itemDeleted.getSync().delete("BIA", new Date());
 		endPointB.add(itemDeleted);
 		
@@ -148,7 +155,7 @@ public class MessageSyncEngineTests {
 		Assert.assertFalse(snapshotA.get(0).isDeleted());
 		
 		Item itemDeleted = new Item(new NullContent(snapshotA.get(0).getSyncId()), snapshotA.get(0).getSync().clone());
-		Thread.sleep(5000);
+		Thread.sleep(1000);
 		itemDeleted.getSync().delete("BIA", new Date());
 		endPointA.add(itemDeleted);
 		
@@ -180,7 +187,7 @@ public class MessageSyncEngineTests {
 		Assert.assertFalse(snapshotA.get(0).isDeleted());
 		
 		Item itemUpdated = snapshotB.get(0).clone();
-		Thread.sleep(5000);
+		Thread.sleep(1000);
 		itemUpdated.getSync().update("BIA", new Date());
 		Element element = itemUpdated.getContent().getPayload().element("bar");
 		element.add(DocumentHelper.createElement("updateXXXX"));
@@ -215,7 +222,7 @@ public class MessageSyncEngineTests {
 		Assert.assertFalse(snapshotA.get(0).isDeleted());
 		
 		Item itemUpdated = snapshotA.get(0).clone();
-		Thread.sleep(5000);
+		Thread.sleep(1000);
 		itemUpdated.getSync().update("BIA", new Date());
 		Element element = itemUpdated.getContent().getPayload().element("bar");
 		element.add(DocumentHelper.createElement("updateXXXX"));
@@ -253,7 +260,7 @@ public class MessageSyncEngineTests {
 
 		
 		Item itemUpdated = snapshotA.get(0).clone();
-		Thread.sleep(5000);
+		Thread.sleep(1000);
 		itemUpdated.getSync().update("BIA", new Date());
 		Element element = itemUpdated.getContent().getPayload().element("bar");
 		element.add(DocumentHelper.createElement("updateXXXX"));
@@ -261,15 +268,15 @@ public class MessageSyncEngineTests {
 		endPointA.add(itemUpdated);
 		
 		itemUpdated = snapshotB.get(0).clone();
-		Thread.sleep(5000);
+		Thread.sleep(1000);
 		itemUpdated.getSync().update("JUN", new Date());
 		element = itemUpdated.getContent().getPayload().element("bar");
 		element.add(DocumentHelper.createElement("updateJUN"));
 		((Content)itemUpdated.getContent()).refreshVersion();
 		endPointB.update(itemUpdated);
 		
-		Assert.assertFalse(syncSessionFactoryA.get(SOURCE_ID, TARGET_B).hasConflict(item.getSyncId()));
-		Assert.assertFalse(syncSessionFactoryB.get(SOURCE_ID, TARGET_A).hasConflict(item.getSyncId()));
+		Assert.assertFalse(syncSessionRepoA.getSession(SOURCE_ID, TARGET_B).hasConflict(item.getSyncId()));
+		Assert.assertFalse(syncSessionRepoB.getSession(SOURCE_ID, TARGET_A).hasConflict(item.getSyncId()));
 		Assert.assertTrue(snapshotA.get(0).equals(snapshotB.get(0)));
 		Assert.assertNotNull(endPointA.get(item.getSyncId()).getContent().getPayload().element("bar").element("updateXXXX"));
 		Assert.assertNotNull(endPointB.get(item.getSyncId()).getContent().getPayload().element("bar").element("updateJUN"));
@@ -282,8 +289,8 @@ public class MessageSyncEngineTests {
 		Assert.assertNotNull(endPointA.get(item.getSyncId()).getContent().getPayload().element("bar").element("updateXXXX"));
 		Assert.assertNotNull(endPointB.get(item.getSyncId()).getContent().getPayload().element("bar").element("updateJUN"));
 		Assert.assertFalse(snapshotA.get(0).equals(snapshotB.get(0)));
-		Assert.assertTrue(syncSessionFactoryA.get(SOURCE_ID, TARGET_B).hasConflict(item.getSyncId()));
-		Assert.assertFalse(syncSessionFactoryB.get(SOURCE_ID, TARGET_A).hasConflict(item.getSyncId()));
+		Assert.assertTrue(syncSessionRepoA.getSession(SOURCE_ID, TARGET_B).hasConflict(item.getSyncId()));
+		Assert.assertFalse(syncSessionRepoB.getSession(SOURCE_ID, TARGET_A).hasConflict(item.getSyncId()));
 	}
 	
 	
@@ -308,7 +315,7 @@ public class MessageSyncEngineTests {
 
 		
 		Item itemUpdated = snapshotA.get(0).clone();
-		Thread.sleep(5000);
+		Thread.sleep(1000);
 		itemUpdated.getSync().update("BIA", new Date());
 		Element element = itemUpdated.getContent().getPayload().element("bar");
 		element.add(DocumentHelper.createElement("updateXXXX"));
@@ -316,15 +323,15 @@ public class MessageSyncEngineTests {
 		endPointA.add(itemUpdated);
 		
 		itemUpdated = snapshotB.get(0).clone();
-		Thread.sleep(5000);
+		Thread.sleep(1000);
 		itemUpdated.getSync().update("JUN", new Date());
 		element = itemUpdated.getContent().getPayload().element("bar");
 		element.add(DocumentHelper.createElement("updateJUN"));
 		((Content)itemUpdated.getContent()).refreshVersion();
 		endPointB.update(itemUpdated);
 		
-		Assert.assertFalse(syncSessionFactoryA.get(SOURCE_ID, TARGET_B).hasConflict(item.getSyncId()));
-		Assert.assertFalse(syncSessionFactoryB.get(SOURCE_ID, TARGET_A).hasConflict(item.getSyncId()));
+		Assert.assertFalse(syncSessionRepoA.getSession(SOURCE_ID, TARGET_B).hasConflict(item.getSyncId()));
+		Assert.assertFalse(syncSessionRepoB.getSession(SOURCE_ID, TARGET_A).hasConflict(item.getSyncId()));
 		Assert.assertTrue(snapshotA.get(0).equals(snapshotB.get(0)));
 		Assert.assertNotNull(endPointA.get(item.getSyncId()).getContent().getPayload().element("bar").element("updateXXXX"));
 		Assert.assertNotNull(endPointB.get(item.getSyncId()).getContent().getPayload().element("bar").element("updateJUN"));
@@ -336,8 +343,8 @@ public class MessageSyncEngineTests {
 		Assert.assertFalse(snapshotA.get(0).isDeleted());
 		Assert.assertNotNull(endPointA.get(item.getSyncId()).getContent().getPayload().element("bar").element("updateXXXX"));
 		Assert.assertNotNull(endPointB.get(item.getSyncId()).getContent().getPayload().element("bar").element("updateJUN"));
-		Assert.assertTrue(syncSessionFactoryA.get(SOURCE_ID, TARGET_B).hasConflict(item.getSyncId()));
-		Assert.assertFalse(syncSessionFactoryB.get(SOURCE_ID, TARGET_A).hasConflict(item.getSyncId()));
+		Assert.assertTrue(syncSessionRepoA.getSession(SOURCE_ID, TARGET_B).hasConflict(item.getSyncId()));
+		Assert.assertFalse(syncSessionRepoB.getSession(SOURCE_ID, TARGET_A).hasConflict(item.getSyncId()));
 		Assert.assertFalse(snapshotA.get(0).equals(snapshotB.get(0)));
 	}
 	
@@ -397,7 +404,7 @@ public class MessageSyncEngineTests {
 		Assert.assertFalse(snapshotA.get(0).isDeleted());
 		
 		Item itemDeleted = new Item(new NullContent(snapshotB.get(0).getSyncId()), snapshotB.get(0).getSync().clone());
-		Thread.sleep(5000);
+		Thread.sleep(1000);
 		itemDeleted.getSync().delete("BIA", new Date());
 		endPointB.add(itemDeleted);
 		
@@ -430,7 +437,7 @@ public class MessageSyncEngineTests {
 		Assert.assertFalse(snapshotA.get(0).isDeleted());
 		
 		Item itemDeleted = new Item(new NullContent(snapshotA.get(0).getSyncId()), snapshotA.get(0).getSync().clone());
-		Thread.sleep(5000);
+		Thread.sleep(1000);
 		itemDeleted.getSync().delete("BIA", new Date());
 		endPointA.add(itemDeleted);
 		
@@ -462,7 +469,7 @@ public class MessageSyncEngineTests {
 		Assert.assertFalse(snapshotA.get(0).isDeleted());
 		
 		Item itemUpdated = snapshotB.get(0).clone();
-		Thread.sleep(5000);
+		Thread.sleep(1000);
 		itemUpdated.getSync().update("BIA", new Date());
 		Element element = itemUpdated.getContent().getPayload().element("bar");
 		element.add(DocumentHelper.createElement("updateXXXX"));
@@ -497,7 +504,7 @@ public class MessageSyncEngineTests {
 		Assert.assertFalse(snapshotA.get(0).isDeleted());
 		
 		Item itemUpdated = snapshotA.get(0).clone();
-		Thread.sleep(5000);
+		Thread.sleep(1000);
 		itemUpdated.getSync().update("BIA", new Date());
 		Element element = itemUpdated.getContent().getPayload().element("bar");
 		element.add(DocumentHelper.createElement("updateXXXX"));
@@ -522,13 +529,13 @@ public class MessageSyncEngineTests {
 		SmsEndpoint endpointB = new SmsEndpoint(TARGET_B);
 		
 		if(fullProtocol){
-			syncEngineEndPointA.synchronizeFull(SOURCE_ID, endpointB);
+			syncEngineEndPointA.synchronize(SOURCE_ID, endpointB, true);
 		} else {
 			syncEngineEndPointA.synchronize(SOURCE_ID, endpointB);
 		}
 		
-		Assert.assertFalse(syncSessionFactoryA.get(SOURCE_ID, TARGET_B).isOpen());
-		Assert.assertFalse(syncSessionFactoryB.get(SOURCE_ID, TARGET_A).isOpen());
+		Assert.assertFalse(syncSessionRepoA.getSession(SOURCE_ID, TARGET_B).isOpen());
+		Assert.assertFalse(syncSessionRepoB.getSession(SOURCE_ID, TARGET_A).isOpen());
 		
 		System.out.println("A: " 
 				+ smsConnectionEndpointA.getGeneratedMessagesSizeStatistics() 
@@ -538,8 +545,8 @@ public class MessageSyncEngineTests {
 				+ smsConnectionEndpointB.getGeneratedMessagesSizeStatistics() 
 				+ " messages: " + smsConnectionEndpointB.getGeneratedMessagesStatistics());
 		
-		snapshotA = syncSessionFactoryA.get(SOURCE_ID, TARGET_B).getSnapshot();
-		snapshotB = syncSessionFactoryB.get(SOURCE_ID, TARGET_A).getSnapshot();
+		snapshotA = syncSessionRepoA.getSession(SOURCE_ID, TARGET_B).getSnapshot();
+		snapshotB = syncSessionRepoB.getSession(SOURCE_ID, TARGET_A).getSnapshot();
 	}
 	
 	private Item createNewItem() {
@@ -554,5 +561,47 @@ public class MessageSyncEngineTests {
 		sync.update("jjj", new Date());
 		
 		return new Item(content, sync);
+	}
+	
+	@Test
+	public void shouldCancelSync(){
+		final Message msg = new Message("1", "2", "3", "4", new SmsEndpoint("123"));
+		
+		IChannel channel = new IChannel(){
+			@Override public void registerMessageReceiver(IMessageReceiver messageReceiver) {}
+			@Override public void send(IMessage message) {
+				Assert.assertSame(msg, message);
+			}
+		};
+		
+		IMessageSyncProtocol protocol = new IMessageSyncProtocol(){
+			@Override public IMessage beginSync(String sourceId, IEndpoint endpoint, boolean fullProtocol) {return null;}
+			@Override public IMessage cancelSync(String sourceId, IEndpoint target) {return msg; }
+			@Override public boolean isValidMessageProtocol(IMessage message) {return false;}
+			@Override public List<IMessage> processMessage(IMessage message) {return null;}
+		};
+		MessageSyncEngine engine = new MessageSyncEngine(protocol, channel);
+		engine.cancelSync("123", new SmsEndpoint("123"));
+		
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldCreateEngineFailsWhenProtocolIsNull(){
+		IChannel channel = new IChannel(){
+			@Override public void registerMessageReceiver(IMessageReceiver messageReceiver) {}
+			@Override public void send(IMessage message) {}
+		};
+		new MessageSyncEngine(null, channel);
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldCreateEngineFailsWhenChannelIsNull(){
+		IMessageSyncProtocol protocol = new IMessageSyncProtocol(){
+			@Override public IMessage beginSync(String sourceId, IEndpoint endpoint, boolean fullProtocol) {return null;}
+			@Override public IMessage cancelSync(String sourceId, IEndpoint target) {return null;}
+			@Override public boolean isValidMessageProtocol(IMessage message) {return false;}
+			@Override public List<IMessage> processMessage(IMessage message) {return null;}
+		};
+		new MessageSyncEngine(protocol, null);
 	}
 }
