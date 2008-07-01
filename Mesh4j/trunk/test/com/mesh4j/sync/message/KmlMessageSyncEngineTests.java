@@ -18,8 +18,10 @@ import com.mesh4j.sync.adapters.kml.DOMLoaderFactory;
 import com.mesh4j.sync.adapters.kml.KMLContent;
 import com.mesh4j.sync.message.channel.sms.SmsChannel;
 import com.mesh4j.sync.message.channel.sms.SmsEndpoint;
+import com.mesh4j.sync.message.core.ISyncSessionRepository;
 import com.mesh4j.sync.message.core.MockSyncSessionRepository;
 import com.mesh4j.sync.message.core.repository.SyncSessionFactory;
+import com.mesh4j.sync.message.core.repository.file.FileSyncSessionRepository;
 import com.mesh4j.sync.message.encoding.CompressBase91MessageEncoding;
 import com.mesh4j.sync.message.encoding.IMessageEncoding;
 import com.mesh4j.sync.message.protocol.MessageSyncProtocolFactory;
@@ -30,7 +32,7 @@ import com.mesh4j.sync.utils.XMLHelper;
 
 public class KmlMessageSyncEngineTests {
 	
-	@Test
+	//@Test
 	public void shouldSyncKml() throws DocumentException, IOException{
 		
 		String fileNameA = this.getClass().getResource("kmlWithSyncInfo.kml").getFile();
@@ -62,14 +64,21 @@ public class KmlMessageSyncEngineTests {
 		SyncSessionFactory syncSessionFactoryA = new SyncSessionFactory();
 		syncSessionFactoryA.registerSource(endpointA);
 	
-		IMessageSyncProtocol syncProtocolA = MessageSyncProtocolFactory.createSyncProtocol(100, new MockSyncSessionRepository(syncSessionFactoryA));		
+		//ISyncSessionRepository repoA = new MockSyncSessionRepository(syncSessionFactoryA);
+		ISyncSessionRepository repoA = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), syncSessionFactoryA);
+		
+		IMessageSyncProtocol syncProtocolA = MessageSyncProtocolFactory.createSyncProtocol(100, repoA);		
 		MessageSyncEngine syncEngineEndPointA = new MessageSyncEngine(syncProtocolA, channelEndpointA);
 
 		MockInMemoryMessageSyncAdapter endpointB = new MockInMemoryMessageSyncAdapter(dataSetId, kmlAdapterB.getAll());
 		
 		SyncSessionFactory syncSessionFactoryB = new SyncSessionFactory();
 		syncSessionFactoryB.registerSource(endpointB);
-		IMessageSyncProtocol syncProtocolB = MessageSyncProtocolFactory.createSyncProtocol(100, new MockSyncSessionRepository(syncSessionFactoryB));
+		
+		//ISyncSessionRepository repoB = new MockSyncSessionRepository(syncSessionFactoryB);
+		ISyncSessionRepository repoB = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), syncSessionFactoryB);
+		
+		IMessageSyncProtocol syncProtocolB = MessageSyncProtocolFactory.createSyncProtocol(100, repoB);
 		MessageSyncEngine syncEngineEndPointB = new MessageSyncEngine(syncProtocolB, channelEndpointB);
 		Assert.assertNotNull(syncEngineEndPointB);
 		

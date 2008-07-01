@@ -1,5 +1,6 @@
 package com.mesh4j.sync.message.core.repository;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -87,6 +88,10 @@ public class SyncSessionFactory implements ISyncSessionFactory {
 		
 		this.sessions.put(sessionId, session);
 		return session;
+	}
+
+	public List<ISyncSession> getAll() {
+		return new ArrayList<ISyncSession>(this.sessions.values());		
 	}
 
 }

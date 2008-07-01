@@ -1089,4 +1089,18 @@ public class FileSyncSessionRepositoryTest {
 		Assert.assertSame(syncSession, repo.getSession(sourceID, endpoint.getEndpointId()));
 	}
 	
+	@Test
+	public void shouldReadAllSessions(){
+		File file = new File(this.getClass().getResource("example2_current.xml").getFile());
+		
+		SyncSessionFactory syncSessionFactory = new SyncSessionFactory();
+		
+		FileSyncSessionRepository repo = new FileSyncSessionRepository(file.getParent()+"\\", syncSessionFactory);
+		
+		List<ISyncSession> all = repo.readAllSessions();
+		Assert.assertNotNull(all);
+		Assert.assertEquals(9, all.size());
+		Assert.assertEquals(9, syncSessionFactory.getAll().size());
+		
+	}
 }

@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -30,7 +32,11 @@ import com.mesh4j.sync.validations.MeshException;
 
 public class FileSyncSessionRepository implements ISyncSessionRepository{
 
+	private final static Log LOGGER = LogFactory.getLog(FileSyncSessionRepository.class);
+	
 	// CONSTANTS
+	private static final String SUBFIX_CURRENT = "_current.xml";
+	private static final String SUBFIX_SNAPSHOT = "_snapshot.xml";
 	public static final String ATTRIBUTE_OPEN = "open";
 	public static final String ATTRIBUTE_FULL = "full";
 	public static final String ATTRIBUTE_LAST_SYNC_DATE = "lastSyncDate";
@@ -60,6 +66,34 @@ public class FileSyncSessionRepository implements ISyncSessionRepository{
 		this.feedReader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 	}
 	
+	public List<ISyncSession> readAllSessions() {
+		ArrayList<ISyncSession> all = new ArrayList<ISyncSession>();
+		
+		File rootDir = new File(this.rootDirectory);
+		File[] files = rootDir.listFiles();
+		for (File file : files) {
+			if(file.isFile()){
+				String sessionId = null;
+				String fileName = file.getName();
+				if(fileName.endsWith(SUBFIX_SNAPSHOT)){
+					sessionId = fileName.substring(0, fileName.length() - SUBFIX_SNAPSHOT.length());
+				} else if(fileName.endsWith(SUBFIX_CURRENT)){
+					sessionId = fileName.substring(0, fileName.length() - SUBFIX_CURRENT.length());
+				}
+				if(sessionId != null){
+					if(getSession(sessionId) == null){
+						try{
+							all.add(readSession(sessionId));
+						} catch(MeshException e){
+							LOGGER.error(e.getMessage(), e);
+						}
+					}
+				}
+			}
+		}
+		return all;
+	}
+
 	public List<Item> readSnapshot(String sessionId){
 		try {
 			File file = getSnapshotFile(sessionId);
@@ -149,12 +183,12 @@ public class FileSyncSessionRepository implements ISyncSessionRepository{
 	}
 
 	public File getSnapshotFile(String sessionId) {
-		File file = new File(this.rootDirectory + sessionId + "_snapshot.xml");
+		File file = new File(this.rootDirectory + sessionId + SUBFIX_SNAPSHOT);
 		return file;
 	}
 	
 	public File getCurrentSessionFile(String sessionId) {
-		File file = new File(this.rootDirectory + sessionId + "_current.xml");
+		File file = new File(this.rootDirectory + sessionId + SUBFIX_CURRENT);
 		return file;
 	}
 
