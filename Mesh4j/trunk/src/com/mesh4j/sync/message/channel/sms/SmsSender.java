@@ -7,6 +7,8 @@ import java.util.List;
 
 public class SmsSender {
 
+	// TODO (JMT) MeshSMS: persist state in feed file
+	
 	// MODEL 
 	private ISmsConnection smsConnection;
 	private HashMap<String, SmsMessageBatch> ongoingBatches = new HashMap<String, SmsMessageBatch>();

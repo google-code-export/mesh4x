@@ -6,6 +6,8 @@ import java.util.List;
 
 public class SmsReceiver implements ISmsMessageReceiver {
 
+	// TODO (JMT) MeshSMS: persist state in feed file
+	
 	// MODEL VARIABLES
 	private  HashMap<String, SmsMessageBatch> completedBatches = new HashMap<String, SmsMessageBatch>();
 	private  HashMap<String, SmsMessageBatch> ongoingBatches = new HashMap<String, SmsMessageBatch>();
