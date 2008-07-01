@@ -1,11 +1,15 @@
 package com.mesh4j.sync.message.channel.sms;
 
+import java.util.Date;
+import java.util.StringTokenizer;
+
 import com.mesh4j.sync.message.IChannel;
 import com.mesh4j.sync.message.IMessage;
 import com.mesh4j.sync.message.IMessageReceiver;
 import com.mesh4j.sync.message.core.Message;
 import com.mesh4j.sync.message.encoding.IMessageEncoding;
 import com.mesh4j.sync.message.schedule.timer.TimerScheduler;
+import com.mesh4j.sync.utils.IdGenerator;
 import com.mesh4j.sync.validations.Guard;
 
 public class SmsChannel implements IChannel, IBatchReceiver {
@@ -18,7 +22,6 @@ public class SmsChannel implements IChannel, IBatchReceiver {
 	private IMessageEncoding messageEncoding;
 	
 	private IMessageReceiver messageReceiver;
-	private AskLossMessagesScheduleTask retryTask;
 
 	// METHODs
 	public SmsChannel(ISmsConnection smsConnection, int senderDelay, int receiverDelay) {
@@ -32,16 +35,14 @@ public class SmsChannel implements IChannel, IBatchReceiver {
 		smsConnection.registerSmsMessageReceiver(this.receiver);
 		
 		TimerScheduler.INSTANCE.schedule(new ResendBatchWithoutACKScheduleTask(this.sender, senderDelay), senderDelay);
-		
-		this.retryTask = new AskLossMessagesScheduleTask(this, this.receiver, this.sender, receiverDelay);
-		TimerScheduler.INSTANCE.schedule(this.retryTask, receiverDelay);
+		TimerScheduler.INSTANCE.schedule( new AskLossMessagesScheduleTask(this, this.receiver, receiverDelay), receiverDelay);
 	}
 
 	@Override
 	public void receive(SmsMessageBatch batch){
 		IMessage message = createMessage(batch);
-		if(this.retryTask.isRetry(message)){
-			this.retryTask.sendRetry(message);
+		if(this.isRetry(message)){
+			this.sendRetry(message);
 		}else{
 			this.messageReceiver.receiveMessage(message);
 		}
@@ -93,5 +94,43 @@ public class SmsChannel implements IChannel, IBatchReceiver {
 	public boolean hasPendingMessages() {
 		return this.sender.getOngoingBatchesCount() > 0 ||
 			this.receiver.getOngoingBatchesCount() > 0;
+	}
+
+	protected void sendAskRetry(SmsMessageBatch batch) {
+		StringBuffer sb = new StringBuffer();
+		sb.append(batch.getId());
+		sb.append("|");
+		
+		for (int i = 0; i < batch.getExpectedMessageCount(); i++) {
+			SmsMessage msg = batch.getMessage(i);
+			if(msg == null){
+				sb.append(i);
+				sb.append("|");
+			}else{
+				msg.setLastModificationDate(new Date());
+			}
+		}
+		Message message = new Message("R", "R", IdGenerator.newID(), sb.toString(), batch.getEndpoint());
+		message.setAckIsRequired(false);
+		
+		this.send(message);
+	}
+
+	private boolean isRetry(IMessage message){
+		return message != null  && "R".equals(message.getProtocol()) && "R".equals(message.getMessageType());
+	}
+
+	private void sendRetry(IMessage message) {
+		StringTokenizer st = new StringTokenizer(message.getData(), "|");
+		String batchID = st.nextToken();
+		
+		SmsMessageBatch batch = this.sender.getOngoingBatch(batchID);
+		if(batch != null){
+			while(st.hasMoreTokens()){
+				int seq = Integer.valueOf(st.nextToken());
+				SmsMessage smsMessage = batch.getMessage(seq);
+				this.sender.send(smsMessage, batch.getEndpoint());
+			}
+		}
 	}
 }

@@ -45,6 +45,8 @@ public class MockSmsConnection implements ISmsConnection{
 		this.sleep();
 		
 		this.endpoint.receiveSms(this.smsEndpoint, messageText);
+		
+		this.sleep();
 	}
 
 	private void sleep() {

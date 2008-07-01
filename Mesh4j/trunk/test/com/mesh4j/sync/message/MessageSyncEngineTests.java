@@ -22,6 +22,7 @@ import com.mesh4j.sync.model.IContent;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.NullContent;
 import com.mesh4j.sync.model.Sync;
+import com.mesh4j.sync.test.utils.TestHelper;
 import com.mesh4j.sync.utils.IdGenerator;
 
 public class MessageSyncEngineTests {
@@ -83,7 +84,7 @@ public class MessageSyncEngineTests {
 		ArrayList<Item> itemsA = new ArrayList<Item>();
 		
 		ArrayList<Item> itemsB = new ArrayList<Item>();
-		itemsB.add(createNewItem());
+		itemsB.add(createNewItem(TestHelper.newText(500)));
 		
 		IMessageSyncAdapter endPointA = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsA);
 		IMessageSyncAdapter endPointB = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsB);
@@ -565,10 +566,15 @@ public class MessageSyncEngineTests {
 	}
 	
 	private Item createNewItem() {
+		return createNewItem("123");
+	}
+	
+	private Item createNewItem(String text) {
 		String syncId = IdGenerator.newID();
 		
 		Element payload = DocumentHelper.createElement("foo");
-		payload.addElement("bar");
+		Element barElement = payload.addElement("bar");
+		barElement.setText(text);
 		
 		IContent content = new XMLContent(syncId, "", "", payload);
 		

@@ -39,10 +39,6 @@ public class MessageFormatter {
 		return sb.toString();
 	}
 
-	public static String getProtocol(String message){
-		return message.substring(0, 1);
-	}
-	
 	public static int getBatchHeaderLenght(){
 		return 13;
 	}	
