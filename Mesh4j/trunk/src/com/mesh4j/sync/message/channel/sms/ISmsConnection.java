@@ -1,5 +1,7 @@
 package com.mesh4j.sync.message.channel.sms;
 
+import com.mesh4j.sync.message.encoding.IMessageEncoding;
+
 
 public interface ISmsConnection {
 
@@ -8,5 +10,7 @@ public interface ISmsConnection {
 	void send(SmsEndpoint endpoint, String messageText);
 
 	int getMaxMessageLenght();
+
+	IMessageEncoding getMessageEncoding();
 
 }

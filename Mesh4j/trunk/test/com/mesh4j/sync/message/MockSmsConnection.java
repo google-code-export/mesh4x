@@ -3,6 +3,7 @@ package com.mesh4j.sync.message;
 import com.mesh4j.sync.message.channel.sms.ISmsConnection;
 import com.mesh4j.sync.message.channel.sms.ISmsMessageReceiver;
 import com.mesh4j.sync.message.channel.sms.SmsEndpoint;
+import com.mesh4j.sync.message.encoding.IMessageEncoding;
 
 public class MockSmsConnection implements ISmsConnection{
 
@@ -13,11 +14,15 @@ public class MockSmsConnection implements ISmsConnection{
 	private int generatedMessagesStatistics = 0;
 	private int generatedMessagesSizeStatistics = 0;
 	private boolean activeTrace = false;
+	private IMessageEncoding messageEncoding;
+	private int sleepDelay = 0;
+	private int maxMessageLenght = 140;
 	
 	// METHODS
-	public MockSmsConnection(String smsNumber) {
+	public MockSmsConnection(String smsNumber, IMessageEncoding messageEncoding) {
 		super();
 		this.smsEndpoint = new SmsEndpoint(smsNumber);
+		this.messageEncoding = messageEncoding;
 	}
 	
 	public void setEndPoint(MockSmsConnection endpoint){
@@ -36,7 +41,20 @@ public class MockSmsConnection implements ISmsConnection{
 		}
 		this.generatedMessagesStatistics = this.generatedMessagesStatistics + 1;
 		this.generatedMessagesSizeStatistics = this.generatedMessagesSizeStatistics + messageText.length();
+		
+		this.sleep();
+		
 		this.endpoint.receiveSms(this.smsEndpoint, messageText);
+	}
+
+	private void sleep() {
+		if(sleepDelay > 0){
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				// Nothing to do
+			}
+		}
 	}
 	
 	public void receiveSms(SmsEndpoint endpoint, String messageText){
@@ -45,9 +63,13 @@ public class MockSmsConnection implements ISmsConnection{
 
 	@Override
 	public int getMaxMessageLenght() {
-		return 140;
+		return maxMessageLenght;
 	}
-
+	
+	public void setMaxMessageLenght(int max) {
+		this.maxMessageLenght = max;
+	}
+		
 	protected int getGeneratedMessagesStatistics() {
 		return generatedMessagesStatistics;
 	}
@@ -63,6 +85,15 @@ public class MockSmsConnection implements ISmsConnection{
 	
 	public void activateTrace(){
 		this.activeTrace = true;
+	}
+
+	@Override
+	public IMessageEncoding getMessageEncoding() {
+		return messageEncoding;
+	}
+	
+	public void setSleepDelay(int sleepDelay) {
+		this.sleepDelay = sleepDelay;
 	}
 
 }

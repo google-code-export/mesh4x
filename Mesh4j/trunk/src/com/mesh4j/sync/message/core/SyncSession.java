@@ -67,7 +67,7 @@ public class SyncSession implements ISyncSession{
 
 	@Override
 	public void delete(String syncID, String by, Date when){
-		Item item = this.cache.get(syncID);		
+		Item item = this.get(syncID);		
 		Item ItemDeleted = new Item(new NullContent(syncID), item.getSync().clone().delete(by, when));
 		this.cache.put(syncID, ItemDeleted);
 	}

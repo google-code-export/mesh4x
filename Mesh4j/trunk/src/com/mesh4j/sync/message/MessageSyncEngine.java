@@ -47,6 +47,7 @@ public class MessageSyncEngine implements IMessageReceiver {
 			List<IMessage> response = this.syncProtocol.processMessage(message);
 			if(response != IMessageSyncProtocol.NO_RESPONSE){
 				for (IMessage msg : response) {
+					msg.setOrigin(message.getOrigin());
 					this.channel.send(msg);	
 				}			
 			}

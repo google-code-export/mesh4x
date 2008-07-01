@@ -16,12 +16,14 @@ public class CancelSyncMessageProcessor implements ICancelSyncMessageProcessor {
 		Guard.argumentNotNull(syncSession, "syncSession");
 				
 		syncSession.cancelSync();
-		return new Message(
+		Message message = new Message(
 			IProtocolConstants.PROTOCOL,
 			getMessageType(),
 			syncSession.getSessionId(),
 			"",
 			syncSession.getTarget());
+		message.setAckIsRequired(false);
+		return message;
 	}
 	
 	@Override

@@ -47,17 +47,17 @@ public class KmlMessageSyncEngineTests {
 		// Sync SMS
 		String dataSetId = "12345";
 		
-		MockSmsConnection smsConnectionEndpointA = new MockSmsConnection("A");
+		MockSmsConnection smsConnectionEndpointA = new MockSmsConnection("A", CompressBase91MessageEncoding.INSTANCE);
 		//smsConnectionEndpointA.activateTrace();
 		
-		MockSmsConnection smsConnectionEndpointB = new MockSmsConnection("B");
+		MockSmsConnection smsConnectionEndpointB = new MockSmsConnection("B", CompressBase91MessageEncoding.INSTANCE);
 		//smsConnectionEndpointB.activateTrace();
 		
 		smsConnectionEndpointA.setEndPoint(smsConnectionEndpointB);
 		smsConnectionEndpointB.setEndPoint(smsConnectionEndpointA);
 		
-		IChannel channelEndpointA = new SmsChannel(smsConnectionEndpointA, CompressBase91MessageEncoding.INSTANCE);
-		IChannel channelEndpointB = new SmsChannel(smsConnectionEndpointB, CompressBase91MessageEncoding.INSTANCE);
+		IChannel channelEndpointA = new SmsChannel(smsConnectionEndpointA, 5000, 5000);
+		IChannel channelEndpointB = new SmsChannel(smsConnectionEndpointB, 5000, 5000);
 
 		IMessageSyncAdapter endpointA = new MockInMemoryMessageSyncAdapter(dataSetId, kmlAdapterA.getAll());
 				
@@ -194,14 +194,14 @@ public class KmlMessageSyncEngineTests {
 		// Sync SMS
 		String dataSetId = "12345";
 
-		MockSmsConnection smsConnectionEndpointA = new MockSmsConnection("A");
-		MockSmsConnection smsConnectionEndpointB = new MockSmsConnection("B");
+		MockSmsConnection smsConnectionEndpointA = new MockSmsConnection("A", messageEncoding);
+		MockSmsConnection smsConnectionEndpointB = new MockSmsConnection("B", messageEncoding);
 
 		smsConnectionEndpointA.setEndPoint(smsConnectionEndpointB);
 		smsConnectionEndpointB.setEndPoint(smsConnectionEndpointA);
 		
-		IChannel channelEndpointA = new SmsChannel(smsConnectionEndpointA, messageEncoding);
-		IChannel channelEndpointB = new SmsChannel(smsConnectionEndpointB, messageEncoding);
+		IChannel channelEndpointA = new SmsChannel(smsConnectionEndpointA, 5000, 5000);
+		IChannel channelEndpointB = new SmsChannel(smsConnectionEndpointB, 5000, 5000);
 
 		MockInMemoryMessageSyncAdapter endpointA = new MockInMemoryMessageSyncAdapter(dataSetId, kmlAdapter.getAll());
 		SyncSessionFactory syncSessionFactoryA = new SyncSessionFactory();

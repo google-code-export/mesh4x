@@ -37,18 +37,30 @@ public class MessageSyncEngineTests {
 	private MockSmsConnection smsConnectionEndpointB;
 	private List<Item> snapshotA;
 	private List<Item> snapshotB;
+	private SmsChannel channelEndpointA;
+	private SmsChannel channelEndpointB;
 
 	public void setUp(IMessageSyncAdapter endPointA, IMessageSyncAdapter endPointB){
-		smsConnectionEndpointA = new MockSmsConnection(TARGET_A);
-		smsConnectionEndpointB = new MockSmsConnection(TARGET_B);
-
+		setUp(endPointA, 0, 140, 50000, 50000, endPointB, 0, 140, 50000, 50000);
+	}
+		
+	public void setUp(IMessageSyncAdapter endPointA, int smsConnectionDelayA, int maxMessageLenghtA, int channelASenderCheckDelay, int channelAReceiveCheckDelay, IMessageSyncAdapter endPointB, int smsConnectionDelayB, int maxMessageLenghtB, int channelBSenderCheckDelay, int channelBReceiveCheckDelay){
+		
+		smsConnectionEndpointA = new MockSmsConnection(TARGET_A, MockMessageEncoding.INSTANCE);
+		smsConnectionEndpointA.setSleepDelay(smsConnectionDelayA);
+		smsConnectionEndpointA.setMaxMessageLenght(maxMessageLenghtA);
+		
+		smsConnectionEndpointB = new MockSmsConnection(TARGET_B, MockMessageEncoding.INSTANCE);
+		smsConnectionEndpointB.setSleepDelay(smsConnectionDelayB);
+		smsConnectionEndpointB.setMaxMessageLenght(maxMessageLenghtB);
+		
 		smsConnectionEndpointA.setEndPoint(smsConnectionEndpointB);
 		smsConnectionEndpointA.activateTrace();
 		smsConnectionEndpointB.setEndPoint(smsConnectionEndpointA);
 		smsConnectionEndpointB.activateTrace();
 		
-		IChannel channelEndpointA = new SmsChannel(smsConnectionEndpointA, MockMessageEncoding.INSTANCE);
-		IChannel channelEndpointB = new SmsChannel(smsConnectionEndpointB, MockMessageEncoding.INSTANCE);
+		channelEndpointA = new SmsChannel(smsConnectionEndpointA, channelASenderCheckDelay, channelAReceiveCheckDelay);
+		channelEndpointB = new SmsChannel(smsConnectionEndpointB, channelBSenderCheckDelay, channelBReceiveCheckDelay);
 		
 		SyncSessionFactory syncSessionFactoryA = new SyncSessionFactory();
 		syncSessionFactoryA.registerSource(endPointA);
@@ -75,7 +87,7 @@ public class MessageSyncEngineTests {
 		
 		IMessageSyncAdapter endPointA = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsA);
 		IMessageSyncAdapter endPointB = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsB);
-		setUp(endPointA, endPointB);
+		setUp(endPointA, 500, 80, 100, 100, endPointB, 500, 80, 100, 100);
 		
 		sync(false);		
 		Assert.assertEquals(1, snapshotA.size());
@@ -536,6 +548,9 @@ public class MessageSyncEngineTests {
 		
 		Assert.assertFalse(syncSessionRepoA.getSession(SOURCE_ID, TARGET_B).isOpen());
 		Assert.assertFalse(syncSessionRepoB.getSession(SOURCE_ID, TARGET_A).isOpen());
+		
+		Assert.assertFalse(channelEndpointA.hasPendingMessages());
+		Assert.assertFalse(channelEndpointB.hasPendingMessages());
 		
 		System.out.println("A: " 
 				+ smsConnectionEndpointA.getGeneratedMessagesSizeStatistics() 

@@ -11,5 +11,11 @@ public interface IMessage {
 	String getData();
 
 	IEndpoint getEndpoint();
+
+	String getOrigin();
+	
+	void setOrigin(String origin);
+
+	boolean isAckRequired();
 	
 }

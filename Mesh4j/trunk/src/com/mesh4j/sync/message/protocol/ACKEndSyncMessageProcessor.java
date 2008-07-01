@@ -22,12 +22,14 @@ public class ACKEndSyncMessageProcessor implements IMessageProcessor {
 		Guard.argumentNotNull(syncSession, "syncSession");
 		Guard.argumentNotNull(sinceDate, "sinceDate");
 		
-		return new Message(
+		Message message = new Message(
 				IProtocolConstants.PROTOCOL,
 				getMessageType(),
 				syncSession.getSessionId(),
 				DateHelper.formatDateTime(sinceDate),
 				syncSession.getTarget());
+		message.setAckIsRequired(false);
+		return message;
 	}
 
 	@Override

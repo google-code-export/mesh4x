@@ -11,6 +11,8 @@ public class Message implements IMessage {
 	private String sessionId;
 	private String data;
 	private IEndpoint endpoint;
+	private String origin;
+	private boolean ackRequired = true;
 	
 	// METHODs
 	public Message(String protocol, String messageType, String sessionId, String data, IEndpoint endpoint) {
@@ -45,5 +47,24 @@ public class Message implements IMessage {
 	@Override
 	public IEndpoint getEndpoint() {
 		return endpoint;
+	}
+
+	@Override
+	public String getOrigin() {
+		return origin;
+	}
+
+	@Override
+	public void setOrigin(String origin) {
+		this.origin = origin;
+	}
+
+	@Override
+	public boolean isAckRequired() {
+		return ackRequired;
+	}
+
+	public void setAckIsRequired(boolean ackRequired) {
+		this.ackRequired = ackRequired;
 	}
 }

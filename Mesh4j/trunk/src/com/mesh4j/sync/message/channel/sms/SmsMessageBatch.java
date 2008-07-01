@@ -18,9 +18,10 @@ public class SmsMessageBatch {
 
 	// BUSINESS METHODS
 
-	public SmsMessageBatch() {
+	public SmsMessageBatch(SmsEndpoint endpoint) {
 		super();
 		this.id = this.generateNewId();
+		this.endpoint = endpoint;
 	}
 
 	public SmsMessageBatch(SmsEndpoint endpoint, String protocolHeader, String messageBatchId, int expectedMessageCount) {
@@ -50,24 +51,24 @@ public class SmsMessageBatch {
 		return complete;
 	}
 
-	public Date getDateTimeFirstMessageReceived() {
+	public Date getDateTimeFirstMessage() {
 		Date min = null;
 
 		for (SmsMessage msg : this.messages.values()) {
-			if (min == null || msg.getReceived().before(min)) {
-				min = msg.getReceived();
+			if (min == null || msg.getLastModificationDate().before(min)) {
+				min = msg.getLastModificationDate();
 			}
 		}
 
 		return min;
 	}
 
-	public Date getDateTimeLastMessageReceived() {
+	public Date getDateTimeLastMessage() {
 		Date max = null;
 
 		for (SmsMessage msg : this.messages.values()) {
-			if (max == null || msg.getReceived().after(max)) {
-				max = msg.getReceived();
+			if (max == null || msg.getLastModificationDate().after(max)) {
+				max = msg.getLastModificationDate();
 			}
 		}
 		return max;

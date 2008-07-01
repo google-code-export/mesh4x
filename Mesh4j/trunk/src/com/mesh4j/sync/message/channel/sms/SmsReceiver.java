@@ -1,7 +1,8 @@
 package com.mesh4j.sync.message.channel.sms;
 
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class SmsReceiver implements ISmsMessageReceiver {
 
@@ -10,17 +11,16 @@ public class SmsReceiver implements ISmsMessageReceiver {
 	private  HashMap<String, SmsMessageBatch> ongoingBatches = new HashMap<String, SmsMessageBatch>();
 	private  HashMap<String, DiscardedBatchRecord> discardedBatches = new HashMap<String, DiscardedBatchRecord>();
 
-	private ISmsMessageReceiver messageReceiver;
+	private IBatchReceiver batchReceiver;
 	
 	// BUSINESS METHODS
-
 	public SmsReceiver() {
 		super();
 	}
 	
-	public SmsReceiver(ISmsMessageReceiver messageReceiver) {
+	public SmsReceiver(IBatchReceiver batchReceiver) {
 		super();
-		this.messageReceiver = messageReceiver;
+		this.batchReceiver = batchReceiver;
 	}
 
 	public SmsReceiver receive(String endpoint, SmsMessage message) {
@@ -51,6 +51,7 @@ public class SmsReceiver implements ISmsMessageReceiver {
 				MessageFormatter.getBatchExpectedMessageCount(message.getText()));
 			ongoingBatches.put(receivedMessageBatchId, batch);
 
+			this.notifyBathACK(message);
 		}
 
 		int sequence = MessageFormatter.getBatchMessageSequenceNumber(message.getText());
@@ -77,11 +78,17 @@ public class SmsReceiver implements ISmsMessageReceiver {
 	}
 	
 	private void notifyBathCompleted(SmsMessageBatch batch){
-		if(this.messageReceiver != null){
-			this.messageReceiver.receiveSms(batch.getEndpoint(), batch.getProtocolHeader() + batch.getPayload());
+		if(this.batchReceiver != null){
+			this.batchReceiver.receive(batch);
 		}
 	}
 
+	private void notifyBathACK(SmsMessage message){
+		if(this.batchReceiver != null){
+			this.batchReceiver.receiveACK(MessageFormatter.getBatchACK(message.getText()));
+		}
+	}
+	
 	public SmsReceiver discardBatch(String ongoingBatchId) {
 		discardBatch(ongoingBatchId, null);
 		return this;
@@ -131,8 +138,11 @@ public class SmsReceiver implements ISmsMessageReceiver {
 
 	@Override
 	public void receiveSms(SmsEndpoint endpoint, String message) {
-		SmsMessage smsMessage = new SmsMessage(message, new Date());
+		SmsMessage smsMessage = new SmsMessage(message);
 		this.receive(endpoint, smsMessage);		
 	}
 
+	public List<SmsMessageBatch> getOngoingBatches() {
+		return new ArrayList<SmsMessageBatch>(this.ongoingBatches.values());
+	}
 }

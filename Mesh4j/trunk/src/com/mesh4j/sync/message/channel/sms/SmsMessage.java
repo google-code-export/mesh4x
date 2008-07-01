@@ -6,30 +6,35 @@ public class SmsMessage {
 
 	// MODEL VARIABLE
 	private String text;
-	private Date received;
+	private Date creationDate;
+	private Date lastModificationDate;
 
 	// BUSINESS METHODS
 	public SmsMessage(String text) {
 		this(text, new Date());
 	}
 
-	public SmsMessage(String text, Date received) {
+	public SmsMessage(String text, Date creationDate) {
 		super();
 		this.text = text;
-		this.received = received;
+		this.creationDate = creationDate;
+		this.lastModificationDate = creationDate;
 	}
 
 	public String getText() {
 		return text;
 	}
 
-	public Date getReceived() {
-		return received;
+	public Date getCreationDate() {
+		return creationDate;
 	}
-
-	public SmsMessage setReceived(Date date) {
-		this.received = date;
-		return this;
+	
+	public Date getLastModificationDate() {
+		return lastModificationDate;
+	}
+	
+	public void setLastModificationDate(Date date) {
+		this.lastModificationDate = date;
 	}
 
 	public SmsMessage setText(String text) {

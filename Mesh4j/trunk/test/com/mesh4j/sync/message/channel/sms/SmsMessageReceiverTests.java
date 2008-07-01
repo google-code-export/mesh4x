@@ -12,13 +12,13 @@ public class SmsMessageReceiverTests {
 	public SmsMessageBatch createTestBatch(int originalTextlength)
 	{
 		MessageBatchFactory factory = new MessageBatchFactory();
-		return factory.createMessageBatch("M", TestHelper.newText(originalTextlength));
+		return factory.createMessageBatch(new SmsEndpoint("1234"), "M", "12345", TestHelper.newText(originalTextlength));
 	}
 	
 	public SmsMessageBatch createTestBatch(int msgSize, String originalText)
 	{
 		MessageBatchFactory factory = new MessageBatchFactory(msgSize);
-		return factory.createMessageBatch("M", originalText);
+		return factory.createMessageBatch(new SmsEndpoint("1234"), "M", "12345", originalText);
 	}
 
 	@Test
@@ -135,16 +135,16 @@ public class SmsMessageReceiverTests {
 		Date first = new Date();
 		Date second = TestHelper.nowAddHours(2);
 
-		message1.setReceived(second);
-		message2.setReceived(first);
+		message1.setLastModificationDate(second);
+		message2.setLastModificationDate(first);
 
 
 		receiver
 			.receive("sms:123", message2)
 			.receive("sms:123", message1);
 
-		Assert.assertEquals(first, receiver.getOngoingBatch(originalbatch.getId()).getDateTimeFirstMessageReceived());
-		Assert.assertEquals(second, receiver.getOngoingBatch(originalbatch.getId()).getDateTimeLastMessageReceived());
+		Assert.assertEquals(first, receiver.getOngoingBatch(originalbatch.getId()).getDateTimeFirstMessage());
+		Assert.assertEquals(second, receiver.getOngoingBatch(originalbatch.getId()).getDateTimeLastMessage());
 
 	}
 
@@ -189,7 +189,7 @@ public class SmsMessageReceiverTests {
 		Assert.assertEquals(originalbatch.getMessagesCount(), ongoing.getExpectedMessageCount());
 		Assert.assertNotNull(ongoing.getMessage(3));
 
-		SmsMessage msg2 = new SmsMessage(msg.getText(), msg.getReceived());
+		SmsMessage msg2 = new SmsMessage(msg.getText(), msg.getLastModificationDate());
 
 		msg2.setText(msg2.getText().substring(0, msg2.getText().length() - 2) + "**");
 
@@ -216,7 +216,7 @@ public class SmsMessageReceiverTests {
 		Assert.assertEquals(originalbatch.getMessagesCount(), ongoing.getExpectedMessageCount());
 		Assert.assertNotNull(ongoing.getMessage(3));
 
-		SmsMessage msg2 = new SmsMessage(msg.getText(), msg.getReceived());
+		SmsMessage msg2 = new SmsMessage(msg.getText(), msg.getLastModificationDate());
 
 		msg2.setText(msg2.getText().substring(0, msg2.getText().length() - 2) + "**");
 

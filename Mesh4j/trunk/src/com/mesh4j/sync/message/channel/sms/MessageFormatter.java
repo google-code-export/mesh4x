@@ -43,18 +43,14 @@ public class MessageFormatter {
 		return message.substring(0, 1);
 	}
 	
-	public static String getMessage(String messageText) {
-		return messageText.substring(1, messageText.length());
-	}
-	
 	public static int getBatchHeaderLenght(){
-		return 8;
+		return 13;
 	}	
 	
-	public static String createBatchMessage(String protocolHeader, String batchId, int expected, int sequence, String messagetext) {
+	public static String createBatchMessage(String protocolHeader, String batchId, String ackBatchId, int expected, int sequence, String messagetext) {
 		String expectedString = String.valueOf(expected);
 		String sequenceString = String.valueOf(sequence);
-		return protocolHeader + batchId + expectedString + sequenceString + messagetext;
+		return protocolHeader + batchId + expectedString + sequenceString + ackBatchId + messagetext;
 	}
 	
 	public static String getBatchProtocolHeader(String messageText) {
@@ -69,7 +65,11 @@ public class MessageFormatter {
 		return new Integer(messageText.substring(6, 7));
 	}
 
-	public static  int getBatchMessageSequenceNumber(String messageText) {
+	public static int getBatchMessageSequenceNumber(String messageText) {
 		return new Integer(messageText.substring(7, 8));
+	}
+
+	public static String getBatchACK(String messageText) {
+		return messageText.substring(8, 13);
 	}
 }
