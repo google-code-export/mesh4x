@@ -10,7 +10,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.mesh4j.sync.adapters.feed.XMLContent;
-import com.mesh4j.sync.message.channel.sms.SmsChannel;
+import com.mesh4j.sync.message.channel.sms.ISmsChannel;
+import com.mesh4j.sync.message.channel.sms.SmsChannelFactory;
 import com.mesh4j.sync.message.channel.sms.SmsEndpoint;
 import com.mesh4j.sync.message.core.ISyncSessionRepository;
 import com.mesh4j.sync.message.core.Message;
@@ -38,8 +39,8 @@ public class MessageSyncEngineTests {
 	private MockSmsConnection smsConnectionEndpointB;
 	private List<Item> snapshotA;
 	private List<Item> snapshotB;
-	private SmsChannel channelEndpointA;
-	private SmsChannel channelEndpointB;
+	private ISmsChannel channelEndpointA;
+	private ISmsChannel channelEndpointB;
 
 	public void setUp(IMessageSyncAdapter endPointA, IMessageSyncAdapter endPointB){
 		setUp(endPointA, 0, 140, 50000, 50000, endPointB, 0, 140, 50000, 50000);
@@ -60,8 +61,8 @@ public class MessageSyncEngineTests {
 		smsConnectionEndpointB.setEndPoint(smsConnectionEndpointA);
 		smsConnectionEndpointB.activateTrace();
 		
-		channelEndpointA = new SmsChannel(smsConnectionEndpointA, channelASenderCheckDelay, channelAReceiveCheckDelay);
-		channelEndpointB = new SmsChannel(smsConnectionEndpointB, channelBSenderCheckDelay, channelBReceiveCheckDelay);
+		channelEndpointA = SmsChannelFactory.createChannel(smsConnectionEndpointA, channelASenderCheckDelay, channelAReceiveCheckDelay);
+		channelEndpointB = SmsChannelFactory.createChannel(smsConnectionEndpointB, channelBSenderCheckDelay, channelBReceiveCheckDelay);
 		
 		SyncSessionFactory syncSessionFactoryA = new SyncSessionFactory();
 		syncSessionFactoryA.registerSource(endPointA);
@@ -550,8 +551,10 @@ public class MessageSyncEngineTests {
 		Assert.assertFalse(syncSessionRepoA.getSession(SOURCE_ID, TARGET_B).isOpen());
 		Assert.assertFalse(syncSessionRepoB.getSession(SOURCE_ID, TARGET_A).isOpen());
 		
-		Assert.assertFalse(channelEndpointA.hasPendingMessages());
-		Assert.assertFalse(channelEndpointB.hasPendingMessages());
+		Assert.assertEquals(0, channelEndpointA.getIncommingBatches().size());
+		Assert.assertEquals(0, channelEndpointA.getOutcommingBatches().size());
+		Assert.assertEquals(0, channelEndpointB.getIncommingBatches().size());
+		Assert.assertEquals(0, channelEndpointB.getOutcommingBatches().size());
 		
 		System.out.println("A: " 
 				+ smsConnectionEndpointA.getGeneratedMessagesSizeStatistics() 

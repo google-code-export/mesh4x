@@ -34,11 +34,11 @@ public class ScheduleTests {
 	public void shouldScheduleTask() throws Exception {
 		String taskId = "3";
 	
-		TimerScheduler.INSTANCE.schedule(new MyTask(taskId), 50);
+		TimerScheduler.INSTANCE.schedule(new MyTask(taskId), 70);
 		Thread.sleep(300);
 		
 		MyTask task = (MyTask) TimerScheduler.INSTANCE.getTask(taskId);
-		Assert.assertEquals(5, task.getExecutuions());
+		Assert.assertEquals(4, task.getExecutuions());
 	}
 	
 	@Test

@@ -1,10 +1,17 @@
-package com.mesh4j.sync.message.channel.sms;
+package com.mesh4j.sync.message.channel.sms.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class SmsReceiver implements ISmsMessageReceiver {
+import com.mesh4j.sync.message.channel.sms.ISmsChannel;
+import com.mesh4j.sync.message.channel.sms.ISmsReceiver;
+import com.mesh4j.sync.message.channel.sms.SmsEndpoint;
+import com.mesh4j.sync.message.channel.sms.batch.DiscardedBatchRecord;
+import com.mesh4j.sync.message.channel.sms.batch.SmsMessage;
+import com.mesh4j.sync.message.channel.sms.batch.SmsMessageBatch;
+
+public class SmsReceiver implements ISmsReceiver {
 
 	// TODO (JMT) MeshSMS: persist state in feed file
 	
@@ -13,16 +20,16 @@ public class SmsReceiver implements ISmsMessageReceiver {
 	private  HashMap<String, SmsMessageBatch> ongoingBatches = new HashMap<String, SmsMessageBatch>();
 	private  HashMap<String, DiscardedBatchRecord> discardedBatches = new HashMap<String, DiscardedBatchRecord>();
 
-	private IBatchReceiver batchReceiver;
+	private ISmsChannel smsChannel;
 	
 	// BUSINESS METHODS
 	public SmsReceiver() {
 		super();
 	}
 	
-	public SmsReceiver(IBatchReceiver batchReceiver) {
+	public SmsReceiver(ISmsChannel smsChannel) {
 		super();
-		this.batchReceiver = batchReceiver;
+		this.smsChannel = smsChannel;
 	}
 
 	public SmsReceiver receive(String endpoint, SmsMessage message) {
@@ -80,14 +87,14 @@ public class SmsReceiver implements ISmsMessageReceiver {
 	}
 	
 	private void notifyBathCompleted(SmsMessageBatch batch){
-		if(this.batchReceiver != null){
-			this.batchReceiver.receive(batch);
+		if(this.smsChannel != null){
+			this.smsChannel.receive(batch);
 		}
 	}
 
 	private void notifyBathACK(SmsMessage message){
-		if(this.batchReceiver != null){
-			this.batchReceiver.receiveACK(MessageFormatter.getBatchACK(message.getText()));
+		if(this.smsChannel != null){
+			this.smsChannel.receiveACK(MessageFormatter.getBatchACK(message.getText()));
 		}
 	}
 	
@@ -146,5 +153,10 @@ public class SmsReceiver implements ISmsMessageReceiver {
 
 	public List<SmsMessageBatch> getOngoingBatches() {
 		return new ArrayList<SmsMessageBatch>(this.ongoingBatches.values());
+	}
+
+	@Override
+	public void setBatchReceiver(ISmsChannel smsChannel) {
+		this.smsChannel = smsChannel;		
 	}
 }

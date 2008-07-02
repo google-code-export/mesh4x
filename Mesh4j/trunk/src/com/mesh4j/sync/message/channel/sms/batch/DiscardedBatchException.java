@@ -1,4 +1,4 @@
-package com.mesh4j.sync.message.channel.sms;
+package com.mesh4j.sync.message.channel.sms.batch;
 
 public class DiscardedBatchException extends RuntimeException {
 

@@ -5,7 +5,7 @@ import com.mesh4j.sync.message.encoding.IMessageEncoding;
 
 public interface ISmsConnection {
 
-	void registerSmsMessageReceiver(ISmsMessageReceiver messageText);
+	void registerSmsReceiver(ISmsReceiver messageReceiver);
 
 	void send(SmsEndpoint endpoint, String messageText);
 

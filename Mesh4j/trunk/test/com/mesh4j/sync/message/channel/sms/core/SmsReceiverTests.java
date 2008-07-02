@@ -1,13 +1,18 @@
-package com.mesh4j.sync.message.channel.sms;
+package com.mesh4j.sync.message.channel.sms.core;
 
 import java.util.Date;
 
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.mesh4j.sync.message.channel.sms.SmsEndpoint;
+import com.mesh4j.sync.message.channel.sms.batch.DiscardedBatchException;
+import com.mesh4j.sync.message.channel.sms.batch.MessageBatchFactory;
+import com.mesh4j.sync.message.channel.sms.batch.SmsMessage;
+import com.mesh4j.sync.message.channel.sms.batch.SmsMessageBatch;
 import com.mesh4j.sync.test.utils.TestHelper;
 
-public class SmsMessageReceiverTests {
+public class SmsReceiverTests {
 	
 	public SmsMessageBatch createTestBatch(int originalTextlength)
 	{
@@ -287,11 +292,51 @@ public class SmsMessageReceiverTests {
 
 	}
 
+	@Test
+	public void ShouldNotifyToBachReceiverWhenBatchIsCompleted()
+	{
+		MockSmsChannel batchReceiver = new MockSmsChannel();
+		
+		SmsMessageBatch batch = createTestBatch(100);
 
+		SmsReceiver receiver = new SmsReceiver(batchReceiver);
+		receiver.receive("sms:123", batch.getMessage(0));
+		
+		Assert.assertEquals(1, receiver.getCompletedBatchesCount());
+		Assert.assertEquals(1, batchReceiver.getIncommingBatches().size());
+		Assert.assertEquals(batch.getId(), batchReceiver.getIncommingBatches().get(0).getId());
+		Assert.assertEquals(batch.getExpectedMessageCount(), batchReceiver.getIncommingBatches().get(0).getExpectedMessageCount());
+		Assert.assertEquals(batch.getPayload(), batchReceiver.getIncommingBatches().get(0).getPayload());
+		
+	}
 
-	//batchfromdifferentnumbersdontcollide
-	//get notification on batch job completion
-	//can ask for resends for an incomplete batch jobs
-	//can cancel an ongoing batch job and gets logged
-	//can get dupe messages
+	
+	@Test
+	public void ShouldNotNotifyToBachReceiverWhenBatchIsNotCompleted()
+	{
+		MockSmsChannel batchReceiver = new MockSmsChannel();
+		
+		SmsMessageBatch batch = createTestBatch(10, "12345678901234567890");
+
+		SmsReceiver receiver = new SmsReceiver(batchReceiver);
+		receiver.receive("sms:123", batch.getMessage(0));
+		
+		Assert.assertEquals(0, receiver.getCompletedBatchesCount());
+		Assert.assertEquals(0, batchReceiver.getIncommingBatches().size());
+	}
+
+	
+	@Test
+	public void ShouldNotifyACKWhenReceiveFirstMessageOfBatch()
+	{
+		MockSmsChannel batchReceiver = new MockSmsChannel();
+		
+		SmsMessageBatch batch = createTestBatch(10, "12345678901234567890");
+
+		SmsReceiver receiver = new SmsReceiver(batchReceiver);
+		receiver.receive("sms:123", batch.getMessage(0));
+		
+		Assert.assertEquals(0, receiver.getCompletedBatchesCount());
+		Assert.assertEquals(1, batchReceiver.getBatchACKs().size());
+	}
 }

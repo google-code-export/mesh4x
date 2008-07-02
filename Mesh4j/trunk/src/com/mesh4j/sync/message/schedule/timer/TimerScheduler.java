@@ -10,12 +10,13 @@ public class TimerScheduler implements IScheduler<ScheduleTimerTask>{
 	public final static TimerScheduler INSTANCE = new TimerScheduler();
 	
 	// MODEL VARIABLES
-	private Timer timer = new Timer("TimerScheduler", true);
+	private Timer timer;
 	private ArrayList<ScheduleTimerTask> tasks = new ArrayList<ScheduleTimerTask>();
 
 	// BUSINESS METHODS
 	private TimerScheduler(){
 		super();
+		reset();
 	}
 	
 	@Override
@@ -40,10 +41,20 @@ public class TimerScheduler implements IScheduler<ScheduleTimerTask>{
 		if(task != null){
 			task.cancel();
 			this.tasks.remove(task);
-			this.timer.purge();
+			this.purge();
 		}		
 	}
-	
-	
-	
+
+	public void purge() {
+		this.timer.purge();		
+	}
+
+	public void reset() {
+		if(this.timer != null){
+			this.timer.cancel();
+		}
+		this.timer = new Timer("TimerScheduler", true);
+		this.tasks = new ArrayList<ScheduleTimerTask>();		
+	}
+		
 }

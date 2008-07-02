@@ -1,4 +1,4 @@
-package com.mesh4j.sync.message.channel.sms;
+package com.mesh4j.sync.message.channel.sms.batch;
 
 import java.util.Date;
 
@@ -6,7 +6,6 @@ public class SmsMessage {
 
 	// MODEL VARIABLE
 	private String text;
-	private Date creationDate;
 	private Date lastModificationDate;
 
 	// BUSINESS METHODS
@@ -14,21 +13,16 @@ public class SmsMessage {
 		this(text, new Date());
 	}
 
-	public SmsMessage(String text, Date creationDate) {
+	public SmsMessage(String text, Date date) {
 		super();
 		this.text = text;
-		this.creationDate = creationDate;
-		this.lastModificationDate = creationDate;
+		this.lastModificationDate = date;
 	}
 
 	public String getText() {
 		return text;
 	}
 
-	public Date getCreationDate() {
-		return creationDate;
-	}
-	
 	public Date getLastModificationDate() {
 		return lastModificationDate;
 	}

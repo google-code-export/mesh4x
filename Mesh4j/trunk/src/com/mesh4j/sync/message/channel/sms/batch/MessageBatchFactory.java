@@ -1,4 +1,7 @@
-package com.mesh4j.sync.message.channel.sms;
+package com.mesh4j.sync.message.channel.sms.batch;
+
+import com.mesh4j.sync.message.channel.sms.SmsEndpoint;
+import com.mesh4j.sync.message.channel.sms.core.MessageFormatter;
 
 
 public class MessageBatchFactory {

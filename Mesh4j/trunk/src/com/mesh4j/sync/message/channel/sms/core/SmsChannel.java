@@ -1,22 +1,27 @@
-package com.mesh4j.sync.message.channel.sms;
+package com.mesh4j.sync.message.channel.sms.core;
 
 import java.util.Date;
+import java.util.List;
 import java.util.StringTokenizer;
 
-import com.mesh4j.sync.message.IChannel;
 import com.mesh4j.sync.message.IMessage;
 import com.mesh4j.sync.message.IMessageReceiver;
+import com.mesh4j.sync.message.channel.sms.ISmsChannel;
+import com.mesh4j.sync.message.channel.sms.ISmsReceiver;
+import com.mesh4j.sync.message.channel.sms.ISmsSender;
+import com.mesh4j.sync.message.channel.sms.SmsEndpoint;
+import com.mesh4j.sync.message.channel.sms.batch.MessageBatchFactory;
+import com.mesh4j.sync.message.channel.sms.batch.SmsMessage;
+import com.mesh4j.sync.message.channel.sms.batch.SmsMessageBatch;
 import com.mesh4j.sync.message.core.Message;
 import com.mesh4j.sync.message.encoding.IMessageEncoding;
-import com.mesh4j.sync.message.schedule.timer.TimerScheduler;
-import com.mesh4j.sync.utils.IdGenerator;
 import com.mesh4j.sync.validations.Guard;
 
-public class SmsChannel implements IChannel, IBatchReceiver {
+public class SmsChannel implements ISmsChannel {
 	
 	// MODEL VARIABLES
-	private SmsSender sender;
-	private SmsReceiver receiver;
+	private ISmsSender sender;
+	private ISmsReceiver receiver;
 
 	private MessageBatchFactory batchFactory;
 	private IMessageEncoding messageEncoding;
@@ -24,25 +29,27 @@ public class SmsChannel implements IChannel, IBatchReceiver {
 	private IMessageReceiver messageReceiver;
 
 	// METHODs
-	public SmsChannel(ISmsConnection smsConnection, int senderDelay, int receiverDelay) {
-		Guard.argumentNotNull(smsConnection, "smsConnection");
+	public SmsChannel(ISmsSender sender, ISmsReceiver receiver, IMessageEncoding messageEncoding, int maxMessageLenght) {
+
+		Guard.argumentNotNull(sender, "sender");
+		Guard.argumentNotNull(receiver, "receiver");
+		Guard.argumentNotNull(messageEncoding, "messageEncoding");
 		
-		this.messageEncoding = smsConnection.getMessageEncoding();
-		this.batchFactory = new MessageBatchFactory(smsConnection.getMaxMessageLenght());
+		this.messageEncoding = messageEncoding;
+		this.batchFactory = new MessageBatchFactory(maxMessageLenght);
 		
-		this.sender = new SmsSender(smsConnection);
-		this.receiver = new SmsReceiver(this);
-		smsConnection.registerSmsMessageReceiver(this.receiver);
-		
-		TimerScheduler.INSTANCE.schedule(new ResendBatchWithoutACKScheduleTask(this.sender, senderDelay), senderDelay);
-		TimerScheduler.INSTANCE.schedule( new AskLossMessagesScheduleTask(this, this.receiver, receiverDelay), receiverDelay);
+		this.sender = sender;
+		this.receiver = receiver;
+		receiver.setBatchReceiver(this);
 	}
 
 	@Override
 	public void receive(SmsMessageBatch batch){
+		Guard.argumentNotNull(batch, "batch");
+		
 		IMessage message = createMessage(batch);
 		if(this.isRetry(message)){
-			this.sendRetry(message);
+			this.resendSmsMessages(message);
 		}else{
 			this.messageReceiver.receiveMessage(message);
 		}
@@ -55,8 +62,10 @@ public class SmsChannel implements IChannel, IBatchReceiver {
 
 	@Override
 	public void send(IMessage message) {
+		Guard.argumentNotNull(message, "message");
+		
 		SmsMessageBatch batch = createBatch(message);		
-		this.sender.send(batch, message.isAckRequired());
+		this.send(batch, message.isAckRequired());
 	}
 
 	private SmsMessageBatch createBatch(IMessage message) {
@@ -88,15 +97,16 @@ public class SmsChannel implements IChannel, IBatchReceiver {
 
 	@Override
 	public void receiveACK(String batchId) {
-		this.sender.receiveACK(batchId);		
+		if(batchId != null && batchId.length() != 0){
+			this.sender.receiveACK(batchId);
+		}
 	}
 
-	public boolean hasPendingMessages() {
-		return this.sender.getOngoingBatchesCount() > 0 ||
-			this.receiver.getOngoingBatchesCount() > 0;
-	}
-
-	protected void sendAskRetry(SmsMessageBatch batch) {
+	@Override
+	public void sendAskForRetry(SmsMessageBatch batch) {
+		
+		Guard.argumentNotNull(batch, "batch");
+		
 		StringBuffer sb = new StringBuffer();
 		sb.append(batch.getId());
 		sb.append("|");
@@ -110,17 +120,17 @@ public class SmsChannel implements IChannel, IBatchReceiver {
 				msg.setLastModificationDate(new Date());
 			}
 		}
-		Message message = new Message("R", "R", IdGenerator.newID(), sb.toString(), batch.getEndpoint());
+		Message message = new Message("R", "R", "R", sb.toString(), batch.getEndpoint());
 		message.setAckIsRequired(false);
 		
 		this.send(message);
 	}
 
-	private boolean isRetry(IMessage message){
+	public boolean isRetry(IMessage message){
 		return message != null  && "R".equals(message.getProtocol()) && "R".equals(message.getMessageType());
 	}
 
-	private void sendRetry(IMessage message) {
+	private void resendSmsMessages(IMessage message) {
 		StringTokenizer st = new StringTokenizer(message.getData(), "|");
 		String batchID = st.nextToken();
 		
@@ -132,5 +142,25 @@ public class SmsChannel implements IChannel, IBatchReceiver {
 				this.sender.send(smsMessage, batch.getEndpoint());
 			}
 		}
+	}
+
+	@Override
+	public List<SmsMessageBatch> getIncommingBatches() {
+		return this.receiver.getOngoingBatches();
+	}
+
+	@Override
+	public List<SmsMessageBatch> getOutcommingBatches() {
+		return this.sender.getOngoingBatches();
+	}
+
+	@Override
+	public void resend(SmsMessageBatch outcommingBatch) {
+		this.sender.send(outcommingBatch, false);
+	}
+
+	@Override
+	public void send(SmsMessageBatch batch, boolean ackIsRequired) {
+		this.sender.send(batch, ackIsRequired);		
 	}
 }

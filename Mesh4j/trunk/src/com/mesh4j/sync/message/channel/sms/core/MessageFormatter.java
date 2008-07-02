@@ -1,7 +1,6 @@
-package com.mesh4j.sync.message.channel.sms;
+package com.mesh4j.sync.message.channel.sms.core;
 
 import java.util.StringTokenizer;
-
 
 public class MessageFormatter {
 

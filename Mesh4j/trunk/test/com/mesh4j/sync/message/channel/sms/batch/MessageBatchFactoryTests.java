@@ -1,15 +1,13 @@
-package com.mesh4j.sync.message.channel.sms;
+package com.mesh4j.sync.message.channel.sms.batch;
 
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.mesh4j.sync.message.channel.sms.SmsEndpoint;
+import com.mesh4j.sync.message.channel.sms.core.MessageFormatter;
 import com.mesh4j.sync.test.utils.TestHelper;
 
 public class MessageBatchFactoryTests {
-	
-	//can provide block of text and create set of messages
-	//each message does not exceed message length
-	//default message length is 140
 	
 	@Test
 	public void ShouldCreateCompleteMessageBatchFromText()
@@ -54,9 +52,5 @@ public class MessageBatchFactoryTests {
 
 		Assert.assertFalse(batch1.getId().equals(batch2.getId()));
 	}
-
-
-	//can change message length limit
-	//each message has batch ID but does not need length
 
 }

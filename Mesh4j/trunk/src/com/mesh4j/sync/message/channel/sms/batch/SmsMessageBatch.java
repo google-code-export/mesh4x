@@ -1,9 +1,11 @@
-package com.mesh4j.sync.message.channel.sms;
+package com.mesh4j.sync.message.channel.sms.batch;
 
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 
+import com.mesh4j.sync.message.channel.sms.SmsEndpoint;
+import com.mesh4j.sync.message.channel.sms.core.MessageFormatter;
 import com.mesh4j.sync.utils.IdGenerator;
 
 public class SmsMessageBatch {
