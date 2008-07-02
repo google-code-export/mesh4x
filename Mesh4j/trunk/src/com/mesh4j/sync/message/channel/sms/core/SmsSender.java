@@ -14,8 +14,6 @@ import com.mesh4j.sync.validations.Guard;
 
 public class SmsSender implements ISmsSender{
 
-	// TODO (JMT) MeshSMS: persist state in feed file
-	
 	// MODEL 
 	private ISmsConnection smsConnection;
 	private HashMap<String, SmsMessageBatch> ongoingBatches = new HashMap<String, SmsMessageBatch>();
@@ -62,4 +60,8 @@ public class SmsSender implements ISmsSender{
 		return this.ongoingBatches.get(batchID);
 	}
 
+	public void setOngoingBatches(List<SmsMessageBatch> outcomming) {
+		// TODO Auto-generated method stub
+		
+	}
 }

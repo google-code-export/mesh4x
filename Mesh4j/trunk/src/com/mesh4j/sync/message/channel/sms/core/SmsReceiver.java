@@ -13,8 +13,6 @@ import com.mesh4j.sync.message.channel.sms.batch.SmsMessageBatch;
 
 public class SmsReceiver implements ISmsReceiver {
 
-	// TODO (JMT) MeshSMS: persist state in feed file
-	
 	// MODEL VARIABLES
 	private  HashMap<String, SmsMessageBatch> completedBatches = new HashMap<String, SmsMessageBatch>();
 	private  HashMap<String, SmsMessageBatch> ongoingBatches = new HashMap<String, SmsMessageBatch>();
@@ -158,5 +156,33 @@ public class SmsReceiver implements ISmsReceiver {
 	@Override
 	public void setBatchReceiver(ISmsChannel smsChannel) {
 		this.smsChannel = smsChannel;		
+	}
+
+	public void setCompletedBatches(List<SmsMessageBatch> incommingCompleted) {
+		for (SmsMessageBatch smsMessageBatch : incommingCompleted) {
+			this.completedBatches.put(smsMessageBatch.getId(), smsMessageBatch);
+		}
+	}
+	
+	public void setOngoingBatches(List<SmsMessageBatch> incommingOngoing) {
+		for (SmsMessageBatch smsMessageBatch : incommingOngoing) {
+			this.ongoingBatches.put(smsMessageBatch.getId(), smsMessageBatch);
+		}
+	}
+
+	public void setDicardedBatches(List<DiscardedBatchRecord> incoingDiscarded) {
+		for (DiscardedBatchRecord discardedBatchRecord : incoingDiscarded) {
+			this.discardedBatches.put(discardedBatchRecord.getMessageBatch().getId(), discardedBatchRecord);
+		}
+	}
+
+	@Override
+	public List<SmsMessageBatch> getCompletedBatches() {
+		return new ArrayList<SmsMessageBatch>(this.completedBatches.values());
+	}
+
+	@Override
+	public List<DiscardedBatchRecord> getDiscardedBatches() {
+		return new ArrayList<DiscardedBatchRecord>(this.discardedBatches.values());
 	}
 }

@@ -11,6 +11,11 @@ import com.mesh4j.sync.validations.Guard;
 public class SmsChannelFactory {
 
 	public static ISmsChannel createChannel(ISmsConnection smsConnection, int senderRetryTimeOut, int receiverRetryTimeOut){
+		return createChannel(smsConnection, senderRetryTimeOut, receiverRetryTimeOut, null);
+	}
+	
+	// TODO (JMT) MeshSMS: Set repository
+	public static ISmsChannel createChannel(ISmsConnection smsConnection, int senderRetryTimeOut, int receiverRetryTimeOut, ISmsChannelRepository repository){
 		Guard.argumentNotNull(smsConnection, "smsConnection");
 		
 		SmsSender sender = new SmsSender(smsConnection);

@@ -22,11 +22,9 @@ public class SmsChannel implements ISmsChannel {
 	// MODEL VARIABLES
 	private ISmsSender sender;
 	private ISmsReceiver receiver;
-
 	private MessageBatchFactory batchFactory;
-	private IMessageEncoding messageEncoding;
-	
-	private IMessageReceiver messageReceiver;
+	private IMessageEncoding messageEncoding;	
+	private IMessageReceiver messageReceiver;	
 
 	// METHODs
 	public SmsChannel(ISmsSender sender, ISmsReceiver receiver, IMessageEncoding messageEncoding, int maxMessageLenght) {

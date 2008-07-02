@@ -87,6 +87,4 @@ public class MessageSyncEngine implements IMessageReceiver {
 		}
 		return null;
 	}
-	
-	// TODO (JMT) MeshSms: ack and messages retries/timeout - Timer/Quartz
 }

@@ -38,7 +38,7 @@ public class ACKEndSyncMessageProcessor implements IMessageProcessor {
 		if(syncSession.isOpen() && this.getMessageType().equals(message.getMessageType())){
 			Date sinceDate = DateHelper.parseDateTime(message.getData());
 			if(sinceDate != null){
-				syncSession.endSync(sinceDate);   // TODO (JMT) MeshSms: ACK MANAGMENT - If date parameter is invalid message should be discarded
+				syncSession.endSync(sinceDate);
 			}
 		}
 		return IMessageSyncProtocol.NO_RESPONSE;

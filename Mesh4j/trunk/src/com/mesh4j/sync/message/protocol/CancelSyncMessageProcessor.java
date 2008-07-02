@@ -36,7 +36,7 @@ public class CancelSyncMessageProcessor implements ICancelSyncMessageProcessor {
 		if(!syncSession.isOpen() && this.getMessageType().equals(message.getMessageType())){
 			syncSession.cancelSync();
 		}
-		return IMessageSyncProtocol.NO_RESPONSE;	// TODO (JMT) MeshSms: cancel ack?
+		return IMessageSyncProtocol.NO_RESPONSE;
 	}
 
 }
