@@ -18,7 +18,7 @@ public class CommTests {
 
 	static Enumeration<CommPortIdentifier> portList;
 
-	static int bauds[] = { 9600, 14400, 19200, 28800, 33600, 38400, 56000, 57600, 115200 };
+	static int bauds[] = { 9600, 14400, 19200, 28800, 33600, 38400, 56000, 57600, 115200, 230400, 460800 };
 
 	/**
 	 * Wrapper around {@link CommPortIdentifier#getPortIdentifiers()} to be
@@ -36,92 +36,104 @@ public class CommTests {
 		portList = getCleanPortIdentifiers();
 		while (portList.hasMoreElements())
 		{
-			portId = portList.nextElement();
-			if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL)
+			testPort(portList.nextElement());
+		}
+		System.out.println("\nTest complete.");
+	}
+	
+	//@Test
+	public void testsCOM()
+	{
+		System.out.println("\nSearching for devices...");
+		testPort(CommPortIdentifier.getPortIdentifier("COM18"));
+		System.out.println("\nTest complete.");
+	}
+
+	private void testPort(CommPortIdentifier port) {
+		portId = port;
+		if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL)
+		{
+			_formatter.format("%nFound port: %-5s%n", portId.getName());
+			for (int i = 0; i < bauds.length; i++)
 			{
-				_formatter.format("%nFound port: %-5s%n", portId.getName());
-				for (int i = 0; i < bauds.length; i++)
+				SerialPort serialPort = null;
+				_formatter.format("       Trying at %6d...", bauds[i]);
+				try
 				{
-					SerialPort serialPort = null;
-					_formatter.format("       Trying at %6d...", bauds[i]);
-					try
+					InputStream inStream;
+					OutputStream outStream;
+					int c;
+					String response;
+					serialPort = portId.open("SMSLibCommTester", 1971);
+					serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_IN);
+					serialPort.setSerialPortParams(bauds[i], SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
+					inStream = serialPort.getInputStream();
+					outStream = serialPort.getOutputStream();
+					serialPort.enableReceiveTimeout(1000);
+					c = inStream.read();
+					while (c != -1)
+						c = inStream.read();
+					outStream.write('A');
+					outStream.write('T');
+					outStream.write('\r');
+					Thread.sleep(1000);
+					response = "";
+					c = inStream.read();
+					while (c != -1)
 					{
-						InputStream inStream;
-						OutputStream outStream;
-						int c;
-						String response;
-						serialPort = portId.open("SMSLibCommTester", 1971);
-						serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_IN);
-						serialPort.setSerialPortParams(bauds[i], SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
-						inStream = serialPort.getInputStream();
-						outStream = serialPort.getOutputStream();
-						serialPort.enableReceiveTimeout(1000);
+						response += (char) c;
 						c = inStream.read();
-						while (c != -1)
-							c = inStream.read();
-						outStream.write('A');
-						outStream.write('T');
-						outStream.write('\r');
-						Thread.sleep(1000);
-						response = "";
-						c = inStream.read();
-						while (c != -1)
+					}
+					if (response.indexOf("OK") >= 0)
+					{
+						try
 						{
-							response += (char) c;
+							System.out.print("  Getting Info...");
+							outStream.write('A');
+							outStream.write('T');
+							outStream.write('+');
+							outStream.write('C');
+							outStream.write('G');
+							outStream.write('M');
+							outStream.write('M');
+							outStream.write('\r');
+							response = "";
 							c = inStream.read();
-						}
-						if (response.indexOf("OK") >= 0)
-						{
-							try
+							while (c != -1)
 							{
-								System.out.print("  Getting Info...");
-								outStream.write('A');
-								outStream.write('T');
-								outStream.write('+');
-								outStream.write('C');
-								outStream.write('G');
-								outStream.write('M');
-								outStream.write('M');
-								outStream.write('\r');
-								response = "";
+								response += (char) c;
 								c = inStream.read();
-								while (c != -1)
-								{
-									response += (char) c;
-									c = inStream.read();
-								}
-								System.out.println(" Found: " + response.replaceAll("\\s+OK\\s+", "").replaceAll("\n", "").replaceAll("\r", ""));
 							}
-							catch (Exception e)
-							{
-								System.out.println(_NO_DEVICE_FOUND);
-							}
+							System.out.println(" Found: " + response.replaceAll("\\s+OK\\s+", "").replaceAll("\n", "").replaceAll("\r", ""));
 						}
-						else
+						catch (Exception e)
 						{
 							System.out.println(_NO_DEVICE_FOUND);
 						}
 					}
-					catch (Exception e)
+					else
 					{
-						System.out.print(_NO_DEVICE_FOUND);
-						Throwable cause = e;
-						while (cause.getCause() != null)
-						{
-							cause = cause.getCause();
-						}
-						System.out.println(" (" + cause.getMessage() + ")");
+						System.out.println(_NO_DEVICE_FOUND);
 					}
-					finally
+				}
+				catch (Exception e)
+				{
+					System.out.print(_NO_DEVICE_FOUND);
+					Throwable cause = e;
+					while (cause.getCause() != null)
 					{
-						if (serialPort != null)
-						{
-							serialPort.close();
-						}
+						cause = cause.getCause();
+					}
+					System.out.println(" (" + cause.getMessage() + ")");
+				}
+				finally
+				{
+					if (serialPort != null)
+					{
+						serialPort.close();
 					}
 				}
 			}
 		}
-		System.out.println("\nTest complete.");
 	}
 }
