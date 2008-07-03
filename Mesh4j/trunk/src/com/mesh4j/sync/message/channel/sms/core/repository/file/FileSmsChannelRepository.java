@@ -168,8 +168,12 @@ public class FileSmsChannelRepository implements ISmsSenderRepository, ISmsRecei
 	
 	public List<SmsMessageBatch> readIncomming(File file){
 		try {
-			Document document= XMLHelper.readDocument(file);
-			return readIncomming(document);
+			if(!file.exists()){
+				return new ArrayList<SmsMessageBatch>();
+			}else {
+				Document document= XMLHelper.readDocument(file);
+				return readIncomming(document);
+			}
 		} catch (DocumentException e) {
 			throw new MeshException(e);
 		}
@@ -187,8 +191,12 @@ public class FileSmsChannelRepository implements ISmsSenderRepository, ISmsRecei
 	
 	public List<SmsMessageBatch> readIncommingCompleted(File file){
 		try {
-			Document document= XMLHelper.readDocument(file);
-			return readIncommingCompleted(document);
+			if(!file.exists()){
+				return new ArrayList<SmsMessageBatch>();
+			}else {
+				Document document= XMLHelper.readDocument(file);
+				return readIncommingCompleted(document);
+			}
 		} catch (DocumentException e) {
 			throw new MeshException(e);
 		}
@@ -206,8 +214,12 @@ public class FileSmsChannelRepository implements ISmsSenderRepository, ISmsRecei
 	
 	public List<DiscardedBatchRecord> readIncommingDicarded(File file){
 		try {
-			Document document= XMLHelper.readDocument(file);
-			return readIncommingDicarded(document);
+			if(!file.exists()){
+				return new ArrayList<DiscardedBatchRecord>();
+			}else {
+				Document document= XMLHelper.readDocument(file);
+				return readIncommingDicarded(document);
+			}
 		} catch (DocumentException e) {
 			throw new MeshException(e);
 		}
@@ -225,8 +237,12 @@ public class FileSmsChannelRepository implements ISmsSenderRepository, ISmsRecei
 	
 	public List<SmsMessageBatch> readOutcomming(File file){
 		try {
-			Document document= XMLHelper.readDocument(file);
-			return readOutcomming(document);
+			if(!file.exists()){
+				return new ArrayList<SmsMessageBatch>();
+			}else {
+				Document document= XMLHelper.readDocument(file);
+				return readOutcomming(document);
+			}
 		} catch (DocumentException e) {
 			throw new MeshException(e);
 		}

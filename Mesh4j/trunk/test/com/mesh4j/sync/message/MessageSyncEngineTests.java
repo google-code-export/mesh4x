@@ -61,20 +61,29 @@ public class MessageSyncEngineTests {
 		smsConnectionEndpointB.setEndPoint(smsConnectionEndpointA);
 		smsConnectionEndpointB.activateTrace();
 		
+		//FileSmsChannelRepository fileRepoA = new FileSmsChannelRepository("c:\\");
+		//channelEndpointA = SmsChannelFactory.createChannel(smsConnectionEndpointA, channelASenderCheckDelay, channelAReceiveCheckDelay, fileRepoA, fileRepoA);
 		channelEndpointA = SmsChannelFactory.createChannel(smsConnectionEndpointA, channelASenderCheckDelay, channelAReceiveCheckDelay);
+		
+		//FileSmsChannelRepository fileRepoB = new FileSmsChannelRepository("d:\\");
+		//channelEndpointB = SmsChannelFactory.createChannel(smsConnectionEndpointB, channelBSenderCheckDelay, channelBReceiveCheckDelay, fileRepoB, fileRepoB);
 		channelEndpointB = SmsChannelFactory.createChannel(smsConnectionEndpointB, channelBSenderCheckDelay, channelBReceiveCheckDelay);
 		
 		SyncSessionFactory syncSessionFactoryA = new SyncSessionFactory();
 		syncSessionFactoryA.registerSource(endPointA);
 		
+		//this.syncSessionRepoA = new FileSyncSessionRepository("c:\\", syncSessionFactoryA);
 		this.syncSessionRepoA = new MockSyncSessionRepository(syncSessionFactoryA);
+		
 		IMessageSyncProtocol syncProtocolA = MessageSyncProtocolFactory.createSyncProtocol(100, this.syncSessionRepoA);
 		syncEngineEndPointA = new MessageSyncEngine(syncProtocolA, channelEndpointA);
 
 		SyncSessionFactory syncSessionFactoryB = new SyncSessionFactory();
 		syncSessionFactoryB.registerSource(endPointB);
 
+		//this.syncSessionRepoB = new FileSyncSessionRepository("d:\\", syncSessionFactoryB);
 		this.syncSessionRepoB = new MockSyncSessionRepository(syncSessionFactoryB);
+		
 		IMessageSyncProtocol syncProtocolB = MessageSyncProtocolFactory.createSyncProtocol(100, this.syncSessionRepoB);
 		syncEngineEndPointB = new MessageSyncEngine(syncProtocolB, channelEndpointB);
 		Assert.assertNotNull(syncEngineEndPointB);
