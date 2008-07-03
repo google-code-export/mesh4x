@@ -78,6 +78,20 @@ public class MessageSyncProtocolTests {
 		syncProtocol.beginSync("123", new SmsEndpoint("123"), true);
 	}
 	
+	@Test
+	public void shouldBeginSyncIsDiscartedWhenSourceIDIsNotRegistered(){
+		SyncSessionFactory syncSessionFactory = new SyncSessionFactory();
+		MessageSyncProtocol syncProtocol = new MessageSyncProtocol("M", new BeginSyncMessageProcessor(null, null), new CancelSyncMessageProcessor(), new MockSyncSessionRepository(syncSessionFactory), new ArrayList<IMessageProcessor>());
+		Assert.assertNull(syncProtocol.beginSync("123", new SmsEndpoint("123"), true));
+	}
+	
+	@Test
+	public void shouldProcessMessageReturnNoResponseWhenSourceIDIsNotRegistered(){
+		SyncSessionFactory syncSessionFactory = new SyncSessionFactory();
+		MessageSyncProtocol syncProtocol = new MessageSyncProtocol("M", new BeginSyncMessageProcessor(null, null), new CancelSyncMessageProcessor(), new MockSyncSessionRepository(syncSessionFactory), new ArrayList<IMessageProcessor>());
+		Assert.assertEquals(IMessageSyncProtocol.NO_RESPONSE, syncProtocol.processMessage(new Message("M", "1", "1", "a", new SmsEndpoint("sms:1"))));
+	}
+	
 	@Test(expected=MeshException.class)
 	public void shouldCancelSyncFailsWhenSessionIsNull(){
 		SyncSessionFactory syncSessionFactory = new SyncSessionFactory();
@@ -111,9 +125,4 @@ public class MessageSyncProtocolTests {
 		
 		Assert.assertFalse(syncSession.isOpen());
 	}
-
-	// TODO (JMT) MEshSMS: Tests beginSync and ProcessMessages when there are not an adapter register for the sourceID 
-	// TODO (JMT) MEshSMS: Tests SyncSession creation guards
-	// TODO (JMT) MEshSMS: Tests SyncSessionFactory createSession and readSession return null when there are not an adapter register for the sourceID
-	
 }

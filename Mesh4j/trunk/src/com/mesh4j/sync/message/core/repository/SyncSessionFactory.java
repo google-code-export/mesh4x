@@ -23,7 +23,7 @@ public class SyncSessionFactory implements ISyncSessionFactory {
 
 	@Override
 	public ISyncSession createSession(String sessionId, String sourceId, IEndpoint target, boolean fullProtocol) {
-		Guard.argumentNotNull(sessionId, "sessionId");
+		Guard.argumentNotNullOrEmptyString(sessionId, "sessionId");
 		Guard.argumentNotNullOrEmptyString(sourceId, "sourceId");
 		Guard.argumentNotNull(target, "target");
 		

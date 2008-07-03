@@ -1105,5 +1105,31 @@ public class FileSyncSessionRepositoryTest {
 		
 	}
 	
-	// TODO (JMT) MEshSMS: Tests readAllSessions and readSession return null when there are not an adapter register for the sourceID
+	@Test
+	public void shouldReadAllSessionsDiscartSessionWhenNoSourceIsRegistered(){
+		File file = new File(this.getClass().getResource("example2_current.xml").getFile());
+		
+		SyncSessionFactory syncSessionFactory = new SyncSessionFactory();
+				
+		FileSyncSessionRepository repo = new FileSyncSessionRepository(file.getParent()+"\\", syncSessionFactory);
+		
+		List<ISyncSession> all = repo.readAllSessions();
+		Assert.assertNotNull(all);
+		Assert.assertEquals(0, all.size());
+		Assert.assertEquals(0, syncSessionFactory.getAll().size());
+		
+	}
+	
+	@Test
+	public void shouldDontReadSessionWhenSourceIsNotRegistered(){
+		String sessionId = "example2";
+		File file = new File(this.getClass().getResource(sessionId + "_current.xml").getFile());
+
+		ISyncSessionFactory sessionFactory = new SyncSessionFactory();
+		
+		FileSyncSessionRepository repo = new FileSyncSessionRepository(file.getParent()+"\\", sessionFactory);
+				
+		ISyncSession syncSessionLoaded = repo.readSession(sessionId);
+		Assert.assertNull(syncSessionLoaded);
+	}
 }
