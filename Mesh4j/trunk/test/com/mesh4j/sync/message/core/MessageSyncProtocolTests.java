@@ -112,4 +112,8 @@ public class MessageSyncProtocolTests {
 		Assert.assertFalse(syncSession.isOpen());
 	}
 
+	// TODO (JMT) MEshSMS: Tests beginSync and ProcessMessages when there are not an adapter register for the sourceID 
+	// TODO (JMT) MEshSMS: Tests SyncSession creation guards
+	// TODO (JMT) MEshSMS: Tests SyncSessionFactory createSession and readSession return null when there are not an adapter register for the sourceID
+	
 }

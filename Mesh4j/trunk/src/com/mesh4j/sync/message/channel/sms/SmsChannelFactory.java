@@ -15,7 +15,6 @@ public class SmsChannelFactory {
 		return createChannel(smsConnection, senderRetryTimeOut, receiverRetryTimeOut, null);
 	}
 	
-	// TODO (JMT) MeshSMS: Set repository
 	public static ISmsChannel createChannel(ISmsConnection smsConnection, int senderRetryTimeOut, int receiverRetryTimeOut, ISmsSenderRepository repository){
 		Guard.argumentNotNull(smsConnection, "smsConnection");
 		

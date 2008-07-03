@@ -1104,4 +1104,6 @@ public class FileSyncSessionRepositoryTest {
 		Assert.assertEquals(9, syncSessionFactory.getAll().size());
 		
 	}
+	
+	// TODO (JMT) MEshSMS: Tests readAllSessions and readSession return null when there are not an adapter register for the sourceID
 }
