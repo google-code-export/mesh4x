@@ -28,6 +28,10 @@ public class SyncSessionFactory implements ISyncSessionFactory {
 		Guard.argumentNotNull(target, "target");
 		
 		IMessageSyncAdapter syncAdapter = getSource(sourceId);
+		if(syncAdapter == null){
+			return null;
+		}
+		
 		SyncSession session = new SyncSession(sessionId, syncAdapter, target, fullProtocol);
 		this.sessions.put(sessionId, session);
 		return session;
@@ -66,6 +70,10 @@ public class SyncSessionFactory implements ISyncSessionFactory {
 			List<String> conflicts, List<String> acks) {
 		
 		IMessageSyncAdapter syncAdapter = getSource(sourceId);
+		if(syncAdapter == null){
+			return null;
+		}
+		
 		SyncSession session = new SyncSession(sessionId, syncAdapter, new SmsEndpoint(endpointId), fullProtocol);
 		session.setOpen(isOpen);
 		session.setLastSyncDate(lastSyncDate);

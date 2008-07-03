@@ -28,14 +28,16 @@ public class FileSmsChannelRepositoryTests {
 		repo.writeIncommingCompleted(incommingCompleted);
 		repo.writeIncommingDiscarded(incommingDiscarded);
 		
-		Assert.assertTrue(repo.getFile().exists());
+		Assert.assertTrue(repo.getOutcommingFile().exists());
+		Assert.assertTrue(repo.getIncommingFile().exists());
 	}
 	
 	@Test
 	public void shouldReadFile(){
 		FileSmsChannelRepository repo = new FileSmsChannelRepository(TestHelper.baseDirectoryForTest());
 		
-		Assert.assertTrue(repo.getFile().exists());
+		Assert.assertTrue(repo.getOutcommingFile().exists());
+		Assert.assertTrue(repo.getIncommingFile().exists());
 
 		Assert.assertFalse(repo.readOutcomming().isEmpty());
 		Assert.assertFalse(repo.readIncomming().isEmpty());

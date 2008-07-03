@@ -9,16 +9,18 @@ import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
-import com.mesh4j.sync.message.channel.sms.ISmsChannelRepository;
 import com.mesh4j.sync.message.channel.sms.batch.DiscardedBatchRecord;
 import com.mesh4j.sync.message.channel.sms.batch.SmsMessageBatch;
+import com.mesh4j.sync.message.channel.sms.core.ISmsReceiverRepository;
+import com.mesh4j.sync.message.channel.sms.core.ISmsSenderRepository;
 import com.mesh4j.sync.utils.XMLHelper;
 import com.mesh4j.sync.validations.Guard;
 import com.mesh4j.sync.validations.MeshException;
 
-public class FileSmsChannelRepository implements ISmsChannelRepository{
+public class FileSmsChannelRepository implements ISmsSenderRepository, ISmsReceiverRepository{
 
-	private static final String SMS_CHANNEL_FILE_NAME = "smsChannel.xml";
+	private static final String INCOMMING_FILE_NAME = "smsChannel_incomming.xml";
+	private static final String OUTCOMMING_FILE_NAME = "smsChannel_outcomming.xml";
 	
 	// MODEL VARIANBLES
 	private String rootDirectory;
@@ -30,13 +32,18 @@ public class FileSmsChannelRepository implements ISmsChannelRepository{
 		this.rootDirectory = rootDirectory;
 	}
 	
-	public File getFile() {
-		File file = new File(this.rootDirectory + SMS_CHANNEL_FILE_NAME);
+	public File getIncommingFile() {
+		File file = new File(this.rootDirectory + INCOMMING_FILE_NAME);
+		return file;
+	}
+	
+	public File getOutcommingFile() {
+		File file = new File(this.rootDirectory + OUTCOMMING_FILE_NAME);
 		return file;
 	}
 	
 	public void writeOutcomming(List<SmsMessageBatch> outcomming){
-		File file = this.getFile();
+		File file = this.getOutcommingFile();
 		this.writeOutcomming(outcomming, file);
 	}
 	
@@ -52,7 +59,7 @@ public class FileSmsChannelRepository implements ISmsChannelRepository{
 	}
 	
 	public void writeIncomming(List<SmsMessageBatch> incomming){
-		File file = this.getFile();
+		File file = this.getIncommingFile();
 		this.writeIncomming(incomming, file);
 	}
 	
@@ -68,7 +75,7 @@ public class FileSmsChannelRepository implements ISmsChannelRepository{
 	}
 	
 	public void writeIncommingCompleted(List<SmsMessageBatch> incomming){
-		File file = this.getFile();
+		File file = this.getIncommingFile();
 		this.writeIncommingCompleted(incomming, file);
 	}
 	
@@ -84,7 +91,7 @@ public class FileSmsChannelRepository implements ISmsChannelRepository{
 	}
 
 	public void writeIncommingDiscarded(List<DiscardedBatchRecord> incomming){
-		File file = this.getFile();
+		File file = this.getIncommingFile();
 		this.writeIncommingDiscarded(incomming, file);
 	}
 	
@@ -155,7 +162,7 @@ public class FileSmsChannelRepository implements ISmsChannelRepository{
 	}
 
 	public List<SmsMessageBatch> readIncomming(){
-		File file = getFile();
+		File file = getIncommingFile();
 		return readIncomming(file);
 	}
 	
@@ -174,7 +181,7 @@ public class FileSmsChannelRepository implements ISmsChannelRepository{
 	}
 	
 	public List<SmsMessageBatch> readIncommingCompleted(){
-		File file = getFile();
+		File file = getIncommingFile();
 		return readIncommingCompleted(file);
 	}
 	
@@ -193,7 +200,7 @@ public class FileSmsChannelRepository implements ISmsChannelRepository{
 	}
 	
 	public List<DiscardedBatchRecord> readIncommingDicarded(){
-		File file = getFile();
+		File file = getIncommingFile();
 		return readIncommingDicarded(file);
 	}
 	
@@ -212,7 +219,7 @@ public class FileSmsChannelRepository implements ISmsChannelRepository{
 	}
 	
 	public List<SmsMessageBatch> readOutcomming(){
-		File file = getFile();
+		File file = getOutcommingFile();
 		return readOutcomming(file);
 	}
 	
@@ -252,5 +259,20 @@ public class FileSmsChannelRepository implements ISmsChannelRepository{
 			result.add(new DiscardedBatchRecord(batch, null));
 		}
 		return result;
+	}
+
+	@Override
+	public void write(List<SmsMessageBatch> incomming,
+			List<SmsMessageBatch> completed,
+			List<DiscardedBatchRecord> discarded) {
+		
+		File file = this.getIncommingFile();
+		Document document = getDocument(file);
+		
+		this.writeIncomming(incomming, document);
+		this.writeIncommingCompleted(completed, document);
+		this.writeIncommingDiscarded(discarded, document);
+		
+		XMLHelper.write(document, file);
 	}
 }

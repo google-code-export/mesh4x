@@ -9,7 +9,7 @@ public interface ISmsSender {
 
 	void send(SmsMessageBatch batch, boolean ackRequired);
 
-	void send(SmsMessage smsMessage, SmsEndpoint endpoint);
+	void send(List<SmsMessage> smsMessages, SmsEndpoint endpoint);
 	
 	void receiveACK(String batchId);
 

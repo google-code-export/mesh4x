@@ -1,5 +1,6 @@
 package com.mesh4j.sync.message.channel.sms;
 
+import com.mesh4j.sync.message.channel.sms.core.ISmsSenderRepository;
 import com.mesh4j.sync.message.channel.sms.core.SmsChannel;
 import com.mesh4j.sync.message.channel.sms.core.SmsReceiver;
 import com.mesh4j.sync.message.channel.sms.core.SmsSender;
@@ -15,7 +16,7 @@ public class SmsChannelFactory {
 	}
 	
 	// TODO (JMT) MeshSMS: Set repository
-	public static ISmsChannel createChannel(ISmsConnection smsConnection, int senderRetryTimeOut, int receiverRetryTimeOut, ISmsChannelRepository repository){
+	public static ISmsChannel createChannel(ISmsConnection smsConnection, int senderRetryTimeOut, int receiverRetryTimeOut, ISmsSenderRepository repository){
 		Guard.argumentNotNull(smsConnection, "smsConnection");
 		
 		SmsSender sender = new SmsSender(smsConnection);

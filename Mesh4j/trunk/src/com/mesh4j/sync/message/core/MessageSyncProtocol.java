@@ -47,6 +47,9 @@ public class MessageSyncProtocol implements IMessageSyncProtocol {
 			if(this.initialMessage.getMessageType().equals(message.getMessageType())){
 				String sourceId = this.initialMessage.getSourceId(message.getData());
 				syncSession = this.repository.createSession(message.getSessionId(), sourceId, message.getEndpoint(), false);
+				if(syncSession == null){
+					return NO_RESPONSE;
+				}
 			} else {
 				return NO_RESPONSE;
 			}
@@ -77,7 +80,7 @@ public class MessageSyncProtocol implements IMessageSyncProtocol {
 	}
 
 
-	private void persistChanges(ISyncSession syncSession) {
+	private synchronized void persistChanges(ISyncSession syncSession) {
 		if(syncSession.isOpen()){
 			this.repository.flush(syncSession);
 		} else {
@@ -93,6 +96,9 @@ public class MessageSyncProtocol implements IMessageSyncProtocol {
 		}
 		if(syncSession == null){
 			syncSession = this.repository.createSession(IdGenerator.newID(), sourceId, endpoint, fullProtocol);
+			if(syncSession == null){
+				return null;
+			}
 		}
 		
 		IMessage message = this.initialMessage.createMessage(syncSession);

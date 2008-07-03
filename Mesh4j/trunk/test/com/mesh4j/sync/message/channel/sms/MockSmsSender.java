@@ -43,6 +43,12 @@ public class MockSmsSender implements ISmsSender {
 	}
 
 	@Override
+	public void send(List<SmsMessage> smsMessages, SmsEndpoint endpoint) {
+		for (SmsMessage smsMessage : smsMessages) {
+			send(smsMessage, endpoint);
+		}
+	}
+
 	public void send(SmsMessage smsMessage, SmsEndpoint endpoint) {
 		this.messages.add(smsMessage);
 	}

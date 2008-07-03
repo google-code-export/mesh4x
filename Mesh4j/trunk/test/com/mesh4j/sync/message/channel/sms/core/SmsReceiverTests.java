@@ -299,7 +299,9 @@ public class SmsReceiverTests {
 		
 		SmsMessageBatch batch = createTestBatch(100);
 
-		SmsReceiver receiver = new SmsReceiver(batchReceiver);
+		SmsReceiver receiver = new SmsReceiver();
+		receiver.setBatchReceiver(batchReceiver);
+		
 		receiver.receive("sms:123", batch.getMessage(0));
 		
 		Assert.assertEquals(1, receiver.getCompletedBatchesCount());
@@ -318,7 +320,9 @@ public class SmsReceiverTests {
 		
 		SmsMessageBatch batch = createTestBatch(10, "12345678901234567890");
 
-		SmsReceiver receiver = new SmsReceiver(batchReceiver);
+		SmsReceiver receiver = new SmsReceiver();
+		receiver.setBatchReceiver(batchReceiver);
+		
 		receiver.receive("sms:123", batch.getMessage(0));
 		
 		Assert.assertEquals(0, receiver.getCompletedBatchesCount());
@@ -333,7 +337,9 @@ public class SmsReceiverTests {
 		
 		SmsMessageBatch batch = createTestBatch(10, "12345678901234567890");
 
-		SmsReceiver receiver = new SmsReceiver(batchReceiver);
+		SmsReceiver receiver = new SmsReceiver();
+		receiver.setBatchReceiver(batchReceiver);
+
 		receiver.receive("sms:123", batch.getMessage(0));
 		
 		Assert.assertEquals(0, receiver.getCompletedBatchesCount());

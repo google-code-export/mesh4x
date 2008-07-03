@@ -1,5 +1,6 @@
 package com.mesh4j.sync.message.channel.sms.core;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -134,11 +135,13 @@ public class SmsChannel implements ISmsChannel {
 		
 		SmsMessageBatch batch = this.sender.getOngoingBatch(batchID);
 		if(batch != null){
+			ArrayList<SmsMessage> messagesToResend = new ArrayList<SmsMessage>();
 			while(st.hasMoreTokens()){
 				int seq = Integer.valueOf(st.nextToken());
 				SmsMessage smsMessage = batch.getMessage(seq);
-				this.sender.send(smsMessage, batch.getEndpoint());
+				messagesToResend.add(smsMessage);
 			}
+			this.sender.send(messagesToResend, batch.getEndpoint());
 		}
 	}
 

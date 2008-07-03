@@ -19,15 +19,17 @@ public class SmsReceiver implements ISmsReceiver {
 	private  HashMap<String, DiscardedBatchRecord> discardedBatches = new HashMap<String, DiscardedBatchRecord>();
 
 	private ISmsChannel smsChannel;
+	private ISmsReceiverRepository repository;
 	
 	// BUSINESS METHODS
 	public SmsReceiver() {
 		super();
 	}
-	
-	public SmsReceiver(ISmsChannel smsChannel) {
+
+	public SmsReceiver(ISmsReceiverRepository repository) {
 		super();
-		this.smsChannel = smsChannel;
+		this.repository = repository;
+		this.initialize();
 	}
 
 	public SmsReceiver receive(String endpoint, SmsMessage message) {
@@ -58,7 +60,7 @@ public class SmsReceiver implements ISmsReceiver {
 				MessageFormatter.getBatchExpectedMessageCount(message.getText()));
 			ongoingBatches.put(receivedMessageBatchId, batch);
 
-			this.notifyBathACK(message);
+			this.notifyBatchACK(message);
 		}
 
 		int sequence = MessageFormatter.getBatchMessageSequenceNumber(message.getText());
@@ -79,18 +81,19 @@ public class SmsReceiver implements ISmsReceiver {
 			this.ongoingBatches.remove(batch.getId());
 			this.completedBatches.put(batch.getId(), batch);
 			
-			this.notifyBathCompleted(batch);
+			this.notifyBatchCompleted(batch);
 		}
+		this.persistChanges();
 		return this;
 	}
 	
-	private void notifyBathCompleted(SmsMessageBatch batch){
+	private void notifyBatchCompleted(SmsMessageBatch batch){
 		if(this.smsChannel != null){
 			this.smsChannel.receive(batch);
 		}
 	}
 
-	private void notifyBathACK(SmsMessage message){
+	private void notifyBatchACK(SmsMessage message){
 		if(this.smsChannel != null){
 			this.smsChannel.receiveACK(MessageFormatter.getBatchACK(message.getText()));
 		}
@@ -158,24 +161,6 @@ public class SmsReceiver implements ISmsReceiver {
 		this.smsChannel = smsChannel;		
 	}
 
-	public void setCompletedBatches(List<SmsMessageBatch> incommingCompleted) {
-		for (SmsMessageBatch smsMessageBatch : incommingCompleted) {
-			this.completedBatches.put(smsMessageBatch.getId(), smsMessageBatch);
-		}
-	}
-	
-	public void setOngoingBatches(List<SmsMessageBatch> incommingOngoing) {
-		for (SmsMessageBatch smsMessageBatch : incommingOngoing) {
-			this.ongoingBatches.put(smsMessageBatch.getId(), smsMessageBatch);
-		}
-	}
-
-	public void setDicardedBatches(List<DiscardedBatchRecord> incoingDiscarded) {
-		for (DiscardedBatchRecord discardedBatchRecord : incoingDiscarded) {
-			this.discardedBatches.put(discardedBatchRecord.getMessageBatch().getId(), discardedBatchRecord);
-		}
-	}
-
 	@Override
 	public List<SmsMessageBatch> getCompletedBatches() {
 		return new ArrayList<SmsMessageBatch>(this.completedBatches.values());
@@ -184,5 +169,31 @@ public class SmsReceiver implements ISmsReceiver {
 	@Override
 	public List<DiscardedBatchRecord> getDiscardedBatches() {
 		return new ArrayList<DiscardedBatchRecord>(this.discardedBatches.values());
+	}
+
+	public synchronized void initialize() {
+		if(this.repository != null){
+			List<SmsMessageBatch> incommingCompleted = this.repository.readIncommingCompleted();
+			for (SmsMessageBatch smsMessageBatch : incommingCompleted) {
+				this.completedBatches.put(smsMessageBatch.getId(), smsMessageBatch);
+			}
+	
+			List<SmsMessageBatch> incommingOngoing = this.repository.readIncomming();
+			for (SmsMessageBatch smsMessageBatch : incommingOngoing) {
+				this.ongoingBatches.put(smsMessageBatch.getId(), smsMessageBatch);
+			}
+	
+			List<DiscardedBatchRecord> incoingDiscarded = this.repository.readIncommingDicarded();
+			for (DiscardedBatchRecord discardedBatchRecord : incoingDiscarded) {
+				this.discardedBatches.put(discardedBatchRecord.getMessageBatch().getId(), discardedBatchRecord);
+			}
+		}
+	}
+
+	
+	private synchronized void persistChanges() {
+		if(this.repository != null){
+			this.repository.write(this.getOngoingBatches(), this.getCompletedBatches(), this.getDiscardedBatches());
+		}
 	}
 }

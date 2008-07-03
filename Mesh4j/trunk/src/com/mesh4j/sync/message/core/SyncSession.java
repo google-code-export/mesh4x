@@ -11,6 +11,7 @@ import com.mesh4j.sync.message.IMessageSyncAdapter;
 import com.mesh4j.sync.message.ISyncSession;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.NullContent;
+import com.mesh4j.sync.validations.Guard;
 
 public class SyncSession implements ISyncSession{
 
@@ -28,7 +29,10 @@ public class SyncSession implements ISyncSession{
 
 	// METHODS
 	public SyncSession(String sessionId, IMessageSyncAdapter syncAdapter, IEndpoint target, boolean fullProtocol) {
-		super();
+		Guard.argumentNotNullOrEmptyString(sessionId, "sessionId");
+		Guard.argumentNotNull(syncAdapter, "syncAdapter");
+		Guard.argumentNotNull(target, "target");
+		
 		this.sessionId = sessionId;
 		this.syncAdapter = syncAdapter;
 		this.target = target;

@@ -1094,6 +1094,7 @@ public class FileSyncSessionRepositoryTest {
 		File file = new File(this.getClass().getResource("example2_current.xml").getFile());
 		
 		SyncSessionFactory syncSessionFactory = new SyncSessionFactory();
+		syncSessionFactory.registerSource(new MockMessageSyncAdapter("123"));
 		
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(file.getParent()+"\\", syncSessionFactory);
 		

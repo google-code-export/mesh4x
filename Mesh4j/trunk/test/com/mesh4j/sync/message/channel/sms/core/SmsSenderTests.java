@@ -1,5 +1,6 @@
 package com.mesh4j.sync.message.channel.sms.core;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import org.junit.Assert;
@@ -143,7 +144,7 @@ public class SmsSenderTests {
 	}	
 	
 	@Test(expected=IllegalArgumentException.class)
-	public void shouldSendSMSMessageFailsIfSmsMessageIsNull(){
+	public void shouldSendSMSMessageFailsIfSmsMessageListIsNull(){
 		SmsSender smsSender = new SmsSender(new MockSmsConnection("sms:154022344", new MockMessageEncoding()));
 		smsSender.send(null, new SmsEndpoint("123"));
 	}	
@@ -151,19 +152,31 @@ public class SmsSenderTests {
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldSendSMSMessageFailsIfSmsMessageTextIsNull(){
 		SmsSender smsSender = new SmsSender(new MockSmsConnection("sms:154022344", new MockMessageEncoding()));
-		smsSender.send(new SmsMessage(null), new SmsEndpoint("123"));
+		
+		ArrayList<SmsMessage> msgs = new ArrayList<SmsMessage>();
+		msgs.add(new SmsMessage(null));
+		
+		smsSender.send(msgs, new SmsEndpoint("123"));
 	}	
 
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldSendSMSMessageFailsIfSmsMessageTextIsEmpty(){
 		SmsSender smsSender = new SmsSender(new MockSmsConnection("sms:154022344", new MockMessageEncoding()));
-		smsSender.send(new SmsMessage(""), new SmsEndpoint("123"));
+		
+		ArrayList<SmsMessage> msgs = new ArrayList<SmsMessage>();
+		msgs.add(new SmsMessage(""));
+		
+		smsSender.send(msgs, new SmsEndpoint("123"));
 	}	
 
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldSendSMSMessageFailsIfEndpointIsNull(){
 		SmsSender smsSender = new SmsSender(new MockSmsConnection("sms:154022344", new MockMessageEncoding()));
-		smsSender.send(new SmsMessage("dffef"), null);
+		
+		ArrayList<SmsMessage> msgs = new ArrayList<SmsMessage>();
+		msgs.add(new SmsMessage("dffef"));
+		
+		smsSender.send(msgs, null);
 	}
 	
 	@Test
@@ -182,7 +195,11 @@ public class SmsSenderTests {
 		
 		Date date = TestHelper.makeDate(2008, 1, 1, 1, 1, 1, 1);
 		SmsMessage smsMessage = new SmsMessage("message 1123", date); 
-		smsSender.send(smsMessage, new SmsEndpoint("123"));
+				
+		ArrayList<SmsMessage> msgs = new ArrayList<SmsMessage>();
+		msgs.add(smsMessage);
+		
+		smsSender.send(msgs, new SmsEndpoint("123"));
 		
 		Assert.assertEquals(1, smsReceiver.getReceivedMessages().size());
 		Assert.assertEquals(smsMessage.getText(), smsReceiver.getReceivedMessages().get(0).getText());

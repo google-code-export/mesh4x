@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -64,10 +65,12 @@ public class FileSyncSessionRepository implements ISyncSessionRepository{
 		this.rootDirectory = rootDirectory;
 		this.feedWriter = new FeedWriter(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		this.feedReader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
+		
+		this.readAllSessions();
 	}
 	
 	public List<ISyncSession> readAllSessions() {
-		ArrayList<ISyncSession> all = new ArrayList<ISyncSession>();
+		HashSet<ISyncSession> all = new HashSet<ISyncSession>();
 		
 		File rootDir = new File(this.rootDirectory);
 		File[] files = rootDir.listFiles();
@@ -81,17 +84,23 @@ public class FileSyncSessionRepository implements ISyncSessionRepository{
 					sessionId = fileName.substring(0, fileName.length() - SUBFIX_CURRENT.length());
 				}
 				if(sessionId != null){
-					if(getSession(sessionId) == null){
+					ISyncSession syncSession = getSession(sessionId);
+					if(syncSession == null){
 						try{
-							all.add(readSession(sessionId));
+							syncSession = readSession(sessionId);
+							if(syncSession != null){
+								all.add(syncSession);
+							}
 						} catch(MeshException e){
 							LOGGER.error(e.getMessage(), e);
 						}
+					}else{
+						all.add(syncSession);
 					}
 				}
 			}
 		}
-		return all;
+		return new ArrayList<ISyncSession>(all);
 	}
 
 	public List<Item> readSnapshot(String sessionId){
@@ -154,12 +163,18 @@ public class FileSyncSessionRepository implements ISyncSessionRepository{
 				} else {
 					syncSession = this.createSyncSession(feedCurrent.getPayload(), feedCurrent.getItems(), new ArrayList<Item>());
 				}
+				if(syncSession == null){
+					return null;
+				}
 				if(!syncSession.isOpen() || !syncSession.getSessionId().equals(sessionId)){
 					Guard.throwsException("INVALID_SYNC_SESSION");			
 				}
 			} else{
 				Feed feedSnapshot = this.feedReader.read(fileSnapshot);
 				syncSession = this.createSyncSession(feedSnapshot.getPayload(), new ArrayList<Item>(), feedSnapshot.getItems());
+				if(syncSession == null){
+					return null;
+				}
 				if(syncSession.isOpen() || !syncSession.getSessionId().equals(sessionId)){
 					Guard.throwsException("INVALID_SYNC_SESSION");			
 				}
