@@ -4,7 +4,7 @@
 	<classpathentry kind="src" output="testbin" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/dom4j/dom4j-1.6.1.jar" sourcepath="D:/Marcelo/java_src/dom4j-1.6.1/src"/>
-	<classpathentry kind="lib" path="lib/hibernate/hibernate3.jar" sourcepath="lib/hibernate/hibernate-3.2.6.ga_src.zip"/>
+	<classpathentry kind="lib" path="lib/hibernate/hibernate3.jar" />
 	<classpathentry kind="lib" path="lib/jakarta-commons/commons-collections-2.1.1.jar"/>
 	<classpathentry kind="lib" path="lib/jakarta-commons/commons-logging-1.0.4.jar"/>
 	<classpathentry kind="lib" path="lib/log4j/log4j-1.2.11.jar"/>
@@ -16,10 +16,10 @@
 	<classpathentry kind="lib" path="lib/jaxen/jaxen-1.1-beta-7.jar" sourcepath="D:/Marcelo/java_src/dom4j-1.6.1/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="lib/jakarta-commons/commons-lang.jar"/>
-	<classpathentry kind="lib" path="lib/smsLib/smslib-3.3.0.jar"/>
 	<classpathentry kind="lib" path="lib/jaf/activation.jar"/>
 	<classpathentry kind="lib" path="lib/jakarta-commons/commons-net-1.4.1.jar"/>
 	<classpathentry kind="lib" path="lib/javamail/mail.jar"/>
+	<classpathentry kind="lib" path="lib/smsLib/smslib-3.3.0b2.jar"/>
 	<classpathentry kind="lib" path="etc"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

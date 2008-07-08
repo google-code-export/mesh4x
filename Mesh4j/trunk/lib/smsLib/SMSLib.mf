@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
 Implementation-Title: SMSLib for Java
-Implementation-Version: 3.3.0
+Implementation-Version: 3.3.0b2
 Main-Class: org.smslib.Service
 Created-By: Thanasis Delenikas

@@ -5,9 +5,10 @@ import java.util.Date;
 import java.util.List;
 
 import com.mesh4j.sync.IFilter;
+import com.mesh4j.sync.ISyncAdapter;
 import com.mesh4j.sync.model.Item;
 
-public class MockInMemoryMessageSyncAdapter implements IMessageSyncAdapter{
+public class MockInMemoryMessageSyncAdapter implements IMessageSyncAdapter, ISyncAdapter{
 
 	// MODEL VARIABLES
 	private String sourceId;
@@ -97,6 +98,12 @@ public class MockInMemoryMessageSyncAdapter implements IMessageSyncAdapter{
 	public void setItems(List<Item> items) {
 		this.items = items;
 		
+	}
+
+	@Override
+	public List<Item> synchronizeSnapshot(ISyncSession syncSession) {
+		this.items = syncSession.getSnapshot();
+		return new ArrayList<Item>();
 	}
 
 }

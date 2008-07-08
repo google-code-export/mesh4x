@@ -1,0 +1,70 @@
+package com.mesh4j.sync.message.core;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.mesh4j.sync.message.IMessageSyncAdapter;
+import com.mesh4j.sync.message.ISyncSession;
+import com.mesh4j.sync.model.Item;
+import com.mesh4j.sync.validations.Guard;
+
+public class InMemoryMessageSyncAdapter implements IMessageSyncAdapter {
+	
+	// MODEL VARIABLES
+	private String sourceId;
+	private List<Item> items = new ArrayList<Item>();
+	
+	// BUSINESS METHODS
+	
+	public InMemoryMessageSyncAdapter(String sourceId) {
+		this(sourceId, new ArrayList<Item>());
+	}
+	
+	public InMemoryMessageSyncAdapter(String sourceId, List<Item> items) {
+		
+		Guard.argumentNotNullOrEmptyString(sourceId, "sourceId");
+		Guard.argumentNotNull(items, "items");
+		
+		this.sourceId = sourceId;
+		this.items = items;
+	}
+
+	@Override
+	public List<Item> getAll() {
+		return new ArrayList<Item>(this.items);
+	}
+
+	@Override
+	public String getSourceId() {
+		return sourceId;
+	}
+
+	@Override
+	public List<Item> synchronizeSnapshot(ISyncSession syncSession) {
+		this.items = syncSession.getSnapshot();
+		return new ArrayList<Item>();
+	}
+	
+	public void add(Item item) {
+		this.items.add(item);
+	}
+
+	public void update(Item item) {
+		Item itemToUpdate = get(item.getSyncId());
+		if(itemToUpdate != null){
+			this.items.remove(itemToUpdate);
+			if(!item.isDeleted()){
+				this.items.add(item);
+			}
+		}
+	}
+
+	public Item get(String id) {
+		for (Item localItem : this.items) {
+			if(localItem.getSyncId().equals(id)){
+				return localItem;
+			}
+		}
+		return null;
+	}
+}

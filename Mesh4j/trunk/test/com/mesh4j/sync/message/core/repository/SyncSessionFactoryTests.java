@@ -5,7 +5,7 @@ import org.junit.Test;
 
 import com.mesh4j.sync.message.ISyncSession;
 import com.mesh4j.sync.message.channel.sms.SmsEndpoint;
-import com.mesh4j.sync.message.protocol.MockMessageSyncAdapter;
+import com.mesh4j.sync.message.core.InMemoryMessageSyncAdapter;
 import com.mesh4j.sync.utils.IdGenerator;
 
 public class SyncSessionFactoryTests {
@@ -60,7 +60,7 @@ public class SyncSessionFactoryTests {
 		SmsEndpoint endpoint = new SmsEndpoint("123");
 		
 		SyncSessionFactory factory = new SyncSessionFactory();
-		factory.registerSource(new MockMessageSyncAdapter(sourceID));
+		factory.registerSource(new InMemoryMessageSyncAdapter(sourceID));
 		
 		ISyncSession syncSession = factory.createSession(sessionID, sourceID, endpoint, true);
 		Assert.assertNotNull(syncSession);

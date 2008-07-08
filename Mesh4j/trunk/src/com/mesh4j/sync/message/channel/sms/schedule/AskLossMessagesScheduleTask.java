@@ -22,7 +22,7 @@ public class AskLossMessagesScheduleTask extends ScheduleTimerTask {
 	}
 
 	@Override
-	public void run() {
+	protected void execute() {
 		long nowTime = System.currentTimeMillis();
 		long min = nowTime - delay;
 		

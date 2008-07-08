@@ -1,8 +1,9 @@
 package com.mesh4j.sync.message.channel.sms.batch;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import com.mesh4j.sync.message.channel.sms.SmsEndpoint;
 import com.mesh4j.sync.message.channel.sms.core.MessageFormatter;
@@ -112,8 +113,8 @@ public class SmsMessageBatch {
 		return payload;
 	}
 
-	public Collection<SmsMessage> getMessages() {
-		return this.messages.values();
+	public List<SmsMessage> getMessages() {
+		return new ArrayList<SmsMessage>(this.messages.values());
 	}
 
 	public int getExpectedMessageCount() {

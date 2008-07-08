@@ -87,4 +87,8 @@ public class MessageSyncEngine implements IMessageReceiver {
 		}
 		return null;
 	}
+	
+	public ISyncSession getSyncSession(String sourceId, IEndpoint target){
+		return this.syncProtocol.getSyncSession(sourceId, target);
+	}
 }

@@ -105,4 +105,9 @@ public class MessageSyncProtocol implements IMessageSyncProtocol {
 		this.persistChanges(syncSession);
 		return message;
 	}
+
+	@Override
+	public ISyncSession getSyncSession(String sourceId, IEndpoint endpoint) {
+		return this.repository.getSession(sourceId, endpoint.getEndpointId());
+	}
 }

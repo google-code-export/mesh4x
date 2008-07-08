@@ -12,7 +12,6 @@ import com.mesh4j.sync.message.channel.sms.SmsEndpoint;
 import com.mesh4j.sync.message.core.repository.SyncSessionFactory;
 import com.mesh4j.sync.message.protocol.BeginSyncMessageProcessor;
 import com.mesh4j.sync.message.protocol.CancelSyncMessageProcessor;
-import com.mesh4j.sync.message.protocol.MockMessageSyncAdapter;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.validations.MeshException;
 
@@ -70,7 +69,7 @@ public class MessageSyncProtocolTests {
 	@Test(expected=MeshException.class)
 	public void shouldBeginSyncFailsWhenSessionIsOpen(){
 		SyncSessionFactory syncSessionFactory = new SyncSessionFactory();
-		syncSessionFactory.registerSource(new MockMessageSyncAdapter("123"));
+		syncSessionFactory.registerSource(new InMemoryMessageSyncAdapter("123"));
 		
 		syncSessionFactory.createSession("a", "123", "123", true, true, new Date(), new ArrayList<Item>(), new ArrayList<Item>(), new ArrayList<String>(), new ArrayList<String>());
 		
@@ -95,7 +94,7 @@ public class MessageSyncProtocolTests {
 	@Test(expected=MeshException.class)
 	public void shouldCancelSyncFailsWhenSessionIsNull(){
 		SyncSessionFactory syncSessionFactory = new SyncSessionFactory();
-		syncSessionFactory.registerSource(new MockMessageSyncAdapter("123"));
+		syncSessionFactory.registerSource(new InMemoryMessageSyncAdapter("123"));
 
 		MessageSyncProtocol syncProtocol = new MessageSyncProtocol("M", new BeginSyncMessageProcessor(null, null), new CancelSyncMessageProcessor(), new MockSyncSessionRepository(syncSessionFactory), new ArrayList<IMessageProcessor>());
 		syncProtocol.cancelSync("123", new SmsEndpoint("123"));
@@ -104,7 +103,7 @@ public class MessageSyncProtocolTests {
 	@Test(expected=MeshException.class)
 	public void shouldCancelSyncFailsWhenSessionIsClosed(){
 		SyncSessionFactory syncSessionFactory = new SyncSessionFactory();
-		syncSessionFactory.registerSource(new MockMessageSyncAdapter("123"));
+		syncSessionFactory.registerSource(new InMemoryMessageSyncAdapter("123"));
 		
 		ISyncSession syncSession = syncSessionFactory.createSession("a", "123", "123", true, true, new Date(), new ArrayList<Item>(), new ArrayList<Item>(), new ArrayList<String>(), new ArrayList<String>());
 		syncSession.endSync(new Date());
@@ -116,7 +115,7 @@ public class MessageSyncProtocolTests {
 	@Test
 	public void shouldCancelSync(){
 		SyncSessionFactory syncSessionFactory = new SyncSessionFactory();
-		syncSessionFactory.registerSource(new MockMessageSyncAdapter("123"));
+		syncSessionFactory.registerSource(new InMemoryMessageSyncAdapter("123"));
 		
 		ISyncSession syncSession = syncSessionFactory.createSession("a", "123", "123", true, true, new Date(), new ArrayList<Item>(), new ArrayList<Item>(), new ArrayList<String>(), new ArrayList<String>());
 		

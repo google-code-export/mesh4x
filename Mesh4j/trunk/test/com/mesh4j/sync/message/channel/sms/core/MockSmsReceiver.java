@@ -1,6 +1,7 @@
 package com.mesh4j.sync.message.channel.sms.core;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.mesh4j.sync.message.channel.sms.ISmsChannel;
@@ -16,8 +17,8 @@ public class MockSmsReceiver implements ISmsReceiver {
 	private List<SmsMessage> messages = new ArrayList<SmsMessage>();
 	
 	@Override
-	public void receiveSms(SmsEndpoint endpoint, String smsMessageText) {
-		this.messages.add(new SmsMessage(smsMessageText));
+	public void receiveSms(SmsEndpoint endpoint, String smsMessageText, Date date) {
+		this.messages.add(new SmsMessage(smsMessageText, date));
 	}
 
 	public List<SmsMessage> getReceivedMessages() {

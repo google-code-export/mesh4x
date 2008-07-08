@@ -1,5 +1,8 @@
 package com.mesh4j.sync.message;
 
+import java.util.Date;
+import java.util.List;
+
 import com.mesh4j.sync.message.channel.sms.ISmsConnection;
 import com.mesh4j.sync.message.channel.sms.ISmsReceiver;
 import com.mesh4j.sync.message.channel.sms.SmsEndpoint;
@@ -35,18 +38,19 @@ public class MockSmsConnection implements ISmsConnection{
 	}
 
 	@Override
-	public void send(SmsEndpoint smsEndpoint, String messageText) {
-		if(this.activeTrace){
-			System.out.println("SMS from: " + this.smsEndpoint.getEndpointId() + " to: " + smsEndpoint.getEndpointId() + " msg: " + messageText);
+	public void send(List<String> messageTexts, SmsEndpoint smsEndpoint) {
+		for (String messageText : messageTexts) {
+			if(this.activeTrace){
+				System.out.println("SMS from: " + this.smsEndpoint.getEndpointId() + " to: " + smsEndpoint.getEndpointId() + " msg: " + messageText);
+			}
+			this.generatedMessagesStatistics = this.generatedMessagesStatistics + 1;
+			this.generatedMessagesSizeStatistics = this.generatedMessagesSizeStatistics + messageText.length();
+			this.sleep();
+			if(this.endpoint != null){
+				this.endpoint.receiveSms(this.smsEndpoint, messageText);
+			}
+			this.sleep();
 		}
-		this.generatedMessagesStatistics = this.generatedMessagesStatistics + 1;
-		this.generatedMessagesSizeStatistics = this.generatedMessagesSizeStatistics + messageText.length();
-		
-		this.sleep();
-		if(this.endpoint != null){
-			this.endpoint.receiveSms(this.smsEndpoint, messageText);
-		}
-		this.sleep();
 	}
 
 	private void sleep() {
@@ -60,7 +64,7 @@ public class MockSmsConnection implements ISmsConnection{
 	}
 	
 	public void receiveSms(SmsEndpoint endpoint, String messageText){
-		this.messageReceiver.receiveSms(endpoint, messageText);
+		this.messageReceiver.receiveSms(endpoint, messageText, new Date());
 	}
 
 	@Override

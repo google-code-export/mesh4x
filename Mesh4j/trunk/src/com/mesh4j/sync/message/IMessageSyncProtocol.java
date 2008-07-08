@@ -15,5 +15,7 @@ public interface IMessageSyncProtocol {
 
 	IMessage cancelSync(String sourceId, IEndpoint target);
 
+	ISyncSession getSyncSession(String sourceId, IEndpoint target);
+
 
 }

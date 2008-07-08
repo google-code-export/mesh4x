@@ -14,6 +14,7 @@ import com.mesh4j.sync.message.channel.sms.ISmsChannel;
 import com.mesh4j.sync.message.channel.sms.SmsChannelFactory;
 import com.mesh4j.sync.message.channel.sms.SmsEndpoint;
 import com.mesh4j.sync.message.core.ISyncSessionRepository;
+import com.mesh4j.sync.message.core.InMemoryMessageSyncAdapter;
 import com.mesh4j.sync.message.core.Message;
 import com.mesh4j.sync.message.core.MockSyncSessionRepository;
 import com.mesh4j.sync.message.core.repository.SyncSessionFactory;
@@ -96,8 +97,8 @@ public class MessageSyncEngineTests {
 		ArrayList<Item> itemsB = new ArrayList<Item>();
 		itemsB.add(createNewItem(TestHelper.newText(500)));
 		
-		IMessageSyncAdapter endPointA = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsA);
-		IMessageSyncAdapter endPointB = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsB);
+		IMessageSyncAdapter endPointA = new InMemoryMessageSyncAdapter(SOURCE_ID, itemsA);
+		IMessageSyncAdapter endPointB = new InMemoryMessageSyncAdapter(SOURCE_ID, itemsB);
 		setUp(endPointA, 500, 80, 100, 100, endPointB, 500, 80, 100, 100);
 		
 		sync(false);		
@@ -114,8 +115,8 @@ public class MessageSyncEngineTests {
 		
 		ArrayList<Item> itemsB = new ArrayList<Item>();
 		
-		IMessageSyncAdapter endPointA = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsA);
-		IMessageSyncAdapter endPointB = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsB);
+		IMessageSyncAdapter endPointA = new InMemoryMessageSyncAdapter(SOURCE_ID, itemsA);
+		IMessageSyncAdapter endPointB = new InMemoryMessageSyncAdapter(SOURCE_ID, itemsB);
 		setUp(endPointA, endPointB);
 		
 		sync(false);			
@@ -134,8 +135,8 @@ public class MessageSyncEngineTests {
 		
 		ArrayList<Item> itemsB = new ArrayList<Item>();
 		
-		MockInMemoryMessageSyncAdapter endPointA = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsA);
-		MockInMemoryMessageSyncAdapter endPointB = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsB);
+		InMemoryMessageSyncAdapter endPointA = new InMemoryMessageSyncAdapter(SOURCE_ID, itemsA);
+		InMemoryMessageSyncAdapter endPointB = new InMemoryMessageSyncAdapter(SOURCE_ID, itemsB);
 		setUp(endPointA, endPointB);
 		
 		sync(false);		
@@ -167,8 +168,8 @@ public class MessageSyncEngineTests {
 		ArrayList<Item> itemsB = new ArrayList<Item>();
 		itemsB.add(item);
 		
-		IMessageSyncAdapter endPointA = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsA);
-		IMessageSyncAdapter endPointB = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsB);
+		InMemoryMessageSyncAdapter endPointA = new InMemoryMessageSyncAdapter(SOURCE_ID, itemsA);
+		InMemoryMessageSyncAdapter endPointB = new InMemoryMessageSyncAdapter(SOURCE_ID, itemsB);
 		setUp(endPointA, endPointB);
 		
 		sync(false);		
@@ -199,8 +200,8 @@ public class MessageSyncEngineTests {
 		
 		ArrayList<Item> itemsB = new ArrayList<Item>();
 				
-		IMessageSyncAdapter endPointA = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsA);
-		IMessageSyncAdapter endPointB = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsB);
+		InMemoryMessageSyncAdapter endPointA = new InMemoryMessageSyncAdapter(SOURCE_ID, itemsA);
+		InMemoryMessageSyncAdapter endPointB = new InMemoryMessageSyncAdapter(SOURCE_ID, itemsB);
 		setUp(endPointA, endPointB);
 		
 		sync(false);		
@@ -234,8 +235,8 @@ public class MessageSyncEngineTests {
 		ArrayList<Item> itemsB = new ArrayList<Item>();
 		itemsB.add(item);
 		
-		IMessageSyncAdapter endPointA = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsA);
-		IMessageSyncAdapter endPointB = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsB);
+		InMemoryMessageSyncAdapter endPointA = new InMemoryMessageSyncAdapter(SOURCE_ID, itemsA);
+		InMemoryMessageSyncAdapter endPointB = new InMemoryMessageSyncAdapter(SOURCE_ID, itemsB);
 		setUp(endPointA, endPointB);
 		
 		sync(false);		
@@ -271,8 +272,8 @@ public class MessageSyncEngineTests {
 		ArrayList<Item> itemsB = new ArrayList<Item>();
 		itemsB.add(item);
 		
-		IMessageSyncAdapter endPointA = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsA);
-		IMessageSyncAdapter endPointB = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsB);
+		InMemoryMessageSyncAdapter endPointA = new InMemoryMessageSyncAdapter(SOURCE_ID, itemsA);
+		InMemoryMessageSyncAdapter endPointB = new InMemoryMessageSyncAdapter(SOURCE_ID, itemsB);
 		setUp(endPointA, endPointB);
 		
 		sync(false);		
@@ -326,8 +327,8 @@ public class MessageSyncEngineTests {
 		ArrayList<Item> itemsB = new ArrayList<Item>();
 		itemsB.add(item);
 		
-		IMessageSyncAdapter endPointA = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsA);
-		IMessageSyncAdapter endPointB = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsB);
+		InMemoryMessageSyncAdapter endPointA = new InMemoryMessageSyncAdapter(SOURCE_ID, itemsA);
+		InMemoryMessageSyncAdapter endPointB = new InMemoryMessageSyncAdapter(SOURCE_ID, itemsB);
 		setUp(endPointA, endPointB);
 		
 		sync(true);		
@@ -378,8 +379,8 @@ public class MessageSyncEngineTests {
 		ArrayList<Item> itemsB = new ArrayList<Item>();
 		itemsB.add(createNewItem());
 		
-		IMessageSyncAdapter endPointA = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsA);
-		IMessageSyncAdapter endPointB = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsB);
+		InMemoryMessageSyncAdapter endPointA = new InMemoryMessageSyncAdapter(SOURCE_ID, itemsA);
+		InMemoryMessageSyncAdapter endPointB = new InMemoryMessageSyncAdapter(SOURCE_ID, itemsB);
 		setUp(endPointA, endPointB);
 		
 		sync(true);		
@@ -396,8 +397,8 @@ public class MessageSyncEngineTests {
 		
 		ArrayList<Item> itemsB = new ArrayList<Item>();
 		
-		IMessageSyncAdapter endPointA = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsA);
-		IMessageSyncAdapter endPointB = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsB);
+		InMemoryMessageSyncAdapter endPointA = new InMemoryMessageSyncAdapter(SOURCE_ID, itemsA);
+		InMemoryMessageSyncAdapter endPointB = new InMemoryMessageSyncAdapter(SOURCE_ID, itemsB);
 		setUp(endPointA, endPointB);
 		
 		sync(true);			
@@ -416,8 +417,8 @@ public class MessageSyncEngineTests {
 		
 		ArrayList<Item> itemsB = new ArrayList<Item>();
 		
-		MockInMemoryMessageSyncAdapter endPointA = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsA);
-		MockInMemoryMessageSyncAdapter endPointB = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsB);
+		InMemoryMessageSyncAdapter endPointA = new InMemoryMessageSyncAdapter(SOURCE_ID, itemsA);
+		InMemoryMessageSyncAdapter endPointB = new InMemoryMessageSyncAdapter(SOURCE_ID, itemsB);
 		setUp(endPointA, endPointB);
 		
 		sync(true);		
@@ -449,8 +450,8 @@ public class MessageSyncEngineTests {
 		ArrayList<Item> itemsB = new ArrayList<Item>();
 		itemsB.add(item);
 		
-		IMessageSyncAdapter endPointA = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsA);
-		IMessageSyncAdapter endPointB = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsB);
+		InMemoryMessageSyncAdapter endPointA = new InMemoryMessageSyncAdapter(SOURCE_ID, itemsA);
+		InMemoryMessageSyncAdapter endPointB = new InMemoryMessageSyncAdapter(SOURCE_ID, itemsB);
 		setUp(endPointA, endPointB);
 		
 		sync(true);		
@@ -481,8 +482,8 @@ public class MessageSyncEngineTests {
 		
 		ArrayList<Item> itemsB = new ArrayList<Item>();
 				
-		IMessageSyncAdapter endPointA = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsA);
-		IMessageSyncAdapter endPointB = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsB);
+		InMemoryMessageSyncAdapter endPointA = new InMemoryMessageSyncAdapter(SOURCE_ID, itemsA);
+		InMemoryMessageSyncAdapter endPointB = new InMemoryMessageSyncAdapter(SOURCE_ID, itemsB);
 		setUp(endPointA, endPointB);
 		
 		sync(true);		
@@ -516,8 +517,8 @@ public class MessageSyncEngineTests {
 		ArrayList<Item> itemsB = new ArrayList<Item>();
 		itemsB.add(item);
 		
-		IMessageSyncAdapter endPointA = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsA);
-		IMessageSyncAdapter endPointB = new MockInMemoryMessageSyncAdapter(SOURCE_ID, itemsB);
+		InMemoryMessageSyncAdapter endPointA = new InMemoryMessageSyncAdapter(SOURCE_ID, itemsA);
+		InMemoryMessageSyncAdapter endPointB = new InMemoryMessageSyncAdapter(SOURCE_ID, itemsB);
 		setUp(endPointA, endPointB);
 		
 		sync(true);		
@@ -612,6 +613,7 @@ public class MessageSyncEngineTests {
 			@Override public IMessage cancelSync(String sourceId, IEndpoint target) {return msg; }
 			@Override public boolean isValidMessageProtocol(IMessage message) {return false;}
 			@Override public List<IMessage> processMessage(IMessage message) {return null;}
+			@Override public ISyncSession getSyncSession(String sourceId, IEndpoint target) {return null;}
 		};
 		MessageSyncEngine engine = new MessageSyncEngine(protocol, channel);
 		engine.cancelSync("123", new SmsEndpoint("123"));
@@ -634,6 +636,7 @@ public class MessageSyncEngineTests {
 			@Override public IMessage cancelSync(String sourceId, IEndpoint target) {return null;}
 			@Override public boolean isValidMessageProtocol(IMessage message) {return false;}
 			@Override public List<IMessage> processMessage(IMessage message) {return null;}
+			@Override public ISyncSession getSyncSession(String sourceId, IEndpoint target) {return null;}
 		};
 		new MessageSyncEngine(protocol, null);
 	}

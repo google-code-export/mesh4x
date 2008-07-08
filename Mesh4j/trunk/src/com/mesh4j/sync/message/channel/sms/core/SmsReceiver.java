@@ -1,6 +1,7 @@
 package com.mesh4j.sync.message.channel.sms.core;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -147,8 +148,8 @@ public class SmsReceiver implements ISmsReceiver {
 	}
 
 	@Override
-	public void receiveSms(SmsEndpoint endpoint, String message) {
-		SmsMessage smsMessage = new SmsMessage(message);
+	public void receiveSms(SmsEndpoint endpoint, String message, Date date) {
+		SmsMessage smsMessage = new SmsMessage(message, date);
 		this.receive(endpoint, smsMessage);		
 	}
 

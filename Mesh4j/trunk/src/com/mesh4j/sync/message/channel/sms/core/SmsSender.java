@@ -38,10 +38,7 @@ public class SmsSender implements ISmsSender{
 		if(ackIsRequired){
 			this.ongoingBatches.put(batch.getId(), batch);
 		}
-		for (SmsMessage smsMessage : batch.getMessages()) {
-			send(smsMessage, batch.getEndpoint());
-		}
-		this.persistChanges();
+		send(batch.getMessages(), batch.getEndpoint());
 	}
 
 	@Override
@@ -49,18 +46,19 @@ public class SmsSender implements ISmsSender{
 		Guard.argumentNotNull(smsMessages, "smsMessages");
 		
 		for (SmsMessage smsMessage : smsMessages) {
-			send(smsMessage, endpoint);
+			Guard.argumentNotNull(smsMessage, "smsMessage");
+			Guard.argumentNotNullOrEmptyString(smsMessage.getText(), "smsMessage.text");
+			Guard.argumentNotNull(endpoint, "endpoint");
 		}
-		this.persistChanges();
-	}
-	
-	private void send(SmsMessage smsMessage, SmsEndpoint endpoint) {
-		Guard.argumentNotNull(smsMessage, "smsMessage");
-		Guard.argumentNotNullOrEmptyString(smsMessage.getText(), "smsMessage.text");
-		Guard.argumentNotNull(endpoint, "endpoint");
 		
-		smsMessage.setLastModificationDate(new Date());
-		this.smsConnection.send(endpoint, smsMessage.getText());
+		ArrayList<String> msgTexts = new ArrayList<String>();
+		for (SmsMessage smsMessage : smsMessages) {
+			smsMessage.setLastModificationDate(new Date());
+			msgTexts.add(smsMessage.getText());
+		}
+		
+		this.smsConnection.send(msgTexts, endpoint);
+		this.persistChanges();
 	}
 	
 	public void receiveACK(String batchId) {

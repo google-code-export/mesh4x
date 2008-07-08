@@ -67,7 +67,7 @@ public class SmsChannel implements ISmsChannel {
 		this.send(batch, message.isAckRequired());
 	}
 
-	private SmsMessageBatch createBatch(IMessage message) {
+	public SmsMessageBatch createBatch(IMessage message) {
 		String msg = MessageFormatter.createMessage(message.getMessageType(), message.getSessionId(), message.getData());
 
 		String encodedData = this.messageEncoding.encode(msg);		

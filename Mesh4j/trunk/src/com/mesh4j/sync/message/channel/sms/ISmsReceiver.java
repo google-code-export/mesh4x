@@ -1,5 +1,6 @@
 package com.mesh4j.sync.message.channel.sms;
 
+import java.util.Date;
 import java.util.List;
 
 import com.mesh4j.sync.message.channel.sms.batch.DiscardedBatchRecord;
@@ -13,7 +14,7 @@ public interface ISmsReceiver {
 
 	List<SmsMessageBatch> getOngoingBatches();
 	
-	void receiveSms(SmsEndpoint endpoint, String message);
+	void receiveSms(SmsEndpoint endpoint, String message, Date date);
 
 	List<SmsMessageBatch> getCompletedBatches();
 

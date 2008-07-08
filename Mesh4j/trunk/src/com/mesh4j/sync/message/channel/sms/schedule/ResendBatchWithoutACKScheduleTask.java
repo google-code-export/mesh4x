@@ -22,7 +22,7 @@ public class ResendBatchWithoutACKScheduleTask extends ScheduleTimerTask {
 	}
 
 	@Override
-	public void run() {
+	public void execute() {
 		long nowTime = System.currentTimeMillis();
 		long min = nowTime - delay;
 		
