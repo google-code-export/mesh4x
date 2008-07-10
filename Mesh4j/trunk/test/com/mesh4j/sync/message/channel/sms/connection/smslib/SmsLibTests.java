@@ -114,14 +114,14 @@ public class SmsLibTests {
 		String sourceId = "12345";
 				
 		IMessageSyncAdapter adapterB = new InMemoryMessageSyncAdapter(sourceId, new ArrayList<Item>());
-		SmsLibConnection smsConnectionB = new SmsLibConnection("sonyEricsson", "COM23", 115200, "Sony Ericsson", "FAD-3022013-BV", 140, CompressBase91MessageEncoding.INSTANCE, null, null, 500);
+		SmsLibConnection smsConnectionB = new SmsLibConnection("sonyEricsson", "COM23", 115200, "Sony Ericsson", "FAD-3022013-BV", 140, CompressBase91MessageEncoding.INSTANCE, null, null, 60000);
 		SmsEndpoint targetA = new SmsEndpoint("01136540460");
 		MessageSyncEngine syncEngineEndPointB = createSyncSmsEndpoint("sonyEricsson", adapterB, smsConnectionB, 0);
 		
-		Thread.sleep(5000);
+		Thread.sleep(120000);
 		ISyncSession syncSessionB = syncEngineEndPointB.getSyncSession(sourceId, targetA);
 		while(syncSessionB.isOpen()){			
-			Thread.sleep(500);
+			Thread.sleep(60000);
 		}
 	}
 	
@@ -235,8 +235,7 @@ public class SmsLibTests {
 		
 		return syncEngineEndPoint;
 	}
-	
-	
+		
 	//@Test
 	public void shouldReadMeshMessages() throws InterruptedException{
 		SmsReceiver messageReceiver = new SmsReceiver();		
@@ -250,26 +249,6 @@ public class SmsLibTests {
 		smsConnectionB.processReceivedMessages();
 
 	}
-
-//	private void emulateResponses(SmsChannelWrapper channel, SyncSessionFactory syncSessionFactory, String dataSetId, IEndpoint endpoint) {
-//		ISyncSession syncSession = syncSessionFactory.get(dataSetId, endpoint.getEndpointId());
-//		Message messageNC = new Message(IProtocolConstants.PROTOCOL, "2", syncSession.getSessionId(), "", endpoint);
-//		messageNC.setOrigin(channel.getLastSentBathID());
-//		
-//		SmsMessageBatch batchNC = channel.createBatch(messageNC);
-//		System.out.println(batchNC.getMessage(0).getText());
-//		
-//		Message messageEnd = new Message(
-//				IProtocolConstants.PROTOCOL,
-//				"9",
-//				syncSession.getSessionId(),
-//				DateHelper.formatDateTime(TestHelper.now()),
-//				syncSession.getTarget());
-//		messageEnd.setAckIsRequired(false);
-//		
-//		SmsMessageBatch batchEnd = channel.createBatch(messageEnd);
-//		System.out.println(batchEnd.getMessage(0).getText());
-//	}
 
 	private List<Item> createItems(int max) {
 		List<Item> items = new ArrayList<Item>();

@@ -74,14 +74,16 @@ public class SmsLibConnection implements ISmsConnection, IRefreshTask {
 
 	@Override
 	public void send(List<String> messages, SmsEndpoint endpoint) {
-		try{
-			this.send(endpoint.getEndpointId(), messages);
-		} catch(MeshException e){
-			LOGGER.error(e.getMessage(), e);
+		for (String smsText : messages) {
+			try{
+				this.sendMessage(endpoint.getEndpointId(), smsText);	
+			} catch(MeshException e){
+				LOGGER.error(e.getMessage(), e);
+			}
 		}
 	}
 	
-	public void send(String smsNumber, List<String> messages){
+	private void sendMessage(String smsNumber, String smsText) {
 		synchronized (SEMAPHORE) {
 			Service srv = null;
 			SerialModemGateway gateway = null;
@@ -104,10 +106,8 @@ public class SmsLibConnection implements ISmsConnection, IRefreshTask {
 				srv.startService();
 				
 				// Send a message synchronously.
-				for (String smsText : messages) {
-					OutboundMessage msg = new OutboundMessage(smsNumber, smsText);
-					srv.sendMessage(msg);
-				}
+				OutboundMessage msg = new OutboundMessage(smsNumber, smsText);
+				srv.sendMessage(msg);
 				
 			} catch (Exception e) {
 				throw new MeshException(e);
@@ -119,13 +119,13 @@ public class SmsLibConnection implements ISmsConnection, IRefreshTask {
 						throw new MeshException(stopException);
 					}
 				}
-//				if(gateway != null){
-//					try {
-//						gateway.stopGateway();
-//					} catch (Exception e1) {
-//						throw new MeshException(e1);
-//					}
-//				}
+				if(gateway != null){
+					try {
+						gateway.stopGateway();
+					} catch (Exception e1) {
+						throw new MeshException(e1);
+					}
+				}
 			}
 		}
 	}
@@ -196,13 +196,13 @@ public class SmsLibConnection implements ISmsConnection, IRefreshTask {
 						throw new MeshException(e1);
 					}
 				}
-//				if(gateway != null){
-//					try {
-//						gateway.stopGateway();
-//					} catch (Exception e1) {
-//						throw new MeshException(e1);
-//					}
-//				}
+				if(gateway != null){
+					try {
+						gateway.stopGateway();
+					} catch (Exception e1) {
+						throw new MeshException(e1);
+					}
+				}
 			}
 			return msgList;
 		}
