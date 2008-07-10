@@ -24,7 +24,7 @@ public class SmsLibConnection implements ISmsConnection, IRefreshTask {
 
 	// CONSTANTS
 	private final static Log LOGGER = LogFactory.getLog(SmsLibConnection.class);
-	private Object SEMAPHORE = new Object();
+	private final static Object SEMAPHORE = new Object();
 	
 	// MODEL VARIABLES
 	private String gatewayId;
@@ -119,13 +119,13 @@ public class SmsLibConnection implements ISmsConnection, IRefreshTask {
 						throw new MeshException(stopException);
 					}
 				}
-				if(gateway != null){
-					try {
-						gateway.stopGateway();
-					} catch (Exception e1) {
-						throw new MeshException(e1);
-					}
-				}
+//				if(gateway != null){
+//					try {
+//						gateway.stopGateway();
+//					} catch (Exception e1) {
+//						throw new MeshException(e1);
+//					}
+//				}
 			}
 		}
 	}
@@ -196,13 +196,13 @@ public class SmsLibConnection implements ISmsConnection, IRefreshTask {
 						throw new MeshException(e1);
 					}
 				}
-				if(gateway != null){
-					try {
-						gateway.stopGateway();
-					} catch (Exception e1) {
-						throw new MeshException(e1);
-					}
-				}
+//				if(gateway != null){
+//					try {
+//						gateway.stopGateway();
+//					} catch (Exception e1) {
+//						throw new MeshException(e1);
+//					}
+//				}
 			}
 			return msgList;
 		}
