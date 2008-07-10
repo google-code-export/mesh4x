@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import com.mesh4j.sync.ISyncAware;
 import com.mesh4j.sync.filter.SinceLastUpdateFilter;
 import com.mesh4j.sync.message.IEndpoint;
 import com.mesh4j.sync.message.IMessageSyncAdapter;
@@ -128,6 +129,10 @@ public class SyncSession implements ISyncSession{
 		this.acks = new ArrayList<String>();
 		this.cache = new HashMap<String, Item>();
 		
+		if(this.syncAdapter instanceof ISyncAware){
+			((ISyncAware)this.syncAdapter).beginSync();
+		}
+		
 		List<Item> items = this.syncAdapter.getAll();
 		for (Item item : items) {
 			this.cache.put(item.getSyncId(), item);
@@ -140,7 +145,10 @@ public class SyncSession implements ISyncSession{
 		this.open = false;
 		
 		this.snapshot = new ArrayList<Item>(this.cache.values());
-	}
+		
+		if(this.syncAdapter instanceof ISyncAware){
+			((ISyncAware)this.syncAdapter).endSync();
+		}	}
 	
 	@Override
 	public void cancelSync() {

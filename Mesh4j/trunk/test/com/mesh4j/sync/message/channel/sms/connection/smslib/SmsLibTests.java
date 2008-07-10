@@ -6,6 +6,7 @@ import java.util.List;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.junit.Assert;
+import org.junit.Test;
 import org.smslib.IInboundMessageNotification;
 import org.smslib.IOutboundMessageNotification;
 import org.smslib.InboundMessage;
@@ -16,11 +17,12 @@ import org.smslib.modem.SerialModemGateway;
 import com.mesh4j.sync.adapters.dom.DOMAdapter;
 import com.mesh4j.sync.adapters.feed.XMLContent;
 import com.mesh4j.sync.adapters.kml.DOMLoaderFactory;
-import com.mesh4j.sync.message.IEndpoint;
 import com.mesh4j.sync.message.IMessageSyncAdapter;
 import com.mesh4j.sync.message.IMessageSyncProtocol;
 import com.mesh4j.sync.message.ISyncSession;
 import com.mesh4j.sync.message.MessageSyncEngine;
+import com.mesh4j.sync.message.MockMessageEncoding;
+import com.mesh4j.sync.message.channel.sms.ISmsConnection;
 import com.mesh4j.sync.message.channel.sms.SmsChannelFactory;
 import com.mesh4j.sync.message.channel.sms.SmsEndpoint;
 import com.mesh4j.sync.message.channel.sms.core.SmsChannel;
@@ -62,30 +64,42 @@ public class SmsLibTests {
 		command.execute(gateway, "<phone number here>", "hi...");
 	}
 	
-	//@Test
+	@Test
 	public void shouldMeshWithSMSLib() throws InterruptedException{
 		
-		int delay = 500; //1 * 60 * 1000; // min * seg * miliseconds
 		String sourceId = IdGenerator.newID().substring(0, 5);
 		List<Item> items = createItems(1);						
 				
 		IMessageSyncAdapter adapterA = new InMemoryMessageSyncAdapter(sourceId, items);
-		MessageSyncEngine syncEngineEndPointA = createSyncSmsEndpoint(adapterA, "sonyEricsson", "COM23", 115200, "Sony Ericsson", "FAD-3022013-BV", delay, delay, delay);
-		IEndpoint targetA = new SmsEndpoint("<phone number here>");
+		//SmsLibConnection smsConnectionA = new SmsLibConnection("sonyEricsson", "COM23", 115200, "Sony Ericsson", "FAD-3022013-BV", 140, CompressBase91MessageEncoding.INSTANCE, new OutboundNotification(), new InboundNotification(), (3 * 60 * 1000));
+		//SmsEndpoint targetA = new SmsEndpoint("01136544867");
+		MockSmsRefreshConnection smsConnectionA = new MockSmsRefreshConnection(MockMessageEncoding.INSTANCE, 160, 100); 
+		SmsEndpoint targetA = new SmsEndpoint("A");
+		MessageSyncEngine syncEngineEndPointA = createSyncSmsEndpoint("sonyEricsson", adapterA, smsConnectionA, 60000);
 
 		IMessageSyncAdapter adapterB = new InMemoryMessageSyncAdapter(sourceId, new ArrayList<Item>());
-		MessageSyncEngine syncEngineEndPointB = createSyncSmsEndpoint(adapterB, "nokia", "COM28", 115200, "Nokia", "6070", delay, delay, delay);
-		IEndpoint targetB = new SmsEndpoint("<phone number here>");
+		//SmsLibConnection smsConnectionB = new SmsLibConnection("nokia", "COM28", 115200, "Nokia", "6070", 140, CompressBase91MessageEncoding.INSTANCE, new OutboundNotification(), new InboundNotification(), (3 * 60 * 1000));
+		//SmsEndpoint targetB = new SmsEndpoint("01136540460");
+		MockSmsRefreshConnection smsConnectionB = new MockSmsRefreshConnection(MockMessageEncoding.INSTANCE, 160, 100);
+		SmsEndpoint targetB = new SmsEndpoint("B");
+		MessageSyncEngine syncEngineEndPointB = createSyncSmsEndpoint("nokia", adapterB, smsConnectionB, 60000);
 		
-		//syncEngineEndPointA.synchronize(sourceId, targetB, true);
+		smsConnectionA.setEndpointConnection(smsConnectionB);
+		smsConnectionA.setEndpoint(targetA);
+		smsConnectionB.setEndpointConnection(smsConnectionA);
+		smsConnectionB.setEndpoint(targetB);
+		
+		syncEngineEndPointA.synchronize(sourceId, targetB, true);
 
+		Thread.sleep(1000);
 		ISyncSession syncSessionA = syncEngineEndPointA.getSyncSession(sourceId, targetB);
 		ISyncSession syncSessionB = syncEngineEndPointB.getSyncSession(sourceId, targetA);
-		while(syncSessionA.isOpen() && syncSessionB.isOpen()){			
+		while(syncSessionA.isOpen() || syncSessionB.isOpen()){			
 			Thread.sleep(500);
 		}
 		
 		Assert.assertFalse(syncSessionA.isOpen());
+		Assert.assertFalse(syncSessionB.isOpen());
 		Assert.assertEquals(items.size(), syncSessionA.getSnapshot().size());
 		Assert.assertEquals(items.size(), syncSessionB.getSnapshot().size());
 		
@@ -98,54 +112,57 @@ public class SmsLibTests {
 		}
 	}
 	
-	//@Test
+	@Test
 	public void shouldMeshKMLWithSMSLib() throws InterruptedException{
 		
-		int delay = 1 * 60 * 1000; // min * seg * miliseconds
 		String sourceId = IdGenerator.newID().substring(0, 5);
-		List<Item> items = createItems(1);						
 		
 		String fileNameA = this.getClass().getResource("kmlWithSyncInfo.kml").getFile();
 		DOMAdapter kmlAdapterA = new DOMAdapter(DOMLoaderFactory.createDOMLoader(fileNameA, NullIdentityProvider.INSTANCE));
 		IMessageSyncAdapter adapterA = new MessageSyncAdapter(sourceId, NullIdentityProvider.INSTANCE, kmlAdapterA);
-		MessageSyncEngine syncEngineEndPointA = createSyncSmsEndpoint(adapterA, "modem.com23", "COM23", 115200, "Sony Ericsson", "FAD-3022013-BV", delay, delay, delay);
-		IEndpoint targetA = new SmsEndpoint("<phone number here>");
+		//SmsLibConnection smsConnectionA = new SmsLibConnection("sonyEricsson", "COM23", 115200, "Sony Ericsson", "FAD-3022013-BV", 140, CompressBase91MessageEncoding.INSTANCE, new OutboundNotification(), new InboundNotification(), (3 * 60 * 1000));
+		//SmsEndpoint targetA = new SmsEndpoint("01136544867");
+		MockSmsRefreshConnection smsConnectionA = new MockSmsRefreshConnection(MockMessageEncoding.INSTANCE, 160, 100); 
+		SmsEndpoint targetA = new SmsEndpoint("A");
+		MessageSyncEngine syncEngineEndPointA = createSyncSmsEndpoint("sonyEricsson", adapterA, smsConnectionA, 0);
 
 		String fileNameB = this.getClass().getResource("kmlDummyForSync.kml").getFile();
 		DOMAdapter kmlAdapterB = new DOMAdapter(DOMLoaderFactory.createDOMLoader(fileNameB, NullIdentityProvider.INSTANCE));
 		IMessageSyncAdapter adapterB = new MessageSyncAdapter(sourceId, NullIdentityProvider.INSTANCE, kmlAdapterB);
-		MessageSyncEngine syncEngineEndPointB = createSyncSmsEndpoint(adapterB, "modem.com28", "COM28", 115200, "Nokia", "6070", delay, delay, delay);
-		IEndpoint targetB = new SmsEndpoint("<phone number here>");
+		//SmsLibConnection smsConnectionB = new SmsLibConnection("nokia", "COM28", 115200, "Nokia", "6070", 140, CompressBase91MessageEncoding.INSTANCE, new OutboundNotification(), new InboundNotification(), (3 * 60 * 1000));
+		//SmsEndpoint targetB = new SmsEndpoint("01136540460");
+		MockSmsRefreshConnection smsConnectionB = new MockSmsRefreshConnection(MockMessageEncoding.INSTANCE, 160, 100);
+		SmsEndpoint targetB = new SmsEndpoint("B");
+		MessageSyncEngine syncEngineEndPointB = createSyncSmsEndpoint("nokia", adapterB, smsConnectionB, 0);
+
+		smsConnectionA.setEndpointConnection(smsConnectionB);
+		smsConnectionA.setEndpoint(targetA);
+		smsConnectionB.setEndpointConnection(smsConnectionA);
+		smsConnectionB.setEndpoint(targetB);
 		
 		syncEngineEndPointA.synchronize(sourceId, targetB, true);
 
+		Thread.sleep(1000);
 		ISyncSession syncSessionA = syncEngineEndPointA.getSyncSession(sourceId, targetB);
 		ISyncSession syncSessionB = syncEngineEndPointB.getSyncSession(sourceId, targetA);
-		while(syncSessionA.isOpen() && syncSessionB.isOpen()){			
+		while(syncSessionA.isOpen() || syncSessionB.isOpen()){			
 			Thread.sleep(500);
 		}
 		
 		Assert.assertFalse(syncSessionA.isOpen());
-		Assert.assertEquals(items.size(), syncSessionA.getSnapshot().size());
-		Assert.assertEquals(items.size(), syncSessionB.getSnapshot().size());
-		
-		for (Item item : items) {
-			Item itemA = syncSessionA.get(item.getSyncId());
-			Item itemB = syncSessionA.get(item.getSyncId());
-			Assert.assertNotNull(itemA);
-			Assert.assertNotNull(itemB);
-			Assert.assertTrue(itemA.equals(itemB));
-		}
+		Assert.assertFalse(syncSessionB.isOpen());
+		Assert.assertEquals(syncSessionB.getSnapshot().size(), syncSessionA.getSnapshot().size());
 		
 		adapterA.synchronizeSnapshot(syncSessionA);
 		adapterB.synchronizeSnapshot(syncSessionB);
+
+		kmlAdapterB.beginSync();
+		Assert.assertEquals(kmlAdapterA.getAll().size(), kmlAdapterB.getAll().size());
 	}
 	
-	private MessageSyncEngine createSyncSmsEndpoint(IMessageSyncAdapter adapter, String gatewayId, String comPort, int baudRate, String manufacturer, String model, int readSmsTaskDelay, int sendTaskDelay, int receiveACKTaskDelay){
-		SmsLibConnection smsConnection = new SmsLibConnection(gatewayId, comPort, baudRate, manufacturer, model, 140, CompressBase91MessageEncoding.INSTANCE, new OutboundNotification(), new InboundNotification(), readSmsTaskDelay);
-		
+	private MessageSyncEngine createSyncSmsEndpoint(String gatewayId, IMessageSyncAdapter adapter, ISmsConnection smsConnection, int delay){
 		FileSmsChannelRepository channelRepo = new FileSmsChannelRepository(TestHelper.baseDirectoryForTest()+gatewayId+"\\");
-		SmsChannelWrapper channel = new SmsChannelWrapper((SmsChannel) SmsChannelFactory.createChannel(smsConnection, sendTaskDelay, receiveACKTaskDelay, channelRepo, channelRepo));
+		SmsChannelWrapper channel = new SmsChannelWrapper((SmsChannel) SmsChannelFactory.createChannel(smsConnection, delay, delay, channelRepo, channelRepo));
 						
 		SyncSessionFactory syncSessionFactory = new SyncSessionFactory();
 		syncSessionFactory.registerSource(adapter);
@@ -226,4 +243,3 @@ public class SmsLibTests {
 	}
 
 }
-

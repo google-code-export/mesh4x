@@ -3,6 +3,7 @@ package com.mesh4j.sync.message.core;
 import java.util.List;
 
 import com.mesh4j.sync.ISyncAdapter;
+import com.mesh4j.sync.ISyncAware;
 import com.mesh4j.sync.NullPreviewHandler;
 import com.mesh4j.sync.PreviewBehavior;
 import com.mesh4j.sync.SyncEngine;
@@ -13,7 +14,7 @@ import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.security.IIdentityProvider;
 import com.mesh4j.sync.validations.Guard;
 
-public class MessageSyncAdapter implements IMessageSyncAdapter {
+public class MessageSyncAdapter implements IMessageSyncAdapter, ISyncAware {
 
 	// MODEL VARIABLES
 	private String sourceId;
@@ -54,5 +55,19 @@ public class MessageSyncAdapter implements IMessageSyncAdapter {
 	
 	public ISyncAdapter getSyncAdapter() {
 		return this.syncAdapter;
+	}
+
+	@Override
+	public void beginSync() {
+		if(this.syncAdapter instanceof ISyncAware){
+			((ISyncAware)this.syncAdapter).beginSync();
+		}
+	}
+
+	@Override
+	public void endSync() {
+		if(this.syncAdapter instanceof ISyncAware){
+			((ISyncAware)this.syncAdapter).endSync();
+		}
 	}
 }

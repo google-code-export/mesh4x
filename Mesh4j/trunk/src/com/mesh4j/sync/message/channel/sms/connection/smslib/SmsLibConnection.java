@@ -20,10 +20,11 @@ import com.mesh4j.sync.message.encoding.IMessageEncoding;
 import com.mesh4j.sync.message.schedule.timer.TimerScheduler;
 import com.mesh4j.sync.validations.MeshException;
 
-public class SmsLibConnection implements ISmsConnection {
+public class SmsLibConnection implements ISmsConnection, IRefreshTask {
 
 	// CONSTANTS
 	private final static Log LOGGER = LogFactory.getLog(SmsLibConnection.class);
+	private Object SEMAPHORE = new Object();
 	
 	// MODEL VARIABLES
 	private String gatewayId;
@@ -52,7 +53,7 @@ public class SmsLibConnection implements ISmsConnection {
 		this.inboundMessageNotification = inboundMessageNotification;
 		
 		if(refrehDelay > 0){
-			TimerScheduler.INSTANCE.schedule(new SmsLibRefreshTask(this), refrehDelay);
+			TimerScheduler.INSTANCE.schedule(new RefreshSchedulerTimerTask(this), refrehDelay);
 		}
 	}
 	
@@ -80,48 +81,50 @@ public class SmsLibConnection implements ISmsConnection {
 		}
 	}
 	
-	public synchronized void send(String smsNumber, List<String> messages){
-		Service srv = null;
-		SerialModemGateway gateway = null;
-		try{			
-			// Create new gateway
-			gateway = new SerialModemGateway(this.gatewayId, this.comPort, this.baudRate, this.manufacturer, this.model);
-			
-			// Create new Service object - the parent of all and the main interface to you.
-			srv = new Service();
-						
-			gateway.setInbound(true);
-			gateway.setOutbound(true);
-			gateway.setSimPin("0000");
-			
-			if(this.outboundMessageNotification != null){
-				gateway.setOutboundNotification(this.outboundMessageNotification);
-			}
-			
-			srv.addGateway(gateway);
-			srv.startService();
-			
-			// Send a message synchronously.
-			for (String smsText : messages) {
-				OutboundMessage msg = new OutboundMessage(smsNumber, smsText);
-				srv.sendMessage(msg);
-			}
-			
-		} catch (Exception e) {
-			throw new MeshException(e);
-		} finally {
-			if(srv != null){
-				try {
-					srv.stopService();
-				} catch (Exception stopException) {
-					throw new MeshException(stopException);
+	public void send(String smsNumber, List<String> messages){
+		synchronized (SEMAPHORE) {
+			Service srv = null;
+			SerialModemGateway gateway = null;
+			try{			
+				// Create new gateway
+				gateway = new SerialModemGateway(this.gatewayId, this.comPort, this.baudRate, this.manufacturer, this.model);
+				
+				// Create new Service object - the parent of all and the main interface to you.
+				srv = new Service();
+							
+				gateway.setInbound(true);
+				gateway.setOutbound(true);
+				gateway.setSimPin("0000");
+				
+				if(this.outboundMessageNotification != null){
+					gateway.setOutboundNotification(this.outboundMessageNotification);
 				}
-			}
-			if(gateway != null){
-				try {
-					gateway.stopGateway();
-				} catch (Exception e1) {
-					throw new MeshException(e1);
+				
+				srv.addGateway(gateway);
+				srv.startService();
+				
+				// Send a message synchronously.
+				for (String smsText : messages) {
+					OutboundMessage msg = new OutboundMessage(smsNumber, smsText);
+					srv.sendMessage(msg);
+				}
+				
+			} catch (Exception e) {
+				throw new MeshException(e);
+			} finally {
+				if(srv != null){
+					try {
+						srv.stopService();
+					} catch (Exception stopException) {
+						throw new MeshException(stopException);
+					}
+				}
+				if(gateway != null){
+					try {
+						gateway.stopGateway();
+					} catch (Exception e1) {
+						throw new MeshException(e1);
+					}
 				}
 			}
 		}
@@ -141,69 +144,72 @@ public class SmsLibConnection implements ISmsConnection {
 				smsMessage.getText(),
 				smsMessage.getDate());
 		} catch(RuntimeException re){
-//			LOGGER.info(re.getMessage());
+			LOGGER.info(re.getMessage());
 		}
 	}
 	
-	public synchronized List<InboundMessage> readAllMessages() {
-		List<InboundMessage> msgList = new ArrayList<InboundMessage>();		
-		Service srv = null;
-		SerialModemGateway gateway = null;
-		try {
-
-			// Create new gateway
-			gateway = new SerialModemGateway(this.gatewayId, this.comPort, this.baudRate, this.manufacturer, this.model);
+	public List<InboundMessage> readAllMessages() {
+		synchronized (SEMAPHORE) {
+			List<InboundMessage> msgList = new ArrayList<InboundMessage>();		
+			Service srv = null;
+			SerialModemGateway gateway = null;
+			try {
+	
+				// Create new gateway
+				gateway = new SerialModemGateway(this.gatewayId, this.comPort, this.baudRate, this.manufacturer, this.model);
+				
+				// Create new Service object - the parent of all and the main interface to you.
+				srv = new Service();
+				
+				// Do we want the Gateway to be used for Inbound messages? If not, SMSLib will never read messages from this Gateway.
+				gateway.setInbound(true);
+				
+				// Do we want the Gateway to be used for Outbound messages? If not, SMSLib will never send messages from this Gateway.
+				gateway.setOutbound(true);
+				gateway.setSimPin("0000");
+				
+				if(this.inboundMessageNotification != null){
+					gateway.setInboundNotification(this.inboundMessageNotification);
+				}
+				
+				// Add the Gateway to the Service object.
+				srv.addGateway(gateway);
+				
+				// Similarly, you may define as many Gateway objects, representing
+				// various GSM modems, add them in the Service object and control
+				// all of them.
+				// Start! (i.e. connect to all defined Gateways)
+				srv.startService();
+				
+				// Read Messages. The reading is done via the Service object and
+				// affects all Gateway objects defined. This can also be more
+				// directed to a specific Gateway
+				srv.readMessages(msgList, MessageClasses.ALL);
 			
-			// Create new Service object - the parent of all and the main interface to you.
-			srv = new Service();
-			
-			// Do we want the Gateway to be used for Inbound messages? If not, SMSLib will never read messages from this Gateway.
-			gateway.setInbound(true);
-			
-			// Do we want the Gateway to be used for Outbound messages? If not, SMSLib will never send messages from this Gateway.
-			gateway.setOutbound(true);
-			gateway.setSimPin("0000");
-			
-			if(this.inboundMessageNotification != null){
-				gateway.setInboundNotification(this.inboundMessageNotification);
-			}
-			
-			// Add the Gateway to the Service object.
-			srv.addGateway(gateway);
-			
-			// Similarly, you may define as many Gateway objects, representing
-			// various GSM modems, add them in the Service object and control
-			// all of them.
-			// Start! (i.e. connect to all defined Gateways)
-			srv.startService();
-			
-			// Read Messages. The reading is done via the Service object and
-			// affects all Gateway objects defined. This can also be more
-			// directed to a specific Gateway
-			srv.readMessages(msgList, MessageClasses.ALL);
-		
-		} catch (Exception e) {
-			throw new MeshException(e);
-		} finally {
-			if(srv != null){
-				try {
-					srv.stopService();
-				} catch (Exception e1) {
-					throw new MeshException(e1);
+			} catch (Exception e) {
+				throw new MeshException(e);
+			} finally {
+				if(srv != null){
+					try {
+						srv.stopService();
+					} catch (Exception e1) {
+						throw new MeshException(e1);
+					}
+				}
+				if(gateway != null){
+					try {
+						gateway.stopGateway();
+					} catch (Exception e1) {
+						throw new MeshException(e1);
+					}
 				}
 			}
-			if(gateway != null){
-				try {
-					gateway.stopGateway();
-				} catch (Exception e1) {
-					throw new MeshException(e1);
-				}
-			}
+			return msgList;
 		}
-		return msgList;
 	}
 
-	public void sendAndReceiveMessages() {
+	@Override
+	public void refresh() {
 		this.processReceivedMessages();
 	}
 		

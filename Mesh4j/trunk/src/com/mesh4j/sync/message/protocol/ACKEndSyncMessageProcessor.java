@@ -35,7 +35,7 @@ public class ACKEndSyncMessageProcessor implements IMessageProcessor {
 	@Override
 	public List<IMessage> process(ISyncSession syncSession, IMessage message) {
 		
-		if(syncSession.isOpen() && this.getMessageType().equals(message.getMessageType()) && syncSession.isCompleteSync()){
+		if(syncSession.isOpen() && this.getMessageType().equals(message.getMessageType())){
 			Date sinceDate = DateHelper.parseDateTime(message.getData());
 			if(sinceDate != null){
 				syncSession.endSync(sinceDate);

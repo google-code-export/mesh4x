@@ -4,22 +4,22 @@ import com.mesh4j.sync.message.schedule.timer.ScheduleTimerTask;
 import com.mesh4j.sync.utils.IdGenerator;
 import com.mesh4j.sync.validations.Guard;
 
-public class SmsLibRefreshTask extends ScheduleTimerTask {
+public class RefreshSchedulerTimerTask extends ScheduleTimerTask {
 
 	// MODEL 
-	private SmsLibConnection smsLibConnection;
+	private IRefreshTask refreshTask;
 	
 	// BUSINESS METHODS
-	public SmsLibRefreshTask(SmsLibConnection smsLibConnection) {
+	public RefreshSchedulerTimerTask(IRefreshTask refreshTask) {
 		super("SmsLibRefreshTask"+IdGenerator.newID());
 		
-		Guard.argumentNotNull(smsLibConnection, "smsLibConnection");
-		this.smsLibConnection = smsLibConnection;
+		Guard.argumentNotNull(refreshTask, "refreshTask");
+		this.refreshTask = refreshTask;
 	}
 
 	@Override
 	public void execute() {
-		this.smsLibConnection.sendAndReceiveMessages();
+		this.refreshTask.refresh();
 	}
 
 }
