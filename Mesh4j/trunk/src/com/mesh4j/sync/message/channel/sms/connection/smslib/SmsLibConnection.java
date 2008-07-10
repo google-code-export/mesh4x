@@ -13,8 +13,6 @@ import org.smslib.Service;
 import org.smslib.InboundMessage.MessageClasses;
 import org.smslib.modem.SerialModemGateway;
 
-import sun.awt.windows.ThemeReader;
-
 import com.mesh4j.sync.message.channel.sms.ISmsConnection;
 import com.mesh4j.sync.message.channel.sms.ISmsReceiver;
 import com.mesh4j.sync.message.channel.sms.SmsEndpoint;
