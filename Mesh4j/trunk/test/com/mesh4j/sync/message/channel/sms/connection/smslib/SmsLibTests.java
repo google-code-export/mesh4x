@@ -53,26 +53,6 @@ public class SmsLibTests {
 		SerialModemGateway gateway = new SerialModemGateway("modem.com18", "COM18", 115200, "Nokia", "6070");		
 		ReadMessageCommand command = new ReadMessageCommand();
 		command.execute(gateway);
-		
-		SerialModemGateway gatewayB = new SerialModemGateway("modem.com23", "COM23", 115200, "Sony Ericsson", "FAD-3022013-BV");		
-		ReadMessageCommand commandB = new ReadMessageCommand();
-		commandB.execute(gatewayB);
-		
-		gateway = new SerialModemGateway("modem.com18", "COM18", 115200, "Nokia", "6070");		
-		command = new ReadMessageCommand();
-		command.execute(gateway);
-		
-		gatewayB = new SerialModemGateway("modem.com23", "COM23", 115200, "Sony Ericsson", "FAD-3022013-BV");		
-		commandB = new ReadMessageCommand();
-		commandB.execute(gatewayB);
-		
-		gateway = new SerialModemGateway("modem.com18", "COM18", 115200, "Nokia", "6070");		
-		command = new ReadMessageCommand();
-		command.execute(gateway);
-		
-		gatewayB = new SerialModemGateway("modem.com23", "COM23", 115200, "Sony Ericsson", "FAD-3022013-BV");		
-		commandB = new ReadMessageCommand();
-		commandB.execute(gatewayB);
 	}
 	
 	//@Test	
@@ -84,14 +64,14 @@ public class SmsLibTests {
 		command.execute(gateway, "<phone number here>", "hi...");
 	}
 	
-	//@Test
+	@Test
 	public void shouldMeshWithSMSLibPhoneA() throws InterruptedException{
 		
 		String sourceId = "12345";
 		List<Item> items = createItems(1);						
 				
-		IMessageSyncAdapter adapterA = new InMemoryMessageSyncAdapter(sourceId, new ArrayList<Item>());
-		SmsLibConnection smsConnectionA = new SmsLibConnection("nokia", "COM28", 115200, "Nokia", "6070", 140, CompressBase91MessageEncoding.INSTANCE, null, null, 500);
+		IMessageSyncAdapter adapterA = new InMemoryMessageSyncAdapter(sourceId, items);
+		SmsLibConnection smsConnectionA = new SmsLibConnection("nokia", "COM18", 115200, "Nokia", "6070", 140, CompressBase91MessageEncoding.INSTANCE, null, null, 60000);
 		MessageSyncEngine syncEngineEndPointA = createSyncSmsEndpoint("nokia", adapterA, smsConnectionA, 0);
 
 		SmsEndpoint targetB = new SmsEndpoint("01136544867");
@@ -100,7 +80,7 @@ public class SmsLibTests {
 		Thread.sleep(5000);
 		ISyncSession syncSessionA = syncEngineEndPointA.getSyncSession(sourceId, targetB);
 		while(syncSessionA.isOpen()){			
-			Thread.sleep(500);
+			Thread.sleep(5000);
 		}
 		
 		Assert.assertFalse(syncSessionA.isOpen());
@@ -108,7 +88,7 @@ public class SmsLibTests {
 		
 	}
 	
-	@Test
+	//@Test
 	public void shouldMeshWithSMSLibPhoneB() throws InterruptedException{
 		
 		String sourceId = "12345";
@@ -235,7 +215,7 @@ public class SmsLibTests {
 		
 		return syncEngineEndPoint;
 	}
-		
+
 	//@Test
 	public void shouldReadMeshMessages() throws InterruptedException{
 		SmsReceiver messageReceiver = new SmsReceiver();		
