@@ -125,5 +125,9 @@ public class HibernateContentAdapter implements IContentAdapter {
 	public String getType() {
 		return entityName;
 	}
+
+	public List<IContent> getAll() {
+		return getAll(null);
+	}
 	
 }

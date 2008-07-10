@@ -64,7 +64,7 @@ public class SmsLibTests {
 		command.execute(gateway, "<phone number here>", "hi...");
 	}
 	
-	@Test
+	//@Test
 	public void shouldMeshWithSMSLibPhoneA() throws InterruptedException{
 		
 		String sourceId = "12345";

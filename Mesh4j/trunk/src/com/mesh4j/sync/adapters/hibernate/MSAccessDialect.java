@@ -1,4 +1,4 @@
-package com.mesh4j.sync.adapters.msaccess;
+package com.mesh4j.sync.adapters.hibernate;
 
 import java.sql.Types;
 
