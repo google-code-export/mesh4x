@@ -39,9 +39,12 @@ public class SmsMessageBatchFormatter {
 		batchElement.addAttribute(ATTRIBUTE_EXPECTED_MESSAGE_COUNT, String.valueOf(batch.getExpectedMessageCount()));
 		batchElement.addAttribute(ATTRIBUTE_ENDPOINT, batch.getEndpoint().getEndpointId());
 		
-		for (int i = 0; i < batch.getMessagesCount(); i++) {
-			Element messageElement = createMessageElement(i, batch.getMessage(i));
-			batchElement.add(messageElement);			
+		for (int i = 0; i < batch.getExpectedMessageCount(); i++) {
+			SmsMessage msg = batch.getMessage(i);
+			if(msg != null){
+				Element messageElement = createMessageElement(i, batch.getMessage(i));
+				batchElement.add(messageElement);
+			}
 		}
 		return batchElement;
 	}

@@ -73,6 +73,8 @@ public class SmsReceiver implements ISmsReceiver {
 			// validate the same
 			if (!(message.getText().equals(batchMsg.getText()))) {
 				discardBatch(receivedMessageBatchId);
+			} else {
+				return this;
 			}
 		}
 

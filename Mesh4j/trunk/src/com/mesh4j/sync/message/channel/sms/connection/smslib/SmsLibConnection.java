@@ -13,6 +13,8 @@ import org.smslib.Service;
 import org.smslib.InboundMessage.MessageClasses;
 import org.smslib.modem.SerialModemGateway;
 
+import sun.awt.windows.ThemeReader;
+
 import com.mesh4j.sync.message.channel.sms.ISmsConnection;
 import com.mesh4j.sync.message.channel.sms.ISmsReceiver;
 import com.mesh4j.sync.message.channel.sms.SmsEndpoint;
@@ -76,7 +78,12 @@ public class SmsLibConnection implements ISmsConnection, IRefreshTask {
 	public void send(List<String> messages, SmsEndpoint endpoint) {
 		for (String smsText : messages) {
 			try{
-				this.sendMessage(endpoint.getEndpointId(), smsText);	
+				this.sendMessage(endpoint.getEndpointId(), smsText);
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					// nothing to do
+				}
 			} catch(MeshException e){
 				LOGGER.error(e.getMessage(), e);
 			}
