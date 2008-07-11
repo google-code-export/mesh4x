@@ -23,6 +23,7 @@ import com.mesh4j.sync.message.core.repository.file.FileSyncSessionRepository;
 import com.mesh4j.sync.message.encoding.CompressBase91MessageEncoding;
 import com.mesh4j.sync.message.encoding.IMessageEncoding;
 import com.mesh4j.sync.message.protocol.MessageSyncProtocolFactory;
+import com.mesh4j.sync.properties.PropertiesProvider;
 import com.mesh4j.sync.security.IIdentityProvider;
 
 public class SmsHelper {
@@ -101,5 +102,10 @@ public class SmsHelper {
 		MessageSyncEngine syncEngineEndPoint = new MessageSyncEngine(syncProtocol, channel);
 		
 		return syncEngineEndPoint;
+	}
+
+	public static String[] getAvailablePhones() {
+		PropertiesProvider prop = new PropertiesProvider("mesh4j_sms.properties");
+		return new String [] {prop.getString("default.sms.phone.number.demo"), prop.getString("default.sms.phone.number.demo1"), prop.getString("default.sms.phone.number.demo2")};
 	}
 }

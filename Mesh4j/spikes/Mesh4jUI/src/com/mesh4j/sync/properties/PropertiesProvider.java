@@ -73,4 +73,8 @@ public class PropertiesProvider {
 	public int getInt(String key) {
 		return Integer.valueOf(this.properties.getProperty(key, "0"));
 	}
+
+	public String getString(String key) {
+		return this.properties.getProperty(key, "");
+	}
 }
