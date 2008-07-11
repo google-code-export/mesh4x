@@ -16,12 +16,17 @@ public class PropertiesProvider {
 	// BUSINESS METHODS
 	public PropertiesProvider(){
 		super();
-		initialize();
+		initialize("mesh4j.properties");
 	}
-
-	private void initialize() {
+	
+	public PropertiesProvider(String resourceName){
+		super();
+		initialize(resourceName);
+	}
+	
+	private void initialize(String resourceName) {
 		try{
-			FileReader reader = new FileReader("mesh4j.properties");
+			FileReader reader = new FileReader(resourceName);
 			Properties prop = new Properties();
 			prop.load(reader);
 			this.properties = prop;
@@ -59,5 +64,13 @@ public class PropertiesProvider {
 		Class clazz = Class.forName(identityProviderClassName);
 		IIdentityProvider identityProvider = (IIdentityProvider)clazz.newInstance();
 		return identityProvider;
+	}
+
+	public String getBaseDirectory() {
+		return this.properties.getProperty("default.base.directory", "c:\\");
+	}
+
+	public int getInt(String key) {
+		return Integer.valueOf(this.properties.getProperty(key, "0"));
 	}
 }

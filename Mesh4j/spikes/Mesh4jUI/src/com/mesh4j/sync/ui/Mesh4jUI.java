@@ -37,7 +37,7 @@ import com.mesh4j.sync.security.NullIdentityProvider;
 import com.mesh4j.sync.ui.translator.Mesh4jUITranslator;
 import com.mesh4j.sync.validations.MeshException;
 
-public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
+public class Mesh4jUI {
 
 	private final static Log Logger = LogFactory.getLog(Mesh4jUI.class);
 	
@@ -155,8 +155,7 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 		});
 		
 		buttonPrepareKMLToSync.setText(Mesh4jUITranslator.getLabelPrepareToSync());
-		
-		
+			
 		Button buttonCleanKML = new Button(shell, SWT.PUSH);
 		buttonCleanKML.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {				
@@ -351,12 +350,6 @@ public class Mesh4jUI {  // TODO (JMT) REFACTORING: subclass Composite...
 			consoleView.append("\n"+ Mesh4jUITranslator.getErrorFileType(endpointHeader));
 			return false;
 		}
-		
-		File file = new File(fileName);
-		if(!file.exists()){
-			consoleView.append("\n"+ Mesh4jUITranslator.getErrorFileDoesNotExist(endpointHeader));
-			return false;
-		}		
 		return true;
 	}
 	
