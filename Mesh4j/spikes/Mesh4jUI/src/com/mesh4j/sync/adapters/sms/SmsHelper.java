@@ -12,7 +12,7 @@ import com.mesh4j.sync.message.MessageSyncEngine;
 import com.mesh4j.sync.message.channel.sms.ISmsConnection;
 import com.mesh4j.sync.message.channel.sms.SmsChannelFactory;
 import com.mesh4j.sync.message.channel.sms.SmsEndpoint;
-import com.mesh4j.sync.message.channel.sms.connection.inmemory.ISmsConnectionLog;
+import com.mesh4j.sync.message.channel.sms.connection.inmemory.ISmsConnectionOutboundNotification;
 import com.mesh4j.sync.message.channel.sms.connection.inmemory.InMemorySmsConnection;
 import com.mesh4j.sync.message.channel.sms.core.repository.file.FileSmsChannelRepository;
 import com.mesh4j.sync.message.core.ISyncSessionRepository;
@@ -27,7 +27,7 @@ import com.mesh4j.sync.security.IIdentityProvider;
 
 public class SmsHelper {
 	
-	public static void synchronizeItems(ISmsConnectionLog logger, String smsFrom, String smsTo, boolean useCompression, String kmlFileName, IIdentityProvider identityProvider, String repositoryBaseDirectory, int senderDelay, int receiverDelay, int readDelay, int channelDelay, int maxMessageLenght) throws InterruptedException{
+	public static void synchronizeItems(ISmsConnectionOutboundNotification smsConnectionOutboundNotification, String smsFrom, String smsTo, boolean useCompression, String kmlFileName, IIdentityProvider identityProvider, String repositoryBaseDirectory, int senderDelay, int receiverDelay, int readDelay, int channelDelay, int maxMessageLenght) throws InterruptedException{
 		
 		IMessageEncoding encoding = NonMessageEncoding.INSTANCE;
 		if(useCompression){
@@ -41,7 +41,7 @@ public class SmsHelper {
 		IMessageSyncAdapter adapterA = new MessageSyncAdapter(sourceId, identityProvider, kmlAdapterA);
 
 		InMemorySmsConnection smsConnectionA = new InMemorySmsConnection(encoding, maxMessageLenght, readDelay, channelDelay);
-		smsConnectionA.setConnectionLog(logger);
+		smsConnectionA.setSmsConnectionOutboundNotification(smsConnectionOutboundNotification);
 		SmsEndpoint targetA = new SmsEndpoint(smsFrom);
 		
 		File fileDirFrom = new File(repositoryBaseDirectory+"\\"+smsFrom+"\\");
@@ -61,7 +61,7 @@ public class SmsHelper {
 		IMessageSyncAdapter adapterB = new MessageSyncAdapter(sourceId, identityProvider, kmlAdapterB);
 
 		InMemorySmsConnection smsConnectionB = new InMemorySmsConnection(encoding, maxMessageLenght, readDelay, channelDelay);
-		smsConnectionB.setConnectionLog(logger);
+		smsConnectionB.setSmsConnectionOutboundNotification(smsConnectionOutboundNotification);
 		SmsEndpoint targetB = new SmsEndpoint(smsTo);
 		MessageSyncEngine syncEngineEndPointB = createSyncSmsEndpoint(repositoryBaseDirectory+"\\"+smsTo+"\\", adapterB, smsConnectionB, senderDelay, receiverDelay);
 		

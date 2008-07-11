@@ -19,12 +19,13 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import com.mesh4j.sync.adapters.sms.SmsHelper;
-import com.mesh4j.sync.message.channel.sms.connection.inmemory.ISmsConnectionLog;
+import com.mesh4j.sync.message.channel.sms.SmsEndpoint;
+import com.mesh4j.sync.message.channel.sms.connection.inmemory.ISmsConnectionOutboundNotification;
 import com.mesh4j.sync.properties.PropertiesProvider;
 import com.mesh4j.sync.security.IIdentityProvider;
 import com.mesh4j.sync.security.NullIdentityProvider;
 
-public class MeshSmsUI implements ISmsConnectionLog{
+public class MeshSmsUI implements ISmsConnectionOutboundNotification{
 
 	private final static Log Logger = LogFactory.getLog(Mesh4jUI.class);
 	
@@ -221,6 +222,10 @@ public class MeshSmsUI implements ISmsConnectionLog{
 	}
 
 	@Override
+	public void notifySend(SmsEndpoint endpointFrom, SmsEndpoint endpointTo, String message) {
+		this.log("Send from: " + endpointFrom.getEndpointId() + " to: " + endpointTo.getEndpointId() + " message: " + message);	
+	}
+
 	public void log(String message) {
 		final String msg = message;
 		display.syncExec(new Runnable() {
