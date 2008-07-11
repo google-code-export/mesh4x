@@ -1,4 +1,4 @@
-package com.mesh4j.sync.message.channel.sms.connection.smslib;
+package com.mesh4j.sync.message.channel.sms.connection.inmemory;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -7,28 +7,36 @@ import java.util.List;
 import com.mesh4j.sync.message.channel.sms.ISmsConnection;
 import com.mesh4j.sync.message.channel.sms.ISmsReceiver;
 import com.mesh4j.sync.message.channel.sms.SmsEndpoint;
+import com.mesh4j.sync.message.channel.sms.connection.smslib.IRefreshTask;
+import com.mesh4j.sync.message.channel.sms.connection.smslib.RefreshSchedulerTimerTask;
 import com.mesh4j.sync.message.encoding.IMessageEncoding;
 import com.mesh4j.sync.message.schedule.timer.TimerScheduler;
 
-public class MockSmsRefreshConnection implements ISmsConnection, IRefreshTask{
+public class InMemorySmsConnection implements ISmsConnection, IRefreshTask{
 
 	private final static Object SEMAPHORE = new Object();
 	
 	// MODEL VARIABLES
 	private List<String> messages = new ArrayList<String>();
 	private ISmsReceiver messageReceiver;
-	private MockSmsRefreshConnection endpointConnection;
+	private InMemorySmsConnection endpointConnection;
 	private SmsEndpoint endpoint;
 	private int maxMessageLenght = 140;
 	private IMessageEncoding messageEncoding;
+	private ISmsConnectionLog smsConnectionLog = new SmsConnectionLog();
+	private int channelDelay = 300;
 	
 	// BUSINESS METHODS
+	public InMemorySmsConnection(IMessageEncoding messageEncoding, int maxMessageLenght, int readDelay){
+		this(messageEncoding, maxMessageLenght, readDelay, 300);
+	}
 	
-	public MockSmsRefreshConnection(IMessageEncoding messageEncoding, int maxMessageLenght, int delay){
+	public InMemorySmsConnection(IMessageEncoding messageEncoding, int maxMessageLenght, int readDelay, int channelDelay){
 		this.maxMessageLenght = maxMessageLenght;
 		this.messageEncoding = messageEncoding;
-		if(delay > 0){
-			TimerScheduler.INSTANCE.schedule(new RefreshSchedulerTimerTask(this), delay);
+		this.channelDelay = channelDelay;
+		if(readDelay > 0){
+			TimerScheduler.INSTANCE.schedule(new RefreshSchedulerTimerTask(this), readDelay);
 		} else {
 			TimerScheduler.INSTANCE.schedule(new RefreshSchedulerTimerTask(this), 500);
 		}
@@ -52,7 +60,7 @@ public class MockSmsRefreshConnection implements ISmsConnection, IRefreshTask{
 	@Override
 	public void send(List<String> msgs, SmsEndpoint endpoint) {
 		for (String msg : msgs) {
-			System.out.println("Send from: " + this.endpoint.getEndpointId() + " to: " + endpoint.getEndpointId() + " msg: " + msg);
+			smsConnectionLog.log("Send from: " + this.endpoint.getEndpointId() + " to: " + endpoint.getEndpointId() + " msg: " + msg);
 		}
 		this.endpointConnection.receive(msgs, endpoint);
 	}
@@ -61,8 +69,8 @@ public class MockSmsRefreshConnection implements ISmsConnection, IRefreshTask{
 	public void refresh() {
 		synchronized (SEMAPHORE) {
 			for (String msg : this.messages) {
-				this.sleep(300);
-				//System.out.println("Read: " + this.endpoint.getEndpointId() + " msg: " + msg);
+				this.sleep(this.channelDelay);
+				//smsConnectionLog.log("Read: " + this.endpoint.getEndpointId() + " msg: " + msg);
 				this.messageReceiver.receiveSms(this.endpointConnection.getEndpoint(), msg, new Date());			
 			}
 			this.messages = new ArrayList<String>();
@@ -71,7 +79,9 @@ public class MockSmsRefreshConnection implements ISmsConnection, IRefreshTask{
 
 	private void sleep(int i) {
 		try {
-			Thread.sleep(i);
+			if(i > 0){
+				Thread.sleep(i);
+			}
 		} catch (InterruptedException e) {
 			// nothing to do
 		}
@@ -89,14 +99,19 @@ public class MockSmsRefreshConnection implements ISmsConnection, IRefreshTask{
 	public void receive(List<String> msgs, SmsEndpoint endpoint) {
 		synchronized (SEMAPHORE) {
 			for (String msg : msgs) {
-				//System.out.println("Receive: " + this.endpoint.getEndpointId() + " endpoint: " + endpoint.getEndpointId() + " msg: " + msg);
+				//smsConnectionLog.log("Receive: " + this.endpoint.getEndpointId() + " endpoint: " + endpoint.getEndpointId() + " msg: " + msg);
 				this.messages.add(msg);		
 			}
 		}		
 	}
 
-	public void setEndpointConnection(MockSmsRefreshConnection endpointConnection) {
+	public void setEndpointConnection(InMemorySmsConnection endpointConnection) {
 		this.endpointConnection = endpointConnection; 
+	}
+
+	public void setConnectionLog(ISmsConnectionLog logger) {
+		this.smsConnectionLog = logger;
+		
 	}
 
 }

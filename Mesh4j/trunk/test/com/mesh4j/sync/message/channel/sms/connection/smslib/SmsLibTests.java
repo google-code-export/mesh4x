@@ -25,6 +25,7 @@ import com.mesh4j.sync.message.MockMessageEncoding;
 import com.mesh4j.sync.message.channel.sms.ISmsConnection;
 import com.mesh4j.sync.message.channel.sms.SmsChannelFactory;
 import com.mesh4j.sync.message.channel.sms.SmsEndpoint;
+import com.mesh4j.sync.message.channel.sms.connection.inmemory.InMemorySmsConnection;
 import com.mesh4j.sync.message.channel.sms.core.SmsChannel;
 import com.mesh4j.sync.message.channel.sms.core.SmsReceiver;
 import com.mesh4j.sync.message.channel.sms.core.repository.file.FileSmsChannelRepository;
@@ -163,7 +164,7 @@ public class SmsLibTests {
 		IMessageSyncAdapter adapterA = new MessageSyncAdapter(sourceId, NullIdentityProvider.INSTANCE, kmlAdapterA);
 		//SmsLibConnection smsConnectionA = new SmsLibConnection("sonyEricsson", "COM23", 115200, "Sony Ericsson", "FAD-3022013-BV", 140, CompressBase91MessageEncoding.INSTANCE, new OutboundNotification(), new InboundNotification(), (3 * 60 * 1000));
 		//SmsEndpoint targetA = new SmsEndpoint("01136544867");
-		MockSmsRefreshConnection smsConnectionA = new MockSmsRefreshConnection(MockMessageEncoding.INSTANCE, 160, 100); 
+		InMemorySmsConnection smsConnectionA = new InMemorySmsConnection(MockMessageEncoding.INSTANCE, 160, 100); 
 		SmsEndpoint targetA = new SmsEndpoint("A");
 		MessageSyncEngine syncEngineEndPointA = createSyncSmsEndpoint("sonyEricsson", adapterA, smsConnectionA, 0);
 
@@ -172,7 +173,7 @@ public class SmsLibTests {
 		IMessageSyncAdapter adapterB = new MessageSyncAdapter(sourceId, NullIdentityProvider.INSTANCE, kmlAdapterB);
 		//SmsLibConnection smsConnectionB = new SmsLibConnection("nokia", "COM28", 115200, "Nokia", "6070", 140, CompressBase91MessageEncoding.INSTANCE, new OutboundNotification(), new InboundNotification(), (3 * 60 * 1000));
 		//SmsEndpoint targetB = new SmsEndpoint("01136540460");
-		MockSmsRefreshConnection smsConnectionB = new MockSmsRefreshConnection(MockMessageEncoding.INSTANCE, 160, 100);
+		InMemorySmsConnection smsConnectionB = new InMemorySmsConnection(MockMessageEncoding.INSTANCE, 160, 100);
 		SmsEndpoint targetB = new SmsEndpoint("B");
 		MessageSyncEngine syncEngineEndPointB = createSyncSmsEndpoint("nokia", adapterB, smsConnectionB, 0);
 
