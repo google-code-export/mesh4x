@@ -9,7 +9,6 @@ import java.util.List;
 
 import org.dom4j.Element;
 import org.junit.Assert;
-import org.junit.Test;
 
 import sun.jdbc.odbc.JdbcOdbcDriver;
 

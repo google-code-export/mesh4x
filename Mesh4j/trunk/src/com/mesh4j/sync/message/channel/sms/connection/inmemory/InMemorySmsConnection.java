@@ -23,7 +23,7 @@ public class InMemorySmsConnection implements ISmsConnection, IRefreshTask{
 	private SmsEndpoint endpoint;
 	private int maxMessageLenght = 140;
 	private IMessageEncoding messageEncoding;
-	private ISmsConnectionLog smsConnectionLog = new SmsConnectionLog();
+	private ISmsConnectionOutboundNotification smsConnectionOutboundNotification = new SmsConnectionOutboundNotification();
 	private int channelDelay = 300;
 	
 	// BUSINESS METHODS
@@ -60,7 +60,7 @@ public class InMemorySmsConnection implements ISmsConnection, IRefreshTask{
 	@Override
 	public void send(List<String> msgs, SmsEndpoint endpoint) {
 		for (String msg : msgs) {
-			smsConnectionLog.log("Send from: " + this.endpoint.getEndpointId() + " to: " + endpoint.getEndpointId() + " msg: " + msg);
+			this.smsConnectionOutboundNotification.notifySend(this.endpoint, endpoint, msg);
 		}
 		this.endpointConnection.receive(msgs, endpoint);
 	}
@@ -70,7 +70,6 @@ public class InMemorySmsConnection implements ISmsConnection, IRefreshTask{
 		synchronized (SEMAPHORE) {
 			for (String msg : this.messages) {
 				this.sleep(this.channelDelay);
-				//smsConnectionLog.log("Read: " + this.endpoint.getEndpointId() + " msg: " + msg);
 				this.messageReceiver.receiveSms(this.endpointConnection.getEndpoint(), msg, new Date());			
 			}
 			this.messages = new ArrayList<String>();
@@ -99,7 +98,6 @@ public class InMemorySmsConnection implements ISmsConnection, IRefreshTask{
 	public void receive(List<String> msgs, SmsEndpoint endpoint) {
 		synchronized (SEMAPHORE) {
 			for (String msg : msgs) {
-				//smsConnectionLog.log("Receive: " + this.endpoint.getEndpointId() + " endpoint: " + endpoint.getEndpointId() + " msg: " + msg);
 				this.messages.add(msg);		
 			}
 		}		
@@ -109,8 +107,8 @@ public class InMemorySmsConnection implements ISmsConnection, IRefreshTask{
 		this.endpointConnection = endpointConnection; 
 	}
 
-	public void setConnectionLog(ISmsConnectionLog logger) {
-		this.smsConnectionLog = logger;
+	public void setSmsConnectionOutboundNotification(ISmsConnectionOutboundNotification smsConnectionOutboundNotification) {
+		this.smsConnectionOutboundNotification = smsConnectionOutboundNotification;
 		
 	}
 

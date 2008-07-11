@@ -6,7 +6,6 @@ import java.util.List;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.junit.Assert;
-import org.junit.Test;
 import org.smslib.IInboundMessageNotification;
 import org.smslib.IOutboundMessageNotification;
 import org.smslib.InboundMessage;
