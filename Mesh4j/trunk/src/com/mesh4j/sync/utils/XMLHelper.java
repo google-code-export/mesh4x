@@ -124,7 +124,7 @@ public class XMLHelper {
 			String xml = formatXML(element, OutputFormat.createCompactFormat());
 			
 			Canonicalizer20010315WithComments c = new Canonicalizer20010315WithComments();
-			byte[] result = c.engineCanonicalize(xml.getBytes());
+			byte[] result = c.engineCanonicalize(xml.getBytes("UTF-8"));
 			return new String(result);
 		} catch (Exception e) {
 			throw new MeshException(e);
@@ -136,7 +136,7 @@ public class XMLHelper {
 			String xml = formatXML(document, OutputFormat.createCompactFormat());
 			
 			Canonicalizer20010315WithComments c = new Canonicalizer20010315WithComments();
-			byte[] result = c.engineCanonicalize(xml.getBytes());
+			byte[] result = c.engineCanonicalize(xml.getBytes("UTF-8"));
 			return new String(result);
 		} catch (Exception e) {
 			throw new MeshException(e);
