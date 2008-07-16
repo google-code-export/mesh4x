@@ -1,4 +1,4 @@
-<project default="jars">
+<project default="distSMS">
 
 	<target name="delete">
 		<mkdir dir="dist"/>
@@ -23,6 +23,27 @@
 			<zipfileset prefix="mesh4j-KML-DemoApp-0.1.6" dir="." includes="default.kml"/>
 			<zipfileset prefix="mesh4j-KML-DemoApp-0.1.6/lib" dir="dist" includes="log4j.properties"/>
 			<zipfileset prefix="mesh4j-KML-DemoApp-0.1.6/lib" dir="dist" includes="mesh4j_resources.properties"/>
+		</zip>
+	</target>
+	
+	<target name="jarsSMS" depends="delete">
+		<mkdir dir="dist"/>
+		<jar destfile="dist/mesh4j-SMS-DemoApp.jar" manifest="META-INF/MANIFEST.MF">
+			<fileset dir="bin" />
+		</jar>
+		<copy todir="dist" file="etc/log4j.properties"/>
+		<copy todir="dist" file="etc/mesh4j_resources.properties"/>
+	</target>
+	
+	<target name="distSMS" depends="jarsSMS">
+		<zip destfile="dist/mesh4j-SMS-DemoApp-0.1.6.zip">
+			<zipfileset prefix="mesh4j-SMS-DemoApp-0.1.6" dir="dist" includes="mesh4j-SMS-DemoApp.jar"/>
+			<zipfileset prefix="mesh4j-SMS-DemoApp-0.1.6" dir="." includes="lib/**/*"/>
+			<zipfileset prefix="mesh4j-SMS-DemoApp-0.1.6" dir="." includes="swt-win32-3138.dll"/>
+			<zipfileset prefix="mesh4j-SMS-DemoApp-0.1.6" dir="." includes="mesh4j_sms.properties"/>
+			<zipfileset prefix="mesh4j-SMS-DemoApp-0.1.6" dir="." includes="default_sms.kml"/>
+			<zipfileset prefix="mesh4j-SMS-DemoApp-0.1.6/lib" dir="dist" includes="log4j.properties"/>
+			<zipfileset prefix="mesh4j-SMS-DemoApp-0.1.6/lib" dir="dist" includes="mesh4j_resources.properties"/>
 		</zip>
 	</target>
 </project>
