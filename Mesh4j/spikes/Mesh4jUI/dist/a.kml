@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<kml xmlns="http://earth.google.com/kml/2.2">  
+  <Document> 
+    <name>a.kml</name>  
+    <ExtendedData xmlns:mesh4x="http://mesh4x.org/kml">
+      <mesh4x:hierarchy mesh4x:childId="74247a7a-0737-494e-9ed2-7045716941c6" xml:id="441d81a1-b978-4687-8985-4bd0942bed2f"></mesh4x:hierarchy>
+      <mesh4x:sync version="-2118764673">
+        <sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="441d81a1-b978-4687-8985-4bd0942bed2f" updates="1" deleted="false" noconflicts="false">
+          <sx:history sequence="1" when="2008-07-16T21:10:24Z" by="vcc-PC_jtondato"/>
+        </sx:sync>
+      </mesh4x:sync>
+      <mesh4x:sync version="627736262">
+        <sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="74247a7a-0737-494e-9ed2-7045716941c6" updates="1" deleted="false" noconflicts="false">
+          <sx:history sequence="1" when="2008-07-16T21:10:24Z" by="vcc-PC_jtondato"/>
+        </sx:sync>
+      </mesh4x:sync>
+    </ExtendedData>  
+    <Placemark xml:id="74247a7a-0737-494e-9ed2-7045716941c6">
+      <name>a</name>
+    </Placemark>
+  </Document> 
+</kml>
