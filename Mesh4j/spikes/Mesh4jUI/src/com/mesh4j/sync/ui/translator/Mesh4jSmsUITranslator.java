@@ -50,11 +50,6 @@ public class Mesh4jSmsUITranslator {
 		return MessageTranslator.translate("Mesh4jUI_SMS_LABEL_SUCCESS");
 	}
 
-	public static String getMessageNotifySend(String endpointIdFrom,
-			String endpointIdTo, String message) {
-		return MessageTranslator.translate("Mesh4jUI_SMS_MESSAGE_NOTIFY_SEND", endpointIdFrom, endpointIdTo, message);
-	}
-
 	public static String getLabelEmulate() {
 		return MessageTranslator.translate("Mesh4jUI_SMS_LABEL_EMULATE");
 	}
@@ -63,14 +58,24 @@ public class Mesh4jSmsUITranslator {
 		return MessageTranslator.translate("Mesh4jUI_SMS_LABEL_DEMO");
 	}
 
-	public static String getMessageNotifySendMessage(String recipient,
-			String text) {
-		return MessageTranslator.translate("Mesh4jUI_SMS_MESSAGE_NOTIFY_SEND_MSG", text, recipient);
+	public static String getMessageNotifySendMessage(String endpointId,
+			String message) {
+		return MessageTranslator.translate("Mesh4jUI_SMS_MESSAGE_NOTIFY_SEND_MSG", endpointId, message);
 	}
 
-	public static String getMessageNotifyReceiveMessage(String originator,
-			String text) {
-		return MessageTranslator.translate("Mesh4jUI_SMS_MESSAGE_NOTIFY_RECEIVE_MSG", text, originator);
+	public static String getMessageNotifyReceiveMessage(String endpointId,
+			String message) {
+		return MessageTranslator.translate("Mesh4jUI_SMS_MESSAGE_NOTIFY_RECEIVE_MSG", endpointId, message);
+	}
+
+	public static String getMessageNotifyReceiveMessageError(String endpointId,
+			String message) {
+		return MessageTranslator.translate("Mesh4jUI_SMS_MESSAGE_NOTIFY_RECEIVE_MSG", endpointId, message);
+	}
+
+	public static String getMessageNotifySendMessageError(String endpointId,
+			String message) {
+		return MessageTranslator.translate("Mesh4jUI_SMS_MESSAGE_NOTIFY_RECEIVE_MSG", endpointId, message);
 	}
 
 }

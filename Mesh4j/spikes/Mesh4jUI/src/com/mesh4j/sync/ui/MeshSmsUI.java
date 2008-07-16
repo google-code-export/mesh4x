@@ -1,6 +1,7 @@
 package com.mesh4j.sync.ui;
 
 import java.io.File;
+import java.util.Date;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -17,21 +18,15 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.smslib.IInboundMessageNotification;
-import org.smslib.IOutboundMessageNotification;
-import org.smslib.InboundMessage;
-import org.smslib.OutboundMessage;
-import org.smslib.Message.MessageTypes;
 
 import com.mesh4j.sync.adapters.sms.SmsHelper;
 import com.mesh4j.sync.message.MessageSyncEngine;
-import com.mesh4j.sync.message.channel.sms.SmsEndpoint;
-import com.mesh4j.sync.message.channel.sms.connection.inmemory.ISmsConnectionOutboundNotification;
+import com.mesh4j.sync.message.channel.sms.connection.ISmsConnectionInboundOutboundNotification;
 import com.mesh4j.sync.message.channel.sms.connection.smslib.Modem;
 import com.mesh4j.sync.properties.PropertiesProvider;
 import com.mesh4j.sync.ui.translator.Mesh4jSmsUITranslator;
 
-public class MeshSmsUI implements ISmsConnectionOutboundNotification, IOutboundMessageNotification, IInboundMessageNotification{
+public class MeshSmsUI implements ISmsConnectionInboundOutboundNotification{
 
 	private final static Log Logger = LogFactory.getLog(Mesh4jUI.class);
 	
@@ -56,7 +51,7 @@ public class MeshSmsUI implements ISmsConnectionOutboundNotification, IOutboundM
 		meshUI.initializeDefaults();
 		
 		Modem modem = SmsHelper.getDefaultModem();
-		meshUI.syncEngine = SmsHelper.createSyncEngine(meshUI, meshUI, modem);
+		meshUI.syncEngine = SmsHelper.createSyncEngine(meshUI, modem);
 		meshUI.openMesh(modem);
 		
 	}
@@ -278,19 +273,27 @@ public class MeshSmsUI implements ISmsConnectionOutboundNotification, IOutboundM
 		}
 	}
 
+	@Override
+	public void notifyReceiveMessage(String endpointId, String message,
+			Date date) {
+		this.log(Mesh4jSmsUITranslator.getMessageNotifyReceiveMessageError(endpointId, message));
+	}
+
+	@Override
+	public void notifyReceiveMessageError(String endpointId, String message,
+			Date date) {
+		this.log(Mesh4jSmsUITranslator.getMessageNotifyReceiveMessage(endpointId, message));		
+	}
+
+	@Override
+	public void notifySendMessage(String endpointId, String message) {
+		this.log(Mesh4jSmsUITranslator.getMessageNotifySendMessage(endpointId, message));
+	}
+
+	@Override
+	public void notifySendMessageError(String endpointId, String message) {
+		this.log(Mesh4jSmsUITranslator.getMessageNotifySendMessageError(endpointId, message));		
+	}
+
 	
-	@Override
-	public void notifySend(SmsEndpoint endpointFrom, SmsEndpoint endpointTo, String message) {
-		this.log(Mesh4jSmsUITranslator.getMessageNotifySend(endpointFrom.getEndpointId(), endpointTo.getEndpointId(), message));	
-	}
-
-	@Override
-	public void process(String gtwId, OutboundMessage msg) {
-		this.log(Mesh4jSmsUITranslator.getMessageNotifySendMessage(msg.getRecipient() , msg.getText()));	
-	}
-
-	@Override
-	public void process(String gtwId, MessageTypes msgType, InboundMessage msg) {
-		this.log(Mesh4jSmsUITranslator.getMessageNotifyReceiveMessage(msg.getOriginator(), msg.getText()));	
-	}
 }
