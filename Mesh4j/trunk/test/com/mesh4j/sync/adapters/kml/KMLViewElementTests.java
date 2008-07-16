@@ -96,7 +96,7 @@ public class KMLViewElementTests {
 		String oldXML = document.asXML();
 		
 		HierarchyXMLViewElement hierarchyView = new HierarchyXMLViewElement();
-		hierarchyView.setDOM(new KMLDOM(document, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(new FileManager())));
+		hierarchyView.setDOM(new KMLDOM(document, NullIdentityProvider.INSTANCE, KMLDOMLoaderFactory.createView(new FileManager())));
 		KMLViewElement style = new KMLViewElement(KmlNames.KML_QNAME_STYLE, hierarchyView, true);
 		
 		Assert.assertSame(element, style.refresh(document, element));
@@ -177,7 +177,7 @@ public class KMLViewElementTests {
 		String oldXML = document.asXML();
 		
 		HierarchyXMLViewElement hierarchyView = new HierarchyXMLViewElement();
-		hierarchyView.setDOM(new KMLDOM(document, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(new FileManager())));
+		hierarchyView.setDOM(new KMLDOM(document, NullIdentityProvider.INSTANCE, KMLDOMLoaderFactory.createView(new FileManager())));
 		KMLViewElement style = new KMLViewElement(KmlNames.KML_QNAME_STYLE, hierarchyView, true);
 		
 		Assert.assertSame(element, style.refresh(document, element));
@@ -261,7 +261,7 @@ public class KMLViewElementTests {
 		String oldXML = document.asXML();
 		
 		HierarchyXMLViewElement hierarchyView = new HierarchyXMLViewElement();
-		hierarchyView.setDOM(new KMLDOM(document, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(new FileManager())));
+		hierarchyView.setDOM(new KMLDOM(document, NullIdentityProvider.INSTANCE, KMLDOMLoaderFactory.createView(new FileManager())));
 		KMLViewElement styleMap = new KMLViewElement(KmlNames.KML_QNAME_STYLE_MAP, hierarchyView, true);
 		
 		Assert.assertSame(element, styleMap.refresh(document, element));
@@ -311,7 +311,7 @@ public class KMLViewElementTests {
 		String oldXML = document.asXML();
 		
 		HierarchyXMLViewElement hierarchyView = new HierarchyXMLViewElement();
-		hierarchyView.setDOM(new KMLDOM(document, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(new FileManager())));
+		hierarchyView.setDOM(new KMLDOM(document, NullIdentityProvider.INSTANCE, KMLDOMLoaderFactory.createView(new FileManager())));
 		
 		KMLViewElement placemark = new KMLViewElement(KmlNames.KML_QNAME_PLACEMARK, hierarchyView, false);
 		Assert.assertSame(element, placemark.refresh(document, element));
@@ -358,7 +358,7 @@ public class KMLViewElementTests {
 		String oldXML = document.asXML();
 		
 		HierarchyXMLViewElement hierarchyView = new HierarchyXMLViewElement();
-		hierarchyView.setDOM(new KMLDOM(document, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(new FileManager())));
+		hierarchyView.setDOM(new KMLDOM(document, NullIdentityProvider.INSTANCE, KMLDOMLoaderFactory.createView(new FileManager())));
 		
 		KMLViewElement placemark = new KMLViewElement(KmlNames.KML_QNAME_PLACEMARK, hierarchyView, false);
 		Assert.assertSame(element, placemark.refresh(document, element));
@@ -407,7 +407,7 @@ public class KMLViewElementTests {
 		String oldXML = document.asXML();
 		
 		HierarchyXMLViewElement hierarchyView = new HierarchyXMLViewElement();
-		hierarchyView.setDOM(new KMLDOM(document, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(new FileManager())));
+		hierarchyView.setDOM(new KMLDOM(document, NullIdentityProvider.INSTANCE, KMLDOMLoaderFactory.createView(new FileManager())));
 		
 		KMLViewElement placemark = new KMLViewElement(KmlNames.KML_QNAME_PLACEMARK, hierarchyView, false);
 		Assert.assertSame(element, placemark.refresh(document, element));

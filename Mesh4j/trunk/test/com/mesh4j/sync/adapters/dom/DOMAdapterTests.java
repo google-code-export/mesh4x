@@ -17,8 +17,8 @@ import org.junit.Test;
 import com.mesh4j.sync.ISupportMerge;
 import com.mesh4j.sync.adapters.dom.parsers.FileManager;
 import com.mesh4j.sync.adapters.dom.parsers.HierarchyXMLViewElement;
-import com.mesh4j.sync.adapters.kml.DOMLoaderFactory;
 import com.mesh4j.sync.adapters.kml.KMLContent;
+import com.mesh4j.sync.adapters.kml.KMLDOMLoaderFactory;
 import com.mesh4j.sync.adapters.kml.KmlNames;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.model.NullContent;
@@ -236,7 +236,7 @@ public class DOMAdapterTests {
 	}
 
 	private DOMAdapter makeNewDOMAdapter(String fileName) {
-		IDOMLoader domLoader = DOMLoaderFactory.createDOMLoader(fileName,
+		IDOMLoader domLoader = KMLDOMLoaderFactory.createDOMLoader(fileName,
 				NullIdentityProvider.INSTANCE);
 		return new DOMAdapter(domLoader);
 	}
@@ -247,7 +247,7 @@ public class DOMAdapterTests {
 
 		File file = TestHelper.makeNewXMLFile(xml, ".kml");
 
-		IDOMLoader domLoader = DOMLoaderFactory.createDOMLoader(file
+		IDOMLoader domLoader = KMLDOMLoaderFactory.createDOMLoader(file
 				.getAbsolutePath(), NullIdentityProvider.INSTANCE);
 		
 		DOMAdapter domAdapter = new DOMAdapter(domLoader);
@@ -315,7 +315,7 @@ public class DOMAdapterTests {
 	}
 
 	public List<Element> getElementsToSync(Document document) {
-		Map<String, String> namespaces = DOMLoaderFactory.createView(new FileManager()).getNameSpaces();
+		Map<String, String> namespaces = KMLDOMLoaderFactory.createView(new FileManager()).getNameSpaces();
 		List<Element> elements = XMLHelper.selectElements("//kml:StyleMap",
 				document.getRootElement(), namespaces);
 		elements.addAll(XMLHelper.selectElements("//kml:Style", document

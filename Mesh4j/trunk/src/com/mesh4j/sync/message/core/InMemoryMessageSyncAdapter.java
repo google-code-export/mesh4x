@@ -41,12 +41,21 @@ public class InMemoryMessageSyncAdapter implements IMessageSyncAdapter {
 
 	@Override
 	public List<Item> synchronizeSnapshot(ISyncSession syncSession) {
-		this.items = syncSession.getSnapshot();
-		return new ArrayList<Item>();
+		ArrayList<Item> result = new ArrayList<Item>();
+		ArrayList<Item> conflicts = new ArrayList<Item>();
+		for (Item snapshotItem : syncSession.getSnapshot()) {
+			Item item = snapshotItem.clone();
+			if(item.hasSyncConflicts()){
+				conflicts.add(item);
+			}
+			result.add(item);
+		}
+		this.items = result;
+		return conflicts;
 	}
 	
 	public void add(Item item) {
-		this.items.add(item);
+		this.items.add(item.clone());
 	}
 
 	public void update(Item item) {
@@ -54,7 +63,7 @@ public class InMemoryMessageSyncAdapter implements IMessageSyncAdapter {
 		if(itemToUpdate != null){
 			this.items.remove(itemToUpdate);
 			if(!item.isDeleted()){
-				this.items.add(item);
+				this.items.add(item.clone());
 			}
 		}
 	}

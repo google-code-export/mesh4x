@@ -1,6 +1,7 @@
 package com.mesh4j.sync.message;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public interface IMessageSyncProtocol {
@@ -16,6 +17,10 @@ public interface IMessageSyncProtocol {
 	IMessage cancelSync(String sourceId, IEndpoint target);
 
 	ISyncSession getSyncSession(String sourceId, IEndpoint target);
+
+	void registerSourceIfAbsent(IMessageSyncAdapter adapter);
+
+	void endSync(ISyncSession syncSession, Date date);
 
 
 }

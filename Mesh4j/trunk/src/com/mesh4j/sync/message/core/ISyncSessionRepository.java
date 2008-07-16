@@ -1,6 +1,7 @@
 package com.mesh4j.sync.message.core;
 
 import com.mesh4j.sync.message.IEndpoint;
+import com.mesh4j.sync.message.IMessageSyncAdapter;
 import com.mesh4j.sync.message.ISyncSession;
 
 public interface ISyncSessionRepository {
@@ -16,5 +17,9 @@ public interface ISyncSessionRepository {
 	void snapshot(ISyncSession syncSession);
 
 	void cancel(ISyncSession syncSession);
+
+	void registerSourceIfAbsent(IMessageSyncAdapter adapter);
+
+	IMessageSyncAdapter getSource(String sourceId);
 
 }

@@ -279,7 +279,7 @@ public class KMLAdapterTests {
 	}
 
 	private DOMAdapter makeNewDOMAdapter(String fileName) {
-		IDOMLoader domLoader = DOMLoaderFactory.createDOMLoader(fileName,
+		IDOMLoader domLoader = KMLDOMLoaderFactory.createDOMLoader(fileName,
 				NullIdentityProvider.INSTANCE);
 		return new DOMAdapter(domLoader);
 	}
@@ -290,7 +290,7 @@ public class KMLAdapterTests {
 
 		File file = TestHelper.makeNewXMLFile(xml, ".kml");
 
-		IDOMLoader domLoader = DOMLoaderFactory.createDOMLoader(file
+		IDOMLoader domLoader = KMLDOMLoaderFactory.createDOMLoader(file
 				.getAbsolutePath(), NullIdentityProvider.INSTANCE);
 
 		DOMAdapter kmlAdapter = new DOMAdapter(domLoader);
@@ -360,7 +360,7 @@ public class KMLAdapterTests {
 	}
 	
 	public List<Element> getElementsToSync(Document document) {
-		Map<String, String> namespaces = DOMLoaderFactory.createView(new FileManager()).getNameSpaces();
+		Map<String, String> namespaces = KMLDOMLoaderFactory.createView(new FileManager()).getNameSpaces();
 		List<Element> elements = XMLHelper.selectElements("//kml:StyleMap",
 				document.getRootElement(), namespaces);
 		elements.addAll(XMLHelper.selectElements("//kml:Style", document
@@ -1205,7 +1205,7 @@ public class KMLAdapterTests {
 		Document doc = XMLHelper.readDocument(localFile);
 		XMLHelper.write(doc, externalFile);
 		
-		DOMLoader loader = DOMLoaderFactory.createDOMLoader(externalFile.getAbsolutePath(), NullIdentityProvider.INSTANCE);
+		DOMLoader loader = KMLDOMLoaderFactory.createDOMLoader(externalFile.getAbsolutePath(), NullIdentityProvider.INSTANCE);
 		DOMAdapter kml = new DOMAdapter(loader);
 		kml.beginSync();
 		
@@ -1284,7 +1284,7 @@ public class KMLAdapterTests {
 		Document doc = XMLHelper.readDocument(localFile);
 		XMLHelper.write(doc, externalFile);
 		
-		DOMLoader loader = DOMLoaderFactory.createDOMLoader(externalFile.getAbsolutePath(), NullIdentityProvider.INSTANCE);
+		DOMLoader loader = KMLDOMLoaderFactory.createDOMLoader(externalFile.getAbsolutePath(), NullIdentityProvider.INSTANCE);
 		DOMAdapter kml = new DOMAdapter(loader);
 		kml.beginSync();
 		

@@ -14,8 +14,9 @@ import org.junit.Test;
 
 import com.mesh4j.sync.SyncEngine;
 import com.mesh4j.sync.adapters.dom.DOMAdapter;
-import com.mesh4j.sync.adapters.kml.DOMLoaderFactory;
 import com.mesh4j.sync.adapters.kml.KMLContent;
+import com.mesh4j.sync.adapters.kml.KMLDOMLoaderFactory;
+import com.mesh4j.sync.adapters.kml.KmlNames;
 import com.mesh4j.sync.message.channel.sms.SmsChannelFactory;
 import com.mesh4j.sync.message.channel.sms.SmsEndpoint;
 import com.mesh4j.sync.message.core.ISyncSessionRepository;
@@ -38,10 +39,10 @@ public class KmlMessageSyncEngineTests {
 		String fileNameA = this.getClass().getResource("kmlWithSyncInfo.kml").getFile();
 		String fileNameB = this.getClass().getResource("kmlDummyForSync.kml").getFile(); 
 		
-		DOMAdapter kmlAdapterA = new DOMAdapter(DOMLoaderFactory.createDOMLoader(fileNameA, NullIdentityProvider.INSTANCE));
+		DOMAdapter kmlAdapterA = new DOMAdapter(KMLDOMLoaderFactory.createDOMLoader(fileNameA, NullIdentityProvider.INSTANCE));
 		kmlAdapterA.beginSync();
 
-		DOMAdapter kmlAdapterB = new DOMAdapter(DOMLoaderFactory.createDOMLoader(fileNameB, NullIdentityProvider.INSTANCE));
+		DOMAdapter kmlAdapterB = new DOMAdapter(KMLDOMLoaderFactory.createDOMLoader(fileNameB, NullIdentityProvider.INSTANCE));
 		kmlAdapterB.beginSync();
 		
 		// Sync SMS
@@ -85,7 +86,7 @@ public class KmlMessageSyncEngineTests {
 		Assert.assertEquals(611, endpointA.getAll().size());
 		Assert.assertEquals(0, endpointB.getAll().size());
 		
-		syncEngineEndPointA.synchronize(dataSetId, new SmsEndpoint("B"));
+		syncEngineEndPointA.synchronize(endpointA, new SmsEndpoint("B"));
 	
 		System.out.println("batch A: " 
 				+ smsConnectionEndpointA.getGeneratedMessagesSizeStatistics() 
@@ -112,7 +113,7 @@ public class KmlMessageSyncEngineTests {
 		File file = new File(TestHelper.fileName("kmlMessage.kml")); 
 		XMLHelper.write(kmlAdapterB.getDOM().toDocument(), file);
 		
-		DOMAdapter kmlAdapter = new DOMAdapter(DOMLoaderFactory.createDOMLoader(file.getAbsolutePath(), NullIdentityProvider.INSTANCE));
+		DOMAdapter kmlAdapter = new DOMAdapter(KMLDOMLoaderFactory.createDOMLoader(file.getAbsolutePath(), NullIdentityProvider.INSTANCE));
 		
 		SyncEngine syncEngine = new SyncEngine(kmlAdapter, endpointB);
 		List<Item> conflicts = syncEngine.synchronize();
@@ -188,11 +189,11 @@ public class KmlMessageSyncEngineTests {
 	private void syncKml(boolean updateA, boolean updateB, IMessageEncoding messageEncoding) throws InterruptedException{
 		
 		String fileName = this.getClass().getResource("kmlWithPlacemark.kml").getFile(); 
-		DOMAdapter kmlAdapter = new DOMAdapter(DOMLoaderFactory.createDOMLoader(fileName, NullIdentityProvider.INSTANCE));
+		DOMAdapter kmlAdapter = new DOMAdapter(KMLDOMLoaderFactory.createDOMLoader(fileName, NullIdentityProvider.INSTANCE));
 		kmlAdapter.beginSync();
 		
 		// Sync SMS
-		String dataSetId = "12345";
+		String dataSetId = "kmlWithPlacemark.kml";
 
 		MockSmsConnection smsConnectionEndpointA = new MockSmsConnection("A", messageEncoding);
 		MockSmsConnection smsConnectionEndpointB = new MockSmsConnection("B", messageEncoding);
@@ -221,7 +222,7 @@ public class KmlMessageSyncEngineTests {
 		Assert.assertEquals(2, endpointA.getAll().size());
 		Assert.assertEquals(2, endpointB.getAll().size());
 
-		syncEngineEndPointA.synchronize(dataSetId, new SmsEndpoint("B"));
+		syncEngineEndPointA.synchronize(endpointA, new SmsEndpoint("B"));
 		
 		ISyncSession syncSessionAB = syncSessionFactoryA.get(dataSetId, "B");
 		ISyncSession syncSessionBA = syncSessionFactoryB.get(dataSetId, "A");
@@ -231,6 +232,10 @@ public class KmlMessageSyncEngineTests {
 		
 		// A Update item 
 		Item itemA = endpointA.getAll().get(0);
+		if(!KmlNames.KML_ELEMENT_PLACEMARK.equals(itemA.getContent().getPayload().getName())){
+			itemA = endpointA.getAll().get(1);
+		}
+		
 		String syncIDPlacemark = itemA.getSyncId();
 		if(updateA){
 			Thread.sleep(1000);
@@ -250,6 +255,10 @@ public class KmlMessageSyncEngineTests {
 		if(updateB){
 			Thread.sleep(1000);
 			Item itemB = endpointB.getAll().get(0);
+			if(!KmlNames.KML_ELEMENT_PLACEMARK.equals(itemB.getContent().getPayload().getName())){
+				itemB = endpointB.getAll().get(1);
+			}			
+			
 			Element placemarkB = itemB.getContent().getPayload();
 			
 			Element placemarkNameB = placemarkB.element("name");
@@ -270,7 +279,7 @@ public class KmlMessageSyncEngineTests {
 		Assert.assertEquals(2, endpointA.getAll().size());
 		Assert.assertEquals(2, endpointB.getAll().size());
 	
-		syncEngineEndPointA.synchronize(dataSetId, new SmsEndpoint("B"));
+		syncEngineEndPointA.synchronize(endpointA, new SmsEndpoint("B"));
 	
 		System.out.println("batch A: " 
 				+ smsConnectionEndpointA.getGeneratedMessagesSizeStatistics() 

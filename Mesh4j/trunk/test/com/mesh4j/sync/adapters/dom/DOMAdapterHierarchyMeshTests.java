@@ -9,8 +9,8 @@ import org.dom4j.Element;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.mesh4j.sync.adapters.kml.DOMLoaderFactory;
 import com.mesh4j.sync.adapters.kml.KMLContent;
+import com.mesh4j.sync.adapters.kml.KMLDOMLoaderFactory;
 import com.mesh4j.sync.adapters.kml.KmlNames;
 import com.mesh4j.sync.model.IContent;
 import com.mesh4j.sync.model.Item;
@@ -532,7 +532,7 @@ public class DOMAdapterHierarchyMeshTests {
 	}
 	
 	private DOMAdapter makeNewDOMAdapter(String fileName) {
-		IDOMLoader domLoader = DOMLoaderFactory.createDOMLoader(fileName,
+		IDOMLoader domLoader = KMLDOMLoaderFactory.createDOMLoader(fileName,
 				NullIdentityProvider.INSTANCE);
 		return new DOMAdapter(domLoader);
 	}

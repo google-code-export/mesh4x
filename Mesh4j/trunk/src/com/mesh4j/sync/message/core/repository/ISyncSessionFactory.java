@@ -25,4 +25,6 @@ public interface ISyncSessionFactory {
 		List<Item> currentSyncSnapshot, List<Item> lastSyncSnapshot,
 		List<String> conflicts, List<String> acks);
 
+	void registerSourceIfAbsent(IMessageSyncAdapter source);
+
 }

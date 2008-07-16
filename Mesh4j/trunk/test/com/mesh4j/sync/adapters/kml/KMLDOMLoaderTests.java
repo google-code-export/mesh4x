@@ -24,25 +24,25 @@ public class KMLDOMLoaderTests {
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldNotAccetpNullFileName(){
 		FileManager fileManager = new FileManager();
-		new KMLDOMLoader(null, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(fileManager), fileManager);
+		new KMLDOMLoader(null, NullIdentityProvider.INSTANCE, KMLDOMLoaderFactory.createView(fileManager), fileManager);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldNotAccetpEmptyFileName(){
 		FileManager fileManager = new FileManager();
-		new KMLDOMLoader("", NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(fileManager), fileManager);
+		new KMLDOMLoader("", NullIdentityProvider.INSTANCE, KMLDOMLoaderFactory.createView(fileManager), fileManager);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldNotAccetpInvalidExtension(){
 		FileManager fileManager = new FileManager();
-		new KMLDOMLoader("a.kmz", NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(fileManager), fileManager);
+		new KMLDOMLoader("a.kmz", NullIdentityProvider.INSTANCE, KMLDOMLoaderFactory.createView(fileManager), fileManager);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldNotAccetpNullIdentityProvider(){
 		FileManager fileManager = new FileManager();
-		new KMLDOMLoader("a.kml", null, DOMLoaderFactory.createView(fileManager), fileManager);
+		new KMLDOMLoader("a.kml", null, KMLDOMLoaderFactory.createView(fileManager), fileManager);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
@@ -54,14 +54,14 @@ public class KMLDOMLoaderTests {
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldNotAccetpNullFileManager(){
 		FileManager fileManager = new FileManager();
-		new KMLDOMLoader("a.kml", NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(fileManager), null);
+		new KMLDOMLoader("a.kml", NullIdentityProvider.INSTANCE, KMLDOMLoaderFactory.createView(fileManager), null);
 	}
 	
 	@Test(expected=MeshException.class)
 	public void shouldReadThrowsExceptionBecauseFileHasInvalidContent(){
 		String fileName = this.getClass().getResource("templateWithInvalidXML.kml").getFile();
 		FileManager fileManager = new FileManager();
-		KMLDOMLoader loader = new KMLDOMLoader(fileName, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(fileManager), fileManager);
+		KMLDOMLoader loader = new KMLDOMLoader(fileName, NullIdentityProvider.INSTANCE, KMLDOMLoaderFactory.createView(fileManager), fileManager);
 		loader.read();
 	}
 	
@@ -69,7 +69,7 @@ public class KMLDOMLoaderTests {
 	public void shouldReturnFriendlyName(){
 		String fileName = this.getClass().getResource("templateWithInvalidXML.kml").getFile();
 		FileManager fileManager = new FileManager();
-		KMLDOMLoader loader = new KMLDOMLoader(fileName, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(fileManager), fileManager);
+		KMLDOMLoader loader = new KMLDOMLoader(fileName, NullIdentityProvider.INSTANCE, KMLDOMLoaderFactory.createView(fileManager), fileManager);
 		
 		String name = loader.getFriendlyName();
 		Assert.assertNotNull(name);
@@ -81,7 +81,7 @@ public class KMLDOMLoaderTests {
 		String fileName = TestHelper.fileName(IdGenerator.newID()+".kml");
 		 
 		FileManager fileManager = new FileManager();
-		KMLDOMLoader loader = new KMLDOMLoader(fileName, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(fileManager), fileManager);
+		KMLDOMLoader loader = new KMLDOMLoader(fileName, NullIdentityProvider.INSTANCE, KMLDOMLoaderFactory.createView(fileManager), fileManager);
 		loader.read();
 		Assert.assertNotNull(loader.getDOM());
 		
@@ -120,7 +120,7 @@ public class KMLDOMLoaderTests {
 		Assert.assertTrue(file.exists());
 		
 		FileManager fileManager = new FileManager();
-		KMLDOMLoader loader = new KMLDOMLoader(file.getAbsolutePath(), NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(fileManager), fileManager);
+		KMLDOMLoader loader = new KMLDOMLoader(file.getAbsolutePath(), NullIdentityProvider.INSTANCE, KMLDOMLoaderFactory.createView(fileManager), fileManager);
 		loader.read();
 		
 		Assert.assertNotNull(loader.getDOM());
@@ -155,7 +155,7 @@ public class KMLDOMLoaderTests {
 		Assert.assertTrue(file.exists());
 		
 		FileManager fileManager = new FileManager();
-		KMLDOMLoader loader = new KMLDOMLoader(file.getAbsolutePath(), NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(fileManager), fileManager);
+		KMLDOMLoader loader = new KMLDOMLoader(file.getAbsolutePath(), NullIdentityProvider.INSTANCE, KMLDOMLoaderFactory.createView(fileManager), fileManager);
 		loader.read();
 		
 		Assert.assertNotNull(loader.getDOM());
@@ -175,7 +175,7 @@ public class KMLDOMLoaderTests {
 					+file.getName()+"</name><ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\"></ExtendedData></Document></kml>";
 				 
 		FileManager fileManager = new FileManager();
-		KMLDOMLoader loader = new KMLDOMLoader(fileName, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(fileManager), fileManager);
+		KMLDOMLoader loader = new KMLDOMLoader(fileName, NullIdentityProvider.INSTANCE, KMLDOMLoaderFactory.createView(fileManager), fileManager);
 		loader.read();
 		Assert.assertNotNull(loader.getDOM());
 		
@@ -217,7 +217,7 @@ public class KMLDOMLoaderTests {
 		Assert.assertTrue(file.exists());
 		
 		FileManager fileManager = new FileManager();
-		KMLDOMLoader loader = new KMLDOMLoader(file.getAbsolutePath(), NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(fileManager), fileManager);
+		KMLDOMLoader loader = new KMLDOMLoader(file.getAbsolutePath(), NullIdentityProvider.INSTANCE, KMLDOMLoaderFactory.createView(fileManager), fileManager);
 		loader.read();
 		
 		Assert.assertNotNull(loader.getDOM());
@@ -271,7 +271,7 @@ public class KMLDOMLoaderTests {
 		private Document document;
 		
 		public MockLoader(Document doc){
-			super("a.kmj", NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(new FileManager()));
+			super("a.kmj", NullIdentityProvider.INSTANCE, KMLDOMLoaderFactory.createView(new FileManager()));
 			this.document = doc;
 		}
 				

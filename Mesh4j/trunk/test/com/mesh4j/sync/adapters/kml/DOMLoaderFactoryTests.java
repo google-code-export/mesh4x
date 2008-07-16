@@ -13,28 +13,28 @@ public class DOMLoaderFactoryTests {
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldNotAcceptNullFileName(){
-		DOMLoaderFactory.createDOMLoader(null, NullIdentityProvider.INSTANCE);
+		KMLDOMLoaderFactory.createDOMLoader(null, NullIdentityProvider.INSTANCE);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldNotAcceptEmptyFileName(){
-		DOMLoaderFactory.createDOMLoader("", NullIdentityProvider.INSTANCE);
+		KMLDOMLoaderFactory.createDOMLoader("", NullIdentityProvider.INSTANCE);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldNotAcceptNullSecurity(){
-		DOMLoaderFactory.createDOMLoader("a.txt", null);
+		KMLDOMLoaderFactory.createDOMLoader("a.txt", null);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldOnlyAcceptKMLorKMZFileNameExtension(){  // valid extension are KML y KMZ
 		
-		DOMLoaderFactory.createDOMLoader("a.txt", NullIdentityProvider.INSTANCE);
+		KMLDOMLoaderFactory.createDOMLoader("a.txt", NullIdentityProvider.INSTANCE);
 	}
 	
 	@Test
 	public void shouldCreateKMLLoader(){ 
-		IDOMLoader loader = DOMLoaderFactory.createDOMLoader("j.kml", NullIdentityProvider.INSTANCE);
+		IDOMLoader loader = KMLDOMLoaderFactory.createDOMLoader("j.kml", NullIdentityProvider.INSTANCE);
 		
 		Assert.assertNotNull(loader);
 		Assert.assertTrue(loader instanceof KMLDOMLoader);
@@ -75,7 +75,7 @@ public class DOMLoaderFactoryTests {
 	
 	@Test
 	public void shouldCreateKMZLoader(){ 
-		IDOMLoader loader = DOMLoaderFactory.createDOMLoader("h.kmz", NullIdentityProvider.INSTANCE);
+		IDOMLoader loader = KMLDOMLoaderFactory.createDOMLoader("h.kmz", NullIdentityProvider.INSTANCE);
 		
 		Assert.assertNotNull(loader);
 		Assert.assertTrue(loader instanceof KMZDOMLoader);

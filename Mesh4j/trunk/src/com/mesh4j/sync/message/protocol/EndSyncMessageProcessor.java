@@ -16,6 +16,7 @@ public class EndSyncMessageProcessor implements IMessageProcessor {
 
 	// MODEL VARIABLES
 	private ACKEndSyncMessageProcessor ackEndMessage; 
+	private IMessageSyncProtocol messageSyncProtocol;
 	
 	// BUSINESS METHODS
 	public EndSyncMessageProcessor(ACKEndSyncMessageProcessor ackEndMessage) {
@@ -45,7 +46,7 @@ public class EndSyncMessageProcessor implements IMessageProcessor {
 		if(syncSession.isOpen() && this.getMessageType().equals(message.getMessageType())){
 			Date sinceDate = DateHelper.parseDateTime(message.getData());
 			if(sinceDate != null){
-				syncSession.endSync(sinceDate);
+				this.messageSyncProtocol.endSync(syncSession, sinceDate);
 				
 				ArrayList<IMessage> response = new ArrayList<IMessage>();
 				response.add(this.ackEndMessage.createMessage(syncSession, sinceDate));
@@ -53,6 +54,10 @@ public class EndSyncMessageProcessor implements IMessageProcessor {
 			}
 		}
 		return IMessageSyncProtocol.NO_RESPONSE;
+	}
+
+	public void setMessageSyncProtocol(IMessageSyncProtocol messageSyncProtocol) {
+		this.messageSyncProtocol = messageSyncProtocol;
 	}
 
 }

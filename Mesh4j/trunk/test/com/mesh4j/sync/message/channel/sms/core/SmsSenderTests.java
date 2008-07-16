@@ -11,6 +11,7 @@ import com.mesh4j.sync.message.MockSmsConnection;
 import com.mesh4j.sync.message.channel.sms.SmsEndpoint;
 import com.mesh4j.sync.message.channel.sms.batch.SmsMessage;
 import com.mesh4j.sync.message.channel.sms.batch.SmsMessageBatch;
+import com.mesh4j.sync.message.protocol.IProtocolConstants;
 import com.mesh4j.sync.test.utils.TestHelper;
 
 public class SmsSenderTests {
@@ -207,7 +208,7 @@ public class SmsSenderTests {
 	}
 
 	private SmsMessageBatch createBatch(int numberOfMessages) {
-		SmsMessageBatch batch = new SmsMessageBatch(new SmsEndpoint("123"), "T", "12345", numberOfMessages);
+		SmsMessageBatch batch = new SmsMessageBatch(new SmsEndpoint("123"), IProtocolConstants.PROTOCOL, "12345", numberOfMessages);
 		for (int i = 0; i < numberOfMessages; i++) {
 			batch.addMessage(i, new SmsMessage("message"+i));
 		}

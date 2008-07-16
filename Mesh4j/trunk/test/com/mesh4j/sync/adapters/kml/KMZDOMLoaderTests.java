@@ -24,25 +24,25 @@ public class KMZDOMLoaderTests {
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldNotAccetpNullFileName(){
 		FileManager fileManager = new FileManager();
-		new KMZDOMLoader(null, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(fileManager), fileManager);
+		new KMZDOMLoader(null, NullIdentityProvider.INSTANCE, KMLDOMLoaderFactory.createView(fileManager), fileManager);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldNotAccetpEmptyFileName(){
 		FileManager fileManager = new FileManager();
-		new KMZDOMLoader("", NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(fileManager), fileManager);
+		new KMZDOMLoader("", NullIdentityProvider.INSTANCE, KMLDOMLoaderFactory.createView(fileManager), fileManager);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldNotAccetpInvalidExtension(){
 		FileManager fileManager = new FileManager();
-		new KMZDOMLoader("a.kml", NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(fileManager), fileManager);
+		new KMZDOMLoader("a.kml", NullIdentityProvider.INSTANCE, KMLDOMLoaderFactory.createView(fileManager), fileManager);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldNotAccetpNullIdentityProvider(){
 		FileManager fileManager = new FileManager();
-		new KMZDOMLoader("a.kmz", null, DOMLoaderFactory.createView(fileManager), fileManager);
+		new KMZDOMLoader("a.kmz", null, KMLDOMLoaderFactory.createView(fileManager), fileManager);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
@@ -54,14 +54,14 @@ public class KMZDOMLoaderTests {
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldNotAccetpNullFileManager(){
 		FileManager fileManager = new FileManager();
-		new KMZDOMLoader("a.kmz", NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(fileManager), null);
+		new KMZDOMLoader("a.kmz", NullIdentityProvider.INSTANCE, KMLDOMLoaderFactory.createView(fileManager), null);
 	}
 	
 	@Test(expected=MeshException.class)
 	public void shouldReadThrowsExceptionBecauseFileHasInvalidContent(){
 		String fileName = this.getClass().getResource("templateWithInvalidXML.kmz").getFile();
 		FileManager fileManager = new FileManager();
-		KMZDOMLoader loader = new KMZDOMLoader(fileName, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(fileManager), fileManager);
+		KMZDOMLoader loader = new KMZDOMLoader(fileName, NullIdentityProvider.INSTANCE, KMLDOMLoaderFactory.createView(fileManager), fileManager);
 		loader.read();
 	}
 	
@@ -69,7 +69,7 @@ public class KMZDOMLoaderTests {
 	public void shouldReadDoNotCreateFile(){
 		String fileName = TestHelper.fileName(IdGenerator.newID()+".kmz");
 		FileManager fileManager = new FileManager();
-		KMZDOMLoader loader = new KMZDOMLoader(fileName, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(fileManager), fileManager);
+		KMZDOMLoader loader = new KMZDOMLoader(fileName, NullIdentityProvider.INSTANCE, KMLDOMLoaderFactory.createView(fileManager), fileManager);
 		loader.read();
 		Assert.assertNotNull(loader.getDOM());
 		
@@ -108,7 +108,7 @@ public class KMZDOMLoaderTests {
 		File file = TestHelper.makeNewKMZFile(xml);
 		Assert.assertTrue(file.exists());
 		FileManager fileManager = new FileManager();
-		KMZDOMLoader loader = new KMZDOMLoader(file.getAbsolutePath(), NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(fileManager), fileManager);
+		KMZDOMLoader loader = new KMZDOMLoader(file.getAbsolutePath(), NullIdentityProvider.INSTANCE, KMLDOMLoaderFactory.createView(fileManager), fileManager);
 		loader.read();
 		
 		Assert.assertNotNull(loader.getDOM());
@@ -144,7 +144,7 @@ public class KMZDOMLoaderTests {
 		File file = TestHelper.makeNewKMZFile(xml);
 		Assert.assertTrue(file.exists());
 		FileManager fileManager = new FileManager();
-		KMZDOMLoader loader = new KMZDOMLoader(file.getAbsolutePath(), NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(fileManager), fileManager);
+		KMZDOMLoader loader = new KMZDOMLoader(file.getAbsolutePath(), NullIdentityProvider.INSTANCE, KMLDOMLoaderFactory.createView(fileManager), fileManager);
 		loader.read();
 		
 		Assert.assertNotNull(loader.getDOM());
@@ -165,7 +165,7 @@ public class KMZDOMLoaderTests {
 					+file.getName()+"</name><ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\"></ExtendedData></Document></kml>";
 		
 		FileManager fileManager = new FileManager();
-		KMZDOMLoader loader = new KMZDOMLoader(fileName, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(fileManager), fileManager);
+		KMZDOMLoader loader = new KMZDOMLoader(fileName, NullIdentityProvider.INSTANCE, KMLDOMLoaderFactory.createView(fileManager), fileManager);
 		loader.read();
 		Assert.assertNotNull(loader.getDOM());
 		
@@ -208,7 +208,7 @@ public class KMZDOMLoaderTests {
 		Assert.assertTrue(file.exists());
 		
 		FileManager fileManager = new FileManager();
-		KMZDOMLoader loader = new KMZDOMLoader(file.getAbsolutePath(), NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(fileManager), fileManager);
+		KMZDOMLoader loader = new KMZDOMLoader(file.getAbsolutePath(), NullIdentityProvider.INSTANCE, KMLDOMLoaderFactory.createView(fileManager), fileManager);
 		loader.read();
 		
 		Assert.assertNotNull(loader.getDOM());
@@ -234,7 +234,7 @@ public class KMZDOMLoaderTests {
 		String fileName = this.getClass().getResource("templateWithInvalidXML.kmz").getFile();
 		 
 		FileManager fileManager = new FileManager();
-		KMZDOMLoader loader = new KMZDOMLoader(fileName, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(fileManager), fileManager);
+		KMZDOMLoader loader = new KMZDOMLoader(fileName, NullIdentityProvider.INSTANCE, KMLDOMLoaderFactory.createView(fileManager), fileManager);
 		
 		String name = loader.getFriendlyName();
 		Assert.assertNotNull(name);
@@ -254,7 +254,7 @@ public class KMZDOMLoaderTests {
 		fileManager.setFileContent("files/star.jpg", Base64Helper.encode(file2));
 		fileManager.setFileContent("files/camera_mode.png", Base64Helper.encode(file3));
 
-		KMZDOMLoader kmzLoader = new KMZDOMLoader(file.getAbsolutePath(), NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(fileManager), fileManager);
+		KMZDOMLoader kmzLoader = new KMZDOMLoader(file.getAbsolutePath(), NullIdentityProvider.INSTANCE, KMLDOMLoaderFactory.createView(fileManager), fileManager);
 		kmzLoader.read();
 		kmzLoader.write();
 
@@ -296,7 +296,7 @@ public class KMZDOMLoaderTests {
 		
 		FileManager fileManager = new FileManager();
 		
-		KMZDOMLoader kmzLoader = new KMZDOMLoader(file.getAbsolutePath(), NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(fileManager), fileManager);
+		KMZDOMLoader kmzLoader = new KMZDOMLoader(file.getAbsolutePath(), NullIdentityProvider.INSTANCE, KMLDOMLoaderFactory.createView(fileManager), fileManager);
 		kmzLoader.read();
 		
 		Assert.assertNotNull(kmzLoader.getDOM().asXML());

@@ -13,6 +13,14 @@ import com.mesh4j.sync.validations.Guard;
 
 public class ACKEndSyncMessageProcessor implements IMessageProcessor {
 
+	// MODEL VARIABLES
+	private IMessageSyncProtocol messageSyncProtocol;
+	
+	// BUSINESS METHODS
+	public ACKEndSyncMessageProcessor() {
+		super();
+	}
+
 	@Override
 	public String getMessageType() {
 		return "9";
@@ -38,10 +46,14 @@ public class ACKEndSyncMessageProcessor implements IMessageProcessor {
 		if(syncSession.isOpen() && this.getMessageType().equals(message.getMessageType())){
 			Date sinceDate = DateHelper.parseDateTime(message.getData());
 			if(sinceDate != null){
-				syncSession.endSync(sinceDate);
+				this.messageSyncProtocol.endSync(syncSession, sinceDate);
 			}
 		}
 		return IMessageSyncProtocol.NO_RESPONSE;
+	}
+
+	public void setMessageSyncProtocol(IMessageSyncProtocol messageSyncProtocol) {
+		this.messageSyncProtocol = messageSyncProtocol;
 	}
 
 }

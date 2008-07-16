@@ -15,7 +15,7 @@ import org.smslib.modem.SerialModemGateway;
 
 import com.mesh4j.sync.adapters.dom.DOMAdapter;
 import com.mesh4j.sync.adapters.feed.XMLContent;
-import com.mesh4j.sync.adapters.kml.DOMLoaderFactory;
+import com.mesh4j.sync.adapters.kml.KMLDOMLoaderFactory;
 import com.mesh4j.sync.message.IMessageSyncAdapter;
 import com.mesh4j.sync.message.IMessageSyncProtocol;
 import com.mesh4j.sync.message.ISyncSession;
@@ -75,7 +75,7 @@ public class SmsLibTests {
 		MessageSyncEngine syncEngineEndPointA = createSyncSmsEndpoint("nokia", adapterA, smsConnectionA, 0);
 
 		SmsEndpoint targetB = new SmsEndpoint("01136544867");
-		syncEngineEndPointA.synchronize(sourceId, targetB, true);
+		syncEngineEndPointA.synchronize(adapterA, targetB, true);
 
 		Thread.sleep(5000);
 		ISyncSession syncSessionA = syncEngineEndPointA.getSyncSession(sourceId, targetB);
@@ -130,7 +130,7 @@ public class SmsLibTests {
 //		smsConnectionB.setEndpointConnection(smsConnectionA);
 //		smsConnectionB.setEndpoint(targetB);
 //		
-		syncEngineEndPointA.synchronize(sourceId, targetB, true);
+		syncEngineEndPointA.synchronize(adapterA, targetB, true);
 
 		Thread.sleep(1000);
 		ISyncSession syncSessionA = syncEngineEndPointA.getSyncSession(sourceId, targetB);
@@ -159,7 +159,7 @@ public class SmsLibTests {
 		String sourceId = IdGenerator.newID().substring(0, 5);
 		
 		String fileNameA = this.getClass().getResource("kmlWithSyncInfo.kml").getFile();
-		DOMAdapter kmlAdapterA = new DOMAdapter(DOMLoaderFactory.createDOMLoader(fileNameA, NullIdentityProvider.INSTANCE));
+		DOMAdapter kmlAdapterA = new DOMAdapter(KMLDOMLoaderFactory.createDOMLoader(fileNameA, NullIdentityProvider.INSTANCE));
 		IMessageSyncAdapter adapterA = new MessageSyncAdapter(sourceId, NullIdentityProvider.INSTANCE, kmlAdapterA);
 		//SmsLibConnection smsConnectionA = new SmsLibConnection("sonyEricsson", "COM23", 115200, "Sony Ericsson", "FAD-3022013-BV", 140, CompressBase91MessageEncoding.INSTANCE, new OutboundNotification(), new InboundNotification(), (3 * 60 * 1000));
 		//SmsEndpoint targetA = new SmsEndpoint("01136544867");
@@ -168,7 +168,7 @@ public class SmsLibTests {
 		MessageSyncEngine syncEngineEndPointA = createSyncSmsEndpoint("sonyEricsson", adapterA, smsConnectionA, 0);
 
 		String fileNameB = this.getClass().getResource("kmlDummyForSync.kml").getFile();
-		DOMAdapter kmlAdapterB = new DOMAdapter(DOMLoaderFactory.createDOMLoader(fileNameB, NullIdentityProvider.INSTANCE));
+		DOMAdapter kmlAdapterB = new DOMAdapter(KMLDOMLoaderFactory.createDOMLoader(fileNameB, NullIdentityProvider.INSTANCE));
 		IMessageSyncAdapter adapterB = new MessageSyncAdapter(sourceId, NullIdentityProvider.INSTANCE, kmlAdapterB);
 		//SmsLibConnection smsConnectionB = new SmsLibConnection("nokia", "COM28", 115200, "Nokia", "6070", 140, CompressBase91MessageEncoding.INSTANCE, new OutboundNotification(), new InboundNotification(), (3 * 60 * 1000));
 		//SmsEndpoint targetB = new SmsEndpoint("01136540460");
@@ -181,7 +181,7 @@ public class SmsLibTests {
 		smsConnectionB.setEndpointConnection(smsConnectionA);
 		smsConnectionB.setEndpoint(targetB);
 		
-		syncEngineEndPointA.synchronize(sourceId, targetB, true);
+		syncEngineEndPointA.synchronize(adapterA, targetB, true);
 
 		Thread.sleep(1000);
 		ISyncSession syncSessionA = syncEngineEndPointA.getSyncSession(sourceId, targetB);
@@ -194,8 +194,8 @@ public class SmsLibTests {
 		Assert.assertFalse(syncSessionB.isOpen());
 		Assert.assertEquals(syncSessionB.getSnapshot().size(), syncSessionA.getSnapshot().size());
 		
-		adapterA.synchronizeSnapshot(syncSessionA);
-		adapterB.synchronizeSnapshot(syncSessionB);
+//		adapterA.synchronizeSnapshot(syncSessionA);
+//		adapterB.synchronizeSnapshot(syncSessionB);
 
 		kmlAdapterB.beginSync();
 		Assert.assertEquals(kmlAdapterA.getAll().size(), kmlAdapterB.getAll().size());

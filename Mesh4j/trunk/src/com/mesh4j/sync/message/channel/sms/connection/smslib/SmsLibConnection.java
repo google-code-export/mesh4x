@@ -148,11 +148,71 @@ public class SmsLibConnection implements ISmsConnection, IRefreshTask {
 				new SmsEndpoint(smsMessage.getOriginator()), 
 				smsMessage.getText(),
 				smsMessage.getDate());
+			this.removeMessage(smsMessage);
 		} catch(RuntimeException re){
 			LOGGER.info(re.getMessage());
 		}
 	}
 	
+	private void removeMessage(InboundMessage msg) {
+		synchronized (SEMAPHORE) {
+			Service srv = null;
+			SerialModemGateway gateway = null;
+			try {
+	
+				// Create new gateway
+				gateway = new SerialModemGateway(this.gatewayId, this.comPort, this.baudRate, this.manufacturer, this.model);
+				
+				// Create new Service object - the parent of all and the main interface to you.
+				srv = new Service();
+				
+				// Do we want the Gateway to be used for Inbound messages? If not, SMSLib will never read messages from this Gateway.
+				gateway.setInbound(true);
+				
+				// Do we want the Gateway to be used for Outbound messages? If not, SMSLib will never send messages from this Gateway.
+				gateway.setOutbound(true);
+				gateway.setSimPin("0000");
+				
+				if(this.inboundMessageNotification != null){
+					gateway.setInboundNotification(this.inboundMessageNotification);
+				}
+				
+				// Add the Gateway to the Service object.
+				srv.addGateway(gateway);
+				
+				// Similarly, you may define as many Gateway objects, representing
+				// various GSM modems, add them in the Service object and control
+				// all of them.
+				// Start! (i.e. connect to all defined Gateways)
+				srv.startService();
+				
+				// Read Messages. The reading is done via the Service object and
+				// affects all Gateway objects defined. This can also be more
+				// directed to a specific Gateway
+				srv.deleteMessage(msg);
+			
+			} catch (Exception e) {
+				throw new MeshException(e);
+			} finally {
+				if(srv != null){
+					try {
+						srv.stopService();
+					} catch (Exception e1) {
+						throw new MeshException(e1);
+					}
+				}
+				if(gateway != null){
+					try {
+						gateway.stopGateway();
+					} catch (Exception e1) {
+						throw new MeshException(e1);
+					}
+				}
+			}
+		}
+		
+	}
+
 	public List<InboundMessage> readAllMessages() {
 		synchronized (SEMAPHORE) {
 			List<InboundMessage> msgList = new ArrayList<InboundMessage>();		

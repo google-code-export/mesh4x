@@ -15,7 +15,7 @@ public class EntityContent extends Content{
 	// BUSINESS METHODS
 	public EntityContent(Element payload, String entityName, String entityID) {
 		super(payload, entityID);
-		this.entityName = entityName;
+		this.entityName = entityName; 
 	}
 
 	public EntityContent clone(){

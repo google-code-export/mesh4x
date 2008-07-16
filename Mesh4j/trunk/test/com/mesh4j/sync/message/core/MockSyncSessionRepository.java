@@ -1,6 +1,7 @@
 package com.mesh4j.sync.message.core;
 
 import com.mesh4j.sync.message.IEndpoint;
+import com.mesh4j.sync.message.IMessageSyncAdapter;
 import com.mesh4j.sync.message.ISyncSession;
 import com.mesh4j.sync.message.core.repository.SyncSessionFactory;
 
@@ -39,5 +40,15 @@ public class MockSyncSessionRepository implements ISyncSessionRepository {
 	@Override
 	public ISyncSession getSession(String sourceId, String endpointId) {
 		return factory.get(sourceId, endpointId);
+	}
+
+	@Override
+	public void registerSourceIfAbsent(IMessageSyncAdapter adapter) {
+		factory.registerSourceIfAbsent(adapter);
+	}
+
+	@Override
+	public IMessageSyncAdapter getSource(String sourceId) {
+		return factory.getSource(sourceId);
 	}
 }

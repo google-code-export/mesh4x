@@ -9,7 +9,13 @@ import com.mesh4j.sync.parsers.XMLView;
 import com.mesh4j.sync.security.IIdentityProvider;
 import com.mesh4j.sync.validations.Guard;
 
-public class DOMLoaderFactory {
+public class KMLDOMLoaderFactory {
+	
+	public static boolean isKML(String fileName){
+		Guard.argumentNotNullOrEmptyString(fileName, "fileName");
+		String localFileName = fileName.trim();
+		return localFileName.toUpperCase().endsWith(".KMZ") || localFileName.toUpperCase().endsWith(".KML");
+	}
 	
 	public static DOMLoader createDOMLoader(String fileName, IIdentityProvider identityProvider){
 		Guard.argumentNotNullOrEmptyString(fileName, "fileName");

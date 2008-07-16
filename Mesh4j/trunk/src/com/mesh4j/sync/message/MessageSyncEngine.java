@@ -23,12 +23,13 @@ public class MessageSyncEngine implements IMessageReceiver {
 		this.syncProtocol = protocol;
 	}
 	
-	public void synchronize(String sourceId, IEndpoint target) {
-		synchronize(sourceId, target, false);
+	public void synchronize(IMessageSyncAdapter adapter, IEndpoint target) {
+		synchronize(adapter, target, false);
 	}
 	
-	public void synchronize(String sourceId, IEndpoint target, boolean fullProtocol) {
-		IMessage message = this.syncProtocol.beginSync(sourceId, target, fullProtocol);
+	public void synchronize(IMessageSyncAdapter adapter, IEndpoint target, boolean fullProtocol) {
+		this.registerSourceIfAbsent(adapter);
+		IMessage message = this.syncProtocol.beginSync(adapter.getSourceId(), target, fullProtocol);
 		if(message != null){
 			this.channel.send(message);
 		}
@@ -64,11 +65,6 @@ public class MessageSyncEngine implements IMessageReceiver {
 				syncSession.addConflict(conflicItem);
 			}
 		}
-//		else {   // update is not send
-//			List<IMessage> response = new ArrayList<IMessage>();
-//			response.add(createMessage(dataSetId, result.getOriginal()));
-//			return response;
-//		}
 	}
 	
 	private static Item importItem(MergeResult result, ISyncSession syncSession) {
@@ -90,5 +86,9 @@ public class MessageSyncEngine implements IMessageReceiver {
 	
 	public ISyncSession getSyncSession(String sourceId, IEndpoint target){
 		return this.syncProtocol.getSyncSession(sourceId, target);
+	}
+
+	public void registerSourceIfAbsent(IMessageSyncAdapter adapter) {
+		this.syncProtocol.registerSourceIfAbsent(adapter);
 	}
 }

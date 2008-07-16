@@ -5,6 +5,7 @@ import com.mesh4j.sync.message.channel.sms.core.ISmsSenderRepository;
 import com.mesh4j.sync.message.channel.sms.core.SmsChannel;
 import com.mesh4j.sync.message.channel.sms.core.SmsReceiver;
 import com.mesh4j.sync.message.channel.sms.core.SmsSender;
+import com.mesh4j.sync.message.channel.sms.core.repository.file.FileSmsChannelRepository;
 import com.mesh4j.sync.message.channel.sms.schedule.AskLossMessagesScheduleTask;
 import com.mesh4j.sync.message.channel.sms.schedule.ResendBatchWithoutACKScheduleTask;
 import com.mesh4j.sync.message.schedule.timer.TimerScheduler;
@@ -14,6 +15,11 @@ public class SmsChannelFactory {
 
 	public static ISmsChannel createChannel(ISmsConnection smsConnection, int senderRetryTimeOut, int receiverRetryTimeOut){
 		return createChannel(smsConnection, senderRetryTimeOut, receiverRetryTimeOut, null, null);
+	}
+	
+	public static ISmsChannel createChannelWithFileRepository(ISmsConnection smsConnection, int senderRetryTimeOut, int receiverRetryTimeOut, String repositoryBaseDirectory){
+		FileSmsChannelRepository channelRepo = new FileSmsChannelRepository(repositoryBaseDirectory);
+		return createChannel(smsConnection, senderRetryTimeOut, receiverRetryTimeOut, channelRepo, channelRepo);
 	}
 	
 	public static ISmsChannel createChannel(ISmsConnection smsConnection, int senderRetryTimeOut, int receiverRetryTimeOut, ISmsSenderRepository senderRepository, ISmsReceiverRepository receiverRepository){

@@ -1,10 +1,12 @@
 package com.mesh4j.sync.message.core;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.mesh4j.sync.message.IEndpoint;
 import com.mesh4j.sync.message.IMessage;
+import com.mesh4j.sync.message.IMessageSyncAdapter;
 import com.mesh4j.sync.message.IMessageSyncProtocol;
 import com.mesh4j.sync.message.ISyncSession;
 import com.mesh4j.sync.utils.IdGenerator;
@@ -105,9 +107,21 @@ public class MessageSyncProtocol implements IMessageSyncProtocol {
 		this.persistChanges(syncSession);
 		return message;
 	}
+	
+	@Override
+	public void endSync(ISyncSession syncSession, Date date) {
+		syncSession.endSync(date);
+		IMessageSyncAdapter adapter = this.repository.getSource(syncSession.getSourceId());
+		adapter.synchronizeSnapshot(syncSession);
+	}
 
 	@Override
 	public ISyncSession getSyncSession(String sourceId, IEndpoint endpoint) {
 		return this.repository.getSession(sourceId, endpoint.getEndpointId());
+	}
+
+	@Override
+	public void registerSourceIfAbsent(IMessageSyncAdapter adapter) {
+		this.repository.registerSourceIfAbsent(adapter);
 	}
 }

@@ -30,6 +30,11 @@ public class FileSmsChannelRepository implements ISmsSenderRepository, ISmsRecei
 		Guard.argumentNotNullOrEmptyString(rootDirectory, "rootDirectory");
 
 		this.rootDirectory = rootDirectory;
+		
+		File fileDir = new File(rootDirectory);
+		if(!fileDir.exists()){
+			fileDir.mkdirs();
+		}
 	}
 	
 	public File getIncommingFile() {

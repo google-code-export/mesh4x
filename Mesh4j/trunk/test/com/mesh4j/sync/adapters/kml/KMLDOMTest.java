@@ -161,31 +161,31 @@ public class KMLDOMTest {
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldNotAcceptNullDocument() {
 		Document doc = null;
-		new KMLDOM(doc, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(new FileManager()));
+		new KMLDOM(doc, NullIdentityProvider.INSTANCE, KMLDOMLoaderFactory.createView(new FileManager()));
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldNotAcceptNullName() {
 		String name = null;
-		new KMLDOM(name, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(new FileManager()));
+		new KMLDOM(name, NullIdentityProvider.INSTANCE, KMLDOMLoaderFactory.createView(new FileManager()));
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldNotAcceptEmptyName() {
 		String name = "";
-		new KMLDOM(name, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(new FileManager()));
+		new KMLDOM(name, NullIdentityProvider.INSTANCE, KMLDOMLoaderFactory.createView(new FileManager()));
 	}
 
 	private KMLDOM createDOM(Document document) {
 		FileManager fileManager = new FileManager();
-		return new KMLDOM(document, NullIdentityProvider.INSTANCE, DOMLoaderFactory.createView(fileManager));
+		return new KMLDOM(document, NullIdentityProvider.INSTANCE, KMLDOMLoaderFactory.createView(fileManager));
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldNotAcceptNullIdentityProvider() {
 		Document doc = DocumentHelper.createDocument();
-		new KMLDOM(doc, null, DOMLoaderFactory.createView(new FileManager()));		
-		new KMLDOM("myName", null, DOMLoaderFactory.createView(new FileManager()));
+		new KMLDOM(doc, null, KMLDOMLoaderFactory.createView(new FileManager()));		
+		new KMLDOM("myName", null, KMLDOMLoaderFactory.createView(new FileManager()));
 	}
 	
 	@Test(expected=IllegalArgumentException.class)

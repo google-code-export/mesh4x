@@ -22,6 +22,7 @@ import com.mesh4j.sync.adapters.feed.FeedReader;
 import com.mesh4j.sync.adapters.feed.FeedWriter;
 import com.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import com.mesh4j.sync.message.IEndpoint;
+import com.mesh4j.sync.message.IMessageSyncAdapter;
 import com.mesh4j.sync.message.ISyncSession;
 import com.mesh4j.sync.message.core.ISyncSessionRepository;
 import com.mesh4j.sync.message.core.repository.ISyncSessionFactory;
@@ -66,7 +67,12 @@ public class FileSyncSessionRepository implements ISyncSessionRepository{
 		this.feedWriter = new FeedWriter(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		this.feedReader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		
-		this.readAllSessions();
+		File fileDir = new File(rootDirectory);
+		if(!fileDir.exists()){
+			fileDir.mkdirs();
+		} else {
+			this.readAllSessions();
+		}
 	}
 	
 	public List<ISyncSession> readAllSessions() {
@@ -287,5 +293,15 @@ public class FileSyncSessionRepository implements ISyncSessionRepository{
 	@Override
 	public ISyncSession getSession(String sourceId, String endpointId) {
 		return sessionFactory.get(sourceId, endpointId);
+	}
+
+	@Override
+	public void registerSourceIfAbsent(IMessageSyncAdapter adapter) {
+		this.sessionFactory.registerSourceIfAbsent(adapter);		
+	}
+
+	@Override
+	public IMessageSyncAdapter getSource(String sourceId) {
+		return this.sessionFactory.getSource(sourceId);
 	}	
 }
