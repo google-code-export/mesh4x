@@ -80,8 +80,8 @@ public class SmsLibConnection implements ISmsConnection, IRefreshTask {
 	public void send(List<String> messages, SmsEndpoint endpoint) {
 		for (String smsText : messages) {
 			try{
-				this.sendMessage(endpoint.getEndpointId(), smsText);
 				this.notifySendMessage(endpoint.getEndpointId(), smsText);
+				this.sendMessage(endpoint.getEndpointId(), smsText);				
 				try {
 					Thread.sleep(500);
 				} catch (InterruptedException e) {
@@ -149,22 +149,24 @@ public class SmsLibConnection implements ISmsConnection, IRefreshTask {
 	}
 
 	private void processReceivedMessage(InboundMessage smsMessage) {
-		try{
-			this.messageReceiver.receiveSms(
-				new SmsEndpoint(smsMessage.getOriginator()), 
-				smsMessage.getText(),
-				smsMessage.getDate());
-			this.removeMessage(smsMessage);
-			this.notifyReceiveMessage(
-					smsMessage.getOriginator(), 
+		if(!(smsMessage == null || smsMessage.getText() == null || smsMessage.getText().isEmpty())){
+			try{
+				this.notifyReceiveMessage(
+						smsMessage.getOriginator(), 
+						smsMessage.getText(),
+						smsMessage.getDate());
+				this.messageReceiver.receiveSms(
+					new SmsEndpoint(smsMessage.getOriginator()), 
 					smsMessage.getText(),
 					smsMessage.getDate());
-		} catch(RuntimeException re){
-			LOGGER.info(re.getMessage());
-			this.notifyReceiveMessageError(
-					smsMessage.getOriginator(), 
-					smsMessage.getText(),
-					smsMessage.getDate());
+				this.removeMessage(smsMessage);
+			} catch(RuntimeException re){
+				LOGGER.info(re.getMessage());
+				this.notifyReceiveMessageError(
+						smsMessage.getOriginator(), 
+						smsMessage.getText(),
+						smsMessage.getDate());
+			}
 		}
 	}
 	
@@ -289,28 +291,43 @@ public class SmsLibConnection implements ISmsConnection, IRefreshTask {
 
 	@Override
 	public void refresh() {
+		if(LOGGER.isInfoEnabled()){
+			LOGGER.info("SMS - Read messaged from the modem...");
+		}
 		this.processReceivedMessages();
 	}
 	
 	private void notifyReceiveMessage(String endpointId, String message, Date date) {
+		if(LOGGER.isInfoEnabled()){
+			LOGGER.info("SMS - Receive msg from: " + endpointId + " message: " + message );
+		}
 		if(this.smsConnectionNotification != null){
 			this.smsConnectionNotification.notifyReceiveMessage(endpointId, message, date);
 		}
 	}
 
 	private void notifyReceiveMessageError(String endpointId, String message, Date date) {
+		if(LOGGER.isInfoEnabled()){
+			LOGGER.info("SMS - Receive msg with error from: " + endpointId + " message: " + message );
+		}
 		if(this.smsConnectionNotification != null){
 			this.smsConnectionNotification.notifyReceiveMessageError(endpointId, message, date);
 		}
 	}
 	
 	private void notifySendMessageError(String endpointId, String message) {
+		if(LOGGER.isInfoEnabled()){
+			LOGGER.info("SMS - Send msg with error to: " + endpointId + " message: " + message );
+		}
 		if(this.smsConnectionNotification != null){
 			this.smsConnectionNotification.notifySendMessageError(endpointId, message);
 		}
 	}
 
 	private void notifySendMessage(String endpointId, String message) {
+		if(LOGGER.isInfoEnabled()){
+			LOGGER.info("SMS - Send msg to: " + endpointId + " message: " + message );
+		}
 		if(this.smsConnectionNotification != null){
 			this.smsConnectionNotification.notifySendMessage(endpointId, message);
 		}
