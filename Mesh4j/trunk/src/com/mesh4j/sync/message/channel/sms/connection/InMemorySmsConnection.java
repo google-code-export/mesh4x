@@ -1,4 +1,4 @@
-package com.mesh4j.sync.message.channel.sms.connection.inmemory;
+package com.mesh4j.sync.message.channel.sms.connection;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,7 +23,7 @@ public class InMemorySmsConnection implements ISmsConnection, IRefreshTask{
 	private SmsEndpoint endpoint;
 	private int maxMessageLenght = 140;
 	private IMessageEncoding messageEncoding;
-	private ISmsConnectionOutboundNotification smsConnectionOutboundNotification = new SmsConnectionOutboundNotification();
+	private ISmsConnectionInboundOutboundNotification smsConnectionInboundOutboundNotification = new SmsConnectionInboundOutboundNotification();
 	private int channelDelay = 300;
 	
 	// BUSINESS METHODS
@@ -59,10 +59,12 @@ public class InMemorySmsConnection implements ISmsConnection, IRefreshTask{
 
 	@Override
 	public void send(List<String> msgs, SmsEndpoint endpoint) {
-		for (String msg : msgs) {
-			this.smsConnectionOutboundNotification.notifySend(this.endpoint, endpoint, msg);
+		if(this.smsConnectionInboundOutboundNotification != null){
+			for (String msg : msgs) {
+				this.smsConnectionInboundOutboundNotification.notifySendMessage(endpoint.getEndpointId(), msg);
+			}
 		}
-		this.endpointConnection.receive(msgs, endpoint);
+		this.endpointConnection.receive(msgs, this.endpoint);
 	}
 
 	@Override
@@ -70,7 +72,11 @@ public class InMemorySmsConnection implements ISmsConnection, IRefreshTask{
 		synchronized (SEMAPHORE) {
 			for (String msg : this.messages) {
 				this.sleep(this.channelDelay);
-				this.messageReceiver.receiveSms(this.endpointConnection.getEndpoint(), msg, new Date());			
+				Date date = new Date();
+				if(this.smsConnectionInboundOutboundNotification != null){
+					this.smsConnectionInboundOutboundNotification.notifyReceiveMessage(this.endpointConnection.getEndpoint().getEndpointId(), msg, date);
+				}
+				this.messageReceiver.receiveSms(this.endpointConnection.getEndpoint(), msg, date);			
 			}
 			this.messages = new ArrayList<String>();
 		}
@@ -98,7 +104,7 @@ public class InMemorySmsConnection implements ISmsConnection, IRefreshTask{
 	public void receive(List<String> msgs, SmsEndpoint endpoint) {
 		synchronized (SEMAPHORE) {
 			for (String msg : msgs) {
-				this.messages.add(msg);		
+				this.messages.add(msg);
 			}
 		}		
 	}
@@ -107,8 +113,8 @@ public class InMemorySmsConnection implements ISmsConnection, IRefreshTask{
 		this.endpointConnection = endpointConnection; 
 	}
 
-	public void setSmsConnectionOutboundNotification(ISmsConnectionOutboundNotification smsConnectionOutboundNotification) {
-		this.smsConnectionOutboundNotification = smsConnectionOutboundNotification;
+	public void setSmsConnectionOutboundNotification(ISmsConnectionInboundOutboundNotification smsConnectionOutboundNotification) {
+		this.smsConnectionInboundOutboundNotification = smsConnectionOutboundNotification;
 		
 	}
 

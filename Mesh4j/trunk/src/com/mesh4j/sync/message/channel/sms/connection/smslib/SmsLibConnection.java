@@ -1,6 +1,7 @@
 package com.mesh4j.sync.message.channel.sms.connection.smslib;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -16,6 +17,7 @@ import org.smslib.modem.SerialModemGateway;
 import com.mesh4j.sync.message.channel.sms.ISmsConnection;
 import com.mesh4j.sync.message.channel.sms.ISmsReceiver;
 import com.mesh4j.sync.message.channel.sms.SmsEndpoint;
+import com.mesh4j.sync.message.channel.sms.connection.ISmsConnectionInboundOutboundNotification;
 import com.mesh4j.sync.message.encoding.IMessageEncoding;
 import com.mesh4j.sync.message.schedule.timer.TimerScheduler;
 import com.mesh4j.sync.validations.MeshException;
@@ -37,10 +39,11 @@ public class SmsLibConnection implements ISmsConnection, IRefreshTask {
 	private ISmsReceiver messageReceiver;
 	private IOutboundMessageNotification outboundMessageNotification;
 	private IInboundMessageNotification inboundMessageNotification;
+	private ISmsConnectionInboundOutboundNotification smsConnectionNotification; 
 		
 	// BUSINESS METHODS
 	public SmsLibConnection(String gatewayId, String comPort, int baudRate,
-			String manufacturer, String model, int maxMessageLenght, IMessageEncoding messageEncoding, IOutboundMessageNotification outboundMessageNotification, IInboundMessageNotification inboundMessageNotification, int refrehDelay) {
+			String manufacturer, String model, int maxMessageLenght, IMessageEncoding messageEncoding, int refrehDelay, ISmsConnectionInboundOutboundNotification smsConnectionNotification, IOutboundMessageNotification outboundMessageNotification, IInboundMessageNotification inboundMessageNotification) {
 		super();
 		this.gatewayId = gatewayId;
 		this.comPort = comPort;
@@ -51,6 +54,7 @@ public class SmsLibConnection implements ISmsConnection, IRefreshTask {
 		this.messageEncoding = messageEncoding;
 		this.outboundMessageNotification = outboundMessageNotification;
 		this.inboundMessageNotification = inboundMessageNotification;
+		this.smsConnectionNotification = smsConnectionNotification;
 		
 		if(refrehDelay > 0){
 			TimerScheduler.INSTANCE.schedule(new RefreshSchedulerTimerTask(this), refrehDelay);
@@ -77,6 +81,7 @@ public class SmsLibConnection implements ISmsConnection, IRefreshTask {
 		for (String smsText : messages) {
 			try{
 				this.sendMessage(endpoint.getEndpointId(), smsText);
+				this.notifySendMessage(endpoint.getEndpointId(), smsText);
 				try {
 					Thread.sleep(500);
 				} catch (InterruptedException e) {
@@ -84,6 +89,7 @@ public class SmsLibConnection implements ISmsConnection, IRefreshTask {
 				}
 			} catch(MeshException e){
 				LOGGER.error(e.getMessage(), e);
+				this.notifySendMessageError(endpoint.getEndpointId(), smsText);
 			}
 		}
 	}
@@ -149,8 +155,16 @@ public class SmsLibConnection implements ISmsConnection, IRefreshTask {
 				smsMessage.getText(),
 				smsMessage.getDate());
 			this.removeMessage(smsMessage);
+			this.notifyReceiveMessage(
+					smsMessage.getOriginator(), 
+					smsMessage.getText(),
+					smsMessage.getDate());
 		} catch(RuntimeException re){
 			LOGGER.info(re.getMessage());
+			this.notifyReceiveMessageError(
+					smsMessage.getOriginator(), 
+					smsMessage.getText(),
+					smsMessage.getDate());
 		}
 	}
 	
@@ -277,5 +291,28 @@ public class SmsLibConnection implements ISmsConnection, IRefreshTask {
 	public void refresh() {
 		this.processReceivedMessages();
 	}
-		
+	
+	private void notifyReceiveMessage(String endpointId, String message, Date date) {
+		if(this.smsConnectionNotification != null){
+			this.smsConnectionNotification.notifyReceiveMessage(endpointId, message, date);
+		}
+	}
+
+	private void notifyReceiveMessageError(String endpointId, String message, Date date) {
+		if(this.smsConnectionNotification != null){
+			this.smsConnectionNotification.notifyReceiveMessageError(endpointId, message, date);
+		}
+	}
+	
+	private void notifySendMessageError(String endpointId, String message) {
+		if(this.smsConnectionNotification != null){
+			this.smsConnectionNotification.notifySendMessageError(endpointId, message);
+		}
+	}
+
+	private void notifySendMessage(String endpointId, String message) {
+		if(this.smsConnectionNotification != null){
+			this.smsConnectionNotification.notifySendMessage(endpointId, message);
+		}
+	}
 }
