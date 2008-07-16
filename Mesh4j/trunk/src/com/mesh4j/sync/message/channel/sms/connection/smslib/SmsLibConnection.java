@@ -39,11 +39,16 @@ public class SmsLibConnection implements ISmsConnection, IRefreshTask {
 	private ISmsReceiver messageReceiver;
 	private IOutboundMessageNotification outboundMessageNotification;
 	private IInboundMessageNotification inboundMessageNotification;
-	private ISmsConnectionInboundOutboundNotification smsConnectionNotification; 
+	private ISmsConnectionInboundOutboundNotification smsConnectionNotification;
+	private int channelDelay = 1000;
 		
 	// BUSINESS METHODS
 	public SmsLibConnection(String gatewayId, String comPort, int baudRate,
-			String manufacturer, String model, int maxMessageLenght, IMessageEncoding messageEncoding, int refrehDelay, ISmsConnectionInboundOutboundNotification smsConnectionNotification, IOutboundMessageNotification outboundMessageNotification, IInboundMessageNotification inboundMessageNotification) {
+			String manufacturer, String model, int maxMessageLenght, IMessageEncoding messageEncoding, 
+			int refrehDelay, int channelDelay, 
+			ISmsConnectionInboundOutboundNotification smsConnectionNotification, 
+			IOutboundMessageNotification outboundMessageNotification, 
+			IInboundMessageNotification inboundMessageNotification) {
 		super();
 		this.gatewayId = gatewayId;
 		this.comPort = comPort;
@@ -56,11 +61,15 @@ public class SmsLibConnection implements ISmsConnection, IRefreshTask {
 		this.inboundMessageNotification = inboundMessageNotification;
 		this.smsConnectionNotification = smsConnectionNotification;
 		
+		if(channelDelay > 0){
+			this.channelDelay = channelDelay;
+		}
+		
 		if(refrehDelay > 0){
 			TimerScheduler.INSTANCE.schedule(new RefreshSchedulerTimerTask(this), refrehDelay);
 		}
 	}
-	
+
 	@Override
 	public int getMaxMessageLenght() {
 		return this.maxMessageLenght;
@@ -82,18 +91,14 @@ public class SmsLibConnection implements ISmsConnection, IRefreshTask {
 			try{
 				this.notifySendMessage(endpoint.getEndpointId(), smsText);
 				this.sendMessage(endpoint.getEndpointId(), smsText);				
-				try {
-					Thread.sleep(500);
-				} catch (InterruptedException e) {
-					// nothing to do
-				}
+				sleepChannelDelay();
 			} catch(MeshException e){
 				LOGGER.error(e.getMessage(), e);
 				this.notifySendMessageError(endpoint.getEndpointId(), smsText);
 			}
 		}
 	}
-	
+
 	private void sendMessage(String smsNumber, String smsText) {
 		synchronized (SEMAPHORE) {
 			Service srv = null;
@@ -159,6 +164,9 @@ public class SmsLibConnection implements ISmsConnection, IRefreshTask {
 					new SmsEndpoint(smsMessage.getOriginator()), 
 					smsMessage.getText(),
 					smsMessage.getDate());
+				
+				sleepChannelDelay();
+				
 				this.removeMessage(smsMessage);
 			} catch(RuntimeException re){
 				LOGGER.info(re.getMessage());
@@ -330,6 +338,14 @@ public class SmsLibConnection implements ISmsConnection, IRefreshTask {
 		}
 		if(this.smsConnectionNotification != null){
 			this.smsConnectionNotification.notifySendMessage(endpointId, message);
+		}
+	}
+	
+	private void sleepChannelDelay() {
+		try {
+			Thread.sleep(this.channelDelay);
+		} catch (InterruptedException e) {
+			// nothing to do
 		}
 	}
 }
