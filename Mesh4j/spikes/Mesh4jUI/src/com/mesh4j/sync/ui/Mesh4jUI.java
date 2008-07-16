@@ -29,7 +29,7 @@ import com.mesh4j.sync.adapters.dom.IDOMLoader;
 import com.mesh4j.sync.adapters.feed.FeedAdapter;
 import com.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import com.mesh4j.sync.adapters.http.HttpSyncAdapter;
-import com.mesh4j.sync.adapters.kml.DOMLoaderFactory;
+import com.mesh4j.sync.adapters.kml.KMLDOMLoaderFactory;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.properties.PropertiesProvider;
 import com.mesh4j.sync.security.IIdentityProvider;
@@ -294,7 +294,7 @@ public class Mesh4jUI {
 			if(isFeed(endpoint)){
 				return new FeedAdapter(endpoint, this.identityProvider);
 			}else{
-				IDOMLoader loader = DOMLoaderFactory.createDOMLoader(endpoint, this.identityProvider);
+				IDOMLoader loader = KMLDOMLoaderFactory.createDOMLoader(endpoint, this.identityProvider);
 				return new DOMAdapter(loader);
 			}
 		}
@@ -423,7 +423,7 @@ public class Mesh4jUI {
 	
 	private String prepareKMLToSync(String kmlFile){
 		try{
-			IDOMLoader loader = DOMLoaderFactory.createDOMLoader(kmlFile, this.identityProvider);
+			IDOMLoader loader = KMLDOMLoaderFactory.createDOMLoader(kmlFile, this.identityProvider);
 			DOMAdapter domAdapter = new DOMAdapter(loader);
 			domAdapter.prepareDOMToSync();
 			return Mesh4jUITranslator.getMessagePrepareToSyncSuccessfuly();
@@ -473,7 +473,7 @@ public class Mesh4jUI {
 	
 	private String cleanKML(String kmlFile){
 		try{
-			IDOMLoader loader = DOMLoaderFactory.createDOMLoader(kmlFile, this.identityProvider);
+			IDOMLoader loader = KMLDOMLoaderFactory.createDOMLoader(kmlFile, this.identityProvider);
 			DOMAdapter domAdapter = new DOMAdapter(loader);
 			domAdapter.clean();
 			return Mesh4jUITranslator.getMessageCleanKMLSuccessfuly();
@@ -523,7 +523,7 @@ public class Mesh4jUI {
 	
 	private String purgueKML(String kmlFile){
 		try{
-			IDOMLoader loader = DOMLoaderFactory.createDOMLoader(kmlFile, this.identityProvider);
+			IDOMLoader loader = KMLDOMLoaderFactory.createDOMLoader(kmlFile, this.identityProvider);
 			DOMAdapter domAdapter = new DOMAdapter(loader);
 			domAdapter.purgue();
 			return Mesh4jUITranslator.getMessagePurgueKMLSuccessfuly();

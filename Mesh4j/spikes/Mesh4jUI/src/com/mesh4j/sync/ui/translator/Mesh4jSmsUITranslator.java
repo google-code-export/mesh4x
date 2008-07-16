@@ -55,4 +55,22 @@ public class Mesh4jSmsUITranslator {
 		return MessageTranslator.translate("Mesh4jUI_SMS_MESSAGE_NOTIFY_SEND", endpointIdFrom, endpointIdTo, message);
 	}
 
+	public static String getLabelEmulate() {
+		return MessageTranslator.translate("Mesh4jUI_SMS_LABEL_EMULATE");
+	}
+
+	public static String getLabelDemo() {
+		return MessageTranslator.translate("Mesh4jUI_SMS_LABEL_DEMO");
+	}
+
+	public static String getMessageNotifySendMessage(String recipient,
+			String text) {
+		return MessageTranslator.translate("Mesh4jUI_SMS_MESSAGE_NOTIFY_SEND_MSG", text, recipient);
+	}
+
+	public static String getMessageNotifyReceiveMessage(String originator,
+			String text) {
+		return MessageTranslator.translate("Mesh4jUI_SMS_MESSAGE_NOTIFY_RECEIVE_MSG", text, originator);
+	}
+
 }

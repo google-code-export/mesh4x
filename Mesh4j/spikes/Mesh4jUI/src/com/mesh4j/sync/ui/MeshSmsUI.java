@@ -17,16 +17,21 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.smslib.IInboundMessageNotification;
+import org.smslib.IOutboundMessageNotification;
+import org.smslib.InboundMessage;
+import org.smslib.OutboundMessage;
+import org.smslib.Message.MessageTypes;
 
 import com.mesh4j.sync.adapters.sms.SmsHelper;
+import com.mesh4j.sync.message.MessageSyncEngine;
 import com.mesh4j.sync.message.channel.sms.SmsEndpoint;
 import com.mesh4j.sync.message.channel.sms.connection.inmemory.ISmsConnectionOutboundNotification;
+import com.mesh4j.sync.message.channel.sms.connection.smslib.Modem;
 import com.mesh4j.sync.properties.PropertiesProvider;
-import com.mesh4j.sync.security.IIdentityProvider;
-import com.mesh4j.sync.security.NullIdentityProvider;
 import com.mesh4j.sync.ui.translator.Mesh4jSmsUITranslator;
 
-public class MeshSmsUI implements ISmsConnectionOutboundNotification{
+public class MeshSmsUI implements ISmsConnectionOutboundNotification, IOutboundMessageNotification, IInboundMessageNotification{
 
 	private final static Log Logger = LogFactory.getLog(Mesh4jUI.class);
 	
@@ -41,27 +46,35 @@ public class MeshSmsUI implements ISmsConnectionOutboundNotification{
 	
 	private String defaultKmlFile;
 	private String defaultPhoneNumberDestination;
-	private IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
 	private String baseDirectory;
-	private int senderDelay = 0;
-	private int receiverDelay = 0;
-	private int readDelay = 500;
-	private int channelDelay = 300;
-	private int maxMessageLenght = 160;
 
+	private MessageSyncEngine syncEngine;
 	
 	// BUSINESS METHODS
 	public static void main (String [] args) {
 		MeshSmsUI meshUI = new MeshSmsUI();
 		meshUI.initializeDefaults();
-		meshUI.openMesh();
+		
+		Modem modem = SmsHelper.getDefaultModem();
+		meshUI.syncEngine = SmsHelper.createSyncEngine(meshUI, meshUI, modem);
+		meshUI.openMesh(modem);
+		
 	}
 
-	private void openMesh() {
+	private void openMesh(Modem modem) {
 		this.display = new Display();
 		
 		this.shell = new Shell(display);
 		this.shell.setText(Mesh4jSmsUITranslator.getTitle());
+		
+		Label labelPhone = new Label (shell, SWT.NONE);
+		labelPhone.setText(Mesh4jSmsUITranslator.getLabelPhone());
+
+		comboPhone = new Combo (shell, SWT.READ_ONLY);
+		comboPhone.setItems(SmsHelper.getAvailableModems(modem));
+		comboPhone.setSize (200, 200);
+		comboPhone.select(0);
+		comboPhone.setEnabled(false);
 		
 		Label labelKmlFile = new Label (shell, SWT.NONE);
 		labelKmlFile.setText(Mesh4jSmsUITranslator.getLabelKMLFile());
@@ -81,14 +94,6 @@ public class MeshSmsUI implements ISmsConnectionOutboundNotification{
 		});
 		buttonKmlFile.setText("...");
 
-		Label labelPhone = new Label (shell, SWT.NONE);
-		labelPhone.setText(Mesh4jSmsUITranslator.getLabelPhone());
-
-		comboPhone = new Combo (shell, SWT.READ_ONLY);
-		comboPhone.setItems (SmsHelper.getAvailablePhones());
-		comboPhone.setSize (200, 200);
-		comboPhone.select(0);
-		
 		Label labelSms = new Label (shell, SWT.NONE);
 		labelSms.setText(Mesh4jSmsUITranslator.getLabelPhoneDestination());
 
@@ -96,22 +101,38 @@ public class MeshSmsUI implements ISmsConnectionOutboundNotification{
 		textSmsNumber.setLayoutData (new GridData(600, 15));
 		textSmsNumber.setText(this.defaultPhoneNumberDestination);
 		
-		buttonCompress = new Button(shell, SWT.CHECK);
-		buttonCompress.setText(Mesh4jSmsUITranslator.getLabelCompressMessage());
-		buttonCompress.setSelection(true);
-
 		Button buttonSynchronize = new Button(shell, SWT.PUSH);
 		buttonSynchronize.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {				
 				boolean ok = validateInputs();
 					if(ok){
 						consoleView.setText("");
-						synchronizeItemsInNewThread();
+						executeInNewThread(false);
 					}
 				}
 			}
 		);		
 		buttonSynchronize.setText(Mesh4jSmsUITranslator.getLabelSynchronize());
+		buttonSynchronize.setEnabled(modem != null);
+		
+		new Label(shell, SWT.LINE_SOLID);
+		
+		buttonCompress = new Button(shell, SWT.CHECK);
+		buttonCompress.setText(Mesh4jSmsUITranslator.getLabelCompressMessage());
+		buttonCompress.setSelection(true);
+		
+		Button buttonEmulate = new Button(shell, SWT.PUSH);
+		buttonEmulate.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {				
+				boolean ok = validateInputs();
+					if(ok){
+						consoleView.setText("");
+						executeInNewThread(true);
+					}
+				}
+			}
+		);		
+		buttonEmulate.setText(Mesh4jSmsUITranslator.getLabelEmulate());
 		
 		consoleView = new Text(shell, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		consoleView.setLayoutData(new GridData(900, 300));
@@ -176,7 +197,7 @@ public class MeshSmsUI implements ISmsConnectionOutboundNotification{
 		return true;
 	}
 	
-	private void synchronizeItemsInNewThread(){
+	private void executeInNewThread(final boolean emulate){
 		final String smsFrom = this.comboPhone.getText();
 		final String smsTo = this.textSmsNumber.getText();
 		final boolean useCompression = this.buttonCompress.getSelection();
@@ -189,11 +210,13 @@ public class MeshSmsUI implements ISmsConnectionOutboundNotification{
 					public void run() {
 						log(Mesh4jSmsUITranslator.getLabelStart());
 						
-						final String syncResult = synchronizeItems(smsFrom, smsTo, useCompression, kmlFileName);
+						final String syncResult = emulate 
+							? emulateSync(smsFrom, smsTo, useCompression, kmlFileName)
+							: synchronizeItems(kmlFileName, smsTo);
 						
 						if (display.isDisposed()) return;
 						
-						log("End: " + syncResult);
+						log(syncResult);
 
 						done = true;
 						display.wake();
@@ -209,10 +232,10 @@ public class MeshSmsUI implements ISmsConnectionOutboundNotification{
 		BusyIndicator.showWhile(display, longJob);
 	}
 	
-	private String synchronizeItems(String smsFrom, String smsTo, boolean useCompression, String kmlFileName){
+	private String emulateSync(String smsFrom, String smsTo, boolean useCompression, String kmlFileName){
 		try{
 				
-			SmsHelper.synchronizeItems(this, smsFrom, smsTo, useCompression, kmlFileName, this.identityProvider, this.baseDirectory, this.senderDelay, this.receiverDelay, this.readDelay, this.channelDelay, this.maxMessageLenght);
+			SmsHelper.emulateSync(this, smsFrom, smsTo, useCompression, kmlFileName);
 			return Mesh4jSmsUITranslator.getLabelSuccess();
 		} catch (RuntimeException e) {
 			Logger.error(e.getMessage(), e);
@@ -222,10 +245,15 @@ public class MeshSmsUI implements ISmsConnectionOutboundNotification{
 			return Mesh4jSmsUITranslator.getLabelFailed();
 		}
 	}
-
-	@Override
-	public void notifySend(SmsEndpoint endpointFrom, SmsEndpoint endpointTo, String message) {
-		this.log(Mesh4jSmsUITranslator.getMessageNotifySend(endpointFrom.getEndpointId(), endpointTo.getEndpointId(), message));	
+	
+	private String synchronizeItems(String kmlFileName, String smsTo){
+		try{				
+			SmsHelper.synchronizeKml(this.syncEngine, kmlFileName, smsTo);
+			return "";
+		} catch (RuntimeException e) {
+			Logger.error(e.getMessage(), e);
+			return Mesh4jSmsUITranslator.getLabelFailed();
+		}
 	}
 
 	public void log(String message) {
@@ -241,13 +269,28 @@ public class MeshSmsUI implements ISmsConnectionOutboundNotification{
 	private void initializeDefaults(){
 		PropertiesProvider prop = new PropertiesProvider("mesh4j_sms.properties");
 		this.defaultKmlFile = prop.getDefaultEnpoint1();					
-		this.identityProvider = prop.getIdentityProvider();
 		this.baseDirectory = prop.getBaseDirectory();
 		this.defaultPhoneNumberDestination = prop.getString("default.sms.phone.number.destination");
-		this.senderDelay = prop.getInt("default.sms.sender.delay");
-		this.receiverDelay = prop.getInt("default.sms.receiver.delay");
-		this.readDelay = prop.getInt("default.sms.read.delay");
-		this.channelDelay = prop.getInt("default.sms.channel.delay");
-		this.maxMessageLenght = prop.getInt("default.sms.max.message.lenght");
+		
+		File dirDemo = new File(baseDirectory+"\\demo\\");
+		if(!dirDemo.exists()){
+			dirDemo.mkdirs();
+		}
+	}
+
+	
+	@Override
+	public void notifySend(SmsEndpoint endpointFrom, SmsEndpoint endpointTo, String message) {
+		this.log(Mesh4jSmsUITranslator.getMessageNotifySend(endpointFrom.getEndpointId(), endpointTo.getEndpointId(), message));	
+	}
+
+	@Override
+	public void process(String gtwId, OutboundMessage msg) {
+		this.log(Mesh4jSmsUITranslator.getMessageNotifySendMessage(msg.getRecipient() , msg.getText()));	
+	}
+
+	@Override
+	public void process(String gtwId, MessageTypes msgType, InboundMessage msg) {
+		this.log(Mesh4jSmsUITranslator.getMessageNotifyReceiveMessage(msg.getOriginator(), msg.getText()));	
 	}
 }
