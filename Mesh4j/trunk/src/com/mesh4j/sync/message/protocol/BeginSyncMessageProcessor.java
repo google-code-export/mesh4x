@@ -20,6 +20,7 @@ public class BeginSyncMessageProcessor implements IMessageProcessor, IBeginSyncM
 	// MODEL VARIABLES
 	private NoChangesMessageProcessor noChanges;
 	private LastVersionStatusMessageProcessor lastVersionStatus;
+	private IMessageSyncProtocol messageSyncProtocol;
 
 	// METHODS
 	public BeginSyncMessageProcessor(NoChangesMessageProcessor noChanges, LastVersionStatusMessageProcessor lastVersionStatus) {
@@ -54,6 +55,10 @@ public class BeginSyncMessageProcessor implements IMessageProcessor, IBeginSyncM
 					
 			Date sinceDate = decodeSyncDate(message.getData());
 			syncSession.beginSync(sinceDate);
+			
+			if(this.messageSyncProtocol != null){
+				this.messageSyncProtocol.notifyBeginSync(syncSession);
+			}
 			
 			List<Item> items = syncSession.getAll();
 			
@@ -99,4 +104,7 @@ public class BeginSyncMessageProcessor implements IMessageProcessor, IBeginSyncM
 		return st.nextToken();
 	}
 
+	public void setMessageSyncProtocol(IMessageSyncProtocol messageSyncProtocol) {
+		this.messageSyncProtocol = messageSyncProtocol;
+	}
 }

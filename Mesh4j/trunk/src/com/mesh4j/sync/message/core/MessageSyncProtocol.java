@@ -142,7 +142,7 @@ public class MessageSyncProtocol implements IMessageSyncProtocol {
 		}
 	}
 	
-	private void notifyBeginSync(ISyncSession syncSession) {
+	public void notifyBeginSync(ISyncSession syncSession) {
 		for (IMessageSyncAware syncAware : this.syncAwareList) {
 			syncAware.beginSync(syncSession);
 		}

@@ -22,5 +22,7 @@ public interface IMessageSyncProtocol {
 
 	void endSync(ISyncSession syncSession, Date date);
 
+	void notifyBeginSync(ISyncSession syncSession);
+
 
 }

@@ -126,6 +126,11 @@ public class ACKEndSyncMessageProcessorTests {
 			public void registerSourceIfAbsent(IMessageSyncAdapter adapter) {
 				Assert.fail();
 			}
+
+			@Override
+			public void notifyBeginSync(ISyncSession syncSession) {
+				Assert.fail();
+			}
 		};
 		
 		Item item = new Item(new NullContent("1"), new Sync("1", "jmt", new Date(), true));

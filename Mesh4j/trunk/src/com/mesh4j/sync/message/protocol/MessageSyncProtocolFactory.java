@@ -42,6 +42,8 @@ public class MessageSyncProtocolFactory {
 		msgProcessors.add(cancelMessage);
 		
 		MessageSyncProtocol syncProtocol = new MessageSyncProtocol(IProtocolConstants.PROTOCOL, beginMessage, cancelMessage, repository, msgProcessors);
+		
+		beginMessage.setMessageSyncProtocol(syncProtocol);
 		ackEndMessage.setMessageSyncProtocol(syncProtocol);
 		endMessage.setMessageSyncProtocol(syncProtocol);
 		
