@@ -77,4 +77,8 @@ public class PropertiesProvider {
 	public String getString(String key) {
 		return this.properties.getProperty(key, "");
 	}
+
+	public boolean getBoolean(String key) {
+		return Boolean.valueOf(this.properties.getProperty(key, "true"));
+	}
 }

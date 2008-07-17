@@ -131,10 +131,13 @@ public class SmsHelper {
 			int readDelay = prop.getInt("default.sms.read.delay");
 			int maxMessageLenght = prop.getInt("default.sms.max.message.lenght");
 			int channelDelay = prop.getInt("default.sms.channel.delay");
+			boolean useCompress = prop.getBoolean("default.sms.use.compress");
 			IIdentityProvider identityProvider = prop.getIdentityProvider();
 			
-			//IMessageEncoding messageEncoding = CompressBase91MessageEncoding.INSTANCE;
 			IMessageEncoding messageEncoding = NonMessageEncoding.INSTANCE;
+			if(useCompress){
+				messageEncoding = CompressBase91MessageEncoding.INSTANCE;
+			}
 				
 			SmsLibConnection smsConnection = new SmsLibConnection("mesh4j.sync", modem.getComPort(), modem.getBaudRate(),
 				modem.getManufacturer(), modem.getModel(), maxMessageLenght, messageEncoding, readDelay, channelDelay, smsConnectionInboundOutboundNotification, null, null);
