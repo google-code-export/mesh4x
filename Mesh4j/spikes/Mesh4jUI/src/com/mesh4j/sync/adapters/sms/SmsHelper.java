@@ -18,6 +18,7 @@ import com.mesh4j.sync.message.channel.sms.connection.InMemorySmsConnection;
 import com.mesh4j.sync.message.channel.sms.connection.smslib.Modem;
 import com.mesh4j.sync.message.channel.sms.connection.smslib.ModemHelper;
 import com.mesh4j.sync.message.channel.sms.connection.smslib.SmsLibConnection;
+import com.mesh4j.sync.message.core.IMessageSyncAware;
 import com.mesh4j.sync.message.core.MessageSyncAdapter;
 import com.mesh4j.sync.message.core.NonMessageEncoding;
 import com.mesh4j.sync.message.encoding.CompressBase91MessageEncoding;
@@ -29,7 +30,7 @@ import com.mesh4j.sync.ui.translator.Mesh4jSmsUITranslator;
 
 public class SmsHelper {
 
-	public static void emulateSync(ISmsConnectionInboundOutboundNotification smsConnectionNotification, String smsFrom, String smsTo, boolean useCompression, String kmlFileName) throws InterruptedException{
+	public static void emulateSync(ISmsConnectionInboundOutboundNotification smsConnectionNotification, IMessageSyncAware syncAware, String smsFrom, String smsTo, boolean useCompression, String kmlFileName) throws InterruptedException{
 		PropertiesProvider prop = new PropertiesProvider("mesh4j_sms.properties");
 		String baseDirectory = prop.getBaseDirectory();
 		int senderDelay = prop.getInt("default.sms.demo.sender.delay");
@@ -43,10 +44,10 @@ public class SmsHelper {
 		if(useCompression){
 			encoding = CompressBase91MessageEncoding.INSTANCE;
 		}
-		emulateSync(smsConnectionNotification, smsFrom, smsTo, encoding, kmlFileName, identityProvider, baseDirectory, senderDelay, receiverDelay, readDelay, channelDelay, maxMessageLenght);
+		emulateSync(smsConnectionNotification, syncAware, smsFrom, smsTo, encoding, kmlFileName, identityProvider, baseDirectory, senderDelay, receiverDelay, readDelay, channelDelay, maxMessageLenght);
 	}
 	
-	private static void emulateSync(ISmsConnectionInboundOutboundNotification smsConnectionNotification, String smsFrom, String smsTo, IMessageEncoding encoding, String kmlFileName, IIdentityProvider identityProvider, String repositoryBaseDirectory, int senderDelay, int receiverDelay, int readDelay, int channelDelay, int maxMessageLenght) throws InterruptedException{
+	private static void emulateSync(ISmsConnectionInboundOutboundNotification smsConnectionNotification, IMessageSyncAware syncAware, String smsFrom, String smsTo, IMessageEncoding encoding, String kmlFileName, IIdentityProvider identityProvider, String repositoryBaseDirectory, int senderDelay, int receiverDelay, int readDelay, int channelDelay, int maxMessageLenght) throws InterruptedException{
 
 		File file = new File(kmlFileName);
 		String sourceId = file.getName();
@@ -59,13 +60,13 @@ public class SmsHelper {
 		smsConnectionA.setSmsConnectionOutboundNotification(smsConnectionNotification);
 		SmsEndpoint targetA = new SmsEndpoint(smsFrom);
 		
-		MessageSyncEngine syncEngineEndPointA = createSyncEngine(repositoryBaseDirectory+"\\"+smsFrom+"\\", identityProvider, smsConnectionA, senderDelay, receiverDelay);
+		MessageSyncEngine syncEngineEndPointA = createSyncEngine(syncAware, repositoryBaseDirectory+"\\"+smsFrom+"\\", identityProvider, smsConnectionA, senderDelay, receiverDelay);
 
 		// ENDPOINT B
 		InMemorySmsConnection smsConnectionB = new InMemorySmsConnection(encoding, maxMessageLenght, readDelay, channelDelay);
 		SmsEndpoint targetB = new SmsEndpoint(smsTo);
 		
-		MessageSyncEngine syncEngineEndPointB = createSyncEngine(repositoryBaseDirectory+"\\"+smsTo+"\\", identityProvider, smsConnectionB, senderDelay, receiverDelay);
+		MessageSyncEngine syncEngineEndPointB = createSyncEngine(null, repositoryBaseDirectory+"\\"+smsTo+"\\", identityProvider, smsConnectionB, senderDelay, receiverDelay);
 		
 		// CHANNEL EMULATION
 		smsConnectionA.setEndpointConnection(smsConnectionB);
@@ -85,9 +86,9 @@ public class SmsHelper {
 		}
 	}
 	
-	private static MessageSyncEngine createSyncEngine(String repositoryBaseDirectory, IIdentityProvider identityProvider, ISmsConnection smsConnection, int senderDelay, int receiverDelay){
+	private static MessageSyncEngine createSyncEngine(IMessageSyncAware syncAware, String repositoryBaseDirectory, IIdentityProvider identityProvider, ISmsConnection smsConnection, int senderDelay, int receiverDelay){
 		IChannel channel = SmsChannelFactory.createChannelWithFileRepository(smsConnection, senderDelay, receiverDelay, repositoryBaseDirectory);
-		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocolWithFileRepository(100, repositoryBaseDirectory, identityProvider);		
+		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocolWithFileRepository(100, repositoryBaseDirectory, identityProvider, syncAware);		
 		return new MessageSyncEngine(syncProtocol, channel);		
 	}
 
@@ -121,7 +122,7 @@ public class SmsHelper {
 		}
 	}
 
-	public static MessageSyncEngine createSyncEngine(ISmsConnectionInboundOutboundNotification smsConnectionInboundOutboundNotification, Modem modem) {
+	public static MessageSyncEngine createSyncEngine(ISmsConnectionInboundOutboundNotification smsConnectionInboundOutboundNotification, IMessageSyncAware syncAware, Modem modem) {
 		if(modem != null){
 			PropertiesProvider prop = new PropertiesProvider("mesh4j_sms.properties");
 			String baseDirectory = prop.getBaseDirectory();
@@ -138,7 +139,7 @@ public class SmsHelper {
 			SmsLibConnection smsConnection = new SmsLibConnection("mesh4j.sync", modem.getComPort(), modem.getBaudRate(),
 				modem.getManufacturer(), modem.getModel(), maxMessageLenght, messageEncoding, readDelay, channelDelay, smsConnectionInboundOutboundNotification, null, null);
 			
-			return createSyncEngine(baseDirectory+"\\"+modem.toString()+"\\", identityProvider, smsConnection, senderDelay, receiverDelay);
+			return createSyncEngine(syncAware, baseDirectory+"\\"+modem.toString()+"\\", identityProvider, smsConnection, senderDelay, receiverDelay);
 		} else {
 			return null;
 		}

@@ -2,6 +2,7 @@ package com.mesh4j.sync.ui;
 
 import java.io.File;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -20,13 +21,16 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import com.mesh4j.sync.adapters.sms.SmsHelper;
+import com.mesh4j.sync.message.ISyncSession;
 import com.mesh4j.sync.message.MessageSyncEngine;
 import com.mesh4j.sync.message.channel.sms.connection.ISmsConnectionInboundOutboundNotification;
 import com.mesh4j.sync.message.channel.sms.connection.smslib.Modem;
+import com.mesh4j.sync.message.core.IMessageSyncAware;
+import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.properties.PropertiesProvider;
 import com.mesh4j.sync.ui.translator.Mesh4jSmsUITranslator;
 
-public class MeshSmsUI implements ISmsConnectionInboundOutboundNotification{
+public class MeshSmsUI implements ISmsConnectionInboundOutboundNotification, IMessageSyncAware{
 
 	private final static Log Logger = LogFactory.getLog(Mesh4jUI.class);
 	
@@ -51,7 +55,7 @@ public class MeshSmsUI implements ISmsConnectionInboundOutboundNotification{
 		meshUI.initializeDefaults();
 		
 		Modem modem = SmsHelper.getDefaultModem();
-		meshUI.syncEngine = SmsHelper.createSyncEngine(meshUI, modem);
+		meshUI.syncEngine = SmsHelper.createSyncEngine(meshUI, meshUI, modem);
 		meshUI.openMesh(modem);
 		
 	}
@@ -203,8 +207,7 @@ public class MeshSmsUI implements ISmsConnectionInboundOutboundNotification{
 			public void run() {
 				Thread thread = new Thread(new Runnable() {
 					public void run() {
-						log(Mesh4jSmsUITranslator.getLabelStart());
-						
+												
 						final String syncResult = emulate 
 							? emulateSync(smsFrom, smsTo, useCompression, kmlFileName)
 							: synchronizeItems(kmlFileName, smsTo);
@@ -229,9 +232,8 @@ public class MeshSmsUI implements ISmsConnectionInboundOutboundNotification{
 	
 	private String emulateSync(String smsFrom, String smsTo, boolean useCompression, String kmlFileName){
 		try{
-				
-			SmsHelper.emulateSync(this, smsFrom, smsTo, useCompression, kmlFileName);
-			return Mesh4jSmsUITranslator.getLabelSuccess();
+			SmsHelper.emulateSync(this, this, smsFrom, smsTo, useCompression, kmlFileName);
+			return "";
 		} catch (RuntimeException e) {
 			Logger.error(e.getMessage(), e);
 			return Mesh4jSmsUITranslator.getLabelFailed();
@@ -280,8 +282,7 @@ public class MeshSmsUI implements ISmsConnectionInboundOutboundNotification{
 	}
 
 	@Override
-	public void notifyReceiveMessageError(String endpointId, String message,
-			Date date) {
+	public void notifyReceiveMessageError(String endpointId, String message, Date date) {
 		this.log(Mesh4jSmsUITranslator.getMessageNotifyReceiveMessage(endpointId, message));		
 	}
 
@@ -293,6 +294,16 @@ public class MeshSmsUI implements ISmsConnectionInboundOutboundNotification{
 	@Override
 	public void notifySendMessageError(String endpointId, String message) {
 		this.log(Mesh4jSmsUITranslator.getMessageNotifySendMessageError(endpointId, message));		
+	}
+
+	@Override
+	public void beginSync(ISyncSession syncSession) {
+		log(Mesh4jSmsUITranslator.getLabelStart());		
+	}
+
+	@Override
+	public void endSync(ISyncSession syncSession, List<Item> conflicts) {
+		log(Mesh4jSmsUITranslator.getLabelSuccess());		
 	}
 
 	
