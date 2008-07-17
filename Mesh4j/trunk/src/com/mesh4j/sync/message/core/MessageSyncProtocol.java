@@ -9,6 +9,7 @@ import com.mesh4j.sync.message.IMessage;
 import com.mesh4j.sync.message.IMessageSyncAdapter;
 import com.mesh4j.sync.message.IMessageSyncProtocol;
 import com.mesh4j.sync.message.ISyncSession;
+import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.utils.IdGenerator;
 import com.mesh4j.sync.validations.Guard;
 
@@ -20,6 +21,7 @@ public class MessageSyncProtocol implements IMessageSyncProtocol {
 	private ICancelSyncMessageProcessor cancelMessage;
 	private ISyncSessionRepository repository;
 	private String protocolPrefix = "";
+	private List<IMessageSyncAware> syncAwareList = new ArrayList<IMessageSyncAware>();
 	
 	// METHODS
 	public MessageSyncProtocol(String protocolPrefix, IBeginSyncMessageProcessor initialMessage, ICancelSyncMessageProcessor cancelMessage, ISyncSessionRepository repository, ArrayList<IMessageProcessor> messageProcessors){
@@ -102,7 +104,7 @@ public class MessageSyncProtocol implements IMessageSyncProtocol {
 				return null;
 			}
 		}
-		
+		this.notifyBeginSync(syncSession);
 		IMessage message = this.initialMessage.createMessage(syncSession);
 		this.persistChanges(syncSession);
 		return message;
@@ -111,8 +113,11 @@ public class MessageSyncProtocol implements IMessageSyncProtocol {
 	@Override
 	public void endSync(ISyncSession syncSession, Date date) {
 		syncSession.endSync(date);
+		
 		IMessageSyncAdapter adapter = this.repository.getSource(syncSession.getSourceId());
-		adapter.synchronizeSnapshot(syncSession);
+		List<Item> conflicts = adapter.synchronizeSnapshot(syncSession);
+		
+		this.notifyEndSync(syncSession, conflicts);
 	}
 
 	@Override
@@ -123,5 +128,23 @@ public class MessageSyncProtocol implements IMessageSyncProtocol {
 	@Override
 	public void registerSourceIfAbsent(IMessageSyncAdapter adapter) {
 		this.repository.registerSourceIfAbsent(adapter);
+	}
+	
+	public void registerSyncAware(IMessageSyncAware syncAware){
+		if(syncAware != null){
+			this.syncAwareList.add(syncAware);
+		}
+	}
+	
+	private void notifyEndSync(ISyncSession syncSession, List<Item> conflicts) {
+		for (IMessageSyncAware syncAware : this.syncAwareList) {
+			syncAware.endSync(syncSession, conflicts);
+		}
+	}
+	
+	private void notifyBeginSync(ISyncSession syncSession) {
+		for (IMessageSyncAware syncAware : this.syncAwareList) {
+			syncAware.beginSync(syncSession);
+		}
 	}
 }

@@ -39,7 +39,9 @@ public abstract class DOMLoader implements IDOMLoader {
 	
 
 	public void write() {
-		this.flush();
+		if(this.dom != null){
+			this.flush();
+		}
 	}
 	
 	protected abstract void flush();

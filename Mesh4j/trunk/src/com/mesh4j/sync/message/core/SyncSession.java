@@ -145,10 +145,7 @@ public class SyncSession implements ISyncSession{
 		this.open = false;
 		
 		this.snapshot = new ArrayList<Item>(this.cache.values());
-		
-		if(this.syncAdapter instanceof ISyncAware){
-			((ISyncAware)this.syncAdapter).endSync();
-		}	}
+	}
 	
 	@Override
 	public void cancelSync() {

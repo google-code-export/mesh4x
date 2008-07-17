@@ -67,7 +67,6 @@ public class MessageSyncAdapter implements IMessageSyncAdapter, ISyncAware {
 	@Override
 	public void endSync() {
 		if(this.syncAdapter instanceof ISyncAware){
-			((ISyncAware)this.syncAdapter).beginSync();
 			((ISyncAware)this.syncAdapter).endSync();
 		}
 	}
