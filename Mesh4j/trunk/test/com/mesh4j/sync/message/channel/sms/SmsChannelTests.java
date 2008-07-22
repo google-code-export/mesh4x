@@ -43,11 +43,11 @@ public class SmsChannelTests {
 	public void shouldReceiveResendBatchMessagesWhenMessageIsAskForRetry(){
 		MockMessageReceiver messageReceiver = new MockMessageReceiver();
 		
-		SmsMessageBatch batch = createTestBatch(10, "qqq23672146781246");
+		SmsMessageBatch batch = createTestBatch(10, "qqq23672146781&0&46");
 		MockSmsSender sender = new MockSmsSender();
 		sender.send(batch, true);
 
-		String msg = MessageFormatter.createMessage("R", IdGenerator.newID(), batch.getId()+"|0");
+		String msg = MessageFormatter.createMessage("R", 0, batch.getId()+"|0");
 		SmsMessageBatch batchRetry = createTestBatch(10, msg);
 
 		
@@ -61,7 +61,8 @@ public class SmsChannelTests {
 	
 	@Test
 	public void shouldReceiveNotifyMessageWhenMessageIsNotAskForRetry(){
-		SmsMessageBatch batch = createTestBatch(10, "qqq23672146781246");
+		String message = MessageFormatter.createMessage("q", 0, "1234567890");
+		SmsMessageBatch batch = createTestBatch(10, message);
 		MockMessageReceiver messageReceiver = new MockMessageReceiver();
 		
 		MockSmsSender sender = new MockSmsSender();
@@ -81,7 +82,7 @@ public class SmsChannelTests {
 	
 	@Test
 	public void shouldSendMessage(){
-		Message message = new Message("a", "a", "60131f9c-1e40-47df-b316-ed15a9460515", "123", new SmsEndpoint("123"));
+		Message message = new Message("a", "a", "60131f9c-1e40-47df-b316-ed15a9460515", 0, "123", new SmsEndpoint("123"));
 		
 		MockSmsSender sender = new MockSmsSender();
 		SmsChannel channel = new SmsChannel(sender, new MockSmsReceiver(), new MockMessageEncoding(), 10);
@@ -91,7 +92,7 @@ public class SmsChannelTests {
 		
 		SmsMessageBatch batch = sender.getOngoingBatches().get(0);
 		batch.reconstitutePayload();
-		Assert.assertEquals("a60131f9c-1e40-47df-b316-ed15a9460515&123", batch.getPayload());
+		Assert.assertEquals("a0&123", batch.getPayload());
 	}	
 	
 	@Test
@@ -160,7 +161,7 @@ public class SmsChannelTests {
 		Date date = TestHelper.makeDate(2008, 1, 1, 1, 1, 1, 1);
 		SmsMessage smsMessage = new SmsMessage("message 1", date);
 		
-		SmsMessageBatch batch = new SmsMessageBatch(new SmsEndpoint("1234"), "R", "12345", 3);
+		SmsMessageBatch batch = new SmsMessageBatch(IdGenerator.newID(), new SmsEndpoint("1234"), "R", "12345", 3);
 		batch.addMessage(1, smsMessage);
 		
 		MockSmsSender sender = new MockSmsSender();
@@ -174,14 +175,14 @@ public class SmsChannelTests {
 		
 		SmsMessageBatch batchRetry = sender.getOngoingBatches().get(0);
 		batchRetry.reconstitutePayload();
-		Assert.assertEquals("RR&12345|0|2|", batchRetry.getPayload());
+		Assert.assertEquals("R0&12345|0|2|", batchRetry.getPayload());
 	}	
 	
 	
 	public SmsMessageBatch createTestBatch(int msgSize, String originalText)
 	{
 		MessageBatchFactory factory = new MessageBatchFactory(msgSize);
-		SmsMessageBatch batch = factory.createMessageBatch(new SmsEndpoint("1234"), "R", "12345", originalText);
+		SmsMessageBatch batch = factory.createMessageBatch(IdGenerator.newID(), new SmsEndpoint("1234"), "R", "12345", originalText);
 		return batch;
 	}
 }

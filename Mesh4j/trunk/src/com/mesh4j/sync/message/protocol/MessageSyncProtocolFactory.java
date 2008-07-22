@@ -2,9 +2,9 @@ package com.mesh4j.sync.message.protocol;
 
 import java.util.ArrayList;
 
+import com.mesh4j.sync.message.IMessageSyncAware;
 import com.mesh4j.sync.message.IMessageSyncProtocol;
 import com.mesh4j.sync.message.core.IMessageProcessor;
-import com.mesh4j.sync.message.core.IMessageSyncAware;
 import com.mesh4j.sync.message.core.ISyncSessionRepository;
 import com.mesh4j.sync.message.core.MessageSyncProtocol;
 import com.mesh4j.sync.message.core.repository.SyncSessionFactory;
@@ -48,13 +48,20 @@ public class MessageSyncProtocolFactory {
 		endMessage.setMessageSyncProtocol(syncProtocol);
 		
 		for (IMessageSyncAware syncAware : syncAwareList) {
-			syncProtocol.registerSyncAware(syncAware);
+			if(syncAware != null){
+				syncProtocol.registerSyncAware(syncAware);
+			}
 		}
 		return syncProtocol;
 	}
 
 	public static IMessageSyncProtocol createSyncProtocolWithFileRepository(int diffBlockSize, String repositoryBaseDirectory, IIdentityProvider identityProvider, IMessageSyncAware syncAware) {
+		return createSyncProtocolWithFileRepository(diffBlockSize, repositoryBaseDirectory, identityProvider, syncAware, false);
+	}
+	
+	public static IMessageSyncProtocol createSyncProtocolWithFileRepository(int diffBlockSize, String repositoryBaseDirectory, IIdentityProvider identityProvider, IMessageSyncAware syncAware, boolean supportInMemoryAdapter) {
 		SyncSessionFactory syncSessionFactory = new SyncSessionFactory(repositoryBaseDirectory, identityProvider);
+		syncSessionFactory.setSupportInMemoryAdapter(supportInMemoryAdapter);
 		ISyncSessionRepository repo = new FileSyncSessionRepository(repositoryBaseDirectory, syncSessionFactory);
 		return createSyncProtocol(diffBlockSize, repo, syncAware);
 	}

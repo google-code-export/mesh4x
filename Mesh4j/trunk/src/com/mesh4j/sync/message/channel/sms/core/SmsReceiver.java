@@ -1,9 +1,11 @@
 package com.mesh4j.sync.message.channel.sms.core;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.mesh4j.sync.message.channel.sms.ISmsChannel;
 import com.mesh4j.sync.message.channel.sms.ISmsReceiver;
@@ -14,10 +16,12 @@ import com.mesh4j.sync.message.channel.sms.batch.SmsMessageBatch;
 
 public class SmsReceiver implements ISmsReceiver {
 
+	private final static Object SEMAPHORE = new Object();
+	
 	// MODEL VARIABLES
-	private  HashMap<String, SmsMessageBatch> completedBatches = new HashMap<String, SmsMessageBatch>();
-	private  HashMap<String, SmsMessageBatch> ongoingBatches = new HashMap<String, SmsMessageBatch>();
-	private  HashMap<String, DiscardedBatchRecord> discardedBatches = new HashMap<String, DiscardedBatchRecord>();
+	private  Map<String, SmsMessageBatch> completedBatches = Collections.synchronizedMap(new HashMap<String, SmsMessageBatch>());
+	private  Map<String, SmsMessageBatch> ongoingBatches = Collections.synchronizedMap(new HashMap<String, SmsMessageBatch>());
+	private  Map<String, DiscardedBatchRecord> discardedBatches = Collections.synchronizedMap(new HashMap<String, DiscardedBatchRecord>());
 
 	private ISmsChannel smsChannel;
 	private ISmsReceiverRepository repository;
@@ -38,55 +42,66 @@ public class SmsReceiver implements ISmsReceiver {
 	}
 	
 	public SmsReceiver receive(SmsEndpoint endpoint, SmsMessage message) {
-		// do we have the batch?
-		String receivedMessageBatchId = MessageFormatter.getBatchId(message.getText());
+
 		SmsMessageBatch batch = null;
-
-		if (ongoingBatches.containsKey(receivedMessageBatchId)) {
-			batch = ongoingBatches.get(receivedMessageBatchId);
-		} else {
-			// if it is a discarded batch exit
-			if (this.discardedBatches.containsKey(receivedMessageBatchId))
-				return this;
-
-			// if it is a completed batch exit
-			if (this.completedBatches.containsKey(receivedMessageBatchId))
-				return this;
-
-			String protocolHeader = MessageFormatter.getBatchProtocolHeader(message.getText());
-			batch = new SmsMessageBatch(
-				endpoint,
-				protocolHeader, 
-				receivedMessageBatchId,
-				MessageFormatter.getBatchExpectedMessageCount(message.getText()));
-			ongoingBatches.put(receivedMessageBatchId, batch);
-
+		boolean notifyACK = false;
+		synchronized (SEMAPHORE) {
+			
+			// do we have the batch?
+			String receivedMessageBatchId = MessageFormatter.getBatchId(message.getText());
+	
+			if (ongoingBatches.containsKey(receivedMessageBatchId)) {
+				batch = ongoingBatches.get(receivedMessageBatchId);
+			} else {
+				// if it is a discarded batch exit
+				if (this.discardedBatches.containsKey(receivedMessageBatchId))
+					return this;
+	
+				// if it is a completed batch exit
+				if (this.completedBatches.containsKey(receivedMessageBatchId))
+					return this;
+	
+				String protocolHeader = MessageFormatter.getBatchProtocolHeader(message.getText());
+				String sessionId = MessageFormatter.getBatchSessionId(message.getText());
+				batch = new SmsMessageBatch(
+					sessionId,
+					endpoint,
+					protocolHeader, 
+					receivedMessageBatchId,
+					MessageFormatter.getBatchExpectedMessageCount(message.getText()));
+				ongoingBatches.put(receivedMessageBatchId, batch);
+	
+				notifyACK = true;
+			}
+	
+			int sequence = MessageFormatter.getBatchMessageSequenceNumber(message.getText());
+	
+			SmsMessage batchMsg = batch.getMessage(sequence);
+			if (batchMsg == null) {
+				batch.addMessage(sequence, message);
+			} else {
+				// validate the same
+				if (!(message.getText().equals(batchMsg.getText()))) {
+					discardBatch(receivedMessageBatchId);
+				} else {
+					return this;
+				}
+			}
+	
+			if (batch.isComplete()) {
+				batch.reconstitutePayload();
+	
+				this.ongoingBatches.remove(batch.getId());
+				this.completedBatches.put(batch.getId(), batch);
+			}
+			this.persistChanges();
+		}
+		if(notifyACK){
 			this.notifyBatchACK(message);
 		}
-
-		int sequence = MessageFormatter.getBatchMessageSequenceNumber(message.getText());
-
-		SmsMessage batchMsg = batch.getMessage(sequence);
-		if (batchMsg == null) {
-			batch.addMessage(sequence, message);
-		} else {
-			// validate the same
-			if (!(message.getText().equals(batchMsg.getText()))) {
-				discardBatch(receivedMessageBatchId);
-			} else {
-				return this;
-			}
-		}
-
-		if (batch.isComplete()) {
-			batch.reconstitutePayload();
-
-			this.ongoingBatches.remove(batch.getId());
-			this.completedBatches.put(batch.getId(), batch);
-			
+		if(batch != null && batch.isComplete()){
 			this.notifyBatchCompleted(batch);
 		}
-		this.persistChanges();
 		return this;
 	}
 	
@@ -108,12 +123,14 @@ public class SmsReceiver implements ISmsReceiver {
 	}
 
 	public SmsReceiver discardBatch(String ongoingBatchId, Exception reason) {
-		SmsMessageBatch batch = this.ongoingBatches.get(ongoingBatchId);
-		this.ongoingBatches.remove(ongoingBatchId);
-
-		DiscardedBatchRecord discardedRecord = new DiscardedBatchRecord(batch,
-				reason);
-		this.discardedBatches.put(ongoingBatchId, discardedRecord);
+		synchronized (SEMAPHORE) {
+			
+			SmsMessageBatch batch = this.ongoingBatches.get(ongoingBatchId);
+			this.ongoingBatches.remove(ongoingBatchId);
+	
+			DiscardedBatchRecord discardedRecord = new DiscardedBatchRecord(batch, reason);
+			this.discardedBatches.put(ongoingBatchId, discardedRecord);
+		}
 		return this;
 	}
 
@@ -174,29 +191,60 @@ public class SmsReceiver implements ISmsReceiver {
 		return new ArrayList<DiscardedBatchRecord>(this.discardedBatches.values());
 	}
 
-	public synchronized void initialize() {
+	public void initialize() {
 		if(this.repository != null){
-			List<SmsMessageBatch> incommingCompleted = this.repository.readIncommingCompleted();
-			for (SmsMessageBatch smsMessageBatch : incommingCompleted) {
-				this.completedBatches.put(smsMessageBatch.getId(), smsMessageBatch);
-			}
-	
-			List<SmsMessageBatch> incommingOngoing = this.repository.readIncomming();
-			for (SmsMessageBatch smsMessageBatch : incommingOngoing) {
-				this.ongoingBatches.put(smsMessageBatch.getId(), smsMessageBatch);
-			}
-	
-			List<DiscardedBatchRecord> incoingDiscarded = this.repository.readIncommingDicarded();
-			for (DiscardedBatchRecord discardedBatchRecord : incoingDiscarded) {
-				this.discardedBatches.put(discardedBatchRecord.getMessageBatch().getId(), discardedBatchRecord);
+			synchronized (SEMAPHORE) {
+				
+				List<SmsMessageBatch> incommingCompleted = this.repository.readIncommingCompleted();
+				for (SmsMessageBatch smsMessageBatch : incommingCompleted) {
+					this.completedBatches.put(smsMessageBatch.getId(), smsMessageBatch);
+				}
+		
+				List<SmsMessageBatch> incommingOngoing = this.repository.readIncomming();
+				for (SmsMessageBatch smsMessageBatch : incommingOngoing) {
+					this.ongoingBatches.put(smsMessageBatch.getId(), smsMessageBatch);
+				}
+		
+				List<DiscardedBatchRecord> incoingDiscarded = this.repository.readIncommingDicarded();
+				for (DiscardedBatchRecord discardedBatchRecord : incoingDiscarded) {
+					this.discardedBatches.put(discardedBatchRecord.getMessageBatch().getId(), discardedBatchRecord);
+				}
 			}
 		}
 	}
 
-	
 	private synchronized void persistChanges() {
 		if(this.repository != null){
 			this.repository.write(this.getOngoingBatches(), this.getCompletedBatches(), this.getDiscardedBatches());
+		}
+	}
+
+	@Override
+	public void purgeBatches(String sessionId, int sessionVersion) {
+		synchronized (SEMAPHORE) {
+			
+			List<SmsMessageBatch> items = this.getCompletedBatches();
+			for (SmsMessageBatch smsMessageBatch : items) {
+				if(smsMessageBatch.getSessionId().equals(sessionId)){
+					this.completedBatches.remove(smsMessageBatch.getId());
+				}
+			}
+	
+			items = this.getOngoingBatches();
+			for (SmsMessageBatch smsMessageBatch : items) {
+				if(smsMessageBatch.getSessionId().equals(sessionId)){
+					this.ongoingBatches.remove(smsMessageBatch.getId());
+				}
+			}
+	
+			List<DiscardedBatchRecord> records = this.getDiscardedBatches();
+			for (DiscardedBatchRecord discardedBatchRecord : records) {
+				if(discardedBatchRecord.getSessionId().equals(sessionId)){
+					this.discardedBatches.remove(discardedBatchRecord.getId());
+				}
+			}
+			
+			this.persistChanges();
 		}
 	}
 }

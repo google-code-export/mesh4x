@@ -57,13 +57,13 @@ public class MessageSyncProtocolTests {
 	@Test
 	public void shouldValidMessageReturnsFalseIfMsgHasInvalidMsgType(){
 		MessageSyncProtocol syncProtocol = new MessageSyncProtocol("M", new BeginSyncMessageProcessor(null, null), new CancelSyncMessageProcessor(), new MockSyncSessionRepository(), new ArrayList<IMessageProcessor>());
-		Assert.assertFalse(syncProtocol.isValidMessageProtocol(new Message("J", "a", "a", "a", new SmsEndpoint("a"))));
+		Assert.assertFalse(syncProtocol.isValidMessageProtocol(new Message("J", "a", "a", 0, "a", new SmsEndpoint("a"))));
 	}
 
 	@Test
 	public void shouldProcessMsgReturnsNoResponseWhenSessionIsNotNullAndMsgTypeIsNotInitialMsg(){
 		MessageSyncProtocol syncProtocol = new MessageSyncProtocol("M", new BeginSyncMessageProcessor(null, null), new CancelSyncMessageProcessor(), new MockSyncSessionRepository(), new ArrayList<IMessageProcessor>());
-		Assert.assertEquals(IMessageSyncProtocol.NO_RESPONSE, syncProtocol.processMessage(new Message("J", "a", "a", "a", new SmsEndpoint("a"))));	
+		Assert.assertEquals(IMessageSyncProtocol.NO_RESPONSE, syncProtocol.processMessage(new Message("J", "a", "a", 0, "a", new SmsEndpoint("a"))));	
 	}
 	
 	@Test(expected=MeshException.class)
@@ -71,7 +71,7 @@ public class MessageSyncProtocolTests {
 		SyncSessionFactory syncSessionFactory = new SyncSessionFactory();
 		syncSessionFactory.registerSource(new InMemoryMessageSyncAdapter("123"));
 		
-		syncSessionFactory.createSession("a", "123", "123", true, true, new Date(), new ArrayList<Item>(), new ArrayList<Item>(), new ArrayList<String>(), new ArrayList<String>());
+		syncSessionFactory.createSession("a", 0, "123", "123", true, true, new Date(), new ArrayList<Item>(), new ArrayList<Item>(), new ArrayList<String>(), new ArrayList<String>());
 		
 		MessageSyncProtocol syncProtocol = new MessageSyncProtocol("M", new BeginSyncMessageProcessor(null, null), new CancelSyncMessageProcessor(), new MockSyncSessionRepository(syncSessionFactory), new ArrayList<IMessageProcessor>());
 		syncProtocol.beginSync("123", new SmsEndpoint("123"), true);
@@ -88,7 +88,7 @@ public class MessageSyncProtocolTests {
 	public void shouldProcessMessageReturnNoResponseWhenSourceIDIsNotRegistered(){
 		SyncSessionFactory syncSessionFactory = new SyncSessionFactory();
 		MessageSyncProtocol syncProtocol = new MessageSyncProtocol("M", new BeginSyncMessageProcessor(null, null), new CancelSyncMessageProcessor(), new MockSyncSessionRepository(syncSessionFactory), new ArrayList<IMessageProcessor>());
-		Assert.assertEquals(IMessageSyncProtocol.NO_RESPONSE, syncProtocol.processMessage(new Message("M", "1", "1", "a", new SmsEndpoint("sms:1"))));
+		Assert.assertEquals(IMessageSyncProtocol.NO_RESPONSE, syncProtocol.processMessage(new Message("M", "1", "1", 0, "a", new SmsEndpoint("sms:1"))));
 	}
 	
 	@Test(expected=MeshException.class)
@@ -105,7 +105,7 @@ public class MessageSyncProtocolTests {
 		SyncSessionFactory syncSessionFactory = new SyncSessionFactory();
 		syncSessionFactory.registerSource(new InMemoryMessageSyncAdapter("123"));
 		
-		ISyncSession syncSession = syncSessionFactory.createSession("a", "123", "123", true, true, new Date(), new ArrayList<Item>(), new ArrayList<Item>(), new ArrayList<String>(), new ArrayList<String>());
+		ISyncSession syncSession = syncSessionFactory.createSession("a", 0, "123", "123", true, true, new Date(), new ArrayList<Item>(), new ArrayList<Item>(), new ArrayList<String>(), new ArrayList<String>());
 		syncSession.endSync(new Date());
 		
 		MessageSyncProtocol syncProtocol = new MessageSyncProtocol("M", new BeginSyncMessageProcessor(null, null), new CancelSyncMessageProcessor(), new MockSyncSessionRepository(syncSessionFactory), new ArrayList<IMessageProcessor>());
@@ -117,7 +117,7 @@ public class MessageSyncProtocolTests {
 		SyncSessionFactory syncSessionFactory = new SyncSessionFactory();
 		syncSessionFactory.registerSource(new InMemoryMessageSyncAdapter("123"));
 		
-		ISyncSession syncSession = syncSessionFactory.createSession("a", "123", "123", true, true, new Date(), new ArrayList<Item>(), new ArrayList<Item>(), new ArrayList<String>(), new ArrayList<String>());
+		ISyncSession syncSession = syncSessionFactory.createSession("a", 0, "123", "123", true, true, new Date(), new ArrayList<Item>(), new ArrayList<Item>(), new ArrayList<String>(), new ArrayList<String>());
 		
 		MessageSyncProtocol syncProtocol = new MessageSyncProtocol("M", new BeginSyncMessageProcessor(null, null), new CancelSyncMessageProcessor(), new MockSyncSessionRepository(syncSessionFactory), new ArrayList<IMessageProcessor>());
 		syncProtocol.cancelSync("123", new SmsEndpoint("123"));

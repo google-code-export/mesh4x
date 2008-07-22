@@ -13,43 +13,43 @@ public class SyncSessionFactoryTests {
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateSessionFailsWhenTargetIsNull(){
 		SyncSessionFactory factory = new SyncSessionFactory();
-		factory.createSession("1", "123", null, true);
+		factory.createSession("1", 0, "123", null, true);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateSessionFailsWhenSessionIsNull(){
 		SyncSessionFactory factory = new SyncSessionFactory();
-		factory.createSession(null, "123", new SmsEndpoint("123"), true);		
+		factory.createSession(null, 0, "123", new SmsEndpoint("123"), true);		
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateSessionFailsWhenSessionIsEmpty(){
 		SyncSessionFactory factory = new SyncSessionFactory();
-		factory.createSession("", "123", new SmsEndpoint("123"), true);
+		factory.createSession("", 0, "123", new SmsEndpoint("123"), true);
 	}
 
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateSessionFailsWhenSourceIDIsNull(){
 		SyncSessionFactory factory = new SyncSessionFactory();
-		factory.createSession("1", null, new SmsEndpoint("123"), true);
+		factory.createSession("1", 0, null, new SmsEndpoint("123"), true);
 	}
 
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateSessionFailsWhenSourceIDIsEmpty(){
 		SyncSessionFactory factory = new SyncSessionFactory();
-		factory.createSession("1", "", new SmsEndpoint("123"), true);
+		factory.createSession("1", 0, "", new SmsEndpoint("123"), true);
 	}
 
 	@Test
 	public void shouldCreateSessionReturnsNullWhenSourceIDDoesNotRegistered(){
 		SyncSessionFactory factory = new SyncSessionFactory();
-		Assert.assertNull(factory.createSession("1", "123", new SmsEndpoint("123"), true));
+		Assert.assertNull(factory.createSession("1", 0, "123", new SmsEndpoint("123"), true));
 	}
 	
 	@Test
 	public void shouldBasicCreateSessionReturnsNullWhenSourceIDDoesNotRegistered(){
 		SyncSessionFactory factory = new SyncSessionFactory();
-		Assert.assertNull(factory.createSession("1", "123", null, true, true, null, null, null, null,null));
+		Assert.assertNull(factory.createSession("1", 0, "123", null, true, true, null, null, null, null,null));
 	}
 
 
@@ -62,10 +62,11 @@ public class SyncSessionFactoryTests {
 		SyncSessionFactory factory = new SyncSessionFactory();
 		factory.registerSource(new InMemoryMessageSyncAdapter(sourceID));
 		
-		ISyncSession syncSession = factory.createSession(sessionID, sourceID, endpoint, true);
+		ISyncSession syncSession = factory.createSession(sessionID, 0, sourceID, endpoint, true);
 		Assert.assertNotNull(syncSession);
 		Assert.assertNull(syncSession.getLastSyncDate());
 		Assert.assertEquals(sessionID, syncSession.getSessionId());
+		Assert.assertEquals(0, syncSession.getVersion());
 		Assert.assertEquals(0, syncSession.getSnapshot().size());
 		Assert.assertEquals(sourceID, syncSession.getSourceId());
 		Assert.assertEquals(endpoint, syncSession.getTarget());

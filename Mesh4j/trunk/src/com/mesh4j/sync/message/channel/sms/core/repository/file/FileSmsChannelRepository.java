@@ -49,18 +49,7 @@ public class FileSmsChannelRepository implements ISmsSenderRepository, ISmsRecei
 	
 	public void writeOutcomming(List<SmsMessageBatch> outcomming){
 		File file = this.getOutcommingFile();
-		this.writeOutcomming(outcomming, file);
-	}
-	
-	public void writeOutcomming(List<SmsMessageBatch> outcomming, File file){
-		Document document = getDocument(file);
-		this.writeOutcomming(outcomming, document);
-		XMLHelper.write(document, file);
-	}
-
-	public void writeOutcomming(List<SmsMessageBatch> outcomming, Document document){
-		Element root = this.getRootElement(document);
-		this.write(outcomming, root, SmsMessageBatchFormatter.ELEMENT_OUTCOMMING);
+		this.writeOutcomming(outcomming, file, SmsMessageBatchFormatter.ELEMENT_OUTCOMMING);
 	}
 	
 	public void writeIncomming(List<SmsMessageBatch> incomming){
@@ -237,25 +226,7 @@ public class FileSmsChannelRepository implements ISmsSenderRepository, ISmsRecei
 	
 	public List<SmsMessageBatch> readOutcomming(){
 		File file = getOutcommingFile();
-		return readOutcomming(file);
-	}
-	
-	public List<SmsMessageBatch> readOutcomming(File file){
-		try {
-			if(!file.exists()){
-				return new ArrayList<SmsMessageBatch>();
-			}else {
-				Document document= XMLHelper.readDocument(file);
-				return readOutcomming(document);
-			}
-		} catch (DocumentException e) {
-			throw new MeshException(e);
-		}
-	}
-	
-	public List<SmsMessageBatch> readOutcomming(Document document){		
-		Element outcommingElement = document.getRootElement().element(SmsMessageBatchFormatter.ELEMENT_OUTCOMMING);
-		return this.read(outcommingElement);
+		return readOutcomming(file, SmsMessageBatchFormatter.ELEMENT_OUTCOMMING);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -295,5 +266,46 @@ public class FileSmsChannelRepository implements ISmsSenderRepository, ISmsRecei
 		this.writeIncommingDiscarded(discarded, document);
 		
 		XMLHelper.write(document, file);
+	}
+
+	@Override
+	public List<SmsMessageBatch> readOutcommingCompleted(){
+		File file = getOutcommingFile();
+		return readOutcomming(file, SmsMessageBatchFormatter.ELEMENT_OUTCOMMING_COMPLETED);
+	}
+	
+	public List<SmsMessageBatch> readOutcomming(File file, String elementName){
+		try {
+			if(!file.exists()){
+				return new ArrayList<SmsMessageBatch>();
+			}else {
+				Document document= XMLHelper.readDocument(file);
+				return readOutcomming(document, elementName);
+			}
+		} catch (DocumentException e) {
+			throw new MeshException(e);
+		}
+	}
+	
+	public List<SmsMessageBatch> readOutcomming(Document document, String elementName){		
+		Element outcommingElement = document.getRootElement().element(elementName);
+		return this.read(outcommingElement);
+	}
+	
+	@Override
+	public void writeOutcommingCompleted(List<SmsMessageBatch> outcomming) {
+		File file = this.getOutcommingFile();
+		this.writeOutcomming(outcomming, file, SmsMessageBatchFormatter.ELEMENT_OUTCOMMING_COMPLETED);		
+	}
+	
+	public void writeOutcomming(List<SmsMessageBatch> outcomming, File file, String elementName){
+		Document document = getDocument(file);
+		this.writeOutcomming(outcomming, document, elementName);
+		XMLHelper.write(document, file);
+	}
+
+	public void writeOutcomming(List<SmsMessageBatch> outcomming, Document document, String elementName){
+		Element root = this.getRootElement(document);
+		this.write(outcomming, root, elementName);
 	}
 }

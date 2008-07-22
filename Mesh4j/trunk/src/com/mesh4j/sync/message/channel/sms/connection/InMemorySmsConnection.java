@@ -1,8 +1,11 @@
 package com.mesh4j.sync.message.channel.sms.connection;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.mesh4j.sync.message.channel.sms.ISmsConnection;
 import com.mesh4j.sync.message.channel.sms.ISmsReceiver;
@@ -17,9 +20,9 @@ public class InMemorySmsConnection implements ISmsConnection, IRefreshTask{
 	private final static Object SEMAPHORE = new Object();
 	
 	// MODEL VARIABLES
-	private List<String> messages = new ArrayList<String>();
+	private Map<String, List<String>> messages = Collections.synchronizedMap(new HashMap<String, List<String>>());
 	private ISmsReceiver messageReceiver;
-	private InMemorySmsConnection endpointConnection;
+	private Map<String, InMemorySmsConnection> endpointConnections = Collections.synchronizedMap(new HashMap<String, InMemorySmsConnection>());
 	private SmsEndpoint endpoint;
 	private int maxMessageLenght = 140;
 	private IMessageEncoding messageEncoding;
@@ -27,14 +30,16 @@ public class InMemorySmsConnection implements ISmsConnection, IRefreshTask{
 	private int channelDelay = 300;
 	
 	// BUSINESS METHODS
-	public InMemorySmsConnection(IMessageEncoding messageEncoding, int maxMessageLenght, int readDelay){
-		this(messageEncoding, maxMessageLenght, readDelay, 300);
+	public InMemorySmsConnection(IMessageEncoding messageEncoding, int maxMessageLenght, int readDelay, SmsEndpoint endpoint){
+		this(messageEncoding, maxMessageLenght, readDelay, endpoint, 300);
 	}
 	
-	public InMemorySmsConnection(IMessageEncoding messageEncoding, int maxMessageLenght, int readDelay, int channelDelay){
+	public InMemorySmsConnection(IMessageEncoding messageEncoding, int maxMessageLenght, int readDelay, SmsEndpoint endpoint, int channelDelay){
 		this.maxMessageLenght = maxMessageLenght;
 		this.messageEncoding = messageEncoding;
 		this.channelDelay = channelDelay;
+		this.endpoint = endpoint;
+		
 		if(readDelay > 0){
 			TimerScheduler.INSTANCE.schedule(new RefreshSchedulerTimerTask(this), readDelay);
 		} else {
@@ -64,21 +69,28 @@ public class InMemorySmsConnection implements ISmsConnection, IRefreshTask{
 				this.smsConnectionInboundOutboundNotification.notifySendMessage(endpoint.getEndpointId(), msg);
 			}
 		}
-		this.endpointConnection.receive(msgs, this.endpoint);
+		
+		InMemorySmsConnection endpointConnection = this.endpointConnections.get(endpoint.getEndpointId());
+		endpointConnection.receive(msgs, this.endpoint);
 	}
 
 	@Override
 	public void refresh() {
 		synchronized (SEMAPHORE) {
-			for (String msg : this.messages) {
-				this.sleep(this.channelDelay);
-				Date date = new Date();
-				if(this.smsConnectionInboundOutboundNotification != null){
-					this.smsConnectionInboundOutboundNotification.notifyReceiveMessage(this.endpointConnection.getEndpoint().getEndpointId(), msg, date);
+			for (String endpointId : this.messages.keySet()) {
+				List<String> localMsgs = this.messages.get(endpointId);
+				if(localMsgs != null){
+					for (String msg : localMsgs) {
+						this.sleep(this.channelDelay);
+						Date date = new Date();
+						if(this.smsConnectionInboundOutboundNotification != null){
+							this.smsConnectionInboundOutboundNotification.notifyReceiveMessage(endpointId, msg, date);
+						}
+						this.messageReceiver.receiveSms(new SmsEndpoint(endpointId), msg, date);			
+					}
+					this.messages.put(endpointId, new ArrayList<String>());
 				}
-				this.messageReceiver.receiveSms(this.endpointConnection.getEndpoint(), msg, date);			
 			}
-			this.messages = new ArrayList<String>();
 		}
 	}
 
@@ -97,20 +109,19 @@ public class InMemorySmsConnection implements ISmsConnection, IRefreshTask{
 		return endpoint;
 	}
 
-	public void setEndpoint(SmsEndpoint endpoint) {
-		this.endpoint = endpoint;
-	}
-	
 	public void receive(List<String> msgs, SmsEndpoint endpoint) {
 		synchronized (SEMAPHORE) {
-			for (String msg : msgs) {
-				this.messages.add(msg);
+			List<String> localMsgs = this.messages.get(endpoint.getEndpointId());
+			if(localMsgs == null){
+				localMsgs = new ArrayList<String>();
+				this.messages.put(endpoint.getEndpointId(), localMsgs);
 			}
+			localMsgs.addAll(msgs);
 		}		
 	}
 
-	public void setEndpointConnection(InMemorySmsConnection endpointConnection) {
-		this.endpointConnection = endpointConnection; 
+	public void addEndpointConnection(InMemorySmsConnection endpointConnection) {
+		this.endpointConnections.put(endpointConnection.getEndpoint().getEndpointId(), endpointConnection); 
 	}
 
 	public void setSmsConnectionOutboundNotification(ISmsConnectionInboundOutboundNotification smsConnectionOutboundNotification) {

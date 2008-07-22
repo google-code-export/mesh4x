@@ -19,4 +19,6 @@ public interface ISmsSender {
 
 	SmsMessageBatch getOngoingBatch(String batchID);
 
+	void purgeBatches(String sessionId, int sessionVersion);
+
 }

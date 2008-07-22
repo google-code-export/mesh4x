@@ -42,7 +42,7 @@ public class NoChangesMessageProcessorTests {
 		syncSession.setOpen();
 		
 		NoChangesMessageProcessor ncp = new NoChangesMessageProcessor(null, null);
-		Message message = new Message("a", "a", syncSession.getSessionId(), "", syncSession.getTarget());
+		Message message = new Message("a", "a", syncSession.getSessionId(), 0, "", syncSession.getTarget());
 		List<IMessage> messages = ncp.process(syncSession, message);
 		Assert.assertEquals(IMessageSyncProtocol.NO_RESPONSE, messages);
 	}
@@ -52,7 +52,7 @@ public class NoChangesMessageProcessorTests {
 		MockSyncSession syncSession = new MockSyncSession(null);
 		
 		NoChangesMessageProcessor ncp = new NoChangesMessageProcessor(null, null);
-		Message message = new Message("a", ncp.getMessageType(), syncSession.getSessionId(), "", syncSession.getTarget());
+		Message message = new Message("a", ncp.getMessageType(), syncSession.getSessionId(), 0, "", syncSession.getTarget());
 		List<IMessage> messages = ncp.process(syncSession, message);
 		Assert.assertEquals(IMessageSyncProtocol.NO_RESPONSE, messages);	
 	}
@@ -65,7 +65,7 @@ public class NoChangesMessageProcessorTests {
 		MergeWithACKMessageProcessor merge = new MergeWithACKMessageProcessor(new ItemEncoding(100), null);
 		EndSyncMessageProcessor end =  new EndSyncMessageProcessor(null);
 		NoChangesMessageProcessor ncp = new NoChangesMessageProcessor(end, merge);
-		Message message = new Message("a", ncp.getMessageType(), syncSession.getSessionId(), "", syncSession.getTarget());
+		Message message = new Message("a", ncp.getMessageType(), syncSession.getSessionId(), 0, "", syncSession.getTarget());
 		List<IMessage> messages = ncp.process(syncSession, message);
 		Assert.assertEquals(1, messages.size());
 		
@@ -87,7 +87,7 @@ public class NoChangesMessageProcessorTests {
 		MergeWithACKMessageProcessor merge = new MergeWithACKMessageProcessor(new ItemEncoding(100), null);
 		EndSyncMessageProcessor end =  new EndSyncMessageProcessor(null);
 		NoChangesMessageProcessor ncp = new NoChangesMessageProcessor(end, merge);
-		Message message = new Message("a", ncp.getMessageType(), syncSession.getSessionId(), "", syncSession.getTarget());
+		Message message = new Message("a", ncp.getMessageType(), syncSession.getSessionId(), 0, "", syncSession.getTarget());
 		List<IMessage> messages = ncp.process(syncSession, message);
 		Assert.assertEquals(1, messages.size());
 		

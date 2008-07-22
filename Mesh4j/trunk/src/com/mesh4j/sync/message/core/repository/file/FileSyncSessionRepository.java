@@ -45,6 +45,7 @@ public class FileSyncSessionRepository implements ISyncSessionRepository{
 	public static final String ATTRIBUTE_ENDPOINT_ID = "endpointId";
 	public static final String ATTRIBUTE_SOURCE_ID = "sourceId";
 	public static final String ATTRIBUTE_SESSION_ID = "sessionId";
+	public static final String ATTRIBUTE_VERSION = "sessionVersion";
 
 	public final static String ELEMENT_SYNC_SESSION = "session";
 	public final static String ELEMENT_ACK = "ack";
@@ -230,6 +231,7 @@ public class FileSyncSessionRepository implements ISyncSessionRepository{
 		
 		Element elementSession = payload.addElement(ELEMENT_SYNC_SESSION);
 		elementSession.addAttribute(ATTRIBUTE_SESSION_ID, syncSession.getSessionId());
+		elementSession.addAttribute(ATTRIBUTE_VERSION, String.valueOf(syncSession.getVersion()));
 		elementSession.addAttribute(ATTRIBUTE_SOURCE_ID, syncSession.getSourceId());
 		elementSession.addAttribute(ATTRIBUTE_ENDPOINT_ID, syncSession.getTarget().getEndpointId());
 		elementSession.addAttribute(ATTRIBUTE_LAST_SYNC_DATE, syncSession.getLastSyncDate() == null ? "" : DateHelper.formatRFC822(syncSession.getLastSyncDate()));
@@ -257,6 +259,7 @@ public class FileSyncSessionRepository implements ISyncSessionRepository{
 	private ISyncSession createSyncSession(Element payload, List<Item> currentSyncSnapshot, List<Item> lastSyncSnapshot) {
 		Element syncElement = payload.element(ELEMENT_SYNC_SESSION);
 		String sessionId = syncElement.attributeValue(ATTRIBUTE_SESSION_ID);
+		int version = Integer.valueOf(syncElement.attributeValue(ATTRIBUTE_VERSION));
 		String sourceId = syncElement.attributeValue(ATTRIBUTE_SOURCE_ID);
 		String endpointId = syncElement.attributeValue(ATTRIBUTE_ENDPOINT_ID);
 		String dateAsString = syncElement.attributeValue(ATTRIBUTE_LAST_SYNC_DATE);
@@ -276,13 +279,13 @@ public class FileSyncSessionRepository implements ISyncSessionRepository{
 			conflicts.add(conflictElement.getText());
 		}
 		
-		ISyncSession syncSession = this.sessionFactory.createSession(sessionId, sourceId, endpointId, isFull, isOpen, date, currentSyncSnapshot, lastSyncSnapshot, conflicts, acks);
+		ISyncSession syncSession = this.sessionFactory.createSession(sessionId, version, sourceId, endpointId, isFull, isOpen, date, currentSyncSnapshot, lastSyncSnapshot, conflicts, acks);
 		return syncSession;
 	}
 	
 	@Override
-	public ISyncSession createSession(String sessionID, String sourceId, IEndpoint target, boolean fullProtocol) {
-		return this.sessionFactory.createSession(sessionID, sourceId, target, fullProtocol);
+	public ISyncSession createSession(String sessionID, int version, String sourceId, IEndpoint target, boolean fullProtocol) {
+		return this.sessionFactory.createSession(sessionID, version, sourceId, target, fullProtocol);
 	}
 
 	@Override

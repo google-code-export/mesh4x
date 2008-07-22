@@ -20,4 +20,6 @@ public interface ISmsReceiver {
 
 	List<DiscardedBatchRecord> getDiscardedBatches();
 
+	void purgeBatches(String sessionId, int sessionVersion);
+
 }

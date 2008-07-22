@@ -124,7 +124,7 @@ public class MergeMessageProcessorTests {
 		syncSession.setOpen();
 		
 		MergeMessageProcessor p = new MergeMessageProcessor(null, null);
-		Message message = new Message("a", "a", syncSession.getSessionId(), "", syncSession.getTarget());
+		Message message = new Message("a", "a", syncSession.getSessionId(), 0, "", syncSession.getTarget());
 		List<IMessage> messages = p.process(syncSession, message);
 		Assert.assertEquals(IMessageSyncProtocol.NO_RESPONSE, messages);
 	}
@@ -134,7 +134,7 @@ public class MergeMessageProcessorTests {
 		MockSyncSession syncSession = new MockSyncSession(null);
 		
 		MergeMessageProcessor p = new MergeMessageProcessor(null, null);
-		Message message = new Message("a", p.getMessageType(), syncSession.getSessionId(), "", syncSession.getTarget());
+		Message message = new Message("a", p.getMessageType(), syncSession.getSessionId(), 0, "", syncSession.getTarget());
 		List<IMessage> messages = p.process(syncSession, message);
 		Assert.assertEquals(IMessageSyncProtocol.NO_RESPONSE, messages);
 	}
@@ -151,7 +151,7 @@ public class MergeMessageProcessorTests {
 		
 		EndSyncMessageProcessor end = new EndSyncMessageProcessor(null);
 		MergeMessageProcessor p = new MergeMessageProcessor(new MockItemEncoding(itemChanged), end);
-		Message message = new Message("a", p.getMessageType(), syncSession.getSessionId(), "", syncSession.getTarget());
+		Message message = new Message("a", p.getMessageType(), syncSession.getSessionId(), 0, "", syncSession.getTarget());
 		List<IMessage> messages = p.process(syncSession, message);
 		Assert.assertEquals(1, messages.size());
 		
@@ -180,7 +180,7 @@ public class MergeMessageProcessorTests {
 		
 		EndSyncMessageProcessor end = new EndSyncMessageProcessor(null);
 		MergeMessageProcessor p = new MergeMessageProcessor(new MockItemEncoding(itemChanged), end);
-		Message message = new Message("a", p.getMessageType(), syncSession.getSessionId(), "", syncSession.getTarget());
+		Message message = new Message("a", p.getMessageType(), syncSession.getSessionId(), 0, "", syncSession.getTarget());
 		List<IMessage> messages = p.process(syncSession, message);
 		Assert.assertEquals(IMessageSyncProtocol.NO_RESPONSE, messages);
 		Assert.assertFalse(syncSession.hasConflict("1"));
@@ -199,7 +199,7 @@ public class MergeMessageProcessorTests {
 		
 		EndSyncMessageProcessor end = new EndSyncMessageProcessor(null);
 		MergeMessageProcessor p = new MergeMessageProcessor(new MockItemEncoding(itemChanged), end);
-		Message message = new Message("a", p.getMessageType(), syncSession.getSessionId(), "", syncSession.getTarget());
+		Message message = new Message("a", p.getMessageType(), syncSession.getSessionId(), 0, "", syncSession.getTarget());
 		List<IMessage> messages = p.process(syncSession, message);
 		Assert.assertEquals(1, messages.size());
 		

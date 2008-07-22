@@ -31,7 +31,7 @@ public class NoChangesMessageProcessor implements IMessageProcessor {
 
 	@Override
 	public List<IMessage> process(ISyncSession syncSession, IMessage message) {
-		if(syncSession.isOpen() && this.getMessageType().equals(message.getMessageType())){
+		if(syncSession.isOpen() && syncSession.getVersion() == message.getSessionVersion() && this.getMessageType().equals(message.getMessageType())){
 			List<IMessage> response = this.processLocalChanges(syncSession);
 			if(response.isEmpty()){
 				response.add(this.endMessage.createMessage(syncSession));
@@ -59,6 +59,7 @@ public class NoChangesMessageProcessor implements IMessageProcessor {
 				IProtocolConstants.PROTOCOL,
 				getMessageType(),
 				syncSession.getSessionId(),
+				syncSession.getVersion(),
 				"",
 				syncSession.getTarget());
 	}

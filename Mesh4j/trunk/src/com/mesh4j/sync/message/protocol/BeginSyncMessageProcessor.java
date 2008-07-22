@@ -38,12 +38,12 @@ public class BeginSyncMessageProcessor implements IMessageProcessor, IBeginSyncM
 	public IMessage createMessage(ISyncSession syncSession){
 		Guard.argumentNotNull(syncSession, "syncSession");
 		
-		syncSession.beginSync();
 		String data = encode(syncSession);			
 		return new Message(
 				IProtocolConstants.PROTOCOL,
 				getMessageType(),
 				syncSession.getSessionId(),
+				syncSession.getVersion(),
 				data,
 				syncSession.getTarget());
 	}
@@ -52,9 +52,9 @@ public class BeginSyncMessageProcessor implements IMessageProcessor, IBeginSyncM
 	public List<IMessage> process(ISyncSession syncSession, IMessage message) {
 		
 		if(!syncSession.isOpen() && this.getMessageType().equals(message.getMessageType())){
-					
+			
 			Date sinceDate = decodeSyncDate(message.getData());
-			syncSession.beginSync(sinceDate);
+			syncSession.beginSync(sinceDate, message.getSessionVersion());
 			
 			if(this.messageSyncProtocol != null){
 				this.messageSyncProtocol.notifyBeginSync(syncSession);

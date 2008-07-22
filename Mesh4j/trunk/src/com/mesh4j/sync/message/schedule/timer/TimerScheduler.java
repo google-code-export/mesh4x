@@ -1,6 +1,8 @@
 package com.mesh4j.sync.message.schedule.timer;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Timer;
 
 import com.mesh4j.sync.message.schedule.IScheduler;
@@ -11,7 +13,7 @@ public class TimerScheduler implements IScheduler<ScheduleTimerTask>{
 	
 	// MODEL VARIABLES
 	private Timer timer;
-	private ArrayList<ScheduleTimerTask> tasks = new ArrayList<ScheduleTimerTask>();
+	private List<ScheduleTimerTask> tasks = Collections.synchronizedList(new ArrayList<ScheduleTimerTask>());
 
 	// BUSINESS METHODS
 	private TimerScheduler(){

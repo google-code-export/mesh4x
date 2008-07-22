@@ -18,6 +18,7 @@ public class SyncSession implements ISyncSession{
 
 	// MODEL VARIABLES
 	private String sessionId;
+	private int version = 0;
 	private IMessageSyncAdapter syncAdapter;
 	private IEndpoint target;
 	private Date lastSyncDate;
@@ -29,12 +30,13 @@ public class SyncSession implements ISyncSession{
 	private boolean fullProtocol = false;
 
 	// METHODS
-	public SyncSession(String sessionId, IMessageSyncAdapter syncAdapter, IEndpoint target, boolean fullProtocol) {
+	public SyncSession(String sessionId, int version, IMessageSyncAdapter syncAdapter, IEndpoint target, boolean fullProtocol) {
 		Guard.argumentNotNullOrEmptyString(sessionId, "sessionId");
 		Guard.argumentNotNull(syncAdapter, "syncAdapter");
 		Guard.argumentNotNull(target, "target");
 		
 		this.sessionId = sessionId;
+		this.version = version;
 		this.syncAdapter = syncAdapter;
 		this.target = target;
 		this.fullProtocol = fullProtocol;
@@ -117,13 +119,19 @@ public class SyncSession implements ISyncSession{
 	}
 
 	@Override
-	public void beginSync(Date sinceDate){
+	public void beginSync(Date sinceDate, int version){
 		this.lastSyncDate = sinceDate;
-		beginSync();
+		this.beginSync(version);
 	}
 
 	@Override
 	public void beginSync(){
+		this.beginSync(this.version +1);
+	}
+	
+	
+	private void beginSync(int version){
+		this.version = version;
 		this.open = true;
 		this.conflicts = new HashMap<String, Item>();
 		this.acks = new ArrayList<String>();
@@ -180,6 +188,11 @@ public class SyncSession implements ISyncSession{
 		return sessionId;
 	}
 
+	@Override
+	public int getVersion() {
+		return version;
+	}
+	
 	@Override
 	public List<Item> getSnapshot() {
 		return this.snapshot;

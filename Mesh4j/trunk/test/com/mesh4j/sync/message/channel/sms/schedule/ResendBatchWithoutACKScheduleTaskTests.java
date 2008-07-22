@@ -12,6 +12,7 @@ import com.mesh4j.sync.message.channel.sms.batch.SmsMessageBatch;
 import com.mesh4j.sync.message.channel.sms.core.MockSmsChannel;
 import com.mesh4j.sync.message.schedule.timer.TimerScheduler;
 import com.mesh4j.sync.test.utils.TestHelper;
+import com.mesh4j.sync.utils.IdGenerator;
 
 public class ResendBatchWithoutACKScheduleTaskTests {
 	
@@ -72,7 +73,7 @@ public class ResendBatchWithoutACKScheduleTaskTests {
 	public SmsMessageBatch createTestBatch(int msgSize, String originalText, Date date)
 	{
 		MessageBatchFactory factory = new MessageBatchFactory(msgSize);
-		SmsMessageBatch batch = factory.createMessageBatch(new SmsEndpoint("1234"), "M", "12345", originalText);
+		SmsMessageBatch batch = factory.createMessageBatch(IdGenerator.newID(), new SmsEndpoint("1234"), "M", "12345", originalText);
 		for (SmsMessage message : batch.getMessages()) {
 			message.setLastModificationDate(date);
 		}

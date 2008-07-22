@@ -2,9 +2,11 @@ package com.mesh4j.sync.message.core.repository;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.mesh4j.sync.adapters.dom.DOMAdapter;
 import com.mesh4j.sync.adapters.kml.KMLDOMLoaderFactory;
@@ -12,6 +14,7 @@ import com.mesh4j.sync.message.IEndpoint;
 import com.mesh4j.sync.message.IMessageSyncAdapter;
 import com.mesh4j.sync.message.ISyncSession;
 import com.mesh4j.sync.message.channel.sms.SmsEndpoint;
+import com.mesh4j.sync.message.core.InMemoryMessageSyncAdapter;
 import com.mesh4j.sync.message.core.MessageSyncAdapter;
 import com.mesh4j.sync.message.core.SyncSession;
 import com.mesh4j.sync.model.Item;
@@ -22,10 +25,11 @@ import com.mesh4j.sync.validations.Guard;
 public class SyncSessionFactory implements ISyncSessionFactory {
 
 	// MODEL VARIABLES
-	private HashMap<String, SyncSession> sessions = new HashMap<String, SyncSession>();
-	private HashMap<String, IMessageSyncAdapter> adapters = new HashMap<String, IMessageSyncAdapter>();
+	private Map<String, SyncSession> sessions = Collections.synchronizedMap(new HashMap<String, SyncSession>());
+	private Map<String, IMessageSyncAdapter> adapters = Collections.synchronizedMap(new HashMap<String, IMessageSyncAdapter>());
 	private String baseDirectory = "";
 	private IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
+	private boolean supportInMemoryAdapter = false;
 	
 	// BUSINESS METHODS
 	public SyncSessionFactory(){
@@ -56,8 +60,13 @@ public class SyncSessionFactory implements ISyncSessionFactory {
 			DOMAdapter kmlAdapter = new DOMAdapter(KMLDOMLoaderFactory.createDOMLoader(kmlFileName, this.identityProvider));
 			syncAdapter = new MessageSyncAdapter(sourceId, this.identityProvider, kmlAdapter);
 			return syncAdapter;
+		} else {
+			if(this.supportInMemoryAdapter){
+				return new InMemoryMessageSyncAdapter(sourceId);
+			} else {
+				return null;
+			}
 		}
-		return null;
 	}
 
 	@Override
@@ -93,7 +102,7 @@ public class SyncSessionFactory implements ISyncSessionFactory {
 	}
 
 	@Override
-	public ISyncSession createSession(String sessionId, String sourceId, IEndpoint target, boolean fullProtocol) {
+	public ISyncSession createSession(String sessionId, int version, String sourceId, IEndpoint target, boolean fullProtocol) {
 		Guard.argumentNotNullOrEmptyString(sessionId, "sessionId");
 		Guard.argumentNotNullOrEmptyString(sourceId, "sourceId");
 		Guard.argumentNotNull(target, "target");
@@ -103,13 +112,13 @@ public class SyncSessionFactory implements ISyncSessionFactory {
 			return null;
 		}
 		
-		SyncSession session = new SyncSession(sessionId, syncAdapter, target, fullProtocol);
+		SyncSession session = new SyncSession(sessionId, version, syncAdapter, target, fullProtocol);
 		this.sessions.put(sessionId, session);
 		return session;
 	}
 
 	@Override
-	public ISyncSession createSession(String sessionId, String sourceId,
+	public ISyncSession createSession(String sessionId, int version, String sourceId,
 			String endpointId, boolean fullProtocol, boolean isOpen, Date lastSyncDate,
 			List<Item> currentSyncSnapshot, List<Item> lastSyncSnapshot,
 			List<String> conflicts, List<String> acks) {
@@ -119,7 +128,7 @@ public class SyncSessionFactory implements ISyncSessionFactory {
 			return null;
 		}
 		
-		SyncSession session = new SyncSession(sessionId, syncAdapter, new SmsEndpoint(endpointId), fullProtocol);
+		SyncSession session = new SyncSession(sessionId, version, syncAdapter, new SmsEndpoint(endpointId), fullProtocol);
 		session.setOpen(isOpen);
 		session.setLastSyncDate(lastSyncDate);
 		
@@ -141,5 +150,9 @@ public class SyncSessionFactory implements ISyncSessionFactory {
 		
 		this.sessions.put(sessionId, session);
 		return session;
+	}
+
+	public void setSupportInMemoryAdapter(boolean supportInMemoryAdapter) {
+		this.supportInMemoryAdapter = supportInMemoryAdapter;
 	}
 }

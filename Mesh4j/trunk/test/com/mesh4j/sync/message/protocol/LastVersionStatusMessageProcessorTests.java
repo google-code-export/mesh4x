@@ -85,7 +85,7 @@ public class LastVersionStatusMessageProcessorTests {
 		MockSyncSession syncSession = new MockSyncSession(null);
 		syncSession.setOpen();
 		
-		Message message = new Message("a", "a", "a", "a", null);
+		Message message = new Message("a", "a", "a", 0, "a", null);
 		
 		LastVersionStatusMessageProcessor mp = new LastVersionStatusMessageProcessor(null, null, null);
 		Assert.assertEquals(IMessageSyncProtocol.NO_RESPONSE, mp.process(syncSession, message));		
@@ -99,7 +99,7 @@ public class LastVersionStatusMessageProcessorTests {
 		GetForMergeMessageProcessor get = new GetForMergeMessageProcessor(new ItemEncoding(100), null);
 		LastVersionStatusMessageProcessor mp = new LastVersionStatusMessageProcessor(get, null, null);
 		
-		Message message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), "1~-702666385", syncSession.getTarget());
+		Message message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), 0, "1~-702666385", syncSession.getTarget());
 		List<IMessage> messages = mp.process(syncSession, message);
 		Assert.assertNotNull(messages);
 		Assert.assertEquals(1, messages.size());
@@ -128,7 +128,7 @@ public class LastVersionStatusMessageProcessorTests {
 		EndSyncMessageProcessor end = new EndSyncMessageProcessor(null);
 		LastVersionStatusMessageProcessor mp = new LastVersionStatusMessageProcessor(null, null, end);
 		
-		Message message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), "1~-73244", syncSession.getTarget());
+		Message message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), 0, "1~-73244", syncSession.getTarget());
 		List<IMessage> messages = mp.process(syncSession, message);
 		Assert.assertNotNull(messages);
 		Assert.assertEquals(1, messages.size());
@@ -158,7 +158,7 @@ public class LastVersionStatusMessageProcessorTests {
 		GetForMergeMessageProcessor get = new GetForMergeMessageProcessor(new ItemEncoding(100), null);
 		LastVersionStatusMessageProcessor mp = new LastVersionStatusMessageProcessor(get, null, null);
 		
-		Message message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), "1~-73244", syncSession.getTarget());
+		Message message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), 0, "1~-73244", syncSession.getTarget());
 		List<IMessage> messages = mp.process(syncSession, message);
 		Assert.assertNotNull(messages);
 		Assert.assertEquals(1, messages.size());
@@ -184,7 +184,7 @@ public class LastVersionStatusMessageProcessorTests {
 		EndSyncMessageProcessor end = new EndSyncMessageProcessor(null);
 		LastVersionStatusMessageProcessor mp = new LastVersionStatusMessageProcessor(null, null, end);
 		
-		Message message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), "1~-1269158974~D~jmt~1201834861000", syncSession.getTarget());
+		Message message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), 0, "1~-1269158974~D~jmt~1201834861000", syncSession.getTarget());
 		List<IMessage> messages = mp.process(syncSession, message);
 		Assert.assertNotNull(messages);
 		Assert.assertEquals(1, messages.size());
@@ -213,7 +213,7 @@ public class LastVersionStatusMessageProcessorTests {
 		GetForMergeMessageProcessor get = new GetForMergeMessageProcessor(new ItemEncoding(100), null);
 		LastVersionStatusMessageProcessor mp = new LastVersionStatusMessageProcessor(get, null, null);
 		
-		Message message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), "1~-1269158974~D~jmt~1201834861000", syncSession.getTarget());
+		Message message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), 0, "1~-1269158974~D~jmt~1201834861000", syncSession.getTarget());
 		List<IMessage> messages = mp.process(syncSession, message);
 		Assert.assertNotNull(messages);
 		Assert.assertEquals(1, messages.size());
@@ -239,7 +239,7 @@ public class LastVersionStatusMessageProcessorTests {
 		GetForMergeMessageProcessor get = new GetForMergeMessageProcessor(new ItemEncoding(100), null);
 		LastVersionStatusMessageProcessor mp = new LastVersionStatusMessageProcessor(get, null, null);
 		
-		Message message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), "1~-1269158955", syncSession.getTarget());
+		Message message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), 0, "1~-1269158955", syncSession.getTarget());
 		List<IMessage> messages = mp.process(syncSession, message);
 		Assert.assertNotNull(messages);
 		Assert.assertEquals(1, messages.size());
@@ -266,7 +266,7 @@ public class LastVersionStatusMessageProcessorTests {
 		MergeWithACKMessageProcessor merge = new MergeWithACKMessageProcessor(new ItemEncoding(100), null);
 		LastVersionStatusMessageProcessor mp = new LastVersionStatusMessageProcessor(null, merge, null);
 		
-		Message message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), "1~-1269158974~D~jmt~1201834861000", syncSession.getTarget());
+		Message message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), 0, "1~-1269158974~D~jmt~1201834861000", syncSession.getTarget());
 		List<IMessage> messages = mp.process(syncSession, message);
 		Assert.assertNotNull(messages);
 		Assert.assertEquals(1, messages.size());

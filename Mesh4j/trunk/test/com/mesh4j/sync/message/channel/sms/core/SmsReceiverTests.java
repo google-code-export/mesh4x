@@ -11,19 +11,20 @@ import com.mesh4j.sync.message.channel.sms.batch.MessageBatchFactory;
 import com.mesh4j.sync.message.channel.sms.batch.SmsMessage;
 import com.mesh4j.sync.message.channel.sms.batch.SmsMessageBatch;
 import com.mesh4j.sync.test.utils.TestHelper;
+import com.mesh4j.sync.utils.IdGenerator;
 
 public class SmsReceiverTests {
 	
 	public SmsMessageBatch createTestBatch(int originalTextlength)
 	{
 		MessageBatchFactory factory = new MessageBatchFactory();
-		return factory.createMessageBatch(new SmsEndpoint("1234"), "M", "12345", TestHelper.newText(originalTextlength));
+		return factory.createMessageBatch(IdGenerator.newID(), new SmsEndpoint("1234"), "M", "12345", TestHelper.newText(originalTextlength));
 	}
 	
 	public SmsMessageBatch createTestBatch(int msgSize, String originalText)
 	{
 		MessageBatchFactory factory = new MessageBatchFactory(msgSize);
-		return factory.createMessageBatch(new SmsEndpoint("1234"), "M", "12345", originalText);
+		return factory.createMessageBatch(IdGenerator.newID(), new SmsEndpoint("1234"), "M", "12345", originalText);
 	}
 
 	@Test
@@ -52,7 +53,7 @@ public class SmsReceiverTests {
 		String new2 = batch.getMessage(2).getText();
 		String new3 = batch.getMessage(3).getText();
 		
-		String newTxt =  new0.substring(MessageFormatter.getBatchHeaderLenght(), new0.length())
+		String newTxt = new0.substring(MessageFormatter.getBatchHeaderLenght(), new0.length())
 			+ new1.substring(MessageFormatter.getBatchHeaderLenght(), new1.length())
 			+ new2.substring(MessageFormatter.getBatchHeaderLenght(), new2.length())
 			+ new3.substring(MessageFormatter.getBatchHeaderLenght(), new3.length());
@@ -60,7 +61,6 @@ public class SmsReceiverTests {
 		Assert.assertEquals(txt, newTxt);
 				
 		SmsReceiver receiver = new SmsReceiver();
-
 				
 		receiver.receive("sms:123", batch.getMessage(0));
 		Assert.assertEquals(0, receiver.getCompletedBatchesCount());

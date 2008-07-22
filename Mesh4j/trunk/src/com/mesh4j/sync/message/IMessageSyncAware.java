@@ -1,8 +1,7 @@
-package com.mesh4j.sync.message.core;
+package com.mesh4j.sync.message;
 
 import java.util.List;
 
-import com.mesh4j.sync.message.ISyncSession;
 import com.mesh4j.sync.model.Item;
 
 public interface IMessageSyncAware {

@@ -9,21 +9,21 @@ public class SyncSessionTests {
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateSessionFailsWhenSessionIDIsNull(){
-		new SyncSession(null, new InMemoryMessageSyncAdapter("123"), new SmsEndpoint("123"), true);
+		new SyncSession(null, 0, new InMemoryMessageSyncAdapter("123"), new SmsEndpoint("123"), true);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateSessionFailsWhenSessionIDIsEmpty(){
-		new SyncSession("", new InMemoryMessageSyncAdapter("123"), new SmsEndpoint("123"), true);
+		new SyncSession("", 0, new InMemoryMessageSyncAdapter("123"), new SmsEndpoint("123"), true);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateSessionFailsWhenSourceIsNull(){
-		new SyncSession("a", null, new SmsEndpoint("123"), true);
+		new SyncSession("a", 0, null, new SmsEndpoint("123"), true);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateSessionFailsWhenEndpointIsNull(){
-		new SyncSession("a", new InMemoryMessageSyncAdapter("123"), null, true);
+		new SyncSession("a", 0, new InMemoryMessageSyncAdapter("123"), null, true);
 	}
 }

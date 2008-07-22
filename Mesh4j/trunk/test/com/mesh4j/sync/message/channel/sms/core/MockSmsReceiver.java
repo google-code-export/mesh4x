@@ -54,4 +54,8 @@ public class MockSmsReceiver implements ISmsReceiver {
 		return null;
 	}
 
+	@Override
+	public void purgeBatches(String sessionId, int sessionVersion) {
+		// nothing to do		
+	}
 }

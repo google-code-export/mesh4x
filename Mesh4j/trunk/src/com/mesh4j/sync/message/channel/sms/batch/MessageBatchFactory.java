@@ -19,8 +19,8 @@ public class MessageBatchFactory {
 		this.maxMessageLength = maxMesgLength;
 	}
 
-	public SmsMessageBatch createMessageBatch(SmsEndpoint endopoint, String protocolHeader, String ackBatchId, String payload) {
-		SmsMessageBatch newBatch = new SmsMessageBatch(endopoint);
+	public SmsMessageBatch createMessageBatch(String sessionId, SmsEndpoint endopoint, String protocolHeader, String ackBatchId, String payload) {
+		SmsMessageBatch newBatch = new SmsMessageBatch(sessionId, endopoint);
 		
 		int payloadLength = payload.length();
 		int expected = (payloadLength / maxMessageLength)
@@ -34,7 +34,7 @@ public class MessageBatchFactory {
 					((i + maxMessageLength) > payloadLength) ? payloadLength
 							: (maxMessageLength + i));
 
-			newMessagetext = MessageFormatter.createBatchMessage(protocolHeader, newBatch.getId(), ackBatchId, expected, msgSequence, newMessagetext);
+			newMessagetext = MessageFormatter.createBatchMessage(sessionId, protocolHeader, newBatch.getId(), ackBatchId, expected, msgSequence, newMessagetext);
 			SmsMessage newMessage = new SmsMessage(newMessagetext);
 
 			// add to collection

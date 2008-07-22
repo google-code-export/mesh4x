@@ -59,6 +59,7 @@ public class FileSmsChannelRepositoryTests {
 	
 	private SmsMessageBatch createBatch(){
 		SmsMessageBatch batch = new SmsMessageBatch(
+			IdGenerator.newID(),
 			new SmsEndpoint(IdGenerator.newID()),
 			"H", 
 			"00012", 

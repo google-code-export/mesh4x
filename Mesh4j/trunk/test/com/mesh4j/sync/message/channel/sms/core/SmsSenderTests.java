@@ -208,7 +208,7 @@ public class SmsSenderTests {
 	}
 
 	private SmsMessageBatch createBatch(int numberOfMessages) {
-		SmsMessageBatch batch = new SmsMessageBatch(new SmsEndpoint("123"), IProtocolConstants.PROTOCOL, "12345", numberOfMessages);
+		SmsMessageBatch batch = new SmsMessageBatch("123", new SmsEndpoint("123"), IProtocolConstants.PROTOCOL, "12345", numberOfMessages);
 		for (int i = 0; i < numberOfMessages; i++) {
 			batch.addMessage(i, new SmsMessage("message"+i));
 		}

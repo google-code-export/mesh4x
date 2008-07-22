@@ -7,6 +7,8 @@ import java.util.StringTokenizer;
 
 import com.mesh4j.sync.message.IMessage;
 import com.mesh4j.sync.message.IMessageReceiver;
+import com.mesh4j.sync.message.IMessageSyncAware;
+import com.mesh4j.sync.message.ISyncSession;
 import com.mesh4j.sync.message.channel.sms.ISmsChannel;
 import com.mesh4j.sync.message.channel.sms.ISmsReceiver;
 import com.mesh4j.sync.message.channel.sms.ISmsSender;
@@ -16,9 +18,10 @@ import com.mesh4j.sync.message.channel.sms.batch.SmsMessage;
 import com.mesh4j.sync.message.channel.sms.batch.SmsMessageBatch;
 import com.mesh4j.sync.message.core.Message;
 import com.mesh4j.sync.message.encoding.IMessageEncoding;
+import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.validations.Guard;
 
-public class SmsChannel implements ISmsChannel {
+public class SmsChannel implements ISmsChannel, IMessageSyncAware {
 	
 	// MODEL VARIABLES
 	private ISmsSender sender;
@@ -68,12 +71,12 @@ public class SmsChannel implements ISmsChannel {
 	}
 
 	public SmsMessageBatch createBatch(IMessage message) {
-		String msg = MessageFormatter.createMessage(message.getMessageType(), message.getSessionId(), message.getData());
+		String msg = MessageFormatter.createMessage(message.getMessageType(), message.getSessionVersion(), message.getData());
 
 		String encodedData = this.messageEncoding.encode(msg);		
 		String header = message.getProtocol();
 		String ackBatchId = (message.getOrigin() == null || message.getOrigin().length() == 0) ? "00000" : message.getOrigin();
-		SmsMessageBatch batch = this.batchFactory.createMessageBatch((SmsEndpoint)message.getEndpoint(), header, ackBatchId, encodedData);
+		SmsMessageBatch batch = this.batchFactory.createMessageBatch(message.getSessionId(), (SmsEndpoint)message.getEndpoint(), header, ackBatchId, encodedData);
 		return batch;
 	}
 	
@@ -86,7 +89,8 @@ public class SmsChannel implements ISmsChannel {
 		Message message = new Message(
 			batch.getProtocolHeader(),
 			MessageFormatter.getMessageType(decodedData),
-			MessageFormatter.getSessionId(decodedData),
+			batch.getSessionId(),
+			MessageFormatter.getSessionVersion(decodedData),
 			MessageFormatter.getData(decodedData),
 			batch.getEndpoint()
 		);
@@ -119,7 +123,7 @@ public class SmsChannel implements ISmsChannel {
 				msg.setLastModificationDate(new Date());
 			}
 		}
-		Message message = new Message("R", "R", "R", sb.toString(), batch.getEndpoint());
+		Message message = new Message("R", "R", batch.getSessionId(), 0, sb.toString(), batch.getEndpoint());
 		message.setAckIsRequired(false);
 		
 		this.send(message);
@@ -163,5 +167,16 @@ public class SmsChannel implements ISmsChannel {
 	@Override
 	public void send(SmsMessageBatch batch, boolean ackIsRequired) {
 		this.sender.send(batch, ackIsRequired);		
+	}
+	
+	@Override
+	public void beginSync(ISyncSession syncSession) {
+		// nothing to do		
+	}
+	
+	@Override
+	public void endSync(ISyncSession syncSession, List<Item> conflicts) {
+		this.sender.purgeBatches(syncSession.getSessionId(), syncSession.getVersion());
+		this.receiver.purgeBatches(syncSession.getSessionId(), syncSession.getVersion());
 	}
 }

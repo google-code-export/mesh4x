@@ -8,11 +8,13 @@ import java.util.List;
 import com.mesh4j.sync.message.channel.sms.SmsEndpoint;
 import com.mesh4j.sync.message.channel.sms.core.MessageFormatter;
 import com.mesh4j.sync.utils.IdGenerator;
+import com.mesh4j.sync.validations.Guard;
 
 public class SmsMessageBatch {
 
 	// MODEL VARIABLES
 	private String id = "";
+	private String sessionId = "";
 	private String protocolHeader = "";
 	private int expectedMessageCount = 0;
 	private HashMap<Integer, SmsMessage> messages = new HashMap<Integer, SmsMessage>();
@@ -21,13 +23,23 @@ public class SmsMessageBatch {
 
 	// BUSINESS METHODS
 
-	public SmsMessageBatch(SmsEndpoint endpoint) {
-		super();
+	public SmsMessageBatch(String sessionId, SmsEndpoint endpoint) {
+		
+		Guard.argumentNotNull(sessionId, "sessionId");
+		Guard.argumentNotNull(endpoint, "endpoint");
+		
+		this.sessionId = sessionId;
 		this.id = this.generateNewId();
 		this.endpoint = endpoint;
 	}
 
-	public SmsMessageBatch(SmsEndpoint endpoint, String protocolHeader, String messageBatchId, int expectedMessageCount) {
+	public SmsMessageBatch(String sessionId, SmsEndpoint endpoint, String protocolHeader, String messageBatchId, int expectedMessageCount) {
+		Guard.argumentNotNull(sessionId, "sessionId");
+		Guard.argumentNotNull(endpoint, "endpoint");
+		Guard.argumentNotNull(protocolHeader, "protocolHeader");
+		Guard.argumentNotNull(messageBatchId, "messageBatchId");
+		
+		this.sessionId = sessionId;
 		this.protocolHeader = protocolHeader;
 		this.id = messageBatchId;
 		this.expectedMessageCount = expectedMessageCount;
@@ -127,5 +139,9 @@ public class SmsMessageBatch {
 
 	public SmsEndpoint getEndpoint() {
 		return endpoint;
+	}
+
+	public String getSessionId() {
+		return sessionId;
 	}
 }

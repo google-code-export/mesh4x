@@ -21,6 +21,10 @@ public class MessageSyncEngine implements IMessageReceiver {
 		this.channel = channel;
 		this.channel.registerMessageReceiver(this);
 		this.syncProtocol = protocol;
+		
+		if(channel instanceof IMessageSyncAware){
+			this.syncProtocol.registerSyncAware((IMessageSyncAware) channel);
+		}
 	}
 	
 	public void synchronize(IMessageSyncAdapter adapter, IEndpoint target) {

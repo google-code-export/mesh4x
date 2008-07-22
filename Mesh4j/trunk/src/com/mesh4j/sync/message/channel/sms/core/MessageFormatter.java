@@ -10,27 +10,29 @@ public class MessageFormatter {
 		return message.substring(0, 1);
 	}
 	
-	public static String getSessionId(String message) {
+	public static int getSessionVersion(String message) {
 		String data =  message.substring(1, message.length());
 		StringTokenizer st = new StringTokenizer(data, ELEMENT_SEPARATOR);
-		return st.nextToken();
+		String sessionVersion = st.nextToken();
+		int version = Integer.valueOf(sessionVersion);
+		return version;
 	}
 
 	public static String getData(String message) {
 		String data =  message.substring(1, message.length());
 		StringTokenizer st = new StringTokenizer(data, ELEMENT_SEPARATOR);
-		String sessionID = st.nextToken();
+		String sessionVersion = st.nextToken();
 		if(st.hasMoreTokens()){
-			return data.substring(sessionID.length()+1, data.length());
+			return data.substring(sessionVersion.length() + 1, data.length());
 		} else {
 			return "";
 		}
 	}
 	
-	public static String createMessage(String messageType, String sessionId, String data) {
+	public static String createMessage(String messageType, int version, String data) {
 		StringBuffer sb = new StringBuffer();
 		sb.append(messageType);
-		sb.append(sessionId);
+		sb.append(String.valueOf(version));
 		if(data != null && !data.isEmpty()){
 			sb.append(ELEMENT_SEPARATOR);
 			sb.append(data);
@@ -39,13 +41,13 @@ public class MessageFormatter {
 	}
 
 	public static int getBatchHeaderLenght(){
-		return 13;
+		return 49;
 	}	
 	
-	public static String createBatchMessage(String protocolHeader, String batchId, String ackBatchId, int expected, int sequence, String messagetext) {
+	public static String createBatchMessage(String sessionId, String protocolHeader, String batchId, String ackBatchId, int expected, int sequence, String messagetext) {
 		String expectedString = String.valueOf(expected);
 		String sequenceString = String.valueOf(sequence);
-		return protocolHeader + batchId + expectedString + sequenceString + ackBatchId + messagetext;
+		return protocolHeader + batchId + expectedString + sequenceString + ackBatchId + sessionId + messagetext;
 	}
 	
 	public static String getBatchProtocolHeader(String messageText) {
@@ -66,5 +68,9 @@ public class MessageFormatter {
 
 	public static String getBatchACK(String messageText) {
 		return messageText.substring(8, 13);
+	}
+
+	public static String getBatchSessionId(String messageText) {
+		return messageText.substring(13, 49);
 	}
 }

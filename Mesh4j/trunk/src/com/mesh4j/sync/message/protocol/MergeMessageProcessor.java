@@ -49,13 +49,14 @@ public class MergeMessageProcessor implements IMessageProcessor {
 				IProtocolConstants.PROTOCOL,
 				getMessageType(),
 				syncSession.getSessionId(),
+				syncSession.getVersion(),
 				data,
 				syncSession.getTarget());
 	}
 	
 	@Override
 	public List<IMessage> process(ISyncSession syncSession, IMessage message) {
-		if(syncSession.isOpen() && this.getMessageType().equals(message.getMessageType())){
+		if(syncSession.isOpen()  && syncSession.getVersion() == message.getSessionVersion() && this.getMessageType().equals(message.getMessageType())){
 			Item incomingItem = this.itemEncoding.decode(syncSession, message.getData());
 			MessageSyncEngine.merge(syncSession, incomingItem);
 			

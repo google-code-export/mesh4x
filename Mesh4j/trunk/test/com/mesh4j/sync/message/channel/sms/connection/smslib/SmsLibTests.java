@@ -163,8 +163,8 @@ public class SmsLibTests {
 		IMessageSyncAdapter adapterA = new MessageSyncAdapter(sourceId, NullIdentityProvider.INSTANCE, kmlAdapterA);
 		//SmsLibConnection smsConnectionA = new SmsLibConnection("sonyEricsson", "COM23", 115200, "Sony Ericsson", "FAD-3022013-BV", 140, CompressBase91MessageEncoding.INSTANCE, new OutboundNotification(), new InboundNotification(), (3 * 60 * 1000));
 		//SmsEndpoint targetA = new SmsEndpoint("01136544867");
-		InMemorySmsConnection smsConnectionA = new InMemorySmsConnection(MockMessageEncoding.INSTANCE, 160, 100); 
 		SmsEndpoint targetA = new SmsEndpoint("A");
+		InMemorySmsConnection smsConnectionA = new InMemorySmsConnection(MockMessageEncoding.INSTANCE, 160, 100, targetA); 
 		MessageSyncEngine syncEngineEndPointA = createSyncSmsEndpoint("sonyEricsson", adapterA, smsConnectionA, 0);
 
 		String fileNameB = this.getClass().getResource("kmlDummyForSync.kml").getFile();
@@ -172,14 +172,13 @@ public class SmsLibTests {
 		IMessageSyncAdapter adapterB = new MessageSyncAdapter(sourceId, NullIdentityProvider.INSTANCE, kmlAdapterB);
 		//SmsLibConnection smsConnectionB = new SmsLibConnection("nokia", "COM28", 115200, "Nokia", "6070", 140, CompressBase91MessageEncoding.INSTANCE, new OutboundNotification(), new InboundNotification(), (3 * 60 * 1000));
 		//SmsEndpoint targetB = new SmsEndpoint("01136540460");
-		InMemorySmsConnection smsConnectionB = new InMemorySmsConnection(MockMessageEncoding.INSTANCE, 160, 100);
+
 		SmsEndpoint targetB = new SmsEndpoint("B");
+		InMemorySmsConnection smsConnectionB = new InMemorySmsConnection(MockMessageEncoding.INSTANCE, 160, 100, targetB);
 		MessageSyncEngine syncEngineEndPointB = createSyncSmsEndpoint("nokia", adapterB, smsConnectionB, 0);
 
-		smsConnectionA.setEndpointConnection(smsConnectionB);
-		smsConnectionA.setEndpoint(targetA);
-		smsConnectionB.setEndpointConnection(smsConnectionA);
-		smsConnectionB.setEndpoint(targetB);
+		smsConnectionA.addEndpointConnection(smsConnectionB);
+		smsConnectionB.addEndpointConnection(smsConnectionA);
 		
 		syncEngineEndPointA.synchronize(adapterA, targetB, true);
 

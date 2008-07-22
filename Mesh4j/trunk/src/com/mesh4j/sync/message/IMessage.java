@@ -17,5 +17,7 @@ public interface IMessage {
 	void setOrigin(String origin);
 
 	boolean isAckRequired();
+
+	int getSessionVersion();
 	
 }

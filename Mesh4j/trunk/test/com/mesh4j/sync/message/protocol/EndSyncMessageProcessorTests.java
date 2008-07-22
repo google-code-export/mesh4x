@@ -9,6 +9,7 @@ import org.junit.Test;
 import com.mesh4j.sync.message.IEndpoint;
 import com.mesh4j.sync.message.IMessage;
 import com.mesh4j.sync.message.IMessageSyncAdapter;
+import com.mesh4j.sync.message.IMessageSyncAware;
 import com.mesh4j.sync.message.IMessageSyncProtocol;
 import com.mesh4j.sync.message.ISyncSession;
 import com.mesh4j.sync.message.core.Message;
@@ -48,7 +49,7 @@ public class EndSyncMessageProcessorTests {
 		syncSession.setOpen();
 		
 		EndSyncMessageProcessor p = new EndSyncMessageProcessor(null);
-		Message message = new Message("a", "a", syncSession.getSessionId(), "", syncSession.getTarget());
+		Message message = new Message("a", "a", syncSession.getSessionId(), 0, "", syncSession.getTarget());
 		List<IMessage> messages = p.process(syncSession, message);
 		Assert.assertEquals(IMessageSyncProtocol.NO_RESPONSE, messages);
 		Assert.assertFalse(syncSession.endSyncWasCalled());
@@ -59,7 +60,7 @@ public class EndSyncMessageProcessorTests {
 		MockSyncSession syncSession = new MockSyncSession(null);
 		
 		EndSyncMessageProcessor p = new EndSyncMessageProcessor(null);
-		Message message = new Message("a", p.getMessageType(), syncSession.getSessionId(), "", syncSession.getTarget());
+		Message message = new Message("a", p.getMessageType(), syncSession.getSessionId(), 0, "", syncSession.getTarget());
 		List<IMessage> messages = p.process(syncSession, message);
 		Assert.assertEquals(IMessageSyncProtocol.NO_RESPONSE, messages);
 		Assert.assertFalse(syncSession.endSyncWasCalled());
@@ -71,7 +72,7 @@ public class EndSyncMessageProcessorTests {
 		syncSession.setOpen();
 		
 		EndSyncMessageProcessor p = new EndSyncMessageProcessor(null);
-		Message message = new Message("a", p.getMessageType(), syncSession.getSessionId(), "erkrnwfkwefk", syncSession.getTarget());
+		Message message = new Message("a", p.getMessageType(), syncSession.getSessionId(), 0, "erkrnwfkwefk", syncSession.getTarget());
 		List<IMessage> messages = p.process(syncSession, message);
 		Assert.assertEquals(IMessageSyncProtocol.NO_RESPONSE, messages);
 		Assert.assertFalse(syncSession.endSyncWasCalled());
@@ -126,6 +127,11 @@ public class EndSyncMessageProcessorTests {
 			public void notifyBeginSync(ISyncSession syncSession) {
 				Assert.fail();				
 			}
+			
+			@Override
+			public void registerSyncAware(IMessageSyncAware syncAware) {
+				Assert.fail();
+			}
 		};
 		
 		Item item = new Item(new NullContent("1"), new Sync("1", "jmt", new Date(), true));
@@ -137,7 +143,7 @@ public class EndSyncMessageProcessorTests {
 		EndSyncMessageProcessor p = new EndSyncMessageProcessor(ack);
 		p.setMessageSyncProtocol(messageSyncProtocol);
 		
-		Message message = new Message("a", p.getMessageType(), syncSession.getSessionId(), DateHelper.formatDateTime(syncSession.createSyncDate()), syncSession.getTarget());
+		Message message = new Message("a", p.getMessageType(), syncSession.getSessionId(), 0, DateHelper.formatDateTime(syncSession.createSyncDate()), syncSession.getTarget());
 		List<IMessage> messages = p.process(syncSession, message);
 		Assert.assertEquals(1, messages.size());
 		

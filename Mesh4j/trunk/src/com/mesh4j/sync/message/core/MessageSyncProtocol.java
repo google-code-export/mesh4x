@@ -7,6 +7,7 @@ import java.util.List;
 import com.mesh4j.sync.message.IEndpoint;
 import com.mesh4j.sync.message.IMessage;
 import com.mesh4j.sync.message.IMessageSyncAdapter;
+import com.mesh4j.sync.message.IMessageSyncAware;
 import com.mesh4j.sync.message.IMessageSyncProtocol;
 import com.mesh4j.sync.message.ISyncSession;
 import com.mesh4j.sync.model.Item;
@@ -50,7 +51,7 @@ public class MessageSyncProtocol implements IMessageSyncProtocol {
 		if(syncSession == null){
 			if(this.initialMessage.getMessageType().equals(message.getMessageType())){
 				String sourceId = this.initialMessage.getSourceId(message.getData());
-				syncSession = this.repository.createSession(message.getSessionId(), sourceId, message.getEndpoint(), false);
+				syncSession = this.repository.createSession(message.getSessionId(), message.getSessionVersion(), sourceId, message.getEndpoint(), false);
 				if(syncSession == null){
 					return NO_RESPONSE;
 				}
@@ -99,14 +100,17 @@ public class MessageSyncProtocol implements IMessageSyncProtocol {
 			Guard.throwsException("ERROR_MESSAGE_SYNC_SESSION_IS_OPEN", sourceId, endpoint.getEndpointId());
 		}
 		if(syncSession == null){
-			syncSession = this.repository.createSession(IdGenerator.newID(), sourceId, endpoint, fullProtocol);
+			syncSession = this.repository.createSession(IdGenerator.newID(), 0, sourceId, endpoint, fullProtocol);
 			if(syncSession == null){
 				return null;
 			}
 		}
-		this.notifyBeginSync(syncSession);
+		
+		syncSession.beginSync();
+		
 		IMessage message = this.initialMessage.createMessage(syncSession);
 		this.persistChanges(syncSession);
+		this.notifyBeginSync(syncSession);
 		return message;
 	}
 	

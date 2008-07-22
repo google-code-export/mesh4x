@@ -16,6 +16,7 @@ public class SmsMessageBatchFormatter {
 
 	public final static String ELEMENT_ROOT = "SmsChannel";
 	public final static String ELEMENT_OUTCOMMING = "Outcomming";
+	public static final String ELEMENT_OUTCOMMING_COMPLETED = "OutcommingCompleted";
 	public final static String ELEMENT_INCOMMING_COMPLETED = "IncommingCompleted";
 	public final static String ELEMENT_INCOMMING_ONGOING = "IncommingOngoing";
 	public final static String ELEMENT_INCOMMING_DISCARDED = "IncommingDiscarded";
@@ -23,12 +24,12 @@ public class SmsMessageBatchFormatter {
 	private final static String ELEMENT_BATCH = "Batch";
 	private final static String ELEMENT_MESSAGE = "BatchMessage";
 	private final static String ATTRIBUTE_ID = "batchId";
+	private final static String ATTRIBUTE_SESSION_ID = "sessionId";
 	private final static String ATTRIBUTE_PROTOCOL = "protocol";
 	private final static String ATTRIBUTE_EXPECTED_MESSAGE_COUNT = "messages";
 	private final static String ATTRIBUTE_ENDPOINT = "sms";
 	private final static String ATTRIBUTE_SEQUENCE = "sequence";
 	private final static String ATTRIBUTE_DATE = "lastModDate";
-	
 	
 	public static Element createBatchElement(SmsMessageBatch batch){
 		Guard.argumentNotNull(batch, "batch");
@@ -38,6 +39,7 @@ public class SmsMessageBatchFormatter {
 		batchElement.addAttribute(ATTRIBUTE_PROTOCOL, batch.getProtocolHeader());
 		batchElement.addAttribute(ATTRIBUTE_EXPECTED_MESSAGE_COUNT, String.valueOf(batch.getExpectedMessageCount()));
 		batchElement.addAttribute(ATTRIBUTE_ENDPOINT, batch.getEndpoint().getEndpointId());
+		batchElement.addAttribute(ATTRIBUTE_SESSION_ID, batch.getSessionId());
 		
 		for (int i = 0; i < batch.getExpectedMessageCount(); i++) {
 			SmsMessage msg = batch.getMessage(i);
@@ -65,8 +67,9 @@ public class SmsMessageBatchFormatter {
 		String protocol = batchElement.attributeValue(ATTRIBUTE_PROTOCOL);
 		int expectedMsgCount = Integer.parseInt(batchElement.attributeValue(ATTRIBUTE_EXPECTED_MESSAGE_COUNT));
 		String endpoint = batchElement.attributeValue(ATTRIBUTE_ENDPOINT);
+		String sessionId = batchElement.attributeValue(ATTRIBUTE_SESSION_ID);
 		
-		SmsMessageBatch batch = new SmsMessageBatch(new SmsEndpoint(endpoint), protocol, id, expectedMsgCount);
+		SmsMessageBatch batch = new SmsMessageBatch(sessionId, new SmsEndpoint(endpoint), protocol, id, expectedMsgCount);
 		
 		List<Element> messageElements = batchElement.elements(ELEMENT_MESSAGE);
 		for (Element msgElement : messageElements) {

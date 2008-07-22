@@ -8,4 +8,7 @@ public interface ISmsSenderRepository {
 
 	void writeOutcomming(List<SmsMessageBatch> batches);
 	List<SmsMessageBatch> readOutcomming();	
+	
+	void writeOutcommingCompleted(List<SmsMessageBatch> batches);
+	List<SmsMessageBatch> readOutcommingCompleted();	
 }

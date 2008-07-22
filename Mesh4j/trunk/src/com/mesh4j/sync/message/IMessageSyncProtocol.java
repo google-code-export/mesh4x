@@ -24,5 +24,6 @@ public interface IMessageSyncProtocol {
 
 	void notifyBeginSync(ISyncSession syncSession);
 
+	void registerSyncAware(IMessageSyncAware syncAware);
 
 }

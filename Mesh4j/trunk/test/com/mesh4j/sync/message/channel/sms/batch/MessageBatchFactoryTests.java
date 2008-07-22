@@ -6,6 +6,7 @@ import org.junit.Test;
 import com.mesh4j.sync.message.channel.sms.SmsEndpoint;
 import com.mesh4j.sync.message.channel.sms.core.MessageFormatter;
 import com.mesh4j.sync.test.utils.TestHelper;
+import com.mesh4j.sync.utils.IdGenerator;
 
 public class MessageBatchFactoryTests {
 	
@@ -13,7 +14,7 @@ public class MessageBatchFactoryTests {
 	public void ShouldCreateCompleteMessageBatchFromText()
 	{
 		MessageBatchFactory factory = new MessageBatchFactory();
-		SmsMessageBatch batch = factory.createMessageBatch(new SmsEndpoint("1234"), "M", "12345", TestHelper.newText(200));
+		SmsMessageBatch batch = factory.createMessageBatch("123", new SmsEndpoint("1234"), "M", "12345", TestHelper.newText(200));
 
 		Assert.assertEquals(2, batch.getMessagesCount());
 		Assert.assertTrue(batch.isComplete());
@@ -35,7 +36,7 @@ public class MessageBatchFactoryTests {
 	{
 		MessageBatchFactory factory = new MessageBatchFactory();
 		String original = TestHelper.newText(200);
-		SmsMessageBatch batch = factory.createMessageBatch(new SmsEndpoint("1234"),"M", "12345", original);
+		SmsMessageBatch batch = factory.createMessageBatch(IdGenerator.newID(), new SmsEndpoint("1234"),"M", "12345", original);
 
 		Assert.assertTrue(batch.isComplete());
 		batch.reconstitutePayload();
@@ -47,8 +48,9 @@ public class MessageBatchFactoryTests {
 	@Test
 	public void ShouldGenerateImprobableIdWhenCreatingBatch()
 	{
-		SmsMessageBatch batch1 = new SmsMessageBatch(new SmsEndpoint("1234"));
-		SmsMessageBatch batch2 = new SmsMessageBatch(new SmsEndpoint("1234"));
+		String sessionId = IdGenerator.newID();
+		SmsMessageBatch batch1 = new SmsMessageBatch(sessionId, new SmsEndpoint("1234"));
+		SmsMessageBatch batch2 = new SmsMessageBatch(sessionId, new SmsEndpoint("1234"));
 
 		Assert.assertFalse(batch1.getId().equals(batch2.getId()));
 	}

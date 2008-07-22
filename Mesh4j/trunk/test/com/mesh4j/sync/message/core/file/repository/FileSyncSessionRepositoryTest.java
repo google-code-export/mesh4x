@@ -1023,13 +1023,13 @@ public class FileSyncSessionRepositoryTest {
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateSessionFailsIfSourceIDIsNull(){
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory());
-		repo.createSession(null, "1234", new SmsEndpoint("sms:1"), false);
+		repo.createSession(null, 0, "1234", new SmsEndpoint("sms:1"), false);
 	}
 
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateSessionFailsIfEndPointIsNull(){
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory());
-		repo.createSession("123", null, new SmsEndpoint("sms:1"), false);
+		repo.createSession("123",0, null, new SmsEndpoint("sms:1"), false);
 	}
 	
 	@Test
@@ -1042,10 +1042,11 @@ public class FileSyncSessionRepositoryTest {
 		
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), sessionFac);
 				
-		ISyncSession syncSession = repo.createSession("111", sourceID, endpoint, false);
+		ISyncSession syncSession = repo.createSession("111", 1, sourceID, endpoint, false);
 		
 		Assert.assertNotNull(syncSession);
 		Assert.assertEquals("111", syncSession.getSessionId());
+		Assert.assertEquals(1, syncSession.getVersion());
 		Assert.assertFalse(syncSession.isOpen());
 		Assert.assertNotNull(syncSession.getAll());
 		Assert.assertEquals(0, syncSession.getAll().size());
@@ -1067,7 +1068,7 @@ public class FileSyncSessionRepositoryTest {
 		
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), sessionFac);
 				
-		ISyncSession syncSession = repo.createSession("111", sourceID, endpoint, false);
+		ISyncSession syncSession = repo.createSession("111", 3, sourceID, endpoint, false);
 		
 		Assert.assertNotNull(syncSession);
 		Assert.assertSame(syncSession, repo.getSession("111"));
@@ -1083,7 +1084,7 @@ public class FileSyncSessionRepositoryTest {
 		
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), sessionFac);
 				
-		ISyncSession syncSession = repo.createSession("111", sourceID, endpoint, false);
+		ISyncSession syncSession = repo.createSession("111", 0, sourceID, endpoint, false);
 		
 		Assert.assertNotNull(syncSession);
 		Assert.assertSame(syncSession, repo.getSession(sourceID, endpoint.getEndpointId()));

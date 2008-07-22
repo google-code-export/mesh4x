@@ -1,5 +1,7 @@
 package com.mesh4j.sync.message.channel.sms.batch;
 
+import com.mesh4j.sync.validations.Guard;
+
 public class DiscardedBatchRecord {
 
 	// MODEL VARIABLES
@@ -8,7 +10,8 @@ public class DiscardedBatchRecord {
 
 	// BUSINESS METHODS
 	public DiscardedBatchRecord(SmsMessageBatch messageBatch, Exception reason) {
-		super();
+		Guard.argumentNotNull(messageBatch, "messageBatch");
+
 		this.reason = reason;
 		this.messageBatch = messageBatch;
 	}
@@ -19,5 +22,13 @@ public class DiscardedBatchRecord {
 
 	public Exception getReason() {
 		return reason;
+	}
+
+	public String getSessionId(){ 
+		return this.getMessageBatch().getSessionId();
+	}
+
+	public String getId() {
+		return this.getMessageBatch().getId();
 	}
 }

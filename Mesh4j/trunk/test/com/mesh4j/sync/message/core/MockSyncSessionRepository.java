@@ -18,9 +18,9 @@ public class MockSyncSessionRepository implements ISyncSessionRepository {
 	}
 
 	@Override
-	public ISyncSession createSession(String sessionID, String sourceId, IEndpoint target,
+	public ISyncSession createSession(String sessionID, int version, String sourceId, IEndpoint target,
 			boolean fullProtocol) {
-		return factory.createSession(sessionID, sourceId, target, fullProtocol);
+		return factory.createSession(sessionID, version, sourceId, target, fullProtocol);
 	}
 
 	@Override

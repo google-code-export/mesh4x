@@ -89,7 +89,7 @@ public class GetForMergeMessageProcessorTests {
 	public void shouldProcessMessageReturnsNoResponseWhenSessionIsNonOpen(){
 		MockSyncSession syncSession = new MockSyncSession(null);
 		GetForMergeMessageProcessor p = new GetForMergeMessageProcessor(null, null);
-		List<IMessage> messages = p.process(syncSession, new Message("m", p.getMessageType(), "1", "1", new SmsEndpoint("1")));
+		List<IMessage> messages = p.process(syncSession, new Message("m", p.getMessageType(), "1", 0, "1", new SmsEndpoint("1")));
 		Assert.assertEquals(IMessageSyncProtocol.NO_RESPONSE, messages); 
 	}
 	
@@ -97,7 +97,7 @@ public class GetForMergeMessageProcessorTests {
 	public void shouldProcessMessageReturnsNoResponseWhenMessageTypeIsInvalid(){
 		MockSyncSession syncSession = new MockSyncSession(null);
 		GetForMergeMessageProcessor p = new GetForMergeMessageProcessor(null, null);
-		List<IMessage> messages = p.process(syncSession, new Message("m", "a", "1", "1", new SmsEndpoint("1")));
+		List<IMessage> messages = p.process(syncSession, new Message("m", "a", "1", 0, "1", new SmsEndpoint("1")));
 		Assert.assertEquals(IMessageSyncProtocol.NO_RESPONSE, messages); 	}
 	
 	@Test
@@ -108,7 +108,7 @@ public class GetForMergeMessageProcessorTests {
 		
 		MergeMessageProcessor merge = new MergeMessageProcessor(new MockItemEncoding(item), null);
 		GetForMergeMessageProcessor p = new GetForMergeMessageProcessor(new MockItemEncoding(item), merge);
-		List<IMessage> messages = p.process(syncSession, new Message("m", p.getMessageType(), "1", "1", new SmsEndpoint("1")));
+		List<IMessage> messages = p.process(syncSession, new Message("m", p.getMessageType(), "1", 0, "1", new SmsEndpoint("1")));
 		
 		Assert.assertEquals(1, messages.size());
 		
@@ -130,7 +130,7 @@ public class GetForMergeMessageProcessorTests {
 
 		MergeMessageProcessor merge = new MergeMessageProcessor(new MockItemEncoding(item), null);
 		GetForMergeMessageProcessor p = new GetForMergeMessageProcessor(new MockItemEncoding(item), merge);
-		List<IMessage> messages = p.process(syncSession, new Message("m", p.getMessageType(), "1", "1|67~30", new SmsEndpoint("1")));
+		List<IMessage> messages = p.process(syncSession, new Message("m", p.getMessageType(), "1", 0, "1|67~30", new SmsEndpoint("1")));
 		Assert.assertEquals(1, messages.size());
 		
 		IMessage response = messages.get(0);

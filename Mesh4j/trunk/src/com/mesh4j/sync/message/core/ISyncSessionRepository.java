@@ -6,7 +6,7 @@ import com.mesh4j.sync.message.ISyncSession;
 
 public interface ISyncSessionRepository {
 
-	ISyncSession createSession(String sessionID, String sourceId, IEndpoint endpoint, boolean fullProtocol);
+	ISyncSession createSession(String sessionID, int version, String sourceId, IEndpoint endpoint, boolean fullProtocol);
 
 	ISyncSession getSession(String sessionId);
 	

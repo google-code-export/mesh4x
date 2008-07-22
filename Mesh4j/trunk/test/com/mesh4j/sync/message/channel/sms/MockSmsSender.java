@@ -61,4 +61,9 @@ public class MockSmsSender implements ISmsSender {
 		return acks;
 	}
 
+	@Override
+	public void purgeBatches(String sessionId, int sessionVersion) {
+		// nothing to do		
+	}
+
 }

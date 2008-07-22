@@ -8,6 +8,7 @@ import com.mesh4j.sync.model.Item;
 public interface ISyncSession {
 	
 	String getSessionId();
+	int getVersion();
 	
 	String getSourceId();
 	IEndpoint getTarget();
@@ -25,7 +26,7 @@ public interface ISyncSession {
 	List<Item> getAll();
 
 	void beginSync();
-	void beginSync(Date sinceDate);
+	void beginSync(Date sinceDate, int version);
 	void endSync(Date sinceDate);
 	void cancelSync();
 	

@@ -15,6 +15,7 @@ public class MockSyncSession implements ISyncSession{
 	private Item item;
 	private IEndpoint endpoint;
 	private String sessionID;
+	private int sessionVersion = 0;
 	private ArrayList<Item> all = new ArrayList<Item>();
 	private ArrayList<Item> snapshot = new ArrayList<Item>();
 	private boolean open = false;
@@ -54,7 +55,7 @@ public class MockSyncSession implements ISyncSession{
 	@Override public void add(Item item) {}
 	@Override public void addConflict(String syncID) {this.conflicts.add(syncID);}
 	@Override public void beginSync() {this.beginWasCalled = true;}
-	@Override public void beginSync(Date sinceDate) {this.beginWasCalled=true;}
+	@Override public void beginSync(Date sinceDate, int version) {this.beginWasCalled=true;}
 	@Override public void cancelSync() {}
 	@Override public void delete(String syncID, String by, Date when) {
 		this.item.getSync().delete(by, when);
@@ -148,5 +149,9 @@ public class MockSyncSession implements ISyncSession{
 	}
 	public void setClose() {
 		this.open = false;		
+	}
+	@Override
+	public int getVersion() {
+		return this.sessionVersion;
 	}
 }

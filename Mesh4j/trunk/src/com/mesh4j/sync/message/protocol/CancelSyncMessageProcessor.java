@@ -20,6 +20,7 @@ public class CancelSyncMessageProcessor implements ICancelSyncMessageProcessor {
 			IProtocolConstants.PROTOCOL,
 			getMessageType(),
 			syncSession.getSessionId(),
+			syncSession.getVersion(),
 			"",
 			syncSession.getTarget());
 		message.setAckIsRequired(false);
@@ -33,7 +34,7 @@ public class CancelSyncMessageProcessor implements ICancelSyncMessageProcessor {
 
 	@Override
 	public List<IMessage> process(ISyncSession syncSession, IMessage message) {
-		if(!syncSession.isOpen() && this.getMessageType().equals(message.getMessageType())){
+		if(!syncSession.isOpen() && syncSession.getVersion() == message.getSessionVersion() && this.getMessageType().equals(message.getMessageType())){
 			syncSession.cancelSync();
 		}
 		return IMessageSyncProtocol.NO_RESPONSE;

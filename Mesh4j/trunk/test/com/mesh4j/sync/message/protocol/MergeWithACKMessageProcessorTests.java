@@ -97,7 +97,7 @@ public class MergeWithACKMessageProcessorTests {
 		syncSession.setOpen();
 		
 		MergeWithACKMessageProcessor p = new MergeWithACKMessageProcessor(null, null);
-		Message message = new Message("a", "a", syncSession.getSessionId(), "", syncSession.getTarget());
+		Message message = new Message("a", "a", syncSession.getSessionId(), 0, "", syncSession.getTarget());
 		List<IMessage> messages = p.process(syncSession, message);
 		Assert.assertEquals(IMessageSyncProtocol.NO_RESPONSE, messages);
 	}
@@ -107,7 +107,7 @@ public class MergeWithACKMessageProcessorTests {
 		MockSyncSession syncSession = new MockSyncSession(null);
 		
 		MergeWithACKMessageProcessor p = new MergeWithACKMessageProcessor(null, null);
-		Message message = new Message("a", p.getMessageType(), syncSession.getSessionId(), "", syncSession.getTarget());
+		Message message = new Message("a", p.getMessageType(), syncSession.getSessionId(), 0, "", syncSession.getTarget());
 		List<IMessage> messages = p.process(syncSession, message);
 		Assert.assertEquals(IMessageSyncProtocol.NO_RESPONSE, messages);
 	}
@@ -124,7 +124,7 @@ public class MergeWithACKMessageProcessorTests {
 		
 		ACKMergeMessageProcessor ack = new ACKMergeMessageProcessor(new ItemEncoding(100), null);
 		MergeWithACKMessageProcessor p = new MergeWithACKMessageProcessor(new MockItemEncoding(itemChanged), ack);
-		Message message = new Message("a", p.getMessageType(), syncSession.getSessionId(), "F1", syncSession.getTarget());
+		Message message = new Message("a", p.getMessageType(), syncSession.getSessionId(), 0, "F1", syncSession.getTarget());
 		List<IMessage> messages = p.process(syncSession, message);
 		Assert.assertEquals(1, messages.size());
 		
@@ -152,7 +152,7 @@ public class MergeWithACKMessageProcessorTests {
 		
 		ACKMergeMessageProcessor ack = new ACKMergeMessageProcessor(new ItemEncoding(100), null);
 		MergeWithACKMessageProcessor p = new MergeWithACKMessageProcessor(new MockItemEncoding(itemChanged), ack);
-		Message message = new Message("a", p.getMessageType(), syncSession.getSessionId(), "F1", syncSession.getTarget());
+		Message message = new Message("a", p.getMessageType(), syncSession.getSessionId(), 0, "F1", syncSession.getTarget());
 		List<IMessage> messages = p.process(syncSession, message);
 		Assert.assertEquals(1, messages.size());
 		

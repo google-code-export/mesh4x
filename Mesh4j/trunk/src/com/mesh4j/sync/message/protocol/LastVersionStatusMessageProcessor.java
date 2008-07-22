@@ -44,6 +44,7 @@ public class LastVersionStatusMessageProcessor implements IMessageProcessor{
 				IProtocolConstants.PROTOCOL,
 				this.getMessageType(),
 				syncSession.getSessionId(),
+				syncSession.getVersion(),
 				encode(items),
 				syncSession.getTarget());
 	}
@@ -56,7 +57,7 @@ public class LastVersionStatusMessageProcessor implements IMessageProcessor{
 	@Override
 	public List<IMessage> process(ISyncSession syncSession, IMessage message) {
 		List<IMessage> response = new ArrayList<IMessage>();		
-		if(syncSession.isOpen() && this.getMessageType().equals(message.getMessageType())){
+		if(syncSession.isOpen()  && syncSession.getVersion() == message.getSessionVersion() && this.getMessageType().equals(message.getMessageType())){
 			ArrayList<Object[]> changes = decodeChanges(message.getData());
 			ArrayList<String> updatedItems = new ArrayList<String>();
 			for (Object[] parameters : changes) {

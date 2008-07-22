@@ -9,17 +9,19 @@ public class Message implements IMessage {
 	private String protocol;
 	private String messageType;
 	private String sessionId;
+	private int sessionVersion = 0;
 	private String data;
 	private IEndpoint endpoint;
 	private String origin;
 	private boolean ackRequired = true;
 	
 	// METHODs
-	public Message(String protocol, String messageType, String sessionId, String data, IEndpoint endpoint) {
+	public Message(String protocol, String messageType, String sessionId, int sessionVersion, String data, IEndpoint endpoint) {
 		super();
 		this.protocol = protocol;
 		this.messageType = messageType;
 		this.sessionId = sessionId;
+		this.sessionVersion = sessionVersion;
 		this.data = data;
 		this.endpoint = endpoint;
 	}
@@ -66,5 +68,10 @@ public class Message implements IMessage {
 
 	public void setAckIsRequired(boolean ackRequired) {
 		this.ackRequired = ackRequired;
+	}
+
+	@Override
+	public int getSessionVersion() {
+		return this.sessionVersion;
 	}
 }

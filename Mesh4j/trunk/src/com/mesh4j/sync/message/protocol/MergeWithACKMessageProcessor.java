@@ -46,6 +46,7 @@ public class MergeWithACKMessageProcessor implements IMessageProcessor {
 				IProtocolConstants.PROTOCOL,
 				getMessageType(),
 				syncSession.getSessionId(),
+				syncSession.getVersion(),
 				sb.toString(),
 				syncSession.getTarget());
 	}
@@ -65,7 +66,7 @@ public class MergeWithACKMessageProcessor implements IMessageProcessor {
 
 	@Override
 	public List<IMessage> process(ISyncSession syncSession, IMessage message) {
-		if(syncSession.isOpen() && this.getMessageType().equals(message.getMessageType())){
+		if(syncSession.isOpen()  && syncSession.getVersion() == message.getSessionVersion() && this.getMessageType().equals(message.getMessageType())){
 			
 			boolean isFullProtocol= message.getData().startsWith("T");
 			
