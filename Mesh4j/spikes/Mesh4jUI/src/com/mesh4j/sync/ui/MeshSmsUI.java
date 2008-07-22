@@ -21,11 +21,11 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import com.mesh4j.sync.adapters.sms.SmsHelper;
+import com.mesh4j.sync.message.IMessageSyncAware;
 import com.mesh4j.sync.message.ISyncSession;
 import com.mesh4j.sync.message.MessageSyncEngine;
 import com.mesh4j.sync.message.channel.sms.connection.ISmsConnectionInboundOutboundNotification;
 import com.mesh4j.sync.message.channel.sms.connection.smslib.Modem;
-import com.mesh4j.sync.message.core.IMessageSyncAware;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.properties.PropertiesProvider;
 import com.mesh4j.sync.ui.translator.Mesh4jSmsUITranslator;

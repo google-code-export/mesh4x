@@ -7,6 +7,7 @@ import com.mesh4j.sync.adapters.dom.DOMAdapter;
 import com.mesh4j.sync.adapters.kml.KMLDOMLoaderFactory;
 import com.mesh4j.sync.message.IChannel;
 import com.mesh4j.sync.message.IMessageSyncAdapter;
+import com.mesh4j.sync.message.IMessageSyncAware;
 import com.mesh4j.sync.message.IMessageSyncProtocol;
 import com.mesh4j.sync.message.ISyncSession;
 import com.mesh4j.sync.message.MessageSyncEngine;
@@ -18,7 +19,6 @@ import com.mesh4j.sync.message.channel.sms.connection.InMemorySmsConnection;
 import com.mesh4j.sync.message.channel.sms.connection.smslib.Modem;
 import com.mesh4j.sync.message.channel.sms.connection.smslib.ModemHelper;
 import com.mesh4j.sync.message.channel.sms.connection.smslib.SmsLibConnection;
-import com.mesh4j.sync.message.core.IMessageSyncAware;
 import com.mesh4j.sync.message.core.MessageSyncAdapter;
 import com.mesh4j.sync.message.core.NonMessageEncoding;
 import com.mesh4j.sync.message.encoding.CompressBase91MessageEncoding;
@@ -56,24 +56,22 @@ public class SmsHelper {
 		DOMAdapter kmlAdapterA = new DOMAdapter(KMLDOMLoaderFactory.createDOMLoader(kmlFileName, identityProvider));
 		IMessageSyncAdapter adapterA = new MessageSyncAdapter(sourceId, identityProvider, kmlAdapterA);
 
-		InMemorySmsConnection smsConnectionA = new InMemorySmsConnection(encoding, maxMessageLenght, readDelay, channelDelay);
-		smsConnectionA.setSmsConnectionOutboundNotification(smsConnectionNotification);
 		SmsEndpoint targetA = new SmsEndpoint(smsFrom);
-		
+		InMemorySmsConnection smsConnectionA = new InMemorySmsConnection(encoding, maxMessageLenght, readDelay, targetA, channelDelay);
+		smsConnectionA.setSmsConnectionOutboundNotification(smsConnectionNotification);
+				
 		MessageSyncEngine syncEngineEndPointA = createSyncEngine(syncAware, repositoryBaseDirectory+"\\"+smsFrom+"\\", identityProvider, smsConnectionA, senderDelay, receiverDelay);
 
 		// ENDPOINT B
-		InMemorySmsConnection smsConnectionB = new InMemorySmsConnection(encoding, maxMessageLenght, readDelay, channelDelay);
 		SmsEndpoint targetB = new SmsEndpoint(smsTo);
-		
+		InMemorySmsConnection smsConnectionB = new InMemorySmsConnection(encoding, maxMessageLenght, readDelay, targetB, channelDelay);
+	
 		MessageSyncEngine syncEngineEndPointB = createSyncEngine(null, repositoryBaseDirectory+"\\"+smsTo+"\\", identityProvider, smsConnectionB, senderDelay, receiverDelay);
 		
 		// CHANNEL EMULATION
-		smsConnectionA.setEndpointConnection(smsConnectionB);
-		smsConnectionA.setEndpoint(targetA);
-		smsConnectionB.setEndpointConnection(smsConnectionA);
-		smsConnectionB.setEndpoint(targetB);
-		
+		smsConnectionA.addEndpointConnection(smsConnectionB);
+		smsConnectionB.addEndpointConnection(smsConnectionA);
+				
 		// SYNC
 		syncEngineEndPointA.synchronize(adapterA, targetB, true);
 

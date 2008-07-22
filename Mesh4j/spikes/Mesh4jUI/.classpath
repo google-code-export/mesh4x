@@ -17,6 +17,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/swt.jar"/>
 	<classpathentry exported="true" kind="lib" path="etc"/>
 	<classpathentry exported="true" kind="lib" path="lib/smslib-3.3.0b2.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mesh4j-1.0.0.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Mesh4j"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
