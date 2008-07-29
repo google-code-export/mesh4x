@@ -43,6 +43,7 @@ public class SmsHelper {
 		IMessageEncoding encoding = NonMessageEncoding.INSTANCE;
 		if(useCompression){
 			encoding = CompressBase91MessageEncoding.INSTANCE;
+			//encoding = CompressYEncMessageEncoding.INSTANCE;
 		}
 		emulateSync(smsConnectionNotification, syncAware, smsFrom, smsTo, encoding, kmlFileName, identityProvider, baseDirectory, senderDelay, receiverDelay, readDelay, channelDelay, maxMessageLenght);
 	}
@@ -134,11 +135,12 @@ public class SmsHelper {
 			
 			IMessageEncoding messageEncoding = NonMessageEncoding.INSTANCE;
 			if(useCompress){
+				//messageEncoding = CompressYEncMessageEncoding.INSTANCE;
 				messageEncoding = CompressBase91MessageEncoding.INSTANCE;
 			}
 				
 			SmsLibConnection smsConnection = new SmsLibConnection("mesh4j.sync", modem.getComPort(), modem.getBaudRate(),
-				modem.getManufacturer(), modem.getModel(), maxMessageLenght, messageEncoding, readDelay, channelDelay, smsConnectionInboundOutboundNotification, null, null);
+				modem.getManufacturer(), modem.getModel(), maxMessageLenght, messageEncoding, readDelay, channelDelay, smsConnectionInboundOutboundNotification);
 			
 			return createSyncEngine(syncAware, baseDirectory+"\\"+modem.toString()+"\\", identityProvider, smsConnection, senderDelay, receiverDelay);
 		} else {

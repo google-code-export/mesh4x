@@ -78,4 +78,13 @@ public class Mesh4jSmsUITranslator {
 		return MessageTranslator.translate("Mesh4jUI_SMS_MESSAGE_NOTIFY_RECEIVE_MSG", endpointId, message);
 	}
 
+	public static String getLabelMessageToSend() {
+		// TODO Resource bundleeeeeeee
+		return "Message";
+	}
+
+	public static String getLabelSendMessage() {
+		return "send";
+	}
+
 }

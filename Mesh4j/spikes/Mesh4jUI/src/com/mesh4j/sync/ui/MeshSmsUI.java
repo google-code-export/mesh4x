@@ -1,6 +1,7 @@
 package com.mesh4j.sync.ui;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -24,8 +25,11 @@ import com.mesh4j.sync.adapters.sms.SmsHelper;
 import com.mesh4j.sync.message.IMessageSyncAware;
 import com.mesh4j.sync.message.ISyncSession;
 import com.mesh4j.sync.message.MessageSyncEngine;
+import com.mesh4j.sync.message.channel.sms.SmsEndpoint;
+import com.mesh4j.sync.message.channel.sms.batch.SmsMessage;
 import com.mesh4j.sync.message.channel.sms.connection.ISmsConnectionInboundOutboundNotification;
 import com.mesh4j.sync.message.channel.sms.connection.smslib.Modem;
+import com.mesh4j.sync.message.channel.sms.core.SmsChannel;
 import com.mesh4j.sync.model.Item;
 import com.mesh4j.sync.properties.PropertiesProvider;
 import com.mesh4j.sync.ui.translator.Mesh4jSmsUITranslator;
@@ -41,7 +45,8 @@ public class MeshSmsUI implements ISmsConnectionInboundOutboundNotification, IMe
 	private Text consoleView;
 	private Combo comboPhone;
 	private Text textSmsNumber;
-	private Button buttonCompress;
+	private Button buttonCompress;	
+	private Text textMessageToSend;
 	
 	private String defaultKmlFile;
 	private String defaultPhoneNumberDestination;
@@ -106,7 +111,7 @@ public class MeshSmsUI implements ISmsConnectionInboundOutboundNotification, IMe
 				boolean ok = validateInputs();
 					if(ok){
 						consoleView.setText("");
-						executeInNewThread(false);
+						executeInNewThread(SmsExecutionMode.SYNCHRONIZE);
 					}
 				}
 			}
@@ -126,12 +131,34 @@ public class MeshSmsUI implements ISmsConnectionInboundOutboundNotification, IMe
 				boolean ok = validateInputs();
 					if(ok){
 						consoleView.setText("");
-						executeInNewThread(true);
+						executeInNewThread(SmsExecutionMode.EMULATE);
 					}
 				}
 			}
 		);		
 		buttonEmulate.setText(Mesh4jSmsUITranslator.getLabelEmulate());
+		
+		
+		Label labelMessageToSend = new Label (shell, SWT.NONE);
+		labelMessageToSend.setText(Mesh4jSmsUITranslator.getLabelMessageToSend());
+
+		textMessageToSend = new Text (shell, SWT.BORDER);
+		textMessageToSend.setLayoutData (new GridData(600, 15));
+		textMessageToSend.setText("<imput the message to send>");
+		
+		Button buttonSendMessage = new Button(shell, SWT.PUSH);
+		buttonSendMessage.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {				
+				boolean ok = validateInputs();
+					if(ok){
+						consoleView.setText("");
+						executeInNewThread(SmsExecutionMode.SEND);
+					}
+				}
+			}
+		);		
+		buttonSendMessage.setText(Mesh4jSmsUITranslator.getLabelSendMessage());
+		buttonSendMessage.setEnabled(modem != null);
 		
 		consoleView = new Text(shell, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		consoleView.setLayoutData(new GridData(900, 300));
@@ -196,9 +223,10 @@ public class MeshSmsUI implements ISmsConnectionInboundOutboundNotification, IMe
 		return true;
 	}
 	
-	private void executeInNewThread(final boolean emulate){
+	private void executeInNewThread(final SmsExecutionMode executionMode){
 		final String smsFrom = this.comboPhone.getText();
 		final String smsTo = this.textSmsNumber.getText();
+		final String text = this.textMessageToSend.getText();
 		final boolean useCompression = this.buttonCompress.getSelection();
 		final String kmlFileName = this.textKmlFile.getText();
 		
@@ -208,9 +236,10 @@ public class MeshSmsUI implements ISmsConnectionInboundOutboundNotification, IMe
 				Thread thread = new Thread(new Runnable() {
 					public void run() {
 												
-						final String syncResult = emulate 
+						final String syncResult = executionMode.isEmulate() 
 							? emulateSync(smsFrom, smsTo, useCompression, kmlFileName)
-							: synchronizeItems(kmlFileName, smsTo);
+							: (executionMode.isSynchronize() ? synchronizeItems(kmlFileName, smsTo)
+							: sendMessage(text, smsTo));
 						
 						if (display.isDisposed()) return;
 						
@@ -246,6 +275,19 @@ public class MeshSmsUI implements ISmsConnectionInboundOutboundNotification, IMe
 	private String synchronizeItems(String kmlFileName, String smsTo){
 		try{				
 			SmsHelper.synchronizeKml(this.syncEngine, kmlFileName, smsTo);
+			return "";
+		} catch (RuntimeException e) {
+			Logger.error(e.getMessage(), e);
+			return Mesh4jSmsUITranslator.getLabelFailed();
+		}
+	}
+	
+	private String sendMessage(String text, String smsTo){
+		try{				
+			List<SmsMessage> messages = new ArrayList<SmsMessage>();
+			messages.add(new SmsMessage(text));
+			
+			((SmsChannel)this.syncEngine.getChannel()).send(messages, new SmsEndpoint(smsTo));
 			return "";
 		} catch (RuntimeException e) {
 			Logger.error(e.getMessage(), e);
