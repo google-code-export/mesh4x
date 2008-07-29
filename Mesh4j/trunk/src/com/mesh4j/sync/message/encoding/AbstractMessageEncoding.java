@@ -39,10 +39,13 @@ public abstract class AbstractMessageEncoding implements IMessageEncoding {
 		}else{
 			encodeMsg = "c"+encodeMsg;
 		}
-		
-		System.out.println(encodeMsg.length() + " -> " + encodeMsg);		
 		return encodeMsg;
 	}
 
+	@Override
+	public boolean isBynary() {
+		return false;
+	}
+	
 	protected abstract String basicEncode(String message);
 }
