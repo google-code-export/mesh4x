@@ -6,10 +6,9 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.smslib.IInboundMessageNotification;
-import org.smslib.IOutboundMessageNotification;
+import org.smslib.InboundBinaryMessage;
 import org.smslib.InboundMessage;
-import org.smslib.OutboundMessage;
+import org.smslib.OutboundBinaryMessage;
 import org.smslib.Service;
 import org.smslib.InboundMessage.MessageClasses;
 import org.smslib.modem.SerialModemGateway;
@@ -37,8 +36,6 @@ public class SmsLibConnection implements ISmsConnection, IRefreshTask {
 	private int maxMessageLenght = 140;
 	private IMessageEncoding messageEncoding;
 	private ISmsReceiver messageReceiver;
-	private IOutboundMessageNotification outboundMessageNotification;
-	private IInboundMessageNotification inboundMessageNotification;
 	private ISmsConnectionInboundOutboundNotification smsConnectionNotification;
 	private int channelDelay = 1000;
 		
@@ -46,9 +43,7 @@ public class SmsLibConnection implements ISmsConnection, IRefreshTask {
 	public SmsLibConnection(String gatewayId, String comPort, int baudRate,
 			String manufacturer, String model, int maxMessageLenght, IMessageEncoding messageEncoding, 
 			int refrehDelay, int channelDelay, 
-			ISmsConnectionInboundOutboundNotification smsConnectionNotification, 
-			IOutboundMessageNotification outboundMessageNotification, 
-			IInboundMessageNotification inboundMessageNotification) {
+			ISmsConnectionInboundOutboundNotification smsConnectionNotification) {
 		super();
 		this.gatewayId = gatewayId;
 		this.comPort = comPort;
@@ -57,8 +52,6 @@ public class SmsLibConnection implements ISmsConnection, IRefreshTask {
 		this.model = model;
 		this.maxMessageLenght = maxMessageLenght;
 		this.messageEncoding = messageEncoding;
-		this.outboundMessageNotification = outboundMessageNotification;
-		this.inboundMessageNotification = inboundMessageNotification;
 		this.smsConnectionNotification = smsConnectionNotification;
 		
 		if(channelDelay > 0){
@@ -114,15 +107,11 @@ public class SmsLibConnection implements ISmsConnection, IRefreshTask {
 				gateway.setOutbound(true);
 				gateway.setSimPin("0000");
 				
-				if(this.outboundMessageNotification != null){
-					gateway.setOutboundNotification(this.outboundMessageNotification);
-				}
-				
 				srv.addGateway(gateway);
 				srv.startService();
 				
 				// Send a message synchronously.
-				OutboundMessage msg = new OutboundMessage(smsNumber, smsText);
+				OutboundBinaryMessage msg = new OutboundBinaryMessage(smsNumber, smsText.getBytes());
 				srv.sendMessage(msg);
 				
 			} catch (Exception e) {
@@ -154,16 +143,31 @@ public class SmsLibConnection implements ISmsConnection, IRefreshTask {
 	}
 
 	private void processReceivedMessage(InboundMessage smsMessage) {
-		if(!(smsMessage == null || smsMessage.getText() == null || smsMessage.getText().isEmpty())){
+		if(smsMessage == null){
+			return;
+		}
+		
+		if(smsMessage instanceof InboundBinaryMessage){
+			InboundBinaryMessage binaryMessage = (InboundBinaryMessage) smsMessage;
+			byte[] bytes = binaryMessage.getDataBytes();
+			String text = new String(bytes);
+			processReceivedTextMessage(smsMessage.getOriginator(), text, smsMessage.getDate(), smsMessage);
+		} else {
+			processReceivedTextMessage(smsMessage.getOriginator(), smsMessage.getText(), smsMessage.getDate(), smsMessage);
+		}
+	}
+
+	private void processReceivedTextMessage(String endpointId, String text, Date date, InboundMessage smsMessage) {
+		if(!(text == null || text.isEmpty())){
 			try{
 				this.notifyReceiveMessage(
-						smsMessage.getOriginator(), 
-						smsMessage.getText(),
-						smsMessage.getDate());
+						endpointId, 
+						text,
+						date);
 				this.messageReceiver.receiveSms(
-					new SmsEndpoint(smsMessage.getOriginator()), 
-					smsMessage.getText(),
-					smsMessage.getDate());
+					new SmsEndpoint(endpointId), 
+					text,
+					date);
 				
 				sleepChannelDelay();
 				
@@ -171,9 +175,9 @@ public class SmsLibConnection implements ISmsConnection, IRefreshTask {
 			} catch(RuntimeException re){
 				LOGGER.info(re.getMessage());
 				this.notifyReceiveMessageError(
-						smsMessage.getOriginator(), 
-						smsMessage.getText(),
-						smsMessage.getDate());
+						endpointId, 
+						text,
+						date);
 			}
 		}
 	}
@@ -196,10 +200,6 @@ public class SmsLibConnection implements ISmsConnection, IRefreshTask {
 				// Do we want the Gateway to be used for Outbound messages? If not, SMSLib will never send messages from this Gateway.
 				gateway.setOutbound(true);
 				gateway.setSimPin("0000");
-				
-				if(this.inboundMessageNotification != null){
-					gateway.setInboundNotification(this.inboundMessageNotification);
-				}
 				
 				// Add the Gateway to the Service object.
 				srv.addGateway(gateway);
@@ -256,10 +256,6 @@ public class SmsLibConnection implements ISmsConnection, IRefreshTask {
 				// Do we want the Gateway to be used for Outbound messages? If not, SMSLib will never send messages from this Gateway.
 				gateway.setOutbound(true);
 				gateway.setSimPin("0000");
-				
-				if(this.inboundMessageNotification != null){
-					gateway.setInboundNotification(this.inboundMessageNotification);
-				}
 				
 				// Add the Gateway to the Service object.
 				srv.addGateway(gateway);

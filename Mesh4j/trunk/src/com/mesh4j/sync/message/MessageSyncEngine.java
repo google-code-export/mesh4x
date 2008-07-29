@@ -95,4 +95,8 @@ public class MessageSyncEngine implements IMessageReceiver {
 	public void registerSourceIfAbsent(IMessageSyncAdapter adapter) {
 		this.syncProtocol.registerSourceIfAbsent(adapter);
 	}
+
+	public IChannel getChannel() {
+		return this.channel;
+	}
 }

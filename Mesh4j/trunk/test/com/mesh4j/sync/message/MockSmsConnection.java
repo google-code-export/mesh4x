@@ -76,11 +76,11 @@ public class MockSmsConnection implements ISmsConnection{
 		this.maxMessageLenght = max;
 	}
 		
-	protected int getGeneratedMessagesStatistics() {
+	public int getGeneratedMessagesStatistics() {
 		return generatedMessagesStatistics;
 	}
 
-	protected int getGeneratedMessagesSizeStatistics() {
+	public int getGeneratedMessagesSizeStatistics() {
 		return generatedMessagesSizeStatistics;
 	}
 

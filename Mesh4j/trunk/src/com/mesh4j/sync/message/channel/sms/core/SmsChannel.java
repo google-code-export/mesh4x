@@ -169,6 +169,10 @@ public class SmsChannel implements ISmsChannel, IMessageSyncAware {
 		this.sender.send(batch, ackIsRequired);		
 	}
 	
+	public void send(List<SmsMessage> messages, SmsEndpoint endpoint){
+		this.sender.send(messages, endpoint);
+	}
+	
 	@Override
 	public void beginSync(ISyncSession syncSession) {
 		// nothing to do		

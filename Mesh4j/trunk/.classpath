@@ -19,7 +19,8 @@
 	<classpathentry kind="lib" path="lib/jaf/activation.jar"/>
 	<classpathentry kind="lib" path="lib/jakarta-commons/commons-net-1.4.1.jar"/>
 	<classpathentry kind="lib" path="lib/javamail/mail.jar"/>
-	<classpathentry kind="lib" path="lib/smsLib/smslib-3.3.0b2.jar" sourcepath="lib/smsLib/smslib-src.zip"/>
 	<classpathentry kind="lib" path="etc"/>
+	<classpathentry kind="lib" path="lib/jakarta-commons/commons-codec-1.3.jar"/>
+	<classpathentry kind="lib" path="lib/smsLib/smslib-3.3.0-B3.jar" sourcepath="lib/smsLib/smslib-3.3.0-B3-src.zip"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

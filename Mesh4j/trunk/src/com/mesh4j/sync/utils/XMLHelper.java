@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -116,6 +117,12 @@ public class XMLHelper {
 
 	public static Document readDocument(File file) throws DocumentException {
 		SAXReader reader = new SAXReader();
+		return reader.read(file);
+	}
+	
+	public static Document readDocument(File file, Charset charset) throws DocumentException {
+		SAXReader reader = new SAXReader();
+		reader.setEncoding(charset.name());
 		return reader.read(file);
 	}
 	

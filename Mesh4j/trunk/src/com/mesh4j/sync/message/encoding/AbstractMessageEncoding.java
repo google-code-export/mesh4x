@@ -23,7 +23,6 @@ public abstract class AbstractMessageEncoding implements IMessageEncoding {
 			Guard.throwsArgumentException("ERROR_MESSAGE_SYNC_INVALID_ENCODED_MESSAGE", message);
 		}
 		return decodedMsg;
-		
 	}
 
 	protected abstract String basicDecode(String message);
@@ -40,6 +39,8 @@ public abstract class AbstractMessageEncoding implements IMessageEncoding {
 		}else{
 			encodeMsg = "c"+encodeMsg;
 		}
+		
+		System.out.println(encodeMsg.length() + " -> " + encodeMsg);		
 		return encodeMsg;
 	}
 
