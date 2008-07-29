@@ -153,7 +153,7 @@ public class SmsLibConnection implements ISmsConnection, IRefreshTask {
 			String text = new String(bytes);
 			processReceivedTextMessage(smsMessage.getOriginator(), text, smsMessage.getDate(), smsMessage);
 		} else {
-			processReceivedTextMessage(smsMessage.getOriginator(), smsMessage.getText(), smsMessage.getDate(), smsMessage);
+			//processReceivedTextMessage(smsMessage.getOriginator(), smsMessage.getText(), smsMessage.getDate(), smsMessage);
 		}
 	}
 
