@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.mesh4j.sync.message.channel.sms.ISmsChannel;
+import com.mesh4j.sync.message.channel.sms.ISmsBatchReceiver;
 import com.mesh4j.sync.message.channel.sms.ISmsReceiver;
 import com.mesh4j.sync.message.channel.sms.SmsEndpoint;
 import com.mesh4j.sync.message.channel.sms.batch.DiscardedBatchRecord;
@@ -40,7 +40,7 @@ public class MockSmsReceiver implements ISmsReceiver {
 	}
 
 	@Override
-	public void setBatchReceiver(ISmsChannel batchReceiver) {
+	public void setBatchReceiver(ISmsBatchReceiver smsBatchReceiver) {
 		
 	}
 

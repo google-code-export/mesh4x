@@ -58,7 +58,7 @@ public class InMemorySmsConnection implements ISmsConnection, IRefreshTask{
 	}
 
 	@Override
-	public void registerSmsReceiver(ISmsReceiver messageReceiver) {
+	public void setMessageReceiver(ISmsReceiver messageReceiver) {
 		this.messageReceiver = messageReceiver;
 	}
 

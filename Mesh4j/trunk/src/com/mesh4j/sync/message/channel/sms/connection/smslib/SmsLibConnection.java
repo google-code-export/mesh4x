@@ -9,6 +9,7 @@ import org.apache.commons.logging.LogFactory;
 import org.smslib.InboundBinaryMessage;
 import org.smslib.InboundMessage;
 import org.smslib.OutboundBinaryMessage;
+import org.smslib.OutboundMessage;
 import org.smslib.Service;
 import org.smslib.InboundMessage.MessageClasses;
 import org.smslib.modem.SerialModemGateway;
@@ -17,6 +18,7 @@ import com.mesh4j.sync.message.channel.sms.ISmsConnection;
 import com.mesh4j.sync.message.channel.sms.ISmsReceiver;
 import com.mesh4j.sync.message.channel.sms.SmsEndpoint;
 import com.mesh4j.sync.message.channel.sms.connection.ISmsConnectionInboundOutboundNotification;
+import com.mesh4j.sync.message.core.NonMessageEncoding;
 import com.mesh4j.sync.message.encoding.IMessageEncoding;
 import com.mesh4j.sync.message.schedule.timer.TimerScheduler;
 import com.mesh4j.sync.validations.MeshException;
@@ -34,9 +36,9 @@ public class SmsLibConnection implements ISmsConnection, IRefreshTask {
 	private String manufacturer;
 	private String model;
 	private int maxMessageLenght = 140;
-	private IMessageEncoding messageEncoding;
-	private ISmsReceiver messageReceiver;
-	private ISmsConnectionInboundOutboundNotification smsConnectionNotification;
+	private IMessageEncoding messageEncoding = NonMessageEncoding.INSTANCE;
+	private ISmsReceiver messageReceiver =  null;
+	private ISmsConnectionInboundOutboundNotification smsConnectionNotification = null;
 	private int channelDelay = 1000;
 		
 	// BUSINESS METHODS
@@ -74,7 +76,7 @@ public class SmsLibConnection implements ISmsConnection, IRefreshTask {
 	}
 
 	@Override
-	public void registerSmsReceiver(ISmsReceiver messageReceiver) {
+	public void setMessageReceiver(ISmsReceiver messageReceiver) {
 		this.messageReceiver = messageReceiver;
 	}
 
@@ -111,7 +113,12 @@ public class SmsLibConnection implements ISmsConnection, IRefreshTask {
 				srv.startService();
 				
 				// Send a message synchronously.
-				OutboundBinaryMessage msg = new OutboundBinaryMessage(smsNumber, smsText.getBytes());
+				OutboundMessage msg = null;
+				if(this.messageEncoding.isBynary()){
+					msg = new OutboundBinaryMessage(smsNumber, smsText.getBytes());
+				} else {
+					msg = new OutboundMessage(smsNumber, smsText);
+				}
 				srv.sendMessage(msg);
 				
 			} catch (Exception e) {
@@ -153,7 +160,7 @@ public class SmsLibConnection implements ISmsConnection, IRefreshTask {
 			String text = new String(bytes);
 			processReceivedTextMessage(smsMessage.getOriginator(), text, smsMessage.getDate(), smsMessage);
 		} else {
-			//processReceivedTextMessage(smsMessage.getOriginator(), smsMessage.getText(), smsMessage.getDate(), smsMessage);
+			processReceivedTextMessage(smsMessage.getOriginator(), smsMessage.getText(), smsMessage.getDate(), smsMessage);
 		}
 	}
 
@@ -164,14 +171,16 @@ public class SmsLibConnection implements ISmsConnection, IRefreshTask {
 						endpointId, 
 						text,
 						date);
-				this.messageReceiver.receiveSms(
-					new SmsEndpoint(endpointId), 
-					text,
-					date);
-				
-				sleepChannelDelay();
-				
-				this.removeMessage(smsMessage);
+				if(this.messageReceiver != null){
+					this.messageReceiver.receiveSms(
+						new SmsEndpoint(endpointId), 
+						text,
+						date);
+					
+					sleepChannelDelay();
+					
+					this.removeMessage(smsMessage);
+				}
 			} catch(RuntimeException re){
 				LOGGER.info(re.getMessage());
 				this.notifyReceiveMessageError(

@@ -214,12 +214,12 @@ public class SmsLibTests {
 	public void shouldReadMeshMessages() throws InterruptedException{
 		SmsReceiver messageReceiver = new SmsReceiver();		
 		SmsLibConnection smsConnection = new SmsLibConnection("modem.com23", "COM23", 115200, "Sony Ericsson", "FAD-3022013-BV", 140, CompressBase91MessageEncoding.INSTANCE,1000,  0, null);
-		smsConnection.registerSmsReceiver(messageReceiver);
+		smsConnection.setMessageReceiver(messageReceiver);
 		smsConnection.processReceivedMessages();
 		
 		SmsReceiver messageReceiverB = new SmsReceiver();		
 		SmsLibConnection smsConnectionB = new SmsLibConnection("modem.com18", "COM18", 115200, "Nokia", "6070", 140, CompressBase91MessageEncoding.INSTANCE,1000,  0, null);
-		smsConnectionB.registerSmsReceiver(messageReceiverB);
+		smsConnectionB.setMessageReceiver(messageReceiverB);
 		smsConnectionB.processReceivedMessages();
 
 	}

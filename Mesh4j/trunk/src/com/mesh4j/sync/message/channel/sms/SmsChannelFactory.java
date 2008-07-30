@@ -27,7 +27,7 @@ public class SmsChannelFactory {
 		
 		SmsSender sender = new SmsSender(smsConnection, senderRepository);
 		SmsReceiver receiver = new SmsReceiver(receiverRepository);
-		smsConnection.registerSmsReceiver(receiver);
+		smsConnection.setMessageReceiver(receiver);
 		
 		SmsChannel channel = new SmsChannel(sender, receiver, smsConnection.getMessageEncoding(), smsConnection.getMaxMessageLenght());
 		

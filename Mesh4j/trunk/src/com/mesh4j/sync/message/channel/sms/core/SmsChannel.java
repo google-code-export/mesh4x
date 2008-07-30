@@ -38,7 +38,7 @@ public class SmsChannel implements ISmsChannel, IMessageSyncAware {
 		Guard.argumentNotNull(messageEncoding, "messageEncoding");
 		
 		this.messageEncoding = messageEncoding;
-		this.batchFactory = new MessageBatchFactory(maxMessageLenght);
+		this.batchFactory = new MessageBatchFactory(maxMessageLenght - MessageFormatter.getBatchHeaderLenght());
 		
 		this.sender = sender;
 		this.receiver = receiver;

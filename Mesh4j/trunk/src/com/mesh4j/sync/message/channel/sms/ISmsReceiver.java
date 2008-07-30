@@ -8,7 +8,7 @@ import com.mesh4j.sync.message.channel.sms.batch.SmsMessageBatch;
 
 public interface ISmsReceiver {
 
-	void setBatchReceiver(ISmsChannel batchReceiver);
+	void setBatchReceiver(ISmsBatchReceiver smsBatchReceiver);
 
 	int getOngoingBatchesCount();
 

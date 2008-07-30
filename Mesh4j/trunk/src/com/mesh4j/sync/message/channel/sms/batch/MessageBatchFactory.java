@@ -7,7 +7,7 @@ import com.mesh4j.sync.message.channel.sms.core.MessageFormatter;
 public class MessageBatchFactory {
 
 	// CONSTANTS
-	private int maxMessageLength = 140 - MessageFormatter.getBatchHeaderLenght(); // Default max value 140
+	private int maxMessageLength = 140; // Default max value 140
 
 	// BUSINESS METHODS
 	public MessageBatchFactory() {
@@ -16,7 +16,7 @@ public class MessageBatchFactory {
 
 	public MessageBatchFactory(int maxMesgLength) {
 		super();
-		this.maxMessageLength = maxMesgLength - MessageFormatter.getBatchHeaderLenght();
+		this.maxMessageLength = maxMesgLength;
 	}
 
 	public SmsMessageBatch createMessageBatch(String sessionId, SmsEndpoint endopoint, String protocolHeader, String ackBatchId, String payload) {

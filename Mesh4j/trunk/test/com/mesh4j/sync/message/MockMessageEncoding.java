@@ -16,4 +16,9 @@ public class MockMessageEncoding implements IMessageEncoding{
 		return message;
 	}
 
+	@Override
+	public boolean isBynary() {
+		return false;
+	}
+
 }

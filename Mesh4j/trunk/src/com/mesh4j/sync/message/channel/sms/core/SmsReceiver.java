@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.mesh4j.sync.message.channel.sms.ISmsChannel;
+import com.mesh4j.sync.message.channel.sms.ISmsBatchReceiver;
 import com.mesh4j.sync.message.channel.sms.ISmsReceiver;
 import com.mesh4j.sync.message.channel.sms.SmsEndpoint;
 import com.mesh4j.sync.message.channel.sms.batch.DiscardedBatchRecord;
@@ -23,7 +23,7 @@ public class SmsReceiver implements ISmsReceiver {
 	private  Map<String, SmsMessageBatch> ongoingBatches = Collections.synchronizedMap(new HashMap<String, SmsMessageBatch>());
 	private  Map<String, DiscardedBatchRecord> discardedBatches = Collections.synchronizedMap(new HashMap<String, DiscardedBatchRecord>());
 
-	private ISmsChannel smsChannel;
+	private ISmsBatchReceiver smsBatchReceiver;
 	private ISmsReceiverRepository repository;
 	
 	// BUSINESS METHODS
@@ -106,14 +106,14 @@ public class SmsReceiver implements ISmsReceiver {
 	}
 	
 	private void notifyBatchCompleted(SmsMessageBatch batch){
-		if(this.smsChannel != null){
-			this.smsChannel.receive(batch);
+		if(this.smsBatchReceiver != null){
+			this.smsBatchReceiver.receive(batch);
 		}
 	}
 
 	private void notifyBatchACK(SmsMessage message){
-		if(this.smsChannel != null){
-			this.smsChannel.receiveACK(MessageFormatter.getBatchACK(message.getText()));
+		if(this.smsBatchReceiver != null){
+			this.smsBatchReceiver.receiveACK(MessageFormatter.getBatchACK(message.getText()));
 		}
 	}
 	
@@ -177,8 +177,8 @@ public class SmsReceiver implements ISmsReceiver {
 	}
 
 	@Override
-	public void setBatchReceiver(ISmsChannel smsChannel) {
-		this.smsChannel = smsChannel;		
+	public void setBatchReceiver(ISmsBatchReceiver smsBatchReceiver) {
+		this.smsBatchReceiver = smsBatchReceiver;		
 	}
 
 	@Override
