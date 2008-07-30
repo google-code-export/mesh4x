@@ -52,18 +52,17 @@ public class PropertiesProvider {
 	public IIdentityProvider getIdentityProvider() {
 		try{
 			String identityProviderClassName =  this.properties.getProperty("sync.identity.provider", LoggedInIdentityProvider.class.getName());
-			IIdentityProvider security = makeNewInstance(identityProviderClassName);
+			IIdentityProvider security = (IIdentityProvider)makeNewInstance(identityProviderClassName);
 			return security;
 		} catch (Exception e) {
 			throw new MeshException(e);
 		}
 	}
-
+	
 	@SuppressWarnings("unchecked")
-	private IIdentityProvider makeNewInstance(String identityProviderClassName) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-		Class clazz = Class.forName(identityProviderClassName);
-		IIdentityProvider identityProvider = (IIdentityProvider)clazz.newInstance();
-		return identityProvider;
+	public Object makeNewInstance(String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+		Class clazz = Class.forName(className);
+		return clazz.newInstance();
 	}
 
 	public String getBaseDirectory() {
@@ -80,5 +79,17 @@ public class PropertiesProvider {
 
 	public boolean getBoolean(String key) {
 		return Boolean.valueOf(this.properties.getProperty(key, "true"));
+	}
+
+	public Object getInstance(String key, Object defaultInstanceIfAbsent) {
+		try{
+			String className = this.getString(key);
+			if(className == null || className.length() == 0){
+				return defaultInstanceIfAbsent;
+			}
+			return makeNewInstance(className);
+		} catch (Exception e) {
+			throw new MeshException(e);
+		}
 	}
 }

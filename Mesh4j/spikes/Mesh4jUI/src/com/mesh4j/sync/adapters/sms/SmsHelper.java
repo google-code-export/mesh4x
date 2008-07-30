@@ -18,10 +18,10 @@ import com.mesh4j.sync.message.channel.sms.connection.ISmsConnectionInboundOutbo
 import com.mesh4j.sync.message.channel.sms.connection.InMemorySmsConnection;
 import com.mesh4j.sync.message.channel.sms.connection.smslib.Modem;
 import com.mesh4j.sync.message.channel.sms.connection.smslib.ModemHelper;
+import com.mesh4j.sync.message.channel.sms.connection.smslib.SmsLibAsynchronousConnection;
 import com.mesh4j.sync.message.channel.sms.connection.smslib.SmsLibConnection;
 import com.mesh4j.sync.message.core.MessageSyncAdapter;
 import com.mesh4j.sync.message.core.NonMessageEncoding;
-import com.mesh4j.sync.message.encoding.CompressBase91MessageEncoding;
 import com.mesh4j.sync.message.encoding.IMessageEncoding;
 import com.mesh4j.sync.message.protocol.MessageSyncProtocolFactory;
 import com.mesh4j.sync.properties.PropertiesProvider;
@@ -40,11 +40,7 @@ public class SmsHelper {
 		int maxMessageLenght = prop.getInt("default.sms.demo.max.message.lenght");
 		IIdentityProvider identityProvider = prop.getIdentityProvider();
 
-		IMessageEncoding encoding = NonMessageEncoding.INSTANCE;
-		if(useCompression){
-			encoding = CompressBase91MessageEncoding.INSTANCE;
-			//encoding = CompressYEncMessageEncoding.INSTANCE;
-		}
+		IMessageEncoding encoding = (IMessageEncoding) prop.getInstance("default.sms.demo.compress.method", NonMessageEncoding.INSTANCE);
 		emulateSync(smsConnectionNotification, syncAware, smsFrom, smsTo, encoding, kmlFileName, identityProvider, baseDirectory, senderDelay, receiverDelay, readDelay, channelDelay, maxMessageLenght);
 	}
 	
@@ -130,18 +126,19 @@ public class SmsHelper {
 			int readDelay = prop.getInt("default.sms.read.delay");
 			int maxMessageLenght = prop.getInt("default.sms.max.message.lenght");
 			int channelDelay = prop.getInt("default.sms.channel.delay");
-			boolean useCompress = prop.getBoolean("default.sms.use.compress");
-			IIdentityProvider identityProvider = prop.getIdentityProvider();
+			IIdentityProvider identityProvider = prop.getIdentityProvider();			
+			IMessageEncoding messageEncoding = (IMessageEncoding) prop.getInstance("default.sms.compress.method", NonMessageEncoding.INSTANCE);
+			boolean useAsynchronousConnection = prop.getBoolean("default.sms.use.asynchronous.connection");
 			
-			IMessageEncoding messageEncoding = NonMessageEncoding.INSTANCE;
-			if(useCompress){
-				//messageEncoding = CompressYEncMessageEncoding.INSTANCE;
-				messageEncoding = CompressBase91MessageEncoding.INSTANCE;
+			ISmsConnection smsConnection =  null;
+			if(useAsynchronousConnection){
+				smsConnection = new SmsLibAsynchronousConnection("mesh4j.sync", modem.getComPort(), modem.getBaudRate(),
+						modem.getManufacturer(), modem.getModel(), maxMessageLenght, messageEncoding, smsConnectionInboundOutboundNotification);
+				((SmsLibAsynchronousConnection)smsConnection).startService();
+			}else{
+				smsConnection = new SmsLibConnection("mesh4j.sync", modem.getComPort(), modem.getBaudRate(),
+						modem.getManufacturer(), modem.getModel(), maxMessageLenght, messageEncoding, readDelay, channelDelay, smsConnectionInboundOutboundNotification);
 			}
-				
-			SmsLibConnection smsConnection = new SmsLibConnection("mesh4j.sync", modem.getComPort(), modem.getBaudRate(),
-				modem.getManufacturer(), modem.getModel(), maxMessageLenght, messageEncoding, readDelay, channelDelay, smsConnectionInboundOutboundNotification);
-			
 			return createSyncEngine(syncAware, baseDirectory+"\\"+modem.toString()+"\\", identityProvider, smsConnection, senderDelay, receiverDelay);
 		} else {
 			return null;
@@ -159,4 +156,5 @@ public class SmsHelper {
 
 		syncEngine.synchronize(adapter, new SmsEndpoint(smsNumber), true);
 	}
+	
 }

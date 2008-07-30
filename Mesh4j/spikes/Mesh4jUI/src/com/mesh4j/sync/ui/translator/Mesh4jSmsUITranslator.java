@@ -79,12 +79,12 @@ public class Mesh4jSmsUITranslator {
 	}
 
 	public static String getLabelMessageToSend() {
-		// TODO Resource bundleeeeeeee
-		return "Message";
+		return MessageTranslator.translate("Mesh4jUI_SMS_MESSAGE_LABEL_MESSAGE_TO_SEND");
 	}
 
 	public static String getLabelSendMessage() {
-		return "send";
+		return MessageTranslator.translate("Mesh4jUI_SMS_MESSAGE_LABEL_SEND");
+
 	}
 
 }
