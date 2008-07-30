@@ -5,4 +5,6 @@ public interface IMessageEncoding {
 	String encode(String message);
 	
 	String decode(String message);
+	
+	boolean isBynary();
 }

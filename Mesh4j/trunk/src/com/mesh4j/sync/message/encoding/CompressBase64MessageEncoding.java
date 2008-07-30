@@ -10,10 +10,6 @@ public class CompressBase64MessageEncoding extends AbstractMessageEncoding {
 
 	public static final CompressBase64MessageEncoding INSTANCE = new CompressBase64MessageEncoding();
 
-	private CompressBase64MessageEncoding(){
-		super();
-	}
-	
 	@Override
 	protected String basicDecode(String message) {
 		try{
@@ -35,5 +31,11 @@ public class CompressBase64MessageEncoding extends AbstractMessageEncoding {
 			throw new MeshException(e);
 		}
 	}
+	
+	@Override
+	public boolean isBynary() {
+		return false;
+	}
+
 
 }

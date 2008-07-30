@@ -85,7 +85,7 @@ public class SmsChannelTests {
 		Message message = new Message("a", "a", "60131f9c-1e40-47df-b316-ed15a9460515", 0, "123", new SmsEndpoint("123"));
 		
 		MockSmsSender sender = new MockSmsSender();
-		SmsChannel channel = new SmsChannel(sender, new MockSmsReceiver(), new MockMessageEncoding(), 10);
+		SmsChannel channel = new SmsChannel(sender, new MockSmsReceiver(), new MockMessageEncoding(), 100);
 		channel.send(message);
 		
 		Assert.assertEquals(1, sender.getOngoingBatchesCount());
@@ -166,7 +166,7 @@ public class SmsChannelTests {
 		
 		MockSmsSender sender = new MockSmsSender();
 		
-		SmsChannel channel = new SmsChannel(sender, new MockSmsReceiver(), new MockMessageEncoding(), 10);
+		SmsChannel channel = new SmsChannel(sender, new MockSmsReceiver(), new MockMessageEncoding(), 100);
 		channel.sendAskForRetry(batch);
 		
 		Assert.assertTrue(smsMessage.getLastModificationDate().after(date));

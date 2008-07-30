@@ -6,10 +6,6 @@ import com.mesh4j.sync.utils.ZipUtils;
 public class ZipBase64MessageEncoding extends AbstractMessageEncoding{
 
 	public static final ZipBase64MessageEncoding INSTANCE = new ZipBase64MessageEncoding();
-
-	private ZipBase64MessageEncoding(){
-		super();
-	}
 	
 	@Override
 	public String basicEncode(String message) {
@@ -22,5 +18,11 @@ public class ZipBase64MessageEncoding extends AbstractMessageEncoding{
 	public String basicDecode(String message) {
 		byte[] zipBytes = Base64Helper.decode(message);		
 		return ZipUtils.unzip(zipBytes, "message");
-	}	
+	}
+	
+	@Override
+	public boolean isBynary() {
+		return false;
+	}
+
 }

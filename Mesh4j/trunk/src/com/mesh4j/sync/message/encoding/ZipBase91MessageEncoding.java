@@ -7,10 +7,6 @@ public class ZipBase91MessageEncoding extends AbstractMessageEncoding{
 
 	public static final ZipBase91MessageEncoding INSTANCE = new ZipBase91MessageEncoding();
 
-	private ZipBase91MessageEncoding(){
-		super();
-	}
-	
 	@Override
 	protected String basicEncode(String message) {
 		byte[] bytes = ZipUtils.zip(message, "message");
@@ -23,4 +19,10 @@ public class ZipBase91MessageEncoding extends AbstractMessageEncoding{
 		byte[] zipBytes = Base91Helper.decode(message);		
 		return ZipUtils.unzip(zipBytes, "message");
 	}
+
+	@Override
+	public boolean isBynary() {
+		return true;
+	}
+
 }

@@ -142,6 +142,10 @@ public class SyncSession implements ISyncSession{
 		}
 		
 		List<Item> items = this.syncAdapter.getAll();
+		
+		if(this.syncAdapter instanceof ISyncAware){
+			((ISyncAware)this.syncAdapter).endSync();
+		}
 		for (Item item : items) {
 			this.cache.put(item.getSyncId(), item);
 		}

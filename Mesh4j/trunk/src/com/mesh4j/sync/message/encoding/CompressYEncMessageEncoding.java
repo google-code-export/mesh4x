@@ -9,10 +9,6 @@ import com.mesh4j.sync.validations.MeshException;
 public class CompressYEncMessageEncoding extends AbstractMessageEncoding {
 
 	public static final CompressYEncMessageEncoding INSTANCE = new CompressYEncMessageEncoding();
-
-	private CompressYEncMessageEncoding(){
-		super();
-	}
 	
 	@Override
 	protected String basicDecode(String message) {
@@ -43,6 +39,10 @@ public class CompressYEncMessageEncoding extends AbstractMessageEncoding {
 			throw new MeshException(e);
 		}
 	}
-
+	
+	@Override
+	public boolean isBynary() {
+		return true;
+	}
 
 }

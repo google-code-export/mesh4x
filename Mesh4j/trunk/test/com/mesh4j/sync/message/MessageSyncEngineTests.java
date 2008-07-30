@@ -102,7 +102,7 @@ public class MessageSyncEngineTests {
 		
 		IMessageSyncAdapter endPointA = new InMemoryMessageSyncAdapter(SOURCE_ID, itemsA);
 		IMessageSyncAdapter endPointB = new InMemoryMessageSyncAdapter(SOURCE_ID, itemsB);
-		setUp(endPointA, 500, 80, 100, 100, endPointB, 500, 80, 100, 100);
+		setUp(endPointA, 500, 140, 0, 0, endPointB, 500, 140, 0, 0);
 		
 		sync(false);		
 		Assert.assertEquals(1, snapshotA.size());
