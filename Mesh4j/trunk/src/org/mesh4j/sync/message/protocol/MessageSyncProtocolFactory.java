@@ -1,0 +1,70 @@
+package org.mesh4j.sync.message.protocol;
+
+import java.util.ArrayList;
+
+import org.mesh4j.sync.message.IMessageSyncAware;
+import org.mesh4j.sync.message.IMessageSyncProtocol;
+import org.mesh4j.sync.message.core.IMessageProcessor;
+import org.mesh4j.sync.message.core.ISyncSessionRepository;
+import org.mesh4j.sync.message.core.MessageSyncProtocol;
+import org.mesh4j.sync.message.core.repository.SyncSessionFactory;
+import org.mesh4j.sync.message.core.repository.file.FileSyncSessionRepository;
+import org.mesh4j.sync.security.IIdentityProvider;
+
+
+public class MessageSyncProtocolFactory {
+
+	public static IMessageSyncProtocol createSyncProtocol(int diffBlockSize, ISyncSessionRepository repository, IMessageSyncAware... syncAwareList) {
+
+		IItemEncoding itemEncoding = new ItemEncoding(diffBlockSize);
+		
+		ACKEndSyncMessageProcessor ackEndMessage = new ACKEndSyncMessageProcessor();
+		EndSyncMessageProcessor endMessage = new EndSyncMessageProcessor(ackEndMessage);
+		
+		ACKMergeMessageProcessor ackMergeMessage = new ACKMergeMessageProcessor(itemEncoding, endMessage);
+		MergeMessageProcessor mergeMessage = new MergeMessageProcessor(itemEncoding, endMessage);
+		MergeWithACKMessageProcessor mergeWithACKMessage = new MergeWithACKMessageProcessor(itemEncoding, ackMergeMessage);
+		GetForMergeMessageProcessor getForMergeMessage = new GetForMergeMessageProcessor(itemEncoding, mergeMessage);
+		LastVersionStatusMessageProcessor lastVersionMessage = new LastVersionStatusMessageProcessor(getForMergeMessage, mergeWithACKMessage, endMessage);
+		NoChangesMessageProcessor noChangesMessage = new NoChangesMessageProcessor(endMessage, mergeWithACKMessage);
+		BeginSyncMessageProcessor beginMessage = new BeginSyncMessageProcessor(noChangesMessage, lastVersionMessage);
+		CancelSyncMessageProcessor cancelMessage = new CancelSyncMessageProcessor();
+		
+		ArrayList<IMessageProcessor> msgProcessors = new ArrayList<IMessageProcessor>();
+		msgProcessors.add(beginMessage);
+		msgProcessors.add(endMessage);
+		msgProcessors.add(ackEndMessage);
+		msgProcessors.add(ackMergeMessage);
+		msgProcessors.add(mergeMessage);
+		msgProcessors.add(getForMergeMessage);
+		msgProcessors.add(lastVersionMessage);
+		msgProcessors.add(mergeWithACKMessage);
+		msgProcessors.add(noChangesMessage);
+		msgProcessors.add(cancelMessage);
+		
+		MessageSyncProtocol syncProtocol = new MessageSyncProtocol(IProtocolConstants.PROTOCOL, beginMessage, cancelMessage, repository, msgProcessors);
+		
+		beginMessage.setMessageSyncProtocol(syncProtocol);
+		ackEndMessage.setMessageSyncProtocol(syncProtocol);
+		endMessage.setMessageSyncProtocol(syncProtocol);
+		
+		for (IMessageSyncAware syncAware : syncAwareList) {
+			if(syncAware != null){
+				syncProtocol.registerSyncAware(syncAware);
+			}
+		}
+		return syncProtocol;
+	}
+
+	public static IMessageSyncProtocol createSyncProtocolWithFileRepository(int diffBlockSize, String repositoryBaseDirectory, IIdentityProvider identityProvider, IMessageSyncAware syncAware) {
+		return createSyncProtocolWithFileRepository(diffBlockSize, repositoryBaseDirectory, identityProvider, syncAware, false);
+	}
+	
+	public static IMessageSyncProtocol createSyncProtocolWithFileRepository(int diffBlockSize, String repositoryBaseDirectory, IIdentityProvider identityProvider, IMessageSyncAware syncAware, boolean supportInMemoryAdapter) {
+		SyncSessionFactory syncSessionFactory = new SyncSessionFactory(repositoryBaseDirectory, identityProvider);
+		syncSessionFactory.setSupportInMemoryAdapter(supportInMemoryAdapter);
+		ISyncSessionRepository repo = new FileSyncSessionRepository(repositoryBaseDirectory, syncSessionFactory);
+		return createSyncProtocol(diffBlockSize, repo, syncAware);
+	}
+
+}

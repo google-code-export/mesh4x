@@ -1,0 +1,31 @@
+package org.mesh4j.sync.message.core.repository;
+
+import java.util.Date;
+import java.util.List;
+
+import org.mesh4j.sync.message.IEndpoint;
+import org.mesh4j.sync.message.IMessageSyncAdapter;
+import org.mesh4j.sync.message.ISyncSession;
+import org.mesh4j.sync.model.Item;
+
+
+public interface ISyncSessionFactory {
+
+	void registerSource(IMessageSyncAdapter source);
+	
+	IMessageSyncAdapter getSource(String sourceId);
+	
+	ISyncSession get(String sessionId);
+	
+	ISyncSession get(String sourceId, String targetId);
+
+	ISyncSession createSession(String sessionId, int version, String sourceId, IEndpoint endpoint, boolean fullProtocol);
+
+	ISyncSession createSession(String sessionId, int version, String sourceId,
+		String endpointId, boolean isFull, boolean isOpen, Date date,
+		List<Item> currentSyncSnapshot, List<Item> lastSyncSnapshot,
+		List<String> conflicts, List<String> acks);
+
+	void registerSourceIfAbsent(IMessageSyncAdapter source);
+
+}
