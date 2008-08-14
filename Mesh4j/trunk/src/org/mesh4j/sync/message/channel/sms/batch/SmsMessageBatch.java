@@ -5,9 +5,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.message.channel.sms.SmsEndpoint;
 import org.mesh4j.sync.message.channel.sms.core.MessageFormatter;
-import org.mesh4j.sync.utils.IdGenerator;
 import org.mesh4j.sync.validations.Guard;
 
 
@@ -48,7 +48,7 @@ public class SmsMessageBatch {
 	}
 
 	private String generateNewId() {
-		return IdGenerator.newID().substring(0, 5);
+		return IdGenerator.INSTANCE.newID().substring(0, 5);
 	}
 
 	public SmsMessageBatch reconstitutePayload() {

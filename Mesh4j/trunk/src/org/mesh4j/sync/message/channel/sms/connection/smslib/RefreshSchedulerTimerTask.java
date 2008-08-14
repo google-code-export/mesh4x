@@ -1,7 +1,7 @@
 package org.mesh4j.sync.message.channel.sms.connection.smslib;
 
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.message.schedule.timer.ScheduleTimerTask;
-import org.mesh4j.sync.utils.IdGenerator;
 import org.mesh4j.sync.validations.Guard;
 
 public class RefreshSchedulerTimerTask extends ScheduleTimerTask {
@@ -11,7 +11,7 @@ public class RefreshSchedulerTimerTask extends ScheduleTimerTask {
 	
 	// BUSINESS METHODS
 	public RefreshSchedulerTimerTask(IRefreshTask refreshTask) {
-		super("SmsLibRefreshTask"+IdGenerator.newID());
+		super("SmsLibRefreshTask" + IdGenerator.INSTANCE.newID());
 		
 		Guard.argumentNotNull(refreshTask, "refreshTask");
 		this.refreshTask = refreshTask;

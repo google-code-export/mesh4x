@@ -17,11 +17,11 @@ import org.mesh4j.sync.adapters.feed.FeedReader;
 import org.mesh4j.sync.adapters.feed.FeedWriter;
 import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.adapters.feed.XMLContent;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.Sync;
 import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.test.utils.TestHelper;
-import org.mesh4j.sync.utils.IdGenerator;
 
 
 public class RssFeedWriterTests {
@@ -32,7 +32,7 @@ public class RssFeedWriterTests {
 		File file = new File(this.getClass().getResource("rss.xml").getFile());
 		Assert.assertTrue(file.exists());
 		
-		FeedReader reader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
+		FeedReader reader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		Feed feed = reader.read(file);
 		
 		XMLWriter xmlWriter = new XMLWriter(new FileWriter(TestHelper.fileName("rss1.xml")));
@@ -62,7 +62,7 @@ public class RssFeedWriterTests {
 		
 		String by = "jmt";
 		
-		Sync sync = new Sync(IdGenerator.newID(), by, new Date(), false);
+		Sync sync = new Sync(IdGenerator.INSTANCE.newID(), by, new Date(), false);
 		XMLContent content = new XMLContent(sync.getId(), "titleA", "descA", payload);
 		Item item = new Item(content, sync);
 		Feed feed = new Feed(item);
@@ -83,7 +83,7 @@ public class RssFeedWriterTests {
 		
 		String by = "jmt";
 		
-		Sync sync = new Sync(IdGenerator.newID(), by, new Date(), false);
+		Sync sync = new Sync(IdGenerator.INSTANCE.newID(), by, new Date(), false);
 		XMLContent content = new XMLContent(sync.getId(), "titleA", "descA", payload);
 		Item item = new Item(content, sync);
 		Feed feed = new Feed(item);
@@ -102,7 +102,7 @@ public class RssFeedWriterTests {
 		
 		String by = "jmt";
 		
-		Sync sync = new Sync(IdGenerator.newID(), by, new Date(), false);
+		Sync sync = new Sync(IdGenerator.INSTANCE.newID(), by, new Date(), false);
 		XMLContent content = new XMLContent(sync.getId(), "titleA", "descA", payload);
 		Item item = new Item(content, sync);
 		Feed feed = new Feed(item);
@@ -123,7 +123,7 @@ public class RssFeedWriterTests {
 		
 		String by = "jmt";
 		
-		Sync sync = new Sync(IdGenerator.newID(), by, new Date(), false);
+		Sync sync = new Sync(IdGenerator.INSTANCE.newID(), by, new Date(), false);
 		XMLContent content = new XMLContent(sync.getId(), "titleA", "descA", payload);
 		Item item = new Item(content, sync);
 		Feed feed = new Feed(item);
@@ -142,7 +142,7 @@ public class RssFeedWriterTests {
 		Element name = author.addElement(ISyndicationFormat.SX_ELEMENT_NAME);
 		name.setText("otherAuthor");
 		
-		Sync sync = new Sync(IdGenerator.newID(), null, new Date(), false);
+		Sync sync = new Sync(IdGenerator.INSTANCE.newID(), null, new Date(), false);
 		XMLContent content = new XMLContent(sync.getId(), "titleA", "descA", payload);
 		Item item = new Item(content, sync);
 		Feed feed = new Feed(item);
@@ -158,7 +158,7 @@ public class RssFeedWriterTests {
 		Document document = DocumentHelper.createDocument();
 		Element payload = DocumentHelper.createElement(ISyndicationFormat.ELEMENT_PAYLOAD);
 		
-		Sync sync = new Sync(IdGenerator.newID(), null, new Date(), false);
+		Sync sync = new Sync(IdGenerator.INSTANCE.newID(), null, new Date(), false);
 		XMLContent content = new XMLContent(sync.getId(), "titleA", "descA", payload);
 		Item item = new Item(content, sync);
 		Feed feed = new Feed(item);
@@ -175,7 +175,7 @@ public class RssFeedWriterTests {
 		Element payload = DocumentHelper.createElement(ISyndicationFormat.ELEMENT_PAYLOAD);
 		payload.addElement(ISyndicationFormat.SX_ELEMENT_AUTHOR);
 		
-		Sync sync = new Sync(IdGenerator.newID(), null, new Date(), false);
+		Sync sync = new Sync(IdGenerator.INSTANCE.newID(), null, new Date(), false);
 		XMLContent content = new XMLContent(sync.getId(), "titleA", "descA", payload);
 		Item item = new Item(content, sync);
 		Feed feed = new Feed(item);
@@ -194,7 +194,7 @@ public class RssFeedWriterTests {
 		Element name = author.addElement(ISyndicationFormat.SX_ELEMENT_NAME);
 		name.setText(NullIdentityProvider.INSTANCE.getAuthenticatedUser());
 		
-		Sync sync = new Sync(IdGenerator.newID(), null, new Date(), false);
+		Sync sync = new Sync(IdGenerator.INSTANCE.newID(), null, new Date(), false);
 		XMLContent content = new XMLContent(sync.getId(), "titleA", "descA", payload);
 		Item item = new Item(content, sync);
 		Feed feed = new Feed(item);

@@ -7,11 +7,11 @@ import org.dom4j.Element;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.Sync;
 import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.test.utils.TestHelper;
-import org.mesh4j.sync.utils.IdGenerator;
 import org.mesh4j.sync.utils.XMLHelper;
 
 
@@ -20,7 +20,7 @@ public class FeedWriterTests {
 	@Test
 	public void shouldWriteContent(){
 		
-		String syncID = IdGenerator.newID();
+		String syncID = IdGenerator.INSTANCE.newID();
 		
 		Element element = DocumentHelper.createElement("payload");
 		Element fooElement = element.addElement("foo");
@@ -42,7 +42,7 @@ public class FeedWriterTests {
 	@Test
 	public void shouldWriteContentUpdateTitleAndDescription(){
 		
-		String syncID = IdGenerator.newID();
+		String syncID = IdGenerator.INSTANCE.newID();
 		
 		Element element = DocumentHelper.createElement("payload");
 		Element fooElement = element.addElement("foo");
@@ -70,7 +70,7 @@ public class FeedWriterTests {
 	@Test
 	public void shouldWriteContentDeleteTitleAndDescription(){
 		
-		String syncID = IdGenerator.newID();
+		String syncID = IdGenerator.INSTANCE.newID();
 		
 		Element element = DocumentHelper.createElement("payload");
 		Element fooElement = element.addElement("foo");

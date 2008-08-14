@@ -12,10 +12,10 @@ import org.mesh4j.sync.adapters.SyncInfo;
 import org.mesh4j.sync.adapters.dom.MeshNames;
 import org.mesh4j.sync.adapters.dom.parsers.FileManager;
 import org.mesh4j.sync.adapters.dom.parsers.HierarchyXMLViewElement;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.Sync;
 import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.test.utils.TestHelper;
-import org.mesh4j.sync.utils.IdGenerator;
 import org.mesh4j.sync.utils.XMLHelper;
 
 
@@ -198,7 +198,7 @@ public class KMLDOMTest {
 	// getElement
 	@Test
 	public void shouldgetElementReturnNullWhenIDDoesNotExists() throws DocumentException{
-		String id = IdGenerator.newID();
+		String id = IdGenerator.INSTANCE.newID();
 		Document doc = DocumentHelper.parseText(xmlWithHierarchy);
 		
 		KMLDOM meshParser = createDOM(doc);
@@ -1436,7 +1436,7 @@ public class KMLDOMTest {
 		Document doc = DocumentHelper.parseText(xml);
 		
 		KMLDOM meshParser = createDOM(doc);
-		meshParser.deleteElement(IdGenerator.newID());
+		meshParser.deleteElement(IdGenerator.INSTANCE.newID());
 	}
 	
 	

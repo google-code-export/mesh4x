@@ -4,13 +4,13 @@ import java.util.Date;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.message.channel.sms.SmsEndpoint;
 import org.mesh4j.sync.message.channel.sms.batch.DiscardedBatchException;
 import org.mesh4j.sync.message.channel.sms.batch.MessageBatchFactory;
 import org.mesh4j.sync.message.channel.sms.batch.SmsMessage;
 import org.mesh4j.sync.message.channel.sms.batch.SmsMessageBatch;
 import org.mesh4j.sync.test.utils.TestHelper;
-import org.mesh4j.sync.utils.IdGenerator;
 
 
 public class SmsReceiverTests {
@@ -18,13 +18,13 @@ public class SmsReceiverTests {
 	public SmsMessageBatch createTestBatch(int originalTextlength)
 	{
 		MessageBatchFactory factory = new MessageBatchFactory();
-		return factory.createMessageBatch(IdGenerator.newID(), new SmsEndpoint("1234"), "M", "12345", TestHelper.newText(originalTextlength));
+		return factory.createMessageBatch(IdGenerator.INSTANCE.newID(), new SmsEndpoint("1234"), "M", "12345", TestHelper.newText(originalTextlength));
 	}
 	
 	public SmsMessageBatch createTestBatch(int msgSize, String originalText)
 	{
 		MessageBatchFactory factory = new MessageBatchFactory(msgSize);
-		return factory.createMessageBatch(IdGenerator.newID(), new SmsEndpoint("1234"), "M", "12345", originalText);
+		return factory.createMessageBatch(IdGenerator.INSTANCE.newID(), new SmsEndpoint("1234"), "M", "12345", originalText);
 	}
 
 	@Test

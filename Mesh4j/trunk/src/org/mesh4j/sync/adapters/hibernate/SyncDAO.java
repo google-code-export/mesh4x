@@ -14,8 +14,8 @@ import org.dom4j.Element;
 import org.hibernate.EntityMode;
 import org.hibernate.Session;
 import org.mesh4j.sync.adapters.SyncInfo;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.parsers.SyncInfoParser;
-import org.mesh4j.sync.utils.IdGenerator;
 import org.mesh4j.sync.validations.MeshException;
 
 
@@ -80,7 +80,7 @@ public class SyncDAO {
 	}
 
 	public String newSyncID() {
-		return IdGenerator.newID();
+		return IdGenerator.INSTANCE.newID();
 	}
 
 	public static File getMapping() {

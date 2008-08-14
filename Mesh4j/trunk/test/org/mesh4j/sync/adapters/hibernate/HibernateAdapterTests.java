@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mesh4j.sync.ISupportMerge;
 import org.mesh4j.sync.filter.NullFilter;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.IContent;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.Sync;
@@ -25,7 +26,7 @@ public class HibernateAdapterTests {
 	@Before
 	public void setUp(){
 		if(repo == null ){
-			repo = new HibernateAdapter(HibernateAdapterTests.class.getResource("User.hbm.xml").getFile(), NullIdentityProvider.INSTANCE);
+			repo = new HibernateAdapter(HibernateAdapterTests.class.getResource("User.hbm.xml").getFile(), NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		}
 		
 	}

@@ -3,6 +3,7 @@ package org.mesh4j.sync.message.channel.sms.connection.smslib;
 import java.util.Date;
 
 import org.junit.Test;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.message.channel.sms.ISmsBatchReceiver;
 import org.mesh4j.sync.message.channel.sms.SmsEndpoint;
 import org.mesh4j.sync.message.channel.sms.batch.MessageBatchFactory;
@@ -12,7 +13,6 @@ import org.mesh4j.sync.message.channel.sms.connection.ISmsConnectionInboundOutbo
 import org.mesh4j.sync.message.channel.sms.core.MessageFormatter;
 import org.mesh4j.sync.message.channel.sms.core.SmsReceiver;
 import org.mesh4j.sync.message.encoding.CompressBase64MessageEncoding;
-import org.mesh4j.sync.utils.IdGenerator;
 
 
 public class SmsLibConnectionOnLineTests implements ISmsConnectionInboundOutboundNotification, ISmsBatchReceiver {
@@ -62,7 +62,7 @@ public class SmsLibConnectionOnLineTests implements ISmsConnectionInboundOutboun
 		String encodedText = CompressBase64MessageEncoding.INSTANCE.encode(originalText);
 		
 		MessageBatchFactory factory = new MessageBatchFactory(120-MessageFormatter.getBatchHeaderLenght());
-		SmsMessageBatch batch = factory.createMessageBatch(IdGenerator.newID(), new SmsEndpoint(smsNumber), "H", "00000", encodedText);
+		SmsMessageBatch batch = factory.createMessageBatch(IdGenerator.INSTANCE.newID(), new SmsEndpoint(smsNumber), "H", "00000", encodedText);
 		
 		for (SmsMessage message : batch.getMessages()) {
 			client.send(smsNumber, message.getText(), false);	

@@ -27,11 +27,11 @@ import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
+import org.mesh4j.sync.id.generator.IIdGenerator;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.NullContent;
 import org.mesh4j.sync.model.Sync;
 import org.mesh4j.sync.security.IIdentityProvider;
-import org.mesh4j.sync.utils.IdGenerator;
 import org.mesh4j.sync.validations.Guard;
 import org.xml.sax.InputSource;
 
@@ -39,17 +39,20 @@ import org.xml.sax.InputSource;
 public class FeedReader {
 	
 	// MODEL VARIABLES
-	ISyndicationFormat syndicationFormat;
-	IIdentityProvider identityProvider;
+	private ISyndicationFormat syndicationFormat;
+	private IIdentityProvider identityProvider;
+	private IIdGenerator idGenerator;
 	
 	// BUSINESS METHODS
 
-	public FeedReader(ISyndicationFormat syndicationFormat, IIdentityProvider identityProvider){
+	public FeedReader(ISyndicationFormat syndicationFormat, IIdentityProvider identityProvider, IIdGenerator idGenerator){
 		Guard.argumentNotNull(syndicationFormat, "syndicationFormat");
 		Guard.argumentNotNull(identityProvider, "identityProvider");
+		Guard.argumentNotNull(idGenerator, "idGenerator");
 		
 		this.syndicationFormat = syndicationFormat;
 		this.identityProvider = identityProvider;
+		this.idGenerator = idGenerator; 
 	}
 	
 	public Feed read(URL url) throws DocumentException{
@@ -191,6 +194,15 @@ public class FeedReader {
 	}
 
 	protected String makeNewSyncID() {
-		return IdGenerator.newID();
+		return this.idGenerator.newID();
+	}
+
+	public Feed read(String xml) throws Exception {
+		Document document = DocumentHelper.parseText(xml);
+		return read(document);
+	}
+
+	public IIdGenerator getIdGenereator() {
+		return this.idGenerator;
 	}
 }

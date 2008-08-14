@@ -15,6 +15,7 @@ import org.mesh4j.sync.IFilter;
 import org.mesh4j.sync.adapters.feed.atom.AtomSyndicationFormat;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.filter.SinceLastUpdateFilter;
+import org.mesh4j.sync.id.generator.IIdGenerator;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.NullContent;
 import org.mesh4j.sync.security.IIdentityProvider;
@@ -34,9 +35,10 @@ public class FeedAdapter extends AbstractSyncAdapter{
 	private IIdentityProvider identityProvider;
 	
 	// BUSINESS METHODS
-	public FeedAdapter(String fileName, IIdentityProvider identityProvider){
+	public FeedAdapter(String fileName, IIdentityProvider identityProvider, IIdGenerator idGenerator){
 		Guard.argumentNotNull(fileName, "fileName");
 		Guard.argumentNotNull(identityProvider, "identityProvider");
+		Guard.argumentNotNull(idGenerator, "idGenerator");
 
 		this.feedFile = new File(fileName);
 		
@@ -54,13 +56,13 @@ public class FeedAdapter extends AbstractSyncAdapter{
 		}
 		
 		this.identityProvider = identityProvider;
-		this.feedReader = new FeedReader(syndicationFormat, identityProvider);
+		this.feedReader = new FeedReader(syndicationFormat, identityProvider, idGenerator);
 		this.feedWriter = new FeedWriter(syndicationFormat, identityProvider);
 		
 		this.feed = this.feedReader.read(document);
 	}
 	
-	public FeedAdapter(File file, ISyndicationFormat syndicationFormat, IIdentityProvider identityProvider){
+	public FeedAdapter(File file, ISyndicationFormat syndicationFormat, IIdentityProvider identityProvider, IIdGenerator idGenerator){
 		
 		Guard.argumentNotNull(file, "file");
 		Guard.argumentNotNull(syndicationFormat, "syndicationFormat");
@@ -68,7 +70,7 @@ public class FeedAdapter extends AbstractSyncAdapter{
 		
 		this.feedFile = file;
 		this.identityProvider = identityProvider;
-		this.feedReader = new FeedReader(syndicationFormat, identityProvider);
+		this.feedReader = new FeedReader(syndicationFormat, identityProvider, idGenerator);
 		this.feedWriter = new FeedWriter(syndicationFormat, identityProvider);
 		try {
 			this.feed = this.feedReader.read(file);
@@ -77,7 +79,7 @@ public class FeedAdapter extends AbstractSyncAdapter{
 		}
 	}
 	
-	public FeedAdapter(File file, ISyndicationFormat syndicationFormat, IIdentityProvider identityProvider, Feed feed){
+	public FeedAdapter(File file, ISyndicationFormat syndicationFormat, IIdentityProvider identityProvider, IIdGenerator idGenerator, Feed feed){
 		
 		Guard.argumentNotNull(file, "file");
 		Guard.argumentNotNull(syndicationFormat, "syndicationFormat");
@@ -86,7 +88,7 @@ public class FeedAdapter extends AbstractSyncAdapter{
 		
 		this.feedFile = file;
 		this.identityProvider = identityProvider;
-		this.feedReader = new FeedReader(syndicationFormat, identityProvider);
+		this.feedReader = new FeedReader(syndicationFormat, identityProvider, idGenerator);
 		this.feedWriter = new FeedWriter(syndicationFormat, identityProvider);
 		this.feed = feed;
 		
@@ -175,4 +177,10 @@ public class FeedAdapter extends AbstractSyncAdapter{
 		return this.identityProvider.getAuthenticatedUser();
 	}
 
+	public FeedWriter getFeedWriter() {
+		return this.feedWriter;
+	}
+	public FeedReader getFeedReader() {
+		return this.feedReader;
+	}
 }

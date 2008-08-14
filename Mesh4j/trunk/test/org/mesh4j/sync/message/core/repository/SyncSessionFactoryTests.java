@@ -2,10 +2,10 @@ package org.mesh4j.sync.message.core.repository;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.message.ISyncSession;
 import org.mesh4j.sync.message.channel.sms.SmsEndpoint;
 import org.mesh4j.sync.message.core.InMemoryMessageSyncAdapter;
-import org.mesh4j.sync.utils.IdGenerator;
 
 
 public class SyncSessionFactoryTests {
@@ -56,7 +56,7 @@ public class SyncSessionFactoryTests {
 	@Test
 	public void shouldCreateSession(){
 		String sourceID = "123";
-		String sessionID = IdGenerator.newID();
+		String sessionID = IdGenerator.INSTANCE.newID();
 		SmsEndpoint endpoint = new SmsEndpoint("123");
 		
 		SyncSessionFactory factory = new SyncSessionFactory();

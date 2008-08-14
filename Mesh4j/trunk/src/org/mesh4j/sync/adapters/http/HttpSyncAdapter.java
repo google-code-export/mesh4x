@@ -28,6 +28,7 @@ import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.filter.ConflictsFilter;
 import org.mesh4j.sync.filter.NullFilter;
 import org.mesh4j.sync.filter.SinceLastUpdateFilter;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.translator.MessageTranslator;
@@ -58,7 +59,7 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 		} catch (MalformedURLException e) {
 			throw new MeshException(e);
 		}
-		this.feedReader = new FeedReader(syndicationFormat, identityProvider);
+		this.feedReader = new FeedReader(syndicationFormat, identityProvider, IdGenerator.INSTANCE);
 		this.feedWriter = new FeedWriter(syndicationFormat, identityProvider);
 	}
 
@@ -66,16 +67,13 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 	public List<Item> merge(List<Item> items) {
 		try {
 			Feed feed = new Feed(items);
-			Document document = DocumentHelper.createDocument();
-			feedWriter.write(document, feed);
-			String xml = document.asXML();
+			String xml = feedWriter.writeAsXml(feed);
 			
-			String result = this.POST(xml);
+			String result = this.doPOST(xml);
 			
-			Document documentResult = DocumentHelper.parseText(result);
-			feed = feedReader.read(documentResult);
+			feed = feedReader.read(result);
 			return feed.getItems();
-		} catch (DocumentException e) {
+		} catch (Exception e) {
 			Logger.error(e.getMessage(), e); 
 			throw new MeshException(e);
 		}
@@ -109,7 +107,7 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 			if(since == null){
 				feed = feedReader.read(this.url);
 			} else {
-				String xml = GETSince(since);
+				String xml = doGET(since);
 				if(xml == null || xml.trim().length() == 0){
 					return result;
 				}
@@ -142,7 +140,7 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 		return MessageTranslator.translate(this.getClass().getName());
 	}
 	
-	protected String GETSince(Date since){
+	protected String doGET(Date since){
 		String result = null;
 		HttpURLConnection conn = null;
 	    try{
@@ -183,7 +181,7 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 		return result.toString();
 	}
 	
-	private String POST(String content){
+	private String doPOST(String content){
 	    HttpURLConnection conn = null;
 	    String result = null;
 	    try{

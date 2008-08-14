@@ -7,13 +7,13 @@ import org.dom4j.Element;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mesh4j.sync.adapters.feed.XMLContent;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.message.ISyncSession;
 import org.mesh4j.sync.model.IContent;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.NullContent;
 import org.mesh4j.sync.model.Sync;
 import org.mesh4j.sync.test.utils.TestHelper;
-import org.mesh4j.sync.utils.IdGenerator;
 import org.mesh4j.sync.utils.XMLHelper;
 
 
@@ -21,7 +21,7 @@ public class ItemEncodingTests {
 	
 	@Test
 	public void shouldEncodeDeletedItemWithOutSinceDate(){		
-		String syncID = IdGenerator.newID();
+		String syncID = IdGenerator.INSTANCE.newID();
 		Sync sync = new Sync(syncID);
 		sync.update("jmt1", TestHelper.makeDate(2008, 6, 1, 1, 1, 0, 0));
 		sync.update("jmt2", TestHelper.makeDate(2008, 6, 7, 1, 1, 0, 0));
@@ -49,7 +49,7 @@ public class ItemEncodingTests {
 	
 	@Test
 	public void shouldDecodeDeletedItemWithOutSinceDate(){		
-		String syncID = IdGenerator.newID();
+		String syncID = IdGenerator.INSTANCE.newID();
 		Sync sync = new Sync(syncID);
 		sync.update("jmt1", TestHelper.makeDate(2008, 6, 1, 1, 1, 0, 0));
 		sync.update("jmt2", TestHelper.makeDate(2008, 6, 7, 1, 1, 0, 0));
@@ -81,7 +81,7 @@ public class ItemEncodingTests {
 		
 		Date sinceDate = TestHelper.makeDate(2008, 5, 1, 1, 1, 0, 0);
 		
-		String syncID = IdGenerator.newID();
+		String syncID = IdGenerator.INSTANCE.newID();
 		Sync sync = new Sync(syncID);
 		sync.update("jmt1", TestHelper.makeDate(2008, 6, 1, 1, 1, 0, 0));
 		sync.update("jmt2", TestHelper.makeDate(2008, 6, 7, 1, 1, 0, 0));
@@ -112,7 +112,7 @@ public class ItemEncodingTests {
 		
 		Date sinceDate = TestHelper.makeDate(2008, 5, 1, 1, 1, 0, 0);
 		
-		String syncID = IdGenerator.newID();
+		String syncID = IdGenerator.INSTANCE.newID();
 		Sync sync = new Sync(syncID);
 		sync.update("jmt1", TestHelper.makeDate(2008, 6, 1, 1, 1, 0, 0));
 		sync.update("jmt2", TestHelper.makeDate(2008, 6, 7, 1, 1, 0, 0));
@@ -144,7 +144,7 @@ public class ItemEncodingTests {
 		
 		Date sinceDate = TestHelper.makeDate(2008, 6, 5, 1, 1, 0, 0);
 		
-		String syncID = IdGenerator.newID();
+		String syncID = IdGenerator.INSTANCE.newID();
 		Sync sync = new Sync(syncID);
 		sync.update("jmt1", TestHelper.makeDate(2008, 6, 1, 1, 1, 0, 0));
 		sync.update("jmt2", TestHelper.makeDate(2008, 6, 7, 1, 1, 0, 0));
@@ -173,7 +173,7 @@ public class ItemEncodingTests {
 		
 		Date sinceDate = TestHelper.makeDate(2008, 6, 5, 1, 1, 0, 0);
 		
-		String syncID = IdGenerator.newID();
+		String syncID = IdGenerator.INSTANCE.newID();
 		Sync sync = new Sync(syncID);
 		sync.update("jmt1", TestHelper.makeDate(2008, 6, 1, 1, 1, 0, 0));
 		sync.update("jmt2", TestHelper.makeDate(2008, 6, 7, 1, 1, 0, 0));
@@ -207,7 +207,7 @@ public class ItemEncodingTests {
 		
 		Date sinceDate = TestHelper.makeDate(2008, 6, 7, 1, 1, 0, 600);
 		
-		String syncID = IdGenerator.newID();
+		String syncID = IdGenerator.INSTANCE.newID();
 		Sync sync = new Sync(syncID);
 		sync.update("jmt1", TestHelper.makeDate(2008, 6, 1, 1, 1, 0, 0));
 		sync.update("jmt2", TestHelper.makeDate(2008, 6, 7, 1, 1, 0, 0));
@@ -234,7 +234,7 @@ public class ItemEncodingTests {
 		
 		Date sinceDate = TestHelper.makeDate(2008, 6, 7, 1, 1, 0, 600);
 		
-		String syncID = IdGenerator.newID();
+		String syncID = IdGenerator.INSTANCE.newID();
 		Sync sync = new Sync(syncID);
 		sync.update("jmt1", TestHelper.makeDate(2008, 6, 1, 1, 1, 0, 0));
 		sync.update("jmt2", TestHelper.makeDate(2008, 6, 7, 1, 1, 0, 0));
@@ -266,7 +266,7 @@ public class ItemEncodingTests {
 	
 	@Test
 	public void shouldEncodeItemWithOutSinceDate(){		
-		String syncID = IdGenerator.newID();
+		String syncID = IdGenerator.INSTANCE.newID();
 		Sync sync = new Sync(syncID)
 			.update("jmt1", TestHelper.makeDate(2008, 6, 1, 1, 1, 0, 0))
 			.update("jmt2", TestHelper.makeDate(2008, 6, 7, 1, 1, 0, 0))
@@ -296,7 +296,7 @@ public class ItemEncodingTests {
 	
 	@Test
 	public void shouldDecodeItemWithOutSinceDate(){		
-		String syncID = IdGenerator.newID();
+		String syncID = IdGenerator.INSTANCE.newID();
 		Sync sync = new Sync(syncID)
 			.update("jmt1", TestHelper.makeDate(2008, 6, 1, 1, 1, 0, 0))
 			.update("jmt2", TestHelper.makeDate(2008, 6, 7, 1, 1, 0, 0))
@@ -328,7 +328,7 @@ public class ItemEncodingTests {
 	
 	@Test
 	public void shouldEncodeItemWhenPayloadLenghtIsLessThanBlockSize(){		
-		String syncID = IdGenerator.newID();
+		String syncID = IdGenerator.INSTANCE.newID();
 		Sync sync = new Sync(syncID, "jmt1", TestHelper.makeDate(2008, 6, 1, 1, 1, 0, 0), false);
 		
 		Element payload = DocumentHelper.createElement("foo");
@@ -351,7 +351,7 @@ public class ItemEncodingTests {
 	
 	@Test
 	public void shouldDecodeItemWhenPayloadLenghtIsLessThanBlockSize(){		
-		String syncID = IdGenerator.newID();
+		String syncID = IdGenerator.INSTANCE.newID();
 		Sync sync = new Sync(syncID, "jmt1", TestHelper.makeDate(2008, 6, 1, 1, 1, 0, 0), false);
 		
 		Element payload = DocumentHelper.createElement("foo");
@@ -375,7 +375,7 @@ public class ItemEncodingTests {
 	
 	@Test
 	public void shouldEncodeItemWhenPayloadLenghtIsEqualsToBlockSize(){		
-		String syncID = IdGenerator.newID();
+		String syncID = IdGenerator.INSTANCE.newID();
 		Sync sync = new Sync(syncID, "jmt1", TestHelper.makeDate(2008, 6, 1, 1, 1, 0, 0), false);
 		
 		Element payload = DocumentHelper.createElement("foo");
@@ -399,7 +399,7 @@ public class ItemEncodingTests {
 	
 	@Test
 	public void shouldDecodeItemWhenPayloadLenghtIsEqualsToBlockSize(){		
-		String syncID = IdGenerator.newID();
+		String syncID = IdGenerator.INSTANCE.newID();
 		Sync sync = new Sync(syncID, "jmt1", TestHelper.makeDate(2008, 6, 1, 1, 1, 0, 0), false);
 		
 		Element payload = DocumentHelper.createElement("foo");
@@ -423,7 +423,7 @@ public class ItemEncodingTests {
 	
 	@Test
 	public void shouldEncodeItemWhenPayloadLenghtIsGreaterThanBlockSize(){		
-		String syncID = IdGenerator.newID();
+		String syncID = IdGenerator.INSTANCE.newID();
 		Sync sync = new Sync(syncID, "jmt1", TestHelper.makeDate(2008, 6, 1, 1, 1, 0, 0), false);
 		
 		Element payload = DocumentHelper.createElement("foo");
@@ -447,7 +447,7 @@ public class ItemEncodingTests {
 	
 	@Test
 	public void shouldDecodeItemWhenPayloadLenghtIsGreaterThanBlockSize(){		
-		String syncID = IdGenerator.newID();
+		String syncID = IdGenerator.INSTANCE.newID();
 		Sync sync = new Sync(syncID, "jmt1", TestHelper.makeDate(2008, 6, 1, 1, 1, 0, 0), false);
 		
 		Element payload = DocumentHelper.createElement("foo");
@@ -471,7 +471,7 @@ public class ItemEncodingTests {
 	
 	@Test
 	public void shouldEncodeItemWhenPayloadWithoutDiffs(){		
-		String syncID = IdGenerator.newID();
+		String syncID = IdGenerator.INSTANCE.newID();
 		Sync sync = new Sync(syncID, "jmt1", TestHelper.makeDate(2008, 6, 1, 1, 1, 0, 0), false);
 		
 		Element payload = DocumentHelper.createElement("foo");
@@ -495,7 +495,7 @@ public class ItemEncodingTests {
 	
 	@Test
 	public void shouldDecodeItemWhenPayloadWithoutDiffs(){		
-		String syncID = IdGenerator.newID();
+		String syncID = IdGenerator.INSTANCE.newID();
 		Sync sync = new Sync(syncID);
 		sync.update("jmt1", TestHelper.makeDate(2008, 6, 1, 1, 1, 0, 0));
 		sync.update("jmt2", TestHelper.makeDate(2008, 6, 7, 1, 1, 0, 0));
@@ -527,7 +527,7 @@ public class ItemEncodingTests {
 	
 	@Test
 	public void shouldEncodeItemWhenPayloadWithDiffs(){		
-		String syncID = IdGenerator.newID();
+		String syncID = IdGenerator.INSTANCE.newID();
 		Sync sync = new Sync(syncID, "jmt1", TestHelper.makeDate(2008, 6, 1, 1, 1, 0, 0), false);
 		
 		Element payload = DocumentHelper.createElement("foo");
@@ -551,7 +551,7 @@ public class ItemEncodingTests {
 	
 	@Test
 	public void shouldDecodeItemWhenPayloadWithDiffs(){		
-		String syncID = IdGenerator.newID();
+		String syncID = IdGenerator.INSTANCE.newID();
 		Sync sync = new Sync(syncID, "jmt1", TestHelper.makeDate(2008, 6, 1, 1, 1, 0, 0), false);
 		
 		Element payload = DocumentHelper.createElement("foo");
@@ -572,7 +572,7 @@ public class ItemEncodingTests {
 		
 		Date sinceDate = TestHelper.makeDate(2008, 5, 1, 1, 1, 0, 0);
 		
-		String syncID = IdGenerator.newID();
+		String syncID = IdGenerator.INSTANCE.newID();
 		Sync sync = new Sync(syncID);
 		sync.update("jmt1", TestHelper.makeDate(2008, 6, 1, 1, 1, 0, 0));
 		sync.update("jmt2", TestHelper.makeDate(2008, 6, 7, 1, 1, 0, 0));
@@ -606,7 +606,7 @@ public class ItemEncodingTests {
 		
 		Date sinceDate = TestHelper.makeDate(2008, 5, 1, 1, 1, 0, 0);
 		
-		String syncID = IdGenerator.newID();
+		String syncID = IdGenerator.INSTANCE.newID();
 		Sync sync = new Sync(syncID);
 		sync.update("jmt1", TestHelper.makeDate(2008, 6, 1, 1, 1, 0, 0));
 		sync.update("jmt2", TestHelper.makeDate(2008, 6, 7, 1, 1, 0, 0));
@@ -640,7 +640,7 @@ public class ItemEncodingTests {
 		
 		Date sinceDate = TestHelper.makeDate(2008, 6, 5, 1, 1, 0, 0);
 		
-		String syncID = IdGenerator.newID();
+		String syncID = IdGenerator.INSTANCE.newID();
 		Sync sync = new Sync(syncID);
 		sync.update("jmt1", TestHelper.makeDate(2008, 6, 1, 1, 1, 0, 0));
 		sync.update("jmt2", TestHelper.makeDate(2008, 6, 7, 1, 1, 0, 0));
@@ -672,7 +672,7 @@ public class ItemEncodingTests {
 		
 		Date sinceDate = TestHelper.makeDate(2008, 6, 5, 1, 1, 0, 0);
 		
-		String syncID = IdGenerator.newID();
+		String syncID = IdGenerator.INSTANCE.newID();
 		Sync sync = new Sync(syncID);
 		sync.update("jmt1", TestHelper.makeDate(2008, 6, 1, 1, 1, 0, 0));
 		sync.update("jmt2", TestHelper.makeDate(2008, 6, 7, 1, 1, 0, 0));
@@ -708,7 +708,7 @@ public class ItemEncodingTests {
 		
 		Date sinceDate = TestHelper.makeDate(2008, 6, 7, 1, 1, 0, 600);
 		
-		String syncID = IdGenerator.newID();
+		String syncID = IdGenerator.INSTANCE.newID();
 		Sync sync = new Sync(syncID);
 		sync.update("jmt1", TestHelper.makeDate(2008, 6, 1, 1, 1, 0, 0));
 		sync.update("jmt2", TestHelper.makeDate(2008, 6, 7, 1, 1, 0, 0));
@@ -738,7 +738,7 @@ public class ItemEncodingTests {
 		
 		Date sinceDate = TestHelper.makeDate(2008, 6, 7, 1, 1, 0, 600);
 		
-		String syncID = IdGenerator.newID();
+		String syncID = IdGenerator.INSTANCE.newID();
 		Sync sync = new Sync(syncID);
 		sync.update("jmt1", TestHelper.makeDate(2008, 6, 1, 1, 1, 0, 0));
 		sync.update("jmt2", TestHelper.makeDate(2008, 6, 7, 1, 1, 0, 0));

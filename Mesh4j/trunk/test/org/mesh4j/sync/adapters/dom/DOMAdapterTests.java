@@ -19,12 +19,12 @@ import org.mesh4j.sync.adapters.dom.parsers.HierarchyXMLViewElement;
 import org.mesh4j.sync.adapters.kml.KMLContent;
 import org.mesh4j.sync.adapters.kml.KMLDOMLoaderFactory;
 import org.mesh4j.sync.adapters.kml.KmlNames;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.NullContent;
 import org.mesh4j.sync.model.Sync;
 import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.test.utils.TestHelper;
-import org.mesh4j.sync.utils.IdGenerator;
 import org.mesh4j.sync.utils.XMLHelper;
 import org.mesh4j.sync.validations.MeshException;
 
@@ -214,7 +214,7 @@ public class DOMAdapterTests {
 
 	@Test
 	public void shouldCreateFileIfDoesNotExist() throws DocumentException {
-		String fileName = TestHelper.fileName(IdGenerator.newID() + ".kml");
+		String fileName = TestHelper.fileName(IdGenerator.INSTANCE.newID() + ".kml");
 		DOMAdapter DOMAdapter = makeNewDOMAdapter(fileName);
 		DOMAdapter.beginSync();
 		DOMAdapter.endSync();
@@ -721,7 +721,7 @@ public class DOMAdapterTests {
 		DOMAdapter domAdapter = makeNewDOMAdapter(file.getAbsolutePath());
 		domAdapter.beginSync();
 
-		Item item = domAdapter.get(IdGenerator.newID());
+		Item item = domAdapter.get(IdGenerator.INSTANCE.newID());
 		Assert.assertNull(item);
 	}
 
@@ -810,7 +810,7 @@ public class DOMAdapterTests {
 		DOMAdapter domAdapter = makeNewDOMAdapter(file.getAbsolutePath());
 		domAdapter.beginSync();
 
-		String syncID = IdGenerator.newID();
+		String syncID = IdGenerator.INSTANCE.newID();
 
 		String localXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 				+ "<kml xmlns=\"http://earth.google.com/kml/2.2\">"
@@ -837,7 +837,7 @@ public class DOMAdapterTests {
 		DOMAdapter domAdapter = makeNewDOMAdapter(file.getAbsolutePath());
 		domAdapter.beginSync();
 
-		String syncID = IdGenerator.newID();
+		String syncID = IdGenerator.INSTANCE.newID();
 
 		Sync sync = new Sync(syncID, "JMT", TestHelper.now(), true);
 		Item item = new Item(new NullContent(syncID), sync);
@@ -877,7 +877,7 @@ public class DOMAdapterTests {
 		DOMAdapter domAdapter = makeNewDOMAdapter(file.getAbsolutePath());
 		domAdapter.beginSync();
 
-		String syncID = IdGenerator.newID();
+		String syncID = IdGenerator.INSTANCE.newID();
 		Item item = domAdapter.get(syncID);
 		Assert.assertNull(item);
 

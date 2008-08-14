@@ -19,11 +19,11 @@ import org.mesh4j.sync.adapters.feed.XMLContent;
 import org.mesh4j.sync.adapters.feed.atom.AtomSyndicationFormat;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.adapters.hibernate.HibernateAdapter;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.Sync;
 import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.test.utils.TestHelper;
-import org.mesh4j.sync.utils.IdGenerator;
 
 
 public class InterRepositoriesTests {
@@ -31,7 +31,7 @@ public class InterRepositoriesTests {
 	@Test
 	public void shouldSyncFeed2Hibernate() throws DocumentException{
 		
-		File rssFile = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
+		File rssFile = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xml"));
 
 		String id1 = TestHelper.newID();
 		String id2 = TestHelper.newID();
@@ -43,9 +43,9 @@ public class InterRepositoriesTests {
 			.addItem(new Item(new XMLContent(id1, id1, id1, e1), new Sync(id1).update(NullIdentityProvider.INSTANCE.getAuthenticatedUser(), new Date())))
 			.addItem(new Item(new XMLContent(id2, id2, id2, e2), new Sync(id2).update(NullIdentityProvider.INSTANCE.getAuthenticatedUser(), new Date())));
 		
-		FeedAdapter feedRepo = new FeedAdapter(rssFile, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, feed);
+		FeedAdapter feedRepo = new FeedAdapter(rssFile, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, feed);
 				
-		HibernateAdapter hibernateRepo = new HibernateAdapter(InterRepositoriesTests.class.getResource("User.hbm.xml").getFile(), NullIdentityProvider.INSTANCE);
+		HibernateAdapter hibernateRepo = new HibernateAdapter(InterRepositoriesTests.class.getResource("User.hbm.xml").getFile(), NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
 		List<Item> allItems = hibernateRepo.getAll();
 		
@@ -64,11 +64,11 @@ public class InterRepositoriesTests {
 	@Test
 	public void shouldSyncHibernate2Feed() throws IOException, DocumentException{
 		
-		File rssFile = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
+		File rssFile = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xml"));
 
-		FeedAdapter feedRepo = new FeedAdapter(rssFile, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, new Feed());
+		FeedAdapter feedRepo = new FeedAdapter(rssFile, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, new Feed());
 		
-		HibernateAdapter	hibernateRepo = new HibernateAdapter(InterRepositoriesTests.class.getResource("User.hbm.xml").getFile(), NullIdentityProvider.INSTANCE);
+		HibernateAdapter	hibernateRepo = new HibernateAdapter(InterRepositoriesTests.class.getResource("User.hbm.xml").getFile(), NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
 		List<Item> allItems = hibernateRepo.getAll();
 		
@@ -92,10 +92,10 @@ public class InterRepositoriesTests {
 	public void shouldSyncRssFeed2Hibernate() throws DocumentException{
 
 		File rssFile = new File(this.getClass().getResource("rssUserFeed.xml").getFile());
-		FeedAdapter feedRepo = new FeedAdapter(rssFile, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
+		FeedAdapter feedRepo = new FeedAdapter(rssFile, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 				
 		File fileMapping = new File(this.getClass().getResource("User.hbm.xml").getFile());
-		HibernateAdapter hibernateRepo = new HibernateAdapter(fileMapping, NullIdentityProvider.INSTANCE);
+		HibernateAdapter hibernateRepo = new HibernateAdapter(fileMapping, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
 		hibernateRepo.deleteAll();
 		
@@ -115,10 +115,10 @@ public class InterRepositoriesTests {
 	public void shouldSyncAtomFeed2Hibernate() throws DocumentException{
 
 		File rssFile = new File(this.getClass().getResource("atomUserFeed.xml").getFile());
-		FeedAdapter feedRepo = new FeedAdapter(rssFile, AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
+		FeedAdapter feedRepo = new FeedAdapter(rssFile, AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 				
 		File fileMapping = new File(this.getClass().getResource("User.hbm.xml").getFile());
-		HibernateAdapter	hibernateRepo = new HibernateAdapter(fileMapping, NullIdentityProvider.INSTANCE);
+		HibernateAdapter	hibernateRepo = new HibernateAdapter(fileMapping, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
 		hibernateRepo.deleteAll();
 		

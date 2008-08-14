@@ -7,6 +7,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mesh4j.sync.adapters.feed.Feed;
 import org.mesh4j.sync.adapters.feed.FeedReader;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.security.NullIdentityProvider;
 
 
@@ -18,7 +19,7 @@ public class RssFeedReaderTests {
 		File file = new File(this.getClass().getResource("rss.xml").getFile());
 		Assert.assertTrue(file.exists());
 		
-		FeedReader reader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
+		FeedReader reader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		Feed feed = reader.read(file);
 		Assert.assertNotNull(feed); // TODO (JMT) test
 	}

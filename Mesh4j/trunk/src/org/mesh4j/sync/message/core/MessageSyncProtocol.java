@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.message.IEndpoint;
 import org.mesh4j.sync.message.IMessage;
 import org.mesh4j.sync.message.IMessageSyncAdapter;
@@ -11,7 +12,6 @@ import org.mesh4j.sync.message.IMessageSyncAware;
 import org.mesh4j.sync.message.IMessageSyncProtocol;
 import org.mesh4j.sync.message.ISyncSession;
 import org.mesh4j.sync.model.Item;
-import org.mesh4j.sync.utils.IdGenerator;
 import org.mesh4j.sync.validations.Guard;
 
 
@@ -101,7 +101,7 @@ public class MessageSyncProtocol implements IMessageSyncProtocol {
 			Guard.throwsException("ERROR_MESSAGE_SYNC_SESSION_IS_OPEN", sourceId, endpoint.getEndpointId());
 		}
 		if(syncSession == null){
-			syncSession = this.repository.createSession(IdGenerator.newID(), 0, sourceId, endpoint, fullProtocol);
+			syncSession = this.repository.createSession(IdGenerator.INSTANCE.newID(), 0, sourceId, endpoint, fullProtocol);
 			if(syncSession == null){
 				return null;
 			}

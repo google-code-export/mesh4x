@@ -7,6 +7,7 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.junit.Test;
 import org.mesh4j.sync.adapters.feed.XMLContent;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.message.channel.sms.ISmsConnection;
 import org.mesh4j.sync.message.channel.sms.SmsChannelFactory;
 import org.mesh4j.sync.message.channel.sms.SmsEndpoint;
@@ -21,7 +22,6 @@ import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.test.utils.TestHelper;
 import org.mesh4j.sync.test.utils.concurrent.command.ConcurrentCommandExecutor;
-import org.mesh4j.sync.utils.IdGenerator;
 
 
 public class MessageSyncEngineConcurrentSessionsTests implements IMessageSyncAware {
@@ -31,9 +31,9 @@ public class MessageSyncEngineConcurrentSessionsTests implements IMessageSyncAwa
 	@Test
 	public void shouldSupportsConcurrentSync() throws InterruptedException{
 		
-		SmsEndpoint endpointA = new SmsEndpoint(IdGenerator.newID());
-		SmsEndpoint endpointB = new SmsEndpoint(IdGenerator.newID());
-		SmsEndpoint endpointC = new SmsEndpoint(IdGenerator.newID());
+		SmsEndpoint endpointA = new SmsEndpoint(IdGenerator.INSTANCE.newID());
+		SmsEndpoint endpointB = new SmsEndpoint(IdGenerator.INSTANCE.newID());
+		SmsEndpoint endpointC = new SmsEndpoint(IdGenerator.INSTANCE.newID());
 		
 		InMemorySmsConnection connectionA = createSmsConnection(endpointA);
 		InMemorySmsConnection connectionB = createSmsConnection(endpointB);
@@ -70,7 +70,7 @@ public class MessageSyncEngineConcurrentSessionsTests implements IMessageSyncAwa
 	}
 
 	private IMessageSyncAdapter createAdapter() {
-		String sourceId = IdGenerator.newID();
+		String sourceId = IdGenerator.INSTANCE.newID();
 		List<Item> items = createItems(1);
 		return new InMemoryMessageSyncAdapter(sourceId, items);
 	}
@@ -107,7 +107,7 @@ public class MessageSyncEngineConcurrentSessionsTests implements IMessageSyncAwa
 	}
 
 	private Item createItem() {
-		String syncID = IdGenerator.newID();
+		String syncID = IdGenerator.INSTANCE.newID();
 		Element payload = DocumentHelper.createElement("payload");
 		payload.addElement("foo").addElement("bar").setText("test sms lib:" + syncID);
 		IContent content = new XMLContent(syncID, "title: "+ syncID, "desc: "+ syncID, payload);

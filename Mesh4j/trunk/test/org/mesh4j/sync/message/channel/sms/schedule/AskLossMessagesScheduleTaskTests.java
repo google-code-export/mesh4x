@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.message.channel.sms.SmsEndpoint;
 import org.mesh4j.sync.message.channel.sms.batch.MessageBatchFactory;
 import org.mesh4j.sync.message.channel.sms.batch.SmsMessage;
@@ -11,7 +12,6 @@ import org.mesh4j.sync.message.channel.sms.batch.SmsMessageBatch;
 import org.mesh4j.sync.message.channel.sms.core.MockSmsChannel;
 import org.mesh4j.sync.message.schedule.timer.TimerScheduler;
 import org.mesh4j.sync.test.utils.TestHelper;
-import org.mesh4j.sync.utils.IdGenerator;
 
 
 public class AskLossMessagesScheduleTaskTests {
@@ -57,7 +57,7 @@ public class AskLossMessagesScheduleTaskTests {
 	public SmsMessageBatch createTestBatch(int msgSize, String originalText, Date date)
 	{
 		MessageBatchFactory factory = new MessageBatchFactory(msgSize);
-		SmsMessageBatch batch = factory.createMessageBatch(IdGenerator.newID(), new SmsEndpoint("1234"), "M", "12345", originalText);
+		SmsMessageBatch batch = factory.createMessageBatch(IdGenerator.INSTANCE.newID(), new SmsEndpoint("1234"), "M", "12345", originalText);
 		for (SmsMessage message : batch.getMessages()) {
 			message.setLastModificationDate(date);
 		}

@@ -17,9 +17,9 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mesh4j.sync.adapters.kml.KMLContent;
 import org.mesh4j.sync.adapters.kml.KmlNames;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.IContent;
 import org.mesh4j.sync.test.utils.TestHelper;
-import org.mesh4j.sync.utils.IdGenerator;
 
 
 public class KMLFolderTests {
@@ -27,7 +27,7 @@ public class KMLFolderTests {
 	@Test
 	public void shouldUpdateFolder() throws DocumentException{
 		
-		String id = IdGenerator.newID();
+		String id = IdGenerator.INSTANCE.newID();
 		String xml ="<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+
 					"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 					"<Document>"+
@@ -80,7 +80,7 @@ public class KMLFolderTests {
 	
 	@Test
 	public void shouldDeleteNotEfectWhenItemDoesNotExist(){
-		String id = IdGenerator.newID();
+		String id = IdGenerator.INSTANCE.newID();
 		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+
 					"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 					"<Document>"+
@@ -119,7 +119,7 @@ public class KMLFolderTests {
 		List<IContent> items = kmlAdapter.getAll();
 		Assert.assertEquals(4, items.size());
 		
-		kmlAdapter.delete(new KMLContent(DocumentHelper.createElement("payload"), IdGenerator.newID()));
+		kmlAdapter.delete(new KMLContent(DocumentHelper.createElement("payload"), IdGenerator.INSTANCE.newID()));
 		
 		items = kmlAdapter.getAll();
 		Assert.assertEquals(4, items.size());
@@ -127,7 +127,7 @@ public class KMLFolderTests {
 	
 	@Test
 	public void shouldGetReturnNullWhenItemDoesNotExist(){
-		String id = IdGenerator.newID();
+		String id = IdGenerator.INSTANCE.newID();
 		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+
 					"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 					"<Document>"+
@@ -162,7 +162,7 @@ public class KMLFolderTests {
 		File file = TestHelper.makeNewXMLFile(xml);
 		
 		KMLContentAdapter kmlAdapter = new KMLContentAdapter(file);
-		KMLContent content = kmlAdapter.get(IdGenerator.newID());
+		KMLContent content = kmlAdapter.get(IdGenerator.INSTANCE.newID());
 		
 		Assert.assertNull(content);
 	}
@@ -171,7 +171,7 @@ public class KMLFolderTests {
 	@Test
 	public void shouldGetFolderAsItem(){
 		
-		String id = IdGenerator.newID();
+		String id = IdGenerator.INSTANCE.newID();
 		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+
 					"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 					"<Document>"+
@@ -282,7 +282,7 @@ public class KMLFolderTests {
 		
 		KMLContentAdapter kmlAdapter = new KMLContentAdapter(file);
 		
-		String id = IdGenerator.newID();
+		String id = IdGenerator.INSTANCE.newID();
 		
 		String newFolderXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+
 							"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
@@ -321,7 +321,7 @@ public class KMLFolderTests {
 	@Test
 	public void shouldDeleteFolder() throws DocumentException{
 		
-		String id = IdGenerator.newID();
+		String id = IdGenerator.INSTANCE.newID();
 		String xml ="<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+
 					"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 					"<Document>"+
@@ -362,7 +362,7 @@ public class KMLFolderTests {
 	@Test
 	public void shouldPrepareKML() throws DocumentException, JaxenException{
 		
-		String id = IdGenerator.newID();
+		String id = IdGenerator.INSTANCE.newID();
 		String xml ="<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+
 					"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 					"<Document>"+
@@ -412,7 +412,7 @@ public class KMLFolderTests {
 	@Test
 	public void shouldNormalizeContent() throws DocumentException{
 		
-		String id = IdGenerator.newID();
+		String id = IdGenerator.INSTANCE.newID();
 		
 		String newFolderXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+
 							"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+

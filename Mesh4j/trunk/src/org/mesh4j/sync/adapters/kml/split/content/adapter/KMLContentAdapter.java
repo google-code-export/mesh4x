@@ -17,9 +17,9 @@ import org.jaxen.JaxenException;
 import org.mesh4j.sync.adapters.kml.KMLContent;
 import org.mesh4j.sync.adapters.kml.KmlNames;
 import org.mesh4j.sync.adapters.split.IContentAdapter;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.IContent;
 import org.mesh4j.sync.parsers.XMLView;
-import org.mesh4j.sync.utils.IdGenerator;
 import org.mesh4j.sync.utils.XMLHelper;
 import org.mesh4j.sync.validations.MeshException;
 
@@ -239,7 +239,7 @@ public class KMLContentAdapter implements IContentAdapter{
 	}
 
 	private String makeNewID() {
-		return IdGenerator.newID();
+		return IdGenerator.INSTANCE.newID();
 	}
 
 	@Override

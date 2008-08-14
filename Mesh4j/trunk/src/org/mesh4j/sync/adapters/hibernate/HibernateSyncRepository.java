@@ -19,9 +19,9 @@ import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.mesh4j.sync.adapters.SyncInfo;
 import org.mesh4j.sync.adapters.split.ISyncRepository;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.IContent;
 import org.mesh4j.sync.parsers.SyncInfoParser;
-import org.mesh4j.sync.utils.IdGenerator;
 import org.mesh4j.sync.validations.MeshException;
 
 
@@ -131,7 +131,7 @@ public class HibernateSyncRepository implements ISyncRepository{
 	}
 
 	public String newSyncID(IContent content) {
-		return IdGenerator.newID();
+		return IdGenerator.INSTANCE.newID();
 	}
 
 	private File getMapping() {

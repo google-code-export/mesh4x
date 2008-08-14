@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.message.MockMessageEncoding;
 import org.mesh4j.sync.message.channel.sms.batch.MessageBatchFactory;
 import org.mesh4j.sync.message.channel.sms.batch.SmsMessage;
@@ -13,7 +14,6 @@ import org.mesh4j.sync.message.channel.sms.core.MockSmsReceiver;
 import org.mesh4j.sync.message.channel.sms.core.SmsChannel;
 import org.mesh4j.sync.message.core.Message;
 import org.mesh4j.sync.test.utils.TestHelper;
-import org.mesh4j.sync.utils.IdGenerator;
 
 
 public class SmsChannelTests {
@@ -161,7 +161,7 @@ public class SmsChannelTests {
 		Date date = TestHelper.makeDate(2008, 1, 1, 1, 1, 1, 1);
 		SmsMessage smsMessage = new SmsMessage("message 1", date);
 		
-		SmsMessageBatch batch = new SmsMessageBatch(IdGenerator.newID(), new SmsEndpoint("1234"), "R", "12345", 3);
+		SmsMessageBatch batch = new SmsMessageBatch(IdGenerator.INSTANCE.newID(), new SmsEndpoint("1234"), "R", "12345", 3);
 		batch.addMessage(1, smsMessage);
 		
 		MockSmsSender sender = new MockSmsSender();
@@ -182,7 +182,7 @@ public class SmsChannelTests {
 	public SmsMessageBatch createTestBatch(int msgSize, String originalText)
 	{
 		MessageBatchFactory factory = new MessageBatchFactory(msgSize);
-		SmsMessageBatch batch = factory.createMessageBatch(IdGenerator.newID(), new SmsEndpoint("1234"), "R", "12345", originalText);
+		SmsMessageBatch batch = factory.createMessageBatch(IdGenerator.INSTANCE.newID(), new SmsEndpoint("1234"), "R", "12345", originalText);
 		return batch;
 	}
 }

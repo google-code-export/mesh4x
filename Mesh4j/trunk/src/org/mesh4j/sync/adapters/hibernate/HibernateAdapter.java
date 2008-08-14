@@ -17,6 +17,7 @@ import org.mesh4j.sync.IFilter;
 import org.mesh4j.sync.adapters.SyncInfo;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.filter.SinceLastUpdateFilter;
+import org.mesh4j.sync.id.generator.IIdGenerator;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.NullContent;
 import org.mesh4j.sync.model.Sync;
@@ -34,36 +35,35 @@ public class HibernateAdapter extends AbstractSyncAdapter implements ISessionPro
 	private SessionFactory sessionFactory;
 	private Session currentSession;
 	private IIdentityProvider identityProvider;
+	private IIdGenerator idGenerator;
 	
 	// BUSINESS METHODs
-	public HibernateAdapter(String fileMappingName, IIdentityProvider identityProvider){
-		super();
-		
-		Guard.argumentNotNull(identityProvider, "identityProvider");
+	public HibernateAdapter(String fileMappingName, IIdentityProvider identityProvider, IIdGenerator idGenerator){
 		Guard.argumentNotNullOrEmptyString(fileMappingName, "fileMappingName");
-		
-		initialize(new File(fileMappingName), identityProvider);
+		Guard.argumentNotNull(identityProvider, "identityProvider");
+		Guard.argumentNotNull(idGenerator, "idGenerator");
+		initialize(new File(fileMappingName), identityProvider, idGenerator);
 	}
 	
-	public HibernateAdapter(File entityMapping, IIdentityProvider identityProvider){
-		super();
-		initialize(entityMapping, identityProvider);
+	public HibernateAdapter(File entityMapping, IIdentityProvider identityProvider, IIdGenerator idGenerator){
+		Guard.argumentNotNull(entityMapping, "entityMapping");
+		Guard.argumentNotNull(identityProvider, "identityProvider");
+		Guard.argumentNotNull(idGenerator, "idGenerator");
+		initialize(entityMapping, identityProvider, idGenerator);
 	}
 
-	private void initialize(File entityMapping,
-			IIdentityProvider identityProvider) {
-		Guard.argumentNotNull(identityProvider, "identityProvider");
-		Guard.argumentNotNull(entityMapping, "entityMapping");
-		
+	private void initialize(File entityMapping, IIdentityProvider identityProvider, IIdGenerator idGenerator) {
+
 		if(!entityMapping.exists() || !entityMapping.canRead()){
 			Guard.throwsArgumentException("Arg_InvalidHibernateFileMapping", entityMapping.getName());
 		}
 		
 		this.identityProvider = identityProvider;
+		this.idGenerator = idGenerator;
 		
 		this.initializeHibernate(SyncDAO.getMapping(), entityMapping);
 		
-		this.syncDAO = new SyncDAO(this, new SyncInfoParser(RssSyndicationFormat.INSTANCE, this.identityProvider));
+		this.syncDAO = new SyncDAO(this, new SyncInfoParser(RssSyndicationFormat.INSTANCE, this.identityProvider, this.idGenerator));
 		
 		ClassMetadata classMetadata = this.getClassMetadata();
 		String entityName = classMetadata.getEntityName();

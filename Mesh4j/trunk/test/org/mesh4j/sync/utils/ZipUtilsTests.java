@@ -11,6 +11,7 @@ import org.dom4j.DocumentHelper;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mesh4j.sync.adapters.kml.KmlNames;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.test.utils.TestHelper;
 
 
@@ -79,7 +80,7 @@ public class ZipUtilsTests {
 		Document docKml = XMLHelper.readDocument(new File(kmlFileName));
 		docKml.normalize();
 		
-		String fileName = TestHelper.fileName(IdGenerator.newID()+".kmz");
+		String fileName = TestHelper.fileName(IdGenerator.INSTANCE.newID()+".kmz");
 		ZipUtils.write(new File(fileName), KmlNames.KMZ_DEFAULT_ENTRY_NAME_TO_KML, docKml.asXML());
 
 		String xml = ZipUtils.getTextEntryContent(fileName, KmlNames.KMZ_DEFAULT_ENTRY_NAME_TO_KML);
@@ -98,7 +99,7 @@ public class ZipUtilsTests {
 		Document docKml = XMLHelper.readDocument(new File(kmlFileName));
 		docKml.normalize();
 		
-		String fileName = TestHelper.fileName(IdGenerator.newID()+".kmz");
+		String fileName = TestHelper.fileName(IdGenerator.INSTANCE.newID()+".kmz");
 		ZipUtils.write(new File(fileName), KmlNames.KMZ_DEFAULT_ENTRY_NAME_TO_KML, docKml.asXML());
 
 		String xml = ZipUtils.getTextEntryContent(fileName, KmlNames.KMZ_DEFAULT_ENTRY_NAME_TO_KML);
@@ -149,7 +150,7 @@ public class ZipUtilsTests {
 		Document docKml = XMLHelper.readDocument(new File(kmlFileName));
 		docKml.normalize();
 		
-		String fileName = TestHelper.fileName(IdGenerator.newID()+".kmz");
+		String fileName = TestHelper.fileName(IdGenerator.INSTANCE.newID()+".kmz");
 		ZipUtils.write(new File(fileName), KmlNames.KMZ_DEFAULT_ENTRY_NAME_TO_KML, docKml.asXML());
 
 		String xml = ZipUtils.getTextEntryContent(fileName, KmlNames.KMZ_DEFAULT_ENTRY_NAME_TO_KML);

@@ -16,9 +16,9 @@ import org.jaxen.dom4j.Dom4jXPath;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mesh4j.sync.adapters.kml.KMLContent;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.IContent;
 import org.mesh4j.sync.test.utils.TestHelper;
-import org.mesh4j.sync.utils.IdGenerator;
 
 
 public class KMLPlacemarkTests {
@@ -26,12 +26,12 @@ public class KMLPlacemarkTests {
 	@Test
 	public void shouldUpdatePacemark() throws DocumentException{
 		
-		String id = IdGenerator.newID();
+		String id = IdGenerator.INSTANCE.newID();
 		String xml ="<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+
 					"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 					"<Document>"+
 					"<name>a.kml</name>"+
-					"<Folder xml:id=\""+ IdGenerator.newID() +"\">"+
+					"<Folder xml:id=\""+ IdGenerator.INSTANCE.newID() +"\">"+
 					"	<name>Folder1</name>"+
 					"	<Placemark xml:id=\""+id+"\">"+
 					"		<name>a</name>"+
@@ -108,12 +108,12 @@ public class KMLPlacemarkTests {
 	
 	@Test
 	public void shouldDeleteNotEfectWhenItemDoesNotExist(){
-		String id = IdGenerator.newID();
+		String id = IdGenerator.INSTANCE.newID();
 		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+
 					"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 					"<Document>"+
 					"<name>a.kml</name>"+
-					"<Folder xml:id=\""+ IdGenerator.newID() +"\">"+
+					"<Folder xml:id=\""+ IdGenerator.INSTANCE.newID() +"\">"+
 					"	<name>Folder1</name>"+
 					"	<Placemark xml:id=\""+id+"\">"+
 					"		<name>zz</name>"+
@@ -147,7 +147,7 @@ public class KMLPlacemarkTests {
 		List<IContent> items = kmlAdapter.getAll();
 		Assert.assertEquals(4, items.size());
 		
-		kmlAdapter.delete(new KMLContent(DocumentHelper.createElement("payload"), IdGenerator.newID()));
+		kmlAdapter.delete(new KMLContent(DocumentHelper.createElement("payload"), IdGenerator.INSTANCE.newID()));
 		
 		items = kmlAdapter.getAll();
 		Assert.assertEquals(4, items.size());
@@ -155,12 +155,12 @@ public class KMLPlacemarkTests {
 	
 	@Test
 	public void shouldGetReturnNullWhenItemDoesNotExist(){
-		String id = IdGenerator.newID();
+		String id = IdGenerator.INSTANCE.newID();
 		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+
 					"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 					"<Document>"+
 					"<name>a.kml</name>"+
-					"<Folder xml:id=\""+ IdGenerator.newID() +"\">"+
+					"<Folder xml:id=\""+ IdGenerator.INSTANCE.newID() +"\">"+
 					"	<name>Folder1</name>"+
 					"	<Placemark xml:id=\""+id+"\">"+
 					"		<name>zz</name>"+
@@ -190,7 +190,7 @@ public class KMLPlacemarkTests {
 		File file = TestHelper.makeNewXMLFile(xml);
 		
 		KMLContentAdapter kmlAdapter = new KMLContentAdapter(file);
-		KMLContent content = kmlAdapter.get(IdGenerator.newID());
+		KMLContent content = kmlAdapter.get(IdGenerator.INSTANCE.newID());
 		
 		Assert.assertNull(content);
 	}
@@ -198,12 +198,12 @@ public class KMLPlacemarkTests {
 	@Test
 	public void shouldGetPlacemarkAsItem(){
 		
-		String id = IdGenerator.newID();
+		String id = IdGenerator.INSTANCE.newID();
 		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+
 					"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 					"<Document>"+
 					"<name>a.kml</name>"+
-					"<Folder xml:id=\""+ IdGenerator.newID() +"\">"+
+					"<Folder xml:id=\""+ IdGenerator.INSTANCE.newID() +"\">"+
 					"	<name>Folder1</name>"+
 					"	<Placemark xml:id=\""+id+"\">"+
 					"		<name>a</name>"+
@@ -357,7 +357,7 @@ public class KMLPlacemarkTests {
 		
 		KMLContentAdapter kmlAdapter = new KMLContentAdapter(file);
 		
-		String id = IdGenerator.newID();
+		String id = IdGenerator.INSTANCE.newID();
 		
 		String newXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+
 			"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
@@ -415,7 +415,7 @@ public class KMLPlacemarkTests {
 	@Test
 	public void shouldDeletePlacemark() throws DocumentException{
 		
-		String id = IdGenerator.newID();
+		String id = IdGenerator.INSTANCE.newID();
 		String xml ="<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+
 		"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 		"<Document>"+
@@ -487,7 +487,7 @@ public class KMLPlacemarkTests {
 	@Test
 	public void shouldPrepareKML() throws DocumentException, JaxenException{
 		
-		String id = IdGenerator.newID();
+		String id = IdGenerator.INSTANCE.newID();
 		String xml ="<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+
 		"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 		"<Document>"+
@@ -561,7 +561,7 @@ public class KMLPlacemarkTests {
 	@Test
 	public void shouldNormalizeContent() throws DocumentException{
 		
-		String id = IdGenerator.newID();
+		String id = IdGenerator.INSTANCE.newID();
 		String xml ="<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+
 		"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 		"<Document>"+

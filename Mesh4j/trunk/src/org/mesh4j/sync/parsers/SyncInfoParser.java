@@ -8,6 +8,7 @@ import org.mesh4j.sync.adapters.feed.FeedReader;
 import org.mesh4j.sync.adapters.feed.FeedWriter;
 import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
+import org.mesh4j.sync.id.generator.IIdGenerator;
 import org.mesh4j.sync.model.Sync;
 import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.validations.Guard;
@@ -26,15 +27,18 @@ public class SyncInfoParser {
 	// MODEL VARIABLES
 	private ISyndicationFormat format;
 	private IIdentityProvider identityProvider;
+	private IIdGenerator idGenerator;
 
 	//BUSINESS METHODS 
 	
-	public SyncInfoParser(ISyndicationFormat format, IIdentityProvider identityProvider) {
+	public SyncInfoParser(ISyndicationFormat format, IIdentityProvider identityProvider, IIdGenerator idGenerator) {
 		Guard.argumentNotNull(format, "format");
 		Guard.argumentNotNull(identityProvider, "identityProvider");
+		Guard.argumentNotNull(idGenerator, "idGenerator");
 		
 		this.format = format;
 		this.identityProvider = identityProvider;
+		this.idGenerator = idGenerator;
 	}
 
 	public SyncInfo convertElement2SyncInfo(Element syncInfoElement) throws DocumentException {
@@ -50,17 +54,17 @@ public class SyncInfoParser {
 		Element syncData = syncInfoElement.element(SYNC_INFO_ATTR_SYNC_DATA);
 		Element syncElement = DocumentHelper.parseText(syncData.getText()).getRootElement();
 		
-		FeedReader reader = new FeedReader(this.format, this.identityProvider);
+		FeedReader reader = new FeedReader(this.format, this.identityProvider, this.idGenerator);
 		Sync sync = reader.readSync(syncElement);
 		return sync;
 	}
 	
 	public Sync convertSyncElement2Sync(Element syncElement){
-		return convertSyncElement2Sync(syncElement, this.format, this.identityProvider);
+		return convertSyncElement2Sync(syncElement, this.format, this.identityProvider, this.idGenerator);
 	}
 	
-	public static Sync convertSyncElement2Sync(Element syncElement, ISyndicationFormat format, IIdentityProvider identityProvider){
-		FeedReader reader = new FeedReader(format, identityProvider);
+	public static Sync convertSyncElement2Sync(Element syncElement, ISyndicationFormat format, IIdentityProvider identityProvider, IIdGenerator idGenerator){
+		FeedReader reader = new FeedReader(format, identityProvider, idGenerator);
 		Sync sync = reader.readSync(syncElement);
 		return sync;
 	}

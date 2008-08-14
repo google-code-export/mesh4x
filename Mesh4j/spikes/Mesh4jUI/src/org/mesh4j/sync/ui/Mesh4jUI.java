@@ -29,6 +29,8 @@ import org.mesh4j.sync.adapters.feed.FeedAdapter;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.adapters.http.HttpSyncAdapter;
 import org.mesh4j.sync.adapters.kml.KMLDOMLoaderFactory;
+import org.mesh4j.sync.id.generator.IIdGenerator;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.properties.PropertiesProvider;
 import org.mesh4j.sync.security.IIdentityProvider;
@@ -51,6 +53,7 @@ public class Mesh4jUI {
 	private String defaultEndpoint1;
 	private String defaultEndpoint2;
 	private IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
+	private IIdGenerator idGenerator = IdGenerator.INSTANCE;
 	
 	// BUSINESS METHODS
 	public static void main (String [] args) {
@@ -292,7 +295,7 @@ public class Mesh4jUI {
 			return new HttpSyncAdapter(endpoint, RssSyndicationFormat.INSTANCE, this.identityProvider);
 		} else {
 			if(isFeed(endpoint)){
-				return new FeedAdapter(endpoint, this.identityProvider);
+				return new FeedAdapter(endpoint, this.identityProvider, this.idGenerator);
 			}else{
 				IDOMLoader loader = KMLDOMLoaderFactory.createDOMLoader(endpoint, this.identityProvider);
 				return new DOMAdapter(loader);

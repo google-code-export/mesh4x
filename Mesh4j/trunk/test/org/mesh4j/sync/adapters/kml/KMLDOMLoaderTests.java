@@ -12,9 +12,9 @@ import org.mesh4j.sync.adapters.dom.DOMLoader;
 import org.mesh4j.sync.adapters.dom.IMeshDOM;
 import org.mesh4j.sync.adapters.dom.MeshNames;
 import org.mesh4j.sync.adapters.dom.parsers.FileManager;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.test.utils.TestHelper;
-import org.mesh4j.sync.utils.IdGenerator;
 import org.mesh4j.sync.utils.XMLHelper;
 import org.mesh4j.sync.validations.MeshException;
 
@@ -78,7 +78,7 @@ public class KMLDOMLoaderTests {
 	
 	@Test
 	public void shouldReadDoNotCreateFile(){
-		String fileName = TestHelper.fileName(IdGenerator.newID()+".kml");
+		String fileName = TestHelper.fileName(IdGenerator.INSTANCE.newID()+".kml");
 		 
 		FileManager fileManager = new FileManager();
 		KMLDOMLoader loader = new KMLDOMLoader(fileName, NullIdentityProvider.INSTANCE, KMLDOMLoaderFactory.createView(fileManager), fileManager);
@@ -168,7 +168,7 @@ public class KMLDOMLoaderTests {
 	@Test
 	public void shouldWriteCreateFile() throws DocumentException{
 
-		String fileName = TestHelper.fileName(IdGenerator.newID()+".kml");
+		String fileName = TestHelper.fileName(IdGenerator.INSTANCE.newID()+".kml");
 		File file = new File(fileName);
 		
 		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><kml xmlns=\"http://earth.google.com/kml/2.2\"><Document><name>"

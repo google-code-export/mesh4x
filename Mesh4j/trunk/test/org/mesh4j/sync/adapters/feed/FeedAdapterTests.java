@@ -9,19 +9,19 @@ import org.junit.Test;
 import org.mesh4j.sync.ISupportMerge;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.filter.NullFilter;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.Sync;
 import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.test.utils.TestHelper;
-import org.mesh4j.sync.utils.IdGenerator;
 
 
 public class FeedAdapterTests {
 
 	@Test
 	public void  shouldBeReturnNewFeed(){
-		File file = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
-		FeedAdapter repo = new FeedAdapter(file, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, new Feed());
+		File file = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xml"));
+		FeedAdapter repo = new FeedAdapter(file, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, new Feed());
 		Feed feed = repo.getFeed();
 		
 		Assert.assertNotNull(feed);
@@ -32,8 +32,8 @@ public class FeedAdapterTests {
 	public void shouldBeReturnFeed(){
 		Feed feedSource = new Feed();
 		
-		File file = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
-		FeedAdapter repo = new FeedAdapter(file, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, feedSource);
+		File file = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xml"));
+		FeedAdapter repo = new FeedAdapter(file, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, feedSource);
 
 		Feed feed = repo.getFeed();
 		
@@ -43,8 +43,8 @@ public class FeedAdapterTests {
 	
 	@Test
 	public void shouldNotSupportMerge(){
-		File file = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
-		FeedAdapter repo = new FeedAdapter(file, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, new Feed());
+		File file = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xml"));
+		FeedAdapter repo = new FeedAdapter(file, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, new Feed());
 
 		Assert.assertFalse(repo instanceof ISupportMerge);		
 	}
@@ -53,8 +53,8 @@ public class FeedAdapterTests {
 	public void shouldBeAddItem(){
 		Item item = new Item(null, new Sync("suncId123"));
 		
-		File file = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
-		FeedAdapter repo = new FeedAdapter(file, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, new Feed());
+		File file = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xml"));
+		FeedAdapter repo = new FeedAdapter(file, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, new Feed());
 
 		repo.add(item);
 		
@@ -72,8 +72,8 @@ public class FeedAdapterTests {
 		Feed feed = new Feed();
 		feed.addItem(item);
 		
-		File file = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
-		FeedAdapter repo = new FeedAdapter(file, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, feed);
+		File file = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xml"));
+		FeedAdapter repo = new FeedAdapter(file, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, feed);
 
 		repo.delete(item.getSyncId());
 				
@@ -88,8 +88,8 @@ public class FeedAdapterTests {
 		Feed feed = new Feed();
 		feed.addItem(item);
 		
-		File file = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
-		FeedAdapter repo = new FeedAdapter(file, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, feed);
+		File file = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xml"));
+		FeedAdapter repo = new FeedAdapter(file, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, feed);
 
 		Item resultItem = repo.get(item.getSyncId());
 				
@@ -105,8 +105,8 @@ public class FeedAdapterTests {
 		feed.addItem(item0);
 		feed.addItem(item1);
 		
-		File file = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
-		FeedAdapter repo = new FeedAdapter(file, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, feed);
+		File file = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xml"));
+		FeedAdapter repo = new FeedAdapter(file, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, feed);
 
 		List<Item> results = repo.getAll(null, new NullFilter<Item>());
 				
@@ -128,8 +128,8 @@ public class FeedAdapterTests {
 		feed.addItem(item0);
 		feed.addItem(item1);
 		
-		File file = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
-		FeedAdapter repo = new FeedAdapter(file, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, feed);
+		File file = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xml"));
+		FeedAdapter repo = new FeedAdapter(file, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, feed);
 
 		List<Item> results = repo.getAll(sinceDate, new NullFilter<Item>());
 				
@@ -140,8 +140,8 @@ public class FeedAdapterTests {
 
 	@Test
 	public void shouldReturnFriendlyName() {
-		File file = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
-		FeedAdapter repo = new FeedAdapter(file, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, new Feed());
+		File file = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xml"));
+		FeedAdapter repo = new FeedAdapter(file, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, new Feed());
 
 		Assert.assertFalse(FeedAdapter.class.getName() == repo.getFriendlyName());
 	}

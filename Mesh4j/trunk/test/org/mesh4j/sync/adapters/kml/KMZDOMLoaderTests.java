@@ -10,11 +10,11 @@ import org.dom4j.DocumentHelper;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mesh4j.sync.adapters.dom.parsers.FileManager;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.test.utils.TestHelper;
 import org.mesh4j.sync.utils.Base64Helper;
 import org.mesh4j.sync.utils.FileUtils;
-import org.mesh4j.sync.utils.IdGenerator;
 import org.mesh4j.sync.utils.ZipUtils;
 import org.mesh4j.sync.validations.MeshException;
 
@@ -67,7 +67,7 @@ public class KMZDOMLoaderTests {
 	
 	@Test
 	public void shouldReadDoNotCreateFile(){
-		String fileName = TestHelper.fileName(IdGenerator.newID()+".kmz");
+		String fileName = TestHelper.fileName(IdGenerator.INSTANCE.newID()+".kmz");
 		FileManager fileManager = new FileManager();
 		KMZDOMLoader loader = new KMZDOMLoader(fileName, NullIdentityProvider.INSTANCE, KMLDOMLoaderFactory.createView(fileManager), fileManager);
 		loader.read();
@@ -158,7 +158,7 @@ public class KMZDOMLoaderTests {
 	@Test
 	public void shouldWriteCreateFile() throws DocumentException{
 
-		String fileName = TestHelper.fileName(IdGenerator.newID()+".kmz");
+		String fileName = TestHelper.fileName(IdGenerator.INSTANCE.newID()+".kmz");
 		File file = new File(fileName);
 		
 		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><kml xmlns=\"http://earth.google.com/kml/2.2\"><Document><name>"
@@ -243,7 +243,7 @@ public class KMZDOMLoaderTests {
 	
 	@Test
 	public void shouldWriteKMZWithFiles() throws IOException{
-		File file = new File(TestHelper.fileName("kmzExample_"+IdGenerator.newID()+".kmz"));
+		File file = new File(TestHelper.fileName("kmzExample_"+IdGenerator.INSTANCE.newID()+".kmz"));
 		
 		byte[] file2 = FileUtils.read(this.getClass().getResource("kmzExample_star.jpg").getFile());
 		byte[] file3 = FileUtils.read(this.getClass().getResource("kmzExample_camera_mode.png").getFile());

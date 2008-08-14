@@ -20,6 +20,7 @@ import org.mesh4j.sync.adapters.feed.Feed;
 import org.mesh4j.sync.adapters.feed.FeedReader;
 import org.mesh4j.sync.adapters.feed.FeedWriter;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.message.IEndpoint;
 import org.mesh4j.sync.message.IMessageSyncAdapter;
 import org.mesh4j.sync.message.ISyncSession;
@@ -66,7 +67,7 @@ public class FileSyncSessionRepository implements ISyncSessionRepository{
 		this.sessionFactory = sessionFactory;
 		this.rootDirectory = rootDirectory;
 		this.feedWriter = new FeedWriter(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
-		this.feedReader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
+		this.feedReader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
 		File fileDir = new File(rootDirectory);
 		if(!fileDir.exists()){

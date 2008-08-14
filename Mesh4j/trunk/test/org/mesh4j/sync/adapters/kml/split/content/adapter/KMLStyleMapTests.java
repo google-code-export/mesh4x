@@ -16,9 +16,9 @@ import org.jaxen.dom4j.Dom4jXPath;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mesh4j.sync.adapters.kml.KMLContent;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.IContent;
 import org.mesh4j.sync.test.utils.TestHelper;
-import org.mesh4j.sync.utils.IdGenerator;
 
 
 public class KMLStyleMapTests {
@@ -26,7 +26,7 @@ public class KMLStyleMapTests {
 	@Test
 	public void shouldUpdatePacemark() throws DocumentException{
 		
-		String id = IdGenerator.newID();
+		String id = IdGenerator.INSTANCE.newID();
 		String xml ="<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+
 					"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 					"<Document>"+
@@ -41,9 +41,9 @@ public class KMLStyleMapTests {
 					"			<styleUrl>#sh_ylw-pushpin</styleUrl>"+
 					"		</Pair>"+
 					"	</StyleMap>"+					
-					"<Folder xml:id=\""+ IdGenerator.newID() +"\">"+
+					"<Folder xml:id=\""+ IdGenerator.INSTANCE.newID() +"\">"+
 					"	<name>Folder1</name>"+
-					"	<Placemark xml:id=\""+IdGenerator.newID()+"\">"+
+					"	<Placemark xml:id=\""+IdGenerator.INSTANCE.newID()+"\">"+
 					"		<name>a</name>"+
 					"		<visibility>0</visibility>"+
 					"		<LookAt>"+
@@ -112,7 +112,7 @@ public class KMLStyleMapTests {
 		
 	@Test
 	public void shouldGetStyleMapAsItem(){
-		String id = IdGenerator.newID();
+		String id = IdGenerator.INSTANCE.newID();
 		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+
 					"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 					"<Document>"+
@@ -127,9 +127,9 @@ public class KMLStyleMapTests {
 					"			<styleUrl>#sh_ylw-pushpin</styleUrl>"+
 					"		</Pair>"+
 					"	</StyleMap>"+
-					"<Folder xml:id=\""+ IdGenerator.newID() +"\">"+
+					"<Folder xml:id=\""+ IdGenerator.INSTANCE.newID() +"\">"+
 					"	<name>Folder1</name>"+
-					"	<Placemark xml:id=\""+IdGenerator.newID()+"\">"+
+					"	<Placemark xml:id=\""+IdGenerator.INSTANCE.newID()+"\">"+
 					"		<name>a</name>"+
 					"		<visibility>0</visibility>"+
 					"		<LookAt>"+
@@ -256,7 +256,7 @@ public class KMLStyleMapTests {
 		
 		KMLContentAdapter kmlAdapter = new KMLContentAdapter(file);
 		
-		String id = IdGenerator.newID();
+		String id = IdGenerator.INSTANCE.newID();
 		
 		String newXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+
 			"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
@@ -307,7 +307,7 @@ public class KMLStyleMapTests {
 	@Test
 	public void shouldDeleteStyleMap() throws DocumentException{
 		
-		String id = IdGenerator.newID();
+		String id = IdGenerator.INSTANCE.newID();
 		String xml ="<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+
 			"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 			"<Document>"+
@@ -362,7 +362,7 @@ public class KMLStyleMapTests {
 	@Test
 	public void shouldPrepareKML() throws DocumentException, JaxenException{
 		
-		String id = IdGenerator.newID();
+		String id = IdGenerator.INSTANCE.newID();
 		String xml ="<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+
 		"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 		"<Document>"+
@@ -419,7 +419,7 @@ public class KMLStyleMapTests {
 	@Test
 	public void shouldNormalizeContent() throws DocumentException{
 		
-		String id = IdGenerator.newID();
+		String id = IdGenerator.INSTANCE.newID();
 		String xml ="<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+
 			"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 			"<Document>"+

@@ -13,10 +13,10 @@ import org.junit.Test;
 import org.mesh4j.sync.adapters.feed.Feed;
 import org.mesh4j.sync.adapters.feed.FeedReader;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.test.utils.TestHelper;
-import org.mesh4j.sync.utils.IdGenerator;
 
 
 public class HttpSyncAdapterTests {
@@ -48,7 +48,7 @@ public class HttpSyncAdapterTests {
 	@Test
 	public void shouldExecuteMerge() throws DocumentException, JaxenException{
 		
-		String newID = IdGenerator.newID();
+		String newID = IdGenerator.INSTANCE.newID();
 		
 		String xml ="<?xml version=\"1.0\" encoding=\"utf-8\"?>"+
 		"<rss version=\"2.0\" xmlns:sx=\"http://feedsync.org/2007/feedsync\">"+
@@ -66,7 +66,7 @@ public class HttpSyncAdapterTests {
 		  "</channel>"+
 		 "</rss>";
 		
-		FeedReader reader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
+		FeedReader reader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		Feed feed = reader.read(DocumentHelper.parseText(xml));
 				
 		List<Item> result = this.httpAdapter.merge(feed.getItems());

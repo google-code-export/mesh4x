@@ -4,12 +4,12 @@ import java.util.ArrayList;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.message.channel.sms.SmsEndpoint;
 import org.mesh4j.sync.message.channel.sms.batch.DiscardedBatchRecord;
 import org.mesh4j.sync.message.channel.sms.batch.SmsMessage;
 import org.mesh4j.sync.message.channel.sms.batch.SmsMessageBatch;
 import org.mesh4j.sync.test.utils.TestHelper;
-import org.mesh4j.sync.utils.IdGenerator;
 
 
 public class FileSmsChannelRepositoryTests {
@@ -59,8 +59,8 @@ public class FileSmsChannelRepositoryTests {
 	
 	private SmsMessageBatch createBatch(){
 		SmsMessageBatch batch = new SmsMessageBatch(
-			IdGenerator.newID(),
-			new SmsEndpoint(IdGenerator.newID()),
+			IdGenerator.INSTANCE.newID(),
+			new SmsEndpoint(IdGenerator.INSTANCE.newID()),
 			"H", 
 			"00012", 
 			3);

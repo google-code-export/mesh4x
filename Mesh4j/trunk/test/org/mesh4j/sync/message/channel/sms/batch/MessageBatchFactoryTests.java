@@ -2,10 +2,10 @@ package org.mesh4j.sync.message.channel.sms.batch;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.message.channel.sms.SmsEndpoint;
 import org.mesh4j.sync.message.channel.sms.core.MessageFormatter;
 import org.mesh4j.sync.test.utils.TestHelper;
-import org.mesh4j.sync.utils.IdGenerator;
 
 
 public class MessageBatchFactoryTests {
@@ -36,7 +36,7 @@ public class MessageBatchFactoryTests {
 	{
 		MessageBatchFactory factory = new MessageBatchFactory();
 		String original = TestHelper.newText(200);
-		SmsMessageBatch batch = factory.createMessageBatch(IdGenerator.newID(), new SmsEndpoint("1234"),"M", "12345", original);
+		SmsMessageBatch batch = factory.createMessageBatch(IdGenerator.INSTANCE.newID(), new SmsEndpoint("1234"),"M", "12345", original);
 
 		Assert.assertTrue(batch.isComplete());
 		batch.reconstitutePayload();
@@ -48,7 +48,7 @@ public class MessageBatchFactoryTests {
 	@Test
 	public void ShouldGenerateImprobableIdWhenCreatingBatch()
 	{
-		String sessionId = IdGenerator.newID();
+		String sessionId = IdGenerator.INSTANCE.newID();
 		SmsMessageBatch batch1 = new SmsMessageBatch(sessionId, new SmsEndpoint("1234"));
 		SmsMessageBatch batch2 = new SmsMessageBatch(sessionId, new SmsEndpoint("1234"));
 

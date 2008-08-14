@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.message.IEndpoint;
 import org.mesh4j.sync.message.ISyncSession;
 import org.mesh4j.sync.model.Item;
-import org.mesh4j.sync.utils.IdGenerator;
 
 
 public class MockSyncSession implements ISyncSession{
@@ -29,10 +29,10 @@ public class MockSyncSession implements ISyncSession{
 	private boolean fullProtocol = true;
 	
 	public MockSyncSession(Date sinceDate) {
-		this(sinceDate, null, IdGenerator.newID());
+		this(sinceDate, null, IdGenerator.INSTANCE.newID());
 	}
 	public MockSyncSession(Date sinceDate, Item item) {
-		this(sinceDate, item, IdGenerator.newID());
+		this(sinceDate, item, IdGenerator.INSTANCE.newID());
 	}
 	public MockSyncSession(Date sinceDate, Item item, String sessionId) {
 		super();

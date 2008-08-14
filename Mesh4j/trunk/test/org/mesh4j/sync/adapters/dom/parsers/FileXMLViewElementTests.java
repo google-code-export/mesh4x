@@ -11,9 +11,9 @@ import org.junit.Test;
 import org.mesh4j.sync.adapters.SyncInfo;
 import org.mesh4j.sync.adapters.dom.IMeshDOM;
 import org.mesh4j.sync.adapters.dom.MeshNames;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.IContent;
 import org.mesh4j.sync.security.IIdentityProvider;
-import org.mesh4j.sync.utils.IdGenerator;
 
 
 public class FileXMLViewElementTests {
@@ -99,7 +99,7 @@ public class FileXMLViewElementTests {
 		Document doc = DocumentHelper.createDocument(DocumentHelper.createElement("foo"));		
 		
 		Element newElement = DocumentHelper.createElement(MeshNames.MESH_QNAME_FILE);
-		newElement.addAttribute(MeshNames.MESH_QNAME_SYNC_ID, IdGenerator.newID());
+		newElement.addAttribute(MeshNames.MESH_QNAME_SYNC_ID, IdGenerator.INSTANCE.newID());
 		newElement.addAttribute(MeshNames.MESH_QNAME_FILE_ID, "a.txt");
 		Element fileContent = newElement.addElement(MeshNames.MESH_QNAME_FILE_CONTENT);
 		fileContent.setText("123");

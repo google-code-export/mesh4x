@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.mesh4j.sync.adapters.feed.Feed;
 import org.mesh4j.sync.adapters.feed.FeedReader;
 import org.mesh4j.sync.adapters.feed.FeedWriter;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.test.utils.TestHelper;
 
@@ -23,7 +24,7 @@ public class AtomFeedWriterTests {
 		File file = new File(this.getClass().getResource("atom.xml").getFile());
 		Assert.assertTrue(file.exists());
 		
-		FeedReader reader = new FeedReader(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
+		FeedReader reader = new FeedReader(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		Feed feed = reader.read(file);
 		
 		XMLWriter xmlWriter = new XMLWriter(new FileWriter(TestHelper.fileName("atom1.xml")));

@@ -9,6 +9,7 @@ import org.junit.Assert;
 import org.mesh4j.sync.adapters.dom.DOMAdapter;
 import org.mesh4j.sync.adapters.feed.XMLContent;
 import org.mesh4j.sync.adapters.kml.KMLDOMLoaderFactory;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.message.IMessageSyncAdapter;
 import org.mesh4j.sync.message.IMessageSyncProtocol;
 import org.mesh4j.sync.message.ISyncSession;
@@ -33,7 +34,6 @@ import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.Sync;
 import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.test.utils.TestHelper;
-import org.mesh4j.sync.utils.IdGenerator;
 import org.smslib.modem.SerialModemGateway;
 
 
@@ -103,7 +103,7 @@ public class SmsLibTests {
 	//@Test
 	public void shouldMeshWithSMSLib() throws InterruptedException{
 		
-		String sourceId = IdGenerator.newID().substring(0, 5);
+		String sourceId = IdGenerator.INSTANCE.newID().substring(0, 5);
 		List<Item> items = createItems(1);						
 				
 		IMessageSyncAdapter adapterA = new InMemoryMessageSyncAdapter(sourceId, items);
@@ -151,7 +151,7 @@ public class SmsLibTests {
 	//@Test
 	public void shouldMeshKMLWithSMSLib() throws InterruptedException{
 		
-		String sourceId = IdGenerator.newID().substring(0, 5);
+		String sourceId = IdGenerator.INSTANCE.newID().substring(0, 5);
 		
 		String fileNameA = this.getClass().getResource("kmlWithSyncInfo.kml").getFile();
 		DOMAdapter kmlAdapterA = new DOMAdapter(KMLDOMLoaderFactory.createDOMLoader(fileNameA, NullIdentityProvider.INSTANCE));
@@ -233,7 +233,7 @@ public class SmsLibTests {
 	}
 
 	private Item createItem() {
-		String syncID = IdGenerator.newID();
+		String syncID = IdGenerator.INSTANCE.newID();
 		Element payload = DocumentHelper.createElement("payload");
 		payload.addElement("foo").addElement("bar").setText("test sms lib:" + syncID);
 		IContent content = new XMLContent(syncID, "title: "+ syncID, "desc: "+ syncID, payload);

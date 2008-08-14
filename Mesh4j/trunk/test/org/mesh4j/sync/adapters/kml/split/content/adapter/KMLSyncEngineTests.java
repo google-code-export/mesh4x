@@ -15,12 +15,12 @@ import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.adapters.file.FileSyncRepository;
 import org.mesh4j.sync.adapters.kml.KMLContent;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.IContent;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.NullContent;
 import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.test.utils.TestHelper;
-import org.mesh4j.sync.utils.IdGenerator;
 import org.mesh4j.sync.utils.XMLHelper;
 
 
@@ -56,9 +56,9 @@ public class KMLSyncEngineTests {
 		"</kml>";
 		
 		File file1 = TestHelper.makeNewXMLFile(xml1);
-		File fileSync1 = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
+		File fileSync1 = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xml"));
 		KMLContentAdapter kmlAdapter1 = new KMLContentAdapter(file1);
-		FileSyncRepository syncRepo1 = new FileSyncRepository(fileSync1, NullIdentityProvider.INSTANCE);
+		FileSyncRepository syncRepo1 = new FileSyncRepository(fileSync1, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		SplitAdapter repo1 = new SplitAdapter(syncRepo1, kmlAdapter1, NullIdentityProvider.INSTANCE);
 		
 		List<IContent> contents = kmlAdapter1.getAll();
@@ -69,8 +69,8 @@ public class KMLSyncEngineTests {
 		
 		File file2 = TestHelper.makeNewXMLFile(xml2);		
 		KMLContentAdapter kmlAdapter2 = new KMLContentAdapter(file2);
-		File fileSync2 = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
-		FileSyncRepository syncRepo2 = new FileSyncRepository(fileSync2, NullIdentityProvider.INSTANCE);
+		File fileSync2 = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xml"));
+		FileSyncRepository syncRepo2 = new FileSyncRepository(fileSync2, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		SplitAdapter repo2 = new SplitAdapter(syncRepo2, kmlAdapter2, NullIdentityProvider.INSTANCE);
 
 		contents = kmlAdapter2.getAll();
@@ -128,9 +128,9 @@ public class KMLSyncEngineTests {
 		"</kml>";
 		
 		File file1 = TestHelper.makeNewXMLFile(xml1);
-		File fileSync1 = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
+		File fileSync1 = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xml"));
 		KMLContentAdapter kmlAdapter1 = new KMLContentAdapter(file1);
-		FileSyncRepository syncRepo1 = new FileSyncRepository(fileSync1, NullIdentityProvider.INSTANCE);
+		FileSyncRepository syncRepo1 = new FileSyncRepository(fileSync1, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		SplitAdapter repo1 = new SplitAdapter(syncRepo1, kmlAdapter1, NullIdentityProvider.INSTANCE);
 		
 		List<IContent> contents = kmlAdapter1.getAll();
@@ -141,8 +141,8 @@ public class KMLSyncEngineTests {
 		
 		File file2 = TestHelper.makeNewXMLFile(xml2);		
 		KMLContentAdapter kmlAdapter2 = new KMLContentAdapter(file2);
-		File fileSync2 = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
-		FileSyncRepository syncRepo2 = new FileSyncRepository(fileSync2, NullIdentityProvider.INSTANCE);
+		File fileSync2 = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xml"));
+		FileSyncRepository syncRepo2 = new FileSyncRepository(fileSync2, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		SplitAdapter repo2 = new SplitAdapter(syncRepo2, kmlAdapter2, NullIdentityProvider.INSTANCE);
 
 		contents = kmlAdapter2.getAll();
@@ -194,9 +194,9 @@ public class KMLSyncEngineTests {
 		"</kml>";
 		
 		File file1 = TestHelper.makeNewXMLFile(xml1);
-		File fileSync1 = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
+		File fileSync1 = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xml"));
 		KMLContentAdapter kmlAdapter1 = new KMLContentAdapter(file1);
-		FileSyncRepository syncRepo1 = new FileSyncRepository(fileSync1, NullIdentityProvider.INSTANCE);
+		FileSyncRepository syncRepo1 = new FileSyncRepository(fileSync1, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		SplitAdapter repo1 = new SplitAdapter(syncRepo1, kmlAdapter1, NullIdentityProvider.INSTANCE);
 		
 		List<IContent> contents = kmlAdapter1.getAll();
@@ -207,8 +207,8 @@ public class KMLSyncEngineTests {
 		
 		File file2 = TestHelper.makeNewXMLFile(xml2);		
 		KMLContentAdapter kmlAdapter2 = new KMLContentAdapter(file2);
-		File fileSync2 = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
-		FileSyncRepository syncRepo2 = new FileSyncRepository(fileSync2, NullIdentityProvider.INSTANCE);
+		File fileSync2 = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xml"));
+		FileSyncRepository syncRepo2 = new FileSyncRepository(fileSync2, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		SplitAdapter repo2 = new SplitAdapter(syncRepo2, kmlAdapter2, NullIdentityProvider.INSTANCE);
 
 		contents = kmlAdapter2.getAll();
@@ -273,9 +273,9 @@ public class KMLSyncEngineTests {
 		"</kml>";
 		
 		File file1 = TestHelper.makeNewXMLFile(xml1);
-		File fileSync1 = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
+		File fileSync1 = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xml"));
 		KMLContentAdapter kmlAdapter1 = new KMLContentAdapter(file1);
-		FileSyncRepository syncRepo1 = new FileSyncRepository(fileSync1, NullIdentityProvider.INSTANCE);
+		FileSyncRepository syncRepo1 = new FileSyncRepository(fileSync1, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		SplitAdapter repo1 = new SplitAdapter(syncRepo1, kmlAdapter1, NullIdentityProvider.INSTANCE);
 		
 		List<IContent> contents = kmlAdapter1.getAll();
@@ -286,8 +286,8 @@ public class KMLSyncEngineTests {
 		
 		File file2 = TestHelper.makeNewXMLFile(xml2);		
 		KMLContentAdapter kmlAdapter2 = new KMLContentAdapter(file2);
-		File fileSync2 = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
-		FileSyncRepository syncRepo2 = new FileSyncRepository(fileSync2, NullIdentityProvider.INSTANCE);
+		File fileSync2 = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xml"));
+		FileSyncRepository syncRepo2 = new FileSyncRepository(fileSync2, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		SplitAdapter repo2 = new SplitAdapter(syncRepo2, kmlAdapter2, NullIdentityProvider.INSTANCE);
 
 		contents = kmlAdapter2.getAll();
@@ -322,7 +322,7 @@ public class KMLSyncEngineTests {
 	@Test
 	public void shouldSyncKMLFilesDeleteStyle(){
 		
-		String id = IdGenerator.newID();
+		String id = IdGenerator.INSTANCE.newID();
 		
 		String xml1 ="<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+
 		"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
@@ -345,9 +345,9 @@ public class KMLSyncEngineTests {
 		"</kml>";
 				
 		File file1 = TestHelper.makeNewXMLFile(xml1);
-		File fileSync1 = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
+		File fileSync1 = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xml"));
 		KMLContentAdapter kmlAdapter1 = new KMLContentAdapter(file1);
-		FileSyncRepository syncRepo1 = new FileSyncRepository(fileSync1, NullIdentityProvider.INSTANCE);
+		FileSyncRepository syncRepo1 = new FileSyncRepository(fileSync1, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		SplitAdapter repo1 = new SplitAdapter(syncRepo1, kmlAdapter1, NullIdentityProvider.INSTANCE);
 		
 		List<IContent> contents = kmlAdapter1.getAll();
@@ -358,8 +358,8 @@ public class KMLSyncEngineTests {
 		
 		File file2 = TestHelper.makeNewXMLFile(xml1);		
 		KMLContentAdapter kmlAdapter2 = new KMLContentAdapter(file2);
-		File fileSync2 = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
-		FileSyncRepository syncRepo2 = new FileSyncRepository(fileSync2, NullIdentityProvider.INSTANCE);
+		File fileSync2 = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xml"));
+		FileSyncRepository syncRepo2 = new FileSyncRepository(fileSync2, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		SplitAdapter repo2 = new SplitAdapter(syncRepo2, kmlAdapter2, NullIdentityProvider.INSTANCE);
 
 		contents = kmlAdapter2.getAll();
@@ -417,7 +417,7 @@ public class KMLSyncEngineTests {
 	
 	@Test
 	public void shouldSyncKMLFilesDeleteStyleMap(){
-		String id = IdGenerator.newID();
+		String id = IdGenerator.INSTANCE.newID();
 		
 		String xml1 ="<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+
 		"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
@@ -437,9 +437,9 @@ public class KMLSyncEngineTests {
 		"</kml>";
 				
 		File file1 = TestHelper.makeNewXMLFile(xml1);
-		File fileSync1 = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
+		File fileSync1 = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xml"));
 		KMLContentAdapter kmlAdapter1 = new KMLContentAdapter(file1);
-		FileSyncRepository syncRepo1 = new FileSyncRepository(fileSync1, NullIdentityProvider.INSTANCE);
+		FileSyncRepository syncRepo1 = new FileSyncRepository(fileSync1, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		SplitAdapter repo1 = new SplitAdapter(syncRepo1, kmlAdapter1, NullIdentityProvider.INSTANCE);
 		
 		List<IContent> contents = kmlAdapter1.getAll();
@@ -450,8 +450,8 @@ public class KMLSyncEngineTests {
 		
 		File file2 = TestHelper.makeNewXMLFile(xml1);		
 		KMLContentAdapter kmlAdapter2 = new KMLContentAdapter(file2);
-		File fileSync2 = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
-		FileSyncRepository syncRepo2 = new FileSyncRepository(fileSync2, NullIdentityProvider.INSTANCE);
+		File fileSync2 = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xml"));
+		FileSyncRepository syncRepo2 = new FileSyncRepository(fileSync2, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		SplitAdapter repo2 = new SplitAdapter(syncRepo2, kmlAdapter2, NullIdentityProvider.INSTANCE);
 
 		contents = kmlAdapter2.getAll();
@@ -509,7 +509,7 @@ public class KMLSyncEngineTests {
 
 	@Test
 	public void shouldSyncKMLFilesDeleteFolder(){
-		String id = IdGenerator.newID();
+		String id = IdGenerator.INSTANCE.newID();
 		
 		String xml1 ="<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+
 		"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
@@ -517,7 +517,7 @@ public class KMLSyncEngineTests {
 		"	<name>a.kml</name>"+
 		"	<Folder xml:id=\""+ id +"\">"+
 		"	<name>Folder1</name>"+
-		"	<Placemark xml:id=\""+IdGenerator.newID()+"\">"+
+		"	<Placemark xml:id=\""+IdGenerator.INSTANCE.newID()+"\">"+
 		"		<name>a</name>"+
 		"		<visibility>0</visibility>"+
 		"		<LookAt>"+
@@ -538,9 +538,9 @@ public class KMLSyncEngineTests {
 		"</kml>";
 				
 		File file1 = TestHelper.makeNewXMLFile(xml1);
-		File fileSync1 = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
+		File fileSync1 = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xml"));
 		KMLContentAdapter kmlAdapter1 = new KMLContentAdapter(file1);
-		FileSyncRepository syncRepo1 = new FileSyncRepository(fileSync1, NullIdentityProvider.INSTANCE);
+		FileSyncRepository syncRepo1 = new FileSyncRepository(fileSync1, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		SplitAdapter repo1 = new SplitAdapter(syncRepo1, kmlAdapter1, NullIdentityProvider.INSTANCE);
 		
 		List<IContent> contents = kmlAdapter1.getAll();
@@ -551,8 +551,8 @@ public class KMLSyncEngineTests {
 		
 		File file2 = TestHelper.makeNewXMLFile(xml1);		
 		KMLContentAdapter kmlAdapter2 = new KMLContentAdapter(file2);
-		File fileSync2 = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
-		FileSyncRepository syncRepo2 = new FileSyncRepository(fileSync2, NullIdentityProvider.INSTANCE);
+		File fileSync2 = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xml"));
+		FileSyncRepository syncRepo2 = new FileSyncRepository(fileSync2, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		SplitAdapter repo2 = new SplitAdapter(syncRepo2, kmlAdapter2, NullIdentityProvider.INSTANCE);
 
 		contents = kmlAdapter2.getAll();
@@ -614,7 +614,7 @@ public class KMLSyncEngineTests {
 	
 	@Test
 	public void shouldSyncKMLFilesDeletePlacemark(){
-		String id = IdGenerator.newID();
+		String id = IdGenerator.INSTANCE.newID();
 		
 		String xml1 ="<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+
 		"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
@@ -643,9 +643,9 @@ public class KMLSyncEngineTests {
 		"</kml>";
 				
 		File file1 = TestHelper.makeNewXMLFile(xml1);
-		File fileSync1 = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
+		File fileSync1 = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xml"));
 		KMLContentAdapter kmlAdapter1 = new KMLContentAdapter(file1);
-		FileSyncRepository syncRepo1 = new FileSyncRepository(fileSync1, NullIdentityProvider.INSTANCE);
+		FileSyncRepository syncRepo1 = new FileSyncRepository(fileSync1, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		SplitAdapter repo1 = new SplitAdapter(syncRepo1, kmlAdapter1, NullIdentityProvider.INSTANCE);
 		
 		List<IContent> contents = kmlAdapter1.getAll();
@@ -656,8 +656,8 @@ public class KMLSyncEngineTests {
 		
 		File file2 = TestHelper.makeNewXMLFile(xml1);		
 		KMLContentAdapter kmlAdapter2 = new KMLContentAdapter(file2);
-		File fileSync2 = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
-		FileSyncRepository syncRepo2 = new FileSyncRepository(fileSync2, NullIdentityProvider.INSTANCE);
+		File fileSync2 = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xml"));
+		FileSyncRepository syncRepo2 = new FileSyncRepository(fileSync2, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		SplitAdapter repo2 = new SplitAdapter(syncRepo2, kmlAdapter2, NullIdentityProvider.INSTANCE);
 
 		contents = kmlAdapter2.getAll();
@@ -719,9 +719,9 @@ public class KMLSyncEngineTests {
 	
 	@Test
 	public void shouldSyncKMLFilesMovePlacemark() throws DocumentException{
-		String id = IdGenerator.newID();
-		String folderID1 = IdGenerator.newID();
-		String folderID2 = IdGenerator.newID();
+		String id = IdGenerator.INSTANCE.newID();
+		String folderID1 = IdGenerator.INSTANCE.newID();
+		String folderID2 = IdGenerator.INSTANCE.newID();
 		
 		String xml1 ="<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+
 		"<kml xmlns=\"http://earth.google.com/kml/2.2\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" >"+
@@ -753,9 +753,9 @@ public class KMLSyncEngineTests {
 		"</kml>";
 				
 		File file1 = TestHelper.makeNewXMLFile(xml1);
-		File fileSync1 = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
+		File fileSync1 = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xml"));
 		KMLContentAdapter kmlAdapter1 = new KMLContentAdapter(file1);
-		FileSyncRepository syncRepo1 = new FileSyncRepository(fileSync1, NullIdentityProvider.INSTANCE);
+		FileSyncRepository syncRepo1 = new FileSyncRepository(fileSync1, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		SplitAdapter repo1 = new SplitAdapter(syncRepo1, kmlAdapter1, NullIdentityProvider.INSTANCE);
 		
 		List<IContent> contents = kmlAdapter1.getAll();
@@ -769,8 +769,8 @@ public class KMLSyncEngineTests {
 			
 		File file2 = TestHelper.makeNewXMLFile(xml1);		
 		KMLContentAdapter kmlAdapter2 = new KMLContentAdapter(file2);
-		File fileSync2 = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
-		FileSyncRepository syncRepo2 = new FileSyncRepository(fileSync2, NullIdentityProvider.INSTANCE);
+		File fileSync2 = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xml"));
+		FileSyncRepository syncRepo2 = new FileSyncRepository(fileSync2, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		SplitAdapter repo2 = new SplitAdapter(syncRepo2, kmlAdapter2, NullIdentityProvider.INSTANCE);
 
 		contents = kmlAdapter2.getAll();
@@ -858,9 +858,9 @@ public class KMLSyncEngineTests {
 	
 	@Test
 	public void shouldSyncKMLFilesMovePlacemarkOutside() throws DocumentException{
-		String id = IdGenerator.newID();
-		String folderID1 = IdGenerator.newID();
-		String folderID2 = IdGenerator.newID();
+		String id = IdGenerator.INSTANCE.newID();
+		String folderID1 = IdGenerator.INSTANCE.newID();
+		String folderID2 = IdGenerator.INSTANCE.newID();
 		
 		String xml1 ="<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+
 		"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
@@ -905,9 +905,9 @@ public class KMLSyncEngineTests {
 	
 	@Test
 	public void shouldSyncKMLFilesFoldersMultiLevels() throws DocumentException, JaxenException{
-		String id = IdGenerator.newID();
-		String folderID1 = IdGenerator.newID();
-		String folderID2 = IdGenerator.newID();
+		String id = IdGenerator.INSTANCE.newID();
+		String folderID1 = IdGenerator.INSTANCE.newID();
+		String folderID2 = IdGenerator.INSTANCE.newID();
 		
 		String xml1 ="<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+
 		"<kml xmlns=\"http://earth.google.com/kml/2.2\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" >"+
@@ -942,9 +942,9 @@ public class KMLSyncEngineTests {
 		File file1 = new File(TestHelper.fileName("folder1.kml"));
 		XMLHelper.write(xml1, file1);
 		
-		File fileSync1 = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
+		File fileSync1 = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xml"));
 		KMLContentAdapter kmlAdapter1 = new KMLContentAdapter(file1);
-		FileSyncRepository syncRepo1 = new FileSyncRepository(fileSync1, NullIdentityProvider.INSTANCE);
+		FileSyncRepository syncRepo1 = new FileSyncRepository(fileSync1, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		SplitAdapter repo1 = new SplitAdapter(syncRepo1, kmlAdapter1, NullIdentityProvider.INSTANCE);
 		
 		List<IContent> contents = kmlAdapter1.getAll();
@@ -956,7 +956,7 @@ public class KMLSyncEngineTests {
 		Assert.assertEquals(folderID1, contents.get(1).getPayload().attributeValue(KMLContentAdapterNames.PARENT_ID_QNAME));
 		Assert.assertEquals(folderID2, contents.get(2).getPayload().attributeValue(KMLContentAdapterNames.PARENT_ID_QNAME));
 			
-		String id2 = IdGenerator.newID();
+		String id2 = IdGenerator.INSTANCE.newID();
 		String xml2 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+
 		"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 		"<Document>"+
@@ -985,8 +985,8 @@ public class KMLSyncEngineTests {
 		XMLHelper.write(xml2, file2);
 		
 		KMLContentAdapter kmlAdapter2 = new KMLContentAdapter(file2);
-		File fileSync2 = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
-		FileSyncRepository syncRepo2 = new FileSyncRepository(fileSync2, NullIdentityProvider.INSTANCE);
+		File fileSync2 = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xml"));
+		FileSyncRepository syncRepo2 = new FileSyncRepository(fileSync2, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		SplitAdapter repo2 = new SplitAdapter(syncRepo2, kmlAdapter2, NullIdentityProvider.INSTANCE);
 
 		contents = kmlAdapter2.getAll();
@@ -1044,7 +1044,7 @@ public class KMLSyncEngineTests {
 	
 	@Test
 	public void shouldSyncKMLFilesFoldersMultiLevelsMoveFolder() throws DocumentException, JaxenException{
-		String id = IdGenerator.newID();
+		String id = IdGenerator.INSTANCE.newID();
 		String folderID1 = "1";
 		String folderID2 = "2";
 		String folderID3 = "3";
@@ -1117,9 +1117,9 @@ public class KMLSyncEngineTests {
 		File file1 = new File(TestHelper.fileName("folder3.kml"));
 		XMLHelper.write(xml1, file1);
 		
-		File fileSync1 = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
+		File fileSync1 = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xml"));
 		KMLContentAdapter kmlAdapter1 = new KMLContentAdapter(file1);
-		FileSyncRepository syncRepo1 = new FileSyncRepository(fileSync1, NullIdentityProvider.INSTANCE);
+		FileSyncRepository syncRepo1 = new FileSyncRepository(fileSync1, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		SplitAdapter repo1 = new SplitAdapter(syncRepo1, kmlAdapter1, NullIdentityProvider.INSTANCE);
 		
 		List<IContent> contents = kmlAdapter1.getAll();
@@ -1146,8 +1146,8 @@ public class KMLSyncEngineTests {
 		XMLHelper.write(xml1, file2);
 		
 		KMLContentAdapter kmlAdapter2 = new KMLContentAdapter(file2);
-		File fileSync2 = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
-		FileSyncRepository syncRepo2 = new FileSyncRepository(fileSync2, NullIdentityProvider.INSTANCE);
+		File fileSync2 = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xml"));
+		FileSyncRepository syncRepo2 = new FileSyncRepository(fileSync2, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		SplitAdapter repo2 = new SplitAdapter(syncRepo2, kmlAdapter2, NullIdentityProvider.INSTANCE);
 
 		// Sync

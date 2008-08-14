@@ -11,11 +11,11 @@ import org.mesh4j.sync.AbstractSyncEngineTest;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.Sync;
 import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.test.utils.TestHelper;
-import org.mesh4j.sync.utils.IdGenerator;
 
 
 public class FeedSyncTest extends AbstractSyncEngineTest{
@@ -32,11 +32,11 @@ public class FeedSyncTest extends AbstractSyncEngineTest{
 		Feed feed = new Feed();
 		feed.addItem(item);
 		
-		File fileSource = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
-		FeedAdapter source = new FeedAdapter(fileSource, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, feed);
+		File fileSource = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xml"));
+		FeedAdapter source = new FeedAdapter(fileSource, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, feed);
 		
-		File fileTarget = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
-		FeedAdapter target = new FeedAdapter(fileTarget, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, new Feed());
+		File fileTarget = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xml"));
+		FeedAdapter target = new FeedAdapter(fileTarget, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, new Feed());
 		
 		SyncEngine syncEngine = new SyncEngine(source, target);
 		List<Item> conflictItems = syncEngine.synchronize();
@@ -63,11 +63,11 @@ public class FeedSyncTest extends AbstractSyncEngineTest{
 		Feed feed2 = new Feed();
 		feed2.addItem(item2);
 		
-		File fileSource = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
-		FeedAdapter source = new FeedAdapter(fileSource, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, feed1);
+		File fileSource = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xml"));
+		FeedAdapter source = new FeedAdapter(fileSource, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, feed1);
 		
-		File fileTarget = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
-		FeedAdapter target = new FeedAdapter(fileTarget, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, feed2);
+		File fileTarget = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xml"));
+		FeedAdapter target = new FeedAdapter(fileTarget, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, feed2);
 		
 		SyncEngine syncEngine = new SyncEngine(source, target);
 		List<Item> conflictItems = syncEngine.synchronize();
@@ -98,11 +98,11 @@ public class FeedSyncTest extends AbstractSyncEngineTest{
 		Feed feed2 = new Feed();
 		feed2.addItem(item01);
 		
-		File fileSource = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
-		FeedAdapter source = new FeedAdapter(fileSource, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, feed1);
+		File fileSource = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xml"));
+		FeedAdapter source = new FeedAdapter(fileSource, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, feed1);
 		
-		File fileTarget = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
-		FeedAdapter target = new FeedAdapter(fileTarget, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, feed2);
+		File fileTarget = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xml"));
+		FeedAdapter target = new FeedAdapter(fileTarget, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, feed2);
 		
 		SyncEngine syncEngine = new SyncEngine(source, target);
 		List<Item> conflictItems = syncEngine.synchronize();
@@ -129,11 +129,11 @@ public class FeedSyncTest extends AbstractSyncEngineTest{
 		Feed feed2 = new Feed();
 		feed2.addItem(item01);
 		
-		File fileSource = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
-		FeedAdapter source = new FeedAdapter(fileSource, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, feed1);
+		File fileSource = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xml"));
+		FeedAdapter source = new FeedAdapter(fileSource, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, feed1);
 		
-		File fileTarget = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
-		FeedAdapter target = new FeedAdapter(fileTarget, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, feed2);
+		File fileTarget = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xml"));
+		FeedAdapter target = new FeedAdapter(fileTarget, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, feed2);
 		
 		SyncEngine syncEngine = new SyncEngine(source, target);
 		List<Item> conflictItems = syncEngine.synchronize();
@@ -145,15 +145,15 @@ public class FeedSyncTest extends AbstractSyncEngineTest{
 	@Override
 	protected ISyncAdapter makeLeftRepository(Item... items) {
 		Feed feed = new Feed(items);
-		File file = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
-		return new FeedAdapter(file, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, feed);
+		File file = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xml"));
+		return new FeedAdapter(file, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, feed);
 	}
 	
 	@Override
 	protected ISyncAdapter makeRightRepository(Item... items) {
 		Feed feed = new Feed(items);
-		File file = new File(TestHelper.fileName(IdGenerator.newID()+".xml"));
-		return new FeedAdapter(file, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, feed);
+		File file = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xml"));
+		return new FeedAdapter(file, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, feed);
 	}
 
 	@Override

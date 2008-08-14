@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.message.IMessage;
 import org.mesh4j.sync.message.IMessageSyncProtocol;
 import org.mesh4j.sync.message.core.Message;
@@ -12,7 +13,6 @@ import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.NullContent;
 import org.mesh4j.sync.model.Sync;
 import org.mesh4j.sync.test.utils.TestHelper;
-import org.mesh4j.sync.utils.IdGenerator;
 
 
 public class ACKMergeMessageProcessorTests {
@@ -102,7 +102,7 @@ public class ACKMergeMessageProcessorTests {
 	
 	@Test
 	public void shouldProcessMessageAddConflictFullProtocol(){
-		String syncID = IdGenerator.newID();
+		String syncID = IdGenerator.INSTANCE.newID();
 		
 		MockSyncSession syncSession = new MockSyncSession(null);
 		syncSession.setOpen();
@@ -121,7 +121,7 @@ public class ACKMergeMessageProcessorTests {
 	
 	@Test
 	public void shouldProcessMessageAddConflict(){
-		String syncID = IdGenerator.newID();
+		String syncID = IdGenerator.INSTANCE.newID();
 		
 		MockSyncSession syncSession = new MockSyncSession(null);
 		syncSession.setOpen();

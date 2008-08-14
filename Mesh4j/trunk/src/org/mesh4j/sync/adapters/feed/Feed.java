@@ -62,4 +62,8 @@ public class Feed {
 		return null;
 	}
 
+	public boolean isEmpty() {
+		return this.feedItems.isEmpty();
+	}
+
 }

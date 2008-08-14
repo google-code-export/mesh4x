@@ -14,13 +14,13 @@ import org.mesh4j.sync.adapters.SyncInfo;
 import org.mesh4j.sync.adapters.dom.parsers.IDOMRequied;
 import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.adapters.feed.atom.AtomSyndicationFormat;
+import org.mesh4j.sync.id.generator.IIdGenerator;
 import org.mesh4j.sync.model.IContent;
 import org.mesh4j.sync.model.Sync;
 import org.mesh4j.sync.parsers.IXMLView;
 import org.mesh4j.sync.parsers.IXMLViewElement;
 import org.mesh4j.sync.parsers.SyncInfoParser;
 import org.mesh4j.sync.security.IIdentityProvider;
-import org.mesh4j.sync.utils.IdGenerator;
 import org.mesh4j.sync.utils.XMLHelper;
 import org.mesh4j.sync.validations.Guard;
 
@@ -38,16 +38,19 @@ public abstract class MeshDOM implements IMeshDOM {
 	private IXMLView xmlView;
 	private Document document;
 	private IIdentityProvider identityProvider;
+	private IIdGenerator idGenerator;
 	
 	// BUSINESS METHODS
 
-	public MeshDOM(Document document, IIdentityProvider identityProvider, IXMLView xmlView) {
+	public MeshDOM(Document document, IIdentityProvider identityProvider, IIdGenerator idGenerator, IXMLView xmlView) {
 		Guard.argumentNotNull(document, "document");
 		Guard.argumentNotNull(identityProvider, "identityProvider");
+		Guard.argumentNotNull(idGenerator, "idGenerator");
 		Guard.argumentNotNull(xmlView, "xmlView");
 		
 		this.document = document;
 		this.identityProvider = identityProvider;
+		this.idGenerator = idGenerator;
 		this.xmlView = xmlView;
 		
 		this.initialize();
@@ -229,7 +232,7 @@ public abstract class MeshDOM implements IMeshDOM {
 	}
 
 	public String newID() {
-		return IdGenerator.newID();
+		return this.idGenerator.newID();
 	}
 	
 	private Map<String, SyncInfo> getAllSyncsGroupBySyncID() {		
@@ -246,7 +249,7 @@ public abstract class MeshDOM implements IMeshDOM {
 			return null;
 		}
 		Element syncElement = getSyncElement(meshElement);
-		Sync sync = SyncInfoParser.convertSyncElement2Sync(syncElement, AtomSyndicationFormat.INSTANCE, identityProvider);
+		Sync sync = SyncInfoParser.convertSyncElement2Sync(syncElement, AtomSyndicationFormat.INSTANCE, identityProvider, this.idGenerator);
 		int version = Integer.valueOf(meshElement.attributeValue(MeshNames.MESH_VERSION));
 		SyncInfo syncInfo = new SyncInfo(sync, this.getType(), sync.getId(), version);
 		return syncInfo;

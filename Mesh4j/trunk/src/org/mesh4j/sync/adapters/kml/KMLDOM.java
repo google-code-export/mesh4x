@@ -6,6 +6,7 @@ import org.dom4j.Element;
 import org.dom4j.Namespace;
 import org.mesh4j.sync.adapters.dom.MeshDOM;
 import org.mesh4j.sync.adapters.dom.MeshNames;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.IContent;
 import org.mesh4j.sync.parsers.IXMLView;
 import org.mesh4j.sync.security.IIdentityProvider;
@@ -19,11 +20,11 @@ public class KMLDOM extends MeshDOM {
 	// Constructor
 	public KMLDOM(Document document, IIdentityProvider identityProvider,
 			IXMLView xmlView) {
-		super(document, identityProvider, xmlView);
+		super(document, identityProvider, IdGenerator.INSTANCE, xmlView);
 	}
 	
 	public KMLDOM(String name, IIdentityProvider identityProvider, IXMLView xmlView) {
-		super(createDocument(name), identityProvider, xmlView);
+		super(createDocument(name), identityProvider, IdGenerator.INSTANCE, xmlView);
 	}
 
 	@Override

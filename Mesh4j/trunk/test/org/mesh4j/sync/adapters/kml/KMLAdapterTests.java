@@ -23,12 +23,12 @@ import org.mesh4j.sync.adapters.dom.MeshDOM;
 import org.mesh4j.sync.adapters.dom.MeshNames;
 import org.mesh4j.sync.adapters.dom.parsers.FileManager;
 import org.mesh4j.sync.adapters.dom.parsers.HierarchyXMLViewElement;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.NullContent;
 import org.mesh4j.sync.model.Sync;
 import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.test.utils.TestHelper;
-import org.mesh4j.sync.utils.IdGenerator;
 import org.mesh4j.sync.utils.XMLHelper;
 import org.mesh4j.sync.validations.MeshException;
 
@@ -256,7 +256,7 @@ public class KMLAdapterTests {
 
 	@Test
 	public void shouldCreateFileIfDoesNotExist() throws DocumentException, IOException {
-		String fileName = TestHelper.fileName(IdGenerator.newID() + ".kml");
+		String fileName = TestHelper.fileName(IdGenerator.INSTANCE.newID() + ".kml");
 		DOMAdapter kmlAdapter = makeNewDOMAdapter(fileName);
 		kmlAdapter.beginSync();
 		kmlAdapter.endSync();
@@ -800,7 +800,7 @@ public class KMLAdapterTests {
 		DOMAdapter kmlAdapter = makeNewDOMAdapter(file.getAbsolutePath());
 		kmlAdapter.beginSync();
 
-		Item item = kmlAdapter.get(IdGenerator.newID());
+		Item item = kmlAdapter.get(IdGenerator.INSTANCE.newID());
 		Assert.assertNull(item);
 	}
 
@@ -892,7 +892,7 @@ public class KMLAdapterTests {
 		DOMAdapter kmlAdapter = makeNewDOMAdapter(file.getAbsolutePath());
 		kmlAdapter.beginSync();
 
-		String syncID = IdGenerator.newID();
+		String syncID = IdGenerator.INSTANCE.newID();
 
 		String localXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 				+ "<kml xmlns=\"http://earth.google.com/kml/2.2\">"
@@ -920,7 +920,7 @@ public class KMLAdapterTests {
 		Element hierarchyElement = XMLHelper.selectSingleNode("//mesh4x:*[@mesh4x:childId='"+syncID+"']", document.getRootElement(), MeshDOM.SEARCH_NAMESPACES);
 		Assert.assertNull(hierarchyElement);
 		
-		String hierarchySyncID = IdGenerator.newID();
+		String hierarchySyncID = IdGenerator.INSTANCE.newID();
 	
 		localXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 			+ "<kml xmlns=\"http://earth.google.com/kml/2.2\">"
@@ -971,7 +971,7 @@ public class KMLAdapterTests {
 		DOMAdapter kmlAdapter = makeNewDOMAdapter(file.getAbsolutePath());
 		kmlAdapter.beginSync();
 
-		String syncID = IdGenerator.newID();
+		String syncID = IdGenerator.INSTANCE.newID();
 
 		Sync sync = new Sync(syncID, "JMT", TestHelper.now(), true);
 		Item item = new Item(new NullContent(syncID), sync);
@@ -1011,7 +1011,7 @@ public class KMLAdapterTests {
 		DOMAdapter kmlAdapter = makeNewDOMAdapter(file.getAbsolutePath());
 		kmlAdapter.beginSync();
 
-		String syncID = IdGenerator.newID();
+		String syncID = IdGenerator.INSTANCE.newID();
 		Item item = kmlAdapter.get(syncID);
 		Assert.assertNull(item);
 

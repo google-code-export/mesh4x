@@ -9,6 +9,7 @@ import org.dom4j.Element;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mesh4j.sync.adapters.feed.XMLContent;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.message.channel.sms.ISmsChannel;
 import org.mesh4j.sync.message.channel.sms.SmsChannelFactory;
 import org.mesh4j.sync.message.channel.sms.SmsEndpoint;
@@ -24,7 +25,6 @@ import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.NullContent;
 import org.mesh4j.sync.model.Sync;
 import org.mesh4j.sync.test.utils.TestHelper;
-import org.mesh4j.sync.utils.IdGenerator;
 
 
 public class MessageSyncEngineTests {
@@ -585,7 +585,7 @@ public class MessageSyncEngineTests {
 	}
 	
 	private Item createNewItem(String text) {
-		String syncId = IdGenerator.newID();
+		String syncId = IdGenerator.INSTANCE.newID();
 		
 		Element payload = DocumentHelper.createElement("foo");
 		Element barElement = payload.addElement("bar");

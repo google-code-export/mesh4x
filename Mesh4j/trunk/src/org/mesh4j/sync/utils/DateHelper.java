@@ -218,5 +218,66 @@ public class DateHelper {
     	} catch(NumberFormatException e){
     		return null;
     	}
-    }   
+    }
+    
+	// yyyy-MM-dd'T'HH:mm:ss'Z'
+	public static String formatDateYYYYMMDDHHMMSS(Date date, String dateSeparator, String dateTimeSeparator, String endIndicator, TimeZone timeZone) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		if(timeZone != null){
+			cal.setTimeZone(timeZone);
+		}
+
+		String month = String.valueOf(cal.get(Calendar.MONTH) + 1);
+		month = month.length() < 2 ? "0" + month : month;
+		String day = String.valueOf(cal.get(Calendar.DAY_OF_MONTH));
+		day = day.length() < 2 ? "0" + day : day;
+		String hour = String.valueOf(cal.get(Calendar.HOUR_OF_DAY));
+		hour = hour.length() < 2 ? "0" + hour : hour;
+		String minute = String.valueOf(cal.get(Calendar.MINUTE));
+		minute = minute.length() < 2 ? "0" + minute : minute;
+		String second = String.valueOf(cal.get(Calendar.SECOND));
+		second = second.length() < 2 ? "0" + second : second;
+
+		StringBuffer sb = new StringBuffer();
+		sb.append(cal.get(Calendar.YEAR));
+		sb.append(dateSeparator);
+		sb.append(month);
+		sb.append(dateSeparator);
+		sb.append(day);
+		sb.append(dateTimeSeparator);
+		sb.append(hour);
+		sb.append(":");
+		sb.append(minute);
+		sb.append(":");
+		sb.append(second);
+		if (endIndicator != null) {
+			sb.append(endIndicator);
+		}
+		return sb.toString();
+	}
+
+	// y y y y - M M - d d T  H  H  :  m  m  :  s  s  Z
+	// 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19
+	public static Date parseDateYYYYMMDDHHMMSS(String sDate, TimeZone timeZone) {
+		
+		int year = Integer.parseInt(sDate.substring(0, 4));
+		int month = Integer.parseInt(sDate.substring(5, 7)) - 1;
+		int day = Integer.parseInt(sDate.substring(8, 10));
+		int hour = Integer.parseInt(sDate.substring(11, 13));
+		int minute = Integer.parseInt(sDate.substring(14, 16)) - 1;
+		int second = Integer.parseInt(sDate.substring(17, 19));
+		
+		Calendar cal = Calendar.getInstance();
+		if(timeZone != null){
+			cal.setTimeZone(timeZone);
+		}
+		cal.set(Calendar.YEAR, year);
+		cal.set(Calendar.MONTH, month);
+		cal.set(Calendar.DAY_OF_MONTH, day);
+		cal.set(Calendar.HOUR_OF_DAY, hour);
+		cal.set(Calendar.MINUTE, minute);
+		cal.set(Calendar.SECOND, second);
+		return cal.getTime();
+	}
 }

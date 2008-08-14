@@ -205,5 +205,12 @@ public class FeedWriter {
 	private String getAuthenticatedUser() {
 		return this.identityProvider.getAuthenticatedUser();
 	}
+
+	public String writeAsXml(Feed feed) throws Exception {
+		Document document = DocumentHelper.createDocument();
+		this.write(document, feed);
+		String xml = document.asXML();
+		return xml;
+	}
 	
 }

@@ -16,7 +16,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.mesh4j.sync.adapters.kml.KmlNames;
-import org.mesh4j.sync.utils.IdGenerator;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.utils.XMLHelper;
 import org.mesh4j.sync.utils.ZipUtils;
 import org.mesh4j.sync.validations.MeshException;
@@ -144,7 +144,7 @@ public class TestHelper {
 	}
 	
 	public static File makeNewXMLFile(String xml, String fileExtension) {
-		File file = new File(TestHelper.fileName(IdGenerator.newID() + fileExtension));
+		File file = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID() + fileExtension));
 		XMLHelper.write(xml, file);
 		return file;
 	}
@@ -179,7 +179,7 @@ public class TestHelper {
 	}
 
 	public static File makeNewKMZFile(String xml) {
-		File file = new File(fileName(IdGenerator.newID() + ".kmz"));
+		File file = new File(fileName(IdGenerator.INSTANCE.newID() + ".kmz"));
 		try {
 			ZipUtils.write(file, KmlNames.KMZ_DEFAULT_ENTRY_NAME_TO_KML, xml);
 		} catch (IOException e) {

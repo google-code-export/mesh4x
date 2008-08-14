@@ -11,9 +11,9 @@ import org.dom4j.Element;
 import org.junit.Assert;
 import org.mesh4j.sync.adapters.hibernate.EntityContent;
 import org.mesh4j.sync.adapters.hibernate.HibernateContentAdapter;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.IContent;
 import org.mesh4j.sync.test.utils.TestHelper;
-import org.mesh4j.sync.utils.IdGenerator;
 
 import sun.jdbc.odbc.JdbcOdbcDriver;
 
@@ -71,7 +71,7 @@ public class HibernateContentadapterWithMsAccessTest {
 	public void shouldHibernateAdd(){
 		try{
 			HibernateContentAdapter adapter = createAdapter();		
-			String id = IdGenerator.newID();
+			String id = IdGenerator.INSTANCE.newID();
 			Element payload = TestHelper.makeElement("<user><id>"+id+"</id><name>"+id+"</name><pass>"+id+"</pass></user>");
 			EntityContent entity = new EntityContent(payload, "user", id);
 			
@@ -91,7 +91,7 @@ public class HibernateContentadapterWithMsAccessTest {
 	public void shouldHibernateUpdate() throws Exception{
 		try{
 			HibernateContentAdapter adapter = createAdapter();		
-			String id = IdGenerator.newID();
+			String id = IdGenerator.INSTANCE.newID();
 			Element payload = TestHelper.makeElement("<user><id>"+id+"</id><name>"+id+"</name><pass>"+id+"</pass></user>");
 			EntityContent entity = new EntityContent(payload, "user", id);
 			
@@ -117,7 +117,7 @@ public class HibernateContentadapterWithMsAccessTest {
 	public void shouldHibernateDelete() throws Exception{
 		try{
 			HibernateContentAdapter adapter = createAdapter();		
-			String id = IdGenerator.newID();
+			String id = IdGenerator.INSTANCE.newID();
 			Element payload = TestHelper.makeElement("<user><id>"+id+"</id><name>"+id+"</name><pass>123</pass></user>");
 			EntityContent entity = new EntityContent(payload, "user", id);
 			
