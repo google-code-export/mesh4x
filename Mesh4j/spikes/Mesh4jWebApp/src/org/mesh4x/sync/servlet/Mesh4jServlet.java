@@ -19,8 +19,8 @@ import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.adapters.InMemorySyncAdapter;
 import org.mesh4j.sync.adapters.feed.Feed;
 import org.mesh4j.sync.adapters.feed.FeedAdapter;
+import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.adapters.feed.XMLContent;
-import org.mesh4j.sync.adapters.feed.atom.AtomSyndicationFormat;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.Sync;
@@ -31,7 +31,7 @@ import org.mesh4j.sync.utils.XMLHelper;
 /**
  * Servlet implementation class Mesh4jServlet
  */
-public class Mesh4jServlet extends HttpServlet {
+public abstract class Mesh4jServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -45,13 +45,13 @@ public class Mesh4jServlet extends HttpServlet {
 	}
 
 	private void initializeFeed() throws IOException {
-		String feedName = this.getClass().getResource("feed.xml").getFile();
+		String feedName = getFileName();
 		File file = new File(feedName);
 		if(!file.exists()){
 			file.createNewFile();
 		}
 		
-		this.adapter = new FeedAdapter(file, AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		this.adapter = new FeedAdapter(file, getSyndicationFormat(), NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		if(this.adapter.getAll().isEmpty()){
 			this.adapter.add(makeNewItem());
 			this.adapter.add(makeNewItem());
@@ -152,4 +152,7 @@ public class Mesh4jServlet extends HttpServlet {
 		}		
 	}
 
+	protected abstract ISyndicationFormat getSyndicationFormat();
+
+	protected abstract String getFileName();	
 }
