@@ -52,11 +52,15 @@ public abstract class Mesh4jServlet extends HttpServlet {
 		}
 		
 		this.adapter = new FeedAdapter(file, getSyndicationFormat(), NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
-		if(this.adapter.getAll().isEmpty()){
+		if(this.adapter.getAll().isEmpty() && this.mustCreateItems()){
 			this.adapter.add(makeNewItem());
 			this.adapter.add(makeNewItem());
 			this.adapter.add(makeNewItem());
 		}
+	}
+
+	protected boolean mustCreateItems() {
+		return true;
 	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -79,6 +83,8 @@ public abstract class Mesh4jServlet extends HttpServlet {
 			e.printStackTrace();
 			message = "ERROR Get: " + modifiedSince;
 		}
+		System.out.println(message);
+		
 		
 		response.setContentType("text/plain");
 		response.setContentLength(message.length());
@@ -86,14 +92,18 @@ public abstract class Mesh4jServlet extends HttpServlet {
 		out.println(message);
 	}
 
-	private Item makeNewItem() {
-		String syncID = this.adapter.getFeedReader().getIdGenereator().newID();
+	protected Item makeNewItem() {
+		String syncID = newID();
 		
 		Element element = XMLHelper.parseElement("<payload><foo>bar" + syncID + "</foo></payload>"); 
 			
 		XMLContent content = new XMLContent(syncID, syncID, syncID, element);
 		Sync sync = new Sync(syncID, "jmt", new Date(), false);
 		return new Item(content, sync);
+	}
+
+	protected String newID() {
+		return this.adapter.getFeedReader().getIdGenereator().newID();
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

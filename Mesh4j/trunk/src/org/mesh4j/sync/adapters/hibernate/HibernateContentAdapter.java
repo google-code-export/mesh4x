@@ -129,5 +129,10 @@ public class HibernateContentAdapter implements IContentAdapter {
 	public List<IContent> getAll() {
 		return getAll(null);
 	}
+
+	@Override
+	public IContent normalize(IContent content) {
+		return EntityContent.normalizeContent(content, this.entityName, this.entityIDNode);
+	}
 	
 }

@@ -18,4 +18,6 @@ public interface IContentAdapter {
 
 	String getType();
 
+	IContent normalize(IContent content);
+
 }

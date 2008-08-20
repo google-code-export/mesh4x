@@ -26,6 +26,19 @@
 		<url-pattern>/atomFeed</url-pattern>
 	</servlet-mapping>
 	
+	<servlet>
+		<description>
+		</description>
+		<display-name>Mesh4jServletUser</display-name>
+		<servlet-name>Mesh4jServletUser</servlet-name>
+		<servlet-class>org.mesh4x.sync.servlet.Mesh4jUserServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Mesh4jServletUser</servlet-name>
+		<url-pattern>/userFeed</url-pattern>
+	</servlet-mapping>
+	
+	
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
 		<welcome-file>index.htm</welcome-file>
