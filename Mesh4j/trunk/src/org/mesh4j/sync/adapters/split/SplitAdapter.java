@@ -49,6 +49,9 @@ public class SplitAdapter extends AbstractSyncAdapter implements ISyncAware{
 		IContent content = contentAdapter.normalize(item.getContent());
 		if (!item.isDeleted())
 		{
+			if(contentAdapter instanceof ISyncEntityRelationListener){
+				((ISyncEntityRelationListener) contentAdapter).notifyNewSyncForContent(item.getSyncId(), content);
+			}
 			contentAdapter.save(content);
 		}		
 		SyncInfo syncInfo = new SyncInfo(item.getSync(), contentAdapter.getType(), content.getId(), content.getVersion());
@@ -131,6 +134,11 @@ public class SplitAdapter extends AbstractSyncAdapter implements ISyncAware{
 		{
 			// Add sync on-the-fly.
 			sync = new Sync(syncInfo.getSyncId(), this.getAuthenticatedUser(), new Date(), false);
+			
+			if(contentAdapter instanceof ISyncEntityRelationListener){
+				((ISyncEntityRelationListener) contentAdapter).notifyNewSyncForContent(syncInfo.getSyncId(), content);
+			}
+			
 			syncInfo.updateSync(sync);
 			syncRepository.save(syncInfo);
 		}
@@ -140,6 +148,10 @@ public class SplitAdapter extends AbstractSyncAdapter implements ISyncAware{
 			{
 				sync.delete(this.getAuthenticatedUser(), new Date());
 				syncRepository.save(syncInfo);
+				
+				if(contentAdapter instanceof ISyncEntityRelationListener){
+					((ISyncEntityRelationListener) contentAdapter).notifyRemoveSync(syncInfo.getSyncId());
+				}
 			}
 		}
 		else
@@ -175,6 +187,10 @@ public class SplitAdapter extends AbstractSyncAdapter implements ISyncAware{
 			if(syncInfo == null){
 				sync = new Sync(syncRepository.newSyncID(content), this.getAuthenticatedUser(), new Date(), false);
 				
+				if(contentAdapter instanceof ISyncEntityRelationListener){
+					((ISyncEntityRelationListener)contentAdapter).notifyNewSyncForContent(sync.getId(), content);
+				}
+				
 				SyncInfo newSyncInfo = new SyncInfo(sync, contentAdapter.getType(), content.getId(), content.getVersion());
 				
 				syncRepository.save(newSyncInfo);
@@ -195,7 +211,7 @@ public class SplitAdapter extends AbstractSyncAdapter implements ISyncAware{
 		for (SyncInfo syncInfo : syncInfos) {
 			updateSyncIfChanged(null, syncInfo);
 			Item item = new Item(
-				new NullContent(syncInfo.getSync().getId()),
+				new NullContent(syncInfo.getSyncId()),
 				syncInfo.getSync());
 			
 			if(appliesFilter(item, since, filter)){
