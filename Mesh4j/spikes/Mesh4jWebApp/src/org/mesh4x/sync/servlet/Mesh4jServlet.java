@@ -65,6 +65,8 @@ public abstract class Mesh4jServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+		this.adapter.refresh();
+		
 		String modifiedSince = request.getHeader("If-Modified-Since");
 		Feed feed = null;
 		if(modifiedSince == null || modifiedSince.trim().length() == 0){
@@ -83,7 +85,7 @@ public abstract class Mesh4jServlet extends HttpServlet {
 			e.printStackTrace();
 			message = "ERROR Get: " + modifiedSince;
 		}
-		System.out.println(message);
+System.out.println("GET RESPONSE: " + message);
 		
 		
 		response.setContentType("text/plain");
@@ -92,25 +94,13 @@ public abstract class Mesh4jServlet extends HttpServlet {
 		out.println(message);
 	}
 
-	protected Item makeNewItem() {
-		String syncID = newID();
-		
-		Element element = XMLHelper.parseElement("<payload><foo>bar" + syncID + "</foo></payload>"); 
-			
-		XMLContent content = new XMLContent(syncID, syncID, syncID, element);
-		Sync sync = new Sync(syncID, "jmt", new Date(), false);
-		return new Item(content, sync);
-	}
-
-	protected String newID() {
-		return this.adapter.getFeedReader().getIdGenereator().newID();
-	}
-
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		this.adapter.refresh();
 		
 		String message;
 		String xml = this.readXML(request);
-		System.out.println(xml);
+System.out.println("POST REQUEST: " + xml);
 		if(xml != null){
 			try{
 				Feed feedLoaded = this.adapter.getFeedReader().read(xml);
@@ -128,8 +118,8 @@ public abstract class Mesh4jServlet extends HttpServlet {
 		} else {
 			message = "ERROR http";
 		}
-		System.out.println(message);
-		
+
+System.out.println("POST RESPONSE: " + message);		
 		response.setContentType("text/plain");
 		response.setContentLength(message.length());
 		PrintWriter out = response.getWriter();
@@ -162,6 +152,20 @@ public abstract class Mesh4jServlet extends HttpServlet {
 		}		
 	}
 
+	protected Item makeNewItem() {
+		String syncID = newID();
+		
+		Element element = XMLHelper.parseElement("<payload><foo>bar" + syncID + "</foo></payload>"); 
+			
+		XMLContent content = new XMLContent(syncID, syncID, syncID, element);
+		Sync sync = new Sync(syncID, "jmt", new Date(), false);
+		return new Item(content, sync);
+	}
+
+	protected String newID() {
+		return this.adapter.getFeedReader().getIdGenereator().newID();
+	}
+	
 	protected abstract ISyndicationFormat getSyndicationFormat();
 
 	protected abstract String getFileName();	

@@ -183,4 +183,15 @@ public class FeedAdapter extends AbstractSyncAdapter{
 	public FeedReader getFeedReader() {
 		return this.feedReader;
 	}
+	
+	public void refresh(){
+		SAXReader reader = new SAXReader();
+		Document document;
+		try {
+			document = reader.read(this.feedFile);
+		} catch (DocumentException e) {
+			throw new MeshException(e);
+		}
+		this.feed = this.feedReader.read(document);
+	}
 }

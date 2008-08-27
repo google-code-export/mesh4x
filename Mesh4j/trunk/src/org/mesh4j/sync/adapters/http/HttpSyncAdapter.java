@@ -145,7 +145,9 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 		HttpURLConnection conn = null;
 	    try{
 			conn = (HttpURLConnection) this.url.openConnection();
-			conn.setIfModifiedSince(since.getTime());
+			if(since != null){
+				conn.setIfModifiedSince(since.getTime());
+			}
 			result = readData(conn);
 	    } catch(Exception e){
 			if(conn != null){
@@ -181,7 +183,7 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 		return result.toString();
 	}
 	
-	private String doPOST(String content){
+	public String doPOST(String content){
 	    HttpURLConnection conn = null;
 	    String result = null;
 	    try{

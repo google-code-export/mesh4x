@@ -183,7 +183,11 @@ public class DateHelper {
             String post = sDate.substring(utIndex+3);
             sDate = pre + " GMT" + post;
         }
-        return parseUsingMask(RFC822_MASKS,sDate);
+        Date result = parseUsingMask(RFC822_MASKS,sDate);
+        if(result == null){
+        	result = parseW3CDateTime(sDate);				// For J2me compatibility
+        }
+        return result;
     }
 
     /**
