@@ -47,7 +47,31 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>Mesh4jServletXForm</servlet-name>
-		<url-pattern>/XForm</url-pattern>
+		<url-pattern>/feeds/MyXForm</url-pattern>
+	</servlet-mapping>
+	
+		<servlet>
+		<description>
+		</description>
+		<display-name>Mesh4jServletXForm1</display-name>
+		<servlet-name>Mesh4jServletXForm1</servlet-name>
+		<servlet-class>org.mesh4x.sync.servlet.Mesh4jXForm1Servlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Mesh4jServletXForm1</servlet-name>
+		<url-pattern>/feeds/MyXForm1</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<description>
+		</description>
+		<display-name>Mesh4jServletXFormSpec</display-name>
+		<servlet-name>Mesh4jServletXFormSpec</servlet-name>
+		<servlet-class>org.mesh4x.sync.servlet.Mesh4jXFormSpecServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Mesh4jServletXFormSpec</servlet-name>
+		<url-pattern>/feeds/XForms</url-pattern>
 	</servlet-mapping>
 	
 	<welcome-file-list>
