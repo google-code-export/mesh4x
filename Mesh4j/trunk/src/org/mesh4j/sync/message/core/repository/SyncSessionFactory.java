@@ -8,20 +8,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.mesh4j.sync.adapters.dom.DOMAdapter;
-import org.mesh4j.sync.adapters.kml.KMLDOMLoaderFactory;
 import org.mesh4j.sync.message.IEndpoint;
 import org.mesh4j.sync.message.IMessageSyncAdapter;
 import org.mesh4j.sync.message.ISyncSession;
-import org.mesh4j.sync.message.channel.sms.SmsEndpoint;
-import org.mesh4j.sync.message.core.InMemoryMessageSyncAdapter;
-import org.mesh4j.sync.message.core.MessageSyncAdapter;
 import org.mesh4j.sync.message.core.SyncSession;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.validations.Guard;
-
 
 public class SyncSessionFactory implements ISyncSessionFactory {
 
@@ -30,43 +24,51 @@ public class SyncSessionFactory implements ISyncSessionFactory {
 	private Map<String, IMessageSyncAdapter> adapters = Collections.synchronizedMap(new HashMap<String, IMessageSyncAdapter>());
 	private String baseDirectory = "";
 	private IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
-	private boolean supportInMemoryAdapter = false;
+	private IEndpointFactory endpointFactory;
+	private IMessageSyncAdapterFactory adapterFactory;
 	
 	// BUSINESS METHODS
-	public SyncSessionFactory(){
-		super();
-	}
 	
-	public SyncSessionFactory(String baseDirectory,
+	public SyncSessionFactory(IEndpointFactory endpointFactory, IMessageSyncAdapterFactory adapterFactory, String baseDirectory,
 			IIdentityProvider identityProvider) {
-		super();
+
+		Guard.argumentNotNull(endpointFactory, "endpointFactory");
+		Guard.argumentNotNull(adapterFactory, "adapterFactory");
+		Guard.argumentNotNullOrEmptyString(baseDirectory, "baseDirectory");
+		Guard.argumentNotNull(identityProvider, "identityProvider");
+		
+		this.adapterFactory = adapterFactory;
+		this.endpointFactory = endpointFactory;
 		this.baseDirectory = baseDirectory;
 		this.identityProvider = identityProvider;
 		
-		File fileDir = new File(baseDirectory);
+		File fileDir = new File(this.baseDirectory);
 		if(!fileDir.exists()){
 			fileDir.mkdirs();
 		}
 	}
 
+	public SyncSessionFactory(IEndpointFactory endpointFactory, IMessageSyncAdapterFactory adapterFactory) {
+		Guard.argumentNotNull(endpointFactory, "endpointFactory");
+		Guard.argumentNotNull(adapterFactory, "adapterFactory");
+		
+		this.endpointFactory = endpointFactory;
+		this.adapterFactory = adapterFactory;
+	}
+
 	@Override
 	public IMessageSyncAdapter getSource(String sourceId) {
-		IMessageSyncAdapter syncAdapter = this.adapters.get(sourceId);
+		IMessageSyncAdapter syncAdapter = (IMessageSyncAdapter) this.adapters.get(sourceId);
 		if(syncAdapter != null){
 			return syncAdapter;
 		}
 		
-		if(KMLDOMLoaderFactory.isKML(sourceId)){
-			String kmlFileName = this.baseDirectory + sourceId;
-			DOMAdapter kmlAdapter = new DOMAdapter(KMLDOMLoaderFactory.createDOMLoader(kmlFileName, this.identityProvider));
-			syncAdapter = new MessageSyncAdapter(sourceId, this.identityProvider, kmlAdapter);
+		syncAdapter = this.adapterFactory.createSyncAdapter(sourceId, this.identityProvider);
+		if(syncAdapter != null){
+			this.adapters.put(sourceId, syncAdapter);
 			return syncAdapter;
 		} else {
-			if(this.supportInMemoryAdapter){
-				return new InMemoryMessageSyncAdapter(sourceId);
-			} else {
-				return null;
-			}
+			return null;
 		}
 	}
 
@@ -129,7 +131,7 @@ public class SyncSessionFactory implements ISyncSessionFactory {
 			return null;
 		}
 		
-		SyncSession session = new SyncSession(sessionId, version, syncAdapter, new SmsEndpoint(endpointId), fullProtocol);
+		SyncSession session = new SyncSession(sessionId, version, syncAdapter, this.endpointFactory.makeIEndpoint(endpointId), fullProtocol);
 		session.setOpen(isOpen);
 		session.setLastSyncDate(lastSyncDate);
 		
@@ -151,9 +153,5 @@ public class SyncSessionFactory implements ISyncSessionFactory {
 		
 		this.sessions.put(sessionId, session);
 		return session;
-	}
-
-	public void setSupportInMemoryAdapter(boolean supportInMemoryAdapter) {
-		this.supportInMemoryAdapter = supportInMemoryAdapter;
 	}
 }

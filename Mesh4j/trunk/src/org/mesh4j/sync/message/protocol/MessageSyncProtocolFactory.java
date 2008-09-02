@@ -7,6 +7,8 @@ import org.mesh4j.sync.message.IMessageSyncProtocol;
 import org.mesh4j.sync.message.core.IMessageProcessor;
 import org.mesh4j.sync.message.core.ISyncSessionRepository;
 import org.mesh4j.sync.message.core.MessageSyncProtocol;
+import org.mesh4j.sync.message.core.repository.IEndpointFactory;
+import org.mesh4j.sync.message.core.repository.IMessageSyncAdapterFactory;
 import org.mesh4j.sync.message.core.repository.SyncSessionFactory;
 import org.mesh4j.sync.message.core.repository.file.FileSyncSessionRepository;
 import org.mesh4j.sync.security.IIdentityProvider;
@@ -56,13 +58,8 @@ public class MessageSyncProtocolFactory {
 		return syncProtocol;
 	}
 
-	public static IMessageSyncProtocol createSyncProtocolWithFileRepository(int diffBlockSize, String repositoryBaseDirectory, IIdentityProvider identityProvider, IMessageSyncAware syncAware) {
-		return createSyncProtocolWithFileRepository(diffBlockSize, repositoryBaseDirectory, identityProvider, syncAware, false);
-	}
-	
-	public static IMessageSyncProtocol createSyncProtocolWithFileRepository(int diffBlockSize, String repositoryBaseDirectory, IIdentityProvider identityProvider, IMessageSyncAware syncAware, boolean supportInMemoryAdapter) {
-		SyncSessionFactory syncSessionFactory = new SyncSessionFactory(repositoryBaseDirectory, identityProvider);
-		syncSessionFactory.setSupportInMemoryAdapter(supportInMemoryAdapter);
+	public static IMessageSyncProtocol createSyncProtocolWithFileRepository(int diffBlockSize, String repositoryBaseDirectory, IIdentityProvider identityProvider, IMessageSyncAware syncAware, IEndpointFactory endpointFactory, IMessageSyncAdapterFactory syncAdapterFactory) {
+		SyncSessionFactory syncSessionFactory = new SyncSessionFactory(endpointFactory, syncAdapterFactory, repositoryBaseDirectory, identityProvider);
 		ISyncSessionRepository repo = new FileSyncSessionRepository(repositoryBaseDirectory, syncSessionFactory);
 		return createSyncProtocol(diffBlockSize, repo, syncAware);
 	}

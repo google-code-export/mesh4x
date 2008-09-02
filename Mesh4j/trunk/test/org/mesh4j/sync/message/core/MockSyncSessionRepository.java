@@ -3,6 +3,8 @@ package org.mesh4j.sync.message.core;
 import org.mesh4j.sync.message.IEndpoint;
 import org.mesh4j.sync.message.IMessageSyncAdapter;
 import org.mesh4j.sync.message.ISyncSession;
+import org.mesh4j.sync.message.channel.sms.core.SmsEndpointFactory;
+import org.mesh4j.sync.message.core.repository.MessageSyncAdapterFactory;
 import org.mesh4j.sync.message.core.repository.SyncSessionFactory;
 
 public class MockSyncSessionRepository implements ISyncSessionRepository {
@@ -10,7 +12,8 @@ public class MockSyncSessionRepository implements ISyncSessionRepository {
 	private SyncSessionFactory factory;
 	
 	public MockSyncSessionRepository() {
-		this.factory = new SyncSessionFactory();
+		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory("", false);
+		this.factory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);
 	}
 	
 	public MockSyncSessionRepository(SyncSessionFactory factory) {

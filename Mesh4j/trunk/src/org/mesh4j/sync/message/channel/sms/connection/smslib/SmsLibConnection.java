@@ -10,6 +10,8 @@ import org.mesh4j.sync.message.channel.sms.ISmsConnection;
 import org.mesh4j.sync.message.channel.sms.ISmsReceiver;
 import org.mesh4j.sync.message.channel.sms.SmsEndpoint;
 import org.mesh4j.sync.message.channel.sms.connection.ISmsConnectionInboundOutboundNotification;
+import org.mesh4j.sync.message.channel.sms.schedule.IRefreshTask;
+import org.mesh4j.sync.message.channel.sms.schedule.RefreshSchedulerTimerTask;
 import org.mesh4j.sync.message.core.NonMessageEncoding;
 import org.mesh4j.sync.message.encoding.IMessageEncoding;
 import org.mesh4j.sync.message.schedule.timer.TimerScheduler;

@@ -13,10 +13,12 @@ import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.message.channel.sms.ISmsChannel;
 import org.mesh4j.sync.message.channel.sms.SmsChannelFactory;
 import org.mesh4j.sync.message.channel.sms.SmsEndpoint;
+import org.mesh4j.sync.message.channel.sms.core.SmsEndpointFactory;
 import org.mesh4j.sync.message.core.ISyncSessionRepository;
 import org.mesh4j.sync.message.core.InMemoryMessageSyncAdapter;
 import org.mesh4j.sync.message.core.Message;
 import org.mesh4j.sync.message.core.MockSyncSessionRepository;
+import org.mesh4j.sync.message.core.repository.MessageSyncAdapterFactory;
 import org.mesh4j.sync.message.core.repository.SyncSessionFactory;
 import org.mesh4j.sync.message.protocol.MessageSyncProtocolFactory;
 import org.mesh4j.sync.model.Content;
@@ -73,7 +75,8 @@ public class MessageSyncEngineTests {
 		//channelEndpointB = SmsChannelFactory.createChannel(smsConnectionEndpointB, channelBSenderCheckDelay, channelBReceiveCheckDelay, fileRepoB, fileRepoB);
 		channelEndpointB = SmsChannelFactory.createChannel(smsConnectionEndpointB, channelBSenderCheckDelay, channelBReceiveCheckDelay);
 		
-		SyncSessionFactory syncSessionFactoryA = new SyncSessionFactory();
+		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory("", false);
+		SyncSessionFactory syncSessionFactoryA = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);
 		syncSessionFactoryA.registerSource(endPointA);
 		
 		//this.syncSessionRepoA = new FileSyncSessionRepository("c:\\", syncSessionFactoryA);
@@ -82,7 +85,7 @@ public class MessageSyncEngineTests {
 		IMessageSyncProtocol syncProtocolA = MessageSyncProtocolFactory.createSyncProtocol(100, this.syncSessionRepoA);
 		syncEngineEndPointA = new MessageSyncEngine(syncProtocolA, channelEndpointA);
 
-		SyncSessionFactory syncSessionFactoryB = new SyncSessionFactory();
+		SyncSessionFactory syncSessionFactoryB = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);
 		syncSessionFactoryB.registerSource(endPointB);
 
 		//this.syncSessionRepoB = new FileSyncSessionRepository("d:\\", syncSessionFactoryB);

@@ -20,11 +20,13 @@ import org.mesh4j.sync.message.channel.sms.SmsChannelFactory;
 import org.mesh4j.sync.message.channel.sms.SmsEndpoint;
 import org.mesh4j.sync.message.channel.sms.connection.InMemorySmsConnection;
 import org.mesh4j.sync.message.channel.sms.core.SmsChannel;
+import org.mesh4j.sync.message.channel.sms.core.SmsEndpointFactory;
 import org.mesh4j.sync.message.channel.sms.core.SmsReceiver;
 import org.mesh4j.sync.message.channel.sms.core.repository.file.FileSmsChannelRepository;
 import org.mesh4j.sync.message.core.ISyncSessionRepository;
 import org.mesh4j.sync.message.core.InMemoryMessageSyncAdapter;
 import org.mesh4j.sync.message.core.MessageSyncAdapter;
+import org.mesh4j.sync.message.core.repository.MessageSyncAdapterFactory;
 import org.mesh4j.sync.message.core.repository.SyncSessionFactory;
 import org.mesh4j.sync.message.core.repository.file.FileSyncSessionRepository;
 import org.mesh4j.sync.message.encoding.CompressBase91MessageEncoding;
@@ -198,8 +200,8 @@ public class SmsLibTests {
 	private MessageSyncEngine createSyncSmsEndpoint(String gatewayId, IMessageSyncAdapter adapter, ISmsConnection smsConnection, int delay){
 		FileSmsChannelRepository channelRepo = new FileSmsChannelRepository(TestHelper.baseDirectoryForTest()+gatewayId+"\\");
 		SmsChannelWrapper channel = new SmsChannelWrapper((SmsChannel) SmsChannelFactory.createChannel(smsConnection, delay, delay, channelRepo, channelRepo));
-						
-		SyncSessionFactory syncSessionFactory = new SyncSessionFactory();
+		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(TestHelper.baseDirectoryForTest()+gatewayId+"\\", false);
+		SyncSessionFactory syncSessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);
 		syncSessionFactory.registerSource(adapter);
 	
 		ISyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest()+gatewayId+"\\", syncSessionFactory);

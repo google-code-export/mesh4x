@@ -8,6 +8,8 @@ import org.junit.Test;
 import org.mesh4j.sync.message.IMessageSyncProtocol;
 import org.mesh4j.sync.message.ISyncSession;
 import org.mesh4j.sync.message.channel.sms.SmsEndpoint;
+import org.mesh4j.sync.message.channel.sms.core.SmsEndpointFactory;
+import org.mesh4j.sync.message.core.repository.MessageSyncAdapterFactory;
 import org.mesh4j.sync.message.core.repository.SyncSessionFactory;
 import org.mesh4j.sync.message.protocol.BeginSyncMessageProcessor;
 import org.mesh4j.sync.message.protocol.CancelSyncMessageProcessor;
@@ -68,7 +70,8 @@ public class MessageSyncProtocolTests {
 	
 	@Test(expected=MeshException.class)
 	public void shouldBeginSyncFailsWhenSessionIsOpen(){
-		SyncSessionFactory syncSessionFactory = new SyncSessionFactory();
+		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory("", false);
+		SyncSessionFactory syncSessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);
 		syncSessionFactory.registerSource(new InMemoryMessageSyncAdapter("123"));
 		
 		syncSessionFactory.createSession("a", 0, "123", "123", true, true, new Date(), new ArrayList<Item>(), new ArrayList<Item>(), new ArrayList<String>(), new ArrayList<String>());
@@ -79,21 +82,24 @@ public class MessageSyncProtocolTests {
 	
 	@Test
 	public void shouldBeginSyncIsDiscartedWhenSourceIDIsNotRegistered(){
-		SyncSessionFactory syncSessionFactory = new SyncSessionFactory();
+		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory("", false);
+		SyncSessionFactory syncSessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);
 		MessageSyncProtocol syncProtocol = new MessageSyncProtocol("M", new BeginSyncMessageProcessor(null, null), new CancelSyncMessageProcessor(), new MockSyncSessionRepository(syncSessionFactory), new ArrayList<IMessageProcessor>());
 		Assert.assertNull(syncProtocol.beginSync("123", new SmsEndpoint("123"), true));
 	}
 	
 	@Test
 	public void shouldProcessMessageReturnNoResponseWhenSourceIDIsNotRegistered(){
-		SyncSessionFactory syncSessionFactory = new SyncSessionFactory();
+		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory("", false);
+		SyncSessionFactory syncSessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);
 		MessageSyncProtocol syncProtocol = new MessageSyncProtocol("M", new BeginSyncMessageProcessor(null, null), new CancelSyncMessageProcessor(), new MockSyncSessionRepository(syncSessionFactory), new ArrayList<IMessageProcessor>());
 		Assert.assertEquals(IMessageSyncProtocol.NO_RESPONSE, syncProtocol.processMessage(new Message("M", "1", "1", 0, "a", new SmsEndpoint("sms:1"))));
 	}
 	
 	@Test(expected=MeshException.class)
 	public void shouldCancelSyncFailsWhenSessionIsNull(){
-		SyncSessionFactory syncSessionFactory = new SyncSessionFactory();
+		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory("", false);
+		SyncSessionFactory syncSessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);
 		syncSessionFactory.registerSource(new InMemoryMessageSyncAdapter("123"));
 
 		MessageSyncProtocol syncProtocol = new MessageSyncProtocol("M", new BeginSyncMessageProcessor(null, null), new CancelSyncMessageProcessor(), new MockSyncSessionRepository(syncSessionFactory), new ArrayList<IMessageProcessor>());
@@ -102,7 +108,8 @@ public class MessageSyncProtocolTests {
 	
 	@Test(expected=MeshException.class)
 	public void shouldCancelSyncFailsWhenSessionIsClosed(){
-		SyncSessionFactory syncSessionFactory = new SyncSessionFactory();
+		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory("", false);
+		SyncSessionFactory syncSessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);
 		syncSessionFactory.registerSource(new InMemoryMessageSyncAdapter("123"));
 		
 		ISyncSession syncSession = syncSessionFactory.createSession("a", 0, "123", "123", true, true, new Date(), new ArrayList<Item>(), new ArrayList<Item>(), new ArrayList<String>(), new ArrayList<String>());
@@ -114,7 +121,8 @@ public class MessageSyncProtocolTests {
 	
 	@Test
 	public void shouldCancelSync(){
-		SyncSessionFactory syncSessionFactory = new SyncSessionFactory();
+		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory("", false);
+		SyncSessionFactory syncSessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);
 		syncSessionFactory.registerSource(new InMemoryMessageSyncAdapter("123"));
 		
 		ISyncSession syncSession = syncSessionFactory.createSession("a", 0, "123", "123", true, true, new Date(), new ArrayList<Item>(), new ArrayList<Item>(), new ArrayList<String>(), new ArrayList<String>());

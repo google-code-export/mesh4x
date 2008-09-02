@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.message.ISyncSession;
 import org.mesh4j.sync.message.channel.sms.SmsEndpoint;
+import org.mesh4j.sync.message.channel.sms.core.SmsEndpointFactory;
 import org.mesh4j.sync.message.core.InMemoryMessageSyncAdapter;
 
 
@@ -12,43 +13,43 @@ public class SyncSessionFactoryTests {
 
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateSessionFailsWhenTargetIsNull(){
-		SyncSessionFactory factory = new SyncSessionFactory();
+		SyncSessionFactory factory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory("", false));
 		factory.createSession("1", 0, "123", null, true);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateSessionFailsWhenSessionIsNull(){
-		SyncSessionFactory factory = new SyncSessionFactory();
+		SyncSessionFactory factory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory("", false));
 		factory.createSession(null, 0, "123", new SmsEndpoint("123"), true);		
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateSessionFailsWhenSessionIsEmpty(){
-		SyncSessionFactory factory = new SyncSessionFactory();
+		SyncSessionFactory factory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory("", false));
 		factory.createSession("", 0, "123", new SmsEndpoint("123"), true);
 	}
 
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateSessionFailsWhenSourceIDIsNull(){
-		SyncSessionFactory factory = new SyncSessionFactory();
+		SyncSessionFactory factory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory("", false));
 		factory.createSession("1", 0, null, new SmsEndpoint("123"), true);
 	}
 
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateSessionFailsWhenSourceIDIsEmpty(){
-		SyncSessionFactory factory = new SyncSessionFactory();
+		SyncSessionFactory factory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory("", false));
 		factory.createSession("1", 0, "", new SmsEndpoint("123"), true);
 	}
 
 	@Test
 	public void shouldCreateSessionReturnsNullWhenSourceIDDoesNotRegistered(){
-		SyncSessionFactory factory = new SyncSessionFactory();
+		SyncSessionFactory factory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory("", false));
 		Assert.assertNull(factory.createSession("1", 0, "123", new SmsEndpoint("123"), true));
 	}
 	
 	@Test
 	public void shouldBasicCreateSessionReturnsNullWhenSourceIDDoesNotRegistered(){
-		SyncSessionFactory factory = new SyncSessionFactory();
+		SyncSessionFactory factory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory("", false));
 		Assert.assertNull(factory.createSession("1", 0, "123", null, true, true, null, null, null, null,null));
 	}
 
@@ -59,7 +60,7 @@ public class SyncSessionFactoryTests {
 		String sessionID = IdGenerator.INSTANCE.newID();
 		SmsEndpoint endpoint = new SmsEndpoint("123");
 		
-		SyncSessionFactory factory = new SyncSessionFactory();
+		SyncSessionFactory factory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory("", false));
 		factory.registerSource(new InMemoryMessageSyncAdapter(sourceID));
 		
 		ISyncSession syncSession = factory.createSession(sessionID, 0, sourceID, endpoint, true);

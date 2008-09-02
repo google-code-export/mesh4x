@@ -18,8 +18,10 @@ import org.mesh4j.sync.adapters.kml.KMLDOMLoaderFactory;
 import org.mesh4j.sync.adapters.kml.KmlNames;
 import org.mesh4j.sync.message.channel.sms.SmsChannelFactory;
 import org.mesh4j.sync.message.channel.sms.SmsEndpoint;
+import org.mesh4j.sync.message.channel.sms.core.SmsEndpointFactory;
 import org.mesh4j.sync.message.core.ISyncSessionRepository;
 import org.mesh4j.sync.message.core.MockSyncSessionRepository;
+import org.mesh4j.sync.message.core.repository.MessageSyncAdapterFactory;
 import org.mesh4j.sync.message.core.repository.SyncSessionFactory;
 import org.mesh4j.sync.message.core.repository.file.FileSyncSessionRepository;
 import org.mesh4j.sync.message.encoding.CompressBase91MessageEncoding;
@@ -61,8 +63,9 @@ public class KmlMessageSyncEngineTests {
 		IChannel channelEndpointB = SmsChannelFactory.createChannel(smsConnectionEndpointB, 5000, 5000);
 
 		IMessageSyncAdapter endpointA = new MockInMemoryMessageSyncAdapter(dataSetId, kmlAdapterA.getAll());
-				
-		SyncSessionFactory syncSessionFactoryA = new SyncSessionFactory();
+		
+		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(TestHelper.baseDirectoryForTest(), false);
+		SyncSessionFactory syncSessionFactoryA = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);
 		syncSessionFactoryA.registerSource(endpointA);
 	
 		//ISyncSessionRepository repoA = new MockSyncSessionRepository(syncSessionFactoryA);
@@ -73,7 +76,7 @@ public class KmlMessageSyncEngineTests {
 
 		MockInMemoryMessageSyncAdapter endpointB = new MockInMemoryMessageSyncAdapter(dataSetId, kmlAdapterB.getAll());
 		
-		SyncSessionFactory syncSessionFactoryB = new SyncSessionFactory();
+		SyncSessionFactory syncSessionFactoryB = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);
 		syncSessionFactoryB.registerSource(endpointB);
 		
 		//ISyncSessionRepository repoB = new MockSyncSessionRepository(syncSessionFactoryB);
@@ -205,14 +208,16 @@ public class KmlMessageSyncEngineTests {
 		IChannel channelEndpointB = SmsChannelFactory.createChannel(smsConnectionEndpointB, 5000, 5000);
 
 		MockInMemoryMessageSyncAdapter endpointA = new MockInMemoryMessageSyncAdapter(dataSetId, kmlAdapter.getAll());
-		SyncSessionFactory syncSessionFactoryA = new SyncSessionFactory();
+		
+		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory("", false);
+		SyncSessionFactory syncSessionFactoryA = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);
 		syncSessionFactoryA.registerSource(endpointA);
 		
 		IMessageSyncProtocol syncProtocolA = MessageSyncProtocolFactory.createSyncProtocol(100, new MockSyncSessionRepository(syncSessionFactoryA));
 		MessageSyncEngine syncEngineEndPointA = new MessageSyncEngine(syncProtocolA, channelEndpointA);
 
 		MockInMemoryMessageSyncAdapter endpointB = new MockInMemoryMessageSyncAdapter(dataSetId, kmlAdapter.getAll());
-		SyncSessionFactory syncSessionFactoryB = new SyncSessionFactory();
+		SyncSessionFactory syncSessionFactoryB = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);
 		syncSessionFactoryB.registerSource(endpointB);
 		
 		IMessageSyncProtocol syncProtocolB = MessageSyncProtocolFactory.createSyncProtocol(100, new MockSyncSessionRepository(syncSessionFactoryB));
