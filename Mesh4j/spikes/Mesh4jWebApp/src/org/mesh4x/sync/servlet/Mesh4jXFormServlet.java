@@ -16,7 +16,7 @@ public class Mesh4jXFormServlet extends Mesh4jServlet {
 	@Override
 	protected String getFileName() {
 		//String feedName = this.getClass().getResource("xform.xml").getFile();
-		String feedName = "c:\\xform.xml";
+		String feedName = "c:\\xform2.xml";
 		return feedName;
 	}
 

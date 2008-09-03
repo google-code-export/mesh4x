@@ -61,17 +61,35 @@ public class XMLContent extends Content {
     }
 
 	public static Element normalizeContent(IContent content) {
+		Element payload = null;
 		if(content instanceof XMLContent){
-			return content.getPayload();
+			payload = content.getPayload().createCopy();
+		} else {
+			payload = DocumentHelper.createElement("payload");
 		}
-		Element payload = DocumentHelper.createElement("payload");
 		content.addToFeedPayload(payload);
 		return payload;
 	}
 	
 	@Override
 	public void addToFeedPayload(Element rootPayload){
-		// nothing to do
+		
+		Element titleElement = DocumentHelper.createElement(ISyndicationFormat.SX_ELEMENT_ITEM_TITLE);
+		if(this.getTitle() == null || this.getTitle().length() == 0){
+			titleElement.setText("---");
+		}else{
+			titleElement.setText(this.getTitle());
+		}
+		rootPayload.add(titleElement);
+		
+		Element descriptionElement = DocumentHelper.createElement(ISyndicationFormat.SX_ELEMENT_ITEM_DESCRIPTION);
+		if(this.getDescription() == null || this.getDescription().length() == 0){
+			descriptionElement.setText("---");
+		}else{
+			descriptionElement.setText(this.getDescription());
+		}
+		
+		rootPayload.add(descriptionElement);
 	}
 
 }

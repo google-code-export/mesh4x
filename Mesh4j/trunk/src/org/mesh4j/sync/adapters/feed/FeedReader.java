@@ -1,6 +1,7 @@
 package org.mesh4j.sync.adapters.feed;
 
 import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.ELEMENT_PAYLOAD;
+import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ELEMENT_AUTHOR;
 import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_HISTORY_BY;
 import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_HISTORY_SEQUENCE;
 import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_HISTORY_WHEN;
@@ -109,13 +110,21 @@ public class FeedReader {
 		Element payload = DocumentHelper.createElement(ELEMENT_PAYLOAD);
 		
 		Sync sync = null;
+		String title = null;
+		String description = null;
 		
 		List<Element> elements = itemElement.elements();
 		for (Element element : elements) {
 			if(SX_QNAME_SYNC.getName().equals(element.getName())){
 				sync = readSync(element);
 			} else {
-				payload.add(element.detach());
+				if(SX_ELEMENT_ITEM_TITLE.equals(element.getName())){
+					title = element.getText();
+				} else if(SX_ELEMENT_ITEM_DESCRIPTION.equals(element.getName())){
+					description = element.getText();
+				} else if(!SX_ELEMENT_AUTHOR.equals(element.getName())){   // skip author
+					payload.add(element.detach());	
+				}				
 			}
 		}
 		
@@ -126,8 +135,13 @@ public class FeedReader {
 		if(sync.isDeleted()){
 			return new Item(new NullContent(sync.getId()), sync);
 		} else {
-			String title = itemElement.elementText(SX_ELEMENT_ITEM_TITLE);
-			String description = itemElement.elementText(SX_ELEMENT_ITEM_DESCRIPTION);
+			if(title == null){
+				title = sync.getId();
+			}
+			
+			if(description == null){
+				description = sync.getId();
+			}
 			XMLContent modelItem = new XMLContent(sync.getId(), title, description, payload);
 			return new Item(modelItem, sync);
 		}

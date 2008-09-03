@@ -47,7 +47,7 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>Mesh4jServletXForm</servlet-name>
-		<url-pattern>/feeds/MyXForm</url-pattern>
+		<url-pattern>/feeds/XFormDemo2</url-pattern>
 	</servlet-mapping>
 	
 		<servlet>
@@ -59,7 +59,7 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>Mesh4jServletXForm1</servlet-name>
-		<url-pattern>/feeds/MyXForm1</url-pattern>
+		<url-pattern>/feeds/XFormDemo1</url-pattern>
 	</servlet-mapping>
 	
 	<servlet>
