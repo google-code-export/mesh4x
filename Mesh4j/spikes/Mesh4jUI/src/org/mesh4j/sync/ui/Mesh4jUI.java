@@ -170,16 +170,16 @@ public class Mesh4jUI {
 		});		
 		buttonCleanKML.setText(Mesh4jUITranslator.getLabelClean());
 		
-		Button buttonPurgueKML = new Button(shell, SWT.PUSH);
-		buttonPurgueKML.addSelectionListener(new SelectionAdapter() {
+		Button buttonPurgeKML = new Button(shell, SWT.PUSH);
+		buttonPurgeKML.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {				
 				boolean ok = validateKMLFile(kmlFileToExternalActions.getText(), "KmlFile");
 				if(ok){
-					purgueKMLInNewThread();
+					purgeKMLInNewThread();
 				}
 			}
 		});		
-		buttonPurgueKML.setText(Mesh4jUITranslator.getLabelPurgue());
+		buttonPurgeKML.setText(Mesh4jUITranslator.getLabelPurge());
 		
 		shell.setLayout (new GridLayout());
 		shell.pack ();
@@ -488,7 +488,7 @@ public class Mesh4jUI {
 		}
 	}
 	
-	private void purgueKMLInNewThread(){
+	private void purgeKMLInNewThread(){
 		final String kmlFile = kmlFileToExternalActions.getText();
 		
 		Runnable longJob = new Runnable() {
@@ -499,7 +499,7 @@ public class Mesh4jUI {
 						display.syncExec(new Runnable() {
 							public void run() {
 								if (consoleView.isDisposed()) return;
-								consoleView.append("\n"+ Mesh4jUITranslator.getMessagePurgueKML(kmlFile));
+								consoleView.append("\n"+ Mesh4jUITranslator.getMessagePurgeKML(kmlFile));
 							}
 						});
 						
@@ -509,7 +509,7 @@ public class Mesh4jUI {
 						display.syncExec(new Runnable() {
 							public void run() {
 								if (consoleView.isDisposed()) return;
-								consoleView.append("\n"+ Mesh4jUITranslator.getMessagePurgueKMLCompleted(result));
+								consoleView.append("\n"+ Mesh4jUITranslator.getMessagePurgeKMLCompleted(result));
 							}
 						});
 						done = true;
@@ -531,10 +531,10 @@ public class Mesh4jUI {
 			IDOMLoader loader = KMLDOMLoaderFactory.createDOMLoader(kmlFile, this.identityProvider);
 			DOMAdapter domAdapter = new DOMAdapter(loader);
 			domAdapter.purgue();
-			return Mesh4jUITranslator.getMessagePurgueKMLSuccessfuly();
+			return Mesh4jUITranslator.getMessagePurgeKMLSuccessfuly();
 		} catch (MeshException e) {
 			Logger.error(e.getMessage(), e);
-			return Mesh4jUITranslator.getMessagePurgueKMLFailed();
+			return Mesh4jUITranslator.getMessagePurgeKMLFailed();
 		}
 	}
 	

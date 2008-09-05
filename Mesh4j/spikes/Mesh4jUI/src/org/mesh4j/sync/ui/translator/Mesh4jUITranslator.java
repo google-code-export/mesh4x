@@ -115,23 +115,23 @@ public class Mesh4jUITranslator {
 		return MessageTranslator.translate("Mesh4jUI_CLEAN_KML_FAILED");
 	}
 	
-	public static String getMessagePurgueKML(String kmlFile) {
-		return MessageTranslator.translate("Mesh4jUI_PURGUE_KML_START", kmlFile);
+	public static String getMessagePurgeKML(String kmlFile) {
+		return MessageTranslator.translate("Mesh4jUI_PURGE_KML_START", kmlFile);
 	}
 
-	public static String getMessagePurgueKMLCompleted(String result) {
-		return MessageTranslator.translate("Mesh4jUI_PURGUE_KML_COMPLETED", result);
+	public static String getMessagePurgeKMLCompleted(String result) {
+		return MessageTranslator.translate("Mesh4jUI_PURGE_KML_COMPLETED", result);
 	}
 
-	public static String getMessagePurgueKMLSuccessfuly() {
-		return MessageTranslator.translate("Mesh4jUI_PURGUE_KML_SUCCESSFULY");
+	public static String getMessagePurgeKMLSuccessfuly() {
+		return MessageTranslator.translate("Mesh4jUI_PURGE_KML_SUCCESSFULY");
 	}
 
-	public static String getMessagePurgueKMLFailed() {
-		return MessageTranslator.translate("Mesh4jUI_PURGUE_KML_FAILED");
+	public static String getMessagePurgeKMLFailed() {
+		return MessageTranslator.translate("Mesh4jUI_PURGE_KML_FAILED");
 	}
 
-	public static String getLabelPurgue() {
-		return MessageTranslator.translate("Mesh4jUI_LABEL_PURGUE");
+	public static String getLabelPurge() {
+		return MessageTranslator.translate("Mesh4jUI_LABEL_PURGE");
 	}
 }
