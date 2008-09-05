@@ -87,7 +87,7 @@ public class Mesh4jUI {
 		buttonSource.setText("...");
 		
 		Label labelTarget = new Label (shell, SWT.NONE);
-		labelTarget.setText ("Endpoint 2: ");
+		labelTarget.setText (Mesh4jUITranslator.getLabelEndpoint2());
 		
 		endpoint2 = new Text (shell, SWT.BORDER);
 		endpoint2.setLayoutData (new GridData(600, 15));
@@ -337,8 +337,10 @@ public class Mesh4jUI {
 			consoleView.append("\n"+ Mesh4jUITranslator.getErrorInvalidURL(endpointHeader));
 			return false;
 		}
+		
+		URLConnection conn = null;
 		try {
-			URLConnection conn = newURL.openConnection();
+			conn = newURL.openConnection();
 			conn.connect();
 		} catch (IOException e) {
 			consoleView.append("\n"+ Mesh4jUITranslator.getErrorURLConnectionFailed(endpointHeader));
@@ -379,7 +381,7 @@ public class Mesh4jUI {
 	}
 	
 	private boolean isURL(String endpointValue) {
-		return endpointValue.startsWith("http");
+		return endpointValue.toUpperCase().startsWith("HTTP");
 	}
 
 	private boolean isFeed(String endpointValue) {
