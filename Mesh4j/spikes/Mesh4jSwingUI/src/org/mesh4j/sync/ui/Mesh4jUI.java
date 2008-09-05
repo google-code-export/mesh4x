@@ -9,7 +9,6 @@ import java.io.File;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -333,13 +332,13 @@ public class Mesh4jUI {
 					(fileName.trim().toUpperCase().endsWith(".KML") || fileName.trim().toUpperCase().endsWith(".KMZ"))
 			)
 		){
-			consoleView.append("\n"+ Mesh4jUITranslator.getErrorKMLType(header));
+			consoleView.setText( consoleView.getText() + "\n"+ Mesh4jUITranslator.getErrorKMLType(header) );
 			return false;
 		}
 		
 		File file = new File(fileName);
 		if(!file.exists()){
-			consoleView.append("\n"+ Mesh4jUITranslator.getErrorFileDoesNotExist(header));
+			consoleView.setText( consoleView.getText() + "\n"+ Mesh4jUITranslator.getErrorFileDoesNotExist(header));
 			return false;
 		}		
 		return true;
@@ -351,7 +350,7 @@ public class Mesh4jUI {
 		
 		if(okEndpoint1 && okEndpoint2){
 			if(endpoint1.equals(endpoint2)){
-				consoleView.append("\n"+ Mesh4jUITranslator.getErrorSameEndpoints());
+				consoleView.setText( consoleView.getText() + "\n"+ Mesh4jUITranslator.getErrorSameEndpoints());
 				return false;
 			}
 		}
@@ -361,7 +360,7 @@ public class Mesh4jUI {
 
 	private boolean validate(JTextArea consoleView, String endpointValue, String endpointHeader){
 		if(endpointValue ==  null || endpointValue.trim().length() == 0){
-			consoleView.append("\n"+ Mesh4jUITranslator.getErrorEndpoint(endpointHeader));
+			consoleView.setText( consoleView.getText() + "\n"+ Mesh4jUITranslator.getErrorEndpoint(endpointHeader));
 			return false;
 		}
 		if(SyncEngineUtil.isURL(endpointValue)){
@@ -376,7 +375,7 @@ public class Mesh4jUI {
 		try {
 			newURL = new URL(url);
 		} catch (MalformedURLException e) {
-			consoleView.append("\n"+ Mesh4jUITranslator.getErrorInvalidURL(endpointHeader));
+			consoleView.setText( consoleView.getText() + "\n"+ Mesh4jUITranslator.getErrorInvalidURL(endpointHeader));
 			return false;
 		}
 		
@@ -385,7 +384,7 @@ public class Mesh4jUI {
 			conn = (HttpURLConnection)newURL.openConnection();
 			conn.connect();
 		} catch (Exception e) {
-			consoleView.append("\n"+ Mesh4jUITranslator.getErrorURLConnectionFailed(endpointHeader));
+			consoleView.setText( consoleView.getText() + "\n"+ Mesh4jUITranslator.getErrorURLConnectionFailed(endpointHeader));
 			return false;
 		}finally{
 	    	if(conn != null){
@@ -398,7 +397,7 @@ public class Mesh4jUI {
 	private boolean validateFile(JTextArea consoleView, String fileName, String endpointHeader){
 		if(!(fileName != null && fileName.trim().length() > 5 
 				&& (fileName.toUpperCase().endsWith(".KMZ") || fileName.toUpperCase().endsWith(".KML") || fileName.toUpperCase().endsWith(".XML")))){
-			consoleView.append("\n"+ Mesh4jUITranslator.getErrorFileType(endpointHeader));
+			consoleView.setText( consoleView.getText() + "\n"+ Mesh4jUITranslator.getErrorFileType(endpointHeader));
 			return false;
 		}
 		return true;
@@ -432,23 +431,27 @@ public class Mesh4jUI {
         public Void doInBackground() {
         	disableAllButtons();
         	if(action == SYNCHRONIZE){
-        		textAreaConsole.append("\n"+ Mesh4jUITranslator.getMessageSyncStart());
-				textAreaConsole.append("\n\t"+ Mesh4jUITranslator.getLabelEndpoint1() + textFieldEndpoint1.getText());
-				textAreaConsole.append("\n\t"+ Mesh4jUITranslator.getLabelEndpoint2() + textFieldEndpoint2.getText());
+        		textAreaConsole.setText("");
+        		textAreaConsole.setText( textAreaConsole.getText() + "\n"+ Mesh4jUITranslator.getMessageSyncStart());
+				textAreaConsole.setText( textAreaConsole.getText() + "\n\t"+ Mesh4jUITranslator.getLabelEndpoint1() + textFieldEndpoint1.getText());
+				textAreaConsole.setText( textAreaConsole.getText() + "\n\t"+ Mesh4jUITranslator.getLabelEndpoint2() + textFieldEndpoint2.getText());
         		String result = SyncEngineUtil.synchronizeItems(textFieldEndpoint1.getText(), textFieldEndpoint2.getText(), identityProvider, idGenerator);
-        		textAreaConsole.append("\n"+ Mesh4jUITranslator.getMessageSyncCompleted(result));
+        		textAreaConsole.setText( textAreaConsole.getText() + "\n"+ Mesh4jUITranslator.getMessageSyncCompleted(result));
         	} else if(action == PREPARE_KML_TO_SYNC){
-        		textAreaConsole.append("\n"+ Mesh4jUITranslator.getMessagePrepareToSync(textFieldKmlFile.getText()));
+        		textAreaConsole.setText("");
+        		textAreaConsole.setText( textAreaConsole.getText() + "\n"+ Mesh4jUITranslator.getMessagePrepareToSync(textFieldKmlFile.getText()));
         		String result = SyncEngineUtil.prepareKMLToSync(textFieldKmlFile.getText(), identityProvider);
-        		textAreaConsole.append("\n"+ Mesh4jUITranslator.getMessagePrepareToSyncCompleted(result));
+        		textAreaConsole.setText( textAreaConsole.getText() + "\n"+ Mesh4jUITranslator.getMessagePrepareToSyncCompleted(result));
         	}else if(action == CLEAN_KML){
-        		textAreaConsole.append("\n"+ Mesh4jUITranslator.getMessageCleanKML(textFieldKmlFile.getText()));
+        		textAreaConsole.setText("");
+        		textAreaConsole.setText( textAreaConsole.getText() + "\n"+ Mesh4jUITranslator.getMessageCleanKML(textFieldKmlFile.getText()));
         		String result = SyncEngineUtil.cleanKML(textFieldKmlFile.getText(), identityProvider);   
-        		textAreaConsole.append("\n"+ Mesh4jUITranslator.getMessageCleanKMLCompleted(result));
+        		textAreaConsole.setText( textAreaConsole.getText() + "\n"+ Mesh4jUITranslator.getMessageCleanKMLCompleted(result));
         	}else if(action == PURGE_KML){
-        		textAreaConsole.append("\n"+ Mesh4jUITranslator.getMessagePurgueKML(textFieldKmlFile.getText()));
+        		textAreaConsole.setText("");
+        		textAreaConsole.setText( textAreaConsole.getText() + "\n"+ Mesh4jUITranslator.getMessagePurgueKML(textFieldKmlFile.getText()));
         		String result = SyncEngineUtil.purgueKML(textFieldKmlFile.getText(), identityProvider);
-        		textAreaConsole.append("\n"+ Mesh4jUITranslator.getMessagePurgueKMLCompleted(result));
+        		textAreaConsole.setText( textAreaConsole.getText() + "\n"+ Mesh4jUITranslator.getMessagePurgueKMLCompleted(result));
         	}
             return null;
         }
