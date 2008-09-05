@@ -5,6 +5,55 @@ import org.mesh4j.sync.translator.MessageTranslator;
 public class Mesh4jUITranslator {
 
 	// Internationalization
+
+	public static String getLabelKMLExtensions(){
+		return MessageTranslator.translate("Mesh4jUI_LABEL_KML_EXTENSIONS");	
+	}
+	
+	public static String getLabelFileExtensions(){
+		return MessageTranslator.translate("Mesh4jUI_LABEL_FILE_EXTENSIONS");	
+	}
+	
+	public static String getLabelFileChooser(){
+		return MessageTranslator.translate("Mesh4jUI_LABEL_FILE_CHOOSER");	
+	}
+	
+	public static String getToolTipPrepareToSync(){
+		return MessageTranslator.translate("Mesh4jUI_TOOL_TIP_PREPARE_TO_SYNC");	
+	}
+	
+	public static String getToolTipCleanSyncInfo(){
+		return MessageTranslator.translate("Mesh4jUI_TOOL_TIP_CLEAN_SYNC_INFO");	
+	}
+	
+	public static String getToolTipPurge(){
+		return MessageTranslator.translate("Mesh4jUI_TOOL_TIP_PURGE");	
+	}
+	
+	
+	public static String getToolTipKMLFile(){
+		return MessageTranslator.translate("Mesh4jUI_TOOL_TIP_KML_FILE");	
+	}
+	
+	public static String getToolTipCleanConsole(){
+		return MessageTranslator.translate("Mesh4jUI_TOOL_TIP_CLEAN_CONSOLE");	
+	}
+	
+	public static String getToolTipSync(){
+		return MessageTranslator.translate("Mesh4jUI_TOOL_TIP_SYNC");	
+	}
+	
+	public static String getToolTipConsole(){
+		return MessageTranslator.translate("Mesh4jUI_TOOL_TIP_CONSOLE");	
+	}
+	
+	public static String getToolTipFile(){
+		return MessageTranslator.translate("Mesh4jUI_TOOL_TIP_FILE");	
+	}
+	
+	public static String getToolTipFileChooser(){
+		return MessageTranslator.translate("Mesh4jUI_TOOL_TIP_FILE_CHOOSER");	
+	}	
 	
 	public static String getLabelPrepareToSync() {
 		return MessageTranslator.translate("Mesh4jUI_LABEL_PREPARE_TO_SYNC");

@@ -127,10 +127,12 @@ public class Mesh4jUI {
 		frame.getContentPane().add(panelSync, new CellConstraints(2, 2, 2, 1));
 
 		textFieldEndpoint1 = new JTextField();
+		textFieldEndpoint1.setToolTipText(Mesh4jUITranslator.getToolTipFile());
 		panelSync.add(textFieldEndpoint1, new CellConstraints(4, 2));
 		textFieldEndpoint1.setText(this.defaultEndpoint1);
 
 		textFieldEndpoint2 = new JTextField();
+		textFieldEndpoint2.setToolTipText(Mesh4jUITranslator.getToolTipFile());
 		panelSync.add(textFieldEndpoint2, new CellConstraints(4, 4));
 		textFieldEndpoint2.setText(this.defaultEndpoint2);
 		
@@ -143,7 +145,8 @@ public class Mesh4jUI {
 			}
 		};		
 		buttonOpenFileEndpoint1 = new JButton();
-		buttonOpenFileEndpoint1.setText(" . . . ");
+		buttonOpenFileEndpoint1.setToolTipText(Mesh4jUITranslator.getToolTipFileChooser());
+		buttonOpenFileEndpoint1.setText(Mesh4jUITranslator.getLabelFileChooser());
 		panelSync.add(buttonOpenFileEndpoint1, new CellConstraints(6, 2));
 		buttonOpenFileEndpoint1.addActionListener(fileChooserEndpoint1ActionListener);
 
@@ -157,7 +160,8 @@ public class Mesh4jUI {
 			}
 		};
 		buttonOpenFileEndpoint2 = new JButton();
-		buttonOpenFileEndpoint2.setText(" . . . ");
+		buttonOpenFileEndpoint2.setToolTipText(Mesh4jUITranslator.getToolTipFileChooser());
+		buttonOpenFileEndpoint2.setText(Mesh4jUITranslator.getLabelFileChooser());
 		panelSync.add(buttonOpenFileEndpoint2, new CellConstraints(6, 4));
 		buttonOpenFileEndpoint2.addActionListener(fileChooserEndpoint2ActionListener);
 
@@ -171,7 +175,7 @@ public class Mesh4jUI {
 		
 		textAreaConsole.setLineWrap(true);
 		scrollPane.setViewportView(textAreaConsole);
-		textAreaConsole.setToolTipText("console");
+		textAreaConsole.setToolTipText(Mesh4jUITranslator.getToolTipConsole());
 		textAreaConsole.setEditable(false);
 		textAreaConsole.setPreferredSize(new Dimension(200, 320));
 
@@ -195,6 +199,7 @@ public class Mesh4jUI {
 			}
 		};		
 		buttonSynchronize = new JButton();
+		buttonSynchronize.setToolTipText(Mesh4jUITranslator.getToolTipSync());
 		buttonSynchronize.setText(Mesh4jUITranslator.getLabelSyncronize());
 		buttonSynchronize.addActionListener(synchronizeActionListener);
 		panelSyncButtons.add(buttonSynchronize, new CellConstraints());
@@ -206,6 +211,7 @@ public class Mesh4jUI {
 			}
 		};	
 		buttonClean = new JButton();
+		buttonClean.setToolTipText(Mesh4jUITranslator.getToolTipCleanConsole());
 		buttonClean.setText(Mesh4jUITranslator.getLabelClean());
 		buttonClean.addActionListener(cleanActionListener);
 		panelSyncButtons.add(buttonClean, new CellConstraints(3, 1));
@@ -234,6 +240,7 @@ public class Mesh4jUI {
 		panelKml.add(labelKmlFile, new CellConstraints(2, 2));
 
 		textFieldKmlFile = new JTextField();
+		textFieldKmlFile.setToolTipText(Mesh4jUITranslator.getToolTipKMLFile());
 		panelKml.add(textFieldKmlFile, new CellConstraints(4, 2));
 
 		ActionListener fileChooserKmlFileActionListener = new ActionListener(){
@@ -245,7 +252,8 @@ public class Mesh4jUI {
 			}
 		};
 		buttonOpenFileKml = new JButton();
-		buttonOpenFileKml.setText(" . . . ");
+		buttonOpenFileKml.setToolTipText(Mesh4jUITranslator.getToolTipFileChooser());
+		buttonOpenFileKml.setText(Mesh4jUITranslator.getLabelFileChooser());
 		buttonOpenFileKml.addActionListener(fileChooserKmlFileActionListener);
 		panelKml.add(buttonOpenFileKml, new CellConstraints(6, 2));
 
@@ -263,6 +271,7 @@ public class Mesh4jUI {
 			}
 		};
 		buttonPrepareFileToSync = new JButton();
+		buttonPrepareFileToSync.setToolTipText(Mesh4jUITranslator.getToolTipPrepareToSync());
 		buttonPrepareFileToSync.setText(Mesh4jUITranslator.getLabelPrepareToSync());
 		buttonPrepareFileToSync.addActionListener(prepareFileToSyncActionListener);
 		panelKmlButtons.add(buttonPrepareFileToSync, new CellConstraints());
@@ -277,6 +286,7 @@ public class Mesh4jUI {
 			}
 		};
 		buttonCleanSyncInfo = new JButton();
+		buttonCleanSyncInfo.setToolTipText(Mesh4jUITranslator.getToolTipCleanSyncInfo());
 		buttonCleanSyncInfo.setText(Mesh4jUITranslator.getLabelClean());
 		buttonCleanSyncInfo.addActionListener(cleanSyncInfoActionListener);
 		panelKmlButtons.add(buttonCleanSyncInfo, new CellConstraints(3, 1));
@@ -291,18 +301,19 @@ public class Mesh4jUI {
 			}
 		};
 		buttonPurgeKml = new JButton();
+		buttonPurgeKml.setToolTipText(Mesh4jUITranslator.getToolTipPurge());
 		buttonPurgeKml.setText(Mesh4jUITranslator.getLabelPurgue());
 		buttonPurgeKml.addActionListener(purgeKmlActionListener);
 		panelKmlButtons.add(buttonPurgeKml, new CellConstraints(5, 1));
 	}
 	
 	private String openFileDialogKML(String fileName){
-		String fileNameSelected = openFileDialog(fileName, new FileNameExtensionFilter("Kml/Kmz (*.kmz/*.kml)", "kml", "kmz"));
+		String fileNameSelected = openFileDialog(fileName, new FileNameExtensionFilter(Mesh4jUITranslator.getLabelKMLExtensions(), "kml", "kmz"));
 		return fileNameSelected;
 	}
 	
 	private String openFileDialog(String fileName){
-		String fileNameSelected = openFileDialog(fileName, new FileNameExtensionFilter("Feed Rss/Atom (*.xml) or Kml/Kmz (*.kmz/*.kml)", "kml", "kmz", "xml"));
+		String fileNameSelected = openFileDialog(fileName, new FileNameExtensionFilter(Mesh4jUITranslator.getLabelFileExtensions(), "kml", "kmz", "xml"));
 		return fileNameSelected;
 	}
 	
