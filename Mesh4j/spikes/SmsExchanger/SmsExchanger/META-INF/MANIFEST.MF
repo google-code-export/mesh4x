@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Sealed: false
+Class-Path: ./lib/ ./lib/commons-logging-1.0.4.jar ./lib/log4j-1.2.11.jar ./lib/smslib-3.3.0.jar
+Main-Class: org.sms.exchanger.SmsExchanger
+
+
+
