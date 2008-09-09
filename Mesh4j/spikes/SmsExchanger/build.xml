@@ -1,0 +1,25 @@
+<project default="dist">
+
+	<target name="delete">
+		<mkdir dir="dist"/>
+		<delete file="dist/*"/>
+	</target>
+	
+	<target name="jars" depends="delete">
+		<mkdir dir="dist"/>
+		<jar destfile="dist/smsExchanger.jar" manifest="META-INF/MANIFEST.MF">
+			<fileset dir="bin" />
+		</jar>
+	</target>
+	
+	<target name="dist" depends="jars">
+		<zip destfile="dist/smsExchanger-0.0.1.zip">
+			<zipfileset prefix="smsExchanger-0.0.1" dir="dist" includes="smsExchanger.jar"/>
+			<zipfileset prefix="smsExchanger-0.0.1" dir="." includes="lib/*.jar"/>
+			<zipfileset prefix="smsExchanger-0.0.1/lib" dir="." includes="log4j.properties"/>
+			<zipfileset prefix="smsExchanger-0.0.1" dir="." includes="sms.properties"/>
+		</zip>
+		<delete file="dist/smsExchanger.jar"/>
+	</target>
+	
+</project>
