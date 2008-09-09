@@ -19,20 +19,20 @@ public class MessageRepository implements IMessageRepository {
 	private final static Log LOGGER = LogFactory.getLog(MessageRepository.class);
 
 	// MODEL VARIABLEs
-	private String outboundDirectory;
-	private String inboundDirectory;
+	private String outboxDirectory;
+	private String inboxDirectory;
 	
 	// BUSINESS METHODS
-	public MessageRepository(String inboundDirectory, String outboundDirectory) {
+	public MessageRepository(String inboxDirectory, String outboxDirectory) {
 		super();
-		this.inboundDirectory = inboundDirectory;
-		this.outboundDirectory = outboundDirectory;
+		this.inboxDirectory = inboxDirectory;
+		this.outboxDirectory = outboxDirectory;
 	}
 
 	@Override
 	public boolean addMessage(Message message) {
 		try{
-			String fileName = getInboundMessageFileName(message);
+			String fileName = getInboxMessageFileName(message);
 			FileWriter fw = new FileWriter(fileName);
 			try{
 				fw.write(message.getText());
@@ -47,11 +47,11 @@ public class MessageRepository implements IMessageRepository {
 		}			
 	}
 
-	private String getInboundMessageFileName(Message message) {
-		return this.inboundDirectory + message.getNumber() + "_" + message.getID() + ".txt";
+	private String getInboxMessageFileName(Message message) {
+		return this.inboxDirectory + message.getNumber() + "_" + message.getID() + ".txt";
 	}
-	private String getOutboundMessageFileName(Message message) {
-		return this.outboundDirectory + message.getNumber() + "_" + message.getID() + ".txt";
+	private String getOutboxMessageFileName(Message message) {
+		return this.outboxDirectory + message.getNumber() + "_" + message.getID() + ".txt";
 	}
 	
 	private String readFile(File file) throws Exception{
@@ -73,7 +73,7 @@ public class MessageRepository implements IMessageRepository {
 	public List<Message> getAllMessagesToSend() {
 		List<Message> result = new ArrayList<Message>();
 		
-		File fileDir = new File(this.outboundDirectory);
+		File fileDir = new File(this.outboxDirectory);
 		File[] files = fileDir.listFiles();
 		for (File file : files) {
 			if(file.isFile()){
@@ -97,7 +97,7 @@ public class MessageRepository implements IMessageRepository {
 
 	@Override
 	public boolean deleteMessage(Message message) {
-		String fileName = this.getOutboundMessageFileName(message);
+		String fileName = this.getOutboxMessageFileName(message);
 		File file = new File(fileName);
 		if(file.exists()){
 			file.delete();
@@ -110,14 +110,14 @@ public class MessageRepository implements IMessageRepository {
 
 	@Override
 	public void open() {
-		File fileOutboundDir = new File(this.outboundDirectory);
-		if(!fileOutboundDir.exists()){
-			fileOutboundDir.mkdirs();
+		File fileOutboxDir = new File(this.outboxDirectory);
+		if(!fileOutboxDir.exists()){
+			fileOutboxDir.mkdirs();
 		}
 		
-		File fileInboundDir = new File(this.inboundDirectory);
-		if(!fileInboundDir.exists()){
-			fileInboundDir.mkdirs();
+		File fileInboxDir = new File(this.inboxDirectory);
+		if(!fileInboxDir.exists()){
+			fileInboxDir.mkdirs();
 		}
 	}
 	

@@ -3,7 +3,7 @@ package org.sms.exchanger;
 public interface IProperties {
 
 	public final static String WATCHER_PERIOD = "watcher.period";
-	public final static String WATCHER_PERIOD_DEFAULT_VALUE = "60000";
+	public final static String WATCHER_PERIOD_DEFAULT_VALUE = "30000";
 	
 	public final static String READ_MODE = "read.mode";
 	
@@ -14,6 +14,6 @@ public interface IProperties {
 	public static final String SMS_BAUD_RATE = "baud.rate";
 	public static final String SMS_BAUD_RATE_DEFAULT_VALUE = "115200";
 	
-	public static final String INBOUND_DIR = "inbound.directory";
-	public static final String OUTBOUND_DIR = "outbound.directory";
+	public static final String INBOX_DIR = "inbox.directory";
+	public static final String OUTBOX_DIR = "outbox.directory";
 }

@@ -9,9 +9,9 @@ public class MessageRepositoryFactory implements IMessageRepositoryFactory{
 
 	@Override
 	public IMessageRepository createMessageManager(PropertiesProvider prop) {
-		String inboundDirectory = prop.getString(IProperties.INBOUND_DIR, prop.getCurrentDirectory()+"\\inbox\\");
-		String outboundDirectory = prop.getString(IProperties.OUTBOUND_DIR, prop.getCurrentDirectory()+"\\outbox\\");
-		return new MessageRepository(inboundDirectory, outboundDirectory);
+		String inboxDirectory = prop.getString(IProperties.INBOX_DIR, prop.getCurrentDirectory()+"\\inbox\\");
+		String outboxDirectory = prop.getString(IProperties.OUTBOX_DIR, prop.getCurrentDirectory()+"\\outbox\\");
+		return new MessageRepository(inboxDirectory, outboxDirectory);
 	}
 
 }

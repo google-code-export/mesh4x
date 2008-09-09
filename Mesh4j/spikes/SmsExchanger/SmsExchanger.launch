@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.jdt.launching.localJavaApplication">
+<stringAttribute key="bad_container_name" value="\SmsExchanger\launch_cfg"/>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+<listEntry value="/SmsExchanger/src/org/sms/exchanger/SmsExchanger.java"/>
+</listAttribute>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+<listEntry value="1"/>
+</listAttribute>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.sms.exchanger.SmsExchanger"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="SmsExchanger"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Doutbox.directory=c:\Clarius\mesh4x\test\smscl\outbox\ -Dinbox.directory=c:\Clarius\mesh4x\test\smscl\inbox\ -Dport=COM23"/>
+</launchConfiguration>
