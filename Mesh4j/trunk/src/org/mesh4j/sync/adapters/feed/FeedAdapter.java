@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
+import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 import org.mesh4j.sync.AbstractSyncAdapter;
@@ -161,7 +162,7 @@ public class FeedAdapter extends AbstractSyncAdapter{
 	
 	private void flush() {
 		try {
-			XMLWriter writer = new XMLWriter(new FileWriter(this.feedFile));
+			XMLWriter writer = new XMLWriter(new FileWriter(this.feedFile), OutputFormat.createPrettyPrint());
 			this.feedWriter.write(writer, this.feed);	
 		} catch (Exception e) {
 			throw new MeshException(e);

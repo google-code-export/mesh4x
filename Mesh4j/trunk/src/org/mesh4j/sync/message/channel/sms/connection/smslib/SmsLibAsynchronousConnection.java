@@ -51,13 +51,14 @@ public class SmsLibAsynchronousConnection implements ISmsConnection, IInboundMes
 		this.messageEncoding = messageEncoding;
 		
 		SerialModemGateway gateway = new SerialModemGateway(gatewayId, comPort, baudRate, manufacturer, model);
-		gateway.setInboundNotification(this);
-		
+				
 		gateway.setOutbound(true);
 		gateway.setInbound(true);
 		gateway.setSimPin("0000");
 		
 		this.service = new Service();
+		this.service.setInboundNotification(this);
+		this.service.setOutboundNotification(this);
 		this.service.addGateway(gateway);
 	}
 
