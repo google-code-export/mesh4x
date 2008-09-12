@@ -8,10 +8,11 @@ public interface IMessageRepository {
 	
 	void close();
 
-	List<Message> getAllMessagesToSend();
-	
-	boolean addMessage(Message message);
+	List<Message> getIncommingMessages();
+	boolean addIncommingMessage(Message message);
+	boolean deleteIncommingMessage(Message message);
 
-	boolean deleteMessage(Message message);
-
+	List<Message> getOutcommingMessages();
+	boolean addOutcommingMessage(Message message);
+	boolean deleteOutcommingMessage(Message message);
 }

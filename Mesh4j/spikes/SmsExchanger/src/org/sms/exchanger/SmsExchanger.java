@@ -1,6 +1,7 @@
 package org.sms.exchanger;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -23,12 +24,16 @@ public class SmsExchanger implements IMessageNotification{
 	public final static String READ_MODE_ALL = "all";
 	public final static String READ_MODE_UNREAD = "unread";
 	public final static String READ_MODE_READ = "read";
+	private final static Object SEMAPHORE = new Object();
 	
 	// MODEL VARIABLEs
 	protected ISmsConnection connection;
 	protected IMessageRepository messageRepository;
 	protected boolean forceRead = false;
 	protected String readMode = READ_MODE_UNREAD;
+	private String port;
+	private String msgSrcPort;
+	private String msgDstport;
 	
 	// BUSINESS METHODS
 	
@@ -36,15 +41,25 @@ public class SmsExchanger implements IMessageNotification{
 		super();
 	}
 
+	public SmsExchanger(String port, String msgSrcPort, String msgDstPort) {
+		super();
+		this.port = port;
+		this.msgSrcPort = msgSrcPort;
+		this.msgDstport = msgDstPort;
+	}
+
+	
 	public static void main(String[] args) {
-		
 		SmsExchanger sms = new SmsExchanger();
-		
+		sms.startUp(args);
+	}
+
+	public void startUp(String[] args) {
 		try{
-			PropertiesProvider prop = sms.loadProperties(args);
+			PropertiesProvider prop = this.loadProperties(args);
 			
-			sms.startUp(prop);
-			sms.schedulerWatcher(prop);
+			this.startUp(prop);
+			this.scheduleWatcher(prop);
 		} catch (Exception e){
 			LOGGER.error(e.getMessage(), e);
 		}
@@ -52,10 +67,19 @@ public class SmsExchanger implements IMessageNotification{
 
 	private PropertiesProvider loadProperties(String[] args) throws IOException{
 		PropertiesProvider prop = new PropertiesProvider();
+		if(this.port != null){
+			prop.setStringProperty(IProperties.SMS_PORT, this.port);
+		}
+		if(this.msgSrcPort != null){
+			prop.setStringProperty(IProperties.SMS_MESSAGE_SOURCE_PORT, this.msgSrcPort);
+		}
+		if(this.msgDstport != null){
+			prop.setStringProperty(IProperties.SMS_MESSAGE_DESTINATION_PORT, this.msgDstport);
+		}
 		return prop;
 	}
 
-	private void schedulerWatcher(PropertiesProvider prop) {
+	private void scheduleWatcher(PropertiesProvider prop) {
 		int period = prop.getInt(IProperties.WATCHER_PERIOD, IProperties.WATCHER_PERIOD_DEFAULT_VALUE);
 		
 		TimerTask task = new TimerTask(){
@@ -86,11 +110,13 @@ public class SmsExchanger implements IMessageNotification{
 	}
 	
 	protected void sendAndReceiveMessages() {
-		this.sendMessages();
-		if(this.forceRead){
-			boolean ok = this.receiveMessages();
-			if(ok){
-				this.forceRead = false;				
+		synchronized (SEMAPHORE) {
+			this.sendMessages();
+			if(this.forceRead){
+				boolean ok = this.receiveMessages();
+				if(ok){
+					this.forceRead = false;				
+				}
 			}
 		}
 	}
@@ -113,7 +139,7 @@ public class SmsExchanger implements IMessageNotification{
 			
 			for (Message message : messages) {
 				try{
-					this.messageRepository.addMessage(message);
+					this.messageRepository.addIncommingMessage(message);
 				} catch(Exception e){
 					LOGGER.error(e.getMessage(), e);
 				}
@@ -127,7 +153,7 @@ public class SmsExchanger implements IMessageNotification{
 
 	protected void sendMessages() {
 		try{
-			List<Message> messages = this.messageRepository.getAllMessagesToSend();
+			List<Message> messages = this.messageRepository.getOutcommingMessages();
 			for (Message message : messages) {
 				try {
 					this.connection.sendMessage(message);
@@ -143,12 +169,12 @@ public class SmsExchanger implements IMessageNotification{
 
 	@Override
 	public boolean notifyReceiveMessage(Message message) {
-		return this.messageRepository.addMessage(message);
+		return this.messageRepository.addIncommingMessage(message);
 	}
 
 	@Override
 	public boolean notifySentMessage(Message message) {
-		return this.messageRepository.deleteMessage(message);		
+		return this.messageRepository.deleteOutcommingMessage(message);		
 	}
 	
 	public void synchronousExecution(PropertiesProvider prop) {
@@ -170,5 +196,23 @@ public class SmsExchanger implements IMessageNotification{
 	@Override
 	public void notifyStartUpGateway() {
 		this.forceRead = true;
+	}
+
+	public void send(List<String> messageTexts, String smsNumber) {
+		synchronized (SEMAPHORE) {
+			Message message;
+			for (String messageText : messageTexts) {
+				message = new Message(this.connection.newMessageID(), smsNumber, messageText, new Date());
+				this.messageRepository.addOutcommingMessage(message);	
+			}
+		}
+	}
+
+	public List<Message> getIncommingMessages() {
+		return this.messageRepository.getIncommingMessages();
+	}
+	
+	public void deleteIncommingMessage(Message message) {
+		this.messageRepository.deleteIncommingMessage(message);
 	}
 }

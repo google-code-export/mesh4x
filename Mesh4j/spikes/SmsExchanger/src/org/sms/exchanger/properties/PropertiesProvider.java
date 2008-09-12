@@ -1,5 +1,6 @@
 package org.sms.exchanger.properties;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
@@ -25,11 +26,15 @@ public class PropertiesProvider {
 	}
 	
 	private void initialize(String resourceName) throws IOException {
-		FileReader reader = new FileReader(resourceName);
 		Properties prop = new Properties();
-		prop.load(reader);
+		
+		File file = new File(resourceName);
+		if(file.exists()){
+			FileReader reader = new FileReader(resourceName);
+			prop.load(reader);
+			reader.close();
+		}		
 		this.properties = prop;
-		reader.close();
 	}
 
 	public int getInt(String key, String defaultValue) {
@@ -77,5 +82,9 @@ public class PropertiesProvider {
 	
 	public String getCurrentDirectory(){
 		return System.getProperty("user.dir");
+	}
+
+	public void setStringProperty(String key, String value) {
+		this.properties.setProperty(key, value);		
 	}
 }

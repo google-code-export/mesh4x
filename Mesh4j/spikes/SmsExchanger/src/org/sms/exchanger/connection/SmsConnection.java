@@ -35,13 +35,15 @@ public class SmsConnection implements ISmsConnection, IInboundMessageNotificatio
 	private int baudRate;
 	private String manufacturer;
 	private String model;
+	private int messageSrcPort;
+	private int messageDstPort;
 	
 	protected IMessageNotification messageNotification;
 	private SerialModemGateway gateway; 
 	protected Service srv;
 
 	// BUSINESS METHODS
-	public SmsConnection(String comPort, int baudRate, IMessageNotification messageNotification) {
+	public SmsConnection(String comPort, int baudRate, int messageSrcPort, int messageDstPort, IMessageNotification messageNotification) {
 		super();
 		this.comPort = comPort;
 		this.baudRate = baudRate;
@@ -49,6 +51,8 @@ public class SmsConnection implements ISmsConnection, IInboundMessageNotificatio
 		this.manufacturer = "generic";
 		this.model = "generic";
 		this.messageNotification = messageNotification;
+		this.messageSrcPort = messageSrcPort;
+		this.messageDstPort = messageDstPort;
 	}
 
 	public void connect() throws Exception{
@@ -73,8 +77,11 @@ public class SmsConnection implements ISmsConnection, IInboundMessageNotificatio
 	public void sendMessage(Message message) throws Exception {
 		OutboundMessage msg = new OutboundMessage(message.getNumber(), message.getText());
 		msg.setStatusReport(true);
+		msg.setSrcPort(this.messageSrcPort);
+		msg.setDstPort(this.messageDstPort);
 		boolean wasSent = this.srv.sendMessage(msg);
 		if(wasSent){
+			System.out.println(msg.toString());
 			this.messageNotification.notifySentMessage(message);
 		}
 //		OutboundMessage msg = new OutboundMessage(message.getNumber(), message.getText());
@@ -104,6 +111,7 @@ public class SmsConnection implements ISmsConnection, IInboundMessageNotificatio
 		ArrayList<Message> result = new ArrayList<Message>();
 		Message message;
 		for (InboundMessage inboundMessage : msgList) {
+System.out.println(inboundMessage.toString());
 			if(!(inboundMessage instanceof InboundBinaryMessage)){
 				message = createMessage(inboundMessage.getOriginator(), inboundMessage.getText(), inboundMessage.getDate());
 				result.add(message);
@@ -113,15 +121,16 @@ public class SmsConnection implements ISmsConnection, IInboundMessageNotificatio
 	}
 	
 	protected Message createMessage(String originator, String text, Date date){
-		return new Message(newGUID(), originator, text, date);
+		return new Message(newMessageID(), originator, text, date);
 	}
 	
-	private String newGUID(){
+	public String newMessageID(){
 		return UUID.randomUUID().toString();
 	}
 	
 	@Override
 	public void process(String gatewayId, MessageTypes msgType, InboundMessage msg) {
+System.out.println(msg.toString());
 		if(MessageTypes.INBOUND.equals(msgType)){
 			Message message = createMessage(msg.getOriginator(), msg.getText(), msg.getDate());
 			boolean ok = this.messageNotification.notifyReceiveMessage(message);
@@ -137,6 +146,7 @@ public class SmsConnection implements ISmsConnection, IInboundMessageNotificatio
 
 	@Override
 	public void process(String gatewayId, OutboundMessage msg) {
+System.out.println(msg.toString());
 		if(MessageStatuses.SENT.equals(msg.getMessageStatus())){
 			Message message = createMessage(msg.getRecipient(), msg.getText(), msg.getDate());
 			this.messageNotification.notifySentMessage(message);

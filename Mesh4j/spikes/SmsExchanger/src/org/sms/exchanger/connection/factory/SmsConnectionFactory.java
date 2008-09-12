@@ -15,7 +15,9 @@ public class SmsConnectionFactory implements ISmsConnectionFactory {
 			throw new IllegalArgumentException("portName");
 		}
 		int baudRate = prop.getInt(IProperties.SMS_BAUD_RATE, IProperties.SMS_BAUD_RATE_DEFAULT_VALUE);
-		return new SmsConnection(portName, baudRate, messageNotification);
+		int dstPort = prop.getInt(IProperties.SMS_MESSAGE_DESTINATION_PORT, IProperties.SMS_MESSAGE_DESTINATION_PORT_VALUE);
+		int srcPort = prop.getInt(IProperties.SMS_MESSAGE_SOURCE_PORT, IProperties.SMS_MESSAGE_SOURCE_PORT_VALUE);
+		return new SmsConnection(portName, baudRate, srcPort, dstPort, messageNotification);
 	}
 
 }

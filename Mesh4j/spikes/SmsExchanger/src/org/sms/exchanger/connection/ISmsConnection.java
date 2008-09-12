@@ -17,5 +17,7 @@ public interface ISmsConnection {
 	List<Message> getUnreadMessages() throws Exception;
 
 	List<Message> getAllMessages() throws Exception;
+	
+	String newMessageID();
 
 }

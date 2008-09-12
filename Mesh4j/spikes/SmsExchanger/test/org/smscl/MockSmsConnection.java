@@ -55,4 +55,9 @@ public class MockSmsConnection implements ISmsConnection {
 		return result;
 	}
 
+	@Override
+	public String newMessageID() {
+		return String.valueOf(System.nanoTime());
+	}
+
 }

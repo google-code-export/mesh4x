@@ -28,52 +28,64 @@ public class MessageRepository implements IMessageRepository {
 		this.inboxDirectory = inboxDirectory;
 		this.outboxDirectory = outboxDirectory;
 	}
-
+	
 	@Override
-	public boolean addMessage(Message message) {
-		try{
-			String fileName = getInboxMessageFileName(message);
-			FileWriter fw = new FileWriter(fileName);
-			try{
-				fw.write(message.getText());
-				fw.flush();
-			} finally {
-				fw.close();
-			}
-			return true;
-		} catch(Exception e){
-			LOGGER.error(e.getMessage(), e);
-			return false;
-		}			
-	}
-
-	private String getInboxMessageFileName(Message message) {
-		return this.inboxDirectory + message.getNumber() + "_" + message.getID() + ".txt";
-	}
-	private String getOutboxMessageFileName(Message message) {
-		return this.outboxDirectory + message.getNumber() + "_" + message.getID() + ".txt";
+	public void open() {
+		File fileOutboxDir = new File(this.outboxDirectory);
+		if(!fileOutboxDir.exists()){
+			fileOutboxDir.mkdirs();
+		}
+		
+		File fileInboxDir = new File(this.inboxDirectory);
+		if(!fileInboxDir.exists()){
+			fileInboxDir.mkdirs();
+		}
 	}
 	
-	private String readFile(File file) throws Exception{
-		InputStream is = new FileInputStream(file);		
-		StringBuffer result = new StringBuffer();
-		Reader reader = new InputStreamReader(is);
-		char[] cb = new char[2048];
-
-		int amtRead = reader.read(cb);
-		while (amtRead > 0) {
-			result.append(cb, 0, amtRead);
-			amtRead = reader.read(cb);
-		}
-		reader.close();
-		return result.toString();
+	@Override
+	public List<Message> getOutcommingMessages() {
+		return this.getMessages(this.outboxDirectory);
 	}
 
 	@Override
-	public List<Message> getAllMessagesToSend() {
+	public boolean addOutcommingMessage(Message message) {
+		String fileName = getInboxMessageFileName(message);
+		return addFile(fileName, message.getText());	
+	}
+	
+	@Override
+	public boolean deleteOutcommingMessage(Message message) {
+		String fileName = this.getOutboxMessageFileName(message);
+		return deleteFile(fileName);
+		
+	}
+	
+	@Override
+	public List<Message> getIncommingMessages() {
+		return this.getMessages(this.inboxDirectory);
+	}
+	
+	@Override
+	public boolean addIncommingMessage(Message message) {
+		String fileName = getInboxMessageFileName(message);
+		return addFile(fileName, message.getText());			
+	}
+	
+	@Override
+	public boolean deleteIncommingMessage(Message message) {
+		String fileName = this.getInboxMessageFileName(message);
+		return deleteFile(fileName);
+	}
+
+	@Override
+	public void close() {
+		// nothing to do
+	}
+
+	private List<Message> getMessages(String dir) {
 		List<Message> result = new ArrayList<Message>();
 		
-		File fileDir = new File(this.outboxDirectory);
+		File fileDir = new File(dir);
 		File[] files = fileDir.listFiles();
 		for (File file : files) {
 			if(file.isFile()){
@@ -93,11 +105,8 @@ public class MessageRepository implements IMessageRepository {
 		Collections.sort(result, MessageComparator.INSTANCE);
 		return result;
 	}
-
-
-	@Override
-	public boolean deleteMessage(Message message) {
-		String fileName = this.getOutboxMessageFileName(message);
+	
+	private boolean deleteFile(String fileName) {
 		File file = new File(fileName);
 		if(file.exists()){
 			file.delete();
@@ -105,24 +114,46 @@ public class MessageRepository implements IMessageRepository {
 		} else {
 			return false;
 		}
-		
 	}
-
-	@Override
-	public void open() {
-		File fileOutboxDir = new File(this.outboxDirectory);
-		if(!fileOutboxDir.exists()){
-			fileOutboxDir.mkdirs();
-		}
-		
-		File fileInboxDir = new File(this.inboxDirectory);
-		if(!fileInboxDir.exists()){
-			fileInboxDir.mkdirs();
+	
+	private boolean addFile(String fileName, String content) {
+		try{
+			
+			FileWriter fw = new FileWriter(fileName);
+			try{
+				fw.write(content);
+				fw.flush();
+			} finally {
+				fw.close();
+			}
+			return true;
+		} catch(Exception e){
+			LOGGER.error(e.getMessage(), e);
+			return false;
 		}
 	}
 	
-	@Override
-	public void close() {
-		// nothing to do
+	private String getInboxMessageFileName(Message message) {
+		return this.inboxDirectory + message.getNumber() + "_" + message.getID() + ".txt";
 	}
+
+	private String getOutboxMessageFileName(Message message) {
+		return this.outboxDirectory + message.getNumber() + "_" + message.getID() + ".txt";
+	}
+	
+	private String readFile(File file) throws Exception{
+		InputStream is = new FileInputStream(file);		
+		StringBuffer result = new StringBuffer();
+		Reader reader = new InputStreamReader(is);
+		char[] cb = new char[2048];
+
+		int amtRead = reader.read(cb);
+		while (amtRead > 0) {
+			result.append(cb, 0, amtRead);
+			amtRead = reader.read(cb);
+		}
+		reader.close();
+		return result.toString();
+	}
+
 }

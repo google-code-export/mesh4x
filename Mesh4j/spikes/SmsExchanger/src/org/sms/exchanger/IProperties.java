@@ -14,6 +14,11 @@ public interface IProperties {
 	public static final String SMS_BAUD_RATE = "baud.rate";
 	public static final String SMS_BAUD_RATE_DEFAULT_VALUE = "115200";
 	
+	public static final String SMS_MESSAGE_DESTINATION_PORT = "msg.dest.port";
+	public static final String SMS_MESSAGE_DESTINATION_PORT_VALUE = "-1";
+	public static final String SMS_MESSAGE_SOURCE_PORT = "msg.src.port";
+	public static final String SMS_MESSAGE_SOURCE_PORT_VALUE = "-1";	
+	
 	public static final String INBOX_DIR = "inbox.directory";
 	public static final String OUTBOX_DIR = "outbox.directory";
 }
