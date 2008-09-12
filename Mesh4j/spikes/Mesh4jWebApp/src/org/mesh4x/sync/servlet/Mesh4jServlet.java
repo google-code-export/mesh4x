@@ -80,6 +80,7 @@ public abstract class Mesh4jServlet extends HttpServlet {
 
 		String message = null;
 		try{
+			feed.setPayload(this.adapter.getFeed().getPayload().createCopy());
 			message = this.adapter.getFeedWriter().writeAsXml(feed);
 		} catch(Exception e){
 			e.printStackTrace();
@@ -110,6 +111,7 @@ System.out.println("POST REQUEST: " + xml);
 				List<Item> conflicts = syncEngine.synchronize();
 				
 				Feed feedResult = new Feed(conflicts);
+				feedResult.setPayload(this.adapter.getFeed().getPayload().createCopy());
 				message = this.adapter.getFeedWriter().writeAsXml(feedResult);
 			} catch(Exception e){
 				e.printStackTrace();

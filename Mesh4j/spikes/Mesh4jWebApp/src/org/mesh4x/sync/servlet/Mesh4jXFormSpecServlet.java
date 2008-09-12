@@ -16,7 +16,7 @@ public class Mesh4jXFormSpecServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-		FileReader reader = new FileReader("c:\\xFromSpec.xml");
+		FileReader reader = new FileReader("C:\\Clarius\\temp\\xFromSpec.xml");
 		String message = readData(reader);	
 		if(message == null){
 			message = "ERROR";
