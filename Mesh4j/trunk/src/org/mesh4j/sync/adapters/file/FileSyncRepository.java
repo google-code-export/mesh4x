@@ -2,7 +2,6 @@ package org.mesh4j.sync.adapters.file;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -84,7 +83,7 @@ public class FileSyncRepository implements ISyncRepository{
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<SyncInfo> getAll(Date since, String entityName) {
+	public List<SyncInfo> getAll(String entityName) {
 		ArrayList<SyncInfo> result = new ArrayList<SyncInfo>(); 
 		
 		List<Element> syncInfoElements = syncDocument.getRootElement().elements();

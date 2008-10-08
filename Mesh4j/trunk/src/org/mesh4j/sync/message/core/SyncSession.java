@@ -48,6 +48,10 @@ public class SyncSession implements ISyncSession{
 		return open;
 	}
 
+	public IMessageSyncAdapter getSyncAdapter(){
+		return this.syncAdapter;
+	}
+	
 	@Override
 	public String getSourceId(){
 		return this.syncAdapter.getSourceId();

@@ -126,6 +126,12 @@ public class SyncSessionFactory implements ISyncSessionFactory {
 			List<Item> currentSyncSnapshot, List<Item> lastSyncSnapshot,
 			List<String> conflicts, List<String> acks) {
 		
+		Guard.argumentNotNull(currentSyncSnapshot, "currentSyncSnapshot");
+		Guard.argumentNotNull(lastSyncSnapshot, "lastSyncSnapshot");
+		Guard.argumentNotNull(acks, "acks");
+		Guard.argumentNotNull(conflicts, "conflicts");
+
+		
 		IMessageSyncAdapter syncAdapter = getSource(sourceId);
 		if(syncAdapter == null){
 			return null;

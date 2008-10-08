@@ -1,7 +1,13 @@
 package org.mesh4j.sync.message.core.repository;
 
+import java.io.File;
+
 import org.mesh4j.sync.adapters.dom.DOMAdapter;
+import org.mesh4j.sync.adapters.feed.Feed;
+import org.mesh4j.sync.adapters.feed.FeedAdapter;
+import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.adapters.kml.KMLDOMLoaderFactory;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.message.IMessageSyncAdapter;
 import org.mesh4j.sync.message.core.InMemoryMessageSyncAdapter;
 import org.mesh4j.sync.message.core.MessageSyncAdapter;
@@ -31,15 +37,18 @@ public class MessageSyncAdapterFactory implements IMessageSyncAdapterFactory {
 			String kmlFileName = this.baseDirectory + sourceId;
 			DOMAdapter kmlAdapter = new DOMAdapter(KMLDOMLoaderFactory.createDOMLoader(kmlFileName, identityProvider));
 			syncAdapter = new MessageSyncAdapter(sourceId, identityProvider, kmlAdapter);
-			return syncAdapter;
 		} else {
 			if(this.supportInMemoryAdapter){
-				InMemoryMessageSyncAdapter inMemoryAdapter = new InMemoryMessageSyncAdapter(sourceId);
-				return inMemoryAdapter;
+				syncAdapter = new InMemoryMessageSyncAdapter(sourceId);
 			} else {
-				return null;
+				String feedFileName = this.baseDirectory + sourceId;
+				File feedFile = new File(feedFileName);
+				Feed feed = new Feed();
+				FeedAdapter feedAdapter = new FeedAdapter(feedFile, RssSyndicationFormat.INSTANCE, identityProvider, IdGenerator.INSTANCE, feed);
+				syncAdapter = new MessageSyncAdapter(sourceId, identityProvider, feedAdapter);
 			}
 		}
+		return syncAdapter;
 	}
 
 }

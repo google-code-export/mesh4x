@@ -1,6 +1,5 @@
 package org.mesh4j.sync.adapters.split;
 
-import java.util.Date;
 import java.util.List;
 
 import org.mesh4j.sync.adapters.SyncInfo;
@@ -13,7 +12,7 @@ public interface ISyncRepository {
 
 	SyncInfo get(String syncId);
 
-	List<SyncInfo> getAll(Date since, String entityName);
+	List<SyncInfo> getAll(String entityName);
 
 	String newSyncID(IContent content);
 }

@@ -152,4 +152,8 @@ public class MessageSyncProtocol implements IMessageSyncProtocol {
 			syncAware.beginSync(syncSession);
 		}
 	}
+	
+	public IBeginSyncMessageProcessor getInitialMessage(){
+		return this.initialMessage;
+	}
 }

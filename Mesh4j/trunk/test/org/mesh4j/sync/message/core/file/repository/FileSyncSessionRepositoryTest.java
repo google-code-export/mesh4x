@@ -10,14 +10,18 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.junit.Test;
 import org.mesh4j.sync.adapters.feed.Feed;
+import org.mesh4j.sync.adapters.feed.FeedAdapter;
 import org.mesh4j.sync.adapters.feed.FeedReader;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.message.IEndpoint;
+import org.mesh4j.sync.message.IMessageSyncAdapter;
 import org.mesh4j.sync.message.ISyncSession;
 import org.mesh4j.sync.message.channel.sms.SmsEndpoint;
 import org.mesh4j.sync.message.channel.sms.core.SmsEndpointFactory;
 import org.mesh4j.sync.message.core.InMemoryMessageSyncAdapter;
+import org.mesh4j.sync.message.core.MessageSyncAdapter;
+import org.mesh4j.sync.message.core.SyncSession;
 import org.mesh4j.sync.message.core.repository.ISyncSessionFactory;
 import org.mesh4j.sync.message.core.repository.MessageSyncAdapterFactory;
 import org.mesh4j.sync.message.core.repository.SyncSessionFactory;
@@ -1109,7 +1113,7 @@ public class FileSyncSessionRepositoryTest {
 	}
 	
 	@Test
-	public void shouldReadAllSessionsDiscartSessionWhenNoSourceIsRegistered(){
+	public void shouldReadAllSessionsReturnsSessionsWithFeedAdapterWhenNoSourceIsRegistered(){
 		File file = new File(this.getClass().getResource("example2_current.xml").getFile());
 		
 		SyncSessionFactory syncSessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(file.getParent()+"\\", false));
@@ -1118,13 +1122,13 @@ public class FileSyncSessionRepositoryTest {
 		
 		List<ISyncSession> all = repo.readAllSessions();
 		Assert.assertNotNull(all);
-		Assert.assertEquals(0, all.size());
-		Assert.assertEquals(0, syncSessionFactory.getAll().size());
+		Assert.assertEquals(9, all.size());
+		Assert.assertEquals(9, syncSessionFactory.getAll().size());
 		
 	}
 	
 	@Test
-	public void shouldDontReadSessionWhenSourceIsNotRegistered(){
+	public void shouldSessionUseFeedAdapterWhenSourceIsNotRegistered(){
 		String sessionId = "example2";
 		File file = new File(this.getClass().getResource(sessionId + "_current.xml").getFile());
 
@@ -1133,6 +1137,9 @@ public class FileSyncSessionRepositoryTest {
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(file.getParent()+"\\", sessionFactory);
 				
 		ISyncSession syncSessionLoaded = repo.readSession(sessionId);
-		Assert.assertNull(syncSessionLoaded);
+		IMessageSyncAdapter adapter = ((SyncSession)syncSessionLoaded).getSyncAdapter();
+		Assert.assertEquals(MessageSyncAdapter.class.getName(), adapter.getClass().getName());
+		Assert.assertEquals(FeedAdapter.class.getName(), ((MessageSyncAdapter)adapter).getSyncAdapter().getClass().getName());
+
 	}
 }

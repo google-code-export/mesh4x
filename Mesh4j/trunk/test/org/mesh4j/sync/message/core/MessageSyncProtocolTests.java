@@ -5,6 +5,8 @@ import java.util.Date;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.mesh4j.sync.adapters.feed.FeedAdapter;
+import org.mesh4j.sync.message.IMessageSyncAdapter;
 import org.mesh4j.sync.message.IMessageSyncProtocol;
 import org.mesh4j.sync.message.ISyncSession;
 import org.mesh4j.sync.message.channel.sms.SmsEndpoint;
@@ -81,11 +83,19 @@ public class MessageSyncProtocolTests {
 	}
 	
 	@Test
-	public void shouldBeginSyncIsDiscartedWhenSourceIDIsNotRegistered(){
+	public void shouldBeginSyncUseFeedAdapterWhenSourceIDIsNotRegistered(){
 		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory("", false);
 		SyncSessionFactory syncSessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);
 		MessageSyncProtocol syncProtocol = new MessageSyncProtocol("M", new BeginSyncMessageProcessor(null, null), new CancelSyncMessageProcessor(), new MockSyncSessionRepository(syncSessionFactory), new ArrayList<IMessageProcessor>());
-		Assert.assertNull(syncProtocol.beginSync("123", new SmsEndpoint("123"), true));
+		
+		SmsEndpoint endpoint = new SmsEndpoint("123");
+		Message message = (Message)syncProtocol.beginSync("123", endpoint, true);
+		String sourceId = syncProtocol.getInitialMessage().getSourceId(message.getData());
+		SyncSession syncSession = (SyncSession)syncProtocol.getSyncSession(sourceId, endpoint);
+
+		Assert.assertEquals(MessageSyncAdapter.class.getName(), syncSession.getSyncAdapter().getClass().getName());
+		Assert.assertEquals(FeedAdapter.class.getName(), ((MessageSyncAdapter)syncSession.getSyncAdapter()).getSyncAdapter().getClass().getName());
+
 	}
 	
 	@Test

@@ -1,12 +1,20 @@
 package org.mesh4j.sync.message.core.repository;
 
+import java.util.ArrayList;
+
 import org.junit.Assert;
 import org.junit.Test;
+import org.mesh4j.sync.adapters.feed.FeedAdapter;
+import org.mesh4j.sync.adapters.feed.FeedSyncTest;
 import org.mesh4j.sync.id.generator.IdGenerator;
+import org.mesh4j.sync.message.IMessageSyncAdapter;
 import org.mesh4j.sync.message.ISyncSession;
 import org.mesh4j.sync.message.channel.sms.SmsEndpoint;
 import org.mesh4j.sync.message.channel.sms.core.SmsEndpointFactory;
 import org.mesh4j.sync.message.core.InMemoryMessageSyncAdapter;
+import org.mesh4j.sync.message.core.MessageSyncAdapter;
+import org.mesh4j.sync.message.core.SyncSession;
+import org.mesh4j.sync.model.Item;
 
 
 public class SyncSessionFactoryTests {
@@ -42,15 +50,23 @@ public class SyncSessionFactoryTests {
 	}
 
 	@Test
-	public void shouldCreateSessionReturnsNullWhenSourceIDDoesNotRegistered(){
+	public void shouldCreateSessionReturnsFeedAdapterWhenSourceIDDoesNotRegistered(){
 		SyncSessionFactory factory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory("", false));
-		Assert.assertNull(factory.createSession("1", 0, "123", new SmsEndpoint("123"), true));
+		
+		IMessageSyncAdapter adapter = ((SyncSession)factory.createSession("1", 0, "123", new SmsEndpoint("123"), true)).getSyncAdapter();
+		Assert.assertEquals(MessageSyncAdapter.class.getName(), adapter.getClass().getName());
+		Assert.assertEquals(FeedAdapter.class.getName(), ((MessageSyncAdapter)adapter).getSyncAdapter().getClass().getName());
+		
 	}
 	
 	@Test
-	public void shouldBasicCreateSessionReturnsNullWhenSourceIDDoesNotRegistered(){
+	public void shouldBasicCreateSessionReturnsFeedAdapterWhenSourceIDDoesNotRegistered(){
 		SyncSessionFactory factory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory("", false));
-		Assert.assertNull(factory.createSession("1", 0, "123", null, true, true, null, null, null, null,null));
+		
+		IMessageSyncAdapter adapter = ((SyncSession)factory.createSession("1", 0, "123", "333", true, true, null, new ArrayList<Item>(), new ArrayList<Item>(), new ArrayList<String>(), new ArrayList<String>())).getSyncAdapter();
+		Assert.assertEquals(MessageSyncAdapter.class.getName(), adapter.getClass().getName());
+		Assert.assertEquals(FeedAdapter.class.getName(), ((MessageSyncAdapter)adapter).getSyncAdapter().getClass().getName());
+
 	}
 
 

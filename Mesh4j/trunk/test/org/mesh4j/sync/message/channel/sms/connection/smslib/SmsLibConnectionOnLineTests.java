@@ -51,8 +51,8 @@ public class SmsLibConnectionOnLineTests implements ISmsConnectionInboundOutboun
 		client.setMessageReceiver(messageReceiver);
 		client.startService();
 		
-		//client.sendMessage("01136544867", "nokia 950");
-		//client.sendMessage("01136540460", "nokia 750");
+		//client.sendMessage("01136544867", "nokia 950"); +541136544867
+		//client.sendMessage("01136540460", "nokia 750"); +541136540460
 		//client.sendMessage("0111555627633", "motorola");
 		String smsNumber = "01136544867";
 		

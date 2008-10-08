@@ -175,7 +175,7 @@ public class SplitAdapter extends AbstractSyncAdapter implements ISyncAware{
 		ArrayList<Item> result = new ArrayList<Item>();
 		
 		List<IContent> contents = contentAdapter.getAll(since);
-		List<SyncInfo> syncInfos = syncRepository.getAll(since, contentAdapter.getType());
+		List<SyncInfo> syncInfos = syncRepository.getAll(contentAdapter.getType());
 		
 		Map<String, SyncInfo> syncInfoAsMapByEntity = this.makeSyncMapByEntity(syncInfos);
  
@@ -208,11 +208,18 @@ public class SplitAdapter extends AbstractSyncAdapter implements ISyncAware{
 
 		}
 
+		Item item;
+		IContent content;
 		for (SyncInfo syncInfo : syncInfos) {
-			updateSyncIfChanged(null, syncInfo);
-			Item item = new Item(
-				new NullContent(syncInfo.getSyncId()),
-				syncInfo.getSync());
+			content = contentAdapter.get(syncInfo.getId());
+			updateSyncIfChanged(content, syncInfo);
+			if(syncInfo.isDeleted()){
+				item = new Item(
+						new NullContent(syncInfo.getSyncId()),
+						syncInfo.getSync());
+			} else {
+				item = new Item(content, syncInfo.getSync());
+			}
 			
 			if(appliesFilter(item, since, filter)){
 				result.add(item);
