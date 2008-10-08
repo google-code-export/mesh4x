@@ -1,6 +1,7 @@
 package org.mesh4x.sync.servlet;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -15,6 +16,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.dom4j.Element;
+import org.dom4j.io.OutputFormat;
+import org.dom4j.io.XMLWriter;
 import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.adapters.InMemorySyncAdapter;
 import org.mesh4j.sync.adapters.feed.Feed;
@@ -105,6 +108,9 @@ System.out.println("POST REQUEST: " + xml);
 		if(xml != null){
 			try{
 				Feed feedLoaded = this.adapter.getFeedReader().read(xml);
+				
+				Mesh4jLastPostReceivedServlet.writeFeed(feedLoaded);
+				
 				InMemorySyncAdapter inMemoryAdapter = new InMemorySyncAdapter("feed", NullIdentityProvider.INSTANCE, feedLoaded.getItems());
 				
 				SyncEngine syncEngine = new SyncEngine(this.adapter, inMemoryAdapter);

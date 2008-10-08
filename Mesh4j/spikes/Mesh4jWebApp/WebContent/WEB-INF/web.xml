@@ -74,6 +74,30 @@
 		<url-pattern>/feeds/XForms</url-pattern>
 	</servlet-mapping>
 	
+	<servlet>
+		<description>
+		</description>
+		<display-name>Mesh4jServletLastPostReceived</display-name>
+		<servlet-name>Mesh4jServletLastPostReceived</servlet-name>
+		<servlet-class>org.mesh4x.sync.servlet.Mesh4jLastPostReceivedServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Mesh4jServletLastPostReceived</servlet-name>
+		<url-pattern>/feeds/lastPost</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<description>
+		</description>
+		<display-name>Mesh4jXFormExample</display-name>
+		<servlet-name>Mesh4jXFormExample</servlet-name>
+		<servlet-class>org.mesh4x.sync.servlet.Mesh4jXFormExampleServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Mesh4jXFormExample</servlet-name>
+		<url-pattern>/feeds/Mesh4jXFormExample</url-pattern>
+	</servlet-mapping>
+	
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
 		<welcome-file>index.htm</welcome-file>
