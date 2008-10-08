@@ -32,8 +32,8 @@ public class SmsExchanger implements IMessageNotification{
 	protected boolean forceRead = false;
 	protected String readMode = READ_MODE_UNREAD;
 	private String port;
-	private String msgSrcPort;
-	private String msgDstport;
+	private int msgSrcPort = -1;
+	private int msgDstport = -1;
 	
 	// BUSINESS METHODS
 	
@@ -41,7 +41,7 @@ public class SmsExchanger implements IMessageNotification{
 		super();
 	}
 
-	public SmsExchanger(String port, String msgSrcPort, String msgDstPort) {
+	public SmsExchanger(String port, int msgSrcPort, int msgDstPort) {
 		super();
 		this.port = port;
 		this.msgSrcPort = msgSrcPort;
@@ -68,13 +68,13 @@ public class SmsExchanger implements IMessageNotification{
 	private PropertiesProvider loadProperties(String[] args) throws IOException{
 		PropertiesProvider prop = new PropertiesProvider();
 		if(this.port != null){
-			prop.setStringProperty(IProperties.SMS_PORT, this.port);
+			prop.setProperty(IProperties.SMS_PORT, this.port);
 		}
-		if(this.msgSrcPort != null){
-			prop.setStringProperty(IProperties.SMS_MESSAGE_SOURCE_PORT, this.msgSrcPort);
+		if(this.msgSrcPort != -1){
+			prop.setProperty(IProperties.SMS_MESSAGE_SOURCE_PORT, String.valueOf(this.msgSrcPort));
 		}
-		if(this.msgDstport != null){
-			prop.setStringProperty(IProperties.SMS_MESSAGE_DESTINATION_PORT, this.msgDstport);
+		if(this.msgDstport != -1){
+			prop.setProperty(IProperties.SMS_MESSAGE_DESTINATION_PORT, String.valueOf(this.msgDstport));
 		}
 		return prop;
 	}

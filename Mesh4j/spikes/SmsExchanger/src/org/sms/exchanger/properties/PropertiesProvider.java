@@ -84,7 +84,7 @@ public class PropertiesProvider {
 		return System.getProperty("user.dir");
 	}
 
-	public void setStringProperty(String key, String value) {
+	public void setProperty(String key, String value) {
 		this.properties.setProperty(key, value);		
 	}
 }
