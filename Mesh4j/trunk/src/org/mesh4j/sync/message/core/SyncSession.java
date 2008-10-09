@@ -29,6 +29,7 @@ public class SyncSession implements ISyncSession{
 	private HashMap<String, Item> conflicts = new HashMap<String, Item>();
 	private ArrayList<String> acks = new ArrayList<String>();
 	private boolean fullProtocol = false;
+	private boolean cancelled = false;
 
 	// METHODS
 	public SyncSession(String sessionId, int version, IMessageSyncAdapter syncAdapter, IEndpoint target, boolean fullProtocol) {
@@ -41,6 +42,7 @@ public class SyncSession implements ISyncSession{
 		this.syncAdapter = syncAdapter;
 		this.target = target;
 		this.fullProtocol = fullProtocol;
+		this.cancelled = cancelled;
 	}
 
 	@Override
@@ -141,6 +143,7 @@ public class SyncSession implements ISyncSession{
 		this.conflicts = new HashMap<String, Item>();
 		this.acks = new ArrayList<String>();
 		this.cache = new HashMap<String, Item>();
+		this.cancelled = false;
 		
 		if(this.syncAdapter instanceof ISyncAware){
 			((ISyncAware)this.syncAdapter).beginSync();
@@ -160,6 +163,7 @@ public class SyncSession implements ISyncSession{
 	public void endSync(Date sinceDate){
 		this.lastSyncDate = sinceDate;
 		this.open = false;
+		this.cancelled = false;
 		
 		this.snapshot = new ArrayList<Item>(this.cache.values());
 	}
@@ -167,6 +171,7 @@ public class SyncSession implements ISyncSession{
 	@Override
 	public void cancelSync() {
 		this.open = false;
+		this.cancelled = true;
 		this.conflicts = new HashMap<String, Item>();
 		this.acks = new ArrayList<String>();
 		this.cache = new HashMap<String, Item>();
@@ -244,5 +249,13 @@ public class SyncSession implements ISyncSession{
 
 	public void addToSnapshot(Item item) {
 		this.snapshot.add(item);		
+	}
+	
+	public boolean isCancelled() {
+		return cancelled;
+	}
+
+	public void setCancelled(boolean isCancelled) {
+		this.cancelled = isCancelled;
 	}
 }

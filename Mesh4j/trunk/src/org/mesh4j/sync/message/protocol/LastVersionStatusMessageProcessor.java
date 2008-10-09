@@ -17,6 +17,8 @@ import org.mesh4j.sync.validations.Guard;
 
 public class LastVersionStatusMessageProcessor implements IMessageProcessor{
 	
+	public static final String MESSAGE_TYPE = "3";
+	
 	// MODEL VARIABLES
 	private GetForMergeMessageProcessor getForMergeMessage;
 	private MergeWithACKMessageProcessor mergeWithACKMessage;
@@ -52,7 +54,7 @@ public class LastVersionStatusMessageProcessor implements IMessageProcessor{
 
 	@Override
 	public String getMessageType() {
-		return "3";
+		return MESSAGE_TYPE;
 	}
 
 	@Override

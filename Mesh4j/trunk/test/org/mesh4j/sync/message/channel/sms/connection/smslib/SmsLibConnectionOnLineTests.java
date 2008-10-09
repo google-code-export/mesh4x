@@ -110,4 +110,11 @@ public class SmsLibConnectionOnLineTests implements ISmsConnectionInboundOutboun
 	public void receiveACK(String batchId) {
 		System.out.println("receiveACK " + batchId);		
 	}
+
+
+	@Override
+	public void notifyReceiveMessageWasNotProcessed(String endpointId, String message,
+			Date date) {
+		System.out.println("receive error - msg was not processed endpoint: " + endpointId + " message: "+ message + " date: " + date);
+	}
 }

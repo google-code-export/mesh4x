@@ -122,7 +122,7 @@ public class SyncSessionFactory implements ISyncSessionFactory {
 
 	@Override
 	public ISyncSession createSession(String sessionId, int version, String sourceId,
-			String endpointId, boolean fullProtocol, boolean isOpen, Date lastSyncDate,
+			String endpointId, boolean fullProtocol, boolean isOpen, boolean isCancelled, Date lastSyncDate,
 			List<Item> currentSyncSnapshot, List<Item> lastSyncSnapshot,
 			List<String> conflicts, List<String> acks) {
 		
@@ -140,6 +140,7 @@ public class SyncSessionFactory implements ISyncSessionFactory {
 		SyncSession session = new SyncSession(sessionId, version, syncAdapter, this.endpointFactory.makeIEndpoint(endpointId), fullProtocol);
 		session.setOpen(isOpen);
 		session.setLastSyncDate(lastSyncDate);
+		session.setCancelled(isCancelled);
 		
 		for (Item item : currentSyncSnapshot) {
 			session.add(item);	

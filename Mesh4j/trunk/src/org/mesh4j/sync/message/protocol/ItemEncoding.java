@@ -37,6 +37,7 @@ public class ItemEncoding implements IItemEncoding, IProtocolConstants{
 		String header = st.nextToken();
 			
 		String syncID = header.substring(0, 36);
+		
 		boolean deleted = "T".equals(header.substring(36, 37));
 		
 		Sync sync = new Sync(syncID);
@@ -137,6 +138,12 @@ public class ItemEncoding implements IItemEncoding, IProtocolConstants{
 	@Override
 	public int[] calculateDiffBlockHashCodes(String xml) {
 		return DiffUtils.calculateBlockHashCodes(xml, this.diffBlockSize);
+	}
+
+	public static String getSyncID(String data) {
+		StringTokenizer st = new StringTokenizer(data, ELEMENT_SEPARATOR);
+		String header = st.nextToken();			
+		return header.substring(0, 36);
 	}
 
 }

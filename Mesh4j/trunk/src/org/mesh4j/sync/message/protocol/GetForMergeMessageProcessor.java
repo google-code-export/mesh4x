@@ -16,6 +16,8 @@ import org.mesh4j.sync.validations.Guard;
 
 public class GetForMergeMessageProcessor implements IMessageProcessor {
 
+	public static final String MESSAGE_TYPE = "4";
+	
 	// MODEL VARIABLES
 	private MergeMessageProcessor mergeMessage;
 	private IItemEncoding itemEncoding;
@@ -30,7 +32,7 @@ public class GetForMergeMessageProcessor implements IMessageProcessor {
 
 	@Override
 	public String getMessageType() {
-		return "4";
+		return MESSAGE_TYPE;
 	}
 	
 	public IMessage createMessage(ISyncSession syncSession, String syncID) {
@@ -64,7 +66,7 @@ public class GetForMergeMessageProcessor implements IMessageProcessor {
 	public List<IMessage> process(ISyncSession syncSession, IMessage message) {
 		
 		if(syncSession.isOpen() && syncSession.getVersion() == message.getSessionVersion() && this.getMessageType().equals(message.getMessageType())){						
-			String syncId = decodeSyncID(message.getData());
+			String syncId = getSyncID(message.getData());
 			int[] diffHashCodes = decodeDiffHashCodes(message.getData());
 				
 			List<IMessage> response = new ArrayList<IMessage>();
@@ -113,7 +115,7 @@ public class GetForMergeMessageProcessor implements IMessageProcessor {
 		}
 	}
 
-	private String decodeSyncID(String data) {
+	public static String getSyncID(String data) {
 		StringTokenizer st = new StringTokenizer(data, IProtocolConstants.ELEMENT_SEPARATOR);
 		return st.nextToken();
 	}

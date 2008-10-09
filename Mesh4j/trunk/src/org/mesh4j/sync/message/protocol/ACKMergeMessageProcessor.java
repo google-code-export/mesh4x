@@ -14,6 +14,8 @@ import org.mesh4j.sync.validations.Guard;
 
 public class ACKMergeMessageProcessor implements IMessageProcessor {
 
+	public static final String MESSAGE_TYPE = "7";
+	
 	// MODEL VARIABLES
 	private IItemEncoding itemEncoding;
 	private EndSyncMessageProcessor endMessage;
@@ -27,7 +29,7 @@ public class ACKMergeMessageProcessor implements IMessageProcessor {
 	
 	@Override
 	public String getMessageType() {
-		return "7";
+		return MESSAGE_TYPE;
 	}
 
 	@Override

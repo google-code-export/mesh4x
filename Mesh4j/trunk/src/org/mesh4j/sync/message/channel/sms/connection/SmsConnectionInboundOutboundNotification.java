@@ -31,4 +31,9 @@ public class SmsConnectionInboundOutboundNotification implements ISmsConnectionI
 		LOGGER.info("Error - Send to: " + endpointId + " message: " + message);		
 	}
 
+	@Override
+	public void notifyReceiveMessageWasNotProcessed(String endpointId, String message, Date date) {
+		LOGGER.info("Error - msg was not processed - Receive from: " + endpointId + " message: " + message);		
+	}
+
 }

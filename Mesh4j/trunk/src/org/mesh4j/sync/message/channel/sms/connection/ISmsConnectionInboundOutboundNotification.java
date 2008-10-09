@@ -12,5 +12,7 @@ public interface ISmsConnectionInboundOutboundNotification {
 
 	void notifySendMessage(String endpointId, String message);
 
+	void notifyReceiveMessageWasNotProcessed(String endpointId, String message, Date date);
+
 
 }

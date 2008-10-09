@@ -18,6 +18,8 @@ import org.mesh4j.sync.validations.Guard;
 
 public class BeginSyncMessageProcessor implements IMessageProcessor, IBeginSyncMessageProcessor {
 
+	public static final String MESSAGE_TYPE = "1";
+	
 	// MODEL VARIABLES
 	private NoChangesMessageProcessor noChanges;
 	private LastVersionStatusMessageProcessor lastVersionStatus;
@@ -32,7 +34,7 @@ public class BeginSyncMessageProcessor implements IMessageProcessor, IBeginSyncM
 	
 	@Override
 	public String getMessageType() {
-		return "1";
+		return MESSAGE_TYPE;
 	}
 
 	@Override

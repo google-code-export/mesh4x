@@ -89,18 +89,6 @@ public class MessageSyncEngineConcurrentSessionsTests implements IMessageSyncAwa
 		return new MessageSyncEngine(syncProtocol, channel);		
 	}
 	
-	@Override
-	public synchronized void beginSync(ISyncSession syncSession) {
-		System.out.println("Begin sync: " + syncSession.getSessionId());
-		this.syncSessionCount = this.syncSessionCount + 1;
-	}
-
-	@Override
-	public synchronized void endSync(ISyncSession syncSession, List<Item> conflicts) {
-		System.out.println("End sync: " + syncSession.getSessionId());
-		this.syncSessionCount = this.syncSessionCount - 1;
-	}
-	
 	private List<Item> createItems(int max) {
 		List<Item> items = new ArrayList<Item>();
 		for (int i = 0; i < max; i++) {
@@ -117,6 +105,60 @@ public class MessageSyncEngineConcurrentSessionsTests implements IMessageSyncAwa
 		Sync sync = new Sync(syncID, "jmt", TestHelper.now(), false);
 		Item item = new Item(content, sync);
 		return item;
+	}
+
+	
+	// IMessageSyncAware protocol
+	
+	@Override
+	public synchronized void beginSync(ISyncSession syncSession) {
+		System.out.println("Begin sync: " + syncSession.getSessionId());
+		this.syncSessionCount = this.syncSessionCount + 1;
+	}
+
+	@Override
+	public synchronized void endSync(ISyncSession syncSession, List<Item> conflicts) {
+		System.out.println("End sync: " + syncSession.getSessionId());
+		this.syncSessionCount = this.syncSessionCount - 1;
+	}
+	
+	@Override
+	public void beginSyncWithError(ISyncSession syncSession) {
+		System.out.println("Error Begin sync: " + syncSession.getSessionId());		
+	}
+
+	@Override
+	public void notifyCancelSync(ISyncSession syncSession) {
+		System.out.println("Cancel sync: " + syncSession.getSessionId());
+		this.syncSessionCount = this.syncSessionCount - 1;
+	}
+
+	@Override
+	public void notifyCancelSyncErrorSyncSessionNotOpen(String sourceId, IEndpoint endpoint) {
+		System.out.println("Cancel sync error: " + sourceId + " endpoint: " + endpoint.getEndpointId());
+	}
+
+	@Override
+	public void notifyInvalidMessageProtocol(IMessage message) {
+		System.out.println("Invalid message protocol: " + message.getSessionId());		
+	}
+
+	@Override
+	public void notifyInvalidProtocolMessageOrder(IMessage message) {
+		System.out.println("Invalid protocol message order: " + message.getSessionId());		
+	}
+
+	@Override
+	public void notifyMessageProcessed(IMessage message, List<IMessage> response) {
+		System.out.println("Protocol message processed: " + message.getMessageType());
+		for (IMessage message2 : response) {
+			System.out.println("	response: " + message2.getMessageType());	
+		}
+	}
+
+	@Override
+	public void notifySessionCreationError(IMessage message, String sourceId) {
+		System.out.println("Problem with session creation: " + message.getSessionId() + " source: " + sourceId);
 	}
 
 }

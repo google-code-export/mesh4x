@@ -14,8 +14,6 @@ public interface IMessageSyncProtocol {
 	
 	List<IMessage> processMessage(IMessage message);
 
-	IMessage cancelSync(String sourceId, IEndpoint target);
-
 	ISyncSession getSyncSession(String sourceId, IEndpoint target);
 
 	void registerSourceIfAbsent(IMessageSyncAdapter adapter);
@@ -25,5 +23,9 @@ public interface IMessageSyncProtocol {
 	void notifyBeginSync(ISyncSession syncSession);
 
 	void registerSyncAware(IMessageSyncAware syncAware);
+
+	
+	IMessage cancelSync(String sourceId, IEndpoint target);
+	void cancelSync(ISyncSession syncSession);
 
 }

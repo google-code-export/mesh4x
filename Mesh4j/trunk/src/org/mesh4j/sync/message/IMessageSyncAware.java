@@ -11,4 +11,17 @@ public interface IMessageSyncAware {
 	
 	void endSync(ISyncSession syncSession, List<Item> conflicts);
 
+	void beginSyncWithError(ISyncSession syncSession);
+
+	void notifyInvalidMessageProtocol(IMessage message);
+
+	void notifyMessageProcessed(IMessage message, List<IMessage> response);
+
+	void notifyInvalidProtocolMessageOrder(IMessage message);
+
+	void notifySessionCreationError(IMessage message, String sourceId);
+
+	void notifyCancelSync(ISyncSession syncSession);
+
+	void notifyCancelSyncErrorSyncSessionNotOpen(String sourceId, IEndpoint endpoint);
 }

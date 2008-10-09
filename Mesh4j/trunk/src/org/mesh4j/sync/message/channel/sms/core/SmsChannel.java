@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.mesh4j.sync.message.IEndpoint;
 import org.mesh4j.sync.message.IMessage;
 import org.mesh4j.sync.message.IMessageReceiver;
 import org.mesh4j.sync.message.IMessageSyncAware;
@@ -174,6 +175,7 @@ public class SmsChannel implements ISmsChannel, IMessageSyncAware {
 		this.sender.send(messages, endpoint);
 	}
 	
+	// IMEssageSyncAdapter protocol
 	@Override
 	public void beginSync(ISyncSession syncSession) {
 		// nothing to do		
@@ -183,5 +185,33 @@ public class SmsChannel implements ISmsChannel, IMessageSyncAware {
 	public void endSync(ISyncSession syncSession, List<Item> conflicts) {
 		this.sender.purgeBatches(syncSession.getSessionId(), syncSession.getVersion());
 		this.receiver.purgeBatches(syncSession.getSessionId(), syncSession.getVersion());
+	}
+	
+	public void beginSyncWithError(ISyncSession syncSession) {
+		// nothing to do		
+	}
+
+	public void notifyInvalidMessageProtocol(IMessage message) {
+		// nothing to do		
+	}
+
+	public void notifyInvalidProtocolMessageOrder(IMessage message) {
+		// nothing to do		
+	}
+
+	public void notifyMessageProcessed(IMessage message, List<IMessage> response) {
+		// nothing to do		
+	}
+
+	public void notifySessionCreationError(IMessage message, String sourceId) {
+		// nothing to do		
+	}
+
+	public void notifyCancelSync(ISyncSession syncSession) {
+		// nothing to do		
+	}
+
+	public void notifyCancelSyncErrorSyncSessionNotOpen(String sourceId, IEndpoint endpoint) {
+		// nothing to do		
 	}
 }

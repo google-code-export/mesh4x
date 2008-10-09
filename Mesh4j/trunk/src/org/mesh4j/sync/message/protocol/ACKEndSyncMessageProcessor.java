@@ -14,6 +14,8 @@ import org.mesh4j.sync.validations.Guard;
 
 public class ACKEndSyncMessageProcessor implements IMessageProcessor {
 
+	public static final String MESSAGE_TYPE = "9";
+	
 	// MODEL VARIABLES
 	private IMessageSyncProtocol messageSyncProtocol;
 	
@@ -24,7 +26,7 @@ public class ACKEndSyncMessageProcessor implements IMessageProcessor {
 
 	@Override
 	public String getMessageType() {
-		return "9";
+		return MESSAGE_TYPE;
 	}
 	
 	public IMessage createMessage(ISyncSession syncSession, Date sinceDate){

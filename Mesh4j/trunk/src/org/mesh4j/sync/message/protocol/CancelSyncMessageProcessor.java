@@ -12,6 +12,13 @@ import org.mesh4j.sync.validations.Guard;
 
 public class CancelSyncMessageProcessor implements ICancelSyncMessageProcessor {
 
+	// CONSTANTS 
+	public final static String MESSAGE_TYPE = "0";
+	
+	// MODEL VARIABLES
+	private IMessageSyncProtocol messageSyncProtocol;
+	
+	// BUSINESS METHODS
 	@Override
 	public IMessage createMessage(ISyncSession syncSession) {
 		Guard.argumentNotNull(syncSession, "syncSession");
@@ -30,15 +37,19 @@ public class CancelSyncMessageProcessor implements ICancelSyncMessageProcessor {
 	
 	@Override
 	public String getMessageType() {
-		return "0";
+		return MESSAGE_TYPE;
 	}
 
 	@Override
 	public List<IMessage> process(ISyncSession syncSession, IMessage message) {
 		if(!syncSession.isOpen() && syncSession.getVersion() == message.getSessionVersion() && this.getMessageType().equals(message.getMessageType())){
-			syncSession.cancelSync();
+			this.messageSyncProtocol.cancelSync(syncSession);
 		}
 		return IMessageSyncProtocol.NO_RESPONSE;
+	}
+	
+	public void setMessageSyncProtocol(IMessageSyncProtocol messageSyncProtocol) {
+		this.messageSyncProtocol = messageSyncProtocol;
 	}
 
 }

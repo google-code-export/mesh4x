@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.mesh4j.sync.IFilter;
 import org.mesh4j.sync.message.channel.sms.ISmsConnection;
 import org.mesh4j.sync.message.channel.sms.ISmsReceiver;
 import org.mesh4j.sync.message.channel.sms.SmsEndpoint;
@@ -36,19 +37,21 @@ public class SmsLibAsynchronousConnection implements ISmsConnection, IInboundMes
 	private int maxMessageLenght = 140;
 	private IMessageEncoding messageEncoding = NonMessageEncoding.INSTANCE;
 	private ISmsReceiver messageReceiver = null;
+	private IFilter<String> filter = null;
 			
 	// BUSINESS METHODS
 	public SmsLibAsynchronousConnection(String gatewayId, String comPort, int baudRate, String manufacturer, String model) {
-		this(gatewayId, comPort, baudRate, manufacturer, model, 140, NonMessageEncoding.INSTANCE, null);
+		this(gatewayId, comPort, baudRate, manufacturer, model, 140, NonMessageEncoding.INSTANCE, null, null);
 	}
 	
 	public SmsLibAsynchronousConnection(String gatewayId, String comPort, int baudRate, String manufacturer, String model, 
-			int maxMessageLenght, IMessageEncoding messageEncoding, ISmsConnectionInboundOutboundNotification smsConnectionNotification) {
+			int maxMessageLenght, IMessageEncoding messageEncoding, ISmsConnectionInboundOutboundNotification smsConnectionNotification, IFilter<String> filter) {
 		super();
 
 		this.smsConnectionNotification = smsConnectionNotification;
 		this.maxMessageLenght = maxMessageLenght;
 		this.messageEncoding = messageEncoding;
+		this.filter = filter;
 		
 		SerialModemGateway gateway = new SerialModemGateway(gatewayId, comPort, baudRate, manufacturer, model);
 				
@@ -94,16 +97,34 @@ public class SmsLibAsynchronousConnection implements ISmsConnection, IInboundMes
 	}
 
 	
-	private void notifyReceiveMessage(String endpointId, String message, Date date) {
+	private boolean notifyReceiveMessage(String endpointId, String message, Date date) {
 		if(LOGGER.isInfoEnabled()){
 			LOGGER.info("SMS - Receive msg from: " + endpointId + " message: " + message );
 		}
-		if(this.smsConnectionNotification != null){
-			this.smsConnectionNotification.notifyReceiveMessage(endpointId, message, date);
-		}
+
 		if(this.messageReceiver != null){
-			this.messageReceiver.receiveSms(new SmsEndpoint(endpointId), message, date);
+			if(this.isValidMessage(message)){
+				if(this.smsConnectionNotification != null){
+					this.smsConnectionNotification.notifyReceiveMessage(endpointId, message, date);
+				}
+				this.messageReceiver.receiveSms(new SmsEndpoint(endpointId), message, date);
+				return true;
+			} else {
+				if(this.smsConnectionNotification != null){
+					this.smsConnectionNotification.notifyReceiveMessageWasNotProcessed(endpointId, message, date);
+				}		
+				return false;
+			}
+		} else {
+			if(this.smsConnectionNotification != null){
+				this.smsConnectionNotification.notifyReceiveMessageWasNotProcessed(endpointId, message, date);
+			}
+			return false;
 		}
+	}
+
+	private boolean isValidMessage(String message) {
+		return this.filter == null || this.filter.applies(message);
 	}
 
 	private void notifyReceiveMessageError(String endpointId, String message, Date date) {
@@ -152,12 +173,13 @@ public class SmsLibAsynchronousConnection implements ISmsConnection, IInboundMes
 	private void processMessage(String endpointId, String text, Date date, InboundMessage smsMessage) {
 		if(!(text == null || text.isEmpty())){
 			try{
-				this.notifyReceiveMessage(
+				boolean ok = this.notifyReceiveMessage(
 						endpointId, 
 						text,
 						date);
-					
-				this.service.deleteMessage(smsMessage);
+				if(ok){
+					this.service.deleteMessage(smsMessage);
+				}
 			} catch(RuntimeException re){
 				LOGGER.info(re.getMessage());
 				this.notifyReceiveMessageError(

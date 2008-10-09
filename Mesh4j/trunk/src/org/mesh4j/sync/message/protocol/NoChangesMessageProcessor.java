@@ -14,6 +14,8 @@ import org.mesh4j.sync.validations.Guard;
 
 public class NoChangesMessageProcessor implements IMessageProcessor {
 
+	public static final String MESSAGE_TYPE = "2";
+	
 	// MODEL VARIABLES
 	private EndSyncMessageProcessor endMessage;
 	private MergeWithACKMessageProcessor mergeWithACKMessage;
@@ -27,7 +29,7 @@ public class NoChangesMessageProcessor implements IMessageProcessor {
 	
 	@Override
 	public String getMessageType() {
-		return "2";
+		return MESSAGE_TYPE;
 	}
 
 	@Override

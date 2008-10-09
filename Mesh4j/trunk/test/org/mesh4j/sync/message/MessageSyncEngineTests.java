@@ -616,6 +616,7 @@ public class MessageSyncEngineTests {
 		IMessageSyncProtocol protocol = new IMessageSyncProtocol(){
 			@Override public IMessage beginSync(String sourceId, IEndpoint endpoint, boolean fullProtocol) {return null;}
 			@Override public IMessage cancelSync(String sourceId, IEndpoint target) {return msg; }
+			@Override public void cancelSync(ISyncSession syncSession) {Assert.fail();}
 			@Override public boolean isValidMessageProtocol(IMessage message) {return false;}
 			@Override public List<IMessage> processMessage(IMessage message) {return null;}
 			@Override public ISyncSession getSyncSession(String sourceId, IEndpoint target) {return null;}
@@ -650,6 +651,7 @@ public class MessageSyncEngineTests {
 			@Override public void endSync(ISyncSession syncSession, Date date) {}
 			@Override public void notifyBeginSync(ISyncSession syncSession) {}
 			@Override public void registerSyncAware(IMessageSyncAware syncAware) {}
+			@Override public void cancelSync(ISyncSession syncSession) {Assert.fail();}
 		};
 		new MessageSyncEngine(protocol, null);
 	}

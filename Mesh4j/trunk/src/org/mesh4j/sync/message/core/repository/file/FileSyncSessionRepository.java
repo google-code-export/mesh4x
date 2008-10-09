@@ -47,6 +47,7 @@ public class FileSyncSessionRepository implements ISyncSessionRepository{
 	public static final String ATTRIBUTE_SOURCE_ID = "sourceId";
 	public static final String ATTRIBUTE_SESSION_ID = "sessionId";
 	public static final String ATTRIBUTE_VERSION = "sessionVersion";
+	public static final String ATTRIBUTE_CANCELLED = "cancelled";
 
 	public final static String ELEMENT_SYNC_SESSION = "session";
 	public final static String ELEMENT_ACK = "ack";
@@ -196,7 +197,10 @@ public class FileSyncSessionRepository implements ISyncSessionRepository{
 	@Override
 	public void cancel(ISyncSession syncSession) {
 		Guard.argumentNotNull(syncSession, "syncSession");
-		this.deleteCurrentSessionFile(syncSession.getSessionId());		
+		//this.deleteCurrentSessionFile(syncSession.getSessionId());
+		File file = getCurrentSessionFile(syncSession.getSessionId());
+		List<Item> items = syncSession.getCurrentSnapshot();
+		write(syncSession, file, items, false);
 	}
 
 	private String getSessionID(Element payload) {
@@ -238,6 +242,7 @@ public class FileSyncSessionRepository implements ISyncSessionRepository{
 		elementSession.addAttribute(ATTRIBUTE_LAST_SYNC_DATE, syncSession.getLastSyncDate() == null ? "" : DateHelper.formatRFC822(syncSession.getLastSyncDate()));
 		elementSession.addAttribute(ATTRIBUTE_FULL, syncSession.isFullProtocol() ? "true" : "false");
 		elementSession.addAttribute(ATTRIBUTE_OPEN, syncSession.isOpen() ? "true" : "false");
+		elementSession.addAttribute(ATTRIBUTE_CANCELLED, syncSession.isCancelled() ? "true" : "false");
 		
 		if(!isSnapshot){
 			List<String> pendingAcks = syncSession.getAllPendingACKs();
@@ -267,6 +272,7 @@ public class FileSyncSessionRepository implements ISyncSessionRepository{
 		Date date = (dateAsString == null || dateAsString.length() == 0) ? null : DateHelper.parseRFC822(dateAsString);
 		boolean isFull = Boolean.valueOf(syncElement.attributeValue(ATTRIBUTE_FULL));
 		boolean isOpen = Boolean.valueOf(syncElement.attributeValue(ATTRIBUTE_OPEN));
+		boolean isCancelled = Boolean.valueOf(syncElement.attributeValue(ATTRIBUTE_CANCELLED));
 		
 		List<String> acks = new ArrayList<String>();
 		List<Element> ackElements = syncElement.elements(ELEMENT_ACK);
@@ -280,7 +286,7 @@ public class FileSyncSessionRepository implements ISyncSessionRepository{
 			conflicts.add(conflictElement.getText());
 		}
 		
-		ISyncSession syncSession = this.sessionFactory.createSession(sessionId, version, sourceId, endpointId, isFull, isOpen, date, currentSyncSnapshot, lastSyncSnapshot, conflicts, acks);
+		ISyncSession syncSession = this.sessionFactory.createSession(sessionId, version, sourceId, endpointId, isFull, isOpen, isCancelled, date, currentSyncSnapshot, lastSyncSnapshot, conflicts, acks);
 		return syncSession;
 	}
 	

@@ -750,7 +750,9 @@ public class FileSyncSessionRepositoryTest {
 		Assert.assertTrue(file.exists());
 		
 		repo.cancel(syncSession);
-		Assert.assertFalse(file.exists());
+		Assert.assertTrue(file.exists());
+		
+		Assert.assertFalse(repo.readSession(syncSession.getSessionId()).isCancelled());
 	}
 
 	@Test(expected=IllegalArgumentException.class)

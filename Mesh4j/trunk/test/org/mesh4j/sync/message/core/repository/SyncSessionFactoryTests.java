@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mesh4j.sync.adapters.feed.FeedAdapter;
-import org.mesh4j.sync.adapters.feed.FeedSyncTest;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.message.IMessageSyncAdapter;
 import org.mesh4j.sync.message.ISyncSession;
@@ -63,7 +62,7 @@ public class SyncSessionFactoryTests {
 	public void shouldBasicCreateSessionReturnsFeedAdapterWhenSourceIDDoesNotRegistered(){
 		SyncSessionFactory factory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory("", false));
 		
-		IMessageSyncAdapter adapter = ((SyncSession)factory.createSession("1", 0, "123", "333", true, true, null, new ArrayList<Item>(), new ArrayList<Item>(), new ArrayList<String>(), new ArrayList<String>())).getSyncAdapter();
+		IMessageSyncAdapter adapter = ((SyncSession)factory.createSession("1", 0, "123", "333", true, true, false, null, new ArrayList<Item>(), new ArrayList<Item>(), new ArrayList<String>(), new ArrayList<String>())).getSyncAdapter();
 		Assert.assertEquals(MessageSyncAdapter.class.getName(), adapter.getClass().getName());
 		Assert.assertEquals(FeedAdapter.class.getName(), ((MessageSyncAdapter)adapter).getSyncAdapter().getClass().getName());
 

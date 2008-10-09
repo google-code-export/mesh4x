@@ -94,6 +94,11 @@ public class EndSyncMessageProcessorTests {
 				Assert.fail();
 				return null;
 			}
+			
+			@Override
+			public void cancelSync(ISyncSession syncSession) {
+				Assert.fail();				
+			}
 
 			@Override
 			public void endSync(ISyncSession syncSession, Date date) {

@@ -48,28 +48,40 @@ public class MessageSyncProtocol implements IMessageSyncProtocol {
 	
 	@Override
 	public List<IMessage> processMessage(IMessage message) {		
-		ISyncSession syncSession = this.repository.getSession(message.getSessionId());
-		if(syncSession == null){
-			if(this.initialMessage.getMessageType().equals(message.getMessageType())){
-				String sourceId = this.initialMessage.getSourceId(message.getData());
-				syncSession = this.repository.createSession(message.getSessionId(), message.getSessionVersion(), sourceId, message.getEndpoint(), false);
-				if(syncSession == null){
+	
+		if(this.isValidMessageProtocol(message)){
+			ISyncSession syncSession = this.repository.getSession(message.getSessionId());
+			if(syncSession == null){
+				if(this.initialMessage.getMessageType().equals(message.getMessageType())){
+					String sourceId = this.initialMessage.getSourceId(message.getData());
+					syncSession = this.repository.createSession(message.getSessionId(), message.getSessionVersion(), sourceId, message.getEndpoint(), false);
+					if(syncSession == null){
+						this.notifySessionCreationError(message, sourceId);
+						return NO_RESPONSE;
+					}
+				} else {
+					this.notifyInvalidProtocolMessageOrder(message);
 					return NO_RESPONSE;
 				}
 			} else {
-				return NO_RESPONSE;
+				if(syncSession.isCancelled()){
+					this.notifyInvalidProtocolMessageOrder(message);
+					return NO_RESPONSE;
+				}
 			}
-		}
-		
-		List<IMessage> response = new ArrayList<IMessage>();
-		if(this.isValidMessageProtocol(message)){
+			
+			List<IMessage> response = new ArrayList<IMessage>();
 			for (IMessageProcessor processor : this.messageProcessors) {
 				List<IMessage> msgResponse = processor.process(syncSession, message);
 				response.addAll(msgResponse);
 			}
 			this.persistChanges(syncSession);
+			this.notifyMessageProcessed(message, response);
+			return response;
+		} else {
+			this.notifyInvalidMessageProtocol(message);
+			return NO_RESPONSE;
 		}
-		return response;
 	}
 	
 	
@@ -77,20 +89,30 @@ public class MessageSyncProtocol implements IMessageSyncProtocol {
 	public IMessage cancelSync(String sourceId, IEndpoint endpoint) {
 		ISyncSession syncSession = this.repository.getSession(sourceId, endpoint.getEndpointId());
 		if(syncSession == null || !syncSession.isOpen()){
+			this.notifyCancelSyncErrorSyncSessionNotOpen(sourceId, endpoint);
 			Guard.throwsException("ERROR_MESSAGE_SYNC_SESSION_IS_NOT_OPEN", sourceId, endpoint.getEndpointId());
 		}
 		
 		IMessage message = this.cancelMessage.createMessage(syncSession);
-		this.repository.cancel(syncSession);
+		this.cancelSync(syncSession);
 		return message;
 	}
-
+	
+	public void cancelSync(ISyncSession syncSession) {
+		syncSession.cancelSync();
+		this.persistChanges(syncSession);
+		this.notifyCancelSync(syncSession);
+	}
 
 	private synchronized void persistChanges(ISyncSession syncSession) {
 		if(syncSession.isOpen()){
 			this.repository.flush(syncSession);
 		} else {
-			this.repository.snapshot(syncSession);
+			if(syncSession.isCancelled()){
+				this.repository.cancel(syncSession);
+			} else {
+				this.repository.snapshot(syncSession);
+			}
 		}
 	}
 
@@ -98,7 +120,8 @@ public class MessageSyncProtocol implements IMessageSyncProtocol {
 	public IMessage beginSync(String sourceId, IEndpoint endpoint, boolean fullProtocol) {
 		ISyncSession syncSession = this.repository.getSession(sourceId, endpoint.getEndpointId());
 		if(syncSession != null && syncSession.isOpen()){
-			Guard.throwsException("ERROR_MESSAGE_SYNC_SESSION_IS_OPEN", sourceId, endpoint.getEndpointId());
+			this.notifyBeginSyncError(syncSession);
+			return null;
 		}
 		if(syncSession == null){
 			syncSession = this.repository.createSession(IdGenerator.INSTANCE.newID(), 0, sourceId, endpoint, fullProtocol);
@@ -150,6 +173,54 @@ public class MessageSyncProtocol implements IMessageSyncProtocol {
 	public void notifyBeginSync(ISyncSession syncSession) {
 		for (IMessageSyncAware syncAware : this.syncAwareList) {
 			syncAware.beginSync(syncSession);
+		}
+	}
+	
+	public void notifyBeginSyncError(ISyncSession syncSession) {
+		for (IMessageSyncAware syncAware : this.syncAwareList) {
+			syncAware.beginSyncWithError(syncSession);
+		}
+	}
+
+	public void notifyInvalidMessageProtocol(IMessage message) {
+		for (IMessageSyncAware syncAware : this.syncAwareList) {
+			syncAware.notifyInvalidMessageProtocol(message);
+		}	
+	}
+
+
+	public void notifyMessageProcessed(IMessage message,
+			List<IMessage> response) {
+		for (IMessageSyncAware syncAware : this.syncAwareList) {
+			syncAware.notifyMessageProcessed(message, response);
+		}
+	}
+
+
+	public void notifyInvalidProtocolMessageOrder(IMessage message) {
+		for (IMessageSyncAware syncAware : this.syncAwareList) {
+			syncAware.notifyInvalidProtocolMessageOrder(message);
+		}
+	}
+
+
+	public void notifySessionCreationError(IMessage message, String sourceId) {
+		for (IMessageSyncAware syncAware : this.syncAwareList) {
+			syncAware.notifySessionCreationError(message, sourceId);
+		}
+	}
+	
+
+	public void notifyCancelSync(ISyncSession syncSession) {
+		for (IMessageSyncAware syncAware : this.syncAwareList) {
+			syncAware.notifyCancelSync(syncSession);
+		}
+	}
+
+
+	public void notifyCancelSyncErrorSyncSessionNotOpen(String sourceId, IEndpoint endpoint) {
+		for (IMessageSyncAware syncAware : this.syncAwareList) {
+			syncAware.notifyCancelSyncErrorSyncSessionNotOpen(sourceId, endpoint);
 		}
 	}
 	

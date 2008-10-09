@@ -27,6 +27,7 @@ public class MockSyncSession implements ISyncSession{
 	private ArrayList<String> acks = new ArrayList<String>();
 	private ArrayList<String> conflicts = new ArrayList<String>();
 	private boolean fullProtocol = true;
+	private boolean cancelled = false;
 	
 	public MockSyncSession(Date sinceDate) {
 		this(sinceDate, null, IdGenerator.INSTANCE.newID());
@@ -55,14 +56,22 @@ public class MockSyncSession implements ISyncSession{
 
 	@Override public void add(Item item) {}
 	@Override public void addConflict(String syncID) {this.conflicts.add(syncID);}
-	@Override public void beginSync() {this.beginWasCalled = true;}
-	@Override public void beginSync(Date sinceDate, int version) {this.beginWasCalled=true;}
-	@Override public void cancelSync() {}
+	@Override public void beginSync() {
+		this.beginWasCalled = true;
+		this.cancelled = false;}
+	@Override public void beginSync(Date sinceDate, int version) {
+		this.beginWasCalled=true;
+		this.cancelled = false;
+	}
+	@Override public void cancelSync() {
+		this.cancelled = true;
+	}
 	@Override public void delete(String syncID, String by, Date when) {
 		this.item.getSync().delete(by, when);
 	}	
 	@Override public void endSync(Date sinceDate) {
 		this.sinceDate = sinceDate;
+		this.cancelled = false;
 		this.endSyncWasCalled = true;
 	}
 	@Override public Item get(String syncId) {return item;}
@@ -154,5 +163,9 @@ public class MockSyncSession implements ISyncSession{
 	@Override
 	public int getVersion() {
 		return this.sessionVersion;
+	}
+	@Override
+	public boolean isCancelled() {
+		return this.cancelled;
 	}
 }

@@ -137,6 +137,11 @@ public class ACKEndSyncMessageProcessorTests {
 			public void registerSyncAware(IMessageSyncAware syncAware) {
 				Assert.fail();
 			}
+
+			@Override
+			public void cancelSync(ISyncSession syncSession) {
+				Assert.fail();				
+			}
 		};
 		
 		Item item = new Item(new NullContent("1"), new Sync("1", "jmt", new Date(), true));

@@ -15,6 +15,8 @@ import org.mesh4j.sync.validations.Guard;
 
 public class MergeMessageProcessor implements IMessageProcessor {
 
+	public static final String MESSAGE_TYPE = "5";
+	
 	// MODEL VARIABLES
 	private IItemEncoding itemEncoding;
 	private EndSyncMessageProcessor endMessage;
@@ -28,7 +30,7 @@ public class MergeMessageProcessor implements IMessageProcessor {
 
 	@Override
 	public String getMessageType() {
-		return "5";
+		return MESSAGE_TYPE;
 	}
 	
 	public IMessage createMessage(ISyncSession syncSession, String syncId, int[] diffHashCodes) {
