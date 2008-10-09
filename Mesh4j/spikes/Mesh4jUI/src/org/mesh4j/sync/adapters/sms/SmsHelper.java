@@ -3,6 +3,7 @@ package org.mesh4j.sync.adapters.sms;
 import java.io.File;
 import java.util.ArrayList;
 
+import org.mesh4j.sync.IFilter;
 import org.mesh4j.sync.adapters.dom.DOMAdapter;
 import org.mesh4j.sync.adapters.kml.KMLDOMLoaderFactory;
 import org.mesh4j.sync.message.IChannel;
@@ -25,11 +26,11 @@ import org.mesh4j.sync.message.core.MessageSyncAdapter;
 import org.mesh4j.sync.message.core.NonMessageEncoding;
 import org.mesh4j.sync.message.core.repository.MessageSyncAdapterFactory;
 import org.mesh4j.sync.message.encoding.IMessageEncoding;
+import org.mesh4j.sync.message.protocol.IProtocolConstants;
 import org.mesh4j.sync.message.protocol.MessageSyncProtocolFactory;
 import org.mesh4j.sync.properties.PropertiesProvider;
 import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.ui.translator.Mesh4jSmsUITranslator;
-
 
 public class SmsHelper {
 
@@ -133,15 +134,22 @@ public class SmsHelper {
 			IIdentityProvider identityProvider = prop.getIdentityProvider();			
 			IMessageEncoding messageEncoding = (IMessageEncoding) prop.getInstance("default.sms.compress.method", NonMessageEncoding.INSTANCE);
 			boolean useAsynchronousConnection = prop.getBoolean("default.sms.use.asynchronous.connection");
+
+			IFilter<String> protocolFilter = new IFilter<String>(){
+				@Override
+				public boolean applies(String message) {
+					return message != null && message.length() > 0 && message.startsWith(IProtocolConstants.PROTOCOL);
+				}
+			};
 			
 			ISmsConnection smsConnection =  null;
 			if(useAsynchronousConnection){
 				smsConnection = new SmsLibAsynchronousConnection("mesh4j.sync", modem.getComPort(), modem.getBaudRate(),
-						modem.getManufacturer(), modem.getModel(), maxMessageLenght, messageEncoding, smsConnectionInboundOutboundNotification);
+						modem.getManufacturer(), modem.getModel(), maxMessageLenght, messageEncoding, smsConnectionInboundOutboundNotification, protocolFilter);
 				((SmsLibAsynchronousConnection)smsConnection).startService();
 			}else{
 				smsConnection = new SmsLibConnection("mesh4j.sync", modem.getComPort(), modem.getBaudRate(),
-						modem.getManufacturer(), modem.getModel(), maxMessageLenght, messageEncoding, readDelay, channelDelay, smsConnectionInboundOutboundNotification);
+						modem.getManufacturer(), modem.getModel(), maxMessageLenght, messageEncoding, readDelay, channelDelay, smsConnectionInboundOutboundNotification, protocolFilter);
 			}
 			return createSyncEngine(syncAware, baseDirectory+"\\"+modem.toString()+"\\", identityProvider, smsConnection, senderDelay, receiverDelay);
 		} else {
@@ -159,6 +167,12 @@ public class SmsHelper {
 		IMessageSyncAdapter adapter = new MessageSyncAdapter(sourceId, identityProvider, kmlAdapter);
 
 		syncEngine.synchronize(adapter, new SmsEndpoint(smsNumber), true);
+	}
+
+	public static void cancelSync(MessageSyncEngine syncEngine, String kmlFileName, String smsNumber) {
+		File file = new File(kmlFileName);
+		String sourceId = file.getName();
+		syncEngine.cancelSync(sourceId, new SmsEndpoint(smsNumber));		
 	}
 	
 }

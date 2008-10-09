@@ -4,7 +4,8 @@ public enum SmsExecutionMode {
 
 	EMULATE,
 	SYNCHRONIZE,
-	SEND;
+	SEND, 
+	CANCEL_SYNC;
 
 	public boolean isEmulate() {
 		return EMULATE.equals(this);
@@ -12,5 +13,9 @@ public enum SmsExecutionMode {
 
 	public boolean isSynchronize() {
 		return SYNCHRONIZE.equals(this);
+	}
+
+	public boolean isCancelSync() {
+		return CANCEL_SYNC.equals(this);
 	}
 }

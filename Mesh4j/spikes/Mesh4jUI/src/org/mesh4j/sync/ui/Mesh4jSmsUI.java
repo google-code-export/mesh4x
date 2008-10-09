@@ -17,10 +17,13 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.mesh4j.sync.adapters.sms.SmsHelper;
+import org.mesh4j.sync.message.IEndpoint;
+import org.mesh4j.sync.message.IMessage;
 import org.mesh4j.sync.message.IMessageSyncAware;
 import org.mesh4j.sync.message.ISyncSession;
 import org.mesh4j.sync.message.MessageSyncEngine;
@@ -32,12 +35,13 @@ import org.mesh4j.sync.message.channel.sms.core.SmsChannel;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.properties.PropertiesProvider;
 import org.mesh4j.sync.ui.translator.Mesh4jSmsUITranslator;
+import org.mesh4j.sync.ui.translator.Mesh4jUITranslator;
 
 
 public class Mesh4jSmsUI implements ISmsConnectionInboundOutboundNotification, IMessageSyncAware{
 
 	private final static Log Logger = LogFactory.getLog(Mesh4jUI.class);
-	
+
 	// MODEL VARIABLES
 	private Display display;
 	private Shell shell;
@@ -66,28 +70,47 @@ public class Mesh4jSmsUI implements ISmsConnectionInboundOutboundNotification, I
 	}
 
 	private void openMesh(Modem modem) {
-		this.display = new Display();
-		
-		this.shell = new Shell(display);
-		this.shell.setText(Mesh4jSmsUITranslator.getTitle());
-		
-		Label labelPhone = new Label (shell, SWT.NONE);
+		this.display = Display.getDefault();
+		this.shell = new Shell();
+		final GridLayout gridLayout = new GridLayout();
+		shell.setLayout(gridLayout);
+		shell.setSize(815, 580);
+		shell.setText(Mesh4jSmsUITranslator.getTitle());
+
+		shell.open();
+
+		final Group synchronizeGroup = new Group(shell, SWT.NONE);
+		synchronizeGroup.setText(Mesh4jSmsUITranslator.getLabelSynGroup());
+		final GridData gd_synchronizeGroup = new GridData(775, SWT.DEFAULT);
+		synchronizeGroup.setLayoutData(gd_synchronizeGroup);
+		final GridLayout gridLayout_3 = new GridLayout();
+		gridLayout_3.numColumns = 3;
+		synchronizeGroup.setLayout(gridLayout_3);
+
+		final Label labelPhone = new Label(synchronizeGroup, SWT.NONE);
+		labelPhone.setLayoutData(new GridData());
 		labelPhone.setText(Mesh4jSmsUITranslator.getLabelPhone());
 
-		comboPhone = new Combo (shell, SWT.READ_ONLY);
+		comboPhone = new Combo (synchronizeGroup, SWT.READ_ONLY);
+		final GridData gd_comboPhone = new GridData(SWT.LEFT, SWT.CENTER, true, false);
+		gd_comboPhone.widthHint = 675;
+		comboPhone.setLayoutData(gd_comboPhone);
 		comboPhone.setItems(SmsHelper.getAvailableModems(modem));
-		comboPhone.setSize (200, 200);
 		comboPhone.select(0);
 		comboPhone.setEnabled(false);
-		
-		Label labelKmlFile = new Label (shell, SWT.NONE);
+		new Label(synchronizeGroup, SWT.NONE);
+
+		Label labelKmlFile = new Label (synchronizeGroup, SWT.NONE);
+		labelKmlFile.setLayoutData(new GridData());
 		labelKmlFile.setText(Mesh4jSmsUITranslator.getLabelKMLFile());
 
-		textKmlFile = new Text (shell, SWT.BORDER);
-		textKmlFile.setLayoutData (new GridData(600, 15));
+		textKmlFile = new Text (synchronizeGroup, SWT.BORDER);
+		final GridData gd_textKmlFile = new GridData(SWT.LEFT, SWT.CENTER, true, false);
+		gd_textKmlFile.widthHint = 693;
+		textKmlFile.setLayoutData(gd_textKmlFile);
 		textKmlFile.setText(this.defaultKmlFile);
-		
-		Button buttonKmlFile = new Button(shell, SWT.PUSH);
+
+		final Button buttonKmlFile = new Button(synchronizeGroup, SWT.PUSH);
 		buttonKmlFile.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				String selectedFileName = openFileDialogKML(textKmlFile.getText());
@@ -98,14 +121,20 @@ public class Mesh4jSmsUI implements ISmsConnectionInboundOutboundNotification, I
 		});
 		buttonKmlFile.setText("...");
 
-		Label labelSms = new Label (shell, SWT.NONE);
+		final Label labelSms = new Label (synchronizeGroup, SWT.NONE);
+		labelSms.setLayoutData(new GridData());
 		labelSms.setText(Mesh4jSmsUITranslator.getLabelPhoneDestination());
 
-		textSmsNumber = new Text (shell, SWT.BORDER);
-		textSmsNumber.setLayoutData (new GridData(600, 15));
+		textSmsNumber = new Text (synchronizeGroup, SWT.BORDER);
+		final GridData gd_text = new GridData(SWT.LEFT, SWT.CENTER, true, false);
+		gd_text.widthHint = 691;
+		textSmsNumber.setLayoutData(gd_text);
 		textSmsNumber.setText(this.defaultPhoneNumberDestination);
 		
-		Button buttonSynchronize = new Button(shell, SWT.PUSH);
+		new Label(synchronizeGroup, SWT.NONE);
+
+		final Button buttonSynchronize = new Button(synchronizeGroup, SWT.PUSH);
+		buttonSynchronize.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, true));
 		buttonSynchronize.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {				
 				boolean ok = validateInputs();
@@ -119,13 +148,27 @@ public class Mesh4jSmsUI implements ISmsConnectionInboundOutboundNotification, I
 		buttonSynchronize.setText(Mesh4jSmsUITranslator.getLabelSynchronize());
 		buttonSynchronize.setEnabled(modem != null);
 		
-		new Label(shell, SWT.LINE_SOLID);
+		final Button buttonCancel = new Button(synchronizeGroup, SWT.PUSH);
+		buttonCancel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, true));
+		buttonCancel.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {				
+				executeInNewThread(SmsExecutionMode.CANCEL_SYNC);
+			}
+		});		
+		buttonCancel.setText(Mesh4jSmsUITranslator.getLabelCancelSyn());
+		buttonCancel.setEnabled(modem != null);
 		
-		buttonCompress = new Button(shell, SWT.CHECK);
-		buttonCompress.setText(Mesh4jSmsUITranslator.getLabelCompressMessage());
-		buttonCompress.setSelection(true);
-		
-		Button buttonEmulate = new Button(shell, SWT.PUSH);
+		new Label(synchronizeGroup, SWT.NONE);
+
+		final Group simulationGroup = new Group(shell, SWT.NONE);
+		simulationGroup.setText(Mesh4jSmsUITranslator.getLabelSimulationGroup());
+		final GridData gd_simulationGroup = new GridData(772, SWT.DEFAULT);
+		simulationGroup.setLayoutData(gd_simulationGroup);
+		final GridLayout gridLayout_1 = new GridLayout();
+		gridLayout_1.numColumns = 2;
+		simulationGroup.setLayout(gridLayout_1);
+
+		final Button buttonEmulate = new Button(simulationGroup, SWT.PUSH);
 		buttonEmulate.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {				
 				boolean ok = validateInputs();
@@ -136,17 +179,33 @@ public class Mesh4jSmsUI implements ISmsConnectionInboundOutboundNotification, I
 				}
 			}
 		);		
-		buttonEmulate.setText(Mesh4jSmsUITranslator.getLabelEmulate());
+		buttonEmulate.setText(Mesh4jSmsUITranslator.getLabelSimulate());
+
+		buttonCompress = new Button(simulationGroup, SWT.CHECK);
+		buttonCompress.setText(Mesh4jSmsUITranslator.getLabelCompressMessage());
+		buttonCompress.setSelection(true);
 		
+
+		final Group sendSmsGroup = new Group(shell, SWT.NONE);
+		sendSmsGroup.setText(Mesh4jSmsUITranslator.getLabelSMSGroup());
+		final GridData gd_sendSmsGroup = new GridData(775, SWT.DEFAULT);
+		sendSmsGroup.setLayoutData(gd_sendSmsGroup);
+		final GridLayout gridLayout_2 = new GridLayout();
+		gridLayout_2.numColumns = 2;
+		sendSmsGroup.setLayout(gridLayout_2);
+
 		
-		Label labelMessageToSend = new Label (shell, SWT.NONE);
+		Label labelMessageToSend = new Label (sendSmsGroup, SWT.NONE);
 		labelMessageToSend.setText(Mesh4jSmsUITranslator.getLabelMessageToSend());
 
-		textMessageToSend = new Text (shell, SWT.BORDER);
-		textMessageToSend.setLayoutData (new GridData(600, 15));
-		textMessageToSend.setText("<imput the message to send>");
+		textMessageToSend = new Text (sendSmsGroup, SWT.BORDER);
+		final GridData gd_text_1 = new GridData(SWT.LEFT, SWT.CENTER, true, false);
+		gd_text_1.widthHint = 687;
+		textMessageToSend.setLayoutData(gd_text_1);
+		textMessageToSend.setText(Mesh4jSmsUITranslator.getMessageEnterTextMessage());
 		
-		Button buttonSendMessage = new Button(shell, SWT.PUSH);
+		final Button buttonSendMessage = new Button(sendSmsGroup, SWT.PUSH);
+		buttonSendMessage.setLayoutData(new GridData());
 		buttonSendMessage.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {				
 				boolean ok = validateInputs();
@@ -159,21 +218,34 @@ public class Mesh4jSmsUI implements ISmsConnectionInboundOutboundNotification, I
 		);		
 		buttonSendMessage.setText(Mesh4jSmsUITranslator.getLabelSendMessage());
 		buttonSendMessage.setEnabled(modem != null);
+
+		final Button button = new Button(sendSmsGroup, SWT.NONE);
+		button.setLayoutData(new GridData());
+		button.setText(Mesh4jSmsUITranslator.getLabelForceReceiveMessages());
+		button.setEnabled(false);
 		
+		final Button buttonClean = new Button(shell, SWT.PUSH);
+		buttonClean.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				consoleView.setText("");
+			}
+		});
+		buttonClean.setText(Mesh4jUITranslator.getLabelClean());
+
 		consoleView = new Text(shell, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
-		consoleView.setLayoutData(new GridData(900, 300));
+		final GridData gd_text_2 = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		gd_text_2.heightHint = 265;
+		consoleView.setLayoutData(gd_text_2);
 		consoleView.setText("");
 		
-		shell.setLayout (new GridLayout());
-		shell.pack ();
-		shell.open();
-		
-		while (!shell.isDisposed ()) {
-			if (!display.readAndDispatch ()) display.sleep ();
+		shell.pack ();		
+		shell.layout();
+		while (!shell.isDisposed()) {
+			if (!display.readAndDispatch())
+				display.sleep();
 		}
-		display.dispose ();		
 	}
-	
+
 	private String openFileDialogKML(String fileName){
 		String fileNameSelected = openFileDialog(fileName, new String [] {"Kml"}, new String [] {"*.kml"});
 		return fileNameSelected;
@@ -239,7 +311,7 @@ public class Mesh4jSmsUI implements ISmsConnectionInboundOutboundNotification, I
 						final String syncResult = executionMode.isEmulate() 
 							? emulateSync(smsFrom, smsTo, useCompression, kmlFileName)
 							: (executionMode.isSynchronize() ? synchronizeItems(kmlFileName, smsTo)
-							: sendMessage(text, smsTo));
+							: (executionMode.isCancelSync() ? cancelSync(kmlFileName, smsTo) : sendMessage(text, smsTo)));
 						
 						if (display.isDisposed()) return;
 						
@@ -248,6 +320,7 @@ public class Mesh4jSmsUI implements ISmsConnectionInboundOutboundNotification, I
 						done = true;
 						display.wake();
 					}
+
 				});
 				thread.start();
 				while (!done && !shell.isDisposed()) {
@@ -275,6 +348,16 @@ public class Mesh4jSmsUI implements ISmsConnectionInboundOutboundNotification, I
 	private String synchronizeItems(String kmlFileName, String smsTo){
 		try{				
 			SmsHelper.synchronizeKml(this.syncEngine, kmlFileName, smsTo);
+			return "";
+		} catch (RuntimeException e) {
+			Logger.error(e.getMessage(), e);
+			return Mesh4jSmsUITranslator.getLabelFailed();
+		}
+	}
+	
+	private String cancelSync(String kmlFileName, String smsTo) {
+		try{				
+			SmsHelper.cancelSync(this.syncEngine, kmlFileName, smsTo);
 			return "";
 		} catch (RuntimeException e) {
 			Logger.error(e.getMessage(), e);
@@ -320,22 +403,22 @@ public class Mesh4jSmsUI implements ISmsConnectionInboundOutboundNotification, I
 	@Override
 	public void notifyReceiveMessage(String endpointId, String message,
 			Date date) {
-		this.log(Mesh4jSmsUITranslator.getMessageNotifyReceiveMessageError(endpointId, message));
+		this.log("\t"+Mesh4jSmsUITranslator.getMessageNotifyReceiveMessageError(endpointId, message));
 	}
 
 	@Override
 	public void notifyReceiveMessageError(String endpointId, String message, Date date) {
-		this.log(Mesh4jSmsUITranslator.getMessageNotifyReceiveMessage(endpointId, message));		
+		this.log("\t"+Mesh4jSmsUITranslator.getMessageNotifyReceiveMessage(endpointId, message));		
 	}
 
 	@Override
 	public void notifySendMessage(String endpointId, String message) {
-		this.log(Mesh4jSmsUITranslator.getMessageNotifySendMessage(endpointId, message));
+		this.log("\t"+Mesh4jSmsUITranslator.getMessageNotifySendMessage(endpointId, message));
 	}
 
 	@Override
 	public void notifySendMessageError(String endpointId, String message) {
-		this.log(Mesh4jSmsUITranslator.getMessageNotifySendMessageError(endpointId, message));		
+		this.log("\t"+Mesh4jSmsUITranslator.getMessageNotifySendMessageError(endpointId, message));		
 	}
 
 	@Override
@@ -348,5 +431,43 @@ public class Mesh4jSmsUI implements ISmsConnectionInboundOutboundNotification, I
 		log(Mesh4jSmsUITranslator.getLabelSuccess());		
 	}
 
-	
+	@Override
+	public void beginSyncWithError(ISyncSession syncSession) {
+		log(Mesh4jSmsUITranslator.getMessageErrorBeginSync(syncSession.getTarget().getEndpointId(), syncSession.getSourceId()));		
+	}
+
+	@Override
+	public void notifyCancelSync(ISyncSession syncSession) {
+		log(Mesh4jSmsUITranslator.getMessageCancelSync(syncSession.getSessionId(), syncSession.getTarget().getEndpointId(), syncSession.getSourceId()));		
+	}
+
+	@Override
+	public void notifyCancelSyncErrorSyncSessionNotOpen(String sourceId, IEndpoint endpoint) {
+		log(Mesh4jSmsUITranslator.getMessageCancelSyncErrorSessionNotOpen(endpoint, sourceId));		
+	}
+
+	@Override
+	public void notifyInvalidMessageProtocol(IMessage message) {
+		log(Mesh4jSmsUITranslator.getMessageInvalidMessageProtocol(message));
+	}
+
+	@Override
+	public void notifyInvalidProtocolMessageOrder(IMessage message) {
+		log(Mesh4jSmsUITranslator.getMessageErrorInvalidProtocolMessageOrder(message));
+	}
+
+	@Override
+	public void notifyMessageProcessed(IMessage message, List<IMessage> response) {
+		log(Mesh4jSmsUITranslator.getMessageProcessed(message, response));
+	}
+
+	@Override
+	public void notifySessionCreationError(IMessage message, String sourceId) {
+		log(Mesh4jSmsUITranslator.getMessageErrorSessionCreation(message, sourceId));
+	}
+
+	@Override
+	public void notifyReceiveMessageWasNotProcessed(String endpoint, String message, Date date) {
+		Logger.info("SMS - Received message was not processed, endpoint: " + endpoint + " message: " + message + " date: " + date.toString());
+	}
 }
