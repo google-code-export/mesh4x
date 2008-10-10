@@ -20,7 +20,9 @@ import org.sms.exchanger.properties.PropertiesProvider;
 
 public class SmsExchanger implements IMessageNotification{
 
+	// CONSTANTS
 	private final static Log LOGGER = LogFactory.getLog(SmsExchanger.class);
+	
 	public final static String READ_MODE_ALL = "all";
 	public final static String READ_MODE_UNREAD = "unread";
 	public final static String READ_MODE_READ = "read";
