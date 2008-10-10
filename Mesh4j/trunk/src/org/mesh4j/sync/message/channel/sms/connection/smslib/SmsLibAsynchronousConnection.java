@@ -202,9 +202,9 @@ public class SmsLibAsynchronousConnection implements ISmsConnection, IInboundMes
 			OutboundBinaryMessage binaryMessage = (OutboundBinaryMessage) msg;
 			byte[] bytes = binaryMessage.getDataBytes();
 			String text = new String(bytes);
-			this.notifySendMessage(msg.getFrom(), text);	
+			this.notifySendMessage(msg.getRecipient(), text);	
 		} else {
-			this.notifySendMessage(msg.getFrom(), msg.getText());
+			this.notifySendMessage(msg.getRecipient(), msg.getText());
 		}	
 	}
 
@@ -241,5 +241,10 @@ public class SmsLibAsynchronousConnection implements ISmsConnection, IInboundMes
 		for (InboundMessage msg : msgList) {
 			process(msg.getGatewayId(), msg.getType(), msg);
 		}
+	}
+
+	@Override
+	public void shutdown() {
+		this.stopService();
 	}
 }

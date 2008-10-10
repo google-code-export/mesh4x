@@ -130,4 +130,9 @@ public class InMemorySmsConnection implements ISmsConnection, IRefreshTask{
 		
 	}
 
+	@Override
+	public void shutdown() {
+		// nothing to do		
+	}
+
 }

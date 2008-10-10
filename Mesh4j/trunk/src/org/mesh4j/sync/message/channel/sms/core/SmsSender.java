@@ -143,5 +143,10 @@ public class SmsSender implements ISmsSender{
 			this.persistChanges();
 		}
 	}
+
+	@Override
+	public void shutdown() {
+		this.smsConnection.shutdown();		
+	}
 	
 }

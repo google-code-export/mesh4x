@@ -77,5 +77,9 @@ public class MockSmsChannel implements ISmsChannel {
 		return this.resend;
 	}
 
+	@Override
+	public void shutdown() {
+	}
+
 
 }

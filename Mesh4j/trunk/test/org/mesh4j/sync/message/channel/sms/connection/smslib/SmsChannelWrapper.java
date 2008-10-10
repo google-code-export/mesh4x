@@ -75,4 +75,10 @@ public class SmsChannelWrapper implements ISmsChannel {
 	public String getLastSentBathID() {
 		return lastSentBatchID;
 	}
+	
+	@Override
+	public void shutdown() {
+		this.channel.shutdown();
+	}
+
 }

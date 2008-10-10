@@ -103,4 +103,9 @@ public class MockSmsConnection implements ISmsConnection{
 		this.sleepDelay = sleepDelay;
 	}
 
+	@Override
+	public void shutdown() {
+		// nothing to do
+	}
+
 }

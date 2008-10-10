@@ -67,7 +67,11 @@ public class PropertiesProvider {
 	}
 
 	public String getBaseDirectory() {
-		return this.properties.getProperty("default.base.directory", "c:\\");
+		return this.properties.getProperty("default.base.directory", getCurrentDirectory());
+	}
+	
+	public String getCurrentDirectory(){
+		return System.getProperty("user.dir");
 	}
 
 	public int getInt(String key) {

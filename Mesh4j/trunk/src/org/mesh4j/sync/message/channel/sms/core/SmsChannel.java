@@ -214,4 +214,9 @@ public class SmsChannel implements ISmsChannel, IMessageSyncAware {
 	public void notifyCancelSyncErrorSyncSessionNotOpen(String sourceId, IEndpoint endpoint) {
 		// nothing to do		
 	}
+
+	@Override
+	public void shutdown() {
+		this.sender.shutdown();
+	}
 }

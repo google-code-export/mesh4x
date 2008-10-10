@@ -22,4 +22,6 @@ public interface ISmsSender {
 
 	void purgeBatches(String sessionId, int sessionVersion);
 
+	void shutdown();
+
 }

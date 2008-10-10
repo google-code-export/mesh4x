@@ -16,9 +16,11 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.mesh4j.sync.adapters.sms.SmsHelper;
@@ -49,6 +51,7 @@ public class Mesh4jSmsUI implements ISmsConnectionInboundOutboundNotification, I
 	private Text consoleView;
 	private Combo comboPhone;
 	private Text textSmsNumber;
+	private Text textSmsNumber2;
 	private Button buttonCompress;	
 	private Text textMessageToSend;
 	
@@ -71,10 +74,17 @@ public class Mesh4jSmsUI implements ISmsConnectionInboundOutboundNotification, I
 
 	private void openMesh(Modem modem) {
 		this.display = Display.getDefault();
-		this.shell = new Shell();
+		this.shell = new Shell(display);
+		
+		this.shell.addListener(SWT.Close, new Listener() {
+			public void handleEvent(Event event) {
+		       shutdown();
+		    }
+		});
+		
 		final GridLayout gridLayout = new GridLayout();
 		shell.setLayout(gridLayout);
-		shell.setSize(815, 580);
+		shell.setSize(815, 659);
 		shell.setText(Mesh4jSmsUITranslator.getTitle());
 
 		shell.open();
@@ -121,9 +131,9 @@ public class Mesh4jSmsUI implements ISmsConnectionInboundOutboundNotification, I
 		});
 		buttonKmlFile.setText("...");
 
-		final Label labelSms = new Label (synchronizeGroup, SWT.NONE);
-		labelSms.setLayoutData(new GridData());
-		labelSms.setText(Mesh4jSmsUITranslator.getLabelPhoneDestination());
+		final Label labelPhone1 = new Label (synchronizeGroup, SWT.NONE);
+		labelPhone1.setLayoutData(new GridData());
+		labelPhone1.setText(Mesh4jSmsUITranslator.getLabelPhoneDestination());
 
 		textSmsNumber = new Text (synchronizeGroup, SWT.BORDER);
 		final GridData gd_text = new GridData(SWT.LEFT, SWT.CENTER, true, false);
@@ -194,13 +204,21 @@ public class Mesh4jSmsUI implements ISmsConnectionInboundOutboundNotification, I
 		gridLayout_2.numColumns = 2;
 		sendSmsGroup.setLayout(gridLayout_2);
 
+		final Label labelPhone2 = new Label(sendSmsGroup, SWT.NONE);
+		labelPhone2.setText(Mesh4jSmsUITranslator.getLabelPhoneDestination());
+
+		textSmsNumber2 = new Text(sendSmsGroup, SWT.BORDER);
+		final GridData gd_text_3 = new GridData(SWT.RIGHT, SWT.CENTER, true, false);
+		gd_text_3.widthHint = 751;
+		textSmsNumber2.setLayoutData(gd_text_3);
+		textSmsNumber2.setText(this.defaultPhoneNumberDestination);
 		
 		Label labelMessageToSend = new Label (sendSmsGroup, SWT.NONE);
 		labelMessageToSend.setText(Mesh4jSmsUITranslator.getLabelMessageToSend());
 
 		textMessageToSend = new Text (sendSmsGroup, SWT.BORDER);
-		final GridData gd_text_1 = new GridData(SWT.LEFT, SWT.CENTER, true, false);
-		gd_text_1.widthHint = 687;
+		final GridData gd_text_1 = new GridData(SWT.RIGHT, SWT.CENTER, true, false);
+		gd_text_1.widthHint = 728;
 		textMessageToSend.setLayoutData(gd_text_1);
 		textMessageToSend.setText(Mesh4jSmsUITranslator.getMessageEnterTextMessage());
 		
@@ -208,9 +226,8 @@ public class Mesh4jSmsUI implements ISmsConnectionInboundOutboundNotification, I
 		buttonSendMessage.setLayoutData(new GridData());
 		buttonSendMessage.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {				
-				boolean ok = validateInputs();
+				boolean ok = validateSendMessageParameters();
 					if(ok){
-						consoleView.setText("");
 						executeInNewThread(SmsExecutionMode.SEND);
 					}
 				}
@@ -233,7 +250,7 @@ public class Mesh4jSmsUI implements ISmsConnectionInboundOutboundNotification, I
 		buttonClean.setText(Mesh4jUITranslator.getLabelClean());
 
 		consoleView = new Text(shell, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
-		final GridData gd_text_2 = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		final GridData gd_text_2 = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd_text_2.heightHint = 265;
 		consoleView.setLayoutData(gd_text_2);
 		consoleView.setText("");
@@ -278,6 +295,21 @@ public class Mesh4jSmsUI implements ISmsConnectionInboundOutboundNotification, I
 		return okKML && okSMS;
 	}
 	
+	private boolean validateSendMessageParameters() {
+		boolean okKML = validateMessageToSend(this.textMessageToSend.getText());
+		boolean okSMS = validateSmsNumber(this.textSmsNumber2.getText());
+		return okKML && okSMS;
+	}
+	
+	
+	private boolean validateMessageToSend(String text) {
+		if(text == null || text.length() == 0){
+			consoleView.append("\n"+Mesh4jSmsUITranslator.getMessageErrorSMSTextToSendEmptyOrNull());
+			return false;
+		}
+		return true;
+	}
+
 	private boolean validateFile(String fileName){
 		if(!(fileName != null && fileName.trim().length() > 5 
 				&& (fileName.toUpperCase().endsWith(".KML")))){
@@ -298,6 +330,7 @@ public class Mesh4jSmsUI implements ISmsConnectionInboundOutboundNotification, I
 	private void executeInNewThread(final SmsExecutionMode executionMode){
 		final String smsFrom = this.comboPhone.getText();
 		final String smsTo = this.textSmsNumber.getText();
+		final String smsTo2 = this.textSmsNumber2.getText();
 		final String text = this.textMessageToSend.getText();
 		final boolean useCompression = this.buttonCompress.getSelection();
 		final String kmlFileName = this.textKmlFile.getText();
@@ -311,7 +344,7 @@ public class Mesh4jSmsUI implements ISmsConnectionInboundOutboundNotification, I
 						final String syncResult = executionMode.isEmulate() 
 							? emulateSync(smsFrom, smsTo, useCompression, kmlFileName)
 							: (executionMode.isSynchronize() ? synchronizeItems(kmlFileName, smsTo)
-							: (executionMode.isCancelSync() ? cancelSync(kmlFileName, smsTo) : sendMessage(text, smsTo)));
+							: (executionMode.isCancelSync() ? cancelSync(kmlFileName, smsTo) : sendMessage(text, smsTo2)));
 						
 						if (display.isDisposed()) return;
 						
@@ -469,5 +502,13 @@ public class Mesh4jSmsUI implements ISmsConnectionInboundOutboundNotification, I
 	@Override
 	public void notifyReceiveMessageWasNotProcessed(String endpoint, String message, Date date) {
 		Logger.info("SMS - Received message was not processed, endpoint: " + endpoint + " message: " + message + " date: " + date.toString());
+	}
+	
+	private void shutdown(){
+		try{
+			this.syncEngine.getChannel().shutdown();
+		} catch(Throwable e){
+			Logger.error(e.getMessage(), e);
+		}
 	}
 }

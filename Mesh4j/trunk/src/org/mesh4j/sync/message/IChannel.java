@@ -5,5 +5,7 @@ public interface IChannel {
 	void registerMessageReceiver(IMessageReceiver messageReceiver);
 
 	void send(IMessage message);
+	
+	void shutdown();
 
 }

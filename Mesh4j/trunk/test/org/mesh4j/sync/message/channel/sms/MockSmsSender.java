@@ -67,4 +67,9 @@ public class MockSmsSender implements ISmsSender {
 		// nothing to do		
 	}
 
+	@Override
+	public void shutdown() {
+		// nothing to do		
+	}
+
 }

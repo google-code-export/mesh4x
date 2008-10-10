@@ -5,6 +5,7 @@ import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.Formatter;
 
+import org.junit.Test;
 import org.smslib.helper.CommPortIdentifier;
 import org.smslib.helper.SerialPort;
 
@@ -25,7 +26,7 @@ public class CommTests {
 		return CommPortIdentifier.getPortIdentifiers();
 	}
 
-//	@Test
+	//@Test
 	public void tests()
 	{
 		System.out.println("\nSearching for devices...");
@@ -37,12 +38,13 @@ public class CommTests {
 		System.out.println("\nTest complete.");
 	}
 	
-	//@Test
+	@Test
 	public void testsCOM()
 	{
 		System.out.println("\nSearching for devices...");
-		testPort(CommPortIdentifier.getPortIdentifier("COM18"));
-		testPort(CommPortIdentifier.getPortIdentifier("COM23"));
+//		testPort(CommPortIdentifier.getPortIdentifier("COM18"));
+//		testPort(CommPortIdentifier.getPortIdentifier("COM23"));
+		testPort(CommPortIdentifier.getPortIdentifier("COM28"));
 		System.out.println("\nTest complete.");
 	}
 

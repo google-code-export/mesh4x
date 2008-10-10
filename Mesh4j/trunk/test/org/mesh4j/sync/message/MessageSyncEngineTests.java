@@ -611,6 +611,7 @@ public class MessageSyncEngineTests {
 			@Override public void send(IMessage message) {
 				Assert.assertSame(msg, message);
 			}
+			@Override public void shutdown() {}
 		};
 		
 		IMessageSyncProtocol protocol = new IMessageSyncProtocol(){
@@ -635,6 +636,8 @@ public class MessageSyncEngineTests {
 		IChannel channel = new IChannel(){
 			@Override public void registerMessageReceiver(IMessageReceiver messageReceiver) {}
 			@Override public void send(IMessage message) {}
+			@Override public void shutdown() {}
+
 		};
 		new MessageSyncEngine(null, channel);
 	}

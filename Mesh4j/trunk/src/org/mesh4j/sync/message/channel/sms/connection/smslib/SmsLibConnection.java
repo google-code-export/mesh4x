@@ -378,4 +378,9 @@ public class SmsLibConnection implements ISmsConnection, IRefreshTask {
 	private boolean isValidMessage(String message) {
 		return this.filter == null || this.filter.applies(message);
 	}
+
+	@Override
+	public void shutdown() {
+		// nothing to do		
+	}
 }

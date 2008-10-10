@@ -214,4 +214,8 @@ public class Mesh4jSmsUITranslator {
 		return MessageTranslator.translate("Mesh4jUI_SMS_MESSAGE_ENTER_TEXT");
 	}
 
+	public static String getMessageErrorSMSTextToSendEmptyOrNull() {
+		return MessageTranslator.translate("Mesh4jUI_SMS_MESSAGE_TEXT_TO_SEND_EMPTY_OR_NULL");
+	}
+
 }

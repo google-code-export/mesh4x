@@ -16,4 +16,6 @@ public interface ISmsConnection {
 
 	IMessageEncoding getMessageEncoding();
 
+	void shutdown();
+
 }
