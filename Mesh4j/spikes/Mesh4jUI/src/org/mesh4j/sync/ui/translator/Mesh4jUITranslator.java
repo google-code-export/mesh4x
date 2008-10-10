@@ -134,4 +134,11 @@ public class Mesh4jUITranslator {
 	public static String getLabelPurge() {
 		return MessageTranslator.translate("Mesh4jUI_LABEL_PURGE");
 	}
+
+	public static String getLabelGroupSync() {
+		return MessageTranslator.translate("Mesh4jUI_LABEL_SYNC_GROUP");
+	}
+	public static String getLabelGroupMaintenance() {
+		return MessageTranslator.translate("Mesh4jUI_LABEL_MAINTENANCE_GROUP");
+	}
 }
