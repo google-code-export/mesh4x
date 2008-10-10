@@ -137,7 +137,7 @@ public class SmsHelper {
 
 			IFilter<String> protocolFilter = new IFilter<String>(){
 				@Override
-				public boolean applies(String message) {
+				public boolean applies(String message) {  // Accept only protocol messages
 					return message != null && message.length() > 0 && message.startsWith(IProtocolConstants.PROTOCOL);
 				}
 			};
