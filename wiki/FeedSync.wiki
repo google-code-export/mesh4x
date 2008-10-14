@@ -1,4 +1,4 @@
-#FeedSync is a protocol licensed under Creative Commons that specifies XML data formats and algorithms for version tracking and conflict management in a data mesh
+!FeedSync is a protocol licensed under Creative Commons that specifies XML data formats and algorithms for version tracking and conflict management in a data mesh
 
 You can see it here
 http://dev.live.com/feedsync/spec/v1.htm
