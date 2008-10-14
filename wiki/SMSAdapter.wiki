@@ -11,7 +11,7 @@ But an alternative if you have cell signal is to synchronize by receiving and se
 We are currently working on implementing the sync protocol over SMS messages.
 
 
-the main idea is [http://edjez.instedd.org/2008/06/mesh4x-sms-adapter-sync-data-without.html Sync data without an Internet connection].
+The main idea is [http://edjez.instedd.org/2008/06/mesh4x-sms-adapter-sync-data-without.html Sync data without an Internet connection].
 
 == How it works ==
 
