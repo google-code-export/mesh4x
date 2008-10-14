@@ -24,6 +24,9 @@ The results is a sync that is 2-ways between both endpoints. That is, if record 
 
 Because of the mesh4x adapter architecture, you can use any other existing adapter to decide how/where the synchronized data will get stored. For example, you could sync two MySQL databases with each other (using the Hibernate Adapter), or a set of J2ME RMS records with a google spreadsheet (using the corresponding adapters which we dont have yet but invite you to build)
 
+
+
+
 ==Peer-Peer and Client-Server scenarios==
 
 Our hope is to have client and server implementations:
@@ -54,6 +57,10 @@ The main idea is to provide mesh capabilities allowing mobile phones to share XF
 You could read about the demo in [http://jtondato.clariusconsulting.net/2008/10/javarosa-midp-demo.html Mesh4x+JavaRosa MIDP Demo - step by step]. This demo requires a mobile phone MIDP 2.0 and CLDC 1.1 compatible.
 
 The entire application was written in J2ME using [http://www.j2mepolish.org/cms/leftsection/introduction.html J2ME Polish], which then makes the app look great on specific handset models and adapts the UI to the capabilities of each phone.
+
+
+http://lh6.ggpht.com/edujez/SO-xGrOAJHI/AAAAAAAAAMM/nK_4ubvo4mM/s1600-h/image%5B45%5D.png
+
 
 == More Information ==
 [http://edjez.instedd.org/2008/06/mesh4x-sms-adapter-sync-data-without.html Mesh4x SMS Adapter: Sync data without an Internet connection]
