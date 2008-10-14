@@ -8,7 +8,7 @@ The Hibernate Adapter allows you to synchronize to any database through the Hibe
 
 [http://edjez.instedd.org/2008/05/build-maps-collaboratively-with-new.html Build maps collaboratively with new Mesh4x KML adapter]
 
-http://edjez.instedd.org/2008/05/improvements-to-mesh4x-kml-adapter.html
+[http://edjez.instedd.org/2008/05/improvements-to-mesh4x-kml-adapter.html Improvements to Mesh4x KML adapter ("Mesh4Maps"?)]
 
 We have also set up a demo server to show how you can sync to the HTTP sync server and back. If you use the KML adapter sample application you can sync between two local KML files, a local KML and an http server we are hosting, or 2 http servers.
 
