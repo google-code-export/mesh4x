@@ -60,4 +60,6 @@ The entire application was written in J2ME using [http://www.j2mepolish.org/cms/
 
 [http://edjez.instedd.org/2008/10/mesh4x-goes-mobile-with-javarosa-allows.html Mesh4x goes mobile with JavaROSA, allows you to sync data on your handset with no Internet]
 
+[http://jtondato.clariusconsulting.net/2008/10/mesh4x-j2me-version-with-javarosa.html Mesh4x J2ME version with JavaRosa XForms]
+
 [http://jtondato.clariusconsulting.net/2008/10/javarosa-midp-demo.html Mesh4x+JavaRosa MIDP Demo - step by step]
