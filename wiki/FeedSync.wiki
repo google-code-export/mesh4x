@@ -2,3 +2,8 @@
 
 You can see it here
 http://dev.live.com/feedsync/spec/v1.htm
+
+==More Information==
+[http://www.clariusconsulting.net/blogs/kzu/archive/2008/04/29/62598.aspx Live Mesh FeedSync: an overview of the protocol under the hood (by kzu)]
+
+[http://weblogs.asp.net/cibrax/archive/2008/04/22/overview-of-feedsync-support-in-the-microsoft-sync-framework.aspx Overview of FeedSync support in the Microsoft Sync Framework (by cibrax)]
