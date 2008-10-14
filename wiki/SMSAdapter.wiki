@@ -56,6 +56,9 @@ In collaboration with [http://www.openrosa.org/index.php/javarosa JavaRosa], an 
 
 The main idea is to provide mesh capabilities allowing mobile phones to share XForms definitions and data. You could read about it in [http://edjez.instedd.org/2008/10/mesh4x-goes-mobile-with-javarosa-allows.html Mesh4x goes mobile with JavaROSA, allows you to sync data on your handset with no Internet].
 
+
+http://mesh4x.googlecode.com/svn/wiki/files/javarosa1.png
+
 [http://mesh4x.googlecode.com/files/Mesh4XForm_1.1.zip Download Mesh4x+JavaRosa MIDP demo]. 
 
 You could read about the demo in [http://jtondato.clariusconsulting.net/2008/10/javarosa-midp-demo.html Mesh4x+JavaRosa MIDP Demo - step by step]. This demo requires a mobile phone MIDP 2.0 and CLDC 1.1 compatible.
@@ -63,7 +66,7 @@ You could read about the demo in [http://jtondato.clariusconsulting.net/2008/10/
 The entire application was written in J2ME using [http://www.j2mepolish.org/cms/leftsection/introduction.html J2ME Polish], which then makes the app look great on specific handset models and adapts the UI to the capabilities of each phone.
 
 
-http://mesh4x.googlecode.com/svn/wiki/files/javarosa1.png
+http://mesh4x.googlecode.com/svn/wiki/files/javarosa2.png
 
 
 == More Information ==
