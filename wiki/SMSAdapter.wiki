@@ -46,6 +46,8 @@ You could check if your mobile phone is in the [http://www.smslib.org/doc/compat
 
 [http://mesh4x.googlecode.com/files/mesh4j-SMS-DemoApp-0.1.9.zip Download desktop application]. 
 
+http://mesh4x.googlecode.com/svn/wiki/files/desktopClient1.png
+
 
 ===Mobile application===
 In collaboration with [http://www.openrosa.org/index.php/javarosa JavaRosa], an [http://www.openrosa.org/ OpenRosa] java implementation which supports XForms for J2ME, we have migrated Mesh4J to J2ME.
