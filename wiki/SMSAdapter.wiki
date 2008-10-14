@@ -30,4 +30,8 @@ Our hope is to have client and server implementations:
 *Client Scenario*: You have a PC with a phone plugged in (or a mobile device with the data) and a set of SMS messages get exchanged with another PC/phone that then applies the changes locally.
 
 ==More Information==
-[http://edjez.instedd.org/2008/06/mesh4x-sms-adapter-sync-data-without.html Blog Post]
+[http://edjez.instedd.org/2008/06/mesh4x-sms-adapter-sync-data-without.html Blog Post - Mesh4x SMS Adapter: Sync data without an Internet connection]
+
+[http://edjez.instedd.org/2008/10/mesh4x-goes-mobile-with-javarosa-allows.html Blog Post - Mesh4x goes mobile with JavaROSA, allows you to sync data on your handset with no Internet]
+
+[http://jtondato.clariusconsulting.net/2008/10/javarosa-midp-demo.html Blog Post - Mesh4x+JavaRosa MIDP Demo]
