@@ -10,6 +10,9 @@ But an alternative if you have cell signal is to synchronize by receiving and se
 
 We are currently working on implementing the sync protocol over SMS messages.
 
+
+the main idea is [http://edjez.instedd.org/2008/06/mesh4x-sms-adapter-sync-data-without.html Sync data without an Internet connection].
+
 == How it works ==
 
 We just started the effort mid-June 2008, but the broad idea is to have a protocol that:
@@ -50,5 +53,5 @@ The main idea is to provide mesh capabilities allowing mobile phones to share XF
 
 You could read about the demo in [http://jtondato.clariusconsulting.net/2008/10/javarosa-midp-demo.html Mesh4x+JavaRosa MIDP Demo - step by step]. This demo requires a mobile phone MIDP 2.0 and CLDC 1.1 compatible.
 
-==More Information==
+== More Information ==
 [http://edjez.instedd.org/2008/06/mesh4x-sms-adapter-sync-data-without.html Mesh4x SMS Adapter: Sync data without an Internet connection]
