@@ -30,7 +30,7 @@ Our hope is to have client and server implementations:
 
 *Client Scenario*: You have a PC with a phone plugged in (or a mobile device with the data) and a set of SMS messages get exchanged with another PC/phone that then applies the changes locally.
 
-==Desktop application:==
+===Desktop application===
 The Sms Adapter for desktop applications uses the [http://www.smslib.org/ smslib] java library to send and receive messages.
 The idea is to share KML files between two PCs with a phone plugged in, the application uses the phone like a modem.
 
@@ -41,7 +41,7 @@ You could check if your mobile phone is in the [http://www.smslib.org/doc/compat
 [http://mesh4x.googlecode.com/files/mesh4j-SMS-DemoApp-0.1.9.zip Download desktop application]. 
 
 
-==Mobile application==
+===Mobile application===
 In collaboration with [http://www.openrosa.org/index.php/javarosa JavaRosa], an [http://www.openrosa.org/ OpenRosa] java implementation which supports XForms for J2ME, we have migrated Mesh4J to J2ME.
 
 The main idea is to provide mesh capabilities allowing mobile phones to share XForms definitions and data. You could read about it in [http://edjez.instedd.org/2008/10/mesh4x-goes-mobile-with-javarosa-allows.html Mesh4x goes mobile with JavaROSA, allows you to sync data on your handset with no Internet].
