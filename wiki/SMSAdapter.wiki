@@ -57,3 +57,7 @@ The entire application was written in J2ME using [http://www.j2mepolish.org/cms/
 
 == More Information ==
 [http://edjez.instedd.org/2008/06/mesh4x-sms-adapter-sync-data-without.html Mesh4x SMS Adapter: Sync data without an Internet connection]
+
+[http://edjez.instedd.org/2008/10/mesh4x-goes-mobile-with-javarosa-allows.html Mesh4x goes mobile with JavaROSA, allows you to sync data on your handset with no Internet]
+
+[http://jtondato.clariusconsulting.net/2008/10/javarosa-midp-demo.html Mesh4x+JavaRosa MIDP Demo - step by step]
