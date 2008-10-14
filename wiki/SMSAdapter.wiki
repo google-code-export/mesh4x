@@ -59,7 +59,7 @@ You could read about the demo in [http://jtondato.clariusconsulting.net/2008/10/
 The entire application was written in J2ME using [http://www.j2mepolish.org/cms/leftsection/introduction.html J2ME Polish], which then makes the app look great on specific handset models and adapts the UI to the capabilities of each phone.
 
 
-http://lh6.ggpht.com/edujez/SO-xGrOAJHI/AAAAAAAAAMM/nK_4ubvo4mM/s1600-h/image%5B45%5D.png
+http://mesh4x.googlecode.com/svn/wiki/files/javarosa1.png
 
 
 == More Information ==
