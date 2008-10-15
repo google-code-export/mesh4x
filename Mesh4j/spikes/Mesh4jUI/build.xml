@@ -38,14 +38,14 @@
 	</target>
 	
 	<target name="distSMS" depends="jarsSMS">
-		<zip destfile="dist/mesh4j-SMS-DemoApp-0.1.9.zip">
-			<zipfileset prefix="mesh4j-SMS-DemoApp-0.1.9" dir="dist" includes="mesh4j-SMS-DemoApp.jar"/>
-			<zipfileset prefix="mesh4j-SMS-DemoApp-0.1.9" dir="." includes="lib/**/*"/>
-			<zipfileset prefix="mesh4j-SMS-DemoApp-0.1.9" dir="." includes="swt-win32-3138.dll"/>
-			<zipfileset prefix="mesh4j-SMS-DemoApp-0.1.9" dir="." includes="mesh4j_sms.properties"/>
-			<zipfileset prefix="mesh4j-SMS-DemoApp-0.1.9" dir="." includes="default_sms.kml"/>
-			<zipfileset prefix="mesh4j-SMS-DemoApp-0.1.9/lib" dir="dist" includes="log4j.properties"/>
-			<zipfileset prefix="mesh4j-SMS-DemoApp-0.1.9/lib" dir="dist" includes="mesh4j_resources.properties"/>
+		<zip destfile="dist/mesh4j-SMS-DemoApp-0.2.0.zip">
+			<zipfileset prefix="mesh4j-SMS-DemoApp-0.2.0" dir="dist" includes="mesh4j-SMS-DemoApp.jar"/>
+			<zipfileset prefix="mesh4j-SMS-DemoApp-0.2.0" dir="." includes="lib/**/*"/>
+			<zipfileset prefix="mesh4j-SMS-DemoApp-0.2.0" dir="." includes="swt-win32-3138.dll"/>
+			<zipfileset prefix="mesh4j-SMS-DemoApp-0.2.0" dir="." includes="mesh4j_sms.properties"/>
+			<zipfileset prefix="mesh4j-SMS-DemoApp-0.2.0" dir="." includes="default_sms.kml"/>
+			<zipfileset prefix="mesh4j-SMS-DemoApp-0.2.0/lib" dir="dist" includes="log4j.properties"/>
+			<zipfileset prefix="mesh4j-SMS-DemoApp-0.2.0/lib" dir="dist" includes="mesh4j_resources.properties"/>
 		</zip>
 	</target>
 </project>
