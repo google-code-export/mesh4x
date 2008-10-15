@@ -38,9 +38,11 @@ Our hope is to have client and server implementations:
 
 ===Desktop application===
 The Sms Adapter for desktop applications uses the [http://www.smslib.org/ smslib] java library to send and receive messages.
-The idea is to share KML files between two PCs with a phone plugged in, the application uses the phone like a modem.
+The idea is to share KML files between two PCs with a phone plugged in, the application uses the phone as a modem.
 
 http://mesh4x.googlecode.com/svn/wiki/files/desktopClient1.png
+
+You can read about the demo in [http://jtondato.clariusconsulting.net/2008/10/mesh4x-sms-adapter-desktop-pc.html Mesh4x SMS Adapter Desktop PC]
 
 The demo requires the "Java Communications Library" installed in your PC, please check the following [http://www.smslib.org/doc/installation/ installation instructions] (only Java Communications Library section).
 
@@ -61,7 +63,7 @@ http://mesh4x.googlecode.com/svn/wiki/files/javarosa1.png
 
 [http://mesh4x.googlecode.com/files/Mesh4XForm_1.1.zip Download Mesh4x+JavaRosa MIDP demo]. 
 
-You could read about the demo in [http://jtondato.clariusconsulting.net/2008/10/javarosa-midp-demo.html Mesh4x+JavaRosa MIDP Demo - step by step]. This demo requires a mobile phone MIDP 2.0 and CLDC 1.1 compatible.
+You can read about the demo in [http://jtondato.clariusconsulting.net/2008/10/javarosa-midp-demo.html Mesh4x+JavaRosa MIDP Demo - step by step]. This demo requires a mobile phone MIDP 2.0 and CLDC 1.1 compatible.
 
 The entire application was written in J2ME using [http://www.j2mepolish.org/cms/leftsection/introduction.html J2ME Polish], which then makes the app look great on specific handset models and adapts the UI to the capabilities of each phone.
 
