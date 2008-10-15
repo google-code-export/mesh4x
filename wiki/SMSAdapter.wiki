@@ -79,3 +79,5 @@ http://mesh4x.googlecode.com/svn/wiki/files/javarosa2.png
 [http://jtondato.clariusconsulting.net/2008/10/mesh4x-j2me-version-with-javarosa.html Mesh4x J2ME version with JavaRosa XForms]
 
 [http://jtondato.clariusconsulting.net/2008/10/javarosa-midp-demo.html Mesh4x+JavaRosa MIDP Demo - step by step]
+
+[http://jtondato.clariusconsulting.net/2008/10/mesh4x-sms-adapter-desktop-pc.html Mesh4x SMS Adapter Desktop PC]
