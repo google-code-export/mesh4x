@@ -1,4 +1,3 @@
-#labels Featured
 #How to build an adapter for a specific storage or transport
 
 = Introduction =
