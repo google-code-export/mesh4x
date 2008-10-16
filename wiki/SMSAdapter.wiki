@@ -1,4 +1,5 @@
 #summary The SMS Adapter allows 2-way synchronization over SMS messages, optimizing for number of messages sent both ways
+#labels Featured
 
 = Introduction =
 
