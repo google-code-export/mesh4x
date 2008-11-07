@@ -7,6 +7,7 @@ import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_HIST
 import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_SYNC_DELETED;
 import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_SYNC_ID;
 import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_SYNC_NO_CONFLICTS;
+import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_SYNC_UPDATES;
 import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ELEMENT_AUTHOR;
 import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ELEMENT_ITEM_DESCRIPTION;
 import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ELEMENT_ITEM_TITLE;
@@ -149,11 +150,11 @@ public class FeedReader {
 
 	@SuppressWarnings("unchecked")
 	public Sync readSync(Element syncElement) {
+		
 		String syncID = syncElement.attributeValue(SX_ATTRIBUTE_SYNC_ID);
-		//int updates = Integer.valueOf(syncElement.attributeValue(SX_ATTRIBUTE_SYNC_UPDATES));
+		int updates = Integer.valueOf(syncElement.attributeValue(SX_ATTRIBUTE_SYNC_UPDATES));
 		boolean deleted = Boolean.parseBoolean(syncElement.attributeValue(SX_ATTRIBUTE_SYNC_DELETED));
 		boolean noConflicts = Boolean.parseBoolean(syncElement.attributeValue(SX_ATTRIBUTE_SYNC_NO_CONFLICTS));
-		//syncElement.asXML()
 		
 		Sync sync = new Sync(syncID);
 		sync.setDeleted(deleted);
@@ -178,8 +179,7 @@ public class FeedReader {
 			String by = historyElement.attributeValue(SX_ATTRIBUTE_HISTORY_BY);
 			sync.update(by, when, sequence);
 		}
-		
-		
+		sync.setUpdatesWithLastUpdateSequence();
 		
 		Element conflicts = syncElement.element(SX_QNAME_CONFLICTS);
 		if(conflicts != null){

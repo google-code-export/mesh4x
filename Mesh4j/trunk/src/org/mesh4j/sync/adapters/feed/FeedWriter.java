@@ -213,4 +213,10 @@ public class FeedWriter {
 		return xml;
 	}
 	
+	public String writeAsXml(Item item) throws Exception {
+		Element root = DocumentHelper.createElement("items");
+		this.write(root, item);
+		String xml = ((Element)root.elements().get(0)).asXML();
+		return xml;
+	}
 }

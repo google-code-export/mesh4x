@@ -318,4 +318,74 @@ public class MergeBehavior {
 
 		return new Item(R.getContent(), updatedSync);
 	}
+	
+	/// <summary>
+	/// Purges the <paramref name="Sync.UpdatesHistory"/> by retaining the sx:history sub-elements 
+	/// of sx:sync having the highest ‘sequence’ for a given ‘by’, and removing all other 
+	/// sx:history sub-elements of sx:sync that have lower ‘sequence’ values for the same given ‘by’.
+	/// </summary>
+	/// <param name="sync"></param>
+	/// <returns></returns>
+	public static boolean sparsePurge(Sync sync)
+	{
+//		List<History> purgedHistory = new List<History>();
+//
+//		Dictionary<string, History> latest = new Dictionary<string, History>();
+//
+//		foreach (History history in sync.UpdatesHistory)
+//		{
+//			// By may be null or empty if not specified.
+//			// feedsync allows either By or When to be specified.
+//			if (String.IsNullOrEmpty(history.By))
+//			{
+//				// Can't purge without a By
+//				purgedHistory.Add(history);
+//			}
+//			else
+//			{
+//				History last;
+//				if (latest.TryGetValue(history.By, out last))
+//				{
+//					if (history.Sequence > last.Sequence)
+//					{
+//						// Replace the item we added before.
+//						purgedHistory.Remove(last);
+//						latest.Add(history.By, history);
+//					}
+//				}
+//				else
+//				{
+//					latest.Add(history.By, history);
+//					purgedHistory.Add(history);
+//				}
+//			}
+//		}
+//
+//		purgedHistory.Reverse();
+//		Sync purged = new Sync(sync.Id, sync.Updates);
+//		purged.Conflicts.AddRange(sync.Conflicts);
+//		purged.Deleted = sync.Deleted;
+//		purged.Tag = sync.Tag;
+//		purged.NoConflicts = sync.NoConflicts;
+//		purged.Updates = sync.Updates;
+//
+//		foreach (History history in purgedHistory)
+//		{
+//			purged.AddHistory(history);
+//		}
+//
+//		return purged;
+//	}
+
+		// TODO (JMT) SparcePurge
+		if(sync.getUpdates() > 1){
+			History lastUpdate = sync.getLastUpdate();
+			sync.getUpdatesHistory().clear();
+			sync.getUpdatesHistory().push(lastUpdate);
+			sync.setUpdatesWithLastUpdateSequence();
+			return true;
+		} else {
+			return false;
+		}
+	}
 }

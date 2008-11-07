@@ -2,6 +2,7 @@ package org.mesh4j.sync.adapters;
 
 import java.util.Date;
 
+import org.mesh4j.sync.merge.MergeBehavior;
 import org.mesh4j.sync.model.IContent;
 import org.mesh4j.sync.model.Sync;
 import org.mesh4j.sync.security.IIdentityProvider;
@@ -81,7 +82,7 @@ public class SyncInfo {
 		return false;
 	}
 
-	public boolean purgue() {
-		return this.sync.purgue();
+	public boolean sparsePurge() {
+		return MergeBehavior.sparsePurge(this.sync);
 	}
 }

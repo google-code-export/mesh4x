@@ -1307,8 +1307,8 @@ public class KMLAdapterTests {
 		
 		syncs = kml.getDOM().getAllSyncs();
 		for (SyncInfo syncInfo : syncs) {
-			Assert.assertEquals(syncInfo.getSync().getUpdates(), syncInfo.getSync().getUpdatesHistory().size());
-			Assert.assertEquals(1, syncInfo.getSync().getUpdates());
+			Assert.assertEquals(syncInfo.getSync().getUpdates(), syncInfo.getSync().getLastUpdate().getSequence());
+			Assert.assertEquals(1, syncInfo.getSync().getUpdatesHistory().size());
 			Assert.assertFalse(syncInfo.isDeleted());
 		}
 	}

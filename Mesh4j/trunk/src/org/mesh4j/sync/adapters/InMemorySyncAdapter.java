@@ -22,6 +22,22 @@ public class InMemorySyncAdapter extends AbstractSyncAdapter {
 	private IIdentityProvider identityProvider;
 
 	// BUSINESS METHODS
+	
+	public InMemorySyncAdapter(String name, IIdentityProvider identityProvider, Item... allItems){
+		super();
+		Guard.argumentNotNullOrEmptyString(name, "name");
+		Guard.argumentNotNull(identityProvider, "identityProvider");
+		Guard.argumentNotNull(allItems, "allItems");
+		
+		this.name = name;
+		this.identityProvider = identityProvider;
+		
+		for (Item item : allItems)
+		{
+			items.put(item.getSyncId(), item);
+		}
+	}
+	
 	public InMemorySyncAdapter(String name, IIdentityProvider identityProvider, List<Item> allItems){
 		super();
 		Guard.argumentNotNullOrEmptyString(name, "name");

@@ -12,6 +12,7 @@ import org.mesh4j.sync.utils.DateHelper;
 
 public class AtomSyndicationFormat implements ISyndicationFormat {
 
+	private static final String NAME = "atom10";
 	private static final String ATOM_ELEMENT_FEED = "feed";
 	private static final String ATOM_ELEMENT_ENTRY = "entry";
 	public static final AtomSyndicationFormat INSTANCE = new AtomSyndicationFormat();
@@ -53,4 +54,14 @@ public class AtomSyndicationFormat implements ISyndicationFormat {
 	public static boolean isAtom(Document document) {
 		return "feed".equals(document.getRootElement().getName());
 	}
+
+	public static boolean isAtom(String protocol) {
+		return "feed".equals(protocol);
+	}
+	
+	@Override
+	public String getName() {
+		return NAME;
+	}
+
 }

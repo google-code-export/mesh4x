@@ -3,6 +3,7 @@ package org.mesh4j.sync.adapters.feed;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.validations.Guard;
@@ -17,15 +18,24 @@ public class Feed {
 	// BUSINES METHODS
 	public Feed(){
 		super();
+		this.payload = DocumentHelper.createElement(ISyndicationFormat.ELEMENT_PAYLOAD);
+	}
+	
+	public Feed(String link, String description){
+		super();
+		this.payload = DocumentHelper.createElement(ISyndicationFormat.ELEMENT_PAYLOAD);
+// TODO JMT create a payload 
 	}
 	
 	public Feed(List<Item> items){
-		super();
+		this();
 		Guard.argumentNotNull(items, "items");
 		this.feedItems = items;
 	}
+	
 	public Feed(Item ...items){
-		super();
+		this();
+
 		for (Item item : items) {
 			this.addItem(item);
 		}

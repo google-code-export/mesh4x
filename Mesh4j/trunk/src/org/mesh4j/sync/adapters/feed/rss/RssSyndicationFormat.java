@@ -12,6 +12,7 @@ import org.mesh4j.sync.utils.DateHelper;
 
 public class RssSyndicationFormat implements ISyndicationFormat {
 
+	public static final String NAME = "rss20";
 	public static final String RSS_ELEMENT_ROOT = "rss";
 	public static final String RSS_ELEMENT_ITEM = "item";
 	public static final String RSS_ELEMENT_CHANNEL = "channel";
@@ -52,6 +53,11 @@ public class RssSyndicationFormat implements ISyndicationFormat {
 	public Element addFeedItemElement(Element root) {
 		Element item = root.addElement(RSS_ELEMENT_ITEM);
 		return item;
+	}
+
+	@Override
+	public String getName() {
+		return NAME;
 	}
 
 }

@@ -36,6 +36,41 @@ public class FeedAdapter extends AbstractSyncAdapter{
 	private IIdentityProvider identityProvider;
 	
 	// BUSINESS METHODS
+	public FeedAdapter(String fileName, IIdentityProvider identityProvider, IIdGenerator idGenerator, ISyndicationFormat syndicationFormat){
+		Guard.argumentNotNull(fileName, "fileName");
+		Guard.argumentNotNull(identityProvider, "identityProvider");
+		Guard.argumentNotNull(idGenerator, "idGenerator");
+		Guard.argumentNotNull(syndicationFormat, "syndicationFormat");
+
+		this.identityProvider = identityProvider;
+		this.feedReader = new FeedReader(syndicationFormat, identityProvider, idGenerator);
+		this.feedWriter = new FeedWriter(syndicationFormat, identityProvider);
+		
+		this.feedFile = new File(fileName);
+		if(!this.feedFile.exists()){
+			this.feed = new Feed();
+			try{
+				this.feedFile.createNewFile();
+				this.flush();
+			} catch (Exception e) {
+				throw new MeshException(e);
+			}
+		} else {
+			if(this.feedFile.length() == 0){
+				this.feed = new Feed();
+			} else {
+				SAXReader reader = new SAXReader();
+				Document document;
+				try {
+					document = reader.read(this.feedFile);
+				} catch (DocumentException e) {
+					throw new MeshException(e);
+				}
+				this.feed = this.feedReader.read(document);
+			}
+		}
+	}
+	
 	public FeedAdapter(String fileName, IIdentityProvider identityProvider, IIdGenerator idGenerator){
 		Guard.argumentNotNull(fileName, "fileName");
 		Guard.argumentNotNull(identityProvider, "identityProvider");
@@ -160,7 +195,7 @@ public class FeedAdapter extends AbstractSyncAdapter{
 		}
 	}
 	
-	private void flush() {
+	public void flush() {
 		try {
 			XMLWriter writer = new XMLWriter(new FileWriter(this.feedFile), OutputFormat.createPrettyPrint());
 			this.feedWriter.write(writer, this.feed);	
@@ -186,13 +221,17 @@ public class FeedAdapter extends AbstractSyncAdapter{
 	}
 	
 	public void refresh(){
-		SAXReader reader = new SAXReader();
-		Document document;
-		try {
-			document = reader.read(this.feedFile);
-		} catch (DocumentException e) {
-			throw new MeshException(e);
+		if(this.feedFile.length() == 0){
+			this.feed = new Feed();
+		} else {
+			SAXReader reader = new SAXReader();
+			Document document;
+			try {
+				document = reader.read(this.feedFile);
+			} catch (DocumentException e) {
+				throw new MeshException(e);
+			}
+			this.feed = this.feedReader.read(document);
 		}
-		this.feed = this.feedReader.read(document);
 	}
 }

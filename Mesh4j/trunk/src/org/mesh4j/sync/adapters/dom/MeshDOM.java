@@ -339,7 +339,7 @@ public abstract class MeshDOM implements IMeshDOM {
 				Element meshElement = getMeshElement(syncRepository, syncInfo.getSyncId());
 				meshElement.getParent().remove(meshElement);
 			} else {
-				if(syncInfo.purgue()){
+				if(syncInfo.sparsePurge()){
 					updateSync(syncInfo);
 				}
 			}

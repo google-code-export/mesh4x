@@ -10,6 +10,8 @@ import org.dom4j.Namespace;
 import org.dom4j.QName;
 
 public interface ISyndicationFormat {
+	
+	String getName();
 
 	boolean isFeedItem(Element element);
 

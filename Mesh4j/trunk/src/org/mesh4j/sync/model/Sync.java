@@ -115,7 +115,7 @@ public class Sync implements Cloneable{
 		return false;
 	}
 	
-	private static boolean areEqualsHistories(Stack<History> updatesHistory, Stack<History> updatesHistory1){
+	public static boolean areEqualsHistories(Stack<History> updatesHistory, Stack<History> updatesHistory1){
 		if (updatesHistory == updatesHistory1) return true;
 		if (updatesHistory != null && updatesHistory1 != null)
 		{
@@ -130,6 +130,49 @@ public class Sync implements Cloneable{
 			}
 
 			return true;
+		}
+		return false;
+	}
+	
+	public static boolean isSameBranchHistory(Stack<History> updatesHistory, Stack<History> updatesHistory1){
+		if (updatesHistory == updatesHistory1){ 
+			return true;
+		}
+	
+		if (updatesHistory != null && updatesHistory1 != null){
+			if (updatesHistory.size() == updatesHistory1.size()){ 
+				return areEqualsHistories(updatesHistory, updatesHistory1);
+			} else {
+				Stack<History> maxUpdatesHistory = updatesHistory;
+				Stack<History> minUpdatesHistory = updatesHistory1;
+				if(updatesHistory.size() < updatesHistory1.size()){
+					maxUpdatesHistory = updatesHistory1;
+					minUpdatesHistory = updatesHistory;	
+				}
+				
+				for (int i = 0; i < minUpdatesHistory.size(); i++)
+				{
+					History historyMin = minUpdatesHistory.elementAt(i);
+					
+					int maxi = i;
+					boolean ok = false;
+					while (!ok && maxi < maxUpdatesHistory.size()){
+						History history = maxUpdatesHistory.elementAt(maxi);
+						if (history == null) return false;
+						
+						if (!history.equals(historyMin)){
+							if(history.getSequence() > historyMin.getSequence()) {
+								return false;
+							} else {
+								maxi = maxi +1;
+							}
+						} else {
+							ok = true;
+						}
+					}
+				}
+				return true;
+			}
 		}
 		return false;
 	}
@@ -238,15 +281,11 @@ public class Sync implements Cloneable{
 		return this;
 	}
 
-	public boolean purgue() {
-		if(this.updates > 1){
-			History lastUpdate = getLastUpdate();
-			this.updatesHistory.clear();
-			this.updatesHistory.push(lastUpdate);
-			this.updates = 1;
-			return true;
+	public void setUpdatesWithLastUpdateSequence() {
+		if(this.getLastUpdate() == null){
+			this.updates = 0;
 		} else {
-			return false;
+			this.updates = this.getLastUpdate().getSequence();
 		}
 	}
 

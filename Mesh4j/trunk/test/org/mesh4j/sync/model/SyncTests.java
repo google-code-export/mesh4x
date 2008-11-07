@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.mesh4j.sync.merge.MergeBehavior;
 import org.mesh4j.sync.test.utils.TestHelper;
 
 
@@ -110,7 +111,7 @@ public class SyncTests {
 		Assert.assertNotNull(sync.getLastUpdate());
 		Assert.assertEquals(1, sync.getUpdates());
 		
-		sync.purgue();
+		MergeBehavior.sparsePurge(sync);
 		
 		Assert.assertNotNull(sync.getLastUpdate());
 		Assert.assertEquals(1, sync.getUpdates());
@@ -126,9 +127,9 @@ public class SyncTests {
 		Assert.assertNotNull(history);
 		Assert.assertEquals(3, sync.getUpdates());
 		
-		sync.purgue();
+		MergeBehavior.sparsePurge(sync);
 		
-		Assert.assertEquals(1, sync.getUpdates());			
+		Assert.assertEquals(sync.getLastUpdate().getSequence(), sync.getUpdates());			
 		Assert.assertNotNull(sync.getLastUpdate());
 		Assert.assertSame(history, sync.getLastUpdate());
 	
