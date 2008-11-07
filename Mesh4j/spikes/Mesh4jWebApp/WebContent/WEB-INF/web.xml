@@ -8,10 +8,6 @@
 		<display-name>FeedServlet</display-name>
 		<servlet-name>FeedServlet</servlet-name>
 		<servlet-class>org.mesh4j.sync.servlet.FeedServlet</servlet-class>
-		<init-param>
-   			<param-name>default.feeds.path</param-name>
-   			<param-value>C:\Clarius\temp</param-value>
-   		</init-param>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>FeedServlet</servlet-name>
