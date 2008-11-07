@@ -1,0 +1,39 @@
+#labels Phase-Implementation
+=JavaRosa and FeedSync Server Demo=
+This demo depicts how a mobile application can to sync data with an opaque FeedSync server.
+
+==Environment Configuration==
+For this demo 2 Eclipse instances are required.
+
+ * Feed sync server workspace:
+  # Configure one eclipse with Mesh4x importing projects from SVN: 
+   * http://mesh4x.googlecode.com/svn/Mesh4j/trunk
+   * http://mesh4x.googlecode.com/svn/Mesh4j/spikes/Mesh4jWebApp
+  # Create a tomcat server
+  # Add MeshjWebApp to the tomcat server
+  # Start the server
+  # check that the following urls are working:
+     * http://localhost:8080/mesh4x/
+     * http://localhost:8080/mesh4x/feeds
+     * http://localhost:8080/mesh4x/feeds/XForms
+     * http://localhost:8080/mesh4x/feeds/XFormDemo1
+     * http://localhost:8080/mesh4x/feeds/XFormDemo2va
+
+ * Java Rosa workspace:
+  # Configure one Eclipse instance with JavaRosa environment
+  # Import projects from SVN: http://code.dimagi.com/svn/JavaRosa/branches/dev-instedd/
+  # Change the url of the feed sync server
+    * Open class org.javarosa.demo.shell.JavaRosaDemoShell
+    * Search method loadProperties()
+    * Change the server in both url, change "vcc-pc" for you machine name (localhost does not work with SUN's emulator):
+       * initProperty(Mesh4jPropertyRules.HTTP_SYNC_BASE_URL, "http://vcc-pc:8080/mesh4x/feeds/", true);
+       * initProperty(Mesh4jPropertyRules.HTTP_DISCOVERY_XFORMS_URL, "http://vcc-pc:8080/mesh4x/feeds/XForms", true);
+  # Start the JavaRosa midlet demo running with ANT the file build.xml of the project org.javarosa.demo
+
+==Demo Step by Step==
+ # Set focus on the mobile phone emulator.
+ # Open the JavaRosa menu and choose the option 'Sync - Import Def - HTTP', this imports all available forms from the FeedSync server. New forms are automatically available in the form list.
+ # Select the XFormDemo2 element form the forms list.
+ # Open the JavaRosa menu and choose the option 'Sync Data - HTTP', this imports all data from the FeedSync server.
+
+For more details you may want to read the following blog entry [http://jtondato.clariusconsulting.net/2008/10/javarosa-midp-demo.html JavaRosa MIDP Demo] 
