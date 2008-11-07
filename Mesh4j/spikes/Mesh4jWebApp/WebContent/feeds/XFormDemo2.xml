@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<rss xmlns:sx="http://feedsync.org/2007/feedsync" version="2.0">
+  <channel>
+    <title>XForm2</title>
+    <description>XForm2</description>
+    <link>/feeds/XFormDemo2</link>
+    <item>
+      <XFormDemo2>
+        <Meta>
+          <DeviceID>JYJY0DRW0QP6QCQVP57O8EB9N</DeviceID>
+          <TimeStart>2008-09-13T01:27:15</TimeStart>
+          <TimeEnd>2008-10-06T19:42:24</TimeEnd>
+        </Meta>
+        <Patient>
+          <PatientNumber>3</PatientNumber>
+          <Name>6JGE</Name>
+        </Patient>
+      </XFormDemo2>
+      <title>XFormDemo2</title>
+      <description>Sync id: 6248276137770042251-6667707669692552 version: -696061565</description>
+      <author>
+        <name>JYJY0DRW0QP6QCQVP57O8EB9N_admin</name>
+      </author>
+      <sx:sync id="6248276137770042251-6667707669692552" updates="3" deleted="false" noconflicts="false">
+        <sx:history sequence="3" when="2008-10-06T19:42:47Z" by="JYJY0DRW0QP6QCQVP57O8EB9N_admin"/>
+        <sx:history sequence="2" when="2008-09-13T01:28:33Z" by="admin"/>
+        <sx:history sequence="1" when="2008-09-13T01:26:33Z" by="admin"/>
+      </sx:sync>
+    </item>
+    <item>
+      <XFormDemo2>
+        <Meta>
+          <DeviceID>JYJY0DRW0QP6QCQVP57O8EB9N</DeviceID>
+          <TimeStart>2008-09-13T01:25:23</TimeStart>
+          <TimeEnd>2008-09-13T01:25:29</TimeEnd>
+        </Meta>
+        <Patient>
+          <PatientNumber>333</PatientNumber>
+          <Name>DGJ</Name>
+        </Patient>
+      </XFormDemo2>
+      <title>XFormDemo2</title>
+      <description>Sync id: 3393951970895724113-2003078649696802 version: 248184328</description>
+      <author>
+        <name>JYJY0DRW0QP6QCQVP57O8EB9N_admin</name>
+      </author>
+      <sx:sync id="3393951970895724113-2003078649696802" updates="2" deleted="false" noconflicts="false">
+        <sx:history sequence="2" when="2008-10-06T19:42:47Z" by="JYJY0DRW0QP6QCQVP57O8EB9N_admin"/>
+        <sx:history sequence="1" when="2008-09-13T01:25:36Z" by="admin"/>
+      </sx:sync>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:sx="http://feedsync.org/2007/feedsync" version="2.0">
+<channel>
+	<title>XForm List</title><description>Java Rosa XForm available list</description><link>/feeds/XForms</link>
+	<item>
+		<title>XFormDemo1</title>
+		<description>XFormDemo1</description>
+		<link>/mesh4x/feeds/XFormDemo1</link>
+		<author>
+			<name>jmt</name>
+		</author>
+		<h:html xmlns:h="http://www.w3.org/1999/xhtml"
+				xmlns="http://www.w3.org/2002/xforms"
+			  xmlns:ev="http://www.w3.org/2001/xml-events"
+			  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+			  xmlns:jr="http://openrosa.org/javarosa">
+		<h:head>
+			<h:title>XFormDemo1</h:title>
+			<model>
+			<instance>
+				<XFormDemo1>
+					<Meta>
+						<DeviceID />
+						<TimeStart />
+						<TimeEnd />
+					</Meta>
+				
+					<Patient>
+						<PatientNumber/>
+						<Name/>
+					</Patient>
+				</XFormDemo1>
+			</instance>
+			<bind id="hidden1" nodeset="/XFormDemo1/Meta/DeviceID" type="xsd:string" jr:preload="property" jr:preloadParams="DeviceID" />
+			<bind id="hidden2" nodeset="/XFormDemo1/Meta/TimeStart" type="xsd:dateTime" jr:preload="timestamp" jr:preloadParams="start" />
+			<bind id="hidden3" nodeset="/XFormDemo1/Meta/TimeEnd" type="xsd:dateTime" jr:preload="timestamp" jr:preloadParams="end" />
+			<bind id="pNumber" nodeset="/XFormDemo1/Patient/PatientNumber" type="xsd:int"/>
+			<bind id="pName" nodeset="/XFormDemo1/Patient/Name" type="xsd:string"/>
+			</model>
+			</h:head>			
+			<h:body>
+					<input bind="pNumber"><label>Patient #:</label></input>
+					<input bind="pName"><label>Name:</label></input>
+			</h:body>
+		</h:html>
+		<sx:sync id="8ea581a3-1068-43b0-bfa3-c54aa16680f0" updates="1" deleted="false" noconflicts="false">
+			<sx:history sequence="1" when="2008-09-05T18:03:04Z" by="jmt"/>
+		</sx:sync>
+	</item>
+	<item>
+		<title>XFormDemo2</title>
+		<description>XFormDemo2</description>
+		<link>/mesh4x/feeds/XFormDemo2</link>
+		<author>
+			<name>jmt</name>
+		</author>
+		<h:html xmlns:h="http://www.w3.org/1999/xhtml"
+				xmlns="http://www.w3.org/2002/xforms"
+			  xmlns:ev="http://www.w3.org/2001/xml-events"
+			  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+			  xmlns:jr="http://openrosa.org/javarosa">
+		<h:head>
+			<h:title>XFormDemo2</h:title>
+			<model>
+			<instance>
+				<XFormDemo2>
+					<Meta>
+						<DeviceID />
+						<TimeStart />
+						<TimeEnd />
+					</Meta>
+				
+					<Patient>
+						<PatientNumber/>
+						<Name/>
+					</Patient>
+				</XFormDemo2>
+			</instance>
+			<bind id="hidden1" nodeset="/XFormDemo2/Meta/DeviceID" type="xsd:string" jr:preload="property" jr:preloadParams="DeviceID" />
+			<bind id="hidden2" nodeset="/XFormDemo2/Meta/TimeStart" type="xsd:dateTime" jr:preload="timestamp" jr:preloadParams="start" />
+			<bind id="hidden3" nodeset="/XFormDemo2/Meta/TimeEnd" type="xsd:dateTime" jr:preload="timestamp" jr:preloadParams="end" />
+			<bind id="pNumber" nodeset="/XFormDemo2/Patient/PatientNumber" type="xsd:int"/>
+			<bind id="pName" nodeset="/XFormDemo2/Patient/Name" type="xsd:string"/>
+			</model>
+			</h:head>			
+			<h:body>
+					<input bind="pNumber"><label>Patient #:</label></input>
+					<input bind="pName"><label>Name:</label></input>
+			</h:body>
+		</h:html>
+		<sx:sync id="8ea581a3-1068-43b0-bfa3-c54aa1668111" updates="1" deleted="false" noconflicts="false">
+			<sx:history sequence="1" when="2008-09-05T18:03:04Z" by="jmt"/>
+		</sx:sync>
+	</item>
+</channel>
+</rss>
