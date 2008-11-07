@@ -20,7 +20,7 @@ For this demo 2 Eclipse instances are required.
      * http://localhost:8080/mesh4x/feeds/XFormDemo2va
 
  * Java Rosa workspace:
-  # Configure one Eclipse instance with JavaRosa environment
+  # Configure one Eclipse instance with [http://code.javarosa.org/wiki JavaRosa] environment
   # Import projects from SVN: http://code.dimagi.com/svn/JavaRosa/branches/dev-instedd/
   # Change the url of the feed sync server
     * Open class org.javarosa.demo.shell.JavaRosaDemoShell
