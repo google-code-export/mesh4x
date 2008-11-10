@@ -33,7 +33,7 @@ public class S3AdapterTest {
 	
 	@Test
 	public void shouldGetAllReturnsEmptyResultsWhenBucketIsEmpty(){
-		S3Service s3 = new S3Service();
+		S3Service s3 = makeService();
 		S3Adapter s3Adapter = new S3Adapter(BUCKET_NAME, FEED_NAME, s3, NullIdentityProvider.INSTANCE);
 		
 		deleteAll(s3, BUCKET_NAME, FEED_NAME);
@@ -42,10 +42,10 @@ public class S3AdapterTest {
 		Assert.assertNotNull(items);
 		Assert.assertEquals(0, items.size());
 	}
-	
+
 	@Test
 	public void shouldGetAllReturnsListWithBucketElement() throws Exception{
-		S3Service s3 = new S3Service();
+		S3Service s3 = makeService();
 		deleteAll(s3, BUCKET_NAME, FEED_NAME);
 		
 		Item item = makeNewItem("<payload><foo>bar</foo></payload>");
@@ -62,7 +62,7 @@ public class S3AdapterTest {
 	
 	@Test
 	public void shouldGetAllReturnsListWithBucketElementsOrderByDescByLastUpdateWhenValue() throws Exception{
-		S3Service s3 = new S3Service();
+		S3Service s3 = makeService();
 		deleteAll(s3, BUCKET_NAME, FEED_NAME);
 		
 		Item item = makeNewItem("0", "<payload><foo>bar</foo></payload>", TestHelper.makeDate(2008, 1, 1, 10, 15, 10, 0));
@@ -87,7 +87,7 @@ public class S3AdapterTest {
 	
 	@Test
 	public void shouldGetAllMergeConflictsAndReturnsListWithBucketElementsOrderByDescByLastUpdateWhenValue() throws Exception{
-		S3Service s3 = new S3Service();
+		S3Service s3 = makeService();
 		deleteAll(s3, BUCKET_NAME, FEED_NAME);
 		
 		Item item = makeNewItem("0", "<payload><foo>bar</foo></payload>", TestHelper.makeDate(2008, 1, 1, 10, 10, 10, 0));
@@ -142,7 +142,7 @@ public class S3AdapterTest {
 	
 	@Test
 	public void shouldReadItemReturnsNullBecauseItemDoesNotExists(){
-		S3Service s3 = new S3Service();
+		S3Service s3 = makeService();
 		deleteAll(s3, BUCKET_NAME, FEED_NAME);
 		
 		S3Adapter s3Adapter = new S3Adapter(BUCKET_NAME, FEED_NAME, s3, NullIdentityProvider.INSTANCE);
@@ -151,7 +151,7 @@ public class S3AdapterTest {
 
 	@Test
 	public void shouldReadItemReturnsItemWhenItExistsInS3() throws Exception{
-		S3Service s3 = new S3Service();
+		S3Service s3 = makeService();
 		deleteAll(s3, BUCKET_NAME, FEED_NAME);
 		
 		Item item = makeNewItem("<payload><foo>bar</foo></payload>");
@@ -167,7 +167,7 @@ public class S3AdapterTest {
 	
 	@Test
 	public void shouldReadItemReturnsLastItemVersionWhenItExistsInS3() throws Exception{
-		S3Service s3 = new S3Service();
+		S3Service s3 = makeService();
 		deleteAll(s3, BUCKET_NAME, FEED_NAME);
 		
 		Item item = makeNewItem("<payload><foo>bar</foo></payload>");
@@ -185,7 +185,7 @@ public class S3AdapterTest {
 	
 	@Test
 	public void shouldMergeConflicts() throws Exception{
-		S3Service s3 = new S3Service();
+		S3Service s3 = makeService();
 		deleteAll(s3, BUCKET_NAME, FEED_NAME);
 		
 		Item item = makeNewItem("<payload><foo>bar</foo></payload>");
@@ -217,7 +217,7 @@ public class S3AdapterTest {
 	
 	@Test
 	public void shouldSyncLocalItemWithS3ConflictItem() throws Exception{
-		S3Service s3 = new S3Service();
+		S3Service s3 = makeService();
 		deleteAll(s3, BUCKET_NAME, FEED_NAME);
 		
 		Item item = makeNewItem("<payload><foo>bar</foo></payload>");
@@ -259,7 +259,7 @@ public class S3AdapterTest {
 	
 	@Test
 	public void shouldPurgeBranchesDeleteOldHistoriesAndDoesNotDeleteLastUpdatedConflicts() throws Exception{
-		S3Service s3 = new S3Service();
+		S3Service s3 = makeService();
 		deleteAll(s3, BUCKET_NAME, FEED_NAME);
 		
 		Item item = makeNewItem("<payload><foo>bar</foo></payload>");
@@ -289,7 +289,7 @@ public class S3AdapterTest {
 	
 	@Test
 	public void shouldPurgeBranchesDeleteOldHistories() throws Exception{
-		S3Service s3 = new S3Service();
+		S3Service s3 = makeService();
 		deleteAll(s3, BUCKET_NAME, FEED_NAME);
 		
 		Item item = makeNewItem("<payload><foo>bar</foo></payload>");
@@ -376,5 +376,9 @@ public class S3AdapterTest {
 			objects = s3.readObjectsStartsWith(bucket, oidPath);
 			Assert.assertTrue(objects.size() == 0);
 		}
+	}
+	
+	private S3Service makeService() {
+		return new S3Service("[aws-access-key-id]", "[aws-secret-access-key-id]");  // Replace with your amazon account keys
 	}
 }

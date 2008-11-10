@@ -41,7 +41,7 @@ public class S3MultiNodesTest {
 		int execTimes = 10;
 		int maxDelay = 500;
 		
-		S3Service s3 = new S3Service();
+		S3Service s3 = new S3Service("[aws-access-key-id]", "[aws-secret-access-key-id]");  // Replace with your amazon account keys
 		S3Adapter s3Adapter = new S3Adapter(BUCKET_NAME, FEED_NAME, s3, NullIdentityProvider.INSTANCE);
 
 		deleteAll(s3, BUCKET_NAME, FEED_NAME);

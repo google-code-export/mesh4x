@@ -19,9 +19,25 @@ import com.amazon.s3.Response;
 import com.amazon.s3.S3Object;
 
 public class S3Service implements IS3Service{
+	
+	// MODEL VARIABLES
+	private String accessKey;
+	private String secretAccessKey;
+	
+	// BUSINESS METHODS
 
+	public S3Service(String accessKey, String secretAccessKey){
+		super();
+		
+		Guard.argumentNotNullOrEmptyString(accessKey, "accessKey");
+		Guard.argumentNotNullOrEmptyString(secretAccessKey, "secretAccessKey");
+		
+		this.accessKey = accessKey;
+		this.secretAccessKey = secretAccessKey;
+	}
+	
 	private AWSAuthConnection connect(){
-		return new AWSAuthConnection("[aws-access-key-id]", "[aws-secret-access-key-id]");
+		return new AWSAuthConnection(this.accessKey, this.secretAccessKey);
 	}
 
 	public void createBucket(String bucket){

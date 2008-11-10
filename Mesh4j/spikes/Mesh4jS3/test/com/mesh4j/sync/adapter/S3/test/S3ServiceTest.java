@@ -29,35 +29,35 @@ public class S3ServiceTest {
 
 	//	@Test
 	public void shouldCreateBucket(){
-		S3Service s3 = new S3Service();
+		S3Service s3 = makeService();
 		s3.createBucket(BUCKET_NAME);
 	}
-	
+
 	//@Test
 	public void shouldAddData() throws Exception{
 		Item item = makeNewItem(IdGenerator.INSTANCE.newID(), "<payload><foo>bar</foo></payload>", "jmt");
 		
-		S3Service s3 = new S3Service();
+		S3Service s3 = makeService();
 		this.write(item, s3, BUCKET_NAME, FEED_NAME);
 	}
 	
 	//@Test
 	public void shouldReadBucket(){
-		S3Service s3 = new S3Service();
+		S3Service s3 = makeService();
 		List<ObjectData> objects = s3.readObjects(BUCKET_NAME);
 		Assert.assertTrue(objects.size() > 0);
 	}
 	
 	//@Test
 	public void shouldReadBucketObjectStartWith(){
-		S3Service s3 = new S3Service();
+		S3Service s3 = makeService();
 		List<ObjectData> objects = s3.readObjectsStartsWith(BUCKET_NAME, FEED_NAME);
 		Assert.assertTrue(objects.size() > 0);
 	}
 	
 	//@Test
 	public void shouldReadBucketItem() throws Exception{
-		S3Service s3 = new S3Service();
+		S3Service s3 = makeService();
 		
 		Item item = makeNewItem(IdGenerator.INSTANCE.newID(), "<payload><foo>bar</foo></payload>", "jmt");
 		this.write(item, s3, BUCKET_NAME, FEED_NAME);
@@ -71,7 +71,7 @@ public class S3ServiceTest {
 	
 	@Test
 	public void shouldDeleteBucketItems() throws Exception{
-		S3Service s3 = new S3Service();
+		S3Service s3 = makeService();
 		
 		List<ObjectData> objects = s3.readObjectsStartsWith(BUCKET_NAME, FEED_NAME);
 		Assert.assertTrue(objects.size() > 0);
@@ -104,5 +104,10 @@ public class S3ServiceTest {
 		Sync sync = new Sync(syncId, user, new Date(), false);
 		Item item = new Item(content, sync);
 		return item;
+	}
+	
+	
+	private S3Service makeService() {
+		return new S3Service("[aws-access-key-id]", "[aws-secret-access-key-id]");  // Replace with your amazon account keys
 	}
 }
