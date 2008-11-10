@@ -67,7 +67,7 @@ public class S3Adapter extends AbstractSyncAdapter {
 	private void writeItem(Item item) {
 		String oid = this.getOID(item);
 		byte[] data = this.getData(item);
-		this.s3.write(this.bucket, oid, data);
+		this.s3.writeObject(this.bucket, oid, data);
 	}
 	
 	// ISyncAdapter METHODS

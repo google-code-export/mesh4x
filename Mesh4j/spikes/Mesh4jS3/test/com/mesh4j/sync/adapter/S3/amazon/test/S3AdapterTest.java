@@ -1,4 +1,4 @@
-package com.mesh4j.sync.adapter.S3.test;
+package com.mesh4j.sync.adapter.S3.amazon.test;
 
 import java.util.Date;
 import java.util.List;
@@ -14,7 +14,7 @@ import org.mesh4j.sync.adapters.InMemorySyncAdapter;
 import org.mesh4j.sync.adapters.S3.IS3Service;
 import org.mesh4j.sync.adapters.S3.ObjectData;
 import org.mesh4j.sync.adapters.S3.S3Adapter;
-import org.mesh4j.sync.adapters.S3.S3Service;
+import org.mesh4j.sync.adapters.S3.amazon.S3Service;
 import org.mesh4j.sync.adapters.feed.FeedWriter;
 import org.mesh4j.sync.adapters.feed.XMLContent;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
@@ -345,7 +345,7 @@ public class S3AdapterTest {
 		String xmlItem = writer.writeAsXml(item);
 		String oid = objectPath+"."+item.getSyncId()+"."+item.getLastUpdate().getSequence()+"."+item.getLastUpdate().getBy();
 		
-		s3.write(bucket, oid, xmlItem.getBytes());
+		s3.writeObject(bucket, oid, xmlItem.getBytes());
 		Thread.sleep(50);		
 	}
 	

@@ -1,4 +1,4 @@
-package org.mesh4j.sync.adapters.S3;
+package org.mesh4j.sync.adapters.S3.amazon;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -8,6 +8,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.mesh4j.sync.adapters.S3.IS3Service;
+import org.mesh4j.sync.adapters.S3.ObjectData;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
@@ -146,7 +148,7 @@ public class S3Service implements IS3Service{
 	}
 
 	@Override
-	public void write(String bucket, String oid, byte[] data) {
+	public void writeObject(String bucket, String oid, byte[] data) {
 		AWSAuthConnection connection = this.connect();
 		S3Object simpleObject = new S3Object(data, null);
 	

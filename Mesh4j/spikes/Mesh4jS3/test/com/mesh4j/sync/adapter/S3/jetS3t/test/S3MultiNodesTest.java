@@ -1,4 +1,4 @@
-package com.mesh4j.sync.adapter.S3.test;
+package com.mesh4j.sync.adapter.S3.jetS3t.test;
 
 import java.util.Date;
 import java.util.List;
@@ -14,7 +14,7 @@ import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.adapters.InMemorySyncAdapter;
 import org.mesh4j.sync.adapters.S3.ObjectData;
 import org.mesh4j.sync.adapters.S3.S3Adapter;
-import org.mesh4j.sync.adapters.S3.S3Service;
+import org.mesh4j.sync.adapters.S3.jetS3t.S3Service;
 import org.mesh4j.sync.adapters.feed.FeedWriter;
 import org.mesh4j.sync.adapters.feed.XMLContent;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
@@ -252,7 +252,7 @@ public class S3MultiNodesTest {
 		String xmlItem = writer.writeAsXml(item);
 		String oid = objectPath+"."+item.getSyncId()+"."+item.getLastUpdate().getSequence()+"."+item.getLastUpdate().getBy();
 				
-		s3.write(bucket, oid, xmlItem.getBytes());
+		s3.writeObject(bucket, oid, xmlItem.getBytes());
 
 	}
 	

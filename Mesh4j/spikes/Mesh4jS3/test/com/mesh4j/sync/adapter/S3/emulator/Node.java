@@ -50,4 +50,13 @@ public class Node {
 		Bucket bucket = getBucket(bucketId);
 		bucket.delete(oids);
 	}
+
+	public void createBucket(String bucketId) {
+		this.buckets.put(bucketId, new Bucket(bucketId));		
+	}
+
+	public List<ObjectData> readObjects(String bucketId) {
+		Bucket bucket = getBucket(bucketId);
+		return bucket.readObjects();
+	}
 }

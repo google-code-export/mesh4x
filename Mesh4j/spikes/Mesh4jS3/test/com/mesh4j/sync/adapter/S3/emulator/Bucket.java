@@ -65,4 +65,14 @@ public class Bucket {
 			}
 		}
 	}
+
+	public List<ObjectData> readObjects() {
+		synchronized (SEMAPHORE) {
+			ArrayList<ObjectData> objs = new ArrayList<ObjectData>();
+			for (String oid : this.objects.keySet()) {
+				objs.add( this.objects.get(oid));
+			}
+			return objs;
+		}
+	}
 }

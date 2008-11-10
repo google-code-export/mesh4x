@@ -10,7 +10,6 @@ import java.util.TreeSet;
 import org.mesh4j.sync.adapters.S3.IS3Service;
 import org.mesh4j.sync.adapters.S3.ObjectData;
 
-
 public class S3Service implements IS3Service {
 	
 	// MODEL VARIABLES
@@ -32,7 +31,8 @@ public class S3Service implements IS3Service {
 		this.nodes.put(nodeId, new Node(nodeId));
 	}
 	
-	public void write(String bucketId, String oid, byte[] data){
+	@Override
+	public void writeObject(String bucketId, String oid, byte[] data){
 		WriteAction wa = new WriteAction(bucketId, oid, data);
 		propagateChanges(wa);
 	}
@@ -40,6 +40,12 @@ public class S3Service implements IS3Service {
 	public byte[] read(String bucketId, String oid){
 		Node node = (Node)this.nodes.values().toArray()[randomIndex()];
 		return node.read(bucketId, oid);
+	}
+	
+	@Override
+	public List<ObjectData> readObjects(String bucket) {
+		Node node = (Node)this.nodes.values().toArray()[randomIndex()];
+		return node.readObjects(bucket);
 	}
 	
 	@Override
@@ -122,7 +128,6 @@ public class S3Service implements IS3Service {
 		}
 	}
 	
-	@Override
 	public void deleteObject(String bucket, String oid) {
 		TreeSet<String> oids = new TreeSet<String>();
 		oids.add(oid);
@@ -181,6 +186,13 @@ public class S3Service implements IS3Service {
 
 	public boolean isPropagatingChanges() {
 		return propagationProcess >0;
+	}
+
+	@Override
+	public void createBucket(String bucket) {
+		for (Node node : S3Service.this.nodes.values()) {
+			node.createBucket(bucket);
+		}
 	}
 
 }
