@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.mesh4j.sync.adapters.S3.IS3Service;
+import org.mesh4j.sync.adapters.S3.ObjectData;
 
 
 public class S3Service implements IS3Service {
@@ -45,7 +48,6 @@ public class S3Service implements IS3Service {
 		return node.readObjectsStartsWith(bucket, oidPath);
 	}
 	
-	@Override
 	public List<ObjectData> readObjectsStartsWith(String nodeId, String bucket, String oidPath) {
 		Node node = this.nodes.get(nodeId);
 		if(node == null){
@@ -119,9 +121,18 @@ public class S3Service implements IS3Service {
 			node.write(bucketId, oid, data);
 		}
 	}
+	
+	@Override
+	public void deleteObject(String bucket, String oid) {
+		TreeSet<String> oids = new TreeSet<String>();
+		oids.add(oid);
+		
+		DeleteAction da = new DeleteAction(bucket, oids);
+		propagateChanges(da);		
+	}
 
 	@Override
-	public void delete(String bucketId, List<String> oids) {
+	public void deleteObjects(String bucketId, Set<String> oids) {
 		DeleteAction da = new DeleteAction(bucketId, oids);
 		propagateChanges(da);		
 	}
@@ -152,11 +163,11 @@ public class S3Service implements IS3Service {
 
 		// MODEL VARIABLES
 		private String bucketId;
-		private List<String> oids;
+		private Set<String> oids;
 		
 		// BUISINESS METHODS
 		
-		public DeleteAction(String bucketId, List<String> oids) {
+		public DeleteAction(String bucketId, Set<String> oids) {
 			super();
 			this.bucketId = bucketId;
 			this.oids = oids;
@@ -171,4 +182,5 @@ public class S3Service implements IS3Service {
 	public boolean isPropagatingChanges() {
 		return propagationProcess >0;
 	}
+
 }

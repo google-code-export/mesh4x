@@ -25,13 +25,12 @@ import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
-import com.mesh4j.sync.adapter.S3.emulator.ObjectData;
 
 public class S3Adapter extends AbstractSyncAdapter {
 
 	private final static String NAME = "S3";
 	
-	private final Comparator<ObjectData> OBJECT_DATA_ORDER_BY_HISTORY_DESC = new Comparator<ObjectData>(){
+	protected final Comparator<ObjectData> OBJECT_DATA_ORDER_BY_HISTORY_DESC = new Comparator<ObjectData>(){
 		@Override
 		public int compare(ObjectData o1, ObjectData o2) {
 			return o1.getId().compareTo(o2.getId()) * -1;
@@ -46,9 +45,9 @@ public class S3Adapter extends AbstractSyncAdapter {
 	};
 	
 	// MODEL VARIABLES
-	private IS3Service s3;
-	private String bucket;
-	private String objectPath;
+	protected IS3Service s3;
+	protected String bucket;
+	protected String objectPath;
 	private IIdentityProvider identityProvider;
 	private FeedReader reader;
 	private FeedWriter writer;
@@ -129,40 +128,7 @@ public class S3Adapter extends AbstractSyncAdapter {
 		return branches;
 	}
 	
-	public Set<ObjectData> getObjects(String syncId, String node) {
-		List<ObjectData> objs = this.s3.readObjectsStartsWith(node, this.bucket, getS3OID(syncId));
-		TreeSet<ObjectData> orderedObjs = new TreeSet<ObjectData>(OBJECT_DATA_ORDER_BY_HISTORY_DESC);
-		orderedObjs.addAll(objs);
-		return orderedObjs;
-	}
-
-	public List<Item> getBranches(String syncId, String node) {
-		Set<ObjectData> objs = this.getObjects(syncId, node);
-		
-		ArrayList<Item> branches = new ArrayList<Item>();
-		Item item;
-		for (ObjectData obj : objs) {
-			item = this.parseItem(obj.getData());
-			Item branch = this.getBranch(branches, item);
-			
-			if(branch == null){
-				branches.add(item);  // new branch
-			} else {				// update with last history
-				if(branch.getLastUpdate().getSequence() < item.getLastUpdate().getSequence()){
-					branches.remove(branch);
-					branches.add(item);
-				}
-			}
-		}
-		return branches;
-	}
-
-	public Item get(String syncId, String node) {
-		List<Item> branches = this.getBranches(syncId, node);
-		return getItemFromBranches(branches);
-	}
-
-	private Item getItemFromBranches(List<Item> branches) {
+	protected Item getItemFromBranches(List<Item> branches) {
 		if(branches.size() == 0){
 			return null;
 		} else if(branches.size() == 1){
@@ -185,7 +151,7 @@ public class S3Adapter extends AbstractSyncAdapter {
 		}
 	}
 	
-	private Item getBranch(ArrayList<Item> branches, Item item) {
+	protected Item getBranch(ArrayList<Item> branches, Item item) {
 		for (Item branch : branches) {
 			if(Sync.isSameBranchHistory(branch.getSync().getUpdatesHistory(), item.getSync().getUpdatesHistory())){
 				return branch;
@@ -246,7 +212,7 @@ public class S3Adapter extends AbstractSyncAdapter {
 		
 		Set<ObjectData> objs = this.getObjects(syncId);
 		
-		ArrayList<String> branchesToDelete = new ArrayList<String>();
+		TreeSet<String> branchesToDelete = new TreeSet<String>();
 		ArrayList<Item> branches = new ArrayList<Item>();
 		Item item;
 		for (ObjectData obj : objs) {
@@ -267,7 +233,7 @@ public class S3Adapter extends AbstractSyncAdapter {
 			}
 		}
 		
-		this.s3.delete(this.bucket, branchesToDelete);
+		this.s3.deleteObjects(this.bucket, branchesToDelete);
 	}
 
 	// ACCESSORS
@@ -281,7 +247,7 @@ public class S3Adapter extends AbstractSyncAdapter {
 		}
 	}
 	
-	private Item parseItem(byte[] data) {
+	protected Item parseItem(byte[] data) {
 		try{
 			String xml = new String(data);
 			Document document = DocumentHelper.parseText(xml);
@@ -304,7 +270,7 @@ public class S3Adapter extends AbstractSyncAdapter {
 		return sb.toString();
 	}
 	
-	private String getS3OID(String syncId) {
+	protected String getS3OID(String syncId) {
 		StringBuffer sb = new StringBuffer();
 		sb.append(this.objectPath);
 		sb.append(".");

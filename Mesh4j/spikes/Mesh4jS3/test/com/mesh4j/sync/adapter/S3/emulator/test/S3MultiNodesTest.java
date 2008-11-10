@@ -1,10 +1,8 @@
-package com.mesh4j.sync.adapter.S3.test;
+package com.mesh4j.sync.adapter.S3.emulator.test;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
@@ -14,7 +12,6 @@ import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.adapters.InMemorySyncAdapter;
 import org.mesh4j.sync.adapters.S3.ObjectData;
 import org.mesh4j.sync.adapters.S3.S3Adapter;
-import org.mesh4j.sync.adapters.S3.S3Service;
 import org.mesh4j.sync.adapters.feed.FeedWriter;
 import org.mesh4j.sync.adapters.feed.XMLContent;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
@@ -29,23 +26,49 @@ import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.test.utils.concurrent.command.ConcurrentCommandExecutor;
 import org.mesh4j.sync.test.utils.concurrent.command.ConcurrentWorkerCommand;
 
+import com.mesh4j.sync.adapter.S3.emulator.S3AdapterEmulator;
+import com.mesh4j.sync.adapter.S3.emulator.S3Service;
+
 public class S3MultiNodesTest {
 
-	private static final String FEED_NAME = "myFeed";
-	private static final String BUCKET_NAME = "instedd-tests";
+	@Test
+	public void shouldReadItemReturnsNullBecauseItemDoesNotExists(){
+		S3Service s3 = makeService(100);
+		
+		S3Adapter s3Adapter = new S3Adapter("feeds", "myFeed", s3, NullIdentityProvider.INSTANCE);
+		Assert.assertNull(s3Adapter.get(IdGenerator.INSTANCE.newID()));
+	}
+
+	@Test
+	public void shouldReadItemReturnsItemWhenItExistsInS3() throws Exception{
+	
+		S3Service s3 = makeService(100);
+		
+		Item item = makeNewItem(IdGenerator.INSTANCE.newID(), "<payload><foo>bar</foo></payload>", "jmt");
+		this.write(item, s3, "feeds", "myFeed."+item.getSyncId());
+		
+		Thread.sleep(500);
+		
+		S3Adapter s3Adapter = new S3Adapter("feeds", "myFeed", s3, NullIdentityProvider.INSTANCE);		
+		Item addedItem = s3Adapter.get(item.getSyncId());
+		
+		Assert.assertNotNull(addedItem);
+		Assert.assertEquals(item, addedItem);
+	}
 	
 	@Test
 	public void emulate() throws Exception{
 		
 		boolean showAll = true;
-		int execTimes = 10;
-		int maxDelay = 500;
+		int execTimes = 30;
+		int maxDelay = 100;
+		int s3ReplicationDelay = 500;
 		
-		S3Service s3 = new S3Service();
-		S3Adapter s3Adapter = new S3Adapter(BUCKET_NAME, FEED_NAME, s3, NullIdentityProvider.INSTANCE);
+		String bucket = "feeds";
+		String objectPath = "myFeed";
+		S3Service s3 = makeService(s3ReplicationDelay);
+		S3AdapterEmulator s3Adapter = new S3AdapterEmulator(bucket, objectPath, s3, NullIdentityProvider.INSTANCE);
 
-		deleteAll(s3, BUCKET_NAME, FEED_NAME);
-		
 		// Create 15 items
 		int size = 15;
 		String[] availableSyncIds = new String[size];
@@ -54,76 +77,73 @@ public class S3MultiNodesTest {
 			availableSyncIds[i] = syncId;
 			
 			Item newItem = makeNewItem(syncId, "<payload><foo>bar_"+syncId+"</foo></payload>", "admin");
-			this.write(newItem, s3, BUCKET_NAME, FEED_NAME);
+			this.write(newItem, s3, bucket, objectPath);
 		}		
-		
-		Thread.sleep(5000);
-		
-		printData(s3, BUCKET_NAME, FEED_NAME, showAll);
+		printNodeStatus(showAll, bucket, objectPath, s3);
 		
 		// Emulate sync process with 6 clients
 		ConcurrentCommandExecutor executor = new ConcurrentCommandExecutor();
 		executor.execute(
-			new SyncClient("jmt", s3, BUCKET_NAME, FEED_NAME, showAll, execTimes, maxDelay, 0),
-			new SyncClient("nico", s3, BUCKET_NAME, FEED_NAME, showAll, execTimes, maxDelay, 10),
-			new SyncClient("juan", s3, BUCKET_NAME, FEED_NAME, showAll, execTimes, maxDelay, 35),
-			new SyncClient("kzu", s3, BUCKET_NAME, FEED_NAME, showAll, execTimes, maxDelay, 50),
-			new SyncClient("brian", s3, BUCKET_NAME, FEED_NAME, showAll, execTimes, maxDelay, 75),
-			new SyncClient("cibrax", s3, BUCKET_NAME, FEED_NAME, showAll, execTimes, maxDelay, 150)
+			new SyncClient("jmt", s3, bucket, objectPath, showAll, execTimes, maxDelay, 0),
+			new SyncClient("nico", s3, bucket, objectPath, showAll, execTimes, maxDelay, 10),
+			new SyncClient("juan", s3, bucket, objectPath, showAll, execTimes, maxDelay, 35),
+			new SyncClient("kzu", s3, bucket, objectPath, showAll, execTimes, maxDelay, 50),
+			new SyncClient("brian", s3, bucket, objectPath, showAll, execTimes, maxDelay, 75),
+			new SyncClient("cibrax", s3, bucket, objectPath, showAll, execTimes, maxDelay, 150)
 		);
 		
-		Thread.sleep(5000);
+		while(s3.isPropagatingChanges()){
+			Thread.sleep(50);
+		}		
+		printNodeStatus(showAll, bucket, objectPath, s3);
+		printItemStatus(s3Adapter, availableSyncIds, true);	// purge old histories
 		
-		printData(s3, BUCKET_NAME, FEED_NAME, showAll);
-		printItemStatus(s3Adapter, availableSyncIds, true);
-		
-		Thread.sleep(5000);
-
-		printData(s3, BUCKET_NAME, FEED_NAME, showAll);
-		printItemStatus(s3Adapter, availableSyncIds, true);
-
-	}
-
-
-	private void deleteAll(S3Service s3, String bucket, String oidPath) {
-		List<ObjectData> objects = s3.readObjectsStartsWith(bucket, oidPath);
-		Assert.assertTrue(objects.size() > 0);
-		
-		Set<String> oids = new TreeSet<String>();
-		for (ObjectData objectData : objects) {
-			oids.add(objectData.getId());
+		while(s3.isPropagatingChanges()){
+			Thread.sleep(50);
 		}
-		
-		s3.deleteObjects(bucket, oids);
-		objects = s3.readObjectsStartsWith(bucket, oidPath);
-		Assert.assertTrue(objects.size() == 0);		
+
+		// Show status after purge old histories
+		System.out.println("Purge........");
+		printNodeStatus(showAll, bucket, objectPath, s3);		
+		printItemStatus(s3Adapter, availableSyncIds, false);
 	}
 
-	private void printItemStatus(S3Adapter s3Adapter, String[] availableSyncIds, boolean purge) {
+	private void printNodeStatus(boolean showAll, String bucket,
+			String objectPath, S3Service s3) {
+		for (int i = 0; i < 10; i++) {
+			printData(s3, String.valueOf(i), bucket, objectPath, showAll);	
+		}
+	}
+
+	private void printItemStatus(S3AdapterEmulator s3Adapter, String[] availableSyncIds, boolean purge) {
 		for (String syncId : availableSyncIds) {
-			Item item = s3Adapter.get(syncId);
-			if(item == null){
-				System.out.println("Item: " + syncId + " is null");
-			} else {
-				System.out.println("Item: " + syncId + " updates: " + item.getSync().getUpdates() + " deleted: " + item.isDeleted() + " conflicts: " + item.hasSyncConflicts());
-				for (History h : item.getSync().getUpdatesHistory()) {
-					System.out.println("\t" +h.getBy() + "\t" +h.getSequence() + "\t" + h.getWhen());
-				}
-				if(purge){
-					if(item.hasSyncConflicts()){
-						Item itemResult = MergeBehavior.resolveConflicts(item, "admin", new Date(), item.isDeleted());
-						s3Adapter.update(itemResult);
-					} 
-					s3Adapter.purgeBranches(syncId);
+			System.out.println("SyncId: " + syncId);
+			for (int i = 0; i < 10; i++) {
+				String node = String.valueOf(i);
+				Item item = s3Adapter.get(syncId, node);
+				if(item == null){
+					System.out.println("node: " + i + " item: null");
+				} else {
+					System.out.println("node: " + i + " item: " + item.getSync().getUpdates() + " deleted: " + item.isDeleted() + " conflicts: " + item.hasSyncConflicts());
+					for (History h : item.getSync().getUpdatesHistory()) {
+						System.out.println("\t" +h.getBy() + "\t" +h.getSequence() + "\t" + h.getWhen());
+					}
+					if(purge){
+						if(item.hasSyncConflicts()){
+							Item itemResult = MergeBehavior.resolveConflicts(item, "admin", new Date(), item.isDeleted());
+							s3Adapter.update(itemResult);
+						} 
+						s3Adapter.purgeBranches(syncId);
+					}
 				}
 			}			
 		}
 	}
 
-	private void printData(S3Service s3, String bucket, String objectPath, boolean showAll) {
-		List<ObjectData> objs = s3.readObjectsStartsWith(bucket, objectPath);
+	private void printData(S3Service s3, String node, String bucket, String objectPath, boolean showAll) {
+		List<ObjectData> objs = s3.readObjectsStartsWith(node, bucket, objectPath);
 		
-		System.out.println("Objects: " + objs.size());
+		System.out.println("Node: " + node + " objects: " + objs.size());
 		if(showAll){
 			for (ObjectData obj : objs) {
 				System.out.println(obj.getId());
@@ -252,7 +272,7 @@ public class S3MultiNodesTest {
 		String xmlItem = writer.writeAsXml(item);
 		String oid = objectPath+"."+item.getSyncId()+"."+item.getLastUpdate().getSequence()+"."+item.getLastUpdate().getBy();
 				
-		s3.write(bucket, oid, xmlItem.getBytes());
+		s3.writeAndFastReplicate(bucket, oid, xmlItem.getBytes());
 
 	}
 	
@@ -264,5 +284,21 @@ public class S3MultiNodesTest {
 		Item item = new Item(content, sync);
 		return item;
 	}
+	
+	private S3Service makeService(int s3Delay) {
+		S3Service s3 = new S3Service(s3Delay);
+		s3.addNode("0");
+		s3.addNode("1");
+		s3.addNode("2");
+		s3.addNode("3");
+		s3.addNode("4");
+		s3.addNode("5");
+		s3.addNode("6");
+		s3.addNode("7");
+		s3.addNode("8");
+		s3.addNode("9");
+		return s3;
+	}
+
 
 }

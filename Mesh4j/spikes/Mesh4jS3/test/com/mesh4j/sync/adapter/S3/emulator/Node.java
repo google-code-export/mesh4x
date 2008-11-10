@@ -2,6 +2,9 @@ package com.mesh4j.sync.adapter.S3.emulator;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
+
+import org.mesh4j.sync.adapters.S3.ObjectData;
 
 public class Node {
 
@@ -43,7 +46,7 @@ public class Node {
 		return bucket.readObjectsStartsWith(oidPath);
 	}
 
-	public void delete(String bucketId, List<String> oids) {
+	public void delete(String bucketId, Set<String> oids) {
 		Bucket bucket = getBucket(bucketId);
 		bucket.delete(oids);
 	}

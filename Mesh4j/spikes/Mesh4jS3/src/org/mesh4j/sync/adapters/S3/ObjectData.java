@@ -1,4 +1,4 @@
-package com.mesh4j.sync.adapter.S3.emulator;
+package org.mesh4j.sync.adapters.S3;
 
 public class ObjectData {
 

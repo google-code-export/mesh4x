@@ -1,4 +1,4 @@
-package com.mesh4j.sync.adapter.S3.test;
+package com.mesh4j.sync.adapter.S3.emulator.test;
 
 import org.junit.Assert;
 import org.junit.Test;
