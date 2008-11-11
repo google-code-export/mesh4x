@@ -52,7 +52,7 @@ public class MsExcelUtils {
 			cellHeader = rowHeader.getCell(cell.getColumnIndex());
 			
 			columnName = cellHeader.getRichStringCellValue().getString();
-			columnValue = cell.getRichStringCellValue().getString();
+			columnValue = cell.getRichStringCellValue().getString();		// TODO (JMT) data type formatters
 			
 			header = payload.addElement(columnName);
 			header.addText(columnValue);
@@ -153,7 +153,7 @@ public class MsExcelUtils {
 			if(cell == null){
 				cell = row.createCell(row.getPhysicalNumberOfCells());
 			}
-			cell.setCellValue(new HSSFRichTextString(child.getText()));
+			cell.setCellValue(new HSSFRichTextString(child.getText()));     // TODO (JMT) data type formatters
 		}
 	}
 }

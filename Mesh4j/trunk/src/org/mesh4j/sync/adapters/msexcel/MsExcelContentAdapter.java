@@ -26,8 +26,7 @@ public class MsExcelContentAdapter implements IContentAdapter, ISyncAware {
 	private HSSFWorkbook workbook;
 	private HSSFSheet worksheet;
 	private int entityIdIndex;
-	
-	
+		
 	// BUSINESS METHODS
 	public MsExcelContentAdapter(String sheetName, String entityIdColumnName, String fileName){
 		super();
@@ -38,7 +37,9 @@ public class MsExcelContentAdapter implements IContentAdapter, ISyncAware {
 		
 		this.sheetName = sheetName;
 		this.fileName = fileName;
-		this.entityIdColumnName = entityIdColumnName;	
+		this.entityIdColumnName = entityIdColumnName;
+		
+		this.initialize();
 	}
 
 	private void initialize() {
@@ -59,8 +60,12 @@ public class MsExcelContentAdapter implements IContentAdapter, ISyncAware {
 	}
 
 	private void addRow(EntityContent entityContent) {
-		HSSFRow row = this.worksheet.createRow(this.worksheet.getLastRowNum() +1);
+		HSSFRow row = this.worksheet.createRow(this.worksheet.getPhysicalNumberOfRows());
 		MsExcelUtils.updateRow(this.worksheet, row, entityContent.getPayload());		
+	}
+	
+	public HSSFWorkbook getWorkbook() {
+		return this.workbook;
 	}
 	
 	// IContentAdapter methods
@@ -126,7 +131,7 @@ public class MsExcelContentAdapter implements IContentAdapter, ISyncAware {
 
 	@Override
 	public void beginSync() {
-		this.initialize();
+		//this.initialize();
 	}
 
 	@Override
