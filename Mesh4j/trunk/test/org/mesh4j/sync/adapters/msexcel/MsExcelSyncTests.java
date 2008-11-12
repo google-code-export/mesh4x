@@ -33,19 +33,13 @@ public class MsExcelSyncTests {
 		String sheetName = "patient";
 		String idColumnName = "id";
 		
-		SplitAdapter adapterA = makeSplitAdapter(sheetName, idColumnName, "excelA.xls", "syncA.xls", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		SplitAdapter adapterA = makeSplitAdapter(sheetName, idColumnName, "excelA.xls", "syncA.xls", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, true);
 		adapterA.add(makeNewItem());
 		adapterA.add(makeNewItem());
 		adapterA.add(makeNewItem());
 		adapterA.add(makeNewItem());
-		adapterA.endSync();
 		
-		SplitAdapter adapterB = makeSplitAdapter(sheetName, idColumnName, "excelB.xls", "syncB.xls", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
-		adapterB.add(makeNewItem());
-		adapterB.add(makeNewItem());
-		adapterB.add(makeNewItem());
-		adapterB.add(makeNewItem());
-		adapterB.endSync();
+		SplitAdapter adapterB = makeSplitAdapter(sheetName, idColumnName, "excelB.xls", "syncB.xls", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, true);
 		
 		SyncEngine syncEngine = new SyncEngine(adapterA, adapterB);
 		
@@ -61,19 +55,13 @@ public class MsExcelSyncTests {
 		String sheetName = "patient";
 		String idColumnName = "id";
 		
-		SplitAdapter adapterA = makeSplitAdapter(sheetName, idColumnName, "dataAndSyncA.xls", "dataAndSyncA.xls", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		SplitAdapter adapterA = makeSplitAdapter(sheetName, idColumnName, "dataAndSyncA.xls", "dataAndSyncA.xls", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, true);
 		adapterA.add(makeNewItem());
 		adapterA.add(makeNewItem());
 		adapterA.add(makeNewItem());
 		adapterA.add(makeNewItem());
-		adapterA.endSync();
 		
-		SplitAdapter adapterB = makeSplitAdapter(sheetName, idColumnName, "dataAndSyncB.xls", "dataAndSyncB.xls", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
-		adapterB.add(makeNewItem());
-		adapterB.add(makeNewItem());
-		adapterB.add(makeNewItem());
-		adapterB.add(makeNewItem());
-		adapterB.endSync();
+		SplitAdapter adapterB = makeSplitAdapter(sheetName, idColumnName, "dataAndSyncB.xls", "dataAndSyncB.xls", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, false);
 		
 		SyncEngine syncEngine = new SyncEngine(adapterA, adapterB);
 		
@@ -96,7 +84,7 @@ public class MsExcelSyncTests {
 		return new Item(content, sync);
 	}
 
-	private SplitAdapter makeSplitAdapter(String sheetName, String idColumnName, String contentFileName, String syncFileName, IIdentityProvider identityProvider, IdGenerator idGenerator) {
+	private SplitAdapter makeSplitAdapter(String sheetName, String idColumnName, String contentFileName, String syncFileName, IIdentityProvider identityProvider, IdGenerator idGenerator, boolean mustCreateHeader) {
 		
 		MsExcel contentExcel = null;
 		MsExcel syncExcel = null;
@@ -114,22 +102,23 @@ public class MsExcelSyncTests {
 		
 		MsExcelSyncRepository syncRepo = new MsExcelSyncRepository(syncExcel, identityProvider, idGenerator);
 		MsExcelContentAdapter contentAdapter = new MsExcelContentAdapter(contentExcel, sheetName, idColumnName);
-		
-		HSSFSheet sheet = contentAdapter.getWorkbook().getSheet(sheetName);
-		HSSFRow row = sheet.getRow(0);
-		
-		HSSFCell cell = row.createCell(1, HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString("name"));
-		
-		cell = row.createCell(2, HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString("age"));
-		
-		cell = row.createCell(3, HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString("country"));
-		
-		cell = row.createCell(4, HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString("city"));
-		
+
+		if(mustCreateHeader){
+			HSSFSheet sheet = contentAdapter.getWorkbook().getSheet(sheetName);
+			HSSFRow row = sheet.getRow(0);
+			
+			HSSFCell cell = row.createCell(1, HSSFCell.CELL_TYPE_STRING);
+			cell.setCellValue(new HSSFRichTextString("name"));
+			
+			cell = row.createCell(2, HSSFCell.CELL_TYPE_STRING);
+			cell.setCellValue(new HSSFRichTextString("age"));
+			
+			cell = row.createCell(3, HSSFCell.CELL_TYPE_STRING);
+			cell.setCellValue(new HSSFRichTextString("country"));
+			
+			cell = row.createCell(4, HSSFCell.CELL_TYPE_STRING);
+			cell.setCellValue(new HSSFRichTextString("city"));
+		}
 		SplitAdapter splitAdapter = new SplitAdapter(syncRepo, contentAdapter, identityProvider);
 		return splitAdapter;
 	}

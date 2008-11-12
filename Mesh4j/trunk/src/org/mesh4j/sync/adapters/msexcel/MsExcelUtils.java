@@ -146,12 +146,17 @@ public class MsExcelUtils {
 
 	@SuppressWarnings("unchecked")
 	public static void updateRow(HSSFSheet worksheet, HSSFRow row, Element payload) {
+		
+		HSSFRow rowHeader = worksheet.getRow(0);
+		HSSFCell cellHeader;
+		
 		Element child;
 		for (Iterator<Element> iterator = payload.elementIterator(); iterator.hasNext();) {
 			child = (Element) iterator.next();
 			HSSFCell cell = getCell(worksheet, row, child.getName());
 			if(cell == null){
-				cell = row.createCell(row.getPhysicalNumberOfCells());
+				cellHeader = getOrCreateCellStringIfAbsent(rowHeader, child.getName());
+				cell = row.createCell(cellHeader.getColumnIndex());
 			}
 			cell.setCellValue(new HSSFRichTextString(child.getText()));     // TODO (JMT) data type formatters
 		}
