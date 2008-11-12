@@ -48,7 +48,7 @@ public class S3Service implements IS3Service{
 		try{
 			Response response = connection.createBucket(bucket, AWSAuthConnection.LOCATION_DEFAULT, null);
 			if (response.connection.getResponseCode() != 200) {
-				Guard.throwsException("XXXXXXXXXX ERROR");	// TODO (JMT) define the creation error 
+				Guard.throwsException(S3Error.ERROR_CREATE_BUCKET.name()); 
 			}
 		} catch(Exception e){
 			throw new MeshException(e);
@@ -81,7 +81,7 @@ public class S3Service implements IS3Service{
 		try{
 			Response response = connection.delete(bucket, objectID, null);
 			if (response.connection.getResponseCode() != 204) {
-				Guard.throwsException("XXXXXXXXXX ERROR");	// TODO (JMT) define the creation error
+				Guard.throwsException(S3Error.ERROR_DELETE_OBJECT.name());
 			}
 		} catch (Exception e) {
 			throw new MeshException(e);
@@ -155,7 +155,7 @@ public class S3Service implements IS3Service{
 		try{
 			Response response = connection.put(bucket, oid, simpleObject, null);
 			if (response.connection.getResponseCode() != 200) {
-				Guard.throwsException("XXXXXXXXXX ERROR");	// TODO (JMT) define the add/update error 
+				Guard.throwsException(S3Error.ERROR_WRITE_OBJECT.name()); 
 			}
 		} catch (Exception e) {
 			throw new MeshException(e);

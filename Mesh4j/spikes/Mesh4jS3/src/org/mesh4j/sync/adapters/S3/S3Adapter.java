@@ -16,6 +16,7 @@ import org.mesh4j.sync.IFilter;
 import org.mesh4j.sync.adapters.feed.FeedReader;
 import org.mesh4j.sync.adapters.feed.FeedWriter;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
+import org.mesh4j.sync.filter.SinceLastUpdateFilter;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.merge.MergeBehavior;
 import org.mesh4j.sync.merge.MergeResult;
@@ -163,7 +164,6 @@ public class S3Adapter extends AbstractSyncAdapter {
 	@Override
 	protected List<Item> getAll(Date since, IFilter<Item> filter) { 
 		
-		ArrayList<Item> result = new ArrayList<Item>();
 		List<ObjectData> objs = this.s3.readObjectsStartsWith(this.bucket, this.objectPath);
 		HashMap<String, ArrayList<Item>> allBranches = new HashMap<String, ArrayList<Item>>();
 		
@@ -188,13 +188,16 @@ public class S3Adapter extends AbstractSyncAdapter {
 			}
 		}
 		
+		ArrayList<Item> result = new ArrayList<Item>();
 		for (String syncId : allBranches.keySet()) {
 			ArrayList<Item> branches = allBranches.get(syncId);
 			Item item = this.getItemFromBranches(branches);
-			result.add(item);
+			if(filter.applies(item) && SinceLastUpdateFilter.applies(item, since)){
+				result.add(item);
+			}
 		}
 		
-		Collections.sort(result, ITEM_ORDER_BY_HISTORY_DESC); // TODO (JMT) add filters
+		Collections.sort(result, ITEM_ORDER_BY_HISTORY_DESC);
 		return result;
 	}
 
