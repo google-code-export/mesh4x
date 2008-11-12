@@ -2,7 +2,6 @@ package org.mesh4j.sync.adapters.msexcel;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
@@ -33,29 +32,24 @@ public class MsExcelSyncRepositoryTests {
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateSyncRepoFailsWhenFileNameIsEmpty(){
-		new MsExcelSyncRepository("", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);	
+		new MsExcelSyncRepository(new MsExcel(""), NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);	
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateSyncRepoFailsWhenIdentityProviderIsNull(){
-		new MsExcelSyncRepository("myfile.xml", null, IdGenerator.INSTANCE);
+		new MsExcelSyncRepository(new MsExcel("myfile.xml"), null, IdGenerator.INSTANCE);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateSyncRepoFailsWhenIdGeneratorIsNull(){
-		new MsExcelSyncRepository("myfile.xml", NullIdentityProvider.INSTANCE, null);
+		new MsExcelSyncRepository(new MsExcel("myfile.xml"), NullIdentityProvider.INSTANCE, null);
 	}
 	
 	@Test
 	public void shouldCreateSyncRepoCreateWorkbookWhenFileDoesNotExist(){
-		String fileName = TestHelper.fileName("myExcel.xls");
-		File file = new File(fileName);
-		if(file.exists()){
-			file.delete();
-		}
-		Assert.assertFalse(file.exists());
+		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
 		
-		MsExcelSyncRepository repo = new MsExcelSyncRepository(fileName, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		MsExcelSyncRepository repo = new MsExcelSyncRepository(new MsExcel(file.getAbsolutePath()), NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
 		HSSFWorkbook workbook = repo.getWorkbook();
 		Assert.assertNotNull(workbook);
@@ -64,18 +58,13 @@ public class MsExcelSyncRepositoryTests {
 	
 	@Test
 	public void shouldCreateSyncRepoLoadWorkbook() throws FileNotFoundException, IOException{
-		String fileName = TestHelper.fileName("myExcel.xls");
-		File file = new File(fileName);
-		if(file.exists()){
-			file.delete();
-		}
-		Assert.assertFalse(file.exists());
+		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
 		
 		HSSFWorkbook workbook = makeValidSyncWorkbook();
-		workbook.write(new FileOutputStream(fileName));
+		MsExcelUtils.flush(workbook, file.getAbsolutePath());
 		Assert.assertTrue(file.exists());
 		
-		MsExcelSyncRepository repo = new MsExcelSyncRepository(fileName, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		MsExcelSyncRepository repo = new MsExcelSyncRepository(new MsExcel(file.getAbsolutePath()), NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
 		HSSFWorkbook workbook1 = repo.getWorkbook();
 		Assert.assertNotNull(workbook1);
@@ -85,18 +74,13 @@ public class MsExcelSyncRepositoryTests {
 	
 	@Test
 	public void shouldCreateSyncRepoLoadWorkbookAndAddSyncSheet() throws FileNotFoundException, IOException{
-		String fileName = TestHelper.fileName("myExcel3.xls");
-		File file = new File(fileName);
-		if(file.exists()){
-			file.delete();
-		}
-		Assert.assertFalse(file.exists());
+		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
 		
 		HSSFWorkbook workbook = new HSSFWorkbook();
-		workbook.write(new FileOutputStream(fileName));
+		MsExcelUtils.flush(workbook, file.getAbsolutePath());
 		Assert.assertTrue(file.exists());
 		
-		MsExcelSyncRepository repo = new MsExcelSyncRepository(fileName, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		MsExcelSyncRepository repo = new MsExcelSyncRepository(new MsExcel(file.getAbsolutePath()), NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
 		HSSFWorkbook workbook1 = repo.getWorkbook();
 		Assert.assertNotNull(workbook1);
@@ -105,19 +89,14 @@ public class MsExcelSyncRepositoryTests {
 	
 	@Test
 	public void shouldCreateSyncRepoLoadWorkbookAndAddSyncRowHeader() throws FileNotFoundException, IOException{
-		String fileName = TestHelper.fileName("myExcel1.xls");
-		File file = new File(fileName);
-		if(file.exists()){
-			file.delete();
-		}
-		Assert.assertFalse(file.exists());
+		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
 		
 		HSSFWorkbook workbook = new HSSFWorkbook();
 		workbook.createSheet(MsExcelSyncRepository.SHEET_NAME);
-		workbook.write(new FileOutputStream(fileName));
+		MsExcelUtils.flush(workbook, file.getAbsolutePath());
 		Assert.assertTrue(file.exists());
 		
-		MsExcelSyncRepository repo = new MsExcelSyncRepository(fileName, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		MsExcelSyncRepository repo = new MsExcelSyncRepository(new MsExcel(file.getAbsolutePath()), NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
 		HSSFWorkbook workbook1 = repo.getWorkbook();
 		Assert.assertNotNull(workbook1);
@@ -126,20 +105,15 @@ public class MsExcelSyncRepositoryTests {
 	
 	@Test
 	public void shouldCreateSyncRepoLoadWorkbookAndAddSyncCells() throws FileNotFoundException, IOException{
-		String fileName = TestHelper.fileName("myExcel2.xls");
-		File file = new File(fileName);
-		if(file.exists()){
-			file.delete();
-		}
-		Assert.assertFalse(file.exists());
+		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
 		
 		HSSFWorkbook workbook = new HSSFWorkbook();
 		HSSFSheet sheet = workbook.createSheet(MsExcelSyncRepository.SHEET_NAME);
 		sheet.createRow(0);
-		workbook.write(new FileOutputStream(fileName));
+		MsExcelUtils.flush(workbook, file.getAbsolutePath());
 		Assert.assertTrue(file.exists());
 		
-		MsExcelSyncRepository repo = new MsExcelSyncRepository(fileName, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		MsExcelSyncRepository repo = new MsExcelSyncRepository(new MsExcel(file.getAbsolutePath()), NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
 		HSSFWorkbook workbook1 = repo.getWorkbook();
 		Assert.assertNotNull(workbook1);
@@ -151,7 +125,7 @@ public class MsExcelSyncRepositoryTests {
 		
 		MyIdentityProvider myIdGenerator = new MyIdentityProvider();
 		
-		MsExcelSyncRepository repo = new MsExcelSyncRepository("myexcel.xls", NullIdentityProvider.INSTANCE, myIdGenerator);
+		MsExcelSyncRepository repo = new MsExcelSyncRepository(new MsExcel("myExcel.xls"), NullIdentityProvider.INSTANCE, myIdGenerator);
 		String syncId = repo.newSyncID(null);
 		String syncId1 = repo.newSyncID(null);
 		
@@ -163,28 +137,18 @@ public class MsExcelSyncRepositoryTests {
 	
 	@Test
 	public void shouldGetSyncReturnsNullWhenSheetIsEmpty(){
-		String fileName = TestHelper.fileName("myExcel4.xls");
-		File file = new File(fileName);
-		if(file.exists()){
-			file.delete();
-		}
-		Assert.assertFalse(file.exists());
+		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
 		
-		MsExcelSyncRepository repo = new MsExcelSyncRepository(fileName, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		MsExcelSyncRepository repo = new MsExcelSyncRepository(new MsExcel(file.getAbsolutePath()), NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		SyncInfo syncInfo = repo.get(IdGenerator.INSTANCE.newID());
 		Assert.assertNull(syncInfo);
 	}
 	
 	@Test
 	public void shouldGetSyncReturnsNullWhenSyncIdDoesNotExistInSheet(){
-		String fileName = TestHelper.fileName("myExcel5.xls");
-		File file = new File(fileName);
-		if(file.exists()){
-			file.delete();
-		}
-		Assert.assertFalse(file.exists());
+		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
 		
-		MsExcelSyncRepository repo = new MsExcelSyncRepository(fileName, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		MsExcelSyncRepository repo = new MsExcelSyncRepository(new MsExcel(file.getAbsolutePath()), NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		addNewSyncRow(new Sync(IdGenerator.INSTANCE.newID(), "jmt", new Date(), false), "myFeed", "1", 123, repo.getWorkbook());
 		addNewSyncRow(new Sync(IdGenerator.INSTANCE.newID(), "jmt", new Date(), false), "myFeed", "1", 123, repo.getWorkbook());
 		addNewSyncRow(new Sync(IdGenerator.INSTANCE.newID(), "jmt", new Date(), false), "myFeed", "1", 123, repo.getWorkbook());
@@ -195,14 +159,9 @@ public class MsExcelSyncRepositoryTests {
 	
 	@Test
 	public void shouldGetSync(){
-		String fileName = TestHelper.fileName("myExcel6.xls");
-		File file = new File(fileName);
-		if(file.exists()){
-			file.delete();
-		}
-		Assert.assertFalse(file.exists());
+		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
 		
-		MsExcelSyncRepository repo = new MsExcelSyncRepository(fileName, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		MsExcelSyncRepository repo = new MsExcelSyncRepository(new MsExcel(file.getAbsolutePath()), NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
 		String syncIdlocal = IdGenerator.INSTANCE.newID();
 		addNewSyncRow(new Sync(syncIdlocal, "jmt", new Date(), false), "myFeed", "1", 123, repo.getWorkbook());
@@ -219,14 +178,9 @@ public class MsExcelSyncRepositoryTests {
 	
 	@Test
 	public void shouldGetAllSyncs(){
-		String fileName = TestHelper.fileName("myExcel7.xls");
-		File file = new File(fileName);
-		if(file.exists()){
-			file.delete();
-		}
-		Assert.assertFalse(file.exists());
+		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
 		
-		MsExcelSyncRepository repo = new MsExcelSyncRepository(fileName, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		MsExcelSyncRepository repo = new MsExcelSyncRepository(new MsExcel(file.getAbsolutePath()), NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		addNewSyncRow(new Sync(IdGenerator.INSTANCE.newID(), "jmt", new Date(), false), "myFeed", "1", 123, repo.getWorkbook());
 		addNewSyncRow(new Sync(IdGenerator.INSTANCE.newID(), "jmt", new Date(), false), "myFeed", "1", 123, repo.getWorkbook());
 		addNewSyncRow(new Sync(IdGenerator.INSTANCE.newID(), "jmt", new Date(), false), "myFeed", "1", 123, repo.getWorkbook());
@@ -238,14 +192,9 @@ public class MsExcelSyncRepositoryTests {
 	
 	@Test
 	public void shouldGetAllReturnsEmpty(){
-		String fileName = TestHelper.fileName("myExcel8.xls");
-		File file = new File(fileName);
-		if(file.exists()){
-			file.delete();
-		}
-		Assert.assertFalse(file.exists());
+		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
 		
-		MsExcelSyncRepository repo = new MsExcelSyncRepository(fileName, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		MsExcelSyncRepository repo = new MsExcelSyncRepository(new MsExcel(file.getAbsolutePath()), NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		addNewSyncRow(new Sync(IdGenerator.INSTANCE.newID(), "jmt", new Date(), false), "myFeed1", "1", 123, repo.getWorkbook());
 		addNewSyncRow(new Sync(IdGenerator.INSTANCE.newID(), "jmt", new Date(), false), "myFeed2", "1", 123, repo.getWorkbook());
 		addNewSyncRow(new Sync(IdGenerator.INSTANCE.newID(), "jmt", new Date(), false), "myFeed3", "1", 123, repo.getWorkbook());
@@ -257,14 +206,9 @@ public class MsExcelSyncRepositoryTests {
 	
 	@Test
 	public void shouldGetAllReturnsOneRow(){
-		String fileName = TestHelper.fileName("myExcel9.xls");
-		File file = new File(fileName);
-		if(file.exists()){
-			file.delete();
-		}
-		Assert.assertFalse(file.exists());
+		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
 		
-		MsExcelSyncRepository repo = new MsExcelSyncRepository(fileName, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		MsExcelSyncRepository repo = new MsExcelSyncRepository(new MsExcel(file.getAbsolutePath()), NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		addNewSyncRow(new Sync(IdGenerator.INSTANCE.newID(), "jmt", new Date(), false), "myFeed1", "1", 123, repo.getWorkbook());
 		addNewSyncRow(new Sync(IdGenerator.INSTANCE.newID(), "jmt", new Date(), false), "myFeed", "1", 123, repo.getWorkbook());
 		addNewSyncRow(new Sync(IdGenerator.INSTANCE.newID(), "jmt", new Date(), false), "myFeed3", "1", 123, repo.getWorkbook());
@@ -276,14 +220,9 @@ public class MsExcelSyncRepositoryTests {
 	
 	@Test
 	public void shouldAdd(){
-		String fileName = TestHelper.fileName("myExcel10.xls");
-		File file = new File(fileName);
-		if(file.exists()){
-			file.delete();
-		}
-		Assert.assertFalse(file.exists());
+		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
 		
-		MsExcelSyncRepository repo = new MsExcelSyncRepository(fileName, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		MsExcelSyncRepository repo = new MsExcelSyncRepository(new MsExcel(file.getAbsolutePath()), NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
 		addNewSyncRow(new Sync(IdGenerator.INSTANCE.newID(), "jmt", new Date(), false), "myFeed", "1", 123, repo.getWorkbook());
 		addNewSyncRow(new Sync(IdGenerator.INSTANCE.newID(), "jmt", new Date(), false), "myFeed", "1", 123, repo.getWorkbook());				
@@ -308,14 +247,9 @@ public class MsExcelSyncRepositoryTests {
 
 	@Test
 	public void shouldUpdate(){
-		String fileName = TestHelper.fileName("myExcel11.xls");
-		File file = new File(fileName);
-		if(file.exists()){
-			file.delete();
-		}
-		Assert.assertFalse(file.exists());
+		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
 		
-		MsExcelSyncRepository repo = new MsExcelSyncRepository(fileName, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		MsExcelSyncRepository repo = new MsExcelSyncRepository(new MsExcel(file.getAbsolutePath()), NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
 		addNewSyncRow(new Sync(IdGenerator.INSTANCE.newID(), "jmt", new Date(), false), "myFeed", "1", 123, repo.getWorkbook());
 		addNewSyncRow(new Sync(IdGenerator.INSTANCE.newID(), "jmt", new Date(), false), "myFeed", "1", 123, repo.getWorkbook());
@@ -343,14 +277,9 @@ public class MsExcelSyncRepositoryTests {
 	
 	@Test
 	public void shouldFileDoesNotCreatedBecauseEndSyncIsNotExecuted(){
-		String fileName = TestHelper.fileName("myExcel11.xls");
-		File file = new File(fileName);
-		if(file.exists()){
-			file.delete();
-		}
-		Assert.assertFalse(file.exists());
+		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
 		
-		MsExcelSyncRepository repo = new MsExcelSyncRepository(fileName, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		MsExcelSyncRepository repo = new MsExcelSyncRepository(new MsExcel(file.getAbsolutePath()), NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
 		addNewSyncRow(new Sync(IdGenerator.INSTANCE.newID(), "jmt", new Date(), false), "myFeed", "1", 123, repo.getWorkbook());
 		addNewSyncRow(new Sync(IdGenerator.INSTANCE.newID(), "jmt", new Date(), false), "myFeed", "1", 123, repo.getWorkbook());
@@ -380,14 +309,9 @@ public class MsExcelSyncRepositoryTests {
 	
 	@Test
 	public void shouldFileCreatedWhenEndSyncIsExecuted(){
-		String fileName = TestHelper.fileName("myExcel11.xls");
-		File file = new File(fileName);
-		if(file.exists()){
-			file.delete();
-		}
-		Assert.assertFalse(file.exists());
+		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
 		
-		MsExcelSyncRepository repo = new MsExcelSyncRepository(fileName, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		MsExcelSyncRepository repo = new MsExcelSyncRepository(new MsExcel(file.getAbsolutePath()), NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
 		addNewSyncRow(new Sync(IdGenerator.INSTANCE.newID(), "jmt", new Date(), false), "myFeed", "1", 123, repo.getWorkbook());
 		addNewSyncRow(new Sync(IdGenerator.INSTANCE.newID(), "jmt", new Date(), false), "myFeed", "1", 123, repo.getWorkbook());
@@ -414,6 +338,7 @@ public class MsExcelSyncRepositoryTests {
 		
 		Assert.assertFalse(file.exists());
 		
+		repo.beginSync();
 		repo.endSync();
 		
 		Assert.assertTrue(file.exists());
@@ -421,14 +346,9 @@ public class MsExcelSyncRepositoryTests {
 	
 	@Test
 	public void shouldFileUpdatedWhenEndSyncIsExecuted() throws FileNotFoundException, IOException{
-		String fileName = TestHelper.fileName("myExcel12.xls");
-		File file = new File(fileName);
-		if(file.exists()){
-			file.delete();
-		}
-		Assert.assertFalse(file.exists());
+		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
 		
-		MsExcelSyncRepository repo = new MsExcelSyncRepository(fileName, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		MsExcelSyncRepository repo = new MsExcelSyncRepository(new MsExcel(file.getAbsolutePath()), NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
 		addNewSyncRow(new Sync(IdGenerator.INSTANCE.newID(), "jmt", new Date(), false), "myFeed", "1", 123, repo.getWorkbook());
 		addNewSyncRow(new Sync(IdGenerator.INSTANCE.newID(), "jmt", new Date(), false), "myFeed", "1", 123, repo.getWorkbook());
@@ -438,7 +358,7 @@ public class MsExcelSyncRepositoryTests {
 	
 		Assert.assertEquals(3, repo.getAll("myFeed").size());
 		
-		repo.getWorkbook().write(new FileOutputStream(file));
+		MsExcelUtils.flush(repo.getWorkbook(), file.getAbsolutePath());
 		Assert.assertTrue(file.exists());
 		
 		sync.update("jit", new Date());
@@ -456,11 +376,12 @@ public class MsExcelSyncRepositoryTests {
 		Assert.assertEquals(syncInfo.getId(), syncInfo1.getId());
 		Assert.assertEquals(syncInfo.getVersion(), syncInfo1.getVersion());
 		
+		repo.beginSync();
 		repo.endSync();
 		
 		Assert.assertTrue(file.exists());
 		
-		repo = new MsExcelSyncRepository(fileName, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		repo = new MsExcelSyncRepository(new MsExcel(file.getAbsolutePath()), NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		syncInfo1 = repo.get(syncInfo.getSyncId());
 		
 		Assert.assertNotNull(syncInfo1);

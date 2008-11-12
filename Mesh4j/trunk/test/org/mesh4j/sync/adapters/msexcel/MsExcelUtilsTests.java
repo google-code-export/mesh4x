@@ -3,7 +3,6 @@ package org.mesh4j.sync.adapters.msexcel;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 import junit.framework.Assert;
@@ -42,19 +41,14 @@ public class MsExcelUtilsTests {
 		String sheetName = "example";
 		String cellValue = "cellValueExample";
 		
-		String fileName = TestHelper.fileName("myExcel.xls");
-		File file = new File(fileName);
-		if(file.exists()){
-			file.delete();
-		}
-		Assert.assertFalse(file.exists());
+		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
 	
 		HSSFWorkbook workbook = new HSSFWorkbook();
 		HSSFSheet sheet = workbook.createSheet(sheetName);
 		HSSFRow row = sheet.createRow(0);
 		HSSFCell cell = row.createCell(0, HSSFCell.CELL_TYPE_STRING);
 		cell.setCellValue(new HSSFRichTextString(cellValue));
-		MsExcelUtils.flush(workbook, fileName);
+		MsExcelUtils.flush(workbook, file.getAbsolutePath());
 		
 		Assert.assertTrue(file.exists());
 		
@@ -80,19 +74,14 @@ public class MsExcelUtilsTests {
 		String sheetName = "example";
 		String cellValue = "cellValueExample";
 		
-		String fileName = TestHelper.fileName("myExcel.xls");
-		File file = new File(fileName);
-		if(file.exists()){
-			file.delete();
-		}
-		Assert.assertFalse(file.exists());
+		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
 	
 		HSSFWorkbook workbook = new HSSFWorkbook();
 		HSSFSheet sheet = workbook.createSheet(sheetName);
 		HSSFRow row = sheet.createRow(0);
 		HSSFCell cell = row.createCell(0, HSSFCell.CELL_TYPE_STRING);
 		cell.setCellValue(new HSSFRichTextString(cellValue));
-		MsExcelUtils.flush(workbook, fileName);
+		MsExcelUtils.flush(workbook, file.getAbsolutePath());
 		
 		Assert.assertTrue(file.exists());
 		
@@ -101,7 +90,7 @@ public class MsExcelUtilsTests {
 		row = sheet.createRow(1);
 		cell = row.createCell(0, HSSFCell.CELL_TYPE_STRING);
 		cell.setCellValue(new HSSFRichTextString(cellValue));
-		MsExcelUtils.flush(workbook, fileName);
+		MsExcelUtils.flush(workbook, file.getAbsolutePath());
 		
 		Assert.assertTrue(file.exists());
 		
@@ -213,14 +202,9 @@ public class MsExcelUtilsTests {
 	
 	@Test
 	public void shouldCreateWookbookWhenFileDoesNotExist() throws FileNotFoundException, IOException{
-		String fileName = TestHelper.fileName("myExcel.xls");
-		File file = new File(fileName);
-		if(file.exists()){
-			file.delete();
-		}
-		Assert.assertFalse(file.exists());
+		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
 		
-		HSSFWorkbook workbook = MsExcelUtils.getOrCreateWorkbookIfAbsent(fileName);
+		HSSFWorkbook workbook = MsExcelUtils.getOrCreateWorkbookIfAbsent(file.getAbsolutePath());
 		Assert.assertNotNull(workbook);
 		Assert.assertFalse(file.exists());
 	}
@@ -229,7 +213,7 @@ public class MsExcelUtilsTests {
 	public void shouldLoadWookbookWhenFileExist() throws FileNotFoundException, IOException{
 		String fileName = TestHelper.fileName("myExcel.xls");
 		HSSFWorkbook workbook = makeDefaultWorkbook();
-		workbook.write(new FileOutputStream(fileName));
+		MsExcelUtils.flush(workbook, fileName);
 			
 		File file = new File(fileName);
 		Assert.assertTrue(file.exists());

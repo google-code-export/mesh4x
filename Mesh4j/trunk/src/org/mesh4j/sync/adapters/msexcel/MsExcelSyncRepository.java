@@ -33,35 +33,32 @@ public class MsExcelSyncRepository implements ISyncRepository, ISyncAware {
 	public final static String COLUMN_NAME_SYNC = "sync";
 
 	// MODEL VARIABLES
-	private String fileName;
 	private IIdentityProvider identityProvider;
 	private IIdGenerator idGenerator;
 	
-	private HSSFWorkbook workbook;
-	private HSSFSheet worksheet;
+	private MsExcel excel;
 	
 	// BUSINESS METHODS
-	public MsExcelSyncRepository(String fileName, IIdentityProvider identityProvider, IIdGenerator idGenerator){
+	public MsExcelSyncRepository(MsExcel excel, IIdentityProvider identityProvider, IIdGenerator idGenerator){
 		super();
-		Guard.argumentNotNullOrEmptyString(fileName, "fileName");
+		Guard.argumentNotNull(excel, "excel");
 		Guard.argumentNotNull(identityProvider, "identityProvider");
 		Guard.argumentNotNull(idGenerator, "idGenerator");
 		
-		this.fileName = fileName;
 		this.identityProvider = identityProvider;
 		this.idGenerator = idGenerator;
-		
+		this.excel = excel;
 		this.initialize();
 	}
 
 	private void initialize() {
 		try{
 			
-			this.workbook = MsExcelUtils.getOrCreateWorkbookIfAbsent(this.fileName);
+			HSSFWorkbook workbook = this.excel.getWorkbook();
 			
-			this.worksheet = MsExcelUtils.getOrCreateSheetIfAbsent(this.workbook, SHEET_NAME);			
+			HSSFSheet sheet = MsExcelUtils.getOrCreateSheetIfAbsent(workbook, SHEET_NAME);			
 			
-			HSSFRow row = MsExcelUtils.getOrCreateRowHeaderIfAbsent(this.worksheet);
+			HSSFRow row = MsExcelUtils.getOrCreateRowHeaderIfAbsent(sheet);
 			
 			MsExcelUtils.getOrCreateCellStringIfAbsent(row, COLUMN_NAME_SYNC_ID);
 			MsExcelUtils.getOrCreateCellStringIfAbsent(row, COLUMN_NAME_ENTITY_NAME);
@@ -101,19 +98,23 @@ public class MsExcelSyncRepository implements ISyncRepository, ISyncAware {
 	}
 	
 	private void addRow(SyncInfo syncInfo) {
-		HSSFRow row = this.worksheet.createRow(this.worksheet.getLastRowNum() +1);
+		HSSFRow row = getSheet().createRow(getSheet().getLastRowNum() +1);
 		this.updateRow(syncInfo, row);		
+	}
+
+	private HSSFSheet getSheet(){
+		return this.excel.getSheet(SHEET_NAME);
 	}
 	
 	public HSSFWorkbook getWorkbook() {
-		return this.workbook;
+		return this.excel.getWorkbook();
 	}
 
 	// ISyncRepository methods
 	
 	@Override
 	public SyncInfo get(String syncId) {
-		HSSFRow row = MsExcelUtils.getRow(this.worksheet, 0, syncId);
+		HSSFRow row = MsExcelUtils.getRow(getSheet(), 0, syncId);
 		if(row == null){
 			return null;
 		} else {
@@ -128,8 +129,8 @@ public class MsExcelSyncRepository implements ISyncRepository, ISyncAware {
 		
 		HSSFRow row;
 		SyncInfo syncInfo;
-		for (int i = this.worksheet.getFirstRowNum()+1; i <= this.worksheet.getLastRowNum(); i++) {
-			row = this.worksheet.getRow(i);
+		for (int i = getSheet().getFirstRowNum()+1; i <= getSheet().getLastRowNum(); i++) {
+			row = getSheet().getRow(i);
 			syncInfo = this.translate(row);
 			if(syncInfo.getType().equals(type)){
 				result.add(syncInfo);
@@ -145,7 +146,7 @@ public class MsExcelSyncRepository implements ISyncRepository, ISyncAware {
 
 	@Override
 	public void save(SyncInfo syncInfo) {
-		HSSFRow row = MsExcelUtils.getRow(this.worksheet, 0, syncInfo.getSyncId());
+		HSSFRow row = MsExcelUtils.getRow(getSheet(), 0, syncInfo.getSyncId());
 		if(row == null){
 			this.addRow(syncInfo);
 		} else {
@@ -157,11 +158,11 @@ public class MsExcelSyncRepository implements ISyncRepository, ISyncAware {
 	
 	@Override
 	public void beginSync() {
-		// this.initialize();		
+		this.excel.setDirty();		
 	}
 
 	@Override
 	public void endSync() {
-		MsExcelUtils.flush(this.workbook, this.fileName);
+		this.excel.flush();
 	}
 }

@@ -18,7 +18,7 @@ import org.mesh4j.sync.validations.MeshException;
 
 public class MsExcelUtils {
 
-	public static void flush(HSSFWorkbook workbook, String fileName){
+	public static void flush(HSSFWorkbook workbook, String fileName) {
 		FileOutputStream fos = null;
 		try{
 			fos = new FileOutputStream(fileName);

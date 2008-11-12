@@ -11,6 +11,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
 
+import junit.framework.Assert;
+
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
@@ -205,4 +207,13 @@ public class TestHelper {
 		return baseDirectoryForTest() + name;
 	}
 	
+	public static File makeFileAndDeleteIfExists(String fileName){
+		String myFileName = TestHelper.fileName(fileName);
+		File file = new File(myFileName);
+		if(file.exists()){
+			file.delete();
+		}
+		Assert.assertFalse(file.exists());
+		return file;
+	}
 }
