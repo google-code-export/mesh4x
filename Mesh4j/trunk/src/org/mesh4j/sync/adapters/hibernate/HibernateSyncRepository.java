@@ -3,7 +3,6 @@ package org.mesh4j.sync.adapters.hibernate;
 import static org.mesh4j.sync.parsers.SyncInfoParser.SYNC_INFO;
 import static org.mesh4j.sync.parsers.SyncInfoParser.SYNC_INFO_ATTR_ENTITY_NAME;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +14,6 @@ import org.hibernate.EntityMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.cfg.Configuration;
 import org.mesh4j.sync.adapters.SyncInfo;
 import org.mesh4j.sync.adapters.split.ISyncRepository;
 import org.mesh4j.sync.id.generator.IdGenerator;
@@ -34,16 +32,10 @@ public class HibernateSyncRepository implements ISyncRepository{
 	private SessionFactory sessionFactory;
 	
 	// BUSINESS METHODS
-	public HibernateSyncRepository(SyncInfoParser syncInfoParser) {
+	public HibernateSyncRepository(SyncInfoParser syncInfoParser, IHibernateSessionFactoryBuilder sessionFactoryBuilder) {
 		super();
 		this.syncInfoParser = syncInfoParser;
-		initializeHibernate();
-	}
-	
-	private void initializeHibernate() {
-		Configuration hibernateConfiguration = new Configuration();
-		hibernateConfiguration.addFile(getMapping());		
-		this.sessionFactory = hibernateConfiguration.buildSessionFactory();
+		this.sessionFactory = sessionFactoryBuilder.buildSessionFactory();
 	}
 	
 	public SyncInfo get(String syncId) {
@@ -130,11 +122,6 @@ public class HibernateSyncRepository implements ISyncRepository{
 
 	public String newSyncID(IContent content) {
 		return IdGenerator.INSTANCE.newID();
-	}
-
-	private File getMapping() {
-		File syncMapping = new File(this.getClass().getResource("SyncInfo.hbm.xml").getFile());   // TODO (JMT) REFACTORING: Spring, inject sync info mapping name
-		return syncMapping;
 	}
 
 	public String getEntityName() {

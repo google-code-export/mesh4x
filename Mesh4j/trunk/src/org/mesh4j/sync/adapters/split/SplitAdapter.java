@@ -272,4 +272,8 @@ public class SplitAdapter extends AbstractSyncAdapter implements ISyncAware{
 			((ISyncAware)this.syncRepository).endSync();
 		}		
 	}
+
+	public IContentAdapter getContentAdapter() {
+		return this.contentAdapter;
+	}
 }

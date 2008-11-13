@@ -27,7 +27,7 @@ public class MsExcelContentAdapter implements IContentAdapter, ISyncAware {
 	
 	private int lastUpdateIndex;
 	private int entityIdIndex;
-	
+	private int numberOfPhantomRows = 0;
 		
 	// BUSINESS METHODS
 	public MsExcelContentAdapter(MsExcel excel, String sheetName, String entityIdColumnName){
@@ -74,7 +74,13 @@ public class MsExcelContentAdapter implements IContentAdapter, ISyncAware {
 	}
 
 	private void addRow(EntityContent entityContent) {
-		HSSFRow row = getSheet().createRow(getSheet().getPhysicalNumberOfRows());
+		int index = getSheet().getPhysicalNumberOfRows();
+		if(numberOfPhantomRows > 0){
+			index = index - this.numberOfPhantomRows;
+			this.numberOfPhantomRows--;
+		} 
+		
+		HSSFRow row = getSheet().createRow(index);
 		MsExcelUtils.updateRow(getSheet(), row, entityContent.getPayload());		
 	}
 	
@@ -84,6 +90,10 @@ public class MsExcelContentAdapter implements IContentAdapter, ISyncAware {
 	
 	public HSSFSheet getSheet() {
 		return getWorkbook().getSheet(this.sheetName);
+	}
+	
+	public int getNumberOfPhantomRows() {
+		return numberOfPhantomRows;
 	}
 	
 	// IContentAdapter methods
@@ -104,7 +114,11 @@ public class MsExcelContentAdapter implements IContentAdapter, ISyncAware {
 		EntityContent entityContent = EntityContent.normalizeContent(content, this.sheetName, this.entityIdColumnName);
 		HSSFRow row = MsExcelUtils.getRow(getSheet(), this.entityIdIndex, entityContent.getId());
 		if(row != null){
+			this.numberOfPhantomRows++;
 			getSheet().removeRow(row);
+			if(row.getRowNum() < getSheet().getLastRowNum()){
+				getSheet().shiftRows(row.getRowNum()+1, getSheet().getLastRowNum(), -1);
+			}
 		}		
 	}
 
@@ -130,12 +144,13 @@ public class MsExcelContentAdapter implements IContentAdapter, ISyncAware {
 		for (int i = getSheet().getFirstRowNum()+1; i <= getSheet().getLastRowNum(); i++) {
 			row = getSheet().getRow(i);
 			
-			if(this.hasChanged(row, since)){
-				payload = this.translate(row);
-				
+			if(row != null && this.hasChanged(row, since)){
 				cell = MsExcelUtils.getCell(getSheet(), row, this.entityIdColumnName);
-				entityContent = new EntityContent(payload, this.sheetName, cell.getRichStringCellValue().getString());
-				result.add(entityContent);
+				if(cell != null && cell.getCellType() != HSSFCell.CELL_TYPE_BLANK){
+					payload = this.translate(row);		
+					entityContent = new EntityContent(payload, this.sheetName, cell.getRichStringCellValue().getString());
+					result.add(entityContent);
+				}
 			}
 		}
 		return result;
@@ -169,6 +184,18 @@ public class MsExcelContentAdapter implements IContentAdapter, ISyncAware {
 
 	@Override
 	public void beginSync() {
+		this.numberOfPhantomRows = 0;
+		for (int i = getSheet().getFirstRowNum()+1; i <= getSheet().getLastRowNum(); i++) {
+			HSSFRow row = getSheet().getRow(i);
+			
+			if(MsExcelUtils.isPhantomRow(row)){
+				this.numberOfPhantomRows++;
+				if(i < getSheet().getLastRowNum()){
+					getSheet().shiftRows(i+1, getSheet().getLastRowNum(), -1);
+				}
+			}
+		}
+		
 		this.excel.setDirty();
 	}
 
@@ -176,4 +203,5 @@ public class MsExcelContentAdapter implements IContentAdapter, ISyncAware {
 	public void endSync() {
 		this.excel.flush();		
 	}
+
 }

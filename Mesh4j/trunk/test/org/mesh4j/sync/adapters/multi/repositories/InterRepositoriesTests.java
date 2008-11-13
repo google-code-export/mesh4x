@@ -19,6 +19,8 @@ import org.mesh4j.sync.adapters.feed.XMLContent;
 import org.mesh4j.sync.adapters.feed.atom.AtomSyndicationFormat;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.adapters.hibernate.HibernateAdapter;
+import org.mesh4j.sync.adapters.hibernate.HibernateSessionFactoryBuilder;
+import org.mesh4j.sync.adapters.hibernate.SyncDAO;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.Sync;
@@ -44,8 +46,13 @@ public class InterRepositoriesTests {
 			.addItem(new Item(new XMLContent(id2, id2, id2, e2), new Sync(id2).update(NullIdentityProvider.INSTANCE.getAuthenticatedUser(), new Date())));
 		
 		FeedAdapter feedRepo = new FeedAdapter(rssFile, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, feed);
-				
-		HibernateAdapter hibernateRepo = new HibernateAdapter(InterRepositoriesTests.class.getResource("User.hbm.xml").getFile(), NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		
+		HibernateSessionFactoryBuilder builder = new HibernateSessionFactoryBuilder();
+		builder.setPropertiesFile(new File(InterRepositoriesTests.class.getResource("xx_hibernate.properties").getFile()));
+		builder.addMapping(new File(InterRepositoriesTests.class.getResource("User.hbm.xml").getFile()));
+		builder.addMapping(SyncDAO.getMapping());
+		
+		HibernateAdapter hibernateRepo = new HibernateAdapter(builder, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
 		List<Item> allItems = hibernateRepo.getAll();
 		
@@ -68,7 +75,11 @@ public class InterRepositoriesTests {
 
 		FeedAdapter feedRepo = new FeedAdapter(rssFile, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, new Feed());
 		
-		HibernateAdapter	hibernateRepo = new HibernateAdapter(InterRepositoriesTests.class.getResource("User.hbm.xml").getFile(), NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		HibernateSessionFactoryBuilder builder = new HibernateSessionFactoryBuilder();
+		builder.addMapping(new File(InterRepositoriesTests.class.getResource("User.hbm.xml").getFile()));
+		builder.addMapping(SyncDAO.getMapping());
+		builder.setPropertiesFile(new File(InterRepositoriesTests.class.getResource("xx_hibernate.properties").getFile()));
+		HibernateAdapter hibernateRepo = new HibernateAdapter(builder, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
 		List<Item> allItems = hibernateRepo.getAll();
 		
@@ -94,8 +105,11 @@ public class InterRepositoriesTests {
 		File rssFile = new File(this.getClass().getResource("rssUserFeed.xml").getFile());
 		FeedAdapter feedRepo = new FeedAdapter(rssFile, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 				
-		File fileMapping = new File(this.getClass().getResource("User.hbm.xml").getFile());
-		HibernateAdapter hibernateRepo = new HibernateAdapter(fileMapping, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		HibernateSessionFactoryBuilder builder = new HibernateSessionFactoryBuilder();
+		builder.addMapping(new File(InterRepositoriesTests.class.getResource("User.hbm.xml").getFile()));
+		builder.addMapping(SyncDAO.getMapping());
+		builder.setPropertiesFile(new File(InterRepositoriesTests.class.getResource("xx_hibernate.properties").getFile()));
+		HibernateAdapter hibernateRepo = new HibernateAdapter(builder, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
 		hibernateRepo.deleteAll();
 		
@@ -117,8 +131,11 @@ public class InterRepositoriesTests {
 		File rssFile = new File(this.getClass().getResource("atomUserFeed.xml").getFile());
 		FeedAdapter feedRepo = new FeedAdapter(rssFile, AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 				
-		File fileMapping = new File(this.getClass().getResource("User.hbm.xml").getFile());
-		HibernateAdapter	hibernateRepo = new HibernateAdapter(fileMapping, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		HibernateSessionFactoryBuilder builder = new HibernateSessionFactoryBuilder();
+		builder.addMapping(new File(InterRepositoriesTests.class.getResource("User.hbm.xml").getFile()));
+		builder.addMapping(SyncDAO.getMapping());
+		builder.setPropertiesFile(new File(InterRepositoriesTests.class.getResource("xx_hibernate.properties").getFile()));
+		HibernateAdapter hibernateRepo = new HibernateAdapter(builder, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
 		hibernateRepo.deleteAll();
 		

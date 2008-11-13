@@ -17,6 +17,7 @@ import org.junit.Test;
 import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.adapters.hibernate.EntityContent;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
+import org.mesh4j.sync.id.generator.IIdGenerator;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.IContent;
 import org.mesh4j.sync.model.Item;
@@ -26,6 +27,32 @@ import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.test.utils.TestHelper;
 
 public class MsExcelSyncTests {
+	
+	@Test
+	public void executeSync(){
+		
+		IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
+		IIdGenerator idGenerator = IdGenerator.INSTANCE;
+		String sheetName = "patient";
+		String idColumnName = "id";
+		
+		MsExcel excelA = new MsExcel(TestHelper.fileName("fileA.xls"));
+		MsExcelSyncRepository syncRepoA = new MsExcelSyncRepository(excelA, identityProvider, idGenerator);
+		MsExcelContentAdapter contentAdapterA = new MsExcelContentAdapter(excelA, sheetName, idColumnName);
+		SplitAdapter splitAdapterA = new SplitAdapter(syncRepoA, contentAdapterA, identityProvider);
+
+		MsExcel excelB = new MsExcel(TestHelper.fileName("fileB.xls"));
+		MsExcelSyncRepository syncRepoB = new MsExcelSyncRepository(excelB, identityProvider, idGenerator);
+		MsExcelContentAdapter contentAdapterB = new MsExcelContentAdapter(excelB, sheetName, idColumnName);
+		SplitAdapter splitAdapterB = new SplitAdapter(syncRepoB, contentAdapterB, identityProvider);		
+
+		SyncEngine syncEngine = new SyncEngine(splitAdapterA, splitAdapterB);
+		
+		List<Item> conflicts = syncEngine.synchronize();
+		
+		Assert.assertEquals(0, conflicts.size());
+		
+	}
 
 	@Test
 	public void shouldSync() throws DocumentException{
@@ -33,13 +60,16 @@ public class MsExcelSyncTests {
 		String sheetName = "patient";
 		String idColumnName = "id";
 		
-		SplitAdapter adapterA = makeSplitAdapter(sheetName, idColumnName, "excelA.xls", "syncA.xls", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, true);
+		SplitAdapter adapterA = makeSplitAdapter(sheetName, idColumnName, "excelA.xls", "syncA.xls", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		makeHeader(adapterA);
 		adapterA.add(makeNewItem());
 		adapterA.add(makeNewItem());
 		adapterA.add(makeNewItem());
 		adapterA.add(makeNewItem());
 		
-		SplitAdapter adapterB = makeSplitAdapter(sheetName, idColumnName, "excelB.xls", "syncB.xls", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, true);
+		SplitAdapter adapterB = makeSplitAdapter(sheetName, idColumnName, "excelB.xls", "syncB.xls", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		makeHeader(adapterB);
+		adapterB.add(makeNewItem());
 		
 		SyncEngine syncEngine = new SyncEngine(adapterA, adapterB);
 		
@@ -55,13 +85,14 @@ public class MsExcelSyncTests {
 		String sheetName = "patient";
 		String idColumnName = "id";
 		
-		SplitAdapter adapterA = makeSplitAdapter(sheetName, idColumnName, "dataAndSyncA.xls", "dataAndSyncA.xls", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, true);
+		SplitAdapter adapterA = makeSplitAdapter(sheetName, idColumnName, "dataAndSyncA.xls", "dataAndSyncA.xls", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		makeHeader(adapterA);
 		adapterA.add(makeNewItem());
 		adapterA.add(makeNewItem());
 		adapterA.add(makeNewItem());
 		adapterA.add(makeNewItem());
 		
-		SplitAdapter adapterB = makeSplitAdapter(sheetName, idColumnName, "dataAndSyncB.xls", "dataAndSyncB.xls", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, false);
+		SplitAdapter adapterB = makeSplitAdapter(sheetName, idColumnName, "dataAndSyncB.xls", "dataAndSyncB.xls", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
 		SyncEngine syncEngine = new SyncEngine(adapterA, adapterB);
 		
@@ -72,7 +103,23 @@ public class MsExcelSyncTests {
 	}
 	
 	// PRIVATE METHODS
-
+	private void makeHeader(SplitAdapter adapter) {
+		HSSFSheet sheet = ((MsExcelContentAdapter)adapter.getContentAdapter()).getSheet();
+		HSSFRow row = sheet.getRow(0);
+			
+		HSSFCell cell = row.createCell(1, HSSFCell.CELL_TYPE_STRING);
+		cell.setCellValue(new HSSFRichTextString("name"));
+			
+		cell = row.createCell(2, HSSFCell.CELL_TYPE_STRING);
+		cell.setCellValue(new HSSFRichTextString("age"));
+		
+		cell = row.createCell(3, HSSFCell.CELL_TYPE_STRING);
+		cell.setCellValue(new HSSFRichTextString("country"));
+		
+		cell = row.createCell(4, HSSFCell.CELL_TYPE_STRING);
+		cell.setCellValue(new HSSFRichTextString("city"));
+	}
+	
 	private Item makeNewItem() throws DocumentException {
 		
 		String id = IdGenerator.INSTANCE.newID();
@@ -84,7 +131,7 @@ public class MsExcelSyncTests {
 		return new Item(content, sync);
 	}
 
-	private SplitAdapter makeSplitAdapter(String sheetName, String idColumnName, String contentFileName, String syncFileName, IIdentityProvider identityProvider, IdGenerator idGenerator, boolean mustCreateHeader) {
+	private SplitAdapter makeSplitAdapter(String sheetName, String idColumnName, String contentFileName, String syncFileName, IIdentityProvider identityProvider, IdGenerator idGenerator) {
 		
 		MsExcel contentExcel = null;
 		MsExcel syncExcel = null;
@@ -103,22 +150,6 @@ public class MsExcelSyncTests {
 		MsExcelSyncRepository syncRepo = new MsExcelSyncRepository(syncExcel, identityProvider, idGenerator);
 		MsExcelContentAdapter contentAdapter = new MsExcelContentAdapter(contentExcel, sheetName, idColumnName);
 
-		if(mustCreateHeader){
-			HSSFSheet sheet = contentAdapter.getWorkbook().getSheet(sheetName);
-			HSSFRow row = sheet.getRow(0);
-			
-			HSSFCell cell = row.createCell(1, HSSFCell.CELL_TYPE_STRING);
-			cell.setCellValue(new HSSFRichTextString("name"));
-			
-			cell = row.createCell(2, HSSFCell.CELL_TYPE_STRING);
-			cell.setCellValue(new HSSFRichTextString("age"));
-			
-			cell = row.createCell(3, HSSFCell.CELL_TYPE_STRING);
-			cell.setCellValue(new HSSFRichTextString("country"));
-			
-			cell = row.createCell(4, HSSFCell.CELL_TYPE_STRING);
-			cell.setCellValue(new HSSFRichTextString("city"));
-		}
 		SplitAdapter splitAdapter = new SplitAdapter(syncRepo, contentAdapter, identityProvider);
 		return splitAdapter;
 	}

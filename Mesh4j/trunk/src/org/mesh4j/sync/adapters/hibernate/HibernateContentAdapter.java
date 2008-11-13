@@ -1,8 +1,8 @@
 package org.mesh4j.sync.adapters.hibernate;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -11,11 +11,9 @@ import org.hibernate.EntityMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.cfg.Configuration;
 import org.hibernate.metadata.ClassMetadata;
 import org.mesh4j.sync.adapters.split.IContentAdapter;
 import org.mesh4j.sync.model.IContent;
-
 
 public class HibernateContentAdapter implements IContentAdapter {
 
@@ -26,26 +24,26 @@ public class HibernateContentAdapter implements IContentAdapter {
 	
 	// BUSINESS METHODS
 	
-	public HibernateContentAdapter(File entityMapping){
+	public HibernateContentAdapter(IHibernateSessionFactoryBuilder sessionFactoryBuilder, String entityName){
 			
-		this.initializeHibernate(entityMapping);
+		this.sessionFactory = sessionFactoryBuilder.buildSessionFactory();
 		
-		ClassMetadata classMetadata = this.getClassMetadata();
+		ClassMetadata classMetadata = this.getClassMetadata(entityName);
 		this.entityName = classMetadata.getEntityName();
 		this.entityIDNode = classMetadata.getIdentifierPropertyName();
 	}
 
-	private void initializeHibernate(File entityMapping) {
-		Configuration hibernateConfiguration = new Configuration();
-		hibernateConfiguration.addFile(entityMapping);	
-		this.sessionFactory = hibernateConfiguration.buildSessionFactory();
-	}
 	
 	@SuppressWarnings("unchecked")
-	private ClassMetadata getClassMetadata(){
+	private ClassMetadata getClassMetadata(String entityName){
 		Map<String, ClassMetadata> map = sessionFactory.getAllClassMetadata();
-		ClassMetadata classMetadata = map.values().iterator().next();
-		return classMetadata;
+		for (Iterator<ClassMetadata> iterator = map.values().iterator(); iterator.hasNext();) {
+			ClassMetadata classMetadata = iterator.next(); 
+			if(classMetadata.getEntityName().equals(entityName)){
+				return classMetadata;
+			}
+		}
+		return null;
 	}
 
 	public EntityContent get(String entityId) {

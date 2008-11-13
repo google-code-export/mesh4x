@@ -1,8 +1,11 @@
 package org.mesh4j.sync.adapters.hibernate;
 
+import java.io.File;
+
 import org.junit.Assert;
 import org.mesh4j.sync.AbstractSyncEngineTest;
 import org.mesh4j.sync.ISyncAdapter;
+import org.mesh4j.sync.adapters.multi.repositories.InterRepositoriesTests;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.security.NullIdentityProvider;
@@ -18,7 +21,12 @@ public class HibernateSyncEngineRightTest extends AbstractSyncEngineTest {
 
 	@Override
 	protected ISyncAdapter makeRightRepository(Item... items) {
-		HibernateAdapter repo = new HibernateAdapter(this.getClass().getResource("User.hbm.xml").getFile(), NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		HibernateSessionFactoryBuilder builder = new HibernateSessionFactoryBuilder();
+		builder.addMapping(new File(this.getClass().getResource("User.hbm.xml").getFile()));
+		builder.addMapping(SyncDAO.getMapping());
+		builder.setPropertiesFile(new File(this.getClass().getResource("xx_hibernate.properties").getFile()));
+		
+		HibernateAdapter repo = new HibernateAdapter(builder, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
 		repo.deleteAll();		
 		Assert.assertEquals(0, repo.getAll().size());

@@ -98,7 +98,7 @@ public class MsExcelSyncRepository implements ISyncRepository, ISyncAware {
 	}
 	
 	private void addRow(SyncInfo syncInfo) {
-		HSSFRow row = getSheet().createRow(getSheet().getLastRowNum() +1);
+		HSSFRow row = getSheet().createRow(getSheet().getPhysicalNumberOfRows());
 		this.updateRow(syncInfo, row);		
 	}
 
@@ -131,9 +131,11 @@ public class MsExcelSyncRepository implements ISyncRepository, ISyncAware {
 		SyncInfo syncInfo;
 		for (int i = getSheet().getFirstRowNum()+1; i <= getSheet().getLastRowNum(); i++) {
 			row = getSheet().getRow(i);
-			syncInfo = this.translate(row);
-			if(syncInfo.getType().equals(type)){
-				result.add(syncInfo);
+			if(row != null){
+				syncInfo = this.translate(row);
+				if(syncInfo.getType().equals(type)){
+					result.add(syncInfo);
+				}
 			}
 		}
 		return result;

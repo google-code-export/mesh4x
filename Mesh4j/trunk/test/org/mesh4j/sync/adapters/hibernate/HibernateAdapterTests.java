@@ -1,5 +1,6 @@
 package org.mesh4j.sync.adapters.hibernate;
 
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 
@@ -26,7 +27,12 @@ public class HibernateAdapterTests {
 	@Before
 	public void setUp(){
 		if(repo == null ){
-			repo = new HibernateAdapter(HibernateAdapterTests.class.getResource("User.hbm.xml").getFile(), NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+			HibernateSessionFactoryBuilder builder = new HibernateSessionFactoryBuilder();
+			builder.addMapping(new File(HibernateAdapterTests.class.getResource("User.hbm.xml").getFile()));
+			builder.addMapping(SyncDAO.getMapping());
+			builder.setPropertiesFile(new File(this.getClass().getResource("xx_hibernate.properties").getFile()));
+			
+			repo = new HibernateAdapter(builder, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		}
 		
 	}

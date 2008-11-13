@@ -372,8 +372,133 @@ public class MsExcelContentAdapterTests {
 		Assert.assertEquals("5", row.getCell(0).getRichStringCellValue().getString());
 		Assert.assertEquals("mrs", row.getCell(1).getRichStringCellValue().getString());
 	}
+
+	@Test
+	public void shouldBeginSyncRegisterAndMoveToBottomPhantomRows(){
+		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
+		
+		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), "sheet", "id");
+		addEntityHeader(adapter, "sheet", "name");
+		addEntity(adapter, "sheet", "1", "jct");
+		addPhantomRow(adapter, "sheet", 2);
+		addEntity(adapter, "sheet", "3", "jit");
+		addPhantomRow(adapter, "sheet", 2);
+		addEntity(adapter, "sheet", "5", "msa");
+		
+		Assert.assertEquals(6, adapter.getWorkbook().getSheet("sheet").getPhysicalNumberOfRows());
+		Assert.assertEquals(HSSFCell.CELL_TYPE_STRING, adapter.getWorkbook().getSheet("sheet").getRow(1).getCell(0).getCellType());
+		Assert.assertEquals("1", adapter.getWorkbook().getSheet("sheet").getRow(1).getCell(0).getRichStringCellValue().getString());
+		Assert.assertEquals(HSSFCell.CELL_TYPE_BLANK, adapter.getWorkbook().getSheet("sheet").getRow(2).getCell(0).getCellType());
+		Assert.assertEquals(HSSFCell.CELL_TYPE_STRING, adapter.getWorkbook().getSheet("sheet").getRow(3).getCell(0).getCellType());
+		Assert.assertEquals("3", adapter.getWorkbook().getSheet("sheet").getRow(3).getCell(0).getRichStringCellValue().getString());
+		Assert.assertEquals(HSSFCell.CELL_TYPE_BLANK, adapter.getWorkbook().getSheet("sheet").getRow(4).getCell(0).getCellType());
+		Assert.assertEquals(HSSFCell.CELL_TYPE_STRING, adapter.getWorkbook().getSheet("sheet").getRow(5).getCell(0).getCellType());
+		Assert.assertEquals("5", adapter.getWorkbook().getSheet("sheet").getRow(5).getCell(0).getRichStringCellValue().getString());
+				
+		adapter.beginSync();
+		
+		Assert.assertEquals(6, adapter.getWorkbook().getSheet("sheet").getPhysicalNumberOfRows());
+		Assert.assertEquals(HSSFCell.CELL_TYPE_STRING, adapter.getWorkbook().getSheet("sheet").getRow(1).getCell(0).getCellType());
+		Assert.assertEquals("1", adapter.getWorkbook().getSheet("sheet").getRow(1).getCell(0).getRichStringCellValue().getString());
+		Assert.assertEquals(HSSFCell.CELL_TYPE_STRING, adapter.getWorkbook().getSheet("sheet").getRow(2).getCell(0).getCellType());
+		Assert.assertEquals("3", adapter.getWorkbook().getSheet("sheet").getRow(2).getCell(0).getRichStringCellValue().getString());
+		Assert.assertEquals(HSSFCell.CELL_TYPE_STRING, adapter.getWorkbook().getSheet("sheet").getRow(3).getCell(0).getCellType());
+		Assert.assertEquals("5", adapter.getWorkbook().getSheet("sheet").getRow(3).getCell(0).getRichStringCellValue().getString());
+		Assert.assertNull(adapter.getWorkbook().getSheet("sheet").getRow(4).getCell(0));
+		Assert.assertNull(adapter.getWorkbook().getSheet("sheet").getRow(5).getCell(0));
+		
+		Assert.assertEquals(2, adapter.getNumberOfPhantomRows());
+		
+		adapter.endSync();
+	}
+	
+	@Test
+	public void shouldDeleteRegisterAndMoveToBottomPhantomRow() throws DocumentException{
+		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
+		
+		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), "sheet", "id");
+		addEntityHeader(adapter, "sheet", "name");
+		addEntity(adapter, "sheet", "1", "jct");
+		addEntity(adapter, "sheet", "2", "jmt");
+		
+		adapter.beginSync();
+		
+		Assert.assertEquals(3, adapter.getWorkbook().getSheet("sheet").getPhysicalNumberOfRows());
+		
+		String xml = "<sheet><id>1</id><name>jct</name></sheet>";
+		Element payload = DocumentHelper.parseText(xml).getRootElement();
+		IContent content = new EntityContent(payload, "sheet", "1");
+		
+		Assert.assertEquals(0, adapter.getNumberOfPhantomRows());
+		
+		adapter.delete(content);
+
+		Assert.assertEquals(1, adapter.getNumberOfPhantomRows());
+		Assert.assertEquals(3, adapter.getWorkbook().getSheet("sheet").getPhysicalNumberOfRows());
+		
+		Assert.assertEquals(HSSFCell.CELL_TYPE_STRING, adapter.getWorkbook().getSheet("sheet").getRow(1).getCell(0).getCellType());
+		Assert.assertEquals("2", adapter.getWorkbook().getSheet("sheet").getRow(1).getCell(0).getRichStringCellValue().getString());
+		Assert.assertNull(adapter.getWorkbook().getSheet("sheet").getRow(2).getCell(0));
+	}
+	
+	@Test
+	public void shouldAddUsePhantomRows() throws DocumentException{
+	File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
+		
+		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), "sheet", "id");
+		addEntityHeader(adapter, "sheet", "name");
+		addEntity(adapter, "sheet", "1", "jct");
+		addPhantomRow(adapter, "sheet", 2);
+		addEntity(adapter, "sheet", "3", "jit");
+		addPhantomRow(adapter, "sheet", 2);
+		addEntity(adapter, "sheet", "5", "msa");
+		
+		Assert.assertEquals(6, adapter.getWorkbook().getSheet("sheet").getPhysicalNumberOfRows());
+		Assert.assertEquals(HSSFCell.CELL_TYPE_STRING, adapter.getWorkbook().getSheet("sheet").getRow(1).getCell(0).getCellType());
+		Assert.assertEquals("1", adapter.getWorkbook().getSheet("sheet").getRow(1).getCell(0).getRichStringCellValue().getString());
+		Assert.assertEquals(HSSFCell.CELL_TYPE_BLANK, adapter.getWorkbook().getSheet("sheet").getRow(2).getCell(0).getCellType());
+		Assert.assertEquals(HSSFCell.CELL_TYPE_STRING, adapter.getWorkbook().getSheet("sheet").getRow(3).getCell(0).getCellType());
+		Assert.assertEquals("3", adapter.getWorkbook().getSheet("sheet").getRow(3).getCell(0).getRichStringCellValue().getString());
+		Assert.assertEquals(HSSFCell.CELL_TYPE_BLANK, adapter.getWorkbook().getSheet("sheet").getRow(4).getCell(0).getCellType());
+		Assert.assertEquals(HSSFCell.CELL_TYPE_STRING, adapter.getWorkbook().getSheet("sheet").getRow(5).getCell(0).getCellType());
+		Assert.assertEquals("5", adapter.getWorkbook().getSheet("sheet").getRow(5).getCell(0).getRichStringCellValue().getString());
+				
+		adapter.beginSync();
+		
+		Assert.assertEquals(6, adapter.getWorkbook().getSheet("sheet").getPhysicalNumberOfRows());
+		Assert.assertEquals(HSSFCell.CELL_TYPE_STRING, adapter.getWorkbook().getSheet("sheet").getRow(1).getCell(0).getCellType());
+		Assert.assertEquals("1", adapter.getWorkbook().getSheet("sheet").getRow(1).getCell(0).getRichStringCellValue().getString());
+		Assert.assertEquals(HSSFCell.CELL_TYPE_STRING, adapter.getWorkbook().getSheet("sheet").getRow(2).getCell(0).getCellType());
+		Assert.assertEquals("3", adapter.getWorkbook().getSheet("sheet").getRow(2).getCell(0).getRichStringCellValue().getString());
+		Assert.assertEquals(HSSFCell.CELL_TYPE_STRING, adapter.getWorkbook().getSheet("sheet").getRow(3).getCell(0).getCellType());
+		Assert.assertEquals("5", adapter.getWorkbook().getSheet("sheet").getRow(3).getCell(0).getRichStringCellValue().getString());
+		Assert.assertNull(adapter.getWorkbook().getSheet("sheet").getRow(4).getCell(0));
+		Assert.assertNull(adapter.getWorkbook().getSheet("sheet").getRow(5).getCell(0));
+		
+		Assert.assertEquals(2, adapter.getNumberOfPhantomRows());
+		
+		String xml = "<sheet><id>32</id><name>dnkndfk</name></sheet>";
+		Element payload = DocumentHelper.parseText(xml).getRootElement();
+		IContent content = new EntityContent(payload, "sheet", "32");
+		
+		adapter.save(content);
+		
+		Assert.assertEquals(6, adapter.getWorkbook().getSheet("sheet").getPhysicalNumberOfRows());
+		Assert.assertEquals(HSSFCell.CELL_TYPE_STRING, adapter.getWorkbook().getSheet("sheet").getRow(1).getCell(0).getCellType());
+		Assert.assertEquals("1", adapter.getWorkbook().getSheet("sheet").getRow(1).getCell(0).getRichStringCellValue().getString());
+		Assert.assertEquals(HSSFCell.CELL_TYPE_STRING, adapter.getWorkbook().getSheet("sheet").getRow(2).getCell(0).getCellType());
+		Assert.assertEquals("3", adapter.getWorkbook().getSheet("sheet").getRow(2).getCell(0).getRichStringCellValue().getString());
+		Assert.assertEquals(HSSFCell.CELL_TYPE_STRING, adapter.getWorkbook().getSheet("sheet").getRow(3).getCell(0).getCellType());
+		Assert.assertEquals("5", adapter.getWorkbook().getSheet("sheet").getRow(3).getCell(0).getRichStringCellValue().getString());
+		Assert.assertEquals(HSSFCell.CELL_TYPE_STRING, adapter.getWorkbook().getSheet("sheet").getRow(4).getCell(0).getCellType());
+		Assert.assertEquals("32", adapter.getWorkbook().getSheet("sheet").getRow(4).getCell(0).getRichStringCellValue().getString());
+		Assert.assertNull(adapter.getWorkbook().getSheet("sheet").getRow(5).getCell(0));
+
+		Assert.assertEquals(1, adapter.getNumberOfPhantomRows());		
+	}
 	
 	// PRIVATE METHODS
+	
 	private void addEntityHeader(MsExcelContentAdapter adapter, String sheetName, String columnName) {
 		HSSFSheet sheet = adapter.getWorkbook().getSheet(sheetName);
 		HSSFRow row = sheet.getRow(0);
@@ -431,6 +556,14 @@ public class MsExcelContentAdapterTests {
 		Assert.assertEquals(HSSFCell.CELL_TYPE_STRING, cell.getCellType());
 		Assert.assertNotNull(cell.getRichStringCellValue());
 		Assert.assertEquals(idColumn, cell.getRichStringCellValue().getString());
+	}
+	
+	private void addPhantomRow(MsExcelContentAdapter adapter, String sheetName, int numOfCell) {
+		HSSFSheet sheet = adapter.getWorkbook().getSheet(sheetName);
+		HSSFRow row = sheet.createRow(sheet.getPhysicalNumberOfRows());
+		for (int i = 0; i < numOfCell; i++) {
+			row.createCell(i, HSSFCell.CELL_TYPE_BLANK);
+		}
 	}
 }
 

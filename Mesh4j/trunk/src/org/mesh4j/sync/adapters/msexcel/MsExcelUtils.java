@@ -66,10 +66,14 @@ public class MsExcelUtils {
 		String cellValue;
 		for (int i = worksheet.getFirstRowNum()+1; i <= worksheet.getLastRowNum(); i++) {
 			row = worksheet.getRow(i);
-			cellId = row.getCell(columnIndex);
-			cellValue = cellId.getRichStringCellValue().getString();
-			if(value.equals(cellValue)){
-				return row;
+			if(row != null){
+				cellId = row.getCell(columnIndex);
+				if(cellId != null && cellId.getCellType() != HSSFCell.CELL_TYPE_BLANK){
+					cellValue = cellId.getRichStringCellValue().getString();
+					if(value.equals(cellValue)){
+						return row;
+					}
+				}
 			}
 		}
 		return null;
@@ -160,5 +164,20 @@ public class MsExcelUtils {
 			}
 			cell.setCellValue(new HSSFRichTextString(child.getText()));     // TODO (JMT) data type formatters
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public static boolean isPhantomRow(HSSFRow row) {
+		if(row == null){
+			return true;
+		}
+		
+		for (Iterator<HSSFCell> iterator = row.cellIterator(); iterator.hasNext();) {
+			HSSFCell cell = iterator.next();
+			if(HSSFCell.CELL_TYPE_BLANK != cell.getCellType()){
+				return false;
+			}
+		}
+		return true;
 	}
 }
