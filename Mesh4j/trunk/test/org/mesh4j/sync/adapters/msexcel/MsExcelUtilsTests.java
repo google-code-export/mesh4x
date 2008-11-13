@@ -23,7 +23,7 @@ public class MsExcelUtilsTests {
 
 	@Test(expected=MeshException.class)
 	public void shouldFlushFailWhenWorkbookIsNull(){
-		MsExcelUtils.flush(null, "file.xls");
+		MsExcelUtils.flush(null, TestHelper.fileName("file.xls"));
 	}
 
 	@Test(expected=MeshException.class)

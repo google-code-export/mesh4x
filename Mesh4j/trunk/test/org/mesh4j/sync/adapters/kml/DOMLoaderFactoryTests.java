@@ -7,6 +7,7 @@ import org.mesh4j.sync.adapters.dom.parsers.FileXMLViewElement;
 import org.mesh4j.sync.adapters.dom.parsers.HierarchyXMLViewElement;
 import org.mesh4j.sync.parsers.IXMLViewElement;
 import org.mesh4j.sync.security.NullIdentityProvider;
+import org.mesh4j.sync.test.utils.TestHelper;
 
 
 public class DOMLoaderFactoryTests {
@@ -23,13 +24,13 @@ public class DOMLoaderFactoryTests {
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldNotAcceptNullSecurity(){
-		KMLDOMLoaderFactory.createDOMLoader("a.txt", null);
+		KMLDOMLoaderFactory.createDOMLoader(TestHelper.fileName("a.txt"), null);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldOnlyAcceptKMLorKMZFileNameExtension(){  // valid extension are KML y KMZ
 		
-		KMLDOMLoaderFactory.createDOMLoader("a.txt", NullIdentityProvider.INSTANCE);
+		KMLDOMLoaderFactory.createDOMLoader(TestHelper.fileName("a.txt"), NullIdentityProvider.INSTANCE);
 	}
 	
 	@Test
