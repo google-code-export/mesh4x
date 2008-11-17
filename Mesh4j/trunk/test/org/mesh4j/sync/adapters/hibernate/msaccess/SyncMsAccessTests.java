@@ -35,14 +35,17 @@ public class SyncMsAccessTests {
 
 		HibernateContentAdapter contentAdapter = new HibernateContentAdapter(builderA, "user");
 		List<IContent> contents = contentAdapter.getAll();
+		Assert.assertFalse(contents.isEmpty());		
 		
 		SyncInfoParser syncInfoParser = new SyncInfoParser(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
 		HibernateSyncRepository syncRepository = new HibernateSyncRepository(syncInfoParser, builderA);
-		List<SyncInfo> syncInfos = syncRepository.getAll(contentAdapter.getType());		
+		List<SyncInfo> syncInfos = syncRepository.getAll(contentAdapter.getType());
+		Assert.assertFalse(syncInfos.isEmpty());
 		
 		SplitAdapter splitAdapter = new SplitAdapter(syncRepository, contentAdapter, NullIdentityProvider.INSTANCE);
 		List<Item> items = splitAdapter.getAll();
+		Assert.assertFalse(items.isEmpty());
 		
 	}
 	
@@ -86,6 +89,13 @@ public class SyncMsAccessTests {
 		Assert.assertNotNull(conflicts);
 		Assert.assertEquals(0, conflicts.size());
 
+		List<Item> itemsA = splitAdapterA.getAll();
+		Assert.assertFalse(itemsA.isEmpty());
+		
+		List<Item> itemsB = splitAdapterB.getAll();
+		Assert.assertFalse(itemsB.isEmpty());
+
+		Assert.assertEquals(itemsA.size(), itemsB.size());
 	}
 
 	
