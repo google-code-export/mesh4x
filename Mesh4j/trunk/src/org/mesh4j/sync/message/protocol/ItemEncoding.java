@@ -80,8 +80,9 @@ public class ItemEncoding implements IItemEncoding, IProtocolConstants{
 			StringTokenizer stDiffs = new StringTokenizer(xmlDiff, FIELD_SEPARATOR);
 			while(stDiffs.hasMoreTokens()){
 				String blockDiff = stDiffs.nextToken();
-				String index = blockDiff.substring(0, 1);
-				String textDiff = blockDiff.substring(1, blockDiff.length());
+				String[] elements = blockDiff.split(SUB_FIELD_SEPARATOR);
+				String index = elements[0];
+				String textDiff = elements[1];
 				diffs.put(Integer.valueOf(index), textDiff);
 			}
 			
@@ -89,7 +90,7 @@ public class ItemEncoding implements IItemEncoding, IProtocolConstants{
 			
 			String xmlResult = DiffUtils.appliesDiff(xml, this.diffBlockSize, diffs);
 			Element payload = XMLHelper.parseElement(xmlResult);
-			XMLContent content = new XMLContent(syncID, "", "", payload);
+			XMLContent content = new XMLContent(syncID, "", "", "", payload);
 			return new Item(content, sync);
 		}
 	}
@@ -125,6 +126,7 @@ public class ItemEncoding implements IItemEncoding, IProtocolConstants{
 			while(it.hasNext()) {
 				int i = it.next();
 				sb.append(i);
+				sb.append(SUB_FIELD_SEPARATOR);
 				sb.append(diffs.get(i));
 				if(it.hasNext()){
 					sb.append(FIELD_SEPARATOR);

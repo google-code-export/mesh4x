@@ -49,9 +49,9 @@ public class AskLossMessagesScheduleTaskTests {
 		
 		TimerScheduler.INSTANCE.reset();
 		TimerScheduler.INSTANCE.schedule(task, 50);
-		Thread.sleep(500);
+		Thread.sleep(800);
 		
-		Assert.assertEquals(9, channel.getRetries().size());
+		Assert.assertEquals(15, channel.getRetries().size());
 	}
 	
 	public SmsMessageBatch createTestBatch(int msgSize, String originalText, Date date)

@@ -10,6 +10,7 @@ import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_SYNC
 import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_SYNC_UPDATES;
 import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ELEMENT_AUTHOR;
 import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ELEMENT_ITEM_DESCRIPTION;
+import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ELEMENT_ITEM_LINK;
 import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ELEMENT_ITEM_TITLE;
 import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_QNAME_CONFLICTS;
 import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_QNAME_HISTORY;
@@ -113,6 +114,7 @@ public class FeedReader {
 		Sync sync = null;
 		String title = null;
 		String description = null;
+		String link = null;
 		
 		List<Element> elements = itemElement.elements();
 		for (Element element : elements) {
@@ -123,6 +125,8 @@ public class FeedReader {
 					title = element.getText();
 				} else if(SX_ELEMENT_ITEM_DESCRIPTION.equals(element.getName())){
 					description = element.getText();
+				}else if(SX_ELEMENT_ITEM_LINK.equals(element.getName())){
+					link = element.getText();
 				} else if(!SX_ELEMENT_AUTHOR.equals(element.getName())){   // skip author
 					payload.add(element.detach());	
 				}				
@@ -143,7 +147,12 @@ public class FeedReader {
 			if(description == null){
 				description = sync.getId();
 			}
-			XMLContent modelItem = new XMLContent(sync.getId(), title, description, payload);
+			
+			if(link == null){
+				link = "";
+			}
+			
+			XMLContent modelItem = new XMLContent(sync.getId(), title, description, link, payload);
 			return new Item(modelItem, sync);
 		}
 	}

@@ -8,7 +8,27 @@
 		<display-name>FeedServlet</display-name>
 		<servlet-name>FeedServlet</servlet-name>
 		<servlet-class>org.mesh4j.sync.servlet.FeedServlet</servlet-class>
-	</servlet>
+   		<!-- init-param>
+   			<param-name>feeds.repository</param-name>
+   			<param-value>org.mesh4j.sync.web.FileFeedRepository</param-value>
+   		</init-param>
+		<init-param>
+   			<param-name>feeds.base.directory</param-name>
+   			<param-value>C:\Clarius\temp</param-value>
+   		</init-param-->
+   		<init-param>
+   			<param-name>feeds.repository</param-name>
+   			<param-value>org.mesh4j.sync.web.S3FeedRepository</param-value>
+   		</init-param>
+		<init-param>
+   			<param-name>feeds.s3.access.key</param-name>
+   			<param-value>1</param-value>
+   		</init-param>
+   		<init-param>
+   			<param-name>feeds.s3.secret.access.key</param-name>
+   			<param-value>1</param-value>
+   		</init-param>
+	</servlet> 
 	<servlet-mapping>
 		<servlet-name>FeedServlet</servlet-name>
 		<url-pattern>/feeds/*</url-pattern>		

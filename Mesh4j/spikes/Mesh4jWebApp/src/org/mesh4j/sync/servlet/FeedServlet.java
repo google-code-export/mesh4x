@@ -1,6 +1,5 @@
 package org.mesh4j.sync.servlet;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -15,14 +14,15 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.utils.DateHelper;
-import org.mesh4j.sync.web.SyncEngineManager;
+import org.mesh4j.sync.web.FeedRepositoryFactory;
+import org.mesh4j.sync.web.IFeedRepository;
 
 public class FeedServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 8932466869419169112L;
 	
 	// MODEL VARIABLES
-	private SyncEngineManager syncEngineManager;
+	private IFeedRepository feedRepository;
 	
 	// BUSINESS METHODS
 
@@ -31,25 +31,27 @@ public class FeedServlet extends HttpServlet {
 	}
 
 	public void init() throws ServletException{
+		this.log("Mesh4x is starting up.....");
 		super.init();		
-		this.syncEngineManager = new SyncEngineManager(this.getRootPath());
+		this.feedRepository = FeedRepositoryFactory.createFeedRepository(this); 
 		this.log("Mesh4x is running.....");
 	}
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 		String sourceID = this.getSourceID(request);
-		if(sourceID != null && !this.syncEngineManager.isValidSourceID(sourceID)){  // sourceID == null ==> Get all feeds
+		if(sourceID != null && !this.feedRepository.existsFeed(sourceID)){  // sourceID == null ==> Get all feeds
 			response.sendError(404, sourceID);
 		} else {
 			String format = request.getParameter("format");     // format=rss20/atom10
-			ISyndicationFormat syndicationFormat = this.syncEngineManager.getSyndicationFormat(format);
+			ISyndicationFormat syndicationFormat = this.feedRepository.getSyndicationFormat(format);
 			if(syndicationFormat == null){
 				response.sendError(404, format);
 			} else {
 
 				Date sinceDate = this.getSinceDate(request);
-				String responseContent = this.syncEngineManager.readFeed(sourceID, sinceDate, syndicationFormat);
+				String link = getLink(request, sourceID);
+				String responseContent = this.feedRepository.readFeed(sourceID, link, sinceDate, syndicationFormat);
 			
 				response.setContentType("text/plain");
 				response.setContentLength(responseContent.length());
@@ -59,32 +61,38 @@ public class FeedServlet extends HttpServlet {
 		}
 	}
 
+	private String getLink(HttpServletRequest request, String sourceID) {
+		if(sourceID == null){
+			return request.getRequestURI();
+		} else {
+			return request.getRequestURI()+ "/" + sourceID;
+		}
+	}
+
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {		
 		String sourceID = this.getSourceID(request);				
-		if(sourceID == null){	// sourceID == null ==> Add new feed
+		if(this.feedRepository.isAddNewFeedAction(sourceID)){
 			addNewFeed(request, response);
-		} else {				// synchronize a feed
+		} else {
 			synchronizeFeed(request, response, sourceID);
 		}
 	}
 
 	private void synchronizeFeed(HttpServletRequest request, HttpServletResponse response, String sourceID) throws IOException {
-		if(!this.syncEngineManager.isValidSourceID(sourceID)){
+		if(!this.feedRepository.existsFeed(sourceID)){
 			response.sendError(404, sourceID);
-		} else {
-		
+		} else {		
 			String format = request.getParameter("format");  		// format=rss20/atom10
-			ISyndicationFormat syndicationFormat = this.syncEngineManager.getSyndicationFormat(format);	
+			ISyndicationFormat syndicationFormat = this.feedRepository.getSyndicationFormat(format);	
 			if(syndicationFormat == null){
 				response.sendError(404, format);	
 			} else {
-
 				String feedXml = this.readXML(request);
 				if(feedXml == null){
 					response.sendError(404, sourceID);
 				} else {
-		
-					String responseContent = this.syncEngineManager.synchronize(sourceID, feedXml, syndicationFormat);
+					String link = getLink(request, sourceID);
+					String responseContent = this.feedRepository.synchronize(sourceID, link, feedXml, syndicationFormat);
 					
 					response.setContentType("text/plain");
 					response.setContentLength(responseContent.length());
@@ -96,25 +104,23 @@ public class FeedServlet extends HttpServlet {
 	}
 
 	private void addNewFeed(HttpServletRequest request, HttpServletResponse response) throws IOException {
-				
 		String newSourceID = request.getParameter("newSourceID");
-		String format = request.getParameter("format");
-		String description = request.getParameter("description");
-		
-		ISyndicationFormat syndicationFormat = this.syncEngineManager.getSyndicationFormat(format);	
-		if(syndicationFormat == null){
-			response.sendError(404, format);	
+		if(this.feedRepository.existsFeed(newSourceID)){
+			response.sendError(404, newSourceID);
+		} else {
+			String format = request.getParameter("format");
+			String description = request.getParameter("description");
+			
+			ISyndicationFormat syndicationFormat = this.feedRepository.getSyndicationFormat(format);	
+			if(syndicationFormat == null){
+				response.sendError(404, format);	
+			}
+			
+			String link = getLink(request, newSourceID);
+			this.feedRepository.addNewFeed(newSourceID, syndicationFormat, link, description);
+			
+			response.sendRedirect(request.getRequestURI()+"/"+newSourceID);
 		}
-		
-		String link = request.getRequestURI()+ "/" + newSourceID;
-		this.syncEngineManager.addNewFeed(newSourceID, syndicationFormat, link, newSourceID, description);
-		
-		String responseContent = this.syncEngineManager.readFeed(null, null, syndicationFormat);
-		
-		response.setContentType("text/plain");
-		response.setContentLength(responseContent.length());
-		PrintWriter out = response.getWriter();
-		out.println(responseContent);
 	}
 
 	private String readXML(HttpServletRequest request) throws IOException{
@@ -149,14 +155,6 @@ public class FeedServlet extends HttpServlet {
 			}
 		} 
 		return null;
-	}
-	
-	private String getRootPath() {
-		String feedsPath = this.getInitParameter("default.feeds.path");
-		if(feedsPath == null || feedsPath.length() == 0){
-			feedsPath = this.getServletContext().getRealPath("/feeds");
-		}
-		return feedsPath + File.separator;
 	}
 	
 	private Date getSinceDate(HttpServletRequest request){

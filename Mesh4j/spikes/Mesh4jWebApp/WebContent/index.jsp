@@ -20,26 +20,48 @@
 	<br>
 	<ul>
 		<li>
-			<p><b>How to get all available feeds</b>&nbsp;&nbsp;<a class="atomRssLink" href="/mesh4x/feeds?format=atom10">atom</a>&nbsp;|&nbsp;<a href="/mesh4x/feeds?format=rss20">rss</a></p>
+			<p><b>How to get all available Mesh</b>&nbsp;&nbsp;<a class="atomRssLink" href="/mesh4x/feeds?format=atom10">atom</a>&nbsp;|&nbsp;<a href="/mesh4x/feeds?format=rss20">rss</a></p>
 			<div class="description">Method: GET</div>
 			<div class="description">URL: /feeds?format[atom10/rss20]&nbsp;&nbsp;&nbsp;(*)</div>
+			<br>
 		</li>
-		<br>
+		<li>
+			<p><b>How to add a new own Mesh</b></p>
+			<div class="description">Method: POST</div>
+			<div class="description">URL: /feeds?format[atom10/rss20]&nbsp;&nbsp;&nbsp;(*)</div>
+			<div class="description">Parameters:</div>
+			<div class="description">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name="newSourceID" type="text" value="myMesh"<div>
+			<div class="description">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name="title" type="text" value="my own mesh"</div>
+			<div class="description">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name="description" type="text" value="my mesh is the best mesh"</dic>
+			<div class="description">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name="format" type=text value=rss20/atom10</div>
+			<br>
+		</li>
+		<li>
+			<p><b>How to get all available feeds for a Mesh</b></p>
+			<div class="description">Method: GET</div>
+			<div class="description">URL: /feeds/{meshName}?format[atom10/rss20]&nbsp;&nbsp;&nbsp;(*)</div>
+			<br>
+		</li>
 		<li>
 			<p><b>How to add a new own Feed</b></p>
 			<div class="description">Method: POST</div>
-			<div class="description">URL: /feeds?format[atom10/rss20]&nbsp;&nbsp;&nbsp;(*)</div>
+			<div class="description">URL: /feeds/{meshName}?format[atom10/rss20]&nbsp;&nbsp;&nbsp;(*)</div>
+			<div class="description">Parameters:</div>
+			<div class="description">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name="newSourceID" type="text" value="myMesh/myFeed"</div>
+			<div class="description">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name="title" type="text" value="my own feed</div>
+			<div class="description">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name="description" type="text" value="my feed is the best feed"</div>
+			<div class="description">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name="format" type=text value=rss20/atom10</div>
+			<br>
 		</li>
-		<br>
 		<li>
 			<p><b>How to get a Feed</b></p>
 			<div class="description">Method: GET</div>
-			<div class="description">URL: /feeds/{feedName}?format[atom10/rss20]&nbsp;&nbsp;&nbsp;(*)</div>
+			<div class="description">URL: /feeds/{meshName}/{feedName}?format[atom10/rss20]&nbsp;&nbsp;&nbsp;(*)</div>
+			<br>
 		</li>
-		<br>
 		<li><p><b>How to synchronize a Feed</b></p>
 			<div class="description">Method: POST</div>
-			<div class="description">URL: /feeds/{feedName}?format[atom10/rss20]&nbsp;&nbsp;&nbsp;(*)</div>
+			<div class="description">URL: /feeds/{meshName}/{feedName}?format[atom10/rss20]&nbsp;&nbsp;&nbsp;(*)</div>
 		</li>
 	</ul>
 	<br>
@@ -47,10 +69,22 @@
 	<br>
 	<hr>
 	<br>
+	<h2>Create you own Mesh:</h2>
+	<br>
+	<form action="/mesh4x/feeds" method="post">
+		name: <input id="newSourceID" name="newSourceID" type="text" value="myMesh">
+		title: <input id="title" name="title" type="text" value="my own mesh">
+		description: <input id="description" name="description" type="text" value="my mesh is the best mesh">
+		format: <select id="format" name="format"><option>rss20</option><option>atom10</option></select>
+		<br>
+		<br>
+		<button type="submit">Add</button>
+	</form>
+	<br>
 	<h2>Create you own Feed:</h2>
 	<br>
 	<form action="/mesh4x/feeds" method="post">
-		name: <input id="newSourceID" name="newSourceID" type="text" value="myFeed">
+		name: <input id="newSourceID" name="newSourceID" type="text" value="myMesh/myFeed">
 		title: <input id="title" name="title" type="text" value="my own feed">
 		description: <input id="description" name="description" type="text" value="my feed is the best feed">
 		format: <select id="format" name="format"><option>rss20</option><option>atom10</option></select>

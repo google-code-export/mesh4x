@@ -343,7 +343,7 @@ public class RepositoryTests {
 		String id = TestHelper.newID();
 		String by = "jmt";
 
-		Item item = new Item(new XMLContent(id, "foo", "bar", TestHelper
+		Item item = new Item(new XMLContent(id, "foo", "bar", "", TestHelper
 				.makeElement("<payload/>")), new Sync(id, by, TestHelper.nowSubtractMinutes(5), false));
 		repo.add(item);
 

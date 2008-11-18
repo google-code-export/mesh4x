@@ -25,6 +25,8 @@ public interface ISyndicationFormat {
 
 	Element addFeedItemElement(Element root);
 
+	void addFeedInformation(Element payload, String title, String description, String link);
+	
 	// / <summary>
 	// / Namespace of the FeedSync elements.
 	// / </summary>
@@ -77,8 +79,11 @@ public interface ISyndicationFormat {
 	
 	public static final String SX_ELEMENT_ITEM_TITLE = "title";
 	public static final String SX_ELEMENT_ITEM_DESCRIPTION = "description";
+	public static final String SX_ELEMENT_ITEM_LINK = "link";
 	
 	// internal
 	public static final String ELEMENT_PAYLOAD = "payload";
+
+	
 
 }

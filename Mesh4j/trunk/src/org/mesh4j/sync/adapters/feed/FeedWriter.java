@@ -10,6 +10,7 @@ import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_SYNC
 import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ELEMENT_AUTHOR;
 import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ELEMENT_ITEM_DESCRIPTION;
 import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ELEMENT_ITEM_TITLE;
+import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ELEMENT_ITEM_LINK;
 import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ELEMENT_NAME;
 import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_QNAME_CONFLICTS;
 import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_QNAME_HISTORY;
@@ -149,6 +150,23 @@ public class FeedWriter {
 				Element descriptionElement = itemElement.element(SX_ELEMENT_ITEM_DESCRIPTION);
 				if(descriptionElement != null){
 					itemElement.remove(descriptionElement);
+				}
+			}
+			
+			if(contextAsXMLContent.getLink() != null && contextAsXMLContent.getLink().trim().length() > 0){
+				String link = itemElement.elementText(SX_ELEMENT_ITEM_LINK);
+				if(link == null){
+					Element linkElement = DocumentHelper.createElement(SX_ELEMENT_ITEM_LINK);
+					linkElement.setText(contextAsXMLContent.getLink());
+					itemElement.add(linkElement);
+				} else {
+					Element linkElement = itemElement.element(SX_ELEMENT_ITEM_LINK);
+					linkElement.setText(contextAsXMLContent.getLink());
+				}
+			}else{
+				Element linkElement = itemElement.element(SX_ELEMENT_ITEM_LINK);
+				if(linkElement != null){
+					itemElement.remove(linkElement);
 				}
 			}
 		}

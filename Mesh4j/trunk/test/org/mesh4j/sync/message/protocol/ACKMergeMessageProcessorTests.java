@@ -74,7 +74,7 @@ public class ACKMergeMessageProcessorTests {
 		IMessage message = mp.createMessage(syncSession, "1", true);
 
 		Assert.assertNotNull(message);
-		Assert.assertEquals("T1T1201834861000jmt", message.getData());
+		Assert.assertEquals("T1T1201849261000jmt", message.getData());
 		Assert.assertEquals(syncSession.getTarget(), message.getEndpoint());
 		Assert.assertEquals(mp.getMessageType(), message.getMessageType());
 		Assert.assertEquals(IProtocolConstants.PROTOCOL, message.getProtocol());

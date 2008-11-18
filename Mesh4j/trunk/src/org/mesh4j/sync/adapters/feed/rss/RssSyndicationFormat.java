@@ -16,6 +16,9 @@ public class RssSyndicationFormat implements ISyndicationFormat {
 	public static final String RSS_ELEMENT_ROOT = "rss";
 	public static final String RSS_ELEMENT_ITEM = "item";
 	public static final String RSS_ELEMENT_CHANNEL = "channel";
+	private static final String RSS_ELEMENT_TITLE = "title";
+	private static final String RSS_ELEMENT_DESCRIPTION = "description";
+	private static final String RSS_ELEMENT_LINK = "link";
 	public static final RssSyndicationFormat INSTANCE = new RssSyndicationFormat();
 
 	@SuppressWarnings("unchecked")
@@ -58,6 +61,18 @@ public class RssSyndicationFormat implements ISyndicationFormat {
 	@Override
 	public String getName() {
 		return NAME;
+	}
+
+	@Override
+	public void addFeedInformation(Element rootElement, String title, String description, String link) {
+		Element titleElement = rootElement.addElement(RSS_ELEMENT_TITLE);
+		titleElement.setText(title);
+		
+		Element descriptionElement = rootElement.addElement(RSS_ELEMENT_DESCRIPTION);
+		descriptionElement.setText(description);
+		
+		Element linkElement = rootElement.addElement(RSS_ELEMENT_LINK);
+		linkElement.setText(link);
 	}
 
 }

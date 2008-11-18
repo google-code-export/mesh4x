@@ -6,6 +6,9 @@
         <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/Mesh4j/Mesh4j">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/Mesh4jS3/Mesh4jS3">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="java-output-path"/>
         <property name="context-root" value="mesh4x"/>
     </wb-module>

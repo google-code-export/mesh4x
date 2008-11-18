@@ -163,8 +163,13 @@ public class S3Adapter extends AbstractSyncAdapter {
 
 	@Override
 	protected List<Item> getAll(Date since, IFilter<Item> filter) { 
+		StringBuffer sb = new StringBuffer();
+		sb.append(this.objectPath);
+		if(!this.objectPath.endsWith(".")){
+			sb.append(".");
+		}
 		
-		List<ObjectData> objs = this.s3.readObjectsStartsWith(this.bucket, this.objectPath);
+		List<ObjectData> objs = this.s3.readObjectsStartsWith(this.bucket, sb.toString());
 		HashMap<String, ArrayList<Item>> allBranches = new HashMap<String, ArrayList<Item>>();
 		
 		for (ObjectData obj : objs) {
@@ -264,7 +269,9 @@ public class S3Adapter extends AbstractSyncAdapter {
 	public String getOID(Item item) {
 		StringBuffer sb = new StringBuffer();
 		sb.append(this.objectPath);
-		sb.append(".");
+		if(!this.objectPath.endsWith(".")){
+			sb.append(".");
+		}
 		sb.append(item.getSyncId());
 		sb.append(".");
 		sb.append(item.getLastUpdate().getSequence());
@@ -276,7 +283,9 @@ public class S3Adapter extends AbstractSyncAdapter {
 	protected String getS3OID(String syncId) {
 		StringBuffer sb = new StringBuffer();
 		sb.append(this.objectPath);
-		sb.append(".");
+		if(!this.objectPath.endsWith(".")){
+			sb.append(".");
+		}
 		sb.append(syncId);
 		return sb.toString();
 	}

@@ -36,7 +36,7 @@ public class FeedAdapter extends AbstractSyncAdapter{
 	private IIdentityProvider identityProvider;
 	
 	// BUSINESS METHODS
-	public FeedAdapter(String fileName, IIdentityProvider identityProvider, IIdGenerator idGenerator, ISyndicationFormat syndicationFormat){
+	public FeedAdapter(String fileName, IIdentityProvider identityProvider, IIdGenerator idGenerator, ISyndicationFormat syndicationFormat, Feed defaultFeed){
 		Guard.argumentNotNull(fileName, "fileName");
 		Guard.argumentNotNull(identityProvider, "identityProvider");
 		Guard.argumentNotNull(idGenerator, "idGenerator");
@@ -48,7 +48,7 @@ public class FeedAdapter extends AbstractSyncAdapter{
 		
 		this.feedFile = new File(fileName);
 		if(!this.feedFile.exists()){
-			this.feed = new Feed();
+			this.feed = defaultFeed;
 			try{
 				this.feedFile.createNewFile();
 				this.flush();
@@ -57,7 +57,7 @@ public class FeedAdapter extends AbstractSyncAdapter{
 			}
 		} else {
 			if(this.feedFile.length() == 0){
-				this.feed = new Feed();
+				this.feed = defaultFeed;
 			} else {
 				SAXReader reader = new SAXReader();
 				Document document;

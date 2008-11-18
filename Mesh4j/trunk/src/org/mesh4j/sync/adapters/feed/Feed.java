@@ -21,10 +21,10 @@ public class Feed {
 		this.payload = DocumentHelper.createElement(ISyndicationFormat.ELEMENT_PAYLOAD);
 	}
 	
-	public Feed(String link, String description){
+	public Feed(String title, String description, String link, ISyndicationFormat syndicationFormat){
 		super();
 		this.payload = DocumentHelper.createElement(ISyndicationFormat.ELEMENT_PAYLOAD);
-// TODO JMT create a payload 
+		syndicationFormat.addFeedInformation(this.payload, title, description, link);
 	}
 	
 	public Feed(List<Item> items){
@@ -41,10 +41,16 @@ public class Feed {
 		}
 	}
 	
+	public Feed addItems(List<Item> items) {
+		for (Item item : items) {
+			this.addItem(item);
+		}
+		return this;
+	}
+	
 	public Feed addItem(Item item) {
 		this.feedItems.add(item);
 		return this;
-		
 	}
 
 	public Feed deleteItem(Item item) {

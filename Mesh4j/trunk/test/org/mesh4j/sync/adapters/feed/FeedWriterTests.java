@@ -12,6 +12,7 @@ import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.Sync;
 import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.test.utils.TestHelper;
+import org.mesh4j.sync.utils.DateHelper;
 import org.mesh4j.sync.utils.XMLHelper;
 
 
@@ -35,7 +36,7 @@ public class FeedWriterTests {
 		FeedWriter writer = new FeedWriter(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		writer.write(root, item);
 		
-		Assert.assertEquals("<items><item><foo><bar></bar></foo><title>myTitle</title><description>myDesc</description><author><name>jmt</name></author><sx:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" deleted=\"false\" id=\""+syncID+"\" noconflicts=\"false\" updates=\"1\"><sx:history by=\"jmt\" sequence=\"1\" when=\"Fri, 01 Feb 2008 03:01:01 GMT\"></sx:history></sx:sync></item></items>", XMLHelper.canonicalizeXML(root));		
+		Assert.assertEquals("<items><item><foo><bar></bar></foo><title>myTitle</title><description>myDesc</description><author><name>jmt</name></author><sx:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" deleted=\"false\" id=\""+syncID+"\" noconflicts=\"false\" updates=\"1\"><sx:history by=\"jmt\" sequence=\"1\" when=\""+ DateHelper.formatRFC822(date)+"\"></sx:history></sx:sync></item></items>", XMLHelper.canonicalizeXML(root));		
 		
 	}
 	
@@ -63,7 +64,7 @@ public class FeedWriterTests {
 		FeedWriter writer = new FeedWriter(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		writer.write(root, item);
 		
-		Assert.assertEquals("<items><item><foo><bar></bar></foo><title>myTitle</title><description>myDesc</description><author><name>jmt</name></author><sx:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" deleted=\"false\" id=\""+syncID+"\" noconflicts=\"false\" updates=\"1\"><sx:history by=\"jmt\" sequence=\"1\" when=\"Fri, 01 Feb 2008 03:01:01 GMT\"></sx:history></sx:sync></item></items>", XMLHelper.canonicalizeXML(root));		
+		Assert.assertEquals("<items><item><foo><bar></bar></foo><title>myTitle</title><description>myDesc</description><author><name>jmt</name></author><sx:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" deleted=\"false\" id=\""+syncID+"\" noconflicts=\"false\" updates=\"1\"><sx:history by=\"jmt\" sequence=\"1\" when=\""+ DateHelper.formatRFC822(date)+"\"></sx:history></sx:sync></item></items>", XMLHelper.canonicalizeXML(root));		
 		
 	}
 	
@@ -91,7 +92,7 @@ public class FeedWriterTests {
 		FeedWriter writer = new FeedWriter(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		writer.write(root, item);
 		
-		Assert.assertEquals("<items><item><foo><bar></bar></foo><title>---</title><description>---</description><author><name>jmt</name></author><sx:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" deleted=\"false\" id=\""+syncID+"\" noconflicts=\"false\" updates=\"1\"><sx:history by=\"jmt\" sequence=\"1\" when=\"Fri, 01 Feb 2008 03:01:01 GMT\"></sx:history></sx:sync></item></items>", XMLHelper.canonicalizeXML(root));		
+		Assert.assertEquals("<items><item><foo><bar></bar></foo><author><name>jmt</name></author><sx:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" deleted=\"false\" id=\""+syncID+"\" noconflicts=\"false\" updates=\"1\"><sx:history by=\"jmt\" sequence=\"1\" when=\""+ DateHelper.formatRFC822(date)+"\"></sx:history></sx:sync></item></items>", XMLHelper.canonicalizeXML(root));		
 		
 	}
 }

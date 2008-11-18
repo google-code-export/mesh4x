@@ -46,7 +46,7 @@ public class LastVersionStatusMessageProcessorTests {
 		IMessage message = mp.createMessage(syncSession, items);
 		
 		Assert.assertNotNull(message);
-		Assert.assertEquals("1~-1269158974~D~jmt~1201834861000|2~-702666385", message.getData());
+		Assert.assertEquals("1~-244055120~D~jmt~1201849261000|2~1010782017", message.getData());
 		Assert.assertEquals(syncSession.getTarget(), message.getEndpoint());
 		Assert.assertEquals(mp.getMessageType(), message.getMessageType());
 		Assert.assertEquals(IProtocolConstants.PROTOCOL, message.getProtocol());
@@ -65,7 +65,7 @@ public class LastVersionStatusMessageProcessorTests {
 		IMessage message = mp.createMessage(syncSession, items);
 		
 		Assert.assertNotNull(message);
-		Assert.assertEquals("1~-702666385|2~-702666385", message.getData());
+		Assert.assertEquals("1~1010782017|2~1010782017", message.getData());
 		Assert.assertEquals(syncSession.getTarget(), message.getEndpoint());
 		Assert.assertEquals(mp.getMessageType(), message.getMessageType());
 		Assert.assertEquals(IProtocolConstants.PROTOCOL, message.getProtocol());

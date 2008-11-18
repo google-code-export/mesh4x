@@ -290,7 +290,7 @@ public class ItemEncodingTests {
 		sb.append("jmt2~");
 		sb.append(TestHelper.makeDate(2008, 6, 10, 1, 1, 0, 0).getTime());
 		sb.append("jmt3");
-		sb.append("|0<foo>~1</foo~2>");
+		sb.append("|0`<foo>~1`</foo~2`>");
 		Assert.assertEquals(sb.toString(), encodedItem);
 	}
 	
@@ -319,7 +319,7 @@ public class ItemEncodingTests {
 		sb.append("jmt2~");
 		sb.append(TestHelper.makeDate(2008, 6, 10, 1, 1, 0, 0).getTime());
 		sb.append("jmt3");
-		sb.append("|0<foo>~1</foo~2>");
+		sb.append("|0`<foo>~1`</foo~2`>");
 		
 		Item decodedItem = itemEncoding.decode(syncSession, sb.toString());
 		Assert.assertNotNull(decodedItem);
@@ -345,7 +345,7 @@ public class ItemEncodingTests {
 		sb.append("F");
 		sb.append(TestHelper.makeDate(2008, 6, 1, 1, 1, 0, 0).getTime());
 		sb.append("jmt1");
-		sb.append("|0<foo></foo>");
+		sb.append("|0`<foo></foo>");
 		Assert.assertEquals(sb.toString(), encodedItem);
 	}
 	
@@ -366,7 +366,7 @@ public class ItemEncodingTests {
 		sb.append("F");
 		sb.append(TestHelper.makeDate(2008, 6, 1, 1, 1, 0, 0).getTime());
 		sb.append("jmt1");
-		sb.append("|0<foo></foo>");
+		sb.append("|0`<foo></foo>");
 		
 		Item decodedItem = itemEncoding.decode(syncSession, sb.toString());
 		Assert.assertNotNull(decodedItem);
@@ -392,7 +392,7 @@ public class ItemEncodingTests {
 		sb.append("F");
 		sb.append(TestHelper.makeDate(2008, 6, 1, 1, 1, 0, 0).getTime());
 		sb.append("jmt1");
-		sb.append("|0<foo></foo>");
+		sb.append("|0`<foo></foo>");
 		
 		Assert.assertEquals(sb.toString(), encodedItem);
 	}
@@ -414,7 +414,7 @@ public class ItemEncodingTests {
 		sb.append("F");
 		sb.append(TestHelper.makeDate(2008, 6, 1, 1, 1, 0, 0).getTime());
 		sb.append("jmt1");
-		sb.append("|0<foo></foo>");
+		sb.append("|0`<foo></foo>");
 		
 		Item decoItem = itemEncoding.decode(syncSession, sb.toString());
 		Assert.assertNotNull(decoItem);
@@ -440,7 +440,7 @@ public class ItemEncodingTests {
 		sb.append("F");
 		sb.append(TestHelper.makeDate(2008, 6, 1, 1, 1, 0, 0).getTime());
 		sb.append("jmt1");
-		sb.append("|0<fo~1o><~2/fo~3o>");
+		sb.append("|0`<fo~1`o><~2`/fo~3`o>");
 		
 		Assert.assertEquals(sb.toString(), encodedItem);
 	}
@@ -462,7 +462,7 @@ public class ItemEncodingTests {
 		sb.append("F");
 		sb.append(TestHelper.makeDate(2008, 6, 1, 1, 1, 0, 0).getTime());
 		sb.append("jmt1");
-		sb.append("|0<fo~1o><~2/fo~3o>");
+		sb.append("|0`<fo~1`o><~2`/fo~3`o>");
 		
 		Item decodeItem = itemEncoding.decode(syncSession, sb.toString());
 		Assert.assertNotNull(decodeItem);
@@ -544,7 +544,7 @@ public class ItemEncodingTests {
 		sb.append("F");
 		sb.append(TestHelper.makeDate(2008, 6, 1, 1, 1, 0, 0).getTime());
 		sb.append("jmt1");
-		sb.append("|1</foo~2>");
+		sb.append("|1`</foo~2`>");
 		
 		Assert.assertEquals(sb.toString(), encodedItem);
 	}
@@ -561,7 +561,7 @@ public class ItemEncodingTests {
 		
 		ISyncSession syncSession = new MockSyncSession(null, item);
 		ItemEncoding itemEncoding = new ItemEncoding(5);
-		Item decodedItem = itemEncoding.decode(syncSession, syncID+"F1214928060000jmt1|1<rab>~2Examp~3le</r~4ab></~5foo>");
+		Item decodedItem = itemEncoding.decode(syncSession, syncID+"F1214928060000jmt1|1`<rab>~2`Examp~3`le</r~4`ab></~5`foo>");
 		Assert.assertNotNull(decodedItem);
 		Assert.assertFalse(item.equals(decodedItem));
 		Assert.assertEquals("<foo><rab>Example</rab></foo>", decodedItem.getContent().getPayload().asXML());
@@ -596,7 +596,7 @@ public class ItemEncodingTests {
 		sb.append("jmt2~");
 		sb.append(TestHelper.makeDate(2008, 6, 10, 1, 1, 0, 0).getTime());
 		sb.append("jmt3");
-		sb.append("|0<foo></foo>");
+		sb.append("|0`<foo></foo>");
 		
 		Assert.assertEquals(sb.toString(), encodedItem);
 	}
@@ -628,7 +628,7 @@ public class ItemEncodingTests {
 		sb.append("jmt2~");
 		sb.append(TestHelper.makeDate(2008, 6, 10, 1, 1, 0, 0).getTime());
 		sb.append("jmt3");
-		sb.append("|0<foo></foo>");
+		sb.append("|0`<foo></foo>");
 		
 		Item decodedItem = itemEncoding.decode(syncSession, sb.toString());
 		Assert.assertNotNull(decodedItem);
@@ -662,7 +662,7 @@ public class ItemEncodingTests {
 		sb.append("jmt2~");
 		sb.append(TestHelper.makeDate(2008, 6, 10, 1, 1, 0, 0).getTime());
 		sb.append("jmt3");
-		sb.append("|0<foo></foo>");
+		sb.append("|0`<foo></foo>");
 		
 		Assert.assertEquals(sb.toString(), encodedItem);
 	}
@@ -696,7 +696,7 @@ public class ItemEncodingTests {
 		sb.append("jmt2~");
 		sb.append(TestHelper.makeDate(2008, 6, 10, 1, 1, 0, 0).getTime());
 		sb.append("jmt3");
-		sb.append("|0<foo></foo>");
+		sb.append("|0`<foo></foo>");
 		
 		Item decodedItem = itemEncoding.decode(syncSession, sb.toString());
 		Assert.assertNotNull(decodedItem);
@@ -728,7 +728,7 @@ public class ItemEncodingTests {
 		sb.append("F");
 		sb.append(TestHelper.makeDate(2008, 6, 10, 1, 1, 0, 0).getTime());
 		sb.append("jmt3");
-		sb.append("|0<foo></foo>");
+		sb.append("|0`<foo></foo>");
 		
 		Assert.assertEquals(sb.toString(), encodedItem);
 	}
@@ -762,7 +762,7 @@ public class ItemEncodingTests {
 		sb.append("F");
 		sb.append(TestHelper.makeDate(2008, 6, 10, 1, 1, 0, 0).getTime());
 		sb.append("jmt3");
-		sb.append("|0<foo></foo>");
+		sb.append("|0`<foo></foo>");
 		
 		Item decodedItem = itemEncoding.decode(syncSession, sb.toString());
 		Assert.assertNotNull(decodedItem);
