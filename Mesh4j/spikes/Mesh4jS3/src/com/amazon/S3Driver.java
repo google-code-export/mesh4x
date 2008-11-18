@@ -8,9 +8,9 @@ package com.amazon;
 //  this software code. (c) 2006-2007 Amazon Digital Services, Inc. or its
 //  affiliates.
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.Arrays;
 
 import com.amazon.s3.AWSAuthConnection;
 import com.amazon.s3.CallingFormat;
