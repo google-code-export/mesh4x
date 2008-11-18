@@ -313,7 +313,7 @@ public class Mesh4jUI {
 	}
 	
 	private String openFileDialog(String fileName){
-		String fileNameSelected = openFileDialog(fileName, new FileNameExtensionFilter(Mesh4jUITranslator.getLabelFileExtensions(), "kml", "kmz", "xml"));
+		String fileNameSelected = openFileDialog(fileName, new FileNameExtensionFilter(Mesh4jUITranslator.getLabelFileExtensions(), "kml", "kmz", "xml", "xls", "xlsx"));
 		return fileNameSelected;
 	}
 	
@@ -339,9 +339,7 @@ public class Mesh4jUI {
 	
 	private boolean validateKMLFile(JTextArea consoleView, String fileName, String header){
 		if(
-			!(fileName != null && fileName.trim().length() > 5 && 
-					(fileName.trim().toUpperCase().endsWith(".KML") || fileName.trim().toUpperCase().endsWith(".KMZ"))
-			)
+			!(fileName != null && fileName.trim().length() > 5 && SyncEngineUtil.isKML(fileName))
 		){
 			consoleView.setText( consoleView.getText() + "\n"+ Mesh4jUITranslator.getErrorKMLType(header) );
 			return false;
@@ -376,11 +374,25 @@ public class Mesh4jUI {
 		}
 		if(SyncEngineUtil.isURL(endpointValue)){
 			return validateURL(consoleView, endpointValue, endpointHeader);
-		} else{
+		} else if (SyncEngineUtil.isSMS(endpointValue)){
+			return validateSMS(consoleView, endpointValue, endpointHeader);
+		}else if (SyncEngineUtil.isAccess(endpointValue)){
+			return validateACCESS(consoleView, endpointValue, endpointHeader);
+		}else {
 			return validateFile(consoleView, endpointValue, endpointHeader);
 		}
 	}
 
+	private boolean validateSMS(JTextArea consoleView, String endpointValue, String endpointHeader) {
+		// TODO (JMT) validate sms
+		return false;
+	}
+
+	private boolean validateACCESS(JTextArea consoleView, String endpointValue, String endpointHeader) {
+		// TODO (JMT) validate odbc access
+		return true;
+	}
+	
 	private boolean validateURL(JTextArea consoleView, String url, String endpointHeader){
 		URL newURL;
 		try {
@@ -407,7 +419,9 @@ public class Mesh4jUI {
 	
 	private boolean validateFile(JTextArea consoleView, String fileName, String endpointHeader){
 		if(!(fileName != null && fileName.trim().length() > 5 
-				&& (fileName.toUpperCase().endsWith(".KMZ") || fileName.toUpperCase().endsWith(".KML") || fileName.toUpperCase().endsWith(".XML")))){
+				&& (SyncEngineUtil.isKML(fileName) 
+						|| SyncEngineUtil.isFeed(fileName)
+						|| SyncEngineUtil.isExcel(fileName)))){
 			consoleView.setText( consoleView.getText() + "\n"+ Mesh4jUITranslator.getErrorFileType(endpointHeader));
 			return false;
 		}
