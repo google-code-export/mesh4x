@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -145,6 +144,7 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 		HttpURLConnection conn = null;
 	    try{
 			conn = (HttpURLConnection) this.url.openConnection();
+
 			if(since != null){
 				conn.setIfModifiedSince(since.getTime());
 			}
@@ -168,8 +168,26 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 		return result;
 	}
 
-	private String readData(HttpURLConnection conn) throws UnsupportedEncodingException, IOException {
-		InputStream is = conn.getInputStream();		
+	private String readData(HttpURLConnection conn) throws Exception {
+		InputStream is = null;
+	
+		try{
+			is = conn.getInputStream();
+		} catch(Exception e){
+			StringBuffer result = new StringBuffer();
+			Reader reader = new InputStreamReader(conn.getErrorStream(), "UTF-8");
+			char[] cb = new char[2048];
+
+			int amtRead = reader.read(cb);
+			while (amtRead > 0) {
+				result.append(cb, 0, amtRead);
+				amtRead = reader.read(cb);
+			}
+			reader.close();
+			Logger.error(result.toString());
+			throw e;
+		}
+
 		StringBuffer result = new StringBuffer();
 		Reader reader = new InputStreamReader(is, "UTF-8");
 		char[] cb = new char[2048];

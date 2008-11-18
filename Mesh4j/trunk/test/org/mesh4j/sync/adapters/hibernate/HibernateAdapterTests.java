@@ -29,7 +29,7 @@ public class HibernateAdapterTests {
 		if(repo == null ){
 			HibernateSessionFactoryBuilder builder = new HibernateSessionFactoryBuilder();
 			builder.addMapping(new File(HibernateAdapterTests.class.getResource("User.hbm.xml").getFile()));
-			builder.addMapping(SyncDAO.getMapping());
+			builder.addMapping(new File(this.getClass().getResource("SyncInfo.hbm.xml").getFile()));
 			builder.setPropertiesFile(new File(this.getClass().getResource("xx_hibernate.properties").getFile()));
 			
 			repo = new HibernateAdapter(builder, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);

@@ -20,7 +20,6 @@ import org.mesh4j.sync.adapters.feed.atom.AtomSyndicationFormat;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.adapters.hibernate.HibernateAdapter;
 import org.mesh4j.sync.adapters.hibernate.HibernateSessionFactoryBuilder;
-import org.mesh4j.sync.adapters.hibernate.SyncDAO;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.Sync;
@@ -49,8 +48,8 @@ public class InterRepositoriesTests {
 		
 		HibernateSessionFactoryBuilder builder = new HibernateSessionFactoryBuilder();
 		builder.setPropertiesFile(new File(InterRepositoriesTests.class.getResource("xx_hibernate.properties").getFile()));
-		builder.addMapping(new File(InterRepositoriesTests.class.getResource("User.hbm.xml").getFile()));
-		builder.addMapping(SyncDAO.getMapping());
+		builder.addMapping(new File(this.getClass().getResource("User.hbm.xml").getFile()));
+		builder.addMapping(new File(this.getClass().getResource("SyncInfo.hbm.xml").getFile()));
 		
 		HibernateAdapter hibernateRepo = new HibernateAdapter(builder, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
@@ -76,8 +75,8 @@ public class InterRepositoriesTests {
 		FeedAdapter feedRepo = new FeedAdapter(rssFile, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, new Feed());
 		
 		HibernateSessionFactoryBuilder builder = new HibernateSessionFactoryBuilder();
-		builder.addMapping(new File(InterRepositoriesTests.class.getResource("User.hbm.xml").getFile()));
-		builder.addMapping(SyncDAO.getMapping());
+		builder.addMapping(new File(this.getClass().getResource("User.hbm.xml").getFile()));
+		builder.addMapping(new File(this.getClass().getResource("SyncInfo.hbm.xml").getFile()));
 		builder.setPropertiesFile(new File(InterRepositoriesTests.class.getResource("xx_hibernate.properties").getFile()));
 		HibernateAdapter hibernateRepo = new HibernateAdapter(builder, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
@@ -106,8 +105,8 @@ public class InterRepositoriesTests {
 		FeedAdapter feedRepo = new FeedAdapter(rssFile, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 				
 		HibernateSessionFactoryBuilder builder = new HibernateSessionFactoryBuilder();
-		builder.addMapping(new File(InterRepositoriesTests.class.getResource("User.hbm.xml").getFile()));
-		builder.addMapping(SyncDAO.getMapping());
+		builder.addMapping(new File(this.getClass().getResource("User.hbm.xml").getFile()));
+		builder.addMapping(new File(this.getClass().getResource("SyncInfo.hbm.xml").getFile()));
 		builder.setPropertiesFile(new File(InterRepositoriesTests.class.getResource("xx_hibernate.properties").getFile()));
 		HibernateAdapter hibernateRepo = new HibernateAdapter(builder, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
@@ -132,8 +131,8 @@ public class InterRepositoriesTests {
 		FeedAdapter feedRepo = new FeedAdapter(rssFile, AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 				
 		HibernateSessionFactoryBuilder builder = new HibernateSessionFactoryBuilder();
-		builder.addMapping(new File(InterRepositoriesTests.class.getResource("User.hbm.xml").getFile()));
-		builder.addMapping(SyncDAO.getMapping());
+		builder.addMapping(new File(this.getClass().getResource("User.hbm.xml").getFile()));
+		builder.addMapping(new File(this.getClass().getResource("SyncInfo.hbm.xml").getFile()));
 		builder.setPropertiesFile(new File(InterRepositoriesTests.class.getResource("xx_hibernate.properties").getFile()));
 		HibernateAdapter hibernateRepo = new HibernateAdapter(builder, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		

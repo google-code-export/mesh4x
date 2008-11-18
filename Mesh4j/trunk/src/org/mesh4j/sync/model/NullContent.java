@@ -2,6 +2,7 @@ package org.mesh4j.sync.model;
 
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.validations.Guard;
 
 
@@ -50,7 +51,15 @@ public class NullContent implements IContent {
 	}
 	
 	public void addToFeedPayload(Element rootPayload){
-		// nothing to do
+		Element titleElement = DocumentHelper.createElement(ISyndicationFormat.SX_ELEMENT_ITEM_TITLE);
+		titleElement.setText("--DELETED--");	// TODO (JMT) deleted is a bad title, an item must be have a null content and it could be not deleted
+		rootPayload.add(titleElement);
+		
+		Element descriptionElement = DocumentHelper.createElement(ISyndicationFormat.SX_ELEMENT_ITEM_DESCRIPTION);
+		descriptionElement.setText("Id: " + this.getId() + " version: " + this.getVersion());
+		rootPayload.add(descriptionElement);
+		
+		rootPayload.add(this.getPayload().createCopy());
 	}
 
 	@Override

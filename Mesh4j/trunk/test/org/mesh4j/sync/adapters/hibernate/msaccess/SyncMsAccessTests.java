@@ -30,8 +30,7 @@ public class SyncMsAccessTests {
 		builderA.setProperty("hibernate.connection.username","mesh4j");
 		builderA.setProperty("hibernate.connection.password","mesh4j");
 		builderA.addMapping(new File(this.getClass().getResource("User.hbm.xml").getFile()));
-		builderA.addSyncInfoMapping();
-
+		builderA.addMapping(new File(this.getClass().getResource("SyncInfo.hbm.xml").getFile()));
 
 		HibernateContentAdapter contentAdapter = new HibernateContentAdapter(builderA, "user");
 		List<IContent> contents = contentAdapter.getAll();
@@ -60,7 +59,7 @@ public class SyncMsAccessTests {
 		builderA.setProperty("hibernate.connection.username","mesh4j");
 		builderA.setProperty("hibernate.connection.password","mesh4j");
 		builderA.addMapping(new File(this.getClass().getResource("User.hbm.xml").getFile()));
-		builderA.addSyncInfoMapping();
+		builderA.addMapping(new File(this.getClass().getResource("SyncInfo.hbm.xml").getFile()));
 
 		SyncInfoParser syncInfoParser = new SyncInfoParser(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
@@ -76,7 +75,7 @@ public class SyncMsAccessTests {
 		builderB.setProperty("hibernate.connection.username","mesh4j");
 		builderB.setProperty("hibernate.connection.password","mesh4j");
 		builderB.addMapping(new File(this.getClass().getResource("User.hbm.xml").getFile()));
-		builderB.addSyncInfoMapping();
+		builderB.addMapping(new File(this.getClass().getResource("SyncInfo.hbm.xml").getFile()));
 		
 		HibernateSyncRepository syncRepositoryB = new HibernateSyncRepository(syncInfoParser, builderB);
 		HibernateContentAdapter contentAdapterB = new HibernateContentAdapter(builderB, "user");

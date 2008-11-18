@@ -19,11 +19,6 @@ public class HibernateSessionFactoryBuilder implements IHibernateSessionFactoryB
 	
 	// BUSINESS METHODS
 	
-	public void addSyncInfoMapping() {
-		File syncMapping = new File(this.getClass().getResource("SyncInfo.hbm.xml").getFile());
-		this.addMapping(syncMapping);
-	}
-
 	public void addMapping(File mapping){
 		this.mappings.add(mapping);	
 	}

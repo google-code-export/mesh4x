@@ -3,7 +3,6 @@ package org.mesh4j.sync.adapters.hibernate;
 import static org.mesh4j.sync.parsers.SyncInfoParser.SYNC_INFO;
 import static org.mesh4j.sync.parsers.SyncInfoParser.SYNC_INFO_ATTR_ENTITY_NAME;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,11 +80,6 @@ public class SyncDAO {
 
 	public String newSyncID() {
 		return IdGenerator.INSTANCE.newID();
-	}
-
-	public static File getMapping() {
-		File syncMapping = new File(SyncDAO.class.getResource("SyncInfo.hbm.xml").getFile());   // TODO (JMT) REFACTORING: Spring, inject sync info mapping name
-		return syncMapping;
 	}
 
 	public String getEntityName() {
