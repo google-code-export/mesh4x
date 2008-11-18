@@ -45,17 +45,20 @@ public class SplitAdapter extends AbstractSyncAdapter implements ISyncAware{
 	public void add(Item item) {
 		
 		Guard.argumentNotNull(item, "item");
-
-		IContent content = contentAdapter.normalize(item.getContent());
-		if (!item.isDeleted())
-		{
+		
+		if (item.isDeleted()){
+			SyncInfo syncInfo = new SyncInfo(item.getSync(), contentAdapter.getType(), item.getContent().getId(), item.getContent().getVersion());
+			syncRepository.save(syncInfo);
+		} else {
+			IContent content = contentAdapter.normalize(item.getContent());
 			if(contentAdapter instanceof ISyncEntityRelationListener){
 				((ISyncEntityRelationListener) contentAdapter).notifyNewSyncForContent(item.getSyncId(), content);
 			}
 			contentAdapter.save(content);
+			SyncInfo syncInfo = new SyncInfo(item.getSync(), contentAdapter.getType(), content.getId(), content.getVersion());
+			syncRepository.save(syncInfo);
+
 		}		
-		SyncInfo syncInfo = new SyncInfo(item.getSync(), contentAdapter.getType(), content.getId(), content.getVersion());
-		syncRepository.save(syncInfo);
 	}
 
 	@Override
@@ -82,8 +85,7 @@ public class SplitAdapter extends AbstractSyncAdapter implements ISyncAware{
 		
 		Guard.argumentNotNull(item, "item");
 		
-		if (item.isDeleted())
-		{
+		if (item.isDeleted()){
 			SyncInfo syncInfo = syncRepository.get(item.getSyncId());
 			if(syncInfo != null){
 				syncInfo.updateSync(item.getSync());
@@ -94,9 +96,7 @@ public class SplitAdapter extends AbstractSyncAdapter implements ISyncAware{
 				}
 				syncRepository.save(syncInfo);
 			}
-		}
-		else
-		{
+		}else{
 			IContent content = contentAdapter.normalize(item.getContent());
 			contentAdapter.save(content);
 			SyncInfo syncInfo = new SyncInfo(item.getSync(), contentAdapter.getType(), content.getId(), content.getVersion());

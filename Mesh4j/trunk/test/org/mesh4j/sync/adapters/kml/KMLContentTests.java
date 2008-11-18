@@ -9,6 +9,7 @@ import org.mesh4j.sync.adapters.dom.parsers.FileManager;
 import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.model.IContent;
 import org.mesh4j.sync.model.NullContent;
+import org.mesh4j.sync.model.Sync;
 
 
 public class KMLContentTests {
@@ -46,7 +47,7 @@ public class KMLContentTests {
 		
 		KMLContent content = new KMLContent(payload, "1");
 		
-		content.addToFeedPayload(feedPayload);
+		content.addToFeedPayload(new Sync("1"), feedPayload);
 		
 		Assert.assertNotNull(feedPayload.element(ISyndicationFormat.SX_ELEMENT_ITEM_TITLE));
 		Assert.assertNotNull(feedPayload.element(ISyndicationFormat.SX_ELEMENT_ITEM_TITLE).getText());
@@ -183,7 +184,7 @@ public class KMLContentTests {
 		}
 		
 		@Override
-		public void addToFeedPayload(Element rootPayload) {
+		public void addToFeedPayload(Sync sync, Element rootPayload) {
 		}
 
 		@Override

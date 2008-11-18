@@ -5,6 +5,7 @@ import org.dom4j.Element;
 import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.model.Content;
 import org.mesh4j.sync.model.IContent;
+import org.mesh4j.sync.model.Sync;
 
 
 public class EntityContent extends Content{
@@ -73,7 +74,7 @@ public class EntityContent extends Content{
 	}
 
 	@Override
-	public void addToFeedPayload(Element rootPayload){
+	public void addToFeedPayload(Sync sync, Element rootPayload){
 			
 		Element titleElement = DocumentHelper.createElement(ISyndicationFormat.SX_ELEMENT_ITEM_TITLE);
 		titleElement.setText(this.entityName);

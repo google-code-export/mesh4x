@@ -10,7 +10,7 @@ public interface IContent extends Cloneable{
 	
 	IContent clone();
 
-	void addToFeedPayload(Element rootPayload);
+	void addToFeedPayload(Sync sync, Element rootPayload);
 
 	int getVersion();
 

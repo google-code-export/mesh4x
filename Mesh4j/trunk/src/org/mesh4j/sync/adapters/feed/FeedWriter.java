@@ -85,7 +85,7 @@ public class FeedWriter {
 	{
 		Element itemElement = this.addFeedItemElement(root);
 		
-		this.writeContent(itemElement, item.getContent());
+		this.writeContent(itemElement, item.getSync(), item.getContent());
 		
 		String by = this.getAuthenticatedUser();
 		History lastUpdate = item.getLastUpdate();
@@ -113,8 +113,8 @@ public class FeedWriter {
 		}
 	}	
 	
-	private void writeContent(Element itemElement, IContent content) {
-		Element xmlContent = XMLContent.normalizeContent(content);
+	private void writeContent(Element itemElement, Sync sync, IContent content) {
+		Element xmlContent = XMLContent.normalizeContent(sync, content);
 		writePayload(itemElement, xmlContent);
 		
 		if(content instanceof XMLContent){

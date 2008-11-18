@@ -4,6 +4,7 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.mesh4j.sync.model.Content;
 import org.mesh4j.sync.model.IContent;
+import org.mesh4j.sync.model.Sync;
 
 
 public class XMLContent extends Content {
@@ -75,19 +76,19 @@ public class XMLContent extends Content {
 		return super.hashCode() + result.hashCode();
     }
 
-	public static Element normalizeContent(IContent content) {
+	public static Element normalizeContent(Sync sync, IContent content) {
 		Element payload = null;
 		if(content instanceof XMLContent){
 			payload = content.getPayload().createCopy();
 		} else {
 			payload = DocumentHelper.createElement("payload");
 		}
-		content.addToFeedPayload(payload);
+		content.addToFeedPayload(sync, payload);
 		return payload;
 	}
 	
 	@Override
-	public void addToFeedPayload(Element rootPayload){
+	public void addToFeedPayload(Sync sync, Element rootPayload){
 		basicAddToFeedPayload(rootPayload, "---");
 	}
 	

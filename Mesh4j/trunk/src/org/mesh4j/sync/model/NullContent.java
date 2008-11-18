@@ -50,9 +50,14 @@ public class NullContent implements IContent {
 		return id;
 	}
 	
-	public void addToFeedPayload(Element rootPayload){
+	@Override
+	public void addToFeedPayload(Sync sync, Element rootPayload){
 		Element titleElement = DocumentHelper.createElement(ISyndicationFormat.SX_ELEMENT_ITEM_TITLE);
-		titleElement.setText("--DELETED--");	// TODO (JMT) deleted is a bad title, an item must be have a null content and it could be not deleted
+		if(sync.isDeleted()){
+			titleElement.setText("--DELETED--");
+		} else {
+			titleElement.setText("--UNKNOWN--");
+		}
 		rootPayload.add(titleElement);
 		
 		Element descriptionElement = DocumentHelper.createElement(ISyndicationFormat.SX_ELEMENT_ITEM_DESCRIPTION);

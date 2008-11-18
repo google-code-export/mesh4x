@@ -4,6 +4,7 @@ import org.dom4j.Element;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mesh4j.sync.model.IContent;
+import org.mesh4j.sync.model.Sync;
 import org.mesh4j.sync.test.utils.TestHelper;
 
 
@@ -93,7 +94,7 @@ public class EntityContentTests {
 			return new MyContent(e);
 		}
 		@Override
-		public void addToFeedPayload(Element rootPayload) {
+		public void addToFeedPayload(Sync sync, Element rootPayload) {
 			rootPayload.add(this.e.createCopy());			
 		}
 		
