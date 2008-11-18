@@ -8,6 +8,7 @@ import org.mesh4j.sync.adapters.dom.MeshNames;
 import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.model.Content;
 import org.mesh4j.sync.model.IContent;
+import org.mesh4j.sync.model.Sync;
 import org.mesh4j.sync.parsers.IXMLView;
 import org.mesh4j.sync.parsers.IXMLViewElement;
 import org.mesh4j.sync.validations.Guard;
@@ -70,7 +71,8 @@ public class KMLContent extends Content{
 		return null;
 	}
 	
-	public void addToFeedPayload(Element rootPayload){
+	@Override
+	public void addToFeedPayload(Sync sync, Element rootPayload){
 		
 		Element titleElement = DocumentHelper.createElement(ISyndicationFormat.SX_ELEMENT_ITEM_TITLE);
 		titleElement.setText(this.getPayload().getName());
