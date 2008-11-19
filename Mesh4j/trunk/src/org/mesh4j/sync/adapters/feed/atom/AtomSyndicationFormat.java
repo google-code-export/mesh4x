@@ -44,7 +44,7 @@ public class AtomSyndicationFormat implements ISyndicationFormat {
 	@Override
 	public Element addRootElement(Document document) {
 		Element rootElement = document.addElement(ATOM_ELEMENT_FEED);
-		rootElement.addNamespace("", "http://www.w3.org/2005/Atom");
+		//rootElement.addNamespace("", "http://www.w3.org/2005/Atom");
 		rootElement.add(new Namespace(SX_PREFIX, NAMESPACE));
 		return rootElement;
 	}
