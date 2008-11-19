@@ -1,13 +1,5 @@
 #summary List of adapters and what they do
 
-=Generic Purpose Persistence Adapters=
-==Hibernate OR/M for Databases Adapter==
-The Hibernate Adapter allows you to synchronize to any database through the Hibernate 
-OR/M library, which allows support for pretty much most databases available today. 
-
-==Amazon Web Services S3 Adapter==
-This adapter can be used in conjunction with the storage web service (hosted in EC2) for a highly scalable cloud-based storage node.
-
 =Adapters for Productivity Apps=
 ==KML Adapter==
 #The Mesh4x KML adapter allows you to synchronize KML / KMZ files, including all their placemarks (pushpins, polygons, lines, etc) styles and for KMZ files the embedded resources (photos, icons).
@@ -25,9 +17,13 @@ The Excel Adapter helps syncrhonize data kept in Excel. It takes a simple approa
 ==Microsoft Access Adapter==
 The Access Adapter allows you to synchronize to Access databases. It uses Hibernate's XML to table mappings, and accesses the MDB via ODBC. This has the drawback that the MDB has to be closed to be able to write to it. This will be addressed in future versions depending on user demand (ideally this adapter should be hosted in-process in the access application itself as a plugin, instead of a separate standalone application 'on the side')
 
-=Adapters for developer extensibility=
-==Split Adapter==
-The Split Adapter can be used by developeers to synchronize with a data soruce that does not have awareness/support of mesh4x synchronziation (like a database whose schema you can't modify). The split adapter keeps track of all versioning metadata, and interacts with the datasource only through an class that has a simple CRUD API.
+=Generic Purpose Persistence Adapters=
+==Hibernate OR/M for Databases Adapter==
+The Hibernate Adapter allows you to synchronize to any database through the Hibernate 
+OR/M library, which allows support for pretty much most databases available today. 
+
+==Amazon Web Services S3 Adapter==
+This adapter can be used in conjunction with the storage web service (hosted in EC2) for a highly scalable cloud-based storage node.
 
 
 =Adapters used as Transports=
@@ -41,5 +37,11 @@ The HTTP adapter synchronizes to a server that supports the REST APIs for Feedsy
 
 ==SMS Adapter==
 The SMSAdapter allows you to synchronize over SMS messages. It implements an optimized version of the FeedSync protocol specifically designed to minimize the number of messages exchanged. For example you could use this to synchronize J2ME RMS records with a PC or server or two PCs (with phones plugged in). Read more here: [SMSAdapter] 
+
+
+=Adapters for developer extensibility=
+==Split Adapter==
+The Split Adapter can be used by developeers to synchronize with a data soruce that does not have awareness/support of mesh4x synchronziation (like a database whose schema you can't modify). The split adapter keeps track of all versioning metadata, and interacts with the datasource only through an class that has a simple CRUD API.
+
 
 _Would you like to see a specific adapter not listed here? Please leave a comment below or add it to the Issues List!_
