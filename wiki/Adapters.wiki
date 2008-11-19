@@ -41,7 +41,7 @@ The SMSAdapter allows you to synchronize over SMS messages. It implements an opt
 
 =Adapters for developer extensibility=
 ==Split Adapter==
-The Split Adapter can be used by developeers to synchronize with a data soruce that does not have awareness/support of mesh4x synchronziation (like a database whose schema you can't modify). The split adapter keeps track of all versioning metadata, and interacts with the datasource only through an class that has a simple CRUD API.
+The Split Adapter can be used by developeers to synchronize with a data soruce that does not have awareness/support of mesh4x synchronziation (like a database whose schema you can't modify). The split adapter keeps track of all versioning metadata, and interacts with the datasource only through an class that has a simple CRUD API. See HowToBuildAnAdapter for more information.
 
 
 _Would you like to see a specific adapter not listed here? Please leave a comment below or add it to the Issues List!_
