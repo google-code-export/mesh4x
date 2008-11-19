@@ -12,6 +12,7 @@ import org.mesh4j.sync.adapters.dom.IDOMLoader;
 import org.mesh4j.sync.adapters.feed.Feed;
 import org.mesh4j.sync.adapters.feed.FeedAdapter;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
+import org.mesh4j.sync.adapters.hibernate.HibernateAdapter;
 import org.mesh4j.sync.adapters.hibernate.HibernateContentAdapter;
 import org.mesh4j.sync.adapters.hibernate.HibernateSessionFactoryBuilder;
 import org.mesh4j.sync.adapters.hibernate.HibernateSyncRepository;
@@ -98,8 +99,19 @@ public class SyncEngineUtil {
 			
 			HibernateSyncRepository syncRepository = new HibernateSyncRepository(syncInfoParser, builder);
 			HibernateContentAdapter contentAdapter = new HibernateContentAdapter(builder, entity);
-			return new SplitAdapter(syncRepository, contentAdapter, NullIdentityProvider.INSTANCE);				
-		} else{
+			return new SplitAdapter(syncRepository, contentAdapter, NullIdentityProvider.INSTANCE);		
+		} else if(isMySQL(endpoint)){
+			String[] elements = endpoint.split(FIELD_SEPARATOR);
+			String entity = elements[1];
+			
+			HibernateSessionFactoryBuilder builder = new HibernateSessionFactoryBuilder();
+			builder.setPropertiesFile(new File("test_MySQL_hibernate.properties"));
+			builder.addMapping(new File(entity+".hbm.xml"));
+			builder.addMapping(new File("SyncInfo.hbm.xml"));
+
+			return new HibernateAdapter(builder, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+				
+		} else {
 			return null;
 		}
 	}
@@ -169,5 +181,10 @@ public class SyncEngineUtil {
 	public static boolean isAccess(String endpointValue) {
 		String[] elements = endpointValue.split(FIELD_SEPARATOR);
 		return endpointValue.toUpperCase().startsWith("ACCESS") && elements.length == 5; 
+	}
+	
+	public static boolean isMySQL(String endpointValue) {
+		String[] elements = endpointValue.split(FIELD_SEPARATOR);
+		return endpointValue.toUpperCase().startsWith("MYSQL") && elements.length == 2; 
 	}
 }

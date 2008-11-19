@@ -27,6 +27,7 @@
             <zipfileset excludes="META-INF/*.SF" src="C:/Clarius/workspaces/mesh4j/Mesh4jSwingUI/lib/commons-net-1.4.1.jar"/>
             <zipfileset excludes="META-INF/*.SF" src="C:/Clarius/workspaces/mesh4j/Mesh4jSwingUI/lib/mail.jar"/>
             <zipfileset excludes="META-INF/*.SF" src="C:/Clarius/workspaces/mesh4j/Mesh4jSwingUI/lib/poi-3.2-FINAL-20081019.jar"/>
+        	<zipfileset excludes="META-INF/*.SF" src="C:/Clarius/workspaces/mesh4j/Mesh4jSwingUI/lib/mysql-connector-java-5.1.6-bin.jar"/>
         </jar>
     </target>
 

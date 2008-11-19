@@ -378,6 +378,8 @@ public class Mesh4jUI {
 			return validateSMS(consoleView, endpointValue, endpointHeader);
 		}else if (SyncEngineUtil.isAccess(endpointValue)){
 			return validateACCESS(consoleView, endpointValue, endpointHeader);
+		}else if (SyncEngineUtil.isMySQL(endpointValue)){
+			return validateMySQL(consoleView, endpointValue, endpointHeader);
 		}else {
 			return validateFile(consoleView, endpointValue, endpointHeader);
 		}
@@ -392,6 +394,12 @@ public class Mesh4jUI {
 		// TODO (JMT) validate odbc access
 		return true;
 	}
+	
+	private boolean validateMySQL(JTextArea consoleView, String endpointValue, String endpointHeader) {
+		// TODO (JMT) validate mySql access
+		return true;
+	}
+	
 	
 	private boolean validateURL(JTextArea consoleView, String url, String endpointHeader){
 		URL newURL;
