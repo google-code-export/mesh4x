@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.dom4j.Element;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.adapters.InMemorySyncAdapter;
@@ -93,13 +94,19 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 		}
 	}
 
-	public void addNewFeed(String sourceID, ISyndicationFormat syndicationFormat, String link, String description) {
+	public void addNewFeed(String sourceID, ISyndicationFormat syndicationFormat, String link, String description, String schema) {
 		String title = getFeedTitle(sourceID);
 		Feed feed = new Feed(title, description, link, syndicationFormat);
 		
 		this.addNewFeed(sourceID, feed, syndicationFormat);
 		
-		XMLContent content = new XMLContent(sourceID, title, description, link, feed.getPayload());
+		Element parentPayload = feed.getPayload().createCopy();
+		if(schema != null && schema.trim().length() >0){
+			Element schemaElement = parentPayload.addElement("schema");	
+			schemaElement.setText(schema);
+		}
+		
+		XMLContent content = new XMLContent(sourceID, title, description, link, parentPayload);
 		Sync sync = new Sync(IdGenerator.INSTANCE.newID(), NullIdentityProvider.INSTANCE.getAuthenticatedUser(), new Date(), false);
 		Item item = new Item(content, sync);
 		

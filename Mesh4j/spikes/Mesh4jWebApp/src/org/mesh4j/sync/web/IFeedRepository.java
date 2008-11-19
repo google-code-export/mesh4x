@@ -12,7 +12,7 @@ public interface IFeedRepository {
 
 	boolean isAddNewFeedAction(String sourceID);
 
-	void addNewFeed(String newSourceID, ISyndicationFormat syndicationFormat, String link, String description);
+	void addNewFeed(String newSourceID, ISyndicationFormat syndicationFormat, String link, String description, String schema);
 
 	ISyndicationFormat getSyndicationFormat(String format);
 

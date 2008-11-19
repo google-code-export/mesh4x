@@ -52,7 +52,9 @@ public class FeedServlet extends HttpServlet {
 				Date sinceDate = this.getSinceDate(request);
 				String link = getLink(request, sourceID);
 				String responseContent = this.feedRepository.readFeed(sourceID, link, sinceDate, syndicationFormat);
-			
+				responseContent = responseContent.replaceAll("&lt;", "<");	// TODO (JMT) issue from XFROMS (MIDP demo)
+				responseContent = responseContent.replaceAll("&gt;", ">");
+				
 				response.setContentType("text/plain");
 				response.setContentLength(responseContent.length());
 				PrintWriter out = response.getWriter();
@@ -110,6 +112,7 @@ public class FeedServlet extends HttpServlet {
 		} else {
 			String format = request.getParameter("format");
 			String description = request.getParameter("description");
+			String schema = request.getParameter("schema");
 			
 			ISyndicationFormat syndicationFormat = this.feedRepository.getSyndicationFormat(format);	
 			if(syndicationFormat == null){
@@ -117,7 +120,7 @@ public class FeedServlet extends HttpServlet {
 			}
 			
 			String link = getLink(request, newSourceID);
-			this.feedRepository.addNewFeed(newSourceID, syndicationFormat, link, description);
+			this.feedRepository.addNewFeed(newSourceID, syndicationFormat, link, description, schema);
 			
 			response.sendRedirect(request.getRequestURI()+"/"+newSourceID);
 		}
