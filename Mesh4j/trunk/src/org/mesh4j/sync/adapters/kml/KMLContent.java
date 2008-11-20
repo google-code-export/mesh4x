@@ -2,7 +2,6 @@ package org.mesh4j.sync.adapters.kml;
 
 import java.util.List;
 
-import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.mesh4j.sync.adapters.dom.MeshNames;
 import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
@@ -72,17 +71,15 @@ public class KMLContent extends Content{
 	}
 	
 	@Override
-	public void addToFeedPayload(Sync sync, Element rootPayload){
+	public void addToFeedPayload(Sync sync, Element itemElement, ISyndicationFormat format){
 		
-		Element titleElement = DocumentHelper.createElement(ISyndicationFormat.SX_ELEMENT_ITEM_TITLE);
+		Element titleElement = format.addFeedItemTitleElement(itemElement);
 		titleElement.setText(this.getPayload().getName());
-		rootPayload.add(titleElement);
 		
-		Element descriptionElement = DocumentHelper.createElement(ISyndicationFormat.SX_ELEMENT_ITEM_DESCRIPTION);
+		Element descriptionElement = format.addFeedItemDescriptionElement(itemElement);
 		descriptionElement.setText("Id: " + this.getId() + " version: " + this.getVersion());
-		rootPayload.add(descriptionElement);
 		
-		rootPayload.add(this.getPayload().createCopy());
+		itemElement.add(this.getPayload().createCopy());
 	}
 
 

@@ -89,7 +89,7 @@ public class S3FeedRepository extends AbstractFeedRepository {
 			S3Adapter adapter = new S3Adapter(this.bucket, parentID, this.s3, NullIdentityProvider.INSTANCE);
 			List<Item> items = adapter.getAll();
 			for (Item item : items) {
-				Element titleElement = item.getContent().getPayload().element(ISyndicationFormat.SX_ELEMENT_ITEM_TITLE);
+				Element titleElement = adapter.getSyndicationFormat().getFeedItemTitleElement(item.getContent().getPayload());
 				if(titleElement != null && titleElement.getText().equals(title)){
 					return true;
 				}

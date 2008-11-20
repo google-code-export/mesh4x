@@ -14,7 +14,7 @@ import org.mesh4j.sync.security.NullIdentityProvider;
 public class AtomFeedReaderTests {
 
 	@Test
-	public void shouldReadRssFeed() throws DocumentException{
+	public void shouldReadFeed() throws DocumentException{
 		
 		File file = new File(this.getClass().getResource("atom.xml").getFile());
 		Assert.assertTrue(file.exists());

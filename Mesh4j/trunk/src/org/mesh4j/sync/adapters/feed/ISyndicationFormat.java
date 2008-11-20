@@ -14,7 +14,10 @@ public interface ISyndicationFormat {
 	String getName();
 
 	boolean isFeedItem(Element element);
-
+	boolean isFeedItemTitle(Element element);
+	boolean isFeedItemDescription(Element element);
+	boolean isFeedItemLink(Element element);
+	
 	List<Element> getRootElements(Element root);
 
 	Date parseDate(String dateAsString);
@@ -26,6 +29,15 @@ public interface ISyndicationFormat {
 	Element addFeedItemElement(Element root);
 
 	void addFeedInformation(Element payload, String title, String description, String link);
+
+	Element getFeedItemTitleElement(Element itemElement);
+	Element addFeedItemTitleElement(Element itemElement);
+
+	Element getFeedItemDescriptionElement(Element itemElement);
+	Element addFeedItemDescriptionElement(Element itemElement);
+
+	Element getFeedItemLinkElement(Element itemElement);
+	Element addFeedItemLinkElement(Element itemElement);
 	
 	// / <summary>
 	// / Namespace of the FeedSync elements.
@@ -39,12 +51,6 @@ public interface ISyndicationFormat {
 
 	public static final Namespace SX_NS = DocumentHelper.createNamespace(SX_PREFIX, NAMESPACE);
 
-//	public static final String SX_ELEMENT_SHARING = "sharing";
-//	public static final String SX_ELEMENT_RELATED = "related";
-//	public static final String SX_ELEMENT_SYNC = "sync";
-//	public static final String SX_ELEMENT_HISTORY = "history";
-//	public static final String SX_ELEMENT_CONFLICTS = "conflicts";
-	
 	public static final String SX_ELEMENT_AUTHOR = "author";
 	public static final String SX_ELEMENT_NAME = "name";
 
@@ -77,13 +83,7 @@ public interface ISyndicationFormat {
 	public static final String SX_ATTRIBUTE_HISTORY_WHEN = "when";
 	public static final String SX_ATTRIBUTE_HISTORY_BY = "by";
 	
-	public static final String SX_ELEMENT_ITEM_TITLE = "title";
-	public static final String SX_ELEMENT_ITEM_DESCRIPTION = "description";
-	public static final String SX_ELEMENT_ITEM_LINK = "link";
-	
 	// internal
 	public static final String ELEMENT_PAYLOAD = "payload";
-
-	
 
 }

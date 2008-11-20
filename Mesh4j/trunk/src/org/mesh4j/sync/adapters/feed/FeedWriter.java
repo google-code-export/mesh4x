@@ -8,9 +8,6 @@ import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_SYNC
 import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_SYNC_NO_CONFLICTS;
 import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_SYNC_UPDATES;
 import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ELEMENT_AUTHOR;
-import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ELEMENT_ITEM_DESCRIPTION;
-import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ELEMENT_ITEM_LINK;
-import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ELEMENT_ITEM_TITLE;
 import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ELEMENT_NAME;
 import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_QNAME_CONFLICTS;
 import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_QNAME_HISTORY;
@@ -114,62 +111,7 @@ public class FeedWriter {
 	}	
 	
 	private void writeContent(Element itemElement, Sync sync, IContent content) {
-		Element xmlContent = XMLContent.normalizeContent(sync, content);
-		writePayload(itemElement, xmlContent);
-		
-		if(content instanceof XMLContent){
-			XMLContent contextAsXMLContent = (XMLContent) content;
-			if(contextAsXMLContent.getTitle() != null && contextAsXMLContent.getTitle().trim().length() > 0){
-				String title = itemElement.elementText(SX_ELEMENT_ITEM_TITLE);
-				if(title == null){
-					Element titleElement = DocumentHelper.createElement(SX_ELEMENT_ITEM_TITLE);
-					titleElement.setText(contextAsXMLContent.getTitle());
-					itemElement.add(titleElement);
-				} else {
-					Element titleElement = itemElement.element(SX_ELEMENT_ITEM_TITLE);
-					titleElement.setText(contextAsXMLContent.getTitle());
-				}
-			}else{
-				Element titleElement = itemElement.element(SX_ELEMENT_ITEM_TITLE);
-				if(titleElement != null){
-					itemElement.remove(titleElement);
-				}
-			}
-			
-			if(contextAsXMLContent.getDescription() != null && contextAsXMLContent.getDescription().trim().length() > 0){
-				String description = itemElement.elementText(SX_ELEMENT_ITEM_DESCRIPTION);
-				if(description == null){
-					Element descriptionElement = DocumentHelper.createElement(SX_ELEMENT_ITEM_DESCRIPTION);
-					descriptionElement.setText(contextAsXMLContent.getDescription());
-					itemElement.add(descriptionElement);
-				} else {
-					Element descriptionElement = itemElement.element(SX_ELEMENT_ITEM_DESCRIPTION);
-					descriptionElement.setText(contextAsXMLContent.getDescription());
-				}
-			}else{
-				Element descriptionElement = itemElement.element(SX_ELEMENT_ITEM_DESCRIPTION);
-				if(descriptionElement != null){
-					itemElement.remove(descriptionElement);
-				}
-			}
-			
-			if(contextAsXMLContent.getLink() != null && contextAsXMLContent.getLink().trim().length() > 0){
-				String link = itemElement.elementText(SX_ELEMENT_ITEM_LINK);
-				if(link == null){
-					Element linkElement = DocumentHelper.createElement(SX_ELEMENT_ITEM_LINK);
-					linkElement.setText(contextAsXMLContent.getLink());
-					itemElement.add(linkElement);
-				} else {
-					Element linkElement = itemElement.element(SX_ELEMENT_ITEM_LINK);
-					linkElement.setText(contextAsXMLContent.getLink());
-				}
-			}else{
-				Element linkElement = itemElement.element(SX_ELEMENT_ITEM_LINK);
-				if(linkElement != null){
-					itemElement.remove(linkElement);
-				}
-			}
-		}
+		content.addToFeedPayload(sync, itemElement, this.syndicationFormat);
 	}
 
 	protected Element addFeedItemElement(Element root) {

@@ -3,6 +3,7 @@ package org.mesh4j.sync.adapters.hibernate;
 import org.dom4j.Element;
 import org.junit.Assert;
 import org.junit.Test;
+import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.model.IContent;
 import org.mesh4j.sync.model.Sync;
 import org.mesh4j.sync.test.utils.TestHelper;
@@ -78,7 +79,6 @@ public class EntityContentTests {
 	}	
 
 	
-	@SuppressWarnings("unused")
 	private class MyContent implements IContent{
 		
 		private Element e;
@@ -94,7 +94,7 @@ public class EntityContentTests {
 			return new MyContent(e);
 		}
 		@Override
-		public void addToFeedPayload(Sync sync, Element rootPayload) {
+		public void addToFeedPayload(Sync sync, Element rootPayload, ISyndicationFormat format) {
 			rootPayload.add(this.e.createCopy());			
 		}
 		

@@ -1,9 +1,9 @@
 package org.mesh4j.sync.adapters.feed;
 
-import org.dom4j.DocumentHelper;
+import java.util.List;
+
 import org.dom4j.Element;
 import org.mesh4j.sync.model.Content;
-import org.mesh4j.sync.model.IContent;
 import org.mesh4j.sync.model.Sync;
 
 
@@ -24,8 +24,6 @@ public class XMLContent extends Content {
 		this.title = title;
 		this.description = description;
 		this.link = link;
-		this.basicAddToFeedPayload(payload, null);
-		this.refreshVersion();
 	}
 
 	public String getDescription() {
@@ -76,23 +74,17 @@ public class XMLContent extends Content {
 		return super.hashCode() + result.hashCode();
     }
 
-	public static Element normalizeContent(Sync sync, IContent content) {
-		Element payload = null;
-		if(content instanceof XMLContent){
-			payload = content.getPayload().createCopy();
-		} else {
-			payload = DocumentHelper.createElement("payload");
-		}
-		content.addToFeedPayload(sync, payload);
-		return payload;
-	}
 	
 	@Override
-	public void addToFeedPayload(Sync sync, Element rootPayload){
-		basicAddToFeedPayload(rootPayload, "---");
-	}
-	
-	private void basicAddToFeedPayload(Element rootPayload, String defaultValue){
+	public void addToFeedPayload(Sync sync, Element itemElement, ISyndicationFormat format){
+		
+		List<Element> payloadElements = this.getPayload().elements(); 
+		for (Element payloadElement : payloadElements) {
+			itemElement.add(payloadElement.createCopy());
+		}
+		
+		String defaultValue = "---";
+		
 		String myTitle = null;
 		if(this.getTitle() == null || this.getTitle().length() == 0){
 			if(defaultValue != null){
@@ -104,9 +96,9 @@ public class XMLContent extends Content {
 		
 		
 		if(myTitle != null){
-			Element titleElement = rootPayload.element(ISyndicationFormat.SX_ELEMENT_ITEM_TITLE);
+			Element titleElement = format.getFeedItemTitleElement(itemElement);
 			if(titleElement == null){
-				titleElement = rootPayload.addElement(ISyndicationFormat.SX_ELEMENT_ITEM_TITLE);
+				titleElement = format.addFeedItemTitleElement(itemElement);
 			}
 			titleElement.setText(myTitle);
 		}
@@ -122,22 +114,69 @@ public class XMLContent extends Content {
 		}
 		
 		if(myDesc != null){
-			Element descriptionElement = rootPayload.element(ISyndicationFormat.SX_ELEMENT_ITEM_DESCRIPTION);
+			Element descriptionElement = format.getFeedItemDescriptionElement(itemElement);
 			if(descriptionElement == null){
-				descriptionElement = rootPayload.addElement(ISyndicationFormat.SX_ELEMENT_ITEM_DESCRIPTION);
+				descriptionElement = format.addFeedItemDescriptionElement(itemElement);
 			}
 			descriptionElement.setText(myDesc);
 		}
 		
 		if(this.getLink() != null && this.getLink().length() > 0){
-			Element linkElement = rootPayload.element(ISyndicationFormat.SX_ELEMENT_ITEM_LINK);
+			Element linkElement = format.getFeedItemLinkElement(itemElement);
 			if(linkElement == null){
-				linkElement = rootPayload.addElement(ISyndicationFormat.SX_ELEMENT_ITEM_LINK);
+				linkElement = format.addFeedItemLinkElement(itemElement);
 			}
 			linkElement.setText(this.getLink());
-		}
-		
+		}		
 	}
-
-
 }
+
+
+//XMLContent contextAsXMLContent = (XMLContent) content;
+//if(contextAsXMLContent.getTitle() != null && contextAsXMLContent.getTitle().trim().length() > 0){
+//	Element titleElement = this.syndicationFormat.getFeedItemTitleElement(itemElement);
+//	if(titleElement == null){
+//		titleElement = this.syndicationFormat.addFeedItemTitleElement(itemElement);
+//		titleElement.setText(contextAsXMLContent.getTitle());
+//	} else {
+//		titleElement.setText(contextAsXMLContent.getTitle());
+//	}
+//}else{
+//	Element titleElement = this.syndicationFormat.getFeedItemTitleElement(itemElement);
+//	if(titleElement != null){
+//		itemElement.remove(titleElement);
+//	}
+//}
+//
+//if(contextAsXMLContent.getDescription() != null && contextAsXMLContent.getDescription().trim().length() > 0){
+//	Element descriptionElement = this.syndicationFormat.getFeedItemDescriptionElement(itemElement);
+//	if(descriptionElement == null){
+//		descriptionElement = this.syndicationFormat.addFeedItemDescriptionElement(itemElement);
+//		descriptionElement.setText(contextAsXMLContent.getDescription());
+//		itemElement.add(descriptionElement);
+//	} else {
+//		descriptionElement.setText(contextAsXMLContent.getDescription());
+//	}
+//}else{
+//	Element descriptionElement = this.syndicationFormat.getFeedItemDescriptionElement(itemElement);
+//	if(descriptionElement != null){
+//		itemElement.remove(descriptionElement);
+//	}
+//}
+//
+//if(contextAsXMLContent.getLink() != null && contextAsXMLContent.getLink().trim().length() > 0){
+//	Element linkElement = this.syndicationFormat.getFeedItemLinkElement(itemElement);
+//	if(linkElement == null){
+//		linkElement = this.syndicationFormat.addFeedItemLinkElement(itemElement);
+//		linkElement.setText(contextAsXMLContent.getLink());
+//		itemElement.add(linkElement);
+//	} else {
+//		linkElement.setText(contextAsXMLContent.getLink());
+//	}
+//}else{
+//	Element linkElement = this.syndicationFormat.getFeedItemLinkElement(itemElement);
+//	if(linkElement != null){
+//		itemElement.remove(linkElement);
+//	}
+//}
+//}

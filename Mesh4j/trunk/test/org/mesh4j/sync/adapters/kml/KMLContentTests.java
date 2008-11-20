@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.mesh4j.sync.adapters.dom.MeshNames;
 import org.mesh4j.sync.adapters.dom.parsers.FileManager;
 import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
+import org.mesh4j.sync.adapters.feed.atom.AtomSyndicationFormat;
 import org.mesh4j.sync.model.IContent;
 import org.mesh4j.sync.model.NullContent;
 import org.mesh4j.sync.model.Sync;
@@ -47,12 +48,12 @@ public class KMLContentTests {
 		
 		KMLContent content = new KMLContent(payload, "1");
 		
-		content.addToFeedPayload(new Sync("1"), feedPayload);
+		content.addToFeedPayload(new Sync("1"), feedPayload, AtomSyndicationFormat.INSTANCE);
 		
-		Assert.assertNotNull(feedPayload.element(ISyndicationFormat.SX_ELEMENT_ITEM_TITLE));
-		Assert.assertNotNull(feedPayload.element(ISyndicationFormat.SX_ELEMENT_ITEM_TITLE).getText());
-		Assert.assertNotNull(feedPayload.element(ISyndicationFormat.SX_ELEMENT_ITEM_DESCRIPTION));
-		Assert.assertNotNull(feedPayload.element(ISyndicationFormat.SX_ELEMENT_ITEM_DESCRIPTION).getText());
+		Assert.assertNotNull(AtomSyndicationFormat.INSTANCE.getFeedItemTitleElement(feedPayload));
+		Assert.assertNotNull(AtomSyndicationFormat.INSTANCE.getFeedItemTitleElement(feedPayload).getText());
+		Assert.assertNotNull(AtomSyndicationFormat.INSTANCE.getFeedItemDescriptionElement(feedPayload));
+		Assert.assertNotNull(AtomSyndicationFormat.INSTANCE.getFeedItemDescriptionElement(feedPayload).getText());
 		Assert.assertNotNull(feedPayload.element("payload"));
 	}
 	
@@ -184,7 +185,7 @@ public class KMLContentTests {
 		}
 		
 		@Override
-		public void addToFeedPayload(Sync sync, Element rootPayload) {
+		public void addToFeedPayload(Sync sync, Element rootPayload, ISyndicationFormat format) {
 		}
 
 		@Override

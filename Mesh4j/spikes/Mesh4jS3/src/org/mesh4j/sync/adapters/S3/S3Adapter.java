@@ -15,6 +15,7 @@ import org.mesh4j.sync.AbstractSyncAdapter;
 import org.mesh4j.sync.IFilter;
 import org.mesh4j.sync.adapters.feed.FeedReader;
 import org.mesh4j.sync.adapters.feed.FeedWriter;
+import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.filter.SinceLastUpdateFilter;
 import org.mesh4j.sync.id.generator.IdGenerator;
@@ -61,8 +62,8 @@ public class S3Adapter extends AbstractSyncAdapter {
 		this.s3 = s3;
 		this.identityProvider = identityProvider;
 		
-		this.reader = new FeedReader(RssSyndicationFormat.INSTANCE, identityProvider, IdGenerator.INSTANCE);
-		this.writer = new FeedWriter(RssSyndicationFormat.INSTANCE, identityProvider);
+		this.reader = new FeedReader(getSyndicationFormat(), identityProvider, IdGenerator.INSTANCE);
+		this.writer = new FeedWriter(getSyndicationFormat(), identityProvider);
 	}	
 
 	private void writeItem(Item item) {
@@ -288,6 +289,10 @@ public class S3Adapter extends AbstractSyncAdapter {
 		}
 		sb.append(syncId);
 		return sb.toString();
+	}
+
+	public ISyndicationFormat getSyndicationFormat() {
+		return RssSyndicationFormat.INSTANCE;
 	}
 	
 }

@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.SyncEngine;
@@ -37,12 +38,10 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 		this.readers.put(AtomSyndicationFormat.INSTANCE, new FeedReader(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE));
 	}
 	
-	
 	protected abstract ISyncAdapter getSyncAdapter(String sourceID);
 	protected abstract ISyncAdapter getParentSyncAdapter(String sourceID);
 	protected abstract void addNewFeed(String sourceID, Feed feed, ISyndicationFormat syndicationFormat);
 
-	
 	private String writeFeedAsXml(Feed feed, ISyndicationFormat syndicationFormat){
 		FeedWriter writer = (FeedWriter)this.writers.get(syndicationFormat);
 		try {
@@ -100,7 +99,7 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 		
 		this.addNewFeed(sourceID, feed, syndicationFormat);
 		
-		Element parentPayload = feed.getPayload().createCopy();
+		Element parentPayload = DocumentHelper.createElement(ISyndicationFormat.ELEMENT_PAYLOAD);
 		if(schema != null && schema.trim().length() >0){
 			Element schemaElement = parentPayload.addElement("schema");	
 			schemaElement.setText(schema);

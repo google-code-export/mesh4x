@@ -77,10 +77,10 @@ public class FeedWriterTests {
 		Element fooElement = element.addElement("foo");
 		fooElement.addElement("bar");
 		
-		Element elementTitle = element.addElement(ISyndicationFormat.SX_ELEMENT_ITEM_TITLE);
+		Element elementTitle = RssSyndicationFormat.INSTANCE.addFeedItemTitleElement(element);
 		elementTitle.setText("abc");
 		
-		Element elementDescription = element.addElement(ISyndicationFormat.SX_ELEMENT_ITEM_DESCRIPTION);
+		Element elementDescription = RssSyndicationFormat.INSTANCE.addFeedItemDescriptionElement(element);
 		elementDescription.setText("abc");
 		
 		Date date = TestHelper.makeDate(2008, 1, 1, 1, 1, 1, 1);
@@ -92,7 +92,7 @@ public class FeedWriterTests {
 		FeedWriter writer = new FeedWriter(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		writer.write(root, item);
 		
-		Assert.assertEquals("<items><item><foo><bar></bar></foo><author><name>jmt</name></author><sx:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" deleted=\"false\" id=\""+syncID+"\" noconflicts=\"false\" updates=\"1\"><sx:history by=\"jmt\" sequence=\"1\" when=\""+ DateHelper.formatRFC822(date)+"\"></sx:history></sx:sync></item></items>", XMLHelper.canonicalizeXML(root));		
+		Assert.assertEquals("<items><item><foo><bar></bar></foo><title>---</title><description>---</description><author><name>jmt</name></author><sx:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" deleted=\"false\" id=\""+syncID+"\" noconflicts=\"false\" updates=\"1\"><sx:history by=\"jmt\" sequence=\"1\" when=\""+ DateHelper.formatRFC822(date)+"\"></sx:history></sx:sync></item></items>", XMLHelper.canonicalizeXML(root));		
 		
 	}
 }

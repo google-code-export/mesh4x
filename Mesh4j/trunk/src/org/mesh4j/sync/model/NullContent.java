@@ -51,20 +51,16 @@ public class NullContent implements IContent {
 	}
 	
 	@Override
-	public void addToFeedPayload(Sync sync, Element rootPayload){
-		Element titleElement = DocumentHelper.createElement(ISyndicationFormat.SX_ELEMENT_ITEM_TITLE);
+	public void addToFeedPayload(Sync sync, Element itemElement, ISyndicationFormat format){
+		Element titleElement = format.addFeedItemTitleElement(itemElement);
 		if(sync.isDeleted()){
 			titleElement.setText("--DELETED--");
 		} else {
 			titleElement.setText("--UNKNOWN--");
 		}
-		rootPayload.add(titleElement);
 		
-		Element descriptionElement = DocumentHelper.createElement(ISyndicationFormat.SX_ELEMENT_ITEM_DESCRIPTION);
-		descriptionElement.setText("Id: " + this.getId() + " version: " + this.getVersion());
-		rootPayload.add(descriptionElement);
-		
-		rootPayload.add(this.getPayload().createCopy());
+		Element descriptionElement = format.addFeedItemDescriptionElement(itemElement);
+		descriptionElement.setText("Id: " + this.getId() + " version: " + this.getVersion());	
 	}
 
 	@Override
