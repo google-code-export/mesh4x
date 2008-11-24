@@ -1,4 +1,4 @@
-package org.mesh4j.sync.adapters.hibernate;
+package org.mesh4j.sync.adapters.msaccess;
 
 import java.sql.Types;
 
@@ -9,11 +9,12 @@ import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.function.NoArgSQLFunction;
 import org.hibernate.dialect.function.StandardSQLFunction;
 
-public class MSAccessDialect extends Dialect {
+public class MsAccessDialect extends Dialect {
 
-    static final String NO_BATCH = "0"; // this should be just protected in Dialect, I think
+    public static final String NO_BATCH = "0"; // this should be just protected in Dialect, I think
+	protected static final MsAccessDialect INSTANCE = new MsAccessDialect();
 
-	public MSAccessDialect() {
+	public MsAccessDialect() {
 		super();
 
 		// From intermediate:

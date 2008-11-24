@@ -32,7 +32,7 @@ public class HibernateSyncRepository implements ISyncRepository{
 	private SessionFactory sessionFactory;
 	
 	// BUSINESS METHODS
-	public HibernateSyncRepository(SyncInfoParser syncInfoParser, IHibernateSessionFactoryBuilder sessionFactoryBuilder) {
+	public HibernateSyncRepository(IHibernateSessionFactoryBuilder sessionFactoryBuilder, SyncInfoParser syncInfoParser) {
 		super();
 		this.syncInfoParser = syncInfoParser;
 		this.sessionFactory = sessionFactoryBuilder.buildSessionFactory();

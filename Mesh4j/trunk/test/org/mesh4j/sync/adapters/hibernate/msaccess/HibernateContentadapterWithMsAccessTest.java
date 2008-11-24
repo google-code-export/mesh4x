@@ -13,6 +13,7 @@ import org.junit.Test;
 import org.mesh4j.sync.adapters.hibernate.EntityContent;
 import org.mesh4j.sync.adapters.hibernate.HibernateContentAdapter;
 import org.mesh4j.sync.adapters.hibernate.HibernateSessionFactoryBuilder;
+import org.mesh4j.sync.adapters.msaccess.MsAccessDialect;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.IContent;
 import org.mesh4j.sync.test.utils.TestHelper;
@@ -139,7 +140,7 @@ public class HibernateContentadapterWithMsAccessTest {
 	private HibernateContentAdapter createAdapter() {
 
 		HibernateSessionFactoryBuilder builder = new HibernateSessionFactoryBuilder();
-		builder.setProperty("hibernate.dialect","org.mesh4j.sync.adapters.hibernate.MSAccessDialect");
+		builder.setProperty("hibernate.dialect", MsAccessDialect.class.getName());
 		builder.setProperty("hibernate.connection.driver_class","sun.jdbc.odbc.JdbcOdbcDriver");
 		builder.setProperty("hibernate.connection.url","jdbc:odbc:DevDB");
 		builder.setProperty("hibernate.connection.username","mesh4j");
