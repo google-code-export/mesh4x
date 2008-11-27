@@ -59,13 +59,18 @@ public class Modem {
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append(this.manufacturer);
-		sb.append(" [");
-		sb.append(this.model);
-		sb.append("] [");
-		sb.append(this.comPort);
-		sb.append(" - ");
-		sb.append(this.baudRate);
-		sb.append("]");
+		if(this.model != null && this.model.length() > 0){
+			sb.append(" [");
+			sb.append(this.model);
+			sb.append("]");
+		}
+		if(this.comPort != null && this.comPort.length() > 0 && this.baudRate > 0){
+			sb.append(" [");
+			sb.append(this.comPort);
+			sb.append(" - ");
+			sb.append(this.baudRate);
+			sb.append("]");
+		}
 		return sb.toString();
 	}
 

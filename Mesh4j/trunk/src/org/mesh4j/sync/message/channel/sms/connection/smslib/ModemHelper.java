@@ -22,12 +22,12 @@ public class ModemHelper {
 	private final static int bauds[] = { 9600, 14400, 19200, 28800, 33600, 38400, 56000,
 			57600, 115200, 230400, 460800 };
 
-	public static List<Modem> getAvailableModems() {
+	public static List<Modem> getAvailableModems(IProgressMonitor progressMonitor) {
 		ArrayList<Modem> result = new ArrayList<Modem>();
 		Enumeration<CommPortIdentifier> portList = CommPortIdentifier.getPortIdentifiers();
 		while (portList.hasMoreElements()) {
 			CommPortIdentifier port = portList.nextElement();
-			Modem modem = getModem(port);
+			Modem modem = getModem(progressMonitor, port);
 			if(modem != null){
 				result.add(modem);
 			}
@@ -115,17 +115,28 @@ public class ModemHelper {
 	
 	public static Modem getModem(String portName) {
 		CommPortIdentifier port = CommPortIdentifier.getPortIdentifier(portName);
-		return getModem(port);
+		return getModem(null, port);
 	}
 	
-	private static Modem getModem(CommPortIdentifier port) {
+	private static Modem getModem(IProgressMonitor progressMonitor, CommPortIdentifier port) {
 		if (port.getPortType() == CommPortIdentifier.PORT_SERIAL) {
 			int baudRateAvailable = 0;
 			for (int i = 0; i < bauds.length; i++) {
 				try{
+					if (progressMonitor != null) {
+						progressMonitor.checkingPortInfo(port, bauds[i]);
+					}
+					
 					String response = getPortInfo(port, bauds[i]);
 					if(!hasError(response)){
+						if (progressMonitor != null) {
+							progressMonitor.notifyAvailablePortInfo(port, bauds[i]);
+						}
 						baudRateAvailable = bauds[i];
+					} else {
+						if (progressMonitor != null) {
+							progressMonitor.notifyNonAvailablePortInfo(port, bauds[i]);
+						}
 					}
 				} catch(MeshException e){
 					LOGGER.info(e.getMessage(), e);
@@ -133,9 +144,19 @@ public class ModemHelper {
 			}
 			
 			if(baudRateAvailable > 0){
+				if (progressMonitor != null) {
+					progressMonitor.checkingModem(port, baudRateAvailable);
+				}
 				Modem modem = getModem(port, baudRateAvailable);
 				if(modem != null){
+					if (progressMonitor != null) {
+						progressMonitor.notifyAvailableModem(port, baudRateAvailable, modem);
+					}
 					return modem;
+				} else {
+					if (progressMonitor != null) {
+						progressMonitor.notifyNonAvailableModem(port, baudRateAvailable);
+					}
 				}
 			}
 		}

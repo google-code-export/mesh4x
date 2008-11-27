@@ -31,6 +31,7 @@ public class FileNameResolver implements ISourceIdResolver {
 		File file = new File(this.fileName);
 		if(!file.exists()){
 			try{
+				file.getParentFile().mkdirs();
 				file.createNewFile();
 			} catch (Exception e) {
 				throw new MeshException(e);
