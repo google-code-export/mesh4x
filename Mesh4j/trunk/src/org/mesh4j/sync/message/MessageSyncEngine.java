@@ -93,11 +93,23 @@ public class MessageSyncEngine implements IMessageReceiver {
 		return this.syncProtocol.getSyncSession(sourceId, target);
 	}
 
+	public void registerSource(IMessageSyncAdapter adapter) {
+		this.syncProtocol.registerSource(adapter);
+	}
+	
 	public void registerSourceIfAbsent(IMessageSyncAdapter adapter) {
 		this.syncProtocol.registerSourceIfAbsent(adapter);
 	}
 
 	public IChannel getChannel() {
 		return this.channel;
+	}
+
+	public IMessageSyncAdapter getSource(String sourceId) {
+		return this.syncProtocol.getSource(sourceId);
+	}
+	
+	public IMessageSyncProtocol getSyncProtocol(){
+		return this.syncProtocol;
 	}
 }

@@ -18,8 +18,12 @@ public interface ISyncSessionRepository {
 
 	void cancel(ISyncSession syncSession);
 
+	void registerSource(IMessageSyncAdapter adapter);
+	
 	void registerSourceIfAbsent(IMessageSyncAdapter adapter);
-
+	
 	IMessageSyncAdapter getSource(String sourceId);
+
+	IMessageSyncAdapter getSourceOrCreateIfAbsent(String sourceId);
 
 }

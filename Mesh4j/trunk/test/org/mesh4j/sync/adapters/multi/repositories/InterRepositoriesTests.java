@@ -107,10 +107,12 @@ public class InterRepositoriesTests {
 		HibernateSessionFactoryBuilder builder = new HibernateSessionFactoryBuilder();
 		builder.addMapping(new File(this.getClass().getResource("User.hbm.xml").getFile()));
 		builder.addMapping(new File(this.getClass().getResource("SyncInfo.hbm.xml").getFile()));
-		builder.setPropertiesFile(new File(InterRepositoriesTests.class.getResource("xx_hibernate.properties").getFile()));
+		builder.setPropertiesFile(new File(this.getClass().getResource("xx_hibernate.properties").getFile()));
 		HibernateAdapter hibernateRepo = new HibernateAdapter(builder, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
 		hibernateRepo.deleteAll();
+		Assert.assertEquals(0, hibernateRepo.getAll().size());		
+		Assert.assertEquals(1, feedRepo.getAll().size());
 		
 		SyncEngine engine = new SyncEngine(feedRepo, hibernateRepo);
 		List<Item> conflicts = engine.synchronize();

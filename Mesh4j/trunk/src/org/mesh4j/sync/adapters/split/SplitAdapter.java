@@ -163,9 +163,10 @@ public class SplitAdapter extends AbstractSyncAdapter implements ISyncAware{
 			/// item actual data. If it's not, a new 
 			/// update will be added. Used when exporting/retrieving 
 			/// items from the local stores.
-			if (!syncInfo.isDeleted() && syncInfo.contentHasChanged(content))
+			//if (!syncInfo.isDeleted() && syncInfo.contentHasChanged(content))
+			if ((!syncInfo.isDeleted() && syncInfo.contentHasChanged(content)) || syncInfo.isDeleted())
 			{
-				sync.update(this.getAuthenticatedUser(), new Date(), sync.isDeleted());
+				sync.update(this.getAuthenticatedUser(), new Date(), false);
 				syncInfo.setVersion(content.getVersion());
 				syncRepository.save(syncInfo);
 			}

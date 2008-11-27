@@ -129,6 +129,11 @@ public class EndSyncMessageProcessorTests {
 			}
 
 			@Override
+			public void registerSource(IMessageSyncAdapter adapter) {
+				Assert.fail();
+			}
+			
+			@Override
 			public void notifyBeginSync(ISyncSession syncSession) {
 				Assert.fail();				
 			}
@@ -136,6 +141,12 @@ public class EndSyncMessageProcessorTests {
 			@Override
 			public void registerSyncAware(IMessageSyncAware syncAware) {
 				Assert.fail();
+			}
+			
+			@Override
+			public IMessageSyncAdapter getSource(String sourceId) {
+				Assert.fail();
+				return null;
 			}
 		};
 		

@@ -42,7 +42,7 @@ public class SyncSession implements ISyncSession{
 		this.syncAdapter = syncAdapter;
 		this.target = target;
 		this.fullProtocol = fullProtocol;
-		this.cancelled = cancelled;
+
 	}
 
 	@Override

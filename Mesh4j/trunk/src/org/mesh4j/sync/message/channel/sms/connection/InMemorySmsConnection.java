@@ -135,4 +135,8 @@ public class InMemorySmsConnection implements ISmsConnection, IRefreshTask{
 		// nothing to do		
 	}
 
+	public boolean hasEndpointConnection(SmsEndpoint target) {
+		return this.endpointConnections.get(target.getEndpointId()) != null;
+	}
+
 }

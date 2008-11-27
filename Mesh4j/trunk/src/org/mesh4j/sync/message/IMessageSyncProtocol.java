@@ -16,6 +16,8 @@ public interface IMessageSyncProtocol {
 
 	ISyncSession getSyncSession(String sourceId, IEndpoint target);
 
+	void registerSource(IMessageSyncAdapter adapter);
+	
 	void registerSourceIfAbsent(IMessageSyncAdapter adapter);
 
 	void endSync(ISyncSession syncSession, Date date);
@@ -23,9 +25,11 @@ public interface IMessageSyncProtocol {
 	void notifyBeginSync(ISyncSession syncSession);
 
 	void registerSyncAware(IMessageSyncAware syncAware);
-
 	
 	IMessage cancelSync(String sourceId, IEndpoint target);
+
 	void cancelSync(ISyncSession syncSession);
+
+	IMessageSyncAdapter getSource(String sourceId);
 
 }

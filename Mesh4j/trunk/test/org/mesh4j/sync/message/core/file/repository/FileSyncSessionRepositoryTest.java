@@ -12,7 +12,9 @@ import org.junit.Test;
 import org.mesh4j.sync.adapters.feed.Feed;
 import org.mesh4j.sync.adapters.feed.FeedAdapter;
 import org.mesh4j.sync.adapters.feed.FeedReader;
+import org.mesh4j.sync.adapters.feed.FeedSyncAdapterFactory;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
+import org.mesh4j.sync.adapters.kml.KMLDOMLoaderFactory;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.message.IEndpoint;
 import org.mesh4j.sync.message.IMessageSyncAdapter;
@@ -40,12 +42,12 @@ public class FileSyncSessionRepositoryTest {
 
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateRepositoryFailsIfDirIsNull(){
-		new FileSyncSessionRepository(null, new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory("", false)));
+		new FileSyncSessionRepository(null, new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(null, false)));
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateRepositoryFailsIfDirIsEmpty(){
-		new FileSyncSessionRepository("", new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory("", false)));
+		new FileSyncSessionRepository("", new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(null, false)));
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
@@ -56,15 +58,17 @@ public class FileSyncSessionRepositoryTest {
 	// FLUSH
 	@Test
 	public void shouldGetFlushFile(){
-		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(TestHelper.baseDirectoryForTest(), false)));
+		FeedSyncAdapterFactory feedAdapterFactory = new FeedSyncAdapterFactory(TestHelper.baseDirectoryForTest());
+		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory(feedAdapterFactory)));
 		File file = repo.getCurrentSessionFile("myFile");
 		Assert.assertEquals(TestHelper.baseDirectoryForTest() + "myFile_current.xml", file.getAbsolutePath());
 	}
-	
+
 	@Test
 	public void shouldFlushOpenSession() throws DocumentException{
 
-		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(TestHelper.baseDirectoryForTest(), false)));
+		FeedSyncAdapterFactory feedAdapterFactory = new FeedSyncAdapterFactory(TestHelper.baseDirectoryForTest());
+		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory(feedAdapterFactory)));
 		String sessionId = IdGenerator.INSTANCE.newID();
 		
 		File file = repo.getCurrentSessionFile(sessionId);
@@ -88,7 +92,8 @@ public class FileSyncSessionRepositoryTest {
 	@Test(expected=MeshException.class)
 	public void shouldFlushCloseSessionFails() throws DocumentException{
 
-		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(TestHelper.baseDirectoryForTest(), false)));
+		FeedSyncAdapterFactory feedAdapterFactory = new FeedSyncAdapterFactory(TestHelper.baseDirectoryForTest());
+		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory(feedAdapterFactory)));
 		String sessionId = IdGenerator.INSTANCE.newID();
 		
 		File file = repo.getCurrentSessionFile(sessionId);
@@ -113,7 +118,7 @@ public class FileSyncSessionRepositoryTest {
 	@Test
 	public void shouldFlushFullProtocolSession() throws DocumentException{
 
-		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(TestHelper.baseDirectoryForTest(), false)));
+		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
 		
 		File file = repo.getCurrentSessionFile(sessionId);
@@ -134,11 +139,11 @@ public class FileSyncSessionRepositoryTest {
 		Assert.assertNotNull(syncSessionElement);
 		Assert.assertEquals("true", syncSessionElement.attributeValue(FileSyncSessionRepository.ATTRIBUTE_FULL));	
 	}
-	
+
 	@Test
 	public void shouldFlushLightProtocolSession() throws DocumentException{
 
-		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(TestHelper.baseDirectoryForTest(), false)));
+		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
 		
 		File file = repo.getCurrentSessionFile(sessionId);
@@ -163,7 +168,7 @@ public class FileSyncSessionRepositoryTest {
 	@Test
 	public void shouldFlushLastSyncDateSession() throws DocumentException{
 
-		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(TestHelper.baseDirectoryForTest(), false)));
+		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
 		
 		File file = repo.getCurrentSessionFile(sessionId);
@@ -188,7 +193,7 @@ public class FileSyncSessionRepositoryTest {
 	@Test
 	public void shouldFlushNonLastSyncDateSession() throws DocumentException{
 
-		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(TestHelper.baseDirectoryForTest(), false)));
+		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
 		
 		File file = repo.getCurrentSessionFile(sessionId);
@@ -212,7 +217,7 @@ public class FileSyncSessionRepositoryTest {
 	@Test
 	public void shouldFlushNonEmptySession() throws DocumentException{
 
-		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(TestHelper.baseDirectoryForTest(), false)));
+		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
 		
 		File file = repo.getCurrentSessionFile(sessionId);
@@ -240,7 +245,7 @@ public class FileSyncSessionRepositoryTest {
 	@Test
 	public void shouldFlushEmptySession() throws DocumentException{
 
-		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(TestHelper.baseDirectoryForTest(), false)));
+		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
 		
 		File file = repo.getCurrentSessionFile(sessionId);
@@ -265,7 +270,7 @@ public class FileSyncSessionRepositoryTest {
 	@Test
 	public void shouldFlushACKSession() throws DocumentException{
 
-		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(TestHelper.baseDirectoryForTest(), false)));
+		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
 		
 		File file = repo.getCurrentSessionFile(sessionId);
@@ -293,7 +298,7 @@ public class FileSyncSessionRepositoryTest {
 	@Test
 	public void shouldFlushNonACKSession() throws DocumentException{
 
-		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(TestHelper.baseDirectoryForTest(), false)));
+		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
 		
 		File file = repo.getCurrentSessionFile(sessionId);
@@ -317,7 +322,7 @@ public class FileSyncSessionRepositoryTest {
 	@Test
 	public void shouldFlushConflictSession() throws DocumentException{
 
-		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(TestHelper.baseDirectoryForTest(), false)));
+		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
 		
 		File file = repo.getCurrentSessionFile(sessionId);
@@ -343,7 +348,7 @@ public class FileSyncSessionRepositoryTest {
 	
 	@Test
 	public void shouldFlushNonConflictSession() throws DocumentException{
-		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(TestHelper.baseDirectoryForTest(), false)));
+		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
 		
 		File file = repo.getCurrentSessionFile(sessionId);
@@ -367,7 +372,7 @@ public class FileSyncSessionRepositoryTest {
 	// SNAPSHOT
 	@Test
 	public void shouldGetSnapshotFile(){
-		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(TestHelper.baseDirectoryForTest(), false)));
+		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		File file = repo.getSnapshotFile("myFile");
 		Assert.assertEquals(TestHelper.baseDirectoryForTest() + "myFile_snapshot.xml", file.getAbsolutePath());
 	}
@@ -375,7 +380,7 @@ public class FileSyncSessionRepositoryTest {
 	@Test(expected=MeshException.class)
 	public void shouldSnapshotOpenSessionFails() throws DocumentException{
 
-		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(TestHelper.baseDirectoryForTest(), false)));
+		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
 		
 		File file = repo.getSnapshotFile(sessionId);
@@ -399,7 +404,7 @@ public class FileSyncSessionRepositoryTest {
 	@Test
 	public void shouldSnapshotCloseSession() throws DocumentException{
 
-		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(TestHelper.baseDirectoryForTest(), false)));
+		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
 		
 		File file = repo.getSnapshotFile(sessionId);
@@ -424,7 +429,7 @@ public class FileSyncSessionRepositoryTest {
 	@Test
 	public void shouldSnapshotFullProtocolSession() throws DocumentException{
 
-		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(TestHelper.baseDirectoryForTest(), false)));
+		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
 		
 		File file = repo.getSnapshotFile(sessionId);
@@ -448,7 +453,7 @@ public class FileSyncSessionRepositoryTest {
 	@Test
 	public void shouldSnapshotLightProtocolSession() throws DocumentException{
 
-		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(TestHelper.baseDirectoryForTest(), false)));
+		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
 		
 		File file = repo.getSnapshotFile(sessionId);
@@ -472,7 +477,7 @@ public class FileSyncSessionRepositoryTest {
 	@Test
 	public void shouldSnapshotLastSyncDateSession() throws DocumentException{
 
-		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(TestHelper.baseDirectoryForTest(), false)));
+		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
 		
 		File file = repo.getSnapshotFile(sessionId);
@@ -496,7 +501,7 @@ public class FileSyncSessionRepositoryTest {
 	@Test(expected=MeshException.class)
 	public void shouldSnapshotNonLastSyncDateSessionFails() throws DocumentException{
 
-		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(TestHelper.baseDirectoryForTest(), false)));
+		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
 		
 		File file = repo.getSnapshotFile(sessionId);
@@ -519,7 +524,7 @@ public class FileSyncSessionRepositoryTest {
 	@Test
 	public void shouldSnapshotNonEmptySession() throws DocumentException{
 
-		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(TestHelper.baseDirectoryForTest(), false)));
+		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
 		
 		File file = repo.getSnapshotFile(sessionId);
@@ -548,7 +553,7 @@ public class FileSyncSessionRepositoryTest {
 	@Test
 	public void shouldSnapshotEmptySession() throws DocumentException{
 
-		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(TestHelper.baseDirectoryForTest(), false)));
+		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
 		
 		File file = repo.getSnapshotFile(sessionId);
@@ -572,7 +577,7 @@ public class FileSyncSessionRepositoryTest {
 	@Test
 	public void shouldSnapshotACKSession() throws DocumentException{
 
-		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(TestHelper.baseDirectoryForTest(), false)));
+		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
 		
 		File file = repo.getSnapshotFile(sessionId);
@@ -600,7 +605,7 @@ public class FileSyncSessionRepositoryTest {
 	@Test
 	public void shouldSnapshotNonACKSession() throws DocumentException{
 
-		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(TestHelper.baseDirectoryForTest(), false)));
+		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
 		
 		File file = repo.getSnapshotFile(sessionId);
@@ -627,7 +632,7 @@ public class FileSyncSessionRepositoryTest {
 	@Test
 	public void shouldSnapshotConflictSession() throws DocumentException{
 
-		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(TestHelper.baseDirectoryForTest(), false)));
+		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
 		
 		File file = repo.getSnapshotFile(sessionId);
@@ -654,7 +659,7 @@ public class FileSyncSessionRepositoryTest {
 	
 	@Test
 	public void shouldSnapshotNonConflictSession() throws DocumentException{
-		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(TestHelper.baseDirectoryForTest(), false)));
+		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
 		
 		File file = repo.getSnapshotFile(sessionId);
@@ -679,7 +684,7 @@ public class FileSyncSessionRepositoryTest {
 	
 	@Test
 	public void shouldSnapshotDeleteCurrentFile(){
-		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(TestHelper.baseDirectoryForTest(), false)));
+		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
 		
 		File file = repo.getSnapshotFile(sessionId);
@@ -713,7 +718,7 @@ public class FileSyncSessionRepositoryTest {
 	// DELETE CURRENT SESSION
 	@Test
 	public void shouldDeleteCurrentSessionFile(){
-		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(TestHelper.baseDirectoryForTest(), false)));
+		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
 		
 		File file = repo.getCurrentSessionFile(sessionId);
@@ -728,7 +733,7 @@ public class FileSyncSessionRepositoryTest {
 
 	@Test
 	public void shouldDeleteCurrentSessionFileNoEffectWhenFileDoesNotExist(){
-		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(TestHelper.baseDirectoryForTest(), false)));
+		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
 		
 		File file = repo.getCurrentSessionFile(sessionId);
@@ -740,7 +745,7 @@ public class FileSyncSessionRepositoryTest {
 	
 	@Test
 	public void shouldCancelCurrentSession(){
-		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(TestHelper.baseDirectoryForTest(), false)));
+		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
 		
 		File file = repo.getCurrentSessionFile(sessionId);
@@ -757,7 +762,7 @@ public class FileSyncSessionRepositoryTest {
 
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCancelFailsWhenSessionIsNull(){
-		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(TestHelper.baseDirectoryForTest(), false)));
+		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		repo.cancel(null);
 	}
 	
@@ -765,7 +770,7 @@ public class FileSyncSessionRepositoryTest {
 	
 	@Test
 	public void shouldReadSnapshot(){
-		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(TestHelper.baseDirectoryForTest(), false)));
+		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = "t3";
 		String syncID = IdGenerator.INSTANCE.newID();
 		
@@ -783,7 +788,7 @@ public class FileSyncSessionRepositoryTest {
 	
 	@Test(expected=MeshException.class)
 	public void shouldReadSessionFailsWhenSnapshotAndCurrentSessionDoesNotExist(){
-		ISyncSessionFactory sessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(TestHelper.baseDirectoryForTest(), false));
+		ISyncSessionFactory sessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory());
 		sessionFactory.registerSource(new InMemoryMessageSyncAdapter("123"));
 		
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), sessionFactory);
@@ -797,7 +802,8 @@ public class FileSyncSessionRepositoryTest {
 		String sessionId = "exampleSnapshotWithErrorInSessionID";
 		File file = new File(this.getClass().getResource(sessionId + "_snapshot.xml").getFile());
 		
-		ISyncSessionFactory sessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(file.getParent()+"\\", false));
+		FeedSyncAdapterFactory feedFactory =  new FeedSyncAdapterFactory(file.getParent()+"\\");
+		ISyncSessionFactory sessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory(feedFactory));
 		sessionFactory.registerSource(new InMemoryMessageSyncAdapter("123"));
 
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(file.getParent()+"\\", sessionFactory);
@@ -810,7 +816,8 @@ public class FileSyncSessionRepositoryTest {
 		String sessionId = "exampleCurrentWithErrorInSessionID";
 		File file = new File(this.getClass().getResource(sessionId + "_current.xml").getFile());
 		
-		ISyncSessionFactory sessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(file.getParent()+"\\", false));
+		FeedSyncAdapterFactory feedFactory =  new FeedSyncAdapterFactory(file.getParent()+"\\");
+		ISyncSessionFactory sessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory(feedFactory));
 		sessionFactory.registerSource(new InMemoryMessageSyncAdapter("123"));
 		
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(file.getParent()+"\\", sessionFactory);
@@ -823,7 +830,8 @@ public class FileSyncSessionRepositoryTest {
 		String sessionId = "exampleSnapshotAndCurrentWithErrorInSessionID";
 		File file = new File(this.getClass().getResource(sessionId + "_snapshot.xml").getFile());
 		
-		ISyncSessionFactory sessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(file.getParent()+"\\", false));
+		FeedSyncAdapterFactory feedFactory =  new FeedSyncAdapterFactory(file.getParent()+"\\");
+		ISyncSessionFactory sessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory(feedFactory));
 		sessionFactory.registerSource(new InMemoryMessageSyncAdapter("123"));
 		
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(file.getParent()+"\\", sessionFactory);
@@ -836,7 +844,8 @@ public class FileSyncSessionRepositoryTest {
 		String sessionId = "example1";
 		File file = new File(this.getClass().getResource(sessionId + "_snapshot.xml").getFile());
 		
-		ISyncSessionFactory sessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(file.getParent()+"\\", false));
+		FeedSyncAdapterFactory feedFactory =  new FeedSyncAdapterFactory(file.getParent()+"\\");
+		ISyncSessionFactory sessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory(feedFactory));
 		sessionFactory.registerSource(new InMemoryMessageSyncAdapter("123"));
 		
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(file.getParent()+"\\", sessionFactory);
@@ -854,7 +863,8 @@ public class FileSyncSessionRepositoryTest {
 		String sessionId = "example2";
 		File file = new File(this.getClass().getResource(sessionId + "_current.xml").getFile());
 
-		ISyncSessionFactory sessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(file.getParent()+"\\", false));
+		FeedSyncAdapterFactory feedFactory =  new FeedSyncAdapterFactory(file.getParent()+"\\");
+		ISyncSessionFactory sessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory(feedFactory));
 		sessionFactory.registerSource(new InMemoryMessageSyncAdapter("123"));
 		
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(file.getParent()+"\\", sessionFactory);
@@ -872,7 +882,8 @@ public class FileSyncSessionRepositoryTest {
 		String sessionId = "example3";
 		File file = new File(this.getClass().getResource(sessionId + "_snapshot.xml").getFile());
 
-		ISyncSessionFactory sessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(file.getParent()+"\\", false));
+		FeedSyncAdapterFactory feedFactory =  new FeedSyncAdapterFactory(file.getParent()+"\\");
+		ISyncSessionFactory sessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory(feedFactory));
 		sessionFactory.registerSource(new InMemoryMessageSyncAdapter("123"));
 
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(file.getParent()+"\\", sessionFactory);
@@ -891,7 +902,8 @@ public class FileSyncSessionRepositoryTest {
 		String sessionId = "example4";
 		File file = new File(this.getClass().getResource(sessionId + "_snapshot.xml").getFile());
 
-		ISyncSessionFactory sessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(file.getParent()+"\\", false));
+		FeedSyncAdapterFactory feedFactory =  new FeedSyncAdapterFactory(file.getParent()+"\\");
+		ISyncSessionFactory sessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory(feedFactory));
 		sessionFactory.registerSource(new InMemoryMessageSyncAdapter("123"));
 		
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(file.getParent()+"\\", sessionFactory);
@@ -908,7 +920,8 @@ public class FileSyncSessionRepositoryTest {
 		String sessionId = "example5";
 		File file = new File(this.getClass().getResource(sessionId + "_snapshot.xml").getFile());
 		
-		ISyncSessionFactory sessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(file.getParent()+"\\", false));
+		FeedSyncAdapterFactory feedFactory =  new FeedSyncAdapterFactory(file.getParent()+"\\");
+		ISyncSessionFactory sessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory(feedFactory));
 		sessionFactory.registerSource(new InMemoryMessageSyncAdapter("123"));
 		
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(file.getParent()+"\\", sessionFactory);
@@ -925,7 +938,8 @@ public class FileSyncSessionRepositoryTest {
 		String sessionId = "example4";
 		File file = new File(this.getClass().getResource(sessionId + "_snapshot.xml").getFile());
 		
-		ISyncSessionFactory sessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(file.getParent()+"\\", false));
+		FeedSyncAdapterFactory feedFactory =  new FeedSyncAdapterFactory(file.getParent()+"\\");
+		ISyncSessionFactory sessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory(feedFactory));
 		sessionFactory.registerSource(new InMemoryMessageSyncAdapter("123"));
 		
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(file.getParent()+"\\", sessionFactory);
@@ -942,7 +956,8 @@ public class FileSyncSessionRepositoryTest {
 		String sessionId = "example6";
 		File file = new File(this.getClass().getResource(sessionId + "_current.xml").getFile());
 		
-		ISyncSessionFactory sessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(file.getParent()+"\\", false));
+		FeedSyncAdapterFactory feedFactory =  new FeedSyncAdapterFactory(file.getParent()+"\\");
+		ISyncSessionFactory sessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory(feedFactory));
 		sessionFactory.registerSource(new InMemoryMessageSyncAdapter("123"));
 		
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(file.getParent()+"\\", sessionFactory);
@@ -959,7 +974,8 @@ public class FileSyncSessionRepositoryTest {
 		String sessionId = "example7";
 		File file = new File(this.getClass().getResource(sessionId + "_current.xml").getFile());
 		
-		ISyncSessionFactory sessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(file.getParent()+"\\", false));
+		FeedSyncAdapterFactory feedFactory =  new FeedSyncAdapterFactory(file.getParent()+"\\");
+		ISyncSessionFactory sessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory(feedFactory));
 		sessionFactory.registerSource(new InMemoryMessageSyncAdapter("123"));
 		
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(file.getParent()+"\\", sessionFactory);
@@ -978,7 +994,8 @@ public class FileSyncSessionRepositoryTest {
 		String sessionId = "example8";
 		File file = new File(this.getClass().getResource(sessionId + "_current.xml").getFile());
 		
-		ISyncSessionFactory sessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(file.getParent()+"\\", false));
+		FeedSyncAdapterFactory feedFactory =  new FeedSyncAdapterFactory(file.getParent()+"\\");
+		ISyncSessionFactory sessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory(feedFactory));
 		sessionFactory.registerSource(new InMemoryMessageSyncAdapter("123"));
 		
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(file.getParent()+"\\", sessionFactory);
@@ -996,7 +1013,8 @@ public class FileSyncSessionRepositoryTest {
 		String sessionId = "example9";
 		File file = new File(this.getClass().getResource(sessionId + "_current.xml").getFile());
 		
-		ISyncSessionFactory sessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(file.getParent()+"\\", false));
+		FeedSyncAdapterFactory feedFactory =  new FeedSyncAdapterFactory(file.getParent()+"\\");
+		ISyncSessionFactory sessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory(feedFactory));
 		sessionFactory.registerSource(new InMemoryMessageSyncAdapter("123"));
 		
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(file.getParent()+"\\", sessionFactory);
@@ -1014,7 +1032,8 @@ public class FileSyncSessionRepositoryTest {
 		String sessionId = "example8";
 		File file = new File(this.getClass().getResource(sessionId + "_current.xml").getFile());
 		
-		ISyncSessionFactory sessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(file.getParent()+"\\", false));
+		FeedSyncAdapterFactory feedFactory =  new FeedSyncAdapterFactory(file.getParent()+"\\");
+		ISyncSessionFactory sessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory(feedFactory));
 		sessionFactory.registerSource(new InMemoryMessageSyncAdapter("123"));
 		
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(file.getParent()+"\\", sessionFactory);
@@ -1030,13 +1049,13 @@ public class FileSyncSessionRepositoryTest {
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateSessionFailsIfSourceIDIsNull(){
-		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(TestHelper.baseDirectoryForTest(), false)));
+		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		repo.createSession(null, 0, "1234", new SmsEndpoint("sms:1"), false);
 	}
 
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateSessionFailsIfEndPointIsNull(){
-		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(TestHelper.baseDirectoryForTest(), false)));
+		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		repo.createSession("123",0, null, new SmsEndpoint("sms:1"), false);
 	}
 	
@@ -1045,7 +1064,7 @@ public class FileSyncSessionRepositoryTest {
 		String sourceID = "1234";
 		IEndpoint endpoint = new SmsEndpoint("sms:1");
 
-		SyncSessionFactory sessionFac = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(TestHelper.baseDirectoryForTest(), false));
+		SyncSessionFactory sessionFac = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory());
 		sessionFac.registerSource(new InMemoryMessageSyncAdapter(sourceID));
 		
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), sessionFac);
@@ -1071,7 +1090,7 @@ public class FileSyncSessionRepositoryTest {
 		String sourceID = "1234";
 		IEndpoint endpoint = new SmsEndpoint("sms:1");
 
-		SyncSessionFactory sessionFac = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(TestHelper.baseDirectoryForTest(), false));
+		SyncSessionFactory sessionFac = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory());
 		sessionFac.registerSource(new InMemoryMessageSyncAdapter(sourceID));
 		
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), sessionFac);
@@ -1087,7 +1106,7 @@ public class FileSyncSessionRepositoryTest {
 		String sourceID = "1234";
 		IEndpoint endpoint = new SmsEndpoint("sms:1");
 
-		SyncSessionFactory sessionFac = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(TestHelper.baseDirectoryForTest(), false));
+		SyncSessionFactory sessionFac = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory());
 		sessionFac.registerSource(new InMemoryMessageSyncAdapter(sourceID));
 		
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), sessionFac);
@@ -1101,8 +1120,8 @@ public class FileSyncSessionRepositoryTest {
 	@Test
 	public void shouldReadAllSessions(){
 		File file = new File(this.getClass().getResource("example2_current.xml").getFile());
-		
-		SyncSessionFactory syncSessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(file.getParent()+"\\", false));
+		FeedSyncAdapterFactory feedFactory =  new FeedSyncAdapterFactory(TestHelper.baseDirectoryForTest());
+		SyncSessionFactory syncSessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory(feedFactory));
 		syncSessionFactory.registerSource(new InMemoryMessageSyncAdapter("123"));
 		
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(file.getParent()+"\\", syncSessionFactory);
@@ -1118,7 +1137,8 @@ public class FileSyncSessionRepositoryTest {
 	public void shouldReadAllSessionsReturnsSessionsWithFeedAdapterWhenNoSourceIsRegistered(){
 		File file = new File(this.getClass().getResource("example2_current.xml").getFile());
 		
-		SyncSessionFactory syncSessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(file.getParent()+"\\", false));
+		FeedSyncAdapterFactory feedFactory =  new FeedSyncAdapterFactory(TestHelper.baseDirectoryForTest());
+		SyncSessionFactory syncSessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory(feedFactory));
 				
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(file.getParent()+"\\", syncSessionFactory);
 		
@@ -1134,7 +1154,8 @@ public class FileSyncSessionRepositoryTest {
 		String sessionId = "example2";
 		File file = new File(this.getClass().getResource(sessionId + "_current.xml").getFile());
 
-		ISyncSessionFactory sessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(file.getParent()+"\\", false));
+		FeedSyncAdapterFactory feedFactory =  new FeedSyncAdapterFactory(TestHelper.baseDirectoryForTest());
+		ISyncSessionFactory sessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory(feedFactory));
 		
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(file.getParent()+"\\", sessionFactory);
 				
@@ -1143,5 +1164,15 @@ public class FileSyncSessionRepositoryTest {
 		Assert.assertEquals(MessageSyncAdapter.class.getName(), adapter.getClass().getName());
 		Assert.assertEquals(FeedAdapter.class.getName(), ((MessageSyncAdapter)adapter).getSyncAdapter().getClass().getName());
 
+	}
+	
+	private MessageSyncAdapterFactory createMessageSyncAdapterFactory() {
+		FeedSyncAdapterFactory feedFactory =  new FeedSyncAdapterFactory(TestHelper.baseDirectoryForTest());
+		KMLDOMLoaderFactory kmlFactory = new KMLDOMLoaderFactory(TestHelper.baseDirectoryForTest());
+		return new MessageSyncAdapterFactory(feedFactory, false, kmlFactory);
+	}
+	
+	private MessageSyncAdapterFactory createMessageSyncAdapterFactory(FeedSyncAdapterFactory feedAdapterFactory) {
+		return new MessageSyncAdapterFactory(feedAdapterFactory, false);
 	}
 }

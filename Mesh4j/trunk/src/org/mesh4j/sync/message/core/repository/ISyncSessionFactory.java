@@ -11,9 +11,9 @@ import org.mesh4j.sync.model.Item;
 
 public interface ISyncSessionFactory {
 
-	void registerSource(IMessageSyncAdapter source);
-	
 	IMessageSyncAdapter getSource(String sourceId);
+	
+	IMessageSyncAdapter getSourceOrCreateIfAbsent(String sourceId);
 	
 	ISyncSession get(String sessionId);
 	
@@ -26,6 +26,8 @@ public interface ISyncSessionFactory {
 		List<Item> currentSyncSnapshot, List<Item> lastSyncSnapshot,
 		List<String> conflicts, List<String> acks);
 
+	void registerSource(IMessageSyncAdapter source);
+	
 	void registerSourceIfAbsent(IMessageSyncAdapter source);
 
 }

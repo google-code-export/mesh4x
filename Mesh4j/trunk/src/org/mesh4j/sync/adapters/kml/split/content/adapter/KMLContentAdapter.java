@@ -224,7 +224,6 @@ public class KMLContentAdapter implements IContentAdapter{
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<IContent> getAll(Date since) {		
 		return getAll();

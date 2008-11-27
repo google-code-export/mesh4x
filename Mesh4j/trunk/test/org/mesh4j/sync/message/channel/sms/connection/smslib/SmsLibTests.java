@@ -7,6 +7,7 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.junit.Assert;
 import org.mesh4j.sync.adapters.dom.DOMAdapter;
+import org.mesh4j.sync.adapters.feed.FeedSyncAdapterFactory;
 import org.mesh4j.sync.adapters.feed.XMLContent;
 import org.mesh4j.sync.adapters.kml.KMLDOMLoaderFactory;
 import org.mesh4j.sync.id.generator.IdGenerator;
@@ -200,7 +201,10 @@ public class SmsLibTests {
 	private MessageSyncEngine createSyncSmsEndpoint(String gatewayId, IMessageSyncAdapter adapter, ISmsConnection smsConnection, int delay){
 		FileSmsChannelRepository channelRepo = new FileSmsChannelRepository(TestHelper.baseDirectoryForTest()+gatewayId+"\\");
 		SmsChannelWrapper channel = new SmsChannelWrapper((SmsChannel) SmsChannelFactory.createChannel(smsConnection, delay, delay, channelRepo, channelRepo));
-		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(TestHelper.baseDirectoryForTest()+gatewayId+"\\", false);
+		
+		KMLDOMLoaderFactory kmlFactory = new KMLDOMLoaderFactory(TestHelper.baseDirectoryForTest()+gatewayId+"\\");
+		FeedSyncAdapterFactory feedFactory = new FeedSyncAdapterFactory(TestHelper.baseDirectoryForTest()+gatewayId+"\\");
+		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(feedFactory, false, kmlFactory);
 		SyncSessionFactory syncSessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);
 		syncSessionFactory.registerSource(adapter);
 	

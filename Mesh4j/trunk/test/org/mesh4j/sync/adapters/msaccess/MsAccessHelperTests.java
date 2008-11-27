@@ -24,9 +24,9 @@ public class MsAccessHelperTests {
 			"C:/Clarius/mesh4x/test/epiinfo/demo");
 		
 		ISyncAdapter syncAdapterB = MsAccessSyncAdapterFactory.createSyncAdapterFromFile(
-			"C:/Clarius/mesh4x/test/epiinfo/0111555627633/epiinfo.mdb", 
+			"C:/Clarius/mesh4x/test/epiinfo/demo1/epiinfo.mdb", 
 			"Oswego", 
-			"C:/Clarius/mesh4x/test/epiinfo/0111555627633");
+			"C:/Clarius/mesh4x/test/epiinfo/demo1");
 		
 		SyncEngine syncEngine = new SyncEngine(syncAdapterA, syncAdapterB);
 		

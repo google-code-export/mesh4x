@@ -1,5 +1,10 @@
 package org.mesh4j.sync.adapters.kml;
 
+import java.io.File;
+
+import org.mesh4j.sync.ISyncAdapter;
+import org.mesh4j.sync.adapters.ISyncAdapterFactory;
+import org.mesh4j.sync.adapters.dom.DOMAdapter;
 import org.mesh4j.sync.adapters.dom.DOMLoader;
 import org.mesh4j.sync.adapters.dom.MeshNames;
 import org.mesh4j.sync.adapters.dom.parsers.FileManager;
@@ -9,7 +14,17 @@ import org.mesh4j.sync.parsers.XMLView;
 import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.validations.Guard;
 
-public class KMLDOMLoaderFactory {
+public class KMLDOMLoaderFactory implements ISyncAdapterFactory {
+
+	// MODEL VARIABLES
+	private String baseDirectory;
+	
+	// BUSINESS METHODS
+	public KMLDOMLoaderFactory(String baseDirectory){
+		Guard.argumentNotNull(baseDirectory, "baseDirectory");
+		
+		this.baseDirectory = baseDirectory;
+	}
 	
 	public static boolean isKML(String fileName){
 		Guard.argumentNotNullOrEmptyString(fileName, "fileName");
@@ -53,5 +68,26 @@ public class KMLDOMLoaderFactory {
 		KMLDocumentExtendedDataViewElement documentExtendedDataView = new KMLDocumentExtendedDataViewElement();
 		FileXMLViewElement fileView = new FileXMLViewElement(fileManager);
 		return new XMLView(styleView, styleMapView, folderView, placemarkView, photoView, imageView, schemaView, documentExtendedDataView, hierarchyView, fileView);
+	}
+	
+	// ISyncAdapterFactry methods
+	
+	public static String createSourceId(String kmlFileName){
+		File file = new File(kmlFileName);
+		String sourceID = file.getName();
+		return sourceID;
+	}
+	
+
+	@Override
+	public boolean acceptsSourceId(String sourceId) {
+		return isKML(sourceId);
+	}
+
+	@Override
+	public ISyncAdapter createSyncAdapter(String sourceId, IIdentityProvider identityProvider) throws Exception {
+		String kmlFileName = this.baseDirectory+"/" + sourceId;
+		DOMAdapter kmlAdapter = new DOMAdapter(createDOMLoader(kmlFileName, identityProvider));
+		return kmlAdapter;
 	}
 }

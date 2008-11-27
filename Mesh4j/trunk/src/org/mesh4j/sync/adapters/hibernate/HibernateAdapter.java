@@ -248,9 +248,9 @@ public class HibernateAdapter extends AbstractSyncAdapter implements ISessionPro
 				/// item actual data. If it's not, a new 
 				/// update will be added. Used when exporting/retrieving 
 				/// items from the local stores.
-				if (!syncInfo.isDeleted() && syncInfo.contentHasChanged(entity))
+				if ((!syncInfo.isDeleted() && syncInfo.contentHasChanged(entity)) || syncInfo.isDeleted())
 				{
-					sync.update(this.getAuthenticatedUser(), new Date(), sync.isDeleted());
+					sync.update(this.getAuthenticatedUser(), new Date(), false);
 					syncInfo.setVersion(entity.getVersion());
 					syncDAO.save(syncInfo);
 				}

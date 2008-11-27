@@ -265,7 +265,6 @@ public class KMLDOMLoaderTests {
 		Assert.assertNotNull(extendedData.getNamespaceForPrefix(MeshNames.MESH_PREFIX));
 	}
 	
-	@SuppressWarnings("unused")
 	private class MockLoader extends DOMLoader{
 
 		private Document document;

@@ -1,67 +1,62 @@
 package org.mesh4j.sync.message.core.repository;
 
-import java.io.File;
+import java.util.ArrayList;
 
 import org.mesh4j.sync.ISyncAdapter;
-import org.mesh4j.sync.adapters.dom.DOMAdapter;
-import org.mesh4j.sync.adapters.feed.Feed;
-import org.mesh4j.sync.adapters.feed.FeedAdapter;
-import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
-import org.mesh4j.sync.adapters.kml.KMLDOMLoaderFactory;
-import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
-import org.mesh4j.sync.id.generator.IdGenerator;
+import org.mesh4j.sync.adapters.ISyncAdapterFactory;
 import org.mesh4j.sync.message.IMessageSyncAdapter;
 import org.mesh4j.sync.message.core.InMemoryMessageSyncAdapter;
 import org.mesh4j.sync.message.core.MessageSyncAdapter;
 import org.mesh4j.sync.security.IIdentityProvider;
-import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
 public class MessageSyncAdapterFactory implements IMessageSyncAdapterFactory {
 
 	// MODEL VARIABLES
-	private String baseDirectory = "";
 	private boolean supportInMemoryAdapter = false;
+	private ISyncAdapterFactory defaultSyncAdapterFactory;
+	private ArrayList<ISyncAdapterFactory> syncAdapterFactories = new ArrayList<ISyncAdapterFactory>();
 	
 	// BUSINESS METHODS
 	
-	public MessageSyncAdapterFactory(String baseDirectory, boolean supportInMemoryAdapter){
-		Guard.argumentNotNull(baseDirectory, "baseDirectory");
-		
-		this.baseDirectory = baseDirectory;
+	public MessageSyncAdapterFactory(ISyncAdapterFactory defaultSyncAdapterFactory, boolean supportInMemoryAdapter, ISyncAdapterFactory ... allSyncAdapterFactories) {
 		this.supportInMemoryAdapter = supportInMemoryAdapter;
+		this.defaultSyncAdapterFactory = defaultSyncAdapterFactory;
+		for (ISyncAdapterFactory syncAdapterFactory : allSyncAdapterFactories) {
+			this.registerSyncAdapterFactory(syncAdapterFactory);
+		}
 	}
-	
+
 	@Override
 	public IMessageSyncAdapter createSyncAdapter(String sourceId, IIdentityProvider identityProvider) {
 		try{
-			// TODO (JMT) create a registry of Factories
-			IMessageSyncAdapter syncAdapter = null;
-			if(KMLDOMLoaderFactory.isKML(sourceId)){
-				String kmlFileName = this.baseDirectory + sourceId;
-				DOMAdapter kmlAdapter = new DOMAdapter(KMLDOMLoaderFactory.createDOMLoader(kmlFileName, identityProvider));
-				syncAdapter = new MessageSyncAdapter(sourceId, identityProvider, kmlAdapter);
-			} else if(MsAccessSyncAdapterFactory.isMsAccess(sourceId)){
-				String[] elements = sourceId.substring("access:".length(), sourceId.length()).split("@");
-				String mdbFileName = elements[0];
-				String tableName = elements[1];
-				ISyncAdapter msAccessAdapter = MsAccessSyncAdapterFactory.createSyncAdapterFromFile(this.baseDirectory+"/"+mdbFileName, tableName, this.baseDirectory);
-				syncAdapter = new MessageSyncAdapter(sourceId, identityProvider, msAccessAdapter);
-			} else {
-				if(this.supportInMemoryAdapter){
-					syncAdapter = new InMemoryMessageSyncAdapter(sourceId);
-				} else {
-					String feedFileName = this.baseDirectory + sourceId;
-					File feedFile = new File(feedFileName);
-					Feed feed = new Feed();
-					FeedAdapter feedAdapter = new FeedAdapter(feedFile, RssSyndicationFormat.INSTANCE, identityProvider, IdGenerator.INSTANCE, feed);
-					syncAdapter = new MessageSyncAdapter(sourceId, identityProvider, feedAdapter);
-				}
+			IMessageSyncAdapter msgSyncAdapter = createMessageSyncAdapter(sourceId, identityProvider);
+			if(msgSyncAdapter == null && this.supportInMemoryAdapter){
+				msgSyncAdapter = new InMemoryMessageSyncAdapter(sourceId);
 			}
-			return syncAdapter;
+			return msgSyncAdapter;
 		} catch (Exception e) {
 			throw new MeshException(e);
 		}
+	}
+
+	private IMessageSyncAdapter createMessageSyncAdapter(String sourceId, IIdentityProvider identityProvider) throws Exception {
+		IMessageSyncAdapter msgSyncAdapter = null;
+		for (ISyncAdapterFactory syncAdapterFactory : this.syncAdapterFactories) {
+			if(syncAdapterFactory.acceptsSourceId(sourceId)){
+				ISyncAdapter syncAdapter = syncAdapterFactory.createSyncAdapter(sourceId, identityProvider);
+				msgSyncAdapter = new MessageSyncAdapter(sourceId, identityProvider, syncAdapter);
+			}
+		}
+		if(msgSyncAdapter == null && this.defaultSyncAdapterFactory != null){
+			ISyncAdapter syncAdapter = this.defaultSyncAdapterFactory.createSyncAdapter(sourceId, identityProvider);
+			msgSyncAdapter = new MessageSyncAdapter(sourceId, identityProvider, syncAdapter);
+		}
+		return msgSyncAdapter;
+	}
+
+	public void registerSyncAdapterFactory(ISyncAdapterFactory syncAdapterFactory) {
+		this.syncAdapterFactories.add(syncAdapterFactory);
 	}
 
 }

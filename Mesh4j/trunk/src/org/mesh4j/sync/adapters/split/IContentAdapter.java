@@ -8,11 +8,11 @@ import org.mesh4j.sync.model.IContent;
 
 public interface IContentAdapter {
 
-	void save(IContent entity);
+	void save(IContent content);
 
-	IContent get(String entityId);
+	IContent get(String contentId);
 
-	void delete(IContent entity);
+	void delete(IContent content);
 
 	List<IContent> getAll(Date since);
 

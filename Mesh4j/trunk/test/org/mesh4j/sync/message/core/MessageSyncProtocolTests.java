@@ -6,6 +6,7 @@ import java.util.Date;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mesh4j.sync.adapters.feed.FeedAdapter;
+import org.mesh4j.sync.adapters.feed.FeedSyncAdapterFactory;
 import org.mesh4j.sync.message.IMessageSyncProtocol;
 import org.mesh4j.sync.message.ISyncSession;
 import org.mesh4j.sync.message.channel.sms.SmsEndpoint;
@@ -15,10 +16,7 @@ import org.mesh4j.sync.message.core.repository.SyncSessionFactory;
 import org.mesh4j.sync.message.protocol.BeginSyncMessageProcessor;
 import org.mesh4j.sync.message.protocol.CancelSyncMessageProcessor;
 import org.mesh4j.sync.model.Item;
-import org.mesh4j.sync.test.utils.TestHelper;
 import org.mesh4j.sync.validations.MeshException;
-
-
 
 public class MessageSyncProtocolTests {
 
@@ -72,7 +70,7 @@ public class MessageSyncProtocolTests {
 	
 	
 	public void shouldBeginSyncReturnNullWhenSessionIsOpen(){
-		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(TestHelper.baseDirectoryForTest(), false);
+		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(null, true);
 		SyncSessionFactory syncSessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);
 		syncSessionFactory.registerSource(new InMemoryMessageSyncAdapter("123"));
 		
@@ -84,7 +82,7 @@ public class MessageSyncProtocolTests {
 	
 	@Test
 	public void shouldBeginSyncUseFeedAdapterWhenSourceIDIsNotRegistered(){
-		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(TestHelper.baseDirectoryForTest(), false);
+		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(new FeedSyncAdapterFactory(""), true);
 		SyncSessionFactory syncSessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);
 		MessageSyncProtocol syncProtocol = new MessageSyncProtocol("M", new BeginSyncMessageProcessor(null, null), new CancelSyncMessageProcessor(), new MockSyncSessionRepository(syncSessionFactory), new ArrayList<IMessageProcessor>());
 		
@@ -100,7 +98,7 @@ public class MessageSyncProtocolTests {
 	
 	@Test
 	public void shouldProcessMessageReturnNoResponseWhenSourceIDIsNotRegistered(){
-		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(TestHelper.baseDirectoryForTest(), false);
+		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(null, true);
 		SyncSessionFactory syncSessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);
 		MessageSyncProtocol syncProtocol = new MessageSyncProtocol("M", new BeginSyncMessageProcessor(null, null), new CancelSyncMessageProcessor(), new MockSyncSessionRepository(syncSessionFactory), new ArrayList<IMessageProcessor>());
 		Assert.assertEquals(IMessageSyncProtocol.NO_RESPONSE, syncProtocol.processMessage(new Message("M", "1", "1", 0, "a", new SmsEndpoint("sms:1"))));
@@ -108,7 +106,7 @@ public class MessageSyncProtocolTests {
 	
 	@Test(expected=MeshException.class)
 	public void shouldCancelSyncFailsWhenSessionIsNull(){
-		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(TestHelper.baseDirectoryForTest(), false);
+		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(null, true);
 		SyncSessionFactory syncSessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);
 		syncSessionFactory.registerSource(new InMemoryMessageSyncAdapter("123"));
 
@@ -118,7 +116,7 @@ public class MessageSyncProtocolTests {
 	
 	@Test(expected=MeshException.class)
 	public void shouldCancelSyncFailsWhenSessionIsClosed(){
-		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(TestHelper.baseDirectoryForTest(), false);
+		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(null, true);
 		SyncSessionFactory syncSessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);
 		syncSessionFactory.registerSource(new InMemoryMessageSyncAdapter("123"));
 		
@@ -131,7 +129,7 @@ public class MessageSyncProtocolTests {
 	
 	@Test
 	public void shouldCancelSync(){
-		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(TestHelper.baseDirectoryForTest(), false);
+		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(null, true);
 		SyncSessionFactory syncSessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);
 		syncSessionFactory.registerSource(new InMemoryMessageSyncAdapter("123"));
 		

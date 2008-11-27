@@ -5,7 +5,6 @@ import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.Formatter;
 
-import org.junit.Test;
 import org.smslib.helper.CommPortIdentifier;
 import org.smslib.helper.SerialPort;
 
@@ -38,7 +37,7 @@ public class CommTests {
 		System.out.println("\nTest complete.");
 	}
 	
-	@Test
+//	@Test
 	public void testsCOM()
 	{
 		System.out.println("\nSearching for devices...");

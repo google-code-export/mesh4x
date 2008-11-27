@@ -142,7 +142,7 @@ public class MessageSyncProtocol implements IMessageSyncProtocol {
 	public void endSync(ISyncSession syncSession, Date date) {
 		syncSession.endSync(date);
 		
-		IMessageSyncAdapter adapter = this.repository.getSource(syncSession.getSourceId());
+		IMessageSyncAdapter adapter = this.repository.getSourceOrCreateIfAbsent(syncSession.getSourceId());
 		List<Item> conflicts = adapter.synchronizeSnapshot(syncSession);
 		
 		this.notifyEndSync(syncSession, conflicts);
@@ -156,6 +156,16 @@ public class MessageSyncProtocol implements IMessageSyncProtocol {
 	@Override
 	public void registerSourceIfAbsent(IMessageSyncAdapter adapter) {
 		this.repository.registerSourceIfAbsent(adapter);
+	}
+	
+	@Override
+	public void registerSource(IMessageSyncAdapter adapter) {
+		this.repository.registerSource(adapter);
+	}
+	
+	@Override
+	public IMessageSyncAdapter getSource(String sourceId) {
+		return this.repository.getSource(sourceId);
 	}
 	
 	public void registerSyncAware(IMessageSyncAware syncAware){
@@ -227,4 +237,5 @@ public class MessageSyncProtocol implements IMessageSyncProtocol {
 	public IBeginSyncMessageProcessor getInitialMessage(){
 		return this.initialMessage;
 	}
+
 }

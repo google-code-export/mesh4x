@@ -72,8 +72,9 @@ public class SyncInfo {
 				sync.delete(identityProvider.getAuthenticatedUser(), new Date());
 				return true;
 			}
-		}else{
-			if (!this.isDeleted() && this.contentHasChanged(content)){
+		}else if(content != null && sync != null){
+			//if (!this.isDeleted() && this.contentHasChanged(content)){
+			if ((!this.isDeleted() && this.contentHasChanged(content)) || this.isDeleted()){
 				sync.update(identityProvider.getAuthenticatedUser(), new Date(), sync.isDeleted());
 				this.setVersion(content.getVersion());
 				return true;

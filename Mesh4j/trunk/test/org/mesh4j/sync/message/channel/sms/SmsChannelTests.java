@@ -6,6 +6,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.message.MockMessageEncoding;
+import org.mesh4j.sync.message.MockSmsConnection;
 import org.mesh4j.sync.message.channel.sms.batch.MessageBatchFactory;
 import org.mesh4j.sync.message.channel.sms.batch.SmsMessage;
 import org.mesh4j.sync.message.channel.sms.batch.SmsMessageBatch;
@@ -13,6 +14,7 @@ import org.mesh4j.sync.message.channel.sms.core.MessageFormatter;
 import org.mesh4j.sync.message.channel.sms.core.MockSmsReceiver;
 import org.mesh4j.sync.message.channel.sms.core.SmsChannel;
 import org.mesh4j.sync.message.core.Message;
+import org.mesh4j.sync.message.core.NonMessageEncoding;
 import org.mesh4j.sync.test.utils.TestHelper;
 
 
@@ -20,22 +22,22 @@ public class SmsChannelTests {
 
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateChannelFailsWhenSenderIsNull(){
-		 new SmsChannel(null, new MockSmsReceiver(), new MockMessageEncoding(), 10);
+		 new SmsChannel(new MockSmsConnection("1", NonMessageEncoding.INSTANCE),null, new MockSmsReceiver(), new MockMessageEncoding(), 10);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateChannelFailsWhenReceiverIsNull(){
-		 new SmsChannel(new MockSmsSender(), null, new MockMessageEncoding(), 10);
+		 new SmsChannel(new MockSmsConnection("1", NonMessageEncoding.INSTANCE),new MockSmsSender(), null, new MockMessageEncoding(), 10);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateChannelFailsWhenEncodingIsNull(){
-		 new SmsChannel(new MockSmsSender(), new MockSmsReceiver(), null, 10);
+		 new SmsChannel(new MockSmsConnection("1", NonMessageEncoding.INSTANCE),new MockSmsSender(), new MockSmsReceiver(), null, 10);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldReceiveBathcFailsWhenBathcIsNull(){
-		 SmsChannel channel = new SmsChannel(new MockSmsSender(), new MockSmsReceiver(), new MockMessageEncoding(), 10);
+		 SmsChannel channel = new SmsChannel(new MockSmsConnection("1", NonMessageEncoding.INSTANCE), new MockSmsSender(), new MockSmsReceiver(), new MockMessageEncoding(), 10);
 		 channel.receive(null);
 	}
 	
@@ -51,7 +53,7 @@ public class SmsChannelTests {
 		SmsMessageBatch batchRetry = createTestBatch(10, msg);
 
 		
-		SmsChannel channel = new SmsChannel(sender, new MockSmsReceiver(), new MockMessageEncoding(), 10);
+		SmsChannel channel = new SmsChannel(new MockSmsConnection("1", NonMessageEncoding.INSTANCE), sender, new MockSmsReceiver(), new MockMessageEncoding(), 10);
 		channel.registerMessageReceiver(messageReceiver);
 		channel.receive(batchRetry);
 		
@@ -66,7 +68,7 @@ public class SmsChannelTests {
 		MockMessageReceiver messageReceiver = new MockMessageReceiver();
 		
 		MockSmsSender sender = new MockSmsSender();
-		SmsChannel channel = new SmsChannel(sender, new MockSmsReceiver(), new MockMessageEncoding(), 10);
+		SmsChannel channel = new SmsChannel(new MockSmsConnection("1", NonMessageEncoding.INSTANCE), sender, new MockSmsReceiver(), new MockMessageEncoding(), 10);
 		channel.registerMessageReceiver(messageReceiver);
 		channel.receive(batch);
 		
@@ -76,7 +78,7 @@ public class SmsChannelTests {
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldSendMessageFailsWhenMessageIsNull(){		
-		SmsChannel channel = new SmsChannel(new MockSmsSender(), new MockSmsReceiver(), new MockMessageEncoding(), 10);
+		SmsChannel channel = new SmsChannel(new MockSmsConnection("1", NonMessageEncoding.INSTANCE), new MockSmsSender(), new MockSmsReceiver(), new MockMessageEncoding(), 10);
 		channel.send(null);
 	}	
 	
@@ -85,7 +87,7 @@ public class SmsChannelTests {
 		Message message = new Message("a", "a", "60131f9c-1e40-47df-b316-ed15a9460515", 0, "123", new SmsEndpoint("123"));
 		
 		MockSmsSender sender = new MockSmsSender();
-		SmsChannel channel = new SmsChannel(sender, new MockSmsReceiver(), new MockMessageEncoding(), 100);
+		SmsChannel channel = new SmsChannel(new MockSmsConnection("1", NonMessageEncoding.INSTANCE), sender, new MockSmsReceiver(), new MockMessageEncoding(), 100);
 		channel.send(message);
 		
 		Assert.assertEquals(1, sender.getOngoingBatchesCount());
@@ -98,7 +100,7 @@ public class SmsChannelTests {
 	@Test
 	public void shouldReceiveAckDiscartedWhenBatchIDIsNull(){
 		MockSmsSender sender = new MockSmsSender();
-		SmsChannel channel = new SmsChannel(sender, new MockSmsReceiver(), new MockMessageEncoding(), 10);
+		SmsChannel channel = new SmsChannel(new MockSmsConnection("1", NonMessageEncoding.INSTANCE), sender, new MockSmsReceiver(), new MockMessageEncoding(), 10);
 		channel.receiveACK(null);
 		
 		Assert.assertEquals(0, sender.getACKs().size());
@@ -107,7 +109,7 @@ public class SmsChannelTests {
 	@Test
 	public void shouldReceiveAckDiscartedWhenBatchIDIsEmpty(){
 		MockSmsSender sender = new MockSmsSender();
-		SmsChannel channel = new SmsChannel(sender, new MockSmsReceiver(), new MockMessageEncoding(), 10);
+		SmsChannel channel = new SmsChannel(new MockSmsConnection("1", NonMessageEncoding.INSTANCE), sender, new MockSmsReceiver(), new MockMessageEncoding(), 10);
 		channel.receiveACK("");
 		
 		Assert.assertEquals(0, sender.getACKs().size());
@@ -116,7 +118,7 @@ public class SmsChannelTests {
 	@Test
 	public void shouldReceiveAck(){
 		MockSmsSender sender = new MockSmsSender();
-		SmsChannel channel = new SmsChannel(sender, new MockSmsReceiver(), new MockMessageEncoding(), 10);
+		SmsChannel channel = new SmsChannel(new MockSmsConnection("1", NonMessageEncoding.INSTANCE), sender, new MockSmsReceiver(), new MockMessageEncoding(), 10);
 		channel.receiveACK("123");
 		
 		Assert.assertEquals(1, sender.getACKs().size());
@@ -130,7 +132,7 @@ public class SmsChannelTests {
 		MockSmsSender sender = new MockSmsSender();
 		sender.send(batch, true);
 		
-		SmsChannel channel = new SmsChannel(sender, new MockSmsReceiver(), new MockMessageEncoding(), 10);
+		SmsChannel channel = new SmsChannel(new MockSmsConnection("1", NonMessageEncoding.INSTANCE), sender, new MockSmsReceiver(), new MockMessageEncoding(), 10);
 		Assert.assertEquals(sender.getOngoingBatches().size(), channel.getOutcommingBatches().size());
 		Assert.assertEquals(sender.getOngoingBatches().get(0), channel.getOutcommingBatches().get(0));
 		
@@ -143,7 +145,7 @@ public class SmsChannelTests {
 		MockSmsReceiver receiver = new MockSmsReceiver();
 		receiver.addBatch(batch);
 		
-		SmsChannel channel = new SmsChannel(new MockSmsSender(), receiver, new MockMessageEncoding(), 10);
+		SmsChannel channel = new SmsChannel(new MockSmsConnection("1", NonMessageEncoding.INSTANCE), new MockSmsSender(), receiver, new MockMessageEncoding(), 10);
 		Assert.assertEquals(receiver.getOngoingBatches().size(), channel.getIncommingBatches().size());
 		Assert.assertEquals(receiver.getOngoingBatches().get(0), channel.getIncommingBatches().get(0));
 		
@@ -151,7 +153,7 @@ public class SmsChannelTests {
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldSendAskForRetryFailsWhenBatchIsNull(){
-		SmsChannel channel = new SmsChannel(new MockSmsSender(), new MockSmsReceiver(), new MockMessageEncoding(), 10);
+		SmsChannel channel = new SmsChannel(new MockSmsConnection("1", NonMessageEncoding.INSTANCE), new MockSmsSender(), new MockSmsReceiver(), new MockMessageEncoding(), 10);
 		channel.sendAskForRetry(null);		
 	}
 	
@@ -166,7 +168,7 @@ public class SmsChannelTests {
 		
 		MockSmsSender sender = new MockSmsSender();
 		
-		SmsChannel channel = new SmsChannel(sender, new MockSmsReceiver(), new MockMessageEncoding(), 100);
+		SmsChannel channel = new SmsChannel(new MockSmsConnection("1", NonMessageEncoding.INSTANCE), sender, new MockSmsReceiver(), new MockMessageEncoding(), 100);
 		channel.sendAskForRetry(batch);
 		
 		Assert.assertTrue(smsMessage.getLastModificationDate().after(date));

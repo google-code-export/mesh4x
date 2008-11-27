@@ -11,6 +11,7 @@ import org.mesh4j.sync.message.IMessageReceiver;
 import org.mesh4j.sync.message.IMessageSyncAware;
 import org.mesh4j.sync.message.ISyncSession;
 import org.mesh4j.sync.message.channel.sms.ISmsChannel;
+import org.mesh4j.sync.message.channel.sms.ISmsConnection;
 import org.mesh4j.sync.message.channel.sms.ISmsReceiver;
 import org.mesh4j.sync.message.channel.sms.ISmsSender;
 import org.mesh4j.sync.message.channel.sms.SmsEndpoint;
@@ -30,15 +31,18 @@ public class SmsChannel implements ISmsChannel, IMessageSyncAware {
 	private ISmsReceiver receiver;
 	private MessageBatchFactory batchFactory;
 	private IMessageEncoding messageEncoding;	
-	private IMessageReceiver messageReceiver;	
+	private IMessageReceiver messageReceiver;
+	private ISmsConnection smsConnection;
 
 	// METHODs
-	public SmsChannel(ISmsSender sender, ISmsReceiver receiver, IMessageEncoding messageEncoding, int maxMessageLenght) {
+	public SmsChannel(ISmsConnection smsConnection, ISmsSender sender, ISmsReceiver receiver, IMessageEncoding messageEncoding, int maxMessageLenght) {
 
 		Guard.argumentNotNull(sender, "sender");
 		Guard.argumentNotNull(receiver, "receiver");
 		Guard.argumentNotNull(messageEncoding, "messageEncoding");
+		Guard.argumentNotNull(smsConnection, "smsConnection");
 		
+		this.smsConnection = smsConnection;
 		this.messageEncoding = messageEncoding;
 		this.batchFactory = new MessageBatchFactory(maxMessageLenght - MessageFormatter.getBatchHeaderLenght());
 		
@@ -218,5 +222,9 @@ public class SmsChannel implements ISmsChannel, IMessageSyncAware {
 	@Override
 	public void shutdown() {
 		this.sender.shutdown();
+	}
+
+	public ISmsConnection getSmsConnection() {
+		return this.smsConnection;
 	}
 }

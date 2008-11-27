@@ -59,24 +59,6 @@ public class SyncMsAccessTests {
 			System.out.println(rs.getString(2));
 			System.out.println(rs.getString(3));
 		}
-
-		rs =  conn.getMetaData().getSchemas("D:/temp_dev/mesh4j/ms-access/DevDB2.mdb", "user");
-		while (rs.next())
-		{
-			System.out.println(rs.getString(1));
-			System.out.println(rs.getString(2));
-			System.out.println(rs.getString(3));
-		}
-		
-		command = conn.createStatement();
-		rs = command.executeQuery("select * from dba_tables");
-		while (rs.next())
-		{
-			System.out.println(rs.getString(1));
-			System.out.println(rs.getString(2));
-			System.out.println(rs.getString(3));
-		}
-		
 		
 		System.out.println("Connected To Excel");
 		

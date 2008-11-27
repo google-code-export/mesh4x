@@ -39,7 +39,7 @@ public class SmsLibConnectionOnLineTests implements ISmsConnectionInboundOutboun
 //		client.stopService();
 //	}
 	
-	@Test
+	//@Test
 	public void should() throws InterruptedException{
 		
 		SmsReceiver messageReceiver = new SmsReceiver();

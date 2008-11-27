@@ -29,7 +29,7 @@ public class SmsChannelFactory {
 		SmsReceiver receiver = new SmsReceiver(receiverRepository);
 		smsConnection.setMessageReceiver(receiver);
 		
-		SmsChannel channel = new SmsChannel(sender, receiver, smsConnection.getMessageEncoding(), smsConnection.getMaxMessageLenght());
+		SmsChannel channel = new SmsChannel(smsConnection, sender, receiver, smsConnection.getMessageEncoding(), smsConnection.getMaxMessageLenght());
 		
 		if(senderRetryTimeOut > 0){
 			TimerScheduler.INSTANCE.schedule(new ResendBatchWithoutACKScheduleTask(channel, senderRetryTimeOut), senderRetryTimeOut);

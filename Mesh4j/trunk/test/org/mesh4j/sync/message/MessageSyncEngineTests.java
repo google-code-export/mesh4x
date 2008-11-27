@@ -75,7 +75,7 @@ public class MessageSyncEngineTests {
 		//channelEndpointB = SmsChannelFactory.createChannel(smsConnectionEndpointB, channelBSenderCheckDelay, channelBReceiveCheckDelay, fileRepoB, fileRepoB);
 		channelEndpointB = SmsChannelFactory.createChannel(smsConnectionEndpointB, channelBSenderCheckDelay, channelBReceiveCheckDelay);
 		
-		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory("", false);
+		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(null, true);
 		SyncSessionFactory syncSessionFactoryA = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);
 		syncSessionFactoryA.registerSource(endPointA);
 		
@@ -622,9 +622,11 @@ public class MessageSyncEngineTests {
 			@Override public List<IMessage> processMessage(IMessage message) {return null;}
 			@Override public ISyncSession getSyncSession(String sourceId, IEndpoint target) {return null;}
 			@Override public void registerSourceIfAbsent(IMessageSyncAdapter adapter) {}
+			@Override public void registerSource(IMessageSyncAdapter adapter) {}
 			@Override public void endSync(ISyncSession syncSession, Date date) {}
 			@Override public void notifyBeginSync(ISyncSession syncSession) {}
 			@Override public void registerSyncAware(IMessageSyncAware syncAware) {}
+			@Override public IMessageSyncAdapter getSource(String sourceId) { return null; }
 		};
 		MessageSyncEngine engine = new MessageSyncEngine(protocol, channel);
 		engine.cancelSync("123", new SmsEndpoint("123"));
@@ -651,10 +653,12 @@ public class MessageSyncEngineTests {
 			@Override public List<IMessage> processMessage(IMessage message) {return null;}
 			@Override public ISyncSession getSyncSession(String sourceId, IEndpoint target) {return null;}
 			@Override public void registerSourceIfAbsent(IMessageSyncAdapter adapter) {}
+			@Override public void registerSource(IMessageSyncAdapter adapter) {}
 			@Override public void endSync(ISyncSession syncSession, Date date) {}
 			@Override public void notifyBeginSync(ISyncSession syncSession) {}
 			@Override public void registerSyncAware(IMessageSyncAware syncAware) {}
 			@Override public void cancelSync(ISyncSession syncSession) {Assert.fail();}
+			@Override public IMessageSyncAdapter getSource(String sourceId) { return null; }
 		};
 		new MessageSyncEngine(protocol, null);
 	}

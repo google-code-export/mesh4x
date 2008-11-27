@@ -127,6 +127,11 @@ public class ACKEndSyncMessageProcessorTests {
 			public void registerSourceIfAbsent(IMessageSyncAdapter adapter) {
 				Assert.fail();
 			}
+			
+			@Override
+			public void registerSource(IMessageSyncAdapter adapter) {
+				Assert.fail();
+			}
 
 			@Override
 			public void notifyBeginSync(ISyncSession syncSession) {
@@ -141,6 +146,12 @@ public class ACKEndSyncMessageProcessorTests {
 			@Override
 			public void cancelSync(ISyncSession syncSession) {
 				Assert.fail();				
+			}
+
+			@Override
+			public IMessageSyncAdapter getSource(String sourceId) {
+				Assert.fail();
+				return null;
 			}
 		};
 		

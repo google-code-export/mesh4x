@@ -59,6 +59,12 @@ public class SyncSessionFactory implements ISyncSessionFactory {
 	@Override
 	public IMessageSyncAdapter getSource(String sourceId) {
 		IMessageSyncAdapter syncAdapter = (IMessageSyncAdapter) this.adapters.get(sourceId);
+		return syncAdapter;
+	}
+	
+	@Override
+	public IMessageSyncAdapter getSourceOrCreateIfAbsent(String sourceId) {
+		IMessageSyncAdapter syncAdapter = (IMessageSyncAdapter) this.adapters.get(sourceId);
 		if(syncAdapter != null){
 			return syncAdapter;
 		}
@@ -110,7 +116,7 @@ public class SyncSessionFactory implements ISyncSessionFactory {
 		Guard.argumentNotNullOrEmptyString(sourceId, "sourceId");
 		Guard.argumentNotNull(target, "target");
 		
-		IMessageSyncAdapter syncAdapter = getSource(sourceId);
+		IMessageSyncAdapter syncAdapter = getSourceOrCreateIfAbsent(sourceId);
 		if(syncAdapter == null){
 			return null;
 		}
@@ -132,7 +138,7 @@ public class SyncSessionFactory implements ISyncSessionFactory {
 		Guard.argumentNotNull(conflicts, "conflicts");
 
 		
-		IMessageSyncAdapter syncAdapter = getSource(sourceId);
+		IMessageSyncAdapter syncAdapter = getSourceOrCreateIfAbsent(sourceId);
 		if(syncAdapter == null){
 			return null;
 		}

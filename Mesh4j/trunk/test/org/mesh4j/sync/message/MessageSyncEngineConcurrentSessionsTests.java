@@ -84,7 +84,7 @@ public class MessageSyncEngineConcurrentSessionsTests implements IMessageSyncAwa
 	
 	private MessageSyncEngine createSyncEngine(IMessageSyncAware syncAware, String repositoryBaseDirectory, IIdentityProvider identityProvider, ISmsConnection smsConnection, int senderDelay, int receiverDelay){
 		IChannel channel = SmsChannelFactory.createChannelWithFileRepository(smsConnection, senderDelay, receiverDelay, repositoryBaseDirectory);
-		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(repositoryBaseDirectory, true);
+		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(null, true);
 		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocolWithFileRepository(100, repositoryBaseDirectory, identityProvider, syncAware, SmsEndpointFactory.INSTANCE, syncAdapterFactory);		
 		return new MessageSyncEngine(syncProtocol, channel);		
 	}

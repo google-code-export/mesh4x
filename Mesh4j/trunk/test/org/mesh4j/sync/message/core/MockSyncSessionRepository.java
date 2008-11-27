@@ -1,5 +1,7 @@
 package org.mesh4j.sync.message.core;
 
+import org.mesh4j.sync.adapters.feed.FeedSyncAdapterFactory;
+import org.mesh4j.sync.adapters.kml.KMLDOMLoaderFactory;
 import org.mesh4j.sync.message.IEndpoint;
 import org.mesh4j.sync.message.IMessageSyncAdapter;
 import org.mesh4j.sync.message.ISyncSession;
@@ -12,7 +14,9 @@ public class MockSyncSessionRepository implements ISyncSessionRepository {
 	private SyncSessionFactory factory;
 	
 	public MockSyncSessionRepository() {
-		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory("", false);
+		KMLDOMLoaderFactory kmlFactory = new KMLDOMLoaderFactory("");
+		FeedSyncAdapterFactory feedFactory = new FeedSyncAdapterFactory("");
+		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(feedFactory, false, kmlFactory);
 		this.factory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);
 	}
 	
@@ -46,6 +50,11 @@ public class MockSyncSessionRepository implements ISyncSessionRepository {
 	}
 
 	@Override
+	public void registerSource(IMessageSyncAdapter adapter) {
+		factory.registerSource(adapter);
+	}
+	
+	@Override
 	public void registerSourceIfAbsent(IMessageSyncAdapter adapter) {
 		factory.registerSourceIfAbsent(adapter);
 	}
@@ -53,5 +62,10 @@ public class MockSyncSessionRepository implements ISyncSessionRepository {
 	@Override
 	public IMessageSyncAdapter getSource(String sourceId) {
 		return factory.getSource(sourceId);
+	}
+	
+	@Override
+	public IMessageSyncAdapter getSourceOrCreateIfAbsent(String sourceId) {
+		return factory.getSourceOrCreateIfAbsent(sourceId);
 	}
 }
