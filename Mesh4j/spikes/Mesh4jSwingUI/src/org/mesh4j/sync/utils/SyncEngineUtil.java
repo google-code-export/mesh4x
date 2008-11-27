@@ -56,6 +56,9 @@ public class SyncEngineUtil {
 	}
 	
 	public static ISyncAdapter makeRepositoryAdapter(String endpoint, IIdentityProvider identityProvider, IIdGenerator idGenerator) {
+		
+		// TODO (JMT) refactoring: change for ISyncAdapterFactory
+		
 		if(isURL(endpoint)){
 			return new HttpSyncAdapter(endpoint, RssSyndicationFormat.INSTANCE, identityProvider);
 		} else if(isFeed(endpoint)){
@@ -97,7 +100,7 @@ public class SyncEngineUtil {
 
 			SyncInfoParser syncInfoParser = new SyncInfoParser(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 			
-			HibernateSyncRepository syncRepository = new HibernateSyncRepository(syncInfoParser, builder);
+			HibernateSyncRepository syncRepository = new HibernateSyncRepository(builder, syncInfoParser);
 			HibernateContentAdapter contentAdapter = new HibernateContentAdapter(builder, entity);
 			return new SplitAdapter(syncRepository, contentAdapter, NullIdentityProvider.INSTANCE);		
 		} else if(isMySQL(endpoint)){
