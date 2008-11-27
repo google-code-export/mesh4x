@@ -2,8 +2,12 @@ package org.mesh4j.sync.properties;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.Properties;
 
+import org.mesh4j.sync.message.channel.sms.connection.smslib.Modem;
+import org.mesh4j.sync.message.core.NonMessageEncoding;
+import org.mesh4j.sync.message.encoding.IMessageEncoding;
 import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.security.LoggedInIdentityProvider;
 import org.mesh4j.sync.validations.MeshException;
@@ -11,13 +15,14 @@ import org.mesh4j.sync.validations.MeshException;
 
 public class PropertiesProvider {
 
+	private static final String MESH4J_PROPERTIES = "mesh4j.properties";
 	// MODEL VARIABLES
 	private Properties properties;
 	
 	// BUSINESS METHODS
 	public PropertiesProvider(){
 		super();
-		initialize("mesh4j.properties");
+		initialize(MESH4J_PROPERTIES);
 	}
 	
 	public PropertiesProvider(String resourceName){
@@ -100,6 +105,44 @@ public class PropertiesProvider {
 		} catch (Exception e) {
 			throw new MeshException(e);
 		}
+	}
+
+	public void setDefaults(Modem modem, String defaultPhoneNumber, String defaultDataSource, String defaultTableName, String defaultURL) {
+		this.properties.put("default.sms.port", modem.getComPort());
+		this.properties.put("default.sms.baud.rate", String.valueOf(modem.getBaudRate()));
+		this.properties.put("default.phone.number", defaultPhoneNumber);
+		this.properties.put("default.mdb.file", defaultDataSource);
+		this.properties.put("default.mdb.table", defaultTableName);
+		this.properties.put("default.url", defaultURL);
+	
+	}
+
+	public void store() {
+		try{
+			FileWriter writer = new FileWriter(MESH4J_PROPERTIES);
+			this.properties.store(writer, "");
+			writer.close();
+		} catch (Exception e) {
+			throw new MeshException(e);
+		}
+		
+		
+	}
+
+	public String getDefaultURL() {
+		return getString("default.url");
+	}
+
+	public IMessageEncoding getDefaultMessageEncoding() {
+		return (IMessageEncoding) getInstance("default.sms.compress.method", NonMessageEncoding.INSTANCE);
+	}
+
+	public String getDefaultPort() {
+		return getString("default.sms.port");
+	}
+
+	public int getDefaultBaudRate() {
+		return getInt("default.sms.baud.rate");
 	}
 	
 }

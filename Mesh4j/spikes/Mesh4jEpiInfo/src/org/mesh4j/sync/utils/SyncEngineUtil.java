@@ -1,7 +1,6 @@
 package org.mesh4j.sync.utils;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.mesh4j.sync.ISyncAdapter;
@@ -18,6 +17,7 @@ import org.mesh4j.sync.message.channel.sms.SmsEndpoint;
 import org.mesh4j.sync.message.channel.sms.connection.ISmsConnectionInboundOutboundNotification;
 import org.mesh4j.sync.message.channel.sms.connection.InMemorySmsConnection;
 import org.mesh4j.sync.message.channel.sms.connection.SmsConnectionInboundOutboundNotification;
+import org.mesh4j.sync.message.channel.sms.connection.smslib.IProgressMonitor;
 import org.mesh4j.sync.message.channel.sms.connection.smslib.Modem;
 import org.mesh4j.sync.message.channel.sms.connection.smslib.ModemHelper;
 import org.mesh4j.sync.message.channel.sms.connection.smslib.SmsLibMessageSyncEngineFactory;
@@ -29,6 +29,7 @@ import org.mesh4j.sync.message.core.repository.MessageSyncAdapterFactory;
 import org.mesh4j.sync.message.encoding.IMessageEncoding;
 import org.mesh4j.sync.message.protocol.MessageSyncProtocolFactory;
 import org.mesh4j.sync.model.Item;
+import org.mesh4j.sync.properties.PropertiesProvider;
 import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.validations.MeshException;
 
@@ -157,17 +158,21 @@ public class SyncEngineUtil {
 			identityProvider, messageEncoding, smsConnectionInboundOutboundNotification, messageSyncAware, syncAdapterFactory);
 	}
 	
-	public static String[] getAvailableModems() {
-		ArrayList<String> result = new ArrayList<String>();
-		List<Modem> availableModems = ModemHelper.getAvailableModems();
-		for (Modem availableModem : availableModems) {
-			result.add(availableModem.toString());
+	public static Modem[] getAvailableModems(IProgressMonitor progressMonitor, Modem demoModem) {
+		List<Modem> availableModems = ModemHelper.getAvailableModems(progressMonitor);
+		//List<Modem> availableModems = new ArrayList<Modem>();
+		if(availableModems.isEmpty()){
+			availableModems.add(demoModem);
+//			availableModems.add(new Modem("10", 100, "nokia", "n95", "123", null, 0, 0));
+//			availableModems.add(new Modem("20", 100, "motorola", "z3", "123", null, 0, 0));
 		}
-		
-		if(result.isEmpty()){
-			result.add("demo");
-		}
-		return result.toArray(new String[0]);
+		return availableModems.toArray(new Modem[0]);
+	}
+
+	public static void saveDefaults(Modem modem, String defaultPhoneNumber, String defaultDataSource, String defaultTableName, String defaultURL) {
+		PropertiesProvider propertiesProvider = new PropertiesProvider();
+		propertiesProvider.setDefaults(modem, defaultPhoneNumber, defaultDataSource, defaultTableName, defaultURL);
+		propertiesProvider.store();
 	}
 
 }

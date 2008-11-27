@@ -235,4 +235,36 @@ public class EpiInfoUITranslator {
 	public static String getLabelDataSourceFileExtensions() {
 		return MessageTranslator.translate("EPIINFO_LABEL_DATA_SOURCE_FILE_EXTENSIONS");
 	}
+
+	public static String getLabelDemo() {
+		return MessageTranslator.translate("EPIINFO_LABEL_DEMO");
+	}
+
+	public static String getLabelModemDiscovery() {
+		return MessageTranslator.translate("EPIINFO_LABEL_MODEM_DISCOVERY");
+	}
+
+	public static String getLabelURL() {
+		return MessageTranslator.translate("EPIINFO_LABEL_URL");
+	}
+
+	public static String getLabelChannelSMS() {
+		return MessageTranslator.translate("EPIINFO_LABEL_CHANNEL_SMS");
+	}
+
+	public static String getLabelChannelWEB() {
+		return MessageTranslator.translate("EPIINFO_LABEL_CHANNEL_WEB");
+	}
+
+	public static String getLabelAddDataSource() {
+		return MessageTranslator.translate("EPIINFO_LABEL_ADD_DATA_SOURCE");
+	}
+
+	public static String getLabelDeviceConnectionFailed(String device) {
+		return MessageTranslator.translate("EPIINFO_LABEL_DEVICE_CONNECTION_FAILED", device);
+	}
+
+	public static String getLabelSaveDefaults() {
+		return MessageTranslator.translate("EPIINFO_LABEL_SAVE_DEFAULTS");
+	}
 }

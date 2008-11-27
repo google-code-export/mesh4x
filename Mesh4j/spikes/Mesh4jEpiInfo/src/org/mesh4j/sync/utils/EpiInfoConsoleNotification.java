@@ -13,10 +13,13 @@ import org.mesh4j.sync.message.IMessage;
 import org.mesh4j.sync.message.IMessageSyncAware;
 import org.mesh4j.sync.message.ISyncSession;
 import org.mesh4j.sync.message.channel.sms.connection.ISmsConnectionInboundOutboundNotification;
+import org.mesh4j.sync.message.channel.sms.connection.smslib.IProgressMonitor;
+import org.mesh4j.sync.message.channel.sms.connection.smslib.Modem;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.ui.translator.EpiInfoUITranslator;
+import org.smslib.helper.CommPortIdentifier;
 
-public class EpiInfoConsoleNotification implements ISmsConnectionInboundOutboundNotification, IMessageSyncAware {
+public class EpiInfoConsoleNotification implements ISmsConnectionInboundOutboundNotification, IMessageSyncAware, IProgressMonitor {
 	
 	private final static Log Logger = LogFactory.getLog(EpiInfoConsoleNotification.class);
 
@@ -120,6 +123,42 @@ public class EpiInfoConsoleNotification implements ISmsConnectionInboundOutbound
 		this.log(EpiInfoUITranslator.getMessageErrorSessionCreation(message, sourceId));
 	}
 
+
+	// IProgressMonitor methods
+	
+	@Override
+	public void checkingModem(CommPortIdentifier port, int baudRateAvailable) {
+		log("verificando modem: " + port.getName() + " baudRate: " + baudRateAvailable + " ... ");
+	}
+
+	@Override
+	public void checkingPortInfo(CommPortIdentifier port, int baudRateAvailable) {
+		log("verificando port: " + port.getName() + " baudRate: " + baudRateAvailable + " ... ");
+		
+	}
+
+	@Override
+	public void notifyAvailableModem(CommPortIdentifier port, int baudRateAvailable, Modem modem) {
+		logAppendEndLine("Available: " + modem.toString());		
+	}
+
+	@Override
+	public void notifyAvailablePortInfo(CommPortIdentifier port, int baudRateAvailable) {
+		logAppendEndLine("Available");		
+	}
+
+	@Override
+	public void notifyNonAvailableModem(CommPortIdentifier port, int baudRateAvailable) {
+		logAppendEndLine("No available");
+	}
+
+	@Override
+	public void notifyNonAvailablePortInfo(CommPortIdentifier port, int baudRateAvailable) {
+		logAppendEndLine("No available");
+	}
+
+	
+	// Console view methods
 	public void logStatus(String text) {
 		this.consoleStatus.setText(text + "\n"+ this.consoleStatus.getText());
 	}
@@ -135,5 +174,23 @@ public class EpiInfoConsoleNotification implements ISmsConnectionInboundOutbound
 		this.consoleView.setText(errorMessage + "\n"+ this.consoleView.getText());
 		Logger.error(t.getMessage(), t);
 	}
-
+	
+	public void logAppendEndLine(String text) {
+		String line, allWithOutLine;
+		
+		String consoleText = this.consoleView.getText();
+		int lfIndex = consoleText.indexOf("\n");
+		if(lfIndex == -1){
+			line = consoleText;
+			allWithOutLine = "";
+		} else {
+			line = consoleText.substring(0, lfIndex);
+			allWithOutLine = consoleText.substring(lfIndex, consoleText.length());
+		}
+		
+		this.consoleView.setText(line+ text + allWithOutLine);
+		if(Logger.isInfoEnabled()){
+			Logger.info(text);
+		}
+	}
 }

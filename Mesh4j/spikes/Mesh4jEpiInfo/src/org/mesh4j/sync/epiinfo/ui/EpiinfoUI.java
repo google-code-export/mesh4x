@@ -1,6 +1,7 @@
 package org.mesh4j.sync.epiinfo.ui;
 
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -34,7 +35,6 @@ import org.mesh4j.sync.adapters.msaccess.MsAccessHelper;
 import org.mesh4j.sync.message.MessageSyncEngine;
 import org.mesh4j.sync.message.channel.sms.connection.smslib.Modem;
 import org.mesh4j.sync.message.channel.sms.connection.smslib.ModemHelper;
-import org.mesh4j.sync.message.core.NonMessageEncoding;
 import org.mesh4j.sync.message.encoding.IMessageEncoding;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.properties.PropertiesProvider;
@@ -63,7 +63,9 @@ public class EpiinfoUI{
 	private final static int SYNCHRONIZE_SMS = 0;
 	private final static int CANCEL_SYNC = 1;
 	private final static int ADD_DATA_SOURCE = 2;
-	protected static final int DISCOVERY_MODEMS = 3;
+	private static final int DISCOVERY_MODEMS = 3;
+	private final static int CHANGE_DEVICE = 4;
+	private final static int SAVE_DEFAULTS = 5;
 	
 	// MODEL VARIABLES
 	private JFrame frame;
@@ -87,6 +89,7 @@ public class EpiinfoUI{
 	private JLabel labelPhoneNumber;
 	private JRadioButton radioEndpointSMS;
 	private JRadioButton radioEndpointHTTP;
+	private JButton buttonSaveDefaults;
 	
 	private EpiInfoConsoleNotification consoleNotification;
 	
@@ -131,7 +134,7 @@ public class EpiinfoUI{
 		this.initializeModem();
 		this.createUI();
 		this.consoleNotification = new EpiInfoConsoleNotification(this.textAreaConsole, this.textAreaStatus);
-		this.initializeSyncEngine();
+		this.startUpSyncEngine();
 	}
 
 	private void initializeModem() {
@@ -150,17 +153,17 @@ public class EpiinfoUI{
 		this.maxMessageLenght = propertiesProvider.getInt("default.sms.max.message.lenght");
 		this.channelDelay = propertiesProvider.getInt("default.sms.channel.delay");
 		this.identityProvider = propertiesProvider.getIdentityProvider();
-		this.messageEncoding = (IMessageEncoding) propertiesProvider.getInstance("default.sms.compress.method", NonMessageEncoding.INSTANCE);
-		this.portName = propertiesProvider.getString("default.sms.port");
-		this.baudRate = propertiesProvider.getInt("default.sms.baud.rate");
+		this.messageEncoding = propertiesProvider.getDefaultMessageEncoding();
+		this.portName = propertiesProvider.getDefaultPort();
+		this.baudRate = propertiesProvider.getDefaultBaudRate();
 		this.defaultPhoneNumber = propertiesProvider.getDefaultPhoneNumber();
 		this.defaultDataSource = propertiesProvider.getDefaultDataSource();
 		this.defaultTableName = propertiesProvider.getDefaultTable();
-		this.defaultURL = propertiesProvider.getString("default.url");
+		this.defaultURL = propertiesProvider.getDefaultURL();
 	}
 	
-	private void initializeSyncEngine() throws Exception {
-		if(modem != null){
+	protected void startUpSyncEngine() throws Exception {
+		if(modem != null && !modem.getManufacturer().equals(EpiInfoUITranslator.getLabelDemo())){
 			String modemDirectory = baseDirectory+"/"+modem.toString()+"/";
 			this.fileNameResolver = new FileNameResolver(modemDirectory+"myFiles.properties");
 			this.syncEngine = SyncEngineUtil.createSyncEngine(fileNameResolver, modem, baseDirectory, senderDelay, receiverDelay, readDelay, maxMessageLenght, channelDelay,
@@ -168,9 +171,9 @@ public class EpiinfoUI{
 		}
 				
 		if(this.syncEngine == null){
-			String emulatorDirectory = baseDirectory+"/demo/";
+			String emulatorDirectory = baseDirectory+"/"+EpiInfoUITranslator.getLabelDemo()+"/";
 			this.fileNameResolver = new FileNameResolver(emulatorDirectory+"myFiles.properties");
-			this.syncEngine = SyncEngineUtil.createEmulator(fileNameResolver, consoleNotification, consoleNotification, "demo", messageEncoding, identityProvider, baseDirectory, senderDelay, receiverDelay, readDelay, channelDelay, maxMessageLenght);
+			this.syncEngine = SyncEngineUtil.createEmulator(fileNameResolver, consoleNotification, consoleNotification, EpiInfoUITranslator.getLabelDemo(), messageEncoding, identityProvider, baseDirectory, senderDelay, receiverDelay, readDelay, channelDelay, maxMessageLenght);
 			this.emulate = true;
 		}
 	}
@@ -180,7 +183,7 @@ public class EpiinfoUI{
 		
 		WindowAdapter windowAdapter = new WindowAdapter() {
 			public void windowClosed(final WindowEvent e) {
-				shutdown();
+				shutdownSyncEngine();
 			}
 		};
 		
@@ -233,22 +236,27 @@ public class EpiinfoUI{
 		frame.getContentPane().add(panelCommunications, new CellConstraints(2, 2, CellConstraints.FILL, CellConstraints.FILL));
 
 		textFieldPhoneNumber = new JTextField();
-		textFieldPhoneNumber.setEnabled(false);
 		textFieldPhoneNumber.setToolTipText(EpiInfoUITranslator.getToolTipPhoneNumber());
 		panelCommunications.add(textFieldPhoneNumber, new CellConstraints(4, 5, 3, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
 		textFieldPhoneNumber.setText(this.defaultPhoneNumber);
 		
-		labelSMSDevice = DefaultComponentFactory.getInstance().createLabel("Device");
-		labelSMSDevice.setEnabled(false);
+		labelSMSDevice = DefaultComponentFactory.getInstance().createLabel(EpiInfoUITranslator.getLabelSMSDevice());
 		panelCommunications.add(labelSMSDevice, new CellConstraints(2, 3, CellConstraints.RIGHT, CellConstraints.DEFAULT));
 
 		labelPhoneNumber = DefaultComponentFactory.getInstance().createLabel(EpiInfoUITranslator.getLabelPhoneNumber());
-		labelPhoneNumber.setEnabled(false);
 		panelCommunications.add(labelPhoneNumber, new CellConstraints(2, 5, CellConstraints.RIGHT, CellConstraints.DEFAULT));
 
+		ActionListener deviceActionListener = new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				Task task = new Task(CHANGE_DEVICE);
+				task.execute();
+			}
+		};
+		
 		comboSMSDevice = new JComboBox();
-		comboSMSDevice.setEnabled(false);
-		comboSMSDevice.setModel(modem == null ? new DefaultComboBoxModel(new String[]{"demo"}) : new DefaultComboBoxModel(new String[]{modem.toString()}));
+		comboSMSDevice.setFocusable(false);
+		comboSMSDevice.setModel(modem == null ? new DefaultComboBoxModel(new Modem[]{getDemoModem()}) : new DefaultComboBoxModel(new Modem[]{modem}));
+		comboSMSDevice.addActionListener(deviceActionListener);
 		panelCommunications.add(comboSMSDevice, new CellConstraints(4, 3, CellConstraints.FILL, CellConstraints.DEFAULT));
 
 		ActionListener modemDiscoveryActionListener = new ActionListener(){
@@ -259,13 +267,13 @@ public class EpiinfoUI{
 		};	
 		
 		buttonModemDiscovery = new JButton();
-		buttonModemDiscovery.setText("?");
-		buttonModemDiscovery.setEnabled(false);
+		buttonModemDiscovery.setFocusable(false);
+		buttonModemDiscovery.setText(EpiInfoUITranslator.getLabelModemDiscovery());
 		buttonModemDiscovery.addActionListener(modemDiscoveryActionListener);
 		panelCommunications.add(buttonModemDiscovery, new CellConstraints(6, 3, CellConstraints.FILL, CellConstraints.FILL));
 
 		labelUrl = new JLabel();
-		labelUrl.setText("URL");
+		labelUrl.setText(EpiInfoUITranslator.getLabelURL());
 		panelCommunications.add(labelUrl, new CellConstraints(2, 8, CellConstraints.RIGHT, CellConstraints.DEFAULT));
 
 		textFieldURL = new JTextField();
@@ -289,7 +297,7 @@ public class EpiinfoUI{
 		
 		radioEndpointSMS = new JRadioButton();
 		buttonGroup.add(radioEndpointSMS);
-		radioEndpointSMS.setText("SMS");
+		radioEndpointSMS.setText(EpiInfoUITranslator.getLabelChannelSMS());
 		radioEndpointSMS.addActionListener(channelSMSActionListener);
 		panelCommunications.add(radioEndpointSMS, new CellConstraints(2, 2));
 
@@ -310,7 +318,7 @@ public class EpiinfoUI{
 		
 		radioEndpointHTTP = new JRadioButton();
 		buttonGroup.add(radioEndpointHTTP);
-		radioEndpointHTTP.setText("Web");
+		radioEndpointHTTP.setText(EpiInfoUITranslator.getLabelChannelWEB());
 		radioEndpointHTTP.setSelected(true);
 		radioEndpointHTTP.addActionListener(channelHTTPActionListener);
 
@@ -385,7 +393,7 @@ public class EpiinfoUI{
 		};	
 		
 		buttonAddDataSource = new JButton();
-		buttonAddDataSource.setText("+");
+		buttonAddDataSource.setText(EpiInfoUITranslator.getLabelAddDataSource());
 		buttonAddDataSource.addActionListener(addDataSourceActionListener);
 		panelDataSource.add(buttonAddDataSource, new CellConstraints(6, 4));
 		
@@ -461,8 +469,9 @@ public class EpiinfoUI{
 				FormFactory.DEFAULT_COLSPEC,
 				FormFactory.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("88dlu"),
-				ColumnSpec.decode("175dlu"),
-				ColumnSpec.decode("88dlu"),
+				ColumnSpec.decode("197dlu"),
+				FormFactory.RELATED_GAP_COLSPEC,
+				ColumnSpec.decode("59dlu"),
 				FormFactory.RELATED_GAP_COLSPEC},
 			new RowSpec[] {
 				FormFactory.DEFAULT_ROWSPEC}));
@@ -487,8 +496,31 @@ public class EpiinfoUI{
 		buttonClean = new JButton();
 		buttonClean.setText(EpiInfoUITranslator.getLabelCleanConsole());
 		buttonClean.addActionListener(cleanConsoleActionListener);
-		panelSyncButtons.add(buttonClean, new CellConstraints(5, 1, CellConstraints.RIGHT, CellConstraints.FILL));
+		panelSyncButtons.add(buttonClean, new CellConstraints(6, 1, CellConstraints.FILL, CellConstraints.FILL));
 
+		
+		ActionListener saveDefaultActionListener = new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				Task task = new Task(SAVE_DEFAULTS);
+				task.execute();
+			}
+		};
+		
+		buttonSaveDefaults = new JButton();
+		buttonSaveDefaults.setText(EpiInfoUITranslator.getLabelSaveDefaults());
+		buttonSaveDefaults.addActionListener(saveDefaultActionListener);
+		panelSyncButtons.add(buttonSaveDefaults, new CellConstraints(4, 1, CellConstraints.RIGHT, CellConstraints.FILL));
+
+		// disable sms channel group
+		textFieldPhoneNumber.setEnabled(false);
+		comboSMSDevice.setEnabled(false);
+		buttonModemDiscovery.setEnabled(false);
+		labelSMSDevice.setEnabled(false);
+		labelPhoneNumber.setEnabled(false);
+	}
+
+	private Modem getDemoModem() {
+		return new Modem("", 0, EpiInfoUITranslator.getLabelDemo(), "", "", "", 0, 0);
 	}
 
 	private ComboBoxModel getDataSourceTableModel() {
@@ -503,7 +535,7 @@ public class EpiinfoUI{
 		}
 	}
 
-	private void shutdown(){
+	private void shutdownSyncEngine(){
 		try{
 			this.syncEngine.getChannel().shutdown();
 		} catch(Throwable e){
@@ -524,115 +556,148 @@ public class EpiinfoUI{
 	
 		@Override
 	    public Void doInBackground() {
-	    	disableAllButtons();
-	    	try{
-	    		if(action == SYNCHRONIZE_SMS){
-	    			textAreaConsole.setText("");
-	    			
-	    			SyncEngineUtil.addDataSource(fileNameResolver, textFieldDataSource.getText());
-	    			
-	    			if(emulate){	    				
-	    				SyncEngineUtil.registerNewEndpointToEmulator(syncEngine, textFieldPhoneNumber.getText(), messageEncoding, 
-	    					identityProvider, baseDirectory, senderDelay, receiverDelay, readDelay, channelDelay, maxMessageLenght);
-	    			}	
-    				SyncEngineUtil.synchronize(syncEngine, textFieldPhoneNumber.getText(), 
-	    					textFieldDataSource.getText(), (String)comboTables.getSelectedItem(), 
-	    					identityProvider, baseDirectory);
-	    		} else if(action == SYNCHRONIZE_HTTP){
-	    			consoleNotification.beginSync(textFieldURL.getText(), textFieldDataSource.getText(), (String)comboTables.getSelectedItem());
-	    			List<Item> conflicts = SyncEngineUtil.synchronize(textFieldURL.getText(), textFieldDataSource.getText(), (String)comboTables.getSelectedItem(), identityProvider, baseDirectory);
-	    			consoleNotification.endSync(textFieldURL.getText(), textFieldDataSource.getText(), (String)comboTables.getSelectedItem(), conflicts);
-	    		} else if(action == CANCEL_SYNC){
-	    			SyncEngineUtil.cancelSynchronize(syncEngine, textFieldPhoneNumber.getText(), textFieldDataSource.getText(), (String)comboTables.getSelectedItem());
-	    		} else if(action == ADD_DATA_SOURCE){
-	    			SyncEngineUtil.addDataSource(fileNameResolver, textFieldDataSource.getText());
-	    		} else if(action == DISCOVERY_MODEMS){
-					comboSMSDevice.setModel(new DefaultComboBoxModel(SyncEngineUtil.getAvailableModems()));
+			disableAllButtons();
+			frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			
+    		if(action == SYNCHRONIZE_SMS){
+    			textAreaConsole.setText("");
+    			
+    			SyncEngineUtil.addDataSource(fileNameResolver, textFieldDataSource.getText());
+    			
+    			if(emulate){	    				
+    				SyncEngineUtil.registerNewEndpointToEmulator(syncEngine, textFieldPhoneNumber.getText(), messageEncoding, 
+    					identityProvider, baseDirectory, senderDelay, receiverDelay, readDelay, channelDelay, maxMessageLenght);
+    			}	
+    			try{
+					SyncEngineUtil.synchronize(syncEngine, textFieldPhoneNumber.getText(), 
+    					textFieldDataSource.getText(), (String)comboTables.getSelectedItem(), 
+    					identityProvider, baseDirectory);
+	    		
+	    		} catch(Throwable t){
+	    			consoleNotification.logError(t, EpiInfoUITranslator.getLabelFailed());
 	    		}
-    		} catch(Throwable t){
-    			consoleNotification.logError(t, EpiInfoUITranslator.getLabelFailed());
+    		} 
+
+    		if(action == SYNCHRONIZE_HTTP){
+    			consoleNotification.beginSync(textFieldURL.getText(), textFieldDataSource.getText(), (String)comboTables.getSelectedItem());
+    			List<Item> conflicts = SyncEngineUtil.synchronize(textFieldURL.getText(), textFieldDataSource.getText(), (String)comboTables.getSelectedItem(), identityProvider, baseDirectory);
+    			consoleNotification.endSync(textFieldURL.getText(), textFieldDataSource.getText(), (String)comboTables.getSelectedItem(), conflicts);
+    		} 
+
+    		if(action == CANCEL_SYNC){
+    			SyncEngineUtil.cancelSynchronize(syncEngine, textFieldPhoneNumber.getText(), textFieldDataSource.getText(), (String)comboTables.getSelectedItem());
+    		} 
+
+    		if(action == ADD_DATA_SOURCE){
+    			SyncEngineUtil.addDataSource(fileNameResolver, textFieldDataSource.getText());
+    		}
+    		
+    		if(action == DISCOVERY_MODEMS){
+				comboSMSDevice.setModel(new DefaultComboBoxModel(SyncEngineUtil.getAvailableModems(consoleNotification, getDemoModem())));
+    		}
+    		
+    		if(action == CHANGE_DEVICE){
+				modem = (Modem)comboSMSDevice.getSelectedItem();
+				shutdownSyncEngine();
+				
+				try{
+					startUpSyncEngine();
+				} catch (Exception exc) {
+					shutdownSyncEngine();
+					consoleNotification.logError(exc, EpiInfoUITranslator.getLabelDeviceConnectionFailed(modem.toString()));
+					Logger.error(exc.getMessage(), exc);
+				}
+    		}
+    		
+    		if(action == SAVE_DEFAULTS){
+    			SyncEngineUtil.saveDefaults(modem, textFieldPhoneNumber.getText(), textFieldDataSource.getText(), (String)comboTables.getSelectedItem(), textFieldURL.getText());
     		}
 	        return null;
 	    }
 
 		@Override
 	    public void done() {
+			frame.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 	        enableAllButtons();
 	    }
+		
+		 private void enableAllButtons(){
+			 buttonCancel.setEnabled(true);
+			 buttonSynchronize.setEnabled(true);
+			 buttonClean.setEnabled(true);
+			 
+			 radioEndpointHTTP.setEnabled(true);
+			 radioEndpointSMS.setEnabled(true);
+			 
+			 if(channel == SYNCHRONIZE_SMS){
+				 labelSMSDevice.setEnabled(true);
+				 labelPhoneNumber.setEnabled(true);
+				 comboSMSDevice.setEnabled(true);
+				 buttonModemDiscovery.setEnabled(true);
+				 textFieldPhoneNumber.setEnabled(true);
+			 }
+			 
+			 textFieldDataSource.setEnabled(true);
+			 comboTables.setEnabled(true);
+			 buttonAddDataSource.setEnabled(true);
+			 buttonOpenFileDataSource.setEnabled(true);
+
+			 if(channel == SYNCHRONIZE_HTTP){
+				 labelUrl.setEnabled(true);
+				 textFieldURL.setEnabled(true);
+			 }
+			 
+			 buttonSaveDefaults.setEnabled(true);
+
+		 }
+		 
+		 private void disableAllButtons(){
+			 buttonSynchronize.setEnabled(false);
+			 buttonClean.setEnabled(false);
+			 buttonCancel.setEnabled(false);
+
+			 radioEndpointHTTP.setEnabled(false);
+			 radioEndpointSMS.setEnabled(false);
+			 
+			 labelSMSDevice.setEnabled(false);
+			 labelPhoneNumber.setEnabled(false);
+			 textFieldPhoneNumber.setEnabled(false);
+			 comboSMSDevice.setEnabled(false);
+			 
+			 textFieldDataSource.setEnabled(false);
+			 comboTables.setEnabled(false);
+			 buttonAddDataSource.setEnabled(false);
+			 buttonOpenFileDataSource.setEnabled(false);
+
+			 labelUrl.setEnabled(false);
+			 textFieldURL.setEnabled(false);
+			 
+			 buttonModemDiscovery.setEnabled(false);
+			 
+			 buttonSaveDefaults.setEnabled(false);
+		 }
 	}
 
-	 private void enableAllButtons(){
-		 this.buttonCancel.setEnabled(true);
-		 this.buttonSynchronize.setEnabled(true);
-		 this.buttonClean.setEnabled(true);
-		 
-		 this.radioEndpointHTTP.setEnabled(true);
-		 this.radioEndpointSMS.setEnabled(true);
-		 
-		 if(channel == SYNCHRONIZE_SMS){
-			 this.labelSMSDevice.setEnabled(true);
-			 this.labelPhoneNumber.setEnabled(true);
-			 this.comboSMSDevice.setEnabled(true);
-			 this.buttonModemDiscovery.setEnabled(true);
-			 this.textFieldPhoneNumber.setEnabled(true);
-		 }
-		 
-		 this.textFieldDataSource.setEnabled(true);
-		 this.comboTables.setEnabled(true);
-		 this.buttonAddDataSource.setEnabled(true);
-		 this.buttonOpenFileDataSource.setEnabled(true);
-
-		 if(channel == SYNCHRONIZE_HTTP){
-			 this.labelUrl.setEnabled(true);
-			 this.textFieldURL.setEnabled(true);
-		 }
-
-	 }
-	 
-	 private void disableAllButtons(){
-		 this.buttonSynchronize.setEnabled(false);
-		 this.buttonClean.setEnabled(false);
-		 this.buttonCancel.setEnabled(false);
-
-		 this.radioEndpointHTTP.setEnabled(false);
-		 this.radioEndpointSMS.setEnabled(false);
-		 
-		 this.labelSMSDevice.setEnabled(false);
-		 this.labelPhoneNumber.setEnabled(false);
-		 this.textFieldPhoneNumber.setEnabled(false);
-		 this.buttonModemDiscovery.setEnabled(false);
-		 this.comboSMSDevice.setEnabled(false);
-		 
-		 this.textFieldDataSource.setEnabled(false);
-		 this.comboTables.setEnabled(false);
-		 this.buttonAddDataSource.setEnabled(false);
-		 this.buttonOpenFileDataSource.setEnabled(false);
-
-		 this.labelUrl.setEnabled(false);
-		 this.textFieldURL.setEnabled(false);
-	 }
-
-	 
-		private String openFileDialog(String fileName){
-			String fileNameSelected = openFileDialog(fileName, new FileNameExtensionFilter(EpiInfoUITranslator.getLabelDataSourceFileExtensions(), "mdb"));
-			return fileNameSelected;
+	private String openFileDialog(String fileName){
+		String fileNameSelected = openFileDialog(fileName, new FileNameExtensionFilter(EpiInfoUITranslator.getLabelDataSourceFileExtensions(), "mdb"));
+		return fileNameSelected;
+	}
+	
+	private String openFileDialog(String fileName, FileNameExtensionFilter filter){
+		JFileChooser chooser = new JFileChooser();
+		chooser.setAcceptAllFileFilterUsed(false);
+		chooser.setFileFilter(filter);
+		
+		if(fileName != null && fileName.trim().length() > 0){
+			File file = new File(fileName);
+			chooser.setSelectedFile(file);
 		}
 		
-		private String openFileDialog(String fileName, FileNameExtensionFilter filter){
-			JFileChooser chooser = new JFileChooser();
-			chooser.setAcceptAllFileFilterUsed(false);
-			chooser.setFileFilter(filter);
-			
-			if(fileName != null && fileName.trim().length() > 0){
-				File file = new File(fileName);
-				chooser.setSelectedFile(file);
-			}
-			
-			int returnVal = chooser.showOpenDialog(this.frame);
-			if(returnVal == JFileChooser.APPROVE_OPTION) {
-				return chooser.getSelectedFile().getAbsolutePath();
-			} else{
-				return null;
-			}
+		int returnVal = chooser.showOpenDialog(this.frame);
+		if(returnVal == JFileChooser.APPROVE_OPTION) {
+			return chooser.getSelectedFile().getAbsolutePath();
+		} else{
+			return null;
 		}
+	}
 }
