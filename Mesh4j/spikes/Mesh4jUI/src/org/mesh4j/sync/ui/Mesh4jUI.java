@@ -327,6 +327,7 @@ public class Mesh4jUI {
 	}
 
 	private ISyncAdapter makeRepositoryAdapter(String endpoint) {
+		// TODO (JMT) refactoring: change for ISyncAdapterFactory
 		if(isURL(endpoint)){
 			return new HttpSyncAdapter(endpoint, RssSyndicationFormat.INSTANCE, this.identityProvider);
 		} else {

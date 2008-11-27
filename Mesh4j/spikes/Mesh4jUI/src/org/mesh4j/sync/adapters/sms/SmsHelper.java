@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import org.mesh4j.sync.IFilter;
 import org.mesh4j.sync.adapters.dom.DOMAdapter;
+import org.mesh4j.sync.adapters.feed.FeedSyncAdapterFactory;
 import org.mesh4j.sync.adapters.kml.KMLDOMLoaderFactory;
 import org.mesh4j.sync.message.IChannel;
 import org.mesh4j.sync.message.IMessageSyncAdapter;
@@ -86,7 +87,10 @@ public class SmsHelper {
 	}
 	
 	private static MessageSyncEngine createSyncEngine(IMessageSyncAware syncAware, String repositoryBaseDirectory, IIdentityProvider identityProvider, ISmsConnection smsConnection, int senderDelay, int receiverDelay){
-		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(repositoryBaseDirectory, false);		
+		KMLDOMLoaderFactory kmlSyncAdapterFactory = new KMLDOMLoaderFactory(repositoryBaseDirectory);
+		FeedSyncAdapterFactory feedSyncAdapterFactory = new FeedSyncAdapterFactory(repositoryBaseDirectory);
+		
+		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(feedSyncAdapterFactory, false, kmlSyncAdapterFactory);		
 		IChannel channel = SmsChannelFactory.createChannelWithFileRepository(smsConnection, senderDelay, receiverDelay, repositoryBaseDirectory);
 		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocolWithFileRepository(100, repositoryBaseDirectory, identityProvider, syncAware, SmsEndpointFactory.INSTANCE, syncAdapterFactory);		
 		return new MessageSyncEngine(syncProtocol, channel);		

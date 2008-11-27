@@ -662,6 +662,7 @@ public class Mesh4jSmsUI implements ISmsConnectionInboundOutboundNotification, I
 	}
 
 	private ISyncAdapter makeRepositoryAdapter(String endpoint) {
+		// TODO (JMT) refactoring: change for ISyncAdapterFactory
 		if(isURL(endpoint)){
 			return new HttpSyncAdapter(endpoint, RssSyndicationFormat.INSTANCE, this.identityProvider);
 		} else {
