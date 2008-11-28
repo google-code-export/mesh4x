@@ -55,6 +55,10 @@ public class FeedWriter {
 	}
 
 	public void write(Document document, Feed feed) throws DocumentException {
+		write(document, feed, false);
+	}
+	
+	public void write(Document document, Feed feed, boolean plainMode) throws DocumentException {
 		Element root = this.addRootElement(document);
 		
 		if(feed.getPayload() != null){
@@ -62,7 +66,7 @@ public class FeedWriter {
 		}
 		
 		for (Item item : feed.getItems()) {
-			write(root, item);
+			write(root, item, plainMode);
 		}
 	}
 
@@ -78,8 +82,11 @@ public class FeedWriter {
 		return this.syndicationFormat.addRootElement(document);
 	}
 
-	public void write(Element root, Item item) 
-	{
+	public void write(Element root, Item item) {
+		write(root, item, false); 
+	}
+	
+	public void write(Element root, Item item, boolean plainMode){
 		Element itemElement = this.addFeedItemElement(root);
 		
 		this.writeContent(itemElement, item.getSync(), item.getContent());
@@ -105,7 +112,7 @@ public class FeedWriter {
 			}
 		}
 		
-		if(item.getSync() != null){
+		if(item.getSync() != null && !plainMode){
 			writeSync(itemElement, item.getSync());
 		}
 	}	
@@ -167,8 +174,12 @@ public class FeedWriter {
 	}
 
 	public String writeAsXml(Feed feed) throws Exception {
+		return writeAsXml(feed, false);
+	}
+	
+	public String writeAsXml(Feed feed, boolean plainMode) throws Exception {
 		Document document = DocumentHelper.createDocument();
-		this.write(document, feed);
+		this.write(document, feed, plainMode);
 		String xml = document.asXML();
 		return xml;
 	}

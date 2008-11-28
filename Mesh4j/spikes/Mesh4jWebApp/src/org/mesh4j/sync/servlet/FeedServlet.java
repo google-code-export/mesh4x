@@ -48,10 +48,11 @@ public class FeedServlet extends HttpServlet {
 			if(syndicationFormat == null){
 				response.sendError(404, format);
 			} else {
-
+				boolean plainMode = request.getParameter("plain") != null;     // plain  ==> remove deleted items and sync information
+				
 				Date sinceDate = this.getSinceDate(request);
 				String link = getLink(request, sourceID);
-				String responseContent = this.feedRepository.readFeed(sourceID, link, sinceDate, syndicationFormat);
+				String responseContent = this.feedRepository.readFeed(sourceID, link, sinceDate, syndicationFormat, plainMode);
 				responseContent = responseContent.replaceAll("&lt;", "<");	// TODO (JMT) issue from XFROMS (MIDP demo)
 				responseContent = responseContent.replaceAll("&gt;", ">");
 				

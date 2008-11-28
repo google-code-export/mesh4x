@@ -16,6 +16,9 @@ import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.adapters.feed.XMLContent;
 import org.mesh4j.sync.adapters.feed.atom.AtomSyndicationFormat;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
+import org.mesh4j.sync.filter.CompoundFilter;
+import org.mesh4j.sync.filter.NonDeletedFilter;
+import org.mesh4j.sync.filter.SinceLastUpdateFilter;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.Sync;
@@ -42,26 +45,42 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 	protected abstract ISyncAdapter getParentSyncAdapter(String sourceID);
 	protected abstract void addNewFeed(String sourceID, Feed feed, ISyndicationFormat syndicationFormat);
 
-	private String writeFeedAsXml(Feed feed, ISyndicationFormat syndicationFormat){
+	private String writeFeedAsXml(Feed feed, ISyndicationFormat syndicationFormat, boolean plainMode){
 		FeedWriter writer = (FeedWriter)this.writers.get(syndicationFormat);
 		try {
-			return writer.writeAsXml(feed);
+			return writer.writeAsXml(feed, plainMode);
 		} catch (Exception e) {
 			throw new MeshException(e);
 		}
 	}
 
-	public String readFeed(String sourceID, String link, Date sinceDate, ISyndicationFormat syndicationFormat) {
+	@SuppressWarnings("unchecked")
+	@Override
+	public String readFeed(String sourceID, String link, Date sinceDate, ISyndicationFormat syndicationFormat, boolean plainMode) {
 		
 		ISyncAdapter adapter = getSyncAdapter(sourceID);
 		
-		List<Item> items = adapter.getAllSince(sinceDate);
-
+		
+		List<Item> items;
+		
+		if(plainMode){
+			CompoundFilter compoundFilter;
+			if(sinceDate == null){
+				compoundFilter = new CompoundFilter(NonDeletedFilter.INSTANCE);
+			}else {
+				SinceLastUpdateFilter sinceFilter = new SinceLastUpdateFilter(sinceDate);
+				compoundFilter = new CompoundFilter(NonDeletedFilter.INSTANCE, sinceFilter);
+			}
+			items = adapter.getAll(compoundFilter);
+		} else {
+			items = adapter.getAllSince(sinceDate);	
+		}
+		
 		String title = getFeedTitle(sourceID);
 		Feed feed = new Feed(title, "", link, syndicationFormat);
 		feed.addItems(items);
 		
-		String xml = writeFeedAsXml(feed, syndicationFormat);
+		String xml = writeFeedAsXml(feed, syndicationFormat, plainMode);
 		return xml;
 	}
 	
@@ -78,7 +97,7 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 		String title = getFeedTitle(sourceID);
 		Feed feedResult = new Feed(title, "conflicts", link, syndicationFormat);
 		feedResult.addItems(conflicts);
-		return this.writeFeedAsXml(feedResult, syndicationFormat);
+		return this.writeFeedAsXml(feedResult, syndicationFormat, false);
 	}
 	
 	public ISyndicationFormat getSyndicationFormat(String formatName) {

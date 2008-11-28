@@ -8,7 +8,7 @@ public interface IFeedRepository {
 
 	boolean existsFeed(String sourceID);
 
-	String readFeed(String sourceID, String link, Date sinceDate, ISyndicationFormat syndicationFormat);
+	String readFeed(String sourceID, String link, Date sinceDate, ISyndicationFormat syndicationFormat, boolean plainMode);
 
 	boolean isAddNewFeedAction(String sourceID);
 

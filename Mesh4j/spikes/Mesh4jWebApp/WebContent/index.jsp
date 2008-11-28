@@ -22,7 +22,7 @@
 		<li>
 			<p><b>How to get all available Mesh</b>&nbsp;&nbsp;<a class="atomRssLink" href="/mesh4x/feeds?format=atom10">atom</a>&nbsp;|&nbsp;<a href="/mesh4x/feeds?format=rss20">rss</a></p>
 			<div class="description">Method: GET</div>
-			<div class="description">URL: /feeds?format[atom10/rss20]&nbsp;&nbsp;&nbsp;(*)</div>
+			<div class="description">URL: /feeds?format[atom10/rss20]&[plain]&nbsp;&nbsp;&nbsp;(*)</div>
 			<br>
 		</li>
 		<li>
@@ -39,7 +39,7 @@
 		<li>
 			<p><b>How to get all available feeds for a Mesh</b></p>
 			<div class="description">Method: GET</div>
-			<div class="description">URL: /feeds/{meshName}?format[atom10/rss20]&nbsp;&nbsp;&nbsp;(*)</div>
+			<div class="description">URL: /feeds/{meshName}?format[atom10/rss20]&[plain]&nbsp;&nbsp;&nbsp;(*)</div>
 			<br>
 		</li>
 		<li>
@@ -56,7 +56,7 @@
 		<li>
 			<p><b>How to get a Feed</b></p>
 			<div class="description">Method: GET</div>
-			<div class="description">URL: /feeds/{meshName}/{feedName}?format[atom10/rss20]&nbsp;&nbsp;&nbsp;(*)</div>
+			<div class="description">URL: /feeds/{meshName}/{feedName}?format[atom10/rss20]&[plain]&nbsp;&nbsp;&nbsp;(*)</div>
 			<br>
 		</li>
 		<li><p><b>How to synchronize a Feed</b></p>
@@ -65,7 +65,8 @@
 		</li>
 	</ul>
 	<br>
-	<p>* If the <b>format</b> is empty a rss value is assigned by default</p>
+	<p>* Parameter <b>format</b> is optional, rss20 value is assigned by default</p>
+	<p>* Parameter <b>plain</b> is optional, result feed not contains deleted items and sync information</p>
 	<br>
 	<hr>
 	<br>
