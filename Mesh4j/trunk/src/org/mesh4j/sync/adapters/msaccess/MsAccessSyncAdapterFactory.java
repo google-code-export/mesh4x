@@ -60,7 +60,7 @@ public class MsAccessSyncAdapterFactory implements ISyncAdapterFactory {
 		return new SplitAdapter(syncRepository, contentAdapter, NullIdentityProvider.INSTANCE);
 	}
 	
-	private static HibernateSessionFactoryBuilder createHibernateSessionBuilder(String dbURL, String tableName, String user, String password, String contentMappingFileName, String syncMappingFileName) {
+	public static HibernateSessionFactoryBuilder createHibernateSessionBuilder(String dbURL, String tableName, String user, String password, String contentMappingFileName, String syncMappingFileName) {
 		
 		HibernateSessionFactoryBuilder builder = new HibernateSessionFactoryBuilder();
 		builder.setProperty("hibernate.dialect", MsAccessDialect.class.getName());

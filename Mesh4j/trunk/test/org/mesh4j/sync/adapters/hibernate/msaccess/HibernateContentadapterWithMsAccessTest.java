@@ -38,6 +38,8 @@ public class HibernateContentadapterWithMsAccessTest {
 			System.out.println(rs.getString(3));
 		}
 
+		command.close();
+		conn.close();
 		System.out.println("Connected To Excel");
 
 	}
@@ -58,7 +60,8 @@ public class HibernateContentadapterWithMsAccessTest {
 		}
 
 		System.out.println("Connected To Access");
-
+		command.close();
+		conn.close();
 	}
 	
 	@Test
