@@ -9,5 +9,5 @@
 </listAttribute>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.sms.exchanger.SmsExchanger"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="SmsExchanger"/>
-<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Doutbox.directory=c:\Clarius\mesh4x\test\smscl\outbox\ -Dinbox.directory=c:\Clarius\mesh4x\test\smscl\inbox\ -Dport=COM23"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Doutbox.directory=c:\mesh4x\demos\smscl\outbox\ -Dinbox.directory=c:\mesh4x\demos\smscl\inbox\ -Dport=COM23"/>
 </launchConfiguration>
