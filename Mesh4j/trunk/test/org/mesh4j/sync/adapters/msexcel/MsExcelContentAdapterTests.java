@@ -132,7 +132,7 @@ public class MsExcelContentAdapterTests {
 	}
 
 	@Test
-	public void shouldFileDoesNotCreatedBecauseEndSyncIsNotExecuted(){
+	public void shouldFileDoesNotCreatedBecauseEndSyncIsNotExecuted() throws IOException{
 		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
 		
 		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), "sheet", "id");
@@ -142,7 +142,7 @@ public class MsExcelContentAdapterTests {
 	}
 	
 	@Test
-	public void shouldFileCreatedWhenEndSyncIsExecuted(){
+	public void shouldFileCreatedWhenEndSyncIsExecuted() throws IOException{
 		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
 		
 		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), "sheet", "id");
@@ -179,7 +179,7 @@ public class MsExcelContentAdapterTests {
 	}
 	
 	@Test
-	public void shouldGetReturnsNullBecauseItemDoesNotExistsOnSheet(){
+	public void shouldGetReturnsNullBecauseItemDoesNotExistsOnSheet() throws IOException{
 		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
 		
 		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), "sheet", "id");
@@ -196,7 +196,7 @@ public class MsExcelContentAdapterTests {
 	}
 	
 	@Test
-	public void shouldGetReturnsItem(){
+	public void shouldGetReturnsItem() throws IOException{
 		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
 		
 		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), "sheet", "id");
@@ -216,14 +216,14 @@ public class MsExcelContentAdapterTests {
 	}
 	
 	@Test
-	public void shouldGetAllReturnsEmpty(){
+	public void shouldGetAllReturnsEmpty() throws IOException{
 		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");		
 		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), "sheet", "id");
 		Assert.assertEquals(0, adapter.getAll(new Date()).size());
 	}
 	
 	@Test
-	public void shouldGetAllReturnsItems(){
+	public void shouldGetAllReturnsItems() throws IOException{
 		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
 		
 		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), "sheet", "id");
@@ -250,7 +250,7 @@ public class MsExcelContentAdapterTests {
 	}
 
 	@Test
-	public void shouldGetAllReturnsItemsFilteringBySinceDate(){
+	public void shouldGetAllReturnsItemsFilteringBySinceDate() throws IOException{
 		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
 
 		Date since = TestHelper.makeDate(2008, 11, 10, 1, 1, 1, 0);
@@ -275,7 +275,7 @@ public class MsExcelContentAdapterTests {
 	}
 	
 	@Test 
-	public void shouldDeleteNoProduceChangesWhenItemDoesNotExist() throws DocumentException{
+	public void shouldDeleteNoProduceChangesWhenItemDoesNotExist() throws DocumentException, IOException{
 		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
 		
 		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), "sheet", "id");
@@ -298,7 +298,7 @@ public class MsExcelContentAdapterTests {
 	}
 	
 	@Test 
-	public void shouldDelete() throws DocumentException{
+	public void shouldDelete() throws DocumentException, IOException{
 		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
 		
 		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), "sheet", "id");
@@ -320,7 +320,7 @@ public class MsExcelContentAdapterTests {
 	}
 
 	@Test
-	public void shouldSave() throws DocumentException{
+	public void shouldSave() throws DocumentException, IOException{
 		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
 		
 		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), "sheet", "id");
@@ -347,7 +347,7 @@ public class MsExcelContentAdapterTests {
 	}
 
 	@Test
-	public void shouldUpdate() throws DocumentException{
+	public void shouldUpdate() throws DocumentException, IOException{
 		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
 		
 		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), "sheet", "id");
@@ -374,7 +374,7 @@ public class MsExcelContentAdapterTests {
 	}
 
 	@Test
-	public void shouldBeginSyncRegisterAndMoveToBottomPhantomRows(){
+	public void shouldBeginSyncRegisterAndMoveToBottomPhantomRows() throws IOException{
 		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
 		
 		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), "sheet", "id");
@@ -413,7 +413,7 @@ public class MsExcelContentAdapterTests {
 	}
 	
 	@Test
-	public void shouldDeleteRegisterAndMoveToBottomPhantomRow() throws DocumentException{
+	public void shouldDeleteRegisterAndMoveToBottomPhantomRow() throws DocumentException, IOException{
 		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
 		
 		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), "sheet", "id");
@@ -442,7 +442,7 @@ public class MsExcelContentAdapterTests {
 	}
 	
 	@Test
-	public void shouldAddUsePhantomRows() throws DocumentException{
+	public void shouldAddUsePhantomRows() throws DocumentException, IOException{
 	File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
 		
 		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), "sheet", "id");

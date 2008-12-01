@@ -6,10 +6,12 @@ import org.dom4j.Element;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.S3.IS3Service;
 import org.mesh4j.sync.adapters.S3.S3Adapter;
+import org.mesh4j.sync.adapters.S3.amazon.S3Service;
 import org.mesh4j.sync.adapters.feed.Feed;
 import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.security.NullIdentityProvider;
+import org.mesh4j.sync.validations.Guard;
 
 public class S3FeedRepository extends AbstractFeedRepository {
 
@@ -18,16 +20,17 @@ public class S3FeedRepository extends AbstractFeedRepository {
 	private static final String MESH_OBJECT = "mesh";
 	// MODEL VARIABLES
 	private IS3Service s3;
-	private String bucket = "instedd";
+	private String bucket;
 	
 	// BUSINESS METHODS
 
-	public S3FeedRepository(String accessKey, String secretAccessKey) {
-		super();
-		com.mesh4j.sync.adapter.S3.emulator.S3Service emulator = new com.mesh4j.sync.adapter.S3.emulator.S3Service();
-		emulator.addNode("1");
-		this.s3 = emulator;
-		//this.s3 = new S3Service();
+	public S3FeedRepository(String bucket, String accessKey, String secretAccessKey) {
+		Guard.argumentNotNullOrEmptyString(bucket, "bucket");
+		Guard.argumentNotNullOrEmptyString(accessKey, "accessKey");
+		Guard.argumentNotNullOrEmptyString(secretAccessKey, "secretAccessKey");
+		
+		this.bucket = bucket;
+		this.s3 = new S3Service(accessKey, secretAccessKey);
 		
 	}
 

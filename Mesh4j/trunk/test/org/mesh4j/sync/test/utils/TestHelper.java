@@ -207,7 +207,7 @@ public class TestHelper {
 		return baseDirectoryForTest() + name;
 	}
 	
-	public static File makeFileAndDeleteIfExists(String fileName){
+	public static File makeFileAndDeleteIfExists(String fileName) throws IOException{
 		String myFileName = TestHelper.fileName(fileName);
 		File file = new File(myFileName);
 		if(file.exists()){

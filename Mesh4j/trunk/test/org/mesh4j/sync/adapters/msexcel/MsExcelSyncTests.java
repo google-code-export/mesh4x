@@ -1,6 +1,7 @@
 package org.mesh4j.sync.adapters.msexcel;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -55,7 +56,7 @@ public class MsExcelSyncTests {
 	}
 
 	@Test
-	public void shouldSync() throws DocumentException{
+	public void shouldSync() throws DocumentException, IOException{
 		
 		String sheetName = "patient";
 		String idColumnName = "id";
@@ -80,7 +81,7 @@ public class MsExcelSyncTests {
 	}
 	
 	@Test
-	public void shouldSyncSameFile() throws DocumentException{
+	public void shouldSyncSameFile() throws DocumentException, IOException{
 		
 		String sheetName = "patient";
 		String idColumnName = "id";
@@ -131,7 +132,7 @@ public class MsExcelSyncTests {
 		return new Item(content, sync);
 	}
 
-	private SplitAdapter makeSplitAdapter(String sheetName, String idColumnName, String contentFileName, String syncFileName, IIdentityProvider identityProvider, IdGenerator idGenerator) {
+	private SplitAdapter makeSplitAdapter(String sheetName, String idColumnName, String contentFileName, String syncFileName, IIdentityProvider identityProvider, IdGenerator idGenerator) throws IOException {
 		
 		MsExcel contentExcel = null;
 		MsExcel syncExcel = null;

@@ -65,7 +65,7 @@ public class ACKMergeMessageProcessorTests {
 	@Test
 	public void shouldCreateMessageWithConflictsFullProtocol(){
 		
-		Date date = TestHelper.makeDate(2008, 1, 1, 1, 1, 1, 1);
+		Date date = TestHelper.makeDate(2008, 1, 1, 1, 1, 1, 0);
 		Item item = new Item(new NullContent("1"), new Sync("1", "jmt", date, true));
 		MockSyncSession syncSession = new MockSyncSession(null, item);
 		syncSession.addConflict("1");
@@ -74,7 +74,7 @@ public class ACKMergeMessageProcessorTests {
 		IMessage message = mp.createMessage(syncSession, "1", true);
 
 		Assert.assertNotNull(message);
-		Assert.assertEquals("T1T1201849261000jmt", message.getData());
+		Assert.assertEquals("T1T"+date.getTime()+"jmt", message.getData());
 		Assert.assertEquals(syncSession.getTarget(), message.getEndpoint());
 		Assert.assertEquals(mp.getMessageType(), message.getMessageType());
 		Assert.assertEquals(IProtocolConstants.PROTOCOL, message.getProtocol());

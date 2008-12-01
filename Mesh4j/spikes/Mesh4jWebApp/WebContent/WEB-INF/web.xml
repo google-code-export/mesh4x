@@ -16,9 +16,14 @@
    			<param-name>feeds.base.directory</param-name>
    			<param-value>C:\mesh4x\demos\feedSyncServer</param-value>
    		</init-param>
-   		<!--init-param>
+   		   		
+   		<!-- init-param>
    			<param-name>feeds.repository</param-name>
    			<param-value>org.mesh4j.sync.web.S3FeedRepository</param-value>
+   		</init-param>	
+   		<init-param>
+   			<param-name>feeds.s3.bucket</param-name>
+   			<param-value>instedd.mesh4x</param-value>
    		</init-param>
 		<init-param>
    			<param-name>feeds.s3.access.key</param-name>

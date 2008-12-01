@@ -11,6 +11,7 @@ public class FeedRepositoryFactory {
 
 	private static final String FEEDS_BASE_DIRECTORY = "feeds.base.directory";
 	
+	private static final String FEEDS_S3_BUCKET = "feeds.s3.bucket";
 	private static final String FEEDS_S3_SECRET_ACCESS_KEY = "feeds.s3.secret.access.key";
 	private static final String FEEDS_S3_ACCESS_KEY = "feeds.s3.access.key";
 
@@ -22,9 +23,10 @@ public class FeedRepositoryFactory {
 		 }
 		 
 		 if(S3FeedRepository.class.getName().equals(repositoryClassName)){
-			 String accessKey = feedServlet.getInitParameter(FEEDS_S3_ACCESS_KEY);;
-			 String secretAccessKey = feedServlet.getInitParameter(FEEDS_S3_SECRET_ACCESS_KEY);;
-			 return new S3FeedRepository(accessKey, secretAccessKey);
+			 String bucket = feedServlet.getInitParameter(FEEDS_S3_BUCKET);
+			 String accessKey = feedServlet.getInitParameter(FEEDS_S3_ACCESS_KEY);
+			 String secretAccessKey = feedServlet.getInitParameter(FEEDS_S3_SECRET_ACCESS_KEY);
+			 return new S3FeedRepository(bucket, accessKey, secretAccessKey);
 		 } 
 		 
 		 return null;
