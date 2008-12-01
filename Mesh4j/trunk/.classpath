@@ -3,7 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" output="testbin" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry exported="true" kind="lib" path="lib/dom4j/dom4j-1.6.1.jar" sourcepath="D:/Marcelo/java_src/dom4j-1.6.1/src"/>
+	<classpathentry exported="true" kind="lib" path="lib/dom4j/dom4j-1.6.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/hibernate/hibernate3.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jakarta-commons/commons-collections-2.1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jakarta-commons/commons-logging-1.0.4.jar"/>

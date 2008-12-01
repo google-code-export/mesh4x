@@ -32,14 +32,14 @@ public class SyncMsAccessTests {
 
 	@Test
 	public void testAccessDB() throws IOException{
-		String mdbFile = "D:/temp_dev/mesh4j/ms-access/DevDB2.mdb";
+		String mdbFile = "c:/mesh4x/tests/ms-access/DevDB2.mdb";
 		Database db = Database.open(new File(mdbFile));
 		System.out.println(db.getTableNames());
 	}
 	
 	@Test
 	public void testFileConnection()throws Exception{
-		String filename = "D:/temp_dev/mesh4j/ms-access/DevDB2.mdb";
+		String filename = "c:/mesh4x/tests/ms-access/DevDB2.mdb";
 		String database = "jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=";
 		database+= filename.trim() + ";DriverID=22;READONLY=false}"; // add on to the end 
  
@@ -120,11 +120,11 @@ public class SyncMsAccessTests {
 	@Test
 	public void executeSync(){
 
-		String filenameA = "D:/temp_dev/mesh4j/ms-access/DevDB.mdb";
+		String filenameA = "c:/mesh4x/tests/ms-access/DevDB.mdb";
 		String databaseA = "jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=";
 		databaseA+= filenameA.trim() + ";DriverID=22;READONLY=false}"; // add on to the end 
 
-		String filenameB = "D:/temp_dev/mesh4j/ms-access/DevDB2.mdb";
+		String filenameB = "c:/mesh4x/tests/ms-access/DevDB2.mdb";
 		String databaseB = "jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=";
 		databaseB+= filenameB.trim() + ";DriverID=22;READONLY=false}"; // add on to the end
 		
