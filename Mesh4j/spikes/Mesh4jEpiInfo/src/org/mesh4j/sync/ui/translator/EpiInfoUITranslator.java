@@ -267,4 +267,21 @@ public class EpiInfoUITranslator {
 	public static String getLabelSaveDefaults() {
 		return MessageTranslator.translate("EPIINFO_LABEL_SAVE_DEFAULTS");
 	}
+
+	public static String getLabelKML() {
+		return MessageTranslator.translate("EPIINFO_LABEL_KML_LOCAL");
+	}
+	
+	public static String getLabelKMLWEB() {
+		return MessageTranslator.translate("EPIINFO_LABEL_KML_WEB");
+	}
+
+	public static String getErrorKMLSchemaNotFound() {
+		return MessageTranslator.translate("EPIINFO_ERROR_KML_SCHEMA_NOT_FOUND");
+	}
+
+	public static String getLabelDownloadSchema() {
+		return MessageTranslator.translate("EPIINFO_LABEL_DOWNLOAD_SCHEMA");
+	}
+
 }

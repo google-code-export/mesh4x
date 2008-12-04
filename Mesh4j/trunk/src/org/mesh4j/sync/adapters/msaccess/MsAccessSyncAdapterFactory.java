@@ -2,7 +2,6 @@ package org.mesh4j.sync.adapters.msaccess;
 
 import java.io.File;
 
-import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.ISourceIdResolver;
 import org.mesh4j.sync.adapters.ISyncAdapterFactory;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
@@ -33,7 +32,7 @@ public class MsAccessSyncAdapterFactory implements ISyncAdapterFactory {
 		this.fileMappings = fileMappings;
 	}	
 	
-	public static ISyncAdapter createSyncAdapterFromFile(String mdbFileName, String tableName, String mappingsDirectory) throws Exception{
+	public static SplitAdapter createSyncAdapterFromFile(String mdbFileName, String tableName, String mappingsDirectory) throws Exception{
 		String contentMappingFileName = mappingsDirectory + "/" + tableName + ".hbm.xml";
 		String syncMappingFileName =  mappingsDirectory + "/" + tableName + "_sync.hbm.xml";
 		
@@ -42,17 +41,17 @@ public class MsAccessSyncAdapterFactory implements ISyncAdapterFactory {
 		return createSyncAdapterFromFile(mdbFileName, tableName, contentMappingFileName, syncMappingFileName);	
 	}
 
-	public static ISyncAdapter createSyncAdapterFromFile(String mdbFileName, String tableName, String contentMappingFileName, String syncMappingFileName){
+	public static SplitAdapter createSyncAdapterFromFile(String mdbFileName, String tableName, String contentMappingFileName, String syncMappingFileName){
 		String dbURL = "jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=" + mdbFileName.trim() + ";DriverID=22;READONLY=false}"; 
 		return createSplitAdapter(dbURL, tableName, "", "", contentMappingFileName, syncMappingFileName);	
 	}
 
-	public static ISyncAdapter createSyncAdapterFromODBC(String odbcName, String tableName, String user, String password, String contentMappingFileName, String syncMappingFileName){
+	public static SplitAdapter createSyncAdapterFromODBC(String odbcName, String tableName, String user, String password, String contentMappingFileName, String syncMappingFileName){
 		String dbURL = "jdbc:odbc:"+odbcName;
 		return createSplitAdapter(tableName, user, password, dbURL, contentMappingFileName, syncMappingFileName);	
 	}
 	
-	private static ISyncAdapter createSplitAdapter(String dbURL, String tableName, String user, String password, String contentMappingFileName, String syncMappingFileName) {
+	private static SplitAdapter createSplitAdapter(String dbURL, String tableName, String user, String password, String contentMappingFileName, String syncMappingFileName) {
 		HibernateSessionFactoryBuilder builder = createHibernateSessionBuilder(dbURL, tableName, user, password, contentMappingFileName, syncMappingFileName);
 		SyncInfoParser syncInfoParser = new SyncInfoParser(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		HibernateSyncRepository syncRepository = new HibernateSyncRepository(builder, syncInfoParser);
@@ -91,7 +90,7 @@ public class MsAccessSyncAdapterFactory implements ISyncAdapterFactory {
 	}
 
 	@Override
-	public ISyncAdapter createSyncAdapter(String sourceId, IIdentityProvider identityProvider) throws Exception {
+	public SplitAdapter createSyncAdapter(String sourceId, IIdentityProvider identityProvider) throws Exception {
 		String[] elements = sourceId.substring("access:".length(), sourceId.length()).split("@");
 		String mdbFileName = this.baseDirectory+"/"+ elements[0];
 		String tableName = elements[1];
@@ -102,7 +101,7 @@ public class MsAccessSyncAdapterFactory implements ISyncAdapterFactory {
 				mdbFileName = fileName;
 			}
 		}
-		ISyncAdapter msAccessAdapter = createSyncAdapterFromFile(mdbFileName, tableName, this.baseDirectory);
+		SplitAdapter msAccessAdapter = createSyncAdapterFromFile(mdbFileName, tableName, this.baseDirectory);
 		return msAccessAdapter;
 	}
 
@@ -114,5 +113,19 @@ public class MsAccessSyncAdapterFactory implements ISyncAdapterFactory {
 	public static String getFileName(String sourceId) {
 		String[] elements = sourceId.substring("access:".length(), sourceId.length()).split("@");
 		return elements[0];
+	}
+
+	public String getBaseDirectory() {
+		return this.baseDirectory;
+	}
+
+	@Override
+	public String getSourceName(String sourceId) {
+		return getTableName(sourceId);
+	}
+
+	@Override
+	public String getSourceType(String sourceId) {
+		return "MsAccess";
 	}
 }

@@ -23,7 +23,7 @@
    		</init-param>	
    		<init-param>
    			<param-name>feeds.s3.bucket</param-name>
-   			<param-value>instedd.mesh4x</param-value>
+   			<param-value>mesh4x.store.instedd.org</param-value>
    		</init-param>
 		<init-param>
    			<param-name>feeds.s3.access.key</param-name>

@@ -5,6 +5,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 
 import javax.servlet.ServletException;
@@ -13,6 +14,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
+import org.mesh4j.sync.adapters.kml.exporter.KMLExporter;
+import org.mesh4j.sync.model.Item;
+import org.mesh4j.sync.payload.schema.ISchemaResolver;
 import org.mesh4j.sync.utils.DateHelper;
 import org.mesh4j.sync.web.FeedRepositoryFactory;
 import org.mesh4j.sync.web.IFeedRepository;
@@ -40,37 +44,74 @@ public class FeedServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 		String sourceID = this.getSourceID(request);
-		if(sourceID != null && !this.feedRepository.existsFeed(sourceID)){  // sourceID == null ==> Get all feeds
-			response.sendError(404, sourceID);
-		} else {
-			String format = request.getParameter("format");     // format=rss20/atom10
-			ISyndicationFormat syndicationFormat = this.feedRepository.getSyndicationFormat(format);
-			if(syndicationFormat == null){
-				response.sendError(404, format);
+		String link = request.getRequestURI();
+
+		if(sourceID != null && sourceID.endsWith("schema")){
+			link = link.substring(0, link.length() - "/schema".length());
+			sourceID = sourceID.substring(0, sourceID.length() - "/schema".length());
+
+			if(!this.feedRepository.existsFeed(sourceID)){
+				response.sendError(404, sourceID);
 			} else {
-				boolean plainMode = request.getParameter("plain") != null;     // plain  ==> remove deleted items and sync information
-				
-				Date sinceDate = this.getSinceDate(request);
-				String link = getLink(request, sourceID);
-				String responseContent = this.feedRepository.readFeed(sourceID, link, sinceDate, syndicationFormat, plainMode);
-				responseContent = responseContent.replaceAll("&lt;", "<");	// TODO (JMT) issue from XFROMS (MIDP demo)
-				responseContent = responseContent.replaceAll("&gt;", ">");
+				ISchemaResolver propertyResolver;
+				try {
+					propertyResolver = this.feedRepository.getSchema(sourceID, link);
+				} catch (Exception e) {
+					throw new ServletException(e);
+				}
+				String responseContent = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"+ propertyResolver.getSchema().asXML();
 				
 				response.setContentType("text/plain");
 				response.setContentLength(responseContent.length());
 				PrintWriter out = response.getWriter();
 				out.println(responseContent);
 			}
+		} else {
+			if(sourceID != null && !this.feedRepository.existsFeed(sourceID)){  // sourceID == null ==> Get all feeds
+				response.sendError(404, sourceID);
+			} else {
+				String format = request.getParameter("format");     // format=rss20/atom10/kml
+				if("kml".equals(format)){
+					
+					Date sinceDate = this.getSinceDate(request);
+					
+					List<Item> items = this.feedRepository.getAll(sourceID, sinceDate);
+					
+					ISchemaResolver propertyResolver;
+					try {
+						propertyResolver = this.feedRepository.getSchema(sourceID, link);
+					} catch (Exception e) {
+						throw new ServletException(e);
+					}
+					String responseContent = KMLExporter.generateKML(sourceID, items, propertyResolver);
+					
+					response.setContentType("text/plain");
+					response.setContentLength(responseContent.length());
+					PrintWriter out = response.getWriter();
+					out.println(responseContent);
+	
+				}else {
+					ISyndicationFormat syndicationFormat = this.feedRepository.getSyndicationFormat(format);
+					if(syndicationFormat == null){
+						response.sendError(404, format);
+					} else {
+						boolean plainMode = request.getParameter("plain") != null;     // plain  ==> remove deleted items and sync information
+						
+						Date sinceDate = this.getSinceDate(request);
+						String responseContent = this.feedRepository.readFeed(sourceID, link, sinceDate, syndicationFormat, plainMode);
+						responseContent = responseContent.replaceAll("&lt;", "<");	// TODO (JMT) issue from XFROMS (MIDP demo)
+						responseContent = responseContent.replaceAll("&gt;", ">");
+						
+						response.setContentType("text/plain");
+						response.setContentLength(responseContent.length());
+						PrintWriter out = response.getWriter();
+						out.println(responseContent);
+					}
+				}
+			}
 		}
 	}
 
-	private String getLink(HttpServletRequest request, String sourceID) {
-		if(sourceID == null){
-			return request.getRequestURI();
-		} else {
-			return request.getRequestURI()+ "/" + sourceID;
-		}
-	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {		
 		String sourceID = this.getSourceID(request);				
@@ -94,7 +135,7 @@ public class FeedServlet extends HttpServlet {
 				if(feedXml == null){
 					response.sendError(404, sourceID);
 				} else {
-					String link = getLink(request, sourceID);
+					String link = request.getRequestURI();
 					String responseContent = this.feedRepository.synchronize(sourceID, link, feedXml, syndicationFormat);
 					
 					response.setContentType("text/plain");
@@ -120,7 +161,7 @@ public class FeedServlet extends HttpServlet {
 				response.sendError(404, format);	
 			}
 			
-			String link = getLink(request, newSourceID);
+			String link = request.getRequestURI()+ "/" + newSourceID;
 			this.feedRepository.addNewFeed(newSourceID, syndicationFormat, link, description, schema);
 			
 			response.sendRedirect(request.getRequestURI()+"/"+newSourceID);

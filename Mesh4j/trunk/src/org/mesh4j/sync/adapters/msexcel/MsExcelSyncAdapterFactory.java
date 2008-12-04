@@ -48,4 +48,17 @@ public class MsExcelSyncAdapterFactory implements ISyncAdapterFactory {
 		return new SplitAdapter(syncRepo, contentAdapter, identityProvider);
 	}
 
+	@Override
+	public String getSourceName(String sourceId) {
+		String[] elements = sourceId.substring("excel:".length(), sourceId.length()).split("@");
+		//String excelFileName = elements[0];
+		String sheetName = elements[1];
+		return sheetName;
+	}
+
+	@Override
+	public String getSourceType(String sourceId) {
+		return "MsExcel";
+	}
+
 }

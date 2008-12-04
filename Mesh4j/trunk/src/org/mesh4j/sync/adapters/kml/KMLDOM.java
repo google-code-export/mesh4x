@@ -66,6 +66,13 @@ public class KMLDOM extends MeshDOM {
 	}
 
 	private static Document createDocument(String name) {
+		Document kmlDocument = createKmlDocument(name);
+		
+		prepateSyncRepository(kmlDocument);
+		return kmlDocument;
+	}
+
+	public static Document createKmlDocument(String name) {
 		Guard.argumentNotNullOrEmptyString(name, "name");
 		
 		Document kmlDocument = DocumentHelper.createDocument();
@@ -73,8 +80,6 @@ public class KMLDOM extends MeshDOM {
 		Element documentElement = kmlElement.addElement(KmlNames.KML_ELEMENT_DOCUMENT, KmlNames.KML_URI);
 		Element elementName = documentElement.addElement(KmlNames.KML_ELEMENT_NAME, KmlNames.KML_URI);
 		elementName.addText(name);
-		
-		prepateSyncRepository(kmlDocument);
 		return kmlDocument;
 	}
 

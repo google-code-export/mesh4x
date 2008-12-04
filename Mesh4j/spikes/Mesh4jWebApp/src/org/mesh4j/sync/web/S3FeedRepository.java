@@ -20,7 +20,7 @@ public class S3FeedRepository extends AbstractFeedRepository {
 	private static final String MESH_OBJECT = "mesh";
 	// MODEL VARIABLES
 	private IS3Service s3;
-	private String bucket;
+	private String bucket;   // TODO (JMT) bucket pool?
 	
 	// BUSINESS METHODS
 

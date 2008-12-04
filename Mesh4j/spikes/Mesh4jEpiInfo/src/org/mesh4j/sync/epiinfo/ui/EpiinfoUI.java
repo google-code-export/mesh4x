@@ -31,6 +31,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.mesh4j.sync.adapters.kml.exporter.KMLExporter;
 import org.mesh4j.sync.adapters.msaccess.MsAccessHelper;
 import org.mesh4j.sync.message.MessageSyncEngine;
 import org.mesh4j.sync.message.channel.sms.connection.smslib.Modem;
@@ -66,6 +67,9 @@ public class EpiinfoUI{
 	private static final int DISCOVERY_MODEMS = 3;
 	private final static int CHANGE_DEVICE = 4;
 	private final static int SAVE_DEFAULTS = 5;
+	private final static int GENERATE_KML = 6;
+	private final static int GENERATE_KML_WEB = 7;
+	private final static int DOWNLOAD_SCHEMA = 8;
 	
 	// MODEL VARIABLES
 	private JFrame frame;
@@ -90,6 +94,9 @@ public class EpiinfoUI{
 	private JRadioButton radioEndpointSMS;
 	private JRadioButton radioEndpointHTTP;
 	private JButton buttonSaveDefaults;
+	private JButton buttonKmlGenerator;
+	private JButton buttonKmlWebGenerator;
+	private JButton buttonDownloadSchema;
 	
 	private EpiInfoConsoleNotification consoleNotification;
 	
@@ -192,7 +199,7 @@ public class EpiinfoUI{
 		frame.getContentPane().setLayout(new FormLayout(
 			new ColumnSpec[] {
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("407dlu"),
+				ColumnSpec.decode("454dlu"),
 				FormFactory.RELATED_GAP_COLSPEC},
 			new RowSpec[] {
 				FormFactory.RELATED_GAP_ROWSPEC,
@@ -208,7 +215,7 @@ public class EpiinfoUI{
 				FormFactory.RELATED_GAP_ROWSPEC}));
 		frame.setResizable(false);
 		frame.setTitle(EpiInfoUITranslator.getTitle());
-		frame.setBounds(100, 100, 834, 773);
+		frame.setBounds(100, 100, 928, 773);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		final JPanel panelCommunications = new JPanel();
@@ -219,7 +226,7 @@ public class EpiinfoUI{
 				FormFactory.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("44dlu"),
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("305dlu"),
+				ColumnSpec.decode("352dlu"),
 				FormFactory.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("36dlu"),
 				FormFactory.RELATED_GAP_COLSPEC},
@@ -332,7 +339,7 @@ public class EpiinfoUI{
 				FormFactory.RELATED_GAP_COLSPEC,
 				FormFactory.DEFAULT_COLSPEC,
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("335dlu"),
+				ColumnSpec.decode("382dlu"),
 				FormFactory.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("35dlu"),
 				FormFactory.RELATED_GAP_COLSPEC},
@@ -420,7 +427,7 @@ public class EpiinfoUI{
 				FormFactory.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("167dlu"),
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("85dlu"),
+				ColumnSpec.decode("134dlu"),
 				FormFactory.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("87dlu"),
 				FormFactory.RELATED_GAP_COLSPEC},
@@ -466,12 +473,19 @@ public class EpiinfoUI{
 		final JPanel panelSyncButtons = new JPanel();
 		panelSyncButtons.setLayout(new FormLayout(
 			new ColumnSpec[] {
+				ColumnSpec.decode("53dlu"),
+				FormFactory.RELATED_GAP_COLSPEC,
+				ColumnSpec.decode("91dlu"),
+				FormFactory.RELATED_GAP_COLSPEC,
+				ColumnSpec.decode("60dlu"),
+				FormFactory.RELATED_GAP_COLSPEC,
 				FormFactory.DEFAULT_COLSPEC,
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("88dlu"),
-				ColumnSpec.decode("197dlu"),
+				FormFactory.DEFAULT_COLSPEC,
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("59dlu"),
+				FormFactory.DEFAULT_COLSPEC,
+				FormFactory.RELATED_GAP_COLSPEC,
+				ColumnSpec.decode("64dlu"),
 				FormFactory.RELATED_GAP_COLSPEC},
 			new RowSpec[] {
 				FormFactory.DEFAULT_ROWSPEC}));
@@ -496,20 +510,52 @@ public class EpiinfoUI{
 		buttonClean = new JButton();
 		buttonClean.setText(EpiInfoUITranslator.getLabelCleanConsole());
 		buttonClean.addActionListener(cleanConsoleActionListener);
-		panelSyncButtons.add(buttonClean, new CellConstraints(6, 1, CellConstraints.FILL, CellConstraints.FILL));
-
+		panelSyncButtons.add(buttonClean, new CellConstraints(13, 1, CellConstraints.FILL, CellConstraints.FILL));
 		
 		ActionListener saveDefaultActionListener = new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				Task task = new Task(SAVE_DEFAULTS);
 				task.execute();
 			}
-		};
-		
+		};		
 		buttonSaveDefaults = new JButton();
 		buttonSaveDefaults.setText(EpiInfoUITranslator.getLabelSaveDefaults());
 		buttonSaveDefaults.addActionListener(saveDefaultActionListener);
-		panelSyncButtons.add(buttonSaveDefaults, new CellConstraints(4, 1, CellConstraints.RIGHT, CellConstraints.FILL));
+		panelSyncButtons.add(buttonSaveDefaults, new CellConstraints(5, 1, CellConstraints.FILL, CellConstraints.FILL));
+		
+		ActionListener kmlGeneratorActionListener = new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				Task task = new Task(GENERATE_KML);
+				task.execute();
+			}
+		};
+		buttonKmlGenerator = new JButton();
+		buttonKmlGenerator.addActionListener(kmlGeneratorActionListener);
+		buttonKmlGenerator.setText(EpiInfoUITranslator.getLabelKML());
+		panelSyncButtons.add(buttonKmlGenerator, new CellConstraints(7, 1, CellConstraints.FILL, CellConstraints.FILL));
+
+		ActionListener kmlWebGeneratorActionListener = new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				Task task = new Task(GENERATE_KML_WEB);
+				task.execute();
+			}
+		};
+		buttonKmlWebGenerator = new JButton();
+		buttonKmlWebGenerator.setText(EpiInfoUITranslator.getLabelKMLWEB());
+		buttonKmlWebGenerator.addActionListener(kmlWebGeneratorActionListener);
+		panelSyncButtons.add(buttonKmlWebGenerator, new CellConstraints(11, 1, CellConstraints.FILL, CellConstraints.FILL));
+
+		
+		ActionListener downloadSchemaActionListener = new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				Task task = new Task(DOWNLOAD_SCHEMA);
+				task.execute();
+			}
+		};
+		buttonDownloadSchema = new JButton();
+		buttonDownloadSchema.setText(EpiInfoUITranslator.getLabelDownloadSchema());
+		buttonDownloadSchema.addActionListener(downloadSchemaActionListener);
+		panelSyncButtons.add(buttonDownloadSchema, new CellConstraints(9, 1, CellConstraints.FILL, CellConstraints.FILL));
 
 		// disable sms channel group
 		textFieldPhoneNumber.setEnabled(false);
@@ -569,9 +615,9 @@ public class EpiinfoUI{
     					identityProvider, baseDirectory, senderDelay, receiverDelay, readDelay, channelDelay, maxMessageLenght);
     			}	
     			try{
-					SyncEngineUtil.synchronize(syncEngine, textFieldPhoneNumber.getText(), 
+					SyncEngineUtil.synchronize(syncEngine, getModemPhoneNumber(), textFieldPhoneNumber.getText(), 
     					textFieldDataSource.getText(), (String)comboTables.getSelectedItem(), 
-    					identityProvider, baseDirectory);
+    					identityProvider, baseDirectory, fileNameResolver);
 	    		
 	    		} catch(Throwable t){
 	    			consoleNotification.logError(t, EpiInfoUITranslator.getLabelFailed());
@@ -580,7 +626,7 @@ public class EpiinfoUI{
 
     		if(action == SYNCHRONIZE_HTTP){
     			consoleNotification.beginSync(textFieldURL.getText(), textFieldDataSource.getText(), (String)comboTables.getSelectedItem());
-    			List<Item> conflicts = SyncEngineUtil.synchronize(textFieldURL.getText(), textFieldDataSource.getText(), (String)comboTables.getSelectedItem(), identityProvider, baseDirectory);
+    			List<Item> conflicts = SyncEngineUtil.synchronize(getModemPhoneNumber(), textFieldURL.getText(), textFieldDataSource.getText(), (String)comboTables.getSelectedItem(), identityProvider, baseDirectory, fileNameResolver);
     			consoleNotification.endSync(textFieldURL.getText(), textFieldDataSource.getText(), (String)comboTables.getSelectedItem(), conflicts);
     		} 
 
@@ -612,8 +658,42 @@ public class EpiinfoUI{
     		if(action == SAVE_DEFAULTS){
     			SyncEngineUtil.saveDefaults(modem, textFieldPhoneNumber.getText(), textFieldDataSource.getText(), (String)comboTables.getSelectedItem(), textFieldURL.getText());
     		}
+    		
+    		if(action == GENERATE_KML){
+    			try{
+    				SyncEngineUtil.generateKML(getModemPhoneNumber(), textFieldDataSource.getText(), (String)comboTables.getSelectedItem(), baseDirectory, fileNameResolver, identityProvider);
+	    		} catch(Throwable t){
+	    			consoleNotification.logError(t, EpiInfoUITranslator.getLabelFailed());
+	    		}
+    		}
+    		
+    		if(action == GENERATE_KML_WEB){
+    			try{
+	    			String documentName = (String)comboTables.getSelectedItem();
+	    			String url = textFieldURL.getText() + "?format=kml";
+	    			String fileName = baseDirectory + "/" + getModemPhoneNumber() + "/"+ documentName + "_web.kml";
+	    			KMLExporter.makeKMLWithNetworkLink(fileName, documentName, url);
+	    		} catch(Throwable t){
+	    			consoleNotification.logError(t, EpiInfoUITranslator.getLabelFailed());
+	    		}
+    		}
+    		
+    		if(action == DOWNLOAD_SCHEMA){
+    			try{
+	    			String documentName = (String)comboTables.getSelectedItem();
+	    			String url = textFieldURL.getText() + "?format=kml";
+	    			String fileName = baseDirectory + "/" + getModemPhoneNumber() + "/"+ documentName + "_schema.xml";
+	    			SyncEngineUtil.downloadSchema(url, fileName);
+	    		} catch(Throwable t){
+	    			consoleNotification.logError(t, EpiInfoUITranslator.getLabelFailed());
+	    		}
+    		}
 	        return null;
 	    }
+
+		private String getModemPhoneNumber() {
+			return (modem == null ? EpiInfoUITranslator.getLabelDemo() : modem.toString());
+		}
 
 		@Override
 	    public void done() {

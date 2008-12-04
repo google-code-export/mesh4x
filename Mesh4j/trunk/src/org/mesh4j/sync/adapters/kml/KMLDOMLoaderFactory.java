@@ -90,4 +90,14 @@ public class KMLDOMLoaderFactory implements ISyncAdapterFactory {
 		DOMAdapter kmlAdapter = new DOMAdapter(createDOMLoader(kmlFileName, identityProvider));
 		return kmlAdapter;
 	}
+
+	@Override
+	public String getSourceName(String sourceId) {
+		return sourceId;
+	}
+
+	@Override
+	public String getSourceType(String sourceId) {
+		return "kml";
+	}
 }

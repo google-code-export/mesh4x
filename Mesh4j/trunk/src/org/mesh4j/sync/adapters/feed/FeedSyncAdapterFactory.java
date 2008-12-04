@@ -44,4 +44,14 @@ public class FeedSyncAdapterFactory implements ISyncAdapterFactory {
 		}
 	}
 
+	@Override
+	public String getSourceName(String sourceId) {
+		return sourceId;
+	}
+
+	@Override
+	public String getSourceType(String sourceId) {
+		return "feed";
+	}
+
 }

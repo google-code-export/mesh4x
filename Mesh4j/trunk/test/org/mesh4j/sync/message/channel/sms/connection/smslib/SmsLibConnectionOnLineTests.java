@@ -2,7 +2,6 @@ package org.mesh4j.sync.message.channel.sms.connection.smslib;
 
 import java.util.Date;
 
-import org.junit.Test;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.message.channel.sms.ISmsBatchReceiver;
 import org.mesh4j.sync.message.channel.sms.SmsEndpoint;

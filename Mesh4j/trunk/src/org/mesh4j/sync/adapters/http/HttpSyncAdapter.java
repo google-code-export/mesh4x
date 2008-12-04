@@ -260,4 +260,33 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 	public void update(Item item, boolean resolveConflicts) {
 		throw new UnsupportedOperationException();
 	}
+
+	public String getSchema() {
+		String result = null;
+		HttpURLConnection conn = null;
+	    try{
+	    	String urlSchemaString = this.url.getProtocol() + "://"+ this.url.getHost() +":"+ this.url.getPort()+ this.url.getPath()+ "/" + "schema";
+	    	
+	    	URL urlSchema = new URL(urlSchemaString);
+			conn = (HttpURLConnection) urlSchema.openConnection();
+			
+			result = readData(conn);
+	    } catch(Exception e){
+			if(conn != null){
+				try {
+					int responseCode = conn.getResponseCode();
+					if(responseCode == HttpURLConnection.HTTP_INTERNAL_ERROR){
+						return null;
+					}
+				} catch (IOException e1) {
+					Logger.error(e.getMessage(), e);
+					throw new MeshException(e);
+				}
+			} else {
+				Logger.error(e.getMessage(), e);
+				throw new MeshException(e);
+			}
+	    }		
+		return result;
+	}
 }

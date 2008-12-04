@@ -19,9 +19,12 @@ import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.filter.CompoundFilter;
 import org.mesh4j.sync.filter.NonDeletedFilter;
 import org.mesh4j.sync.filter.SinceLastUpdateFilter;
+import org.mesh4j.sync.filter.XMLContentLinkFilter;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.Sync;
+import org.mesh4j.sync.payload.schema.ISchemaResolver;
+import org.mesh4j.sync.payload.schema.SchemaResolver;
 import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.validations.MeshException;
 
@@ -54,13 +57,19 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 		}
 	}
 
+	@Override
+	public List<Item> getAll(String sourceID, Date sinceDate) {
+		ISyncAdapter adapter = getSyncAdapter(sourceID);
+		List<Item> items = adapter.getAllSince(sinceDate);	
+		return items;
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public String readFeed(String sourceID, String link, Date sinceDate, ISyndicationFormat syndicationFormat, boolean plainMode) {
 		
 		ISyncAdapter adapter = getSyncAdapter(sourceID);
-		
-		
+				
 		List<Item> items;
 		
 		if(plainMode){
@@ -124,8 +133,9 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 			schemaElement.setText(schema);
 		}
 		
-		XMLContent content = new XMLContent(sourceID, title, description, link, parentPayload);
-		Sync sync = new Sync(IdGenerator.INSTANCE.newID(), NullIdentityProvider.INSTANCE.getAuthenticatedUser(), new Date(), false);
+		String sycnId = IdGenerator.INSTANCE.newID();
+		XMLContent content = new XMLContent(sycnId, title, description, link, parentPayload);
+		Sync sync = new Sync(sycnId, NullIdentityProvider.INSTANCE.getAuthenticatedUser(), new Date(), false);
 		Item item = new Item(content, sync);
 		
 		ISyncAdapter parentAdapter = this.getParentSyncAdapter(sourceID);
@@ -152,5 +162,30 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 		} catch (Exception e) {
 			throw new MeshException(e);
 		}
+	}
+	
+	@Override
+	public ISchemaResolver getSchema(String sourceID, String link) throws Exception{
+		
+		ISyncAdapter syncAdapter = this.getParentSyncAdapter(sourceID);
+		List<Item> items = syncAdapter.getAll(new XMLContentLinkFilter(link));
+		
+		if(items.isEmpty()){
+			return new SchemaResolver();
+		} else {
+			Item item = items.get(0);
+			
+			String xml = item.getContent().getPayload().asXML();
+			xml = xml.replaceAll("&lt;", "<");						// TODO (JMT) remove ==>  xml.replaceAll("&lt;", "<"); 
+			xml = xml.replaceAll("&gt;", ">");
+			
+			Element schema = DocumentHelper.parseText(xml).getRootElement();
+			if(ISchemaResolver.ELEMENT_PAYLOAD.equals(schema.getName())){
+				schema = schema.element(ISchemaResolver.ELEMENT_SCHEMA);
+			}
+			SchemaResolver schemaResolver = new SchemaResolver(schema);
+			return schemaResolver;
+		}
+		
 	}
 }
