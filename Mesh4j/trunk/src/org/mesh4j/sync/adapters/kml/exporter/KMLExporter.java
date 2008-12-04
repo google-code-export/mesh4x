@@ -31,11 +31,11 @@ public class KMLExporter {
 	}
 	
 	// TODO (JMT) RDF schema
-	private static String makeElement(Element element, ISchemaResolver propertyResolver) {
-		String name = propertyResolver.getValue(element, "//item.title");
-		String description = propertyResolver.getValue(element, "//item.description");
-		String longitude= propertyResolver.getValue(element, "//geo.longitude");
-		String latitude= propertyResolver.getValue(element, "//geo.latitude");
+	private static String makeElement(Element element, ISchemaResolver schemaResolver) {
+		String name = schemaResolver.getValue(element, "//item.title");
+		String description = schemaResolver.getValue(element, "//item.description");
+		String longitude= schemaResolver.getValue(element, "//geo.longitude");
+		String latitude= schemaResolver.getValue(element, "//geo.latitude");
 		return MessageFormat.format("<Placemark><name>{0}</name><description><![CDATA[{1}]]></description><Point><coordinates>{2},{3}</coordinates></Point></Placemark>", name, description, longitude, latitude);
 	}
 

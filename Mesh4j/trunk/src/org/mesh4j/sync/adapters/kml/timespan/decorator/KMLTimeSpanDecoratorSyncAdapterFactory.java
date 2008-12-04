@@ -9,23 +9,25 @@ public class KMLTimeSpanDecoratorSyncAdapterFactory implements ISyncAdapterFacto
 	// MODEL VARIABLES
 	private ISyncAdapterFactory syncFactory;
 	private String baseDirectory;
-	private IKMLGenerator kmlGenerator;
+	private IKMLGeneratorFactory kmlGeneratorFactory;
 	
 	// BUSINESS METHODS
 	
-	public KMLTimeSpanDecoratorSyncAdapterFactory(String baseDirectory, ISyncAdapterFactory syncFactory, IKMLGenerator kmlGenerator) {
+	public KMLTimeSpanDecoratorSyncAdapterFactory(String baseDirectory, ISyncAdapterFactory syncFactory, IKMLGeneratorFactory kmlGeneratorFactory) {
 		super();		
 		this.syncFactory = syncFactory;
 		this.baseDirectory = baseDirectory;
-		this.kmlGenerator = kmlGenerator;
+		this.kmlGeneratorFactory = kmlGeneratorFactory;
 	}
 	
-	public ISyncAdapter createSyncAdapter(String sourceId, IIdentityProvider identityProvider) throws Exception{
+	public KMLTimeSpanDecoratorSyncAdapter createSyncAdapter(String sourceId, IIdentityProvider identityProvider) throws Exception{
 		ISyncAdapter syncAdapter = this.syncFactory.createSyncAdapter(sourceId, identityProvider);
 		
 		String sourceName = this.syncFactory.getSourceName(sourceId);
 		String kmlFileName = this.baseDirectory + "/" + sourceName + ".kml";
-		ISyncAdapter syncAdapterDecorator = new KMLTimeSpanDecoratorSyncAdapter(this.kmlGenerator, sourceName, kmlFileName, syncAdapter);
+		
+		IKMLGenerator kmlGenerator = this.kmlGeneratorFactory.createKMLGenereator(sourceName);
+		KMLTimeSpanDecoratorSyncAdapter syncAdapterDecorator = new KMLTimeSpanDecoratorSyncAdapter(kmlGenerator, sourceName, kmlFileName, syncAdapter);
 		return syncAdapterDecorator;
 	}
 

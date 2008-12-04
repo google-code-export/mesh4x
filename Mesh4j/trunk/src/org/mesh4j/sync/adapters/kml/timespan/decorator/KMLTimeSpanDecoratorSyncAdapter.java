@@ -44,22 +44,31 @@ public class KMLTimeSpanDecoratorSyncAdapter implements ISyncAdapter, ISyncAware
 	
 	@Override
 	public List<Item> getAll() {
-		return this.syncAdapter.getAll();
+		List<Item> items = this.syncAdapter.getAll();
+		refreshAll(items);
+		return items;
+		
 	}
 
 	@Override
 	public List<Item> getAll(IFilter<Item> filter) {
-		return this.syncAdapter.getAll(filter);
+		List<Item> items = this.syncAdapter.getAll(filter);
+		refreshAll(items);
+		return items;
 	}
 	
 	@Override
 	public List<Item> getAllSince(Date since) {
-		return this.syncAdapter.getAllSince(since);
+		List<Item> items = this.syncAdapter.getAllSince(since);
+		refreshAll(items);
+		return items;
 	}
 	
 	@Override
 	public List<Item> getAllSince(Date since, IFilter<Item> filter) {
-		return this.syncAdapter.getAllSince(since, filter);
+		List<Item> items = this.syncAdapter.getAllSince(since, filter);
+		refreshAll(items);
+		return items;
 	}
 	
 	@Override
@@ -117,6 +126,12 @@ public class KMLTimeSpanDecoratorSyncAdapter implements ISyncAdapter, ISyncAware
 		this.kmlGenerator.addElement(this.document, item); 
 	}
 	
+	private void refreshAll(List<Item> items) {
+		for (Item item : items) {
+			refreshKML(item);
+		}		
+	}
+	
 	private void refreshKML(Item item) {
 		try{
 			if(!item.isDeleted()){
@@ -128,10 +143,10 @@ public class KMLTimeSpanDecoratorSyncAdapter implements ISyncAdapter, ISyncAware
 					Element timeSpan = itemElement.element(KmlNames.KML_ELEMENT_TIME_SPAN);
 					Element elementEnd = timeSpan.element(KmlNames.KML_ELEMENT_TIME_SPAN_END);
 					if(this.kmlGenerator.hasItemChanged(this.document, itemElement, item)){
-						elementEnd.setText(DateHelper.formatW3CDateTime(new Date()));	
-					} else {
 						elementEnd.setText(DateHelper.formatW3CDateTime(item.getLastUpdate().getWhen()));
 						addItemToKML(item);
+					} else { 
+						elementEnd.setText(DateHelper.formatW3CDateTime(new Date()));	
 					}				
 				}
 			}
@@ -145,7 +160,6 @@ public class KMLTimeSpanDecoratorSyncAdapter implements ISyncAdapter, ISyncAware
 		try{
 			SAXReader saxReader = new SAXReader();
 			if(!this.kmlFile.exists()){
-				this.kmlFile.createNewFile();
 				this.document = this.kmlGenerator.makeDocument(this.documentName);
 			} else {	
 				this.document = saxReader.read(kmlFile);

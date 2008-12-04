@@ -26,6 +26,7 @@ public interface KmlNames {
 	public static final String KML_ELEMENT_TIME_SPAN = "TimeSpan";
 	public static final String KML_ELEMENT_TIME_SPAN_BEGIN = "begin";
 	public static final String KML_ELEMENT_TIME_SPAN_END = "end";
+	public static final String KML_ELEMENT_STYLE_URL = "styleUrl";
 	
 	public static final QName KML_ATTRIBUTE_ID_QNAME = DocumentHelper.createQName("id", KML_NS);
 	public static final String KML_ATTRIBUTE_ID = "id";
@@ -40,5 +41,6 @@ public interface KmlNames {
 	public static final String KML_ELEMENT_EXTENDED_DATA = "ExtendedData";
 	
 	public static final String KMZ_DEFAULT_ENTRY_NAME_TO_KML = "doc.kml";
+	
 
 }

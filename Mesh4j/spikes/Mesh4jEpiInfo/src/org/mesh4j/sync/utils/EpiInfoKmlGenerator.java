@@ -11,10 +11,22 @@ import org.dom4j.Element;
 import org.mesh4j.sync.adapters.kml.KmlNames;
 import org.mesh4j.sync.adapters.kml.timespan.decorator.IKMLGenerator;
 import org.mesh4j.sync.model.Item;
+import org.mesh4j.sync.payload.schema.ISchemaResolver;
+import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
 public class EpiInfoKmlGenerator implements IKMLGenerator{
 
+	// MODEL VARIABLE
+	private ISchemaResolver schemaResolver;
+	
+	// BUSINESS METHODS
+
+	public EpiInfoKmlGenerator(ISchemaResolver schemaResolver){
+		Guard.argumentNotNull(schemaResolver, "schemaResolver");
+		this.schemaResolver = schemaResolver;
+	}
+	
 	protected static String makePlacemark(String id, String name, String description, String longitude, String latitude, String styleUrl, Date start, Date end) {
 
 		return MessageFormat.format(
@@ -36,15 +48,7 @@ public class EpiInfoKmlGenerator implements IKMLGenerator{
 			"</Document>"+
 			"</kml>", id, name, description, styleUrl, longitude, latitude, DateHelper.formatW3CDateTime(start), DateHelper.formatW3CDateTime(end));
 	}
-	
-	
-	private String getValueIll(Element payload) {
-		Element ill = payload.element("ILL");
-		if(ill == null || ill.getText() == null){
-			return "0";
-		}
-		return ill.getText();
-	}
+
 
 	
 	// IKMLGenerator methods
@@ -52,11 +56,22 @@ public class EpiInfoKmlGenerator implements IKMLGenerator{
 	public void addElement(Document document, Item item) {
 		try{
 			if(!item.isDeleted()){
+				
+				Element payload = item.getContent().getPayload();
+
+				String name = schemaResolver.getValue(payload, "//item.title");
+				String description = schemaResolver.getValue(payload, "//item.description");
+				String longitude = schemaResolver.getValue(payload, "//geo.longitude");
+				String latitude = schemaResolver.getValue(payload, "//geo.latitude");
+				String ill = schemaResolver.getValue(payload, "//patient.ill");
+				String style = "0".equals(ill) ? "#msn_ylw-pushpin0" : "#msn_ylw-pushpin";
+				
 				Date start = item.getLastUpdate().getWhen();
 				Date end = new Date();
-				String xml = makePlacemark("'"+item.getSyncId()+"'", "name", item.getContent().getPayload().asXML(), "1", "1", ("0".equals(getValueIll(item.getContent().getPayload())) ? "#msn_ylw-pushpin0" : "#msn_ylw-pushpin"), start, end);
+				
+				String xml = makePlacemark("'"+item.getSyncId()+"'", name, description, longitude, latitude, style, start, end);
 
-				Element itemElement = DocumentHelper.parseText(xml).getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT).element(KmlNames.KML_ELEMENT_PLACEMARK);; 
+				Element itemElement = DocumentHelper.parseText(xml).getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT).element(KmlNames.KML_ELEMENT_PLACEMARK); 
 				document.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT).add(itemElement.createCopy());
 			}
 		} catch(Exception e){
@@ -80,9 +95,11 @@ public class EpiInfoKmlGenerator implements IKMLGenerator{
 	@Override
 	public boolean hasItemChanged(Document document, Element itemElement, Item item) {
 		try{
-			String itemIll = getValueIll(item.getContent().getPayload());
-			String actualXML = itemElement.element(KmlNames.KML_ELEMENT_DESCRIPTION).getText();
-			String actualItemIll = getValueIll(DocumentHelper.parseText(actualXML).getRootElement());
+			String itemIll = schemaResolver.getValue(item.getContent().getPayload(), "//patient.ill");
+			//String actualXML = itemElement.element(KmlNames.KML_ELEMENT_DESCRIPTION).getText();
+			//String actualItemIll = schemaResolver.getValue(DocumentHelper.parseText(actualXML).getRootElement(), "//patient.ill");
+			Element styleUrl = itemElement.element(KmlNames.KML_ELEMENT_STYLE_URL);
+			String actualItemIll = "#msn_ylw-pushpin0".equals(styleUrl.getText()) ?  "0" : "1";			
 			return !itemIll.equals(actualItemIll);
 		} catch(Exception e){
 			throw new MeshException(e);

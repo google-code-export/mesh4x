@@ -12,7 +12,8 @@ import org.mesh4j.sync.adapters.ISyncAdapterFactory;
 import org.mesh4j.sync.adapters.http.HttpSyncAdapter;
 import org.mesh4j.sync.adapters.http.HttpSyncAdapterFactory;
 import org.mesh4j.sync.adapters.kml.exporter.KMLExporter;
-import org.mesh4j.sync.adapters.kml.timespan.decorator.IKMLGenerator;
+import org.mesh4j.sync.adapters.kml.timespan.decorator.IKMLGeneratorFactory;
+import org.mesh4j.sync.adapters.kml.timespan.decorator.KMLTimeSpanDecoratorSyncAdapter;
 import org.mesh4j.sync.adapters.kml.timespan.decorator.KMLTimeSpanDecoratorSyncAdapterFactory;
 import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
 import org.mesh4j.sync.filter.CompoundFilter;
@@ -139,7 +140,7 @@ public class SyncEngineUtil {
 		InMemorySmsConnection smsConnection = new InMemorySmsConnection(encoding, maxMessageLenght, readDelay, target, channelDelay);
 		smsConnection.setSmsConnectionOutboundNotification(smsConnectionInboundOutboundNotification);
 		
-		KMLTimeSpanDecoratorSyncAdapterFactory syncAdapterFactory = makeSyncAdapterFactory(fileNameResolver, baseDirectory);
+		ISyncAdapterFactory syncAdapterFactory = makeSyncAdapterFactory(fileNameResolver, baseDirectory);
 		
 		MessageSyncAdapterFactory messageSyncAdapterFactory = new MessageSyncAdapterFactory(syncAdapterFactory, false);
 		
@@ -152,10 +153,11 @@ public class SyncEngineUtil {
 		return syncEngineEndPoint;
 	}
 
-	private static KMLTimeSpanDecoratorSyncAdapterFactory makeSyncAdapterFactory(ISourceIdResolver sourceIdResolver, String baseDirectory) {
+	private static ISyncAdapterFactory makeSyncAdapterFactory(ISourceIdResolver sourceIdResolver, String baseDirectory) {
 		MsAccessSyncAdapterFactory msAccessSyncFactory = new MsAccessSyncAdapterFactory(baseDirectory, sourceIdResolver);
-		IKMLGenerator kmlGenerator = new EpiInfoKmlGenerator();
-		return new KMLTimeSpanDecoratorSyncAdapterFactory(baseDirectory, msAccessSyncFactory, kmlGenerator);
+//		IKMLGeneratorFactory kmlGeneratorFactory = new EpiInfoKmlGeneratorFactory(baseDirectory);
+//		return new KMLTimeSpanDecoratorSyncAdapterFactory(baseDirectory, msAccessSyncFactory, kmlGeneratorFactory);
+		return msAccessSyncFactory;
 	}
 	
 	public static void addDataSource(FileNameResolver fileNameResolver, String fileName) {
@@ -176,7 +178,7 @@ public class SyncEngineUtil {
 			IMessageSyncAware messageSyncAware) {
 		
 		String targetDirectory = baseDirectory + "/" + modem.toString() + "/";
-		KMLTimeSpanDecoratorSyncAdapterFactory syncAdapterFactory = makeSyncAdapterFactory(fileNameResolver, targetDirectory);
+		ISyncAdapterFactory syncAdapterFactory = makeSyncAdapterFactory(fileNameResolver, targetDirectory);
 		
 		return SmsLibMessageSyncEngineFactory.createSyncEngine(
 			modem, targetDirectory, senderDelay, receiverDelay, readDelay, maxMessageLenght, channelDelay,
@@ -214,10 +216,16 @@ public class SyncEngineUtil {
 		String sourceID = MsAccessSyncAdapterFactory.createSourceId(mdbFileName, mdbTableName);
 		String sourceDirectory = baseDirectory + "/" + fromPhoneNumber +"/";
 		ISyncAdapterFactory syncFactory = makeSyncAdapterFactory(fileNameResolver, sourceDirectory);
-		ISyncAdapter syncAdapter = syncFactory.createSyncAdapter(sourceID, identityProvider);
+
+		IKMLGeneratorFactory kmlGeneratorFactory = new EpiInfoKmlGeneratorFactory(mappingsDirectory);
+		KMLTimeSpanDecoratorSyncAdapterFactory kmlDecSyncFactory = new KMLTimeSpanDecoratorSyncAdapterFactory(mappingsDirectory, syncFactory, kmlGeneratorFactory);
+
+		KMLTimeSpanDecoratorSyncAdapter syncAdapter = kmlDecSyncFactory.createSyncAdapter(sourceID, identityProvider);
+		syncAdapter.beginSync();
 		
 		CompoundFilter filter = new CompoundFilter(NonDeletedFilter.INSTANCE);
 		List<Item> items = syncAdapter.getAll(filter);
+		syncAdapter.endSync();
 		
 		String kmlFileName = mappingsDirectory + "/" + mdbTableName + "_last.kml";
 		
