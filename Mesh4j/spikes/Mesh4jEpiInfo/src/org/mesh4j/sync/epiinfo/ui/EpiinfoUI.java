@@ -589,6 +589,8 @@ public class EpiinfoUI{
 		}
 	}
 	
+	// TODO (JMT) error handling
+	
 	private class Task extends SwingWorker<Void, Void> {
 		 
 		// MODEL VARIABLES
