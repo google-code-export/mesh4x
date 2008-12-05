@@ -128,12 +128,12 @@ public class EpiInfoConsoleNotification implements ISmsConnectionInboundOutbound
 	
 	@Override
 	public void checkingModem(CommPortIdentifier port, int baudRateAvailable) {
-		log("verificando modem: " + port.getName() + " baudRate: " + baudRateAvailable + " ... ");
+		log("checking modem: " + port.getName() + " baudRate: " + baudRateAvailable + " ... ");
 	}
 
 	@Override
 	public void checkingPortInfo(CommPortIdentifier port, int baudRateAvailable) {
-		log("verificando port: " + port.getName() + " baudRate: " + baudRateAvailable + " ... ");
+		log("checking port: " + port.getName() + " baudRate: " + baudRateAvailable + " ... ");
 		
 	}
 
@@ -192,5 +192,10 @@ public class EpiInfoConsoleNotification implements ISmsConnectionInboundOutbound
 		if(Logger.isInfoEnabled()){
 			Logger.info(text);
 		}
+	}
+
+	@Override
+	public boolean isStopped() {
+		return false;
 	}
 }

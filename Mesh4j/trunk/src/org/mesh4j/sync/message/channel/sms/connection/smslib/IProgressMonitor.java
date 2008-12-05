@@ -15,5 +15,7 @@ public interface IProgressMonitor {
 	void notifyAvailableModem(CommPortIdentifier port, int baudRateAvailable, Modem modem);
 
 	void notifyNonAvailableModem(CommPortIdentifier port, int baudRateAvailable);
+	
+	boolean isStopped();
 
 }

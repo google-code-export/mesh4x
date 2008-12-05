@@ -25,12 +25,16 @@ public class ModemHelper {
 	public static List<Modem> getAvailableModems(IProgressMonitor progressMonitor) {
 		ArrayList<Modem> result = new ArrayList<Modem>();
 		Enumeration<CommPortIdentifier> portList = CommPortIdentifier.getPortIdentifiers();
-		while (portList.hasMoreElements()) {
+		
+		boolean isStopped = progressMonitor == null ? false : progressMonitor.isStopped();
+		
+		while (portList.hasMoreElements() && !isStopped) {
 			CommPortIdentifier port = portList.nextElement();
 			Modem modem = getModem(progressMonitor, port);
 			if(modem != null){
 				result.add(modem);
 			}
+			isStopped = progressMonitor == null ? false : progressMonitor.isStopped();
 		}
 		return result;
 	}
@@ -124,6 +128,9 @@ public class ModemHelper {
 			for (int i = 0; i < bauds.length; i++) {
 				try{
 					if (progressMonitor != null) {
+						if(progressMonitor.isStopped()){
+							return null;
+						}
 						progressMonitor.checkingPortInfo(port, bauds[i]);
 					}
 					
