@@ -329,4 +329,20 @@ public class EpiInfoUITranslator {
 	public static String getToolTipStopAutoDetect() {
 		return MessageTranslator.translate("EPIINFO_TOOLTIP_MODEM_DICOVERY_STOP");
 	}
+
+	public static String getLabelKMLFailed() {
+		return MessageTranslator.translate("EPIINFO_LABEL_KML_FAILED");
+	}
+
+	public static String getLabelDownloadSchemaFailed() {
+		return MessageTranslator.translate("EPIINFO_LABEL_DONWLOAD_SCHEMA_FAILED");
+	}
+
+	public static String getErrorInvalidURL() {
+		return MessageTranslator.translate("EPIINFO_ERROR_INVALID_URL");
+	}
+
+	public static String getErrorInvalidMSAccessTable() {
+		return MessageTranslator.translate("EPIINFO_ERROR_INVALID_MS_ACCESS");
+	}
 }

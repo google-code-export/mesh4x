@@ -128,4 +128,8 @@ public class MsAccessSyncAdapterFactory implements ISyncAdapterFactory {
 	public String getSourceType(String sourceId) {
 		return "MsAccess";
 	}
+
+	public static boolean isValidAccessTable(String mdbFileName, String mdbTableName) {
+		return MsAccessHelper.existTable(mdbFileName, mdbTableName);
+	}
 }

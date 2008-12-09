@@ -31,8 +31,10 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.mesh4j.sync.adapters.http.HttpSyncAdapterFactory;
 import org.mesh4j.sync.adapters.kml.exporter.KMLExporter;
 import org.mesh4j.sync.adapters.msaccess.MsAccessHelper;
+import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
 import org.mesh4j.sync.message.MessageSyncEngine;
 import org.mesh4j.sync.message.channel.sms.connection.smslib.Modem;
 import org.mesh4j.sync.message.channel.sms.connection.smslib.ModemHelper;
@@ -598,8 +600,6 @@ public class EpiinfoUI{
 		}
 	}
 	
-	// TODO (JMT) error handling
-	
 	private class Task extends SwingWorker<Void, Void> {
 		 
 		// MODEL VARIABLES
@@ -619,7 +619,14 @@ public class EpiinfoUI{
     		if(action == SYNCHRONIZE_SMS){
     			textAreaConsole.setText("");
     			
-    			SyncEngineUtil.addDataSource(fileNameResolver, textFieldDataSource.getText());
+				String dataSource = textFieldDataSource.getText();
+				String tableName = (String)comboTables.getSelectedItem();
+				if(!MsAccessSyncAdapterFactory.isValidAccessTable(dataSource, tableName)){
+	    			consoleNotification.log(EpiInfoUITranslator.getErrorInvalidMSAccessTable());
+					return null;
+				}
+    			
+    			SyncEngineUtil.addDataSource(fileNameResolver, dataSource);
     			
     			if(emulate){	    				
     				SyncEngineUtil.registerNewEndpointToEmulator(syncEngine, textFieldPhoneNumber.getText(), messageEncoding, 
@@ -627,8 +634,7 @@ public class EpiinfoUI{
     			}	
     			try{
 					SyncEngineUtil.synchronize(syncEngine, getModemPhoneNumber(), textFieldPhoneNumber.getText(), 
-    					textFieldDataSource.getText(), (String)comboTables.getSelectedItem(), 
-    					identityProvider, baseDirectory, fileNameResolver);
+    					dataSource, tableName, identityProvider, baseDirectory, fileNameResolver);
 	    		
 	    		} catch(Throwable t){
 	    			consoleNotification.logError(t, EpiInfoUITranslator.getLabelFailed());
@@ -637,8 +643,21 @@ public class EpiinfoUI{
     		} 
 
     		if(action == SYNCHRONIZE_HTTP){
+				String url = textFieldURL.getText();
+				if(!HttpSyncAdapterFactory.isValidURL(url)){
+	    			consoleNotification.log(EpiInfoUITranslator.getErrorInvalidURL());
+					return null;
+				}
+				
+				String dataSource = textFieldDataSource.getText();
+				String tableName = (String)comboTables.getSelectedItem();
+				if(!MsAccessSyncAdapterFactory.isValidAccessTable(dataSource, tableName)){
+	    			consoleNotification.log(EpiInfoUITranslator.getErrorInvalidMSAccessTable());
+					return null;
+				}
+				
     			try{
-    				consoleNotification.beginSync(textFieldURL.getText(), textFieldDataSource.getText(), (String)comboTables.getSelectedItem());
+    				consoleNotification.beginSync(url, dataSource, tableName);
     				List<Item> conflicts = SyncEngineUtil.synchronize(getModemPhoneNumber(), textFieldURL.getText(), textFieldDataSource.getText(), (String)comboTables.getSelectedItem(), identityProvider, baseDirectory, fileNameResolver);
     				consoleNotification.endSync(textFieldURL.getText(), textFieldDataSource.getText(), (String)comboTables.getSelectedItem(), conflicts);
 	    		} catch(Throwable t){
@@ -689,32 +708,64 @@ public class EpiinfoUI{
     		}
     		
     		if(action == GENERATE_KML){
+				String dataSource = textFieldDataSource.getText();
+				String tableName = (String)comboTables.getSelectedItem();
+				if(!MsAccessSyncAdapterFactory.isValidAccessTable(dataSource, tableName)){
+	    			consoleNotification.log(EpiInfoUITranslator.getErrorInvalidMSAccessTable());
+					return null;
+				}
     			try{
     				SyncEngineUtil.generateKML(kmlTemplateFileName, getModemPhoneNumber(), textFieldDataSource.getText(), (String)comboTables.getSelectedItem(), baseDirectory, fileNameResolver, identityProvider);
 	    		} catch(Throwable t){
-	    			consoleNotification.logError(t, EpiInfoUITranslator.getLabelFailed());
+	    			consoleNotification.logError(t, EpiInfoUITranslator.getLabelKMLFailed());
 	    		}
     		}
     		
     		if(action == GENERATE_KML_WEB){
+				String url = textFieldURL.getText();
+				if(!HttpSyncAdapterFactory.isValidURL(url)){
+	    			consoleNotification.log(EpiInfoUITranslator.getErrorInvalidURL());
+					return null;
+				}
+				
+				String dataSource = textFieldDataSource.getText();
+				String tableName = (String)comboTables.getSelectedItem();
+				if(!MsAccessSyncAdapterFactory.isValidAccessTable(dataSource, tableName)){
+	    			consoleNotification.log(EpiInfoUITranslator.getErrorInvalidMSAccessTable());
+					return null;
+				}
+				
     			try{
 	    			String documentName = (String)comboTables.getSelectedItem();
-	    			String url = textFieldURL.getText() + "?format=kml";
+	    			String urlWebKml = textFieldURL.getText() + "?format=kml";
 	    			String fileName = baseDirectory + "/" + getModemPhoneNumber() + "/"+ documentName + "_web.kml";
-	    			KMLExporter.makeKMLWithNetworkLink(fileName, documentName, url);
+	    			KMLExporter.makeKMLWithNetworkLink(fileName, documentName, urlWebKml);
 	    		} catch(Throwable t){
-	    			consoleNotification.logError(t, EpiInfoUITranslator.getLabelFailed());
+	    			consoleNotification.logError(t, EpiInfoUITranslator.getLabelKMLFailed());
 	    		}
     		}
     		
     		if(action == DOWNLOAD_SCHEMA){
+				String url = textFieldURL.getText();
+				if(!HttpSyncAdapterFactory.isValidURL(url)){
+	    			consoleNotification.log(EpiInfoUITranslator.getErrorInvalidURL());
+					return null;
+				}
+				
+				String dataSource = textFieldDataSource.getText();
+				String tableName = (String)comboTables.getSelectedItem();
+				if(!MsAccessSyncAdapterFactory.isValidAccessTable(dataSource, tableName)){
+	    			consoleNotification.log(EpiInfoUITranslator.getErrorInvalidMSAccessTable());
+					return null;
+				}
+				
     			try{
 	    			String documentName = (String)comboTables.getSelectedItem();
-	    			String url = textFieldURL.getText() + "?format=kml";
+	    			String urlSchema = textFieldURL.getText() + "?format=kml";
 	    			String fileName = baseDirectory + "/" + getModemPhoneNumber() + "/"+ documentName + "_schema.xml";
-	    			SyncEngineUtil.downloadSchema(url, fileName);
+	    			SyncEngineUtil.downloadSchema(urlSchema, fileName);
 	    		} catch(Throwable t){
-	    			consoleNotification.logError(t, EpiInfoUITranslator.getLabelFailed());
+	    			consoleNotification.logError(t, EpiInfoUITranslator.getLabelDownloadSchemaFailed());
 	    		}
     		}
 	        return null;

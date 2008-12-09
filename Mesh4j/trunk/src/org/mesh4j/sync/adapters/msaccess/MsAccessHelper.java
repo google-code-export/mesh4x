@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Set;
 
 import com.healthmarketscience.jackcess.Database;
+import com.healthmarketscience.jackcess.Table;
 
 public class MsAccessHelper {
 
@@ -19,6 +20,21 @@ public class MsAccessHelper {
 			db.close();
 		}
 		return tableNames;
+	}
+	
+	public static boolean existTable(String mdbFileName, String mdbTableName){
+		try{
+			File mdbFile = new File(mdbFileName);
+			Database db = Database.open(mdbFile);
+			try{
+				Table table = db.getTable(mdbTableName);
+				return table != null;
+			} finally{
+				db.close();
+			}
+		}catch (Exception e) {
+			return false;
+		}
 	}
 	
 }
