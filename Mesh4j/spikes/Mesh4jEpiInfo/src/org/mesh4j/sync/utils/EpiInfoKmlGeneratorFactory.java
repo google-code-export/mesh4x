@@ -16,12 +16,16 @@ public class EpiInfoKmlGeneratorFactory implements IKMLGeneratorFactory {
 
 	// MODEL VARIABLES
 	private String baseDirectory;
+	private String templateFileName;
 	
 	// BUSINESS METHODS
 	
-	public EpiInfoKmlGeneratorFactory(String baseDirectory) {
+	public EpiInfoKmlGeneratorFactory(String baseDirectory, String templateFileName) {
 		Guard.argumentNotNullOrEmptyString(baseDirectory, "baseDirectory");
+		Guard.argumentNotNullOrEmptyString(templateFileName, "templateFileName");
+		
 		this.baseDirectory = baseDirectory;
+		this.templateFileName = templateFileName;
 	}
 
 	@Override
@@ -42,7 +46,7 @@ public class EpiInfoKmlGeneratorFactory implements IKMLGeneratorFactory {
 		} catch (Exception e) {
 			throw new MeshException(e);
 		}
-		return new EpiInfoKmlGenerator(schemaResolver);
+		return new EpiInfoKmlGenerator(this.templateFileName, schemaResolver);
 	}
 
 }

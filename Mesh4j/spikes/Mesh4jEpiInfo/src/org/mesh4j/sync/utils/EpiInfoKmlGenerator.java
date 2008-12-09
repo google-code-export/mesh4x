@@ -19,12 +19,16 @@ public class EpiInfoKmlGenerator implements IKMLGenerator{
 
 	// MODEL VARIABLE
 	private ISchemaResolver schemaResolver;
+	private String templateFileName;
 	
 	// BUSINESS METHODS
 
-	public EpiInfoKmlGenerator(ISchemaResolver schemaResolver){
+	public EpiInfoKmlGenerator(String templateFileName, ISchemaResolver schemaResolver){
 		Guard.argumentNotNull(schemaResolver, "schemaResolver");
+		Guard.argumentNotNullOrEmptyString(templateFileName, "templateFileName");
+		
 		this.schemaResolver = schemaResolver;
+		this.templateFileName = templateFileName;
 	}
 	
 	protected static String makePlacemark(String id, String name, String description, String longitude, String latitude, String styleUrl, Date start, Date end) {
@@ -109,14 +113,13 @@ public class EpiInfoKmlGenerator implements IKMLGenerator{
 	@Override
 	public Document makeDocument(String documentName) {
 		try{
-			return DocumentHelper.parseText(readTemplateXML(documentName));
+			return DocumentHelper.parseText(readTemplateXML(this.templateFileName, documentName));
 		} catch(Exception e){
 			throw new MeshException(e);
 		}
 	}
 	
-	protected static String readTemplateXML(String documentName) throws Exception {		
-		String templateFileName = "template.kml";
+	protected static String readTemplateXML(String templateFileName, String documentName) throws Exception {		
 		byte[] templateBytes = FileUtils.read(templateFileName);
 		String template = new String(templateBytes, "UTF-8");		
 		return MessageFormat.format(template, documentName, "");

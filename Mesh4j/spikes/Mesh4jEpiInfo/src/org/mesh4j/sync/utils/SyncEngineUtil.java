@@ -201,7 +201,7 @@ public class SyncEngineUtil {
 
 
 	@SuppressWarnings("unchecked")
-	public static void generateKML(String fromPhoneNumber, String mdbFileName, String mdbTableName, String baseDirectory, ISourceIdResolver fileNameResolver, IIdentityProvider identityProvider) throws Exception{
+	public static void generateKML(String templateFileName, String fromPhoneNumber, String mdbFileName, String mdbTableName, String baseDirectory, ISourceIdResolver fileNameResolver, IIdentityProvider identityProvider) throws Exception{
 		
 		String mappingsDirectory = baseDirectory + "/" + fromPhoneNumber +"/";
 		
@@ -217,7 +217,7 @@ public class SyncEngineUtil {
 		String sourceDirectory = baseDirectory + "/" + fromPhoneNumber +"/";
 		ISyncAdapterFactory syncFactory = makeSyncAdapterFactory(fileNameResolver, sourceDirectory);
 
-		IKMLGeneratorFactory kmlGeneratorFactory = new EpiInfoKmlGeneratorFactory(mappingsDirectory);
+		IKMLGeneratorFactory kmlGeneratorFactory = new EpiInfoKmlGeneratorFactory(mappingsDirectory, templateFileName);
 		KMLTimeSpanDecoratorSyncAdapterFactory kmlDecSyncFactory = new KMLTimeSpanDecoratorSyncAdapterFactory(mappingsDirectory, syncFactory, kmlGeneratorFactory);
 
 		KMLTimeSpanDecoratorSyncAdapter syncAdapter = kmlDecSyncFactory.createSyncAdapter(sourceID, identityProvider);

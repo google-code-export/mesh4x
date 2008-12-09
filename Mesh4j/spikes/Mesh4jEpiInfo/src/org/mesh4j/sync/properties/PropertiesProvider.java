@@ -22,7 +22,8 @@ public class PropertiesProvider {
 	// BUSINESS METHODS
 	public PropertiesProvider(){
 		super();
-		initialize(MESH4J_PROPERTIES);
+		//initialize(MESH4J_PROPERTIES);
+		initialize(getCurrentDirectory()+"\\properties\\"+MESH4J_PROPERTIES);
 	}
 	
 	public PropertiesProvider(String resourceName){
@@ -79,7 +80,7 @@ public class PropertiesProvider {
 		return this.properties.getProperty("default.base.directory", getCurrentDirectory());
 	}
 
-	public String getCurrentDirectory(){
+	public static String getCurrentDirectory(){
 		return System.getProperty("user.dir");
 	}
 	
@@ -143,6 +144,10 @@ public class PropertiesProvider {
 
 	public int getDefaultBaudRate() {
 		return getInt("default.sms.baud.rate");
+	}
+
+	public String getDefaultKMLTemplateFileName() {
+		return getString("default.kml.template.file.name");
 	}
 	
 }

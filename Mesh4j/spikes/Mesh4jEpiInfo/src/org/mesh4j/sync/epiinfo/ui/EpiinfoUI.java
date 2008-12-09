@@ -120,6 +120,7 @@ public class EpiinfoUI{
 	private String defaultDataSource;
 	private String defaultTableName;
 	private String defaultURL;
+	private String kmlTemplateFileName;
 	
 	private boolean discoveryModems = false;
 	
@@ -169,6 +170,7 @@ public class EpiinfoUI{
 		this.defaultDataSource = propertiesProvider.getDefaultDataSource();
 		this.defaultTableName = propertiesProvider.getDefaultTable();
 		this.defaultURL = propertiesProvider.getDefaultURL();
+		this.kmlTemplateFileName = propertiesProvider.getDefaultKMLTemplateFileName();
 	}
 	
 	protected void startUpSyncEngine() throws Exception {
@@ -688,7 +690,7 @@ public class EpiinfoUI{
     		
     		if(action == GENERATE_KML){
     			try{
-    				SyncEngineUtil.generateKML(getModemPhoneNumber(), textFieldDataSource.getText(), (String)comboTables.getSelectedItem(), baseDirectory, fileNameResolver, identityProvider);
+    				SyncEngineUtil.generateKML(kmlTemplateFileName, getModemPhoneNumber(), textFieldDataSource.getText(), (String)comboTables.getSelectedItem(), baseDirectory, fileNameResolver, identityProvider);
 	    		} catch(Throwable t){
 	    			consoleNotification.logError(t, EpiInfoUITranslator.getLabelFailed());
 	    		}

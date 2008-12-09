@@ -19,11 +19,11 @@
 	<classpathentry exported="true" kind="lib" path="lib/jackcess-1.1.18.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jaxen-1.1-beta-7.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jta.jar"/>
-	<classpathentry kind="lib" path="lib/log4j-1.2.11.jar"/>
-	<classpathentry kind="lib" path="lib/mail.jar"/>
-	<classpathentry kind="lib" path="lib/mysql-connector-java-5.1.6-bin.jar"/>
-	<classpathentry kind="lib" path="lib/poi-3.2-FINAL-20081019.jar"/>
-	<classpathentry kind="lib" path="lib/smslib-3.3.0.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/Mesh4j"/>
+	<classpathentry exported="true" kind="lib" path="lib/log4j-1.2.11.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mail.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mysql-connector-java-5.1.6-bin.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/poi-3.2-FINAL-20081019.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/smslib-3.3.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mesh4j-1.0.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
