@@ -26,6 +26,7 @@ public class EpiInfoConsoleNotification implements ISmsConnectionInboundOutbound
 	// MODEL VARIABLES
 	private JTextArea consoleView;
 	private JTextArea consoleStatus;
+	private boolean stop;
 	
 	// BUSINESS METHODS
 	public EpiInfoConsoleNotification(JTextArea consoleView, JTextArea consoleStatus) {
@@ -122,41 +123,39 @@ public class EpiInfoConsoleNotification implements ISmsConnectionInboundOutbound
 	public void notifySessionCreationError(IMessage message, String sourceId) {
 		this.log(EpiInfoUITranslator.getMessageErrorSessionCreation(message, sourceId));
 	}
-
-
+	
 	// IProgressMonitor methods
 	
 	@Override
 	public void checkingModem(CommPortIdentifier port, int baudRateAvailable) {
-		log("checking modem: " + port.getName() + " baudRate: " + baudRateAvailable + " ... ");
+		log("\t"+EpiInfoUITranslator.getMessageCheckingModem(port.getName(), baudRateAvailable));
 	}
 
 	@Override
 	public void checkingPortInfo(CommPortIdentifier port, int baudRateAvailable) {
-		log("checking port: " + port.getName() + " baudRate: " + baudRateAvailable + " ... ");
+		log("\t"+EpiInfoUITranslator.getMessageCheckingPort(port.getName(), baudRateAvailable));
 		
 	}
 
 	@Override
 	public void notifyAvailableModem(CommPortIdentifier port, int baudRateAvailable, Modem modem) {
-		logAppendEndLine("Available: " + modem.toString());		
+		logAppendEndLine(EpiInfoUITranslator.getMessageAvailableModem(modem));		
 	}
 
 	@Override
 	public void notifyAvailablePortInfo(CommPortIdentifier port, int baudRateAvailable) {
-		logAppendEndLine("Available");		
+		logAppendEndLine(EpiInfoUITranslator.getLabelAvailable());		
 	}
 
 	@Override
 	public void notifyNonAvailableModem(CommPortIdentifier port, int baudRateAvailable) {
-		logAppendEndLine("No available");
+		logAppendEndLine(EpiInfoUITranslator.getLabelNoAvailable());
 	}
 
 	@Override
 	public void notifyNonAvailablePortInfo(CommPortIdentifier port, int baudRateAvailable) {
-		logAppendEndLine("No available");
+		logAppendEndLine(EpiInfoUITranslator.getLabelNoAvailable());
 	}
-
 	
 	// Console view methods
 	public void logStatus(String text) {
@@ -194,8 +193,15 @@ public class EpiInfoConsoleNotification implements ISmsConnectionInboundOutbound
 		}
 	}
 
-	@Override
-	public boolean isStopped() {
-		return false;
+	public void stopDiscovery(){
+		this.stop = true;
+	}
+	
+	public void startDiscovery(){
+		this.stop = false;
+	}
+	
+	public boolean isStopped(){
+		return stop;
 	}
 }

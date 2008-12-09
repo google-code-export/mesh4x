@@ -121,6 +121,8 @@ public class EpiinfoUI{
 	private String defaultTableName;
 	private String defaultURL;
 	
+	private boolean discoveryModems = false;
+	
 	// BUSINESS METHODS
 	
 	public static void main(String args[]) {
@@ -268,14 +270,19 @@ public class EpiinfoUI{
 
 		ActionListener modemDiscoveryActionListener = new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
-				Task task = new Task(DISCOVERY_MODEMS);
-				task.execute();
+				if(isDicoveringModems()){
+					consoleNotification.stopDiscovery();
+				} else {
+					Task task = new Task(DISCOVERY_MODEMS);
+					task.execute();
+				}
 			}
 		};	
 		
 		buttonModemDiscovery = new JButton();
 		buttonModemDiscovery.setFocusable(false);
 		buttonModemDiscovery.setText(EpiInfoUITranslator.getLabelModemDiscovery());
+		buttonModemDiscovery.setToolTipText(EpiInfoUITranslator.getToolTipAutoDetect());
 		buttonModemDiscovery.addActionListener(modemDiscoveryActionListener);
 		panelCommunications.add(buttonModemDiscovery, new CellConstraints(6, 3, CellConstraints.FILL, CellConstraints.FILL));
 
@@ -623,13 +630,19 @@ public class EpiinfoUI{
 	    		
 	    		} catch(Throwable t){
 	    			consoleNotification.logError(t, EpiInfoUITranslator.getLabelFailed());
+	    			consoleNotification.logStatus(EpiInfoUITranslator.getLabelFailed());
 	    		}
     		} 
 
     		if(action == SYNCHRONIZE_HTTP){
-    			consoleNotification.beginSync(textFieldURL.getText(), textFieldDataSource.getText(), (String)comboTables.getSelectedItem());
-    			List<Item> conflicts = SyncEngineUtil.synchronize(getModemPhoneNumber(), textFieldURL.getText(), textFieldDataSource.getText(), (String)comboTables.getSelectedItem(), identityProvider, baseDirectory, fileNameResolver);
-    			consoleNotification.endSync(textFieldURL.getText(), textFieldDataSource.getText(), (String)comboTables.getSelectedItem(), conflicts);
+    			try{
+    				consoleNotification.beginSync(textFieldURL.getText(), textFieldDataSource.getText(), (String)comboTables.getSelectedItem());
+    				List<Item> conflicts = SyncEngineUtil.synchronize(getModemPhoneNumber(), textFieldURL.getText(), textFieldDataSource.getText(), (String)comboTables.getSelectedItem(), identityProvider, baseDirectory, fileNameResolver);
+    				consoleNotification.endSync(textFieldURL.getText(), textFieldDataSource.getText(), (String)comboTables.getSelectedItem(), conflicts);
+	    		} catch(Throwable t){
+	    			consoleNotification.logError(t, EpiInfoUITranslator.getLabelFailed());
+	    			consoleNotification.logStatus(EpiInfoUITranslator.getLabelFailed());
+	    		}
     		} 
 
     		if(action == CANCEL_SYNC){
@@ -641,7 +654,19 @@ public class EpiinfoUI{
     		}
     		
     		if(action == DISCOVERY_MODEMS){
-				comboSMSDevice.setModel(new DefaultComboBoxModel(SyncEngineUtil.getAvailableModems(consoleNotification, getDemoModem())));
+				consoleNotification.log(EpiInfoUITranslator.getMessageBeginModemDiscovery());
+    			setModeDiscoveryModems();
+				buttonModemDiscovery.setText(EpiInfoUITranslator.getLabelStopModemDiscovery());
+				buttonModemDiscovery.setToolTipText(EpiInfoUITranslator.getToolTipStopAutoDetect());    			
+    			
+    			Modem[] modems = SyncEngineUtil.getAvailableModems(consoleNotification, getDemoModem());
+    			comboSMSDevice.setModel(new DefaultComboBoxModel(modems));
+    			    			
+    			setModeNoDiscoveryModems();
+    			buttonModemDiscovery.setText(EpiInfoUITranslator.getLabelModemDiscovery());
+    			buttonModemDiscovery.setToolTipText(EpiInfoUITranslator.getToolTipAutoDetect());
+    			
+    			consoleNotification.log(EpiInfoUITranslator.getMessageEndModemDiscovery(modems.length));
     		}
     		
     		if(action == CHANGE_DEVICE){
@@ -730,6 +755,10 @@ public class EpiinfoUI{
 			 }
 			 
 			 buttonSaveDefaults.setEnabled(true);
+			 
+			 buttonKmlGenerator.setEnabled(true);
+			 buttonKmlWebGenerator.setEnabled(true);
+			 buttonDownloadSchema.setEnabled(true);
 
 		 }
 		 
@@ -754,9 +783,13 @@ public class EpiinfoUI{
 			 labelUrl.setEnabled(false);
 			 textFieldURL.setEnabled(false);
 			 
-			 buttonModemDiscovery.setEnabled(false);
+			 //buttonModemDiscovery.setEnabled(false);
 			 
 			 buttonSaveDefaults.setEnabled(false);
+			 
+			 buttonKmlGenerator.setEnabled(false);
+			 buttonKmlWebGenerator.setEnabled(false);
+			 buttonDownloadSchema.setEnabled(false);
 		 }
 	}
 
@@ -781,5 +814,20 @@ public class EpiinfoUI{
 		} else{
 			return null;
 		}
+	}
+	
+	private void setModeNoDiscoveryModems() {
+		discoveryModems = false;
+		consoleNotification.startDiscovery();
+		
+	}
+
+	private void setModeDiscoveryModems() {
+		discoveryModems = true;
+		consoleNotification.startDiscovery();		
+	}
+	
+	private boolean isDicoveringModems() {
+		return discoveryModems;
 	}
 }

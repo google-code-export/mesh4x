@@ -6,6 +6,7 @@ import java.util.List;
 import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
 import org.mesh4j.sync.message.IEndpoint;
 import org.mesh4j.sync.message.IMessage;
+import org.mesh4j.sync.message.channel.sms.connection.smslib.Modem;
 import org.mesh4j.sync.message.protocol.ACKEndSyncMessageProcessor;
 import org.mesh4j.sync.message.protocol.ACKMergeMessageProcessor;
 import org.mesh4j.sync.message.protocol.BeginSyncMessageProcessor;
@@ -284,4 +285,48 @@ public class EpiInfoUITranslator {
 		return MessageTranslator.translate("EPIINFO_LABEL_DOWNLOAD_SCHEMA");
 	}
 
+	
+	public static String getMessageCheckingModem(String portName, int baudRate) {
+		return MessageTranslator.translate("EPIINFO_MESSAGE_CHECKING_MODEM", portName, baudRate);
+	}
+
+	public static String getMessageCheckingPort(String portName, int baudRate) {
+		return MessageTranslator.translate("EPIINFO_MESSAGE_CHECKING_PORT", portName, baudRate);
+	}
+
+	public static String getMessageAvailableModem(Modem modem) {
+		return MessageTranslator.translate("EPIINFO_MESSAGE_AVAILABLE_MODEM", modem.toString());
+	}
+
+	public static String getLabelAvailable() {
+		return MessageTranslator.translate("EPIINFO_MESSAGE_AVAILABLE");
+	}
+
+	public static String getLabelNoAvailable() {
+		return MessageTranslator.translate("EPIINFO_MESSAGE_NO_AVAILABLE");
+	}
+	
+	public static String getLabelStopModemDiscovery() {
+		return MessageTranslator.translate("EPIINFO_LABEL_STOP_MODEM_DISCOVERY");
+	}
+	
+	public static String getMessageBeginModemDiscovery() {
+		return MessageTranslator.translate("EPIINFO_MESSAGE_BEGIN_MODEM_DISCOVERY");
+	}
+
+	public static String getMessageEndModemDiscovery(int availableModems) {
+		if(availableModems == 0){
+			return MessageTranslator.translate("EPIINFO_MESSAGE_END_MODEM_DISCOVERY_NO_AVAILABLE");
+		} else {
+			return MessageTranslator.translate("EPIINFO_MESSAGE_END_MODEM_DISCOVERY_AVAILABLE", availableModems);
+		}
+	}
+	
+	public static String getToolTipAutoDetect() {
+		return MessageTranslator.translate("EPIINFO_TOOLTIP_MODEM_DICOVERY");
+	}
+
+	public static String getToolTipStopAutoDetect() {
+		return MessageTranslator.translate("EPIINFO_TOOLTIP_MODEM_DICOVERY_STOP");
+	}
 }
