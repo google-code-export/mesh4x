@@ -19,6 +19,8 @@ import sun.jdbc.odbc.JdbcOdbcDriver;
 
 public class MsAccessSyncAdapterFactory implements ISyncAdapterFactory {
 
+	private static final String DEFAULT_SEPARATOR = "@";
+	
 	// MODEL VARIABLES
 	private String baseDirectory;
 	private ISourceIdResolver fileMappings;
@@ -80,7 +82,7 @@ public class MsAccessSyncAdapterFactory implements ISyncAdapterFactory {
 	
 	public static String createSourceId(String mdbFileName, String mdbTableName){
 		File file = new File(mdbFileName);
-		String sourceID = "access:" + file.getName() + "@" + mdbTableName;
+		String sourceID = "access:" + file.getName() + DEFAULT_SEPARATOR + mdbTableName;
 		return sourceID;
 	}
 	
@@ -91,7 +93,7 @@ public class MsAccessSyncAdapterFactory implements ISyncAdapterFactory {
 
 	@Override
 	public SplitAdapter createSyncAdapter(String sourceId, IIdentityProvider identityProvider) throws Exception {
-		String[] elements = sourceId.substring("access:".length(), sourceId.length()).split("@");
+		String[] elements = sourceId.substring("access:".length(), sourceId.length()).split(DEFAULT_SEPARATOR);
 		String mdbFileName = this.baseDirectory+"/"+ elements[0];
 		String tableName = elements[1];
 		
@@ -106,12 +108,12 @@ public class MsAccessSyncAdapterFactory implements ISyncAdapterFactory {
 	}
 
 	public static String getTableName(String sourceId) {
-		String[] elements = sourceId.substring("access:".length(), sourceId.length()).split("@");
+		String[] elements = sourceId.substring("access:".length(), sourceId.length()).split(DEFAULT_SEPARATOR);
 		return elements[1];
 	}
 
 	public static String getFileName(String sourceId) {
-		String[] elements = sourceId.substring("access:".length(), sourceId.length()).split("@");
+		String[] elements = sourceId.substring("access:".length(), sourceId.length()).split(DEFAULT_SEPARATOR);
 		return elements[0];
 	}
 
