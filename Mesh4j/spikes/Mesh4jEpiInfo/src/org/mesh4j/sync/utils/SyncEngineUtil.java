@@ -5,6 +5,9 @@ import java.util.List;
 
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.mesh4j.geo.coder.GeoCoderLatitudePropertyResolver;
+import org.mesh4j.geo.coder.GeoCoderLongitudePropertyResolver;
+import org.mesh4j.geo.coder.GoogleGeoCoder;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.adapters.ISourceIdResolver;
@@ -50,7 +53,7 @@ import org.mesh4j.sync.validations.MeshException;
 
 public class SyncEngineUtil {
 
-	public static List<Item> synchronize( String fromPhoneNumber, String url, String mdbFileName, String mdbTableName, IIdentityProvider identityProvider, String baseDirectory, ISourceIdResolver fileNameResolver) {
+	public static List<Item> synchronize(String fromPhoneNumber, String url, String mdbFileName, String mdbTableName, IIdentityProvider identityProvider, String baseDirectory, ISourceIdResolver fileNameResolver) {
 		
 		try{
 			ISyncAdapter httpAdapter = HttpSyncAdapterFactory.INSTANCE.createSyncAdapter(url, identityProvider);
@@ -201,7 +204,7 @@ public class SyncEngineUtil {
 
 
 	@SuppressWarnings("unchecked")
-	public static void generateKML(String templateFileName, String fromPhoneNumber, String mdbFileName, String mdbTableName, String baseDirectory, ISourceIdResolver fileNameResolver, IIdentityProvider identityProvider) throws Exception{
+	public static void generateKML(String geoCoderKey, String templateFileName, String fromPhoneNumber, String mdbFileName, String mdbTableName, String baseDirectory, ISourceIdResolver fileNameResolver, IIdentityProvider identityProvider) throws Exception{
 		
 		String mappingsDirectory = baseDirectory + "/" + fromPhoneNumber +"/";
 		
@@ -213,11 +216,13 @@ public class SyncEngineUtil {
 			throw new IllegalArgumentException(EpiInfoUITranslator.getErrorKMLSchemaNotFound());
 		}
 
+		GoogleGeoCoder geoCoder = new GoogleGeoCoder(geoCoderKey);
+
 		String sourceID = MsAccessSyncAdapterFactory.createSourceId(mdbFileName, mdbTableName);
 		String sourceDirectory = baseDirectory + "/" + fromPhoneNumber +"/";
 		ISyncAdapterFactory syncFactory = makeSyncAdapterFactory(fileNameResolver, sourceDirectory);
 
-		IKMLGeneratorFactory kmlGeneratorFactory = new EpiInfoKmlGeneratorFactory(mappingsDirectory, templateFileName);
+		IKMLGeneratorFactory kmlGeneratorFactory = new EpiInfoKmlGeneratorFactory(mappingsDirectory, templateFileName, geoCoder);
 		KMLTimeSpanDecoratorSyncAdapterFactory kmlDecSyncFactory = new KMLTimeSpanDecoratorSyncAdapterFactory(mappingsDirectory, syncFactory, kmlGeneratorFactory);
 
 		KMLTimeSpanDecoratorSyncAdapter syncAdapter = kmlDecSyncFactory.createSyncAdapter(sourceID, identityProvider);
@@ -232,7 +237,11 @@ public class SyncEngineUtil {
 		byte[] bytes = FileUtils.read(schemaFile);
 		String xml = new String(bytes);
 		Element schema = DocumentHelper.parseText(xml).getRootElement();
-		propertyResolver = new SchemaResolver(schema);
+		
+		GeoCoderLatitudePropertyResolver propertyResolverLat = new GeoCoderLatitudePropertyResolver(geoCoder);
+		GeoCoderLongitudePropertyResolver propertyResolverLon = new GeoCoderLongitudePropertyResolver(geoCoder);
+		
+		propertyResolver = new SchemaResolver(schema, propertyResolverLat, propertyResolverLon);
 		KMLExporter.export(kmlFileName, mdbTableName, items, propertyResolver);			
 
 	}

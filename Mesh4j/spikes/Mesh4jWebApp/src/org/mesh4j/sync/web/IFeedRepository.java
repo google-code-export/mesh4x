@@ -3,6 +3,7 @@ package org.mesh4j.sync.web;
 import java.util.Date;
 import java.util.List;
 
+import org.mesh4j.geo.coder.IGeoCoder;
 import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.payload.schema.ISchemaResolver;
@@ -23,5 +24,5 @@ public interface IFeedRepository {
 
 	List<Item> getAll(String sourceID, Date sinceDate);
 	
-	ISchemaResolver getSchema(String sourceID, String link) throws Exception;
+	ISchemaResolver getSchema(String sourceID, String link, IGeoCoder geoCoder) throws Exception;
 }

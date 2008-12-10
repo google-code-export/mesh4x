@@ -2,6 +2,7 @@ package org.mesh4j.sync.payload.schema;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.dom4j.DocumentHelper;
@@ -13,23 +14,26 @@ public class SchemaResolver implements ISchemaResolver {
 
 	// MODEL VARIABLES
 	private Element schema;
+	private List<IPropertyResolver> propertyResolvers = new ArrayList<IPropertyResolver>();
 	
 	// BUSINESS METHODS
 	
-	public SchemaResolver() {
-		this(DocumentHelper.createElement(ELEMENT_SCHEMA));
+	public SchemaResolver(IPropertyResolver... allPropertyResolvers) {
+		this(DocumentHelper.createElement(ELEMENT_SCHEMA), allPropertyResolvers);
 	}
 
-	public SchemaResolver(Element schema) {
+	public SchemaResolver(Element schema, IPropertyResolver... allPropertyResolvers) {
 		if(schema == null){
 			this.schema = DocumentHelper.createElement(ELEMENT_SCHEMA);
 		} else {
 			this.schema = schema;	
 		}
 		
+		for (IPropertyResolver propertyResolver : allPropertyResolvers) {
+			this.propertyResolvers.add(propertyResolver);		
+		}
 	}
 
-	
 	@Override
 	public String getValue(Element element, String propertyName) {
 		
@@ -60,11 +64,16 @@ public class SchemaResolver implements ISchemaResolver {
 
 	private String getElementValue(Element element, String variable) {
 		
-		Element resultElement = XMLHelper.selectSingleNode(variable, element, new HashMap<String, String>());
-		if(resultElement == null){
-			return null;
+		IPropertyResolver propertyResolver = getPropertyResolver(variable);
+		if(propertyResolver != null){
+			return propertyResolver.getPropertyValue(element, variable);
+		} else {
+			Element resultElement = XMLHelper.selectSingleNode(variable, element, new HashMap<String, String>());
+			if(resultElement == null){
+				return null;
+			}
+			return resultElement.getText();
 		}
-		return resultElement.getText();
 		
 //		Element resultElement = element;
 //		String[] properties = variable.split("@");
@@ -75,6 +84,15 @@ public class SchemaResolver implements ISchemaResolver {
 //			}
 //		}
 //		return resultElement.getText();
+	}
+
+	private IPropertyResolver getPropertyResolver(String variable) {
+		for (IPropertyResolver propertyResolver : this.propertyResolvers) {
+			if(propertyResolver.accepts(variable)){
+				return propertyResolver;
+			}
+		}
+		return null;
 	}
 
 	private ArrayList<String> getVariables(String template){

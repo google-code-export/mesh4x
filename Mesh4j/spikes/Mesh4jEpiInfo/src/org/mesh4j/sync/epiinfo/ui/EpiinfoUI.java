@@ -123,7 +123,7 @@ public class EpiinfoUI{
 	private String defaultTableName;
 	private String defaultURL;
 	private String kmlTemplateFileName;
-	
+	private String geoCoderKey;
 	private boolean discoveryModems = false;
 	
 	// BUSINESS METHODS
@@ -173,6 +173,7 @@ public class EpiinfoUI{
 		this.defaultTableName = propertiesProvider.getDefaultTable();
 		this.defaultURL = propertiesProvider.getDefaultURL();
 		this.kmlTemplateFileName = propertiesProvider.getDefaultKMLTemplateFileName();
+		this.geoCoderKey = propertiesProvider.getGeoCoderKey();
 	}
 	
 	protected void startUpSyncEngine() throws Exception {
@@ -715,7 +716,7 @@ public class EpiinfoUI{
 					return null;
 				}
     			try{
-    				SyncEngineUtil.generateKML(kmlTemplateFileName, getModemPhoneNumber(), textFieldDataSource.getText(), (String)comboTables.getSelectedItem(), baseDirectory, fileNameResolver, identityProvider);
+    				SyncEngineUtil.generateKML(geoCoderKey, kmlTemplateFileName, getModemPhoneNumber(), textFieldDataSource.getText(), (String)comboTables.getSelectedItem(), baseDirectory, fileNameResolver, identityProvider);
 	    		} catch(Throwable t){
 	    			consoleNotification.logError(t, EpiInfoUITranslator.getLabelKMLFailed());
 	    		}

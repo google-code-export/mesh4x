@@ -153,7 +153,7 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 			if(conn != null){
 				try {
 					int responseCode = conn.getResponseCode();
-					if(responseCode == HttpURLConnection.HTTP_INTERNAL_ERROR){
+					if(responseCode != HttpURLConnection.HTTP_OK){
 						return null;
 					}
 				} catch (IOException e1) {

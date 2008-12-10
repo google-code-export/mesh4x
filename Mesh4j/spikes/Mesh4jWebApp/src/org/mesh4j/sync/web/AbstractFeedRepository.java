@@ -6,6 +6,9 @@ import java.util.List;
 
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.mesh4j.geo.coder.GeoCoderLatitudePropertyResolver;
+import org.mesh4j.geo.coder.GeoCoderLongitudePropertyResolver;
+import org.mesh4j.geo.coder.IGeoCoder;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.adapters.InMemorySyncAdapter;
@@ -165,27 +168,31 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 	}
 	
 	@Override
-	public ISchemaResolver getSchema(String sourceID, String link) throws Exception{
+	public ISchemaResolver getSchema(String sourceID, String link, IGeoCoder geoCoder) throws Exception{
 		
 		ISyncAdapter syncAdapter = this.getParentSyncAdapter(sourceID);
 		List<Item> items = syncAdapter.getAll(new XMLContentLinkFilter(link));
-		
-		if(items.isEmpty()){
-			return new SchemaResolver();
-		} else {
+				
+		Element schema = null;
+		if(!items.isEmpty()){
 			Item item = items.get(0);
 			
 			String xml = item.getContent().getPayload().asXML();
 			xml = xml.replaceAll("&lt;", "<");						// TODO (JMT) remove ==>  xml.replaceAll("&lt;", "<"); 
 			xml = xml.replaceAll("&gt;", ">");
 			
-			Element schema = DocumentHelper.parseText(xml).getRootElement();
+			schema = DocumentHelper.parseText(xml).getRootElement();
 			if(ISchemaResolver.ELEMENT_PAYLOAD.equals(schema.getName())){
 				schema = schema.element(ISchemaResolver.ELEMENT_SCHEMA);
 			}
-			SchemaResolver schemaResolver = new SchemaResolver(schema);
-			return schemaResolver;
 		}
 		
+		if(geoCoder != null){
+			GeoCoderLatitudePropertyResolver propertyResolverLat = new GeoCoderLatitudePropertyResolver(geoCoder);
+			GeoCoderLongitudePropertyResolver propertyResolverLon = new GeoCoderLongitudePropertyResolver(geoCoder);
+			return new SchemaResolver(schema, propertyResolverLat, propertyResolverLon);
+		} else {
+			return new SchemaResolver(schema);
+		}
 	}
 }

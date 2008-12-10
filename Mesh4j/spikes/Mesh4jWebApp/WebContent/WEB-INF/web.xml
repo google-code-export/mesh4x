@@ -8,6 +8,18 @@
 		<display-name>FeedServlet</display-name>
 		<servlet-name>FeedServlet</servlet-name>
 		<servlet-class>org.mesh4j.sync.servlet.FeedServlet</servlet-class>
+		
+		<init-param>
+		   	<param-name>google.geo.coder.key</param-name>
+   			<param-value>ABQIAAAAjpkAC9ePGem0lIq5XcMiuhT2yXp_ZAY8_ufC3CFXhHIE1NvwkxTS6gjckBmeABOGXIUiOiZObZESPg</param-value>
+   		</init-param>
+
+		<init-param>
+		   	<param-name>geo.coder</param-name>
+   			<param-value>org.mesh4j.geo.coder.GoogleGeoCoder</param-value>
+   		</init-param>
+
+
    		<init-param>
    			<param-name>feeds.repository</param-name>
    			<param-value>org.mesh4j.sync.web.FileFeedRepository</param-value>
@@ -33,6 +45,7 @@
    			<param-name>feeds.s3.secret.access.key</param-name>
    			<param-value>1</param-value>
    		</init-param-->
+   		
 	</servlet> 
 	<servlet-mapping>
 		<servlet-name>FeedServlet</servlet-name>

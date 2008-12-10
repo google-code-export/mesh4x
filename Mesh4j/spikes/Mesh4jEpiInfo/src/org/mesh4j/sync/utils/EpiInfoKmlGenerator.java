@@ -63,20 +63,24 @@ public class EpiInfoKmlGenerator implements IKMLGenerator{
 				
 				Element payload = item.getContent().getPayload();
 
-				String name = schemaResolver.getValue(payload, "//item.title");
-				String description = schemaResolver.getValue(payload, "//item.description");
 				String longitude = schemaResolver.getValue(payload, "//geo.longitude");
 				String latitude = schemaResolver.getValue(payload, "//geo.latitude");
-				String ill = schemaResolver.getValue(payload, "//patient.ill");
-				String style = "0".equals(ill) ? "#msn_ylw-pushpin0" : "#msn_ylw-pushpin";
 				
-				Date start = item.getLastUpdate().getWhen();
-				Date end = new Date();
-				
-				String xml = makePlacemark("'"+item.getSyncId()+"'", name, description, longitude, latitude, style, start, end);
-
-				Element itemElement = DocumentHelper.parseText(xml).getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT).element(KmlNames.KML_ELEMENT_PLACEMARK); 
-				document.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT).add(itemElement.createCopy());
+				if(longitude != null && longitude.trim().length() > 0 && latitude != null && latitude.trim().length() > 0){
+					String name = schemaResolver.getValue(payload, "//item.title");
+					String description = schemaResolver.getValue(payload, "//item.description");
+					
+					String ill = schemaResolver.getValue(payload, "//patient.ill");
+					String style = "0".equals(ill) ? "#msn_ylw-pushpin0" : "#msn_ylw-pushpin";
+					
+					Date start = item.getLastUpdate().getWhen();
+					Date end = new Date();
+					
+					String xml = makePlacemark("'"+item.getSyncId()+"'", name, description, longitude, latitude, style, start, end);
+	
+					Element itemElement = DocumentHelper.parseText(xml).getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT).element(KmlNames.KML_ELEMENT_PLACEMARK); 
+					document.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT).add(itemElement.createCopy());
+				}
 			}
 		} catch(Exception e){
 			throw new MeshException(e);

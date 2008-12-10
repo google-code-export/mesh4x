@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.mesh4j.geo.coder.IGeoCoder;
 import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.adapters.kml.exporter.KMLExporter;
 import org.mesh4j.sync.model.Item;
@@ -20,6 +21,7 @@ import org.mesh4j.sync.payload.schema.ISchemaResolver;
 import org.mesh4j.sync.utils.DateHelper;
 import org.mesh4j.sync.web.FeedRepositoryFactory;
 import org.mesh4j.sync.web.IFeedRepository;
+import org.mesh4j.sync.web.geo.coder.GeoCoderFactory;
 
 public class FeedServlet extends HttpServlet {
 
@@ -27,6 +29,7 @@ public class FeedServlet extends HttpServlet {
 	
 	// MODEL VARIABLES
 	private IFeedRepository feedRepository;
+	private IGeoCoder geoCoder;
 	
 	// BUSINESS METHODS
 
@@ -38,6 +41,7 @@ public class FeedServlet extends HttpServlet {
 		this.log("Mesh4x is starting up.....");
 		super.init();		
 		this.feedRepository = FeedRepositoryFactory.createFeedRepository(this); 
+		this.geoCoder = GeoCoderFactory.createGeoCoder(this);
 		this.log("Mesh4x is running.....");
 	}
 	
@@ -55,7 +59,7 @@ public class FeedServlet extends HttpServlet {
 			} else {
 				ISchemaResolver propertyResolver;
 				try {
-					propertyResolver = this.feedRepository.getSchema(sourceID, link);
+					propertyResolver = this.feedRepository.getSchema(sourceID, link, this.geoCoder);
 				} catch (Exception e) {
 					throw new ServletException(e);
 				}
@@ -79,7 +83,7 @@ public class FeedServlet extends HttpServlet {
 					
 					ISchemaResolver propertyResolver;
 					try {
-						propertyResolver = this.feedRepository.getSchema(sourceID, link);
+						propertyResolver = this.feedRepository.getSchema(sourceID, link, this.geoCoder);
 					} catch (Exception e) {
 						throw new ServletException(e);
 					}

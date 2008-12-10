@@ -42,7 +42,7 @@ public class SmsLibMessageSyncEngineFactory {
 		ISmsConnection smsConnection =  new SmsLibAsynchronousConnection("mesh4j.sync", modem.getComPort(), modem.getBaudRate(),
 					modem.getManufacturer(), modem.getModel(), maxMessageLenght, messageEncoding, smsConnectionInboundOutboundNotification, protocolFilter);
 		
-		MessageSyncEngine syncEngine = createSyncEngine(syncAware, baseDirectory, identityProvider, smsConnection, senderDelay, receiverDelay);
+		MessageSyncEngine syncEngine = createSyncEngine(syncAware, baseDirectory, identityProvider, smsConnection, senderDelay, receiverDelay, syncAdapterFactories);
 		
 		((SmsLibAsynchronousConnection)smsConnection).startService();
 		

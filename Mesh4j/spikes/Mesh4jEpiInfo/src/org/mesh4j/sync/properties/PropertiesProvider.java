@@ -149,5 +149,9 @@ public class PropertiesProvider {
 	public String getDefaultKMLTemplateFileName() {
 		return getString("default.kml.template.file.name");
 	}
+
+	public String getGeoCoderKey() {
+		return getString("google.geo.coder.key");
+	}
 	
 }

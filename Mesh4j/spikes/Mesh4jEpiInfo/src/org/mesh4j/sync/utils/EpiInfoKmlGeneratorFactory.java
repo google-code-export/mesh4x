@@ -4,6 +4,9 @@ import java.io.File;
 
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.mesh4j.geo.coder.GeoCoderLatitudePropertyResolver;
+import org.mesh4j.geo.coder.GeoCoderLongitudePropertyResolver;
+import org.mesh4j.geo.coder.IGeoCoder;
 import org.mesh4j.sync.adapters.kml.timespan.decorator.IKMLGenerator;
 import org.mesh4j.sync.adapters.kml.timespan.decorator.IKMLGeneratorFactory;
 import org.mesh4j.sync.payload.schema.ISchemaResolver;
@@ -17,15 +20,18 @@ public class EpiInfoKmlGeneratorFactory implements IKMLGeneratorFactory {
 	// MODEL VARIABLES
 	private String baseDirectory;
 	private String templateFileName;
+	private IGeoCoder geoCoder;
 	
 	// BUSINESS METHODS
 	
-	public EpiInfoKmlGeneratorFactory(String baseDirectory, String templateFileName) {
+	public EpiInfoKmlGeneratorFactory(String baseDirectory, String templateFileName, IGeoCoder geoCoder) {
 		Guard.argumentNotNullOrEmptyString(baseDirectory, "baseDirectory");
 		Guard.argumentNotNullOrEmptyString(templateFileName, "templateFileName");
+		Guard.argumentNotNull(geoCoder, "geoCoder");
 		
 		this.baseDirectory = baseDirectory;
 		this.templateFileName = templateFileName;
+		this.geoCoder = geoCoder;
 	}
 
 	@Override
@@ -42,7 +48,11 @@ public class EpiInfoKmlGeneratorFactory implements IKMLGeneratorFactory {
 			byte[] bytes = FileUtils.read(schemaFile);
 			String xml = new String(bytes);
 			Element schema = DocumentHelper.parseText(xml).getRootElement();
-			schemaResolver = new SchemaResolver(schema);
+			
+			GeoCoderLatitudePropertyResolver propertyResolverLat = new GeoCoderLatitudePropertyResolver(geoCoder);
+			GeoCoderLongitudePropertyResolver propertyResolverLon = new GeoCoderLongitudePropertyResolver(geoCoder);
+
+			schemaResolver = new SchemaResolver(schema, propertyResolverLat, propertyResolverLon);
 		} catch (Exception e) {
 			throw new MeshException(e);
 		}
