@@ -177,16 +177,14 @@ public class EpiinfoUI{
 	}
 	
 	protected void startUpSyncEngine() throws Exception {
+		this.fileNameResolver = new FileNameResolver(baseDirectory+"/myFiles.properties");
+		
 		if(modem != null && !modem.getManufacturer().equals(EpiInfoUITranslator.getLabelDemo())){
-			String modemDirectory = baseDirectory+"/"+modem.toString()+"/";
-			this.fileNameResolver = new FileNameResolver(modemDirectory+"myFiles.properties");
 			this.syncEngine = SyncEngineUtil.createSyncEngine(fileNameResolver, modem, baseDirectory, senderDelay, receiverDelay, readDelay, maxMessageLenght, channelDelay,
 				identityProvider, messageEncoding, consoleNotification, consoleNotification);  
 		}
 				
 		if(this.syncEngine == null){
-			String emulatorDirectory = baseDirectory+"/"+EpiInfoUITranslator.getLabelDemo()+"/";
-			this.fileNameResolver = new FileNameResolver(emulatorDirectory+"myFiles.properties");
 			this.syncEngine = SyncEngineUtil.createEmulator(fileNameResolver, consoleNotification, consoleNotification, EpiInfoUITranslator.getLabelDemo(), messageEncoding, identityProvider, baseDirectory, senderDelay, receiverDelay, readDelay, channelDelay, maxMessageLenght);
 			this.emulate = true;
 		}
@@ -269,7 +267,10 @@ public class EpiinfoUI{
 		
 		comboSMSDevice = new JComboBox();
 		comboSMSDevice.setFocusable(false);
-		comboSMSDevice.setModel(modem == null ? new DefaultComboBoxModel(new Modem[]{getDemoModem()}) : new DefaultComboBoxModel(new Modem[]{modem}));
+		
+		Modem demoModem = getDemoModem();
+		comboSMSDevice.setModel(modem == null ? new DefaultComboBoxModel(new Modem[]{demoModem}) : new DefaultComboBoxModel(new Modem[]{modem}));
+		comboSMSDevice.setToolTipText(modem == null ? demoModem.toString() : modem.toString());
 		comboSMSDevice.addActionListener(deviceActionListener);
 		panelCommunications.add(comboSMSDevice, new CellConstraints(4, 3, CellConstraints.FILL, CellConstraints.DEFAULT));
 
@@ -628,15 +629,14 @@ public class EpiinfoUI{
 				}
     			
     			SyncEngineUtil.addDataSource(fileNameResolver, dataSource);
-    			
-    			if(emulate){	    				
-    				SyncEngineUtil.registerNewEndpointToEmulator(syncEngine, textFieldPhoneNumber.getText(), messageEncoding, 
-    					identityProvider, baseDirectory, senderDelay, receiverDelay, readDelay, channelDelay, maxMessageLenght);
-    			}	
+
     			try{
-					SyncEngineUtil.synchronize(syncEngine, getModemPhoneNumber(), textFieldPhoneNumber.getText(), 
-    					dataSource, tableName, identityProvider, baseDirectory, fileNameResolver);
-	    		
+	    			if(emulate){	    				
+	    				SyncEngineUtil.registerNewEndpointToEmulator(syncEngine, textFieldPhoneNumber.getText(), messageEncoding, 
+	    					identityProvider, baseDirectory, senderDelay, receiverDelay, readDelay, channelDelay, maxMessageLenght);
+	    			}
+					SyncEngineUtil.synchronize(syncEngine, textFieldPhoneNumber.getText(), 
+	    				dataSource, tableName, identityProvider, baseDirectory, fileNameResolver);
 	    		} catch(Throwable t){
 	    			consoleNotification.logError(t, EpiInfoUITranslator.getLabelFailed());
 	    			consoleNotification.logStatus(EpiInfoUITranslator.getLabelFailed());
@@ -659,7 +659,7 @@ public class EpiinfoUI{
 				
     			try{
     				consoleNotification.beginSync(url, dataSource, tableName);
-    				List<Item> conflicts = SyncEngineUtil.synchronize(getModemPhoneNumber(), textFieldURL.getText(), textFieldDataSource.getText(), (String)comboTables.getSelectedItem(), identityProvider, baseDirectory, fileNameResolver);
+    				List<Item> conflicts = SyncEngineUtil.synchronize(textFieldURL.getText(), textFieldDataSource.getText(), (String)comboTables.getSelectedItem(), identityProvider, baseDirectory, fileNameResolver);
     				consoleNotification.endSync(textFieldURL.getText(), textFieldDataSource.getText(), (String)comboTables.getSelectedItem(), conflicts);
 	    		} catch(Throwable t){
 	    			consoleNotification.logError(t, EpiInfoUITranslator.getLabelFailed());
@@ -702,6 +702,7 @@ public class EpiinfoUI{
 					consoleNotification.logError(exc, EpiInfoUITranslator.getLabelDeviceConnectionFailed(modem.toString()));
 					Logger.error(exc.getMessage(), exc);
 				}
+				comboSMSDevice.setToolTipText(modem.toString());
     		}
     		
     		if(action == SAVE_DEFAULTS){
@@ -716,7 +717,7 @@ public class EpiinfoUI{
 					return null;
 				}
     			try{
-    				SyncEngineUtil.generateKML(geoCoderKey, kmlTemplateFileName, getModemPhoneNumber(), textFieldDataSource.getText(), (String)comboTables.getSelectedItem(), baseDirectory, fileNameResolver, identityProvider);
+    				SyncEngineUtil.generateKML(geoCoderKey, kmlTemplateFileName, getModemPhoneNumber(), dataSource, tableName, baseDirectory, fileNameResolver, identityProvider);
 	    		} catch(Throwable t){
 	    			consoleNotification.logError(t, EpiInfoUITranslator.getLabelKMLFailed());
 	    		}
@@ -737,10 +738,10 @@ public class EpiinfoUI{
 				}
 				
     			try{
-	    			String documentName = (String)comboTables.getSelectedItem();
-	    			String urlWebKml = textFieldURL.getText() + "?format=kml";
-	    			String fileName = baseDirectory + "/" + getModemPhoneNumber() + "/"+ documentName + "_web.kml";
-	    			KMLExporter.makeKMLWithNetworkLink(fileName, documentName, urlWebKml);
+	    			String urlWebKml = url + "?format=kml";
+	    			String fileName = baseDirectory + "/"+ tableName + "_web.kml";
+
+	    			KMLExporter.makeKMLWithNetworkLink(fileName, tableName, urlWebKml);
 	    		} catch(Throwable t){
 	    			consoleNotification.logError(t, EpiInfoUITranslator.getLabelKMLFailed());
 	    		}
@@ -761,10 +762,7 @@ public class EpiinfoUI{
 				}
 				
     			try{
-	    			String documentName = (String)comboTables.getSelectedItem();
-	    			String urlSchema = textFieldURL.getText() + "?format=kml";
-	    			String fileName = baseDirectory + "/" + getModemPhoneNumber() + "/"+ documentName + "_schema.xml";
-	    			SyncEngineUtil.downloadSchema(urlSchema, fileName);
+	    			SyncEngineUtil.downloadSchema(url, tableName, baseDirectory);
 	    		} catch(Throwable t){
 	    			consoleNotification.logError(t, EpiInfoUITranslator.getLabelDownloadSchemaFailed());
 	    		}

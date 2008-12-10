@@ -53,14 +53,13 @@ import org.mesh4j.sync.validations.MeshException;
 
 public class SyncEngineUtil {
 
-	public static List<Item> synchronize(String fromPhoneNumber, String url, String mdbFileName, String mdbTableName, IIdentityProvider identityProvider, String baseDirectory, ISourceIdResolver fileNameResolver) {
+	public static List<Item> synchronize(String url, String mdbFileName, String mdbTableName, IIdentityProvider identityProvider, String baseDirectory, ISourceIdResolver fileNameResolver) {
 		
 		try{
 			ISyncAdapter httpAdapter = HttpSyncAdapterFactory.INSTANCE.createSyncAdapter(url, identityProvider);
 			
 			String sourceID = MsAccessSyncAdapterFactory.createSourceId(mdbFileName, mdbTableName);
-			String sourceDirectory = baseDirectory + "/" + fromPhoneNumber +"/";
-			ISyncAdapterFactory syncFactory = makeSyncAdapterFactory(fileNameResolver, sourceDirectory);
+			ISyncAdapterFactory syncFactory = makeSyncAdapterFactory(fileNameResolver, baseDirectory);
 			ISyncAdapter syncAdapter = syncFactory.createSyncAdapter(sourceID, identityProvider);
 	
 			SyncEngine syncEngine = new SyncEngine(syncAdapter, httpAdapter);
@@ -71,14 +70,12 @@ public class SyncEngineUtil {
 		}
 	}
 	
-	public static void synchronize(MessageSyncEngine syncEngine, String fromPhoneNumber, String toPhoneNumber, String mdbFileName, String mdbTableName, IIdentityProvider identityProvider, String baseDirectory, ISourceIdResolver fileNameResolver) throws Exception {
+	public static void synchronize(MessageSyncEngine syncEngine, String toPhoneNumber, String mdbFileName, String mdbTableName, IIdentityProvider identityProvider, String baseDirectory, ISourceIdResolver fileNameResolver) throws Exception {
 		
 		String sourceID = MsAccessSyncAdapterFactory.createSourceId(mdbFileName, mdbTableName);
 		IMessageSyncAdapter adapter = syncEngine.getSource(sourceID);
 		if(adapter == null){
-			String sourceDirectory = baseDirectory + "/" + fromPhoneNumber +"/";
-			
-			ISyncAdapterFactory syncFactory = makeSyncAdapterFactory(fileNameResolver, sourceDirectory);
+			ISyncAdapterFactory syncFactory = makeSyncAdapterFactory(fileNameResolver, baseDirectory);
 			ISyncAdapter syncAdapter = syncFactory.createSyncAdapter(sourceID, identityProvider);
 			adapter = new MessageSyncAdapter(sourceID, identityProvider, syncAdapter);
 		}
@@ -96,12 +93,10 @@ public class SyncEngineUtil {
 			IIdentityProvider identityProvider, String baseDirectory, 
 			int senderDelay, int receiverDelay, int readDelay, int channelDelay, int maxMessageLenght) throws Exception {
 
-		String targetDirectory = baseDirectory + "/" +smsFrom +"/";
-		
 		SmsEndpoint target = new SmsEndpoint(smsFrom);
 		
 		MessageSyncEngine syncEngine = createSyncEngineEmulator(
-				fileNameResolver, smsFrom, encoding, identityProvider, targetDirectory,
+				fileNameResolver, smsFrom, encoding, identityProvider, baseDirectory+"/",
 				senderDelay, receiverDelay, readDelay, channelDelay,
 				maxMessageLenght, target, smsConnectionNotification, syncAware);
 	
@@ -180,11 +175,10 @@ public class SyncEngineUtil {
 			ISmsConnectionInboundOutboundNotification smsConnectionInboundOutboundNotification,
 			IMessageSyncAware messageSyncAware) {
 		
-		String targetDirectory = baseDirectory + "/" + modem.toString() + "/";
-		ISyncAdapterFactory syncAdapterFactory = makeSyncAdapterFactory(fileNameResolver, targetDirectory);
+		ISyncAdapterFactory syncAdapterFactory = makeSyncAdapterFactory(fileNameResolver, baseDirectory);
 		
 		return SmsLibMessageSyncEngineFactory.createSyncEngine(
-			modem, targetDirectory, senderDelay, receiverDelay, readDelay, maxMessageLenght, channelDelay,
+			modem, baseDirectory + "/", senderDelay, receiverDelay, readDelay, maxMessageLenght, channelDelay,
 			identityProvider, messageEncoding, smsConnectionInboundOutboundNotification, messageSyncAware, syncAdapterFactory);
 	}
 	
@@ -206,9 +200,7 @@ public class SyncEngineUtil {
 	@SuppressWarnings("unchecked")
 	public static void generateKML(String geoCoderKey, String templateFileName, String fromPhoneNumber, String mdbFileName, String mdbTableName, String baseDirectory, ISourceIdResolver fileNameResolver, IIdentityProvider identityProvider) throws Exception{
 		
-		String mappingsDirectory = baseDirectory + "/" + fromPhoneNumber +"/";
-		
-		String schemaFileName = mappingsDirectory + "/" + mdbTableName + "_schema.xml";
+		String schemaFileName = baseDirectory + "/" + mdbTableName + "_schema.xml";
 		
 		ISchemaResolver propertyResolver = null;
 		File schemaFile = new File(schemaFileName);
@@ -219,11 +211,10 @@ public class SyncEngineUtil {
 		GoogleGeoCoder geoCoder = new GoogleGeoCoder(geoCoderKey);
 
 		String sourceID = MsAccessSyncAdapterFactory.createSourceId(mdbFileName, mdbTableName);
-		String sourceDirectory = baseDirectory + "/" + fromPhoneNumber +"/";
-		ISyncAdapterFactory syncFactory = makeSyncAdapterFactory(fileNameResolver, sourceDirectory);
+		ISyncAdapterFactory syncFactory = makeSyncAdapterFactory(fileNameResolver, baseDirectory);
 
-		IKMLGeneratorFactory kmlGeneratorFactory = new EpiInfoKmlGeneratorFactory(mappingsDirectory, templateFileName, geoCoder);
-		KMLTimeSpanDecoratorSyncAdapterFactory kmlDecSyncFactory = new KMLTimeSpanDecoratorSyncAdapterFactory(mappingsDirectory, syncFactory, kmlGeneratorFactory);
+		IKMLGeneratorFactory kmlGeneratorFactory = new EpiInfoKmlGeneratorFactory(baseDirectory, templateFileName, geoCoder);
+		KMLTimeSpanDecoratorSyncAdapterFactory kmlDecSyncFactory = new KMLTimeSpanDecoratorSyncAdapterFactory(baseDirectory, syncFactory, kmlGeneratorFactory);
 
 		KMLTimeSpanDecoratorSyncAdapter syncAdapter = kmlDecSyncFactory.createSyncAdapter(sourceID, identityProvider);
 		syncAdapter.beginSync();
@@ -232,7 +223,7 @@ public class SyncEngineUtil {
 		List<Item> items = syncAdapter.getAll(filter);
 		syncAdapter.endSync();
 		
-		String kmlFileName = mappingsDirectory + "/" + mdbTableName + "_last.kml";
+		String kmlFileName = baseDirectory + "/" + mdbTableName + "_last.kml";
 		
 		byte[] bytes = FileUtils.read(schemaFile);
 		String xml = new String(bytes);
@@ -246,9 +237,12 @@ public class SyncEngineUtil {
 
 	}
 
-	public static void downloadSchema(String url, String fileName) throws Exception {
+	public static void downloadSchema(String url, String tableName, String baseDirectory) throws Exception {
+		
 		HttpSyncAdapter httpSyncAdapter = HttpSyncAdapterFactory.INSTANCE.createSyncAdapter(url, NullIdentityProvider.INSTANCE);
 		String xmlSchema = httpSyncAdapter.getSchema();
+		
+		String fileName = baseDirectory + "/" + tableName + "_schema.xml";
 		FileUtils.write(fileName, xmlSchema.getBytes());
 	}
 
