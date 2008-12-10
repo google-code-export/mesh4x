@@ -22,6 +22,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
@@ -84,7 +85,6 @@ public class EpiinfoUI{
 	private JButton buttonCancel;
 	private JButton buttonClean;
 	private JScrollPane scrollPaneConsole;
-	private JTextArea textAreaStatus;
 	private JButton buttonModemDiscovery;
 	private JButton buttonAddDataSource;
 	private JButton buttonOpenFileDataSource;
@@ -99,6 +99,10 @@ public class EpiinfoUI{
 	private JButton buttonKmlGenerator;
 	private JButton buttonKmlWebGenerator;
 	private JButton buttonDownloadSchema;
+	private JButton buttonHideShowConsole;
+	private JButton buttonHideShowConsole1;
+	private JButton buttonHideShowConsole2;
+	private JLabel imageStatus;
 	
 	private EpiInfoConsoleNotification consoleNotification;
 	
@@ -106,6 +110,7 @@ public class EpiinfoUI{
 	private FileNameResolver fileNameResolver;
 	private MessageSyncEngine syncEngine;
 	private boolean emulate = false;
+	private boolean syncInProcess = false;
 	private int channel = SYNCHRONIZE_HTTP;
 	
 	private IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
@@ -133,6 +138,8 @@ public class EpiinfoUI{
 			public void run() {
 				try {
 					EpiinfoUI window = new EpiinfoUI();
+					window.frame.pack();
+					window.frame.setSize(window.frame.getPreferredSize());
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					Logger.error(e.getMessage(), e);
@@ -145,7 +152,7 @@ public class EpiinfoUI{
 		this.initializeProperties();
 		this.initializeModem();
 		this.createUI();
-		this.consoleNotification = new EpiInfoConsoleNotification(this.textAreaConsole, this.textAreaStatus);
+		this.consoleNotification = new EpiInfoConsoleNotification(this.textAreaConsole, this.imageStatus, this);
 		this.startUpSyncEngine();
 	}
 
@@ -204,7 +211,7 @@ public class EpiinfoUI{
 		frame.getContentPane().setLayout(new FormLayout(
 			new ColumnSpec[] {
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("454dlu"),
+				ColumnSpec.decode("322dlu"),
 				FormFactory.RELATED_GAP_COLSPEC},
 			new RowSpec[] {
 				FormFactory.RELATED_GAP_ROWSPEC,
@@ -212,15 +219,13 @@ public class EpiinfoUI{
 				FormFactory.RELATED_GAP_ROWSPEC,
 				FormFactory.DEFAULT_ROWSPEC,
 				FormFactory.RELATED_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC,
+				RowSpec.decode("41dlu"),
 				FormFactory.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("153dlu"),
-				FormFactory.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("94dlu"),
+				RowSpec.decode("103dlu"),
 				FormFactory.RELATED_GAP_ROWSPEC}));
 		frame.setResizable(false);
 		frame.setTitle(EpiInfoUITranslator.getTitle());
-		frame.setBounds(100, 100, 928, 773);
+		frame.setBounds(100, 100, 664, 572);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		final JPanel panelCommunications = new JPanel();
@@ -231,7 +236,7 @@ public class EpiinfoUI{
 				FormFactory.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("44dlu"),
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("352dlu"),
+				ColumnSpec.decode("221dlu"),
 				FormFactory.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("36dlu"),
 				FormFactory.RELATED_GAP_COLSPEC},
@@ -352,7 +357,7 @@ public class EpiinfoUI{
 				FormFactory.RELATED_GAP_COLSPEC,
 				FormFactory.DEFAULT_COLSPEC,
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("382dlu"),
+				ColumnSpec.decode("251dlu"),
 				FormFactory.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("35dlu"),
 				FormFactory.RELATED_GAP_COLSPEC},
@@ -417,10 +422,23 @@ public class EpiinfoUI{
 		buttonAddDataSource.addActionListener(addDataSourceActionListener);
 		panelDataSource.add(buttonAddDataSource, new CellConstraints(6, 4));
 		
+		final JPanel panelFooter = new JPanel();
+		panelFooter.setLayout(new FormLayout(
+			new ColumnSpec[] {
+				ColumnSpec.decode("37dlu"),
+				FormFactory.RELATED_GAP_COLSPEC,
+				ColumnSpec.decode("177dlu"),
+				ColumnSpec.decode("5dlu"),
+				ColumnSpec.decode("95dlu"),
+				FormFactory.RELATED_GAP_COLSPEC},
+			new RowSpec[] {
+				RowSpec.decode("104dlu")}));
+		frame.getContentPane().add(panelFooter, new CellConstraints(2, 8, CellConstraints.FILL, CellConstraints.FILL));
+
 		scrollPaneConsole = new JScrollPane();
-		scrollPaneConsole.setBorder(new BevelBorder(BevelBorder.RAISED));
+		scrollPaneConsole.setBorder(new BevelBorder(BevelBorder.LOWERED));
 		scrollPaneConsole.setAutoscrolls(true);
-		frame.getContentPane().add(scrollPaneConsole, new CellConstraints("2, 8, 1, 1, fill, fill"));
+		panelFooter.add(scrollPaneConsole, new CellConstraints("2, 1, 5, 1, fill, fill"));
 
 		textAreaConsole = new JTextArea();
 		scrollPaneConsole.setViewportView(textAreaConsole);
@@ -433,27 +451,50 @@ public class EpiinfoUI{
 		textAreaConsole.setName("");
 		textAreaConsole.setEditable(false);
 
-		final JPanel panelFooter = new JPanel();
-		panelFooter.setLayout(new FormLayout(
+		scrollPaneConsole.setVisible(false);
+
+		final JLabel labelLogoEpiinfo = new JLabel();
+		labelLogoEpiinfo.setIcon(SwingResourceManager.getIcon(EpiinfoUI.class, "/Epi2002.jpg"));
+		labelLogoEpiinfo.setText("");
+		panelFooter.add(labelLogoEpiinfo, new CellConstraints(3, 1, 4, 1, CellConstraints.FILL, CellConstraints.FILL));
+
+		imageStatus = new JLabel();
+		imageStatus.setText("");
+		panelFooter.add(imageStatus, new CellConstraints(1, 1, CellConstraints.CENTER, CellConstraints.CENTER));
+
+		// disable sms channel group
+		textFieldPhoneNumber.setEnabled(false);
+		comboSMSDevice.setEnabled(false);
+		buttonModemDiscovery.setEnabled(false);
+		labelSMSDevice.setEnabled(false);
+		labelPhoneNumber.setEnabled(false);
+
+		// Tabbed panel
+		JPanel panelExchange = new JPanel(false);
+		panelExchange.setLayout(new FormLayout(
 			new ColumnSpec[] {
-				ColumnSpec.decode("54dlu"),
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("167dlu"),
+				ColumnSpec.decode("53dlu"),
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("134dlu"),
+				ColumnSpec.decode("91dlu"),
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("87dlu"),
+				ColumnSpec.decode("65dlu"),
 				FormFactory.RELATED_GAP_COLSPEC},
 			new RowSpec[] {
-				RowSpec.decode("96dlu")}));
-		frame.getContentPane().add(panelFooter, new CellConstraints(2, 10, CellConstraints.DEFAULT, CellConstraints.FILL));
-
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
+				FormFactory.RELATED_GAP_ROWSPEC}));
+				
 		ActionListener synchronizeActionListener = new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				Task task = new Task(channel);
 				task.execute();
 			}
 		};	
+		buttonSynchronize = new JButton();
+		panelExchange.add(buttonSynchronize, new CellConstraints(2, 2, CellConstraints.FILL, CellConstraints.FILL));
+		buttonSynchronize.setText(EpiInfoUITranslator.getSynchronize());
+		buttonSynchronize.addActionListener(synchronizeActionListener);
 		
 		ActionListener cancelActionListener = new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
@@ -461,70 +502,102 @@ public class EpiinfoUI{
 				task.execute();
 			}
 		};	
-		
-		final JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setAutoscrolls(true);
-		panelFooter.add(scrollPane, new CellConstraints("3, 1, 3, 1, fill, fill"));
-
-		textAreaStatus = new JTextArea();
-		textAreaStatus.setLineWrap(true);
-		scrollPane.setViewportView(textAreaStatus);
-		textAreaStatus.setBorder(new BevelBorder(BevelBorder.RAISED));
-		textAreaStatus.setWrapStyleWord(true);
-		textAreaStatus.setEditable(false);
-
-		final JLabel labelLogoInstedd = new JLabel();
-		labelLogoInstedd.setIcon(SwingResourceManager.getIcon(EpiinfoUI.class, "/logo-instedd.png"));
-		labelLogoInstedd.setText("");
-		panelFooter.add(labelLogoInstedd, new CellConstraints(7, 1, CellConstraints.FILL, CellConstraints.CENTER));
-
-		final JLabel labelLogoEpiinfo = new JLabel();
-		labelLogoEpiinfo.setIcon(SwingResourceManager.getIcon(EpiinfoUI.class, "/Epi2002.jpg"));
-		labelLogoEpiinfo.setText("");
-		panelFooter.add(labelLogoEpiinfo, new CellConstraints(1, 1, CellConstraints.FILL, CellConstraints.CENTER));
-
-		final JPanel panelSyncButtons = new JPanel();
-		panelSyncButtons.setLayout(new FormLayout(
-			new ColumnSpec[] {
-				ColumnSpec.decode("53dlu"),
-				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("91dlu"),
-				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("60dlu"),
-				FormFactory.RELATED_GAP_COLSPEC,
-				FormFactory.DEFAULT_COLSPEC,
-				FormFactory.RELATED_GAP_COLSPEC,
-				FormFactory.DEFAULT_COLSPEC,
-				FormFactory.RELATED_GAP_COLSPEC,
-				FormFactory.DEFAULT_COLSPEC,
-				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("64dlu"),
-				FormFactory.RELATED_GAP_COLSPEC},
-			new RowSpec[] {
-				FormFactory.DEFAULT_ROWSPEC}));
-		frame.getContentPane().add(panelSyncButtons, new CellConstraints(2, 6));
-		
-		buttonSynchronize = new JButton();
-		panelSyncButtons.add(buttonSynchronize, new CellConstraints(1, 1, CellConstraints.FILL, CellConstraints.FILL));
-		buttonSynchronize.setText(EpiInfoUITranslator.getSynchronize());
-		buttonSynchronize.addActionListener(synchronizeActionListener);
-
 		buttonCancel = new JButton();
-		panelSyncButtons.add(buttonCancel, new CellConstraints(3, 1, CellConstraints.FILL, CellConstraints.FILL));
+		panelExchange.add(buttonCancel, new CellConstraints(4, 2, CellConstraints.FILL, CellConstraints.FILL));
 		buttonCancel.setText(EpiInfoUITranslator.getCancel());
 		buttonCancel.addActionListener(cancelActionListener);
 		
-		ActionListener cleanConsoleActionListener = new ActionListener(){
+		ActionListener hiShowActionListener = new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
-				textAreaConsole.setText("");
+				scrollPaneConsole.setVisible(!scrollPaneConsole.isVisible());
+				if(scrollPaneConsole.isVisible()){
+					buttonHideShowConsole.setText(EpiInfoUITranslator.getLabelHideConsole());
+					buttonHideShowConsole.setToolTipText(EpiInfoUITranslator.getToolTipHideConsole());
+					buttonHideShowConsole1.setText(EpiInfoUITranslator.getLabelHideConsole());
+					buttonHideShowConsole1.setToolTipText(EpiInfoUITranslator.getToolTipHideConsole());
+					buttonHideShowConsole2.setText(EpiInfoUITranslator.getLabelHideConsole());
+					buttonHideShowConsole2.setToolTipText(EpiInfoUITranslator.getToolTipHideConsole());
+					labelLogoEpiinfo.setVisible(false);
+				}else{
+					buttonHideShowConsole.setText(EpiInfoUITranslator.getLabelShowConsole());
+					buttonHideShowConsole.setToolTipText(EpiInfoUITranslator.getToolTipShowConsole());
+					buttonHideShowConsole1.setText(EpiInfoUITranslator.getLabelShowConsole());
+					buttonHideShowConsole1.setToolTipText(EpiInfoUITranslator.getToolTipShowConsole());
+					buttonHideShowConsole2.setText(EpiInfoUITranslator.getLabelShowConsole());
+					buttonHideShowConsole2.setToolTipText(EpiInfoUITranslator.getToolTipShowConsole());
+					labelLogoEpiinfo.setVisible(true);
+				}				
+				frame.pack();
+				frame.repaint();
 			}
 		};	
-		
-		buttonClean = new JButton();
-		buttonClean.setText(EpiInfoUITranslator.getLabelCleanConsole());
-		buttonClean.addActionListener(cleanConsoleActionListener);
-		panelSyncButtons.add(buttonClean, new CellConstraints(13, 1, CellConstraints.FILL, CellConstraints.FILL));
-		
+		buttonHideShowConsole = new JButton();
+		buttonHideShowConsole.setText(EpiInfoUITranslator.getLabelShowConsole());
+		buttonHideShowConsole.setToolTipText(EpiInfoUITranslator.getToolTipShowConsole());
+		buttonHideShowConsole.addActionListener(hiShowActionListener);
+		panelExchange.add(buttonHideShowConsole, new CellConstraints(6, 2, CellConstraints.CENTER, CellConstraints.FILL));
+	       
+	    JPanel panelMap = new JPanel(false);
+	    panelMap.setLayout(new FormLayout(
+	    	new ColumnSpec[] {
+	    		FormFactory.RELATED_GAP_COLSPEC,
+	    		ColumnSpec.decode("53dlu"),
+	    		FormFactory.RELATED_GAP_COLSPEC,
+	    		ColumnSpec.decode("47dlu"),
+	    		FormFactory.RELATED_GAP_COLSPEC,
+	    		ColumnSpec.decode("65dlu"),
+	    		FormFactory.RELATED_GAP_COLSPEC},
+	    	new RowSpec[] {
+	    		FormFactory.RELATED_GAP_ROWSPEC,
+	    		FormFactory.DEFAULT_ROWSPEC,
+	    		FormFactory.RELATED_GAP_ROWSPEC}));
+	    
+		ActionListener kmlGeneratorActionListener = new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				Task task = new Task(GENERATE_KML);
+				task.execute();
+			}
+		};
+	    buttonKmlGenerator = new JButton();
+	    buttonKmlGenerator.addActionListener(kmlGeneratorActionListener);
+	    buttonKmlGenerator.setText(EpiInfoUITranslator.getLabelKML());
+	    panelMap.add(buttonKmlGenerator, new CellConstraints(2, 2));
+
+
+		ActionListener kmlWebGeneratorActionListener = new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				Task task = new Task(GENERATE_KML_WEB);
+				task.execute();
+			}
+		};
+	    buttonKmlWebGenerator = new JButton();
+	    buttonKmlWebGenerator.setText(EpiInfoUITranslator.getLabelKMLWEB());
+	    buttonKmlWebGenerator.addActionListener(kmlWebGeneratorActionListener);
+	    panelMap.add(buttonKmlWebGenerator, new CellConstraints(4, 2));
+
+		buttonHideShowConsole1 = new JButton();
+		buttonHideShowConsole1.setText(EpiInfoUITranslator.getLabelShowConsole());
+		buttonHideShowConsole1.setToolTipText(EpiInfoUITranslator.getToolTipShowConsole());
+		buttonHideShowConsole1.addActionListener(hiShowActionListener);
+	    panelMap.add(buttonHideShowConsole1, new CellConstraints(6, 2));
+	    	    
+	    JPanel panelSettings = new JPanel(false);
+	    panelSettings.setLayout(new FormLayout(
+	    	new ColumnSpec[] {
+	    		FormFactory.RELATED_GAP_COLSPEC,
+	    		ColumnSpec.decode("57dlu"),
+	    		FormFactory.RELATED_GAP_COLSPEC,
+	    		ColumnSpec.decode("78dlu"),
+	    		FormFactory.RELATED_GAP_COLSPEC,
+	    		ColumnSpec.decode("72dlu"),
+	    		FormFactory.RELATED_GAP_COLSPEC,
+	    		ColumnSpec.decode("76dlu"),
+	    		FormFactory.RELATED_GAP_COLSPEC},
+	    	new RowSpec[] {
+	    		FormFactory.RELATED_GAP_ROWSPEC,
+	    		FormFactory.DEFAULT_ROWSPEC,
+	    		FormFactory.RELATED_GAP_ROWSPEC}));
+	    
 		ActionListener saveDefaultActionListener = new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				Task task = new Task(SAVE_DEFAULTS);
@@ -534,31 +607,8 @@ public class EpiinfoUI{
 		buttonSaveDefaults = new JButton();
 		buttonSaveDefaults.setText(EpiInfoUITranslator.getLabelSaveDefaults());
 		buttonSaveDefaults.addActionListener(saveDefaultActionListener);
-		panelSyncButtons.add(buttonSaveDefaults, new CellConstraints(5, 1, CellConstraints.FILL, CellConstraints.FILL));
-		
-		ActionListener kmlGeneratorActionListener = new ActionListener(){
-			public void actionPerformed(ActionEvent e) {
-				Task task = new Task(GENERATE_KML);
-				task.execute();
-			}
-		};
-		buttonKmlGenerator = new JButton();
-		buttonKmlGenerator.addActionListener(kmlGeneratorActionListener);
-		buttonKmlGenerator.setText(EpiInfoUITranslator.getLabelKML());
-		panelSyncButtons.add(buttonKmlGenerator, new CellConstraints(7, 1, CellConstraints.FILL, CellConstraints.FILL));
+	    panelSettings.add(buttonSaveDefaults, new CellConstraints(2, 2, CellConstraints.FILL, CellConstraints.CENTER));
 
-		ActionListener kmlWebGeneratorActionListener = new ActionListener(){
-			public void actionPerformed(ActionEvent e) {
-				Task task = new Task(GENERATE_KML_WEB);
-				task.execute();
-			}
-		};
-		buttonKmlWebGenerator = new JButton();
-		buttonKmlWebGenerator.setText(EpiInfoUITranslator.getLabelKMLWEB());
-		buttonKmlWebGenerator.addActionListener(kmlWebGeneratorActionListener);
-		panelSyncButtons.add(buttonKmlWebGenerator, new CellConstraints(11, 1, CellConstraints.FILL, CellConstraints.FILL));
-
-		
 		ActionListener downloadSchemaActionListener = new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				Task task = new Task(DOWNLOAD_SCHEMA);
@@ -568,14 +618,30 @@ public class EpiinfoUI{
 		buttonDownloadSchema = new JButton();
 		buttonDownloadSchema.setText(EpiInfoUITranslator.getLabelDownloadSchema());
 		buttonDownloadSchema.addActionListener(downloadSchemaActionListener);
-		panelSyncButtons.add(buttonDownloadSchema, new CellConstraints(9, 1, CellConstraints.FILL, CellConstraints.FILL));
+		panelSettings.add(buttonDownloadSchema, new CellConstraints(4, 2, CellConstraints.FILL, CellConstraints.CENTER));
 
-		// disable sms channel group
-		textFieldPhoneNumber.setEnabled(false);
-		comboSMSDevice.setEnabled(false);
-		buttonModemDiscovery.setEnabled(false);
-		labelSMSDevice.setEnabled(false);
-		labelPhoneNumber.setEnabled(false);
+		ActionListener cleanConsoleActionListener = new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				textAreaConsole.setText("");
+			}
+		};	
+		buttonClean = new JButton();
+		buttonClean.setText(EpiInfoUITranslator.getLabelCleanConsole());
+		buttonClean.addActionListener(cleanConsoleActionListener);
+	    panelSettings.add(buttonClean, new CellConstraints(6, 2, CellConstraints.FILL, CellConstraints.CENTER));
+
+		buttonHideShowConsole2 = new JButton();
+		buttonHideShowConsole2.setText(EpiInfoUITranslator.getLabelShowConsole());
+		buttonHideShowConsole2.setToolTipText(EpiInfoUITranslator.getToolTipShowConsole());
+		buttonHideShowConsole2.addActionListener(hiShowActionListener);
+	    panelSettings.add(buttonHideShowConsole2, new CellConstraints(8, 2));
+	    
+	    JTabbedPane tabbedPane = new JTabbedPane();
+	    tabbedPane.addTab(EpiInfoUITranslator.getLabelTabDataExchange(), panelExchange);
+	    tabbedPane.addTab(EpiInfoUITranslator.getLabelTabMap(), panelMap);
+	    tabbedPane.addTab(EpiInfoUITranslator.getLabelTabSettings(), panelSettings);
+	    
+	    frame.getContentPane().add(tabbedPane, new CellConstraints(2, 6));
 	}
 
 	private Modem getDemoModem() {
@@ -619,12 +685,14 @@ public class EpiinfoUI{
 			frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			
     		if(action == SYNCHRONIZE_SMS){
+    			syncInProcess = true;
     			textAreaConsole.setText("");
     			
 				String dataSource = textFieldDataSource.getText();
 				String tableName = (String)comboTables.getSelectedItem();
 				if(!MsAccessSyncAdapterFactory.isValidAccessTable(dataSource, tableName)){
 	    			consoleNotification.log(EpiInfoUITranslator.getErrorInvalidMSAccessTable());
+	    			consoleNotification.setErrorImageStatus();
 					return null;
 				}
     			
@@ -637,16 +705,20 @@ public class EpiinfoUI{
 	    			}
 					SyncEngineUtil.synchronize(syncEngine, textFieldPhoneNumber.getText(), 
 	    				dataSource, tableName, identityProvider, baseDirectory, fileNameResolver);
+
 	    		} catch(Throwable t){
+	    			consoleNotification.setErrorImageStatus();
 	    			consoleNotification.logError(t, EpiInfoUITranslator.getLabelFailed());
-	    			consoleNotification.logStatus(EpiInfoUITranslator.getLabelFailed());
+//	    			consoleNotification.logStatus(EpiInfoUITranslator.getLabelFailed());
 	    		}
     		} 
 
     		if(action == SYNCHRONIZE_HTTP){
+    			consoleNotification.setInProcessImageStatus();
 				String url = textFieldURL.getText();
 				if(!HttpSyncAdapterFactory.isValidURL(url)){
 	    			consoleNotification.log(EpiInfoUITranslator.getErrorInvalidURL());
+	    			consoleNotification.setErrorImageStatus();
 					return null;
 				}
 				
@@ -654,6 +726,7 @@ public class EpiinfoUI{
 				String tableName = (String)comboTables.getSelectedItem();
 				if(!MsAccessSyncAdapterFactory.isValidAccessTable(dataSource, tableName)){
 	    			consoleNotification.log(EpiInfoUITranslator.getErrorInvalidMSAccessTable());
+	    			consoleNotification.setErrorImageStatus();
 					return null;
 				}
 				
@@ -661,9 +734,11 @@ public class EpiinfoUI{
     				consoleNotification.beginSync(url, dataSource, tableName);
     				List<Item> conflicts = SyncEngineUtil.synchronize(textFieldURL.getText(), textFieldDataSource.getText(), (String)comboTables.getSelectedItem(), identityProvider, baseDirectory, fileNameResolver);
     				consoleNotification.endSync(textFieldURL.getText(), textFieldDataSource.getText(), (String)comboTables.getSelectedItem(), conflicts);
+	    			consoleNotification.setEndSyncImageStatus();
 	    		} catch(Throwable t){
+	    			consoleNotification.setErrorImageStatus();
 	    			consoleNotification.logError(t, EpiInfoUITranslator.getLabelFailed());
-	    			consoleNotification.logStatus(EpiInfoUITranslator.getLabelFailed());
+//	    			consoleNotification.logStatus(EpiInfoUITranslator.getLabelFailed());
 	    		}
     		} 
 
@@ -780,7 +855,10 @@ public class EpiinfoUI{
 	        enableAllButtons();
 	    }
 		
-		 private void enableAllButtons(){
+	}
+
+	 private void enableAllButtons(){
+		 if(!syncInProcess){
 			 buttonCancel.setEnabled(true);
 			 buttonSynchronize.setEnabled(true);
 			 buttonClean.setEnabled(true);
@@ -800,7 +878,7 @@ public class EpiinfoUI{
 			 comboTables.setEnabled(true);
 			 buttonAddDataSource.setEnabled(true);
 			 buttonOpenFileDataSource.setEnabled(true);
-
+	
 			 if(channel == SYNCHRONIZE_HTTP){
 				 labelUrl.setEnabled(true);
 				 textFieldURL.setEnabled(true);
@@ -811,40 +889,39 @@ public class EpiinfoUI{
 			 buttonKmlGenerator.setEnabled(true);
 			 buttonKmlWebGenerator.setEnabled(true);
 			 buttonDownloadSchema.setEnabled(true);
-
 		 }
+	 }
+	 
+	 private void disableAllButtons(){
+		 buttonSynchronize.setEnabled(false);
+		 buttonClean.setEnabled(false);
+		 buttonCancel.setEnabled(false);
+
+		 radioEndpointHTTP.setEnabled(false);
+		 radioEndpointSMS.setEnabled(false);
 		 
-		 private void disableAllButtons(){
-			 buttonSynchronize.setEnabled(false);
-			 buttonClean.setEnabled(false);
-			 buttonCancel.setEnabled(false);
+		 labelSMSDevice.setEnabled(false);
+		 labelPhoneNumber.setEnabled(false);
+		 textFieldPhoneNumber.setEnabled(false);
+		 comboSMSDevice.setEnabled(false);
+		 
+		 textFieldDataSource.setEnabled(false);
+		 comboTables.setEnabled(false);
+		 buttonAddDataSource.setEnabled(false);
+		 buttonOpenFileDataSource.setEnabled(false);
 
-			 radioEndpointHTTP.setEnabled(false);
-			 radioEndpointSMS.setEnabled(false);
-			 
-			 labelSMSDevice.setEnabled(false);
-			 labelPhoneNumber.setEnabled(false);
-			 textFieldPhoneNumber.setEnabled(false);
-			 comboSMSDevice.setEnabled(false);
-			 
-			 textFieldDataSource.setEnabled(false);
-			 comboTables.setEnabled(false);
-			 buttonAddDataSource.setEnabled(false);
-			 buttonOpenFileDataSource.setEnabled(false);
-
-			 labelUrl.setEnabled(false);
-			 textFieldURL.setEnabled(false);
-			 
-			 //buttonModemDiscovery.setEnabled(false);
-			 
-			 buttonSaveDefaults.setEnabled(false);
-			 
-			 buttonKmlGenerator.setEnabled(false);
-			 buttonKmlWebGenerator.setEnabled(false);
-			 buttonDownloadSchema.setEnabled(false);
-		 }
-	}
-
+		 labelUrl.setEnabled(false);
+		 textFieldURL.setEnabled(false);
+		 
+		 //buttonModemDiscovery.setEnabled(false);
+		 
+		 buttonSaveDefaults.setEnabled(false);
+		 
+		 buttonKmlGenerator.setEnabled(false);
+		 buttonKmlWebGenerator.setEnabled(false);
+		 buttonDownloadSchema.setEnabled(false);
+	 }
+	
 	private String openFileDialog(String fileName){
 		String fileNameSelected = openFileDialog(fileName, new FileNameExtensionFilter(EpiInfoUITranslator.getLabelDataSourceFileExtensions(), "mdb"));
 		return fileNameSelected;
@@ -881,5 +958,10 @@ public class EpiinfoUI{
 	
 	private boolean isDicoveringModems() {
 		return discoveryModems;
+	}
+
+	public void setEndSync() {
+		this.syncInProcess = false;
+		this.enableAllButtons();		
 	}
 }

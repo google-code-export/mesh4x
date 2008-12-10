@@ -345,4 +345,32 @@ public class EpiInfoUITranslator {
 	public static String getErrorInvalidMSAccessTable() {
 		return MessageTranslator.translate("EPIINFO_ERROR_INVALID_MS_ACCESS");
 	}
+
+	public static String getLabelShowConsole() {
+		return MessageTranslator.translate("EPIINFO_LABEL_SHOW_CONSOLE");
+	}
+
+	public static String getToolTipShowConsole() {
+		return MessageTranslator.translate("EPIINFO_TOOLTIP_SHOW_CONSOLE");
+	}
+	
+	public static String getLabelHideConsole() {
+		return MessageTranslator.translate("EPIINFO_LABEL_HIDE_CONSOLE");
+	}
+
+	public static String getToolTipHideConsole() {
+		return MessageTranslator.translate("EPIINFO_TOOLTIP_HIDE_CONSOLE");
+	}
+
+	public static String getLabelTabDataExchange() {
+		return MessageTranslator.translate("EPIINFO_LABEL_TAB_DATA_EXCHANGE");
+	}
+
+	public static String getLabelTabMap() {
+		return MessageTranslator.translate("EPIINFO_LABEL_TAB_MAP_EXCHANGE");
+	}
+
+	public static String getLabelTabSettings() {
+		return MessageTranslator.translate("EPIINFO_LABEL_TAB_SETTINGS");
+	}
 }
