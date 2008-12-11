@@ -26,6 +26,8 @@ import org.mesh4j.sync.filter.XMLContentLinkFilter;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.Sync;
+import org.mesh4j.sync.payload.mappings.IMappingResolver;
+import org.mesh4j.sync.payload.mappings.MappingResolver;
 import org.mesh4j.sync.payload.schema.ISchemaResolver;
 import org.mesh4j.sync.payload.schema.SchemaResolver;
 import org.mesh4j.sync.security.NullIdentityProvider;
@@ -124,16 +126,22 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 		}
 	}
 
-	public void addNewFeed(String sourceID, ISyndicationFormat syndicationFormat, String link, String description, String schema) {
+	public void addNewFeed(String sourceID, ISyndicationFormat syndicationFormat, String link, String description, String schema, String mappings) {
 		String title = getFeedTitle(sourceID);
 		Feed feed = new Feed(title, description, link, syndicationFormat);
 		
 		this.addNewFeed(sourceID, feed, syndicationFormat);
 		
 		Element parentPayload = DocumentHelper.createElement(ISyndicationFormat.ELEMENT_PAYLOAD);
+		
 		if(schema != null && schema.trim().length() >0){
-			Element schemaElement = parentPayload.addElement("schema");	
-			schemaElement.setText(schema);
+			Element schemaElement = parentPayload.addElement(ISchemaResolver.ELEMENT_SCHEMA);	
+			schemaElement.setText(schema);	// TODO (JMT) validate schema
+		}
+		
+		if(mappings != null && mappings.trim().length() >0){
+			Element mappingsElement = parentPayload.addElement(IMappingResolver.ELEMENT_MAPPING);	
+			mappingsElement.setText(mappings);  // TODO (JMT) validate mappings
 		}
 		
 		String sycnId = IdGenerator.INSTANCE.newID();
@@ -168,7 +176,7 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 	}
 	
 	@Override
-	public ISchemaResolver getSchema(String sourceID, String link, IGeoCoder geoCoder) throws Exception{
+	public ISchemaResolver getSchema(String sourceID, String link) throws Exception{
 		
 		ISyncAdapter syncAdapter = this.getParentSyncAdapter(sourceID);
 		List<Item> items = syncAdapter.getAll(new XMLContentLinkFilter(link));
@@ -182,17 +190,46 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 			xml = xml.replaceAll("&gt;", ">");
 			
 			schema = DocumentHelper.parseText(xml).getRootElement();
-			if(ISchemaResolver.ELEMENT_PAYLOAD.equals(schema.getName())){
+			if(ISyndicationFormat.ELEMENT_PAYLOAD.equals(schema.getName())){
 				schema = schema.element(ISchemaResolver.ELEMENT_SCHEMA);
+			}
+			
+			if(schema != null && !schema.getName().equals(ISchemaResolver.ELEMENT_SCHEMA)){
+				schema = null;
+			}
+		}
+		return new SchemaResolver(schema);
+	}
+	
+	@Override
+	public IMappingResolver getMappings(String sourceID, String link, IGeoCoder geoCoder) throws Exception{
+		
+		ISyncAdapter syncAdapter = this.getParentSyncAdapter(sourceID);
+		List<Item> items = syncAdapter.getAll(new XMLContentLinkFilter(link));
+				
+		Element mappings = null;
+		if(!items.isEmpty()){
+			Item item = items.get(0);
+			
+			String xml = item.getContent().getPayload().asXML();
+			xml = xml.replaceAll("&lt;", "<");						// TODO (JMT) remove ==>  xml.replaceAll("&lt;", "<"); 
+			xml = xml.replaceAll("&gt;", ">");
+			
+			mappings = DocumentHelper.parseText(xml).getRootElement();
+			if(ISyndicationFormat.ELEMENT_PAYLOAD.equals(mappings.getName())){
+				mappings = mappings.element(IMappingResolver.ELEMENT_MAPPING);
+			}
+			if(mappings != null && !mappings.getName().equals(IMappingResolver.ELEMENT_MAPPING)){
+				mappings = null;
 			}
 		}
 		
 		if(geoCoder != null){
 			GeoCoderLatitudePropertyResolver propertyResolverLat = new GeoCoderLatitudePropertyResolver(geoCoder);
 			GeoCoderLongitudePropertyResolver propertyResolverLon = new GeoCoderLongitudePropertyResolver(geoCoder);
-			return new SchemaResolver(schema, propertyResolverLat, propertyResolverLon);
+			return new MappingResolver(mappings, propertyResolverLat, propertyResolverLon);
 		} else {
-			return new SchemaResolver(schema);
+			return new MappingResolver(mappings);
 		}
 	}
 }

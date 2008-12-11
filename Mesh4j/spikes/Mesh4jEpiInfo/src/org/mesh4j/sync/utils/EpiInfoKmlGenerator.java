@@ -11,23 +11,23 @@ import org.dom4j.Element;
 import org.mesh4j.sync.adapters.kml.KmlNames;
 import org.mesh4j.sync.adapters.kml.timespan.decorator.IKMLGenerator;
 import org.mesh4j.sync.model.Item;
-import org.mesh4j.sync.payload.schema.ISchemaResolver;
+import org.mesh4j.sync.payload.mappings.IMappingResolver;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
 public class EpiInfoKmlGenerator implements IKMLGenerator{
 
 	// MODEL VARIABLE
-	private ISchemaResolver schemaResolver;
+	private IMappingResolver mappingResolver;
 	private String templateFileName;
 	
 	// BUSINESS METHODS
 
-	public EpiInfoKmlGenerator(String templateFileName, ISchemaResolver schemaResolver){
-		Guard.argumentNotNull(schemaResolver, "schemaResolver");
+	public EpiInfoKmlGenerator(String templateFileName, IMappingResolver mappingResolver){
+		Guard.argumentNotNull(mappingResolver, "mappingResolver");
 		Guard.argumentNotNullOrEmptyString(templateFileName, "templateFileName");
 		
-		this.schemaResolver = schemaResolver;
+		this.mappingResolver = mappingResolver;
 		this.templateFileName = templateFileName;
 	}
 	
@@ -63,14 +63,14 @@ public class EpiInfoKmlGenerator implements IKMLGenerator{
 				
 				Element payload = item.getContent().getPayload();
 
-				String longitude = schemaResolver.getValue(payload, "//geo.longitude");
-				String latitude = schemaResolver.getValue(payload, "//geo.latitude");
+				String longitude = mappingResolver.getValue(payload, "//geo.longitude");
+				String latitude = mappingResolver.getValue(payload, "//geo.latitude");
 				
 				if(longitude != null && longitude.trim().length() > 0 && latitude != null && latitude.trim().length() > 0){
-					String name = schemaResolver.getValue(payload, "//item.title");
-					String description = schemaResolver.getValue(payload, "//item.description");
+					String name = mappingResolver.getValue(payload, "//item.title");
+					String description = mappingResolver.getValue(payload, "//item.description");
 					
-					String ill = schemaResolver.getValue(payload, "//patient.ill");
+					String ill = mappingResolver.getValue(payload, "//patient.ill");
 					String style = "0".equals(ill) ? "#msn_ylw-pushpin0" : "#msn_ylw-pushpin";
 					
 					Date start = item.getLastUpdate().getWhen();
@@ -103,7 +103,7 @@ public class EpiInfoKmlGenerator implements IKMLGenerator{
 	@Override
 	public boolean hasItemChanged(Document document, Element itemElement, Item item) {
 		try{
-			String itemIll = schemaResolver.getValue(item.getContent().getPayload(), "//patient.ill");
+			String itemIll = mappingResolver.getValue(item.getContent().getPayload(), "//patient.ill");
 			//String actualXML = itemElement.element(KmlNames.KML_ELEMENT_DESCRIPTION).getText();
 			//String actualItemIll = schemaResolver.getValue(DocumentHelper.parseText(actualXML).getRootElement(), "//patient.ill");
 			Element styleUrl = itemElement.element(KmlNames.KML_ELEMENT_STYLE_URL);

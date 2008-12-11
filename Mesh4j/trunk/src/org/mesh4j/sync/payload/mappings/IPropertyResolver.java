@@ -1,4 +1,4 @@
-package org.mesh4j.sync.payload.schema;
+package org.mesh4j.sync.payload.mappings;
 
 import org.dom4j.Element;
 

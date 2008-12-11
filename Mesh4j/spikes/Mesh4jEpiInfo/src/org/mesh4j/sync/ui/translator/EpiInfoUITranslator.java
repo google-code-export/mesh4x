@@ -277,15 +277,14 @@ public class EpiInfoUITranslator {
 		return MessageTranslator.translate("EPIINFO_LABEL_KML_WEB");
 	}
 
-	public static String getErrorKMLSchemaNotFound() {
-		return MessageTranslator.translate("EPIINFO_ERROR_KML_SCHEMA_NOT_FOUND");
-	}
-
 	public static String getLabelDownloadSchema() {
 		return MessageTranslator.translate("EPIINFO_LABEL_DOWNLOAD_SCHEMA");
 	}
 
-	
+	public static String getLabelDownloadMappings() {
+		return MessageTranslator.translate("EPIINFO_LABEL_DOWNLOAD_MAPPINGS");
+	}
+
 	public static String getMessageCheckingModem(String portName, int baudRate) {
 		return MessageTranslator.translate("EPIINFO_MESSAGE_CHECKING_MODEM", portName, baudRate);
 	}
@@ -373,4 +372,17 @@ public class EpiInfoUITranslator {
 	public static String getLabelTabSettings() {
 		return MessageTranslator.translate("EPIINFO_LABEL_TAB_SETTINGS");
 	}
+
+	public static String getErrorKMLMappingsNotFound() {
+		return MessageTranslator.translate("EPIINFO_ERROR_KML_MAPPINGS_NOT_FOUND");
+	}
+	
+	public static String getErrorKMLSchemaNotFound() {
+		return MessageTranslator.translate("EPIINFO_ERROR_KML_SCHEMA_NOT_FOUND");
+	}
+
+	public static String getLabelDownloadMappingsFailed() {
+		return MessageTranslator.translate("EPIINFO_LABEL_DONWLOAD_MAPPINGS_FAILED");
+	}
+
 }

@@ -6,7 +6,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.junit.Test;
-import org.mesh4j.sync.payload.schema.SchemaResolver;
+import org.mesh4j.sync.payload.mappings.MappingResolver;
 
 public class GoogleGeoCoderTests {
 
@@ -48,12 +48,12 @@ public class GoogleGeoCoderTests {
 		GeoCoderLatitudePropertyResolver propertyResolverLat = new GeoCoderLatitudePropertyResolver(geoCoder);
 		GeoCoderLongitudePropertyResolver propertyResolverLon = new GeoCoderLongitudePropertyResolver(geoCoder);
 
-		Element schemaElement = DocumentHelper.parseText("<schema><geolat>{geoLatitude(patient/address)}</geolat><geolong>{geoLongitude(patient/address)}</geolong></schema>").getRootElement();
-		SchemaResolver sr = new SchemaResolver(schemaElement, propertyResolverLat, propertyResolverLon);
+		Element mappingsElement = DocumentHelper.parseText("<mappings><geolat>{geoLatitude(patient/address)}</geolat><geolong>{geoLongitude(patient/address)}</geolong></mappings>").getRootElement();
+		MappingResolver mappings = new MappingResolver(mappingsElement, propertyResolverLat, propertyResolverLon);
 
 		Element element = DocumentHelper.parseText("<patient><name>jose</name><address>Buenos Aires</address></patient>").getRootElement();
-		Assert.assertEquals("-34.611781", sr.getValue(element, "geolat"));
-		Assert.assertEquals("-58.417309", sr.getValue(element, "geolong"));
+		Assert.assertEquals("-34.611781", mappings.getValue(element, "geolat"));
+		Assert.assertEquals("-58.417309", mappings.getValue(element, "geolong"));
 	}
 	
 }

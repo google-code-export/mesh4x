@@ -82,6 +82,7 @@
 		<button type="submit">Add</button>
 	</form>
 	<br>
+	<br>
 	<h2>Create you own Feed:</h2>
 	<br>
 	<form action="/mesh4x/feeds" method="post">
@@ -89,7 +90,8 @@
 		title: <input id="title" name="title" type="text" value="my own feed">
 		description: <input id="description" name="description" type="text" value="my feed is the best feed">
 		format: <select id="format" name="format"><option>rss20</option><option>atom10</option></select>
-		schema: <textarea id="schema" name="schema"></textarea>
+		<br>schema: <textarea id="schema" name="schema"></textarea>
+		mappings: <textarea id="mappings" name="mappings"></textarea>
 		<br>
 		<br>
 		<button type="submit">Add</button>

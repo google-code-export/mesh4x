@@ -9,8 +9,8 @@ import org.mesh4j.geo.coder.GeoCoderLongitudePropertyResolver;
 import org.mesh4j.geo.coder.IGeoCoder;
 import org.mesh4j.sync.adapters.kml.timespan.decorator.IKMLGenerator;
 import org.mesh4j.sync.adapters.kml.timespan.decorator.IKMLGeneratorFactory;
-import org.mesh4j.sync.payload.schema.ISchemaResolver;
-import org.mesh4j.sync.payload.schema.SchemaResolver;
+import org.mesh4j.sync.payload.mappings.IMappingResolver;
+import org.mesh4j.sync.payload.mappings.MappingResolver;
 import org.mesh4j.sync.ui.translator.EpiInfoUITranslator;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
@@ -36,27 +36,27 @@ public class EpiInfoKmlGeneratorFactory implements IKMLGeneratorFactory {
 
 	@Override
 	public IKMLGenerator createKMLGenereator(String sourceName) {
-		String schemaFileName = this.baseDirectory + "/" + sourceName + "_schema.xml";
+		String mappingsFileName = this.baseDirectory + "/" + sourceName + "_mappings.xml";
 		
-		ISchemaResolver schemaResolver = null;
-		File schemaFile = new File(schemaFileName);
-		if(!schemaFile.exists()){
-			throw new IllegalArgumentException(EpiInfoUITranslator.getErrorKMLSchemaNotFound());
+		IMappingResolver mappingResolver = null;
+		File mappingFile = new File(mappingsFileName);
+		if(!mappingFile.exists()){
+			throw new IllegalArgumentException(EpiInfoUITranslator.getErrorKMLMappingsNotFound());
 		}
 		
 		try{
-			byte[] bytes = FileUtils.read(schemaFile);
+			byte[] bytes = FileUtils.read(mappingFile);
 			String xml = new String(bytes);
-			Element schema = DocumentHelper.parseText(xml).getRootElement();
+			Element mappings = DocumentHelper.parseText(xml).getRootElement();
 			
 			GeoCoderLatitudePropertyResolver propertyResolverLat = new GeoCoderLatitudePropertyResolver(geoCoder);
 			GeoCoderLongitudePropertyResolver propertyResolverLon = new GeoCoderLongitudePropertyResolver(geoCoder);
 
-			schemaResolver = new SchemaResolver(schema, propertyResolverLat, propertyResolverLon);
+			mappingResolver = new MappingResolver(mappings, propertyResolverLat, propertyResolverLon);
 		} catch (Exception e) {
 			throw new MeshException(e);
 		}
-		return new EpiInfoKmlGenerator(this.templateFileName, schemaResolver);
+		return new EpiInfoKmlGenerator(this.templateFileName, mappingResolver);
 	}
 
 }

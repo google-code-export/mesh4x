@@ -3,7 +3,7 @@ package org.mesh4j.geo.coder;
 import java.util.HashMap;
 
 import org.dom4j.Element;
-import org.mesh4j.sync.payload.schema.IPropertyResolver;
+import org.mesh4j.sync.payload.mappings.IPropertyResolver;
 import org.mesh4j.sync.utils.XMLHelper;
 import org.mesh4j.sync.validations.Guard;
 
@@ -29,14 +29,14 @@ public class GeoCoderLatitudePropertyResolver implements IPropertyResolver {
 		String variable = variableTemplate.substring(12, variableTemplate.length() -1);
 		Element resultElement = XMLHelper.selectSingleNode(variable, element, new HashMap<String, String>());
 		if(resultElement == null){
-			return null;
+			return "";
 		}
 		
 		GeoLocation geoLocation = this.geoCoder.getLocation(resultElement.getText());
 		if(geoLocation != null){
 			return String.valueOf(geoLocation.getLatitude());
 		}
-		return null;
+		return "";
 	}
 
 }

@@ -52,7 +52,7 @@ public class MsExcelUtils {
 			cellHeader = rowHeader.getCell(cell.getColumnIndex());
 			
 			columnName = cellHeader.getRichStringCellValue().getString();
-			columnValue = cell.getRichStringCellValue().getString();		// TODO (JMT) data type formatters
+			columnValue = cell.getRichStringCellValue().getString();		// TODO (JMT) RDF Schema: data type formatters
 			
 			header = payload.addElement(columnName);
 			header.addText(columnValue);
@@ -162,7 +162,7 @@ public class MsExcelUtils {
 				cellHeader = getOrCreateCellStringIfAbsent(rowHeader, child.getName());
 				cell = row.createCell(cellHeader.getColumnIndex());
 			}
-			cell.setCellValue(new HSSFRichTextString(child.getText()));     // TODO (JMT) data type formatters
+			cell.setCellValue(new HSSFRichTextString(child.getText()));     // TODO (JMT) RDF Schema: data type formatters
 		}
 	}
 

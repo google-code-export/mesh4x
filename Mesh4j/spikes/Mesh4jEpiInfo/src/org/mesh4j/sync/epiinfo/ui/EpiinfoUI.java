@@ -73,6 +73,7 @@ public class EpiinfoUI{
 	private final static int GENERATE_KML = 6;
 	private final static int GENERATE_KML_WEB = 7;
 	private final static int DOWNLOAD_SCHEMA = 8;
+	private final static int DOWNLOAD_MAPPINGS = 9;
 	
 	// MODEL VARIABLES
 	private JFrame frame;
@@ -611,12 +612,12 @@ public class EpiinfoUI{
 
 		ActionListener downloadSchemaActionListener = new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
-				Task task = new Task(DOWNLOAD_SCHEMA);
+				Task task = new Task(DOWNLOAD_MAPPINGS);
 				task.execute();
 			}
 		};
 		buttonDownloadSchema = new JButton();
-		buttonDownloadSchema.setText(EpiInfoUITranslator.getLabelDownloadSchema());
+		buttonDownloadSchema.setText(EpiInfoUITranslator.getLabelDownloadMappings());
 		buttonDownloadSchema.addActionListener(downloadSchemaActionListener);
 		panelSettings.add(buttonDownloadSchema, new CellConstraints(4, 2, CellConstraints.FILL, CellConstraints.CENTER));
 
@@ -840,6 +841,27 @@ public class EpiinfoUI{
 	    			SyncEngineUtil.downloadSchema(url, tableName, baseDirectory);
 	    		} catch(Throwable t){
 	    			consoleNotification.logError(t, EpiInfoUITranslator.getLabelDownloadSchemaFailed());
+	    		}
+    		}
+    		
+    		if(action == DOWNLOAD_MAPPINGS){
+				String url = textFieldURL.getText();
+				if(!HttpSyncAdapterFactory.isValidURL(url)){
+	    			consoleNotification.log(EpiInfoUITranslator.getErrorInvalidURL());
+					return null;
+				}
+				
+				String dataSource = textFieldDataSource.getText();
+				String tableName = (String)comboTables.getSelectedItem();
+				if(!MsAccessSyncAdapterFactory.isValidAccessTable(dataSource, tableName)){
+	    			consoleNotification.log(EpiInfoUITranslator.getErrorInvalidMSAccessTable());
+					return null;
+				}
+				
+    			try{
+	    			SyncEngineUtil.downloadMappings(url, tableName, baseDirectory);
+	    		} catch(Throwable t){
+	    			consoleNotification.logError(t, EpiInfoUITranslator.getLabelDownloadMappingsFailed());
 	    		}
     		}
 	        return null;

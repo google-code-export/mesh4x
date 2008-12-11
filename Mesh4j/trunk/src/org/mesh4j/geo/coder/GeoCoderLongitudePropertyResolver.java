@@ -3,7 +3,7 @@ package org.mesh4j.geo.coder;
 import java.util.HashMap;
 
 import org.dom4j.Element;
-import org.mesh4j.sync.payload.schema.IPropertyResolver;
+import org.mesh4j.sync.payload.mappings.IPropertyResolver;
 import org.mesh4j.sync.utils.XMLHelper;
 import org.mesh4j.sync.validations.Guard;
 

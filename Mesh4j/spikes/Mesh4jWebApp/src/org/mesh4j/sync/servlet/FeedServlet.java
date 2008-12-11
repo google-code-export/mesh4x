@@ -19,6 +19,7 @@ import org.mesh4j.geo.coder.IGeoCoder;
 import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.adapters.kml.exporter.KMLExporter;
 import org.mesh4j.sync.model.Item;
+import org.mesh4j.sync.payload.mappings.IMappingResolver;
 import org.mesh4j.sync.payload.schema.ISchemaResolver;
 import org.mesh4j.sync.utils.DateHelper;
 import org.mesh4j.sync.web.FeedRepositoryFactory;
@@ -70,71 +71,104 @@ public class FeedServlet extends HttpServlet {
 		String link = request.getRequestURI();
 
 		if(sourceID != null && sourceID.endsWith("schema")){
-			link = link.substring(0, link.length() - "/schema".length());
-			sourceID = sourceID.substring(0, sourceID.length() - "/schema".length());
-
-			if(!this.feedRepository.existsFeed(sourceID)){
-				response.sendError(404, sourceID);
-			} else {
-				ISchemaResolver propertyResolver;
-				try {
-					propertyResolver = this.feedRepository.getSchema(sourceID, link, this.geoCoder);
-				} catch (Exception e) {
-					throw new ServletException(e);
-				}
-				String responseContent = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"+ propertyResolver.getSchema().asXML();
-				
-				response.setContentType("text/plain");
-				response.setContentLength(responseContent.length());
-				PrintWriter out = response.getWriter();
-				out.println(responseContent);
-			}
+			processGetSchema(response, sourceID, link);
+		} else if(sourceID != null && sourceID.endsWith("mappings")){
+			processGetMappings(response, sourceID, link);
 		} else {
 			if(sourceID != null && !this.feedRepository.existsFeed(sourceID)){  // sourceID == null ==> Get all feeds
 				response.sendError(404, sourceID);
 			} else {
 				String format = request.getParameter("format");     // format=rss20/atom10/kml
-				if("kml".equals(format)){
-					
-					Date sinceDate = this.getSinceDate(request);
-					
-					List<Item> items = this.feedRepository.getAll(sourceID, sinceDate);
-					
-					ISchemaResolver propertyResolver;
-					try {
-						propertyResolver = this.feedRepository.getSchema(sourceID, link, this.geoCoder);
-					} catch (Exception e) {
-						throw new ServletException(e);
-					}
-					String responseContent = KMLExporter.generateKML(sourceID, items, propertyResolver);
-					
-					response.setContentType("text/plain");
-					response.setContentLength(responseContent.length());
-					PrintWriter out = response.getWriter();
-					out.println(responseContent);
-	
+				if("kml".equals(format)){					
+					processGetKML(request, response, sourceID, link);
 				}else {
-					ISyndicationFormat syndicationFormat = this.feedRepository.getSyndicationFormat(format);
-					if(syndicationFormat == null){
-						response.sendError(404, format);
-					} else {
-						boolean plainMode = request.getParameter("plain") != null;     // plain  ==> remove deleted items and sync information
-						
-						Date sinceDate = this.getSinceDate(request);
-						String responseContent = this.feedRepository.readFeed(sourceID, link, sinceDate, syndicationFormat, plainMode);
-						responseContent = responseContent.replaceAll("&lt;", "<");	// TODO (JMT) issue from XFROMS (MIDP demo)
-						responseContent = responseContent.replaceAll("&gt;", ">");
-						
-						response.setContentType("text/plain");
-						response.setContentLength(responseContent.length());
-						PrintWriter out = response.getWriter();
-						out.println(responseContent);
-					}
+					processGetFeed(request, response, sourceID, link, format);
 				}
 			}
 		}
 	}
 
+	private void processGetFeed(HttpServletRequest request, HttpServletResponse response, String sourceID, String link, String format) throws IOException {
+		ISyndicationFormat syndicationFormat = this.feedRepository.getSyndicationFormat(format);
+		if(syndicationFormat == null){
+			response.sendError(404, format);
+		} else {
+			boolean plainMode = request.getParameter("plain") != null;     // plain  ==> remove deleted items and sync information
+			
+			Date sinceDate = this.getSinceDate(request);
+			String responseContent = this.feedRepository.readFeed(sourceID, link, sinceDate, syndicationFormat, plainMode);
+			responseContent = responseContent.replaceAll("&lt;", "<");	// TODO (JMT) remove ==>  xml.replaceAll("&lt;", "<"); 
+			responseContent = responseContent.replaceAll("&gt;", ">");
+			
+			response.setContentType("text/plain");
+			response.setContentLength(responseContent.length());
+			PrintWriter out = response.getWriter();
+			out.println(responseContent);
+		}
+	}
+
+	private void processGetKML(HttpServletRequest request, HttpServletResponse response, String sourceID, String link)throws ServletException, IOException {
+		Date sinceDate = this.getSinceDate(request);
+		
+		List<Item> items = this.feedRepository.getAll(sourceID, sinceDate);
+		
+		IMappingResolver mappingResolver;
+		try {
+			mappingResolver = this.feedRepository.getMappings(sourceID, link, this.geoCoder);
+		} catch (Exception e) {
+			throw new ServletException(e);
+		}
+		String responseContent = KMLExporter.generateKML(sourceID, items, mappingResolver);
+		
+		response.setContentType("text/plain");
+		response.setContentLength(responseContent.length());
+		PrintWriter out = response.getWriter();
+		out.println(responseContent);
+	}
+
+	private void processGetSchema(HttpServletResponse response, String sourceID, String link) throws IOException, ServletException {
+		link = link.substring(0, link.length() - "/schema".length());
+		sourceID = sourceID.substring(0, sourceID.length() - "/schema".length());
+
+		if(!this.feedRepository.existsFeed(sourceID)){
+			response.sendError(404, sourceID);
+		} else {
+			ISchemaResolver propertyResolver;
+			try {
+				propertyResolver = this.feedRepository.getSchema(sourceID, link);
+			} catch (Exception e) {
+				throw new ServletException(e);
+			}
+			String responseContent = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"+ propertyResolver.getSchema().asXML();
+			
+			response.setContentType("text/plain");
+			response.setContentLength(responseContent.length());
+			PrintWriter out = response.getWriter();
+			out.println(responseContent);
+		}
+	}
+	
+	private void processGetMappings(HttpServletResponse response, String sourceID, String link) throws IOException, ServletException {
+		link = link.substring(0, link.length() - "/mappings".length());
+		sourceID = sourceID.substring(0, sourceID.length() - "/mappings".length());
+
+		if(!this.feedRepository.existsFeed(sourceID)){
+			response.sendError(404, sourceID);
+		} else {
+			IMappingResolver mappingsResolver;
+			try {
+				mappingsResolver = this.feedRepository.getMappings(sourceID, link, this.geoCoder);
+			} catch (Exception e) {
+				throw new ServletException(e);
+			}
+			String responseContent = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"+ mappingsResolver.getMappings().asXML();
+			
+			response.setContentType("text/plain");
+			response.setContentLength(responseContent.length());
+			PrintWriter out = response.getWriter();
+			out.println(responseContent);
+		}
+	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {		
 		String sourceID = this.getSourceID(request);				
@@ -178,6 +212,7 @@ public class FeedServlet extends HttpServlet {
 			String format = request.getParameter("format");
 			String description = request.getParameter("description");
 			String schema = request.getParameter("schema");
+			String mappings = request.getParameter("mappings");
 			
 			ISyndicationFormat syndicationFormat = this.feedRepository.getSyndicationFormat(format);	
 			if(syndicationFormat == null){
@@ -185,7 +220,7 @@ public class FeedServlet extends HttpServlet {
 			}
 			
 			String link = request.getRequestURI()+ "/" + newSourceID;
-			this.feedRepository.addNewFeed(newSourceID, syndicationFormat, link, description, schema);
+			this.feedRepository.addNewFeed(newSourceID, syndicationFormat, link, description, schema, mappings);
 			
 			response.sendRedirect(request.getRequestURI()+"/"+newSourceID);
 		}
