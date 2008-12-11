@@ -1,11 +1,13 @@
 package org.mesh4j.sync.servlet;
 
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 import java.util.TimeZone;
 
 import javax.servlet.ServletException;
@@ -39,10 +41,27 @@ public class FeedServlet extends HttpServlet {
 
 	public void init() throws ServletException{
 		this.log("Mesh4x is starting up.....");
+		
 		super.init();		
-		this.feedRepository = FeedRepositoryFactory.createFeedRepository(this); 
-		this.geoCoder = GeoCoderFactory.createGeoCoder(this);
+		
+		try{
+			Properties prop = getProperties();
+
+			this.feedRepository = FeedRepositoryFactory.createFeedRepository(this, prop); 
+			this.geoCoder = GeoCoderFactory.createGeoCoder(this, prop);
+		} catch(Exception e){
+			this.log(e.getMessage());
+			throw new ServletException(e);
+		}
 		this.log("Mesh4x is running.....");
+	}
+
+	private Properties getProperties() throws Exception {
+		String fileName = this.getServletContext().getRealPath("/properties/mesh4j.properties");
+		FileReader reader = new FileReader(fileName);
+		Properties prop = new Properties();
+		prop.load(reader);
+		return prop;
 	}
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

@@ -1,5 +1,7 @@
 package org.mesh4j.sync.web.geo.coder;
 
+import java.util.Properties;
+
 import org.mesh4j.geo.coder.GoogleGeoCoder;
 import org.mesh4j.geo.coder.IGeoCoder;
 import org.mesh4j.sync.servlet.FeedServlet;
@@ -12,10 +14,10 @@ public class GeoCoderFactory {
 
 	// BUSINESS METHODS
 	
-	public static IGeoCoder createGeoCoder(FeedServlet feedServlet) {
-		 String geoCoderClassName = feedServlet.getInitParameter(GEO_CODER_CLASS_NAME);
+	public static IGeoCoder createGeoCoder(FeedServlet feedServlet, Properties properties) {
+		 String geoCoderClassName = properties.getProperty(GEO_CODER_CLASS_NAME);
 		 if(GoogleGeoCoder.class.getName().equals(geoCoderClassName)){
-			 String googleKey = feedServlet.getInitParameter(GOOGLE_GEO_CODER_KEY);
+			 String googleKey = properties.getProperty(GOOGLE_GEO_CODER_KEY);
 			 if(googleKey == null || googleKey.trim().length() == 0){
 				 return null;
 			 } else {
@@ -23,7 +25,6 @@ public class GeoCoderFactory {
 			 }
 		 }
 		 return null;
-
 	}
 
 }
