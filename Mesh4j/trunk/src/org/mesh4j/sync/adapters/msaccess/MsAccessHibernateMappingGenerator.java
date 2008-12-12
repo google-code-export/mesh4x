@@ -2,6 +2,7 @@ package org.mesh4j.sync.adapters.msaccess;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.StringWriter;
 import java.sql.SQLException;
 
 import org.hibernate.HibernateException;
@@ -16,13 +17,8 @@ public class MsAccessHibernateMappingGenerator {
 
 	public static void createMapping(String mdbFileName, String tableName, String mappingFileName) throws Exception{
 
-		File mappingFile = new File(mappingFileName);
-		if(!mappingFile.exists()){
-			mappingFile.createNewFile();
-		}
+		StringWriter writer = new StringWriter();
 		
-		FileWriter writer = new FileWriter(mappingFile);
-	
 		File mdbFile = new File(mdbFileName);
 		Database db = Database.open(mdbFile);
 		try{
@@ -43,13 +39,20 @@ public class MsAccessHibernateMappingGenerator {
 			}
 			MappingGenerator.writerFooter(writer);
 		} finally{
+			db.close();
+		}
+		
+		File mappingFile = new File(mappingFileName);
+		FileWriter fileWriter = new FileWriter(mappingFile);
+		try{
+			writer.flush();
+			fileWriter.write(writer.toString());
+		}finally{
 			try{
-				writer.close();
+				fileWriter.close();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			
-			db.close();
 		}
 	}
 
