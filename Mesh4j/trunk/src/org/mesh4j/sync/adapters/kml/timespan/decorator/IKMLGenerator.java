@@ -14,4 +14,6 @@ public interface IKMLGenerator {
 
 	boolean hasItemChanged(Document document, Element itemElement, Item item);
 
+	String getEndTimeSpan(Item item) throws Exception;
+
 }

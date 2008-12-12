@@ -18,10 +18,6 @@ public class MappingResolver implements IMappingResolver {
 	private List<IPropertyResolver> propertyResolvers = new ArrayList<IPropertyResolver>();
 	
 	// BUSINESS METHODS
-	
-	public MappingResolver(IPropertyResolver... allPropertyResolvers) {
-		this(DocumentHelper.createElement(ELEMENT_MAPPING), allPropertyResolvers);
-	}
 
 	public MappingResolver(Element schema, IPropertyResolver... allPropertyResolvers) {
 		if(schema == null){

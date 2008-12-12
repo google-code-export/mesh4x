@@ -1,6 +1,8 @@
 package org.mesh4j.sync.utils;
 
 import java.text.MessageFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -17,6 +19,8 @@ import org.mesh4j.sync.validations.MeshException;
 
 public class EpiInfoKmlGenerator implements IKMLGenerator{
 
+	final static SimpleDateFormat DATEONSET_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	
 	// MODEL VARIABLE
 	private IMappingResolver mappingResolver;
 	private String templateFileName;
@@ -62,7 +66,7 @@ public class EpiInfoKmlGenerator implements IKMLGenerator{
 			if(!item.isDeleted()){
 				
 				Element payload = item.getContent().getPayload();
-
+				
 				//String longitude = mappingResolver.getValue(payload, "//geo.longitude");
 				//String latitude = mappingResolver.getValue(payload, "//geo.latitude");
 				String location = mappingResolver.getValue(payload, "//geo.location");
@@ -74,7 +78,11 @@ public class EpiInfoKmlGenerator implements IKMLGenerator{
 					String ill = mappingResolver.getValue(payload, "//patient.ill");
 					String style = "0".equals(ill) ? "#msn_ylw-pushpin0" : "#msn_ylw-pushpin";
 					
-					Date start = item.getLastUpdate().getWhen();
+					Date start = getDateOnSet(item);
+					if(start == null){
+						start = item.getLastUpdate().getWhen();
+					}
+					
 					Date end = new Date();
 					
 					String xml = makePlacemark("'"+item.getSyncId()+"'", name, description, location, style, start, end);
@@ -128,5 +136,26 @@ public class EpiInfoKmlGenerator implements IKMLGenerator{
 		byte[] templateBytes = FileUtils.read(templateFileName);
 		String template = new String(templateBytes, "UTF-8");		
 		return MessageFormat.format(template, documentName, "");
+	}
+
+	@Override
+	public String getEndTimeSpan(Item item) throws Exception {
+		Date dateOnSet = getDateOnSet(item);
+		if(dateOnSet == null){
+			return DateHelper.formatW3CDateTime(item.getLastUpdate().getWhen());
+		} else {
+			return DateHelper.formatW3CDateTime(dateOnSet);
+		}
+	}
+
+	private Date getDateOnSet(Item item) throws ParseException {
+		Element payload = item.getContent().getPayload();
+		String dateOnSet = mappingResolver.getValue(payload, "//patient.dateOnset");
+		if(dateOnSet == null || dateOnSet.trim().length() == 0){
+			return null;
+		} else {
+			Date date = DATEONSET_FORMAT.parse(dateOnSet);
+			return date;
+		}
 	}
 }

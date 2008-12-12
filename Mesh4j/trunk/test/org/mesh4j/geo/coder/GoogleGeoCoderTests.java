@@ -47,13 +47,15 @@ public class GoogleGeoCoderTests {
 
 		GeoCoderLatitudePropertyResolver propertyResolverLat = new GeoCoderLatitudePropertyResolver(geoCoder);
 		GeoCoderLongitudePropertyResolver propertyResolverLon = new GeoCoderLongitudePropertyResolver(geoCoder);
+		GeoCoderLocationPropertyResolver propertyResolverLoc = new GeoCoderLocationPropertyResolver(geoCoder);
 
-		Element mappingsElement = DocumentHelper.parseText("<mappings><geolat>{geoLatitude(patient/address)}</geolat><geolong>{geoLongitude(patient/address)}</geolong></mappings>").getRootElement();
-		MappingResolver mappings = new MappingResolver(mappingsElement, propertyResolverLat, propertyResolverLon);
+		Element mappingsElement = DocumentHelper.parseText("<mappings><geolat>{geoLatitude(patient/address)}</geolat><geolong>{geoLongitude(patient/address)}</geolong><geoloc>{geoLocation(patient/address)}</geoloc></mappings>").getRootElement();
+		MappingResolver mappings = new MappingResolver(mappingsElement, propertyResolverLat, propertyResolverLon, propertyResolverLoc);
 
 		Element element = DocumentHelper.parseText("<patient><name>jose</name><address>Buenos Aires</address></patient>").getRootElement();
 		Assert.assertEquals("-34.611781", mappings.getValue(element, "geolat"));
 		Assert.assertEquals("-58.417309", mappings.getValue(element, "geolong"));
+		Assert.assertEquals("-58.417,-34.612", mappings.getValue(element, "geoloc"));
 	}
 	
 }
