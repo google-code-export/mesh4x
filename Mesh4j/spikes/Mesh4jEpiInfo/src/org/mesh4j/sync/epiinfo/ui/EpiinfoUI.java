@@ -154,6 +154,7 @@ public class EpiinfoUI{
 		this.initializeModem();
 		this.createUI();
 		this.consoleNotification = new EpiInfoConsoleNotification(this.textAreaConsole, this.imageStatus, this);
+		this.consoleNotification.setReadyImageStatus();
 		this.startUpSyncEngine();
 	}
 
@@ -684,6 +685,7 @@ public class EpiinfoUI{
 	    public Void doInBackground() {
 			disableAllButtons();
 			frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			consoleNotification.setInProcessImageStatus();
 			
     		if(action == SYNCHRONIZE_SMS){
     			syncInProcess = true;
@@ -715,7 +717,6 @@ public class EpiinfoUI{
     		} 
 
     		if(action == SYNCHRONIZE_HTTP){
-    			consoleNotification.setInProcessImageStatus();
 				String url = textFieldURL.getText();
 				if(!HttpSyncAdapterFactory.isValidURL(url)){
 	    			consoleNotification.log(EpiInfoUITranslator.getErrorInvalidURL());
@@ -745,10 +746,17 @@ public class EpiinfoUI{
 
     		if(action == CANCEL_SYNC){
     			SyncEngineUtil.cancelSynchronize(syncEngine, textFieldPhoneNumber.getText(), textFieldDataSource.getText(), (String)comboTables.getSelectedItem());
+    			consoleNotification.setEndSyncImageStatus();
     		} 
 
     		if(action == ADD_DATA_SOURCE){
-    			SyncEngineUtil.addDataSource(fileNameResolver, textFieldDataSource.getText());
+    			try{
+    				SyncEngineUtil.addDataSource(fileNameResolver, textFieldDataSource.getText());
+    				consoleNotification.setEndSyncImageStatus();
+	    		} catch(Throwable t){
+	    			consoleNotification.setErrorImageStatus();
+	    			consoleNotification.logError(t, t.getMessage());
+	    		}
     		}
     		
     		if(action == DISCOVERY_MODEMS){
@@ -765,6 +773,7 @@ public class EpiinfoUI{
     			buttonModemDiscovery.setToolTipText(EpiInfoUITranslator.getToolTipAutoDetect());
     			
     			consoleNotification.log(EpiInfoUITranslator.getMessageEndModemDiscovery(modems.length));
+    			consoleNotification.setEndSyncImageStatus();
     		}
     		
     		if(action == CHANGE_DEVICE){
@@ -773,8 +782,10 @@ public class EpiinfoUI{
 				
 				try{
 					startUpSyncEngine();
+	    			consoleNotification.setEndSyncImageStatus();
 				} catch (Exception exc) {
 					shutdownSyncEngine();
+					consoleNotification.setErrorImageStatus();
 					consoleNotification.logError(exc, EpiInfoUITranslator.getLabelDeviceConnectionFailed(modem.toString()));
 					Logger.error(exc.getMessage(), exc);
 				}
@@ -782,19 +793,28 @@ public class EpiinfoUI{
     		}
     		
     		if(action == SAVE_DEFAULTS){
-    			SyncEngineUtil.saveDefaults(modem, textFieldPhoneNumber.getText(), textFieldDataSource.getText(), (String)comboTables.getSelectedItem(), textFieldURL.getText());
+    			try{
+    				SyncEngineUtil.saveDefaults(modem, textFieldPhoneNumber.getText(), textFieldDataSource.getText(), (String)comboTables.getSelectedItem(), textFieldURL.getText());
+    				consoleNotification.setEndSyncImageStatus();
+	    		} catch(Throwable t){
+	    			consoleNotification.setErrorImageStatus();
+	    			consoleNotification.logError(t, t.getMessage());
+	    		}
     		}
     		
     		if(action == GENERATE_KML){
 				String dataSource = textFieldDataSource.getText();
 				String tableName = (String)comboTables.getSelectedItem();
 				if(!MsAccessSyncAdapterFactory.isValidAccessTable(dataSource, tableName)){
+					consoleNotification.setErrorImageStatus();
 	    			consoleNotification.log(EpiInfoUITranslator.getErrorInvalidMSAccessTable());
 					return null;
 				}
     			try{
     				SyncEngineUtil.generateKML(geoCoderKey, kmlTemplateFileName, getModemPhoneNumber(), dataSource, tableName, baseDirectory, fileNameResolver, identityProvider);
+	    			consoleNotification.setEndSyncImageStatus();
 	    		} catch(Throwable t){
+	    			consoleNotification.setErrorImageStatus();
 	    			consoleNotification.logError(t, EpiInfoUITranslator.getLabelKMLFailed());
 	    		}
     		}
@@ -802,6 +822,7 @@ public class EpiinfoUI{
     		if(action == GENERATE_KML_WEB){
 				String url = textFieldURL.getText();
 				if(!HttpSyncAdapterFactory.isValidURL(url)){
+					consoleNotification.setErrorImageStatus();
 	    			consoleNotification.log(EpiInfoUITranslator.getErrorInvalidURL());
 					return null;
 				}
@@ -809,6 +830,7 @@ public class EpiinfoUI{
 				String dataSource = textFieldDataSource.getText();
 				String tableName = (String)comboTables.getSelectedItem();
 				if(!MsAccessSyncAdapterFactory.isValidAccessTable(dataSource, tableName)){
+					consoleNotification.setErrorImageStatus();
 	    			consoleNotification.log(EpiInfoUITranslator.getErrorInvalidMSAccessTable());
 					return null;
 				}
@@ -818,14 +840,18 @@ public class EpiinfoUI{
 	    			String fileName = baseDirectory + "/"+ tableName + "_web.kml";
 
 	    			KMLExporter.makeKMLWithNetworkLink(fileName, tableName, urlWebKml);
+	    			consoleNotification.setEndSyncImageStatus();
 	    		} catch(Throwable t){
+	    			consoleNotification.setErrorImageStatus();
 	    			consoleNotification.logError(t, EpiInfoUITranslator.getLabelKMLFailed());
 	    		}
+	    		
     		}
     		
     		if(action == DOWNLOAD_SCHEMA){
 				String url = textFieldURL.getText();
 				if(!HttpSyncAdapterFactory.isValidURL(url)){
+					consoleNotification.setErrorImageStatus();
 	    			consoleNotification.log(EpiInfoUITranslator.getErrorInvalidURL());
 					return null;
 				}
@@ -833,13 +859,16 @@ public class EpiinfoUI{
 				String dataSource = textFieldDataSource.getText();
 				String tableName = (String)comboTables.getSelectedItem();
 				if(!MsAccessSyncAdapterFactory.isValidAccessTable(dataSource, tableName)){
+					consoleNotification.setErrorImageStatus();
 	    			consoleNotification.log(EpiInfoUITranslator.getErrorInvalidMSAccessTable());
 					return null;
 				}
 				
     			try{
 	    			SyncEngineUtil.downloadSchema(url, tableName, baseDirectory);
+	    			consoleNotification.setEndSyncImageStatus();
 	    		} catch(Throwable t){
+	    			consoleNotification.setErrorImageStatus();
 	    			consoleNotification.logError(t, EpiInfoUITranslator.getLabelDownloadSchemaFailed());
 	    		}
     		}
@@ -847,6 +876,7 @@ public class EpiinfoUI{
     		if(action == DOWNLOAD_MAPPINGS){
 				String url = textFieldURL.getText();
 				if(!HttpSyncAdapterFactory.isValidURL(url)){
+					consoleNotification.setErrorImageStatus();
 	    			consoleNotification.log(EpiInfoUITranslator.getErrorInvalidURL());
 					return null;
 				}
@@ -854,13 +884,16 @@ public class EpiinfoUI{
 				String dataSource = textFieldDataSource.getText();
 				String tableName = (String)comboTables.getSelectedItem();
 				if(!MsAccessSyncAdapterFactory.isValidAccessTable(dataSource, tableName)){
+					consoleNotification.setErrorImageStatus();
 	    			consoleNotification.log(EpiInfoUITranslator.getErrorInvalidMSAccessTable());
 					return null;
 				}
 				
     			try{
 	    			SyncEngineUtil.downloadMappings(url, tableName, baseDirectory);
+	    			consoleNotification.setEndSyncImageStatus();
 	    		} catch(Throwable t){
+	    			consoleNotification.setErrorImageStatus();
 	    			consoleNotification.logError(t, EpiInfoUITranslator.getLabelDownloadMappingsFailed());
 	    		}
     		}

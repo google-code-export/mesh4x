@@ -112,7 +112,7 @@ public class ModemHelper {
 			}
 			return null;
 		} catch(Exception e){
-			LOGGER.error(e.getMessage(), e);
+			//LOGGER.error(e.getMessage(), e);
 			return null;
 		}
 	}

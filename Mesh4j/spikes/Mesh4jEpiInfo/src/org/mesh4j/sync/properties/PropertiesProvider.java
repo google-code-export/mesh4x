@@ -109,8 +109,14 @@ public class PropertiesProvider {
 	}
 
 	public void setDefaults(Modem modem, String defaultPhoneNumber, String defaultDataSource, String defaultTableName, String defaultURL) {
-		this.properties.put("default.sms.port", modem.getComPort());
-		this.properties.put("default.sms.baud.rate", String.valueOf(modem.getBaudRate()));
+		if(modem != null && modem.getComPort() != null){
+			this.properties.put("default.sms.port", modem.getComPort());
+		}
+		
+		if(modem != null && modem.getBaudRate() > 0){
+			this.properties.put("default.sms.baud.rate", String.valueOf(modem.getBaudRate()));
+		}
+		
 		this.properties.put("default.phone.number", defaultPhoneNumber);
 		this.properties.put("default.mdb.file", defaultDataSource);
 		this.properties.put("default.mdb.table", defaultTableName);

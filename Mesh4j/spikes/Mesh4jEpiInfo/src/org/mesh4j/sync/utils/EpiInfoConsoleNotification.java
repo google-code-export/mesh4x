@@ -229,6 +229,6 @@ public class EpiInfoConsoleNotification implements ISmsConnectionInboundOutbound
 	}
 	
 	public void setReadyImageStatus() {
-		this.imageStatus.setIcon(null);		
+		this.imageStatus.setIcon(SwingResourceManager.getIcon(EpiinfoUI.class, "/endsync.png"));	
 	}
 }
