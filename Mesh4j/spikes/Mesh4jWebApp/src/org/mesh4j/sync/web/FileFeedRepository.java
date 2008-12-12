@@ -80,4 +80,20 @@ public class FileFeedRepository extends AbstractFeedRepository {
 		adapter.refresh();
 		return adapter;
 	}
+	
+//	@Override
+//	public void cleanFeed(String sourceID) {
+//		FeedAdapter feedAdapter = (FeedAdapter) getSyncAdapter(sourceID);
+//		feedAdapter.getFeed().deleteAllItems();
+//		feedAdapter.flush();
+//	}
+//
+//	@Override
+//	protected void basicRemoveFeed(String sourceID) {
+//		String feedFileName = this.getFeedFileName(sourceID);
+//		File file = new File(feedFileName);
+//		if(file.exists()){
+//			file.delete();
+//		}
+//	}
 }

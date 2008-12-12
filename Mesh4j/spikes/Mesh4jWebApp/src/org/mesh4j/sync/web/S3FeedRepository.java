@@ -18,6 +18,7 @@ public class S3FeedRepository extends AbstractFeedRepository {
 	private static final String FEED_PREFIX = "_feed_";
 	private static final String MESH_PREFIX = "mesh_";
 	private static final String MESH_OBJECT = "mesh";
+	
 	// MODEL VARIABLES
 	private IS3Service s3;
 	private String bucket;   // TODO (JMT) bucket pool?
@@ -100,4 +101,5 @@ public class S3FeedRepository extends AbstractFeedRepository {
 		}
 		return false;
 	}
+	
 }

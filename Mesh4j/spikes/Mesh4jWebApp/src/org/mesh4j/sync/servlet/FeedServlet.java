@@ -68,7 +68,7 @@ public class FeedServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 		String sourceID = this.getSourceID(request);
-		String link = request.getRequestURI();
+		String link = getFeedLink(request);
 
 		if(sourceID != null && sourceID.endsWith("schema")){
 			processGetSchema(response, sourceID, link);
@@ -86,6 +86,10 @@ public class FeedServlet extends HttpServlet {
 				}
 			}
 		}
+	}
+
+	private String getFeedLink(HttpServletRequest request) {
+		return request.getRequestURL().toString();
 	}
 
 	private void processGetFeed(HttpServletRequest request, HttpServletResponse response, String sourceID, String link, String format) throws IOException {
@@ -178,6 +182,36 @@ public class FeedServlet extends HttpServlet {
 			synchronizeFeed(request, response, sourceID);
 		}
 	}
+	
+//	private void cleanFeed(HttpServletRequest request, HttpServletResponse response, String sourceID) throws IOException {
+//		if(!this.feedRepository.existsFeed(sourceID)){
+//			response.sendError(404, sourceID);
+//		} else {		
+//			String format = request.getParameter("format");  		// format=rss20/atom10
+//			ISyndicationFormat syndicationFormat = this.feedRepository.getSyndicationFormat(format);	
+//			if(syndicationFormat == null){
+//				response.sendError(404, format);	
+//			} else {
+//				this.feedRepository.cleanFeed(sourceID);					
+//				response.sendRedirect(request.getRequestURI());
+//			}
+//		}
+//	}
+	
+//	private void removeFeed(HttpServletRequest request, HttpServletResponse response, String sourceID) throws IOException {
+//		if(!this.feedRepository.existsFeed(sourceID)){
+//			response.sendError(404, sourceID);
+//		} else {		
+//			String format = request.getParameter("format");  		// format=rss20/atom10
+//			ISyndicationFormat syndicationFormat = this.feedRepository.getSyndicationFormat(format);	
+//			if(syndicationFormat == null){
+//				response.sendError(404, format);	
+//			} else {
+//				String link = getFeedLink(request);
+//				this.feedRepository.removeFeed(sourceID, link, "admin");
+//			}
+//		}
+//	}
 
 	private void synchronizeFeed(HttpServletRequest request, HttpServletResponse response, String sourceID) throws IOException {
 		if(!this.feedRepository.existsFeed(sourceID)){
@@ -192,7 +226,7 @@ public class FeedServlet extends HttpServlet {
 				if(feedXml == null){
 					response.sendError(404, sourceID);
 				} else {
-					String link = request.getRequestURI();
+					String link = getFeedLink(request);
 					String responseContent = this.feedRepository.synchronize(sourceID, link, feedXml, syndicationFormat);
 					
 					response.setContentType("text/plain");
@@ -204,6 +238,27 @@ public class FeedServlet extends HttpServlet {
 		}
 	}
 
+//	private void updateFeed(HttpServletRequest request, HttpServletResponse response, String sourceID) throws IOException {
+//		if(!this.feedRepository.existsFeed(sourceID)){
+//			response.sendError(404, sourceID);
+//		} else {
+//			String format = request.getParameter("format");
+//			String description = request.getParameter("description");
+//			String schema = request.getParameter("schema");
+//			String mappings = request.getParameter("mappings");
+//			
+//			ISyndicationFormat syndicationFormat = this.feedRepository.getSyndicationFormat(format);	
+//			if(syndicationFormat == null){
+//				response.sendError(404, format);	
+//			}
+//			
+//			String link = getFeedLink(request);
+//			this.feedRepository.updateFeed(sourceID, syndicationFormat, link, description, schema, mappings, "admin");
+//			
+//			response.sendRedirect(request.getRequestURI());
+//		}
+//	}
+	
 	private void addNewFeed(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		String newSourceID = request.getParameter("newSourceID");
 		if(this.feedRepository.existsFeed(newSourceID)){
@@ -219,10 +274,11 @@ public class FeedServlet extends HttpServlet {
 				response.sendError(404, format);	
 			}
 			
-			String link = request.getRequestURI()+ "/" + newSourceID;
-			this.feedRepository.addNewFeed(newSourceID, syndicationFormat, link, description, schema, mappings);
+			//String link = request.getRequestURI()+ "/" + newSourceID;
+			String link = getFeedLink(request)+ "/" + newSourceID;
+			this.feedRepository.addNewFeed(newSourceID, syndicationFormat, link, description, schema, mappings, "admin");
 			
-			response.sendRedirect(request.getRequestURI()+"/"+newSourceID);
+			response.sendRedirect(link);
 		}
 	}
 

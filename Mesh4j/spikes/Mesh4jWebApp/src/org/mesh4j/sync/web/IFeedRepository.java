@@ -17,7 +17,7 @@ public interface IFeedRepository {
 
 	boolean isAddNewFeedAction(String sourceID);
 
-	void addNewFeed(String newSourceID, ISyndicationFormat syndicationFormat, String link, String description, String schema, String mappings);
+	void addNewFeed(String newSourceID, ISyndicationFormat syndicationFormat, String link, String description, String schema, String mappings, String by);
 
 	ISyndicationFormat getSyndicationFormat(String format);
 
@@ -28,4 +28,10 @@ public interface IFeedRepository {
 	ISchemaResolver getSchema(String sourceID, String link) throws Exception;
 	
 	IMappingResolver getMappings(String sourceID, String link, IGeoCoder geoCoder) throws Exception;
+
+//	void cleanFeed(String sourceID);
+//
+//	void updateFeed(String sourceID, ISyndicationFormat syndicationFormat, String link, String description, String schema, String mappings, String by);
+//
+//	void removeFeed(String sourceID, String link, String by);
 }

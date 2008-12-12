@@ -127,7 +127,8 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 		}
 	}
 
-	public void addNewFeed(String sourceID, ISyndicationFormat syndicationFormat, String link, String description, String schema, String mappings) {
+	@Override
+	public void addNewFeed(String sourceID, ISyndicationFormat syndicationFormat, String link, String description, String schema, String mappings, String by) {
 		String title = getFeedTitle(sourceID);
 		Feed feed = new Feed(title, description, link, syndicationFormat);
 		
@@ -147,7 +148,7 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 		
 		String sycnId = IdGenerator.INSTANCE.newID();
 		XMLContent content = new XMLContent(sycnId, title, description, link, parentPayload);
-		Sync sync = new Sync(sycnId, NullIdentityProvider.INSTANCE.getAuthenticatedUser(), new Date(), false);
+		Sync sync = new Sync(sycnId, by, new Date(), false);
 		Item item = new Item(content, sync);
 		
 		ISyncAdapter parentAdapter = this.getParentSyncAdapter(sourceID);
@@ -234,4 +235,54 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 			return new MappingResolver(mappings);
 		}
 	}
+
+//	@Override
+//	public void removeFeed(String sourceID, String link, String by) {
+//		ISyncAdapter parentAdapter = this.getParentSyncAdapter(sourceID);
+//		
+//		List<Item> items = parentAdapter.getAll(new XMLContentLinkFilter(link));
+//		if(!items.isEmpty()){
+//			Item item = items.get(0);
+//			parentAdapter.delete(item.getSyncId());
+//			this.basicRemoveFeed(sourceID);
+//		}		
+//	}
+//
+//	protected abstract void basicRemoveFeed(String sourceID);
+//
+//	@Override
+//	public void updateFeed(String sourceID, ISyndicationFormat syndicationFormat, String link, String description, String schema, String mappings, String by) {
+//		ISyncAdapter parentAdapter = this.getParentSyncAdapter(sourceID);
+//		
+//		List<Item> items = parentAdapter.getAll(new XMLContentLinkFilter(link));
+//		if(items.isEmpty()){
+//			
+//			addNewFeed(sourceID, syndicationFormat, link, description, schema, mappings, by);
+//			
+//		} else{
+//			
+//			Item item =items.get(0);
+//			
+//			item.getSync().update(by, new Date());
+//			
+//			Element payload = item.getContent().getPayload();
+//			if(schema != null && schema.trim().length() >0){
+//				Element schemaElement = payload.element(ISchemaResolver.ELEMENT_SCHEMA);
+//				if(schemaElement == null){
+//					schemaElement = payload.addElement(ISchemaResolver.ELEMENT_SCHEMA);
+//				}
+//				schemaElement.setText(schema);	// TODO (JMT) validate schema
+//			}
+//			
+//			if(mappings != null && mappings.trim().length() >0){
+//				Element mappingsElement = payload.element(IMappingResolver.ELEMENT_MAPPING);
+//				if(mappingsElement == null){	
+//					mappingsElement = payload.addElement(IMappingResolver.ELEMENT_MAPPING);
+//				}
+//				mappingsElement.setText(mappings);  // TODO (JMT) validate mappings
+//			}
+//			
+//			parentAdapter.update(item);
+//		}
+//	}
 }
