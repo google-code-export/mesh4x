@@ -6,6 +6,7 @@ import java.util.List;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.mesh4j.geo.coder.GeoCoderLatitudePropertyResolver;
+import org.mesh4j.geo.coder.GeoCoderLocationPropertyResolver;
 import org.mesh4j.geo.coder.GeoCoderLongitudePropertyResolver;
 import org.mesh4j.geo.coder.GoogleGeoCoder;
 import org.mesh4j.sync.ISyncAdapter;
@@ -231,8 +232,8 @@ public class SyncEngineUtil {
 		
 		GeoCoderLatitudePropertyResolver propertyResolverLat = new GeoCoderLatitudePropertyResolver(geoCoder);
 		GeoCoderLongitudePropertyResolver propertyResolverLon = new GeoCoderLongitudePropertyResolver(geoCoder);
-		
-		mappingResolver = new MappingResolver(schema, propertyResolverLat, propertyResolverLon);
+		GeoCoderLocationPropertyResolver propertyResolverLoc = new GeoCoderLocationPropertyResolver(geoCoder);
+		mappingResolver = new MappingResolver(schema, propertyResolverLat, propertyResolverLon, propertyResolverLoc);
 		KMLExporter.export(kmlFileName, mdbTableName, items, mappingResolver);			
 
 	}

@@ -95,6 +95,6 @@ public class GeoLocation {
 	
 	@Override
 	public String toString(){
-		return MessageFormat.format("Latitude: {0}, Longitude: {1}, Address: {2}", this.latitude, this.longitude, this.address);
+		return MessageFormat.format("{0},{1}", this.longitude, this.latitude);
 	}
 }

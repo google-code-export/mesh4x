@@ -31,7 +31,7 @@ public class EpiInfoKmlGenerator implements IKMLGenerator{
 		this.templateFileName = templateFileName;
 	}
 	
-	protected static String makePlacemark(String id, String name, String description, String longitude, String latitude, String styleUrl, Date start, Date end) {
+	protected static String makePlacemark(String id, String name, String description, String location, String styleUrl, Date start, Date end) {
 
 		return MessageFormat.format(
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+
@@ -42,15 +42,15 @@ public class EpiInfoKmlGenerator implements IKMLGenerator{
 			"	<description><![CDATA[{2}]]></description>"+
 			"	<styleUrl>{3}</styleUrl>"+
 			"	<Point>"+
-			"		<coordinates>{4},{5}</coordinates>"+
+			"		<coordinates>{4}</coordinates>"+
 			"	</Point>"+
 			"   <TimeSpan>"+
-			"		<begin>{6}</begin>"+
-			"		<end>{7}</end>"+
+			"		<begin>{5}</begin>"+
+			"		<end>{6}</end>"+
 			"	</TimeSpan>"+
 			"</Placemark>"+
 			"</Document>"+
-			"</kml>", id, name, description, styleUrl, longitude, latitude, DateHelper.formatW3CDateTime(start), DateHelper.formatW3CDateTime(end));
+			"</kml>", id, name, description, styleUrl, location, DateHelper.formatW3CDateTime(start), DateHelper.formatW3CDateTime(end));
 	}
 
 
@@ -63,10 +63,11 @@ public class EpiInfoKmlGenerator implements IKMLGenerator{
 				
 				Element payload = item.getContent().getPayload();
 
-				String longitude = mappingResolver.getValue(payload, "//geo.longitude");
-				String latitude = mappingResolver.getValue(payload, "//geo.latitude");
+				//String longitude = mappingResolver.getValue(payload, "//geo.longitude");
+				//String latitude = mappingResolver.getValue(payload, "//geo.latitude");
+				String location = mappingResolver.getValue(payload, "//geo.location");
 				
-				if(longitude != null && longitude.trim().length() > 0 && latitude != null && latitude.trim().length() > 0){
+				if(location != null && location.trim().length() > 0){
 					String name = mappingResolver.getValue(payload, "//item.title");
 					String description = mappingResolver.getValue(payload, "//item.description");
 					
@@ -76,7 +77,7 @@ public class EpiInfoKmlGenerator implements IKMLGenerator{
 					Date start = item.getLastUpdate().getWhen();
 					Date end = new Date();
 					
-					String xml = makePlacemark("'"+item.getSyncId()+"'", name, description, longitude, latitude, style, start, end);
+					String xml = makePlacemark("'"+item.getSyncId()+"'", name, description, location, style, start, end);
 	
 					Element itemElement = DocumentHelper.parseText(xml).getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT).element(KmlNames.KML_ELEMENT_PLACEMARK); 
 					document.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT).add(itemElement.createCopy());

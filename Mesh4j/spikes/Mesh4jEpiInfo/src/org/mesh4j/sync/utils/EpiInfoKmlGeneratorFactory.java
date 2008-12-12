@@ -5,6 +5,7 @@ import java.io.File;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.mesh4j.geo.coder.GeoCoderLatitudePropertyResolver;
+import org.mesh4j.geo.coder.GeoCoderLocationPropertyResolver;
 import org.mesh4j.geo.coder.GeoCoderLongitudePropertyResolver;
 import org.mesh4j.geo.coder.IGeoCoder;
 import org.mesh4j.sync.adapters.kml.timespan.decorator.IKMLGenerator;
@@ -51,8 +52,8 @@ public class EpiInfoKmlGeneratorFactory implements IKMLGeneratorFactory {
 			
 			GeoCoderLatitudePropertyResolver propertyResolverLat = new GeoCoderLatitudePropertyResolver(geoCoder);
 			GeoCoderLongitudePropertyResolver propertyResolverLon = new GeoCoderLongitudePropertyResolver(geoCoder);
-
-			mappingResolver = new MappingResolver(mappings, propertyResolverLat, propertyResolverLon);
+			GeoCoderLocationPropertyResolver propertyResolverLoc = new GeoCoderLocationPropertyResolver(geoCoder);
+			mappingResolver = new MappingResolver(mappings, propertyResolverLat, propertyResolverLon, propertyResolverLoc);
 		} catch (Exception e) {
 			throw new MeshException(e);
 		}
