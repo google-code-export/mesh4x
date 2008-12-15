@@ -118,8 +118,8 @@ public class EpiinfoUI{
 	private String baseDirectory;
 	private int senderDelay;
 	private int receiverDelay;
-	private int readDelay;
 	private int maxMessageLenght;
+	private int readDelay;
 	private int channelDelay;
 	private IMessageEncoding messageEncoding;
 	private String portName;
@@ -170,9 +170,9 @@ public class EpiinfoUI{
 		this.baseDirectory = propertiesProvider.getBaseDirectory();
 		this.senderDelay = propertiesProvider.getInt("default.sms.sender.delay");
 		this.receiverDelay = propertiesProvider.getInt("default.sms.receiver.delay");
-		this.readDelay = propertiesProvider.getInt("default.sms.read.delay");
 		this.maxMessageLenght = propertiesProvider.getInt("default.sms.max.message.lenght");
-		this.channelDelay = propertiesProvider.getInt("default.sms.channel.delay");
+		this.readDelay = propertiesProvider.getInt("default.sms.demo.read.delay");
+		this.channelDelay = propertiesProvider.getInt("default.sms.demo.channel.delay");
 		this.identityProvider = propertiesProvider.getIdentityProvider();
 		this.messageEncoding = propertiesProvider.getDefaultMessageEncoding();
 		this.portName = propertiesProvider.getDefaultPort();
@@ -189,7 +189,7 @@ public class EpiinfoUI{
 		this.fileNameResolver = new FileNameResolver(baseDirectory+"/myFiles.properties");
 		
 		if(modem != null && !modem.getManufacturer().equals(EpiInfoUITranslator.getLabelDemo())){
-			this.syncEngine = SyncEngineUtil.createSyncEngine(fileNameResolver, modem, baseDirectory, senderDelay, receiverDelay, readDelay, maxMessageLenght, channelDelay,
+			this.syncEngine = SyncEngineUtil.createSyncEngine(fileNameResolver, modem, baseDirectory, senderDelay, receiverDelay, maxMessageLenght,
 				identityProvider, messageEncoding, consoleNotification, consoleNotification);  
 		}
 				

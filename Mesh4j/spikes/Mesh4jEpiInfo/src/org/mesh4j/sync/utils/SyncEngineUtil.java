@@ -169,8 +169,7 @@ public class SyncEngineUtil {
 
 	public static MessageSyncEngine createSyncEngine(
 			FileNameResolver fileNameResolver, Modem modem,
-			String baseDirectory, int senderDelay, int receiverDelay,
-			int readDelay, int maxMessageLenght, int channelDelay,
+			String baseDirectory, int senderDelay, int receiverDelay, int maxMessageLenght, 
 			IIdentityProvider identityProvider,
 			IMessageEncoding messageEncoding,
 			ISmsConnectionInboundOutboundNotification smsConnectionInboundOutboundNotification,
@@ -179,7 +178,7 @@ public class SyncEngineUtil {
 		ISyncAdapterFactory syncAdapterFactory = makeSyncAdapterFactory(fileNameResolver, baseDirectory);
 		
 		return SmsLibMessageSyncEngineFactory.createSyncEngine(
-			modem, baseDirectory + "/", senderDelay, receiverDelay, readDelay, maxMessageLenght, channelDelay,
+			modem, baseDirectory + "/", senderDelay, receiverDelay, maxMessageLenght,
 			identityProvider, messageEncoding, smsConnectionInboundOutboundNotification, messageSyncAware, syncAdapterFactory);
 	}
 	

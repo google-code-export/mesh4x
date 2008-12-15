@@ -24,6 +24,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/mysql-connector-java-5.1.6-bin.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/poi-3.2-FINAL-20081019.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/smslib-3.3.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mesh4j-1.0.0.jar" sourcepath="/Mesh4j"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Mesh4j"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

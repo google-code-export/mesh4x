@@ -82,4 +82,9 @@ public class Feed {
 		return this.feedItems.isEmpty();
 	}
 
+	public Feed deleteAllItems() {
+		this.feedItems = new ArrayList<Item>();
+		return this;		
+	}
+
 }
