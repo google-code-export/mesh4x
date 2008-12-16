@@ -29,5 +29,3 @@ Get your Google Code password here:  http://code.google.com/hosting/settings
 svn checkout https://mesh4x.googlecode.com/svn/Mesh4n/trunk
 svn checkout https://mesh4x.googlecode.com/svn/Mesh4j/trunk
 }}}
-
-We have rumours contributors are working on Ruby and Javascript too, stay tuned! 
