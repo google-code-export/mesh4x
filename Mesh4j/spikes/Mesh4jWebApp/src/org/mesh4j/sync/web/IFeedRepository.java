@@ -29,7 +29,7 @@ public interface IFeedRepository {
 	
 	IMappingResolver getMappings(String sourceID, String link, IGeoCoder geoCoder) throws Exception;
 
-//	void cleanFeed(String sourceID);
+	void cleanFeed(String sourceID);
 //
 //	void updateFeed(String sourceID, ISyndicationFormat syndicationFormat, String link, String description, String schema, String mappings, String by);
 //

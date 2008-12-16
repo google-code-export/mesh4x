@@ -101,5 +101,11 @@ public class S3FeedRepository extends AbstractFeedRepository {
 		}
 		return false;
 	}
+
+	@Override
+	public void cleanFeed(String sourceID) {
+		// Not supported operation
+		// TODO (JMT) supports clean a feed
+	}
 	
 }

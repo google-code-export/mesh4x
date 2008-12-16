@@ -175,28 +175,29 @@ public class FeedServlet extends HttpServlet {
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {		
-		String sourceID = this.getSourceID(request);				
-		if(this.feedRepository.isAddNewFeedAction(sourceID)){
-			addNewFeed(request, response);
+		String action = request.getParameter("action");
+		if("clean".equals(action)){
+			cleanFeed(request, response);
 		} else {
-			synchronizeFeed(request, response, sourceID);
+			String sourceID = this.getSourceID(request);
+			if(this.feedRepository.isAddNewFeedAction(sourceID)){
+				addNewFeed(request, response);
+			} else {
+				synchronizeFeed(request, response, sourceID);
+			}
 		}
 	}
 	
-//	private void cleanFeed(HttpServletRequest request, HttpServletResponse response, String sourceID) throws IOException {
-//		if(!this.feedRepository.existsFeed(sourceID)){
-//			response.sendError(404, sourceID);
-//		} else {		
-//			String format = request.getParameter("format");  		// format=rss20/atom10
-//			ISyndicationFormat syndicationFormat = this.feedRepository.getSyndicationFormat(format);	
-//			if(syndicationFormat == null){
-//				response.sendError(404, format);	
-//			} else {
-//				this.feedRepository.cleanFeed(sourceID);					
-//				response.sendRedirect(request.getRequestURI());
-//			}
-//		}
-//	}
+	private void cleanFeed(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		String sourceID = request.getParameter("sourceID");
+		if(!this.feedRepository.existsFeed(sourceID)){
+			response.sendError(404, sourceID);
+		} else {		
+			this.feedRepository.cleanFeed(sourceID);
+			String link = getFeedLink(request)+ "/" + sourceID;
+			response.sendRedirect(link);
+		}
+	}
 	
 //	private void removeFeed(HttpServletRequest request, HttpServletResponse response, String sourceID) throws IOException {
 //		if(!this.feedRepository.existsFeed(sourceID)){

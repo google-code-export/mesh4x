@@ -96,5 +96,16 @@
 		<br>
 		<button type="submit">Add</button>
 	</form>
+		<br>
+	<br>
+	<h2>Clean you own Feed:</h2>
+	<br>
+	<form action="/mesh4x/feeds" method="post">
+		<input type="hidden" id="action" name="action" value="clean">
+		name: <input id="sourceID" name="sourceID" type="text" value="myMesh/myFeed">
+		<br>
+		<br>
+		<button type="submit">Clean</button>
+	</form>
 </body>
 </html>
