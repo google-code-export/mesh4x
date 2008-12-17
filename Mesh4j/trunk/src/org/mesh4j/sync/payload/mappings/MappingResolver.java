@@ -109,5 +109,16 @@ public class MappingResolver implements IMappingResolver {
 	public Element getMappings() {
 		return this.mappings;
 	}
+
+	@Override
+	public String getMapping(String mappingName) {
+		Element propElement = XMLHelper.selectSingleNode(mappingName, this.mappings, new HashMap<String, String>());
+		
+		String template = "";
+		if(propElement != null){
+			template = propElement.getText();
+		}
+		return template;
+	}
 	
 }

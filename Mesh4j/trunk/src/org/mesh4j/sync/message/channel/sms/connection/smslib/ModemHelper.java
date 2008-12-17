@@ -64,7 +64,7 @@ public class ModemHelper {
 				result = ATGMMCommand.INSTANCE.execute(serialPortInputStream, serialPortOutputStream);
 				return result;
 			} 
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			LOGGER.info(e.getMessage(), e);
 		} finally {
 			if (serialPort != null) {
@@ -145,7 +145,7 @@ public class ModemHelper {
 							progressMonitor.notifyNonAvailablePortInfo(port, bauds[i]);
 						}
 					}
-				} catch(MeshException e){
+				} catch(Throwable e){
 					LOGGER.info(e.getMessage(), e);
 				}
 			}

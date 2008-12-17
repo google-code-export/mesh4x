@@ -9,4 +9,6 @@ public interface IMappingResolver {
 	String getValue(Element element, String mappingName);
 
 	Element getMappings();
+	
+	String getMapping(String mappingName);
 }

@@ -10,11 +10,6 @@ import org.mesh4j.sync.utils.FileUtils;
 
 public class KMLExporter {
 
-	public static void makeKMLWithNetworkLink(String fileName, String documentName, String url) throws Exception{
-		String template = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><kml xmlns=\"http://earth.google.com/kml/2.2\"><Document><name>{0}</name><open>1</open><NetworkLink><name>{0}</name><visibility>0</visibility><open>0</open><refreshVisibility>0</refreshVisibility><flyToView>0</flyToView><Link><href>{1}</href></Link></NetworkLink></Document></kml>";	
-		FileUtils.write(fileName, MessageFormat.format(template, documentName, url).getBytes());
-	}
-	
 	public static void export(String fileName, String documentName, List<Item> items, IMappingResolver mappingResolver) throws Exception {
 		String kmlXml = generateKML(documentName, items, mappingResolver);
 		FileUtils.write(fileName, kmlXml.getBytes());
