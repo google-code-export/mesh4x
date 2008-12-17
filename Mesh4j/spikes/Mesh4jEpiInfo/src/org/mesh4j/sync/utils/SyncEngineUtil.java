@@ -1,6 +1,7 @@
 package org.mesh4j.sync.utils;
 
 import java.io.File;
+import java.text.MessageFormat;
 import java.util.List;
 
 import org.dom4j.DocumentHelper;
@@ -182,11 +183,8 @@ public class SyncEngineUtil {
 			identityProvider, messageEncoding, smsConnectionInboundOutboundNotification, messageSyncAware, syncAdapterFactory);
 	}
 	
-	public static Modem[] getAvailableModems(IProgressMonitor progressMonitor, Modem demoModem) {
+	public static Modem[] getAvailableModems(IProgressMonitor progressMonitor) {
 		List<Modem> availableModems = ModemHelper.getAvailableModems(progressMonitor);
-		if(availableModems.isEmpty()){
-			availableModems.add(demoModem);
-		}
 		return availableModems.toArray(new Modem[0]);
 	}
 
@@ -255,4 +253,9 @@ public class SyncEngineUtil {
 		FileUtils.write(fileName, xmlMappings.getBytes());
 	}
 
+	public static void makeKMLWithNetworkLink(String templateFileName, String fileName, String tableName, String url) throws Exception {
+		byte[] bytes = FileUtils.read(templateFileName);
+		String template = new String(bytes);
+		FileUtils.write(fileName, MessageFormat.format(template, tableName, url).getBytes());
+	}
 }

@@ -3,10 +3,13 @@ package org.mesh4j.sync.utils;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -19,6 +22,7 @@ import org.mesh4j.sync.validations.MeshException;
 
 public class EpiInfoKmlGenerator implements IKMLGenerator{
 
+	final static Log LOGGER = LogFactory.getLog(EpiInfoKmlGenerator.class);
 	final static SimpleDateFormat DATEONSET_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	// MODEL VARIABLE
@@ -35,7 +39,7 @@ public class EpiInfoKmlGenerator implements IKMLGenerator{
 		this.templateFileName = templateFileName;
 	}
 	
-	protected static String makePlacemark(String id, String name, String description, String location, String styleUrl, Date start, Date end) {
+	protected static String makePlacemark(String id, String name, String description, String location, String styleUrl, Date start) {
 
 		return MessageFormat.format(
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+
@@ -50,11 +54,10 @@ public class EpiInfoKmlGenerator implements IKMLGenerator{
 			"	</Point>"+
 			"   <TimeSpan>"+
 			"		<begin>{5}</begin>"+
-			"		<end>{6}</end>"+
 			"	</TimeSpan>"+
 			"</Placemark>"+
 			"</Document>"+
-			"</kml>", id, name, description, styleUrl, location, DateHelper.formatW3CDateTime(start), DateHelper.formatW3CDateTime(end));
+			"</kml>", id, name, description, styleUrl, location, DateHelper.formatW3CDateTime(start));
 	}
 
 
@@ -81,18 +84,16 @@ public class EpiInfoKmlGenerator implements IKMLGenerator{
 					Date start = getDateOnSet(item);
 					if(start == null){
 						start = item.getLastUpdate().getWhen();
-					}
+					} 
 					
-					Date end = new Date();
-					
-					String xml = makePlacemark("'"+item.getSyncId()+"'", name, description, location, style, start, end);
+					String xml = makePlacemark("'"+item.getSyncId()+"'", name, description, location, style, start);
 	
 					Element itemElement = DocumentHelper.parseText(xml).getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT).element(KmlNames.KML_ELEMENT_PLACEMARK); 
 					document.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT).add(itemElement.createCopy());
 				}
 			}
 		} catch(Exception e){
-			throw new MeshException(e);
+			LOGGER.error(e.getMessage(), e);
 		}
 	}
 
@@ -139,11 +140,15 @@ public class EpiInfoKmlGenerator implements IKMLGenerator{
 	}
 
 	@Override
-	public String getEndTimeSpan(Item item) throws Exception {
+	public String getEndTimeSpan(Item item) throws Exception{
 		Date dateOnSet = getDateOnSet(item);
 		if(dateOnSet == null){
 			return DateHelper.formatW3CDateTime(item.getLastUpdate().getWhen());
 		} else {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(dateOnSet);
+			cal.add(Calendar.SECOND, (-1 * 1));
+			dateOnSet = cal.getTime();
 			return DateHelper.formatW3CDateTime(dateOnSet);
 		}
 	}

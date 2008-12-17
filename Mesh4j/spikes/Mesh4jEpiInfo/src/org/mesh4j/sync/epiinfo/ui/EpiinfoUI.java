@@ -33,7 +33,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mesh4j.sync.adapters.http.HttpSyncAdapterFactory;
-import org.mesh4j.sync.adapters.kml.exporter.KMLExporter;
 import org.mesh4j.sync.adapters.msaccess.MsAccessHelper;
 import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
 import org.mesh4j.sync.message.MessageSyncEngine;
@@ -129,6 +128,7 @@ public class EpiinfoUI{
 	private String defaultTableName;
 	private String defaultURL;
 	private String kmlTemplateFileName;
+	private String kmlTemplateNetworkLinkFileName;
 	private String geoCoderKey;
 	private boolean discoveryModems = false;
 	
@@ -182,6 +182,7 @@ public class EpiinfoUI{
 		this.defaultTableName = propertiesProvider.getDefaultTable();
 		this.defaultURL = propertiesProvider.getDefaultURL();
 		this.kmlTemplateFileName = propertiesProvider.getDefaultKMLTemplateFileName();
+		this.kmlTemplateNetworkLinkFileName = propertiesProvider.getDefaultKMLTemplateNetworkLinkFileName();
 		this.geoCoderKey = propertiesProvider.getGeoCoderKey();
 	}
 	
@@ -688,7 +689,6 @@ public class EpiinfoUI{
 			consoleNotification.setInProcessImageStatus();
 			
     		if(action == SYNCHRONIZE_SMS){
-    			syncInProcess = true;
     			textAreaConsole.setText("");
     			
 				String dataSource = textFieldDataSource.getText();
@@ -702,6 +702,9 @@ public class EpiinfoUI{
     			SyncEngineUtil.addDataSource(fileNameResolver, dataSource);
 
     			try{
+        			syncInProcess = true;
+        			buttonCancel.setEnabled(true);
+
 	    			if(emulate){	    				
 	    				SyncEngineUtil.registerNewEndpointToEmulator(syncEngine, textFieldPhoneNumber.getText(), messageEncoding, 
 	    					identityProvider, baseDirectory, senderDelay, receiverDelay, readDelay, channelDelay, maxMessageLenght);
@@ -710,6 +713,7 @@ public class EpiinfoUI{
 	    				dataSource, tableName, identityProvider, baseDirectory, fileNameResolver);
 
 	    		} catch(Throwable t){
+	    			syncInProcess = false;
 	    			consoleNotification.setErrorImageStatus();
 	    			consoleNotification.logError(t, EpiInfoUITranslator.getLabelFailed());
 //	    			consoleNotification.logStatus(EpiInfoUITranslator.getLabelFailed());
@@ -765,14 +769,18 @@ public class EpiinfoUI{
 				buttonModemDiscovery.setText(EpiInfoUITranslator.getLabelStopModemDiscovery());
 				buttonModemDiscovery.setToolTipText(EpiInfoUITranslator.getToolTipStopAutoDetect());    			
     			
-    			Modem[] modems = SyncEngineUtil.getAvailableModems(consoleNotification, getDemoModem());
+    			Modem[] modems = SyncEngineUtil.getAvailableModems(consoleNotification);
+    			consoleNotification.log(EpiInfoUITranslator.getMessageEndModemDiscovery(modems.length));
+    			
+    			if(modems.length == 0){
+    				modems = new Modem[]{getDemoModem()};
+    			}
     			comboSMSDevice.setModel(new DefaultComboBoxModel(modems));
     			    			
     			setModeNoDiscoveryModems();
     			buttonModemDiscovery.setText(EpiInfoUITranslator.getLabelModemDiscovery());
     			buttonModemDiscovery.setToolTipText(EpiInfoUITranslator.getToolTipAutoDetect());
-    			
-    			consoleNotification.log(EpiInfoUITranslator.getMessageEndModemDiscovery(modems.length));
+    			    			
     			consoleNotification.setEndSyncImageStatus();
     		}
     		
@@ -839,7 +847,7 @@ public class EpiinfoUI{
 	    			String urlWebKml = url + "?format=kml";
 	    			String fileName = baseDirectory + "/"+ tableName + "_web.kml";
 
-	    			KMLExporter.makeKMLWithNetworkLink(fileName, tableName, urlWebKml);
+	    			SyncEngineUtil.makeKMLWithNetworkLink(kmlTemplateNetworkLinkFileName, fileName, tableName, urlWebKml);
 	    			consoleNotification.setEndSyncImageStatus();
 	    		} catch(Throwable t){
 	    			consoleNotification.setErrorImageStatus();

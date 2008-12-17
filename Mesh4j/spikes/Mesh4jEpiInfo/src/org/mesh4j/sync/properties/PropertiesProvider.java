@@ -132,8 +132,6 @@ public class PropertiesProvider {
 		} catch (Exception e) {
 			throw new MeshException(e);
 		}
-		
-		
 	}
 
 	public String getDefaultURL() {
@@ -155,9 +153,12 @@ public class PropertiesProvider {
 	public String getDefaultKMLTemplateFileName() {
 		return getString("default.kml.template.file.name");
 	}
+	
+	public String getDefaultKMLTemplateNetworkLinkFileName() {
+		return getString("default.kml.template.networklink.file.name");
+	}
 
 	public String getGeoCoderKey() {
 		return getString("google.geo.coder.key");
 	}
-	
 }

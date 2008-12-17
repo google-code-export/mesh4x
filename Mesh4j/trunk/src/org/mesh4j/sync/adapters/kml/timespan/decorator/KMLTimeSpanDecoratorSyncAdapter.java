@@ -142,6 +142,9 @@ public class KMLTimeSpanDecoratorSyncAdapter implements ISyncAdapter, ISyncAware
 				} else {
 					Element timeSpan = itemElement.element(KmlNames.KML_ELEMENT_TIME_SPAN);
 					Element elementEnd = timeSpan.element(KmlNames.KML_ELEMENT_TIME_SPAN_END);
+					if(elementEnd == null){
+						elementEnd = timeSpan.addElement(KmlNames.KML_ELEMENT_TIME_SPAN_END);
+					}
 					if(this.kmlGenerator.hasItemChanged(this.document, itemElement, item)){
 						elementEnd.setText(this.kmlGenerator.getEndTimeSpan(item));
 						addItemToKML(item);
