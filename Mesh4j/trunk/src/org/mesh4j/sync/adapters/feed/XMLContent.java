@@ -78,9 +78,13 @@ public class XMLContent extends Content {
 	@Override
 	public void addToFeedPayload(Sync sync, Element itemElement, ISyndicationFormat format){
 		
-		List<Element> payloadElements = this.getPayload().elements(); 
-		for (Element payloadElement : payloadElements) {
-			itemElement.add(payloadElement.createCopy());
+		if(ISyndicationFormat.ELEMENT_PAYLOAD.equals(this.getPayload().getName())){
+			List<Element> payloadElements = this.getPayload().elements(); 
+			for (Element payloadElement : payloadElements) {
+				itemElement.add(payloadElement.createCopy());
+			}
+		} else {
+			itemElement.add(this.getPayload().createCopy());
 		}
 		
 		String defaultValue = "---";

@@ -10,7 +10,6 @@ import org.mesh4j.sync.message.ISyncSession;
 import org.mesh4j.sync.message.core.IMessageProcessor;
 import org.mesh4j.sync.message.core.Message;
 import org.mesh4j.sync.model.Item;
-import org.mesh4j.sync.utils.XMLHelper;
 import org.mesh4j.sync.validations.Guard;
 
 
@@ -85,9 +84,7 @@ public class GetForMergeMessageProcessor implements IMessageProcessor {
 			sb.append(syncID);
 			sb.append(IProtocolConstants.ELEMENT_SEPARATOR);
 			
-			String xml = XMLHelper.canonicalizeXML(item.getContent().getPayload());
-			
-			int[] hashs = this.itemEncoding.calculateDiffBlockHashCodes(xml);
+			int[] hashs = this.itemEncoding.calculateDiffBlockHashCodes(item.getContent().getPayload());
 			for (int j = 0; j < hashs.length; j++) {
 				sb.append(hashs[j]);
 				if(j+1 != hashs.length){

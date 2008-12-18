@@ -1,5 +1,6 @@
 package org.mesh4j.sync.message.protocol;
 
+import org.dom4j.Element;
 import org.mesh4j.sync.message.ISyncSession;
 import org.mesh4j.sync.model.Item;
 
@@ -14,6 +15,11 @@ public class MockItemEncoding implements IItemEncoding {
 	
 	@Override
 	public int[] calculateDiffBlockHashCodes(String xml) {
+		return new int[]{1,2};
+	}
+	
+	@Override
+	public int[] calculateDiffBlockHashCodes(Element element) {
 		return new int[]{1,2};
 	}
 

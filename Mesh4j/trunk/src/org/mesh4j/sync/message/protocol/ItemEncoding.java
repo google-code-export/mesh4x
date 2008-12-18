@@ -145,6 +145,12 @@ public class ItemEncoding implements IItemEncoding, IProtocolConstants{
 		return DiffUtils.calculateBlockHashCodes(xml, this.diffBlockSize);
 	}
 
+	@Override
+	public int[] calculateDiffBlockHashCodes(Element element) {
+		String xml = XMLHelper.canonicalizeXML(element);
+		return DiffUtils.calculateBlockHashCodes(xml, this.diffBlockSize);
+	}
+	
 	public static String getSyncID(String data) {
 		StringTokenizer st = new StringTokenizer(data, ELEMENT_SEPARATOR);
 		String header = st.nextToken();			

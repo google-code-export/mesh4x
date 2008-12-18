@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.dom4j.Element;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -166,5 +167,73 @@ public class DiffTests {
 		String result = DiffUtils.appliesDiff("abc", 2, diffs);
 		
 		Assert.assertEquals("j", result);
+	}
+	
+	@Test
+	public void shouldDiff(){
+		String oswegoXml1 = 
+			"<Oswego>" +
+			"      <Code>P10</Code>" +
+			"      <Name>Patient10</Name>" +
+			"      <AGE>60</AGE>" +
+			"      <SEX>Female</SEX>" +
+			"      <ILL>1</ILL>" +
+			"      <BAKEDHAM>1</BAKEDHAM>" +
+			"      <SPINACH>1</SPINACH>" +
+			"      <MASHEDPOTA>1</MASHEDPOTA>" +
+			"      <CABBAGESAL>0</CABBAGESAL>" +
+			"      <JELLO>0</JELLO>" +
+			"      <ROLLS>1</ROLLS>" +
+			"      <BROWNBREAD>1</BROWNBREAD>" +
+			"      <MILK>0</MILK>" +
+			"      <COFFEE>0</COFFEE>" +
+			"      <WATER>1</WATER>" +
+			"      <CAKES>0</CAKES>" +
+			"      <VANILLA>1</VANILLA>" +
+			"      <CHOCOLATE>1</CHOCOLATE>" +
+			"      <FRUITSALAD>0</FRUITSALAD>" +
+			"      <TimeSupper>1940-04-18 19:00:00</TimeSupper>" +
+			"      <DateOnset>1940-04-18 23:00:00</DateOnset>" +
+			"      <RecStatus>1</RecStatus>" +
+			"      <Address>20700 State Route 411. La Fargeville, NY, 13656</Address>" +
+			"      <County>Jefferson</County>"+
+			"</Oswego>";
+		
+		String oswegoXml = 
+			"<Oswego>" +
+			"      <Code>P10</Code>" +
+			"      <Name>Patient10</Name>" +
+			"      <AGE>50</AGE>" +
+			"      <SEX>Female</SEX>" +
+			"      <ILL>1</ILL>" +
+			"      <BAKEDHAM>1</BAKEDHAM>" +
+			"      <SPINACH>1</SPINACH>" +
+			"      <MASHEDPOTA>1</MASHEDPOTA>" +
+			"      <CABBAGESAL>0</CABBAGESAL>" +
+			"      <JELLO>0</JELLO>" +
+			"      <ROLLS>1</ROLLS>" +
+			"      <BROWNBREAD>1</BROWNBREAD>" +
+			"      <MILK>0</MILK>" +
+			"      <COFFEE>0</COFFEE>" +
+			"      <WATER>1</WATER>" +
+			"      <CAKES>0</CAKES>" +
+			"      <VANILLA>1</VANILLA>" +
+			"      <CHOCOLATE>1</CHOCOLATE>" +
+			"      <FRUITSALAD>0</FRUITSALAD>" +
+			"      <TimeSupper>1940-04-18 19:00:00</TimeSupper>" +
+			"      <DateOnset>1940-04-18 23:00:00</DateOnset>" +
+			"      <RecStatus>1</RecStatus>" +
+			"      <Address>20700 State Route 411. La Fargeville, NY, 13656</Address>" +
+			"      <County>Jefferson</County>"+
+			"</Oswego>";
+		
+		Element element = XMLHelper.parseElement(oswegoXml);
+		String xml = XMLHelper.canonicalizeXML(element);
+		
+		Element element1 = XMLHelper.parseElement(oswegoXml1);
+		String xml1 = XMLHelper.canonicalizeXML(element1);
+		int[] diffHashCodes = DiffUtils.calculateBlockHashCodes(xml1, 100);
+		Map<Integer, String> diffs = DiffUtils.obtainsDiff(xml, 100, diffHashCodes);
+		System.out.println(diffs);
 	}
 }

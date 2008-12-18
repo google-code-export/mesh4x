@@ -10,7 +10,6 @@ import org.mesh4j.sync.message.MessageSyncEngine;
 import org.mesh4j.sync.message.core.IMessageProcessor;
 import org.mesh4j.sync.message.core.Message;
 import org.mesh4j.sync.model.Item;
-import org.mesh4j.sync.utils.XMLHelper;
 import org.mesh4j.sync.validations.Guard;
 
 
@@ -59,8 +58,7 @@ public class MergeWithACKMessageProcessor implements IMessageProcessor {
 			List<Item> items = syncSession.getSnapshot();
 			for (Item item : items) {
 				if(item.getSyncId().equals(actualItem.getSyncId())){
-					String xml = XMLHelper.canonicalizeXML(item.getContent().getPayload());
-					return this.itemEncoding.calculateDiffBlockHashCodes(xml);  
+					return this.itemEncoding.calculateDiffBlockHashCodes(item.getContent().getPayload());  
 				}
 			}
 		}

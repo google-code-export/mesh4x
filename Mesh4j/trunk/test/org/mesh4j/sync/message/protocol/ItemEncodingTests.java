@@ -772,7 +772,8 @@ public class ItemEncodingTests {
 	@Test
 	public void shouldCalculateDiffBlockHashCodesReturnsEmptyArrayWhenTextIsNull(){
 		ItemEncoding itemEncoding = new ItemEncoding(100);
-		Assert.assertTrue(itemEncoding.calculateDiffBlockHashCodes(null).length == 0);
+		String xml = null;
+		Assert.assertTrue(itemEncoding.calculateDiffBlockHashCodes(xml).length == 0);
 	}
 
 	@Test
