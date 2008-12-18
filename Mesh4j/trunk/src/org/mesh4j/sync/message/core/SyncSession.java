@@ -87,19 +87,6 @@ public class SyncSession implements ISyncSession{
 	}
 
 	@Override
-	public boolean hasChanged(String syncID){
-		if(this.lastSyncDate == null){
-			return true;
-		}
-		
-		Item item = this.get(syncID);
-		if(item == null || item.getLastUpdate() == null || item.getLastUpdate().getWhen() == null){
-			return false;
-		} 
-		return this.lastSyncDate.compareTo(item.getLastUpdate().getWhen()) <= 0;
-	}
-	
-	@Override
 	public void addConflict(String syncID){
 		this.conflicts.put(syncID, null);
 	}

@@ -18,7 +18,7 @@ public class BeginSyncMessageProcessorTests {
 
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateMessageFailsWhenSessionIsNull(){
-		BeginSyncMessageProcessor p = new BeginSyncMessageProcessor(null, null);
+		BeginSyncMessageProcessor p = new BeginSyncMessageProcessor(null, null, null);
 		p.createMessage(null);
 	}
 	
@@ -26,11 +26,11 @@ public class BeginSyncMessageProcessorTests {
 	public void shouldCreateMessageWithOutSinceDate(){
 		MockSyncSession syncSession = new MockSyncSession(null);
 		
-		BeginSyncMessageProcessor mp = new BeginSyncMessageProcessor(null, null);
+		BeginSyncMessageProcessor mp = new BeginSyncMessageProcessor(null, null, null);
 		IMessage message = mp.createMessage(syncSession);
 
 		Assert.assertNotNull(message);
-		Assert.assertEquals(syncSession.getSourceId(), message.getData());
+		Assert.assertEquals(syncSession.getSourceId()+"|0", message.getData());
 		Assert.assertEquals(syncSession.getTarget(), message.getEndpoint());
 		Assert.assertEquals(mp.getMessageType(), message.getMessageType());
 		Assert.assertEquals(IProtocolConstants.PROTOCOL, message.getProtocol());
@@ -47,8 +47,8 @@ public class BeginSyncMessageProcessorTests {
 		NoChangesMessageProcessor ncp = new NoChangesMessageProcessor(null, null); 
 		LastVersionStatusMessageProcessor lvp = new LastVersionStatusMessageProcessor(null, null, null);
 		
-		String data = syncSession.getSourceId();
-		BeginSyncMessageProcessor mp = new BeginSyncMessageProcessor(ncp, lvp);
+		String data = syncSession.getSourceId() + "|0";
+		BeginSyncMessageProcessor mp = new BeginSyncMessageProcessor(ncp, lvp, null);
 		IMessage message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), 0, data, syncSession.getTarget());
 		List<IMessage> messages = mp.process(syncSession, message);
 		Assert.assertNotNull(messages);
@@ -75,9 +75,10 @@ public class BeginSyncMessageProcessorTests {
 
 		NoChangesMessageProcessor ncp = new NoChangesMessageProcessor(null, null); 
 		LastVersionStatusMessageProcessor lvp = new LastVersionStatusMessageProcessor(null, null, null);
+		EqualStatusMessageProcessor esp = new EqualStatusMessageProcessor(null);
 		
-		String data = syncSession.getSourceId();
-		BeginSyncMessageProcessor mp = new BeginSyncMessageProcessor(ncp, lvp);
+		String data = syncSession.getSourceId()+ "|0";
+		BeginSyncMessageProcessor mp = new BeginSyncMessageProcessor(ncp, lvp, esp);
 		IMessage message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), 0, data, syncSession.getTarget());
 		List<IMessage> messages = mp.process(syncSession, message);
 		Assert.assertNotNull(messages);
@@ -100,7 +101,7 @@ public class BeginSyncMessageProcessorTests {
 	public void shouldProcessMessageReturnsNoResponseBecauseMessageTypeIsInvalid(){
 		MockSyncSession syncSession = new MockSyncSession(null);
 		
-		BeginSyncMessageProcessor mp = new BeginSyncMessageProcessor(null, null);
+		BeginSyncMessageProcessor mp = new BeginSyncMessageProcessor(null, null, null);
 		IMessage message = new Message(IProtocolConstants.PROTOCOL, "aaaaa", syncSession.getSessionId(), 0, "dsds", syncSession.getTarget());
 		List<IMessage> messages = mp.process(syncSession, message);
 		Assert.assertEquals(IMessageSyncProtocol.NO_RESPONSE, messages);
@@ -114,7 +115,7 @@ public class BeginSyncMessageProcessorTests {
 		MockSyncSession syncSession = new MockSyncSession(null);
 		syncSession.setOpen();
 		
-		BeginSyncMessageProcessor mp = new BeginSyncMessageProcessor(null, null);
+		BeginSyncMessageProcessor mp = new BeginSyncMessageProcessor(null, null, null);
 		IMessage message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), 0, "dsds", syncSession.getTarget());
 		List<IMessage> messages = mp.process(syncSession, message);
 		Assert.assertEquals(IMessageSyncProtocol.NO_RESPONSE, messages);
@@ -128,11 +129,11 @@ public class BeginSyncMessageProcessorTests {
 		Date date = new Date();
 		MockSyncSession syncSession = new MockSyncSession(date);
 		
-		BeginSyncMessageProcessor mp = new BeginSyncMessageProcessor(null, null);
+		BeginSyncMessageProcessor mp = new BeginSyncMessageProcessor(null, null, null);
 		IMessage message = mp.createMessage(syncSession);
 
 		Assert.assertNotNull(message);
-		Assert.assertEquals(syncSession.getSourceId()+"|"+DateHelper.formatDateTime(date), message.getData());
+		Assert.assertEquals(syncSession.getSourceId()+"|0|"+DateHelper.formatDateTime(date), message.getData());
 		Assert.assertEquals(syncSession.getTarget(), message.getEndpoint());
 		Assert.assertEquals(mp.getMessageType(), message.getMessageType());
 		Assert.assertEquals(IProtocolConstants.PROTOCOL, message.getProtocol());
@@ -151,9 +152,10 @@ public class BeginSyncMessageProcessorTests {
 
 		NoChangesMessageProcessor ncp = new NoChangesMessageProcessor(null, null); 
 		LastVersionStatusMessageProcessor lvp = new LastVersionStatusMessageProcessor(null, null, null);
+		EqualStatusMessageProcessor esp = new EqualStatusMessageProcessor(null);
 		
-		String data = syncSession.getSourceId();
-		BeginSyncMessageProcessor mp = new BeginSyncMessageProcessor(ncp, lvp);
+		String data = syncSession.getSourceId()+"|0";
+		BeginSyncMessageProcessor mp = new BeginSyncMessageProcessor(ncp, lvp, esp);
 		IMessage message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), 0, data, syncSession.getTarget());
 		List<IMessage> messages = mp.process(syncSession, message);
 		Assert.assertNotNull(messages);
@@ -180,9 +182,10 @@ public class BeginSyncMessageProcessorTests {
 
 		NoChangesMessageProcessor ncp = new NoChangesMessageProcessor(null, null); 
 		LastVersionStatusMessageProcessor lvp = new LastVersionStatusMessageProcessor(null, null, null);
+		EqualStatusMessageProcessor esp = new EqualStatusMessageProcessor(null);
 		
-		String data = syncSession.getSourceId();
-		BeginSyncMessageProcessor mp = new BeginSyncMessageProcessor(ncp, lvp);
+		String data = syncSession.getSourceId()+"|0";
+		BeginSyncMessageProcessor mp = new BeginSyncMessageProcessor(ncp, lvp, esp);
 		IMessage message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), 0, data, syncSession.getTarget());
 		List<IMessage> messages = mp.process(syncSession, message);
 		Assert.assertNotNull(messages);

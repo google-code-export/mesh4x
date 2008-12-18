@@ -1,6 +1,7 @@
 package org.mesh4j.sync.message.protocol;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.Assert;
@@ -116,9 +117,11 @@ public class LastVersionStatusMessageProcessorTests {
 	@Test
 	public void shouldProcessMarkConflicItemWhenItemWasChanged(){
 		
+		Date lastSyncDate = TestHelper.makeDate(2007, 1, 1, 1, 1, 1, 1);
+		
 		Item item = new Item(new NullContent("1"), new Sync("1", "jmt", TestHelper.makeDate(2008, 1, 1, 1, 1, 1, 1), false));
 
-		MockSyncSession syncSession = new MockSyncSession(null, item);
+		MockSyncSession syncSession = new MockSyncSession(lastSyncDate, item);
 		syncSession.addToSnapshot(item);
 		syncSession.setOpen();
 		syncSession.setFullProtocol(false);

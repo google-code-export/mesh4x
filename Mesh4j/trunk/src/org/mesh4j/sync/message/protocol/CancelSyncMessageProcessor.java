@@ -42,7 +42,7 @@ public class CancelSyncMessageProcessor implements ICancelSyncMessageProcessor {
 
 	@Override
 	public List<IMessage> process(ISyncSession syncSession, IMessage message) {
-		if(!syncSession.isOpen() && syncSession.getVersion() == message.getSessionVersion() && this.getMessageType().equals(message.getMessageType())){
+		if(syncSession.isOpen() && syncSession.getVersion() == message.getSessionVersion() && this.getMessageType().equals(message.getMessageType())){
 			this.messageSyncProtocol.cancelSync(syncSession);
 		}
 		return IMessageSyncProtocol.NO_RESPONSE;

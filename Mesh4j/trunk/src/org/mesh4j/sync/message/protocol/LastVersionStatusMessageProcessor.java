@@ -73,7 +73,7 @@ public class LastVersionStatusMessageProcessor implements IMessageProcessor{
 					String deletedBy = (String)parameters[3];
 					Date deletedWhen = (Date)parameters[4];
 					
-					if(syncSession.hasChanged(syncID)){
+					if(hasChanged(localItem, syncSession.getLastSyncDate())){
 						if(syncSession.isFullProtocol()){
 							response.add(this.getForMergeMessage.createMessage(syncSession, localItem));
 						} else {
@@ -81,10 +81,12 @@ public class LastVersionStatusMessageProcessor implements IMessageProcessor{
 						}
 					} else{
 						if(delete){
-							if(syncSession.isFullProtocol()){
-								response.add(this.getForMergeMessage.createMessage(syncSession, localItem));
-							} else {
-								syncSession.delete(syncID, deletedBy, deletedWhen);
+							if(!localItem.getSync().isDeleted()){
+								if(syncSession.isFullProtocol()){
+									response.add(this.getForMergeMessage.createMessage(syncSession, localItem));
+								} else {
+									syncSession.delete(syncID, deletedBy, deletedWhen);
+								}
 							}
 						} else {
 							String localHashCode = this.calculateHasCode(localItem);
@@ -105,6 +107,17 @@ public class LastVersionStatusMessageProcessor implements IMessageProcessor{
 			}
 		}
 		return response;
+	}
+
+	private boolean hasChanged(Item item, Date sinceDate) {
+		if(sinceDate == null){
+			return false;
+		}
+		
+		if(item == null || item.getLastUpdate() == null || item.getLastUpdate().getWhen() == null){
+			return false;
+		} 
+		return sinceDate.compareTo(item.getLastUpdate().getWhen()) <= 0;
 	}
 
 	private List<IMessage> processLocalChanges(ISyncSession syncSession, ArrayList<String> updatedItems) {

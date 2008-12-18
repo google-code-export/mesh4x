@@ -82,7 +82,10 @@ public class ItemEncoding implements IItemEncoding, IProtocolConstants{
 				String blockDiff = stDiffs.nextToken();
 				String[] elements = blockDiff.split(SUB_FIELD_SEPARATOR);
 				String index = elements[0];
-				String textDiff = elements[1];
+				String textDiff = "";
+				if(elements.length == 2){
+					textDiff = elements[1];
+				}
 				diffs.put(Integer.valueOf(index), textDiff);
 			}
 			

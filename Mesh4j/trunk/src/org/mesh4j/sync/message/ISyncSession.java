@@ -19,7 +19,6 @@ public interface ISyncSession {
 	void update(Item item);
 	void delete(String syncID, String by, Date when);
 	
-	boolean hasChanged(String syncID);
 	boolean hasConflict(String syncId);
 	void addConflict(String syncID);
 	void addConflict(Item conflicItem);

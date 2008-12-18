@@ -29,7 +29,9 @@ public class MessageSyncProtocolFactory {
 		GetForMergeMessageProcessor getForMergeMessage = new GetForMergeMessageProcessor(itemEncoding, mergeMessage);
 		LastVersionStatusMessageProcessor lastVersionMessage = new LastVersionStatusMessageProcessor(getForMergeMessage, mergeWithACKMessage, endMessage);
 		NoChangesMessageProcessor noChangesMessage = new NoChangesMessageProcessor(endMessage, mergeWithACKMessage);
-		BeginSyncMessageProcessor beginMessage = new BeginSyncMessageProcessor(noChangesMessage, lastVersionMessage);
+
+		EqualStatusMessageProcessor equalStatusMessage = new EqualStatusMessageProcessor(endMessage);
+		BeginSyncMessageProcessor beginMessage = new BeginSyncMessageProcessor(noChangesMessage, lastVersionMessage, equalStatusMessage);
 		CancelSyncMessageProcessor cancelMessage = new CancelSyncMessageProcessor();
 		
 		ArrayList<IMessageProcessor> msgProcessors = new ArrayList<IMessageProcessor>();
@@ -43,6 +45,7 @@ public class MessageSyncProtocolFactory {
 		msgProcessors.add(mergeWithACKMessage);
 		msgProcessors.add(noChangesMessage);
 		msgProcessors.add(cancelMessage);
+		msgProcessors.add(equalStatusMessage);
 		
 		MessageSyncProtocol syncProtocol = new MessageSyncProtocol(IProtocolConstants.PROTOCOL, beginMessage, cancelMessage, repository, msgProcessors);
 		

@@ -84,14 +84,7 @@ public class MockSyncSession implements ISyncSession{
 	@Override public List<Item> getSnapshot() {return snapshot;}
 	@Override public String getSourceId() {return "12345";}
 	@Override public IEndpoint getTarget() {return endpoint;}
-	@Override public boolean hasChanged(String syncID) {
-		for (Item snapshotItem : snapshot) {
-			if(snapshotItem.getSyncId().equals(syncID)){
-				return this.item.equals(snapshotItem);
-			}
-		}
-		return false;
-	}
+
 	@Override public boolean hasConflict(String syncId) {return this.conflicts.contains(syncId);}
 	@Override public boolean isOpen() {return open;}
 	@Override public void update(Item item) {}

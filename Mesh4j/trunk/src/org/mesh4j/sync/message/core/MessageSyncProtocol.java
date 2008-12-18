@@ -64,7 +64,7 @@ public class MessageSyncProtocol implements IMessageSyncProtocol {
 					return NO_RESPONSE;
 				}
 			} else {
-				if(syncSession.isCancelled()){
+				if(!this.initialMessage.getMessageType().equals(message.getMessageType()) && syncSession.isCancelled()){
 					this.notifyInvalidProtocolMessageOrder(message);
 					return NO_RESPONSE;
 				}
