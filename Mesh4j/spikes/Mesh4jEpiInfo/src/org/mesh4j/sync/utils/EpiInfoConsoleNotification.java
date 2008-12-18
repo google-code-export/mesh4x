@@ -110,6 +110,8 @@ public class EpiInfoConsoleNotification implements ISmsConnectionInboundOutbound
 	public void notifyCancelSync(ISyncSession syncSession) {
 		this.log(EpiInfoUITranslator.getMessageCancelSync(syncSession.getSessionId(), syncSession.getTarget().getEndpointId(), EpiInfoUITranslator.getSourceId(syncSession.getSourceId())));
 //		this.logStatus(EpiInfoUITranslator.getStatusCancelSync(syncSession.getTarget(), MsAccessSyncAdapterFactory.getFileName(syncSession.getSourceId()), MsAccessSyncAdapterFactory.getTableName(syncSession.getSourceId()), new Date()));
+		this.setEndSyncImageStatus();
+		this.epiinfoUI.setEndSync();
 	}
 
 	@Override

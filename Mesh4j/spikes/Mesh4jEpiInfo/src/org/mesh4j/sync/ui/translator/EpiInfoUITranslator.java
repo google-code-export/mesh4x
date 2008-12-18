@@ -12,6 +12,7 @@ import org.mesh4j.sync.message.protocol.ACKMergeMessageProcessor;
 import org.mesh4j.sync.message.protocol.BeginSyncMessageProcessor;
 import org.mesh4j.sync.message.protocol.CancelSyncMessageProcessor;
 import org.mesh4j.sync.message.protocol.EndSyncMessageProcessor;
+import org.mesh4j.sync.message.protocol.EqualStatusMessageProcessor;
 import org.mesh4j.sync.message.protocol.GetForMergeMessageProcessor;
 import org.mesh4j.sync.message.protocol.ItemEncoding;
 import org.mesh4j.sync.message.protocol.LastVersionStatusMessageProcessor;
@@ -123,32 +124,32 @@ public class EpiInfoUITranslator {
 	private static String translateMessageType(IMessage message){
 		String messageType = message.getMessageType();
 		if(BeginSyncMessageProcessor.MESSAGE_TYPE.equals(messageType)){
-			return "Begin sync";
+			return  MessageTranslator.translate("EPIINFO_SMS_MESSAGE_TYPE_BEGIN_SYNC");
 		}
 		if(NoChangesMessageProcessor.MESSAGE_TYPE.equals(messageType)){
-			return "No Changes";
+			return MessageTranslator.translate("EPIINFO_SMS_MESSAGE_TYPE_NO_CHANGES");
 		}
 		if(LastVersionStatusMessageProcessor.MESSAGE_TYPE.equals(messageType)){
-			return "Last Items Versions";
+			return MessageTranslator.translate("EPIINFO_SMS_MESSAGE_TYPE_LAST_VERSION");
 		}
 		if(GetForMergeMessageProcessor.MESSAGE_TYPE.equals(messageType)){
 			String syncId = GetForMergeMessageProcessor.getSyncID(message.getData());
-			return "Get For Merge: " + syncId;
+			return MessageTranslator.translate("EPIINFO_SMS_MESSAGE_TYPE_GET_FOR_MERGE", syncId);
 		}
 		if(MergeMessageProcessor.MESSAGE_TYPE.equals(messageType)){
 			String syncId = ItemEncoding.getSyncID(message.getData());
-			return "Merge: " + syncId;
+			return MessageTranslator.translate("EPIINFO_SMS_MESSAGE_TYPE_MERGE", syncId);
 		}
 		if(MergeWithACKMessageProcessor.MESSAGE_TYPE.equals(messageType)){
 			String itemData = message.getData().substring(1, message.getData().length());
 			String syncId = ItemEncoding.getSyncID(itemData);
-			return "Merge with ACK: " + syncId;
+			return MessageTranslator.translate("EPIINFO_SMS_MESSAGE_TYPE_MERGE_WITH_ACK", syncId);
 		}
 		if(EndSyncMessageProcessor.MESSAGE_TYPE.equals(messageType)){
-			return "End sync";
+			return MessageTranslator.translate("EPIINFO_SMS_MESSAGE_TYPE_END_SYNC");
 		}
 		if(ACKEndSyncMessageProcessor.MESSAGE_TYPE.equals(messageType)){
-			return "ACK of End Sync";
+			return MessageTranslator.translate("EPIINFO_SMS_MESSAGE_TYPE_ACK_END_SYNC");
 		}
 		if(ACKMergeMessageProcessor.MESSAGE_TYPE.equals(messageType)){
 			String itemData = message.getData().substring(1, message.getData().length());
@@ -157,6 +158,9 @@ public class EpiInfoUITranslator {
 		}
 		if(CancelSyncMessageProcessor.MESSAGE_TYPE.equals(messageType)){
 			return MessageTranslator.translate("EPIINFO_SMS_MESSAGE_TYPE_CANCEL", message.getSessionId());
+		}
+		if(EqualStatusMessageProcessor.MESSAGE_TYPE.equals(messageType)){
+			return MessageTranslator.translate("EPIINFO_SMS_MESSAGE_TYPE_EQUAL_STATUS");
 		}
 		return messageType;
 	}

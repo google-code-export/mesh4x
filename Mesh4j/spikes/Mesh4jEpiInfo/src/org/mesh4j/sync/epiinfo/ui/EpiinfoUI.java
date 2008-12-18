@@ -750,6 +750,7 @@ public class EpiinfoUI{
 
     		if(action == CANCEL_SYNC){
     			SyncEngineUtil.cancelSynchronize(syncEngine, textFieldPhoneNumber.getText(), textFieldDataSource.getText(), (String)comboTables.getSelectedItem());
+    			syncInProcess = false;
     			consoleNotification.setEndSyncImageStatus();
     		} 
 
