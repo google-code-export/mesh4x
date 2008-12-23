@@ -101,10 +101,11 @@ public class FeedServlet extends HttpServlet {
 			
 			Date sinceDate = this.getSinceDate(request);
 			String responseContent = this.feedRepository.readFeed(sourceID, link, sinceDate, syndicationFormat, plainMode);
-			responseContent = responseContent.replaceAll("&lt;", "<");	// TODO (JMT) remove ==>  xml.replaceAll("&lt;", "<"); 
-			responseContent = responseContent.replaceAll("&gt;", ">");
+//			responseContent = responseContent.replaceAll("&lt;", "<");	// TODO (JMT) remove ==>  xml.replaceAll("&lt;", "<"); 
+//			responseContent = responseContent.replaceAll("&gt;", ">");
 			
-			response.setContentType("text/plain");
+			//response.setContentType("text/plain");
+			response.setContentType(syndicationFormat.getContentType());
 			response.setContentLength(responseContent.length());
 			PrintWriter out = response.getWriter();
 			out.println(responseContent);
@@ -144,6 +145,8 @@ public class FeedServlet extends HttpServlet {
 				throw new ServletException(e);
 			}
 			String responseContent = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"+ propertyResolver.getSchema().asXML();
+			responseContent = responseContent.replaceAll("&lt;", "<");	// TODO (JMT) remove ==>  xml.replaceAll("&lt;", "<"); 
+			responseContent = responseContent.replaceAll("&gt;", ">");
 			
 			response.setContentType("text/plain");
 			response.setContentLength(responseContent.length());
@@ -166,6 +169,8 @@ public class FeedServlet extends HttpServlet {
 				throw new ServletException(e);
 			}
 			String responseContent = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"+ mappingsResolver.getMappings().asXML();
+			responseContent = responseContent.replaceAll("&lt;", "<");	// TODO (JMT) remove ==>  xml.replaceAll("&lt;", "<"); 
+			responseContent = responseContent.replaceAll("&gt;", ">");
 			
 			response.setContentType("text/plain");
 			response.setContentLength(responseContent.length());
@@ -230,7 +235,8 @@ public class FeedServlet extends HttpServlet {
 					String link = getFeedLink(request);
 					String responseContent = this.feedRepository.synchronize(sourceID, link, feedXml, syndicationFormat);
 					
-					response.setContentType("text/plain");
+					//response.setContentType("text/plain");
+					response.setContentType(syndicationFormat.getContentType());
 					response.setContentLength(responseContent.length());
 					PrintWriter out = response.getWriter();
 					out.println(responseContent);
@@ -316,7 +322,7 @@ public class FeedServlet extends HttpServlet {
 		} 
 		return null;
 	}
-	
+
 	private Date getSinceDate(HttpServletRequest request){
 		String modifiedSince = request.getHeader("If-Modified-Since");
 		if(modifiedSince != null && modifiedSince.trim().length() > 0){

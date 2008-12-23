@@ -7,7 +7,6 @@ import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_HIST
 import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_SYNC_DELETED;
 import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_SYNC_ID;
 import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_SYNC_NO_CONFLICTS;
-import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ELEMENT_AUTHOR;
 import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_QNAME_CONFLICTS;
 import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_QNAME_HISTORY;
 import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_QNAME_SYNC;
@@ -85,20 +84,33 @@ public class FeedReader {
 	}
 
 	public Feed read(Document document) {
-		Feed feed = new Feed();
+		
 		Element payload = DocumentHelper.createElement(ELEMENT_PAYLOAD);
+		
+		String title = "";
+		String description = "";
+		String link = "";
+		ArrayList<Item> items = new ArrayList<Item>();
 		
 		Element root = document.getRootElement();
 		List<Element> elements = getRootElements(root);
 		for (Element element : elements) {
 			if(isFeedItem(element)){
 				Item item = readItem(element);
-				feed.addItem(item);
-			} else {
+				items.add(item);
+			}else if(this.syndicationFormat.isFeedTitle(element)){
+				title = element.getText();
+			} else if(this.syndicationFormat.isFeedDescription(element)){
+				description = element.getText();
+			}else if(this.syndicationFormat.isFeedLink(element)){
+				link = element.getText();
+			} else if(this.syndicationFormat.isAditionalFeedPayload(element)){
 				payload.add(element.detach());
-			}
+			}				
 		}
 
+		Feed feed = new Feed(title, description, link);
+		feed.addItems(items);
 		feed.setPayload(payload);
 		return feed;
 	}
@@ -123,9 +135,21 @@ public class FeedReader {
 					description = element.getText();
 				}else if(this.syndicationFormat.isFeedItemLink(element)){
 					link = element.getText();
-				} else if(!SX_ELEMENT_AUTHOR.equals(element.getName())){   // skip author
-					payload.add(element.detach());	
+				} else if(this.syndicationFormat.isAditionalFeedItemPayload(element)){
+					payload.add(element.detach());
 				}				
+			}
+		}
+		
+		Element contentElement = this.syndicationFormat.getFeedItemPayloadElement(itemElement);
+		if(contentElement != null){
+			if(ISyndicationFormat.ELEMENT_PAYLOAD.equals(contentElement.getName())){
+				List<Element> contentElements = contentElement.elements();
+				for (Element element : contentElements) {
+					payload.add(element.createCopy());
+				}
+			} else {
+				payload.add(contentElement);
 			}
 		}
 		

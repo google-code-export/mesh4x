@@ -39,7 +39,7 @@ public class FeedSyncAdapterFactory implements ISyncAdapterFactory {
 		if(file.exists()){
 			return new FeedAdapter(feedFileName, identityProvider, IdGenerator.INSTANCE);
 		} else {
-			Feed feed = new Feed(sourceId, sourceId, "", RssSyndicationFormat.INSTANCE);
+			Feed feed = new Feed(sourceId, sourceId, "");
 			return new FeedAdapter(feedFileName, identityProvider, IdGenerator.INSTANCE, RssSyndicationFormat.INSTANCE, feed);
 		}
 	}

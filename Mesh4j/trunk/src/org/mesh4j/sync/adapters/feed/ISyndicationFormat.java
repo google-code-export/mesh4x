@@ -8,15 +8,26 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Namespace;
 import org.dom4j.QName;
+import org.mesh4j.sync.model.Item;
 
 public interface ISyndicationFormat {
 	
 	String getName();
 
+	String getContentType();
+	
+	boolean isFeedTitle(Element element);
+	boolean isFeedDescription(Element element);
+	boolean isFeedLink(Element element);
+	boolean isAditionalFeedPayload(Element element);
+	
 	boolean isFeedItem(Element element);
 	boolean isFeedItemTitle(Element element);
 	boolean isFeedItemDescription(Element element);
 	boolean isFeedItemLink(Element element);
+	boolean isFeedItemAuthor(Element element);
+	boolean isFeedItemPayload(Element element);
+	boolean isAditionalFeedItemPayload(Element element);
 	
 	List<Element> getRootElements(Element root);
 
@@ -26,19 +37,24 @@ public interface ISyndicationFormat {
 
 	Element addRootElement(Document document);
 
-	Element addFeedItemElement(Element root);
+	Element addFeedItemElement(Element root, Item item);
 
-	void addFeedInformation(Element payload, String title, String description, String link);
+	void addFeedInformation(Element payload, String title, String description, String link, Date lastUpdate);
 
 	Element getFeedItemTitleElement(Element itemElement);
-	Element addFeedItemTitleElement(Element itemElement);
+	Element addFeedItemTitleElement(Element itemElement, String title);
 
 	Element getFeedItemDescriptionElement(Element itemElement);
-	Element addFeedItemDescriptionElement(Element itemElement);
+	Element addFeedItemDescriptionElement(Element itemElement, String description);
 
 	Element getFeedItemLinkElement(Element itemElement);
-	Element addFeedItemLinkElement(Element itemElement);
+	Element addFeedItemLinkElement(Element itemElement, String absoluteLink);
 	
+	void addAuthorElement(Element itemElement, String author);
+
+	Element getFeedItemPayloadElement(Element itemElement);
+	void addFeedItemPayloadElement(Element itemElement, Element payload);
+
 	// / <summary>
 	// / Namespace of the FeedSync elements.
 	// / </summary>

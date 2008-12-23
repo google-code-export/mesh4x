@@ -75,17 +75,9 @@ public class XMLContent extends Content {
     }
 
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public void addToFeedPayload(Sync sync, Element itemElement, ISyndicationFormat format){
-		
-		if(ISyndicationFormat.ELEMENT_PAYLOAD.equals(this.getPayload().getName())){
-			List<Element> payloadElements = this.getPayload().elements(); 
-			for (Element payloadElement : payloadElements) {
-				itemElement.add(payloadElement.createCopy());
-			}
-		} else {
-			itemElement.add(this.getPayload().createCopy());
-		}
 		
 		String defaultValue = "---";
 		
@@ -98,15 +90,9 @@ public class XMLContent extends Content {
 			myTitle = this.getTitle();
 		}
 		
-		
 		if(myTitle != null){
-			Element titleElement = format.getFeedItemTitleElement(itemElement);
-			if(titleElement == null){
-				titleElement = format.addFeedItemTitleElement(itemElement);
-			}
-			titleElement.setText(myTitle);
+			format.addFeedItemTitleElement(itemElement, myTitle);
 		}
-
 
 		String myDesc = null;
 		if(this.getDescription() == null || this.getDescription().length() == 0){
@@ -118,23 +104,27 @@ public class XMLContent extends Content {
 		}
 		
 		if(myDesc != null){
-			Element descriptionElement = format.getFeedItemDescriptionElement(itemElement);
-			if(descriptionElement == null){
-				descriptionElement = format.addFeedItemDescriptionElement(itemElement);
-			}
-			descriptionElement.setText(myDesc);
+			format.addFeedItemDescriptionElement(itemElement, myDesc);
 		}
 		
 		if(this.getLink() != null && this.getLink().length() > 0){
-			Element linkElement = format.getFeedItemLinkElement(itemElement);
-			if(linkElement == null){
-				linkElement = format.addFeedItemLinkElement(itemElement);
+			format.addFeedItemLinkElement(itemElement, this.getLink());
+		}
+		
+		if(ISyndicationFormat.ELEMENT_PAYLOAD.equals(this.getPayload().getName())){
+			List<Element> payloadElements = this.getPayload().elements();
+			
+			if(payloadElements.size() > 1){
+				format.addFeedItemPayloadElement(itemElement, this.getPayload().createCopy());
+			} else if(payloadElements.size() == 1){
+				format.addFeedItemPayloadElement(itemElement, payloadElements.get(0).createCopy());
 			}
-			linkElement.setText(this.getLink());
-		}		
+		} else {
+			format.addFeedItemPayloadElement(itemElement, this.getPayload().createCopy());
+		}
+		
 	}
 }
-
 
 //XMLContent contextAsXMLContent = (XMLContent) content;
 //if(contextAsXMLContent.getTitle() != null && contextAsXMLContent.getTitle().trim().length() > 0){

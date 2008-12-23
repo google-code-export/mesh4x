@@ -219,10 +219,7 @@ public class RssFeedWriterTests {
 		Element authorElement = itemElement.element(RssSyndicationFormat.SX_ELEMENT_AUTHOR);
 		Assert.assertNotNull(authorElement);
 		
-		Element authorNameElement = authorElement.element(RssSyndicationFormat.SX_ELEMENT_NAME);
-		Assert.assertNotNull(authorNameElement);
-		
-		Assert.assertEquals(by, authorNameElement.getTextTrim());
+		Assert.assertEquals(by+"@mesh4x.example", authorElement.getTextTrim());
 	}
 
 }

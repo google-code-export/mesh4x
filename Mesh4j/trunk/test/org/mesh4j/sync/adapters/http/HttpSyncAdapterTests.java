@@ -1,20 +1,21 @@
 package org.mesh4j.sync.adapters.http;
 
 import java.net.MalformedURLException;
+import java.util.Date;
 import java.util.List;
 
 import junit.framework.Assert;
 
-import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
-import org.jaxen.JaxenException;
+import org.dom4j.Element;
 import org.junit.Before;
 import org.junit.Test;
 import org.mesh4j.sync.adapters.feed.Feed;
-import org.mesh4j.sync.adapters.feed.FeedReader;
+import org.mesh4j.sync.adapters.feed.XMLContent;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.Item;
+import org.mesh4j.sync.model.Sync;
 import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.test.utils.TestHelper;
 
@@ -28,51 +29,62 @@ public class HttpSyncAdapterTests {
 	
 	@Before
 	public void setUp() throws MalformedURLException{
-		String path = "http://localhost:7777/feeds/KML";
+		String path = "http://localhost:9090/mesh4x/feeds/myMesh/myFeed";
 		this.httpAdapter = new HttpSyncAdapter(path, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 	}
 		
 	@Test
 	public void shouldExecuteGetAll(){
 		List<Item> items = this.httpAdapter.getAll();
-		Assert.assertEquals(0, items.size());
+		Assert.assertNotNull(items);
 	}
 	
 	@Test
 	public void shouldExecuteGetAllSince(){
 		List<Item> items = this.httpAdapter.getAllSince(TestHelper.now());
-		Assert.assertEquals(0, items.size());
+		Assert.assertNotNull(items);
 	}
 
 	
 	@Test
-	public void shouldExecuteMerge() throws DocumentException, JaxenException{
+	public void shouldExecuteMerge() throws Exception{
 		
-		String newID = IdGenerator.INSTANCE.newID();
+		Date now = TestHelper.now();
+		Thread.sleep(500);
+		int size = this.httpAdapter.getAll().size();
+		int size1 = this.httpAdapter.getAllSince(now).size();
 		
-		String xml ="<?xml version=\"1.0\" encoding=\"utf-8\"?>"+
-		"<rss version=\"2.0\" xmlns:sx=\"http://feedsync.org/2007/feedsync\">"+
-		 "<channel> "+			
-			"<item>"+
-		   "<title>Buy groceries</title>"+
-		   "<user><name>jose</name></user>"+
-		   "<description>Get milk, eggs, butter and bread</description>"+
-		   "<sx:sync id=\""+ newID +"\" updates=\"3\">"+
-		    "<sx:history sequence=\"3\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/>"+
-		    "<sx:history sequence=\"2\" when=\"2005-05-21T10:43:33Z\" by=\"REO1750\"/>"+
-		    "<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"+
-		   "</sx:sync>"+
-		  "</item>"+
-		  "</channel>"+
-		 "</rss>";
+		String syncId = IdGenerator.INSTANCE.newID();		
+
+		Element payload = DocumentHelper.createElement("foo");
+		payload.addElement("bar").setText("fooBar");
 		
-		FeedReader reader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
-		Feed feed = reader.read(DocumentHelper.parseText(xml));
+		XMLContent content = new XMLContent(syncId, "myTitle", "myDesc", payload);
+		Sync sync = new Sync(syncId, "jmt", TestHelper.now(), false);
+		Item item = new Item(content, sync);
+		
+		Feed feed = new Feed(item);
 				
 		List<Item> result = this.httpAdapter.merge(feed.getItems());
 		Assert.assertEquals(0, result.size());
+		
+		List<Item> items = this.httpAdapter.getAll();
+		Assert.assertEquals(size + 1, items.size());
+		
+		items = this.httpAdapter.getAllSince(now);
+		Assert.assertEquals(size1 + 1, items.size());
 	}
+
 	
-	// TODO (JMT) test
-	
+	@Test
+	public void shouldObtainsSchema(){
+		String schema = this.httpAdapter.getSchema();
+		Assert.assertNotNull(schema);
+	}
+
+	@Test
+	public void shouldObtainsMappings(){
+		String mappings = this.httpAdapter.getMappings();
+		Assert.assertNotNull(mappings);
+	}
 }

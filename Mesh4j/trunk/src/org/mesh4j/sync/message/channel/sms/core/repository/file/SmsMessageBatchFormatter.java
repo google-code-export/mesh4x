@@ -54,7 +54,7 @@ public class SmsMessageBatchFormatter {
 	private static Element createMessageElement(int sequence, SmsMessage message) {
 		Element msgElement = DocumentHelper.createElement(ELEMENT_MESSAGE);
 		msgElement.addAttribute(ATTRIBUTE_SEQUENCE, String.valueOf(sequence));
-		msgElement.addAttribute(ATTRIBUTE_DATE, DateHelper.formatRFC822(message.getLastModificationDate()));
+		msgElement.addAttribute(ATTRIBUTE_DATE, DateHelper.formatW3CDateTime(message.getLastModificationDate()));
 		msgElement.setText(message.getText());
 		return msgElement;
 	}
@@ -80,7 +80,7 @@ public class SmsMessageBatchFormatter {
 
 	private static void addBatchMessage(SmsMessageBatch batch, Element msgElement) {
 		int sequence = Integer.parseInt(msgElement.attributeValue(ATTRIBUTE_SEQUENCE));
-		Date date = DateHelper.parseRFC822(msgElement.attributeValue(ATTRIBUTE_DATE));
+		Date date = DateHelper.parseW3CDateTime(msgElement.attributeValue(ATTRIBUTE_DATE));
 		String msgText = msgElement.getText();
 		batch.addMessage(sequence, new SmsMessage(msgText, date));
 	}

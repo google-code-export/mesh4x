@@ -66,7 +66,7 @@ public class SyncEngineUtil {
 			if(file.exists()){
 				return new FeedAdapter(endpoint, identityProvider, idGenerator);
 			} else {
-				Feed feed = new Feed(endpoint, endpoint, "", RssSyndicationFormat.INSTANCE);
+				Feed feed = new Feed(endpoint, endpoint, "");
 				return new FeedAdapter(endpoint, identityProvider, idGenerator, RssSyndicationFormat.INSTANCE, feed);
 			}
 		}else if(isKML(endpoint)){

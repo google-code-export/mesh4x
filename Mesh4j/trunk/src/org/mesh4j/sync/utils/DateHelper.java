@@ -265,23 +265,27 @@ public class DateHelper {
 	// 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19
 	public static Date parseDateYYYYMMDDHHMMSS(String sDate, TimeZone timeZone) {
 		
-		int year = Integer.parseInt(sDate.substring(0, 4));
-		int month = Integer.parseInt(sDate.substring(5, 7)) - 1;
-		int day = Integer.parseInt(sDate.substring(8, 10));
-		int hour = Integer.parseInt(sDate.substring(11, 13));
-		int minute = Integer.parseInt(sDate.substring(14, 16)) - 1;
-		int second = Integer.parseInt(sDate.substring(17, 19));
-		
-		Calendar cal = Calendar.getInstance();
-		if(timeZone != null){
-			cal.setTimeZone(timeZone);
+		try{
+			int year = Integer.parseInt(sDate.substring(0, 4));
+			int month = Integer.parseInt(sDate.substring(5, 7)) - 1;
+			int day = Integer.parseInt(sDate.substring(8, 10));
+			int hour = Integer.parseInt(sDate.substring(11, 13));
+			int minute = Integer.parseInt(sDate.substring(14, 16)) - 1;
+			int second = Integer.parseInt(sDate.substring(17, 19));
+			
+			Calendar cal = Calendar.getInstance();
+			if(timeZone != null){
+				cal.setTimeZone(timeZone);
+			}
+			cal.set(Calendar.YEAR, year);
+			cal.set(Calendar.MONTH, month);
+			cal.set(Calendar.DAY_OF_MONTH, day);
+			cal.set(Calendar.HOUR_OF_DAY, hour);
+			cal.set(Calendar.MINUTE, minute);
+			cal.set(Calendar.SECOND, second);
+			return cal.getTime();
+		} catch (Exception e) {
+			return new Date(sDate);
 		}
-		cal.set(Calendar.YEAR, year);
-		cal.set(Calendar.MONTH, month);
-		cal.set(Calendar.DAY_OF_MONTH, day);
-		cal.set(Calendar.HOUR_OF_DAY, hour);
-		cal.set(Calendar.MINUTE, minute);
-		cal.set(Calendar.SECOND, second);
-		return cal.getTime();
 	}
 }

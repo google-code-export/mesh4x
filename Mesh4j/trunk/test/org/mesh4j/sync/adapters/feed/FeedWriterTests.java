@@ -36,8 +36,8 @@ public class FeedWriterTests {
 		FeedWriter writer = new FeedWriter(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		writer.write(root, item);
 		
-		Assert.assertEquals("<items><item><foo><bar></bar></foo><title>myTitle</title><description>myDesc</description><author><name>jmt</name></author><sx:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" deleted=\"false\" id=\""+syncID+"\" noconflicts=\"false\" updates=\"1\"><sx:history by=\"jmt\" sequence=\"1\" when=\""+ DateHelper.formatRFC822(date)+"\"></sx:history></sx:sync></item></items>", XMLHelper.canonicalizeXML(root));		
-		
+		Assert.assertEquals("<items><item><guid isPermaLink=\"false\">urn:uuid:"+syncID+"</guid><pubDate>"+DateHelper.formatRFC822(date)+"</pubDate><title>myTitle</title><description>myDesc</description><content:encoded xmlns:content=\"http://purl.org/rss/1.0/modules/content/\">&lt;foo&gt;&lt;bar&gt;&lt;/bar&gt;&lt;/foo&gt;</content:encoded><author>jmt@mesh4x.example</author><sx:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" deleted=\"false\" id=\""+syncID+"\" noconflicts=\"false\" updates=\"1\"><sx:history by=\"jmt\" sequence=\"1\" when=\""+ DateHelper.formatW3CDateTime(date)+"\"></sx:history></sx:sync></item></items>", XMLHelper.canonicalizeXML(root));
+
 	}
 	
 	@Test
@@ -64,8 +64,7 @@ public class FeedWriterTests {
 		FeedWriter writer = new FeedWriter(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		writer.write(root, item);
 		
-		Assert.assertEquals("<items><item><foo><bar></bar></foo><title>myTitle</title><description>myDesc</description><author><name>jmt</name></author><sx:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" deleted=\"false\" id=\""+syncID+"\" noconflicts=\"false\" updates=\"1\"><sx:history by=\"jmt\" sequence=\"1\" when=\""+ DateHelper.formatRFC822(date)+"\"></sx:history></sx:sync></item></items>", XMLHelper.canonicalizeXML(root));		
-		
+		Assert.assertEquals("<items><item><guid isPermaLink=\"false\">urn:uuid:"+syncID+"</guid><pubDate>"+DateHelper.formatRFC822(date)+"</pubDate><title>myTitle</title><description>myDesc</description><content:encoded xmlns:content=\"http://purl.org/rss/1.0/modules/content/\">&lt;foo&gt;&lt;bar&gt;&lt;/bar&gt;&lt;/foo&gt;</content:encoded><author>jmt@mesh4x.example</author><sx:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" deleted=\"false\" id=\""+syncID+"\" noconflicts=\"false\" updates=\"1\"><sx:history by=\"jmt\" sequence=\"1\" when=\""+DateHelper.formatW3CDateTime(date)+"\"></sx:history></sx:sync></item></items>", XMLHelper.canonicalizeXML(root));
 	}
 	
 	@Test
@@ -77,12 +76,6 @@ public class FeedWriterTests {
 		Element fooElement = element.addElement("foo");
 		fooElement.addElement("bar");
 		
-		Element elementTitle = RssSyndicationFormat.INSTANCE.addFeedItemTitleElement(element);
-		elementTitle.setText("abc");
-		
-		Element elementDescription = RssSyndicationFormat.INSTANCE.addFeedItemDescriptionElement(element);
-		elementDescription.setText("abc");
-		
 		Date date = TestHelper.makeDate(2008, 1, 1, 1, 1, 1, 1);
 		XMLContent content = new XMLContent(syncID, null, null, element);
 		Sync sync = new Sync(syncID, "jmt", date, false);
@@ -92,7 +85,8 @@ public class FeedWriterTests {
 		FeedWriter writer = new FeedWriter(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		writer.write(root, item);
 		
-		Assert.assertEquals("<items><item><foo><bar></bar></foo><title>---</title><description>---</description><author><name>jmt</name></author><sx:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" deleted=\"false\" id=\""+syncID+"\" noconflicts=\"false\" updates=\"1\"><sx:history by=\"jmt\" sequence=\"1\" when=\""+ DateHelper.formatRFC822(date)+"\"></sx:history></sx:sync></item></items>", XMLHelper.canonicalizeXML(root));		
+		Assert.assertEquals("<items><item><guid isPermaLink=\"false\">urn:uuid:"+syncID+"</guid><pubDate>"+DateHelper.formatRFC822(date)+"</pubDate><title>---</title><description>---</description><content:encoded xmlns:content=\"http://purl.org/rss/1.0/modules/content/\">&lt;foo&gt;&lt;bar&gt;&lt;/bar&gt;&lt;/foo&gt;</content:encoded><author>jmt@mesh4x.example</author><sx:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" deleted=\"false\" id=\""+syncID+"\" noconflicts=\"false\" updates=\"1\"><sx:history by=\"jmt\" sequence=\"1\" when=\""+DateHelper.formatW3CDateTime(date)+"\"></sx:history></sx:sync></item></items>", XMLHelper.canonicalizeXML(root));
+		
 		
 	}
 }

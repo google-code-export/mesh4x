@@ -7,8 +7,6 @@ import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_SYNC
 import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_SYNC_ID;
 import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_SYNC_NO_CONFLICTS;
 import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ATTRIBUTE_SYNC_UPDATES;
-import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ELEMENT_AUTHOR;
-import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_ELEMENT_NAME;
 import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_QNAME_CONFLICTS;
 import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_QNAME_HISTORY;
 import static org.mesh4j.sync.adapters.feed.ISyndicationFormat.SX_QNAME_SYNC;
@@ -61,6 +59,8 @@ public class FeedWriter {
 	public void write(Document document, Feed feed, boolean plainMode) throws DocumentException {
 		Element root = this.addRootElement(document);
 		
+		this.syndicationFormat.addFeedInformation(root, feed.getTitle(), feed.getDescription(), feed.getLink(), feed.getLastUpdate());
+		
 		if(feed.getPayload() != null){
 			this.writePayload(root, feed.getPayload());
 		}
@@ -87,7 +87,7 @@ public class FeedWriter {
 	}
 	
 	public void write(Element root, Item item, boolean plainMode){
-		Element itemElement = this.addFeedItemElement(root);
+		Element itemElement = this.addFeedItemElement(root, item);
 		
 		this.writeContent(itemElement, item.getSync(), item.getContent());
 		
@@ -97,20 +97,7 @@ public class FeedWriter {
 			by = lastUpdate.getBy();
 		}
 		
-		Element author = itemElement.element(SX_ELEMENT_AUTHOR);
-		if(author == null){
-			author = itemElement.addElement(SX_ELEMENT_AUTHOR);
-			Element name = author.addElement(SX_ELEMENT_NAME);
-			name.setText(by);
-		} else {
-			Element name = author.element(SX_ELEMENT_NAME);
-			if(name == null){
-				name = author.addElement(SX_ELEMENT_NAME);
-				name.setText(by);
-			} else if(!name.getTextTrim().equals(by.trim())){
-				name.setText(by);
-			}
-		}
+		this.syndicationFormat.addAuthorElement(itemElement, by);
 		
 		if(item.getSync() != null && !plainMode){
 			writeSync(itemElement, item.getSync());
@@ -121,8 +108,8 @@ public class FeedWriter {
 		content.addToFeedPayload(sync, itemElement, this.syndicationFormat);
 	}
 
-	protected Element addFeedItemElement(Element root) {
-		return this.syndicationFormat.addFeedItemElement(root);
+	protected Element addFeedItemElement(Element root, Item item) {
+		return this.syndicationFormat.addFeedItemElement(root, item);
 	}
 
 	protected String parseDate(Date date) {

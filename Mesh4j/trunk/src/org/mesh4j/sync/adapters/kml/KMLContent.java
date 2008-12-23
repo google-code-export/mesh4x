@@ -72,14 +72,9 @@ public class KMLContent extends Content{
 	
 	@Override
 	public void addToFeedPayload(Sync sync, Element itemElement, ISyndicationFormat format){
-		
-		Element titleElement = format.addFeedItemTitleElement(itemElement);
-		titleElement.setText(this.getPayload().getName());
-		
-		Element descriptionElement = format.addFeedItemDescriptionElement(itemElement);
-		descriptionElement.setText("Id: " + this.getId() + " version: " + this.getVersion());
-		
-		itemElement.add(this.getPayload().createCopy());
+		format.addFeedItemTitleElement(itemElement, this.getPayload().getName());
+		format.addFeedItemDescriptionElement(itemElement, "Id: " + this.getId() + " version: " + this.getVersion());
+		format.addFeedItemPayloadElement(itemElement, this.getPayload().createCopy());
 	}
 
 

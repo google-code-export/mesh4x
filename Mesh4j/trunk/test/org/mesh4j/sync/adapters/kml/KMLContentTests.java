@@ -45,6 +45,7 @@ public class KMLContentTests {
 	public void shouldAddToFeedPayload(){
 		Element feedPayload = DocumentHelper.createElement("feedPayload");
 		Element payload = DocumentHelper.createElement("payload");
+		payload.addElement("foo");
 		
 		KMLContent content = new KMLContent(payload, "1");
 		
@@ -54,7 +55,7 @@ public class KMLContentTests {
 		Assert.assertNotNull(AtomSyndicationFormat.INSTANCE.getFeedItemTitleElement(feedPayload).getText());
 		Assert.assertNotNull(AtomSyndicationFormat.INSTANCE.getFeedItemDescriptionElement(feedPayload));
 		Assert.assertNotNull(AtomSyndicationFormat.INSTANCE.getFeedItemDescriptionElement(feedPayload).getText());
-		Assert.assertNotNull(feedPayload.element("payload"));
+		Assert.assertNotNull(feedPayload.element("content").getData());
 	}
 	
 	@Test(expected=IllegalArgumentException.class)

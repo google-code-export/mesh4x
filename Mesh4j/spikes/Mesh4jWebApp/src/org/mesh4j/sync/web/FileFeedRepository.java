@@ -19,7 +19,7 @@ public class FileFeedRepository extends AbstractFeedRepository {
 	public FileFeedRepository(String rootPath){
 		super();
 		this.rootPath = rootPath;
-		Feed feed = new Feed("Mesh", "Available Mesh", "mesh4x/feeds", RssSyndicationFormat.INSTANCE);
+		Feed feed = new Feed("Mesh", "Available Mesh", "mesh4x/feeds");
 		new FeedAdapter(this.rootPath + "mesh.xml", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, RssSyndicationFormat.INSTANCE, feed);
 	}	
 	

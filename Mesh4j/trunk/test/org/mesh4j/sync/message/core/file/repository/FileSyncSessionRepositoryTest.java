@@ -187,7 +187,7 @@ public class FileSyncSessionRepositoryTest {
 
 		Element syncSessionElement = feed.getPayload().element(FileSyncSessionRepository.ELEMENT_SYNC_SESSION);
 		Assert.assertNotNull(syncSessionElement);
-		Assert.assertEquals(DateHelper.formatRFC822(date), syncSessionElement.attributeValue(FileSyncSessionRepository.ATTRIBUTE_LAST_SYNC_DATE));
+		Assert.assertEquals(DateHelper.formatW3CDateTime(date), syncSessionElement.attributeValue(FileSyncSessionRepository.ATTRIBUTE_LAST_SYNC_DATE));
 	}
 	
 	@Test
@@ -495,7 +495,7 @@ public class FileSyncSessionRepositoryTest {
 
 		Element syncSessionElement = feed.getPayload().element(FileSyncSessionRepository.ELEMENT_SYNC_SESSION);
 		Assert.assertNotNull(syncSessionElement);
-		Assert.assertEquals(DateHelper.formatRFC822(date), syncSessionElement.attributeValue(FileSyncSessionRepository.ATTRIBUTE_LAST_SYNC_DATE));
+		Assert.assertEquals(DateHelper.formatW3CDateTime(date), syncSessionElement.attributeValue(FileSyncSessionRepository.ATTRIBUTE_LAST_SYNC_DATE));
 	}
 	
 	@Test(expected=MeshException.class)
@@ -948,7 +948,7 @@ public class FileSyncSessionRepositoryTest {
 		Assert.assertNotNull(syncSessionLoaded);		
 		Assert.assertSame(syncSessionLoaded, sessionFactory.get(sessionId));
 		
-		Assert.assertEquals(DateHelper.parseRFC822("Mon, 30 Jun 2008 18:31:23 GMT"), syncSessionLoaded.getLastSyncDate());
+		Assert.assertEquals(DateHelper.parseW3CDateTime("2008-06-30T18:31:23Z"), syncSessionLoaded.getLastSyncDate());
 	}
 	
 	@Test

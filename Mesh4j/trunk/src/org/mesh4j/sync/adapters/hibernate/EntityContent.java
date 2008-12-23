@@ -74,13 +74,8 @@ public class EntityContent extends Content{
 
 	@Override
 	public void addToFeedPayload(Sync sync, Element itemElement, ISyndicationFormat format){
-			
-		Element titleElement = format.addFeedItemTitleElement(itemElement);
-		titleElement.setText(this.entityName);
-		
-		Element descriptionElement = format.addFeedItemDescriptionElement(itemElement);
-		descriptionElement.setText("Entity id: " + this.getId() + " version: " + this.getVersion());
-		
-		itemElement.add(this.getPayload().createCopy());
+		format.addFeedItemTitleElement(itemElement, this.entityName);
+		format.addFeedItemDescriptionElement(itemElement, "Entity id: " + this.getId() + " version: " + this.getVersion());
+		format.addFeedItemPayloadElement(itemElement, this.getPayload().createCopy());
 	}
 }

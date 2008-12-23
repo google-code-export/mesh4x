@@ -92,7 +92,7 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 		}
 		
 		String title = getFeedTitle(sourceID);
-		Feed feed = new Feed(title, "", link, syndicationFormat);
+		Feed feed = new Feed(title, "", link);
 		feed.addItems(items);
 		
 		String xml = writeFeedAsXml(feed, syndicationFormat, plainMode);
@@ -110,7 +110,7 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 		List<Item> conflicts = syncEngine.synchronize();
 		
 		String title = getFeedTitle(sourceID);
-		Feed feedResult = new Feed(title, "conflicts", link, syndicationFormat);
+		Feed feedResult = new Feed(title, "conflicts", link);
 		feedResult.addItems(conflicts);
 		return this.writeFeedAsXml(feedResult, syndicationFormat, false);
 	}
@@ -130,7 +130,7 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 	@Override
 	public void addNewFeed(String sourceID, ISyndicationFormat syndicationFormat, String link, String description, String schema, String mappings, String by) {
 		String title = getFeedTitle(sourceID);
-		Feed feed = new Feed(title, description, link, syndicationFormat);
+		Feed feed = new Feed(title, description, link);
 		
 		this.addNewFeed(sourceID, feed, syndicationFormat);
 		
@@ -188,8 +188,8 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 			Item item = items.get(0);
 			
 			String xml = item.getContent().getPayload().asXML();
-			xml = xml.replaceAll("&lt;", "<");						// TODO (JMT) remove ==>  xml.replaceAll("&lt;", "<"); 
-			xml = xml.replaceAll("&gt;", ">");
+//			xml = xml.replaceAll("&lt;", "<");						// TODO (JMT) remove ==>  xml.replaceAll("&lt;", "<"); 
+//			xml = xml.replaceAll("&gt;", ">");
 			
 			schema = DocumentHelper.parseText(xml).getRootElement();
 			if(ISyndicationFormat.ELEMENT_PAYLOAD.equals(schema.getName())){
@@ -214,8 +214,8 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 			Item item = items.get(0);
 			
 			String xml = item.getContent().getPayload().asXML();
-			xml = xml.replaceAll("&lt;", "<");						// TODO (JMT) remove ==>  xml.replaceAll("&lt;", "<"); 
-			xml = xml.replaceAll("&gt;", ">");
+//			xml = xml.replaceAll("&lt;", "<");						// TODO (JMT) remove ==>  xml.replaceAll("&lt;", "<"); 
+//			xml = xml.replaceAll("&gt;", ">");
 			
 			mappings = DocumentHelper.parseText(xml).getRootElement();
 			if(ISyndicationFormat.ELEMENT_PAYLOAD.equals(mappings.getName())){

@@ -239,7 +239,7 @@ public class FileSyncSessionRepository implements ISyncSessionRepository{
 		elementSession.addAttribute(ATTRIBUTE_VERSION, String.valueOf(syncSession.getVersion()));
 		elementSession.addAttribute(ATTRIBUTE_SOURCE_ID, syncSession.getSourceId());
 		elementSession.addAttribute(ATTRIBUTE_ENDPOINT_ID, syncSession.getTarget().getEndpointId());
-		elementSession.addAttribute(ATTRIBUTE_LAST_SYNC_DATE, syncSession.getLastSyncDate() == null ? "" : DateHelper.formatRFC822(syncSession.getLastSyncDate()));
+		elementSession.addAttribute(ATTRIBUTE_LAST_SYNC_DATE, syncSession.getLastSyncDate() == null ? "" : DateHelper.formatW3CDateTime(syncSession.getLastSyncDate()));
 		elementSession.addAttribute(ATTRIBUTE_FULL, syncSession.isFullProtocol() ? "true" : "false");
 		elementSession.addAttribute(ATTRIBUTE_OPEN, syncSession.isOpen() ? "true" : "false");
 		elementSession.addAttribute(ATTRIBUTE_CANCELLED, syncSession.isCancelled() ? "true" : "false");
@@ -269,7 +269,7 @@ public class FileSyncSessionRepository implements ISyncSessionRepository{
 		String sourceId = syncElement.attributeValue(ATTRIBUTE_SOURCE_ID);
 		String endpointId = syncElement.attributeValue(ATTRIBUTE_ENDPOINT_ID);
 		String dateAsString = syncElement.attributeValue(ATTRIBUTE_LAST_SYNC_DATE);
-		Date date = (dateAsString == null || dateAsString.length() == 0) ? null : DateHelper.parseRFC822(dateAsString);
+		Date date = (dateAsString == null || dateAsString.length() == 0) ? null : DateHelper.parseW3CDateTime(dateAsString);
 		boolean isFull = Boolean.valueOf(syncElement.attributeValue(ATTRIBUTE_FULL));
 		boolean isOpen = Boolean.valueOf(syncElement.attributeValue(ATTRIBUTE_OPEN));
 		boolean isCancelled = Boolean.valueOf(syncElement.attributeValue(ATTRIBUTE_CANCELLED));
