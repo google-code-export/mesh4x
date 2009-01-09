@@ -35,6 +35,7 @@ import org.apache.commons.logging.LogFactory;
 import org.mesh4j.sync.adapters.http.HttpSyncAdapterFactory;
 import org.mesh4j.sync.adapters.msaccess.MsAccessHelper;
 import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
+import org.mesh4j.sync.mappings.SyncMode;
 import org.mesh4j.sync.message.MessageSyncEngine;
 import org.mesh4j.sync.message.channel.sms.connection.smslib.Modem;
 import org.mesh4j.sync.message.channel.sms.connection.smslib.ModemHelper;
@@ -191,7 +192,8 @@ public class EpiinfoUI{
 		
 		if(modem != null && !modem.getManufacturer().equals(EpiInfoUITranslator.getLabelDemo())){
 			this.syncEngine = SyncEngineUtil.createSyncEngine(fileNameResolver, modem, baseDirectory, senderDelay, receiverDelay, maxMessageLenght,
-				identityProvider, messageEncoding, consoleNotification, consoleNotification);  
+				identityProvider, messageEncoding, consoleNotification, consoleNotification); 
+			this.syncEngine.getChannel().startUp();
 		}
 				
 		if(this.syncEngine == null){
@@ -709,8 +711,15 @@ public class EpiinfoUI{
 	    				SyncEngineUtil.registerNewEndpointToEmulator(syncEngine, textFieldPhoneNumber.getText(), messageEncoding, 
 	    					identityProvider, baseDirectory, senderDelay, receiverDelay, readDelay, channelDelay, maxMessageLenght);
 	    			}
-					SyncEngineUtil.synchronize(syncEngine, textFieldPhoneNumber.getText(), 
-	    				dataSource, tableName, identityProvider, baseDirectory, fileNameResolver);
+					SyncEngineUtil.synchronize(
+						syncEngine, 
+						SyncMode.SendAndReceiveChanges,
+						textFieldPhoneNumber.getText(), 
+	    				dataSource, 
+	    				tableName, 
+	    				identityProvider, 
+	    				baseDirectory, 
+	    				fileNameResolver);
 
 	    		} catch(Throwable t){
 	    			syncInProcess = false;

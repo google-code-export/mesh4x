@@ -23,6 +23,9 @@ import org.mesh4j.sync.adapters.kml.timespan.decorator.KMLTimeSpanDecoratorSyncA
 import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
 import org.mesh4j.sync.filter.CompoundFilter;
 import org.mesh4j.sync.filter.NonDeletedFilter;
+import org.mesh4j.sync.mappings.DataSourceMapping;
+import org.mesh4j.sync.mappings.EndpointMapping;
+import org.mesh4j.sync.mappings.SyncMode;
 import org.mesh4j.sync.message.IChannel;
 import org.mesh4j.sync.message.IMessageSyncAdapter;
 import org.mesh4j.sync.message.IMessageSyncAware;
@@ -30,6 +33,7 @@ import org.mesh4j.sync.message.IMessageSyncProtocol;
 import org.mesh4j.sync.message.MessageSyncEngine;
 import org.mesh4j.sync.message.channel.sms.SmsChannelFactory;
 import org.mesh4j.sync.message.channel.sms.SmsEndpoint;
+import org.mesh4j.sync.message.channel.sms.batch.SmsMessage;
 import org.mesh4j.sync.message.channel.sms.connection.ISmsConnectionInboundOutboundNotification;
 import org.mesh4j.sync.message.channel.sms.connection.InMemorySmsConnection;
 import org.mesh4j.sync.message.channel.sms.connection.SmsConnectionInboundOutboundNotification;
@@ -41,6 +45,7 @@ import org.mesh4j.sync.message.channel.sms.core.SmsChannel;
 import org.mesh4j.sync.message.channel.sms.core.SmsEndpointFactory;
 import org.mesh4j.sync.message.core.LoggerMessageSyncAware;
 import org.mesh4j.sync.message.core.MessageSyncAdapter;
+import org.mesh4j.sync.message.core.NonMessageEncoding;
 import org.mesh4j.sync.message.core.repository.MessageSyncAdapterFactory;
 import org.mesh4j.sync.message.encoding.IMessageEncoding;
 import org.mesh4j.sync.message.protocol.MessageSyncProtocolFactory;
@@ -72,7 +77,7 @@ public class SyncEngineUtil {
 		}
 	}
 	
-	public static void synchronize(MessageSyncEngine syncEngine, String toPhoneNumber, String mdbFileName, String mdbTableName, IIdentityProvider identityProvider, String baseDirectory, ISourceIdResolver fileNameResolver) throws Exception {
+	public static void synchronize(MessageSyncEngine syncEngine, SyncMode syncMode, String toPhoneNumber, String mdbFileName, String mdbTableName, IIdentityProvider identityProvider, String baseDirectory, ISourceIdResolver fileNameResolver) throws Exception {
 		
 		String sourceID = MsAccessSyncAdapterFactory.createSourceId(mdbFileName, mdbTableName);
 		IMessageSyncAdapter adapter = syncEngine.getSource(sourceID);
@@ -81,7 +86,7 @@ public class SyncEngineUtil {
 			ISyncAdapter syncAdapter = syncFactory.createSyncAdapter(sourceID, identityProvider);
 			adapter = new MessageSyncAdapter(sourceID, identityProvider, syncAdapter);
 		}
-		syncEngine.synchronize(adapter, new SmsEndpoint(toPhoneNumber), true);
+		syncEngine.synchronize(adapter, new SmsEndpoint(toPhoneNumber), true, syncMode.shouldSendChanges(), syncMode.shouldReceiveChanges());
 	}
 
 	public static void cancelSynchronize(MessageSyncEngine syncEngine,String phoneNumber, String mdbFileName, String mdbTableName) {
@@ -194,7 +199,6 @@ public class SyncEngineUtil {
 		propertiesProvider.store();
 	}
 
-
 	@SuppressWarnings("unchecked")
 	public static void generateKML(String geoCoderKey, String templateFileName, String fromPhoneNumber, String mdbFileName, String mdbTableName, String baseDirectory, ISourceIdResolver fileNameResolver, IIdentityProvider identityProvider) throws Exception{
 		
@@ -257,5 +261,63 @@ public class SyncEngineUtil {
 		byte[] bytes = FileUtils.read(templateFileName);
 		String template = new String(bytes);
 		FileUtils.write(fileName, MessageFormat.format(template, tableName, url).getBytes());
+	}
+
+	// NEW EXAMPLE UI
+
+	public static MessageSyncEngine createSyncEngine(ExampleConsoleNotification consoleNotification) {
+// TODO (JMT) replace properties from mesh4x.properties file
+		FileNameResolver fileNameResolver = new FileNameResolver("C:\\mesh4x\\demos\\epiinfo\\myFiles.properties");
+		Modem modem = new Modem("COM23", 115200, "sonny", "750i", "", "", 0, 0);
+		String baseDirectory = "C:\\mesh4x\\demos\\epiinfo"; 
+		int senderDelay = 0;
+		int receiverDelay = 0; 
+		int maxMessageLenght = 160;
+		IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
+		IMessageEncoding messageEncoding = NonMessageEncoding.INSTANCE;
+		
+		return createSyncEngine(
+			fileNameResolver, 
+			modem,
+			baseDirectory, 
+			senderDelay, 
+			receiverDelay, 
+			maxMessageLenght, 
+			identityProvider,
+			messageEncoding,
+			consoleNotification,
+			consoleNotification);
+	}
+
+	public static Object[] getDataSourceMappings() {
+// TODO (JMT) replace properties from mesh4x.properties file
+		return new DataSourceMapping[]{
+			new DataSourceMapping("Oswego", "epiinfo.mdb", "Oswego"),
+			new DataSourceMapping("MyAccess", "", "")};
+	}
+	
+	public static Object[] getEndpointMappings() {
+// TODO (JMT) replace properties from mesh4x.properties file
+		return new EndpointMapping[]{
+			new EndpointMapping("kzu", "01115783242"),
+			new EndpointMapping("jmt", "01115783242"),
+			new EndpointMapping("ed", "01115783242"),
+			new EndpointMapping("taha", "01115783242")};
+	}
+
+	public static void synchronize(MessageSyncEngine syncEngine, SyncMode syncMode, EndpointMapping endpoint, DataSourceMapping dataSource) throws Exception {
+// TODO (JMT) replace properties from mesh4x.properties file
+		FileNameResolver fileNameResolver = new FileNameResolver("C:\\mesh4x\\demos\\epiinfo\\myFiles.properties");
+		String baseDirectory = "C:\\mesh4x\\demos\\epiinfo"; 
+		IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
+		synchronize(syncEngine, syncMode, endpoint.getEndpoint(), dataSource.getMDBName(), dataSource.getTableName(), identityProvider, baseDirectory, fileNameResolver);	
+	}
+
+	public static void cancelSynchronize(MessageSyncEngine syncEngine, EndpointMapping endpoint, DataSourceMapping dataSource) {
+		cancelSynchronize(syncEngine, endpoint.getEndpoint(), dataSource.getMDBName(), dataSource.getTableName());
+	}
+
+	public static void sendSms(MessageSyncEngine syncEngine, String endpoint, String message) {
+		((SmsChannel)syncEngine.getChannel()).send(new SmsMessage(message), new SmsEndpoint(endpoint));
 	}
 }

@@ -150,7 +150,7 @@ public class SmsHelper {
 			if(useAsynchronousConnection){
 				smsConnection = new SmsLibAsynchronousConnection("mesh4j.sync", modem.getComPort(), modem.getBaudRate(),
 						modem.getManufacturer(), modem.getModel(), maxMessageLenght, messageEncoding, smsConnectionInboundOutboundNotification, protocolFilter);
-				((SmsLibAsynchronousConnection)smsConnection).startService();
+				((SmsLibAsynchronousConnection)smsConnection).startUp();
 			}else{
 				smsConnection = new SmsLibConnection("mesh4j.sync", modem.getComPort(), modem.getBaudRate(),
 						modem.getManufacturer(), modem.getModel(), maxMessageLenght, messageEncoding, readDelay, channelDelay, smsConnectionInboundOutboundNotification, protocolFilter);
