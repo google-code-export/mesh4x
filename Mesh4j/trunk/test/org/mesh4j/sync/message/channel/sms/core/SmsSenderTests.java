@@ -2,6 +2,7 @@ package org.mesh4j.sync.message.channel.sms.core;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -147,7 +148,8 @@ public class SmsSenderTests {
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldSendSMSMessageFailsIfSmsMessageListIsNull(){
 		SmsSender smsSender = new SmsSender(new MockSmsConnection("sms:154022344", new MockMessageEncoding()));
-		smsSender.send(null, new SmsEndpoint("123"));
+		List<SmsMessage> messages = null;
+		smsSender.send(messages, new SmsEndpoint("123"));
 	}	
 	
 	@Test(expected=IllegalArgumentException.class)

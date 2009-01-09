@@ -30,7 +30,7 @@ public class BeginSyncMessageProcessorTests {
 		IMessage message = mp.createMessage(syncSession);
 
 		Assert.assertNotNull(message);
-		Assert.assertEquals(syncSession.getSourceId()+"|0", message.getData());
+		Assert.assertEquals(syncSession.getSourceId()+"|T|T|T|0", message.getData());
 		Assert.assertEquals(syncSession.getTarget(), message.getEndpoint());
 		Assert.assertEquals(mp.getMessageType(), message.getMessageType());
 		Assert.assertEquals(IProtocolConstants.PROTOCOL, message.getProtocol());
@@ -47,7 +47,7 @@ public class BeginSyncMessageProcessorTests {
 		NoChangesMessageProcessor ncp = new NoChangesMessageProcessor(null, null); 
 		LastVersionStatusMessageProcessor lvp = new LastVersionStatusMessageProcessor(null, null, null);
 		
-		String data = syncSession.getSourceId() + "|0";
+		String data = syncSession.getSourceId() + "|T|T|T|0";
 		BeginSyncMessageProcessor mp = new BeginSyncMessageProcessor(ncp, lvp, null);
 		IMessage message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), 0, data, syncSession.getTarget());
 		List<IMessage> messages = mp.process(syncSession, message);
@@ -64,7 +64,6 @@ public class BeginSyncMessageProcessorTests {
 		Assert.assertTrue(syncSession.beginSyncWasCalled());
 		Assert.assertTrue(syncSession.getAllWasCalled());
 		Assert.assertNull(syncSession.getLastSyncDate());
-
 	}
 	
 	@Test
@@ -77,7 +76,7 @@ public class BeginSyncMessageProcessorTests {
 		LastVersionStatusMessageProcessor lvp = new LastVersionStatusMessageProcessor(null, null, null);
 		EqualStatusMessageProcessor esp = new EqualStatusMessageProcessor(null);
 		
-		String data = syncSession.getSourceId()+ "|0";
+		String data = syncSession.getSourceId()+ "|T|T|T|0";
 		BeginSyncMessageProcessor mp = new BeginSyncMessageProcessor(ncp, lvp, esp);
 		IMessage message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), 0, data, syncSession.getTarget());
 		List<IMessage> messages = mp.process(syncSession, message);
@@ -133,7 +132,7 @@ public class BeginSyncMessageProcessorTests {
 		IMessage message = mp.createMessage(syncSession);
 
 		Assert.assertNotNull(message);
-		Assert.assertEquals(syncSession.getSourceId()+"|0|"+DateHelper.formatDateTime(date), message.getData());
+		Assert.assertEquals(syncSession.getSourceId()+"|T|T|T|0|"+DateHelper.formatDateTime(date), message.getData());
 		Assert.assertEquals(syncSession.getTarget(), message.getEndpoint());
 		Assert.assertEquals(mp.getMessageType(), message.getMessageType());
 		Assert.assertEquals(IProtocolConstants.PROTOCOL, message.getProtocol());
@@ -154,7 +153,7 @@ public class BeginSyncMessageProcessorTests {
 		LastVersionStatusMessageProcessor lvp = new LastVersionStatusMessageProcessor(null, null, null);
 		EqualStatusMessageProcessor esp = new EqualStatusMessageProcessor(null);
 		
-		String data = syncSession.getSourceId()+"|0";
+		String data = syncSession.getSourceId()+"|T|T|T|0";
 		BeginSyncMessageProcessor mp = new BeginSyncMessageProcessor(ncp, lvp, esp);
 		IMessage message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), 0, data, syncSession.getTarget());
 		List<IMessage> messages = mp.process(syncSession, message);
@@ -184,7 +183,7 @@ public class BeginSyncMessageProcessorTests {
 		LastVersionStatusMessageProcessor lvp = new LastVersionStatusMessageProcessor(null, null, null);
 		EqualStatusMessageProcessor esp = new EqualStatusMessageProcessor(null);
 		
-		String data = syncSession.getSourceId()+"|0";
+		String data = syncSession.getSourceId()+"|T|T|T|0";
 		BeginSyncMessageProcessor mp = new BeginSyncMessageProcessor(ncp, lvp, esp);
 		IMessage message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), 0, data, syncSession.getTarget());
 		List<IMessage> messages = mp.process(syncSession, message);
@@ -203,4 +202,115 @@ public class BeginSyncMessageProcessorTests {
 		Assert.assertEquals(date, syncSession.getLastSyncDate());
 				
 	}
+	
+	@Test
+	public void shouldEncodeFullProtocol(){
+		
+		Date date = new Date();
+		Item item = new Item(new NullContent("1"), new Sync("1", "jmt", new Date(), true));
+		MockSyncSession syncSession = new MockSyncSession(date, item);
+		syncSession.setFullProtocol(true);
+
+		NoChangesMessageProcessor ncp = new NoChangesMessageProcessor(null, null); 
+		LastVersionStatusMessageProcessor lvp = new LastVersionStatusMessageProcessor(null, null, null);
+		EqualStatusMessageProcessor esp = new EqualStatusMessageProcessor(null);
+				
+		BeginSyncMessageProcessor mp = new BeginSyncMessageProcessor(ncp, lvp, esp);
+		IMessage message = mp.createMessage(syncSession);
+		
+		Assert.assertNotNull(message);
+		Assert.assertTrue(mp.getFullProtocol(message.getData()));
+			
+	}
+
+	@Test
+	public void shouldEncodeNonFullProtocol(){
+		Date date = new Date();
+		Item item = new Item(new NullContent("1"), new Sync("1", "jmt", new Date(), true));
+		MockSyncSession syncSession = new MockSyncSession(date, item);
+		syncSession.setFullProtocol(false);
+
+		NoChangesMessageProcessor ncp = new NoChangesMessageProcessor(null, null); 
+		LastVersionStatusMessageProcessor lvp = new LastVersionStatusMessageProcessor(null, null, null);
+		EqualStatusMessageProcessor esp = new EqualStatusMessageProcessor(null);
+				
+		BeginSyncMessageProcessor mp = new BeginSyncMessageProcessor(ncp, lvp, esp);
+		IMessage message = mp.createMessage(syncSession);
+		
+		Assert.assertNotNull(message);
+		Assert.assertFalse(mp.getFullProtocol(message.getData()));		
+	}
+	
+	@Test
+	public void shouldEncodeSendChanges(){
+		Date date = new Date();
+		Item item = new Item(new NullContent("1"), new Sync("1", "jmt", new Date(), true));
+		MockSyncSession syncSession = new MockSyncSession(date, item);
+		syncSession.setShouldSendChanges(true);
+
+		NoChangesMessageProcessor ncp = new NoChangesMessageProcessor(null, null); 
+		LastVersionStatusMessageProcessor lvp = new LastVersionStatusMessageProcessor(null, null, null);
+		EqualStatusMessageProcessor esp = new EqualStatusMessageProcessor(null);
+				
+		BeginSyncMessageProcessor mp = new BeginSyncMessageProcessor(ncp, lvp, esp);
+		IMessage message = mp.createMessage(syncSession);
+		
+		Assert.assertNotNull(message);
+		Assert.assertTrue(mp.getSendChanges(message.getData()));		
+	}
+	
+	@Test
+	public void shouldEncodeNoSendChanges(){
+		Date date = new Date();
+		Item item = new Item(new NullContent("1"), new Sync("1", "jmt", new Date(), true));
+		MockSyncSession syncSession = new MockSyncSession(date, item);
+		syncSession.setShouldSendChanges(false);
+		
+		NoChangesMessageProcessor ncp = new NoChangesMessageProcessor(null, null); 
+		LastVersionStatusMessageProcessor lvp = new LastVersionStatusMessageProcessor(null, null, null);
+		EqualStatusMessageProcessor esp = new EqualStatusMessageProcessor(null);
+				
+		BeginSyncMessageProcessor mp = new BeginSyncMessageProcessor(ncp, lvp, esp);
+		IMessage message = mp.createMessage(syncSession);
+		
+		Assert.assertNotNull(message);
+		Assert.assertFalse(mp.getSendChanges(message.getData()));		
+	}
+	
+	@Test
+	public void shouldEncodeReceiveChanges(){
+		Date date = new Date();
+		Item item = new Item(new NullContent("1"), new Sync("1", "jmt", new Date(), true));
+		MockSyncSession syncSession = new MockSyncSession(date, item);
+		syncSession.setShouldReceiveChanges(true);
+
+		NoChangesMessageProcessor ncp = new NoChangesMessageProcessor(null, null); 
+		LastVersionStatusMessageProcessor lvp = new LastVersionStatusMessageProcessor(null, null, null);
+		EqualStatusMessageProcessor esp = new EqualStatusMessageProcessor(null);
+				
+		BeginSyncMessageProcessor mp = new BeginSyncMessageProcessor(ncp, lvp, esp);
+		IMessage message = mp.createMessage(syncSession);
+		
+		Assert.assertNotNull(message);
+		Assert.assertTrue(mp.getReceiveChanges(message.getData()));		
+	}
+	
+	@Test
+	public void shouldEncodeNonReceiveChanges(){
+		Date date = new Date();
+		Item item = new Item(new NullContent("1"), new Sync("1", "jmt", new Date(), true));
+		MockSyncSession syncSession = new MockSyncSession(date, item);
+		syncSession.setShouldReceiveChanges(false);
+
+		NoChangesMessageProcessor ncp = new NoChangesMessageProcessor(null, null); 
+		LastVersionStatusMessageProcessor lvp = new LastVersionStatusMessageProcessor(null, null, null);
+		EqualStatusMessageProcessor esp = new EqualStatusMessageProcessor(null);
+				
+		BeginSyncMessageProcessor mp = new BeginSyncMessageProcessor(ncp, lvp, esp);
+		IMessage message = mp.createMessage(syncSession);
+		
+		Assert.assertNotNull(message);
+		Assert.assertFalse(mp.getReceiveChanges(message.getData()));		
+	}
+	
 }

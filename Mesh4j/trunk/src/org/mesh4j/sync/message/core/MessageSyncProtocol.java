@@ -54,7 +54,11 @@ public class MessageSyncProtocol implements IMessageSyncProtocol {
 			if(syncSession == null){
 				if(this.initialMessage.getMessageType().equals(message.getMessageType())){
 					String sourceId = this.initialMessage.getSourceId(message.getData());
-					syncSession = this.repository.createSession(message.getSessionId(), message.getSessionVersion(), sourceId, message.getEndpoint(), false);
+					boolean isFull = this.initialMessage.getFullProtocol(message.getData());
+					boolean shouldSendChanges = this.initialMessage.getSendChanges(message.getData());
+					boolean shouldReceiveChanges = this.initialMessage.getReceiveChanges(message.getData());
+					
+					syncSession = this.repository.createSession(message.getSessionId(), message.getSessionVersion(), sourceId, message.getEndpoint(), isFull, shouldSendChanges, shouldReceiveChanges);
 					if(syncSession == null){
 						this.notifySessionCreationError(message, sourceId);
 						return NO_RESPONSE;
@@ -117,14 +121,14 @@ public class MessageSyncProtocol implements IMessageSyncProtocol {
 	}
 
 	@Override
-	public IMessage beginSync(String sourceId, IEndpoint endpoint, boolean fullProtocol) {
+	public IMessage beginSync(String sourceId, IEndpoint endpoint, boolean fullProtocol, boolean shouldSendChanges, boolean shouldReceiveChanges) {
 		ISyncSession syncSession = this.repository.getSession(sourceId, endpoint.getEndpointId());
 		if(syncSession != null && syncSession.isOpen()){
 			this.notifyBeginSyncError(syncSession);
 			return null;
 		}
 		if(syncSession == null){
-			syncSession = this.repository.createSession(IdGenerator.INSTANCE.newID(), 0, sourceId, endpoint, fullProtocol);
+			syncSession = this.repository.createSession(IdGenerator.INSTANCE.newID(), 0, sourceId, endpoint, fullProtocol, shouldSendChanges, shouldReceiveChanges);
 			if(syncSession == null){
 				return null;
 			}

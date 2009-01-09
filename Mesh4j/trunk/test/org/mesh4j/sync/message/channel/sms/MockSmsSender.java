@@ -66,6 +66,11 @@ public class MockSmsSender implements ISmsSender {
 	public void purgeBatches(String sessionId, int sessionVersion) {
 		// nothing to do		
 	}
+	
+	@Override
+	public void startUp() {
+		// nothing to do		
+	}
 
 	@Override
 	public void shutdown() {

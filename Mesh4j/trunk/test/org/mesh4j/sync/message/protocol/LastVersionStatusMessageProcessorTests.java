@@ -286,4 +286,251 @@ public class LastVersionStatusMessageProcessorTests {
 		Assert.assertEquals("jmt", item.getLastUpdate().getBy());
 		Assert.assertEquals("1201834861000", String.valueOf(item.getLastUpdate().getWhen().getTime()));
 	}
+	
+	
+	@Test
+	public void shouldProcessThrowsMergeForLocalChangesIfSessionHasChangesAndShouldSendChangesAndShouldNotReceiveChanges(){
+		Item item = new Item(new NullContent("1"), new Sync("1", "jmt", TestHelper.makeDate(2008, 1, 1, 1, 1, 1, 1), false));
+		Item item2 = new Item(new NullContent("2"), new Sync("2", "jmt", TestHelper.makeDate(2008, 1, 1, 1, 1, 1, 1), false));
+
+		MockSyncSession syncSession = new MockSyncSession(null, item);
+		syncSession.setOpen();
+		syncSession.addItem(item2);
+		syncSession.setFullProtocol(false);
+		syncSession.setShouldSendChanges(true);
+		syncSession.setShouldReceiveChanges(false);
+		
+		MergeWithACKMessageProcessor merge = new MergeWithACKMessageProcessor(new ItemEncoding(100), null);
+		LastVersionStatusMessageProcessor mp = new LastVersionStatusMessageProcessor(null, merge, null);
+		
+		Message message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), 0, "1~-1269158974~D~jmt~1201834861000", syncSession.getTarget());
+		List<IMessage> messages = mp.process(syncSession, message);
+		Assert.assertNotNull(messages);
+		Assert.assertEquals(2, messages.size());
+		
+		IMessage response = messages.get(0);		
+		Assert.assertNotNull(response);
+		Assert.assertNotNull(response.getData());
+		Assert.assertEquals(syncSession.getTarget(), response.getEndpoint());
+		Assert.assertEquals(merge.getMessageType(), response.getMessageType());
+		Assert.assertEquals(IProtocolConstants.PROTOCOL, response.getProtocol());
+		Assert.assertEquals(syncSession.getSessionId(), response.getSessionId());
+		
+		response = messages.get(1);		
+		Assert.assertNotNull(response);
+		Assert.assertNotNull(response.getData());
+		Assert.assertEquals(syncSession.getTarget(), response.getEndpoint());
+		Assert.assertEquals(merge.getMessageType(), response.getMessageType());
+		Assert.assertEquals(IProtocolConstants.PROTOCOL, response.getProtocol());
+		Assert.assertEquals(syncSession.getSessionId(), response.getSessionId());
+	}
+	
+	@Test
+	public void shouldProcessThrowsEndSyncForLocalChangesIfSessionHasChangesAndShouldNotSendChangesAndShouldNotReceiveChanges(){
+		Item item = new Item(new NullContent("1"), new Sync("1", "jmt", TestHelper.makeDate(2008, 1, 1, 1, 1, 1, 1), false));
+		Item item2 = new Item(new NullContent("2"), new Sync("2", "jmt", TestHelper.makeDate(2008, 1, 1, 1, 1, 1, 1), false));
+
+		MockSyncSession syncSession = new MockSyncSession(null, item);
+		syncSession.setOpen();
+		syncSession.addItem(item2);
+		syncSession.setFullProtocol(false);
+		syncSession.setShouldSendChanges(false);
+		syncSession.setShouldReceiveChanges(false);
+		
+		EndSyncMessageProcessor end = new EndSyncMessageProcessor(null);
+		LastVersionStatusMessageProcessor mp = new LastVersionStatusMessageProcessor(null, null, end);
+		
+		Message message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), 0, "1~-1269158974~D~jmt~1201834861000", syncSession.getTarget());
+		List<IMessage> messages = mp.process(syncSession, message);
+		Assert.assertNotNull(messages);
+		Assert.assertEquals(1, messages.size());
+		
+		IMessage response = messages.get(0);		
+		Assert.assertNotNull(response);
+		Assert.assertNotNull(response.getData());
+		Assert.assertEquals(syncSession.getTarget(), response.getEndpoint());
+		Assert.assertEquals(end.getMessageType(), response.getMessageType());
+		Assert.assertEquals(IProtocolConstants.PROTOCOL, response.getProtocol());
+		Assert.assertEquals(syncSession.getSessionId(), response.getSessionId());
+		
+	}
+	
+	@Test
+	public void shouldProcessThrowsEndSyncForLocalChangesIfSessionHasNotChangesAndShouldNotSendChangesAndShouldNotReceiveChanges(){
+
+		MockSyncSession syncSession = new MockSyncSession(null, null);
+		syncSession.setOpen();
+		syncSession.setFullProtocol(false);
+		syncSession.setShouldSendChanges(false);
+		syncSession.setShouldReceiveChanges(false);
+		
+		EndSyncMessageProcessor end = new EndSyncMessageProcessor(null);
+		LastVersionStatusMessageProcessor mp = new LastVersionStatusMessageProcessor(null, null, end);
+		
+		Message message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), 0, "1~-1269158974~D~jmt~1201834861000", syncSession.getTarget());
+		List<IMessage> messages = mp.process(syncSession, message);
+		Assert.assertNotNull(messages);
+		Assert.assertEquals(1, messages.size());
+		
+		IMessage response = messages.get(0);		
+		Assert.assertNotNull(response);
+		Assert.assertNotNull(response.getData());
+		Assert.assertEquals(syncSession.getTarget(), response.getEndpoint());
+		Assert.assertEquals(end.getMessageType(), response.getMessageType());
+		Assert.assertEquals(IProtocolConstants.PROTOCOL, response.getProtocol());
+		Assert.assertEquals(syncSession.getSessionId(), response.getSessionId());
+		
+	}
+	
+	@Test
+	public void shouldProcessThrowsEndSyncForLocalChangesIfSessionHasNotChangesAndShouldSendChangesAndShouldNotReceiveChanges(){
+
+		MockSyncSession syncSession = new MockSyncSession(null, null);
+		syncSession.setOpen();
+		syncSession.setFullProtocol(false);
+		syncSession.setShouldSendChanges(true);
+		syncSession.setShouldReceiveChanges(false);
+		
+		EndSyncMessageProcessor end = new EndSyncMessageProcessor(null);
+		LastVersionStatusMessageProcessor mp = new LastVersionStatusMessageProcessor(null, null, end);
+		
+		Message message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), 0, "1~-1269158974~D~jmt~1201834861000", syncSession.getTarget());
+		List<IMessage> messages = mp.process(syncSession, message);
+		Assert.assertNotNull(messages);
+		Assert.assertEquals(1, messages.size());
+		
+		IMessage response = messages.get(0);		
+		Assert.assertNotNull(response);
+		Assert.assertNotNull(response.getData());
+		Assert.assertEquals(syncSession.getTarget(), response.getEndpoint());
+		Assert.assertEquals(end.getMessageType(), response.getMessageType());
+		Assert.assertEquals(IProtocolConstants.PROTOCOL, response.getProtocol());
+		Assert.assertEquals(syncSession.getSessionId(), response.getSessionId());
+		
+	}
+	
+	@Test
+	public void shouldProcessThrowsEndSyncIfSessionHasChangesAndShouldNotSendChangesAndShouldReceiveDeleteChange(){
+		
+		Item item = new Item(new NullContent("1"), new Sync("1", "jmt", TestHelper.makeDate(2008, 1, 1, 1, 1, 1, 1), false));
+		Item item2 = new Item(new NullContent("2"), new Sync("2", "jmt", TestHelper.makeDate(2008, 1, 1, 1, 1, 1, 1), false));
+
+		MockSyncSession syncSession = new MockSyncSession(null, item);
+		syncSession.setOpen();
+		syncSession.addItem(item2);
+		syncSession.setFullProtocol(false);
+		syncSession.setShouldSendChanges(false);
+		syncSession.setShouldReceiveChanges(true);
+		
+		EndSyncMessageProcessor end = new EndSyncMessageProcessor(null);
+		GetForMergeMessageProcessor get = new GetForMergeMessageProcessor(new ItemEncoding(100), null);
+		MergeWithACKMessageProcessor merge = new MergeWithACKMessageProcessor(new ItemEncoding(100), null);
+		LastVersionStatusMessageProcessor mp = new LastVersionStatusMessageProcessor(get, merge, end);
+		
+		Message message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), 0, "1~-1269158974~D~jmt~1201834861000", syncSession.getTarget());
+		List<IMessage> messages = mp.process(syncSession, message);
+		Assert.assertNotNull(messages);
+		Assert.assertEquals(1, messages.size());
+		
+		IMessage response = messages.get(0);		
+		Assert.assertNotNull(response);
+		Assert.assertNotNull(response.getData());
+		Assert.assertEquals(syncSession.getTarget(), response.getEndpoint());
+		Assert.assertEquals(end.getMessageType(), response.getMessageType());
+		Assert.assertEquals(IProtocolConstants.PROTOCOL, response.getProtocol());
+		Assert.assertEquals(syncSession.getSessionId(), response.getSessionId());
+		
+	}
+	
+	@Test
+	public void shouldProcessThrowsGetItemForMergeIfSessionHasNotChangesAndShouldNotSendChangesAndShouldReceiveChanges(){
+
+		MockSyncSession syncSession = new MockSyncSession(null, null);
+		syncSession.setOpen();
+		syncSession.setFullProtocol(false);
+		syncSession.setShouldSendChanges(false);
+		syncSession.setShouldReceiveChanges(true);
+		
+		GetForMergeMessageProcessor get = new GetForMergeMessageProcessor(new ItemEncoding(100), null);
+		LastVersionStatusMessageProcessor mp = new LastVersionStatusMessageProcessor(get, null, null);
+		
+		Message message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), 0, "1~-1269158974~D~jmt~1201834861000", syncSession.getTarget());
+		List<IMessage> messages = mp.process(syncSession, message);
+		Assert.assertNotNull(messages);
+		Assert.assertEquals(1, messages.size());
+		
+		IMessage response = messages.get(0);		
+		Assert.assertNotNull(response);
+		Assert.assertNotNull(response.getData());
+		Assert.assertEquals(syncSession.getTarget(), response.getEndpoint());
+		Assert.assertEquals(get.getMessageType(), response.getMessageType());
+		Assert.assertEquals(IProtocolConstants.PROTOCOL, response.getProtocol());
+		Assert.assertEquals(syncSession.getSessionId(), response.getSessionId());
+		
+	}
+	
+	@Test
+	public void shouldProcessThrowsGetItemForMergeIfSessionHasNotChangesAndShouldSendChangesAndShouldReceiveChanges(){
+
+		MockSyncSession syncSession = new MockSyncSession(null, null);
+		syncSession.setOpen();
+		syncSession.setFullProtocol(false);
+		syncSession.setShouldSendChanges(true);
+		syncSession.setShouldReceiveChanges(true);
+		
+		GetForMergeMessageProcessor get = new GetForMergeMessageProcessor(new ItemEncoding(100), null);
+		LastVersionStatusMessageProcessor mp = new LastVersionStatusMessageProcessor(get, null, null);
+		
+		Message message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), 0, "1~-1269158974~D~jmt~1201834861000", syncSession.getTarget());
+		List<IMessage> messages = mp.process(syncSession, message);
+		Assert.assertNotNull(messages);
+		Assert.assertEquals(1, messages.size());
+		
+		IMessage response = messages.get(0);		
+		Assert.assertNotNull(response);
+		Assert.assertNotNull(response.getData());
+		Assert.assertEquals(syncSession.getTarget(), response.getEndpoint());
+		Assert.assertEquals(get.getMessageType(), response.getMessageType());
+		Assert.assertEquals(IProtocolConstants.PROTOCOL, response.getProtocol());
+		Assert.assertEquals(syncSession.getSessionId(), response.getSessionId());
+		
+	}
+	
+	@Test
+	public void shouldProcessThrowsMergeChangesIfSessionHasChangesAndShouldSendChangesAndShouldReceiveChanges(){
+		Item item = new Item(new NullContent("2"), new Sync("2", "jmt", TestHelper.makeDate(2008, 1, 1, 1, 1, 1, 1), false));
+
+		MockSyncSession syncSession = new MockSyncSession(null, item);
+		syncSession.setOpen();
+
+		syncSession.setOpen();
+		syncSession.setFullProtocol(false);
+		syncSession.setShouldSendChanges(true);
+		syncSession.setShouldReceiveChanges(true);
+		
+		GetForMergeMessageProcessor get = new GetForMergeMessageProcessor(new ItemEncoding(100), null);
+		MergeWithACKMessageProcessor merge = new MergeWithACKMessageProcessor(new ItemEncoding(100), null);
+		LastVersionStatusMessageProcessor mp = new LastVersionStatusMessageProcessor(get, merge, null);
+		
+		Message message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), 0, "1~-1269158974~D~jmt~1201834861000", syncSession.getTarget());
+		List<IMessage> messages = mp.process(syncSession, message);
+		Assert.assertNotNull(messages);
+		Assert.assertEquals(2, messages.size());
+		
+		IMessage response = messages.get(0);		
+		Assert.assertNotNull(response);
+		Assert.assertNotNull(response.getData());
+		Assert.assertEquals(syncSession.getTarget(), response.getEndpoint());
+		Assert.assertEquals(get.getMessageType(), response.getMessageType());
+		Assert.assertEquals(IProtocolConstants.PROTOCOL, response.getProtocol());
+		Assert.assertEquals(syncSession.getSessionId(), response.getSessionId());
+		
+		response = messages.get(1);		
+		Assert.assertNotNull(response);
+		Assert.assertNotNull(response.getData());
+		Assert.assertEquals(syncSession.getTarget(), response.getEndpoint());
+		Assert.assertEquals(merge.getMessageType(), response.getMessageType());
+		Assert.assertEquals(IProtocolConstants.PROTOCOL, response.getProtocol());
+		Assert.assertEquals(syncSession.getSessionId(), response.getSessionId());
+	}
 }

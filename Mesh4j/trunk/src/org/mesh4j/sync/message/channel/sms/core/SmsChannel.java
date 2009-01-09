@@ -42,9 +42,14 @@ public class SmsChannel implements ISmsChannel, IMessageSyncAware {
 		Guard.argumentNotNull(messageEncoding, "messageEncoding");
 		Guard.argumentNotNull(smsConnection, "smsConnection");
 		
+		int max = maxMessageLenght - MessageFormatter.getBatchHeaderLenght();
+		if(max < 0){
+			Guard.throwsArgumentException("maxMessageLenght");	
+		}
+		
 		this.smsConnection = smsConnection;
 		this.messageEncoding = messageEncoding;
-		this.batchFactory = new MessageBatchFactory(maxMessageLenght - MessageFormatter.getBatchHeaderLenght());
+		this.batchFactory = new MessageBatchFactory(max);
 		
 		this.sender = sender;
 		this.receiver = receiver;
@@ -175,6 +180,10 @@ public class SmsChannel implements ISmsChannel, IMessageSyncAware {
 		this.sender.send(batch, ackIsRequired);		
 	}
 	
+	public void send(SmsMessage message, SmsEndpoint endpoint){
+		this.sender.send(message, endpoint);
+	}
+	
 	public void send(List<SmsMessage> messages, SmsEndpoint endpoint){
 		this.sender.send(messages, endpoint);
 	}
@@ -219,6 +228,11 @@ public class SmsChannel implements ISmsChannel, IMessageSyncAware {
 		// nothing to do		
 	}
 
+	@Override
+	public void startUp() {
+		this.sender.startUp();
+	}
+	
 	@Override
 	public void shutdown() {
 		this.sender.shutdown();

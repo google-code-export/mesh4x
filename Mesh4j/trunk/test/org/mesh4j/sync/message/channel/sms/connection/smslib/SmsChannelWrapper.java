@@ -77,6 +77,11 @@ public class SmsChannelWrapper implements ISmsChannel {
 	}
 	
 	@Override
+	public void startUp() {
+		this.channel.startUp();
+	}
+	
+	@Override
 	public void shutdown() {
 		this.channel.shutdown();
 	}

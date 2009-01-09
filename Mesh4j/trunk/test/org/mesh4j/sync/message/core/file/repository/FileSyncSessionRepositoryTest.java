@@ -369,6 +369,106 @@ public class FileSyncSessionRepositoryTest {
 		Assert.assertEquals(0, syncSessionElement.elements(FileSyncSessionRepository.ELEMENT_CONFLICT).size());
 	}
 	
+	@Test
+	public void shouldFlushSendChangesAttrSession() throws DocumentException{
+
+		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
+		String sessionId = IdGenerator.INSTANCE.newID();
+		
+		File file = repo.getCurrentSessionFile(sessionId);
+		Assert.assertFalse(file.exists());
+		
+		MockSyncSession syncSession = new MockSyncSession(null, null, sessionId);
+		syncSession.setOpen();
+		syncSession.setShouldSendChanges(true);
+		repo.flush(syncSession);
+				
+		file = repo.getCurrentSessionFile(sessionId);
+		Assert.assertTrue(file.exists());
+		
+		FeedReader feedReader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		Feed feed = feedReader.read(file);
+
+		Element syncSessionElement = feed.getPayload().element(FileSyncSessionRepository.ELEMENT_SYNC_SESSION);
+		Assert.assertNotNull(syncSessionElement);
+		Assert.assertEquals("true", syncSessionElement.attributeValue(FileSyncSessionRepository.ATTRIBUTE_SHOULD_SEND_CHANGES));	
+	}
+
+	@Test
+	public void shouldFlushNoSendChangesAttrSession() throws DocumentException{
+
+		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
+		String sessionId = IdGenerator.INSTANCE.newID();
+		
+		File file = repo.getCurrentSessionFile(sessionId);
+		Assert.assertFalse(file.exists());
+		
+		MockSyncSession syncSession = new MockSyncSession(null, null, sessionId);
+		syncSession.setOpen();
+		syncSession.setShouldSendChanges(false);
+		repo.flush(syncSession);
+				
+		file = repo.getCurrentSessionFile(sessionId);
+		Assert.assertTrue(file.exists());
+		
+		FeedReader feedReader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		Feed feed = feedReader.read(file);
+
+		Element syncSessionElement = feed.getPayload().element(FileSyncSessionRepository.ELEMENT_SYNC_SESSION);
+		Assert.assertNotNull(syncSessionElement);
+		Assert.assertEquals("false", syncSessionElement.attributeValue(FileSyncSessionRepository.ATTRIBUTE_SHOULD_SEND_CHANGES));	
+	}
+	
+	@Test
+	public void shouldFlushReceiveChangesAttrSession() throws DocumentException{
+
+		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
+		String sessionId = IdGenerator.INSTANCE.newID();
+		
+		File file = repo.getCurrentSessionFile(sessionId);
+		Assert.assertFalse(file.exists());
+		
+		MockSyncSession syncSession = new MockSyncSession(null, null, sessionId);
+		syncSession.setOpen();
+		syncSession.setShouldReceiveChanges(true);
+		repo.flush(syncSession);
+				
+		file = repo.getCurrentSessionFile(sessionId);
+		Assert.assertTrue(file.exists());
+		
+		FeedReader feedReader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		Feed feed = feedReader.read(file);
+
+		Element syncSessionElement = feed.getPayload().element(FileSyncSessionRepository.ELEMENT_SYNC_SESSION);
+		Assert.assertNotNull(syncSessionElement);
+		Assert.assertEquals("true", syncSessionElement.attributeValue(FileSyncSessionRepository.ATTRIBUTE_SHOULD_RECEIVE_CHANGES));	
+	}
+
+	@Test
+	public void shouldFlushNoReceiveChangesAttrSession() throws DocumentException{
+
+		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
+		String sessionId = IdGenerator.INSTANCE.newID();
+		
+		File file = repo.getCurrentSessionFile(sessionId);
+		Assert.assertFalse(file.exists());
+		
+		MockSyncSession syncSession = new MockSyncSession(null, null, sessionId);
+		syncSession.setOpen();
+		syncSession.setShouldReceiveChanges(false);
+		repo.flush(syncSession);
+				
+		file = repo.getCurrentSessionFile(sessionId);
+		Assert.assertTrue(file.exists());
+		
+		FeedReader feedReader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		Feed feed = feedReader.read(file);
+
+		Element syncSessionElement = feed.getPayload().element(FileSyncSessionRepository.ELEMENT_SYNC_SESSION);
+		Assert.assertNotNull(syncSessionElement);
+		Assert.assertEquals("false", syncSessionElement.attributeValue(FileSyncSessionRepository.ATTRIBUTE_SHOULD_RECEIVE_CHANGES));	
+	}
+	
 	// SNAPSHOT
 	@Test
 	public void shouldGetSnapshotFile(){
@@ -715,6 +815,102 @@ public class FileSyncSessionRepositoryTest {
 		Assert.assertFalse(fileCurrent.exists());
 	}
 	
+	@Test
+	public void shouldSnapshotAddSendChangesAttrSession() throws DocumentException{
+
+		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
+		String sessionId = IdGenerator.INSTANCE.newID();
+		
+		File file = repo.getSnapshotFile(sessionId);
+		Assert.assertFalse(file.exists());
+		
+		MockSyncSession syncSession = new MockSyncSession(new Date(), null, sessionId);
+		syncSession.setShouldSendChanges(true);
+		repo.snapshot(syncSession);
+				
+		file = repo.getSnapshotFile(sessionId);
+		Assert.assertTrue(file.exists());
+		
+		FeedReader feedReader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		Feed feed = feedReader.read(file);
+
+		Element syncSessionElement = feed.getPayload().element(FileSyncSessionRepository.ELEMENT_SYNC_SESSION);
+		Assert.assertNotNull(syncSessionElement);
+		Assert.assertEquals("true", syncSessionElement.attributeValue(FileSyncSessionRepository.ATTRIBUTE_SHOULD_SEND_CHANGES));	
+	}
+	
+	@Test
+	public void shouldSnapshotAddNoSendChangesAttrSession() throws DocumentException{
+
+		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
+		String sessionId = IdGenerator.INSTANCE.newID();
+		
+		File file = repo.getSnapshotFile(sessionId);
+		Assert.assertFalse(file.exists());
+		
+		MockSyncSession syncSession = new MockSyncSession(new Date(), null, sessionId);
+		syncSession.setShouldSendChanges(false);
+		repo.snapshot(syncSession);
+				
+		file = repo.getSnapshotFile(sessionId);
+		Assert.assertTrue(file.exists());
+		
+		FeedReader feedReader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		Feed feed = feedReader.read(file);
+
+		Element syncSessionElement = feed.getPayload().element(FileSyncSessionRepository.ELEMENT_SYNC_SESSION);
+		Assert.assertNotNull(syncSessionElement);
+		Assert.assertEquals("false", syncSessionElement.attributeValue(FileSyncSessionRepository.ATTRIBUTE_SHOULD_SEND_CHANGES));	
+	}
+	
+	@Test
+	public void shouldSnapshotAddReceiveChangesAttrSession() throws DocumentException{
+
+		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
+		String sessionId = IdGenerator.INSTANCE.newID();
+		
+		File file = repo.getSnapshotFile(sessionId);
+		Assert.assertFalse(file.exists());
+		
+		MockSyncSession syncSession = new MockSyncSession(new Date(), null, sessionId);
+		syncSession.setShouldReceiveChanges(true);
+		repo.snapshot(syncSession);
+				
+		file = repo.getSnapshotFile(sessionId);
+		Assert.assertTrue(file.exists());
+		
+		FeedReader feedReader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		Feed feed = feedReader.read(file);
+
+		Element syncSessionElement = feed.getPayload().element(FileSyncSessionRepository.ELEMENT_SYNC_SESSION);
+		Assert.assertNotNull(syncSessionElement);
+		Assert.assertEquals("true", syncSessionElement.attributeValue(FileSyncSessionRepository.ATTRIBUTE_SHOULD_RECEIVE_CHANGES));	
+	}
+	
+	@Test
+	public void shouldSnapshotAddNoReceiveChangesAttrSession() throws DocumentException{
+
+		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
+		String sessionId = IdGenerator.INSTANCE.newID();
+		
+		File file = repo.getSnapshotFile(sessionId);
+		Assert.assertFalse(file.exists());
+		
+		MockSyncSession syncSession = new MockSyncSession(new Date(), null, sessionId);
+		syncSession.setShouldReceiveChanges(false);
+		repo.snapshot(syncSession);
+				
+		file = repo.getSnapshotFile(sessionId);
+		Assert.assertTrue(file.exists());
+		
+		FeedReader feedReader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		Feed feed = feedReader.read(file);
+
+		Element syncSessionElement = feed.getPayload().element(FileSyncSessionRepository.ELEMENT_SYNC_SESSION);
+		Assert.assertNotNull(syncSessionElement);
+		Assert.assertEquals("false", syncSessionElement.attributeValue(FileSyncSessionRepository.ATTRIBUTE_SHOULD_RECEIVE_CHANGES));	
+	}
+	
 	// DELETE CURRENT SESSION
 	@Test
 	public void shouldDeleteCurrentSessionFile(){
@@ -1044,19 +1240,91 @@ public class FileSyncSessionRepositoryTest {
 		
 		Assert.assertEquals(0, syncSessionLoaded.getConflictsSyncIDs().size());
 	}
+	
+	@Test
+	public void shouldReadSendChangesAttrSession() throws DocumentException{
+		String sessionId = "example4";
+		File file = new File(this.getClass().getResource(sessionId + "_snapshot.xml").getFile());
+
+		FeedSyncAdapterFactory feedFactory =  new FeedSyncAdapterFactory(file.getParent()+"\\");
+		ISyncSessionFactory sessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory(feedFactory));
+		sessionFactory.registerSource(new InMemoryMessageSyncAdapter("123"));
+		
+		FileSyncSessionRepository repo = new FileSyncSessionRepository(file.getParent()+"\\", sessionFactory);
+				
+		ISyncSession syncSessionLoaded = repo.readSession(sessionId);
+		Assert.assertNotNull(syncSessionLoaded);		
+		Assert.assertSame(syncSessionLoaded, sessionFactory.get(sessionId));
+		
+		Assert.assertTrue(syncSessionLoaded.shouldSendChanges());
+	}
+	
+	@Test
+	public void shouldReadNoSendChangesAttrSession() throws DocumentException{
+		String sessionId = "example6";
+		File file = new File(this.getClass().getResource(sessionId + "_current.xml").getFile());
+
+		FeedSyncAdapterFactory feedFactory =  new FeedSyncAdapterFactory(file.getParent()+"\\");
+		ISyncSessionFactory sessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory(feedFactory));
+		sessionFactory.registerSource(new InMemoryMessageSyncAdapter("123"));
+		
+		FileSyncSessionRepository repo = new FileSyncSessionRepository(file.getParent()+"\\", sessionFactory);
+				
+		ISyncSession syncSessionLoaded = repo.readSession(sessionId);
+		Assert.assertNotNull(syncSessionLoaded);		
+		Assert.assertSame(syncSessionLoaded, sessionFactory.get(sessionId));
+		
+		Assert.assertFalse(syncSessionLoaded.shouldSendChanges());
+	}
+	
+	@Test
+	public void shouldReadReceiveChangesArrtSession() throws DocumentException{
+		String sessionId = "example5";
+		File file = new File(this.getClass().getResource(sessionId + "_snapshot.xml").getFile());
+
+		FeedSyncAdapterFactory feedFactory =  new FeedSyncAdapterFactory(file.getParent()+"\\");
+		ISyncSessionFactory sessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory(feedFactory));
+		sessionFactory.registerSource(new InMemoryMessageSyncAdapter("123"));
+		
+		FileSyncSessionRepository repo = new FileSyncSessionRepository(file.getParent()+"\\", sessionFactory);
+				
+		ISyncSession syncSessionLoaded = repo.readSession(sessionId);
+		Assert.assertNotNull(syncSessionLoaded);		
+		Assert.assertSame(syncSessionLoaded, sessionFactory.get(sessionId));
+		
+		Assert.assertTrue(syncSessionLoaded.shouldReceiveChanges());
+	}
+	
+	@Test
+	public void shouldReadNoReceiveChangesAttrSession() throws DocumentException{
+		String sessionId = "example7";
+		File file = new File(this.getClass().getResource(sessionId + "_current.xml").getFile());
+
+		FeedSyncAdapterFactory feedFactory =  new FeedSyncAdapterFactory(file.getParent()+"\\");
+		ISyncSessionFactory sessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory(feedFactory));
+		sessionFactory.registerSource(new InMemoryMessageSyncAdapter("123"));
+		
+		FileSyncSessionRepository repo = new FileSyncSessionRepository(file.getParent()+"\\", sessionFactory);
+				
+		ISyncSession syncSessionLoaded = repo.readSession(sessionId);
+		Assert.assertNotNull(syncSessionLoaded);		
+		Assert.assertSame(syncSessionLoaded, sessionFactory.get(sessionId));
+		
+		Assert.assertFalse(syncSessionLoaded.shouldReceiveChanges());
+	}
 
 	// CREATE SESSION
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateSessionFailsIfSourceIDIsNull(){
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
-		repo.createSession(null, 0, "1234", new SmsEndpoint("sms:1"), false);
+		repo.createSession(null, 0, "1234", new SmsEndpoint("sms:1"), false, true, true);
 	}
 
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateSessionFailsIfEndPointIsNull(){
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
-		repo.createSession("123",0, null, new SmsEndpoint("sms:1"), false);
+		repo.createSession("123",0, null, new SmsEndpoint("sms:1"), false, true, true);
 	}
 	
 	@Test
@@ -1069,7 +1337,7 @@ public class FileSyncSessionRepositoryTest {
 		
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), sessionFac);
 				
-		ISyncSession syncSession = repo.createSession("111", 1, sourceID, endpoint, false);
+		ISyncSession syncSession = repo.createSession("111", 1, sourceID, endpoint, false, true, true);
 		
 		Assert.assertNotNull(syncSession);
 		Assert.assertEquals("111", syncSession.getSessionId());
@@ -1095,7 +1363,7 @@ public class FileSyncSessionRepositoryTest {
 		
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), sessionFac);
 				
-		ISyncSession syncSession = repo.createSession("111", 3, sourceID, endpoint, false);
+		ISyncSession syncSession = repo.createSession("111", 3, sourceID, endpoint, false, true, true);
 		
 		Assert.assertNotNull(syncSession);
 		Assert.assertSame(syncSession, repo.getSession("111"));
@@ -1111,7 +1379,7 @@ public class FileSyncSessionRepositoryTest {
 		
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), sessionFac);
 				
-		ISyncSession syncSession = repo.createSession("111", 0, sourceID, endpoint, false);
+		ISyncSession syncSession = repo.createSession("111", 0, sourceID, endpoint, false, true, true);
 		
 		Assert.assertNotNull(syncSession);
 		Assert.assertSame(syncSession, repo.getSession(sourceID, endpoint.getEndpointId()));

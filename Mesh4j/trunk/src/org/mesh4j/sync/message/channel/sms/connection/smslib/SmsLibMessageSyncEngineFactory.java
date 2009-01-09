@@ -42,8 +42,6 @@ public class SmsLibMessageSyncEngineFactory {
 		
 		MessageSyncEngine syncEngine = createSyncEngine(syncAware, baseDirectory, identityProvider, smsConnection, senderDelay, receiverDelay, syncAdapterFactories);
 		
-		((SmsLibAsynchronousConnection)smsConnection).startService();
-		
 		return syncEngine;
 	}
 	

@@ -35,7 +35,12 @@ public class NoChangesMessageProcessor implements IMessageProcessor {
 	@Override
 	public List<IMessage> process(ISyncSession syncSession, IMessage message) {
 		if(syncSession.isOpen() && syncSession.getVersion() == message.getSessionVersion() && this.getMessageType().equals(message.getMessageType())){
-			List<IMessage> response = this.processLocalChanges(syncSession);
+			ArrayList<IMessage> response = new ArrayList<IMessage>();
+			
+			if(syncSession.shouldSendChanges()){
+				this.processLocalChanges(syncSession, response);
+			}
+			
 			if(response.isEmpty()){
 				response.add(this.endMessage.createMessage(syncSession));
 			}
@@ -45,13 +50,11 @@ public class NoChangesMessageProcessor implements IMessageProcessor {
 		}
 	}
 	
-	private List<IMessage> processLocalChanges(ISyncSession syncSession) {
-		ArrayList<IMessage> response = new ArrayList<IMessage>();
+	private void processLocalChanges(ISyncSession syncSession, ArrayList<IMessage> response) {
 		List<Item> localChanges = syncSession.getAll();
 		for (Item item : localChanges) {
 			response.add(this.mergeWithACKMessage.createMessage(syncSession, item));
 		}
-		return response;
 	}
 
 

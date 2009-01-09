@@ -82,8 +82,7 @@ public class BeginSyncMessageProcessor implements IMessageProcessor, IBeginSyncM
 			if(items.isEmpty()){
 				response.add(this.noChanges.createMessage(syncSession));
 				return response;
-			} else {
-								
+			} else {								
 				int localHash = calculateGlobalHash(items);
 				String localHashAsString = String.valueOf(localHash);
 				String globalHash = decodeGlobalHash(message.getData());
@@ -106,6 +105,15 @@ public class BeginSyncMessageProcessor implements IMessageProcessor, IBeginSyncM
 		sb.append(syncSession.getSourceId());
 		
 		sb.append(IProtocolConstants.ELEMENT_SEPARATOR);
+		sb.append(syncSession.isFullProtocol() ? "T" : "F");
+		
+		sb.append(IProtocolConstants.ELEMENT_SEPARATOR);
+		sb.append(syncSession.shouldSendChanges() ? "T" : "F");
+		
+		sb.append(IProtocolConstants.ELEMENT_SEPARATOR);
+		sb.append(syncSession.shouldReceiveChanges() ? "T" : "F");
+		
+		sb.append(IProtocolConstants.ELEMENT_SEPARATOR);
 		sb.append(calculateGlobalHash(syncSession.getAll()));
 		
 		if(syncSession.getLastSyncDate() != null){
@@ -126,11 +134,13 @@ public class BeginSyncMessageProcessor implements IMessageProcessor, IBeginSyncM
 		}
 		return globalHash;
 	}
-
 	
 	private Date decodeSyncDate(String data) {
 		StringTokenizer st =  new StringTokenizer(data, IProtocolConstants.ELEMENT_SEPARATOR);
-		st.nextToken();	// skip source id		
+		st.nextToken();	// skip source id
+		st.nextToken();	// skip full protocol
+		st.nextToken();	// skip send changes
+		st.nextToken();	// skip receive changes
 		st.nextToken();	// skip source global hash
 		if(st.hasMoreTokens()){
 			return DateHelper.parseDateTime(st.nextToken());
@@ -141,8 +151,11 @@ public class BeginSyncMessageProcessor implements IMessageProcessor, IBeginSyncM
 	
 	private String decodeGlobalHash(String data) {
 		StringTokenizer st =  new StringTokenizer(data, IProtocolConstants.ELEMENT_SEPARATOR);
-		st.nextToken();	// skip source id		
-		return st.nextToken();	// skip source global hash
+		st.nextToken();	// skip source id
+		st.nextToken();	// skip full protocol
+		st.nextToken();	// skip send changes
+		st.nextToken();	// skip receive changes
+		return st.nextToken();
 	}
 
 	@Override
@@ -153,5 +166,29 @@ public class BeginSyncMessageProcessor implements IMessageProcessor, IBeginSyncM
 
 	public void setMessageSyncProtocol(IMessageSyncProtocol messageSyncProtocol) {
 		this.messageSyncProtocol = messageSyncProtocol;
+	}
+
+	@Override
+	public boolean getFullProtocol(String data) {
+		StringTokenizer st =  new StringTokenizer(data, IProtocolConstants.ELEMENT_SEPARATOR);
+		st.nextToken();	// skip source id
+		return "T".equals(st.nextToken());
+	}
+
+	@Override
+	public boolean getReceiveChanges(String data) {
+		StringTokenizer st =  new StringTokenizer(data, IProtocolConstants.ELEMENT_SEPARATOR);
+		st.nextToken();	// skip source id
+		st.nextToken();	// skip full protocol
+		st.nextToken();	// skip send changes
+		return "T".equals(st.nextToken());
+	}
+
+	@Override
+	public boolean getSendChanges(String data) {
+		StringTokenizer st =  new StringTokenizer(data, IProtocolConstants.ELEMENT_SEPARATOR);
+		st.nextToken();	// skip source id
+		st.nextToken();	// skip full protocol
+		return "T".equals(st.nextToken());
 	}
 }

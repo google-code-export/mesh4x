@@ -61,52 +61,66 @@ public class LastVersionStatusMessageProcessor implements IMessageProcessor{
 	public List<IMessage> process(ISyncSession syncSession, IMessage message) {
 		List<IMessage> response = new ArrayList<IMessage>();		
 		if(syncSession.isOpen()  && syncSession.getVersion() == message.getSessionVersion() && this.getMessageType().equals(message.getMessageType())){
-			ArrayList<Object[]> changes = decodeChanges(message.getData());
+			
 			ArrayList<String> updatedItems = new ArrayList<String>();
-			for (Object[] parameters : changes) {
-				String syncID = (String)parameters[0];
 
-				Item localItem = syncSession.get(syncID);
-				if(localItem != null){
-					String itemHashCode = (String)parameters[1];
-					boolean delete = (Boolean)parameters[2];
-					String deletedBy = (String)parameters[3];
-					Date deletedWhen = (Date)parameters[4];
-					
-					if(hasChanged(localItem, syncSession.getLastSyncDate())){
-						if(syncSession.isFullProtocol()){
-							response.add(this.getForMergeMessage.createMessage(syncSession, localItem));
-						} else {
-							syncSession.addConflict(syncID);
-						}
-					} else{
-						if(delete){
-							if(!localItem.getSync().isDeleted()){
-								if(syncSession.isFullProtocol()){
-									response.add(this.getForMergeMessage.createMessage(syncSession, localItem));
-								} else {
-									syncSession.delete(syncID, deletedBy, deletedWhen);
-								}
-							}
-						} else {
-							String localHashCode = this.calculateHasCode(localItem);
-							if(!localHashCode.equals(itemHashCode)){
-								response.add(this.getForMergeMessage.createMessage(syncSession, localItem));
-							}
-						}
-					}
-					updatedItems.add(syncID);
-				} else {
-					response.add(this.getForMergeMessage.createMessage(syncSession, syncID)); 
-				}
+			if(syncSession.shouldReceiveChanges()){
+				processRemoteChanges(syncSession, response, updatedItems, message);
+			} else {
+				
 			}
 			
-			response.addAll(processLocalChanges(syncSession, updatedItems));
+			if(syncSession.shouldSendChanges()){
+				processLocalChanges(syncSession, response, updatedItems);
+			}
+			
 			if(response.isEmpty()){
 				response.add(this.endMessage.createMessage(syncSession));
 			}
 		}
 		return response;
+	}
+
+	private ArrayList<String> processRemoteChanges(ISyncSession syncSession, List<IMessage> response, ArrayList<String> updatedItems, IMessage message) {
+		ArrayList<Object[]> changes = decodeChanges(message.getData());
+		for (Object[] parameters : changes) {
+			String syncID = (String)parameters[0];
+
+			Item localItem = syncSession.get(syncID);
+			if(localItem != null){
+				String itemHashCode = (String)parameters[1];
+				boolean delete = (Boolean)parameters[2];
+				String deletedBy = (String)parameters[3];
+				Date deletedWhen = (Date)parameters[4];
+				
+				if(hasChanged(localItem, syncSession.getLastSyncDate())){
+					if(syncSession.isFullProtocol()){
+						response.add(this.getForMergeMessage.createMessage(syncSession, localItem));
+					} else {
+						syncSession.addConflict(syncID);
+					}
+				} else{
+					if(delete){
+						if(!localItem.getSync().isDeleted()){
+							if(syncSession.isFullProtocol()){
+								response.add(this.getForMergeMessage.createMessage(syncSession, localItem));
+							} else {
+								syncSession.delete(syncID, deletedBy, deletedWhen);
+							}
+						}
+					} else {
+						String localHashCode = this.calculateHasCode(localItem);
+						if(!localHashCode.equals(itemHashCode)){
+							response.add(this.getForMergeMessage.createMessage(syncSession, localItem));
+						}
+					}
+				}
+				updatedItems.add(syncID);
+			} else {					
+				response.add(this.getForMergeMessage.createMessage(syncSession, syncID)); 
+			}
+		}
+		return updatedItems;
 	}
 
 	private boolean hasChanged(Item item, Date sinceDate) {
@@ -120,17 +134,14 @@ public class LastVersionStatusMessageProcessor implements IMessageProcessor{
 		return sinceDate.compareTo(item.getLastUpdate().getWhen()) <= 0;
 	}
 
-	private List<IMessage> processLocalChanges(ISyncSession syncSession, ArrayList<String> updatedItems) {
-		ArrayList<IMessage> response = new ArrayList<IMessage>();
+	private void processLocalChanges(ISyncSession syncSession, List<IMessage> response, ArrayList<String> updatedItems) {
 		List<Item> localChanges = syncSession.getAll();
 		for (Item item : localChanges) {
 			if(!updatedItems.contains(item.getSyncId())){
 				response.add(this.mergeWithACKMessage.createMessage(syncSession, item));
 			}
 		}
-		return response;
 	}
-
 
 	private String encode(List<Item> items) {
 		StringBuilder sb = new StringBuilder();

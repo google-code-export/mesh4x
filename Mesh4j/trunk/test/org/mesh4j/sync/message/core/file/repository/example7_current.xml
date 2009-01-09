@@ -2,7 +2,7 @@
 
 <rss xmlns:sx="http://feedsync.org/2007/feedsync" version="2.0">
   <channel>
-    <session sessionId="example7" sessionVersion="0" sourceId="123" endpointId="sms:1" lastSyncDate="" full="true" open="true">
+    <session sessionId="example7" sessionVersion="0" sourceId="123" endpointId="sms:1" lastSyncDate="" full="true" open="true" sendChanges="true" receiveChanges="false">
       <ack>607d3605-f8e2-4a9a-8ba6-806dd15ac3e6</ack> 
   	</session> 
     <item>

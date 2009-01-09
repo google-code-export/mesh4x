@@ -2,7 +2,7 @@
 
 <rss xmlns:sx="http://feedsync.org/2007/feedsync" version="2.0">
   <channel>
-    <session sessionId="example3" sesionVersion="0" sourceId="123" endpointId="sms:1" lastSyncDate="2008-06-30T18:31:23Z" full="true" open="false" /> 
+    <session sessionId="example3" sesionVersion="0" sourceId="123" endpointId="sms:1" lastSyncDate="2008-06-30T18:31:23Z" full="true" open="false" sendChanges="true" receiveChanges="true" /> 
     <item>
       <author>
         <name>jmt</name>

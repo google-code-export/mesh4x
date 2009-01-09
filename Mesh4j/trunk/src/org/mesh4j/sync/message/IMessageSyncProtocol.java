@@ -10,7 +10,7 @@ public interface IMessageSyncProtocol {
 		
 	boolean isValidMessageProtocol(IMessage message);
 
-	IMessage beginSync(String sourceId, IEndpoint endpoint, boolean fullProtocol);
+	IMessage beginSync(String sourceId, IEndpoint endpoint, boolean fullProtocol, boolean shouldSendChanges, boolean shouldReceiveChanges);
 	
 	List<IMessage> processMessage(IMessage message);
 

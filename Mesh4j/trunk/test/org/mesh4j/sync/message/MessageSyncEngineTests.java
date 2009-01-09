@@ -611,11 +611,12 @@ public class MessageSyncEngineTests {
 			@Override public void send(IMessage message) {
 				Assert.assertSame(msg, message);
 			}
+			@Override public void startUp() {}
 			@Override public void shutdown() {}
 		};
 		
 		IMessageSyncProtocol protocol = new IMessageSyncProtocol(){
-			@Override public IMessage beginSync(String sourceId, IEndpoint endpoint, boolean fullProtocol) {return null;}
+			@Override public IMessage beginSync(String sourceId, IEndpoint endpoint, boolean fullProtocol, boolean shouldSendChanges, boolean shouldReceiveMessages) {return null;}
 			@Override public IMessage cancelSync(String sourceId, IEndpoint target) {return msg; }
 			@Override public void cancelSync(ISyncSession syncSession) {Assert.fail();}
 			@Override public boolean isValidMessageProtocol(IMessage message) {return false;}
@@ -638,6 +639,7 @@ public class MessageSyncEngineTests {
 		IChannel channel = new IChannel(){
 			@Override public void registerMessageReceiver(IMessageReceiver messageReceiver) {}
 			@Override public void send(IMessage message) {}
+			@Override public void startUp() {}
 			@Override public void shutdown() {}
 
 		};
@@ -647,7 +649,7 @@ public class MessageSyncEngineTests {
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateEngineFailsWhenChannelIsNull(){
 		IMessageSyncProtocol protocol = new IMessageSyncProtocol(){
-			@Override public IMessage beginSync(String sourceId, IEndpoint endpoint, boolean fullProtocol) {return null;}
+			@Override public IMessage beginSync(String sourceId, IEndpoint endpoint, boolean fullProtocol, boolean shouldSendChanges, boolean shouldReceiveMessages) {return null;}
 			@Override public IMessage cancelSync(String sourceId, IEndpoint target) {return null;}
 			@Override public boolean isValidMessageProtocol(IMessage message) {return false;}
 			@Override public List<IMessage> processMessage(IMessage message) {return null;}

@@ -30,9 +30,11 @@ public class SyncSession implements ISyncSession{
 	private ArrayList<String> acks = new ArrayList<String>();
 	private boolean fullProtocol = false;
 	private boolean cancelled = false;
+	private boolean shouldSendChanges = true;
+	private boolean shouldReceiveChanges = true;
 
 	// METHODS
-	public SyncSession(String sessionId, int version, IMessageSyncAdapter syncAdapter, IEndpoint target, boolean fullProtocol) {
+	public SyncSession(String sessionId, int version, IMessageSyncAdapter syncAdapter, IEndpoint target, boolean fullProtocol, boolean shouldSendChanges, boolean shouldReceiveChanges) {
 		Guard.argumentNotNullOrEmptyString(sessionId, "sessionId");
 		Guard.argumentNotNull(syncAdapter, "syncAdapter");
 		Guard.argumentNotNull(target, "target");
@@ -42,6 +44,8 @@ public class SyncSession implements ISyncSession{
 		this.syncAdapter = syncAdapter;
 		this.target = target;
 		this.fullProtocol = fullProtocol;
+		this.shouldSendChanges = shouldSendChanges;
+		this.shouldReceiveChanges = shouldReceiveChanges;
 
 	}
 
@@ -244,5 +248,15 @@ public class SyncSession implements ISyncSession{
 
 	public void setCancelled(boolean isCancelled) {
 		this.cancelled = isCancelled;
+	}
+
+	@Override
+	public boolean shouldReceiveChanges() {
+		return this.shouldReceiveChanges;
+	}
+
+	@Override
+	public boolean shouldSendChanges() {
+		return this.shouldSendChanges;
 	}
 }

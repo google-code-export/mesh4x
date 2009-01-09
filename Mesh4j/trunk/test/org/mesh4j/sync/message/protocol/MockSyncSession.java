@@ -9,11 +9,10 @@ import org.mesh4j.sync.message.IEndpoint;
 import org.mesh4j.sync.message.ISyncSession;
 import org.mesh4j.sync.model.Item;
 
-
 public class MockSyncSession implements ISyncSession{
 
+	// MODEL VARIABLES
 	private Date sinceDate;
-	private Item item;
 	private IEndpoint endpoint;
 	private String sessionID;
 	private int sessionVersion = 0;
@@ -28,6 +27,10 @@ public class MockSyncSession implements ISyncSession{
 	private ArrayList<String> conflicts = new ArrayList<String>();
 	private boolean fullProtocol = true;
 	private boolean cancelled = false;
+	private boolean shouldSendChanges = true;
+	private boolean shouldReceiveChanges = true;
+	
+	// BUSINESS METHODS
 	
 	public MockSyncSession(Date sinceDate) {
 		this(sinceDate, null, IdGenerator.INSTANCE.newID());
@@ -38,7 +41,6 @@ public class MockSyncSession implements ISyncSession{
 	public MockSyncSession(Date sinceDate, Item item, String sessionId) {
 		super();
 		this.sinceDate = sinceDate;
-		this.item = item;
 		
 		if(item != null){
 			this.all.add(item);
@@ -54,7 +56,9 @@ public class MockSyncSession implements ISyncSession{
 		this.sessionID = sessionId;
 	}
 
-	@Override public void add(Item item) {}
+	@Override public void add(Item item) {
+		this.all.add(item);
+	}
 	@Override public void addConflict(String syncID) {this.conflicts.add(syncID);}
 	@Override public void beginSync() {
 		this.beginWasCalled = true;
@@ -67,14 +71,26 @@ public class MockSyncSession implements ISyncSession{
 		this.cancelled = true;
 	}
 	@Override public void delete(String syncID, String by, Date when) {
-		this.item.getSync().delete(by, when);
+		Item item = get(syncID);
+		if(item != null){
+			item.getSync().delete(by, when);
+		}
 	}	
 	@Override public void endSync(Date sinceDate) {
 		this.sinceDate = sinceDate;
 		this.cancelled = false;
 		this.endSyncWasCalled = true;
 	}
-	@Override public Item get(String syncId) {return item;}
+	
+	@Override public Item get(String syncId) {
+		for (Item item : this.all) {
+			if(item.getSyncId().equals(syncId)){
+				return item;
+			}
+		}
+		return null;
+	}
+	
 	@Override public List<Item> getAll() {
 		this.getAllWasCalled = true;
 		return all;
@@ -150,15 +166,36 @@ public class MockSyncSession implements ISyncSession{
 	public List<String> getConflictsSyncIDs() {
 		return conflicts;
 	}
+	
 	public void setClose() {
 		this.open = false;		
 	}
+	
 	@Override
 	public int getVersion() {
 		return this.sessionVersion;
 	}
+	
 	@Override
 	public boolean isCancelled() {
 		return this.cancelled;
+	}
+	
+	@Override
+	public boolean shouldReceiveChanges() {
+		return this.shouldReceiveChanges;
+	}
+	
+	@Override
+	public boolean shouldSendChanges() {
+		return this.shouldSendChanges;
+	}
+	
+	public void setShouldReceiveChanges(boolean shouldReceiveChanges) {
+		this.shouldReceiveChanges = shouldReceiveChanges;
+	}
+	
+	public void setShouldSendChanges(boolean shouldSendChanges) {
+		this.shouldSendChanges = shouldSendChanges;
 	}
 }

@@ -48,7 +48,7 @@ public class SmsLibConnectionOnLineTests implements ISmsConnectionInboundOutboun
 		
 		SmsLibAsynchronousConnection client = new SmsLibAsynchronousConnection("mesh4j.sync", modem.getComPort(), modem.getBaudRate(), modem.getManufacturer(), modem.getModel());
 		client.setMessageReceiver(messageReceiver);
-		client.startService();
+		client.startUp();
 		
 		//client.sendMessage("01136544867", "nokia 950"); +541136544867
 		//client.sendMessage("01136540460", "nokia 750"); +541136540460
@@ -68,7 +68,7 @@ public class SmsLibConnectionOnLineTests implements ISmsConnectionInboundOutboun
 		}
 		
 		client.readAll();
-		client.stopService();
+		client.shutdown();
 	}
 	
 

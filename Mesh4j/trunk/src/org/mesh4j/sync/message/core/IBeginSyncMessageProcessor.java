@@ -9,4 +9,10 @@ public interface IBeginSyncMessageProcessor extends IMessageProcessor {
 
 	String getSourceId(String data);
 
+	boolean getFullProtocol(String data);
+
+	boolean getSendChanges(String data);
+
+	boolean getReceiveChanges(String data);
+
 }

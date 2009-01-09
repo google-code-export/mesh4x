@@ -108,4 +108,9 @@ public class MockSmsConnection implements ISmsConnection{
 		// nothing to do
 	}
 
+	@Override
+	public void startUp() {
+		// nothing to do		
+	}
+
 }

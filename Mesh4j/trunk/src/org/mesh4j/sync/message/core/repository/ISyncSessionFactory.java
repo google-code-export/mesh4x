@@ -19,10 +19,11 @@ public interface ISyncSessionFactory {
 	
 	ISyncSession get(String sourceId, String targetId);
 
-	ISyncSession createSession(String sessionId, int version, String sourceId, IEndpoint endpoint, boolean fullProtocol);
+	ISyncSession createSession(String sessionId, int version, String sourceId, IEndpoint endpoint, boolean fullProtocol, boolean shouldSendChanges, boolean shouldReceiveChanges);
 
 	ISyncSession createSession(String sessionId, int version, String sourceId,
-		String endpointId, boolean isFull, boolean isOpen, boolean isCancelled, Date date,
+		String endpointId, boolean isFull, boolean shouldSendChanges, boolean shouldReceiveChanges, 
+		boolean isOpen, boolean isCancelled, Date date,
 		List<Item> currentSyncSnapshot, List<Item> lastSyncSnapshot,
 		List<String> conflicts, List<String> acks);
 

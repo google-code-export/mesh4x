@@ -34,7 +34,15 @@ public class MessageSyncEngine implements IMessageReceiver {
 	
 	public void synchronize(IMessageSyncAdapter adapter, IEndpoint target, boolean fullProtocol) {
 		this.registerSourceIfAbsent(adapter);
-		IMessage message = this.syncProtocol.beginSync(adapter.getSourceId(), target, fullProtocol);
+		IMessage message = this.syncProtocol.beginSync(adapter.getSourceId(), target, fullProtocol, true, true);
+		if(message != null){
+			this.channel.send(message);
+		}
+	}
+	
+	public void synchronize(IMessageSyncAdapter adapter, IEndpoint target, boolean fullProtocol, boolean shouldSendChanges, boolean shouldReceiveChanges) {
+		this.registerSourceIfAbsent(adapter);
+		IMessage message = this.syncProtocol.beginSync(adapter.getSourceId(), target, fullProtocol, shouldSendChanges, shouldReceiveChanges);
 		if(message != null){
 			this.channel.send(message);
 		}

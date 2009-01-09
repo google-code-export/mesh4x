@@ -53,7 +53,7 @@ public class SmsChannelTests {
 		SmsMessageBatch batchRetry = createTestBatch(10, msg);
 
 		
-		SmsChannel channel = new SmsChannel(new MockSmsConnection("1", NonMessageEncoding.INSTANCE), sender, new MockSmsReceiver(), new MockMessageEncoding(), 10);
+		SmsChannel channel = new SmsChannel(new MockSmsConnection("1", NonMessageEncoding.INSTANCE), sender, new MockSmsReceiver(), new MockMessageEncoding(), 160);
 		channel.registerMessageReceiver(messageReceiver);
 		channel.receive(batchRetry);
 		
@@ -68,7 +68,7 @@ public class SmsChannelTests {
 		MockMessageReceiver messageReceiver = new MockMessageReceiver();
 		
 		MockSmsSender sender = new MockSmsSender();
-		SmsChannel channel = new SmsChannel(new MockSmsConnection("1", NonMessageEncoding.INSTANCE), sender, new MockSmsReceiver(), new MockMessageEncoding(), 10);
+		SmsChannel channel = new SmsChannel(new MockSmsConnection("1", NonMessageEncoding.INSTANCE), sender, new MockSmsReceiver(), new MockMessageEncoding(), 160);
 		channel.registerMessageReceiver(messageReceiver);
 		channel.receive(batch);
 		
@@ -100,7 +100,7 @@ public class SmsChannelTests {
 	@Test
 	public void shouldReceiveAckDiscartedWhenBatchIDIsNull(){
 		MockSmsSender sender = new MockSmsSender();
-		SmsChannel channel = new SmsChannel(new MockSmsConnection("1", NonMessageEncoding.INSTANCE), sender, new MockSmsReceiver(), new MockMessageEncoding(), 10);
+		SmsChannel channel = new SmsChannel(new MockSmsConnection("1", NonMessageEncoding.INSTANCE), sender, new MockSmsReceiver(), new MockMessageEncoding(), 160);
 		channel.receiveACK(null);
 		
 		Assert.assertEquals(0, sender.getACKs().size());
@@ -109,7 +109,7 @@ public class SmsChannelTests {
 	@Test
 	public void shouldReceiveAckDiscartedWhenBatchIDIsEmpty(){
 		MockSmsSender sender = new MockSmsSender();
-		SmsChannel channel = new SmsChannel(new MockSmsConnection("1", NonMessageEncoding.INSTANCE), sender, new MockSmsReceiver(), new MockMessageEncoding(), 10);
+		SmsChannel channel = new SmsChannel(new MockSmsConnection("1", NonMessageEncoding.INSTANCE), sender, new MockSmsReceiver(), new MockMessageEncoding(), 160);
 		channel.receiveACK("");
 		
 		Assert.assertEquals(0, sender.getACKs().size());
@@ -118,7 +118,7 @@ public class SmsChannelTests {
 	@Test
 	public void shouldReceiveAck(){
 		MockSmsSender sender = new MockSmsSender();
-		SmsChannel channel = new SmsChannel(new MockSmsConnection("1", NonMessageEncoding.INSTANCE), sender, new MockSmsReceiver(), new MockMessageEncoding(), 10);
+		SmsChannel channel = new SmsChannel(new MockSmsConnection("1", NonMessageEncoding.INSTANCE), sender, new MockSmsReceiver(), new MockMessageEncoding(), 160);
 		channel.receiveACK("123");
 		
 		Assert.assertEquals(1, sender.getACKs().size());
@@ -132,7 +132,7 @@ public class SmsChannelTests {
 		MockSmsSender sender = new MockSmsSender();
 		sender.send(batch, true);
 		
-		SmsChannel channel = new SmsChannel(new MockSmsConnection("1", NonMessageEncoding.INSTANCE), sender, new MockSmsReceiver(), new MockMessageEncoding(), 10);
+		SmsChannel channel = new SmsChannel(new MockSmsConnection("1", NonMessageEncoding.INSTANCE), sender, new MockSmsReceiver(), new MockMessageEncoding(), 160);
 		Assert.assertEquals(sender.getOngoingBatches().size(), channel.getOutcommingBatches().size());
 		Assert.assertEquals(sender.getOngoingBatches().get(0), channel.getOutcommingBatches().get(0));
 		
@@ -145,7 +145,7 @@ public class SmsChannelTests {
 		MockSmsReceiver receiver = new MockSmsReceiver();
 		receiver.addBatch(batch);
 		
-		SmsChannel channel = new SmsChannel(new MockSmsConnection("1", NonMessageEncoding.INSTANCE), new MockSmsSender(), receiver, new MockMessageEncoding(), 10);
+		SmsChannel channel = new SmsChannel(new MockSmsConnection("1", NonMessageEncoding.INSTANCE), new MockSmsSender(), receiver, new MockMessageEncoding(), 160);
 		Assert.assertEquals(receiver.getOngoingBatches().size(), channel.getIncommingBatches().size());
 		Assert.assertEquals(receiver.getOngoingBatches().get(0), channel.getIncommingBatches().get(0));
 		

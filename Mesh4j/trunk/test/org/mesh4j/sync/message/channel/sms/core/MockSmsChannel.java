@@ -79,7 +79,12 @@ public class MockSmsChannel implements ISmsChannel {
 
 	@Override
 	public void shutdown() {
+		// nothing to do	
 	}
 
+	@Override
+	public void startUp() {
+		// nothing to do		
+	}
 
 }

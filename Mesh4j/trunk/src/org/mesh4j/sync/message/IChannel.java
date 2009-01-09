@@ -6,6 +6,8 @@ public interface IChannel {
 
 	void send(IMessage message);
 	
+	void startUp();
+	
 	void shutdown();
 
 }

@@ -49,5 +49,8 @@ public interface ISyncSession {
 	List<String> getConflictsSyncIDs();
 
 	boolean isCancelled();
+	
+	boolean shouldSendChanges();
+	boolean shouldReceiveChanges();
 
 }

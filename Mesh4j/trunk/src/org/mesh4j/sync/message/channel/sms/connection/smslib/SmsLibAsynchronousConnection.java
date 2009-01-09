@@ -65,7 +65,9 @@ public class SmsLibAsynchronousConnection implements ISmsConnection, IInboundMes
 		this.service.addGateway(gateway);
 	}
 
-	public void startService() {
+
+	@Override
+	public void startUp() {
 		try {
 			this.service.startService();
 		} catch (Exception e) {
@@ -73,7 +75,8 @@ public class SmsLibAsynchronousConnection implements ISmsConnection, IInboundMes
 		}
 	}
 
-	public void stopService() {
+	@Override
+	public void shutdown() {
 		try {
 			this.service.stopService();
 		} catch (Exception e) {
@@ -241,10 +244,5 @@ public class SmsLibAsynchronousConnection implements ISmsConnection, IInboundMes
 		for (InboundMessage msg : msgList) {
 			process(msg.getGatewayId(), msg.getType(), msg);
 		}
-	}
-
-	@Override
-	public void shutdown() {
-		this.stopService();
 	}
 }

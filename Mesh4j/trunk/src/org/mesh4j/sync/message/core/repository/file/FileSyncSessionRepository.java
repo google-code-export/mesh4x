@@ -48,6 +48,8 @@ public class FileSyncSessionRepository implements ISyncSessionRepository{
 	public static final String ATTRIBUTE_SESSION_ID = "sessionId";
 	public static final String ATTRIBUTE_VERSION = "sessionVersion";
 	public static final String ATTRIBUTE_CANCELLED = "cancelled";
+	public static final String ATTRIBUTE_SHOULD_SEND_CHANGES = "sendChanges";
+	public static final String ATTRIBUTE_SHOULD_RECEIVE_CHANGES = "receiveChanges";
 
 	public final static String ELEMENT_SYNC_SESSION = "session";
 	public final static String ELEMENT_ACK = "ack";
@@ -243,6 +245,8 @@ public class FileSyncSessionRepository implements ISyncSessionRepository{
 		elementSession.addAttribute(ATTRIBUTE_FULL, syncSession.isFullProtocol() ? "true" : "false");
 		elementSession.addAttribute(ATTRIBUTE_OPEN, syncSession.isOpen() ? "true" : "false");
 		elementSession.addAttribute(ATTRIBUTE_CANCELLED, syncSession.isCancelled() ? "true" : "false");
+		elementSession.addAttribute(ATTRIBUTE_SHOULD_SEND_CHANGES, syncSession.shouldSendChanges() ? "true" : "false");
+		elementSession.addAttribute(ATTRIBUTE_SHOULD_RECEIVE_CHANGES, syncSession.shouldReceiveChanges() ? "true" : "false");
 		
 		if(!isSnapshot){
 			List<String> pendingAcks = syncSession.getAllPendingACKs();
@@ -273,6 +277,8 @@ public class FileSyncSessionRepository implements ISyncSessionRepository{
 		boolean isFull = Boolean.valueOf(syncElement.attributeValue(ATTRIBUTE_FULL));
 		boolean isOpen = Boolean.valueOf(syncElement.attributeValue(ATTRIBUTE_OPEN));
 		boolean isCancelled = Boolean.valueOf(syncElement.attributeValue(ATTRIBUTE_CANCELLED));
+		boolean shouldSendChanges = Boolean.valueOf(syncElement.attributeValue(ATTRIBUTE_SHOULD_SEND_CHANGES));
+		boolean shouldReceiveChanges = Boolean.valueOf(syncElement.attributeValue(ATTRIBUTE_SHOULD_RECEIVE_CHANGES));
 		
 		List<String> acks = new ArrayList<String>();
 		List<Element> ackElements = syncElement.elements(ELEMENT_ACK);
@@ -286,13 +292,13 @@ public class FileSyncSessionRepository implements ISyncSessionRepository{
 			conflicts.add(conflictElement.getText());
 		}
 		
-		ISyncSession syncSession = this.sessionFactory.createSession(sessionId, version, sourceId, endpointId, isFull, isOpen, isCancelled, date, currentSyncSnapshot, lastSyncSnapshot, conflicts, acks);
+		ISyncSession syncSession = this.sessionFactory.createSession(sessionId, version, sourceId, endpointId, isFull, shouldSendChanges, shouldReceiveChanges, isOpen, isCancelled, date, currentSyncSnapshot, lastSyncSnapshot, conflicts, acks);
 		return syncSession;
 	}
 	
 	@Override
-	public ISyncSession createSession(String sessionID, int version, String sourceId, IEndpoint target, boolean fullProtocol) {
-		return this.sessionFactory.createSession(sessionID, version, sourceId, target, fullProtocol);
+	public ISyncSession createSession(String sessionID, int version, String sourceId, IEndpoint target, boolean fullProtocol, boolean shouldSendChanges, boolean shouldReceiveChanges) {
+		return this.sessionFactory.createSession(sessionID, version, sourceId, target, fullProtocol, shouldSendChanges, shouldReceiveChanges);
 	}
 
 	@Override

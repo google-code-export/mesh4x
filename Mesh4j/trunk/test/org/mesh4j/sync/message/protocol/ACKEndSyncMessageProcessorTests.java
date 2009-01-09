@@ -89,7 +89,7 @@ public class ACKEndSyncMessageProcessorTests {
 		
 		IMessageSyncProtocol messageSyncProtocol = new IMessageSyncProtocol(){
 	
-			@Override public IMessage beginSync(String sourceId, IEndpoint endpoint, boolean fullProtocol) {
+			@Override public IMessage beginSync(String sourceId, IEndpoint endpoint, boolean fullProtocol, boolean shouldSendChanges, boolean shouldReceiveMessages) {
 				Assert.fail();
 				return null;
 			}

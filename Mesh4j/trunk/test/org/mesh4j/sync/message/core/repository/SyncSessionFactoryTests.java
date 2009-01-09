@@ -25,38 +25,38 @@ public class SyncSessionFactoryTests {
 	public void shouldCreateSessionFailsWhenTargetIsNull(){
 		
 		SyncSessionFactory factory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory());
-		factory.createSession("1", 0, "123", null, true);
+		factory.createSession("1", 0, "123", null, true, true, true);
 	}
 
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateSessionFailsWhenSessionIsNull(){
 		SyncSessionFactory factory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory());
-		factory.createSession(null, 0, "123", new SmsEndpoint("123"), true);		
+		factory.createSession(null, 0, "123", new SmsEndpoint("123"), true, true, true);		
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateSessionFailsWhenSessionIsEmpty(){
 		SyncSessionFactory factory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory());
-		factory.createSession("", 0, "123", new SmsEndpoint("123"), true);
+		factory.createSession("", 0, "123", new SmsEndpoint("123"), true, true, true);
 	}
 
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateSessionFailsWhenSourceIDIsNull(){
 		SyncSessionFactory factory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory());
-		factory.createSession("1", 0, null, new SmsEndpoint("123"), true);
+		factory.createSession("1", 0, null, new SmsEndpoint("123"), true, true, true);
 	}
 
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateSessionFailsWhenSourceIDIsEmpty(){
 		SyncSessionFactory factory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory());
-		factory.createSession("1", 0, "", new SmsEndpoint("123"), true);
+		factory.createSession("1", 0, "", new SmsEndpoint("123"), true, true, true);
 	}
 
 	@Test
 	public void shouldCreateSessionReturnsFeedAdapterWhenSourceIDDoesNotRegistered(){
 		SyncSessionFactory factory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory());
 		
-		IMessageSyncAdapter adapter = ((SyncSession)factory.createSession("1", 0, "123", new SmsEndpoint("123"), true)).getSyncAdapter();
+		IMessageSyncAdapter adapter = ((SyncSession)factory.createSession("1", 0, "123", new SmsEndpoint("123"), true, true, true)).getSyncAdapter();
 		Assert.assertEquals(MessageSyncAdapter.class.getName(), adapter.getClass().getName());
 		Assert.assertEquals(FeedAdapter.class.getName(), ((MessageSyncAdapter)adapter).getSyncAdapter().getClass().getName());
 		
@@ -66,7 +66,7 @@ public class SyncSessionFactoryTests {
 	public void shouldBasicCreateSessionReturnsFeedAdapterWhenSourceIDDoesNotRegistered(){
 		SyncSessionFactory factory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory());
 		
-		IMessageSyncAdapter adapter = ((SyncSession)factory.createSession("1", 0, "123", "333", true, true, false, null, new ArrayList<Item>(), new ArrayList<Item>(), new ArrayList<String>(), new ArrayList<String>())).getSyncAdapter();
+		IMessageSyncAdapter adapter = ((SyncSession)factory.createSession("1", 0, "123", "333", true, true, true, true, false, null, new ArrayList<Item>(), new ArrayList<Item>(), new ArrayList<String>(), new ArrayList<String>())).getSyncAdapter();
 		Assert.assertEquals(MessageSyncAdapter.class.getName(), adapter.getClass().getName());
 		Assert.assertEquals(FeedAdapter.class.getName(), ((MessageSyncAdapter)adapter).getSyncAdapter().getClass().getName());
 
@@ -81,7 +81,7 @@ public class SyncSessionFactoryTests {
 		SyncSessionFactory factory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory());
 		factory.registerSource(new InMemoryMessageSyncAdapter(sourceID));
 		
-		ISyncSession syncSession = factory.createSession(sessionID, 0, sourceID, endpoint, true);
+		ISyncSession syncSession = factory.createSession(sessionID, 0, sourceID, endpoint, true, true, true);
 		Assert.assertNotNull(syncSession);
 		Assert.assertNull(syncSession.getLastSyncDate());
 		Assert.assertEquals(sessionID, syncSession.getSessionId());

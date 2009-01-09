@@ -99,4 +99,96 @@ public class NoChangesMessageProcessorTests {
 		Assert.assertEquals(IProtocolConstants.PROTOCOL, response.getProtocol());
 		Assert.assertEquals(syncSession.getSessionId(), response.getSessionId());
 	}
+
+	@Test
+	public void shouldProcessChangesReturnLocalChangesIfSessionHasLocalChangesAndShouldSendChanges(){
+		Item item = new Item(new NullContent("1"), new Sync("1", "jmt", new Date(), true));
+		MockSyncSession syncSession = new MockSyncSession(null, item);
+		syncSession.setShouldSendChanges(true);
+		syncSession.setOpen();
+		
+		MergeWithACKMessageProcessor merge = new MergeWithACKMessageProcessor(new ItemEncoding(100), null);
+		EndSyncMessageProcessor end =  new EndSyncMessageProcessor(null);
+		NoChangesMessageProcessor ncp = new NoChangesMessageProcessor(end, merge);
+		Message message = new Message("a", ncp.getMessageType(), syncSession.getSessionId(), 0, "", syncSession.getTarget());
+		List<IMessage> messages = ncp.process(syncSession, message);
+		Assert.assertEquals(1, messages.size());
+		
+		IMessage response = messages.get(0);
+		Assert.assertNotNull(response);
+		Assert.assertNotNull(response.getData().length());
+		Assert.assertEquals(syncSession.getTarget(), response.getEndpoint());
+		Assert.assertEquals(merge.getMessageType(), response.getMessageType());
+		Assert.assertEquals(IProtocolConstants.PROTOCOL, response.getProtocol());
+		Assert.assertEquals(syncSession.getSessionId(), response.getSessionId());
+	}
+	
+	@Test
+	public void shouldProcessChangesReturnEndSyncIfSessionHasLocalChangesAndShouldNotSendChanges(){
+		Item item = new Item(new NullContent("1"), new Sync("1", "jmt", new Date(), true));
+		MockSyncSession syncSession = new MockSyncSession(null, item);
+		syncSession.setShouldSendChanges(false);
+		syncSession.setOpen();
+		
+		MergeWithACKMessageProcessor merge = new MergeWithACKMessageProcessor(new ItemEncoding(100), null);
+		EndSyncMessageProcessor end =  new EndSyncMessageProcessor(null);
+		NoChangesMessageProcessor ncp = new NoChangesMessageProcessor(end, merge);
+		Message message = new Message("a", ncp.getMessageType(), syncSession.getSessionId(), 0, "", syncSession.getTarget());
+		List<IMessage> messages = ncp.process(syncSession, message);
+		Assert.assertEquals(1, messages.size());
+		
+		IMessage response = messages.get(0);
+		Assert.assertNotNull(response);
+		Assert.assertNotNull(response.getData().length());
+		Assert.assertEquals(syncSession.getTarget(), response.getEndpoint());
+		Assert.assertEquals(end.getMessageType(), response.getMessageType());
+		Assert.assertEquals(IProtocolConstants.PROTOCOL, response.getProtocol());
+		Assert.assertEquals(syncSession.getSessionId(), response.getSessionId());
+	}
+	
+	@Test
+	public void shouldProcessChangesReturnEndSyncIfSessionHasNotLocalChangesAndShouldSendChanges(){
+		MockSyncSession syncSession = new MockSyncSession(null);
+		syncSession.setShouldSendChanges(true);
+		syncSession.setOpen();
+		
+		MergeWithACKMessageProcessor merge = new MergeWithACKMessageProcessor(new ItemEncoding(100), null);
+		EndSyncMessageProcessor end =  new EndSyncMessageProcessor(null);
+		NoChangesMessageProcessor ncp = new NoChangesMessageProcessor(end, merge);
+		Message message = new Message("a", ncp.getMessageType(), syncSession.getSessionId(), 0, "", syncSession.getTarget());
+		List<IMessage> messages = ncp.process(syncSession, message);
+		Assert.assertEquals(1, messages.size());
+		
+		IMessage response = messages.get(0);
+		Assert.assertNotNull(response);
+		Assert.assertNotNull(response.getData().length());
+		Assert.assertEquals(syncSession.getTarget(), response.getEndpoint());
+		Assert.assertEquals(end.getMessageType(), response.getMessageType());
+		Assert.assertEquals(IProtocolConstants.PROTOCOL, response.getProtocol());
+		Assert.assertEquals(syncSession.getSessionId(), response.getSessionId());	
+	}
+	
+	@Test
+	public void shouldProcessChangesReturnEndSyncIfSessionHasNotLocalChangesAndShouldNotSendChanges(){
+		MockSyncSession syncSession = new MockSyncSession(null);
+		syncSession.setShouldSendChanges(false);
+		syncSession.setOpen();
+		
+		MergeWithACKMessageProcessor merge = new MergeWithACKMessageProcessor(new ItemEncoding(100), null);
+		EndSyncMessageProcessor end =  new EndSyncMessageProcessor(null);
+		NoChangesMessageProcessor ncp = new NoChangesMessageProcessor(end, merge);
+		Message message = new Message("a", ncp.getMessageType(), syncSession.getSessionId(), 0, "", syncSession.getTarget());
+		List<IMessage> messages = ncp.process(syncSession, message);
+		Assert.assertEquals(1, messages.size());
+		
+		IMessage response = messages.get(0);
+		Assert.assertNotNull(response);
+		Assert.assertNotNull(response.getData().length());
+		Assert.assertEquals(syncSession.getTarget(), response.getEndpoint());
+		Assert.assertEquals(end.getMessageType(), response.getMessageType());
+		Assert.assertEquals(IProtocolConstants.PROTOCOL, response.getProtocol());
+		Assert.assertEquals(syncSession.getSessionId(), response.getSessionId());	
+	}
+	
+	
 }

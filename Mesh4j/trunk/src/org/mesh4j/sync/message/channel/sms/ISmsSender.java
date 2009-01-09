@@ -5,12 +5,13 @@ import java.util.List;
 import org.mesh4j.sync.message.channel.sms.batch.SmsMessage;
 import org.mesh4j.sync.message.channel.sms.batch.SmsMessageBatch;
 
-
 public interface ISmsSender {
 
 	void send(SmsMessageBatch batch, boolean ackRequired);
 
 	void send(List<SmsMessage> smsMessages, SmsEndpoint endpoint);
+
+	void send(SmsMessage smsMessage, SmsEndpoint endpoint);
 	
 	void receiveACK(String batchId);
 
@@ -22,6 +23,8 @@ public interface ISmsSender {
 
 	void purgeBatches(String sessionId, int sessionVersion);
 
+	void startUp();
+	
 	void shutdown();
 
 }

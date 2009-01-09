@@ -50,6 +50,22 @@ public class SmsSender implements ISmsSender{
 		}
 		send(batch.getMessages(), batch.getEndpoint());
 	}
+	
+	@Override
+	public void send(SmsMessage smsMessage, SmsEndpoint endpoint) {
+		Guard.argumentNotNull(smsMessage, "smsMessage");
+		
+		Guard.argumentNotNull(smsMessage, "smsMessage");
+		Guard.argumentNotNullOrEmptyString(smsMessage.getText(), "smsMessage.text");
+		Guard.argumentNotNull(endpoint, "endpoint");
+		
+		ArrayList<String> msgTexts = new ArrayList<String>();
+		smsMessage.setLastModificationDate(new Date());
+		msgTexts.add(smsMessage.getText());
+	
+		this.smsConnection.send(msgTexts, endpoint);
+		this.persistChanges();
+	}
 
 	@Override
 	public void send(List<SmsMessage> smsMessages, SmsEndpoint endpoint) {
@@ -142,6 +158,11 @@ public class SmsSender implements ISmsSender{
 			
 			this.persistChanges();
 		}
+	}
+	
+	@Override
+	public void startUp() {
+		this.smsConnection.startUp();		
 	}
 
 	@Override
