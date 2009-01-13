@@ -149,7 +149,7 @@ public class MessageSyncEngineConcurrentSessionsTests implements IMessageSyncAwa
 	}
 
 	@Override
-	public void notifyMessageProcessed(IMessage message, List<IMessage> response) {
+	public void notifyMessageProcessed(ISyncSession syncSession, IMessage message, List<IMessage> response) {
 		System.out.println("Protocol message processed: " + message.getMessageType());
 		for (IMessage message2 : response) {
 			System.out.println("	response: " + message2.getMessageType());	

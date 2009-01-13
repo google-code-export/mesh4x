@@ -11,6 +11,8 @@ import org.mesh4j.sync.validations.Guard;
 
 public class MsExcelSyncAdapterFactory implements ISyncAdapterFactory {
 
+	public static final String SOURCE_TYPE = "MS_EXCEL";
+	
 	// MODEL VARIABLES
 	private String baseDirectory;
 	
@@ -57,8 +59,8 @@ public class MsExcelSyncAdapterFactory implements ISyncAdapterFactory {
 	}
 
 	@Override
-	public String getSourceType(String sourceId) {
-		return "MsExcel";
+	public String getSourceType() {
+		return SOURCE_TYPE;
 	}
 
 }

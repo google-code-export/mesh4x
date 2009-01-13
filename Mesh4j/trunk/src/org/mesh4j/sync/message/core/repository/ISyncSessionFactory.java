@@ -25,7 +25,8 @@ public interface ISyncSessionFactory {
 		String endpointId, boolean isFull, boolean shouldSendChanges, boolean shouldReceiveChanges, 
 		boolean isOpen, boolean isCancelled, Date date,
 		List<Item> currentSyncSnapshot, List<Item> lastSyncSnapshot,
-		List<String> conflicts, List<String> acks);
+		List<String> conflicts, List<String> acks, 
+		int numberOfAddedItems, int numberOfUpdatedItems, int numberOfDeletedItems);
 
 	void registerSource(IMessageSyncAdapter source);
 	

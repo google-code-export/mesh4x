@@ -107,4 +107,9 @@ public class MockInMemoryMessageSyncAdapter implements IMessageSyncAdapter, ISyn
 		return new ArrayList<Item>();
 	}
 
+	@Override
+	public String getSourceType() {
+		return this.sourceId;
+	}
+
 }

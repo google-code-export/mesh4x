@@ -20,6 +20,8 @@ import sun.jdbc.odbc.JdbcOdbcDriver;
 public class MsAccessSyncAdapterFactory implements ISyncAdapterFactory {
 
 	private static final String DEFAULT_SEPARATOR = "@";
+
+	public static final String SOURCE_TYPE = "MS_ACCESS";
 	
 	// MODEL VARIABLES
 	private String baseDirectory;
@@ -127,8 +129,8 @@ public class MsAccessSyncAdapterFactory implements ISyncAdapterFactory {
 	}
 
 	@Override
-	public String getSourceType(String sourceId) {
-		return "MsAccess";
+	public String getSourceType() {
+		return SOURCE_TYPE;
 	}
 
 	public static boolean isValidAccessTable(String mdbFileName, String mdbTableName) {

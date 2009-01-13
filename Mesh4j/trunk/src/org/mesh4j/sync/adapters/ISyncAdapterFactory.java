@@ -11,6 +11,6 @@ public interface ISyncAdapterFactory {
 
 	public String getSourceName(String sourceId);
 	
-	public String getSourceType(String sourceId);
+	public String getSourceType();
 }
  

@@ -130,7 +130,8 @@ public class SyncSessionFactory implements ISyncSessionFactory {
 	public ISyncSession createSession(String sessionId, int version, String sourceId,
 			String endpointId, boolean fullProtocol, boolean shouldSendChanges, boolean shouldReceiveChanges, boolean isOpen, boolean isCancelled, Date lastSyncDate,
 			List<Item> currentSyncSnapshot, List<Item> lastSyncSnapshot,
-			List<String> conflicts, List<String> acks) {
+			List<String> conflicts, List<String> acks,
+			int numberOfAddedItems, int numberOfUpdatedItems, int numberOfDeletedItems) {
 		
 		Guard.argumentNotNull(currentSyncSnapshot, "currentSyncSnapshot");
 		Guard.argumentNotNull(lastSyncSnapshot, "lastSyncSnapshot");
@@ -143,7 +144,7 @@ public class SyncSessionFactory implements ISyncSessionFactory {
 			return null;
 		}
 		
-		SyncSession session = new SyncSession(sessionId, version, syncAdapter, this.endpointFactory.makeIEndpoint(endpointId), fullProtocol, shouldSendChanges, shouldReceiveChanges);
+		SyncSession session = new SyncSession(sessionId, version, syncAdapter, this.endpointFactory.makeIEndpoint(endpointId), fullProtocol, shouldSendChanges, shouldReceiveChanges, numberOfAddedItems, numberOfUpdatedItems, numberOfDeletedItems);
 		session.setOpen(isOpen);
 		session.setLastSyncDate(lastSyncDate);
 		session.setCancelled(isCancelled);

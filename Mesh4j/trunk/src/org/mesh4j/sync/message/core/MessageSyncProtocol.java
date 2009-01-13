@@ -80,7 +80,7 @@ public class MessageSyncProtocol implements IMessageSyncProtocol {
 				response.addAll(msgResponse);
 			}
 			this.persistChanges(syncSession);
-			this.notifyMessageProcessed(message, response);
+			this.notifyMessageProcessed(syncSession, message, response);
 			return response;
 		} else {
 			this.notifyInvalidMessageProtocol(message);
@@ -134,7 +134,7 @@ public class MessageSyncProtocol implements IMessageSyncProtocol {
 			}
 		}
 		
-		syncSession.beginSync();
+		syncSession.beginSync(fullProtocol, shouldSendChanges, shouldReceiveChanges);
 		
 		IMessage message = this.initialMessage.createMessage(syncSession);
 		this.persistChanges(syncSession);
@@ -203,10 +203,9 @@ public class MessageSyncProtocol implements IMessageSyncProtocol {
 	}
 
 
-	public void notifyMessageProcessed(IMessage message,
-			List<IMessage> response) {
+	public void notifyMessageProcessed(ISyncSession syncSession, IMessage message, List<IMessage> response) {
 		for (IMessageSyncAware syncAware : this.syncAwareList) {
-			syncAware.notifyMessageProcessed(message, response);
+			syncAware.notifyMessageProcessed(syncSession, message, response);
 		}
 	}
 

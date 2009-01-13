@@ -10,6 +10,8 @@ import org.mesh4j.sync.security.IIdentityProvider;
 
 public class HttpSyncAdapterFactory implements ISyncAdapterFactory {
 
+	public static final String SOURCE_TYPE = "HTTP";
+	
 	public static final HttpSyncAdapterFactory INSTANCE = new HttpSyncAdapterFactory();
 	
 	@Override
@@ -28,8 +30,8 @@ public class HttpSyncAdapterFactory implements ISyncAdapterFactory {
 	}
 
 	@Override
-	public String getSourceType(String sourceId) {
-		return "http";
+	public String getSourceType() {
+		return SOURCE_TYPE;
 	}
 	
 	

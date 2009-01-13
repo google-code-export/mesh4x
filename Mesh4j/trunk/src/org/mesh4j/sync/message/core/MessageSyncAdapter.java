@@ -19,19 +19,22 @@ public class MessageSyncAdapter implements IMessageSyncAdapter, ISyncAware {
 
 	// MODEL VARIABLES
 	private String sourceId;
+	private String sourceType;
 	private ISyncAdapter syncAdapter;
 	private IIdentityProvider identityProvider;
 	
 	// BUSINESS METHODS
 	
-	public MessageSyncAdapter(String sourceId, IIdentityProvider identityProvider, ISyncAdapter syncAdapter) {
+	public MessageSyncAdapter(String sourceId, String sourceType, IIdentityProvider identityProvider, ISyncAdapter syncAdapter) {
 		super();
 		
 		Guard.argumentNotNullOrEmptyString(sourceId, "sourceId");
+		Guard.argumentNotNullOrEmptyString(sourceType, "sourceType");
 		Guard.argumentNotNull(syncAdapter, "syncAdapter");
 		Guard.argumentNotNull(identityProvider, "identityProvider");
 		
 		this.sourceId = sourceId;
+		this.sourceType = sourceType;
 		this.syncAdapter = syncAdapter;
 		this.identityProvider = identityProvider;
 	}
@@ -70,5 +73,10 @@ public class MessageSyncAdapter implements IMessageSyncAdapter, ISyncAware {
 		if(this.syncAdapter instanceof ISyncAware){
 			((ISyncAware)this.syncAdapter).endSync();
 		}
+	}
+
+	@Override
+	public String getSourceType() {
+		return this.sourceType;
 	}
 }

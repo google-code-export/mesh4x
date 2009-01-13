@@ -1,5 +1,6 @@
 package org.mesh4j.sync.message.protocol;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -7,6 +8,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mesh4j.sync.message.IMessage;
 import org.mesh4j.sync.message.IMessageSyncProtocol;
+import org.mesh4j.sync.message.MockInMemoryMessageSyncAdapter;
 import org.mesh4j.sync.message.core.Message;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.NullContent;
@@ -23,13 +25,17 @@ public class NoChangesMessageProcessorTests {
 	
 	@Test
 	public void shouldCreateMessage(){
+		
+		MockInMemoryMessageSyncAdapter adapter = new MockInMemoryMessageSyncAdapter("myadapter", new ArrayList<Item>());
 		MockSyncSession syncSession = new MockSyncSession(null);
+		MockSyncProtocol syncProtocol = new MockSyncProtocol(adapter, syncSession); 
 		
 		NoChangesMessageProcessor ncp = new NoChangesMessageProcessor(null, null);
+		ncp.setMessageSyncProtocol(syncProtocol);
 		IMessage message = ncp.createMessage(syncSession);
 		
 		Assert.assertNotNull(message);
-		Assert.assertEquals(0, message.getData().length());
+		Assert.assertEquals(syncProtocol.getSourceType(), message.getData());
 		Assert.assertEquals(syncSession.getTarget(), message.getEndpoint());
 		Assert.assertEquals(ncp.getMessageType(), message.getMessageType());
 		Assert.assertEquals(IProtocolConstants.PROTOCOL, message.getProtocol());

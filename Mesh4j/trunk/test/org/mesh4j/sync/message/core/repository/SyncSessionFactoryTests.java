@@ -66,7 +66,7 @@ public class SyncSessionFactoryTests {
 	public void shouldBasicCreateSessionReturnsFeedAdapterWhenSourceIDDoesNotRegistered(){
 		SyncSessionFactory factory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory());
 		
-		IMessageSyncAdapter adapter = ((SyncSession)factory.createSession("1", 0, "123", "333", true, true, true, true, false, null, new ArrayList<Item>(), new ArrayList<Item>(), new ArrayList<String>(), new ArrayList<String>())).getSyncAdapter();
+		IMessageSyncAdapter adapter = ((SyncSession)factory.createSession("1", 0, "123", "333", true, true, true, true, false, null, new ArrayList<Item>(), new ArrayList<Item>(), new ArrayList<String>(), new ArrayList<String>(), 0, 0, 0)).getSyncAdapter();
 		Assert.assertEquals(MessageSyncAdapter.class.getName(), adapter.getClass().getName());
 		Assert.assertEquals(FeedAdapter.class.getName(), ((MessageSyncAdapter)adapter).getSyncAdapter().getClass().getName());
 

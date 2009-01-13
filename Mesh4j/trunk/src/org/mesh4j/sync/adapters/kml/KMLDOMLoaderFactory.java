@@ -16,6 +16,8 @@ import org.mesh4j.sync.validations.Guard;
 
 public class KMLDOMLoaderFactory implements ISyncAdapterFactory {
 
+	public static final String SOURCE_TYPE = KmlNames.KML_PREFIX;
+	
 	// MODEL VARIABLES
 	private String baseDirectory;
 	
@@ -97,7 +99,7 @@ public class KMLDOMLoaderFactory implements ISyncAdapterFactory {
 	}
 
 	@Override
-	public String getSourceType(String sourceId) {
-		return "kml";
+	public String getSourceType() {
+		return SOURCE_TYPE;
 	}
 }

@@ -15,7 +15,7 @@ public interface IMessageSyncAware {
 
 	void notifyInvalidMessageProtocol(IMessage message);
 
-	void notifyMessageProcessed(IMessage message, List<IMessage> response);
+	void notifyMessageProcessed(ISyncSession syncSession, IMessage message, List<IMessage> response);
 
 	void notifyInvalidProtocolMessageOrder(IMessage message);
 

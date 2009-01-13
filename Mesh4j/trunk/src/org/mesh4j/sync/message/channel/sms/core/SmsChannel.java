@@ -212,7 +212,7 @@ public class SmsChannel implements ISmsChannel, IMessageSyncAware {
 		// nothing to do		
 	}
 
-	public void notifyMessageProcessed(IMessage message, List<IMessage> response) {
+	public void notifyMessageProcessed(ISyncSession syncSession, IMessage message, List<IMessage> response) {
 		// nothing to do		
 	}
 

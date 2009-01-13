@@ -1,5 +1,6 @@
 package org.mesh4j.sync.message.protocol;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -7,6 +8,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mesh4j.sync.message.IMessage;
 import org.mesh4j.sync.message.IMessageSyncProtocol;
+import org.mesh4j.sync.message.MockInMemoryMessageSyncAdapter;
 import org.mesh4j.sync.message.core.Message;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.NullContent;
@@ -30,7 +32,7 @@ public class BeginSyncMessageProcessorTests {
 		IMessage message = mp.createMessage(syncSession);
 
 		Assert.assertNotNull(message);
-		Assert.assertEquals(syncSession.getSourceId()+"|T|T|T|0", message.getData());
+		Assert.assertEquals(syncSession.getSourceId()+"|mock|T|T|T|0", message.getData());
 		Assert.assertEquals(syncSession.getTarget(), message.getEndpoint());
 		Assert.assertEquals(mp.getMessageType(), message.getMessageType());
 		Assert.assertEquals(IProtocolConstants.PROTOCOL, message.getProtocol());
@@ -42,12 +44,17 @@ public class BeginSyncMessageProcessorTests {
 	@Test
 	public void shouldProcessMessageWithOutSinceDateWithOutChanges(){
 		
+		MockInMemoryMessageSyncAdapter adapter = new MockInMemoryMessageSyncAdapter("myadapter", new ArrayList<Item>());
 		MockSyncSession syncSession = new MockSyncSession(null);
-
-		NoChangesMessageProcessor ncp = new NoChangesMessageProcessor(null, null); 
-		LastVersionStatusMessageProcessor lvp = new LastVersionStatusMessageProcessor(null, null, null);
+		MockSyncProtocol syncProtocol = new MockSyncProtocol(adapter, syncSession); 
 		
-		String data = syncSession.getSourceId() + "|T|T|T|0";
+		NoChangesMessageProcessor ncp = new NoChangesMessageProcessor(null, null);
+		ncp.setMessageSyncProtocol(syncProtocol);
+		
+		LastVersionStatusMessageProcessor lvp = new LastVersionStatusMessageProcessor(null, null, null);
+		lvp.setMessageSyncProtocol(syncProtocol);
+		
+		String data = syncSession.getSourceId() + "|mock|T|T|T|0";
 		BeginSyncMessageProcessor mp = new BeginSyncMessageProcessor(ncp, lvp, null);
 		IMessage message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), 0, data, syncSession.getTarget());
 		List<IMessage> messages = mp.process(syncSession, message);
@@ -57,6 +64,7 @@ public class BeginSyncMessageProcessorTests {
 		IMessage response = messages.get(0);
 		Assert.assertNotNull(response);
 		Assert.assertNotNull(response.getData());
+		Assert.assertEquals(adapter.getSourceType(), response.getData());
 		Assert.assertEquals(syncSession.getTarget(), response.getEndpoint());
 		Assert.assertEquals(ncp.getMessageType(), response.getMessageType());
 		Assert.assertEquals(IProtocolConstants.PROTOCOL, response.getProtocol());
@@ -70,13 +78,21 @@ public class BeginSyncMessageProcessorTests {
 	public void shouldProcessMessageWithOutSinceDateWithChanges(){
 		
 		Item item = new Item(new NullContent("1"), new Sync("1", "jmt", new Date(), true));
-		MockSyncSession syncSession = new MockSyncSession(null, item);
 
-		NoChangesMessageProcessor ncp = new NoChangesMessageProcessor(null, null); 
-		LastVersionStatusMessageProcessor lvp = new LastVersionStatusMessageProcessor(null, null, null);
-		EqualStatusMessageProcessor esp = new EqualStatusMessageProcessor(null);
+		MockSyncSession syncSession = new MockSyncSession(null, item);
+		MockInMemoryMessageSyncAdapter adapter = new MockInMemoryMessageSyncAdapter("myadapter", new ArrayList<Item>());
+		MockSyncProtocol syncProtocol = new MockSyncProtocol(adapter, syncSession); 
+				
+		NoChangesMessageProcessor ncp = new NoChangesMessageProcessor(null, null);
+		ncp.setMessageSyncProtocol(syncProtocol);
 		
-		String data = syncSession.getSourceId()+ "|T|T|T|0";
+		LastVersionStatusMessageProcessor lvp = new LastVersionStatusMessageProcessor(null, null, null);
+		lvp.setMessageSyncProtocol(syncProtocol);
+		
+		EqualStatusMessageProcessor esp = new EqualStatusMessageProcessor(null);
+		esp.setMessageSyncProtocol(syncProtocol);
+		
+		String data = syncSession.getSourceId()+ "|mock|T|T|T|0";
 		BeginSyncMessageProcessor mp = new BeginSyncMessageProcessor(ncp, lvp, esp);
 		IMessage message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), 0, data, syncSession.getTarget());
 		List<IMessage> messages = mp.process(syncSession, message);
@@ -86,6 +102,7 @@ public class BeginSyncMessageProcessorTests {
 		IMessage response = messages.get(0);		
 		Assert.assertNotNull(response);
 		Assert.assertNotNull(response.getData());
+		Assert.assertEquals(adapter.getSourceType(), LastVersionStatusMessageProcessor.getSourceType(response.getData()));
 		Assert.assertEquals(syncSession.getTarget(), response.getEndpoint());
 		Assert.assertEquals(lvp.getMessageType(), response.getMessageType());
 		Assert.assertEquals(IProtocolConstants.PROTOCOL, response.getProtocol());
@@ -132,7 +149,7 @@ public class BeginSyncMessageProcessorTests {
 		IMessage message = mp.createMessage(syncSession);
 
 		Assert.assertNotNull(message);
-		Assert.assertEquals(syncSession.getSourceId()+"|T|T|T|0|"+DateHelper.formatDateTime(date), message.getData());
+		Assert.assertEquals(syncSession.getSourceId()+"|mock|T|T|T|0|"+DateHelper.formatDateTime(date), message.getData());
 		Assert.assertEquals(syncSession.getTarget(), message.getEndpoint());
 		Assert.assertEquals(mp.getMessageType(), message.getMessageType());
 		Assert.assertEquals(IProtocolConstants.PROTOCOL, message.getProtocol());
@@ -148,12 +165,19 @@ public class BeginSyncMessageProcessorTests {
 		
 		Date date = new Date();
 		MockSyncSession syncSession = new MockSyncSession(date);
+		MockInMemoryMessageSyncAdapter adapter = new MockInMemoryMessageSyncAdapter("myadapter", new ArrayList<Item>());
+		MockSyncProtocol syncProtocol = new MockSyncProtocol(adapter, syncSession); 
 
-		NoChangesMessageProcessor ncp = new NoChangesMessageProcessor(null, null); 
-		LastVersionStatusMessageProcessor lvp = new LastVersionStatusMessageProcessor(null, null, null);
-		EqualStatusMessageProcessor esp = new EqualStatusMessageProcessor(null);
+		NoChangesMessageProcessor ncp = new NoChangesMessageProcessor(null, null);
+		ncp.setMessageSyncProtocol(syncProtocol);
 		
-		String data = syncSession.getSourceId()+"|T|T|T|0";
+		LastVersionStatusMessageProcessor lvp = new LastVersionStatusMessageProcessor(null, null, null);
+		lvp.setMessageSyncProtocol(syncProtocol);
+		
+		EqualStatusMessageProcessor esp = new EqualStatusMessageProcessor(null);
+		esp.setMessageSyncProtocol(syncProtocol);
+		
+		String data = syncSession.getSourceId()+"|mock|T|T|T|0";
 		BeginSyncMessageProcessor mp = new BeginSyncMessageProcessor(ncp, lvp, esp);
 		IMessage message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), 0, data, syncSession.getTarget());
 		List<IMessage> messages = mp.process(syncSession, message);
@@ -163,6 +187,7 @@ public class BeginSyncMessageProcessorTests {
 		IMessage response = messages.get(0);
 		Assert.assertNotNull(response);
 		Assert.assertNotNull(response.getData());
+		Assert.assertEquals(adapter.getSourceType(), response.getData());
 		Assert.assertEquals(syncSession.getTarget(), response.getEndpoint());
 		Assert.assertEquals(ncp.getMessageType(), response.getMessageType());
 		Assert.assertEquals(IProtocolConstants.PROTOCOL, response.getProtocol());
@@ -178,12 +203,19 @@ public class BeginSyncMessageProcessorTests {
 		Date date = new Date();
 		Item item = new Item(new NullContent("1"), new Sync("1", "jmt", new Date(), true));
 		MockSyncSession syncSession = new MockSyncSession(date, item);
-
-		NoChangesMessageProcessor ncp = new NoChangesMessageProcessor(null, null); 
-		LastVersionStatusMessageProcessor lvp = new LastVersionStatusMessageProcessor(null, null, null);
-		EqualStatusMessageProcessor esp = new EqualStatusMessageProcessor(null);
+		MockInMemoryMessageSyncAdapter adapter = new MockInMemoryMessageSyncAdapter("myadapter", new ArrayList<Item>());
+		MockSyncProtocol syncProtocol = new MockSyncProtocol(adapter, syncSession); 
 		
-		String data = syncSession.getSourceId()+"|T|T|T|0";
+		NoChangesMessageProcessor ncp = new NoChangesMessageProcessor(null, null);
+		ncp.setMessageSyncProtocol(syncProtocol);
+		
+		LastVersionStatusMessageProcessor lvp = new LastVersionStatusMessageProcessor(null, null, null);
+		lvp.setMessageSyncProtocol(syncProtocol);
+		
+		EqualStatusMessageProcessor esp = new EqualStatusMessageProcessor(null);
+		esp.setMessageSyncProtocol(syncProtocol);
+		
+		String data = syncSession.getSourceId()+"|mock|T|T|T|0";
 		BeginSyncMessageProcessor mp = new BeginSyncMessageProcessor(ncp, lvp, esp);
 		IMessage message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), 0, data, syncSession.getTarget());
 		List<IMessage> messages = mp.process(syncSession, message);
@@ -193,6 +225,7 @@ public class BeginSyncMessageProcessorTests {
 		IMessage response = messages.get(0);		
 		Assert.assertNotNull(response);
 		Assert.assertNotNull(response.getData());
+		Assert.assertEquals(adapter.getSourceType(), LastVersionStatusMessageProcessor.getSourceType(response.getData()));
 		Assert.assertEquals(syncSession.getTarget(), response.getEndpoint());
 		Assert.assertEquals(lvp.getMessageType(), response.getMessageType());
 		Assert.assertEquals(IProtocolConstants.PROTOCOL, response.getProtocol());

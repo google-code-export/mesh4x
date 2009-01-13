@@ -43,5 +43,4 @@ public class MockContentAdapter implements IContentAdapter {
 	public void save(IContent content) {
 		this.contents.put(content.getId(), content);
 	}
-
 }

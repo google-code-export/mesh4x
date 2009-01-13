@@ -39,7 +39,7 @@ public class ACKMergeMessageProcessorTests {
 		IMessage message = mp.createMessage(syncSession, "1", true);
 
 		Assert.assertNotNull(message);
-		Assert.assertEquals("F1", message.getData());
+		Assert.assertEquals("0|0|0|F1", message.getData());
 		Assert.assertEquals(syncSession.getTarget(), message.getEndpoint());
 		Assert.assertEquals(mp.getMessageType(), message.getMessageType());
 		Assert.assertEquals(IProtocolConstants.PROTOCOL, message.getProtocol());
@@ -55,7 +55,7 @@ public class ACKMergeMessageProcessorTests {
 		IMessage message = mp.createMessage(syncSession, "1", false);
 
 		Assert.assertNotNull(message);
-		Assert.assertEquals("T1", message.getData());
+		Assert.assertEquals("0|0|0|T1", message.getData());
 		Assert.assertEquals(syncSession.getTarget(), message.getEndpoint());
 		Assert.assertEquals(mp.getMessageType(), message.getMessageType());
 		Assert.assertEquals(IProtocolConstants.PROTOCOL, message.getProtocol());
@@ -74,7 +74,7 @@ public class ACKMergeMessageProcessorTests {
 		IMessage message = mp.createMessage(syncSession, "1", true);
 
 		Assert.assertNotNull(message);
-		Assert.assertEquals("T1T"+date.getTime()+"jmt", message.getData());
+		Assert.assertEquals("0|0|0|T1T"+date.getTime()+"jmt", message.getData());
 		Assert.assertEquals(syncSession.getTarget(), message.getEndpoint());
 		Assert.assertEquals(mp.getMessageType(), message.getMessageType());
 		Assert.assertEquals(IProtocolConstants.PROTOCOL, message.getProtocol());
@@ -112,7 +112,7 @@ public class ACKMergeMessageProcessorTests {
 		Assert.assertFalse(syncSession.isCompleteSync());
 		Assert.assertFalse(syncSession.hasConflict(syncID));
 		ACKMergeMessageProcessor mp = new ACKMergeMessageProcessor(new ItemEncoding(100), new EndSyncMessageProcessor(null));
-		List<IMessage> messages = mp.process(syncSession, new Message("M", mp.getMessageType(), syncID, 0, "T"+syncID+"T1201834861000jmt", null));
+		List<IMessage> messages = mp.process(syncSession, new Message("M", mp.getMessageType(), syncID, 0, "0|0|0|T"+syncID+"T1201834861000jmt", null));
 		Assert.assertNotNull(messages);
 		
 		Assert.assertTrue(syncSession.hasConflict(syncID));
@@ -131,7 +131,7 @@ public class ACKMergeMessageProcessorTests {
 		Assert.assertFalse(syncSession.isCompleteSync());
 		Assert.assertFalse(syncSession.hasConflict(syncID));
 		ACKMergeMessageProcessor mp = new ACKMergeMessageProcessor(new ItemEncoding(100), new EndSyncMessageProcessor(null));
-		List<IMessage> messages = mp.process(syncSession, new Message("M", mp.getMessageType(), syncID, 0, "T"+syncID, null));
+		List<IMessage> messages = mp.process(syncSession, new Message("M", mp.getMessageType(), syncID, 0, "0|0|0|T"+syncID, null));
 		Assert.assertNotNull(messages);
 		
 		Assert.assertTrue(syncSession.hasConflict(syncID));
@@ -147,7 +147,7 @@ public class ACKMergeMessageProcessorTests {
 		
 		EndSyncMessageProcessor end = new EndSyncMessageProcessor(null);
 		ACKMergeMessageProcessor mp = new ACKMergeMessageProcessor(new ItemEncoding(100), end);
-		List<IMessage> messages = mp.process(syncSession, new Message("M", mp.getMessageType(), "1", 0, "F1", null));
+		List<IMessage> messages = mp.process(syncSession, new Message("M", mp.getMessageType(), "1", 0, "0|0|0|F1", null));
 
 		Assert.assertTrue(syncSession.isCompleteSync());
 		
@@ -170,7 +170,7 @@ public class ACKMergeMessageProcessorTests {
 		
 		EndSyncMessageProcessor end = new EndSyncMessageProcessor(null);
 		ACKMergeMessageProcessor mp = new ACKMergeMessageProcessor(new ItemEncoding(100), end);
-		List<IMessage> messages = mp.process(syncSession, new Message("M", mp.getMessageType(), "1", 0, "F1", null));
+		List<IMessage> messages = mp.process(syncSession, new Message("M", mp.getMessageType(), "1", 0, "0|0|0|F1", null));
 		
 		Assert.assertFalse(syncSession.isCompleteSync());	
 		Assert.assertEquals(IMessageSyncProtocol.NO_RESPONSE, messages);

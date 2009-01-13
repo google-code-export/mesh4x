@@ -11,6 +11,8 @@ import org.mesh4j.sync.validations.Guard;
 
 public class FeedSyncAdapterFactory implements ISyncAdapterFactory {
 
+	public final static String SOURCE_TYPE = RssSyndicationFormat.INSTANCE.getName();
+	
 	// MODEL VARIABLES
 	private String baseDirectory;
 	
@@ -50,8 +52,8 @@ public class FeedSyncAdapterFactory implements ISyncAdapterFactory {
 	}
 
 	@Override
-	public String getSourceType(String sourceId) {
-		return "feed";
+	public String getSourceType() {
+		return SOURCE_TYPE;
 	}
 
 }

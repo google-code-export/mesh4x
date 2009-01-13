@@ -50,7 +50,7 @@ public class LoggerMessageSyncAware implements IMessageSyncAware {
 	}
 
 	@Override
-	public void notifyMessageProcessed(IMessage message, List<IMessage> response) {
+	public void notifyMessageProcessed(ISyncSession syncSession, IMessage message, List<IMessage> response) {
 		Logger.info("Protocol message processed: " + message.getMessageType());
 		for (IMessage message2 : response) {
 			Logger.info("	response: " + message2.getMessageType());	

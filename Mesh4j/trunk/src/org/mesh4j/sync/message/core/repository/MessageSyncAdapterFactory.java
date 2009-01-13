@@ -45,12 +45,12 @@ public class MessageSyncAdapterFactory implements IMessageSyncAdapterFactory {
 		for (ISyncAdapterFactory syncAdapterFactory : this.syncAdapterFactories) {
 			if(syncAdapterFactory.acceptsSourceId(sourceId)){
 				ISyncAdapter syncAdapter = syncAdapterFactory.createSyncAdapter(sourceId, identityProvider);
-				msgSyncAdapter = new MessageSyncAdapter(sourceId, identityProvider, syncAdapter);
+				msgSyncAdapter = new MessageSyncAdapter(sourceId, syncAdapterFactory.getSourceType(), identityProvider, syncAdapter);
 			}
 		}
 		if(msgSyncAdapter == null && this.defaultSyncAdapterFactory != null){
 			ISyncAdapter syncAdapter = this.defaultSyncAdapterFactory.createSyncAdapter(sourceId, identityProvider);
-			msgSyncAdapter = new MessageSyncAdapter(sourceId, identityProvider, syncAdapter);
+			msgSyncAdapter = new MessageSyncAdapter(sourceId, this.defaultSyncAdapterFactory.getSourceType(), identityProvider, syncAdapter);
 		}
 		return msgSyncAdapter;
 	}

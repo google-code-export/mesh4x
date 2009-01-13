@@ -42,7 +42,7 @@ public class KMLTimeSpanDecoratorSyncAdapterFactory implements ISyncAdapterFacto
 	}
 
 	@Override
-	public String getSourceType(String sourceId) {
-		return this.syncFactory.getSourceType(sourceId);
+	public String getSourceType() {
+		return this.syncFactory.getSourceType();
 	}
 }

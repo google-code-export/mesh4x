@@ -86,4 +86,9 @@ public class MergeWithACKMessageProcessor implements IMessageProcessor {
 		}
 		return IMessageSyncProtocol.NO_RESPONSE;
 	}
+
+	public static String getSyncID(String data) {
+		String itemData = data.substring(1, data.length());
+		return ItemEncoding.getSyncID(itemData);
+	}
 }

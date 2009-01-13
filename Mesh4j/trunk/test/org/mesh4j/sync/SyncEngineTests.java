@@ -196,7 +196,7 @@ public class SyncEngineTests extends AbstractSyncEngineTest {
 		public String getFriendlyName() {
 			return "MockSyncAware";
 		}
-
+		
 		public Item get(String id) {
 			return null;
 		}
@@ -301,6 +301,7 @@ public class SyncEngineTests extends AbstractSyncEngineTest {
 		public void endSync() {
 			throw new UnsupportedOperationException();		
 		}
+
 	}
 
 	private class MockNotSupportMergeRepository implements ISyncAdapter {

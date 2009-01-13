@@ -7,13 +7,14 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import org.mesh4j.sync.message.IMessage;
+import org.mesh4j.sync.message.IMessageSyncAdapter;
+import org.mesh4j.sync.message.IMessageSyncProtocol;
 import org.mesh4j.sync.message.ISyncSession;
 import org.mesh4j.sync.message.core.IMessageProcessor;
 import org.mesh4j.sync.message.core.Message;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.utils.DateHelper;
 import org.mesh4j.sync.validations.Guard;
-
 
 public class LastVersionStatusMessageProcessor implements IMessageProcessor{
 	
@@ -23,6 +24,7 @@ public class LastVersionStatusMessageProcessor implements IMessageProcessor{
 	private GetForMergeMessageProcessor getForMergeMessage;
 	private MergeWithACKMessageProcessor mergeWithACKMessage;
 	private EndSyncMessageProcessor endMessage;
+	private IMessageSyncProtocol messageSyncProtocol;
 	
 	// METHODS
 	public LastVersionStatusMessageProcessor(
@@ -43,12 +45,14 @@ public class LastVersionStatusMessageProcessor implements IMessageProcessor{
 			Guard.throwsArgumentException("ERROR_MESSAGE_SYNC_LAST_STATUS_EMPTY_ITEMS");
 		}
 		
+		IMessageSyncAdapter adapter = this.messageSyncProtocol.getSource(syncSession.getSourceId());
+		
 		return new Message(
 				IProtocolConstants.PROTOCOL,
 				this.getMessageType(),
 				syncSession.getSessionId(),
 				syncSession.getVersion(),
-				encode(items),
+				encode(adapter.getSourceType(), items),
 				syncSession.getTarget());
 	}
 
@@ -143,9 +147,11 @@ public class LastVersionStatusMessageProcessor implements IMessageProcessor{
 		}
 	}
 
-	private String encode(List<Item> items) {
+	private String encode(String sourceType, List<Item> items) {
 		StringBuilder sb = new StringBuilder();
-	
+		sb.append(sourceType);
+		sb.append(IProtocolConstants.ELEMENT_SEPARATOR);
+		
 		Iterator<Item> it = items.iterator();
 		while (it.hasNext()) {
 			Item item = it.next();
@@ -176,10 +182,23 @@ public class LastVersionStatusMessageProcessor implements IMessageProcessor{
 		return String.valueOf(sb.toString().hashCode());		
 	}
 	
+	public static String getSourceType(String data){
+		StringTokenizer st = new StringTokenizer(data, IProtocolConstants.ELEMENT_SEPARATOR);
+		if(st.hasMoreTokens()){
+			return st.nextToken();
+		} else {
+			return null;
+		}		
+	}
+	
 	private ArrayList<Object[]> decodeChanges(String data) {
 		ArrayList<Object[]> changes = new ArrayList<Object[]>();
 		
 		StringTokenizer st = new StringTokenizer(data, IProtocolConstants.ELEMENT_SEPARATOR);
+		if(st.hasMoreTokens()){
+			st.nextToken();  // skip source type
+		}
+		
 		while(st.hasMoreTokens()){
 			String itemToSync = st.nextToken();
 			StringTokenizer stFields = new StringTokenizer(itemToSync, IProtocolConstants.FIELD_SEPARATOR);
@@ -197,4 +216,9 @@ public class LastVersionStatusMessageProcessor implements IMessageProcessor{
 		}
 		return changes;
 	}
+	
+	public void setMessageSyncProtocol(IMessageSyncProtocol messageSyncProtocol) {
+		this.messageSyncProtocol = messageSyncProtocol;
+	}
+	
 }

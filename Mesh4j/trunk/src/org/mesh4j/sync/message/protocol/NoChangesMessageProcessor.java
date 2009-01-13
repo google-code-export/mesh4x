@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.mesh4j.sync.message.IMessage;
+import org.mesh4j.sync.message.IMessageSyncAdapter;
 import org.mesh4j.sync.message.IMessageSyncProtocol;
 import org.mesh4j.sync.message.ISyncSession;
 import org.mesh4j.sync.message.core.IMessageProcessor;
@@ -19,6 +20,7 @@ public class NoChangesMessageProcessor implements IMessageProcessor {
 	// MODEL VARIABLES
 	private EndSyncMessageProcessor endMessage;
 	private MergeWithACKMessageProcessor mergeWithACKMessage;
+	private IMessageSyncProtocol messageSyncProtocol;
 	
 	// METHODS
 	public NoChangesMessageProcessor(EndSyncMessageProcessor endMessage, MergeWithACKMessageProcessor mergeWithACKMessage) {
@@ -61,12 +63,18 @@ public class NoChangesMessageProcessor implements IMessageProcessor {
 	public IMessage createMessage(ISyncSession syncSession) {
 		Guard.argumentNotNull(syncSession, "syncSession");
 
+		IMessageSyncAdapter adapter = this.messageSyncProtocol.getSource(syncSession.getSourceId());
+		
 		return new Message(
 				IProtocolConstants.PROTOCOL,
 				getMessageType(),
 				syncSession.getSessionId(),
 				syncSession.getVersion(),
-				"",
+				adapter.getSourceType(),
 				syncSession.getTarget());
+	}
+	
+	public void setMessageSyncProtocol(IMessageSyncProtocol messageSyncProtocol) {
+		this.messageSyncProtocol = messageSyncProtocol;
 	}
 }

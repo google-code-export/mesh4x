@@ -53,6 +53,9 @@ public class MessageSyncProtocolFactory {
 		ackEndMessage.setMessageSyncProtocol(syncProtocol);
 		endMessage.setMessageSyncProtocol(syncProtocol);
 		cancelMessage.setMessageSyncProtocol(syncProtocol);
+		equalStatusMessage.setMessageSyncProtocol(syncProtocol);
+		noChangesMessage.setMessageSyncProtocol(syncProtocol);
+		lastVersionMessage.setMessageSyncProtocol(syncProtocol);
 		
 		for (IMessageSyncAware syncAware : syncAwareList) {
 			if(syncAware != null){

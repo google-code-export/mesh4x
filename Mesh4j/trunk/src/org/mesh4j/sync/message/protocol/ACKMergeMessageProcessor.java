@@ -2,6 +2,7 @@ package org.mesh4j.sync.message.protocol;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import org.mesh4j.sync.message.IMessage;
 import org.mesh4j.sync.message.IMessageSyncProtocol;
@@ -36,7 +37,8 @@ public class ACKMergeMessageProcessor implements IMessageProcessor {
 	public List<IMessage> process(ISyncSession syncSession, IMessage message) {
 		
 		if(syncSession.isOpen() && syncSession.getVersion() == message.getSessionVersion() && this.getMessageType().equals(message.getMessageType())){
-			String data = message.getData();
+			String data = getData(message.getData());
+			
 			String hasConflictString = data.substring(0, 1);
 						
 			if("T".equals(hasConflictString)){
@@ -69,6 +71,20 @@ public class ACKMergeMessageProcessor implements IMessageProcessor {
 		Guard.argumentNotNull(syncId, "syncId");
 		
 		StringBuilder sb = new StringBuilder();
+		
+		int add = syncSession.getNumberOfAddedItems();
+		int update = syncSession.getNumberOfUpdatedItems();
+		int delete = syncSession.getNumberOfDeletedItems();
+		
+		sb.append(add);
+		sb.append(IProtocolConstants.ELEMENT_SEPARATOR);
+		
+		sb.append(update);
+		sb.append(IProtocolConstants.ELEMENT_SEPARATOR);
+		
+		sb.append(delete);
+		sb.append(IProtocolConstants.ELEMENT_SEPARATOR);
+		
 		if(syncSession.hasConflict(syncId)){
 			sb.append("T");
 			if(fullProtocolRequired){
@@ -91,5 +107,39 @@ public class ACKMergeMessageProcessor implements IMessageProcessor {
 				sb.toString(),
 				syncSession.getTarget());
 	}
+	
+	public static String getData(String data) {
+		StringTokenizer st =  new StringTokenizer(data, IProtocolConstants.ELEMENT_SEPARATOR);
+		st.nextToken();	// skip add
+		st.nextToken();	// skip update
+		st.nextToken();	// skip delete
+		return st.nextToken();
+	}
+	
+	public static int getNumberOfAddedItems(String data) {
+		StringTokenizer st =  new StringTokenizer(data, IProtocolConstants.ELEMENT_SEPARATOR);
+		return Integer.valueOf(st.nextToken());
+	}
 
+	public static int getNumberOfUpdatedItems(String data) {
+		StringTokenizer st =  new StringTokenizer(data, IProtocolConstants.ELEMENT_SEPARATOR);
+		st.nextToken();  // skip add
+		return Integer.valueOf(st.nextToken());
+	}
+
+	public static int getNumberOfDeletedItems(String data) {
+		StringTokenizer st =  new StringTokenizer(data, IProtocolConstants.ELEMENT_SEPARATOR);
+		st.nextToken();	// skip add
+		st.nextToken();	// skip update
+		return Integer.valueOf(st.nextToken());
+	}
+
+	public static String getSyncID(String data) {
+		String ackData = getData(data);
+		String itemData = ackData.substring(1, ackData.length());
+		return ItemEncoding.getSyncID(itemData);
+	}
+
+	
+	
 }

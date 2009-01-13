@@ -131,7 +131,7 @@ public class MergeWithACKMessageProcessorTests {
 		IMessage response = messages.get(0);
 		
 		Assert.assertNotNull(response);
-		Assert.assertEquals("T1", response.getData());
+		Assert.assertEquals("0|1|0|T1", response.getData());
 		Assert.assertEquals(syncSession.getTarget(), response.getEndpoint());
 		Assert.assertEquals(ack.getMessageType(), response.getMessageType());
 		Assert.assertEquals(IProtocolConstants.PROTOCOL, response.getProtocol());
@@ -159,7 +159,7 @@ public class MergeWithACKMessageProcessorTests {
 		IMessage response = messages.get(0);
 		
 		Assert.assertNotNull(response);
-		Assert.assertEquals("F1", response.getData());
+		Assert.assertEquals("0|1|0|F1", response.getData());
 		Assert.assertEquals(syncSession.getTarget(), response.getEndpoint());
 		Assert.assertEquals(ack.getMessageType(), response.getMessageType());
 		Assert.assertEquals(IProtocolConstants.PROTOCOL, response.getProtocol());

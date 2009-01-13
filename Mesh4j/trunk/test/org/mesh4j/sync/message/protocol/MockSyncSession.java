@@ -29,6 +29,9 @@ public class MockSyncSession implements ISyncSession{
 	private boolean cancelled = false;
 	private boolean shouldSendChanges = true;
 	private boolean shouldReceiveChanges = true;
+	private int numberOfAddedItems = 0;
+	private int numberOfUpdatedItems = 0;
+	private int numberOfDeletedItems = 0;
 	
 	// BUSINESS METHODS
 	
@@ -58,12 +61,19 @@ public class MockSyncSession implements ISyncSession{
 
 	@Override public void add(Item item) {
 		this.all.add(item);
+		this.numberOfAddedItems = this.numberOfAddedItems +1;
 	}
 	@Override public void addConflict(String syncID) {this.conflicts.add(syncID);}
-	@Override public void beginSync() {
+	@Override public void beginSync(boolean fullProtocol, boolean shouldSendChanges, boolean shouldReceiveChanges) {
+		this.fullProtocol = fullProtocol;
+		this.shouldSendChanges = shouldSendChanges;
+		this.shouldReceiveChanges = shouldReceiveChanges;
 		this.beginWasCalled = true;
 		this.cancelled = false;}
-	@Override public void beginSync(Date sinceDate, int version) {
+	@Override public void beginSync(boolean fullProtocol, boolean shouldSendChanges, boolean shouldReceiveChanges, Date sinceDate, int version) {
+		this.fullProtocol = fullProtocol;
+		this.shouldSendChanges = shouldSendChanges;
+		this.shouldReceiveChanges = shouldReceiveChanges;
 		this.beginWasCalled=true;
 		this.cancelled = false;
 	}
@@ -74,6 +84,7 @@ public class MockSyncSession implements ISyncSession{
 		Item item = get(syncID);
 		if(item != null){
 			item.getSync().delete(by, when);
+			this.numberOfDeletedItems = this.numberOfDeletedItems +1;
 		}
 	}	
 	@Override public void endSync(Date sinceDate) {
@@ -103,7 +114,7 @@ public class MockSyncSession implements ISyncSession{
 
 	@Override public boolean hasConflict(String syncId) {return this.conflicts.contains(syncId);}
 	@Override public boolean isOpen() {return open;}
-	@Override public void update(Item item) {}
+	@Override public void update(Item item) {this.numberOfUpdatedItems = this.numberOfUpdatedItems +1;}
 	@Override public boolean isCompleteSync() {return this.acks.isEmpty();}
 	@Override public void notifyAck(String syncId) {this.acks.remove(syncId);}	
 	@Override public void waitForAck(String syncId) {this.acks.add(syncId);}
@@ -197,5 +208,24 @@ public class MockSyncSession implements ISyncSession{
 	
 	public void setShouldSendChanges(boolean shouldSendChanges) {
 		this.shouldSendChanges = shouldSendChanges;
+	}
+
+	@Override
+	public int getNumberOfAddedItems() {
+		return this.numberOfAddedItems;
+	}
+
+	@Override
+	public int getNumberOfDeletedItems() {
+		return this.numberOfDeletedItems;
+	}
+
+	@Override
+	public int getNumberOfUpdatedItems() {
+		return this.numberOfUpdatedItems;
+	}
+	@Override
+	public String getSourceType() {
+		return "mock";
 	}
 }

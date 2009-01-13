@@ -8,6 +8,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mesh4j.sync.message.IMessage;
 import org.mesh4j.sync.message.IMessageSyncProtocol;
+import org.mesh4j.sync.message.MockInMemoryMessageSyncAdapter;
 import org.mesh4j.sync.message.core.Message;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.NullContent;
@@ -41,13 +42,16 @@ public class LastVersionStatusMessageProcessorTests {
 		items.add(new Item(new NullContent("1"), new Sync("1", "jmt", TestHelper.makeDate(2008, 1, 1, 1, 1, 1, 1), true)));
 		items.add(new Item(new NullContent("2"), new Sync("2", "jmt", TestHelper.makeDate(2008, 1, 1, 1, 1, 1, 1), false)));
 		
+		MockInMemoryMessageSyncAdapter adapter = new MockInMemoryMessageSyncAdapter("myadapter", new ArrayList<Item>());
 		MockSyncSession syncSession = new MockSyncSession(null);
+		MockSyncProtocol syncProtocol = new MockSyncProtocol(adapter, syncSession); 
 		
 		LastVersionStatusMessageProcessor mp = new LastVersionStatusMessageProcessor(null, null, null);
+		mp.setMessageSyncProtocol(syncProtocol);
 		IMessage message = mp.createMessage(syncSession, items);
 		
 		Assert.assertNotNull(message);
-		Assert.assertEquals("1~1596031791~D~jmt~1201843861000|2~-2076065886", message.getData());
+		Assert.assertEquals("myadapter|1~1596031791~D~jmt~1201843861000|2~-2076065886", message.getData());
 		Assert.assertEquals(syncSession.getTarget(), message.getEndpoint());
 		Assert.assertEquals(mp.getMessageType(), message.getMessageType());
 		Assert.assertEquals(IProtocolConstants.PROTOCOL, message.getProtocol());
@@ -60,13 +64,16 @@ public class LastVersionStatusMessageProcessorTests {
 		items.add(new Item(new NullContent("1"), new Sync("1", "jmt", TestHelper.makeDate(2008, 1, 1, 1, 1, 1, 1), false)));
 		items.add(new Item(new NullContent("2"), new Sync("2", "jmt", TestHelper.makeDate(2008, 1, 1, 1, 1, 1, 1), false)));
 		
+		MockInMemoryMessageSyncAdapter adapter = new MockInMemoryMessageSyncAdapter("myadapter", new ArrayList<Item>());
 		MockSyncSession syncSession = new MockSyncSession(null);
+		MockSyncProtocol syncProtocol = new MockSyncProtocol(adapter, syncSession); 
 		
 		LastVersionStatusMessageProcessor mp = new LastVersionStatusMessageProcessor(null, null, null);
+		mp.setMessageSyncProtocol(syncProtocol);
 		IMessage message = mp.createMessage(syncSession, items);
 		
 		Assert.assertNotNull(message);
-		Assert.assertEquals("1~-2076065886|2~-2076065886", message.getData());
+		Assert.assertEquals("myadapter|1~-2076065886|2~-2076065886", message.getData());
 		Assert.assertEquals(syncSession.getTarget(), message.getEndpoint());
 		Assert.assertEquals(mp.getMessageType(), message.getMessageType());
 		Assert.assertEquals(IProtocolConstants.PROTOCOL, message.getProtocol());
@@ -100,7 +107,7 @@ public class LastVersionStatusMessageProcessorTests {
 		GetForMergeMessageProcessor get = new GetForMergeMessageProcessor(new ItemEncoding(100), null);
 		LastVersionStatusMessageProcessor mp = new LastVersionStatusMessageProcessor(get, null, null);
 		
-		Message message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), 0, "1~-702666385", syncSession.getTarget());
+		Message message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), 0, "myadapter|1~-702666385", syncSession.getTarget());
 		List<IMessage> messages = mp.process(syncSession, message);
 		Assert.assertNotNull(messages);
 		Assert.assertEquals(1, messages.size());
@@ -131,7 +138,7 @@ public class LastVersionStatusMessageProcessorTests {
 		EndSyncMessageProcessor end = new EndSyncMessageProcessor(null);
 		LastVersionStatusMessageProcessor mp = new LastVersionStatusMessageProcessor(null, null, end);
 		
-		Message message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), 0, "1~-73244", syncSession.getTarget());
+		Message message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), 0, "myadapter|1~-73244", syncSession.getTarget());
 		List<IMessage> messages = mp.process(syncSession, message);
 		Assert.assertNotNull(messages);
 		Assert.assertEquals(1, messages.size());
@@ -161,7 +168,7 @@ public class LastVersionStatusMessageProcessorTests {
 		GetForMergeMessageProcessor get = new GetForMergeMessageProcessor(new ItemEncoding(100), null);
 		LastVersionStatusMessageProcessor mp = new LastVersionStatusMessageProcessor(get, null, null);
 		
-		Message message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), 0, "1~-73244", syncSession.getTarget());
+		Message message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), 0, "myadapter|1~-73244", syncSession.getTarget());
 		List<IMessage> messages = mp.process(syncSession, message);
 		Assert.assertNotNull(messages);
 		Assert.assertEquals(1, messages.size());
@@ -187,7 +194,7 @@ public class LastVersionStatusMessageProcessorTests {
 		EndSyncMessageProcessor end = new EndSyncMessageProcessor(null);
 		LastVersionStatusMessageProcessor mp = new LastVersionStatusMessageProcessor(null, null, end);
 		
-		Message message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), 0, "1~-1269158974~D~jmt~1201834861000", syncSession.getTarget());
+		Message message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), 0, "myadapter|1~-1269158974~D~jmt~1201834861000", syncSession.getTarget());
 		List<IMessage> messages = mp.process(syncSession, message);
 		Assert.assertNotNull(messages);
 		Assert.assertEquals(1, messages.size());
@@ -216,7 +223,7 @@ public class LastVersionStatusMessageProcessorTests {
 		GetForMergeMessageProcessor get = new GetForMergeMessageProcessor(new ItemEncoding(100), null);
 		LastVersionStatusMessageProcessor mp = new LastVersionStatusMessageProcessor(get, null, null);
 		
-		Message message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), 0, "1~-1269158974~D~jmt~1201834861000", syncSession.getTarget());
+		Message message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), 0, "myadapter|1~-1269158974~D~jmt~1201834861000", syncSession.getTarget());
 		List<IMessage> messages = mp.process(syncSession, message);
 		Assert.assertNotNull(messages);
 		Assert.assertEquals(1, messages.size());
@@ -242,7 +249,7 @@ public class LastVersionStatusMessageProcessorTests {
 		GetForMergeMessageProcessor get = new GetForMergeMessageProcessor(new ItemEncoding(100), null);
 		LastVersionStatusMessageProcessor mp = new LastVersionStatusMessageProcessor(get, null, null);
 		
-		Message message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), 0, "1~-1269158955", syncSession.getTarget());
+		Message message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), 0, "myadapter|1~-1269158955", syncSession.getTarget());
 		List<IMessage> messages = mp.process(syncSession, message);
 		Assert.assertNotNull(messages);
 		Assert.assertEquals(1, messages.size());
@@ -269,7 +276,7 @@ public class LastVersionStatusMessageProcessorTests {
 		MergeWithACKMessageProcessor merge = new MergeWithACKMessageProcessor(new ItemEncoding(100), null);
 		LastVersionStatusMessageProcessor mp = new LastVersionStatusMessageProcessor(null, merge, null);
 		
-		Message message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), 0, "1~-1269158974~D~jmt~1201834861000", syncSession.getTarget());
+		Message message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), 0, "myadapter|1~-1269158974~D~jmt~1201834861000", syncSession.getTarget());
 		List<IMessage> messages = mp.process(syncSession, message);
 		Assert.assertNotNull(messages);
 		Assert.assertEquals(1, messages.size());
@@ -454,7 +461,7 @@ public class LastVersionStatusMessageProcessorTests {
 		GetForMergeMessageProcessor get = new GetForMergeMessageProcessor(new ItemEncoding(100), null);
 		LastVersionStatusMessageProcessor mp = new LastVersionStatusMessageProcessor(get, null, null);
 		
-		Message message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), 0, "1~-1269158974~D~jmt~1201834861000", syncSession.getTarget());
+		Message message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), 0, "myadapter|1~-1269158974~D~jmt~1201834861000", syncSession.getTarget());
 		List<IMessage> messages = mp.process(syncSession, message);
 		Assert.assertNotNull(messages);
 		Assert.assertEquals(1, messages.size());
@@ -481,7 +488,7 @@ public class LastVersionStatusMessageProcessorTests {
 		GetForMergeMessageProcessor get = new GetForMergeMessageProcessor(new ItemEncoding(100), null);
 		LastVersionStatusMessageProcessor mp = new LastVersionStatusMessageProcessor(get, null, null);
 		
-		Message message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), 0, "1~-1269158974~D~jmt~1201834861000", syncSession.getTarget());
+		Message message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), 0, "myadapter|1~-1269158974~D~jmt~1201834861000", syncSession.getTarget());
 		List<IMessage> messages = mp.process(syncSession, message);
 		Assert.assertNotNull(messages);
 		Assert.assertEquals(1, messages.size());
@@ -512,7 +519,7 @@ public class LastVersionStatusMessageProcessorTests {
 		MergeWithACKMessageProcessor merge = new MergeWithACKMessageProcessor(new ItemEncoding(100), null);
 		LastVersionStatusMessageProcessor mp = new LastVersionStatusMessageProcessor(get, merge, null);
 		
-		Message message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), 0, "1~-1269158974~D~jmt~1201834861000", syncSession.getTarget());
+		Message message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), 0, "myadapter|1~-1269158974~D~jmt~1201834861000", syncSession.getTarget());
 		List<IMessage> messages = mp.process(syncSession, message);
 		Assert.assertNotNull(messages);
 		Assert.assertEquals(2, messages.size());

@@ -12,6 +12,8 @@ public interface ISyncSession {
 	int getVersion();
 	
 	String getSourceId();
+	String getSourceType();
+	
 	IEndpoint getTarget();
 	
 	Item get(String syncId);
@@ -25,8 +27,8 @@ public interface ISyncSession {
 	
 	List<Item> getAll();
 
-	void beginSync();
-	void beginSync(Date sinceDate, int version);
+	void beginSync(boolean fullProtocol, boolean shouldSendChanges, boolean shouldReceiveChanges);
+	void beginSync(boolean fullProtocol, boolean shouldSendChanges, boolean shouldReceiveChanges, Date sinceDate, int version);
 	void endSync(Date sinceDate);
 	void cancelSync();
 	
@@ -52,5 +54,9 @@ public interface ISyncSession {
 	
 	boolean shouldSendChanges();
 	boolean shouldReceiveChanges();
-
+	
+	int getNumberOfAddedItems();
+	int getNumberOfUpdatedItems();
+	int getNumberOfDeletedItems();
+	
 }
