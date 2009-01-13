@@ -131,7 +131,7 @@ public class EpiInfoConsoleNotification implements ISmsConnectionInboundOutbound
 	}
 
 	@Override
-	public void notifyMessageProcessed(IMessage message, List<IMessage> response) {
+	public void notifyMessageProcessed(ISyncSession syncSession, IMessage message, List<IMessage> response) {
 		this.log(EpiInfoUITranslator.getMessageProcessed(message, response));
 	}
 

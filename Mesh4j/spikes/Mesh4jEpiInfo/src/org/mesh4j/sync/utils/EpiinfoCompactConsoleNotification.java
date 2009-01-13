@@ -7,27 +7,32 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
-import org.mesh4j.sync.epiinfo.ui.ExampleUI;
+import org.mesh4j.sync.epiinfo.ui.EpiinfoCompactUI;
 import org.mesh4j.sync.epiinfo.ui.LogFrame;
 import org.mesh4j.sync.message.IEndpoint;
 import org.mesh4j.sync.message.IMessage;
 import org.mesh4j.sync.message.IMessageSyncAware;
 import org.mesh4j.sync.message.ISyncSession;
 import org.mesh4j.sync.message.channel.sms.connection.ISmsConnectionInboundOutboundNotification;
+import org.mesh4j.sync.message.protocol.ACKMergeMessageProcessor;
+import org.mesh4j.sync.message.protocol.BeginSyncMessageProcessor;
+import org.mesh4j.sync.message.protocol.EqualStatusMessageProcessor;
+import org.mesh4j.sync.message.protocol.LastVersionStatusMessageProcessor;
+import org.mesh4j.sync.message.protocol.NoChangesMessageProcessor;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.ui.translator.EpiInfoUITranslator;
 
-public class ExampleConsoleNotification implements ISmsConnectionInboundOutboundNotification, IMessageSyncAware {
+public class EpiinfoCompactConsoleNotification implements ISmsConnectionInboundOutboundNotification, IMessageSyncAware {
 	
-	private final static Log Logger = LogFactory.getLog(ExampleConsoleNotification.class);
+	private final static Log Logger = LogFactory.getLog(EpiinfoCompactConsoleNotification.class);
 
 	// MODEL VARIABLES
 	private LogFrame consoleView;
-	private ExampleUI ui;
+	private EpiinfoCompactUI ui;
 	private ArrayList<String> awaitedMessages = new ArrayList<String>();
 	
 	// BUSINESS METHODS
-	public ExampleConsoleNotification(LogFrame consoleView, ExampleUI ui) {
+	public EpiinfoCompactConsoleNotification(LogFrame consoleView, EpiinfoCompactUI ui) {
 		super();
 		this.consoleView = consoleView;
 		this.ui = ui;
@@ -37,23 +42,27 @@ public class ExampleConsoleNotification implements ISmsConnectionInboundOutbound
 	@Override
 	public void notifyReceiveMessage(String endpointId, String message, Date date) {
 		consoleView.log("\t"+EpiInfoUITranslator.getMessageNotifyReceiveMessageError(endpointId, message));
+		ui.increaseSmsIn();
 	}
 
 	@Override
 	public void notifyReceiveMessageError(String endpointId, String message, Date date) {
 		ui.setErrorImageStatus();
-		consoleView.log("\t"+EpiInfoUITranslator.getMessageNotifyReceiveMessage(endpointId, message));		
+		consoleView.log("\t"+EpiInfoUITranslator.getMessageNotifyReceiveMessage(endpointId, message));
+		ui.increaseSmsIn();
 	}
 
 	@Override
 	public void notifySendMessage(String endpointId, String message) {
 		consoleView.log("\t"+EpiInfoUITranslator.getMessageNotifySendMessage(endpointId, message));
+		ui.increaseSmsOut();
 	}
 
 	@Override
 	public void notifySendMessageError(String endpointId, String message) {
 		ui.setErrorImageStatus();
-		consoleView.log("\t"+EpiInfoUITranslator.getMessageNotifySendMessageError(endpointId, message));		
+		consoleView.log("\t"+EpiInfoUITranslator.getMessageNotifySendMessageError(endpointId, message));
+		ui.increaseSmsOut();
 	}
 	
 	@Override
@@ -79,11 +88,7 @@ public class ExampleConsoleNotification implements ISmsConnectionInboundOutbound
 
 	@Override
 	public void beginSync(ISyncSession syncSession) {
-		this.beginSync(syncSession.getTarget().getEndpointId(), MsAccessSyncAdapterFactory.getFileName(syncSession.getSourceId()), MsAccessSyncAdapterFactory.getTableName(syncSession.getSourceId()));
-	}
-	
-	public void beginSync(String target, String mdbFileName, String mdbTable) {
-		ui.setBeginSync();
+		ui.setBeginSync(syncSession.getSourceId(), syncSession.shouldSendChanges(), syncSession.shouldReceiveChanges());
 		consoleView.log(EpiInfoUITranslator.getLabelStart());
 	}
 
@@ -131,8 +136,41 @@ public class ExampleConsoleNotification implements ISmsConnectionInboundOutbound
 	}
 
 	@Override
-	public void notifyMessageProcessed(IMessage message, List<IMessage> response) {
+	public void notifyMessageProcessed(ISyncSession syncSession, IMessage message, List<IMessage> response) {
 		consoleView.log(EpiInfoUITranslator.getMessageProcessed(message, response));
+		
+		ui.updateLocalStatus(
+			syncSession.getNumberOfAddedItems(), 
+			syncSession.getNumberOfUpdatedItems(),
+			syncSession.getNumberOfDeletedItems());
+		
+		if(BeginSyncMessageProcessor.MESSAGE_TYPE.equals(message.getMessageType())){
+			String dataSourceType = BeginSyncMessageProcessor.getSourceType(message.getData());
+			ui.updateRemoteDataSource(dataSourceType);
+		}
+
+		if(EqualStatusMessageProcessor.MESSAGE_TYPE.equals(message.getMessageType())){
+			String dataSourceType = message.getData();
+			ui.updateRemoteDataSource(dataSourceType);
+		}
+		
+		if(NoChangesMessageProcessor.MESSAGE_TYPE.equals(message.getMessageType())){
+			String dataSourceType = message.getData();
+			ui.updateRemoteDataSource(dataSourceType);
+		}
+		
+		if(LastVersionStatusMessageProcessor.MESSAGE_TYPE.equals(message.getMessageType())){
+			String dataSourceType = LastVersionStatusMessageProcessor.getSourceType(message.getData());
+			ui.updateRemoteDataSource(dataSourceType);
+		}
+		
+		if(ACKMergeMessageProcessor.MESSAGE_TYPE.equals(message.getMessageType())){
+			ui.updateRemoteStatus(
+					ACKMergeMessageProcessor.getNumberOfAddedItems(message.getData()), 
+					ACKMergeMessageProcessor.getNumberOfUpdatedItems(message.getData()),
+					ACKMergeMessageProcessor.getNumberOfDeletedItems(message.getData()));
+			
+		}
 	}
 
 	@Override

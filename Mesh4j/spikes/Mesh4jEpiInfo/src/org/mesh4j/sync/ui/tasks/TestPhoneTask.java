@@ -4,7 +4,7 @@ import java.awt.Cursor;
 
 import javax.swing.SwingWorker;
 
-import org.mesh4j.sync.epiinfo.ui.ExampleUI;
+import org.mesh4j.sync.epiinfo.ui.EpiinfoCompactUI;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.mappings.EndpointMapping;
 import org.mesh4j.sync.utils.SyncEngineUtil;
@@ -12,10 +12,10 @@ import org.mesh4j.sync.utils.SyncEngineUtil;
 public class TestPhoneTask extends SwingWorker<Void, Void> {
 
 	// MODEL VARIABLEs
-	private ExampleUI ui;
+	private EpiinfoCompactUI ui;
 	
 	// BUSINESS METHODS
-	public TestPhoneTask(ExampleUI ui){
+	public TestPhoneTask(EpiinfoCompactUI ui){
 		super();
 		this.ui = ui;
 	}

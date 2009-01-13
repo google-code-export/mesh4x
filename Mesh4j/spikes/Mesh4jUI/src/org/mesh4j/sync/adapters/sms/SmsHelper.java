@@ -56,7 +56,7 @@ public class SmsHelper {
 
 		// ENDPOINT A
 		DOMAdapter kmlAdapterA = new DOMAdapter(KMLDOMLoaderFactory.createDOMLoader(kmlFileName, identityProvider));
-		IMessageSyncAdapter adapterA = new MessageSyncAdapter(sourceId, identityProvider, kmlAdapterA);
+		IMessageSyncAdapter adapterA = new MessageSyncAdapter(sourceId, "kml", identityProvider, kmlAdapterA);
 
 		SmsEndpoint targetA = new SmsEndpoint(smsFrom);
 		InMemorySmsConnection smsConnectionA = new InMemorySmsConnection(encoding, maxMessageLenght, readDelay, targetA, channelDelay);
@@ -168,7 +168,7 @@ public class SmsHelper {
 		File file = new File(kmlFileName);
 		String sourceId = file.getName();		
 		DOMAdapter kmlAdapter = new DOMAdapter(KMLDOMLoaderFactory.createDOMLoader(kmlFileName, identityProvider));
-		IMessageSyncAdapter adapter = new MessageSyncAdapter(sourceId, identityProvider, kmlAdapter);
+		IMessageSyncAdapter adapter = new MessageSyncAdapter(sourceId, "kml", identityProvider, kmlAdapter);
 
 		syncEngine.synchronize(adapter, new SmsEndpoint(smsNumber), true);
 	}

@@ -982,7 +982,7 @@ public class Mesh4jSmsUI implements ISmsConnectionInboundOutboundNotification, I
 	}
 
 	@Override
-	public void notifyMessageProcessed(IMessage message, List<IMessage> response) {
+	public void notifyMessageProcessed(ISyncSession syncSession, IMessage message, List<IMessage> response) {
 		log(Mesh4jSmsUITranslator.getMessageProcessed(message, response));
 	}
 

@@ -84,7 +84,7 @@ public class SyncEngineUtil {
 		if(adapter == null){
 			ISyncAdapterFactory syncFactory = makeSyncAdapterFactory(fileNameResolver, baseDirectory);
 			ISyncAdapter syncAdapter = syncFactory.createSyncAdapter(sourceID, identityProvider);
-			adapter = new MessageSyncAdapter(sourceID, identityProvider, syncAdapter);
+			adapter = new MessageSyncAdapter(sourceID, syncFactory.getSourceType(), identityProvider, syncAdapter);
 		}
 		syncEngine.synchronize(adapter, new SmsEndpoint(toPhoneNumber), true, syncMode.shouldSendChanges(), syncMode.shouldReceiveChanges());
 	}
@@ -265,7 +265,7 @@ public class SyncEngineUtil {
 
 	// NEW EXAMPLE UI
 
-	public static MessageSyncEngine createSyncEngine(ExampleConsoleNotification consoleNotification) {
+	public static MessageSyncEngine createSyncEngine(EpiinfoCompactConsoleNotification consoleNotification) throws Exception {
 // TODO (JMT) replace properties from mesh4x.properties file
 		FileNameResolver fileNameResolver = new FileNameResolver("C:\\mesh4x\\demos\\epiinfo\\myFiles.properties");
 		Modem modem = new Modem("COM23", 115200, "sonny", "750i", "", "", 0, 0);
@@ -275,30 +275,45 @@ public class SyncEngineUtil {
 		int maxMessageLenght = 160;
 		IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
 		IMessageEncoding messageEncoding = NonMessageEncoding.INSTANCE;
+
+		return createEmulator(
+				fileNameResolver, 
+				consoleNotification, 
+				consoleNotification, 
+				EpiInfoUITranslator.getLabelDemo(), 
+				messageEncoding, 
+				identityProvider, 
+				baseDirectory, 
+				0, 
+				0, 
+				0, 
+				0,
+				maxMessageLenght);
 		
-		return createSyncEngine(
-			fileNameResolver, 
-			modem,
-			baseDirectory, 
-			senderDelay, 
-			receiverDelay, 
-			maxMessageLenght, 
-			identityProvider,
-			messageEncoding,
-			consoleNotification,
-			consoleNotification);
+//		return createSyncEngine(
+//			fileNameResolver, 
+//			modem,
+//			baseDirectory, 
+//			senderDelay, 
+//			receiverDelay, 
+//			maxMessageLenght, 
+//			identityProvider,
+//			messageEncoding,
+//			consoleNotification,
+//			consoleNotification);
 	}
 
 	public static Object[] getDataSourceMappings() {
 // TODO (JMT) replace properties from mesh4x.properties file
 		return new DataSourceMapping[]{
 			new DataSourceMapping("Oswego", "epiinfo.mdb", "Oswego"),
-			new DataSourceMapping("MyAccess", "", "")};
+			new DataSourceMapping("MyAccess", "epiinfo_test.mdb", "Oswego")};
 	}
 	
 	public static Object[] getEndpointMappings() {
 // TODO (JMT) replace properties from mesh4x.properties file
 		return new EndpointMapping[]{
+			new EndpointMapping("demo", "1111111111"),
 			new EndpointMapping("kzu", "01115783242"),
 			new EndpointMapping("jmt", "01115783242"),
 			new EndpointMapping("ed", "01115783242"),
@@ -310,6 +325,10 @@ public class SyncEngineUtil {
 		FileNameResolver fileNameResolver = new FileNameResolver("C:\\mesh4x\\demos\\epiinfo\\myFiles.properties");
 		String baseDirectory = "C:\\mesh4x\\demos\\epiinfo"; 
 		IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
+		
+		registerNewEndpointToEmulator(syncEngine, endpoint.getEndpoint(), NonMessageEncoding.INSTANCE, 
+				identityProvider, baseDirectory, 0, 0, 0, 0, 160);
+
 		synchronize(syncEngine, syncMode, endpoint.getEndpoint(), dataSource.getMDBName(), dataSource.getTableName(), identityProvider, baseDirectory, fileNameResolver);	
 	}
 

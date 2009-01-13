@@ -44,11 +44,11 @@ public class LogFrame extends JFrame {
 		super();
 		setTitle("Log Windows");
 		setResizable(false);
-		setBounds(100, 100, 500, 375);
+		setBounds(100, 100, 867, 375);
 		getContentPane().setLayout(new FormLayout(
 			new ColumnSpec[] {
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("239dlu"),
+				ColumnSpec.decode("423dlu"),
 				FormFactory.RELATED_GAP_COLSPEC},
 			new RowSpec[] {
 				FormFactory.RELATED_GAP_ROWSPEC,

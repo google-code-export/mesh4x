@@ -142,7 +142,8 @@ public class EpiInfoUITranslator {
 		}
 		if(MergeWithACKMessageProcessor.MESSAGE_TYPE.equals(messageType)){
 			String itemData = message.getData().substring(1, message.getData().length());
-			String syncId = ItemEncoding.getSyncID(itemData);
+			String syncId = MergeWithACKMessageProcessor.getSyncID(message.getData());
+			ItemEncoding.getSyncID(itemData);
 			return MessageTranslator.translate("EPIINFO_SMS_MESSAGE_TYPE_MERGE_WITH_ACK", syncId);
 		}
 		if(EndSyncMessageProcessor.MESSAGE_TYPE.equals(messageType)){
@@ -152,8 +153,7 @@ public class EpiInfoUITranslator {
 			return MessageTranslator.translate("EPIINFO_SMS_MESSAGE_TYPE_ACK_END_SYNC");
 		}
 		if(ACKMergeMessageProcessor.MESSAGE_TYPE.equals(messageType)){
-			String itemData = message.getData().substring(1, message.getData().length());
-			String syncId = ItemEncoding.getSyncID(itemData);
+			String syncId = ACKMergeMessageProcessor.getSyncID(message.getData());
 			return MessageTranslator.translate("EPIINFO_SMS_MESSAGE_TYPE_ACK_MERGE", syncId);
 		}
 		if(CancelSyncMessageProcessor.MESSAGE_TYPE.equals(messageType)){
