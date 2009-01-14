@@ -88,6 +88,12 @@ public class EpiinfoCompactUI {
 	private JComboBox comboBoxEndpoint;
 	private JLabel labelSyncWith;
 	private JPanel panelSync;
+	private JLabel imageLocalNew;
+	private JLabel imageLocalUpdated;
+	private JLabel imageLocalDeleted;
+	private JLabel imageRemoteNew;
+	private JLabel imageRemoteUpdated;
+	private JLabel imageRemoteDeleted;
 	
 	private LogFrame logFrame;
 	private ConfigurationFrame cfgFrame;	
@@ -110,7 +116,7 @@ public class EpiinfoCompactUI {
 	private int numberOfRemoteUpdatedItems = 0;
 	private int numberOfRemoteDeletedItems = 0;
 	private int syncMinutes = 0;
-			
+
 	// BUSINESS METHODS
 	
 	public static void main(String args[]) {
@@ -674,15 +680,15 @@ public class EpiinfoCompactUI {
 		
 		panelStatus.add(getTextAreaStatus(), new CellConstraints(1, 1, CellConstraints.FILL, CellConstraints.CENTER));
 
-		final JPanel panel = new JPanel();
-		panel.setBackground(Color.WHITE);
-		panel.setLayout(new FormLayout(
+		final JPanel panelTraffic = new JPanel();
+		panelTraffic.setBackground(Color.WHITE);
+		panelTraffic.setLayout(new FormLayout(
 			new ColumnSpec[] {
 				ColumnSpec.decode("12dlu"),
-				FormFactory.DEFAULT_COLSPEC,
+				ColumnSpec.decode("35dlu"),
 				ColumnSpec.decode("2dlu"),
 				ColumnSpec.decode("11dlu"),
-				ColumnSpec.decode("20dlu"),
+				ColumnSpec.decode("18dlu"),
 				FormFactory.DEFAULT_COLSPEC,
 				ColumnSpec.decode("31dlu"),
 				ColumnSpec.decode("35dlu"),
@@ -694,16 +700,16 @@ public class EpiinfoCompactUI {
 				FormFactory.DEFAULT_ROWSPEC,
 				FormFactory.DEFAULT_ROWSPEC,
 				RowSpec.decode("9dlu")}));
-		frame.getContentPane().add(panel, new CellConstraints(2, 5));
-		panel.add(getLabelLocalNew(), new CellConstraints(2, 2, CellConstraints.DEFAULT, CellConstraints.TOP));
-		panel.add(getLabelLocalUpdated(), new CellConstraints(2, 3));
-		panel.add(getLabelLocalDeleted(), new CellConstraints(2, 4));
-		panel.add(getLabelRemoteNew(), new CellConstraints(8, 2));
-		panel.add(getLabelRemoteUpdated(), new CellConstraints(8, 3));
-		panel.add(getLabelRemoteDeleted(), new CellConstraints(8, 4));
+		frame.getContentPane().add(panelTraffic, new CellConstraints(2, 5));
+		panelTraffic.add(getLabelLocalNew(), new CellConstraints(2, 2, CellConstraints.DEFAULT, CellConstraints.TOP));
+		panelTraffic.add(getLabelLocalUpdated(), new CellConstraints(2, 3));
+		panelTraffic.add(getLabelLocalDeleted(), new CellConstraints(2, 4));
+		panelTraffic.add(getLabelRemoteNew(), new CellConstraints(8, 2));
+		panelTraffic.add(getLabelRemoteUpdated(), new CellConstraints(8, 3));
+		panelTraffic.add(getLabelRemoteDeleted(), new CellConstraints(8, 4));
 
 		final JPanel panelInOut = new JPanel();
-		panel.add(panelInOut, new CellConstraints(6, 1, 1, 5));
+		panelTraffic.add(panelInOut, new CellConstraints(6, 1, 1, 5));
 		panelInOut.setBackground(Color.WHITE);
 		panelInOut.setLayout(new FormLayout(
 			"56dlu, 25dlu, 2dlu, 18dlu",
@@ -717,35 +723,29 @@ public class EpiinfoCompactUI {
 		panelInOut.add(getLabelOut(), new CellConstraints(2, 2, CellConstraints.LEFT, CellConstraints.DEFAULT));
 		panelInOut.add(getImageStatus(), new CellConstraints(4, 1, 1, 2, CellConstraints.CENTER, CellConstraints.CENTER));
 
-		final JLabel label = new JLabel();
-		label.setIcon(SwingResourceManager.getIcon(EpiinfoCompactUI.class, "/okSent.png"));
-		label.setText("");
-		panel.add(label, new CellConstraints(4, 2, CellConstraints.FILL, CellConstraints.FILL));
+		imageLocalNew = new JLabel();
+		imageLocalNew.setText("");
+		panelTraffic.add(imageLocalNew, new CellConstraints(4, 2, CellConstraints.FILL, CellConstraints.FILL));
 
-		final JLabel label_1 = new JLabel();
-		label_1.setIcon(SwingResourceManager.getIcon(EpiinfoCompactUI.class, "/inProgressSent.png"));
-		label_1.setText("");
-		panel.add(label_1, new CellConstraints(4, 3, CellConstraints.FILL, CellConstraints.FILL));
+		imageLocalUpdated = new JLabel();
+		imageLocalUpdated.setText("");
+		panelTraffic.add(imageLocalUpdated, new CellConstraints(4, 3, CellConstraints.FILL, CellConstraints.FILL));
 
-		final JLabel label_2 = new JLabel();
-		label_2.setIcon(SwingResourceManager.getIcon(EpiinfoCompactUI.class, "/okSent.png"));
-		label_2.setText("");
-		panel.add(label_2, new CellConstraints(4, 4, CellConstraints.FILL, CellConstraints.FILL));
+		imageLocalDeleted = new JLabel();
+		imageLocalDeleted.setText("");
+		panelTraffic.add(imageLocalDeleted, new CellConstraints(4, 4, CellConstraints.FILL, CellConstraints.FILL));
 
-		final JLabel label_3 = new JLabel();
-		label_3.setIcon(SwingResourceManager.getIcon(EpiinfoCompactUI.class, "/inProgressSent.png"));
-		label_3.setText("");
-		panel.add(label_3, new CellConstraints(10, 2, CellConstraints.FILL, CellConstraints.FILL));
+		imageRemoteNew = new JLabel();
+		imageRemoteNew.setText("");
+		panelTraffic.add(imageRemoteNew, new CellConstraints(10, 2, CellConstraints.FILL, CellConstraints.FILL));
 
-		final JLabel label_4 = new JLabel();
-		label_4.setIcon(SwingResourceManager.getIcon(EpiinfoCompactUI.class, "/inProgressSent.png"));
-		label_4.setText("");
-		panel.add(label_4, new CellConstraints(10, 3, CellConstraints.FILL, CellConstraints.FILL));
+		imageRemoteUpdated = new JLabel();
+		imageRemoteUpdated.setText("");
+		panelTraffic.add(imageRemoteUpdated, new CellConstraints(10, 3, CellConstraints.FILL, CellConstraints.FILL));
 
-		final JLabel label_5 = new JLabel();
-		label_5.setIcon(SwingResourceManager.getIcon(EpiinfoCompactUI.class, "/okSent.png"));
-		label_5.setText("");
-		panel.add(label_5, new CellConstraints(10, 4, CellConstraints.FILL, CellConstraints.FILL));
+		imageRemoteDeleted = new JLabel();
+		imageRemoteDeleted.setText("");
+		panelTraffic.add(imageRemoteDeleted, new CellConstraints(10, 4, CellConstraints.FILL, CellConstraints.FILL));
 		
 		logFrame = new LogFrame();
 		cfgFrame = new ConfigurationFrame();
@@ -943,7 +943,7 @@ public class EpiinfoCompactUI {
 		if (labelLocalUpdated == null) {
 			labelLocalUpdated = new JLabel();
 			labelLocalUpdated.setFont(new Font("Calibri", Font.BOLD, 12));
-			labelLocalUpdated.setText("Updated: 100");
+			labelLocalUpdated.setText("Updated: ");
 		}
 		return labelLocalUpdated;
 	}
@@ -979,7 +979,7 @@ public class EpiinfoCompactUI {
 		if (labelOut == null) {
 			labelOut = new JLabel();
 			labelOut.setFont(new Font("Calibri", Font.BOLD, 12));
-			labelOut.setText("Out: 1000");
+			labelOut.setText("Out: ");
 		}
 		return labelOut;
 	}
@@ -1006,7 +1006,7 @@ public class EpiinfoCompactUI {
 		if (labelRemoteUpdated == null) {
 			labelRemoteUpdated = new JLabel();
 			labelRemoteUpdated.setFont(new Font("Calibri", Font.BOLD, 12));
-			labelRemoteUpdated.setText("Updated: 100");
+			labelRemoteUpdated.setText("Updated: ");
 		}
 		return labelRemoteUpdated;
 	}
