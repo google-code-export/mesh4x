@@ -13,21 +13,30 @@ public class EmulateReadyToSyncTask extends SwingWorker<Void, Void> {
 
 	// MODEL VARIABLEs
 	private EpiinfoCompactUI ui;
+	private boolean okAnswer;
 	
 	// BUSINESS METHODS
-	public EmulateReadyToSyncTask(EpiinfoCompactUI ui){
+	public EmulateReadyToSyncTask(EpiinfoCompactUI ui, boolean okAnswer){
 		super();
 		this.ui = ui;
+		this.okAnswer = okAnswer;
 	}
 	
     public Void doInBackground() {
-		DataSourceMapping dataSource = (DataSourceMapping)ui.getComboBoxMappingDataSource().getSelectedItem();
+    	String dataSourceAlias;
+		if(okAnswer){
+			DataSourceMapping dataSource = (DataSourceMapping)ui.getComboBoxMappingDataSource().getSelectedItem();
+			dataSourceAlias = dataSource.getAlias();
+		} else {
+			dataSourceAlias = "undefined";
+		}
+			
 		EndpointMapping endpoint = (EndpointMapping)ui.getComboBoxEndpoint().getSelectedItem();
 
 		SmsChannel foregroundChannel = (SmsChannel)ui.getSyncEngine().getChannel();
 		InMemorySmsConnection smsConnection = (InMemorySmsConnection) foregroundChannel.getSmsConnection();
 		
-		String message = ReadyToSyncTask.makeQuestion(dataSource.getAlias());
+		String message = ReadyToSyncTask.makeQuestion(dataSourceAlias);
 		smsConnection.receive(message, new SmsEndpoint(endpoint.getEndpoint()));
 		return null;
     }

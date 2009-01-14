@@ -47,9 +47,12 @@ public class ReadyToSyncTask extends SwingWorker<Void, Void> {
 		}
 	}
 	
-	public static boolean isAnswer(String message, String dataSourceAlias) {
-		return makeAnswer(dataSourceAlias, true).equals(message) ||
-			makeAnswer(dataSourceAlias, false).equals(message);
+	public static boolean isAnswerOk(String message, String dataSourceAlias) {
+		return makeAnswer(dataSourceAlias, true).equals(message);
+	}
+	
+	public static boolean isAnswerNotOk(String message, String dataSourceAlias) {
+		return makeAnswer(dataSourceAlias, false).equals(message);
 	}
 	
 	public static String makeQuestion(String dataSourceAlias) {

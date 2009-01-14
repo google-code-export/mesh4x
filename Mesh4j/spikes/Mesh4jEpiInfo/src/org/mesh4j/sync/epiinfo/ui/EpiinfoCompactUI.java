@@ -356,12 +356,7 @@ public class EpiinfoCompactUI {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if(readyToSyncInProcess){
-					readyToSyncInProcess = false;
-					setErrorImageStatus();
-					setStatus(readyToSyncEndpoint.getAlias() + " is NOT ready to sync " + readyToSyncDataSource.getAlias());
-					readyToSyncEndpoint = null;
-					readyToSyncDataSource = null;
-					fullEnableAllButtons();
+					notifyEndpointIsNotReadyToSync();
 				}
 			}
 		};
@@ -377,6 +372,15 @@ public class EpiinfoCompactUI {
 		this.fullEnableAllButtons();
 	}
 	
+	public void notifyEndpointIsNotReadyToSync(){
+		readyToSyncInProcess = false;
+		setErrorImageStatus();
+		setStatus(readyToSyncEndpoint.getAlias() + " is NOT ready to sync " + readyToSyncDataSource.getAlias());
+		readyToSyncEndpoint = null;
+		readyToSyncDataSource = null;
+		fullEnableAllButtons();
+	}
+	
 	public void notifyReceiveMessage(String endpoint, String message, Date date) {
 		
 		if(ReadyToSyncTask.isQuestion(message)){
@@ -388,11 +392,16 @@ public class EpiinfoCompactUI {
 		}
 		
 		if(this.readyToSyncInProcess 
-				&& this.readyToSyncEndpoint.getEndpoint().equals(endpoint)
-				&& ReadyToSyncTask.isAnswer(message, this.readyToSyncDataSource.getAlias())){
-			this.notifyEndpointIsReadyToSync();
+				&& this.readyToSyncEndpoint.getEndpoint().equals(endpoint)){
+			if(ReadyToSyncTask.isAnswerOk(message, this.readyToSyncDataSource.getAlias())){
+				this.notifyEndpointIsReadyToSync();
+			}
+			
+			if(ReadyToSyncTask.isAnswerNotOk(message, this.readyToSyncDataSource.getAlias())){
+				this.notifyEndpointIsNotReadyToSync();
+			}
 		} 
-		
+
 		if(this.phoneCompatibilityInProcess 
 				&& this.phoneCompatibilityEndpoint.getEndpoint().equals(endpoint) 
 				&& TestPhoneTask.makeAnswer(this.phoneCompatibilityId).equals(message)){
@@ -549,15 +558,12 @@ public class EpiinfoCompactUI {
 						CancelSyncTask cancelSync = new CancelSyncTask(EpiinfoCompactUI.this);
 						cancelSync.execute();
 						
-						EpiinfoCompactUI.this.frame.setVisible(false);
-						EpiinfoCompactUI.this.frame.dispose();
-
+						EpiinfoCompactUI.this.close();
 					} else {
 						return;
 					}
 				} else {
-					EpiinfoCompactUI.this.frame.setVisible(false);
-					EpiinfoCompactUI.this.frame.dispose();
+					EpiinfoCompactUI.this.close();
 				}
 			}
 			
@@ -577,12 +583,14 @@ public class EpiinfoCompactUI {
 				RowSpec.decode("6dlu"),
 				RowSpec.decode("89dlu"),
 				FormFactory.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("115dlu"),
-				FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC}));
+				RowSpec.decode("58dlu"),
+				RowSpec.decode("41dlu"),
+				RowSpec.decode("9dlu"),
+				RowSpec.decode("20dlu"),
+				RowSpec.decode("29dlu")}));
 		frame.setResizable(false);
 		frame.setTitle(EpiInfoUITranslator.getTitle());
-		frame.setBounds(100, 100, 588, 446);
+		frame.setBounds(100, 100, 588, 441);
 		frame.getContentPane().add(getPanelSync(), new CellConstraints(2, 2));
 		frame.getContentPane().add(getPanelProgress(), new CellConstraints(2, 4, CellConstraints.FILL, CellConstraints.FILL));
 
@@ -590,8 +598,8 @@ public class EpiinfoCompactUI {
 		panelStatus.setBackground(Color.WHITE);
 		panelStatus.setLayout(new FormLayout(
 			"259dlu",
-			"11dlu, 14dlu"));
-		frame.getContentPane().add(panelStatus, new CellConstraints(2, 5));
+			"10dlu, 11dlu"));
+		frame.getContentPane().add(panelStatus, new CellConstraints(2, 7, CellConstraints.FILL, CellConstraints.FILL));
 
 		final JPanel panelStatusButtons = new JPanel();
 		panelStatusButtons.setBackground(Color.WHITE);
@@ -603,9 +611,11 @@ public class EpiinfoCompactUI {
 				FormFactory.RELATED_GAP_COLSPEC,
 				FormFactory.DEFAULT_COLSPEC,
 				FormFactory.RELATED_GAP_COLSPEC,
+				FormFactory.DEFAULT_COLSPEC,
+				FormFactory.RELATED_GAP_COLSPEC,
 				FormFactory.DEFAULT_COLSPEC},
 			new RowSpec[] {
-				RowSpec.decode("14dlu")}));
+				RowSpec.decode("9dlu")}));
 		panelStatus.add(panelStatusButtons, new CellConstraints(1, 2));
 		panelStatusButtons.add(getButtonOpenLog(), new CellConstraints(1, 1, CellConstraints.CENTER, CellConstraints.FILL));
 		panelStatusButtons.add(getButtonConfiguration(), new CellConstraints(3, 1, CellConstraints.CENTER, CellConstraints.FILL));
@@ -617,7 +627,7 @@ public class EpiinfoCompactUI {
 		emulateSyncButton.setBorderPainted(false);
 		emulateSyncButton.setName("");
 		emulateSyncButton.setOpaque(false);
-		emulateSyncButton.setText("EmulateSync");
+		emulateSyncButton.setText("Emulate incoming Sync");
 		ActionListener emulateSyncActionListener = new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				EmulateIncomingSyncTask task = new EmulateIncomingSyncTask(EpiinfoCompactUI.this);
@@ -634,22 +644,123 @@ public class EpiinfoCompactUI {
 		emulatereadtyosyncButton.setBorder(new EmptyBorder(0, 0, 0, 0));
 		emulatereadtyosyncButton.setFont(new Font("Calibri", Font.PLAIN, 10));
 		emulatereadtyosyncButton.setOpaque(false);
-		emulatereadtyosyncButton.setText("Emulate Ready");
+		emulatereadtyosyncButton.setText("Emulate Ready to sync ok");
 		ActionListener emulateReadyToSyncActionListener = new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
-				EmulateReadyToSyncTask task = new EmulateReadyToSyncTask(EpiinfoCompactUI.this);
+				EmulateReadyToSyncTask task = new EmulateReadyToSyncTask(EpiinfoCompactUI.this, true);
 				task.execute();
 			}
 		};	
 		emulatereadtyosyncButton.addActionListener(emulateReadyToSyncActionListener);
 		
 		panelStatusButtons.add(emulatereadtyosyncButton, new CellConstraints(7, 1, CellConstraints.CENTER, CellConstraints.FILL));
+
+		final JButton emulateReadyNotOkButton = new JButton();
+		emulateReadyNotOkButton.setContentAreaFilled(false);
+		emulateReadyNotOkButton.setBorderPainted(false);
+		emulateReadyNotOkButton.setBorder(new EmptyBorder(0, 0, 0, 0));
+		emulateReadyNotOkButton.setFont(new Font("Calibri", Font.PLAIN, 10));
+		emulateReadyNotOkButton.setText("Emulate Ready to sync not ok");
 		
-		panelStatus.add(getTextAreaStatus(), new CellConstraints(1, 1, CellConstraints.FILL, CellConstraints.FILL));
+		ActionListener emulateReadyToSyncNotOkActionListener = new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				EmulateReadyToSyncTask task = new EmulateReadyToSyncTask(EpiinfoCompactUI.this, false);
+				task.execute();
+			}
+		};	
+		emulateReadyNotOkButton.addActionListener(emulateReadyToSyncNotOkActionListener);
+		
+		panelStatusButtons.add(emulateReadyNotOkButton, new CellConstraints(9, 1));
+		
+		panelStatus.add(getTextAreaStatus(), new CellConstraints(1, 1, CellConstraints.FILL, CellConstraints.CENTER));
+
+		final JPanel panel = new JPanel();
+		panel.setBackground(Color.WHITE);
+		panel.setLayout(new FormLayout(
+			new ColumnSpec[] {
+				ColumnSpec.decode("12dlu"),
+				FormFactory.DEFAULT_COLSPEC,
+				ColumnSpec.decode("2dlu"),
+				ColumnSpec.decode("11dlu"),
+				ColumnSpec.decode("20dlu"),
+				FormFactory.DEFAULT_COLSPEC,
+				ColumnSpec.decode("31dlu"),
+				ColumnSpec.decode("35dlu"),
+				ColumnSpec.decode("2dlu"),
+				FormFactory.DEFAULT_COLSPEC},
+			new RowSpec[] {
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
+				RowSpec.decode("9dlu")}));
+		frame.getContentPane().add(panel, new CellConstraints(2, 5));
+		panel.add(getLabelLocalNew(), new CellConstraints(2, 2, CellConstraints.DEFAULT, CellConstraints.TOP));
+		panel.add(getLabelLocalUpdated(), new CellConstraints(2, 3));
+		panel.add(getLabelLocalDeleted(), new CellConstraints(2, 4));
+		panel.add(getLabelRemoteNew(), new CellConstraints(8, 2));
+		panel.add(getLabelRemoteUpdated(), new CellConstraints(8, 3));
+		panel.add(getLabelRemoteDeleted(), new CellConstraints(8, 4));
+
+		final JPanel panelInOut = new JPanel();
+		panel.add(panelInOut, new CellConstraints(6, 1, 1, 5));
+		panelInOut.setBackground(Color.WHITE);
+		panelInOut.setLayout(new FormLayout(
+			"56dlu, 25dlu, 2dlu, 18dlu",
+			"19dlu, 18dlu"));
+
+		final JLabel imageInOut = new JLabel();
+		imageInOut.setIcon(SwingResourceManager.getIcon(EpiinfoCompactUI.class, "/inOut.png"));
+		imageInOut.setText("");
+		panelInOut.add(imageInOut, new CellConstraints(1, 1, 1, 2, CellConstraints.RIGHT, CellConstraints.DEFAULT));
+		panelInOut.add(getLabelIn(), new CellConstraints(2, 1, CellConstraints.LEFT, CellConstraints.BOTTOM));
+		panelInOut.add(getLabelOut(), new CellConstraints(2, 2, CellConstraints.LEFT, CellConstraints.DEFAULT));
+		panelInOut.add(getImageStatus(), new CellConstraints(4, 1, 1, 2, CellConstraints.CENTER, CellConstraints.CENTER));
+
+		final JLabel label = new JLabel();
+		label.setIcon(SwingResourceManager.getIcon(EpiinfoCompactUI.class, "/okSent.png"));
+		label.setText("");
+		panel.add(label, new CellConstraints(4, 2, CellConstraints.FILL, CellConstraints.FILL));
+
+		final JLabel label_1 = new JLabel();
+		label_1.setIcon(SwingResourceManager.getIcon(EpiinfoCompactUI.class, "/inProgressSent.png"));
+		label_1.setText("");
+		panel.add(label_1, new CellConstraints(4, 3, CellConstraints.FILL, CellConstraints.FILL));
+
+		final JLabel label_2 = new JLabel();
+		label_2.setIcon(SwingResourceManager.getIcon(EpiinfoCompactUI.class, "/okSent.png"));
+		label_2.setText("");
+		panel.add(label_2, new CellConstraints(4, 4, CellConstraints.FILL, CellConstraints.FILL));
+
+		final JLabel label_3 = new JLabel();
+		label_3.setIcon(SwingResourceManager.getIcon(EpiinfoCompactUI.class, "/inProgressSent.png"));
+		label_3.setText("");
+		panel.add(label_3, new CellConstraints(10, 2, CellConstraints.FILL, CellConstraints.FILL));
+
+		final JLabel label_4 = new JLabel();
+		label_4.setIcon(SwingResourceManager.getIcon(EpiinfoCompactUI.class, "/inProgressSent.png"));
+		label_4.setText("");
+		panel.add(label_4, new CellConstraints(10, 3, CellConstraints.FILL, CellConstraints.FILL));
+
+		final JLabel label_5 = new JLabel();
+		label_5.setIcon(SwingResourceManager.getIcon(EpiinfoCompactUI.class, "/okSent.png"));
+		label_5.setText("");
+		panel.add(label_5, new CellConstraints(10, 4, CellConstraints.FILL, CellConstraints.FILL));
 		
 		logFrame = new LogFrame();
 		cfgFrame = new ConfigurationFrame();
 
+	}
+
+	protected void close() {
+		this.logFrame.setVisible(false);
+		this.logFrame.dispose();
+		
+		this.cfgFrame.setVisible(false);
+		this.cfgFrame.dispose();
+		
+		this.frame.setVisible(false);
+		this.frame.dispose();
 	}
 
 	protected JPanel getPanelSync() {
@@ -802,36 +913,10 @@ public class EpiinfoCompactUI {
 					FormFactory.RELATED_GAP_COLSPEC,
 					ColumnSpec.decode("56dlu")},
 				new RowSpec[] {
-					FormFactory.DEFAULT_ROWSPEC,
-					FormFactory.RELATED_GAP_ROWSPEC,
-					FormFactory.DEFAULT_ROWSPEC,
-					FormFactory.DEFAULT_ROWSPEC,
-					RowSpec.decode("17dlu"),
-					FormFactory.RELATED_GAP_ROWSPEC}));
+					RowSpec.decode("58dlu")}));
 			panelProgress.add(getLabelLocalDataSource(), new CellConstraints(2, 1, CellConstraints.FILL, CellConstraints.FILL));
-			panelProgress.add(getLabelLocalNew(), new CellConstraints(2, 3));
-			panelProgress.add(getLabelLocalUpdated(), new CellConstraints(2, 4));
-			panelProgress.add(getLabelLocalDeleted(), new CellConstraints(2, 5, CellConstraints.DEFAULT, CellConstraints.TOP));
-			panelProgress.add(getLabelSyncType(), new CellConstraints(3, 1, CellConstraints.CENTER, CellConstraints.FILL));
+			panelProgress.add(getLabelSyncType(), new CellConstraints(3, 1, CellConstraints.LEFT, CellConstraints.FILL));
 			panelProgress.add(getLabelRemoteDataSource(), new CellConstraints(5, 1, CellConstraints.FILL, CellConstraints.FILL));
-			panelProgress.add(getLabelRemoteNew(), new CellConstraints(5, 3, CellConstraints.LEFT, CellConstraints.DEFAULT));
-			panelProgress.add(getLabelRemoteUpdated(), new CellConstraints(5, 4, CellConstraints.LEFT, CellConstraints.DEFAULT));
-			panelProgress.add(getLabelRemoteDeleted(), new CellConstraints(5, 5, CellConstraints.LEFT, CellConstraints.TOP));
-
-			final JPanel panelInOut = new JPanel();
-			panelInOut.setBackground(Color.WHITE);
-			panelInOut.setLayout(new FormLayout(
-				"24dlu, 56dlu, 28dlu, 18dlu",
-				"19dlu, 18dlu"));
-			panelProgress.add(panelInOut, new CellConstraints(3, 3, 1, 3));
-
-			final JLabel imageInOut = new JLabel();
-			imageInOut.setIcon(SwingResourceManager.getIcon(EpiinfoCompactUI.class, "/inOut.png"));
-			imageInOut.setText("");
-			panelInOut.add(imageInOut, new CellConstraints(2, 1, 1, 2, CellConstraints.RIGHT, CellConstraints.DEFAULT));
-			panelInOut.add(getLabelIn(), new CellConstraints(3, 1, CellConstraints.LEFT, CellConstraints.BOTTOM));
-			panelInOut.add(getLabelOut(), new CellConstraints(3, 2, CellConstraints.LEFT, CellConstraints.DEFAULT));
-			panelInOut.add(getImageStatus(), new CellConstraints(4, 1, CellConstraints.FILL, CellConstraints.FILL));
 		}
 		return panelProgress;
 	}
@@ -858,7 +943,7 @@ public class EpiinfoCompactUI {
 		if (labelLocalUpdated == null) {
 			labelLocalUpdated = new JLabel();
 			labelLocalUpdated.setFont(new Font("Calibri", Font.BOLD, 12));
-			labelLocalUpdated.setText("Updated: ");
+			labelLocalUpdated.setText("Updated: 100");
 		}
 		return labelLocalUpdated;
 	}
@@ -894,7 +979,7 @@ public class EpiinfoCompactUI {
 		if (labelOut == null) {
 			labelOut = new JLabel();
 			labelOut.setFont(new Font("Calibri", Font.BOLD, 12));
-			labelOut.setText("Out: ");
+			labelOut.setText("Out: 1000");
 		}
 		return labelOut;
 	}
@@ -921,7 +1006,7 @@ public class EpiinfoCompactUI {
 		if (labelRemoteUpdated == null) {
 			labelRemoteUpdated = new JLabel();
 			labelRemoteUpdated.setFont(new Font("Calibri", Font.BOLD, 12));
-			labelRemoteUpdated.setText("Updated: ");
+			labelRemoteUpdated.setText("Updated: 100");
 		}
 		return labelRemoteUpdated;
 	}
