@@ -188,7 +188,7 @@ public class SmsChannel implements ISmsChannel, IMessageSyncAware {
 		this.sender.send(messages, endpoint);
 	}
 	
-	// IMEssageSyncAdapter protocol
+	// IMEssageSyncAWare protocol
 	@Override
 	public void beginSync(ISyncSession syncSession) {
 		// nothing to do		
@@ -240,5 +240,9 @@ public class SmsChannel implements ISmsChannel, IMessageSyncAware {
 
 	public ISmsConnection getSmsConnection() {
 		return this.smsConnection;
+	}
+	
+	public IMessageReceiver getMessageReceiver(){
+		return this.messageReceiver;
 	}
 }

@@ -339,4 +339,14 @@ public class SyncEngineUtil {
 	public static void sendSms(MessageSyncEngine syncEngine, String endpoint, String message) {
 		((SmsChannel)syncEngine.getChannel()).send(new SmsMessage(message), new SmsEndpoint(endpoint));
 	}
+
+	public static boolean isDataSourceAvailable(String dataSourceAlias) {
+		DataSourceMapping[] dataSources = (DataSourceMapping[]) getDataSourceMappings();
+		for (DataSourceMapping dataSourceMapping : dataSources) {
+			if(dataSourceMapping.getAlias().equals(dataSourceAlias)){
+				return true;
+			}
+		}
+		return false;
+	}
 }

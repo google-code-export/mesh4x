@@ -3,20 +3,20 @@ package org.mesh4j.sync.mappings;
 public class DataSourceMapping {
 
 	// MODEL VARIABLES
-	private String sourceId;
+	private String alias;
 	private String mdbName;
 	private String tableName;
 	
 	// BUSINESS METHODS
-	public DataSourceMapping(String sourceId, String mdbName, String tableName) {
+	public DataSourceMapping(String alias, String mdbName, String tableName) {
 		super();
-		this.sourceId = sourceId;
+		this.alias = alias;
 		this.mdbName = mdbName;
 		this.tableName = tableName;
 	}
 
-	public String getSourceId() {
-		return sourceId;
+	public String getAlias() {
+		return alias;
 	}
 
 	public String getMDBName() {
@@ -29,6 +29,6 @@ public class DataSourceMapping {
 	
 	@Override
 	public String toString(){
-		return this.sourceId;
+		return this.alias;
 	}
 }

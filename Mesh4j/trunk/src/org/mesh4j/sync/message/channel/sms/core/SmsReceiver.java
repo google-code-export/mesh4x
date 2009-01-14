@@ -248,4 +248,8 @@ public class SmsReceiver implements ISmsReceiver {
 			this.persistChanges();
 		}
 	}
+	
+	public ISmsBatchReceiver getSmsBatchReceiver(){
+		return this.smsBatchReceiver;
+	}
 }

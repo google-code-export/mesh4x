@@ -33,7 +33,7 @@ public class SynchronizeTask extends SwingWorker<Void, Void> {
 			SyncEngineUtil.synchronize(ui.getSyncEngine(), syncMode, endpoint, dataSource);
 
 		} catch(Throwable t){
-			ui.setErrorSync(t);
+			ui.notifyErrorSync(t);
 		}
 		
 		return null;

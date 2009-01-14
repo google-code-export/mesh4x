@@ -26,6 +26,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
+import javax.swing.WindowConstants;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -231,7 +232,7 @@ public class EpiinfoUI{
 		frame.setResizable(false);
 		frame.setTitle(EpiInfoUITranslator.getTitle());
 		frame.setBounds(100, 100, 664, 572);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
 		final JPanel panelCommunications = new JPanel();
 		panelCommunications.setFocusCycleRoot(true);

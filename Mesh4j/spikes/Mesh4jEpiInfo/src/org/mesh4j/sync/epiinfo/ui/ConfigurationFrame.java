@@ -1,13 +1,23 @@
 package org.mesh4j.sync.epiinfo.ui;
 
+import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
 
 import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
 
 import com.jgoodies.forms.factories.FormFactory;
+import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
+import com.swtdesigner.SwingResourceManager;
 
 public class ConfigurationFrame extends JFrame {
 
@@ -28,6 +38,8 @@ public class ConfigurationFrame extends JFrame {
 
 	public ConfigurationFrame() {
 		super();
+		getContentPane().setBackground(Color.WHITE);
+		setIconImage(SwingResourceManager.getImage(ConfigurationFrame.class, "/cdc.gif"));
 		setResizable(false);
 		setTitle("Configuration");
 		setBounds(100, 100, 500, 375);
@@ -42,6 +54,29 @@ public class ConfigurationFrame extends JFrame {
 					FormFactory.RELATED_GAP_ROWSPEC,
 					RowSpec.decode("19dlu"),
 					FormFactory.RELATED_GAP_ROWSPEC}));
+
+		final JPanel panel = new JPanel();
+		panel.setBackground(Color.WHITE);
+		panel.setLayout(new FormLayout(new ColumnSpec[] {FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC}, new RowSpec[] {FormFactory.DEFAULT_ROWSPEC}));
+		getContentPane().add(panel, new CellConstraints(2, 4));
+
+		final JButton buttonClose = new JButton();
+		buttonClose.setActionCommand("Close");
+		buttonClose.setContentAreaFilled(false);
+		buttonClose.setBorder(new EmptyBorder(0, 0, 0, 0));
+		buttonClose.setBorderPainted(false);
+		buttonClose.setOpaque(false);
+		buttonClose.setFont(new Font("Calibri", Font.BOLD, 12));
+		buttonClose.setText("Close");
+		ActionListener closeActionListener = new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				ConfigurationFrame.this.setVisible(false);
+			}
+		};
+		
+		buttonClose.addActionListener(closeActionListener);
+		
+		panel.add(buttonClose, new CellConstraints());
 	}
 
 }

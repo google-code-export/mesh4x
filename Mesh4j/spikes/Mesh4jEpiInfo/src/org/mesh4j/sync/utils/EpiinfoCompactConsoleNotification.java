@@ -1,11 +1,11 @@
 package org.mesh4j.sync.utils;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.mesh4j.sync.IFilter;
 import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
 import org.mesh4j.sync.epiinfo.ui.EpiinfoCompactUI;
 import org.mesh4j.sync.epiinfo.ui.LogFrame;
@@ -29,13 +29,14 @@ public class EpiinfoCompactConsoleNotification implements ISmsConnectionInboundO
 	// MODEL VARIABLES
 	private LogFrame consoleView;
 	private EpiinfoCompactUI ui;
-	private ArrayList<String> awaitedMessages = new ArrayList<String>();
+	private IFilter<String> messageFilter;
 	
 	// BUSINESS METHODS
-	public EpiinfoCompactConsoleNotification(LogFrame consoleView, EpiinfoCompactUI ui) {
+	public EpiinfoCompactConsoleNotification(LogFrame consoleView, EpiinfoCompactUI ui, IFilter<String> messageFilter) {
 		super();
 		this.consoleView = consoleView;
 		this.ui = ui;
+		this.messageFilter = messageFilter;
 	}
 	
 	// ISmsConnectionInboundOutboundNotification methods
@@ -67,28 +68,19 @@ public class EpiinfoCompactConsoleNotification implements ISmsConnectionInboundO
 	
 	@Override
 	public void notifyReceiveMessageWasNotProcessed(String endpoint, String message, Date date) {
-		// TODO (JMT) I must check endpoint?
-		if(this.waitingForMessage(message)){
-			this.awaitedMessages = new ArrayList<String>();
-			ui.setPhoneIsCompatible();
+		if(this.messageFilter.applies(message)){
+			ui.notifyReceiveMessage(endpoint, message, date);
 		} else {
 			Logger.info("SMS - Received message was not processed, endpoint: " + endpoint + " message: " + message + " date: " + date.toString());
 		}
 	}
-	
-	private boolean waitingForMessage(String message) {
-		return this.awaitedMessages.contains(message);
-	}
-	
-	public void addAwaitedMessage(String message) {
-		this.awaitedMessages.add(message);		
-	}
+
 	
 	// IMessageSyncAware methods
 
 	@Override
 	public void beginSync(ISyncSession syncSession) {
-		ui.setBeginSync(syncSession.getSourceId(), syncSession.shouldSendChanges(), syncSession.shouldReceiveChanges());
+		ui.notifyBeginSync(syncSession.getSourceId(), syncSession.shouldSendChanges(), syncSession.shouldReceiveChanges());
 		consoleView.log(EpiInfoUITranslator.getLabelStart());
 	}
 
@@ -100,10 +92,10 @@ public class EpiinfoCompactConsoleNotification implements ISmsConnectionInboundO
 	public void endSync(String target, String mdbFileName, String mdbTable, List<Item> conflicts) {
 		if(conflicts.isEmpty()){
 			consoleView.log(EpiInfoUITranslator.getLabelSuccess());
-			this.ui.setEndSync(false);
+			this.ui.notifyEndSync(false);
 		} else {
 			consoleView.log(EpiInfoUITranslator.getLabelSyncEndWithConflicts(conflicts.size()));
-			this.ui.setEndSync(true);
+			this.ui.notifyEndSync(true);
 		}
 	}
 
@@ -116,7 +108,7 @@ public class EpiinfoCompactConsoleNotification implements ISmsConnectionInboundO
 	@Override
 	public void notifyCancelSync(ISyncSession syncSession) {
 		consoleView.log(EpiInfoUITranslator.getMessageCancelSync(syncSession.getSessionId(), syncSession.getTarget().getEndpointId(), EpiInfoUITranslator.getSourceId(syncSession.getSourceId())));
-		this.ui.setEndSync(false);
+		this.ui.notifyEndSync(false);
 	}
 
 	@Override
@@ -147,6 +139,7 @@ public class EpiinfoCompactConsoleNotification implements ISmsConnectionInboundO
 		if(BeginSyncMessageProcessor.MESSAGE_TYPE.equals(message.getMessageType())){
 			String dataSourceType = BeginSyncMessageProcessor.getSourceType(message.getData());
 			ui.updateRemoteDataSource(dataSourceType);
+			ui.increaseSmsIn();
 		}
 
 		if(EqualStatusMessageProcessor.MESSAGE_TYPE.equals(message.getMessageType())){

@@ -22,12 +22,14 @@ public class TestPhoneTask extends SwingWorker<Void, Void> {
 	
     public Void doInBackground() {
 		ui.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-		ui.setStartTestForPhoneCompatibility();
 		
+		String id = IdGenerator.INSTANCE.newID();
 		EndpointMapping endpoint = (EndpointMapping)ui.getComboBoxEndpoint().getSelectedItem();
 		
-		String message = "Test phone compatibility <" + IdGenerator.INSTANCE.newID() + ">";
-		ui.getConsoleNotification().addAwaitedMessage(message);
+		ui.notifyStartTestForPhoneCompatibility(endpoint, id);
+				
+		String message = makeAnswer(id);
+
 		SyncEngineUtil.sendSms(ui.getSyncEngine(), endpoint.getEndpoint(), message);
 		return null;
     }
@@ -37,4 +39,12 @@ public class TestPhoneTask extends SwingWorker<Void, Void> {
 		super.done();
 		ui.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     }
+
+	public static boolean isQuestion(String message) {
+		return message.startsWith("Test phone compatibility <") && message.endsWith(">");
+	}
+	
+	public static String makeAnswer(String id) {
+		return "Test phone compatibility <" + id + ">";
+	}
 }

@@ -24,7 +24,7 @@ public class CancelSyncTask extends SwingWorker<Void, Void> {
     public Void doInBackground() {
 		ui.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 		
-		ui.setBeginCancelSync();
+		ui.notifyBeginCancelSync();
 		DataSourceMapping dataSource = (DataSourceMapping)ui.getComboBoxMappingDataSource().getSelectedItem();
 		EndpointMapping endpoint = (EndpointMapping)ui.getComboBoxEndpoint().getSelectedItem();
 
@@ -36,6 +36,6 @@ public class CancelSyncTask extends SwingWorker<Void, Void> {
 	@Override
     public void done() {
 		ui.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-		ui.setEndCancelSync();
+		ui.notifyEndCancelSync();
     }
 }

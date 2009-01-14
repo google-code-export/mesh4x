@@ -307,7 +307,7 @@ public class BeginSyncMessageProcessorTests {
 		IMessage message = mp.createMessage(syncSession);
 		
 		Assert.assertNotNull(message);
-		Assert.assertFalse(mp.getSendChanges(message.getData()));		
+		Assert.assertFalse(mp.getReceiveChanges(message.getData()));  // the value was inverted to receive because is the point of view according to endpoint sync session	
 	}
 	
 	@Test
@@ -343,7 +343,7 @@ public class BeginSyncMessageProcessorTests {
 		IMessage message = mp.createMessage(syncSession);
 		
 		Assert.assertNotNull(message);
-		Assert.assertFalse(mp.getReceiveChanges(message.getData()));		
+		Assert.assertFalse(mp.getSendChanges(message.getData()));		// the value was inverted to send because is the point of view according to the endpoint sync session
 	}
 	
 }

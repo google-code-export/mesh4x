@@ -114,10 +114,10 @@ public class BeginSyncMessageProcessor implements IMessageProcessor, IBeginSyncM
 		sb.append(syncSession.isFullProtocol() ? "T" : "F");
 		
 		sb.append(IProtocolConstants.ELEMENT_SEPARATOR);
-		sb.append(syncSession.shouldSendChanges() ? "T" : "F");
+		sb.append(syncSession.shouldReceiveChanges() ? "T" : "F");  // send value for endpoint B - when endpoint A (actual syncSession) receive => endpoint B send ===> Point of view according to process method
 		
 		sb.append(IProtocolConstants.ELEMENT_SEPARATOR);
-		sb.append(syncSession.shouldReceiveChanges() ? "T" : "F");
+		sb.append(syncSession.shouldSendChanges() ? "T" : "F");		// receive value for endpoint B - when endpoint A (actual syncSession) send => endpoint B receive ===> Point of view according to process method
 		
 		sb.append(IProtocolConstants.ELEMENT_SEPARATOR);
 		sb.append(calculateGlobalHash(syncSession.getAll()));

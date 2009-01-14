@@ -87,7 +87,13 @@ public class InMemorySmsConnection implements ISmsConnection, IRefreshTask{
 						if(this.smsConnectionInboundOutboundNotification != null){
 							this.smsConnectionInboundOutboundNotification.notifyReceiveMessage(endpointId, msg, date);
 						}
-						this.messageReceiver.receiveSms(new SmsEndpoint(endpointId), msg, date);			
+						try{
+							this.messageReceiver.receiveSms(new SmsEndpoint(endpointId), msg, date);
+						} catch (Exception e) {
+							if(this.smsConnectionInboundOutboundNotification != null){
+								this.smsConnectionInboundOutboundNotification.notifyReceiveMessageWasNotProcessed(endpointId, msg, date);
+							}	
+						}
 					}
 					this.messages.put(endpointId, new ArrayList<String>());
 				}
@@ -110,6 +116,17 @@ public class InMemorySmsConnection implements ISmsConnection, IRefreshTask{
 		return endpoint;
 	}
 
+	public void receive(String msg, SmsEndpoint endpoint) {
+		synchronized (SEMAPHORE) {
+			List<String> localMsgs = this.messages.get(endpoint.getEndpointId());
+			if(localMsgs == null){
+				localMsgs = new ArrayList<String>();
+				this.messages.put(endpoint.getEndpointId(), localMsgs);
+			}
+			localMsgs.add(msg);
+		}		
+	}
+	
 	public void receive(List<String> msgs, SmsEndpoint endpoint) {
 		synchronized (SEMAPHORE) {
 			List<String> localMsgs = this.messages.get(endpoint.getEndpointId());
@@ -144,4 +161,11 @@ public class InMemorySmsConnection implements ISmsConnection, IRefreshTask{
 		return this.endpointConnections.get(target.getEndpointId()) != null;
 	}
 
+	public InMemorySmsConnection getEndpoint(String endpointId) {
+		return this.endpointConnections.get(endpointId);
+	}
+
+	public ISmsReceiver getMessageReceiver(){
+		return this.messageReceiver;
+	}
 }
