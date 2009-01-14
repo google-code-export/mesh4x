@@ -7,6 +7,7 @@ import javax.swing.SwingWorker;
 import org.mesh4j.sync.epiinfo.ui.EpiinfoCompactUI;
 import org.mesh4j.sync.mappings.DataSourceMapping;
 import org.mesh4j.sync.mappings.EndpointMapping;
+import org.mesh4j.sync.ui.translator.EpiInfoCompactUITranslator;
 import org.mesh4j.sync.utils.SyncEngineUtil;
 
 public class ReadyToSyncTask extends SwingWorker<Void, Void> {
@@ -41,9 +42,9 @@ public class ReadyToSyncTask extends SwingWorker<Void, Void> {
 
 	public static String makeAnswer(String dataSourceAlias, boolean isDataSourceAvailable) {
 		if(isDataSourceAvailable){
-			return "I am ready to sync "+ dataSourceAlias;
+			return EpiInfoCompactUITranslator.getAnswerReadyToSync(dataSourceAlias);
 		} else {
-			return "I am not ready to sync "+ dataSourceAlias;
+			return EpiInfoCompactUITranslator.getAnswerNotReadyToSync(dataSourceAlias);
 		}
 	}
 	
@@ -56,17 +57,17 @@ public class ReadyToSyncTask extends SwingWorker<Void, Void> {
 	}
 	
 	public static String makeQuestion(String dataSourceAlias) {
-		return  "Are you ready to sync " + dataSourceAlias + " ?";
+		return EpiInfoCompactUITranslator.getQuestionForReadyToSync() + " " + dataSourceAlias + EpiInfoCompactUITranslator.getQuestionEndSymbol();
 	}
 
 	public static boolean isQuestion(String message) {
-		return message.startsWith("Are you ready to sync ") &&
-			message.endsWith(" ?");
+		return message.startsWith( EpiInfoCompactUITranslator.getQuestionForReadyToSync() ) &&
+			message.endsWith(EpiInfoCompactUITranslator.getQuestionEndSymbol());
 	}
 	
 	public static String getDataSourceAlias(String message) {
-		int start = "Are you ready to sync ".length();
-		int end = message.length() - 2;
+		int start = EpiInfoCompactUITranslator.getQuestionForReadyToSync().length() +1 ;
+		int end = message.length() - 1;
 		return message.substring(start, end);
 	}
 }

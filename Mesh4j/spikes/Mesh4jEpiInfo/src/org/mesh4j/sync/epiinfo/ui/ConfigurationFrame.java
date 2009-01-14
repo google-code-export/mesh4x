@@ -7,10 +7,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import org.mesh4j.sync.ui.translator.EpiInfoCompactUITranslator;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -41,7 +42,7 @@ public class ConfigurationFrame extends JFrame {
 		getContentPane().setBackground(Color.WHITE);
 		setIconImage(SwingResourceManager.getImage(ConfigurationFrame.class, "/cdc.gif"));
 		setResizable(false);
-		setTitle("Configuration");
+		setTitle(EpiInfoCompactUITranslator.getConfigurationWindowTitle());
 		setBounds(100, 100, 500, 375);
 		getContentPane().setLayout(new FormLayout(
 				new ColumnSpec[] {
@@ -61,13 +62,13 @@ public class ConfigurationFrame extends JFrame {
 		getContentPane().add(panel, new CellConstraints(2, 4));
 
 		final JButton buttonClose = new JButton();
-		buttonClose.setActionCommand("Close");
 		buttonClose.setContentAreaFilled(false);
 		buttonClose.setBorder(new EmptyBorder(0, 0, 0, 0));
 		buttonClose.setBorderPainted(false);
 		buttonClose.setOpaque(false);
 		buttonClose.setFont(new Font("Calibri", Font.BOLD, 12));
-		buttonClose.setText("Close");
+		buttonClose.setText(EpiInfoCompactUITranslator.getConfigurationWindowLabelClose());
+		buttonClose.setToolTipText(EpiInfoCompactUITranslator.getConfigurationWindowToolTipClose());
 		ActionListener closeActionListener = new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				ConfigurationFrame.this.setVisible(false);

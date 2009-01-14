@@ -16,6 +16,7 @@ import javax.swing.border.EmptyBorder;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.mesh4j.sync.ui.translator.EpiInfoCompactUITranslator;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -52,7 +53,7 @@ public class LogFrame extends JFrame {
 		super();
 		setIconImage(SwingResourceManager.getImage(LogFrame.class, "/cdc.gif"));
 		getContentPane().setBackground(Color.WHITE);
-		setTitle("Log Windows");
+		setTitle(EpiInfoCompactUITranslator.getLogWindowTitle());
 		setResizable(false);
 		setBounds(100, 100, 867, 376);
 		getContentPane().setLayout(new FormLayout(
@@ -73,6 +74,7 @@ public class LogFrame extends JFrame {
 		textAreaConsoleView = new JTextArea();
 		textAreaConsoleView.setFont(new Font("Calibri", Font.PLAIN, 12));
 		textAreaConsoleView.setBorder(new BevelBorder(BevelBorder.LOWERED));
+		textAreaConsoleView.setToolTipText(EpiInfoCompactUITranslator.getLogWindowToolTipConsoleView());
 		scrollPane.setViewportView(textAreaConsoleView);
 		
 		ActionListener cleanActionListener = new ActionListener(){
@@ -99,7 +101,8 @@ public class LogFrame extends JFrame {
 		buttonClean.setBorderPainted(false);
 		buttonClean.setFont(new Font("Calibri", Font.BOLD, 12));
 		panel.add(buttonClean, new CellConstraints(1, 1, CellConstraints.CENTER, CellConstraints.DEFAULT));
-		buttonClean.setText("Clean");
+		buttonClean.setText(EpiInfoCompactUITranslator.getLogWindowLabelClean());
+		buttonClean.setToolTipText(EpiInfoCompactUITranslator.getLogWindowToolTipClean());
 		buttonClean.addActionListener(cleanActionListener);
 
 		final JButton buttonClose = new JButton();
@@ -108,7 +111,8 @@ public class LogFrame extends JFrame {
 		buttonClose.setBorderPainted(false);
 		buttonClose.setContentAreaFilled(false);
 		buttonClose.setFont(new Font("Calibri", Font.BOLD, 12));
-		buttonClose.setText("Close");
+		buttonClose.setText(EpiInfoCompactUITranslator.getLogWindowLabelClose());
+		buttonClose.setToolTipText(EpiInfoCompactUITranslator.getLogWindowToolTipClose());
 		
 		ActionListener closeActionListener = new ActionListener(){
 			public void actionPerformed(ActionEvent e) {

@@ -7,6 +7,7 @@ import javax.swing.SwingWorker;
 import org.mesh4j.sync.epiinfo.ui.EpiinfoCompactUI;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.mappings.EndpointMapping;
+import org.mesh4j.sync.ui.translator.EpiInfoCompactUITranslator;
 import org.mesh4j.sync.utils.SyncEngineUtil;
 
 public class TestPhoneTask extends SwingWorker<Void, Void> {
@@ -41,10 +42,10 @@ public class TestPhoneTask extends SwingWorker<Void, Void> {
     }
 
 	public static boolean isQuestion(String message) {
-		return message.startsWith("Test phone compatibility <") && message.endsWith(">");
+		return message.startsWith(EpiInfoCompactUITranslator.getQuestionTestPhoneCompatibility());
 	}
 	
 	public static String makeAnswer(String id) {
-		return "Test phone compatibility <" + id + ">";
+		return EpiInfoCompactUITranslator.getQuestionTestPhoneCompatibility() + " <" + id + ">";
 	}
 }

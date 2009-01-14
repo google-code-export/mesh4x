@@ -161,8 +161,7 @@ public class EpiinfoCompactConsoleNotification implements ISmsConnectionInboundO
 			ui.updateRemoteStatus(
 					ACKMergeMessageProcessor.getNumberOfAddedItems(message.getData()), 
 					ACKMergeMessageProcessor.getNumberOfUpdatedItems(message.getData()),
-					ACKMergeMessageProcessor.getNumberOfDeletedItems(message.getData()));
-			
+					ACKMergeMessageProcessor.getNumberOfDeletedItems(message.getData()));			
 		}
 	}
 

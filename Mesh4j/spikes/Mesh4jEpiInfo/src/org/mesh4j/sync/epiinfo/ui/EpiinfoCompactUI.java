@@ -47,6 +47,7 @@ import org.mesh4j.sync.ui.tasks.ReadyToSyncResponseTask;
 import org.mesh4j.sync.ui.tasks.ReadyToSyncTask;
 import org.mesh4j.sync.ui.tasks.SynchronizeTask;
 import org.mesh4j.sync.ui.tasks.TestPhoneTask;
+import org.mesh4j.sync.ui.translator.EpiInfoCompactUITranslator;
 import org.mesh4j.sync.ui.translator.EpiInfoUITranslator;
 import org.mesh4j.sync.utils.EpiinfoCompactConsoleNotification;
 import org.mesh4j.sync.utils.SyncEngineUtil;
@@ -199,14 +200,14 @@ public class EpiinfoCompactUI {
 	public void notifyEndSync(boolean error) {
 		this.syncInProcess = false;
 		if(error){
-			this.setStatus("Sync failed");
+			this.setStatus(EpiInfoCompactUITranslator.getMessageSyncFailed());
 			this.setErrorImageStatus();
 		} else {
-			this.setStatus("Sync successfully");
+			this.setStatus(EpiInfoCompactUITranslator.getMessageSyncSuccessfully());
 			this.setEndSyncImageStatus();
 		}
 		
-		this.buttonSync.setText("Sync now");
+		this.buttonSync.setText(EpiInfoCompactUITranslator.getLabelSync());
 		this.enableAllButtons();		
 	}
 	
@@ -248,16 +249,16 @@ public class EpiinfoCompactUI {
 		} else {
 			this.labelSyncType.setIcon(SwingResourceManager.getIcon(EpiinfoCompactUI.class, "/receiveChangesOnly.png"));
 		}
-		this.labelLocalNew.setText("New: 0");
-		this.labelLocalDeleted.setText("Deleted: 0");
-		this.labelLocalUpdated.setText("Updated: 0");
+		this.labelLocalNew.setText(EpiInfoCompactUITranslator.getLabelNew(0));
+		this.labelLocalDeleted.setText(EpiInfoCompactUITranslator.getLabelDeleted(0));
+		this.labelLocalUpdated.setText(EpiInfoCompactUITranslator.getLabelUpdated(0));
 
-		this.labelRemoteNew.setText("New: 0");
-		this.labelRemoteDeleted.setText("Deleted: 0");
-		this.labelRemoteUpdated.setText("Updated: 0");
+		this.labelRemoteNew.setText(EpiInfoCompactUITranslator.getLabelNew(0));
+		this.labelRemoteDeleted.setText(EpiInfoCompactUITranslator.getLabelDeleted(0));
+		this.labelRemoteUpdated.setText(EpiInfoCompactUITranslator.getLabelUpdated(0));
 
-		this.labelIn.setText("In: 0");
-		this.labelOut.setText("Out: 0");
+		this.labelIn.setText(EpiInfoCompactUITranslator.getLabelIn(0));
+		this.labelOut.setText(EpiInfoCompactUITranslator.getLabelOut(0));
 		
 		this.smsIn = 0;
 		this.smsOut = 0;
@@ -270,8 +271,8 @@ public class EpiinfoCompactUI {
 		
 		SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
 		
-		this.setStatus("Sync Started: " + dateFormat.format(new Date()));
-		this.buttonSync.setText("Cancel Sync");	
+		this.setStatus(EpiInfoCompactUITranslator.getMessageSyncStarted(dateFormat.format(new Date())));
+		this.buttonSync.setText(EpiInfoCompactUITranslator.getLabelCancelSync());	
 		this.setInProcessImageStatus();
 		this.logFrame.cleanLog();
 		this.disableAllButtons();
@@ -290,15 +291,15 @@ public class EpiinfoCompactUI {
 
 	public void notifyEndCancelSync() {
 		this.syncInProcess = false;
-		this.setStatus("Cancel Sync successfully");
+		this.setStatus(EpiInfoCompactUITranslator.getMessageCancelSyncSuccessfully());
 		
-		this.buttonSync.setText("Sync now");
+		this.buttonSync.setText(EpiInfoCompactUITranslator.getLabelSync());
 		this.setEndSyncImageStatus();
 		this.enableAllButtons();		
 	}
 	
 	public void notifyStartUpError()	{
-		this.setStatus("Start up error, please check phone configuration and compatibility !!!");
+		this.setStatus(EpiInfoCompactUITranslator.getMessageStartUpError());
 		this.setErrorImageStatus();
 
 		comboBoxEndpoint.setEnabled(false);
@@ -316,7 +317,7 @@ public class EpiinfoCompactUI {
 		this.phoneCompatibilityId = id;
 		this.fullDisableAllButtons();
 		this.setInProcessImageStatus();
-		this.setStatus("Testing phone compatibility....");
+		this.setStatus(EpiInfoCompactUITranslator.getMessageTestingPhoneCompatibility());
 		
 		Action errorAction = new AbstractAction(){
 
@@ -327,7 +328,7 @@ public class EpiinfoCompactUI {
 				if(phoneCompatibilityInProcess){
 					phoneCompatibilityInProcess = false;
 					setErrorImageStatus();
-					setStatus("Phone compatibility error: Please check if the phone is plugged to the computa and try again...");
+					setStatus(EpiInfoCompactUITranslator.getMessageTimeOutPhoneCompatibility());
 					phoneCompatibilityEndpoint = null;
 					phoneCompatibilityId = null;
 					fullEnableAllButtons();
@@ -342,7 +343,7 @@ public class EpiinfoCompactUI {
 		this.phoneCompatibilityEndpoint = null;
 		this.phoneCompatibilityId = null;
 		
-		this.setStatus("Phone is compatible....");
+		this.setStatus(EpiInfoCompactUITranslator.getMessagePhoneIsCompatible());
 		this.fullEnableAllButtons();
 		this.setReadyImageStatus();
 		this.disableAllButtons();
@@ -351,7 +352,7 @@ public class EpiinfoCompactUI {
 	public void notifyStartReadyToSync(EndpointMapping endpoint, DataSourceMapping dataSource){
 		this.setInProcessImageStatus();
 		this.fullDisableAllButtons();
-		this.setStatus("Processing: Is " + endpoint.getAlias() + " ready to sync " + dataSource.getAlias() + " ?");
+		this.setStatus(EpiInfoCompactUITranslator.getMessageProcessingReadyToSync(endpoint.getAlias(), dataSource.getAlias()));
 		this.readyToSyncInProcess = true;
 		this.readyToSyncEndpoint = endpoint;
 		this.readyToSyncDataSource = dataSource;
@@ -372,7 +373,7 @@ public class EpiinfoCompactUI {
 	public void notifyEndpointIsReadyToSync(){
 		this.readyToSyncInProcess = false;
 		this.setReadyImageStatus();
-		this.setStatus(readyToSyncEndpoint.getAlias() + " is ready to sync " + readyToSyncDataSource.getAlias());
+		this.setStatus(EpiInfoCompactUITranslator.getMessageEndpointIsReadyToSync(readyToSyncEndpoint.getAlias(), readyToSyncDataSource.getAlias()));
 		this.readyToSyncEndpoint = null;
 		this.readyToSyncDataSource = null;
 		this.fullEnableAllButtons();
@@ -381,7 +382,7 @@ public class EpiinfoCompactUI {
 	public void notifyEndpointIsNotReadyToSync(){
 		readyToSyncInProcess = false;
 		setErrorImageStatus();
-		setStatus(readyToSyncEndpoint.getAlias() + " is NOT ready to sync " + readyToSyncDataSource.getAlias());
+		setStatus(EpiInfoCompactUITranslator.getMessageEndpointIsNotReadyToSync(readyToSyncEndpoint.getAlias(), readyToSyncDataSource.getAlias()));
 		readyToSyncEndpoint = null;
 		readyToSyncDataSource = null;
 		fullEnableAllButtons();
@@ -466,18 +467,18 @@ public class EpiinfoCompactUI {
 	
 	public void increaseSmsIn() {
 		this.smsIn = this.smsIn + 1;
-		this.labelIn.setText("In: " + this.smsIn);
+		this.labelIn.setText(EpiInfoCompactUITranslator.getLabelIn(this.smsIn));
 	}
 	
 	public void increaseSmsOut() {
 		this.smsOut = this.smsOut + 1;
-		this.labelOut.setText("Out: " + this.smsOut);
+		this.labelOut.setText(EpiInfoCompactUITranslator.getLabelOut(this.smsOut));
 	}
 
 	public void updateLocalStatus(int addTotal, int updateTotal, int deleteTotal) {
-		this.labelLocalNew.setText("New: " + addTotal);
-		this.labelLocalDeleted.setText("Deleted: " + deleteTotal);
-		this.labelLocalUpdated.setText("Updated: " + updateTotal);		
+		this.labelLocalNew.setText(EpiInfoCompactUITranslator.getLabelNew(addTotal));
+		this.labelLocalDeleted.setText(EpiInfoCompactUITranslator.getLabelDeleted(deleteTotal));
+		this.labelLocalUpdated.setText(EpiInfoCompactUITranslator.getLabelUpdated(updateTotal));		
 	}
 	
 	public void updateRemoteStatus(int addTotal, int updateTotal, int deleteTotal) {
@@ -488,9 +489,9 @@ public class EpiinfoCompactUI {
 			this.numberOfRemoteDeletedItems = deleteTotal;
 			this.numberOfRemoteUpdatedItems = updateTotal;
 		
-			this.labelRemoteNew.setText("New: " + addTotal);
-			this.labelRemoteDeleted.setText("Deleted: " + deleteTotal);
-			this.labelRemoteUpdated.setText("Updated: " + updateTotal);
+			this.labelRemoteNew.setText(EpiInfoCompactUITranslator.getLabelNew(addTotal));
+			this.labelRemoteDeleted.setText(EpiInfoCompactUITranslator.getLabelDeleted(deleteTotal));
+			this.labelRemoteUpdated.setText(EpiInfoCompactUITranslator.getLabelUpdated(updateTotal));
 		}
 	}
 	
@@ -516,27 +517,40 @@ public class EpiinfoCompactUI {
 					if(days > 0){
 						sb.append(days);
 						if(days > 1){
-							sb.append(" days ");
+							sb.append(" ");
+							sb.append(EpiInfoCompactUITranslator.getLabelDays());
+							sb.append(" ");
 						} else {
-							sb.append(" day ");
+							sb.append(" ");
+							sb.append(EpiInfoCompactUITranslator.getLabelDay());
+							sb.append(" ");
 						}
 					}
 					
 					sb.append(hrs);
 					if(hrs > 1){
-						sb.append(" hours ");
+						sb.append(" ");
+						sb.append(EpiInfoCompactUITranslator.getLabelHours());
+						sb.append(" ");
 					} else {
-						sb.append(" hour ");
+						sb.append(" ");
+						sb.append(EpiInfoCompactUITranslator.getLabelHour());
+						sb.append(" ");
 					}
 				}
 				
 				sb.append(minutes);
 				if(minutes > 1){
-					sb.append(" minutes ");
+					sb.append(" ");
+					sb.append(EpiInfoCompactUITranslator.getLabelMinutes());
+					sb.append(" ");
 				} else {
-					sb.append(" minute ");
+					sb.append(" ");
+					sb.append(EpiInfoCompactUITranslator.getLabelMinute());
+					sb.append(" ");
 				}				
-				sb.append("ago)");
+				sb.append(EpiInfoCompactUITranslator.getLabelAgo());
+				sb.append(")");
 			}		
 		    setStatus(sb.toString());
 		}
@@ -551,10 +565,11 @@ public class EpiinfoCompactUI {
 		WindowAdapter windowAdapter = new WindowAdapter() {
 			public void windowClosing(final WindowEvent e) {
 				if(syncInProcess){
-					Object[] options = {"Cancel sync and Close", "Continues working"};
-					int n = JOptionPane.showOptionDialog(frame,
-						"You are syncronization "+ getSelectedDataSource()+" with " + getSelectedEndpoint() +". What would you like to do?",
-						"Close Application",
+					Object[] options = {EpiInfoCompactUITranslator.getLabelCancelSyncAndCloseWindow(), EpiInfoCompactUITranslator.getLabelCancelCloseWindow()};
+					int n = JOptionPane.showOptionDialog(
+						frame,
+						EpiInfoCompactUITranslator.getMessageForPopUpCloseWindows(getSelectedDataSource(), getSelectedEndpoint()),
+						EpiInfoCompactUITranslator.getTitle(),
 						JOptionPane.YES_NO_OPTION,
 						JOptionPane.QUESTION_MESSAGE,
 						null,     //do not use a custom Icon
@@ -584,7 +599,7 @@ public class EpiinfoCompactUI {
 			new ColumnSpec[] {
 				ColumnSpec.decode("20dlu"),
 				ColumnSpec.decode("259dlu"),
-				ColumnSpec.decode("10dlu")},
+				ColumnSpec.decode("15dlu")},
 			new RowSpec[] {
 				RowSpec.decode("6dlu"),
 				RowSpec.decode("89dlu"),
@@ -619,7 +634,7 @@ public class EpiinfoCompactUI {
 				FormFactory.RELATED_GAP_COLSPEC,
 				FormFactory.DEFAULT_COLSPEC,
 				FormFactory.RELATED_GAP_COLSPEC,
-				FormFactory.DEFAULT_COLSPEC},
+				ColumnSpec.decode("56dlu")},
 			new RowSpec[] {
 				RowSpec.decode("9dlu")}));
 		panelStatus.add(panelStatusButtons, new CellConstraints(1, 2));
@@ -746,6 +761,27 @@ public class EpiinfoCompactUI {
 		imageRemoteDeleted = new JLabel();
 		imageRemoteDeleted.setText("");
 		panelTraffic.add(imageRemoteDeleted, new CellConstraints(10, 4, CellConstraints.FILL, CellConstraints.FILL));
+
+		final JPanel panelTrademark = new JPanel();
+		panelTrademark.setBackground(Color.WHITE);
+		panelTrademark.setLayout(new FormLayout(
+			new ColumnSpec[] {
+				ColumnSpec.decode("285dlu"),
+				ColumnSpec.decode("5dlu")},
+			new RowSpec[] {
+				RowSpec.decode("18dlu"),
+				FormFactory.DEFAULT_ROWSPEC}));
+		frame.getContentPane().add(panelTrademark, new CellConstraints(1, 8, 3, 1));
+
+		final JLabel labelTrademark = new JLabel();
+		labelTrademark.setFont(new Font("Calibri", Font.BOLD, 10));
+		labelTrademark.setText(EpiInfoCompactUITranslator.getTradeMark());
+		panelTrademark.add(labelTrademark, new CellConstraints(1, 2, CellConstraints.RIGHT, CellConstraints.BOTTOM));
+		
+		final JLabel imageTrademark = new JLabel();
+		imageTrademark.setIcon(SwingResourceManager.getIcon(EpiinfoCompactUI.class, "/mesh4x.png"));
+		imageTrademark.setText("");
+		panelTrademark.add(imageTrademark, new CellConstraints(2, 2));
 		
 		logFrame = new LogFrame();
 		cfgFrame = new ConfigurationFrame();
@@ -814,7 +850,7 @@ public class EpiinfoCompactUI {
 		if (labelSyncWith == null) {
 			labelSyncWith = new JLabel();
 			labelSyncWith.setFont(new Font("Calibri", Font.BOLD, 14));
-			labelSyncWith.setText("Sync With:");
+			labelSyncWith.setText(EpiInfoCompactUITranslator.getLabelSyncWith());
 		}
 		return labelSyncWith;
 	}
@@ -833,7 +869,7 @@ public class EpiinfoCompactUI {
 			buttonTestPhone = new JButton();
 			buttonTestPhone.setFont(new Font("Calibri", Font.BOLD, 12));
 			buttonTestPhone.setBackground(UIManager.getColor("Button.background"));
-			buttonTestPhone.setText("Test Phone");
+			buttonTestPhone.setText(EpiInfoCompactUITranslator.getLabelTestPhone());
 			
 			ActionListener testPhoneActionListener = new ActionListener(){
 				public void actionPerformed(ActionEvent e) {
@@ -850,7 +886,7 @@ public class EpiinfoCompactUI {
 		if (buttonReadyToSync == null) {
 			buttonReadyToSync = new JButton();
 			buttonReadyToSync.setFont(new Font("Calibri", Font.BOLD, 12));
-			buttonReadyToSync.setText("Ready To Sync ?");
+			buttonReadyToSync.setText(EpiInfoCompactUITranslator.getLabelReadyToSync());
 			
 			ActionListener readyToSyncActionListener = new ActionListener(){
 				public void actionPerformed(ActionEvent e) {
@@ -867,7 +903,7 @@ public class EpiinfoCompactUI {
 		if (buttonSync == null) {
 			buttonSync = new JButton();
 			buttonSync.setFont(new Font("Arial", Font.PLAIN, 16));
-			buttonSync.setText("Sync Now");
+			buttonSync.setText(EpiInfoCompactUITranslator.getLabelSync());
 			
 			ActionListener synchronizeActionListener = new ActionListener(){
 				public void actionPerformed(ActionEvent e) {
@@ -934,7 +970,7 @@ public class EpiinfoCompactUI {
 		if (labelLocalNew == null) {
 			labelLocalNew = new JLabel();
 			labelLocalNew.setFont(new Font("Calibri", Font.BOLD, 12));
-			labelLocalNew.setText("New: ");
+			labelLocalNew.setText(EpiInfoCompactUITranslator.getLabelNew(0));
 		}
 		return labelLocalNew;
 	}
@@ -943,7 +979,7 @@ public class EpiinfoCompactUI {
 		if (labelLocalUpdated == null) {
 			labelLocalUpdated = new JLabel();
 			labelLocalUpdated.setFont(new Font("Calibri", Font.BOLD, 12));
-			labelLocalUpdated.setText("Updated: ");
+			labelLocalUpdated.setText(EpiInfoCompactUITranslator.getLabelUpdated(0));
 		}
 		return labelLocalUpdated;
 	}
@@ -952,7 +988,7 @@ public class EpiinfoCompactUI {
 		if (labelLocalDeleted == null) {
 			labelLocalDeleted = new JLabel();
 			labelLocalDeleted.setFont(new Font("Calibri", Font.BOLD, 12));
-			labelLocalDeleted.setText("Deleted: ");
+			labelLocalDeleted.setText(EpiInfoCompactUITranslator.getLabelDeleted(0));
 		}
 		return labelLocalDeleted;
 	}
@@ -970,7 +1006,7 @@ public class EpiinfoCompactUI {
 		if (labelIn == null) {
 			labelIn = new JLabel();
 			labelIn.setFont(new Font("Calibri", Font.BOLD, 12));
-			labelIn.setText("In: ");
+			labelIn.setText(EpiInfoCompactUITranslator.getLabelIn(0));
 		}
 		return labelIn;
 	}
@@ -979,7 +1015,7 @@ public class EpiinfoCompactUI {
 		if (labelOut == null) {
 			labelOut = new JLabel();
 			labelOut.setFont(new Font("Calibri", Font.BOLD, 12));
-			labelOut.setText("Out: ");
+			labelOut.setText(EpiInfoCompactUITranslator.getLabelOut(0));
 		}
 		return labelOut;
 	}
@@ -997,7 +1033,7 @@ public class EpiinfoCompactUI {
 		if (labelRemoteNew == null) {
 			labelRemoteNew = new JLabel();
 			labelRemoteNew.setFont(new Font("Calibri", Font.BOLD, 12));
-			labelRemoteNew.setText("New: ");
+			labelRemoteNew.setText(EpiInfoCompactUITranslator.getLabelNew(0));
 		}
 		return labelRemoteNew;
 	}
@@ -1006,7 +1042,7 @@ public class EpiinfoCompactUI {
 		if (labelRemoteUpdated == null) {
 			labelRemoteUpdated = new JLabel();
 			labelRemoteUpdated.setFont(new Font("Calibri", Font.BOLD, 12));
-			labelRemoteUpdated.setText("Updated: ");
+			labelRemoteUpdated.setText(EpiInfoCompactUITranslator.getLabelUpdated(0));
 		}
 		return labelRemoteUpdated;
 	}
@@ -1015,7 +1051,7 @@ public class EpiinfoCompactUI {
 		if (labelRemoteDeleted == null) {
 			labelRemoteDeleted = new JLabel();
 			labelRemoteDeleted.setFont(new Font("Calibri", Font.BOLD, 12));
-			labelRemoteDeleted.setText("Deleted: ");
+			labelRemoteDeleted.setText(EpiInfoCompactUITranslator.getLabelDeleted(0));
 		}
 		return labelRemoteDeleted;
 	}
@@ -1030,7 +1066,7 @@ public class EpiinfoCompactUI {
 			buttonOpenLog.setContentAreaFilled(false);
 			buttonOpenLog.setBorderPainted(false);
 			buttonOpenLog.setBorder(new EmptyBorder(0, 0, 0, 0));
-			buttonOpenLog.setText("Open Log Windows");
+			buttonOpenLog.setText(EpiInfoCompactUITranslator.getLabelOpenLogWindow());
 			
 			buttonOpenLog.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -1054,7 +1090,7 @@ public class EpiinfoCompactUI {
 			buttonConfiguration.setOpaque(false);
 			buttonConfiguration.setBorderPainted(false);
 			buttonConfiguration.setBorder(new EmptyBorder(0, 0, 0, 0));
-			buttonConfiguration.setText("Configuration");
+			buttonConfiguration.setText(EpiInfoCompactUITranslator.getLabelOpenConfigurationWindow());
 			
 			buttonConfiguration.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -1087,7 +1123,7 @@ public class EpiinfoCompactUI {
 			textAreaStatus.setWrapStyleWord(true);
 			textAreaStatus.setOpaque(true);
 			textAreaStatus.setEditable(false);
-			textAreaStatus.setText("Welcome to Epi Info Data Exchange !!!!");
+			textAreaStatus.setText(EpiInfoCompactUITranslator.getMessageWelcome());
 		}
 		return textAreaStatus;
 		
