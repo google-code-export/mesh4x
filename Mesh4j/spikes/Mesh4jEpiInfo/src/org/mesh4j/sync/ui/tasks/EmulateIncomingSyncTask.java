@@ -38,7 +38,7 @@ public class EmulateIncomingSyncTask extends SwingWorker<Void, Void> {
 		SmsChannel channelEndpoint = (SmsChannel)smsReceiverEndpoint.getSmsBatchReceiver();
 		MessageSyncEngine messageSyncEngineEndpoint = (MessageSyncEngine) channelEndpoint.getMessageReceiver();
 		
-		String sourceID = MsAccessSyncAdapterFactory.createSourceId(dataSource.getMDBName(), dataSource.getTableName());
+		String sourceID = MsAccessSyncAdapterFactory.createSourceId(dataSource.getAlias());
 		IMessageSyncAdapter adapter = messageSyncEngineEndpoint.getSource(sourceID);
 		SmsEndpoint target = new SmsEndpoint(EpiInfoUITranslator.getLabelDemo());
 		messageSyncEngineEndpoint.synchronize(adapter, target, true, syncMode.shouldSendChanges(), syncMode.shouldReceiveChanges());

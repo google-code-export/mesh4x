@@ -29,7 +29,7 @@ public class ReadyToSyncTask extends SwingWorker<Void, Void> {
 	
 		ui.notifyStartReadyToSync(endpoint, dataSource);
 		
-		String message = makeQuestion(dataSource.getAlias());
+		String message = makeQuestion(dataSource);
 		SyncEngineUtil.sendSms(ui.getSyncEngine(), endpoint.getEndpoint(), message);
 		return null;
     }
@@ -56,8 +56,21 @@ public class ReadyToSyncTask extends SwingWorker<Void, Void> {
 		return makeAnswer(dataSourceAlias, false).equals(message);
 	}
 	
-	public static String makeQuestion(String dataSourceAlias) {
-		return EpiInfoCompactUITranslator.getQuestionForReadyToSync() + " " + dataSourceAlias + EpiInfoCompactUITranslator.getQuestionEndSymbol();
+	public static String makeQuestion(DataSourceMapping dataSourceMapping) {
+		StringBuffer sb = new StringBuffer();
+		sb.append(EpiInfoCompactUITranslator.getQuestionForReadyToSync());
+		sb.append(" ");
+		sb.append(dataSourceMapping.getAlias());
+		sb.append("(");
+		sb.append(EpiInfoCompactUITranslator.getLabelMSAccessMDB());
+		sb.append(dataSourceMapping.getMDBName());
+		sb.append(" ");
+		sb.append(EpiInfoCompactUITranslator.getLabelMSAccessTableName());
+		sb.append(dataSourceMapping.getTableName());
+		sb.append(")");
+		sb.append(EpiInfoCompactUITranslator.getQuestionEndSymbol());
+		
+		return sb.toString();
 	}
 
 	public static boolean isQuestion(String message) {
@@ -67,7 +80,7 @@ public class ReadyToSyncTask extends SwingWorker<Void, Void> {
 	
 	public static String getDataSourceAlias(String message) {
 		int start = EpiInfoCompactUITranslator.getQuestionForReadyToSync().length() +1 ;
-		int end = message.length() - 1;
+		int end = message.indexOf("(");
 		return message.substring(start, end);
 	}
 }

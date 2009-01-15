@@ -47,7 +47,7 @@ import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.ui.translator.EpiInfoUITranslator;
 import org.mesh4j.sync.utils.EpiInfoConsoleNotification;
-import org.mesh4j.sync.utils.FileNameResolver;
+import org.mesh4j.sync.utils.EpiinfoSourceIdResolver;
 import org.mesh4j.sync.utils.SyncEngineUtil;
 
 import com.jgoodies.forms.factories.DefaultComponentFactory;
@@ -107,9 +107,9 @@ public class EpiinfoUI{
 	private JLabel imageStatus;
 	
 	private EpiInfoConsoleNotification consoleNotification;
+	private EpiinfoSourceIdResolver sourceIdResolver;
 	
 	private Modem modem = null;
-	private FileNameResolver fileNameResolver;
 	private MessageSyncEngine syncEngine;
 	private boolean emulate = false;
 	private boolean syncInProcess = false;
@@ -155,7 +155,7 @@ public class EpiinfoUI{
 		this.initializeProperties();
 		this.initializeModem();
 		this.createUI();
-		this.consoleNotification = new EpiInfoConsoleNotification(this.textAreaConsole, this.imageStatus, this);
+		this.consoleNotification = new EpiInfoConsoleNotification(this.textAreaConsole, this.imageStatus, this, this.sourceIdResolver);
 		this.consoleNotification.setReadyImageStatus();
 		this.startUpSyncEngine();
 	}
@@ -186,19 +186,19 @@ public class EpiinfoUI{
 		this.kmlTemplateFileName = propertiesProvider.getDefaultKMLTemplateFileName();
 		this.kmlTemplateNetworkLinkFileName = propertiesProvider.getDefaultKMLTemplateNetworkLinkFileName();
 		this.geoCoderKey = propertiesProvider.getGeoCoderKey();
+		this.sourceIdResolver = new EpiinfoSourceIdResolver(this.baseDirectory+ "/myDataSources.properties");
 	}
 	
 	protected void startUpSyncEngine() throws Exception {
-		this.fileNameResolver = new FileNameResolver(baseDirectory+"/myFiles.properties");
-		
+
 		if(modem != null && !modem.getManufacturer().equals(EpiInfoUITranslator.getLabelDemo())){
-			this.syncEngine = SyncEngineUtil.createSyncEngine(fileNameResolver, modem, baseDirectory, senderDelay, receiverDelay, maxMessageLenght,
+			this.syncEngine = SyncEngineUtil.createSyncEngine(this.sourceIdResolver, modem, baseDirectory, senderDelay, receiverDelay, maxMessageLenght,
 				identityProvider, messageEncoding, consoleNotification, consoleNotification); 
 			this.syncEngine.getChannel().startUp();
 		}
 				
 		if(this.syncEngine == null){
-			this.syncEngine = SyncEngineUtil.createEmulator(fileNameResolver, consoleNotification, consoleNotification, EpiInfoUITranslator.getLabelDemo(), messageEncoding, identityProvider, baseDirectory, senderDelay, receiverDelay, readDelay, channelDelay, maxMessageLenght);
+			this.syncEngine = SyncEngineUtil.createEmulator(this.sourceIdResolver, consoleNotification, consoleNotification, EpiInfoUITranslator.getLabelDemo(), messageEncoding, identityProvider, baseDirectory, senderDelay, receiverDelay, readDelay, channelDelay, maxMessageLenght);
 			this.emulate = true;
 		}
 	}
@@ -232,7 +232,7 @@ public class EpiinfoUI{
 		frame.setResizable(false);
 		frame.setTitle(EpiInfoUITranslator.getTitle());
 		frame.setBounds(100, 100, 664, 572);
-		frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
 		final JPanel panelCommunications = new JPanel();
 		panelCommunications.setFocusCycleRoot(true);
@@ -702,7 +702,7 @@ public class EpiinfoUI{
 					return null;
 				}
     			
-    			SyncEngineUtil.addDataSource(fileNameResolver, dataSource);
+				SyncEngineUtil.addDataSource(sourceIdResolver, dataSource, tableName);
 
     			try{
         			syncInProcess = true;
@@ -712,15 +712,16 @@ public class EpiinfoUI{
 	    				SyncEngineUtil.registerNewEndpointToEmulator(syncEngine, textFieldPhoneNumber.getText(), messageEncoding, 
 	    					identityProvider, baseDirectory, senderDelay, receiverDelay, readDelay, channelDelay, maxMessageLenght);
 	    			}
+	    			
+	    			String sourceAlias = sourceIdResolver.getSourceName(dataSource, tableName);
 					SyncEngineUtil.synchronize(
 						syncEngine, 
 						SyncMode.SendAndReceiveChanges,
-						textFieldPhoneNumber.getText(), 
-	    				dataSource, 
-	    				tableName, 
+						textFieldPhoneNumber.getText(),
+						sourceAlias, 
 	    				identityProvider, 
 	    				baseDirectory, 
-	    				fileNameResolver);
+	    				sourceIdResolver);
 
 	    		} catch(Throwable t){
 	    			syncInProcess = false;
@@ -747,9 +748,10 @@ public class EpiinfoUI{
 				}
 				
     			try{
-    				consoleNotification.beginSync(url, dataSource, tableName);
-    				List<Item> conflicts = SyncEngineUtil.synchronize(textFieldURL.getText(), textFieldDataSource.getText(), (String)comboTables.getSelectedItem(), identityProvider, baseDirectory, fileNameResolver);
-    				consoleNotification.endSync(textFieldURL.getText(), textFieldDataSource.getText(), (String)comboTables.getSelectedItem(), conflicts);
+    				String sourceAlias = sourceIdResolver.getSourceName(dataSource, tableName);
+    				consoleNotification.beginSync(url, sourceAlias);
+    				List<Item> conflicts = SyncEngineUtil.synchronize(textFieldURL.getText(), sourceIdResolver.getSourceName(dataSource, tableName), identityProvider, baseDirectory, sourceIdResolver);
+    				consoleNotification.endSync(textFieldURL.getText(), sourceAlias, conflicts);
 	    			consoleNotification.setEndSyncImageStatus();
 	    		} catch(Throwable t){
 	    			consoleNotification.setErrorImageStatus();
@@ -759,14 +761,30 @@ public class EpiinfoUI{
     		} 
 
     		if(action == CANCEL_SYNC){
-    			SyncEngineUtil.cancelSynchronize(syncEngine, textFieldPhoneNumber.getText(), textFieldDataSource.getText(), (String)comboTables.getSelectedItem());
+    			String dataSource = textFieldDataSource.getText();
+				String tableName = (String)comboTables.getSelectedItem();
+				if(!MsAccessSyncAdapterFactory.isValidAccessTable(dataSource, tableName)){
+	    			consoleNotification.log(EpiInfoUITranslator.getErrorInvalidMSAccessTable());
+	    			consoleNotification.setErrorImageStatus();
+					return null;
+				}
+				
+    			SyncEngineUtil.cancelSynchronize(syncEngine, textFieldPhoneNumber.getText(), sourceIdResolver.getSourceName(dataSource, tableName));
     			syncInProcess = false;
     			consoleNotification.setEndSyncImageStatus();
     		} 
 
     		if(action == ADD_DATA_SOURCE){
     			try{
-    				SyncEngineUtil.addDataSource(fileNameResolver, textFieldDataSource.getText());
+    				String dataSource = textFieldDataSource.getText();
+    				String tableName = (String)comboTables.getSelectedItem();
+    				if(!MsAccessSyncAdapterFactory.isValidAccessTable(dataSource, tableName)){
+    	    			consoleNotification.log(EpiInfoUITranslator.getErrorInvalidMSAccessTable());
+    	    			consoleNotification.setErrorImageStatus();
+    					return null;
+    				}
+    				
+    				SyncEngineUtil.addDataSource(sourceIdResolver, dataSource, tableName);
     				consoleNotification.setEndSyncImageStatus();
 	    		} catch(Throwable t){
 	    			consoleNotification.setErrorImageStatus();
@@ -830,7 +848,7 @@ public class EpiinfoUI{
 					return null;
 				}
     			try{
-    				SyncEngineUtil.generateKML(geoCoderKey, kmlTemplateFileName, getModemPhoneNumber(), dataSource, tableName, baseDirectory, fileNameResolver, identityProvider);
+    				SyncEngineUtil.generateKML(geoCoderKey, kmlTemplateFileName, getModemPhoneNumber(), dataSource, tableName, baseDirectory, sourceIdResolver, identityProvider);
 	    			consoleNotification.setEndSyncImageStatus();
 	    		} catch(Throwable t){
 	    			consoleNotification.setErrorImageStatus();

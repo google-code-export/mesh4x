@@ -1,7 +1,6 @@
 package org.mesh4j.sync.epiinfo.ui;
 
 import java.awt.Color;
-import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -35,19 +34,6 @@ public class LogFrame extends JFrame {
 	private JTextArea textAreaConsoleView;
 	
 	// BUSINESS METHODS
-
-	public static void main(String args[]) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					LogFrame frame = new LogFrame();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 
 	public LogFrame() {
 		super();

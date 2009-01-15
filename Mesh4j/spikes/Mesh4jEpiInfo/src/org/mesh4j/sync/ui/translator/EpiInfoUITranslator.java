@@ -3,7 +3,6 @@ package org.mesh4j.sync.ui.translator;
 import java.util.Date;
 import java.util.List;
 
-import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
 import org.mesh4j.sync.message.IEndpoint;
 import org.mesh4j.sync.message.IMessage;
 import org.mesh4j.sync.message.channel.sms.connection.smslib.Modem;
@@ -98,15 +97,15 @@ public class EpiInfoUITranslator {
 	}
 
 	public static String getMessageErrorBeginSync(String endpointId, String sourceId) {
-		return MessageTranslator.translate("EPIINFO_SMS_MESSAGE_ERROR_BEGIN_SYNC", endpointId, getSourceId(sourceId));
+		return MessageTranslator.translate("EPIINFO_SMS_MESSAGE_ERROR_BEGIN_SYNC", endpointId, sourceId);
 	}
 
 	public static String getMessageCancelSync(String sessionId, String endpointId, String sourceId) {
-		return MessageTranslator.translate("EPIINFO_SMS_MESSAGE_CANCEL_SYNC", sessionId, endpointId, getSourceId(sourceId));
+		return MessageTranslator.translate("EPIINFO_SMS_MESSAGE_CANCEL_SYNC", sessionId, endpointId, sourceId);
 	}
 
 	public static String getMessageCancelSyncErrorSessionNotOpen(IEndpoint endpoint, String sourceId) {
-		return MessageTranslator.translate("EPIINFO_SMS_MESSAGE_ERROR_CANCEL_SYNC_SESSION_NOT_OPEN", endpoint.getEndpointId(), getSourceId(sourceId));
+		return MessageTranslator.translate("EPIINFO_SMS_MESSAGE_ERROR_CANCEL_SYNC_SESSION_NOT_OPEN", endpoint.getEndpointId(), sourceId);
 	}
 	
 	public static String getMessageInvalidMessageProtocol(IMessage message) {
@@ -118,7 +117,7 @@ public class EpiInfoUITranslator {
 	}
 
 	public static String getMessageErrorSessionCreation(IMessage message, String sourceId) {
-		return MessageTranslator.translate("EPIINFO_SMS_MESSAGE_ERROR_SESSION_CREATION", translateMessageType(message), message.getSessionId(), message.getEndpoint().getEndpointId(), getSourceId(sourceId));
+		return MessageTranslator.translate("EPIINFO_SMS_MESSAGE_ERROR_SESSION_CREATION", translateMessageType(message), message.getSessionId(), message.getEndpoint().getEndpointId(), sourceId);
 	}
 	
 	private static String translateMessageType(IMessage message){
@@ -227,14 +226,6 @@ public class EpiInfoUITranslator {
 	
 	public static String getStatusCancelSync(IEndpoint target, String dataSource, String tableName, Date date) {
 		return MessageTranslator.translate("EPIINFO_STATUS_CANCEL_SYNC", target.getEndpointId(), dataSource, tableName, date);
-	}
-
-	public static String getSourceId(String sourceId) {
-		if(MsAccessSyncAdapterFactory.isMsAccess(sourceId)){
-			return MsAccessSyncAdapterFactory.getFileName(sourceId) + "@" + MsAccessSyncAdapterFactory.getTableName(sourceId);
-		} else {
-			return sourceId;
-		}
 	}
 
 	public static String getLabelDataSourceFileExtensions() {

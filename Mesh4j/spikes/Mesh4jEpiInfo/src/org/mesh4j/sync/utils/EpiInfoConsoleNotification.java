@@ -8,7 +8,7 @@ import javax.swing.JTextArea;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
+import org.mesh4j.sync.adapters.msaccess.IMsAccessSourceIdResolver;
 import org.mesh4j.sync.epiinfo.ui.EpiinfoUI;
 import org.mesh4j.sync.message.IEndpoint;
 import org.mesh4j.sync.message.IMessage;
@@ -32,9 +32,10 @@ public class EpiInfoConsoleNotification implements ISmsConnectionInboundOutbound
 	private boolean stop;
 	private JLabel imageStatus;
 	private EpiinfoUI epiinfoUI;
+	private IMsAccessSourceIdResolver sourceIdResolver;
 	
 	// BUSINESS METHODS
-	public EpiInfoConsoleNotification(JTextArea consoleView, JLabel imageStatus, EpiinfoUI ui) {
+	public EpiInfoConsoleNotification(JTextArea consoleView, JLabel imageStatus, EpiinfoUI ui, IMsAccessSourceIdResolver sourceIdResolver) {
 		super();
 		this.consoleView = consoleView;
 		this.imageStatus = imageStatus;
@@ -73,10 +74,10 @@ public class EpiInfoConsoleNotification implements ISmsConnectionInboundOutbound
 
 	@Override
 	public void beginSync(ISyncSession syncSession) {
-		this.beginSync(syncSession.getTarget().getEndpointId(), MsAccessSyncAdapterFactory.getFileName(syncSession.getSourceId()), MsAccessSyncAdapterFactory.getTableName(syncSession.getSourceId()));
+		this.beginSync(syncSession.getTarget().getEndpointId(), syncSession.getSourceId());
 	}
 	
-	public void beginSync(String target, String mdbFileName, String mdbTable) {
+	public void beginSync(String target, String sourceId) {
 		this.setInProcessImageStatus();
 		this.log(EpiInfoUITranslator.getLabelStart());
 //		this.logStatus(EpiInfoUITranslator.getStatusBeginSync(target, mdbFileName, mdbTable, new Date()));
@@ -84,10 +85,10 @@ public class EpiInfoConsoleNotification implements ISmsConnectionInboundOutbound
 
 	@Override
 	public void endSync(ISyncSession syncSession, List<Item> conflicts) {
-		endSync(syncSession.getTarget().getEndpointId(), MsAccessSyncAdapterFactory.getFileName(syncSession.getSourceId()), MsAccessSyncAdapterFactory.getTableName(syncSession.getSourceId()), conflicts);
+		endSync(syncSession.getTarget().getEndpointId(), syncSession.getSourceId(), conflicts);
 	}
 	
-	public void endSync(String target, String mdbFileName, String mdbTable, List<Item> conflicts) {
+	public void endSync(String target, String sourceId, List<Item> conflicts) {
 		if(conflicts.isEmpty()){
 			this.setEndSyncImageStatus();
 			this.log(EpiInfoUITranslator.getLabelSuccess());
@@ -103,12 +104,12 @@ public class EpiInfoConsoleNotification implements ISmsConnectionInboundOutbound
 	@Override
 	public void beginSyncWithError(ISyncSession syncSession) {
 		this.setErrorImageStatus();
-		this.log(EpiInfoUITranslator.getMessageErrorBeginSync(syncSession.getTarget().getEndpointId(), EpiInfoUITranslator.getSourceId(syncSession.getSourceId())));		
+		this.log(EpiInfoUITranslator.getMessageErrorBeginSync(syncSession.getTarget().getEndpointId(), sourceIdResolver.getSourceName(syncSession.getSourceId())));		
 	}
 
 	@Override
 	public void notifyCancelSync(ISyncSession syncSession) {
-		this.log(EpiInfoUITranslator.getMessageCancelSync(syncSession.getSessionId(), syncSession.getTarget().getEndpointId(), EpiInfoUITranslator.getSourceId(syncSession.getSourceId())));
+		this.log(EpiInfoUITranslator.getMessageCancelSync(syncSession.getSessionId(), syncSession.getTarget().getEndpointId(), sourceIdResolver.getSourceName(syncSession.getSourceId())));
 //		this.logStatus(EpiInfoUITranslator.getStatusCancelSync(syncSession.getTarget(), MsAccessSyncAdapterFactory.getFileName(syncSession.getSourceId()), MsAccessSyncAdapterFactory.getTableName(syncSession.getSourceId()), new Date()));
 		this.setEndSyncImageStatus();
 		this.epiinfoUI.setEndSync();
@@ -137,7 +138,7 @@ public class EpiInfoConsoleNotification implements ISmsConnectionInboundOutbound
 
 	@Override
 	public void notifySessionCreationError(IMessage message, String sourceId) {
-		this.log(EpiInfoUITranslator.getMessageErrorSessionCreation(message, sourceId));
+		this.log(EpiInfoUITranslator.getMessageErrorSessionCreation(message, sourceIdResolver.getSourceName(sourceId)));
 	}
 	
 	// IProgressMonitor methods

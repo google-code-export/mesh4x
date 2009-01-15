@@ -10,6 +10,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -50,6 +51,7 @@ import org.mesh4j.sync.ui.tasks.TestPhoneTask;
 import org.mesh4j.sync.ui.translator.EpiInfoCompactUITranslator;
 import org.mesh4j.sync.ui.translator.EpiInfoUITranslator;
 import org.mesh4j.sync.utils.EpiinfoCompactConsoleNotification;
+import org.mesh4j.sync.utils.EpiinfoSourceIdResolver;
 import org.mesh4j.sync.utils.SyncEngineUtil;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -100,6 +102,7 @@ public class EpiinfoCompactUI {
 	private ConfigurationFrame cfgFrame;	
 	private EpiinfoCompactConsoleNotification consoleNotification;
 	
+	private EpiinfoSourceIdResolver sourceIdResolver;
 	private MessageSyncEngine syncEngine;
 	private boolean syncInProcess = false;
 	
@@ -136,6 +139,9 @@ public class EpiinfoCompactUI {
 	}
 
 	public EpiinfoCompactUI() throws Exception {
+		// TODO (JMT) mesh4x.properties
+		this.sourceIdResolver = new EpiinfoSourceIdResolver("C:\\mesh4x\\demos\\epiinfo\\myDataSources.properties");
+		
 		this.createUI();
 		
 		IFilter<String> messageFilter = new IFilter<String>(){
@@ -147,9 +153,9 @@ public class EpiinfoCompactUI {
 			
 		};
 		
-		this.consoleNotification = new EpiinfoCompactConsoleNotification(logFrame, this, messageFilter);
+		this.consoleNotification = new EpiinfoCompactConsoleNotification(logFrame, this, messageFilter, this.sourceIdResolver);
 		this.setReadyImageStatus();
-		this.syncEngine = SyncEngineUtil.createSyncEngine(consoleNotification);
+		this.syncEngine = SyncEngineUtil.createSyncEngine(sourceIdResolver, consoleNotification);
 		this.startUpSyncEngine();
 		this.startScheduler();	
 	}
@@ -393,7 +399,7 @@ public class EpiinfoCompactUI {
 		if(ReadyToSyncTask.isQuestion(message)){
 			String dataSourceAlias = ReadyToSyncTask.getDataSourceAlias(message);
 			
-			boolean isDataSourceAvailable = SyncEngineUtil.isDataSourceAvailable(dataSourceAlias);
+			boolean isDataSourceAvailable = sourceIdResolver.isDataSourceAvailable(dataSourceAlias);
 			ReadyToSyncResponseTask responseTask = new ReadyToSyncResponseTask(this, endpoint, dataSourceAlias, isDataSourceAvailable);
 			responseTask.execute();
 		}
@@ -784,7 +790,7 @@ public class EpiinfoCompactUI {
 		panelTrademark.add(imageTrademark, new CellConstraints(2, 2));
 		
 		logFrame = new LogFrame();
-		cfgFrame = new ConfigurationFrame();
+		cfgFrame = new ConfigurationFrame(this);
 
 	}
 
@@ -921,7 +927,8 @@ public class EpiinfoCompactUI {
 		if (comboBoxMappingDataSource == null) {
 			comboBoxMappingDataSource = new JComboBox();
 			comboBoxMappingDataSource.setFont(new Font("Calibri", Font.PLAIN, 12));
-			comboBoxMappingDataSource.setModel(new DefaultComboBoxModel(SyncEngineUtil.getDataSourceMappings()));
+			
+			notifyDataSourceMappingListsChanges();
 		}
 		return comboBoxMappingDataSource;
 	}
@@ -1147,5 +1154,22 @@ public class EpiinfoCompactUI {
 	
 	public EndpointMapping getSelectedEndpoint(){
 		return (EndpointMapping)this.getComboBoxEndpoint().getSelectedItem();
+	}
+
+	public EpiinfoSourceIdResolver getSourceIdResolver() {
+		return this.sourceIdResolver;
+	}
+
+	public void notifyEndpointMappingListsChanges() {
+		comboBoxEndpoint.setModel(new DefaultComboBoxModel(SyncEngineUtil.getEndpointMappings()));		
+	}
+
+	public void notifyDataSourceMappingListsChanges() {
+		DefaultComboBoxModel model = new DefaultComboBoxModel();
+		Iterator<DataSourceMapping> sources = sourceIdResolver.getDataSourceMappings().iterator();
+		while(sources.hasNext()) {
+			model.addElement(sources.next());			
+		}
+		comboBoxMappingDataSource.setModel(model);
 	}
 }

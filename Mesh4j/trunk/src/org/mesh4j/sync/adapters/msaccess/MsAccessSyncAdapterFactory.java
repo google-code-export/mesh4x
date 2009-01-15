@@ -2,7 +2,6 @@ package org.mesh4j.sync.adapters.msaccess;
 
 import java.io.File;
 
-import org.mesh4j.sync.adapters.ISourceIdResolver;
 import org.mesh4j.sync.adapters.ISyncAdapterFactory;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.adapters.hibernate.HibernateContentAdapter;
@@ -19,21 +18,20 @@ import sun.jdbc.odbc.JdbcOdbcDriver;
 
 public class MsAccessSyncAdapterFactory implements ISyncAdapterFactory {
 
-	private static final String DEFAULT_SEPARATOR = "@";
-
-	public static final String SOURCE_TYPE = "MS_ACCESS";
+	public static final String SOURCE_TYPE = "MsAccess";
+	private static final String MS_ACCESS = SOURCE_TYPE+":";	
 	
 	// MODEL VARIABLES
 	private String baseDirectory;
-	private ISourceIdResolver fileMappings;
+	private IMsAccessSourceIdResolver sourceIdResolver;
 		
 	// BUSINESS METHODS
-	public MsAccessSyncAdapterFactory(String baseDirectory, ISourceIdResolver fileMappings){
+	public MsAccessSyncAdapterFactory(String baseDirectory, IMsAccessSourceIdResolver sourceIdResolver){
 		Guard.argumentNotNull(baseDirectory,"baseDirectory");
-		Guard.argumentNotNull(fileMappings,"fileMappings");
+		Guard.argumentNotNull(sourceIdResolver,"sourceIdResolver");
 		
 		this.baseDirectory = baseDirectory;
-		this.fileMappings = fileMappings;
+		this.sourceIdResolver = sourceIdResolver;
 	}	
 	
 	public static SplitAdapter createSyncAdapterFromFile(String mdbFileName, String tableName, String mappingsDirectory) throws Exception{
@@ -77,16 +75,10 @@ public class MsAccessSyncAdapterFactory implements ISyncAdapterFactory {
 	}
 
 	public static boolean isMsAccess(String sourceId) {
-		return sourceId.startsWith("access:");
+		return sourceId.startsWith(MS_ACCESS);
 	}
 
 	// ISyncAdapterFactry methods
-	
-	public static String createSourceId(String mdbFileName, String mdbTableName){
-		File file = new File(mdbFileName);
-		String sourceID = "access:" + file.getName() + DEFAULT_SEPARATOR + mdbTableName;
-		return sourceID;
-	}
 	
 	@Override
 	public boolean acceptsSourceId(String sourceId) {
@@ -95,28 +87,11 @@ public class MsAccessSyncAdapterFactory implements ISyncAdapterFactory {
 
 	@Override
 	public SplitAdapter createSyncAdapter(String sourceId, IIdentityProvider identityProvider) throws Exception {
-		String[] elements = sourceId.substring("access:".length(), sourceId.length()).split(DEFAULT_SEPARATOR);
-		String mdbFileName = this.baseDirectory+"/"+ elements[0];
-		String tableName = elements[1];
+		String mdbFileName = this.sourceIdResolver.getFileName(sourceId);
+		String tableName = this.sourceIdResolver.getTableName(sourceId);
 		
-		if(this.fileMappings != null){
-			String fileName = (String) this.fileMappings.getSource(elements[0]);
-			if(fileName != null){
-				mdbFileName = fileName;
-			}
-		}
 		SplitAdapter msAccessAdapter = createSyncAdapterFromFile(mdbFileName, tableName, this.baseDirectory);
 		return msAccessAdapter;
-	}
-
-	public static String getTableName(String sourceId) {
-		String[] elements = sourceId.substring("access:".length(), sourceId.length()).split(DEFAULT_SEPARATOR);
-		return elements[1];
-	}
-
-	public static String getFileName(String sourceId) {
-		String[] elements = sourceId.substring("access:".length(), sourceId.length()).split(DEFAULT_SEPARATOR);
-		return elements[0];
 	}
 
 	public String getBaseDirectory() {
@@ -125,7 +100,7 @@ public class MsAccessSyncAdapterFactory implements ISyncAdapterFactory {
 
 	@Override
 	public String getSourceName(String sourceId) {
-		return getTableName(sourceId);
+		return this.sourceIdResolver.getSourceName(sourceId);
 	}
 
 	@Override
@@ -135,5 +110,17 @@ public class MsAccessSyncAdapterFactory implements ISyncAdapterFactory {
 
 	public static boolean isValidAccessTable(String mdbFileName, String mdbTableName) {
 		return MsAccessHelper.existTable(mdbFileName, mdbTableName);
+	}
+
+	public static String createSourceId(String alias) {
+		return MS_ACCESS + alias;
+	}
+
+	public static String getDataSource(String sourceId) {
+		if(isMsAccess(sourceId)){
+			return sourceId.substring(MS_ACCESS.length(), sourceId.length());
+		} else {
+			return sourceId;
+		}
 	}
 }

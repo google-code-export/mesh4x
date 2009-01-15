@@ -23,12 +23,11 @@ public class EmulateReadyToSyncTask extends SwingWorker<Void, Void> {
 	}
 	
     public Void doInBackground() {
-    	String dataSourceAlias;
+    	DataSourceMapping dataSource;
 		if(okAnswer){
-			DataSourceMapping dataSource = (DataSourceMapping)ui.getComboBoxMappingDataSource().getSelectedItem();
-			dataSourceAlias = dataSource.getAlias();
+			dataSource = (DataSourceMapping)ui.getComboBoxMappingDataSource().getSelectedItem();
 		} else {
-			dataSourceAlias = "undefined";
+			dataSource = new DataSourceMapping("undefined", "undefined", "undefined", "undefined");
 		}
 			
 		EndpointMapping endpoint = (EndpointMapping)ui.getComboBoxEndpoint().getSelectedItem();
@@ -36,7 +35,7 @@ public class EmulateReadyToSyncTask extends SwingWorker<Void, Void> {
 		SmsChannel foregroundChannel = (SmsChannel)ui.getSyncEngine().getChannel();
 		InMemorySmsConnection smsConnection = (InMemorySmsConnection) foregroundChannel.getSmsConnection();
 		
-		String message = ReadyToSyncTask.makeQuestion(dataSourceAlias);
+		String message = ReadyToSyncTask.makeQuestion(dataSource);
 		smsConnection.receive(message, new SmsEndpoint(endpoint.getEndpoint()));
 		return null;
     }

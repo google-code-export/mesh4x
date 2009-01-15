@@ -6,7 +6,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mesh4j.sync.IFilter;
-import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
+import org.mesh4j.sync.adapters.msaccess.IMsAccessSourceIdResolver;
 import org.mesh4j.sync.epiinfo.ui.EpiinfoCompactUI;
 import org.mesh4j.sync.epiinfo.ui.LogFrame;
 import org.mesh4j.sync.message.IEndpoint;
@@ -30,9 +30,10 @@ public class EpiinfoCompactConsoleNotification implements ISmsConnectionInboundO
 	private LogFrame consoleView;
 	private EpiinfoCompactUI ui;
 	private IFilter<String> messageFilter;
+	private IMsAccessSourceIdResolver sourceIdResolver;
 	
 	// BUSINESS METHODS
-	public EpiinfoCompactConsoleNotification(LogFrame consoleView, EpiinfoCompactUI ui, IFilter<String> messageFilter) {
+	public EpiinfoCompactConsoleNotification(LogFrame consoleView, EpiinfoCompactUI ui, IFilter<String> messageFilter, IMsAccessSourceIdResolver sourceIdResolver) {
 		super();
 		this.consoleView = consoleView;
 		this.ui = ui;
@@ -86,10 +87,10 @@ public class EpiinfoCompactConsoleNotification implements ISmsConnectionInboundO
 
 	@Override
 	public void endSync(ISyncSession syncSession, List<Item> conflicts) {
-		endSync(syncSession.getTarget().getEndpointId(), MsAccessSyncAdapterFactory.getFileName(syncSession.getSourceId()), MsAccessSyncAdapterFactory.getTableName(syncSession.getSourceId()), conflicts);
+		endSync(syncSession.getTarget().getEndpointId(), syncSession.getSourceId(), conflicts);
 	}
 	
-	public void endSync(String target, String mdbFileName, String mdbTable, List<Item> conflicts) {
+	public void endSync(String target, String sourceId, List<Item> conflicts) {
 		if(conflicts.isEmpty()){
 			consoleView.log(EpiInfoUITranslator.getLabelSuccess());
 			this.ui.notifyEndSync(false);
@@ -102,12 +103,12 @@ public class EpiinfoCompactConsoleNotification implements ISmsConnectionInboundO
 	@Override
 	public void beginSyncWithError(ISyncSession syncSession) {
 		ui.setErrorImageStatus();
-		consoleView.log(EpiInfoUITranslator.getMessageErrorBeginSync(syncSession.getTarget().getEndpointId(), EpiInfoUITranslator.getSourceId(syncSession.getSourceId())));		
+		consoleView.log(EpiInfoUITranslator.getMessageErrorBeginSync(syncSession.getTarget().getEndpointId(), sourceIdResolver.getSourceName(syncSession.getSourceId())));		
 	}
 
 	@Override
 	public void notifyCancelSync(ISyncSession syncSession) {
-		consoleView.log(EpiInfoUITranslator.getMessageCancelSync(syncSession.getSessionId(), syncSession.getTarget().getEndpointId(), EpiInfoUITranslator.getSourceId(syncSession.getSourceId())));
+		consoleView.log(EpiInfoUITranslator.getMessageCancelSync(syncSession.getSessionId(), syncSession.getTarget().getEndpointId(), sourceIdResolver.getSourceName(syncSession.getSourceId())));
 		this.ui.notifyEndSync(false);
 	}
 
@@ -167,6 +168,6 @@ public class EpiinfoCompactConsoleNotification implements ISmsConnectionInboundO
 
 	@Override
 	public void notifySessionCreationError(IMessage message, String sourceId) {
-		consoleView.log(EpiInfoUITranslator.getMessageErrorSessionCreation(message, sourceId));
+		consoleView.log(EpiInfoUITranslator.getMessageErrorSessionCreation(message, sourceIdResolver.getSourceName(sourceId)));
 	}	
 }

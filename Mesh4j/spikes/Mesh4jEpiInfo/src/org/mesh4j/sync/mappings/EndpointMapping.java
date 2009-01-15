@@ -25,4 +25,12 @@ public class EndpointMapping {
 	public String toString(){
 		return this.alias;
 	}
+
+	public void setAlias(String alias) {
+		this.alias = alias;		
+	}
+
+	public void setEndpoint(String endpoint) {
+		this.endpoint = endpoint;		
+	}
 }

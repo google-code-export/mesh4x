@@ -217,5 +217,40 @@ public class EpiInfoCompactUITranslator {
 	public static String getQuestionEndSymbol() {
 		return MessageTranslator.translate("EPIINFO_COMPACT_QUESTION_END_SYMBOL");
 	}
-	
+
+	public static String getLabelMSAccessMDB() {
+		return MessageTranslator.translate("EPIINFO_COMPACT_LABEL_MDB_FILE_NAME");
+	}
+
+	public static String getLabelMSAccessTableName() {
+		return MessageTranslator.translate("EPIINFO_COMPACT_LABEL_MDB_TABLE_NAME");
+	}
+
+	public static String getMessageEditContactRequiredFields() {
+		return MessageTranslator.translate("EPIINFO_COMPACT_MESSAGE_EDIT_CONTACT_REQUIRED_FIELDS");
+	}
+
+	public static String getLabelSave() {
+		return MessageTranslator.translate("EPIINFO_COMPACT_LABEL_SAVE");
+	}
+
+	public static String getLabelDelete() {
+		return MessageTranslator.translate("EPIINFO_COMPACT_LABEL_DELETE");
+	}
+
+	public static String getMessageEditDataSourceRequiredFields() {
+		return MessageTranslator.translate("EPIINFO_COMPACT_MESSAGE_EDIT_DATA_SOURCE_REQUIRED_FIELDS");
+	}
+
+	public static String getLabelTabContacts() {
+		return MessageTranslator.translate("EPIINFO_COMPACT_LABEL_TAB_CONTACTS");
+	}
+
+	public static String getLabelTabDataSources() {
+		return MessageTranslator.translate("EPIINFO_COMPACT_LABEL_TAB_DATA_SOURCES");
+	}
+
+	public static String getLabelTabModem() {
+		return MessageTranslator.translate("EPIINFO_COMPACT_LABEL_TAB_MODEM");
+	}
 }

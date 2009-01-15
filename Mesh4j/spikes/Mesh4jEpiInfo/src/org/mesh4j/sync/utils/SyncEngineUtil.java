@@ -3,7 +3,12 @@ package org.mesh4j.sync.utils;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.mesh4j.geo.coder.GeoCoderLatitudePropertyResolver;
@@ -12,7 +17,6 @@ import org.mesh4j.geo.coder.GeoCoderLongitudePropertyResolver;
 import org.mesh4j.geo.coder.GoogleGeoCoder;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.SyncEngine;
-import org.mesh4j.sync.adapters.ISourceIdResolver;
 import org.mesh4j.sync.adapters.ISyncAdapterFactory;
 import org.mesh4j.sync.adapters.http.HttpSyncAdapter;
 import org.mesh4j.sync.adapters.http.HttpSyncAdapterFactory;
@@ -20,6 +24,8 @@ import org.mesh4j.sync.adapters.kml.exporter.KMLExporter;
 import org.mesh4j.sync.adapters.kml.timespan.decorator.IKMLGeneratorFactory;
 import org.mesh4j.sync.adapters.kml.timespan.decorator.KMLTimeSpanDecoratorSyncAdapter;
 import org.mesh4j.sync.adapters.kml.timespan.decorator.KMLTimeSpanDecoratorSyncAdapterFactory;
+import org.mesh4j.sync.adapters.msaccess.IMsAccessSourceIdResolver;
+import org.mesh4j.sync.adapters.msaccess.MsAccessHelper;
 import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
 import org.mesh4j.sync.filter.CompoundFilter;
 import org.mesh4j.sync.filter.NonDeletedFilter;
@@ -59,14 +65,16 @@ import org.mesh4j.sync.ui.translator.EpiInfoUITranslator;
 import org.mesh4j.sync.validations.MeshException;
 
 public class SyncEngineUtil {
-
-	public static List<Item> synchronize(String url, String mdbFileName, String mdbTableName, IIdentityProvider identityProvider, String baseDirectory, ISourceIdResolver fileNameResolver) {
+	
+	private final static Log Logger = LogFactory.getLog(SyncEngineUtil.class);
+	
+	public static List<Item> synchronize(String url, String sourceAlias, IIdentityProvider identityProvider, String baseDirectory, IMsAccessSourceIdResolver sourceIdResolver) {
 		
 		try{
 			ISyncAdapter httpAdapter = HttpSyncAdapterFactory.INSTANCE.createSyncAdapter(url, identityProvider);
 			
-			String sourceID = MsAccessSyncAdapterFactory.createSourceId(mdbFileName, mdbTableName);
-			ISyncAdapterFactory syncFactory = makeSyncAdapterFactory(fileNameResolver, baseDirectory);
+			String sourceID = MsAccessSyncAdapterFactory.createSourceId(sourceAlias);
+			ISyncAdapterFactory syncFactory = makeSyncAdapterFactory(sourceIdResolver, baseDirectory);
 			ISyncAdapter syncAdapter = syncFactory.createSyncAdapter(sourceID, identityProvider);
 	
 			SyncEngine syncEngine = new SyncEngine(syncAdapter, httpAdapter);
@@ -77,25 +85,25 @@ public class SyncEngineUtil {
 		}
 	}
 	
-	public static void synchronize(MessageSyncEngine syncEngine, SyncMode syncMode, String toPhoneNumber, String mdbFileName, String mdbTableName, IIdentityProvider identityProvider, String baseDirectory, ISourceIdResolver fileNameResolver) throws Exception {
+	public static void synchronize(MessageSyncEngine syncEngine, SyncMode syncMode, String toPhoneNumber, String sourceAlias, IIdentityProvider identityProvider, String baseDirectory, IMsAccessSourceIdResolver sourceIdResolver) throws Exception {
 		
-		String sourceID = MsAccessSyncAdapterFactory.createSourceId(mdbFileName, mdbTableName);
+		String sourceID = MsAccessSyncAdapterFactory.createSourceId(sourceAlias);
 		IMessageSyncAdapter adapter = syncEngine.getSource(sourceID);
 		if(adapter == null){
-			ISyncAdapterFactory syncFactory = makeSyncAdapterFactory(fileNameResolver, baseDirectory);
+			ISyncAdapterFactory syncFactory = makeSyncAdapterFactory(sourceIdResolver, baseDirectory);
 			ISyncAdapter syncAdapter = syncFactory.createSyncAdapter(sourceID, identityProvider);
 			adapter = new MessageSyncAdapter(sourceID, syncFactory.getSourceType(), identityProvider, syncAdapter);
 		}
 		syncEngine.synchronize(adapter, new SmsEndpoint(toPhoneNumber), true, syncMode.shouldSendChanges(), syncMode.shouldReceiveChanges());
 	}
 
-	public static void cancelSynchronize(MessageSyncEngine syncEngine,String phoneNumber, String mdbFileName, String mdbTableName) {
-		String sourceID = MsAccessSyncAdapterFactory.createSourceId(mdbFileName, mdbTableName);
+	public static void cancelSynchronize(MessageSyncEngine syncEngine,String phoneNumber, String sourceAlias) {
+		String sourceID = MsAccessSyncAdapterFactory.createSourceId(sourceAlias);
 		SmsEndpoint target = new SmsEndpoint(phoneNumber);
 		syncEngine.cancelSync(sourceID, target);
 	}
 
-	public static MessageSyncEngine createEmulator(FileNameResolver fileNameResolver, ISmsConnectionInboundOutboundNotification smsConnectionNotification, 
+	public static MessageSyncEngine createEmulator(IMsAccessSourceIdResolver sourceIdResolver, ISmsConnectionInboundOutboundNotification smsConnectionNotification, 
 			IMessageSyncAware syncAware, String smsFrom, IMessageEncoding encoding, 
 			IIdentityProvider identityProvider, String baseDirectory, 
 			int senderDelay, int receiverDelay, int readDelay, int channelDelay, int maxMessageLenght) throws Exception {
@@ -103,7 +111,7 @@ public class SyncEngineUtil {
 		SmsEndpoint target = new SmsEndpoint(smsFrom);
 		
 		MessageSyncEngine syncEngine = createSyncEngineEmulator(
-				fileNameResolver, smsFrom, encoding, identityProvider, baseDirectory+"/",
+				sourceIdResolver, smsFrom, encoding, identityProvider, baseDirectory+"/",
 				senderDelay, receiverDelay, readDelay, channelDelay,
 				maxMessageLenght, target, smsConnectionNotification, syncAware);
 	
@@ -122,8 +130,8 @@ public class SyncEngineUtil {
 		SmsEndpoint backgroundTarget = new SmsEndpoint(smsTo);
 		if(!foregroundSmsConnection.hasEndpointConnection(backgroundTarget)){
 		
-			FileNameResolver fileNameResolver = new FileNameResolver(targetDirectory+"myFiles.properties");
-			MessageSyncEngine backgroundSyncEngine = createSyncEngineEmulator(fileNameResolver,
+			EpiinfoSourceIdResolver sourceIdResolver= new EpiinfoSourceIdResolver(targetDirectory+"myDataSources.properties");
+			MessageSyncEngine backgroundSyncEngine = createSyncEngineEmulator(sourceIdResolver,
 					smsTo, encoding, identityProvider, targetDirectory,
 					senderDelay, receiverDelay, readDelay, channelDelay,
 					maxMessageLenght, backgroundTarget, new SmsConnectionInboundOutboundNotification(), new LoggerMessageSyncAware());
@@ -136,7 +144,7 @@ public class SyncEngineUtil {
 		}
 	}
 
-	private static MessageSyncEngine createSyncEngineEmulator(FileNameResolver fileNameResolver, String smsTarget,
+	private static MessageSyncEngine createSyncEngineEmulator(IMsAccessSourceIdResolver sourceIdResolver, String smsTarget,
 			IMessageEncoding encoding, IIdentityProvider identityProvider,
 			String baseDirectory, int senderDelay, int receiverDelay,
 			int readDelay, int channelDelay, int maxMessageLenght, SmsEndpoint target,
@@ -145,7 +153,7 @@ public class SyncEngineUtil {
 		InMemorySmsConnection smsConnection = new InMemorySmsConnection(encoding, maxMessageLenght, readDelay, target, channelDelay);
 		smsConnection.setSmsConnectionOutboundNotification(smsConnectionInboundOutboundNotification);
 		
-		ISyncAdapterFactory syncAdapterFactory = makeSyncAdapterFactory(fileNameResolver, baseDirectory);
+		ISyncAdapterFactory syncAdapterFactory = makeSyncAdapterFactory(sourceIdResolver, baseDirectory);
 		
 		MessageSyncAdapterFactory messageSyncAdapterFactory = new MessageSyncAdapterFactory(syncAdapterFactory, false);
 		
@@ -158,30 +166,35 @@ public class SyncEngineUtil {
 		return syncEngineEndPoint;
 	}
 
-	private static ISyncAdapterFactory makeSyncAdapterFactory(ISourceIdResolver sourceIdResolver, String baseDirectory) {
+	private static ISyncAdapterFactory makeSyncAdapterFactory(IMsAccessSourceIdResolver sourceIdResolver, String baseDirectory) {
 		MsAccessSyncAdapterFactory msAccessSyncFactory = new MsAccessSyncAdapterFactory(baseDirectory, sourceIdResolver);
 //		IKMLGeneratorFactory kmlGeneratorFactory = new EpiInfoKmlGeneratorFactory(baseDirectory);
 //		return new KMLTimeSpanDecoratorSyncAdapterFactory(baseDirectory, msAccessSyncFactory, kmlGeneratorFactory);
 		return msAccessSyncFactory;
 	}
 	
-	public static void addDataSource(FileNameResolver fileNameResolver, String fileName) {
+	public static void addDataSource(EpiinfoSourceIdResolver sourceIdResolver, String fileName, String tableName) {
 		File file = new File(fileName);
 		if(file.exists()){
-			fileNameResolver.putSource(file.getName(), fileName);
-			fileNameResolver.store();
+			String sourceAlias = tableName;
+			sourceIdResolver.saveDataSourceMapping(new DataSourceMapping(sourceAlias, file.getName(), tableName, fileName));
 		}
+	}
+	
+	public static String getMDBName(String fileName) {
+		File file = new File(fileName);
+		return file.getName();
 	}
 
 	public static MessageSyncEngine createSyncEngine(
-			FileNameResolver fileNameResolver, Modem modem,
+			IMsAccessSourceIdResolver sourceIdResolver, Modem modem,
 			String baseDirectory, int senderDelay, int receiverDelay, int maxMessageLenght, 
 			IIdentityProvider identityProvider,
 			IMessageEncoding messageEncoding,
 			ISmsConnectionInboundOutboundNotification smsConnectionInboundOutboundNotification,
 			IMessageSyncAware messageSyncAware) {
 		
-		ISyncAdapterFactory syncAdapterFactory = makeSyncAdapterFactory(fileNameResolver, baseDirectory);
+		ISyncAdapterFactory syncAdapterFactory = makeSyncAdapterFactory(sourceIdResolver, baseDirectory);
 		
 		return SmsLibMessageSyncEngineFactory.createSyncEngine(
 			modem, baseDirectory + "/", senderDelay, receiverDelay, maxMessageLenght,
@@ -200,7 +213,7 @@ public class SyncEngineUtil {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static void generateKML(String geoCoderKey, String templateFileName, String fromPhoneNumber, String mdbFileName, String mdbTableName, String baseDirectory, ISourceIdResolver fileNameResolver, IIdentityProvider identityProvider) throws Exception{
+	public static void generateKML(String geoCoderKey, String templateFileName, String fromPhoneNumber, String mdbFileName, String mdbTableName, String baseDirectory, EpiinfoSourceIdResolver sourceIdResolver, IIdentityProvider identityProvider) throws Exception{
 		
 		String mappingsFileName = baseDirectory + "/" + mdbTableName + "_mappings.xml";
 		
@@ -212,8 +225,9 @@ public class SyncEngineUtil {
 
 		GoogleGeoCoder geoCoder = new GoogleGeoCoder(geoCoderKey);
 
-		String sourceID = MsAccessSyncAdapterFactory.createSourceId(mdbFileName, mdbTableName);
-		ISyncAdapterFactory syncFactory = makeSyncAdapterFactory(fileNameResolver, baseDirectory);
+		String sourceAlias = sourceIdResolver.getSourceName(mdbFileName, mdbTableName);
+		String sourceID = MsAccessSyncAdapterFactory.createSourceId(sourceAlias);
+		ISyncAdapterFactory syncFactory = makeSyncAdapterFactory(sourceIdResolver, baseDirectory);
 
 		IKMLGeneratorFactory kmlGeneratorFactory = new EpiInfoKmlGeneratorFactory(baseDirectory, templateFileName, geoCoder);
 		KMLTimeSpanDecoratorSyncAdapterFactory kmlDecSyncFactory = new KMLTimeSpanDecoratorSyncAdapterFactory(baseDirectory, syncFactory, kmlGeneratorFactory);
@@ -265,9 +279,8 @@ public class SyncEngineUtil {
 
 	// NEW EXAMPLE UI
 
-	public static MessageSyncEngine createSyncEngine(EpiinfoCompactConsoleNotification consoleNotification) throws Exception {
+	public static MessageSyncEngine createSyncEngine(EpiinfoSourceIdResolver sourceIdResolver, EpiinfoCompactConsoleNotification consoleNotification) throws Exception {
 // TODO (JMT) replace properties from mesh4x.properties file
-		FileNameResolver fileNameResolver = new FileNameResolver("C:\\mesh4x\\demos\\epiinfo\\myFiles.properties");
 		Modem modem = new Modem("COM23", 115200, "sonny", "750i", "", "", 0, 0);
 		String baseDirectory = "C:\\mesh4x\\demos\\epiinfo"; 
 		int senderDelay = 0;
@@ -276,8 +289,9 @@ public class SyncEngineUtil {
 		IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
 		IMessageEncoding messageEncoding = NonMessageEncoding.INSTANCE;
 
+// TODO (JMT) remove it, it is only for emulation
 		return createEmulator(
-				fileNameResolver, 
+				sourceIdResolver, 
 				consoleNotification, 
 				consoleNotification, 
 				EpiInfoUITranslator.getLabelDemo(), 
@@ -301,52 +315,72 @@ public class SyncEngineUtil {
 //			messageEncoding,
 //			consoleNotification,
 //			consoleNotification);
+// ************************************************888
 	}
 
-	public static Object[] getDataSourceMappings() {
+	public static void synchronize(MessageSyncEngine syncEngine, SyncMode syncMode, EndpointMapping endpoint, DataSourceMapping dataSource, EpiinfoSourceIdResolver sourceIdResolver) throws Exception {
 // TODO (JMT) replace properties from mesh4x.properties file
-		return new DataSourceMapping[]{
-			new DataSourceMapping("Oswego", "epiinfo.mdb", "Oswego"),
-			new DataSourceMapping("MyAccess", "epiinfo_test.mdb", "Oswego")};
-	}
-	
-	public static Object[] getEndpointMappings() {
-// TODO (JMT) replace properties from mesh4x.properties file
-		return new EndpointMapping[]{
-			new EndpointMapping("demo", "1111111111"),
-			new EndpointMapping("kzu", "01115783242"),
-			new EndpointMapping("jmt", "01115783242"),
-			new EndpointMapping("ed", "01115783242"),
-			new EndpointMapping("taha", "01115783242")};
-	}
-
-	public static void synchronize(MessageSyncEngine syncEngine, SyncMode syncMode, EndpointMapping endpoint, DataSourceMapping dataSource) throws Exception {
-// TODO (JMT) replace properties from mesh4x.properties file
-		FileNameResolver fileNameResolver = new FileNameResolver("C:\\mesh4x\\demos\\epiinfo\\myFiles.properties");
 		String baseDirectory = "C:\\mesh4x\\demos\\epiinfo"; 
 		IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
 		
+// TODO (JMT) remove it, it is only for emulation
 		registerNewEndpointToEmulator(syncEngine, endpoint.getEndpoint(), NonMessageEncoding.INSTANCE, 
 				identityProvider, baseDirectory, 0, 0, 0, 0, 160);
-
-		synchronize(syncEngine, syncMode, endpoint.getEndpoint(), dataSource.getMDBName(), dataSource.getTableName(), identityProvider, baseDirectory, fileNameResolver);	
+// ******************
+		
+		synchronize(syncEngine, syncMode, endpoint.getEndpoint(), dataSource.getAlias(), identityProvider, baseDirectory, sourceIdResolver);	
 	}
 
 	public static void cancelSynchronize(MessageSyncEngine syncEngine, EndpointMapping endpoint, DataSourceMapping dataSource) {
-		cancelSynchronize(syncEngine, endpoint.getEndpoint(), dataSource.getMDBName(), dataSource.getTableName());
+		cancelSynchronize(syncEngine, endpoint.getEndpoint(), dataSource.getAlias());
 	}
 
 	public static void sendSms(MessageSyncEngine syncEngine, String endpoint, String message) {
 		((SmsChannel)syncEngine.getChannel()).send(new SmsMessage(message), new SmsEndpoint(endpoint));
 	}
 
-	public static boolean isDataSourceAvailable(String dataSourceAlias) {
-		DataSourceMapping[] dataSources = (DataSourceMapping[]) getDataSourceMappings();
-		for (DataSourceMapping dataSourceMapping : dataSources) {
-			if(dataSourceMapping.getAlias().equals(dataSourceAlias)){
-				return true;
-			}
+
+	public static Set<String> getTableNames(String fileName) {
+		try{
+			Set<String> tableNames = MsAccessHelper.getTableNames(fileName);
+			return tableNames;
+		}catch (Exception e) {
+			Logger.error(e.getMessage(), e);
+			return new TreeSet<String>();
 		}
-		return false;
 	}
+	
+	// TODO (JMT) replace properties from mesh4x.properties file
+	public static EndpointMapping[] getEndpointMappings() {
+		Map<String, String> myEndpoints = PropertiesUtils.getProperties("C:\\mesh4x\\demos\\epiinfo\\myEndpoints.properties");
+		EndpointMapping[] result = new EndpointMapping[myEndpoints.size()];
+		int i = 0;
+		for (String alias : myEndpoints.keySet()) {
+			result[i] = new EndpointMapping(alias, myEndpoints.get(alias));
+			i = i + 1;
+		}
+		return result;
+	}
+	
+	public static void deleteEndpointMapping(EndpointMapping endpoint) {
+		String fileName = "C:\\mesh4x\\demos\\epiinfo\\myEndpoints.properties";
+		
+		Map<String, String> myEndpoints = PropertiesUtils.getProperties(fileName);
+		String result = myEndpoints.remove(endpoint.getAlias());
+		if(result != null){
+			PropertiesUtils.store(fileName, myEndpoints);
+		}		
+	}
+	
+	public static void saveOrUpdateEndpointMapping(String alias, EndpointMapping endpoint) {
+		String fileName = "C:\\mesh4x\\demos\\epiinfo\\myEndpoints.properties";
+		
+		Map<String, String> myEndpoints = PropertiesUtils.getProperties(fileName);
+		myEndpoints.remove(alias);
+		
+		myEndpoints.put(endpoint.getAlias(), endpoint.getEndpoint());
+		PropertiesUtils.store(fileName, myEndpoints);		
+		
+	}
+
 }
