@@ -279,15 +279,19 @@ public class SyncEngineUtil {
 
 	// NEW EXAMPLE UI
 
-	public static MessageSyncEngine createSyncEngine(EpiinfoSourceIdResolver sourceIdResolver, EpiinfoCompactConsoleNotification consoleNotification) throws Exception {
-// TODO (JMT) replace properties from mesh4x.properties file
-		Modem modem = new Modem("COM23", 115200, "sonny", "750i", "", "", 0, 0);
-		String baseDirectory = "C:\\mesh4x\\demos\\epiinfo"; 
-		int senderDelay = 0;
-		int receiverDelay = 0; 
-		int maxMessageLenght = 160;
-		IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
-		IMessageEncoding messageEncoding = NonMessageEncoding.INSTANCE;
+	public static MessageSyncEngine createSyncEngine(EpiinfoSourceIdResolver sourceIdResolver, EpiinfoCompactConsoleNotification consoleNotification, PropertiesProvider propertiesProvider) throws Exception {
+		String baseDirectory = propertiesProvider.getBaseDirectory();
+		int senderDelay = propertiesProvider.getInt("default.sms.sender.delay");
+		int receiverDelay = propertiesProvider.getInt("default.sms.receiver.delay");
+		int maxMessageLenght = propertiesProvider.getInt("default.sms.max.message.lenght");
+		int readDelay = propertiesProvider.getInt("default.sms.demo.read.delay");
+		int channelDelay = propertiesProvider.getInt("default.sms.demo.channel.delay");
+		IIdentityProvider identityProvider = propertiesProvider.getIdentityProvider();
+		IMessageEncoding messageEncoding = propertiesProvider.getDefaultMessageEncoding();
+		String portName = propertiesProvider.getDefaultPort();
+		int baudRate = propertiesProvider.getDefaultBaudRate();
+		
+		Modem modem = new Modem(portName, baudRate, "sonny", "750i", "", "", 0, 0);
 
 // TODO (JMT) remove it, it is only for emulation
 		return createEmulator(
@@ -318,10 +322,9 @@ public class SyncEngineUtil {
 // ************************************************888
 	}
 
-	public static void synchronize(MessageSyncEngine syncEngine, SyncMode syncMode, EndpointMapping endpoint, DataSourceMapping dataSource, EpiinfoSourceIdResolver sourceIdResolver) throws Exception {
-// TODO (JMT) replace properties from mesh4x.properties file
-		String baseDirectory = "C:\\mesh4x\\demos\\epiinfo"; 
-		IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
+	public static void synchronize(MessageSyncEngine syncEngine, SyncMode syncMode, EndpointMapping endpoint, DataSourceMapping dataSource, EpiinfoSourceIdResolver sourceIdResolver, PropertiesProvider propertiesProvider) throws Exception {
+		String baseDirectory = propertiesProvider.getBaseDirectory();
+		IIdentityProvider identityProvider = propertiesProvider.getIdentityProvider();
 		
 // TODO (JMT) remove it, it is only for emulation
 		registerNewEndpointToEmulator(syncEngine, endpoint.getEndpoint(), NonMessageEncoding.INSTANCE, 
@@ -350,9 +353,10 @@ public class SyncEngineUtil {
 		}
 	}
 	
-	// TODO (JMT) replace properties from mesh4x.properties file
-	public static EndpointMapping[] getEndpointMappings() {
-		Map<String, String> myEndpoints = PropertiesUtils.getProperties("C:\\mesh4x\\demos\\epiinfo\\myEndpoints.properties");
+	public static EndpointMapping[] getEndpointMappings(PropertiesProvider propertiesProvider) {
+		String baseDirectory = propertiesProvider.getBaseDirectory();
+		String fileName = baseDirectory+"/myEndpoints.properties";
+		Map<String, String> myEndpoints = PropertiesUtils.getProperties(fileName);
 		EndpointMapping[] result = new EndpointMapping[myEndpoints.size()];
 		int i = 0;
 		for (String alias : myEndpoints.keySet()) {
@@ -362,8 +366,9 @@ public class SyncEngineUtil {
 		return result;
 	}
 	
-	public static void deleteEndpointMapping(EndpointMapping endpoint) {
-		String fileName = "C:\\mesh4x\\demos\\epiinfo\\myEndpoints.properties";
+	public static void deleteEndpointMapping(EndpointMapping endpoint, PropertiesProvider propertiesProvider) {
+		String baseDirectory = propertiesProvider.getBaseDirectory();
+		String fileName = baseDirectory+"/myEndpoints.properties";
 		
 		Map<String, String> myEndpoints = PropertiesUtils.getProperties(fileName);
 		String result = myEndpoints.remove(endpoint.getAlias());
@@ -372,8 +377,9 @@ public class SyncEngineUtil {
 		}		
 	}
 	
-	public static void saveOrUpdateEndpointMapping(String alias, EndpointMapping endpoint) {
-		String fileName = "C:\\mesh4x\\demos\\epiinfo\\myEndpoints.properties";
+	public static void saveOrUpdateEndpointMapping(String alias, EndpointMapping endpoint, PropertiesProvider propertiesProvider) {
+		String baseDirectory = propertiesProvider.getBaseDirectory();
+		String fileName = baseDirectory+"/myEndpoints.properties";
 		
 		Map<String, String> myEndpoints = PropertiesUtils.getProperties(fileName);
 		myEndpoints.remove(alias);

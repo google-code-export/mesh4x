@@ -41,6 +41,7 @@ import org.mesh4j.sync.mappings.EndpointMapping;
 import org.mesh4j.sync.mappings.SyncMode;
 import org.mesh4j.sync.message.IMessageSyncAdapter;
 import org.mesh4j.sync.message.MessageSyncEngine;
+import org.mesh4j.sync.properties.PropertiesProvider;
 import org.mesh4j.sync.ui.tasks.CancelSyncTask;
 import org.mesh4j.sync.ui.tasks.EmulateIncomingSyncTask;
 import org.mesh4j.sync.ui.tasks.EmulateReadyToSyncTask;
@@ -102,6 +103,7 @@ public class EpiinfoCompactUI {
 	private ConfigurationFrame cfgFrame;	
 	private EpiinfoCompactConsoleNotification consoleNotification;
 	
+	private PropertiesProvider propertiesProvider;
 	private EpiinfoSourceIdResolver sourceIdResolver;
 	private MessageSyncEngine syncEngine;
 	private boolean syncInProcess = false;
@@ -139,8 +141,8 @@ public class EpiinfoCompactUI {
 	}
 
 	public EpiinfoCompactUI() throws Exception {
-		// TODO (JMT) mesh4x.properties
-		this.sourceIdResolver = new EpiinfoSourceIdResolver("C:\\mesh4x\\demos\\epiinfo\\myDataSources.properties");
+		this.propertiesProvider = new PropertiesProvider();
+		this.sourceIdResolver = new EpiinfoSourceIdResolver(propertiesProvider.getBaseDirectory()+"/myDataSources.properties");
 		
 		this.createUI();
 		
@@ -155,7 +157,7 @@ public class EpiinfoCompactUI {
 		
 		this.consoleNotification = new EpiinfoCompactConsoleNotification(logFrame, this, messageFilter, this.sourceIdResolver);
 		this.setReadyImageStatus();
-		this.syncEngine = SyncEngineUtil.createSyncEngine(sourceIdResolver, consoleNotification);
+		this.syncEngine = SyncEngineUtil.createSyncEngine(sourceIdResolver, consoleNotification, propertiesProvider);
 		this.startUpSyncEngine();
 		this.startScheduler();	
 	}
@@ -865,7 +867,7 @@ public class EpiinfoCompactUI {
 		if (comboBoxEndpoint == null) {
 			comboBoxEndpoint = new JComboBox();
 			comboBoxEndpoint.setFont(new Font("Calibri", Font.PLAIN, 12));
-			comboBoxEndpoint.setModel(new DefaultComboBoxModel(SyncEngineUtil.getEndpointMappings()));
+			comboBoxEndpoint.setModel(new DefaultComboBoxModel(SyncEngineUtil.getEndpointMappings(propertiesProvider)));
 		}
 		return comboBoxEndpoint;
 	}
@@ -1161,7 +1163,7 @@ public class EpiinfoCompactUI {
 	}
 
 	public void notifyEndpointMappingListsChanges() {
-		comboBoxEndpoint.setModel(new DefaultComboBoxModel(SyncEngineUtil.getEndpointMappings()));		
+		comboBoxEndpoint.setModel(new DefaultComboBoxModel(SyncEngineUtil.getEndpointMappings(propertiesProvider)));		
 	}
 
 	public void notifyDataSourceMappingListsChanges() {
@@ -1171,5 +1173,9 @@ public class EpiinfoCompactUI {
 			model.addElement(sources.next());			
 		}
 		comboBoxMappingDataSource.setModel(model);
+	}
+
+	public PropertiesProvider getPropertiesProvider() {
+		return this.propertiesProvider;
 	}
 }

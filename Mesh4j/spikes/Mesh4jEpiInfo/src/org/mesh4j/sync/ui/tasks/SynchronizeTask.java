@@ -30,7 +30,7 @@ public class SynchronizeTask extends SwingWorker<Void, Void> {
 			EndpointMapping endpoint = (EndpointMapping)ui.getComboBoxEndpoint().getSelectedItem();
 			SyncMode syncMode = (SyncMode)ui.getComboBoxSyncMode().getSelectedItem();
 			
-			SyncEngineUtil.synchronize(ui.getSyncEngine(), syncMode, endpoint, dataSource, ui.getSourceIdResolver());
+			SyncEngineUtil.synchronize(ui.getSyncEngine(), syncMode, endpoint, dataSource, ui.getSourceIdResolver(), ui.getPropertiesProvider());
 
 		} catch(Throwable t){
 			ui.notifyErrorSync(t);

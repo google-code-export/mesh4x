@@ -132,7 +132,7 @@ public class ConfigurationFrame extends JFrame {
 					if (index == -1) {	// save
 						
 						EndpointMapping endpoint = new EndpointMapping(alias, endpointNumber);
-						SyncEngineUtil.saveOrUpdateEndpointMapping(alias, endpoint);
+						SyncEngineUtil.saveOrUpdateEndpointMapping(alias, endpoint, owner.getPropertiesProvider());
 						
 						DefaultListModel listModel = (DefaultListModel)listContacts.getModel();
 						listModel.addElement(endpoint);
@@ -144,7 +144,7 @@ public class ConfigurationFrame extends JFrame {
 						endpoint.setAlias(alias);
 						endpoint.setEndpoint(endpointNumber);
 						
-						SyncEngineUtil.saveOrUpdateEndpointMapping(oldAlias, endpoint);		
+						SyncEngineUtil.saveOrUpdateEndpointMapping(oldAlias, endpoint, owner.getPropertiesProvider());		
 						
 					}	
 					listContacts.setSelectedIndex(-1);
@@ -168,7 +168,7 @@ public class ConfigurationFrame extends JFrame {
 				int index = listContacts.getSelectedIndex();
 				if (index != -1) {
 					EndpointMapping endpoint = (EndpointMapping) listContacts.getSelectedValue();
-					SyncEngineUtil.deleteEndpointMapping(endpoint);				
+					SyncEngineUtil.deleteEndpointMapping(endpoint, owner.getPropertiesProvider());				
 					
 					DefaultListModel listModel = (DefaultListModel)listContacts.getModel();
 					listModel.remove(index);
@@ -191,7 +191,7 @@ public class ConfigurationFrame extends JFrame {
 		buttonDeleteContact.setEnabled(false);
 		buttonDeleteContact.addActionListener(deleteContactActionListener);
 		
-		EndpointMapping[] endpoints = SyncEngineUtil.getEndpointMappings();
+		EndpointMapping[] endpoints = SyncEngineUtil.getEndpointMappings(owner.getPropertiesProvider());
 		for (int i = 0; i < endpoints.length; i++) {
 			listModelContacts.addElement(endpoints[i]);			
 		}
