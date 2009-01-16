@@ -23,10 +23,11 @@ public class CancelSyncTask extends SwingWorker<Void, Void> {
 	@Override
     public Void doInBackground() {
 		ui.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-		
-		ui.notifyBeginCancelSync();
+
 		DataSourceMapping dataSource = (DataSourceMapping)ui.getComboBoxMappingDataSource().getSelectedItem();
 		EndpointMapping endpoint = (EndpointMapping)ui.getComboBoxEndpoint().getSelectedItem();
+
+		ui.notifyBeginCancelSync(endpoint, dataSource);
 
 		SyncEngineUtil.cancelSynchronize(ui.getSyncEngine(), endpoint, dataSource);
 

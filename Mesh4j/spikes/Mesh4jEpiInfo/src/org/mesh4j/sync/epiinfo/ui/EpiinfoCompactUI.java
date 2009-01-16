@@ -208,11 +208,13 @@ public class EpiinfoCompactUI {
 	public void notifyEndSync(boolean error) {
 		this.syncInProcess = false;
 		if(error){
-			this.setStatus(EpiInfoCompactUITranslator.getMessageSyncFailed());
-			this.setErrorImageStatus();
+			String msg = EpiInfoCompactUITranslator.getMessageSyncFailed();
+			this.setStatus(msg);
+			this.setErrorImageStatus(msg);
 		} else {
-			this.setStatus(EpiInfoCompactUITranslator.getMessageSyncSuccessfully());
-			this.setEndSyncImageStatus();
+			String msg = EpiInfoCompactUITranslator.getMessageSyncSuccessfully();
+			this.setStatus(msg);
+			this.setEndSyncImageStatus(msg);
 		}
 		
 		this.buttonSync.setText(EpiInfoCompactUITranslator.getLabelSync());
@@ -223,20 +225,20 @@ public class EpiinfoCompactUI {
 		this.labelRemoteDataSource.setIcon(SwingResourceManager.getIcon(EpiinfoCompactUI.class, getSourceImage(sourceType, true)));
 	}
 	
-	private String getSourceImage(String sourceType, boolean remote) {
-		if(FeedSyncAdapterFactory.SOURCE_TYPE.equals(sourceType)){
+	private String getSourceImage(String source, boolean remote) {
+		if(source.startsWith(FeedSyncAdapterFactory.SOURCE_TYPE)){
 			return "/feedRSSDataSource.png";
-		} else if (HttpSyncAdapterFactory.SOURCE_TYPE.equals(sourceType)){
+		} else if (source.startsWith(HttpSyncAdapterFactory.SOURCE_TYPE)){
 			return "/httpDataSource.png";
-		} else if (KMLDOMLoaderFactory.SOURCE_TYPE.equals(sourceType)){
+		} else if (source.startsWith(KMLDOMLoaderFactory.SOURCE_TYPE)){
 			return "/kmlDataSource.png";
-		} else if (MsAccessSyncAdapterFactory.SOURCE_TYPE.equals(sourceType)){
+		} else if (source.startsWith(MsAccessSyncAdapterFactory.SOURCE_TYPE)){
 			if(remote){
 				return "/msAccessDataSourceRemote.png";
 			} else {
 				return "/msAccessDataSource.png";
 			}
-		} else if (MsExcelSyncAdapterFactory.SOURCE_TYPE.equals(sourceType)){
+		} else if (source.startsWith(MsExcelSyncAdapterFactory.SOURCE_TYPE)){
 			return "/msExcelDataSource.png";
 		} else {
 			return "/undefinedDataSource.png";
@@ -279,36 +281,46 @@ public class EpiinfoCompactUI {
 		
 		SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
 		
-		this.setStatus(EpiInfoCompactUITranslator.getMessageSyncStarted(dateFormat.format(new Date())));
-		this.buttonSync.setText(EpiInfoCompactUITranslator.getLabelCancelSync());	
-		this.setInProcessImageStatus();
+		String msg = EpiInfoCompactUITranslator.getMessageSyncStarted(dateFormat.format(new Date()));
+		this.setStatus(msg);
+		this.setInProcessImageStatus(msg);
+		
+		this.buttonSync.setText(EpiInfoCompactUITranslator.getLabelCancelSync());
+		
 		this.logFrame.cleanLog();
 		this.disableAllButtons();
 	}
 	
 	public void notifyErrorSync(Throwable t)	{
 		this.syncInProcess = false;
-		this.setErrorImageStatus();
-		this.logFrame.logError(t, EpiInfoUITranslator.getLabelFailed());
+		String msg = EpiInfoUITranslator.getLabelFailed();
+		this.setErrorImageStatus(msg);
+		this.logFrame.logError(t, msg);
 	}
 
-	public void notifyBeginCancelSync()	{
+	public void notifyBeginCancelSync(EndpointMapping endpointMapping, DataSourceMapping dataSourceMapping)	{
 		this.disableAllButtons();
-		this.setInProcessImageStatus();
+		
+		String msg = EpiInfoCompactUITranslator.getLabelCancelationSyncInProgress(endpointMapping.getAlias(), dataSourceMapping.getAlias());
+		this.setStatus(msg);
+		this.setInProcessImageStatus(msg);
 	}
 
 	public void notifyEndCancelSync() {
 		this.syncInProcess = false;
-		this.setStatus(EpiInfoCompactUITranslator.getMessageCancelSyncSuccessfully());
+		
+		String msg = EpiInfoCompactUITranslator.getMessageCancelSyncSuccessfully();
+		this.setStatus(msg);
+		this.setEndSyncImageStatus(msg);
 		
 		this.buttonSync.setText(EpiInfoCompactUITranslator.getLabelSync());
-		this.setEndSyncImageStatus();
 		this.enableAllButtons();		
 	}
 	
-	public void notifyStartUpError()	{
-		this.setStatus(EpiInfoCompactUITranslator.getMessageStartUpError());
-		this.setErrorImageStatus();
+	public void notifyStartUpError(){		
+		String msg = EpiInfoCompactUITranslator.getMessageStartUpError();
+		this.setStatus(msg);
+		this.setErrorImageStatus(msg);
 
 		comboBoxEndpoint.setEnabled(false);
 		comboBoxMappingDataSource.setEnabled(false);
@@ -324,8 +336,10 @@ public class EpiinfoCompactUI {
 		this.phoneCompatibilityEndpoint = endpoint;
 		this.phoneCompatibilityId = id;
 		this.fullDisableAllButtons();
-		this.setInProcessImageStatus();
-		this.setStatus(EpiInfoCompactUITranslator.getMessageTestingPhoneCompatibility());
+		
+		String msg = EpiInfoCompactUITranslator.getMessageTestingPhoneCompatibility();
+		this.setInProcessImageStatus(msg);
+		this.setStatus(msg);
 		
 		Action errorAction = new AbstractAction(){
 
@@ -335,8 +349,11 @@ public class EpiinfoCompactUI {
 			public void actionPerformed(ActionEvent arg0) {
 				if(phoneCompatibilityInProcess){
 					phoneCompatibilityInProcess = false;
-					setErrorImageStatus();
-					setStatus(EpiInfoCompactUITranslator.getMessageTimeOutPhoneCompatibility());
+					
+					String msg = EpiInfoCompactUITranslator.getMessageTimeOutPhoneCompatibility();
+					setErrorImageStatus(msg);
+					setStatus(msg);
+					
 					phoneCompatibilityEndpoint = null;
 					phoneCompatibilityId = null;
 					fullEnableAllButtons();
@@ -352,18 +369,21 @@ public class EpiinfoCompactUI {
 		this.phoneCompatibilityId = null;
 		
 		this.setStatus(EpiInfoCompactUITranslator.getMessagePhoneIsCompatible());
-		this.fullEnableAllButtons();
 		this.setReadyImageStatus();
-		this.disableAllButtons();
+		this.fullEnableAllButtons();
 	}
 	
 	public void notifyStartReadyToSync(EndpointMapping endpoint, DataSourceMapping dataSource){
-		this.setInProcessImageStatus();
-		this.fullDisableAllButtons();
-		this.setStatus(EpiInfoCompactUITranslator.getMessageProcessingReadyToSync(endpoint.getAlias(), dataSource.getAlias()));
+
 		this.readyToSyncInProcess = true;
 		this.readyToSyncEndpoint = endpoint;
 		this.readyToSyncDataSource = dataSource;
+
+		this.fullDisableAllButtons();
+
+		String msg = EpiInfoCompactUITranslator.getMessageProcessingReadyToSync(endpoint.getAlias(), dataSource.getAlias());
+		this.setInProcessImageStatus(msg);
+		this.setStatus(msg);
 		
 		Action errorReadyToSync = new AbstractAction(){
 			private static final long serialVersionUID = 4028395273128514170L;
@@ -380,6 +400,7 @@ public class EpiinfoCompactUI {
 	
 	public void notifyEndpointIsReadyToSync(){
 		this.readyToSyncInProcess = false;
+		
 		this.setReadyImageStatus();
 		this.setStatus(EpiInfoCompactUITranslator.getMessageEndpointIsReadyToSync(readyToSyncEndpoint.getAlias(), readyToSyncDataSource.getAlias()));
 		this.readyToSyncEndpoint = null;
@@ -389,8 +410,10 @@ public class EpiinfoCompactUI {
 	
 	public void notifyEndpointIsNotReadyToSync(){
 		readyToSyncInProcess = false;
-		setErrorImageStatus();
-		setStatus(EpiInfoCompactUITranslator.getMessageEndpointIsNotReadyToSync(readyToSyncEndpoint.getAlias(), readyToSyncDataSource.getAlias()));
+		
+		String msg = EpiInfoCompactUITranslator.getMessageEndpointIsNotReadyToSync(readyToSyncEndpoint.getAlias(), readyToSyncDataSource.getAlias());
+		setErrorImageStatus(msg);
+		setStatus(msg);
 		readyToSyncEndpoint = null;
 		readyToSyncDataSource = null;
 		fullEnableAllButtons();
@@ -455,20 +478,24 @@ public class EpiinfoCompactUI {
 	
 	// Status images methods
 	
-	public void setErrorImageStatus() {
-		this.imageStatus.setIcon(SwingResourceManager.getIcon(EpiinfoUI.class, "/error.png"));		
+	public void setErrorImageStatus(String msg) {
+		this.imageStatus.setIcon(SwingResourceManager.getIcon(EpiinfoUI.class, "/error.png"));
+		this.imageStatus.setToolTipText(msg);
 	}
 	
-	public void setInProcessImageStatus() {
+	public void setInProcessImageStatus(String msg) {
 		this.imageStatus.setIcon(SwingResourceManager.getIcon(EpiinfoUI.class, "/inProcess.gif"));
+		this.imageStatus.setToolTipText(msg);
 	}
 	
-	public void setEndSyncImageStatus() {
-		this.imageStatus.setIcon(SwingResourceManager.getIcon(EpiinfoUI.class, "/ok.png"));		
+	public void setEndSyncImageStatus(String msg) {
+		this.imageStatus.setIcon(SwingResourceManager.getIcon(EpiinfoUI.class, "/ok.png"));
+		this.imageStatus.setToolTipText(msg);
 	}
 	
 	public void setReadyImageStatus() {
-		this.imageStatus.setIcon(null);	
+		this.imageStatus.setIcon(null);
+		this.imageStatus.setToolTipText("");
 	}
 	
 	// Detailed status
@@ -619,7 +646,7 @@ public class EpiinfoCompactUI {
 				RowSpec.decode("29dlu")}));
 		frame.setResizable(false);
 		frame.setTitle(EpiInfoUITranslator.getTitle());
-		frame.setBounds(100, 100, 588, 441);
+		frame.setBounds(100, 100, 595, 450);
 		frame.getContentPane().add(getPanelSync(), new CellConstraints(2, 2));
 		frame.getContentPane().add(getPanelProgress(), new CellConstraints(2, 4, CellConstraints.FILL, CellConstraints.FILL));
 
@@ -777,19 +804,21 @@ public class EpiinfoCompactUI {
 				ColumnSpec.decode("285dlu"),
 				ColumnSpec.decode("5dlu")},
 			new RowSpec[] {
-				RowSpec.decode("18dlu"),
+				RowSpec.decode("16dlu"),
 				FormFactory.DEFAULT_ROWSPEC}));
 		frame.getContentPane().add(panelTrademark, new CellConstraints(1, 8, 3, 1));
 
 		final JLabel labelTrademark = new JLabel();
 		labelTrademark.setFont(new Font("Calibri", Font.BOLD, 10));
 		labelTrademark.setText(EpiInfoCompactUITranslator.getTradeMark());
-		panelTrademark.add(labelTrademark, new CellConstraints(1, 2, CellConstraints.RIGHT, CellConstraints.BOTTOM));
+		labelTrademark.setToolTipText(EpiInfoCompactUITranslator.getToolTipTradeMark());
+		
+		panelTrademark.add(labelTrademark, new CellConstraints(1, 1, 1, 2, CellConstraints.RIGHT, CellConstraints.BOTTOM));
 		
 		final JLabel imageTrademark = new JLabel();
 		imageTrademark.setIcon(SwingResourceManager.getIcon(EpiinfoCompactUI.class, "/mesh4x.png"));
 		imageTrademark.setText("");
-		panelTrademark.add(imageTrademark, new CellConstraints(2, 2));
+		panelTrademark.add(imageTrademark, new CellConstraints(2, 1, 1, 2, CellConstraints.DEFAULT, CellConstraints.BOTTOM));
 		
 		logFrame = new LogFrame();
 		cfgFrame = new ConfigurationFrame(this);
@@ -868,6 +897,7 @@ public class EpiinfoCompactUI {
 			comboBoxEndpoint = new JComboBox();
 			comboBoxEndpoint.setFont(new Font("Calibri", Font.PLAIN, 12));
 			comboBoxEndpoint.setModel(new DefaultComboBoxModel(SyncEngineUtil.getEndpointMappings(propertiesProvider)));
+			comboBoxEndpoint.setToolTipText(EpiInfoCompactUITranslator.getToolTipEndpoints());
 		}
 		return comboBoxEndpoint;
 	}
@@ -878,6 +908,7 @@ public class EpiinfoCompactUI {
 			buttonTestPhone.setFont(new Font("Calibri", Font.BOLD, 12));
 			buttonTestPhone.setBackground(UIManager.getColor("Button.background"));
 			buttonTestPhone.setText(EpiInfoCompactUITranslator.getLabelTestPhone());
+			buttonTestPhone.setToolTipText(EpiInfoCompactUITranslator.getToolTipTestPhone());
 			
 			ActionListener testPhoneActionListener = new ActionListener(){
 				public void actionPerformed(ActionEvent e) {
@@ -895,6 +926,7 @@ public class EpiinfoCompactUI {
 			buttonReadyToSync = new JButton();
 			buttonReadyToSync.setFont(new Font("Calibri", Font.BOLD, 12));
 			buttonReadyToSync.setText(EpiInfoCompactUITranslator.getLabelReadyToSync());
+			buttonReadyToSync.setToolTipText(EpiInfoCompactUITranslator.getToolTipReadyToSync());
 			
 			ActionListener readyToSyncActionListener = new ActionListener(){
 				public void actionPerformed(ActionEvent e) {
@@ -912,6 +944,7 @@ public class EpiinfoCompactUI {
 			buttonSync = new JButton();
 			buttonSync.setFont(new Font("Arial", Font.PLAIN, 16));
 			buttonSync.setText(EpiInfoCompactUITranslator.getLabelSync());
+			buttonSync.setToolTipText(EpiInfoCompactUITranslator.getToolTipSync());
 			
 			ActionListener synchronizeActionListener = new ActionListener(){
 				public void actionPerformed(ActionEvent e) {
@@ -929,6 +962,7 @@ public class EpiinfoCompactUI {
 		if (comboBoxMappingDataSource == null) {
 			comboBoxMappingDataSource = new JComboBox();
 			comboBoxMappingDataSource.setFont(new Font("Calibri", Font.PLAIN, 12));
+			comboBoxMappingDataSource.setToolTipText(EpiInfoCompactUITranslator.getToolTipDataSources());
 			
 			notifyDataSourceMappingListsChanges();
 		}
@@ -939,6 +973,7 @@ public class EpiinfoCompactUI {
 		if (comboBoxSyncMode == null) {
 			comboBoxSyncMode = new JComboBox();
 			comboBoxSyncMode.setFont(new Font("Calibri", Font.PLAIN, 12));
+			comboBoxSyncMode.setToolTipText(EpiInfoCompactUITranslator.getToolTipSyncMode());
 
 			DefaultComboBoxModel syncTypesTableModel = new DefaultComboBoxModel(new SyncMode[]{SyncMode.SendAndReceiveChanges, SyncMode.SendChangesOnly, SyncMode.ReceiveChangesOnly});
 			comboBoxSyncMode.setModel(syncTypesTableModel);
@@ -1076,6 +1111,7 @@ public class EpiinfoCompactUI {
 			buttonOpenLog.setBorderPainted(false);
 			buttonOpenLog.setBorder(new EmptyBorder(0, 0, 0, 0));
 			buttonOpenLog.setText(EpiInfoCompactUITranslator.getLabelOpenLogWindow());
+			buttonOpenLog.setToolTipText(EpiInfoCompactUITranslator.getToolTipOpenLogWindow());
 			
 			buttonOpenLog.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -1100,6 +1136,7 @@ public class EpiinfoCompactUI {
 			buttonConfiguration.setBorderPainted(false);
 			buttonConfiguration.setBorder(new EmptyBorder(0, 0, 0, 0));
 			buttonConfiguration.setText(EpiInfoCompactUITranslator.getLabelOpenConfigurationWindow());
+			buttonConfiguration.setToolTipText(EpiInfoCompactUITranslator.getToolTipConfigurationWindow());
 			
 			buttonConfiguration.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {

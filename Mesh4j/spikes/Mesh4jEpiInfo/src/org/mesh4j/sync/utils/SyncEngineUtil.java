@@ -51,7 +51,6 @@ import org.mesh4j.sync.message.channel.sms.core.SmsChannel;
 import org.mesh4j.sync.message.channel.sms.core.SmsEndpointFactory;
 import org.mesh4j.sync.message.core.LoggerMessageSyncAware;
 import org.mesh4j.sync.message.core.MessageSyncAdapter;
-import org.mesh4j.sync.message.core.NonMessageEncoding;
 import org.mesh4j.sync.message.core.repository.MessageSyncAdapterFactory;
 import org.mesh4j.sync.message.encoding.IMessageEncoding;
 import org.mesh4j.sync.message.protocol.MessageSyncProtocolFactory;
@@ -155,7 +154,7 @@ public class SyncEngineUtil {
 		
 		ISyncAdapterFactory syncAdapterFactory = makeSyncAdapterFactory(sourceIdResolver, baseDirectory);
 		
-		MessageSyncAdapterFactory messageSyncAdapterFactory = new MessageSyncAdapterFactory(syncAdapterFactory, false);
+		MessageSyncAdapterFactory messageSyncAdapterFactory = new MessageSyncAdapterFactory(null, false, syncAdapterFactory);
 		
 		IChannel channel = SmsChannelFactory.createChannelWithFileRepository(smsConnection, senderDelay, receiverDelay, baseDirectory);
 		
@@ -325,9 +324,10 @@ public class SyncEngineUtil {
 	public static void synchronize(MessageSyncEngine syncEngine, SyncMode syncMode, EndpointMapping endpoint, DataSourceMapping dataSource, EpiinfoSourceIdResolver sourceIdResolver, PropertiesProvider propertiesProvider) throws Exception {
 		String baseDirectory = propertiesProvider.getBaseDirectory();
 		IIdentityProvider identityProvider = propertiesProvider.getIdentityProvider();
+		IMessageEncoding messageEncoding = propertiesProvider.getDefaultMessageEncoding();
 		
 // TODO (JMT) remove it, it is only for emulation
-		registerNewEndpointToEmulator(syncEngine, endpoint.getEndpoint(), NonMessageEncoding.INSTANCE, 
+		registerNewEndpointToEmulator(syncEngine, endpoint.getEndpoint(), messageEncoding, 
 				identityProvider, baseDirectory, 0, 0, 0, 0, 160);
 // ******************
 		

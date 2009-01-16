@@ -253,4 +253,68 @@ public class EpiInfoCompactUITranslator {
 	public static String getLabelTabModem() {
 		return MessageTranslator.translate("EPIINFO_COMPACT_LABEL_TAB_MODEM");
 	}
+
+	public static String getToolTipOpenLogWindow() {
+		return MessageTranslator.translate("EPIINFO_COMPACT_TOOLTIP_OPEN_LOG_WINDOW");
+	}
+
+	public static String getToolTipConfigurationWindow() {
+		return MessageTranslator.translate("EPIINFO_COMPACT_TOOLTIP_OPEN_CFG_WINDOW");
+	}
+
+	public static String getToolTipTradeMark() {
+		return MessageTranslator.translate("EPIINFO_COMPACT_TOOLTIP_TRADEMARK");
+	}
+
+	public static String getToolTipTestPhone() {
+		return MessageTranslator.translate("EPIINFO_COMPACT_TOOLTIP_TEST_PHONE");
+	}
+
+	public static String getToolTipReadyToSync() {
+		return MessageTranslator.translate("EPIINFO_COMPACT_TOOLTIP_READY_TO_SYNC");
+	}
+
+	public static String getToolTipSync() {
+		return MessageTranslator.translate("EPIINFO_COMPACT_TOOLTIP_SYNC");
+	}
+
+	public static String getToolTipEndpoints() {
+		return MessageTranslator.translate("EPIINFO_COMPACT_TOOLTIP_ENDPOINTS");
+	}
+
+	public static String getToolTipDataSources() {
+		return MessageTranslator.translate("EPIINFO_COMPACT_TOOLTIP_DATA_SOURCES");
+	}
+
+	public static String getToolTipSyncMode() {
+		return MessageTranslator.translate("EPIINFO_COMPACT_TOOLTIP_SYNC_MODE");
+	}
+
+	public static String getToolTipEditContactAliasField() {
+		return MessageTranslator.translate("EPIINFO_COMPACT_TOOLTIP_EDIT_CONTACT_ALIAS_FIELD");
+	}
+
+	public static String getToolTipEditContactNumberField() {
+		return MessageTranslator.translate("EPIINFO_COMPACT_TOOLTIP_EDIT_CONTACT_NUMBER_FIELD");
+	}
+
+	public static String getToolTipSave() {
+		return MessageTranslator.translate("EPIINFO_COMPACT_TOOLTIP_SAVE");
+	}
+
+	public static String getToolTipDelete() {
+		return MessageTranslator.translate("EPIINFO_COMPACT_TOOLTIP_DELETE");
+	}
+
+	public static String getToolTipEditDataSourceAliasField() {
+		return MessageTranslator.translate("EPIINFO_COMPACT_TOOLTIP_EDIT_DATA_SOURCE_ALIAS_FIELD");
+	}
+
+	public static String getToolTipEditDataSourceTableNameField() {
+		return MessageTranslator.translate("EPIINFO_COMPACT_TOOLTIP_EDIT_DATA_SOURCE_TABLE_FIELD");
+	}
+	
+	public static String getLabelCancelationSyncInProgress(String endpoint, String dataSourceAlias) {
+		return MessageTranslator.translate("EPIINFO_COMPACT_LABEL_CANCELATION_SYNC_IN_PROCESS", endpoint, dataSourceAlias);
+	}
 }

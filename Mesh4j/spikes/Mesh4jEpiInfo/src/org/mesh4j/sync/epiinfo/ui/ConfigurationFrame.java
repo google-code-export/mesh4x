@@ -105,9 +105,11 @@ public class ConfigurationFrame extends JFrame {
 		final JList listContacts = new JList(listModelContacts);
 		
 		final JTextField textFieldContactAlias = new JTextField();
+		textFieldContactAlias.setToolTipText(EpiInfoCompactUITranslator.getToolTipEditContactAliasField());
 		panelEditContact.add(textFieldContactAlias, new CellConstraints());
 
 		final JTextField textFieldContactNumber = new JTextField();
+		textFieldContactNumber.setToolTipText(EpiInfoCompactUITranslator.getToolTipEditContactNumberField());
 		panelEditContact.add(textFieldContactNumber, new CellConstraints(3, 1));
 
 		final JPanel panelContactButtons = new JPanel();
@@ -162,7 +164,8 @@ public class ConfigurationFrame extends JFrame {
 		buttonSaveContact.setFont(new Font("Calibri", Font.BOLD, 10));
 		buttonSaveContact.setText(EpiInfoCompactUITranslator.getLabelSave());
 		buttonSaveContact.addActionListener(saveContactActionListener);
-
+		buttonSaveContact.setToolTipText(EpiInfoCompactUITranslator.getToolTipSave());
+		
 		ActionListener deleteContactActionListener = new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				int index = listContacts.getSelectedIndex();
@@ -190,6 +193,7 @@ public class ConfigurationFrame extends JFrame {
 		buttonDeleteContact.setText(EpiInfoCompactUITranslator.getLabelDelete());
 		buttonDeleteContact.setEnabled(false);
 		buttonDeleteContact.addActionListener(deleteContactActionListener);
+		buttonDeleteContact.setToolTipText(EpiInfoCompactUITranslator.getToolTipDelete());
 		
 		EndpointMapping[] endpoints = SyncEngineUtil.getEndpointMappings(owner.getPropertiesProvider());
 		for (int i = 0; i < endpoints.length; i++) {
@@ -262,12 +266,14 @@ public class ConfigurationFrame extends JFrame {
 		panelEditDataSource.add(textFieldDataSourceFileName, new CellConstraints(1, 3));
 
 		final JTextField textFieldDataSourceAlias = new JTextField();
+		textFieldDataSourceAlias.setToolTipText(EpiInfoCompactUITranslator.getToolTipEditDataSourceAliasField());
 		textFieldDataSourceAlias.setFont(new Font("Calibri", Font.PLAIN, 12));
 		panelEditDataSource.add(textFieldDataSourceAlias, new CellConstraints());
 		
 		final JComboBox comboBoxTableName = new JComboBox();
 		comboBoxTableName.setBackground(Color.WHITE);
 		comboBoxTableName.setFont(new Font("Calibri", Font.PLAIN, 12));
+		comboBoxTableName.setToolTipText(EpiInfoCompactUITranslator.getToolTipEditDataSourceTableNameField());
 		panelEditDataSource.add(comboBoxTableName, new CellConstraints(1, 5));
 		
 		final JPanel panelDataSourceButtons = new JPanel();
@@ -330,7 +336,8 @@ public class ConfigurationFrame extends JFrame {
 		panelDataSourceButtons.add(buttonSaveDataSource, new CellConstraints());
 		buttonSaveDataSource.setText(EpiInfoCompactUITranslator.getLabelSave());
 		buttonSaveDataSource.addActionListener(saveDataSourceActionListener);
-
+		buttonSaveDataSource.setToolTipText(EpiInfoCompactUITranslator.getToolTipSave());
+		
 		ActionListener deleteDataSourceActionListener = new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				int index = listDataSources.getSelectedIndex();
@@ -357,7 +364,8 @@ public class ConfigurationFrame extends JFrame {
 		buttonDeleteDataSource.setText(EpiInfoCompactUITranslator.getLabelDelete());
 		buttonDeleteDataSource.setEnabled(false);
 		buttonDeleteDataSource.addActionListener(deleteDataSourceActionListener);
-
+		buttonDeleteDataSource.setToolTipText(EpiInfoCompactUITranslator.getToolTipDelete());
+		
 		ActionListener fileChooserFileActionListener = new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				String selectedFileName = openFileDialog(
@@ -365,6 +373,7 @@ public class ConfigurationFrame extends JFrame {
 					new FileNameExtensionFilter(EpiInfoUITranslator.getLabelDataSourceFileExtensions(), "mdb"));
 				if(selectedFileName != null){
 					textFieldDataSourceFileName.setText(selectedFileName);
+					textFieldDataSourceFileName.setToolTipText(selectedFileName);
 					Set<String> tableNames = SyncEngineUtil.getTableNames(selectedFileName);
 					ComboBoxModel tableNameModel = new DefaultComboBoxModel(tableNames.toArray());
 					comboBoxTableName.setModel(tableNameModel);
@@ -394,6 +403,7 @@ public class ConfigurationFrame extends JFrame {
 			        	DataSourceMapping dataSourceMapping = (DataSourceMapping) listDataSources.getSelectedValue();
 			        	textFieldDataSourceAlias.setText(dataSourceMapping.getAlias());
 			        	textFieldDataSourceFileName.setText(dataSourceMapping.getFileName());
+			        	textFieldDataSourceFileName.setToolTipText(dataSourceMapping.getFileName());
 			        	
 						Set<String> tableNames = SyncEngineUtil.getTableNames(dataSourceMapping.getFileName());
 						ComboBoxModel tableNameModel = new DefaultComboBoxModel(tableNames.toArray());
@@ -453,6 +463,7 @@ public class ConfigurationFrame extends JFrame {
 		buttonClose.setFont(new Font("Calibri", Font.BOLD, 12));
 		buttonClose.setText(EpiInfoCompactUITranslator.getConfigurationWindowLabelClose());
 		buttonClose.setToolTipText(EpiInfoCompactUITranslator.getConfigurationWindowToolTipClose());
+		
 		ActionListener closeActionListener = new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				ConfigurationFrame.this.setVisible(false);

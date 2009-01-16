@@ -49,8 +49,9 @@ public class EpiinfoCompactConsoleNotification implements ISmsConnectionInboundO
 
 	@Override
 	public void notifyReceiveMessageError(String endpointId, String message, Date date) {
-		ui.setErrorImageStatus();
-		consoleView.log("\t"+EpiInfoUITranslator.getMessageNotifyReceiveMessage(endpointId, message));
+		String error = EpiInfoUITranslator.getMessageNotifyReceiveMessage(endpointId, message);
+		ui.setErrorImageStatus(error);
+		consoleView.log("\t"+error);
 		ui.increaseSmsIn();
 	}
 
@@ -62,8 +63,9 @@ public class EpiinfoCompactConsoleNotification implements ISmsConnectionInboundO
 
 	@Override
 	public void notifySendMessageError(String endpointId, String message) {
-		ui.setErrorImageStatus();
-		consoleView.log("\t"+EpiInfoUITranslator.getMessageNotifySendMessageError(endpointId, message));
+		String error = EpiInfoUITranslator.getMessageNotifySendMessageError(endpointId, message);
+		ui.setErrorImageStatus(error);
+		consoleView.log("\t"+error);
 		ui.increaseSmsOut();
 	}
 	
@@ -102,8 +104,9 @@ public class EpiinfoCompactConsoleNotification implements ISmsConnectionInboundO
 
 	@Override
 	public void beginSyncWithError(ISyncSession syncSession) {
-		ui.setErrorImageStatus();
-		consoleView.log(EpiInfoUITranslator.getMessageErrorBeginSync(syncSession.getTarget().getEndpointId(), sourceIdResolver.getSourceName(syncSession.getSourceId())));		
+		String error = EpiInfoUITranslator.getMessageErrorBeginSync(syncSession.getTarget().getEndpointId(), sourceIdResolver.getSourceName(syncSession.getSourceId()));
+		ui.setErrorImageStatus(error);
+		consoleView.log(error);		
 	}
 
 	@Override
@@ -114,8 +117,9 @@ public class EpiinfoCompactConsoleNotification implements ISmsConnectionInboundO
 
 	@Override
 	public void notifyCancelSyncErrorSyncSessionNotOpen(String sourceId, IEndpoint endpoint) {
-		ui.setErrorImageStatus();
-		consoleView.log(EpiInfoUITranslator.getMessageCancelSyncErrorSessionNotOpen(endpoint, sourceId));		
+		String error = EpiInfoUITranslator.getMessageCancelSyncErrorSessionNotOpen(endpoint, sourceId);
+		ui.setErrorImageStatus(error);
+		consoleView.log(error);		
 	}
 
 	@Override
@@ -138,8 +142,8 @@ public class EpiinfoCompactConsoleNotification implements ISmsConnectionInboundO
 			syncSession.getNumberOfDeletedItems());
 		
 		if(BeginSyncMessageProcessor.MESSAGE_TYPE.equals(message.getMessageType())){
-			String dataSourceType = BeginSyncMessageProcessor.getSourceType(message.getData());
-			ui.updateRemoteDataSource(dataSourceType);
+			String dataSourceId = BeginSyncMessageProcessor.getSourceIdFromData(message.getData());
+			ui.updateRemoteDataSource(dataSourceId);
 			ui.increaseSmsIn();
 		}
 
