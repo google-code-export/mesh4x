@@ -317,4 +317,52 @@ public class EpiInfoCompactUITranslator {
 	public static String getLabelCancelationSyncInProgress(String endpoint, String dataSourceAlias) {
 		return MessageTranslator.translate("EPIINFO_COMPACT_LABEL_CANCELATION_SYNC_IN_PROCESS", endpoint, dataSourceAlias);
 	}
+
+	public static String getLabelTabProperties() {
+		return MessageTranslator.translate("EPIINFO_COMPACT_LABEL_TAB_PROPERTIES");
+	}
+
+	public static String getLabelEditPropertiesPortName() {
+		return MessageTranslator.translate("EPIINFO_COMPACT_LABEL_EDIT_PROPERTIES_PORT_NAME");
+	}
+
+	public static String getLabelEditPropertiesBaudRate() {
+		return MessageTranslator.translate("EPIINFO_COMPACT_LABEL_EDIT_PROPERTIES_BAUD_RATE");
+	}
+
+	public static String getLabelEditPropertiesSendRetryDelay() {
+		return MessageTranslator.translate("EPIINFO_COMPACT_LABEL_EDIT_PROPERTIES_SEND_RETRY_DELAY");
+	}
+
+	public static String getLabelEditPropertiesReceiveRetryDelay() {
+		return MessageTranslator.translate("EPIINFO_COMPACT_LABEL_EDIT_PROPERTIES_RECEIVE_RETRY_DELAY");
+	}
+
+	public static String getLabelEditPropertiesReadyToSyncDelay() {
+		return MessageTranslator.translate("EPIINFO_COMPACT_LABEL_EDIT_PROPERTIES_READY_TO_SYNC_DELAY");
+	}
+
+	public static String getLabelEditPropertiesTestPhoneDelay() {
+		return MessageTranslator.translate("EPIINFO_COMPACT_LABEL_EDIT_PROPERTIES_TEST_PHONE_DELAY");
+	}
+
+	public static Object getMessageEditPropertiesRequiredFields() {
+		return MessageTranslator.translate("EPIINFO_COMPACT_MESSAGE_EDIT_PROPERTIES_REQUIRED_FIELDS");
+	}
+
+	public static String getLabelCancel() {
+		return MessageTranslator.translate("EPIINFO_COMPACT_LABEL_CANCEL");
+	}
+
+	public static String getMessageConfigurePhone() {
+		return MessageTranslator.translate("EPIINFO_COMPACT_MESSAGE_CONFIGURE_PHONE");
+	}
+
+	public static String getMessagePhoneConnected() {
+		return MessageTranslator.translate("EPIINFO_COMPACT_MESSAGE_PHONE_WAS_CONNECTED");
+	}
+
+	public static Object getMessageForPopUpPhoneNotConnected() {
+		return MessageTranslator.translate("EPIINFO_COMPACT_MESSAGE_FOR_POPUP_PHONE_NOT_CONNECTED");
+	}
 }

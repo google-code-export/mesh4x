@@ -47,6 +47,8 @@ import org.mesh4j.sync.ui.tasks.EmulateIncomingSyncTask;
 import org.mesh4j.sync.ui.tasks.EmulateReadyToSyncTask;
 import org.mesh4j.sync.ui.tasks.ReadyToSyncResponseTask;
 import org.mesh4j.sync.ui.tasks.ReadyToSyncTask;
+import org.mesh4j.sync.ui.tasks.ShutdownTask;
+import org.mesh4j.sync.ui.tasks.StartUpTask;
 import org.mesh4j.sync.ui.tasks.SynchronizeTask;
 import org.mesh4j.sync.ui.tasks.TestPhoneTask;
 import org.mesh4j.sync.ui.translator.EpiInfoCompactUITranslator;
@@ -158,8 +160,8 @@ public class EpiinfoCompactUI {
 		this.consoleNotification = new EpiinfoCompactConsoleNotification(logFrame, this, messageFilter, this.sourceIdResolver);
 		this.setReadyImageStatus();
 		this.syncEngine = SyncEngineUtil.createSyncEngine(sourceIdResolver, consoleNotification, propertiesProvider);
-		this.startUpSyncEngine();
-		this.startScheduler();	
+		this.startScheduler();
+		//this.startUpSyncEngine();
 	}
 	
 	private void startScheduler() {
@@ -174,25 +176,12 @@ public class EpiinfoCompactUI {
 		new Timer(1 * 60 * 1000, refreshStatus).start();
 	}
 
-	protected void startUpSyncEngine() throws Exception {
-		try{
-			if(this.syncEngine == null){
-				this.notifyStartUpError();
-			} else {
-				this.syncEngine.getChannel().startUp();		
-			}
-		} catch(Throwable e){
-			this.notifyStartUpError();
-			Logger.error(e.getMessage(), e);
-		}
+	public void startUpSyncEngine(){
+		new StartUpTask(this).execute();
 	}
 
-	private void shutdownSyncEngine(){
-		try{
-			this.syncEngine.getChannel().shutdown();
-		} catch(Throwable e){
-			Logger.error(e.getMessage(), e);
-		}
+	public void shutdownSyncEngine(){
+		new ShutdownTask(this).execute();
 	}
 	
 	// Status
@@ -218,7 +207,8 @@ public class EpiinfoCompactUI {
 		}
 		
 		this.buttonSync.setText(EpiInfoCompactUITranslator.getLabelSync());
-		this.enableAllButtons();		
+		this.enableAllButtons();
+		this.cfgFrame.notifyOwnerNotWorking();
 	}
 	
 	public void updateRemoteDataSource(String sourceType) {
@@ -289,6 +279,8 @@ public class EpiinfoCompactUI {
 		
 		this.logFrame.cleanLog();
 		this.disableAllButtons();
+		
+		this.cfgFrame.notifyOwnerWorking();
 	}
 	
 	public void notifyErrorSync(Throwable t)	{
@@ -296,6 +288,7 @@ public class EpiinfoCompactUI {
 		String msg = EpiInfoUITranslator.getLabelFailed();
 		this.setErrorImageStatus(msg);
 		this.logFrame.logError(t, msg);
+		this.cfgFrame.notifyOwnerNotWorking();
 	}
 
 	public void notifyBeginCancelSync(EndpointMapping endpointMapping, DataSourceMapping dataSourceMapping)	{
@@ -314,10 +307,19 @@ public class EpiinfoCompactUI {
 		this.setEndSyncImageStatus(msg);
 		
 		this.buttonSync.setText(EpiInfoCompactUITranslator.getLabelSync());
-		this.enableAllButtons();		
+		this.enableAllButtons();
+		this.cfgFrame.notifyOwnerNotWorking();
 	}
 	
-	public void notifyStartUpError(){		
+	public void notifyStartUpOk(){		
+		String msg = EpiInfoCompactUITranslator.getMessageWelcome();
+		this.setStatus(msg);
+		this.setReadyImageStatus();
+
+		fullEnableAllButtons();
+	}
+	
+	public void notifyStartUpError(){	
 		String msg = EpiInfoCompactUITranslator.getMessageStartUpError();
 		this.setStatus(msg);
 		this.setErrorImageStatus(msg);
@@ -327,8 +329,25 @@ public class EpiinfoCompactUI {
 		comboBoxSyncMode.setEnabled(false);
 		
 		buttonReadyToSync.setEnabled(false);
-		buttonTestPhone.setEnabled(true);
+		buttonTestPhone.setEnabled(false);
 		buttonSync.setEnabled(false); 
+		
+		String[] options = new String[] {EpiInfoCompactUITranslator.getMessageConfigurePhone(), EpiInfoCompactUITranslator.getMessagePhoneConnected(), EpiInfoCompactUITranslator.getLabelCancel()};
+		int n = JOptionPane.showOptionDialog(
+			frame,
+			EpiInfoCompactUITranslator.getMessageForPopUpPhoneNotConnected(),
+			EpiInfoCompactUITranslator.getTitle(),
+			JOptionPane.YES_NO_OPTION,
+			JOptionPane.ERROR_MESSAGE,
+			null,     //do not use a custom Icon
+			options,  //the titles of buttons
+			options[0]); //default button title
+		if(n == 0){
+			cfgFrame.selectPropertiesTab();
+			cfgFrame.setVisible(true);
+		}else if(n == 1) {			
+			notifyStartUpOk();
+		}
 	}
 	
 	public void notifyStartTestForPhoneCompatibility(EndpointMapping endpoint, String id){
@@ -340,6 +359,7 @@ public class EpiinfoCompactUI {
 		String msg = EpiInfoCompactUITranslator.getMessageTestingPhoneCompatibility();
 		this.setInProcessImageStatus(msg);
 		this.setStatus(msg);
+		this.cfgFrame.notifyOwnerWorking();
 		
 		Action errorAction = new AbstractAction(){
 
@@ -357,10 +377,12 @@ public class EpiinfoCompactUI {
 					phoneCompatibilityEndpoint = null;
 					phoneCompatibilityId = null;
 					fullEnableAllButtons();
+					
+					cfgFrame.notifyOwnerNotWorking();
 				}
 			}
 		};
-		new Timer(1 * 60 * 1000, errorAction).start();
+		new Timer(getPropertiesProvider().getDefaultTestPhoneDelay(), errorAction).start();
 	}
 	
 	public void notifyPhoneIsCompatible() {
@@ -371,6 +393,7 @@ public class EpiinfoCompactUI {
 		this.setStatus(EpiInfoCompactUITranslator.getMessagePhoneIsCompatible());
 		this.setReadyImageStatus();
 		this.fullEnableAllButtons();
+		this.cfgFrame.notifyOwnerNotWorking();
 	}
 	
 	public void notifyStartReadyToSync(EndpointMapping endpoint, DataSourceMapping dataSource){
@@ -385,6 +408,8 @@ public class EpiinfoCompactUI {
 		this.setInProcessImageStatus(msg);
 		this.setStatus(msg);
 		
+		this.cfgFrame.notifyOwnerWorking();
+		
 		Action errorReadyToSync = new AbstractAction(){
 			private static final long serialVersionUID = 4028395273128514170L;
 
@@ -395,7 +420,7 @@ public class EpiinfoCompactUI {
 				}
 			}
 		};
-		new Timer(1 * 60 * 1000, errorReadyToSync).start();
+		new Timer(getPropertiesProvider().getDefaultReadyToSyncDelay(), errorReadyToSync).start();
 	}
 	
 	public void notifyEndpointIsReadyToSync(){
@@ -406,6 +431,8 @@ public class EpiinfoCompactUI {
 		this.readyToSyncEndpoint = null;
 		this.readyToSyncDataSource = null;
 		this.fullEnableAllButtons();
+		
+		this.cfgFrame.notifyOwnerNotWorking();
 	}
 	
 	public void notifyEndpointIsNotReadyToSync(){
@@ -417,6 +444,8 @@ public class EpiinfoCompactUI {
 		readyToSyncEndpoint = null;
 		readyToSyncDataSource = null;
 		fullEnableAllButtons();
+		
+		this.cfgFrame.notifyOwnerNotWorking();
 	}
 	
 	public void notifyReceiveMessage(String endpoint, String message, Date date) {
@@ -621,6 +650,10 @@ public class EpiinfoCompactUI {
 				} else {
 					EpiinfoCompactUI.this.close();
 				}
+			}
+			
+			public void windowOpened(final WindowEvent e) {
+				startUpSyncEngine();
 			}
 			
 			public void windowClosed(final WindowEvent e) {

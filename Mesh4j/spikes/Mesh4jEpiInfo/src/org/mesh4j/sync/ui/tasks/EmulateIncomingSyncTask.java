@@ -27,6 +27,7 @@ public class EmulateIncomingSyncTask extends SwingWorker<Void, Void> {
 	}
 	
     public Void doInBackground() {
+    	
 		DataSourceMapping dataSource = (DataSourceMapping)ui.getComboBoxMappingDataSource().getSelectedItem();
 		EndpointMapping endpoint = (EndpointMapping)ui.getComboBoxEndpoint().getSelectedItem();
 		SyncMode syncMode = (SyncMode)ui.getComboBoxSyncMode().getSelectedItem();

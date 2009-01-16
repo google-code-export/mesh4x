@@ -14,7 +14,9 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
+import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -30,6 +32,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.mesh4j.sync.mappings.DataSourceMapping;
 import org.mesh4j.sync.mappings.EndpointMapping;
+import org.mesh4j.sync.ui.tasks.ChangeDeviceTask;
 import org.mesh4j.sync.ui.translator.EpiInfoCompactUITranslator;
 import org.mesh4j.sync.ui.translator.EpiInfoUITranslator;
 import org.mesh4j.sync.utils.SyncEngineUtil;
@@ -47,11 +50,14 @@ public class ConfigurationFrame extends JFrame {
 
 	// MODEL VARIABLES
 	private EpiinfoCompactUI owner;
+	private JButton buttonSaveProperties;
+	private JTabbedPane tabbedPane;
 	
 	// BUSINESS METHODS
 	
 	public ConfigurationFrame(EpiinfoCompactUI owner) {
 		super();
+		setAlwaysOnTop(true);
 		this.owner = owner;
 		createUI();
 	}
@@ -62,14 +68,14 @@ public class ConfigurationFrame extends JFrame {
 		setIconImage(SwingResourceManager.getImage(ConfigurationFrame.class, "/cdc.gif"));
 		setResizable(false);
 		setTitle(EpiInfoCompactUITranslator.getConfigurationWindowTitle());
-		setBounds(100, 100, 273, 375);
+		setBounds(100, 100, 287, 375);
 		getContentPane().setLayout(new FormLayout(
 			new ColumnSpec[] {
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("125dlu"),
+				ColumnSpec.decode("133dlu"),
 				FormFactory.RELATED_GAP_COLSPEC},
 			new RowSpec[] {
-				FormFactory.RELATED_GAP_ROWSPEC,
+				RowSpec.decode("6dlu"),
 				RowSpec.decode("185dlu"),
 				RowSpec.decode("14dlu"),
 				RowSpec.decode("10dlu")}));
@@ -80,7 +86,7 @@ public class ConfigurationFrame extends JFrame {
 		panelContacts.setLayout(new FormLayout(
 			new ColumnSpec[] {
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("114dlu"),
+				ColumnSpec.decode("121dlu"),
 				FormFactory.RELATED_GAP_COLSPEC},
 			new RowSpec[] {
 				FormFactory.RELATED_GAP_ROWSPEC,
@@ -92,9 +98,9 @@ public class ConfigurationFrame extends JFrame {
 		panelEditContact.setBackground(Color.WHITE);
 		panelEditContact.setLayout(new FormLayout(
 			new ColumnSpec[] {
-				ColumnSpec.decode("54dlu"),
+				ColumnSpec.decode("58dlu"),
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("54dlu")},
+				ColumnSpec.decode("58dlu")},
 			new RowSpec[] {
 				FormFactory.DEFAULT_ROWSPEC,
 				RowSpec.decode("2dlu"),
@@ -233,7 +239,7 @@ public class ConfigurationFrame extends JFrame {
 		panelDataSources.setLayout(new FormLayout(
 			new ColumnSpec[] {
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("114dlu"),
+				ColumnSpec.decode("125dlu"),
 				FormFactory.RELATED_GAP_COLSPEC},
 			new RowSpec[] {
 				FormFactory.RELATED_GAP_ROWSPEC,
@@ -245,7 +251,7 @@ public class ConfigurationFrame extends JFrame {
 		panelEditDataSource.setBackground(Color.WHITE);
 		panelEditDataSource.setLayout(new FormLayout(
 			new ColumnSpec[] {
-				ColumnSpec.decode("108dlu"),
+				ColumnSpec.decode("117dlu"),
 				ColumnSpec.decode("5dlu")},
 			new RowSpec[] {
 				FormFactory.DEFAULT_ROWSPEC,
@@ -430,23 +436,139 @@ public class ConfigurationFrame extends JFrame {
 		scrollPaneDataSources.setViewportView(listDataSources);
 		panelDataSources.add(scrollPaneDataSources, new CellConstraints(2, 4, CellConstraints.FILL, CellConstraints.FILL));
 		
-		// Modem		
-		JPanel panelModem = new JPanel(false);
-		panelModem.setBackground(Color.WHITE);
-		panelModem.setLayout(new FormLayout(
+		// Properties		
+		JPanel panelProperties = new JPanel(false);
+		panelProperties.setBackground(Color.WHITE);
+		panelProperties.setLayout(new FormLayout(
 			new ColumnSpec[] {
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("114dlu"),
+				ColumnSpec.decode("122dlu"),
 				FormFactory.RELATED_GAP_COLSPEC},
 			new RowSpec[] {
 				FormFactory.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("163dlu")}));
+				RowSpec.decode("102dlu"),
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC}));
+		
+		final JPanel panelEditProperties = new JPanel();
+		panelEditProperties.setBackground(Color.WHITE);
+		panelEditProperties.setLayout(new FormLayout(
+			new ColumnSpec[] {
+				FormFactory.DEFAULT_COLSPEC,
+				FormFactory.RELATED_GAP_COLSPEC,
+				ColumnSpec.decode("49dlu")},
+			new RowSpec[] {
+				FormFactory.DEFAULT_ROWSPEC,
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC}));
+		
+		
+		final JLabel labelPort = new JLabel();
+		labelPort.setFont(new Font("Calibri", Font.PLAIN, 12));
+		labelPort.setText(EpiInfoCompactUITranslator.getLabelEditPropertiesPortName());
+		panelEditProperties.add(labelPort, new CellConstraints(1, 1, CellConstraints.FILL, CellConstraints.FILL));
+
+		final JLabel labelBaudRate = new JLabel();
+		labelBaudRate.setFont(new Font("Calibri", Font.PLAIN, 12));
+		labelBaudRate.setText(EpiInfoCompactUITranslator.getLabelEditPropertiesBaudRate());
+		panelEditProperties.add(labelBaudRate, new CellConstraints(1, 3, CellConstraints.FILL, CellConstraints.CENTER));
+
+		final JLabel labelSendRetriesDelay = new JLabel();
+		labelSendRetriesDelay.setFont(new Font("Calibri", Font.PLAIN, 12));
+		labelSendRetriesDelay.setText(EpiInfoCompactUITranslator.getLabelEditPropertiesSendRetryDelay());
+		panelEditProperties.add(labelSendRetriesDelay, new CellConstraints(1, 5));
+
+		final JLabel labelReceiveretriesDelay = new JLabel();
+		labelReceiveretriesDelay.setFont(new Font("Calibri", Font.PLAIN, 12));
+		labelReceiveretriesDelay.setText(EpiInfoCompactUITranslator.getLabelEditPropertiesReceiveRetryDelay());
+		panelEditProperties.add(labelReceiveretriesDelay, new CellConstraints(1, 7));
+
+		final JLabel labelReadyToSync = new JLabel();
+		labelReadyToSync.setFont(new Font("Calibri", Font.PLAIN, 12));
+		labelReadyToSync.setText(EpiInfoCompactUITranslator.getLabelEditPropertiesReadyToSyncDelay());
+		panelEditProperties.add(labelReadyToSync, new CellConstraints(1, 9));
+
+		final JLabel labelTestPhoneDelay = new JLabel();
+		labelTestPhoneDelay.setFont(new Font("Calibri", Font.PLAIN, 12));
+		labelTestPhoneDelay.setText(EpiInfoCompactUITranslator.getLabelEditPropertiesTestPhoneDelay());
+		panelEditProperties.add(labelTestPhoneDelay, new CellConstraints(1, 11));
+
+		final JTextField textFieldPortName = new JTextField();
+		textFieldPortName.setText(owner.getPropertiesProvider().getDefaultPort());
+		panelEditProperties.add(textFieldPortName, new CellConstraints(3, 1));
+
+		final JFormattedTextField textFieldBaudRate = new JFormattedTextField();
+		textFieldBaudRate.setValue(owner.getPropertiesProvider().getDefaultBaudRate());
+		panelEditProperties.add(textFieldBaudRate, new CellConstraints(3, 3));
+
+		final JFormattedTextField textFieldSendRetryDelay = new JFormattedTextField();
+		textFieldSendRetryDelay.setValue(owner.getPropertiesProvider().getDefaultSendRetryDelay());
+		panelEditProperties.add(textFieldSendRetryDelay, new CellConstraints(3, 5));
+
+		final JFormattedTextField textFieldReceiveRetryDelay = new JFormattedTextField();
+		textFieldReceiveRetryDelay.setValue(owner.getPropertiesProvider().getDefaultReceiveRetryDelay());
+		panelEditProperties.add(textFieldReceiveRetryDelay, new CellConstraints(3, 7));
+
+		final JFormattedTextField textFieldReadyToSyncDelay = new JFormattedTextField();
+		textFieldReadyToSyncDelay.setValue(owner.getPropertiesProvider().getDefaultReadyToSyncDelay());
+		panelEditProperties.add(textFieldReadyToSyncDelay, new CellConstraints(3, 9));
+
+		final JFormattedTextField textFieldTestPhoneDelay = new JFormattedTextField();
+		textFieldTestPhoneDelay.setValue(owner.getPropertiesProvider().getDefaultTestPhoneDelay());
+		panelEditProperties.add(textFieldTestPhoneDelay, new CellConstraints(3, 11));
+		
+		panelProperties.add(panelEditProperties, new CellConstraints(2, 2));
+		
+		
+		final JPanel panelPropertiesButtons = new JPanel();
+		panelPropertiesButtons.setBackground(Color.WHITE);
+		panelPropertiesButtons.setLayout(new FormLayout(new ColumnSpec[] {FormFactory.DEFAULT_COLSPEC}, new RowSpec[] {FormFactory.DEFAULT_ROWSPEC}));
+		panelProperties.add(panelPropertiesButtons, new CellConstraints(2, 4));
+
+		ActionListener savePropertiesActionListener = new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				String portName = textFieldPortName.getText();
+				int baudRate = ((Integer)textFieldBaudRate.getValue()).intValue();
+				int sendRetryDelay = ((Integer)textFieldSendRetryDelay.getValue()).intValue();
+				int receiveRetryDelay= ((Integer)textFieldReceiveRetryDelay.getValue()).intValue();
+				int readyToSyncDelay= ((Integer)textFieldReadyToSyncDelay.getValue()).intValue();
+				int testPhoneDelay = ((Integer)textFieldTestPhoneDelay.getValue()).intValue();
+				
+				if(portName == null || portName.length() == 0 || baudRate == 0 || readyToSyncDelay == 0 || testPhoneDelay == 0){
+					JOptionPane.showMessageDialog(
+							ConfigurationFrame.this,
+							EpiInfoCompactUITranslator.getMessageEditPropertiesRequiredFields(),
+							EpiInfoCompactUITranslator.getTitle(),
+							JOptionPane.ERROR_MESSAGE);
+				} else {				
+					owner.getPropertiesProvider().saveDefaultProperties(portName, baudRate, sendRetryDelay, receiveRetryDelay, readyToSyncDelay, testPhoneDelay);
+					new ChangeDeviceTask(owner).execute();
+				}
+			}
+		};		
+
+		buttonSaveProperties = new JButton();
+		buttonSaveProperties.setFont(new Font("Calibri", Font.BOLD, 10));
+		buttonSaveProperties.setContentAreaFilled(false);
+		buttonSaveProperties.setBorderPainted(false);
+		buttonSaveProperties.setBorder(new EmptyBorder(0, 0, 0, 0));
+		buttonSaveProperties.setText(EpiInfoCompactUITranslator.getLabelSave());
+		buttonSaveProperties.addActionListener(savePropertiesActionListener);
+		panelPropertiesButtons.add(buttonSaveProperties, new CellConstraints());
 		
 		// Tabbed Panel
-	    JTabbedPane tabbedPane = new JTabbedPane();
+	    tabbedPane = new JTabbedPane();
 	    tabbedPane.addTab(EpiInfoCompactUITranslator.getLabelTabContacts(), panelContacts);
 	    tabbedPane.addTab(EpiInfoCompactUITranslator.getLabelTabDataSources(), panelDataSources);
-	    tabbedPane.addTab(EpiInfoCompactUITranslator.getLabelTabModem(), panelModem);
+	    tabbedPane.addTab(EpiInfoCompactUITranslator.getLabelTabProperties(), panelProperties);
 		getContentPane().add(tabbedPane, new CellConstraints(2, 2, CellConstraints.FILL, CellConstraints.FILL));
 		
 		// Buttons panel
@@ -473,6 +595,7 @@ public class ConfigurationFrame extends JFrame {
 		buttonClose.addActionListener(closeActionListener);
 		
 		panelButtons.add(buttonClose, new CellConstraints(1, 1, CellConstraints.DEFAULT, CellConstraints.TOP));
+		
 	}
 
 	private String openFileDialog(String fileName, FileNameExtensionFilter filter){
@@ -491,5 +614,17 @@ public class ConfigurationFrame extends JFrame {
 		} else{
 			return null;
 		}
+	}
+
+	public void selectPropertiesTab(){
+		tabbedPane.setSelectedIndex(2);
+	}
+	
+	public void notifyOwnerWorking(){
+		buttonSaveProperties.setEnabled(false);
+	}
+	
+	public void notifyOwnerNotWorking(){
+		buttonSaveProperties.setEnabled(true);
 	}
 }

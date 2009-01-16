@@ -53,8 +53,15 @@ public class SmsLibAsynchronousConnection implements ISmsConnection, IInboundMes
 		this.messageEncoding = messageEncoding;
 		this.filter = filter;
 		
+		initialize(gatewayId, comPort, baudRate, manufacturer, model);
+	}
+
+	public void initialize(String gatewayId, String comPort, int baudRate, String manufacturer, String model) {
+		
+		this.service = null;
+		
 		SerialModemGateway gateway = new SerialModemGateway(gatewayId, comPort, baudRate, manufacturer, model);
-				
+		
 		gateway.setOutbound(true);
 		gateway.setInbound(true);
 		gateway.setSimPin("0000");
@@ -64,7 +71,6 @@ public class SmsLibAsynchronousConnection implements ISmsConnection, IInboundMes
 		this.service.setOutboundNotification(this);
 		this.service.addGateway(gateway);
 	}
-
 
 	@Override
 	public void startUp() {

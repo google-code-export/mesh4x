@@ -17,21 +17,23 @@ public class PropertiesProvider {
 
 	private static final String MESH4J_PROPERTIES = "mesh4j.properties";
 	// MODEL VARIABLES
+	private String resourceName;
 	private Properties properties;
 	
 	// BUSINESS METHODS
 	public PropertiesProvider(){
 		super();
-		//initialize(MESH4J_PROPERTIES);
-		initialize(getCurrentDirectory()+"\\properties\\"+MESH4J_PROPERTIES);
+		this.resourceName = getCurrentDirectory()+"\\properties\\"+MESH4J_PROPERTIES;
+		initialize();
 	}
 	
 	public PropertiesProvider(String resourceName){
 		super();
-		initialize(resourceName);
+		this.resourceName = resourceName;
+		initialize();
 	}
 	
-	private void initialize(String resourceName) {
+	private void initialize() {
 		try{
 			FileReader reader = new FileReader(resourceName);
 			Properties prop = new Properties();
@@ -126,7 +128,7 @@ public class PropertiesProvider {
 
 	public void store() {
 		try{
-			FileWriter writer = new FileWriter(MESH4J_PROPERTIES);
+			FileWriter writer = new FileWriter(resourceName);
 			this.properties.store(writer, "");
 			writer.close();
 		} catch (Exception e) {
@@ -160,5 +162,41 @@ public class PropertiesProvider {
 
 	public String getGeoCoderKey() {
 		return getString("google.geo.coder.key");
+	}
+
+	public void setString(String key, String value) {
+		this.properties.put(key, value);		
+	}
+
+	public void setInt(String key, int value) {
+		this.properties.put(key, String.valueOf(value));		
+	}
+
+	public int getDefaultSendRetryDelay() {
+		return getInt("default.sms.sender.delay");
+	}
+
+	public int getDefaultReceiveRetryDelay() {
+		return getInt("default.sms.receiver.delay");
+	}
+
+	public int getDefaultReadyToSyncDelay() {
+		return getInt("default.ready.to.sync.delay");
+	}
+
+	public int getDefaultTestPhoneDelay() {
+		return getInt("default.test.phone.delay");
+	}
+
+	public void saveDefaultProperties(String portName, int baudRate,
+			int sendRetryDelay, int receiveRetryDelay, int readyToSyncDelay,
+			int testPhoneDelay) {
+		this.setString("default.sms.port", portName);
+		this.setInt("default.sms.baud.rate", baudRate);
+		this.setInt("default.sms.sender.delay", sendRetryDelay);
+		this.setInt("default.sms.receiver.delay", receiveRetryDelay);
+		this.setInt("default.ready.to.sync.delay", readyToSyncDelay);
+		this.setInt("default.test.phone.delay", testPhoneDelay);
+		this.store();
 	}
 }

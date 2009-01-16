@@ -46,6 +46,7 @@ import org.mesh4j.sync.message.channel.sms.connection.SmsConnectionInboundOutbou
 import org.mesh4j.sync.message.channel.sms.connection.smslib.IProgressMonitor;
 import org.mesh4j.sync.message.channel.sms.connection.smslib.Modem;
 import org.mesh4j.sync.message.channel.sms.connection.smslib.ModemHelper;
+import org.mesh4j.sync.message.channel.sms.connection.smslib.SmsLibAsynchronousConnection;
 import org.mesh4j.sync.message.channel.sms.connection.smslib.SmsLibMessageSyncEngineFactory;
 import org.mesh4j.sync.message.channel.sms.core.SmsChannel;
 import org.mesh4j.sync.message.channel.sms.core.SmsEndpointFactory;
@@ -287,11 +288,9 @@ public class SyncEngineUtil {
 
 	public static MessageSyncEngine createSyncEngine(EpiinfoSourceIdResolver sourceIdResolver, EpiinfoCompactConsoleNotification consoleNotification, PropertiesProvider propertiesProvider) throws Exception {
 		String baseDirectory = propertiesProvider.getBaseDirectory();
-		int senderDelay = propertiesProvider.getInt("default.sms.sender.delay");
-		int receiverDelay = propertiesProvider.getInt("default.sms.receiver.delay");
+		int senderDelay = propertiesProvider.getDefaultSendRetryDelay();
+		int receiverDelay = propertiesProvider.getDefaultReceiveRetryDelay();
 		int maxMessageLenght = propertiesProvider.getInt("default.sms.max.message.lenght");
-		int readDelay = propertiesProvider.getInt("default.sms.demo.read.delay");
-		int channelDelay = propertiesProvider.getInt("default.sms.demo.channel.delay");
 		IIdentityProvider identityProvider = propertiesProvider.getIdentityProvider();
 		IMessageEncoding messageEncoding = propertiesProvider.getDefaultMessageEncoding();
 		String portName = propertiesProvider.getDefaultPort();
@@ -300,42 +299,42 @@ public class SyncEngineUtil {
 		Modem modem = new Modem(portName, baudRate, "sonny", "750i", "", "", 0, 0);
 
 // TODO (JMT) remove it, it is only for emulation
-		return createEmulator(
-				sourceIdResolver, 
-				consoleNotification, 
-				consoleNotification, 
-				EpiInfoUITranslator.getLabelDemo(), 
-				messageEncoding, 
-				identityProvider, 
-				baseDirectory, 
-				0, 
-				0, 
-				0, 
-				0,
-				maxMessageLenght);
+//		return createEmulator(
+//				sourceIdResolver, 
+//				consoleNotification, 
+//				consoleNotification, 
+//				EpiInfoUITranslator.getLabelDemo(), 
+//				messageEncoding, 
+//				identityProvider, 
+//				baseDirectory, 
+//				0, 
+//				0, 
+//				0, 
+//				0,
+//				maxMessageLenght);
 		
-//		return createSyncEngine(
-//			fileNameResolver, 
-//			modem,
-//			baseDirectory, 
-//			senderDelay, 
-//			receiverDelay, 
-//			maxMessageLenght, 
-//			identityProvider,
-//			messageEncoding,
-//			consoleNotification,
-//			consoleNotification);
-// ************************************************888
+		return createSyncEngine(
+			sourceIdResolver, 
+			modem,
+			baseDirectory, 
+			senderDelay, 
+			receiverDelay, 
+			maxMessageLenght, 
+			identityProvider,
+			messageEncoding,
+			consoleNotification,
+			consoleNotification);
+// ************************************************
 	}
 
 	public static void synchronize(MessageSyncEngine syncEngine, SyncMode syncMode, EndpointMapping endpoint, DataSourceMapping dataSource, EpiinfoSourceIdResolver sourceIdResolver, PropertiesProvider propertiesProvider) throws Exception {
 		String baseDirectory = propertiesProvider.getBaseDirectory();
 		IIdentityProvider identityProvider = propertiesProvider.getIdentityProvider();
-		IMessageEncoding messageEncoding = propertiesProvider.getDefaultMessageEncoding();
 		
 // TODO (JMT) remove it, it is only for emulation
-		registerNewEndpointToEmulator(syncEngine, endpoint.getEndpoint(), messageEncoding, 
-				identityProvider, baseDirectory, 0, 0, 0, 0, 160, true);
+//		IMessageEncoding messageEncoding = propertiesProvider.getDefaultMessageEncoding();
+//		registerNewEndpointToEmulator(syncEngine, endpoint.getEndpoint(), messageEncoding, 
+//				identityProvider, baseDirectory, 0, 0, 0, 0, 160, true);
 // ******************
 		
 		synchronize(syncEngine, syncMode, endpoint.getEndpoint(), dataSource.getAlias(), identityProvider, baseDirectory, sourceIdResolver);	
@@ -394,6 +393,12 @@ public class SyncEngineUtil {
 		myEndpoints.put(endpoint.getAlias(), endpoint.getEndpoint());
 		PropertiesUtils.store(fileName, myEndpoints);		
 		
+	}
+
+	public static void initializeSmsConnection(MessageSyncEngine syncEngine, PropertiesProvider propertiesProvider) {
+		SmsChannel smsChannel = (SmsChannel)syncEngine.getChannel();
+		SmsLibAsynchronousConnection smsLibConnection = (SmsLibAsynchronousConnection)smsChannel.getSmsConnection();
+		smsLibConnection.initialize("mesh4x", propertiesProvider.getDefaultPort(), propertiesProvider.getDefaultBaudRate(), "", "");
 	}
 
 }
