@@ -11,7 +11,8 @@ import org.mesh4j.sync.validations.Guard;
 
 public class MsExcelSyncAdapterFactory implements ISyncAdapterFactory {
 
-	public static final String SOURCE_TYPE = "MS_EXCEL";
+	public static final String SOURCE_TYPE = "MsExcel";
+	private static final String MS_EXCEL = SOURCE_TYPE+":";
 	
 	// MODEL VARIABLES
 	private String baseDirectory;
@@ -25,21 +26,21 @@ public class MsExcelSyncAdapterFactory implements ISyncAdapterFactory {
 	
 	public static String createSourceId(String excelFileName, String sheetName, String idColumn){
 		File file = new File(excelFileName);
-		String sourceID = "excel:" + file.getName() + "@" + sheetName + "@" + idColumn;
+		String sourceID = MS_EXCEL + file.getName() + "@" + sheetName + "@" + idColumn;
 		return sourceID;
 	}
 	
 	@Override
 	public boolean acceptsSourceId(String sourceId) {
 		String[] elements = sourceId.split("@");
-		return sourceId.toUpperCase().startsWith("EXCEL:") && elements.length == 4 
+		return sourceId.toUpperCase().startsWith(MS_EXCEL.toUpperCase()) && elements.length == 4 
 			&& (elements[1].toUpperCase().endsWith(".XLS") || elements[1].toUpperCase().endsWith(".XLSX"));
 	}
 
 	@Override
 	public ISyncAdapter createSyncAdapter(String sourceId, IIdentityProvider identityProvider) throws Exception {
 		
-		String[] elements = sourceId.substring("excel:".length(), sourceId.length()).split("@");
+		String[] elements = sourceId.substring(MS_EXCEL.length(), sourceId.length()).split("@");
 		String excelFileName = elements[0];
 		String sheetName = elements[1];
 		String idColumnName = elements[2];
@@ -52,7 +53,7 @@ public class MsExcelSyncAdapterFactory implements ISyncAdapterFactory {
 
 	@Override
 	public String getSourceName(String sourceId) {
-		String[] elements = sourceId.substring("excel:".length(), sourceId.length()).split("@");
+		String[] elements = sourceId.substring(MS_EXCEL.length(), sourceId.length()).split("@");
 		//String excelFileName = elements[0];
 		String sheetName = elements[1];
 		return sheetName;
@@ -62,5 +63,4 @@ public class MsExcelSyncAdapterFactory implements ISyncAdapterFactory {
 	public String getSourceType() {
 		return SOURCE_TYPE;
 	}
-
 }

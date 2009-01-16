@@ -87,7 +87,7 @@ public class MessageSyncProtocolTests {
 		MessageSyncProtocol syncProtocol = new MessageSyncProtocol("M", new BeginSyncMessageProcessor(null, null, null), new CancelSyncMessageProcessor(), new MockSyncSessionRepository(syncSessionFactory), new ArrayList<IMessageProcessor>());
 		
 		SmsEndpoint endpoint = new SmsEndpoint("123");
-		Message message = (Message)syncProtocol.beginSync("123", endpoint, true, true, true);
+		Message message = (Message)syncProtocol.beginSync("MySourceType:123", endpoint, true, true, true);
 		String sourceId = syncProtocol.getInitialMessage().getSourceId(message.getData());
 		SyncSession syncSession = (SyncSession)syncProtocol.getSyncSession(sourceId, endpoint);
 

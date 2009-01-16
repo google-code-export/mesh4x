@@ -65,7 +65,7 @@ public class KmlMessageSyncEngineTests {
 		IMessageSyncAdapter endpointA = new MockInMemoryMessageSyncAdapter(dataSetId, kmlAdapterA.getAll());
 		
 		KMLDOMLoaderFactory kmlfactory = new KMLDOMLoaderFactory(TestHelper.baseDirectoryForTest());
-		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(kmlfactory, false);
+		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(null, false, kmlfactory);
 		SyncSessionFactory syncSessionFactoryA = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);
 		syncSessionFactoryA.registerSource(endpointA);
 	
@@ -211,7 +211,7 @@ public class KmlMessageSyncEngineTests {
 		MockInMemoryMessageSyncAdapter endpointA = new MockInMemoryMessageSyncAdapter(dataSetId, kmlAdapter.getAll());
 		
 		KMLDOMLoaderFactory kmlFactory = new KMLDOMLoaderFactory("");
-		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(kmlFactory, false);
+		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(null, false, kmlFactory);
 		SyncSessionFactory syncSessionFactoryA = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);
 		syncSessionFactoryA.registerSource(endpointA);
 		

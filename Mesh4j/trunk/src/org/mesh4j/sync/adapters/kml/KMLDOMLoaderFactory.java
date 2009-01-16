@@ -76,19 +76,20 @@ public class KMLDOMLoaderFactory implements ISyncAdapterFactory {
 	
 	public static String createSourceId(String kmlFileName){
 		File file = new File(kmlFileName);
-		String sourceID = file.getName();
-		return sourceID;
+		String fileName = file.getName();
+		return SOURCE_TYPE + ":" + fileName;
 	}
 	
 
 	@Override
 	public boolean acceptsSourceId(String sourceId) {
-		return isKML(sourceId);
+		return sourceId.toUpperCase().startsWith(SOURCE_TYPE) && isKML(sourceId);
 	}
 
 	@Override
 	public ISyncAdapter createSyncAdapter(String sourceId, IIdentityProvider identityProvider) throws Exception {
-		String kmlFileName = this.baseDirectory+"/" + sourceId;
+		String fileName = sourceId.substring(SOURCE_TYPE.length() + 1, sourceId.length());
+		String kmlFileName = this.baseDirectory+"/" + fileName;
 		DOMAdapter kmlAdapter = new DOMAdapter(createDOMLoader(kmlFileName, identityProvider));
 		return kmlAdapter;
 	}

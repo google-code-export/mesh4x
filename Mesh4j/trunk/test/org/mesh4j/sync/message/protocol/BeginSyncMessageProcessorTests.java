@@ -32,7 +32,7 @@ public class BeginSyncMessageProcessorTests {
 		IMessage message = mp.createMessage(syncSession);
 
 		Assert.assertNotNull(message);
-		Assert.assertEquals(syncSession.getSourceId()+"|mock|T|T|T|0", message.getData());
+		Assert.assertEquals(syncSession.getSourceId()+"|T|T|T|0", message.getData());
 		Assert.assertEquals(syncSession.getTarget(), message.getEndpoint());
 		Assert.assertEquals(mp.getMessageType(), message.getMessageType());
 		Assert.assertEquals(IProtocolConstants.PROTOCOL, message.getProtocol());
@@ -149,7 +149,7 @@ public class BeginSyncMessageProcessorTests {
 		IMessage message = mp.createMessage(syncSession);
 
 		Assert.assertNotNull(message);
-		Assert.assertEquals(syncSession.getSourceId()+"|mock|T|T|T|0|"+DateHelper.formatDateTime(date), message.getData());
+		Assert.assertEquals(syncSession.getSourceId()+"|T|T|T|0|"+DateHelper.formatDateTime(date), message.getData());
 		Assert.assertEquals(syncSession.getTarget(), message.getEndpoint());
 		Assert.assertEquals(mp.getMessageType(), message.getMessageType());
 		Assert.assertEquals(IProtocolConstants.PROTOCOL, message.getProtocol());

@@ -105,11 +105,8 @@ public class BeginSyncMessageProcessor implements IMessageProcessor, IBeginSyncM
 
 	private String encode(ISyncSession syncSession) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(syncSession.getSourceId());
-		
-		sb.append(IProtocolConstants.ELEMENT_SEPARATOR);
-		sb.append(syncSession.getSourceType());
-		
+		sb.append(syncSession.getSourceId());				// MSAccess:Oswego
+	
 		sb.append(IProtocolConstants.ELEMENT_SEPARATOR);
 		sb.append(syncSession.isFullProtocol() ? "T" : "F");
 		
@@ -144,7 +141,6 @@ public class BeginSyncMessageProcessor implements IMessageProcessor, IBeginSyncM
 	private Date decodeSyncDate(String data) {
 		StringTokenizer st =  new StringTokenizer(data, IProtocolConstants.ELEMENT_SEPARATOR);
 		st.nextToken();	// skip source id
-		st.nextToken();	// skip source type
 		st.nextToken();	// skip full protocol
 		st.nextToken();	// skip send changes
 		st.nextToken();	// skip receive changes
@@ -159,7 +155,6 @@ public class BeginSyncMessageProcessor implements IMessageProcessor, IBeginSyncM
 	private String decodeGlobalHash(String data) {
 		StringTokenizer st =  new StringTokenizer(data, IProtocolConstants.ELEMENT_SEPARATOR);
 		st.nextToken();	// skip source id
-		st.nextToken();	// skip source type
 		st.nextToken();	// skip full protocol
 		st.nextToken();	// skip send changes
 		st.nextToken();	// skip receive changes
@@ -168,14 +163,7 @@ public class BeginSyncMessageProcessor implements IMessageProcessor, IBeginSyncM
 
 	@Override
 	public String getSourceId(String data) {
-		StringTokenizer st =  new StringTokenizer(data, IProtocolConstants.ELEMENT_SEPARATOR);
-		return st.nextToken();
-	}
-	
-	public static String getSourceType(String data) {
-		StringTokenizer st =  new StringTokenizer(data, IProtocolConstants.ELEMENT_SEPARATOR);
-		st.nextToken();	// skip source id
-		return st.nextToken();
+		return getSourceIdFromData(data);
 	}
 
 	public void setMessageSyncProtocol(IMessageSyncProtocol messageSyncProtocol) {
@@ -186,7 +174,6 @@ public class BeginSyncMessageProcessor implements IMessageProcessor, IBeginSyncM
 	public boolean getFullProtocol(String data) {
 		StringTokenizer st =  new StringTokenizer(data, IProtocolConstants.ELEMENT_SEPARATOR);
 		st.nextToken();	// skip source id
-		st.nextToken();	// skip source type
 		return "T".equals(st.nextToken());
 	}
 
@@ -194,7 +181,6 @@ public class BeginSyncMessageProcessor implements IMessageProcessor, IBeginSyncM
 	public boolean getReceiveChanges(String data) {
 		StringTokenizer st =  new StringTokenizer(data, IProtocolConstants.ELEMENT_SEPARATOR);
 		st.nextToken();	// skip source id
-		st.nextToken();	// skip source type
 		st.nextToken();	// skip full protocol
 		st.nextToken();	// skip send changes
 		return "T".equals(st.nextToken());
@@ -204,8 +190,12 @@ public class BeginSyncMessageProcessor implements IMessageProcessor, IBeginSyncM
 	public boolean getSendChanges(String data) {
 		StringTokenizer st =  new StringTokenizer(data, IProtocolConstants.ELEMENT_SEPARATOR);
 		st.nextToken();	// skip source id
-		st.nextToken();	// skip source type
 		st.nextToken();	// skip full protocol
 		return "T".equals(st.nextToken());
+	}
+
+	public static String getSourceIdFromData(String data) {
+		StringTokenizer st =  new StringTokenizer(data, IProtocolConstants.ELEMENT_SEPARATOR);
+		return st.nextToken();
 	}
 }

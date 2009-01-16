@@ -14,12 +14,12 @@ public class MessageSyncAdapterFactory implements IMessageSyncAdapterFactory {
 
 	// MODEL VARIABLES
 	private boolean supportInMemoryAdapter = false;
-	private ISyncAdapterFactory defaultSyncAdapterFactory;
+	private IOpaqueSyncAdapterFactory defaultSyncAdapterFactory;
 	private ArrayList<ISyncAdapterFactory> syncAdapterFactories = new ArrayList<ISyncAdapterFactory>();
 	
 	// BUSINESS METHODS
 	
-	public MessageSyncAdapterFactory(ISyncAdapterFactory defaultSyncAdapterFactory, boolean supportInMemoryAdapter, ISyncAdapterFactory ... allSyncAdapterFactories) {
+	public MessageSyncAdapterFactory(IOpaqueSyncAdapterFactory defaultSyncAdapterFactory, boolean supportInMemoryAdapter, ISyncAdapterFactory ... allSyncAdapterFactories) {
 		this.supportInMemoryAdapter = supportInMemoryAdapter;
 		this.defaultSyncAdapterFactory = defaultSyncAdapterFactory;
 		for (ISyncAdapterFactory syncAdapterFactory : allSyncAdapterFactories) {
@@ -49,7 +49,8 @@ public class MessageSyncAdapterFactory implements IMessageSyncAdapterFactory {
 			}
 		}
 		if(msgSyncAdapter == null && this.defaultSyncAdapterFactory != null){
-			ISyncAdapter syncAdapter = this.defaultSyncAdapterFactory.createSyncAdapter(sourceId, identityProvider);
+			String sourceIdForDefaultSyncAdapter = this.defaultSyncAdapterFactory.createSourceId(sourceId);
+			ISyncAdapter syncAdapter = this.defaultSyncAdapterFactory.createSyncAdapter(sourceIdForDefaultSyncAdapter, identityProvider);
 			msgSyncAdapter = new MessageSyncAdapter(sourceId, this.defaultSyncAdapterFactory.getSourceType(), identityProvider, syncAdapter);
 		}
 		return msgSyncAdapter;
