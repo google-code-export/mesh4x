@@ -52,6 +52,7 @@ import org.mesh4j.sync.message.channel.sms.core.SmsEndpointFactory;
 import org.mesh4j.sync.message.core.LoggerMessageSyncAware;
 import org.mesh4j.sync.message.core.MessageSyncAdapter;
 import org.mesh4j.sync.message.core.repository.MessageSyncAdapterFactory;
+import org.mesh4j.sync.message.core.repository.OpaqueFeedSyncAdapterFactory;
 import org.mesh4j.sync.message.encoding.IMessageEncoding;
 import org.mesh4j.sync.message.protocol.MessageSyncProtocolFactory;
 import org.mesh4j.sync.model.Item;
@@ -112,14 +113,14 @@ public class SyncEngineUtil {
 		MessageSyncEngine syncEngine = createSyncEngineEmulator(
 				sourceIdResolver, smsFrom, encoding, identityProvider, baseDirectory+"/",
 				senderDelay, receiverDelay, readDelay, channelDelay,
-				maxMessageLenght, target, smsConnectionNotification, syncAware);
+				maxMessageLenght, target, smsConnectionNotification, syncAware, false);
 	
 		return syncEngine;
 	}
 
 	public static void registerNewEndpointToEmulator(MessageSyncEngine syncEngine, String smsTo, IMessageEncoding encoding, 
 			IIdentityProvider identityProvider, String baseDirectory, 
-			int senderDelay, int receiverDelay, int readDelay, int channelDelay, int maxMessageLenght) {
+			int senderDelay, int receiverDelay, int readDelay, int channelDelay, int maxMessageLenght, boolean isOpaque) {
 
 		String targetDirectory = baseDirectory + "/" +smsTo +"/";
 		
@@ -133,7 +134,7 @@ public class SyncEngineUtil {
 			MessageSyncEngine backgroundSyncEngine = createSyncEngineEmulator(sourceIdResolver,
 					smsTo, encoding, identityProvider, targetDirectory,
 					senderDelay, receiverDelay, readDelay, channelDelay,
-					maxMessageLenght, backgroundTarget, new SmsConnectionInboundOutboundNotification(), new LoggerMessageSyncAware());
+					maxMessageLenght, backgroundTarget, new SmsConnectionInboundOutboundNotification(), new LoggerMessageSyncAware(), isOpaque);
 
 			SmsChannel backgroundChannel = (SmsChannel)backgroundSyncEngine.getChannel();
 			InMemorySmsConnection backgroundSmsConnection = (InMemorySmsConnection) backgroundChannel.getSmsConnection(); 
@@ -147,14 +148,20 @@ public class SyncEngineUtil {
 			IMessageEncoding encoding, IIdentityProvider identityProvider,
 			String baseDirectory, int senderDelay, int receiverDelay,
 			int readDelay, int channelDelay, int maxMessageLenght, SmsEndpoint target,
-			ISmsConnectionInboundOutboundNotification smsConnectionInboundOutboundNotification, IMessageSyncAware syncAware) {
+			ISmsConnectionInboundOutboundNotification smsConnectionInboundOutboundNotification, IMessageSyncAware syncAware,
+			boolean isOpaque) {
 		
 		InMemorySmsConnection smsConnection = new InMemorySmsConnection(encoding, maxMessageLenght, readDelay, target, channelDelay);
 		smsConnection.setSmsConnectionOutboundNotification(smsConnectionInboundOutboundNotification);
 		
 		ISyncAdapterFactory syncAdapterFactory = makeSyncAdapterFactory(sourceIdResolver, baseDirectory);
-		
-		MessageSyncAdapterFactory messageSyncAdapterFactory = new MessageSyncAdapterFactory(null, false, syncAdapterFactory);
+
+		MessageSyncAdapterFactory messageSyncAdapterFactory;
+		if(isOpaque){
+			messageSyncAdapterFactory = new MessageSyncAdapterFactory(new OpaqueFeedSyncAdapterFactory(baseDirectory), false);
+		} else {
+			messageSyncAdapterFactory = new MessageSyncAdapterFactory(null, false, syncAdapterFactory);
+		}
 		
 		IChannel channel = SmsChannelFactory.createChannelWithFileRepository(smsConnection, senderDelay, receiverDelay, baseDirectory);
 		
@@ -328,7 +335,7 @@ public class SyncEngineUtil {
 		
 // TODO (JMT) remove it, it is only for emulation
 		registerNewEndpointToEmulator(syncEngine, endpoint.getEndpoint(), messageEncoding, 
-				identityProvider, baseDirectory, 0, 0, 0, 0, 160);
+				identityProvider, baseDirectory, 0, 0, 0, 0, 160, true);
 // ******************
 		
 		synchronize(syncEngine, syncMode, endpoint.getEndpoint(), dataSource.getAlias(), identityProvider, baseDirectory, sourceIdResolver);	

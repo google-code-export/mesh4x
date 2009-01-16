@@ -710,7 +710,7 @@ public class EpiinfoUI{
 
 	    			if(emulate){	    				
 	    				SyncEngineUtil.registerNewEndpointToEmulator(syncEngine, textFieldPhoneNumber.getText(), messageEncoding, 
-	    					identityProvider, baseDirectory, senderDelay, receiverDelay, readDelay, channelDelay, maxMessageLenght);
+	    					identityProvider, baseDirectory, senderDelay, receiverDelay, readDelay, channelDelay, maxMessageLenght, false);
 	    			}
 	    			
 	    			String sourceAlias = sourceIdResolver.getSourceName(dataSource, tableName);

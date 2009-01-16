@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mesh4j.sync.adapters.feed.FeedAdapter;
-import org.mesh4j.sync.adapters.feed.FeedSyncAdapterFactory;
 import org.mesh4j.sync.adapters.kml.KMLDOMLoaderFactory;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.message.IMessageSyncAdapter;
@@ -56,7 +55,7 @@ public class SyncSessionFactoryTests {
 	public void shouldCreateSessionReturnsFeedAdapterWhenSourceIDDoesNotRegistered(){
 		SyncSessionFactory factory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory());
 		
-		IMessageSyncAdapter adapter = ((SyncSession)factory.createSession("1", 0, "123", new SmsEndpoint("123"), true, true, true)).getSyncAdapter();
+		IMessageSyncAdapter adapter = ((SyncSession)factory.createSession("1", 0, "kml:123", new SmsEndpoint("123"), true, true, true)).getSyncAdapter();
 		Assert.assertEquals(MessageSyncAdapter.class.getName(), adapter.getClass().getName());
 		Assert.assertEquals(FeedAdapter.class.getName(), ((MessageSyncAdapter)adapter).getSyncAdapter().getClass().getName());
 		
@@ -66,7 +65,7 @@ public class SyncSessionFactoryTests {
 	public void shouldBasicCreateSessionReturnsFeedAdapterWhenSourceIDDoesNotRegistered(){
 		SyncSessionFactory factory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory());
 		
-		IMessageSyncAdapter adapter = ((SyncSession)factory.createSession("1", 0, "123", "333", true, true, true, true, false, null, new ArrayList<Item>(), new ArrayList<Item>(), new ArrayList<String>(), new ArrayList<String>(), 0, 0, 0)).getSyncAdapter();
+		IMessageSyncAdapter adapter = ((SyncSession)factory.createSession("1", 0, "kml:123", "333", true, true, true, true, false, null, new ArrayList<Item>(), new ArrayList<Item>(), new ArrayList<String>(), new ArrayList<String>(), 0, 0, 0)).getSyncAdapter();
 		Assert.assertEquals(MessageSyncAdapter.class.getName(), adapter.getClass().getName());
 		Assert.assertEquals(FeedAdapter.class.getName(), ((MessageSyncAdapter)adapter).getSyncAdapter().getClass().getName());
 
@@ -74,7 +73,7 @@ public class SyncSessionFactoryTests {
 
 	@Test
 	public void shouldCreateSession(){
-		String sourceID = "123";
+		String sourceID = "kml:123";
 		String sessionID = IdGenerator.INSTANCE.newID();
 		SmsEndpoint endpoint = new SmsEndpoint("123");
 		
@@ -95,7 +94,7 @@ public class SyncSessionFactoryTests {
 	}
 
 	private MessageSyncAdapterFactory createMessageSyncAdapterFactory() {
-		FeedSyncAdapterFactory feedFactory = new FeedSyncAdapterFactory(TestHelper.baseDirectoryForTest());
+		OpaqueFeedSyncAdapterFactory feedFactory = new OpaqueFeedSyncAdapterFactory(TestHelper.baseDirectoryForTest());
 		KMLDOMLoaderFactory kmlFactory = new KMLDOMLoaderFactory(TestHelper.baseDirectoryForTest());
 		
 		MessageSyncAdapterFactory msgSyncAdapter = new MessageSyncAdapterFactory(feedFactory, false, kmlFactory);

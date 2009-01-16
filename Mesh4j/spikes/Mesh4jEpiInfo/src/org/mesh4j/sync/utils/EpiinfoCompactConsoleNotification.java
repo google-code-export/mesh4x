@@ -142,8 +142,8 @@ public class EpiinfoCompactConsoleNotification implements ISmsConnectionInboundO
 			syncSession.getNumberOfDeletedItems());
 		
 		if(BeginSyncMessageProcessor.MESSAGE_TYPE.equals(message.getMessageType())){
-			String dataSourceId = BeginSyncMessageProcessor.getSourceIdFromData(message.getData());
-			ui.updateRemoteDataSource(dataSourceId);
+			String dataSourceType = BeginSyncMessageProcessor.getSourceType(message.getData());
+			ui.updateRemoteDataSource(dataSourceType);
 			ui.increaseSmsIn();
 		}
 

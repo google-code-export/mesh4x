@@ -5,7 +5,6 @@ import java.util.ArrayList;
 
 import org.mesh4j.sync.IFilter;
 import org.mesh4j.sync.adapters.dom.DOMAdapter;
-import org.mesh4j.sync.adapters.feed.FeedSyncAdapterFactory;
 import org.mesh4j.sync.adapters.kml.KMLDOMLoaderFactory;
 import org.mesh4j.sync.message.IChannel;
 import org.mesh4j.sync.message.IMessageSyncAdapter;
@@ -26,6 +25,7 @@ import org.mesh4j.sync.message.channel.sms.core.SmsEndpointFactory;
 import org.mesh4j.sync.message.core.MessageSyncAdapter;
 import org.mesh4j.sync.message.core.NonMessageEncoding;
 import org.mesh4j.sync.message.core.repository.MessageSyncAdapterFactory;
+import org.mesh4j.sync.message.core.repository.OpaqueFeedSyncAdapterFactory;
 import org.mesh4j.sync.message.encoding.IMessageEncoding;
 import org.mesh4j.sync.message.protocol.IProtocolConstants;
 import org.mesh4j.sync.message.protocol.MessageSyncProtocolFactory;
@@ -88,7 +88,7 @@ public class SmsHelper {
 	
 	private static MessageSyncEngine createSyncEngine(IMessageSyncAware syncAware, String repositoryBaseDirectory, IIdentityProvider identityProvider, ISmsConnection smsConnection, int senderDelay, int receiverDelay){
 		KMLDOMLoaderFactory kmlSyncAdapterFactory = new KMLDOMLoaderFactory(repositoryBaseDirectory);
-		FeedSyncAdapterFactory feedSyncAdapterFactory = new FeedSyncAdapterFactory(repositoryBaseDirectory);
+		OpaqueFeedSyncAdapterFactory feedSyncAdapterFactory = new OpaqueFeedSyncAdapterFactory(repositoryBaseDirectory);
 		
 		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(feedSyncAdapterFactory, false, kmlSyncAdapterFactory);		
 		IChannel channel = SmsChannelFactory.createChannelWithFileRepository(smsConnection, senderDelay, receiverDelay, repositoryBaseDirectory);

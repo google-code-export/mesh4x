@@ -6,12 +6,12 @@ import java.util.Date;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mesh4j.sync.adapters.feed.FeedAdapter;
-import org.mesh4j.sync.adapters.feed.FeedSyncAdapterFactory;
 import org.mesh4j.sync.message.IMessageSyncProtocol;
 import org.mesh4j.sync.message.ISyncSession;
 import org.mesh4j.sync.message.channel.sms.SmsEndpoint;
 import org.mesh4j.sync.message.channel.sms.core.SmsEndpointFactory;
 import org.mesh4j.sync.message.core.repository.MessageSyncAdapterFactory;
+import org.mesh4j.sync.message.core.repository.OpaqueFeedSyncAdapterFactory;
 import org.mesh4j.sync.message.core.repository.SyncSessionFactory;
 import org.mesh4j.sync.message.protocol.BeginSyncMessageProcessor;
 import org.mesh4j.sync.message.protocol.CancelSyncMessageProcessor;
@@ -82,7 +82,7 @@ public class MessageSyncProtocolTests {
 	
 	@Test
 	public void shouldBeginSyncUseFeedAdapterWhenSourceIDIsNotRegistered(){
-		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(new FeedSyncAdapterFactory(""), true);
+		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(new OpaqueFeedSyncAdapterFactory(""), true);
 		SyncSessionFactory syncSessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);
 		MessageSyncProtocol syncProtocol = new MessageSyncProtocol("M", new BeginSyncMessageProcessor(null, null, null), new CancelSyncMessageProcessor(), new MockSyncSessionRepository(syncSessionFactory), new ArrayList<IMessageProcessor>());
 		

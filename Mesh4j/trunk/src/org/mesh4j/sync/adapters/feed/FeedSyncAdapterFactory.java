@@ -3,13 +3,13 @@ package org.mesh4j.sync.adapters.feed;
 import java.io.File;
 
 import org.mesh4j.sync.ISyncAdapter;
+import org.mesh4j.sync.adapters.ISyncAdapterFactory;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.id.generator.IdGenerator;
-import org.mesh4j.sync.message.core.repository.IOpaqueSyncAdapterFactory;
 import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.validations.Guard;
 
-public class FeedSyncAdapterFactory implements IOpaqueSyncAdapterFactory {
+public class FeedSyncAdapterFactory implements ISyncAdapterFactory {
 
 	public final static String SOURCE_TYPE = RssSyndicationFormat.INSTANCE.getName();
 	
@@ -23,22 +23,6 @@ public class FeedSyncAdapterFactory implements IOpaqueSyncAdapterFactory {
 		this.baseDirectory = baseDirectory;
 	}
 
-	@Override
-	public String createSourceId(String source){
-		StringBuffer sb = new StringBuffer();
-			
-		if(!source.toUpperCase().startsWith(SOURCE_TYPE)){
-			sb.append(SOURCE_TYPE);
-			sb.append(":");
-		}
-		sb.append(source);
-		
-		if(!source.toUpperCase().endsWith(".XML")){
-			sb.append(".xml");	
-		}
-		return sb.toString();
-	}
-	
 	public static String createSourceIdFromFileName(String feedFileName){
 		File file = new File(feedFileName);
 		String fileName = file.getName();

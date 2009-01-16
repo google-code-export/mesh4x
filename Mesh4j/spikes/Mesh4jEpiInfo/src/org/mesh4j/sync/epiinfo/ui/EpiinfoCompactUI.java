@@ -633,8 +633,7 @@ public class EpiinfoCompactUI {
 		frame.getContentPane().setLayout(new FormLayout(
 			new ColumnSpec[] {
 				ColumnSpec.decode("20dlu"),
-				ColumnSpec.decode("259dlu"),
-				ColumnSpec.decode("15dlu")},
+				ColumnSpec.decode("272dlu")},
 			new RowSpec[] {
 				RowSpec.decode("6dlu"),
 				RowSpec.decode("89dlu"),
@@ -643,10 +642,10 @@ public class EpiinfoCompactUI {
 				RowSpec.decode("41dlu"),
 				RowSpec.decode("9dlu"),
 				RowSpec.decode("20dlu"),
-				RowSpec.decode("29dlu")}));
+				RowSpec.decode("28dlu")}));
 		frame.setResizable(false);
 		frame.setTitle(EpiInfoUITranslator.getTitle());
-		frame.setBounds(100, 100, 595, 450);
+		frame.setBounds(100, 100, 590, 446);
 		frame.getContentPane().add(getPanelSync(), new CellConstraints(2, 2));
 		frame.getContentPane().add(getPanelProgress(), new CellConstraints(2, 4, CellConstraints.FILL, CellConstraints.FILL));
 
@@ -806,7 +805,7 @@ public class EpiinfoCompactUI {
 			new RowSpec[] {
 				RowSpec.decode("16dlu"),
 				FormFactory.DEFAULT_ROWSPEC}));
-		frame.getContentPane().add(panelTrademark, new CellConstraints(1, 8, 3, 1));
+		frame.getContentPane().add(panelTrademark, new CellConstraints(1, 8, 2, 1));
 
 		final JLabel labelTrademark = new JLabel();
 		labelTrademark.setFont(new Font("Calibri", Font.BOLD, 10));
@@ -991,7 +990,7 @@ public class EpiinfoCompactUI {
 					ColumnSpec.decode("52dlu"),
 					ColumnSpec.decode("140dlu"),
 					FormFactory.RELATED_GAP_COLSPEC,
-					ColumnSpec.decode("56dlu")},
+					ColumnSpec.decode("69dlu")},
 				new RowSpec[] {
 					RowSpec.decode("58dlu")}));
 			panelProgress.add(getLabelLocalDataSource(), new CellConstraints(2, 1, CellConstraints.FILL, CellConstraints.FILL));
