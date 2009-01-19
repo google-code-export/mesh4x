@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.mesh4j.sync.message.IEndpoint;
 import org.mesh4j.sync.message.IMessage;
 import org.mesh4j.sync.message.IMessageSyncAware;
 import org.mesh4j.sync.message.ISyncSession;
@@ -35,8 +34,8 @@ public class LoggerMessageSyncAware implements IMessageSyncAware {
 	}
 
 	@Override
-	public void notifyCancelSyncErrorSyncSessionNotOpen(String sourceId, IEndpoint endpoint) {
-		Logger.info("Cancel sync error: " + sourceId + " endpoint: " + endpoint.getEndpointId());
+	public void notifyCancelSyncErrorSyncSessionNotOpen(ISyncSession syncSession) {
+		Logger.info("Cancel sync error: " + syncSession.getSourceId() + " endpoint: " + syncSession.getTarget().getEndpointId());
 	}
 
 	@Override

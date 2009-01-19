@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Date;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -15,7 +17,14 @@ import javax.swing.border.EmptyBorder;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.mesh4j.sync.message.IMessage;
+import org.mesh4j.sync.message.IMessageSyncAware;
+import org.mesh4j.sync.message.ISyncSession;
+import org.mesh4j.sync.message.channel.sms.connection.ISmsConnectionInboundOutboundNotification;
+import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.ui.translator.EpiInfoCompactUITranslator;
+import org.mesh4j.sync.ui.translator.EpiInfoUITranslator;
+import org.mesh4j.sync.utils.EpiinfoSourceIdResolver;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -24,7 +33,7 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 import com.swtdesigner.SwingResourceManager;
 
-public class LogFrame extends JFrame {
+public class LogFrame extends JFrame implements ISmsConnectionInboundOutboundNotification, IMessageSyncAware {
 	
 	private static final long serialVersionUID = -5672081373978129329L;
 	
@@ -32,11 +41,15 @@ public class LogFrame extends JFrame {
 
 	// MODEL VARIABLES
 	private JTextArea textAreaConsoleView;
+	private EpiinfoSourceIdResolver sourceIdResolver;
 	
 	// BUSINESS METHODS
 
-	public LogFrame() {
+	public LogFrame(EpiinfoSourceIdResolver sourceIdResolver) {
 		super();
+		
+		this.sourceIdResolver = sourceIdResolver;
+		
 		setIconImage(SwingResourceManager.getImage(LogFrame.class, "/cdc.gif"));
 		getContentPane().setBackground(Color.WHITE);
 		setTitle(EpiInfoCompactUITranslator.getLogWindowTitle());
@@ -149,5 +162,92 @@ public class LogFrame extends JFrame {
 		if(Logger.isInfoEnabled()){
 			Logger.info(text);
 		}
+	}
+	
+	
+	// ISmsConnectionInboundOutboundNotification methods
+	@Override
+	public void notifyReceiveMessage(String endpointId, String message, Date date) {
+		this.log("\t"+EpiInfoUITranslator.getMessageNotifyReceiveMessageError(endpointId, message));
+	}
+
+	@Override
+	public void notifyReceiveMessageError(String endpointId, String message, Date date) {
+		String error = EpiInfoUITranslator.getMessageNotifyReceiveMessage(endpointId, message);
+		this.log("\t"+error);
+	}
+
+	@Override
+	public void notifySendMessage(String endpointId, String message) {
+		this.log("\t"+EpiInfoUITranslator.getMessageNotifySendMessage(endpointId, message));
+	}
+
+	@Override
+	public void notifySendMessageError(String endpointId, String message) {
+		String error = EpiInfoUITranslator.getMessageNotifySendMessageError(endpointId, message);
+		this.log("\t"+error);
+	}
+	
+	@Override
+	public void notifyReceiveMessageWasNotProcessed(String endpoint, String message, Date date) {
+		// nothing to do
+	}
+
+	
+	// IMessageSyncAware methods
+
+	@Override
+	public void beginSync(ISyncSession syncSession) {
+		this.log(EpiInfoUITranslator.getLabelStart());
+	}
+
+	@Override
+	public void endSync(ISyncSession syncSession, List<Item> conflicts) {
+		endSync(syncSession.getTarget().getEndpointId(), syncSession.getSourceId(), conflicts);
+	}
+	
+	public void endSync(String target, String sourceId, List<Item> conflicts) {
+		if(conflicts.isEmpty()){
+			this.log(EpiInfoUITranslator.getLabelSuccess());
+		} else {
+			this.log(EpiInfoUITranslator.getLabelSyncEndWithConflicts(conflicts.size()));
+		}
+	}
+
+	@Override
+	public void beginSyncWithError(ISyncSession syncSession) {
+		String error = EpiInfoUITranslator.getMessageErrorBeginSync(syncSession.getTarget().getEndpointId(), sourceIdResolver.getSourceName(syncSession.getSourceId()));
+		this.log(error);		
+	}
+
+	@Override
+	public void notifyCancelSync(ISyncSession syncSession) {
+		this.log(EpiInfoUITranslator.getMessageCancelSync(syncSession.getSessionId(), syncSession.getTarget().getEndpointId(), sourceIdResolver.getSourceName(syncSession.getSourceId())));
+	}
+
+	@Override
+	public void notifyCancelSyncErrorSyncSessionNotOpen(ISyncSession syncSession) {
+		String error = EpiInfoUITranslator.getMessageCancelSyncErrorSessionNotOpen(syncSession.getTarget(), syncSession.getSourceId());
+		this.log(error);		
+	}
+
+	@Override
+	public void notifyInvalidMessageProtocol(IMessage message) {
+		this.log(EpiInfoUITranslator.getMessageInvalidMessageProtocol(message));
+	}
+
+	@Override
+	public void notifyInvalidProtocolMessageOrder(IMessage message) {
+		this.log(EpiInfoUITranslator.getMessageErrorInvalidProtocolMessageOrder(message));
+	}
+
+	@Override
+	public void notifyMessageProcessed(ISyncSession syncSession, IMessage message, List<IMessage> response) {
+		this.log(EpiInfoUITranslator.getMessageProcessed(message, response));
+	}
+
+	@Override
+	public void notifySessionCreationError(IMessage message, String sourceId) {
+		this.log(EpiInfoUITranslator.getMessageErrorSessionCreation(message, sourceIdResolver.getSourceName(sourceId)));
 	}
 }

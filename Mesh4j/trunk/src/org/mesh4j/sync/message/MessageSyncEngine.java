@@ -120,4 +120,8 @@ public class MessageSyncEngine implements IMessageReceiver {
 	public IMessageSyncProtocol getSyncProtocol(){
 		return this.syncProtocol;
 	}
+
+	public List<ISyncSession> getAllSyncSessions() {
+		return this.syncProtocol.getAllSyncSessions();
+	}
 }

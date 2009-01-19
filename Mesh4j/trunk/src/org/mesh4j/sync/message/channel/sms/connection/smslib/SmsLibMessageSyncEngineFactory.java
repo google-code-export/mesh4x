@@ -48,7 +48,7 @@ public class SmsLibMessageSyncEngineFactory {
 	private static MessageSyncEngine createSyncEngine(IMessageSyncAware syncAware, String repositoryBaseDirectory, IIdentityProvider identityProvider, ISmsConnection smsConnection, int senderDelay, int receiverDelay, ISyncAdapterFactory ... syncAdapterFactories){
 		MessageSyncAdapterFactory msgSyncAdapterFactory = new MessageSyncAdapterFactory(null, false, syncAdapterFactories);		
 		IChannel channel = SmsChannelFactory.createChannelWithFileRepository(smsConnection, senderDelay, receiverDelay, repositoryBaseDirectory);
-		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocolWithFileRepository(100, repositoryBaseDirectory, identityProvider, syncAware, SmsEndpointFactory.INSTANCE, msgSyncAdapterFactory);
+		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocolWithFileRepository(100, repositoryBaseDirectory, identityProvider, new IMessageSyncAware[]{syncAware}, SmsEndpointFactory.INSTANCE, msgSyncAdapterFactory);
 		return new MessageSyncEngine(syncProtocol, channel);		
 	}
 }

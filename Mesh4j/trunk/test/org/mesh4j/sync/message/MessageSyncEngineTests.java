@@ -628,6 +628,7 @@ public class MessageSyncEngineTests {
 			@Override public void notifyBeginSync(ISyncSession syncSession) {}
 			@Override public void registerSyncAware(IMessageSyncAware syncAware) {}
 			@Override public IMessageSyncAdapter getSource(String sourceId) { return null; }
+			@Override public List<ISyncSession> getAllSyncSessions() {return null;}
 		};
 		MessageSyncEngine engine = new MessageSyncEngine(protocol, channel);
 		engine.cancelSync("123", new SmsEndpoint("123"));
@@ -661,6 +662,7 @@ public class MessageSyncEngineTests {
 			@Override public void registerSyncAware(IMessageSyncAware syncAware) {}
 			@Override public void cancelSync(ISyncSession syncSession) {Assert.fail();}
 			@Override public IMessageSyncAdapter getSource(String sourceId) { return null; }
+			@Override public List<ISyncSession> getAllSyncSessions() {return null;}
 		};
 		new MessageSyncEngine(protocol, null);
 	}

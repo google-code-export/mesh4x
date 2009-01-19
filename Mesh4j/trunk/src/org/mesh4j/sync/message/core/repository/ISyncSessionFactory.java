@@ -32,4 +32,6 @@ public interface ISyncSessionFactory {
 	
 	void registerSourceIfAbsent(IMessageSyncAdapter source);
 
+	List<ISyncSession> getAll();
+
 }

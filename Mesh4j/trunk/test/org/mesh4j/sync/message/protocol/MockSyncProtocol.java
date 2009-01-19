@@ -1,5 +1,6 @@
 package org.mesh4j.sync.message.protocol;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -85,6 +86,13 @@ public class MockSyncProtocol implements IMessageSyncProtocol {
 
 	public String getSourceType() {
 		return this.adapter.getSourceType();
+	}
+
+	@Override
+	public List<ISyncSession> getAllSyncSessions() {
+		List<ISyncSession> all = new ArrayList<ISyncSession>();
+		all.add(this.session);
+		return all;
 	}
 
 }

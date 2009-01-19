@@ -13,6 +13,7 @@ import org.mesh4j.sync.message.channel.sms.SmsEndpoint;
 import org.mesh4j.sync.message.channel.sms.connection.InMemorySmsConnection;
 import org.mesh4j.sync.message.channel.sms.core.SmsChannel;
 import org.mesh4j.sync.message.channel.sms.core.SmsReceiver;
+import org.mesh4j.sync.message.core.MessageSyncProtocol;
 import org.mesh4j.sync.ui.translator.EpiInfoUITranslator;
 
 public class EmulateIncomingSyncTask extends SwingWorker<Void, Void> {
@@ -40,7 +41,7 @@ public class EmulateIncomingSyncTask extends SwingWorker<Void, Void> {
 		MessageSyncEngine messageSyncEngineEndpoint = (MessageSyncEngine) channelEndpoint.getMessageReceiver();
 		
 		String sourceID = MsAccessSyncAdapterFactory.createSourceId(dataSource.getAlias());
-		IMessageSyncAdapter adapter = messageSyncEngineEndpoint.getSource(sourceID);
+		IMessageSyncAdapter adapter = ((MessageSyncProtocol)messageSyncEngineEndpoint.getSyncProtocol()).getSourceOrCreateIfAbsent(sourceID);
 		SmsEndpoint target = new SmsEndpoint(EpiInfoUITranslator.getLabelDemo());
 		messageSyncEngineEndpoint.synchronize(adapter, target, true, syncMode.shouldSendChanges(), syncMode.shouldReceiveChanges());
 		return null;

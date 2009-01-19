@@ -33,8 +33,11 @@ public interface ISyncSession {
 	void cancelSync();
 	
 	Date getLastSyncDate();
+	
 	boolean isOpen();
 	boolean isCompleteSync();
+	boolean isCancelled();
+	
 	List<Item> getSnapshot();
 	
 	void waitForAck(String syncId);
@@ -42,16 +45,13 @@ public interface ISyncSession {
 
 	Date createSyncDate();
 
-	boolean isFullProtocol();
-
 	List<Item> getCurrentSnapshot();
 
 	List<String> getAllPendingACKs();
 
 	List<String> getConflictsSyncIDs();
 
-	boolean isCancelled();
-	
+	boolean isFullProtocol();
 	boolean shouldSendChanges();
 	boolean shouldReceiveChanges();
 	

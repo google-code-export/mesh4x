@@ -39,7 +39,6 @@ import org.mesh4j.sync.adapters.kml.KMLDOMLoaderFactory;
 import org.mesh4j.sync.adapters.sms.SmsHelper;
 import org.mesh4j.sync.id.generator.IIdGenerator;
 import org.mesh4j.sync.id.generator.IdGenerator;
-import org.mesh4j.sync.message.IEndpoint;
 import org.mesh4j.sync.message.IMessage;
 import org.mesh4j.sync.message.IMessageSyncAware;
 import org.mesh4j.sync.message.ISyncSession;
@@ -967,8 +966,8 @@ public class Mesh4jSmsUI implements ISmsConnectionInboundOutboundNotification, I
 	}
 
 	@Override
-	public void notifyCancelSyncErrorSyncSessionNotOpen(String sourceId, IEndpoint endpoint) {
-		log(Mesh4jSmsUITranslator.getMessageCancelSyncErrorSessionNotOpen(endpoint, sourceId));		
+	public void notifyCancelSyncErrorSyncSessionNotOpen(ISyncSession syncSession) {
+		log(Mesh4jSmsUITranslator.getMessageCancelSyncErrorSessionNotOpen(syncSession.getTarget(), syncSession.getSourceId()));		
 	}
 
 	@Override

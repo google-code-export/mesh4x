@@ -93,7 +93,7 @@ public class MessageSyncProtocol implements IMessageSyncProtocol {
 	public IMessage cancelSync(String sourceId, IEndpoint endpoint) {
 		ISyncSession syncSession = this.repository.getSession(sourceId, endpoint.getEndpointId());
 		if(syncSession == null || !syncSession.isOpen()){
-			this.notifyCancelSyncErrorSyncSessionNotOpen(sourceId, endpoint);
+			this.notifyCancelSyncErrorSyncSessionNotOpen(syncSession);
 			Guard.throwsException("ERROR_MESSAGE_SYNC_SESSION_IS_NOT_OPEN", sourceId, endpoint.getEndpointId());
 		}
 		
@@ -231,14 +231,23 @@ public class MessageSyncProtocol implements IMessageSyncProtocol {
 	}
 
 
-	public void notifyCancelSyncErrorSyncSessionNotOpen(String sourceId, IEndpoint endpoint) {
+	public void notifyCancelSyncErrorSyncSessionNotOpen(ISyncSession syncSession) {
 		for (IMessageSyncAware syncAware : this.syncAwareList) {
-			syncAware.notifyCancelSyncErrorSyncSessionNotOpen(sourceId, endpoint);
+			syncAware.notifyCancelSyncErrorSyncSessionNotOpen(syncSession);
 		}
 	}
 	
 	public IBeginSyncMessageProcessor getInitialMessage(){
 		return this.initialMessage;
+	}
+
+	@Override
+	public List<ISyncSession> getAllSyncSessions() {
+		return this.repository.getAllSyncSessions();
+	}
+
+	public IMessageSyncAdapter getSourceOrCreateIfAbsent(String sourceID) {
+		return this.repository.getSourceOrCreateIfAbsent(sourceID);
 	}
 
 }

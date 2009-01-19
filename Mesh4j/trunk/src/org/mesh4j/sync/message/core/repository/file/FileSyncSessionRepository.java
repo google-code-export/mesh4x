@@ -355,5 +355,10 @@ public class FileSyncSessionRepository implements ISyncSessionRepository{
 	@Override
 	public IMessageSyncAdapter getSourceOrCreateIfAbsent(String sourceId) {
 		return this.sessionFactory.getSourceOrCreateIfAbsent(sourceId);
+	}
+
+	@Override
+	public List<ISyncSession> getAllSyncSessions() {
+		return this.sessionFactory.getAll();
 	}	
 }

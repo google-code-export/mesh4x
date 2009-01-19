@@ -1,5 +1,7 @@
 package org.mesh4j.sync.message.core;
 
+import java.util.List;
+
 import org.mesh4j.sync.adapters.kml.KMLDOMLoaderFactory;
 import org.mesh4j.sync.message.IEndpoint;
 import org.mesh4j.sync.message.IMessageSyncAdapter;
@@ -67,5 +69,10 @@ public class MockSyncSessionRepository implements ISyncSessionRepository {
 	@Override
 	public IMessageSyncAdapter getSourceOrCreateIfAbsent(String sourceId) {
 		return factory.getSourceOrCreateIfAbsent(sourceId);
+	}
+
+	@Override
+	public List<ISyncSession> getAllSyncSessions() {
+		return this.factory.getAll();
 	}
 }

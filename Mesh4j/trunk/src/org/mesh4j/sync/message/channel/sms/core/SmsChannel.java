@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import org.mesh4j.sync.message.IEndpoint;
 import org.mesh4j.sync.message.IMessage;
 import org.mesh4j.sync.message.IMessageReceiver;
 import org.mesh4j.sync.message.IMessageSyncAware;
@@ -200,31 +199,38 @@ public class SmsChannel implements ISmsChannel, IMessageSyncAware {
 		this.receiver.purgeBatches(syncSession.getSessionId(), syncSession.getVersion());
 	}
 	
+	@Override
 	public void beginSyncWithError(ISyncSession syncSession) {
 		// nothing to do		
 	}
 
+	@Override
 	public void notifyInvalidMessageProtocol(IMessage message) {
 		// nothing to do		
 	}
 
+	@Override
 	public void notifyInvalidProtocolMessageOrder(IMessage message) {
 		// nothing to do		
 	}
 
+	@Override
 	public void notifyMessageProcessed(ISyncSession syncSession, IMessage message, List<IMessage> response) {
 		// nothing to do		
 	}
 
+	@Override
 	public void notifySessionCreationError(IMessage message, String sourceId) {
 		// nothing to do		
 	}
 
+	@Override
 	public void notifyCancelSync(ISyncSession syncSession) {
 		// nothing to do		
 	}
 
-	public void notifyCancelSyncErrorSyncSessionNotOpen(String sourceId, IEndpoint endpoint) {
+	@Override
+	public void notifyCancelSyncErrorSyncSessionNotOpen(ISyncSession syncSession) {
 		// nothing to do		
 	}
 

@@ -1,5 +1,7 @@
 package org.mesh4j.sync.message.core;
 
+import java.util.List;
+
 import org.mesh4j.sync.message.IEndpoint;
 import org.mesh4j.sync.message.IMessageSyncAdapter;
 import org.mesh4j.sync.message.ISyncSession;
@@ -25,5 +27,7 @@ public interface ISyncSessionRepository {
 	IMessageSyncAdapter getSource(String sourceId);
 
 	IMessageSyncAdapter getSourceOrCreateIfAbsent(String sourceId);
+
+	List<ISyncSession> getAllSyncSessions();
 
 }

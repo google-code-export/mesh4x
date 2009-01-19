@@ -60,7 +60,7 @@ public class SmsHelper {
 
 		SmsEndpoint targetA = new SmsEndpoint(smsFrom);
 		InMemorySmsConnection smsConnectionA = new InMemorySmsConnection(encoding, maxMessageLenght, readDelay, targetA, channelDelay);
-		smsConnectionA.setSmsConnectionOutboundNotification(smsConnectionNotification);
+		smsConnectionA.addSmsConnectionOutboundNotification(new ISmsConnectionInboundOutboundNotification[]{smsConnectionNotification});
 				
 		MessageSyncEngine syncEngineEndPointA = createSyncEngine(syncAware, repositoryBaseDirectory+"\\"+smsFrom+"\\", identityProvider, smsConnectionA, senderDelay, receiverDelay);
 
@@ -92,7 +92,7 @@ public class SmsHelper {
 		
 		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(feedSyncAdapterFactory, false, kmlSyncAdapterFactory);		
 		IChannel channel = SmsChannelFactory.createChannelWithFileRepository(smsConnection, senderDelay, receiverDelay, repositoryBaseDirectory);
-		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocolWithFileRepository(100, repositoryBaseDirectory, identityProvider, syncAware, SmsEndpointFactory.INSTANCE, syncAdapterFactory);		
+		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocolWithFileRepository(100, repositoryBaseDirectory, identityProvider, new IMessageSyncAware[]{syncAware}, SmsEndpointFactory.INSTANCE, syncAdapterFactory);		
 		return new MessageSyncEngine(syncProtocol, channel);		
 	}
 

@@ -10,7 +10,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mesh4j.sync.adapters.msaccess.IMsAccessSourceIdResolver;
 import org.mesh4j.sync.epiinfo.ui.EpiinfoUI;
-import org.mesh4j.sync.message.IEndpoint;
 import org.mesh4j.sync.message.IMessage;
 import org.mesh4j.sync.message.IMessageSyncAware;
 import org.mesh4j.sync.message.ISyncSession;
@@ -116,9 +115,9 @@ public class EpiInfoConsoleNotification implements ISmsConnectionInboundOutbound
 	}
 
 	@Override
-	public void notifyCancelSyncErrorSyncSessionNotOpen(String sourceId, IEndpoint endpoint) {
+	public void notifyCancelSyncErrorSyncSessionNotOpen(ISyncSession syncSession) {
 		this.setErrorImageStatus();
-		this.log(EpiInfoUITranslator.getMessageCancelSyncErrorSessionNotOpen(endpoint, sourceId));		
+		this.log(EpiInfoUITranslator.getMessageCancelSyncErrorSessionNotOpen(syncSession.getTarget(), syncSession.getSourceId()));		
 	}
 
 	@Override

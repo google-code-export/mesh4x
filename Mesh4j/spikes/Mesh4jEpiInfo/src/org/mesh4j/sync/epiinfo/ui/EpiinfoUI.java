@@ -37,7 +37,9 @@ import org.mesh4j.sync.adapters.http.HttpSyncAdapterFactory;
 import org.mesh4j.sync.adapters.msaccess.MsAccessHelper;
 import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
 import org.mesh4j.sync.mappings.SyncMode;
+import org.mesh4j.sync.message.IMessageSyncAware;
 import org.mesh4j.sync.message.MessageSyncEngine;
+import org.mesh4j.sync.message.channel.sms.connection.ISmsConnectionInboundOutboundNotification;
 import org.mesh4j.sync.message.channel.sms.connection.smslib.Modem;
 import org.mesh4j.sync.message.channel.sms.connection.smslib.ModemHelper;
 import org.mesh4j.sync.message.encoding.IMessageEncoding;
@@ -198,7 +200,18 @@ public class EpiinfoUI{
 		}
 				
 		if(this.syncEngine == null){
-			this.syncEngine = SyncEngineUtil.createEmulator(this.sourceIdResolver, consoleNotification, consoleNotification, EpiInfoUITranslator.getLabelDemo(), messageEncoding, identityProvider, baseDirectory, senderDelay, receiverDelay, readDelay, channelDelay, maxMessageLenght);
+			this.syncEngine = SyncEngineUtil.createEmulator(this.sourceIdResolver, 
+					new ISmsConnectionInboundOutboundNotification[]{consoleNotification}, 
+					new IMessageSyncAware[]{consoleNotification}, 
+					EpiInfoUITranslator.getLabelDemo(), 
+					messageEncoding, 
+					identityProvider, 
+					baseDirectory, 
+					senderDelay, 
+					receiverDelay, 
+					readDelay, 
+					channelDelay, 
+					maxMessageLenght);
 			this.emulate = true;
 		}
 	}

@@ -85,7 +85,7 @@ public class MessageSyncEngineConcurrentSessionsTests implements IMessageSyncAwa
 	private MessageSyncEngine createSyncEngine(IMessageSyncAware syncAware, String repositoryBaseDirectory, IIdentityProvider identityProvider, ISmsConnection smsConnection, int senderDelay, int receiverDelay){
 		IChannel channel = SmsChannelFactory.createChannelWithFileRepository(smsConnection, senderDelay, receiverDelay, repositoryBaseDirectory);
 		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(null, true);
-		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocolWithFileRepository(100, repositoryBaseDirectory, identityProvider, syncAware, SmsEndpointFactory.INSTANCE, syncAdapterFactory);		
+		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocolWithFileRepository(100, repositoryBaseDirectory, identityProvider, new IMessageSyncAware[]{syncAware}, SmsEndpointFactory.INSTANCE, syncAdapterFactory);		
 		return new MessageSyncEngine(syncProtocol, channel);		
 	}
 	
@@ -134,8 +134,8 @@ public class MessageSyncEngineConcurrentSessionsTests implements IMessageSyncAwa
 	}
 
 	@Override
-	public void notifyCancelSyncErrorSyncSessionNotOpen(String sourceId, IEndpoint endpoint) {
-		System.out.println("Cancel sync error: " + sourceId + " endpoint: " + endpoint.getEndpointId());
+	public void notifyCancelSyncErrorSyncSessionNotOpen(ISyncSession syncSession) {
+		System.out.println("Cancel sync error: " + syncSession.getSourceId() + " endpoint: " + syncSession.getTarget().getEndpointId());
 	}
 
 	@Override

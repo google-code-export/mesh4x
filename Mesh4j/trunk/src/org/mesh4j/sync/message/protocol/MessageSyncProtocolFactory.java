@@ -65,7 +65,7 @@ public class MessageSyncProtocolFactory {
 		return syncProtocol;
 	}
 
-	public static IMessageSyncProtocol createSyncProtocolWithFileRepository(int diffBlockSize, String repositoryBaseDirectory, IIdentityProvider identityProvider, IMessageSyncAware syncAware, IEndpointFactory endpointFactory, IMessageSyncAdapterFactory syncAdapterFactory) {
+	public static IMessageSyncProtocol createSyncProtocolWithFileRepository(int diffBlockSize, String repositoryBaseDirectory, IIdentityProvider identityProvider, IMessageSyncAware[] syncAware, IEndpointFactory endpointFactory, IMessageSyncAdapterFactory syncAdapterFactory) {
 		SyncSessionFactory syncSessionFactory = new SyncSessionFactory(endpointFactory, syncAdapterFactory, repositoryBaseDirectory, identityProvider);
 		ISyncSessionRepository repo = new FileSyncSessionRepository(repositoryBaseDirectory, syncSessionFactory);
 		return createSyncProtocol(diffBlockSize, repo, syncAware);

@@ -27,7 +27,7 @@ public class InMemorySmsConnection implements ISmsConnection, IRefreshTask{
 	private SmsEndpoint endpoint;
 	private int maxMessageLenght = 140;
 	private IMessageEncoding messageEncoding;
-	private ISmsConnectionInboundOutboundNotification smsConnectionInboundOutboundNotification = new SmsConnectionInboundOutboundNotification();
+	private ArrayList<ISmsConnectionInboundOutboundNotification> smsConnectionInboundOutboundNotifications = new ArrayList<ISmsConnectionInboundOutboundNotification>();
 	private int channelDelay = 300;
 	
 	// BUSINESS METHODS
@@ -65,14 +65,35 @@ public class InMemorySmsConnection implements ISmsConnection, IRefreshTask{
 
 	@Override
 	public void send(List<String> msgs, SmsEndpoint endpoint) {
-		if(this.smsConnectionInboundOutboundNotification != null){
-			for (String msg : msgs) {
-				this.smsConnectionInboundOutboundNotification.notifySendMessage(endpoint.getEndpointId(), msg);
-			}
-		}
-		
+		this.notifySendMessage(msgs, endpoint);
 		InMemorySmsConnection endpointConnection = this.endpointConnections.get(endpoint.getEndpointId());
 		endpointConnection.receive(msgs, this.endpoint);
+	}
+
+	private void notifySendMessage(List<String> msgs, SmsEndpoint endpoint) {
+		if(this.smsConnectionInboundOutboundNotifications != null){
+			for (String msg : msgs) {
+				for (ISmsConnectionInboundOutboundNotification smsConnectionInboundOutboundNotification : this.smsConnectionInboundOutboundNotifications) {
+					smsConnectionInboundOutboundNotification.notifySendMessage(endpoint.getEndpointId(), msg);
+				}
+			}
+		}
+	}
+	
+	private void notifyReceiveMessageWasNotProcessed(String endpointId, String msg, Date date) {
+		if(this.smsConnectionInboundOutboundNotifications != null){
+			for (ISmsConnectionInboundOutboundNotification smsConnectionInboundOutboundNotification : this.smsConnectionInboundOutboundNotifications) {
+					smsConnectionInboundOutboundNotification.notifyReceiveMessageWasNotProcessed(endpointId, msg, date);
+			}
+		}
+	}
+
+	private void notifyReceivedMessage(String endpointId, String msg, Date date) {
+		if(this.smsConnectionInboundOutboundNotifications != null){
+			for (ISmsConnectionInboundOutboundNotification smsConnectionInboundOutboundNotification : this.smsConnectionInboundOutboundNotifications) {
+				smsConnectionInboundOutboundNotification.notifyReceiveMessage(endpointId, msg, date);
+			}
+		}
 	}
 
 	@Override
@@ -84,15 +105,11 @@ public class InMemorySmsConnection implements ISmsConnection, IRefreshTask{
 					for (String msg : localMsgs) {
 						this.sleep(this.channelDelay);
 						Date date = new Date();
-						if(this.smsConnectionInboundOutboundNotification != null){
-							this.smsConnectionInboundOutboundNotification.notifyReceiveMessage(endpointId, msg, date);
-						}
+						notifyReceivedMessage(endpointId, msg, date);
 						try{
 							this.messageReceiver.receiveSms(new SmsEndpoint(endpointId), msg, date);
 						} catch (Exception e) {
-							if(this.smsConnectionInboundOutboundNotification != null){
-								this.smsConnectionInboundOutboundNotification.notifyReceiveMessageWasNotProcessed(endpointId, msg, date);
-							}	
+							notifyReceiveMessageWasNotProcessed(endpointId, msg, date);	
 						}
 					}
 					this.messages.put(endpointId, new ArrayList<String>());
@@ -100,6 +117,7 @@ public class InMemorySmsConnection implements ISmsConnection, IRefreshTask{
 			}
 		}
 	}
+
 
 	private void sleep(int i) {
 		try {
@@ -142,11 +160,6 @@ public class InMemorySmsConnection implements ISmsConnection, IRefreshTask{
 		this.endpointConnections.put(endpointConnection.getEndpoint().getEndpointId(), endpointConnection); 
 	}
 
-	public void setSmsConnectionOutboundNotification(ISmsConnectionInboundOutboundNotification smsConnectionOutboundNotification) {
-		this.smsConnectionInboundOutboundNotification = smsConnectionOutboundNotification;
-		
-	}
-
 	@Override
 	public void startUp() {
 		// nothing to do		
@@ -167,5 +180,11 @@ public class InMemorySmsConnection implements ISmsConnection, IRefreshTask{
 
 	public ISmsReceiver getMessageReceiver(){
 		return this.messageReceiver;
+	}
+
+	public void addSmsConnectionOutboundNotification(ISmsConnectionInboundOutboundNotification[] smsConnectionInboundOutboundNotifications) {
+		for (ISmsConnectionInboundOutboundNotification smsConnectionInboundOutboundNotification : smsConnectionInboundOutboundNotifications) {
+			this.smsConnectionInboundOutboundNotifications.add(smsConnectionInboundOutboundNotification);
+		}		
 	}
 }

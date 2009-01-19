@@ -153,6 +153,12 @@ public class ACKEndSyncMessageProcessorTests {
 				Assert.fail();
 				return null;
 			}
+
+			@Override
+			public List<ISyncSession> getAllSyncSessions() {
+				Assert.fail();
+				return null;
+			}
 		};
 		
 		Item item = new Item(new NullContent("1"), new Sync("1", "jmt", new Date(), true));

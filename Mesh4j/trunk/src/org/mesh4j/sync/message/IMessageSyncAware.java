@@ -23,5 +23,5 @@ public interface IMessageSyncAware {
 
 	void notifyCancelSync(ISyncSession syncSession);
 
-	void notifyCancelSyncErrorSyncSessionNotOpen(String sourceId, IEndpoint endpoint);
+	void notifyCancelSyncErrorSyncSessionNotOpen(ISyncSession syncSession);
 }

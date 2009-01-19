@@ -32,4 +32,6 @@ public interface IMessageSyncProtocol {
 
 	IMessageSyncAdapter getSource(String sourceId);
 
+	List<ISyncSession> getAllSyncSessions();
+
 }

@@ -365,4 +365,33 @@ public class EpiInfoCompactUITranslator {
 	public static Object getMessageForPopUpPhoneNotConnected() {
 		return MessageTranslator.translate("EPIINFO_COMPACT_MESSAGE_FOR_POPUP_PHONE_NOT_CONNECTED");
 	}
+
+
+	public static String getSyncSessionWindowTitle() {
+		return MessageTranslator.translate("EPIINFO_COMPACT_SYNC_SESSION_WINDOW_TITLE");
+	}
+
+	public static String getSyncSessionWindowLabelAllSessions() {
+		return MessageTranslator.translate("EPIINFO_COMPACT_SYNC_SESSION_LABEL_ALL_SESSIONS");
+	}
+
+	public static String getSyncSessionWindowLabelClose() {
+		return MessageTranslator.translate("EPIINFO_COMPACT_SYNC_SESSION_LABEL_CLOSE");
+	}
+
+	public static String getSyncSessionWindowToolTipClose() {
+		return MessageTranslator.translate("EPIINFO_COMPACT_SYNC_SESSION_TOOLTIP_CLOSE");
+	}
+
+	public static String getSyncSessionWindowToolTipAllSessions() {
+		return MessageTranslator.translate("EPIINFO_COMPACT_SYNC_SESSION_TOOLTIP_ALL_SESSIONS_NODE");
+	}
+
+	public static String getSyncSessionWindowToolTipDataSource() {
+		return MessageTranslator.translate("EPIINFO_COMPACT_SYNC_SESSION_TOOLTIP_DATA_SOURCE_NODE");
+	}
+
+	public static String getSyncSessionWindowToolTipSyncSession() {
+		return MessageTranslator.translate("EPIINFO_COMPACT_SYNC_SESSION_TOOLTIP_SYNC_SESSION_NODE");
+	}
 }

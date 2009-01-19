@@ -104,8 +104,8 @@ public class SyncEngineUtil {
 		syncEngine.cancelSync(sourceID, target);
 	}
 
-	public static MessageSyncEngine createEmulator(IMsAccessSourceIdResolver sourceIdResolver, ISmsConnectionInboundOutboundNotification smsConnectionNotification, 
-			IMessageSyncAware syncAware, String smsFrom, IMessageEncoding encoding, 
+	public static MessageSyncEngine createEmulator(IMsAccessSourceIdResolver sourceIdResolver, ISmsConnectionInboundOutboundNotification[] smsAware, 
+			IMessageSyncAware[] syncAware, String smsFrom, IMessageEncoding encoding, 
 			IIdentityProvider identityProvider, String baseDirectory, 
 			int senderDelay, int receiverDelay, int readDelay, int channelDelay, int maxMessageLenght) throws Exception {
 
@@ -114,7 +114,7 @@ public class SyncEngineUtil {
 		MessageSyncEngine syncEngine = createSyncEngineEmulator(
 				sourceIdResolver, smsFrom, encoding, identityProvider, baseDirectory+"/",
 				senderDelay, receiverDelay, readDelay, channelDelay,
-				maxMessageLenght, target, smsConnectionNotification, syncAware, false);
+				maxMessageLenght, target, smsAware, syncAware, false);
 	
 		return syncEngine;
 	}
@@ -135,7 +135,10 @@ public class SyncEngineUtil {
 			MessageSyncEngine backgroundSyncEngine = createSyncEngineEmulator(sourceIdResolver,
 					smsTo, encoding, identityProvider, targetDirectory,
 					senderDelay, receiverDelay, readDelay, channelDelay,
-					maxMessageLenght, backgroundTarget, new SmsConnectionInboundOutboundNotification(), new LoggerMessageSyncAware(), isOpaque);
+					maxMessageLenght, backgroundTarget, 
+					new ISmsConnectionInboundOutboundNotification[]{new SmsConnectionInboundOutboundNotification()},
+					new IMessageSyncAware[]{ new LoggerMessageSyncAware()},
+					isOpaque);
 
 			SmsChannel backgroundChannel = (SmsChannel)backgroundSyncEngine.getChannel();
 			InMemorySmsConnection backgroundSmsConnection = (InMemorySmsConnection) backgroundChannel.getSmsConnection(); 
@@ -149,11 +152,11 @@ public class SyncEngineUtil {
 			IMessageEncoding encoding, IIdentityProvider identityProvider,
 			String baseDirectory, int senderDelay, int receiverDelay,
 			int readDelay, int channelDelay, int maxMessageLenght, SmsEndpoint target,
-			ISmsConnectionInboundOutboundNotification smsConnectionInboundOutboundNotification, IMessageSyncAware syncAware,
+			ISmsConnectionInboundOutboundNotification[] smsAware, IMessageSyncAware[] syncAware,
 			boolean isOpaque) {
 		
 		InMemorySmsConnection smsConnection = new InMemorySmsConnection(encoding, maxMessageLenght, readDelay, target, channelDelay);
-		smsConnection.setSmsConnectionOutboundNotification(smsConnectionInboundOutboundNotification);
+		smsConnection.addSmsConnectionOutboundNotification(smsAware);
 		
 		ISyncAdapterFactory syncAdapterFactory = makeSyncAdapterFactory(sourceIdResolver, baseDirectory);
 
@@ -286,7 +289,7 @@ public class SyncEngineUtil {
 
 	// NEW EXAMPLE UI
 
-	public static MessageSyncEngine createSyncEngine(EpiinfoSourceIdResolver sourceIdResolver, EpiinfoCompactConsoleNotification consoleNotification, PropertiesProvider propertiesProvider) throws Exception {
+	public static MessageSyncEngine createSyncEngine(EpiinfoSourceIdResolver sourceIdResolver, PropertiesProvider propertiesProvider, IMessageSyncAware[] syncAware, ISmsConnectionInboundOutboundNotification[] smsAware) throws Exception {
 		String baseDirectory = propertiesProvider.getBaseDirectory();
 		int senderDelay = propertiesProvider.getDefaultSendRetryDelay();
 		int receiverDelay = propertiesProvider.getDefaultReceiveRetryDelay();
@@ -299,43 +302,44 @@ public class SyncEngineUtil {
 		Modem modem = new Modem(portName, baudRate, "sonny", "750i", "", "", 0, 0);
 
 // TODO (JMT) remove it, it is only for emulation
-//		return createEmulator(
-//				sourceIdResolver, 
-//				consoleNotification, 
-//				consoleNotification, 
-//				EpiInfoUITranslator.getLabelDemo(), 
-//				messageEncoding, 
-//				identityProvider, 
-//				baseDirectory, 
-//				0, 
-//				0, 
-//				0, 
-//				0,
-//				maxMessageLenght);
+		MessageSyncEngine syncEngine = createEmulator(
+				sourceIdResolver, 
+				smsAware, 
+				syncAware, 
+				EpiInfoUITranslator.getLabelDemo(), 
+				messageEncoding, 
+				identityProvider, 
+				baseDirectory, 
+				0, 
+				0, 
+				0, 
+				0,
+				maxMessageLenght);
 		
-		return createSyncEngine(
-			sourceIdResolver, 
-			modem,
-			baseDirectory, 
-			senderDelay, 
-			receiverDelay, 
-			maxMessageLenght, 
-			identityProvider,
-			messageEncoding,
-			consoleNotification,
-			consoleNotification);
+		EndpointMapping[] endpoints = getEndpointMappings(propertiesProvider);
+		for (EndpointMapping endpoint : endpoints) {
+			registerNewEndpointToEmulator(syncEngine, endpoint.getEndpoint(), messageEncoding, 
+					identityProvider, baseDirectory, 0, 0, 0, 0, 160, true);
+		}
+		return syncEngine;
+		
+//		return createSyncEngine(
+//			sourceIdResolver, 
+//			modem,
+//			baseDirectory, 
+//			senderDelay, 
+//			receiverDelay, 
+//			maxMessageLenght, 
+//			identityProvider,
+//			messageEncoding,
+//			consoleNotification,
+//			consoleNotification);
 // ************************************************
 	}
 
 	public static void synchronize(MessageSyncEngine syncEngine, SyncMode syncMode, EndpointMapping endpoint, DataSourceMapping dataSource, EpiinfoSourceIdResolver sourceIdResolver, PropertiesProvider propertiesProvider) throws Exception {
 		String baseDirectory = propertiesProvider.getBaseDirectory();
 		IIdentityProvider identityProvider = propertiesProvider.getIdentityProvider();
-		
-// TODO (JMT) remove it, it is only for emulation
-//		IMessageEncoding messageEncoding = propertiesProvider.getDefaultMessageEncoding();
-//		registerNewEndpointToEmulator(syncEngine, endpoint.getEndpoint(), messageEncoding, 
-//				identityProvider, baseDirectory, 0, 0, 0, 0, 160, true);
-// ******************
 		
 		synchronize(syncEngine, syncMode, endpoint.getEndpoint(), dataSource.getAlias(), identityProvider, baseDirectory, sourceIdResolver);	
 	}
@@ -372,6 +376,18 @@ public class SyncEngineUtil {
 		return result;
 	}
 	
+	public static EndpointMapping getEndpointMapping(String endpointId, PropertiesProvider propertiesProvider) {
+		String baseDirectory = propertiesProvider.getBaseDirectory();
+		String fileName = baseDirectory+"/myEndpoints.properties";
+		Map<String, String> myEndpoints = PropertiesUtils.getProperties(fileName);
+		for (String alias : myEndpoints.keySet()) {
+			if(endpointId.equals(myEndpoints.get(alias))){
+				return new EndpointMapping(alias, endpointId);
+			}
+		}
+		return null;
+	}
+	
 	public static void deleteEndpointMapping(EndpointMapping endpoint, PropertiesProvider propertiesProvider) {
 		String baseDirectory = propertiesProvider.getBaseDirectory();
 		String fileName = baseDirectory+"/myEndpoints.properties";
@@ -400,5 +416,6 @@ public class SyncEngineUtil {
 		SmsLibAsynchronousConnection smsLibConnection = (SmsLibAsynchronousConnection)smsChannel.getSmsConnection();
 		smsLibConnection.initialize("mesh4x", propertiesProvider.getDefaultPort(), propertiesProvider.getDefaultBaudRate(), "", "");
 	}
+
 
 }
