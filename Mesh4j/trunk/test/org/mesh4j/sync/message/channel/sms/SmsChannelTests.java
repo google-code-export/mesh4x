@@ -1,12 +1,16 @@
 package org.mesh4j.sync.message.channel.sms;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.mesh4j.sync.id.generator.IdGenerator;
+import org.mesh4j.sync.message.InOutStatistics;
 import org.mesh4j.sync.message.MockMessageEncoding;
 import org.mesh4j.sync.message.MockSmsConnection;
+import org.mesh4j.sync.message.channel.sms.batch.DiscardedBatchRecord;
 import org.mesh4j.sync.message.channel.sms.batch.MessageBatchFactory;
 import org.mesh4j.sync.message.channel.sms.batch.SmsMessage;
 import org.mesh4j.sync.message.channel.sms.batch.SmsMessageBatch;
@@ -45,12 +49,12 @@ public class SmsChannelTests {
 	public void shouldReceiveResendBatchMessagesWhenMessageIsAskForRetry(){
 		MockMessageReceiver messageReceiver = new MockMessageReceiver();
 		
-		SmsMessageBatch batch = createTestBatch(10, "qqq23672146781&0&46");
+		SmsMessageBatch batch = createBatch(10, "qqq23672146781&0&46");
 		MockSmsSender sender = new MockSmsSender();
 		sender.send(batch, true);
 
 		String msg = MessageFormatter.createMessage("R", 0, batch.getId()+"|0");
-		SmsMessageBatch batchRetry = createTestBatch(10, msg);
+		SmsMessageBatch batchRetry = createBatch(10, msg);
 
 		
 		SmsChannel channel = new SmsChannel(new MockSmsConnection("1", NonMessageEncoding.INSTANCE), sender, new MockSmsReceiver(), new MockMessageEncoding(), 160);
@@ -64,7 +68,7 @@ public class SmsChannelTests {
 	@Test
 	public void shouldReceiveNotifyMessageWhenMessageIsNotAskForRetry(){
 		String message = MessageFormatter.createMessage("q", 0, "1234567890");
-		SmsMessageBatch batch = createTestBatch(10, message);
+		SmsMessageBatch batch = createBatch(10, message);
 		MockMessageReceiver messageReceiver = new MockMessageReceiver();
 		
 		MockSmsSender sender = new MockSmsSender();
@@ -127,7 +131,7 @@ public class SmsChannelTests {
 	
 	@Test
 	public void shouldGetOutcommingBatches(){
-		SmsMessageBatch batch = createTestBatch(10, "12345678901234567890");
+		SmsMessageBatch batch = createBatch(10, "12345678901234567890");
 		
 		MockSmsSender sender = new MockSmsSender();
 		sender.send(batch, true);
@@ -140,7 +144,7 @@ public class SmsChannelTests {
 	
 	@Test
 	public void shouldGetIncommingBatches(){
-		SmsMessageBatch batch = createTestBatch(10, "12345678901234567890");
+		SmsMessageBatch batch = createBatch(10, "12345678901234567890");
 		
 		MockSmsReceiver receiver = new MockSmsReceiver();
 		receiver.addBatch(batch);
@@ -181,10 +185,133 @@ public class SmsChannelTests {
 	}	
 	
 	
-	public SmsMessageBatch createTestBatch(int msgSize, String originalText)
+	protected static boolean PURGE_SENDER_WAS_CALLED= false;
+	protected static boolean PURGE_RECEIVER_WAS_CALLED= false;
+	@Test
+	public void shouldPurgeBatches(){
+		
+		ISmsReceiver receiver = new ISmsReceiver(){
+			@Override public void purgeBatches(String sessionId, int sessionVersion) {PURGE_RECEIVER_WAS_CALLED = true;}
+			@Override public List<SmsMessageBatch> getCompletedBatches(String sessionId, int version) {Assert.fail();return null;}
+			@Override public List<SmsMessageBatch> getOngoingBatches(String sessionId, int version) {Assert.fail(); return null;}
+			@Override public List<SmsMessageBatch> getCompletedBatches() {Assert.fail(); return null;}
+			@Override public List<DiscardedBatchRecord> getDiscardedBatches() {Assert.fail(); return null;}
+			@Override public List<SmsMessageBatch> getOngoingBatches() {Assert.fail(); return null;}
+			@Override public int getOngoingBatchesCount() {Assert.fail(); return 0;}
+			@Override public void receiveSms(SmsEndpoint endpoint, String message, Date date) {Assert.fail();}
+			@Override public void setBatchReceiver(ISmsBatchReceiver smsBatchReceiver) {}
+		};
+
+		
+		ISmsSender sender = new ISmsSender(){
+			@Override public void purgeBatches(String sessionId, int sessionVersion) {PURGE_SENDER_WAS_CALLED = true;}
+			@Override public List<SmsMessageBatch> getCompletedBatches(String sessionId, int version) {Assert.fail(); return null;}
+			@Override public List<SmsMessageBatch> getOngoingBatches(String sessionId, int version) {Assert.fail(); return null;}
+			@Override public SmsMessageBatch getOngoingBatch(String batchID) {Assert.fail();return null;}			
+			@Override public List<SmsMessageBatch> getOngoingBatches() {Assert.fail(); return null;}
+			@Override public int getOngoingBatchesCount() {Assert.fail(); return 0;}
+			@Override public void receiveACK(String batchId) {Assert.fail();}
+			@Override public void send(SmsMessageBatch batch, boolean ackRequired) {Assert.fail();}
+			@Override public void send(List<SmsMessage> smsMessages, SmsEndpoint endpoint) {Assert.fail();}
+			@Override public void send(SmsMessage smsMessage, SmsEndpoint endpoint) {Assert.fail();}
+			@Override public void shutdown() {Assert.fail();}
+			@Override public void startUp() {Assert.fail();}
+			
+		};
+		
+		String sessionId = IdGenerator.INSTANCE.newID();
+		int version = 1;
+		
+		SmsChannel channel = new SmsChannel(new MockSmsConnection("1", NonMessageEncoding.INSTANCE), sender, receiver, new MockMessageEncoding(), 100);
+		
+		PURGE_RECEIVER_WAS_CALLED = false;
+		PURGE_SENDER_WAS_CALLED = false;
+		
+		channel.purgeMessages(sessionId, version);
+		
+		Assert.assertTrue(PURGE_RECEIVER_WAS_CALLED);
+		Assert.assertTrue(PURGE_SENDER_WAS_CALLED);
+	}
+	
+	@Test
+	public void shouldGetInOutStatistics(){
+		
+		ISmsReceiver receiver = new ISmsReceiver(){
+
+			@Override public List<SmsMessageBatch> getCompletedBatches(String sessionId, int version) {
+				ArrayList<SmsMessageBatch> result = new ArrayList<SmsMessageBatch>();
+				result.add(createBatch(10, TestHelper.newText(50)));
+				return result;
+			}
+			
+			@Override
+			public List<SmsMessageBatch> getOngoingBatches(String sessionId, int version) {
+				ArrayList<SmsMessageBatch> result = new ArrayList<SmsMessageBatch>();
+				SmsMessageBatch batch = new SmsMessageBatch(sessionId, new SmsEndpoint("123"), "a", "1234", 5);
+				batch.addMessage(0, new SmsMessage("cccc"));
+				batch.addMessage(1, new SmsMessage("cccc"));
+				batch.addMessage(2, new SmsMessage("cccc"));
+				result.add(batch);
+				return result;
+			}
+
+
+			@Override public List<SmsMessageBatch> getCompletedBatches() {Assert.fail(); return null;}
+			@Override public List<DiscardedBatchRecord> getDiscardedBatches() {Assert.fail(); return null;}
+			@Override public List<SmsMessageBatch> getOngoingBatches() {Assert.fail(); return null;}
+			@Override public int getOngoingBatchesCount() {Assert.fail(); return 0;}
+			@Override public void purgeBatches(String sessionId, int sessionVersion) {Assert.fail();}
+			@Override public void receiveSms(SmsEndpoint endpoint, String message, Date date) {Assert.fail();}
+			@Override public void setBatchReceiver(ISmsBatchReceiver smsBatchReceiver) {}
+		};
+
+		
+		ISmsSender sender = new ISmsSender(){
+
+			@Override public List<SmsMessageBatch> getCompletedBatches(String sessionId, int version) {
+				ArrayList<SmsMessageBatch> result = new ArrayList<SmsMessageBatch>();
+				result.add(createBatch(10, TestHelper.newText(50)));
+				return result;
+			}
+
+			@Override public List<SmsMessageBatch> getOngoingBatches(String sessionId, int version) {
+				ArrayList<SmsMessageBatch> result = new ArrayList<SmsMessageBatch>();
+				result.add(createBatch(10, TestHelper.newText(50)));
+				return result;
+			}
+
+			@Override public SmsMessageBatch getOngoingBatch(String batchID) {Assert.fail();return null;}			
+			@Override public List<SmsMessageBatch> getOngoingBatches() {Assert.fail(); return null;}
+			@Override public int getOngoingBatchesCount() {Assert.fail(); return 0;}
+			@Override public void purgeBatches(String sessionId, int sessionVersion) {Assert.fail();}
+			@Override public void receiveACK(String batchId) {Assert.fail();}
+			@Override public void send(SmsMessageBatch batch, boolean ackRequired) {Assert.fail();}
+			@Override public void send(List<SmsMessage> smsMessages, SmsEndpoint endpoint) {Assert.fail();}
+			@Override public void send(SmsMessage smsMessage, SmsEndpoint endpoint) {Assert.fail();}
+			@Override public void shutdown() {Assert.fail();}
+			@Override public void startUp() {Assert.fail();}
+			
+		};
+		
+		String sessionId = IdGenerator.INSTANCE.newID();
+		int version = 1;
+		
+		SmsChannel channel = new SmsChannel(new MockSmsConnection("1", NonMessageEncoding.INSTANCE), sender, receiver, new MockMessageEncoding(), 100);
+		
+		InOutStatistics inOut = channel.getInOutStatistics(sessionId, version);
+		Assert.assertEquals(8, inOut.getNumberInMessages());
+		Assert.assertEquals(2, inOut.getNumberInPendingToArriveMessages());
+		Assert.assertEquals(10, inOut.getNumberOutMessages());
+		Assert.assertEquals(5, inOut.getNumberOutPendingAckMessages());
+		
+	}
+	
+	
+	public SmsMessageBatch createBatch(int msgSize, String originalText)
 	{
+		String id = IdGenerator.INSTANCE.newID();
 		MessageBatchFactory factory = new MessageBatchFactory(msgSize);
-		SmsMessageBatch batch = factory.createMessageBatch(IdGenerator.INSTANCE.newID(), new SmsEndpoint("1234"), "R", "12345", originalText);
+		SmsMessageBatch batch = factory.createMessageBatch(id, new SmsEndpoint("1234"), "R", id.substring(0,5), originalText);
 		return batch;
 	}
 }

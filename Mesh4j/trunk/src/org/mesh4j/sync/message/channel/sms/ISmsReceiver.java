@@ -23,4 +23,6 @@ public interface ISmsReceiver {
 
 	void purgeBatches(String sessionId, int sessionVersion);
 
+	List<SmsMessageBatch> getOngoingBatches(String sessionId, int version);
+	List<SmsMessageBatch> getCompletedBatches(String sessionId, int version);
 }

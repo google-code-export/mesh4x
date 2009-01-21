@@ -210,7 +210,7 @@ public class SmsLibTests {
 	
 		ISyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest()+gatewayId+"\\", syncSessionFactory);
 		
-		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocol(100, repo);		
+		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocol(100, repo, channel);		
 		MessageSyncEngine syncEngineEndPoint = new MessageSyncEngine(syncProtocol, channel);
 		
 		return syncEngineEndPoint;

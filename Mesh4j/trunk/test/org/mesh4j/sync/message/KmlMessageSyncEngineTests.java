@@ -72,7 +72,7 @@ public class KmlMessageSyncEngineTests {
 		//ISyncSessionRepository repoA = new MockSyncSessionRepository(syncSessionFactoryA);
 		ISyncSessionRepository repoA = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), syncSessionFactoryA);
 		
-		IMessageSyncProtocol syncProtocolA = MessageSyncProtocolFactory.createSyncProtocol(100, repoA);		
+		IMessageSyncProtocol syncProtocolA = MessageSyncProtocolFactory.createSyncProtocol(100, repoA, channelEndpointA);		
 		MessageSyncEngine syncEngineEndPointA = new MessageSyncEngine(syncProtocolA, channelEndpointA);
 
 		MockInMemoryMessageSyncAdapter endpointB = new MockInMemoryMessageSyncAdapter(dataSetId, kmlAdapterB.getAll());
@@ -83,7 +83,7 @@ public class KmlMessageSyncEngineTests {
 		//ISyncSessionRepository repoB = new MockSyncSessionRepository(syncSessionFactoryB);
 		ISyncSessionRepository repoB = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), syncSessionFactoryB);
 		
-		IMessageSyncProtocol syncProtocolB = MessageSyncProtocolFactory.createSyncProtocol(100, repoB);
+		IMessageSyncProtocol syncProtocolB = MessageSyncProtocolFactory.createSyncProtocol(100, repoB, channelEndpointA);
 		MessageSyncEngine syncEngineEndPointB = new MessageSyncEngine(syncProtocolB, channelEndpointB);
 		Assert.assertNotNull(syncEngineEndPointB);
 		
@@ -215,14 +215,14 @@ public class KmlMessageSyncEngineTests {
 		SyncSessionFactory syncSessionFactoryA = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);
 		syncSessionFactoryA.registerSource(endpointA);
 		
-		IMessageSyncProtocol syncProtocolA = MessageSyncProtocolFactory.createSyncProtocol(100, new MockSyncSessionRepository(syncSessionFactoryA));
+		IMessageSyncProtocol syncProtocolA = MessageSyncProtocolFactory.createSyncProtocol(100, new MockSyncSessionRepository(syncSessionFactoryA), channelEndpointA);
 		MessageSyncEngine syncEngineEndPointA = new MessageSyncEngine(syncProtocolA, channelEndpointA);
 
 		MockInMemoryMessageSyncAdapter endpointB = new MockInMemoryMessageSyncAdapter(dataSetId, kmlAdapter.getAll());
 		SyncSessionFactory syncSessionFactoryB = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);
 		syncSessionFactoryB.registerSource(endpointB);
 		
-		IMessageSyncProtocol syncProtocolB = MessageSyncProtocolFactory.createSyncProtocol(100, new MockSyncSessionRepository(syncSessionFactoryB));
+		IMessageSyncProtocol syncProtocolB = MessageSyncProtocolFactory.createSyncProtocol(100, new MockSyncSessionRepository(syncSessionFactoryB), channelEndpointB);
 		MessageSyncEngine syncEngineEndPointB = new MessageSyncEngine(syncProtocolB, channelEndpointB);
 		Assert.assertNotNull(syncEngineEndPointB);
 		

@@ -13,16 +13,16 @@ import org.mesh4j.sync.validations.Guard;
 
 public class SmsChannelFactory {
 
-	public static ISmsChannel createChannel(ISmsConnection smsConnection, int senderRetryTimeOut, int receiverRetryTimeOut){
+	public static SmsChannel createChannel(ISmsConnection smsConnection, int senderRetryTimeOut, int receiverRetryTimeOut){
 		return createChannel(smsConnection, senderRetryTimeOut, receiverRetryTimeOut, null, null);
 	}
 	
-	public static ISmsChannel createChannelWithFileRepository(ISmsConnection smsConnection, int senderRetryTimeOut, int receiverRetryTimeOut, String repositoryBaseDirectory){
+	public static SmsChannel createChannelWithFileRepository(ISmsConnection smsConnection, int senderRetryTimeOut, int receiverRetryTimeOut, String repositoryBaseDirectory){
 		FileSmsChannelRepository channelRepo = new FileSmsChannelRepository(repositoryBaseDirectory);
 		return createChannel(smsConnection, senderRetryTimeOut, receiverRetryTimeOut, channelRepo, channelRepo);
 	}
 	
-	public static ISmsChannel createChannel(ISmsConnection smsConnection, int senderRetryTimeOut, int receiverRetryTimeOut, ISmsSenderRepository senderRepository, ISmsReceiverRepository receiverRepository){
+	public static SmsChannel createChannel(ISmsConnection smsConnection, int senderRetryTimeOut, int receiverRetryTimeOut, ISmsSenderRepository senderRepository, ISmsReceiverRepository receiverRepository){
 		Guard.argumentNotNull(smsConnection, "smsConnection");
 		
 		SmsSender sender = new SmsSender(smsConnection, senderRepository);

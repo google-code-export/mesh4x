@@ -2,6 +2,7 @@ package org.mesh4j.sync.message.protocol;
 
 import java.util.ArrayList;
 
+import org.mesh4j.sync.message.IChannel;
 import org.mesh4j.sync.message.IMessageSyncAware;
 import org.mesh4j.sync.message.IMessageSyncProtocol;
 import org.mesh4j.sync.message.core.IMessageProcessor;
@@ -16,7 +17,7 @@ import org.mesh4j.sync.security.IIdentityProvider;
 
 public class MessageSyncProtocolFactory {
 
-	public static IMessageSyncProtocol createSyncProtocol(int diffBlockSize, ISyncSessionRepository repository, IMessageSyncAware... syncAwareList) {
+	public static IMessageSyncProtocol createSyncProtocol(int diffBlockSize, ISyncSessionRepository repository, IChannel channel, IMessageSyncAware... syncAwareList) {
 
 		IItemEncoding itemEncoding = new ItemEncoding(diffBlockSize);
 		
@@ -47,7 +48,7 @@ public class MessageSyncProtocolFactory {
 		msgProcessors.add(cancelMessage);
 		msgProcessors.add(equalStatusMessage);
 		
-		MessageSyncProtocol syncProtocol = new MessageSyncProtocol(IProtocolConstants.PROTOCOL, beginMessage, cancelMessage, repository, msgProcessors);
+		MessageSyncProtocol syncProtocol = new MessageSyncProtocol(IProtocolConstants.PROTOCOL, beginMessage, cancelMessage, repository, channel, msgProcessors);
 		
 		beginMessage.setMessageSyncProtocol(syncProtocol);
 		ackEndMessage.setMessageSyncProtocol(syncProtocol);
@@ -65,10 +66,10 @@ public class MessageSyncProtocolFactory {
 		return syncProtocol;
 	}
 
-	public static IMessageSyncProtocol createSyncProtocolWithFileRepository(int diffBlockSize, String repositoryBaseDirectory, IIdentityProvider identityProvider, IMessageSyncAware[] syncAware, IEndpointFactory endpointFactory, IMessageSyncAdapterFactory syncAdapterFactory) {
+	public static IMessageSyncProtocol createSyncProtocolWithFileRepository(int diffBlockSize, String repositoryBaseDirectory, IChannel channel, IIdentityProvider identityProvider, IMessageSyncAware[] syncAware, IEndpointFactory endpointFactory, IMessageSyncAdapterFactory syncAdapterFactory) {
 		SyncSessionFactory syncSessionFactory = new SyncSessionFactory(endpointFactory, syncAdapterFactory, repositoryBaseDirectory, identityProvider);
 		ISyncSessionRepository repo = new FileSyncSessionRepository(repositoryBaseDirectory, syncSessionFactory);
-		return createSyncProtocol(diffBlockSize, repo, syncAware);
+		return createSyncProtocol(diffBlockSize, repo, channel, syncAware);
 	}
 
 }

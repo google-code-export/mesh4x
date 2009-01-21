@@ -82,7 +82,7 @@ public class MessageSyncEngineTests {
 		//this.syncSessionRepoA = new FileSyncSessionRepository("c:\\", syncSessionFactoryA);
 		this.syncSessionRepoA = new MockSyncSessionRepository(syncSessionFactoryA);
 		
-		IMessageSyncProtocol syncProtocolA = MessageSyncProtocolFactory.createSyncProtocol(100, this.syncSessionRepoA);
+		IMessageSyncProtocol syncProtocolA = MessageSyncProtocolFactory.createSyncProtocol(100, this.syncSessionRepoA, channelEndpointA);
 		syncEngineEndPointA = new MessageSyncEngine(syncProtocolA, channelEndpointA);
 
 		SyncSessionFactory syncSessionFactoryB = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);
@@ -91,7 +91,7 @@ public class MessageSyncEngineTests {
 		//this.syncSessionRepoB = new FileSyncSessionRepository("d:\\", syncSessionFactoryB);
 		this.syncSessionRepoB = new MockSyncSessionRepository(syncSessionFactoryB);
 		
-		IMessageSyncProtocol syncProtocolB = MessageSyncProtocolFactory.createSyncProtocol(100, this.syncSessionRepoB);
+		IMessageSyncProtocol syncProtocolB = MessageSyncProtocolFactory.createSyncProtocol(100, this.syncSessionRepoB, channelEndpointB);
 		syncEngineEndPointB = new MessageSyncEngine(syncProtocolB, channelEndpointB);
 		Assert.assertNotNull(syncEngineEndPointB);
 	}
@@ -613,6 +613,8 @@ public class MessageSyncEngineTests {
 			}
 			@Override public void startUp() {}
 			@Override public void shutdown() {}
+			@Override public InOutStatistics getInOutStatistics(String sessionId, int version) {return null;}
+			@Override public void purgeMessages(String sessionId, int sessionVersion) {}
 		};
 		
 		IMessageSyncProtocol protocol = new IMessageSyncProtocol(){
@@ -642,6 +644,8 @@ public class MessageSyncEngineTests {
 			@Override public void send(IMessage message) {}
 			@Override public void startUp() {}
 			@Override public void shutdown() {}
+			@Override public InOutStatistics getInOutStatistics(String sessionId, int version) { return null;}
+			@Override public void purgeMessages(String sessionId, int sessionVersion) {}
 
 		};
 		new MessageSyncEngine(null, channel);

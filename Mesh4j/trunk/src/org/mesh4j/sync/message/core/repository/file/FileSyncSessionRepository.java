@@ -44,6 +44,8 @@ public class FileSyncSessionRepository implements ISyncSessionRepository{
 	public static final String ATTRIBUTE_BROKEN = "broken";
 	public static final String ATTRIBUTE_FULL = "full";
 	public static final String ATTRIBUTE_LAST_SYNC_DATE = "lastSyncDate";
+	public static final String ATTRIBUTE_LAST_IN = "lastIn";
+	public static final String ATTRIBUTE_LAST_OUT = "lastOut";
 	public static final String ATTRIBUTE_ENDPOINT_ID = "endpointId";
 	public static final String ATTRIBUTE_SOURCE_ID = "sourceId";
 	public static final String ATTRIBUTE_SESSION_ID = "sessionId";
@@ -250,6 +252,8 @@ public class FileSyncSessionRepository implements ISyncSessionRepository{
 		elementSession.addAttribute(ATTRIBUTE_SOURCE_ID, syncSession.getSourceId());
 		elementSession.addAttribute(ATTRIBUTE_ENDPOINT_ID, syncSession.getTarget().getEndpointId());
 		elementSession.addAttribute(ATTRIBUTE_LAST_SYNC_DATE, syncSession.getLastSyncDate() == null ? "" : DateHelper.formatW3CDateTime(syncSession.getLastSyncDate()));
+		elementSession.addAttribute(ATTRIBUTE_LAST_IN, String.valueOf(syncSession.getLastNumberInMessages()));
+		elementSession.addAttribute(ATTRIBUTE_LAST_OUT, String.valueOf(syncSession.getLastNumberOutMessages()));
 		elementSession.addAttribute(ATTRIBUTE_FULL, syncSession.isFullProtocol() ? "true" : "false");
 		elementSession.addAttribute(ATTRIBUTE_OPEN, syncSession.isOpen() ? "true" : "false");
 		elementSession.addAttribute(ATTRIBUTE_BROKEN, syncSession.isBroken() ? "true" : "false");
@@ -290,6 +294,8 @@ public class FileSyncSessionRepository implements ISyncSessionRepository{
 		String endpointId = syncElement.attributeValue(ATTRIBUTE_ENDPOINT_ID);
 		String dateAsString = syncElement.attributeValue(ATTRIBUTE_LAST_SYNC_DATE);
 		Date date = (dateAsString == null || dateAsString.length() == 0) ? null : DateHelper.parseW3CDateTime(dateAsString);
+		int lastIn = Integer.valueOf(syncElement.attributeValue(ATTRIBUTE_LAST_IN));
+		int lastOut = Integer.valueOf(syncElement.attributeValue(ATTRIBUTE_LAST_OUT));
 		boolean isFull = Boolean.valueOf(syncElement.attributeValue(ATTRIBUTE_FULL));
 		boolean isOpen = Boolean.valueOf(syncElement.attributeValue(ATTRIBUTE_OPEN));
 		boolean isBroken = Boolean.valueOf(syncElement.attributeValue(ATTRIBUTE_BROKEN));
@@ -333,6 +339,8 @@ public class FileSyncSessionRepository implements ISyncSessionRepository{
 			isBroken,
 			isCancelled, 
 			date, 
+			lastIn,
+			lastOut,
 			currentSyncSnapshot, 
 			lastSyncSnapshot, 
 			conflicts, 

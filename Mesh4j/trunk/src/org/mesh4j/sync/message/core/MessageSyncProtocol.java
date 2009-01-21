@@ -5,12 +5,14 @@ import java.util.Date;
 import java.util.List;
 
 import org.mesh4j.sync.id.generator.IdGenerator;
+import org.mesh4j.sync.message.IChannel;
 import org.mesh4j.sync.message.IEndpoint;
 import org.mesh4j.sync.message.IMessage;
 import org.mesh4j.sync.message.IMessageSyncAdapter;
 import org.mesh4j.sync.message.IMessageSyncAware;
 import org.mesh4j.sync.message.IMessageSyncProtocol;
 import org.mesh4j.sync.message.ISyncSession;
+import org.mesh4j.sync.message.InOutStatistics;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.validations.Guard;
 
@@ -22,22 +24,25 @@ public class MessageSyncProtocol implements IMessageSyncProtocol {
 	private IBeginSyncMessageProcessor initialMessage;
 	private ICancelSyncMessageProcessor cancelMessage;
 	private ISyncSessionRepository repository;
+	private IChannel channel;
 	private String protocolPrefix = "";
 	private List<IMessageSyncAware> syncAwareList = new ArrayList<IMessageSyncAware>();
 	
 	// METHODS
-	public MessageSyncProtocol(String protocolPrefix, IBeginSyncMessageProcessor initialMessage, ICancelSyncMessageProcessor cancelMessage, ISyncSessionRepository repository, ArrayList<IMessageProcessor> messageProcessors){
+	public MessageSyncProtocol(String protocolPrefix, IBeginSyncMessageProcessor initialMessage, ICancelSyncMessageProcessor cancelMessage, ISyncSessionRepository repository, IChannel channel, ArrayList<IMessageProcessor> messageProcessors){
 		Guard.argumentNotNullOrEmptyString(protocolPrefix, "protocolPrefix");
 		Guard.argumentNotNull(initialMessage, "initialMessage");
 		Guard.argumentNotNull(cancelMessage, "cancelMessage");
 		Guard.argumentNotNull(repository, "repository");
 		Guard.argumentNotNull(messageProcessors, "messageProcessors");
+		Guard.argumentNotNull(channel, "channel");
 
 		this.protocolPrefix = protocolPrefix;
 		this.initialMessage = initialMessage;
 		this.cancelMessage = cancelMessage;
 		this.repository = repository;
 		this.messageProcessors = messageProcessors;
+		this.channel = channel;
 	}
 
 	@Override
@@ -150,10 +155,15 @@ public class MessageSyncProtocol implements IMessageSyncProtocol {
 	
 	@Override
 	public void endSync(ISyncSession syncSession, Date date) {
-		syncSession.endSync(date);
+		
+		InOutStatistics statistics = this.channel.getInOutStatistics(syncSession.getSessionId(), syncSession.getVersion());
+		syncSession.endSync(date, statistics.getNumberInMessages(), statistics.getNumberOutMessages());
 		
 		IMessageSyncAdapter adapter = this.repository.getSourceOrCreateIfAbsent(syncSession.getSourceId());
 		List<Item> conflicts = adapter.synchronizeSnapshot(syncSession);
+		
+		
+		this.channel.purgeMessages(syncSession.getSessionId(), syncSession.getVersion());
 		
 		this.notifyEndSync(syncSession, conflicts);
 	}

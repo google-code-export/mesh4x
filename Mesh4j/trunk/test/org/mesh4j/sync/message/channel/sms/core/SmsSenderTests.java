@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.message.MockMessageEncoding;
 import org.mesh4j.sync.message.MockSmsConnection;
 import org.mesh4j.sync.message.channel.sms.SmsEndpoint;
@@ -32,7 +33,7 @@ public class SmsSenderTests {
 	
 	@Test
 	public void shouldSendBatchAddToOngoingListIfAckIsRequired(){
-		SmsMessageBatch batch = createBatch(3);
+		SmsMessageBatch batch = createBatch(3, "123");
 		
 		SmsSender smsSender = new SmsSender(new MockSmsConnection("sms:154022344", new MockMessageEncoding()));
 		smsSender.send(batch, true);
@@ -44,7 +45,7 @@ public class SmsSenderTests {
 	
 	@Test
 	public void shouldSendBatchDontAddToOngoingListIfAckIsNotRequired(){
-		SmsMessageBatch batch = createBatch(3);
+		SmsMessageBatch batch = createBatch(3, "123");
 		
 		SmsSender smsSender = new SmsSender(new MockSmsConnection("sms:154022344", new MockMessageEncoding()));
 		smsSender.send(batch, false);
@@ -65,7 +66,7 @@ public class SmsSenderTests {
 		
 		connA.setEndPoint(connB);
 		
-		SmsMessageBatch batch = createBatch(3);
+		SmsMessageBatch batch = createBatch(3, "123");
 		
 		SmsSender smsSender = new SmsSender(connA);
 		smsSender.send(batch, true);
@@ -78,7 +79,7 @@ public class SmsSenderTests {
 
 	@Test
 	public void shouldReceiveACKIsDiscartedWhenBathIsNotOngoing(){
-		SmsMessageBatch batch = createBatch(3);
+		SmsMessageBatch batch = createBatch(3, "123");
 
 		SmsSender smsSender = new SmsSender(new MockSmsConnection("sms:154022344", new MockMessageEncoding()));
 		smsSender.send(batch, false);
@@ -102,7 +103,7 @@ public class SmsSenderTests {
 
 	@Test
 	public void shouldReceiveACKRemoveBathInOngoingList(){
-		SmsMessageBatch batch = createBatch(3);
+		SmsMessageBatch batch = createBatch(3, "123");
 
 		SmsSender smsSender = new SmsSender(new MockSmsConnection("sms:154022344", new MockMessageEncoding()));
 		smsSender.send(batch, true);
@@ -127,7 +128,7 @@ public class SmsSenderTests {
 	
 	@Test
 	public void shouldGetOngoingBatchReturnsNullIfBatchIsNotOngoing(){
-		SmsMessageBatch batch = createBatch(3);
+		SmsMessageBatch batch = createBatch(3, "123");
 
 		SmsSender smsSender = new SmsSender(new MockSmsConnection("sms:154022344", new MockMessageEncoding()));
 		smsSender.send(batch, false);
@@ -137,7 +138,7 @@ public class SmsSenderTests {
 
 	@Test
 	public void shouldGetOngoingBatchReturnsBatchOngoing(){
-		SmsMessageBatch batch = createBatch(3);
+		SmsMessageBatch batch = createBatch(3, "123");
 		
 		SmsSender smsSender = new SmsSender(new MockSmsConnection("sms:154022344", new MockMessageEncoding()));
 		smsSender.send(batch, true);
@@ -209,8 +210,105 @@ public class SmsSenderTests {
 		Assert.assertTrue(date.before(smsMessage.getLastModificationDate()));
 	}
 
-	private SmsMessageBatch createBatch(int numberOfMessages) {
-		SmsMessageBatch batch = new SmsMessageBatch("123", new SmsEndpoint("123"), IProtocolConstants.PROTOCOL, "12345", numberOfMessages);
+	@Test
+	public void shouldGetCompletedBatchesForSyncSession(){
+		
+		String sessionId = "1";
+		int version = 1;
+		
+		SmsSender smsSender = new SmsSender(new MockSmsConnection("sms:154022344", new MockMessageEncoding()));
+		
+		SmsMessageBatch batch = createBatch(10, "2");
+		smsSender.send(batch, false);
+		batch = createBatch(10, "3");
+		smsSender.send(batch, false);
+		batch = createBatch(10, "4");
+		smsSender.send(batch, true);
+		batch = createBatch(10, "5");
+		smsSender.send(batch, true);
+		
+		batch = createBatch(10, sessionId);
+		smsSender.send(batch, false);
+		
+		SmsMessageBatch batch2 = createBatch(10, sessionId);
+		smsSender.send(batch2, false);
+
+		List<SmsMessageBatch> result = smsSender.getCompletedBatches(sessionId, version);
+		Assert.assertNotNull(result);
+		Assert.assertEquals(2, result.size());
+		Assert.assertFalse(result.get(1).equals(result.get(0)));
+		
+		Assert.assertTrue(batch.equals(result.get(1)) || batch.equals(result.get(0)));
+		Assert.assertTrue(batch2.equals(result.get(1)) || batch2.equals(result.get(0)));
+	}
+	
+	@Test
+	public void shouldGetOngoingBatchesForSyncSession(){
+		
+		String sessionId = "1";
+		int version = 1;
+		
+		SmsSender smsSender = new SmsSender(new MockSmsConnection("sms:154022344", new MockMessageEncoding()));
+		
+		SmsMessageBatch batch = createBatch(10, "2");
+		smsSender.send(batch, false);
+		batch = createBatch(10, "3");
+		smsSender.send(batch, false);
+		batch = createBatch(10, "4");
+		smsSender.send(batch, true);
+		batch = createBatch(10, "5");
+		smsSender.send(batch, true);
+			
+		batch = createBatch(10, sessionId);
+		smsSender.send(batch, true);
+		SmsMessageBatch batch2 = createBatch(10, sessionId);
+		smsSender.send(batch2, true);
+		
+		List<SmsMessageBatch> result = smsSender.getOngoingBatches(sessionId, version);
+		Assert.assertNotNull(result);
+		Assert.assertEquals(2, result.size());
+		Assert.assertFalse(result.get(1).equals(result.get(0)));
+		
+		Assert.assertTrue(batch.equals(result.get(1)) || batch.equals(result.get(0)));
+		Assert.assertTrue(batch2.equals(result.get(1)) || batch2.equals(result.get(0)));
+	}
+
+	
+	@Test
+	public void shouldPurgeBatches(){
+		String sessionId = "1";
+		int version = 1;
+		
+		SmsSender smsSender = new SmsSender(new MockSmsConnection("sms:154022344", new MockMessageEncoding()));
+		
+		SmsMessageBatch batch = createBatch(10, sessionId);
+		smsSender.send(batch, false);
+		batch = createBatch(10, sessionId);
+		smsSender.send(batch, false);
+		batch = createBatch(10,sessionId);
+		smsSender.send(batch, true);
+		batch = createBatch(10, sessionId);
+		smsSender.send(batch, true);			
+		
+		List<SmsMessageBatch> result = smsSender.getOngoingBatches(sessionId, version);
+		Assert.assertNotNull(result);
+		Assert.assertEquals(2, result.size());
+		result = smsSender.getCompletedBatches(sessionId, version);
+		Assert.assertNotNull(result);
+		Assert.assertEquals(2, result.size());
+		
+		smsSender.purgeBatches(sessionId, version);
+		
+		result = smsSender.getOngoingBatches(sessionId, version);
+		Assert.assertNotNull(result);
+		Assert.assertEquals(0, result.size());
+		result = smsSender.getCompletedBatches(sessionId, version);
+		Assert.assertNotNull(result);
+		Assert.assertEquals(0, result.size());
+	}
+	
+	private SmsMessageBatch createBatch(int numberOfMessages, String sessionId) {
+		SmsMessageBatch batch = new SmsMessageBatch(sessionId, new SmsEndpoint("123"), IProtocolConstants.PROTOCOL, IdGenerator.INSTANCE.newID(), numberOfMessages);
 		for (int i = 0; i < numberOfMessages; i++) {
 			batch.addMessage(i, new SmsMessage("message"+i));
 		}

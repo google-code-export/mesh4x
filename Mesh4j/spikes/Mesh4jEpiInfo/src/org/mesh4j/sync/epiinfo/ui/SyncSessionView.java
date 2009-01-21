@@ -16,12 +16,13 @@ import javax.swing.JTextArea;
 import javax.swing.Timer;
 
 import org.mesh4j.sync.epiinfo.ui.utils.EpiInfoIconManager;
+import org.mesh4j.sync.message.IChannel;
 import org.mesh4j.sync.message.IMessage;
 import org.mesh4j.sync.message.IMessageSyncAware;
 import org.mesh4j.sync.message.ISyncSession;
+import org.mesh4j.sync.message.InOutStatistics;
 import org.mesh4j.sync.message.channel.sms.connection.ISmsConnectionInboundOutboundNotification;
 import org.mesh4j.sync.message.protocol.ACKEndSyncMessageProcessor;
-import org.mesh4j.sync.message.protocol.BeginSyncMessageProcessor;
 import org.mesh4j.sync.message.protocol.EndSyncMessageProcessor;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.ui.translator.EpiInfoCompactUITranslator;
@@ -61,29 +62,30 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 	private JLabel imageRemoteUpdated;
 	private JLabel imageRemoteDeleted;
 	private JTextArea textAreaStatus;
-
+	private JLabel labelInOutPendings;
+	
 	private ISyncSession syncSession;
 	
 	private ISyncSessionViewOwner owner;
 	private EpiinfoSourceIdResolver sourceIdResolver;
+	private IChannel channel;
 	
-	private int smsIn = 0;
-	private int smsOut = 0;
-
 	private int syncMinutes = 0;
 	
 	// BUSINESS METHODS
 
-	public SyncSessionView() {
+	public SyncSessionView(boolean mustStartRefreshStatus) {
 		super();
 		
-		startScheduler();
+		if(mustStartRefreshStatus){
+			startScheduler();
+		}
 		
 		setBackground(Color.WHITE);
 		setBounds(100, 100, 867, 346);
 		setLayout(new FormLayout(
 			"272dlu",
-			"58dlu, 41dlu, default"));
+			"58dlu, 50dlu, 12dlu"));
 
 		add(getPanelProgress(), new CellConstraints(1, 1, CellConstraints.FILL, CellConstraints.FILL));
 		add(getPanelTraffic(), new CellConstraints(1, 2));
@@ -122,7 +124,8 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 					FormFactory.DEFAULT_ROWSPEC,
 					FormFactory.DEFAULT_ROWSPEC,
 					FormFactory.DEFAULT_ROWSPEC,
-					RowSpec.decode("9dlu")}));
+					RowSpec.decode("9dlu"),
+					RowSpec.decode("default")}));
 			
 			panelTraffic.add(getLabelLocalNew(), new CellConstraints(2, 2, CellConstraints.DEFAULT, CellConstraints.TOP));
 			panelTraffic.add(getLabelLocalUpdated(), new CellConstraints(2, 3));
@@ -169,6 +172,22 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 			imageRemoteDeleted = new JLabel();
 			imageRemoteDeleted.setText("");
 			panelTraffic.add(imageRemoteDeleted, new CellConstraints(10, 4, CellConstraints.FILL, CellConstraints.FILL));
+
+			final JPanel panelInOurPendings = new JPanel();
+			panelInOurPendings.setBackground(Color.WHITE);
+			panelInOurPendings.setLayout(new FormLayout(
+				new ColumnSpec[] {
+					ColumnSpec.decode("78dlu"),
+					ColumnSpec.decode("102dlu")},
+				new RowSpec[] {
+					FormFactory.DEFAULT_ROWSPEC}));
+			panelTraffic.add(panelInOurPendings, new CellConstraints(1, 6, 10, 1, CellConstraints.DEFAULT, CellConstraints.TOP));
+
+			labelInOutPendings = new JLabel();
+			labelInOutPendings.setForeground(new Color(128, 128, 128));
+			labelInOutPendings.setFont(new Font("Calibri", Font.PLAIN, 8));
+			labelInOutPendings.setText("");
+			panelInOurPendings.add(labelInOutPendings, new CellConstraints(2, 1, CellConstraints.CENTER, CellConstraints.FILL));
 		}
 		return panelTraffic;
 	}
@@ -323,6 +342,7 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 		
 		if(syncSession != null){
 			updateSessionStatus();
+			updateInOut();
 			
 			if(syncSession.isOpen()){
 				setInProcess("");
@@ -346,9 +366,8 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 
 		this.labelIn.setText(EpiInfoCompactUITranslator.getLabelIn(0));
 		this.labelOut.setText(EpiInfoCompactUITranslator.getLabelOut(0));
+		this.labelInOutPendings.setText("");
 		
-		this.smsIn = 0;
-		this.smsOut = 0;
 		this.syncMinutes = 0;
 		
 		this.labelLocalDataSource.setIcon(EpiInfoIconManager.getUndefinedSourceImage());		
@@ -380,16 +399,22 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 		return this.syncSession != null && this.syncSession.getSessionId().equals(syncSession.getSessionId());
 	}
 	
-	// sms status
-	
-	public void increaseSmsIn() {
-		this.smsIn = this.smsIn + 1;
-		this.labelIn.setText(EpiInfoCompactUITranslator.getLabelIn(this.smsIn));
-	}
-	
-	public void increaseSmsOut() {
-		this.smsOut = this.smsOut + 1;
-		this.labelOut.setText(EpiInfoCompactUITranslator.getLabelOut(this.smsOut));
+	public void updateInOut() {
+		if(this.syncSession.isOpen()){
+			InOutStatistics stat = this.channel.getInOutStatistics(this.syncSession.getSessionId(), this.syncSession.getVersion());
+			this.labelIn.setText(EpiInfoCompactUITranslator.getLabelIn(stat.getNumberInMessages()));
+			this.labelOut.setText(EpiInfoCompactUITranslator.getLabelOut(stat.getNumberOutMessages()));
+			
+			if(stat.getNumberInPendingToArriveMessages() == 0 && stat.getNumberOutPendingAckMessages() == 0){
+				this.labelInOutPendings.setText("");
+			} else {
+				this.labelInOutPendings.setText(EpiInfoCompactUITranslator.getMessageInOutPendings(stat.getNumberInPendingToArriveMessages(), stat.getNumberOutPendingAckMessages()));				
+			}
+		} else {
+			this.labelIn.setText(EpiInfoCompactUITranslator.getLabelIn(syncSession.getLastNumberInMessages()));
+			this.labelOut.setText(EpiInfoCompactUITranslator.getLabelOut(syncSession.getLastNumberOutMessages()));
+			this.labelInOutPendings.setText("");
+		}
 	}
 
 	// IMessageSyncAware methods
@@ -487,11 +512,7 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 	@Override
 	public void notifyMessageProcessed(ISyncSession syncSession, IMessage message, List<IMessage> response) {
 		if(accepts(syncSession)){
-		
-			if(BeginSyncMessageProcessor.MESSAGE_TYPE.equals(message.getMessageType())){
-				this.increaseSmsIn();
-			}
-			
+			this.updateInOut();
 			if(!ACKEndSyncMessageProcessor.MESSAGE_TYPE.equals(message.getMessageType()) && 
 					!EndSyncMessageProcessor.MESSAGE_TYPE.equals(message.getMessageType())){
 				this.updateSessionStatus();
@@ -508,26 +529,36 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 	// ISmsConnectionInboundOutboundNotification methods
 	@Override
 	public void notifyReceiveMessage(String endpointId, String message, Date date) {
-		this.increaseSmsIn();
+		if(this.syncSession != null && this.syncSession.getTarget().getEndpointId().equals(endpointId)){
+			this.updateInOut();
+		}
 	}
 
 	@Override
 	public void notifyReceiveMessageError(String endpointId, String message, Date date) {
-		String error = EpiInfoCompactUITranslator.getMessageNotifyReceiveMessageError(endpointId, message);
-		this.setError(error);
-		this.increaseSmsIn();
+		if(this.syncSession != null && this.syncSession.getTarget().getEndpointId().equals(endpointId)){
+			this.updateInOut();
+			
+			String error = EpiInfoCompactUITranslator.getMessageNotifyReceiveMessageError(endpointId, message);
+			this.setError(error);
+		}
 	}
 
 	@Override
 	public void notifySendMessage(String endpointId, String message) {
-		this.increaseSmsOut();
+		if(this.syncSession != null && this.syncSession.getTarget().getEndpointId().equals(endpointId)){
+			this.updateInOut();
+		}
 	}
 
 	@Override
 	public void notifySendMessageError(String endpointId, String message) {
-		String error = EpiInfoCompactUITranslator.getMessageNotifySendMessageError(endpointId, message);
-		this.setError(error);
-		this.increaseSmsOut();
+		if(this.syncSession != null && this.syncSession.getTarget().getEndpointId().equals(endpointId)){
+			this.updateInOut();
+		
+			String error = EpiInfoCompactUITranslator.getMessageNotifySendMessageError(endpointId, message);
+			this.setError(error);
+		}
 	}
 	
 	@Override
@@ -536,11 +567,11 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 	}
 
 	
-	public void initialize(ISyncSessionViewOwner owner, EpiinfoSourceIdResolver sourceIdResolver){
+	public void initialize(ISyncSessionViewOwner owner, EpiinfoSourceIdResolver sourceIdResolver, IChannel channel){
 		this.owner = owner;
 		this.sourceIdResolver = sourceIdResolver;
+		this.channel = channel;
 	}
-	
 	
 	private void setStatusText(String text) {
 		this.textAreaStatus.setText(text);

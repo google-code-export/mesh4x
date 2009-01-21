@@ -77,4 +77,15 @@ public class MockSmsSender implements ISmsSender {
 		// nothing to do		
 	}
 
+	@Override
+	public List<SmsMessageBatch> getCompletedBatches(String sessionId,
+			int version) {
+		return null;
+	}
+
+	@Override
+	public List<SmsMessageBatch> getOngoingBatches(String sessionId, int version) {
+		return null;
+	}
+
 }

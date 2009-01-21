@@ -102,7 +102,7 @@ public class EndSyncMessageProcessorTests {
 
 			@Override
 			public void endSync(ISyncSession syncSession, Date date) {
-				syncSession.endSync(date);
+				syncSession.endSync(date, 0, 0);
 			}
 
 			@Override

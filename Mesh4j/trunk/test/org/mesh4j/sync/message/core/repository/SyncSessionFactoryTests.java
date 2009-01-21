@@ -72,7 +72,7 @@ public class SyncSessionFactoryTests {
 		SyncSessionFactory factory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory());
 		
 		IMessageSyncAdapter adapter = ((SyncSession)factory.createSession(
-			"1", 0, "kml:123", "333", true, true, true, true, false, false, null, new ArrayList<Item>(), 
+			"1", 0, "kml:123", "333", true, true, true, true, false, false, null, 0, 0, new ArrayList<Item>(), 
 			new ArrayList<Item>(), new ArrayList<String>(), new ArrayList<String>(), 0, 0, 0, 
 			null, 0, 0, 0))
 				.getSyncAdapter();
@@ -150,7 +150,7 @@ public class SyncSessionFactoryTests {
 		factory.registerSource(new InMemoryMessageSyncAdapter(sourceId));
 		
 		ISyncSession syncSession = factory.createSession(sessionId, version, sourceId, endpoint, full, shouldSend, shouldReceive, open, broken, cancelled, date,
-			current, snapshot, conflicts, acks, 1, 2, 3, "mySource", 4, 5, 6);
+				1, 2, current, snapshot, conflicts, acks, 1, 2, 3, "mySource", 4, 5, 6);
 		
 		Assert.assertNotNull(syncSession);
 		Assert.assertEquals(sessionId, syncSession.getSessionId());
@@ -180,6 +180,9 @@ public class SyncSessionFactoryTests {
 		Assert.assertEquals(5, syncSession.getTargetNumberOfUpdatedItems());
 		Assert.assertEquals(6, syncSession.getTargetNumberOfDeletedItems());
 		Assert.assertEquals("mySource", syncSession.getTargetSourceType());
+		
+		Assert.assertEquals(1, syncSession.getLastNumberInMessages());
+		Assert.assertEquals(2, syncSession.getLastNumberOutMessages());
 	}
 
 	private MessageSyncAdapterFactory createMessageSyncAdapterFactory() {

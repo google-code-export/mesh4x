@@ -249,6 +249,36 @@ public class SmsReceiver implements ISmsReceiver {
 		}
 	}
 	
+	@Override
+	public List<SmsMessageBatch> getCompletedBatches(String sessionId, int version) {
+		synchronized (SEMAPHORE) {
+			
+			List<SmsMessageBatch> result = new ArrayList<SmsMessageBatch>();
+			List<SmsMessageBatch> items = this.getCompletedBatches();
+			for (SmsMessageBatch smsMessageBatch : items) {
+				if(smsMessageBatch.getSessionId().equals(sessionId)){
+					result.add(smsMessageBatch);
+				}
+			}
+			return result;
+		}
+	}
+
+	@Override
+	public List<SmsMessageBatch> getOngoingBatches(String sessionId, int version) {
+		synchronized (SEMAPHORE) {
+			
+			List<SmsMessageBatch> result = new ArrayList<SmsMessageBatch>();
+			List<SmsMessageBatch> items = this.getOngoingBatches();
+			for (SmsMessageBatch smsMessageBatch : items) {
+				if(smsMessageBatch.getSessionId().equals(sessionId)){
+					result.add(smsMessageBatch);
+				}
+			}
+			return result;
+		}
+	}
+	
 	public ISmsBatchReceiver getSmsBatchReceiver(){
 		return this.smsBatchReceiver;
 	}

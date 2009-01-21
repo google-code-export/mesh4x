@@ -37,6 +37,8 @@ public class MockSyncSession implements ISyncSession{
 	private int targetNumberOfUpdatedItems = 0;
 	private int targetNumberOfDeletedItems = 0;
 	private boolean broken = false;
+	private int in = 0;
+	private int out = 0;
 	
 	// BUSINESS METHODS
 	
@@ -94,10 +96,12 @@ public class MockSyncSession implements ISyncSession{
 			this.numberOfDeletedItems = this.numberOfDeletedItems +1;
 		}
 	}	
-	@Override public void endSync(Date sinceDate) {
+	@Override public void endSync(Date sinceDate, int in, int out) {
 		this.sinceDate = sinceDate;
 		this.cancelled = false;
 		this.endSyncWasCalled = true;
+		this.in = in;
+		this.out = out;
 	}
 	
 	@Override public Item get(String syncId) {
@@ -275,5 +279,13 @@ public class MockSyncSession implements ISyncSession{
 	@Override
 	public void setBroken() {
 		this.broken = true;
+	}
+	@Override
+	public int getLastNumberInMessages() {
+		return in;
+	}
+	@Override
+	public int getLastNumberOutMessages() {
+		return out;
 	}
 }

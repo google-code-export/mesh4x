@@ -243,7 +243,7 @@ public class LogFrame extends JFrame implements ISmsConnectionInboundOutboundNot
 
 	@Override
 	public void notifyMessageProcessed(ISyncSession syncSession, IMessage message, List<IMessage> response) {
-		this.log(EpiInfoUITranslator.getMessageProcessed(message, response));
+//		this.log(EpiInfoUITranslator.getMessageProcessed(message, response));
 	}
 
 	@Override

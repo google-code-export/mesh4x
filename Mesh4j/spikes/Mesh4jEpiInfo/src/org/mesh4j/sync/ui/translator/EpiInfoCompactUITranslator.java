@@ -423,4 +423,8 @@ public class EpiInfoCompactUITranslator {
 	public static String getLabelCancelled() {
 		return MessageTranslator.translate("EPIINFO_COMPACT_LABEL_CANCELLED");
 	}
+
+	public static String getMessageInOutPendings(int numberInPendingToArriveMessages, int numberOutPendingAckMessages) {
+		return MessageTranslator.translate("EPIINFO_COMPACT_MESSAGE_IN_OUT_PENDINGS", numberInPendingToArriveMessages, numberOutPendingAckMessages);
+	}
 }

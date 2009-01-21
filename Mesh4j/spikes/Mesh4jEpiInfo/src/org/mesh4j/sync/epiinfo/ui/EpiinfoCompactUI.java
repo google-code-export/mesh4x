@@ -125,13 +125,15 @@ public class EpiinfoCompactUI implements ISmsConnectionInboundOutboundNotificati
 		
 		this.logFrame = new LogFrame(this.sourceIdResolver);
 		this.cfgFrame = new ConfigurationFrame(this);
+		this.syncSessionsFrame = new SyncSessionsFrame(this, this.sourceIdResolver, this.propertiesProvider);
 		
 		IMessageSyncAware[] syncAware = new IMessageSyncAware[] {this.logFrame, this.syncSessionView};
 		ISmsConnectionInboundOutboundNotification[] smsAware = new ISmsConnectionInboundOutboundNotification[]{this, this.logFrame, this.syncSessionView};
 		this.syncEngine = SyncEngineUtil.createSyncEngine(this.sourceIdResolver, this.propertiesProvider, syncAware, smsAware);
-		
-		this.syncSessionView.initialize(this, this.sourceIdResolver);
-		syncSessionsFrame = new SyncSessionsFrame(this, this.syncEngine, this.sourceIdResolver, this.propertiesProvider);
+		if(this.syncEngine != null){
+			this.syncSessionView.initialize(this, this.sourceIdResolver, this.syncEngine.getChannel());
+			this.syncSessionsFrame.initialize(this.syncEngine);
+		}
 	}
 	
 	public void startUpSyncEngine(){
@@ -213,8 +215,15 @@ public class EpiinfoCompactUI implements ISmsConnectionInboundOutboundNotificati
 	}
 	
 	public void notifyStartUpOk(){		
+		
+		if(this.syncEngine != null){
+			this.syncSessionView.initialize(this, this.sourceIdResolver, this.syncEngine.getChannel());
+			this.syncSessionsFrame.initialize(this.syncEngine);
+		}
+		
 		String msg = EpiInfoCompactUITranslator.getMessageWelcome();
 		this.syncSessionView.setReady(msg);
+		
 		fullEnableAllButtons();
 	}
 	
@@ -419,14 +428,14 @@ public class EpiinfoCompactUI implements ISmsConnectionInboundOutboundNotificati
 				ColumnSpec.decode("272dlu")},
 			new RowSpec[] {
 				RowSpec.decode("6dlu"),
-				RowSpec.decode("89dlu"),
+				RowSpec.decode("120dlu"),
 				FormFactory.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("110dlu"),
-				RowSpec.decode("20dlu"),
+				RowSpec.decode("120dlu"),
+				RowSpec.decode("17dlu"),
 				RowSpec.decode("28dlu")}));
 		frame.setResizable(false);
 		frame.setTitle(EpiInfoUITranslator.getTitle());
-		frame.setBounds(100, 100, 590, 446);
+		frame.setBounds(100, 100, 590, 504);
 		frame.getContentPane().add(getPanelSync(), new CellConstraints(2, 2));
 
 		final JPanel panelStatusButtons = new JPanel();
@@ -776,7 +785,7 @@ public class EpiinfoCompactUI implements ISmsConnectionInboundOutboundNotificati
 
 	public SyncSessionView getSyncSessionView() {
 		if(syncSessionView == null){
-			syncSessionView = new SyncSessionView();
+			syncSessionView = new SyncSessionView(true);
 		}
 		return syncSessionView;
 	}

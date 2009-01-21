@@ -2,13 +2,13 @@ package org.mesh4j.sync.message.channel.sms.connection.smslib;
 
 import org.mesh4j.sync.IFilter;
 import org.mesh4j.sync.adapters.ISyncAdapterFactory;
-import org.mesh4j.sync.message.IChannel;
 import org.mesh4j.sync.message.IMessageSyncAware;
 import org.mesh4j.sync.message.IMessageSyncProtocol;
 import org.mesh4j.sync.message.MessageSyncEngine;
 import org.mesh4j.sync.message.channel.sms.ISmsConnection;
 import org.mesh4j.sync.message.channel.sms.SmsChannelFactory;
 import org.mesh4j.sync.message.channel.sms.connection.ISmsConnectionInboundOutboundNotification;
+import org.mesh4j.sync.message.channel.sms.core.SmsChannel;
 import org.mesh4j.sync.message.channel.sms.core.SmsEndpointFactory;
 import org.mesh4j.sync.message.core.repository.MessageSyncAdapterFactory;
 import org.mesh4j.sync.message.encoding.IMessageEncoding;
@@ -47,8 +47,8 @@ public class SmsLibMessageSyncEngineFactory {
 	
 	private static MessageSyncEngine createSyncEngine(IMessageSyncAware syncAware, String repositoryBaseDirectory, IIdentityProvider identityProvider, ISmsConnection smsConnection, int senderDelay, int receiverDelay, ISyncAdapterFactory ... syncAdapterFactories){
 		MessageSyncAdapterFactory msgSyncAdapterFactory = new MessageSyncAdapterFactory(null, false, syncAdapterFactories);		
-		IChannel channel = SmsChannelFactory.createChannelWithFileRepository(smsConnection, senderDelay, receiverDelay, repositoryBaseDirectory);
-		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocolWithFileRepository(100, repositoryBaseDirectory, identityProvider, new IMessageSyncAware[]{syncAware}, SmsEndpointFactory.INSTANCE, msgSyncAdapterFactory);
+		SmsChannel channel = SmsChannelFactory.createChannelWithFileRepository(smsConnection, senderDelay, receiverDelay, repositoryBaseDirectory);
+		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocolWithFileRepository(100, repositoryBaseDirectory, channel, identityProvider, new IMessageSyncAware[]{syncAware}, SmsEndpointFactory.INSTANCE, msgSyncAdapterFactory);
 		return new MessageSyncEngine(syncProtocol, channel);		
 	}
 }

@@ -29,10 +29,12 @@ public interface ISyncSession {
 
 	void beginSync(boolean fullProtocol, boolean shouldSendChanges, boolean shouldReceiveChanges);
 	void beginSync(boolean fullProtocol, boolean shouldSendChanges, boolean shouldReceiveChanges, Date sinceDate, int version, String targetSourceType);
-	void endSync(Date sinceDate);
+	void endSync(Date sinceDate, int numberInMessages, int numberOutMessages);
 	void cancelSync();
 	
 	Date getLastSyncDate();
+	int getLastNumberInMessages();
+	int getLastNumberOutMessages();
 	
 	boolean isOpen();
 	boolean isCompleteSync();

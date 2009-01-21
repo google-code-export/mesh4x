@@ -10,4 +10,7 @@ public interface IChannel {
 	
 	void shutdown();
 
+	InOutStatistics getInOutStatistics(String sessionId, int version);
+
+	void purgeMessages(String sessionId, int sessionVersion);
 }

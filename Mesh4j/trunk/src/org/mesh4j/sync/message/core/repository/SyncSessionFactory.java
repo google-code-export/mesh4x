@@ -129,7 +129,7 @@ public class SyncSessionFactory implements ISyncSessionFactory {
 	@Override
 	public ISyncSession createSession(String sessionId, int version, String sourceId,
 			String endpointId, boolean fullProtocol, boolean shouldSendChanges, boolean shouldReceiveChanges, 
-			boolean isOpen, boolean isBroken, boolean isCancelled, Date lastSyncDate,
+			boolean isOpen, boolean isBroken, boolean isCancelled, Date lastSyncDate, int lastIn, int lastOut,
 			List<Item> currentSyncSnapshot, List<Item> lastSyncSnapshot,
 			List<String> conflicts, List<String> acks,
 			int numberOfAddedItems, int numberOfUpdatedItems, int numberOfDeletedItems,
@@ -164,6 +164,8 @@ public class SyncSessionFactory implements ISyncSessionFactory {
 		
 		session.setOpen(isOpen);
 		session.setLastSyncDate(lastSyncDate);
+		session.setLastNumberInMessages(lastIn);
+		session.setLastNumberOutMessages(lastOut);
 		session.setCancelled(isCancelled);
 		
 		for (Item item : currentSyncSnapshot) {

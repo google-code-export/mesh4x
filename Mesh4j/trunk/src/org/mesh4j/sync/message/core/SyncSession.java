@@ -23,6 +23,8 @@ public class SyncSession implements ISyncSession{
 	private IMessageSyncAdapter syncAdapter;
 	private IEndpoint target;
 	private Date lastSyncDate;
+	private int lastNumberInMessages = 0;
+	private int lastNumberOutMessages = 0;	
 	private boolean open = false;
 	private HashMap<String, Item> cache = new HashMap<String, Item>();
 	private List<Item> snapshot = new ArrayList<Item>();
@@ -195,11 +197,17 @@ public class SyncSession implements ISyncSession{
 		this.targetNumberOfAddedItems = 0;
 		this.targetNumberOfDeletedItems = 0;
 		this.targetNumberOfUpdatedItems = 0;
+		
+		this.lastNumberInMessages = 0;
+		this.lastNumberOutMessages = 0;
 	}
 
 	@Override
-	public void endSync(Date sinceDate){
+	public void endSync(Date sinceDate, int numberInMessages, int numberOutMessages){
 		this.lastSyncDate = sinceDate;
+		this.lastNumberInMessages = numberInMessages;
+		this.lastNumberOutMessages = numberOutMessages;
+		
 		this.open = false;
 		this.cancelled = false;
 		
@@ -388,6 +396,21 @@ public class SyncSession implements ISyncSession{
 		this.broken = true;
 	}
 
+	@Override
+	public int getLastNumberInMessages() {
+		return this.lastNumberInMessages;
+	}
+	public void setLastNumberInMessages(int in) {
+		this.lastNumberInMessages = in;
+	}
+
+	@Override
+	public int getLastNumberOutMessages() {
+		return this.lastNumberOutMessages;
+	}
+	public void setLastNumberOutMessages(int out) {
+		this.lastNumberOutMessages = out;
+	}
 }
 
 

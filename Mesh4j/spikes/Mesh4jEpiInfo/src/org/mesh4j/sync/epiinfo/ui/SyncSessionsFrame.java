@@ -51,11 +51,10 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner{
 
 	// BUSINESS METHODS
 
-	public SyncSessionsFrame(EpiinfoCompactUI ui, MessageSyncEngine syncEngine, EpiinfoSourceIdResolver sourceIdResolver, PropertiesProvider propertiesProvider) {
+	public SyncSessionsFrame(EpiinfoCompactUI ui, EpiinfoSourceIdResolver sourceIdResolver, PropertiesProvider propertiesProvider) {
 		super();
 		
 		this.owner = ui;
-		this.syncEngine = syncEngine;
 		this.propertiesProvider = propertiesProvider;
 		this.sourceIdResolver = sourceIdResolver;
 		
@@ -162,8 +161,7 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner{
 			new RowSpec[] {
 				RowSpec.decode("197dlu")}));
 		
-		syncSessionView = new SyncSessionView();
-		syncSessionView.initialize(this, this.sourceIdResolver);
+		syncSessionView = new SyncSessionView(false);
 		panelViewSession.add(syncSessionView, new CellConstraints(3, 1, CellConstraints.FILL, CellConstraints.FILL ));
 
 		final JSplitPane splitPane = new JSplitPane();
@@ -182,14 +180,16 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner{
 
 		HashMap<String, DefaultMutableTreeNode> sourceNodes = new HashMap<String, DefaultMutableTreeNode>();
 		
-		for (ISyncSession syncSession : syncEngine.getAllSyncSessions()) {
-			DefaultMutableTreeNode sourceNode = sourceNodes.get(syncSession.getSourceId());
-			if(sourceNode == null){
-				sourceNode = new DefaultMutableTreeNode(syncSession.getSourceId());
-				sourceNodes.put(syncSession.getSourceId(), sourceNode);
-				rootNode.add(sourceNode);
+		if(this.syncEngine != null){
+			for (ISyncSession syncSession : this.syncEngine.getAllSyncSessions()) {
+				DefaultMutableTreeNode sourceNode = sourceNodes.get(syncSession.getSourceId());
+				if(sourceNode == null){
+					sourceNode = new DefaultMutableTreeNode(syncSession.getSourceId());
+					sourceNodes.put(syncSession.getSourceId(), sourceNode);
+					rootNode.add(sourceNode);
+				}
+				sourceNode.add(new DefaultMutableTreeNode(new SyncSessionWrapper(syncSession)));
 			}
-			sourceNode.add(new DefaultMutableTreeNode(new SyncSessionWrapper(syncSession)));
 		}
 	}
 
@@ -313,10 +313,7 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner{
 	
 	@Override
 	public void notifyNewSync() {
-		this.rootNode = new DefaultMutableTreeNode(EpiInfoCompactUITranslator.getSyncSessionWindowLabelAllSessions());
-		this.createSyncSessionTreeModel();		
-		this.treeSessions.setModel(new DefaultTreeModel(rootNode));
-		this.treeSessions.repaint();
+		updateSessions();
 	}
 
 	@Override
@@ -332,5 +329,20 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner{
 	@Override
 	public void notifyEndSync(boolean error) {
 		this.treeSessions.repaint();		
+	}
+
+	public void updateSessions(){
+		this.rootNode = new DefaultMutableTreeNode(EpiInfoCompactUITranslator.getSyncSessionWindowLabelAllSessions());
+		this.createSyncSessionTreeModel();		
+		this.treeSessions.setModel(new DefaultTreeModel(rootNode));
+		this.treeSessions.repaint();
+		
+		this.syncSessionView.viewSession(null);
+	}
+	
+	public void initialize(MessageSyncEngine syncEngine) {
+		this.syncEngine = syncEngine;
+		this.syncSessionView.initialize(this, this.sourceIdResolver, this.syncEngine.getChannel());
+		updateSessions();
 	}
 }

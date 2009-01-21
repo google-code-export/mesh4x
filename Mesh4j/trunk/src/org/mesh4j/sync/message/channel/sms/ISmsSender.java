@@ -27,4 +27,7 @@ public interface ISmsSender {
 	
 	void shutdown();
 
+	List<SmsMessageBatch> getOngoingBatches(String sessionId, int version);
+	List<SmsMessageBatch> getCompletedBatches(String sessionId, int version);
+
 }

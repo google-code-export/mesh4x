@@ -7,8 +7,7 @@ import java.util.StringTokenizer;
 
 import org.mesh4j.sync.message.IMessage;
 import org.mesh4j.sync.message.IMessageReceiver;
-import org.mesh4j.sync.message.IMessageSyncAware;
-import org.mesh4j.sync.message.ISyncSession;
+import org.mesh4j.sync.message.InOutStatistics;
 import org.mesh4j.sync.message.channel.sms.ISmsChannel;
 import org.mesh4j.sync.message.channel.sms.ISmsConnection;
 import org.mesh4j.sync.message.channel.sms.ISmsReceiver;
@@ -19,11 +18,10 @@ import org.mesh4j.sync.message.channel.sms.batch.SmsMessage;
 import org.mesh4j.sync.message.channel.sms.batch.SmsMessageBatch;
 import org.mesh4j.sync.message.core.Message;
 import org.mesh4j.sync.message.encoding.IMessageEncoding;
-import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.validations.Guard;
 
 
-public class SmsChannel implements ISmsChannel, IMessageSyncAware {
+public class SmsChannel implements ISmsChannel {
 	
 	// MODEL VARIABLES
 	private ISmsSender sender;
@@ -187,53 +185,12 @@ public class SmsChannel implements ISmsChannel, IMessageSyncAware {
 		this.sender.send(messages, endpoint);
 	}
 	
-	// IMEssageSyncAWare protocol
 	@Override
-	public void beginSync(ISyncSession syncSession) {
-		// nothing to do		
+	public void purgeMessages(String sessionId, int sessionVersion) {
+		this.sender.purgeBatches(sessionId, sessionVersion);
+		this.receiver.purgeBatches(sessionId, sessionVersion);
 	}
 	
-	@Override
-	public void endSync(ISyncSession syncSession, List<Item> conflicts) {
-		this.sender.purgeBatches(syncSession.getSessionId(), syncSession.getVersion());
-		this.receiver.purgeBatches(syncSession.getSessionId(), syncSession.getVersion());
-	}
-	
-	@Override
-	public void beginSyncWithError(ISyncSession syncSession) {
-		// nothing to do		
-	}
-
-	@Override
-	public void notifyInvalidMessageProtocol(IMessage message) {
-		// nothing to do		
-	}
-
-	@Override
-	public void notifyInvalidProtocolMessageOrder(IMessage message) {
-		// nothing to do		
-	}
-
-	@Override
-	public void notifyMessageProcessed(ISyncSession syncSession, IMessage message, List<IMessage> response) {
-		// nothing to do		
-	}
-
-	@Override
-	public void notifySessionCreationError(IMessage message, String sourceId) {
-		// nothing to do		
-	}
-
-	@Override
-	public void notifyCancelSync(ISyncSession syncSession) {
-		// nothing to do		
-	}
-
-	@Override
-	public void notifyCancelSyncErrorSyncSessionNotOpen(ISyncSession syncSession) {
-		// nothing to do		
-	}
-
 	@Override
 	public void startUp() {
 		this.sender.startUp();
@@ -250,5 +207,51 @@ public class SmsChannel implements ISmsChannel, IMessageSyncAware {
 	
 	public IMessageReceiver getMessageReceiver(){
 		return this.messageReceiver;
+	}
+
+	@Override
+	public InOutStatistics getInOutStatistics(String sessionId, int version) {
+		
+		int out = 0;
+		int outPendingAcks = 0;
+		int in = 0;
+		int inPendingToArrive = 0;
+		
+		List<SmsMessageBatch> outPendindBatches = this.sender.getOngoingBatches(sessionId, version);
+		List<SmsMessageBatch> outBatches = this.sender.getCompletedBatches(sessionId, version);
+		List<SmsMessageBatch> inPendingBatches = this.receiver.getOngoingBatches(sessionId, version);
+		List<SmsMessageBatch> inBatches = this.receiver.getCompletedBatches(sessionId, version);
+		
+		for (SmsMessageBatch smsMessageBatch : outPendindBatches) {
+			out = out + smsMessageBatch.getExpectedMessageCount();
+			outPendingAcks = outPendingAcks + smsMessageBatch.getExpectedMessageCount();
+		}
+
+		
+		for (SmsMessageBatch smsMessageBatch : outBatches) {
+			out = out + smsMessageBatch.getExpectedMessageCount();
+		}
+		
+		
+		for (SmsMessageBatch smsMessageBatch : inPendingBatches) {
+			if(smsMessageBatch.isComplete()){
+				in = in + smsMessageBatch.getExpectedMessageCount();
+			} else {
+				in = in + smsMessageBatch.getMessagesCount();
+				inPendingToArrive = inPendingToArrive + (smsMessageBatch.getExpectedMessageCount() - smsMessageBatch.getMessagesCount());
+			}
+		}
+		
+		for (SmsMessageBatch smsMessageBatch : inBatches) {
+			if(smsMessageBatch.isComplete()){
+				in = in + smsMessageBatch.getExpectedMessageCount();
+			} else {
+				in = in + smsMessageBatch.getMessagesCount();
+				inPendingToArrive = inPendingToArrive + (smsMessageBatch.getExpectedMessageCount() - smsMessageBatch.getMessagesCount());
+			}
+		}
+		
+		InOutStatistics sta = new InOutStatistics(in, inPendingToArrive, out, outPendingAcks);
+		return sta;
 	}
 }
