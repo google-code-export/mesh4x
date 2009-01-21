@@ -80,11 +80,11 @@ public class EpiInfoUITranslator {
 	}
 
 	public static String getMessageNotifyReceiveMessageError(String endpointId, String message) {
-		return MessageTranslator.translate("EPIINFO_SMS_MESSAGE_NOTIFY_RECEIVE_MSG", endpointId, message);
+		return MessageTranslator.translate("EPIINFO_SMS_MESSAGE_NOTIFY_RECEIVE_MSG_ERROR", endpointId, message);
 	}
 
 	public static String getMessageNotifySendMessageError(String endpointId, String message) {
-		return MessageTranslator.translate("EPIINFO_SMS_MESSAGE_NOTIFY_RECEIVE_MSG", endpointId, message);
+		return MessageTranslator.translate("EPIINFO_SMS_MESSAGE_NOTIFY_SEND_MSG_ERROR", endpointId, message);
 	}
 
 	public static String getLabelMessageToSend() {

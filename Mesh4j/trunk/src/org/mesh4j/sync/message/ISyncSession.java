@@ -28,7 +28,7 @@ public interface ISyncSession {
 	List<Item> getAll();
 
 	void beginSync(boolean fullProtocol, boolean shouldSendChanges, boolean shouldReceiveChanges);
-	void beginSync(boolean fullProtocol, boolean shouldSendChanges, boolean shouldReceiveChanges, Date sinceDate, int version);
+	void beginSync(boolean fullProtocol, boolean shouldSendChanges, boolean shouldReceiveChanges, Date sinceDate, int version, String targetSourceType);
 	void endSync(Date sinceDate);
 	void cancelSync();
 	
@@ -37,6 +37,7 @@ public interface ISyncSession {
 	boolean isOpen();
 	boolean isCompleteSync();
 	boolean isCancelled();
+	boolean isBroken();	
 	
 	List<Item> getSnapshot();
 	
@@ -58,5 +59,19 @@ public interface ISyncSession {
 	int getNumberOfAddedItems();
 	int getNumberOfUpdatedItems();
 	int getNumberOfDeletedItems();
+
+	String getTargetSourceType();
+	void setTargetSorceType(String targetSourceType);
+	
+	int getTargetNumberOfAddedItems();
+	void setTargetNumberOfAddedItems(int added);
+	
+	int getTargetNumberOfUpdatedItems();
+	void setTargetNumberOfUpdatedItems(int updated);
+	
+	int getTargetNumberOfDeletedItems();
+	void setTargetNumberOfDeletedItems(int deleted);
+	
+	void setBroken();
 	
 }

@@ -17,16 +17,12 @@ import javax.swing.Timer;
 
 import org.mesh4j.sync.epiinfo.ui.utils.EpiInfoIconManager;
 import org.mesh4j.sync.message.IMessage;
-import org.mesh4j.sync.message.IMessageSyncAdapter;
 import org.mesh4j.sync.message.IMessageSyncAware;
 import org.mesh4j.sync.message.ISyncSession;
-import org.mesh4j.sync.message.MessageSyncEngine;
 import org.mesh4j.sync.message.channel.sms.connection.ISmsConnectionInboundOutboundNotification;
-import org.mesh4j.sync.message.protocol.ACKMergeMessageProcessor;
+import org.mesh4j.sync.message.protocol.ACKEndSyncMessageProcessor;
 import org.mesh4j.sync.message.protocol.BeginSyncMessageProcessor;
-import org.mesh4j.sync.message.protocol.EqualStatusMessageProcessor;
-import org.mesh4j.sync.message.protocol.LastVersionStatusMessageProcessor;
-import org.mesh4j.sync.message.protocol.NoChangesMessageProcessor;
+import org.mesh4j.sync.message.protocol.EndSyncMessageProcessor;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.ui.translator.EpiInfoCompactUITranslator;
 import org.mesh4j.sync.ui.translator.EpiInfoUITranslator;
@@ -69,16 +65,12 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 	private ISyncSession syncSession;
 	
 	private ISyncSessionViewOwner owner;
-	private MessageSyncEngine syncEngine;
 	private EpiinfoSourceIdResolver sourceIdResolver;
 	
 	private int smsIn = 0;
 	private int smsOut = 0;
-	private int numberOfRemoteAddedItems = 0;
-	private int numberOfRemoteUpdatedItems = 0;
-	private int numberOfRemoteDeletedItems = 0;
+
 	private int syncMinutes = 0;
-	private boolean syncInProcess = false;
 	
 	// BUSINESS METHODS
 
@@ -324,34 +316,22 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 	}
 	
 	// BUSINESS METHODS
-	public void updateRemoteDataSource(String sourceType) {
-		this.labelRemoteDataSource.setIcon(EpiInfoIconManager.getSourceImage(sourceType, true));
-	}
-	
+
 	public void viewSession(ISyncSession syncSession){
 		this.syncSession = syncSession;
 		this.reset();
 		
-		if(syncSession == null){
-			this.labelLocalDataSource.setIcon(EpiInfoIconManager.getUndefinedSourceImage());		
-			this.labelSyncType.setIcon(EpiInfoIconManager.getSyncModeIcon(true, true));
-			this.setReadyImageStatus();
-		} else {
-			IMessageSyncAdapter adapter = this.syncEngine.getSource(syncSession.getSourceId());
-			this.labelLocalDataSource.setIcon(EpiInfoIconManager.getSourceImage(adapter.getSourceType(), false));
-			
-			this.labelSyncType.setIcon(EpiInfoIconManager.getSyncModeIcon(syncSession.shouldSendChanges(), syncSession.shouldReceiveChanges()));
+		if(syncSession != null){
+			updateSessionStatus();
 			
 			if(syncSession.isOpen()){
-				this.setInProcessImageStatus("");
-			} else {
-				this.setReadyImageStatus();
+				setInProcess("");
 			}
-			updateLocalStatus();
+			
+			if(syncSession.isBroken()){
+				setError("");
+			}
 		}
-		
-		this.labelRemoteDataSource.setIcon(EpiInfoIconManager.getUndefinedSourceImage());
-		
 	}
 	
 	public void reset(){
@@ -369,34 +349,38 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 		
 		this.smsIn = 0;
 		this.smsOut = 0;
-		this.numberOfRemoteAddedItems = 0;
-		this.numberOfRemoteDeletedItems = 0;
-		this.numberOfRemoteUpdatedItems = 0;
+		this.syncMinutes = 0;
+		
+		this.labelLocalDataSource.setIcon(EpiInfoIconManager.getUndefinedSourceImage());		
+		this.labelRemoteDataSource.setIcon(EpiInfoIconManager.getUndefinedSourceImage());
+		this.labelSyncType.setIcon(EpiInfoIconManager.getSyncModeIcon(true, true));
+		this.setReady("");
 	}
 	
-	// Status images methods
-	
-	public void setErrorImageStatus(String msg) {
-		this.imageStatus.setIcon(EpiInfoIconManager.getStatusErrorIcon());
-		this.imageStatus.setToolTipText(msg);
+	private void updateSessionStatus() {
+		this.labelLocalNew.setText(EpiInfoCompactUITranslator.getLabelNew(this.syncSession.getNumberOfAddedItems()));
+		this.labelLocalDeleted.setText(EpiInfoCompactUITranslator.getLabelDeleted(this.syncSession.getNumberOfDeletedItems()));
+		this.labelLocalUpdated.setText(EpiInfoCompactUITranslator.getLabelUpdated(this.syncSession.getNumberOfUpdatedItems()));
+
+		this.labelRemoteNew.setText(EpiInfoCompactUITranslator.getLabelNew(this.syncSession.getTargetNumberOfAddedItems()));
+		this.labelRemoteDeleted.setText(EpiInfoCompactUITranslator.getLabelDeleted(this.syncSession.getTargetNumberOfDeletedItems()));
+		this.labelRemoteUpdated.setText(EpiInfoCompactUITranslator.getLabelUpdated(this.syncSession.getTargetNumberOfUpdatedItems()));
+		
+		this.labelLocalDataSource.setIcon(EpiInfoIconManager.getSourceImage(this.syncSession.getSourceType(), false));
+		this.labelRemoteDataSource.setIcon(EpiInfoIconManager.getSourceImage(this.syncSession.getTargetSourceType(), true));
+		
+		this.labelSyncType.setIcon(EpiInfoIconManager.getSyncModeIcon(this.syncSession.shouldSendChanges(), this.syncSession.shouldReceiveChanges()));
+		
+		if(!this.syncSession.isOpen()){
+			this.setReady("");
+		}
 	}
 	
-	public void setInProcessImageStatus(String msg) {
-		this.imageStatus.setIcon(EpiInfoIconManager.getStatusInProcessIcon());
-		this.imageStatus.setToolTipText(msg);
+	private boolean accepts(ISyncSession syncSession) {
+		return this.syncSession != null && this.syncSession.getSessionId().equals(syncSession.getSessionId());
 	}
 	
-	public void setEndSyncImageStatus(String msg) {
-		this.imageStatus.setIcon(EpiInfoIconManager.getStatusOkIcon());
-		this.imageStatus.setToolTipText(msg);
-	}
-	
-	public void setReadyImageStatus() {
-		this.imageStatus.setIcon(EpiInfoIconManager.getStatusReadyIcon());
-		this.imageStatus.setToolTipText("");
-	}
-	
-	// Detailed status
+	// sms status
 	
 	public void increaseSmsIn() {
 		this.smsIn = this.smsIn + 1;
@@ -408,49 +392,26 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 		this.labelOut.setText(EpiInfoCompactUITranslator.getLabelOut(this.smsOut));
 	}
 
-	public void updateLocalStatus() {
-		this.labelLocalNew.setText(EpiInfoCompactUITranslator.getLabelNew(this.syncSession.getNumberOfAddedItems()));
-		this.labelLocalDeleted.setText(EpiInfoCompactUITranslator.getLabelDeleted(this.syncSession.getNumberOfDeletedItems()));
-		this.labelLocalUpdated.setText(EpiInfoCompactUITranslator.getLabelUpdated(this.syncSession.getNumberOfUpdatedItems()));
-	}
-	
-	public void updateRemoteStatus(int addTotal, int updateTotal, int deleteTotal) {
-		if(addTotal > this.numberOfRemoteAddedItems || 
-				updateTotal > this.numberOfRemoteUpdatedItems ||
-				deleteTotal > this.numberOfRemoteDeletedItems){
-			this.numberOfRemoteAddedItems = addTotal;
-			this.numberOfRemoteDeletedItems = deleteTotal;
-			this.numberOfRemoteUpdatedItems = updateTotal;
-		
-			this.labelRemoteNew.setText(EpiInfoCompactUITranslator.getLabelNew(addTotal));
-			this.labelRemoteDeleted.setText(EpiInfoCompactUITranslator.getLabelDeleted(deleteTotal));
-			this.labelRemoteUpdated.setText(EpiInfoCompactUITranslator.getLabelUpdated(updateTotal));
-		}
-	}
-
-	private boolean accepts(ISyncSession syncSession) {
-		return this.syncSession != null && this.syncSession.getSessionId().equals(syncSession.getSessionId());
-	}
-	
 	// IMessageSyncAware methods
 	
 	@Override
 	public void beginSync(ISyncSession syncSession) {
 		if(this.syncSession == null){
-			this.syncInProcess = true;
 			this.syncSession = syncSession;
+		}
+		
+		if(accepts(syncSession)){
 			this.reset();
 			
-			IMessageSyncAdapter adapter = this.syncEngine.getSource(syncSession.getSourceId());
-			this.labelLocalDataSource.setIcon(EpiInfoIconManager.getSourceImage(adapter.getSourceType(), false));
-			this.labelRemoteDataSource.setIcon(EpiInfoIconManager.getUndefinedSourceImage());
-			this.labelSyncType.setIcon(EpiInfoIconManager.getSyncModeIcon(syncSession.shouldSendChanges(), syncSession.shouldReceiveChanges()));
+			if(this.owner != null){
+				this.owner.notifyBeginSync();
+			}
+			
+			this.updateSessionStatus();
 			
 			SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
-			
 			String msg = EpiInfoCompactUITranslator.getMessageSyncStarted(dateFormat.format(new Date()));
-			this.setStatus(msg);
-			
+			this.setInProcess(msg);
 		}
 
 		if(this.owner != null){
@@ -461,14 +422,13 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 	@Override
 	public void beginSyncWithError(ISyncSession syncSession) {
 		if(this.accepts(syncSession)){
-			String error = EpiInfoUITranslator.getMessageErrorBeginSync(syncSession.getTarget().getEndpointId(), sourceIdResolver.getSourceName(syncSession.getSourceId()));
-			this.setErrorImageStatus(error);
+			String error = EpiInfoCompactUITranslator.getMessageErrorBeginSync(syncSession.getTarget().getEndpointId(), sourceIdResolver.getSourceName(syncSession.getSourceId()));
+			this.setError(error);
 			
 			if(owner != null){
 				this.owner.notifyEndSync(true);
 			}
-			this.viewSession(null);
-			this.syncInProcess = false;
+//			this.viewSession(null);
 		}		
 	}
 
@@ -477,20 +437,17 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 		if(accepts(syncSession)){
 			if(!conflicts.isEmpty()){
 				String msg = EpiInfoCompactUITranslator.getMessageSyncFailed();
-				this.setErrorImageStatus(msg);	
-				this.setStatus(msg);
+				this.setError(msg);
 			} else {
 				String msg = EpiInfoCompactUITranslator.getMessageSyncSuccessfully();
-				this.setEndSyncImageStatus(msg);
-				this.setStatus(msg);
+				this.setOk(msg);
 			}
 			
 			if(owner != null){
 				this.owner.notifyEndSync(!conflicts.isEmpty());
 			}
 			
-			this.viewSession(null);
-			this.syncInProcess = false;
+//			this.viewSession(null);
 		}		
 	}
 	
@@ -498,32 +455,28 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 	public void notifyCancelSync(ISyncSession syncSession) {
 		if(accepts(syncSession)){
 			String msg = EpiInfoCompactUITranslator.getMessageCancelSyncSuccessfully();
-			this.setEndSyncImageStatus(msg);
-			this.setStatus(msg);
+			this.setOk(msg);
 			
 			if(this.owner != null){
 				this.owner.notifyEndCancelSync();
 			}
 			
-			this.viewSession(null);
-			this.syncInProcess = false;
+//			this.viewSession(null);
 		}			
 	}
 
 	@Override
 	public void notifyCancelSyncErrorSyncSessionNotOpen(ISyncSession syncSession) {
 		if(accepts(syncSession)){
-			String error = EpiInfoUITranslator.getMessageCancelSyncErrorSessionNotOpen(syncSession.getTarget(), syncSession.getSourceId());
-			this.setEndSyncImageStatus(error);
-			
-			this.syncInProcess = false;
-			this.viewSession(null);
+			String error = EpiInfoCompactUITranslator.getMessageCancelSyncErrorSessionNotOpen(syncSession.getTarget(), syncSession.getSourceId());
+			this.setError(error);
+//			this.viewSession(null);
 		}
 	}
 
 	@Override
 	public void notifyInvalidMessageProtocol(IMessage message) {
-		// nothing to do		
+		// nothing to do
 	}
 
 	@Override
@@ -534,42 +487,22 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 	@Override
 	public void notifyMessageProcessed(ISyncSession syncSession, IMessage message, List<IMessage> response) {
 		if(accepts(syncSession)){
-			this.updateLocalStatus();
-			
+		
 			if(BeginSyncMessageProcessor.MESSAGE_TYPE.equals(message.getMessageType())){
-				String dataSourceType = BeginSyncMessageProcessor.getSourceType(message.getData());
-				this.updateRemoteDataSource(dataSourceType);
 				this.increaseSmsIn();
 			}
-
-			if(EqualStatusMessageProcessor.MESSAGE_TYPE.equals(message.getMessageType())){
-				String dataSourceType = message.getData();
-				this.updateRemoteDataSource(dataSourceType);
-			}
 			
-			if(NoChangesMessageProcessor.MESSAGE_TYPE.equals(message.getMessageType())){
-				String dataSourceType = message.getData();
-				this.updateRemoteDataSource(dataSourceType);
-			}
-			
-			if(LastVersionStatusMessageProcessor.MESSAGE_TYPE.equals(message.getMessageType())){
-				String dataSourceType = LastVersionStatusMessageProcessor.getSourceType(message.getData());
-				this.updateRemoteDataSource(dataSourceType);
-			}
-			
-			if(ACKMergeMessageProcessor.MESSAGE_TYPE.equals(message.getMessageType())){
-				this.updateRemoteStatus(
-						ACKMergeMessageProcessor.getNumberOfAddedItems(message.getData()), 
-						ACKMergeMessageProcessor.getNumberOfUpdatedItems(message.getData()),
-						ACKMergeMessageProcessor.getNumberOfDeletedItems(message.getData()));			
+			if(!ACKEndSyncMessageProcessor.MESSAGE_TYPE.equals(message.getMessageType()) && 
+					!EndSyncMessageProcessor.MESSAGE_TYPE.equals(message.getMessageType())){
+				this.updateSessionStatus();
 			}
 		}
-		
 	}
 
 	@Override
 	public void notifySessionCreationError(IMessage message, String sourceId) {
-		// nothing to do		
+		String error = EpiInfoUITranslator.getMessageErrorSessionCreation(message, sourceIdResolver.getSourceName(sourceId));
+		this.setError(error);
 	}
 
 	// ISmsConnectionInboundOutboundNotification methods
@@ -580,8 +513,8 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 
 	@Override
 	public void notifyReceiveMessageError(String endpointId, String message, Date date) {
-		String error = EpiInfoUITranslator.getMessageNotifyReceiveMessage(endpointId, message);
-		this.setErrorImageStatus(error);
+		String error = EpiInfoCompactUITranslator.getMessageNotifyReceiveMessageError(endpointId, message);
+		this.setError(error);
 		this.increaseSmsIn();
 	}
 
@@ -592,8 +525,8 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 
 	@Override
 	public void notifySendMessageError(String endpointId, String message) {
-		String error = EpiInfoUITranslator.getMessageNotifySendMessageError(endpointId, message);
-		this.setErrorImageStatus(error);
+		String error = EpiInfoCompactUITranslator.getMessageNotifySendMessageError(endpointId, message);
+		this.setError(error);
 		this.increaseSmsOut();
 	}
 	
@@ -603,20 +536,43 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 	}
 
 	
-	public void initialize(ISyncSessionViewOwner owner, MessageSyncEngine syncEngine, EpiinfoSourceIdResolver sourceIdResolver){
+	public void initialize(ISyncSessionViewOwner owner, EpiinfoSourceIdResolver sourceIdResolver){
 		this.owner = owner;
-		this.syncEngine = syncEngine;
 		this.sourceIdResolver = sourceIdResolver;
 	}
 	
 	
-	public void setStatus(String status) {
-		this.textAreaStatus.setText(status);
+	private void setStatusText(String text) {
+		this.textAreaStatus.setText(text);
+		this.textAreaStatus.setToolTipText(text);
+	}
+
+	public void setReady(String msg){
+		this.textAreaStatus.setForeground(Color.BLACK);
+		this.setStatusText(msg);
+		this.imageStatus.setIcon(null);
+		this.imageStatus.setToolTipText(msg);
+	}
+
+	public void setInProcess(String msg){
+		this.textAreaStatus.setForeground(Color.BLACK);
+		this.setStatusText(msg);
+		this.imageStatus.setIcon(null);
+		this.imageStatus.setToolTipText(msg);
+	}
+	
+	public void setOk(String msg){
+		this.textAreaStatus.setForeground(Color.BLACK);
+		this.setStatusText(msg);
+		this.imageStatus.setIcon(EpiInfoIconManager.getStatusOkIcon());
+		this.imageStatus.setToolTipText(msg);
 	}
 	
 	public void setError(String error){
-		this.textAreaStatus.setForeground(new Color(255, 0, 0));
-		this.textAreaStatus.setText(error);
+		this.textAreaStatus.setForeground(Color.RED);
+		this.setStatusText(error);
+		this.imageStatus.setIcon(EpiInfoIconManager.getStatusErrorIcon());
+		this.imageStatus.setToolTipText(error);
 	}
 	
 	private void startScheduler() {
@@ -632,7 +588,7 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 	}
 
 	protected void refresh(){
-		if (syncInProcess) {
+		if (isSyncInProcess()) {
 			this.syncMinutes = this.syncMinutes + 1;
 			String actualStatus = this.textAreaStatus.getText();
 			int index = actualStatus.indexOf(" (");
@@ -688,11 +644,15 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 				sb.append(EpiInfoCompactUITranslator.getLabelAgo());
 				sb.append(")");
 			}		
-		    setStatus(sb.toString());
+		    setStatusText(sb.toString());
 		}
 	}
 
 	public boolean isSyncInProcess() {
-		return this.syncInProcess;
+		return this.syncSession != null && this.syncSession.isOpen();
+	}
+
+	public ISyncSession getSyncSession() {
+		return this.syncSession;
 	}	
 }

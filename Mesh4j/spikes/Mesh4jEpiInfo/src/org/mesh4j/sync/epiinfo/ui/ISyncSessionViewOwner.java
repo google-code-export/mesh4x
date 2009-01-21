@@ -8,4 +8,6 @@ public interface ISyncSessionViewOwner {
 
 	void notifyNewSync();
 
+	void notifyBeginSync();
+
 }

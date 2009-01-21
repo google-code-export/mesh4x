@@ -68,20 +68,26 @@ public class MessageSyncProtocol implements IMessageSyncProtocol {
 					return NO_RESPONSE;
 				}
 			} else {
-				if(!this.initialMessage.getMessageType().equals(message.getMessageType()) && syncSession.isCancelled()){
+				if(!this.initialMessage.getMessageType().equals(message.getMessageType()) && (syncSession.isCancelled() || syncSession.isBroken())){
 					this.notifyInvalidProtocolMessageOrder(message);
 					return NO_RESPONSE;
 				}
 			}
-			
-			List<IMessage> response = new ArrayList<IMessage>();
-			for (IMessageProcessor processor : this.messageProcessors) {
-				List<IMessage> msgResponse = processor.process(syncSession, message);
-				response.addAll(msgResponse);
+
+			try{
+				List<IMessage> response = new ArrayList<IMessage>();
+				for (IMessageProcessor processor : this.messageProcessors) {
+					List<IMessage> msgResponse = processor.process(syncSession, message);
+					response.addAll(msgResponse);
+				}
+				this.persistChanges(syncSession);
+				this.notifyMessageProcessed(syncSession, message, response);
+				return response;
+			} catch (RuntimeException e) {
+				syncSession.setBroken();
+				this.persistChanges(syncSession);
+				throw e;
 			}
-			this.persistChanges(syncSession);
-			this.notifyMessageProcessed(syncSession, message, response);
-			return response;
 		} else {
 			this.notifyInvalidMessageProtocol(message);
 			return NO_RESPONSE;
@@ -123,7 +129,7 @@ public class MessageSyncProtocol implements IMessageSyncProtocol {
 	@Override
 	public IMessage beginSync(String sourceId, IEndpoint endpoint, boolean fullProtocol, boolean shouldSendChanges, boolean shouldReceiveChanges) {
 		ISyncSession syncSession = this.repository.getSession(sourceId, endpoint.getEndpointId());
-		if(syncSession != null && syncSession.isOpen()){
+		if(syncSession != null && (syncSession.isOpen() || syncSession.isBroken())){
 			this.notifyBeginSyncError(syncSession);
 			return null;
 		}

@@ -2,6 +2,7 @@ package org.mesh4j.sync.ui.translator;
 
 import org.mesh4j.sync.mappings.DataSourceMapping;
 import org.mesh4j.sync.mappings.EndpointMapping;
+import org.mesh4j.sync.message.IEndpoint;
 import org.mesh4j.sync.translator.MessageTranslator;
 
 public class EpiInfoCompactUITranslator {
@@ -393,5 +394,33 @@ public class EpiInfoCompactUITranslator {
 
 	public static String getSyncSessionWindowToolTipSyncSession() {
 		return MessageTranslator.translate("EPIINFO_COMPACT_SYNC_SESSION_TOOLTIP_SYNC_SESSION_NODE");
+	}
+	
+	public static String getMessageErrorBeginSync(String endpointId, String sourceId) {
+		return MessageTranslator.translate("EPIINFO_COMPACT_MESSAGE_ERROR_BEGIN_SYNC", endpointId, sourceId);
+	}
+
+	public static String getMessageCancelSyncErrorSessionNotOpen(IEndpoint endpoint, String sourceId) {
+		return MessageTranslator.translate("EPIINFO_COMPACT_MESSAGE_ERROR_CANCEL_SYNC_SESSION_NOT_OPEN", endpoint.getEndpointId(), sourceId);
+	}
+
+	public static String getMessageNotifySendMessageError(String endpointId, String message) {
+		return MessageTranslator.translate("EPIINFO_COMPACT_MESSAGE_NOTIFY_SEND_MSG_ERROR", endpointId, message);
+	}
+	
+	public static String getMessageNotifyReceiveMessageError(String endpointId, String message) {
+		return MessageTranslator.translate("EPIINFO_COMPACT_MESSAGE_NOTIFY_SEND_MSG_ERROR", endpointId, message);
+	}
+	
+	public static String getSyncSessionWindowLabelSync() {
+		return MessageTranslator.translate("EPIINFO_COMPACT_SYNC_SESSION_LABEL_SYNC");
+	}
+	
+	public static String getSyncSessionWindowToolTipSync() {
+		return MessageTranslator.translate("EPIINFO_COMPACT_SYNC_SESSION_TOOLTIP_SYNC");
+	}
+
+	public static String getLabelCancelled() {
+		return MessageTranslator.translate("EPIINFO_COMPACT_LABEL_CANCELLED");
 	}
 }

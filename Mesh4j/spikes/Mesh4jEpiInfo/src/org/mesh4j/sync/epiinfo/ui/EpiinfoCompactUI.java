@@ -34,10 +34,12 @@ import org.mesh4j.sync.mappings.DataSourceMapping;
 import org.mesh4j.sync.mappings.EndpointMapping;
 import org.mesh4j.sync.mappings.SyncMode;
 import org.mesh4j.sync.message.IMessageSyncAware;
+import org.mesh4j.sync.message.ISyncSession;
 import org.mesh4j.sync.message.MessageSyncEngine;
 import org.mesh4j.sync.message.channel.sms.connection.ISmsConnectionInboundOutboundNotification;
 import org.mesh4j.sync.properties.PropertiesProvider;
 import org.mesh4j.sync.ui.tasks.CancelSyncTask;
+import org.mesh4j.sync.ui.tasks.EmulateIncomingCancelSyncTask;
 import org.mesh4j.sync.ui.tasks.EmulateIncomingSyncTask;
 import org.mesh4j.sync.ui.tasks.EmulateReadyToSyncTask;
 import org.mesh4j.sync.ui.tasks.ReadyToSyncResponseTask;
@@ -128,8 +130,8 @@ public class EpiinfoCompactUI implements ISmsConnectionInboundOutboundNotificati
 		ISmsConnectionInboundOutboundNotification[] smsAware = new ISmsConnectionInboundOutboundNotification[]{this, this.logFrame, this.syncSessionView};
 		this.syncEngine = SyncEngineUtil.createSyncEngine(this.sourceIdResolver, this.propertiesProvider, syncAware, smsAware);
 		
-		this.syncSessionView.initialize(this, this.syncEngine, this.sourceIdResolver);
-		syncSessionsFrame = new SyncSessionsFrame(this.syncEngine, this.sourceIdResolver, this.propertiesProvider);
+		this.syncSessionView.initialize(this, this.sourceIdResolver);
+		syncSessionsFrame = new SyncSessionsFrame(this, this.syncEngine, this.sourceIdResolver, this.propertiesProvider);
 	}
 	
 	public void startUpSyncEngine(){
@@ -141,6 +143,48 @@ public class EpiinfoCompactUI implements ISmsConnectionInboundOutboundNotificati
 	}
 	
 	// Status	
+	public void viewSyncSession(ISyncSession syncSession) {
+		if(syncSession != null){
+			if(!this.syncSessionView.isSyncInProcess()){
+				this.syncSessionView.viewSession(syncSession);
+				
+				this.selectEndpoint(syncSession.getTarget().getEndpointId());
+				this.selectDataSource(syncSession.getSourceId());
+				this.comboBoxSyncMode.setSelectedItem(SyncMode.getSyncMode(syncSession.shouldSendChanges(), syncSession.shouldReceiveChanges()));
+				
+				if(syncSession.isOpen() && !syncSession.isCancelled()){
+					notifyBeginSync();
+				}
+			}
+		}
+	}
+
+	private void selectDataSource(String sourceId) {
+		int size = this.comboBoxMappingDataSource.getModel().getSize();
+		int i = 0;
+		while(i< size){
+			DataSourceMapping dataSource = (DataSourceMapping)this.comboBoxMappingDataSource.getModel().getElementAt(i);
+			if(dataSource.getSourceId().equals(sourceId)){
+				this.comboBoxMappingDataSource.setSelectedIndex(i);
+				return;
+			}
+			i = i +1;
+		}		
+	}
+
+	private void selectEndpoint(String endpointId) {
+		int size = this.comboBoxEndpoint.getModel().getSize();
+		int i = 0;
+		while(i< size){
+			EndpointMapping endpoint = (EndpointMapping)this.comboBoxEndpoint.getModel().getElementAt(i);
+			if(endpoint.getEndpoint().equals(endpointId)){
+				this.comboBoxEndpoint.setSelectedIndex(i);
+				return;
+			}
+			i = i +1;
+		}
+	}
+	
 	public void notifyEndSync(boolean error) {
 		this.buttonSync.setText(EpiInfoCompactUITranslator.getLabelSync());
 		this.enableAllButtons();
@@ -148,17 +192,12 @@ public class EpiinfoCompactUI implements ISmsConnectionInboundOutboundNotificati
 	}
 		
 	public void beginSync() {
-		
-		this.disableAllButtons();		
-		this.buttonSync.setText(EpiInfoCompactUITranslator.getLabelCancelSync());
-				
-		this.cfgFrame.notifyOwnerWorking();
 		this.syncSessionView.viewSession(null);
 	}
-	
+		
 	public void notifyErrorSync(Throwable t)	{
 		String msg = EpiInfoUITranslator.getLabelFailed();
-		this.syncSessionView.setErrorImageStatus(msg);
+		this.syncSessionView.setError(msg);
 		this.logFrame.logError(t, msg);
 		this.cfgFrame.notifyOwnerNotWorking();
 	}
@@ -175,16 +214,13 @@ public class EpiinfoCompactUI implements ISmsConnectionInboundOutboundNotificati
 	
 	public void notifyStartUpOk(){		
 		String msg = EpiInfoCompactUITranslator.getMessageWelcome();
-		this.syncSessionView.setStatus(msg);
-		this.syncSessionView.setReadyImageStatus();
-
+		this.syncSessionView.setReady(msg);
 		fullEnableAllButtons();
 	}
 	
 	public void notifyStartUpError(){	
 		String msg = EpiInfoCompactUITranslator.getMessageStartUpError();
-		this.syncSessionView.setStatus(msg);
-		this.syncSessionView.setErrorImageStatus(msg);
+		this.syncSessionView.setError(msg);
 
 		comboBoxEndpoint.setEnabled(false);
 		comboBoxMappingDataSource.setEnabled(false);
@@ -219,8 +255,7 @@ public class EpiinfoCompactUI implements ISmsConnectionInboundOutboundNotificati
 		this.fullDisableAllButtons();
 		
 		String msg = EpiInfoCompactUITranslator.getMessageTestingPhoneCompatibility();
-		this.syncSessionView.setInProcessImageStatus(msg);
-		this.syncSessionView.setStatus(msg);
+		this.syncSessionView.setInProcess(msg);
 		this.cfgFrame.notifyOwnerWorking();
 		
 		Action errorAction = new AbstractAction(){
@@ -233,8 +268,7 @@ public class EpiinfoCompactUI implements ISmsConnectionInboundOutboundNotificati
 					phoneCompatibilityInProcess = false;
 					
 					String msg = EpiInfoCompactUITranslator.getMessageTimeOutPhoneCompatibility();
-					syncSessionView.setErrorImageStatus(msg);
-					syncSessionView.setStatus(msg);
+					syncSessionView.setError(msg);
 					
 					phoneCompatibilityEndpoint = null;
 					phoneCompatibilityId = null;
@@ -252,8 +286,7 @@ public class EpiinfoCompactUI implements ISmsConnectionInboundOutboundNotificati
 		this.phoneCompatibilityEndpoint = null;
 		this.phoneCompatibilityId = null;
 		
-		this.syncSessionView.setStatus(EpiInfoCompactUITranslator.getMessagePhoneIsCompatible());
-		this.syncSessionView.setReadyImageStatus();
+		this.syncSessionView.setReady(EpiInfoCompactUITranslator.getMessagePhoneIsCompatible());
 		this.fullEnableAllButtons();
 		this.cfgFrame.notifyOwnerNotWorking();
 	}
@@ -267,8 +300,7 @@ public class EpiinfoCompactUI implements ISmsConnectionInboundOutboundNotificati
 		this.fullDisableAllButtons();
 
 		String msg = EpiInfoCompactUITranslator.getMessageProcessingReadyToSync(endpoint.getAlias(), dataSource.getAlias());
-		this.syncSessionView.setInProcessImageStatus(msg);
-		this.syncSessionView.setStatus(msg);
+		this.syncSessionView.setInProcess(msg);
 		
 		this.cfgFrame.notifyOwnerWorking();
 		
@@ -288,8 +320,7 @@ public class EpiinfoCompactUI implements ISmsConnectionInboundOutboundNotificati
 	public void notifyEndpointIsReadyToSync(){
 		this.readyToSyncInProcess = false;
 		
-		this.syncSessionView.setReadyImageStatus();
-		this.syncSessionView.setStatus(EpiInfoCompactUITranslator.getMessageEndpointIsReadyToSync(readyToSyncEndpoint.getAlias(), readyToSyncDataSource.getAlias()));
+		this.syncSessionView.setReady(EpiInfoCompactUITranslator.getMessageEndpointIsReadyToSync(readyToSyncEndpoint.getAlias(), readyToSyncDataSource.getAlias()));
 		this.readyToSyncEndpoint = null;
 		this.readyToSyncDataSource = null;
 		this.fullEnableAllButtons();
@@ -301,8 +332,7 @@ public class EpiinfoCompactUI implements ISmsConnectionInboundOutboundNotificati
 		readyToSyncInProcess = false;
 		
 		String msg = EpiInfoCompactUITranslator.getMessageEndpointIsNotReadyToSync(readyToSyncEndpoint.getAlias(), readyToSyncDataSource.getAlias());
-		this.syncSessionView.setErrorImageStatus(msg);
-		syncSessionView.setStatus(msg);
+		this.syncSessionView.setError(msg);
 		readyToSyncEndpoint = null;
 		readyToSyncDataSource = null;
 		fullEnableAllButtons();
@@ -407,12 +437,10 @@ public class EpiinfoCompactUI implements ISmsConnectionInboundOutboundNotificati
 				FormFactory.RELATED_GAP_COLSPEC,
 				FormFactory.DEFAULT_COLSPEC,
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("17dlu"),
-				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("22dlu"),
-				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("23dlu"),
-				FormFactory.RELATED_GAP_COLSPEC,
+				ColumnSpec.decode("31dlu"),
+				ColumnSpec.decode("36dlu"),
+				ColumnSpec.decode("41dlu"),
+				FormFactory.DEFAULT_COLSPEC,
 				FormFactory.DEFAULT_COLSPEC},
 			new RowSpec[] {
 				RowSpec.decode("9dlu")}));
@@ -454,7 +482,7 @@ public class EpiinfoCompactUI implements ISmsConnectionInboundOutboundNotificati
 		};	
 		emulatereadtyosyncButton.addActionListener(emulateReadyToSyncActionListener);
 		
-		panelStatusButtons.add(emulatereadtyosyncButton, new CellConstraints(7, 1, CellConstraints.CENTER, CellConstraints.FILL));
+		panelStatusButtons.add(emulatereadtyosyncButton, new CellConstraints(6, 1, CellConstraints.CENTER, CellConstraints.FILL));
 
 		final JButton emulateReadyNotOkButton = new JButton();
 		emulateReadyNotOkButton.setContentAreaFilled(false);
@@ -470,7 +498,7 @@ public class EpiinfoCompactUI implements ISmsConnectionInboundOutboundNotificati
 			}
 		};	
 		emulateReadyNotOkButton.addActionListener(emulateReadyToSyncNotOkActionListener);
-		panelStatusButtons.add(emulateReadyNotOkButton, new CellConstraints(9, 1));
+		panelStatusButtons.add(emulateReadyNotOkButton, new CellConstraints(7, 1));
 
 		final JButton buttonOpenSessions = new JButton();
 		buttonOpenSessions.setContentAreaFilled(false);
@@ -489,7 +517,24 @@ public class EpiinfoCompactUI implements ISmsConnectionInboundOutboundNotificati
 			}
 		};	
 		buttonOpenSessions.addActionListener(openSessionsViewActionListener);
-		panelStatusButtons.add(buttonOpenSessions, new CellConstraints(11, 1));
+		panelStatusButtons.add(buttonOpenSessions, new CellConstraints(9, 1));
+
+		final JButton emulateCancelSyncButton = new JButton();
+		emulateCancelSyncButton.setFont(new Font("Calibri", Font.PLAIN, 10));
+		emulateCancelSyncButton.setContentAreaFilled(false);
+		emulateCancelSyncButton.setBorder(new EmptyBorder(0, 0, 0, 0));
+		emulateCancelSyncButton.setBorderPainted(false);
+		emulateCancelSyncButton.setName("");
+		emulateCancelSyncButton.setOpaque(false);
+		emulateCancelSyncButton.setText("Incoming Cancel");
+		ActionListener emulateCancelSyncActionListener = new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				EmulateIncomingCancelSyncTask task = new EmulateIncomingCancelSyncTask(EpiinfoCompactUI.this);
+				task.execute();
+			}
+		};	
+		emulateCancelSyncButton.addActionListener(emulateCancelSyncActionListener);
+		panelStatusButtons.add(emulateCancelSyncButton, new CellConstraints(8, 1));
 
 		final JPanel panelTrademark = new JPanel();
 		panelTrademark.setBackground(Color.WHITE);
@@ -773,7 +818,6 @@ public class EpiinfoCompactUI implements ISmsConnectionInboundOutboundNotificati
 		return this.propertiesProvider;
 	}
 
-	
 	// ISmsConnectionInboundOutboundNotification
 	@Override
 	public void notifyReceiveMessageError(String endpointId, String message, Date date) {
@@ -829,6 +873,13 @@ public class EpiinfoCompactUI implements ISmsConnectionInboundOutboundNotificati
 	@Override
 	public void notifyNewSync() {
 		this.syncSessionsFrame.notifyNewSync();
+	}
+
+	@Override
+	public void notifyBeginSync() {
+		this.disableAllButtons();		
+		this.buttonSync.setText(EpiInfoCompactUITranslator.getLabelCancelSync());
+		this.cfgFrame.notifyOwnerWorking();
 	}
 
 }

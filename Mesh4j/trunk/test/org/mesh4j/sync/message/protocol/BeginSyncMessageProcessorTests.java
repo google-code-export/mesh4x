@@ -345,5 +345,55 @@ public class BeginSyncMessageProcessorTests {
 		Assert.assertNotNull(message);
 		Assert.assertFalse(mp.getSendChanges(message.getData()));		// the value was inverted to send because is the point of view according to the endpoint sync session
 	}
+
+	@Test
+	public void shouldEncodeSourceType(){
+		Date date = new Date();
+		Item item = new Item(new NullContent("1"), new Sync("1", "jmt", new Date(), true));
+		MockSyncSession syncSession = new MockSyncSession(date, item);
+
+		NoChangesMessageProcessor ncp = new NoChangesMessageProcessor(null, null); 
+		LastVersionStatusMessageProcessor lvp = new LastVersionStatusMessageProcessor(null, null, null);
+		EqualStatusMessageProcessor esp = new EqualStatusMessageProcessor(null);
+				
+		BeginSyncMessageProcessor mp = new BeginSyncMessageProcessor(ncp, lvp, esp);
+		IMessage message = mp.createMessage(syncSession);
+		
+		Assert.assertNotNull(message);
+		Assert.assertEquals("mock", BeginSyncMessageProcessor.getSourceType(message.getData()));
+	}
+
+	@Test
+	public void shouldProcessMessageChangeSyncSessionTargetSourceType(){
+		
+		Date date = new Date();
+		Item item = new Item(new NullContent("1"), new Sync("1", "jmt", new Date(), true));
+		MockSyncSession syncSession = new MockSyncSession(date, item);
+		MockInMemoryMessageSyncAdapter adapter = new MockInMemoryMessageSyncAdapter("myadapter", new ArrayList<Item>());
+		MockSyncProtocol syncProtocol = new MockSyncProtocol(adapter, syncSession); 
+		
+		NoChangesMessageProcessor ncp = new NoChangesMessageProcessor(null, null);
+		ncp.setMessageSyncProtocol(syncProtocol);
+		
+		LastVersionStatusMessageProcessor lvp = new LastVersionStatusMessageProcessor(null, null, null);
+		lvp.setMessageSyncProtocol(syncProtocol);
+		
+		EqualStatusMessageProcessor esp = new EqualStatusMessageProcessor(null);
+		esp.setMessageSyncProtocol(syncProtocol);
+		
+		String data = syncSession.getSourceId()+"|myMock|T|T|T|0";
+		BeginSyncMessageProcessor mp = new BeginSyncMessageProcessor(ncp, lvp, esp);
+		IMessage message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), 0, data, syncSession.getTarget());
+		List<IMessage> messages = mp.process(syncSession, message);
+		Assert.assertNotNull(messages);
+		Assert.assertEquals(1, messages.size());
+		
+		IMessage response = messages.get(0);		
+		Assert.assertNotNull(response);
+		Assert.assertNotNull(response.getData());
+		Assert.assertEquals("myMock", syncSession.getTargetSourceType());
+				
+	}
+	
 	
 }

@@ -21,7 +21,10 @@ public class EpiInfoIconManager {
 	}
 	
 	private static String getSourceImageName(String source, boolean remote){
-		if(source.startsWith(FeedSyncAdapterFactory.SOURCE_TYPE)){
+		
+		if(source == null){
+			return "/undefinedDataSource.png";
+		} else if(source.startsWith(FeedSyncAdapterFactory.SOURCE_TYPE)){
 			return "/feedRSSDataSource.png";
 		} else if (source.startsWith(HttpSyncAdapterFactory.SOURCE_TYPE)){
 			return "/httpDataSource.png";
@@ -68,6 +71,10 @@ public class EpiInfoIconManager {
 	
 	public static Icon getStatusOkIcon() {
 		return SwingResourceManager.getIcon(EpiinfoUI.class, "/ok.png");
+	}
+	
+	public static Icon getStatusProcessingIcon() {
+		return SwingResourceManager.getIcon(EpiinfoUI.class, "/processing.png");
 	}
 	
 	public static Icon getStatusReadyIcon() {

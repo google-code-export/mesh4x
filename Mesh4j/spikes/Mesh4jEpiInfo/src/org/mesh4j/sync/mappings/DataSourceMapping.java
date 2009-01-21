@@ -1,5 +1,7 @@
 package org.mesh4j.sync.mappings;
 
+import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
+
 public class DataSourceMapping {
 
 
@@ -53,5 +55,9 @@ public class DataSourceMapping {
 
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
+	}
+
+	public String getSourceId() {
+		return MsAccessSyncAdapterFactory.createSourceId(this.alias);
 	}
 }

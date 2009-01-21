@@ -11,7 +11,7 @@ import org.mesh4j.sync.validations.Guard;
 
 public class InMemoryMessageSyncAdapter implements IMessageSyncAdapter {
 	
-	private static final String IN_MEMORY = "IN_MEMORY";
+	public static final String SOURCE_TYPE = "IN_MEMORY";
 	
 	// MODEL VARIABLES
 	private String sourceId;
@@ -82,6 +82,6 @@ public class InMemoryMessageSyncAdapter implements IMessageSyncAdapter {
 
 	@Override
 	public String getSourceType() {
-		return IN_MEMORY;
+		return SOURCE_TYPE;
 	}
 }

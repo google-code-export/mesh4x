@@ -73,7 +73,8 @@ public class BeginSyncMessageProcessor implements IMessageProcessor, IBeginSyncM
 			boolean fullProtocol = getFullProtocol(message.getData());
 			boolean shouldSendChanges = getSendChanges(message.getData());
 			boolean shouldReceiveChanges = getReceiveChanges(message.getData());
-			syncSession.beginSync(fullProtocol, shouldSendChanges, shouldReceiveChanges, sinceDate, message.getSessionVersion());
+			String targetSourceType = getSourceType(message.getData());
+			syncSession.beginSync(fullProtocol, shouldSendChanges, shouldReceiveChanges, sinceDate, message.getSessionVersion(), targetSourceType);
 			
 			if(this.messageSyncProtocol != null){
 				this.messageSyncProtocol.notifyBeginSync(syncSession);

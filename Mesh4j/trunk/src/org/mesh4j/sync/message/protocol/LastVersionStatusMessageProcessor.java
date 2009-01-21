@@ -66,6 +66,9 @@ public class LastVersionStatusMessageProcessor implements IMessageProcessor{
 		List<IMessage> response = new ArrayList<IMessage>();		
 		if(syncSession.isOpen()  && syncSession.getVersion() == message.getSessionVersion() && this.getMessageType().equals(message.getMessageType())){
 			
+			String targetSourceType = getSourceType(message.getData());
+			syncSession.setTargetSorceType(targetSourceType);
+			
 			ArrayList<String> updatedItems = new ArrayList<String>();
 
 			if(syncSession.shouldReceiveChanges()){

@@ -196,5 +196,23 @@ public class NoChangesMessageProcessorTests {
 		Assert.assertEquals(syncSession.getSessionId(), response.getSessionId());	
 	}
 	
+	@Test
+	public void shouldProcessChangeSyncSessionTargetSourceType(){
+		MockSyncSession syncSession = new MockSyncSession(null);
+		syncSession.setShouldSendChanges(false);
+		syncSession.setOpen();
+		
+		MergeWithACKMessageProcessor merge = new MergeWithACKMessageProcessor(new ItemEncoding(100), null);
+		EndSyncMessageProcessor end =  new EndSyncMessageProcessor(null);
+		NoChangesMessageProcessor ncp = new NoChangesMessageProcessor(end, merge);
+		Message message = new Message("a", ncp.getMessageType(), syncSession.getSessionId(), 0, "mySource", syncSession.getTarget());
+		
+		Assert.assertNull(syncSession.getTargetSourceType());	
+		
+		List<IMessage> messages = ncp.process(syncSession, message);
+		Assert.assertEquals(1, messages.size());
+		
+		Assert.assertEquals("mySource", syncSession.getTargetSourceType());	
+	}
 	
 }

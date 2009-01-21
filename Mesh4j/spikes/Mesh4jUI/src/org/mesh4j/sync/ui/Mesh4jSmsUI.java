@@ -927,12 +927,12 @@ public class Mesh4jSmsUI implements ISmsConnectionInboundOutboundNotification, I
 	@Override
 	public void notifyReceiveMessage(String endpointId, String message,
 			Date date) {
-		this.log("\t"+Mesh4jSmsUITranslator.getMessageNotifyReceiveMessageError(endpointId, message));
+		this.log("\t"+Mesh4jSmsUITranslator.getMessageNotifyReceiveMessage(endpointId, message));
 	}
 
 	@Override
 	public void notifyReceiveMessageError(String endpointId, String message, Date date) {
-		this.log("\t"+Mesh4jSmsUITranslator.getMessageNotifyReceiveMessage(endpointId, message));		
+		this.log("\t"+Mesh4jSmsUITranslator.getMessageNotifyReceiveMessageError(endpointId, message));		
 	}
 
 	@Override

@@ -540,4 +540,28 @@ public class LastVersionStatusMessageProcessorTests {
 		Assert.assertEquals(IProtocolConstants.PROTOCOL, response.getProtocol());
 		Assert.assertEquals(syncSession.getSessionId(), response.getSessionId());
 	}
+	
+	@Test
+	public void shouldProcessChangeSyncSessionTargetSourceType(){
+		Item item = new Item(new NullContent("1"), new Sync("1", "jmt", TestHelper.makeDate(2008, 1, 1, 1, 1, 1, 1), false));
+
+		MockSyncSession syncSession = new MockSyncSession(null, item);
+		syncSession.setOpen();
+		
+		GetForMergeMessageProcessor get = new GetForMergeMessageProcessor(new ItemEncoding(100), null);
+		LastVersionStatusMessageProcessor mp = new LastVersionStatusMessageProcessor(get, null, null);
+		
+		Message message = new Message(IProtocolConstants.PROTOCOL, mp.getMessageType(), syncSession.getSessionId(), 0, "mySourceType|1~-1269158974~D~jmt~1201834861000", syncSession.getTarget());
+
+		Assert.assertNull(syncSession.getTargetSourceType());
+		
+		List<IMessage> messages = mp.process(syncSession, message);
+		Assert.assertNotNull(messages);
+		Assert.assertEquals(1, messages.size());
+		
+		IMessage response = messages.get(0);		
+		Assert.assertNotNull(response);
+		Assert.assertNotNull(response.getData());
+		Assert.assertEquals("mySourceType", syncSession.getTargetSourceType());
+	}	
 }

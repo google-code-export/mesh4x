@@ -2,7 +2,6 @@ package org.mesh4j.sync.mappings;
 
 import org.mesh4j.sync.ui.translator.EpiInfoCompactUITranslator;
 
-
 public enum SyncMode {
 	
 	SendAndReceiveChanges(true, true, EpiInfoCompactUITranslator.getLabelSendAndReceiveChanges()),
@@ -21,6 +20,16 @@ public enum SyncMode {
 		this.alias = alias;
 	}
 	
+	public static SyncMode getSyncMode(boolean shouldSendChanges, boolean shouldReceiveChanges) {
+		if(shouldSendChanges && shouldReceiveChanges){
+			return SendAndReceiveChanges;
+		}else if(shouldSendChanges){
+			return SendChangesOnly;
+		} else {
+			return ReceiveChangesOnly;
+		}
+	}
+	
 	public boolean shouldSendChanges() {
 		return this.shouldSendChanges;
 	}
@@ -33,5 +42,4 @@ public enum SyncMode {
 	public String toString(){
 		return this.alias;
 	}
-
 }

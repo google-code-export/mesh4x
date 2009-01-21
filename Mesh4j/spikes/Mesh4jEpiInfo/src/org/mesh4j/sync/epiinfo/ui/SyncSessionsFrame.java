@@ -47,12 +47,14 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner{
 	private EpiinfoSourceIdResolver sourceIdResolver;
 	private PropertiesProvider propertiesProvider;
 	private SyncSessionView syncSessionView;
+	private EpiinfoCompactUI owner;
 
 	// BUSINESS METHODS
 
-	public SyncSessionsFrame(MessageSyncEngine syncEngine, EpiinfoSourceIdResolver sourceIdResolver, PropertiesProvider propertiesProvider) {
+	public SyncSessionsFrame(EpiinfoCompactUI ui, MessageSyncEngine syncEngine, EpiinfoSourceIdResolver sourceIdResolver, PropertiesProvider propertiesProvider) {
 		super();
 		
+		this.owner = ui;
 		this.syncEngine = syncEngine;
 		this.propertiesProvider = propertiesProvider;
 		this.sourceIdResolver = sourceIdResolver;
@@ -61,11 +63,11 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner{
 		getContentPane().setBackground(Color.WHITE);
 		setTitle(EpiInfoCompactUITranslator.getSyncSessionWindowTitle());
 		setResizable(false);
-		setBounds(100, 100, 765, 394);
+		setBounds(100, 100, 827, 394);
 		getContentPane().setLayout(new FormLayout(
 			new ColumnSpec[] {
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("378dlu")},
+				ColumnSpec.decode("408dlu")},
 			new RowSpec[] {
 				FormFactory.RELATED_GAP_ROWSPEC,
 				RowSpec.decode("200dlu"),
@@ -79,7 +81,7 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner{
 			new ColumnSpec[] {
 				ColumnSpec.decode("17dlu"),
 				FormFactory.RELATED_GAP_COLSPEC,
-				FormFactory.DEFAULT_COLSPEC},
+				ColumnSpec.decode("20dlu")},
 			new RowSpec[] {
 				RowSpec.decode("12dlu")}));
 		getContentPane().add(panelButtons, new CellConstraints(2, 4));
@@ -102,6 +104,23 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner{
 		buttonClose.addActionListener(closeActionListener);
 		
 		panelButtons.add(buttonClose, new CellConstraints());
+
+		ActionListener syncActionListener = new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				owner.viewSyncSession(syncSessionView.getSyncSession());
+			}
+		};	
+		
+		final JButton buttonSyncSession = new JButton();
+		buttonSyncSession.setOpaque(true);
+		buttonSyncSession.setContentAreaFilled(false);
+		buttonSyncSession.setBorderPainted(false);
+		buttonSyncSession.setBorder(new EmptyBorder(0, 0, 0, 0));
+		buttonSyncSession.setFont(new Font("Calibri", Font.BOLD, 12));
+		buttonSyncSession.setText(EpiInfoCompactUITranslator.getSyncSessionWindowLabelSync());
+		buttonSyncSession.setToolTipText(EpiInfoCompactUITranslator.getSyncSessionWindowToolTipSync());
+		buttonSyncSession.addActionListener(syncActionListener);
+		panelButtons.add(buttonSyncSession, new CellConstraints(3, 1));
 	
 		rootNode = new DefaultMutableTreeNode(EpiInfoCompactUITranslator.getSyncSessionWindowLabelAllSessions());
 		createSyncSessionTreeModel();
@@ -144,15 +163,15 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner{
 				RowSpec.decode("197dlu")}));
 		
 		syncSessionView = new SyncSessionView();
-		syncSessionView.initialize(this, this.syncEngine, this.sourceIdResolver);
+		syncSessionView.initialize(this, this.sourceIdResolver);
 		panelViewSession.add(syncSessionView, new CellConstraints(3, 1, CellConstraints.FILL, CellConstraints.FILL ));
 
 		final JSplitPane splitPane = new JSplitPane();
+		splitPane.setDividerLocation(210);
 		splitPane.setLeftComponent(scrollPaneSessions);
 		splitPane.setContinuousLayout(true);
 		splitPane.setBorder(new EmptyBorder(0, 0, 0, 0));
 		splitPane.setOneTouchExpandable(true);
-		splitPane.setDividerLocation(150);
 		splitPane.setRightComponent(panelViewSession);
 		
 		getContentPane().add(splitPane, new CellConstraints(2, 2, CellConstraints.FILL, CellConstraints.FILL));
@@ -207,9 +226,10 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner{
 	        } else if(leaf && isSyncSession(node)){
 		        SyncSessionWrapper syncSession = (SyncSessionWrapper)(node.getUserObject());
 
-		    	//boolean isCancelled(); 
-		        if(syncSession.isOpen()){
-		        	setIcon(EpiInfoIconManager.getStatusInProcessIcon());	
+		        if(syncSession.isBroken()){
+		        	setIcon(EpiInfoIconManager.getStatusErrorIcon());
+		        } else if(syncSession.isOpen()){
+		        	setIcon(EpiInfoIconManager.getStatusProcessingIcon());	
 		        } else {
 		        	setIcon(EpiInfoIconManager.getStatusOkIcon());
 		        }
@@ -257,14 +277,6 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner{
 		public String toString(){
 			StringBuffer sb = new StringBuffer();
 
-//			if(shouldSendChanges() && shouldReceiveChanges()){
-//				sb.append(" <-> ");
-//			}else if(shouldSendChanges()){
-//				sb.append(" -> ");
-//			} else {
-//				sb.append(" <- ");
-//			}
-			
 			EndpointMapping endpoint = SyncEngineUtil.getEndpointMapping(this.syncSession.getTarget().getEndpointId(), propertiesProvider);
 			if(endpoint == null){
 				sb.append(this.syncSession.getTarget().getEndpointId());
@@ -272,16 +284,21 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner{
 				sb.append(endpoint.getAlias());
 			}
 			
-//			sb.append(" [");
-//			sb.append(EpiInfoCompactUITranslator.getLabelNew(this.syncSession.getNumberOfAddedItems()));
-//			sb.append(" ");
-//			sb.append(EpiInfoCompactUITranslator.getLabelUpdated(this.syncSession.getNumberOfUpdatedItems()));
-//			sb.append(" ");
-//			sb.append(EpiInfoCompactUITranslator.getLabelDeleted(this.syncSession.getNumberOfDeletedItems()));
-//			sb.append("]");
+			if(isCancelled()){
+				sb.append("[");
+				sb.append(EpiInfoCompactUITranslator.getLabelCancelled());
+				sb.append("]");
+			}
+	    				
 			return sb.toString();
 		}
 		
+		protected boolean isCancelled() {
+			return this.syncSession.isCancelled();
+		}
+		public boolean isBroken() {
+			return this.syncSession.isBroken();
+		}
 		protected boolean shouldSendChanges(){
 			return this.syncSession.shouldSendChanges();
 		}
@@ -303,13 +320,17 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner{
 	}
 
 	@Override
-	public void notifyEndCancelSync() {
+	public void notifyBeginSync() {
 		// nothing to do
-		
+	}
+	
+	@Override
+	public void notifyEndCancelSync() {
+		this.treeSessions.repaint();
 	}
 
 	@Override
 	public void notifyEndSync(boolean error) {
-		// nothing to do		
+		this.treeSessions.repaint();		
 	}
 }

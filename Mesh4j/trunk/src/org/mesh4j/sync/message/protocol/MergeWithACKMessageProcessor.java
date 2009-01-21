@@ -67,23 +67,25 @@ public class MergeWithACKMessageProcessor implements IMessageProcessor {
 
 	@Override
 	public List<IMessage> process(ISyncSession syncSession, IMessage message) {
+
 		if(syncSession.isOpen()  && syncSession.getVersion() == message.getSessionVersion() && this.getMessageType().equals(message.getMessageType())){
 			
 			boolean isFullProtocol= message.getData().startsWith("T");
-			
+
 			String itemData = message.getData().substring(1, message.getData().length());
-			
+
 			Item incomingItem = this.itemEncoding.decode(syncSession, itemData);
 
 			MessageSyncEngine.merge(syncSession, incomingItem);
-			
+
 			ArrayList<IMessage> response = new ArrayList<IMessage>();
 			response.add(this.ackMessage.createMessage(
-				syncSession, 
+				syncSession,
 				incomingItem.getSyncId(),
 				isFullProtocol));
 			return response;
 		}
+		
 		return IMessageSyncProtocol.NO_RESPONSE;
 	}
 

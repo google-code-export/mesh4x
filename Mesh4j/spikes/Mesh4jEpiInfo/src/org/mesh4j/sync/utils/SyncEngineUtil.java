@@ -66,6 +66,14 @@ import org.mesh4j.sync.ui.translator.EpiInfoUITranslator;
 import org.mesh4j.sync.validations.MeshException;
 
 public class SyncEngineUtil {
+
+	// TODO (JMT) change emulation to supports 2 clients via files
+	// TODO (JMT) Add number of GET/MERGE and ACKs to client session target values
+	// TODO (JMT) Add items added/updated/deleted to client session target values
+	// TODO (JMT) Calculate sms in/out from channel information(batches) filtering by session id
+	// TODO (JMT) Add sms in/out to client session target values ??? sms out 10 <==> in  7
+	//                                                        		 sms in   1 <==> out 5
+
 	
 	private final static Log Logger = LogFactory.getLog(SyncEngineUtil.class);
 	

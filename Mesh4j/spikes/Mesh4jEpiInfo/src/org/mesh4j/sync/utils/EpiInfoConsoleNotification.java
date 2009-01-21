@@ -44,13 +44,13 @@ public class EpiInfoConsoleNotification implements ISmsConnectionInboundOutbound
 	// ISmsConnectionInboundOutboundNotification methods
 	@Override
 	public void notifyReceiveMessage(String endpointId, String message, Date date) {
-		this.log("\t"+EpiInfoUITranslator.getMessageNotifyReceiveMessageError(endpointId, message));
+		this.log("\t"+EpiInfoUITranslator.getMessageNotifyReceiveMessage(endpointId, message));
 	}
 
 	@Override
 	public void notifyReceiveMessageError(String endpointId, String message, Date date) {
 		this.setErrorImageStatus();
-		this.log("\t"+EpiInfoUITranslator.getMessageNotifyReceiveMessage(endpointId, message));		
+		this.log("\t"+EpiInfoUITranslator.getMessageNotifyReceiveMessageError(endpointId, message));		
 	}
 
 	@Override

@@ -37,6 +37,9 @@ public class NoChangesMessageProcessor implements IMessageProcessor {
 	@Override
 	public List<IMessage> process(ISyncSession syncSession, IMessage message) {
 		if(syncSession.isOpen() && syncSession.getVersion() == message.getSessionVersion() && this.getMessageType().equals(message.getMessageType())){
+			
+			syncSession.setTargetSorceType(message.getData());
+			
 			ArrayList<IMessage> response = new ArrayList<IMessage>();
 			
 			if(syncSession.shouldSendChanges()){

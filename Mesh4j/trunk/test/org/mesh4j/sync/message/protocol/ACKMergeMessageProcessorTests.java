@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.message.IMessage;
 import org.mesh4j.sync.message.IMessageSyncProtocol;
+import org.mesh4j.sync.message.channel.sms.SmsEndpoint;
 import org.mesh4j.sync.message.core.Message;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.NullContent;
@@ -175,4 +176,125 @@ public class ACKMergeMessageProcessorTests {
 		Assert.assertFalse(syncSession.isCompleteSync());	
 		Assert.assertEquals(IMessageSyncProtocol.NO_RESPONSE, messages);
 	}
+	
+	@Test
+	public void shouldProcessMessageNoChangeTargetTotalsBecauseOlderDataTotalsArrive(){
+		
+		MockSyncSession syncSession = new MockSyncSession(null);
+		syncSession.setOpen();
+		syncSession.setTargetNumberOfAddedItems(5);
+		syncSession.setTargetNumberOfUpdatedItems(5);
+		syncSession.setTargetNumberOfDeletedItems(5);
+		
+		EndSyncMessageProcessor end = new EndSyncMessageProcessor(null);
+		ACKMergeMessageProcessor mp = new ACKMergeMessageProcessor(new ItemEncoding(100), end);
+		Message message = new Message("M", mp.getMessageType(), "1", 0, "1|1|1|F1", new SmsEndpoint("endpoint"));
+	
+		Assert.assertEquals(5, syncSession.getTargetNumberOfAddedItems());
+		Assert.assertEquals(5, syncSession.getTargetNumberOfUpdatedItems());
+		Assert.assertEquals(5, syncSession.getTargetNumberOfDeletedItems());
+		
+		mp.process(syncSession, message);
+		
+		Assert.assertEquals(5, syncSession.getTargetNumberOfAddedItems());
+		Assert.assertEquals(5, syncSession.getTargetNumberOfUpdatedItems());
+		Assert.assertEquals(5, syncSession.getTargetNumberOfDeletedItems());
+	}
+	
+	@Test
+	public void shouldProcessMessageChangeTargetTotalsBecauseTotalItemAddedChanged(){
+		
+		MockSyncSession syncSession = new MockSyncSession(null);
+		syncSession.setOpen();
+		syncSession.setTargetNumberOfAddedItems(5);
+		syncSession.setTargetNumberOfUpdatedItems(5);
+		syncSession.setTargetNumberOfDeletedItems(5);
+		
+		EndSyncMessageProcessor end = new EndSyncMessageProcessor(null);
+		ACKMergeMessageProcessor mp = new ACKMergeMessageProcessor(new ItemEncoding(100), end);
+		Message message = new Message("M", mp.getMessageType(), "1", 0, "6|5|5|F1", new SmsEndpoint("endpoint"));
+	
+		Assert.assertEquals(5, syncSession.getTargetNumberOfAddedItems());
+		Assert.assertEquals(5, syncSession.getTargetNumberOfUpdatedItems());
+		Assert.assertEquals(5, syncSession.getTargetNumberOfDeletedItems());
+		
+		mp.process(syncSession, message);
+		
+		Assert.assertEquals(6, syncSession.getTargetNumberOfAddedItems());
+		Assert.assertEquals(5, syncSession.getTargetNumberOfUpdatedItems());
+		Assert.assertEquals(5, syncSession.getTargetNumberOfDeletedItems());
+	}
+	
+	@Test
+	public void shouldProcessMessageChangeTargetTotalsBecauseTotalItemUpdatedChanged(){
+		
+		MockSyncSession syncSession = new MockSyncSession(null);
+		syncSession.setOpen();
+		syncSession.setTargetNumberOfAddedItems(5);
+		syncSession.setTargetNumberOfUpdatedItems(5);
+		syncSession.setTargetNumberOfDeletedItems(5);
+		
+		EndSyncMessageProcessor end = new EndSyncMessageProcessor(null);
+		ACKMergeMessageProcessor mp = new ACKMergeMessageProcessor(new ItemEncoding(100), end);
+		Message message = new Message("M", mp.getMessageType(), "1", 0, "5|6|5|F1", new SmsEndpoint("endpoint"));
+	
+		Assert.assertEquals(5, syncSession.getTargetNumberOfAddedItems());
+		Assert.assertEquals(5, syncSession.getTargetNumberOfUpdatedItems());
+		Assert.assertEquals(5, syncSession.getTargetNumberOfDeletedItems());
+		
+		mp.process(syncSession, message);
+		
+		Assert.assertEquals(5, syncSession.getTargetNumberOfAddedItems());
+		Assert.assertEquals(6, syncSession.getTargetNumberOfUpdatedItems());
+		Assert.assertEquals(5, syncSession.getTargetNumberOfDeletedItems());
+	}
+
+	@Test
+	public void shouldProcessMessageChangeTargetTotalsBecauseTotalItemDeletedChanged(){
+		
+		MockSyncSession syncSession = new MockSyncSession(null);
+		syncSession.setOpen();
+		syncSession.setTargetNumberOfAddedItems(5);
+		syncSession.setTargetNumberOfUpdatedItems(5);
+		syncSession.setTargetNumberOfDeletedItems(5);
+		
+		EndSyncMessageProcessor end = new EndSyncMessageProcessor(null);
+		ACKMergeMessageProcessor mp = new ACKMergeMessageProcessor(new ItemEncoding(100), end);
+		Message message = new Message("M", mp.getMessageType(), "1", 0, "5|5|6|F1", new SmsEndpoint("endpoint"));
+	
+		Assert.assertEquals(5, syncSession.getTargetNumberOfAddedItems());
+		Assert.assertEquals(5, syncSession.getTargetNumberOfUpdatedItems());
+		Assert.assertEquals(5, syncSession.getTargetNumberOfDeletedItems());
+		
+		mp.process(syncSession, message);
+		
+		Assert.assertEquals(5, syncSession.getTargetNumberOfAddedItems());
+		Assert.assertEquals(5, syncSession.getTargetNumberOfUpdatedItems());
+		Assert.assertEquals(6, syncSession.getTargetNumberOfDeletedItems());
+	}
+	
+	@Test
+	public void shouldProcessMessageChangeTargetTotalsBecauseAllTotalsChanged(){
+		
+		MockSyncSession syncSession = new MockSyncSession(null);
+		syncSession.setOpen();
+		syncSession.setTargetNumberOfAddedItems(5);
+		syncSession.setTargetNumberOfUpdatedItems(5);
+		syncSession.setTargetNumberOfDeletedItems(5);
+		
+		EndSyncMessageProcessor end = new EndSyncMessageProcessor(null);
+		ACKMergeMessageProcessor mp = new ACKMergeMessageProcessor(new ItemEncoding(100), end);
+		Message message = new Message("M", mp.getMessageType(), "1", 0, "6|6|6|F1", new SmsEndpoint("endpoint"));
+	
+		Assert.assertEquals(5, syncSession.getTargetNumberOfAddedItems());
+		Assert.assertEquals(5, syncSession.getTargetNumberOfUpdatedItems());
+		Assert.assertEquals(5, syncSession.getTargetNumberOfDeletedItems());
+		
+		mp.process(syncSession, message);
+		
+		Assert.assertEquals(6, syncSession.getTargetNumberOfAddedItems());
+		Assert.assertEquals(6, syncSession.getTargetNumberOfUpdatedItems());
+		Assert.assertEquals(6, syncSession.getTargetNumberOfDeletedItems());
+	}
+	
 }

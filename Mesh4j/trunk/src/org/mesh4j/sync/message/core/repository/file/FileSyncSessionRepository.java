@@ -41,6 +41,7 @@ public class FileSyncSessionRepository implements ISyncSessionRepository{
 	private static final String SUBFIX_CURRENT = "_current.xml";
 	private static final String SUBFIX_SNAPSHOT = "_snapshot.xml";
 	public static final String ATTRIBUTE_OPEN = "open";
+	public static final String ATTRIBUTE_BROKEN = "broken";
 	public static final String ATTRIBUTE_FULL = "full";
 	public static final String ATTRIBUTE_LAST_SYNC_DATE = "lastSyncDate";
 	public static final String ATTRIBUTE_ENDPOINT_ID = "endpointId";
@@ -53,7 +54,11 @@ public class FileSyncSessionRepository implements ISyncSessionRepository{
 	public static final String ATTRIBUTE_NUMBER_OF_ADDED_ITEMS = "addedItems";
 	public static final String ATTRIBUTE_NUMBER_OF_UPDATED_ITEMS = "updatedItems";
 	public static final String ATTRIBUTE_NUMBER_OF_DELETED_ITEMS = "deletedItems";
-
+	public static final String ATTRIBUTE_TARGET_SOURCE_TYPE = "endpointSourceType";
+	public static final String ATTRIBUTE_TARGET_NUMBER_OF_ADDED_ITEMS = "endpointAddedItems";
+	public static final String ATTRIBUTE_TARGET_NUMBER_OF_UPDATED_ITEMS = "endpointUpdatedItems";
+	public static final String ATTRIBUTE_TARGET_NUMBER_OF_DELETED_ITEMS = "endpointDeletedItems";
+	
 	public final static String ELEMENT_SYNC_SESSION = "session";
 	public final static String ELEMENT_ACK = "ack";
 	public final static String ELEMENT_CONFLICT = "conflict";
@@ -247,12 +252,17 @@ public class FileSyncSessionRepository implements ISyncSessionRepository{
 		elementSession.addAttribute(ATTRIBUTE_LAST_SYNC_DATE, syncSession.getLastSyncDate() == null ? "" : DateHelper.formatW3CDateTime(syncSession.getLastSyncDate()));
 		elementSession.addAttribute(ATTRIBUTE_FULL, syncSession.isFullProtocol() ? "true" : "false");
 		elementSession.addAttribute(ATTRIBUTE_OPEN, syncSession.isOpen() ? "true" : "false");
+		elementSession.addAttribute(ATTRIBUTE_BROKEN, syncSession.isBroken() ? "true" : "false");
 		elementSession.addAttribute(ATTRIBUTE_CANCELLED, syncSession.isCancelled() ? "true" : "false");
 		elementSession.addAttribute(ATTRIBUTE_SHOULD_SEND_CHANGES, syncSession.shouldSendChanges() ? "true" : "false");
 		elementSession.addAttribute(ATTRIBUTE_SHOULD_RECEIVE_CHANGES, syncSession.shouldReceiveChanges() ? "true" : "false");
 		elementSession.addAttribute(ATTRIBUTE_NUMBER_OF_ADDED_ITEMS, String.valueOf(syncSession.getNumberOfAddedItems()));
 		elementSession.addAttribute(ATTRIBUTE_NUMBER_OF_UPDATED_ITEMS, String.valueOf(syncSession.getNumberOfUpdatedItems()));
 		elementSession.addAttribute(ATTRIBUTE_NUMBER_OF_DELETED_ITEMS, String.valueOf(syncSession.getNumberOfDeletedItems()));
+		elementSession.addAttribute(ATTRIBUTE_TARGET_SOURCE_TYPE, syncSession.getTargetSourceType() == null ? "undefined" : syncSession.getTargetSourceType());
+		elementSession.addAttribute(ATTRIBUTE_TARGET_NUMBER_OF_ADDED_ITEMS, String.valueOf(syncSession.getTargetNumberOfAddedItems()));
+		elementSession.addAttribute(ATTRIBUTE_TARGET_NUMBER_OF_UPDATED_ITEMS, String.valueOf(syncSession.getTargetNumberOfUpdatedItems()));
+		elementSession.addAttribute(ATTRIBUTE_TARGET_NUMBER_OF_DELETED_ITEMS, String.valueOf(syncSession.getTargetNumberOfDeletedItems()));
 		
 		if(!isSnapshot){
 			List<String> pendingAcks = syncSession.getAllPendingACKs();
@@ -282,12 +292,22 @@ public class FileSyncSessionRepository implements ISyncSessionRepository{
 		Date date = (dateAsString == null || dateAsString.length() == 0) ? null : DateHelper.parseW3CDateTime(dateAsString);
 		boolean isFull = Boolean.valueOf(syncElement.attributeValue(ATTRIBUTE_FULL));
 		boolean isOpen = Boolean.valueOf(syncElement.attributeValue(ATTRIBUTE_OPEN));
+		boolean isBroken = Boolean.valueOf(syncElement.attributeValue(ATTRIBUTE_BROKEN));
 		boolean isCancelled = Boolean.valueOf(syncElement.attributeValue(ATTRIBUTE_CANCELLED));
 		boolean shouldSendChanges = Boolean.valueOf(syncElement.attributeValue(ATTRIBUTE_SHOULD_SEND_CHANGES));
 		boolean shouldReceiveChanges = Boolean.valueOf(syncElement.attributeValue(ATTRIBUTE_SHOULD_RECEIVE_CHANGES));
 		int numberOfAddedItems = Integer.valueOf(syncElement.attributeValue(ATTRIBUTE_NUMBER_OF_ADDED_ITEMS));
 		int numberOfUpdatedItems = Integer.valueOf(syncElement.attributeValue(ATTRIBUTE_NUMBER_OF_UPDATED_ITEMS));
 		int numberOfDeletedItems = Integer.valueOf(syncElement.attributeValue(ATTRIBUTE_NUMBER_OF_DELETED_ITEMS));
+		
+		String targetSourceType = syncElement.attributeValue(ATTRIBUTE_TARGET_SOURCE_TYPE);
+		if("undefined".equals(targetSourceType)){
+			targetSourceType = null;
+		}
+		
+		int targetNumberOfAddedItems = Integer.valueOf(syncElement.attributeValue(ATTRIBUTE_TARGET_NUMBER_OF_ADDED_ITEMS));
+		int targetNumberOfUpdatedItems = Integer.valueOf(syncElement.attributeValue(ATTRIBUTE_TARGET_NUMBER_OF_UPDATED_ITEMS));
+		int targetNumberOfDeletedItems = Integer.valueOf(syncElement.attributeValue(ATTRIBUTE_TARGET_NUMBER_OF_DELETED_ITEMS));
 		
 		List<String> acks = new ArrayList<String>();
 		List<Element> ackElements = syncElement.elements(ELEMENT_ACK);
@@ -310,6 +330,7 @@ public class FileSyncSessionRepository implements ISyncSessionRepository{
 			shouldSendChanges, 
 			shouldReceiveChanges, 
 			isOpen, 
+			isBroken,
 			isCancelled, 
 			date, 
 			currentSyncSnapshot, 
@@ -318,7 +339,11 @@ public class FileSyncSessionRepository implements ISyncSessionRepository{
 			acks,
 			numberOfAddedItems,
 			numberOfUpdatedItems,
-			numberOfDeletedItems);
+			numberOfDeletedItems,
+			targetSourceType,
+			targetNumberOfAddedItems,
+			targetNumberOfUpdatedItems,
+			targetNumberOfDeletedItems);
 		return syncSession;
 	}
 	

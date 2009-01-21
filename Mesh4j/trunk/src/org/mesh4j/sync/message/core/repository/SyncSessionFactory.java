@@ -128,10 +128,12 @@ public class SyncSessionFactory implements ISyncSessionFactory {
 
 	@Override
 	public ISyncSession createSession(String sessionId, int version, String sourceId,
-			String endpointId, boolean fullProtocol, boolean shouldSendChanges, boolean shouldReceiveChanges, boolean isOpen, boolean isCancelled, Date lastSyncDate,
+			String endpointId, boolean fullProtocol, boolean shouldSendChanges, boolean shouldReceiveChanges, 
+			boolean isOpen, boolean isBroken, boolean isCancelled, Date lastSyncDate,
 			List<Item> currentSyncSnapshot, List<Item> lastSyncSnapshot,
 			List<String> conflicts, List<String> acks,
-			int numberOfAddedItems, int numberOfUpdatedItems, int numberOfDeletedItems) {
+			int numberOfAddedItems, int numberOfUpdatedItems, int numberOfDeletedItems,
+			String targetSourceType, int targetNumberOfAddedItems, int targetNumberOfUpdatedItems, int targetNumberOfDeletedItems) {
 		
 		Guard.argumentNotNull(currentSyncSnapshot, "currentSyncSnapshot");
 		Guard.argumentNotNull(lastSyncSnapshot, "lastSyncSnapshot");
@@ -144,7 +146,22 @@ public class SyncSessionFactory implements ISyncSessionFactory {
 			return null;
 		}
 		
-		SyncSession session = new SyncSession(sessionId, version, syncAdapter, this.endpointFactory.makeIEndpoint(endpointId), fullProtocol, shouldSendChanges, shouldReceiveChanges, numberOfAddedItems, numberOfUpdatedItems, numberOfDeletedItems);
+		SyncSession session = new SyncSession(
+				sessionId, 
+				version, 
+				syncAdapter, 
+				this.endpointFactory.makeIEndpoint(endpointId), 
+				fullProtocol, 
+				shouldSendChanges, 
+				shouldReceiveChanges, 
+				numberOfAddedItems, 
+				numberOfUpdatedItems, 
+				numberOfDeletedItems,
+				targetSourceType, 
+				targetNumberOfAddedItems, 
+				targetNumberOfUpdatedItems, 
+				targetNumberOfDeletedItems);
+		
 		session.setOpen(isOpen);
 		session.setLastSyncDate(lastSyncDate);
 		session.setCancelled(isCancelled);
@@ -164,6 +181,10 @@ public class SyncSessionFactory implements ISyncSessionFactory {
 		for (String syncId : conflicts) {
 			session.addConflict(syncId);
 		}		
+		
+		if(isBroken){
+			session.setBroken();
+		}
 		
 		this.sessions.put(sessionId, session);
 		return session;

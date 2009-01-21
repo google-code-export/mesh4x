@@ -168,12 +168,12 @@ public class LogFrame extends JFrame implements ISmsConnectionInboundOutboundNot
 	// ISmsConnectionInboundOutboundNotification methods
 	@Override
 	public void notifyReceiveMessage(String endpointId, String message, Date date) {
-		this.log("\t"+EpiInfoUITranslator.getMessageNotifyReceiveMessageError(endpointId, message));
+		this.log("\t"+EpiInfoUITranslator.getMessageNotifyReceiveMessage(endpointId, message));
 	}
 
 	@Override
 	public void notifyReceiveMessageError(String endpointId, String message, Date date) {
-		String error = EpiInfoUITranslator.getMessageNotifyReceiveMessage(endpointId, message);
+		String error = EpiInfoUITranslator.getMessageNotifyReceiveMessageError(endpointId, message);
 		this.log("\t"+error);
 	}
 
@@ -190,7 +190,7 @@ public class LogFrame extends JFrame implements ISmsConnectionInboundOutboundNot
 	
 	@Override
 	public void notifyReceiveMessageWasNotProcessed(String endpoint, String message, Date date) {
-		// nothing to do
+		Logger.info("SMS - Received message was not processed, endpoint: " + endpoint + " message: " + message + " date: " + date.toString());
 	}
 
 	

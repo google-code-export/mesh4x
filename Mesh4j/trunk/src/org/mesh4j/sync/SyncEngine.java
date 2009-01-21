@@ -27,7 +27,7 @@ public class SyncEngine {
 	private ISyncAdapter target;
 
 	// BUSINESS METHODS
-	public SyncEngine(ISyncAdapter source, ISyncAdapter target) {   // TODO (JMT) SPIKE: SyncEngine<T>
+	public SyncEngine(ISyncAdapter source, ISyncAdapter target) {
 		super();
 
 		Guard.argumentNotNull(source, "left");

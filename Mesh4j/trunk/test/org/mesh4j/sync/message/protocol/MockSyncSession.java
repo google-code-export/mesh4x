@@ -32,6 +32,11 @@ public class MockSyncSession implements ISyncSession{
 	private int numberOfAddedItems = 0;
 	private int numberOfUpdatedItems = 0;
 	private int numberOfDeletedItems = 0;
+	private String targetSourceType = null;
+	private int targetNumberOfAddedItems = 0;
+	private int targetNumberOfUpdatedItems = 0;
+	private int targetNumberOfDeletedItems = 0;
+	private boolean broken = false;
 	
 	// BUSINESS METHODS
 	
@@ -70,12 +75,14 @@ public class MockSyncSession implements ISyncSession{
 		this.shouldReceiveChanges = shouldReceiveChanges;
 		this.beginWasCalled = true;
 		this.cancelled = false;}
-	@Override public void beginSync(boolean fullProtocol, boolean shouldSendChanges, boolean shouldReceiveChanges, Date sinceDate, int version) {
+	@Override public void beginSync(boolean fullProtocol, boolean shouldSendChanges, boolean shouldReceiveChanges, 
+			Date sinceDate, int version, String targetsourceType) {
 		this.fullProtocol = fullProtocol;
 		this.shouldSendChanges = shouldSendChanges;
 		this.shouldReceiveChanges = shouldReceiveChanges;
 		this.beginWasCalled=true;
 		this.cancelled = false;
+		this.targetSourceType = targetsourceType;
 	}
 	@Override public void cancelSync() {
 		this.cancelled = true;
@@ -227,5 +234,46 @@ public class MockSyncSession implements ISyncSession{
 	@Override
 	public String getSourceType() {
 		return "mock";
+	}
+
+	@Override
+	public int getTargetNumberOfAddedItems() {
+		return this.targetNumberOfAddedItems;
+	}
+	@Override
+	public int getTargetNumberOfDeletedItems() {
+		return this.targetNumberOfDeletedItems;
+	}
+	@Override
+	public int getTargetNumberOfUpdatedItems() {
+		return this.targetNumberOfUpdatedItems;
+	}
+	@Override
+	public String getTargetSourceType() {
+		return targetSourceType;
+	}
+	@Override
+	public void setTargetNumberOfAddedItems(int added) {
+		this.targetNumberOfAddedItems = added;		
+	}
+	@Override
+	public void setTargetNumberOfDeletedItems(int deleted) {
+		this.targetNumberOfDeletedItems = deleted;		
+	}
+	@Override
+	public void setTargetNumberOfUpdatedItems(int updated) {
+		this.targetNumberOfUpdatedItems = updated;
+	}
+	@Override
+	public void setTargetSorceType(String targetSourceType) {
+		this.targetSourceType = targetSourceType;
+	}
+	@Override
+	public boolean isBroken() {
+		return broken;
+	}
+	@Override
+	public void setBroken() {
+		this.broken = true;
 	}
 }

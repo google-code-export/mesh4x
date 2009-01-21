@@ -30,22 +30,29 @@ public class SyncSession implements ISyncSession{
 	private ArrayList<String> acks = new ArrayList<String>();
 	private boolean fullProtocol = false;
 	private boolean cancelled = false;
+	private boolean broken = false;
 	private boolean shouldSendChanges = true;
 	private boolean shouldReceiveChanges = true;
 	private int numberOfAddedItems = 0;
 	private int numberOfUpdatedItems = 0;
 	private int numberOfDeletedItems = 0;
+	private String targetSourceType;
+	private int targetNumberOfAddedItems = 0;
+	private int targetNumberOfUpdatedItems = 0;
+	private int targetNumberOfDeletedItems = 0;
 
 	// METHODS
 	public SyncSession(String sessionId, int version, IMessageSyncAdapter syncAdapter, IEndpoint target, boolean fullProtocol, boolean shouldSendChanges, boolean shouldReceiveChanges) {
-		this(sessionId, version, syncAdapter, target, fullProtocol, shouldSendChanges, shouldReceiveChanges, 0, 0, 0);
+		this(sessionId, version, syncAdapter, target, fullProtocol, shouldSendChanges, shouldReceiveChanges, 0, 0, 0, null, 0, 0, 0);
 	}
 	
 	public SyncSession(String sessionId, int version,
 			IMessageSyncAdapter syncAdapter, IEndpoint target,
 			boolean fullProtocol, boolean shouldSendChanges,
 			boolean shouldReceiveChanges, int numberOfAddedItems,
-			int numberOfUpdatedItems, int numberOfDeletedItems) {
+			int numberOfUpdatedItems, int numberOfDeletedItems,
+			String targetSourceType, int targetNumberOfAddedItems,
+			int targetNumberOfUpdatedItems, int targetNumberOfDeletedItems) {
 		
 		Guard.argumentNotNullOrEmptyString(sessionId, "sessionId");
 		Guard.argumentNotNull(syncAdapter, "syncAdapter");
@@ -61,6 +68,10 @@ public class SyncSession implements ISyncSession{
 		this.numberOfAddedItems = numberOfAddedItems;
 		this.numberOfUpdatedItems = numberOfUpdatedItems;
 		this.numberOfDeletedItems = numberOfDeletedItems;
+		this.targetSourceType = targetSourceType;
+		this.targetNumberOfAddedItems = targetNumberOfAddedItems;
+		this.targetNumberOfUpdatedItems = targetNumberOfUpdatedItems;
+		this.targetNumberOfDeletedItems = targetNumberOfDeletedItems;
 	}
 
 	@Override
@@ -138,12 +149,13 @@ public class SyncSession implements ISyncSession{
 	}
 
 	@Override
-	public void beginSync(boolean fullProtocol, boolean shouldSendChanges, boolean shouldReceiveChanges, Date sinceDate, int version){
+	public void beginSync(boolean fullProtocol, boolean shouldSendChanges, boolean shouldReceiveChanges, 
+			Date sinceDate, int version, String targetSourceType){
 		this.lastSyncDate = sinceDate;
 		this.fullProtocol = fullProtocol;
 		this.shouldSendChanges = shouldSendChanges;
 		this.shouldReceiveChanges = shouldReceiveChanges;
-		this.beginSync(version);
+		this.beginSync(version, targetSourceType);
 	}
 
 	@Override
@@ -151,10 +163,10 @@ public class SyncSession implements ISyncSession{
 		this.fullProtocol = fullProtocol;
 		this.shouldSendChanges = shouldSendChanges;
 		this.shouldReceiveChanges = shouldReceiveChanges;
-		this.beginSync(this.version +1);
+		this.beginSync(this.version +1, null);
 	}
 		
-	private void beginSync(int version){
+	private void beginSync(int version, String targetSourceType){
 		this.version = version;
 		this.open = true;
 		this.conflicts = new HashMap<String, Item>();
@@ -178,6 +190,11 @@ public class SyncSession implements ISyncSession{
 		this.numberOfAddedItems = 0;
 		this.numberOfDeletedItems = 0;
 		this.numberOfUpdatedItems = 0;
+		
+		this.targetSourceType = targetSourceType;
+		this.targetNumberOfAddedItems = 0;
+		this.targetNumberOfDeletedItems = 0;
+		this.targetNumberOfUpdatedItems = 0;
 	}
 
 	@Override
@@ -201,6 +218,12 @@ public class SyncSession implements ISyncSession{
 		this.numberOfAddedItems = 0;
 		this.numberOfDeletedItems = 0;
 		this.numberOfUpdatedItems = 0;
+		
+		this.targetNumberOfAddedItems = 0;
+		this.targetNumberOfDeletedItems = 0;
+		this.targetNumberOfUpdatedItems = 0;
+		
+		this.broken = false;
 	}
 	
 	@Override
@@ -314,5 +337,57 @@ public class SyncSession implements ISyncSession{
 	public String getSourceType() {
 		return this.getSyncAdapter().getSourceType();
 	}
+	
+	@Override
+	public int getTargetNumberOfAddedItems() {
+		return this.targetNumberOfAddedItems;
+	}
+
+	@Override
+	public int getTargetNumberOfDeletedItems() {
+		return this.targetNumberOfDeletedItems;
+	}
+
+	@Override
+	public int getTargetNumberOfUpdatedItems() {
+		return this.targetNumberOfUpdatedItems;
+	}
+	
+	@Override
+	public String getTargetSourceType(){
+		return this.targetSourceType;
+	}
+
+	@Override
+	public void setTargetNumberOfAddedItems(int added) {
+		this.targetNumberOfAddedItems = added;		
+	}
+
+	@Override
+	public void setTargetNumberOfDeletedItems(int deleted) {
+		this.targetNumberOfDeletedItems = deleted;
+	}
+
+	@Override
+	public void setTargetNumberOfUpdatedItems(int updated) {
+		this.targetNumberOfUpdatedItems = updated;
+	}
+
+	@Override
+	public void setTargetSorceType(String targetSourceType) {
+		this.targetSourceType = targetSourceType;
+	}
+
+	@Override
+	public boolean isBroken() {
+		return this.broken;
+	}
+
+	@Override
+	public void setBroken() {
+		this.broken = true;
+	}
+
 }
+
 

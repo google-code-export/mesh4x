@@ -22,11 +22,14 @@ public interface ISyncSessionFactory {
 	ISyncSession createSession(String sessionId, int version, String sourceId, IEndpoint endpoint, boolean fullProtocol, boolean shouldSendChanges, boolean shouldReceiveChanges);
 
 	ISyncSession createSession(String sessionId, int version, String sourceId,
-		String endpointId, boolean isFull, boolean shouldSendChanges, boolean shouldReceiveChanges, 
-		boolean isOpen, boolean isCancelled, Date date,
-		List<Item> currentSyncSnapshot, List<Item> lastSyncSnapshot,
-		List<String> conflicts, List<String> acks, 
-		int numberOfAddedItems, int numberOfUpdatedItems, int numberOfDeletedItems);
+			String endpointId, boolean fullProtocol, boolean shouldSendChanges,
+			boolean shouldReceiveChanges, boolean isOpen, boolean isBroken, boolean isCancelled,
+			Date lastSyncDate, List<Item> currentSyncSnapshot,
+			List<Item> lastSyncSnapshot, List<String> conflicts,
+			List<String> acks, int numberOfAddedItems,
+			int numberOfUpdatedItems, int numberOfDeletedItems,
+			String targetSourceType, int targetNumberOfAddedItems,
+			int targetNumberOfUpdatedItems, int targetNumberOfDeletedItems);
 
 	void registerSource(IMessageSyncAdapter source);
 	

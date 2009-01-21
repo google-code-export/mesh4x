@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.mesh4j.sync.message.channel.sms.ISmsConnection;
 import org.mesh4j.sync.message.channel.sms.ISmsReceiver;
 import org.mesh4j.sync.message.channel.sms.SmsEndpoint;
@@ -18,6 +20,8 @@ import org.mesh4j.sync.message.schedule.timer.TimerScheduler;
 
 public class InMemorySmsConnection implements ISmsConnection, IRefreshTask{
 
+	private final static Log LOGGER = LogFactory.getLog(InMemorySmsConnection.class);
+	
 	private final static Object SEMAPHORE = new Object();
 	
 	// MODEL VARIABLES
@@ -80,14 +84,14 @@ public class InMemorySmsConnection implements ISmsConnection, IRefreshTask{
 		}
 	}
 	
-	private void notifyReceiveMessageWasNotProcessed(String endpointId, String msg, Date date) {
+	private void notifyReceiveMessageError(String endpointId, String msg, Date date) {
 		if(this.smsConnectionInboundOutboundNotifications != null){
 			for (ISmsConnectionInboundOutboundNotification smsConnectionInboundOutboundNotification : this.smsConnectionInboundOutboundNotifications) {
-					smsConnectionInboundOutboundNotification.notifyReceiveMessageWasNotProcessed(endpointId, msg, date);
+					smsConnectionInboundOutboundNotification.notifyReceiveMessageError(endpointId, msg, date);
 			}
 		}
 	}
-
+	
 	private void notifyReceivedMessage(String endpointId, String msg, Date date) {
 		if(this.smsConnectionInboundOutboundNotifications != null){
 			for (ISmsConnectionInboundOutboundNotification smsConnectionInboundOutboundNotification : this.smsConnectionInboundOutboundNotifications) {
@@ -102,17 +106,21 @@ public class InMemorySmsConnection implements ISmsConnection, IRefreshTask{
 			for (String endpointId : this.messages.keySet()) {
 				List<String> localMsgs = this.messages.get(endpointId);
 				if(localMsgs != null){
-					for (String msg : localMsgs) {
+					int size = Math.min(10, localMsgs.size()-1);
+					for (int i = 0; i <= size; i++) {
+						String msg = localMsgs.get(i);
+						localMsgs.remove(i);
+						
 						this.sleep(this.channelDelay);
 						Date date = new Date();
 						notifyReceivedMessage(endpointId, msg, date);
 						try{
 							this.messageReceiver.receiveSms(new SmsEndpoint(endpointId), msg, date);
 						} catch (Exception e) {
-							notifyReceiveMessageWasNotProcessed(endpointId, msg, date);	
+							LOGGER.error(e.getMessage(), e);
+							notifyReceiveMessageError(endpointId, msg, date);	
 						}
 					}
-					this.messages.put(endpointId, new ArrayList<String>());
 				}
 			}
 		}
