@@ -19,6 +19,7 @@ public class FileWatcherSmsConnection implements ISmsConnection {
 	private final static Log LOGGER = LogFactory.getLog(FileWatcherSmsConnection.class);
 	
 	// MODEL VARIABLES
+	private String endpointId;
 	private ISmsReceiver messageReceiver;
 	private int maxMessageLenght = 140;
 	private IMessageEncoding messageEncoding;
@@ -28,8 +29,9 @@ public class FileWatcherSmsConnection implements ISmsConnection {
 	
 	// BUSINESS METHODS
 	
-	public FileWatcherSmsConnection(String inDir, String outDir, IMessageEncoding encoding, int maxMessageLenght, ISmsConnectionInboundOutboundNotification[] smsAware) {
+	public FileWatcherSmsConnection(String endpointId, String inDir, String outDir, IMessageEncoding encoding, int maxMessageLenght, ISmsConnectionInboundOutboundNotification[] smsAware) {
 		super();
+		this.endpointId = endpointId;
 		this.messageEncoding = encoding;
 		this.maxMessageLenght = maxMessageLenght;
 		
@@ -52,8 +54,8 @@ public class FileWatcherSmsConnection implements ISmsConnection {
 		for (String messageText : messages) {
 			boolean ok = true;
 			try{
-				FileMessage msg = new FileMessage(IdGenerator.INSTANCE.newID(), smsNumber, messageText, new Date());
-				this.messageRepository.addOutcommingMessage(msg);
+				FileMessage msg = new FileMessage(IdGenerator.INSTANCE.newID(), this.endpointId, messageText, new Date());
+				this.messageRepository.addOutcommingMessage(endpoint, msg);
 			} catch (Throwable e) {
 				ok = false;
 				LOGGER.error(e.getMessage(), e);

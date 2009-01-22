@@ -137,6 +137,7 @@ public class EpiinfoUI{
 	private boolean discoveryModems = false;
 	private String inDir = "";
 	private String outDir = "";
+	private String myEndpointId = "";
 	
 	// BUSINESS METHODS
 	
@@ -193,6 +194,7 @@ public class EpiinfoUI{
 		this.sourceIdResolver = new EpiinfoSourceIdResolver(this.baseDirectory+ "/myDataSources.properties");
 		this.inDir = propertiesProvider.getString("emulate.sync.file.connection.in");
 		this.outDir = propertiesProvider.getString("emulate.sync.file.connection.out");
+		this.myEndpointId = propertiesProvider.getString("emulate.sync.file.connection.endpointId");
 	}
 	
 	protected void startUpSyncEngine() throws Exception {
@@ -218,7 +220,8 @@ public class EpiinfoUI{
 					new IMessageSyncAware[]{consoleNotification}, 
 					false, 
 					inDir,
-					outDir);
+					outDir,
+					myEndpointId);
 		}
 	}
 

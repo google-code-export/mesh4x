@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.mesh4j.sync.message.channel.sms.SmsEndpoint;
 
 public class FileMessageRepository {
 	
@@ -60,19 +61,9 @@ public class FileMessageRepository {
 		}
 	}
 	
-	public List<FileMessage> getOutcommingMessages() {
-		return this.getMessages(this.outboxDirectory);
-	}
-
-	public boolean addOutcommingMessage(FileMessage message) {
-		String fileName = getOutboxMessageFileName(message);
+	public boolean addOutcommingMessage(SmsEndpoint endpoint, FileMessage message) {
+		String fileName = getOutboxMessageFileName(endpoint, message);
 		return addFile(fileName, message.getText());	
-	}
-	
-	public boolean deleteOutcommingMessage(FileMessage message) {
-		String fileName = this.getOutboxMessageFileName(message);
-		return deleteFile(fileName);
-		
 	}
 	
 	public List<FileMessage> getIncommingMessages() {
@@ -148,8 +139,8 @@ public class FileMessageRepository {
 		return this.inboxDirectory + message.getNumber() + "_" + message.getID() + ".txt";
 	}
 
-	private String getOutboxMessageFileName(FileMessage message) {
-		return this.outboxDirectory + message.getNumber() + "_" + message.getID() + ".txt";
+	private String getOutboxMessageFileName(SmsEndpoint endpoint, FileMessage message) {
+		return this.outboxDirectory + endpoint.getEndpointId() + "\\in\\" + message.getNumber() + "_" + message.getID() + ".txt";
 	}
 	
 	private String readFile(File file) throws Exception{

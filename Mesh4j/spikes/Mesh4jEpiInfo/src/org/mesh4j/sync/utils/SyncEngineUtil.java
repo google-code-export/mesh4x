@@ -110,10 +110,10 @@ public class SyncEngineUtil {
 			String baseDirectory, int senderDelay, int receiverDelay,
 			int readDelay, int channelDelay, int maxMessageLenght, SmsEndpoint target,
 			ISmsConnectionInboundOutboundNotification[] smsAware, IMessageSyncAware[] syncAware,
-			boolean isOpaque, String inDir, String outDir) {
+			boolean isOpaque, String inDir, String outDir, String endpointId) {
 		
 		
-		ISmsConnection smsConnection = new FileWatcherSmsConnection(inDir, outDir, encoding, maxMessageLenght, smsAware);
+		ISmsConnection smsConnection = new FileWatcherSmsConnection(endpointId, inDir, outDir, encoding, maxMessageLenght, smsAware);
 				
 		ISyncAdapterFactory syncAdapterFactory = makeSyncAdapterFactory(sourceIdResolver, baseDirectory);
 
@@ -265,7 +265,7 @@ public class SyncEngineUtil {
 		if(emulateSync){
 			String inDirectory = propertiesProvider.getString("emulate.sync.file.connection.in");
 			String outDirectory = propertiesProvider.getString("emulate.sync.file.connection.out");
-			
+			String endpointId = propertiesProvider.getString("emulate.sync.file.connection.endpointId");
 			return createSyncEngineEmulator(
 					sourceIdResolver,
 					messageEncoding,
@@ -281,7 +281,8 @@ public class SyncEngineUtil {
 					syncAware, 
 					false,
 					inDirectory,
-					outDirectory);
+					outDirectory,
+					endpointId);
 		} else {
 			return createSyncEngine(
 					sourceIdResolver, 
