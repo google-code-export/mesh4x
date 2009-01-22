@@ -26,8 +26,8 @@ public class SmsLibMessageSyncEngineFactory {
 		int maxMessageLenght,
 		IIdentityProvider identityProvider,			
 		IMessageEncoding messageEncoding,
-		ISmsConnectionInboundOutboundNotification smsConnectionInboundOutboundNotification, 
-		IMessageSyncAware syncAware,
+		ISmsConnectionInboundOutboundNotification[] smsAware, 
+		IMessageSyncAware[] syncAware,
 		ISyncAdapterFactory ... syncAdapterFactories) {
 	
 		IFilter<String> protocolFilter = new IFilter<String>(){
@@ -38,17 +38,17 @@ public class SmsLibMessageSyncEngineFactory {
 		};
 		
 		ISmsConnection smsConnection =  new SmsLibAsynchronousConnection("mesh4j.sync", modem.getComPort(), modem.getBaudRate(),
-					modem.getManufacturer(), modem.getModel(), maxMessageLenght, messageEncoding, smsConnectionInboundOutboundNotification, protocolFilter);
+					modem.getManufacturer(), modem.getModel(), maxMessageLenght, messageEncoding, smsAware, protocolFilter);
 		
 		MessageSyncEngine syncEngine = createSyncEngine(syncAware, baseDirectory, identityProvider, smsConnection, senderDelay, receiverDelay, syncAdapterFactories);
 		
 		return syncEngine;
 	}
 	
-	private static MessageSyncEngine createSyncEngine(IMessageSyncAware syncAware, String repositoryBaseDirectory, IIdentityProvider identityProvider, ISmsConnection smsConnection, int senderDelay, int receiverDelay, ISyncAdapterFactory ... syncAdapterFactories){
+	private static MessageSyncEngine createSyncEngine(IMessageSyncAware[] syncAware, String repositoryBaseDirectory, IIdentityProvider identityProvider, ISmsConnection smsConnection, int senderDelay, int receiverDelay, ISyncAdapterFactory ... syncAdapterFactories){
 		MessageSyncAdapterFactory msgSyncAdapterFactory = new MessageSyncAdapterFactory(null, false, syncAdapterFactories);		
 		SmsChannel channel = SmsChannelFactory.createChannelWithFileRepository(smsConnection, senderDelay, receiverDelay, repositoryBaseDirectory);
-		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocolWithFileRepository(100, repositoryBaseDirectory, channel, identityProvider, new IMessageSyncAware[]{syncAware}, SmsEndpointFactory.INSTANCE, msgSyncAdapterFactory);
+		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocolWithFileRepository(100, repositoryBaseDirectory, channel, identityProvider, syncAware, SmsEndpointFactory.INSTANCE, msgSyncAdapterFactory);
 		return new MessageSyncEngine(syncProtocol, channel);		
 	}
 }

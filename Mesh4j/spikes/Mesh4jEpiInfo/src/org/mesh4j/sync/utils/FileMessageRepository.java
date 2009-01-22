@@ -1,4 +1,4 @@
-package org.sms.exchanger.message.repository;
+package org.mesh4j.sync.utils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -8,28 +8,46 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class MessageRepository implements IMessageRepository {
+public class FileMessageRepository {
 	
-	private final static Log LOGGER = LogFactory.getLog(MessageRepository.class);
+	private final static Log LOGGER = LogFactory.getLog(FileMessageRepository.class);
 
+	private final static Comparator<FileMessage> FILE_MESSAGE_COMPARATOR = new Comparator<FileMessage>(){
+		@Override
+		public int compare(FileMessage o1, FileMessage o2) {
+			if(o1.getDate() == null && o2.getDate() == null){
+				return 0;
+			}
+			
+			if(o1.getDate() == null){
+				return -1;
+			}
+			
+			if(o2.getDate() == null){
+				return 1;
+			}
+			return o1.getDate().compareTo(o2.getDate());
+		}	
+	};
+	
 	// MODEL VARIABLEs
 	private String outboxDirectory;
 	private String inboxDirectory;
 	
 	// BUSINESS METHODS
-	public MessageRepository(String inboxDirectory, String outboxDirectory) {
+	public FileMessageRepository(String inboxDirectory, String outboxDirectory) {
 		super();
 		this.inboxDirectory = inboxDirectory;
 		this.outboxDirectory = outboxDirectory;
 	}
 	
-	@Override
 	public void open() {
 		File fileOutboxDir = new File(this.outboxDirectory);
 		if(!fileOutboxDir.exists()){
@@ -42,48 +60,41 @@ public class MessageRepository implements IMessageRepository {
 		}
 	}
 	
-	@Override
-	public List<Message> getOutcommingMessages() {
+	public List<FileMessage> getOutcommingMessages() {
 		return this.getMessages(this.outboxDirectory);
 	}
 
-	@Override
-	public boolean addOutcommingMessage(Message message) {
+	public boolean addOutcommingMessage(FileMessage message) {
 		String fileName = getOutboxMessageFileName(message);
 		return addFile(fileName, message.getText());	
 	}
 	
-	@Override
-	public boolean deleteOutcommingMessage(Message message) {
+	public boolean deleteOutcommingMessage(FileMessage message) {
 		String fileName = this.getOutboxMessageFileName(message);
 		return deleteFile(fileName);
 		
 	}
 	
-	@Override
-	public List<Message> getIncommingMessages() {
+	public List<FileMessage> getIncommingMessages() {
 		return this.getMessages(this.inboxDirectory);
 	}
 	
-	@Override
-	public boolean addIncommingMessage(Message message) {
+	public boolean addIncommingMessage(FileMessage message) {
 		String fileName = getInboxMessageFileName(message);
 		return addFile(fileName, message.getText());			
 	}
 	
-	@Override
-	public boolean deleteIncommingMessage(Message message) {
+	public boolean deleteIncommingMessage(FileMessage message) {
 		String fileName = this.getInboxMessageFileName(message);
 		return deleteFile(fileName);
 	}
 
-	@Override
 	public void close() {
 		// nothing to do
 	}
 
-	private List<Message> getMessages(String dir) {
-		List<Message> result = new ArrayList<Message>();
+	private List<FileMessage> getMessages(String dir) {
+		List<FileMessage> result = new ArrayList<FileMessage>();
 		
 		File fileDir = new File(dir);
 		File[] files = fileDir.listFiles();
@@ -95,14 +106,14 @@ public class MessageRepository implements IMessageRepository {
 					String smsId = fields[1].substring(0, fields[1].length()-4);
 					String smsText = readFile(file);
 					
-					Message message = new Message(smsId, smsNumber, smsText, new Date(file.lastModified()));
+					FileMessage message = new FileMessage(smsId, smsNumber, smsText, new Date(file.lastModified()));
 					result.add(message);
 				} catch(Exception e){
 					LOGGER.error(e.getMessage(), e);
 				}
 			}
 		}
-		Collections.sort(result, MessageComparator.INSTANCE);
+		Collections.sort(result, FILE_MESSAGE_COMPARATOR);
 		return result;
 	}
 	
@@ -133,11 +144,11 @@ public class MessageRepository implements IMessageRepository {
 		}
 	}
 	
-	private String getInboxMessageFileName(Message message) {
+	private String getInboxMessageFileName(FileMessage message) {
 		return this.inboxDirectory + message.getNumber() + "_" + message.getID() + ".txt";
 	}
 
-	private String getOutboxMessageFileName(Message message) {
+	private String getOutboxMessageFileName(FileMessage message) {
 		return this.outboxDirectory + message.getNumber() + "_" + message.getID() + ".txt";
 	}
 	

@@ -36,14 +36,18 @@ public class InMemorySmsConnection implements ISmsConnection, IRefreshTask{
 	
 	// BUSINESS METHODS
 	public InMemorySmsConnection(IMessageEncoding messageEncoding, int maxMessageLenght, int readDelay, SmsEndpoint endpoint){
-		this(messageEncoding, maxMessageLenght, readDelay, endpoint, 300);
+		this(messageEncoding, maxMessageLenght, readDelay, endpoint, 300, null);
 	}
 	
-	public InMemorySmsConnection(IMessageEncoding messageEncoding, int maxMessageLenght, int readDelay, SmsEndpoint endpoint, int channelDelay){
+	public InMemorySmsConnection(IMessageEncoding messageEncoding, int maxMessageLenght, int readDelay, SmsEndpoint endpoint, int channelDelay, ISmsConnectionInboundOutboundNotification[] smsAware){
 		this.maxMessageLenght = maxMessageLenght;
 		this.messageEncoding = messageEncoding;
 		this.channelDelay = channelDelay;
 		this.endpoint = endpoint;
+		
+		if(smsAware != null){
+			this.addSmsConnectionOutboundNotification(smsAware);
+		}
 		
 		if(readDelay > 0){
 			TimerScheduler.INSTANCE.schedule(new RefreshSchedulerTimerTask(this), readDelay);

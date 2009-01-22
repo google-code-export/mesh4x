@@ -446,7 +446,7 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 
 	@Override
 	public void beginSyncWithError(ISyncSession syncSession) {
-		if(this.accepts(syncSession)){
+		if(this.accepts(syncSession) || this.syncSession == null){
 			String error = EpiInfoCompactUITranslator.getMessageErrorBeginSync(syncSession.getTarget().getEndpointId(), sourceIdResolver.getSourceName(syncSession.getSourceId()));
 			this.setError(error);
 			
@@ -492,7 +492,7 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 
 	@Override
 	public void notifyCancelSyncErrorSyncSessionNotOpen(ISyncSession syncSession) {
-		if(accepts(syncSession)){
+		if(accepts(syncSession) || this.syncSession == null){
 			String error = EpiInfoCompactUITranslator.getMessageCancelSyncErrorSessionNotOpen(syncSession.getTarget(), syncSession.getSourceId());
 			this.setError(error);
 //			this.viewSession(null);

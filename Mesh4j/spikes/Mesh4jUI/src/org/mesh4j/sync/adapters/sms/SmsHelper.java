@@ -59,14 +59,13 @@ public class SmsHelper {
 		IMessageSyncAdapter adapterA = new MessageSyncAdapter(sourceId, "kml", identityProvider, kmlAdapterA);
 
 		SmsEndpoint targetA = new SmsEndpoint(smsFrom);
-		InMemorySmsConnection smsConnectionA = new InMemorySmsConnection(encoding, maxMessageLenght, readDelay, targetA, channelDelay);
-		smsConnectionA.addSmsConnectionOutboundNotification(new ISmsConnectionInboundOutboundNotification[]{smsConnectionNotification});
+		InMemorySmsConnection smsConnectionA = new InMemorySmsConnection(encoding, maxMessageLenght, readDelay, targetA, channelDelay, new ISmsConnectionInboundOutboundNotification[]{smsConnectionNotification});
 				
 		MessageSyncEngine syncEngineEndPointA = createSyncEngine(syncAware, repositoryBaseDirectory+"\\"+smsFrom+"\\", identityProvider, smsConnectionA, senderDelay, receiverDelay);
 
 		// ENDPOINT B
 		SmsEndpoint targetB = new SmsEndpoint(smsTo);
-		InMemorySmsConnection smsConnectionB = new InMemorySmsConnection(encoding, maxMessageLenght, readDelay, targetB, channelDelay);
+		InMemorySmsConnection smsConnectionB = new InMemorySmsConnection(encoding, maxMessageLenght, readDelay, targetB, channelDelay, null);
 	
 		MessageSyncEngine syncEngineEndPointB = createSyncEngine(null, repositoryBaseDirectory+"\\"+smsTo+"\\", identityProvider, smsConnectionB, senderDelay, receiverDelay);
 		
@@ -149,7 +148,7 @@ public class SmsHelper {
 			ISmsConnection smsConnection =  null;
 			if(useAsynchronousConnection){
 				smsConnection = new SmsLibAsynchronousConnection("mesh4j.sync", modem.getComPort(), modem.getBaudRate(),
-						modem.getManufacturer(), modem.getModel(), maxMessageLenght, messageEncoding, smsConnectionInboundOutboundNotification, protocolFilter);
+						modem.getManufacturer(), modem.getModel(), maxMessageLenght, messageEncoding, new ISmsConnectionInboundOutboundNotification[]{smsConnectionInboundOutboundNotification}, protocolFilter);
 				((SmsLibAsynchronousConnection)smsConnection).startUp();
 			}else{
 				smsConnection = new SmsLibConnection("mesh4j.sync", modem.getComPort(), modem.getBaudRate(),

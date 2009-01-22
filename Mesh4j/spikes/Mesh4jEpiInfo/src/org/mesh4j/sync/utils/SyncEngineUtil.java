@@ -37,6 +37,7 @@ import org.mesh4j.sync.message.IMessageSyncAdapter;
 import org.mesh4j.sync.message.IMessageSyncAware;
 import org.mesh4j.sync.message.IMessageSyncProtocol;
 import org.mesh4j.sync.message.MessageSyncEngine;
+import org.mesh4j.sync.message.channel.sms.ISmsConnection;
 import org.mesh4j.sync.message.channel.sms.SmsChannelFactory;
 import org.mesh4j.sync.message.channel.sms.SmsEndpoint;
 import org.mesh4j.sync.message.channel.sms.batch.SmsMessage;
@@ -67,7 +68,6 @@ import org.mesh4j.sync.validations.MeshException;
 
 public class SyncEngineUtil {
 
-	// TODO (JMT) change emulation to supports 2 clients via files
 	// TODO (JMT) Add number of GET/MERGE and ACKs to client session target values
 	// TODO (JMT) Add items added/updated/deleted to client session target values
 
@@ -108,21 +108,6 @@ public class SyncEngineUtil {
 		syncEngine.cancelSync(sourceID, target);
 	}
 
-	public static MessageSyncEngine createEmulator(IMsAccessSourceIdResolver sourceIdResolver, ISmsConnectionInboundOutboundNotification[] smsAware, 
-			IMessageSyncAware[] syncAware, String smsFrom, IMessageEncoding encoding, 
-			IIdentityProvider identityProvider, String baseDirectory, 
-			int senderDelay, int receiverDelay, int readDelay, int channelDelay, int maxMessageLenght) throws Exception {
-
-		SmsEndpoint target = new SmsEndpoint(smsFrom);
-		
-		MessageSyncEngine syncEngine = createSyncEngineEmulator(
-				sourceIdResolver, smsFrom, encoding, identityProvider, baseDirectory+"/",
-				senderDelay, receiverDelay, readDelay, channelDelay,
-				maxMessageLenght, target, smsAware, syncAware, false);
-	
-		return syncEngine;
-	}
-
 	public static void registerNewEndpointToEmulator(MessageSyncEngine syncEngine, String smsTo, IMessageEncoding encoding, 
 			IIdentityProvider identityProvider, String baseDirectory, 
 			int senderDelay, int receiverDelay, int readDelay, int channelDelay, int maxMessageLenght, boolean isOpaque) {
@@ -137,12 +122,12 @@ public class SyncEngineUtil {
 		
 			EpiinfoSourceIdResolver sourceIdResolver= new EpiinfoSourceIdResolver(targetDirectory+"myDataSources.properties");
 			MessageSyncEngine backgroundSyncEngine = createSyncEngineEmulator(sourceIdResolver,
-					smsTo, encoding, identityProvider, targetDirectory,
+					encoding, identityProvider, targetDirectory,
 					senderDelay, receiverDelay, readDelay, channelDelay,
 					maxMessageLenght, backgroundTarget, 
 					new ISmsConnectionInboundOutboundNotification[]{new SmsConnectionInboundOutboundNotification()},
 					new IMessageSyncAware[]{ new LoggerMessageSyncAware()},
-					isOpaque);
+					isOpaque, true);
 
 			SmsChannel backgroundChannel = (SmsChannel)backgroundSyncEngine.getChannel();
 			InMemorySmsConnection backgroundSmsConnection = (InMemorySmsConnection) backgroundChannel.getSmsConnection(); 
@@ -152,15 +137,20 @@ public class SyncEngineUtil {
 		}
 	}
 
-	private static MessageSyncEngine createSyncEngineEmulator(IMsAccessSourceIdResolver sourceIdResolver, String smsTarget,
+	public static MessageSyncEngine createSyncEngineEmulator(IMsAccessSourceIdResolver sourceIdResolver,
 			IMessageEncoding encoding, IIdentityProvider identityProvider,
 			String baseDirectory, int senderDelay, int receiverDelay,
 			int readDelay, int channelDelay, int maxMessageLenght, SmsEndpoint target,
 			ISmsConnectionInboundOutboundNotification[] smsAware, IMessageSyncAware[] syncAware,
-			boolean isOpaque) {
+			boolean isOpaque, boolean inMemory) {
 		
-		InMemorySmsConnection smsConnection = new InMemorySmsConnection(encoding, maxMessageLenght, readDelay, target, channelDelay);
-		smsConnection.addSmsConnectionOutboundNotification(smsAware);
+		
+		ISmsConnection smsConnection = null;
+		if(inMemory){
+			smsConnection = new InMemorySmsConnection(encoding, maxMessageLenght, readDelay, target, channelDelay, smsAware);
+		} else {
+			smsConnection = new FileWatcherSmsConnection(baseDirectory, encoding, maxMessageLenght, smsAware);
+		}
 		
 		ISyncAdapterFactory syncAdapterFactory = makeSyncAdapterFactory(sourceIdResolver, baseDirectory);
 
@@ -177,6 +167,14 @@ public class SyncEngineUtil {
 		
 		MessageSyncEngine syncEngineEndPoint = new MessageSyncEngine(syncProtocol, channel); 
 
+//		if(inMemory){
+//			EndpointMapping[] endpoints = getEndpointMappings(propertiesProvider);
+//			for (EndpointMapping endpoint : endpoints) {
+//				registerNewEndpointToEmulator(syncEngineEndPoint, endpoint.getEndpoint(), encoding, 
+//						identityProvider, baseDirectory, 0, 0, 0, 0, 160, true);
+//			}
+//		}
+		
 		return syncEngineEndPoint;
 	}
 
@@ -205,14 +203,14 @@ public class SyncEngineUtil {
 			String baseDirectory, int senderDelay, int receiverDelay, int maxMessageLenght, 
 			IIdentityProvider identityProvider,
 			IMessageEncoding messageEncoding,
-			ISmsConnectionInboundOutboundNotification smsConnectionInboundOutboundNotification,
-			IMessageSyncAware messageSyncAware) {
+			ISmsConnectionInboundOutboundNotification[] smsAware,
+			IMessageSyncAware[] syncAware) {
 		
 		ISyncAdapterFactory syncAdapterFactory = makeSyncAdapterFactory(sourceIdResolver, baseDirectory);
 		
 		return SmsLibMessageSyncEngineFactory.createSyncEngine(
 			modem, baseDirectory + "/", senderDelay, receiverDelay, maxMessageLenght,
-			identityProvider, messageEncoding, smsConnectionInboundOutboundNotification, messageSyncAware, syncAdapterFactory);
+			identityProvider, messageEncoding, smsAware, syncAware, syncAdapterFactory);
 	}
 	
 	public static Modem[] getAvailableModems(IProgressMonitor progressMonitor) {
@@ -293,7 +291,12 @@ public class SyncEngineUtil {
 
 	// NEW EXAMPLE UI
 
-	public static MessageSyncEngine createSyncEngine(EpiinfoSourceIdResolver sourceIdResolver, PropertiesProvider propertiesProvider, IMessageSyncAware[] syncAware, ISmsConnectionInboundOutboundNotification[] smsAware) throws Exception {
+	public static MessageSyncEngine createSyncEngine(
+			EpiinfoSourceIdResolver sourceIdResolver, 
+			PropertiesProvider propertiesProvider, 
+			IMessageSyncAware[] syncAware, 
+			ISmsConnectionInboundOutboundNotification[] smsAware) throws Exception {
+		
 		String baseDirectory = propertiesProvider.getBaseDirectory();
 		int senderDelay = propertiesProvider.getDefaultSendRetryDelay();
 		int receiverDelay = propertiesProvider.getDefaultReceiveRetryDelay();
@@ -303,42 +306,38 @@ public class SyncEngineUtil {
 		String portName = propertiesProvider.getDefaultPort();
 		int baudRate = propertiesProvider.getDefaultBaudRate();
 		
-		Modem modem = new Modem(portName, baudRate, "sonny", "750i", "", "", 0, 0);
-
-// TODO (JMT) remove it, it is only for emulation
-		MessageSyncEngine syncEngine = createEmulator(
-				sourceIdResolver, 
-				smsAware, 
-				syncAware, 
-				EpiInfoUITranslator.getLabelDemo(), 
-				messageEncoding, 
-				identityProvider, 
-				baseDirectory, 
-				0, 
-				0, 
-				0, 
-				0,
-				maxMessageLenght);
+		Modem modem = new Modem(portName, baudRate, "", "", "", "", 0, 0);
 		
-		EndpointMapping[] endpoints = getEndpointMappings(propertiesProvider);
-		for (EndpointMapping endpoint : endpoints) {
-			registerNewEndpointToEmulator(syncEngine, endpoint.getEndpoint(), messageEncoding, 
-					identityProvider, baseDirectory, 0, 0, 0, 0, 160, true);
+		boolean emulateSync = propertiesProvider.getBoolean("emulate.sync");
+		if(emulateSync){
+			return createSyncEngineEmulator(
+					sourceIdResolver,
+					messageEncoding,
+					identityProvider, 
+					baseDirectory+"/",
+					0, 
+					0, 
+					0, 
+					0,
+					maxMessageLenght,
+					new SmsEndpoint(EpiInfoUITranslator.getLabelDemo()),
+					smsAware, 
+					syncAware, 
+					false,
+					false);
+		} else {
+			return createSyncEngine(
+					sourceIdResolver, 
+					modem,
+					baseDirectory, 
+					senderDelay, 
+					receiverDelay, 
+					maxMessageLenght, 
+					identityProvider,
+					messageEncoding,
+					smsAware,
+					syncAware);
 		}
-		return syncEngine;
-		
-//		return createSyncEngine(
-//			sourceIdResolver, 
-//			modem,
-//			baseDirectory, 
-//			senderDelay, 
-//			receiverDelay, 
-//			maxMessageLenght, 
-//			identityProvider,
-//			messageEncoding,
-//			consoleNotification,
-//			consoleNotification);
-// ************************************************
 	}
 
 	public static void synchronize(MessageSyncEngine syncEngine, SyncMode syncMode, EndpointMapping endpoint, DataSourceMapping dataSource, EpiinfoSourceIdResolver sourceIdResolver, PropertiesProvider propertiesProvider) throws Exception {
