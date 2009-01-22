@@ -209,6 +209,13 @@ public class SmsExchanger implements IMessageNotification{
 			}
 		}
 	}
+	
+	public void send(String messageText, String smsNumber) {
+		synchronized (SEMAPHORE) {
+			Message message = new Message(this.connection.newMessageID(), smsNumber, messageText, new Date());
+			this.messageRepository.addOutcommingMessage(message);	
+		}
+	}
 
 	public List<Message> getIncommingMessages() {
 		return this.messageRepository.getIncommingMessages();

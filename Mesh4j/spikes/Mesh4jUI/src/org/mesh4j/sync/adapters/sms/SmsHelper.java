@@ -27,7 +27,6 @@ import org.mesh4j.sync.message.core.NonMessageEncoding;
 import org.mesh4j.sync.message.core.repository.MessageSyncAdapterFactory;
 import org.mesh4j.sync.message.core.repository.OpaqueFeedSyncAdapterFactory;
 import org.mesh4j.sync.message.encoding.IMessageEncoding;
-import org.mesh4j.sync.message.protocol.IProtocolConstants;
 import org.mesh4j.sync.message.protocol.MessageSyncProtocolFactory;
 import org.mesh4j.sync.properties.PropertiesProvider;
 import org.mesh4j.sync.security.IIdentityProvider;
@@ -88,9 +87,9 @@ public class SmsHelper {
 	private static MessageSyncEngine createSyncEngine(IMessageSyncAware syncAware, String repositoryBaseDirectory, IIdentityProvider identityProvider, ISmsConnection smsConnection, int senderDelay, int receiverDelay){
 		KMLDOMLoaderFactory kmlSyncAdapterFactory = new KMLDOMLoaderFactory(repositoryBaseDirectory);
 		OpaqueFeedSyncAdapterFactory feedSyncAdapterFactory = new OpaqueFeedSyncAdapterFactory(repositoryBaseDirectory);
-		
+		IFilter<String> protocolFilter = MessageSyncProtocolFactory.getProtocolMessageFilter();
 		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(feedSyncAdapterFactory, false, kmlSyncAdapterFactory);		
-		IChannel channel = SmsChannelFactory.createChannelWithFileRepository(smsConnection, senderDelay, receiverDelay, repositoryBaseDirectory);
+		IChannel channel = SmsChannelFactory.createChannelWithFileRepository(smsConnection, senderDelay, receiverDelay, repositoryBaseDirectory, protocolFilter);
 		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocolWithFileRepository(100, repositoryBaseDirectory, channel, identityProvider, new IMessageSyncAware[]{syncAware}, SmsEndpointFactory.INSTANCE, syncAdapterFactory);		
 		return new MessageSyncEngine(syncProtocol, channel);		
 	}
@@ -138,21 +137,14 @@ public class SmsHelper {
 			IMessageEncoding messageEncoding = (IMessageEncoding) prop.getInstance("default.sms.compress.method", NonMessageEncoding.INSTANCE);
 			boolean useAsynchronousConnection = prop.getBoolean("default.sms.use.asynchronous.connection");
 
-			IFilter<String> protocolFilter = new IFilter<String>(){
-				@Override
-				public boolean applies(String message) {  // Accept only protocol messages
-					return message != null && message.length() > 0 && message.startsWith(IProtocolConstants.PROTOCOL);
-				}
-			};
-			
 			ISmsConnection smsConnection =  null;
 			if(useAsynchronousConnection){
 				smsConnection = new SmsLibAsynchronousConnection("mesh4j.sync", modem.getComPort(), modem.getBaudRate(),
-						modem.getManufacturer(), modem.getModel(), maxMessageLenght, messageEncoding, new ISmsConnectionInboundOutboundNotification[]{smsConnectionInboundOutboundNotification}, protocolFilter);
+						modem.getManufacturer(), modem.getModel(), maxMessageLenght, messageEncoding, new ISmsConnectionInboundOutboundNotification[]{smsConnectionInboundOutboundNotification});
 				((SmsLibAsynchronousConnection)smsConnection).startUp();
 			}else{
 				smsConnection = new SmsLibConnection("mesh4j.sync", modem.getComPort(), modem.getBaudRate(),
-						modem.getManufacturer(), modem.getModel(), maxMessageLenght, messageEncoding, readDelay, channelDelay, smsConnectionInboundOutboundNotification, protocolFilter);
+						modem.getManufacturer(), modem.getModel(), maxMessageLenght, messageEncoding, new ISmsConnectionInboundOutboundNotification[]{smsConnectionInboundOutboundNotification}, readDelay, channelDelay);
 			}
 			return createSyncEngine(syncAware, baseDirectory+"\\"+modem.toString()+"\\", identityProvider, smsConnection, senderDelay, receiverDelay);
 		} else {
