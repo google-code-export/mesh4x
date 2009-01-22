@@ -1,7 +1,5 @@
 package org.mesh4j.sync.ui.translator;
 
-import org.mesh4j.sync.mappings.DataSourceMapping;
-import org.mesh4j.sync.mappings.EndpointMapping;
 import org.mesh4j.sync.message.IEndpoint;
 import org.mesh4j.sync.translator.MessageTranslator;
 
@@ -159,8 +157,8 @@ public class EpiInfoCompactUITranslator {
 		return MessageTranslator.translate("EPIINFO_COMPACT_LABEL_CANCEL_CLOSE_WINDOW");
 	}
 
-	public static String getMessageForPopUpCloseWindows(DataSourceMapping dataSource, EndpointMapping endpoint) {
-		return MessageTranslator.translate("EPIINFO_COMPACT_MESSAGE_POP_UP_CLOSE_WINDOWS", dataSource.getAlias(), endpoint.getAlias());
+	public static String getMessageForPopUpCloseWindows(int numberOfOpenSyncSessions) {
+		return MessageTranslator.translate("EPIINFO_COMPACT_MESSAGE_POP_UP_CLOSE_WINDOWS", numberOfOpenSyncSessions);
 	}
 
 	public static String getLabelSyncWith() {

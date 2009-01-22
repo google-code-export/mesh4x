@@ -10,6 +10,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -38,6 +39,7 @@ import org.mesh4j.sync.message.ISyncSession;
 import org.mesh4j.sync.message.MessageSyncEngine;
 import org.mesh4j.sync.message.channel.sms.connection.ISmsConnectionInboundOutboundNotification;
 import org.mesh4j.sync.properties.PropertiesProvider;
+import org.mesh4j.sync.ui.tasks.CancelAllSyncTask;
 import org.mesh4j.sync.ui.tasks.CancelSyncTask;
 import org.mesh4j.sync.ui.tasks.EmulateIncomingCancelSyncTask;
 import org.mesh4j.sync.ui.tasks.EmulateIncomingSyncTask;
@@ -387,11 +389,12 @@ public class EpiinfoCompactUI implements ISmsConnectionInboundOutboundNotificati
 		
 		WindowAdapter windowAdapter = new WindowAdapter() {
 			public void windowClosing(final WindowEvent e) {
-				if(syncSessionView.isSyncInProcess()){
+				int numberOfOpenSyncSessions = getNumberOfOpenSyncSessions();
+				if(numberOfOpenSyncSessions > 0){
 					Object[] options = {EpiInfoCompactUITranslator.getLabelCancelSyncAndCloseWindow(), EpiInfoCompactUITranslator.getLabelCancelCloseWindow()};
 					int n = JOptionPane.showOptionDialog(
 						frame,
-						EpiInfoCompactUITranslator.getMessageForPopUpCloseWindows(getSelectedDataSource(), getSelectedEndpoint()),
+						EpiInfoCompactUITranslator.getMessageForPopUpCloseWindows(numberOfOpenSyncSessions),
 						EpiInfoCompactUITranslator.getTitle(),
 						JOptionPane.YES_NO_OPTION,
 						JOptionPane.QUESTION_MESSAGE,
@@ -399,7 +402,7 @@ public class EpiinfoCompactUI implements ISmsConnectionInboundOutboundNotificati
 						options,  //the titles of buttons
 						options[0]); //default button title
 					if(n == 0){
-						CancelSyncTask cancelSync = new CancelSyncTask(EpiinfoCompactUI.this);
+						CancelAllSyncTask cancelSync = new CancelAllSyncTask(EpiinfoCompactUI.this);
 						cancelSync.execute();
 						
 						EpiinfoCompactUI.this.close();
@@ -410,7 +413,7 @@ public class EpiinfoCompactUI implements ISmsConnectionInboundOutboundNotificati
 					EpiinfoCompactUI.this.close();
 				}
 			}
-			
+
 			public void windowOpened(final WindowEvent e) {
 				startUpSyncEngine();
 			}
@@ -827,6 +830,21 @@ public class EpiinfoCompactUI implements ISmsConnectionInboundOutboundNotificati
 		return this.propertiesProvider;
 	}
 
+	
+	private int getNumberOfOpenSyncSessions() {
+		int result = 0;
+		if(this.syncEngine != null){
+			List<ISyncSession> syncSessions = this.syncEngine.getAllSyncSessions();
+			for (ISyncSession syncSession : syncSessions) {
+				if(syncSession.isOpen()){
+					result = result + 1;
+				}
+			}
+		}
+		return result;
+	}
+	
+	
 	// ISmsConnectionInboundOutboundNotification
 	@Override
 	public void notifyReceiveMessageError(String endpointId, String message, Date date) {
@@ -891,4 +909,5 @@ public class EpiinfoCompactUI implements ISmsConnectionInboundOutboundNotificati
 		this.cfgFrame.notifyOwnerWorking();
 	}
 
+	
 }
