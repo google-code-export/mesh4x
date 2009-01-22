@@ -121,10 +121,11 @@ public class FileWatcherSmsConnection implements ISmsConnection {
 			try{
 				if(this.isValidMessage(fileMessage.getText())){
 					this.messageReceiver.receiveSms(new SmsEndpoint(fileMessage.getNumber()), fileMessage.getText(), fileMessage.getDate());
-					this.messageRepository.deleteIncommingMessage(fileMessage);
 				} else {
 					result = 1;
 				}
+				
+				this.messageRepository.deleteIncommingMessage(fileMessage);
 			} catch(Throwable e){
 				result = 2;
 				LOGGER.error(e.getMessage(), e);

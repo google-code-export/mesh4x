@@ -119,7 +119,7 @@ public class EpiinfoCompactUI implements ISmsConnectionInboundOutboundNotificati
 				
 		this.messageFilter = new IFilter<String>(){		
 			@Override public boolean applies(String message) {
-				return ReadyToSyncTask.isQuestion(message) || TestPhoneTask.isQuestion(message);
+				return ReadyToSyncTask.isQuestion(message) || ReadyToSyncTask.isAnswer(message) || TestPhoneTask.isQuestion(message);
 			}			
 		};
 
