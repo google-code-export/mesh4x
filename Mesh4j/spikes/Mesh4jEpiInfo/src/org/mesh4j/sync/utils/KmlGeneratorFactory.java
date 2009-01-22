@@ -12,11 +12,11 @@ import org.mesh4j.sync.adapters.kml.timespan.decorator.IKMLGenerator;
 import org.mesh4j.sync.adapters.kml.timespan.decorator.IKMLGeneratorFactory;
 import org.mesh4j.sync.payload.mappings.IMappingResolver;
 import org.mesh4j.sync.payload.mappings.MappingResolver;
-import org.mesh4j.sync.ui.translator.EpiInfoUITranslator;
+import org.mesh4j.sync.ui.translator.MeshUITranslator;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
-public class EpiInfoKmlGeneratorFactory implements IKMLGeneratorFactory {
+public class KmlGeneratorFactory implements IKMLGeneratorFactory {
 
 	// MODEL VARIABLES
 	private String baseDirectory;
@@ -25,7 +25,7 @@ public class EpiInfoKmlGeneratorFactory implements IKMLGeneratorFactory {
 	
 	// BUSINESS METHODS
 	
-	public EpiInfoKmlGeneratorFactory(String baseDirectory, String templateFileName, IGeoCoder geoCoder) {
+	public KmlGeneratorFactory(String baseDirectory, String templateFileName, IGeoCoder geoCoder) {
 		Guard.argumentNotNullOrEmptyString(baseDirectory, "baseDirectory");
 		Guard.argumentNotNullOrEmptyString(templateFileName, "templateFileName");
 		Guard.argumentNotNull(geoCoder, "geoCoder");
@@ -42,7 +42,7 @@ public class EpiInfoKmlGeneratorFactory implements IKMLGeneratorFactory {
 		IMappingResolver mappingResolver = null;
 		File mappingFile = new File(mappingsFileName);
 		if(!mappingFile.exists()){
-			throw new IllegalArgumentException(EpiInfoUITranslator.getErrorKMLMappingsNotFound());
+			throw new IllegalArgumentException(MeshUITranslator.getErrorKMLMappingsNotFound());
 		}
 		
 		try{
@@ -57,7 +57,7 @@ public class EpiInfoKmlGeneratorFactory implements IKMLGeneratorFactory {
 		} catch (Exception e) {
 			throw new MeshException(e);
 		}
-		return new EpiInfoKmlGenerator(this.templateFileName, mappingResolver);
+		return new KmlGenerator(this.templateFileName, mappingResolver);
 	}
 
 }

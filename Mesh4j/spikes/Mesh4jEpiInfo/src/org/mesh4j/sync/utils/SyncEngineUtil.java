@@ -54,7 +54,6 @@ import org.mesh4j.sync.message.core.MessageSyncAdapter;
 import org.mesh4j.sync.message.core.repository.MessageSyncAdapterFactory;
 import org.mesh4j.sync.message.core.repository.OpaqueFeedSyncAdapterFactory;
 import org.mesh4j.sync.message.encoding.IMessageEncoding;
-import org.mesh4j.sync.message.protocol.IProtocolConstants;
 import org.mesh4j.sync.message.protocol.MessageSyncProtocolFactory;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.payload.mappings.IMappingResolver;
@@ -62,7 +61,7 @@ import org.mesh4j.sync.payload.mappings.MappingResolver;
 import org.mesh4j.sync.properties.PropertiesProvider;
 import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.security.NullIdentityProvider;
-import org.mesh4j.sync.ui.translator.EpiInfoUITranslator;
+import org.mesh4j.sync.ui.translator.MeshUITranslator;
 import org.mesh4j.sync.validations.MeshException;
 
 public class SyncEngineUtil {
@@ -114,15 +113,7 @@ public class SyncEngineUtil {
 			ISmsConnectionInboundOutboundNotification[] smsAware, IMessageSyncAware[] syncAware,
 			boolean isOpaque, String inDir, String outDir, String endpointId) {
 		
-		IFilter<String> protocolFilter = new IFilter<String>(){
-			@Override
-			public boolean applies(String message) {  // Accept only protocol messages
-				return message != null && message.length() > 0 && message.startsWith(IProtocolConstants.PROTOCOL);
-			}
-		};
-		
-		ISmsConnection smsConnection = new FileWatcherSmsConnection(endpointId, inDir, outDir, encoding, maxMessageLenght, smsAware, protocolFilter);
-				
+		ISmsConnection smsConnection = new FileWatcherSmsConnection(endpointId, inDir, outDir, maxMessageLenght, encoding, smsAware);
 		ISyncAdapterFactory syncAdapterFactory = makeSyncAdapterFactory(sourceIdResolver, baseDirectory);
 
 		MessageSyncAdapterFactory messageSyncAdapterFactory;
@@ -132,7 +123,8 @@ public class SyncEngineUtil {
 			messageSyncAdapterFactory = new MessageSyncAdapterFactory(null, false, syncAdapterFactory);
 		}
 		
-		IChannel channel = SmsChannelFactory.createChannelWithFileRepository(smsConnection, senderDelay, receiverDelay, baseDirectory);
+		IFilter<String> protocolFilter = MessageSyncProtocolFactory.getProtocolMessageFilter();
+		IChannel channel = SmsChannelFactory.createChannelWithFileRepository(smsConnection, senderDelay, receiverDelay, baseDirectory, protocolFilter);
 		
 		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocolWithFileRepository(100, baseDirectory, channel, identityProvider, syncAware, SmsEndpointFactory.INSTANCE, messageSyncAdapterFactory);		
 		
@@ -146,7 +138,7 @@ public class SyncEngineUtil {
 		return msAccessSyncFactory;
 	}
 	
-	public static void addDataSource(EpiinfoSourceIdResolver sourceIdResolver, String fileName, String tableName) {
+	public static void addDataSource(SourceIdResolver sourceIdResolver, String fileName, String tableName) {
 		File file = new File(fileName);
 		if(file.exists()){
 			String sourceAlias = tableName;
@@ -186,14 +178,14 @@ public class SyncEngineUtil {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static void generateKML(String geoCoderKey, String templateFileName, String fromPhoneNumber, String mdbFileName, String mdbTableName, String baseDirectory, EpiinfoSourceIdResolver sourceIdResolver, IIdentityProvider identityProvider) throws Exception{
+	public static void generateKML(String geoCoderKey, String templateFileName, String fromPhoneNumber, String mdbFileName, String mdbTableName, String baseDirectory, SourceIdResolver sourceIdResolver, IIdentityProvider identityProvider) throws Exception{
 		
 		String mappingsFileName = baseDirectory + "/" + mdbTableName + "_mappings.xml";
 		
 		IMappingResolver mappingResolver = null;
 		File mappingsFile = new File(mappingsFileName);
 		if(!mappingsFile.exists()){
-			throw new IllegalArgumentException(EpiInfoUITranslator.getErrorKMLMappingsNotFound());
+			throw new IllegalArgumentException(MeshUITranslator.getErrorKMLMappingsNotFound());
 		}
 
 		GoogleGeoCoder geoCoder = new GoogleGeoCoder(geoCoderKey);
@@ -202,7 +194,7 @@ public class SyncEngineUtil {
 		String sourceID = MsAccessSyncAdapterFactory.createSourceId(sourceAlias);
 		ISyncAdapterFactory syncFactory = makeSyncAdapterFactory(sourceIdResolver, baseDirectory);
 
-		IKMLGeneratorFactory kmlGeneratorFactory = new EpiInfoKmlGeneratorFactory(baseDirectory, templateFileName, geoCoder);
+		IKMLGeneratorFactory kmlGeneratorFactory = new KmlGeneratorFactory(baseDirectory, templateFileName, geoCoder);
 		KMLTimeSpanDecoratorSyncAdapterFactory kmlDecSyncFactory = new KMLTimeSpanDecoratorSyncAdapterFactory(baseDirectory, syncFactory, kmlGeneratorFactory);
 
 		KMLTimeSpanDecoratorSyncAdapter syncAdapter = kmlDecSyncFactory.createSyncAdapter(sourceID, identityProvider);
@@ -253,7 +245,7 @@ public class SyncEngineUtil {
 	// NEW EXAMPLE UI
 
 	public static MessageSyncEngine createSyncEngine(
-			EpiinfoSourceIdResolver sourceIdResolver, 
+			SourceIdResolver sourceIdResolver, 
 			PropertiesProvider propertiesProvider, 
 			IMessageSyncAware[] syncAware, 
 			ISmsConnectionInboundOutboundNotification[] smsAware) throws Exception {
@@ -284,7 +276,7 @@ public class SyncEngineUtil {
 					0, 
 					0,
 					maxMessageLenght,
-					new SmsEndpoint(EpiInfoUITranslator.getLabelDemo()),
+					new SmsEndpoint(MeshUITranslator.getLabelDemo()),
 					smsAware, 
 					syncAware, 
 					false,
@@ -306,7 +298,7 @@ public class SyncEngineUtil {
 		}
 	}
 
-	public static void synchronize(MessageSyncEngine syncEngine, SyncMode syncMode, EndpointMapping endpoint, DataSourceMapping dataSource, EpiinfoSourceIdResolver sourceIdResolver, PropertiesProvider propertiesProvider) throws Exception {
+	public static void synchronize(MessageSyncEngine syncEngine, SyncMode syncMode, EndpointMapping endpoint, DataSourceMapping dataSource, SourceIdResolver sourceIdResolver, PropertiesProvider propertiesProvider) throws Exception {
 		String baseDirectory = propertiesProvider.getBaseDirectory();
 		IIdentityProvider identityProvider = propertiesProvider.getIdentityProvider();
 		

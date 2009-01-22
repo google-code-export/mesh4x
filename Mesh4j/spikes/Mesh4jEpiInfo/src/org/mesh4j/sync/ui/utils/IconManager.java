@@ -1,4 +1,4 @@
-package org.mesh4j.sync.epiinfo.ui.utils;
+package org.mesh4j.sync.ui.utils;
 
 import java.awt.Image;
 
@@ -9,15 +9,15 @@ import org.mesh4j.sync.adapters.http.HttpSyncAdapterFactory;
 import org.mesh4j.sync.adapters.kml.KMLDOMLoaderFactory;
 import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
 import org.mesh4j.sync.adapters.msexcel.MsExcelSyncAdapterFactory;
-import org.mesh4j.sync.epiinfo.ui.EpiinfoCompactUI;
-import org.mesh4j.sync.epiinfo.ui.EpiinfoUI;
+import org.mesh4j.sync.ui.MeshCompactUI;
+import org.mesh4j.sync.ui.MeshUI;
 
 import com.swtdesigner.SwingResourceManager;
 
-public class EpiInfoIconManager {
+public class IconManager {
 
 	public static Icon getSourceImage(String source, boolean remote) {
-		return SwingResourceManager.getIcon(EpiinfoCompactUI.class, getSourceImageName(source, remote));
+		return SwingResourceManager.getIcon(MeshCompactUI.class, getSourceImageName(source, remote));
 	}
 	
 	private static String getSourceImageName(String source, boolean remote){
@@ -44,37 +44,37 @@ public class EpiInfoIconManager {
 	}
 
 	public static Icon getUndefinedSourceImage() {
-		return SwingResourceManager.getIcon(EpiinfoCompactUI.class, "/undefinedDataSource.png");
+		return SwingResourceManager.getIcon(MeshCompactUI.class, "/undefinedDataSource.png");
 	}
 	
 	public static Icon getDataSourceSamll() {
-		return SwingResourceManager.getIcon(EpiinfoCompactUI.class, "/dataSourceSmall.png");
+		return SwingResourceManager.getIcon(MeshCompactUI.class, "/dataSourceSmall.png");
 	}
 	
 	public static Icon getSyncModeIcon(boolean sendChanges, boolean receiveChanges){
 		if(sendChanges && receiveChanges){
-			return SwingResourceManager.getIcon(EpiinfoCompactUI.class, "/2WaySync.png");
+			return SwingResourceManager.getIcon(MeshCompactUI.class, "/2WaySync.png");
 		}else if(sendChanges){
-			return SwingResourceManager.getIcon(EpiinfoCompactUI.class, "/sendChangesOnly.png");
+			return SwingResourceManager.getIcon(MeshCompactUI.class, "/sendChangesOnly.png");
 		} else {
-			return SwingResourceManager.getIcon(EpiinfoCompactUI.class, "/receiveChangesOnly.png");
+			return SwingResourceManager.getIcon(MeshCompactUI.class, "/receiveChangesOnly.png");
 		}
 	}
 
 	public static Icon getStatusErrorIcon() {
-		return SwingResourceManager.getIcon(EpiinfoCompactUI.class, "/error.png");
+		return SwingResourceManager.getIcon(MeshCompactUI.class, "/error.png");
 	}
 	
 	public static Icon getStatusInProgressIcon() {
-		return SwingResourceManager.getIcon(EpiinfoUI.class, "/inProgress.gif");
+		return SwingResourceManager.getIcon(MeshUI.class, "/inProgress.gif");
 	}
 	
 	public static Icon getStatusOkIcon() {
-		return SwingResourceManager.getIcon(EpiinfoUI.class, "/ok.png");
+		return SwingResourceManager.getIcon(MeshUI.class, "/ok.png");
 	}
 	
 	public static Icon getStatusProcessingIcon() {
-		return SwingResourceManager.getIcon(EpiinfoUI.class, "/processing.png");
+		return SwingResourceManager.getIcon(MeshUI.class, "/processing.png");
 	}
 	
 	public static Icon getStatusReadyIcon() {
@@ -82,18 +82,18 @@ public class EpiInfoIconManager {
 	}
 
 	public static Image getCDCImage() {
-		return SwingResourceManager.getImage(EpiinfoCompactUI.class, "/cdc.gif");
+		return SwingResourceManager.getImage(MeshCompactUI.class, "/cdc.gif");
 	}
 
 	public static Icon getInOutIcon() {
-		return SwingResourceManager.getIcon(EpiinfoCompactUI.class, "/inOut.png");
+		return SwingResourceManager.getIcon(MeshCompactUI.class, "/inOut.png");
 	}
 
 	public static Icon getTrademarkIcon() {
-		return SwingResourceManager.getIcon(EpiinfoCompactUI.class, "/mesh4x.png");
+		return SwingResourceManager.getIcon(MeshCompactUI.class, "/mesh4x.png");
 	}
 
 	public static Icon getSyncMode2WayIcon() {
-		return SwingResourceManager.getIcon(EpiinfoCompactUI.class, "/2WaySync.png");
+		return SwingResourceManager.getIcon(MeshCompactUI.class, "/2WaySync.png");
 	}
 }

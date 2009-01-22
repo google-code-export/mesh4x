@@ -20,9 +20,9 @@ import org.mesh4j.sync.payload.mappings.IMappingResolver;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
-public class EpiInfoKmlGenerator implements IKMLGenerator{
+public class KmlGenerator implements IKMLGenerator{
 
-	final static Log LOGGER = LogFactory.getLog(EpiInfoKmlGenerator.class);
+	final static Log LOGGER = LogFactory.getLog(KmlGenerator.class);
 	final static SimpleDateFormat DATEONSET_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	// MODEL VARIABLE
@@ -31,7 +31,7 @@ public class EpiInfoKmlGenerator implements IKMLGenerator{
 	
 	// BUSINESS METHODS
 
-	public EpiInfoKmlGenerator(String templateFileName, IMappingResolver mappingResolver){
+	public KmlGenerator(String templateFileName, IMappingResolver mappingResolver){
 		Guard.argumentNotNull(mappingResolver, "mappingResolver");
 		Guard.argumentNotNullOrEmptyString(templateFileName, "templateFileName");
 		

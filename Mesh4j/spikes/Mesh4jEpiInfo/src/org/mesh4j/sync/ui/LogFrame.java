@@ -1,4 +1,4 @@
-package org.mesh4j.sync.epiinfo.ui;
+package org.mesh4j.sync.ui;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -22,9 +22,9 @@ import org.mesh4j.sync.message.IMessageSyncAware;
 import org.mesh4j.sync.message.ISyncSession;
 import org.mesh4j.sync.message.channel.sms.connection.ISmsConnectionInboundOutboundNotification;
 import org.mesh4j.sync.model.Item;
-import org.mesh4j.sync.ui.translator.EpiInfoCompactUITranslator;
-import org.mesh4j.sync.ui.translator.EpiInfoUITranslator;
-import org.mesh4j.sync.utils.EpiinfoSourceIdResolver;
+import org.mesh4j.sync.ui.translator.MeshCompactUITranslator;
+import org.mesh4j.sync.ui.translator.MeshUITranslator;
+import org.mesh4j.sync.utils.SourceIdResolver;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -41,18 +41,18 @@ public class LogFrame extends JFrame implements ISmsConnectionInboundOutboundNot
 
 	// MODEL VARIABLES
 	private JTextArea textAreaConsoleView;
-	private EpiinfoSourceIdResolver sourceIdResolver;
+	private SourceIdResolver sourceIdResolver;
 	
 	// BUSINESS METHODS
 
-	public LogFrame(EpiinfoSourceIdResolver sourceIdResolver) {
+	public LogFrame(SourceIdResolver sourceIdResolver) {
 		super();
 		
 		this.sourceIdResolver = sourceIdResolver;
 		
 		setIconImage(SwingResourceManager.getImage(LogFrame.class, "/cdc.gif"));
 		getContentPane().setBackground(Color.WHITE);
-		setTitle(EpiInfoCompactUITranslator.getLogWindowTitle());
+		setTitle(MeshCompactUITranslator.getLogWindowTitle());
 		setResizable(false);
 		setBounds(100, 100, 867, 376);
 		getContentPane().setLayout(new FormLayout(
@@ -73,7 +73,7 @@ public class LogFrame extends JFrame implements ISmsConnectionInboundOutboundNot
 		textAreaConsoleView = new JTextArea();
 		textAreaConsoleView.setFont(new Font("Calibri", Font.PLAIN, 12));
 		textAreaConsoleView.setBorder(new BevelBorder(BevelBorder.LOWERED));
-		textAreaConsoleView.setToolTipText(EpiInfoCompactUITranslator.getLogWindowToolTipConsoleView());
+		textAreaConsoleView.setToolTipText(MeshCompactUITranslator.getLogWindowToolTipConsoleView());
 		scrollPane.setViewportView(textAreaConsoleView);
 		
 		ActionListener cleanActionListener = new ActionListener(){
@@ -100,8 +100,8 @@ public class LogFrame extends JFrame implements ISmsConnectionInboundOutboundNot
 		buttonClean.setBorderPainted(false);
 		buttonClean.setFont(new Font("Calibri", Font.BOLD, 12));
 		panel.add(buttonClean, new CellConstraints(1, 1, CellConstraints.CENTER, CellConstraints.DEFAULT));
-		buttonClean.setText(EpiInfoCompactUITranslator.getLogWindowLabelClean());
-		buttonClean.setToolTipText(EpiInfoCompactUITranslator.getLogWindowToolTipClean());
+		buttonClean.setText(MeshCompactUITranslator.getLogWindowLabelClean());
+		buttonClean.setToolTipText(MeshCompactUITranslator.getLogWindowToolTipClean());
 		buttonClean.addActionListener(cleanActionListener);
 
 		final JButton buttonClose = new JButton();
@@ -110,8 +110,8 @@ public class LogFrame extends JFrame implements ISmsConnectionInboundOutboundNot
 		buttonClose.setBorderPainted(false);
 		buttonClose.setContentAreaFilled(false);
 		buttonClose.setFont(new Font("Calibri", Font.BOLD, 12));
-		buttonClose.setText(EpiInfoCompactUITranslator.getLogWindowLabelClose());
-		buttonClose.setToolTipText(EpiInfoCompactUITranslator.getLogWindowToolTipClose());
+		buttonClose.setText(MeshCompactUITranslator.getLogWindowLabelClose());
+		buttonClose.setToolTipText(MeshCompactUITranslator.getLogWindowToolTipClose());
 		
 		ActionListener closeActionListener = new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
@@ -168,23 +168,23 @@ public class LogFrame extends JFrame implements ISmsConnectionInboundOutboundNot
 	// ISmsConnectionInboundOutboundNotification methods
 	@Override
 	public void notifyReceiveMessage(String endpointId, String message, Date date) {
-		this.log("\t"+EpiInfoUITranslator.getMessageNotifyReceiveMessage(endpointId, message));
+		this.log("\t"+MeshUITranslator.getMessageNotifyReceiveMessage(endpointId, message));
 	}
 
 	@Override
 	public void notifyReceiveMessageError(String endpointId, String message, Date date) {
-		String error = EpiInfoUITranslator.getMessageNotifyReceiveMessageError(endpointId, message);
+		String error = MeshUITranslator.getMessageNotifyReceiveMessageError(endpointId, message);
 		this.log("\t"+error);
 	}
 
 	@Override
 	public void notifySendMessage(String endpointId, String message) {
-		this.log("\t"+EpiInfoUITranslator.getMessageNotifySendMessage(endpointId, message));
+		this.log("\t"+MeshUITranslator.getMessageNotifySendMessage(endpointId, message));
 	}
 
 	@Override
 	public void notifySendMessageError(String endpointId, String message) {
-		String error = EpiInfoUITranslator.getMessageNotifySendMessageError(endpointId, message);
+		String error = MeshUITranslator.getMessageNotifySendMessageError(endpointId, message);
 		this.log("\t"+error);
 	}
 	
@@ -198,7 +198,7 @@ public class LogFrame extends JFrame implements ISmsConnectionInboundOutboundNot
 
 	@Override
 	public void beginSync(ISyncSession syncSession) {
-		this.log(EpiInfoUITranslator.getLabelStart());
+		this.log(MeshUITranslator.getLabelStart());
 	}
 
 	@Override
@@ -208,46 +208,46 @@ public class LogFrame extends JFrame implements ISmsConnectionInboundOutboundNot
 	
 	public void endSync(String target, String sourceId, List<Item> conflicts) {
 		if(conflicts.isEmpty()){
-			this.log(EpiInfoUITranslator.getLabelSuccess());
+			this.log(MeshUITranslator.getLabelSuccess());
 		} else {
-			this.log(EpiInfoUITranslator.getLabelSyncEndWithConflicts(conflicts.size()));
+			this.log(MeshUITranslator.getLabelSyncEndWithConflicts(conflicts.size()));
 		}
 	}
 
 	@Override
 	public void beginSyncWithError(ISyncSession syncSession) {
-		String error = EpiInfoUITranslator.getMessageErrorBeginSync(syncSession.getTarget().getEndpointId(), sourceIdResolver.getSourceName(syncSession.getSourceId()));
+		String error = MeshUITranslator.getMessageErrorBeginSync(syncSession.getTarget().getEndpointId(), sourceIdResolver.getSourceName(syncSession.getSourceId()));
 		this.log(error);		
 	}
 
 	@Override
 	public void notifyCancelSync(ISyncSession syncSession) {
-		this.log(EpiInfoUITranslator.getMessageCancelSync(syncSession.getSessionId(), syncSession.getTarget().getEndpointId(), sourceIdResolver.getSourceName(syncSession.getSourceId())));
+		this.log(MeshUITranslator.getMessageCancelSync(syncSession.getSessionId(), syncSession.getTarget().getEndpointId(), sourceIdResolver.getSourceName(syncSession.getSourceId())));
 	}
 
 	@Override
 	public void notifyCancelSyncErrorSyncSessionNotOpen(ISyncSession syncSession) {
-		String error = EpiInfoUITranslator.getMessageCancelSyncErrorSessionNotOpen(syncSession.getTarget(), syncSession.getSourceId());
+		String error = MeshUITranslator.getMessageCancelSyncErrorSessionNotOpen(syncSession.getTarget(), syncSession.getSourceId());
 		this.log(error);		
 	}
 
 	@Override
 	public void notifyInvalidMessageProtocol(IMessage message) {
-		this.log(EpiInfoUITranslator.getMessageInvalidMessageProtocol(message));
+		this.log(MeshUITranslator.getMessageInvalidMessageProtocol(message));
 	}
 
 	@Override
 	public void notifyInvalidProtocolMessageOrder(IMessage message) {
-		this.log(EpiInfoUITranslator.getMessageErrorInvalidProtocolMessageOrder(message));
+		this.log(MeshUITranslator.getMessageErrorInvalidProtocolMessageOrder(message));
 	}
 
 	@Override
 	public void notifyMessageProcessed(ISyncSession syncSession, IMessage message, List<IMessage> response) {
-//		this.log(EpiInfoUITranslator.getMessageProcessed(message, response));
+		this.log(MeshUITranslator.getMessageProcessed(message, response));
 	}
 
 	@Override
 	public void notifySessionCreationError(IMessage message, String sourceId) {
-		this.log(EpiInfoUITranslator.getMessageErrorSessionCreation(message, sourceIdResolver.getSourceName(sourceId)));
+		this.log(MeshUITranslator.getMessageErrorSessionCreation(message, sourceIdResolver.getSourceName(sourceId)));
 	}
 }

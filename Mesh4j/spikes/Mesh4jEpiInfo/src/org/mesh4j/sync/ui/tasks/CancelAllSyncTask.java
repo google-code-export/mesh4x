@@ -7,18 +7,18 @@ import javax.swing.SwingWorker;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.mesh4j.sync.epiinfo.ui.EpiinfoCompactUI;
 import org.mesh4j.sync.message.ISyncSession;
+import org.mesh4j.sync.ui.MeshCompactUI;
 
 public class CancelAllSyncTask extends SwingWorker<Void, Void> {
 	 
 	private final static Log LOGGER = LogFactory.getLog(CancelAllSyncTask.class);
 	
 	// MODEL VARIABLEs
-	private EpiinfoCompactUI ui;
+	private MeshCompactUI ui;
 	
 	// BUSINESS METHODS
-	public CancelAllSyncTask(EpiinfoCompactUI ui){
+	public CancelAllSyncTask(MeshCompactUI ui){
 		super();
 		this.ui = ui;
 	}

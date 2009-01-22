@@ -4,18 +4,18 @@ import java.awt.Cursor;
 
 import javax.swing.SwingWorker;
 
-import org.mesh4j.sync.epiinfo.ui.EpiinfoCompactUI;
 import org.mesh4j.sync.mappings.DataSourceMapping;
 import org.mesh4j.sync.mappings.EndpointMapping;
+import org.mesh4j.sync.ui.MeshCompactUI;
 import org.mesh4j.sync.utils.SyncEngineUtil;
 
 public class CancelSyncTask extends SwingWorker<Void, Void> {
 	 
 	// MODEL VARIABLEs
-	private EpiinfoCompactUI ui;
+	private MeshCompactUI ui;
 	
 	// BUSINESS METHODS
-	public CancelSyncTask(EpiinfoCompactUI ui){
+	public CancelSyncTask(MeshCompactUI ui){
 		super();
 		this.ui = ui;
 	}

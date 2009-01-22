@@ -9,7 +9,6 @@ import javax.swing.JTextArea;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mesh4j.sync.adapters.msaccess.IMsAccessSourceIdResolver;
-import org.mesh4j.sync.epiinfo.ui.EpiinfoUI;
 import org.mesh4j.sync.message.IMessage;
 import org.mesh4j.sync.message.IMessageSyncAware;
 import org.mesh4j.sync.message.ISyncSession;
@@ -17,51 +16,52 @@ import org.mesh4j.sync.message.channel.sms.connection.ISmsConnectionInboundOutbo
 import org.mesh4j.sync.message.channel.sms.connection.smslib.IProgressMonitor;
 import org.mesh4j.sync.message.channel.sms.connection.smslib.Modem;
 import org.mesh4j.sync.model.Item;
-import org.mesh4j.sync.ui.translator.EpiInfoUITranslator;
+import org.mesh4j.sync.ui.MeshUI;
+import org.mesh4j.sync.ui.translator.MeshUITranslator;
 import org.smslib.helper.CommPortIdentifier;
 
 import com.swtdesigner.SwingResourceManager;
 
-public class EpiInfoConsoleNotification implements ISmsConnectionInboundOutboundNotification, IMessageSyncAware, IProgressMonitor {
+public class ConsoleNotification implements ISmsConnectionInboundOutboundNotification, IMessageSyncAware, IProgressMonitor {
 	
-	private final static Log Logger = LogFactory.getLog(EpiInfoConsoleNotification.class);
+	private final static Log Logger = LogFactory.getLog(ConsoleNotification.class);
 
 	// MODEL VARIABLES
 	private JTextArea consoleView;
 	private boolean stop;
 	private JLabel imageStatus;
-	private EpiinfoUI epiinfoUI;
+	private MeshUI ui;
 	private IMsAccessSourceIdResolver sourceIdResolver;
 	
 	// BUSINESS METHODS
-	public EpiInfoConsoleNotification(JTextArea consoleView, JLabel imageStatus, EpiinfoUI ui, IMsAccessSourceIdResolver sourceIdResolver) {
+	public ConsoleNotification(JTextArea consoleView, JLabel imageStatus, MeshUI ui, IMsAccessSourceIdResolver sourceIdResolver) {
 		super();
 		this.consoleView = consoleView;
 		this.imageStatus = imageStatus;
-		this.epiinfoUI = ui;
+		this.ui = ui;
 	}
 	
 	// ISmsConnectionInboundOutboundNotification methods
 	@Override
 	public void notifyReceiveMessage(String endpointId, String message, Date date) {
-		this.log("\t"+EpiInfoUITranslator.getMessageNotifyReceiveMessage(endpointId, message));
+		this.log("\t"+MeshUITranslator.getMessageNotifyReceiveMessage(endpointId, message));
 	}
 
 	@Override
 	public void notifyReceiveMessageError(String endpointId, String message, Date date) {
 		this.setErrorImageStatus();
-		this.log("\t"+EpiInfoUITranslator.getMessageNotifyReceiveMessageError(endpointId, message));		
+		this.log("\t"+MeshUITranslator.getMessageNotifyReceiveMessageError(endpointId, message));		
 	}
 
 	@Override
 	public void notifySendMessage(String endpointId, String message) {
-		this.log("\t"+EpiInfoUITranslator.getMessageNotifySendMessage(endpointId, message));
+		this.log("\t"+MeshUITranslator.getMessageNotifySendMessage(endpointId, message));
 	}
 
 	@Override
 	public void notifySendMessageError(String endpointId, String message) {
 		this.setErrorImageStatus();
-		this.log("\t"+EpiInfoUITranslator.getMessageNotifySendMessageError(endpointId, message));		
+		this.log("\t"+MeshUITranslator.getMessageNotifySendMessageError(endpointId, message));		
 	}
 	
 	@Override
@@ -78,8 +78,7 @@ public class EpiInfoConsoleNotification implements ISmsConnectionInboundOutbound
 	
 	public void beginSync(String target, String sourceId) {
 		this.setInProcessImageStatus();
-		this.log(EpiInfoUITranslator.getLabelStart());
-//		this.logStatus(EpiInfoUITranslator.getStatusBeginSync(target, mdbFileName, mdbTable, new Date()));
+		this.log(MeshUITranslator.getLabelStart());
 	}
 
 	@Override
@@ -90,87 +89,84 @@ public class EpiInfoConsoleNotification implements ISmsConnectionInboundOutbound
 	public void endSync(String target, String sourceId, List<Item> conflicts) {
 		if(conflicts.isEmpty()){
 			this.setEndSyncImageStatus();
-			this.log(EpiInfoUITranslator.getLabelSuccess());
-//			this.logStatus(EpiInfoUITranslator.getStatusEndSync(target, mdbFileName, mdbTable, new Date()));
+			this.log(MeshUITranslator.getLabelSuccess());
 		} else {
 			this.setErrorImageStatus();
-			this.log(EpiInfoUITranslator.getLabelSyncEndWithConflicts(conflicts.size()));
-//			this.logStatus(EpiInfoUITranslator.getStatusEndSyncWithConflicts(target, mdbFileName, mdbTable, new Date(), conflicts.size()));
+			this.log(MeshUITranslator.getLabelSyncEndWithConflicts(conflicts.size()));
 		}
-		this.epiinfoUI.setEndSync();
+		this.ui.setEndSync();
 	}
 
 	@Override
 	public void beginSyncWithError(ISyncSession syncSession) {
 		this.setErrorImageStatus();
-		this.log(EpiInfoUITranslator.getMessageErrorBeginSync(syncSession.getTarget().getEndpointId(), sourceIdResolver.getSourceName(syncSession.getSourceId())));		
+		this.log(MeshUITranslator.getMessageErrorBeginSync(syncSession.getTarget().getEndpointId(), sourceIdResolver.getSourceName(syncSession.getSourceId())));		
 	}
 
 	@Override
 	public void notifyCancelSync(ISyncSession syncSession) {
-		this.log(EpiInfoUITranslator.getMessageCancelSync(syncSession.getSessionId(), syncSession.getTarget().getEndpointId(), sourceIdResolver.getSourceName(syncSession.getSourceId())));
-//		this.logStatus(EpiInfoUITranslator.getStatusCancelSync(syncSession.getTarget(), MsAccessSyncAdapterFactory.getFileName(syncSession.getSourceId()), MsAccessSyncAdapterFactory.getTableName(syncSession.getSourceId()), new Date()));
+		this.log(MeshUITranslator.getMessageCancelSync(syncSession.getSessionId(), syncSession.getTarget().getEndpointId(), sourceIdResolver.getSourceName(syncSession.getSourceId())));
 		this.setEndSyncImageStatus();
-		this.epiinfoUI.setEndSync();
+		this.ui.setEndSync();
 	}
 
 	@Override
 	public void notifyCancelSyncErrorSyncSessionNotOpen(ISyncSession syncSession) {
 		this.setErrorImageStatus();
-		this.log(EpiInfoUITranslator.getMessageCancelSyncErrorSessionNotOpen(syncSession.getTarget(), syncSession.getSourceId()));		
+		this.log(MeshUITranslator.getMessageCancelSyncErrorSessionNotOpen(syncSession.getTarget(), syncSession.getSourceId()));		
 	}
 
 	@Override
 	public void notifyInvalidMessageProtocol(IMessage message) {
-		this.log(EpiInfoUITranslator.getMessageInvalidMessageProtocol(message));
+		this.log(MeshUITranslator.getMessageInvalidMessageProtocol(message));
 	}
 
 	@Override
 	public void notifyInvalidProtocolMessageOrder(IMessage message) {
-		this.log(EpiInfoUITranslator.getMessageErrorInvalidProtocolMessageOrder(message));
+		this.log(MeshUITranslator.getMessageErrorInvalidProtocolMessageOrder(message));
 	}
 
 	@Override
 	public void notifyMessageProcessed(ISyncSession syncSession, IMessage message, List<IMessage> response) {
-		this.log(EpiInfoUITranslator.getMessageProcessed(message, response));
+		this.log(MeshUITranslator.getMessageProcessed(message, response));
 	}
 
 	@Override
 	public void notifySessionCreationError(IMessage message, String sourceId) {
-		this.log(EpiInfoUITranslator.getMessageErrorSessionCreation(message, sourceIdResolver.getSourceName(sourceId)));
+		this.log(MeshUITranslator.getMessageErrorSessionCreation(message, sourceIdResolver.getSourceName(sourceId)));
 	}
 	
 	// IProgressMonitor methods
 	
 	@Override
 	public void checkingModem(CommPortIdentifier port, int baudRateAvailable) {
-		log("\t"+EpiInfoUITranslator.getMessageCheckingModem(port.getName(), baudRateAvailable));
+		log("\t"+MeshUITranslator.getMessageCheckingModem(port.getName(), baudRateAvailable));
 	}
 
 	@Override
 	public void checkingPortInfo(CommPortIdentifier port, int baudRateAvailable) {
-		log("\t"+EpiInfoUITranslator.getMessageCheckingPort(port.getName(), baudRateAvailable));
+		log("\t"+MeshUITranslator.getMessageCheckingPort(port.getName(), baudRateAvailable));
 		
 	}
 
 	@Override
 	public void notifyAvailableModem(CommPortIdentifier port, int baudRateAvailable, Modem modem) {
-		logAppendEndLine(EpiInfoUITranslator.getMessageAvailableModem(modem));		
+		logAppendEndLine(MeshUITranslator.getMessageAvailableModem(modem));		
 	}
 
 	@Override
 	public void notifyAvailablePortInfo(CommPortIdentifier port, int baudRateAvailable) {
-		logAppendEndLine(EpiInfoUITranslator.getLabelAvailable());		
+		logAppendEndLine(MeshUITranslator.getLabelAvailable());		
 	}
 
 	@Override
 	public void notifyNonAvailableModem(CommPortIdentifier port, int baudRateAvailable) {
-		logAppendEndLine(EpiInfoUITranslator.getLabelNoAvailable());
+		logAppendEndLine(MeshUITranslator.getLabelNoAvailable());
 	}
 
 	@Override
 	public void notifyNonAvailablePortInfo(CommPortIdentifier port, int baudRateAvailable) {
-		logAppendEndLine(EpiInfoUITranslator.getLabelNoAvailable());
+		logAppendEndLine(MeshUITranslator.getLabelNoAvailable());
 	}
 	
 	// Console view methods
@@ -219,18 +215,18 @@ public class EpiInfoConsoleNotification implements ISmsConnectionInboundOutbound
 	
 	
 	public void setErrorImageStatus() {
-		this.imageStatus.setIcon(SwingResourceManager.getIcon(EpiinfoUI.class, "/error.gif"));		
+		this.imageStatus.setIcon(SwingResourceManager.getIcon(MeshUI.class, "/error.gif"));		
 	}
 	
 	public void setInProcessImageStatus() {
-		this.imageStatus.setIcon(SwingResourceManager.getIcon(EpiinfoUI.class, "/inprocess.gif"));		
+		this.imageStatus.setIcon(SwingResourceManager.getIcon(MeshUI.class, "/inprocess.gif"));		
 	}
 	
 	public void setEndSyncImageStatus() {
-		this.imageStatus.setIcon(SwingResourceManager.getIcon(EpiinfoUI.class, "/endsync.png"));		
+		this.imageStatus.setIcon(SwingResourceManager.getIcon(MeshUI.class, "/endsync.png"));		
 	}
 	
 	public void setReadyImageStatus() {
-		this.imageStatus.setIcon(SwingResourceManager.getIcon(EpiinfoUI.class, "/endsync.png"));	
+		this.imageStatus.setIcon(SwingResourceManager.getIcon(MeshUI.class, "/endsync.png"));	
 	}
 }

@@ -1,4 +1,4 @@
-package org.mesh4j.sync.epiinfo.ui;
+package org.mesh4j.sync.ui;
 
 public interface ISyncSessionViewOwner {
 

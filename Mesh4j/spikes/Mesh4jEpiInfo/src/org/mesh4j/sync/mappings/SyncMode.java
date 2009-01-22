@@ -1,12 +1,12 @@
 package org.mesh4j.sync.mappings;
 
-import org.mesh4j.sync.ui.translator.EpiInfoCompactUITranslator;
+import org.mesh4j.sync.ui.translator.MeshCompactUITranslator;
 
 public enum SyncMode {
 	
-	SendAndReceiveChanges(true, true, EpiInfoCompactUITranslator.getLabelSendAndReceiveChanges()),
-	SendChangesOnly(true, false, EpiInfoCompactUITranslator.getLabelSendChangesOnly()),
-	ReceiveChangesOnly(false, true, EpiInfoCompactUITranslator.getLabelReceiveChangesOnly());
+	SendAndReceiveChanges(true, true, MeshCompactUITranslator.getLabelSendAndReceiveChanges()),
+	SendChangesOnly(true, false, MeshCompactUITranslator.getLabelSendChangesOnly()),
+	ReceiveChangesOnly(false, true, MeshCompactUITranslator.getLabelReceiveChangesOnly());
 
 	// MODEL VARIABLES
 	private boolean shouldSendChanges;

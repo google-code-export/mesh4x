@@ -4,19 +4,19 @@ import java.awt.Cursor;
 
 import javax.swing.SwingWorker;
 
-import org.mesh4j.sync.epiinfo.ui.EpiinfoCompactUI;
 import org.mesh4j.sync.mappings.DataSourceMapping;
 import org.mesh4j.sync.mappings.EndpointMapping;
 import org.mesh4j.sync.mappings.SyncMode;
+import org.mesh4j.sync.ui.MeshCompactUI;
 import org.mesh4j.sync.utils.SyncEngineUtil;
 
 public class SynchronizeTask extends SwingWorker<Void, Void> {
 	 
 	// MODEL VARIABLEs
-	private EpiinfoCompactUI ui;
+	private MeshCompactUI ui;
 	
 	// BUSINESS METHODS
-	public SynchronizeTask(EpiinfoCompactUI ui){
+	public SynchronizeTask(MeshCompactUI ui){
 		super();
 		this.ui = ui;
 	}

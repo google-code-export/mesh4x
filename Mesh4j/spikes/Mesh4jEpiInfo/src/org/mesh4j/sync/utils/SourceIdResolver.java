@@ -14,7 +14,7 @@ import org.mesh4j.sync.mappings.DataSourceMapping;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
-public class EpiinfoSourceIdResolver implements IMsAccessSourceIdResolver {
+public class SourceIdResolver implements IMsAccessSourceIdResolver {
 
 	private static final String DEFAULT_SEPARATOR = "@";
 	// MODEL VARIABLES
@@ -22,7 +22,7 @@ public class EpiinfoSourceIdResolver implements IMsAccessSourceIdResolver {
 	private ArrayList<DataSourceMapping> dataSourceMappings = new ArrayList<DataSourceMapping>();
 	
 	// BUSINESS METHODS
-	public EpiinfoSourceIdResolver(String fileName) {
+	public SourceIdResolver(String fileName) {
 		Guard.argumentNotNullOrEmptyString(fileName, "fileName");
 		this.fileName = fileName;
 		load();

@@ -1,4 +1,4 @@
-package org.mesh4j.sync.epiinfo.ui;
+package org.mesh4j.sync.ui;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -21,13 +21,13 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
-import org.mesh4j.sync.epiinfo.ui.utils.EpiInfoIconManager;
 import org.mesh4j.sync.mappings.EndpointMapping;
 import org.mesh4j.sync.message.ISyncSession;
 import org.mesh4j.sync.message.MessageSyncEngine;
 import org.mesh4j.sync.properties.PropertiesProvider;
-import org.mesh4j.sync.ui.translator.EpiInfoCompactUITranslator;
-import org.mesh4j.sync.utils.EpiinfoSourceIdResolver;
+import org.mesh4j.sync.ui.translator.MeshCompactUITranslator;
+import org.mesh4j.sync.ui.utils.IconManager;
+import org.mesh4j.sync.utils.SourceIdResolver;
 import org.mesh4j.sync.utils.SyncEngineUtil;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -44,23 +44,23 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner{
 	private DefaultMutableTreeNode rootNode;
 	private JTree treeSessions;
 	private MessageSyncEngine syncEngine;
-	private EpiinfoSourceIdResolver sourceIdResolver;
+	private SourceIdResolver sourceIdResolver;
 	private PropertiesProvider propertiesProvider;
 	private SyncSessionView syncSessionView;
-	private EpiinfoCompactUI owner;
+	private MeshCompactUI owner;
 
 	// BUSINESS METHODS
 
-	public SyncSessionsFrame(EpiinfoCompactUI ui, EpiinfoSourceIdResolver sourceIdResolver, PropertiesProvider propertiesProvider) {
+	public SyncSessionsFrame(MeshCompactUI ui, SourceIdResolver sourceIdResolver, PropertiesProvider propertiesProvider) {
 		super();
 		
 		this.owner = ui;
 		this.propertiesProvider = propertiesProvider;
 		this.sourceIdResolver = sourceIdResolver;
 		
-		setIconImage(EpiInfoIconManager.getCDCImage());
+		setIconImage(IconManager.getCDCImage());
 		getContentPane().setBackground(Color.WHITE);
-		setTitle(EpiInfoCompactUITranslator.getSyncSessionWindowTitle());
+		setTitle(MeshCompactUITranslator.getSyncSessionWindowTitle());
 		setResizable(false);
 		setBounds(100, 100, 827, 394);
 		getContentPane().setLayout(new FormLayout(
@@ -91,8 +91,8 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner{
 		buttonClose.setBorderPainted(false);
 		buttonClose.setContentAreaFilled(false);
 		buttonClose.setFont(new Font("Calibri", Font.BOLD, 12));
-		buttonClose.setText(EpiInfoCompactUITranslator.getSyncSessionWindowLabelClose());
-		buttonClose.setToolTipText(EpiInfoCompactUITranslator.getSyncSessionWindowToolTipClose());
+		buttonClose.setText(MeshCompactUITranslator.getSyncSessionWindowLabelClose());
+		buttonClose.setToolTipText(MeshCompactUITranslator.getSyncSessionWindowToolTipClose());
 		
 		ActionListener closeActionListener = new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
@@ -116,12 +116,12 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner{
 		buttonSyncSession.setBorderPainted(false);
 		buttonSyncSession.setBorder(new EmptyBorder(0, 0, 0, 0));
 		buttonSyncSession.setFont(new Font("Calibri", Font.BOLD, 12));
-		buttonSyncSession.setText(EpiInfoCompactUITranslator.getSyncSessionWindowLabelSync());
-		buttonSyncSession.setToolTipText(EpiInfoCompactUITranslator.getSyncSessionWindowToolTipSync());
+		buttonSyncSession.setText(MeshCompactUITranslator.getSyncSessionWindowLabelSync());
+		buttonSyncSession.setToolTipText(MeshCompactUITranslator.getSyncSessionWindowToolTipSync());
 		buttonSyncSession.addActionListener(syncActionListener);
 		panelButtons.add(buttonSyncSession, new CellConstraints(3, 1));
 	
-		rootNode = new DefaultMutableTreeNode(EpiInfoCompactUITranslator.getSyncSessionWindowLabelAllSessions());
+		rootNode = new DefaultMutableTreeNode(MeshCompactUITranslator.getSyncSessionWindowLabelAllSessions());
 		createSyncSessionTreeModel();
 		
 	    treeSessions = new JTree(rootNode);
@@ -219,21 +219,21 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner{
        	 	DefaultMutableTreeNode node = (DefaultMutableTreeNode)value;
        	 
 	        if (!leaf && isRootNode(node)) {
-	            setToolTipText(EpiInfoCompactUITranslator.getSyncSessionWindowToolTipAllSessions());
+	            setToolTipText(MeshCompactUITranslator.getSyncSessionWindowToolTipAllSessions());
 	        } else if(!leaf && isDataSource(node)){
-	            setIcon(EpiInfoIconManager.getDataSourceSamll());
-	            setToolTipText(EpiInfoCompactUITranslator.getSyncSessionWindowToolTipDataSource());
+	            setIcon(IconManager.getDataSourceSamll());
+	            setToolTipText(MeshCompactUITranslator.getSyncSessionWindowToolTipDataSource());
 	        } else if(leaf && isSyncSession(node)){
 		        SyncSessionWrapper syncSession = (SyncSessionWrapper)(node.getUserObject());
 
 		        if(syncSession.isBroken()){
-		        	setIcon(EpiInfoIconManager.getStatusErrorIcon());
+		        	setIcon(IconManager.getStatusErrorIcon());
 		        } else if(syncSession.isOpen()){
-		        	setIcon(EpiInfoIconManager.getStatusProcessingIcon());	
+		        	setIcon(IconManager.getStatusProcessingIcon());	
 		        } else {
-		        	setIcon(EpiInfoIconManager.getStatusOkIcon());
+		        	setIcon(IconManager.getStatusOkIcon());
 		        }
-	            setToolTipText(EpiInfoCompactUITranslator.getSyncSessionWindowToolTipSyncSession());
+	            setToolTipText(MeshCompactUITranslator.getSyncSessionWindowToolTipSyncSession());
 	        } else{
 	            setToolTipText(null); //no tool tip
 	        } 
@@ -286,7 +286,7 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner{
 			
 			if(isCancelled()){
 				sb.append("[");
-				sb.append(EpiInfoCompactUITranslator.getLabelCancelled());
+				sb.append(MeshCompactUITranslator.getLabelCancelled());
 				sb.append("]");
 			}
 	    				
@@ -332,7 +332,7 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner{
 	}
 
 	public void updateSessions(){
-		this.rootNode = new DefaultMutableTreeNode(EpiInfoCompactUITranslator.getSyncSessionWindowLabelAllSessions());
+		this.rootNode = new DefaultMutableTreeNode(MeshCompactUITranslator.getSyncSessionWindowLabelAllSessions());
 		this.createSyncSessionTreeModel();		
 		this.treeSessions.setModel(new DefaultTreeModel(rootNode));
 		this.treeSessions.repaint();

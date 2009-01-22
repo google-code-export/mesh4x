@@ -6,7 +6,7 @@ import javax.swing.SwingWorker;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.mesh4j.sync.epiinfo.ui.EpiinfoCompactUI;
+import org.mesh4j.sync.ui.MeshCompactUI;
 import org.mesh4j.sync.utils.SyncEngineUtil;
 
 public class ChangeDeviceTask extends SwingWorker<Void, Void> {
@@ -15,10 +15,10 @@ public class ChangeDeviceTask extends SwingWorker<Void, Void> {
 
 	 
 	// MODEL VARIABLEs
-	private EpiinfoCompactUI ui;
+	private MeshCompactUI ui;
 	
 	// BUSINESS METHODS
-	public ChangeDeviceTask(EpiinfoCompactUI ui){
+	public ChangeDeviceTask(MeshCompactUI ui){
 		super();
 		this.ui = ui;
 	}

@@ -4,19 +4,19 @@ import java.awt.Cursor;
 
 import javax.swing.SwingWorker;
 
-import org.mesh4j.sync.epiinfo.ui.EpiinfoCompactUI;
 import org.mesh4j.sync.mappings.DataSourceMapping;
 import org.mesh4j.sync.mappings.EndpointMapping;
-import org.mesh4j.sync.ui.translator.EpiInfoCompactUITranslator;
+import org.mesh4j.sync.ui.MeshCompactUI;
+import org.mesh4j.sync.ui.translator.MeshCompactUITranslator;
 import org.mesh4j.sync.utils.SyncEngineUtil;
 
 public class ReadyToSyncTask extends SwingWorker<Void, Void> {
 
 	// MODEL VARIABLEs
-	private EpiinfoCompactUI ui;
+	private MeshCompactUI ui;
 	
 	// BUSINESS METHODS
-	public ReadyToSyncTask(EpiinfoCompactUI ui){
+	public ReadyToSyncTask(MeshCompactUI ui){
 		super();
 		this.ui = ui;
 	}
@@ -27,7 +27,7 @@ public class ReadyToSyncTask extends SwingWorker<Void, Void> {
 		EndpointMapping endpoint = (EndpointMapping)ui.getComboBoxEndpoint().getSelectedItem();
 		DataSourceMapping dataSource = (DataSourceMapping)ui.getComboBoxMappingDataSource().getSelectedItem();
 	
-		ui.notifyStartReadyToSync(endpoint, dataSource);
+		ui.getProcessCustomMessages().notifyStartReadyToSync(endpoint, dataSource);
 		
 		String message = makeQuestion(dataSource);
 		SyncEngineUtil.sendSms(ui.getSyncEngine(), endpoint.getEndpoint(), message);
@@ -42,9 +42,9 @@ public class ReadyToSyncTask extends SwingWorker<Void, Void> {
 
 	public static String makeAnswer(String dataSourceAlias, boolean isDataSourceAvailable) {
 		if(isDataSourceAvailable){
-			return EpiInfoCompactUITranslator.getAnswerReadyToSync(dataSourceAlias);
+			return MeshCompactUITranslator.getAnswerReadyToSync(dataSourceAlias);
 		} else {
-			return EpiInfoCompactUITranslator.getAnswerNotReadyToSync(dataSourceAlias);
+			return MeshCompactUITranslator.getAnswerNotReadyToSync(dataSourceAlias);
 		}
 	}
 	
@@ -62,28 +62,28 @@ public class ReadyToSyncTask extends SwingWorker<Void, Void> {
 	
 	public static String makeQuestion(DataSourceMapping dataSourceMapping) {
 		StringBuffer sb = new StringBuffer();
-		sb.append(EpiInfoCompactUITranslator.getQuestionForReadyToSync());
+		sb.append(MeshCompactUITranslator.getQuestionForReadyToSync());
 		sb.append(" ");
 		sb.append(dataSourceMapping.getAlias());
 		sb.append("(");
-		sb.append(EpiInfoCompactUITranslator.getLabelMSAccessMDB());
+		sb.append(MeshCompactUITranslator.getLabelMSAccessMDB());
 		sb.append(dataSourceMapping.getMDBName());
 		sb.append(" ");
-		sb.append(EpiInfoCompactUITranslator.getLabelMSAccessTableName());
+		sb.append(MeshCompactUITranslator.getLabelMSAccessTableName());
 		sb.append(dataSourceMapping.getTableName());
 		sb.append(")");
-		sb.append(EpiInfoCompactUITranslator.getQuestionEndSymbol());
+		sb.append(MeshCompactUITranslator.getQuestionEndSymbol());
 		
 		return sb.toString();
 	}
 
 	public static boolean isQuestion(String message) {
-		return message.startsWith( EpiInfoCompactUITranslator.getQuestionForReadyToSync() ) &&
-			message.endsWith(EpiInfoCompactUITranslator.getQuestionEndSymbol());
+		return message.startsWith( MeshCompactUITranslator.getQuestionForReadyToSync() ) &&
+			message.endsWith(MeshCompactUITranslator.getQuestionEndSymbol());
 	}
 	
 	public static String getDataSourceAlias(String message) {
-		int start = EpiInfoCompactUITranslator.getQuestionForReadyToSync().length() +1 ;
+		int start = MeshCompactUITranslator.getQuestionForReadyToSync().length() +1 ;
 		int end = message.indexOf("(");
 		return message.substring(start, end);
 	}

@@ -1,4 +1,4 @@
-package org.mesh4j.sync.epiinfo.ui;
+package org.mesh4j.sync.ui;
 
 import java.awt.Component;
 import java.awt.Cursor;
@@ -48,9 +48,9 @@ import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.properties.PropertiesProvider;
 import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.security.NullIdentityProvider;
-import org.mesh4j.sync.ui.translator.EpiInfoUITranslator;
-import org.mesh4j.sync.utils.EpiInfoConsoleNotification;
-import org.mesh4j.sync.utils.EpiinfoSourceIdResolver;
+import org.mesh4j.sync.ui.translator.MeshUITranslator;
+import org.mesh4j.sync.utils.ConsoleNotification;
+import org.mesh4j.sync.utils.SourceIdResolver;
 import org.mesh4j.sync.utils.SyncEngineUtil;
 
 import com.jgoodies.forms.factories.DefaultComponentFactory;
@@ -62,9 +62,9 @@ import com.jgoodies.forms.layout.RowSpec;
 import com.swtdesigner.FocusTraversalOnArray;
 import com.swtdesigner.SwingResourceManager;
 
-public class EpiinfoUI{
+public class MeshUI{
 
-	private final static Log Logger = LogFactory.getLog(EpiinfoUI.class);
+	private final static Log Logger = LogFactory.getLog(MeshUI.class);
 
 	// CONSTANTS
 	private final static int SYNCHRONIZE_HTTP = -1;
@@ -109,8 +109,8 @@ public class EpiinfoUI{
 	private JButton buttonHideShowConsole2;
 	private JLabel imageStatus;
 	
-	private EpiInfoConsoleNotification consoleNotification;
-	private EpiinfoSourceIdResolver sourceIdResolver;
+	private ConsoleNotification consoleNotification;
+	private SourceIdResolver sourceIdResolver;
 	
 	private Modem modem = null;
 	private MessageSyncEngine syncEngine;
@@ -145,7 +145,7 @@ public class EpiinfoUI{
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					EpiinfoUI window = new EpiinfoUI();
+					MeshUI window = new MeshUI();
 					window.frame.pack();
 					window.frame.setSize(window.frame.getPreferredSize());
 					window.frame.setVisible(true);
@@ -156,11 +156,11 @@ public class EpiinfoUI{
 		});
 	}
 
-	public EpiinfoUI() throws Exception {
+	public MeshUI() throws Exception {
 		this.initializeProperties();
 		this.initializeModem();
 		this.createUI();
-		this.consoleNotification = new EpiInfoConsoleNotification(this.textAreaConsole, this.imageStatus, this, this.sourceIdResolver);
+		this.consoleNotification = new ConsoleNotification(this.textAreaConsole, this.imageStatus, this, this.sourceIdResolver);
 		this.consoleNotification.setReadyImageStatus();
 		this.startUpSyncEngine();
 	}
@@ -191,7 +191,7 @@ public class EpiinfoUI{
 		this.kmlTemplateFileName = propertiesProvider.getDefaultKMLTemplateFileName();
 		this.kmlTemplateNetworkLinkFileName = propertiesProvider.getDefaultKMLTemplateNetworkLinkFileName();
 		this.geoCoderKey = propertiesProvider.getGeoCoderKey();
-		this.sourceIdResolver = new EpiinfoSourceIdResolver(this.baseDirectory+ "/myDataSources.properties");
+		this.sourceIdResolver = new SourceIdResolver(this.baseDirectory+ "/myDataSources.properties");
 		this.inDir = propertiesProvider.getString("emulate.sync.file.connection.in");
 		this.outDir = propertiesProvider.getString("emulate.sync.file.connection.out");
 		this.myEndpointId = propertiesProvider.getString("emulate.sync.file.connection.endpointId");
@@ -199,7 +199,7 @@ public class EpiinfoUI{
 	
 	protected void startUpSyncEngine() throws Exception {
 
-		if(modem != null && !modem.getManufacturer().equals(EpiInfoUITranslator.getLabelDemo())){
+		if(modem != null && !modem.getManufacturer().equals(MeshUITranslator.getLabelDemo())){
 			this.syncEngine = SyncEngineUtil.createSyncEngine(this.sourceIdResolver, modem, baseDirectory, senderDelay, receiverDelay, maxMessageLenght,
 				identityProvider, messageEncoding, new ISmsConnectionInboundOutboundNotification[]{consoleNotification}, new IMessageSyncAware[]{consoleNotification}); 
 			this.syncEngine.getChannel().startUp();
@@ -215,7 +215,7 @@ public class EpiinfoUI{
 					readDelay, 
 					channelDelay, 
 					maxMessageLenght,
-					new SmsEndpoint(EpiInfoUITranslator.getLabelDemo()),
+					new SmsEndpoint(MeshUITranslator.getLabelDemo()),
 					new ISmsConnectionInboundOutboundNotification[]{consoleNotification}, 
 					new IMessageSyncAware[]{consoleNotification}, 
 					false, 
@@ -235,7 +235,7 @@ public class EpiinfoUI{
 		};
 		
 		frame.addWindowListener(windowAdapter);
-		frame.setIconImage(SwingResourceManager.getImage(EpiinfoUI.class, "/cdc.gif"));
+		frame.setIconImage(SwingResourceManager.getImage(MeshUI.class, "/cdc.gif"));
 		frame.getContentPane().setLayout(new FormLayout(
 			new ColumnSpec[] {
 				FormFactory.RELATED_GAP_COLSPEC,
@@ -252,13 +252,13 @@ public class EpiinfoUI{
 				RowSpec.decode("103dlu"),
 				FormFactory.RELATED_GAP_ROWSPEC}));
 		frame.setResizable(false);
-		frame.setTitle(EpiInfoUITranslator.getTitle());
+		frame.setTitle(MeshUITranslator.getTitle());
 		frame.setBounds(100, 100, 664, 572);
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
 		final JPanel panelCommunications = new JPanel();
 		panelCommunications.setFocusCycleRoot(true);
-		panelCommunications.setBorder(new TitledBorder(new BevelBorder(BevelBorder.RAISED), EpiInfoUITranslator.getGroupCommunications(), TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
+		panelCommunications.setBorder(new TitledBorder(new BevelBorder(BevelBorder.RAISED), MeshUITranslator.getGroupCommunications(), TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
 		panelCommunications.setLayout(new FormLayout(
 			new ColumnSpec[] {
 				FormFactory.RELATED_GAP_COLSPEC,
@@ -281,14 +281,14 @@ public class EpiinfoUI{
 		frame.getContentPane().add(panelCommunications, new CellConstraints(2, 2, CellConstraints.FILL, CellConstraints.FILL));
 
 		textFieldPhoneNumber = new JTextField();
-		textFieldPhoneNumber.setToolTipText(EpiInfoUITranslator.getToolTipPhoneNumber());
+		textFieldPhoneNumber.setToolTipText(MeshUITranslator.getToolTipPhoneNumber());
 		panelCommunications.add(textFieldPhoneNumber, new CellConstraints(4, 5, 3, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
 		textFieldPhoneNumber.setText(this.defaultPhoneNumber);
 		
-		labelSMSDevice = DefaultComponentFactory.getInstance().createLabel(EpiInfoUITranslator.getLabelSMSDevice());
+		labelSMSDevice = DefaultComponentFactory.getInstance().createLabel(MeshUITranslator.getLabelSMSDevice());
 		panelCommunications.add(labelSMSDevice, new CellConstraints(2, 3, CellConstraints.RIGHT, CellConstraints.DEFAULT));
 
-		labelPhoneNumber = DefaultComponentFactory.getInstance().createLabel(EpiInfoUITranslator.getLabelPhoneNumber());
+		labelPhoneNumber = DefaultComponentFactory.getInstance().createLabel(MeshUITranslator.getLabelPhoneNumber());
 		panelCommunications.add(labelPhoneNumber, new CellConstraints(2, 5, CellConstraints.RIGHT, CellConstraints.DEFAULT));
 
 		ActionListener deviceActionListener = new ActionListener(){
@@ -320,13 +320,13 @@ public class EpiinfoUI{
 		
 		buttonModemDiscovery = new JButton();
 		buttonModemDiscovery.setFocusable(false);
-		buttonModemDiscovery.setText(EpiInfoUITranslator.getLabelModemDiscovery());
-		buttonModemDiscovery.setToolTipText(EpiInfoUITranslator.getToolTipAutoDetect());
+		buttonModemDiscovery.setText(MeshUITranslator.getLabelModemDiscovery());
+		buttonModemDiscovery.setToolTipText(MeshUITranslator.getToolTipAutoDetect());
 		buttonModemDiscovery.addActionListener(modemDiscoveryActionListener);
 		panelCommunications.add(buttonModemDiscovery, new CellConstraints(6, 3, CellConstraints.FILL, CellConstraints.FILL));
 
 		labelUrl = new JLabel();
-		labelUrl.setText(EpiInfoUITranslator.getLabelURL());
+		labelUrl.setText(MeshUITranslator.getLabelURL());
 		panelCommunications.add(labelUrl, new CellConstraints(2, 8, CellConstraints.RIGHT, CellConstraints.DEFAULT));
 
 		textFieldURL = new JTextField();
@@ -350,7 +350,7 @@ public class EpiinfoUI{
 		
 		radioEndpointSMS = new JRadioButton();
 		buttonGroup.add(radioEndpointSMS);
-		radioEndpointSMS.setText(EpiInfoUITranslator.getLabelChannelSMS());
+		radioEndpointSMS.setText(MeshUITranslator.getLabelChannelSMS());
 		radioEndpointSMS.addActionListener(channelSMSActionListener);
 		panelCommunications.add(radioEndpointSMS, new CellConstraints(2, 2));
 
@@ -371,7 +371,7 @@ public class EpiinfoUI{
 		
 		radioEndpointHTTP = new JRadioButton();
 		buttonGroup.add(radioEndpointHTTP);
-		radioEndpointHTTP.setText(EpiInfoUITranslator.getLabelChannelWEB());
+		radioEndpointHTTP.setText(MeshUITranslator.getLabelChannelWEB());
 		radioEndpointHTTP.setSelected(true);
 		radioEndpointHTTP.addActionListener(channelHTTPActionListener);
 
@@ -379,7 +379,7 @@ public class EpiinfoUI{
 		panelCommunications.setFocusTraversalPolicy(new FocusTraversalOnArray(new Component[] {labelSMSDevice, labelPhoneNumber, textFieldPhoneNumber, buttonSynchronize}));
 
 		final JPanel panelDataSource = new JPanel();
-		panelDataSource.setBorder(new TitledBorder(new BevelBorder(BevelBorder.RAISED), EpiInfoUITranslator.getLabelDataSource(), TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
+		panelDataSource.setBorder(new TitledBorder(new BevelBorder(BevelBorder.RAISED), MeshUITranslator.getLabelDataSource(), TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
 		panelDataSource.setLayout(new FormLayout(
 			new ColumnSpec[] {
 				FormFactory.RELATED_GAP_COLSPEC,
@@ -399,7 +399,7 @@ public class EpiinfoUI{
 		frame.getContentPane().add(panelDataSource, new CellConstraints(2, 4, CellConstraints.FILL, CellConstraints.FILL));
 
 		textFieldDataSource = new JTextField();
-		textFieldDataSource.setToolTipText(EpiInfoUITranslator.getToolTipDataSource());
+		textFieldDataSource.setToolTipText(MeshUITranslator.getToolTipDataSource());
 		textFieldDataSource.setText(this.defaultDataSource);
 		panelDataSource.add(textFieldDataSource, new CellConstraints(2, 2, 3, 1, CellConstraints.FILL, CellConstraints.FILL));
 
@@ -413,8 +413,8 @@ public class EpiinfoUI{
 		};
 		
 		buttonOpenFileDataSource = new JButton();
-		buttonOpenFileDataSource.setToolTipText(EpiInfoUITranslator.getToolTipFileChooser());
-		buttonOpenFileDataSource.setText(EpiInfoUITranslator.getLabelFileChooser());
+		buttonOpenFileDataSource.setToolTipText(MeshUITranslator.getToolTipFileChooser());
+		buttonOpenFileDataSource.setText(MeshUITranslator.getLabelFileChooser());
 		buttonOpenFileDataSource.addActionListener(fileChooserFileActionListener);
 		panelDataSource.add(buttonOpenFileDataSource, new CellConstraints(6, 2, CellConstraints.FILL, CellConstraints.FILL));
 
@@ -431,7 +431,7 @@ public class EpiinfoUI{
 		panelDataSource.add(panelButtons, new CellConstraints(2, 6, 5, 1));
 
 		final JLabel labelTable = new JLabel();
-		labelTable.setText(EpiInfoUITranslator.getLabelTable());
+		labelTable.setText(MeshUITranslator.getLabelTable());
 		panelDataSource.add(labelTable, new CellConstraints(2, 4));
 
 		comboTables = new JComboBox();
@@ -446,7 +446,7 @@ public class EpiinfoUI{
 		};	
 		
 		buttonAddDataSource = new JButton();
-		buttonAddDataSource.setText(EpiInfoUITranslator.getLabelAddDataSource());
+		buttonAddDataSource.setText(MeshUITranslator.getLabelAddDataSource());
 		buttonAddDataSource.addActionListener(addDataSourceActionListener);
 		panelDataSource.add(buttonAddDataSource, new CellConstraints(6, 4));
 		
@@ -481,10 +481,10 @@ public class EpiinfoUI{
 
 		scrollPaneConsole.setVisible(false);
 
-		final JLabel labelLogoEpiinfo = new JLabel();
-		labelLogoEpiinfo.setIcon(SwingResourceManager.getIcon(EpiinfoUI.class, "/Epi2002.jpg"));
-		labelLogoEpiinfo.setText("");
-		panelFooter.add(labelLogoEpiinfo, new CellConstraints(3, 1, 4, 1, CellConstraints.FILL, CellConstraints.FILL));
+		final JLabel labelLogo = new JLabel();
+		labelLogo.setIcon(SwingResourceManager.getIcon(MeshUI.class, "/Epi2002.jpg"));
+		labelLogo.setText("");
+		panelFooter.add(labelLogo, new CellConstraints(3, 1, 4, 1, CellConstraints.FILL, CellConstraints.FILL));
 
 		imageStatus = new JLabel();
 		imageStatus.setText("");
@@ -521,7 +521,7 @@ public class EpiinfoUI{
 		};	
 		buttonSynchronize = new JButton();
 		panelExchange.add(buttonSynchronize, new CellConstraints(2, 2, CellConstraints.FILL, CellConstraints.FILL));
-		buttonSynchronize.setText(EpiInfoUITranslator.getSynchronize());
+		buttonSynchronize.setText(MeshUITranslator.getSynchronize());
 		buttonSynchronize.addActionListener(synchronizeActionListener);
 		
 		ActionListener cancelActionListener = new ActionListener(){
@@ -532,36 +532,36 @@ public class EpiinfoUI{
 		};	
 		buttonCancel = new JButton();
 		panelExchange.add(buttonCancel, new CellConstraints(4, 2, CellConstraints.FILL, CellConstraints.FILL));
-		buttonCancel.setText(EpiInfoUITranslator.getCancel());
+		buttonCancel.setText(MeshUITranslator.getCancel());
 		buttonCancel.addActionListener(cancelActionListener);
 		
 		ActionListener hiShowActionListener = new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				scrollPaneConsole.setVisible(!scrollPaneConsole.isVisible());
 				if(scrollPaneConsole.isVisible()){
-					buttonHideShowConsole.setText(EpiInfoUITranslator.getLabelHideConsole());
-					buttonHideShowConsole.setToolTipText(EpiInfoUITranslator.getToolTipHideConsole());
-					buttonHideShowConsole1.setText(EpiInfoUITranslator.getLabelHideConsole());
-					buttonHideShowConsole1.setToolTipText(EpiInfoUITranslator.getToolTipHideConsole());
-					buttonHideShowConsole2.setText(EpiInfoUITranslator.getLabelHideConsole());
-					buttonHideShowConsole2.setToolTipText(EpiInfoUITranslator.getToolTipHideConsole());
-					labelLogoEpiinfo.setVisible(false);
+					buttonHideShowConsole.setText(MeshUITranslator.getLabelHideConsole());
+					buttonHideShowConsole.setToolTipText(MeshUITranslator.getToolTipHideConsole());
+					buttonHideShowConsole1.setText(MeshUITranslator.getLabelHideConsole());
+					buttonHideShowConsole1.setToolTipText(MeshUITranslator.getToolTipHideConsole());
+					buttonHideShowConsole2.setText(MeshUITranslator.getLabelHideConsole());
+					buttonHideShowConsole2.setToolTipText(MeshUITranslator.getToolTipHideConsole());
+					labelLogo.setVisible(false);
 				}else{
-					buttonHideShowConsole.setText(EpiInfoUITranslator.getLabelShowConsole());
-					buttonHideShowConsole.setToolTipText(EpiInfoUITranslator.getToolTipShowConsole());
-					buttonHideShowConsole1.setText(EpiInfoUITranslator.getLabelShowConsole());
-					buttonHideShowConsole1.setToolTipText(EpiInfoUITranslator.getToolTipShowConsole());
-					buttonHideShowConsole2.setText(EpiInfoUITranslator.getLabelShowConsole());
-					buttonHideShowConsole2.setToolTipText(EpiInfoUITranslator.getToolTipShowConsole());
-					labelLogoEpiinfo.setVisible(true);
+					buttonHideShowConsole.setText(MeshUITranslator.getLabelShowConsole());
+					buttonHideShowConsole.setToolTipText(MeshUITranslator.getToolTipShowConsole());
+					buttonHideShowConsole1.setText(MeshUITranslator.getLabelShowConsole());
+					buttonHideShowConsole1.setToolTipText(MeshUITranslator.getToolTipShowConsole());
+					buttonHideShowConsole2.setText(MeshUITranslator.getLabelShowConsole());
+					buttonHideShowConsole2.setToolTipText(MeshUITranslator.getToolTipShowConsole());
+					labelLogo.setVisible(true);
 				}				
 				frame.pack();
 				frame.repaint();
 			}
 		};	
 		buttonHideShowConsole = new JButton();
-		buttonHideShowConsole.setText(EpiInfoUITranslator.getLabelShowConsole());
-		buttonHideShowConsole.setToolTipText(EpiInfoUITranslator.getToolTipShowConsole());
+		buttonHideShowConsole.setText(MeshUITranslator.getLabelShowConsole());
+		buttonHideShowConsole.setToolTipText(MeshUITranslator.getToolTipShowConsole());
 		buttonHideShowConsole.addActionListener(hiShowActionListener);
 		panelExchange.add(buttonHideShowConsole, new CellConstraints(6, 2, CellConstraints.CENTER, CellConstraints.FILL));
 	       
@@ -588,7 +588,7 @@ public class EpiinfoUI{
 		};
 	    buttonKmlGenerator = new JButton();
 	    buttonKmlGenerator.addActionListener(kmlGeneratorActionListener);
-	    buttonKmlGenerator.setText(EpiInfoUITranslator.getLabelKML());
+	    buttonKmlGenerator.setText(MeshUITranslator.getLabelKML());
 	    panelMap.add(buttonKmlGenerator, new CellConstraints(2, 2));
 
 
@@ -599,13 +599,13 @@ public class EpiinfoUI{
 			}
 		};
 	    buttonKmlWebGenerator = new JButton();
-	    buttonKmlWebGenerator.setText(EpiInfoUITranslator.getLabelKMLWEB());
+	    buttonKmlWebGenerator.setText(MeshUITranslator.getLabelKMLWEB());
 	    buttonKmlWebGenerator.addActionListener(kmlWebGeneratorActionListener);
 	    panelMap.add(buttonKmlWebGenerator, new CellConstraints(4, 2));
 
 		buttonHideShowConsole1 = new JButton();
-		buttonHideShowConsole1.setText(EpiInfoUITranslator.getLabelShowConsole());
-		buttonHideShowConsole1.setToolTipText(EpiInfoUITranslator.getToolTipShowConsole());
+		buttonHideShowConsole1.setText(MeshUITranslator.getLabelShowConsole());
+		buttonHideShowConsole1.setToolTipText(MeshUITranslator.getToolTipShowConsole());
 		buttonHideShowConsole1.addActionListener(hiShowActionListener);
 	    panelMap.add(buttonHideShowConsole1, new CellConstraints(6, 2));
 	    	    
@@ -633,7 +633,7 @@ public class EpiinfoUI{
 			}
 		};		
 		buttonSaveDefaults = new JButton();
-		buttonSaveDefaults.setText(EpiInfoUITranslator.getLabelSaveDefaults());
+		buttonSaveDefaults.setText(MeshUITranslator.getLabelSaveDefaults());
 		buttonSaveDefaults.addActionListener(saveDefaultActionListener);
 	    panelSettings.add(buttonSaveDefaults, new CellConstraints(2, 2, CellConstraints.FILL, CellConstraints.CENTER));
 
@@ -644,7 +644,7 @@ public class EpiinfoUI{
 			}
 		};
 		buttonDownloadSchema = new JButton();
-		buttonDownloadSchema.setText(EpiInfoUITranslator.getLabelDownloadMappings());
+		buttonDownloadSchema.setText(MeshUITranslator.getLabelDownloadMappings());
 		buttonDownloadSchema.addActionListener(downloadSchemaActionListener);
 		panelSettings.add(buttonDownloadSchema, new CellConstraints(4, 2, CellConstraints.FILL, CellConstraints.CENTER));
 
@@ -654,26 +654,26 @@ public class EpiinfoUI{
 			}
 		};	
 		buttonClean = new JButton();
-		buttonClean.setText(EpiInfoUITranslator.getLabelCleanConsole());
+		buttonClean.setText(MeshUITranslator.getLabelCleanConsole());
 		buttonClean.addActionListener(cleanConsoleActionListener);
 	    panelSettings.add(buttonClean, new CellConstraints(6, 2, CellConstraints.FILL, CellConstraints.CENTER));
 
 		buttonHideShowConsole2 = new JButton();
-		buttonHideShowConsole2.setText(EpiInfoUITranslator.getLabelShowConsole());
-		buttonHideShowConsole2.setToolTipText(EpiInfoUITranslator.getToolTipShowConsole());
+		buttonHideShowConsole2.setText(MeshUITranslator.getLabelShowConsole());
+		buttonHideShowConsole2.setToolTipText(MeshUITranslator.getToolTipShowConsole());
 		buttonHideShowConsole2.addActionListener(hiShowActionListener);
 	    panelSettings.add(buttonHideShowConsole2, new CellConstraints(8, 2));
 	    
 	    JTabbedPane tabbedPane = new JTabbedPane();
-	    tabbedPane.addTab(EpiInfoUITranslator.getLabelTabDataExchange(), panelExchange);
-	    tabbedPane.addTab(EpiInfoUITranslator.getLabelTabMap(), panelMap);
-	    tabbedPane.addTab(EpiInfoUITranslator.getLabelTabSettings(), panelSettings);
+	    tabbedPane.addTab(MeshUITranslator.getLabelTabDataExchange(), panelExchange);
+	    tabbedPane.addTab(MeshUITranslator.getLabelTabMap(), panelMap);
+	    tabbedPane.addTab(MeshUITranslator.getLabelTabSettings(), panelSettings);
 	    
 	    frame.getContentPane().add(tabbedPane, new CellConstraints(2, 6));
 	}
 
 	private Modem getDemoModem() {
-		return new Modem("", 0, EpiInfoUITranslator.getLabelDemo(), "", "", "", 0, 0);
+		return new Modem("", 0, MeshUITranslator.getLabelDemo(), "", "", "", 0, 0);
 	}
 
 	private ComboBoxModel getDataSourceTableModel() {
@@ -719,7 +719,7 @@ public class EpiinfoUI{
 				String dataSource = textFieldDataSource.getText();
 				String tableName = (String)comboTables.getSelectedItem();
 				if(!MsAccessSyncAdapterFactory.isValidAccessTable(dataSource, tableName)){
-	    			consoleNotification.log(EpiInfoUITranslator.getErrorInvalidMSAccessTable());
+	    			consoleNotification.log(MeshUITranslator.getErrorInvalidMSAccessTable());
 	    			consoleNotification.setErrorImageStatus();
 					return null;
 				}
@@ -743,14 +743,14 @@ public class EpiinfoUI{
 	    		} catch(Throwable t){
 	    			syncInProcess = false;
 	    			consoleNotification.setErrorImageStatus();
-	    			consoleNotification.logError(t, EpiInfoUITranslator.getLabelFailed());
+	    			consoleNotification.logError(t, MeshUITranslator.getLabelFailed());
 	    		}
     		} 
 
     		if(action == SYNCHRONIZE_HTTP){
 				String url = textFieldURL.getText();
 				if(!HttpSyncAdapterFactory.isValidURL(url)){
-	    			consoleNotification.log(EpiInfoUITranslator.getErrorInvalidURL());
+	    			consoleNotification.log(MeshUITranslator.getErrorInvalidURL());
 	    			consoleNotification.setErrorImageStatus();
 					return null;
 				}
@@ -758,7 +758,7 @@ public class EpiinfoUI{
 				String dataSource = textFieldDataSource.getText();
 				String tableName = (String)comboTables.getSelectedItem();
 				if(!MsAccessSyncAdapterFactory.isValidAccessTable(dataSource, tableName)){
-	    			consoleNotification.log(EpiInfoUITranslator.getErrorInvalidMSAccessTable());
+	    			consoleNotification.log(MeshUITranslator.getErrorInvalidMSAccessTable());
 	    			consoleNotification.setErrorImageStatus();
 					return null;
 				}
@@ -771,8 +771,7 @@ public class EpiinfoUI{
 	    			consoleNotification.setEndSyncImageStatus();
 	    		} catch(Throwable t){
 	    			consoleNotification.setErrorImageStatus();
-	    			consoleNotification.logError(t, EpiInfoUITranslator.getLabelFailed());
-//	    			consoleNotification.logStatus(EpiInfoUITranslator.getLabelFailed());
+	    			consoleNotification.logError(t, MeshUITranslator.getLabelFailed());
 	    		}
     		} 
 
@@ -780,7 +779,7 @@ public class EpiinfoUI{
     			String dataSource = textFieldDataSource.getText();
 				String tableName = (String)comboTables.getSelectedItem();
 				if(!MsAccessSyncAdapterFactory.isValidAccessTable(dataSource, tableName)){
-	    			consoleNotification.log(EpiInfoUITranslator.getErrorInvalidMSAccessTable());
+	    			consoleNotification.log(MeshUITranslator.getErrorInvalidMSAccessTable());
 	    			consoleNotification.setErrorImageStatus();
 					return null;
 				}
@@ -795,7 +794,7 @@ public class EpiinfoUI{
     				String dataSource = textFieldDataSource.getText();
     				String tableName = (String)comboTables.getSelectedItem();
     				if(!MsAccessSyncAdapterFactory.isValidAccessTable(dataSource, tableName)){
-    	    			consoleNotification.log(EpiInfoUITranslator.getErrorInvalidMSAccessTable());
+    	    			consoleNotification.log(MeshUITranslator.getErrorInvalidMSAccessTable());
     	    			consoleNotification.setErrorImageStatus();
     					return null;
     				}
@@ -809,13 +808,13 @@ public class EpiinfoUI{
     		}
     		
     		if(action == DISCOVERY_MODEMS){
-				consoleNotification.log(EpiInfoUITranslator.getMessageBeginModemDiscovery());
+				consoleNotification.log(MeshUITranslator.getMessageBeginModemDiscovery());
     			setModeDiscoveryModems();
-				buttonModemDiscovery.setText(EpiInfoUITranslator.getLabelStopModemDiscovery());
-				buttonModemDiscovery.setToolTipText(EpiInfoUITranslator.getToolTipStopAutoDetect());    			
+				buttonModemDiscovery.setText(MeshUITranslator.getLabelStopModemDiscovery());
+				buttonModemDiscovery.setToolTipText(MeshUITranslator.getToolTipStopAutoDetect());    			
     			
     			Modem[] modems = SyncEngineUtil.getAvailableModems(consoleNotification);
-    			consoleNotification.log(EpiInfoUITranslator.getMessageEndModemDiscovery(modems.length));
+    			consoleNotification.log(MeshUITranslator.getMessageEndModemDiscovery(modems.length));
     			
     			if(modems.length == 0){
     				modems = new Modem[]{getDemoModem()};
@@ -823,8 +822,8 @@ public class EpiinfoUI{
     			comboSMSDevice.setModel(new DefaultComboBoxModel(modems));
     			    			
     			setModeNoDiscoveryModems();
-    			buttonModemDiscovery.setText(EpiInfoUITranslator.getLabelModemDiscovery());
-    			buttonModemDiscovery.setToolTipText(EpiInfoUITranslator.getToolTipAutoDetect());
+    			buttonModemDiscovery.setText(MeshUITranslator.getLabelModemDiscovery());
+    			buttonModemDiscovery.setToolTipText(MeshUITranslator.getToolTipAutoDetect());
     			    			
     			consoleNotification.setEndSyncImageStatus();
     		}
@@ -839,7 +838,7 @@ public class EpiinfoUI{
 				} catch (Exception exc) {
 					shutdownSyncEngine();
 					consoleNotification.setErrorImageStatus();
-					consoleNotification.logError(exc, EpiInfoUITranslator.getLabelDeviceConnectionFailed(modem.toString()));
+					consoleNotification.logError(exc, MeshUITranslator.getLabelDeviceConnectionFailed(modem.toString()));
 					Logger.error(exc.getMessage(), exc);
 				}
 				comboSMSDevice.setToolTipText(modem.toString());
@@ -860,7 +859,7 @@ public class EpiinfoUI{
 				String tableName = (String)comboTables.getSelectedItem();
 				if(!MsAccessSyncAdapterFactory.isValidAccessTable(dataSource, tableName)){
 					consoleNotification.setErrorImageStatus();
-	    			consoleNotification.log(EpiInfoUITranslator.getErrorInvalidMSAccessTable());
+	    			consoleNotification.log(MeshUITranslator.getErrorInvalidMSAccessTable());
 					return null;
 				}
     			try{
@@ -868,7 +867,7 @@ public class EpiinfoUI{
 	    			consoleNotification.setEndSyncImageStatus();
 	    		} catch(Throwable t){
 	    			consoleNotification.setErrorImageStatus();
-	    			consoleNotification.logError(t, EpiInfoUITranslator.getLabelKMLFailed());
+	    			consoleNotification.logError(t, MeshUITranslator.getLabelKMLFailed());
 	    		}
     		}
     		
@@ -876,7 +875,7 @@ public class EpiinfoUI{
 				String url = textFieldURL.getText();
 				if(!HttpSyncAdapterFactory.isValidURL(url)){
 					consoleNotification.setErrorImageStatus();
-	    			consoleNotification.log(EpiInfoUITranslator.getErrorInvalidURL());
+	    			consoleNotification.log(MeshUITranslator.getErrorInvalidURL());
 					return null;
 				}
 				
@@ -884,7 +883,7 @@ public class EpiinfoUI{
 				String tableName = (String)comboTables.getSelectedItem();
 				if(!MsAccessSyncAdapterFactory.isValidAccessTable(dataSource, tableName)){
 					consoleNotification.setErrorImageStatus();
-	    			consoleNotification.log(EpiInfoUITranslator.getErrorInvalidMSAccessTable());
+	    			consoleNotification.log(MeshUITranslator.getErrorInvalidMSAccessTable());
 					return null;
 				}
 				
@@ -896,7 +895,7 @@ public class EpiinfoUI{
 	    			consoleNotification.setEndSyncImageStatus();
 	    		} catch(Throwable t){
 	    			consoleNotification.setErrorImageStatus();
-	    			consoleNotification.logError(t, EpiInfoUITranslator.getLabelKMLFailed());
+	    			consoleNotification.logError(t, MeshUITranslator.getLabelKMLFailed());
 	    		}
 	    		
     		}
@@ -905,7 +904,7 @@ public class EpiinfoUI{
 				String url = textFieldURL.getText();
 				if(!HttpSyncAdapterFactory.isValidURL(url)){
 					consoleNotification.setErrorImageStatus();
-	    			consoleNotification.log(EpiInfoUITranslator.getErrorInvalidURL());
+	    			consoleNotification.log(MeshUITranslator.getErrorInvalidURL());
 					return null;
 				}
 				
@@ -913,7 +912,7 @@ public class EpiinfoUI{
 				String tableName = (String)comboTables.getSelectedItem();
 				if(!MsAccessSyncAdapterFactory.isValidAccessTable(dataSource, tableName)){
 					consoleNotification.setErrorImageStatus();
-	    			consoleNotification.log(EpiInfoUITranslator.getErrorInvalidMSAccessTable());
+	    			consoleNotification.log(MeshUITranslator.getErrorInvalidMSAccessTable());
 					return null;
 				}
 				
@@ -922,7 +921,7 @@ public class EpiinfoUI{
 	    			consoleNotification.setEndSyncImageStatus();
 	    		} catch(Throwable t){
 	    			consoleNotification.setErrorImageStatus();
-	    			consoleNotification.logError(t, EpiInfoUITranslator.getLabelDownloadSchemaFailed());
+	    			consoleNotification.logError(t, MeshUITranslator.getLabelDownloadSchemaFailed());
 	    		}
     		}
     		
@@ -930,7 +929,7 @@ public class EpiinfoUI{
 				String url = textFieldURL.getText();
 				if(!HttpSyncAdapterFactory.isValidURL(url)){
 					consoleNotification.setErrorImageStatus();
-	    			consoleNotification.log(EpiInfoUITranslator.getErrorInvalidURL());
+	    			consoleNotification.log(MeshUITranslator.getErrorInvalidURL());
 					return null;
 				}
 				
@@ -938,7 +937,7 @@ public class EpiinfoUI{
 				String tableName = (String)comboTables.getSelectedItem();
 				if(!MsAccessSyncAdapterFactory.isValidAccessTable(dataSource, tableName)){
 					consoleNotification.setErrorImageStatus();
-	    			consoleNotification.log(EpiInfoUITranslator.getErrorInvalidMSAccessTable());
+	    			consoleNotification.log(MeshUITranslator.getErrorInvalidMSAccessTable());
 					return null;
 				}
 				
@@ -947,14 +946,14 @@ public class EpiinfoUI{
 	    			consoleNotification.setEndSyncImageStatus();
 	    		} catch(Throwable t){
 	    			consoleNotification.setErrorImageStatus();
-	    			consoleNotification.logError(t, EpiInfoUITranslator.getLabelDownloadMappingsFailed());
+	    			consoleNotification.logError(t, MeshUITranslator.getLabelDownloadMappingsFailed());
 	    		}
     		}
 	        return null;
 	    }
 
 		private String getModemPhoneNumber() {
-			return (modem == null ? EpiInfoUITranslator.getLabelDemo() : modem.toString());
+			return (modem == null ? MeshUITranslator.getLabelDemo() : modem.toString());
 		}
 
 		@Override
@@ -1031,7 +1030,7 @@ public class EpiinfoUI{
 	 }
 	
 	private String openFileDialog(String fileName){
-		String fileNameSelected = openFileDialog(fileName, new FileNameExtensionFilter(EpiInfoUITranslator.getLabelDataSourceFileExtensions(), "mdb"));
+		String fileNameSelected = openFileDialog(fileName, new FileNameExtensionFilter(MeshUITranslator.getLabelDataSourceFileExtensions(), "mdb"));
 		return fileNameSelected;
 	}
 	

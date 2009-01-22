@@ -1,4 +1,4 @@
-package org.mesh4j.sync.epiinfo.ui;
+package org.mesh4j.sync.ui;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -33,8 +33,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import org.mesh4j.sync.mappings.DataSourceMapping;
 import org.mesh4j.sync.mappings.EndpointMapping;
 import org.mesh4j.sync.ui.tasks.ChangeDeviceTask;
-import org.mesh4j.sync.ui.translator.EpiInfoCompactUITranslator;
-import org.mesh4j.sync.ui.translator.EpiInfoUITranslator;
+import org.mesh4j.sync.ui.translator.MeshCompactUITranslator;
+import org.mesh4j.sync.ui.translator.MeshUITranslator;
 import org.mesh4j.sync.utils.SyncEngineUtil;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -49,13 +49,13 @@ public class ConfigurationFrame extends JFrame {
 	private static final long serialVersionUID = 1688018089793859404L;
 
 	// MODEL VARIABLES
-	private EpiinfoCompactUI owner;
+	private MeshCompactUI owner;
 	private JButton buttonSaveProperties;
 	private JTabbedPane tabbedPane;
 	
 	// BUSINESS METHODS
 	
-	public ConfigurationFrame(EpiinfoCompactUI owner) {
+	public ConfigurationFrame(MeshCompactUI owner) {
 		super();
 		setAlwaysOnTop(true);
 		this.owner = owner;
@@ -67,7 +67,7 @@ public class ConfigurationFrame extends JFrame {
 		getContentPane().setBackground(Color.WHITE);
 		setIconImage(SwingResourceManager.getImage(ConfigurationFrame.class, "/cdc.gif"));
 		setResizable(false);
-		setTitle(EpiInfoCompactUITranslator.getConfigurationWindowTitle());
+		setTitle(MeshCompactUITranslator.getConfigurationWindowTitle());
 		setBounds(100, 100, 287, 375);
 		getContentPane().setLayout(new FormLayout(
 			new ColumnSpec[] {
@@ -111,11 +111,11 @@ public class ConfigurationFrame extends JFrame {
 		final JList listContacts = new JList(listModelContacts);
 		
 		final JTextField textFieldContactAlias = new JTextField();
-		textFieldContactAlias.setToolTipText(EpiInfoCompactUITranslator.getToolTipEditContactAliasField());
+		textFieldContactAlias.setToolTipText(MeshCompactUITranslator.getToolTipEditContactAliasField());
 		panelEditContact.add(textFieldContactAlias, new CellConstraints());
 
 		final JTextField textFieldContactNumber = new JTextField();
-		textFieldContactNumber.setToolTipText(EpiInfoCompactUITranslator.getToolTipEditContactNumberField());
+		textFieldContactNumber.setToolTipText(MeshCompactUITranslator.getToolTipEditContactNumberField());
 		panelEditContact.add(textFieldContactNumber, new CellConstraints(3, 1));
 
 		final JPanel panelContactButtons = new JPanel();
@@ -131,8 +131,8 @@ public class ConfigurationFrame extends JFrame {
 				if(alias == null || alias.length() == 0 || endpointNumber == null || endpointNumber.length() == 0){
 					JOptionPane.showMessageDialog(
 							ConfigurationFrame.this,
-							EpiInfoCompactUITranslator.getMessageEditContactRequiredFields(),
-							EpiInfoCompactUITranslator.getTitle(),
+							MeshCompactUITranslator.getMessageEditContactRequiredFields(),
+							MeshCompactUITranslator.getTitle(),
 							JOptionPane.ERROR_MESSAGE);
 				} else {
 					
@@ -168,9 +168,9 @@ public class ConfigurationFrame extends JFrame {
 		buttonSaveContact.setBorder(new EmptyBorder(0, 0, 0, 0));
 		buttonSaveContact.setBackground(Color.WHITE);
 		buttonSaveContact.setFont(new Font("Calibri", Font.BOLD, 10));
-		buttonSaveContact.setText(EpiInfoCompactUITranslator.getLabelSave());
+		buttonSaveContact.setText(MeshCompactUITranslator.getLabelSave());
 		buttonSaveContact.addActionListener(saveContactActionListener);
-		buttonSaveContact.setToolTipText(EpiInfoCompactUITranslator.getToolTipSave());
+		buttonSaveContact.setToolTipText(MeshCompactUITranslator.getToolTipSave());
 		
 		ActionListener deleteContactActionListener = new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
@@ -196,10 +196,10 @@ public class ConfigurationFrame extends JFrame {
 		buttonDeleteContact.setBorder(new EmptyBorder(0, 0, 0, 0));
 		buttonDeleteContact.setBackground(Color.WHITE);
 		buttonDeleteContact.setFont(new Font("Calibri", Font.BOLD, 10));
-		buttonDeleteContact.setText(EpiInfoCompactUITranslator.getLabelDelete());
+		buttonDeleteContact.setText(MeshCompactUITranslator.getLabelDelete());
 		buttonDeleteContact.setEnabled(false);
 		buttonDeleteContact.addActionListener(deleteContactActionListener);
-		buttonDeleteContact.setToolTipText(EpiInfoCompactUITranslator.getToolTipDelete());
+		buttonDeleteContact.setToolTipText(MeshCompactUITranslator.getToolTipDelete());
 		
 		EndpointMapping[] endpoints = SyncEngineUtil.getEndpointMappings(owner.getPropertiesProvider());
 		for (int i = 0; i < endpoints.length; i++) {
@@ -272,14 +272,14 @@ public class ConfigurationFrame extends JFrame {
 		panelEditDataSource.add(textFieldDataSourceFileName, new CellConstraints(1, 3));
 
 		final JTextField textFieldDataSourceAlias = new JTextField();
-		textFieldDataSourceAlias.setToolTipText(EpiInfoCompactUITranslator.getToolTipEditDataSourceAliasField());
+		textFieldDataSourceAlias.setToolTipText(MeshCompactUITranslator.getToolTipEditDataSourceAliasField());
 		textFieldDataSourceAlias.setFont(new Font("Calibri", Font.PLAIN, 12));
 		panelEditDataSource.add(textFieldDataSourceAlias, new CellConstraints());
 		
 		final JComboBox comboBoxTableName = new JComboBox();
 		comboBoxTableName.setBackground(Color.WHITE);
 		comboBoxTableName.setFont(new Font("Calibri", Font.PLAIN, 12));
-		comboBoxTableName.setToolTipText(EpiInfoCompactUITranslator.getToolTipEditDataSourceTableNameField());
+		comboBoxTableName.setToolTipText(MeshCompactUITranslator.getToolTipEditDataSourceTableNameField());
 		panelEditDataSource.add(comboBoxTableName, new CellConstraints(1, 5));
 		
 		final JPanel panelDataSourceButtons = new JPanel();
@@ -299,8 +299,8 @@ public class ConfigurationFrame extends JFrame {
 				if(newAlias == null || newAlias.length() == 0 || fileName == null || fileName.length() == 0 || tableName == null || tableName.length() == 0){
 					JOptionPane.showMessageDialog(
 							ConfigurationFrame.this,
-							EpiInfoCompactUITranslator.getMessageEditDataSourceRequiredFields(),
-							EpiInfoCompactUITranslator.getTitle(),
+							MeshCompactUITranslator.getMessageEditDataSourceRequiredFields(),
+							MeshCompactUITranslator.getTitle(),
 							JOptionPane.ERROR_MESSAGE);
 				} else {
 					if (index == -1) {	// save
@@ -340,9 +340,9 @@ public class ConfigurationFrame extends JFrame {
 		buttonSaveDataSource.setBorderPainted(false);
 		buttonSaveDataSource.setFont(new Font("Calibri", Font.BOLD, 10));
 		panelDataSourceButtons.add(buttonSaveDataSource, new CellConstraints());
-		buttonSaveDataSource.setText(EpiInfoCompactUITranslator.getLabelSave());
+		buttonSaveDataSource.setText(MeshCompactUITranslator.getLabelSave());
 		buttonSaveDataSource.addActionListener(saveDataSourceActionListener);
-		buttonSaveDataSource.setToolTipText(EpiInfoCompactUITranslator.getToolTipSave());
+		buttonSaveDataSource.setToolTipText(MeshCompactUITranslator.getToolTipSave());
 		
 		ActionListener deleteDataSourceActionListener = new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
@@ -367,16 +367,16 @@ public class ConfigurationFrame extends JFrame {
 		buttonDeleteDataSource.setBorder(new EmptyBorder(0, 0, 0, 0));
 		buttonDeleteDataSource.setFont(new Font("Calibri", Font.BOLD, 10));
 		panelDataSourceButtons.add(buttonDeleteDataSource, new CellConstraints(3, 1));
-		buttonDeleteDataSource.setText(EpiInfoCompactUITranslator.getLabelDelete());
+		buttonDeleteDataSource.setText(MeshCompactUITranslator.getLabelDelete());
 		buttonDeleteDataSource.setEnabled(false);
 		buttonDeleteDataSource.addActionListener(deleteDataSourceActionListener);
-		buttonDeleteDataSource.setToolTipText(EpiInfoCompactUITranslator.getToolTipDelete());
+		buttonDeleteDataSource.setToolTipText(MeshCompactUITranslator.getToolTipDelete());
 		
 		ActionListener fileChooserFileActionListener = new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				String selectedFileName = openFileDialog(
 					textFieldDataSourceFileName.getText(), 
-					new FileNameExtensionFilter(EpiInfoUITranslator.getLabelDataSourceFileExtensions(), "mdb"));
+					new FileNameExtensionFilter(MeshUITranslator.getLabelDataSourceFileExtensions(), "mdb"));
 				if(selectedFileName != null){
 					textFieldDataSourceFileName.setText(selectedFileName);
 					textFieldDataSourceFileName.setToolTipText(selectedFileName);
@@ -391,8 +391,8 @@ public class ConfigurationFrame extends JFrame {
 		buttonOpenDataSourceFileChooser.setContentAreaFilled(false);
 		buttonOpenDataSourceFileChooser.setBorderPainted(false);
 		buttonOpenDataSourceFileChooser.setFont(new Font("Calibri", Font.BOLD, 12));
-		buttonOpenDataSourceFileChooser.setToolTipText(EpiInfoUITranslator.getToolTipFileChooser());
-		buttonOpenDataSourceFileChooser.setText(EpiInfoUITranslator.getLabelFileChooser());
+		buttonOpenDataSourceFileChooser.setToolTipText(MeshUITranslator.getToolTipFileChooser());
+		buttonOpenDataSourceFileChooser.setText(MeshUITranslator.getLabelFileChooser());
 		buttonOpenDataSourceFileChooser.addActionListener(fileChooserFileActionListener);
 
 		panelEditDataSource.add(buttonOpenDataSourceFileChooser, new CellConstraints(2, 3));
@@ -473,32 +473,32 @@ public class ConfigurationFrame extends JFrame {
 		
 		final JLabel labelPort = new JLabel();
 		labelPort.setFont(new Font("Calibri", Font.PLAIN, 12));
-		labelPort.setText(EpiInfoCompactUITranslator.getLabelEditPropertiesPortName());
+		labelPort.setText(MeshCompactUITranslator.getLabelEditPropertiesPortName());
 		panelEditProperties.add(labelPort, new CellConstraints(1, 1, CellConstraints.FILL, CellConstraints.FILL));
 
 		final JLabel labelBaudRate = new JLabel();
 		labelBaudRate.setFont(new Font("Calibri", Font.PLAIN, 12));
-		labelBaudRate.setText(EpiInfoCompactUITranslator.getLabelEditPropertiesBaudRate());
+		labelBaudRate.setText(MeshCompactUITranslator.getLabelEditPropertiesBaudRate());
 		panelEditProperties.add(labelBaudRate, new CellConstraints(1, 3, CellConstraints.FILL, CellConstraints.CENTER));
 
 		final JLabel labelSendRetriesDelay = new JLabel();
 		labelSendRetriesDelay.setFont(new Font("Calibri", Font.PLAIN, 12));
-		labelSendRetriesDelay.setText(EpiInfoCompactUITranslator.getLabelEditPropertiesSendRetryDelay());
+		labelSendRetriesDelay.setText(MeshCompactUITranslator.getLabelEditPropertiesSendRetryDelay());
 		panelEditProperties.add(labelSendRetriesDelay, new CellConstraints(1, 5));
 
 		final JLabel labelReceiveretriesDelay = new JLabel();
 		labelReceiveretriesDelay.setFont(new Font("Calibri", Font.PLAIN, 12));
-		labelReceiveretriesDelay.setText(EpiInfoCompactUITranslator.getLabelEditPropertiesReceiveRetryDelay());
+		labelReceiveretriesDelay.setText(MeshCompactUITranslator.getLabelEditPropertiesReceiveRetryDelay());
 		panelEditProperties.add(labelReceiveretriesDelay, new CellConstraints(1, 7));
 
 		final JLabel labelReadyToSync = new JLabel();
 		labelReadyToSync.setFont(new Font("Calibri", Font.PLAIN, 12));
-		labelReadyToSync.setText(EpiInfoCompactUITranslator.getLabelEditPropertiesReadyToSyncDelay());
+		labelReadyToSync.setText(MeshCompactUITranslator.getLabelEditPropertiesReadyToSyncDelay());
 		panelEditProperties.add(labelReadyToSync, new CellConstraints(1, 9));
 
 		final JLabel labelTestPhoneDelay = new JLabel();
 		labelTestPhoneDelay.setFont(new Font("Calibri", Font.PLAIN, 12));
-		labelTestPhoneDelay.setText(EpiInfoCompactUITranslator.getLabelEditPropertiesTestPhoneDelay());
+		labelTestPhoneDelay.setText(MeshCompactUITranslator.getLabelEditPropertiesTestPhoneDelay());
 		panelEditProperties.add(labelTestPhoneDelay, new CellConstraints(1, 11));
 
 		final JTextField textFieldPortName = new JTextField();
@@ -545,8 +545,8 @@ public class ConfigurationFrame extends JFrame {
 				if(portName == null || portName.length() == 0 || baudRate == 0 || readyToSyncDelay == 0 || testPhoneDelay == 0){
 					JOptionPane.showMessageDialog(
 							ConfigurationFrame.this,
-							EpiInfoCompactUITranslator.getMessageEditPropertiesRequiredFields(),
-							EpiInfoCompactUITranslator.getTitle(),
+							MeshCompactUITranslator.getMessageEditPropertiesRequiredFields(),
+							MeshCompactUITranslator.getTitle(),
 							JOptionPane.ERROR_MESSAGE);
 				} else {				
 					owner.getPropertiesProvider().saveDefaultProperties(portName, baudRate, sendRetryDelay, receiveRetryDelay, readyToSyncDelay, testPhoneDelay);
@@ -560,15 +560,15 @@ public class ConfigurationFrame extends JFrame {
 		buttonSaveProperties.setContentAreaFilled(false);
 		buttonSaveProperties.setBorderPainted(false);
 		buttonSaveProperties.setBorder(new EmptyBorder(0, 0, 0, 0));
-		buttonSaveProperties.setText(EpiInfoCompactUITranslator.getLabelSave());
+		buttonSaveProperties.setText(MeshCompactUITranslator.getLabelSave());
 		buttonSaveProperties.addActionListener(savePropertiesActionListener);
 		panelPropertiesButtons.add(buttonSaveProperties, new CellConstraints());
 		
 		// Tabbed Panel
 	    tabbedPane = new JTabbedPane();
-	    tabbedPane.addTab(EpiInfoCompactUITranslator.getLabelTabContacts(), panelContacts);
-	    tabbedPane.addTab(EpiInfoCompactUITranslator.getLabelTabDataSources(), panelDataSources);
-	    tabbedPane.addTab(EpiInfoCompactUITranslator.getLabelTabProperties(), panelProperties);
+	    tabbedPane.addTab(MeshCompactUITranslator.getLabelTabContacts(), panelContacts);
+	    tabbedPane.addTab(MeshCompactUITranslator.getLabelTabDataSources(), panelDataSources);
+	    tabbedPane.addTab(MeshCompactUITranslator.getLabelTabProperties(), panelProperties);
 		getContentPane().add(tabbedPane, new CellConstraints(2, 2, CellConstraints.FILL, CellConstraints.FILL));
 		
 		// Buttons panel
@@ -583,8 +583,8 @@ public class ConfigurationFrame extends JFrame {
 		buttonClose.setBorderPainted(false);
 		buttonClose.setOpaque(false);
 		buttonClose.setFont(new Font("Calibri", Font.BOLD, 12));
-		buttonClose.setText(EpiInfoCompactUITranslator.getConfigurationWindowLabelClose());
-		buttonClose.setToolTipText(EpiInfoCompactUITranslator.getConfigurationWindowToolTipClose());
+		buttonClose.setText(MeshCompactUITranslator.getConfigurationWindowLabelClose());
+		buttonClose.setToolTipText(MeshCompactUITranslator.getConfigurationWindowToolTipClose());
 		
 		ActionListener closeActionListener = new ActionListener(){
 			public void actionPerformed(ActionEvent e) {

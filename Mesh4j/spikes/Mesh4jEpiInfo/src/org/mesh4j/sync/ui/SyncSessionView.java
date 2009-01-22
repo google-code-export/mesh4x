@@ -1,4 +1,4 @@
-package org.mesh4j.sync.epiinfo.ui;
+package org.mesh4j.sync.ui;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -15,7 +15,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.Timer;
 
-import org.mesh4j.sync.epiinfo.ui.utils.EpiInfoIconManager;
 import org.mesh4j.sync.message.IChannel;
 import org.mesh4j.sync.message.IMessage;
 import org.mesh4j.sync.message.IMessageSyncAware;
@@ -25,9 +24,10 @@ import org.mesh4j.sync.message.channel.sms.connection.ISmsConnectionInboundOutbo
 import org.mesh4j.sync.message.protocol.ACKEndSyncMessageProcessor;
 import org.mesh4j.sync.message.protocol.EndSyncMessageProcessor;
 import org.mesh4j.sync.model.Item;
-import org.mesh4j.sync.ui.translator.EpiInfoCompactUITranslator;
-import org.mesh4j.sync.ui.translator.EpiInfoUITranslator;
-import org.mesh4j.sync.utils.EpiinfoSourceIdResolver;
+import org.mesh4j.sync.ui.translator.MeshCompactUITranslator;
+import org.mesh4j.sync.ui.translator.MeshUITranslator;
+import org.mesh4j.sync.ui.utils.IconManager;
+import org.mesh4j.sync.utils.SourceIdResolver;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -67,7 +67,7 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 	private ISyncSession syncSession;
 	
 	private ISyncSessionViewOwner owner;
-	private EpiinfoSourceIdResolver sourceIdResolver;
+	private SourceIdResolver sourceIdResolver;
 	private IChannel channel;
 	
 	private int syncMinutes = 0;
@@ -142,7 +142,7 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 				"19dlu, 18dlu"));
 	
 			final JLabel imageInOut = new JLabel();
-			imageInOut.setIcon(EpiInfoIconManager.getInOutIcon());
+			imageInOut.setIcon(IconManager.getInOutIcon());
 			imageInOut.setText("");
 			panelInOut.add(imageInOut, new CellConstraints(1, 1, 1, 2, CellConstraints.RIGHT, CellConstraints.DEFAULT));
 			panelInOut.add(getLabelIn(), new CellConstraints(2, 1, CellConstraints.LEFT, CellConstraints.BOTTOM));
@@ -215,7 +215,7 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 	protected JLabel getLabelLocalDataSource() {
 		if (labelLocalDataSource == null) {
 			labelLocalDataSource = new JLabel();
-			labelLocalDataSource.setIcon(EpiInfoIconManager.getUndefinedSourceImage());
+			labelLocalDataSource.setIcon(IconManager.getUndefinedSourceImage());
 			labelLocalDataSource.setText("");
 		}
 		return labelLocalDataSource;
@@ -225,7 +225,7 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 		if (labelLocalNew == null) {
 			labelLocalNew = new JLabel();
 			labelLocalNew.setFont(new Font("Calibri", Font.BOLD, 12));
-			labelLocalNew.setText(EpiInfoCompactUITranslator.getLabelNew(0));
+			labelLocalNew.setText(MeshCompactUITranslator.getLabelNew(0));
 		}
 		return labelLocalNew;
 	}
@@ -234,7 +234,7 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 		if (labelLocalUpdated == null) {
 			labelLocalUpdated = new JLabel();
 			labelLocalUpdated.setFont(new Font("Calibri", Font.BOLD, 12));
-			labelLocalUpdated.setText(EpiInfoCompactUITranslator.getLabelUpdated(0));
+			labelLocalUpdated.setText(MeshCompactUITranslator.getLabelUpdated(0));
 		}
 		return labelLocalUpdated;
 	}
@@ -243,7 +243,7 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 		if (labelLocalDeleted == null) {
 			labelLocalDeleted = new JLabel();
 			labelLocalDeleted.setFont(new Font("Calibri", Font.BOLD, 12));
-			labelLocalDeleted.setText(EpiInfoCompactUITranslator.getLabelDeleted(0));
+			labelLocalDeleted.setText(MeshCompactUITranslator.getLabelDeleted(0));
 		}
 		return labelLocalDeleted;
 	}
@@ -251,7 +251,7 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 	protected JLabel getLabelSyncType() {
 		if (labelSyncType == null) {
 			labelSyncType = new JLabel();
-			labelSyncType.setIcon(EpiInfoIconManager.getSyncMode2WayIcon());
+			labelSyncType.setIcon(IconManager.getSyncMode2WayIcon());
 			labelSyncType.setText("");
 		}
 		return labelSyncType;
@@ -261,7 +261,7 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 		if (labelIn == null) {
 			labelIn = new JLabel();
 			labelIn.setFont(new Font("Calibri", Font.BOLD, 12));
-			labelIn.setText(EpiInfoCompactUITranslator.getLabelIn(0));
+			labelIn.setText(MeshCompactUITranslator.getLabelIn(0));
 		}
 		return labelIn;
 	}
@@ -270,7 +270,7 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 		if (labelOut == null) {
 			labelOut = new JLabel();
 			labelOut.setFont(new Font("Calibri", Font.BOLD, 12));
-			labelOut.setText(EpiInfoCompactUITranslator.getLabelOut(0));
+			labelOut.setText(MeshCompactUITranslator.getLabelOut(0));
 		}
 		return labelOut;
 	}
@@ -278,7 +278,7 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 	protected JLabel getLabelRemoteDataSource() {
 		if (labelRemoteDataSource == null) {
 			labelRemoteDataSource = new JLabel();
-			labelRemoteDataSource.setIcon(EpiInfoIconManager.getUndefinedSourceImage());
+			labelRemoteDataSource.setIcon(IconManager.getUndefinedSourceImage());
 			labelRemoteDataSource.setText("");
 		}
 		return labelRemoteDataSource;
@@ -288,7 +288,7 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 		if (labelRemoteNew == null) {
 			labelRemoteNew = new JLabel();
 			labelRemoteNew.setFont(new Font("Calibri", Font.BOLD, 12));
-			labelRemoteNew.setText(EpiInfoCompactUITranslator.getLabelNew(0));
+			labelRemoteNew.setText(MeshCompactUITranslator.getLabelNew(0));
 		}
 		return labelRemoteNew;
 	}
@@ -297,7 +297,7 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 		if (labelRemoteUpdated == null) {
 			labelRemoteUpdated = new JLabel();
 			labelRemoteUpdated.setFont(new Font("Calibri", Font.BOLD, 12));
-			labelRemoteUpdated.setText(EpiInfoCompactUITranslator.getLabelUpdated(0));
+			labelRemoteUpdated.setText(MeshCompactUITranslator.getLabelUpdated(0));
 		}
 		return labelRemoteUpdated;
 	}
@@ -306,7 +306,7 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 		if (labelRemoteDeleted == null) {
 			labelRemoteDeleted = new JLabel();
 			labelRemoteDeleted.setFont(new Font("Calibri", Font.BOLD, 12));
-			labelRemoteDeleted.setText(EpiInfoCompactUITranslator.getLabelDeleted(0));
+			labelRemoteDeleted.setText(MeshCompactUITranslator.getLabelDeleted(0));
 		}
 		return labelRemoteDeleted;
 	}
@@ -314,7 +314,7 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 	protected JLabel getImageStatus() {
 		if (imageStatus == null) {
 			imageStatus = new JLabel();
-			imageStatus.setIcon(EpiInfoIconManager.getStatusReadyIcon());
+			imageStatus.setIcon(IconManager.getStatusReadyIcon());
 			imageStatus.setText("");
 		}
 		return imageStatus;
@@ -356,39 +356,39 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 	
 	public void reset(){
 		
-		this.labelLocalNew.setText(EpiInfoCompactUITranslator.getLabelNew(0));
-		this.labelLocalDeleted.setText(EpiInfoCompactUITranslator.getLabelDeleted(0));
-		this.labelLocalUpdated.setText(EpiInfoCompactUITranslator.getLabelUpdated(0));
+		this.labelLocalNew.setText(MeshCompactUITranslator.getLabelNew(0));
+		this.labelLocalDeleted.setText(MeshCompactUITranslator.getLabelDeleted(0));
+		this.labelLocalUpdated.setText(MeshCompactUITranslator.getLabelUpdated(0));
 
-		this.labelRemoteNew.setText(EpiInfoCompactUITranslator.getLabelNew(0));
-		this.labelRemoteDeleted.setText(EpiInfoCompactUITranslator.getLabelDeleted(0));
-		this.labelRemoteUpdated.setText(EpiInfoCompactUITranslator.getLabelUpdated(0));
+		this.labelRemoteNew.setText(MeshCompactUITranslator.getLabelNew(0));
+		this.labelRemoteDeleted.setText(MeshCompactUITranslator.getLabelDeleted(0));
+		this.labelRemoteUpdated.setText(MeshCompactUITranslator.getLabelUpdated(0));
 
-		this.labelIn.setText(EpiInfoCompactUITranslator.getLabelIn(0));
-		this.labelOut.setText(EpiInfoCompactUITranslator.getLabelOut(0));
+		this.labelIn.setText(MeshCompactUITranslator.getLabelIn(0));
+		this.labelOut.setText(MeshCompactUITranslator.getLabelOut(0));
 		this.labelInOutPendings.setText("");
 		
 		this.syncMinutes = 0;
 		
-		this.labelLocalDataSource.setIcon(EpiInfoIconManager.getUndefinedSourceImage());		
-		this.labelRemoteDataSource.setIcon(EpiInfoIconManager.getUndefinedSourceImage());
-		this.labelSyncType.setIcon(EpiInfoIconManager.getSyncModeIcon(true, true));
+		this.labelLocalDataSource.setIcon(IconManager.getUndefinedSourceImage());		
+		this.labelRemoteDataSource.setIcon(IconManager.getUndefinedSourceImage());
+		this.labelSyncType.setIcon(IconManager.getSyncModeIcon(true, true));
 		this.setReady("");
 	}
 	
 	private void updateSessionStatus() {
-		this.labelLocalNew.setText(EpiInfoCompactUITranslator.getLabelNew(this.syncSession.getNumberOfAddedItems()));
-		this.labelLocalDeleted.setText(EpiInfoCompactUITranslator.getLabelDeleted(this.syncSession.getNumberOfDeletedItems()));
-		this.labelLocalUpdated.setText(EpiInfoCompactUITranslator.getLabelUpdated(this.syncSession.getNumberOfUpdatedItems()));
+		this.labelLocalNew.setText(MeshCompactUITranslator.getLabelNew(this.syncSession.getNumberOfAddedItems()));
+		this.labelLocalDeleted.setText(MeshCompactUITranslator.getLabelDeleted(this.syncSession.getNumberOfDeletedItems()));
+		this.labelLocalUpdated.setText(MeshCompactUITranslator.getLabelUpdated(this.syncSession.getNumberOfUpdatedItems()));
 
-		this.labelRemoteNew.setText(EpiInfoCompactUITranslator.getLabelNew(this.syncSession.getTargetNumberOfAddedItems()));
-		this.labelRemoteDeleted.setText(EpiInfoCompactUITranslator.getLabelDeleted(this.syncSession.getTargetNumberOfDeletedItems()));
-		this.labelRemoteUpdated.setText(EpiInfoCompactUITranslator.getLabelUpdated(this.syncSession.getTargetNumberOfUpdatedItems()));
+		this.labelRemoteNew.setText(MeshCompactUITranslator.getLabelNew(this.syncSession.getTargetNumberOfAddedItems()));
+		this.labelRemoteDeleted.setText(MeshCompactUITranslator.getLabelDeleted(this.syncSession.getTargetNumberOfDeletedItems()));
+		this.labelRemoteUpdated.setText(MeshCompactUITranslator.getLabelUpdated(this.syncSession.getTargetNumberOfUpdatedItems()));
 		
-		this.labelLocalDataSource.setIcon(EpiInfoIconManager.getSourceImage(this.syncSession.getSourceType(), false));
-		this.labelRemoteDataSource.setIcon(EpiInfoIconManager.getSourceImage(this.syncSession.getTargetSourceType(), true));
+		this.labelLocalDataSource.setIcon(IconManager.getSourceImage(this.syncSession.getSourceType(), false));
+		this.labelRemoteDataSource.setIcon(IconManager.getSourceImage(this.syncSession.getTargetSourceType(), true));
 		
-		this.labelSyncType.setIcon(EpiInfoIconManager.getSyncModeIcon(this.syncSession.shouldSendChanges(), this.syncSession.shouldReceiveChanges()));
+		this.labelSyncType.setIcon(IconManager.getSyncModeIcon(this.syncSession.shouldSendChanges(), this.syncSession.shouldReceiveChanges()));
 		
 		if(!this.syncSession.isOpen()){
 			this.setReady("");
@@ -402,17 +402,17 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 	public void updateInOut() {
 		if(this.syncSession.isOpen()){
 			InOutStatistics stat = this.channel.getInOutStatistics(this.syncSession.getSessionId(), this.syncSession.getVersion());
-			this.labelIn.setText(EpiInfoCompactUITranslator.getLabelIn(stat.getNumberInMessages()));
-			this.labelOut.setText(EpiInfoCompactUITranslator.getLabelOut(stat.getNumberOutMessages()));
+			this.labelIn.setText(MeshCompactUITranslator.getLabelIn(stat.getNumberInMessages()));
+			this.labelOut.setText(MeshCompactUITranslator.getLabelOut(stat.getNumberOutMessages()));
 			
 			if(stat.getNumberInPendingToArriveMessages() == 0 && stat.getNumberOutPendingAckMessages() == 0){
 				this.labelInOutPendings.setText("");
 			} else {
-				this.labelInOutPendings.setText(EpiInfoCompactUITranslator.getMessageInOutPendings(stat.getNumberInPendingToArriveMessages(), stat.getNumberOutPendingAckMessages()));				
+				this.labelInOutPendings.setText(MeshCompactUITranslator.getMessageInOutPendings(stat.getNumberInPendingToArriveMessages(), stat.getNumberOutPendingAckMessages()));				
 			}
 		} else {
-			this.labelIn.setText(EpiInfoCompactUITranslator.getLabelIn(syncSession.getLastNumberInMessages()));
-			this.labelOut.setText(EpiInfoCompactUITranslator.getLabelOut(syncSession.getLastNumberOutMessages()));
+			this.labelIn.setText(MeshCompactUITranslator.getLabelIn(syncSession.getLastNumberInMessages()));
+			this.labelOut.setText(MeshCompactUITranslator.getLabelOut(syncSession.getLastNumberOutMessages()));
 			this.labelInOutPendings.setText("");
 		}
 	}
@@ -435,7 +435,7 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 			this.updateSessionStatus();
 			
 			SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
-			String msg = EpiInfoCompactUITranslator.getMessageSyncStarted(dateFormat.format(new Date()));
+			String msg = MeshCompactUITranslator.getMessageSyncStarted(dateFormat.format(new Date()));
 			this.setInProcess(msg);
 		}
 
@@ -447,7 +447,7 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 	@Override
 	public void beginSyncWithError(ISyncSession syncSession) {
 		if(this.accepts(syncSession) || this.syncSession == null){
-			String error = EpiInfoCompactUITranslator.getMessageErrorBeginSync(syncSession.getTarget().getEndpointId(), sourceIdResolver.getSourceName(syncSession.getSourceId()));
+			String error = MeshCompactUITranslator.getMessageErrorBeginSync(syncSession.getTarget().getEndpointId(), sourceIdResolver.getSourceName(syncSession.getSourceId()));
 			this.setError(error);
 			
 			if(owner != null){
@@ -461,10 +461,10 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 	public void endSync(ISyncSession syncSession, List<Item> conflicts) {
 		if(accepts(syncSession)){
 			if(!conflicts.isEmpty()){
-				String msg = EpiInfoCompactUITranslator.getMessageSyncFailed();
+				String msg = MeshCompactUITranslator.getMessageSyncFailed();
 				this.setError(msg);
 			} else {
-				String msg = EpiInfoCompactUITranslator.getMessageSyncSuccessfully();
+				String msg = MeshCompactUITranslator.getMessageSyncSuccessfully();
 				this.setOk(msg);
 			}
 			
@@ -479,7 +479,7 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 	@Override
 	public void notifyCancelSync(ISyncSession syncSession) {
 		if(accepts(syncSession)){
-			String msg = EpiInfoCompactUITranslator.getMessageCancelSyncSuccessfully();
+			String msg = MeshCompactUITranslator.getMessageCancelSyncSuccessfully();
 			this.setOk(msg);
 			
 			if(this.owner != null){
@@ -493,7 +493,7 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 	@Override
 	public void notifyCancelSyncErrorSyncSessionNotOpen(ISyncSession syncSession) {
 		if(accepts(syncSession) || this.syncSession == null){
-			String error = EpiInfoCompactUITranslator.getMessageCancelSyncErrorSessionNotOpen(syncSession.getTarget(), syncSession.getSourceId());
+			String error = MeshCompactUITranslator.getMessageCancelSyncErrorSessionNotOpen(syncSession.getTarget(), syncSession.getSourceId());
 			this.setError(error);
 //			this.viewSession(null);
 		}
@@ -522,7 +522,7 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 
 	@Override
 	public void notifySessionCreationError(IMessage message, String sourceId) {
-		String error = EpiInfoUITranslator.getMessageErrorSessionCreation(message, sourceIdResolver.getSourceName(sourceId));
+		String error = MeshUITranslator.getMessageErrorSessionCreation(message, sourceIdResolver.getSourceName(sourceId));
 		this.setError(error);
 	}
 
@@ -539,7 +539,7 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 		if(this.syncSession != null && this.syncSession.getTarget().getEndpointId().equals(endpointId)){
 			this.updateInOut();
 			
-			String error = EpiInfoCompactUITranslator.getMessageNotifyReceiveMessageError(endpointId, message);
+			String error = MeshCompactUITranslator.getMessageNotifyReceiveMessageError(endpointId, message);
 			this.setError(error);
 		}
 	}
@@ -556,7 +556,7 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 		if(this.syncSession != null && this.syncSession.getTarget().getEndpointId().equals(endpointId)){
 			this.updateInOut();
 		
-			String error = EpiInfoCompactUITranslator.getMessageNotifySendMessageError(endpointId, message);
+			String error = MeshCompactUITranslator.getMessageNotifySendMessageError(endpointId, message);
 			this.setError(error);
 		}
 	}
@@ -567,7 +567,7 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 	}
 
 	
-	public void initialize(ISyncSessionViewOwner owner, EpiinfoSourceIdResolver sourceIdResolver, IChannel channel){
+	public void initialize(ISyncSessionViewOwner owner, SourceIdResolver sourceIdResolver, IChannel channel){
 		this.owner = owner;
 		this.sourceIdResolver = sourceIdResolver;
 		this.channel = channel;
@@ -595,14 +595,14 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 	public void setOk(String msg){
 		this.textAreaStatus.setForeground(Color.BLACK);
 		this.setStatusText(msg);
-		this.imageStatus.setIcon(EpiInfoIconManager.getStatusOkIcon());
+		this.imageStatus.setIcon(IconManager.getStatusOkIcon());
 		this.imageStatus.setToolTipText(msg);
 	}
 	
 	public void setError(String error){
 		this.textAreaStatus.setForeground(Color.RED);
 		this.setStatusText(error);
-		this.imageStatus.setIcon(EpiInfoIconManager.getStatusErrorIcon());
+		this.imageStatus.setIcon(IconManager.getStatusErrorIcon());
 		this.imageStatus.setToolTipText(error);
 	}
 	
@@ -641,11 +641,11 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 						sb.append(days);
 						if(days > 1){
 							sb.append(" ");
-							sb.append(EpiInfoCompactUITranslator.getLabelDays());
+							sb.append(MeshCompactUITranslator.getLabelDays());
 							sb.append(" ");
 						} else {
 							sb.append(" ");
-							sb.append(EpiInfoCompactUITranslator.getLabelDay());
+							sb.append(MeshCompactUITranslator.getLabelDay());
 							sb.append(" ");
 						}
 					}
@@ -653,11 +653,11 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 					sb.append(hrs);
 					if(hrs > 1){
 						sb.append(" ");
-						sb.append(EpiInfoCompactUITranslator.getLabelHours());
+						sb.append(MeshCompactUITranslator.getLabelHours());
 						sb.append(" ");
 					} else {
 						sb.append(" ");
-						sb.append(EpiInfoCompactUITranslator.getLabelHour());
+						sb.append(MeshCompactUITranslator.getLabelHour());
 						sb.append(" ");
 					}
 				}
@@ -665,14 +665,14 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 				sb.append(minutes);
 				if(minutes > 1){
 					sb.append(" ");
-					sb.append(EpiInfoCompactUITranslator.getLabelMinutes());
+					sb.append(MeshCompactUITranslator.getLabelMinutes());
 					sb.append(" ");
 				} else {
 					sb.append(" ");
-					sb.append(EpiInfoCompactUITranslator.getLabelMinute());
+					sb.append(MeshCompactUITranslator.getLabelMinute());
 					sb.append(" ");
 				}				
-				sb.append(EpiInfoCompactUITranslator.getLabelAgo());
+				sb.append(MeshCompactUITranslator.getLabelAgo());
 				sb.append(")");
 			}		
 		    setStatusText(sb.toString());
