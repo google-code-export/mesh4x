@@ -39,6 +39,10 @@ public class FileWatcherSmsConnection implements ISmsConnection {
 		
 		this.messageRepository = new FileMessageRepository(inDir, outDir);
 		this.filter = filter;
+		
+		if(smsAware != null){
+			this.smsAware = smsAware;
+		}
 	}
 
 	@Override
