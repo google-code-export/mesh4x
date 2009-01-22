@@ -15,6 +15,7 @@ import org.mesh4j.geo.coder.GeoCoderLatitudePropertyResolver;
 import org.mesh4j.geo.coder.GeoCoderLocationPropertyResolver;
 import org.mesh4j.geo.coder.GeoCoderLongitudePropertyResolver;
 import org.mesh4j.geo.coder.GoogleGeoCoder;
+import org.mesh4j.sync.IFilter;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.adapters.ISyncAdapterFactory;
@@ -53,6 +54,7 @@ import org.mesh4j.sync.message.core.MessageSyncAdapter;
 import org.mesh4j.sync.message.core.repository.MessageSyncAdapterFactory;
 import org.mesh4j.sync.message.core.repository.OpaqueFeedSyncAdapterFactory;
 import org.mesh4j.sync.message.encoding.IMessageEncoding;
+import org.mesh4j.sync.message.protocol.IProtocolConstants;
 import org.mesh4j.sync.message.protocol.MessageSyncProtocolFactory;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.payload.mappings.IMappingResolver;
@@ -112,8 +114,14 @@ public class SyncEngineUtil {
 			ISmsConnectionInboundOutboundNotification[] smsAware, IMessageSyncAware[] syncAware,
 			boolean isOpaque, String inDir, String outDir, String endpointId) {
 		
+		IFilter<String> protocolFilter = new IFilter<String>(){
+			@Override
+			public boolean applies(String message) {  // Accept only protocol messages
+				return message != null && message.length() > 0 && message.startsWith(IProtocolConstants.PROTOCOL);
+			}
+		};
 		
-		ISmsConnection smsConnection = new FileWatcherSmsConnection(endpointId, inDir, outDir, encoding, maxMessageLenght, smsAware);
+		ISmsConnection smsConnection = new FileWatcherSmsConnection(endpointId, inDir, outDir, encoding, maxMessageLenght, smsAware, protocolFilter);
 				
 		ISyncAdapterFactory syncAdapterFactory = makeSyncAdapterFactory(sourceIdResolver, baseDirectory);
 

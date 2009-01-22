@@ -7,6 +7,7 @@ import java.util.TimerTask;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.mesh4j.sync.IFilter;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.message.channel.sms.ISmsConnection;
 import org.mesh4j.sync.message.channel.sms.ISmsReceiver;
@@ -26,16 +27,18 @@ public class FileWatcherSmsConnection implements ISmsConnection {
 	private FileMessageRepository messageRepository;
 	private ISmsConnectionInboundOutboundNotification[] smsAware = new ISmsConnectionInboundOutboundNotification[]{}; 
 	private Timer timer;
+	private IFilter<String> filter = null;
 	
 	// BUSINESS METHODS
 	
-	public FileWatcherSmsConnection(String endpointId, String inDir, String outDir, IMessageEncoding encoding, int maxMessageLenght, ISmsConnectionInboundOutboundNotification[] smsAware) {
+	public FileWatcherSmsConnection(String endpointId, String inDir, String outDir, IMessageEncoding encoding, int maxMessageLenght, ISmsConnectionInboundOutboundNotification[] smsAware, IFilter<String> filter) {
 		super();
 		this.endpointId = endpointId;
 		this.messageEncoding = encoding;
 		this.maxMessageLenght = maxMessageLenght;
 		
 		this.messageRepository = new FileMessageRepository(inDir, outDir);
+		this.filter = filter;
 	}
 
 	@Override
@@ -109,20 +112,26 @@ public class FileWatcherSmsConnection implements ISmsConnection {
 	protected void receiveMessages() {
 		List<FileMessage> inMessages = this.messageRepository.getIncommingMessages();
 		for (FileMessage fileMessage : inMessages) {
-			boolean ok = true;
+			int result = 0;
 			
 			try{
-				this.messageReceiver.receiveSms(new SmsEndpoint(fileMessage.getNumber()), fileMessage.getText(), fileMessage.getDate());
-				this.messageRepository.deleteIncommingMessage(fileMessage);
+				if(this.isValidMessage(fileMessage.getText())){
+					this.messageReceiver.receiveSms(new SmsEndpoint(fileMessage.getNumber()), fileMessage.getText(), fileMessage.getDate());
+					this.messageRepository.deleteIncommingMessage(fileMessage);
+				} else {
+					result = 1;
+				}
 			} catch(Throwable e){
-				ok = false;
+				result = 2;
 				LOGGER.error(e.getMessage(), e);
 			}
 			
 			try{
-				if(ok){
+				if(result == 0){
 					this.notifyReceiveMessage(fileMessage.getNumber(), fileMessage.getText(), fileMessage.getDate());
-				} else {
+				} else if(result == 1){
+					this.notifyReceiveMessageWasNotProcessed(fileMessage.getNumber(), fileMessage.getText(), fileMessage.getDate());
+				} else if(result == 2){
 					this.notifyReceiveMessageError(fileMessage.getNumber(), fileMessage.getText(), fileMessage.getDate());
 				}
 			} catch(Throwable e){
@@ -155,5 +164,14 @@ public class FileWatcherSmsConnection implements ISmsConnection {
 			smsNot.notifyReceiveMessageError(endpointId, message, date);
 		}
 	}
+	
+	private void notifyReceiveMessageWasNotProcessed(String endpointId, String message, Date date) {
+		for (ISmsConnectionInboundOutboundNotification smsNot : this.smsAware) {
+			smsNot.notifyReceiveMessageWasNotProcessed(endpointId, message, date);
+		}
+	}
 
+	private boolean isValidMessage(String message) {
+		return this.filter == null || this.filter.applies(message);
+	}
 }
