@@ -7,6 +7,7 @@ import org.mesh4j.sync.message.IMessage;
 import org.mesh4j.sync.message.IMessageReceiver;
 import org.mesh4j.sync.message.InOutStatistics;
 import org.mesh4j.sync.message.channel.sms.ISmsChannel;
+import org.mesh4j.sync.message.channel.sms.ISmsConnection;
 import org.mesh4j.sync.message.channel.sms.batch.SmsMessageBatch;
 
 
@@ -96,6 +97,11 @@ public class MockSmsChannel implements ISmsChannel {
 	@Override
 	public void purgeMessages(String sessionId, int sessionVersion) {
 		// nothing to do		
+	}
+
+	@Override
+	public ISmsConnection getSmsConnection() {
+		return null;
 	}
 
 }

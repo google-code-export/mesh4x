@@ -4,16 +4,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.mesh4j.sync.IFilter;
-import org.mesh4j.sync.message.channel.sms.ISmsConnection;
-import org.mesh4j.sync.message.channel.sms.ISmsReceiver;
-import org.mesh4j.sync.message.channel.sms.SmsEndpoint;
 import org.mesh4j.sync.message.channel.sms.connection.ISmsConnectionInboundOutboundNotification;
+import org.mesh4j.sync.message.channel.sms.core.AbstractSmsConnection;
 import org.mesh4j.sync.message.channel.sms.schedule.IRefreshTask;
 import org.mesh4j.sync.message.channel.sms.schedule.RefreshSchedulerTimerTask;
-import org.mesh4j.sync.message.core.NonMessageEncoding;
 import org.mesh4j.sync.message.encoding.IMessageEncoding;
 import org.mesh4j.sync.message.schedule.timer.TimerScheduler;
 import org.mesh4j.sync.validations.MeshException;
@@ -26,10 +20,9 @@ import org.smslib.InboundMessage.MessageClasses;
 import org.smslib.modem.SerialModemGateway;
 
 
-public class SmsLibConnection implements ISmsConnection, IRefreshTask {
+public class SmsLibConnection extends AbstractSmsConnection implements IRefreshTask {
 
 	// CONSTANTS
-	private final static Log LOGGER = LogFactory.getLog(SmsLibConnection.class);
 	private final static Object SEMAPHORE = new Object();
 	
 	// MODEL VARIABLES
@@ -38,30 +31,22 @@ public class SmsLibConnection implements ISmsConnection, IRefreshTask {
 	private int baudRate;
 	private String manufacturer;
 	private String model;
-	private int maxMessageLenght = 140;
-	private IMessageEncoding messageEncoding = NonMessageEncoding.INSTANCE;
-	private ISmsReceiver messageReceiver =  null;
-	private ISmsConnectionInboundOutboundNotification smsConnectionNotification = null;
 	private int channelDelay = 1000;
-	private IFilter<String> filter = null;
 		
 	// BUSINESS METHODS
 	public SmsLibConnection(String gatewayId, String comPort, int baudRate,
 			String manufacturer, String model, int maxMessageLenght, IMessageEncoding messageEncoding, 
-			int refrehDelay, int channelDelay, 
-			ISmsConnectionInboundOutboundNotification smsConnectionNotification,
-			IFilter<String> filter) {
-		super();
+			ISmsConnectionInboundOutboundNotification[] smsAware,
+			int refrehDelay, int channelDelay) {
+		
+		super(maxMessageLenght, messageEncoding, smsAware);
+		
 		this.gatewayId = gatewayId;
 		this.comPort = comPort;
 		this.baudRate = baudRate;
 		this.manufacturer = manufacturer;
 		this.model = model;
-		this.maxMessageLenght = maxMessageLenght;
-		this.messageEncoding = messageEncoding;
-		this.smsConnectionNotification = smsConnectionNotification;
-		this.filter = filter;
-		
+	
 		if(channelDelay > 0){
 			this.channelDelay = channelDelay;
 		}
@@ -72,35 +57,9 @@ public class SmsLibConnection implements ISmsConnection, IRefreshTask {
 	}
 
 	@Override
-	public int getMaxMessageLenght() {
-		return this.maxMessageLenght;
-	}
+	protected void send(String endpointId, String message, boolean bynary) {
+		this.notifySendMessage(endpointId, message);
 
-	@Override
-	public IMessageEncoding getMessageEncoding() {
-		return this.messageEncoding;
-	}
-
-	@Override
-	public void setMessageReceiver(ISmsReceiver messageReceiver) {
-		this.messageReceiver = messageReceiver;
-	}
-
-	@Override
-	public void send(List<String> messages, SmsEndpoint endpoint) {
-		for (String smsText : messages) {
-			try{
-				this.notifySendMessage(endpoint.getEndpointId(), smsText);
-				this.sendMessage(endpoint.getEndpointId(), smsText);				
-				sleepChannelDelay();
-			} catch(MeshException e){
-				LOGGER.error(e.getMessage(), e);
-				this.notifySendMessageError(endpoint.getEndpointId(), smsText);
-			}
-		}
-	}
-
-	private void sendMessage(String smsNumber, String smsText) {
 		synchronized (SEMAPHORE) {
 			Service srv = null;
 			SerialModemGateway gateway = null;
@@ -120,10 +79,10 @@ public class SmsLibConnection implements ISmsConnection, IRefreshTask {
 				
 				// Send a message synchronously.
 				OutboundMessage msg = null;
-				if(this.messageEncoding.isBynary()){
-					msg = new OutboundBinaryMessage(smsNumber, smsText.getBytes());
+				if(bynary){
+					msg = new OutboundBinaryMessage(endpointId, message.getBytes());
 				} else {
-					msg = new OutboundMessage(smsNumber, smsText);
+					msg = new OutboundMessage(endpointId, message);
 				}
 				srv.sendMessage(msg);
 				
@@ -146,6 +105,7 @@ public class SmsLibConnection implements ISmsConnection, IRefreshTask {
 				}
 			}
 		}
+		sleepChannelDelay();
 	}
 
 	public void processReceivedMessages() {
@@ -172,34 +132,14 @@ public class SmsLibConnection implements ISmsConnection, IRefreshTask {
 
 	private void processReceivedTextMessage(String endpointId, String text, Date date, InboundMessage smsMessage) {
 		if(!(text == null || text.isEmpty())){
-			if(this.isValidMessage(text)){
+			boolean ok = this.processReceivedMessage(endpointId, text, date);
+			if(ok){
 				try{
-					this.notifyReceiveMessage(
-							endpointId, 
-							text,
-							date);
-					if(this.messageReceiver != null){
-						this.messageReceiver.receiveSms(
-							new SmsEndpoint(endpointId), 
-							text,
-							date);
-						
-						sleepChannelDelay();
-						
-						this.removeMessage(smsMessage);
-					}
-				} catch(RuntimeException re){
+					sleepChannelDelay();					
+					this.removeMessage(smsMessage);
+				} catch(Throwable re){
 					LOGGER.info(re.getMessage());
-					this.notifyReceiveMessageError(
-							endpointId, 
-							text,
-							date);
 				}
-			} else {
-				this.notifyReceiveMessageWasNotProcessed(
-					endpointId, 
-					text,
-					date);
 			}
 		}
 	}
@@ -323,60 +263,12 @@ public class SmsLibConnection implements ISmsConnection, IRefreshTask {
 		this.processReceivedMessages();
 	}
 	
-	private void notifyReceiveMessageWasNotProcessed(String endpointId, String message, Date date) {
-		if(LOGGER.isInfoEnabled()){
-			LOGGER.info("SMS - Receive msg was not processed endpoint: " + endpointId + " message: " + message );
-		}
-		if(this.smsConnectionNotification != null){
-			this.smsConnectionNotification.notifyReceiveMessageWasNotProcessed(endpointId, message, date);
-		}
-	}
-	private void notifyReceiveMessage(String endpointId, String message, Date date) {
-		if(LOGGER.isInfoEnabled()){
-			LOGGER.info("SMS - Receive msg from: " + endpointId + " message: " + message );
-		}
-		if(this.smsConnectionNotification != null){
-			this.smsConnectionNotification.notifyReceiveMessage(endpointId, message, date);
-		}
-	}
-
-	private void notifyReceiveMessageError(String endpointId, String message, Date date) {
-		if(LOGGER.isInfoEnabled()){
-			LOGGER.info("SMS - Receive msg with error from: " + endpointId + " message: " + message );
-		}
-		if(this.smsConnectionNotification != null){
-			this.smsConnectionNotification.notifyReceiveMessageError(endpointId, message, date);
-		}
-	}
-	
-	private void notifySendMessageError(String endpointId, String message) {
-		if(LOGGER.isInfoEnabled()){
-			LOGGER.info("SMS - Send msg with error to: " + endpointId + " message: " + message );
-		}
-		if(this.smsConnectionNotification != null){
-			this.smsConnectionNotification.notifySendMessageError(endpointId, message);
-		}
-	}
-
-	private void notifySendMessage(String endpointId, String message) {
-		if(LOGGER.isInfoEnabled()){
-			LOGGER.info("SMS - Send msg to: " + endpointId + " message: " + message );
-		}
-		if(this.smsConnectionNotification != null){
-			this.smsConnectionNotification.notifySendMessage(endpointId, message);
-		}
-	}
-	
 	private void sleepChannelDelay() {
 		try {
 			Thread.sleep(this.channelDelay);
 		} catch (InterruptedException e) {
 			// nothing to do
 		}
-	}
-	
-	private boolean isValidMessage(String message) {
-		return this.filter == null || this.filter.applies(message);
 	}
 	
 	@Override

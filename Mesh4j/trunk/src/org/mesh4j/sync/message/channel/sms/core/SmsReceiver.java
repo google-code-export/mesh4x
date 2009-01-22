@@ -8,14 +8,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.mesh4j.sync.message.channel.sms.ISmsBatchReceiver;
-import org.mesh4j.sync.message.channel.sms.ISmsReceiver;
+import org.mesh4j.sync.message.channel.sms.ISmsReceiverAndBatchManager;
 import org.mesh4j.sync.message.channel.sms.SmsEndpoint;
 import org.mesh4j.sync.message.channel.sms.batch.DiscardedBatchRecord;
 import org.mesh4j.sync.message.channel.sms.batch.SmsMessage;
 import org.mesh4j.sync.message.channel.sms.batch.SmsMessageBatch;
 
 
-public class SmsReceiver implements ISmsReceiver {
+public class SmsReceiver implements ISmsReceiverAndBatchManager {
 
 	private final static Object SEMAPHORE = new Object();
 	

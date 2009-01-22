@@ -17,5 +17,7 @@ public interface ISmsChannel extends IChannel, ISmsBatchReceiver{
 	List<SmsMessageBatch> getOutcommingBatches();
 
 	void resend(SmsMessageBatch outcommingBatch);
+	
+	ISmsConnection getSmsConnection();
 
 }

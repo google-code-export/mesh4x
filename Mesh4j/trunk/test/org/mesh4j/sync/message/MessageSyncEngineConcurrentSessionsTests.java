@@ -1,16 +1,19 @@
 package org.mesh4j.sync.message;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.junit.Test;
+import org.mesh4j.sync.IFilter;
 import org.mesh4j.sync.adapters.feed.XMLContent;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.message.channel.sms.ISmsConnection;
 import org.mesh4j.sync.message.channel.sms.SmsChannelFactory;
 import org.mesh4j.sync.message.channel.sms.SmsEndpoint;
+import org.mesh4j.sync.message.channel.sms.connection.ISmsConnectionInboundOutboundNotification;
 import org.mesh4j.sync.message.channel.sms.connection.InMemorySmsConnection;
 import org.mesh4j.sync.message.channel.sms.core.SmsEndpointFactory;
 import org.mesh4j.sync.message.core.InMemoryMessageSyncAdapter;
@@ -26,7 +29,7 @@ import org.mesh4j.sync.test.utils.TestHelper;
 import org.mesh4j.sync.test.utils.concurrent.command.ConcurrentCommandExecutor;
 
 
-public class MessageSyncEngineConcurrentSessionsTests implements IMessageSyncAware {
+public class MessageSyncEngineConcurrentSessionsTests implements IMessageSyncAware, ISmsConnectionInboundOutboundNotification {
 
 	private int syncSessionCount = 0;
 	
@@ -78,12 +81,21 @@ public class MessageSyncEngineConcurrentSessionsTests implements IMessageSyncAwa
 	}
 	
 	private InMemorySmsConnection createSmsConnection(SmsEndpoint endpoint){
-		InMemorySmsConnection inMemorySmsConnection = new InMemorySmsConnection(CompressBase91MessageEncoding.INSTANCE, 160, 50, endpoint);
+		InMemorySmsConnection inMemorySmsConnection = new InMemorySmsConnection(
+			CompressBase91MessageEncoding.INSTANCE, 
+			160, 
+			50, 
+			endpoint, 
+			300, 
+			new ISmsConnectionInboundOutboundNotification[]{this});
 		return inMemorySmsConnection;
 	}
 	
 	private MessageSyncEngine createSyncEngine(IMessageSyncAware syncAware, String repositoryBaseDirectory, IIdentityProvider identityProvider, ISmsConnection smsConnection, int senderDelay, int receiverDelay){
-		IChannel channel = SmsChannelFactory.createChannelWithFileRepository(smsConnection, senderDelay, receiverDelay, repositoryBaseDirectory);
+		
+		IFilter<String> protocolFilter = MessageSyncProtocolFactory.getProtocolMessageFilter();
+		
+		IChannel channel = SmsChannelFactory.createChannelWithFileRepository(smsConnection, senderDelay, receiverDelay, repositoryBaseDirectory, protocolFilter);
 		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(null, true);
 		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocolWithFileRepository(100, repositoryBaseDirectory, channel, identityProvider, new IMessageSyncAware[]{syncAware}, SmsEndpointFactory.INSTANCE, syncAdapterFactory);		
 		return new MessageSyncEngine(syncProtocol, channel);		
@@ -159,6 +171,33 @@ public class MessageSyncEngineConcurrentSessionsTests implements IMessageSyncAwa
 	@Override
 	public void notifySessionCreationError(IMessage message, String sourceId) {
 		System.out.println("Problem with session creation: " + message.getSessionId() + " source: " + sourceId);
+	}
+
+	@Override
+	public void notifyReceiveMessage(String endpointId, String message,
+			Date date) {
+		System.out.println("Receive from: " + endpointId + " message: " + message);		
+	}
+
+	@Override
+	public void notifyReceiveMessageError(String endpointId, String message,
+			Date date) {
+		System.out.println("Error - Receive from: " + endpointId + " message: " + message);		
+	}
+
+	@Override
+	public void notifySendMessage(String endpointId, String message) {
+		System.out.println("Send to: " + endpointId + " message: " + message);	
+	}
+
+	@Override
+	public void notifySendMessageError(String endpointId, String message) {
+		System.out.println("Error - Send to: " + endpointId + " message: " + message);		
+	}
+
+	@Override
+	public void notifyReceiveMessageWasNotProcessed(String endpointId, String message, Date date) {
+		System.out.println("Error - msg was not processed - Receive from: " + endpointId + " message: " + message);		
 	}
 
 }

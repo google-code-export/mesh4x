@@ -59,8 +59,8 @@ public class KmlMessageSyncEngineTests {
 		smsConnectionEndpointA.setEndPoint(smsConnectionEndpointB);
 		smsConnectionEndpointB.setEndPoint(smsConnectionEndpointA);
 		
-		IChannel channelEndpointA = SmsChannelFactory.createChannel(smsConnectionEndpointA, 5000, 5000);
-		IChannel channelEndpointB = SmsChannelFactory.createChannel(smsConnectionEndpointB, 5000, 5000);
+		IChannel channelEndpointA = SmsChannelFactory.createChannel(smsConnectionEndpointA, 5000, 5000, MessageSyncProtocolFactory.getProtocolMessageFilter());
+		IChannel channelEndpointB = SmsChannelFactory.createChannel(smsConnectionEndpointB, 5000, 5000, MessageSyncProtocolFactory.getProtocolMessageFilter());
 
 		IMessageSyncAdapter endpointA = new MockInMemoryMessageSyncAdapter(dataSetId, kmlAdapterA.getAll());
 		
@@ -205,8 +205,8 @@ public class KmlMessageSyncEngineTests {
 		smsConnectionEndpointA.setEndPoint(smsConnectionEndpointB);
 		smsConnectionEndpointB.setEndPoint(smsConnectionEndpointA);
 		
-		IChannel channelEndpointA = SmsChannelFactory.createChannel(smsConnectionEndpointA, 5000, 5000);
-		IChannel channelEndpointB = SmsChannelFactory.createChannel(smsConnectionEndpointB, 5000, 5000);
+		IChannel channelEndpointA = SmsChannelFactory.createChannel(smsConnectionEndpointA, 5000, 5000, MessageSyncProtocolFactory.getProtocolMessageFilter());
+		IChannel channelEndpointB = SmsChannelFactory.createChannel(smsConnectionEndpointB, 5000, 5000, MessageSyncProtocolFactory.getProtocolMessageFilter());
 
 		MockInMemoryMessageSyncAdapter endpointA = new MockInMemoryMessageSyncAdapter(dataSetId, kmlAdapter.getAll());
 		

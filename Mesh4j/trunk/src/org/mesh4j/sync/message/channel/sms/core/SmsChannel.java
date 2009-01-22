@@ -10,7 +10,7 @@ import org.mesh4j.sync.message.IMessageReceiver;
 import org.mesh4j.sync.message.InOutStatistics;
 import org.mesh4j.sync.message.channel.sms.ISmsChannel;
 import org.mesh4j.sync.message.channel.sms.ISmsConnection;
-import org.mesh4j.sync.message.channel.sms.ISmsReceiver;
+import org.mesh4j.sync.message.channel.sms.ISmsReceiverAndBatchManager;
 import org.mesh4j.sync.message.channel.sms.ISmsSender;
 import org.mesh4j.sync.message.channel.sms.SmsEndpoint;
 import org.mesh4j.sync.message.channel.sms.batch.MessageBatchFactory;
@@ -25,14 +25,14 @@ public class SmsChannel implements ISmsChannel {
 	
 	// MODEL VARIABLES
 	private ISmsSender sender;
-	private ISmsReceiver receiver;
+	private ISmsReceiverAndBatchManager receiver;
 	private MessageBatchFactory batchFactory;
 	private IMessageEncoding messageEncoding;	
 	private IMessageReceiver messageReceiver;
 	private ISmsConnection smsConnection;
 
 	// METHODs
-	public SmsChannel(ISmsConnection smsConnection, ISmsSender sender, ISmsReceiver receiver, IMessageEncoding messageEncoding, int maxMessageLenght) {
+	public SmsChannel(ISmsConnection smsConnection, ISmsSender sender, ISmsReceiverAndBatchManager receiver, IMessageEncoding messageEncoding, int maxMessageLenght) {
 
 		Guard.argumentNotNull(sender, "sender");
 		Guard.argumentNotNull(receiver, "receiver");
@@ -201,6 +201,7 @@ public class SmsChannel implements ISmsChannel {
 		this.sender.shutdown();
 	}
 
+	@Override
 	public ISmsConnection getSmsConnection() {
 		return this.smsConnection;
 	}

@@ -3,6 +3,7 @@ package org.mesh4j.sync.message;
 import java.util.Date;
 import java.util.List;
 
+import org.mesh4j.sync.IFilter;
 import org.mesh4j.sync.message.channel.sms.ISmsConnection;
 import org.mesh4j.sync.message.channel.sms.ISmsReceiver;
 import org.mesh4j.sync.message.channel.sms.SmsEndpoint;
@@ -34,7 +35,7 @@ public class MockSmsConnection implements ISmsConnection{
 	}
 	
 	@Override
-	public void setMessageReceiver(ISmsReceiver messageReceiver) {
+	public void registerMessageReceiver(IFilter<String> filter, ISmsReceiver messageReceiver) {
 		this.messageReceiver = messageReceiver;			
 	}
 

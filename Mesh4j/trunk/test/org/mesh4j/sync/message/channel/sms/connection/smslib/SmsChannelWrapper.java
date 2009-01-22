@@ -6,6 +6,7 @@ import org.mesh4j.sync.message.IMessage;
 import org.mesh4j.sync.message.IMessageReceiver;
 import org.mesh4j.sync.message.InOutStatistics;
 import org.mesh4j.sync.message.channel.sms.ISmsChannel;
+import org.mesh4j.sync.message.channel.sms.ISmsConnection;
 import org.mesh4j.sync.message.channel.sms.batch.SmsMessageBatch;
 import org.mesh4j.sync.message.channel.sms.core.SmsChannel;
 import org.mesh4j.sync.message.core.Message;
@@ -95,6 +96,11 @@ public class SmsChannelWrapper implements ISmsChannel {
 	@Override
 	public void purgeMessages(String sessionId, int sessionVersion) {
 		this.channel.purgeMessages(sessionId, sessionVersion);
+	}
+
+	@Override
+	public ISmsConnection getSmsConnection() {
+		return this.channel.getSmsConnection();
 	}
 
 }

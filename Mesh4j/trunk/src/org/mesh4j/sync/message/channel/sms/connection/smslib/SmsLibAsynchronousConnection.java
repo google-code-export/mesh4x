@@ -4,13 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.mesh4j.sync.IFilter;
-import org.mesh4j.sync.message.channel.sms.ISmsConnection;
-import org.mesh4j.sync.message.channel.sms.ISmsReceiver;
-import org.mesh4j.sync.message.channel.sms.SmsEndpoint;
 import org.mesh4j.sync.message.channel.sms.connection.ISmsConnectionInboundOutboundNotification;
+import org.mesh4j.sync.message.channel.sms.core.AbstractSmsConnection;
 import org.mesh4j.sync.message.core.NonMessageEncoding;
 import org.mesh4j.sync.message.encoding.IMessageEncoding;
 import org.mesh4j.sync.validations.MeshException;
@@ -26,36 +21,19 @@ import org.smslib.Message.MessageTypes;
 import org.smslib.modem.SerialModemGateway;
 
 
-public class SmsLibAsynchronousConnection implements ISmsConnection, IInboundMessageNotification, IOutboundMessageNotification {
+public class SmsLibAsynchronousConnection extends AbstractSmsConnection implements IInboundMessageNotification, IOutboundMessageNotification {
 
-	// CONSTANTS
-	private final static Log LOGGER = LogFactory.getLog(SmsLibAsynchronousConnection.class);
-	
 	// MODEL VARIABLES
-	private ISmsConnectionInboundOutboundNotification[] smsConnectionNotifications = new ISmsConnectionInboundOutboundNotification[]{};
 	private Service service;
-	private int maxMessageLenght = 140;
-	private IMessageEncoding messageEncoding = NonMessageEncoding.INSTANCE;
-	private ISmsReceiver messageReceiver = null;
-	private IFilter<String> filter = null;
 			
 	// BUSINESS METHODS
 	public SmsLibAsynchronousConnection(String gatewayId, String comPort, int baudRate, String manufacturer, String model) {
-		this(gatewayId, comPort, baudRate, manufacturer, model, 140, NonMessageEncoding.INSTANCE, null, null);
+		this(gatewayId, comPort, baudRate, manufacturer, model, 140, NonMessageEncoding.INSTANCE, null);
 	}
 	
 	public SmsLibAsynchronousConnection(String gatewayId, String comPort, int baudRate, String manufacturer, String model, 
-			int maxMessageLenght, IMessageEncoding messageEncoding, ISmsConnectionInboundOutboundNotification[] smsAware, IFilter<String> filter) {
-		super();
-
-		if(smsAware != null){
-			this.smsConnectionNotifications = smsAware;
-		}
-		
-		this.maxMessageLenght = maxMessageLenght;
-		this.messageEncoding = messageEncoding;
-		this.filter = filter;
-		
+			int maxMessageLenght, IMessageEncoding messageEncoding, ISmsConnectionInboundOutboundNotification[] smsAware) {
+		super(maxMessageLenght, messageEncoding, smsAware);
 		initialize(gatewayId, comPort, baudRate, manufacturer, model);
 	}
 
@@ -93,102 +71,15 @@ public class SmsLibAsynchronousConnection implements ISmsConnection, IInboundMes
 		}
 	}
 	
+	@Override
 	public void send(String smsNumber, String message, boolean isBinary) {
-		try{
-			OutboundMessage msg = null;
-			if(isBinary){
-				msg = new OutboundBinaryMessage(smsNumber, message.getBytes());
-			} else {
-				msg = new OutboundMessage(smsNumber, message);
-			}
-			this.service.queueMessage(msg);
-		} catch (Exception e) {
-			this.notifySendMessageError(smsNumber, message);
-			throw new MeshException(e);
-		}
-	}
-
-	private boolean isValidMessage(String message) {
-		return this.filter == null || this.filter.applies(message);
-	}
-	
-	private boolean notifyReceiveMessage(String endpointId, String message, Date date) {
-		if(LOGGER.isInfoEnabled()){
-			LOGGER.info("SMS - Receive msg from: " + endpointId + " message: " + message );
-		}
-
-		if(this.messageReceiver != null){
-			if(this.isValidMessage(message)){
-				
-				for (ISmsConnectionInboundOutboundNotification smsConnectionNotification : this.smsConnectionNotifications) {
-					try{
-						smsConnectionNotification.notifyReceiveMessage(endpointId, message, date);
-					} catch (Throwable e) {
-						LOGGER.error(e.getMessage(), e);
-					}
-				}
-				
-				this.messageReceiver.receiveSms(new SmsEndpoint(endpointId), message, date);
-				return true;
-			} else {
-				for (ISmsConnectionInboundOutboundNotification smsConnectionNotification : this.smsConnectionNotifications) {
-					try{
-						smsConnectionNotification.notifyReceiveMessageWasNotProcessed(endpointId, message, date);
-					} catch (Throwable e) {
-						LOGGER.error(e.getMessage(), e);
-					}
-				}		
-				return false;
-			}
+		OutboundMessage msg = null;
+		if(isBinary){
+			msg = new OutboundBinaryMessage(smsNumber, message.getBytes());
 		} else {
-			for (ISmsConnectionInboundOutboundNotification smsConnectionNotification : this.smsConnectionNotifications) {
-				try{
-					smsConnectionNotification.notifyReceiveMessageWasNotProcessed(endpointId, message, date);
-				} catch (Throwable e) {
-					LOGGER.error(e.getMessage(), e);
-				}
-			}		
-			return false;
+			msg = new OutboundMessage(smsNumber, message);
 		}
-	}
-
-	private void notifyReceiveMessageError(String endpointId, String message, Date date) {
-		if(LOGGER.isInfoEnabled()){
-			LOGGER.info("SMS - Receive msg with error from: " + endpointId + " message: " + message );
-		}
-		for (ISmsConnectionInboundOutboundNotification smsConnectionNotification : this.smsConnectionNotifications) {
-			try{
-				smsConnectionNotification.notifyReceiveMessageError(endpointId, message, date);
-			} catch (Throwable e) {
-				LOGGER.error(e.getMessage(), e);
-			}
-		}		
-	}
-	
-	private void notifySendMessageError(String endpointId, String message) {
-		if(LOGGER.isInfoEnabled()){
-			LOGGER.info("SMS - Send msg with error to: " + endpointId + " message: " + message );
-		}
-		for (ISmsConnectionInboundOutboundNotification smsConnectionNotification : this.smsConnectionNotifications) {
-			try{
-				smsConnectionNotification.notifySendMessageError(endpointId, message);
-			} catch (Throwable e) {
-				LOGGER.error(e.getMessage(), e);
-			}
-		}		
-	}
-
-	private void notifySendMessage(String endpointId, String message) {
-		if(LOGGER.isInfoEnabled()){
-			LOGGER.info("SMS - Send msg to: " + endpointId + " message: " + message );
-		}
-		for (ISmsConnectionInboundOutboundNotification smsConnectionNotification : this.smsConnectionNotifications) {
-			try{
-				smsConnectionNotification.notifySendMessage(endpointId, message);
-			} catch (Throwable e) {
-				LOGGER.error(e.getMessage(), e);
-			}
-		}		
+		this.service.queueMessage(msg);
 	}
 
 	@Override
@@ -209,20 +100,13 @@ public class SmsLibAsynchronousConnection implements ISmsConnection, IInboundMes
 	
 	private void processMessage(String endpointId, String text, Date date, InboundMessage smsMessage) {
 		if(!(text == null || text.isEmpty())){
-			try{
-				boolean ok = this.notifyReceiveMessage(
-						endpointId, 
-						text,
-						date);
-				if(ok){
+			boolean ok = this.processReceivedMessage(endpointId, text, date);
+			if(ok){
+				try{
 					this.service.deleteMessage(smsMessage);
+				} catch(Throwable re){
+					LOGGER.info(re.getMessage());
 				}
-			} catch(Throwable re){
-				LOGGER.info(re.getMessage());
-				this.notifyReceiveMessageError(
-						endpointId, 
-						text,
-						date);
 			}
 		}
 	}
@@ -237,28 +121,6 @@ public class SmsLibAsynchronousConnection implements ISmsConnection, IInboundMes
 		} else {
 			this.notifySendMessage(msg.getRecipient(), msg.getText());
 		}	
-	}
-
-	@Override
-	public int getMaxMessageLenght() {
-		return this.maxMessageLenght;
-	}
-
-	@Override
-	public IMessageEncoding getMessageEncoding() {
-		return messageEncoding;
-	}
-
-	@Override
-	public void setMessageReceiver(ISmsReceiver messageReceiver) {
-		this.messageReceiver = messageReceiver;
-	}
-
-	@Override
-	public void send(List<String> messages, SmsEndpoint endpoint) {
-		for (String message : messages) {
-			this.send(endpoint.getEndpointId(), message, this.messageEncoding.isBynary());
-		}		
 	}
 
 	public void readAll() {

@@ -2,6 +2,7 @@ package org.mesh4j.sync.message.protocol;
 
 import java.util.ArrayList;
 
+import org.mesh4j.sync.IFilter;
 import org.mesh4j.sync.message.IChannel;
 import org.mesh4j.sync.message.IMessageSyncAware;
 import org.mesh4j.sync.message.IMessageSyncProtocol;
@@ -70,6 +71,17 @@ public class MessageSyncProtocolFactory {
 		SyncSessionFactory syncSessionFactory = new SyncSessionFactory(endpointFactory, syncAdapterFactory, repositoryBaseDirectory, identityProvider);
 		ISyncSessionRepository repo = new FileSyncSessionRepository(repositoryBaseDirectory, syncSessionFactory);
 		return createSyncProtocol(diffBlockSize, repo, channel, syncAware);
+	}
+
+	private final static IFilter<String> PROTOCOL_FILTER = new IFilter<String>(){
+		@Override
+		public boolean applies(String message) {  // Accept only protocol messages
+			return message != null && message.length() > 0 && message.startsWith(IProtocolConstants.PROTOCOL);
+		}
+	};
+	
+	public static IFilter<String> getProtocolMessageFilter() {
+		return PROTOCOL_FILTER;
 	}
 
 }

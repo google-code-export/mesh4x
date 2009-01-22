@@ -12,6 +12,7 @@ import org.mesh4j.sync.message.channel.sms.connection.ISmsConnectionInboundOutbo
 import org.mesh4j.sync.message.channel.sms.core.MessageFormatter;
 import org.mesh4j.sync.message.channel.sms.core.SmsReceiver;
 import org.mesh4j.sync.message.encoding.CompressBase64MessageEncoding;
+import org.mesh4j.sync.message.protocol.MessageSyncProtocolFactory;
 
 
 public class SmsLibConnectionOnLineTests implements ISmsConnectionInboundOutboundNotification, ISmsBatchReceiver {
@@ -47,7 +48,7 @@ public class SmsLibConnectionOnLineTests implements ISmsConnectionInboundOutboun
 		Modem modem = ModemHelper.getModem("COM23", 115200);
 		
 		SmsLibAsynchronousConnection client = new SmsLibAsynchronousConnection("mesh4j.sync", modem.getComPort(), modem.getBaudRate(), modem.getManufacturer(), modem.getModel());
-		client.setMessageReceiver(messageReceiver);
+		client.registerMessageReceiver(MessageSyncProtocolFactory.getProtocolMessageFilter(), messageReceiver);
 		client.startUp();
 		
 		//client.sendMessage("01136544867", "nokia 950"); +541136544867

@@ -5,14 +5,14 @@ import java.util.Date;
 import java.util.List;
 
 import org.mesh4j.sync.message.channel.sms.ISmsBatchReceiver;
-import org.mesh4j.sync.message.channel.sms.ISmsReceiver;
+import org.mesh4j.sync.message.channel.sms.ISmsReceiverAndBatchManager;
 import org.mesh4j.sync.message.channel.sms.SmsEndpoint;
 import org.mesh4j.sync.message.channel.sms.batch.DiscardedBatchRecord;
 import org.mesh4j.sync.message.channel.sms.batch.SmsMessage;
 import org.mesh4j.sync.message.channel.sms.batch.SmsMessageBatch;
 
 
-public class MockSmsReceiver implements ISmsReceiver {
+public class MockSmsReceiver implements ISmsReceiverAndBatchManager {
 
 	private List<SmsMessageBatch> batches = new ArrayList<SmsMessageBatch>();
 	private List<SmsMessage> messages = new ArrayList<SmsMessage>();

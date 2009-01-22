@@ -62,7 +62,7 @@ public class SmsSenderTests {
 		MockSmsConnection connA = new MockSmsConnection("sms:154022344", new MockMessageEncoding());
 		
 		MockSmsConnection connB = new MockSmsConnection("sms:330083232", new MockMessageEncoding());
-		connB.setMessageReceiver(smsReceiver);
+		connB.registerMessageReceiver(null, smsReceiver);
 		
 		connA.setEndPoint(connB);
 		
@@ -191,7 +191,7 @@ public class SmsSenderTests {
 		MockSmsConnection connA = new MockSmsConnection("sms:154022344", new MockMessageEncoding());
 		
 		MockSmsConnection connB = new MockSmsConnection("sms:330083232", new MockMessageEncoding());
-		connB.setMessageReceiver(smsReceiver);
+		connB.registerMessageReceiver(null, smsReceiver);
 		
 		connA.setEndPoint(connB);
 		

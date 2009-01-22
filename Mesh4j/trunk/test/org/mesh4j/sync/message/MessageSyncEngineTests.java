@@ -69,11 +69,11 @@ public class MessageSyncEngineTests {
 		
 		//FileSmsChannelRepository fileRepoA = new FileSmsChannelRepository("c:\\");
 		//channelEndpointA = SmsChannelFactory.createChannel(smsConnectionEndpointA, channelASenderCheckDelay, channelAReceiveCheckDelay, fileRepoA, fileRepoA);
-		channelEndpointA = SmsChannelFactory.createChannel(smsConnectionEndpointA, channelASenderCheckDelay, channelAReceiveCheckDelay);
+		channelEndpointA = SmsChannelFactory.createChannel(smsConnectionEndpointA, channelASenderCheckDelay, channelAReceiveCheckDelay, MessageSyncProtocolFactory.getProtocolMessageFilter());
 		
 		//FileSmsChannelRepository fileRepoB = new FileSmsChannelRepository("d:\\");
 		//channelEndpointB = SmsChannelFactory.createChannel(smsConnectionEndpointB, channelBSenderCheckDelay, channelBReceiveCheckDelay, fileRepoB, fileRepoB);
-		channelEndpointB = SmsChannelFactory.createChannel(smsConnectionEndpointB, channelBSenderCheckDelay, channelBReceiveCheckDelay);
+		channelEndpointB = SmsChannelFactory.createChannel(smsConnectionEndpointB, channelBSenderCheckDelay, channelBReceiveCheckDelay, MessageSyncProtocolFactory.getProtocolMessageFilter());
 		
 		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(null, true);
 		SyncSessionFactory syncSessionFactoryA = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);

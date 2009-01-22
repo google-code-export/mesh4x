@@ -6,6 +6,7 @@ import java.util.List;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.junit.Assert;
+import org.mesh4j.sync.IFilter;
 import org.mesh4j.sync.adapters.dom.DOMAdapter;
 import org.mesh4j.sync.adapters.feed.XMLContent;
 import org.mesh4j.sync.adapters.kml.KMLDOMLoaderFactory;
@@ -69,7 +70,7 @@ public class SmsLibTests {
 		List<Item> items = createItems(1);						
 				
 		IMessageSyncAdapter adapterA = new InMemoryMessageSyncAdapter(sourceId, items);
-		SmsLibConnection smsConnectionA = new SmsLibConnection("nokia", "COM18", 115200, "Nokia", "6070", 140, CompressBase91MessageEncoding.INSTANCE, 1000, 60000, null, null);
+		SmsLibConnection smsConnectionA = new SmsLibConnection("nokia", "COM18", 115200, "Nokia", "6070", 140, CompressBase91MessageEncoding.INSTANCE, null, 1000, 60000);
 		MessageSyncEngine syncEngineEndPointA = createSyncSmsEndpoint("nokia", adapterA, smsConnectionA, 0);
 
 		SmsEndpoint targetB = new SmsEndpoint("01136544867");
@@ -92,7 +93,7 @@ public class SmsLibTests {
 		String sourceId = "12345";
 				
 		IMessageSyncAdapter adapterB = new InMemoryMessageSyncAdapter(sourceId, new ArrayList<Item>());
-		SmsLibConnection smsConnectionB = new SmsLibConnection("sonyEricsson", "COM23", 115200, "Sony Ericsson", "FAD-3022013-BV", 140, CompressBase91MessageEncoding.INSTANCE, 1000, 60000, null, null);
+		SmsLibConnection smsConnectionB = new SmsLibConnection("sonyEricsson", "COM23", 115200, "Sony Ericsson", "FAD-3022013-BV", 140, CompressBase91MessageEncoding.INSTANCE, null, 1000, 60000);
 		SmsEndpoint targetA = new SmsEndpoint("01136540460");
 		MessageSyncEngine syncEngineEndPointB = createSyncSmsEndpoint("sonyEricsson", adapterB, smsConnectionB, 0);
 		
@@ -110,14 +111,14 @@ public class SmsLibTests {
 		List<Item> items = createItems(1);						
 				
 		IMessageSyncAdapter adapterA = new InMemoryMessageSyncAdapter(sourceId, items);
-		SmsLibConnection smsConnectionA = new SmsLibConnection("sonyEricsson", "COM23", 115200, "Sony Ericsson", "FAD-3022013-BV", 140, CompressBase91MessageEncoding.INSTANCE, 1000, 0, null, null);
+		SmsLibConnection smsConnectionA = new SmsLibConnection("sonyEricsson", "COM23", 115200, "Sony Ericsson", "FAD-3022013-BV", 140, CompressBase91MessageEncoding.INSTANCE, null, 1000, 0);
 		SmsEndpoint targetA = new SmsEndpoint("01136544867");
 		//MockSmsRefreshConnection smsConnectionA = new MockSmsRefreshConnection(MockMessageEncoding.INSTANCE, 160, 100); 
 		//SmsEndpoint targetA = new SmsEndpoint("A");
 		MessageSyncEngine syncEngineEndPointA = createSyncSmsEndpoint("sonyEricsson", adapterA, smsConnectionA, 0);
 
 		IMessageSyncAdapter adapterB = new InMemoryMessageSyncAdapter(sourceId, new ArrayList<Item>());
-		SmsLibConnection smsConnectionB = new SmsLibConnection("nokia", "COM28", 115200, "Nokia", "6070", 140, CompressBase91MessageEncoding.INSTANCE, 1000, 5000, null, null);
+		SmsLibConnection smsConnectionB = new SmsLibConnection("nokia", "COM28", 115200, "Nokia", "6070", 140, CompressBase91MessageEncoding.INSTANCE, null, 1000, 5000);
 		SmsEndpoint targetB = new SmsEndpoint("01136540460");
 		//MockSmsRefreshConnection smsConnectionB = new MockSmsRefreshConnection(MockMessageEncoding.INSTANCE, 160, 100);
 		//SmsEndpoint targetB = new SmsEndpoint("B");
@@ -199,8 +200,10 @@ public class SmsLibTests {
 	}
 	
 	private MessageSyncEngine createSyncSmsEndpoint(String gatewayId, IMessageSyncAdapter adapter, ISmsConnection smsConnection, int delay){
+		IFilter<String> protocolFilter = MessageSyncProtocolFactory.getProtocolMessageFilter();
+		
 		FileSmsChannelRepository channelRepo = new FileSmsChannelRepository(TestHelper.baseDirectoryForTest()+gatewayId+"\\");
-		SmsChannelWrapper channel = new SmsChannelWrapper((SmsChannel) SmsChannelFactory.createChannel(smsConnection, delay, delay, channelRepo, channelRepo));
+		SmsChannelWrapper channel = new SmsChannelWrapper((SmsChannel) SmsChannelFactory.createChannel(smsConnection, delay, delay, channelRepo, channelRepo, protocolFilter));
 		
 		KMLDOMLoaderFactory kmlFactory = new KMLDOMLoaderFactory(TestHelper.baseDirectoryForTest()+gatewayId+"\\");
 		OpaqueFeedSyncAdapterFactory feedFactory = new OpaqueFeedSyncAdapterFactory(TestHelper.baseDirectoryForTest()+gatewayId+"\\");
@@ -218,14 +221,16 @@ public class SmsLibTests {
 
 	//@Test
 	public void shouldReadMeshMessages() throws InterruptedException{
+		IFilter<String> protocolFilter = MessageSyncProtocolFactory.getProtocolMessageFilter();
+		
 		SmsReceiver messageReceiver = new SmsReceiver();		
-		SmsLibConnection smsConnection = new SmsLibConnection("modem.com23", "COM23", 115200, "Sony Ericsson", "FAD-3022013-BV", 140, CompressBase91MessageEncoding.INSTANCE,1000,  0, null, null);
-		smsConnection.setMessageReceiver(messageReceiver);
+		SmsLibConnection smsConnection = new SmsLibConnection("modem.com23", "COM23", 115200, "Sony Ericsson", "FAD-3022013-BV", 140, CompressBase91MessageEncoding.INSTANCE, null, 1000, 0);
+		smsConnection.registerMessageReceiver(protocolFilter, messageReceiver);
 		smsConnection.processReceivedMessages();
 		
 		SmsReceiver messageReceiverB = new SmsReceiver();		
-		SmsLibConnection smsConnectionB = new SmsLibConnection("modem.com18", "COM18", 115200, "Nokia", "6070", 140, CompressBase91MessageEncoding.INSTANCE, 1000, 0, null, null);
-		smsConnectionB.setMessageReceiver(messageReceiverB);
+		SmsLibConnection smsConnectionB = new SmsLibConnection("modem.com18", "COM18", 115200, "Nokia", "6070", 140, CompressBase91MessageEncoding.INSTANCE, null, 1000, 0);
+		smsConnectionB.registerMessageReceiver(protocolFilter, messageReceiverB);
 		smsConnectionB.processReceivedMessages();
 
 	}

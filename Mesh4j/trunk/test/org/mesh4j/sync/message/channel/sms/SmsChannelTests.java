@@ -190,7 +190,7 @@ public class SmsChannelTests {
 	@Test
 	public void shouldPurgeBatches(){
 		
-		ISmsReceiver receiver = new ISmsReceiver(){
+		ISmsReceiverAndBatchManager receiver = new ISmsReceiverAndBatchManager(){
 			@Override public void purgeBatches(String sessionId, int sessionVersion) {PURGE_RECEIVER_WAS_CALLED = true;}
 			@Override public List<SmsMessageBatch> getCompletedBatches(String sessionId, int version) {Assert.fail();return null;}
 			@Override public List<SmsMessageBatch> getOngoingBatches(String sessionId, int version) {Assert.fail(); return null;}
@@ -236,7 +236,7 @@ public class SmsChannelTests {
 	@Test
 	public void shouldGetInOutStatistics(){
 		
-		ISmsReceiver receiver = new ISmsReceiver(){
+		ISmsReceiverAndBatchManager receiver = new ISmsReceiverAndBatchManager(){
 
 			@Override public List<SmsMessageBatch> getCompletedBatches(String sessionId, int version) {
 				ArrayList<SmsMessageBatch> result = new ArrayList<SmsMessageBatch>();
