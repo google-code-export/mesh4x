@@ -91,7 +91,7 @@ public class FileWatcherSmsConnection implements ISmsConnection {
 	public void startUp() {
 		this.messageRepository.open();
 		
-		int period = 30000;		
+		int period = 1000;		
 		TimerTask task = new TimerTask(){
 			@Override
 			public void run() {
