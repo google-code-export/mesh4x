@@ -65,8 +65,8 @@ public class EpiInfoIconManager {
 		return SwingResourceManager.getIcon(EpiinfoCompactUI.class, "/error.png");
 	}
 	
-	public static Icon getStatusInProcessIcon() {
-		return SwingResourceManager.getIcon(EpiinfoUI.class, "/inProcess.gif");
+	public static Icon getStatusInProgressIcon() {
+		return SwingResourceManager.getIcon(EpiinfoUI.class, "/inProgress.gif");
 	}
 	
 	public static Icon getStatusOkIcon() {

@@ -114,7 +114,6 @@ public class EpiinfoUI{
 	
 	private Modem modem = null;
 	private MessageSyncEngine syncEngine;
-	private boolean emulate = false;
 	private boolean syncInProcess = false;
 	private int channel = SYNCHRONIZE_HTTP;
 	
@@ -136,6 +135,8 @@ public class EpiinfoUI{
 	private String kmlTemplateNetworkLinkFileName;
 	private String geoCoderKey;
 	private boolean discoveryModems = false;
+	private String inDir = "";
+	private String outDir = "";
 	
 	// BUSINESS METHODS
 	
@@ -190,6 +191,8 @@ public class EpiinfoUI{
 		this.kmlTemplateNetworkLinkFileName = propertiesProvider.getDefaultKMLTemplateNetworkLinkFileName();
 		this.geoCoderKey = propertiesProvider.getGeoCoderKey();
 		this.sourceIdResolver = new EpiinfoSourceIdResolver(this.baseDirectory+ "/myDataSources.properties");
+		this.inDir = propertiesProvider.getString("emulate.sync.file.connection.in");
+		this.outDir = propertiesProvider.getString("emulate.sync.file.connection.out");
 	}
 	
 	protected void startUpSyncEngine() throws Exception {
@@ -213,9 +216,9 @@ public class EpiinfoUI{
 					new SmsEndpoint(EpiInfoUITranslator.getLabelDemo()),
 					new ISmsConnectionInboundOutboundNotification[]{consoleNotification}, 
 					new IMessageSyncAware[]{consoleNotification}, 
-					false,
-					true);
-			this.emulate = true;
+					false, 
+					inDir,
+					outDir);
 		}
 	}
 
@@ -724,11 +727,6 @@ public class EpiinfoUI{
         			syncInProcess = true;
         			buttonCancel.setEnabled(true);
 
-	    			if(emulate){	    				
-	    				SyncEngineUtil.registerNewEndpointToEmulator(syncEngine, textFieldPhoneNumber.getText(), messageEncoding, 
-	    					identityProvider, baseDirectory, senderDelay, receiverDelay, readDelay, channelDelay, maxMessageLenght, false);
-	    			}
-	    			
 	    			String sourceAlias = sourceIdResolver.getSourceName(dataSource, tableName);
 					SyncEngineUtil.synchronize(
 						syncEngine, 
@@ -743,7 +741,6 @@ public class EpiinfoUI{
 	    			syncInProcess = false;
 	    			consoleNotification.setErrorImageStatus();
 	    			consoleNotification.logError(t, EpiInfoUITranslator.getLabelFailed());
-//	    			consoleNotification.logStatus(EpiInfoUITranslator.getLabelFailed());
 	    		}
     		} 
 

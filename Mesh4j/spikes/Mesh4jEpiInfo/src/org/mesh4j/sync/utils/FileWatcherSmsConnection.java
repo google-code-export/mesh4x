@@ -28,12 +28,12 @@ public class FileWatcherSmsConnection implements ISmsConnection {
 	
 	// BUSINESS METHODS
 	
-	public FileWatcherSmsConnection(String baseDirectory, IMessageEncoding encoding, int maxMessageLenght, ISmsConnectionInboundOutboundNotification[] smsAware) {
+	public FileWatcherSmsConnection(String inDir, String outDir, IMessageEncoding encoding, int maxMessageLenght, ISmsConnectionInboundOutboundNotification[] smsAware) {
 		super();
 		this.messageEncoding = encoding;
 		this.maxMessageLenght = maxMessageLenght;
 		
-		this.messageRepository = new FileMessageRepository(baseDirectory+"in/", baseDirectory+"out/");
+		this.messageRepository = new FileMessageRepository(inDir, outDir);
 	}
 
 	@Override
