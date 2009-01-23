@@ -6,6 +6,7 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 import org.mesh4j.sync.message.channel.sms.SmsEndpoint;
+import org.mesh4j.sync.test.utils.TestHelper;
 
 
 public class SyncSessionTests {
@@ -31,8 +32,9 @@ public class SyncSessionTests {
 		new SyncSession("a", 0, new InMemoryMessageSyncAdapter("123"), null, true, true, true);
 	}
 	
+	@Test
 	public void shouldBeginSyncInitializeInOutStatistics(){
-		SyncSession syncSession = new SyncSession("a", 0, new InMemoryMessageSyncAdapter("123"), null, true, true, true);
+		SyncSession syncSession = new SyncSession("a", 0, new InMemoryMessageSyncAdapter("123"), new SmsEndpoint("123"), true, true, true);
 		Assert.assertEquals(0, syncSession.getLastNumberInMessages());
 		Assert.assertEquals(0, syncSession.getLastNumberOutMessages());
 		
@@ -59,9 +61,10 @@ public class SyncSessionTests {
 		Assert.assertEquals(0, syncSession.getLastNumberOutMessages());
 
 	}
-	
+
+	@Test
 	public void shouldEndSyncSetInOutStatistics(){
-		SyncSession syncSession = new SyncSession("a", 0, new InMemoryMessageSyncAdapter("123"), null, true, true, true);
+		SyncSession syncSession = new SyncSession("a", 0, new InMemoryMessageSyncAdapter("123"), new SmsEndpoint("123"), true, true, true);
 		Assert.assertEquals(0, syncSession.getLastNumberInMessages());
 		Assert.assertEquals(0, syncSession.getLastNumberOutMessages());
 		
@@ -70,6 +73,67 @@ public class SyncSessionTests {
 		Assert.assertEquals(7, syncSession.getLastNumberInMessages());
 		Assert.assertEquals(8, syncSession.getLastNumberOutMessages());
 
+	}
+	
+	@Test
+	public void shouldBeginSyncInitializeStartAndEndDate(){
+		SyncSession syncSession = new SyncSession("a", 0, new InMemoryMessageSyncAdapter("123"), new SmsEndpoint("123"), true, true, true);
+		
+		Assert.assertNull(syncSession.getStartDate());
+		Assert.assertNull(syncSession.getEndDate());
+		
+		syncSession.beginSync(true, true, true);
+		
+		Assert.assertNotNull(syncSession.getStartDate());
+		Assert.assertNull(syncSession.getEndDate());
+		
+		Date startDate = TestHelper.makeDate(2008, 1, 1, 10, 20, 30, 0);
+		syncSession.setStartDate(startDate);
+		syncSession.setEndDate(new Date());
+		
+		syncSession.beginSync(true, true, true);
+
+		Assert.assertNotNull(syncSession.getStartDate());
+		Assert.assertFalse(startDate.equals(syncSession.getStartDate()));
+		Assert.assertNull(syncSession.getEndDate());
+	}
+
+	@Test
+	public void shouldEndSyncSetEndDate(){
+		SyncSession syncSession = new SyncSession("a", 0, new InMemoryMessageSyncAdapter("123"), new SmsEndpoint("123"), true, true, true);
+		Assert.assertNull(syncSession.getEndDate());
+
+		Date startDate = TestHelper.makeDate(2008, 1, 1, 10, 20, 30, 0);
+		syncSession.setStartDate(startDate);
+
+		Assert.assertNotNull(syncSession.getStartDate());
+		Assert.assertNull(syncSession.getEndDate());
+		
+		syncSession.endSync(new Date(), 7, 8);
+		
+		Assert.assertNotNull(syncSession.getStartDate());
+		Assert.assertEquals(startDate, syncSession.getStartDate());	
+		Assert.assertNotNull(syncSession.getEndDate());
+		Assert.assertTrue(syncSession.getStartDate().before(syncSession.getEndDate()));
+	}
+	
+	@Test
+	public void shouldCancelSyncSetEndDate(){
+		SyncSession syncSession = new SyncSession("a", 0, new InMemoryMessageSyncAdapter("123"), new SmsEndpoint("123"), true, true, true);
+		Assert.assertNull(syncSession.getEndDate());
+
+		Date startDate = TestHelper.makeDate(2008, 1, 1, 10, 20, 30, 0);
+		syncSession.setStartDate(startDate);
+
+		Assert.assertNotNull(syncSession.getStartDate());
+		Assert.assertNull(syncSession.getEndDate());
+		
+		syncSession.cancelSync();
+		
+		Assert.assertNotNull(syncSession.getStartDate());
+		Assert.assertEquals(startDate, syncSession.getStartDate());	
+		Assert.assertNotNull(syncSession.getEndDate());
+		Assert.assertTrue(syncSession.getStartDate().before(syncSession.getEndDate()));
 	}
 	
 }

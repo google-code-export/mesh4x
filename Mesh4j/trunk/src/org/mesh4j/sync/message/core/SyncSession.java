@@ -23,6 +23,8 @@ public class SyncSession implements ISyncSession{
 	private IMessageSyncAdapter syncAdapter;
 	private IEndpoint target;
 	private Date lastSyncDate;
+	private Date startDate;
+	private Date endDate;
 	private int lastNumberInMessages = 0;
 	private int lastNumberOutMessages = 0;	
 	private boolean open = false;
@@ -200,6 +202,9 @@ public class SyncSession implements ISyncSession{
 		
 		this.lastNumberInMessages = 0;
 		this.lastNumberOutMessages = 0;
+		
+		this.startDate = new Date();
+		this.endDate = null;
 	}
 
 	@Override
@@ -212,7 +217,7 @@ public class SyncSession implements ISyncSession{
 		this.cancelled = false;
 		
 		this.snapshot = new ArrayList<Item>(this.cache.values());
-
+		this.endDate = new Date();
 	}
 	
 	@Override
@@ -232,6 +237,8 @@ public class SyncSession implements ISyncSession{
 		this.targetNumberOfUpdatedItems = 0;
 		
 		this.broken = false;
+		
+		this.endDate = new Date();
 	}
 	
 	@Override
@@ -410,6 +417,22 @@ public class SyncSession implements ISyncSession{
 	}
 	public void setLastNumberOutMessages(int out) {
 		this.lastNumberOutMessages = out;
+	}
+
+	@Override
+	public Date getEndDate() {
+		return this.endDate;
+	}
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;		
+	}
+	
+	@Override
+	public Date getStartDate() {
+		return this.startDate;
+	}
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;		
 	}
 }
 

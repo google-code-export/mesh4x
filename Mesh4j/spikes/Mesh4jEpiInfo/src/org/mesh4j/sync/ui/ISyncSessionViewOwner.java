@@ -6,7 +6,7 @@ public interface ISyncSessionViewOwner {
 
 	void notifyEndCancelSync();
 
-	void notifyNewSync();
+	void notifyNewSync(boolean isSyncSessioninView);
 
 	void notifyBeginSync();
 

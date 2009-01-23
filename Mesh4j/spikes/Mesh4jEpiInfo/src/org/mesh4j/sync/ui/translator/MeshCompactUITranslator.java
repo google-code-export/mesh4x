@@ -1,5 +1,8 @@
 package org.mesh4j.sync.ui.translator;
 
+import java.text.DateFormat;
+import java.util.Date;
+
 import org.mesh4j.sync.message.IEndpoint;
 import org.mesh4j.sync.translator.MessageTranslator;
 
@@ -49,14 +52,6 @@ public class MeshCompactUITranslator {
 		return MessageTranslator.translate("MESH_COMPACT_LOG_WINDOW_TOOLTIP_CLOSE");
 	}
 
-	public static String getMessageSyncFailed() {
-		return MessageTranslator.translate("MESH_COMPACT_MESSAGE_SYNC_FAILED");
-	}
-
-	public static String getMessageSyncSuccessfully() {
-		return MessageTranslator.translate("MESH_COMPACT_MESSAGE_SYNC_SUCCESS");
-	}
-
 	public static String getLabelSync() {
 		return MessageTranslator.translate("MESH_COMPACT_LABEL_SYNC");
 	}
@@ -81,18 +76,10 @@ public class MeshCompactUITranslator {
 		return MessageTranslator.translate("MESH_COMPACT_LABEL_OUT", i);
 	}
 
-	public static String getMessageSyncStarted(String date) {
-		return MessageTranslator.translate("MESH_COMPACT_MESSAGE_SYNC_STARTED", date);
-	}
-
 	public static String getLabelCancelSync() {
 		return MessageTranslator.translate("MESH_COMPACT_LABEL_CANCEL_SYNC");
 	}
-
-	public static String getMessageCancelSyncSuccessfully() {
-		return MessageTranslator.translate("MESH_COMPACT_MESSAGE_CANCEL_SYNC_SUCCESSFULLY");
-	}
-
+	
 	public static String getMessageStartUpError() {
 		return MessageTranslator.translate("MESH_COMPACT_MESSAGE_START_UP_ERROR");
 	}
@@ -107,6 +94,33 @@ public class MeshCompactUITranslator {
 
 	public static String getMessagePhoneIsCompatible() {
 		return MessageTranslator.translate("MESH_COMPACT_MESSAGE_PHONE_IS_COMPATIBLE");
+	}
+	
+	public static String getMessageSyncStarted(Date startDate, Date endDate, Date lastSyncDate, DateFormat format) {
+		String date = format.format(startDate);
+		return MessageTranslator.translate("MESH_COMPACT_MESSAGE_SYNC_STARTED", date);
+	}
+
+	public static String getMessageSyncFailed(Date startDate, Date endDate, Date lastSyncDate, DateFormat format) {
+		String dateStart = format.format(startDate);
+		
+		String dateEnd = "?";
+		if(endDate != null){
+			dateEnd = format.format(endDate);
+		}
+		return MessageTranslator.translate("MESH_COMPACT_MESSAGE_SYNC_FAILED", dateStart, dateEnd);
+	}
+
+	public static String getMessageSyncSuccessfully(Date startDate, Date endDate, Date lastSyncDate, DateFormat format) {
+		String dateStart = format.format(startDate);
+		String dateEnd = format.format(endDate);
+		return MessageTranslator.translate("MESH_COMPACT_MESSAGE_SYNC_SUCCESS", dateStart, dateEnd);
+	}
+	
+	public static String getMessageCancelSyncSuccessfully(Date startDate, Date endDate, Date lastSyncDate, DateFormat format) {
+		String dateStart = format.format(startDate);
+		String dateEnd = format.format(endDate);
+		return MessageTranslator.translate("MESH_COMPACT_MESSAGE_CANCEL_SYNC_SUCCESSFULLY", dateStart, dateEnd);
 	}
 
 	public static String getMessageProcessingReadyToSync(String endpoint, String dataSource) {
@@ -410,12 +424,12 @@ public class MeshCompactUITranslator {
 		return MessageTranslator.translate("MESH_COMPACT_MESSAGE_NOTIFY_SEND_MSG_ERROR", endpointId, message);
 	}
 	
-	public static String getSyncSessionWindowLabelSync() {
-		return MessageTranslator.translate("MESH_COMPACT_SYNC_SESSION_LABEL_SYNC");
+	public static String getSyncSessionWindowLabelChooseSync() {
+		return MessageTranslator.translate("MESH_COMPACT_SYNC_SESSION_LABEL_CHOOSE_SYNC");
 	}
 	
-	public static String getSyncSessionWindowToolTipSync() {
-		return MessageTranslator.translate("MESH_COMPACT_SYNC_SESSION_TOOLTIP_SYNC");
+	public static String getSyncSessionWindowToolTipChooseSync() {
+		return MessageTranslator.translate("MESH_COMPACT_SYNC_SESSION_TOOLTIP_CHOOSE_SYNC");
 	}
 
 	public static String getLabelCancelled() {
@@ -424,5 +438,17 @@ public class MeshCompactUITranslator {
 
 	public static String getMessageInOutPendings(int numberInPendingToArriveMessages, int numberOutPendingAckMessages) {
 		return MessageTranslator.translate("MESH_COMPACT_MESSAGE_IN_OUT_PENDINGS", numberInPendingToArriveMessages, numberOutPendingAckMessages);
+	}
+
+	public static String getLabelOpenSyncSessionsWindow() {
+		return MessageTranslator.translate("MESH_COMPACT_SYNC_SESSION_LABEL_OPEN_WINDOWS");
+	}
+
+	public static String getToolTipOpenSyncSessionsWindow() {
+		return MessageTranslator.translate("MESH_COMPACT_SYNC_SESSION_TOOLTIP_OPEN_WINDOWS");
+	}
+
+	public static String getToolTipOpenSyncSessionsWindowNewSyncSessionss() {
+		return MessageTranslator.translate("MESH_COMPACT_SYNC_SESSION_TOOLTIP_NEW_SYNC_SESSIONS");
 	}
 }

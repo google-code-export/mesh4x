@@ -87,7 +87,7 @@ public class MessageSyncProtocolTests {
 		SyncSessionFactory syncSessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);
 		syncSessionFactory.registerSource(new InMemoryMessageSyncAdapter("123"));
 		
-		syncSessionFactory.createSession("a", 0, "123", "123", true, true, true, true, false, false, new Date(), 0, 0, new ArrayList<Item>(), new ArrayList<Item>(), new ArrayList<String>(), new ArrayList<String>(), 0, 0, 0, null, 0, 0, 0);
+		syncSessionFactory.createSession("a", 0, "123", "123", true, true, true, true, false, false, new Date(), new Date(), new Date(), 0, 0, new ArrayList<Item>(), new ArrayList<Item>(), new ArrayList<String>(), new ArrayList<String>(), 0, 0, 0, null, 0, 0, 0);
 		
 		MessageSyncProtocol syncProtocol = new MessageSyncProtocol("M", new BeginSyncMessageProcessor(null, null, null), new CancelSyncMessageProcessor(), new MockSyncSessionRepository(syncSessionFactory), new MockChannel(), new ArrayList<IMessageProcessor>());
 		Assert.assertNull(syncProtocol.beginSync("123", new SmsEndpoint("123"), true, true, true));
@@ -133,7 +133,7 @@ public class MessageSyncProtocolTests {
 		SyncSessionFactory syncSessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);
 		syncSessionFactory.registerSource(new InMemoryMessageSyncAdapter("123"));
 		
-		ISyncSession syncSession = syncSessionFactory.createSession("a", 0, "123", "123", true, true, true, true, false, true, new Date(), 0, 0, new ArrayList<Item>(), new ArrayList<Item>(), new ArrayList<String>(), new ArrayList<String>(), 0, 0, 0, null, 0, 0, 0);
+		ISyncSession syncSession = syncSessionFactory.createSession("a", 0, "123", "123", true, true, true, true, false, true, new Date(), new Date(), new Date(), 0, 0, new ArrayList<Item>(), new ArrayList<Item>(), new ArrayList<String>(), new ArrayList<String>(), 0, 0, 0, null, 0, 0, 0);
 		syncSession.endSync(new Date(), 0, 0);
 		
 		MessageSyncProtocol syncProtocol = new MessageSyncProtocol("M", new BeginSyncMessageProcessor(null, null, null), new CancelSyncMessageProcessor(), new MockSyncSessionRepository(syncSessionFactory), new MockChannel(), new ArrayList<IMessageProcessor>());
@@ -146,7 +146,7 @@ public class MessageSyncProtocolTests {
 		SyncSessionFactory syncSessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);
 		syncSessionFactory.registerSource(new InMemoryMessageSyncAdapter("123"));
 		
-		ISyncSession syncSession = syncSessionFactory.createSession("a", 0, "123", "123", true, true, true, true, false, true, new Date(), 0, 0, new ArrayList<Item>(), new ArrayList<Item>(), new ArrayList<String>(), new ArrayList<String>(), 0, 0, 0, null, 0, 0, 0);
+		ISyncSession syncSession = syncSessionFactory.createSession("a", 0, "123", "123", true, true, true, true, false, true, new Date(), new Date(), new Date(), 0, 0, new ArrayList<Item>(), new ArrayList<Item>(), new ArrayList<String>(), new ArrayList<String>(), 0, 0, 0, null, 0, 0, 0);
 		
 		MessageSyncProtocol syncProtocol = new MessageSyncProtocol("M", new BeginSyncMessageProcessor(null, null, null), new CancelSyncMessageProcessor(), new MockSyncSessionRepository(syncSessionFactory), new MockChannel(), new ArrayList<IMessageProcessor>());
 		syncProtocol.cancelSync("123", new SmsEndpoint("123"));
@@ -226,6 +226,8 @@ public class MessageSyncProtocolTests {
 			@Override public void waitForAck(String syncId) {}
 			@Override public int getLastNumberInMessages() {return 0;}
 			@Override public int getLastNumberOutMessages() {return 0;}
+			@Override public Date getEndDate() {return null;}
+			@Override public Date getStartDate() {return null;}
 		};
 		
 		ISyncSessionRepository repo = new ISyncSessionRepository(){
@@ -302,6 +304,8 @@ public class MessageSyncProtocolTests {
 			@Override public void waitForAck(String syncId) {}
 			@Override public int getLastNumberInMessages() {return 0;}
 			@Override public int getLastNumberOutMessages() {return 0;}
+			@Override public Date getEndDate() {return null;}
+			@Override public Date getStartDate() {return null;}
 		};
 		
 		ISyncSessionRepository repo = new ISyncSessionRepository(){
@@ -382,6 +386,8 @@ public class MessageSyncProtocolTests {
 			@Override public void waitForAck(String syncId) {}
 			@Override public int getLastNumberInMessages() {return 0;}
 			@Override public int getLastNumberOutMessages() {return 0;}
+			@Override public Date getEndDate() {return null;}
+			@Override public Date getStartDate() {return null;}
 		};
 		
 	

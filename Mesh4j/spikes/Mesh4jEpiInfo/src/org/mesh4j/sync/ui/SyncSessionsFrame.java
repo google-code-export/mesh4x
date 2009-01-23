@@ -5,6 +5,8 @@ import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
 import java.util.HashMap;
 
 import javax.swing.JButton;
@@ -36,7 +38,7 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
-public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner{
+public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner, WindowFocusListener{
 	
 	private static final long serialVersionUID = 142343742087435808L;
 
@@ -116,8 +118,8 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner{
 		buttonSyncSession.setBorderPainted(false);
 		buttonSyncSession.setBorder(new EmptyBorder(0, 0, 0, 0));
 		buttonSyncSession.setFont(new Font("Calibri", Font.BOLD, 12));
-		buttonSyncSession.setText(MeshCompactUITranslator.getSyncSessionWindowLabelSync());
-		buttonSyncSession.setToolTipText(MeshCompactUITranslator.getSyncSessionWindowToolTipSync());
+		buttonSyncSession.setText(MeshCompactUITranslator.getSyncSessionWindowLabelChooseSync());
+		buttonSyncSession.setToolTipText(MeshCompactUITranslator.getSyncSessionWindowToolTipChooseSync());
 		buttonSyncSession.addActionListener(syncActionListener);
 		panelButtons.add(buttonSyncSession, new CellConstraints(3, 1));
 	
@@ -173,7 +175,8 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner{
 		splitPane.setRightComponent(panelViewSession);
 		
 		getContentPane().add(splitPane, new CellConstraints(2, 2, CellConstraints.FILL, CellConstraints.FILL));
-		
+	
+		this.addWindowFocusListener(this);
 	}
 	
 	private void createSyncSessionTreeModel() {
@@ -312,7 +315,7 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner{
 	// ISyncSessionViewOwner methods
 	
 	@Override
-	public void notifyNewSync() {
+	public void notifyNewSync(boolean isSyncSessionInView) {
 		updateSessions();
 	}
 
@@ -344,5 +347,16 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner{
 		this.syncEngine = syncEngine;
 		this.syncSessionView.initialize(this, this.sourceIdResolver, this.syncEngine.getChannel());
 		updateSessions();
+	}
+
+	@Override
+	public void windowGainedFocus(WindowEvent e) {
+        this.owner.notifySyncSessionFrameGainedFocus(); 
+	}
+
+	@Override
+	public void windowLostFocus(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }

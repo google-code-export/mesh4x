@@ -24,7 +24,7 @@ public interface ISyncSessionFactory {
 	ISyncSession createSession(String sessionId, int version, String sourceId,
 			String endpointId, boolean fullProtocol, boolean shouldSendChanges,
 			boolean shouldReceiveChanges, boolean isOpen, boolean isBroken, boolean isCancelled,
-			Date lastSyncDate, int lastIn, int lastOut, List<Item> currentSyncSnapshot,
+			Date startDate, Date endDate, Date lastSyncDate, int lastIn, int lastOut, List<Item> currentSyncSnapshot,
 			List<Item> lastSyncSnapshot, List<String> conflicts,
 			List<String> acks, int numberOfAddedItems,
 			int numberOfUpdatedItems, int numberOfDeletedItems,

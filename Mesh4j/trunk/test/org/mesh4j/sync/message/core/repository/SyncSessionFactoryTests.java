@@ -72,7 +72,7 @@ public class SyncSessionFactoryTests {
 		SyncSessionFactory factory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory());
 		
 		IMessageSyncAdapter adapter = ((SyncSession)factory.createSession(
-			"1", 0, "kml:123", "333", true, true, true, true, false, false, null, 0, 0, new ArrayList<Item>(), 
+			"1", 0, "kml:123", "333", true, true, true, true, false, false, new Date(), null, null, 0, 0, new ArrayList<Item>(), 
 			new ArrayList<Item>(), new ArrayList<String>(), new ArrayList<String>(), 0, 0, 0, 
 			null, 0, 0, 0))
 				.getSyncAdapter();
@@ -122,7 +122,9 @@ public class SyncSessionFactoryTests {
 		String sourceId = "kml:myFeed";
 		String sessionId = IdGenerator.INSTANCE.newID();
 		int version = 6;
-		Date date = new Date();
+		Date lastSyncDate = new Date();
+		Date startDate = new Date();
+		Date endDate = new Date();
 		
 		boolean open = false;
 		boolean cancelled = true;
@@ -149,8 +151,8 @@ public class SyncSessionFactoryTests {
 		SyncSessionFactory factory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory());
 		factory.registerSource(new InMemoryMessageSyncAdapter(sourceId));
 		
-		ISyncSession syncSession = factory.createSession(sessionId, version, sourceId, endpoint, full, shouldSend, shouldReceive, open, broken, cancelled, date,
-				1, 2, current, snapshot, conflicts, acks, 1, 2, 3, "mySource", 4, 5, 6);
+		ISyncSession syncSession = factory.createSession(sessionId, version, sourceId, endpoint, full, shouldSend, shouldReceive, open, broken, cancelled, 
+			startDate, endDate, lastSyncDate, 1, 2, current, snapshot, conflicts, acks, 1, 2, 3, "mySource", 4, 5, 6);
 		
 		Assert.assertNotNull(syncSession);
 		Assert.assertEquals(sessionId, syncSession.getSessionId());
@@ -165,7 +167,9 @@ public class SyncSessionFactoryTests {
 		Assert.assertEquals(broken, syncSession.isBroken());
 		Assert.assertEquals(cancelled, syncSession.isCancelled());		
 		Assert.assertNotNull(syncSession.getLastSyncDate());
-		Assert.assertEquals(date, syncSession.getLastSyncDate());
+		Assert.assertEquals(startDate, syncSession.getStartDate());
+		Assert.assertEquals(endDate, syncSession.getEndDate());
+		Assert.assertEquals(lastSyncDate, syncSession.getLastSyncDate());
 		
 		Assert.assertEquals(snapshot.size(), syncSession.getSnapshot().size());
 		Assert.assertEquals(current.size(), syncSession.getCurrentSnapshot().size());

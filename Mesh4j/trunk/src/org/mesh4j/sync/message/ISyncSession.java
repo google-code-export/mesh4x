@@ -32,7 +32,11 @@ public interface ISyncSession {
 	void endSync(Date sinceDate, int numberInMessages, int numberOutMessages);
 	void cancelSync();
 	
+	Date getStartDate();
+	Date getEndDate();
+	
 	Date getLastSyncDate();
+	
 	int getLastNumberInMessages();
 	int getLastNumberOutMessages();
 	

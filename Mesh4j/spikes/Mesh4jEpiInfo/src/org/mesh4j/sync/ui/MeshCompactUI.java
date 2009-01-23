@@ -68,6 +68,7 @@ public class MeshCompactUI implements ISyncSessionViewOwner{
 	private JComboBox comboBoxEndpoint;
 	private JButton buttonOpenLog;
 	private JButton buttonConfiguration;
+	private JButton buttonOpenSessions;
 	private JPanel panelSync;
 
 	private SyncSessionView syncSessionView;
@@ -346,12 +347,14 @@ public class MeshCompactUI implements ISyncSessionViewOwner{
 		panelStatusButtons.add(getButtonOpenLog(), new CellConstraints(1, 1, CellConstraints.CENTER, CellConstraints.FILL));
 		panelStatusButtons.add(getButtonConfiguration(), new CellConstraints(3, 1, CellConstraints.CENTER, CellConstraints.FILL));
 
-		final JButton buttonOpenSessions = new JButton();
+		buttonOpenSessions = new JButton();
 		buttonOpenSessions.setContentAreaFilled(false);
 		buttonOpenSessions.setBorderPainted(false);
 		buttonOpenSessions.setBorder(new EmptyBorder(0, 0, 0, 0));
 		buttonOpenSessions.setFont(new Font("Calibri", Font.PLAIN, 10));
-		buttonOpenSessions.setText("Open Sessions");
+		buttonOpenSessions.setText(MeshCompactUITranslator.getLabelOpenSyncSessionsWindow());
+		buttonOpenSessions.setToolTipText(MeshCompactUITranslator.getToolTipOpenSyncSessionsWindow());
+		
 		ActionListener openSessionsViewActionListener = new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				if(syncSessionsFrame.isVisible()){
@@ -663,8 +666,12 @@ public class MeshCompactUI implements ISyncSessionViewOwner{
 	
 	// ISyncSessionViewOwner methods
 	@Override
-	public void notifyNewSync() {
-		this.syncSessionsFrame.notifyNewSync();
+	public void notifyNewSync(boolean isSyncSessioninView) {
+		this.syncSessionsFrame.notifyNewSync(isSyncSessioninView);
+		if(!isSyncSessioninView){
+			this.buttonOpenSessions.setForeground(Color.RED);
+			this.buttonOpenSessions.setToolTipText(MeshCompactUITranslator.getToolTipOpenSyncSessionsWindowNewSyncSessionss());
+		}
 	}
 
 	@Override
@@ -684,5 +691,10 @@ public class MeshCompactUI implements ISyncSessionViewOwner{
 
 	public ProcessCustomMessages getProcessCustomMessages() {
 		return this.processCustomMessages;
+	}
+
+	public void notifySyncSessionFrameGainedFocus() {
+		this.buttonOpenSessions.setForeground(null);
+		this.buttonOpenSessions.setToolTipText(MeshCompactUITranslator.getToolTipOpenSyncSessionsWindow());
 	}	
 }

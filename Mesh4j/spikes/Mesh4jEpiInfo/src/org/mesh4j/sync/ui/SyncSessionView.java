@@ -343,13 +343,25 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 		if(syncSession != null){
 			updateSessionStatus();
 			updateInOut();
-			
-			if(syncSession.isOpen()){
-				setInProcess("");
-			}
+
+			SimpleDateFormat dateFormat = getDateFormat();
 			
 			if(syncSession.isBroken()){
-				setError("");
+				String msg = MeshCompactUITranslator.getMessageSyncFailed(syncSession.getStartDate(), syncSession.getEndDate(), syncSession.getLastSyncDate(), dateFormat);
+				setError(msg);
+			} else {
+				if(syncSession.isOpen()){
+					String msg = MeshCompactUITranslator.getMessageSyncStarted(syncSession.getStartDate(), syncSession.getEndDate(), syncSession.getLastSyncDate(), dateFormat);
+					setInProcess(msg);
+				} else {
+					if(syncSession.isCancelled()){
+						String msg = MeshCompactUITranslator.getMessageCancelSyncSuccessfully(syncSession.getStartDate(), syncSession.getEndDate(), syncSession.getLastSyncDate(), dateFormat);
+						setOk(msg);
+					} else {
+						String msg = MeshCompactUITranslator.getMessageSyncSuccessfully(syncSession.getStartDate(), syncSession.getEndDate(), syncSession.getLastSyncDate(), dateFormat);
+						setOk(msg);
+					}
+				}
 			}
 		}
 	}
@@ -425,7 +437,8 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 			this.syncSession = syncSession;
 		}
 		
-		if(accepts(syncSession)){
+		boolean isSyncSessioninView = accepts(syncSession);
+		if(isSyncSessioninView){
 			this.reset();
 			
 			if(this.owner != null){
@@ -434,14 +447,19 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 			
 			this.updateSessionStatus();
 			
-			SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
-			String msg = MeshCompactUITranslator.getMessageSyncStarted(dateFormat.format(new Date()));
+			SimpleDateFormat dateFormat = getDateFormat();
+			String msg = MeshCompactUITranslator.getMessageSyncStarted(syncSession.getStartDate(), syncSession.getEndDate(), syncSession.getLastSyncDate(), dateFormat);
 			this.setInProcess(msg);
 		}
 
 		if(this.owner != null){
-			this.owner.notifyNewSync();
+			this.owner.notifyNewSync(isSyncSessioninView);
 		}
+	}
+
+	private SimpleDateFormat getDateFormat() {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
+		return dateFormat;
 	}
 
 	@Override
@@ -461,10 +479,10 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 	public void endSync(ISyncSession syncSession, List<Item> conflicts) {
 		if(accepts(syncSession)){
 			if(!conflicts.isEmpty()){
-				String msg = MeshCompactUITranslator.getMessageSyncFailed();
+				String msg = MeshCompactUITranslator.getMessageSyncFailed(syncSession.getStartDate(), syncSession.getEndDate(), syncSession.getLastSyncDate(), getDateFormat());
 				this.setError(msg);
 			} else {
-				String msg = MeshCompactUITranslator.getMessageSyncSuccessfully();
+				String msg = MeshCompactUITranslator.getMessageSyncSuccessfully(syncSession.getStartDate(), syncSession.getEndDate(), syncSession.getLastSyncDate(), getDateFormat());
 				this.setOk(msg);
 			}
 			
@@ -479,7 +497,7 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 	@Override
 	public void notifyCancelSync(ISyncSession syncSession) {
 		if(accepts(syncSession)){
-			String msg = MeshCompactUITranslator.getMessageCancelSyncSuccessfully();
+			String msg = MeshCompactUITranslator.getMessageCancelSyncSuccessfully(syncSession.getStartDate(), syncSession.getEndDate(), syncSession.getLastSyncDate(), getDateFormat());
 			this.setOk(msg);
 			
 			if(this.owner != null){

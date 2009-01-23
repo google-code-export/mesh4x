@@ -288,4 +288,12 @@ public class MockSyncSession implements ISyncSession{
 	public int getLastNumberOutMessages() {
 		return out;
 	}
+	@Override
+	public Date getEndDate() {
+		return null;
+	}
+	@Override
+	public Date getStartDate() {
+		return null;
+	}
 }
