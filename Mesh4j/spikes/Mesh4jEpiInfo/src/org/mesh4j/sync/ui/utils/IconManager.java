@@ -84,6 +84,10 @@ public class IconManager {
 	public static Image getCDCImage() {
 		return SwingResourceManager.getImage(MeshCompactUI.class, "/cdc.gif");
 	}
+	
+	public static Icon getViewImage() {
+		return SwingResourceManager.getIcon(MeshCompactUI.class, "/view.jpg");
+	}
 
 	public static Icon getInOutIcon() {
 		return SwingResourceManager.getIcon(MeshCompactUI.class, "/inOut.png");

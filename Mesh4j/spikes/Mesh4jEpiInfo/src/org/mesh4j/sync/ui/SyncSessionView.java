@@ -601,7 +601,7 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 	public void setInProcess(String msg){
 		this.textAreaStatus.setForeground(Color.BLACK);
 		this.setStatusText(msg);
-		this.imageStatus.setIcon(null);
+		this.imageStatus.setIcon(IconManager.getStatusInProgressIcon());
 		this.imageStatus.setToolTipText(msg);
 	}
 	

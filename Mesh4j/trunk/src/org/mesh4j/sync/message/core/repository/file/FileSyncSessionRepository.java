@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.TimeZone;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -44,8 +45,8 @@ public class FileSyncSessionRepository implements ISyncSessionRepository{
 	public static final String ATTRIBUTE_BROKEN = "broken";
 	public static final String ATTRIBUTE_FULL = "full";
 	public static final String ATTRIBUTE_LAST_SYNC_DATE = "lastSyncDate";
-	public static final String ATTRIBUTE_START_DATE = "startDate";
-	public static final String ATTRIBUTE_END_DATE = "endDate";
+	public static final String ATTRIBUTE_START_DATE = "startDateLocal";
+	public static final String ATTRIBUTE_END_DATE = "endDateLocal";
 	public static final String ATTRIBUTE_LAST_IN = "lastIn";
 	public static final String ATTRIBUTE_LAST_OUT = "lastOut";
 	public static final String ATTRIBUTE_ENDPOINT_ID = "endpointId";
@@ -253,8 +254,8 @@ public class FileSyncSessionRepository implements ISyncSessionRepository{
 		elementSession.addAttribute(ATTRIBUTE_VERSION, String.valueOf(syncSession.getVersion()));
 		elementSession.addAttribute(ATTRIBUTE_SOURCE_ID, syncSession.getSourceId());
 		elementSession.addAttribute(ATTRIBUTE_ENDPOINT_ID, syncSession.getTarget().getEndpointId());
-		elementSession.addAttribute(ATTRIBUTE_START_DATE, syncSession.getStartDate() == null ? "" : DateHelper.formatW3CDateTime(syncSession.getStartDate()));
-		elementSession.addAttribute(ATTRIBUTE_END_DATE, syncSession.getEndDate() == null ? "" : DateHelper.formatW3CDateTime(syncSession.getEndDate()));
+		elementSession.addAttribute(ATTRIBUTE_START_DATE, syncSession.getStartDate() == null ? "" : DateHelper.formatDateYYYYMMDDHHMMSS(syncSession.getStartDate(), "/", ":", "", TimeZone.getDefault()));
+		elementSession.addAttribute(ATTRIBUTE_END_DATE, syncSession.getEndDate() == null ? "" : DateHelper.formatDateYYYYMMDDHHMMSS(syncSession.getEndDate(), "/", ":", "", TimeZone.getDefault()));
 		elementSession.addAttribute(ATTRIBUTE_LAST_SYNC_DATE, syncSession.getLastSyncDate() == null ? "" : DateHelper.formatW3CDateTime(syncSession.getLastSyncDate()));
 		elementSession.addAttribute(ATTRIBUTE_LAST_IN, String.valueOf(syncSession.getLastNumberInMessages()));
 		elementSession.addAttribute(ATTRIBUTE_LAST_OUT, String.valueOf(syncSession.getLastNumberOutMessages()));
@@ -301,10 +302,10 @@ public class FileSyncSessionRepository implements ISyncSessionRepository{
 		Date lastSyncDate = (lastSyncDateAsString == null || lastSyncDateAsString.length() == 0) ? null : DateHelper.parseW3CDateTime(lastSyncDateAsString);
 		
 		String startDateAsString = syncElement.attributeValue(ATTRIBUTE_START_DATE);
-		Date startDate = (startDateAsString == null || startDateAsString.length() == 0) ? null : DateHelper.parseW3CDateTime(startDateAsString);
+		Date startDate = (startDateAsString == null || startDateAsString.length() == 0) ? null : DateHelper.parseDateYYYYMMDDHHMMSS(startDateAsString, TimeZone.getDefault());
 
 		String endDateAsString = syncElement.attributeValue(ATTRIBUTE_END_DATE);
-		Date endDate = (endDateAsString == null || endDateAsString.length() == 0) ? null : DateHelper.parseW3CDateTime(endDateAsString);
+		Date endDate = (endDateAsString == null || endDateAsString.length() == 0) ? null : DateHelper.parseDateYYYYMMDDHHMMSS(endDateAsString, TimeZone.getDefault());
 		
 		int lastIn = Integer.valueOf(syncElement.attributeValue(ATTRIBUTE_LAST_IN));
 		int lastOut = Integer.valueOf(syncElement.attributeValue(ATTRIBUTE_LAST_OUT));

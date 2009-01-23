@@ -275,8 +275,8 @@ public class MeshCompactUITranslator {
 		return MessageTranslator.translate("MESH_COMPACT_TOOLTIP_OPEN_CFG_WINDOW");
 	}
 
-	public static String getToolTipTradeMark() {
-		return MessageTranslator.translate("MESH_COMPACT_TOOLTIP_TRADEMARK");
+	public static String getToolTipTradeMark(String url) {
+		return MessageTranslator.translate("MESH_COMPACT_TOOLTIP_TRADEMARK", url);
 	}
 
 	public static String getToolTipTestPhone() {
@@ -451,4 +451,25 @@ public class MeshCompactUITranslator {
 	public static String getToolTipOpenSyncSessionsWindowNewSyncSessionss() {
 		return MessageTranslator.translate("MESH_COMPACT_SYNC_SESSION_TOOLTIP_NEW_SYNC_SESSIONS");
 	}
+
+	public static String getLabelOpenSyncWindow() {
+		return MessageTranslator.translate("MESH_COMPACT_SYNC_WINDOW_LABEL_OPEN");
+	}
+
+	public static String getToolTipOpenSyncWindow() {
+		return MessageTranslator.translate("MESH_COMPACT_SYNC_WINDOW_TOOLTIP_OPEN");
+	}
+
+	public static String getLabelURL() {
+		return MessageTranslator.translate("MESH_COMPACT_SYNC_WINDOW_LABEL_URL");
+	}
+
+	public static String getSyncWindowTitle() {
+		return MessageTranslator.translate("MESH_COMPACT_SYNC_WINDOW_TITLE");
+	}
+
+	public static String getSyncWindowTooltipViewFeed() {
+		return MessageTranslator.translate("MESH_COMPACT_SYNC_WINDOW_TOOLTIP_VIEW_FEED");
+	}
+	
 }

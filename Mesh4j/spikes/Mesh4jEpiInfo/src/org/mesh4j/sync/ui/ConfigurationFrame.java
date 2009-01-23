@@ -35,6 +35,7 @@ import org.mesh4j.sync.mappings.EndpointMapping;
 import org.mesh4j.sync.ui.tasks.ChangeDeviceTask;
 import org.mesh4j.sync.ui.translator.MeshCompactUITranslator;
 import org.mesh4j.sync.ui.translator.MeshUITranslator;
+import org.mesh4j.sync.ui.utils.IconManager;
 import org.mesh4j.sync.utils.SyncEngineUtil;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -42,7 +43,6 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
-import com.swtdesigner.SwingResourceManager;
 
 public class ConfigurationFrame extends JFrame {
 
@@ -57,15 +57,14 @@ public class ConfigurationFrame extends JFrame {
 	
 	public ConfigurationFrame(MeshCompactUI owner) {
 		super();
-		setAlwaysOnTop(true);
 		this.owner = owner;
 		createUI();
 	}
 
 	public void createUI(){
-				
+		setAlwaysOnTop(true);				
 		getContentPane().setBackground(Color.WHITE);
-		setIconImage(SwingResourceManager.getImage(ConfigurationFrame.class, "/cdc.gif"));
+		setIconImage(IconManager.getCDCImage());
 		setResizable(false);
 		setTitle(MeshCompactUITranslator.getConfigurationWindowTitle());
 		setBounds(100, 100, 287, 375);

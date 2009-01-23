@@ -199,4 +199,8 @@ public class PropertiesProvider {
 		this.setInt("default.test.phone.delay", testPhoneDelay);
 		this.store();
 	}
+
+	public String getMesh4xURL() {
+		return getString("mesh4x.url");
+	}
 }

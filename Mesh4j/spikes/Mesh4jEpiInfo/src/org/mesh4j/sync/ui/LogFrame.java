@@ -24,6 +24,7 @@ import org.mesh4j.sync.message.channel.sms.connection.ISmsConnectionInboundOutbo
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.ui.translator.MeshCompactUITranslator;
 import org.mesh4j.sync.ui.translator.MeshUITranslator;
+import org.mesh4j.sync.ui.utils.IconManager;
 import org.mesh4j.sync.utils.SourceIdResolver;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -31,13 +32,12 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
-import com.swtdesigner.SwingResourceManager;
 
 public class LogFrame extends JFrame implements ISmsConnectionInboundOutboundNotification, IMessageSyncAware {
 	
 	private static final long serialVersionUID = -5672081373978129329L;
 	
-	private final static Log Logger = LogFactory.getLog(LogFrame.class);
+	public final static Log Logger = LogFactory.getLog(LogFrame.class);
 
 	// MODEL VARIABLES
 	private JTextArea textAreaConsoleView;
@@ -49,8 +49,8 @@ public class LogFrame extends JFrame implements ISmsConnectionInboundOutboundNot
 		super();
 		
 		this.sourceIdResolver = sourceIdResolver;
-		
-		setIconImage(SwingResourceManager.getImage(LogFrame.class, "/cdc.gif"));
+		setAlwaysOnTop(true);
+		setIconImage(IconManager.getCDCImage());
 		getContentPane().setBackground(Color.WHITE);
 		setTitle(MeshCompactUITranslator.getLogWindowTitle());
 		setResizable(false);

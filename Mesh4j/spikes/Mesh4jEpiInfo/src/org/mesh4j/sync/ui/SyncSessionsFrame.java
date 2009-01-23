@@ -60,6 +60,7 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner, 
 		this.propertiesProvider = propertiesProvider;
 		this.sourceIdResolver = sourceIdResolver;
 		
+		setAlwaysOnTop(true);
 		setIconImage(IconManager.getCDCImage());
 		getContentPane().setBackground(Color.WHITE);
 		setTitle(MeshCompactUITranslator.getSyncSessionWindowTitle());
@@ -109,6 +110,14 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner, 
 		ActionListener syncActionListener = new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				owner.viewSyncSession(syncSessionView.getSyncSession());
+				
+				JFrame ownerFrame = owner.getFrame();
+				if(ownerFrame.isVisible()){
+					ownerFrame.toFront();
+				} else {
+					ownerFrame.pack();
+					ownerFrame.setVisible(true);
+				}
 			}
 		};	
 		
