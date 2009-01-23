@@ -22,6 +22,7 @@ import org.mesh4j.sync.message.ISyncSession;
 import org.mesh4j.sync.message.InOutStatistics;
 import org.mesh4j.sync.message.channel.sms.connection.ISmsConnectionInboundOutboundNotification;
 import org.mesh4j.sync.message.protocol.ACKEndSyncMessageProcessor;
+import org.mesh4j.sync.message.protocol.CancelSyncMessageProcessor;
 import org.mesh4j.sync.message.protocol.EndSyncMessageProcessor;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.ui.translator.MeshCompactUITranslator;
@@ -69,8 +70,6 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 	private ISyncSessionViewOwner owner;
 	private SourceIdResolver sourceIdResolver;
 	private IChannel channel;
-	
-	private int syncMinutes = 0;
 	
 	// BUSINESS METHODS
 
@@ -353,6 +352,7 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 				if(syncSession.isOpen()){
 					String msg = MeshCompactUITranslator.getMessageSyncStarted(syncSession.getStartDate(), syncSession.getEndDate(), syncSession.getLastSyncDate(), dateFormat);
 					setInProcess(msg);
+					refresh();
 				} else {
 					if(syncSession.isCancelled()){
 						String msg = MeshCompactUITranslator.getMessageCancelSyncSuccessfully(syncSession.getStartDate(), syncSession.getEndDate(), syncSession.getLastSyncDate(), dateFormat);
@@ -380,8 +380,6 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 		this.labelOut.setText(MeshCompactUITranslator.getLabelOut(0));
 		this.labelInOutPendings.setText("");
 		
-		this.syncMinutes = 0;
-		
 		this.labelLocalDataSource.setIcon(IconManager.getUndefinedSourceImage());		
 		this.labelRemoteDataSource.setIcon(IconManager.getUndefinedSourceImage());
 		this.labelSyncType.setIcon(IconManager.getSyncModeIcon(true, true));
@@ -401,10 +399,6 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 		this.labelRemoteDataSource.setIcon(IconManager.getSourceImage(this.syncSession.getTargetSourceType(), true));
 		
 		this.labelSyncType.setIcon(IconManager.getSyncModeIcon(this.syncSession.shouldSendChanges(), this.syncSession.shouldReceiveChanges()));
-		
-		if(!this.syncSession.isOpen()){
-			this.setReady("");
-		}
 	}
 	
 	private boolean accepts(ISyncSession syncSession) {
@@ -532,7 +526,8 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 		if(accepts(syncSession)){
 			this.updateInOut();
 			if(!ACKEndSyncMessageProcessor.MESSAGE_TYPE.equals(message.getMessageType()) && 
-					!EndSyncMessageProcessor.MESSAGE_TYPE.equals(message.getMessageType())){
+					!EndSyncMessageProcessor.MESSAGE_TYPE.equals(message.getMessageType()) &&
+					!CancelSyncMessageProcessor.MESSAGE_TYPE.equals(message.getMessageType())){
 				this.updateSessionStatus();
 			}
 		}
@@ -638,7 +633,10 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 
 	protected void refresh(){
 		if (isSyncInProcess()) {
-			this.syncMinutes = this.syncMinutes + 1;
+			
+			long millis = System.currentTimeMillis() - syncSession.getStartDate().getTime();
+			long syncMinutes = (millis / 1000) / 60; 
+				
 			String actualStatus = this.textAreaStatus.getText();
 			int index = actualStatus.indexOf(" (");
 			if(index > 0){
@@ -648,13 +646,13 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 			StringBuffer sb = new StringBuffer();
 			sb.append(actualStatus);
 					
-			int minutes = this.syncMinutes % 60;
+			long minutes = syncMinutes % 60;
 			if(minutes > 0){
 				sb.append(" (");
-				int hrs = this.syncMinutes / 60;
+				long hrs = syncMinutes / 60;
 				if(hrs > 0){
 					hrs = hrs % 24;
-					int days = hrs / 24;
+					long days = hrs / 24;
 					if(days > 0){
 						sb.append(days);
 						if(days > 1){
