@@ -35,6 +35,10 @@ public class MsAccessSyncAdapterFactory implements ISyncAdapterFactory {
 	}	
 	
 	public static SplitAdapter createSyncAdapterFromFile(String mdbFileName, String tableName, String mappingsDirectory) throws Exception{
+		if(mdbFileName == null || mdbFileName.length() == 0 || tableName == null || tableName.length() == 0){
+			return null;
+		}
+		
 		String contentMappingFileName = mappingsDirectory + "/" + tableName + ".hbm.xml";
 		String syncMappingFileName =  mappingsDirectory + "/" + tableName + "_sync.hbm.xml";
 		
@@ -89,7 +93,6 @@ public class MsAccessSyncAdapterFactory implements ISyncAdapterFactory {
 	public SplitAdapter createSyncAdapter(String sourceId, IIdentityProvider identityProvider) throws Exception {
 		String mdbFileName = this.sourceIdResolver.getFileName(sourceId);
 		String tableName = this.sourceIdResolver.getTableName(sourceId);
-		
 		SplitAdapter msAccessAdapter = createSyncAdapterFromFile(mdbFileName, tableName, this.baseDirectory);
 		return msAccessAdapter;
 	}
