@@ -67,7 +67,7 @@ public class ProcessCustomMessages implements ISmsReceiver {
 				ReadyToSyncResponseTask responseTask = new ReadyToSyncResponseTask(ui, endpoint.getEndpointId(), dataSourceAlias, isDataSourceAvailable);
 				responseTask.execute();
 				
-				EndpointMapping endpointMapping = SyncEngineUtil.createNewEndpointMappingIfAbsent(endpoint.getEndpointId(), this.ui.getPropertiesProvider());
+				EndpointMapping endpointMapping = SyncEngineUtil.createNewEndpointMappingIfAbsent(endpoint.getEndpointId(), endpoint.getEndpointId(), this.ui.getPropertiesProvider());
 				if(endpointMapping != null){
 					this.ui.notifyNewEndpointMapping(endpointMapping);
 				}
@@ -106,7 +106,8 @@ public class ProcessCustomMessages implements ISmsReceiver {
 					if(TestPhoneTask.isQuestion(message)){
 						new TestPhoneResponseTask(this.ui, endpoint.getEndpointId(), message).execute();
 					
-						EndpointMapping endpointMapping = SyncEngineUtil.createNewEndpointMappingIfAbsent(endpoint.getEndpointId(), this.ui.getPropertiesProvider());
+						String userName = TestPhoneTask.getUserName(message);
+						EndpointMapping endpointMapping = SyncEngineUtil.createNewEndpointMappingIfAbsent(userName, endpoint.getEndpointId(), this.ui.getPropertiesProvider());
 						if(endpointMapping != null){
 							this.ui.notifyNewEndpointMapping(endpointMapping);
 						}

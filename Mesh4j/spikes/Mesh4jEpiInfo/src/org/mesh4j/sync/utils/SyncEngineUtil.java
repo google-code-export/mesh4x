@@ -349,6 +349,18 @@ public class SyncEngineUtil {
 		return null;
 	}
 	
+	public static EndpointMapping getEndpointMappingByAlias(String endpointAlias, PropertiesProvider propertiesProvider) {
+		String baseDirectory = propertiesProvider.getBaseDirectory();
+		String fileName = baseDirectory+"/myEndpoints.properties";
+		Map<String, String> myEndpoints = PropertiesUtils.getProperties(fileName);
+		for (String alias : myEndpoints.keySet()) {
+			if(endpointAlias.equals(alias)){
+				return new EndpointMapping(alias, myEndpoints.get(alias));
+			}
+		}
+		return null;
+	}
+	
 	public static void deleteEndpointMapping(EndpointMapping endpoint, PropertiesProvider propertiesProvider) {
 		String baseDirectory = propertiesProvider.getBaseDirectory();
 		String fileName = baseDirectory+"/myEndpoints.properties";
@@ -372,14 +384,26 @@ public class SyncEngineUtil {
 		
 	}
 	
-	public static EndpointMapping createNewEndpointMappingIfAbsent(String endpointId, PropertiesProvider propertiesProvider){
+	public static EndpointMapping createNewEndpointMappingIfAbsent(String alias, String endpointId, PropertiesProvider propertiesProvider){
 		EndpointMapping endpoint = null;
 		try{
 			endpoint = SyncEngineUtil.getEndpointMapping(endpointId, propertiesProvider);
 			if(endpoint == null){
-				endpoint = new EndpointMapping(endpointId, endpointId);
+				
+				endpoint = SyncEngineUtil.getEndpointMappingByAlias(alias, propertiesProvider);
+				
+				String aliasToAdd = alias;
+				int i = 0;
+				while(endpoint != null){
+					i = i +1;
+					aliasToAdd = alias + "_" + i;
+					endpoint = SyncEngineUtil.getEndpointMappingByAlias(aliasToAdd, propertiesProvider);
+				}
+				
+				endpoint = new EndpointMapping(aliasToAdd, endpointId);
 				SyncEngineUtil.saveOrUpdateEndpointMapping(endpointId, endpoint, propertiesProvider);
 				return endpoint;
+				
 			} else {
 				return null;
 			}

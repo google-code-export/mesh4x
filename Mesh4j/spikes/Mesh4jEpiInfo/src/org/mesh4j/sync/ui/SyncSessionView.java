@@ -459,7 +459,7 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 	}
 
 	private EndpointMapping verifyNewEndpointMapping(String endpointId) {
-		EndpointMapping endpointMapping = SyncEngineUtil.createNewEndpointMappingIfAbsent(endpointId, this.propertiesProvider);
+		EndpointMapping endpointMapping = SyncEngineUtil.createNewEndpointMappingIfAbsent(endpointId, endpointId, this.propertiesProvider);
 		if(endpointMapping != null){
 			this.owner.notifyNewEndpointMapping(endpointMapping);
 		}

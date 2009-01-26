@@ -49,7 +49,7 @@ public class TestPhoneTask extends SwingWorker<Void, Void> {
 	
 	public static String getUserName(String message) {
 		int end = message.indexOf(" <");
-		int start = message.substring(0, end).lastIndexOf(" ");
+		int start = message.substring(0, end).lastIndexOf(" ") + 1;
 		return message.substring(start, end);
 	}
 
