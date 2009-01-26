@@ -28,4 +28,8 @@ public class LoggedInIdentityProvider implements IIdentityProvider {
 			throw new MeshException(e);
 		}
 	}
+	
+	public static String getUserName(){
+		return System.getProperty("user.name");
+	}
 }

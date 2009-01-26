@@ -4,6 +4,7 @@ import java.text.DateFormat;
 import java.util.Date;
 
 import org.mesh4j.sync.message.IEndpoint;
+import org.mesh4j.sync.security.LoggedInIdentityProvider;
 import org.mesh4j.sync.translator.MessageTranslator;
 
 public class MeshCompactUITranslator {
@@ -196,7 +197,7 @@ public class MeshCompactUITranslator {
 	}
 
 	public static String getMessageWelcome() {
-		return MessageTranslator.translate("MESH_COMPACT_MESSAGE_WELCOME");
+		return MessageTranslator.translate("MESH_COMPACT_MESSAGE_WELCOME", LoggedInIdentityProvider.getUserName());
 	}
 
 	public static String getLabelSendAndReceiveChanges() {
@@ -490,5 +491,5 @@ public class MeshCompactUITranslator {
 	
 	public static String getToolTipOpenLogWindowNewMessagesAvailables() {
 		return MessageTranslator.translate("MESH_COMPACT_TOOLTIP_OPEN_LOG_WINDOW_NEW_MESSAGES");
-	}	
+	}
 }

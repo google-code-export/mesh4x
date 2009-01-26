@@ -6,6 +6,7 @@ import javax.swing.SwingWorker;
 
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.mappings.EndpointMapping;
+import org.mesh4j.sync.security.LoggedInIdentityProvider;
 import org.mesh4j.sync.ui.MeshCompactUI;
 import org.mesh4j.sync.ui.translator.MeshCompactUITranslator;
 import org.mesh4j.sync.utils.SyncEngineUtil;
@@ -42,14 +43,28 @@ public class TestPhoneTask extends SwingWorker<Void, Void> {
     }
 
 	public static boolean isQuestion(String message) {
-		return message.startsWith(MeshCompactUITranslator.getQuestionTestPhoneCompatibility());
+		String userName = getUserName(message);
+		return isTestPhoneMessage(message) && !LoggedInIdentityProvider.getUserName().equals(userName);
 	}
 	
+	public static String getUserName(String message) {
+		int end = message.indexOf(" <");
+		int start = message.substring(0, end).lastIndexOf(" ");
+		return message.substring(start, end);
+	}
+
 	public static String makeAnswer(String id) {
-		return MeshCompactUITranslator.getQuestionTestPhoneCompatibility() + " <" + id + ">";
+		return MeshCompactUITranslator.getQuestionTestPhoneCompatibility() 
+			+ " " 
+			+ LoggedInIdentityProvider.getUserName() 
+			+ " <" + id + "> ";
 	}
 	
 	protected void sendSms(String endpointId, String message){
 		SyncEngineUtil.sendSms(ui.getSyncEngine(), endpointId , message);
+	}
+
+	public static boolean isTestPhoneMessage(String message) {
+		return message.startsWith(MeshCompactUITranslator.getQuestionTestPhoneCompatibility());
 	}
 }

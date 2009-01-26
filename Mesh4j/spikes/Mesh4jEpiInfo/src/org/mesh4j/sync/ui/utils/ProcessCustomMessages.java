@@ -28,7 +28,7 @@ public class ProcessCustomMessages implements ISmsReceiver {
 
 	private final static IFilter<String> FILTER = new IFilter<String>(){		
 		@Override public boolean applies(String message) {
-			return ReadyToSyncTask.isQuestion(message) || ReadyToSyncTask.isAnswer(message) || TestPhoneTask.isQuestion(message);
+			return ReadyToSyncTask.isQuestion(message) || ReadyToSyncTask.isAnswer(message) || TestPhoneTask.isTestPhoneMessage(message);
 		}			
 	};	
 	
@@ -90,21 +90,27 @@ public class ProcessCustomMessages implements ISmsReceiver {
 				}
 			} 
 	
-			if(TestPhoneTask.isQuestion(message)){
+			if(TestPhoneTask.isTestPhoneMessage(message)){
 				if(this.phoneCompatibilityInProcess 
 					&& TestPhoneTask.makeAnswer(this.phoneCompatibilityId).equals(message)
 					&& this.phoneCompatibilityEndpoint.getEndpoint().equals(endpoint.getEndpointId())){
+					
+						// is response
 						this.resetPhoneCompatibility();			
 						ui.getSyncSessionView().setReady(MeshCompactUITranslator.getMessagePhoneIsCompatible());
 						ui.fullEnableAllButtons();
 						ui.notifyOwnerNotWorking();
-				} else {				
-					new TestPhoneResponseTask(this.ui, endpoint.getEndpointId(), message).execute();
+				} else {
+					// if is a question -> response, if is a old response -> discard
 					
-					EndpointMapping endpointMapping = SyncEngineUtil.createNewEndpointMappingIfAbsent(endpoint.getEndpointId(), this.ui.getPropertiesProvider());
-					if(endpointMapping != null){
-						this.ui.notifyNewEndpointMapping(endpointMapping);
-					}
+					if(TestPhoneTask.isQuestion(message)){
+						new TestPhoneResponseTask(this.ui, endpoint.getEndpointId(), message).execute();
+					
+						EndpointMapping endpointMapping = SyncEngineUtil.createNewEndpointMappingIfAbsent(endpoint.getEndpointId(), this.ui.getPropertiesProvider());
+						if(endpointMapping != null){
+							this.ui.notifyNewEndpointMapping(endpointMapping);
+						}
+					}	
 				}
 			}		
 		}
