@@ -67,7 +67,8 @@ public class ProcessCustomMessages implements ISmsReceiver {
 				ReadyToSyncResponseTask responseTask = new ReadyToSyncResponseTask(ui, endpoint.getEndpointId(), dataSourceAlias, isDataSourceAvailable);
 				responseTask.execute();
 				
-				EndpointMapping endpointMapping = SyncEngineUtil.createNewEndpointMappingIfAbsent(endpoint.getEndpointId(), endpoint.getEndpointId(), this.ui.getPropertiesProvider());
+				String userName = ReadyToSyncTask.getQuestionUserName(message);
+				EndpointMapping endpointMapping = SyncEngineUtil.createNewEndpointMappingIfAbsent(userName, endpoint.getEndpointId(), this.ui.getPropertiesProvider());
 				if(endpointMapping != null){
 					this.ui.notifyNewEndpointMapping(endpointMapping);
 				}
