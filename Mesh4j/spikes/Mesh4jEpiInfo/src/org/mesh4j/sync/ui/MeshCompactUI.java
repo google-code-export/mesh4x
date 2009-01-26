@@ -775,12 +775,19 @@ public class MeshCompactUI implements ISyncSessionViewOwner{
 
 	@Override
 	public void notifyNotAvailableDataSource(String dataSourceAlias, String dataSourceDescription, String endpointId) {
-		String logText = MeshCompactUITranslator.getMessageNotAvailableDataSource(dataSourceAlias, dataSourceDescription, endpointId);
-		addMessage(logText);
+		EndpointMapping endpointMapping = SyncEngineUtil.getEndpointMapping(endpointId, this.propertiesProvider);
+		String logText = MeshCompactUITranslator.getMessageNotAvailableDataSource(
+			dataSourceAlias, 
+			dataSourceDescription, 
+			endpointMapping == null ? endpointId : endpointMapping.getAlias());
+		addError(logText);
 	}
 	
 	public void notifyReadyToSyncAnswerSent(String dataSourceAlias, String endpointId) {
-		String logText = MeshCompactUITranslator.getMessageReadyToSyncAnswerSent(dataSourceAlias, endpointId);
+		EndpointMapping endpointMapping = SyncEngineUtil.getEndpointMapping(endpointId, this.propertiesProvider);
+		String logText = MeshCompactUITranslator.getMessageReadyToSyncAnswerSent(
+			dataSourceAlias, 
+			endpointMapping == null ? endpointId : endpointMapping.getAlias());
 		addMessage(logText);
 	}
 	
@@ -790,10 +797,21 @@ public class MeshCompactUI implements ISyncSessionViewOwner{
 		if(isWorking()){
 			this.newMessagesAreAvailables();
 		} else {
-			this.syncSessionView.setReady(logText);
+			this.syncSessionView.setOk(logText);
 		}
 	}
 
+	private void addError(String logText) {
+
+		this.logFrame.log(logText);
+		if(isWorking()){
+			this.newMessagesAreAvailables();
+		} else {
+			this.syncSessionView.setError(logText);
+		}
+	}
+
+	
 	private void newMessagesAreAvailables(){
 		this.buttonOpenLog.setForeground(Color.RED);
 		this.buttonOpenLog.setToolTipText(MeshCompactUITranslator.getToolTipOpenLogWindowNewMessagesAvailables());

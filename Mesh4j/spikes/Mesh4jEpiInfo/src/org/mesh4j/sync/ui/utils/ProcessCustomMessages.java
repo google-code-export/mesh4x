@@ -98,7 +98,7 @@ public class ProcessCustomMessages implements ISmsReceiver {
 					
 						// is response
 						this.resetPhoneCompatibility();			
-						ui.getSyncSessionView().setReady(MeshCompactUITranslator.getMessagePhoneIsCompatible());
+						ui.getSyncSessionView().setOk(MeshCompactUITranslator.getMessagePhoneIsCompatible());
 						ui.fullEnableAllButtons();
 						ui.notifyOwnerNotWorking();
 				} else {
@@ -201,7 +201,7 @@ public class ProcessCustomMessages implements ISmsReceiver {
 		synchronized (SEMAPHORE) {
 			this.readyToSyncInProcess = false;
 			
-			ui.getSyncSessionView().setReady(MeshCompactUITranslator.getMessageEndpointIsReadyToSync(readyToSyncEndpoint.getAlias(), readyToSyncDataSource.getAlias()));
+			ui.getSyncSessionView().setOk(MeshCompactUITranslator.getMessageEndpointIsReadyToSync(readyToSyncEndpoint.getAlias(), readyToSyncDataSource.getAlias()));
 			this.readyToSyncEndpoint = null;
 			this.readyToSyncDataSource = null;
 			ui.fullEnableAllButtons();

@@ -482,11 +482,13 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 	public void beginSyncWithError(ISyncSession syncSession) {
 		
 		String endpointId = syncSession.getTarget().getEndpointId();
-		verifyNewEndpointMapping(endpointId);
+		EndpointMapping endpointMapping = verifyNewEndpointMapping(endpointId);
 		verifyNewDataSourceMapping(syncSession.getSourceId(), endpointId);
 		
 		if(this.accepts(syncSession) || this.syncSession == null){
-			String error = MeshCompactUITranslator.getMessageErrorBeginSync(syncSession.getTarget().getEndpointId(), sourceIdResolver.getSourceName(syncSession.getSourceId()));
+			String error = MeshCompactUITranslator.getMessageErrorBeginSync(
+				endpointMapping == null ? endpointId : endpointMapping.getAlias(), 
+				sourceIdResolver.getSourceName(syncSession.getSourceId()));
 			this.setError(error);
 			
 			if(owner != null){
@@ -534,11 +536,13 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 	public void notifyCancelSyncErrorSyncSessionNotOpen(ISyncSession syncSession) {
 		
 		String endpointId = syncSession.getTarget().getEndpointId();
-		verifyNewEndpointMapping(endpointId);
+	 	EndpointMapping endpointMapping = verifyNewEndpointMapping(endpointId);
 		verifyNewDataSourceMapping(syncSession.getSourceId(), endpointId);
 		
 		if(accepts(syncSession) || this.syncSession == null){
-			String error = MeshCompactUITranslator.getMessageCancelSyncErrorSessionNotOpen(syncSession.getTarget(), syncSession.getSourceId());
+			String error = MeshCompactUITranslator.getMessageCancelSyncErrorSessionNotOpen(
+				endpointMapping == null ? endpointId : endpointMapping.getAlias(), 
+				syncSession.getSourceId());
 			this.setError(error);
 //			this.viewSession(null);
 		}
@@ -572,8 +576,9 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 		String endpointId = message.getEndpoint().getEndpointId();
 		EndpointMapping endpointMapping = verifyNewEndpointMapping(endpointId);
 		verifyNewDataSourceMapping(sourceId, endpointId);
-		
-		String error = MeshCompactUITranslator.getMessageErrorSessionCreation(sourceIdResolver.getSourceName(sourceId), (endpointMapping == null ? endpointId : endpointMapping.getAlias()));
+		String error = MeshCompactUITranslator.getMessageErrorSessionCreation(
+			sourceIdResolver.getSourceName(sourceId), 
+			(endpointMapping == null ? endpointId : endpointMapping.getAlias()));
 		this.setError(error);
 	}
 
@@ -589,8 +594,10 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 	public void notifyReceiveMessageError(String endpointId, String message, Date date) {
 		if(this.syncSession != null && this.syncSession.getTarget().getEndpointId().equals(endpointId)){
 			this.updateInOut();
-			
-			String error = MeshCompactUITranslator.getMessageNotifyReceiveMessageError(endpointId, message);
+			EndpointMapping endpointMapping = SyncEngineUtil.getEndpointMapping(endpointId, this.propertiesProvider);
+			String error = MeshCompactUITranslator.getMessageNotifyReceiveMessageError(
+				endpointMapping == null ? endpointId : endpointMapping.getAlias(), 
+				message);
 			this.setError(error);
 		}
 	}
@@ -607,7 +614,10 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 		if(this.syncSession != null && this.syncSession.getTarget().getEndpointId().equals(endpointId)){
 			this.updateInOut();
 		
-			String error = MeshCompactUITranslator.getMessageNotifySendMessageError(endpointId, message);
+			EndpointMapping endpointMapping = SyncEngineUtil.getEndpointMapping(endpointId, this.propertiesProvider);
+			String error = MeshCompactUITranslator.getMessageNotifySendMessageError(
+				endpointMapping == null ? endpointId : endpointMapping.getAlias(), 
+				message);
 			this.setError(error);
 		}
 	}

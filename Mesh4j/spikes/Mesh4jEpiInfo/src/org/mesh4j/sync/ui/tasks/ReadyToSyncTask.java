@@ -97,7 +97,7 @@ public class ReadyToSyncTask extends SwingWorker<Void, Void> {
 	}
 
 	public static String getQuestionUserName(String message) {
-		int start = message.indexOf("). ");
+		int start = message.indexOf("). ") + 3;
 		int end = message.indexOf(MeshCompactUITranslator.getQuestionEndSymbol());
 		return message.substring(start, end);
 	}

@@ -3,7 +3,6 @@ package org.mesh4j.sync.ui.translator;
 import java.text.DateFormat;
 import java.util.Date;
 
-import org.mesh4j.sync.message.IEndpoint;
 import org.mesh4j.sync.security.LoggedInIdentityProvider;
 import org.mesh4j.sync.translator.MessageTranslator;
 
@@ -124,16 +123,16 @@ public class MeshCompactUITranslator {
 		return MessageTranslator.translate("MESH_COMPACT_MESSAGE_CANCEL_SYNC_SUCCESSFULLY", dateStart, dateEnd);
 	}
 
-	public static String getMessageProcessingReadyToSync(String endpoint, String dataSource) {
-		return MessageTranslator.translate("MESH_COMPACT_MESSAGE_PROCESSING_READY_TO_SYNC", endpoint, dataSource);
+	public static String getMessageProcessingReadyToSync(String endpointAlias, String dataSourceAlias) {
+		return MessageTranslator.translate("MESH_COMPACT_MESSAGE_PROCESSING_READY_TO_SYNC", endpointAlias, dataSourceAlias);
 	}
 
-	public static String getMessageEndpointIsReadyToSync(String endpoint, String dataSource) {
-		return MessageTranslator.translate("MESH_COMPACT_MESSAGE_ENDPOINT_IS_READY_TO_SYNC", endpoint, dataSource);
+	public static String getMessageEndpointIsReadyToSync(String endpointAlias, String dataSourceAlias) {
+		return MessageTranslator.translate("MESH_COMPACT_MESSAGE_ENDPOINT_IS_READY_TO_SYNC", endpointAlias, dataSourceAlias);
 	}
 	
-	public static String getMessageEndpointIsNotReadyToSync(String endpoint, String dataSource) {
-		return MessageTranslator.translate("MESH_COMPACT_MESSAGE_ENDPOINT_IS_NOT_READY_TO_SYNC", endpoint, dataSource);
+	public static String getMessageEndpointIsNotReadyToSync(String endpointAlias, String dataSourceAlias) {
+		return MessageTranslator.translate("MESH_COMPACT_MESSAGE_ENDPOINT_IS_NOT_READY_TO_SYNC", endpointAlias, dataSourceAlias);
 	}
 
 	public static String getLabelDays() {
@@ -409,20 +408,20 @@ public class MeshCompactUITranslator {
 		return MessageTranslator.translate("MESH_COMPACT_SYNC_SESSION_TOOLTIP_SYNC_SESSION_NODE");
 	}
 	
-	public static String getMessageErrorBeginSync(String endpointId, String sourceId) {
-		return MessageTranslator.translate("MESH_COMPACT_MESSAGE_ERROR_BEGIN_SYNC", endpointId, sourceId);
+	public static String getMessageErrorBeginSync(String endpointAlias, String sourceId) {
+		return MessageTranslator.translate("MESH_COMPACT_MESSAGE_ERROR_BEGIN_SYNC", endpointAlias, sourceId);
 	}
 
-	public static String getMessageCancelSyncErrorSessionNotOpen(IEndpoint endpoint, String sourceId) {
-		return MessageTranslator.translate("MESH_COMPACT_MESSAGE_ERROR_CANCEL_SYNC_SESSION_NOT_OPEN", endpoint.getEndpointId(), sourceId);
+	public static String getMessageCancelSyncErrorSessionNotOpen(String endpointAlias, String sourceId) {
+		return MessageTranslator.translate("MESH_COMPACT_MESSAGE_ERROR_CANCEL_SYNC_SESSION_NOT_OPEN", endpointAlias, sourceId);
 	}
 
-	public static String getMessageNotifySendMessageError(String endpointId, String message) {
-		return MessageTranslator.translate("MESH_COMPACT_MESSAGE_NOTIFY_SEND_MSG_ERROR", endpointId, message);
+	public static String getMessageNotifySendMessageError(String endpointAlias, String message) {
+		return MessageTranslator.translate("MESH_COMPACT_MESSAGE_NOTIFY_SEND_MSG_ERROR", endpointAlias, message);
 	}
 	
-	public static String getMessageNotifyReceiveMessageError(String endpointId, String message) {
-		return MessageTranslator.translate("MESH_COMPACT_MESSAGE_NOTIFY_SEND_MSG_ERROR", endpointId, message);
+	public static String getMessageNotifyReceiveMessageError(String endpointAlias, String message) {
+		return MessageTranslator.translate("MESH_COMPACT_MESSAGE_NOTIFY_SEND_MSG_ERROR", endpointAlias, message);
 	}
 	
 	public static String getSyncSessionWindowLabelChooseSync() {
@@ -477,16 +476,16 @@ public class MeshCompactUITranslator {
 		return MessageTranslator.translate("MESH_COMPACT_MESSAGE_ENDPOINT_AUTOMATICALLY_CREATED", alias);
 	}
 
-	public static String getMessageNotAvailableDataSource(String dataSourceAlias,  String dataSourceDescription, String endpointId) {
-		return MessageTranslator.translate("MESH_COMPACT_MESSAGE_DATA_SOURCE_NOT_AVAILABLE", endpointId, dataSourceAlias, dataSourceDescription);
+	public static String getMessageNotAvailableDataSource(String dataSourceAlias,  String dataSourceDescription, String endpointAlias) {
+		return MessageTranslator.translate("MESH_COMPACT_MESSAGE_DATA_SOURCE_NOT_AVAILABLE", endpointAlias, dataSourceAlias, dataSourceDescription);
 	}
 
-	public static String getMessageReadyToSyncAnswerSent(String dataSourceAlias, String endpointId) {
-		return MessageTranslator.translate("MESH_COMPACT_MESSAGE_READY_TO_SYNC_ANSWER_SENT", endpointId, dataSourceAlias);
+	public static String getMessageReadyToSyncAnswerSent(String dataSourceAlias, String endpointAlias) {
+		return MessageTranslator.translate("MESH_COMPACT_MESSAGE_READY_TO_SYNC_ANSWER_SENT", endpointAlias, dataSourceAlias);
 	}
 
-	public static String getMessageErrorSessionCreation(String dataSourceAlias, String endpointId) {
-		return MessageTranslator.translate("MESH_COMPACT_MESSAGE_DATA_SOURCE_NOT_AVAILABLE", endpointId, dataSourceAlias, dataSourceAlias);
+	public static String getMessageErrorSessionCreation(String dataSourceAlias, String endpointAlias) {
+		return MessageTranslator.translate("MESH_COMPACT_MESSAGE_DATA_SOURCE_NOT_AVAILABLE", endpointAlias, dataSourceAlias, dataSourceAlias);
 	}
 	
 	public static String getToolTipOpenLogWindowNewMessagesAvailables() {
