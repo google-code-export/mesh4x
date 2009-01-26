@@ -16,10 +16,15 @@ import org.mesh4j.sync.message.channel.sms.SmsEndpoint;
 import org.mesh4j.sync.ui.MeshCompactUI;
 import org.mesh4j.sync.ui.tasks.ReadyToSyncResponseTask;
 import org.mesh4j.sync.ui.tasks.ReadyToSyncTask;
+import org.mesh4j.sync.ui.tasks.TestPhoneResponseTask;
 import org.mesh4j.sync.ui.tasks.TestPhoneTask;
 import org.mesh4j.sync.ui.translator.MeshCompactUITranslator;
+import org.mesh4j.sync.utils.SyncEngineUtil;
 
 public class ProcessCustomMessages implements ISmsReceiver {
+	
+	
+	private final static Object SEMAPHORE = new Object();
 
 	private final static IFilter<String> FILTER = new IFilter<String>(){		
 		@Override public boolean applies(String message) {
@@ -51,41 +56,66 @@ public class ProcessCustomMessages implements ISmsReceiver {
 	// MODEL VARIABLES
 	@Override
 	public void receiveSms(SmsEndpoint endpoint, String message, Date date) {
-		if(ReadyToSyncTask.isQuestion(message)){
-			String dataSourceAlias = ReadyToSyncTask.getDataSourceAlias(message);
+		synchronized (SEMAPHORE) {
 			
-			boolean isDataSourceAvailable = ui.getSourceIdResolver().isDataSourceAvailable(dataSourceAlias);
-			ReadyToSyncResponseTask responseTask = new ReadyToSyncResponseTask(ui, endpoint.getEndpointId(), dataSourceAlias, isDataSourceAvailable);
-			responseTask.execute();
+			if(ReadyToSyncTask.isQuestion(message)){
+				String dataSourceAlias = ReadyToSyncTask.getDataSourceAlias(message);
+				String dataSourceDescription = ReadyToSyncTask.getDataSourceDescription(message);
+				
+				boolean isDataSourceAvailable = this.ui.getSourceIdResolver().isDataSourceAvailable(dataSourceAlias);
+				
+				ReadyToSyncResponseTask responseTask = new ReadyToSyncResponseTask(ui, endpoint.getEndpointId(), dataSourceAlias, isDataSourceAvailable);
+				responseTask.execute();
+				
+				EndpointMapping endpointMapping = SyncEngineUtil.createNewEndpointMappingIfAbsent(endpoint.getEndpointId(), this.ui.getPropertiesProvider());
+				if(endpointMapping != null){
+					this.ui.notifyNewEndpointMapping(endpointMapping);
+				}
+				
+				if(isDataSourceAvailable){
+					this.ui.notifyReadyToSyncAnswerSent(dataSourceAlias, endpoint.getEndpointId());
+				} else {
+					this.ui.notifyNotAvailableDataSource(dataSourceAlias, dataSourceDescription, endpoint.getEndpointId());
+				}
+			}
+			
+			if(this.readyToSyncInProcess 
+					&& this.readyToSyncEndpoint.getEndpoint().equals(endpoint.getEndpointId())){
+				if(ReadyToSyncTask.isAnswerOk(message, this.readyToSyncDataSource.getAlias())){
+					notifyEndpointIsReadyToSync();
+				}
+				
+				if(ReadyToSyncTask.isAnswerNotOk(message, this.readyToSyncDataSource.getAlias())){
+					notifyEndpointIsNotReadyToSync();
+				}
+			} 
+	
+			if(TestPhoneTask.isQuestion(message)){
+				if(this.phoneCompatibilityInProcess 
+					&& TestPhoneTask.makeAnswer(this.phoneCompatibilityId).equals(message)
+					&& this.phoneCompatibilityEndpoint.getEndpoint().equals(endpoint.getEndpointId())){
+						this.resetPhoneCompatibility();			
+						ui.getSyncSessionView().setReady(MeshCompactUITranslator.getMessagePhoneIsCompatible());
+						ui.fullEnableAllButtons();
+						ui.notifyOwnerNotWorking();
+				} else {				
+					new TestPhoneResponseTask(this.ui, endpoint.getEndpointId(), message).execute();
+					
+					EndpointMapping endpointMapping = SyncEngineUtil.createNewEndpointMappingIfAbsent(endpoint.getEndpointId(), this.ui.getPropertiesProvider());
+					if(endpointMapping != null){
+						this.ui.notifyNewEndpointMapping(endpointMapping);
+					}
+				}
+			}		
 		}
-		
-		if(this.readyToSyncInProcess 
-				&& this.readyToSyncEndpoint.getEndpoint().equals(endpoint.getEndpointId())){
-			if(ReadyToSyncTask.isAnswerOk(message, this.readyToSyncDataSource.getAlias())){
-				notifyEndpointIsReadyToSync();
-			}
-			
-			if(ReadyToSyncTask.isAnswerNotOk(message, this.readyToSyncDataSource.getAlias())){
-				notifyEndpointIsNotReadyToSync();
-			}
-		} 
-
-		if(this.phoneCompatibilityInProcess 
-				&& this.phoneCompatibilityEndpoint.getEndpoint().equals(endpoint.getEndpointId()) 
-				&& TestPhoneTask.makeAnswer(this.phoneCompatibilityId).equals(message)){
-			
-			this.resetPhoneCompatibility();			
-			ui.getSyncSessionView().setReady(MeshCompactUITranslator.getMessagePhoneIsCompatible());
-			ui.fullEnableAllButtons();
-			ui.notifyOwnerNotWorking();
-		}		
-
 	}
 
 	public void resetPhoneCompatibility() {
-		phoneCompatibilityInProcess = false;
-		phoneCompatibilityEndpoint = null;
-		phoneCompatibilityId = null;
+		synchronized (SEMAPHORE) {
+			phoneCompatibilityInProcess = false;
+			phoneCompatibilityEndpoint = null;
+			phoneCompatibilityId = null;
+		}
 		
 	}
 
@@ -95,15 +125,18 @@ public class ProcessCustomMessages implements ISmsReceiver {
 	}
 	
 	public void notifyStartTestForPhoneCompatibility(EndpointMapping endpoint, String id){
-		this.phoneCompatibilityInProcess = true;
-		this.phoneCompatibilityEndpoint = endpoint;
-		this.phoneCompatibilityId = id;	
+		synchronized (SEMAPHORE) {
+			this.phoneCompatibilityInProcess = true;
+			this.phoneCompatibilityEndpoint = endpoint;
+			this.phoneCompatibilityId = id;	
 		
-		ui.fullDisableAllButtons();
+			ui.fullDisableAllButtons();
 		
-		String msg = MeshCompactUITranslator.getMessageTestingPhoneCompatibility();
-		ui.getSyncSessionView().setInProcess(msg);
-		ui.notifyOwnerWorking();
+			String msg = MeshCompactUITranslator.getMessageTestingPhoneCompatibility();
+			ui.getSyncSessionView().viewSession(null);
+			ui.getSyncSessionView().setInProcess(msg);
+			ui.notifyOwnerWorking();
+		}
 		
 		Action errorAction = new AbstractAction(){
 
@@ -128,16 +161,20 @@ public class ProcessCustomMessages implements ISmsReceiver {
 	
 	public void notifyStartReadyToSync(EndpointMapping endpoint, DataSourceMapping dataSource){
 
-		this.readyToSyncInProcess = true;
-		this.readyToSyncEndpoint = endpoint;
-		this.readyToSyncDataSource = dataSource;
-
-		ui.fullDisableAllButtons();
-
-		String msg = MeshCompactUITranslator.getMessageProcessingReadyToSync(endpoint.getAlias(), dataSource.getAlias());
-		ui.getSyncSessionView().setInProcess(msg);
-		
-		ui.notifyOwnerWorking();
+		synchronized (SEMAPHORE) {
+			
+			this.readyToSyncInProcess = true;
+			this.readyToSyncEndpoint = endpoint;
+			this.readyToSyncDataSource = dataSource;
+	
+			ui.fullDisableAllButtons();
+	
+			String msg = MeshCompactUITranslator.getMessageProcessingReadyToSync(endpoint.getAlias(), dataSource.getAlias());
+			ui.getSyncSessionView().viewSession(null);
+			ui.getSyncSessionView().setInProcess(msg);
+			
+			ui.notifyOwnerWorking();
+		}
 		
 		Action errorReadyToSync = new AbstractAction(){
 			private static final long serialVersionUID = 4028395273128514170L;
@@ -153,26 +190,35 @@ public class ProcessCustomMessages implements ISmsReceiver {
 	}
 	
 	public void notifyEndpointIsReadyToSync(){
-		this.readyToSyncInProcess = false;
-		
-		ui.getSyncSessionView().setReady(MeshCompactUITranslator.getMessageEndpointIsReadyToSync(readyToSyncEndpoint.getAlias(), readyToSyncDataSource.getAlias()));
-		this.readyToSyncEndpoint = null;
-		this.readyToSyncDataSource = null;
-		ui.fullEnableAllButtons();
-		
-		ui.notifyOwnerNotWorking();
+		synchronized (SEMAPHORE) {
+			this.readyToSyncInProcess = false;
+			
+			ui.getSyncSessionView().setReady(MeshCompactUITranslator.getMessageEndpointIsReadyToSync(readyToSyncEndpoint.getAlias(), readyToSyncDataSource.getAlias()));
+			this.readyToSyncEndpoint = null;
+			this.readyToSyncDataSource = null;
+			ui.fullEnableAllButtons();
+			
+			ui.notifyOwnerNotWorking();
+		}
 	}
 	
 	public void notifyEndpointIsNotReadyToSync(){
-		readyToSyncInProcess = false;
-		
-		String msg = MeshCompactUITranslator.getMessageEndpointIsNotReadyToSync(readyToSyncEndpoint.getAlias(), readyToSyncDataSource.getAlias());
-		ui.getSyncSessionView().setError(msg);
-		readyToSyncEndpoint = null;
-		readyToSyncDataSource = null;
-		ui.fullEnableAllButtons();
-		
-		ui.notifyOwnerNotWorking();
+		synchronized (SEMAPHORE) {
+			readyToSyncInProcess = false;
+			
+			String msg = MeshCompactUITranslator.getMessageEndpointIsNotReadyToSync(readyToSyncEndpoint.getAlias(), readyToSyncDataSource.getAlias());
+			ui.getSyncSessionView().setError(msg);
+			readyToSyncEndpoint = null;
+			readyToSyncDataSource = null;
+			ui.fullEnableAllButtons();
+			
+			ui.notifyOwnerNotWorking();
+		}
+	}
+
+
+	public boolean isReadyToSyncInProcess() {
+		return this.readyToSyncInProcess;
 	}
 
 }

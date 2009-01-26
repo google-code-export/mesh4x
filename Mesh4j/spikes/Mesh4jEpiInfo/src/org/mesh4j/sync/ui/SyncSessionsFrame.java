@@ -172,7 +172,7 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner, 
 			new RowSpec[] {
 				RowSpec.decode("197dlu")}));
 		
-		syncSessionView = new SyncSessionView(false);
+		syncSessionView = new SyncSessionView(false, this.propertiesProvider);
 		panelViewSession.add(syncSessionView, new CellConstraints(3, 1, CellConstraints.FILL, CellConstraints.FILL ));
 
 		final JSplitPane splitPane = new JSplitPane();
@@ -342,6 +342,17 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner, 
 	public void notifyEndSync(boolean error) {
 		this.treeSessions.repaint();		
 	}
+	
+	@Override
+	public void notifyNewEndpointMapping(EndpointMapping endpointMapping) {
+		// nothing to do		
+	}
+	
+	@Override
+	public void notifyNotAvailableDataSource(String dataSourceAlias, String dataSourceDescription, String endpointId) {
+		// nothing to do
+		
+	}
 
 	public void updateSessions(){
 		this.rootNode = new DefaultMutableTreeNode(MeshCompactUITranslator.getSyncSessionWindowLabelAllSessions());
@@ -359,13 +370,21 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner, 
 	}
 
 	@Override
+	public boolean isWorking() {
+		return false;
+	}
+
+	
+	// WindowFocusListener methods
+	@Override
 	public void windowGainedFocus(WindowEvent e) {
         this.owner.notifySyncSessionFrameGainedFocus(); 
 	}
 
 	@Override
 	public void windowLostFocus(WindowEvent e) {
-		// TODO Auto-generated method stub
+		// nothing to do
 		
 	}
+
 }

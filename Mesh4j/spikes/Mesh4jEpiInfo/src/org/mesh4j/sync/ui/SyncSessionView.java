@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.Timer;
 
+import org.mesh4j.sync.mappings.EndpointMapping;
 import org.mesh4j.sync.message.IChannel;
 import org.mesh4j.sync.message.IMessage;
 import org.mesh4j.sync.message.IMessageSyncAware;
@@ -25,10 +26,11 @@ import org.mesh4j.sync.message.protocol.ACKEndSyncMessageProcessor;
 import org.mesh4j.sync.message.protocol.CancelSyncMessageProcessor;
 import org.mesh4j.sync.message.protocol.EndSyncMessageProcessor;
 import org.mesh4j.sync.model.Item;
+import org.mesh4j.sync.properties.PropertiesProvider;
 import org.mesh4j.sync.ui.translator.MeshCompactUITranslator;
-import org.mesh4j.sync.ui.translator.MeshUITranslator;
 import org.mesh4j.sync.ui.utils.IconManager;
 import org.mesh4j.sync.utils.SourceIdResolver;
+import org.mesh4j.sync.utils.SyncEngineUtil;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -69,12 +71,15 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 	
 	private ISyncSessionViewOwner owner;
 	private SourceIdResolver sourceIdResolver;
+	private PropertiesProvider propertiesProvider;
 	private IChannel channel;
 	
 	// BUSINESS METHODS
 
-	public SyncSessionView(boolean mustStartRefreshStatus) {
+	public SyncSessionView(boolean mustStartRefreshStatus, PropertiesProvider propertiesProvider) {
 		super();
+		
+		this.propertiesProvider = propertiesProvider;
 		
 		if(mustStartRefreshStatus){
 			startScheduler();
@@ -84,7 +89,7 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 		setBounds(100, 100, 867, 346);
 		setLayout(new FormLayout(
 			"272dlu",
-			"58dlu, 50dlu, 12dlu"));
+			"58dlu, 50dlu, 20dlu"));
 
 		add(getPanelProgress(), new CellConstraints(1, 1, CellConstraints.FILL, CellConstraints.FILL));
 		add(getPanelTraffic(), new CellConstraints(1, 2));
@@ -96,8 +101,8 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 		if (panelStatus == null) {
 			panelStatus = new JPanel();
 			panelStatus.setBackground(Color.WHITE);
-			panelStatus.setLayout(new FormLayout("259dlu","10dlu"));
-			panelStatus.add(getTextAreaStatus(), new CellConstraints(1, 1, CellConstraints.FILL, CellConstraints.CENTER));
+			panelStatus.setLayout(new FormLayout("259dlu","17dlu"));
+			panelStatus.add(getTextAreaStatus(), new CellConstraints(1, 1, CellConstraints.FILL, CellConstraints.BOTTOM));
 		}
 		return panelStatus;
 	}
@@ -427,9 +432,11 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 	
 	@Override
 	public void beginSync(ISyncSession syncSession) {
-		if(this.syncSession == null){
+		if(this.syncSession == null && !this.owner.isWorking()){
 			this.syncSession = syncSession;
 		}
+		
+		verifyNewEndpointMapping(syncSession.getTarget().getEndpointId());
 		
 		boolean isSyncSessioninView = accepts(syncSession);
 		if(isSyncSessioninView){
@@ -451,6 +458,21 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 		}
 	}
 
+	private EndpointMapping verifyNewEndpointMapping(String endpointId) {
+		EndpointMapping endpointMapping = SyncEngineUtil.createNewEndpointMappingIfAbsent(endpointId, this.propertiesProvider);
+		if(endpointMapping != null){
+			this.owner.notifyNewEndpointMapping(endpointMapping);
+		}
+		return endpointMapping;
+	}
+	
+	private void verifyNewDataSourceMapping(String sourceId, String endpointId){
+		String dataSourceAlias = sourceIdResolver.getSourceName(sourceId);
+		if(!this.sourceIdResolver.isDataSourceAvailable(dataSourceAlias)){
+			this.owner.notifyNotAvailableDataSource(dataSourceAlias, dataSourceAlias, endpointId);
+		}
+	}
+
 	private SimpleDateFormat getDateFormat() {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
 		return dateFormat;
@@ -458,6 +480,11 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 
 	@Override
 	public void beginSyncWithError(ISyncSession syncSession) {
+		
+		String endpointId = syncSession.getTarget().getEndpointId();
+		verifyNewEndpointMapping(endpointId);
+		verifyNewDataSourceMapping(syncSession.getSourceId(), endpointId);
+		
 		if(this.accepts(syncSession) || this.syncSession == null){
 			String error = MeshCompactUITranslator.getMessageErrorBeginSync(syncSession.getTarget().getEndpointId(), sourceIdResolver.getSourceName(syncSession.getSourceId()));
 			this.setError(error);
@@ -490,6 +517,7 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 	
 	@Override
 	public void notifyCancelSync(ISyncSession syncSession) {
+		
 		if(accepts(syncSession)){
 			String msg = MeshCompactUITranslator.getMessageCancelSyncSuccessfully(syncSession.getStartDate(), syncSession.getEndDate(), syncSession.getLastSyncDate(), getDateFormat());
 			this.setOk(msg);
@@ -504,6 +532,11 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 
 	@Override
 	public void notifyCancelSyncErrorSyncSessionNotOpen(ISyncSession syncSession) {
+		
+		String endpointId = syncSession.getTarget().getEndpointId();
+		verifyNewEndpointMapping(endpointId);
+		verifyNewDataSourceMapping(syncSession.getSourceId(), endpointId);
+		
 		if(accepts(syncSession) || this.syncSession == null){
 			String error = MeshCompactUITranslator.getMessageCancelSyncErrorSessionNotOpen(syncSession.getTarget(), syncSession.getSourceId());
 			this.setError(error);
@@ -518,7 +551,7 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 
 	@Override
 	public void notifyInvalidProtocolMessageOrder(IMessage message) {
-		// nothing to do		
+		verifyNewEndpointMapping(message.getEndpoint().getEndpointId());
 	}
 
 	@Override
@@ -535,7 +568,12 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 
 	@Override
 	public void notifySessionCreationError(IMessage message, String sourceId) {
-		String error = MeshUITranslator.getMessageErrorSessionCreation(message, sourceIdResolver.getSourceName(sourceId));
+		
+		String endpointId = message.getEndpoint().getEndpointId();
+		EndpointMapping endpointMapping = verifyNewEndpointMapping(endpointId);
+		verifyNewDataSourceMapping(sourceId, endpointId);
+		
+		String error = MeshCompactUITranslator.getMessageErrorSessionCreation(sourceIdResolver.getSourceName(sourceId), (endpointMapping == null ? endpointId : endpointMapping.getAlias()));
 		this.setError(error);
 	}
 

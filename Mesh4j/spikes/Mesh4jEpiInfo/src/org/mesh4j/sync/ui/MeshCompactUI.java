@@ -106,7 +106,7 @@ public class MeshCompactUI implements ISyncSessionViewOwner{
 		this.sourceIdResolver = new SourceIdResolver(propertiesProvider.getBaseDirectory()+"/myDataSources.properties");
 		
 		this.syncFrame = new SyncFrame(this.propertiesProvider, this.sourceIdResolver);
-		this.logFrame = new LogFrame(this.sourceIdResolver);
+		this.logFrame = new LogFrame(this, this.sourceIdResolver);
 		this.cfgFrame = new ConfigurationFrame(this);
 		this.syncSessionsFrame = new SyncSessionsFrame(this, this.sourceIdResolver, this.propertiesProvider);
 		
@@ -328,12 +328,12 @@ public class MeshCompactUI implements ISyncSessionViewOwner{
 				RowSpec.decode("6dlu"),
 				RowSpec.decode("120dlu"),
 				FormFactory.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("120dlu"),
+				RowSpec.decode("129dlu"),
 				RowSpec.decode("17dlu"),
-				RowSpec.decode("28dlu")}));
+				RowSpec.decode("26dlu")}));
 		frame.setResizable(false);
 		frame.setTitle(MeshUITranslator.getTitle());
-		frame.setBounds(100, 100, 590, 504);
+		frame.setBounds(100, 100, 590, 516);
 		frame.getContentPane().add(getPanelSync(), new CellConstraints(2, 2));
 
 		final JPanel panelStatusButtons = new JPanel();
@@ -660,7 +660,7 @@ public class MeshCompactUI implements ISyncSessionViewOwner{
 
 	public SyncSessionView getSyncSessionView() {
 		if(syncSessionView == null){
-			syncSessionView = new SyncSessionView(true);
+			syncSessionView = new SyncSessionView(true, this.propertiesProvider);
 		}
 		return syncSessionView;
 	}
@@ -723,6 +723,14 @@ public class MeshCompactUI implements ISyncSessionViewOwner{
 	
 	// ISyncSessionViewOwner methods
 	@Override
+	public boolean isWorking() {
+		return this.syncSessionView.isSyncInProcess() 
+				|| this.processCustomMessages.isPhoneCompatibilityInProcess() 
+				|| this.processCustomMessages.isReadyToSyncInProcess();
+	}
+
+	
+	@Override
 	public void notifyNewSync(boolean isSyncSessioninView) {
 		this.syncSessionsFrame.notifyNewSync(isSyncSessioninView);
 		if(!isSyncSessioninView){
@@ -757,6 +765,44 @@ public class MeshCompactUI implements ISyncSessionViewOwner{
 		this.buttonOpenSessions.setToolTipText(MeshCompactUITranslator.getToolTipOpenSyncSessionsWindow());
 	}	
 	
+	public void notifyNewEndpointMapping(EndpointMapping endpointMapping){
+		this.cfgFrame.addNewEndpoint(endpointMapping);
+		this.notifyEndpointMappingListsChanges();
+
+		String logText = MeshCompactUITranslator.getMessageEndpointMappingAutomaticallyCreated(endpointMapping.getAlias());
+		addMessage(logText);
+	}
+
+	@Override
+	public void notifyNotAvailableDataSource(String dataSourceAlias, String dataSourceDescription, String endpointId) {
+		String logText = MeshCompactUITranslator.getMessageNotAvailableDataSource(dataSourceAlias, dataSourceDescription, endpointId);
+		addMessage(logText);
+	}
+	
+	public void notifyReadyToSyncAnswerSent(String dataSourceAlias, String endpointId) {
+		String logText = MeshCompactUITranslator.getMessageReadyToSyncAnswerSent(dataSourceAlias, endpointId);
+		addMessage(logText);
+	}
+	
+	private void addMessage(String logText) {
+
+		this.logFrame.log(logText);
+		if(isWorking()){
+			this.newMessagesAreAvailables();
+		} else {
+			this.syncSessionView.setReady(logText);
+		}
+	}
+
+	private void newMessagesAreAvailables(){
+		this.buttonOpenLog.setForeground(Color.RED);
+		this.buttonOpenLog.setToolTipText(MeshCompactUITranslator.getToolTipOpenLogWindowNewMessagesAvailables());
+	}
+	
+	public void notifyLogFrameGainedFocus() {
+		this.buttonOpenLog.setForeground(null);
+		this.buttonOpenLog.setToolTipText(MeshCompactUITranslator.getToolTipOpenLogWindow());
+	}
 	
 	public void openMesh4xURL(){
         if (Desktop.isDesktopSupported()) {

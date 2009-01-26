@@ -203,4 +203,12 @@ public class PropertiesProvider {
 	public String getMesh4xURL() {
 		return getString("mesh4x.url");
 	}
+
+	public boolean mustTraceProtocol() {
+		return getBoolean("dafault.trace.protocol");
+	}
+
+	public boolean mustTraceSms() {
+		return getBoolean("dafault.trace.sms");
+	}
 }

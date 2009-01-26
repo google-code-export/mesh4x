@@ -52,6 +52,7 @@ public class ConfigurationFrame extends JFrame {
 	private MeshCompactUI owner;
 	private JButton buttonSaveProperties;
 	private JTabbedPane tabbedPane;
+	private JList listContacts;
 	
 	// BUSINESS METHODS
 	
@@ -107,7 +108,7 @@ public class ConfigurationFrame extends JFrame {
 		panelContacts.add(panelEditContact, new CellConstraints(2, 2));
 
 		DefaultListModel listModelContacts = new DefaultListModel();
-		final JList listContacts = new JList(listModelContacts);
+		listContacts = new JList(listModelContacts);
 		
 		final JTextField textFieldContactAlias = new JTextField();
 		textFieldContactAlias.setToolTipText(MeshCompactUITranslator.getToolTipEditContactAliasField());
@@ -625,5 +626,10 @@ public class ConfigurationFrame extends JFrame {
 	
 	public void notifyOwnerNotWorking(){
 		buttonSaveProperties.setEnabled(true);
+	}
+	
+	public void addNewEndpoint(EndpointMapping endpoint){
+		DefaultListModel listModel = (DefaultListModel)listContacts.getModel();
+		listModel.addElement(endpoint);
 	}
 }

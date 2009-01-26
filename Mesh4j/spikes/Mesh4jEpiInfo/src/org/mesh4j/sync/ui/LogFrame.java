@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
 import java.util.Date;
 import java.util.List;
 
@@ -33,7 +35,7 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
-public class LogFrame extends JFrame implements ISmsConnectionInboundOutboundNotification, IMessageSyncAware {
+public class LogFrame extends JFrame implements ISmsConnectionInboundOutboundNotification, IMessageSyncAware, WindowFocusListener {
 	
 	private static final long serialVersionUID = -5672081373978129329L;
 	
@@ -42,13 +44,20 @@ public class LogFrame extends JFrame implements ISmsConnectionInboundOutboundNot
 	// MODEL VARIABLES
 	private JTextArea textAreaConsoleView;
 	private SourceIdResolver sourceIdResolver;
+	private MeshCompactUI owner;
+	private boolean mustTraceSms = false;
+	private boolean mustTraceProtocol = false;
 	
 	// BUSINESS METHODS
 
-	public LogFrame(SourceIdResolver sourceIdResolver) {
+	public LogFrame(MeshCompactUI owner, SourceIdResolver sourceIdResolver) {
 		super();
 		
+		this.owner = owner;
 		this.sourceIdResolver = sourceIdResolver;
+		this.mustTraceSms = owner.getPropertiesProvider().mustTraceSms();
+		this.mustTraceProtocol = owner.getPropertiesProvider().mustTraceProtocol();
+		
 		setAlwaysOnTop(true);
 		setIconImage(IconManager.getCDCImage());
 		getContentPane().setBackground(Color.WHITE);
@@ -123,6 +132,7 @@ public class LogFrame extends JFrame implements ISmsConnectionInboundOutboundNot
 		
 		panel.add(buttonClose, new CellConstraints(3, 1));
 		
+		this.addWindowFocusListener(this);
 	}
 
 	public JTextArea getTextAreaConsoleView() {
@@ -134,7 +144,14 @@ public class LogFrame extends JFrame implements ISmsConnectionInboundOutboundNot
 	}
 	
 	public void log(String text) {
-		this.textAreaConsoleView.setText(text + "\n"+ this.textAreaConsoleView.getText());
+		log(text, true);
+	}
+	
+	public void log(String text, boolean mustUseConsole) {
+		if(mustUseConsole){
+			this.textAreaConsoleView.setText(text + "\n"+ this.textAreaConsoleView.getText());
+		}
+		
 		if(Logger.isInfoEnabled()){
 			Logger.info(text);
 		}
@@ -168,24 +185,25 @@ public class LogFrame extends JFrame implements ISmsConnectionInboundOutboundNot
 	// ISmsConnectionInboundOutboundNotification methods
 	@Override
 	public void notifyReceiveMessage(String endpointId, String message, Date date) {
-		this.log("\t"+MeshUITranslator.getMessageNotifyReceiveMessage(endpointId, message));
+		String text = "\t"+MeshUITranslator.getMessageNotifyReceiveMessage(endpointId, message);
+		this.log(text, mustTraceSms);
 	}
 
 	@Override
 	public void notifyReceiveMessageError(String endpointId, String message, Date date) {
 		String error = MeshUITranslator.getMessageNotifyReceiveMessageError(endpointId, message);
-		this.log("\t"+error);
+		this.log("\t"+error, mustTraceSms);
 	}
 
 	@Override
 	public void notifySendMessage(String endpointId, String message) {
-		this.log("\t"+MeshUITranslator.getMessageNotifySendMessage(endpointId, message));
+		this.log("\t"+MeshUITranslator.getMessageNotifySendMessage(endpointId, message), mustTraceSms);
 	}
 
 	@Override
 	public void notifySendMessageError(String endpointId, String message) {
 		String error = MeshUITranslator.getMessageNotifySendMessageError(endpointId, message);
-		this.log("\t"+error);
+		this.log("\t"+error, mustTraceSms);
 	}
 	
 	@Override
@@ -198,7 +216,7 @@ public class LogFrame extends JFrame implements ISmsConnectionInboundOutboundNot
 
 	@Override
 	public void beginSync(ISyncSession syncSession) {
-		this.log(MeshUITranslator.getLabelStart());
+		this.log(MeshUITranslator.getLabelStart(), mustTraceProtocol);
 	}
 
 	@Override
@@ -208,46 +226,58 @@ public class LogFrame extends JFrame implements ISmsConnectionInboundOutboundNot
 	
 	public void endSync(String target, String sourceId, List<Item> conflicts) {
 		if(conflicts.isEmpty()){
-			this.log(MeshUITranslator.getLabelSuccess());
+			this.log(MeshUITranslator.getLabelSuccess(), mustTraceProtocol);
 		} else {
-			this.log(MeshUITranslator.getLabelSyncEndWithConflicts(conflicts.size()));
+			this.log(MeshUITranslator.getLabelSyncEndWithConflicts(conflicts.size()), mustTraceProtocol);
 		}
 	}
 
 	@Override
 	public void beginSyncWithError(ISyncSession syncSession) {
 		String error = MeshUITranslator.getMessageErrorBeginSync(syncSession.getTarget().getEndpointId(), sourceIdResolver.getSourceName(syncSession.getSourceId()));
-		this.log(error);		
+		this.log(error, mustTraceProtocol);		
 	}
 
 	@Override
 	public void notifyCancelSync(ISyncSession syncSession) {
-		this.log(MeshUITranslator.getMessageCancelSync(syncSession.getSessionId(), syncSession.getTarget().getEndpointId(), sourceIdResolver.getSourceName(syncSession.getSourceId())));
+		this.log(MeshUITranslator.getMessageCancelSync(syncSession.getSessionId(), syncSession.getTarget().getEndpointId(), sourceIdResolver.getSourceName(syncSession.getSourceId())), mustTraceProtocol);
 	}
 
 	@Override
 	public void notifyCancelSyncErrorSyncSessionNotOpen(ISyncSession syncSession) {
 		String error = MeshUITranslator.getMessageCancelSyncErrorSessionNotOpen(syncSession.getTarget(), syncSession.getSourceId());
-		this.log(error);		
+		this.log(error, mustTraceProtocol);		
 	}
 
 	@Override
 	public void notifyInvalidMessageProtocol(IMessage message) {
-		this.log(MeshUITranslator.getMessageInvalidMessageProtocol(message));
+		this.log(MeshUITranslator.getMessageInvalidMessageProtocol(message), mustTraceProtocol);
 	}
 
 	@Override
 	public void notifyInvalidProtocolMessageOrder(IMessage message) {
-		this.log(MeshUITranslator.getMessageErrorInvalidProtocolMessageOrder(message));
+		this.log(MeshUITranslator.getMessageErrorInvalidProtocolMessageOrder(message), mustTraceProtocol);
 	}
 
 	@Override
 	public void notifyMessageProcessed(ISyncSession syncSession, IMessage message, List<IMessage> response) {
-		this.log(MeshUITranslator.getMessageProcessed(message, response));
+		this.log(MeshUITranslator.getMessageProcessed(message, response), mustTraceProtocol);
 	}
 
 	@Override
 	public void notifySessionCreationError(IMessage message, String sourceId) {
-		this.log(MeshUITranslator.getMessageErrorSessionCreation(message, sourceIdResolver.getSourceName(sourceId)));
+		this.log(MeshUITranslator.getMessageErrorSessionCreation(message, sourceIdResolver.getSourceName(sourceId)), mustTraceProtocol);
+	}
+	
+	// WindowFocusListener methods
+	@Override
+	public void windowGainedFocus(WindowEvent e) {
+        this.owner.notifyLogFrameGainedFocus(); 
+	}
+
+	@Override
+	public void windowLostFocus(WindowEvent e) {
+		// nothing to do
+		
 	}
 }

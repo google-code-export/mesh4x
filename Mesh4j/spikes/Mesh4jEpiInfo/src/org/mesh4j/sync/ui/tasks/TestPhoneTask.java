@@ -31,7 +31,7 @@ public class TestPhoneTask extends SwingWorker<Void, Void> {
 				
 		String message = makeAnswer(id);
 
-		SyncEngineUtil.sendSms(ui.getSyncEngine(), endpoint.getEndpoint(), message);
+		this.sendSms(endpoint.getEndpoint(), message);
 		return null;
     }
 
@@ -47,5 +47,9 @@ public class TestPhoneTask extends SwingWorker<Void, Void> {
 	
 	public static String makeAnswer(String id) {
 		return MeshCompactUITranslator.getQuestionTestPhoneCompatibility() + " <" + id + ">";
+	}
+	
+	protected void sendSms(String endpointId, String message){
+		SyncEngineUtil.sendSms(ui.getSyncEngine(), endpointId , message);
 	}
 }

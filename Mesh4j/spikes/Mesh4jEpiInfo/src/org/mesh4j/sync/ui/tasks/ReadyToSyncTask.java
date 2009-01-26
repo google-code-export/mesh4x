@@ -87,4 +87,10 @@ public class ReadyToSyncTask extends SwingWorker<Void, Void> {
 		int end = message.indexOf("(");
 		return message.substring(start, end);
 	}
+
+	public static String getDataSourceDescription(String message) {
+		int start = MeshCompactUITranslator.getQuestionForReadyToSync().length() +1 ;
+		int end = message.indexOf(")");
+		return message.substring(start, end+1);
+	}
 }

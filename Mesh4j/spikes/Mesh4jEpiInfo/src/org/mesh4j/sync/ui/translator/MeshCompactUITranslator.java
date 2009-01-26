@@ -471,5 +471,24 @@ public class MeshCompactUITranslator {
 	public static String getSyncWindowTooltipViewFeed() {
 		return MessageTranslator.translate("MESH_COMPACT_SYNC_WINDOW_TOOLTIP_VIEW_FEED");
 	}
+
+	public static String getMessageEndpointMappingAutomaticallyCreated(String alias) {
+		return MessageTranslator.translate("MESH_COMPACT_MESSAGE_ENDPOINT_AUTOMATICALLY_CREATED", alias);
+	}
+
+	public static String getMessageNotAvailableDataSource(String dataSourceAlias,  String dataSourceDescription, String endpointId) {
+		return MessageTranslator.translate("MESH_COMPACT_MESSAGE_DATA_SOURCE_NOT_AVAILABLE", endpointId, dataSourceAlias, dataSourceDescription);
+	}
+
+	public static String getMessageReadyToSyncAnswerSent(String dataSourceAlias, String endpointId) {
+		return MessageTranslator.translate("MESH_COMPACT_MESSAGE_READY_TO_SYNC_ANSWER_SENT", endpointId, dataSourceAlias);
+	}
+
+	public static String getMessageErrorSessionCreation(String dataSourceAlias, String endpointId) {
+		return MessageTranslator.translate("MESH_COMPACT_MESSAGE_DATA_SOURCE_NOT_AVAILABLE", endpointId, dataSourceAlias, dataSourceAlias);
+	}
 	
+	public static String getToolTipOpenLogWindowNewMessagesAvailables() {
+		return MessageTranslator.translate("MESH_COMPACT_TOOLTIP_OPEN_LOG_WINDOW_NEW_MESSAGES");
+	}	
 }

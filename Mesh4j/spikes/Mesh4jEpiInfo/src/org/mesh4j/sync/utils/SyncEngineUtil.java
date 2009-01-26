@@ -68,7 +68,7 @@ public class SyncEngineUtil {
 
 	// TODO (JMT) Add number of GET/MERGE and ACKs to client session target values
 	// TODO (JMT) Add items added/updated/deleted to client session target values
-
+	
 	private final static Log Logger = LogFactory.getLog(SyncEngineUtil.class);
 	
 	public static List<Item> synchronize(String url, String sourceAlias, IIdentityProvider identityProvider, String baseDirectory, IMsAccessSourceIdResolver sourceIdResolver) {
@@ -370,6 +370,23 @@ public class SyncEngineUtil {
 		myEndpoints.put(endpoint.getAlias(), endpoint.getEndpoint());
 		PropertiesUtils.store(fileName, myEndpoints);		
 		
+	}
+	
+	public static EndpointMapping createNewEndpointMappingIfAbsent(String endpointId, PropertiesProvider propertiesProvider){
+		EndpointMapping endpoint = null;
+		try{
+			endpoint = SyncEngineUtil.getEndpointMapping(endpointId, propertiesProvider);
+			if(endpoint == null){
+				endpoint = new EndpointMapping(endpointId, endpointId);
+				SyncEngineUtil.saveOrUpdateEndpointMapping(endpointId, endpoint, propertiesProvider);
+				return endpoint;
+			} else {
+				return null;
+			}
+		} catch(Throwable e){
+			Logger.error(e.getMessage(), e);
+			return null;
+		}
 	}
 
 	public static void initializeSmsConnection(MessageSyncEngine syncEngine, PropertiesProvider propertiesProvider) {
