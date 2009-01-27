@@ -159,6 +159,11 @@ public class ACKEndSyncMessageProcessorTests {
 				Assert.fail();
 				return null;
 			}
+
+			@Override
+			public void removeSourceId(String sourceId) {
+				Assert.fail();
+			}
 		};
 		
 		Item item = new Item(new NullContent("1"), new Sync("1", "jmt", new Date(), true));

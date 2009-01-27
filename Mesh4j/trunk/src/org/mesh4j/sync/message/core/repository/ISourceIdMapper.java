@@ -4,4 +4,6 @@ public interface ISourceIdMapper {
 
 	String getSourceDefinition(String sourceId);
 
+	void removeSourceDefinition(String sourceId);
+
 }

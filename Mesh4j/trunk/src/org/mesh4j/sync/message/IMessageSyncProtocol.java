@@ -34,4 +34,6 @@ public interface IMessageSyncProtocol {
 
 	List<ISyncSession> getAllSyncSessions();
 
+	void removeSourceId(String sourceId);
+
 }

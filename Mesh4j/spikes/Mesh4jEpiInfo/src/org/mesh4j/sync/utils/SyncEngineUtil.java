@@ -31,6 +31,7 @@ import org.mesh4j.sync.filter.CompoundFilter;
 import org.mesh4j.sync.filter.NonDeletedFilter;
 import org.mesh4j.sync.mappings.DataSourceMapping;
 import org.mesh4j.sync.mappings.EndpointMapping;
+import org.mesh4j.sync.mappings.MSAccessDataSourceMapping;
 import org.mesh4j.sync.mappings.SyncMode;
 import org.mesh4j.sync.message.IChannel;
 import org.mesh4j.sync.message.IMessageSyncAdapter;
@@ -140,7 +141,7 @@ public class SyncEngineUtil {
 		File file = new File(fileName);
 		if(file.exists()){
 			String sourceAlias = tableName;
-			sourceIdResolver.saveDataSourceMapping(new DataSourceMapping(sourceAlias, file.getName(), tableName, fileName));
+			sourceIdResolver.saveDataSourceMapping(new MSAccessDataSourceMapping(sourceAlias, file.getName(), tableName, fileName));
 		}
 	}
 	

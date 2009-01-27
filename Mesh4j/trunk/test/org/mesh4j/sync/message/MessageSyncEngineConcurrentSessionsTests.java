@@ -98,6 +98,11 @@ public class MessageSyncEngineConcurrentSessionsTests implements IMessageSyncAwa
 			@Override
 			public String getSourceDefinition(String sourceId) {
 				return sourceId;
+			}
+
+			@Override
+			public void removeSourceDefinition(String sourceId) {
+				// nothing to do			
 			}			
 		};
 

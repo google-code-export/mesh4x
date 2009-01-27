@@ -37,4 +37,8 @@ public interface ISyncSessionFactory {
 
 	List<ISyncSession> getAll();
 
+	void removeSourceId(String sourceId);
+
+	List<ISyncSession> getAll(String sourceId);
+
 }

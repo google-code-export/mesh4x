@@ -4,8 +4,8 @@ import java.awt.Cursor;
 
 import javax.swing.SwingWorker;
 
-import org.mesh4j.sync.mappings.DataSourceMapping;
 import org.mesh4j.sync.mappings.EndpointMapping;
+import org.mesh4j.sync.mappings.MSAccessDataSourceMapping;
 import org.mesh4j.sync.security.LoggedInIdentityProvider;
 import org.mesh4j.sync.ui.MeshCompactUI;
 import org.mesh4j.sync.ui.translator.MeshCompactUITranslator;
@@ -26,7 +26,7 @@ public class ReadyToSyncTask extends SwingWorker<Void, Void> {
 		ui.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
 		EndpointMapping endpoint = (EndpointMapping)ui.getComboBoxEndpoint().getSelectedItem();
-		DataSourceMapping dataSource = (DataSourceMapping)ui.getComboBoxMappingDataSource().getSelectedItem();
+		MSAccessDataSourceMapping dataSource = (MSAccessDataSourceMapping)ui.getComboBoxMappingDataSource().getSelectedItem();
 	
 		ui.getProcessCustomMessages().notifyStartReadyToSync(endpoint, dataSource);
 		
@@ -61,7 +61,7 @@ public class ReadyToSyncTask extends SwingWorker<Void, Void> {
 		return makeAnswer(dataSourceAlias, false).equals(message);
 	}
 	
-	public static String makeQuestion(DataSourceMapping dataSourceMapping) {
+	public static String makeQuestion(MSAccessDataSourceMapping dataSourceMapping) {
 		StringBuffer sb = new StringBuffer();
 		sb.append(MeshCompactUITranslator.getQuestionForReadyToSync());
 		sb.append(" ");

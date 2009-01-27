@@ -408,5 +408,28 @@ public class FileSyncSessionRepository implements ISyncSessionRepository{
 	@Override
 	public List<ISyncSession> getAllSyncSessions() {
 		return this.sessionFactory.getAll();
+	}
+
+	@Override
+	public void removeSourceId(String sourceId) {
+		List<ISyncSession> allSessions = this.sessionFactory.getAll(sourceId);
+
+		this.sessionFactory.removeSourceId(sourceId);
+		
+		for (ISyncSession syncSession : allSessions) {
+			deleteSessionFiles(syncSession.getSessionId());
+		}
+	}
+
+	private void deleteSessionFiles(String sessionId) {
+		File currentFile = getCurrentSessionFile(sessionId);
+		if(currentFile.exists()){
+			currentFile.delete();
+		}
+		
+		File snappshotFile = getSnapshotFile(sessionId);
+		if(snappshotFile.exists()){
+			snappshotFile.delete();
+		}
 	}	
 }

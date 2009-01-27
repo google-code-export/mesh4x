@@ -195,4 +195,29 @@ public class SyncSessionFactory implements ISyncSessionFactory {
 		this.sessions.put(sessionId, session);
 		return session;
 	}
+
+	@Override
+	public void removeSourceId(String sourceId) {
+		
+		List<ISyncSession> sessionsToRemove = getAll(sourceId);
+		
+		for (ISyncSession syncSession : sessionsToRemove) {
+			this.sessions.remove(syncSession.getSessionId());
+		}
+		
+		this.adapters.remove(sourceId);
+		
+		this.adapterFactory.removeSourceId(sourceId);
+	}
+
+	@Override
+	public List<ISyncSession> getAll(String sourceId) {
+		ArrayList<ISyncSession> all = new ArrayList<ISyncSession>();
+		for (ISyncSession syncSession : this.sessions.values()) {
+			if(syncSession.getSourceId().equals(sourceId)){
+				all.add(syncSession);
+			}
+		}
+		return all;
+	}
 }

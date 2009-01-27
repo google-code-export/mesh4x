@@ -85,7 +85,10 @@ public class MessageSyncProtocolTests {
 	
 	public void shouldBeginSyncReturnNullWhenSessionIsOpen(){
 		
-		ISourceIdMapper sourceIdMapper = new ISourceIdMapper(){@Override public String getSourceDefinition(String sourceId) {return sourceId;}};
+		ISourceIdMapper sourceIdMapper = new ISourceIdMapper(){
+			@Override public String getSourceDefinition(String sourceId) {return sourceId;}
+			@Override public void removeSourceDefinition(String sourceId) {Assert.fail();}
+		};
 		
 		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(sourceIdMapper, null, true);
 		SyncSessionFactory syncSessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);
@@ -106,6 +109,8 @@ public class MessageSyncProtocolTests {
 				// ""
 				return sourceId;
 			}
+			
+			@Override public void removeSourceDefinition(String sourceId) {Assert.fail();}
 			
 		};
 		
@@ -133,6 +138,7 @@ public class MessageSyncProtocolTests {
 				return sourceId;
 			}
 			
+			@Override public void removeSourceDefinition(String sourceId) {Assert.fail();}
 		};
 		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(sourceIdMapper, null, true);
 		SyncSessionFactory syncSessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);
@@ -149,6 +155,8 @@ public class MessageSyncProtocolTests {
 				// ""
 				return sourceId;
 			}
+			
+			@Override public void removeSourceDefinition(String sourceId) {Assert.fail();}
 			
 		};
 		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(sourceIdMapper, null, true);
@@ -168,6 +176,8 @@ public class MessageSyncProtocolTests {
 				// ""
 				return sourceId;
 			}
+			
+			@Override public void removeSourceDefinition(String sourceId) {Assert.fail();}
 			
 		};
 		
@@ -192,6 +202,8 @@ public class MessageSyncProtocolTests {
 				// ""
 				return sourceId;
 			}
+			
+			@Override public void removeSourceDefinition(String sourceId) {Assert.fail();}
 			
 		};
 		
@@ -295,6 +307,7 @@ public class MessageSyncProtocolTests {
 			@Override public void registerSource(IMessageSyncAdapter adapter) {}
 			@Override public void registerSourceIfAbsent(IMessageSyncAdapter adapter) {}
 			@Override public void snapshot(ISyncSession syncSession) {}
+			@Override public void removeSourceId(String sourceId) { Assert.fail(); }
 		};
 		
 		BeginSyncMessageProcessor begin  = new BeginSyncMessageProcessor(null, null, null);
@@ -373,6 +386,7 @@ public class MessageSyncProtocolTests {
 			@Override public void registerSource(IMessageSyncAdapter adapter) {}
 			@Override public void registerSourceIfAbsent(IMessageSyncAdapter adapter) {}
 			@Override public void snapshot(ISyncSession syncSession) {}
+			@Override public void removeSourceId(String sourceId) { Assert.fail(); }
 		};
 		
 		BeginSyncMessageProcessor begin  = new BeginSyncMessageProcessor(null, null, null);
@@ -507,6 +521,7 @@ public class MessageSyncProtocolTests {
 		@Override public void registerSource(IMessageSyncAdapter adapter) {Assert.fail();}
 		@Override public void registerSourceIfAbsent(IMessageSyncAdapter adapter) {Assert.fail();}
 		@Override public void snapshot(ISyncSession syncSession) {Assert.fail();}
+		@Override public void removeSourceId(String sourceId) { Assert.fail(); }
 	};
 	
 	private class MyMessageSyncAware implements IMessageSyncAware {

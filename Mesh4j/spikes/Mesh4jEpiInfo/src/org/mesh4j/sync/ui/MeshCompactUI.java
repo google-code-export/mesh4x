@@ -689,6 +689,17 @@ public class MeshCompactUI implements ISyncSessionViewOwner{
 		comboBoxEndpoint.setModel(new DefaultComboBoxModel(SyncEngineUtil.getEndpointMappings(propertiesProvider)));		
 	}
 
+	public void notifyDataSourceMappingDeleted(String alias) {
+		
+		if(this.syncSessionView.getSyncSession() != null &&
+				alias.equals(this.syncSessionView.getSyncSession().getSourceId())){
+			this.syncSessionView.viewSession(null);
+		}
+		this.syncSessionsFrame.updateSessions();
+		notifyDataSourceMappingListsChanges();
+	}
+
+	
 	public void notifyDataSourceMappingListsChanges() {
 		DefaultComboBoxModel model = new DefaultComboBoxModel();
 		
@@ -834,4 +845,5 @@ public class MeshCompactUI implements ISyncSessionViewOwner{
         	}
         }
 	}
+
 }

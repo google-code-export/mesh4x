@@ -7,4 +7,6 @@ public interface IMessageSyncAdapterFactory {
 
 	IMessageSyncAdapter createSyncAdapter(String sourceId, IIdentityProvider identityProvider);
 
+	void removeSourceId(String sourceId);
+
 }

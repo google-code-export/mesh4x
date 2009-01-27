@@ -95,4 +95,9 @@ public class MockSyncProtocol implements IMessageSyncProtocol {
 		return all;
 	}
 
+	@Override
+	public void removeSourceId(String sourceId) {
+		// nothing to do
+	}
+
 }

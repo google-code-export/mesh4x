@@ -209,7 +209,9 @@ public class SmsLibTests {
 			@Override
 			public String getSourceDefinition(String sourceId) {
 				return sourceId;
-			}			
+			}
+			
+			@Override public void removeSourceDefinition(String sourceId) {Assert.fail();}
 		};
 		
 		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(sourceIdMapper, null, false);

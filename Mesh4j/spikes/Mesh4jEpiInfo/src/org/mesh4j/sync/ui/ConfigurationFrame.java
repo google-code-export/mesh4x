@@ -32,6 +32,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.mesh4j.sync.mappings.DataSourceMapping;
 import org.mesh4j.sync.mappings.EndpointMapping;
+import org.mesh4j.sync.mappings.MSAccessDataSourceMapping;
 import org.mesh4j.sync.ui.tasks.ChangeDeviceTask;
 import org.mesh4j.sync.ui.translator.MeshCompactUITranslator;
 import org.mesh4j.sync.ui.translator.MeshUITranslator;
@@ -305,15 +306,15 @@ public class ConfigurationFrame extends JFrame {
 				} else {
 					if (index == -1) {	// save
 	
-						DataSourceMapping dataSourceMapping = new DataSourceMapping(newAlias, mdbName, tableName, fileName);
+						MSAccessDataSourceMapping dataSourceMapping = new MSAccessDataSourceMapping(newAlias, mdbName, tableName, fileName);
 						owner.getSourceIdMapper().saveDataSourceMapping(dataSourceMapping);
 						
 						DefaultListModel listModel = (DefaultListModel)listDataSources.getModel();
 						listModel.addElement(dataSourceMapping);
 					
 					} else { 			// update
-						DataSourceMapping dataSourceMapping = (DataSourceMapping) listDataSources.getSelectedValue();
-						DataSourceMapping oldDataSourceMapping = new DataSourceMapping(
+						MSAccessDataSourceMapping dataSourceMapping = (MSAccessDataSourceMapping) listDataSources.getSelectedValue();
+						MSAccessDataSourceMapping oldDataSourceMapping = new MSAccessDataSourceMapping(
 								dataSourceMapping.getAlias(),
 								dataSourceMapping.getMDBName(),
 								dataSourceMapping.getTableName(),
@@ -348,8 +349,9 @@ public class ConfigurationFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				int index = listDataSources.getSelectedIndex();
 				if (index != -1) {
-					DataSourceMapping dataSource = (DataSourceMapping) listDataSources.getSelectedValue();
-					owner.getSourceIdMapper().deleteDataSourceMapping(dataSource);				
+					MSAccessDataSourceMapping dataSource = (MSAccessDataSourceMapping) listDataSources.getSelectedValue();
+					//owner.getSourceIdMapper().deleteDataSourceMapping(dataSource);	
+					owner.getSyncEngine().removeSourceId(dataSource.getAlias());
 					
 					DefaultListModel listModel = (DefaultListModel)listDataSources.getModel();
 					listModel.remove(index);
@@ -357,7 +359,7 @@ public class ConfigurationFrame extends JFrame {
 					listDataSources.setSelectedIndex(-1);
 					listDataSources.repaint();
 					
-					owner.notifyDataSourceMappingListsChanges();
+					owner.notifyDataSourceMappingDeleted(dataSource.getAlias());
 				}
 			}
 		};	
@@ -406,7 +408,7 @@ public class ConfigurationFrame extends JFrame {
 			public void valueChanged(ListSelectionEvent e) {
 			    if (e.getValueIsAdjusting() == false) {
 			        if (listDataSources.getSelectedIndex() != -1) {
-			        	DataSourceMapping dataSourceMapping = (DataSourceMapping) listDataSources.getSelectedValue();
+			        	MSAccessDataSourceMapping dataSourceMapping = (MSAccessDataSourceMapping) listDataSources.getSelectedValue();
 			        	textFieldDataSourceAlias.setText(dataSourceMapping.getAlias());
 			        	textFieldDataSourceFileName.setText(dataSourceMapping.getFileName());
 			        	textFieldDataSourceFileName.setToolTipText(dataSourceMapping.getFileName());

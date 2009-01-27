@@ -70,4 +70,10 @@ public class MessageSyncAdapterFactory implements IMessageSyncAdapterFactory {
 		this.syncAdapterFactories.add(syncAdapterFactory);
 	}
 
+	@Override
+	public void removeSourceId(String sourceId) {
+		this.sourceIdMapper.removeSourceDefinition(sourceId);
+		
+	}
+
 }

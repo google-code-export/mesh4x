@@ -73,6 +73,11 @@ public class KmlMessageSyncEngineTests {
 				return sourceId;
 			}
 			
+			@Override
+			public void removeSourceDefinition(String sourceId) {
+				// nothing to do
+			}
+			
 		};
 		
 		KMLDOMLoaderFactory kmlfactory = new KMLDOMLoaderFactory();
@@ -227,6 +232,11 @@ public class KmlMessageSyncEngineTests {
 			public String getSourceDefinition(String sourceId) {
 				// ""
 				return sourceId;
+			}
+
+			@Override
+			public void removeSourceDefinition(String sourceId) {
+				// nothing to do				
 			}
 			
 		};

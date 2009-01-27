@@ -82,6 +82,11 @@ public class MessageSyncEngineTests {
 			public String getSourceDefinition(String sourceId) {
 				return sourceId;
 			}
+
+			@Override
+			public void removeSourceDefinition(String sourceId) {
+				// nothing to do
+			}
 			
 		};
 
@@ -641,6 +646,7 @@ public class MessageSyncEngineTests {
 			@Override public void registerSyncAware(IMessageSyncAware syncAware) {}
 			@Override public IMessageSyncAdapter getSource(String sourceId) { return null; }
 			@Override public List<ISyncSession> getAllSyncSessions() {return null;}
+			@Override public void removeSourceId(String sourceId) { Assert.fail(); }
 		};
 		MessageSyncEngine engine = new MessageSyncEngine(protocol, channel);
 		engine.cancelSync("123", new SmsEndpoint("123"));
@@ -677,6 +683,7 @@ public class MessageSyncEngineTests {
 			@Override public void cancelSync(ISyncSession syncSession) {Assert.fail();}
 			@Override public IMessageSyncAdapter getSource(String sourceId) { return null; }
 			@Override public List<ISyncSession> getAllSyncSessions() {return null;}
+			@Override public void removeSourceId(String sourceId) { Assert.fail(); }
 		};
 		new MessageSyncEngine(protocol, null);
 	}

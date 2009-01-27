@@ -1445,6 +1445,11 @@ public class FileSyncSessionRepositoryTest {
 			public String getSourceDefinition(String sourceId) {
 				return sourceId;
 			}
+			
+			@Override
+			public void removeSourceDefinition(String sourceId) {
+				// nothing to do
+			}
 		};
 		return sourceIdMapper;
 	}

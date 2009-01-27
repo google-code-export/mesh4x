@@ -30,4 +30,6 @@ public interface ISyncSessionRepository {
 
 	List<ISyncSession> getAllSyncSessions();
 
+	void removeSourceId(String sourceId);
+
 }

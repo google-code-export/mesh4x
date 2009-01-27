@@ -2,6 +2,7 @@ package org.mesh4j.sync.message.core;
 
 import java.util.List;
 
+import org.junit.Assert;
 import org.mesh4j.sync.message.IEndpoint;
 import org.mesh4j.sync.message.IMessageSyncAdapter;
 import org.mesh4j.sync.message.ISyncSession;
@@ -23,6 +24,8 @@ public class MockSyncSessionRepository implements ISyncSessionRepository {
 				// ""
 				return sourceId;
 			}
+			
+			@Override public void removeSourceDefinition(String sourceId) {Assert.fail();}
 			
 		};
 		//KMLDOMLoaderFactory kmlFactory = new KMLDOMLoaderFactory();
@@ -84,5 +87,10 @@ public class MockSyncSessionRepository implements ISyncSessionRepository {
 	@Override
 	public List<ISyncSession> getAllSyncSessions() {
 		return this.factory.getAll();
+	}
+
+	@Override
+	public void removeSourceId(String sourceId) {
+		this.factory.removeSourceId(sourceId);		
 	}
 }

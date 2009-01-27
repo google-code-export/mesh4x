@@ -198,6 +198,7 @@ public class SyncSessionFactoryTests {
 				return sourceId;
 			}
 			
+			@Override public void removeSourceDefinition(String sourceId) {Assert.fail();}
 		};
 		
 		OpaqueFeedSyncAdapterFactory feedFactory = new OpaqueFeedSyncAdapterFactory(TestHelper.baseDirectoryForTest());

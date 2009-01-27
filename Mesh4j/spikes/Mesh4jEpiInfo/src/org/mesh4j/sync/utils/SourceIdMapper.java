@@ -10,6 +10,7 @@ import java.util.Properties;
 
 import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
 import org.mesh4j.sync.mappings.DataSourceMapping;
+import org.mesh4j.sync.mappings.MSAccessDataSourceMapping;
 import org.mesh4j.sync.message.core.repository.ISourceIdMapper;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
@@ -18,7 +19,7 @@ public class SourceIdMapper implements ISourceIdMapper {
 
 	// MODEL VARIABLES
 	private String fileName;
-	private ArrayList<DataSourceMapping> dataSourceMappings = new ArrayList<DataSourceMapping>();
+	private ArrayList<MSAccessDataSourceMapping> dataSourceMappings = new ArrayList<MSAccessDataSourceMapping>();
 	
 	// BUSINESS METHODS
 	public SourceIdMapper(String fileName) {
@@ -28,7 +29,7 @@ public class SourceIdMapper implements ISourceIdMapper {
 	}
 
 	public String getSourceName(String fileName, String mdbTableName) {
-		for (DataSourceMapping dataSourceMapping : this.dataSourceMappings) {
+		for (MSAccessDataSourceMapping dataSourceMapping : this.dataSourceMappings) {
 			if(dataSourceMapping.getFileName().equals(fileName) && dataSourceMapping.getTableName().equals(mdbTableName)){
 				return dataSourceMapping.getAlias();
 			}
@@ -38,9 +39,9 @@ public class SourceIdMapper implements ISourceIdMapper {
 
 	public ArrayList<DataSourceMapping> getDataSourceMappings() {
 		ArrayList<DataSourceMapping> result = new ArrayList<DataSourceMapping>();
-		for (DataSourceMapping dataSourceMapping : this.dataSourceMappings) {
+		for (MSAccessDataSourceMapping dataSourceMapping : this.dataSourceMappings) {
 			result.add(
-				new DataSourceMapping(
+				new MSAccessDataSourceMapping(
 						dataSourceMapping.getAlias(), 
 						dataSourceMapping.getMDBName(),
 						dataSourceMapping.getTableName(),
@@ -52,12 +53,12 @@ public class SourceIdMapper implements ISourceIdMapper {
 		return getDataSource(alias) != null;
 	}
 
-	public void saveDataSourceMapping(DataSourceMapping dataSourceMapping) {
+	public void saveDataSourceMapping(MSAccessDataSourceMapping dataSourceMapping) {
 		this.dataSourceMappings.add(dataSourceMapping);
 		this.store();		
 	}
 
-	public void updateDataSourceMapping(DataSourceMapping oldDataSourceMapping, DataSourceMapping newDataSourceMapping) {
+	public void updateDataSourceMapping(MSAccessDataSourceMapping oldDataSourceMapping, MSAccessDataSourceMapping newDataSourceMapping) {
 		DataSourceMapping dataSourceMapping = getDataSource(oldDataSourceMapping.getAlias());
 		if(dataSourceMapping != null){
 			this.dataSourceMappings.remove(dataSourceMapping);
@@ -66,7 +67,7 @@ public class SourceIdMapper implements ISourceIdMapper {
 		this.store();		
 	}
 
-	public void deleteDataSourceMapping(DataSourceMapping dataSource) {
+	public void deleteDataSourceMapping(MSAccessDataSourceMapping dataSource) {
 		DataSourceMapping dataSourceMapping = getDataSource(dataSource.getAlias());
 		if(dataSourceMapping != null){
 			this.dataSourceMappings.remove(dataSourceMapping);
@@ -74,8 +75,8 @@ public class SourceIdMapper implements ISourceIdMapper {
 		}
 	}
 
-	public DataSourceMapping getDataSource(String alias){
-		for (DataSourceMapping dataSourceMapping : this.dataSourceMappings) {
+	public MSAccessDataSourceMapping getDataSource(String alias){
+		for (MSAccessDataSourceMapping dataSourceMapping : this.dataSourceMappings) {
 			if(dataSourceMapping.getAlias().equals(alias)){
 				return dataSourceMapping;
 			}
@@ -108,7 +109,7 @@ public class SourceIdMapper implements ISourceIdMapper {
 					String tableName = MsAccessSyncAdapterFactory.getTableName(sourceDefinition);
 					String fileName= MsAccessSyncAdapterFactory.getFileName(sourceDefinition);
 					String mdbName= new File(fileName).getName();
-					DataSourceMapping dataSourceMapping = new DataSourceMapping(alias, mdbName, tableName, fileName);
+					MSAccessDataSourceMapping dataSourceMapping = new MSAccessDataSourceMapping(alias, mdbName, tableName, fileName);
 					this.dataSourceMappings.add(dataSourceMapping);
 					
 				}	
@@ -125,7 +126,7 @@ public class SourceIdMapper implements ISourceIdMapper {
 			FileWriter writer = new FileWriter(fileName);
 			Properties prop = new Properties();
 			
-			for (DataSourceMapping dataSourceMapping : this.dataSourceMappings) {
+			for (MSAccessDataSourceMapping dataSourceMapping : this.dataSourceMappings) {
 				String sourceDefinition = MsAccessSyncAdapterFactory.createSourceDefinition(dataSourceMapping.getFileName(), dataSourceMapping.getTableName());
 				prop.put(dataSourceMapping.getAlias(), sourceDefinition);
 			}
@@ -139,11 +140,19 @@ public class SourceIdMapper implements ISourceIdMapper {
 
 	@Override
 	public String getSourceDefinition(String sourceId) {
-		DataSourceMapping dataSourceMapping = getDataSource(sourceId);
+		MSAccessDataSourceMapping dataSourceMapping = getDataSource(sourceId);
 		if(dataSourceMapping != null){
 			return MsAccessSyncAdapterFactory.createSourceDefinition(dataSourceMapping.getFileName(), dataSourceMapping.getTableName());
 		} else {
 			return null;
 		}
+	}
+
+	@Override
+	public void removeSourceDefinition(String sourceId) {
+		MSAccessDataSourceMapping dataSourceMapping = getDataSource(sourceId);
+		if(dataSourceMapping != null){
+			this.deleteDataSourceMapping(dataSourceMapping);
+		}		
 	}
 }

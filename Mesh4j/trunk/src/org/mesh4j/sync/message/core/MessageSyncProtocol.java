@@ -266,4 +266,9 @@ public class MessageSyncProtocol implements IMessageSyncProtocol {
 		return this.repository.getSourceOrCreateIfAbsent(sourceID);
 	}
 
+	@Override
+	public void removeSourceId(String sourceId) {
+		this.repository.removeSourceId(sourceId);
+	}
+
 }

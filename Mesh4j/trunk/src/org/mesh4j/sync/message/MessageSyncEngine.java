@@ -120,4 +120,8 @@ public class MessageSyncEngine implements IMessageReceiver {
 	public List<ISyncSession> getAllSyncSessions() {
 		return this.syncProtocol.getAllSyncSessions();
 	}
+	
+	public void removeSourceId(String sourceId){
+		this.syncProtocol.removeSourceId(sourceId);
+	}
 }
