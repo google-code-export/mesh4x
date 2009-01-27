@@ -4,19 +4,16 @@ import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.security.IIdentityProvider;
 
 // examples:
-// 	source Id 	= rss20:myfile.xml
+// 	source definition = rss20:myfile.xml
 // 	source type	= rss20
-// 	source name  ~= myfile
 
 public interface ISyncAdapterFactory {
 
-	public boolean acceptsSourceId(String sourceId);
-	
-	public ISyncAdapter createSyncAdapter(String sourceId, IIdentityProvider identityProvider) throws Exception;
-
-	public String getSourceName(String sourceId);
-	
 	public String getSourceType();
+
+	public boolean acceptsSource(String sourceId, String sourceDefinition);
+	
+	public ISyncAdapter createSyncAdapter(String sourceAlias, String sourceDefinition, IIdentityProvider identityProvider) throws Exception;
 
 }
  

@@ -16,6 +16,7 @@ import org.mesh4j.sync.message.ISyncSession;
 import org.mesh4j.sync.message.InOutStatistics;
 import org.mesh4j.sync.message.channel.sms.SmsEndpoint;
 import org.mesh4j.sync.message.channel.sms.core.SmsEndpointFactory;
+import org.mesh4j.sync.message.core.repository.ISourceIdMapper;
 import org.mesh4j.sync.message.core.repository.MessageSyncAdapterFactory;
 import org.mesh4j.sync.message.core.repository.OpaqueFeedSyncAdapterFactory;
 import org.mesh4j.sync.message.core.repository.SyncSessionFactory;
@@ -83,7 +84,10 @@ public class MessageSyncProtocolTests {
 	
 	
 	public void shouldBeginSyncReturnNullWhenSessionIsOpen(){
-		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(null, true);
+		
+		ISourceIdMapper sourceIdMapper = new ISourceIdMapper(){@Override public String getSourceDefinition(String sourceId) {return sourceId;}};
+		
+		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(sourceIdMapper, null, true);
 		SyncSessionFactory syncSessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);
 		syncSessionFactory.registerSource(new InMemoryMessageSyncAdapter("123"));
 		
@@ -95,7 +99,17 @@ public class MessageSyncProtocolTests {
 	
 	@Test
 	public void shouldBeginSyncUseFeedAdapterWhenSourceIDIsNotRegistered(){
-		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(new OpaqueFeedSyncAdapterFactory(""), true);
+		ISourceIdMapper sourceIdMapper = new ISourceIdMapper(){
+
+			@Override
+			public String getSourceDefinition(String sourceId) {
+				// ""
+				return sourceId;
+			}
+			
+		};
+		
+		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(sourceIdMapper, new OpaqueFeedSyncAdapterFactory(""), true);
 		SyncSessionFactory syncSessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);
 		MessageSyncProtocol syncProtocol = new MessageSyncProtocol("M", new BeginSyncMessageProcessor(null, null, null), new CancelSyncMessageProcessor(), new MockSyncSessionRepository(syncSessionFactory), new MockChannel(), new ArrayList<IMessageProcessor>());
 		
@@ -111,7 +125,16 @@ public class MessageSyncProtocolTests {
 	
 	@Test
 	public void shouldProcessMessageReturnNoResponseWhenSourceIDIsNotRegistered(){
-		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(null, true);
+		ISourceIdMapper sourceIdMapper = new ISourceIdMapper(){
+
+			@Override
+			public String getSourceDefinition(String sourceId) {
+				// ""
+				return sourceId;
+			}
+			
+		};
+		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(sourceIdMapper, null, true);
 		SyncSessionFactory syncSessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);
 		MessageSyncProtocol syncProtocol = new MessageSyncProtocol("M", new BeginSyncMessageProcessor(null, null, null), new CancelSyncMessageProcessor(), new MockSyncSessionRepository(syncSessionFactory), new MockChannel(), new ArrayList<IMessageProcessor>());
 		Assert.assertEquals(IMessageSyncProtocol.NO_RESPONSE, syncProtocol.processMessage(new Message("M", "1", "1", 0, "a|T|T|T|0", new SmsEndpoint("sms:1"))));
@@ -119,7 +142,16 @@ public class MessageSyncProtocolTests {
 	
 	@Test(expected=MeshException.class)
 	public void shouldCancelSyncFailsWhenSessionIsNull(){
-		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(null, true);
+		ISourceIdMapper sourceIdMapper = new ISourceIdMapper(){
+
+			@Override
+			public String getSourceDefinition(String sourceId) {
+				// ""
+				return sourceId;
+			}
+			
+		};
+		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(sourceIdMapper, null, true);
 		SyncSessionFactory syncSessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);
 		syncSessionFactory.registerSource(new InMemoryMessageSyncAdapter("123"));
 
@@ -129,7 +161,17 @@ public class MessageSyncProtocolTests {
 	
 	@Test(expected=MeshException.class)
 	public void shouldCancelSyncFailsWhenSessionIsClosed(){
-		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(null, true);
+		ISourceIdMapper sourceIdMapper = new ISourceIdMapper(){
+
+			@Override
+			public String getSourceDefinition(String sourceId) {
+				// ""
+				return sourceId;
+			}
+			
+		};
+		
+		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(sourceIdMapper, null, true);
 		SyncSessionFactory syncSessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);
 		syncSessionFactory.registerSource(new InMemoryMessageSyncAdapter("123"));
 		
@@ -142,7 +184,18 @@ public class MessageSyncProtocolTests {
 	
 	@Test
 	public void shouldCancelSync(){
-		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(null, true);
+		
+		ISourceIdMapper sourceIdMapper = new ISourceIdMapper(){
+
+			@Override
+			public String getSourceDefinition(String sourceId) {
+				// ""
+				return sourceId;
+			}
+			
+		};
+		
+		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(sourceIdMapper, null, true);
 		SyncSessionFactory syncSessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);
 		syncSessionFactory.registerSource(new InMemoryMessageSyncAdapter("123"));
 		

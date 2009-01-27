@@ -29,7 +29,7 @@ import org.mesh4j.sync.message.MessageSyncEngine;
 import org.mesh4j.sync.properties.PropertiesProvider;
 import org.mesh4j.sync.ui.translator.MeshCompactUITranslator;
 import org.mesh4j.sync.ui.utils.IconManager;
-import org.mesh4j.sync.utils.SourceIdResolver;
+import org.mesh4j.sync.utils.SourceIdMapper;
 import org.mesh4j.sync.utils.SyncEngineUtil;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -46,19 +46,19 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner, 
 	private DefaultMutableTreeNode rootNode;
 	private JTree treeSessions;
 	private MessageSyncEngine syncEngine;
-	private SourceIdResolver sourceIdResolver;
+	private SourceIdMapper sourceIdMapper;
 	private PropertiesProvider propertiesProvider;
 	private SyncSessionView syncSessionView;
 	private MeshCompactUI owner;
 
 	// BUSINESS METHODS
 
-	public SyncSessionsFrame(MeshCompactUI ui, SourceIdResolver sourceIdResolver, PropertiesProvider propertiesProvider) {
+	public SyncSessionsFrame(MeshCompactUI ui, SourceIdMapper sourceIdMapper, PropertiesProvider propertiesProvider) {
 		super();
 		
 		this.owner = ui;
 		this.propertiesProvider = propertiesProvider;
-		this.sourceIdResolver = sourceIdResolver;
+		this.sourceIdMapper = sourceIdMapper;
 		
 		setAlwaysOnTop(true);
 		setIconImage(IconManager.getCDCImage());
@@ -365,7 +365,7 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner, 
 	
 	public void initialize(MessageSyncEngine syncEngine) {
 		this.syncEngine = syncEngine;
-		this.syncSessionView.initialize(this, this.sourceIdResolver, this.syncEngine.getChannel());
+		this.syncSessionView.initialize(this, this.sourceIdMapper, this.syncEngine.getChannel());
 		updateSessions();
 	}
 

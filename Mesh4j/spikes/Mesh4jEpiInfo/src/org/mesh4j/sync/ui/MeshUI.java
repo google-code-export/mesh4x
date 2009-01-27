@@ -50,7 +50,7 @@ import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.ui.translator.MeshUITranslator;
 import org.mesh4j.sync.utils.ConsoleNotification;
-import org.mesh4j.sync.utils.SourceIdResolver;
+import org.mesh4j.sync.utils.SourceIdMapper;
 import org.mesh4j.sync.utils.SyncEngineUtil;
 
 import com.jgoodies.forms.factories.DefaultComponentFactory;
@@ -110,7 +110,7 @@ public class MeshUI{
 	private JLabel imageStatus;
 	
 	private ConsoleNotification consoleNotification;
-	private SourceIdResolver sourceIdResolver;
+	private SourceIdMapper sourceIdResolver;
 	
 	private Modem modem = null;
 	private MessageSyncEngine syncEngine;
@@ -160,7 +160,7 @@ public class MeshUI{
 		this.initializeProperties();
 		this.initializeModem();
 		this.createUI();
-		this.consoleNotification = new ConsoleNotification(this.textAreaConsole, this.imageStatus, this, this.sourceIdResolver);
+		this.consoleNotification = new ConsoleNotification(this.textAreaConsole, this.imageStatus, this);
 		this.consoleNotification.setReadyImageStatus();
 		this.startUpSyncEngine();
 	}
@@ -191,7 +191,7 @@ public class MeshUI{
 		this.kmlTemplateFileName = propertiesProvider.getDefaultKMLTemplateFileName();
 		this.kmlTemplateNetworkLinkFileName = propertiesProvider.getDefaultKMLTemplateNetworkLinkFileName();
 		this.geoCoderKey = propertiesProvider.getGeoCoderKey();
-		this.sourceIdResolver = new SourceIdResolver(this.baseDirectory+ "/myDataSources.properties");
+		this.sourceIdResolver = new SourceIdMapper(this.baseDirectory+ "/myDataSources.properties");
 		this.inDir = propertiesProvider.getString("emulate.sync.file.connection.in");
 		this.outDir = propertiesProvider.getString("emulate.sync.file.connection.out");
 		this.myEndpointId = propertiesProvider.getString("emulate.sync.file.connection.endpointId");

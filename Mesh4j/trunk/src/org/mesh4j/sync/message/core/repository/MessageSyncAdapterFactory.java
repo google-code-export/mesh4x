@@ -8,6 +8,7 @@ import org.mesh4j.sync.message.IMessageSyncAdapter;
 import org.mesh4j.sync.message.core.InMemoryMessageSyncAdapter;
 import org.mesh4j.sync.message.core.MessageSyncAdapter;
 import org.mesh4j.sync.security.IIdentityProvider;
+import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
 public class MessageSyncAdapterFactory implements IMessageSyncAdapterFactory {
@@ -16,10 +17,16 @@ public class MessageSyncAdapterFactory implements IMessageSyncAdapterFactory {
 	private boolean supportInMemoryAdapter = false;
 	private IOpaqueSyncAdapterFactory defaultSyncAdapterFactory;
 	private ArrayList<ISyncAdapterFactory> syncAdapterFactories = new ArrayList<ISyncAdapterFactory>();
+	private ISourceIdMapper sourceIdMapper;
 	
 	// BUSINESS METHODS
 	
-	public MessageSyncAdapterFactory(IOpaqueSyncAdapterFactory defaultSyncAdapterFactory, boolean supportInMemoryAdapter, ISyncAdapterFactory ... allSyncAdapterFactories) {
+	public MessageSyncAdapterFactory(ISourceIdMapper sourceIdMapper, IOpaqueSyncAdapterFactory defaultSyncAdapterFactory, boolean supportInMemoryAdapter, ISyncAdapterFactory ... allSyncAdapterFactories) {
+		super();
+		
+		Guard.argumentNotNull(sourceIdMapper, "sourceIdMapper");
+		
+		this.sourceIdMapper = sourceIdMapper;
 		this.supportInMemoryAdapter = supportInMemoryAdapter;
 		this.defaultSyncAdapterFactory = defaultSyncAdapterFactory;
 		for (ISyncAdapterFactory syncAdapterFactory : allSyncAdapterFactories) {
@@ -30,7 +37,8 @@ public class MessageSyncAdapterFactory implements IMessageSyncAdapterFactory {
 	@Override
 	public IMessageSyncAdapter createSyncAdapter(String sourceId, IIdentityProvider identityProvider) {
 		try{
-			IMessageSyncAdapter msgSyncAdapter = createMessageSyncAdapter(sourceId, identityProvider);
+			String sourceDefinition = sourceIdMapper.getSourceDefinition(sourceId);
+			IMessageSyncAdapter msgSyncAdapter = createMessageSyncAdapter(sourceId, sourceDefinition, identityProvider);
 			if(msgSyncAdapter == null && this.supportInMemoryAdapter){
 				msgSyncAdapter = new InMemoryMessageSyncAdapter(sourceId);
 			}
@@ -40,19 +48,19 @@ public class MessageSyncAdapterFactory implements IMessageSyncAdapterFactory {
 		}
 	}
 
-	private IMessageSyncAdapter createMessageSyncAdapter(String sourceId, IIdentityProvider identityProvider) throws Exception {
+	private IMessageSyncAdapter createMessageSyncAdapter(String sourceId, String sourceDefinition, IIdentityProvider identityProvider) throws Exception {
 		IMessageSyncAdapter msgSyncAdapter = null;
 		for (ISyncAdapterFactory syncAdapterFactory : this.syncAdapterFactories) {
-			if(syncAdapterFactory.acceptsSourceId(sourceId)){
-				ISyncAdapter syncAdapter = syncAdapterFactory.createSyncAdapter(sourceId, identityProvider);
+			if(syncAdapterFactory.acceptsSource(sourceId, sourceDefinition)){
+				ISyncAdapter syncAdapter = syncAdapterFactory.createSyncAdapter(sourceId, sourceDefinition, identityProvider);
 				if(syncAdapter != null){
 					msgSyncAdapter = new MessageSyncAdapter(sourceId, syncAdapterFactory.getSourceType(), identityProvider, syncAdapter);
 				}
 			}
 		}
 		if(msgSyncAdapter == null && this.defaultSyncAdapterFactory != null){
-			String sourceIdForDefaultSyncAdapter = this.defaultSyncAdapterFactory.createSourceId(sourceId);
-			ISyncAdapter syncAdapter = this.defaultSyncAdapterFactory.createSyncAdapter(sourceIdForDefaultSyncAdapter, identityProvider);
+			String defaultSourceDefinition = this.defaultSyncAdapterFactory.createSourceDefinition(sourceId, sourceDefinition);
+			ISyncAdapter syncAdapter = this.defaultSyncAdapterFactory.createSyncAdapter(sourceId, defaultSourceDefinition, identityProvider);
 			msgSyncAdapter = new MessageSyncAdapter(sourceId, this.defaultSyncAdapterFactory.getSourceType(), identityProvider, syncAdapter);
 		}
 		return msgSyncAdapter;

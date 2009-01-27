@@ -29,7 +29,7 @@ import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.properties.PropertiesProvider;
 import org.mesh4j.sync.ui.translator.MeshCompactUITranslator;
 import org.mesh4j.sync.ui.utils.IconManager;
-import org.mesh4j.sync.utils.SourceIdResolver;
+import org.mesh4j.sync.utils.SourceIdMapper;
 import org.mesh4j.sync.utils.SyncEngineUtil;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -70,7 +70,7 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 	private ISyncSession syncSession;
 	
 	private ISyncSessionViewOwner owner;
-	private SourceIdResolver sourceIdResolver;
+	private SourceIdMapper sourceIdMapper;
 	private PropertiesProvider propertiesProvider;
 	private IChannel channel;
 	
@@ -466,9 +466,8 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 		return endpointMapping;
 	}
 	
-	private void verifyNewDataSourceMapping(String sourceId, String endpointId){
-		String dataSourceAlias = sourceIdResolver.getSourceName(sourceId);
-		if(!this.sourceIdResolver.isDataSourceAvailable(dataSourceAlias)){
+	private void verifyNewDataSourceMapping(String dataSourceAlias, String endpointId){
+		if(!this.sourceIdMapper.isDataSourceAvailable(dataSourceAlias)){
 			this.owner.notifyNotAvailableDataSource(dataSourceAlias, dataSourceAlias, endpointId);
 		}
 	}
@@ -488,7 +487,7 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 		if(this.accepts(syncSession) || this.syncSession == null){
 			String error = MeshCompactUITranslator.getMessageErrorBeginSync(
 				endpointMapping == null ? endpointId : endpointMapping.getAlias(), 
-				sourceIdResolver.getSourceName(syncSession.getSourceId()));
+				syncSession.getSourceId());
 			this.setError(error);
 			
 			if(owner != null){
@@ -577,7 +576,7 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 		EndpointMapping endpointMapping = verifyNewEndpointMapping(endpointId);
 		verifyNewDataSourceMapping(sourceId, endpointId);
 		String error = MeshCompactUITranslator.getMessageErrorSessionCreation(
-			sourceIdResolver.getSourceName(sourceId), 
+			sourceId, 
 			(endpointMapping == null ? endpointId : endpointMapping.getAlias()));
 		this.setError(error);
 	}
@@ -628,9 +627,9 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 	}
 
 	
-	public void initialize(ISyncSessionViewOwner owner, SourceIdResolver sourceIdResolver, IChannel channel){
+	public void initialize(ISyncSessionViewOwner owner, SourceIdMapper sourceIdMapper, IChannel channel){
 		this.owner = owner;
-		this.sourceIdResolver = sourceIdResolver;
+		this.sourceIdMapper = sourceIdMapper;
 		this.channel = channel;
 	}
 	

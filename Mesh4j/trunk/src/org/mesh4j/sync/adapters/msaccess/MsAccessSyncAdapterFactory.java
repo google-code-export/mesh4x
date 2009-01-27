@@ -19,19 +19,18 @@ import sun.jdbc.odbc.JdbcOdbcDriver;
 public class MsAccessSyncAdapterFactory implements ISyncAdapterFactory {
 
 	public static final String SOURCE_TYPE = "MsAccess";
-	private static final String MS_ACCESS = SOURCE_TYPE+":";	
+	private static final String MS_ACCESS = SOURCE_TYPE+":";		
+	public static final String DEFAULT_SEPARATOR = "@";
 	
 	// MODEL VARIABLES
 	private String baseDirectory;
-	private IMsAccessSourceIdResolver sourceIdResolver;
-		
+
 	// BUSINESS METHODS
-	public MsAccessSyncAdapterFactory(String baseDirectory, IMsAccessSourceIdResolver sourceIdResolver){
-		Guard.argumentNotNull(baseDirectory,"baseDirectory");
-		Guard.argumentNotNull(sourceIdResolver,"sourceIdResolver");
+	public MsAccessSyncAdapterFactory(String baseDirectory){
+		super();
+		Guard.argumentNotNull(baseDirectory, "baseDirectory");
 		
 		this.baseDirectory = baseDirectory;
-		this.sourceIdResolver = sourceIdResolver;
 	}	
 	
 	public static SplitAdapter createSyncAdapterFromFile(String mdbFileName, String tableName, String mappingsDirectory) throws Exception{
@@ -78,32 +77,27 @@ public class MsAccessSyncAdapterFactory implements ISyncAdapterFactory {
 		return builder;
 	}
 
-	public static boolean isMsAccess(String sourceId) {
-		return sourceId.startsWith(MS_ACCESS);
+	public static boolean isMsAccess(String sourceDefinition) {
+		return sourceDefinition.startsWith(MS_ACCESS);
 	}
 
+	public static boolean isValidAccessTable(String mdbFileName, String mdbTableName) {
+		return MsAccessHelper.existTable(mdbFileName, mdbTableName);
+	}
+	
 	// ISyncAdapterFactry methods
 	
 	@Override
-	public boolean acceptsSourceId(String sourceId) {
-		return isMsAccess(sourceId);
+	public boolean acceptsSource(String sourceId, String sourceDefinition) {
+		return sourceDefinition != null && isMsAccess(sourceDefinition);
 	}
 
 	@Override
-	public SplitAdapter createSyncAdapter(String sourceId, IIdentityProvider identityProvider) throws Exception {
-		String mdbFileName = this.sourceIdResolver.getFileName(sourceId);
-		String tableName = this.sourceIdResolver.getTableName(sourceId);
+	public SplitAdapter createSyncAdapter(String sourceAlias, String sourceDefinition, IIdentityProvider identityProvider) throws Exception {
+		String mdbFileName = getFileName(sourceDefinition);
+		String tableName = getTableName(sourceDefinition);
 		SplitAdapter msAccessAdapter = createSyncAdapterFromFile(mdbFileName, tableName, this.baseDirectory);
 		return msAccessAdapter;
-	}
-
-	public String getBaseDirectory() {
-		return this.baseDirectory;
-	}
-
-	@Override
-	public String getSourceName(String sourceId) {
-		return this.sourceIdResolver.getSourceName(sourceId);
 	}
 
 	@Override
@@ -111,19 +105,31 @@ public class MsAccessSyncAdapterFactory implements ISyncAdapterFactory {
 		return SOURCE_TYPE;
 	}
 
-	public static boolean isValidAccessTable(String mdbFileName, String mdbTableName) {
-		return MsAccessHelper.existTable(mdbFileName, mdbTableName);
+	public static String createSourceDefinition(String mdbFileName, String mdbTableName) {
+		return MS_ACCESS + mdbFileName + DEFAULT_SEPARATOR + mdbTableName;
 	}
 
-	public static String createSourceId(String alias) {
-		return MS_ACCESS + alias;
-	}
-
-	public static String getDataSource(String sourceId) {
-		if(isMsAccess(sourceId)){
-			return sourceId.substring(MS_ACCESS.length(), sourceId.length());
+	private static String getDataSource(String sourceDefinition) {
+		if(isMsAccess(sourceDefinition)){
+			return sourceDefinition.substring(MS_ACCESS.length(), sourceDefinition.length());
 		} else {
-			return sourceId;
+			return sourceDefinition;
 		}
+	}
+	
+	public static String getFileName(String sourceDefinition) {
+		String source = MsAccessSyncAdapterFactory.getDataSource(sourceDefinition);
+		String[] elements = source.split(DEFAULT_SEPARATOR);
+		//String tableName = elements[1];
+		String fileName= elements[0];
+		return fileName;
+	}
+
+	public static String getTableName(String sourceDefinition) {
+		String source = MsAccessSyncAdapterFactory.getDataSource(sourceDefinition);
+		String[] elements = source.split(DEFAULT_SEPARATOR);
+		String tableName = elements[1];
+		//String fileName= elements[0];
+		return tableName;
 	}
 }

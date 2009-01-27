@@ -62,7 +62,7 @@ public class ProcessCustomMessages implements ISmsReceiver {
 				String dataSourceAlias = ReadyToSyncTask.getDataSourceAlias(message);
 				String dataSourceDescription = ReadyToSyncTask.getDataSourceDescription(message);
 				
-				boolean isDataSourceAvailable = this.ui.getSourceIdResolver().isDataSourceAvailable(dataSourceAlias);
+				boolean isDataSourceAvailable = this.ui.getSourceIdMapper().isDataSourceAvailable(dataSourceAlias);
 				
 				ReadyToSyncResponseTask responseTask = new ReadyToSyncResponseTask(ui, endpoint.getEndpointId(), dataSourceAlias, isDataSourceAvailable);
 				responseTask.execute();

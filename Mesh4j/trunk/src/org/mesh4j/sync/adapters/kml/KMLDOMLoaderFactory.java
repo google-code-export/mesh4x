@@ -1,7 +1,5 @@
 package org.mesh4j.sync.adapters.kml;
 
-import java.io.File;
-
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.ISyncAdapterFactory;
 import org.mesh4j.sync.adapters.dom.DOMAdapter;
@@ -18,14 +16,9 @@ public class KMLDOMLoaderFactory implements ISyncAdapterFactory {
 
 	public static final String SOURCE_TYPE = KmlNames.KML_PREFIX;
 	
-	// MODEL VARIABLES
-	private String baseDirectory;
-	
 	// BUSINESS METHODS
-	public KMLDOMLoaderFactory(String baseDirectory){
-		Guard.argumentNotNull(baseDirectory, "baseDirectory");
-		
-		this.baseDirectory = baseDirectory;
+	public KMLDOMLoaderFactory(){
+		super();
 	}
 	
 	public static boolean isKML(String fileName){
@@ -74,29 +67,21 @@ public class KMLDOMLoaderFactory implements ISyncAdapterFactory {
 	
 	// ISyncAdapterFactry methods
 	
-	public static String createSourceId(String kmlFileName){
-		File file = new File(kmlFileName);
-		String fileName = file.getName();
-		return SOURCE_TYPE + ":" + fileName;
+	public static String createSourceDefinition(String kmlFileName){
+		return SOURCE_TYPE + ":" + kmlFileName;
 	}
 	
-
 	@Override
-	public boolean acceptsSourceId(String sourceId) {
-		return sourceId.toUpperCase().startsWith(SOURCE_TYPE) && isKML(sourceId);
+	public boolean acceptsSource(String sourceId, String sourceDefinition) {
+		return sourceDefinition != null && sourceDefinition.toUpperCase().startsWith(SOURCE_TYPE) && isKML(sourceDefinition);
 	}
 
 	@Override
-	public ISyncAdapter createSyncAdapter(String sourceId, IIdentityProvider identityProvider) throws Exception {
-		String fileName = sourceId.substring(SOURCE_TYPE.length() + 1, sourceId.length());
-		String kmlFileName = this.baseDirectory+"/" + fileName;
+	public ISyncAdapter createSyncAdapter(String sourceAlias, String sourceDefinition, IIdentityProvider identityProvider) throws Exception {
+		String fileName = sourceDefinition.substring(SOURCE_TYPE.length() + 1, sourceDefinition.length());
+		String kmlFileName = fileName;
 		DOMAdapter kmlAdapter = new DOMAdapter(createDOMLoader(kmlFileName, identityProvider));
 		return kmlAdapter;
-	}
-
-	@Override
-	public String getSourceName(String sourceId) {
-		return sourceId;
 	}
 
 	@Override

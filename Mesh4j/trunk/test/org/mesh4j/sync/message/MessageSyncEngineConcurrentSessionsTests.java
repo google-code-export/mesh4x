@@ -17,6 +17,7 @@ import org.mesh4j.sync.message.channel.sms.connection.ISmsConnectionInboundOutbo
 import org.mesh4j.sync.message.channel.sms.connection.InMemorySmsConnection;
 import org.mesh4j.sync.message.channel.sms.core.SmsEndpointFactory;
 import org.mesh4j.sync.message.core.InMemoryMessageSyncAdapter;
+import org.mesh4j.sync.message.core.repository.ISourceIdMapper;
 import org.mesh4j.sync.message.core.repository.MessageSyncAdapterFactory;
 import org.mesh4j.sync.message.encoding.CompressBase91MessageEncoding;
 import org.mesh4j.sync.message.protocol.MessageSyncProtocolFactory;
@@ -93,10 +94,18 @@ public class MessageSyncEngineConcurrentSessionsTests implements IMessageSyncAwa
 	
 	private MessageSyncEngine createSyncEngine(IMessageSyncAware syncAware, String repositoryBaseDirectory, IIdentityProvider identityProvider, ISmsConnection smsConnection, int senderDelay, int receiverDelay){
 		
+		ISourceIdMapper sourceIdMapper = new ISourceIdMapper(){
+			@Override
+			public String getSourceDefinition(String sourceId) {
+				return sourceId;
+			}			
+		};
+
+		
 		IFilter<String> protocolFilter = MessageSyncProtocolFactory.getProtocolMessageFilter();
 		
 		IChannel channel = SmsChannelFactory.createChannelWithFileRepository(smsConnection, senderDelay, receiverDelay, repositoryBaseDirectory, protocolFilter);
-		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(null, true);
+		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(sourceIdMapper, null, true);
 		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocolWithFileRepository(100, repositoryBaseDirectory, channel, identityProvider, new IMessageSyncAware[]{syncAware}, SmsEndpointFactory.INSTANCE, syncAdapterFactory);		
 		return new MessageSyncEngine(syncProtocol, channel);		
 	}

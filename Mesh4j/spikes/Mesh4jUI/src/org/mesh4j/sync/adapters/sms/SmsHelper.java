@@ -24,6 +24,7 @@ import org.mesh4j.sync.message.channel.sms.connection.smslib.SmsLibConnection;
 import org.mesh4j.sync.message.channel.sms.core.SmsEndpointFactory;
 import org.mesh4j.sync.message.core.MessageSyncAdapter;
 import org.mesh4j.sync.message.core.NonMessageEncoding;
+import org.mesh4j.sync.message.core.repository.ISourceIdMapper;
 import org.mesh4j.sync.message.core.repository.MessageSyncAdapterFactory;
 import org.mesh4j.sync.message.core.repository.OpaqueFeedSyncAdapterFactory;
 import org.mesh4j.sync.message.encoding.IMessageEncoding;
@@ -84,11 +85,19 @@ public class SmsHelper {
 		}
 	}
 	
-	private static MessageSyncEngine createSyncEngine(IMessageSyncAware syncAware, String repositoryBaseDirectory, IIdentityProvider identityProvider, ISmsConnection smsConnection, int senderDelay, int receiverDelay){
-		KMLDOMLoaderFactory kmlSyncAdapterFactory = new KMLDOMLoaderFactory(repositoryBaseDirectory);
+	private static MessageSyncEngine createSyncEngine(IMessageSyncAware syncAware, final String repositoryBaseDirectory, IIdentityProvider identityProvider, ISmsConnection smsConnection, int senderDelay, int receiverDelay){
+		
+		ISourceIdMapper sourceIdMapper = new ISourceIdMapper(){
+			@Override
+			public String getSourceDefinition(String sourceId) {
+				return sourceId;
+			}
+		};
+
+		KMLDOMLoaderFactory kmlSyncAdapterFactory = new KMLDOMLoaderFactory();
 		OpaqueFeedSyncAdapterFactory feedSyncAdapterFactory = new OpaqueFeedSyncAdapterFactory(repositoryBaseDirectory);
 		IFilter<String> protocolFilter = MessageSyncProtocolFactory.getProtocolMessageFilter();
-		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(feedSyncAdapterFactory, false, kmlSyncAdapterFactory);		
+		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(sourceIdMapper, feedSyncAdapterFactory, false, kmlSyncAdapterFactory);		
 		IChannel channel = SmsChannelFactory.createChannelWithFileRepository(smsConnection, senderDelay, receiverDelay, repositoryBaseDirectory, protocolFilter);
 		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocolWithFileRepository(100, repositoryBaseDirectory, channel, identityProvider, new IMessageSyncAware[]{syncAware}, SmsEndpointFactory.INSTANCE, syncAdapterFactory);		
 		return new MessageSyncEngine(syncProtocol, channel);		

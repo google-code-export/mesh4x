@@ -8,52 +8,23 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
-import org.mesh4j.sync.adapters.msaccess.IMsAccessSourceIdResolver;
 import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
 import org.mesh4j.sync.mappings.DataSourceMapping;
+import org.mesh4j.sync.message.core.repository.ISourceIdMapper;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
-public class SourceIdResolver implements IMsAccessSourceIdResolver {
+public class SourceIdMapper implements ISourceIdMapper {
 
-	private static final String DEFAULT_SEPARATOR = "@";
 	// MODEL VARIABLES
 	private String fileName;
 	private ArrayList<DataSourceMapping> dataSourceMappings = new ArrayList<DataSourceMapping>();
 	
 	// BUSINESS METHODS
-	public SourceIdResolver(String fileName) {
+	public SourceIdMapper(String fileName) {
 		Guard.argumentNotNullOrEmptyString(fileName, "fileName");
 		this.fileName = fileName;
 		load();
-	}
-
-	@Override
-	public String getSourceName(String sourceId){
-		String alias = MsAccessSyncAdapterFactory.getDataSource(sourceId);
-		return alias;
-	}
-
-	@Override
-	public String getFileName(String sourceId) {
-		String alias = MsAccessSyncAdapterFactory.getDataSource(sourceId);
-		DataSourceMapping dataSourceMapping = getDataSource(alias);
-		if(dataSourceMapping != null){
-			return dataSourceMapping.getFileName();
-		} else {
-			return null;
-		}
-	}
-
-	@Override
-	public String getTableName(String sourceId) {
-		String alias = MsAccessSyncAdapterFactory.getDataSource(sourceId);
-		DataSourceMapping dataSourceMapping = getDataSource(alias);
-		if(dataSourceMapping != null){
-			return dataSourceMapping.getTableName();
-		} else {
-			return null;
-		}
 	}
 
 	public String getSourceName(String fileName, String mdbTableName) {
@@ -133,11 +104,10 @@ public class SourceIdResolver implements IMsAccessSourceIdResolver {
 					entry = iterator.next();
 					
 					String alias = (String)entry.getKey();
-					String source = MsAccessSyncAdapterFactory.getDataSource((String)entry.getValue());
-					String[] elements = source.split(DEFAULT_SEPARATOR);
-					String tableName = elements[1];
-					String fileName= elements[0];
-					String mdbName=new File(fileName).getName();
+					String sourceDefinition = (String)entry.getValue();
+					String tableName = MsAccessSyncAdapterFactory.getTableName(sourceDefinition);
+					String fileName= MsAccessSyncAdapterFactory.getFileName(sourceDefinition);
+					String mdbName= new File(fileName).getName();
 					DataSourceMapping dataSourceMapping = new DataSourceMapping(alias, mdbName, tableName, fileName);
 					this.dataSourceMappings.add(dataSourceMapping);
 					
@@ -156,15 +126,24 @@ public class SourceIdResolver implements IMsAccessSourceIdResolver {
 			Properties prop = new Properties();
 			
 			for (DataSourceMapping dataSourceMapping : this.dataSourceMappings) {
-				String source = dataSourceMapping.getFileName() + DEFAULT_SEPARATOR + dataSourceMapping.getTableName();
-				String sourceId = MsAccessSyncAdapterFactory.createSourceId(source);
-				prop.put(dataSourceMapping.getAlias(), sourceId);
+				String sourceDefinition = MsAccessSyncAdapterFactory.createSourceDefinition(dataSourceMapping.getFileName(), dataSourceMapping.getTableName());
+				prop.put(dataSourceMapping.getAlias(), sourceDefinition);
 			}
 			
 			prop.store(writer, "");
 			writer.close();
 		} catch (Exception e) {
 			throw new MeshException(e);
+		}
+	}
+
+	@Override
+	public String getSourceDefinition(String sourceId) {
+		DataSourceMapping dataSourceMapping = getDataSource(sourceId);
+		if(dataSourceMapping != null){
+			return MsAccessSyncAdapterFactory.createSourceDefinition(dataSourceMapping.getFileName(), dataSourceMapping.getTableName());
+		} else {
+			return null;
 		}
 	}
 }

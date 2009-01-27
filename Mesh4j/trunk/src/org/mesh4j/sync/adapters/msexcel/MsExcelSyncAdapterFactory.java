@@ -7,56 +7,46 @@ import org.mesh4j.sync.adapters.ISyncAdapterFactory;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.security.IIdentityProvider;
-import org.mesh4j.sync.validations.Guard;
 
 public class MsExcelSyncAdapterFactory implements ISyncAdapterFactory {
 
 	public static final String SOURCE_TYPE = "MsExcel";
 	private static final String MS_EXCEL = SOURCE_TYPE+":";
 	
-	// MODEL VARIABLES
-	private String baseDirectory;
-	
 	// BUSINESS METHODS
-	public MsExcelSyncAdapterFactory(String baseDirectory){
-		Guard.argumentNotNull(baseDirectory, "baseDirectory");
-		
-		this.baseDirectory = baseDirectory;
+	public MsExcelSyncAdapterFactory(){
+		super();
 	}
 	
-	public static String createSourceId(String excelFileName, String sheetName, String idColumn){
+	public static String createSourceDefinition(String excelFileName, String sheetName, String idColumn){
 		File file = new File(excelFileName);
-		String sourceID = MS_EXCEL + file.getName() + "@" + sheetName + "@" + idColumn;
-		return sourceID;
+		String sourceDefinition = MS_EXCEL + file.getName() + "@" + sheetName + "@" + idColumn;
+		return sourceDefinition;
 	}
 	
 	@Override
-	public boolean acceptsSourceId(String sourceId) {
-		String[] elements = sourceId.split("@");
-		return sourceId.toUpperCase().startsWith(MS_EXCEL.toUpperCase()) && elements.length == 4 
+	public boolean acceptsSource(String sourceId, String sourceDefinition) {
+		if(sourceDefinition == null){
+			return false;
+		}
+		
+		String[] elements = sourceDefinition.split("@");
+		return sourceDefinition.toUpperCase().startsWith(MS_EXCEL.toUpperCase()) && elements.length == 4 
 			&& (elements[1].toUpperCase().endsWith(".XLS") || elements[1].toUpperCase().endsWith(".XLSX"));
 	}
 
 	@Override
-	public ISyncAdapter createSyncAdapter(String sourceId, IIdentityProvider identityProvider) throws Exception {
+	public ISyncAdapter createSyncAdapter(String sourceAlias, String sourceDefinition, IIdentityProvider identityProvider) throws Exception {
 		
-		String[] elements = sourceId.substring(MS_EXCEL.length(), sourceId.length()).split("@");
+		String[] elements = sourceDefinition.substring(MS_EXCEL.length(), sourceDefinition.length()).split("@");
 		String excelFileName = elements[0];
 		String sheetName = elements[1];
 		String idColumnName = elements[2];
 		
-		MsExcel excel = new MsExcel(this.baseDirectory+"/" + excelFileName);
+		MsExcel excel = new MsExcel(excelFileName);
 		MsExcelSyncRepository syncRepo = new MsExcelSyncRepository(excel, identityProvider, IdGenerator.INSTANCE);
 		MsExcelContentAdapter contentAdapter = new MsExcelContentAdapter(excel, sheetName, idColumnName);
 		return new SplitAdapter(syncRepo, contentAdapter, identityProvider);
-	}
-
-	@Override
-	public String getSourceName(String sourceId) {
-		String[] elements = sourceId.substring(MS_EXCEL.length(), sourceId.length()).split("@");
-		//String excelFileName = elements[0];
-		String sheetName = elements[1];
-		return sheetName;
 	}
 
 	@Override

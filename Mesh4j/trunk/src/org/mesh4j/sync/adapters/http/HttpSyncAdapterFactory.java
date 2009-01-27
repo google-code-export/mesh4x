@@ -15,18 +15,13 @@ public class HttpSyncAdapterFactory implements ISyncAdapterFactory {
 	public static final HttpSyncAdapterFactory INSTANCE = new HttpSyncAdapterFactory();
 	
 	@Override
-	public boolean acceptsSourceId(String sourceId) {
-		return sourceId.toUpperCase().startsWith("HTTP://") && isValidURL(sourceId);
+	public boolean acceptsSource(String sourceId, String sourceDefinition) {
+		return sourceDefinition != null && sourceDefinition.toUpperCase().startsWith("HTTP://") && isValidURL(sourceDefinition);
 	}
 
 	@Override
-	public HttpSyncAdapter createSyncAdapter(String sourceId, IIdentityProvider identityProvider) throws Exception {
-		return new HttpSyncAdapter(sourceId, RssSyndicationFormat.INSTANCE, identityProvider);
-	}
-
-	@Override
-	public String getSourceName(String sourceId) {
-		return sourceId;
+	public HttpSyncAdapter createSyncAdapter(String sourceAlias, String sourceDefinition, IIdentityProvider identityProvider) throws Exception {
+		return new HttpSyncAdapter(sourceDefinition, RssSyndicationFormat.INSTANCE, identityProvider);
 	}
 
 	@Override

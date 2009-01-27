@@ -21,6 +21,7 @@ import org.mesh4j.sync.message.channel.sms.SmsEndpoint;
 import org.mesh4j.sync.message.channel.sms.core.SmsEndpointFactory;
 import org.mesh4j.sync.message.core.ISyncSessionRepository;
 import org.mesh4j.sync.message.core.MockSyncSessionRepository;
+import org.mesh4j.sync.message.core.repository.ISourceIdMapper;
 import org.mesh4j.sync.message.core.repository.MessageSyncAdapterFactory;
 import org.mesh4j.sync.message.core.repository.SyncSessionFactory;
 import org.mesh4j.sync.message.core.repository.file.FileSyncSessionRepository;
@@ -64,8 +65,18 @@ public class KmlMessageSyncEngineTests {
 
 		IMessageSyncAdapter endpointA = new MockInMemoryMessageSyncAdapter(dataSetId, kmlAdapterA.getAll());
 		
-		KMLDOMLoaderFactory kmlfactory = new KMLDOMLoaderFactory(TestHelper.baseDirectoryForTest());
-		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(null, false, kmlfactory);
+		ISourceIdMapper sourceIdMapper = new ISourceIdMapper(){
+
+			@Override
+			public String getSourceDefinition(String sourceId) {
+				//TestHelper.baseDirectoryForTest();
+				return sourceId;
+			}
+			
+		};
+		
+		KMLDOMLoaderFactory kmlfactory = new KMLDOMLoaderFactory();
+		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(sourceIdMapper, null, false, kmlfactory);
 		SyncSessionFactory syncSessionFactoryA = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);
 		syncSessionFactoryA.registerSource(endpointA);
 	
@@ -210,8 +221,19 @@ public class KmlMessageSyncEngineTests {
 
 		MockInMemoryMessageSyncAdapter endpointA = new MockInMemoryMessageSyncAdapter(dataSetId, kmlAdapter.getAll());
 		
-		KMLDOMLoaderFactory kmlFactory = new KMLDOMLoaderFactory("");
-		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(null, false, kmlFactory);
+		ISourceIdMapper sourceIdMapper = new ISourceIdMapper(){
+
+			@Override
+			public String getSourceDefinition(String sourceId) {
+				// ""
+				return sourceId;
+			}
+			
+		};
+
+		
+		KMLDOMLoaderFactory kmlFactory = new KMLDOMLoaderFactory();
+		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(sourceIdMapper, null, false, kmlFactory);
 		SyncSessionFactory syncSessionFactoryA = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);
 		syncSessionFactoryA.registerSource(endpointA);
 		

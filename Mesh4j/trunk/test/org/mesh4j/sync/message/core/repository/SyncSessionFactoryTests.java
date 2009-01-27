@@ -190,10 +190,20 @@ public class SyncSessionFactoryTests {
 	}
 
 	private MessageSyncAdapterFactory createMessageSyncAdapterFactory() {
-		OpaqueFeedSyncAdapterFactory feedFactory = new OpaqueFeedSyncAdapterFactory(TestHelper.baseDirectoryForTest());
-		KMLDOMLoaderFactory kmlFactory = new KMLDOMLoaderFactory(TestHelper.baseDirectoryForTest());
+		ISourceIdMapper sourceIdMapper = new ISourceIdMapper(){
+
+			@Override
+			public String getSourceDefinition(String sourceId) {
+				//TestHelper.baseDirectoryForTest();
+				return sourceId;
+			}
+			
+		};
 		
-		MessageSyncAdapterFactory msgSyncAdapter = new MessageSyncAdapterFactory(feedFactory, false, kmlFactory);
+		OpaqueFeedSyncAdapterFactory feedFactory = new OpaqueFeedSyncAdapterFactory(TestHelper.baseDirectoryForTest());
+		KMLDOMLoaderFactory kmlFactory = new KMLDOMLoaderFactory();
+		
+		MessageSyncAdapterFactory msgSyncAdapter = new MessageSyncAdapterFactory(sourceIdMapper, feedFactory, false, kmlFactory);
 		return msgSyncAdapter;
 	}
 

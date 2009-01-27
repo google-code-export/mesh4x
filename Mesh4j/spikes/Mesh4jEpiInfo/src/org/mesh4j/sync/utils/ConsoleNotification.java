@@ -8,7 +8,6 @@ import javax.swing.JTextArea;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.mesh4j.sync.adapters.msaccess.IMsAccessSourceIdResolver;
 import org.mesh4j.sync.message.IMessage;
 import org.mesh4j.sync.message.IMessageSyncAware;
 import org.mesh4j.sync.message.ISyncSession;
@@ -31,10 +30,9 @@ public class ConsoleNotification implements ISmsConnectionInboundOutboundNotific
 	private boolean stop;
 	private JLabel imageStatus;
 	private MeshUI ui;
-	private IMsAccessSourceIdResolver sourceIdResolver;
 	
 	// BUSINESS METHODS
-	public ConsoleNotification(JTextArea consoleView, JLabel imageStatus, MeshUI ui, IMsAccessSourceIdResolver sourceIdResolver) {
+	public ConsoleNotification(JTextArea consoleView, JLabel imageStatus, MeshUI ui) {
 		super();
 		this.consoleView = consoleView;
 		this.imageStatus = imageStatus;
@@ -100,12 +98,12 @@ public class ConsoleNotification implements ISmsConnectionInboundOutboundNotific
 	@Override
 	public void beginSyncWithError(ISyncSession syncSession) {
 		this.setErrorImageStatus();
-		this.log(MeshUITranslator.getMessageErrorBeginSync(syncSession.getTarget().getEndpointId(), sourceIdResolver.getSourceName(syncSession.getSourceId())));		
+		this.log(MeshUITranslator.getMessageErrorBeginSync(syncSession.getTarget().getEndpointId(), syncSession.getSourceId()));		
 	}
 
 	@Override
 	public void notifyCancelSync(ISyncSession syncSession) {
-		this.log(MeshUITranslator.getMessageCancelSync(syncSession.getSessionId(), syncSession.getTarget().getEndpointId(), sourceIdResolver.getSourceName(syncSession.getSourceId())));
+		this.log(MeshUITranslator.getMessageCancelSync(syncSession.getSessionId(), syncSession.getTarget().getEndpointId(), syncSession.getSourceId()));
 		this.setEndSyncImageStatus();
 		this.ui.setEndSync();
 	}
@@ -133,7 +131,7 @@ public class ConsoleNotification implements ISmsConnectionInboundOutboundNotific
 
 	@Override
 	public void notifySessionCreationError(IMessage message, String sourceId) {
-		this.log(MeshUITranslator.getMessageErrorSessionCreation(message, sourceIdResolver.getSourceName(sourceId)));
+		this.log(MeshUITranslator.getMessageErrorSessionCreation(message, sourceId));
 	}
 	
 	// IProgressMonitor methods

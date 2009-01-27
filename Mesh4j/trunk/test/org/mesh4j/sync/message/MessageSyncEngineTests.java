@@ -18,6 +18,7 @@ import org.mesh4j.sync.message.core.ISyncSessionRepository;
 import org.mesh4j.sync.message.core.InMemoryMessageSyncAdapter;
 import org.mesh4j.sync.message.core.Message;
 import org.mesh4j.sync.message.core.MockSyncSessionRepository;
+import org.mesh4j.sync.message.core.repository.ISourceIdMapper;
 import org.mesh4j.sync.message.core.repository.MessageSyncAdapterFactory;
 import org.mesh4j.sync.message.core.repository.SyncSessionFactory;
 import org.mesh4j.sync.message.protocol.MessageSyncProtocolFactory;
@@ -75,7 +76,16 @@ public class MessageSyncEngineTests {
 		//channelEndpointB = SmsChannelFactory.createChannel(smsConnectionEndpointB, channelBSenderCheckDelay, channelBReceiveCheckDelay, fileRepoB, fileRepoB);
 		channelEndpointB = SmsChannelFactory.createChannel(smsConnectionEndpointB, channelBSenderCheckDelay, channelBReceiveCheckDelay, MessageSyncProtocolFactory.getProtocolMessageFilter());
 		
-		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(null, true);
+		ISourceIdMapper sourceIdMapper = new ISourceIdMapper(){
+
+			@Override
+			public String getSourceDefinition(String sourceId) {
+				return sourceId;
+			}
+			
+		};
+
+		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(sourceIdMapper, null, true);
 		SyncSessionFactory syncSessionFactoryA = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);
 		syncSessionFactoryA.registerSource(endPointA);
 		

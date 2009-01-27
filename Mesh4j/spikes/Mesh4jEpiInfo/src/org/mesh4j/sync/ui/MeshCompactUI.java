@@ -46,7 +46,7 @@ import org.mesh4j.sync.ui.translator.MeshCompactUITranslator;
 import org.mesh4j.sync.ui.translator.MeshUITranslator;
 import org.mesh4j.sync.ui.utils.IconManager;
 import org.mesh4j.sync.ui.utils.ProcessCustomMessages;
-import org.mesh4j.sync.utils.SourceIdResolver;
+import org.mesh4j.sync.utils.SourceIdMapper;
 import org.mesh4j.sync.utils.SyncEngineUtil;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -80,7 +80,7 @@ public class MeshCompactUI implements ISyncSessionViewOwner{
 	private SyncFrame syncFrame;
 	
 	private PropertiesProvider propertiesProvider;
-	private SourceIdResolver sourceIdResolver;
+	private SourceIdMapper sourceIdMapper;
 	private MessageSyncEngine syncEngine;
 	private ProcessCustomMessages processCustomMessages;
 	
@@ -103,22 +103,22 @@ public class MeshCompactUI implements ISyncSessionViewOwner{
 
 	public MeshCompactUI() throws Exception {
 		this.propertiesProvider = new PropertiesProvider();
-		this.sourceIdResolver = new SourceIdResolver(propertiesProvider.getBaseDirectory()+"/myDataSources.properties");
+		this.sourceIdMapper = new SourceIdMapper(propertiesProvider.getBaseDirectory()+"/myDataSources.properties");
 		
-		this.syncFrame = new SyncFrame(this.propertiesProvider, this.sourceIdResolver);
-		this.logFrame = new LogFrame(this, this.sourceIdResolver);
+		this.syncFrame = new SyncFrame(this.propertiesProvider, this.sourceIdMapper);
+		this.logFrame = new LogFrame(this);
 		this.cfgFrame = new ConfigurationFrame(this);
-		this.syncSessionsFrame = new SyncSessionsFrame(this, this.sourceIdResolver, this.propertiesProvider);
+		this.syncSessionsFrame = new SyncSessionsFrame(this, this.sourceIdMapper, this.propertiesProvider);
 		
 		this.createUI();
 		
 		IMessageSyncAware[] syncAware = new IMessageSyncAware[] {this.logFrame, this.syncSessionView};
 		ISmsConnectionInboundOutboundNotification[] smsAware = new ISmsConnectionInboundOutboundNotification[]{this.logFrame, this.syncSessionView};
-		this.syncEngine = SyncEngineUtil.createSyncEngine(this.sourceIdResolver, this.propertiesProvider, syncAware, smsAware);
+		this.syncEngine = SyncEngineUtil.createSyncEngine(this.sourceIdMapper, this.propertiesProvider, syncAware, smsAware);
 		this.processCustomMessages = new ProcessCustomMessages(this);
 		
 		if(this.syncEngine != null){
-			this.syncSessionView.initialize(this, this.sourceIdResolver, this.syncEngine.getChannel());
+			this.syncSessionView.initialize(this, this.sourceIdMapper, this.syncEngine.getChannel());
 			this.syncSessionsFrame.initialize(this.syncEngine);
 		}
 	}
@@ -153,7 +153,7 @@ public class MeshCompactUI implements ISyncSessionViewOwner{
 		int i = 0;
 		while(i< size){
 			DataSourceMapping dataSource = (DataSourceMapping)this.comboBoxMappingDataSource.getModel().getElementAt(i);
-			if(dataSource.getSourceId().equals(sourceId)){
+			if(dataSource.getAlias().equals(sourceId)){
 				this.comboBoxMappingDataSource.setSelectedIndex(i);
 				return;
 			}
@@ -204,7 +204,7 @@ public class MeshCompactUI implements ISyncSessionViewOwner{
 	public void notifyStartUpOk(){		
 		
 		if(this.syncEngine != null){
-			this.syncSessionView.initialize(this, this.sourceIdResolver, this.syncEngine.getChannel());
+			this.syncSessionView.initialize(this, this.sourceIdMapper, this.syncEngine.getChannel());
 			this.syncSessionsFrame.initialize(this.syncEngine);
 		}
 		
@@ -681,8 +681,8 @@ public class MeshCompactUI implements ISyncSessionViewOwner{
 		return (EndpointMapping)this.getComboBoxEndpoint().getSelectedItem();
 	}
 
-	public SourceIdResolver getSourceIdResolver() {
-		return this.sourceIdResolver;
+	public SourceIdMapper getSourceIdMapper() {
+		return this.sourceIdMapper;
 	}
 
 	public void notifyEndpointMappingListsChanges() {
@@ -692,7 +692,7 @@ public class MeshCompactUI implements ISyncSessionViewOwner{
 	public void notifyDataSourceMappingListsChanges() {
 		DefaultComboBoxModel model = new DefaultComboBoxModel();
 		
-		ArrayList<DataSourceMapping> sources = sourceIdResolver.getDataSourceMappings();
+		ArrayList<DataSourceMapping> sources = sourceIdMapper.getDataSourceMappings();
 		Iterator<DataSourceMapping> sourcesIt = sources.iterator();
 		
 		while(sourcesIt.hasNext()) {

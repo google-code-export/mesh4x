@@ -27,8 +27,8 @@ import org.mesh4j.sync.message.channel.sms.core.repository.file.FileSmsChannelRe
 import org.mesh4j.sync.message.core.ISyncSessionRepository;
 import org.mesh4j.sync.message.core.InMemoryMessageSyncAdapter;
 import org.mesh4j.sync.message.core.MessageSyncAdapter;
+import org.mesh4j.sync.message.core.repository.ISourceIdMapper;
 import org.mesh4j.sync.message.core.repository.MessageSyncAdapterFactory;
-import org.mesh4j.sync.message.core.repository.OpaqueFeedSyncAdapterFactory;
 import org.mesh4j.sync.message.core.repository.SyncSessionFactory;
 import org.mesh4j.sync.message.core.repository.file.FileSyncSessionRepository;
 import org.mesh4j.sync.message.encoding.CompressBase91MessageEncoding;
@@ -199,15 +199,20 @@ public class SmsLibTests {
 		Assert.assertEquals(kmlAdapterA.getAll().size(), kmlAdapterB.getAll().size());
 	}
 	
-	private MessageSyncEngine createSyncSmsEndpoint(String gatewayId, IMessageSyncAdapter adapter, ISmsConnection smsConnection, int delay){
+	private MessageSyncEngine createSyncSmsEndpoint(final String gatewayId, IMessageSyncAdapter adapter, ISmsConnection smsConnection, int delay){
 		IFilter<String> protocolFilter = MessageSyncProtocolFactory.getProtocolMessageFilter();
 		
 		FileSmsChannelRepository channelRepo = new FileSmsChannelRepository(TestHelper.baseDirectoryForTest()+gatewayId+"\\");
 		SmsChannelWrapper channel = new SmsChannelWrapper((SmsChannel) SmsChannelFactory.createChannel(smsConnection, delay, delay, channelRepo, channelRepo, protocolFilter));
 		
-		KMLDOMLoaderFactory kmlFactory = new KMLDOMLoaderFactory(TestHelper.baseDirectoryForTest()+gatewayId+"\\");
-		OpaqueFeedSyncAdapterFactory feedFactory = new OpaqueFeedSyncAdapterFactory(TestHelper.baseDirectoryForTest()+gatewayId+"\\");
-		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(feedFactory, false, kmlFactory);
+		ISourceIdMapper sourceIdMapper = new ISourceIdMapper(){
+			@Override
+			public String getSourceDefinition(String sourceId) {
+				return sourceId;
+			}			
+		};
+		
+		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(sourceIdMapper, null, false);
 		SyncSessionFactory syncSessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);
 		syncSessionFactory.registerSource(adapter);
 	

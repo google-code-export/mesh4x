@@ -27,7 +27,6 @@ import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.ui.translator.MeshCompactUITranslator;
 import org.mesh4j.sync.ui.translator.MeshUITranslator;
 import org.mesh4j.sync.ui.utils.IconManager;
-import org.mesh4j.sync.utils.SourceIdResolver;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -43,18 +42,16 @@ public class LogFrame extends JFrame implements ISmsConnectionInboundOutboundNot
 
 	// MODEL VARIABLES
 	private JTextArea textAreaConsoleView;
-	private SourceIdResolver sourceIdResolver;
 	private MeshCompactUI owner;
 	private boolean mustTraceSms = false;
 	private boolean mustTraceProtocol = false;
 	
 	// BUSINESS METHODS
 
-	public LogFrame(MeshCompactUI owner, SourceIdResolver sourceIdResolver) {
+	public LogFrame(MeshCompactUI owner) {
 		super();
 		
 		this.owner = owner;
-		this.sourceIdResolver = sourceIdResolver;
 		this.mustTraceSms = owner.getPropertiesProvider().mustTraceSms();
 		this.mustTraceProtocol = owner.getPropertiesProvider().mustTraceProtocol();
 		
@@ -234,13 +231,13 @@ public class LogFrame extends JFrame implements ISmsConnectionInboundOutboundNot
 
 	@Override
 	public void beginSyncWithError(ISyncSession syncSession) {
-		String error = MeshUITranslator.getMessageErrorBeginSync(syncSession.getTarget().getEndpointId(), sourceIdResolver.getSourceName(syncSession.getSourceId()));
+		String error = MeshUITranslator.getMessageErrorBeginSync(syncSession.getTarget().getEndpointId(), syncSession.getSourceId());
 		this.log(error, mustTraceProtocol);		
 	}
 
 	@Override
 	public void notifyCancelSync(ISyncSession syncSession) {
-		this.log(MeshUITranslator.getMessageCancelSync(syncSession.getSessionId(), syncSession.getTarget().getEndpointId(), sourceIdResolver.getSourceName(syncSession.getSourceId())), mustTraceProtocol);
+		this.log(MeshUITranslator.getMessageCancelSync(syncSession.getSessionId(), syncSession.getTarget().getEndpointId(), syncSession.getSourceId()), mustTraceProtocol);
 	}
 
 	@Override
@@ -266,7 +263,7 @@ public class LogFrame extends JFrame implements ISmsConnectionInboundOutboundNot
 
 	@Override
 	public void notifySessionCreationError(IMessage message, String sourceId) {
-		this.log(MeshUITranslator.getMessageErrorSessionCreation(message, sourceIdResolver.getSourceName(sourceId)), mustTraceProtocol);
+		this.log(MeshUITranslator.getMessageErrorSessionCreation(message, sourceId), mustTraceProtocol);
 	}
 	
 	// WindowFocusListener methods

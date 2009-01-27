@@ -9,6 +9,7 @@ import org.mesh4j.sync.message.channel.sms.SmsChannelFactory;
 import org.mesh4j.sync.message.channel.sms.connection.ISmsConnectionInboundOutboundNotification;
 import org.mesh4j.sync.message.channel.sms.core.SmsChannel;
 import org.mesh4j.sync.message.channel.sms.core.SmsEndpointFactory;
+import org.mesh4j.sync.message.core.repository.ISourceIdMapper;
 import org.mesh4j.sync.message.core.repository.MessageSyncAdapterFactory;
 import org.mesh4j.sync.message.encoding.IMessageEncoding;
 import org.mesh4j.sync.message.protocol.MessageSyncProtocolFactory;
@@ -24,6 +25,7 @@ public class SmsLibMessageSyncEngineFactory {
 		int maxMessageLenght,
 		IIdentityProvider identityProvider,			
 		IMessageEncoding messageEncoding,
+		ISourceIdMapper sourceIdMapper,
 		ISmsConnectionInboundOutboundNotification[] smsAware, 
 		IMessageSyncAware[] syncAware,
 		ISyncAdapterFactory ... syncAdapterFactories) {
@@ -31,13 +33,13 @@ public class SmsLibMessageSyncEngineFactory {
 		ISmsConnection smsConnection =  new SmsLibAsynchronousConnection("mesh4j.sync", modem.getComPort(), modem.getBaudRate(),
 					modem.getManufacturer(), modem.getModel(), maxMessageLenght, messageEncoding, smsAware);
 		
-		MessageSyncEngine syncEngine = createSyncEngine(syncAware, baseDirectory, identityProvider, smsConnection, senderDelay, receiverDelay, syncAdapterFactories);
+		MessageSyncEngine syncEngine = createSyncEngine(sourceIdMapper, syncAware, baseDirectory, identityProvider, smsConnection, senderDelay, receiverDelay, syncAdapterFactories);
 		
 		return syncEngine;
 	}
 	
-	private static MessageSyncEngine createSyncEngine(IMessageSyncAware[] syncAware, String repositoryBaseDirectory, IIdentityProvider identityProvider, ISmsConnection smsConnection, int senderDelay, int receiverDelay, ISyncAdapterFactory ... syncAdapterFactories){
-		MessageSyncAdapterFactory msgSyncAdapterFactory = new MessageSyncAdapterFactory(null, false, syncAdapterFactories);		
+	private static MessageSyncEngine createSyncEngine(ISourceIdMapper sourceIdMapper, IMessageSyncAware[] syncAware, String repositoryBaseDirectory, IIdentityProvider identityProvider, ISmsConnection smsConnection, int senderDelay, int receiverDelay, ISyncAdapterFactory ... syncAdapterFactories){
+		MessageSyncAdapterFactory msgSyncAdapterFactory = new MessageSyncAdapterFactory(sourceIdMapper, null, false, syncAdapterFactories);		
 		SmsChannel channel = SmsChannelFactory.createChannelWithFileRepository(smsConnection, senderDelay, receiverDelay, repositoryBaseDirectory, MessageSyncProtocolFactory.getProtocolMessageFilter());
 		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocolWithFileRepository(100, repositoryBaseDirectory, channel, identityProvider, syncAware, SmsEndpointFactory.INSTANCE, msgSyncAdapterFactory);
 		return new MessageSyncEngine(syncProtocol, channel);		

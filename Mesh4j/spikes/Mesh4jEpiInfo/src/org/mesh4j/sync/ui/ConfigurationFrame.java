@@ -306,7 +306,7 @@ public class ConfigurationFrame extends JFrame {
 					if (index == -1) {	// save
 	
 						DataSourceMapping dataSourceMapping = new DataSourceMapping(newAlias, mdbName, tableName, fileName);
-						owner.getSourceIdResolver().saveDataSourceMapping(dataSourceMapping);
+						owner.getSourceIdMapper().saveDataSourceMapping(dataSourceMapping);
 						
 						DefaultListModel listModel = (DefaultListModel)listDataSources.getModel();
 						listModel.addElement(dataSourceMapping);
@@ -324,7 +324,7 @@ public class ConfigurationFrame extends JFrame {
 						dataSourceMapping.setTableName(tableName);
 						dataSourceMapping.setFileName(fileName);
 						
-						owner.getSourceIdResolver().updateDataSourceMapping(oldDataSourceMapping, dataSourceMapping);		
+						owner.getSourceIdMapper().updateDataSourceMapping(oldDataSourceMapping, dataSourceMapping);		
 						
 					}	
 					listDataSources.setSelectedIndex(-1);
@@ -349,7 +349,7 @@ public class ConfigurationFrame extends JFrame {
 				int index = listDataSources.getSelectedIndex();
 				if (index != -1) {
 					DataSourceMapping dataSource = (DataSourceMapping) listDataSources.getSelectedValue();
-					owner.getSourceIdResolver().deleteDataSourceMapping(dataSource);				
+					owner.getSourceIdMapper().deleteDataSourceMapping(dataSource);				
 					
 					DefaultListModel listModel = (DefaultListModel)listDataSources.getModel();
 					listModel.remove(index);
@@ -397,7 +397,7 @@ public class ConfigurationFrame extends JFrame {
 
 		panelEditDataSource.add(buttonOpenDataSourceFileChooser, new CellConstraints(2, 3));
 
-		Iterator<DataSourceMapping> sources = owner.getSourceIdResolver().getDataSourceMappings().iterator();
+		Iterator<DataSourceMapping> sources = owner.getSourceIdMapper().getDataSourceMappings().iterator();
 		while(sources.hasNext()) {
 			listModelDataSources.addElement(sources.next());			
 		}

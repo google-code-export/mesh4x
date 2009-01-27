@@ -23,7 +23,6 @@ import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 
 import org.mesh4j.sync.adapters.http.HttpSyncAdapterFactory;
-import org.mesh4j.sync.adapters.msaccess.IMsAccessSourceIdResolver;
 import org.mesh4j.sync.mappings.DataSourceMapping;
 import org.mesh4j.sync.mappings.SyncMode;
 import org.mesh4j.sync.model.Item;
@@ -32,7 +31,7 @@ import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.ui.translator.MeshCompactUITranslator;
 import org.mesh4j.sync.ui.translator.MeshUITranslator;
 import org.mesh4j.sync.ui.utils.IconManager;
-import org.mesh4j.sync.utils.SourceIdResolver;
+import org.mesh4j.sync.utils.SourceIdMapper;
 import org.mesh4j.sync.utils.SyncEngineUtil;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -55,15 +54,15 @@ public class SyncFrame extends JFrame{
 	private JLabel imageStatus;
 	
 	private PropertiesProvider propertiesProvider;
-	private SourceIdResolver sourceIdResolver;
+	private SourceIdMapper sourceIdMapper;
 	
 	// BUSINESS METHODS
-	public SyncFrame(PropertiesProvider propertiesProvider, SourceIdResolver sourceIdResolver){
+	public SyncFrame(PropertiesProvider propertiesProvider, SourceIdMapper sourceIdMapper){
 
 		super();
 		
 		this.propertiesProvider = propertiesProvider;
-		this.sourceIdResolver = sourceIdResolver;
+		this.sourceIdMapper = sourceIdMapper;
 		
 		setAlwaysOnTop(true);
 		setIconImage(IconManager.getCDCImage());
@@ -240,7 +239,7 @@ public class SyncFrame extends JFrame{
 			
 			try{
 				setInProcess(MeshUITranslator.getLabelStart());
-				List<Item> conflicts = SyncEngineUtil.synchronize(textFieldURL.getText(), dataSource.getAlias(), getIdentityProvider(), getBaseDirectory(), getSourceIdResolver());
+				List<Item> conflicts = SyncEngineUtil.synchronize(textFieldURL.getText(), dataSource.getAlias(), getIdentityProvider(), getBaseDirectory(), getSourceIdMapper());
 				if(conflicts.isEmpty()){
 					setOk(MeshUITranslator.getLabelSuccess());
 				} else {
@@ -293,8 +292,8 @@ public class SyncFrame extends JFrame{
 	    }
 	}
 
-	public IMsAccessSourceIdResolver getSourceIdResolver() {
-		return this.sourceIdResolver;
+	public SourceIdMapper getSourceIdMapper() {
+		return this.sourceIdMapper;
 	}
 
 	public IIdentityProvider getIdentityProvider() {

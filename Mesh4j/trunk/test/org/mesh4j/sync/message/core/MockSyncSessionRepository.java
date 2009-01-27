@@ -2,11 +2,11 @@ package org.mesh4j.sync.message.core;
 
 import java.util.List;
 
-import org.mesh4j.sync.adapters.kml.KMLDOMLoaderFactory;
 import org.mesh4j.sync.message.IEndpoint;
 import org.mesh4j.sync.message.IMessageSyncAdapter;
 import org.mesh4j.sync.message.ISyncSession;
 import org.mesh4j.sync.message.channel.sms.core.SmsEndpointFactory;
+import org.mesh4j.sync.message.core.repository.ISourceIdMapper;
 import org.mesh4j.sync.message.core.repository.MessageSyncAdapterFactory;
 import org.mesh4j.sync.message.core.repository.OpaqueFeedSyncAdapterFactory;
 import org.mesh4j.sync.message.core.repository.SyncSessionFactory;
@@ -16,9 +16,19 @@ public class MockSyncSessionRepository implements ISyncSessionRepository {
 	private SyncSessionFactory factory;
 	
 	public MockSyncSessionRepository() {
-		KMLDOMLoaderFactory kmlFactory = new KMLDOMLoaderFactory("");
+		ISourceIdMapper sourceIdMapper = new ISourceIdMapper(){
+
+			@Override
+			public String getSourceDefinition(String sourceId) {
+				// ""
+				return sourceId;
+			}
+			
+		};
+		//KMLDOMLoaderFactory kmlFactory = new KMLDOMLoaderFactory();
 		OpaqueFeedSyncAdapterFactory feedFactory = new OpaqueFeedSyncAdapterFactory("");
-		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(feedFactory, false, kmlFactory);
+		
+		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(sourceIdMapper, feedFactory, false);
 		this.factory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);
 	}
 	

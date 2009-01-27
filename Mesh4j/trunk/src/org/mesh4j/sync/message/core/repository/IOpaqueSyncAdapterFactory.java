@@ -4,6 +4,6 @@ import org.mesh4j.sync.adapters.ISyncAdapterFactory;
 
 public interface IOpaqueSyncAdapterFactory extends ISyncAdapterFactory {
 
-	String createSourceId(String sourceId);
+	String createSourceDefinition(String sourceId, String sourceDefinition);
 
 }
