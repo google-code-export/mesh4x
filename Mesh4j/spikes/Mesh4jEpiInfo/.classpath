@@ -2,8 +2,8 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="etc"/>
-	<classpathentry kind="lib" path="images"/>
+	<classpathentry exported="true" kind="lib" path="etc"/>
+	<classpathentry exported="true" kind="lib" path="images"/>
 	<classpathentry exported="true" kind="lib" path="lib/activation.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/antlr-2.7.6.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/asm.jar"/>
@@ -24,6 +24,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/mysql-connector-java-5.1.6-bin.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/poi-3.2-FINAL-20081019.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/smslib-3.3.0.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/Mesh4j"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/Mesh4j"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

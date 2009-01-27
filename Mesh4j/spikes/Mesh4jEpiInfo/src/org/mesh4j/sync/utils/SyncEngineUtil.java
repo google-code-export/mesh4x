@@ -43,6 +43,7 @@ import org.mesh4j.sync.message.channel.sms.SmsChannelFactory;
 import org.mesh4j.sync.message.channel.sms.SmsEndpoint;
 import org.mesh4j.sync.message.channel.sms.batch.SmsMessage;
 import org.mesh4j.sync.message.channel.sms.connection.ISmsConnectionInboundOutboundNotification;
+import org.mesh4j.sync.message.channel.sms.connection.file.watcher.FileWatcherSmsConnection;
 import org.mesh4j.sync.message.channel.sms.connection.smslib.IProgressMonitor;
 import org.mesh4j.sync.message.channel.sms.connection.smslib.Modem;
 import org.mesh4j.sync.message.channel.sms.connection.smslib.ModemHelper;

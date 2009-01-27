@@ -1,4 +1,4 @@
-package org.mesh4j.sync.utils;
+package org.mesh4j.sync.message.channel.sms.connection.file.watcher;
 
 import java.util.Date;
 
