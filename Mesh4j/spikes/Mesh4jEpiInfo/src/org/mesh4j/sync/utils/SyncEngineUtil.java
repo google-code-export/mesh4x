@@ -2,9 +2,11 @@ package org.mesh4j.sync.utils;
 
 import java.io.File;
 import java.text.MessageFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.TreeSet;
 
 import org.apache.commons.logging.Log;
@@ -17,8 +19,13 @@ import org.mesh4j.geo.coder.GeoCoderLongitudePropertyResolver;
 import org.mesh4j.geo.coder.GoogleGeoCoder;
 import org.mesh4j.sync.IFilter;
 import org.mesh4j.sync.ISyncAdapter;
+import org.mesh4j.sync.NullPreviewHandler;
 import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.adapters.ISyncAdapterFactory;
+import org.mesh4j.sync.adapters.feed.Feed;
+import org.mesh4j.sync.adapters.feed.FeedAdapter;
+import org.mesh4j.sync.adapters.feed.XMLContent;
+import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.adapters.http.HttpSyncAdapter;
 import org.mesh4j.sync.adapters.http.HttpSyncAdapterFactory;
 import org.mesh4j.sync.adapters.kml.exporter.KMLExporter;
@@ -29,6 +36,7 @@ import org.mesh4j.sync.adapters.msaccess.MsAccessHelper;
 import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
 import org.mesh4j.sync.filter.CompoundFilter;
 import org.mesh4j.sync.filter.NonDeletedFilter;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.mappings.DataSourceMapping;
 import org.mesh4j.sync.mappings.EndpointMapping;
 import org.mesh4j.sync.mappings.MSAccessDataSourceMapping;
@@ -57,11 +65,13 @@ import org.mesh4j.sync.message.core.repository.OpaqueFeedSyncAdapterFactory;
 import org.mesh4j.sync.message.encoding.IMessageEncoding;
 import org.mesh4j.sync.message.protocol.MessageSyncProtocolFactory;
 import org.mesh4j.sync.model.Item;
+import org.mesh4j.sync.model.Sync;
 import org.mesh4j.sync.payload.mappings.IMappingResolver;
 import org.mesh4j.sync.payload.mappings.MappingResolver;
 import org.mesh4j.sync.properties.PropertiesProvider;
 import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.security.NullIdentityProvider;
+import org.mesh4j.sync.ui.SyncSessionsFrame.CloudSyncSessionWrapper;
 import org.mesh4j.sync.ui.translator.MeshUITranslator;
 import org.mesh4j.sync.validations.MeshException;
 
@@ -69,12 +79,15 @@ public class SyncEngineUtil {
 
 	// TODO (JMT) Add number of GET/MERGE and ACKs to client session target values
 	// TODO (JMT) Add items added/updated/deleted to client session target values
+	// TODO (JMT) Supports add/update/delete all data source types in ConfigurationFrame/SourceIdMapper
 	
 	private final static Log Logger = LogFactory.getLog(SyncEngineUtil.class);
 	
-	public static List<Item> synchronize(String url, String sourceAlias, IIdentityProvider identityProvider, String baseDirectory, SourceIdMapper sourceIdMapper) {
+	public static List<Item> synchronize(String url, String sourceAlias, IIdentityProvider identityProvider, String baseDirectory, SourceIdMapper sourceIdMapper, SyncMode syncMode) {
 		
+		Date start = new Date();
 		try{
+			
 			ISyncAdapter httpAdapter = HttpSyncAdapterFactory.INSTANCE.createSyncAdapter(sourceAlias, url, identityProvider);
 			
 			String sourceDefinition = sourceIdMapper.getSourceDefinition(sourceAlias);
@@ -82,13 +95,65 @@ public class SyncEngineUtil {
 			ISyncAdapter syncAdapter = syncFactory.createSyncAdapter(sourceAlias, sourceDefinition, identityProvider);
 	
 			SyncEngine syncEngine = new SyncEngine(syncAdapter, httpAdapter);
-			List<Item> conflicts = syncEngine.synchronize();
+			List<Item> conflicts = syncEngine.synchronize(NullPreviewHandler.INSTANCE, syncMode.getBehavior());
+			
+			traceCloudSynchronization(url, syncMode, start, new Date(), conflicts, false, sourceAlias, identityProvider, baseDirectory);
+			
 			return conflicts;
 		} catch (Exception e) {
+			traceCloudSynchronization(url, syncMode, start, new Date(), null, true, sourceAlias, identityProvider, baseDirectory);
 			throw new MeshException(e);
 		}
 	}
+		
+	public static FeedAdapter getCloudSyncTraceAdapter(String sourceAlias, IIdentityProvider identityProvider, String baseDirectory) {
+		String fileName = baseDirectory + "/" + sourceAlias + "_cloudSync.xml";
+		Feed feed = new Feed(sourceAlias, "Cloud synchronizations", "");
+		FeedAdapter adapter = new FeedAdapter(fileName, identityProvider, IdGenerator.INSTANCE, RssSyndicationFormat.INSTANCE, feed);
+		return adapter;
+	}
 	
+	
+	public static void updateCloudSyncWrapper(CloudSyncSessionWrapper cloud, Item item){
+		Element cloudSyncElement = item.getContent().getPayload().element("cloudSync");
+		String start = cloudSyncElement.attributeValue("start");
+		Date startDate = DateHelper.parseDateYYYYMMDDHHMMSS(start, TimeZone.getDefault());
+		if(cloud.getStartDate() == null || cloud.getStartDate().getTime() < startDate.getTime()){
+			String end = cloudSyncElement.attributeValue("end");
+			int conflicts = Integer.valueOf(cloudSyncElement.attributeValue("conflicts"));
+			boolean error = Boolean.parseBoolean(cloudSyncElement.attributeValue("error"));
+			String syncMode = cloudSyncElement.attributeValue("syncMode");
+			
+			cloud.setSyncMode(syncMode);
+			cloud.setStart(start);
+			cloud.setEnd(end);
+			cloud.setConflicts(conflicts);
+			cloud.setError(error);
+		}	
+	}
+	
+	private static void traceCloudSynchronization(String url, SyncMode syncMode, Date start, Date end, List<Item> conflicts, boolean error, String sourceAlias, IIdentityProvider identityProvider, String baseDirectory) {
+		try{
+			FeedAdapter adapter = getCloudSyncTraceAdapter(sourceAlias, identityProvider, baseDirectory);
+			
+			String syncId = IdGenerator.INSTANCE.newID();
+			
+			Element root = DocumentHelper.createElement("cloudSync");
+			root.addAttribute("start", DateHelper.formatDateYYYYMMDDHHMMSS(start, "/", ":", "", TimeZone.getDefault()));
+			root.addAttribute("end", DateHelper.formatDateYYYYMMDDHHMMSS(end, "/", ":", "", TimeZone.getDefault()));
+			root.addAttribute("conflicts", (conflicts == null || conflicts.isEmpty()) ? "0" : String.valueOf(conflicts.size()));
+			root.addAttribute("error", error ? "true" : "false");
+			root.addAttribute("syncMode", syncMode.name());
+			
+			XMLContent content = new XMLContent(syncId, "Cloud sync", "Cloud synchronization", url, root);
+			Sync sync = new Sync(syncId, identityProvider.getAuthenticatedUser(), end, false);
+			Item item = new Item(content, sync);
+			adapter.add(item);
+		} catch (Throwable e) {
+			Logger.error(e.getMessage(), e);
+		}
+	}
+
 	public static void synchronize(MessageSyncEngine syncEngine, SyncMode syncMode, String toPhoneNumber, String sourceAlias, IIdentityProvider identityProvider, String baseDirectory, SourceIdMapper sourceIdMapper) throws Exception {
 
 		IMessageSyncAdapter adapter = syncEngine.getSource(sourceAlias);
@@ -178,9 +243,9 @@ public class SyncEngineUtil {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static void generateKML(String geoCoderKey, String templateFileName, String fromPhoneNumber, String mdbFileName, String mdbTableName, String baseDirectory, SourceIdMapper sourceIdResolver, IIdentityProvider identityProvider) throws Exception{
+	public static String generateKML(String geoCoderKey, String templateFileName, String mdbFileName, String dataSourceAlias, String baseDirectory, SourceIdMapper sourceIdResolver, IIdentityProvider identityProvider) throws Exception{
 		
-		String mappingsFileName = baseDirectory + "/" + mdbTableName + "_mappings.xml";
+		String mappingsFileName = baseDirectory + "/" + dataSourceAlias + "_mappings.xml";
 		
 		IMappingResolver mappingResolver = null;
 		File mappingsFile = new File(mappingsFileName);
@@ -190,23 +255,20 @@ public class SyncEngineUtil {
 
 		GoogleGeoCoder geoCoder = new GoogleGeoCoder(geoCoderKey);
 
-		String sourceAlias = sourceIdResolver.getSourceName(mdbFileName, mdbTableName);
-		String sourceDefinition = sourceIdResolver.getSourceDefinition(sourceAlias);
+		String sourceDefinition = sourceIdResolver.getSourceDefinition(dataSourceAlias);
 		ISyncAdapterFactory syncFactory = makeSyncAdapterFactory(baseDirectory);
 
 		IKMLGeneratorFactory kmlGeneratorFactory = new KmlGeneratorFactory(baseDirectory, templateFileName, geoCoder);
 		KMLTimeSpanDecoratorSyncAdapterFactory kmlDecSyncFactory = new KMLTimeSpanDecoratorSyncAdapterFactory(baseDirectory, syncFactory, kmlGeneratorFactory);
-
 		
-		
-		KMLTimeSpanDecoratorSyncAdapter syncAdapter = kmlDecSyncFactory.createSyncAdapter(sourceAlias, sourceDefinition, identityProvider);
+		KMLTimeSpanDecoratorSyncAdapter syncAdapter = kmlDecSyncFactory.createSyncAdapter(dataSourceAlias, sourceDefinition, identityProvider);
 		syncAdapter.beginSync();
 		
 		CompoundFilter filter = new CompoundFilter(NonDeletedFilter.INSTANCE);
 		List<Item> items = syncAdapter.getAll(filter);
 		syncAdapter.endSync();
 		
-		String kmlFileName = baseDirectory + "/" + mdbTableName + "_last.kml";
+		String kmlFileName = baseDirectory + "/" + dataSourceAlias + "_last.kml";
 		
 		byte[] bytes = FileUtils.read(mappingsFile);
 		String xml = new String(bytes);
@@ -216,8 +278,8 @@ public class SyncEngineUtil {
 		GeoCoderLongitudePropertyResolver propertyResolverLon = new GeoCoderLongitudePropertyResolver(geoCoder);
 		GeoCoderLocationPropertyResolver propertyResolverLoc = new GeoCoderLocationPropertyResolver(geoCoder);
 		mappingResolver = new MappingResolver(schema, propertyResolverLat, propertyResolverLon, propertyResolverLoc);
-		KMLExporter.export(kmlFileName, mdbTableName, items, mappingResolver);			
-
+		KMLExporter.export(kmlFileName, dataSourceAlias, items, mappingResolver);			
+		return kmlFileName;
 	}
 
 	public static void downloadSchema(String url, String tableName, String baseDirectory) throws Exception {
@@ -238,10 +300,10 @@ public class SyncEngineUtil {
 		FileUtils.write(fileName, xmlMappings.getBytes());
 	}
 
-	public static void makeKMLWithNetworkLink(String templateFileName, String fileName, String tableName, String url) throws Exception {
+	public static void makeKMLWithNetworkLink(String templateFileName, String fileName, String docName, String url) throws Exception {
 		byte[] bytes = FileUtils.read(templateFileName);
 		String template = new String(bytes);
-		FileUtils.write(fileName, MessageFormat.format(template, tableName, url).getBytes());
+		FileUtils.write(fileName, MessageFormat.format(template, docName, url).getBytes());
 	}
 
 	// NEW EXAMPLE UI

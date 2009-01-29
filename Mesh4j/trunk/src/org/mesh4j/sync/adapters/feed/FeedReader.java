@@ -99,11 +99,11 @@ public class FeedReader {
 				Item item = readItem(element);
 				items.add(item);
 			}else if(this.syndicationFormat.isFeedTitle(element)){
-				title = element.getText();
+				title = this.syndicationFormat.getFeedTitle(element);
 			} else if(this.syndicationFormat.isFeedDescription(element)){
-				description = element.getText();
+				description = this.syndicationFormat.getFeedDescription(element);
 			}else if(this.syndicationFormat.isFeedLink(element)){
-				link = element.getText();
+				link = this.syndicationFormat.getFeedLink(element);
 			} else if(this.syndicationFormat.isAditionalFeedPayload(element)){
 				payload.add(element.detach());
 			}				
@@ -130,11 +130,11 @@ public class FeedReader {
 				sync = readSync(element);
 			} else {
 				if(this.syndicationFormat.isFeedItemTitle(element)){
-					title = element.getText();
+					title = this.syndicationFormat.getFeedItemTitle(element);
 				} else if(this.syndicationFormat.isFeedItemDescription(element)){
-					description = element.getText();
+					description = this.syndicationFormat.getFeedItemDescription(element);
 				}else if(this.syndicationFormat.isFeedItemLink(element)){
-					link = element.getText();
+					link = this.syndicationFormat.getFeedItemLink(element);
 				} else if(this.syndicationFormat.isAditionalFeedItemPayload(element)){
 					payload.add(element.detach());
 				}				

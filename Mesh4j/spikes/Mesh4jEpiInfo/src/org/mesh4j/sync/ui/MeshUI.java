@@ -766,7 +766,7 @@ public class MeshUI{
     			try{
     				String sourceAlias = sourceIdResolver.getSourceName(dataSource, tableName);
     				consoleNotification.beginSync(url, sourceAlias);
-    				List<Item> conflicts = SyncEngineUtil.synchronize(textFieldURL.getText(), sourceIdResolver.getSourceName(dataSource, tableName), identityProvider, baseDirectory, sourceIdResolver);
+    				List<Item> conflicts = SyncEngineUtil.synchronize(textFieldURL.getText(), sourceIdResolver.getSourceName(dataSource, tableName), identityProvider, baseDirectory, sourceIdResolver, SyncMode.SendAndReceiveChanges);
     				consoleNotification.endSync(textFieldURL.getText(), sourceAlias, conflicts);
 	    			consoleNotification.setEndSyncImageStatus();
 	    		} catch(Throwable t){
@@ -863,7 +863,7 @@ public class MeshUI{
 					return null;
 				}
     			try{
-    				SyncEngineUtil.generateKML(geoCoderKey, kmlTemplateFileName, getModemPhoneNumber(), dataSource, tableName, baseDirectory, sourceIdResolver, identityProvider);
+    				SyncEngineUtil.generateKML(geoCoderKey, kmlTemplateFileName, dataSource, tableName, baseDirectory, sourceIdResolver, identityProvider);
 	    			consoleNotification.setEndSyncImageStatus();
 	    		} catch(Throwable t){
 	    			consoleNotification.setErrorImageStatus();
@@ -951,10 +951,6 @@ public class MeshUI{
     		}
 	        return null;
 	    }
-
-		private String getModemPhoneNumber() {
-			return (modem == null ? MeshUITranslator.getLabelDemo() : modem.toString());
-		}
 
 		@Override
 	    public void done() {

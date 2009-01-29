@@ -101,8 +101,8 @@ public class FeedServlet extends HttpServlet {
 			
 			Date sinceDate = this.getSinceDate(request);
 			String responseContent = this.feedRepository.readFeed(sourceID, link, sinceDate, syndicationFormat, plainMode);
-//			responseContent = responseContent.replaceAll("&lt;", "<");	// TODO (JMT) remove ==>  xml.replaceAll("&lt;", "<"); 
-//			responseContent = responseContent.replaceAll("&gt;", ">");
+			responseContent = responseContent.replaceAll("&lt;", "<");	// TODO (JMT) remove ==>  xml.replaceAll("&lt;", "<"); 
+			responseContent = responseContent.replaceAll("&gt;", ">");
 			
 			//response.setContentType("text/plain");
 			response.setContentType(syndicationFormat.getContentType());

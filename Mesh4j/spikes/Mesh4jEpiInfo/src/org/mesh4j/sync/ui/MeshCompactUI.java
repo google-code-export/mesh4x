@@ -29,6 +29,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mesh4j.sync.mappings.DataSourceMapping;
 import org.mesh4j.sync.mappings.EndpointMapping;
+import org.mesh4j.sync.mappings.MSAccessDataSourceMapping;
 import org.mesh4j.sync.mappings.SyncMode;
 import org.mesh4j.sync.message.IMessageSyncAware;
 import org.mesh4j.sync.message.ISyncSession;
@@ -37,6 +38,7 @@ import org.mesh4j.sync.message.channel.sms.connection.ISmsConnectionInboundOutbo
 import org.mesh4j.sync.properties.PropertiesProvider;
 import org.mesh4j.sync.ui.tasks.CancelAllSyncTask;
 import org.mesh4j.sync.ui.tasks.CancelSyncTask;
+import org.mesh4j.sync.ui.tasks.OpenFileTask;
 import org.mesh4j.sync.ui.tasks.ReadyToSyncTask;
 import org.mesh4j.sync.ui.tasks.ShutdownTask;
 import org.mesh4j.sync.ui.tasks.StartUpTask;
@@ -65,6 +67,7 @@ public class MeshCompactUI implements ISyncSessionViewOwner{
 	private JButton buttonSync;
 	private JButton buttonReadyToSync;
 	private JButton buttonTestPhone;
+	private JButton buttonOpenDataSource;
 	private JComboBox comboBoxSyncMode;
 	private JComboBox comboBoxMappingDataSource;
 	private JComboBox comboBoxEndpoint;
@@ -77,7 +80,8 @@ public class MeshCompactUI implements ISyncSessionViewOwner{
 	private LogFrame logFrame;
 	private ConfigurationFrame cfgFrame;
 	private SyncSessionsFrame syncSessionsFrame;
-	private SyncFrame syncFrame;
+	private SyncCloudFrame syncCloudFrame;
+	private MapsFrame mapsFrame;
 	
 	private PropertiesProvider propertiesProvider;
 	private SourceIdMapper sourceIdMapper;
@@ -105,10 +109,11 @@ public class MeshCompactUI implements ISyncSessionViewOwner{
 		this.propertiesProvider = new PropertiesProvider();
 		this.sourceIdMapper = new SourceIdMapper(propertiesProvider.getBaseDirectory()+"/myDataSources.properties");
 		
-		this.syncFrame = new SyncFrame(this.propertiesProvider, this.sourceIdMapper);
+		this.mapsFrame = new MapsFrame(this.propertiesProvider, this.sourceIdMapper);
 		this.logFrame = new LogFrame(this);
 		this.cfgFrame = new ConfigurationFrame(this);
 		this.syncSessionsFrame = new SyncSessionsFrame(this, this.sourceIdMapper, this.propertiesProvider);
+		this.syncCloudFrame = new SyncCloudFrame(this.propertiesProvider, this.sourceIdMapper, this.syncSessionsFrame);
 		
 		this.createUI();
 		
@@ -250,6 +255,7 @@ public class MeshCompactUI implements ISyncSessionViewOwner{
 		this.comboBoxEndpoint.setEnabled(true);
 		this.comboBoxMappingDataSource.setEnabled(true);
 		this.comboBoxSyncMode.setEnabled(true);
+		this.buttonOpenDataSource.setEnabled(true);
 		
 		this.buttonReadyToSync.setEnabled(true);
 		this.buttonTestPhone.setEnabled(true);		
@@ -259,7 +265,7 @@ public class MeshCompactUI implements ISyncSessionViewOwner{
 		this.comboBoxEndpoint.setEnabled(false);
 		this.comboBoxMappingDataSource.setEnabled(false);
 		this.comboBoxSyncMode.setEnabled(false);
-		
+		this.buttonOpenDataSource.setEnabled(false);
 		this.buttonReadyToSync.setEnabled(false);
 		this.buttonTestPhone.setEnabled(false);
 	}
@@ -346,7 +352,9 @@ public class MeshCompactUI implements ISyncSessionViewOwner{
 				FormFactory.RELATED_GAP_COLSPEC,
 				FormFactory.DEFAULT_COLSPEC,
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("62dlu")},
+				ColumnSpec.decode("44dlu"),
+				FormFactory.RELATED_GAP_COLSPEC,
+				ColumnSpec.decode("43dlu")},
 			new RowSpec[] {
 				RowSpec.decode("9dlu")}));
 		frame.getContentPane().add(panelStatusButtons, new CellConstraints(2, 5, CellConstraints.FILL, CellConstraints.FILL));
@@ -385,11 +393,11 @@ public class MeshCompactUI implements ISyncSessionViewOwner{
 		
 		ActionListener openSyncWindowActionListener = new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
-				if(syncFrame.isVisible()){
-					syncFrame.toFront();
+				if(syncCloudFrame.isVisible()){
+					syncCloudFrame.toFront();
 				} else {
-					syncFrame.pack();
-					syncFrame.setVisible(true);
+					syncCloudFrame.pack();
+					syncCloudFrame.setVisible(true);
 				}
 			}
 		};	
@@ -398,6 +406,27 @@ public class MeshCompactUI implements ISyncSessionViewOwner{
 		buttonOpenSyncWindow.setEnabled(this.propertiesProvider.getBoolean("mesh4x.sync.web.enabled"));
 		
 		panelStatusButtons.add(buttonOpenSyncWindow, new CellConstraints(7, 1, CellConstraints.LEFT, CellConstraints.FILL));
+
+		final JButton buttonOpenMaps = new JButton();
+		buttonOpenMaps.setContentAreaFilled(false);
+		buttonOpenMaps.setBorderPainted(false);
+		buttonOpenMaps.setBorder(new EmptyBorder(0, 0, 0, 0));
+		buttonOpenMaps.setFont(new Font("Calibri", Font.PLAIN, 10));
+		buttonOpenMaps.setText(MeshCompactUITranslator.getLabelOpenMapsWindow());
+		buttonOpenMaps.setToolTipText(MeshCompactUITranslator.getToolTipOpenMapsWindow());
+		
+		ActionListener openMapsActionListener = new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				if(mapsFrame.isVisible()){
+					mapsFrame.toFront();
+				} else {
+					mapsFrame.pack();
+					mapsFrame.setVisible(true);
+				}
+			}
+		};	
+		buttonOpenMaps.addActionListener(openMapsActionListener);
+		panelStatusButtons.add(buttonOpenMaps, new CellConstraints(9, 1, CellConstraints.LEFT, CellConstraints.FILL));
 
 		final JPanel panelTrademark = new JPanel();
 		panelTrademark.setBackground(Color.WHITE);
@@ -453,8 +482,11 @@ public class MeshCompactUI implements ISyncSessionViewOwner{
 		this.syncSessionsFrame.setVisible(false);
 		this.syncSessionsFrame.dispose();
 		
-		this.syncFrame.setVisible(false);
-		this.syncFrame.dispose();
+		this.syncCloudFrame.setVisible(false);
+		this.syncCloudFrame.dispose();
+		
+		this.mapsFrame.setVisible(false);
+		this.mapsFrame.dispose();
 		
 		this.frame.setVisible(false);
 		this.frame.dispose();
@@ -489,13 +521,37 @@ public class MeshCompactUI implements ISyncSessionViewOwner{
 			panel.setLayout(new FormLayout(
 				new ColumnSpec[] {
 					ColumnSpec.decode("75dlu"),
-					FormFactory.RELATED_GAP_COLSPEC,
+					ColumnSpec.decode("2dlu"),
+					ColumnSpec.decode("17dlu"),
+					ColumnSpec.decode("6dlu"),
 					ColumnSpec.decode("98dlu")},
 				new RowSpec[] {
 					FormFactory.DEFAULT_ROWSPEC}));
 			panelSync.add(panel, new CellConstraints(1, 7, 5, 1));
 			panel.add(getComboBoxMappingDataSource(), new CellConstraints());
-			panel.add(getComboBoxSyncMode(), new CellConstraints(3, 1));
+			panel.add(getComboBoxSyncMode(), new CellConstraints(5, 1));
+
+			
+			ActionListener openDataSourceActionListener = new ActionListener(){
+				public void actionPerformed(ActionEvent e) {
+					MSAccessDataSourceMapping dataSource = (MSAccessDataSourceMapping) getComboBoxMappingDataSource().getSelectedItem();
+					if(dataSource != null){
+						OpenFileTask task = new OpenFileTask(dataSource.getFileName());
+						task.execute();
+					}
+				}
+			};	
+			
+			buttonOpenDataSource = new JButton();
+			buttonOpenDataSource.setContentAreaFilled(false);
+			buttonOpenDataSource.setBorderPainted(false);
+			buttonOpenDataSource.setBorder(new EmptyBorder(0, 0, 0, 0));
+			buttonOpenDataSource.setBackground(Color.WHITE);
+			buttonOpenDataSource.setText("");
+			buttonOpenDataSource.setToolTipText(MeshCompactUITranslator.getTooltipViewDataSource());
+			buttonOpenDataSource.setIcon(IconManager.getViewDataSource());
+			buttonOpenDataSource.addActionListener(openDataSourceActionListener);
+			panel.add(buttonOpenDataSource, new CellConstraints(3, 1, CellConstraints.FILL, CellConstraints.FILL));
 
 			final JPanel panelSyncButtons = new JPanel();
 			panelSyncButtons.setLayout(new FormLayout(
@@ -569,6 +625,10 @@ public class MeshCompactUI implements ISyncSessionViewOwner{
 			buttonSync.setFont(new Font("Arial", Font.PLAIN, 16));
 			buttonSync.setText(MeshCompactUITranslator.getLabelSync());
 			buttonSync.setToolTipText(MeshCompactUITranslator.getToolTipSync());
+			//buttonSync.setBorder(new EmptyBorder(0, 0, 0, 0));
+			//buttonSync.setBorderPainted(false);
+			//buttonSync.setContentAreaFilled(false);
+			//buttonSync.setIcon(IconManager.getStatusProcessingIcon());
 			
 			ActionListener synchronizeActionListener = new ActionListener(){
 				public void actionPerformed(ActionEvent e) {
@@ -711,7 +771,8 @@ public class MeshCompactUI implements ISyncSessionViewOwner{
 		}
 		comboBoxMappingDataSource.setModel(model);
 		
-		this.syncFrame.notifyDataSourceMappingListsChanges(sources);
+		this.syncCloudFrame.notifyDataSourceMappingListsChanges(sources);
+		this.mapsFrame.notifyDataSourceMappingListsChanges(sources);
 	}
 
 	public PropertiesProvider getPropertiesProvider() {
@@ -759,12 +820,16 @@ public class MeshCompactUI implements ISyncSessionViewOwner{
 
 	public void notifyOwnerWorking() {
 		this.cfgFrame.notifyOwnerWorking();
-		this.syncFrame.notifyOwnerWorking();
+		this.syncCloudFrame.notifyOwnerWorking();
+		this.mapsFrame.notifyOwnerWorking();
+		this.syncSessionsFrame.notifyOwnerWorking();
 	}
 
 	public void notifyOwnerNotWorking() {
 		this.cfgFrame.notifyOwnerNotWorking();
-		this.syncFrame.notifyOwnerNotWorking();
+		this.syncCloudFrame.notifyOwnerNotWorking();
+		this.mapsFrame.notifyOwnerNotWorking();
+		this.syncSessionsFrame.notifyOwnerNotWorking();
 	}
 
 	public ProcessCustomMessages getProcessCustomMessages() {
@@ -844,6 +909,10 @@ public class MeshCompactUI implements ISyncSessionViewOwner{
         		}
         	}
         }
+	}
+
+	public SyncCloudFrame getSyncCloudFrame(){
+		return this.syncCloudFrame;
 	}
 
 }

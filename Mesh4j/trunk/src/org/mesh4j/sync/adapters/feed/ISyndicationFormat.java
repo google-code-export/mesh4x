@@ -32,7 +32,6 @@ public interface ISyndicationFormat {
 	List<Element> getRootElements(Element root);
 
 	Date parseDate(String dateAsString);
-
 	String formatDate(Date date);
 
 	Element addRootElement(Document document);
@@ -55,6 +54,14 @@ public interface ISyndicationFormat {
 	Element getFeedItemPayloadElement(Element itemElement);
 	void addFeedItemPayloadElement(Element itemElement, Element payload);
 
+	String getFeedTitle(Element element);
+	String getFeedDescription(Element element);
+	String getFeedLink(Element element);
+	
+	String getFeedItemTitle(Element element);
+	String getFeedItemDescription(Element element);
+	String getFeedItemLink(Element element);
+	
 	// / <summary>
 	// / Namespace of the FeedSync elements.
 	// / </summary>

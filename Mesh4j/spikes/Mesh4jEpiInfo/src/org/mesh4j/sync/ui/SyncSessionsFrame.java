@@ -7,7 +7,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
+import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -21,12 +24,18 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeSelectionModel;
 
+import org.mesh4j.sync.adapters.feed.FeedAdapter;
+import org.mesh4j.sync.adapters.feed.XMLContent;
 import org.mesh4j.sync.mappings.EndpointMapping;
+import org.mesh4j.sync.mappings.MSAccessDataSourceMapping;
 import org.mesh4j.sync.message.ISyncSession;
 import org.mesh4j.sync.message.MessageSyncEngine;
+import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.properties.PropertiesProvider;
+import org.mesh4j.sync.ui.tasks.OpenFileTask;
 import org.mesh4j.sync.ui.translator.MeshCompactUITranslator;
 import org.mesh4j.sync.ui.utils.IconManager;
 import org.mesh4j.sync.utils.SourceIdMapper;
@@ -45,6 +54,9 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner, 
 	// MODEL VARIABLES
 	private DefaultMutableTreeNode rootNode;
 	private JTree treeSessions;
+	private JButton buttonSyncSession;
+	private JButton buttonOpenDataSource;
+	
 	private MessageSyncEngine syncEngine;
 	private SourceIdMapper sourceIdMapper;
 	private PropertiesProvider propertiesProvider;
@@ -53,12 +65,12 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner, 
 
 	// BUSINESS METHODS
 
-	public SyncSessionsFrame(MeshCompactUI ui, SourceIdMapper sourceIdMapper, PropertiesProvider propertiesProvider) {
+	public SyncSessionsFrame(MeshCompactUI ui, SourceIdMapper ownerSourceIdMapper, PropertiesProvider ownerPropertiesProvider) {
 		super();
 		
 		this.owner = ui;
-		this.propertiesProvider = propertiesProvider;
-		this.sourceIdMapper = sourceIdMapper;
+		this.propertiesProvider = ownerPropertiesProvider;
+		this.sourceIdMapper = ownerSourceIdMapper;
 		
 		setAlwaysOnTop(true);
 		setIconImage(IconManager.getCDCImage());
@@ -83,7 +95,9 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner, 
 			new ColumnSpec[] {
 				ColumnSpec.decode("17dlu"),
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("20dlu")},
+				FormFactory.DEFAULT_COLSPEC,
+				FormFactory.RELATED_GAP_COLSPEC,
+				ColumnSpec.decode("54dlu")},
 			new RowSpec[] {
 				RowSpec.decode("12dlu")}));
 		getContentPane().add(panelButtons, new CellConstraints(2, 4));
@@ -105,23 +119,49 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner, 
 		
 		buttonClose.addActionListener(closeActionListener);
 		
-		panelButtons.add(buttonClose, new CellConstraints());
+		panelButtons.add(buttonClose, new CellConstraints(1, 1, CellConstraints.FILL, CellConstraints.FILL));
 
 		ActionListener syncActionListener = new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
-				owner.viewSyncSession(syncSessionView.getSyncSession());
 				
-				JFrame ownerFrame = owner.getFrame();
-				if(ownerFrame.isVisible()){
-					ownerFrame.toFront();
-				} else {
-					ownerFrame.pack();
-					ownerFrame.setVisible(true);
-				}
+				DefaultMutableTreeNode node = (DefaultMutableTreeNode) treeSessions.getLastSelectedPathComponent();
+    			
+    			if (node == null){
+    				return;
+    			}
+    			
+    			if(isSyncSession(node)){
+    				owner.viewSyncSession(syncSessionView.getSyncSession());
+    				
+    				JFrame ownerFrame = owner.getFrame();
+    				if(ownerFrame.isVisible()){
+    					ownerFrame.toFront();
+    				} else {
+    					ownerFrame.pack();
+    					ownerFrame.setVisible(true);
+    				}		
+    			} else if(isCloudSync(node)){
+    				
+    				CloudSyncSessionWrapper cloudSyncSessionWrapper = (CloudSyncSessionWrapper) node.getUserObject();
+    				
+    				SyncCloudFrame cloudFrame = owner.getSyncCloudFrame();
+    				
+    				cloudFrame.viewCloudSession(
+    					cloudSyncSessionWrapper.getUrl(), 
+    					cloudSyncSessionWrapper.getSourceId(),
+    					cloudSyncSessionWrapper.getSyncMode());
+    				
+    				if(cloudFrame.isVisible()){
+    					cloudFrame.toFront();
+    				} else {
+    					cloudFrame.pack();
+    					cloudFrame.setVisible(true);
+    				}	
+    			}
 			}
 		};	
 		
-		final JButton buttonSyncSession = new JButton();
+		buttonSyncSession = new JButton();
 		buttonSyncSession.setOpaque(true);
 		buttonSyncSession.setContentAreaFilled(false);
 		buttonSyncSession.setBorderPainted(false);
@@ -130,7 +170,47 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner, 
 		buttonSyncSession.setText(MeshCompactUITranslator.getSyncSessionWindowLabelChooseSync());
 		buttonSyncSession.setToolTipText(MeshCompactUITranslator.getSyncSessionWindowToolTipChooseSync());
 		buttonSyncSession.addActionListener(syncActionListener);
-		panelButtons.add(buttonSyncSession, new CellConstraints(3, 1));
+		panelButtons.add(buttonSyncSession, new CellConstraints(5, 1, CellConstraints.FILL, CellConstraints.FILL));
+
+		ActionListener openDataSourceActionListener = new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				
+				DefaultMutableTreeNode node = (DefaultMutableTreeNode) treeSessions.getLastSelectedPathComponent();
+    			
+    			if (node == null){
+    				return;
+    			}
+    			
+    			String sourceId = null;
+    			
+    			if(isDataSource(node)){
+    				sourceId= (String)node.getUserObject();
+    			} else if(isSyncSession(node)){
+   					sourceId = ((SyncSessionWrapper) node.getUserObject()).getSourceId();		
+    			} else if(isCloudSync(node)){
+   					sourceId = ((CloudSyncSessionWrapper) node.getUserObject()).getSourceId();		
+    			}			
+    			
+    			if(sourceId != null){
+    				MSAccessDataSourceMapping dataSource = sourceIdMapper.getDataSource(sourceId);
+    				if(dataSource != null){
+    					OpenFileTask task = new OpenFileTask(dataSource.getFileName());
+    					task.execute();
+    				}
+				}
+			}
+		};	
+		
+		buttonOpenDataSource = new JButton();
+		buttonOpenDataSource.setOpaque(true);
+		buttonOpenDataSource.setContentAreaFilled(false);
+		buttonOpenDataSource.setBorderPainted(false);
+		buttonOpenDataSource.setBorder(new EmptyBorder(0, 0, 0, 0));
+		buttonOpenDataSource.setFont(new Font("Calibri", Font.BOLD, 12));
+		buttonOpenDataSource.setText(MeshCompactUITranslator.getSyncSessionWindowLabelOpenDataSource());
+		buttonOpenDataSource.setToolTipText(MeshCompactUITranslator.getTooltipViewDataSource());
+		buttonOpenDataSource.addActionListener(openDataSourceActionListener);
+		panelButtons.add(buttonOpenDataSource, new CellConstraints(3, 1, CellConstraints.FILL, CellConstraints.FILL));
 	
 		rootNode = new DefaultMutableTreeNode(MeshCompactUITranslator.getSyncSessionWindowLabelAllSessions());
 		createSyncSessionTreeModel();
@@ -144,16 +224,32 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner, 
 	    treeSessions.addTreeSelectionListener(
 	    	new TreeSelectionListener() {
 	    		public void valueChanged(TreeSelectionEvent e) {
-	    			DefaultMutableTreeNode node = (DefaultMutableTreeNode)
-	                treeSessions.getLastSelectedPathComponent();
+	    			DefaultMutableTreeNode node = (DefaultMutableTreeNode) treeSessions.getLastSelectedPathComponent();
 	    			
 	    			if (node == null){
+	    				buttonOpenDataSource.setEnabled(false);
+	    				buttonSyncSession.setEnabled(false);
 	    				return;
 	    			}
 	    			
-	    			if(isSyncSession(node)){
-	    				 SyncSessionWrapper syncSessionWrapper = (SyncSessionWrapper)(node.getUserObject());
-	    				 syncSessionView.viewSession(syncSessionWrapper.getSyncSession());	
+	    			if(isDataSource(node)){
+	    				syncSessionView.viewSession(null);
+	    				buttonOpenDataSource.setEnabled(true);
+		    			buttonSyncSession.setEnabled(false);
+	    			} else if(isSyncSession(node)){
+	    				SyncSessionWrapper syncSessionWrapper = (SyncSessionWrapper)(node.getUserObject());
+	    				syncSessionView.viewSession(syncSessionWrapper.getSyncSession());
+	    				 
+	    				buttonOpenDataSource.setEnabled(true);
+		    			buttonSyncSession.setEnabled(true);
+	    			} else if(isCloudSync(node)){
+	    				syncSessionView.viewSession(null);
+	    				buttonOpenDataSource.setEnabled(true);
+		    			buttonSyncSession.setEnabled(true);
+	    			} else {
+	    				syncSessionView.viewSession(null);
+	    				buttonOpenDataSource.setEnabled(false);
+		    			buttonSyncSession.setEnabled(false);
 	    			}
 	    		}
 	        }
@@ -201,8 +297,37 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner, 
 					rootNode.add(sourceNode);
 				}
 				sourceNode.add(new DefaultMutableTreeNode(new SyncSessionWrapper(syncSession)));
+
+				Collection<MutableTreeNode> cloudNodes = createSyncCloudTreeNode(syncSession.getSourceId());
+				if(!cloudNodes.isEmpty()){
+					for (MutableTreeNode cloudNode : cloudNodes) {
+						sourceNode.add(cloudNode);	
+					}
+				}
 			}
 		}
+	}
+
+	private Collection<MutableTreeNode> createSyncCloudTreeNode(String sourceAlias) {
+
+		HashMap<String, MutableTreeNode> nodes = new HashMap<String, MutableTreeNode>();
+		
+		FeedAdapter adapter = SyncEngineUtil.getCloudSyncTraceAdapter(sourceAlias, this.propertiesProvider.getIdentityProvider(), this.propertiesProvider.getBaseDirectory());
+		List<Item> items = adapter.getAll();
+
+		if(!items.isEmpty()){		
+			for (Item item : items) {				
+				String url = ((XMLContent)item.getContent()).getLink();				
+				DefaultMutableTreeNode syncNode = (DefaultMutableTreeNode) nodes.get(url);
+				if(syncNode == null){
+					syncNode = new DefaultMutableTreeNode(new CloudSyncSessionWrapper(sourceAlias, url, item));
+					nodes.put(url, syncNode);
+				} else {
+					((CloudSyncSessionWrapper)syncNode.getUserObject()).updateStatus(item);
+				}
+			}
+		}
+		return nodes.values();
 	}
 
 	private class TreeSessionRenderer extends DefaultTreeCellRenderer {
@@ -236,7 +361,7 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner, 
 	            setIcon(IconManager.getDataSourceSamll());
 	            setToolTipText(MeshCompactUITranslator.getSyncSessionWindowToolTipDataSource());
 	        } else if(leaf && isSyncSession(node)){
-		        SyncSessionWrapper syncSession = (SyncSessionWrapper)(node.getUserObject());
+		        SyncSessionWrapper syncSession = (SyncSessionWrapper)node.getUserObject();
 
 		        if(syncSession.isBroken()){
 		        	setIcon(IconManager.getStatusErrorIcon());
@@ -246,7 +371,18 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner, 
 		        	setIcon(IconManager.getStatusOkIcon());
 		        }
 	            setToolTipText(MeshCompactUITranslator.getSyncSessionWindowToolTipSyncSession());
-	        } else{
+	        } else if(leaf && isCloudSync(node)){
+		        CloudSyncSessionWrapper syncSession = (CloudSyncSessionWrapper)node.getUserObject();
+
+		        if(syncSession.isError()){
+		        	setIcon(IconManager.getCloudErrorIcon());
+		        } else if(syncSession.hasConflicts()){
+		        	setIcon(IconManager.getCloudConflictsIcon());
+		        } else {
+		        	setIcon(IconManager.getCloudIcon());
+		        }
+	            setToolTipText(syncSession.toString());
+	        } else {
 	            setToolTipText(null); //no tool tip
 	        } 
 	        
@@ -260,12 +396,15 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner, 
     }
     
     protected boolean isDataSource(DefaultMutableTreeNode node) {
-        return node != rootNode;
+        return node != rootNode && !isSyncSession(node) && !isCloudSync(node);
     }
     
     protected boolean isSyncSession(DefaultMutableTreeNode node) {
-        Object nodeInfo =(Object)(node.getUserObject());
-        return nodeInfo instanceof SyncSessionWrapper;
+        return node.getUserObject() instanceof SyncSessionWrapper;
+    }
+    
+    protected boolean isCloudSync(DefaultMutableTreeNode node) {
+        return node.getUserObject() instanceof CloudSyncSessionWrapper;
     }
     
 	private class SyncSessionWrapper{
@@ -277,6 +416,10 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner, 
 			this.syncSession = syncSession;
 		}
 		
+		public String getSourceId() {
+			return this.getSyncSession().getSourceId();
+		}
+
 		public ISyncSession getSyncSession() {
 			return this.syncSession;
 		}
@@ -319,7 +462,83 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner, 
 			return this.syncSession.shouldReceiveChanges();
 		}
 	}
+	
+	public class CloudSyncSessionWrapper{
 
+		// MODEL VARIABLES
+		private String sourceId;
+		private String url;
+		private Date startDate;
+		private String start;
+		private String end;
+		private boolean error;
+		private int conflicts;
+		private String syncMode;
+		
+		// BUSINESS METHODS
+		public CloudSyncSessionWrapper(String sourceId, String url, Item item) {
+			super();
+			this.url = url;
+			this.sourceId = sourceId;
+			this.updateStatus(item);
+		}
+
+		public String getSyncMode() {
+			return this.syncMode;
+		}
+
+		public String getSourceId() {
+			return sourceId;
+		}
+		
+		public String getUrl() {
+			return url;
+		}
+		
+		public boolean isError() {
+			return error;
+		}
+
+		public boolean hasConflicts() {
+			return this.conflicts > 0;
+		}
+		
+		public void updateStatus(Item item) {
+			SyncEngineUtil.updateCloudSyncWrapper(this, item);
+		}
+		
+		@Override
+		public String toString(){
+			return MeshCompactUITranslator.getSyncSessionWindowToolTipCloudSyncSession(this.url, this.start, this.end, this.conflicts);
+		}
+
+		public Date getStartDate() {
+			return this.startDate;
+		}
+		public void setStartDate(Date startDate) {
+			this.startDate = startDate;
+		}
+
+		public void setStart(String start) {
+			this.start = start;
+		}
+		
+		public void setEnd(String end) {
+			this.end = end;
+		}
+
+		public void setConflicts(int conflicts) {
+			this.conflicts = conflicts;
+		}
+
+		public void setError(boolean error) {
+			this.error = error;
+		}
+		
+		public void setSyncMode(String syncMode){
+			this.syncMode = syncMode;
+		}
+	}
 	
 	// ISyncSessionViewOwner methods
 	
@@ -340,7 +559,7 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner, 
 
 	@Override
 	public void notifyEndSync(boolean error) {
-		this.treeSessions.repaint();		
+		this.treeSessions.repaint();
 	}
 	
 	@Override
@@ -355,6 +574,9 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner, 
 	}
 
 	public void updateSessions(){
+		this.buttonOpenDataSource.setEnabled(false);
+		this.buttonSyncSession.setEnabled(false);
+		
 		this.rootNode = new DefaultMutableTreeNode(MeshCompactUITranslator.getSyncSessionWindowLabelAllSessions());
 		this.createSyncSessionTreeModel();		
 		this.treeSessions.setModel(new DefaultTreeModel(rootNode));
@@ -387,4 +609,33 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner, 
 		
 	}
 
+	public void notifyOwnerWorking(){
+		this.buttonSyncSession.setEnabled(false);
+		this.buttonOpenDataSource.setEnabled(false);
+	}
+	
+	public void notifyOwnerNotWorking(){
+		DefaultMutableTreeNode node = (DefaultMutableTreeNode) treeSessions.getLastSelectedPathComponent();
+		
+		if (node == null){
+			buttonOpenDataSource.setEnabled(false);
+			buttonSyncSession.setEnabled(false);
+			return;
+		}
+		
+		if(isDataSource(node)){
+			buttonOpenDataSource.setEnabled(true);
+			buttonSyncSession.setEnabled(false);
+		} else if(isSyncSession(node)){
+			buttonOpenDataSource.setEnabled(true);
+			buttonSyncSession.setEnabled(true);
+		} else if(isCloudSync(node)){
+			buttonOpenDataSource.setEnabled(true);
+			buttonSyncSession.setEnabled(true);
+		} else {
+			buttonOpenDataSource.setEnabled(false);
+			buttonSyncSession.setEnabled(false);
+		}
+	}
+	
 }

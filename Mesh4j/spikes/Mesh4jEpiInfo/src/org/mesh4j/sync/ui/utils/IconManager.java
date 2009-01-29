@@ -51,6 +51,10 @@ public class IconManager {
 		return SwingResourceManager.getIcon(MeshCompactUI.class, "/dataSourceSmall.png");
 	}
 	
+	public static Icon getViewDataSource() {
+		return SwingResourceManager.getIcon(MeshCompactUI.class, "/viewDataSource.png");
+	}
+	
 	public static Icon getSyncModeIcon(boolean sendChanges, boolean receiveChanges){
 		if(sendChanges && receiveChanges){
 			return SwingResourceManager.getIcon(MeshCompactUI.class, "/2WaySync.png");
@@ -100,4 +104,25 @@ public class IconManager {
 	public static Icon getSyncMode2WayIcon() {
 		return SwingResourceManager.getIcon(MeshCompactUI.class, "/2WaySync.png");
 	}
+
+	public static Icon getDownloadImage() {
+		return SwingResourceManager.getIcon(MeshCompactUI.class, "/download.jpg");
+	}
+
+	public static Icon getMapImage() {
+		return SwingResourceManager.getIcon(MeshCompactUI.class, "/map.jpg");
+	}
+
+	public static Icon getCloudErrorIcon() {
+		return SwingResourceManager.getIcon(MeshCompactUI.class, "/cloudError.jpg");
+	}
+
+	public static Icon getCloudIcon() {
+		return SwingResourceManager.getIcon(MeshCompactUI.class, "/cloud.jpg");
+	}
+
+	public static Icon getCloudConflictsIcon() {
+		return SwingResourceManager.getIcon(MeshCompactUI.class, "/cloudConflicts.jpg");
+	}
+
 }

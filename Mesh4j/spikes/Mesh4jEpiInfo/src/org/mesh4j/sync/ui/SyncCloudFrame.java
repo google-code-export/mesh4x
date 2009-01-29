@@ -23,11 +23,14 @@ import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 
 import org.mesh4j.sync.adapters.http.HttpSyncAdapterFactory;
+import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
 import org.mesh4j.sync.mappings.DataSourceMapping;
+import org.mesh4j.sync.mappings.MSAccessDataSourceMapping;
 import org.mesh4j.sync.mappings.SyncMode;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.properties.PropertiesProvider;
 import org.mesh4j.sync.security.IIdentityProvider;
+import org.mesh4j.sync.ui.tasks.OpenFileTask;
 import org.mesh4j.sync.ui.translator.MeshCompactUITranslator;
 import org.mesh4j.sync.ui.translator.MeshUITranslator;
 import org.mesh4j.sync.ui.utils.IconManager;
@@ -40,13 +43,14 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
-public class SyncFrame extends JFrame{
+public class SyncCloudFrame extends JFrame{
 
 	private static final long serialVersionUID = 7380206163750504752L;
 
 	// MODEL VARIABLES
 	private JLabel labelURL;
 	private JButton buttonSync;
+	private JButton buttonOpenDataSource;
 	private JComboBox comboBoxSyncMode;
 	private JComboBox comboBoxMappingDataSource;
 	private JTextArea textAreaStatus;
@@ -55,32 +59,34 @@ public class SyncFrame extends JFrame{
 	
 	private PropertiesProvider propertiesProvider;
 	private SourceIdMapper sourceIdMapper;
+	private SyncSessionsFrame owner;
 	
 	// BUSINESS METHODS
-	public SyncFrame(PropertiesProvider propertiesProvider, SourceIdMapper sourceIdMapper){
+	public SyncCloudFrame(PropertiesProvider propertiesProvider, SourceIdMapper sourceIdMapper, SyncSessionsFrame owner){
 
 		super();
 		
 		this.propertiesProvider = propertiesProvider;
 		this.sourceIdMapper = sourceIdMapper;
+		this.owner = owner;
 		
 		setAlwaysOnTop(true);
 		setIconImage(IconManager.getCDCImage());
 		getContentPane().setBackground(Color.WHITE);
 		setTitle(MeshCompactUITranslator.getSyncWindowTitle());
 		setResizable(false);
-		setBounds(100, 100, 537, 178);
+		setBounds(100, 100, 576, 178);
 		getContentPane().setLayout(new FormLayout(
 			new ColumnSpec[] {
-				FormFactory.RELATED_GAP_COLSPEC,
+				ColumnSpec.decode("14dlu"),
 				ColumnSpec.decode("257dlu"),
-				FormFactory.RELATED_GAP_COLSPEC},
+				ColumnSpec.decode("14dlu")},
 			new RowSpec[] {
 				FormFactory.RELATED_GAP_ROWSPEC,
 				RowSpec.decode("34dlu"),
 				FormFactory.RELATED_GAP_ROWSPEC,
 				FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC,
+				RowSpec.decode("6dlu"),
 				FormFactory.DEFAULT_ROWSPEC,
 				FormFactory.RELATED_GAP_ROWSPEC}));
 
@@ -126,28 +132,51 @@ public class SyncFrame extends JFrame{
 		panelSync.setLayout(new FormLayout(
 			new ColumnSpec[] {
 				ColumnSpec.decode("75dlu"),
-				FormFactory.RELATED_GAP_COLSPEC,
+				ColumnSpec.decode("2dlu"),
+				ColumnSpec.decode("17dlu"),
+				ColumnSpec.decode("6dlu"),
 				ColumnSpec.decode("98dlu"),
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("75dlu")},
+				ColumnSpec.decode("53dlu")},
 			new RowSpec[] {
 				FormFactory.DEFAULT_ROWSPEC}));
 		getContentPane().add(panelSync, new CellConstraints(2, 4));
 
 		panelSync.add(getComboBoxMappingDataSource(), new CellConstraints(1, 1));
-		panelSync.add(getComboBoxSyncMode(), new CellConstraints(3, 1));
-		panelSync.add(getButtonSync(), new CellConstraints(5, 1));
+		panelSync.add(getComboBoxSyncMode(), new CellConstraints(5, 1));
+		panelSync.add(getButtonSync(), new CellConstraints(7, 1, CellConstraints.FILL, CellConstraints.FILL));
+
+		ActionListener openDataSourceActionListener = new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				MSAccessDataSourceMapping dataSource = (MSAccessDataSourceMapping) getComboBoxMappingDataSource().getSelectedItem();
+				if(dataSource != null){
+					OpenFileTask task = new OpenFileTask(dataSource.getFileName());
+					task.execute();
+				}
+			}
+		};	
+		
+		buttonOpenDataSource = new JButton();
+		buttonOpenDataSource.setContentAreaFilled(false);
+		buttonOpenDataSource.setBorderPainted(false);
+		buttonOpenDataSource.setBorder(new EmptyBorder(0, 0, 0, 0));
+		buttonOpenDataSource.setBackground(Color.WHITE);
+		buttonOpenDataSource.setText("");
+		buttonOpenDataSource.setToolTipText(MeshCompactUITranslator.getTooltipViewDataSource());
+		buttonOpenDataSource.setIcon(IconManager.getViewDataSource());
+		buttonOpenDataSource.addActionListener(openDataSourceActionListener);
+		panelSync.add(buttonOpenDataSource, new CellConstraints(3, 1, CellConstraints.FILL, CellConstraints.FILL));
 
 		final JPanel panelStatus = new JPanel();
 		panelStatus.setBackground(Color.WHITE);
 		panelStatus.setBorder(new EmptyBorder(0, 0, 0, 0));
 		panelStatus.setLayout(new FormLayout(
 			new ColumnSpec[] {
-				ColumnSpec.decode("230dlu"),
+				ColumnSpec.decode("227dlu"),
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("22dlu")},
+				ColumnSpec.decode("17dlu")},
 			new RowSpec[] {
-				RowSpec.decode("24dlu")}));
+				RowSpec.decode("19dlu")}));
 		getContentPane().add(panelStatus, new CellConstraints(2, 6, CellConstraints.FILL, CellConstraints.FILL));
 
 		textAreaStatus = new JTextArea();
@@ -168,6 +197,10 @@ public class SyncFrame extends JFrame{
 			buttonSync.setFont(new Font("Arial", Font.PLAIN, 16));
 			buttonSync.setText(MeshCompactUITranslator.getLabelSync());
 			buttonSync.setToolTipText(MeshCompactUITranslator.getToolTipSync());
+			//buttonSync.setBorder(new EmptyBorder(0, 0, 0, 0));
+			//buttonSync.setBorderPainted(false);
+			//buttonSync.setContentAreaFilled(false);
+			//buttonSync.setIcon(IconManager.getStatusProcessingIcon());
 			
 			ActionListener synchronizeActionListener = new ActionListener(){
 				public void actionPerformed(ActionEvent e) {
@@ -229,17 +262,22 @@ public class SyncFrame extends JFrame{
 	    public Void doInBackground() {
 			setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
-			DataSourceMapping dataSource = (DataSourceMapping) getComboBoxMappingDataSource().getSelectedItem();
-			
 			String url = textFieldURL.getText();
 			if(!HttpSyncAdapterFactory.isValidURL(url)){
 				setError(MeshUITranslator.getErrorInvalidURL());
 				return null;
 			}
 			
+			MSAccessDataSourceMapping dataSource = (MSAccessDataSourceMapping) getComboBoxMappingDataSource().getSelectedItem();
+			if(dataSource == null || !MsAccessSyncAdapterFactory.isValidAccessTable(dataSource.getFileName(), dataSource.getTableName())){
+    			setError(MeshCompactUITranslator.getErrorInvalidMSAccessTable());
+				return null;
+			}
+			
 			try{
+				owner.notifyOwnerWorking();
 				setInProcess(MeshUITranslator.getLabelStart());
-				List<Item> conflicts = SyncEngineUtil.synchronize(textFieldURL.getText(), dataSource.getAlias(), getIdentityProvider(), getBaseDirectory(), getSourceIdMapper());
+				List<Item> conflicts = SyncEngineUtil.synchronize(url, dataSource.getAlias(), getIdentityProvider(), getBaseDirectory(), getSourceIdMapper(), getSelectedSyncMode());
 				if(conflicts.isEmpty()){
 					setOk(MeshUITranslator.getLabelSuccess());
 				} else {
@@ -249,6 +287,8 @@ public class SyncFrame extends JFrame{
 				LogFrame.Logger.error(e.getMessage(), e);
 				setError(MeshUITranslator.getLabelFailed());
 			}
+			owner.updateSessions();
+			owner.notifyOwnerNotWorking();
 			return null;
 	    }
 
@@ -349,9 +389,35 @@ public class SyncFrame extends JFrame{
 	
 	public void notifyOwnerWorking(){
 		this.buttonSync.setEnabled(false);
+		this.buttonOpenDataSource.setEnabled(false);
 	}
 	
 	public void notifyOwnerNotWorking(){
 		this.buttonSync.setEnabled(true);
+		this.buttonOpenDataSource.setEnabled(true);
 	}
+
+	public void viewCloudSession(String url, String sourceId, String syncMode) {
+		this.textFieldURL.setText(url);
+		this.selectDataSource(sourceId);
+		this.comboBoxSyncMode.setSelectedItem(SyncMode.valueOf(syncMode));
+	}
+	
+	private void selectDataSource(String sourceId) {
+		int size = this.comboBoxMappingDataSource.getModel().getSize();
+		int i = 0;
+		while(i< size){
+			DataSourceMapping dataSource = (DataSourceMapping)this.comboBoxMappingDataSource.getModel().getElementAt(i);
+			if(dataSource.getAlias().equals(sourceId)){
+				this.comboBoxMappingDataSource.setSelectedIndex(i);
+				return;
+			}
+			i = i +1;
+		}		
+	}
+	
+	private SyncMode getSelectedSyncMode() {
+		return (SyncMode)this.comboBoxSyncMode.getSelectedItem();
+	}
+
 }

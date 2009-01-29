@@ -78,9 +78,8 @@ public class RssSyndicationFormat implements ISyndicationFormat {
 		idElement.setText("urn:uuid:"+item.getSyncId());
 		idElement.addAttribute("isPermaLink ", "false");
 		
-		Element updatedElement = itemElement.addElement(RSS_ELEMENT_PUB_DATE);
-		
 		if(item.getLastUpdate() != null && item.getLastUpdate().getWhen() != null){
+			Element updatedElement = itemElement.addElement(RSS_ELEMENT_PUB_DATE);
 			updatedElement.setText(formatRFC822Date(item.getLastUpdate().getWhen()));
 		}
 		return itemElement;
@@ -259,5 +258,29 @@ public class RssSyndicationFormat implements ISyndicationFormat {
 		}
 		element.setText(text);
 		return element;
+	}
+	
+	public String getFeedTitle(Element element){
+		return element.getText();
+	}
+	
+	public String getFeedDescription(Element element){
+		return element.getText();
+	}
+	
+	public String getFeedLink(Element element){
+		return element.getText();	
+	}
+	
+	public String getFeedItemTitle(Element element){
+		return element.getText();
+	}
+	
+	public String getFeedItemDescription(Element element){
+		return element.getText();	
+	}
+	
+	public String getFeedItemLink(Element element){
+		return element.getText();
 	}
 }

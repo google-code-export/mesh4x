@@ -198,7 +198,7 @@ public class AtomSyndicationFormat implements ISyndicationFormat {
 			contentElement.addAttribute("type", "text");
 		}
 
-		String xml = payload.asXML();
+		String xml = XMLHelper.canonicalizeXML(payload);
 		contentElement.add(DocumentHelper.createCDATA(xml));
 	}
 
@@ -314,4 +314,28 @@ public class AtomSyndicationFormat implements ISyndicationFormat {
 		element.setText(text);			
 	}
 
+	
+	public String getFeedTitle(Element element){
+		return element.getText();
+	}
+	
+	public String getFeedDescription(Element element){
+		return element.getText();
+	}
+	
+	public String getFeedLink(Element element){
+		return element.attributeValue("href");
+	}
+	
+	public String getFeedItemTitle(Element element){
+		return element.getText();
+	}
+	
+	public String getFeedItemDescription(Element element){
+		return element.getText();
+	}
+	
+	public String getFeedItemLink(Element element){
+		return element.attributeValue("href");
+	}
 }

@@ -491,4 +491,102 @@ public class MeshCompactUITranslator {
 	public static String getToolTipOpenLogWindowNewMessagesAvailables() {
 		return MessageTranslator.translate("MESH_COMPACT_TOOLTIP_OPEN_LOG_WINDOW_NEW_MESSAGES");
 	}
+
+	public static String getLabelOpenMapsWindow() {
+		return MessageTranslator.translate("MESH_COMPACT_LABEL_OPEN_MAPS_WINDOW");
+	}
+
+	public static String getToolTipOpenMapsWindow() {
+		return MessageTranslator.translate("MESH_COMPACT_TOOLTIP_OPEN_MAPS_WINDOW");
+	}
+
+	public static String getMapsWindowTooltipDownloadMappings() {
+		return MessageTranslator.translate("MESH_COMPACT_MAPS_WINDOW_TOOLTIP_DOWNLOAD_MAPPINGS");
+	}
+
+	public static String getMapsWindowTooltipViewCloudMap() {
+		return MessageTranslator.translate("MESH_COMPACT_MAPS_WINDOW_TOOLTIP_OPEN_CLOUD_MAP");
+	}
+
+	public static String getMapsWindowTitle() {
+		return MessageTranslator.translate("MESH_COMPACT_MAPS_WINDOW_TITLE");
+	}
+
+	public static String getMapsWindowMessageWelcome() {
+		return MessageTranslator.translate("MESH_COMPACT_MAPS_WINDOW_MESSAGE_WELCOME", LoggedInIdentityProvider.getUserName());
+	}
+
+	public static String getMapsWindowToolTipCreateMap() {
+		return MessageTranslator.translate("MESH_COMPACT_MAPS_WINDOW_TOOLTIP_OPEN_LOCAL_MAP");
+	}
+
+	public static String getMapsWindowToolTipDataSourcesToCreateMap() {
+		return MessageTranslator.translate("MESH_COMPACT_MAPS_WINDOW_TOOLTIP_DATA_SOURCES");
+	}
+
+	public static String getMapsWindowMessageDownloadMappingsStart() {
+		return MessageTranslator.translate("MESH_COMPACT_MAPS_WINDOW_MESSAGE_DOWNLOAD_MAPPINGS_START");
+	}
+
+	public static String getMapsWindowMessageDownloadMappingsEnd() {
+		return MessageTranslator.translate("MESH_COMPACT_MAPS_WINDOW_MESSAGE_DOWNLOAD_MAPPINGS_END");
+	}
+
+	public static String getMapsWindowMessageDownloadMappingsFailed() {
+		return MessageTranslator.translate("MESH_COMPACT_MAPS_WINDOW_MESSAGE_DOWNLOAD_MAPPINGS_FAILED");
+	}
+
+	public static String getMapsWindowMessageMapCreationStart() {
+		return MessageTranslator.translate("MESH_COMPACT_MAPS_WINDOW_MESSAGE_MAP_CREATION_START");
+	}
+
+	public static String getMapsWindowMessageMapCreationEnd() {
+		return MessageTranslator.translate("MESH_COMPACT_MAPS_WINDOW_MESSAGE_MAP_CREATION_END");
+	}
+	
+	public static String getMapsWindowMessageMapCreationFailed() {
+		return MessageTranslator.translate("MESH_COMPACT_MAPS_WINDOW_MESSAGE_MAP_CREATION_FAILED");
+	}
+
+	public static String getMapsWindowMessageNetworkMapCreationFailed() {
+		return MessageTranslator.translate("MESH_COMPACT_MAPS_WINDOW_MESSAGE_NET_MAP_CREATION_FAILED");
+	}
+
+	public static String getMapsWindowMessageNetworkMapCreationStart() {
+		return MessageTranslator.translate("MESH_COMPACT_MAPS_WINDOW_MESSAGE_NET_MAP_CREATION_START");
+	}
+
+	public static String getMapsWindowMessageNetworkMapCreationEnd() {
+		return MessageTranslator.translate("MESH_COMPACT_MAPS_WINDOW_MESSAGE_NET_MAP_CREATION_END");
+	}
+
+	public static String getTooltipViewDataSource() {
+		return MessageTranslator.translate("MESH_COMPACT_TOOLTIP_VIEW_DATA_SOURCE");
+	}
+
+	
+	public static String getMapsWindowLabelCreateMap() {
+		return MessageTranslator.translate("MESH_COMPACT_MAPS_WINDOW_LABEL_OPEN_MAP");
+	}
+	
+	
+	public static String getSyncSessionWindowLabelOpenDataSource() {
+		return MessageTranslator.translate("MESH_COMPACT_SYNC_SESSION_LABEL_OPEN_DATA_SOURCE");
+	}
+
+	public static String getSyncSessionWindowToolTipCloudSyncSession(String url, String start, String end, int conflicts) {
+		if(conflicts == 0){
+			return MessageTranslator.translate("MESH_COMPACT_SYNC_SESSION_TOOLTIP_CLOUD_SYNC_SUMMARY", url, start, end);
+		} else {
+			return MessageTranslator.translate("MESH_COMPACT_SYNC_SESSION_TOOLTIP_CLOUD_SYNC_SUMMARY_WITH_CONFLICTS", url, start, end, conflicts);
+		}
+	}
+
+	public static String getErrorInvalidURL() {
+		return MeshUITranslator.getErrorInvalidURL();
+	}
+
+	public static String getErrorInvalidMSAccessTable() {
+		return MeshUITranslator.getErrorInvalidMSAccessTable();
+	}
 }
