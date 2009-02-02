@@ -78,7 +78,6 @@ public class SyncEngineUtil {
 
 	// TODO (JMT) Add number of GET/MERGE and ACKs to client session target values
 	// TODO (JMT) Add items added/updated/deleted to client session target values
-	// TODO (JMT) Supports add/update/delete all data source types in ConfigurationFrame/SourceIdMapper
 	
 	private final static Log Logger = LogFactory.getLog(SyncEngineUtil.class);
 	
@@ -160,7 +159,7 @@ public class SyncEngineUtil {
 			String sourceDefinition = sourceIdMapper.getSourceDefinition(sourceAlias);
 			ISyncAdapterFactory syncFactory = makeSyncAdapterFactory(baseDirectory);
 			ISyncAdapter syncAdapter = syncFactory.createSyncAdapter(sourceAlias, sourceDefinition, identityProvider);
-			adapter = new MessageSyncAdapter(sourceAlias, syncFactory.getSourceType(), identityProvider, syncAdapter);
+			adapter = new MessageSyncAdapter(sourceAlias, syncFactory.getSourceType(), identityProvider, syncAdapter, syncFactory);
 		}
 		syncEngine.synchronize(adapter, new SmsEndpoint(toPhoneNumber), true, syncMode.shouldSendChanges(), syncMode.shouldReceiveChanges());
 	}

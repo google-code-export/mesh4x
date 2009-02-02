@@ -161,7 +161,7 @@ public class SmsLibTests {
 		
 		String fileNameA = this.getClass().getResource("kmlWithSyncInfo.kml").getFile();
 		DOMAdapter kmlAdapterA = new DOMAdapter(KMLDOMLoaderFactory.createDOMLoader(fileNameA, NullIdentityProvider.INSTANCE));
-		IMessageSyncAdapter adapterA = new MessageSyncAdapter(sourceId, "kml", NullIdentityProvider.INSTANCE, kmlAdapterA);
+		IMessageSyncAdapter adapterA = new MessageSyncAdapter(sourceId, "kml", NullIdentityProvider.INSTANCE, kmlAdapterA, null);
 		//SmsLibConnection smsConnectionA = new SmsLibConnection("sonyEricsson", "COM23", 115200, "Sony Ericsson", "FAD-3022013-BV", 140, CompressBase91MessageEncoding.INSTANCE, new OutboundNotification(), new InboundNotification(), (3 * 60 * 1000));
 		//SmsEndpoint targetA = new SmsEndpoint("01136544867");
 		SmsEndpoint targetA = new SmsEndpoint("A");
@@ -170,7 +170,7 @@ public class SmsLibTests {
 
 		String fileNameB = this.getClass().getResource("kmlDummyForSync.kml").getFile();
 		DOMAdapter kmlAdapterB = new DOMAdapter(KMLDOMLoaderFactory.createDOMLoader(fileNameB, NullIdentityProvider.INSTANCE));
-		IMessageSyncAdapter adapterB = new MessageSyncAdapter(sourceId, "kml", NullIdentityProvider.INSTANCE, kmlAdapterB);
+		IMessageSyncAdapter adapterB = new MessageSyncAdapter(sourceId, "kml", NullIdentityProvider.INSTANCE, kmlAdapterB, null);
 		//SmsLibConnection smsConnectionB = new SmsLibConnection("nokia", "COM28", 115200, "Nokia", "6070", 140, CompressBase91MessageEncoding.INSTANCE, new OutboundNotification(), new InboundNotification(), (3 * 60 * 1000));
 		//SmsEndpoint targetB = new SmsEndpoint("01136540460");
 

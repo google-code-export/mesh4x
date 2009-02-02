@@ -2,11 +2,13 @@ package org.mesh4j.sync.adapters.msaccess;
 
 import java.io.File;
 
+import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.ISyncAdapterFactory;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.adapters.hibernate.HibernateContentAdapter;
 import org.mesh4j.sync.adapters.hibernate.HibernateSessionFactoryBuilder;
 import org.mesh4j.sync.adapters.hibernate.HibernateSyncRepository;
+import org.mesh4j.sync.adapters.hibernate.IHibernateSessionFactoryBuilder;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.parsers.SyncInfoParser;
@@ -131,5 +133,23 @@ public class MsAccessSyncAdapterFactory implements ISyncAdapterFactory {
 		String tableName = elements[1];
 		//String fileName= elements[0];
 		return tableName;
+	}
+
+	// TODO (JMT) Adapter should be supports dynamic source definition changes
+	public void changeSourceDefinition(String sourceAlias, String sourceDefinition, ISyncAdapter syncAdapter) {
+		SplitAdapter splitAdapter = (SplitAdapter) syncAdapter;
+		HibernateContentAdapter contentAdapter = (HibernateContentAdapter) splitAdapter.getContentAdapter();
+		
+		String mdbFileName = getFileName(sourceDefinition);
+		String tableName = getTableName(sourceDefinition);
+		String contentMappingFileName = this.baseDirectory + "/" + tableName + ".hbm.xml";
+		String syncMappingFileName =  this.baseDirectory + "/" + tableName + "_sync.hbm.xml";
+		String user = "";
+		String password = "";
+
+		String dbURL = "jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=" + mdbFileName.trim() + ";DriverID=22;READONLY=false}"; 
+		
+		IHibernateSessionFactoryBuilder builder = createHibernateSessionBuilder(dbURL, tableName, user, password, contentMappingFileName, syncMappingFileName);
+		contentAdapter.initializeSessionFactory(builder, tableName);
 	}
 }

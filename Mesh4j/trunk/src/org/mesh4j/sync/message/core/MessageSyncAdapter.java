@@ -7,6 +7,7 @@ import org.mesh4j.sync.ISyncAware;
 import org.mesh4j.sync.NullPreviewHandler;
 import org.mesh4j.sync.PreviewBehavior;
 import org.mesh4j.sync.SyncEngine;
+import org.mesh4j.sync.adapters.ISyncAdapterFactory;
 import org.mesh4j.sync.adapters.InMemorySyncAdapter;
 import org.mesh4j.sync.message.IMessageSyncAdapter;
 import org.mesh4j.sync.message.ISyncSession;
@@ -21,11 +22,12 @@ public class MessageSyncAdapter implements IMessageSyncAdapter, ISyncAware {
 	private String sourceId;
 	private String sourceType;
 	private ISyncAdapter syncAdapter;
+	private ISyncAdapterFactory syncAdapterFactory;
 	private IIdentityProvider identityProvider;
 	
 	// BUSINESS METHODS
 	
-	public MessageSyncAdapter(String sourceId, String sourceType, IIdentityProvider identityProvider, ISyncAdapter syncAdapter) {
+	public MessageSyncAdapter(String sourceId, String sourceType, IIdentityProvider identityProvider, ISyncAdapter syncAdapter, ISyncAdapterFactory syncAdapterFactory) {
 		super();
 		
 		Guard.argumentNotNullOrEmptyString(sourceId, "sourceId");
@@ -36,6 +38,7 @@ public class MessageSyncAdapter implements IMessageSyncAdapter, ISyncAware {
 		this.sourceId = sourceId;
 		this.sourceType = sourceType;
 		this.syncAdapter = syncAdapter;
+		this.syncAdapterFactory = syncAdapterFactory;
 		this.identityProvider = identityProvider;
 	}
 
@@ -78,5 +81,9 @@ public class MessageSyncAdapter implements IMessageSyncAdapter, ISyncAware {
 	@Override
 	public String getSourceType() {
 		return this.sourceType;
+	}
+
+	public ISyncAdapterFactory getSyncAdapterFactory() {
+		return this.syncAdapterFactory;
 	}
 }

@@ -233,16 +233,19 @@ public class PropertiesProvider {
 	}
 
 	public String getEmulationInFolder() {
-		return getBaseDirectory()+"\\in";
+		return getCurrentDirectory()+"\\in";
+		//return getBaseDirectory()+"\\in";
 	}
 
 	public String getEmulationOutRootFolder() {
-		File file = new File(getBaseDirectory());
+		File file = new File(getCurrentDirectory());
+		//File file = new File(getBaseDirectory());
 		return file.getParent();
 	}
 
 	public String getEmulationEndpointId() {
-		File file = new File(getBaseDirectory());
+		File file = new File(getCurrentDirectory());
+		//File file = new File(getBaseDirectory());
 		return file.getName();
 	}
 

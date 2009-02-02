@@ -25,7 +25,11 @@ public class HibernateContentAdapter implements IContentAdapter {
 	// BUSINESS METHODS
 	
 	public HibernateContentAdapter(IHibernateSessionFactoryBuilder sessionFactoryBuilder, String entityName){
-			
+		super();
+		initializeSessionFactory(sessionFactoryBuilder, entityName);
+	}
+
+	public void initializeSessionFactory(IHibernateSessionFactoryBuilder sessionFactoryBuilder, String entityName) {
 		this.sessionFactory = sessionFactoryBuilder.buildSessionFactory();
 		
 		ClassMetadata classMetadata = this.getClassMetadata(entityName);

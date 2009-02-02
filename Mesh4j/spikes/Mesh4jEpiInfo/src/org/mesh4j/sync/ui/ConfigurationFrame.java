@@ -30,9 +30,11 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
 import org.mesh4j.sync.mappings.DataSourceMapping;
 import org.mesh4j.sync.mappings.EndpointMapping;
 import org.mesh4j.sync.mappings.MSAccessDataSourceMapping;
+import org.mesh4j.sync.message.core.MessageSyncAdapter;
 import org.mesh4j.sync.ui.tasks.ChangeDeviceTask;
 import org.mesh4j.sync.ui.translator.MeshCompactUITranslator;
 import org.mesh4j.sync.ui.translator.MeshUITranslator;
@@ -47,6 +49,7 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
+//TODO (JMT) Supports add/update/delete all data source types in ConfigurationFrame/SourceIdMapper
 public class ConfigurationFrame extends JFrame {
 
 	private static final long serialVersionUID = 1688018089793859404L;
@@ -329,6 +332,14 @@ public class ConfigurationFrame extends JFrame {
 						
 						owner.getSourceIdMapper().updateDataSourceMapping(oldDataSourceMapping, dataSourceMapping);		
 						
+// TODO (JMT) Adapter should be supports dynamic source definition changes
+// *******************************************************************************************************************
+						String sourceId = oldDataSourceMapping.getAlias();
+						String newSourceDefinition = owner.getSourceIdMapper().getSourceDefinition(oldDataSourceMapping.getAlias());
+						MessageSyncAdapter msgSyncAdapter = (MessageSyncAdapter)owner.getSyncEngine().getSource(sourceId);
+						MsAccessSyncAdapterFactory msAccessSyncAdapterFactory = (MsAccessSyncAdapterFactory) msgSyncAdapter.getSyncAdapterFactory();
+						msAccessSyncAdapterFactory.changeSourceDefinition(sourceId, newSourceDefinition, msgSyncAdapter.getSyncAdapter());	
+//********************************************************************************************************************
 					}	
 					listDataSources.setSelectedIndex(-1);
 					listDataSources.repaint();
@@ -352,7 +363,6 @@ public class ConfigurationFrame extends JFrame {
 				int index = listDataSources.getSelectedIndex();
 				if (index != -1) {
 					MSAccessDataSourceMapping dataSource = (MSAccessDataSourceMapping) listDataSources.getSelectedValue();
-					//owner.getSourceIdMapper().deleteDataSourceMapping(dataSource);	
 					owner.getSyncEngine().removeSourceId(dataSource.getAlias());
 					
 					DefaultListModel listModel = (DefaultListModel)listDataSources.getModel();
