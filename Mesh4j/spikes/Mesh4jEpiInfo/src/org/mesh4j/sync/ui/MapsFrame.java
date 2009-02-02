@@ -197,7 +197,7 @@ public class MapsFrame extends JFrame{
 		textAreaStatus.setWrapStyleWord(true);
 		textAreaStatus.setOpaque(true);
 		textAreaStatus.setEditable(false);
-		textAreaStatus.setText(MeshCompactUITranslator.getMapsWindowMessageWelcome());
+		textAreaStatus.setText(MeshCompactUITranslator.getMapsWindowMessageWelcome(this.propertiesProvider.getLoggedUserName()));
 
 		panelStatus.add(textAreaStatus, new CellConstraints(1, 1, CellConstraints.FILL, CellConstraints.FILL));
 		panelStatus.add(getImageStatus(), new CellConstraints(3, 1, CellConstraints.FILL, CellConstraints.FILL));
@@ -463,4 +463,5 @@ public class MapsFrame extends JFrame{
 		this.buttonCreateMap.setEnabled(true);
 		this.buttonOpenDataSource.setEnabled(true);
 	}
+	
 }

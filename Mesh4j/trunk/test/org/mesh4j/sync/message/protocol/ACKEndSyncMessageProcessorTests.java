@@ -11,6 +11,7 @@ import org.mesh4j.sync.message.IMessageSyncAdapter;
 import org.mesh4j.sync.message.IMessageSyncAware;
 import org.mesh4j.sync.message.IMessageSyncProtocol;
 import org.mesh4j.sync.message.ISyncSession;
+import org.mesh4j.sync.message.core.IMessageProcessor;
 import org.mesh4j.sync.message.core.Message;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.NullContent;
@@ -163,6 +164,12 @@ public class ACKEndSyncMessageProcessorTests {
 			@Override
 			public void removeSourceId(String sourceId) {
 				Assert.fail();
+			}
+
+			@Override
+			public IMessageProcessor getMessageProcessor(String messageType) {
+				Assert.fail();
+				return null;
 			}
 		};
 		

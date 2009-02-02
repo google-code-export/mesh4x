@@ -93,7 +93,7 @@ public class ProcessCustomMessages implements ISmsReceiver {
 	
 			if(TestPhoneTask.isTestPhoneMessage(message)){
 				if(this.phoneCompatibilityInProcess 
-					&& TestPhoneTask.makeAnswer(this.phoneCompatibilityId).equals(message)
+					&& TestPhoneTask.makeAnswer(this.phoneCompatibilityId, ui.getPropertiesProvider().getLoggedUserName()).equals(message)
 					&& this.phoneCompatibilityEndpoint.getEndpoint().equals(endpoint.getEndpointId())){
 					
 						// is response
@@ -104,7 +104,7 @@ public class ProcessCustomMessages implements ISmsReceiver {
 				} else {
 					// if is a question -> response, if is a old response -> discard
 					
-					if(TestPhoneTask.isQuestion(message)){
+					if(TestPhoneTask.isQuestion(message, ui.getPropertiesProvider().getLoggedUserName())){
 						new TestPhoneResponseTask(this.ui, endpoint.getEndpointId(), message).execute();
 					
 						String userName = TestPhoneTask.getUserName(message);

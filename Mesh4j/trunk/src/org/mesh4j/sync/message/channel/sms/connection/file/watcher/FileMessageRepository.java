@@ -135,11 +135,11 @@ public class FileMessageRepository {
 	}
 	
 	private String getInboxMessageFileName(FileMessage message) {
-		return this.inboxDirectory + message.getNumber() + "_" + message.getID() + ".txt";
+		return this.inboxDirectory + "\\" + message.getNumber() + "_" + message.getID() + ".txt";
 	}
 
 	private String getOutboxMessageFileName(String endpoint, FileMessage message) {
-		return this.outboxDirectory + endpoint + "\\in\\" + message.getNumber() + "_" + message.getID() + ".txt";
+		return this.outboxDirectory+ "\\" + endpoint + "\\in\\" + message.getNumber() + "_" + message.getID() + ".txt";
 	}
 	
 	private String readFile(File file) throws Exception{

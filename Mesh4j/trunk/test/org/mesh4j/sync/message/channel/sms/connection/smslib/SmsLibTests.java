@@ -32,6 +32,8 @@ import org.mesh4j.sync.message.core.repository.MessageSyncAdapterFactory;
 import org.mesh4j.sync.message.core.repository.SyncSessionFactory;
 import org.mesh4j.sync.message.core.repository.file.FileSyncSessionRepository;
 import org.mesh4j.sync.message.encoding.CompressBase91MessageEncoding;
+import org.mesh4j.sync.message.protocol.IItemEncoding;
+import org.mesh4j.sync.message.protocol.ItemEncodingFixedBlock;
 import org.mesh4j.sync.message.protocol.MessageSyncProtocolFactory;
 import org.mesh4j.sync.model.IContent;
 import org.mesh4j.sync.model.Item;
@@ -220,7 +222,7 @@ public class SmsLibTests {
 	
 		ISyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest()+gatewayId+"\\", syncSessionFactory);
 		
-		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocol(100, repo, channel);		
+		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocol(getItemEncoding(), repo, channel);		
 		MessageSyncEngine syncEngineEndPoint = new MessageSyncEngine(syncProtocol, channel);
 		
 		return syncEngineEndPoint;
@@ -259,5 +261,10 @@ public class SmsLibTests {
 		Item item = new Item(content, sync);
 		return item;
 	}
-	
+
+	private IItemEncoding getItemEncoding() {
+		//return new ItemEncoding(100);
+		return new ItemEncodingFixedBlock(100);
+	}
+
 }

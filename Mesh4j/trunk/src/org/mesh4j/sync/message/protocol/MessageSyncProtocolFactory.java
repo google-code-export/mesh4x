@@ -18,9 +18,7 @@ import org.mesh4j.sync.security.IIdentityProvider;
 
 public class MessageSyncProtocolFactory {
 
-	public static IMessageSyncProtocol createSyncProtocol(int diffBlockSize, ISyncSessionRepository repository, IChannel channel, IMessageSyncAware... syncAwareList) {
-
-		IItemEncoding itemEncoding = new ItemEncoding(diffBlockSize);
+	public static IMessageSyncProtocol createSyncProtocol(IItemEncoding itemEncoding, ISyncSessionRepository repository, IChannel channel, IMessageSyncAware... syncAwareList) {
 		
 		ACKEndSyncMessageProcessor ackEndMessage = new ACKEndSyncMessageProcessor();
 		EndSyncMessageProcessor endMessage = new EndSyncMessageProcessor(ackEndMessage);
@@ -67,10 +65,10 @@ public class MessageSyncProtocolFactory {
 		return syncProtocol;
 	}
 
-	public static IMessageSyncProtocol createSyncProtocolWithFileRepository(int diffBlockSize, String repositoryBaseDirectory, IChannel channel, IIdentityProvider identityProvider, IMessageSyncAware[] syncAware, IEndpointFactory endpointFactory, IMessageSyncAdapterFactory syncAdapterFactory) {
+	public static IMessageSyncProtocol createSyncProtocolWithFileRepository(IItemEncoding itemEncoding, String repositoryBaseDirectory, IChannel channel, IIdentityProvider identityProvider, IMessageSyncAware[] syncAware, IEndpointFactory endpointFactory, IMessageSyncAdapterFactory syncAdapterFactory) {
 		SyncSessionFactory syncSessionFactory = new SyncSessionFactory(endpointFactory, syncAdapterFactory, repositoryBaseDirectory, identityProvider);
 		ISyncSessionRepository repo = new FileSyncSessionRepository(repositoryBaseDirectory, syncSessionFactory);
-		return createSyncProtocol(diffBlockSize, repo, channel, syncAware);
+		return createSyncProtocol(itemEncoding, repo, channel, syncAware);
 	}
 
 	private final static IFilter<String> PROTOCOL_FILTER = new IFilter<String>(){

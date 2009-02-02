@@ -73,7 +73,7 @@ public class PropertiesProvider {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Object makeNewInstance(String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+	private Object makeNewInstance(String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 		Class clazz = Class.forName(className);
 		return clazz.newInstance();
 	}
@@ -86,19 +86,19 @@ public class PropertiesProvider {
 		return System.getProperty("user.dir");
 	}
 	
-	public int getInt(String key) {
+	private int getInt(String key) {
 		return Integer.valueOf(this.properties.getProperty(key, "0"));
 	}
 
-	public String getString(String key) {
+	private String getString(String key) {
 		return this.properties.getProperty(key, "");
 	}
 
-	public boolean getBoolean(String key) {
+	private boolean getBoolean(String key) {
 		return Boolean.valueOf(this.properties.getProperty(key, "true"));
 	}
 
-	public Object getInstance(String key, Object defaultInstanceIfAbsent) {
+	private Object getInstance(String key, Object defaultInstanceIfAbsent) {
 		try{
 			String className = this.getString(key);
 			if(className == null || className.length() == 0){
@@ -164,11 +164,11 @@ public class PropertiesProvider {
 		return getString("google.geo.coder.key");
 	}
 
-	public void setString(String key, String value) {
+	private void setString(String key, String value) {
 		this.properties.put(key, value);		
 	}
 
-	public void setInt(String key, int value) {
+	private void setInt(String key, int value) {
 		this.properties.put(key, String.valueOf(value));		
 	}
 
@@ -210,5 +210,45 @@ public class PropertiesProvider {
 
 	public boolean mustTraceSms() {
 		return getBoolean("dafault.trace.sms");
+	}
+	
+	public boolean mustUseItemEncodingFixedBlock(){
+		return getBoolean("default.sms.item.encoding.fixed.block");
+	}
+	
+	public int getItemEncodingBlockSize(){
+		return Integer.valueOf(this.properties.getProperty("default.sms.item.encoding.block.size", "100"));
+	}
+
+	public int getDefaultMaxMessageLenght() {
+		return getInt("default.sms.max.message.lenght");
+	}
+
+	public boolean isSyncCloudEnabled() {
+		return getBoolean("mesh4x.sync.web.enabled");
+	}
+
+	public boolean isEmulationModeActive() {
+		return getBoolean("emulate.sync");
+	}
+
+	public String getEmulationInFolder() {
+		return getString("emulate.sync.file.connection.in");
+	}
+
+	public String getEmulationOutRootFolder() {
+		return getString("emulate.sync.file.connection.out");
+	}
+
+	public String getEmulationEndpointId() {
+		return getString("emulate.sync.file.connection.endpointId");
+	}
+
+	public String getLoggedUserName() {
+		if(this.isEmulationModeActive()){
+			return this.getEmulationEndpointId();
+		} else {
+			return LoggedInIdentityProvider.getUserName();
+		}
 	}
 }

@@ -10,6 +10,7 @@ import org.mesh4j.sync.message.IMessageSyncAdapter;
 import org.mesh4j.sync.message.IMessageSyncAware;
 import org.mesh4j.sync.message.IMessageSyncProtocol;
 import org.mesh4j.sync.message.ISyncSession;
+import org.mesh4j.sync.message.core.IMessageProcessor;
 
 public class MockSyncProtocol implements IMessageSyncProtocol {
 
@@ -98,6 +99,11 @@ public class MockSyncProtocol implements IMessageSyncProtocol {
 	@Override
 	public void removeSourceId(String sourceId) {
 		// nothing to do
+	}
+
+	@Override
+	public IMessageProcessor getMessageProcessor(String messageType) {
+		return null;
 	}
 
 }

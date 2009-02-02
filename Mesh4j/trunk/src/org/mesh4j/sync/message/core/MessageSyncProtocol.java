@@ -271,4 +271,14 @@ public class MessageSyncProtocol implements IMessageSyncProtocol {
 		this.repository.removeSourceId(sourceId);
 	}
 
+	@Override
+	public IMessageProcessor getMessageProcessor(String messageType) {
+		for (IMessageProcessor processor : this.messageProcessors) {
+			if(processor.getMessageType().equals(messageType)){
+				return processor;
+			}
+		}
+		return null;
+	}
+
 }

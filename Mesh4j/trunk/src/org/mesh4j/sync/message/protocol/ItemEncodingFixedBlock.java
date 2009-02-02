@@ -16,15 +16,16 @@ import org.mesh4j.sync.model.NullContent;
 import org.mesh4j.sync.model.Sync;
 import org.mesh4j.sync.utils.DiffUtils;
 import org.mesh4j.sync.utils.XMLHelper;
+import org.mesh4j.sync.validations.Guard;
 
 
-public class ItemEncoding implements IItemEncoding, IProtocolConstants{
+public class ItemEncodingFixedBlock implements IItemEncoding, IProtocolConstants{
 	
 	// MODEL VARIABLES
 	private int diffBlockSize = 100;
 
 	// BUSINESS METHODS
-	public ItemEncoding(int diffBlockSize) {
+	public ItemEncodingFixedBlock(int diffBlockSize) {
 		super();
 		this.diffBlockSize = diffBlockSize;
 	}
@@ -77,17 +78,22 @@ public class ItemEncoding implements IItemEncoding, IProtocolConstants{
 			String xmlDiff = encodingItem.substring(header.length() + 1, encodingItem.length());
 			HashMap<Integer, String> diffs = new HashMap<Integer, String>();
 			
-			StringTokenizer stDiffs = new StringTokenizer(xmlDiff, FIELD_SEPARATOR);
-			while(stDiffs.hasMoreTokens()){
-				String blockDiff = stDiffs.nextToken();
-				String[] elements = blockDiff.split(SUB_FIELD_SEPARATOR);
-				String index = elements[0];
-				String textDiff = "";
-				if(elements.length == 2){
-					textDiff = elements[1];
+			String currentBlock;
+			String currentIndex;
+			while(xmlDiff.length() > 0){
+				currentIndex= xmlDiff.substring(0, 2);
+				 
+				if(xmlDiff.length() <= (2 + this.diffBlockSize)){
+					currentBlock = xmlDiff.substring(2, xmlDiff.length());
+					xmlDiff = "";
+				} else {
+					currentBlock = xmlDiff.substring(2, 2+this.diffBlockSize);				
+					xmlDiff = xmlDiff.substring(2+this.diffBlockSize, xmlDiff.length());
 				}
-				diffs.put(Integer.valueOf(index), textDiff);
+				
+				diffs.put(Integer.valueOf(currentIndex), currentBlock);
 			}
+					
 			
 			String xml = localItem == null ? "" : XMLHelper.canonicalizeXML(localItem.getContent().getPayload());
 			
@@ -128,16 +134,23 @@ public class ItemEncoding implements IItemEncoding, IProtocolConstants{
 			Iterator<Integer> it = diffs.keySet().iterator();
 			while(it.hasNext()) {
 				int i = it.next();
-				sb.append(i);
-				sb.append(SUB_FIELD_SEPARATOR);
+				sb.append(encodeDiffPosition(i));
 				sb.append(diffs.get(i));
-				if(it.hasNext()){
-					sb.append(FIELD_SEPARATOR);
-				}
 			}
 		}
 
 		return sb.toString();
+	}
+
+	private String encodeDiffPosition(int i) {
+		if(i <=9){
+			return "0" + i;
+		} else if(i > 9 && i <= 99 ){
+			return String.valueOf(i);
+		} else {
+			Guard.throwsArgumentException("item encoding");
+			return "-1";
+		}
 	}
 
 	@Override
@@ -150,8 +163,7 @@ public class ItemEncoding implements IItemEncoding, IProtocolConstants{
 		String xml = XMLHelper.canonicalizeXML(element);
 		return DiffUtils.calculateBlockHashCodes(xml, this.diffBlockSize);
 	}
-
-	@Override
+	
 	public String getSyncID(String data) {
 		StringTokenizer st = new StringTokenizer(data, ELEMENT_SEPARATOR);
 		String header = st.nextToken();			

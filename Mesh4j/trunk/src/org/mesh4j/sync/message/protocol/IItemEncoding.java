@@ -13,4 +13,6 @@ public interface IItemEncoding {
 	int[] calculateDiffBlockHashCodes(String xml);
 	
 	int[] calculateDiffBlockHashCodes(Element element);
+
+	String getSyncID(String data);
 }

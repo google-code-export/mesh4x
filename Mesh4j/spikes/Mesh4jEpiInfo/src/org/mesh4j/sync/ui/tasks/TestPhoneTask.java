@@ -6,7 +6,6 @@ import javax.swing.SwingWorker;
 
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.mappings.EndpointMapping;
-import org.mesh4j.sync.security.LoggedInIdentityProvider;
 import org.mesh4j.sync.ui.MeshCompactUI;
 import org.mesh4j.sync.ui.translator.MeshCompactUITranslator;
 import org.mesh4j.sync.utils.SyncEngineUtil;
@@ -30,7 +29,7 @@ public class TestPhoneTask extends SwingWorker<Void, Void> {
 		
 		ui.getProcessCustomMessages().notifyStartTestForPhoneCompatibility(endpoint, id);
 				
-		String message = makeAnswer(id);
+		String message = makeAnswer(id, ui.getPropertiesProvider().getLoggedUserName());
 
 		this.sendSms(endpoint.getEndpoint(), message);
 		return null;
@@ -42,9 +41,9 @@ public class TestPhoneTask extends SwingWorker<Void, Void> {
 		ui.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     }
 
-	public static boolean isQuestion(String message) {
+	public static boolean isQuestion(String message, String currentUserName) {
 		String userName = getUserName(message);
-		return isTestPhoneMessage(message) && !LoggedInIdentityProvider.getUserName().equals(userName);
+		return isTestPhoneMessage(message) && !currentUserName.equals(userName);
 	}
 	
 	public static String getUserName(String message) {
@@ -53,10 +52,10 @@ public class TestPhoneTask extends SwingWorker<Void, Void> {
 		return message.substring(start, end);
 	}
 
-	public static String makeAnswer(String id) {
+	public static String makeAnswer(String id, String currentUserName) {
 		return MeshCompactUITranslator.getQuestionTestPhoneCompatibility() 
 			+ " " 
-			+ LoggedInIdentityProvider.getUserName() 
+			+ currentUserName 
 			+ " <" + id + "> ";
 	}
 	

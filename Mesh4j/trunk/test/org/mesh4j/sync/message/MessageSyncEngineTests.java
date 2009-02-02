@@ -14,6 +14,7 @@ import org.mesh4j.sync.message.channel.sms.ISmsChannel;
 import org.mesh4j.sync.message.channel.sms.SmsChannelFactory;
 import org.mesh4j.sync.message.channel.sms.SmsEndpoint;
 import org.mesh4j.sync.message.channel.sms.core.SmsEndpointFactory;
+import org.mesh4j.sync.message.core.IMessageProcessor;
 import org.mesh4j.sync.message.core.ISyncSessionRepository;
 import org.mesh4j.sync.message.core.InMemoryMessageSyncAdapter;
 import org.mesh4j.sync.message.core.Message;
@@ -21,6 +22,8 @@ import org.mesh4j.sync.message.core.MockSyncSessionRepository;
 import org.mesh4j.sync.message.core.repository.ISourceIdMapper;
 import org.mesh4j.sync.message.core.repository.MessageSyncAdapterFactory;
 import org.mesh4j.sync.message.core.repository.SyncSessionFactory;
+import org.mesh4j.sync.message.protocol.IItemEncoding;
+import org.mesh4j.sync.message.protocol.ItemEncodingFixedBlock;
 import org.mesh4j.sync.message.protocol.MessageSyncProtocolFactory;
 import org.mesh4j.sync.model.Content;
 import org.mesh4j.sync.model.IContent;
@@ -97,7 +100,7 @@ public class MessageSyncEngineTests {
 		//this.syncSessionRepoA = new FileSyncSessionRepository("c:\\", syncSessionFactoryA);
 		this.syncSessionRepoA = new MockSyncSessionRepository(syncSessionFactoryA);
 		
-		IMessageSyncProtocol syncProtocolA = MessageSyncProtocolFactory.createSyncProtocol(100, this.syncSessionRepoA, channelEndpointA);
+		IMessageSyncProtocol syncProtocolA = MessageSyncProtocolFactory.createSyncProtocol(getItemEncoding(), this.syncSessionRepoA, channelEndpointA);
 		syncEngineEndPointA = new MessageSyncEngine(syncProtocolA, channelEndpointA);
 
 		SyncSessionFactory syncSessionFactoryB = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);
@@ -106,7 +109,7 @@ public class MessageSyncEngineTests {
 		//this.syncSessionRepoB = new FileSyncSessionRepository("d:\\", syncSessionFactoryB);
 		this.syncSessionRepoB = new MockSyncSessionRepository(syncSessionFactoryB);
 		
-		IMessageSyncProtocol syncProtocolB = MessageSyncProtocolFactory.createSyncProtocol(100, this.syncSessionRepoB, channelEndpointB);
+		IMessageSyncProtocol syncProtocolB = MessageSyncProtocolFactory.createSyncProtocol(getItemEncoding(), this.syncSessionRepoB, channelEndpointB);
 		syncEngineEndPointB = new MessageSyncEngine(syncProtocolB, channelEndpointB);
 		Assert.assertNotNull(syncEngineEndPointB);
 	}
@@ -647,6 +650,7 @@ public class MessageSyncEngineTests {
 			@Override public IMessageSyncAdapter getSource(String sourceId) { return null; }
 			@Override public List<ISyncSession> getAllSyncSessions() {return null;}
 			@Override public void removeSourceId(String sourceId) { Assert.fail(); }
+			@Override public IMessageProcessor getMessageProcessor(String messageType) {return null;}
 		};
 		MessageSyncEngine engine = new MessageSyncEngine(protocol, channel);
 		engine.cancelSync("123", new SmsEndpoint("123"));
@@ -684,7 +688,14 @@ public class MessageSyncEngineTests {
 			@Override public IMessageSyncAdapter getSource(String sourceId) { return null; }
 			@Override public List<ISyncSession> getAllSyncSessions() {return null;}
 			@Override public void removeSourceId(String sourceId) { Assert.fail(); }
+			@Override public IMessageProcessor getMessageProcessor(String messageType) {return null;}
 		};
 		new MessageSyncEngine(protocol, null);
 	}
+	
+	private IItemEncoding getItemEncoding() {
+		//return new ItemEncoding(100);
+		return new ItemEncodingFixedBlock(100);
+	}
+
 }

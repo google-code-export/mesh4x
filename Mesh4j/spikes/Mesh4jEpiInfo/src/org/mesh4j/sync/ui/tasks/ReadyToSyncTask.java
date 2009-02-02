@@ -6,7 +6,6 @@ import javax.swing.SwingWorker;
 
 import org.mesh4j.sync.mappings.EndpointMapping;
 import org.mesh4j.sync.mappings.MSAccessDataSourceMapping;
-import org.mesh4j.sync.security.LoggedInIdentityProvider;
 import org.mesh4j.sync.ui.MeshCompactUI;
 import org.mesh4j.sync.ui.translator.MeshCompactUITranslator;
 import org.mesh4j.sync.utils.SyncEngineUtil;
@@ -30,7 +29,7 @@ public class ReadyToSyncTask extends SwingWorker<Void, Void> {
 	
 		ui.getProcessCustomMessages().notifyStartReadyToSync(endpoint, dataSource);
 		
-		String message = makeQuestion(dataSource);
+		String message = makeQuestion(dataSource, ui.getPropertiesProvider().getLoggedUserName());
 		SyncEngineUtil.sendSms(ui.getSyncEngine(), endpoint.getEndpoint(), message);
 		return null;
     }
@@ -61,7 +60,7 @@ public class ReadyToSyncTask extends SwingWorker<Void, Void> {
 		return makeAnswer(dataSourceAlias, false).equals(message);
 	}
 	
-	public static String makeQuestion(MSAccessDataSourceMapping dataSourceMapping) {
+	public static String makeQuestion(MSAccessDataSourceMapping dataSourceMapping, String userName) {
 		StringBuffer sb = new StringBuffer();
 		sb.append(MeshCompactUITranslator.getQuestionForReadyToSync());
 		sb.append(" ");
@@ -73,7 +72,7 @@ public class ReadyToSyncTask extends SwingWorker<Void, Void> {
 		sb.append(MeshCompactUITranslator.getLabelMSAccessTableName());
 		sb.append(dataSourceMapping.getTableName());
 		sb.append("). ");
-		sb.append(LoggedInIdentityProvider.getUserName());
+		sb.append(userName);
 		sb.append(MeshCompactUITranslator.getQuestionEndSymbol());
 		
 		return sb.toString();

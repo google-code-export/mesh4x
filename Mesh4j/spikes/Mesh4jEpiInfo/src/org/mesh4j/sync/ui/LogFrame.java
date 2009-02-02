@@ -248,22 +248,22 @@ public class LogFrame extends JFrame implements ISmsConnectionInboundOutboundNot
 
 	@Override
 	public void notifyInvalidMessageProtocol(IMessage message) {
-		this.log(MeshUITranslator.getMessageInvalidMessageProtocol(message), mustTraceProtocol);
+		this.log(MeshUITranslator.getMessageInvalidMessageProtocol(owner.getSyncProtocol(), message), mustTraceProtocol);
 	}
 
 	@Override
 	public void notifyInvalidProtocolMessageOrder(IMessage message) {
-		this.log(MeshUITranslator.getMessageErrorInvalidProtocolMessageOrder(message), mustTraceProtocol);
+		this.log(MeshUITranslator.getMessageErrorInvalidProtocolMessageOrder(owner.getSyncProtocol(), message), mustTraceProtocol);
 	}
 
 	@Override
 	public void notifyMessageProcessed(ISyncSession syncSession, IMessage message, List<IMessage> response) {
-		this.log(MeshUITranslator.getMessageProcessed(message, response), mustTraceProtocol);
+		this.log(MeshUITranslator.getMessageProcessed(owner.getSyncProtocol(), message, response), mustTraceProtocol);
 	}
 
 	@Override
 	public void notifySessionCreationError(IMessage message, String sourceId) {
-		this.log(MeshUITranslator.getMessageErrorSessionCreation(message, sourceId), mustTraceProtocol);
+		this.log(MeshUITranslator.getMessageErrorSessionCreation(owner.getSyncProtocol(), message, sourceId), mustTraceProtocol);
 	}
 	
 	// WindowFocusListener methods

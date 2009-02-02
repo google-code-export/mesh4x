@@ -20,6 +20,8 @@ import org.mesh4j.sync.message.core.InMemoryMessageSyncAdapter;
 import org.mesh4j.sync.message.core.repository.ISourceIdMapper;
 import org.mesh4j.sync.message.core.repository.MessageSyncAdapterFactory;
 import org.mesh4j.sync.message.encoding.CompressBase91MessageEncoding;
+import org.mesh4j.sync.message.protocol.IItemEncoding;
+import org.mesh4j.sync.message.protocol.ItemEncodingFixedBlock;
 import org.mesh4j.sync.message.protocol.MessageSyncProtocolFactory;
 import org.mesh4j.sync.model.IContent;
 import org.mesh4j.sync.model.Item;
@@ -111,7 +113,7 @@ public class MessageSyncEngineConcurrentSessionsTests implements IMessageSyncAwa
 		
 		IChannel channel = SmsChannelFactory.createChannelWithFileRepository(smsConnection, senderDelay, receiverDelay, repositoryBaseDirectory, protocolFilter);
 		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(sourceIdMapper, null, true);
-		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocolWithFileRepository(100, repositoryBaseDirectory, channel, identityProvider, new IMessageSyncAware[]{syncAware}, SmsEndpointFactory.INSTANCE, syncAdapterFactory);		
+		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocolWithFileRepository(getItemEncoding(), repositoryBaseDirectory, channel, identityProvider, new IMessageSyncAware[]{syncAware}, SmsEndpointFactory.INSTANCE, syncAdapterFactory);		
 		return new MessageSyncEngine(syncProtocol, channel);		
 	}
 	
@@ -213,5 +215,11 @@ public class MessageSyncEngineConcurrentSessionsTests implements IMessageSyncAwa
 	public void notifyReceiveMessageWasNotProcessed(String endpointId, String message, Date date) {
 		System.out.println("Error - msg was not processed - Receive from: " + endpointId + " message: " + message);		
 	}
+
+	private IItemEncoding getItemEncoding() {
+		//return new ItemEncoding(100);
+		return new ItemEncodingFixedBlock(100);
+	}
+
 
 }

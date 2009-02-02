@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.mesh4j.sync.message.IEndpoint;
 import org.mesh4j.sync.message.IMessage;
+import org.mesh4j.sync.message.IMessageSyncProtocol;
 import org.mesh4j.sync.message.channel.sms.connection.smslib.Modem;
 import org.mesh4j.sync.message.protocol.ACKEndSyncMessageProcessor;
 import org.mesh4j.sync.message.protocol.ACKMergeMessageProcessor;
@@ -13,11 +14,11 @@ import org.mesh4j.sync.message.protocol.CancelSyncMessageProcessor;
 import org.mesh4j.sync.message.protocol.EndSyncMessageProcessor;
 import org.mesh4j.sync.message.protocol.EqualStatusMessageProcessor;
 import org.mesh4j.sync.message.protocol.GetForMergeMessageProcessor;
-import org.mesh4j.sync.message.protocol.ItemEncoding;
 import org.mesh4j.sync.message.protocol.LastVersionStatusMessageProcessor;
 import org.mesh4j.sync.message.protocol.MergeMessageProcessor;
 import org.mesh4j.sync.message.protocol.MergeWithACKMessageProcessor;
 import org.mesh4j.sync.message.protocol.NoChangesMessageProcessor;
+import org.mesh4j.sync.security.LoggedInIdentityProvider;
 import org.mesh4j.sync.translator.MessageTranslator;
 
 
@@ -25,6 +26,10 @@ public class MeshUITranslator {
 
 	public static String getTitle() {
 		return MessageTranslator.translate("MESH_TITLE");
+	}
+	
+	public static String getTitleEmulationMode(String emulationEndpointId) {
+		return MessageTranslator.translate("MESH_TITLE_EMULATION", emulationEndpointId, LoggedInIdentityProvider.getUserName());
 	}
 
 	public static String getGroupCommunications() {
@@ -108,19 +113,19 @@ public class MeshUITranslator {
 		return MessageTranslator.translate("MESH_SMS_MESSAGE_ERROR_CANCEL_SYNC_SESSION_NOT_OPEN", endpoint.getEndpointId(), sourceId);
 	}
 	
-	public static String getMessageInvalidMessageProtocol(IMessage message) {
-		return MessageTranslator.translate("MESH_SMS_MESSAGE_ERROR_INVALID_PROTOCOL", message.getProtocol(), translateMessageType(message) + " session: " + message.getSessionId() + " endpoint: " + message.getEndpoint().getEndpointId());
+	public static String getMessageInvalidMessageProtocol(IMessageSyncProtocol syncProtocol, IMessage message) {
+		return MessageTranslator.translate("MESH_SMS_MESSAGE_ERROR_INVALID_PROTOCOL", message.getProtocol(), translateMessageType(syncProtocol, message) + " session: " + message.getSessionId() + " endpoint: " + message.getEndpoint().getEndpointId());
 	}
 	
-	public static String getMessageErrorInvalidProtocolMessageOrder(IMessage message) {
-		return MessageTranslator.translate("MESH_SMS_MESSAGE_ERROR_INVALID_PROTOCOL_MESSAGE_ORDER", translateMessageType(message), message.getSessionId(), message.getEndpoint().getEndpointId());	
+	public static String getMessageErrorInvalidProtocolMessageOrder(IMessageSyncProtocol syncProtocol, IMessage message) {
+		return MessageTranslator.translate("MESH_SMS_MESSAGE_ERROR_INVALID_PROTOCOL_MESSAGE_ORDER", translateMessageType(syncProtocol, message), message.getSessionId(), message.getEndpoint().getEndpointId());	
 	}
 
-	public static String getMessageErrorSessionCreation(IMessage message, String sourceId) {
-		return MessageTranslator.translate("MESH_SMS_MESSAGE_ERROR_SESSION_CREATION", translateMessageType(message), message.getSessionId(), message.getEndpoint().getEndpointId(), sourceId);
+	public static String getMessageErrorSessionCreation(IMessageSyncProtocol syncProtocol, IMessage message, String sourceId) {
+		return MessageTranslator.translate("MESH_SMS_MESSAGE_ERROR_SESSION_CREATION", translateMessageType(syncProtocol, message), message.getSessionId(), message.getEndpoint().getEndpointId(), sourceId);
 	}
 	
-	private static String translateMessageType(IMessage message){
+	private static String translateMessageType(IMessageSyncProtocol syncProtocol, IMessage message){
 		String messageType = message.getMessageType();
 		if(BeginSyncMessageProcessor.MESSAGE_TYPE.equals(messageType)){
 			return  MessageTranslator.translate("MESH_SMS_MESSAGE_TYPE_BEGIN_SYNC");
@@ -135,14 +140,14 @@ public class MeshUITranslator {
 			String syncId = GetForMergeMessageProcessor.getSyncID(message.getData());
 			return MessageTranslator.translate("MESH_SMS_MESSAGE_TYPE_GET_FOR_MERGE", syncId);
 		}
-		if(MergeMessageProcessor.MESSAGE_TYPE.equals(messageType)){
-			String syncId = ItemEncoding.getSyncID(message.getData());
+		if(MergeMessageProcessor.MESSAGE_TYPE.equals(messageType)){			
+			MergeMessageProcessor messageProcessor = (MergeMessageProcessor)syncProtocol.getMessageProcessor(MergeMessageProcessor.MESSAGE_TYPE);
+			String syncId = messageProcessor.getSyncID(message.getData());
 			return MessageTranslator.translate("MESH_SMS_MESSAGE_TYPE_MERGE", syncId);
 		}
 		if(MergeWithACKMessageProcessor.MESSAGE_TYPE.equals(messageType)){
-			String itemData = message.getData().substring(1, message.getData().length());
-			String syncId = MergeWithACKMessageProcessor.getSyncID(message.getData());
-			ItemEncoding.getSyncID(itemData);
+			MergeWithACKMessageProcessor messageProcessor = (MergeWithACKMessageProcessor)syncProtocol.getMessageProcessor(MergeWithACKMessageProcessor.MESSAGE_TYPE);
+			String syncId = messageProcessor.getSyncID(message.getData());
 			return MessageTranslator.translate("MESH_SMS_MESSAGE_TYPE_MERGE_WITH_ACK", syncId);
 		}
 		if(EndSyncMessageProcessor.MESSAGE_TYPE.equals(messageType)){
@@ -152,7 +157,9 @@ public class MeshUITranslator {
 			return MessageTranslator.translate("MESH_SMS_MESSAGE_TYPE_ACK_END_SYNC");
 		}
 		if(ACKMergeMessageProcessor.MESSAGE_TYPE.equals(messageType)){
-			String syncId = ACKMergeMessageProcessor.getSyncID(message.getData());
+			ACKMergeMessageProcessor messageProcessor = (ACKMergeMessageProcessor)syncProtocol.getMessageProcessor(ACKMergeMessageProcessor.MESSAGE_TYPE);
+			String syncId = messageProcessor.getSyncID(message.getData());
+
 			return MessageTranslator.translate("MESH_SMS_MESSAGE_TYPE_ACK_MERGE", syncId);
 		}
 		if(CancelSyncMessageProcessor.MESSAGE_TYPE.equals(messageType)){
@@ -164,7 +171,7 @@ public class MeshUITranslator {
 		return messageType;
 	}
 
-	public static String getMessageProcessed(IMessage message, List<IMessage> response) {
+	public static String getMessageProcessed(IMessageSyncProtocol syncProtocol, IMessage message, List<IMessage> response) {
 		StringBuffer sb = new StringBuffer();
 		if(response.size() > 0){
 			IMessage responseMessage;
@@ -172,17 +179,17 @@ public class MeshUITranslator {
 			if(response.size() == 1){
 				responseMessage = response.get(0);
 				sb.append("\n   ");
-				sb.append(MessageTranslator.translate("MESH_SMS_MESSAGE_RESPONSE", 1, translateMessageType(responseMessage)));
+				sb.append(MessageTranslator.translate("MESH_SMS_MESSAGE_RESPONSE", 1, translateMessageType(syncProtocol, responseMessage)));
 			} else {
 				for (int i = 0; i < response.size(); i++) {
 					responseMessage = response.get(i);
 					sb.append("\n   ");
-					sb.append(MessageTranslator.translate("MESH_SMS_MESSAGE_RESPONSE", i, translateMessageType(responseMessage)));
+					sb.append(MessageTranslator.translate("MESH_SMS_MESSAGE_RESPONSE", i, translateMessageType(syncProtocol, responseMessage)));
 				}
 			}
 		}
 		return MessageTranslator.translate("MESH_SMS_MESSAGE_PROCESSED", 
-				translateMessageType(message), 
+				translateMessageType(syncProtocol, message), 
 				message.getOrigin(),
 				message.getSessionId(),
 				message.getEndpoint().getEndpointId()) + sb.toString();

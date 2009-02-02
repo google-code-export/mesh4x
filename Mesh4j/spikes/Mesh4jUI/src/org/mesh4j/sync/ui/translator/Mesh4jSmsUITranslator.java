@@ -141,12 +141,12 @@ public class Mesh4jSmsUITranslator {
 			return "Get For Merge: " + syncId;
 		}
 		if(MergeMessageProcessor.MESSAGE_TYPE.equals(messageType)){
-			String syncId = ItemEncoding.getSyncID(message.getData());
+			String syncId = new ItemEncoding(100).getSyncID(message.getData());
 			return "Merge: " + syncId;
 		}
 		if(MergeWithACKMessageProcessor.MESSAGE_TYPE.equals(messageType)){
 			String itemData = message.getData().substring(1, message.getData().length());
-			String syncId = ItemEncoding.getSyncID(itemData);
+			String syncId = new ItemEncoding(100).getSyncID(itemData);
 			return "Merge with ACK: " + syncId;
 		}
 		if(EndSyncMessageProcessor.MESSAGE_TYPE.equals(messageType)){
@@ -157,7 +157,7 @@ public class Mesh4jSmsUITranslator {
 		}
 		if(ACKMergeMessageProcessor.MESSAGE_TYPE.equals(messageType)){
 			String itemData = message.getData().substring(1, message.getData().length());
-			String syncId = ItemEncoding.getSyncID(itemData);
+			String syncId = new ItemEncoding(100).getSyncID(itemData);
 			return MessageTranslator.translate("Mesh4jUI_SMS_MESSAGE_TYPE_ACK_MERGE", syncId);
 		}
 		if(CancelSyncMessageProcessor.MESSAGE_TYPE.equals(messageType)){

@@ -63,6 +63,9 @@ import org.mesh4j.sync.message.core.MessageSyncAdapter;
 import org.mesh4j.sync.message.core.repository.MessageSyncAdapterFactory;
 import org.mesh4j.sync.message.core.repository.OpaqueFeedSyncAdapterFactory;
 import org.mesh4j.sync.message.encoding.IMessageEncoding;
+import org.mesh4j.sync.message.protocol.IItemEncoding;
+import org.mesh4j.sync.message.protocol.ItemEncoding;
+import org.mesh4j.sync.message.protocol.ItemEncodingFixedBlock;
 import org.mesh4j.sync.message.protocol.MessageSyncProtocolFactory;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.Sync;
@@ -172,9 +175,9 @@ public class SyncEngineUtil {
 	}
 
 	public static MessageSyncEngine createSyncEngineEmulator(SourceIdMapper sourceIdMapper,
-			IMessageEncoding encoding, IIdentityProvider identityProvider,
+			IMessageEncoding encoding, IIdentityProvider identityProvider, IItemEncoding itemEncoding,
 			String baseDirectory, int senderDelay, int receiverDelay,
-			int readDelay, int channelDelay, int maxMessageLenght, SmsEndpoint target,
+			int maxMessageLenght, SmsEndpoint target,
 			ISmsConnectionInboundOutboundNotification[] smsAware, IMessageSyncAware[] syncAware,
 			boolean isOpaque, String inDir, String outDir, String endpointId) {
 		
@@ -191,7 +194,7 @@ public class SyncEngineUtil {
 		IFilter<String> protocolFilter = MessageSyncProtocolFactory.getProtocolMessageFilter();
 		IChannel channel = SmsChannelFactory.createChannelWithFileRepository(smsConnection, senderDelay, receiverDelay, baseDirectory, protocolFilter);
 		
-		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocolWithFileRepository(100, baseDirectory, channel, identityProvider, syncAware, SmsEndpointFactory.INSTANCE, messageSyncAdapterFactory);		
+		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocolWithFileRepository(itemEncoding, baseDirectory, channel, identityProvider, syncAware, SmsEndpointFactory.INSTANCE, messageSyncAdapterFactory);		
 		
 		MessageSyncEngine syncEngineEndPoint = new MessageSyncEngine(syncProtocol, channel); 
 
@@ -220,6 +223,7 @@ public class SyncEngineUtil {
 			SourceIdMapper sourceIdMapper, Modem modem,
 			String baseDirectory, int senderDelay, int receiverDelay, int maxMessageLenght, 
 			IIdentityProvider identityProvider,
+			IItemEncoding itemEncoding,
 			IMessageEncoding messageEncoding,
 			ISmsConnectionInboundOutboundNotification[] smsAware,
 			IMessageSyncAware[] syncAware) {
@@ -228,7 +232,7 @@ public class SyncEngineUtil {
 		
 		return SmsLibMessageSyncEngineFactory.createSyncEngine(
 			modem, baseDirectory + "/", senderDelay, receiverDelay, maxMessageLenght,
-			identityProvider, messageEncoding, sourceIdMapper, smsAware, syncAware, syncAdapterFactory);
+			identityProvider, itemEncoding, messageEncoding, sourceIdMapper, smsAware, syncAware, syncAdapterFactory);
 	}
 	
 	public static Modem[] getAvailableModems(IProgressMonitor progressMonitor) {
@@ -317,26 +321,34 @@ public class SyncEngineUtil {
 		String baseDirectory = propertiesProvider.getBaseDirectory();
 		int senderDelay = propertiesProvider.getDefaultSendRetryDelay();
 		int receiverDelay = propertiesProvider.getDefaultReceiveRetryDelay();
-		int maxMessageLenght = propertiesProvider.getInt("default.sms.max.message.lenght");
+		int maxMessageLenght = propertiesProvider.getDefaultMaxMessageLenght();
 		IIdentityProvider identityProvider = propertiesProvider.getIdentityProvider();
 		IMessageEncoding messageEncoding = propertiesProvider.getDefaultMessageEncoding();
 		String portName = propertiesProvider.getDefaultPort();
 		int baudRate = propertiesProvider.getDefaultBaudRate();
 		
+		IItemEncoding itemEncoding = null;
+		
+		int itemEncodingBlockSize = propertiesProvider.getItemEncodingBlockSize();
+		if(propertiesProvider.mustUseItemEncodingFixedBlock()){
+			itemEncoding = new ItemEncodingFixedBlock(itemEncodingBlockSize);
+		} else {
+			itemEncoding = new ItemEncoding(itemEncodingBlockSize);
+		}
+		
 		Modem modem = new Modem(portName, baudRate, "", "", "", "", 0, 0);
 		
-		boolean emulateSync = propertiesProvider.getBoolean("emulate.sync");
+		boolean emulateSync = propertiesProvider.isEmulationModeActive();
 		if(emulateSync){
-			String inDirectory = propertiesProvider.getString("emulate.sync.file.connection.in");
-			String outDirectory = propertiesProvider.getString("emulate.sync.file.connection.out");
-			String endpointId = propertiesProvider.getString("emulate.sync.file.connection.endpointId");
+			String inDirectory = propertiesProvider.getEmulationInFolder();
+			String outDirectory = propertiesProvider.getEmulationOutRootFolder();
+			String endpointId = propertiesProvider.getEmulationEndpointId();
 			return createSyncEngineEmulator(
 					sourceIdResolver,
 					messageEncoding,
 					identityProvider, 
+					itemEncoding,
 					baseDirectory+"/",
-					0, 
-					0, 
 					0, 
 					0,
 					maxMessageLenght,
@@ -356,6 +368,7 @@ public class SyncEngineUtil {
 					receiverDelay, 
 					maxMessageLenght, 
 					identityProvider,
+					itemEncoding,
 					messageEncoding,
 					smsAware,
 					syncAware);

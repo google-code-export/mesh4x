@@ -116,22 +116,22 @@ public class ConsoleNotification implements ISmsConnectionInboundOutboundNotific
 
 	@Override
 	public void notifyInvalidMessageProtocol(IMessage message) {
-		this.log(MeshUITranslator.getMessageInvalidMessageProtocol(message));
+		this.log(MeshUITranslator.getMessageInvalidMessageProtocol(ui.getSyncProtocol(), message));
 	}
 
 	@Override
 	public void notifyInvalidProtocolMessageOrder(IMessage message) {
-		this.log(MeshUITranslator.getMessageErrorInvalidProtocolMessageOrder(message));
+		this.log(MeshUITranslator.getMessageErrorInvalidProtocolMessageOrder(ui.getSyncProtocol(), message));
 	}
 
 	@Override
 	public void notifyMessageProcessed(ISyncSession syncSession, IMessage message, List<IMessage> response) {
-		this.log(MeshUITranslator.getMessageProcessed(message, response));
+		this.log(MeshUITranslator.getMessageProcessed(ui.getSyncProtocol(), message, response));
 	}
 
 	@Override
 	public void notifySessionCreationError(IMessage message, String sourceId) {
-		this.log(MeshUITranslator.getMessageErrorSessionCreation(message, sourceId));
+		this.log(MeshUITranslator.getMessageErrorSessionCreation(ui.getSyncProtocol(), message, sourceId));
 	}
 	
 	// IProgressMonitor methods

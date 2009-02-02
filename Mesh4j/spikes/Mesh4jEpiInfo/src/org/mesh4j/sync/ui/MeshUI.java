@@ -38,12 +38,15 @@ import org.mesh4j.sync.adapters.msaccess.MsAccessHelper;
 import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
 import org.mesh4j.sync.mappings.SyncMode;
 import org.mesh4j.sync.message.IMessageSyncAware;
+import org.mesh4j.sync.message.IMessageSyncProtocol;
 import org.mesh4j.sync.message.MessageSyncEngine;
 import org.mesh4j.sync.message.channel.sms.SmsEndpoint;
 import org.mesh4j.sync.message.channel.sms.connection.ISmsConnectionInboundOutboundNotification;
 import org.mesh4j.sync.message.channel.sms.connection.smslib.Modem;
 import org.mesh4j.sync.message.channel.sms.connection.smslib.ModemHelper;
 import org.mesh4j.sync.message.encoding.IMessageEncoding;
+import org.mesh4j.sync.message.protocol.IItemEncoding;
+import org.mesh4j.sync.message.protocol.ItemEncoding;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.properties.PropertiesProvider;
 import org.mesh4j.sync.security.IIdentityProvider;
@@ -122,8 +125,6 @@ public class MeshUI{
 	private int senderDelay;
 	private int receiverDelay;
 	private int maxMessageLenght;
-	private int readDelay;
-	private int channelDelay;
 	private IMessageEncoding messageEncoding;
 	private String portName;
 	private int baudRate;
@@ -175,11 +176,9 @@ public class MeshUI{
 		PropertiesProvider propertiesProvider = new PropertiesProvider();
 		
 		this.baseDirectory = propertiesProvider.getBaseDirectory();
-		this.senderDelay = propertiesProvider.getInt("default.sms.sender.delay");
-		this.receiverDelay = propertiesProvider.getInt("default.sms.receiver.delay");
-		this.maxMessageLenght = propertiesProvider.getInt("default.sms.max.message.lenght");
-		this.readDelay = propertiesProvider.getInt("default.sms.demo.read.delay");
-		this.channelDelay = propertiesProvider.getInt("default.sms.demo.channel.delay");
+		this.senderDelay = propertiesProvider.getDefaultSendRetryDelay();
+		this.receiverDelay = propertiesProvider.getDefaultReceiveRetryDelay();
+		this.maxMessageLenght = propertiesProvider.getDefaultMaxMessageLenght();
 		this.identityProvider = propertiesProvider.getIdentityProvider();
 		this.messageEncoding = propertiesProvider.getDefaultMessageEncoding();
 		this.portName = propertiesProvider.getDefaultPort();
@@ -192,16 +191,21 @@ public class MeshUI{
 		this.kmlTemplateNetworkLinkFileName = propertiesProvider.getDefaultKMLTemplateNetworkLinkFileName();
 		this.geoCoderKey = propertiesProvider.getGeoCoderKey();
 		this.sourceIdResolver = new SourceIdMapper(this.baseDirectory+ "/myDataSources.properties");
-		this.inDir = propertiesProvider.getString("emulate.sync.file.connection.in");
-		this.outDir = propertiesProvider.getString("emulate.sync.file.connection.out");
-		this.myEndpointId = propertiesProvider.getString("emulate.sync.file.connection.endpointId");
+		this.inDir = propertiesProvider.getEmulationInFolder();
+		this.outDir = propertiesProvider.getEmulationOutRootFolder();
+		this.myEndpointId = propertiesProvider.getEmulationEndpointId();
 	}
 	
 	protected void startUpSyncEngine() throws Exception {
 
+		IItemEncoding itemEncoding = new ItemEncoding(100);
+		//IItemEncoding itemEncoding = new ItemEncodingFixedBlock(100);
+
+		
 		if(modem != null && !modem.getManufacturer().equals(MeshUITranslator.getLabelDemo())){
+
 			this.syncEngine = SyncEngineUtil.createSyncEngine(this.sourceIdResolver, modem, baseDirectory, senderDelay, receiverDelay, maxMessageLenght,
-				identityProvider, messageEncoding, new ISmsConnectionInboundOutboundNotification[]{consoleNotification}, new IMessageSyncAware[]{consoleNotification}); 
+				identityProvider, itemEncoding, messageEncoding, new ISmsConnectionInboundOutboundNotification[]{consoleNotification}, new IMessageSyncAware[]{consoleNotification}); 
 			this.syncEngine.getChannel().startUp();
 		}
 				
@@ -209,11 +213,10 @@ public class MeshUI{
 			this.syncEngine = SyncEngineUtil.createSyncEngineEmulator(this.sourceIdResolver,
 					messageEncoding, 
 					identityProvider, 
+					itemEncoding,
 					baseDirectory+"/", 
 					senderDelay, 
 					receiverDelay, 
-					readDelay, 
-					channelDelay, 
 					maxMessageLenght,
 					new SmsEndpoint(MeshUITranslator.getLabelDemo()),
 					new ISmsConnectionInboundOutboundNotification[]{consoleNotification}, 
@@ -1066,5 +1069,9 @@ public class MeshUI{
 	public void setEndSync() {
 		this.syncInProcess = false;
 		this.enableAllButtons();		
+	}
+
+	public IMessageSyncProtocol getSyncProtocol() {
+		return this.syncEngine.getSyncProtocol();
 	}
 }

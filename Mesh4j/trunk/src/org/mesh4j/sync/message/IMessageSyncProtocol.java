@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.mesh4j.sync.message.core.IMessageProcessor;
+
 public interface IMessageSyncProtocol {
 
 	public static final List<IMessage> NO_RESPONSE = new ArrayList<IMessage>();
@@ -35,5 +37,7 @@ public interface IMessageSyncProtocol {
 	List<ISyncSession> getAllSyncSessions();
 
 	void removeSourceId(String sourceId);
+
+	IMessageProcessor getMessageProcessor(String messageType);
 
 }

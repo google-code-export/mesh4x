@@ -150,10 +150,10 @@ public class ACKMergeMessageProcessor implements IMessageProcessor {
 		return Integer.valueOf(st.nextToken());
 	}
 
-	public static String getSyncID(String data) {
+	public String getSyncID(String data) {
 		String ackData = getData(data);
 		String itemData = ackData.substring(1, ackData.length());
-		return ItemEncoding.getSyncID(itemData);
+		return this.itemEncoding.getSyncID(itemData);
 	}
 	
 }

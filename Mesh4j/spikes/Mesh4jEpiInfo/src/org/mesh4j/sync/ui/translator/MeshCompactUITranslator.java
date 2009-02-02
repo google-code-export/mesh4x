@@ -3,7 +3,6 @@ package org.mesh4j.sync.ui.translator;
 import java.text.DateFormat;
 import java.util.Date;
 
-import org.mesh4j.sync.security.LoggedInIdentityProvider;
 import org.mesh4j.sync.translator.MessageTranslator;
 
 public class MeshCompactUITranslator {
@@ -195,8 +194,8 @@ public class MeshCompactUITranslator {
 		return MessageTranslator.translate("MESH_COMPACT_LABEL_OPEN_CONFIGURATION_WINDOW");
 	}
 
-	public static String getMessageWelcome() {
-		return MessageTranslator.translate("MESH_COMPACT_MESSAGE_WELCOME", LoggedInIdentityProvider.getUserName());
+	public static String getMessageWelcome(String userName) {
+		return MessageTranslator.translate("MESH_COMPACT_MESSAGE_WELCOME", userName);
 	}
 
 	public static String getLabelSendAndReceiveChanges() {
@@ -512,8 +511,8 @@ public class MeshCompactUITranslator {
 		return MessageTranslator.translate("MESH_COMPACT_MAPS_WINDOW_TITLE");
 	}
 
-	public static String getMapsWindowMessageWelcome() {
-		return MessageTranslator.translate("MESH_COMPACT_MAPS_WINDOW_MESSAGE_WELCOME", LoggedInIdentityProvider.getUserName());
+	public static String getMapsWindowMessageWelcome(String userName) {
+		return MessageTranslator.translate("MESH_COMPACT_MAPS_WINDOW_MESSAGE_WELCOME", userName);
 	}
 
 	public static String getMapsWindowToolTipCreateMap() {

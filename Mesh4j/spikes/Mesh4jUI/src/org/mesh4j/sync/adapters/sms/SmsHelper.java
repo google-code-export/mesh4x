@@ -28,6 +28,8 @@ import org.mesh4j.sync.message.core.repository.ISourceIdMapper;
 import org.mesh4j.sync.message.core.repository.MessageSyncAdapterFactory;
 import org.mesh4j.sync.message.core.repository.OpaqueFeedSyncAdapterFactory;
 import org.mesh4j.sync.message.encoding.IMessageEncoding;
+import org.mesh4j.sync.message.protocol.IItemEncoding;
+import org.mesh4j.sync.message.protocol.ItemEncoding;
 import org.mesh4j.sync.message.protocol.MessageSyncProtocolFactory;
 import org.mesh4j.sync.properties.PropertiesProvider;
 import org.mesh4j.sync.security.IIdentityProvider;
@@ -104,7 +106,11 @@ public class SmsHelper {
 		IFilter<String> protocolFilter = MessageSyncProtocolFactory.getProtocolMessageFilter();
 		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(sourceIdMapper, feedSyncAdapterFactory, false, kmlSyncAdapterFactory);		
 		IChannel channel = SmsChannelFactory.createChannelWithFileRepository(smsConnection, senderDelay, receiverDelay, repositoryBaseDirectory, protocolFilter);
-		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocolWithFileRepository(100, repositoryBaseDirectory, channel, identityProvider, new IMessageSyncAware[]{syncAware}, SmsEndpointFactory.INSTANCE, syncAdapterFactory);		
+		
+		IItemEncoding itemEncoding = new ItemEncoding(100);
+		//IItemEncoding itemEncoding = new ItemEncodingFixedBlock(100);
+
+		IMessageSyncProtocol syncProtocol = MessageSyncProtocolFactory.createSyncProtocolWithFileRepository(itemEncoding, repositoryBaseDirectory, channel, identityProvider, new IMessageSyncAware[]{syncAware}, SmsEndpointFactory.INSTANCE, syncAdapterFactory);		
 		return new MessageSyncEngine(syncProtocol, channel);		
 	}
 

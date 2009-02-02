@@ -32,6 +32,7 @@ import org.mesh4j.sync.mappings.EndpointMapping;
 import org.mesh4j.sync.mappings.MSAccessDataSourceMapping;
 import org.mesh4j.sync.mappings.SyncMode;
 import org.mesh4j.sync.message.IMessageSyncAware;
+import org.mesh4j.sync.message.IMessageSyncProtocol;
 import org.mesh4j.sync.message.ISyncSession;
 import org.mesh4j.sync.message.MessageSyncEngine;
 import org.mesh4j.sync.message.channel.sms.connection.ISmsConnectionInboundOutboundNotification;
@@ -213,7 +214,7 @@ public class MeshCompactUI implements ISyncSessionViewOwner{
 			this.syncSessionsFrame.initialize(this.syncEngine);
 		}
 		
-		String msg = MeshCompactUITranslator.getMessageWelcome();
+		String msg = MeshCompactUITranslator.getMessageWelcome(this.propertiesProvider.getLoggedUserName());
 		this.syncSessionView.setReady(msg);
 		
 		fullEnableAllButtons();
@@ -338,7 +339,12 @@ public class MeshCompactUI implements ISyncSessionViewOwner{
 				RowSpec.decode("17dlu"),
 				RowSpec.decode("26dlu")}));
 		frame.setResizable(false);
-		frame.setTitle(MeshUITranslator.getTitle());
+		
+		if(this.propertiesProvider.isEmulationModeActive()){
+			frame.setTitle(MeshUITranslator.getTitleEmulationMode(this.propertiesProvider.getEmulationEndpointId()));
+		} else {
+			frame.setTitle(MeshUITranslator.getTitle());
+		}
 		frame.setBounds(100, 100, 590, 516);
 		frame.getContentPane().add(getPanelSync(), new CellConstraints(2, 2));
 
@@ -403,7 +409,7 @@ public class MeshCompactUI implements ISyncSessionViewOwner{
 		};	
 		buttonOpenSyncWindow.addActionListener(openSyncWindowActionListener);
 		
-		buttonOpenSyncWindow.setEnabled(this.propertiesProvider.getBoolean("mesh4x.sync.web.enabled"));
+		buttonOpenSyncWindow.setEnabled(this.propertiesProvider.isSyncCloudEnabled());
 		
 		panelStatusButtons.add(buttonOpenSyncWindow, new CellConstraints(7, 1, CellConstraints.LEFT, CellConstraints.FILL));
 
@@ -915,4 +921,7 @@ public class MeshCompactUI implements ISyncSessionViewOwner{
 		return this.syncCloudFrame;
 	}
 
+	public IMessageSyncProtocol getSyncProtocol() {
+		return this.syncEngine.getSyncProtocol();
+	}
 }

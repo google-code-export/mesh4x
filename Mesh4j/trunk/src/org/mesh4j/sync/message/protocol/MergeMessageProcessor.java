@@ -72,4 +72,8 @@ public class MergeMessageProcessor implements IMessageProcessor {
 		}
 		return IMessageSyncProtocol.NO_RESPONSE;
 	}
+
+	public String getSyncID(String data) {
+		return this.itemEncoding.getSyncID(data);
+	}
 }

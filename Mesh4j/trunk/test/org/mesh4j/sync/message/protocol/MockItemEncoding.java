@@ -34,4 +34,9 @@ public class MockItemEncoding implements IItemEncoding {
 		return diffHashCodes.length == 0 ? "1" : "2";
 	}
 
+	@Override
+	public String getSyncID(String data) {
+		return item.getSyncId();
+	}
+
 }

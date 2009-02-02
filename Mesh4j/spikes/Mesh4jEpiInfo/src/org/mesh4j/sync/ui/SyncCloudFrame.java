@@ -185,7 +185,7 @@ public class SyncCloudFrame extends JFrame{
 		textAreaStatus.setWrapStyleWord(true);
 		textAreaStatus.setOpaque(true);
 		textAreaStatus.setEditable(false);
-		textAreaStatus.setText(MeshCompactUITranslator.getMessageWelcome());
+		textAreaStatus.setText(MeshCompactUITranslator.getMessageWelcome(this.propertiesProvider.getLoggedUserName()));
 
 		panelStatus.add(textAreaStatus, new CellConstraints(1, 1, CellConstraints.FILL, CellConstraints.FILL));
 		panelStatus.add(getImageStatus(), new CellConstraints(3, 1, CellConstraints.FILL, CellConstraints.FILL));
