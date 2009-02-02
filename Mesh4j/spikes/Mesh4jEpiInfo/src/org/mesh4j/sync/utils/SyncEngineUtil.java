@@ -4,10 +4,7 @@ import java.io.File;
 import java.text.MessageFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.TimeZone;
-import java.util.TreeSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,7 +29,6 @@ import org.mesh4j.sync.adapters.kml.exporter.KMLExporter;
 import org.mesh4j.sync.adapters.kml.timespan.decorator.IKMLGeneratorFactory;
 import org.mesh4j.sync.adapters.kml.timespan.decorator.KMLTimeSpanDecoratorSyncAdapter;
 import org.mesh4j.sync.adapters.kml.timespan.decorator.KMLTimeSpanDecoratorSyncAdapterFactory;
-import org.mesh4j.sync.adapters.msaccess.MsAccessHelper;
 import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
 import org.mesh4j.sync.filter.CompoundFilter;
 import org.mesh4j.sync.filter.NonDeletedFilter;
@@ -388,106 +384,6 @@ public class SyncEngineUtil {
 
 	public static void sendSms(MessageSyncEngine syncEngine, String endpoint, String message) {
 		((SmsChannel)syncEngine.getChannel()).send(new SmsMessage(message), new SmsEndpoint(endpoint));
-	}
-
-
-	public static Set<String> getTableNames(String fileName) {
-		try{
-			Set<String> tableNames = MsAccessHelper.getTableNames(fileName);
-			return tableNames;
-		}catch (Exception e) {
-			Logger.error(e.getMessage(), e);
-			return new TreeSet<String>();
-		}
-	}
-	
-	public static EndpointMapping[] getEndpointMappings(PropertiesProvider propertiesProvider) {
-		String baseDirectory = propertiesProvider.getBaseDirectory();
-		String fileName = baseDirectory+"/myEndpoints.properties";
-		Map<String, String> myEndpoints = PropertiesUtils.getProperties(fileName);
-		EndpointMapping[] result = new EndpointMapping[myEndpoints.size()];
-		int i = 0;
-		for (String alias : myEndpoints.keySet()) {
-			result[i] = new EndpointMapping(alias, myEndpoints.get(alias));
-			i = i + 1;
-		}
-		return result;
-	}
-	
-	public static EndpointMapping getEndpointMapping(String endpointId, PropertiesProvider propertiesProvider) {
-		String baseDirectory = propertiesProvider.getBaseDirectory();
-		String fileName = baseDirectory+"/myEndpoints.properties";
-		Map<String, String> myEndpoints = PropertiesUtils.getProperties(fileName);
-		for (String alias : myEndpoints.keySet()) {
-			if(endpointId.equals(myEndpoints.get(alias))){
-				return new EndpointMapping(alias, endpointId);
-			}
-		}
-		return null;
-	}
-	
-	public static EndpointMapping getEndpointMappingByAlias(String endpointAlias, PropertiesProvider propertiesProvider) {
-		String baseDirectory = propertiesProvider.getBaseDirectory();
-		String fileName = baseDirectory+"/myEndpoints.properties";
-		Map<String, String> myEndpoints = PropertiesUtils.getProperties(fileName);
-		for (String alias : myEndpoints.keySet()) {
-			if(endpointAlias.equals(alias)){
-				return new EndpointMapping(alias, myEndpoints.get(alias));
-			}
-		}
-		return null;
-	}
-	
-	public static void deleteEndpointMapping(EndpointMapping endpoint, PropertiesProvider propertiesProvider) {
-		String baseDirectory = propertiesProvider.getBaseDirectory();
-		String fileName = baseDirectory+"/myEndpoints.properties";
-		
-		Map<String, String> myEndpoints = PropertiesUtils.getProperties(fileName);
-		String result = myEndpoints.remove(endpoint.getAlias());
-		if(result != null){
-			PropertiesUtils.store(fileName, myEndpoints);
-		}		
-	}
-	
-	public static void saveOrUpdateEndpointMapping(String alias, EndpointMapping endpoint, PropertiesProvider propertiesProvider) {
-		String baseDirectory = propertiesProvider.getBaseDirectory();
-		String fileName = baseDirectory+"/myEndpoints.properties";
-		
-		Map<String, String> myEndpoints = PropertiesUtils.getProperties(fileName);
-		myEndpoints.remove(alias);
-		
-		myEndpoints.put(endpoint.getAlias(), endpoint.getEndpoint());
-		PropertiesUtils.store(fileName, myEndpoints);		
-		
-	}
-	
-	public static EndpointMapping createNewEndpointMappingIfAbsent(String alias, String endpointId, PropertiesProvider propertiesProvider){
-		EndpointMapping endpoint = null;
-		try{
-			endpoint = SyncEngineUtil.getEndpointMapping(endpointId, propertiesProvider);
-			if(endpoint == null){
-				
-				endpoint = SyncEngineUtil.getEndpointMappingByAlias(alias, propertiesProvider);
-				
-				String aliasToAdd = alias;
-				int i = 0;
-				while(endpoint != null){
-					i = i +1;
-					aliasToAdd = alias + "_" + i;
-					endpoint = SyncEngineUtil.getEndpointMappingByAlias(aliasToAdd, propertiesProvider);
-				}
-				
-				endpoint = new EndpointMapping(aliasToAdd, endpointId);
-				SyncEngineUtil.saveOrUpdateEndpointMapping(endpointId, endpoint, propertiesProvider);
-				return endpoint;
-				
-			} else {
-				return null;
-			}
-		} catch(Throwable e){
-			Logger.error(e.getMessage(), e);
-			return null;
-		}
 	}
 
 	public static void initializeSmsConnection(MessageSyncEngine syncEngine, PropertiesProvider propertiesProvider) {

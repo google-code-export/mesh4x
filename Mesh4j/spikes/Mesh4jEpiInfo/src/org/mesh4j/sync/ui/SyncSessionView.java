@@ -29,8 +29,8 @@ import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.properties.PropertiesProvider;
 import org.mesh4j.sync.ui.translator.MeshCompactUITranslator;
 import org.mesh4j.sync.ui.utils.IconManager;
+import org.mesh4j.sync.utils.EndpointProvider;
 import org.mesh4j.sync.utils.SourceIdMapper;
-import org.mesh4j.sync.utils.SyncEngineUtil;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -459,7 +459,7 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 	}
 
 	private EndpointMapping verifyNewEndpointMapping(String endpointId) {
-		EndpointMapping endpointMapping = SyncEngineUtil.createNewEndpointMappingIfAbsent(endpointId, endpointId, this.propertiesProvider);
+		EndpointMapping endpointMapping = EndpointProvider.createNewEndpointMappingIfAbsent(endpointId, endpointId, this.propertiesProvider);
 		if(endpointMapping != null){
 			this.owner.notifyNewEndpointMapping(endpointMapping);
 		}
@@ -593,7 +593,7 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 	public void notifyReceiveMessageError(String endpointId, String message, Date date) {
 		if(this.syncSession != null && this.syncSession.getTarget().getEndpointId().equals(endpointId)){
 			this.updateInOut();
-			EndpointMapping endpointMapping = SyncEngineUtil.getEndpointMapping(endpointId, this.propertiesProvider);
+			EndpointMapping endpointMapping = EndpointProvider.getEndpointMapping(endpointId, this.propertiesProvider);
 			String error = MeshCompactUITranslator.getMessageNotifyReceiveMessageError(
 				endpointMapping == null ? endpointId : endpointMapping.getAlias(), 
 				message);
@@ -613,7 +613,7 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 		if(this.syncSession != null && this.syncSession.getTarget().getEndpointId().equals(endpointId)){
 			this.updateInOut();
 		
-			EndpointMapping endpointMapping = SyncEngineUtil.getEndpointMapping(endpointId, this.propertiesProvider);
+			EndpointMapping endpointMapping = EndpointProvider.getEndpointMapping(endpointId, this.propertiesProvider);
 			String error = MeshCompactUITranslator.getMessageNotifySendMessageError(
 				endpointMapping == null ? endpointId : endpointMapping.getAlias(), 
 				message);

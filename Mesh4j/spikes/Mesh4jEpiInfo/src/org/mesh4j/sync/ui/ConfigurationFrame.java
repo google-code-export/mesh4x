@@ -37,6 +37,8 @@ import org.mesh4j.sync.ui.tasks.ChangeDeviceTask;
 import org.mesh4j.sync.ui.translator.MeshCompactUITranslator;
 import org.mesh4j.sync.ui.translator.MeshUITranslator;
 import org.mesh4j.sync.ui.utils.IconManager;
+import org.mesh4j.sync.utils.EndpointProvider;
+import org.mesh4j.sync.utils.SourceIdMapper;
 import org.mesh4j.sync.utils.SyncEngineUtil;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -141,7 +143,7 @@ public class ConfigurationFrame extends JFrame {
 					if (index == -1) {	// save
 						
 						EndpointMapping endpoint = new EndpointMapping(alias, endpointNumber);
-						SyncEngineUtil.saveOrUpdateEndpointMapping(alias, endpoint, owner.getPropertiesProvider());
+						EndpointProvider.saveOrUpdateEndpointMapping(alias, endpoint, owner.getPropertiesProvider());
 						
 						DefaultListModel listModel = (DefaultListModel)listContacts.getModel();
 						listModel.addElement(endpoint);
@@ -153,7 +155,7 @@ public class ConfigurationFrame extends JFrame {
 						endpoint.setAlias(alias);
 						endpoint.setEndpoint(endpointNumber);
 						
-						SyncEngineUtil.saveOrUpdateEndpointMapping(oldAlias, endpoint, owner.getPropertiesProvider());		
+						EndpointProvider.saveOrUpdateEndpointMapping(oldAlias, endpoint, owner.getPropertiesProvider());		
 						
 					}	
 					listContacts.setSelectedIndex(-1);
@@ -178,7 +180,7 @@ public class ConfigurationFrame extends JFrame {
 				int index = listContacts.getSelectedIndex();
 				if (index != -1) {
 					EndpointMapping endpoint = (EndpointMapping) listContacts.getSelectedValue();
-					SyncEngineUtil.deleteEndpointMapping(endpoint, owner.getPropertiesProvider());				
+					EndpointProvider.deleteEndpointMapping(endpoint, owner.getPropertiesProvider());				
 					
 					DefaultListModel listModel = (DefaultListModel)listContacts.getModel();
 					listModel.remove(index);
@@ -202,7 +204,7 @@ public class ConfigurationFrame extends JFrame {
 		buttonDeleteContact.addActionListener(deleteContactActionListener);
 		buttonDeleteContact.setToolTipText(MeshCompactUITranslator.getToolTipDelete());
 		
-		EndpointMapping[] endpoints = SyncEngineUtil.getEndpointMappings(owner.getPropertiesProvider());
+		EndpointMapping[] endpoints = EndpointProvider.getEndpointMappings(owner.getPropertiesProvider());
 		for (int i = 0; i < endpoints.length; i++) {
 			listModelContacts.addElement(endpoints[i]);			
 		}
@@ -382,7 +384,7 @@ public class ConfigurationFrame extends JFrame {
 				if(selectedFileName != null){
 					textFieldDataSourceFileName.setText(selectedFileName);
 					textFieldDataSourceFileName.setToolTipText(selectedFileName);
-					Set<String> tableNames = SyncEngineUtil.getTableNames(selectedFileName);
+					Set<String> tableNames = SourceIdMapper.getTableNames(selectedFileName);
 					ComboBoxModel tableNameModel = new DefaultComboBoxModel(tableNames.toArray());
 					comboBoxTableName.setModel(tableNameModel);
 				}
@@ -413,7 +415,7 @@ public class ConfigurationFrame extends JFrame {
 			        	textFieldDataSourceFileName.setText(dataSourceMapping.getFileName());
 			        	textFieldDataSourceFileName.setToolTipText(dataSourceMapping.getFileName());
 			        	
-						Set<String> tableNames = SyncEngineUtil.getTableNames(dataSourceMapping.getFileName());
+						Set<String> tableNames = SourceIdMapper.getTableNames(dataSourceMapping.getFileName());
 						ComboBoxModel tableNameModel = new DefaultComboBoxModel(tableNames.toArray());
 						tableNameModel.setSelectedItem(dataSourceMapping.getTableName());						
 						comboBoxTableName.setModel(tableNameModel);

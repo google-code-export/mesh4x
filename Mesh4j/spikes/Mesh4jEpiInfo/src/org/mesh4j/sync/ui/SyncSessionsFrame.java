@@ -38,6 +38,7 @@ import org.mesh4j.sync.properties.PropertiesProvider;
 import org.mesh4j.sync.ui.tasks.OpenFileTask;
 import org.mesh4j.sync.ui.translator.MeshCompactUITranslator;
 import org.mesh4j.sync.ui.utils.IconManager;
+import org.mesh4j.sync.utils.EndpointProvider;
 import org.mesh4j.sync.utils.SourceIdMapper;
 import org.mesh4j.sync.utils.SyncEngineUtil;
 
@@ -432,7 +433,7 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner, 
 		public String toString(){
 			StringBuffer sb = new StringBuffer();
 
-			EndpointMapping endpoint = SyncEngineUtil.getEndpointMapping(this.syncSession.getTarget().getEndpointId(), propertiesProvider);
+			EndpointMapping endpoint = EndpointProvider.getEndpointMapping(this.syncSession.getTarget().getEndpointId(), propertiesProvider);
 			if(endpoint == null){
 				sb.append(this.syncSession.getTarget().getEndpointId());
 			} else {

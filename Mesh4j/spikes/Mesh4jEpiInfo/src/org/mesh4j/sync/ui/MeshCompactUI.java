@@ -49,6 +49,7 @@ import org.mesh4j.sync.ui.translator.MeshCompactUITranslator;
 import org.mesh4j.sync.ui.translator.MeshUITranslator;
 import org.mesh4j.sync.ui.utils.IconManager;
 import org.mesh4j.sync.ui.utils.ProcessCustomMessages;
+import org.mesh4j.sync.utils.EndpointProvider;
 import org.mesh4j.sync.utils.SourceIdMapper;
 import org.mesh4j.sync.utils.SyncEngineUtil;
 
@@ -582,7 +583,7 @@ public class MeshCompactUI implements ISyncSessionViewOwner{
 		if (comboBoxEndpoint == null) {
 			comboBoxEndpoint = new JComboBox();
 			comboBoxEndpoint.setFont(new Font("Calibri", Font.PLAIN, 12));
-			comboBoxEndpoint.setModel(new DefaultComboBoxModel(SyncEngineUtil.getEndpointMappings(propertiesProvider)));
+			comboBoxEndpoint.setModel(new DefaultComboBoxModel(EndpointProvider.getEndpointMappings(propertiesProvider)));
 			comboBoxEndpoint.setToolTipText(MeshCompactUITranslator.getToolTipEndpoints());
 		}
 		return comboBoxEndpoint;
@@ -752,7 +753,7 @@ public class MeshCompactUI implements ISyncSessionViewOwner{
 	}
 
 	public void notifyEndpointMappingListsChanges() {
-		comboBoxEndpoint.setModel(new DefaultComboBoxModel(SyncEngineUtil.getEndpointMappings(propertiesProvider)));		
+		comboBoxEndpoint.setModel(new DefaultComboBoxModel(EndpointProvider.getEndpointMappings(propertiesProvider)));		
 	}
 
 	public void notifyDataSourceMappingDeleted(String alias) {
@@ -857,7 +858,7 @@ public class MeshCompactUI implements ISyncSessionViewOwner{
 
 	@Override
 	public void notifyNotAvailableDataSource(String dataSourceAlias, String dataSourceDescription, String endpointId) {
-		EndpointMapping endpointMapping = SyncEngineUtil.getEndpointMapping(endpointId, this.propertiesProvider);
+		EndpointMapping endpointMapping = EndpointProvider.getEndpointMapping(endpointId, this.propertiesProvider);
 		String logText = MeshCompactUITranslator.getMessageNotAvailableDataSource(
 			dataSourceAlias, 
 			dataSourceDescription, 
@@ -866,7 +867,7 @@ public class MeshCompactUI implements ISyncSessionViewOwner{
 	}
 	
 	public void notifyReadyToSyncAnswerSent(String dataSourceAlias, String endpointId) {
-		EndpointMapping endpointMapping = SyncEngineUtil.getEndpointMapping(endpointId, this.propertiesProvider);
+		EndpointMapping endpointMapping = EndpointProvider.getEndpointMapping(endpointId, this.propertiesProvider);
 		String logText = MeshCompactUITranslator.getMessageReadyToSyncAnswerSent(
 			dataSourceAlias, 
 			endpointMapping == null ? endpointId : endpointMapping.getAlias());

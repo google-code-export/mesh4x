@@ -7,7 +7,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
+import java.util.TreeSet;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.mesh4j.sync.adapters.msaccess.MsAccessHelper;
 import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
 import org.mesh4j.sync.mappings.DataSourceMapping;
 import org.mesh4j.sync.mappings.MSAccessDataSourceMapping;
@@ -17,6 +22,8 @@ import org.mesh4j.sync.validations.MeshException;
 
 public class SourceIdMapper implements ISourceIdMapper {
 
+	private final static Log Logger = LogFactory.getLog(SourceIdMapper.class);
+	
 	// MODEL VARIABLES
 	private String fileName;
 	private ArrayList<MSAccessDataSourceMapping> dataSourceMappings = new ArrayList<MSAccessDataSourceMapping>();
@@ -154,5 +161,15 @@ public class SourceIdMapper implements ISourceIdMapper {
 		if(dataSourceMapping != null){
 			this.deleteDataSourceMapping(dataSourceMapping);
 		}		
+	}
+	
+	public static Set<String> getTableNames(String fileName) {
+		try{
+			Set<String> tableNames = MsAccessHelper.getTableNames(fileName);
+			return tableNames;
+		}catch (Exception e) {
+			Logger.error(e.getMessage(), e);
+			return new TreeSet<String>();
+		}
 	}
 }

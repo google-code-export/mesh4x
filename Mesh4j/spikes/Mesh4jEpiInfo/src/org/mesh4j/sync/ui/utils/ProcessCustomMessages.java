@@ -19,7 +19,7 @@ import org.mesh4j.sync.ui.tasks.ReadyToSyncTask;
 import org.mesh4j.sync.ui.tasks.TestPhoneResponseTask;
 import org.mesh4j.sync.ui.tasks.TestPhoneTask;
 import org.mesh4j.sync.ui.translator.MeshCompactUITranslator;
-import org.mesh4j.sync.utils.SyncEngineUtil;
+import org.mesh4j.sync.utils.EndpointProvider;
 
 public class ProcessCustomMessages implements ISmsReceiver {
 	
@@ -68,7 +68,7 @@ public class ProcessCustomMessages implements ISmsReceiver {
 				responseTask.execute();
 				
 				String userName = ReadyToSyncTask.getQuestionUserName(message);
-				EndpointMapping endpointMapping = SyncEngineUtil.createNewEndpointMappingIfAbsent(userName, endpoint.getEndpointId(), this.ui.getPropertiesProvider());
+				EndpointMapping endpointMapping = EndpointProvider.createNewEndpointMappingIfAbsent(userName, endpoint.getEndpointId(), this.ui.getPropertiesProvider());
 				if(endpointMapping != null){
 					this.ui.notifyNewEndpointMapping(endpointMapping);
 				}
@@ -108,7 +108,7 @@ public class ProcessCustomMessages implements ISmsReceiver {
 						new TestPhoneResponseTask(this.ui, endpoint.getEndpointId(), message).execute();
 					
 						String userName = TestPhoneTask.getUserName(message);
-						EndpointMapping endpointMapping = SyncEngineUtil.createNewEndpointMappingIfAbsent(userName, endpoint.getEndpointId(), this.ui.getPropertiesProvider());
+						EndpointMapping endpointMapping = EndpointProvider.createNewEndpointMappingIfAbsent(userName, endpoint.getEndpointId(), this.ui.getPropertiesProvider());
 						if(endpointMapping != null){
 							this.ui.notifyNewEndpointMapping(endpointMapping);
 						}
