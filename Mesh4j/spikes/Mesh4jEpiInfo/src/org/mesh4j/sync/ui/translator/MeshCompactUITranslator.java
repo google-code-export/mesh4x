@@ -242,6 +242,14 @@ public class MeshCompactUITranslator {
 		return MessageTranslator.translate("MESH_COMPACT_MESSAGE_EDIT_CONTACT_REQUIRED_FIELDS");
 	}
 
+	public static String getMessageEditContactOk() {
+		return MessageTranslator.translate("MESH_COMPACT_MESSAGE_EDIT_CONTACT_OK");	
+	}
+
+	public static String getMessageEditDataSourceOk() {
+		return MessageTranslator.translate("MESH_COMPACT_MESSAGE_EDIT_DATA_SOURCE_OK");
+	}
+	
 	public static String getLabelSave() {
 		return MessageTranslator.translate("MESH_COMPACT_LABEL_SAVE");
 	}
@@ -588,4 +596,5 @@ public class MeshCompactUITranslator {
 	public static String getErrorInvalidMSAccessTable() {
 		return MeshUITranslator.getErrorInvalidMSAccessTable();
 	}
+
 }

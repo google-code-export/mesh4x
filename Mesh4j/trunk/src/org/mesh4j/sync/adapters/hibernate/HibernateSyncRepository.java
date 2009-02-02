@@ -35,7 +35,7 @@ public class HibernateSyncRepository implements ISyncRepository{
 	public HibernateSyncRepository(IHibernateSessionFactoryBuilder sessionFactoryBuilder, SyncInfoParser syncInfoParser) {
 		super();
 		this.syncInfoParser = syncInfoParser;
-		this.sessionFactory = sessionFactoryBuilder.buildSessionFactory();
+		initializeSessionFactory(sessionFactoryBuilder);
 	}
 	
 	public SyncInfo get(String syncId) {
@@ -127,5 +127,14 @@ public class HibernateSyncRepository implements ISyncRepository{
 	public String getEntityName() {
 		return SYNC_INFO;
 	}
+	
+	public void initializeSessionFactory(IHibernateSessionFactoryBuilder sessionFactoryBuilder) {
+		if(this.sessionFactory != null){
+			this.sessionFactory.close();
+		}
+		
+		this.sessionFactory = sessionFactoryBuilder.buildSessionFactory();
+	}
+
 
 }

@@ -30,6 +30,10 @@ public class HibernateContentAdapter implements IContentAdapter {
 	}
 
 	public void initializeSessionFactory(IHibernateSessionFactoryBuilder sessionFactoryBuilder, String entityName) {
+		if(this.sessionFactory != null){
+			this.sessionFactory.close();
+		}
+		
 		this.sessionFactory = sessionFactoryBuilder.buildSessionFactory();
 		
 		ClassMetadata classMetadata = this.getClassMetadata(entityName);

@@ -164,6 +164,12 @@ public class ConfigurationFrame extends JFrame {
 					listContacts.setSelectedIndex(-1);
 					listContacts.repaint();
 					owner.notifyEndpointMappingListsChanges();
+					
+					JOptionPane.showMessageDialog(
+							ConfigurationFrame.this,
+							MeshCompactUITranslator.getMessageEditContactOk(),
+							MeshCompactUITranslator.getTitle(),
+							JOptionPane.OK_OPTION);
 				}
 			}
 		};		
@@ -337,14 +343,23 @@ public class ConfigurationFrame extends JFrame {
 						String sourceId = oldDataSourceMapping.getAlias();
 						String newSourceDefinition = owner.getSourceIdMapper().getSourceDefinition(oldDataSourceMapping.getAlias());
 						MessageSyncAdapter msgSyncAdapter = (MessageSyncAdapter)owner.getSyncEngine().getSource(sourceId);
-						MsAccessSyncAdapterFactory msAccessSyncAdapterFactory = (MsAccessSyncAdapterFactory) msgSyncAdapter.getSyncAdapterFactory();
-						msAccessSyncAdapterFactory.changeSourceDefinition(sourceId, newSourceDefinition, msgSyncAdapter.getSyncAdapter());	
+						if(msgSyncAdapter != null){
+							MsAccessSyncAdapterFactory msAccessSyncAdapterFactory = (MsAccessSyncAdapterFactory) msgSyncAdapter.getSyncAdapterFactory();
+							msAccessSyncAdapterFactory.changeSourceDefinition(sourceId, newSourceDefinition, msgSyncAdapter.getSyncAdapter());
+						}
 //********************************************************************************************************************
+						
 					}	
 					listDataSources.setSelectedIndex(-1);
 					listDataSources.repaint();
 					
 					owner.notifyDataSourceMappingListsChanges();
+
+					JOptionPane.showMessageDialog(
+							ConfigurationFrame.this,
+							MeshCompactUITranslator.getMessageEditDataSourceOk(),
+							MeshCompactUITranslator.getTitle(),
+							JOptionPane.OK_OPTION);
 				}
 			}
 		};	

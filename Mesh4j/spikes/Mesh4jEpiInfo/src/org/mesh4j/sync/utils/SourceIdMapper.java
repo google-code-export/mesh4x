@@ -57,7 +57,11 @@ public class SourceIdMapper implements ISourceIdMapper {
 		return result;
 	}
 	public boolean isDataSourceAvailable(String alias) {
-		return getDataSource(alias) != null;
+		MSAccessDataSourceMapping dataSource = getDataSource(alias);
+		if(dataSource == null || !MsAccessSyncAdapterFactory.isValidAccessTable(dataSource.getFileName(), dataSource.getTableName())){
+			return false;
+		}
+		return true;
 	}
 
 	public void saveDataSourceMapping(MSAccessDataSourceMapping dataSourceMapping) {

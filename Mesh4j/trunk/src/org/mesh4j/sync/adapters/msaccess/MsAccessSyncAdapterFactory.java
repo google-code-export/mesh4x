@@ -138,7 +138,6 @@ public class MsAccessSyncAdapterFactory implements ISyncAdapterFactory {
 	// TODO (JMT) Adapter should be supports dynamic source definition changes
 	public void changeSourceDefinition(String sourceAlias, String sourceDefinition, ISyncAdapter syncAdapter) {
 		SplitAdapter splitAdapter = (SplitAdapter) syncAdapter;
-		HibernateContentAdapter contentAdapter = (HibernateContentAdapter) splitAdapter.getContentAdapter();
 		
 		String mdbFileName = getFileName(sourceDefinition);
 		String tableName = getTableName(sourceDefinition);
@@ -150,6 +149,11 @@ public class MsAccessSyncAdapterFactory implements ISyncAdapterFactory {
 		String dbURL = "jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=" + mdbFileName.trim() + ";DriverID=22;READONLY=false}"; 
 		
 		IHibernateSessionFactoryBuilder builder = createHibernateSessionBuilder(dbURL, tableName, user, password, contentMappingFileName, syncMappingFileName);
+		
+		HibernateContentAdapter contentAdapter = (HibernateContentAdapter) splitAdapter.getContentAdapter();
 		contentAdapter.initializeSessionFactory(builder, tableName);
+		
+		HibernateSyncRepository syncRepo = (HibernateSyncRepository) splitAdapter.getSyncRepository();
+		syncRepo.initializeSessionFactory(builder);
 	}
 }

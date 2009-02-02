@@ -4,10 +4,12 @@ import java.awt.Cursor;
 
 import javax.swing.SwingWorker;
 
-import org.mesh4j.sync.mappings.DataSourceMapping;
+import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
 import org.mesh4j.sync.mappings.EndpointMapping;
+import org.mesh4j.sync.mappings.MSAccessDataSourceMapping;
 import org.mesh4j.sync.mappings.SyncMode;
 import org.mesh4j.sync.ui.MeshCompactUI;
+import org.mesh4j.sync.ui.translator.MeshCompactUITranslator;
 import org.mesh4j.sync.utils.SyncEngineUtil;
 
 public class SynchronizeTask extends SwingWorker<Void, Void> {
@@ -26,7 +28,12 @@ public class SynchronizeTask extends SwingWorker<Void, Void> {
 		ui.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 		
 		try{
-			DataSourceMapping dataSource = (DataSourceMapping)ui.getComboBoxMappingDataSource().getSelectedItem();
+			MSAccessDataSourceMapping dataSource = (MSAccessDataSourceMapping)ui.getComboBoxMappingDataSource().getSelectedItem();
+			if(dataSource == null || !MsAccessSyncAdapterFactory.isValidAccessTable(dataSource.getFileName(), dataSource.getTableName())){
+    			ui.getSyncSessionView().setError(MeshCompactUITranslator.getErrorInvalidMSAccessTable());
+				return null;
+			}
+			
 			EndpointMapping endpoint = (EndpointMapping)ui.getComboBoxEndpoint().getSelectedItem();
 			SyncMode syncMode = (SyncMode)ui.getComboBoxSyncMode().getSelectedItem();
 			
