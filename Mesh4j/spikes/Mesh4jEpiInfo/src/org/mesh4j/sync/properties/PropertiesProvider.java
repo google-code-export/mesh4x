@@ -233,15 +233,17 @@ public class PropertiesProvider {
 	}
 
 	public String getEmulationInFolder() {
-		return getString("emulate.sync.file.connection.in");
+		return getBaseDirectory()+"\\in";
 	}
 
 	public String getEmulationOutRootFolder() {
-		return getString("emulate.sync.file.connection.out");
+		File file = new File(getBaseDirectory());
+		return file.getParent();
 	}
 
 	public String getEmulationEndpointId() {
-		return getString("emulate.sync.file.connection.endpointId");
+		File file = new File(getBaseDirectory());
+		return file.getName();
 	}
 
 	public String getLoggedUserName() {
