@@ -149,8 +149,8 @@ public class SyncSessionView extends JPanel implements ISmsConnectionInboundOutb
 			imageInOut.setIcon(IconManager.getInOutIcon());
 			imageInOut.setText("");
 			panelInOut.add(imageInOut, new CellConstraints(1, 1, 1, 2, CellConstraints.RIGHT, CellConstraints.DEFAULT));
-			panelInOut.add(getLabelIn(), new CellConstraints(2, 1, CellConstraints.LEFT, CellConstraints.BOTTOM));
-			panelInOut.add(getLabelOut(), new CellConstraints(2, 2, CellConstraints.LEFT, CellConstraints.DEFAULT));
+			panelInOut.add(getLabelOut(), new CellConstraints(2, 1, CellConstraints.LEFT, CellConstraints.BOTTOM));
+			panelInOut.add(getLabelIn(), new CellConstraints(2, 2, CellConstraints.LEFT, CellConstraints.DEFAULT));
 			panelInOut.add(getImageStatus(), new CellConstraints(4, 1, 1, 2, CellConstraints.CENTER, CellConstraints.CENTER));
 	
 			imageLocalNew = new JLabel();

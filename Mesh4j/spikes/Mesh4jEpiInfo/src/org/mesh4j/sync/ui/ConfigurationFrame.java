@@ -169,7 +169,7 @@ public class ConfigurationFrame extends JFrame {
 							ConfigurationFrame.this,
 							MeshCompactUITranslator.getMessageEditContactOk(),
 							MeshCompactUITranslator.getTitle(),
-							JOptionPane.OK_OPTION);
+							JOptionPane.INFORMATION_MESSAGE);
 				}
 			}
 		};		
@@ -359,7 +359,7 @@ public class ConfigurationFrame extends JFrame {
 							ConfigurationFrame.this,
 							MeshCompactUITranslator.getMessageEditDataSourceOk(),
 							MeshCompactUITranslator.getTitle(),
-							JOptionPane.OK_OPTION);
+							JOptionPane.INFORMATION_MESSAGE);
 				}
 			}
 		};	

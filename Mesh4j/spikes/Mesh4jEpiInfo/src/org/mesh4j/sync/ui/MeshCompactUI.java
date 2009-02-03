@@ -239,7 +239,7 @@ public class MeshCompactUI implements ISyncSessionViewOwner{
 			MeshCompactUITranslator.getMessageForPopUpPhoneNotConnected(),
 			MeshCompactUITranslator.getTitle(),
 			JOptionPane.YES_NO_OPTION,
-			JOptionPane.ERROR_MESSAGE,
+			JOptionPane.WARNING_MESSAGE,
 			null,     //do not use a custom Icon
 			options,  //the titles of buttons
 			options[0]); //default button title
