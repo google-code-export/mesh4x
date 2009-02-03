@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<kml xmlns="http://earth.google.com/kml/2.2">  
+  <Document> 
+    <name>a.kml</name>  
+    <visibility>0</visibility>  
+    <open>1</open>  
+      <Schema name="TrailHeadType" id="TrailHeadTypeId">     
+    	<SimpleField type="string" name="TrailHeadName">       
+      		<displayName><![CDATA[<b>Trail Head Name</b>]]></displayName>     
+    	</SimpleField>     
+    	<SimpleField type="double" name="TrailLength">       
+      		<displayName><![CDATA[<i>The length in miles</i>]]></displayName>     
+    	</SimpleField>     
+    	<SimpleField type="int" name="ElevationGain">       
+      		<displayName><![CDATA[<i>change in altitude</i>]]></displayName>     
+    	</SimpleField>   
+ 	</Schema> 
+	<ExtendedData xmlns:mesh4x="http://mesh4x.org/kml" xmlns:camp="http://campsites.com">
+      <camp:number>14</camp:number>
+      <camp:parkingSpaces>2</camp:parkingSpaces>
+      <camp:tentSites>4</camp:tentSites>
+      <SchemaData schemaUrl="#TrailHeadTypeId">        
+        <SimpleData name="TrailHeadName">Pi in the sky</SimpleData>         
+        <SimpleData name="TrailLength">3.14159</SimpleData>         
+        <SimpleData name="ElevationGain">10</SimpleData>       
+      </SchemaData>
+      <Data name="holeNumber">
+          <displayName><![CDATA[
+            <b>This is hole </b>
+          ]]></displayName>
+          <value>1</value>
+       </Data>
+      <mesh4x:sync version="1195092159"> 
+        <sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="1" updates="2" deleted="true" noconflicts="false">  
+          <sx:history sequence="1" when="2008-06-05T15:36:27Z" by="vcc-PC_jtondato"/> 
+        </sx:sync> 
+      </mesh4x:sync>
+      <mesh4x:hierarchy xml:id="51b50ba9-b506-4d56-a5e8-64c94d368553" mesh4x:childId="1de94ff2-0904-4187-9cbe-21d29f9567cc"/>
+      <mesh4x:sync version="1195092159"> 
+        <sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="51b50ba9-b506-4d56-a5e8-64c94d368553" updates="2" deleted="false" noconflicts="false">  
+          <sx:history sequence="2" when="2008-06-05T15:36:27Z" by="vcc-PC_jtondato"/> 
+          <sx:history sequence="1" when="2008-06-05T15:36:27Z" by="vcc-PC_jtondato"/> 
+        </sx:sync> 
+      </mesh4x:sync>
+      <mesh4x:sync version="1141400559"> 
+        <sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="1de94ff2-0904-4187-9cbe-21d29f9567cc" updates="2" deleted="false" noconflicts="false">
+          <sx:history sequence="2" when="2008-06-05T15:36:27Z" by="vcc-PC_jtondato"/>  
+          <sx:history sequence="1" when="2008-06-05T15:36:27Z" by="vcc-PC_jtondato"/> 
+        </sx:sync> 
+      </mesh4x:sync>
+      <mesh4x:hierarchy xml:id="8e69052a-59d8-4831-a50a-5949ac636074" mesh4x:childId="c46ef253-d1dc-4d6d-984e-c74fe01492cd"/>
+      <mesh4x:sync version="-802708313"> 
+        <sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="8e69052a-59d8-4831-a50a-5949ac636074" updates="2" deleted="false" noconflicts="false">
+          <sx:history sequence="2" when="2008-06-05T15:36:27Z" by="vcc-PC_jtondato"/>          
+          <sx:history sequence="1" when="2008-06-05T15:36:27Z" by="vcc-PC_jtondato"/> 
+        </sx:sync> 
+      </mesh4x:sync>
+      <mesh4x:sync version="1561030817"> 
+        <sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="c46ef253-d1dc-4d6d-984e-c74fe01492cd" updates="2" deleted="false" noconflicts="false">
+          <sx:history sequence="2" when="2008-06-05T15:36:27Z" by="vcc-PC_jtondato"/>          
+          <sx:history sequence="1" when="2008-06-05T15:36:27Z" by="vcc-PC_jtondato"/> 
+        </sx:sync> 
+      </mesh4x:sync>
+      <mesh4x:hierarchy xml:id="7731dbf0-fa20-45a6-8af1-b2fabd2aa7a3" mesh4x:childId="65632af6-310b-4b75-afdc-125cc7547291"/>
+      <mesh4x:sync version="-1803829938"> 
+        <sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="7731dbf0-fa20-45a6-8af1-b2fabd2aa7a3" updates="2" deleted="false" noconflicts="false">
+          <sx:history sequence="2" when="2008-06-05T15:36:27Z" by="vcc-PC_jtondato"/>          
+          <sx:history sequence="1" when="2008-06-05T15:36:27Z" by="vcc-PC_jtondato"/> 
+        </sx:sync> 
+      </mesh4x:sync>
+      <mesh4x:sync version="1159865291"> 
+        <sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="65632af6-310b-4b75-afdc-125cc7547291" updates="2" deleted="false" noconflicts="false">
+          <sx:history sequence="2" when="2008-06-05T15:36:27Z" by="vcc-PC_jtondato"/>          
+          <sx:history sequence="1" when="2008-06-05T15:36:27Z" by="vcc-PC_jtondato"/> 
+        </sx:sync> 
+      </mesh4x:sync>
+      <mesh4x:hierarchy xml:id="3f4d9417-04ba-4dda-b99c-e9d659d0e79e" mesh4x:childId="bbc350b7-7c54-4bcd-93c1-bea7a3096ced"/>
+      <mesh4x:sync version="-805232500"> 
+        <sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="3f4d9417-04ba-4dda-b99c-e9d659d0e79e" updates="2" deleted="false" noconflicts="false">
+          <sx:history sequence="2" when="2008-06-05T15:36:27Z" by="vcc-PC_jtondato"/>          
+          <sx:history sequence="1" when="2008-06-05T15:36:27Z" by="vcc-PC_jtondato"/> 
+        </sx:sync> 
+      </mesh4x:sync>
+      <mesh4x:sync version="-714624882"> 
+        <sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="bbc350b7-7c54-4bcd-93c1-bea7a3096ced" updates="2" deleted="false" noconflicts="false">
+          <sx:history sequence="2" when="2008-06-05T15:36:27Z" by="vcc-PC_jtondato"/>          
+          <sx:history sequence="1" when="2008-06-05T15:36:27Z" by="vcc-PC_jtondato"/> 
+        </sx:sync> 
+      </mesh4x:sync>
+      <mesh4x:sync version="-1181378897"> 
+        <sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="1f4a5902-40ab-48a0-b2bd-6a2e5221a0dc" updates="2" deleted="false" noconflicts="false">
+          <sx:history sequence="2" when="2008-06-05T15:36:27Z" by="vcc-PC_jtondato"/>          
+          <sx:history sequence="1" when="2008-06-05T15:36:27Z" by="vcc-PC_jtondato"/> 
+        </sx:sync> 
+      </mesh4x:sync>
+      <mesh4x:sync version="-1603626751"> 
+        <sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="957a49f2-71ca-4837-8a94-273f4392060d" updates="1" deleted="false" noconflicts="false">  
+          <sx:history sequence="1" when="2008-06-05T15:36:27Z" by="vcc-PC_jtondato"/> 
+        </sx:sync> 
+      </mesh4x:sync>
+      <mesh4x:sync version="-459224364"> 
+        <sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="1ad777ff-1d49-4f76-98d8-fb15c95c4c72" updates="1" deleted="false" noconflicts="false">  
+          <sx:history sequence="1" when="2008-06-05T15:36:27Z" by="vcc-PC_jtondato"/> 
+        </sx:sync> 
+      </mesh4x:sync>
+      <mesh4x:sync version="1333652600"> 
+        <sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="0d5c9998-962b-410b-9f58-832f6983b64d" updates="1" deleted="false" noconflicts="false">  
+          <sx:history sequence="1" when="2008-06-05T15:36:27Z" by="vcc-PC_jtondato"/> 
+        </sx:sync> 
+      </mesh4x:sync>
+      <mesh4x:sync version="875624166"> 
+        <sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="b5e1030d-eb92-4633-a650-dd96fd5828c7" updates="1" deleted="false" noconflicts="false">  
+          <sx:history sequence="1" when="2008-06-05T15:36:27Z" by="vcc-PC_jtondato"/> 
+        </sx:sync> 
+      </mesh4x:sync>
+      <mesh4x:sync version="-1179042712"> 
+        <sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="6fca4ad1-2f5a-4fb6-ab76-c369d9955845" updates="1" deleted="false" noconflicts="false">  
+          <sx:history sequence="1" when="2008-06-05T15:36:27Z" by="vcc-PC_jtondato"/> 
+        </sx:sync> 
+      </mesh4x:sync>
+      <mesh4x:sync version="-528833703"> 
+        <sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="01810ce3-c069-4fac-9332-50f8ecbf7d91" updates="1" deleted="false" noconflicts="false">  
+          <sx:history sequence="1" when="2008-06-05T15:36:27Z" by="vcc-PC_jtondato"/> 
+        </sx:sync> 
+      </mesh4x:sync>
+      <mesh4x:sync version="-1114684736"> 
+        <sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="c544089d-bb8a-46b5-a585-78bbd8613841" updates="2" deleted="false" noconflicts="false">
+          <sx:history sequence="2" when="2008-06-05T15:40:10Z" by="vcc-PC_jtondato"/>
+          <sx:history sequence="1" when="2008-06-05T15:36:27Z" by="vcc-PC_jtondato"/>
+        </sx:sync>
+      </mesh4x:sync>
+      <mesh4x:hierarchy xml:id="02713dc5-02b5-480f-9c41-8af7a198c869" mesh4x:childId="1f4a5902-40ab-48a0-b2bd-6a2e5221a0dc"/>
+      <mesh4x:sync version="-1273248873"> 
+        <sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="02713dc5-02b5-480f-9c41-8af7a198c869" updates="2" deleted="false" noconflicts="false">
+          <sx:history sequence="2" when="2008-06-05T15:36:27Z" by="vcc-PC_jtondato"/>  
+          <sx:history sequence="1" when="2008-06-05T15:36:27Z" by="vcc-PC_jtondato"/> 
+        </sx:sync> 
+      </mesh4x:sync>
+      <mesh4x:hierarchy xml:id="bea42a8a-1c85-4acc-ae16-78c6d5f2a2eb" mesh4x:childId="957a49f2-71ca-4837-8a94-273f4392060d"/>
+      <mesh4x:sync version="-220808102"> 
+        <sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="bea42a8a-1c85-4acc-ae16-78c6d5f2a2eb" updates="2" deleted="false" noconflicts="false">  
+          <sx:history sequence="2" when="2008-06-05T15:36:27Z" by="vcc-PC_jtondato"/>        
+          <sx:history sequence="1" when="2008-06-05T15:36:27Z" by="vcc-PC_jtondato"/> 
+        </sx:sync> 
+      </mesh4x:sync>
+      <mesh4x:hierarchy xml:id="5871b30a-af7b-450f-8d87-91ff5ea6ef8c" mesh4x:childId="1ad777ff-1d49-4f76-98d8-fb15c95c4c72"/>
+      <mesh4x:sync version="-12914386"> 
+        <sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="5871b30a-af7b-450f-8d87-91ff5ea6ef8c" updates="2" deleted="false" noconflicts="false">
+          <sx:history sequence="2" when="2008-06-05T15:36:27Z" by="vcc-PC_jtondato"/>          
+          <sx:history sequence="1" when="2008-06-05T15:36:27Z" by="vcc-PC_jtondato"/> 
+        </sx:sync> 
+      </mesh4x:sync>
+      <mesh4x:hierarchy xml:id="03d76909-99ef-4922-9942-7897d553a0e3" mesh4x:childId="0d5c9998-962b-410b-9f58-832f6983b64d"/>
+      <mesh4x:sync version="-752890702"> 
+        <sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="03d76909-99ef-4922-9942-7897d553a0e3" updates="2" deleted="false" noconflicts="false">
+          <sx:history sequence="2" when="2008-06-05T15:36:27Z" by="vcc-PC_jtondato"/>          
+          <sx:history sequence="1" when="2008-06-05T15:36:27Z" by="vcc-PC_jtondato"/> 
+        </sx:sync> 
+      </mesh4x:sync>
+      <mesh4x:hierarchy xml:id="ea80312e-dbe5-483b-b09e-40807e503eb9" mesh4x:childId="b5e1030d-eb92-4633-a650-dd96fd5828c7"/>
+      <mesh4x:sync version="1126217353"> 
+        <sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="ea80312e-dbe5-483b-b09e-40807e503eb9" updates="1" deleted="false" noconflicts="false">  
+          <sx:history sequence="1" when="2008-06-05T15:36:27Z" by="vcc-PC_jtondato"/> 
+        </sx:sync> 
+      </mesh4x:sync>
+      <mesh4x:hierarchy xml:id="d307182f-5b01-461b-96ba-8b4ccb1c17c2" mesh4x:childId="6fca4ad1-2f5a-4fb6-ab76-c369d9955845"/>
+      <mesh4x:sync version="1865034010"> 
+        <sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="d307182f-5b01-461b-96ba-8b4ccb1c17c2" updates="1" deleted="false" noconflicts="false">  
+          <sx:history sequence="1" when="2008-06-05T15:36:27Z" by="vcc-PC_jtondato"/> 
+        </sx:sync> 
+      </mesh4x:sync>
+      <mesh4x:hierarchy xml:id="1f4537b0-f7b2-4abf-810c-4c2c46d5367f" mesh4x:childId="01810ce3-c069-4fac-9332-50f8ecbf7d91"/>
+      <mesh4x:sync version="860238622"> 
+        <sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="1f4537b0-f7b2-4abf-810c-4c2c46d5367f" updates="1" deleted="false" noconflicts="false">  
+          <sx:history sequence="1" when="2008-06-05T15:36:27Z" by="vcc-PC_jtondato"/> 
+        </sx:sync> 
+      </mesh4x:sync>
+      <mesh4x:hierarchy xml:id="a64a69ff-c545-4bcd-893f-8ffe445224d1" mesh4x:childId="c544089d-bb8a-46b5-a585-78bbd8613841"/>
+      <mesh4x:sync version="-1539933551"> 
+        <sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="a64a69ff-c545-4bcd-893f-8ffe445224d1" updates="2" deleted="false" noconflicts="false">
+          <sx:history sequence="2" when="2008-06-05T15:40:10Z" by="vcc-PC_jtondato"/>
+          <sx:history sequence="1" when="2008-06-05T15:36:27Z" by="vcc-PC_jtondato"/>
+        </sx:sync>
+      </mesh4x:sync> 
+    </ExtendedData>  
+    <StyleMap xmlns:mesh4x="http://mesh4x.org/kml" id="msn_ylw-pushpin_65632af6-310b-4b75-afdc-125cc7547291" xml:id="65632af6-310b-4b75-afdc-125cc7547291" mesh4x:originalId="msn_ylw-pushpin">  
+      <Pair> 
+        <key>normal</key>  
+        <styleUrl>#sn_ylw-pushpin_1de94ff2-0904-4187-9cbe-21d29f9567cc</styleUrl> 
+      </Pair>  
+      <Pair> 
+        <key>highlight</key>  
+        <styleUrl>#sh_ylw-pushpin_c46ef253-d1dc-4d6d-984e-c74fe01492cd</styleUrl> 
+      </Pair> 
+    </StyleMap>  
+    <StyleMap xmlns:mesh4x="http://mesh4x.org/kml" id="msn_ylw-pushpin_b5e1030d-eb92-4633-a650-dd96fd5828c7" xml:id="b5e1030d-eb92-4633-a650-dd96fd5828c7" mesh4x:originalId="msn_ylw-pushpin">  
+      <Pair> 
+        <key>normal</key>  
+        <styleUrl>#sn_ylw-pushpin_1f4a5902-40ab-48a0-b2bd-6a2e5221a0dc</styleUrl> 
+      </Pair>  
+      <Pair> 
+        <key>highlight</key>  
+        <styleUrl>#sh_ylw-pushpin_957a49f2-71ca-4837-8a94-273f4392060d</styleUrl> 
+      </Pair> 
+    </StyleMap>  
+    <StyleMap xmlns:mesh4x="http://mesh4x.org/kml" id="msn_ylw-pushpin0_6fca4ad1-2f5a-4fb6-ab76-c369d9955845" xml:id="6fca4ad1-2f5a-4fb6-ab76-c369d9955845" mesh4x:originalId="msn_ylw-pushpin0">  
+      <Pair> 
+        <key>normal</key>  
+        <styleUrl>#sn_ylw-pushpin0_1ad777ff-1d49-4f76-98d8-fb15c95c4c72</styleUrl> 
+      </Pair>  
+      <Pair> 
+        <key>highlight</key>  
+        <styleUrl>#sh_ylw-pushpin0_0d5c9998-962b-410b-9f58-832f6983b64d</styleUrl> 
+      </Pair> 
+    </StyleMap>  
+    <Style xmlns:mesh4x="http://mesh4x.org/kml" id="sn_ylw-pushpin_1de94ff2-0904-4187-9cbe-21d29f9567cc" xml:id="1de94ff2-0904-4187-9cbe-21d29f9567cc" mesh4x:originalId="sn_ylw-pushpin">  
+      <IconStyle> 
+        <scale>1.1</scale>  
+        <Icon> 
+          <href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href> 
+        </Icon>  
+        <hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/> 
+      </IconStyle> 
+    </Style>  
+    <Style xmlns:mesh4x="http://mesh4x.org/kml" id="sh_ylw-pushpin_c46ef253-d1dc-4d6d-984e-c74fe01492cd" xml:id="c46ef253-d1dc-4d6d-984e-c74fe01492cd" mesh4x:originalId="sh_ylw-pushpin">  
+      <IconStyle> 
+        <scale>1.3</scale>  
+        <Icon> 
+          <href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href> 
+        </Icon>  
+        <hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/> 
+      </IconStyle> 
+    </Style>  
+    <Style xmlns:mesh4x="http://mesh4x.org/kml" id="sn_ylw-pushpin_1f4a5902-40ab-48a0-b2bd-6a2e5221a0dc" xml:id="1f4a5902-40ab-48a0-b2bd-6a2e5221a0dc" mesh4x:originalId="sn_ylw-pushpin">  
+      <IconStyle> 
+        <scale>1.1</scale>  
+        <Icon> 
+          <href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href> 
+        </Icon>  
+        <hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/> 
+      </IconStyle> 
+    </Style>  
+    <Style xmlns:mesh4x="http://mesh4x.org/kml" id="sh_ylw-pushpin_957a49f2-71ca-4837-8a94-273f4392060d" xml:id="957a49f2-71ca-4837-8a94-273f4392060d" mesh4x:originalId="sh_ylw-pushpin">  
+      <IconStyle> 
+        <scale>1.3</scale>  
+        <Icon> 
+          <href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href> 
+        </Icon>  
+        <hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/> 
+      </IconStyle> 
+    </Style>  
+    <Style xmlns:mesh4x="http://mesh4x.org/kml" id="sn_ylw-pushpin0_1ad777ff-1d49-4f76-98d8-fb15c95c4c72" xml:id="1ad777ff-1d49-4f76-98d8-fb15c95c4c72" mesh4x:originalId="sn_ylw-pushpin0">  
+      <IconStyle> 
+        <color>ff0000ff</color>  
+        <scale>1.1</scale>  
+        <Icon> 
+          <href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href> 
+        </Icon>  
+        <hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/> 
+      </IconStyle>  
+      <LabelStyle> 
+        <color>ff0000ff</color> 
+      </LabelStyle> 
+    </Style>  
+    <Style xmlns:mesh4x="http://mesh4x.org/kml" id="sh_ylw-pushpin0_0d5c9998-962b-410b-9f58-832f6983b64d" xml:id="0d5c9998-962b-410b-9f58-832f6983b64d" mesh4x:originalId="sh_ylw-pushpin0">  
+      <IconStyle> 
+        <color>ff0000ff</color>  
+        <scale>1.3</scale>  
+        <Icon> 
+          <href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href> 
+        </Icon>  
+        <hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/> 
+      </IconStyle>  
+      <LabelStyle> 
+        <color>ff0000ff</color> 
+      </LabelStyle> 
+    </Style>  
+    <Placemark xml:id="bbc350b7-7c54-4bcd-93c1-bea7a3096ced"> 
+      <name>a</name>  
+      <visibility>0</visibility>  
+      <LookAt> 
+        <longitude>-95.26548319412237</longitude>  
+        <latitude>38.95938957105111</latitude>  
+        <altitude>0</altitude>  
+        <range>11001000</range>  
+        <tilt>0</tilt>  
+        <heading>3.697394817201339e-014</heading> 
+      </LookAt>  
+      <styleUrl>#msn_ylw-pushpin_65632af6-310b-4b75-afdc-125cc7547291</styleUrl>  
+      <Point> 
+        <coordinates>-95.26548319412237,38.95938957105111,0</coordinates> 
+      </Point> 
+    </Placemark>  
+    <Folder xml:id="01810ce3-c069-4fac-9332-50f8ecbf7d91"> 
+      <name>folder1</name>  
+      <visibility>0</visibility>  
+      <open>1</open> 
+    </Folder>  
+    <Placemark xml:id="c544089d-bb8a-46b5-a585-78bbd8613841"> 
+      <name>c</name>  
+      <visibility>0</visibility>  
+      <LookAt> 
+        <longitude>-95.26548319412237</longitude>  
+        <latitude>38.95938957105111</latitude>  
+        <altitude>0</altitude>  
+        <range>11001000</range>  
+        <tilt>0</tilt>  
+        <heading>3.697394817201339e-014</heading> 
+      </LookAt>  
+      <styleUrl>#msn_ylw-pushpin0_6fca4ad1-2f5a-4fb6-ab76-c369d9955845</styleUrl>  
+      <Point> 
+        <coordinates>-95.26548319412237,38.95938957105111,0</coordinates> 
+      </Point> 
+    </Placemark>
+  </Document> 
+</kml>
