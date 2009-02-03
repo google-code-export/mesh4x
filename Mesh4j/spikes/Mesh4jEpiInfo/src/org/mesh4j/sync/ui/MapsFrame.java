@@ -315,25 +315,32 @@ public class MapsFrame extends JFrame{
 				setError(MeshCompactUITranslator.getErrorInvalidMSAccessTable());
 				return null;
 			}
+
+			String urlWebKml = url + "?format=kml";
+			String fileName = getBaseDirectory() + "/"+ dataSource.getAlias() + "_web.kml";
+			File file = new File(fileName);
 			
  			try{
-    			String urlWebKml = url + "?format=kml";
-    			String fileName = getBaseDirectory() + "/"+ dataSource.getAlias() + "_web.kml";
-
-    			File file = new File(fileName);
     			if(!file.exists()){
     				SyncEngineUtil.makeKMLWithNetworkLink(getKmlTemplateNetworkLinkFileName(), fileName, dataSource.getAlias(), urlWebKml);
     			}
     			
     			setOk(MeshCompactUITranslator.getMapsWindowMessageNetworkMapCreationEnd());
-    			
-				OpenFileTask.openFile(file);
-    			
+    					
     		}catch(Throwable e){
     			LogFrame.Logger.error(e.getMessage(), e);
     			setError(MeshCompactUITranslator.getMapsWindowMessageNetworkMapCreationFailed());
+    			return null;
     		}
 
+    		try{
+    			OpenFileTask.openFile(file);
+    		}catch(Throwable e){
+    			LogFrame.Logger.error(e.getMessage(), e);
+    			setError(MeshCompactUITranslator.getMapsWindowMessageNetworkMapOpenFailed());
+    			return null;
+    		}
+    		
 			return null;
 	    }
 
@@ -360,8 +367,10 @@ public class MapsFrame extends JFrame{
 				setError(MeshCompactUITranslator.getErrorInvalidMSAccessTable());
 				return null;
 			}
+			
+			File file = null;
 			try{
-				String fileName = SyncEngineUtil.generateKML(
+				file = SyncEngineUtil.generateKML(
 						getGeoCoderKey(), 
 						getKmlTemplateFileName(), 
 						dataSource.getFileName(), 
@@ -371,13 +380,21 @@ public class MapsFrame extends JFrame{
 						getIdentityProvider());
 
     			setOk(MeshCompactUITranslator.getMapsWindowMessageMapCreationEnd());
-				OpenFileTask.openFile(fileName);
+				
 				
     		} catch(Throwable e){
     			LogFrame.Logger.error(e.getMessage(), e);
     			setError(MeshCompactUITranslator.getMapsWindowMessageMapCreationFailed());
+    			return null;
     		}
 
+    		try{
+    			OpenFileTask.openFile(file);
+    		}catch(Throwable e){
+    			LogFrame.Logger.error(e.getMessage(), e);
+    			setError(MeshCompactUITranslator.getMapsWindowMessageMapOpenFailed());
+    			return null;
+    		}
 			return null;
 	    }
 

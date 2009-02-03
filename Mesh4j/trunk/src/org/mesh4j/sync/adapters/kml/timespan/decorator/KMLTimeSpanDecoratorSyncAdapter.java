@@ -183,4 +183,8 @@ public class KMLTimeSpanDecoratorSyncAdapter implements ISyncAdapter, ISyncAware
 			//LOGGER.error(e.getMessage(), e);
 		}
 	}
+
+	public File getKmlFile() {
+		return this.kmlFile;
+	}
 }

@@ -214,8 +214,8 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 			Item item = items.get(0);
 			
 			String xml = item.getContent().getPayload().asXML();
-//			xml = xml.replaceAll("&lt;", "<");						// TODO (JMT) remove ==>  xml.replaceAll("&lt;", "<"); 
-//			xml = xml.replaceAll("&gt;", ">");
+			xml = xml.replaceAll("&lt;", "<");						// TODO (JMT) remove ==>  xml.replaceAll("&lt;", "<"); 
+			xml = xml.replaceAll("&gt;", ">");
 			
 			mappings = DocumentHelper.parseText(xml).getRootElement();
 			if(ISyndicationFormat.ELEMENT_PAYLOAD.equals(mappings.getName())){

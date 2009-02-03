@@ -597,4 +597,12 @@ public class MeshCompactUITranslator {
 		return MeshUITranslator.getErrorInvalidMSAccessTable();
 	}
 
+	public static String getMapsWindowMessageMapOpenFailed() {
+		return MessageTranslator.translate("MESH_COMPACT_MAPS_WINDOW_MESSAGE_MAP_OPEN_FAILED");
+	}
+
+	public static String getMapsWindowMessageNetworkMapOpenFailed() {
+		return MessageTranslator.translate("MESH_COMPACT_MAPS_WINDOW_MESSAGE_NET_MAP_OPEN_FAILED");
+	}
+
 }

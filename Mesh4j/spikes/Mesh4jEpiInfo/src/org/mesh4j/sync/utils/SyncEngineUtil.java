@@ -10,9 +10,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.mesh4j.geo.coder.GeoCoderLatitudePropertyResolver;
-import org.mesh4j.geo.coder.GeoCoderLocationPropertyResolver;
-import org.mesh4j.geo.coder.GeoCoderLongitudePropertyResolver;
 import org.mesh4j.geo.coder.GoogleGeoCoder;
 import org.mesh4j.sync.IFilter;
 import org.mesh4j.sync.ISyncAdapter;
@@ -25,7 +22,6 @@ import org.mesh4j.sync.adapters.feed.XMLContent;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.adapters.http.HttpSyncAdapter;
 import org.mesh4j.sync.adapters.http.HttpSyncAdapterFactory;
-import org.mesh4j.sync.adapters.kml.exporter.KMLExporter;
 import org.mesh4j.sync.adapters.kml.timespan.decorator.IKMLGeneratorFactory;
 import org.mesh4j.sync.adapters.kml.timespan.decorator.KMLTimeSpanDecoratorSyncAdapter;
 import org.mesh4j.sync.adapters.kml.timespan.decorator.KMLTimeSpanDecoratorSyncAdapterFactory;
@@ -65,8 +61,6 @@ import org.mesh4j.sync.message.protocol.ItemEncodingFixedBlock;
 import org.mesh4j.sync.message.protocol.MessageSyncProtocolFactory;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.Sync;
-import org.mesh4j.sync.payload.mappings.IMappingResolver;
-import org.mesh4j.sync.payload.mappings.MappingResolver;
 import org.mesh4j.sync.properties.PropertiesProvider;
 import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.security.NullIdentityProvider;
@@ -242,11 +236,10 @@ public class SyncEngineUtil {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static String generateKML(String geoCoderKey, String templateFileName, String mdbFileName, String dataSourceAlias, String baseDirectory, SourceIdMapper sourceIdResolver, IIdentityProvider identityProvider) throws Exception{
+	public static File generateKML(String geoCoderKey, String templateFileName, String mdbFileName, String dataSourceAlias, String baseDirectory, SourceIdMapper sourceIdResolver, IIdentityProvider identityProvider) throws Exception{
 		
 		String mappingsFileName = baseDirectory + "/" + dataSourceAlias + "_mappings.xml";
 		
-		IMappingResolver mappingResolver = null;
 		File mappingsFile = new File(mappingsFileName);
 		if(!mappingsFile.exists()){
 			throw new IllegalArgumentException(MeshUITranslator.getErrorKMLMappingsNotFound());
@@ -264,21 +257,21 @@ public class SyncEngineUtil {
 		syncAdapter.beginSync();
 		
 		CompoundFilter filter = new CompoundFilter(NonDeletedFilter.INSTANCE);
-		List<Item> items = syncAdapter.getAll(filter);
+		//List<Item> items = syncAdapter.getAll(filter);
+		syncAdapter.getAll(filter);
 		syncAdapter.endSync();
 		
-		String kmlFileName = baseDirectory + "/" + dataSourceAlias + "_last.kml";
-		
-		byte[] bytes = FileUtils.read(mappingsFile);
-		String xml = new String(bytes);
-		Element schema = DocumentHelper.parseText(xml).getRootElement();
-		
-		GeoCoderLatitudePropertyResolver propertyResolverLat = new GeoCoderLatitudePropertyResolver(geoCoder);
-		GeoCoderLongitudePropertyResolver propertyResolverLon = new GeoCoderLongitudePropertyResolver(geoCoder);
-		GeoCoderLocationPropertyResolver propertyResolverLoc = new GeoCoderLocationPropertyResolver(geoCoder);
-		mappingResolver = new MappingResolver(schema, propertyResolverLat, propertyResolverLon, propertyResolverLoc);
-		KMLExporter.export(kmlFileName, dataSourceAlias, items, mappingResolver);			
-		return kmlFileName;
+//		String kmlFileName = baseDirectory + "/" + dataSourceAlias + "_last.kml";
+//		
+//		byte[] bytes = FileUtils.read(mappingsFile);
+//		String xml = new String(bytes);
+//		Element schema = DocumentHelper.parseText(xml).getRootElement();
+//		GeoCoderLatitudePropertyResolver propertyResolverLat = new GeoCoderLatitudePropertyResolver(geoCoder);
+//		GeoCoderLongitudePropertyResolver propertyResolverLon = new GeoCoderLongitudePropertyResolver(geoCoder);
+//		GeoCoderLocationPropertyResolver propertyResolverLoc = new GeoCoderLocationPropertyResolver(geoCoder);
+//		IMappingResolver mappingResolver = new MappingResolver(schema, propertyResolverLat, propertyResolverLon, propertyResolverLoc);
+//		KMLExporter.export(kmlFileName, dataSourceAlias, items, mappingResolver);			
+		return syncAdapter.getKmlFile();
 	}
 
 	public static void downloadSchema(String url, String tableName, String baseDirectory) throws Exception {
