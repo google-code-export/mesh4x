@@ -24,6 +24,7 @@ public class FileXMLViewElement extends MeshXMLViewElement{
 		this.fileManager = fileManager;
 	}
 	
+	
 	@Override
 	public Element add(Document document, Element newElement) {
 		Guard.argumentNotNull(this.getDOM(), "dom");
