@@ -1,0 +1,24 @@
+<project default="jars">
+
+	<target name="delete">
+		<mkdir dir="dist"/>
+		<delete file="dist/*"/>
+	</target>
+	
+	<target name="jars" depends="delete">
+		<mkdir dir="dist"/>
+		<jar destfile="dist/mesh4j-1.0.0.jar">
+			<fileset dir="bin"/>
+		</jar>
+	</target>
+	
+	<target name="dist" depends="jars">
+		<zip destfile="dist/mesh4j-1.0.0.zip">
+			<zipfileset prefix="mesh4j-1.0.0" dir="dist" includes="mesh4j-1.0.0.jar"/>
+			<zipfileset prefix="mesh4j-1.0.0" dir="." includes="etc/**/*"/>
+			<zipfileset prefix="mesh4j-1.0.0" dir="." includes="lib/**/*"/>
+			<zipfileset prefix="mesh4j-1.0.0" dir="." includes="src/**/*"/>
+			<zipfileset prefix="mesh4j-1.0.0" dir="." includes="test/**/*"/>
+		</zip>
+	</target>
+</project>

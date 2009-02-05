@@ -1,0 +1,13 @@
+<?xml version="1.0"?><!DOCTYPE hibernate-mapping PUBLIC
+ "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>  
+<class entity-name="SyncInfo" node="SyncInfo" table="MESH_SYNC_INFO">
+<id name="sync_id" type="string" column="sync_id">   
+	<generator class="assigned"/>
+</id>   
+<property name="entity_name" column="entity_name" node="entity_name" type="string"/>
+<property name="entity_id" column="entity_id" node="entity_id" type="string"/>
+<property name="entity_version" column="entity_version" node="entity_version" type="int"/>
+<property name="sync_data" column="sync_data" node="sync_data" type="string"/>
+</class></hibernate-mapping>
