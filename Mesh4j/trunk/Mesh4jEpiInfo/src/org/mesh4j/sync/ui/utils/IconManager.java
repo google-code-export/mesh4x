@@ -10,7 +10,6 @@ import org.mesh4j.sync.adapters.kml.KMLDOMLoaderFactory;
 import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
 import org.mesh4j.sync.adapters.msexcel.MsExcelSyncAdapterFactory;
 import org.mesh4j.sync.ui.MeshCompactUI;
-import org.mesh4j.sync.ui.MeshUI;
 
 import com.swtdesigner.SwingResourceManager;
 
@@ -70,15 +69,15 @@ public class IconManager {
 	}
 	
 	public static Icon getStatusInProgressIcon() {
-		return SwingResourceManager.getIcon(MeshUI.class, "/inProgress.gif");
+		return SwingResourceManager.getIcon(MeshCompactUI.class, "/inProgress.gif");
 	}
 	
 	public static Icon getStatusOkIcon() {
-		return SwingResourceManager.getIcon(MeshUI.class, "/ok.png");
+		return SwingResourceManager.getIcon(MeshCompactUI.class, "/ok.png");
 	}
 	
 	public static Icon getStatusProcessingIcon() {
-		return SwingResourceManager.getIcon(MeshUI.class, "/processing.png");
+		return SwingResourceManager.getIcon(MeshCompactUI.class, "/processing.png");
 	}
 	
 	public static Icon getStatusReadyIcon() {
@@ -123,6 +122,10 @@ public class IconManager {
 
 	public static Icon getCloudConflictsIcon() {
 		return SwingResourceManager.getIcon(MeshCompactUI.class, "/cloudConflicts.jpg");
+	}
+
+	public static Icon getViewCloudIcon() {
+		return SwingResourceManager.getIcon(MeshCompactUI.class, "/viewCloud.jpg");
 	}
 
 }

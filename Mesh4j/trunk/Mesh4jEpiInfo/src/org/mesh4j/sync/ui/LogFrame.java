@@ -55,7 +55,7 @@ public class LogFrame extends JFrame implements ISmsConnectionInboundOutboundNot
 		this.mustTraceSms = owner.getPropertiesProvider().mustTraceSms();
 		this.mustTraceProtocol = owner.getPropertiesProvider().mustTraceProtocol();
 		
-		setAlwaysOnTop(true);
+//		setAlwaysOnTop(true);
 		setIconImage(IconManager.getCDCImage());
 		getContentPane().setBackground(Color.WHITE);
 		setTitle(MeshCompactUITranslator.getLogWindowTitle());

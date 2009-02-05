@@ -26,6 +26,7 @@ import org.mesh4j.sync.mappings.DataSourceMapping;
 import org.mesh4j.sync.mappings.MSAccessDataSourceMapping;
 import org.mesh4j.sync.properties.PropertiesProvider;
 import org.mesh4j.sync.security.IIdentityProvider;
+import org.mesh4j.sync.ui.tasks.IErrorListener;
 import org.mesh4j.sync.ui.tasks.OpenFileTask;
 import org.mesh4j.sync.ui.translator.MeshCompactUITranslator;
 import org.mesh4j.sync.ui.utils.IconManager;
@@ -38,7 +39,7 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
-public class MapsFrame extends JFrame{
+public class MapsFrame extends JFrame implements IErrorListener{
 
 	private static final long serialVersionUID = 7380206163750504752L;
 
@@ -62,7 +63,7 @@ public class MapsFrame extends JFrame{
 		this.propertiesProvider = propertiesProvider;
 		this.sourceIdMapper = sourceIdMapper;
 		
-		setAlwaysOnTop(true);
+//		setAlwaysOnTop(true);
 		setIconImage(IconManager.getCDCImage());
 		getContentPane().setBackground(Color.WHITE);
 		setTitle(MeshCompactUITranslator.getMapsWindowTitle());
@@ -162,7 +163,7 @@ public class MapsFrame extends JFrame{
 			public void actionPerformed(ActionEvent e) {
 				MSAccessDataSourceMapping dataSource = (MSAccessDataSourceMapping) getComboBoxMappingDataSource().getSelectedItem();
 				if(dataSource != null){
-					OpenFileTask task = new OpenFileTask(dataSource.getFileName());
+					OpenFileTask task = new OpenFileTask(MapsFrame.this, MapsFrame.this, dataSource.getFileName());
 					task.execute();
 				}
 			}
@@ -334,7 +335,7 @@ public class MapsFrame extends JFrame{
     		}
 
     		try{
-    			OpenFileTask.openFile(file);
+    			OpenFileTask.openFile(MapsFrame.this, file);
     		}catch(Throwable e){
     			LogFrame.Logger.error(e.getMessage(), e);
     			setError(MeshCompactUITranslator.getMapsWindowMessageNetworkMapOpenFailed());
@@ -389,7 +390,7 @@ public class MapsFrame extends JFrame{
     		}
 
     		try{
-    			OpenFileTask.openFile(file);
+    			OpenFileTask.openFile(MapsFrame.this, file);
     		}catch(Throwable e){
     			LogFrame.Logger.error(e.getMessage(), e);
     			setError(MeshCompactUITranslator.getMapsWindowMessageMapOpenFailed());
@@ -479,6 +480,11 @@ public class MapsFrame extends JFrame{
 	public void notifyOwnerNotWorking(){
 		this.buttonCreateMap.setEnabled(true);
 		this.buttonOpenDataSource.setEnabled(true);
+	}
+
+	@Override
+	public void notifyError(String error) {
+		setError(error);
 	}
 	
 }

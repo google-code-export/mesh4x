@@ -14,6 +14,7 @@ import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -35,6 +36,7 @@ import org.mesh4j.sync.message.ISyncSession;
 import org.mesh4j.sync.message.MessageSyncEngine;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.properties.PropertiesProvider;
+import org.mesh4j.sync.ui.tasks.IErrorListener;
 import org.mesh4j.sync.ui.tasks.OpenFileTask;
 import org.mesh4j.sync.ui.translator.MeshCompactUITranslator;
 import org.mesh4j.sync.ui.utils.IconManager;
@@ -48,7 +50,7 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
-public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner, WindowFocusListener{
+public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner, WindowFocusListener, IErrorListener{
 	
 	private static final long serialVersionUID = 142343742087435808L;
 
@@ -73,7 +75,7 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner, 
 		this.propertiesProvider = ownerPropertiesProvider;
 		this.sourceIdMapper = ownerSourceIdMapper;
 		
-		setAlwaysOnTop(true);
+//		setAlwaysOnTop(true);
 		setIconImage(IconManager.getCDCImage());
 		getContentPane().setBackground(Color.WHITE);
 		setTitle(MeshCompactUITranslator.getSyncSessionWindowTitle());
@@ -195,7 +197,7 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner, 
     			if(sourceId != null){
     				MSAccessDataSourceMapping dataSource = sourceIdMapper.getDataSource(sourceId);
     				if(dataSource != null){
-    					OpenFileTask task = new OpenFileTask(dataSource.getFileName());
+    					OpenFileTask task = new OpenFileTask(SyncSessionsFrame.this, SyncSessionsFrame.this, dataSource.getFileName());
     					task.execute();
     				}
 				}
@@ -228,26 +230,32 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner, 
 	    			DefaultMutableTreeNode node = (DefaultMutableTreeNode) treeSessions.getLastSelectedPathComponent();
 	    			
 	    			if (node == null){
+	    				syncSessionView.setVisible(true);
+	    				syncSessionView.viewSession(null);
 	    				buttonOpenDataSource.setEnabled(false);
 	    				buttonSyncSession.setEnabled(false);
 	    				return;
 	    			}
 	    			
 	    			if(isDataSource(node)){
+	    				syncSessionView.setVisible(true);
 	    				syncSessionView.viewSession(null);
 	    				buttonOpenDataSource.setEnabled(true);
 		    			buttonSyncSession.setEnabled(false);
 	    			} else if(isSyncSession(node)){
+	    				syncSessionView.setVisible(true);
 	    				SyncSessionWrapper syncSessionWrapper = (SyncSessionWrapper)(node.getUserObject());
 	    				syncSessionView.viewSession(syncSessionWrapper.getSyncSession());
 	    				 
 	    				buttonOpenDataSource.setEnabled(true);
 		    			buttonSyncSession.setEnabled(true);
 	    			} else if(isCloudSync(node)){
+	    				syncSessionView.setVisible(false);
 	    				syncSessionView.viewSession(null);
 	    				buttonOpenDataSource.setEnabled(true);
 		    			buttonSyncSession.setEnabled(true);
 	    			} else {
+	    				syncSessionView.setVisible(true);
 	    				syncSessionView.viewSession(null);
 	    				buttonOpenDataSource.setEnabled(false);
 		    			buttonSyncSession.setEnabled(false);
@@ -639,4 +647,8 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner, 
 		}
 	}
 	
+	@Override
+	public void notifyError(String error) {
+		JOptionPane.showMessageDialog(this, error, MeshCompactUITranslator.getSyncWindowTitle(), JOptionPane.ERROR_MESSAGE);
+	}
 }

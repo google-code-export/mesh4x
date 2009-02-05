@@ -16,6 +16,7 @@ import org.mesh4j.sync.validations.MeshException;
 public class PropertiesProvider {
 
 	private static final String MESH4J_PROPERTIES = "mesh4j.properties";
+	
 	// MODEL VARIABLES
 	private String resourceName;
 	private Properties properties;

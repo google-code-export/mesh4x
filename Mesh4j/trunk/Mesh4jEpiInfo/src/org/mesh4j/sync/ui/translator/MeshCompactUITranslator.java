@@ -605,4 +605,20 @@ public class MeshCompactUITranslator {
 		return MessageTranslator.translate("MESH_COMPACT_MAPS_WINDOW_MESSAGE_NET_MAP_OPEN_FAILED");
 	}
 
+	public static String getErrorImpossibleToOpenFileBecauseFileDoesNotExists() {
+		return MessageTranslator.translate("MESH_COMPACT_ERROR_IMPOSSIBLE_OPEN_FILE_BECAUSE_FILE_DOES_NOT_EXISTS");
+	}
+	
+	public static String getErrorOpenFileActionNotSupported(){
+		return MessageTranslator.translate("MESH_COMPACT_ERROR_OPEN_FILE_ACTION_NOT_SUPPORTED");
+	}
+
+	public static String getErrorOpenBrowser() {
+		return MessageTranslator.translate("MESH_COMPACT_ERROR_OPEN_BROWSER");
+	}
+
+	public static String getMessageOpenBrowserActionNotSupported() {
+		return MessageTranslator.translate("MESH_COMPACT_ERROR_OPEN_BROWSER_ACTION_NOT_SUPPORTED");
+	}
+
 }

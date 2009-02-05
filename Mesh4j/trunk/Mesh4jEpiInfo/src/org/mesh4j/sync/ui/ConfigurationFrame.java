@@ -69,7 +69,7 @@ public class ConfigurationFrame extends JFrame {
 	}
 
 	public void createUI(){
-		setAlwaysOnTop(true);				
+//		setAlwaysOnTop(true);				
 		getContentPane().setBackground(Color.WHITE);
 		setIconImage(IconManager.getCDCImage());
 		setResizable(false);

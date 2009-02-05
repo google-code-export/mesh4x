@@ -2,11 +2,9 @@ package org.mesh4j.sync.ui;
 
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -30,7 +28,9 @@ import org.mesh4j.sync.mappings.SyncMode;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.properties.PropertiesProvider;
 import org.mesh4j.sync.security.IIdentityProvider;
+import org.mesh4j.sync.ui.tasks.IErrorListener;
 import org.mesh4j.sync.ui.tasks.OpenFileTask;
+import org.mesh4j.sync.ui.tasks.OpenURLTask;
 import org.mesh4j.sync.ui.translator.MeshCompactUITranslator;
 import org.mesh4j.sync.ui.translator.MeshUITranslator;
 import org.mesh4j.sync.ui.utils.IconManager;
@@ -43,7 +43,7 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
-public class SyncCloudFrame extends JFrame{
+public class SyncCloudFrame extends JFrame implements IErrorListener{
 
 	private static final long serialVersionUID = 7380206163750504752L;
 
@@ -70,16 +70,16 @@ public class SyncCloudFrame extends JFrame{
 		this.sourceIdMapper = sourceIdMapper;
 		this.owner = owner;
 		
-		setAlwaysOnTop(true);
+//		setAlwaysOnTop(true);
 		setIconImage(IconManager.getCDCImage());
 		getContentPane().setBackground(Color.WHITE);
 		setTitle(MeshCompactUITranslator.getSyncWindowTitle());
 		setResizable(false);
-		setBounds(100, 100, 576, 178);
+		setBounds(100, 100, 596, 178);
 		getContentPane().setLayout(new FormLayout(
 			new ColumnSpec[] {
 				ColumnSpec.decode("14dlu"),
-				ColumnSpec.decode("257dlu"),
+				ColumnSpec.decode("266dlu"),
 				ColumnSpec.decode("14dlu")},
 			new RowSpec[] {
 				FormFactory.RELATED_GAP_ROWSPEC,
@@ -98,7 +98,7 @@ public class SyncCloudFrame extends JFrame{
 				FormFactory.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("218dlu"),
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("17dlu")},
+				ColumnSpec.decode("24dlu")},
 			new RowSpec[] {
 				RowSpec.decode("19dlu")}));
 		getContentPane().add(panelWeb, new CellConstraints(2, 2));
@@ -111,7 +111,7 @@ public class SyncCloudFrame extends JFrame{
 
 		ActionListener openFeedActionListener = new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
-				OpenFeedTask task = new OpenFeedTask();
+				OpenURLTask task = new OpenURLTask(SyncCloudFrame.this, SyncCloudFrame.this, textFieldURL.getText());
 				task.execute();
 			}
 		};	
@@ -123,7 +123,7 @@ public class SyncCloudFrame extends JFrame{
 		buttonOpenFeed.setBackground(Color.WHITE);
 		buttonOpenFeed.setText("");
 		buttonOpenFeed.setToolTipText(MeshCompactUITranslator.getSyncWindowTooltipViewFeed());
-		buttonOpenFeed.setIcon(IconManager.getViewImage());
+		buttonOpenFeed.setIcon(IconManager.getViewCloudIcon());
 		buttonOpenFeed.addActionListener(openFeedActionListener);
 		panelWeb.add(buttonOpenFeed, new CellConstraints(5, 1, CellConstraints.CENTER, CellConstraints.FILL));
 
@@ -150,7 +150,7 @@ public class SyncCloudFrame extends JFrame{
 			public void actionPerformed(ActionEvent e) {
 				MSAccessDataSourceMapping dataSource = (MSAccessDataSourceMapping) getComboBoxMappingDataSource().getSelectedItem();
 				if(dataSource != null){
-					OpenFileTask task = new OpenFileTask(dataSource.getFileName());
+					OpenFileTask task = new OpenFileTask(SyncCloudFrame.this, SyncCloudFrame.this, dataSource.getFileName());
 					task.execute();
 				}
 			}
@@ -298,40 +298,6 @@ public class SyncCloudFrame extends JFrame{
 	    }
 	}
 	
-	private class OpenFeedTask extends SwingWorker<Void, Void> {
-		 
-		public OpenFeedTask(){
-			super();
-		}
-		
-		@Override
-	    public Void doInBackground() {
-			setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-
-			String url = textFieldURL.getText();
-			if(HttpSyncAdapterFactory.isValidURL(url)){
-				if (Desktop.isDesktopSupported()) {
-					Desktop desktop = Desktop.getDesktop();
-					if (desktop.isSupported(Desktop.Action.BROWSE)) {
-						try{
-							desktop.browse(new URL(textFieldURL.getText()).toURI());
-						} catch(Exception e){
-							LogFrame.Logger.error(e.getMessage(), e);
-						}
-					}
-				}
-			} else {
-				setError(MeshUITranslator.getErrorInvalidURL());
-			}
-			return null;
-	    }
-
-		@Override
-	    public void done() {
-			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-	    }
-	}
-
 	public SourceIdMapper getSourceIdMapper() {
 		return this.sourceIdMapper;
 	}
@@ -418,6 +384,11 @@ public class SyncCloudFrame extends JFrame{
 	
 	private SyncMode getSelectedSyncMode() {
 		return (SyncMode)this.comboBoxSyncMode.getSelectedItem();
+	}
+
+	@Override
+	public void notifyError(String error) {
+		setError(error);
 	}
 
 }

@@ -1,14 +1,12 @@
 package org.mesh4j.sync.ui;
 
 import java.awt.Color;
-import java.awt.Desktop;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -39,7 +37,9 @@ import org.mesh4j.sync.message.channel.sms.connection.ISmsConnectionInboundOutbo
 import org.mesh4j.sync.properties.PropertiesProvider;
 import org.mesh4j.sync.ui.tasks.CancelAllSyncTask;
 import org.mesh4j.sync.ui.tasks.CancelSyncTask;
+import org.mesh4j.sync.ui.tasks.IErrorListener;
 import org.mesh4j.sync.ui.tasks.OpenFileTask;
+import org.mesh4j.sync.ui.tasks.OpenURLTask;
 import org.mesh4j.sync.ui.tasks.ReadyToSyncTask;
 import org.mesh4j.sync.ui.tasks.ShutdownTask;
 import org.mesh4j.sync.ui.tasks.StartUpTask;
@@ -59,7 +59,7 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
-public class MeshCompactUI implements ISyncSessionViewOwner{
+public class MeshCompactUI implements ISyncSessionViewOwner, IErrorListener{
 
 	private final static Log Logger = LogFactory.getLog(MeshCompactUI.class);
 	
@@ -286,7 +286,7 @@ public class MeshCompactUI implements ISyncSessionViewOwner{
 	// UI Design
 	private void createUI() {
 		frame = new JFrame();
-		frame.setAlwaysOnTop(true);
+//		frame.setAlwaysOnTop(true);
 		frame.getContentPane().setBackground(Color.WHITE);
 		frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		
@@ -448,7 +448,8 @@ public class MeshCompactUI implements ISyncSessionViewOwner{
 
 		ActionListener openMesh4xActionListener = new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
-				openMesh4xURL();
+				OpenURLTask task = new OpenURLTask(MeshCompactUI.this.getFrame(), MeshCompactUI.this, MeshCompactUI.this.getPropertiesProvider().getMesh4xURL());
+				task.execute();
 			}
 		};
 		
@@ -543,7 +544,7 @@ public class MeshCompactUI implements ISyncSessionViewOwner{
 				public void actionPerformed(ActionEvent e) {
 					MSAccessDataSourceMapping dataSource = (MSAccessDataSourceMapping) getComboBoxMappingDataSource().getSelectedItem();
 					if(dataSource != null){
-						OpenFileTask task = new OpenFileTask(dataSource.getFileName());
+						OpenFileTask task = new OpenFileTask(MeshCompactUI.this.getFrame(), MeshCompactUI.this, dataSource.getFileName());
 						task.execute();
 					}
 				}
@@ -904,19 +905,6 @@ public class MeshCompactUI implements ISyncSessionViewOwner{
 		this.buttonOpenLog.setForeground(null);
 		this.buttonOpenLog.setToolTipText(MeshCompactUITranslator.getToolTipOpenLogWindow());
 	}
-	
-	public void openMesh4xURL(){
-        if (Desktop.isDesktopSupported()) {
-        	Desktop desktop = Desktop.getDesktop();
-        	if (desktop.isSupported(Desktop.Action.BROWSE)) {
-        		try{
-        			desktop.browse(new URL(this.propertiesProvider.getMesh4xURL()).toURI());
-        		} catch(Exception e){
-        			LogFrame.Logger.error(e.getMessage(), e);
-        		}
-        	}
-        }
-	}
 
 	public SyncCloudFrame getSyncCloudFrame(){
 		return this.syncCloudFrame;
@@ -924,5 +912,10 @@ public class MeshCompactUI implements ISyncSessionViewOwner{
 
 	public IMessageSyncProtocol getSyncProtocol() {
 		return this.syncEngine.getSyncProtocol();
+	}
+	
+	@Override
+	public void notifyError(String error) {
+		syncSessionView.setError(error);
 	}
 }
