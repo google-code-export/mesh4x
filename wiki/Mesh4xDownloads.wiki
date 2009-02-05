@@ -9,18 +9,20 @@ Tools and products build with Mesh4x.
 
 [http://downloads.instedd.org/mesh4x/kmlExchange_0_0_1.7z KmlExchange] is a tool to synchronize two kml files and synchronize kml files with the cloud.
 
-Last release: 2009-02-05
+Uploaded: 2009-02-05
 
 === MIDP Demo ===
 
 [http://downloads.instedd.org/mesh4x/Mesh4XForm_1.1.zip MIDP demo] using JavaRosa and Mesh4J J2ME version
+
+Uploaded: 2009-02-05
 
 
 === Epiinfo Client ===
 
 [http://downloads.instedd.org/mesh4x/epiinfo_0_0_9.7z Epiinfo client] is a tool to synchronize MSAccess files via SMS and synchronize MSAccess files with the cloud.
 
-Last release: 2009-02-05
+Uploaded: 2009-02-05
 
 
 
@@ -29,7 +31,7 @@ Last release: 2009-02-05
 
 [http://downloads.instedd.org/mesh4x/mesh4x_war_0_0_8.7z Mesh4J FeedSync server (war)]. Supports different types of feed repositories (S3, file).
 
-Last release: 2009-02-05
+Uploaded: 2009-02-05
 
 
 == TOOLS ==
@@ -38,15 +40,14 @@ Last release: 2009-02-05
 
 [http://downloads.instedd.org/mesh4x/phone_manager_0.0.0.7z Phone Manager] is a tool to determine if a cell phone is compatible with mesh4x sms lib.
 
-Last release: 2009-02-05
-
+Uploaded: 2009-02-05
 
 
 === SMS Exchange ===
 
 [http://downloads.instedd.org/mesh4x/smsExchanger-0.0.2.zip SMS Exchanger] is a tool to send and receive SMS from a cell phone plugged in to the PC based on file sharing.
 
-Last release: 2009-02-05
+Uploaded: 2009-02-05
 
 
 == DEV ENVIRONMENTS ==
@@ -55,7 +56,7 @@ Last release: 2009-02-05
 
 [http://downloads.instedd.org/mesh4x/instedd_demo.7z Mesh4j2me] is a developer J2ME environment with a crud demo. 
 
-Last release: 2009-02-05
+Uploaded: 2009-02-05
 
 
 
@@ -64,4 +65,4 @@ Last release: 2009-02-05
 
 [http://downloads.instedd.org/mesh4x/mesh4x_env_0_0_1.7z Mesh4J] is a Developer J2SE environment for development Mesh4x tools.
 
-Last release:  2009-02-05
+Uploaded: 2009-02-05
