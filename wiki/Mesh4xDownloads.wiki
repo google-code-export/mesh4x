@@ -13,12 +13,12 @@ Last release: 2009-02-05
 
 === MIDP Demo ===
 
-[[http://downloads.instedd.org/mesh4x/kmlExchange_0_0_1.7z MIDP demo] using JavaRosa and Mesh4J J2ME version
+[http://downloads.instedd.org/mesh4x/Mesh4XForm_1.1.zip MIDP demo] using JavaRosa and Mesh4J J2ME version
 
 
 === Epiinfo Mesh Client ===
 
-[[http://downloads.instedd.org/mesh4x/kmlExchange_0_0_1.7z Epiinfo client] is a tool to synchronize MSAccess files via SMS and synchronize MSAccess file with the cloud.
+[http://downloads.instedd.org/mesh4x/epiinfo_0_0_9.7z Epiinfo client] is a tool to synchronize MSAccess files via SMS and synchronize MSAccess file with the cloud.
 
 Last release: 2009-02-05
 
@@ -44,7 +44,7 @@ Last release: 2009-02-05
 
 === SMS Exchange ===
 
-[http://downloads.instedd.org/mesh4x/phone_manager_0.0.0.7z SMS Exchange] is a tool to send and receive SMS from a cell phone plugged to the PC based on file sharing.
+[http://downloads.instedd.org/mesh4x/smsExchanger-0.0.2.zip SMS Exchanger] is a tool to send and receive SMS from a cell phone plugged to the PC based on file sharing.
 
 Last release: 2009-02-05
 
