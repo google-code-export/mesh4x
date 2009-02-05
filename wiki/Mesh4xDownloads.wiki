@@ -1,0 +1,60 @@
+= Mesh4x Software Artifacts =
+
+Tools and products build with Mesh4x.
+
+
+== Applications == 
+
+=== [http://downloads.instedd.org/mesh4x/kmlExchange_0_0_1.7z Kml Exhange] ===
+KmlExchange is a tool to synchronize two kml files and synchronize kml files with the cloud.
+
+Last release: 2009-02-05
+
+
+== JavaRosa MIDP Demo ==
+MIDP demo using JavaRosa and Mesh4J J2ME version
+
+
+=== Epiinfo Mesh Client ===
+Epiinfo mesh client is a tool to synchronize MSAccess files via SMS and synchronize MSAccess file with the cloud.
+
+Last release: 2009-02-05
+
+
+
+
+=== [http://downloads.instedd.org/mesh4x/mesh4x_war_0_0_8.7z Mesh4x FeedSync server (RESTFull)] ===
+Mesh4J FeedSync server (war). Supports different kind of feed repositories (S3, file).
+
+Last release: 2009-02-05
+
+
+== Tools ==
+
+=== [http://downloads.instedd.org/mesh4x/phone_manager_0.0.0.7z Phone Manager] ===
+Phone Manager is a tool to determine if a cell phone is compatible with mesh4x sms lib.
+
+Last release: 2009-02-05
+
+
+
+=== SMS Exchange ===
+SMS Exchange is a tool to send and receive SMS from a cell phone plugged to the PC based on file sharing.
+
+Last release: 2009-02-05
+
+
+== Developer Environments ==
+
+=== [http://downloads.instedd.org/mesh4x/instedd_demo.7z Mesh4J J2ME Environment with crud demo] ===
+Developer J2ME environment with a crud demo. 
+
+Last release: 2009-02-05
+
+
+
+
+=== [http://downloads.instedd.org/mesh4x/mesh4x_env_0_0_1.7z Mesh4J Environment] ===
+Developer J2SE environment for development Mesh4J.
+
+Last release:  2009-02-05
