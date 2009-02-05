@@ -2,6 +2,7 @@ package org.mesh4j.sync.properties;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.Properties;
 
 import org.mesh4j.sync.security.IIdentityProvider;
@@ -10,6 +11,8 @@ import org.mesh4j.sync.validations.MeshException;
 
 
 public class PropertiesProvider {
+	
+	private static final String MESH4J_PROPERTIES = "mesh4j.properties";
 
 	// MODEL VARIABLES
 	private Properties properties;
@@ -17,7 +20,7 @@ public class PropertiesProvider {
 	// BUSINESS METHODS
 	public PropertiesProvider(){
 		super();
-		initialize("mesh4j.properties");
+		initialize(getCurrentDirectory()+"\\properties\\"+MESH4J_PROPERTIES);
 	}
 	
 	public PropertiesProvider(String resourceName){
@@ -37,11 +40,11 @@ public class PropertiesProvider {
 		}
 	}
 
-	public String getDefaultEnpoint1() {
+	public String getDefaultEnpoint1() throws IOException {
 		String defaultEndpoint1 =  this.properties.getProperty("default.kml.file", "");
 		File file = new File(defaultEndpoint1);
 		if(file.exists()){
-			defaultEndpoint1 = file.getAbsolutePath();
+			defaultEndpoint1 = file.getCanonicalPath();
 		}	
 		return defaultEndpoint1;
 	}
@@ -96,6 +99,10 @@ public class PropertiesProvider {
 		} catch (Exception e) {
 			throw new MeshException(e);
 		}
+	}
+
+	public String getMesh4xURL() {
+		return getString("mesh4x.url");
 	}
 	
 }

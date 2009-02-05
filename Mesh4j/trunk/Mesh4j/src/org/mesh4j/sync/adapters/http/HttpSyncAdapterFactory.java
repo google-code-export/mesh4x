@@ -52,5 +52,17 @@ public class HttpSyncAdapterFactory implements ISyncAdapterFactory {
 		return true;
 	}
 
+	public static boolean isURL(String url) {
+		return url != null && url.toUpperCase().startsWith("HTTP://");
+	}
+
+	public static boolean isMalformedURL(String url) {
+		try {
+			new URL(url);
+			return false;
+		} catch (MalformedURLException e) {
+			return true;
+		}
+	}
 
 }

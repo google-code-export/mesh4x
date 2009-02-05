@@ -17,6 +17,7 @@ import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.validations.Guard;
 
+// TODO (JMT) separate factory and cache
 public class SyncSessionFactory implements ISyncSessionFactory {
 
 	// MODEL VARIABLES

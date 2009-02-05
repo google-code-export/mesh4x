@@ -22,7 +22,9 @@ public class KMLDOMLoaderFactory implements ISyncAdapterFactory {
 	}
 	
 	public static boolean isKML(String fileName){
-		Guard.argumentNotNullOrEmptyString(fileName, "fileName");
+		if(fileName == null || fileName.isEmpty()){
+			return false;
+		}
 		String localFileName = fileName.trim();
 		return localFileName.toUpperCase().endsWith(".KMZ") || localFileName.toUpperCase().endsWith(".KML");
 	}

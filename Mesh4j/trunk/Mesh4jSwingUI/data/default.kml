@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<kml xmlns="http://earth.google.com/kml/2.2">  
+  <Document> 
+    <name>default.kml</name>  
+    <visibility>0</visibility>  
+    <open>1</open>  
+    <ExtendedData/> 
+  </Document> 
+</kml>

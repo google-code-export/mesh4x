@@ -2,7 +2,7 @@ package org.mesh4j.sync.ui.translator;
 
 import org.mesh4j.sync.translator.MessageTranslator;
 
-public class Mesh4jUITranslator {
+public class KmlUITranslator {
 
 	// Internationalization
 
@@ -190,5 +190,82 @@ public class Mesh4jUITranslator {
 
 	public static String getGroupKML() {
 		return MessageTranslator.translate("Mesh4jUI_LABEL_GROUP_KML");
+	}
+
+	public static String getToolTipTradeMark(String mesh4xURL) {
+		return MessageTranslator.translate("Mesh4jUI_TOOLTIP_TRADEMARK", mesh4xURL);
+	}
+
+	public static String getTradeMark() {
+		return MessageTranslator.translate("Mesh4jUI_TRADEMARK");
+	}
+
+	public static String getTooltipView() {
+		return MessageTranslator.translate("Mesh4jUI_TOOLTIP_VIEW");
+	}
+
+	public static String getMessageWelcome(String userName) {
+		return MessageTranslator.translate("Mesh4jUI_MESSAGE_WELCOME", userName);
+	}
+
+	public static String getLogWindowTitle() {
+		return MessageTranslator.translate("Mesh4jUI_LOG_WINDOW_TITLE");
+	}
+	
+	public static String getLogWindowToolTipConsoleView() {
+		return MessageTranslator.translate("Mesh4jUI_LOG_WINDOW_TOOLTIP_CONSOLE_VIEW");
+	}
+	
+	public static String getLogWindowLabelClean() {
+		return MessageTranslator.translate("Mesh4jUI_LOG_WINDOW_LABEL_CLEAN");
+	}
+	
+	public static String getLogWindowToolTipClean() {
+		return MessageTranslator.translate("Mesh4jUI_LOG_WINDOW_TOOLTIP_CLEAN");
+	}
+	
+	public static String getLogWindowLabelClose() {
+		return MessageTranslator.translate("Mesh4jUI_LOG_WINDOW_LABEL_CLOSE");
+	}
+	
+	public static String getLogWindowToolTipClose() {
+		return MessageTranslator.translate("Mesh4jUI_LOG_WINDOW_TOOLTIP_CLOSE");
+	}
+
+	public static String getKmlManagerWindowTitle() {
+		return MessageTranslator.translate("Mesh4jUI_KML_WINDOW_TITLE");
+	}
+
+	public static String getErrorImpossibleToOpenFileBecauseFileDoesNotExists() {
+		return MessageTranslator.translate("Mesh4jUI_ERROR_IMPOSSIBLE_OPEN_FILE_BECAUSE_FILE_DOES_NOT_EXISTS");
+	}
+	
+	public static String getErrorOpenFileActionNotSupported(){
+		return MessageTranslator.translate("Mesh4jUI_ERROR_OPEN_FILE_ACTION_NOT_SUPPORTED");
+	}
+
+	public static String getErrorOpenBrowser() {
+		return MessageTranslator.translate("Mesh4jUI_ERROR_OPEN_BROWSER");
+	}
+
+	public static String getMessageOpenBrowserActionNotSupported() {
+		return MessageTranslator.translate("Mesh4jUI_ERROR_OPEN_BROWSER_ACTION_NOT_SUPPORTED");
+	}
+
+	public static String getLabelOpenLogWindow() {
+		return MessageTranslator.translate("Mesh4jUI_LABEL_OPEN_LOG_WINDOW");
+	}
+
+
+	public static String getToolTipOpenLogWindow() {
+		return MessageTranslator.translate("Mesh4jUI_TOOLTIP_OPEN_LOG_WINDOW");
+	}
+
+	public static String getLabelOpenKmlManagerWindow() {
+		return MessageTranslator.translate("Mesh4jUI_LABEL_OPEN_KML_MANAGER_WINDOW");
+	}
+
+	public static String getToolTipOpenKmlManagerWindow() {
+		return MessageTranslator.translate("Mesh4jUI_TOOLTIP_OPEN_KML_MANAGER_WINDOW");
 	}
 }
