@@ -101,7 +101,7 @@ public class MapsFrame extends JFrame implements IErrorListener{
 		panelWeb.add(getLabelURL(), new CellConstraints());
 
 		textFieldURL = new JTextField();
-		textFieldURL.setText(this.propertiesProvider.getDefaultURL());
+		textFieldURL.setText("");
 		panelWeb.add(textFieldURL, new CellConstraints(3, 1, CellConstraints.FILL, CellConstraints.FILL));
 
 		ActionListener downloadMappingsActionListener = new ActionListener(){
@@ -230,7 +230,15 @@ public class MapsFrame extends JFrame implements IErrorListener{
 		if (comboBoxMappingDataSource == null) {
 			comboBoxMappingDataSource = new JComboBox();
 			comboBoxMappingDataSource.setFont(new Font("Calibri", Font.PLAIN, 12));
+			comboBoxMappingDataSource.setBackground(Color.WHITE);
 			comboBoxMappingDataSource.setToolTipText(MeshCompactUITranslator.getMapsWindowToolTipDataSourcesToCreateMap());
+			
+			comboBoxMappingDataSource.addActionListener(new ActionListener(){
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					setURLFromSelectedDataSource();
+				}
+			});
 		}
 		return comboBoxMappingDataSource;
 	}
@@ -437,8 +445,18 @@ public class MapsFrame extends JFrame implements IErrorListener{
 			model.addElement(sourcesIt.next());			
 		}
 		comboBoxMappingDataSource.setModel(model);
+		
+		setURLFromSelectedDataSource();
 	}
-	
+
+	private void setURLFromSelectedDataSource() {
+		DataSourceMapping selectedDataSourceMapping = (DataSourceMapping)comboBoxMappingDataSource.getSelectedItem();
+		if(selectedDataSourceMapping != null){
+			String selectedAlias = selectedDataSourceMapping.getAlias();
+			textFieldURL.setText(this.propertiesProvider.getMeshURL(selectedAlias));
+		}
+	}
+
 	private void setStatusText(String text) {
 		this.textAreaStatus.setText(text);
 		this.textAreaStatus.setToolTipText(text);

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<mappings>
+	<item.title>{0}</item.title>
+	<item.description>{1}</item.description>
+	<geo.location>{2}</geo.location>
+	<geo.longitude>{3}</geo.longitude>
+	<geo.latitude>{4}</geo.latitude>
+	<patient.ill>{5}</patient.ill>
+	<patient.updateTimestamp>{6}</patient.updateTimestamp> 
+</mappings>

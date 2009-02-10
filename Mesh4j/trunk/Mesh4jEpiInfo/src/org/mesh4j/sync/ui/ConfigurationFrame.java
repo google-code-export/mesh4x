@@ -296,7 +296,15 @@ public class ConfigurationFrame extends JFrame {
 		
 		final JPanel panelDataSourceButtons = new JPanel();
 		panelDataSourceButtons.setBackground(Color.WHITE);
-		panelDataSourceButtons.setLayout(new FormLayout(new ColumnSpec[] {FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC}, new RowSpec[] {FormFactory.DEFAULT_ROWSPEC}));
+		panelDataSourceButtons.setLayout(new FormLayout(
+			new ColumnSpec[] {
+				FormFactory.DEFAULT_COLSPEC,
+				FormFactory.RELATED_GAP_COLSPEC,
+				FormFactory.DEFAULT_COLSPEC,
+				FormFactory.RELATED_GAP_COLSPEC,
+				FormFactory.DEFAULT_COLSPEC},
+			new RowSpec[] {
+				FormFactory.DEFAULT_ROWSPEC}));
 		panelEditDataSource.add(panelDataSourceButtons, new CellConstraints(1, 7, 2, 1));
 
 		ActionListener saveDataSourceActionListener = new ActionListener(){
@@ -401,6 +409,36 @@ public class ConfigurationFrame extends JFrame {
 		buttonDeleteDataSource.addActionListener(deleteDataSourceActionListener);
 		buttonDeleteDataSource.setToolTipText(MeshCompactUITranslator.getToolTipDelete());
 		
+		ActionListener openMeshAdminActionListener = new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				int index = listDataSources.getSelectedIndex();
+				if (index != -1) {
+					MSAccessDataSourceMapping dataSource = (MSAccessDataSourceMapping) listDataSources.getSelectedValue();
+					MeshAdminFrame meshFrame = owner.getMeshAdminFrame();
+					
+					meshFrame.setDataSource(dataSource);
+					
+					if(meshFrame.isVisible()){
+						meshFrame.toFront();
+					} else {
+						meshFrame.pack();
+						meshFrame.setVisible(true);
+					}
+
+				}
+			}
+		};	
+		final JButton buttonOpenMeshAdmin = new JButton();
+		buttonOpenMeshAdmin.setContentAreaFilled(false);
+		buttonOpenMeshAdmin.setBorderPainted(false);
+		buttonOpenMeshAdmin.setBorder(new EmptyBorder(0, 0, 0, 0));
+		buttonOpenMeshAdmin.setFont(new Font("Calibri", Font.BOLD, 10));
+		buttonOpenMeshAdmin.setText(MeshCompactUITranslator.getLabelOpenMeshAdmin());
+		buttonOpenMeshAdmin.setEnabled(false);
+		buttonOpenMeshAdmin.addActionListener(openMeshAdminActionListener);
+		buttonOpenMeshAdmin.setToolTipText(MeshCompactUITranslator.getToolTipOpenMeshAdmin());
+		panelDataSourceButtons.add(buttonOpenMeshAdmin, new CellConstraints(5, 1));
+		
 		ActionListener fileChooserFileActionListener = new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				String selectedFileName = openFileDialog(
@@ -446,8 +484,10 @@ public class ConfigurationFrame extends JFrame {
 						comboBoxTableName.setModel(tableNameModel);
 						
 						buttonDeleteDataSource.setEnabled(true);
+						buttonOpenMeshAdmin.setEnabled(true);
 			        } else {
 			        	buttonDeleteDataSource.setEnabled(false);
+			        	buttonOpenMeshAdmin.setEnabled(false);
 			        }
 			    }
 			}

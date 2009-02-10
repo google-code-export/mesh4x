@@ -621,4 +621,68 @@ public class MeshCompactUITranslator {
 		return MessageTranslator.translate("MESH_COMPACT_ERROR_OPEN_BROWSER_ACTION_NOT_SUPPORTED");
 	}
 
+	public static String getMeshAdminWindowTitle() {
+		return MessageTranslator.translate("MESH_COMPACT_ADMIN_WINDOW_TITLE");
+	}
+
+	public static String getLabelOpenMeshAdmin() {
+		return MessageTranslator.translate("MESH_COMPACT_ADMIN_WINDOW_LABEL_OPEN_WINDOW");
+	}
+
+	public static String getToolTipOpenMeshAdmin() {
+		return MessageTranslator.translate("MESH_COMPACT_ADMIN_WINDOW_TOOLTIP_OPEN_WINDOW");
+	}
+
+	public static String getErrorSaveMappingsFailed() {
+		return MessageTranslator.translate("MESH_COMPACT_ADMIN_WINDOW_ERROR_SAVE_MAPPINGS"); 
+	}
+
+	public static String getErrorSaveMeshCloudFailed() {
+		return MessageTranslator.translate("MESH_COMPACT_ADMIN_WINDOW_ERROR_SAVE_MESH_CLOUD"); 
+	}
+
+	public static String getMeshAdminWindowLabelMappings() {
+		return MessageTranslator.translate("MESH_COMPACT_ADMIN_WINDOW_LABEL_MAPPINGS");
+	}
+
+	public static String getMeshAdminWindowLabelTitle() {
+		return MessageTranslator.translate("MESH_COMPACT_ADMIN_WINDOW_LABEL_TITLE");
+	}
+
+	public static String getMeshAdminWindowLabelDescription() {
+		return MessageTranslator.translate("MESH_COMPACT_ADMIN_WINDOW_LABEL_DESCRIPTION"); 
+	}
+
+	public static String getMeshAdminWindowLabelAddress() {
+		return MessageTranslator.translate("MESH_COMPACT_ADMIN_WINDOW_LABEL_ADDRESS"); 
+	}
+
+	public static String getMeshAdminWindowLabelIll() {
+		return MessageTranslator.translate("MESH_COMPACT_ADMIN_WINDOW_LABEL_ILL");
+	}
+
+	public static String getMeshAdminWindowLabelUpdateTimestamp() {
+		return MessageTranslator.translate("MESH_COMPACT_ADMIN_WINDOW_LABEL_UPDATE_TIMESTAMP"); 
+	}
+
+	public static String getMeshAdminWindowLabelAdd() {
+		return MessageTranslator.translate("MESH_COMPACT_ADMIN_WINDOW_LABEL_ADD"); 
+	}
+
+	public static String getMeshAdminWindowLabelSave() {
+		return MessageTranslator.translate("MESH_COMPACT_ADMIN_WINDOW_LABEL_SAVE"); 
+	}
+
+	public static String getMeshAdminWindowLabelCloud() {
+		return MessageTranslator.translate("MESH_COMPACT_ADMIN_WINDOW_LABEL_CLOUD"); 
+	}
+
+	public static String getMeshAdminWindowLabelPublish() {
+		return MessageTranslator.translate("MESH_COMPACT_ADMIN_WINDOW_LABEL_PUBLISH"); 
+	}
+
+	public static String getMeshAdminWindowLabelURL() {
+		return MessageTranslator.translate("MESH_COMPACT_ADMIN_WINDOW_LABEL_URL"); 
+	}
+
 }

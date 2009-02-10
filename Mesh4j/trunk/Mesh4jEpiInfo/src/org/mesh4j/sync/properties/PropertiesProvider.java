@@ -140,6 +140,22 @@ public class PropertiesProvider {
 	public String getDefaultURL() {
 		return getString("default.url");
 	}
+	
+	public String getMeshURL(String alias) {
+		return getMeshSyncServerURL() + "/" + getMeshID(alias);
+	}
+	
+	public String getMeshSyncServerURL() {
+		return getString("mesh4x.sync.url");
+	}
+	
+	public String getMeshID() {
+		return getString("mesh4x.sync.meshID");
+	}
+	
+	public String getMeshID(String alias) {
+		return getMeshID() + "/" + alias;
+	}
 
 	public IMessageEncoding getDefaultMessageEncoding() {
 		return (IMessageEncoding) getInstance("default.sms.compress.method", NonMessageEncoding.INSTANCE);
@@ -256,5 +272,13 @@ public class PropertiesProvider {
 		} else {
 			return LoggedInIdentityProvider.getUserName();
 		}
+	}
+
+	public String getDefaultMappingsTemplateFileName() {
+		return getString("default.mappings.template.file.name");
+	}
+
+	public String getDefaultXFormTemplateFileName() {
+		return getString("default.xform.template.file.name");
 	}
 }

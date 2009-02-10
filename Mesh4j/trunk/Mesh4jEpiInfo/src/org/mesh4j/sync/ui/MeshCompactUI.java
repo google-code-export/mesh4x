@@ -84,6 +84,7 @@ public class MeshCompactUI implements ISyncSessionViewOwner, IErrorListener{
 	private SyncSessionsFrame syncSessionsFrame;
 	private SyncCloudFrame syncCloudFrame;
 	private MapsFrame mapsFrame;
+	private MeshAdminFrame meshAdminFrame;
 	
 	private PropertiesProvider propertiesProvider;
 	private SourceIdMapper sourceIdMapper;
@@ -113,6 +114,7 @@ public class MeshCompactUI implements ISyncSessionViewOwner, IErrorListener{
 		
 		this.mapsFrame = new MapsFrame(this.propertiesProvider, this.sourceIdMapper);
 		this.logFrame = new LogFrame(this);
+		this.meshAdminFrame = new MeshAdminFrame(this.propertiesProvider);
 		this.cfgFrame = new ConfigurationFrame(this);
 		this.syncSessionsFrame = new SyncSessionsFrame(this, this.sourceIdMapper, this.propertiesProvider);
 		this.syncCloudFrame = new SyncCloudFrame(this.propertiesProvider, this.sourceIdMapper, this.syncSessionsFrame);
@@ -483,6 +485,9 @@ public class MeshCompactUI implements ISyncSessionViewOwner, IErrorListener{
 	protected void close() {
 		this.logFrame.setVisible(false);
 		this.logFrame.dispose();
+		
+		this.meshAdminFrame.setVisible(false);
+		this.meshAdminFrame.dispose();
 		
 		this.cfgFrame.setVisible(false);
 		this.cfgFrame.dispose();
@@ -909,6 +914,10 @@ public class MeshCompactUI implements ISyncSessionViewOwner, IErrorListener{
 	public SyncCloudFrame getSyncCloudFrame(){
 		return this.syncCloudFrame;
 	}
+	
+	public MeshAdminFrame getMeshAdminFrame(){
+		return this.meshAdminFrame;
+	}
 
 	public IMessageSyncProtocol getSyncProtocol() {
 		return this.syncEngine.getSyncProtocol();
@@ -918,4 +927,5 @@ public class MeshCompactUI implements ISyncSessionViewOwner, IErrorListener{
 	public void notifyError(String error) {
 		syncSessionView.setError(error);
 	}
+
 }

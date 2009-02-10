@@ -13,15 +13,23 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.mesh4j.geo.coder.GeoCoderLocationPropertyResolver;
 import org.mesh4j.sync.adapters.kml.KmlNames;
 import org.mesh4j.sync.adapters.kml.timespan.decorator.IKMLGenerator;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.payload.mappings.IMappingResolver;
+import org.mesh4j.sync.payload.mappings.MappingResolver;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
 public class KmlGenerator implements IKMLGenerator{
 
+	public static final String ATTR_PATIENT_UPDATE_TIMESTAMP = "//patient.updateTimestamp";
+	public static final String ATTR_PATIENT_ILL = "//patient.ill";
+	public static final String ATTR_ITEM_DESCRIPTION = "//item.description";
+	public static final String ATTR_ITEM_TITLE = "//item.title";
+	public static final String ATTR_GEO_LOCATION = "//geo.location";
+	
 	final static Log LOGGER = LogFactory.getLog(KmlGenerator.class);
 	final static SimpleDateFormat DATEONSET_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
@@ -69,19 +77,16 @@ public class KmlGenerator implements IKMLGenerator{
 			if(!item.isDeleted()){
 				
 				Element payload = item.getContent().getPayload();
-				
-				//String longitude = mappingResolver.getValue(payload, "//geo.longitude");
-				//String latitude = mappingResolver.getValue(payload, "//geo.latitude");
-				String location = mappingResolver.getValue(payload, "//geo.location");
+				String location = mappingResolver.getValue(payload, ATTR_GEO_LOCATION);
 				
 				if(location != null && location.trim().length() > 0){
-					String name = mappingResolver.getValue(payload, "//item.title");
-					String description = mappingResolver.getValue(payload, "//item.description");
+					String name = mappingResolver.getValue(payload, ATTR_ITEM_TITLE);
+					String description = mappingResolver.getValue(payload, ATTR_ITEM_DESCRIPTION);
 					
-					String ill = mappingResolver.getValue(payload, "//patient.ill");
+					String ill = mappingResolver.getValue(payload, ATTR_PATIENT_ILL);
 					String style = "0".equals(ill) ? "#msn_ylw-pushpin0" : "#msn_ylw-pushpin";
 					
-					Date start = getDateOnSet(item);
+					Date start = getUpdateTimeStamp(item);
 					if(start == null){
 						start = item.getLastUpdate().getWhen();
 					} 
@@ -113,9 +118,7 @@ public class KmlGenerator implements IKMLGenerator{
 	@Override
 	public boolean hasItemChanged(Document document, Element itemElement, Item item) {
 		try{
-			String itemIll = mappingResolver.getValue(item.getContent().getPayload(), "//patient.ill");
-			//String actualXML = itemElement.element(KmlNames.KML_ELEMENT_DESCRIPTION).getText();
-			//String actualItemIll = schemaResolver.getValue(DocumentHelper.parseText(actualXML).getRootElement(), "//patient.ill");
+			String itemIll = mappingResolver.getValue(item.getContent().getPayload(), ATTR_PATIENT_ILL);
 			Element styleUrl = itemElement.element(KmlNames.KML_ELEMENT_STYLE_URL);
 			String actualItemIll = "#msn_ylw-pushpin0".equals(styleUrl.getText()) ?  "0" : "1";			
 			return !itemIll.equals(actualItemIll);
@@ -141,7 +144,7 @@ public class KmlGenerator implements IKMLGenerator{
 
 	@Override
 	public String getEndTimeSpan(Item item) throws Exception{
-		Date dateOnSet = getDateOnSet(item);
+		Date dateOnSet = getUpdateTimeStamp(item);
 		if(dateOnSet == null){
 			return DateHelper.formatW3CDateTime(item.getLastUpdate().getWhen());
 		} else {
@@ -153,14 +156,35 @@ public class KmlGenerator implements IKMLGenerator{
 		}
 	}
 
-	private Date getDateOnSet(Item item) throws ParseException {
+	private Date getUpdateTimeStamp(Item item) throws ParseException {
 		Element payload = item.getContent().getPayload();
-		String dateOnSet = mappingResolver.getValue(payload, "//patient.dateOnset");
+		String dateOnSet = mappingResolver.getValue(payload, ATTR_PATIENT_UPDATE_TIMESTAMP);
 		if(dateOnSet == null || dateOnSet.trim().length() == 0){
 			return null;
 		} else {
 			Date date = DATEONSET_FORMAT.parse(dateOnSet);
 			return date;
 		}
+	}
+
+	public static String getTitleMapping(MappingResolver mappingResolver) {
+		return mappingResolver.getMapping(ATTR_ITEM_TITLE);
+	}
+	
+	public static String getDescriptionMapping(MappingResolver mappingResolver) {
+		return mappingResolver.getMapping(ATTR_ITEM_DESCRIPTION);
+	}
+	
+	public static String getAddressMapping(MappingResolver mappingResolver) {
+		String geoLocMapping = mappingResolver.getAttribute(ATTR_GEO_LOCATION);
+		return GeoCoderLocationPropertyResolver.getMapping(geoLocMapping);
+	}
+	
+	public static String getIllMapping(MappingResolver mappingResolver) {
+		return mappingResolver.getAttribute(ATTR_PATIENT_ILL);
+	}
+	
+	public static String getUpdateTimestampMapping(MappingResolver mappingResolver) {
+		return mappingResolver.getAttribute(ATTR_PATIENT_UPDATE_TIMESTAMP);
 	}
 }

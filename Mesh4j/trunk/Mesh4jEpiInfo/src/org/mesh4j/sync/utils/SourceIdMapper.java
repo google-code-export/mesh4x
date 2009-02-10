@@ -176,4 +176,34 @@ public class SourceIdMapper implements ISourceIdMapper {
 			return new TreeSet<String>();
 		}
 	}
+
+	public static Set<String> getTableTextColumns(String fileName, String tableName) {
+		try{
+			// TODO (JMT) filter by text column type
+			return MsAccessHelper.getTableColumnNames(fileName, tableName);
+		}catch (Exception e) {
+			Logger.error(e.getMessage(), e);
+			return new TreeSet<String>();
+		}
+	}
+
+	public static Set<String> getTableBooleanColumns(String fileName, String tableName) {
+		try{
+			// TODO (JMT) filter by bool column type
+			return MsAccessHelper.getTableColumnNames(fileName, tableName);
+		}catch (Exception e) {
+			Logger.error(e.getMessage(), e);
+			return new TreeSet<String>();
+		}
+	}
+
+	public static Set<String> getTableTimestampColumns(String fileName, String tableName) {
+		try{
+			// TODO (JMT) filter by timestamp column type
+			return MsAccessHelper.getTableColumnNames(fileName, tableName);
+		}catch (Exception e) {
+			Logger.error(e.getMessage(), e);
+			return new TreeSet<String>();
+		}
+	}
 }

@@ -1,6 +1,7 @@
 package org.mesh4j.sync.utils;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Date;
 import java.util.List;
@@ -10,7 +11,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.mesh4j.geo.coder.GoogleGeoCoder;
 import org.mesh4j.sync.IFilter;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.NullPreviewHandler;
@@ -72,6 +72,7 @@ public class SyncEngineUtil {
 
 	// TODO (JMT) Add number of GET/MERGE and ACKs to client session target values
 	// TODO (JMT) Add items added/updated/deleted to client session target values
+	// TODO (JMT) Add sinceDate in cloud sync
 	
 	private final static Log Logger = LogFactory.getLog(SyncEngineUtil.class);
 	
@@ -245,12 +246,10 @@ public class SyncEngineUtil {
 			throw new IllegalArgumentException(MeshUITranslator.getErrorKMLMappingsNotFound());
 		}
 
-		GoogleGeoCoder geoCoder = new GoogleGeoCoder(geoCoderKey);
-
 		String sourceDefinition = sourceIdResolver.getSourceDefinition(dataSourceAlias);
 		ISyncAdapterFactory syncFactory = makeSyncAdapterFactory(baseDirectory);
 
-		IKMLGeneratorFactory kmlGeneratorFactory = new KmlGeneratorFactory(baseDirectory, templateFileName, geoCoder);
+		IKMLGeneratorFactory kmlGeneratorFactory = new KmlGeneratorFactory(baseDirectory, templateFileName, geoCoderKey);
 		KMLTimeSpanDecoratorSyncAdapterFactory kmlDecSyncFactory = new KMLTimeSpanDecoratorSyncAdapterFactory(baseDirectory, syncFactory, kmlGeneratorFactory);
 		
 		KMLTimeSpanDecoratorSyncAdapter syncAdapter = kmlDecSyncFactory.createSyncAdapter(dataSourceAlias, sourceDefinition, identityProvider);
@@ -283,15 +282,30 @@ public class SyncEngineUtil {
 		FileUtils.write(fileName, xmlSchema.getBytes());
 	}
 	
-	public static void downloadMappings(String url, String tableName, String baseDirectory) throws Exception {
-		
+	public static void downloadMappings(String url, String alias, String baseDirectory) throws Exception {
 		HttpSyncAdapter httpSyncAdapter = HttpSyncAdapterFactory.INSTANCE.createSyncAdapter("downloadMappings", url, NullIdentityProvider.INSTANCE);
 		String xmlMappings = httpSyncAdapter.getMappings();
 		
-		String fileName = baseDirectory + "/" + tableName + "_mappings.xml";
+		String fileName = baseDirectory + "/" + alias + "_mappings.xml";
 		FileUtils.write(fileName, xmlMappings.getBytes());
 	}
 
+	public static void saveMappings(String alias, String templateFileName, String baseDirectory, String title, String description, String location, String latitude, String longitud, String ill, String updateTimestamp) throws IOException {
+		byte[] templateBytes = FileUtils.read(templateFileName);
+		String template = new String(templateBytes, "UTF-8");		
+		String xml = MessageFormat.format(
+				template, 
+				title, 
+				description, 
+				location,
+				longitud,
+				latitude,
+				ill, 
+				updateTimestamp);
+		String fileName = baseDirectory + "/" + alias + "_mappings.xml";
+		FileUtils.write(fileName, xml.getBytes());
+	}
+	
 	public static void makeKMLWithNetworkLink(String templateFileName, String fileName, String docName, String url) throws Exception {
 		byte[] bytes = FileUtils.read(templateFileName);
 		String template = new String(bytes);
@@ -384,5 +398,43 @@ public class SyncEngineUtil {
 		smsLibConnection.initialize("mesh4x", propertiesProvider.getDefaultPort(), propertiesProvider.getDefaultBaudRate(), "", "");
 	}
 
+	@SuppressWarnings("unchecked")
+	public static void uploadMeshDefinition(MSAccessDataSourceMapping dataSource, String description, PropertiesProvider propertiesProvider) throws Exception {
+
+		String schemaFileName = propertiesProvider.getBaseDirectory() + "/" + dataSource.getAlias() + "_schema.xml";
+		MsAccessXFormGenerator.createXFormSchema(
+			schemaFileName,
+			dataSource.getFileName(), 
+			dataSource.getTableName(), 
+			dataSource.getAlias(),
+			dataSource.getTableName(),
+			propertiesProvider.getDefaultXFormTemplateFileName());
+				
+		StringBuffer sbSchema = new StringBuffer();
+		List<Element> schemaElements = XMLHelper.readDocument(new File(schemaFileName)).getRootElement().elements();
+		for (Element schemaElement : schemaElements) {
+			sbSchema.append(schemaElement.asXML());
+			sbSchema.append("\n");
+		}
+		
+				
+		String mappingsFileName = propertiesProvider.getBaseDirectory() + "/" + dataSource.getAlias() + "_mappings.xml";
+		
+		StringBuffer sbMappings = new StringBuffer();
+		List<Element> mappingElements = XMLHelper.readDocument(new File(mappingsFileName)).getRootElement().elements();
+		for (Element mapElement : mappingElements) {
+			sbMappings.append(mapElement.asXML());
+			sbMappings.append("\n");
+		}
+		
+		HttpSyncAdapter httpSyncAdapter = new HttpSyncAdapter(
+			propertiesProvider.getMeshSyncServerURL(), 
+			RssSyndicationFormat.INSTANCE, 
+			propertiesProvider.getIdentityProvider());
+		
+		String meshSourceId = propertiesProvider.getMeshID(dataSource.getAlias());
+		httpSyncAdapter.uploadMeshDefinition(propertiesProvider.getMeshID(), RssSyndicationFormat.INSTANCE.getName(), propertiesProvider.getMeshID(), "", "");
+		httpSyncAdapter.uploadMeshDefinition(meshSourceId, RssSyndicationFormat.INSTANCE.getName(), description, sbSchema.toString(), sbMappings.toString());
+	}
 
 }
