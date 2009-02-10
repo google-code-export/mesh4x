@@ -48,11 +48,7 @@ public class MsAccessHibernateMappingGenerator {
 			writer.flush();
 			fileWriter.write(writer.toString());
 		}finally{
-			try{
-				fileWriter.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			fileWriter.close();
 		}
 	}
 

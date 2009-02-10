@@ -183,13 +183,11 @@ public class FeedServlet extends HttpServlet {
 		String action = request.getParameter("action");
 		if("clean".equals(action)){
 			cleanFeed(request, response);
+		} else if ("uploadMeshDefinition".equals(action)){
+			uploadMeshDefinition(request, response);
 		} else {
 			String sourceID = this.getSourceID(request);
-			if(this.feedRepository.isAddNewFeedAction(sourceID)){
-				addNewFeed(request, response);
-			} else {
-				synchronizeFeed(request, response, sourceID);
-			}
+			synchronizeFeed(request, response, sourceID);
 		}
 	}
 	
@@ -245,30 +243,9 @@ public class FeedServlet extends HttpServlet {
 		}
 	}
 
-//	private void updateFeed(HttpServletRequest request, HttpServletResponse response, String sourceID) throws IOException {
-//		if(!this.feedRepository.existsFeed(sourceID)){
-//			response.sendError(404, sourceID);
-//		} else {
-//			String format = request.getParameter("format");
-//			String description = request.getParameter("description");
-//			String schema = request.getParameter("schema");
-//			String mappings = request.getParameter("mappings");
-//			
-//			ISyndicationFormat syndicationFormat = this.feedRepository.getSyndicationFormat(format);	
-//			if(syndicationFormat == null){
-//				response.sendError(404, format);	
-//			}
-//			
-//			String link = getFeedLink(request);
-//			this.feedRepository.updateFeed(sourceID, syndicationFormat, link, description, schema, mappings, "admin");
-//			
-//			response.sendRedirect(request.getRequestURI());
-//		}
-//	}
-	
-	private void addNewFeed(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	private void uploadMeshDefinition(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		String newSourceID = request.getParameter("newSourceID");
-		if(this.feedRepository.existsFeed(newSourceID)){
+		if(newSourceID == null){
 			response.sendError(404, newSourceID);
 		} else {
 			String format = request.getParameter("format");
@@ -281,9 +258,13 @@ public class FeedServlet extends HttpServlet {
 				response.sendError(404, format);	
 			}
 			
-			//String link = request.getRequestURI()+ "/" + newSourceID;
 			String link = getFeedLink(request)+ "/" + newSourceID;
-			this.feedRepository.addNewFeed(newSourceID, syndicationFormat, link, description, schema, mappings, "admin");
+			
+			if(this.feedRepository.existsFeed(newSourceID)){
+				this.feedRepository.updateFeed(newSourceID, syndicationFormat, link, description, schema, mappings, "admin");
+			} else {
+				this.feedRepository.addNewFeed(newSourceID, syndicationFormat, link, description, schema, mappings, "admin");
+			}
 			
 			response.sendRedirect(link);
 		}

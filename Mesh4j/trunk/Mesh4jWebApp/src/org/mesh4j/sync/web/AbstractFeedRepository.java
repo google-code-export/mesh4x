@@ -249,40 +249,41 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 //	}
 //
 //	protected abstract void basicRemoveFeed(String sourceID);
-//
-//	@Override
-//	public void updateFeed(String sourceID, ISyndicationFormat syndicationFormat, String link, String description, String schema, String mappings, String by) {
-//		ISyncAdapter parentAdapter = this.getParentSyncAdapter(sourceID);
-//		
-//		List<Item> items = parentAdapter.getAll(new XMLContentLinkFilter(link));
-//		if(items.isEmpty()){
-//			
-//			addNewFeed(sourceID, syndicationFormat, link, description, schema, mappings, by);
-//			
-//		} else{
-//			
-//			Item item =items.get(0);
-//			
-//			item.getSync().update(by, new Date());
-//			
-//			Element payload = item.getContent().getPayload();
-//			if(schema != null && schema.trim().length() >0){
-//				Element schemaElement = payload.element(ISchemaResolver.ELEMENT_SCHEMA);
-//				if(schemaElement == null){
-//					schemaElement = payload.addElement(ISchemaResolver.ELEMENT_SCHEMA);
-//				}
-//				schemaElement.setText(schema);	// TODO (JMT) validate schema
-//			}
-//			
-//			if(mappings != null && mappings.trim().length() >0){
-//				Element mappingsElement = payload.element(IMappingResolver.ELEMENT_MAPPING);
-//				if(mappingsElement == null){	
-//					mappingsElement = payload.addElement(IMappingResolver.ELEMENT_MAPPING);
-//				}
-//				mappingsElement.setText(mappings);  // TODO (JMT) validate mappings
-//			}
-//			
-//			parentAdapter.update(item);
-//		}
-//	}
+
+	@Override
+	public void updateFeed(String sourceID, ISyndicationFormat syndicationFormat, String link, String description, String schema, String mappings, String by) {
+		ISyncAdapter parentAdapter = this.getParentSyncAdapter(sourceID);
+		
+		List<Item> items = parentAdapter.getAll(new XMLContentLinkFilter(link));
+		if(items.isEmpty()){
+			
+			addNewFeed(sourceID, syndicationFormat, link, description, schema, mappings, by);
+			
+		} else{
+			
+			Item item =items.get(0);
+			
+			item.getSync().update(by, new Date());
+			
+			Element payload = item.getContent().getPayload();
+			if(schema != null && schema.trim().length() >0){
+				Element schemaElement = payload.element(ISchemaResolver.ELEMENT_SCHEMA);
+				if(schemaElement == null){
+					schemaElement = payload.addElement(ISchemaResolver.ELEMENT_SCHEMA);
+				}
+				schemaElement.setText(schema);	// TODO (JMT) validate schema
+			}
+			
+			if(mappings != null && mappings.trim().length() >0){
+				Element mappingsElement = payload.element(IMappingResolver.ELEMENT_MAPPING);
+				if(mappingsElement == null){	
+					mappingsElement = payload.addElement(IMappingResolver.ELEMENT_MAPPING);
+				}
+				mappingsElement.setText(mappings);  // TODO (JMT) validate mappings
+			}
+			
+			((XMLContent)item.getContent()).setDescription(description);
+			parentAdapter.update(item);
+		}
+	}
 }

@@ -39,4 +39,8 @@ public class GeoCoderLongitudePropertyResolver implements IPropertyResolver {
 		return "";
 	}
 
+	public static String makeMapping(String address) {
+		return "geoLongitude(" + address + ")";
+	}
+
 }

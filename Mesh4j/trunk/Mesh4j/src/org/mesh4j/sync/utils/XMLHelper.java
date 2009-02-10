@@ -157,4 +157,17 @@ public class XMLHelper {
 			throw new MeshException(e);
 		}
 	}
+
+	public static String makeXml(String elementName, String elementValue) {
+		StringBuffer sb = new StringBuffer();
+		sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>");
+		sb.append("<");
+		sb.append(elementName);
+		sb.append(">");
+		sb.append(elementValue);
+		sb.append("</");
+		sb.append(elementName);
+		sb.append(">");
+		return sb.toString();
+	}
 }

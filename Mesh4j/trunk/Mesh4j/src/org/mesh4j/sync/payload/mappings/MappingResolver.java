@@ -121,4 +121,9 @@ public class MappingResolver implements IMappingResolver {
 		return template;
 	}
 	
+	public String getAttribute(String mappingName) {
+		String mapping = getMapping(mappingName);
+		return StringUtils.substringBetween(mapping, "{", "}");
+	}
+	
 }

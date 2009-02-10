@@ -26,13 +26,28 @@ public class HttpSyncAdapterTests {
 	private HttpSyncAdapter httpAdapter;
 	
 	// BUSINESS METHODS
-	
+
 	@Before
 	public void setUp() throws MalformedURLException{
 		String path = "http://localhost:9090/mesh4x/feeds/myMesh/myFeed";
 		this.httpAdapter = new HttpSyncAdapter(path, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 	}
+
+	@Test
+	public void shouldUploadMesh(){
+		String path = "http://localhost:9090/mesh4x/feeds";
+		this.httpAdapter = new HttpSyncAdapter(path, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		
+		// add mesh
+		this.httpAdapter.uploadMeshDefinition("myMesh", RssSyndicationFormat.NAME, "my mesh", "", "");
+		
+		// add feed
+		this.httpAdapter.uploadMeshDefinition("myMesh/myFeed", RssSyndicationFormat.NAME, "my description", "my schema", "my mappings");
+		
+		// update feed
+		this.httpAdapter.uploadMeshDefinition("myMesh/myFeed", RssSyndicationFormat.NAME, "my description223", "my schema1 ", "my mappings2");
+	}
+	
 	@Test
 	public void shouldExecuteGetAll(){
 		List<Item> items = this.httpAdapter.getAll();
@@ -87,4 +102,5 @@ public class HttpSyncAdapterTests {
 		String mappings = this.httpAdapter.getMappings();
 		Assert.assertNotNull(mappings);
 	}
+	
 }

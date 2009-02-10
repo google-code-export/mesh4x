@@ -5,9 +5,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -68,7 +70,7 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 			Feed feed = new Feed(items);
 			String xml = feedWriter.writeAsXml(feed);
 			
-			String result = this.doPOST(xml);
+			String result = this.doPOST(xml, "text/xml");
 			
 			feed = feedReader.read(result);
 			return feed.getItems();
@@ -157,6 +159,7 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 						return null;
 					}
 				} catch (IOException e1) {
+					Logger.error(e1.getMessage(), e1);
 					Logger.error(e.getMessage(), e);
 					throw new MeshException(e);
 				}
@@ -174,8 +177,10 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 		try{
 			is = conn.getInputStream();
 		} catch(Exception e){
+			InputStream es = conn.getErrorStream();
+			
 			StringBuffer result = new StringBuffer();
-			Reader reader = new InputStreamReader(conn.getErrorStream(), "UTF-8");
+			Reader reader = new InputStreamReader(es, "UTF-8");
 			char[] cb = new char[2048];
 
 			int amtRead = reader.read(cb);
@@ -184,9 +189,15 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 				amtRead = reader.read(cb);
 			}
 			reader.close();
+			es.close();
+			
+			if(is != null){
+				is.close();
+			}
+			
 			Logger.error(result.toString());
 			throw e;
-		}
+		} 
 
 		StringBuffer result = new StringBuffer();
 		Reader reader = new InputStreamReader(is, "UTF-8");
@@ -198,15 +209,16 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 			amtRead = reader.read(cb);
 		}
 		reader.close();
+		is.close();
 		return result.toString();
 	}
 	
-	public String doPOST(String content){
+	public String doPOST(String content, String contentType){
 	    HttpURLConnection conn = null;
 	    String result = null;
-	    try{
+	    try{ 
 	    	conn = (HttpURLConnection) this.url.openConnection();
-		    writeData(content, conn);		    
+			writeData(content, contentType, conn);		    
 		    result = readData(conn);
 	    } catch(Exception e){
 	    	Logger.error(e.getMessage(), e);
@@ -219,11 +231,13 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 	    return result;
 	}
 
-	private void writeData(String content, HttpURLConnection conn) throws Exception {
-	    conn.setDoOutput(true);
+	private void writeData(String content, String contentType, HttpURLConnection conn) throws Exception {
+		conn.setDoOutput(true);
+		conn.setUseCaches(false);
 		conn.setRequestMethod("POST");
 		conn.setRequestProperty("Content-Length", Integer.toString(content.length()));
-		conn.setRequestProperty("Content-Type", "text/xml");
+		conn.setRequestProperty("Content-Type", contentType);
+						
 		OutputStreamWriter out = null;
 		try{
 			out = new OutputStreamWriter(conn.getOutputStream());
@@ -279,6 +293,7 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 						return null;
 					}
 				} catch (IOException e1) {
+					Logger.error(e1.getMessage(), e1);
 					Logger.error(e.getMessage(), e);
 					throw new MeshException(e);
 				}
@@ -308,6 +323,7 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 						return null;
 					}
 				} catch (IOException e1) {
+					Logger.error(e1.getMessage(), e1);
 					Logger.error(e.getMessage(), e);
 					throw new MeshException(e);
 				}
@@ -318,4 +334,66 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 	    }		
 		return result;
 	}
+
+	public static String makeMappingsURL(String url) {
+		return url + "/mappings";
+	}
+	
+	public static String makeSchemaURL(String url) {
+		return url + "/schema";
+	}
+
+	public void uploadMeshDefinition(String sourceId, String format, String description, String schema, String mappings) {
+		try{
+			String content = makeMeshDefinitionContent(sourceId, format, description, schema, mappings);
+			doPOST(content, "application/x-www-form-urlencoded");
+		} catch (Exception e) {
+			Logger.error(e.getMessage(), e); 
+			throw new MeshException(e);
+		}
+	}
+
+	private String makeMeshDefinitionContent(String sourceId,
+			String format, String description, String schema, String mappings) throws UnsupportedEncodingException {
+		
+		StringBuffer sb = new StringBuffer();
+		
+		sb.append(URLEncoder.encode("action", "UTF-8"));
+		sb.append("=");
+		sb.append(URLEncoder.encode("uploadMeshDefinition", "UTF-8"));
+		
+		sb.append("&");
+		
+		sb.append(URLEncoder.encode("newSourceID", "UTF-8"));
+		sb.append("=");
+		sb.append(URLEncoder.encode(sourceId, "UTF-8"));
+		
+		sb.append("&");
+
+		sb.append(URLEncoder.encode("format", "UTF-8"));
+		sb.append("=");
+		sb.append(URLEncoder.encode(format, "UTF-8"));
+		
+		sb.append("&");
+
+		sb.append(URLEncoder.encode("description", "UTF-8"));
+		sb.append("=");
+		sb.append(URLEncoder.encode(description, "UTF-8"));
+
+		sb.append("&");
+
+		sb.append(URLEncoder.encode("schema", "UTF-8"));
+		sb.append("=");
+		sb.append(URLEncoder.encode(schema, "UTF-8"));
+		
+		sb.append("&");
+
+		sb.append(URLEncoder.encode("mappings", "UTF-8"));
+		sb.append("=");
+		sb.append(URLEncoder.encode(mappings, "UTF-8"));
+		
+		sb.append("\r\n");
+		return sb.toString();
+	}
+
 }

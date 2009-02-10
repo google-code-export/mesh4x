@@ -124,53 +124,9 @@ public class XMLContent extends Content {
 		}
 		
 	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
 }
 
-//XMLContent contextAsXMLContent = (XMLContent) content;
-//if(contextAsXMLContent.getTitle() != null && contextAsXMLContent.getTitle().trim().length() > 0){
-//	Element titleElement = this.syndicationFormat.getFeedItemTitleElement(itemElement);
-//	if(titleElement == null){
-//		titleElement = this.syndicationFormat.addFeedItemTitleElement(itemElement);
-//		titleElement.setText(contextAsXMLContent.getTitle());
-//	} else {
-//		titleElement.setText(contextAsXMLContent.getTitle());
-//	}
-//}else{
-//	Element titleElement = this.syndicationFormat.getFeedItemTitleElement(itemElement);
-//	if(titleElement != null){
-//		itemElement.remove(titleElement);
-//	}
-//}
-//
-//if(contextAsXMLContent.getDescription() != null && contextAsXMLContent.getDescription().trim().length() > 0){
-//	Element descriptionElement = this.syndicationFormat.getFeedItemDescriptionElement(itemElement);
-//	if(descriptionElement == null){
-//		descriptionElement = this.syndicationFormat.addFeedItemDescriptionElement(itemElement);
-//		descriptionElement.setText(contextAsXMLContent.getDescription());
-//		itemElement.add(descriptionElement);
-//	} else {
-//		descriptionElement.setText(contextAsXMLContent.getDescription());
-//	}
-//}else{
-//	Element descriptionElement = this.syndicationFormat.getFeedItemDescriptionElement(itemElement);
-//	if(descriptionElement != null){
-//		itemElement.remove(descriptionElement);
-//	}
-//}
-//
-//if(contextAsXMLContent.getLink() != null && contextAsXMLContent.getLink().trim().length() > 0){
-//	Element linkElement = this.syndicationFormat.getFeedItemLinkElement(itemElement);
-//	if(linkElement == null){
-//		linkElement = this.syndicationFormat.addFeedItemLinkElement(itemElement);
-//		linkElement.setText(contextAsXMLContent.getLink());
-//		itemElement.add(linkElement);
-//	} else {
-//		linkElement.setText(contextAsXMLContent.getLink());
-//	}
-//}else{
-//	Element linkElement = this.syndicationFormat.getFeedItemLinkElement(itemElement);
-//	if(linkElement != null){
-//		itemElement.remove(linkElement);
-//	}
-//}
-//}

@@ -26,10 +26,11 @@
 			<br>
 		</li>
 		<li>
-			<p><b>How to add a new own Mesh</b></p>
+			<p><b>How to add/update a new own Mesh</b></p>
 			<div class="description">Method: POST</div>
 			<div class="description">URL: /feeds?format[atom10/rss20]&nbsp;&nbsp;&nbsp;(*)</div>
 			<div class="description">Parameters:</div>
+			<div class="description">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name="action" type="hidden text" value="uploadMeshDefinition"</div>
 			<div class="description">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name="newSourceID" type="text" value="myMesh"<div>
 			<div class="description">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name="title" type="text" value="my own mesh"</div>
 			<div class="description">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name="description" type="text" value="my mesh is the best mesh"</dic>
@@ -43,10 +44,11 @@
 			<br>
 		</li>
 		<li>
-			<p><b>How to add a new own Feed</b></p>
+			<p><b>How to add/update a new own Feed</b></p>
 			<div class="description">Method: POST</div>
 			<div class="description">URL: /feeds/{meshName}?format[atom10/rss20]&nbsp;&nbsp;&nbsp;(*)</div>
 			<div class="description">Parameters:</div>
+			<div class="description">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name="action" type="hidden text" value="uploadMeshDefinition"</div>
 			<div class="description">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name="newSourceID" type="text" value="myMesh/myFeed"</div>
 			<div class="description">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name="title" type="text" value="my own feed</div>
 			<div class="description">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name="description" type="text" value="my feed is the best feed"</div>
@@ -70,9 +72,10 @@
 	<br>
 	<hr>
 	<br>
-	<h2>Create you own Mesh:</h2>
+	<h2>Create or update you own Mesh:</h2>
 	<br>
 	<form action="/mesh4x/feeds" method="post">
+		<input type="hidden" id="action" name="action" value="uploadMeshDefinition">
 		name: <input id="newSourceID" name="newSourceID" type="text" value="myMesh">
 		title: <input id="title" name="title" type="text" value="my own mesh">
 		description: <input id="description" name="description" type="text" value="my mesh is the best mesh">
@@ -83,9 +86,10 @@
 	</form>
 	<br>
 	<br>
-	<h2>Create you own Feed:</h2>
+	<h2>Create or update you own Feed:</h2>
 	<br>
 	<form action="/mesh4x/feeds" method="post">
+		<input type="hidden" id="action" name="action" value="uploadMeshDefinition">
 		name: <input id="newSourceID" name="newSourceID" type="text" value="myMesh/myFeed">
 		title: <input id="title" name="title" type="text" value="my own feed">
 		description: <input id="description" name="description" type="text" value="my feed is the best feed">

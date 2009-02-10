@@ -2,6 +2,7 @@ package org.mesh4j.geo.coder;
 
 import java.util.HashMap;
 
+import org.apache.commons.lang.StringUtils;
 import org.dom4j.Element;
 import org.mesh4j.sync.payload.mappings.IPropertyResolver;
 import org.mesh4j.sync.utils.XMLHelper;
@@ -37,6 +38,14 @@ public class GeoCoderLocationPropertyResolver implements IPropertyResolver {
 			return String.valueOf(geoLocation.toString());
 		}
 		return "";
+	}
+
+	public static String getMapping(String mapping) {
+		return StringUtils.substringBetween(mapping, "geoLocation(", ")");
+	}
+
+	public static String makeMapping(String address) {
+		return "geoLocation(" + address + ")";
 	}
 
 }
