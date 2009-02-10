@@ -100,7 +100,7 @@
 		<br>
 		<button type="submit">Add</button>
 	</form>
-		<br>
+	<br>
 	<br>
 	<h2>Clean you own Feed:</h2>
 	<br>
@@ -110,6 +110,17 @@
 		<br>
 		<br>
 		<button type="submit">Clean</button>
+	</form>
+	<br>
+	<br>
+	<h2>Delete you own Feed:</h2>
+	<br>
+	<form action="/mesh4x/feeds" method="post">
+		<input type="hidden" id="action" name="action" value="delete">
+		name: <input id="sourceID" name="sourceID" type="text" value="myMesh/myFeed">
+		<br>
+		<br>
+		<button type="submit">Delete</button>
 	</form>
 </body>
 </html>

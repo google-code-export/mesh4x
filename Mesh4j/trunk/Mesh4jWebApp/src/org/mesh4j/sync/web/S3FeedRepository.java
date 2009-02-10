@@ -107,5 +107,12 @@ public class S3FeedRepository extends AbstractFeedRepository {
 		// Not supported operation
 		// TODO (JMT) supports clean a feed
 	}
+
+	@Override
+	protected void basicDeleteFeed(String sourceID) {
+		// Not supported operation
+		// TODO (JMT) supports delete a feed
+		
+	}
 	
 }

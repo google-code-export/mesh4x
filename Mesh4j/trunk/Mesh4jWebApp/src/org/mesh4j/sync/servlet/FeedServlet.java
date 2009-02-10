@@ -28,6 +28,23 @@ import org.mesh4j.sync.web.geo.coder.GeoCoderFactory;
 
 public class FeedServlet extends HttpServlet {
 
+	private static final String USER_ADMIN = "admin";
+
+	private static final String PARAM_SOURCE_ID = "sourceID";
+	private static final String PARAM_DESCRIPTION = "description";
+	private static final String PARAM_NEW_SOURCE_ID = "newSourceID";
+	private static final String PARAM_ACTION = "action";
+	private static final String PARAM_FORMAT = "format";
+	private static final String PARAM_MAPPINGS = "mappings";
+	private static final String PARAM_SCHEMA = "schema";
+
+	private static final String ACTION_DELETE = "delete";
+	private static final String ACTION_UPLOAD_MESH_DEFINITION = "uploadMeshDefinition";
+	private static final String ACTION_CLEAN = "clean";
+
+	private static final String FORMAT_PLAIN = "plain";
+	private static final String FORMAT_KML = "kml";
+
 	private static final long serialVersionUID = 8932466869419169112L;
 	
 	// MODEL VARIABLES
@@ -70,16 +87,16 @@ public class FeedServlet extends HttpServlet {
 		String sourceID = this.getSourceID(request);
 		String link = getFeedLink(request);
 
-		if(sourceID != null && sourceID.endsWith("schema")){
+		if(sourceID != null && sourceID.endsWith(PARAM_SCHEMA)){
 			processGetSchema(response, sourceID, link);
-		} else if(sourceID != null && sourceID.endsWith("mappings")){
+		} else if(sourceID != null && sourceID.endsWith(PARAM_MAPPINGS)){
 			processGetMappings(response, sourceID, link);
 		} else {
 			if(sourceID != null && !this.feedRepository.existsFeed(sourceID)){  // sourceID == null ==> Get all feeds
 				response.sendError(404, sourceID);
 			} else {
-				String format = request.getParameter("format");     // format=rss20/atom10/kml
-				if("kml".equals(format)){					
+				String format = request.getParameter(PARAM_FORMAT);     // format=rss20/atom10/kml
+				if(FORMAT_KML.equals(format)){					
 					processGetKML(request, response, sourceID, link);
 				}else {
 					processGetFeed(request, response, sourceID, link, format);
@@ -97,14 +114,13 @@ public class FeedServlet extends HttpServlet {
 		if(syndicationFormat == null){
 			response.sendError(404, format);
 		} else {
-			boolean plainMode = request.getParameter("plain") != null;     // plain  ==> remove deleted items and sync information
+			boolean plainMode = request.getParameter(FORMAT_PLAIN) != null;     // plain  ==> remove deleted items and sync information
 			
 			Date sinceDate = this.getSinceDate(request);
 			String responseContent = this.feedRepository.readFeed(sourceID, link, sinceDate, syndicationFormat, plainMode);
 			responseContent = responseContent.replaceAll("&lt;", "<");	// TODO (JMT) remove ==>  xml.replaceAll("&lt;", "<"); 
 			responseContent = responseContent.replaceAll("&gt;", ">");
 			
-			//response.setContentType("text/plain");
 			response.setContentType(syndicationFormat.getContentType());
 			response.setContentLength(responseContent.length());
 			PrintWriter out = response.getWriter();
@@ -180,19 +196,20 @@ public class FeedServlet extends HttpServlet {
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {		
-		String action = request.getParameter("action");
-		if("clean".equals(action)){
+		String action = request.getParameter(PARAM_ACTION);
+		if(ACTION_CLEAN.equals(action)){
 			cleanFeed(request, response);
-		} else if ("uploadMeshDefinition".equals(action)){
+		} else if (ACTION_UPLOAD_MESH_DEFINITION.equals(action)){
 			uploadMeshDefinition(request, response);
-		} else {
-			String sourceID = this.getSourceID(request);
-			synchronizeFeed(request, response, sourceID);
+		} else if(ACTION_DELETE.equals(action)){
+			deleteFeed(request, response);
+		}else {
+			synchronizeFeed(request, response);
 		}
 	}
 	
 	private void cleanFeed(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		String sourceID = request.getParameter("sourceID");
+		String sourceID = request.getParameter(PARAM_SOURCE_ID);
 		if(!this.feedRepository.existsFeed(sourceID)){
 			response.sendError(404, sourceID);
 		} else {		
@@ -202,26 +219,23 @@ public class FeedServlet extends HttpServlet {
 		}
 	}
 	
-//	private void removeFeed(HttpServletRequest request, HttpServletResponse response, String sourceID) throws IOException {
-//		if(!this.feedRepository.existsFeed(sourceID)){
-//			response.sendError(404, sourceID);
-//		} else {		
-//			String format = request.getParameter("format");  		// format=rss20/atom10
-//			ISyndicationFormat syndicationFormat = this.feedRepository.getSyndicationFormat(format);	
-//			if(syndicationFormat == null){
-//				response.sendError(404, format);	
-//			} else {
-//				String link = getFeedLink(request);
-//				this.feedRepository.removeFeed(sourceID, link, "admin");
-//			}
-//		}
-//	}
-
-	private void synchronizeFeed(HttpServletRequest request, HttpServletResponse response, String sourceID) throws IOException {
+	private void deleteFeed(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		String sourceID = request.getParameter(PARAM_SOURCE_ID);
 		if(!this.feedRepository.existsFeed(sourceID)){
 			response.sendError(404, sourceID);
 		} else {		
-			String format = request.getParameter("format");  		// format=rss20/atom10
+			String link = getFeedLink(request)+ "/" + sourceID;
+			this.feedRepository.deleteFeed(sourceID, link, USER_ADMIN);
+			response.sendRedirect(getFeedLink(request));
+		}
+	}
+
+	private void synchronizeFeed(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		String sourceID = this.getSourceID(request);
+		if(!this.feedRepository.existsFeed(sourceID)){
+			response.sendError(404, sourceID);
+		} else {		
+			String format = request.getParameter(PARAM_FORMAT);  		// format=rss20/atom10
 			ISyndicationFormat syndicationFormat = this.feedRepository.getSyndicationFormat(format);	
 			if(syndicationFormat == null){
 				response.sendError(404, format);	
@@ -232,8 +246,7 @@ public class FeedServlet extends HttpServlet {
 				} else {
 					String link = getFeedLink(request);
 					String responseContent = this.feedRepository.synchronize(sourceID, link, feedXml, syndicationFormat);
-					
-					//response.setContentType("text/plain");
+
 					response.setContentType(syndicationFormat.getContentType());
 					response.setContentLength(responseContent.length());
 					PrintWriter out = response.getWriter();
@@ -244,14 +257,14 @@ public class FeedServlet extends HttpServlet {
 	}
 
 	private void uploadMeshDefinition(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		String newSourceID = request.getParameter("newSourceID");
+		String newSourceID = request.getParameter(PARAM_NEW_SOURCE_ID);
 		if(newSourceID == null){
 			response.sendError(404, newSourceID);
 		} else {
-			String format = request.getParameter("format");
-			String description = request.getParameter("description");
-			String schema = request.getParameter("schema");
-			String mappings = request.getParameter("mappings");
+			String format = request.getParameter(PARAM_FORMAT);
+			String description = request.getParameter(PARAM_DESCRIPTION);
+			String schema = request.getParameter(PARAM_SCHEMA);
+			String mappings = request.getParameter(PARAM_MAPPINGS);
 			
 			ISyndicationFormat syndicationFormat = this.feedRepository.getSyndicationFormat(format);	
 			if(syndicationFormat == null){
@@ -261,9 +274,9 @@ public class FeedServlet extends HttpServlet {
 			String link = getFeedLink(request)+ "/" + newSourceID;
 			
 			if(this.feedRepository.existsFeed(newSourceID)){
-				this.feedRepository.updateFeed(newSourceID, syndicationFormat, link, description, schema, mappings, "admin");
+				this.feedRepository.updateFeed(newSourceID, syndicationFormat, link, description, schema, mappings, USER_ADMIN);
 			} else {
-				this.feedRepository.addNewFeed(newSourceID, syndicationFormat, link, description, schema, mappings, "admin");
+				this.feedRepository.addNewFeed(newSourceID, syndicationFormat, link, description, schema, mappings, USER_ADMIN);
 			}
 			
 			response.sendRedirect(link);

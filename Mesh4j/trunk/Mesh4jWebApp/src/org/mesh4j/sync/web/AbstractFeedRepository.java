@@ -236,19 +236,19 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 		}
 	}
 
-//	@Override
-//	public void removeFeed(String sourceID, String link, String by) {
-//		ISyncAdapter parentAdapter = this.getParentSyncAdapter(sourceID);
-//		
-//		List<Item> items = parentAdapter.getAll(new XMLContentLinkFilter(link));
-//		if(!items.isEmpty()){
-//			Item item = items.get(0);
-//			parentAdapter.delete(item.getSyncId());
-//			this.basicRemoveFeed(sourceID);
-//		}		
-//	}
-//
-//	protected abstract void basicRemoveFeed(String sourceID);
+	@Override
+	public void deleteFeed(String sourceID, String link, String by) {
+		ISyncAdapter parentAdapter = this.getParentSyncAdapter(sourceID);
+		
+		List<Item> items = parentAdapter.getAll(new XMLContentLinkFilter(link));
+		if(!items.isEmpty()){
+			Item item = items.get(0);
+			parentAdapter.delete(item.getSyncId());
+			this.basicDeleteFeed(sourceID);
+		}		
+	}
+
+	protected abstract void basicDeleteFeed(String sourceID);
 
 	@Override
 	public void updateFeed(String sourceID, ISyndicationFormat syndicationFormat, String link, String description, String schema, String mappings, String by) {

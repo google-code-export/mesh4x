@@ -33,7 +33,7 @@ public interface IFeedRepository {
 
 	void updateFeed(String sourceID, ISyndicationFormat syndicationFormat, String link, String description, String schema, String mappings, String by);
 
-//	void removeFeed(String sourceID, String link, String by);
+	void deleteFeed(String sourceID, String link, String by);
 
 
 }

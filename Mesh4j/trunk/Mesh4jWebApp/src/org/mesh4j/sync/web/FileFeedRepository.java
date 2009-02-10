@@ -88,12 +88,12 @@ public class FileFeedRepository extends AbstractFeedRepository {
 		feedAdapter.flush();
 	}
 
-//	@Override
-//	protected void basicRemoveFeed(String sourceID) {
-//		String feedFileName = this.getFeedFileName(sourceID);
-//		File file = new File(feedFileName);
-//		if(file.exists()){
-//			file.delete();
-//		}
-//	}
+	@Override
+	protected void basicDeleteFeed(String sourceID) {
+		String feedFileName = this.getFeedFileName(sourceID);
+		File file = new File(feedFileName);
+		if(file.exists()){
+			file.delete();
+		}
+	}
 }
