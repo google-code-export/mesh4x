@@ -66,7 +66,7 @@ public class MsAccessXFormGenerator {
 			writeInput(model, column.getName(), "xsd:int", writerBinIds, writerBody);
 		}else if(DataType.SHORT_DATE_TIME== column.getType()){
 			writeInstance(writerHeadInstance, column);
-			writeInput(model, column.getName(), "xsd:datatime", writerBinIds, writerBody);
+			writeInputDate(model, column.getName(), writerBinIds, writerBody);
 		}else{
 			// TODO (JMT)
 		}		
@@ -83,6 +83,24 @@ public class MsAccessXFormGenerator {
 		writerBody.append("<item><label>Yes</label><value>1</value></item>");
 		writerBody.append("<item><label>No</label><value>0</value></item>");
 		writerBody.append("</select1>");
+		writerBody.append("\n");
+	}
+	
+	private static void writeInputDate(String model, String name, StringWriter writerBinIds, StringWriter writerBody) {
+		writerBinIds.append("<bind id=\"p");
+		writerBinIds.append(name);
+		writerBinIds.append("\" nodeset=\"/");
+		writerBinIds.append(model);
+		writerBinIds.append("/");
+		writerBinIds.append(name);
+		writerBinIds.append("\" type=\"xsd:dateTime\" jr:preload=\"timestamp\" jr:preloadParams=\"today\" />");
+		writerBinIds.append("\n");
+		
+		writerBody.append("<input bind=\"p");
+		writerBody.append(name);
+		writerBody.append("\"><label>");
+		writerBody.append(name);
+		writerBody.append(":</label></input>");
 		writerBody.append("\n");
 	}
 	
