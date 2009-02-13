@@ -71,19 +71,15 @@ public class MessageSyncEngineTests {
 		smsConnectionEndpointB.setEndPoint(smsConnectionEndpointA);
 		smsConnectionEndpointB.activateTrace();
 		
-		//FileSmsChannelRepository fileRepoA = new FileSmsChannelRepository("c:\\");
-		//channelEndpointA = SmsChannelFactory.createChannel(smsConnectionEndpointA, channelASenderCheckDelay, channelAReceiveCheckDelay, fileRepoA, fileRepoA);
 		channelEndpointA = SmsChannelFactory.createChannel(smsConnectionEndpointA, channelASenderCheckDelay, channelAReceiveCheckDelay, MessageSyncProtocolFactory.getProtocolMessageFilter());
 		
-		//FileSmsChannelRepository fileRepoB = new FileSmsChannelRepository("d:\\");
-		//channelEndpointB = SmsChannelFactory.createChannel(smsConnectionEndpointB, channelBSenderCheckDelay, channelBReceiveCheckDelay, fileRepoB, fileRepoB);
 		channelEndpointB = SmsChannelFactory.createChannel(smsConnectionEndpointB, channelBSenderCheckDelay, channelBReceiveCheckDelay, MessageSyncProtocolFactory.getProtocolMessageFilter());
 		
 		ISourceIdMapper sourceIdMapper = new ISourceIdMapper(){
 
 			@Override
 			public String getSourceDefinition(String sourceId) {
-				return sourceId;
+				return "MySourceType:"+TestHelper.baseDirectoryForTest()+sourceId+".xml";
 			}
 
 			@Override
@@ -97,7 +93,6 @@ public class MessageSyncEngineTests {
 		SyncSessionFactory syncSessionFactoryA = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);
 		syncSessionFactoryA.registerSource(endPointA);
 		
-		//this.syncSessionRepoA = new FileSyncSessionRepository("c:\\", syncSessionFactoryA);
 		this.syncSessionRepoA = new MockSyncSessionRepository(syncSessionFactoryA);
 		
 		IMessageSyncProtocol syncProtocolA = MessageSyncProtocolFactory.createSyncProtocol(getItemEncoding(), this.syncSessionRepoA, channelEndpointA);
@@ -106,7 +101,6 @@ public class MessageSyncEngineTests {
 		SyncSessionFactory syncSessionFactoryB = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);
 		syncSessionFactoryB.registerSource(endPointB);
 
-		//this.syncSessionRepoB = new FileSyncSessionRepository("d:\\", syncSessionFactoryB);
 		this.syncSessionRepoB = new MockSyncSessionRepository(syncSessionFactoryB);
 		
 		IMessageSyncProtocol syncProtocolB = MessageSyncProtocolFactory.createSyncProtocol(getItemEncoding(), this.syncSessionRepoB, channelEndpointB);

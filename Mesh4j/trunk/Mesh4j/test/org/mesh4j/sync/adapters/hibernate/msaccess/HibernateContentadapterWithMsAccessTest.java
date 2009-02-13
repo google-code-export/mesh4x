@@ -28,7 +28,10 @@ public class HibernateContentadapterWithMsAccessTest {
 		JdbcOdbcDriver driver = (JdbcOdbcDriver)Class.forName("sun.jdbc.odbc.JdbcOdbcDriver").newInstance();
 		Assert.assertNotNull(driver);
 		
-		Connection conn = DriverManager.getConnection("jdbc:odbc:epiinfo","","");
+		String mdbFileName = TestHelper.baseDirectoryRootForTest() + "ms-access/DevDB.mdb";
+		String dbURL = "jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=" + mdbFileName.trim() + ";DriverID=22;READONLY=false}";
+		Connection conn = DriverManager.getConnection(dbURL,"","");
+		
 		Statement command = conn.createStatement();
 		ResultSet rs = command.executeQuery("select * from [User$]");
 		while (rs.next())
@@ -49,7 +52,9 @@ public class HibernateContentadapterWithMsAccessTest {
 		JdbcOdbcDriver driver = (JdbcOdbcDriver)Class.forName("sun.jdbc.odbc.JdbcOdbcDriver").newInstance();
 		Assert.assertNotNull(driver);
 		
-		Connection conn = DriverManager.getConnection("jdbc:odbc:DevDB","mesh4j","mesh4j");
+		String mdbFileName = TestHelper.baseDirectoryRootForTest() + "ms-access/DevDB.mdb";
+		String dbURL = "jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=" + mdbFileName.trim() + ";DriverID=22;READONLY=false}";
+		Connection conn = DriverManager.getConnection(dbURL,"","");
 		Statement command = conn.createStatement();
 		ResultSet rs = command.executeQuery("select user0_.id as uid0_, user0_.name as name0_, user0_.pass as pass0_ from User user0_");
 		while (rs.next())
@@ -141,20 +146,16 @@ public class HibernateContentadapterWithMsAccessTest {
 	}
 	
 	private HibernateContentAdapter createAdapter() {
-
+		String mdbFileName = TestHelper.baseDirectoryRootForTest() + "ms-access/DevDB.mdb";
+		String dbURL = "jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=" + mdbFileName.trim() + ";DriverID=22;READONLY=false}";
+		
 		HibernateSessionFactoryBuilder builder = new HibernateSessionFactoryBuilder();
 		builder.setProperty("hibernate.dialect", MsAccessDialect.class.getName());
-		builder.setProperty("hibernate.connection.driver_class","sun.jdbc.odbc.JdbcOdbcDriver");
-		builder.setProperty("hibernate.connection.url","jdbc:odbc:DevDB");
-		builder.setProperty("hibernate.connection.username","mesh4j");
-		builder.setProperty("hibernate.connection.password","mesh4j");
+		builder.setProperty("hibernate.connection.driver_class", JdbcOdbcDriver.class.getName());
+		builder.setProperty("hibernate.connection.url", dbURL);
+		builder.setProperty("hibernate.connection.username","");
+		builder.setProperty("hibernate.connection.password","");
 		builder.addMapping(new File(this.getClass().getResource("User.hbm.xml").getFile()));
-
-//		System.setProperty("hibernate.dialect","org.mesh4j.sync.adapters.hibernate.MSAccessDialect");
-//		System.setProperty("hibernate.connection.driver_class","sun.jdbc.odbc.JdbcOdbcDriver");
-//		System.setProperty("hibernate.connection.url","jdbc:odbc:DevDB");
-//		System.setProperty("hibernate.connection.username","mesh4j");
-//		System.setProperty("hibernate.connection.password","mesh4j");
 
 		HibernateContentAdapter adapter = new HibernateContentAdapter(builder, "user");
 		return adapter;

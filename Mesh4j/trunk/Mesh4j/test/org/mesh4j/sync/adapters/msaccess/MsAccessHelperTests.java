@@ -7,26 +7,27 @@ import org.junit.Test;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.model.Item;
+import org.mesh4j.sync.test.utils.TestHelper;
 
 public class MsAccessHelperTests {
 
 	//@Test
 	public void shouldCreateMapping() throws Exception{
-		MsAccessHibernateMappingGenerator.createMapping("C:\\mesh4x\\tests\\ms-access\\epiinfo\\test1\\epiinfo.mdb", "Oswego", "C:\\mesh4x\\tests\\ms-access\\epiinfo\\test1\\Oswego.hbm.xml");
+		MsAccessHibernateMappingGenerator.createMapping(TestHelper.baseDirectoryRootForTest() + "ms-access\\epiinfo\\test1\\epiinfo.mdb", "Oswego", TestHelper.baseDirectoryRootForTest() + "ms-access\\epiinfo\\test1\\Oswego.hbm.xml");
 	}
 	
 	@Test
 	public void executeSync() throws Exception{
 
 		ISyncAdapter syncAdapterA = MsAccessSyncAdapterFactory.createSyncAdapterFromFile(
-			"C:\\mesh4x\\tests\\ms-access\\epiinfo\\test1\\epiinfo.mdb", 
+			TestHelper.baseDirectoryRootForTest() + "ms-access\\epiinfo\\test1\\epiinfo.mdb", 
 			"Oswego", 
-			"C:\\mesh4x\\tests\\ms-access\\epiinfo\\test1");
+			TestHelper.baseDirectoryRootForTest() + "ms-access\\epiinfo\\test1");
 			
 		ISyncAdapter syncAdapterB = MsAccessSyncAdapterFactory.createSyncAdapterFromFile(
-			"C:\\mesh4x\\tests\\ms-access\\epiinfo\\test2\\epiinfo.mdb", 
+				TestHelper.baseDirectoryRootForTest() + "ms-access\\epiinfo\\test2\\epiinfo.mdb", 
 			"Oswego", 
-			"C:\\mesh4x\\tests\\ms-access\\epiinfo\\test2");
+			TestHelper.baseDirectoryRootForTest() + "ms-access\\epiinfo\\test2");
 		
 		SyncEngine syncEngine = new SyncEngine(syncAdapterA, syncAdapterB);
 		

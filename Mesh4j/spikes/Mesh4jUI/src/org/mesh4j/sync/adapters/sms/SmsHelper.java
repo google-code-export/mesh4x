@@ -1,6 +1,7 @@
 package org.mesh4j.sync.adapters.sms;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.mesh4j.sync.IFilter;
@@ -37,7 +38,7 @@ import org.mesh4j.sync.ui.translator.Mesh4jSmsUITranslator;
 
 public class SmsHelper {
 
-	public static void emulateSync(ISmsConnectionInboundOutboundNotification smsConnectionNotification, IMessageSyncAware syncAware, String smsFrom, String smsTo, boolean useCompression, String kmlFileName) throws InterruptedException{
+	public static void emulateSync(ISmsConnectionInboundOutboundNotification smsConnectionNotification, IMessageSyncAware syncAware, String smsFrom, String smsTo, boolean useCompression, String kmlFileName) throws InterruptedException, IOException{
 		PropertiesProvider prop = new PropertiesProvider("mesh4j_sms.properties");
 		String baseDirectory = prop.getBaseDirectory();
 		int senderDelay = prop.getInt("default.sms.demo.sender.delay");
@@ -144,7 +145,7 @@ public class SmsHelper {
 		}
 	}
 
-	public static MessageSyncEngine createSyncEngine(ISmsConnectionInboundOutboundNotification smsConnectionInboundOutboundNotification, IMessageSyncAware syncAware, Modem modem) {
+	public static MessageSyncEngine createSyncEngine(ISmsConnectionInboundOutboundNotification smsConnectionInboundOutboundNotification, IMessageSyncAware syncAware, Modem modem) throws IOException {
 		if(modem != null){
 			PropertiesProvider prop = new PropertiesProvider("mesh4j_sms.properties");
 			String baseDirectory = prop.getBaseDirectory();

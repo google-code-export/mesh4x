@@ -23,6 +23,7 @@ import org.mesh4j.sync.model.IContent;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.parsers.SyncInfoParser;
 import org.mesh4j.sync.security.NullIdentityProvider;
+import org.mesh4j.sync.test.utils.TestHelper;
 
 import sun.jdbc.odbc.JdbcOdbcDriver;
 
@@ -32,14 +33,14 @@ public class SyncMsAccessTests {
 
 	@Test
 	public void testAccessDB() throws IOException{
-		String mdbFile = "c:/mesh4x/tests/ms-access/DevDB2.mdb";
+		String mdbFile = TestHelper.baseDirectoryRootForTest() + "ms-access/DevDB2.mdb";
 		Database db = Database.open(new File(mdbFile));
 		System.out.println(db.getTableNames());
 	}
 	
 	@Test
 	public void testFileConnection()throws Exception{
-		String filename = "c:/mesh4x/tests/ms-access/DevDB2.mdb";
+		String filename = TestHelper.baseDirectoryRootForTest() + "ms-access/DevDB2.mdb";
 		String database = "jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=";
 		database+= filename.trim() + ";DriverID=22;READONLY=false}"; // add on to the end 
  
@@ -62,14 +63,12 @@ public class SyncMsAccessTests {
 		
 		System.out.println("Connected To Excel");
 		
-		//String database = "jdbc:odbc:DevDB2";
   		HibernateSessionFactoryBuilder builderA = new HibernateSessionFactoryBuilder();
 		builderA.setProperty("hibernate.dialect", MsAccessDialect.class.getName());
 		builderA.setProperty("hibernate.connection.driver_class","sun.jdbc.odbc.JdbcOdbcDriver");
 		builderA.setProperty("hibernate.connection.url", database);
-		//builderA.setProperty("hibernate.connection.url","jdbc:odbc:DevDB2");
-		builderA.setProperty("hibernate.connection.username","mesh4j");
-		builderA.setProperty("hibernate.connection.password","mesh4j");
+		builderA.setProperty("hibernate.connection.username","");
+		builderA.setProperty("hibernate.connection.password","");
 		builderA.addMapping(new File(this.getClass().getResource("User.hbm.xml").getFile()));
 		builderA.addMapping(new File(this.getClass().getResource("SyncInfo.hbm.xml").getFile()));
 
@@ -91,13 +90,16 @@ public class SyncMsAccessTests {
 	
 	@Test
 	public void testConnection(){
+		String filename = TestHelper.baseDirectoryRootForTest() + "ms-access/DevDB.mdb";
+		String database = "jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=";
+		database+= filename.trim() + ";DriverID=22;READONLY=false}";
+		
 		HibernateSessionFactoryBuilder builderA = new HibernateSessionFactoryBuilder();
 		builderA.setProperty("hibernate.dialect", MsAccessDialect.class.getName());
 		builderA.setProperty("hibernate.connection.driver_class","sun.jdbc.odbc.JdbcOdbcDriver");
-		builderA.setProperty("hibernate.connection.url","jdbc:odbc:DevDB");
-		//builderA.setProperty("hibernate.connection.url","jdbc:odbc:DevDB2");
-		builderA.setProperty("hibernate.connection.username","mesh4j");
-		builderA.setProperty("hibernate.connection.password","mesh4j");
+		builderA.setProperty("hibernate.connection.url", database);
+		builderA.setProperty("hibernate.connection.username","");
+		builderA.setProperty("hibernate.connection.password","");
 		builderA.addMapping(new File(this.getClass().getResource("User.hbm.xml").getFile()));
 		builderA.addMapping(new File(this.getClass().getResource("SyncInfo.hbm.xml").getFile()));
 
@@ -120,11 +122,11 @@ public class SyncMsAccessTests {
 	@Test
 	public void executeSync(){
 
-		String filenameA = "c:/mesh4x/tests/ms-access/DevDB.mdb";
+		String filenameA = TestHelper.baseDirectoryRootForTest() + "ms-access/DevDB.mdb";
 		String databaseA = "jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=";
 		databaseA+= filenameA.trim() + ";DriverID=22;READONLY=false}"; // add on to the end 
 
-		String filenameB = "c:/mesh4x/tests/ms-access/DevDB2.mdb";
+		String filenameB = TestHelper.baseDirectoryRootForTest() + "ms-access/DevDB2.mdb";
 		String databaseB = "jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=";
 		databaseB+= filenameB.trim() + ";DriverID=22;READONLY=false}"; // add on to the end
 		
@@ -133,9 +135,8 @@ public class SyncMsAccessTests {
 		builderA.setProperty("hibernate.dialect", MsAccessDialect.class.getName());
 		builderA.setProperty("hibernate.connection.driver_class","sun.jdbc.odbc.JdbcOdbcDriver");
 		builderA.setProperty("hibernate.connection.url",databaseA);
-		//builderA.setProperty("hibernate.connection.url","jdbc:odbc:DevDB");
-		builderA.setProperty("hibernate.connection.username","mesh4j");
-		builderA.setProperty("hibernate.connection.password","mesh4j");
+		builderA.setProperty("hibernate.connection.username","");
+		builderA.setProperty("hibernate.connection.password","");
 		builderA.addMapping(new File(this.getClass().getResource("User.hbm.xml").getFile()));
 		builderA.addMapping(new File(this.getClass().getResource("SyncInfo.hbm.xml").getFile()));
 
@@ -150,9 +151,8 @@ public class SyncMsAccessTests {
 		builderB.setProperty("hibernate.dialect", MsAccessDialect.class.getName());
 		builderB.setProperty("hibernate.connection.driver_class","sun.jdbc.odbc.JdbcOdbcDriver");
 		builderB.setProperty("hibernate.connection.url",databaseB);
-		//builderB.setProperty("hibernate.connection.url","jdbc:odbc:DevDB2");
-		builderB.setProperty("hibernate.connection.username","mesh4j");
-		builderB.setProperty("hibernate.connection.password","mesh4j");
+		builderB.setProperty("hibernate.connection.username","");
+		builderB.setProperty("hibernate.connection.password","");
 		builderB.addMapping(new File(this.getClass().getResource("User.hbm.xml").getFile()));
 		builderB.addMapping(new File(this.getClass().getResource("SyncInfo.hbm.xml").getFile()));
 		

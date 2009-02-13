@@ -25,6 +25,7 @@ import org.mesh4j.sync.message.protocol.CancelSyncMessageProcessor;
 import org.mesh4j.sync.message.protocol.IProtocolConstants;
 import org.mesh4j.sync.message.protocol.MockSyncSession;
 import org.mesh4j.sync.model.Item;
+import org.mesh4j.sync.test.utils.TestHelper;
 import org.mesh4j.sync.validations.MeshException;
 
 public class MessageSyncProtocolTests {
@@ -86,7 +87,7 @@ public class MessageSyncProtocolTests {
 	public void shouldBeginSyncReturnNullWhenSessionIsOpen(){
 		
 		ISourceIdMapper sourceIdMapper = new ISourceIdMapper(){
-			@Override public String getSourceDefinition(String sourceId) {return sourceId;}
+			@Override public String getSourceDefinition(String sourceId) {return "MySourceType:"+TestHelper.baseDirectoryForTest()+sourceId+".xml";}
 			@Override public void removeSourceDefinition(String sourceId) {Assert.fail();}
 		};
 		
@@ -106,20 +107,19 @@ public class MessageSyncProtocolTests {
 
 			@Override
 			public String getSourceDefinition(String sourceId) {
-				// ""
-				return sourceId;
+				return "MySourceType:"+TestHelper.baseDirectoryForTest()+sourceId+".xml";
 			}
 			
 			@Override public void removeSourceDefinition(String sourceId) {Assert.fail();}
 			
 		};
 		
-		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(sourceIdMapper, new OpaqueFeedSyncAdapterFactory(""), true);
+		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(sourceIdMapper, new OpaqueFeedSyncAdapterFactory(TestHelper.baseDirectoryForTest()), true);
 		SyncSessionFactory syncSessionFactory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);
 		MessageSyncProtocol syncProtocol = new MessageSyncProtocol("M", new BeginSyncMessageProcessor(null, null, null), new CancelSyncMessageProcessor(), new MockSyncSessionRepository(syncSessionFactory), new MockChannel(), new ArrayList<IMessageProcessor>());
 		
 		SmsEndpoint endpoint = new SmsEndpoint("123");
-		Message message = (Message)syncProtocol.beginSync("MySourceType:123", endpoint, true, true, true);
+		Message message = (Message)syncProtocol.beginSync("feed123", endpoint, true, true, true);
 		String sourceId = syncProtocol.getInitialMessage().getSourceId(message.getData());
 		SyncSession syncSession = (SyncSession)syncProtocol.getSyncSession(sourceId, endpoint);
 
@@ -134,8 +134,7 @@ public class MessageSyncProtocolTests {
 
 			@Override
 			public String getSourceDefinition(String sourceId) {
-				// ""
-				return sourceId;
+				return "MySourceType:"+TestHelper.baseDirectoryForTest()+sourceId+".xml";
 			}
 			
 			@Override public void removeSourceDefinition(String sourceId) {Assert.fail();}
@@ -152,8 +151,7 @@ public class MessageSyncProtocolTests {
 
 			@Override
 			public String getSourceDefinition(String sourceId) {
-				// ""
-				return sourceId;
+				return "MySourceType:"+TestHelper.baseDirectoryForTest()+sourceId+".xml";
 			}
 			
 			@Override public void removeSourceDefinition(String sourceId) {Assert.fail();}
@@ -173,8 +171,7 @@ public class MessageSyncProtocolTests {
 
 			@Override
 			public String getSourceDefinition(String sourceId) {
-				// ""
-				return sourceId;
+				return "MySourceType:"+TestHelper.baseDirectoryForTest()+sourceId+".xml";
 			}
 			
 			@Override public void removeSourceDefinition(String sourceId) {Assert.fail();}
@@ -199,8 +196,7 @@ public class MessageSyncProtocolTests {
 
 			@Override
 			public String getSourceDefinition(String sourceId) {
-				// ""
-				return sourceId;
+				return "MySourceType:"+TestHelper.baseDirectoryForTest()+sourceId+".xml";
 			}
 			
 			@Override public void removeSourceDefinition(String sourceId) {Assert.fail();}

@@ -92,12 +92,14 @@ public class Mesh4jSmsUI implements ISmsConnectionInboundOutboundNotification, I
 	// BUSINESS METHODS
 	public static void main (String [] args) {
 		Mesh4jSmsUI meshUI = new Mesh4jSmsUI();
-		meshUI.initializeDefaults();
-		
-		Modem modem = SmsHelper.getDefaultModem();
-		meshUI.syncEngine = SmsHelper.createSyncEngine(meshUI, meshUI, modem);
-		meshUI.openMesh(modem);
-		
+		try {
+			meshUI.initializeDefaults();
+			Modem modem = SmsHelper.getDefaultModem();
+			meshUI.syncEngine = SmsHelper.createSyncEngine(meshUI, meshUI, modem);
+			meshUI.openMesh(modem);
+		} catch (IOException e) {
+			Logger.error(e.getMessage(), e);
+		}	
 	}
 
 	private void openMesh(Modem modem) {
@@ -505,6 +507,9 @@ public class Mesh4jSmsUI implements ISmsConnectionInboundOutboundNotification, I
 		try{
 			SmsHelper.emulateSync(this, this, smsFrom, smsTo, useCompression, kmlFileName);
 			return "";
+		}catch (IOException e) {
+			Logger.error(e.getMessage(), e);
+			return Mesh4jSmsUITranslator.getLabelFailed();
 		} catch (RuntimeException e) {
 			Logger.error(e.getMessage(), e);
 			return Mesh4jSmsUITranslator.getLabelFailed();
@@ -909,7 +914,7 @@ public class Mesh4jSmsUI implements ISmsConnectionInboundOutboundNotification, I
 		}
 	}
 	
-	private void initializeDefaults(){
+	private void initializeDefaults() throws IOException{
 		PropertiesProvider prop = new PropertiesProvider("mesh4j_sms.properties");
 		this.defaultKmlFile = prop.getDefaultEnpoint1();					
 		this.baseDirectory = prop.getBaseDirectory();

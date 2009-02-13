@@ -4,7 +4,7 @@
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/Mesh4j"/>
-	<classpathentry kind="lib" path="C:/mesh4x/apache-tomcat-5.5.26/common/lib/servlet-api.jar"/>
+	<classpathentry kind="lib" path="../../../mesh4x/apache-tomcat-5.5.26/common/lib/servlet-api.jar"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/Mesh4jS3"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="build/classes"/>

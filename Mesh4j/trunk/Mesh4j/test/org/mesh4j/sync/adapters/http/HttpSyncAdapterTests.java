@@ -29,13 +29,13 @@ public class HttpSyncAdapterTests {
 
 	@Before
 	public void setUp() throws MalformedURLException{
-		String path = "http://localhost:9090/mesh4x/feeds/myMesh/myFeed";
+		String path = "http://localhost:8080/mesh4x/feeds/myMesh/myFeed";
 		this.httpAdapter = new HttpSyncAdapter(path, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 	}
 
 	@Test
 	public void shouldUploadMesh(){
-		String path = "http://localhost:9090/mesh4x/feeds";
+		String path = "http://localhost:8080/mesh4x/feeds";
 		this.httpAdapter = new HttpSyncAdapter(path, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
 		
 		// add mesh

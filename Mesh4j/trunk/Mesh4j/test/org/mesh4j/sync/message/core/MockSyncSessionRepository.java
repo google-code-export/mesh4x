@@ -11,6 +11,7 @@ import org.mesh4j.sync.message.core.repository.ISourceIdMapper;
 import org.mesh4j.sync.message.core.repository.MessageSyncAdapterFactory;
 import org.mesh4j.sync.message.core.repository.OpaqueFeedSyncAdapterFactory;
 import org.mesh4j.sync.message.core.repository.SyncSessionFactory;
+import org.mesh4j.sync.test.utils.TestHelper;
 
 public class MockSyncSessionRepository implements ISyncSessionRepository {
 
@@ -21,15 +22,14 @@ public class MockSyncSessionRepository implements ISyncSessionRepository {
 
 			@Override
 			public String getSourceDefinition(String sourceId) {
-				// ""
-				return sourceId;
+				return "MySourceType:"+TestHelper.baseDirectoryForTest()+sourceId+".xml";
 			}
 			
 			@Override public void removeSourceDefinition(String sourceId) {Assert.fail();}
 			
 		};
 		//KMLDOMLoaderFactory kmlFactory = new KMLDOMLoaderFactory();
-		OpaqueFeedSyncAdapterFactory feedFactory = new OpaqueFeedSyncAdapterFactory("");
+		OpaqueFeedSyncAdapterFactory feedFactory = new OpaqueFeedSyncAdapterFactory(TestHelper.baseDirectoryForTest());
 		
 		MessageSyncAdapterFactory syncAdapterFactory = new MessageSyncAdapterFactory(sourceIdMapper, feedFactory, false);
 		this.factory = new SyncSessionFactory(SmsEndpointFactory.INSTANCE, syncAdapterFactory);

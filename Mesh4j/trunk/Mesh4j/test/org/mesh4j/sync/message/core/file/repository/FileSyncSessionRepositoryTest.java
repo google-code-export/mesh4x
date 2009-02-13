@@ -1,6 +1,7 @@
 package org.mesh4j.sync.message.core.file.repository;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -57,11 +58,13 @@ public class FileSyncSessionRepositoryTest {
 	
 	// FLUSH
 	@Test
-	public void shouldGetFlushFile(){
+	public void shouldGetFlushFile() throws IOException{
 		OpaqueFeedSyncAdapterFactory feedAdapterFactory = new OpaqueFeedSyncAdapterFactory(TestHelper.baseDirectoryForTest());
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(getNullSourceIdMapper(), feedAdapterFactory, false)));
 		File file = repo.getCurrentSessionFile("myFile");
-		Assert.assertEquals(TestHelper.baseDirectoryForTest() + "myFile_current.xml", file.getAbsolutePath());
+		
+		File fileExpected = new File(TestHelper.baseDirectoryForTest() + "myFile_current.xml");
+		Assert.assertEquals(fileExpected.getCanonicalPath(), file.getCanonicalPath());
 	}
 
 	@Test
@@ -471,10 +474,12 @@ public class FileSyncSessionRepositoryTest {
 	
 	// SNAPSHOT
 	@Test
-	public void shouldGetSnapshotFile(){
+	public void shouldGetSnapshotFile() throws IOException{
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		File file = repo.getSnapshotFile("myFile");
-		Assert.assertEquals(TestHelper.baseDirectoryForTest() + "myFile_snapshot.xml", file.getAbsolutePath());
+
+		File fileExpected = new File(TestHelper.baseDirectoryForTest() + "myFile_snapshot.xml");
+		Assert.assertEquals(fileExpected.getCanonicalPath(), file.getCanonicalPath());
 	}
 	
 	@Test(expected=MeshException.class)

@@ -59,9 +59,13 @@ public class Mesh4jUI {
 	
 	// BUSINESS METHODS
 	public static void main (String [] args) {
-		Mesh4jUI meshUI = new Mesh4jUI();
-		meshUI.initializeDefaults();
-		meshUI.openMesh();
+		try{
+			Mesh4jUI meshUI = new Mesh4jUI();
+			meshUI.initializeDefaults();
+			meshUI.openMesh();
+		} catch (Exception e) {
+			Logger.error(e.getMessage(), e);
+		}
 	}
 	
 	private void openMesh(){
@@ -575,7 +579,7 @@ public class Mesh4jUI {
 		}
 	}
 	
-	private void initializeDefaults(){
+	private void initializeDefaults() throws IOException{
 		PropertiesProvider prop = new PropertiesProvider();
 		this.defaultEndpoint1 = prop.getDefaultEnpoint1();					
 		this.defaultEndpoint2 = prop.getDefaultEnpoint2();			

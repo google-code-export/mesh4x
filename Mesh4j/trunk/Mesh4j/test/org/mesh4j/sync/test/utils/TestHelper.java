@@ -200,9 +200,13 @@ public class TestHelper {
 	}
 
 	public static String baseDirectoryForTest() {
-		return "c:\\mesh4x\\tests\\junit\\";
+		return "../../../tests/junit/";
 	}
 
+	public static String baseDirectoryRootForTest() {
+		return "../../../tests/";
+	}
+	
 	public static String fileName(String name) {
 		return baseDirectoryForTest() + name;
 	}

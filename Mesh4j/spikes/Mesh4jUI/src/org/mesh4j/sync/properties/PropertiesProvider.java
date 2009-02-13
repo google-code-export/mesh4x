@@ -2,6 +2,7 @@ package org.mesh4j.sync.properties;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.Properties;
 
 import org.mesh4j.sync.security.IIdentityProvider;
@@ -37,12 +38,10 @@ public class PropertiesProvider {
 		}
 	}
 
-	public String getDefaultEnpoint1() {
+	public String getDefaultEnpoint1() throws IOException {
 		String defaultEndpoint1 =  this.properties.getProperty("default.kml.file", "");
 		File file = new File(defaultEndpoint1);
-		if(file.exists()){
-			defaultEndpoint1 = file.getAbsolutePath();
-		}	
+		defaultEndpoint1 = file.getCanonicalPath();
 		return defaultEndpoint1;
 	}
 
@@ -66,8 +65,10 @@ public class PropertiesProvider {
 		return clazz.newInstance();
 	}
 
-	public String getBaseDirectory() {
-		return this.properties.getProperty("default.base.directory", getCurrentDirectory());
+	public String getBaseDirectory() throws IOException {
+		String baseDir =  this.properties.getProperty("default.base.directory", getCurrentDirectory());
+		File file = new File(baseDir);
+		return file.getCanonicalPath();
 	}
 	
 	public String getCurrentDirectory(){
