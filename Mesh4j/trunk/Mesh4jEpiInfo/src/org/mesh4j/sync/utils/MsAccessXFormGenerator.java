@@ -66,7 +66,8 @@ public class MsAccessXFormGenerator {
 			writeInput(model, column.getName(), "xsd:int", writerBinIds, writerBody);
 		}else if(DataType.SHORT_DATE_TIME== column.getType()){
 			writeInstance(writerHeadInstance, column);
-			writeInputDate(model, column.getName(), writerBinIds, writerBody);
+			//writeInputDate(model, column.getName(), writerBinIds, writerBody);
+			writeInput(model, column.getName(), "xsd:string", writerBinIds, writerBody);
 		}else{
 			// TODO (JMT)
 		}		
