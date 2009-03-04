@@ -147,7 +147,7 @@ public class IntroductionItemTest {
 		Sync deletedSync = sync.clone();
 		deletedSync.delete(by, when);
 		
-		NullContent deletedContent = new NullContent(id);
+		NullContent deletedContent = new NullContent(id);         // NullContent because the row was deleted
 		Item deletedItem = new Item(deletedContent, deletedSync);
 		
 		// ASSERTS
