@@ -10,6 +10,7 @@ import org.junit.Test;
 
 public class DiffTests {
 
+	
 	@Test
 	public void shouldEmptyBlocksWhenTextIsEmpty(){
 		List<String> blocks = DiffUtils.split("", 2);
