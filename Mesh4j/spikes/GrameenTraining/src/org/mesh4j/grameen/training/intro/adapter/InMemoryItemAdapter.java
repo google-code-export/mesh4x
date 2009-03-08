@@ -14,7 +14,7 @@ public class InMemoryItemAdapter extends AbstractSyncAdapter{
 
 	//for storing item in memory
 	private Map<String,Item> itemsMap = new LinkedHashMap<String, Item>();
-	//private List<Item> items = new LinkedList<Item>();
+
 	
 	public InMemoryItemAdapter(Map<String,Item> itemsMap){
 		Guard.argumentNotNull(itemsMap, "itemsMap");

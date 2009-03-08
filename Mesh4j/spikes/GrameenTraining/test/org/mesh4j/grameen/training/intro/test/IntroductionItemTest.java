@@ -34,6 +34,7 @@ public class IntroductionItemTest {
 		// Create sync data
 		String syncId = IdGenerator.INSTANCE.newID();
 		String by = LoggedInIdentityProvider.getUserName();
+		System.out.println("by: " + by);
 		Date when = new Date();
 		boolean isDeleted = false;
 	
@@ -81,7 +82,7 @@ public class IntroductionItemTest {
 	
 		Item item = new Item(content, sync);
 
-		// Update Item (imagine user change the data in the database)
+		//Update Item (imagine user change the data in the database)
 		xml = "<user><id>1</id><name>raju</name></user>";
 		payload = XMLHelper.parseElement(xml);
 		System.out.println(payload.asXML());
