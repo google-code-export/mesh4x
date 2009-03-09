@@ -8,18 +8,38 @@ import java.util.Map;
 import org.mesh4j.sync.AbstractSyncAdapter;
 import org.mesh4j.sync.IFilter;
 import org.mesh4j.sync.model.Item;
+import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.validations.Guard;
-
+/**
+ * 
+ * @author Raju
+ * @version 1.0,4/3/2009
+ */
 public class InMemoryItemAdapter extends AbstractSyncAdapter{
 
 	//for storing item in memory
 	private Map<String,Item> itemsMap = new LinkedHashMap<String, Item>();
+	IIdentityProvider identityProvider = null;
+	private String name;
 
 	
-	public InMemoryItemAdapter(Map<String,Item> itemsMap){
+	public InMemoryItemAdapter(String name ,IIdentityProvider identityProvider,Map<String,Item> itemsMap){
+		Guard.argumentNotNullOrEmptyString(name,"name");
 		Guard.argumentNotNull(itemsMap, "itemsMap");
+		this.name = name;
+		this.identityProvider = identityProvider;
 		this.itemsMap  = itemsMap;
-		//TODO print the item from the collection
+	}
+	
+	public InMemoryItemAdapter(String name,IIdentityProvider identityProvider,Item... items ){
+		Guard.argumentNotNullOrEmptyString(name,"name");
+		Guard.argumentNotNull(identityProvider, "identityProvider");
+		Guard.argumentNotNull(items, "items");
+		this.name = name;
+		this.identityProvider = identityProvider;
+		for(Item item :items){
+			itemsMap.put(item.getSyncId(), item);
+		}
 	}
 	
 	@Override
@@ -52,13 +72,12 @@ public class InMemoryItemAdapter extends AbstractSyncAdapter{
 	@Override
 	public String getAuthenticatedUser() {
 		// TODO Auto-generated method stub
-		return null;
+		return this.identityProvider.getAuthenticatedUser();
 	}
 
 	@Override
 	public String getFriendlyName() {
-		// TODO Auto-generated method stub
-		return null;
+		return name;
 	}
 
 	@Override
