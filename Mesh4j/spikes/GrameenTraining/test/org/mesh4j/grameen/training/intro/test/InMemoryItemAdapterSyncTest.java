@@ -46,16 +46,28 @@ public class InMemoryItemAdapterSyncTest {
 		
 		//test cases
 		Assert.assertNotNull(sourceAdapter.getAll());
+		Assert.assertEquals(1, sourceAdapter.getAll().size());
 		//end test cases
 		
 		
 		InMemoryItemAdapter targetAdapter = new InMemoryItemAdapter("target",NullIdentityProvider.INSTANCE);
 		//sourceAdapter.add(item);
+		Assert.assertNotNull(targetAdapter.getAll());
+		Assert.assertEquals(0, targetAdapter.getAll().size());
 		
 		//now sync sourceAdapter and targetAdapter
 		SyncEngine syncEngine = new SyncEngine(sourceAdapter,targetAdapter);
 		List<Item> confilicts = syncEngine.synchronize();
+		
+		Assert.assertNotNull(confilicts);
+		Assert.assertTrue(confilicts.isEmpty());
+		
 		System.out.println("size is:" + confilicts.size());
+		
+		//now get the source Item and target Item and see if this two are same or not
+		Item sourceItem = sourceAdapter.get(syncId);
+		Item targetItem = targetAdapter.get(syncId);
+		Assert.assertEquals(sourceItem, targetItem);
 		
 	}
 }
