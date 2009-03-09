@@ -131,7 +131,7 @@ public class InMemoryItemAdapterTest {
 		Element updatedElement = XMLHelper.parseElement(updatedRawDataAsXml);
 		
 		//create content object
-		IContent updatedContent = new XMLContent(itemId,title,description,element);
+		IContent updatedContent = new XMLContent(itemId,title,description,updatedElement);
 		
 		//create sync object
 		isDeleted = false;
@@ -146,9 +146,9 @@ public class InMemoryItemAdapterTest {
 		Assert.assertEquals(syncId, updatedItem.getSyncId());
 		Assert.assertEquals(updatedSync, updatedItem.getSync());
 		
-		Assert.assertEquals(updatedContent, item.getContent());
+		Assert.assertEquals(updatedContent, updatedItem.getContent());
 		Assert.assertEquals(updatedElement, updatedItem.getContent().getPayload());
-		Assert.assertEquals(updatedRawDataAsXml, item.getContent().getPayload().asXML());
+		Assert.assertEquals(updatedRawDataAsXml, updatedItem.getContent().getPayload().asXML());
 		Assert.assertFalse(updatedItem.hasSyncConflicts());
 		
 		//History
