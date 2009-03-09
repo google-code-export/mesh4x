@@ -2,11 +2,13 @@ package org.mesh4j.grameen.training.intro.adapter;
 
 import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.mesh4j.sync.AbstractSyncAdapter;
 import org.mesh4j.sync.IFilter;
+import org.mesh4j.sync.filter.SinceLastUpdateFilter;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.validations.Guard;
@@ -65,8 +67,16 @@ public class InMemoryItemAdapter extends AbstractSyncAdapter{
 
 	@Override
 	protected List<Item> getAll(Date since, IFilter<Item> filter) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		Guard.argumentNotNull(filter, "filter");
+		List<Item> alItems = new LinkedList<Item>();
+		for(Map.Entry<String, Item>  entry: itemsMap.entrySet()){
+			Item item = entry.getValue();
+			if (SinceLastUpdateFilter.applies(item, since) && filter.applies(item)){
+				alItems.add(item.clone());
+			}
+		}
+		return alItems;
 	}
 
 	@Override
