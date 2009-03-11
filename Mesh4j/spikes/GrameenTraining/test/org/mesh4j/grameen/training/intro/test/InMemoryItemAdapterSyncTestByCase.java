@@ -190,7 +190,7 @@ public class InMemoryItemAdapterSyncTestByCase {
 		Assert.assertTrue(confilicts.isEmpty());
 		Assert.assertEquals(1, targetAdapter.getAll().size());
 	}
-	
+	@Test
 	public void shouldSyncItem1AndItem2(){
 		
 		InMemoryItemAdapter sourceAdapter = new InMemoryItemAdapter("source",NullIdentityProvider.INSTANCE);
@@ -207,6 +207,8 @@ public class InMemoryItemAdapterSyncTestByCase {
 		Assert.assertTrue(confilicts.isEmpty());
 		
 	}
+	
+	@Test
 	public void shouldSyncItem1AndItem2AndItem3(){
 		
 		//add item1 and item2 to SourceAdapter 
