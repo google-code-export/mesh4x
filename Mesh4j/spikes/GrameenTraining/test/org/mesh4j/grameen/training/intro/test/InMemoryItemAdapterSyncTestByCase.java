@@ -225,7 +225,9 @@ public class InMemoryItemAdapterSyncTestByCase {
 		//sync process starts
 		SyncEngine syncEngine = new SyncEngine(sourceAdapter,targetAdapter);;
 		List<Item> conflicts = syncEngine.synchronize();
+		System.out.println(conflicts.get(0).getSync().getLastUpdate().getBy());
 		
+		Assert.assertEquals(conflicts.get(0).getLastUpdate().getBy(), item1Source.getLastUpdate().getBy());
 		Assert.assertNotNull(conflicts);
 		Assert.assertEquals(1, conflicts.size());
 		Assert.assertEquals(2, sourceAdapter.getAll().size());
