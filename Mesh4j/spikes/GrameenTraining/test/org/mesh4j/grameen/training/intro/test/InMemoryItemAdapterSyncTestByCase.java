@@ -228,6 +228,8 @@ public class InMemoryItemAdapterSyncTestByCase {
 		System.out.println(conflicts.get(0).getSync().getLastUpdate().getBy());
 		
 		Assert.assertEquals(conflicts.get(0).getLastUpdate().getBy(), item1Source.getLastUpdate().getBy());
+		//Assert.assertNotSame(conflicts.get(0).getLastUpdate().getBy(), item2.getLastUpdate().getBy());
+		
 		Assert.assertNotNull(conflicts);
 		Assert.assertEquals(1, conflicts.size());
 		Assert.assertEquals(2, sourceAdapter.getAll().size());
