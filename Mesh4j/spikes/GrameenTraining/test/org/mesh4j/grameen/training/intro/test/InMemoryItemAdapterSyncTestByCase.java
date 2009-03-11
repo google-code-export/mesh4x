@@ -205,7 +205,7 @@ public class InMemoryItemAdapterSyncTestByCase {
 	}
 	
 	@Test
-	public void shouldNotGenerateConflict(){
+	public void shouldNotGenerateConflictAsItem2(){
 		
 		//add item1 and item2 to SourceAdapter 
 		InMemoryItemAdapter sourceAdapter = new InMemoryItemAdapter("source",NullIdentityProvider.INSTANCE);
