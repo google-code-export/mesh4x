@@ -234,6 +234,7 @@ public class InMemoryItemAdapterSyncTestByCase {
 		
 	}
 	
+	
 	@Test
 	public void shouldSyncItem1(){
 		
