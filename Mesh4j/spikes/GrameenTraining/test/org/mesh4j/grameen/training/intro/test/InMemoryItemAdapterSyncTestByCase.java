@@ -199,13 +199,41 @@ public class InMemoryItemAdapterSyncTestByCase {
 		SyncEngine syncEngine = new SyncEngine(sourceAdapter,targetAdapter);;
 		List<Item> conflicts = syncEngine.synchronize();
 		
-//		for(Item item : conflicts){
-//		}
-		
 		Assert.assertNotNull(conflicts);
 		Assert.assertEquals(2, conflicts.size());
 		
 	}
+	
+	@Test
+	public void shouldNotGenerateConflict(){
+		
+		//add item1 and item2 to SourceAdapter 
+		InMemoryItemAdapter sourceAdapter = new InMemoryItemAdapter("source",NullIdentityProvider.INSTANCE);
+		
+		Item item1Source = item1.clone();
+		item1Source.getSync().update("marcelo", new Date());
+		sourceAdapter.add(item1Source);
+		sourceAdapter.add(item2);
+		
+		//initially target adapter is empty
+		InMemoryItemAdapter targetAdapter = new InMemoryItemAdapter("target",NullIdentityProvider.INSTANCE);
+		Item item1Target = item1.clone();		// same original item
+		item1Target.getSync().update("juan", new Date());
+		targetAdapter.add(item1Target);
+		targetAdapter.add(item2);
+		
+		//sync process starts
+		SyncEngine syncEngine = new SyncEngine(sourceAdapter,targetAdapter);;
+		List<Item> conflicts = syncEngine.synchronize();
+		
+		Assert.assertNotNull(conflicts);
+		Assert.assertEquals(1, conflicts.size());
+		Assert.assertEquals(2, sourceAdapter.getAll().size());
+		Assert.assertEquals(2, targetAdapter.getAll().size());
+		Assert.assertEquals(sourceAdapter.getAll().size(), targetAdapter.getAll().size());
+		
+	}
+	
 	@Test
 	public void shouldSyncItem1(){
 		
