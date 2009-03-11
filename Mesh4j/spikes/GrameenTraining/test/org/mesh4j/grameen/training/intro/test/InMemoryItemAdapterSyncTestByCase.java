@@ -34,7 +34,6 @@ public class InMemoryItemAdapterSyncTestByCase {
 		String rawDataAsXML = "<user><id>1</id><name>saiful</name></user>";
 		//create sync object
 		String syncId = IdGenerator.INSTANCE.newID();
-		System.out.println(syncId);
 		String by  ="raju";
 		Date when = new Date();
 		boolean isDeleted = false;
@@ -49,7 +48,6 @@ public class InMemoryItemAdapterSyncTestByCase {
 		rawDataAsXML = "<user><id>1</id><name>juan</name></user>";
 		//create sync object
 		syncId = IdGenerator.INSTANCE.newID();
-		System.out.println(syncId);
 		by  ="marcelo";
 		when = new Date();
 		isDeleted = false;
@@ -64,7 +62,6 @@ public class InMemoryItemAdapterSyncTestByCase {
 		rawDataAsXML = "<user><id>1</id><name>akther</name></user>";
 		//create sync object
 		syncId = IdGenerator.INSTANCE.newID();
-		System.out.println(syncId);
 		by  ="javed";
 		when = new Date();
 		isDeleted = false;
@@ -149,7 +146,7 @@ public class InMemoryItemAdapterSyncTestByCase {
 	}
 	
 	@Test
-	public void shouldGenerateConflicts(){
+	public void shouldGenerateConflict(){
 		
 		//add item1 and item2 to SourceAdapter 
 		InMemoryItemAdapter sourceAdapter = new InMemoryItemAdapter("source",NullIdentityProvider.INSTANCE);
@@ -166,14 +163,49 @@ public class InMemoryItemAdapterSyncTestByCase {
 		targetAdapter.add(item1Target);
 		
 		//sync process starts
-		SyncEngine syncEngine = new SyncEngine(sourceAdapter,targetAdapter);
+		SyncEngine syncEngine = new SyncEngine(sourceAdapter,targetAdapter);;
 		List<Item> conflicts = syncEngine.synchronize();
 		
 		Assert.assertNotNull(conflicts);
 		Assert.assertEquals(1, conflicts.size());
-		
 	}
 	
+	@Test
+	public void shouldGenerateConflicts(){
+		
+		//add item1 and item2 to SourceAdapter 
+		InMemoryItemAdapter sourceAdapter = new InMemoryItemAdapter("source",NullIdentityProvider.INSTANCE);
+		
+		Item item1Source = item1.clone();
+		item1Source.getSync().update("marcelo", new Date());
+		sourceAdapter.add(item1Source);
+		
+		Item item2Source = item2.clone();
+		item2Source.getSync().update("raju", new Date());
+		sourceAdapter.add(item2Source);
+		
+		//initially target adapter is empty
+		InMemoryItemAdapter targetAdapter = new InMemoryItemAdapter("target",NullIdentityProvider.INSTANCE);
+		Item item1Target = item1.clone();		// same original item
+		item1Target.getSync().update("juan", new Date());
+		targetAdapter.add(item1Target);
+		
+		Item item2Target = item2.clone();
+		item2Target.getSync().update("javed", new Date());
+		targetAdapter.add(item2Target);
+		
+		
+		//sync process starts
+		SyncEngine syncEngine = new SyncEngine(sourceAdapter,targetAdapter);;
+		List<Item> conflicts = syncEngine.synchronize();
+		
+//		for(Item item : conflicts){
+//		}
+		
+		Assert.assertNotNull(conflicts);
+		Assert.assertEquals(2, conflicts.size());
+		
+	}
 	@Test
 	public void shouldSyncItem1(){
 		
