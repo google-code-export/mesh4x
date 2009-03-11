@@ -61,6 +61,8 @@ public class InMemoryItemAdapterSyncTest {
 		
 		Assert.assertNotNull(confilicts);
 		Assert.assertTrue(confilicts.isEmpty());
+		Assert.assertEquals(1, sourceAdapter.getAll().size());
+		Assert.assertEquals(1, targetAdapter.getAll().size());
 		
 		System.out.println("size is:" + confilicts.size());
 		
@@ -68,6 +70,23 @@ public class InMemoryItemAdapterSyncTest {
 		Item sourceItem = sourceAdapter.get(syncId);
 		Item targetItem = targetAdapter.get(syncId);
 		Assert.assertEquals(sourceItem, targetItem);
+		
+		sourceAdapter.delete(syncId);
+		
+		Assert.assertEquals(0, sourceAdapter.getAll().size());
+		Assert.assertEquals(1, targetAdapter.getAll().size());
+		
+		confilicts = syncEngine.synchronize();
+		
+		Assert.assertEquals(1, sourceAdapter.getAll().size());
+		Assert.assertEquals(1, targetAdapter.getAll().size());
+		
+		sourceAdapter.delete(syncId);
+		targetAdapter.delete(syncId);
+		confilicts = syncEngine.synchronize();
+		
+		Assert.assertEquals(0, sourceAdapter.getAll().size());
+		Assert.assertEquals(0, targetAdapter.getAll().size());
 		
 	}
 }
