@@ -114,6 +114,7 @@ public class InMemoryItemAdapterSyncTestByCase {
 		case2();
 		case3();
 		case4();
+		case5(); 
 	}
 	
 	
@@ -211,20 +212,30 @@ public class InMemoryItemAdapterSyncTestByCase {
 		Assert.assertEquals(2, sourceAdapter.getAll().size());
 		
 	}
+	
 	//generate conflicts
 	private void case5(){
+		
 		//add item1 and item2 to SourceAdapter 
 		InMemoryItemAdapter sourceAdapter = new InMemoryItemAdapter("source",NullIdentityProvider.INSTANCE);
-		sourceAdapter.add(item1);
+		
+		Item item1Source = item1.clone();
+		item1Source.getSync().update("marcelo", new Date());
+		sourceAdapter.add(item1Source);
 		
 		
 		//initially target adapter is empty
 		InMemoryItemAdapter targetAdapter = new InMemoryItemAdapter("target",NullIdentityProvider.INSTANCE);
-		sourceAdapter.add(item1);
+		Item item1Target = item1.clone();		// same original item
+		item1Target.getSync().update("juan", new Date());
+		targetAdapter.add(item1Target);
 		
 		//sync process starts
 		SyncEngine syncEngine = new SyncEngine(sourceAdapter,targetAdapter);
 		List<Item> conflicts = syncEngine.synchronize();
+		
+		Assert.assertNotNull(conflicts);
+		Assert.assertEquals(1, conflicts.size());
 		
 	}
 	private Item createItem(String id,String title,String desc,String rawXML,String syncId
