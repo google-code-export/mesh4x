@@ -3,10 +3,10 @@ package org.mesh4j.grameen.training.intro.test;
 import java.util.Date;
 import java.util.List;
 
-import junit.framework.Assert;
-
-import org.dom4j.Element;
+import org.junit.Assert;
 import org.junit.Test;
+import org.dom4j.Element;
+
 import org.mesh4j.grameen.training.intro.adapter.InMemoryItemAdapter;
 import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.adapters.feed.XMLContent;
@@ -109,10 +109,11 @@ public class InMemoryItemAdapterSyncTestByCase {
 		
 		//create new Item object with help of the content and sync instance
 		item3 = createItem(id, title, desc, rawDataAsXML, syncId, when, isDeleted, by);
+		
 		case1();
 		case2();
 		case3();
-				
+		case4();
 	}
 	
 	
@@ -121,6 +122,7 @@ public class InMemoryItemAdapterSyncTestByCase {
 		
 		InMemoryItemAdapter sourceAdapter = new InMemoryItemAdapter("source",NullIdentityProvider.INSTANCE);
 		sourceAdapter.add(item1);
+		System.out.println("authenticate "+sourceAdapter.getAuthenticatedUser());
 		
 		InMemoryItemAdapter targetAdapter = new InMemoryItemAdapter("target",NullIdentityProvider.INSTANCE);
 		
@@ -160,7 +162,7 @@ public class InMemoryItemAdapterSyncTestByCase {
 		
 		//sync process starts
 		SyncEngine syncEngine = new SyncEngine(sourceAdapter,targetAdapter);
-		List<Item> conflictBeforeAddedItem3 = syncEngine.synchronize();
+		List<Item> conflict = syncEngine.synchronize();
 		
 		Assert.assertEquals(2, targetAdapter.getAll().size());
 		
@@ -171,12 +173,60 @@ public class InMemoryItemAdapterSyncTestByCase {
 		Assert.assertEquals(2, sourceAdapter.getAll().size());
 		
 		//sync process starts
-		List<Item> conflictAfterAddedItem3 = syncEngine.synchronize();
+		conflict = syncEngine.synchronize();
 		Assert.assertEquals(3, sourceAdapter.getAll().size());
 		Assert.assertEquals(3, targetAdapter.getAll().size());
 		
 	}
 	
+	/**
+	 * add item1 to source adapter and item2 to target adapter
+	 */
+	private void case4(){
+		//add item1 and item2 to SourceAdapter 
+		InMemoryItemAdapter sourceAdapter = new InMemoryItemAdapter("source",NullIdentityProvider.INSTANCE);
+		sourceAdapter.add(item1);
+		
+		
+		//initially target adapter is empty
+		InMemoryItemAdapter targetAdapter = new InMemoryItemAdapter("target",NullIdentityProvider.INSTANCE);
+		sourceAdapter.add(item2);
+		
+		//sync process starts
+		SyncEngine syncEngine = new SyncEngine(sourceAdapter,targetAdapter);
+		List<Item> conflicts = syncEngine.synchronize();
+		Assert.assertEquals(2, targetAdapter.getAll().size());
+		Assert.assertEquals(2, sourceAdapter.getAll().size());
+		
+		sourceAdapter.delete(item1.getSyncId());
+		
+		Assert.assertEquals(1, sourceAdapter.getAll().size());
+		Assert.assertEquals(2, targetAdapter.getAll().size());
+		
+		conflicts = syncEngine.synchronize();
+		
+		Assert.assertNotNull(conflicts);
+		Assert.assertTrue(conflicts.isEmpty());
+		Assert.assertEquals(2, targetAdapter.getAll().size());
+		Assert.assertEquals(2, sourceAdapter.getAll().size());
+		
+	}
+	//generate conflicts
+	private void case5(){
+		//add item1 and item2 to SourceAdapter 
+		InMemoryItemAdapter sourceAdapter = new InMemoryItemAdapter("source",NullIdentityProvider.INSTANCE);
+		sourceAdapter.add(item1);
+		
+		
+		//initially target adapter is empty
+		InMemoryItemAdapter targetAdapter = new InMemoryItemAdapter("target",NullIdentityProvider.INSTANCE);
+		sourceAdapter.add(item1);
+		
+		//sync process starts
+		SyncEngine syncEngine = new SyncEngine(sourceAdapter,targetAdapter);
+		List<Item> conflicts = syncEngine.synchronize();
+		
+	}
 	private Item createItem(String id,String title,String desc,String rawXML,String syncId
 			,Date when,boolean isDeleted,String by){
 		//creating content
