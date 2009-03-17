@@ -255,6 +255,7 @@ public class InMemoryItemAdapterSyncTestByCase {
 		Assert.assertTrue(confilicts.isEmpty());
 		Assert.assertEquals(1, targetAdapter.getAll().size());
 	}
+	
 	@Test
 	public void shouldSyncItem1AndItem2(){
 		
