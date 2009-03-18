@@ -104,21 +104,27 @@ public class SyncEngine {
 
 		this.beginSync();
 		List<Item> result = null;
+		//collect all the eligible source items for sync operation
 		List<Item> sourceItems = (since == null) ? source.getAll() : source.getAllSince(since);
+		//prepare list of outgoing items and notify the related observer if any
 		List<Item> outgoingItems = this.enumerateItemsProgress(sourceItems, this.itemSent);
 
 		if (target instanceof ISupportMerge) {
 			ISupportMerge targetMerge = (ISupportMerge) target;
 			targetMerge.merge(outgoingItems);
 		} else {
+			//prepare merge result for the outgoing items (w.r.t target repository) that includes new/updated/conflicted items
 			List<MergeResult> outgoingToMerge = this.mergeItems(outgoingItems, target);
 			if (behavior == PreviewBehavior.Right || behavior == PreviewBehavior.Both) {
 				outgoingToMerge = previewer.preview(target, outgoingToMerge);
 			}
+			//update the target repository with outgoingToMerge result
 			this.importItems(outgoingToMerge, target);
 		}
 
+		//collect all the eligible target items for sync operation
 		List<Item> targetItmes = (since == null) ? target.getAll() : target.getAllSince(since);
+		//prepare list of incoming items and notify the related observer if any
 		List<Item> incomingItems = this.enumerateItemsProgress(targetItmes, this.itemReceived);
 
 		if (source instanceof ISupportMerge) {
@@ -126,11 +132,13 @@ public class SyncEngine {
 			ISupportMerge sourceMerge = (ISupportMerge) source;
 			result = sourceMerge.merge(incomingItems);				
 		} else {
+			//prepare merge result for the incoming items (w.r.t source repository) that includes new/updated/conflicted items
 			List<MergeResult> incomingToMerge = this.mergeItems(incomingItems, source);
 			if (behavior == PreviewBehavior.Left || behavior == PreviewBehavior.Both) {
 				incomingToMerge = previewer.preview(source, incomingToMerge);
 			}
 
+			//update the source repository with incomingToMerge result
 			result = this.importItems(incomingToMerge, source);
 		}
 		this.endSync();	
