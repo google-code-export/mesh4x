@@ -3,12 +3,11 @@ package org.mesh4j.grameen.training.intro.test;
 import java.util.Date;
 import java.util.List;
 
+import org.dom4j.Element;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.dom4j.Element;
-
 import org.mesh4j.grameen.training.intro.adapter.InMemoryListItemAdapter;
 import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.adapters.feed.XMLContent;
@@ -23,7 +22,7 @@ import org.mesh4j.sync.utils.XMLHelper;
 public class InMemoryListItemAdapterSyncTestByCase {
 
 	private Item item1,item2,item3;
-	
+
 	
 	@Before
 	public void setUp() throws Exception {
@@ -216,9 +215,9 @@ public class InMemoryListItemAdapterSyncTestByCase {
 		sourceAdapter.add(item2);
 		
 		try {
-			Thread.currentThread().sleep(1000L);
+			Thread.sleep(1000L);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
+			// NOTHING TO DO
 			e.printStackTrace();
 		}
 		
@@ -259,10 +258,10 @@ public class InMemoryListItemAdapterSyncTestByCase {
 		InMemoryListItemAdapter targetAdapter = new InMemoryListItemAdapter("target",NullIdentityProvider.INSTANCE);
 		
 		SyncEngine syncEngine = new SyncEngine(sourceAdapter,targetAdapter);
-		List<Item> confilicts = syncEngine.synchronize();
+		List<Item> conflicts = syncEngine.synchronize();
 		
-		Assert.assertNotNull(confilicts);
-		Assert.assertTrue(confilicts.isEmpty());
+		Assert.assertNotNull(conflicts);
+		Assert.assertTrue(conflicts.isEmpty());
 		Assert.assertEquals(1, targetAdapter.getAll().size());
 	}
 	
@@ -276,11 +275,11 @@ public class InMemoryListItemAdapterSyncTestByCase {
 		InMemoryListItemAdapter targetAdapter = new InMemoryListItemAdapter("target",NullIdentityProvider.INSTANCE);
 		
 		SyncEngine syncEngine = new SyncEngine(sourceAdapter,targetAdapter);
-		List<Item> confilicts = syncEngine.synchronize();
+		List<Item> conflicts = syncEngine.synchronize();
 		
 		Assert.assertEquals(2, targetAdapter.getAll().size());
-		Assert.assertNotNull(confilicts);
-		Assert.assertTrue(confilicts.isEmpty());
+		Assert.assertNotNull(conflicts);
+		Assert.assertTrue(conflicts.isEmpty());
 		
 	}
 	
@@ -299,6 +298,8 @@ public class InMemoryListItemAdapterSyncTestByCase {
 		SyncEngine syncEngine = new SyncEngine(sourceAdapter,targetAdapter);
 		List<Item> conflict = syncEngine.synchronize();
 		
+		Assert.assertTrue(conflict.isEmpty());
+		
 		Assert.assertEquals(2, targetAdapter.getAll().size());
 		
 		//now we are adding item3 to TargetAdapter
@@ -315,10 +316,9 @@ public class InMemoryListItemAdapterSyncTestByCase {
 	}
 	
 	
-	
-	
-	private Item createItem(String id,String title,String desc,String rawXML,String syncId
-			,Date when,boolean isDeleted,String by){
+	private Item createItem(String id, String title, String desc, 
+			String rawXML, String syncId, Date when, boolean isDeleted, String by){
+		
 		//creating content
 		Element payLoad = XMLHelper.parseElement(rawXML);
 		IContent content = new XMLContent(id,title,desc,payLoad);

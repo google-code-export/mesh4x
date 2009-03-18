@@ -19,11 +19,12 @@ import org.mesh4j.sync.validations.Guard;
  */
 public class InMemoryListItemAdapter extends AbstractSyncAdapter {
 
-	// for storing item in memory
+	// MODEL VARIABLES
 	private List<Item> itemList = new ArrayList<Item>();
 	IIdentityProvider identityProvider = null;
 	private String name;
 
+	// BUSINESS METHODS
 	public InMemoryListItemAdapter(String name,
 			IIdentityProvider identityProvider, List<Item> itemList) {
 		Guard.argumentNotNullOrEmptyString(name, "name");

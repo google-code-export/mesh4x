@@ -288,6 +288,7 @@ public class InMemoryItemAdapterSyncTestByCase {
 		//sync process starts
 		SyncEngine syncEngine = new SyncEngine(sourceAdapter,targetAdapter);
 		List<Item> conflict = syncEngine.synchronize();
+		Assert.assertTrue(conflict.isEmpty());
 		
 		Assert.assertEquals(2, targetAdapter.getAll().size());
 		
@@ -299,6 +300,8 @@ public class InMemoryItemAdapterSyncTestByCase {
 		
 		//sync process starts
 		conflict = syncEngine.synchronize();
+		Assert.assertTrue(conflict.isEmpty());
+		
 		Assert.assertEquals(3, sourceAdapter.getAll().size());
 		Assert.assertEquals(3, targetAdapter.getAll().size());
 		

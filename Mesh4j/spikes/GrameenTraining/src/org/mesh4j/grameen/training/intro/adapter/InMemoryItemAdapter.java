@@ -19,12 +19,12 @@ import org.mesh4j.sync.validations.Guard;
  */
 public class InMemoryItemAdapter extends AbstractSyncAdapter{
 
-	//for storing item in memory
+	// MODEL VARIABLES
 	private Map<String,Item> itemsMap = new LinkedHashMap<String, Item>();
 	IIdentityProvider identityProvider = null;
 	private String name;
 
-	
+	// BUSINESS METHODS	
 	public InMemoryItemAdapter(String name ,IIdentityProvider identityProvider,Map<String,Item> itemsMap){
 		Guard.argumentNotNullOrEmptyString(name,"name");
 		Guard.argumentNotNull(itemsMap, "itemsMap");
