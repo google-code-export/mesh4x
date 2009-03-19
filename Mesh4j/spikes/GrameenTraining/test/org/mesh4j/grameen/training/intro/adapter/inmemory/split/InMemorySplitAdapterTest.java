@@ -160,9 +160,12 @@ public class InMemorySplitAdapterTest {
 			splitAdapterA.delete(syncInfo.getId());
 		}
 		
+		Assert.assertEquals(splitAdapterA.getAll().size(), 2);
 		
-		Assert.assertEquals(splitAdapterA.getAll().size(), 0);
-		
+		List<Item> items = splitAdapterA.getAll();
+		for (Item item : items) {
+			Assert.assertTrue(item.isDeleted());
+		}
 	}
 	
 	//creating a splitadapter
