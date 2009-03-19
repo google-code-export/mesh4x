@@ -8,6 +8,7 @@ import org.dom4j.Element;
 import org.junit.Before;
 import org.junit.Test;
 import org.mesh4j.sync.SyncEngine;
+import org.mesh4j.sync.adapters.SyncInfo;
 import org.mesh4j.sync.adapters.feed.XMLContent;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.model.IContent;
@@ -153,7 +154,13 @@ public class InMemorySplitAdapterTest {
 		
 		Assert.assertEquals(splitAdapterA.getAll().size(), 2);
 		
-		//splitAdapterA.delete();
+		List<SyncInfo> listOfSyncInfo = splitAdapterA.getSyncRepository().getAll("Student");
+		
+		for(SyncInfo syncInfo : listOfSyncInfo){
+			splitAdapterA.delete(syncInfo.getId());
+		}
+		
+		
 		Assert.assertEquals(splitAdapterA.getAll().size(), 0);
 		
 	}
