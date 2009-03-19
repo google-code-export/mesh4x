@@ -1,6 +1,6 @@
 package org.mesh4j.grameen.training.intro.adapter.inmemory.split;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.mesh4j.sync.adapters.SyncInfo;
@@ -13,11 +13,13 @@ import org.mesh4j.sync.model.IContent;
  * @since 16/3/2009
  */
 public class Storage {
-	private Map<String,Object> contents = null;
+	private Map<String,Object> contents = new LinkedHashMap<String,Object>();
 	
 	
-	public Storage(Map<String,Object> contents){
-		this.contents = contents;
+	public Storage(String id,Object object){
+		contents.put(id, object);
+	}
+	public Storage(){
 	}
 	public Map<String,Object> getStorage(){
 		return this.contents;

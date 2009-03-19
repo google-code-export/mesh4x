@@ -1,5 +1,6 @@
 package org.mesh4j.grameen.training.intro.adapter.inmemory.split;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,7 +12,7 @@ import org.mesh4j.sync.model.IContent;
 
 public class InMemorySyncRepository implements ISyncRepository , ISyncAware{
 
-	private Storage storage = null;
+	private Storage storage = new Storage();
 	private String repositoryType = "";
 	
 	
@@ -20,6 +21,9 @@ public class InMemorySyncRepository implements ISyncRepository , ISyncAware{
 		this.storage = storage;
 		this.repositoryType = repositoryType;
 	}
+	public InMemorySyncRepository(){
+	}
+	
 	@Override
 	public SyncInfo get(String syncId) {
 		return (SyncInfo)this.storage.getRow(syncId);
@@ -28,7 +32,7 @@ public class InMemorySyncRepository implements ISyncRepository , ISyncAware{
 	@Override
 	public List<SyncInfo> getAll(String entityName) {
 		List<SyncInfo> allContents = new LinkedList<SyncInfo>();
-		List<Object> list = (List<Object>) this.storage.getStorage().values();
+		Collection<Object> list = this.storage.getStorage().values();
 		for(Object cont : list){
 			allContents.add((SyncInfo)cont);
 		}

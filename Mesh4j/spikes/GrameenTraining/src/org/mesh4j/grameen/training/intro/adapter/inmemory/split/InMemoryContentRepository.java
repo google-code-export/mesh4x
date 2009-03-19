@@ -1,5 +1,6 @@
 package org.mesh4j.grameen.training.intro.adapter.inmemory.split;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -14,8 +15,7 @@ public class InMemoryContentRepository implements IContentAdapter , ISyncAware{
 	private String repositoryType = "";
 	private String entityName = "";
 	
-	public InMemoryContentRepository(Storage storage,String repositoryType,
-			String entityName,String entityIdColumnName){
+	public InMemoryContentRepository(Storage storage,String repositoryType,String entityName){
 			this.storage = storage;
 			this.repositoryType = repositoryType;
 			this.entityName = entityName;
@@ -34,7 +34,7 @@ public class InMemoryContentRepository implements IContentAdapter , ISyncAware{
 	@Override
 	public List<IContent> getAll(Date since) {
 		List<IContent> allContents = new LinkedList<IContent>();
-		List<Object> list = (List<Object>) this.storage.getStorage().values();
+		Collection<Object> list = this.storage.getStorage().values();
 		for(Object cont : list){
 			allContents.add((IContent)cont);
 		}
