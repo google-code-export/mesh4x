@@ -25,8 +25,8 @@ public class InMemorySyncRepository implements ISyncRepository , ISyncAware{
 	}
 	
 	@Override
-	public SyncInfo get(String syncId) {
-		return (SyncInfo)this.storage.getRow(syncId);
+	public SyncInfo get(String id) {
+		return (SyncInfo)this.storage.getRow(id);
 	}
 
 	@Override
