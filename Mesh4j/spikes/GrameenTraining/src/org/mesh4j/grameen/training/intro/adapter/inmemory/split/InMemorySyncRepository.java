@@ -9,6 +9,7 @@ import org.mesh4j.sync.adapters.SyncInfo;
 import org.mesh4j.sync.adapters.split.ISyncRepository;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.IContent;
+import org.mesh4j.sync.validations.Guard;
 
 public class InMemorySyncRepository implements ISyncRepository , ISyncAware{
 
@@ -18,6 +19,9 @@ public class InMemorySyncRepository implements ISyncRepository , ISyncAware{
 	
 	
 	public InMemorySyncRepository(Storage storage,String repositoryType){
+		Guard.argumentNotNull(storage, "storage");
+		Guard.argumentNotNullOrEmptyString(repositoryType, "repositoryType");
+		
 		this.storage = storage;
 		this.repositoryType = repositoryType;
 	}
@@ -26,11 +30,13 @@ public class InMemorySyncRepository implements ISyncRepository , ISyncAware{
 	
 	@Override
 	public SyncInfo get(String id) {
+		Guard.argumentNotNullOrEmptyString(id, "id");
 		return (SyncInfo)this.storage.getRow(id);
 	}
 
 	@Override
 	public List<SyncInfo> getAll(String entityName) {
+		Guard.argumentNotNullOrEmptyString(entityName, "entityName");
 		List<SyncInfo> allContents = new LinkedList<SyncInfo>();
 		Collection<Object> list = this.storage.getStorage().values();
 		for(Object cont : list){
@@ -41,12 +47,14 @@ public class InMemorySyncRepository implements ISyncRepository , ISyncAware{
 
 	@Override
 	public String newSyncID(IContent content) {
+		Guard.argumentNotNull(content, "content");
 		return IdGenerator.INSTANCE.newID();
 	}
 
 	@Override
 	public void save(SyncInfo syncInfo) {
 		//we will decide if it is new row or old one.
+		Guard.argumentNotNull(syncInfo, "syncInfo");
 		if(this.storage.getRow(syncInfo.getId()) == null){
 			storage.addRow(syncInfo);
 		}else{

@@ -8,6 +8,8 @@ import java.util.List;
 import org.mesh4j.sync.ISyncAware;
 import org.mesh4j.sync.adapters.split.IContentAdapter;
 import org.mesh4j.sync.model.IContent;
+import org.mesh4j.sync.utils.DateHelper;
+import org.mesh4j.sync.validations.Guard;
 
 public class InMemoryContentRepository implements IContentAdapter , ISyncAware{
 
@@ -16,6 +18,11 @@ public class InMemoryContentRepository implements IContentAdapter , ISyncAware{
 	private String entityName = "";
 	
 	public InMemoryContentRepository(Storage storage,String repositoryType,String entityName){
+			
+			Guard.argumentNotNull(storage, "storage");
+			Guard.argumentNotNullOrEmptyString(repositoryType, "repositoryType");
+			Guard.argumentNotNullOrEmptyString(entityName, "entityName");
+			
 			this.storage = storage;
 			this.repositoryType = repositoryType;
 			this.entityName = entityName;
@@ -23,16 +30,19 @@ public class InMemoryContentRepository implements IContentAdapter , ISyncAware{
 	
 	@Override
 	public void delete(IContent content) {
+		Guard.argumentNotNull(content, "content");	
 		this.storage.deletRow(content);
 	}
 
 	@Override
 	public IContent get(String contentId) {
+		Guard.argumentNotNullOrEmptyString(contentId, "contentId");
 		return (IContent)this.storage.getRow(contentId);
 	}
 
 	@Override
 	public List<IContent> getAll(Date since) {
+		Guard.argumentNotNull(since, "since");
 		List<IContent> allContents = new LinkedList<IContent>();
 		Collection<Object> list = this.storage.getStorage().values();
 		for(Object cont : list){
@@ -48,11 +58,13 @@ public class InMemoryContentRepository implements IContentAdapter , ISyncAware{
 
 	@Override
 	public IContent normalize(IContent content) {
+		Guard.argumentNotNull(content, "content");
 		return content;
 	}
 
 	@Override
 	public void save(IContent content) {
+		Guard.argumentNotNull(content, "content");
 		//we will decide if it is new row or old one.
 		if(this.storage.getRow(content.getId()) == null){
 			storage.addRow(content);
