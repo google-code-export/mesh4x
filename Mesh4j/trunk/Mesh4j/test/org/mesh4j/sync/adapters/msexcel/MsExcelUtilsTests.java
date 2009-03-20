@@ -12,9 +12,6 @@ import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.dom4j.DocumentException;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
 import org.junit.Test;
 import org.mesh4j.sync.test.utils.TestHelper;
 import org.mesh4j.sync.validations.MeshException;
@@ -118,49 +115,6 @@ public class MsExcelUtilsTests {
 		Assert.assertEquals(HSSFCell.CELL_TYPE_STRING, cell.getCellType());
 		Assert.assertNotNull(cell.getRichStringCellValue());
 		Assert.assertEquals(cellValue, cell.getRichStringCellValue().getString());
-	}
-
-	@Test
-	public void shouldTranslate(){
-		
-		HSSFWorkbook workbook = new HSSFWorkbook();
-		HSSFSheet sheet = workbook.createSheet("EXAMPLE");
-		HSSFRow row = sheet.createRow(0);
-		
-		HSSFCell cell = row.createCell(0, HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString("COL0"));
-		
-		cell = row.createCell(1, HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString("COL1"));
-		
-		cell = row.createCell(2, HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString("COL2"));
-		
-		cell = row.createCell(3, HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString("COL3"));
-		
-		cell = row.createCell(4, HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString("COL4"));
-		
-		row = sheet.createRow(1);
-		
-		cell = row.createCell(0, HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString("VAL0"));
-		
-		cell = row.createCell(1, HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString("VAL1"));
-		
-		cell = row.createCell(2, HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString("VAL2"));
-		
-		cell = row.createCell(3, HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString("VAL3"));
-		
-		cell = row.createCell(4, HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString("VAL4"));
-		
-		Element element = MsExcelUtils.translate(sheet, row, "EXAMPLE");
-		Assert.assertEquals("<EXAMPLE><COL0>VAL0</COL0><COL1>VAL1</COL1><COL2>VAL2</COL2><COL3>VAL3</COL3><COL4>VAL4</COL4></EXAMPLE>", element.asXML());
 	}
 	
 	@Test
@@ -357,121 +311,7 @@ public class MsExcelUtilsTests {
 		
 		Assert.assertEquals("NEW_VALUE", cell.getRichStringCellValue().getString());
 	}
-	
-	@Test
-	public void shouldUpdateRowExecuteUpdateCell() throws DocumentException{
 		
-		String xml = "<EXAMPLE><COL0>VAL10</COL0><COL1>VAL11</COL1><COL2>VAL12</COL2><COL3>VAL13</COL3><COL4>VAL14</COL4></EXAMPLE>";
-		Element payload = DocumentHelper.parseText(xml).getRootElement();
-		
-		HSSFWorkbook workbook = makeDefaultWorkbook();
-		HSSFSheet sheet = workbook.getSheet("EXAMPLE");
-		HSSFRow row = sheet.getRow(1);
-
-		HSSFCell cell = row.getCell(0);
-		Assert.assertNotNull(cell);
-		Assert.assertEquals("VAL0", cell.getRichStringCellValue().getString());
-		
-		cell = row.getCell(1);
-		Assert.assertNotNull(cell);
-		Assert.assertEquals("VAL1", cell.getRichStringCellValue().getString());
-		
-		cell = row.getCell(2);
-		Assert.assertNotNull(cell);
-		Assert.assertEquals("VAL2", cell.getRichStringCellValue().getString());
-		
-		cell = row.getCell(3);
-		Assert.assertNotNull(cell);
-		Assert.assertEquals("VAL3", cell.getRichStringCellValue().getString());
-		
-		cell = row.getCell(4);
-		Assert.assertNotNull(cell);
-		Assert.assertEquals("VAL4", cell.getRichStringCellValue().getString());
-		
-		MsExcelUtils.updateRow(sheet, row, payload);
-		
-		cell = row.getCell(0);
-		Assert.assertNotNull(cell);
-		Assert.assertEquals("VAL10", cell.getRichStringCellValue().getString());
-		
-		cell = row.getCell(1);
-		Assert.assertNotNull(cell);
-		Assert.assertEquals("VAL11", cell.getRichStringCellValue().getString());
-		
-		cell = row.getCell(2);
-		Assert.assertNotNull(cell);
-		Assert.assertEquals("VAL12", cell.getRichStringCellValue().getString());
-		
-		cell = row.getCell(3);
-		Assert.assertNotNull(cell);
-		Assert.assertEquals("VAL13", cell.getRichStringCellValue().getString());
-		
-		cell = row.getCell(4);
-		Assert.assertNotNull(cell);
-		Assert.assertEquals("VAL14", cell.getRichStringCellValue().getString());
-	}
-	
-	@Test
-	public void shouldUpdateRowExecuteCreateCell() throws DocumentException{
-		String xml = "<EXAMPLE><COL0>VAL10</COL0><COL1>VAL11</COL1><COL2>VAL12</COL2><COL3>VAL13</COL3><COL4>VAL14</COL4><COL5>VAL15</COL5></EXAMPLE>";
-		Element payload = DocumentHelper.parseText(xml).getRootElement();
-		
-		HSSFWorkbook workbook = makeDefaultWorkbook();
-		HSSFSheet sheet = workbook.getSheet("EXAMPLE");
-		HSSFRow row = sheet.getRow(1);
-
-		HSSFCell cell = row.getCell(0);
-		Assert.assertNotNull(cell);
-		Assert.assertEquals("VAL0", cell.getRichStringCellValue().getString());
-		
-		cell = row.getCell(1);
-		Assert.assertNotNull(cell);
-		Assert.assertEquals("VAL1", cell.getRichStringCellValue().getString());
-		
-		cell = row.getCell(2);
-		Assert.assertNotNull(cell);
-		Assert.assertEquals("VAL2", cell.getRichStringCellValue().getString());
-		
-		cell = row.getCell(3);
-		Assert.assertNotNull(cell);
-		Assert.assertEquals("VAL3", cell.getRichStringCellValue().getString());
-		
-		cell = row.getCell(4);
-		Assert.assertNotNull(cell);
-		Assert.assertEquals("VAL4", cell.getRichStringCellValue().getString());
-
-		cell = row.getCell(5);
-		Assert.assertNull(cell);
-		
-		MsExcelUtils.updateRow(sheet, row, payload);
-		
-		cell = row.getCell(0);
-		Assert.assertNotNull(cell);
-		Assert.assertEquals("VAL10", cell.getRichStringCellValue().getString());
-		
-		cell = row.getCell(1);
-		Assert.assertNotNull(cell);
-		Assert.assertEquals("VAL11", cell.getRichStringCellValue().getString());
-		
-		cell = row.getCell(2);
-		Assert.assertNotNull(cell);
-		Assert.assertEquals("VAL12", cell.getRichStringCellValue().getString());
-		
-		cell = row.getCell(3);
-		Assert.assertNotNull(cell);
-		Assert.assertEquals("VAL13", cell.getRichStringCellValue().getString());
-		
-		cell = row.getCell(4);
-		Assert.assertNotNull(cell);
-		Assert.assertEquals("VAL14", cell.getRichStringCellValue().getString());
-
-		cell = row.getCell(5);
-		Assert.assertNotNull(cell);
-		Assert.assertEquals("VAL15", cell.getRichStringCellValue().getString());
-	
-	}
-	
-	
 	// PRIVATE METHODS
 	
 	private void assertDefaultWorkbook(HSSFWorkbook workbook) {

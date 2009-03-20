@@ -3,7 +3,6 @@ package org.mesh4j.sync.payload.schema;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
-// TODO (JMT) RDF Schema
 public class SchemaResolver implements ISchemaResolver {
 
 	// MODEL VARIABLES

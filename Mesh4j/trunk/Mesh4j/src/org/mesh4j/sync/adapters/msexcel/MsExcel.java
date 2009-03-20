@@ -1,11 +1,10 @@
 package org.mesh4j.sync.adapters.msexcel;
 
-import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
-public class MsExcel {
+public class MsExcel implements IMsExcel {
 
 	// MODEL VARIABLES
 	private String fileName;
@@ -26,18 +25,17 @@ public class MsExcel {
 		}
 	}
 	
+	@Override
 	public HSSFWorkbook getWorkbook() {
 		return this.workbook;
 	}
 
-	public HSSFSheet getSheet(String sheetName) {
-		return this.workbook.getSheet(sheetName);
-	}
-
+	@Override
 	public void setDirty() {
 		this.dirty = true;		
 	}
 
+	@Override
 	public void flush() {
 		if(this.dirty){
 			MsExcelUtils.flush(this.workbook, this.fileName);

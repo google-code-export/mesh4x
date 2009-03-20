@@ -36,10 +36,10 @@ public class MsExcelSyncRepository implements ISyncRepository, ISyncAware {
 	private IIdentityProvider identityProvider;
 	private IIdGenerator idGenerator;
 	
-	private MsExcel excel;
+	private IMsExcel excel;
 	
 	// BUSINESS METHODS
-	public MsExcelSyncRepository(MsExcel excel, IIdentityProvider identityProvider, IIdGenerator idGenerator){
+	public MsExcelSyncRepository(IMsExcel excel, IIdentityProvider identityProvider, IIdGenerator idGenerator){
 		super();
 		Guard.argumentNotNull(excel, "excel");
 		Guard.argumentNotNull(identityProvider, "identityProvider");
@@ -103,7 +103,7 @@ public class MsExcelSyncRepository implements ISyncRepository, ISyncAware {
 	}
 
 	private HSSFSheet getSheet(){
-		return this.excel.getSheet(SHEET_NAME);
+		return this.excel.getWorkbook().getSheet(SHEET_NAME);
 	}
 	
 	public HSSFWorkbook getWorkbook() {

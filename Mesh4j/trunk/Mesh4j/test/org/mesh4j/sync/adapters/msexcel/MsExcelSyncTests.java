@@ -39,12 +39,16 @@ public class MsExcelSyncTests {
 		
 		MsExcel excelA = new MsExcel(TestHelper.fileName("fileA.xls"));
 		MsExcelSyncRepository syncRepoA = new MsExcelSyncRepository(excelA, identityProvider, idGenerator);
-		MsExcelContentAdapter contentAdapterA = new MsExcelContentAdapter(excelA, sheetName, idColumnName);
+		
+		MSExcelToPlainXMLMapping mapperA = new MSExcelToPlainXMLMapping(idColumnName, null);
+		MsExcelContentAdapter contentAdapterA = new MsExcelContentAdapter(excelA, mapperA, sheetName);
 		SplitAdapter splitAdapterA = new SplitAdapter(syncRepoA, contentAdapterA, identityProvider);
 
 		MsExcel excelB = new MsExcel(TestHelper.fileName("fileB.xls"));
 		MsExcelSyncRepository syncRepoB = new MsExcelSyncRepository(excelB, identityProvider, idGenerator);
-		MsExcelContentAdapter contentAdapterB = new MsExcelContentAdapter(excelB, sheetName, idColumnName);
+		
+		MSExcelToPlainXMLMapping mapperB = new MSExcelToPlainXMLMapping(idColumnName, null);
+		MsExcelContentAdapter contentAdapterB = new MsExcelContentAdapter(excelB, mapperB, sheetName);
 		SplitAdapter splitAdapterB = new SplitAdapter(syncRepoB, contentAdapterB, identityProvider);		
 
 		SyncEngine syncEngine = new SyncEngine(splitAdapterA, splitAdapterB);
@@ -149,7 +153,8 @@ public class MsExcelSyncTests {
 		}
 		
 		MsExcelSyncRepository syncRepo = new MsExcelSyncRepository(syncExcel, identityProvider, idGenerator);
-		MsExcelContentAdapter contentAdapter = new MsExcelContentAdapter(contentExcel, sheetName, idColumnName);
+		MSExcelToPlainXMLMapping mapper = new MSExcelToPlainXMLMapping(idColumnName, null);
+		MsExcelContentAdapter contentAdapter = new MsExcelContentAdapter(contentExcel, mapper, sheetName);
 
 		SplitAdapter splitAdapter = new SplitAdapter(syncRepo, contentAdapter, identityProvider);
 		return splitAdapter;

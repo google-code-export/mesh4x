@@ -10,6 +10,7 @@ import java.util.List;
 import junit.framework.Assert;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -27,37 +28,37 @@ public class MsExcelContentAdapterTests {
 
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateAdapterFailsWhenSheetNameIsNull(){
-		new MsExcelContentAdapter(new MsExcel("myfile.xls"), null, "oid");
+		new MsExcelContentAdapter(new MsExcel("myfile.xls"), new MSExcelToPlainXMLMapping("oid", null), null);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateAdapterFailsWhenSheetNameIsEmpty(){
-		new MsExcelContentAdapter(new MsExcel("myfile.xls"), "", "oid");
+		new MsExcelContentAdapter(new MsExcel("myfile.xls"), new MSExcelToPlainXMLMapping("oid", null), "");
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateAdapterFailsWhenIDColumnNameIsNull(){
-		new MsExcelContentAdapter(new MsExcel("myfile.xls"), "test", null);
+		new MsExcelContentAdapter(new MsExcel("myfile.xls"), new MSExcelToPlainXMLMapping(null, null), "test");
 	}
 
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateAdapterFailsWhenIDColumnNameIsEmpty(){
-		new MsExcelContentAdapter(new MsExcel("myfile.xls"), "test", "");
+		new MsExcelContentAdapter(new MsExcel("myfile.xls"), new MSExcelToPlainXMLMapping("", null), "test");
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateAdapterFailsWhenFileNameIsNull(){
-		new MsExcelContentAdapter(null, "test", "oid");
+		new MsExcelContentAdapter(null, new MSExcelToPlainXMLMapping("oid", null), "test");
 	}
 
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateAdapterFailsWhenFileNameIsEmpty(){
-		new MsExcelContentAdapter(new MsExcel(""), "test", "oid");
+		new MsExcelContentAdapter(new MsExcel(""), new MSExcelToPlainXMLMapping("oid", null), "test");
 	}
 
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateAdapterFailsWhenLastUpdateColumnNameIsEmpty(){
-		new MsExcelContentAdapter(new MsExcel("myfile.xls"), "test", "oid", "");
+		new MsExcelContentAdapter(new MsExcel("myfile.xls"), new MSExcelToPlainXMLMapping("oid", ""), "test");
 	}
 	
 	
@@ -68,8 +69,9 @@ public class MsExcelContentAdapterTests {
 		
 		String sheetName = "sheet";
 		String idColumn = "oid";
-		
-		MsExcelContentAdapter excel = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), sheetName, idColumn);
+	
+		MSExcelToPlainXMLMapping mapper = new MSExcelToPlainXMLMapping(idColumn, null);
+		MsExcelContentAdapter excel = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), mapper, sheetName);
 		excel.beginSync();
 		excel.endSync();
 		
@@ -90,7 +92,8 @@ public class MsExcelContentAdapterTests {
 		workbook.createSheet("test");
 		MsExcelUtils.flush(workbook, file.getAbsolutePath());
 		
-		MsExcelContentAdapter excel = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), sheetName, idColumn);
+		MSExcelToPlainXMLMapping mapper = new MSExcelToPlainXMLMapping(idColumn, null);
+		MsExcelContentAdapter excel = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), mapper, sheetName);
 		validateWorkbook(sheetName, idColumn, excel.getWorkbook());
 	}
 
@@ -105,7 +108,8 @@ public class MsExcelContentAdapterTests {
 		workbook.createSheet(sheetName);
 		MsExcelUtils.flush(workbook, file.getAbsolutePath());
 		
-		MsExcelContentAdapter excel = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), sheetName, idColumn);
+		MSExcelToPlainXMLMapping mapper = new MSExcelToPlainXMLMapping(idColumn, null);
+		MsExcelContentAdapter excel = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), mapper, sheetName);
 		validateWorkbook(sheetName, idColumn, excel.getWorkbook());
 	}
 
@@ -121,13 +125,15 @@ public class MsExcelContentAdapterTests {
 		sheet.createRow(0);
 		MsExcelUtils.flush(workbook, file.getAbsolutePath());
 		
-		MsExcelContentAdapter excel = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), sheetName, idColumn);
+		MSExcelToPlainXMLMapping mapper = new MSExcelToPlainXMLMapping(idColumn, null);
+		MsExcelContentAdapter excel = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), mapper, sheetName);
 		validateWorkbook(sheetName, idColumn, excel.getWorkbook());
 	}
 
 	@Test
 	public void shouldGetTypeReturnsSheetName(){
-		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel("myfile.xmls"), "test", "oid");
+		MSExcelToPlainXMLMapping mapper = new MSExcelToPlainXMLMapping("oid", null);
+		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel("myfile.xmls"), mapper, "test");
 		Assert.assertEquals("test", adapter.getType());
 	}
 
@@ -135,7 +141,8 @@ public class MsExcelContentAdapterTests {
 	public void shouldFileDoesNotCreatedBecauseEndSyncIsNotExecuted() throws IOException{
 		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
 		
-		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), "sheet", "id");
+		MSExcelToPlainXMLMapping mapper = new MSExcelToPlainXMLMapping("id", null);
+		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), mapper, "sheet");
 		adapter.getWorkbook().createSheet("Test");
 		
 		Assert.assertFalse(file.exists());
@@ -145,7 +152,8 @@ public class MsExcelContentAdapterTests {
 	public void shouldFileCreatedWhenEndSyncIsExecuted() throws IOException{
 		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
 		
-		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), "sheet", "id");
+		MSExcelToPlainXMLMapping mapper = new MSExcelToPlainXMLMapping("id", null);
+		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), mapper, "sheet");
 		adapter.getWorkbook().createSheet("Test");
 		
 		Assert.assertFalse(file.exists());
@@ -160,7 +168,8 @@ public class MsExcelContentAdapterTests {
 	public void shouldFileUpdatedWhenEndSyncIsExecuted() throws FileNotFoundException, IOException{
 		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");	
 		
-		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), "sheet", "id");
+		MSExcelToPlainXMLMapping mapper = new MSExcelToPlainXMLMapping("id", null);
+		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), mapper, "sheet");
 		adapter.getWorkbook().createSheet("test");
 
 		MsExcelUtils.flush(adapter.getWorkbook(), file.getAbsolutePath());
@@ -171,7 +180,9 @@ public class MsExcelContentAdapterTests {
 		adapter.endSync();
 
 		Assert.assertTrue(file.exists());
-		adapter = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), "sheet", "id");		
+		
+		MSExcelToPlainXMLMapping mapper2 = new MSExcelToPlainXMLMapping("id", null);
+		adapter = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), mapper2, "sheet");		
 	
 		Assert.assertNotNull(adapter.getWorkbook().getSheet("test"));
 		Assert.assertNotNull(adapter.getWorkbook().getSheet("test1"));
@@ -182,7 +193,8 @@ public class MsExcelContentAdapterTests {
 	public void shouldGetReturnsNullBecauseItemDoesNotExistsOnSheet() throws IOException{
 		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
 		
-		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), "sheet", "id");
+		MSExcelToPlainXMLMapping mapper = new MSExcelToPlainXMLMapping("id", null);
+		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), mapper, "sheet");
 		addEntityHeader(adapter, "sheet", "name");
 		
 		Assert.assertNull(adapter.get("1"));
@@ -199,7 +211,8 @@ public class MsExcelContentAdapterTests {
 	public void shouldGetReturnsItem() throws IOException{
 		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
 		
-		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), "sheet", "id");
+		MSExcelToPlainXMLMapping mapper = new MSExcelToPlainXMLMapping("id", null);
+		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), mapper, "sheet");
 		addEntityHeader(adapter, "sheet", "name");
 		
 		Assert.assertNull(adapter.get("1"));
@@ -217,8 +230,9 @@ public class MsExcelContentAdapterTests {
 	
 	@Test
 	public void shouldGetAllReturnsEmpty() throws IOException{
-		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");		
-		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), "sheet", "id");
+		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
+		MSExcelToPlainXMLMapping mapper = new MSExcelToPlainXMLMapping("id", null);
+		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), mapper, "sheet");
 		Assert.assertEquals(0, adapter.getAll(new Date()).size());
 	}
 	
@@ -226,7 +240,8 @@ public class MsExcelContentAdapterTests {
 	public void shouldGetAllReturnsItems() throws IOException{
 		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
 		
-		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), "sheet", "id");
+		MSExcelToPlainXMLMapping mapper = new MSExcelToPlainXMLMapping("id", null);
+		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), mapper, "sheet");
 		addEntityHeader(adapter, "sheet", "name");
 		addEntity(adapter, "sheet", "1", "jct");
 		addEntity(adapter, "sheet", "2", "jmt");
@@ -257,7 +272,8 @@ public class MsExcelContentAdapterTests {
 		Date lastUpdate1 = TestHelper.makeDate(2008, 11, 11, 1, 1, 1, 0);
 		Date lastUpdate2 = TestHelper.makeDate(2008, 11, 15, 1, 1, 1, 0);
 		
-		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), "sheet", "id", "lastUpdate");
+		MSExcelToPlainXMLMapping mapper = new MSExcelToPlainXMLMapping("id", "lastUpdate");
+		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), mapper, "sheet");
 		addEntityHeader(adapter, "sheet", "name", "lastUpdate");
 		addEntity(adapter, "sheet", "1", "jct", lastUpdate1);
 		addEntity(adapter, "sheet", "2", "jmt", lastUpdate2);
@@ -278,7 +294,8 @@ public class MsExcelContentAdapterTests {
 	public void shouldDeleteNoProduceChangesWhenItemDoesNotExist() throws DocumentException, IOException{
 		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
 		
-		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), "sheet", "id");
+		MSExcelToPlainXMLMapping mapper = new MSExcelToPlainXMLMapping("id", null);
+		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), mapper, "sheet");
 		addEntityHeader(adapter, "sheet", "name");
 		addEntity(adapter, "sheet", "1", "jct");
 		addEntity(adapter, "sheet", "2", "jmt");
@@ -301,7 +318,8 @@ public class MsExcelContentAdapterTests {
 	public void shouldDelete() throws DocumentException, IOException{
 		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
 		
-		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), "sheet", "id");
+		MSExcelToPlainXMLMapping mapper = new MSExcelToPlainXMLMapping("id", null);
+		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), mapper, "sheet");
 		addEntityHeader(adapter, "sheet", "name");
 		addEntity(adapter, "sheet", "1", "jct");
 		addEntity(adapter, "sheet", "2", "jmt");
@@ -323,7 +341,8 @@ public class MsExcelContentAdapterTests {
 	public void shouldSave() throws DocumentException, IOException{
 		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
 		
-		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), "sheet", "id");
+		MSExcelToPlainXMLMapping mapper = new MSExcelToPlainXMLMapping("id", null);
+		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), mapper, "sheet");
 		addEntityHeader(adapter, "sheet", "name");
 		addEntity(adapter, "sheet", "1", "jct");
 		addEntity(adapter, "sheet", "2", "jmt");
@@ -350,7 +369,8 @@ public class MsExcelContentAdapterTests {
 	public void shouldUpdate() throws DocumentException, IOException{
 		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
 		
-		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), "sheet", "id");
+		MSExcelToPlainXMLMapping mapper = new MSExcelToPlainXMLMapping("id", null);
+		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), mapper, "sheet");
 		addEntityHeader(adapter, "sheet", "name");
 		addEntity(adapter, "sheet", "1", "jct");
 		addEntity(adapter, "sheet", "2", "jmt");
@@ -377,7 +397,8 @@ public class MsExcelContentAdapterTests {
 	public void shouldBeginSyncRegisterAndMoveToBottomPhantomRows() throws IOException{
 		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
 		
-		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), "sheet", "id");
+		MSExcelToPlainXMLMapping mapper = new MSExcelToPlainXMLMapping("id", null);
+		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), mapper, "sheet");
 		addEntityHeader(adapter, "sheet", "name");
 		addEntity(adapter, "sheet", "1", "jct");
 		addPhantomRow(adapter, "sheet", 2);
@@ -416,7 +437,8 @@ public class MsExcelContentAdapterTests {
 	public void shouldDeleteRegisterAndMoveToBottomPhantomRow() throws DocumentException, IOException{
 		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
 		
-		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), "sheet", "id");
+		MSExcelToPlainXMLMapping mapper = new MSExcelToPlainXMLMapping("id", null);
+		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), mapper, "sheet");
 		addEntityHeader(adapter, "sheet", "name");
 		addEntity(adapter, "sheet", "1", "jct");
 		addEntity(adapter, "sheet", "2", "jmt");
@@ -445,7 +467,8 @@ public class MsExcelContentAdapterTests {
 	public void shouldAddUsePhantomRows() throws DocumentException, IOException{
 	File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
 		
-		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), "sheet", "id");
+		MSExcelToPlainXMLMapping mapper = new MSExcelToPlainXMLMapping("id", null);
+		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), mapper, "sheet");
 		addEntityHeader(adapter, "sheet", "name");
 		addEntity(adapter, "sheet", "1", "jct");
 		addPhantomRow(adapter, "sheet", 2);
@@ -533,8 +556,11 @@ public class MsExcelContentAdapterTests {
 		HSSFCell cell = row.createCell(0, HSSFCell.CELL_TYPE_STRING);
 		cell.setCellValue(new HSSFRichTextString(id));
 	
-		cell = row.createCell(1, HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString(DateHelper.formatW3CDateTime(lastUpdate)));
+		cell = row.createCell(1, HSSFCell.CELL_TYPE_NUMERIC);
+		HSSFCellStyle cellStyle = adapter.getWorkbook().createCellStyle();
+	    cellStyle.setDataFormat(adapter.getWorkbook().createDataFormat().getFormat("m/d/yy h:mm"));
+		cell.setCellStyle(cellStyle);
+		cell.setCellValue(lastUpdate);
 		
 		cell = row.createCell(2, HSSFCell.CELL_TYPE_STRING);
 		cell.setCellValue(new HSSFRichTextString(name));

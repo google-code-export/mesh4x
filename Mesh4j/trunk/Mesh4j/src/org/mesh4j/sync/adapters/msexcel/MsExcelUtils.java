@@ -5,15 +5,15 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Date;
 import java.util.Iterator;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
 import org.mesh4j.sync.validations.MeshException;
 
 public class MsExcelUtils {
@@ -36,29 +36,6 @@ public class MsExcelUtils {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
-	public static Element translate(HSSFSheet worksheet, HSSFRow row, String elementName) {
-		Element payload = DocumentHelper.createElement(elementName);
-		HSSFRow rowHeader = worksheet.getRow(0);
-		
-		HSSFCell cell;
-		HSSFCell cellHeader;
-		String columnName;
-		String columnValue;
-		Element header;
-		
-		for (Iterator<HSSFCell> iterator = row.cellIterator(); iterator.hasNext();) {
-			cell = iterator.next();
-			cellHeader = rowHeader.getCell(cell.getColumnIndex());
-			
-			columnName = cellHeader.getRichStringCellValue().getString();
-			columnValue = cell.getRichStringCellValue().getString();		// TODO (JMT) RDF Schema: data type formatters
-			
-			header = payload.addElement(columnName);
-			header.addText(columnValue);
-		}
-		return payload;
-	}
 	
 	public static HSSFRow getRow(HSSFSheet worksheet, int columnIndex, String value) {
 		HSSFRow row;
@@ -82,11 +59,13 @@ public class MsExcelUtils {
 	@SuppressWarnings("unchecked")
 	public static HSSFCell getCell(HSSFSheet worksheet, HSSFRow row, String columnName) {
 		HSSFRow rowHeader = worksheet.getRow(0);
+		HSSFCell cell;
 		for (Iterator<HSSFCell> iterator = rowHeader.cellIterator(); iterator.hasNext();) {
 			HSSFCell cellHeader = iterator.next();
 			String cellHeaderName = cellHeader.getRichStringCellValue().getString();
 			if(columnName.equals(cellHeaderName)){
-				return row.getCell(cellHeader.getColumnIndex());
+				cell = row.getCell(cellHeader.getColumnIndex());
+				return cell;
 			}
 		}
 		return null;
@@ -149,24 +128,6 @@ public class MsExcelUtils {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static void updateRow(HSSFSheet worksheet, HSSFRow row, Element payload) {
-		
-		HSSFRow rowHeader = worksheet.getRow(0);
-		HSSFCell cellHeader;
-		
-		Element child;
-		for (Iterator<Element> iterator = payload.elementIterator(); iterator.hasNext();) {
-			child = (Element) iterator.next();
-			HSSFCell cell = getCell(worksheet, row, child.getName());
-			if(cell == null){
-				cellHeader = getOrCreateCellStringIfAbsent(rowHeader, child.getName());
-				cell = row.createCell(cellHeader.getColumnIndex());
-			}
-			cell.setCellValue(new HSSFRichTextString(child.getText()));     // TODO (JMT) RDF Schema: data type formatters
-		}
-	}
-
-	@SuppressWarnings("unchecked")
 	public static boolean isPhantomRow(HSSFRow row) {
 		if(row == null){
 			return true;
@@ -180,4 +141,41 @@ public class MsExcelUtils {
 		}
 		return true;
 	}
+	
+	public static Object getCellValue(HSSFCell cell) {
+		int type = cell.getCellType();
+
+		if(HSSFCell.CELL_TYPE_STRING == type){
+			return cell.getRichStringCellValue().getString();
+		} else if(HSSFCell.CELL_TYPE_BOOLEAN == type){
+			return cell.getBooleanCellValue();
+		} else if(HSSFCell.CELL_TYPE_NUMERIC == type){
+			if(HSSFDateUtil.isCellDateFormatted(cell)) {
+				return cell.getDateCellValue();
+			} else {
+				return cell.getNumericCellValue();
+		    }
+		} else {
+			return null;
+		}
+	}
+
+	public static void setCellValue(HSSFCell cell, Object value) {
+		int type = cell.getCellType();
+
+		if(HSSFCell.CELL_TYPE_STRING == type){
+			cell.setCellValue(new HSSFRichTextString(String.valueOf(value)));
+		} else if(HSSFCell.CELL_TYPE_BOOLEAN == type){
+			cell.setCellValue((Boolean)value);
+		} else if(HSSFCell.CELL_TYPE_NUMERIC == type){
+			if(HSSFDateUtil.isCellDateFormatted(cell)) {
+				cell.setCellValue((Date) value);
+			} else {
+				cell.setCellValue(((Number) value).doubleValue());
+		    }
+		} else {
+			cell.setCellValue(new HSSFRichTextString(String.valueOf(value)));
+		}
+	}
 }
+
