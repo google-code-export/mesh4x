@@ -1,0 +1,195 @@
+package org.mesh4j.sync.adapters.msexcel;
+
+import java.util.HashMap;
+import java.util.Iterator;
+
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFDateUtil;
+import org.apache.poi.hssf.usermodel.HSSFRichTextString;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.dom4j.Element;
+import org.mesh4j.sync.payload.schema.rdf.RDFInstance;
+import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
+import org.mesh4j.sync.utils.XMLHelper;
+
+public class MsExcelToRDFMapping implements IMsExcelToXMLMapping{
+
+	// MODEL VARIABLES
+	private RDFSchema rdfSchema;
+
+	private String idColumnName;
+	private String lastUpdateColumnName = null;
+	
+	
+	// BUSINESS METHODs
+	public MsExcelToRDFMapping(RDFSchema schema, String idColumnName) {
+		super();
+
+		this.rdfSchema = schema;
+		this.idColumnName = idColumnName;
+	}
+	
+
+	@SuppressWarnings("unchecked")
+	public static RDFSchema extractRDFSchema(IMsExcel excel, String sheetName) throws Exception {
+		RDFSchema rdfSchema = new RDFSchema(sheetName, "http://mesh4x/epiinfo/"+sheetName+"#", sheetName);
+		
+		String cellName;
+		
+		HSSFWorkbook workbook = excel.getWorkbook();
+		HSSFSheet sheet = MsExcelUtils.getOrCreateSheetIfAbsent(workbook, sheetName);
+		HSSFCell cell;
+
+		HSSFRow headerRow = sheet.getRow(sheet.getFirstRowNum());
+		HSSFRow dataRow = sheet.getRow(sheet.getLastRowNum());
+		int cellType;
+		for (Iterator<HSSFCell> iterator = dataRow.cellIterator(); iterator.hasNext();) {
+			cell = iterator.next();
+			
+			cellName = headerRow.getCell(cell.getColumnIndex()).getRichStringCellValue().getString();
+			cellType = cell.getCellType();
+			if(HSSFCell.CELL_TYPE_STRING == cellType){
+				rdfSchema.addStringProperty(cellName, cellName, "en");
+			} else if(HSSFCell.CELL_TYPE_BOOLEAN == cellType){
+				rdfSchema.addBooleanProperty(cellName, cellName, "en");
+			} else if(HSSFCell.CELL_TYPE_NUMERIC == cellType){
+				if(HSSFDateUtil.isCellDateFormatted(cell)) {
+					rdfSchema.addDateTimeProperty(cellName, cellName, "en");
+				} else {
+					rdfSchema.addIntegerProperty(cellName, cellName, "en");
+		        }
+			}
+		}
+		
+		return rdfSchema;
+	}
+
+	@SuppressWarnings("unchecked")
+	public RDFInstance converRowToRDF(HSSFRow headerRow, HSSFRow row) {
+		
+		// obtains properties values
+		HSSFCell cell;
+		String cellName;
+		Object cellValue;
+		Object propertyValue;
+
+		HashMap<String, Object> properties = new HashMap<String, Object>();
+		for (Iterator<HSSFCell> iterator = row.cellIterator(); iterator.hasNext();) {
+			cell = iterator.next();
+			cellName = headerRow.getCell(cell.getColumnIndex()).getRichStringCellValue().getString();
+			cellValue = MsExcelUtils.getCellValue(cell);
+			
+			propertyValue = rdfSchema.cannonicaliseValue(cellName, cellValue);
+			if(propertyValue != null){
+				properties.put(cellName, propertyValue);
+			}
+		}
+		
+		// create rdf instance
+		String id = (String)properties.get(this.idColumnName);
+		
+		RDFInstance rdfInstance = rdfSchema.createNewInstance("uri:urn:"+id);
+		
+		for (String propertyName : properties.keySet()) {
+			rdfInstance.setProperty(
+				propertyName, 
+				properties.get(propertyName));
+		}
+		return rdfInstance;
+	}
+
+	public void appliesRDFToRow(HSSFWorkbook wb, HSSFSheet sheet, HSSFRow row, RDFInstance rdfInstance) {
+		HSSFCell cell;
+		Object propertyValue;
+		String propertyType;
+		
+		int size = rdfInstance.getPropertyCount();
+		for (int i = 0; i < size; i++) {
+			String propertyName = rdfInstance.getPropertyName(i);
+			 propertyValue = rdfInstance.getPropertyValue(propertyName);
+						
+			if(propertyValue != null){
+				HSSFRow headerRow = MsExcelUtils.getOrCreateRowHeaderIfAbsent(sheet);
+				HSSFCell headerCell = MsExcelUtils.getOrCreateCellStringIfAbsent(headerRow, propertyName);
+				
+				cell = row.getCell(headerCell.getColumnIndex());
+				if(cell == null){
+					propertyType = rdfInstance.getPropertyType(propertyName);
+					cell = createCell(wb, row, headerCell.getColumnIndex(), propertyType);
+				}
+				MsExcelUtils.setCellValue(cell, propertyValue);	
+			}			
+		}		
+	}
+
+	private HSSFCell createCell(HSSFWorkbook wb, HSSFRow row, int columnIndex, String propertyType) {
+
+		if(RDFSchema.XLS_STRING.equals(propertyType)){
+			return row.createCell(columnIndex, HSSFCell.CELL_TYPE_STRING);			
+		}else if(RDFSchema.XLS_BOOLEAN.equals(propertyType)){
+			return row.createCell(columnIndex, HSSFCell.CELL_TYPE_BOOLEAN);
+		}else if(RDFSchema.XLS_INTEGER.equals(propertyType)){
+			return row.createCell(columnIndex, HSSFCell.CELL_TYPE_NUMERIC);
+		}else if(RDFSchema.XLS_DATETIME.equals(propertyType)){
+			HSSFCellStyle cellStyle = wb.createCellStyle();
+		    cellStyle.setDataFormat(wb.createDataFormat().getFormat("m/d/yy h:mm"));
+		    
+		    HSSFCell cell = row.createCell(columnIndex, HSSFCell.CELL_TYPE_NUMERIC);
+		    cell.setCellStyle(cellStyle);
+		    return cell;
+		} else {
+			return row.createCell(columnIndex, HSSFCell.CELL_TYPE_STRING);
+		}
+	}
+
+	public void createDataSource(String fileName) throws Exception {
+		HSSFWorkbook workbook = createDataSource();			
+		MsExcelUtils.flush(workbook, fileName);		
+	}
+
+	public HSSFWorkbook createDataSource() {
+		HSSFWorkbook workbook = new HSSFWorkbook();
+		HSSFSheet sheet = workbook.createSheet(this.rdfSchema.getOntologyNameSpace());
+		HSSFRow headerRow = sheet.createRow(0);
+		HSSFCell headerCell;
+		
+		int size = this.rdfSchema.getPropertyCount();
+		String propertyName;
+		for (int j = 0; j < size; j++) {
+			propertyName = this.rdfSchema.getPropertyName(size - 1 - j);	
+			
+			headerCell = headerRow.createCell(j);
+			headerCell.setCellValue(new HSSFRichTextString(propertyName));			
+		}
+		return workbook;
+	}
+	
+	@Override
+	public Element convertRowToXML(HSSFWorkbook wb, HSSFSheet sheet, HSSFRow row){
+		HSSFRow headerRow = sheet.getRow(sheet.getFirstRowNum());
+		RDFInstance rdfInstance = this.converRowToRDF(headerRow, row);
+		return XMLHelper.parseElement(rdfInstance.asXML());
+	}
+	
+	@Override
+	public void appliesXMLToRow(HSSFWorkbook wb, HSSFSheet sheet, HSSFRow row, String id, Element rdfElement){
+		RDFInstance rdfInstance = this.rdfSchema.createNewInstance("uri:urn:"+id, rdfElement.asXML());
+		this.appliesRDFToRow(wb, sheet, row, rdfInstance);
+	}
+
+
+	@Override
+	public String getIdColumnName() {
+		return this.idColumnName;
+	}
+
+
+	@Override
+	public String getLastUpdateColumnName() {
+		return this.lastUpdateColumnName;
+	}
+	
+}
