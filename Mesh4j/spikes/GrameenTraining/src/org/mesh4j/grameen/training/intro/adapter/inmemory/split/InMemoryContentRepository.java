@@ -8,7 +8,6 @@ import java.util.List;
 import org.mesh4j.sync.ISyncAware;
 import org.mesh4j.sync.adapters.split.IContentAdapter;
 import org.mesh4j.sync.model.IContent;
-import org.mesh4j.sync.utils.DateHelper;
 import org.mesh4j.sync.validations.Guard;
 
 public class InMemoryContentRepository implements IContentAdapter , ISyncAware{
@@ -42,7 +41,7 @@ public class InMemoryContentRepository implements IContentAdapter , ISyncAware{
 
 	@Override
 	public List<IContent> getAll(Date since) {
-		Guard.argumentNotNull(since, "since");
+		//Guard.argumentNotNull(since, "since");
 		List<IContent> allContents = new LinkedList<IContent>();
 		Collection<Object> list = this.storage.getStorage().values();
 		for(Object cont : list){
@@ -65,12 +64,7 @@ public class InMemoryContentRepository implements IContentAdapter , ISyncAware{
 	@Override
 	public void save(IContent content) {
 		Guard.argumentNotNull(content, "content");
-		//we will decide if it is new row or old one.
-		if(this.storage.getRow(content.getId()) == null){
-			storage.addRow(content);
-		}else{
-			storage.updateRow(content);
-		}
+		storage.addRow(content);
 	}
 
 	@Override

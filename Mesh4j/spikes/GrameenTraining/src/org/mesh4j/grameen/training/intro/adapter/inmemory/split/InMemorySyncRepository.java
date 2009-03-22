@@ -29,9 +29,9 @@ public class InMemorySyncRepository implements ISyncRepository , ISyncAware{
 	}
 	
 	@Override
-	public SyncInfo get(String id) {
-		Guard.argumentNotNullOrEmptyString(id, "id");
-		return (SyncInfo)this.storage.getRow(id);
+	public SyncInfo get(String syncId) {
+		Guard.argumentNotNullOrEmptyString(syncId, "syncId");
+		return (SyncInfo)this.storage.getRow(syncId);
 	}
 
 	@Override
@@ -55,11 +55,12 @@ public class InMemorySyncRepository implements ISyncRepository , ISyncAware{
 	public void save(SyncInfo syncInfo) {
 		//we will decide if it is new row or old one.
 		Guard.argumentNotNull(syncInfo, "syncInfo");
-		if(this.storage.getRow(syncInfo.getId()) == null){
-			storage.addRow(syncInfo);
-		}else{
-			storage.updateRow(syncInfo);
-		}
+		storage.addRow(syncInfo);
+//		if(this.storage.getRow(syncInfo.getId()) == null){
+//			storage.addRow(syncInfo);
+//		}else{
+//			storage.updateRow(syncInfo);
+//		}
 		
 	}
 

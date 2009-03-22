@@ -37,14 +37,26 @@ public class Storage {
 		contents.put(getId(content), content);
 	}
 	//update the specific row
+	public void updateRow(String entityId,Object content){
+		Guard.argumentNotNullOrEmptyString(entityId, "entityId");
+		Guard.argumentNotNull(content, "content");
+		deletRow(contents.get(entityId));
+		addRow(entityId,content);
+	}
 	public void updateRow(Object content){
 		Guard.argumentNotNull(content, "content");
-		Object oldContent = contents.get(getId(content));
-		oldContent = content;
+		String id = getId(content);
+		deletRow(contents.get(id));
+		addRow(id,content);
 	}
-	public void deletRow(IContent content){
+	//adding a new row to the storage system
+	public void addRow(String entityId,Object content){
 		Guard.argumentNotNull(content, "content");
-		contents.remove(content.getId());	
+		contents.put(entityId, content);
+	}
+	public void deletRow(Object content){
+		Guard.argumentNotNull(content, "content");
+		contents.remove(this.getId(content));	
 	}
 	
 	private String getId(Object content){
@@ -53,7 +65,7 @@ public class Storage {
 		if(content instanceof IContent){
 			objId = ((IContent) content).getId();
 		}else if(content instanceof SyncInfo){
-			objId = ((SyncInfo)content).getId();
+			objId = ((SyncInfo)content).getSyncId();
 		}
 		return objId;
 	}

@@ -157,7 +157,7 @@ public class InMemorySplitAdapterTest {
 		List<SyncInfo> listOfSyncInfo = splitAdapterA.getSyncRepository().getAll("Student");
 		
 		for(SyncInfo syncInfo : listOfSyncInfo){
-			splitAdapterA.delete(syncInfo.getId());
+			splitAdapterA.delete(syncInfo.getSyncId());
 		}
 		
 		Assert.assertEquals(splitAdapterA.getAll().size(), 2);
