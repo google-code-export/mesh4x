@@ -84,7 +84,7 @@ public class RDFInstance {
 		this.model.write(sw, "RDF/XML-ABBREV");
 		
 		this.model.add(this.schema.getRDFModel());
-		return sw.toString();
+		return XMLHelper.canonicalizeXML(sw.toString());
 	}
 
 	public String asPlainXML(String idColumnName) throws Exception {
@@ -108,31 +108,24 @@ public class RDFInstance {
 			
 			 if(RDF.type.getURI().equals(predicate.getURI())){
 				 if(!idWasExported){
-					 sb.append("<");
-					 sb.append(idColumnName);
-					 sb.append(">");
-					 sb.append(subject.getLocalName());
-					 sb.append("</");
-					 sb.append(idColumnName);
-					 sb.append(">");
-				 
+					 String fieldValue = subject.getURI().substring(0, "uri:urn:".length());
+					 writePlainXMLProperty(sb, idColumnName, fieldValue);				 
 					 idWasExported = true;
 				 }
 			 } else {
-				//OntResource range = dataTypeProperty.getRange();
-				 
 	            String fieldName = predicate.getLocalName();
 	            Literal literal = (Literal) object;
 	            Object fieldValue = literal.getValue();
-	            
-				 sb.append("<");
-				 sb.append(fieldName);
-				 sb.append(">");
-				 sb.append(fieldValue);
-				 sb.append("</");
-				 sb.append(fieldName);
-				 sb.append(">");
-	          }
+
+	            if(fieldName.equals(idColumnName)){
+	            	if(!idWasExported){
+	            		writePlainXMLProperty(sb, fieldName, fieldValue);
+	            		idWasExported = true;
+	            	}
+	            }else{
+	            	writePlainXMLProperty(sb, fieldName, fieldValue);
+	            }
+			 }
 		}
 		
 		sb.append("</");
@@ -142,6 +135,16 @@ public class RDFInstance {
 		
 		Element element = XMLHelper.parseElement(sb.toString());
 		return XMLHelper.canonicalizeXML(element);
+	}
+	
+	private void writePlainXMLProperty(StringBuffer sb, String fieldName, Object fieldValue){
+		 sb.append("<");
+		 sb.append(fieldName);
+		 sb.append(">");
+		 sb.append(fieldValue);
+		 sb.append("</");
+		 sb.append(fieldName);
+		 sb.append(">");
 	}
 
 	public int getPropertyCount() {

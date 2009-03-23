@@ -4,6 +4,7 @@ import org.dom4j.Element;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
+import org.mesh4j.sync.adapters.hibernate.mapping.HibernateToPlainXMLMapping;
 import org.mesh4j.sync.model.IContent;
 import org.mesh4j.sync.model.Sync;
 import org.mesh4j.sync.test.utils.TestHelper;
@@ -43,7 +44,7 @@ public class EntityContentTests {
 	public void shouldNormalizeFromHibernateContent(){
 		Element e = TestHelper.makeElement("<foo><id>1</id></foo>");
 		EntityContent c = new EntityContent(e, "foo", "id");
-		EntityDAO dao = new EntityDAO("foo", "id", null);
+		EntityDAO dao = new EntityDAO(null, new HibernateToPlainXMLMapping("foo", "id"));
 		
 		Assert.assertSame(c, dao.normalizeContent(c));
 	}
@@ -52,7 +53,7 @@ public class EntityContentTests {
 	public void shouldNormalizeFromContentWithPayloadNameEqualsEntityName(){
 		Element e = TestHelper.makeElement("<foo><id>1</id></foo>");
 		MyContent c = new MyContent(e);
-		EntityDAO dao = new EntityDAO("foo", "id", null);
+		EntityDAO dao = new EntityDAO(null, new HibernateToPlainXMLMapping("foo", "id"));
 		
 		Assert.assertSame(e, dao.normalizeContent(c).getPayload());		
 	}
@@ -61,7 +62,7 @@ public class EntityContentTests {
 	public void shouldNormalizeFromContentIfEntityNameIntoPayload(){
 		Element e = TestHelper.makeElement("<bar><foo><id>1</id></foo></bar>");
 		MyContent c = new MyContent(e);
-		EntityDAO dao = new EntityDAO("foo", "id", null);
+		EntityDAO dao = new EntityDAO(null, new HibernateToPlainXMLMapping("foo", "id"));
 		
 		IContent cn = dao.normalizeContent(c);
 		Assert.assertNotSame(e, cn.getPayload());
@@ -73,7 +74,7 @@ public class EntityContentTests {
 	public void shouldNormalizeReturnsNullIfEntityNameIsNotInPayload(){
 		Element e = TestHelper.makeElement("<bar><foo>1</foo></bar>");
 		MyContent c = new MyContent(e);
-		EntityDAO dao = new EntityDAO("user", "id", null);
+		EntityDAO dao = new EntityDAO(null, new HibernateToPlainXMLMapping("foo", "id"));
 		
 		Assert.assertNull(dao.normalizeContent(c));
 	}	

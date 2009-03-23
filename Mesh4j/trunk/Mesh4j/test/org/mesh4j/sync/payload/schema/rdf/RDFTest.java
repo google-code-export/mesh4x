@@ -3,7 +3,11 @@ package org.mesh4j.sync.payload.schema.rdf;
 import java.io.InputStream;
 import java.util.Date;
 
+import junit.framework.Assert;
+
 import org.junit.Test;
+import org.mesh4j.sync.id.generator.IdGenerator;
+import org.mesh4j.sync.utils.XMLHelper;
 
 import com.hp.hpl.jena.ontology.DatatypeProperty;
 import com.hp.hpl.jena.ontology.Individual;
@@ -225,5 +229,107 @@ public class RDFTest {
         RDFInstance rdfInstance = rdfSchema.createNewInstance("urn:uuid:9274cc11-7ba4-4594-abaf-3620fbee211a", xml, "id");
         System.out.println(rdfInstance.asXML());
         
+	}
+	
+	// canonical rdf xml
+	
+	@Test
+	public void shouldCanonicalizeRDFXML(){
+        
+		RDFSchema rdfSchema = new RDFSchema("Oswego", "http://mesh4x/Oswego#", "Patient");
+        rdfSchema.addStringProperty("code", "Code", "en");
+        rdfSchema.addStringProperty("name", "Name", "en");
+        rdfSchema.addIntegerProperty("age", "Age", "en");
+        rdfSchema.addBooleanProperty("ill", "is Ill", "en");
+        rdfSchema.addDateTimeProperty("dateOnset", "DateOnset", "en");
+
+        RDFInstance rdfInstance = rdfSchema.createNewInstance("urn:uuid:9274cc11-7ba4-4594-abaf-3620fbee211a");
+        String rdfXml = rdfInstance.asXML();
+
+        RDFSchema rdfSchema2 = new RDFSchema("Oswego", "http://mesh4x/Oswego#", "Patient");
+        rdfSchema2.addStringProperty("code", "Code", "en");
+        rdfSchema2.addStringProperty("name", "Name", "en");
+        rdfSchema2.addIntegerProperty("age", "Age", "en");
+        rdfSchema2.addBooleanProperty("ill", "is Ill", "en");
+        rdfSchema2.addDateTimeProperty("dateOnset", "DateOnset", "en");
+
+        RDFInstance rdfInstance2 = rdfSchema2.createNewInstance("urn:uuid:9274cc11-7ba4-4594-abaf-3620fbee211a");
+        String rdfXml2 = rdfInstance2.asXML();
+        
+        Assert.assertEquals(rdfXml, rdfXml2);
+	
+        Date date = new Date();
+        
+        rdfInstance.setProperty("code", "Code");
+        rdfInstance.setProperty("name", "Name");
+        rdfInstance.setProperty("age", 30);
+        rdfInstance.setProperty("ill", true);
+        rdfInstance.setProperty("dateOnset", date);
+        rdfXml = rdfInstance.asXML();
+
+        rdfInstance2.setProperty("code", "Code");
+        rdfInstance2.setProperty("name", "Name");
+        rdfInstance2.setProperty("age", 30);
+        rdfInstance2.setProperty("ill", true);
+        rdfInstance2.setProperty("dateOnset", date);
+        rdfXml2 = rdfInstance2.asXML();
+        
+        Assert.assertEquals(rdfXml, rdfXml2);
+        
+		RDFSchema rdfSchema3 = new RDFSchema("Oswego", "http://mesh4x/Oswego#", "Patient");
+        rdfSchema3.addStringProperty("code", "Code", "en");
+        rdfSchema3.addStringProperty("name", "Name", "en");
+        rdfSchema3.addIntegerProperty("age", "Age", "en");
+        rdfSchema3.addBooleanProperty("ill", "is Ill", "en");
+        rdfSchema3.addDateTimeProperty("dateOnset", "DateOnset", "en");
+
+        RDFInstance rdfInstance3 = rdfSchema3.createNewInstance("urn:uuid:9274cc11-7ba4-4594-abaf-3620fbee211a");
+        rdfInstance3.setProperty("code", "Code");
+        rdfInstance3.setProperty("name", "Name");
+        rdfInstance3.setProperty("age", 30);
+        rdfInstance3.setProperty("ill", true);
+        rdfInstance3.setProperty("dateOnset", date);
+        String rdfXml3 = rdfInstance.asXML();
+
+        RDFSchema rdfSchema4 = new RDFSchema("Oswego", "http://mesh4x/Oswego#", "Patient");
+        rdfSchema4.addStringProperty("code", "Code", "en");
+        rdfSchema4.addStringProperty("name", "Name", "en");
+        rdfSchema4.addIntegerProperty("age", "Age", "en");
+        rdfSchema4.addBooleanProperty("ill", "is Ill", "en");
+        rdfSchema4.addDateTimeProperty("dateOnset", "DateOnset", "en");
+
+        RDFInstance rdfInstance4 = rdfSchema4.createNewInstance("urn:uuid:9274cc11-7ba4-4594-abaf-3620fbee211a");
+        rdfInstance4.setProperty("dateOnset", date);
+        rdfInstance4.setProperty("code", "Code");
+        rdfInstance4.setProperty("ill", true);
+        rdfInstance4.setProperty("age", 30);        
+        rdfInstance4.setProperty("name", "Name");
+
+        String rdfXml4 = rdfInstance2.asXML();
+        
+        Assert.assertEquals(rdfXml3, rdfXml4);
+        
+	}
+	
+	@Test
+	public void shouldGenerateXML() throws Exception{
+		String id = IdGenerator.INSTANCE.newID();
+		String rdfId = "uri:urn:"+id;
+		String name = "juan";
+		String pass = "123";
+		
+		RDFSchema schema1 = new RDFSchema("user", "http://mesh4x/user#", "user");
+		schema1.addStringProperty("id", "id", "en");
+		schema1.addStringProperty("pass", "password", "en");
+		schema1.addStringProperty("name", "name", "en");
+		
+		RDFInstance rdfInstance1 = schema1.createNewInstance(rdfId);
+		rdfInstance1.setProperty("name", name);
+		rdfInstance1.setProperty("pass", pass);
+		rdfInstance1.setProperty("id", id);
+		
+		String plainXML = XMLHelper.canonicalizeXML("<user><id>"+id+"</id><name>"+name+"</name><pass>"+pass+"</pass></user>");
+		RDFInstance rdfInstance2 = schema1.createNewInstance(rdfId, plainXML, "id");
+		Assert.assertEquals(rdfInstance1.asXML(), rdfInstance2.asXML());
 	}
 }

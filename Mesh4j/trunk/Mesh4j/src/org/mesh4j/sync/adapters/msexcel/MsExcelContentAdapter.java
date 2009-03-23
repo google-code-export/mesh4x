@@ -170,11 +170,6 @@ public class MsExcelContentAdapter implements IContentAdapter, ISyncAware {
 		return this.sheetName;
 	}
 
-	@Override
-	public IContent normalize(IContent content) {
-		return EntityContent.normalizeContent(content, this.sheetName, this.mapping.getIdColumnName());
-	}
-
 	// ISyncAware methods
 
 	@Override

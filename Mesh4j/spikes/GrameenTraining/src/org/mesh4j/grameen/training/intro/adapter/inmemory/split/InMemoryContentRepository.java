@@ -56,12 +56,6 @@ public class InMemoryContentRepository implements IContentAdapter , ISyncAware{
 	}
 
 	@Override
-	public IContent normalize(IContent content) {
-		Guard.argumentNotNull(content, "content");
-		return content;
-	}
-
-	@Override
 	public void save(IContent content) {
 		Guard.argumentNotNull(content, "content");
 		storage.addRow(content);
@@ -69,14 +63,13 @@ public class InMemoryContentRepository implements IContentAdapter , ISyncAware{
 
 	@Override
 	public void beginSync() {
-		// TODO Auto-generated method stub
+		// TODO (raju) nothing to do. remove ISyncAware implements?
 		
 	}
 
 	@Override
 	public void endSync() {
-		// TODO Auto-generated method stub
-		
+		// TODO (raju) nothing to do. remove ISyncAware implements?	
 	}
 
 }

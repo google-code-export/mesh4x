@@ -12,6 +12,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mesh4j.sync.id.generator.IdGenerator;
+import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.payload.schema.rdf.RDFInstance;
 import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
 import org.mesh4j.sync.test.utils.TestHelper;
@@ -43,12 +44,12 @@ public class MSExcelToRDFMappingTest {
 		Assert.assertNotNull(rdfSchema);		
 		
 		Assert.assertEquals(6, rdfSchema.getPropertyCount());
-		Assert.assertEquals(RDFSchema.XLS_STRING, rdfSchema.getPropertyType(COLUMN_NAME));
-		Assert.assertEquals(RDFSchema.XLS_STRING, rdfSchema.getPropertyType(COLUMN_CODE));
-		Assert.assertEquals(RDFSchema.XLS_INTEGER, rdfSchema.getPropertyType(COLUMN_AGE));
-		Assert.assertEquals(RDFSchema.XLS_STRING, rdfSchema.getPropertyType(COLUMN_SEX));
-		Assert.assertEquals(RDFSchema.XLS_BOOLEAN, rdfSchema.getPropertyType(COLUMN_ILL));
-		Assert.assertEquals(RDFSchema.XLS_DATETIME, rdfSchema.getPropertyType(COLUMN_DATE_ONSET));
+		Assert.assertEquals(IRDFSchema.XLS_STRING, rdfSchema.getPropertyType(COLUMN_NAME));
+		Assert.assertEquals(IRDFSchema.XLS_STRING, rdfSchema.getPropertyType(COLUMN_CODE));
+		Assert.assertEquals(IRDFSchema.XLS_INTEGER, rdfSchema.getPropertyType(COLUMN_AGE));
+		Assert.assertEquals(IRDFSchema.XLS_STRING, rdfSchema.getPropertyType(COLUMN_SEX));
+		Assert.assertEquals(IRDFSchema.XLS_BOOLEAN, rdfSchema.getPropertyType(COLUMN_ILL));
+		Assert.assertEquals(IRDFSchema.XLS_DATETIME, rdfSchema.getPropertyType(COLUMN_DATE_ONSET));
 		Assert.assertNull(rdfSchema.getPropertyType(COLUMN_OTHER));
 			
 	}

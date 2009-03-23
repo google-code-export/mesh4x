@@ -395,9 +395,4 @@ public class KMLContentAdapter implements IContentAdapter{
 			return contents;
 		}
 	}
-
-	@Override
-	public IContent normalize(IContent content) {
-		return KMLContent.normalizeContent(content, XML_VIEW);
-	}
 }

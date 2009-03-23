@@ -2,80 +2,68 @@ package org.mesh4j.sync.adapters.hibernate;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.dom4j.Element;
 import org.hibernate.EntityMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.metadata.ClassMetadata;
+import org.mesh4j.sync.adapters.hibernate.mapping.IHibernateToXMLMapping;
 import org.mesh4j.sync.adapters.split.IContentAdapter;
 import org.mesh4j.sync.model.IContent;
+import org.mesh4j.sync.validations.Guard;
+import org.mesh4j.sync.validations.MeshException;
 
 public class HibernateContentAdapter implements IContentAdapter {
 
 	// MODEL VARIABLES
-	private String entityName;
-	private String entityIDNode;
+	private IHibernateToXMLMapping mapping;
 	private SessionFactory sessionFactory;
+	private String entityName;
 	
 	// BUSINESS METHODS
 	
 	public HibernateContentAdapter(IHibernateSessionFactoryBuilder sessionFactoryBuilder, String entityName){
-		super();
-		initializeSessionFactory(sessionFactoryBuilder, entityName);
+		Guard.argumentNotNull(sessionFactoryBuilder, "sessionFactoryBuilder");
+		Guard.argumentNotNullOrEmptyString(entityName, "entityName");
+		
+		this.entityName = entityName;
+		initializeSessionFactory(sessionFactoryBuilder);
 	}
 
-	public void initializeSessionFactory(IHibernateSessionFactoryBuilder sessionFactoryBuilder, String entityName) {
+	public void initializeSessionFactory(IHibernateSessionFactoryBuilder sessionFactoryBuilder) {
 		if(this.sessionFactory != null){
 			this.sessionFactory.close();
 		}
 		
 		this.sessionFactory = sessionFactoryBuilder.buildSessionFactory();
-		
-		ClassMetadata classMetadata = this.getClassMetadata(entityName);
-		this.entityName = classMetadata.getEntityName();
-		this.entityIDNode = classMetadata.getIdentifierPropertyName();
+		this.mapping = sessionFactoryBuilder.buildMeshMapping(this.entityName);
 	}
 
-	
-	@SuppressWarnings("unchecked")
-	private ClassMetadata getClassMetadata(String entityName){
-		Map<String, ClassMetadata> map = sessionFactory.getAllClassMetadata();
-		for (Iterator<ClassMetadata> iterator = map.values().iterator(); iterator.hasNext();) {
-			ClassMetadata classMetadata = iterator.next(); 
-			if(classMetadata.getEntityName().equals(entityName)){
-				return classMetadata;
-			}
-		}
-		return null;
-	}
-
+	@Override
 	public EntityContent get(String entityId) {
 		Session session = this.sessionFactory.openSession();
 		Session dom4jSession = session.getSession(EntityMode.DOM4J);
-		Element entityElement = (Element) dom4jSession.get(this.entityName, entityId);
+		Element entityElement = (Element) dom4jSession.get(this.getType(), entityId);
 		session.close();
 		
 		if(entityElement == null){
 			return null;
 		} else {
-			return new EntityContent(entityElement, this.entityName, entityId);
+			return new EntityContent(convertRowToXML(entityId, entityElement), this.getType(), entityId);
 		}
 	}
 
 	public void save(IContent content) {
-		EntityContent entityContent = EntityContent.normalizeContent(content, this.entityName, this.entityIDNode);
+		EntityContent entityContent = EntityContent.normalizeContent(content, this.getType(), getEntityIdNode());
 		
 		Session session =  this.sessionFactory.openSession();
 		Transaction tx = null;
 		try{
 			tx = session.beginTransaction();
 			Session dom4jSession = session.getSession(EntityMode.DOM4J);
-			dom4jSession.saveOrUpdate(entityContent.getPayload().createCopy());
+			dom4jSession.saveOrUpdate(convertXMLToRow(entityContent));
 			tx.commit();
 		}catch (RuntimeException e) {
 			if (tx != null) {
@@ -90,7 +78,7 @@ public class HibernateContentAdapter implements IContentAdapter {
 	public void delete(IContent content) {
 		Session session =  this.sessionFactory.openSession();
 		Session dom4jSession = session.getSession(EntityMode.DOM4J);
-		Element entityElement = (Element) dom4jSession.get(this.entityName, content.getId());
+		Element entityElement = (Element) dom4jSession.get(this.getType(), content.getId());
 		if(entityElement == null){
 			session.close();
 			return;
@@ -99,7 +87,7 @@ public class HibernateContentAdapter implements IContentAdapter {
 		Transaction tx = null;
 		try{
 			tx = session.beginTransaction();
-			dom4jSession.delete(this.entityName, entityElement);
+			dom4jSession.delete(this.getType(), entityElement);
 			tx.commit();
 		}catch (RuntimeException e) {
 			if (tx != null) {
@@ -113,7 +101,7 @@ public class HibernateContentAdapter implements IContentAdapter {
 
 	@SuppressWarnings("unchecked")
 	public List<IContent> getAll(Date since) {
-		String hqlQuery ="FROM " + this.entityName;
+		String hqlQuery ="FROM " + this.getType();
 		Session session = this.sessionFactory.openSession();
 		Session dom4jSession = session.getSession(EntityMode.DOM4J);		
 		List<Element> entities = dom4jSession.createQuery(hqlQuery).list();
@@ -121,24 +109,39 @@ public class HibernateContentAdapter implements IContentAdapter {
 		
 		ArrayList<IContent> result = new ArrayList<IContent>();
 		for (Element entityElement : entities) {
-			String entityID = entityElement.element(this.entityIDNode).getText();
-			EntityContent entity = new EntityContent(entityElement, this.entityName, entityID);
+			String entityID = entityElement.element(getEntityIdNode()).getText();
+			EntityContent entity = new EntityContent(convertRowToXML(entityID, entityElement), this.getType(), entityID);
 			result.add(entity);
 		}
 		return result;
 	}
 	
 	public String getType() {
-		return entityName;
+		return this.entityName;
+	}
+	
+	private Element convertXMLToRow(EntityContent entityContent) {
+		try{
+			return this.mapping.convertXMLToRow(entityContent.getId(), entityContent.getPayload().createCopy());
+		}catch (Exception e) {
+			throw new MeshException(e);
+		}
+	}
+
+	private Element convertRowToXML(String id, Element entityElement){
+		try{
+			return this.mapping.convertRowToXML(id, entityElement);
+		}catch (Exception e) {
+			throw new MeshException(e);
+		}
+	}
+	
+	private String getEntityIdNode() {
+		return this.mapping.getIDNode();
 	}
 
 	public List<IContent> getAll() {
 		return getAll(null);
 	}
 
-	@Override
-	public IContent normalize(IContent content) {
-		return EntityContent.normalizeContent(content, this.entityName, this.entityIDNode);
-	}
-	
 }

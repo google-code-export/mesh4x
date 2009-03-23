@@ -19,6 +19,7 @@ import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.IContent;
 import org.mesh4j.sync.model.Item;
+import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.payload.schema.rdf.RDFInstance;
 import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
 import org.mesh4j.sync.security.NullIdentityProvider;
@@ -101,7 +102,7 @@ public class MsExcelRDFSyncTest {
 		assertItem(schema, contentAdapterTarget, "juan6", "6", 3, "male", false, date6);
 	}
 	
-	private void assertItem(RDFSchema schema, MsExcelContentAdapter adapter, String name, String code,
+	private void assertItem(IRDFSchema schema, MsExcelContentAdapter adapter, String name, String code,
 			int age, String sex, boolean ill, Date dateOnset) {
 
 		IContent content = adapter.get(code);

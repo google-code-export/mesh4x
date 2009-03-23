@@ -6,7 +6,6 @@ import java.io.Reader;
 import java.io.StringWriter;
 
 import org.dom4j.Element;
-import org.mesh4j.sync.payload.schema.ISchemaResolver;
 import org.mesh4j.sync.utils.XMLHelper;
 
 import com.hp.hpl.jena.datatypes.RDFDatatype;
@@ -20,13 +19,15 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 import com.hp.hpl.jena.vocabulary.XSD;
 
-public class RDFSchema implements ISchemaResolver{
+//TODO RDF: sync test
+//TODO RDF: MSAccess rdf schema extraction
+//TODO RDF: MSAccess creation from rdf schema
+//TODO RDF: Hibernate mappings generation
+//TODO RDF: XForms generation
+//TODO RDF: XForms instance generation
+//TODO RDF: javaRosa get and put xforms 
+public class RDFSchema implements IRDFSchema{
 
-	public final static String XLS_STRING = XSD.xstring.getURI();
-	public final static String XLS_INTEGER = XSD.integer.getURI();
-	public final static String XLS_BOOLEAN = XSD.xboolean.getURI();
-	public final static String XLS_DATETIME = XSD.dateTime.getURI();
-	
 	// MODEL VARIABLES
 	private String ontologyBaseUri;
 	private String ontologyNameSpace;
@@ -89,22 +90,26 @@ public class RDFSchema implements ISchemaResolver{
 		domainProperty.addLabel(label, lang);
 	}
 	
+	@Override
 	public String asXML(){
 		StringWriter sw = new StringWriter();
 		this.schema.write(sw, "RDF/XML-ABBREV");
 		return sw.toString();
 	}
 
+	@Override
 	public RDFInstance createNewInstance(String id) {
 		RDFInstance instance = new RDFInstance(this, id);
 		return instance;
 	}
 	
+	@Override
 	public RDFInstance createNewInstance(String id, String rdfXml) {
 		RDFInstance instance = new RDFInstance(this, id, rdfXml);
 		return instance;
 	}
 
+	@Override
 	public RDFInstance createNewInstance(String id, String plainXML, String idColumnName) throws Exception {
 		Element element = XMLHelper.parseElement(plainXML);
 		

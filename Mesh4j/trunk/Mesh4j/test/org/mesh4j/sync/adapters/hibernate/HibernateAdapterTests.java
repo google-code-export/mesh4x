@@ -18,8 +18,6 @@ import org.mesh4j.sync.model.Sync;
 import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.test.utils.TestHelper;
 
-
-
 public class HibernateAdapterTests {
 
 	private HibernateAdapter repo;

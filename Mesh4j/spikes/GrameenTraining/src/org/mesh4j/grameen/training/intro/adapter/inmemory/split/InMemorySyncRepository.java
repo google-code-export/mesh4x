@@ -70,13 +70,13 @@ public class InMemorySyncRepository implements ISyncRepository , ISyncAware{
 	
 	@Override
 	public void beginSync() {
-		// TODO Auto-generated method stub
+		// TODO (raju) nothing to do. remove ISyncAware implements?
 		
 	}
 
 	@Override
 	public void endSync() {
-		// TODO Auto-generated method stub
+		// TODO (raju) nothing to do. remove ISyncAware implements?
 		
 	}
 

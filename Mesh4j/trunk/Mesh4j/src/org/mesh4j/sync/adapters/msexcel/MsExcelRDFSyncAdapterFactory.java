@@ -1,12 +1,12 @@
 package org.mesh4j.sync.adapters.msexcel;
 
-import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
+import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 
 public class MsExcelRDFSyncAdapterFactory extends MsExcelSyncAdapterFactory{
 	
-	private RDFSchema schema;
+	private IRDFSchema schema;
 	
-	public MsExcelRDFSyncAdapterFactory(RDFSchema schema){
+	public MsExcelRDFSyncAdapterFactory(IRDFSchema schema){
 		super();
 		this.schema = schema;
 	}

@@ -6,38 +6,37 @@ import java.util.List;
 import org.dom4j.Element;
 import org.hibernate.EntityMode;
 import org.hibernate.Session;
+import org.mesh4j.sync.adapters.hibernate.mapping.IHibernateToXMLMapping;
 import org.mesh4j.sync.model.IContent;
 
 
 public class EntityDAO {
 
 	// MODEL VARIABLES
-	private String entityName;
-	private String entityIDNode;
+	private IHibernateToXMLMapping mapping;
 	private ISessionProvider sessionProvider;
 	
 	// BUSINESS METHODS
 	
-	public EntityDAO(String entityName, String entityIDNode, ISessionProvider sessionProvider) {
+	public EntityDAO(ISessionProvider sessionProvider, IHibernateToXMLMapping mapping) {
 		super();
-		this.entityName = entityName;
-		this.entityIDNode = entityIDNode;
+		this.mapping = mapping;
 		this.sessionProvider = sessionProvider;
 	}
 
-	public EntityContent get(String entityId) {
+	public EntityContent get(String entityId) throws Exception {
 		Session session = getSession();
-		Element entityElement = (Element) session.get(this.entityName, entityId);
+		Element entityElement = (Element) session.get(this.getEntityName(), entityId);
 		if(entityElement == null){
 			return null;
 		} else {
-			return new EntityContent(entityElement, this.entityName, entityId);
+			return new EntityContent(this.mapping.convertRowToXML(entityId, entityElement), this.getEntityName(), entityId);
 		}
 	}
 
-	public void save(EntityContent entity) {
+	public void save(EntityContent entity) throws Exception {
 		Session session = getSession();
-		session.saveOrUpdate(entity.getPayload().createCopy());
+		session.saveOrUpdate(this.mapping.convertXMLToRow(entity.getId(), entity.getPayload().createCopy()));
 	}
 
 	public void delete(EntityContent entity) {
@@ -46,38 +45,42 @@ public class EntityDAO {
 	
 	public void delete(String entityId) {
 		Session session = getSession();
-		Element entityElement = (Element) session.get(this.entityName, entityId);
+		Element entityElement = (Element) session.get(this.getEntityName(), entityId);
 		if(entityElement != null){
-			session.delete(this.entityName, entityElement);	
+			session.delete(this.getEntityName(), entityElement);	
 		}	
 	}
 
-	public void update(EntityContent entity) {
+	public void update(EntityContent entity) throws Exception {
 		Session session = getSession();
-		session.saveOrUpdate(entity.getPayload().createCopy());		
+		session.saveOrUpdate(this.mapping.convertXMLToRow(entity.getId(), entity.getPayload().createCopy()));
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<EntityContent> getAll() {
-		String hqlQuery ="FROM " + this.entityName;
+	public List<EntityContent> getAll() throws Exception {
+		String hqlQuery ="FROM " + this.getEntityName();
 		Session session = this.getSession();
 		
 		List<Element> entities = session.createQuery(hqlQuery).list();
 		ArrayList<EntityContent> result = new ArrayList<EntityContent>();
 		for (Element entityElement : entities) {
-			String entityID = entityElement.element(this.entityIDNode).getText();
-			EntityContent entity = new EntityContent(entityElement, this.entityName, entityID);
+			String entityID = entityElement.element(getIDNode()).getText();
+			EntityContent entity = new EntityContent(this.mapping.convertRowToXML(entityID, entityElement), this.getEntityName(), entityID);
 			result.add(entity);
 		}
 		return result;
 	}
 
+	private String getIDNode() {
+		return this.mapping.getIDNode();
+	}
+
 	public EntityContent normalizeContent(IContent content){
-		return EntityContent.normalizeContent(content, this.entityName, this.entityIDNode);
+		return EntityContent.normalizeContent(content, this.getEntityName(), this.getIDNode());
 	}
 	
 	public String getEntityName() {
-		return entityName;
+		return this.mapping.getEntityNode();
 	}
 	
 	private Session getSession() {

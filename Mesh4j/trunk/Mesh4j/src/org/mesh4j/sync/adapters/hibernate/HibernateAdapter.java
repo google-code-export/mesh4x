@@ -23,6 +23,7 @@ import org.mesh4j.sync.parsers.SyncInfoParser;
 import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.translator.MessageTranslator;
 import org.mesh4j.sync.validations.Guard;
+import org.mesh4j.sync.validations.MeshException;
 
 
 public class HibernateAdapter extends AbstractSyncAdapter implements ISessionProvider {
@@ -55,7 +56,7 @@ public class HibernateAdapter extends AbstractSyncAdapter implements ISessionPro
 		ClassMetadata classMetadata = this.getClassMetadata();
 		String entityName = classMetadata.getEntityName();
 		String entityIDNode = classMetadata.getIdentifierPropertyName();
-		this.entityDAO = new EntityDAO(entityName, entityIDNode, this);
+		this.entityDAO = new EntityDAO(this, builder.buildMeshMapping(entityName, entityIDNode));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -95,11 +96,11 @@ public class HibernateAdapter extends AbstractSyncAdapter implements ISessionPro
 			syncDAO.save(syncInfo);
 			
 			tx.commit();
-		}catch (RuntimeException e) {
+		}catch (Exception e) {
 			if (tx != null) {
 				tx.rollback();
 			}
-			throw e;
+			throw new MeshException(e);
 		}finally{
 			closeSession();
 		}
@@ -150,8 +151,14 @@ public class HibernateAdapter extends AbstractSyncAdapter implements ISessionPro
 			if(syncInfo != null){
 				session = newSession();
 				syncInfo.updateSync(item.getSync());
-				EntityContent entity = entityDAO.get(syncInfo.getId());
-				closeSession();
+				EntityContent entity;
+				try{
+					entity = entityDAO.get(syncInfo.getId());
+				} catch (Exception e) {
+					throw new MeshException(e);
+				} finally{
+					closeSession();
+				}
 				
 				session = newSession();
 				Transaction tx = null;
@@ -183,11 +190,11 @@ public class HibernateAdapter extends AbstractSyncAdapter implements ISessionPro
 				SyncInfo syncInfo = new SyncInfo(item.getSync(), entity.getType(), entity.getId(), entity.getVersion());
 				syncDAO.save(syncInfo);	
 				tx.commit();
-			}catch (RuntimeException e) {
+			}catch (Exception e) {
 				if (tx != null) {
 					tx.rollback();
 				}
-				throw e;
+				throw new MeshException(e);
 			}finally{
 				closeSession();
 			}
@@ -206,8 +213,14 @@ public class HibernateAdapter extends AbstractSyncAdapter implements ISessionPro
 			return null;
 		}
 		
-		EntityContent entity = entityDAO.get(syncInfo.getId());
-		closeSession();
+		EntityContent entity = null;
+		try{
+			entity = entityDAO.get(syncInfo.getId());
+		}catch (Exception e) {
+			throw new MeshException(e);
+		}finally{
+			closeSession();
+		}
 		
 		this.updateSyncIfChanged(entity, syncInfo);
 		
@@ -271,10 +284,18 @@ public class HibernateAdapter extends AbstractSyncAdapter implements ISessionPro
 	
 		ArrayList<Item> result = new ArrayList<Item>();
 		
+		List<EntityContent> entities;
+		List<SyncInfo> syncInfos;
+		
 		Session session = newSession();
-		List<EntityContent> entities = entityDAO.getAll();
-		List<SyncInfo> syncInfos = syncDAO.getAll(entityDAO.getEntityName());
-		closeSession();
+		try{
+			entities = entityDAO.getAll();
+			syncInfos = syncDAO.getAll(entityDAO.getEntityName());
+		} catch (Exception e) {
+			throw new MeshException(e);
+		} finally {
+			closeSession();
+		}
 		
 		Map<String, SyncInfo> syncInfoAsMapByEntity = this.makeSyncMapByEntity(syncInfos);
  

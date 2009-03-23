@@ -2,12 +2,19 @@ package org.mesh4j.sync.adapters.hibernate;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.metadata.ClassMetadata;
+import org.mesh4j.sync.adapters.hibernate.mapping.HibernateToPlainXMLMapping;
+import org.mesh4j.sync.adapters.hibernate.mapping.HibernateToRDFMapping;
+import org.mesh4j.sync.adapters.hibernate.mapping.IHibernateToXMLMapping;
+import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.validations.MeshException;
 
 public class HibernateSessionFactoryBuilder implements IHibernateSessionFactoryBuilder {
@@ -16,6 +23,7 @@ public class HibernateSessionFactoryBuilder implements IHibernateSessionFactoryB
 	private Set<File> mappings = new TreeSet<File>();
 	private Properties properties = new Properties();
 	private File propertiesFile;
+	private IRDFSchema rdfSchema;
 	
 	// BUSINESS METHODS
 	
@@ -63,6 +71,42 @@ public class HibernateSessionFactoryBuilder implements IHibernateSessionFactoryB
 
 	public void setPropertiesFile(File file) {
 		this.propertiesFile = file;
+	}
+
+	public String getIdentifierPropertyName(String entityName) {
+		ClassMetadata classMetadata = this.getClassMetadata(entityName);
+		return classMetadata.getIdentifierPropertyName();	
+	}
+
+	@SuppressWarnings("unchecked")
+	private ClassMetadata getClassMetadata(String entityName){
+		SessionFactory sessionFactory = buildSessionFactory();
+		Map<String, ClassMetadata> map = sessionFactory.getAllClassMetadata();
+		for (Iterator<ClassMetadata> iterator = map.values().iterator(); iterator.hasNext();) {
+			ClassMetadata classMetadata = iterator.next(); 
+			if(classMetadata.getEntityName().equals(entityName)){
+				return classMetadata;
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public IHibernateToXMLMapping buildMeshMapping(String entityName, String idNode) {
+		if(this.rdfSchema != null){
+			return new HibernateToRDFMapping(rdfSchema, entityName, idNode);
+		} else {
+			return new HibernateToPlainXMLMapping(entityName, idNode);
+		}
+	}
+
+	@Override
+	public IHibernateToXMLMapping buildMeshMapping(String entityName) {
+		return buildMeshMapping(entityName, this.getIdentifierPropertyName(entityName));
+	}
+	
+	public void addRDFSchema(IRDFSchema schema){
+		this.rdfSchema = schema;
 	}
 
 }

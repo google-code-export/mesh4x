@@ -11,6 +11,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.dom4j.Element;
+import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.payload.schema.rdf.RDFInstance;
 import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
 import org.mesh4j.sync.utils.XMLHelper;
@@ -18,14 +19,14 @@ import org.mesh4j.sync.utils.XMLHelper;
 public class MsExcelToRDFMapping implements IMsExcelToXMLMapping{
 
 	// MODEL VARIABLES
-	private RDFSchema rdfSchema;
+	private IRDFSchema rdfSchema;
 
 	private String idColumnName;
 	private String lastUpdateColumnName = null;
 	
 	
 	// BUSINESS METHODs
-	public MsExcelToRDFMapping(RDFSchema schema, String idColumnName) {
+	public MsExcelToRDFMapping(IRDFSchema schema, String idColumnName) {
 		super();
 
 		this.rdfSchema = schema;
@@ -127,13 +128,13 @@ public class MsExcelToRDFMapping implements IMsExcelToXMLMapping{
 
 	private HSSFCell createCell(HSSFWorkbook wb, HSSFRow row, int columnIndex, String propertyType) {
 
-		if(RDFSchema.XLS_STRING.equals(propertyType)){
+		if(IRDFSchema.XLS_STRING.equals(propertyType)){
 			return row.createCell(columnIndex, HSSFCell.CELL_TYPE_STRING);			
-		}else if(RDFSchema.XLS_BOOLEAN.equals(propertyType)){
+		}else if(IRDFSchema.XLS_BOOLEAN.equals(propertyType)){
 			return row.createCell(columnIndex, HSSFCell.CELL_TYPE_BOOLEAN);
-		}else if(RDFSchema.XLS_INTEGER.equals(propertyType)){
+		}else if(IRDFSchema.XLS_INTEGER.equals(propertyType)){
 			return row.createCell(columnIndex, HSSFCell.CELL_TYPE_NUMERIC);
-		}else if(RDFSchema.XLS_DATETIME.equals(propertyType)){
+		}else if(IRDFSchema.XLS_DATETIME.equals(propertyType)){
 			HSSFCellStyle cellStyle = wb.createCellStyle();
 		    cellStyle.setDataFormat(wb.createDataFormat().getFormat("m/d/yy h:mm"));
 		    

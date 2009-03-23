@@ -125,11 +125,9 @@ public class XMLHelper {
 		reader.setEncoding(charset.name());
 		return reader.read(file);
 	}
-	
-	public static String canonicalizeXML(Element element){
+
+	public static String canonicalizeXML(String xml){
 		try {
-			String xml = formatXML(element, OutputFormat.createCompactFormat());
-			
 			Canonicalizer20010315WithComments c = new Canonicalizer20010315WithComments();
 			byte[] result = c.engineCanonicalize(xml.getBytes("UTF-8"));
 			return new String(result);
@@ -138,13 +136,21 @@ public class XMLHelper {
 		}
 	}
 	
+	public static String canonicalizeXML(Element element){
+		try {
+			String xml = formatXML(element, OutputFormat.createCompactFormat());
+			xml = xml.trim();
+			xml = canonicalizeXML(xml);
+			return xml.trim();
+		} catch (Exception e) {
+			throw new MeshException(e);
+		}
+	}
+	
 	public static String canonicalizeXML(Document document){
 		try {
 			String xml = formatXML(document, OutputFormat.createCompactFormat());
-			
-			Canonicalizer20010315WithComments c = new Canonicalizer20010315WithComments();
-			byte[] result = c.engineCanonicalize(xml.getBytes("UTF-8"));
-			return new String(result);
+			return canonicalizeXML(xml);
 		} catch (Exception e) {
 			throw new MeshException(e);
 		}

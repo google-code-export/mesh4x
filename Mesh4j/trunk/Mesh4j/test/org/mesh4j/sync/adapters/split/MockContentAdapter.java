@@ -35,11 +35,6 @@ public class MockContentAdapter implements IContentAdapter {
 	}
 
 	@Override
-	public IContent normalize(IContent content) {
-		return content;
-	}
-
-	@Override
 	public void save(IContent content) {
 		this.contents.put(content.getId(), content);
 	}

@@ -81,7 +81,6 @@ public class InMemoryItemAdapter extends AbstractSyncAdapter{
 
 	@Override
 	public String getAuthenticatedUser() {
-		// TODO Auto-generated method stub
 		return this.identityProvider.getAuthenticatedUser();
 	}
 

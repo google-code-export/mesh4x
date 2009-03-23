@@ -62,6 +62,7 @@ public class MsAccessSyncAdapterFactory implements ISyncAdapterFactory {
 		HibernateSessionFactoryBuilder builder = createHibernateSessionBuilder(dbURL, tableName, user, password, contentMappingFileName, syncMappingFileName);
 		SyncInfoParser syncInfoParser = new SyncInfoParser(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		HibernateSyncRepository syncRepository = new HibernateSyncRepository(builder, syncInfoParser);
+		
 		HibernateContentAdapter contentAdapter = new HibernateContentAdapter(builder, tableName);
 		return new SplitAdapter(syncRepository, contentAdapter, NullIdentityProvider.INSTANCE);
 	}
@@ -150,8 +151,9 @@ public class MsAccessSyncAdapterFactory implements ISyncAdapterFactory {
 		
 		IHibernateSessionFactoryBuilder builder = createHibernateSessionBuilder(dbURL, tableName, user, password, contentMappingFileName, syncMappingFileName);
 		
+		// TODO RDF schema must be changed
 		HibernateContentAdapter contentAdapter = (HibernateContentAdapter) splitAdapter.getContentAdapter();
-		contentAdapter.initializeSessionFactory(builder, tableName);
+		contentAdapter.initializeSessionFactory(builder);
 		
 		HibernateSyncRepository syncRepo = (HibernateSyncRepository) splitAdapter.getSyncRepository();
 		syncRepo.initializeSessionFactory(builder);
