@@ -71,34 +71,34 @@ public class GoogleSpreadsheetUtilsTests {
 				.getService(), sse, 0);
 		Assert.assertNotNull(wse);
 		
-		int rowIndex = 2;
-		int colIndex = 2;
+		int cellRowIndex = 2;
+		int cellColIndex = 2;
 		
 		MJCellEntry mjCell = GoogleSpreadsheetUtils.getMJCell(gss.getService(),
-				wse, rowIndex, colIndex);
+				wse, cellRowIndex, cellColIndex);
 		
 		Assert.assertNotNull(mjCell);
-		Assert.assertEquals(colIndex, mjCell.getCellEntry().getCell().getCol());
-		Assert.assertEquals(rowIndex, mjCell.getCellEntry().getCell().getRow());
+		Assert.assertEquals(cellColIndex, mjCell.getCellEntry().getCell().getCol());
+		Assert.assertEquals(cellRowIndex, mjCell.getCellEntry().getCell().getRow());
 
 		Assert.assertEquals("Sharif", mjCell.getCellEntry().getCell().getValue());
 		
 		
 		Assert.assertNotNull(mjCell.getParentRow());		
 		
-		Assert.assertEquals(rowIndex, mjCell.getParentRow().getRowIndex());
+		Assert.assertEquals(cellRowIndex - 1, mjCell.getParentRow().getRowIndex());
 		Assert.assertEquals(4, mjCell.getParentRow().getMjCells().size());
 		
 		//this cell should be the same as the one contained in the child cell list of its parent at position colIndex  
-		Assert.assertEquals(mjCell.getId(), mjCell.getParentRow().getMjCell(colIndex).getId());
+		Assert.assertEquals(mjCell.getId(), mjCell.getParentRow().getMjCell(cellColIndex).getId());
 		
 		//get the parent row, pick 2 different child/cell, parent row ID of those two child should be same 
-		Assert.assertEquals(mjCell.getParentRow().getMjCell(colIndex+1).getParentRow().getId(),
-				mjCell.getParentRow().getMjCell(colIndex - 1).getParentRow().getId());
+		Assert.assertEquals(mjCell.getParentRow().getMjCell(cellColIndex + 1).getParentRow().getId(),
+				mjCell.getParentRow().getMjCell(cellColIndex - 1).getParentRow().getId());
 		
 		//get the parent row, pick 2 different child/cell, parent row index of those two child should be same 
-		Assert.assertEquals(mjCell.getParentRow().getMjCell(colIndex+1).getParentRow().getRowIndex(),
-				mjCell.getParentRow().getMjCell(colIndex - 1).getParentRow().getRowIndex());		
+		Assert.assertEquals(mjCell.getParentRow().getMjCell(cellColIndex+1).getParentRow().getRowIndex(),
+				mjCell.getParentRow().getMjCell(cellColIndex - 1).getParentRow().getRowIndex());		
 	}		
 
 	@Test
@@ -108,7 +108,7 @@ public class GoogleSpreadsheetUtilsTests {
 				.getService(), sse, 0);
 		Assert.assertNotNull(wse);
 		
-		int rowIndex = 2;
+		int rowIndex = 1;
 		
 		MJListEntry mjRow = GoogleSpreadsheetUtils.getMJRow(gss.getService(),
 				wse, rowIndex);
@@ -119,6 +119,13 @@ public class GoogleSpreadsheetUtilsTests {
 		Assert.assertNotNull(mjRow.getMjCells());
 		Assert.assertTrue(mjRow.getMjCells().size()>0);
 		
+		for (String tag : mjRow.getRowEntry().getCustomElements().getTags()) {
+		      //out.print(entry.getCustomElements().getValue(tag)+"\t");
+		      System.out.print(mjRow.getRowEntry().getCustomElements().getValue(tag)+" \t");
+		    }    
+		    
+		    System.out.println("");
+		    
 		/*//row/list's rowIndex will be 1 less than cells rowIndex!
 		Assert.assertEquals(rowIndex - 1, mjCell.getParentRow().getRowIndex());
 		Assert.assertEquals(4, mjCell.getParentRow().getMjCells().size());
