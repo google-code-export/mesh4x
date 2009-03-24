@@ -11,7 +11,7 @@ import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.IContent;
 import org.mesh4j.sync.validations.Guard;
 
-public class InMemorySyncRepository implements ISyncRepository , ISyncAware{
+public class InMemorySyncRepository implements ISyncRepository  {
 
 	private Storage storage = new Storage();
 	private String repositoryType = "";
@@ -68,16 +68,6 @@ public class InMemorySyncRepository implements ISyncRepository , ISyncAware{
 		return this.repositoryType;
 	}
 	
-	@Override
-	public void beginSync() {
-		// TODO (raju) nothing to do. remove ISyncAware implements?
-		
-	}
-
-	@Override
-	public void endSync() {
-		// TODO (raju) nothing to do. remove ISyncAware implements?
-		
-	}
+	
 
 }

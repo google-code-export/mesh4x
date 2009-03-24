@@ -10,7 +10,7 @@ import org.mesh4j.sync.adapters.split.IContentAdapter;
 import org.mesh4j.sync.model.IContent;
 import org.mesh4j.sync.validations.Guard;
 
-public class InMemoryContentRepository implements IContentAdapter , ISyncAware{
+public class InMemoryContentRepository implements IContentAdapter  {
 
 	private Storage storage = null;
 	private String repositoryType = "";
@@ -61,15 +61,6 @@ public class InMemoryContentRepository implements IContentAdapter , ISyncAware{
 		storage.addRow(content);
 	}
 
-	@Override
-	public void beginSync() {
-		// TODO (raju) nothing to do. remove ISyncAware implements?
-		
-	}
-
-	@Override
-	public void endSync() {
-		// TODO (raju) nothing to do. remove ISyncAware implements?	
-	}
+	
 
 }
