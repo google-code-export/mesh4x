@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.mesh4j.sync.ISyncAware;
 import org.mesh4j.sync.adapters.SyncInfo;
 import org.mesh4j.sync.adapters.split.ISyncRepository;
 import org.mesh4j.sync.id.generator.IdGenerator;
