@@ -39,6 +39,14 @@ public class MJCellEntry{
 	public String getId(){
 		return this.cellEntry.getId();
 	}
+
+	public void setDirty() {
+		this.dirty = true;
+	}
+
+	public boolean isDirty() {
+		return this.dirty;
+	}
 	
 	/**
 	 * populates the the row that contains this Cell 
@@ -54,7 +62,7 @@ public class MJCellEntry{
 		if(this.parentRow != null) return;
 		
 		ListQuery query = new ListQuery(worksheet.getListFeedUrl());
-		query.setStartIndex(this.cellEntry.getCell().getRow()); 
+		query.setStartIndex(this.cellEntry.getCell().getRow()-1); 
 		//why -1?: Google Spreadsheet's data row starts from it's 2nd row actually, 
 		//1st row contains the column headers. 
 		//So index of a row should be considered 1 less than row index returned from its cells.
@@ -64,7 +72,7 @@ public class MJCellEntry{
 		ListFeed feed = service.query(query, ListFeed.class);
 
 		MJListEntry mjListEntry = new MJListEntry(feed.getEntries().get(0),
-				this.cellEntry.getCell().getRow());
+				this.cellEntry.getCell().getRow()-1);
 		
 		/*for (String tag : feed.getEntries().get(0).getCustomElements().getTags()) {
 		      //out.print(entry.getCustomElements().getValue(tag)+"\t");

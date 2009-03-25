@@ -21,7 +21,10 @@ public class MJListEntry {
 	private int rowIndex;
 	private boolean dirty = false;
 	
-
+	//Google Spreadsheet's data row starts from it's 2nd row actually, 1st row contains the column headers. 
+	//So index of a row should be considered 1 less than row index returned from its cells.
+	//What a weird API! 
+	
 	// BUSINESS METHODS
 	public MJListEntry(List<MJCellEntry> mjCells, ListEntry rowEntry, int rowIndex) {
 		super();
@@ -55,6 +58,10 @@ public class MJListEntry {
 		this.dirty = true;
 	}
 
+	public boolean isDirty() {
+		return this.dirty;
+	}
+	
 	/**
 	 * get the cell at column position colIndex 
 	 * 
@@ -105,8 +112,8 @@ public class MJListEntry {
 		}
 		
 		CellQuery query = new CellQuery(worksheet.getCellFeedUrl());
-		query.setMinimumRow(this.rowIndex);
-		query.setMaximumRow(this.rowIndex);
+		query.setMinimumRow(this.rowIndex + 1); //cell row# is 1 more that row#
+		query.setMaximumRow(this.rowIndex + 1);
 		
 		CellFeed cFeed = service.query(query, CellFeed.class);		
 		
