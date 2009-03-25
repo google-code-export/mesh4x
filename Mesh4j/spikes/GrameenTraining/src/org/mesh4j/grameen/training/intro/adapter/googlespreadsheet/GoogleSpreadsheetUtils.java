@@ -9,19 +9,15 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRichTextString;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
 import org.mesh4j.sync.validations.MeshException;
 
 import com.google.gdata.client.spreadsheet.CellQuery;
 import com.google.gdata.client.spreadsheet.FeedURLFactory;
 import com.google.gdata.client.spreadsheet.ListQuery;
 import com.google.gdata.client.spreadsheet.SpreadsheetService;
+import com.google.gdata.data.Link;
+import com.google.gdata.data.batch.BatchStatus;
+import com.google.gdata.data.batch.BatchUtils;
 import com.google.gdata.data.spreadsheet.CellEntry;
 import com.google.gdata.data.spreadsheet.CellFeed;
 import com.google.gdata.data.spreadsheet.ListEntry;
@@ -38,46 +34,32 @@ import com.google.gdata.util.ServiceException;
  */
 public class GoogleSpreadsheetUtils {
 
-	public static void flush(SpreadsheetEntry spreadsheet, String fileName) {
-		FileOutputStream fos = null;
+	public static void flush(SpreadsheetService service, WorksheetEntry worksheet, CellFeed batchFeed) {
+		
 		try{
-			fos = new FileOutputStream(fileName);
-		//todo	workbook.write(fos);
+			CellFeed cellFeed = service.getFeed(worksheet.getCellFeedUrl(), CellFeed.class);
+
+			// Submit the batch request.
+			Link batchLink = cellFeed.getLink(Link.Rel.FEED_BATCH, Link.Type.ATOM);
+			CellFeed batchResultFeed = service.batch(new URL(batchLink.getHref()), batchFeed);			
+
+			// Make sure all the operations were successful.
+			for (CellEntry entry : batchResultFeed.getEntries()) {
+			  String batchId = BatchUtils.getBatchId(entry);
+			  if (!BatchUtils.isSuccess(entry)) {
+			    BatchStatus status = BatchUtils.getBatchStatus(entry);
+			    String errorMsg = "Failed entry \t" + batchId + " failed (" + status.getReason() + ") " + status.getContent();
+			    System.err.println(errorMsg);
+			    throw new MeshException(new Exception(errorMsg));
+			    //TODO: Need to enhance the exception handling codes
+			    //TODO: Need to think about roll-back mechanism for partial update if such happens
+			  }	
+			} 
+			
 		}catch (Exception e) {
 			throw new MeshException(e);
 		}finally{
-			if(fos != null){
-				try{
-					fos.close();
-				}catch (Exception e) {
-					throw new MeshException(e);
-				}
-			}
 		}
-	}
-	
-	@SuppressWarnings("unchecked")
-	public static Element translate(HSSFSheet worksheet, HSSFRow row, String elementName) {
-		Element payload = DocumentHelper.createElement(elementName);
-		HSSFRow rowHeader = worksheet.getRow(0);
-		
-		HSSFCell cell;
-		HSSFCell cellHeader;
-		String columnName;
-		String columnValue;
-		Element header;
-		
-		for (Iterator<HSSFCell> iterator = row.cellIterator(); iterator.hasNext();) {
-			cell = iterator.next();
-			cellHeader = rowHeader.getCell(cell.getColumnIndex());
-			
-			columnName = cellHeader.getRichStringCellValue().getString();
-			columnValue = cell.getRichStringCellValue().getString();		// TODO (JMT) RDF Schema: data type formatters
-			
-			header = payload.addElement(columnName);
-			header.addText(columnValue);
-		}
-		return payload;
 	}
 	
 	/**
@@ -305,7 +287,7 @@ public class GoogleSpreadsheetUtils {
 	}	
 	
 	
-	public static HSSFWorkbook getOrCreateWorkbookIfAbsent(String fileName) throws FileNotFoundException, IOException{
+/*	public static HSSFWorkbook getOrCreateWorkbookIfAbsent(String fileName) throws FileNotFoundException, IOException{
 		HSSFWorkbook workbook = null;
 		File file = new File(fileName);
 		if(!file.exists()){
@@ -361,7 +343,7 @@ public class GoogleSpreadsheetUtils {
 		cell.setCellValue(new HSSFRichTextString(value));
 	}
 
-/*	@SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked")
 	public static void updateRow(HSSFSheet worksheet, HSSFRow row, Element payload) {
 		
 		HSSFRow rowHeader = worksheet.getRow(0);
@@ -377,7 +359,7 @@ public class GoogleSpreadsheetUtils {
 			}
 			cell.setCellValue(new HSSFRichTextString(child.getText()));     // TODO (JMT) RDF Schema: data type formatters
 		}
-	}*/
+	}
 
 	@SuppressWarnings("unchecked")
 	public static boolean isPhantomRow(HSSFRow row) {
@@ -393,7 +375,9 @@ public class GoogleSpreadsheetUtils {
 		}
 		return true;
 	}
-		
+	
+*/
+	
 	/**
 	 * get a spreadsheet entry by sheetID
 	 * 
