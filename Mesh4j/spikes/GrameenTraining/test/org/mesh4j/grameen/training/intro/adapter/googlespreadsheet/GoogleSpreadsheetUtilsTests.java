@@ -7,7 +7,7 @@ import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadsheet;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadsheetAdapter;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadsheetUtils;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.MJCellEntry;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.MJListEntry;
@@ -22,7 +22,7 @@ import com.google.gdata.util.ServiceException;
 
 public class GoogleSpreadsheetUtilsTests {
 	
-	private GoogleSpreadsheet gss;
+	private GoogleSpreadsheetAdapter gss;
 	
 	@Before
 	public void setUp() throws Exception {
@@ -30,7 +30,7 @@ public class GoogleSpreadsheetUtilsTests {
 		
 		String username = "sharif.uddin.ku@gmail.com";
 		String password = "sharif123";
-		this.gss = new GoogleSpreadsheet(spreadsheetFileId,
+		this.gss = new GoogleSpreadsheetAdapter(spreadsheetFileId,
 				username, password);
 	}
 	
