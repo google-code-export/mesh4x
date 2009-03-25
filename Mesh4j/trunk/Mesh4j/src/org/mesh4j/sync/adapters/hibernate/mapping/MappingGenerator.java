@@ -7,7 +7,52 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.text.MessageFormat;
 
+import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
+
 public class MappingGenerator {
+	
+//	public static void createMapping(IRDFSchema rdfSchema, String idColumnName, String mappingFileName) throws Exception{
+//
+//		StringWriter writer = new StringWriter();
+//		
+//		MappingGenerator.writeHeader(writer);
+//		MappingGenerator.writerClass(writer, rdfSchema.getOntologyNameSpace(), rdfSchema.getOntologyNameSpace());
+//			
+//		String propertyType = rdfSchema.getPropertyType(idColumnName);
+//		MappingGenerator.writeID(writer, idColumnName, idColumnName, getHibernateTypeFromXSD(propertyType));
+//			
+//		int size = rdfSchema.getPropertyCount();
+//		String propertyName;
+//		for (int i = 0; i < size; i++) {
+//			propertyName = rdfSchema.getPropertyName(i);
+//			propertyType = rdfSchema.getPropertyType(propertyName);
+//			MappingGenerator.writeProperty(writer, propertyName, propertyName, getHibernateTypeFromXSD(propertyType));
+//		}
+//		MappingGenerator.writerFooter(writer);
+//		
+//		File mappingFile = new File(mappingFileName);
+//		FileWriter fileWriter = new FileWriter(mappingFile);
+//		try{
+//			writer.flush();
+//			fileWriter.write(writer.toString());
+//		}finally{
+//			fileWriter.close();
+//		}
+//	}
+//	
+//	private static String getHibernateTypeFromXSD(String propertyType) {
+//		if(IRDFSchema.XLS_STRING.equals(propertyType)){
+//			return "string";
+//		}else if(IRDFSchema.XLS_BOOLEAN.equals(propertyType)){
+//			return "byte";
+//		} else if(IRDFSchema.XLS_INTEGER.equals(propertyType)){
+//			return "integer";
+//		} else if(IRDFSchema.XLS_DATETIME.equals(propertyType)){
+//			return "timestamp";
+//		} else {
+//			return null;
+//		}
+//	}
 	
 	public static void createSyncInfoMapping(String mappingFileName, String tableName) throws IOException{
 

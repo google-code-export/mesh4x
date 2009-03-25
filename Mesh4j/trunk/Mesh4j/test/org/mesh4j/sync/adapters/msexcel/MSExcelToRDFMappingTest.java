@@ -46,7 +46,7 @@ public class MSExcelToRDFMappingTest {
 		Assert.assertEquals(6, rdfSchema.getPropertyCount());
 		Assert.assertEquals(IRDFSchema.XLS_STRING, rdfSchema.getPropertyType(COLUMN_NAME));
 		Assert.assertEquals(IRDFSchema.XLS_STRING, rdfSchema.getPropertyType(COLUMN_CODE));
-		Assert.assertEquals(IRDFSchema.XLS_INTEGER, rdfSchema.getPropertyType(COLUMN_AGE));
+		Assert.assertEquals(IRDFSchema.XLS_DOUBLE, rdfSchema.getPropertyType(COLUMN_AGE));
 		Assert.assertEquals(IRDFSchema.XLS_STRING, rdfSchema.getPropertyType(COLUMN_SEX));
 		Assert.assertEquals(IRDFSchema.XLS_BOOLEAN, rdfSchema.getPropertyType(COLUMN_ILL));
 		Assert.assertEquals(IRDFSchema.XLS_DATETIME, rdfSchema.getPropertyType(COLUMN_DATE_ONSET));

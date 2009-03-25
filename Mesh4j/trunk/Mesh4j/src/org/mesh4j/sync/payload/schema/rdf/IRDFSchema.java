@@ -6,10 +6,13 @@ import com.hp.hpl.jena.vocabulary.XSD;
 
 public interface IRDFSchema extends ISchemaResolver {
 
-	public final static String XLS_STRING = XSD.xstring.getURI();
-	public final static String XLS_INTEGER = XSD.integer.getURI();
-	public final static String XLS_BOOLEAN = XSD.xboolean.getURI();
-	public final static String XLS_DATETIME = XSD.dateTime.getURI();
+	public static final String XLS_STRING = XSD.xstring.getURI();
+	public static final String XLS_INTEGER = XSD.integer.getURI();
+	public static final String XLS_BOOLEAN = XSD.xboolean.getURI();
+	public static final String XLS_DATETIME = XSD.dateTime.getURI();
+	public static final String XLS_DOUBLE = XSD.xdouble.getURI();
+	public static final String XLS_LONG = XSD.xlong.getURI();
+	public static final String XLS_DECIMAL = XSD.decimal.getURI();
 
 	public String asXML();
 
@@ -25,6 +28,8 @@ public interface IRDFSchema extends ISchemaResolver {
 	public int getPropertyCount();
 	
 	public String getPropertyName(int index);
-
+	public String getPropertyType(String propertyName);
+	
 	public String getOntologyNameSpace();
+
 }

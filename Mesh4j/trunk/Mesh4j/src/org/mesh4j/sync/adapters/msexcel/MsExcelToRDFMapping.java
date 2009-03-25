@@ -60,7 +60,7 @@ public class MsExcelToRDFMapping implements IMsExcelToXMLMapping{
 				if(HSSFDateUtil.isCellDateFormatted(cell)) {
 					rdfSchema.addDateTimeProperty(cellName, cellName, "en");
 				} else {
-					rdfSchema.addIntegerProperty(cellName, cellName, "en");
+					rdfSchema.addDoubleProperty(cellName, cellName, "en");
 		        }
 			}
 		}
@@ -125,14 +125,17 @@ public class MsExcelToRDFMapping implements IMsExcelToXMLMapping{
 			}			
 		}		
 	}
-
+	// TODO (JMT) RDF: improve MSAccess to RDF type mapper
 	private HSSFCell createCell(HSSFWorkbook wb, HSSFRow row, int columnIndex, String propertyType) {
 
 		if(IRDFSchema.XLS_STRING.equals(propertyType)){
 			return row.createCell(columnIndex, HSSFCell.CELL_TYPE_STRING);			
 		}else if(IRDFSchema.XLS_BOOLEAN.equals(propertyType)){
 			return row.createCell(columnIndex, HSSFCell.CELL_TYPE_BOOLEAN);
-		}else if(IRDFSchema.XLS_INTEGER.equals(propertyType)){
+		}else if(IRDFSchema.XLS_INTEGER.equals(propertyType) 
+				|| IRDFSchema.XLS_LONG.equals(propertyType)
+				|| IRDFSchema.XLS_DOUBLE.equals(propertyType)
+				|| IRDFSchema.XLS_DECIMAL.equals(propertyType)){
 			return row.createCell(columnIndex, HSSFCell.CELL_TYPE_NUMERIC);
 		}else if(IRDFSchema.XLS_DATETIME.equals(propertyType)){
 			HSSFCellStyle cellStyle = wb.createCellStyle();

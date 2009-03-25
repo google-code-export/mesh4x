@@ -19,13 +19,15 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 import com.hp.hpl.jena.vocabulary.XSD;
 
-//TODO RDF: sync test
-//TODO RDF: MSAccess rdf schema extraction
+//TODO RDF: Hibernate mappings generation from rdf schema
 //TODO RDF: MSAccess creation from rdf schema
-//TODO RDF: Hibernate mappings generation
+
 //TODO RDF: XForms generation
 //TODO RDF: XForms instance generation
-//TODO RDF: javaRosa get and put xforms 
+//TODO RDF: XForms javaRosa get and put xforms 
+
+//TODO RDF: FeedWriter: write content as item element (use mesh4x namespace) 
+//TODO RDF: FeedReader: read content from item elements (use mesh4x namespace)
 public class RDFSchema implements IRDFSchema{
 
 	// MODEL VARIABLES
@@ -79,6 +81,18 @@ public class RDFSchema implements IRDFSchema{
 	}
 	public void addDateTimeProperty(String propertyName, String label, String lang){
 		this.addProperty(propertyName, label, lang, XSD.dateTime);
+	}
+	
+	public void addLongProperty(String propertyName, String label, String lang) {
+		this.addProperty(propertyName, label, lang, XSD.xlong);	
+	}
+	
+	public void addDoubleProperty(String propertyName, String label, String lang) {
+		this.addProperty(propertyName, label, lang, XSD.xdouble);	
+	}
+	
+	public void addDecimalProperty(String propertyName, String label, String lang) {
+		this.addProperty(propertyName, label, lang, XSD.decimal);	
 	}
 	
 	private void addProperty(String propertyName, String label, String lang, Resource xsd){
@@ -196,10 +210,12 @@ public class RDFSchema implements IRDFSchema{
 	public String getPropertyName(int index) {		
 		return ((DatatypeProperty)this.schema.listDatatypeProperties().toList().get(index)).getLocalName();
 	}
+	
 
 	// ISchemaResolver methods
 	@Override
 	public Element getSchema() {
 		return XMLHelper.parseElement(this.asXML());
 	}
+
 }
