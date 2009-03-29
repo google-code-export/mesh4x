@@ -9,15 +9,15 @@ import com.google.gdata.data.spreadsheet.ListFeed;
 import com.google.gdata.data.spreadsheet.WorksheetEntry;
 import com.google.gdata.util.ServiceException;
 
-public class MJCellEntry{
+public class GSCellEntry{
 	
 	// MODEL VARIABLES
 	private CellEntry cellEntry;
-	private MJListEntry parentRow;
+	private GSListEntry parentRow;
 	private boolean dirty = false;
 
 	// BUSINESS METHODS	
-	public MJCellEntry(CellEntry cellEntry, MJListEntry parentRow) {
+	public GSCellEntry(CellEntry cellEntry, GSListEntry parentRow) {
 		super();
 		this.cellEntry = cellEntry;
 		this.parentRow = parentRow;
@@ -27,7 +27,7 @@ public class MJCellEntry{
 		return cellEntry;
 	}
 
-	public MJListEntry getParentRow() {
+	public GSListEntry getParentRow() {
 		return parentRow;
 	}
 
@@ -71,7 +71,7 @@ public class MJCellEntry{
 
 		ListFeed feed = service.query(query, ListFeed.class);
 
-		MJListEntry mjListEntry = new MJListEntry(feed.getEntries().get(0),
+		GSListEntry gsListEntry = new GSListEntry(feed.getEntries().get(0),
 				this.cellEntry.getCell().getRow()-1);
 		
 		/*for (String tag : feed.getEntries().get(0).getCustomElements().getTags()) {
@@ -79,8 +79,8 @@ public class MJCellEntry{
 		      System.out.print(feed.getEntries().get(0).getCustomElements().getValue(tag)+" \t");
 		}*/
 		
-		mjListEntry.populateClild(service, worksheet);
+		gsListEntry.populateClild(service, worksheet);
 		
-		this.parentRow = mjListEntry;
+		this.parentRow = gsListEntry;
 	}
 }

@@ -13,11 +13,11 @@ import com.google.gdata.data.spreadsheet.ListFeed;
 import com.google.gdata.data.spreadsheet.WorksheetEntry;
 import com.google.gdata.util.ServiceException;
 
-public class MJListEntry {
+public class GSListEntry {
 	
 	// MODEL VARIABLES
 	private ListEntry rowEntry;
-	private List <MJCellEntry> mjCells;
+	private List <GSCellEntry> gsCells;
 	private int rowIndex;
 	private boolean dirty = false;
 	
@@ -26,16 +26,16 @@ public class MJListEntry {
 	//What a weird API! 
 	
 	// BUSINESS METHODS
-	public MJListEntry(List<MJCellEntry> mjCells, ListEntry rowEntry, int rowIndex) {
+	public GSListEntry(List<GSCellEntry> gsCells, ListEntry rowEntry, int rowIndex) {
 		super();
-		this.mjCells = mjCells;
+		this.gsCells = gsCells;
 		this.rowEntry = rowEntry;
 		this.rowIndex = rowIndex;
 	}	
 	
-	public MJListEntry(ListEntry rowEntry, int rowIndex) {
+	public GSListEntry(ListEntry rowEntry, int rowIndex) {
 		super();
-		this.mjCells = new LinkedList<MJCellEntry>();
+		this.gsCells = new LinkedList<GSCellEntry>();
 		this.rowEntry = rowEntry;
 		this.rowIndex = rowIndex;
 	}	
@@ -44,10 +44,10 @@ public class MJListEntry {
 		return rowEntry;
 	}
 
-	public List<MJCellEntry> getMjCells() {
-		if (mjCells == null)
-			mjCells = new LinkedList<MJCellEntry>();
-		return mjCells;
+	public List<GSCellEntry> getGsCells() {
+		if (gsCells == null)
+			gsCells = new LinkedList<GSCellEntry>();
+		return gsCells;
 	}
 	
 	public int getRowIndex() {
@@ -68,10 +68,10 @@ public class MJListEntry {
 	 * @param colIndex
 	 * @return
 	 */
-	public MJCellEntry getMjCell(int colIndex){
+	public GSCellEntry getGsCell(int colIndex){
 		if (colIndex < 1 )
 			throw new IllegalArgumentException("Column Index should be greater than 0");
-		return mjCells.get(colIndex-1);
+		return gsCells.get(colIndex-1);
 	}
 	
 	/**
@@ -94,7 +94,7 @@ public class MJListEntry {
 	public void populateClild(SpreadsheetService service,
 			WorksheetEntry worksheet) throws IOException, ServiceException{
 		
-		if(this.mjCells != null && this.mjCells.size() > 0) return;
+		if(this.gsCells != null && this.gsCells.size() > 0) return;
 			
 		if(this.rowIndex == 0){
 			ListFeed lFeed = service.getFeed(worksheet.getListFeedUrl(), ListFeed.class);
@@ -118,7 +118,19 @@ public class MJListEntry {
 		CellFeed cFeed = service.query(query, CellFeed.class);		
 		
 		for(CellEntry entry:cFeed.getEntries()){
-			getMjCells().add(new MJCellEntry(entry, this));
+			getGsCells().add(new GSCellEntry(entry, this));
 		}
 	}
+	
+	
+	public void populateClild(List<CellEntry> cellList) throws IOException, ServiceException{
+		if(this.rowIndex > 0){
+			for(CellEntry cell : cellList){
+				if( cell.getCell().getRow()-1 == this.rowIndex)
+					getGsCells().add(new GSCellEntry(cell, this));
+			}
+		}else{
+			//TODO:
+		}	
+	}	
 }
