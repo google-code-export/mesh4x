@@ -4,6 +4,9 @@ package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSCellEntry;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSListEntry;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSSpreadsheet;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;

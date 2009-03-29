@@ -9,6 +9,10 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
 
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSCellEntry;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSListEntry;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSSpreadsheet;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSWorksheet;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 

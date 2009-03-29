@@ -1,10 +1,9 @@
-package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet;
+package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.google.gdata.data.spreadsheet.SpreadsheetEntry;
-import com.google.gdata.data.spreadsheet.WorksheetEntry;
 
 public class GSSpreadsheet{
 
