@@ -7,11 +7,13 @@ import com.google.gdata.data.spreadsheet.WorksheetEntry;
 
 public class GSWorksheet extends WorksheetEntry {
 
+	// MODEL VARIABLES
 	private WorksheetEntry worksheet;
 	private Map<String, GSListEntry> rowList = new LinkedHashMap<String, GSListEntry>();
 	private int sheetIndex;
 	
 	
+	// BUSINESS METHODS	
 	public GSWorksheet(WorksheetEntry worksheet, int sheetIndex) {
 		super();
 		this.worksheet = worksheet;
