@@ -18,7 +18,7 @@ import com.google.gdata.data.spreadsheet.WorksheetEntry;
 import com.google.gdata.util.AuthenticationException;
 
 
-public class GoogleSpreadsheetAdapter {
+public class GoogleSpreadsheet {
 
 	// MODEL VARIABLES
 	//private String spreadsheetFileId;
@@ -76,7 +76,7 @@ public class GoogleSpreadsheetAdapter {
 	 * @param username
 	 * @param password
 	 */
-	public GoogleSpreadsheetAdapter(String spreadsheetFileId, String username,
+	public GoogleSpreadsheet(String spreadsheetFileId, String username,
 			String password) {
 		super();
 		Guard.argumentNotNullOrEmptyString(spreadsheetFileId,
@@ -101,7 +101,7 @@ public class GoogleSpreadsheetAdapter {
 	 * @param username
 	 * @param password
 	 */
-	public GoogleSpreadsheetAdapter(int sheetIndex, String username,
+	public GoogleSpreadsheet(int sheetIndex, String username,
 			String password) {
 		super();
 		Guard.argumentNotNullOrEmptyString(username, "username");
