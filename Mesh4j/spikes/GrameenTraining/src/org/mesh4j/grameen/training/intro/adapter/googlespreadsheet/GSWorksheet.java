@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.google.gdata.data.spreadsheet.WorksheetEntry;
 
-public class GSWorksheet extends WorksheetEntry {
+public class GSWorksheet{
 
 	// MODEL VARIABLES
 	private WorksheetEntry worksheet;
