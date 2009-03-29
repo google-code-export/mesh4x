@@ -1,7 +1,8 @@
 package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet;
 
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSWorksheet;
+
 import com.google.gdata.client.spreadsheet.SpreadsheetService;
-import com.google.gdata.data.spreadsheet.WorksheetEntry;
 
 /**
  * Represent the google spreadsheet  to the Mesh4j.
@@ -12,5 +13,5 @@ public interface IGoogleSpreadSheet {
 	
 	public SpreadsheetService getService();
 	public void setDirty();
-	public void flush(WorksheetEntry worksheet);
+	public void flush(GSWorksheet worksheet);
 }
