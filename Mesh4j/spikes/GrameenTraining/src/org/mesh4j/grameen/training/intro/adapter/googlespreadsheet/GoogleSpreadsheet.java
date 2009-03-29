@@ -4,6 +4,7 @@ package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSCellEntry;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSListEntry;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSSpreadsheet;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSWorksheet;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
@@ -23,10 +24,6 @@ public class GoogleSpreadsheet implements IGoogleSpreadSheet{
 	private SpreadsheetService service;
 	private FeedURLFactory factory;
 
-	//private Map<String, Map<String, MJListEntry>> worksheetMap = new LinkedHashMap<String, Map<String, MJListEntry>>();
-	
-	//private Map<String, MJListEntry> entryMap = new LinkedHashMap<String, MJListEntry>();
-	
 	
 	private boolean dirty = false;
 	
@@ -147,7 +144,7 @@ public class GoogleSpreadsheet implements IGoogleSpreadSheet{
 		}
 	}
 	
-	public void flush(WorksheetEntry worksheet) {
+	public void flush(GSWorksheet worksheet) {
 		if(this.dirty){
 			GoogleSpreadsheetUtils.flush(this.service, worksheet, this.batchFeed);
 			this.dirty = false;
