@@ -13,15 +13,23 @@ import com.google.gdata.data.spreadsheet.ListFeed;
 import com.google.gdata.data.spreadsheet.WorksheetEntry;
 import com.google.gdata.util.ServiceException;
 
+/**
+ * This class is to wrap a {@link ListEntry}, also contains a list of references
+ * to {@link GSCellEntry} as the cells it contains.
+ * 
+ * @author sharif
+ * @Version 1.0, 29-03-09
+ * 
+ */
 public class GSListEntry {
 	
 	// MODEL VARIABLES
-	private ListEntry rowEntry;
-	private List <GSCellEntry> gsCells;
-	private int rowIndex;
-	private boolean dirty = false;
+	private ListEntry rowEntry; //represents the row entry provided by google api
+	private List <GSCellEntry> gsCells; //represents the list of cells it contains
+	private int rowIndex; //represents index of the row in the worksheet; starting from 1
+	private boolean dirty = false; //flag represents row content changed
 	
-	//Google Spreadsheet's data row starts from it's 2nd row actually, 1st row contains the column headers. 
+	//Note:Google Spreadsheet's data row starts from it's 2nd row actually, 1st row contains the column headers. 
 	//So index of a row should be considered 1 less than row index returned from its cells.
 	//What a weird API! 
 	

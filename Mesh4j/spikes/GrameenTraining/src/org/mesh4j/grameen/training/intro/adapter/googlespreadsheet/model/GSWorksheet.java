@@ -8,9 +8,9 @@ import com.google.gdata.data.spreadsheet.WorksheetEntry;
 public class GSWorksheet{
 
 	// MODEL VARIABLES
-	private WorksheetEntry worksheet;
-	private Map<String, GSListEntry> rowList = new LinkedHashMap<String, GSListEntry>();
-	private int sheetIndex;
+	private WorksheetEntry worksheet;  //represents the worksheet entry provided by google api
+	private Map<String, GSListEntry> rowList = new LinkedHashMap<String, GSListEntry>(); //represents the map of rows this worksheet contains
+	private int sheetIndex; //represents the order index of this worksheet in the container spreadsheet 
 	
 	
 	// BUSINESS METHODS	

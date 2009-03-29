@@ -2,6 +2,7 @@ package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model;
 
 import java.io.IOException;
 
+
 import com.google.gdata.client.spreadsheet.ListQuery;
 import com.google.gdata.client.spreadsheet.SpreadsheetService;
 import com.google.gdata.data.spreadsheet.CellEntry;
@@ -9,12 +10,20 @@ import com.google.gdata.data.spreadsheet.ListFeed;
 import com.google.gdata.data.spreadsheet.WorksheetEntry;
 import com.google.gdata.util.ServiceException;
 
+/**
+ * This class is to wrap a {@link CellEntry}, also contains a reference
+ * {@link GSListEntry} as a parent/container row of this cell
+ * 
+ * @author sharif
+ * @Version 1.0, 29-03-09
+ * 
+ */
 public class GSCellEntry{
 	
 	// MODEL VARIABLES
-	private CellEntry cellEntry;
-	private GSListEntry parentRow;
-	private boolean dirty = false;
+	private CellEntry cellEntry; //represents the cell entry provided by google api
+	private GSListEntry parentRow; //represents the row that contains this cell  
+	private boolean dirty = false; //flag represents cell content changed
 
 	// BUSINESS METHODS	
 	public GSCellEntry(CellEntry cellEntry, GSListEntry parentRow) {
@@ -49,7 +58,8 @@ public class GSCellEntry{
 	}
 	
 	/**
-	 * populates the the row that contains this Cell 
+	 * populates the the row that contains this Cell
+	 * Note: this involves a http request    
 	 * 
 	 * @param service
 	 * @param worksheet
