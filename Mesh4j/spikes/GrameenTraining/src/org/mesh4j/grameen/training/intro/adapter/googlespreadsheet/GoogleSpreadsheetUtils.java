@@ -1,12 +1,8 @@
 package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+
 import java.io.IOException;
 import java.net.URL;
-import java.util.Iterator;
 import java.util.List;
 
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSCellEntry;
@@ -34,15 +30,17 @@ import com.google.gdata.data.spreadsheet.WorksheetFeed;
 import com.google.gdata.util.ServiceException;
 
 /**
+ * this is the utility class used by Google spreadsheet adapter
  * @author sharif
+ * version 1.0, 29/03/09 b
  *
  */
 public class GoogleSpreadsheetUtils {
 
-	public static void flush(SpreadsheetService service, WorksheetEntry worksheet, CellFeed batchFeed) {
+	public static void flush(SpreadsheetService service, GSWorksheet worksheet, CellFeed batchFeed) {
 		
 		try{
-			CellFeed cellFeed = service.getFeed(worksheet.getCellFeedUrl(), CellFeed.class);
+			CellFeed cellFeed = service.getFeed(worksheet.getWorksheet().getCellFeedUrl(), CellFeed.class);
 
 			// Submit the batch request.
 			Link batchLink = cellFeed.getLink(Link.Rel.FEED_BATCH, Link.Type.ATOM);
