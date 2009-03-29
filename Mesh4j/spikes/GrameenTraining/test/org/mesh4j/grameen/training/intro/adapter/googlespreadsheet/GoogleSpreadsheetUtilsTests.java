@@ -7,10 +7,6 @@ import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadsheetAdapter;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadsheetUtils;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.MJCellEntry;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.MJListEntry;
 
 
 import com.google.gdata.data.batch.BatchOperationType;
@@ -22,7 +18,7 @@ import com.google.gdata.util.ServiceException;
 
 public class GoogleSpreadsheetUtilsTests {
 	
-	private GoogleSpreadsheetAdapter gss;
+	private GoogleSpreadsheet gss;
 	
 	@Before
 	public void setUp() throws Exception {
@@ -30,7 +26,7 @@ public class GoogleSpreadsheetUtilsTests {
 		
 		String username = "sharif.uddin.ku@gmail.com";
 		String password = "sharif123";
-		this.gss = new GoogleSpreadsheetAdapter(spreadsheetFileId,
+		this.gss = new GoogleSpreadsheet(spreadsheetFileId,
 				username, password);
 	}
 	
@@ -70,31 +66,31 @@ public class GoogleSpreadsheetUtilsTests {
 		int cellRowIndex = 2;
 		int cellColIndex = 2;
 		
-		MJCellEntry mjCell = GoogleSpreadsheetUtils.getMJCell(gss.getService(),
+		GSCellEntry gsCell = GoogleSpreadsheetUtils.getGSCell(gss.getService(),
 				wse, cellRowIndex, cellColIndex);
 		
-		Assert.assertNotNull(mjCell);
-		Assert.assertEquals(cellColIndex, mjCell.getCellEntry().getCell().getCol());
-		Assert.assertEquals(cellRowIndex, mjCell.getCellEntry().getCell().getRow());
+		Assert.assertNotNull(gsCell);
+		Assert.assertEquals(cellColIndex, gsCell.getCellEntry().getCell().getCol());
+		Assert.assertEquals(cellRowIndex, gsCell.getCellEntry().getCell().getRow());
 
-		Assert.assertEquals("Sharif", mjCell.getCellEntry().getCell().getValue());
+		Assert.assertEquals("Sharif", gsCell.getCellEntry().getCell().getValue());
 		
 		
-		Assert.assertNotNull(mjCell.getParentRow());		
+		Assert.assertNotNull(gsCell.getParentRow());		
 		
-		Assert.assertEquals(cellRowIndex - 1, mjCell.getParentRow().getRowIndex());
-		Assert.assertEquals(4, mjCell.getParentRow().getMjCells().size());
+		Assert.assertEquals(cellRowIndex - 1, gsCell.getParentRow().getRowIndex());
+		Assert.assertEquals(4, gsCell.getParentRow().getGsCells().size());
 		
 		//this cell should be the same as the one contained in the child cell list of its parent at position colIndex  
-		Assert.assertEquals(mjCell.getId(), mjCell.getParentRow().getMjCell(cellColIndex).getId());
+		Assert.assertEquals(gsCell.getId(), gsCell.getParentRow().getGsCell(cellColIndex).getId());
 		
 		//get the parent row, pick 2 different child/cell, parent row ID of those two child should be same 
-		Assert.assertEquals(mjCell.getParentRow().getMjCell(cellColIndex + 1).getParentRow().getId(),
-				mjCell.getParentRow().getMjCell(cellColIndex - 1).getParentRow().getId());
+		Assert.assertEquals(gsCell.getParentRow().getGsCell(cellColIndex + 1).getParentRow().getId(),
+				gsCell.getParentRow().getGsCell(cellColIndex - 1).getParentRow().getId());
 		
 		//get the parent row, pick 2 different child/cell, parent row index of those two child should be same 
-		Assert.assertEquals(mjCell.getParentRow().getMjCell(cellColIndex+1).getParentRow().getRowIndex(),
-				mjCell.getParentRow().getMjCell(cellColIndex - 1).getParentRow().getRowIndex());		
+		Assert.assertEquals(gsCell.getParentRow().getGsCell(cellColIndex+1).getParentRow().getRowIndex(),
+				gsCell.getParentRow().getGsCell(cellColIndex - 1).getParentRow().getRowIndex());		
 	}		
 
 	//@Test
@@ -106,14 +102,14 @@ public class GoogleSpreadsheetUtilsTests {
 		
 		int rowIndex = 1;
 		
-		MJListEntry mjRow = GoogleSpreadsheetUtils.getMJRow(gss.getService(),
+		GSListEntry gsRow = GoogleSpreadsheetUtils.getGSRow(gss.getService(),
 				wse, rowIndex);
 		
-		Assert.assertNotNull(mjRow);
-		Assert.assertEquals(rowIndex, mjRow.getRowIndex());
+		Assert.assertNotNull(gsRow);
+		Assert.assertEquals(rowIndex, gsRow.getRowIndex());
 		
-		Assert.assertNotNull(mjRow.getMjCells());
-		Assert.assertTrue(mjRow.getMjCells().size()>0);
+		Assert.assertNotNull(gsRow.getGsCells());
+		Assert.assertTrue(gsRow.getGsCells().size()>0);
 		
 /*		for (String tag : mjRow.getRowEntry().getCustomElements().getTags()) {
 		      //out.print(entry.getCustomElements().getValue(tag)+"\t");
@@ -144,33 +140,33 @@ public class GoogleSpreadsheetUtilsTests {
 				.getService(), sse, 0);
 		Assert.assertNotNull(wse);
 		
-		MJCellEntry mjCell_1 = GoogleSpreadsheetUtils.getMJCell(gss.getService(),
+		GSCellEntry gsCell_1 = GoogleSpreadsheetUtils.getGSCell(gss.getService(),
 				wse, 2, 1);
-		mjCell_1.getCellEntry().changeInputValueLocal("GSL-A21");
-		BatchUtils.setBatchId(mjCell_1.getCellEntry(), "1");
-		BatchUtils.setBatchOperationType(mjCell_1.getCellEntry(), BatchOperationType.UPDATE);
-		gss.addEntryToUpdate(mjCell_1);
+		gsCell_1.getCellEntry().changeInputValueLocal("GSL-A21");
+		BatchUtils.setBatchId(gsCell_1.getCellEntry(), "1");
+		BatchUtils.setBatchOperationType(gsCell_1.getCellEntry(), BatchOperationType.UPDATE);
+		gss.addEntryToUpdate(gsCell_1);
 		
-		MJCellEntry mjCell_2 = GoogleSpreadsheetUtils.getMJCell(gss.getService(),
+		GSCellEntry gsCell_2 = GoogleSpreadsheetUtils.getGSCell(gss.getService(),
 				wse, 3, 1);
-		mjCell_2.getCellEntry().changeInputValueLocal("GSL-A21");
-		BatchUtils.setBatchId(mjCell_2.getCellEntry(), "2");
-		BatchUtils.setBatchOperationType(mjCell_2.getCellEntry(), BatchOperationType.UPDATE);
-		gss.addEntryToUpdate(mjCell_2);
+		gsCell_2.getCellEntry().changeInputValueLocal("GSL-A21");
+		BatchUtils.setBatchId(gsCell_2.getCellEntry(), "2");
+		BatchUtils.setBatchOperationType(gsCell_2.getCellEntry(), BatchOperationType.UPDATE);
+		gss.addEntryToUpdate(gsCell_2);
 		
-		MJCellEntry mjCell_3 = GoogleSpreadsheetUtils.getMJCell(gss.getService(),
+		GSCellEntry gsCell_3 = GoogleSpreadsheetUtils.getGSCell(gss.getService(),
 				wse, 4, 1);
-		mjCell_3.getCellEntry().changeInputValueLocal("GSL-A21");
-		BatchUtils.setBatchId(mjCell_3.getCellEntry(), "3");
-		BatchUtils.setBatchOperationType(mjCell_3.getCellEntry(), BatchOperationType.UPDATE);
-		gss.addEntryToUpdate(mjCell_3);
+		gsCell_3.getCellEntry().changeInputValueLocal("GSL-A21");
+		BatchUtils.setBatchId(gsCell_3.getCellEntry(), "3");
+		BatchUtils.setBatchOperationType(gsCell_3.getCellEntry(), BatchOperationType.UPDATE);
+		gss.addEntryToUpdate(gsCell_3);
 
-		MJCellEntry mjCell_4 = GoogleSpreadsheetUtils.getMJCell(gss.getService(),
+		GSCellEntry gsCell_4 = GoogleSpreadsheetUtils.getGSCell(gss.getService(),
 				wse, 5, 1);
-		mjCell_4.getCellEntry().changeInputValueLocal("GSL-A21");
-		BatchUtils.setBatchId(mjCell_4.getCellEntry(), "3");
-		BatchUtils.setBatchOperationType(mjCell_4.getCellEntry(), BatchOperationType.UPDATE);
-		gss.addEntryToUpdate(mjCell_4);
+		gsCell_4.getCellEntry().changeInputValueLocal("GSL-A21");
+		BatchUtils.setBatchId(gsCell_4.getCellEntry(), "3");
+		BatchUtils.setBatchOperationType(gsCell_4.getCellEntry(), BatchOperationType.UPDATE);
+		gss.addEntryToUpdate(gsCell_4);
 		
 		GoogleSpreadsheetUtils.flush(gss.getService(), wse, gss.getBatchFeed());
 		
@@ -183,48 +179,48 @@ public class GoogleSpreadsheetUtilsTests {
 				.getService(), sse, 0);
 		Assert.assertNotNull(wse);
 		
-		MJListEntry mjRow_1 = GoogleSpreadsheetUtils.getMJRow(gss.getService(),
+		GSListEntry mjRow_1 = GoogleSpreadsheetUtils.getGSRow(gss.getService(),
 				wse, 1);
 
-		mjRow_1.getMjCell(1).getCellEntry().changeInputValueLocal("GSL-A219");
-		mjRow_1.getMjCell(1).setDirty();
+		mjRow_1.getGsCell(1).getCellEntry().changeInputValueLocal("GSL-A219");
+		mjRow_1.getGsCell(1).setDirty();
 		
-		BatchUtils.setBatchId(mjRow_1.getMjCell(1).getCellEntry(), mjRow_1.getMjCell(1).getCellEntry().getId());
-		BatchUtils.setBatchOperationType(mjRow_1.getMjCell(1).getCellEntry(),
+		BatchUtils.setBatchId(mjRow_1.getGsCell(1).getCellEntry(), mjRow_1.getGsCell(1).getCellEntry().getId());
+		BatchUtils.setBatchOperationType(mjRow_1.getGsCell(1).getCellEntry(),
 				BatchOperationType.UPDATE);
 		
 		mjRow_1.setDirty();
 		gss.addEntryToUpdate(mjRow_1);
 	
-		MJListEntry mjRow_2 = GoogleSpreadsheetUtils.getMJRow(gss.getService(),
+		GSListEntry gsRow_2 = GoogleSpreadsheetUtils.getGSRow(gss.getService(),
 				wse, 2);
-		mjRow_2.getMjCell(1).getCellEntry().changeInputValueLocal("GSL-A218");
-		mjRow_2.getMjCell(1).setDirty();
+		gsRow_2.getGsCell(1).getCellEntry().changeInputValueLocal("GSL-A218");
+		gsRow_2.getGsCell(1).setDirty();
 		
-		BatchUtils.setBatchId(mjRow_2.getMjCell(1).getCellEntry(), mjRow_2.getMjCell(1).getCellEntry().getId());
-		BatchUtils.setBatchOperationType(mjRow_2.getMjCell(1).getCellEntry(),
+		BatchUtils.setBatchId(gsRow_2.getGsCell(1).getCellEntry(), gsRow_2.getGsCell(1).getCellEntry().getId());
+		BatchUtils.setBatchOperationType(gsRow_2.getGsCell(1).getCellEntry(),
 				BatchOperationType.UPDATE);
-		gss.addEntryToUpdate(mjRow_2);
+		gss.addEntryToUpdate(gsRow_2);
 
 
-		MJListEntry mjRow_3 = GoogleSpreadsheetUtils.getMJRow(gss.getService(),
+		GSListEntry gsRow_3 = GoogleSpreadsheetUtils.getGSRow(gss.getService(),
 				wse, 3);
-		mjRow_3.getMjCell(1).getCellEntry().changeInputValueLocal("GSL-A217");
-		mjRow_3.getMjCell(1).setDirty();
+		gsRow_3.getGsCell(1).getCellEntry().changeInputValueLocal("GSL-A217");
+		gsRow_3.getGsCell(1).setDirty();
 		
-		BatchUtils.setBatchId(mjRow_3.getMjCell(1).getCellEntry(), mjRow_3.getMjCell(1).getCellEntry().getId());
-		BatchUtils.setBatchOperationType(mjRow_3.getMjCell(1).getCellEntry(),
+		BatchUtils.setBatchId(gsRow_3.getGsCell(1).getCellEntry(), gsRow_3.getGsCell(1).getCellEntry().getId());
+		BatchUtils.setBatchOperationType(gsRow_3.getGsCell(1).getCellEntry(),
 				BatchOperationType.UPDATE);
 		
-		gss.addEntryToUpdate(mjRow_3);
+		gss.addEntryToUpdate(gsRow_3);
 
-		MJListEntry mjRow_4 = GoogleSpreadsheetUtils.getMJRow(gss.getService(),
+		GSListEntry mjRow_4 = GoogleSpreadsheetUtils.getGSRow(gss.getService(),
 				wse, 4);
-		mjRow_4.getMjCell(1).getCellEntry().changeInputValueLocal("GSL-A216");
-		mjRow_4.getMjCell(1).setDirty();
+		mjRow_4.getGsCell(1).getCellEntry().changeInputValueLocal("GSL-A216");
+		mjRow_4.getGsCell(1).setDirty();
 		
-		BatchUtils.setBatchId(mjRow_4.getMjCell(1).getCellEntry(), mjRow_4.getMjCell(1).getCellEntry().getId());
-		BatchUtils.setBatchOperationType(mjRow_4.getMjCell(1).getCellEntry(),
+		BatchUtils.setBatchId(mjRow_4.getGsCell(1).getCellEntry(), mjRow_4.getGsCell(1).getCellEntry().getId());
+		BatchUtils.setBatchOperationType(mjRow_4.getGsCell(1).getCellEntry(),
 				BatchOperationType.UPDATE);
 		gss.addEntryToUpdate(mjRow_4);
 		
@@ -239,26 +235,26 @@ public class GoogleSpreadsheetUtilsTests {
 				.getService(), sse, 0);
 		Assert.assertNotNull(wse);
 		
-		MJListEntry mjRow_4 = GoogleSpreadsheetUtils.getMJRow(gss.getService(),
+		GSListEntry gsRow_4 = GoogleSpreadsheetUtils.getGSRow(gss.getService(),
 				wse, 4);
-		for(MJCellEntry mjCell: mjRow_4.getMjCells()) {
-			mjCell.getCellEntry().changeInputValueLocal("");
-			mjCell.setDirty();
+		for(GSCellEntry gsCell: gsRow_4.getGsCells()) {
+			gsCell.getCellEntry().changeInputValueLocal("");
+			gsCell.setDirty();
 		
-			BatchUtils.setBatchId(mjCell.getCellEntry(), mjCell.getCellEntry().getId());
-			BatchUtils.setBatchOperationType(mjCell.getCellEntry(),
+			BatchUtils.setBatchId(gsCell.getCellEntry(), gsCell.getCellEntry().getId());
+			BatchUtils.setBatchOperationType(gsCell.getCellEntry(),
 					BatchOperationType.UPDATE);
 		}
 		
-		mjRow_4.setDirty();
-		gss.addEntryToUpdate(mjRow_4);
+		gsRow_4.setDirty();
+		gss.addEntryToUpdate(gsRow_4);
 	
 		GoogleSpreadsheetUtils.flush(gss.getService(), wse, gss.getBatchFeed());
 	}		
 	
 	
 	private SpreadsheetEntry getSampleGoogleSpreadsheet() {
-		return gss.getSpreadsheet();
+		return gss.getGSSpreadsheet().getSpreadsheet();
 	}
 
 }
