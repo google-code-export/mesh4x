@@ -1,27 +1,20 @@
 package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet;
 
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSCellEntry;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSListEntry;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSSpreadsheet;
-import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
 import com.google.gdata.client.spreadsheet.FeedURLFactory;
 import com.google.gdata.client.spreadsheet.SpreadsheetService;
-import com.google.gdata.data.spreadsheet.CellEntry;
 import com.google.gdata.data.spreadsheet.CellFeed;
-import com.google.gdata.data.spreadsheet.ListFeed;
-import com.google.gdata.data.spreadsheet.SpreadsheetEntry;
 import com.google.gdata.data.spreadsheet.WorksheetEntry;
 import com.google.gdata.util.AuthenticationException;
 
 
-public class GoogleSpreadsheet {
+public class GoogleSpreadsheet implements IGoogleSpreadSheet{
 
 	// MODEL VARIABLES
 	//private String spreadsheetFileId;
