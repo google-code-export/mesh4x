@@ -22,14 +22,15 @@ public class GoogleSpreadsheetAdapter {
 
 	// MODEL VARIABLES
 	//private String spreadsheetFileId;
-	private SpreadsheetEntry spreadsheet;
+	private GSSpreadsheet spreadsheet;
 	
 	private SpreadsheetService service;
 	private FeedURLFactory factory;
 
-	private Map<String, Map<String, MJListEntry>> worksheetMap = new LinkedHashMap<String, Map<String, MJListEntry>>();
+	//private Map<String, Map<String, MJListEntry>> worksheetMap = new LinkedHashMap<String, Map<String, MJListEntry>>();
 	
-	private Map<String, MJListEntry> entryMap = new LinkedHashMap<String, MJListEntry>();
+	//private Map<String, MJListEntry> entryMap = new LinkedHashMap<String, MJListEntry>();
+	
 	
 	private boolean dirty = false;
 	
@@ -86,7 +87,7 @@ public class GoogleSpreadsheetAdapter {
 		init(username, password);
 		
 		try {
-			this.spreadsheet = GoogleSpreadsheetUtils.getSpreadsheet(
+			this.spreadsheet = GoogleSpreadsheetUtils.getGSSpreadsheet(
 					this.factory, this.service, spreadsheetFileId);
 		} catch (Exception e) {
 			throw new MeshException(e);
@@ -109,7 +110,7 @@ public class GoogleSpreadsheetAdapter {
 		init(username, password);
 		
 		try {
-			this.spreadsheet = GoogleSpreadsheetUtils.getSpreadsheet(
+			this.spreadsheet = GoogleSpreadsheetUtils.getGSSpreadsheet(
 					this.factory, this.service, sheetIndex);
 		} catch (Exception e) {
 			throw new MeshException(e);
@@ -125,7 +126,7 @@ public class GoogleSpreadsheetAdapter {
 		return factory;
 	}
 
-	public SpreadsheetEntry getSpreadsheet() {
+	public GSSpreadsheet getGSSpreadsheet() {
 		return this.spreadsheet;
 	}
 
@@ -137,14 +138,14 @@ public class GoogleSpreadsheetAdapter {
 		this.dirty = true;		
 	}
 
-	public void addEntryToUpdate(MJCellEntry toUpdate){
+	public void addEntryToUpdate(GSCellEntry toUpdate){
 		batchFeed.getEntries().add(toUpdate.getCellEntry());
 	}
 
-	public void addEntryToUpdate(MJListEntry toUpdate){		
-		for(MJCellEntry mjCell : toUpdate.getMjCells()){
-			if(mjCell.isDirty()){
-				addEntryToUpdate(mjCell);
+	public void addEntryToUpdate(GSListEntry toUpdate){		
+		for(GSCellEntry gsCell : toUpdate.getGsCells()){
+			if(gsCell.isDirty()){
+				addEntryToUpdate(gsCell);
 				toUpdate.setDirty();
 			}	
 		}
