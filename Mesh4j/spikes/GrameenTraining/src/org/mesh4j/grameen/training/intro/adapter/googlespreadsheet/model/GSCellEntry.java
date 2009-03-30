@@ -1,6 +1,7 @@
 package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model;
 
 import java.io.IOException;
+import java.util.List;
 
 
 import com.google.gdata.client.spreadsheet.ListQuery;
@@ -105,5 +106,9 @@ public class GSCellEntry implements IGSElement{
 	
 	public boolean isDeleteCandiddate() {
 		return this.deleteCandidate;
+	}
+
+	public List<IGSElement> getChilds() {
+		return null; //cell is the lowest element in the hierarchy and hence no child
 	}
 }
