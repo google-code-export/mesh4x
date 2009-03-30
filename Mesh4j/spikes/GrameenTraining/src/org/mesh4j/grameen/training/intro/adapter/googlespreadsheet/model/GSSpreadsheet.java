@@ -44,8 +44,8 @@ public class GSSpreadsheet implements IGSElement{
 		return null;
 	}
 	
-	public void setDeleteCandiddate(boolean isDeleteCandidate) {
-		this.deleteCandidate = isDeleteCandidate;
+	public void setDeleteCandidate() {
+		this.deleteCandidate = true;
 	}
 	
 	public boolean isDeleteCandiddate() {
@@ -60,9 +60,33 @@ public class GSSpreadsheet implements IGSElement{
 		return this.dirty;
 	}	
 
+	public void setDirty() {
+		this.dirty = true;
+	}
+	
 	public List<IGSElement> getChilds() {
 		Collection values = worksheetList.values();
 		List childs = new ArrayList(values);			
 		return childs; 		
+	}
+
+	public void addChildEntry(IGSElement element) {
+		element.setDirty();
+		String key = Integer.toString(((GSWorksheet)element).getSheetIndex());
+		this.worksheetList.put(key, (GSWorksheet)element); 
+	}
+
+	public void deleteChildEntry(String key) {
+		this.worksheetList.get(key).setDirty();
+		this.worksheetList.get(key).setDeleteCandidate();
+	}
+
+	public IGSElement getChildEntry(String key) {
+		return this.worksheetList.get(key);
+	}
+
+	public void updateChildEntry(String key, IGSElement element) {
+		element.setDirty();
+		this.worksheetList.put(key, (GSWorksheet)element);
 	}	
 }
