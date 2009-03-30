@@ -25,7 +25,7 @@ public class GSListEntry implements IGSElement{
 	
 	// MODEL VARIABLES
 	private ListEntry rowEntry; //represents the row entry provided by google api
-	private List <GSCellEntry> gsCells; //represents the list of cells it contains
+	private List <IGSElement> gsCells; //represents the list of cells it contains
 	private int rowIndex; //represents index of the row in the worksheet; starting from 1
 	private boolean dirty = false; //flag represents row content changed
 	private boolean deleteCandidate = false; //flag represents this row is going to be deleted in next flush operation
@@ -36,7 +36,7 @@ public class GSListEntry implements IGSElement{
 	//What a weird API! 
 	
 	// BUSINESS METHODS
-	public GSListEntry(List<GSCellEntry> gsCells, ListEntry rowEntry, int rowIndex) {
+	public GSListEntry(List<IGSElement> gsCells, ListEntry rowEntry, int rowIndex) {
 		super();
 		this.gsCells = gsCells;
 		this.rowEntry = rowEntry;
@@ -45,7 +45,7 @@ public class GSListEntry implements IGSElement{
 	
 	public GSListEntry(ListEntry rowEntry, int rowIndex) {
 		super();
-		this.gsCells = new LinkedList<GSCellEntry>();
+		this.gsCells = new LinkedList<IGSElement>();
 		this.rowEntry = rowEntry;
 		this.rowIndex = rowIndex;
 	}	
@@ -54,9 +54,9 @@ public class GSListEntry implements IGSElement{
 		return rowEntry;
 	}
 
-	public List<GSCellEntry> getGsCells() {
+	public List<IGSElement> getGsCells() {
 		if (gsCells == null)
-			gsCells = new LinkedList<GSCellEntry>();
+			gsCells = new LinkedList<IGSElement>();
 		return gsCells;
 	}
 	
@@ -81,7 +81,7 @@ public class GSListEntry implements IGSElement{
 	public GSCellEntry getGsCell(int colIndex){
 		if (colIndex < 1 )
 			throw new IllegalArgumentException("Column Index should be greater than 0");
-		return gsCells.get(colIndex-1);
+		return (GSCellEntry)gsCells.get(colIndex-1);
 	}
 	
 	/**
@@ -156,4 +156,9 @@ public class GSListEntry implements IGSElement{
 	public boolean isDeleteCandiddate() {
 		return this.deleteCandidate;
 	}	
+	
+	public List<IGSElement> getChilds() {
+		return this.getGsCells();
+	}
+	
 }
