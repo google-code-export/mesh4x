@@ -50,7 +50,9 @@ public class GSWorksheet implements IGSElement{
 	public boolean isDeleteCandiddate() {
 		return this.deleteCandidate;
 	}
-
+	public void add(GSListEntry listEntry){
+		this.getRowList().put(String.valueOf(getRowList().size() +1), listEntry);
+	}
 	public boolean isDirty() {
 		return this.dirty;
 	}	

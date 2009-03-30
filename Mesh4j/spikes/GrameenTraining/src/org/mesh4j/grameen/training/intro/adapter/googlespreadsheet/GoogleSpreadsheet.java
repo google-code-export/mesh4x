@@ -23,6 +23,7 @@ public class GoogleSpreadsheet implements IGoogleSpreadSheet{
 	
 	private SpreadsheetService service;
 	private FeedURLFactory factory;
+	
 
 	
 	private boolean dirty = false;
@@ -154,5 +155,5 @@ public class GoogleSpreadsheet implements IGoogleSpreadSheet{
 	public void refresh(){
 		//TODO: need to think more abt it
 	}
-	
+
 }
