@@ -1,9 +1,11 @@
 package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
-import com.google.gdata.data.spreadsheet.CellEntry;
 import com.google.gdata.data.spreadsheet.SpreadsheetEntry;
 
 /**
@@ -57,5 +59,10 @@ public class GSSpreadsheet implements IGSElement{
 	public boolean isDirty() {
 		return this.dirty;
 	}	
-	
+
+	public List<IGSElement> getChilds() {
+		Collection values = worksheetList.values();
+		List childs = new ArrayList(values);			
+		return childs; 		
+	}	
 }
