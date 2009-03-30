@@ -21,13 +21,15 @@ import com.google.gdata.util.ServiceException;
  * @Version 1.0, 29-03-09
  * 
  */
-public class GSListEntry {
+public class GSListEntry implements IGSElement{
 	
 	// MODEL VARIABLES
 	private ListEntry rowEntry; //represents the row entry provided by google api
 	private List <GSCellEntry> gsCells; //represents the list of cells it contains
 	private int rowIndex; //represents index of the row in the worksheet; starting from 1
 	private boolean dirty = false; //flag represents row content changed
+	private boolean deleteCandidate = false; //flag represents this row is going to be deleted in next flush operation
+
 	
 	//Note:Google Spreadsheet's data row starts from it's 2nd row actually, 1st row contains the column headers. 
 	//So index of a row should be considered 1 less than row index returned from its cells.
@@ -140,5 +142,18 @@ public class GSListEntry {
 		}else{
 			//TODO:
 		}	
+	}
+
+	public IGSElement getParent() {
+		// TODO: this should be the container worksheet 
+		return null;
+	}
+
+	public void setDeleteCandiddate(boolean isDeleteCandidate) {
+		this.deleteCandidate = isDeleteCandidate;
+	}
+	
+	public boolean isDeleteCandiddate() {
+		return this.deleteCandidate;
 	}	
 }

@@ -18,13 +18,14 @@ import com.google.gdata.util.ServiceException;
  * @Version 1.0, 29-03-09
  * 
  */
-public class GSCellEntry{
+public class GSCellEntry implements IGSElement{
 	
 	// MODEL VARIABLES
 	private CellEntry cellEntry; //represents the cell entry provided by google api
 	private GSListEntry parentRow; //represents the row that contains this cell  
 	private boolean dirty = false; //flag represents cell content changed
-
+	private boolean deleteCandidate = false; //flag represents this cell is going to be deleted in next flush operation
+	
 	// BUSINESS METHODS	
 	public GSCellEntry(CellEntry cellEntry, GSListEntry parentRow) {
 		super();
@@ -92,5 +93,17 @@ public class GSCellEntry{
 		gsListEntry.populateClild(service, worksheet);
 		
 		this.parentRow = gsListEntry;
+	}
+
+	public IGSElement getParent() {
+		return parentRow;
+	}
+
+	public void setDeleteCandiddate(boolean isDeleteCandidate) {
+		this.deleteCandidate = isDeleteCandidate;
+	}
+	
+	public boolean isDeleteCandiddate() {
+		return this.deleteCandidate;
 	}
 }
