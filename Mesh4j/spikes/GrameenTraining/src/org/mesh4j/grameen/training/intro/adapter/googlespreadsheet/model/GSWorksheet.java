@@ -69,6 +69,7 @@ public class GSWorksheet implements IGSElement{
 	}	
 
 	public void setDirty() {
+		getParent().setDirty();
 		this.dirty = true;
 	}	
 	
@@ -96,7 +97,32 @@ public class GSWorksheet implements IGSElement{
 	public void updateChildEntry(String key, IGSElement element) {
 		element.setDirty();
 		this.rowList.put(key, (GSRow)element);
-	}
+	}	
+	
+	/**
+	 * get row from this worksheet by row index
+	 * @param rowIndex
+	 * @return
+	 */
+	public GSRow getGSRow(int rowIndex) {
+		for (GSRow gsRow : this.rowList.values()) {
+			if (gsRow.getRowIndex() == rowIndex)
+				return gsRow;
+		}
+		return null;
+	}	
+	
+	/**
+	 * get cell from this worksheet by row and column index 
+	 * @param rowIndex
+	 * @param colIndex
+	 * @return
+	 */
+	public GSCell getGSCell(int rowIndex, int colIndex) {
+		GSRow gsRow = getGSRow(rowIndex);		
+		return gsRow.getGsCell(colIndex);
+	}	
+		
 	public String getName(){
 		return this.getWorksheet().getTitle().getPlainText();
 	}
