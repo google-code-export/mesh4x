@@ -65,6 +65,7 @@ public class GSRow implements IGSElement{
 	}
 		
 	public void setDirty() {
+		getParent().setDirty();
 		this.dirty = true;
 	}
 

@@ -52,6 +52,7 @@ public class GSCell implements IGSElement{
 	}
 
 	public void setDirty() {
+		getParent().setDirty();
 		this.dirty = true;
 	}
 
