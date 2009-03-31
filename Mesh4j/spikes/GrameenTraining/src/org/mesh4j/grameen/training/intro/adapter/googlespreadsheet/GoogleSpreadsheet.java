@@ -22,9 +22,7 @@ public class GoogleSpreadsheet implements IGoogleSpreadSheet{
 	private FeedURLFactory factory;
 	
 	private boolean dirty = false;
-	
-	//private CellFeed batchFeed;  //TODO: need to guard against duplicate entry
-		
+			
 	public static final String VISIBILITY_PRIVATE = "private";
 	public static final String VISIBILITY_PUBLIC = "public";
 	
@@ -58,7 +56,6 @@ public class GoogleSpreadsheet implements IGoogleSpreadSheet{
 		}
 
 		this.factory = FeedURLFactory.getDefault();
-		//this.batchFeed = new CellFeed();
 	}	
 	
 	/**
@@ -125,10 +122,20 @@ public class GoogleSpreadsheet implements IGoogleSpreadSheet{
 		return this.spreadsheet;
 	}
 
+	/**
+	 * get specific worksheet by sheet name/title
+	 * @param sheetName
+	 * @return
+	 */
 	public GSWorksheet getGSWorksheet(String sheetName) {
 		return this.spreadsheet.getGSWorksheet(sheetName);
 	}	
 
+	/**
+	 * get specific worksheet by sheetIndex
+	 * @param sheetIndex
+	 * @return
+	 */
 	public GSWorksheet getGSWorksheet(int sheetIndex) {
 		return this.spreadsheet.getGSWorksheet(sheetIndex);
 	}	
@@ -165,6 +172,7 @@ public class GoogleSpreadsheet implements IGoogleSpreadSheet{
 		try {
 			this.spreadsheet = GoogleSpreadsheetUtils.getGSSpreadsheet(
 					this.factory, this.service, spreadsheetFileId);
+			this.dirty = false;		
 		} catch (Exception e) {
 			throw new MeshException(e);
 		}
