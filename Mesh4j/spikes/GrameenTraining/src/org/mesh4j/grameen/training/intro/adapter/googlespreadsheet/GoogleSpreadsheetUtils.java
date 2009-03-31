@@ -3,12 +3,15 @@ package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSRow;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSCell;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSSpreadsheet;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSWorksheet;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.IGSElement;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
@@ -37,33 +40,75 @@ import com.google.gdata.util.ServiceException;
  */
 public class GoogleSpreadsheetUtils {
 
-	public static void flush(SpreadsheetService service, GSWorksheet worksheet, CellFeed batchFeed) {
-		
-		try{
-			CellFeed cellFeed = service.getFeed(worksheet.getWorksheet().getCellFeedUrl(), CellFeed.class);
+	public static void flush(SpreadsheetService service, GSSpreadsheet spreadsheet ) {
 
-			// Submit the batch request.
-			Link batchLink = cellFeed.getLink(Link.Rel.FEED_BATCH, Link.Type.ATOM);
-			CellFeed batchResultFeed = service.batch(new URL(batchLink.getHref()), batchFeed);			
-
-			// Make sure all the operations were successful.
-			for (CellEntry entry : batchResultFeed.getEntries()) {
-			  String batchId = BatchUtils.getBatchId(entry);
-			  if (!BatchUtils.isSuccess(entry)) {
-			    BatchStatus status = BatchUtils.getBatchStatus(entry);
-			    String errorMsg = "Failed entry \t" + batchId + " failed (" + status.getReason() + ") " + status.getContent();
-			    System.err.println(errorMsg);
-			    throw new MeshException(new Exception(errorMsg));
-			    //TODO: Need to enhance the exception handling codes
-			    //TODO: Need to think about roll-back mechanism for partial update if such happens
-			  }	
-			} 
+		for(GSWorksheet worksheet : spreadsheet.getWorksheetList().values()){
+			if(worksheet.isDirty()){				
+				Map<String, IGSElement> updatePool = new LinkedHashMap<String, IGSElement>();
+				Map<String, IGSElement> deletePool = new LinkedHashMap<String, IGSElement>();
+						
+				processElementForFlush(worksheet, updatePool, deletePool);
+				
+				if(updatePool.size() > 0 || deletePool.size() > 0){
+					
+					try{
+						CellFeed cellFeed = service.getFeed(worksheet.getWorksheet().getCellFeedUrl(), CellFeed.class);
 			
-		}catch (Exception e) {
-			throw new MeshException(e);
-		}finally{
-		}
+						// Submit the batch request.
+						Link batchLink = cellFeed.getLink(Link.Rel.FEED_BATCH, Link.Type.ATOM);
+						CellFeed batchResultFeed = service.batch(new URL(batchLink.getHref()), new CellFeed());			
+			
+						// Make sure all the operations were successful.
+						for (CellEntry entry : batchResultFeed.getEntries()) {
+						  String batchId = BatchUtils.getBatchId(entry);
+						  if (!BatchUtils.isSuccess(entry)) {
+						    BatchStatus status = BatchUtils.getBatchStatus(entry);
+						    String errorMsg = "Failed entry \t" + batchId + " failed (" + status.getReason() + ") " + status.getContent();
+						    System.err.println(errorMsg);
+						    throw new MeshException(new Exception(errorMsg));
+						    //TODO: Need to enhance the exception handling codes
+						    //TODO: Need to think about roll-back mechanism for partial update if such happens
+						  }	
+						} 
+						
+					}catch (Exception e) {
+						throw new MeshException(e);
+					}finally{
+					}
+					
+				} // if(updatePool.size() > 0 || deletePool.size() > 0)
+			}// if (worksheet.isDirty())
+		}//end for
 	}
+
+	
+	/**
+	 * iterate over the whole object graph to identify changed elements of the
+	 * spreadsheet file and transfer them to corresponding pool for
+	 * update/delete operation
+	 * 
+	 * @param element
+	 * @param deletePool 
+	 * @param updatePool 
+	 */
+	private static void processElementForFlush(IGSElement element, Map<String, IGSElement> updatePool, Map<String, IGSElement> deletePool){
+		for(IGSElement subElement : element.getChilds()){
+			if(subElement.isDirty()){
+				if(subElement.isDeleteCandiddate()){
+					//TODO: add subElement to delete pool
+					deletePool.put(subElement.getId(), subElement);
+				}else{
+					if(subElement instanceof GSCell){
+						//TODO: add subElement to update pool
+						updatePool.put(subElement.getId(), subElement);
+					}else
+						processElementForFlush(element, deletePool, deletePool);
+				}
+			}
+		}
+		
+	}
+	
 	
 	/**
 	 * get a row by specific cell info   

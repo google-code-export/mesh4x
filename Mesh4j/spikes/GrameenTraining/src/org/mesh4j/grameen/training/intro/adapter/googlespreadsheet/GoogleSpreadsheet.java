@@ -1,17 +1,13 @@
 package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet;
 
-
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSCell;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSSpreadsheet;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSWorksheet;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.IGSElement;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
 import com.google.gdata.client.spreadsheet.FeedURLFactory;
 import com.google.gdata.client.spreadsheet.SpreadsheetService;
-import com.google.gdata.data.spreadsheet.CellFeed;
 import com.google.gdata.util.AuthenticationException;
 
 
@@ -28,8 +24,8 @@ public class GoogleSpreadsheet implements IGoogleSpreadSheet{
 	
 	private boolean dirty = false;
 	
-	private CellFeed batchFeed;  //TODO: need to guard against duplicate entry
-	
+	//private CellFeed batchFeed;  //TODO: need to guard against duplicate entry
+		
 	public static final String VISIBILITY_PRIVATE = "private";
 	public static final String VISIBILITY_PUBLIC = "public";
 	
@@ -63,7 +59,7 @@ public class GoogleSpreadsheet implements IGoogleSpreadSheet{
 		}
 
 		this.factory = FeedURLFactory.getDefault();
-		this.batchFeed = new CellFeed();
+		//this.batchFeed = new CellFeed();
 	}	
 	
 	/**
@@ -130,15 +126,19 @@ public class GoogleSpreadsheet implements IGoogleSpreadSheet{
 		return this.spreadsheet;
 	}
 
-	public CellFeed getBatchFeed() {
-		return batchFeed;
-	}
+	public GSWorksheet getGSWorksheet(String sheetName) {
+		return this.spreadsheet.getGSWorksheet(sheetName);
+	}	
 
+	public GSWorksheet getGSWorksheet(int sheetIndex) {
+		return this.spreadsheet.getGSWorksheet(sheetIndex);
+	}	
+	
 	public void setDirty() {
 		this.dirty = true;		
 	}
 
-	public void addEntryToUpdate(GSCell toUpdate){
+/*	public void addEntryToUpdate(GSCell toUpdate){
 		batchFeed.getEntries().add(toUpdate.getCellEntry());
 	}
 
@@ -150,13 +150,13 @@ public class GoogleSpreadsheet implements IGoogleSpreadSheet{
 			}	
 		}
 	}
-	
+*/	
 	/**
 	 * transfer the current state of the spreadsheet in memory to spreadsheet file in weeb
 	 */
-	public void flush(GSWorksheet worksheet) {
-		processElementForFlush(worksheet);
-		GoogleSpreadsheetUtils.flush(this.service, worksheet, this.batchFeed);
+	public void flush() {
+		if(this.dirty)
+			GoogleSpreadsheetUtils.flush(this.service, this.spreadsheet);
 	}
 		
 	/**
@@ -170,29 +170,5 @@ public class GoogleSpreadsheet implements IGoogleSpreadSheet{
 			throw new MeshException(e);
 		}
 	}
-
-	/**
-	 * iterate over the whole object graph to identify changed elements of the
-	 * spreadsheet file and transfer them to corresponding pool for
-	 * update/delete operation
-	 * 
-	 * @param element
-	 */
-	private void processElementForFlush(IGSElement element){
-		for(IGSElement subElement : element.getChilds()){
-			if(subElement.isDirty()){
-				if(subElement.isDeleteCandiddate()){
-					//TODO: add subElement to delete pool
-				}else{
-					if(subElement instanceof GSCell){
-						//TODO: add subElement to update pool
-					}else
-						processElementForFlush(element);
-				}
-			}
-		}
-		
-	}
-	
 	
 }
