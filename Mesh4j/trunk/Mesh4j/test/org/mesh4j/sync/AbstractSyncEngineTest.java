@@ -17,7 +17,6 @@ import org.mesh4j.sync.test.utils.TestHelper;
 
 public abstract class AbstractSyncEngineTest {
 
-	
 	@Test
 	public void ShouldAddNewItems() {
 		ISyncAdapter left = this.makeLeftRepository(createItem("fizz", TestHelper.newID(), new History("kzu")));
