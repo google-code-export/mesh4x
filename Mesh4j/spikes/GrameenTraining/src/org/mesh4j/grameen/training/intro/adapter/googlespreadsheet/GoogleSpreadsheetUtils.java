@@ -5,8 +5,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSCellEntry;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSListEntry;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSRow;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSCell;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSSpreadsheet;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSWorksheet;
 import org.mesh4j.sync.validations.Guard;
@@ -32,7 +32,7 @@ import com.google.gdata.util.ServiceException;
 /**
  * this is the utility class used by Google spreadsheet adapter
  * @author sharif
- * version 1.0, 29/03/09 b
+ * version 1.0, 29/03/09
  *
  */
 public class GoogleSpreadsheetUtils {
@@ -238,7 +238,7 @@ public class GoogleSpreadsheetUtils {
 	 * @throws IOException
 	 * @throws ServiceException
 	 */
-	public static GSListEntry getGSRow(SpreadsheetService service,
+	public static GSRow getGSRow(SpreadsheetService service,
 			WorksheetEntry worksheet, int rowIndex)
 			throws IOException, ServiceException {
 
@@ -247,10 +247,10 @@ public class GoogleSpreadsheetUtils {
 		query.setMaxResults(1);
 		ListFeed feed = service.query(query, ListFeed.class);
 
-		GSListEntry gsListEntry = null;
+		GSRow gsListEntry = null;
 		
 		if (feed.getEntries().size() > 0){
-			gsListEntry = new GSListEntry(feed.getEntries().get(0), rowIndex);
+			gsListEntry = new GSRow(feed.getEntries().get(0), rowIndex);
 			gsListEntry.populateClild(service, worksheet);
 		}
 		
@@ -268,7 +268,7 @@ public class GoogleSpreadsheetUtils {
 	 * @throws IOException
 	 * @throws ServiceException
 	 */
-	public static GSCellEntry getGSCell(SpreadsheetService service,
+	public static GSCell getGSCell(SpreadsheetService service,
 			WorksheetEntry worksheet, int rowIndex, int colIndex)
 			throws IOException, ServiceException {
 
@@ -279,10 +279,10 @@ public class GoogleSpreadsheetUtils {
 		query.setMaximumCol(colIndex);
 		CellFeed feed = service.query(query, CellFeed.class);
 
-		GSCellEntry gsCellEntry = null;
+		GSCell gsCellEntry = null;
 		
 		if (feed.getEntries().size() > 0){
-			gsCellEntry = new GSCellEntry(feed.getEntries().get(0),null);
+			gsCellEntry = new GSCell(feed.getEntries().get(0),null);
 			gsCellEntry.populateParent(service, worksheet);
 		}
 		
@@ -514,7 +514,7 @@ public class GoogleSpreadsheetUtils {
 			
 			for (ListEntry row : rowList){
 				//create a custom row object and populate its child
-				GSListEntry gsListEntry = new GSListEntry(row, rowList.indexOf(row) + 1);
+				GSRow gsListEntry = new GSRow(row, rowList.indexOf(row) + 1);
 				gsListEntry.populateClild(cellList);				
 				
 				//add a row to the custom worksheet object
