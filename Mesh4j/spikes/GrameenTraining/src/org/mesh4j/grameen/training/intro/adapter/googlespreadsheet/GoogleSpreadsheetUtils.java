@@ -20,6 +20,7 @@ import com.google.gdata.client.spreadsheet.FeedURLFactory;
 import com.google.gdata.client.spreadsheet.ListQuery;
 import com.google.gdata.client.spreadsheet.SpreadsheetService;
 import com.google.gdata.data.Link;
+import com.google.gdata.data.batch.BatchOperationType;
 import com.google.gdata.data.batch.BatchStatus;
 import com.google.gdata.data.batch.BatchUtils;
 import com.google.gdata.data.spreadsheet.CellEntry;
@@ -40,7 +41,7 @@ import com.google.gdata.util.ServiceException;
  */
 public class GoogleSpreadsheetUtils {
 
-	public static void flush(SpreadsheetService service, GSSpreadsheet spreadsheet ) {
+	public static void flush(SpreadsheetService service, GSSpreadsheet spreadsheet) {
 
 		for(GSWorksheet worksheet : spreadsheet.getWorksheetList().values()){
 			if(worksheet.isDirty()){				
@@ -52,7 +53,7 @@ public class GoogleSpreadsheetUtils {
 				if(updatePool.size() > 0 || deletePool.size() > 0){
 					
 					try{
-						CellFeed cellFeed = service.getFeed(worksheet.getWorksheet().getCellFeedUrl(), CellFeed.class);
+						/*CellFeed cellFeed = service.getFeed(worksheet.getWorksheet().getCellFeedUrl(), CellFeed.class);
 			
 						// Submit the batch request.
 						Link batchLink = cellFeed.getLink(Link.Rel.FEED_BATCH, Link.Type.ATOM);
@@ -69,7 +70,7 @@ public class GoogleSpreadsheetUtils {
 						    //TODO: Need to enhance the exception handling codes
 						    //TODO: Need to think about roll-back mechanism for partial update if such happens
 						  }	
-						} 
+						}*/ 
 						
 					}catch (Exception e) {
 						throw new MeshException(e);
@@ -109,6 +110,15 @@ public class GoogleSpreadsheetUtils {
 		
 	}
 	
+	/**
+	 * update a cell for batch update
+	 * @param cellToUpdate
+	 */
+	public static void prepareCellForBatchUpdate(GSCell cellToUpdate){
+		BatchUtils.setBatchId(cellToUpdate.getCellEntry(), cellToUpdate.getCellEntry().getId());
+		BatchUtils.setBatchOperationType(cellToUpdate.getCellEntry(), BatchOperationType.UPDATE);
+		cellToUpdate.setDirty();
+	}
 	
 	/**
 	 * get a row by specific cell info   
@@ -121,6 +131,7 @@ public class GoogleSpreadsheetUtils {
 	 * @throws IOException
 	 * @throws ServiceException
 	 */
+	@Deprecated
 	public static ListEntry getRow(SpreadsheetService service,
 			WorksheetEntry worksheet, String columnTag, String value)
 			throws IOException, ServiceException {
@@ -144,6 +155,7 @@ public class GoogleSpreadsheetUtils {
 	 * @throws IOException
 	 * @throws ServiceException
 	 */
+	@Deprecated
 	public static ListEntry getRow(SpreadsheetService service,
 			WorksheetEntry worksheet, int rowIndex)
 			throws IOException, ServiceException {
@@ -171,6 +183,7 @@ public class GoogleSpreadsheetUtils {
 	 * @throws IOException
 	 * @throws ServiceException
 	 */
+	@Deprecated
 	public static ListEntry getRow(SpreadsheetService service,
 			WorksheetEntry worksheet, String rowId) throws IOException,
 			ServiceException {
@@ -196,6 +209,7 @@ public class GoogleSpreadsheetUtils {
 	 * @throws IOException
 	 * @throws ServiceException
 	 */
+	@Deprecated
 	public static CellEntry getCell(SpreadsheetService service,
 			WorksheetEntry worksheet, int rowIndex, int colIndex)
 			throws IOException, ServiceException {
@@ -224,6 +238,7 @@ public class GoogleSpreadsheetUtils {
 	 * @throws IOException
 	 * @throws ServiceException
 	 */
+	@Deprecated
 	public static CellEntry getCell(SpreadsheetService service,
 			WorksheetEntry worksheet, String cellId) throws IOException,
 			ServiceException {
@@ -251,6 +266,7 @@ public class GoogleSpreadsheetUtils {
 	 * @throws IOException
 	 * @throws ServiceException
 	 */
+	@Deprecated
 	public static CellEntry getCell(SpreadsheetService service,
 			WorksheetEntry worksheet, ListEntry row, int columnIndex)
 			throws IOException, ServiceException {
@@ -283,6 +299,7 @@ public class GoogleSpreadsheetUtils {
 	 * @throws IOException
 	 * @throws ServiceException
 	 */
+	@Deprecated
 	public static GSRow getGSRow(SpreadsheetService service,
 			WorksheetEntry worksheet, int rowIndex)
 			throws IOException, ServiceException {
@@ -313,6 +330,7 @@ public class GoogleSpreadsheetUtils {
 	 * @throws IOException
 	 * @throws ServiceException
 	 */
+	@Deprecated
 	public static GSCell getGSCell(SpreadsheetService service,
 			WorksheetEntry worksheet, int rowIndex, int colIndex)
 			throws IOException, ServiceException {
@@ -436,6 +454,7 @@ public class GoogleSpreadsheetUtils {
 	 * @throws IOException
 	 * @throws ServiceException
 	 */
+	@Deprecated
 	public static SpreadsheetEntry getSpreadsheet(FeedURLFactory factory,
 			SpreadsheetService service, String sheetId) throws IOException,
 			ServiceException {
@@ -461,6 +480,7 @@ public class GoogleSpreadsheetUtils {
 	 * @throws IOException
 	 * @throws ServiceException
 	 */
+	@Deprecated
 	public static SpreadsheetEntry getSpreadsheet(FeedURLFactory factory,
 			SpreadsheetService service, int sheetIndex) throws IOException,
 			ServiceException {
@@ -654,6 +674,7 @@ public class GoogleSpreadsheetUtils {
 	 * @throws IOException
 	 * @throws ServiceException
 	 */
+	@Deprecated
 	public static WorksheetEntry getWorksheet(SpreadsheetService service,
 			SpreadsheetEntry spreadsheet, String sheetId) throws IOException,
 			ServiceException {
@@ -680,6 +701,7 @@ public class GoogleSpreadsheetUtils {
 	 * @throws IOException
 	 * @throws ServiceException
 	 */
+	@Deprecated
 	public static WorksheetEntry getWorksheet(SpreadsheetService service,
 			SpreadsheetEntry spreadsheet, int sheetIndex) throws IOException,
 			ServiceException {
