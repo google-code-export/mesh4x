@@ -4,8 +4,8 @@ import org.dom4j.Element;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSRow;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSWorksheet;
 /**
- *  convert entity(row,item) to xml element and xml element to
- *  entity(row,item). 
+ * convert entity(row,item) to xml element and xml element to
+ * entity(row,item). 
  * @author Raju
  * @version 1.0,30/3/2009
  */
