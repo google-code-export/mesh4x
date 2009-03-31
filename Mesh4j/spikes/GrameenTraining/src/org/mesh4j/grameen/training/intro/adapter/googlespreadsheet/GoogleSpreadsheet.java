@@ -1,30 +1,30 @@
 package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet;
 
 
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSCellEntry;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSListEntry;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSCell;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSRow;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSSpreadsheet;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSWorksheet;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.IGSElement;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
 import com.google.gdata.client.spreadsheet.FeedURLFactory;
 import com.google.gdata.client.spreadsheet.SpreadsheetService;
 import com.google.gdata.data.spreadsheet.CellFeed;
-import com.google.gdata.data.spreadsheet.WorksheetEntry;
 import com.google.gdata.util.AuthenticationException;
 
 
 public class GoogleSpreadsheet implements IGoogleSpreadSheet{
 
 	// MODEL VARIABLES
-	//private String spreadsheetFileId;
+	private String spreadsheetFileId;
+	private String username;
+	private String password;
 	private GSSpreadsheet spreadsheet;
 	
 	private SpreadsheetService service;
 	private FeedURLFactory factory;
-	
-
 	
 	private boolean dirty = false;
 	
@@ -47,13 +47,16 @@ public class GoogleSpreadsheet implements IGoogleSpreadSheet{
 		
 	// BUSINESS METHODS
 	
-	private void init(String username, String password) {
-
+	/**
+	 * initialize service and feedURL factory 
+	 */
+	private void init() {
+		
 		this.service = new SpreadsheetService("Mesh4j");
 		this.service.setProtocolVersion(SpreadsheetService.Versions.V1);
 
 		try {
-			this.service.setUserCredentials(username, password);
+			this.service.setUserCredentials(this.username, this.password);
 
 		} catch (AuthenticationException e) {
 			throw new MeshException(e);
@@ -78,7 +81,11 @@ public class GoogleSpreadsheet implements IGoogleSpreadSheet{
 		Guard.argumentNotNullOrEmptyString(username, "username");
 		Guard.argumentNotNullOrEmptyString(password, "password");
 
-		init(username, password);
+		this.spreadsheetFileId = spreadsheetFileId;
+		this.username = username;
+		this.password = password;
+		
+		init();
 		
 		try {
 			this.spreadsheet = GoogleSpreadsheetUtils.getGSSpreadsheet(
@@ -101,7 +108,7 @@ public class GoogleSpreadsheet implements IGoogleSpreadSheet{
 		Guard.argumentNotNullOrEmptyString(username, "username");
 		Guard.argumentNotNullOrEmptyString(password, "password");
 
-		init(username, password);
+		init();
 		
 		try {
 			this.spreadsheet = GoogleSpreadsheetUtils.getGSSpreadsheet(
@@ -109,7 +116,6 @@ public class GoogleSpreadsheet implements IGoogleSpreadSheet{
 		} catch (Exception e) {
 			throw new MeshException(e);
 		}
-		
 	}
 	
 	public SpreadsheetService getService() {
@@ -132,28 +138,61 @@ public class GoogleSpreadsheet implements IGoogleSpreadSheet{
 		this.dirty = true;		
 	}
 
-	public void addEntryToUpdate(GSCellEntry toUpdate){
+	public void addEntryToUpdate(GSCell toUpdate){
 		batchFeed.getEntries().add(toUpdate.getCellEntry());
 	}
 
-	public void addEntryToUpdate(GSListEntry toUpdate){		
-		for(GSCellEntry gsCell : toUpdate.getGsCells()){
+	public void addEntryToUpdate(GSRow toUpdate){		
+		for(IGSElement gsCell : toUpdate.getGsCells()){
 			if(gsCell.isDirty()){
-				addEntryToUpdate(gsCell);
+				addEntryToUpdate((GSCell)gsCell);
 				toUpdate.setDirty();
 			}	
 		}
 	}
 	
+	/**
+	 * transfer the current state of the spreadsheet in memory to spreadsheet file in weeb
+	 */
 	public void flush(GSWorksheet worksheet) {
-		if(this.dirty){
-			GoogleSpreadsheetUtils.flush(this.service, worksheet, this.batchFeed);
-			this.dirty = false;
-		}	
+		processElementForFlush(worksheet);
+		GoogleSpreadsheetUtils.flush(this.service, worksheet, this.batchFeed);
 	}
-	
+		
+	/**
+	 * reload spreadsheet file to memory 
+	 */
 	public void refresh(){
-		//TODO: need to think more abt it
+		try {
+			this.spreadsheet = GoogleSpreadsheetUtils.getGSSpreadsheet(
+					this.factory, this.service, spreadsheetFileId);
+		} catch (Exception e) {
+			throw new MeshException(e);
+		}
 	}
 
+	/**
+	 * iterate over the whole object graph to identify changed elements of the
+	 * spreadsheet file and transfer them to corresponding pool for
+	 * update/delete operation
+	 * 
+	 * @param element
+	 */
+	private void processElementForFlush(IGSElement element){
+		for(IGSElement subElement : element.getChilds()){
+			if(subElement.isDirty()){
+				if(subElement.isDeleteCandiddate()){
+					//TODO: add subElement to delete pool
+				}else{
+					if(subElement instanceof GSCell){
+						//TODO: add subElement to update pool
+					}else
+						processElementForFlush(element);
+				}
+			}
+		}
+		
+	}
+	
+	
 }
