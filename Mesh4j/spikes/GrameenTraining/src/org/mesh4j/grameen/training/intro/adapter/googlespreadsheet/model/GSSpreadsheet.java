@@ -88,5 +88,22 @@ public class GSSpreadsheet implements IGSElement{
 	public void updateChildEntry(String key, IGSElement element) {
 		element.setDirty();
 		this.worksheetList.put(key, (GSWorksheet)element);
+	}
+
+	public GSWorksheet getGSWorksheet(String sheetName) {
+		for (GSWorksheet gsWorksheet : this.worksheetList.values()) {
+			if (gsWorksheet.getWorksheet().getTitle().getPlainText()
+					.equalsIgnoreCase(sheetName))
+				return gsWorksheet;
+		}
+		return null;
+	}
+
+	public GSWorksheet getGSWorksheet(int sheetIndex) {
+		for (GSWorksheet gsWorksheet : this.worksheetList.values()) {
+			if (gsWorksheet.getSheetIndex() == sheetIndex)
+				return gsWorksheet;
+		}
+		return null;
 	}	
 }
