@@ -1,9 +1,14 @@
 package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet;
 
+import java.util.Iterator;
+
+import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSListEntry;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSRow;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSWorksheet;
 import org.mesh4j.sync.validations.Guard;
+
+import com.google.gdata.data.spreadsheet.ListEntry;
 /**
  * 
  * @author Raju
@@ -23,16 +28,40 @@ public class SpreadSheetToXMLMapper implements ISpreadSheetToXMLMapper{
 	}
 	
 	@Override
-	public Element convertRowToXML(GSListEntry listEntry, GSWorksheet worksheet) {
+	public Element convertRowToXML(GSRow gsRow, GSWorksheet worksheet) {
 		
-		return null;
+		Element rootElement = DocumentHelper.createElement(worksheet.getName());
+		
+		ListEntry rowEntry = gsRow.getRowEntry();
+		Element childElement ; 
+		
+		 for (String columnHeader : rowEntry.getCustomElements().getTags()){
+			 String columnContent = rowEntry.getCustomElements().getValue(columnHeader);
+			 childElement = rootElement.addElement(columnHeader);
+			 //TODO need to think about it how we can handle the null value
+			 //if a row contains null value in some of its column then how should handle it
+			 if(columnContent == null || columnContent.equals("")){
+				 childElement.setText("");	 
+			 }else{
+				 childElement.setText(columnContent);
+			 }
+		 }
+		return rootElement;
 	}
 
 	@Override
-	public void convertXMLToRow(Element element, GSListEntry listEntry,
+	public GSRow convertXMLElementToRow(Element element, GSRow gsRow,
 			GSWorksheet worksheet) {
-	
 		
+		Element child;
+		ListEntry newRowEntry = new ListEntry();
+		
+		for (Iterator<Element> iterator = element.elementIterator(); iterator.hasNext();){
+			child = (Element) iterator.next();
+			newRowEntry.getCustomElements().setValueLocal(child.getName(), child.getText());
+		}
+		GSRow newGSRow = new GSRow(newRowEntry,0);
+		return newGSRow;
 	}
 
 	@Override
@@ -45,5 +74,6 @@ public class SpreadSheetToXMLMapper implements ISpreadSheetToXMLMapper{
 		return lastUpdateColumnName;
 	}
 
+	
 	
 }
