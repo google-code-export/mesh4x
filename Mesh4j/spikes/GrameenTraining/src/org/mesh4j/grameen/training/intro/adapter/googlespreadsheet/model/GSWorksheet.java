@@ -96,5 +96,8 @@ public class GSWorksheet implements IGSElement{
 	public void updateChildEntry(String key, IGSElement element) {
 		element.setDirty();
 		this.rowList.put(key, (GSRow)element);
-	}	
+	}
+	public String getName(){
+		return this.getWorksheet().getTitle().getPlainText();
+	}
 }

@@ -1,6 +1,5 @@
 package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet;
 
-import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSSpreadsheet;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSWorksheet;
 import org.mesh4j.sync.validations.Guard;
