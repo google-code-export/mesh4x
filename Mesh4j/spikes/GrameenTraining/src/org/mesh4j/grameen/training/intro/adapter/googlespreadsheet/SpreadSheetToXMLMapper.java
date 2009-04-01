@@ -50,8 +50,7 @@ public class SpreadSheetToXMLMapper implements ISpreadSheetToXMLMapper{
 	}
 
 	@Override
-	public GSRow convertXMLElementToRow(Element element, GSRow gsRow,
-			GSWorksheet worksheet) {
+	public GSRow convertXMLElementToRow(Element element, int rowIndex) {
 		
 		Element child;
 		ListEntry newRowEntry = new ListEntry();
@@ -60,8 +59,8 @@ public class SpreadSheetToXMLMapper implements ISpreadSheetToXMLMapper{
 			child = (Element) iterator.next();
 			newRowEntry.getCustomElements().setValueLocal(child.getName(), child.getText());
 		}
-		GSRow newGSRow = new GSRow(newRowEntry,0);
-		return newGSRow;
+		GSRow gsRow = new GSRow(newRowEntry,rowIndex);
+		return gsRow;
 	}
 
 	@Override

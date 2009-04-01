@@ -26,6 +26,6 @@ public interface ISpreadSheetToXMLMapper {
 
 	//before save the manipulated item or row to the spreadsheet we need to convert the
 	//mesh4x xml element to spreadsheet listEntry which is row.
-	public GSRow convertXMLElementToRow(Element element,GSRow gsRow,GSWorksheet worksheet);
+	public GSRow convertXMLElementToRow(Element element,int rowIndex);
 	
 }
