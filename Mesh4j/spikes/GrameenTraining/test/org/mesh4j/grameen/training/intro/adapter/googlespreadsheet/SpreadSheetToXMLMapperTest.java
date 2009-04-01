@@ -21,18 +21,19 @@ public class SpreadSheetToXMLMapperTest {
 		
 		SpreadSheetToXMLMapper mapper = new SpreadSheetToXMLMapper("id","lastupdateColumnName");
 		
-		IGoogleSpreadSheet spreadsheet = new GoogleSpreadsheet("pTOwHlskRe06LOcTpClQ-Bw","saiful.raju@gmail.com","ir0np0cket");
+		//put your user name and password
+		IGoogleSpreadSheet spreadsheet = new GoogleSpreadsheet("pTOwHlskRe06LOcTpClQ-Bw","saiful.raju@gmail.com","");
 		for(Map.Entry<String, GSWorksheet> spSheet : spreadsheet.getGSSpreadsheet().getWorksheetList().entrySet()){
 			String key = spSheet.getKey();
 			GSWorksheet workSheet = spSheet.getValue();
 			for(Map.Entry<String, GSRow> gsRowMap :workSheet.getRowList().entrySet()){
 				GSRow row = gsRowMap.getValue();
-				System.out.println("id "+row.getId());
-				System.out.println("index "+ row.getRowIndex());
+//				System.out.println("id "+row.getId());
+//				System.out.println("index "+ row.getRowIndex());
 				Element xmlElement = mapper.convertRowToXML(row, workSheet);
-				//Assert.assertEquals(xmlElement.asXML(), rawDataAsXML);
+				Assert.assertEquals(xmlElement.asXML(), rawDataAsXML);
 				System.out.println(xmlElement.asXML());
-				//break;
+				break;
 			}
 		}
 		
@@ -43,12 +44,13 @@ public class SpreadSheetToXMLMapperTest {
 		String rawDataAsXML = "<user><name>Raju</name><age>18</age><city>Dhaka</city><country>Bangladesh</country></user>";
 		Element payLoad = XMLHelper.parseElement(rawDataAsXML);
 		
+		//put your user name and password
 		SpreadSheetToXMLMapper mapper = new SpreadSheetToXMLMapper("id","lastupdateColumnName");
-		GoogleSpreadsheet spreadsheet = new GoogleSpreadsheet("pTOwHlskRe06LOcTpClQ-Bw","saiful.raju@gmail.com","ir0np0cket");
+		GoogleSpreadsheet spreadsheet = new GoogleSpreadsheet("pTOwHlskRe06LOcTpClQ-Bw","saiful.raju@gmail.com","");
 		
 		for(Map.Entry<String, GSWorksheet> spSheetMpa : spreadsheet.getGSSpreadsheet().getWorksheetList().entrySet()){
 			GSWorksheet workSheet = spSheetMpa.getValue();
-			GSRow row = mapper.convertXMLElementToRow(payLoad, null, null);
+			GSRow row = mapper.convertXMLElementToRow(payLoad, 1);
 			Element xmlElement = mapper.convertRowToXML(row, workSheet);
 			Assert.assertEquals(xmlElement.asXML(), rawDataAsXML);
 			break;
