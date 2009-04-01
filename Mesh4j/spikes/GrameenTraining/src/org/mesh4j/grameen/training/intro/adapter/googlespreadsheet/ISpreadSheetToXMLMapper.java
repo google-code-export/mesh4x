@@ -19,7 +19,11 @@ public interface ISpreadSheetToXMLMapper {
 
 	//whenever any item in entity is updated or changed its corresponding
 	//lasupdatecolumnname is also updated with date.
+	@Deprecated
 	public String getLastUpdateColumnName();
+
+	//provides the last update column position
+	public int getLastUpdateColumnPosition();
 	
 	//for mesh4x manipulation we need convert each row which is item to xml element
 	public Element convertRowToXML(GSRow gsRow ,GSWorksheet worksheet);

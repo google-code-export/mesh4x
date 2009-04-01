@@ -73,6 +73,12 @@ public class SpreadSheetToXMLMapper implements ISpreadSheetToXMLMapper{
 		return lastUpdateColumnName;
 	}
 
+	@Override
+	public int getLastUpdateColumnPosition() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 	
 	
 }
