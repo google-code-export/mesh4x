@@ -15,5 +15,4 @@ public interface IGoogleSpreadSheet {
 	public SpreadsheetService getService();
 	public void setDirty();
 	public void flush();
-	
 }
