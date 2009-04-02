@@ -1,11 +1,10 @@
 package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model;
 
 import java.io.IOException;
-import java.util.List;
-
 
 import com.google.gdata.client.spreadsheet.ListQuery;
 import com.google.gdata.client.spreadsheet.SpreadsheetService;
+
 import com.google.gdata.data.spreadsheet.CellEntry;
 import com.google.gdata.data.spreadsheet.ListFeed;
 import com.google.gdata.data.spreadsheet.WorksheetEntry;
@@ -19,63 +18,69 @@ import com.google.gdata.util.ServiceException;
  * @Version 1.0, 29-03-09
  * 
  */
-public class GSCell implements IGSElement{
+@SuppressWarnings("unchecked")
+public class GSCell extends GSBaseElement {
 	
 	// MODEL VARIABLES
-	private CellEntry cellEntry; //represents the cell entry provided by google api
-	private GSRow parentRow; //represents the row that contains this cell  
-	private boolean dirty = false; //flag represents cell content changed
-	private boolean deleteCandidate = false; //flag represents this cell is going to be deleted in next flush operation
+	//all moved to base class
 	
 	// BUSINESS METHODS	
-	public GSCell(CellEntry cellEntry, GSRow parentRow) {
+	public GSCell(CellEntry cellEntry, GSRow<GSCell> parentRow){
 		super();
-		this.cellEntry = cellEntry;
-		this.parentRow = parentRow;
+		this.baseEntry = cellEntry;
+		this.parentElement = parentRow;
+		this.childElements = null;
 	}	
-	
-	public CellEntry getCellEntry() {
-		return cellEntry;
-	}
-
-	public GSRow getParentRow() {
-		return parentRow;
-	}
-
+		
 	/**
-	 * return the unique cell id specified for that cell in the spreadsheet 
-	 *   
+	 * get the core {@link CellEntry} object wrapped by this {@link GSCell}
 	 * @return
 	 */
-	public String getId(){
-		return this.cellEntry.getId();
-	}
-
-	public void setDirty() {
-		getParent().setDirty();
-		this.dirty = true;
-	}
-
-	public boolean isDirty() {
-		return this.dirty;
+	public CellEntry getCellEntry() {
+		return (CellEntry) getBaseEntry();
 	}
 	
 	/**
-	 * populates the the row that contains this Cell
-	 * Note: this involves a http request    
+	 * get the parent/container {@link GSRow} object of this {@link GSCell}
+	 * @return
+	 */	
+	public GSRow<GSCell> getParentRow() {
+		return (GSRow) getParentElement();
+	}
+
+	/**
+	 * get the row index of this {@link GSCell} in the container {@link GSRow}
+	 * @return
+	 */
+	public int getRowIndex() {
+		return getCellEntry().getCell().getRow();
+	}
+	
+	/**
+	 * get the column index of this {@link GSCell} in the container {@link GSRow}
+	 * @return
+	 */
+	public int getColIndex() {
+		return getCellEntry().getCell().getCol();
+	}	
+	
+	/**
+	 * populates the the {@link GSRow} that contains this {@link GSCell}
+	 * Note: this method involves a http request    
 	 * 
 	 * @param service
 	 * @param worksheet
 	 * @throws IOException
 	 * @throws ServiceException
 	 */
+	@Deprecated
 	public void populateParent(SpreadsheetService service,
 			WorksheetEntry worksheet) throws IOException, ServiceException {
 		
-		if(this.parentRow != null) return;
+		if(this.parentElement != null) return;
 		
 		ListQuery query = new ListQuery(worksheet.getListFeedUrl());
-		query.setStartIndex(this.cellEntry.getCell().getRow()-1); 
+		query.setStartIndex(((CellEntry)this.baseEntry).getCell().getRow()-1); 
 		//why -1?: Google Spreadsheet's data row starts from it's 2nd row actually, 
 		//1st row contains the column headers. 
 		//So index of a row should be considered 1 less than row index returned from its cells.
@@ -84,8 +89,9 @@ public class GSCell implements IGSElement{
 
 		ListFeed feed = service.query(query, ListFeed.class);
 
-		GSRow gsListEntry = new GSRow(feed.getEntries().get(0),
-				this.cellEntry.getCell().getRow()-1);
+		GSRow<GSCell> gsListEntry = new GSRow(
+				feed.getEntries().get(0), ((CellEntry) this.baseEntry)
+						.getCell().getRow() - 1);
 		
 		/*for (String tag : feed.getEntries().get(0).getCustomElements().getTags()) {
 		      //out.print(entry.getCustomElements().getValue(tag)+"\t");
@@ -94,40 +100,7 @@ public class GSCell implements IGSElement{
 		
 		gsListEntry.populateClild(service, worksheet);
 		
-		this.parentRow = gsListEntry;
-	}
-
-	public IGSElement getParent() {
-		return parentRow;
-	}
-
-	public void setDeleteCandidate() {
-		this.deleteCandidate = true;
-	}
-	
-	public boolean isDeleteCandiddate() {
-		return this.deleteCandidate;
-	}
-
-	public List<IGSElement> getChilds() {
-		return null; //cell is the lowest element in the hierarchy and hence no child
-	}
-
-	public void addChildEntry(IGSElement element) {
-		// nothing to add here
-	}
-
-	public void deleteChildEntry(String key) {
-		// nothing to delete
-	}
-
-	public IGSElement getChildEntry(String key) {
-		// nothing to get
-		return null;
-	}
-
-	public void updateChildEntry(String key, IGSElement element) {
-		// nothing to update
+		this.parentElement =  gsListEntry;
 	}
 
 }

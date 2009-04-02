@@ -1,129 +1,109 @@
 package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model;
 
 import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Map;
 
+import com.google.gdata.data.BaseEntry;
 import com.google.gdata.data.spreadsheet.WorksheetEntry;
 
-public class GSWorksheet implements IGSElement{
+public class GSWorksheet<C> extends GSBaseElement<C> {
 
 	// MODEL VARIABLES
-	private WorksheetEntry worksheet;  //represents the worksheet entry provided by google api
-	private Map<String, GSRow> rowList = new LinkedHashMap<String, GSRow>(); //represents the map of rows this worksheet contains
-	private int sheetIndex; //represents the order index of this worksheet in the container spreadsheet 
-	private boolean dirty = false; //flag represents worksheet content changed
-	private boolean deleteCandidate = false; //flag represents this worksheet is going to be deleted in next flush operation
-	
+	//all moved to base class
 	
 	// BUSINESS METHODS	
+	@Deprecated
 	public GSWorksheet(WorksheetEntry worksheet, int sheetIndex) {
 		super();
-		this.worksheet = worksheet;
-		this.sheetIndex = sheetIndex;
-		this.rowList = new LinkedHashMap<String, GSRow>();
+		this.baseEntry = worksheet;
+		this.elementListIndex = sheetIndex;
+		this.childElements = new LinkedHashMap<String, C>();
 	}
 	
-	public int getSheetIndex() {
-		return sheetIndex;
+	public GSWorksheet(WorksheetEntry worksheet, int sheetIndex,
+			GSSpreadsheet<?> parentElement) {
+		super();
+		this.baseEntry = worksheet;
+		this.elementListIndex = sheetIndex;
+		this.childElements = new LinkedHashMap<String, C>();
+		this.parentElement = parentElement;
 	}
-
-	public WorksheetEntry getWorksheet() {
-		return worksheet;
-	}
-	public Map<String, GSRow> getRowList() {
-		return rowList;
-	}
-
-	public String getId(){
-		return this.worksheet.getId();
-	}
-
-	public IGSElement getParent() {
-		// TODO: this should be the container spreadsheet
-		return null;
-	}
-
-	public void setDeleteCandidate() {
-		this.deleteCandidate = true;
-	}
-	
-	public boolean isDeleteCandiddate() {
-		return this.deleteCandidate;
-	}
-	
-	/*
-	 * code blocked by sharif, 30-03-09. 
-	 * 
-	 * please use the method addChildEntry(IGSElement element) instead
-	 * also make sure ((GSRow)element).getRowIndex() returns its proper position
-	 * 
-	 * public void add(GSRow listEntry){
-		this.getRowList().put(String.valueOf(getRowList().size() +1), listEntry);
-	}*/
-	
-	public boolean isDirty() {
-		return this.dirty;
-	}	
-
-	public void setDirty() {
-		getParent().setDirty();
-		this.dirty = true;
-	}	
-	
-	public List<IGSElement> getChilds() {
-		Collection values = rowList.values();
-		List childs = new ArrayList(values);			
-		return childs;  
-	}
-	
-	public void addChildEntry(IGSElement element) {
-		element.setDirty();
-		String key = Integer.toString(((GSRow)element).getRowIndex());
-		this.rowList.put(key, (GSRow)element); 
-	}
-
-	public void deleteChildEntry(String key) {
-		this.rowList.get(key).setDirty();
-		this.rowList.get(key).setDeleteCandidate();
-	}
-
-	public IGSElement getChildEntry(String key) {
-		return this.rowList.get(key);
-	}
-
-	public void updateChildEntry(String key, IGSElement element) {
-		element.setDirty();
-		this.rowList.put(key, (GSRow)element);
-	}	
 	
 	/**
-	 * get row from this worksheet by row index
+	 * get the core {@link WorksheetEntry} object wrapped by this
+	 * {@link GSWorksheet}
+	 * @return
+	 */
+	public WorksheetEntry getWorksheetEntry() {
+		return (WorksheetEntry) getBaseEntry();
+	}
+
+	/**
+	 * get the parent/container {@link GSSpreadsheet} object of this {@link GSWorksheet}
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public GSSpreadsheet getParentSpreadsheet() {
+		return (GSSpreadsheet) getParentElement();
+	}
+	
+	/**
+	 * get all the child {@link GSRow} contained in this {@link GSSpreadsheet} 
+	 * @return
+	 */
+	public Map<String, C> getGSRows() {
+		return getChildElements();  
+	}
+	
+	/**
+	 * get a {@link GSRow} from this {@link GSWorksheet} by row index
 	 * @param rowIndex
 	 * @return
 	 */
-	public GSRow getGSRow(int rowIndex) {
-		for (GSRow gsRow : this.rowList.values()) {
-			if (gsRow.getRowIndex() == rowIndex)
-				return gsRow;
-		}
-		return null;
+	public C getGSRow(int rowIndex) {
+		return getChildElement(Integer.toString(rowIndex));
 	}	
 	
 	/**
-	 * get cell from this worksheet by row and column index 
+	 * get a {@link GSRow} by key from this {@link GSWorksheet}
+	 * 
+	 * @param key
+	 * @return
+	 */
+	public C getGSRow(String key){
+		return getChildElement(key);
+	}
+
+	/**
+	 * get the sheet index of this {@link GSWorksheet} in the container {@link GSSpreadsheet}
+	 * @return
+	 */
+	public int getSheetIndex() {
+		return getElementListIndex();
+	}	
+	
+	/**
+	 * get a {@link GSCell} from this {@link GSWorksheet} by row and column index 
 	 * @param rowIndex
 	 * @param colIndex
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	public GSCell getGSCell(int rowIndex, int colIndex) {
-		GSRow gsRow = getGSRow(rowIndex);		
-		return gsRow.getGsCell(colIndex);
+		GSRow<GSCell> gsRow = (GSRow) getChildElement(Integer.toString(rowIndex));
+		return (GSCell) gsRow.getChildElement(Integer
+				.toString(colIndex));
 	}	
 		
-	public String getName(){
-		return this.getWorksheet().getTitle().getPlainText();
+	/**
+	 * return the name/title of the core {@link WorksheetEntry} wrapped by this
+	 * {@link GSWorksheet}
+	 * 
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public String getName() {
+		return ((BaseEntry<WorksheetEntry>) this.baseEntry).getTitle()
+				.getPlainText();
 	}
 }

@@ -1,8 +1,10 @@
 package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model;
 
 import java.io.IOException;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.google.gdata.client.spreadsheet.CellQuery;
 import com.google.gdata.client.spreadsheet.SpreadsheetService;
@@ -21,93 +23,121 @@ import com.google.gdata.util.ServiceException;
  * @Version 1.0, 29-03-09
  * 
  */
-public class GSRow implements IGSElement{
+public class GSRow<C> extends GSBaseElement<C>{
 	
 	// MODEL VARIABLES
-	private ListEntry rowEntry; //represents the row entry provided by google api
-	private List <IGSElement> gsCells; //represents the list of cells it contains
-	private int rowIndex; //represents index of the row in the worksheet; starting from 1
-	private boolean dirty = false; //flag represents row content changed
-	private boolean deleteCandidate = false; //flag represents this row is going to be deleted in next flush operation
-
+	//all moved to base class
 	
-	//Note:Google Spreadsheet's data row starts from it's 2nd row actually, 1st row contains the column headers. 
-	//So index of a row should be considered 1 less than row index returned from its cells.
-	//What a weird API! 
 	
 	// BUSINESS METHODS
-	public GSRow(List<IGSElement> gsCells, ListEntry rowEntry, int rowIndex) {
+	public GSRow(Map<String, C> gsCells,
+			ListEntry rowEntry, int rowIndex,
+			GSWorksheet<GSRow<GSCell>> parentElement) {
 		super();
-		this.gsCells = gsCells;
-		this.rowEntry = rowEntry;
-		this.rowIndex = rowIndex;
+		this.childElements = gsCells;
+		this.baseEntry = rowEntry;
+		this.elementListIndex = rowIndex;
+		this.parentElement = parentElement;
 	}	
 	
+	@Deprecated
 	public GSRow(ListEntry rowEntry, int rowIndex) {
 		super();
-		this.gsCells = new LinkedList<IGSElement>();
-		this.rowEntry = rowEntry;
-		this.rowIndex = rowIndex;
+		this.childElements = new LinkedHashMap<String, C>();
+		this.baseEntry = rowEntry;
+		this.elementListIndex = rowIndex;
 	}	
 
-	public ListEntry getRowEntry() {
-		return rowEntry;
-	}
-
-	public List<IGSElement> getGsCells() {
-		if (gsCells == null)
-			gsCells = new LinkedList<IGSElement>();
-		return gsCells;
-	}
+	public GSRow(ListEntry rowEntry, int rowIndex,
+			GSWorksheet<GSRow<GSCell>> parentElement) {
+		super();
+		this.childElements = new LinkedHashMap<String, C>();
+		this.baseEntry = rowEntry;
+		this.elementListIndex = rowIndex;
+		this.parentElement = parentElement;
+	}	
 	
-	public int getRowIndex() {
-		return rowIndex;
-	}
-		
-	public void setDirty() {
-		getParent().setDirty();
-		this.dirty = true;
+	/**
+	 * get the core {@link ListEntry} object wrapped by this {@link GSRow}
+	 * @return
+	 */
+	public ListEntry getRowEntry() {
+		return (ListEntry) getBaseEntry();
 	}
 
-	public boolean isDirty() {
-		return this.dirty;
+	/**
+	 * get the parent/container {@link GSWorksheet} object of this {@link GSRow}
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public GSWorksheet<GSRow<GSCell>> getParentWorksheet() {
+		return (GSWorksheet) getParentElement();
 	}
 	
 	/**
-	 * get the cell at column position colIndex 
+	 * get all the child {@link GSCell} contained in this {@link GSRow} 
+	 * @return
+	 */
+	public Map<String, C> getGSCells() {
+		return getChildElements();
+	}
+
+	/**
+	 * get all the child {@link GSCell} contained in this {@link GSRow} in the
+	 * form of {@link ArrayList}
+	 * 
+	 * @return
+	 */
+	
+	public List<C> getGsCellsAsList() {
+		return new ArrayList<C>(getChildElements().values());
+	}
+	
+	/**
+	 * get the row index of this {@link GSRow} in the container {@link GSWorksheet}
+	 * @return
+	 */
+	public int getRowIndex() {
+		return getElementListIndex();
+	}
+
+	/**
+	 * get the {@link GSCell} from this {@link GSRow} by colIndex 
 	 * 
 	 * @param colIndex
 	 * @return
 	 */
-	public GSCell getGsCell(int colIndex){
-		if (colIndex < 1 )
-			throw new IllegalArgumentException("Column Index should be greater than 0");
-		return (GSCell)gsCells.get(colIndex-1);
+	public C getGSCell(int colIndex){
+		return getChildElement(Integer.toString(colIndex));
 	}
-	
+
 	/**
- 	 * return the unique row/listEntry id specified for that row in the spreadsheet 
- 	 * 
+	 * get the {@link GSCell} from this {@link GSRow} by key 
+	 * 
+	 * @param key
 	 * @return
 	 */
-	public String getId(){
-		return this.rowEntry.getId();
+	public C getGSCell(String key){
+		return getChildElement(key);
 	}
 	
 	/**
-	 * populate the cells entries contained in this row.
-	 * 
+	 * populate the {@link GSCell} entries from the feed to be contained in this {@link GSRow}.
+ 	 * Note: this method involves a http request
+ 	 *     
 	 * @param service
 	 * @param worksheet
 	 * @throws IOException
 	 * @throws ServiceException
 	 */
+	@SuppressWarnings("unchecked")
+	@Deprecated
 	public void populateClild(SpreadsheetService service,
 			WorksheetEntry worksheet) throws IOException, ServiceException{
 		
-		if(this.gsCells != null && this.gsCells.size() > 0) return;
+		if(getGSCells() != null && getGSCells().size() > 0) return;
 			
-		if(this.rowIndex == 0){
+		if(this.elementListIndex == 0){
 			ListFeed lFeed = service.getFeed(worksheet.getListFeedUrl(), ListFeed.class);
 	
 			//int rowIndex = lFeed.getEntries().contains(this.rowEntry);
@@ -115,78 +145,49 @@ public class GSRow implements IGSElement{
 			
 			int rowIndex=1; 
 			for (; rowIndex <= lFeed.getEntries().size(); rowIndex++){
-				if(lFeed.getEntries().get(rowIndex-1).getId().equals(this.rowEntry.getId()))
+				if(lFeed.getEntries().get(rowIndex-1).getId().equals(((IGSElement)this.baseEntry).getId()))
 					break;
 			}
 	
-			this.rowIndex = rowIndex;
+			this.elementListIndex = rowIndex;
 		}
 		
 		CellQuery query = new CellQuery(worksheet.getCellFeedUrl());
-		query.setMinimumRow(this.rowIndex + 1); //cell row# is 1 more that row#
-		query.setMaximumRow(this.rowIndex + 1);
+		query.setMinimumRow(this.elementListIndex + 1); //cell row# is 1 more that row#
+		query.setMaximumRow(this.elementListIndex + 1);
 		
 		CellFeed cFeed = service.query(query, CellFeed.class);		
 		
-		for(CellEntry entry:cFeed.getEntries()){
-			getGsCells().add(new GSCell(entry, this));
+		for(CellEntry cell:cFeed.getEntries()){
+			//getGsCells().add(new GSCell(cell, this));
+			String key = Integer.toString(cell.getCell().getCol());
+			this.childElements.put(key, (C) new GSCell(cell, (GSRow<GSCell>) this));
 		}
 	}
-	
-	
-	public void populateClild(List<CellEntry> cellList) throws IOException, ServiceException{
-		if(this.rowIndex > 0){
-			for(CellEntry cell : cellList){
-				if( cell.getCell().getRow()-1 == this.rowIndex)
-					getGsCells().add(new GSCell(cell, this));
+		
+	/**
+	 * Populate all the child {@link GSCell} of this {@link GSRow} from all available {@link CellEntry} in a {@link WorksheetEntry}
+	 * by wrapping up each valid {@link CellEntry} with a {@link GSCell} 
+	 * 
+	 * @param cellList All cells in a worksheet
+	 * @throws IOException
+	 * @throws ServiceException
+	 */
+	@SuppressWarnings("unchecked")
+	public void populateClild(List<CellEntry> cellList) throws IOException,
+			ServiceException {
+		if (this.elementListIndex > 0) {
+			// iterate over all cells, only cells of corresponding row will be
+			// entered in the child list
+			for (CellEntry cell : cellList) {
+				if (cell.getCell().getRow() == this.elementListIndex) {
+					String key = Integer.toString(cell.getCell().getCol());
+					this.childElements.put( key, (C) new GSCell(cell, (GSRow<GSCell>) this));
+				}
 			}
-		}else{
-			//TODO:
-		}	
-	}
-
-	public IGSElement getParent() {
-		// TODO: this should be the container worksheet 
-		return null;
-	}
-
-	public void setDeleteCandidate() {
-		this.deleteCandidate = true;
-	}
-	
-	public boolean isDeleteCandiddate() {
-		return this.deleteCandidate;
-	}	
-	
-	public List<IGSElement> getChilds() {
-		return this.getGsCells();
-	}
-
-	public void addChildEntry(IGSElement element) {
-		getChilds().add(element);
-	}
-
-	public void deleteChildEntry(String key) {
-		//TODO: need to review this key to index conversion
-		int colIndex = Integer.parseInt(key);
-		if(getChilds().size() >= colIndex){
-			getGsCell(colIndex).setDeleteCandidate();
-			getGsCell(colIndex).setDirty();
-		}	
-	}
-
-	public IGSElement getChildEntry(String key) {
-		//TODO: need to review this key to index conversion
-		int colIndex = Integer.parseInt(key);
-		return getGsCell(colIndex);
-	}
-
-	public void updateChildEntry(String key, IGSElement element) {
-		// TODO Auto-generated method stub
-		int colIndex = Integer.parseInt(key);
-		if(getChilds().size() >= colIndex){
-			element.getChilds().set(colIndex, element);
-		}	
+		} else {
+			// TODO:
+		}
 	}
 	
 }

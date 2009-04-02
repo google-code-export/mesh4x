@@ -1,9 +1,6 @@
 package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.google.gdata.data.spreadsheet.SpreadsheetEntry;
@@ -16,94 +13,68 @@ import com.google.gdata.data.spreadsheet.SpreadsheetEntry;
  * @Version 1.0, 29-03-09
  * 
  */
-public class GSSpreadsheet implements IGSElement{
+public class GSSpreadsheet<C> extends GSBaseElement<C>{
 
 	// MODEL VARIABLES
-	private SpreadsheetEntry spreadsheet; //represents the spreadsheet entry provided by google api
-	private Map<String, GSWorksheet> worksheetList = new LinkedHashMap<String, GSWorksheet>(); //represents the map of worksheets it contains 
-	private boolean dirty = false; //flag represents spreadsheet content changed
-	private boolean deleteCandidate = false; //flag represents this spreadsheet is going to be deleted in next flush operation
-
+	//all moved to base class
 	
 	// BUSINESS METHODS	
 	public GSSpreadsheet(SpreadsheetEntry spreadsheet) {
 		super();
-		this.spreadsheet = spreadsheet;
-		this.worksheetList = new LinkedHashMap<String, GSWorksheet>();
+		this.parentElement = null;
+		this.baseEntry = spreadsheet;
+		this.childElements = new LinkedHashMap<String, C>();
 	}
 
+	/**
+	 * get the core {@link SpreadsheetEntry} object wrapped by this
+	 * {@link GSSpreadsheet}
+	 * @return
+	 */
 	public SpreadsheetEntry getSpreadsheet() {
-		return spreadsheet;
+		return (SpreadsheetEntry) getBaseEntry();
 	}
 
-	public Map<String, GSWorksheet> getWorksheetList() {
-		return worksheetList;
+	/**
+	 * get all child {@link GSWorksheet} of this {@link GSSpreadsheet}
+	 * @return
+	 */
+	public Map<String, C> getGSWorksheets() {
+		return getChildElements();
 	}	
-
-	public IGSElement getParent() {
-		return null;
-	}
 	
-	public void setDeleteCandidate() {
-		this.deleteCandidate = true;
-	}
-	
-	public boolean isDeleteCandiddate() {
-		return this.deleteCandidate;
-	}
-
-	public String getId() {
-		return spreadsheet.getId();
-	}
-
-	public boolean isDirty() {
-		return this.dirty;
+	/**
+	 * get a {@link GSWorksheet} from this {@link GSSpreadsheet} by row index
+	 * @param rowIndex
+	 * @return
+	 */
+	public C getGSWorksheet(int rowIndex) {
+		return getChildElement(Integer.toString(rowIndex));
 	}	
-
-	public void setDirty() {
-		this.dirty = true;
+	
+	/**
+	 * get a {@link GSWorksheet} by key from this {@link GSSpreadsheet} 
+	 * 
+	 * @param key
+	 * @return
+	 */
+	public C getGSWorksheet(String key){
+		return getChildElement(key);
 	}
 	
-	public List<IGSElement> getChilds() {
-		Collection values = worksheetList.values();
-		List childs = new ArrayList(values);			
-		return childs; 		
-	}
-
-	public void addChildEntry(IGSElement element) {
-		element.setDirty();
-		String key = Integer.toString(((GSWorksheet)element).getSheetIndex());
-		this.worksheetList.put(key, (GSWorksheet)element); 
-	}
-
-	public void deleteChildEntry(String key) {
-		this.worksheetList.get(key).setDirty();
-		this.worksheetList.get(key).setDeleteCandidate();
-	}
-
-	public IGSElement getChildEntry(String key) {
-		return this.worksheetList.get(key);
-	}
-
-	public void updateChildEntry(String key, IGSElement element) {
-		element.setDirty();
-		this.worksheetList.put(key, (GSWorksheet)element);
-	}
-
-	public GSWorksheet getGSWorksheet(String sheetName) {
-		for (GSWorksheet gsWorksheet : this.worksheetList.values()) {
-			if (gsWorksheet.getWorksheet().getTitle().getPlainText()
+	/**
+	 * get a {@link GSWorksheet} by sheet name or title
+	 * @param sheetName
+	 * @return
+	 */
+	public C getGSWorksheetBySheetName(String sheetName) {
+		for (C gsWorksheet : getChildElements().values()) {
+			if (((GSWorksheet<?>) gsWorksheet)
+					.getWorksheetEntry().getTitle().getPlainText()
 					.equalsIgnoreCase(sheetName))
 				return gsWorksheet;
 		}
 		return null;
 	}
-
-	public GSWorksheet getGSWorksheet(int sheetIndex) {
-		for (GSWorksheet gsWorksheet : this.worksheetList.values()) {
-			if (gsWorksheet.getSheetIndex() == sheetIndex)
-				return gsWorksheet;
-		}
-		return null;
-	}	
+	
 }
