@@ -7,15 +7,8 @@ import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSCell;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSRow;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSSpreadsheet;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSWorksheet;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.IGSElement;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.*;
 
-
-import com.google.gdata.data.batch.BatchOperationType;
-import com.google.gdata.data.batch.BatchUtils;
 import com.google.gdata.data.spreadsheet.ListEntry;
 import com.google.gdata.data.spreadsheet.SpreadsheetEntry;
 import com.google.gdata.data.spreadsheet.WorksheetEntry;
@@ -84,18 +77,18 @@ public class GoogleSpreadsheetUtilsTests {
 		Assert.assertNotNull(gsCell.getParentRow());		
 		
 		Assert.assertEquals(cellRowIndex - 1, gsCell.getParentRow().getRowIndex());
-		Assert.assertEquals(4, gsCell.getParentRow().getGsCells().size());
+		Assert.assertEquals(4, gsCell.getParentRow().getGSCells().size());
 		
 		//this cell should be the same as the one contained in the child cell list of its parent at position colIndex  
-		Assert.assertEquals(gsCell.getId(), gsCell.getParentRow().getGsCell(cellColIndex).getId());
+		Assert.assertEquals(gsCell.getId(), ((GSCell) gsCell.getParentRow().getGSCell(cellColIndex)).getId());
 		
 		//get the parent row, pick 2 different child/cell, parent row ID of those two child should be same 
-		Assert.assertEquals(gsCell.getParentRow().getGsCell(cellColIndex + 1).getParentRow().getId(),
-				gsCell.getParentRow().getGsCell(cellColIndex - 1).getParentRow().getId());
+		Assert.assertEquals(((GSCell) gsCell.getParentRow().getGSCell(cellColIndex + 1)).getParentRow().getId(),
+				((GSCell) gsCell.getParentRow().getGSCell(cellColIndex - 1)).getParentRow().getId());
 		
 		//get the parent row, pick 2 different child/cell, parent row index of those two child should be same 
-		Assert.assertEquals(gsCell.getParentRow().getGsCell(cellColIndex+1).getParentRow().getRowIndex(),
-				gsCell.getParentRow().getGsCell(cellColIndex - 1).getParentRow().getRowIndex());		
+		Assert.assertEquals(((GSCell) gsCell.getParentRow().getGSCell(cellColIndex+1)).getParentRow().getRowIndex(),
+				((GSCell) gsCell.getParentRow().getGSCell(cellColIndex - 1)).getParentRow().getRowIndex());		
 	}		
 
 	//@Test
@@ -113,8 +106,8 @@ public class GoogleSpreadsheetUtilsTests {
 		Assert.assertNotNull(gsRow);
 		Assert.assertEquals(rowIndex, gsRow.getRowIndex());
 		
-		Assert.assertNotNull(gsRow.getGsCells());
-		Assert.assertTrue(gsRow.getGsCells().size()>0);
+		Assert.assertNotNull(gsRow.getGSCells());
+		Assert.assertTrue(gsRow.getGSCells().size()>0);
 		
 /*		for (String tag : mjRow.getRowEntry().getCustomElements().getTags()) {
 		      //out.print(entry.getCustomElements().getValue(tag)+"\t");
@@ -140,19 +133,19 @@ public class GoogleSpreadsheetUtilsTests {
 
 	@Test
 	public void shouldBatchUpdateCells() throws IOException, ServiceException {
-		GSSpreadsheet ss = getSampleGoogleSpreadsheet();
-		GSWorksheet ws = ss.getGSWorksheet(1); //get the first sheet
+		GSSpreadsheet<GSWorksheet> ss = getSampleGoogleSpreadsheet();
+		GSWorksheet<GSRow> ws = ss.getGSWorksheet(1); //get the first sheet
 		
 		Assert.assertNotNull(ws);		
-		Assert.assertEquals(ws.getId(), ss.getChildEntry("1").getId()); //get the first sheet from another method and check if they are equal
+		Assert.assertEquals(ws.getId(), ss.getChildElement("1").getId()); //get the first sheet from another method and check if they are equal
 		
 		GSCell gsCell_1 = ws.getGSCell(2, 1);
 		gsCell_1.getCellEntry().changeInputValueLocal("GSL-A21");		
-		GoogleSpreadsheetUtils.prepareCellForBatchUpdate(gsCell_1);
+		GoogleSpreadsheetUtils.dumpCellForBatchUpdate(gsCell_1);
 		
 		GSCell gsCell_2 = ws.getGSCell(3, 1);
 		gsCell_2.getCellEntry().changeInputValueLocal("GSL-A21");
-		GoogleSpreadsheetUtils.prepareCellForBatchUpdate(gsCell_2);
+		GoogleSpreadsheetUtils.dumpCellForBatchUpdate(gsCell_2);
 		
 		GoogleSpreadsheetUtils.flush(gss.getService(), ss);		
 	}		
@@ -240,7 +233,7 @@ public class GoogleSpreadsheetUtilsTests {
 	}		
 	
 */	
-	private GSSpreadsheet getSampleGoogleSpreadsheet() {
+	private GSSpreadsheet<GSWorksheet> getSampleGoogleSpreadsheet() {
 		return gss.getGSSpreadsheet();
 	}
 
