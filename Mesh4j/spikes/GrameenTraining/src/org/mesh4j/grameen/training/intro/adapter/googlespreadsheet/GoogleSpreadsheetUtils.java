@@ -10,6 +10,7 @@ import java.util.Map;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSBaseElement;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSCell;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSRow;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSSpreadsheet;
@@ -48,13 +49,17 @@ import com.google.gdata.util.ServiceException;
  */
 public class GoogleSpreadsheetUtils {
 
-	public static void flush(SpreadsheetService service, GSSpreadsheet spreadsheet) {
+	@SuppressWarnings("unchecked")
+	public static void flush(SpreadsheetService service, GSSpreadsheet<GSWorksheet> spreadsheet) {
 
-		for(GSWorksheet worksheet : spreadsheet.getWorksheetList().values()){
-			if(worksheet.isDirty()){				
-				Map<String, IGSElement> updatePool = new LinkedHashMap<String, IGSElement>();
-				Map<String, IGSElement> deletePool = new LinkedHashMap<String, IGSElement>();
-						
+		for (GSWorksheet<GSBaseElement> worksheet : spreadsheet
+				.getChildElements().values()) {
+			if (worksheet.isDirty()) {
+				Map<String, GSBaseElement> updatePool = new LinkedHashMap<String, GSBaseElement>();
+				Map<String, GSBaseElement> deletePool = new LinkedHashMap<String, GSBaseElement>();
+				// used two pool because update and delete operation are
+				// implemented differently
+
 				processElementForFlush(worksheet, updatePool, deletePool);
 				
 				if(updatePool.size() > 0 || deletePool.size() > 0){
@@ -89,7 +94,7 @@ public class GoogleSpreadsheetUtils {
 		}//end for
 	}
 
-	
+
 	/**
 	 * iterate over the whole object graph to identify changed elements of the
 	 * spreadsheet file and transfer them to corresponding pool for
@@ -99,29 +104,32 @@ public class GoogleSpreadsheetUtils {
 	 * @param deletePool 
 	 * @param updatePool 
 	 */
-	private static void processElementForFlush(IGSElement element, Map<String, IGSElement> updatePool, Map<String, IGSElement> deletePool){
-		for(IGSElement subElement : element.getChilds()){
-			if(subElement.isDirty()){
-				if(subElement.isDeleteCandiddate()){
-					//TODO: add subElement to delete pool
+	@SuppressWarnings("unchecked")
+	private static void processElementForFlush(GSBaseElement<GSBaseElement> element,
+			Map<String, GSBaseElement> updatePool,
+			Map<String, GSBaseElement> deletePool) {
+		for (GSBaseElement subElement : element.getChildElements().values()) {
+			if (subElement.isDirty()) {
+				if (subElement.isDeleteCandiddate()) {
+					// add subElement to delete pool
 					deletePool.put(subElement.getId(), subElement);
-				}else{
-					if(subElement instanceof GSCell){
-						//TODO: add subElement to update pool
+				} else {
+					if (subElement instanceof GSCell) {
+						// add subElement to update pool
 						updatePool.put(subElement.getId(), subElement);
-					}else
-						processElementForFlush(element, deletePool, deletePool);
+					} else
+						processElementForFlush(subElement, updatePool, deletePool);
 				}
 			}
 		}
-		
+
 	}
 	
 	/**
 	 * update a cell for batch update
 	 * @param cellToUpdate
 	 */
-	public static void prepareCellForBatchUpdate(GSCell cellToUpdate){
+	public static void dumpCellForBatchUpdate(GSCell cellToUpdate){
 		BatchUtils.setBatchId(cellToUpdate.getCellEntry(), cellToUpdate.getCellEntry().getId());
 		BatchUtils.setBatchOperationType(cellToUpdate.getCellEntry(), BatchOperationType.UPDATE);
 		cellToUpdate.setDirty();
@@ -152,8 +160,6 @@ public class GoogleSpreadsheetUtils {
 		return null;
 	}
 
-	
-	
 	/**
 	 * get a row by row index
 	 * 
@@ -517,11 +523,11 @@ public class GoogleSpreadsheetUtils {
 		SpreadsheetFeed feed = service.getFeed(
 				factory.getSpreadsheetsFeedUrl(), SpreadsheetFeed.class);
 
-		GSSpreadsheet gsSpreadsheet = null;
+		GSSpreadsheet<GSWorksheet> gsSpreadsheet = null;
 		
 		//pickup the specific spreadsheet and build a custom spreadsheet object
 		if(feed.getEntries().size() >= sheetIndex)
-			gsSpreadsheet = new GSSpreadsheet(feed.getEntries().get(sheetIndex));
+			gsSpreadsheet = new GSSpreadsheet<GSWorksheet>(feed.getEntries().get(sheetIndex));
 		
 		return getGSSpreadsheet( factory,
 				 service,  gsSpreadsheet);		
@@ -545,13 +551,13 @@ public class GoogleSpreadsheetUtils {
 		SpreadsheetFeed feed = service.getFeed(
 				factory.getSpreadsheetsFeedUrl(), SpreadsheetFeed.class);
 
-		GSSpreadsheet gssSpreadsheet = null;
+		GSSpreadsheet<GSWorksheet> gssSpreadsheet = null;
 		
 		//pickup the specific spreadsheet and build a custom spreadsheet object
 		for (SpreadsheetEntry ss : feed.getEntries()) {
 			if (ss.getId().substring(ss.getId().lastIndexOf("/") + 1).equals(
 					sheetId)) {
-				gssSpreadsheet = new GSSpreadsheet(ss);
+				gssSpreadsheet = new GSSpreadsheet<GSWorksheet>(ss);
 				break;
 			}
 		}
@@ -572,8 +578,9 @@ public class GoogleSpreadsheetUtils {
 	 * @throws IOException
 	 * @throws ServiceException
 	 */
+	@SuppressWarnings("unchecked")
 	public static GSSpreadsheet getGSSpreadsheet(FeedURLFactory factory,
-			SpreadsheetService service, GSSpreadsheet gsSpreadsheet) throws IOException,
+			SpreadsheetService service, GSSpreadsheet<GSWorksheet> gsSpreadsheet) throws IOException,
 			ServiceException {		
 		
 		//get all worksheets from the spreadsheet
@@ -581,25 +588,33 @@ public class GoogleSpreadsheetUtils {
 		
 		for(WorksheetEntry ws: wsList){
 			//create a custom worksheet object 
-			GSWorksheet gsWorksheet = new GSWorksheet(ws, wsList.indexOf(ws) + 1);
+			GSWorksheet<GSRow> gsWorksheet = new GSWorksheet<GSRow>(
+					ws, wsList.indexOf(ws) + 1, gsSpreadsheet);
 			
 			List<ListEntry> rowList = getAllRows(service, ws); //1 http request
 			List<CellEntry> cellList = getAllCells(service, ws); //1 http request
 			
-			for (ListEntry row : rowList){
-				//create a custom row object and populate its child
-				GSRow gsListEntry = new GSRow(row, rowList.indexOf(row) + 1);
-				gsListEntry.populateClild(cellList);				
+			if( rowList.size() > 0 && cellList.size() > 0 ){
+				//get the header row and put it as the 1st row in the rowlist
+				GSRow<GSCell> gsListHeaderEntry = new GSRow(
+						new ListEntry(), 1, gsWorksheet);
+				gsListHeaderEntry.populateClild(cellList);				
+				gsWorksheet.getChildElements().put(Integer.toString(gsListHeaderEntry.getRowIndex()), gsListHeaderEntry);			
 				
-				//add a row to the custom worksheet object
-				gsWorksheet.getRowList().put(Integer.toString(gsListEntry.getRowIndex()), gsListEntry);
-				//TODO: right now index has been used as key; mjrow.getId() could have used, this need to review
-			}
-			
+				for (ListEntry row : rowList){
+					//create a custom row object and populate its child
+					GSRow<GSCell> gsListEntry = new GSRow(
+							row, rowList.indexOf(row) + 2, gsWorksheet); //+2 because #1 position is occupied by list header entry 
+					gsListEntry.populateClild(cellList);				
+					
+					//add a row to the custom worksheet object
+					gsWorksheet.getChildElements().put(Integer.toString(gsListEntry.getRowIndex()), gsListEntry);
+					//TODO: right now index has been used as key; mjrow.getId() could have used, this need to review
+				}
+			} // if
 			//add a custom worksheet object to the custom spreadsheet object 
-			gsSpreadsheet.getWorksheetList().put(Integer.toString(gsWorksheet.getSheetIndex()), gsWorksheet);
-			//TODO: right now index has been used as key; mjws.getId() could have used. this need to review
-		}		
+			gsSpreadsheet.getChildElements().put(Integer.toString(gsWorksheet.getSheetIndex()),gsWorksheet);
+		} //for		
 		
 		return gsSpreadsheet;
 	}
@@ -725,12 +740,12 @@ public class GoogleSpreadsheetUtils {
 		return null;
 	}
 	
-	public static GSRow getRow(GSWorksheet worksheet,int columnIndex,String cellValue){
-		GSRow row ;
-		for(Map.Entry<String, GSRow> mpRow : worksheet.getRowList().entrySet()){
+	public static GSRow getRow(GSWorksheet<GSRow<GSCell>> worksheet,int columnIndex,String cellValue){
+		GSRow<GSCell> row ;
+		for(Map.Entry<String, GSRow<GSCell>> mpRow : worksheet.getGSRows().entrySet()){
 			 row = mpRow.getValue();
-			if(row.getGsCells().size()>0){
-				GSCell cell = row.getGsCell(columnIndex);
+			if(row.getGSCells().size()>0){
+				GSCell cell = row.getGSCell(columnIndex);
 				String cellContentAsString = cell.getCellEntry().getCell().getValue();
 				if(cellContentAsString != null && !cellContentAsString.equals("")){
 					if(cellContentAsString.equals(cellValue)){
