@@ -6,12 +6,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.dom4j.Element;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSCell;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSRow;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSWorksheet;
 import org.mesh4j.sync.ISyncAware;
 import org.mesh4j.sync.adapters.hibernate.EntityContent;
 import org.mesh4j.sync.adapters.split.IContentAdapter;
 import org.mesh4j.sync.model.IContent;
+import org.mesh4j.sync.utils.DateHelper;
 import org.mesh4j.sync.validations.Guard;
 /**
  * Basically implementation of CRUD operation in google spreadsheet through Mesh4x wrapper
@@ -56,7 +58,9 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 		this.mapper = mapper;
 		this.type = type;
 		//right now we are planning to give the entity name as the title of the each sheet
-		sheetName = workSheet.getWorksheet().getTitle().getPlainText();
+		this.sheetName = workSheet.getWorksheet().getTitle().getPlainText();
+		this.lastUpdateColumnIndex = mapper.getLastUpdateColumnPosition();
+		
 	}
 	
 	@Override
@@ -91,23 +95,42 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 		for(Map.Entry<String,GSRow> rowMap :this.workSheet.getRowList().entrySet()){
 			GSRow gsRow = rowMap.getValue();
 			
-			 for (String columnHeader : gsRow.getRowEntry().getCustomElements().getTags()){
-				 if(columnHeader != null && !columnHeader.equals("")){
-					if(columnHeader.equalsIgnoreCase(lastUpdateColumn)){
-						String columnContent = gsRow.getRowEntry().getCustomElements().getValue(columnHeader);
-						//now convert this 
-						System.out.println("Date is :" + columnContent);
-					}
-				 }
-			 }
+			if(gsRow != null && rowHasChanged(gsRow, since)){
+				Element payLoad = mapper.convertRowToXML(gsRow, workSheet);
+				EntityContent entityContent = new EntityContent(
+						payLoad,this.sheetName,String.valueOf(gsRow.getRowIndex()));
+				listOfAll.add(entityContent);
+			}
+//			 for (String columnHeader : gsRow.getRowEntry().getCustomElements().getTags()){
+//				 if(columnHeader != null && !columnHeader.equals("")){
+//					if(columnHeader.equalsIgnoreCase(lastUpdateColumn)){
+//						String dateTimeAsString = gsRow.getRowEntry().getCustomElements().getValue(columnHeader);
+//						System.out.println("Date is :" + dateTimeAsString);
+//						Date convertedDate = DateHelper.parseDateTime(dateTimeAsString);
+//						isRowChanged(gsRow, convertedDate);
+//						
+//					}
+//				 }
+//			 }
 		}
 		
 		return listOfAll;
 	}
-	private boolean isRowChanged(GSRow row,Date since){
-		//row.get
-		return false;
+	private boolean rowHasChanged(GSRow row,Date since){
+		if(lastUpdateColumnIndex == -1){
+			return true;
+		} else {
+			GSCell cell = row.getGsCell(lastUpdateColumnIndex);
+			if(cell == null){
+				return true;
+			} else {
+				String dateTimeAsString = cell.getCellEntry().getCell().getValue();
+				Date lasUpdateDate = DateHelper.parseDateTime(dateTimeAsString);
+				return since.compareTo(lasUpdateDate) <= 0;
+			}
+		}
 	}
+	
 	@Override
 	public String getType() {
 		return this.type;

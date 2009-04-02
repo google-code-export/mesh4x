@@ -3,15 +3,24 @@ package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSRow;
+import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSCell;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSRow;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSSpreadsheet;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSWorksheet;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.IGSElement;
+import org.mesh4j.sync.adapters.SyncInfo;
+import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
+import org.mesh4j.sync.id.generator.IIdGenerator;
+import org.mesh4j.sync.model.Sync;
+import org.mesh4j.sync.parsers.SyncInfoParser;
+import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
@@ -19,9 +28,7 @@ import com.google.gdata.client.spreadsheet.CellQuery;
 import com.google.gdata.client.spreadsheet.FeedURLFactory;
 import com.google.gdata.client.spreadsheet.ListQuery;
 import com.google.gdata.client.spreadsheet.SpreadsheetService;
-import com.google.gdata.data.Link;
 import com.google.gdata.data.batch.BatchOperationType;
-import com.google.gdata.data.batch.BatchStatus;
 import com.google.gdata.data.batch.BatchUtils;
 import com.google.gdata.data.spreadsheet.CellEntry;
 import com.google.gdata.data.spreadsheet.CellFeed;
@@ -145,6 +152,8 @@ public class GoogleSpreadsheetUtils {
 		return null;
 	}
 
+	
+	
 	/**
 	 * get a row by row index
 	 * 
@@ -709,5 +718,31 @@ public class GoogleSpreadsheetUtils {
 		WorksheetFeed worksheetFeed = service.getFeed(worksheetFeedUrl,
 				WorksheetFeed.class);
 		return worksheetFeed.getEntries().get(sheetIndex);
-	}	
+	}
+	
+	public Date getDate(String dateString){
+		
+		return null;
+	}
+	
+	public static GSRow getRow(GSWorksheet worksheet,int columnIndex,String cellValue){
+		GSRow row ;
+		for(Map.Entry<String, GSRow> mpRow : worksheet.getRowList().entrySet()){
+			 row = mpRow.getValue();
+			if(row.getGsCells().size()>0){
+				GSCell cell = row.getGsCell(columnIndex);
+				String cellContentAsString = cell.getCellEntry().getCell().getValue();
+				if(cellContentAsString != null && !cellContentAsString.equals("")){
+					if(cellContentAsString.equals(cellValue)){
+						//comparision is successful so, the desired sync info row
+						//is current row
+						 return row;
+					}
+				} 
+			}
+		}
+		return null;
+	}
+	
+	
 }
