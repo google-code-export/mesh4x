@@ -11,7 +11,7 @@ import com.google.gdata.util.AuthenticationException;
 
 
 
-public class GoogleSpreadsheet{
+public class GoogleSpreadsheet implements IGoogleSpreadSheet{
 
 	// MODEL VARIABLES
 	private String spreadsheetFileId;
