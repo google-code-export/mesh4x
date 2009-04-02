@@ -1,15 +1,12 @@
 package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.dom4j.Document;
-import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSCell;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSRow;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSWorksheet;
 import org.mesh4j.sync.ISyncAware;
@@ -64,6 +61,8 @@ public class GoogleSpreadSheetSyncRepository implements ISyncRepository,ISyncAwa
 	
 	@Override
 	public SyncInfo get(String syncId) {
+		Guard.argumentNotNullOrEmptyString(syncId, "syncId");
+		
 		GSRow row ;
 		int syncIdIndex = 1;
 		row = GoogleSpreadsheetUtils.getRow(workSheet,syncIdIndex,syncId);
@@ -79,6 +78,8 @@ public class GoogleSpreadSheetSyncRepository implements ISyncRepository,ISyncAwa
 	
 	@Override
 	public List<SyncInfo> getAll(String entityName) {
+		Guard.argumentNotNullOrEmptyString(entityName, "entityName");
+		
 		List<SyncInfo> listOfAll = new LinkedList<SyncInfo>();
 		
 		for(Map.Entry<String, GSRow> mapRow : workSheet.getRowList().entrySet()){
@@ -100,6 +101,8 @@ public class GoogleSpreadSheetSyncRepository implements ISyncRepository,ISyncAwa
 
 	@Override
 	public void save(SyncInfo syncInfo) {
+		Guard.argumentNotNull(syncInfo, "syncInfo");
+		
 		GSRow row = this.workSheet.getGSRow(Integer.parseInt(syncInfo.getSyncId()));
 		if(row == null){
 			addRow(syncInfo);
@@ -122,14 +125,12 @@ public class GoogleSpreadSheetSyncRepository implements ISyncRepository,ISyncAwa
 	
 	@Override
 	public void beginSync() {
-		// TODO Auto-generated method stub
-		
+		this.spreadSheet.setDirty();
 	}
 
 	@Override
 	public void endSync() {
-		// TODO Auto-generated method stub
-		
+		this.spreadSheet.flush();
 	}
 	
 	private SyncInfo convertRowToSyncInfo(GSRow row){

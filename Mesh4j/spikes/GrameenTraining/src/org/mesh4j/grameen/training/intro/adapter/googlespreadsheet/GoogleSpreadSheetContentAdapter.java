@@ -89,7 +89,6 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 	@Override
 	public List<IContent> getAll(Date since) {
 		Guard.argumentNotNull(since, "content");
-		String lastUpdateColumn = mapper.getLastUpdateColumnName();
 		
 		List<IContent> listOfAll = new LinkedList<IContent>();
 		for(Map.Entry<String,GSRow> rowMap :this.workSheet.getRowList().entrySet()){
@@ -139,6 +138,7 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 	@Override
 	public void save(IContent content) {
 		Guard.argumentNotNull(content, "content");
+		
 		EntityContent entityContent = EntityContent.normalizeContent(content, this.sheetName, idColumnName);
 		//now find out the row from the spreadsheet
 		//here entity id is row index of the each row,since google spreadsheet has row index 
@@ -164,15 +164,15 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 		GSRow row = this.mapper.convertXMLElementToRow(entityContent.getPayload(), rowIndex);
 		this.workSheet.updateChildEntry(entityContent.getId(), row);
 	}
+	
 	@Override
 	public void beginSync() {
-		
-		
+		this.spreadSheet.setDirty();
 	}
+	
 	@Override
 	public void endSync() {
-		
-		
+		this.spreadSheet.flush();
 	}
 
 }

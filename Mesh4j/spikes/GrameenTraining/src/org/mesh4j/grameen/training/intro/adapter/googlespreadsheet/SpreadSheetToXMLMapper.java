@@ -19,7 +19,9 @@ public class SpreadSheetToXMLMapper implements ISpreadSheetToXMLMapper{
 
 	private String idColumnName = "";
 	private String lastUpdateColumnName = "";
+	private int lastUpdateColumnPosition = -1;
 	
+	@Deprecated
 	public SpreadSheetToXMLMapper(String idColumnName,String lastUpdateColumnName){
 		Guard.argumentNotNullOrEmptyString(idColumnName, "idColumnName");
 		Guard.argumentNotNullOrEmptyString(lastUpdateColumnName, "lastUpdateColumnName");
@@ -27,8 +29,17 @@ public class SpreadSheetToXMLMapper implements ISpreadSheetToXMLMapper{
 		this.lastUpdateColumnName = lastUpdateColumnName;
 	}
 	
+	public SpreadSheetToXMLMapper(String idColumnName,int lastUpdateColumnPosition){
+		Guard.argumentNotNullOrEmptyString(idColumnName, "idColumnName");
+		Guard.argumentNotNullOrEmptyString(lastUpdateColumnName, "lastUpdateColumnName");
+		this.idColumnName = idColumnName;
+		this.lastUpdateColumnPosition = lastUpdateColumnPosition;
+	}
+	
 	@Override
 	public Element convertRowToXML(GSRow gsRow, GSWorksheet worksheet) {
+		Guard.argumentNotNull(gsRow, "gsRow");
+		Guard.argumentNotNull(worksheet, "worksheet");
 		
 		Element rootElement = DocumentHelper.createElement(worksheet.getName());
 		
@@ -51,6 +62,7 @@ public class SpreadSheetToXMLMapper implements ISpreadSheetToXMLMapper{
 
 	@Override
 	public GSRow convertXMLElementToRow(Element element, int rowIndex) {
+		Guard.argumentNotNull(element, "element");
 		
 		Element child;
 		ListEntry newRowEntry = new ListEntry();
@@ -75,8 +87,7 @@ public class SpreadSheetToXMLMapper implements ISpreadSheetToXMLMapper{
 
 	@Override
 	public int getLastUpdateColumnPosition() {
-		// TODO Auto-generated method stub
-		return 0;
+		return this.lastUpdateColumnPosition;
 	}
 
 	
