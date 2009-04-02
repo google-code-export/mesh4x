@@ -10,13 +10,14 @@ import com.google.gdata.client.spreadsheet.SpreadsheetService;
 import com.google.gdata.util.AuthenticationException;
 
 
-public class GoogleSpreadsheet implements IGoogleSpreadSheet{
+
+public class GoogleSpreadsheet{
 
 	// MODEL VARIABLES
 	private String spreadsheetFileId;
 	private String username;
 	private String password;
-	private GSSpreadsheet spreadsheet;
+	private GSSpreadsheet<GSWorksheet> spreadsheet;
 	
 	private SpreadsheetService service;
 	private FeedURLFactory factory;
@@ -128,7 +129,7 @@ public class GoogleSpreadsheet implements IGoogleSpreadSheet{
 	 * @return
 	 */
 	public GSWorksheet getGSWorksheet(String sheetName) {
-		return this.spreadsheet.getGSWorksheet(sheetName);
+		return this.spreadsheet.getGSWorksheetBySheetName(sheetName);
 	}	
 
 	/**
