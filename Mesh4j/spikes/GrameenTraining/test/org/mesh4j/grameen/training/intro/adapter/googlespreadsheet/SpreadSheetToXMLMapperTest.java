@@ -6,6 +6,7 @@ import junit.framework.Assert;
 
 import org.dom4j.Element;
 import org.junit.Test;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSCell;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSRow;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSWorksheet;
 import org.mesh4j.sync.utils.XMLHelper;
@@ -23,10 +24,10 @@ public class SpreadSheetToXMLMapperTest {
 		
 		//put your user name and password
 		IGoogleSpreadSheet spreadsheet = new GoogleSpreadsheet("pTOwHlskRe06LOcTpClQ-Bw","saiful.raju@gmail.com","");
-		for(Map.Entry<String, GSWorksheet> spSheet : spreadsheet.getGSSpreadsheet().getWorksheetList().entrySet()){
+		for(Map.Entry<String, GSWorksheet<GSRow<GSCell>>> spSheet : spreadsheet.getGSSpreadsheet().getGSWorksheets().entrySet()){
 			String key = spSheet.getKey();
-			GSWorksheet workSheet = spSheet.getValue();
-			for(Map.Entry<String, GSRow> gsRowMap :workSheet.getRowList().entrySet()){
+			GSWorksheet<GSRow<GSCell>> workSheet = spSheet.getValue();
+			for(Map.Entry<String, GSRow<GSCell>> gsRowMap :workSheet.getGSRows().entrySet()){
 				GSRow row = gsRowMap.getValue();
 //				System.out.println("id "+row.getId());
 //				System.out.println("index "+ row.getRowIndex());
@@ -46,9 +47,8 @@ public class SpreadSheetToXMLMapperTest {
 		
 		//put your user name and password
 		SpreadSheetToXMLMapper mapper = new SpreadSheetToXMLMapper("id","lastupdateColumnName");
-		GoogleSpreadsheet spreadsheet = new GoogleSpreadsheet("pTOwHlskRe06LOcTpClQ-Bw","saiful.raju@gmail.com","");
-		
-		for(Map.Entry<String, GSWorksheet> spSheetMpa : spreadsheet.getGSSpreadsheet().getWorksheetList().entrySet()){
+		IGoogleSpreadSheet spreadsheet = new GoogleSpreadsheet("pTOwHlskRe06LOcTpClQ-Bw","saiful.raju@gmail.com","");
+		for(Map.Entry<String, GSWorksheet<GSRow<GSCell>>> spSheetMpa : spreadsheet.getGSSpreadsheet().getGSWorksheets().entrySet()){
 			GSWorksheet workSheet = spSheetMpa.getValue();
 			GSRow row = mapper.convertXMLElementToRow(payLoad, 1);
 			Element xmlElement = mapper.convertRowToXML(row, workSheet);
