@@ -11,8 +11,8 @@ import org.mesh4j.geo.coder.GoogleGeoCoder;
 import org.mesh4j.geo.coder.IGeoCoder;
 import org.mesh4j.sync.adapters.kml.timespan.decorator.IKMLGenerator;
 import org.mesh4j.sync.adapters.kml.timespan.decorator.IKMLGeneratorFactory;
-import org.mesh4j.sync.payload.mappings.IMappingResolver;
-import org.mesh4j.sync.payload.mappings.MappingResolver;
+import org.mesh4j.sync.payload.mappings.IMapping;
+import org.mesh4j.sync.payload.mappings.Mapping;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
@@ -37,7 +37,7 @@ public class KmlGeneratorFactory implements IKMLGeneratorFactory {
 
 	@Override
 	public IKMLGenerator createKMLGenereator(String sourceName) {
-		IMappingResolver mappingResolver = createMappingResolver(sourceName, this.baseDirectory, this.geoCoderKey);
+		IMapping mappingResolver = createMappingResolver(sourceName, this.baseDirectory, this.geoCoderKey);
 		return new KmlGenerator(this.templateFileName, mappingResolver);
 	}
 	
@@ -45,7 +45,7 @@ public class KmlGeneratorFactory implements IKMLGeneratorFactory {
 		return new GoogleGeoCoder(geoCoderKey);
 	}
 	
-	public static MappingResolver createMappingResolver(String alias, String baseDirectory, String geoCoderKey){
+	public static Mapping createMappingResolver(String alias, String baseDirectory, String geoCoderKey){
 		String mappingsFileName = baseDirectory + "/" + alias + "_mappings.xml";
 		File mappingFile = new File(mappingsFileName);
 		if(!mappingFile.exists()){
@@ -61,7 +61,7 @@ public class KmlGeneratorFactory implements IKMLGeneratorFactory {
 			GeoCoderLatitudePropertyResolver propertyResolverLat = new GeoCoderLatitudePropertyResolver(geoCoder);
 			GeoCoderLongitudePropertyResolver propertyResolverLon = new GeoCoderLongitudePropertyResolver(geoCoder);
 			GeoCoderLocationPropertyResolver propertyResolverLoc = new GeoCoderLocationPropertyResolver(geoCoder);
-			MappingResolver mappingResolver = new MappingResolver(mappings, propertyResolverLat, propertyResolverLon, propertyResolverLoc);
+			Mapping mappingResolver = new Mapping(mappings, propertyResolverLat, propertyResolverLon, propertyResolverLoc);
 			return mappingResolver;
 		} catch (Exception e) {
 			throw new MeshException(e);

@@ -7,8 +7,6 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.text.MessageFormat;
 
-import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
-
 public class MappingGenerator {
 	
 //	public static void createMapping(IRDFSchema rdfSchema, String idColumnName, String mappingFileName) throws Exception{

@@ -16,6 +16,7 @@ import org.mesh4j.sync.utils.XMLHelper;
 
 public class RssSyndicationFormat implements ISyndicationFormat {
 
+	// CONSTANTS
 	public static final String NAME = "rss20";
 	public static final String RSS_ELEMENT_ROOT = "rss";
 	public static final String RSS_ELEMENT_ITEM = "item";
@@ -32,6 +33,12 @@ public class RssSyndicationFormat implements ISyndicationFormat {
 
 	public static final RssSyndicationFormat INSTANCE = new RssSyndicationFormat();
 
+	// BUSINESS METHODS
+	
+	private RssSyndicationFormat(){
+		super();
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Element> getRootElements(Element root) {

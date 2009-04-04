@@ -5,7 +5,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.mesh4j.sync.adapters.ISyncAdapterFactory;
+import org.mesh4j.sync.adapters.feed.ContentReader;
+import org.mesh4j.sync.adapters.feed.ContentWriter;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.security.IIdentityProvider;
 
 public class HttpSyncAdapterFactory implements ISyncAdapterFactory {
@@ -21,7 +24,7 @@ public class HttpSyncAdapterFactory implements ISyncAdapterFactory {
 
 	@Override
 	public HttpSyncAdapter createSyncAdapter(String sourceAlias, String sourceDefinition, IIdentityProvider identityProvider) throws Exception {
-		return new HttpSyncAdapter(sourceDefinition, RssSyndicationFormat.INSTANCE, identityProvider);
+		return new HttpSyncAdapter(sourceDefinition, RssSyndicationFormat.INSTANCE, identityProvider, IdGenerator.INSTANCE, ContentWriter.INSTANCE, ContentReader.INSTANCE);
 	}
 
 	@Override

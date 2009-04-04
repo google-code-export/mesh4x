@@ -17,7 +17,6 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
-import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.mesh4j.sync.IFilter;
 import org.mesh4j.sync.ISupportMerge;
@@ -25,12 +24,16 @@ import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.feed.Feed;
 import org.mesh4j.sync.adapters.feed.FeedReader;
 import org.mesh4j.sync.adapters.feed.FeedWriter;
+import org.mesh4j.sync.adapters.feed.IContentReader;
+import org.mesh4j.sync.adapters.feed.IContentWriter;
 import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.filter.ConflictsFilter;
 import org.mesh4j.sync.filter.NullFilter;
 import org.mesh4j.sync.filter.SinceLastUpdateFilter;
-import org.mesh4j.sync.id.generator.IdGenerator;
+import org.mesh4j.sync.id.generator.IIdGenerator;
 import org.mesh4j.sync.model.Item;
+import org.mesh4j.sync.payload.mappings.IMapping;
+import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.translator.MessageTranslator;
 import org.mesh4j.sync.utils.DateHelper;
@@ -50,18 +53,22 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 	private FeedWriter feedWriter;
 	
 	// BUSINESS METHODS
-	public HttpSyncAdapter(String url, ISyndicationFormat syndicationFormat, IIdentityProvider identityProvider){
+	public HttpSyncAdapter(String url, ISyndicationFormat syndicationFormat, IIdentityProvider identityProvider, 
+			IIdGenerator idGenerator, IContentWriter contentWriter, IContentReader contentReader){
 		Guard.argumentNotNullOrEmptyString(url, "url");
 		Guard.argumentNotNull(syndicationFormat, "syndicationFormat");
 		Guard.argumentNotNull(identityProvider, "identityProvider");
+		Guard.argumentNotNull(idGenerator, "idGenerator");
+		Guard.argumentNotNull(contentReader, "contentReader");
+		Guard.argumentNotNull(contentWriter, "contentWriter");
 		
 		try {
 			this.url = new URL(url);
 		} catch (MalformedURLException e) {
 			throw new MeshException(e);
 		}
-		this.feedReader = new FeedReader(syndicationFormat, identityProvider, IdGenerator.INSTANCE);
-		this.feedWriter = new FeedWriter(syndicationFormat, identityProvider);
+		this.feedReader = new FeedReader(syndicationFormat, identityProvider, idGenerator, contentReader);
+		this.feedWriter = new FeedWriter(syndicationFormat, identityProvider, contentWriter);
 	}
 
 	@Override
@@ -70,7 +77,7 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 			Feed feed = new Feed(items);
 			String xml = feedWriter.writeAsXml(feed);
 			
-			String result = this.doPOST(xml, "text/xml");
+			String result = doPOST(this.url, xml, "text/xml");
 			
 			feed = feedReader.read(result);
 			return feed.getItems();
@@ -123,7 +130,7 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 					}
 				}
 			}
-		} catch (DocumentException e) {
+		} catch (Exception e) {
 			Logger.error(e.getMessage(), e);
 			throw new MeshException(e);
 		}
@@ -171,7 +178,7 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 		return result;
 	}
 
-	private String readData(HttpURLConnection conn) throws Exception {
+	private static String readData(HttpURLConnection conn) throws Exception {
 		InputStream is = null;
 	
 		try{
@@ -213,11 +220,11 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 		return result.toString();
 	}
 	
-	public String doPOST(String content, String contentType){
+	public static String doPOST(URL url, String content, String contentType){
 	    HttpURLConnection conn = null;
 	    String result = null;
 	    try{ 
-	    	conn = (HttpURLConnection) this.url.openConnection();
+	    	conn = (HttpURLConnection) url.openConnection();
 			writeData(content, contentType, conn);		    
 		    result = readData(conn);
 	    } catch(Exception e){
@@ -231,7 +238,7 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 	    return result;
 	}
 
-	private void writeData(String content, String contentType, HttpURLConnection conn) throws Exception {
+	private static void writeData(String content, String contentType, HttpURLConnection conn) throws Exception {
 		conn.setDoOutput(true);
 		conn.setUseCaches(false);
 		conn.setRequestMethod("POST");
@@ -275,11 +282,12 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 		throw new UnsupportedOperationException();
 	}
 
-	public String getSchema() {
+	public static String getSchema(String url) {
 		String result = null;
 		HttpURLConnection conn = null;
 	    try{
-	    	String urlSchemaString = this.url.getProtocol() + "://"+ this.url.getHost() +":"+ this.url.getPort()+ this.url.getPath()+ "/" + "schema";
+	    	URL baseURL = new URL(url);
+	    	String urlSchemaString = baseURL.getProtocol() + "://"+ baseURL.getHost() +":"+ baseURL.getPort()+ baseURL.getPath()+ "/" + "schema";
 	    	
 	    	URL urlSchema = new URL(urlSchemaString);
 			conn = (HttpURLConnection) urlSchema.openConnection();
@@ -305,11 +313,12 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 		return result;
 	}
 
-	public String getMappings() {
+	public static String getMappings(String url) {
 		String result = null;
 		HttpURLConnection conn = null;
 	    try{
-	    	String urlMappingsString = this.url.getProtocol() + "://"+ this.url.getHost() +":"+ this.url.getPort()+ this.url.getPath()+ "/" + "mappings";
+	    	URL baseURL = new URL(url);
+	    	String urlMappingsString = baseURL.getProtocol() + "://"+ baseURL.getHost() +":"+ baseURL.getPort()+ baseURL.getPath()+ "/" + "mappings";
 	    	
 	    	URL urlMappings = new URL(urlMappingsString);
 			conn = (HttpURLConnection) urlMappings.openConnection();
@@ -343,17 +352,24 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 		return url + "/schema";
 	}
 
-	public void uploadMeshDefinition(String sourceId, String format, String description, String schema, String mappings) {
+	public static void uploadMeshDefinition(String url, String sourceId, String format, String description, ISchema schema, IMapping mappings) {
 		try{
-			String content = makeMeshDefinitionContent(sourceId, format, description, schema, mappings);
-			doPOST(content, "application/x-www-form-urlencoded");
+			URL baseURL = new URL(url);
+			
+			String content = makeMeshDefinitionContent(
+					sourceId, 
+					format, 
+					description, 
+					schema == null ? "" : schema.asXMLText(), 
+					mappings == null ? "" : mappings.asXMLText());
+			doPOST(baseURL, content, "application/x-www-form-urlencoded");
 		} catch (Exception e) {
 			Logger.error(e.getMessage(), e); 
 			throw new MeshException(e);
 		}
 	}
 
-	private String makeMeshDefinitionContent(String sourceId,
+	private static String makeMeshDefinitionContent(String sourceId,
 			String format, String description, String schema, String mappings) throws UnsupportedEncodingException {
 		
 		StringBuffer sb = new StringBuffer();

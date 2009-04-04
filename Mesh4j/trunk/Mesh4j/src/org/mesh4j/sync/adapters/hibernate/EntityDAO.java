@@ -36,7 +36,7 @@ public class EntityDAO {
 
 	public void save(EntityContent entity) throws Exception {
 		Session session = getSession();
-		session.saveOrUpdate(this.mapping.convertXMLToRow(entity.getId(), entity.getPayload().createCopy()));
+		session.saveOrUpdate(this.mapping.convertXMLToRow(entity.getPayload().createCopy()));
 	}
 
 	public void delete(EntityContent entity) {
@@ -53,7 +53,7 @@ public class EntityDAO {
 
 	public void update(EntityContent entity) throws Exception {
 		Session session = getSession();
-		session.saveOrUpdate(this.mapping.convertXMLToRow(entity.getId(), entity.getPayload().createCopy()));
+		session.saveOrUpdate(this.mapping.convertXMLToRow(entity.getPayload().createCopy()));
 	}
 
 	@SuppressWarnings("unchecked")

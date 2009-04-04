@@ -4,25 +4,38 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
+import org.mesh4j.sync.payload.schema.ISchema;
+import org.mesh4j.sync.payload.schema.ISchemaTypeFormat;
 import org.mesh4j.sync.utils.XMLHelper;
+import org.mesh4j.sync.validations.Guard;
+import org.mesh4j.sync.validations.MeshException;
 
+import com.hp.hpl.jena.datatypes.RDFDatatype;
+import com.hp.hpl.jena.datatypes.TypeMapper;
 import com.hp.hpl.jena.datatypes.xsd.XSDDateTime;
 import com.hp.hpl.jena.ontology.DatatypeProperty;
 import com.hp.hpl.jena.ontology.Individual;
 import com.hp.hpl.jena.ontology.OntModel;
+import com.hp.hpl.jena.ontology.OntResource;
 import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
+import com.hp.hpl.jena.shared.JenaException;
+import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 import com.hp.hpl.jena.vocabulary.RDF;
 
 public class RDFInstance {
 	
+	private final static Log LOGGER = LogFactory.getLog(RDFInstance.class);
+		
 	// MODEL VARIABLES
 	private RDFSchema schema;
 	
@@ -31,20 +44,87 @@ public class RDFInstance {
 	
 	// BUSINESS MODEL
 
-	protected RDFInstance(RDFSchema schema, String id) {
-		super();		
+	private RDFInstance(RDFSchema schema){		
+		Guard.argumentNotNull(schema, "schema");
 		initializeBaseModel(schema);		
-		this.domainObject = model.createIndividual(id, schema.getDomainClass());
-		
 	}
 	
-	protected RDFInstance(RDFSchema schema, String id, String rdfXml) {
-		super();		
-		initializeBaseModel(schema);
+	protected RDFInstance(RDFSchema schema, String id) {
+		this(schema);		
+		Guard.argumentNotNullOrEmptyString(id, "id");
+		
+		if(!(id.startsWith("http:") || id.startsWith("uri:urn:"))){
+			Guard.throwsArgumentException("id", id);	
+		}
+		
+		this.domainObject = model.createIndividual(id, schema.getDomainClass());
+	}
+	
+	protected static RDFInstance buildFromRDFXml(RDFSchema schema, String rdfXml) {
+		Guard.argumentNotNullOrEmptyString(rdfXml, "rdfXml");
+		
+		RDFInstance instance = new RDFInstance(schema);		
 
 		StringReader sr = new StringReader(rdfXml);
-		model.read(sr, "");		
-		this.domainObject = model.getIndividual(id);	
+		try{
+			instance.model.read(sr, "");
+		}catch (JenaException e) {
+			throw new MeshException(e);
+		}
+		
+		ExtendedIterator it = instance.model.listIndividuals(schema.getDomainClass());
+		if(it.hasNext()){
+			instance.domainObject = (Individual)it.next();
+		} else {
+			Guard.throwsArgumentException("rdfXml");
+		}
+		return instance;
+	}
+	
+	protected static RDFInstance buildFromPlainXML(RDFSchema rdfSchema, String id, String plainXML, Map<String, ISchemaTypeFormat> typeFormats){
+		Guard.argumentNotNull(rdfSchema, "rdfSchema");
+		Guard.argumentNotNullOrEmptyString(id, "id");
+		Guard.argumentNotNullOrEmptyString(plainXML, "plainXML");
+		Guard.argumentNotNull(typeFormats, "typeFormats");
+		
+		Element element = XMLHelper.parseElement(plainXML);
+		
+		RDFInstance instance = new RDFInstance(rdfSchema, "uri:urn:"+id);
+		
+		Element fieldElement;
+		String fieldValue;
+		String dataTypeName;
+		
+		DatatypeProperty dataTypeProperty;
+		ExtendedIterator it = rdfSchema.getOWLSchema().listDatatypeProperties();
+		while(it.hasNext()){
+			dataTypeProperty = (DatatypeProperty)it.next();
+
+			dataTypeName = dataTypeProperty.getLocalName();
+			
+			fieldElement = element.element(dataTypeName);
+			if(fieldElement != null){
+				fieldValue = fieldElement.getText();
+				
+				OntResource range = dataTypeProperty.getRange();
+				ISchemaTypeFormat format = typeFormats.get(range.getURI());
+				if(format != null){
+					try{
+						instance.setProperty(dataTypeName, format.parseObject(fieldValue));
+					} catch (Exception e) {
+						LOGGER.error(e.getMessage(), e);
+					}
+				}else {
+					RDFDatatype dataType = TypeMapper.getInstance().getTypeByName(range.getURI());
+					if(dataType.isValid(fieldValue)){
+						instance.setProperty(dataTypeName, dataType.cannonicalise(dataType.parse(fieldValue)));
+					} else {
+						LOGGER.info("RDF: invalid value. Property: " + dataTypeName + " Type: " + dataType.getURI() + " value: " + fieldValue);
+					}
+				}
+			}
+		}
+		return instance;
 	}
 	
 	private void initializeBaseModel(RDFSchema schema) {
@@ -87,9 +167,12 @@ public class RDFInstance {
 		return XMLHelper.canonicalizeXML(sw.toString());
 	}
 
-	public String asPlainXML(String idColumnName) throws Exception {
+	public String asPlainXML() {
+		return asPlainXML(ISchema.EMPTY_FORMATS);
+	}
+	
+	public String asPlainXML(Map<String, ISchemaTypeFormat> typeFormats) {
 
-		boolean idWasExported = false;
 		StringBuffer sb = new StringBuffer();
 
 		sb.append("<");
@@ -102,29 +185,25 @@ public class RDFInstance {
 		while(it.hasNext()){
 			statement = it.nextStatement();
 			
-			Resource subject = statement.getSubject();
+			//Resource subject = statement.getSubject();
 			Property predicate = statement.getPredicate();
 			RDFNode object = statement.getObject();
 			
-			 if(RDF.type.getURI().equals(predicate.getURI())){
-				 if(!idWasExported){
-					 String fieldValue = subject.getURI().substring(0, "uri:urn:".length());
-					 writePlainXMLProperty(sb, idColumnName, fieldValue);				 
-					 idWasExported = true;
-				 }
-			 } else {
+			 if(!RDF.type.getURI().equals(predicate.getURI())){
 	            String fieldName = predicate.getLocalName();
 	            Literal literal = (Literal) object;
 	            Object fieldValue = literal.getValue();
-
-	            if(fieldName.equals(idColumnName)){
-	            	if(!idWasExported){
-	            		writePlainXMLProperty(sb, fieldName, fieldValue);
-	            		idWasExported = true;
+	            
+	            ISchemaTypeFormat format = typeFormats.get(literal.getDatatypeURI());
+	            if(format != null){
+	            	if(fieldValue instanceof XSDDateTime){
+	            		fieldValue = format.format(((XSDDateTime)fieldValue).asCalendar().getTime());
+	            	} else {
+	            		fieldValue = format.format(fieldValue);
 	            	}
-	            }else{
-	            	writePlainXMLProperty(sb, fieldName, fieldValue);
 	            }
+	            
+           		writePlainXMLProperty(sb, fieldName, fieldValue);
 			 }
 		}
 		

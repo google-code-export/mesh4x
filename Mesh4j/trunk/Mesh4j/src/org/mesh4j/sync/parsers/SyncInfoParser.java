@@ -4,6 +4,8 @@ import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.mesh4j.sync.adapters.SyncInfo;
+import org.mesh4j.sync.adapters.feed.ContentReader;
+import org.mesh4j.sync.adapters.feed.ContentWriter;
 import org.mesh4j.sync.adapters.feed.FeedReader;
 import org.mesh4j.sync.adapters.feed.FeedWriter;
 import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
@@ -54,7 +56,7 @@ public class SyncInfoParser {
 		Element syncData = syncInfoElement.element(SYNC_INFO_ATTR_SYNC_DATA);
 		Element syncElement = DocumentHelper.parseText(syncData.getText()).getRootElement();
 		
-		FeedReader reader = new FeedReader(this.format, this.identityProvider, this.idGenerator);
+		FeedReader reader = new FeedReader(this.format, this.identityProvider, this.idGenerator, ContentReader.INSTANCE);
 		Sync sync = reader.readSync(syncElement);
 		return sync;
 	}
@@ -64,7 +66,7 @@ public class SyncInfoParser {
 	}
 	
 	public static Sync convertSyncElement2Sync(Element syncElement, ISyndicationFormat format, IIdentityProvider identityProvider, IIdGenerator idGenerator){
-		FeedReader reader = new FeedReader(format, identityProvider, idGenerator);
+		FeedReader reader = new FeedReader(format, identityProvider, idGenerator, ContentReader.INSTANCE);
 		Sync sync = reader.readSync(syncElement);
 		return sync;
 	}
@@ -88,7 +90,7 @@ public class SyncInfoParser {
 	}
 	
 	public static Element convertSync2Element(Sync sync, ISyndicationFormat format, IIdentityProvider identityProvider) {
-		FeedWriter writer = new FeedWriter(format, identityProvider);
+		FeedWriter writer = new FeedWriter(format, identityProvider, ContentWriter.INSTANCE);
 		Element syncData = DocumentHelper.createElement(ISyndicationFormat.ELEMENT_PAYLOAD);
 		syncData.addNamespace(ISyndicationFormat.SX_PREFIX, ISyndicationFormat.NAMESPACE);
 		writer.writeSync(syncData, sync);
@@ -99,7 +101,7 @@ public class SyncInfoParser {
 	}
 	
 	public String convertSync2XML(Sync sync) {
-		FeedWriter writer = new FeedWriter(this.format, this.identityProvider);
+		FeedWriter writer = new FeedWriter(this.format, this.identityProvider, ContentWriter.INSTANCE);
 		Element syncData = DocumentHelper.createElement(RssSyndicationFormat.ELEMENT_PAYLOAD);
 		syncData.addNamespace(RssSyndicationFormat.SX_PREFIX, RssSyndicationFormat.NAMESPACE);
 		writer.writeSync(syncData, sync);

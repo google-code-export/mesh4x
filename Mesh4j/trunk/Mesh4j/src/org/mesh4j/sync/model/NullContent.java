@@ -2,7 +2,6 @@ package org.mesh4j.sync.model;
 
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.validations.Guard;
 
 
@@ -50,17 +49,6 @@ public class NullContent implements IContent {
 		return id;
 	}
 	
-	@Override
-	public void addToFeedPayload(Sync sync, Element itemElement, ISyndicationFormat format){
-		if(sync.isDeleted()){
-			format.addFeedItemTitleElement(itemElement, "--DELETED--");
-		} else {
-			format.addFeedItemTitleElement(itemElement, "--UNKNOWN--");
-		}
-		
-		format.addFeedItemDescriptionElement(itemElement, "Id: " + this.getId() + " version: " + this.getVersion());	
-	}
-
 	@Override
 	public int getVersion() {
 		return this.getPayload().asXML().hashCode();

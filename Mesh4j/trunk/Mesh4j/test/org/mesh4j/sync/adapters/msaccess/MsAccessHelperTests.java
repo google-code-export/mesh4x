@@ -19,16 +19,18 @@ public class MsAccessHelperTests {
 	@Test
 	public void executeSync() throws Exception{
 
-		ISyncAdapter syncAdapterA = MsAccessSyncAdapterFactory.createSyncAdapterFromFile(
-			TestHelper.baseDirectoryRootForTest() + "ms-access\\epiinfo\\test1\\epiinfo.mdb", 
-			"Oswego", 
-			TestHelper.baseDirectoryRootForTest() + "ms-access\\epiinfo\\test1");
-			
-		ISyncAdapter syncAdapterB = MsAccessSyncAdapterFactory.createSyncAdapterFromFile(
-				TestHelper.baseDirectoryRootForTest() + "ms-access\\epiinfo\\test2\\epiinfo.mdb", 
-			"Oswego", 
-			TestHelper.baseDirectoryRootForTest() + "ms-access\\epiinfo\\test2");
+		MsAccessSyncAdapterFactory factory = new MsAccessSyncAdapterFactory(TestHelper.baseDirectoryRootForTest() + "ms-access\\epiinfo\\test1", null);
 		
+		ISyncAdapter syncAdapterA = factory.createSyncAdapterFromFile(
+			"Oswego",
+			TestHelper.baseDirectoryRootForTest() + "ms-access\\epiinfo\\test1\\epiinfo.mdb", 
+			"Oswego");
+			
+		ISyncAdapter syncAdapterB = factory.createSyncAdapterFromFile(
+			"Oswego",
+			TestHelper.baseDirectoryRootForTest() + "ms-access\\epiinfo\\test2\\epiinfo.mdb", 
+			"Oswego");
+	
 		SyncEngine syncEngine = new SyncEngine(syncAdapterA, syncAdapterB);
 		
 		List<Item> conflicts = syncEngine.synchronize();

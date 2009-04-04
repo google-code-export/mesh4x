@@ -18,12 +18,10 @@ import java.util.Date;
 import java.util.List;
 
 import org.dom4j.Document;
-import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.io.XMLWriter;
 import org.mesh4j.sync.model.History;
-import org.mesh4j.sync.model.IContent;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.Sync;
 import org.mesh4j.sync.security.IIdentityProvider;
@@ -33,30 +31,29 @@ import org.mesh4j.sync.validations.Guard;
 public class FeedWriter {
 
 	// MODEL VARIABLES
-	ISyndicationFormat syndicationFormat;
-	IIdentityProvider identityProvider;
-	
+	private ISyndicationFormat syndicationFormat;
+	private IIdentityProvider identityProvider;
+	private IContentWriter contentWriter;
+		
 	// BUSINESS METHODS
 
-	public FeedWriter(ISyndicationFormat syndicationFormat, IIdentityProvider identityProvider){
+	public FeedWriter(ISyndicationFormat syndicationFormat, IIdentityProvider identityProvider, IContentWriter contentWriter){
 		Guard.argumentNotNull(syndicationFormat, "syndicationFormat");
 		Guard.argumentNotNull(identityProvider, "identityProvider");
-		
+		Guard.argumentNotNull(contentWriter, "contentWriter");
+				
 		this.syndicationFormat = syndicationFormat;
 		this.identityProvider = identityProvider;
+		this.contentWriter = contentWriter;
 	}
 	
-	public void write(XMLWriter writer, Feed feed) throws IOException, DocumentException{
+	public void write(XMLWriter writer, Feed feed) throws Exception{
         Document document = DocumentHelper.createDocument();
         write(document, feed);        
         write(writer, document);
 	}
 
-	public void write(Document document, Feed feed) throws DocumentException {
-		write(document, feed, false);
-	}
-	
-	public void write(Document document, Feed feed, boolean plainMode) throws DocumentException {
+	public void write(Document document, Feed feed) throws Exception {
 		Element root = this.addRootElement(document);
 		
 		this.syndicationFormat.addFeedInformation(root, feed.getTitle(), feed.getDescription(), feed.getLink(), feed.getLastUpdate());
@@ -66,7 +63,7 @@ public class FeedWriter {
 		}
 		
 		for (Item item : feed.getItems()) {
-			write(root, item, plainMode);
+			write(root, item);
 		}
 	}
 
@@ -83,13 +80,9 @@ public class FeedWriter {
 	}
 
 	public void write(Element root, Item item) {
-		write(root, item, false); 
-	}
-	
-	public void write(Element root, Item item, boolean plainMode){
 		Element itemElement = this.addFeedItemElement(root, item);
 		
-		this.writeContent(itemElement, item.getSync(), item.getContent());
+		this.contentWriter.writeContent(this.syndicationFormat, itemElement, item);
 		
 		String by = this.getAuthenticatedUser();
 		History lastUpdate = item.getLastUpdate();
@@ -99,15 +92,11 @@ public class FeedWriter {
 		
 		this.syndicationFormat.addAuthorElement(itemElement, by);
 		
-		if(item.getSync() != null && !plainMode){
+		if(item.getSync() != null && this.contentWriter.mustWriteSync(item)){
 			writeSync(itemElement, item.getSync());
 		}
 	}	
 	
-	private void writeContent(Element itemElement, Sync sync, IContent content) {
-		content.addToFeedPayload(sync, itemElement, this.syndicationFormat);
-	}
-
 	protected Element addFeedItemElement(Element root, Item item) {
 		return this.syndicationFormat.addFeedItemElement(root, item);
 	}
@@ -161,12 +150,8 @@ public class FeedWriter {
 	}
 
 	public String writeAsXml(Feed feed) throws Exception {
-		return writeAsXml(feed, false);
-	}
-	
-	public String writeAsXml(Feed feed, boolean plainMode) throws Exception {
 		Document document = DocumentHelper.createDocument();
-		this.write(document, feed, plainMode);
+		this.write(document, feed);
 		String xml = document.asXML();
 		return xml;
 	}

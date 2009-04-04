@@ -19,8 +19,9 @@ import org.mesh4j.geo.coder.IGeoCoder;
 import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.adapters.kml.exporter.KMLExporter;
 import org.mesh4j.sync.model.Item;
-import org.mesh4j.sync.payload.mappings.IMappingResolver;
-import org.mesh4j.sync.payload.schema.ISchemaResolver;
+import org.mesh4j.sync.payload.mappings.IMapping;
+import org.mesh4j.sync.payload.schema.ISchema;
+import org.mesh4j.sync.payload.schema.xform.SchemaToXFormTranslator;
 import org.mesh4j.sync.utils.DateHelper;
 import org.mesh4j.sync.web.FeedRepositoryFactory;
 import org.mesh4j.sync.web.IFeedRepository;
@@ -34,16 +35,16 @@ public class FeedServlet extends HttpServlet {
 	private static final String PARAM_DESCRIPTION = "description";
 	private static final String PARAM_NEW_SOURCE_ID = "newSourceID";
 	private static final String PARAM_ACTION = "action";
+	
 	private static final String PARAM_FORMAT = "format";
-	private static final String PARAM_MAPPINGS = "mappings";
-	private static final String PARAM_SCHEMA = "schema";
+	private static final String PARAM_CONTENT = "content";
+
+	private static final String RESOURCE_MAPPINGS = "mappings";
+	private static final String RESOURCE_SCHEMA = "schema";
 
 	private static final String ACTION_DELETE = "delete";
 	private static final String ACTION_UPLOAD_MESH_DEFINITION = "uploadMeshDefinition";
 	private static final String ACTION_CLEAN = "clean";
-
-	private static final String FORMAT_PLAIN = "plain";
-	private static final String FORMAT_KML = "kml";
 
 	private static final long serialVersionUID = 8932466869419169112L;
 	
@@ -87,19 +88,29 @@ public class FeedServlet extends HttpServlet {
 		String sourceID = this.getSourceID(request);
 		String link = getFeedLink(request);
 
-		if(sourceID != null && sourceID.endsWith(PARAM_SCHEMA)){
-			processGetSchema(response, sourceID, link);
-		} else if(sourceID != null && sourceID.endsWith(PARAM_MAPPINGS)){
+		if(sourceID != null && sourceID.endsWith(RESOURCE_SCHEMA)){
+			String contentFormatName = request.getParameter(PARAM_CONTENT);
+			Format contentFormat = Format.getFormat(contentFormatName);
+			processGetSchema(response, sourceID, link, contentFormat);
+		} else if(sourceID != null && sourceID.endsWith(RESOURCE_MAPPINGS)){
 			processGetMappings(response, sourceID, link);
 		} else {
 			if(sourceID != null && !this.feedRepository.existsFeed(sourceID)){  // sourceID == null ==> Get all feeds
 				response.sendError(404, sourceID);
 			} else {
-				String format = request.getParameter(PARAM_FORMAT);     // format=rss20/atom10/kml
-				if(FORMAT_KML.equals(format)){					
+				String formatName = request.getParameter(PARAM_FORMAT);     // format=rss20/atom10/kml
+				Format format = Format.getFormat(formatName);
+				if(format != null && format.isKML()){					
 					processGetKML(request, response, sourceID, link);
 				}else {
-					processGetFeed(request, response, sourceID, link, format);
+					String contentFormatName = request.getParameter(PARAM_CONTENT);
+					Format contentFormat = Format.getFormat(contentFormatName);
+					
+					try{
+						processGetFeed(request, response, sourceID, link, format, contentFormat);
+					} catch (Exception e) {
+						throw new ServletException(e);
+					}
 				}
 			}
 		}
@@ -109,15 +120,13 @@ public class FeedServlet extends HttpServlet {
 		return request.getRequestURL().toString();
 	}
 
-	private void processGetFeed(HttpServletRequest request, HttpServletResponse response, String sourceID, String link, String format) throws IOException {
-		ISyndicationFormat syndicationFormat = this.feedRepository.getSyndicationFormat(format);
+	private void processGetFeed(HttpServletRequest request, HttpServletResponse response, String sourceID, String link, Format feedFormat, Format contentFormat) throws Exception {
+		ISyndicationFormat syndicationFormat = Format.getSyndicationFormat(feedFormat);
 		if(syndicationFormat == null){
-			response.sendError(404, format);
+			response.sendError(404, feedFormat.name());
 		} else {
-			boolean plainMode = request.getParameter(FORMAT_PLAIN) != null;     // plain  ==> remove deleted items and sync information
-			
 			Date sinceDate = this.getSinceDate(request);
-			String responseContent = this.feedRepository.readFeed(sourceID, link, sinceDate, syndicationFormat, plainMode);
+			String responseContent = this.feedRepository.readFeed(sourceID, link, syndicationFormat, contentFormat, this.geoCoder, sinceDate);
 			responseContent = responseContent.replaceAll("&lt;", "<");	// TODO (JMT) remove ==>  xml.replaceAll("&lt;", "<"); 
 			responseContent = responseContent.replaceAll("&gt;", ">");
 			
@@ -133,7 +142,7 @@ public class FeedServlet extends HttpServlet {
 		
 		List<Item> items = this.feedRepository.getAll(sourceID, sinceDate);
 		
-		IMappingResolver mappingResolver;
+		IMapping mappingResolver;
 		try {
 			mappingResolver = this.feedRepository.getMappings(sourceID, link, this.geoCoder);
 		} catch (Exception e) {
@@ -147,27 +156,37 @@ public class FeedServlet extends HttpServlet {
 		out.println(responseContent);
 	}
 
-	private void processGetSchema(HttpServletResponse response, String sourceID, String link) throws IOException, ServletException {
-		link = link.substring(0, link.length() - "/schema".length());
-		sourceID = sourceID.substring(0, sourceID.length() - "/schema".length());
-
-		if(!this.feedRepository.existsFeed(sourceID)){
-			response.sendError(404, sourceID);
-		} else {
-			ISchemaResolver propertyResolver;
-			try {
-				propertyResolver = this.feedRepository.getSchema(sourceID, link);
-			} catch (Exception e) {
-				throw new ServletException(e);
+	private void processGetSchema(HttpServletResponse response, String sourceID, String link, Format contentFormat) throws IOException, ServletException {
+		try{
+			link = link.substring(0, link.length() - "/schema".length());
+			sourceID = sourceID.substring(0, sourceID.length() - "/schema".length());
+	
+			if(!this.feedRepository.existsFeed(sourceID)){
+				response.sendError(404, sourceID);
+			} else {
+				String schemaXML;
+				ISchema schema = this.feedRepository.getSchema(sourceID, link);
+				if(schema == null){
+					schemaXML = "";
+				} else {
+					if(contentFormat != null && contentFormat.isXForm()){
+						schemaXML = SchemaToXFormTranslator.translate(schema);
+					} else {
+						schemaXML = schema.asXML();
+					}
+				}
+				
+				String responseContent = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"+ schemaXML;			
+				responseContent = responseContent.replaceAll("&lt;", "<");	// TODO (JMT) remove ==>  xml.replaceAll("&lt;", "<"); 
+				responseContent = responseContent.replaceAll("&gt;", ">");
+				
+				response.setContentType("text/plain");
+				response.setContentLength(responseContent.length());
+				PrintWriter out = response.getWriter();
+				out.println(responseContent);
 			}
-			String responseContent = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"+ propertyResolver.getSchema().asXML();
-			responseContent = responseContent.replaceAll("&lt;", "<");	// TODO (JMT) remove ==>  xml.replaceAll("&lt;", "<"); 
-			responseContent = responseContent.replaceAll("&gt;", ">");
-			
-			response.setContentType("text/plain");
-			response.setContentLength(responseContent.length());
-			PrintWriter out = response.getWriter();
-			out.println(responseContent);
+		} catch (Exception e) {
+			throw new ServletException(e);
 		}
 	}
 	
@@ -178,13 +197,13 @@ public class FeedServlet extends HttpServlet {
 		if(!this.feedRepository.existsFeed(sourceID)){
 			response.sendError(404, sourceID);
 		} else {
-			IMappingResolver mappingsResolver;
+			IMapping mappingsResolver;
 			try {
 				mappingsResolver = this.feedRepository.getMappings(sourceID, link, this.geoCoder);
 			} catch (Exception e) {
 				throw new ServletException(e);
 			}
-			String responseContent = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"+ mappingsResolver.getMappings().asXML();
+			String responseContent = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"+ mappingsResolver.asXML();
 			responseContent = responseContent.replaceAll("&lt;", "<");	// TODO (JMT) remove ==>  xml.replaceAll("&lt;", "<"); 
 			responseContent = responseContent.replaceAll("&gt;", ">");
 			
@@ -204,7 +223,11 @@ public class FeedServlet extends HttpServlet {
 		} else if(ACTION_DELETE.equals(action)){
 			deleteFeed(request, response);
 		}else {
-			synchronizeFeed(request, response);
+			try{
+				synchronizeFeed(request, response);
+			} catch (Exception e) {
+				throw new ServletException(e);
+			}
 		}
 	}
 	
@@ -230,22 +253,25 @@ public class FeedServlet extends HttpServlet {
 		}
 	}
 
-	private void synchronizeFeed(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	private void synchronizeFeed(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		String sourceID = this.getSourceID(request);
 		if(!this.feedRepository.existsFeed(sourceID)){
 			response.sendError(404, sourceID);
 		} else {		
-			String format = request.getParameter(PARAM_FORMAT);  		// format=rss20/atom10
-			ISyndicationFormat syndicationFormat = this.feedRepository.getSyndicationFormat(format);	
+			String formatName = request.getParameter(PARAM_FORMAT);  		// format=rss20/atom10
+			Format feedFormat = Format.getFormat(formatName);
+			ISyndicationFormat syndicationFormat = Format.getSyndicationFormat(feedFormat);	
 			if(syndicationFormat == null){
-				response.sendError(404, format);	
+				response.sendError(404, formatName);	
 			} else {
 				String feedXml = this.readXML(request);
 				if(feedXml == null){
 					response.sendError(404, sourceID);
 				} else {
 					String link = getFeedLink(request);
-					String responseContent = this.feedRepository.synchronize(sourceID, link, feedXml, syndicationFormat);
+					String contentFormatName = request.getParameter(PARAM_CONTENT);  		// format=rss20/atom10
+					Format contentFormat = Format.getFormat(contentFormatName);
+					String responseContent = this.feedRepository.synchronize(sourceID, link, syndicationFormat, contentFormat, this.geoCoder, feedXml);
 
 					response.setContentType(syndicationFormat.getContentType());
 					response.setContentLength(responseContent.length());
@@ -261,14 +287,16 @@ public class FeedServlet extends HttpServlet {
 		if(newSourceID == null){
 			response.sendError(404, newSourceID);
 		} else {
-			String format = request.getParameter(PARAM_FORMAT);
-			String description = request.getParameter(PARAM_DESCRIPTION);
-			String schema = request.getParameter(PARAM_SCHEMA);
-			String mappings = request.getParameter(PARAM_MAPPINGS);
+			String formatName = request.getParameter(PARAM_FORMAT);
+			Format feedFormat = Format.getFormat(formatName);
 			
-			ISyndicationFormat syndicationFormat = this.feedRepository.getSyndicationFormat(format);	
+			String description = request.getParameter(PARAM_DESCRIPTION);
+			String schema = request.getParameter(RESOURCE_SCHEMA);
+			String mappings = request.getParameter(RESOURCE_MAPPINGS);
+			
+			ISyndicationFormat syndicationFormat = Format.getSyndicationFormat(feedFormat);	
 			if(syndicationFormat == null){
-				response.sendError(404, format);	
+				response.sendError(404, formatName);	
 			}
 			
 			String link = getFeedLink(request)+ "/" + newSourceID;

@@ -56,14 +56,13 @@ public class HibernateContentAdapter implements IContentAdapter {
 	}
 
 	public void save(IContent content) {
-		EntityContent entityContent = EntityContent.normalizeContent(content, this.getType(), getEntityIdNode());
-		
+	
 		Session session =  this.sessionFactory.openSession();
 		Transaction tx = null;
 		try{
 			tx = session.beginTransaction();
 			Session dom4jSession = session.getSession(EntityMode.DOM4J);
-			dom4jSession.saveOrUpdate(convertXMLToRow(entityContent));
+			dom4jSession.saveOrUpdate(convertXMLToRow(content.getPayload()));
 			tx.commit();
 		}catch (RuntimeException e) {
 			if (tx != null) {
@@ -120,9 +119,9 @@ public class HibernateContentAdapter implements IContentAdapter {
 		return this.entityName;
 	}
 	
-	private Element convertXMLToRow(EntityContent entityContent) {
+	private Element convertXMLToRow(Element payload) {
 		try{
-			return this.mapping.convertXMLToRow(entityContent.getId(), entityContent.getPayload().createCopy());
+			return this.mapping.convertXMLToRow(payload.createCopy());
 		}catch (Exception e) {
 			throw new MeshException(e);
 		}

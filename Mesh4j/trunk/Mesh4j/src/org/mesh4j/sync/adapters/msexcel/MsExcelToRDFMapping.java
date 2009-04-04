@@ -179,8 +179,8 @@ public class MsExcelToRDFMapping implements IMsExcelToXMLMapping{
 	}
 	
 	@Override
-	public void appliesXMLToRow(HSSFWorkbook wb, HSSFSheet sheet, HSSFRow row, String id, Element rdfElement){
-		RDFInstance rdfInstance = this.rdfSchema.createNewInstance("uri:urn:"+id, rdfElement.asXML());
+	public void appliesXMLToRow(HSSFWorkbook wb, HSSFSheet sheet, HSSFRow row, Element rdfElement){
+		RDFInstance rdfInstance = this.rdfSchema.createNewInstanceFromRDFXML(rdfElement.asXML());
 		this.appliesRDFToRow(wb, sheet, row, rdfInstance);
 	}
 
@@ -196,4 +196,7 @@ public class MsExcelToRDFMapping implements IMsExcelToXMLMapping{
 		return this.lastUpdateColumnName;
 	}
 	
+	public void setLastUpdateColumnName(String columnName) {
+		this.lastUpdateColumnName = columnName;
+	}
 }

@@ -6,9 +6,10 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mesh4j.sync.adapters.dom.MeshNames;
 import org.mesh4j.sync.adapters.dom.parsers.FileManager;
-import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
+import org.mesh4j.sync.adapters.feed.ContentWriter;
 import org.mesh4j.sync.adapters.feed.atom.AtomSyndicationFormat;
 import org.mesh4j.sync.model.IContent;
+import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.NullContent;
 import org.mesh4j.sync.model.Sync;
 
@@ -48,8 +49,9 @@ public class KMLContentTests {
 		payload.addElement("foo");
 		
 		KMLContent content = new KMLContent(payload, "1");
-		
-		content.addToFeedPayload(new Sync("1"), feedPayload, AtomSyndicationFormat.INSTANCE);
+		Sync sync = new Sync("1");
+		Item item = new Item(content, sync);
+		ContentWriter.INSTANCE.writeContent(AtomSyndicationFormat.INSTANCE, feedPayload, item);
 		
 		Assert.assertNotNull(AtomSyndicationFormat.INSTANCE.getFeedItemTitleElement(feedPayload));
 		Assert.assertNotNull(AtomSyndicationFormat.INSTANCE.getFeedItemTitleElement(feedPayload).getText());
@@ -183,10 +185,6 @@ public class KMLContentTests {
 		public MockContent(Element payload) {
 			super();
 			this.payload = payload;
-		}
-		
-		@Override
-		public void addToFeedPayload(Sync sync, Element rootPayload, ISyndicationFormat format) {
 		}
 
 		@Override

@@ -12,6 +12,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -27,7 +28,7 @@ import org.mesh4j.geo.coder.GeoCoderLocationPropertyResolver;
 import org.mesh4j.geo.coder.GeoCoderLongitudePropertyResolver;
 import org.mesh4j.sync.adapters.http.HttpSyncAdapter;
 import org.mesh4j.sync.mappings.MSAccessDataSourceMapping;
-import org.mesh4j.sync.payload.mappings.MappingResolver;
+import org.mesh4j.sync.payload.mappings.Mapping;
 import org.mesh4j.sync.properties.PropertiesProvider;
 import org.mesh4j.sync.ui.tasks.IErrorListener;
 import org.mesh4j.sync.ui.tasks.OpenURLTask;
@@ -336,7 +337,7 @@ public class MeshAdminFrame extends JFrame implements IErrorListener {
 		
 		textFieldURL.setText(this.propertiesProvider.getMeshURL(dataSource.getAlias()));
 		
-		MappingResolver mappingResolver = KmlGeneratorFactory.createMappingResolver(
+		Mapping mappingResolver = KmlGeneratorFactory.createMappingResolver(
 			dataSource.getAlias(), 
 			this.propertiesProvider.getBaseDirectory(),  
 			this.propertiesProvider.getGeoCoderKey());
@@ -417,8 +418,7 @@ public class MeshAdminFrame extends JFrame implements IErrorListener {
 				String longitude = makeMapping(GeoCoderLongitudePropertyResolver.makeMapping(address));
 				SyncEngineUtil.saveMappings(
 					dataSource.getAlias(), 
-					propertiesProvider.getDefaultMappingsTemplateFileName(), 
-					propertiesProvider.getBaseDirectory(), 
+					propertiesProvider, 
 					title, 
 					description, 
 					location, 
@@ -426,6 +426,12 @@ public class MeshAdminFrame extends JFrame implements IErrorListener {
 					longitude,
 					ill, 
 					updateTimestamp);
+				
+				JOptionPane.showMessageDialog(
+						MeshAdminFrame.this,
+						MeshCompactUITranslator.getMessageSaveMappingsOk(),
+						MeshCompactUITranslator.getTitle(),
+						JOptionPane.INFORMATION_MESSAGE);
 			} catch (Exception e) {
 				LogFrame.Logger.error(e.getMessage(), e);
 				setMappingsStatusError(MeshCompactUITranslator.getErrorSaveMappingsFailed());
@@ -453,6 +459,11 @@ public class MeshAdminFrame extends JFrame implements IErrorListener {
 			try{
 				SyncEngineUtil.uploadMeshDefinition(dataSource, textFieldMeshDescription.getText(), propertiesProvider);
 				
+				JOptionPane.showMessageDialog(
+						MeshAdminFrame.this,
+						MeshCompactUITranslator.getMessageUploadMeshDefinitionOk(),
+						MeshCompactUITranslator.getTitle(),
+						JOptionPane.INFORMATION_MESSAGE);
 			}catch (Exception e) {
 				LogFrame.Logger.error(e.getMessage(), e);
 				setCloudStatusError(MeshCompactUITranslator.getErrorSaveMeshCloudFailed());

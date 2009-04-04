@@ -7,7 +7,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.mesh4j.sync.model.Item;
-import org.mesh4j.sync.payload.mappings.IMappingResolver;
+import org.mesh4j.sync.payload.mappings.IMapping;
 import org.mesh4j.sync.utils.FileUtils;
 import org.mesh4j.sync.validations.MeshException;
 
@@ -15,12 +15,12 @@ public class KMLExporter {
 
 	private final static Log LOGGER = LogFactory.getLog(KMLExporter.class);
 	
-	public static void export(String fileName, String documentName, List<Item> items, IMappingResolver mappingResolver) throws Exception {
+	public static void export(String fileName, String documentName, List<Item> items, IMapping mappingResolver) throws Exception {
 		String kmlXml = generateKML(documentName, items, mappingResolver);
 		FileUtils.write(fileName, kmlXml.getBytes());
 	}
 	
-	public static String generateKML(String documentName, List<Item> items, IMappingResolver mappingResolver) {
+	public static String generateKML(String documentName, List<Item> items, IMapping mappingResolver) {
 		StringBuffer sb = new StringBuffer();
 		sb.append(MessageFormat.format("<?xml version=\"1.0\" encoding=\"UTF-8\"?><kml xmlns=\"http://earth.google.com/kml/2.2\"><Document><name>{0}</name><open>1</open>", documentName));
 		for (Item item : items) {
@@ -30,7 +30,7 @@ public class KMLExporter {
 		return sb.toString();
 	}
 	
-	private static void makeElement(StringBuffer sb, Element element, IMappingResolver mappingResolver) {
+	private static void makeElement(StringBuffer sb, Element element, IMapping mappingResolver) {
 		try{
 			String longitude= mappingResolver.getValue(element, "//geo.longitude");
 			String latitude= mappingResolver.getValue(element, "//geo.latitude");

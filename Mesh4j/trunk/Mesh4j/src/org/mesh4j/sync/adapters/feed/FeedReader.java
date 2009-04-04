@@ -21,7 +21,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.dom4j.Document;
-import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
@@ -40,50 +39,53 @@ public class FeedReader {
 	private ISyndicationFormat syndicationFormat;
 	private IIdentityProvider identityProvider;
 	private IIdGenerator idGenerator;
+	private IContentReader contentReader;
 	
 	// BUSINESS METHODS
 
-	public FeedReader(ISyndicationFormat syndicationFormat, IIdentityProvider identityProvider, IIdGenerator idGenerator){
+	public FeedReader(ISyndicationFormat syndicationFormat, IIdentityProvider identityProvider, IIdGenerator idGenerator, IContentReader contentReader){
 		Guard.argumentNotNull(syndicationFormat, "syndicationFormat");
 		Guard.argumentNotNull(identityProvider, "identityProvider");
 		Guard.argumentNotNull(idGenerator, "idGenerator");
+		Guard.argumentNotNull(contentReader, "contentReader");
 		
 		this.syndicationFormat = syndicationFormat;
 		this.identityProvider = identityProvider;
 		this.idGenerator = idGenerator; 
+		this.contentReader = contentReader;
 	}
 	
-	public Feed read(URL url) throws DocumentException{
+	public Feed read(URL url) throws Exception{
 		SAXReader saxReader = new SAXReader();
 		Document document = saxReader.read(url);
 		return read(document);
 	}
 	
-	public Feed read(Reader reader) throws DocumentException{
+	public Feed read(Reader reader) throws Exception{
 		SAXReader saxReader = new SAXReader();
 		Document document = saxReader.read(reader);
 		return read(document);
 	}
 	
-	public Feed read(InputStream inputStream) throws DocumentException{
+	public Feed read(InputStream inputStream) throws Exception{
 		SAXReader saxReader = new SAXReader();
 		Document document = saxReader.read(inputStream);
 		return read(document);
 	}
 
-	public Feed read(InputSource inputSource) throws DocumentException{
+	public Feed read(InputSource inputSource) throws Exception{
 		SAXReader saxReader = new SAXReader();
 		Document document = saxReader.read(inputSource);
 		return read(document);
 	}
 		
-	public Feed read(File file) throws DocumentException{
+	public Feed read(File file) throws Exception{
 		SAXReader saxReader = new SAXReader();
 		Document document = saxReader.read(file);
 		return read(document);
 	}
 
-	public Feed read(Document document) {
+	public Feed read(Document document) throws Exception {
 		
 		Element payload = DocumentHelper.createElement(ELEMENT_PAYLOAD);
 		
@@ -141,18 +143,6 @@ public class FeedReader {
 			}
 		}
 		
-		Element contentElement = this.syndicationFormat.getFeedItemPayloadElement(itemElement);
-		if(contentElement != null){
-			if(ISyndicationFormat.ELEMENT_PAYLOAD.equals(contentElement.getName())){
-				List<Element> contentElements = contentElement.elements();
-				for (Element element : contentElements) {
-					payload.add(element.createCopy());
-				}
-			} else {
-				payload.add(contentElement);
-			}
-		}
-		
 		if(sync == null){
 			sync = new Sync(makeNewSyncID(), this.getAuthenticatedUser(), new Date(), false); 
 		}
@@ -170,6 +160,11 @@ public class FeedReader {
 			
 			if(link == null){
 				link = "";
+			}
+			
+			Element contentElement = this.syndicationFormat.getFeedItemPayloadElement(itemElement);
+			if(contentElement != null){
+				this.contentReader.readContent(sync.getId(), payload, contentElement);
 			}
 			
 			XMLContent modelItem = new XMLContent(sync.getId(), title, description, link, payload);

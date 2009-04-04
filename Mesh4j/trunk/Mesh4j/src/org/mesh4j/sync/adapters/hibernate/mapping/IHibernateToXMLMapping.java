@@ -10,6 +10,6 @@ public interface IHibernateToXMLMapping {
 
 	Element convertRowToXML(String id, Element element) throws Exception;
 
-	Element convertXMLToRow(String id, Element element) throws Exception;
+	Element convertXMLToRow(Element element) throws Exception;
 
 }

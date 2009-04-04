@@ -87,7 +87,7 @@ public class MsExcelSyncRepository implements ISyncRepository, ISyncAware {
 		}
 	}
 	
-	private void updateRow(SyncInfo syncInfo, HSSFRow row) {
+	private void updateRow(SyncInfo syncInfo, HSSFRow row) throws Exception {
 		MsExcelUtils.updateOrCreateCellStringIfAbsent(row, 0, syncInfo.getSyncId());
 		MsExcelUtils.updateOrCreateCellStringIfAbsent(row, 1, syncInfo.getType());
 		MsExcelUtils.updateOrCreateCellStringIfAbsent(row, 2, syncInfo.getId());
@@ -97,7 +97,7 @@ public class MsExcelSyncRepository implements ISyncRepository, ISyncAware {
 		MsExcelUtils.updateOrCreateCellStringIfAbsent(row, 4, syncElement.asXML());
 	}
 	
-	private void addRow(SyncInfo syncInfo) {
+	private void addRow(SyncInfo syncInfo) throws Exception {
 		HSSFRow row = getSheet().createRow(getSheet().getPhysicalNumberOfRows());
 		this.updateRow(syncInfo, row);		
 	}
@@ -148,11 +148,15 @@ public class MsExcelSyncRepository implements ISyncRepository, ISyncAware {
 
 	@Override
 	public void save(SyncInfo syncInfo) {
-		HSSFRow row = MsExcelUtils.getRow(getSheet(), 0, syncInfo.getSyncId());
-		if(row == null){
-			this.addRow(syncInfo);
-		} else {
-			this.updateRow(syncInfo, row);
+		try{
+			HSSFRow row = MsExcelUtils.getRow(getSheet(), 0, syncInfo.getSyncId());
+			if(row == null){
+				this.addRow(syncInfo);
+			} else {
+				this.updateRow(syncInfo, row);
+			}
+		} catch (Exception e) {
+			throw new MeshException(e);
 		}
 	}
 

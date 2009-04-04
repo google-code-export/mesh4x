@@ -685,4 +685,12 @@ public class MeshCompactUITranslator {
 		return MessageTranslator.translate("MESH_COMPACT_ADMIN_WINDOW_LABEL_URL"); 
 	}
 
+	public static String getMessageSaveMappingsOk() {
+		return MessageTranslator.translate("MESH_COMPACT_ADMIN_WINDOW_MESSAGE_SAVE_MAPPINGS_OK"); 
+	}
+
+	public static String getMessageUploadMeshDefinitionOk() {
+		return MessageTranslator.translate("MESH_COMPACT_ADMIN_WINDOW_MESSAGE_UPLOAD_MESH_OK"); 
+	}
+
 }

@@ -12,11 +12,12 @@ import java.util.TimeZone;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
+import org.mesh4j.sync.adapters.feed.ContentReader;
+import org.mesh4j.sync.adapters.feed.ContentWriter;
 import org.mesh4j.sync.adapters.feed.Feed;
 import org.mesh4j.sync.adapters.feed.FeedReader;
 import org.mesh4j.sync.adapters.feed.FeedWriter;
@@ -82,8 +83,8 @@ public class FileSyncSessionRepository implements ISyncSessionRepository{
 		
 		this.sessionFactory = sessionFactory;
 		this.rootDirectory = rootDirectory;
-		this.feedWriter = new FeedWriter(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
-		this.feedReader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		this.feedWriter = new FeedWriter(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, ContentWriter.INSTANCE);
+		this.feedReader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, ContentReader.INSTANCE);
 		
 		File fileDir = new File(rootDirectory);
 		if(!fileDir.exists()){
@@ -132,7 +133,7 @@ public class FileSyncSessionRepository implements ISyncSessionRepository{
 			File file = getSnapshotFile(sessionId);
 			Feed feed = this.feedReader.read(file);
 			return feed.getItems();
-		} catch (DocumentException e) {
+		} catch (Exception e) {
 			throw new MeshException(e);
 		}
 	}
@@ -204,7 +205,7 @@ public class FileSyncSessionRepository implements ISyncSessionRepository{
 				}
 			}
 			return syncSession;
-		}catch(DocumentException e){
+		}catch(Exception e){
 			throw new MeshException(e);
 		}
 	}

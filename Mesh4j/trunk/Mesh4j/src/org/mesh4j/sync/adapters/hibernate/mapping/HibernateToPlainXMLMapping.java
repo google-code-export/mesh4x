@@ -11,8 +11,11 @@ public class HibernateToPlainXMLMapping implements IHibernateToXMLMapping {
 	
 	// BUSINESS METHODS
 	public HibernateToPlainXMLMapping(String entityNode, String idNode){
-		super();
-		this.initialize(entityNode, idNode);
+		Guard.argumentNotNullOrEmptyString(entityNode, "entityNode");
+		Guard.argumentNotNullOrEmptyString(idNode, "idNode");
+		
+		this.entityNode = entityNode;
+		this.idNode = idNode;
 	}
 	
 	@Override
@@ -21,7 +24,7 @@ public class HibernateToPlainXMLMapping implements IHibernateToXMLMapping {
 	}
 
 	@Override
-	public Element convertXMLToRow(String id, Element element) {
+	public Element convertXMLToRow(Element element) {
 		return element;
 	}
 
@@ -34,13 +37,4 @@ public class HibernateToPlainXMLMapping implements IHibernateToXMLMapping {
 	public String getIDNode() {
 		return this.idNode;
 	}
-
-	private void initialize(String entityNode, String idNode) {
-		Guard.argumentNotNullOrEmptyString(entityNode, "entityNode");
-		Guard.argumentNotNullOrEmptyString(idNode, "idNode");
-		
-		this.entityNode = entityNode;
-		this.idNode = idNode;
-	}
-
 }

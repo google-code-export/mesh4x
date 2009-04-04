@@ -7,6 +7,7 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 import org.mesh4j.sync.id.generator.IdGenerator;
+import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.utils.XMLHelper;
 
 import com.hp.hpl.jena.ontology.DatatypeProperty;
@@ -23,8 +24,9 @@ import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 import com.hp.hpl.jena.vocabulary.XSD;
 
-public class RDFTest {
 
+public class RDFTest {
+	
 	// SPIKE JENNA RDF AND OWL
 	@Test
 	public void shouldCreateRDFModel(){
@@ -161,7 +163,7 @@ public class RDFTest {
         rdfSchema.addBooleanProperty("ill", "is Ill", "en");
         rdfSchema.addDateTimeProperty("dateOnset", "DateOnset", "en");
         
-        RDFInstance rdfInstance = rdfSchema.createNewInstance("urn:uuid:9274cc11-7ba4-4594-abaf-3620fbee211a");
+        RDFInstance rdfInstance = rdfSchema.createNewInstance("uri:urn:9274cc11-7ba4-4594-abaf-3620fbee211a");
         rdfInstance.setProperty("code", "P55");
         rdfInstance.setProperty("name", "juan");
         rdfInstance.setProperty("age", 31);
@@ -179,13 +181,13 @@ public class RDFTest {
         rdfSchema.addBooleanProperty("ill", "is Ill", "en");
         rdfSchema.addDateTimeProperty("dateOnset", "DateOnset", "en");
         
-        RDFInstance rdfInstance = rdfSchema.createNewInstance("urn:uuid:9274cc11-7ba4-4594-abaf-3620fbee211a");
+        RDFInstance rdfInstance = rdfSchema.createNewInstance("uri:urn:9274cc11-7ba4-4594-abaf-3620fbee211a");
         rdfInstance.setProperty("code", "P55");
         rdfInstance.setProperty("name", "juan");
         rdfInstance.setProperty("age", 31);
         rdfInstance.setProperty("ill", true);
         rdfInstance.setProperty("dateOnset", new Date());
-        System.out.println(rdfInstance.asPlainXML("id"));
+        System.out.println(rdfInstance.asPlainXML());
 	}
 	
 	@Test
@@ -211,7 +213,7 @@ public class RDFTest {
         			"   </Oswego:Patient>"+
 					"</rdf:RDF>";
         
-        RDFInstance rdfInstance = rdfSchema.createNewInstance("urn:uuid:9274cc11-7ba4-4594-abaf-3620fbee211a", xml);
+        RDFInstance rdfInstance = rdfSchema.createNewInstanceFromRDFXML(xml);
         System.out.println(rdfInstance.asXML());
 	}
 	
@@ -226,7 +228,7 @@ public class RDFTest {
 
         String xml = "<Patient><dateOnset>2009-03-17T19:06:06.264Z</dateOnset><ill>true</ill><age>31</age><name>juan</name><code>P55</code><id>cc11-7ba4-4594-abaf-3620fbee211a</id></Patient>";
         
-        RDFInstance rdfInstance = rdfSchema.createNewInstance("urn:uuid:9274cc11-7ba4-4594-abaf-3620fbee211a", xml, "id");
+        RDFInstance rdfInstance = rdfSchema.createNewInstanceFromPlainXML("cc11-7ba4-4594-abaf-3620fbee211a", xml, ISchema.EMPTY_FORMATS);
         System.out.println(rdfInstance.asXML());
         
 	}
@@ -243,7 +245,7 @@ public class RDFTest {
         rdfSchema.addBooleanProperty("ill", "is Ill", "en");
         rdfSchema.addDateTimeProperty("dateOnset", "DateOnset", "en");
 
-        RDFInstance rdfInstance = rdfSchema.createNewInstance("urn:uuid:9274cc11-7ba4-4594-abaf-3620fbee211a");
+        RDFInstance rdfInstance = rdfSchema.createNewInstance("uri:urn:9274cc11-7ba4-4594-abaf-3620fbee211a");
         String rdfXml = rdfInstance.asXML();
 
         RDFSchema rdfSchema2 = new RDFSchema("Oswego", "http://mesh4x/Oswego#", "Patient");
@@ -253,7 +255,7 @@ public class RDFTest {
         rdfSchema2.addBooleanProperty("ill", "is Ill", "en");
         rdfSchema2.addDateTimeProperty("dateOnset", "DateOnset", "en");
 
-        RDFInstance rdfInstance2 = rdfSchema2.createNewInstance("urn:uuid:9274cc11-7ba4-4594-abaf-3620fbee211a");
+        RDFInstance rdfInstance2 = rdfSchema2.createNewInstance("uri:urn:9274cc11-7ba4-4594-abaf-3620fbee211a");
         String rdfXml2 = rdfInstance2.asXML();
         
         Assert.assertEquals(rdfXml, rdfXml2);
@@ -283,7 +285,7 @@ public class RDFTest {
         rdfSchema3.addBooleanProperty("ill", "is Ill", "en");
         rdfSchema3.addDateTimeProperty("dateOnset", "DateOnset", "en");
 
-        RDFInstance rdfInstance3 = rdfSchema3.createNewInstance("urn:uuid:9274cc11-7ba4-4594-abaf-3620fbee211a");
+        RDFInstance rdfInstance3 = rdfSchema3.createNewInstance("uri:urn:9274cc11-7ba4-4594-abaf-3620fbee211a");
         rdfInstance3.setProperty("code", "Code");
         rdfInstance3.setProperty("name", "Name");
         rdfInstance3.setProperty("age", 30);
@@ -298,7 +300,7 @@ public class RDFTest {
         rdfSchema4.addBooleanProperty("ill", "is Ill", "en");
         rdfSchema4.addDateTimeProperty("dateOnset", "DateOnset", "en");
 
-        RDFInstance rdfInstance4 = rdfSchema4.createNewInstance("urn:uuid:9274cc11-7ba4-4594-abaf-3620fbee211a");
+        RDFInstance rdfInstance4 = rdfSchema4.createNewInstance("uri:urn:9274cc11-7ba4-4594-abaf-3620fbee211a");
         rdfInstance4.setProperty("dateOnset", date);
         rdfInstance4.setProperty("code", "Code");
         rdfInstance4.setProperty("ill", true);
@@ -329,7 +331,7 @@ public class RDFTest {
 		rdfInstance1.setProperty("id", id);
 		
 		String plainXML = XMLHelper.canonicalizeXML("<user><id>"+id+"</id><name>"+name+"</name><pass>"+pass+"</pass></user>");
-		RDFInstance rdfInstance2 = schema1.createNewInstance(rdfId, plainXML, "id");
+		RDFInstance rdfInstance2 = schema1.createNewInstanceFromPlainXML(id, plainXML, ISchema.EMPTY_FORMATS);
 		Assert.assertEquals(rdfInstance1.asXML(), rdfInstance2.asXML());
 	}
 }

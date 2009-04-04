@@ -1,6 +1,7 @@
 package org.mesh4j.sync.adapters.msaccess;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
@@ -13,6 +14,17 @@ import com.healthmarketscience.jackcess.Database;
 import com.healthmarketscience.jackcess.Table;
 
 public class MsAccessRDFSchemaGenerator {
+	
+	public static IRDFSchema readSchema(String fileName) throws Exception {
+
+		FileReader reader = new FileReader(fileName);
+		try{
+			RDFSchema rdfSchema = new RDFSchema(reader);
+			return rdfSchema;
+		} finally{
+			reader.close();
+		}
+	}	
 
 	public static IRDFSchema extractRDFSchema(String mdbFileName, String tableName, String ontologyNameSpace, String ontologyBaseUri) throws IOException{
 
@@ -50,7 +62,8 @@ public class MsAccessRDFSchemaGenerator {
 	// TODO (JMT) RDF: improve MSAccess to RDF type mapper
 	private static void addProperty(RDFSchema rdfSchema, Column column) {
 		String propertyName = getNodeName(column);
-		if(DataType.BYTE.equals(column.getType()) || DataType.BOOLEAN.equals(column.getType())){
+		
+		if(DataType.BOOLEAN.equals(column.getType())){
 			rdfSchema.addBooleanProperty(propertyName, propertyName, "en");
 		}
 		
@@ -62,7 +75,7 @@ public class MsAccessRDFSchemaGenerator {
 			rdfSchema.addStringProperty(propertyName, propertyName, "en");
 		}
 
-		if(DataType.LONG.equals(column.getType())){
+		if(DataType.BYTE.equals(column.getType()) || DataType.LONG.equals(column.getType())){
 			rdfSchema.addLongProperty(propertyName, propertyName, "en");
 		}
 		
@@ -85,5 +98,6 @@ public class MsAccessRDFSchemaGenerator {
 	
 	private static String getNodeName(Column column) {
 		return column.getName().trim().replaceAll(" ", "_");
-	}	
+	}
+
 }

@@ -74,7 +74,7 @@ public class MSExcelToPlainXMLMappingTests {
 		Element payload = DocumentHelper.parseText(xml).getRootElement();
 		
 		MSExcelToPlainXMLMapping mapping = new MSExcelToPlainXMLMapping(COLUMN_NAME_ID, null);
-		mapping.appliesXMLToRow(workbook, sheet, row, "1", payload);
+		mapping.appliesXMLToRow(workbook, sheet, row, payload);
 		
 		HSSFCell cell = row.getCell(0);
 		Assert.assertNotNull(cell);
@@ -110,7 +110,7 @@ public class MSExcelToPlainXMLMappingTests {
 		Element payload = DocumentHelper.parseText(xml).getRootElement();
 		
 		MSExcelToPlainXMLMapping mapping = new MSExcelToPlainXMLMapping(COLUMN_NAME_ID, null);
-		mapping.appliesXMLToRow(workbook, sheet, row, "1", payload);
+		mapping.appliesXMLToRow(workbook, sheet, row, payload);
 		
 		HSSFCell cell = row.getCell(0);
 		Assert.assertNotNull(cell);
@@ -146,7 +146,7 @@ public class MSExcelToPlainXMLMappingTests {
 		HSSFRow row = sheet.getRow(1);
 		
 		MSExcelToPlainXMLMapping mapping = new MSExcelToPlainXMLMapping(COLUMN_NAME_ID, null);
-		mapping.appliesXMLToRow(workbook, sheet, row, "1", payload);
+		mapping.appliesXMLToRow(workbook, sheet, row, payload);
 		
 		HSSFCell cell = row.getCell(0);
 		Assert.assertNotNull(cell);

@@ -1,7 +1,7 @@
 package org.mesh4j.sync.web;
 
+import java.io.StringReader;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import org.dom4j.DocumentHelper;
@@ -13,13 +13,15 @@ import org.mesh4j.geo.coder.IGeoCoder;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.adapters.InMemorySyncAdapter;
+import org.mesh4j.sync.adapters.feed.ContentReader;
+import org.mesh4j.sync.adapters.feed.ContentWriter;
 import org.mesh4j.sync.adapters.feed.Feed;
 import org.mesh4j.sync.adapters.feed.FeedReader;
 import org.mesh4j.sync.adapters.feed.FeedWriter;
+import org.mesh4j.sync.adapters.feed.IContentReader;
+import org.mesh4j.sync.adapters.feed.IContentWriter;
 import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.adapters.feed.XMLContent;
-import org.mesh4j.sync.adapters.feed.atom.AtomSyndicationFormat;
-import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.filter.CompoundFilter;
 import org.mesh4j.sync.filter.NonDeletedFilter;
 import org.mesh4j.sync.filter.SinceLastUpdateFilter;
@@ -27,41 +29,28 @@ import org.mesh4j.sync.filter.XMLContentLinkFilter;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.Sync;
-import org.mesh4j.sync.payload.mappings.IMappingResolver;
-import org.mesh4j.sync.payload.mappings.MappingResolver;
-import org.mesh4j.sync.payload.schema.ISchemaResolver;
-import org.mesh4j.sync.payload.schema.SchemaResolver;
+import org.mesh4j.sync.payload.mappings.IMapping;
+import org.mesh4j.sync.payload.mappings.Mapping;
+import org.mesh4j.sync.payload.schema.ISchema;
+import org.mesh4j.sync.payload.schema.Schema;
+import org.mesh4j.sync.payload.schema.SchemaInstanceContentReadWriter;
+import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
+import org.mesh4j.sync.payload.schema.xform.XFormRDFSchemaContentWriter;
+import org.mesh4j.sync.payload.schema.xform.XFormRDFSchemaInstanceContentReadWriter;
 import org.mesh4j.sync.security.NullIdentityProvider;
+import org.mesh4j.sync.servlet.Format;
 import org.mesh4j.sync.validations.MeshException;
 
 public abstract class AbstractFeedRepository implements IFeedRepository{
 
-	// MODEL VARIABLES
-	private HashMap<ISyndicationFormat, FeedWriter> writers = new HashMap<ISyndicationFormat, FeedWriter>();
-	private HashMap<ISyndicationFormat, FeedReader> readers = new HashMap<ISyndicationFormat, FeedReader>();
-	
 	// BUSINESS METHODS
 	public AbstractFeedRepository(){
 		super();
-		this.writers.put(RssSyndicationFormat.INSTANCE, new FeedWriter(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE));
-		this.writers.put(AtomSyndicationFormat.INSTANCE, new FeedWriter(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE));
-		
-		this.readers.put(RssSyndicationFormat.INSTANCE, new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE));
-		this.readers.put(AtomSyndicationFormat.INSTANCE, new FeedReader(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE));
 	}
 	
 	protected abstract ISyncAdapter getSyncAdapter(String sourceID);
 	protected abstract ISyncAdapter getParentSyncAdapter(String sourceID);
 	protected abstract void addNewFeed(String sourceID, Feed feed, ISyndicationFormat syndicationFormat);
-
-	private String writeFeedAsXml(Feed feed, ISyndicationFormat syndicationFormat, boolean plainMode){
-		FeedWriter writer = (FeedWriter)this.writers.get(syndicationFormat);
-		try {
-			return writer.writeAsXml(feed, plainMode);
-		} catch (Exception e) {
-			throw new MeshException(e);
-		}
-	}
 
 	@Override
 	public List<Item> getAll(String sourceID, Date sinceDate) {
@@ -72,13 +61,13 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public String readFeed(String sourceID, String link, Date sinceDate, ISyndicationFormat syndicationFormat, boolean plainMode) {
+	public String readFeed(String sourceID, String link, ISyndicationFormat syndicationFormat, Format contentFormat, IGeoCoder geoCoder, Date sinceDate) throws Exception {
 		
 		ISyncAdapter adapter = getSyncAdapter(sourceID);
 				
 		List<Item> items;
 		
-		if(plainMode){
+		if(contentFormat != null && contentFormat.isPlainXML()){
 			CompoundFilter compoundFilter;
 			if(sinceDate == null){
 				compoundFilter = new CompoundFilter(NonDeletedFilter.INSTANCE);
@@ -92,16 +81,21 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 		}
 		
 		String title = getFeedTitle(sourceID);
-		Feed feed = new Feed(title, "", link);
+		Feed feed = new Feed(title, title, link);
 		feed.addItems(items);
 		
-		String xml = writeFeedAsXml(feed, syndicationFormat, plainMode);
+		ISchema schema = this.getSchema(sourceID, link);
+		IMapping mapping = this.getMappings(sourceID, link, geoCoder);
+		String xml = writeFeedAsXml(feed, syndicationFormat, contentFormat, schema, mapping);
 		return xml;
 	}
 	
-	public String synchronize(String sourceID, String link, String feedXml, ISyndicationFormat syndicationFormat) {
-		
-		Feed feedLoaded = this.readFeedFromXml(feedXml, syndicationFormat);		
+	@Override
+	public String synchronize(String sourceID, String link, ISyndicationFormat syndicationFormat, Format contentFormat, IGeoCoder geoCoder, String feedXml) throws Exception {
+
+		ISchema schema = this.getSchema(sourceID, link);
+		IMapping mapping = this.getMappings(sourceID, link, geoCoder);
+		Feed feedLoaded = this.readFeedFromXml(feedXml, syndicationFormat, contentFormat, schema, mapping);		
 		InMemorySyncAdapter inMemoryAdapter = new InMemorySyncAdapter(sourceID, NullIdentityProvider.INSTANCE, feedLoaded.getItems());
 		
 		ISyncAdapter adapter = getSyncAdapter(sourceID);
@@ -112,21 +106,9 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 		String title = getFeedTitle(sourceID);
 		Feed feedResult = new Feed(title, "conflicts", link);
 		feedResult.addItems(conflicts);
-		return this.writeFeedAsXml(feedResult, syndicationFormat, false);
+		return this.writeFeedAsXml(feedResult, syndicationFormat, contentFormat, schema, mapping);
 	}
 	
-	public ISyndicationFormat getSyndicationFormat(String formatName) {
-		if(formatName == null){
-			return RssSyndicationFormat.INSTANCE;
-		}else if(RssSyndicationFormat.INSTANCE.getName().equals(formatName)){
-			return RssSyndicationFormat.INSTANCE;
-		}else if(AtomSyndicationFormat.INSTANCE.getName().equals(formatName)){
-			return AtomSyndicationFormat.INSTANCE;
-		} else {
-			return null;
-		}
-	}
-
 	@Override
 	public void addNewFeed(String sourceID, ISyndicationFormat syndicationFormat, String link, String description, String schema, String mappings, String by) {
 		String title = getFeedTitle(sourceID);
@@ -137,12 +119,12 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 		Element parentPayload = DocumentHelper.createElement(ISyndicationFormat.ELEMENT_PAYLOAD);
 		
 		if(schema != null && schema.trim().length() >0){
-			Element schemaElement = parentPayload.addElement(ISchemaResolver.ELEMENT_SCHEMA);	
+			Element schemaElement = parentPayload.addElement(ISchema.ELEMENT_SCHEMA);	
 			schemaElement.setText(schema);	// TODO (JMT) validate schema
 		}
 		
 		if(mappings != null && mappings.trim().length() >0){
-			Element mappingsElement = parentPayload.addElement(IMappingResolver.ELEMENT_MAPPING);	
+			Element mappingsElement = parentPayload.addElement(IMapping.ELEMENT_MAPPING);	
 			mappingsElement.setText(mappings);  // TODO (JMT) validate mappings
 		}
 		
@@ -168,22 +150,70 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 		return sourceID == null || (sourceID.indexOf("/") == -1 || sourceID.indexOf("/") == sourceID.length());
 	}
 	
-	private Feed readFeedFromXml(String xml, ISyndicationFormat syndicationFormat){
-		FeedReader reader = (FeedReader)this.readers.get(syndicationFormat);
+	private Feed readFeedFromXml(String xml, ISyndicationFormat syndicationFormat, Format contentFormat, ISchema meshSchema, IMapping mapping){
+		IContentReader feedItemReader = getContentReader(contentFormat, meshSchema, mapping);		
+		
+		FeedReader reader = new FeedReader(syndicationFormat, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, feedItemReader);
 		try {
 			return reader.read(xml);
 		} catch (Exception e) {
 			throw new MeshException(e);
 		}
 	}
+
+	private String writeFeedAsXml(Feed feed, ISyndicationFormat syndicationFormat, Format contentFormat, ISchema meshSchema, IMapping mapping){
+		IContentWriter feedItemWriter = getContentWriter(contentFormat, meshSchema, mapping);
+		
+		FeedWriter writer = new FeedWriter(syndicationFormat, NullIdentityProvider.INSTANCE, feedItemWriter);
+		try {
+			return writer.writeAsXml(feed);
+		} catch (Exception e) {
+			throw new MeshException(e);
+		}
+	}
+
+	private IContentWriter getContentWriter(Format contentFormat, ISchema meshSchema, IMapping mapping) {
+		IContentWriter feedItemWriter;
+		if(meshSchema == null){
+			if(contentFormat != null && contentFormat.isXForm()){
+				feedItemWriter = new XFormRDFSchemaContentWriter(contentFormat.isPlainXML());
+			} else {
+				feedItemWriter = ContentWriter.INSTANCE;
+			}
+		} else {
+			if(contentFormat != null && contentFormat.isXForm()){
+				feedItemWriter = new XFormRDFSchemaInstanceContentReadWriter(meshSchema, mapping, !contentFormat.isPlainXML());
+			} else {
+				feedItemWriter = new SchemaInstanceContentReadWriter(meshSchema, mapping, contentFormat == null ? true : !contentFormat.isPlainXML());
+			}
+		}
+		return feedItemWriter;
+	}
+	
+	private IContentReader getContentReader(Format contentFormat,
+			ISchema meshSchema, IMapping mapping) {
+		IContentReader feedItemReader;
+		if(meshSchema == null){
+			feedItemReader = ContentReader.INSTANCE;
+		} else {
+			if(contentFormat != null && contentFormat.isXForm()){
+				feedItemReader = new XFormRDFSchemaInstanceContentReadWriter(meshSchema, mapping, !contentFormat.isPlainXML());
+			} else {
+				feedItemReader = new SchemaInstanceContentReadWriter(meshSchema, mapping, contentFormat == null ? true : !contentFormat.isPlainXML());
+			}
+		}
+		return feedItemReader;
+	}
 	
 	@Override
-	public ISchemaResolver getSchema(String sourceID, String link) throws Exception{
+	public ISchema getSchema(String sourceID, String link) throws Exception{
+		if(sourceID == null){
+			return null;
+		}
 		
 		ISyncAdapter syncAdapter = this.getParentSyncAdapter(sourceID);
 		List<Item> items = syncAdapter.getAll(new XMLContentLinkFilter(link));
 				
-		Element schema = null;
 		if(!items.isEmpty()){
 			Item item = items.get(0);
 			
@@ -191,21 +221,32 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 //			xml = xml.replaceAll("&lt;", "<");						// TODO (JMT) remove ==>  xml.replaceAll("&lt;", "<"); 
 //			xml = xml.replaceAll("&gt;", ">");
 			
-			schema = DocumentHelper.parseText(xml).getRootElement();
+			Element schema = DocumentHelper.parseText(xml).getRootElement();
 			if(ISyndicationFormat.ELEMENT_PAYLOAD.equals(schema.getName())){
-				schema = schema.element(ISchemaResolver.ELEMENT_SCHEMA);
+				schema = schema.element(ISchema.ELEMENT_SCHEMA);
 			}
 			
-			if(schema != null && !schema.getName().equals(ISchemaResolver.ELEMENT_SCHEMA)){
-				schema = null;
+			if(schema == null || !schema.getName().equals(ISchema.ELEMENT_SCHEMA)){
+				return null;
+			} else {
+				String schemaXML = schema.getText();
+				if(schemaXML.startsWith("<rdf")){
+					StringReader xmlReader = new StringReader(schemaXML);
+					return new RDFSchema(xmlReader);
+				} else {
+					return new Schema(schema.createCopy());
+				}
 			}
+		} else {
+			return null;
 		}
-		return new SchemaResolver(schema);
 	}
 	
 	@Override
-	public IMappingResolver getMappings(String sourceID, String link, IGeoCoder geoCoder) throws Exception{
-		
+	public IMapping getMappings(String sourceID, String link, IGeoCoder geoCoder) throws Exception{
+		if(sourceID == null){
+			return null;
+		}
 		ISyncAdapter syncAdapter = this.getParentSyncAdapter(sourceID);
 		List<Item> items = syncAdapter.getAll(new XMLContentLinkFilter(link));
 				
@@ -219,9 +260,9 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 			
 			mappings = DocumentHelper.parseText(xml).getRootElement();
 			if(ISyndicationFormat.ELEMENT_PAYLOAD.equals(mappings.getName())){
-				mappings = mappings.element(IMappingResolver.ELEMENT_MAPPING);
+				mappings = mappings.element(IMapping.ELEMENT_MAPPING);
 			}
-			if(mappings != null && !mappings.getName().equals(IMappingResolver.ELEMENT_MAPPING)){
+			if(mappings != null && !mappings.getName().equals(IMapping.ELEMENT_MAPPING)){
 				mappings = null;
 			}
 		}
@@ -230,9 +271,9 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 			GeoCoderLatitudePropertyResolver propertyResolverLat = new GeoCoderLatitudePropertyResolver(geoCoder);
 			GeoCoderLongitudePropertyResolver propertyResolverLon = new GeoCoderLongitudePropertyResolver(geoCoder);
 			GeoCoderLocationPropertyResolver propertyResolverLoc = new GeoCoderLocationPropertyResolver(geoCoder);
-			return new MappingResolver(mappings, propertyResolverLat, propertyResolverLon, propertyResolverLoc);
+			return new Mapping(mappings, propertyResolverLat, propertyResolverLon, propertyResolverLoc);
 		} else {
-			return new MappingResolver(mappings);
+			return new Mapping(mappings);
 		}
 	}
 
@@ -267,17 +308,17 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 			
 			Element payload = item.getContent().getPayload();
 			if(schema != null && schema.trim().length() >0){
-				Element schemaElement = payload.element(ISchemaResolver.ELEMENT_SCHEMA);
+				Element schemaElement = payload.element(ISchema.ELEMENT_SCHEMA);
 				if(schemaElement == null){
-					schemaElement = payload.addElement(ISchemaResolver.ELEMENT_SCHEMA);
+					schemaElement = payload.addElement(ISchema.ELEMENT_SCHEMA);
 				}
 				schemaElement.setText(schema);	// TODO (JMT) validate schema
 			}
 			
 			if(mappings != null && mappings.trim().length() >0){
-				Element mappingsElement = payload.element(IMappingResolver.ELEMENT_MAPPING);
+				Element mappingsElement = payload.element(IMapping.ELEMENT_MAPPING);
 				if(mappingsElement == null){	
-					mappingsElement = payload.addElement(IMappingResolver.ELEMENT_MAPPING);
+					mappingsElement = payload.addElement(IMapping.ELEMENT_MAPPING);
 				}
 				mappingsElement.setText(mappings);  // TODO (JMT) validate mappings
 			}

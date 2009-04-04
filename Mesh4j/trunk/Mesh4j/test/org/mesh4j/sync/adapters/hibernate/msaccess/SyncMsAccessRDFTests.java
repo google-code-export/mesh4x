@@ -93,7 +93,7 @@ public class SyncMsAccessRDFTests {
 	}
 	
 	@Test
-	public void shouldSyncMSAccessToFeedWithRDFMapping(){
+	public void shouldSyncMSAccessToFeedWithRDFMapping() throws Exception{
 
 		String filenameA = TestHelper.baseDirectoryRootForTest() + "ms-access/DevDB.mdb";
 		String databaseA = "jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=";

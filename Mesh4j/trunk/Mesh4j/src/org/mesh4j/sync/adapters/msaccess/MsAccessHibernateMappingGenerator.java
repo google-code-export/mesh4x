@@ -30,11 +30,12 @@ public class MsAccessHibernateMappingGenerator {
 			
 			String columnNamePrimaryKey = getPrimaryKey(table);
 			Column columnID = table.getColumn(columnNamePrimaryKey);
-			MappingGenerator.writeID(writer, getNodeName(columnID), columnID.getName(), getHibernateType(columnID));
+			MappingGenerator.writeID(writer, getNodeName(columnID.getName()), columnID.getName(), getHibernateType(columnID));
 			
 			for (Column column : table.getColumns()) {
 				if(!column.getName().equals(columnNamePrimaryKey) && !column.isAutoNumber() ){
-					MappingGenerator.writeProperty(writer, getNodeName(column), column.getName(), getHibernateType(column));
+					String columnName = column.getName();
+					MappingGenerator.writeProperty(writer, getNodeName(columnName), columnName, getHibernateType(column));
 				}
 			}
 			MappingGenerator.writerFooter(writer);
@@ -56,8 +57,8 @@ public class MsAccessHibernateMappingGenerator {
 		return tableName.trim().replaceAll(" ", "_");
 	}
 	
-	private static String getNodeName(Column column) {
-		return column.getName().trim().replaceAll(" ", "_");
+	private static String getNodeName(String columnName) {
+		return columnName.trim().replaceAll(" ", "_");
 	}
 
 	private static String getHibernateType(Column column) throws HibernateException, SQLException {

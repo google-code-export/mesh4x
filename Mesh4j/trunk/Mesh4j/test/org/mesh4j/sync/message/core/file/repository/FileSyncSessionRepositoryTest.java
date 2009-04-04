@@ -7,9 +7,9 @@ import java.util.List;
 
 import junit.framework.Assert;
 
-import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.junit.Test;
+import org.mesh4j.sync.adapters.feed.ContentReader;
 import org.mesh4j.sync.adapters.feed.Feed;
 import org.mesh4j.sync.adapters.feed.FeedAdapter;
 import org.mesh4j.sync.adapters.feed.FeedReader;
@@ -68,7 +68,7 @@ public class FileSyncSessionRepositoryTest {
 	}
 
 	@Test
-	public void shouldFlushOpenSession() throws DocumentException{
+	public void shouldFlushOpenSession() throws Exception{
 
 		OpaqueFeedSyncAdapterFactory feedAdapterFactory = new OpaqueFeedSyncAdapterFactory(TestHelper.baseDirectoryForTest());
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(getNullSourceIdMapper(), feedAdapterFactory, false)));
@@ -84,16 +84,20 @@ public class FileSyncSessionRepositoryTest {
 		file = repo.getCurrentSessionFile(sessionId);
 		Assert.assertTrue(file.exists());
 		
-		FeedReader feedReader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		FeedReader feedReader = makeFeedReader();
 		Feed feed = feedReader.read(file);
 
 		Element syncSessionElement = feed.getPayload().element(FileSyncSessionRepository.ELEMENT_SYNC_SESSION);
 		Assert.assertNotNull(syncSessionElement);
 		Assert.assertEquals("true", syncSessionElement.attributeValue(FileSyncSessionRepository.ATTRIBUTE_OPEN));
 	}
+
+	private FeedReader makeFeedReader() {
+		return new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, ContentReader.INSTANCE);
+	}
 	
 	@Test(expected=MeshException.class)
-	public void shouldFlushCloseSessionFails() throws DocumentException{
+	public void shouldFlushCloseSessionFails() throws Exception{
 
 		OpaqueFeedSyncAdapterFactory feedAdapterFactory = new OpaqueFeedSyncAdapterFactory(TestHelper.baseDirectoryForTest());
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, new MessageSyncAdapterFactory(getNullSourceIdMapper(), feedAdapterFactory, false)));
@@ -109,7 +113,7 @@ public class FileSyncSessionRepositoryTest {
 		file = repo.getCurrentSessionFile(sessionId);
 		Assert.assertTrue(file.exists());
 		
-		FeedReader feedReader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		FeedReader feedReader = makeFeedReader();
 		Feed feed = feedReader.read(file);
 
 		Element syncSessionElement = feed.getPayload().element(FileSyncSessionRepository.ELEMENT_SYNC_SESSION);
@@ -119,7 +123,7 @@ public class FileSyncSessionRepositoryTest {
 	}
 
 	@Test
-	public void shouldFlushFullProtocolSession() throws DocumentException{
+	public void shouldFlushFullProtocolSession() throws Exception{
 
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
@@ -135,7 +139,7 @@ public class FileSyncSessionRepositoryTest {
 		file = repo.getCurrentSessionFile(sessionId);
 		Assert.assertTrue(file.exists());
 		
-		FeedReader feedReader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		FeedReader feedReader = makeFeedReader();
 		Feed feed = feedReader.read(file);
 
 		Element syncSessionElement = feed.getPayload().element(FileSyncSessionRepository.ELEMENT_SYNC_SESSION);
@@ -144,7 +148,7 @@ public class FileSyncSessionRepositoryTest {
 	}
 
 	@Test
-	public void shouldFlushLightProtocolSession() throws DocumentException{
+	public void shouldFlushLightProtocolSession() throws Exception{
 
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
@@ -160,7 +164,7 @@ public class FileSyncSessionRepositoryTest {
 		file = repo.getCurrentSessionFile(sessionId);
 		Assert.assertTrue(file.exists());
 		
-		FeedReader feedReader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		FeedReader feedReader = makeFeedReader();
 		Feed feed = feedReader.read(file);
 
 		Element syncSessionElement = feed.getPayload().element(FileSyncSessionRepository.ELEMENT_SYNC_SESSION);
@@ -169,7 +173,7 @@ public class FileSyncSessionRepositoryTest {
 	}
 	
 	@Test
-	public void shouldFlushLastSyncDateSession() throws DocumentException{
+	public void shouldFlushLastSyncDateSession() throws Exception{
 
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
@@ -185,7 +189,7 @@ public class FileSyncSessionRepositoryTest {
 		file = repo.getCurrentSessionFile(sessionId);
 		Assert.assertTrue(file.exists());
 		
-		FeedReader feedReader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		FeedReader feedReader = makeFeedReader();
 		Feed feed = feedReader.read(file);
 
 		Element syncSessionElement = feed.getPayload().element(FileSyncSessionRepository.ELEMENT_SYNC_SESSION);
@@ -194,7 +198,7 @@ public class FileSyncSessionRepositoryTest {
 	}
 	
 	@Test
-	public void shouldFlushNonLastSyncDateSession() throws DocumentException{
+	public void shouldFlushNonLastSyncDateSession() throws Exception{
 
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
@@ -209,7 +213,7 @@ public class FileSyncSessionRepositoryTest {
 		file = repo.getCurrentSessionFile(sessionId);
 		Assert.assertTrue(file.exists());
 		
-		FeedReader feedReader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		FeedReader feedReader = makeFeedReader();
 		Feed feed = feedReader.read(file);
 
 		Element syncSessionElement = feed.getPayload().element(FileSyncSessionRepository.ELEMENT_SYNC_SESSION);
@@ -218,7 +222,7 @@ public class FileSyncSessionRepositoryTest {
 	}
 	
 	@Test
-	public void shouldFlushNonEmptySession() throws DocumentException{
+	public void shouldFlushNonEmptySession() throws Exception{
 
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
@@ -237,7 +241,7 @@ public class FileSyncSessionRepositoryTest {
 		file = repo.getCurrentSessionFile(sessionId);
 		Assert.assertTrue(file.exists());
 		
-		FeedReader feedReader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		FeedReader feedReader = makeFeedReader();
 		Feed feed = feedReader.read(file);
 
 		Assert.assertNotNull(feed.getItems());
@@ -246,7 +250,7 @@ public class FileSyncSessionRepositoryTest {
 	}
 	
 	@Test
-	public void shouldFlushEmptySession() throws DocumentException{
+	public void shouldFlushEmptySession() throws Exception{
 
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
@@ -263,7 +267,7 @@ public class FileSyncSessionRepositoryTest {
 		file = repo.getCurrentSessionFile(sessionId);
 		Assert.assertTrue(file.exists());
 		
-		FeedReader feedReader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		FeedReader feedReader = makeFeedReader();
 		Feed feed = feedReader.read(file);
 
 		Assert.assertNotNull(feed.getItems());
@@ -271,7 +275,7 @@ public class FileSyncSessionRepositoryTest {
 	}
 
 	@Test
-	public void shouldFlushACKSession() throws DocumentException{
+	public void shouldFlushACKSession() throws Exception{
 
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
@@ -289,7 +293,7 @@ public class FileSyncSessionRepositoryTest {
 		file = repo.getCurrentSessionFile(sessionId);
 		Assert.assertTrue(file.exists());
 		
-		FeedReader feedReader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		FeedReader feedReader = makeFeedReader();
 		Feed feed = feedReader.read(file);
 
 		Element syncSessionElement = feed.getPayload().element(FileSyncSessionRepository.ELEMENT_SYNC_SESSION);
@@ -299,7 +303,7 @@ public class FileSyncSessionRepositoryTest {
 	}
 	
 	@Test
-	public void shouldFlushNonACKSession() throws DocumentException{
+	public void shouldFlushNonACKSession() throws Exception{
 
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
@@ -314,7 +318,7 @@ public class FileSyncSessionRepositoryTest {
 		file = repo.getCurrentSessionFile(sessionId);
 		Assert.assertTrue(file.exists());
 		
-		FeedReader feedReader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		FeedReader feedReader = makeFeedReader();
 		Feed feed = feedReader.read(file);
 
 		Element syncSessionElement = feed.getPayload().element(FileSyncSessionRepository.ELEMENT_SYNC_SESSION);
@@ -323,7 +327,7 @@ public class FileSyncSessionRepositoryTest {
 	}
 	
 	@Test
-	public void shouldFlushConflictSession() throws DocumentException{
+	public void shouldFlushConflictSession() throws Exception{
 
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
@@ -340,7 +344,7 @@ public class FileSyncSessionRepositoryTest {
 		file = repo.getCurrentSessionFile(sessionId);
 		Assert.assertTrue(file.exists());
 		
-		FeedReader feedReader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		FeedReader feedReader = makeFeedReader();
 		Feed feed = feedReader.read(file);
 
 		Element syncSessionElement = feed.getPayload().element(FileSyncSessionRepository.ELEMENT_SYNC_SESSION);
@@ -350,7 +354,7 @@ public class FileSyncSessionRepositoryTest {
 	}
 	
 	@Test
-	public void shouldFlushNonConflictSession() throws DocumentException{
+	public void shouldFlushNonConflictSession() throws Exception{
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
 		
@@ -364,7 +368,7 @@ public class FileSyncSessionRepositoryTest {
 		file = repo.getCurrentSessionFile(sessionId);
 		Assert.assertTrue(file.exists());
 		
-		FeedReader feedReader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		FeedReader feedReader = makeFeedReader();
 		Feed feed = feedReader.read(file);
 
 		Element syncSessionElement = feed.getPayload().element(FileSyncSessionRepository.ELEMENT_SYNC_SESSION);
@@ -373,7 +377,7 @@ public class FileSyncSessionRepositoryTest {
 	}
 	
 	@Test
-	public void shouldFlushSendChangesAttrSession() throws DocumentException{
+	public void shouldFlushSendChangesAttrSession() throws Exception{
 
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
@@ -389,7 +393,7 @@ public class FileSyncSessionRepositoryTest {
 		file = repo.getCurrentSessionFile(sessionId);
 		Assert.assertTrue(file.exists());
 		
-		FeedReader feedReader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		FeedReader feedReader = makeFeedReader();
 		Feed feed = feedReader.read(file);
 
 		Element syncSessionElement = feed.getPayload().element(FileSyncSessionRepository.ELEMENT_SYNC_SESSION);
@@ -398,7 +402,7 @@ public class FileSyncSessionRepositoryTest {
 	}
 
 	@Test
-	public void shouldFlushNoSendChangesAttrSession() throws DocumentException{
+	public void shouldFlushNoSendChangesAttrSession() throws Exception{
 
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
@@ -414,7 +418,7 @@ public class FileSyncSessionRepositoryTest {
 		file = repo.getCurrentSessionFile(sessionId);
 		Assert.assertTrue(file.exists());
 		
-		FeedReader feedReader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		FeedReader feedReader = makeFeedReader();
 		Feed feed = feedReader.read(file);
 
 		Element syncSessionElement = feed.getPayload().element(FileSyncSessionRepository.ELEMENT_SYNC_SESSION);
@@ -423,7 +427,7 @@ public class FileSyncSessionRepositoryTest {
 	}
 	
 	@Test
-	public void shouldFlushReceiveChangesAttrSession() throws DocumentException{
+	public void shouldFlushReceiveChangesAttrSession() throws Exception{
 
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
@@ -439,7 +443,7 @@ public class FileSyncSessionRepositoryTest {
 		file = repo.getCurrentSessionFile(sessionId);
 		Assert.assertTrue(file.exists());
 		
-		FeedReader feedReader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		FeedReader feedReader = makeFeedReader();
 		Feed feed = feedReader.read(file);
 
 		Element syncSessionElement = feed.getPayload().element(FileSyncSessionRepository.ELEMENT_SYNC_SESSION);
@@ -448,7 +452,7 @@ public class FileSyncSessionRepositoryTest {
 	}
 
 	@Test
-	public void shouldFlushNoReceiveChangesAttrSession() throws DocumentException{
+	public void shouldFlushNoReceiveChangesAttrSession() throws Exception{
 
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
@@ -464,7 +468,7 @@ public class FileSyncSessionRepositoryTest {
 		file = repo.getCurrentSessionFile(sessionId);
 		Assert.assertTrue(file.exists());
 		
-		FeedReader feedReader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		FeedReader feedReader = makeFeedReader();
 		Feed feed = feedReader.read(file);
 
 		Element syncSessionElement = feed.getPayload().element(FileSyncSessionRepository.ELEMENT_SYNC_SESSION);
@@ -483,7 +487,7 @@ public class FileSyncSessionRepositoryTest {
 	}
 	
 	@Test(expected=MeshException.class)
-	public void shouldSnapshotOpenSessionFails() throws DocumentException{
+	public void shouldSnapshotOpenSessionFails() throws Exception{
 
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
@@ -498,7 +502,7 @@ public class FileSyncSessionRepositoryTest {
 		file = repo.getSnapshotFile(sessionId);
 		Assert.assertTrue(file.exists());
 		
-		FeedReader feedReader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		FeedReader feedReader = makeFeedReader();
 		Feed feed = feedReader.read(file);
 
 		Element syncSessionElement = feed.getPayload().element(FileSyncSessionRepository.ELEMENT_SYNC_SESSION);
@@ -507,7 +511,7 @@ public class FileSyncSessionRepositoryTest {
 	}
 	
 	@Test
-	public void shouldSnapshotCloseSession() throws DocumentException{
+	public void shouldSnapshotCloseSession() throws Exception{
 
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
@@ -522,7 +526,7 @@ public class FileSyncSessionRepositoryTest {
 		file = repo.getSnapshotFile(sessionId);
 		Assert.assertTrue(file.exists());
 		
-		FeedReader feedReader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		FeedReader feedReader = makeFeedReader();
 		Feed feed = feedReader.read(file);
 
 		Element syncSessionElement = feed.getPayload().element(FileSyncSessionRepository.ELEMENT_SYNC_SESSION);
@@ -532,7 +536,7 @@ public class FileSyncSessionRepositoryTest {
 	}
 
 	@Test
-	public void shouldSnapshotFullProtocolSession() throws DocumentException{
+	public void shouldSnapshotFullProtocolSession() throws Exception{
 
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
@@ -547,7 +551,7 @@ public class FileSyncSessionRepositoryTest {
 		file = repo.getSnapshotFile(sessionId);
 		Assert.assertTrue(file.exists());
 		
-		FeedReader feedReader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		FeedReader feedReader = makeFeedReader();
 		Feed feed = feedReader.read(file);
 
 		Element syncSessionElement = feed.getPayload().element(FileSyncSessionRepository.ELEMENT_SYNC_SESSION);
@@ -556,7 +560,7 @@ public class FileSyncSessionRepositoryTest {
 	}
 	
 	@Test
-	public void shouldSnapshotLightProtocolSession() throws DocumentException{
+	public void shouldSnapshotLightProtocolSession() throws Exception{
 
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
@@ -571,7 +575,7 @@ public class FileSyncSessionRepositoryTest {
 		file = repo.getSnapshotFile(sessionId);
 		Assert.assertTrue(file.exists());
 		
-		FeedReader feedReader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		FeedReader feedReader = makeFeedReader();
 		Feed feed = feedReader.read(file);
 
 		Element syncSessionElement = feed.getPayload().element(FileSyncSessionRepository.ELEMENT_SYNC_SESSION);
@@ -580,7 +584,7 @@ public class FileSyncSessionRepositoryTest {
 	}
 	
 	@Test
-	public void shouldSnapshotLastSyncDateSession() throws DocumentException{
+	public void shouldSnapshotLastSyncDateSession() throws Exception{
 
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
@@ -595,7 +599,7 @@ public class FileSyncSessionRepositoryTest {
 		file = repo.getSnapshotFile(sessionId);
 		Assert.assertTrue(file.exists());
 		
-		FeedReader feedReader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		FeedReader feedReader = makeFeedReader();
 		Feed feed = feedReader.read(file);
 
 		Element syncSessionElement = feed.getPayload().element(FileSyncSessionRepository.ELEMENT_SYNC_SESSION);
@@ -604,7 +608,7 @@ public class FileSyncSessionRepositoryTest {
 	}
 	
 	@Test(expected=MeshException.class)
-	public void shouldSnapshotNonLastSyncDateSessionFails() throws DocumentException{
+	public void shouldSnapshotNonLastSyncDateSessionFails() throws Exception{
 
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
@@ -618,7 +622,7 @@ public class FileSyncSessionRepositoryTest {
 		file = repo.getSnapshotFile(sessionId);
 		Assert.assertTrue(file.exists());
 		
-		FeedReader feedReader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		FeedReader feedReader = makeFeedReader();
 		Feed feed = feedReader.read(file);
 
 		Element syncSessionElement = feed.getPayload().element(FileSyncSessionRepository.ELEMENT_SYNC_SESSION);
@@ -627,7 +631,7 @@ public class FileSyncSessionRepositoryTest {
 	}
 	
 	@Test
-	public void shouldSnapshotNonEmptySession() throws DocumentException{
+	public void shouldSnapshotNonEmptySession() throws Exception{
 
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
@@ -647,7 +651,7 @@ public class FileSyncSessionRepositoryTest {
 		file = repo.getSnapshotFile(sessionId);
 		Assert.assertTrue(file.exists());
 		
-		FeedReader feedReader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		FeedReader feedReader = makeFeedReader();
 		Feed feed = feedReader.read(file);
 
 		Assert.assertNotNull(feed.getItems());
@@ -656,7 +660,7 @@ public class FileSyncSessionRepositoryTest {
 	}
 	
 	@Test
-	public void shouldSnapshotEmptySession() throws DocumentException{
+	public void shouldSnapshotEmptySession() throws Exception{
 
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
@@ -672,7 +676,7 @@ public class FileSyncSessionRepositoryTest {
 		file = repo.getSnapshotFile(sessionId);
 		Assert.assertTrue(file.exists());
 		
-		FeedReader feedReader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		FeedReader feedReader = makeFeedReader();
 		Feed feed = feedReader.read(file);
 
 		Assert.assertNotNull(feed.getItems());
@@ -680,7 +684,7 @@ public class FileSyncSessionRepositoryTest {
 	}
 
 	@Test
-	public void shouldSnapshotACKSession() throws DocumentException{
+	public void shouldSnapshotACKSession() throws Exception{
 
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
@@ -699,7 +703,7 @@ public class FileSyncSessionRepositoryTest {
 		file = repo.getSnapshotFile(sessionId);
 		Assert.assertTrue(file.exists());
 		
-		FeedReader feedReader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		FeedReader feedReader = makeFeedReader();
 		Feed feed = feedReader.read(file);
 
 		Element syncSessionElement = feed.getPayload().element(FileSyncSessionRepository.ELEMENT_SYNC_SESSION);
@@ -708,7 +712,7 @@ public class FileSyncSessionRepositoryTest {
 	}
 	
 	@Test
-	public void shouldSnapshotNonACKSession() throws DocumentException{
+	public void shouldSnapshotNonACKSession() throws Exception{
 
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
@@ -726,7 +730,7 @@ public class FileSyncSessionRepositoryTest {
 		file = repo.getSnapshotFile(sessionId);
 		Assert.assertTrue(file.exists());
 		
-		FeedReader feedReader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		FeedReader feedReader = makeFeedReader();
 		Feed feed = feedReader.read(file);
 
 		Element syncSessionElement = feed.getPayload().element(FileSyncSessionRepository.ELEMENT_SYNC_SESSION);
@@ -735,7 +739,7 @@ public class FileSyncSessionRepositoryTest {
 	}
 	
 	@Test
-	public void shouldSnapshotConflictSession() throws DocumentException{
+	public void shouldSnapshotConflictSession() throws Exception{
 
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
@@ -753,7 +757,7 @@ public class FileSyncSessionRepositoryTest {
 		file = repo.getSnapshotFile(sessionId);
 		Assert.assertTrue(file.exists());
 		
-		FeedReader feedReader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		FeedReader feedReader = makeFeedReader();
 		Feed feed = feedReader.read(file);
 
 		Element syncSessionElement = feed.getPayload().element(FileSyncSessionRepository.ELEMENT_SYNC_SESSION);
@@ -763,7 +767,7 @@ public class FileSyncSessionRepositoryTest {
 	}
 	
 	@Test
-	public void shouldSnapshotNonConflictSession() throws DocumentException{
+	public void shouldSnapshotNonConflictSession() throws Exception{
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
 		
@@ -779,7 +783,7 @@ public class FileSyncSessionRepositoryTest {
 		file = repo.getSnapshotFile(sessionId);
 		Assert.assertTrue(file.exists());
 		
-		FeedReader feedReader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		FeedReader feedReader = makeFeedReader();
 		Feed feed = feedReader.read(file);
 
 		Element syncSessionElement = feed.getPayload().element(FileSyncSessionRepository.ELEMENT_SYNC_SESSION);
@@ -821,7 +825,7 @@ public class FileSyncSessionRepositoryTest {
 	}
 	
 	@Test
-	public void shouldSnapshotAddSendChangesAttrSession() throws DocumentException{
+	public void shouldSnapshotAddSendChangesAttrSession() throws Exception{
 
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
@@ -836,7 +840,7 @@ public class FileSyncSessionRepositoryTest {
 		file = repo.getSnapshotFile(sessionId);
 		Assert.assertTrue(file.exists());
 		
-		FeedReader feedReader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		FeedReader feedReader = makeFeedReader();
 		Feed feed = feedReader.read(file);
 
 		Element syncSessionElement = feed.getPayload().element(FileSyncSessionRepository.ELEMENT_SYNC_SESSION);
@@ -845,7 +849,7 @@ public class FileSyncSessionRepositoryTest {
 	}
 	
 	@Test
-	public void shouldSnapshotAddNoSendChangesAttrSession() throws DocumentException{
+	public void shouldSnapshotAddNoSendChangesAttrSession() throws Exception{
 
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
@@ -860,7 +864,7 @@ public class FileSyncSessionRepositoryTest {
 		file = repo.getSnapshotFile(sessionId);
 		Assert.assertTrue(file.exists());
 		
-		FeedReader feedReader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		FeedReader feedReader = makeFeedReader();
 		Feed feed = feedReader.read(file);
 
 		Element syncSessionElement = feed.getPayload().element(FileSyncSessionRepository.ELEMENT_SYNC_SESSION);
@@ -869,7 +873,7 @@ public class FileSyncSessionRepositoryTest {
 	}
 	
 	@Test
-	public void shouldSnapshotAddReceiveChangesAttrSession() throws DocumentException{
+	public void shouldSnapshotAddReceiveChangesAttrSession() throws Exception{
 
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
@@ -884,7 +888,7 @@ public class FileSyncSessionRepositoryTest {
 		file = repo.getSnapshotFile(sessionId);
 		Assert.assertTrue(file.exists());
 		
-		FeedReader feedReader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		FeedReader feedReader = makeFeedReader();
 		Feed feed = feedReader.read(file);
 
 		Element syncSessionElement = feed.getPayload().element(FileSyncSessionRepository.ELEMENT_SYNC_SESSION);
@@ -893,7 +897,7 @@ public class FileSyncSessionRepositoryTest {
 	}
 	
 	@Test
-	public void shouldSnapshotAddNoReceiveChangesAttrSession() throws DocumentException{
+	public void shouldSnapshotAddNoReceiveChangesAttrSession() throws Exception{
 
 		FileSyncSessionRepository repo = new FileSyncSessionRepository(TestHelper.baseDirectoryForTest(), new SyncSessionFactory(SmsEndpointFactory.INSTANCE, createMessageSyncAdapterFactory()));
 		String sessionId = IdGenerator.INSTANCE.newID();
@@ -908,7 +912,7 @@ public class FileSyncSessionRepositoryTest {
 		file = repo.getSnapshotFile(sessionId);
 		Assert.assertTrue(file.exists());
 		
-		FeedReader feedReader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		FeedReader feedReader = makeFeedReader();
 		Feed feed = feedReader.read(file);
 
 		Element syncSessionElement = feed.getPayload().element(FileSyncSessionRepository.ELEMENT_SYNC_SESSION);
@@ -1099,7 +1103,7 @@ public class FileSyncSessionRepositoryTest {
 	
 
 	@Test
-	public void shouldReadFullProtocolSession() throws DocumentException{
+	public void shouldReadFullProtocolSession() throws Exception{
 		String sessionId = "example4";
 		File file = new File(this.getClass().getResource(sessionId + "_snapshot.xml").getFile());
 
@@ -1117,7 +1121,7 @@ public class FileSyncSessionRepositoryTest {
 	}
 	
 	@Test
-	public void shouldReadLightProtocolSession() throws DocumentException{
+	public void shouldReadLightProtocolSession() throws Exception{
 		String sessionId = "example5";
 		File file = new File(this.getClass().getResource(sessionId + "_snapshot.xml").getFile());
 		
@@ -1135,7 +1139,7 @@ public class FileSyncSessionRepositoryTest {
 	}
 	
 	@Test
-	public void shouldReadLastSyncDateSession() throws DocumentException{
+	public void shouldReadLastSyncDateSession() throws Exception{
 		String sessionId = "example4";
 		File file = new File(this.getClass().getResource(sessionId + "_snapshot.xml").getFile());
 		
@@ -1153,7 +1157,7 @@ public class FileSyncSessionRepositoryTest {
 	}
 	
 	@Test
-	public void shouldReadNonLastSyncDateSessionFails() throws DocumentException{
+	public void shouldReadNonLastSyncDateSessionFails() throws Exception{
 		String sessionId = "example6";
 		File file = new File(this.getClass().getResource(sessionId + "_current.xml").getFile());
 		
@@ -1171,7 +1175,7 @@ public class FileSyncSessionRepositoryTest {
 	}
 	
 	@Test
-	public void shouldReadACKSession() throws DocumentException{
+	public void shouldReadACKSession() throws Exception{
 		String sessionId = "example7";
 		File file = new File(this.getClass().getResource(sessionId + "_current.xml").getFile());
 		
@@ -1191,7 +1195,7 @@ public class FileSyncSessionRepositoryTest {
 	}
 	
 	@Test
-	public void shouldReadNonACKSession() throws DocumentException{
+	public void shouldReadNonACKSession() throws Exception{
 		String sessionId = "example8";
 		File file = new File(this.getClass().getResource(sessionId + "_current.xml").getFile());
 		
@@ -1210,7 +1214,7 @@ public class FileSyncSessionRepositoryTest {
 	}
 	
 	@Test
-	public void shouldReadConflictSession() throws DocumentException{
+	public void shouldReadConflictSession() throws Exception{
 		String sessionId = "example9";
 		File file = new File(this.getClass().getResource(sessionId + "_current.xml").getFile());
 		
@@ -1229,7 +1233,7 @@ public class FileSyncSessionRepositoryTest {
 	}
 	
 	@Test
-	public void shouldReadNonConflictSession() throws DocumentException{
+	public void shouldReadNonConflictSession() throws Exception{
 		String sessionId = "example8";
 		File file = new File(this.getClass().getResource(sessionId + "_current.xml").getFile());
 		
@@ -1247,7 +1251,7 @@ public class FileSyncSessionRepositoryTest {
 	}
 	
 	@Test
-	public void shouldReadSendChangesAttrSession() throws DocumentException{
+	public void shouldReadSendChangesAttrSession() throws Exception{
 		String sessionId = "example4";
 		File file = new File(this.getClass().getResource(sessionId + "_snapshot.xml").getFile());
 
@@ -1265,7 +1269,7 @@ public class FileSyncSessionRepositoryTest {
 	}
 	
 	@Test
-	public void shouldReadNoSendChangesAttrSession() throws DocumentException{
+	public void shouldReadNoSendChangesAttrSession() throws Exception{
 		String sessionId = "example6";
 		File file = new File(this.getClass().getResource(sessionId + "_current.xml").getFile());
 
@@ -1283,7 +1287,7 @@ public class FileSyncSessionRepositoryTest {
 	}
 	
 	@Test
-	public void shouldReadReceiveChangesArrtSession() throws DocumentException{
+	public void shouldReadReceiveChangesArrtSession() throws Exception{
 		String sessionId = "example5";
 		File file = new File(this.getClass().getResource(sessionId + "_snapshot.xml").getFile());
 
@@ -1301,7 +1305,7 @@ public class FileSyncSessionRepositoryTest {
 	}
 	
 	@Test
-	public void shouldReadNoReceiveChangesAttrSession() throws DocumentException{
+	public void shouldReadNoReceiveChangesAttrSession() throws Exception{
 		String sessionId = "example7";
 		File file = new File(this.getClass().getResource(sessionId + "_current.xml").getFile());
 

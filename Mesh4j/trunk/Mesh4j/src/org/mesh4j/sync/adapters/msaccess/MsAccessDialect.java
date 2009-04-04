@@ -38,7 +38,8 @@ public class MsAccessDialect extends Dialect {
 		//      * For int, from -2147483648 to 2147483647, inclusive
 		//      * For long, from -9223372036854775808 to 9223372036854775807, inclusive
 		//      * For char, from '\u0000' to '\uffff' inclusive, that is, from 0 to 65535 
-
+		registerColumnType( Types.BOOLEAN, "boolean");
+		registerHibernateType( Types.BOOLEAN,  Hibernate.BOOLEAN.getName());
 		registerColumnType( Types.BIT, "bit" ); // This is a synonym for BOOLEAN
 		// registerColumnType( Types.BIGINT, "bigint" ); // I don't think Access has these
 		registerColumnType( Types.SMALLINT, "smallint" );

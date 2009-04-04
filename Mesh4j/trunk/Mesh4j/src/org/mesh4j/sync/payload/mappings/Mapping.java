@@ -11,7 +11,7 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.mesh4j.sync.utils.XMLHelper;
 
-public class MappingResolver implements IMappingResolver {
+public class Mapping implements IMapping {
 
 	// MODEL VARIABLES
 	private Element mappings;
@@ -19,11 +19,16 @@ public class MappingResolver implements IMappingResolver {
 	
 	// BUSINESS METHODS
 
-	public MappingResolver(Element schema, IPropertyResolver... allPropertyResolvers) {
-		if(schema == null){
+	public Mapping(Element mappings, IPropertyResolver... allPropertyResolvers) {
+		if(mappings == null){
 			this.mappings = DocumentHelper.createElement(ELEMENT_MAPPING);
 		} else {
-			this.mappings = schema;	
+			if(ELEMENT_MAPPING.equals(mappings.getName())){
+				this.mappings = mappings.createCopy();
+			} else {
+				this.mappings = DocumentHelper.createElement(ELEMENT_MAPPING);
+				this.mappings.add(mappings.createCopy());
+			}
 		}
 		
 		for (IPropertyResolver propertyResolver : allPropertyResolvers) {
@@ -106,11 +111,6 @@ public class MappingResolver implements IMappingResolver {
 	}
 
 	@Override
-	public Element getMappings() {
-		return this.mappings;
-	}
-
-	@Override
 	public String getMapping(String mappingName) {
 		Element propElement = XMLHelper.selectSingleNode(mappingName, this.mappings, new HashMap<String, String>());
 		
@@ -124,6 +124,23 @@ public class MappingResolver implements IMappingResolver {
 	public String getAttribute(String mappingName) {
 		String mapping = getMapping(mappingName);
 		return StringUtils.substringBetween(mapping, "{", "}");
+	}
+
+	@Override
+	public String asXML() {
+		return this.mappings.asXML();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public String asXMLText() {
+		StringBuffer sbMappings = new StringBuffer();
+		List<Element> mappingElements = this.mappings.elements();
+		for (Element mapElement : mappingElements) {
+			sbMappings.append(mapElement.asXML());
+			sbMappings.append("\n");
+		}
+		return sbMappings.toString();
 	}
 	
 }

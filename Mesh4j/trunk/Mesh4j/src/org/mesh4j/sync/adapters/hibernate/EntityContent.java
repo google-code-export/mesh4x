@@ -1,10 +1,8 @@
 package org.mesh4j.sync.adapters.hibernate;
 
 import org.dom4j.Element;
-import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.model.Content;
 import org.mesh4j.sync.model.IContent;
-import org.mesh4j.sync.model.Sync;
 
 
 public class EntityContent extends Content{
@@ -72,10 +70,4 @@ public class EntityContent extends Content{
 		}
 	}
 
-	@Override
-	public void addToFeedPayload(Sync sync, Element itemElement, ISyndicationFormat format){
-		format.addFeedItemTitleElement(itemElement, this.entityName);
-		format.addFeedItemDescriptionElement(itemElement, "Entity id: " + this.getId() + " version: " + this.getVersion());
-		format.addFeedItemPayloadElement(itemElement, this.getPayload().createCopy());
-	}
 }

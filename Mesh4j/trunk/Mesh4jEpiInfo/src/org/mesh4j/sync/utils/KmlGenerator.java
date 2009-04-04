@@ -17,8 +17,8 @@ import org.mesh4j.geo.coder.GeoCoderLocationPropertyResolver;
 import org.mesh4j.sync.adapters.kml.KmlNames;
 import org.mesh4j.sync.adapters.kml.timespan.decorator.IKMLGenerator;
 import org.mesh4j.sync.model.Item;
-import org.mesh4j.sync.payload.mappings.IMappingResolver;
-import org.mesh4j.sync.payload.mappings.MappingResolver;
+import org.mesh4j.sync.payload.mappings.IMapping;
+import org.mesh4j.sync.payload.mappings.Mapping;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
@@ -34,12 +34,12 @@ public class KmlGenerator implements IKMLGenerator{
 	final static SimpleDateFormat DATEONSET_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	// MODEL VARIABLE
-	private IMappingResolver mappingResolver;
+	private IMapping mappingResolver;
 	private String templateFileName;
 	
 	// BUSINESS METHODS
 
-	public KmlGenerator(String templateFileName, IMappingResolver mappingResolver){
+	public KmlGenerator(String templateFileName, IMapping mappingResolver){
 		Guard.argumentNotNull(mappingResolver, "mappingResolver");
 		Guard.argumentNotNullOrEmptyString(templateFileName, "templateFileName");
 		
@@ -167,24 +167,24 @@ public class KmlGenerator implements IKMLGenerator{
 		}
 	}
 
-	public static String getTitleMapping(MappingResolver mappingResolver) {
+	public static String getTitleMapping(Mapping mappingResolver) {
 		return mappingResolver.getMapping(ATTR_ITEM_TITLE);
 	}
 	
-	public static String getDescriptionMapping(MappingResolver mappingResolver) {
+	public static String getDescriptionMapping(Mapping mappingResolver) {
 		return mappingResolver.getMapping(ATTR_ITEM_DESCRIPTION);
 	}
 	
-	public static String getAddressMapping(MappingResolver mappingResolver) {
+	public static String getAddressMapping(Mapping mappingResolver) {
 		String geoLocMapping = mappingResolver.getAttribute(ATTR_GEO_LOCATION);
 		return GeoCoderLocationPropertyResolver.getMapping(geoLocMapping);
 	}
 	
-	public static String getIllMapping(MappingResolver mappingResolver) {
+	public static String getIllMapping(Mapping mappingResolver) {
 		return mappingResolver.getAttribute(ATTR_PATIENT_ILL);
 	}
 	
-	public static String getUpdateTimestampMapping(MappingResolver mappingResolver) {
+	public static String getUpdateTimestampMapping(Mapping mappingResolver) {
 		return mappingResolver.getAttribute(ATTR_PATIENT_UPDATE_TIMESTAMP);
 	}
 }

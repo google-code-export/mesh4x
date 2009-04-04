@@ -13,6 +13,8 @@ import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.mesh4j.sync.AbstractSyncAdapter;
 import org.mesh4j.sync.IFilter;
+import org.mesh4j.sync.adapters.feed.ContentReader;
+import org.mesh4j.sync.adapters.feed.ContentWriter;
 import org.mesh4j.sync.adapters.feed.FeedReader;
 import org.mesh4j.sync.adapters.feed.FeedWriter;
 import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
@@ -62,8 +64,8 @@ public class S3Adapter extends AbstractSyncAdapter {
 		this.s3 = s3;
 		this.identityProvider = identityProvider;
 		
-		this.reader = new FeedReader(getSyndicationFormat(), identityProvider, IdGenerator.INSTANCE);
-		this.writer = new FeedWriter(getSyndicationFormat(), identityProvider);
+		this.reader = new FeedReader(getSyndicationFormat(), identityProvider, IdGenerator.INSTANCE, ContentReader.INSTANCE);
+		this.writer = new FeedWriter(getSyndicationFormat(), identityProvider, ContentWriter.INSTANCE);
 	}	
 
 	private void writeItem(Item item) {

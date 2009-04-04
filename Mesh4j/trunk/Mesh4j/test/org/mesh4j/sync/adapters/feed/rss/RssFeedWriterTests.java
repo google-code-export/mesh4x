@@ -2,16 +2,16 @@ package org.mesh4j.sync.adapters.feed.rss;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.util.Date;
 
 import org.dom4j.Document;
-import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.io.XMLWriter;
 import org.junit.Assert;
 import org.junit.Test;
+import org.mesh4j.sync.adapters.feed.ContentReader;
+import org.mesh4j.sync.adapters.feed.ContentWriter;
 import org.mesh4j.sync.adapters.feed.Feed;
 import org.mesh4j.sync.adapters.feed.FeedReader;
 import org.mesh4j.sync.adapters.feed.FeedWriter;
@@ -27,17 +27,17 @@ import org.mesh4j.sync.test.utils.TestHelper;
 public class RssFeedWriterTests {
 
 	@Test
-	public void shouldWriteRssFeed() throws DocumentException, IOException{
+	public void shouldWriteRssFeed() throws Exception{
 		
 		File file = new File(this.getClass().getResource("rss.xml").getFile());
 		Assert.assertTrue(file.exists());
 		
-		FeedReader reader = new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		FeedReader reader = makeFeedReader();
 		Feed feed = reader.read(file);
 		
 		XMLWriter xmlWriter = new XMLWriter(new FileWriter(TestHelper.fileName("rss1.xml")));
 
-		FeedWriter writer = new FeedWriter(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
+		FeedWriter writer = makeFeedWriter();
 		writer.write(xmlWriter, feed);
 		
 		File file2 =  new File(TestHelper.fileName("rss1.xml"));
@@ -51,9 +51,17 @@ public class RssFeedWriterTests {
 		writer.write(xmlWriter, newFeed);
 		
 	}
+
+	private FeedWriter makeFeedWriter() {
+		return new FeedWriter(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, ContentWriter.INSTANCE);
+	}
+
+	private FeedReader makeFeedReader() {
+		return new FeedReader(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, ContentReader.INSTANCE);
+	}
 	
 	@Test
-	public void shouldAddLastUpdateAuthor() throws DocumentException{
+	public void shouldAddLastUpdateAuthor() throws Exception{
 		Document document = DocumentHelper.createDocument();
 		Element payload = DocumentHelper.createElement(ISyndicationFormat.ELEMENT_PAYLOAD);
 		Element author = payload.addElement(ISyndicationFormat.SX_ELEMENT_AUTHOR);
@@ -67,7 +75,7 @@ public class RssFeedWriterTests {
 		Item item = new Item(content, sync);
 		Feed feed = new Feed(item);
 
-		FeedWriter writer = new FeedWriter(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
+		FeedWriter writer = makeFeedWriter();
 		writer.write(document, feed);
 		
 		assertFeedAuthor(document, by);
@@ -75,7 +83,7 @@ public class RssFeedWriterTests {
 	}
 
 	@Test
-	public void shouldAddLastUpdateAuthorWhenAuthorDoesNotExist() throws DocumentException{
+	public void shouldAddLastUpdateAuthorWhenAuthorDoesNotExist() throws Exception{
 		
 		Document document = DocumentHelper.createDocument();
 		Element payload = DocumentHelper.createElement(ISyndicationFormat.ELEMENT_PAYLOAD);
@@ -88,14 +96,14 @@ public class RssFeedWriterTests {
 		Item item = new Item(content, sync);
 		Feed feed = new Feed(item);
 
-		FeedWriter writer = new FeedWriter(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
+		FeedWriter writer = makeFeedWriter();
 		writer.write(document, feed);
 		
 		assertFeedAuthor(document, by);
 	}
 	
 	@Test
-	public void shouldAddLastUpdateAuthorWhenNameDoesNotExist() throws DocumentException{
+	public void shouldAddLastUpdateAuthorWhenNameDoesNotExist() throws Exception{
 		Document document = DocumentHelper.createDocument();
 		Element payload = DocumentHelper.createElement(ISyndicationFormat.ELEMENT_PAYLOAD);
 		payload.addElement(ISyndicationFormat.SX_ELEMENT_AUTHOR);
@@ -107,14 +115,14 @@ public class RssFeedWriterTests {
 		Item item = new Item(content, sync);
 		Feed feed = new Feed(item);
 
-		FeedWriter writer = new FeedWriter(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
+		FeedWriter writer = makeFeedWriter();
 		writer.write(document, feed);
 		
 		assertFeedAuthor(document, by);
 	}
 	
 	@Test
-	public void shouldNoAddLastUpdateAuthorWhenAreTheSameElementAuthor() throws DocumentException{
+	public void shouldNoAddLastUpdateAuthorWhenAreTheSameElementAuthor() throws Exception{
 		Document document = DocumentHelper.createDocument();
 		Element payload = DocumentHelper.createElement(ISyndicationFormat.ELEMENT_PAYLOAD);
 		Element author = payload.addElement(ISyndicationFormat.SX_ELEMENT_AUTHOR);
@@ -128,14 +136,14 @@ public class RssFeedWriterTests {
 		Item item = new Item(content, sync);
 		Feed feed = new Feed(item);
 
-		FeedWriter writer = new FeedWriter(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
+		FeedWriter writer = makeFeedWriter();
 		writer.write(document, feed);
 		
 		assertFeedAuthor(document, by);
 	}
 	
 	@Test
-	public void shouldAddLoggedAuthor() throws DocumentException{
+	public void shouldAddLoggedAuthor() throws Exception{
 		Document document = DocumentHelper.createDocument();
 		Element payload = DocumentHelper.createElement(ISyndicationFormat.ELEMENT_PAYLOAD);
 		Element author = payload.addElement(ISyndicationFormat.SX_ELEMENT_AUTHOR);
@@ -147,14 +155,14 @@ public class RssFeedWriterTests {
 		Item item = new Item(content, sync);
 		Feed feed = new Feed(item);
 
-		FeedWriter writer = new FeedWriter(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
+		FeedWriter writer = makeFeedWriter();
 		writer.write(document, feed);
 		
 		assertFeedAuthor(document, NullIdentityProvider.INSTANCE.getAuthenticatedUser());
 	}
 
 	@Test
-	public void shouldAddLoggedAuthorWhenAuthorDoesNotExist() throws DocumentException{
+	public void shouldAddLoggedAuthorWhenAuthorDoesNotExist() throws Exception{
 		Document document = DocumentHelper.createDocument();
 		Element payload = DocumentHelper.createElement(ISyndicationFormat.ELEMENT_PAYLOAD);
 		
@@ -163,14 +171,14 @@ public class RssFeedWriterTests {
 		Item item = new Item(content, sync);
 		Feed feed = new Feed(item);
 
-		FeedWriter writer = new FeedWriter(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
+		FeedWriter writer = makeFeedWriter();
 		writer.write(document, feed);
 		
 		assertFeedAuthor(document, NullIdentityProvider.INSTANCE.getAuthenticatedUser());
 	}
 	
 	@Test
-	public void shouldAddLoggedAuthorWhenNameDoesNotExist() throws DocumentException{
+	public void shouldAddLoggedAuthorWhenNameDoesNotExist() throws Exception{
 		Document document = DocumentHelper.createDocument();
 		Element payload = DocumentHelper.createElement(ISyndicationFormat.ELEMENT_PAYLOAD);
 		payload.addElement(ISyndicationFormat.SX_ELEMENT_AUTHOR);
@@ -180,14 +188,14 @@ public class RssFeedWriterTests {
 		Item item = new Item(content, sync);
 		Feed feed = new Feed(item);
 
-		FeedWriter writer = new FeedWriter(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
+		FeedWriter writer = makeFeedWriter();
 		writer.write(document, feed);
 		
 		assertFeedAuthor(document, NullIdentityProvider.INSTANCE.getAuthenticatedUser());
 	}
 	
 	@Test
-	public void shouldNoAddLoggedAuthorWhenAreTheSameElementAuthor() throws DocumentException{
+	public void shouldNoAddLoggedAuthorWhenAreTheSameElementAuthor() throws Exception{
 		Document document = DocumentHelper.createDocument();
 		Element payload = DocumentHelper.createElement(ISyndicationFormat.ELEMENT_PAYLOAD);
 		Element author = payload.addElement(ISyndicationFormat.SX_ELEMENT_AUTHOR);
@@ -199,7 +207,7 @@ public class RssFeedWriterTests {
 		Item item = new Item(content, sync);
 		Feed feed = new Feed(item);
 
-		FeedWriter writer = new FeedWriter(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
+		FeedWriter writer = makeFeedWriter();
 		writer.write(document, feed);
 		
 		assertFeedAuthor(document, NullIdentityProvider.INSTANCE.getAuthenticatedUser());

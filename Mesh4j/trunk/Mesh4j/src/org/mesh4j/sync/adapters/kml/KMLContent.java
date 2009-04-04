@@ -4,10 +4,8 @@ import java.util.List;
 
 import org.dom4j.Element;
 import org.mesh4j.sync.adapters.dom.MeshNames;
-import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.model.Content;
 import org.mesh4j.sync.model.IContent;
-import org.mesh4j.sync.model.Sync;
 import org.mesh4j.sync.parsers.IXMLView;
 import org.mesh4j.sync.parsers.IXMLViewElement;
 import org.mesh4j.sync.validations.Guard;
@@ -70,12 +68,4 @@ public class KMLContent extends Content{
 		return null;
 	}
 	
-	@Override
-	public void addToFeedPayload(Sync sync, Element itemElement, ISyndicationFormat format){
-		format.addFeedItemTitleElement(itemElement, this.getPayload().getName());
-		format.addFeedItemDescriptionElement(itemElement, "Id: " + this.getId() + " version: " + this.getVersion());
-		format.addFeedItemPayloadElement(itemElement, this.getPayload().createCopy());
-	}
-
-
 }

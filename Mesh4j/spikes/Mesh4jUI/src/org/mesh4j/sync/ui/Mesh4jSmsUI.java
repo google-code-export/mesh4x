@@ -32,6 +32,8 @@ import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.adapters.dom.DOMAdapter;
 import org.mesh4j.sync.adapters.dom.IDOMLoader;
+import org.mesh4j.sync.adapters.feed.ContentReader;
+import org.mesh4j.sync.adapters.feed.ContentWriter;
 import org.mesh4j.sync.adapters.feed.FeedAdapter;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.adapters.http.HttpSyncAdapter;
@@ -668,7 +670,7 @@ public class Mesh4jSmsUI implements ISmsConnectionInboundOutboundNotification, I
 	private ISyncAdapter makeRepositoryAdapter(String endpoint) {
 		// TODO (JMT) refactoring: change for ISyncAdapterFactory
 		if(isURL(endpoint)){
-			return new HttpSyncAdapter(endpoint, RssSyndicationFormat.INSTANCE, this.identityProvider);
+			return new HttpSyncAdapter(endpoint, RssSyndicationFormat.INSTANCE, this.identityProvider, this.idGenerator, ContentWriter.INSTANCE, ContentReader.INSTANCE);
 		} else {
 			if(isFeed(endpoint)){
 				return new FeedAdapter(endpoint, this.identityProvider, this.idGenerator);

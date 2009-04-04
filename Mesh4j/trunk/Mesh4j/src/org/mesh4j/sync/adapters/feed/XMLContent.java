@@ -1,10 +1,7 @@
 package org.mesh4j.sync.adapters.feed;
 
-import java.util.List;
-
 import org.dom4j.Element;
 import org.mesh4j.sync.model.Content;
-import org.mesh4j.sync.model.Sync;
 
 
 public class XMLContent extends Content {
@@ -75,56 +72,6 @@ public class XMLContent extends Content {
     }
 
 	
-	@SuppressWarnings("unchecked")
-	@Override
-	public void addToFeedPayload(Sync sync, Element itemElement, ISyndicationFormat format){
-		
-		String defaultValue = "---";
-		
-		String myTitle = null;
-		if(this.getTitle() == null || this.getTitle().length() == 0){
-			if(defaultValue != null){
-				myTitle = defaultValue;
-			}
-		}else{
-			myTitle = this.getTitle();
-		}
-		
-		if(myTitle != null){
-			format.addFeedItemTitleElement(itemElement, myTitle);
-		}
-
-		String myDesc = null;
-		if(this.getDescription() == null || this.getDescription().length() == 0){
-			if(defaultValue != null){
-				myDesc = defaultValue;
-			}
-		}else{
-			myDesc = this.getDescription();
-		}
-		
-		if(myDesc != null){
-			format.addFeedItemDescriptionElement(itemElement, myDesc);
-		}
-		
-		if(this.getLink() != null && this.getLink().length() > 0){
-			format.addFeedItemLinkElement(itemElement, this.getLink());
-		}
-		
-		if(ISyndicationFormat.ELEMENT_PAYLOAD.equals(this.getPayload().getName())){
-			List<Element> payloadElements = this.getPayload().elements();
-			
-			if(payloadElements.size() > 1){
-				format.addFeedItemPayloadElement(itemElement, this.getPayload().createCopy());
-			} else if(payloadElements.size() == 1){
-				format.addFeedItemPayloadElement(itemElement, payloadElements.get(0).createCopy());
-			}
-		} else {
-			format.addFeedItemPayloadElement(itemElement, this.getPayload().createCopy());
-		}
-		
-	}
-
 	public void setDescription(String description) {
 		this.description = description;
 	}

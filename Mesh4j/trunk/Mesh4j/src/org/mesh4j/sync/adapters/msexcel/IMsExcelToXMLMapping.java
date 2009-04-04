@@ -11,7 +11,7 @@ public interface IMsExcelToXMLMapping {
 
 	public String getLastUpdateColumnName();
 
-	public void appliesXMLToRow(HSSFWorkbook wb, HSSFSheet sheet, HSSFRow row, String id, Element payload);
+	public void appliesXMLToRow(HSSFWorkbook wb, HSSFSheet sheet, HSSFRow row, Element payload);
 	
 	public Element convertRowToXML(HSSFWorkbook wb, HSSFSheet sheet, HSSFRow row);
 

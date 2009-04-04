@@ -15,6 +15,8 @@ import org.mesh4j.sync.utils.XMLHelper;
 
 public class AtomSyndicationFormat implements ISyndicationFormat {
 
+	// CONSTANTS
+	
 	private static final String NAME = "atom10";
 	public static final Namespace ATOM_NAMESPACE = new Namespace("", "http://www.w3.org/2005/Atom");
 	private static final String ATOM_ELEMENT_FEED = "feed";
@@ -29,6 +31,12 @@ public class AtomSyndicationFormat implements ISyndicationFormat {
 	
 	public static final AtomSyndicationFormat INSTANCE = new AtomSyndicationFormat();
 
+	// BUSINESS METHODS
+	
+	private AtomSyndicationFormat(){
+		super();
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Element> getRootElements(Element root) {

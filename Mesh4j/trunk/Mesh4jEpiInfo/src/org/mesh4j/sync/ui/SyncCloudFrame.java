@@ -27,7 +27,6 @@ import org.mesh4j.sync.mappings.MSAccessDataSourceMapping;
 import org.mesh4j.sync.mappings.SyncMode;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.properties.PropertiesProvider;
-import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.ui.tasks.IErrorListener;
 import org.mesh4j.sync.ui.tasks.OpenFileTask;
 import org.mesh4j.sync.ui.tasks.OpenURLTask;
@@ -284,18 +283,20 @@ public class SyncCloudFrame extends JFrame implements IErrorListener{
 			try{
 				owner.notifyOwnerWorking();
 				setInProcess(MeshUITranslator.getLabelStart());
-				List<Item> conflicts = SyncEngineUtil.synchronize(url, dataSource.getAlias(), getIdentityProvider(), getBaseDirectory(), getSourceIdMapper(), getSelectedSyncMode());
+				List<Item> conflicts = SyncEngineUtil.synchronize(url, dataSource.getAlias(), propertiesProvider, sourceIdMapper, getSelectedSyncMode());
 				if(conflicts.isEmpty()){
 					setOk(MeshUITranslator.getLabelSuccess());
 				} else {
 					setError(MeshUITranslator.getLabelSyncEndWithConflicts(conflicts.size()));	
 				}
+				
+				owner.updateSessions();
+				owner.notifyOwnerNotWorking();
 			} catch(Throwable e){
 				LogFrame.Logger.error(e.getMessage(), e);
 				setError(MeshUITranslator.getLabelFailed());
 			}
-			owner.updateSessions();
-			owner.notifyOwnerNotWorking();
+
 			return null;
 	    }
 
@@ -303,18 +304,6 @@ public class SyncCloudFrame extends JFrame implements IErrorListener{
 	    public void done() {
 			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 	    }
-	}
-	
-	public SourceIdMapper getSourceIdMapper() {
-		return this.sourceIdMapper;
-	}
-
-	public IIdentityProvider getIdentityProvider() {
-		return this.propertiesProvider.getIdentityProvider();
-	}
-
-	public String getBaseDirectory() {
-		return this.propertiesProvider.getBaseDirectory();
 	}
 	
 	public void notifyDataSourceMappingListsChanges(ArrayList<DataSourceMapping> sources) {

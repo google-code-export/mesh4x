@@ -2,7 +2,6 @@ package org.mesh4j.sync.adapters.multi.repositories;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -12,6 +11,7 @@ import org.dom4j.io.XMLWriter;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mesh4j.sync.SyncEngine;
+import org.mesh4j.sync.adapters.feed.ContentWriter;
 import org.mesh4j.sync.adapters.feed.Feed;
 import org.mesh4j.sync.adapters.feed.FeedAdapter;
 import org.mesh4j.sync.adapters.feed.FeedWriter;
@@ -68,7 +68,7 @@ public class InterRepositoriesTests {
 	}
 	
 	@Test
-	public void shouldSyncHibernate2Feed() throws IOException, DocumentException{
+	public void shouldSyncHibernate2Feed() throws Exception{
 		
 		File rssFile = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xml"));
 
@@ -94,7 +94,7 @@ public class InterRepositoriesTests {
 		Assert.assertTrue(hibernateRepo.getAll().size() == allItems.size());
 		
 		XMLWriter xmlWriter = new XMLWriter(new FileWriter(TestHelper.fileName("atomUserFeed1.xml")));
-		FeedWriter feedWriter = new FeedWriter(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
+		FeedWriter feedWriter = new FeedWriter(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, ContentWriter.INSTANCE);
 		feedWriter.write(xmlWriter, feed);
 	}
 	

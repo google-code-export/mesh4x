@@ -65,7 +65,7 @@ public class MsExcelContentAdapter implements IContentAdapter, ISyncAware {
 	}
 	
 	protected void updateRow(HSSFRow row, EntityContent entityContent) {
-		this.mapping.appliesXMLToRow(getWorkbook(), getSheet(), row, entityContent.getId(), entityContent.getPayload());
+		this.mapping.appliesXMLToRow(getWorkbook(), getSheet(), row, entityContent.getPayload());
 	}
 
 	private void addRow(EntityContent entityContent) {

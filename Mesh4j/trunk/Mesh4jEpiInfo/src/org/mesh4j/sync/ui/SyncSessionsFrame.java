@@ -30,6 +30,7 @@ import javax.swing.tree.TreeSelectionModel;
 
 import org.mesh4j.sync.adapters.feed.FeedAdapter;
 import org.mesh4j.sync.adapters.feed.XMLContent;
+import org.mesh4j.sync.mappings.DataSourceMapping;
 import org.mesh4j.sync.mappings.EndpointMapping;
 import org.mesh4j.sync.mappings.MSAccessDataSourceMapping;
 import org.mesh4j.sync.message.ISyncSession;
@@ -297,6 +298,22 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner, 
 
 		HashMap<String, DefaultMutableTreeNode> sourceNodes = new HashMap<String, DefaultMutableTreeNode>();
 		
+		for (DataSourceMapping dataSourceMapping : this.sourceIdMapper.getDataSourceMappings()){			
+			Collection<MutableTreeNode> cloudNodes = createSyncCloudTreeNode(dataSourceMapping.getAlias());
+			if(!cloudNodes.isEmpty()){
+				DefaultMutableTreeNode sourceNode = sourceNodes.get(dataSourceMapping.getAlias());
+				if(sourceNode == null){
+					sourceNode = new DefaultMutableTreeNode(dataSourceMapping.getAlias());
+					sourceNodes.put(dataSourceMapping.getAlias(), sourceNode);
+					rootNode.add(sourceNode);
+				}
+				
+				for (MutableTreeNode cloudNode : cloudNodes) {
+					sourceNode.add(cloudNode);	
+				}
+			}
+		}
+		
 		if(this.syncEngine != null){
 			for (ISyncSession syncSession : this.syncEngine.getAllSyncSessions()) {
 				DefaultMutableTreeNode sourceNode = sourceNodes.get(syncSession.getSourceId());
@@ -306,13 +323,6 @@ public class SyncSessionsFrame extends JFrame implements ISyncSessionViewOwner, 
 					rootNode.add(sourceNode);
 				}
 				sourceNode.add(new DefaultMutableTreeNode(new SyncSessionWrapper(syncSession)));
-
-				Collection<MutableTreeNode> cloudNodes = createSyncCloudTreeNode(syncSession.getSourceId());
-				if(!cloudNodes.isEmpty()){
-					for (MutableTreeNode cloudNode : cloudNodes) {
-						sourceNode.add(cloudNode);	
-					}
-				}
 			}
 		}
 	}

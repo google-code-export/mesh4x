@@ -33,7 +33,7 @@ public class MSExcelToPlainXMLMapping implements IMsExcelToXMLMapping {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void appliesXMLToRow(HSSFWorkbook wb, HSSFSheet sheet, HSSFRow row, String id, Element payload){
+	public void appliesXMLToRow(HSSFWorkbook wb, HSSFSheet sheet, HSSFRow row, Element payload){
 		
 		HSSFRow rowHeader = sheet.getRow(0);
 		HSSFCell cellHeader;

@@ -4,7 +4,7 @@
 	<classpathentry kind="src" output="testbin" path="test"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="lib" path="lib/dom4j/dom4j-1.6.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/hibernate/hibernate3.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/hibernate/hibernate3.jar" sourcepath="E:/Clarius/java/hibernate-3.2.6.ga_src.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/jakarta-commons/commons-collections-2.1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jakarta-commons/commons-logging-1.0.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/log4j/log4j-1.2.11.jar"/>
@@ -25,7 +25,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/jakarta-poi/poi-3.2-FINAL-20081019.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jackcess/jackcess-1.1.18.jar" sourcepath="lib/jackcess/jackcess-1.1.18-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="etc"/>
-	<classpathentry exported="true" kind="lib" path="lib/jenna/jena.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jenna/jena.jar" sourcepath="E:/Clarius/java/Jena-2.5.7/Jena-2.5.7.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/jenna/xercesImpl.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jenna/iri.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jenna/icu4j_3_4.jar"/>

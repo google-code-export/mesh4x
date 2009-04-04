@@ -147,7 +147,7 @@ public class MsAccessRDFSchemaGeneratorTests {
 	
 	@Test
 	public void shouldExtractRDFSchema() throws Exception{
-		String fileName = TestHelper.baseDirectoryRootForTest() + "\\ms-access\\epiinfo\\test1\\epiinfo.mdb";
+		String fileName = TestHelper.baseDirectoryRootForTest() + "\\ms-access\\epiinfo\\epiinfo.mdb";
 		String tableName = "Oswego";
 		String ontologyNS = "Oswego";
 		String ontologyURI = "http://mesh4x/Oswego#";
@@ -156,8 +156,7 @@ public class MsAccessRDFSchemaGeneratorTests {
 		Assert.assertNotNull(rdfSchema);
 System.out.println(rdfSchema.asXML());
 
-		Assert.assertEquals(23, rdfSchema.getPropertyCount());
-		Assert.assertEquals(IRDFSchema.XLS_STRING, rdfSchema.getPropertyType("ID"));
+		Assert.assertEquals(24, rdfSchema.getPropertyCount());
 		Assert.assertEquals(IRDFSchema.XLS_STRING, rdfSchema.getPropertyType("Name"));
 		Assert.assertEquals(IRDFSchema.XLS_STRING, rdfSchema.getPropertyType("Code"));
 		Assert.assertEquals(IRDFSchema.XLS_DOUBLE, rdfSchema.getPropertyType("AGE"));
@@ -180,6 +179,8 @@ System.out.println(rdfSchema.asXML());
 		Assert.assertEquals(IRDFSchema.XLS_DATETIME, rdfSchema.getPropertyType("TimeSupper"));
 		Assert.assertEquals(IRDFSchema.XLS_DATETIME, rdfSchema.getPropertyType("DateOnset"));
 		Assert.assertEquals(IRDFSchema.XLS_INTEGER, rdfSchema.getPropertyType("RecStatus"));
+		Assert.assertEquals(IRDFSchema.XLS_STRING, rdfSchema.getPropertyType("Address"));
+		Assert.assertEquals(IRDFSchema.XLS_STRING, rdfSchema.getPropertyType("County"));
 		
 	}
 }

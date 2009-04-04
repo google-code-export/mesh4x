@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.dom4j.Document;
-import org.dom4j.DocumentException;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
@@ -43,8 +42,8 @@ public class FeedAdapter extends AbstractSyncAdapter{
 		Guard.argumentNotNull(syndicationFormat, "syndicationFormat");
 
 		this.identityProvider = identityProvider;
-		this.feedReader = new FeedReader(syndicationFormat, identityProvider, idGenerator);
-		this.feedWriter = new FeedWriter(syndicationFormat, identityProvider);
+		this.feedReader = new FeedReader(syndicationFormat, identityProvider, idGenerator, ContentReader.INSTANCE);
+		this.feedWriter = new FeedWriter(syndicationFormat, identityProvider, ContentWriter.INSTANCE);
 		
 		this.feedFile = new File(fileName);
 		if(!this.feedFile.exists()){
@@ -63,10 +62,10 @@ public class FeedAdapter extends AbstractSyncAdapter{
 				Document document;
 				try {
 					document = reader.read(this.feedFile);
-				} catch (DocumentException e) {
+					this.feed = this.feedReader.read(document);
+				} catch (Exception e) {
 					throw new MeshException(e);
 				}
-				this.feed = this.feedReader.read(document);
 			}
 		}
 	}
@@ -82,20 +81,20 @@ public class FeedAdapter extends AbstractSyncAdapter{
 		Document document;
 		try {
 			document = reader.read(this.feedFile);
-		} catch (DocumentException e) {
+	
+			ISyndicationFormat syndicationFormat = RssSyndicationFormat.INSTANCE;
+			if(AtomSyndicationFormat.isAtom(document)){
+				syndicationFormat = AtomSyndicationFormat.INSTANCE;
+			}
+			
+			this.identityProvider = identityProvider;
+			this.feedReader = new FeedReader(syndicationFormat, identityProvider, idGenerator, ContentReader.INSTANCE);
+			this.feedWriter = new FeedWriter(syndicationFormat, identityProvider, ContentWriter.INSTANCE);
+			
+			this.feed = this.feedReader.read(document);
+		} catch (Exception e) {
 			throw new MeshException(e);
 		}
-
-		ISyndicationFormat syndicationFormat = RssSyndicationFormat.INSTANCE;
-		if(AtomSyndicationFormat.isAtom(document)){
-			syndicationFormat = AtomSyndicationFormat.INSTANCE;
-		}
-		
-		this.identityProvider = identityProvider;
-		this.feedReader = new FeedReader(syndicationFormat, identityProvider, idGenerator);
-		this.feedWriter = new FeedWriter(syndicationFormat, identityProvider);
-		
-		this.feed = this.feedReader.read(document);
 	}
 	
 	public FeedAdapter(File file, ISyndicationFormat syndicationFormat, IIdentityProvider identityProvider, IIdGenerator idGenerator){
@@ -106,11 +105,11 @@ public class FeedAdapter extends AbstractSyncAdapter{
 		
 		this.feedFile = file;
 		this.identityProvider = identityProvider;
-		this.feedReader = new FeedReader(syndicationFormat, identityProvider, idGenerator);
-		this.feedWriter = new FeedWriter(syndicationFormat, identityProvider);
+		this.feedReader = new FeedReader(syndicationFormat, identityProvider, idGenerator, ContentReader.INSTANCE);
+		this.feedWriter = new FeedWriter(syndicationFormat, identityProvider, ContentWriter.INSTANCE);
 		try {
 			this.feed = this.feedReader.read(file);
-		} catch (DocumentException e) {
+		} catch (Exception e) {
 			throw new MeshException(e);
 		}
 	}
@@ -124,8 +123,8 @@ public class FeedAdapter extends AbstractSyncAdapter{
 		
 		this.feedFile = file;
 		this.identityProvider = identityProvider;
-		this.feedReader = new FeedReader(syndicationFormat, identityProvider, idGenerator);
-		this.feedWriter = new FeedWriter(syndicationFormat, identityProvider);
+		this.feedReader = new FeedReader(syndicationFormat, identityProvider, idGenerator, ContentReader.INSTANCE);
+		this.feedWriter = new FeedWriter(syndicationFormat, identityProvider, ContentWriter.INSTANCE);
 		this.feed = feed;
 		
 		if(!file.exists()){
@@ -228,10 +227,10 @@ public class FeedAdapter extends AbstractSyncAdapter{
 			Document document;
 			try {
 				document = reader.read(this.feedFile);
-			} catch (DocumentException e) {
+				this.feed = this.feedReader.read(document);
+			} catch (Exception e) {
 				throw new MeshException(e);
-			}
-			this.feed = this.feedReader.read(document);
+			}			
 		}
 	}
 }

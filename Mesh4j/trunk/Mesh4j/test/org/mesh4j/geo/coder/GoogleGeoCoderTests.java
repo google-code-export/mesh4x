@@ -6,7 +6,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.junit.Test;
-import org.mesh4j.sync.payload.mappings.MappingResolver;
+import org.mesh4j.sync.payload.mappings.Mapping;
 
 public class GoogleGeoCoderTests {
 
@@ -50,7 +50,7 @@ public class GoogleGeoCoderTests {
 		GeoCoderLocationPropertyResolver propertyResolverLoc = new GeoCoderLocationPropertyResolver(geoCoder);
 
 		Element mappingsElement = DocumentHelper.parseText("<mappings><geolat>{geoLatitude(patient/address)}</geolat><geolong>{geoLongitude(patient/address)}</geolong><geoloc>{geoLocation(patient/address)}</geoloc></mappings>").getRootElement();
-		MappingResolver mappings = new MappingResolver(mappingsElement, propertyResolverLat, propertyResolverLon, propertyResolverLoc);
+		Mapping mappings = new Mapping(mappingsElement, propertyResolverLat, propertyResolverLon, propertyResolverLoc);
 
 		Element element = DocumentHelper.parseText("<patient><name>jose</name><address>Buenos Aires</address></patient>").getRootElement();
 		Assert.assertEquals("-34.611781", mappings.getValue(element, "geolat"));
