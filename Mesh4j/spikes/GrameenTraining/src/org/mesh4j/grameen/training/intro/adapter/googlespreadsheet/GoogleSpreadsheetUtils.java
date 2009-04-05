@@ -29,7 +29,9 @@ import com.google.gdata.client.spreadsheet.CellQuery;
 import com.google.gdata.client.spreadsheet.FeedURLFactory;
 import com.google.gdata.client.spreadsheet.ListQuery;
 import com.google.gdata.client.spreadsheet.SpreadsheetService;
+import com.google.gdata.data.Link;
 import com.google.gdata.data.batch.BatchOperationType;
+import com.google.gdata.data.batch.BatchStatus;
 import com.google.gdata.data.batch.BatchUtils;
 import com.google.gdata.data.spreadsheet.CellEntry;
 import com.google.gdata.data.spreadsheet.CellFeed;
@@ -62,14 +64,20 @@ public class GoogleSpreadsheetUtils {
 
 				processElementForFlush(worksheet, updatePool, deletePool);
 				
+				//process update pool
 				if(updatePool.size() > 0 || deletePool.size() > 0){
 					
-					try{
-						/*CellFeed cellFeed = service.getFeed(worksheet.getWorksheet().getCellFeedUrl(), CellFeed.class);
-			
+					try {
+						CellFeed batchRequest = new CellFeed();
+						for (GSBaseElement cell : updatePool.values()) {
+							batchRequest.getEntries().add(
+									(CellEntry) cell.getBaseEntry());
+						} 
 						// Submit the batch request.
-						Link batchLink = cellFeed.getLink(Link.Rel.FEED_BATCH, Link.Type.ATOM);
-						CellFeed batchResultFeed = service.batch(new URL(batchLink.getHref()), new CellFeed());			
+						CellFeed feed = service.getFeed(worksheet.getWorksheetEntry().getCellFeedUrl(), CellFeed.class);
+					    Link batchLink = feed.getLink(Link.Rel.FEED_BATCH, Link.Type.ATOM);
+						
+						CellFeed batchResultFeed = service.batch(new URL(batchLink.getHref()), batchRequest);			
 			
 						// Make sure all the operations were successful.
 						for (CellEntry entry : batchResultFeed.getEntries()) {
@@ -82,14 +90,30 @@ public class GoogleSpreadsheetUtils {
 						    //TODO: Need to enhance the exception handling codes
 						    //TODO: Need to think about roll-back mechanism for partial update if such happens
 						  }	
-						}*/ 
+						}
 						
 					}catch (Exception e) {
 						throw new MeshException(e);
 					}finally{
 					}
 					
+					
+					//process delete pool
+					for (GSBaseElement elementToDetete : deletePool.values()) {
+						
+						try {
+							elementToDetete.getBaseEntry().delete();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (ServiceException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+					
 				} // if(updatePool.size() > 0 || deletePool.size() > 0)
+				
 			}// if (worksheet.isDirty())
 		}//end for
 	}
@@ -126,14 +150,47 @@ public class GoogleSpreadsheetUtils {
 	}
 	
 	/**
-	 * update a cell for batch update
+	 * update an element for batch update
 	 * @param cellToUpdate
 	 */
-	public static void dumpCellForBatchUpdate(GSCell cellToUpdate){
-		BatchUtils.setBatchId(cellToUpdate.getCellEntry(), cellToUpdate.getCellEntry().getId());
-		BatchUtils.setBatchOperationType(cellToUpdate.getCellEntry(), BatchOperationType.UPDATE);
-		cellToUpdate.setDirty();
+	public static void processAllElementForBatchUpdate(
+			GSBaseElement<GSBaseElement> elementToUpdate) {
+
+		if(!elementToUpdate.isDeleteCandiddate()) return;
+		
+		if (elementToUpdate instanceof GSCell) {
+			GSCell cellToUpdate = (GSCell) elementToUpdate;
+			BatchUtils.setBatchId(cellToUpdate.getCellEntry(), cellToUpdate
+					.getCellEntry().getId());
+			BatchUtils.setBatchOperationType(cellToUpdate.getCellEntry(),
+					BatchOperationType.UPDATE);
+			cellToUpdate.setDirty();
+		}else		
+			for (GSBaseElement subElement : elementToUpdate.getChildElements()
+				.values()) {
+				processAllElementForBatchUpdate(subElement);
+		}
 	}
+		
+	public static void processDirtyElementForBatchUpdate(
+			GSBaseElement elementToUpdate) {
+		
+		if(!elementToUpdate.isDeleteCandiddate() && !elementToUpdate.isDirty()) return;
+		
+		if (elementToUpdate instanceof GSCell) {			
+			GSCell cellToUpdate = (GSCell) elementToUpdate;
+			BatchUtils.setBatchId(cellToUpdate.getCellEntry(), cellToUpdate
+					.getCellEntry().getId());
+			BatchUtils.setBatchOperationType(cellToUpdate.getCellEntry(),
+					BatchOperationType.UPDATE);
+			//cellToUpdate.setDirty();
+		}else		
+			for (GSBaseElement subElement : ((GSBaseElement<GSBaseElement>)elementToUpdate).getChildElements()
+				.values()) {
+				processDirtyElementForBatchUpdate(subElement);
+		}
+	}	
+
 	
 	/**
 	 * get a row by specific cell info   
@@ -320,7 +377,7 @@ public class GoogleSpreadsheetUtils {
 			throws IOException, ServiceException {
 
 		ListQuery query = new ListQuery(worksheet.getListFeedUrl());
-		query.setStartIndex(rowIndex);
+		query.setStartIndex(rowIndex-1);
 		query.setMaxResults(1);
 		ListFeed feed = service.query(query, ListFeed.class);
 
@@ -328,7 +385,7 @@ public class GoogleSpreadsheetUtils {
 		
 		if (feed.getEntries().size() > 0){
 			gsListEntry = new GSRow(feed.getEntries().get(0), rowIndex);
-			gsListEntry.populateClild(service, worksheet);
+			gsListEntry.populateClild(/*service,*/ worksheet);
 		}
 		
 		return gsListEntry;
@@ -361,7 +418,7 @@ public class GoogleSpreadsheetUtils {
 		
 		if (feed.getEntries().size() > 0){
 			gsCellEntry = new GSCell(feed.getEntries().get(0),null);
-			gsCellEntry.populateParent(service, worksheet);
+			gsCellEntry.populateParent(/*service,*/ worksheet);
 		}
 		
 		return gsCellEntry;
