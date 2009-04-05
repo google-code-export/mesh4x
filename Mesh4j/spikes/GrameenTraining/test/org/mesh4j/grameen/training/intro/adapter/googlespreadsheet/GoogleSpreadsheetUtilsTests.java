@@ -132,7 +132,7 @@ public class GoogleSpreadsheetUtilsTests {
 				mjCell.getParentRow().getMjCell(colIndex - 1).getParentRow().getRowIndex());		*/
 	}		
 
-	//@Test OK
+	//@Test
 	public void shouldBatchUpdateCells() throws IOException, ServiceException {
 		GSSpreadsheet<GSWorksheet> ss = getSampleGoogleSpreadsheet();
 		GSWorksheet<GSRow> ws = ss.getGSWorksheet(1); //get the first sheet
@@ -141,18 +141,16 @@ public class GoogleSpreadsheetUtilsTests {
 		Assert.assertEquals(ws.getId(), ss.getChildElement("1").getId()); //get the first sheet from another method and check if they are equal
 		
 		GSCell gsCell_1 = ws.getGSCell(2, 1);		
-		gsCell_1.updateCellValue("GSL-A219");		
-		GoogleSpreadsheetUtils.processDirtyElementForBatchUpdate(gsCell_1);
+		gsCell_1.updateCellValue("GSL-A21x");		
 		
 		GSCell gsCell_2 = ws.getGSCell(3, 1);
-		gsCell_2.updateCellValue("GSL-A218");		
-		GoogleSpreadsheetUtils.processDirtyElementForBatchUpdate(gsCell_2);
+		gsCell_2.updateCellValue("GSL-A21x");		
 		
 		GoogleSpreadsheetUtils.flush(gss.getService(), ss);		
 	}		
 	
 
-	//@Test OK 
+	@Test
 	public void shouldBatchUpdateRows() throws IOException, ServiceException {
 		GSSpreadsheet<GSWorksheet> ss = getSampleGoogleSpreadsheet();
 		GSWorksheet<GSRow> ws = ss.getGSWorksheet(1); //get the first sheet
@@ -162,12 +160,10 @@ public class GoogleSpreadsheetUtilsTests {
 		
 		GSRow gsRow_1 = ws.getGSRow(2);
 		
-		gsRow_1.updateCellValue("GSL-A21", 1);
-		GoogleSpreadsheetUtils.processDirtyElementForBatchUpdate(gsRow_1);
+		gsRow_1.updateCellValue("GSL-A21mm", 1);
 		
 		GSRow gsRow_2 = ws.getGSRow(3);
-		gsRow_2.updateCellValue("GSL-A21", 1);
-		GoogleSpreadsheetUtils.processDirtyElementForBatchUpdate(gsRow_2);
+		gsRow_2.updateCellValue("GSL-A21mm", 1);
 		
 		GoogleSpreadsheetUtils.flush(gss.getService(), ss);		
 	}		
@@ -184,8 +180,6 @@ public class GoogleSpreadsheetUtilsTests {
 		String [] values = {"new","new","new","new"};
 		GSRow<GSCell> newGSRow = ws.createNewRow(values);
 		ws.addNewRow(newGSRow);
-		
-		GoogleSpreadsheetUtils.processDirtyElementForBatchUpdate(newGSRow);
 		
 		GoogleSpreadsheetUtils.flush(gss.getService(), ss);		
 	}		
@@ -206,7 +200,7 @@ public class GoogleSpreadsheetUtilsTests {
 	
 	
 	
-	@Test
+	//@Test
 	public void shouldRefreshRow() throws IOException, ServiceException {
 		GSSpreadsheet<GSWorksheet> ss = getSampleGoogleSpreadsheet();
 		GSWorksheet<GSRow> ws = ss.getGSWorksheet(1); //get the first sheet
@@ -222,7 +216,6 @@ public class GoogleSpreadsheetUtilsTests {
 		GSRow<GSCell> gsRow_1 = ws.getGSRow(2);
 		
 		gsRow_1.updateCellValue("GSL-A21", 1);
-		GoogleSpreadsheetUtils.processDirtyElementForBatchUpdate(gsRow_1);
 		
 		GoogleSpreadsheetUtils.flush(gss.getService(), ss);
 		

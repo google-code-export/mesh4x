@@ -69,9 +69,16 @@ public class GoogleSpreadsheetUtils {
 					
 					try {
 						CellFeed batchRequest = new CellFeed();
-						for (GSBaseElement cell : updatePool.values()) {
+						for (GSBaseElement elementToUpdate : updatePool.values()) {
+							
+							GSCell cellToUpdate = (GSCell) elementToUpdate;
+							BatchUtils.setBatchId(cellToUpdate.getCellEntry(), cellToUpdate
+									.getCellEntry().getId());
+							BatchUtils.setBatchOperationType(cellToUpdate.getCellEntry(),
+									BatchOperationType.UPDATE);
+							
 							batchRequest.getEntries().add(
-									(CellEntry) cell.getBaseEntry());
+									cellToUpdate.getCellEntry());
 						} 
 						// Submit the batch request.
 						CellFeed feed = service.getFeed(worksheet.getWorksheetEntry().getCellFeedUrl(), CellFeed.class);
@@ -149,48 +156,6 @@ public class GoogleSpreadsheetUtils {
 
 	}
 	
-	/**
-	 * update an element for batch update
-	 * @param cellToUpdate
-	 */
-	public static void processAllElementForBatchUpdate(
-			GSBaseElement<GSBaseElement> elementToUpdate) {
-
-		if(!elementToUpdate.isDeleteCandiddate()) return;
-		
-		if (elementToUpdate instanceof GSCell) {
-			GSCell cellToUpdate = (GSCell) elementToUpdate;
-			BatchUtils.setBatchId(cellToUpdate.getCellEntry(), cellToUpdate
-					.getCellEntry().getId());
-			BatchUtils.setBatchOperationType(cellToUpdate.getCellEntry(),
-					BatchOperationType.UPDATE);
-			cellToUpdate.setDirty();
-		}else		
-			for (GSBaseElement subElement : elementToUpdate.getChildElements()
-				.values()) {
-				processAllElementForBatchUpdate(subElement);
-		}
-	}
-		
-	public static void processDirtyElementForBatchUpdate(
-			GSBaseElement elementToUpdate) {
-		
-		if(!elementToUpdate.isDeleteCandiddate() && !elementToUpdate.isDirty()) return;
-		
-		if (elementToUpdate instanceof GSCell) {			
-			GSCell cellToUpdate = (GSCell) elementToUpdate;
-			BatchUtils.setBatchId(cellToUpdate.getCellEntry(), cellToUpdate
-					.getCellEntry().getId());
-			BatchUtils.setBatchOperationType(cellToUpdate.getCellEntry(),
-					BatchOperationType.UPDATE);
-			//cellToUpdate.setDirty();
-		}else		
-			for (GSBaseElement subElement : ((GSBaseElement<GSBaseElement>)elementToUpdate).getChildElements()
-				.values()) {
-				processDirtyElementForBatchUpdate(subElement);
-		}
-	}	
-
 	
 	/**
 	 * get a row by specific cell info   
