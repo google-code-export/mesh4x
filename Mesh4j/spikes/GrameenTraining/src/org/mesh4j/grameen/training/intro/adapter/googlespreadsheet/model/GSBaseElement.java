@@ -1,6 +1,9 @@
 package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model;
 
 import java.util.Map;
+import java.util.UUID;
+
+import org.mesh4j.sync.validations.MeshException;
 
 import com.google.gdata.data.BaseEntry;
 import com.google.gdata.data.IEntry;
@@ -51,7 +54,10 @@ public abstract class GSBaseElement<C> implements IGSElement<C>{
 	 * @return
 	 */
 	public String getId(){
-		return ((IEntry) this.baseEntry).getId();
+		if(((IEntry) this.baseEntry).getId() != null)
+			return ((IEntry) this.baseEntry).getId();
+		else return UUID.randomUUID().toString();
+		
 	}	
 	
 	public int getElementListIndex(){
@@ -80,8 +86,14 @@ public abstract class GSBaseElement<C> implements IGSElement<C>{
 	}
 
 	public void deleteChildElement(String key) {
+		if(this.childElements.get(key) == null) //TODO: think later abt it 
+			throw new MeshException("Object not found with key: "+key);	 		
 		((IGSElement<?>)this.childElements.get(key)).setDirty();
-		((IGSElement<?>)this.childElements.get(key)).setDeleteCandidate();
+
+		if(this.childElements.get(key) instanceof GSCell) //TODO: cell is not deleted, only cell content is removed 
+			((GSCell)this.childElements.get(key)).updateCellValue("");  
+		else
+			((IGSElement<?>)this.childElements.get(key)).setDeleteCandidate();
 	}
 
 	public C getChildElement(String key) {
@@ -92,4 +104,7 @@ public abstract class GSBaseElement<C> implements IGSElement<C>{
 		((IGSElement<?>)element).setDirty();
 		this.childElements.put(key, element);
 	}	
+	
+	public abstract void refreshMe();
+	
 }

@@ -1,6 +1,8 @@
 package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import com.google.gdata.client.spreadsheet.ListQuery;
 import com.google.gdata.client.spreadsheet.SpreadsheetService;
@@ -65,6 +67,15 @@ public class GSCell extends GSBaseElement {
 	}	
 	
 	/**
+	 * update content/value of this cell
+	 * @param value
+	 */
+	public void updateCellValue(String value){
+		getCellEntry().changeInputValueLocal(value);
+		this.setDirty();
+	} 	
+	
+	/**
 	 * populates the the {@link GSRow} that contains this {@link GSCell}
 	 * Note: this method involves a http request    
 	 * 
@@ -74,7 +85,7 @@ public class GSCell extends GSBaseElement {
 	 * @throws ServiceException
 	 */
 	@Deprecated
-	public void populateParent(SpreadsheetService service,
+	public void populateParent(/*SpreadsheetService service,*/
 			WorksheetEntry worksheet) throws IOException, ServiceException {
 		
 		if(this.parentElement != null) return;
@@ -87,7 +98,8 @@ public class GSCell extends GSBaseElement {
 		//What a weird API! 
 		query.setMaxResults(1);
 
-		ListFeed feed = service.query(query, ListFeed.class);
+		//ListFeed feed = service.query(query, ListFeed.class);
+		ListFeed feed = worksheet.getService().query(query, ListFeed.class);
 
 		GSRow<GSCell> gsListEntry = new GSRow(
 				feed.getEntries().get(0), ((CellEntry) this.baseEntry)
@@ -98,9 +110,36 @@ public class GSCell extends GSBaseElement {
 		      System.out.print(feed.getEntries().get(0).getCustomElements().getValue(tag)+" \t");
 		}*/
 		
-		gsListEntry.populateClild(service, worksheet);
+		gsListEntry.populateClild(/*service,*/ worksheet);
 		
 		this.parentElement =  gsListEntry;
 	}
 
+
+	public void refreshMe(){
+		if(this.isDirty()){
+			try {
+				URL entryUrl = new URL(((WorksheetEntry) this
+						.getParentElement().getParentElement().getBaseEntry())
+						.getCellFeedUrl().toString()
+						+ "/" + ((CellEntry) this.baseEntry).getId());
+
+				this.baseEntry = this.baseEntry.getService().getEntry(entryUrl,
+						CellEntry.class);
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ServiceException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			this.dirty = false;
+			this.deleteCandidate = false;
+			
+		}
+	}
 }

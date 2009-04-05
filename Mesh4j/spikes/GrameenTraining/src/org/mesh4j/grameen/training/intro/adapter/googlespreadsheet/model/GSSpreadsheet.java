@@ -76,5 +76,12 @@ public class GSSpreadsheet<C> extends GSBaseElement<C>{
 		}
 		return null;
 	}
-	
+
+	@Override
+	public void refreshMe() {
+		// TODO Auto-generated method stub
+		
+	}
+
+		
 }

@@ -1,10 +1,19 @@
 package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import sun.reflect.ReflectionFactory.GetReflectionFactoryAction;
+
 import com.google.gdata.data.BaseEntry;
+import com.google.gdata.data.batch.BatchUtils;
+import com.google.gdata.data.spreadsheet.CellEntry;
+import com.google.gdata.data.spreadsheet.ListEntry;
 import com.google.gdata.data.spreadsheet.WorksheetEntry;
+import com.google.gdata.util.ServiceException;
 
 public class GSWorksheet<C> extends GSBaseElement<C> {
 
@@ -106,4 +115,62 @@ public class GSWorksheet<C> extends GSBaseElement<C> {
 		return ((BaseEntry<WorksheetEntry>) this.baseEntry).getTitle()
 				.getPlainText();
 	}
+	
+	/**
+	 * add a new row to the spreadsheet
+	 * 
+	 * @param rowToAdd
+	 */
+	public void addNewRow(GSRow rowToAdd) {		
+		int newRowIndex = this.getChildElements().size() + 2;
+		rowToAdd.elementListIndex= newRowIndex;
+		((GSWorksheet<GSRow>) this).addChildElement(
+				Integer.toString(rowToAdd.getRowIndex()), rowToAdd);
+		this.setDirty();
+	}	
+	
+	/**
+	 * generate a new row for the worksheet 
+	 * 
+	 * @param values: cell value for each cell
+	 * @return
+	 * @throws IOException
+	 * @throws ServiceException
+	 */
+	public GSRow<GSCell> createNewRow(String[] values) throws IOException, ServiceException {
+
+		int noOfColumns = ((GSWorksheet<GSRow>) this).getGSRow(1)
+				.getChildElements().size();
+
+		if (values.length < noOfColumns) {
+			// TODO: throw exception
+			return null;
+		}
+		int newRowIndex = this.getChildElements().size() + 1;
+		ListEntry newRow = new ListEntry();
+		GSRow<GSCell> newGSRow = new GSRow(newRow, newRowIndex, this);
+		
+		for (int col = 1; col <= noOfColumns; col++) {
+			
+		    String batchId = "R" + newRowIndex + "C" + col;		    
+		    URL entryUrl = new URL( ((WorksheetEntry)this.getBaseEntry()).getCellFeedUrl().toString() + "/" + batchId);
+		    
+		    CellEntry newCell = ((WorksheetEntry)this.getBaseEntry()).getService().getEntry(entryUrl, CellEntry.class);			
+			//CellEntry newCell = new CellEntry(newRowIndex, col, values[col - 1]); //this is not supported for batch update :(
+
+		    GSCell newGSCell = new GSCell(newCell, newGSRow);
+			newGSCell.updateCellValue(values[col - 1]);
+			newGSRow.addChildElement(Integer.toString(col), newGSCell);
+		}
+
+		return newGSRow;
+	}
+
+	@Override
+	public void refreshMe() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
 }

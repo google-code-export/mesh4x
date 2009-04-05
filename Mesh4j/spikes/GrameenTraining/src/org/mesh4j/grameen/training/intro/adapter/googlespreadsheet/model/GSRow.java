@@ -1,6 +1,8 @@
 package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -132,13 +134,14 @@ public class GSRow<C> extends GSBaseElement<C>{
 	 */
 	@SuppressWarnings("unchecked")
 	@Deprecated
-	public void populateClild(SpreadsheetService service,
+	public void populateClild(/*SpreadsheetService service,*/
 			WorksheetEntry worksheet) throws IOException, ServiceException{
 		
 		if(getGSCells() != null && getGSCells().size() > 0) return;
 			
 		if(this.elementListIndex == 0){
-			ListFeed lFeed = service.getFeed(worksheet.getListFeedUrl(), ListFeed.class);
+			//ListFeed lFeed = service.getFeed(worksheet.getListFeedUrl(), ListFeed.class);
+			ListFeed lFeed = worksheet.getService().getFeed(worksheet.getListFeedUrl(), ListFeed.class);
 	
 			//int rowIndex = lFeed.getEntries().contains(this.rowEntry);
 			//TODO: unfortunately this is not working :(; may be need to override equals method... 
@@ -156,7 +159,8 @@ public class GSRow<C> extends GSBaseElement<C>{
 		query.setMinimumRow(this.elementListIndex + 1); //cell row# is 1 more that row#
 		query.setMaximumRow(this.elementListIndex + 1);
 		
-		CellFeed cFeed = service.query(query, CellFeed.class);		
+		//CellFeed cFeed = service.query(query, CellFeed.class);
+		CellFeed cFeed = worksheet.getService().query(query, CellFeed.class);
 		
 		for(CellEntry cell:cFeed.getEntries()){
 			//getGsCells().add(new GSCell(cell, this));
@@ -187,6 +191,68 @@ public class GSRow<C> extends GSBaseElement<C>{
 			}
 		} else {
 			// TODO:
+		}
+	}
+
+	/**
+ 	 * update content/value of a {@link CellEntry} identified by column index in this row
+ 	 * 
+	 * @param value
+	 * @param colIndex
+	 */
+	public void updateCellValue(String value, int colIndex) {
+		GSCell cellToUpdate = (GSCell) getGSCell(colIndex); 
+		cellToUpdate.getCellEntry().changeInputValueLocal(value);
+		cellToUpdate.setDirty();
+	}
+
+	/**
+	 * update content/value of a {@link CellEntry} identified by key in this row
+	 * 
+	 * @param value
+	 * @param key
+	 */
+	public void updateCellValue(String value, String key) {
+		GSCell cellToUpdate = (GSCell) getGSCell(key); 
+		cellToUpdate.getCellEntry().changeInputValueLocal(value);
+		cellToUpdate.setDirty();
+	}
+
+	public void refreshMe(){
+		if(this.isDirty()){
+			try {
+				URL entryUrl = new URL(((ListEntry) this.baseEntry).getId());
+
+				this.baseEntry = this.baseEntry.getService().getEntry(entryUrl,
+						ListEntry.class);
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ServiceException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			WorksheetEntry worksheet = (WorksheetEntry) this
+				.getParentElement().getBaseEntry();
+	
+			try {
+				this.populateClild(worksheet);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ServiceException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+			this.dirty = false;
+			this.deleteCandidate = false;
+						
 		}
 	}
 	
