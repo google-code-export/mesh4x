@@ -36,6 +36,7 @@ public class GoogleSpreadsheetUtilsTests {
 		Assert.assertNotNull(sse);
 	}
 	
+	@Deprecated
 	public void shouldGetRow(){
 		SpreadsheetEntry sse = getSampleGoogleSpreadsheet().getSpreadsheet();		
 		WorksheetEntry wse = null;
@@ -54,7 +55,7 @@ public class GoogleSpreadsheetUtilsTests {
 		Assert.assertNotNull(row);
 	}
 	
-	//@Test
+	@Deprecated
 	public void shouldGetMJCell() throws IOException, ServiceException {
 		SpreadsheetEntry sse = getSampleGoogleSpreadsheet().getSpreadsheet();
 		WorksheetEntry wse = GoogleSpreadsheetUtils.getWorksheet(gss
@@ -91,7 +92,7 @@ public class GoogleSpreadsheetUtilsTests {
 				((GSCell) gsCell.getParentRow().getGSCell(cellColIndex - 1)).getParentRow().getRowIndex());		
 	}		
 
-	//@Test
+	@Deprecated
 	public void shouldGetMJRow() throws IOException, ServiceException {
 		SpreadsheetEntry sse = getSampleGoogleSpreadsheet().getSpreadsheet();
 		WorksheetEntry wse = GoogleSpreadsheetUtils.getWorksheet(gss
@@ -131,7 +132,7 @@ public class GoogleSpreadsheetUtilsTests {
 				mjCell.getParentRow().getMjCell(colIndex - 1).getParentRow().getRowIndex());		*/
 	}		
 
-	@Test
+	//@Test OK
 	public void shouldBatchUpdateCells() throws IOException, ServiceException {
 		GSSpreadsheet<GSWorksheet> ss = getSampleGoogleSpreadsheet();
 		GSWorksheet<GSRow> ws = ss.getGSWorksheet(1); //get the first sheet
@@ -139,75 +140,109 @@ public class GoogleSpreadsheetUtilsTests {
 		Assert.assertNotNull(ws);		
 		Assert.assertEquals(ws.getId(), ss.getChildElement("1").getId()); //get the first sheet from another method and check if they are equal
 		
-		GSCell gsCell_1 = ws.getGSCell(2, 1);
-		gsCell_1.getCellEntry().changeInputValueLocal("GSL-A21");		
-		GoogleSpreadsheetUtils.dumpCellForBatchUpdate(gsCell_1);
+		GSCell gsCell_1 = ws.getGSCell(2, 1);		
+		gsCell_1.updateCellValue("GSL-A219");		
+		GoogleSpreadsheetUtils.processDirtyElementForBatchUpdate(gsCell_1);
 		
 		GSCell gsCell_2 = ws.getGSCell(3, 1);
-		gsCell_2.getCellEntry().changeInputValueLocal("GSL-A21");
-		GoogleSpreadsheetUtils.dumpCellForBatchUpdate(gsCell_2);
+		gsCell_2.updateCellValue("GSL-A218");		
+		GoogleSpreadsheetUtils.processDirtyElementForBatchUpdate(gsCell_2);
+		
+		GoogleSpreadsheetUtils.flush(gss.getService(), ss);		
+	}		
+	
+
+	//@Test OK 
+	public void shouldBatchUpdateRows() throws IOException, ServiceException {
+		GSSpreadsheet<GSWorksheet> ss = getSampleGoogleSpreadsheet();
+		GSWorksheet<GSRow> ws = ss.getGSWorksheet(1); //get the first sheet
+		
+		Assert.assertNotNull(ws);		
+		Assert.assertEquals(ws.getId(), ss.getChildElement("1").getId()); //get the first sheet from another method and check if they are equal
+		
+		GSRow gsRow_1 = ws.getGSRow(2);
+		
+		gsRow_1.updateCellValue("GSL-A21", 1);
+		GoogleSpreadsheetUtils.processDirtyElementForBatchUpdate(gsRow_1);
+		
+		GSRow gsRow_2 = ws.getGSRow(3);
+		gsRow_2.updateCellValue("GSL-A21", 1);
+		GoogleSpreadsheetUtils.processDirtyElementForBatchUpdate(gsRow_2);
+		
+		GoogleSpreadsheetUtils.flush(gss.getService(), ss);		
+	}		
+
+
+	//@Test  OK   
+	public void shouldAddNweRow() throws IOException, ServiceException {
+		GSSpreadsheet<GSWorksheet> ss = getSampleGoogleSpreadsheet();
+		GSWorksheet<GSRow> ws = ss.getGSWorksheet(1); //get the first sheet
+		
+		Assert.assertNotNull(ws);		
+		Assert.assertEquals(ws.getId(), ss.getChildElement("1").getId()); //get the first sheet from another method and check if they are equal
+		
+		String [] values = {"new","new","new","new"};
+		GSRow<GSCell> newGSRow = ws.createNewRow(values);
+		ws.addNewRow(newGSRow);
+		
+		GoogleSpreadsheetUtils.processDirtyElementForBatchUpdate(newGSRow);
 		
 		GoogleSpreadsheetUtils.flush(gss.getService(), ss);		
 	}		
 	
 	
-/*	
-	@Test //TODO: Need to review the code for dirty checking, avoid adding duplicate cell entry   
-	public void shouldBatchUpdateRows() throws IOException, ServiceException {
-		SpreadsheetEntry sse = getSampleGoogleSpreadsheet();
-		WorksheetEntry wse = GoogleSpreadsheetUtils.getWorksheet(gss
-				.getService(), sse, 0);
-		Assert.assertNotNull(wse);
+	//@Test  OK   
+	public void shouldDeleteRow() throws IOException, ServiceException {
+		GSSpreadsheet<GSWorksheet> ss = getSampleGoogleSpreadsheet();
+		GSWorksheet<GSRow> ws = ss.getGSWorksheet(1); //get the first sheet
 		
-		GSRow mjRow_1 = GoogleSpreadsheetUtils.getGSRow(gss.getService(),
-				wse, 1);
+		Assert.assertNotNull(ws);		
+		Assert.assertEquals(ws.getId(), ss.getChildElement("1").getId()); //get the first sheet from another method and check if they are equal
 
-		mjRow_1.getGsCell(1).getCellEntry().changeInputValueLocal("GSL-A219");
-		mjRow_1.getGsCell(1).setDirty();
+		ws.deleteChildElement("7");		
 		
-		BatchUtils.setBatchId(mjRow_1.getGsCell(1).getCellEntry(), mjRow_1.getGsCell(1).getCellEntry().getId());
-		BatchUtils.setBatchOperationType(mjRow_1.getGsCell(1).getCellEntry(),
-				BatchOperationType.UPDATE);
-		
-		mjRow_1.setDirty();
-		gss.addEntryToUpdate(mjRow_1);
-	
-		GSRow gsRow_2 = GoogleSpreadsheetUtils.getGSRow(gss.getService(),
-				wse, 2);
-		gsRow_2.getGsCell(1).getCellEntry().changeInputValueLocal("GSL-A218");
-		gsRow_2.getGsCell(1).setDirty();
-		
-		BatchUtils.setBatchId(gsRow_2.getGsCell(1).getCellEntry(), gsRow_2.getGsCell(1).getCellEntry().getId());
-		BatchUtils.setBatchOperationType(gsRow_2.getGsCell(1).getCellEntry(),
-				BatchOperationType.UPDATE);
-		gss.addEntryToUpdate(gsRow_2);
-
-
-		GSRow gsRow_3 = GoogleSpreadsheetUtils.getGSRow(gss.getService(),
-				wse, 3);
-		gsRow_3.getGsCell(1).getCellEntry().changeInputValueLocal("GSL-A217");
-		gsRow_3.getGsCell(1).setDirty();
-		
-		BatchUtils.setBatchId(gsRow_3.getGsCell(1).getCellEntry(), gsRow_3.getGsCell(1).getCellEntry().getId());
-		BatchUtils.setBatchOperationType(gsRow_3.getGsCell(1).getCellEntry(),
-				BatchOperationType.UPDATE);
-		
-		gss.addEntryToUpdate(gsRow_3);
-
-		GSRow mjRow_4 = GoogleSpreadsheetUtils.getGSRow(gss.getService(),
-				wse, 4);
-		mjRow_4.getGsCell(1).getCellEntry().changeInputValueLocal("GSL-A216");
-		mjRow_4.getGsCell(1).setDirty();
-		
-		BatchUtils.setBatchId(mjRow_4.getGsCell(1).getCellEntry(), mjRow_4.getGsCell(1).getCellEntry().getId());
-		BatchUtils.setBatchOperationType(mjRow_4.getGsCell(1).getCellEntry(),
-				BatchOperationType.UPDATE);
-		gss.addEntryToUpdate(mjRow_4);
-		
-		GoogleSpreadsheetUtils.flush(gss.getService(), wse, gss.getBatchFeed());
+		GoogleSpreadsheetUtils.flush(gss.getService(), ss);		
 	}		
-
 	
+	
+	
+	@Test
+	public void shouldRefreshRow() throws IOException, ServiceException {
+		GSSpreadsheet<GSWorksheet> ss = getSampleGoogleSpreadsheet();
+		GSWorksheet<GSRow> ws = ss.getGSWorksheet(1); //get the first sheet
+		
+		Assert.assertNotNull(ws);		
+		Assert.assertEquals(ws.getId(), ss.getChildElement("1").getId()); //get the first sheet from another method and check if they are equal		
+		
+		//manually update a cell 2, 1 to specific value
+		//"GSL-A219"
+		
+		
+		//get a row that is going to be changed by batch update
+		GSRow<GSCell> gsRow_1 = ws.getGSRow(2);
+		
+		gsRow_1.updateCellValue("GSL-A21", 1);
+		GoogleSpreadsheetUtils.processDirtyElementForBatchUpdate(gsRow_1);
+		
+		GoogleSpreadsheetUtils.flush(gss.getService(), ss);
+		
+		
+		Assert.assertTrue( gsRow_1.isDirty() );	//row is dirty	
+		GSCell gsCell = gsRow_1.getGSCell(1);		
+		Assert.assertTrue( gsCell.isDirty() ); //cell is dirty
+		
+		Assert.assertEquals(gsCell.getCellEntry().getCell().getValue(), "GSL-A219"); //content is dirty
+		
+		gsRow_1.refreshMe(); //reload data from feed
+
+		Assert.assertFalse( gsRow_1.isDirty() );		
+		GSCell gsCellAfterRefresh = gsRow_1.getGSCell(1);		
+		Assert.assertFalse( gsCellAfterRefresh .isDirty() );
+		
+		Assert.assertEquals(gsCell.getCellEntry().getCell().getValue(), "GSL-A21"); //content should be updated
+		
+	}	
+/*	
 	@Test //TODO: need to resolve phantom row issue
 	public void shouldBatchDeleteRow() throws IOException, ServiceException {
 		SpreadsheetEntry sse = getSampleGoogleSpreadsheet();
