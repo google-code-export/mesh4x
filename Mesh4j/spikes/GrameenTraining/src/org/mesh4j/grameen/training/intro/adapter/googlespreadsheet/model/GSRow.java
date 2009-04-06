@@ -256,8 +256,11 @@ public class GSRow<C> extends GSBaseElement<C>{
 	 */
 	public void updateCellValue(String value, String key) {
 		GSCell cellToUpdate = (GSCell) getGSCell(key); 
-		cellToUpdate.getCellEntry().changeInputValueLocal(value);
-		cellToUpdate.setDirty();
+		if (!cellToUpdate.getCellEntry().getCell().getInputValue()
+				.equals(value)) {
+			cellToUpdate.getCellEntry().changeInputValueLocal(value);
+			cellToUpdate.setDirty();
+		}
 	}
 
 	public void refreshMe(){
