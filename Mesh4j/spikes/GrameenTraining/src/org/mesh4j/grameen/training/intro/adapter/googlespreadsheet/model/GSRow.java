@@ -8,6 +8,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadsheetUtils;
+
 import com.google.gdata.client.spreadsheet.CellQuery;
 import com.google.gdata.client.spreadsheet.SpreadsheetService;
 import com.google.gdata.data.spreadsheet.CellEntry;
@@ -266,10 +268,17 @@ public class GSRow<C> extends GSBaseElement<C>{
 	public void refreshMe(){
 		if(this.isDirty()){
 			try {
-				URL entryUrl = new URL(((ListEntry) this.baseEntry).getId());
+				if (this.baseEntry.getId() == null) { //if it is a newly added row
+					this.baseEntry = GoogleSpreadsheetUtils
+							.getListEntryFromFeed(
+									(WorksheetEntry) this.parentElement.baseEntry,
+									this.elementListIndex);
+				} else {
+					URL entryUrl = new URL(((ListEntry) this.baseEntry).getId());
 
-				this.baseEntry = this.baseEntry.getService().getEntry(entryUrl,
-						ListEntry.class);
+					this.baseEntry = this.baseEntry.getService().getEntry(
+							entryUrl, ListEntry.class);
+				}
 			} catch (MalformedURLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
