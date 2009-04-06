@@ -198,7 +198,7 @@ public class GoogleSpreadsheetUtils {
 			throws IOException, ServiceException {
 		
 	    ListQuery query = new ListQuery(worksheet.getListFeedUrl());
-	    query.setStartIndex(rowIndex);
+	    query.setStartIndex(rowIndex-1);
 	    query.setMaxResults(1);
 
 	    ListFeed feed = service.query(query, ListFeed.class);
@@ -208,6 +208,29 @@ public class GoogleSpreadsheetUtils {
 		else return null;	
 	}	
 
+
+	/**
+	 * 
+	 * get a {@link ListEntry} object from feed by http request
+	 * @param worksheet
+	 * @param rowIndex
+	 * @return
+	 * @throws IOException
+	 * @throws ServiceException
+	 */
+	public static ListEntry getListEntryFromFeed(WorksheetEntry worksheet, int rowIndex)
+		throws IOException, ServiceException {
+
+		ListQuery query = new ListQuery(worksheet.getListFeedUrl());
+		query.setStartIndex(rowIndex-1);
+		query.setMaxResults(1);
+		
+		ListFeed feed = worksheet.getService().query(query, ListFeed.class);
+		
+		if(feed.getEntries().size()>0)
+			return feed.getEntries().get(0);
+		else return null;	
+	}
 	
 	/**
 	 * get a row by rowId
