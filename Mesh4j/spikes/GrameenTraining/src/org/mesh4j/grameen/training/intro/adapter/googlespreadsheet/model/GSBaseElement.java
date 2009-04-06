@@ -57,7 +57,17 @@ public abstract class GSBaseElement<C> implements IGSElement<C>{
 		if(((IEntry) this.baseEntry).getId() != null)
 			return ((IEntry) this.baseEntry).getId();
 		else return UUID.randomUUID().toString();
-		
+	}	
+
+	/**
+	 * return the unique element id specified for that element in the spreadsheet 
+	 * 
+	 * TODO: Need to review it later how to implement unique id for element
+	 * each element will define its own id implementation  
+	 * @return
+	 */
+	public String getElementId(){
+		return Integer.toString(elementListIndex);
 	}	
 	
 	public int getElementListIndex(){

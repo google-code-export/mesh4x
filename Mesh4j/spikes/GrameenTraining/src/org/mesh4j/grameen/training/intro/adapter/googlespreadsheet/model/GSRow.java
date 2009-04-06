@@ -110,11 +110,16 @@ public class GSRow<C> extends GSBaseElement<C>{
 	 * @return
 	 */
 	public C getGSCell(int colIndex){
-		return getChildElement(Integer.toString(colIndex));
+		for(GSCell gsCell : ((GSRow<GSCell>)this).getChildElements().values()){
+			if(gsCell.getCellEntry().getCell().getCol() == colIndex){
+				return (C) gsCell;
+			}			
+		}
+		return null;
 	}
 
 	/**
-	 * get the {@link GSCell} from this {@link GSRow} by key 
+	 * get the {@link GSCell} from this {@link GSRow} by key/header tag 
 	 * 
 	 * @param key
 	 * @return
@@ -146,7 +151,7 @@ public class GSRow<C> extends GSBaseElement<C>{
 			//int rowIndex = lFeed.getEntries().contains(this.rowEntry);
 			//TODO: unfortunately this is not working :(; may be need to override equals method... 
 			
-			int rowIndex=1; 
+			int rowIndex=2; 
 			for (; rowIndex <= lFeed.getEntries().size(); rowIndex++){
 				if(lFeed.getEntries().get(rowIndex-1).getId().equals(((IGSElement)this.baseEntry).getId()))
 					break;
@@ -156,8 +161,8 @@ public class GSRow<C> extends GSBaseElement<C>{
 		}
 		
 		CellQuery query = new CellQuery(worksheet.getCellFeedUrl());
-		query.setMinimumRow(this.elementListIndex + 1); //cell row# is 1 more that row#
-		query.setMaximumRow(this.elementListIndex + 1);
+		query.setMinimumRow(this.elementListIndex ); //cell row# is 1 more that row#
+		query.setMaximumRow(this.elementListIndex );
 		
 		//CellFeed cFeed = service.query(query, CellFeed.class);
 		CellFeed cFeed = worksheet.getService().query(query, CellFeed.class);
@@ -178,6 +183,7 @@ public class GSRow<C> extends GSBaseElement<C>{
 	 * @throws ServiceException
 	 */
 	@SuppressWarnings("unchecked")
+	@Deprecated
 	public void populateClild(List<CellEntry> cellList) throws IOException,
 			ServiceException {
 		if (this.elementListIndex > 0) {
@@ -194,6 +200,42 @@ public class GSRow<C> extends GSBaseElement<C>{
 		}
 	}
 
+	public void populateClildWithHeaderTag(List<CellEntry> cellList) throws IOException,
+		ServiceException {
+		if (this.elementListIndex > 0) {
+			// iterate over all cells, only cells of corresponding row will be
+			// entered in this filtered list
+			List<CellEntry> filteredCellList = new ArrayList();
+			for (CellEntry cell : cellList) {
+				if (cell.getCell().getRow() == this.elementListIndex) {
+					//String key = Integer.toString(cell.getCell().getCol());
+					//this.childElements.put( key, (C) new GSCell(cell, (GSRow<GSCell>) this));
+					filteredCellList.add(cell);
+				}
+			}
+			
+			//pick a cell corresponding to a header tag and put it in the child map 
+			for (String tag : ((ListEntry) this.getBaseEntry())
+					.getCustomElements().getTags()) {							
+				String value = ((ListEntry) this.getBaseEntry())
+					.getCustomElements().getValue(tag);
+				
+				for (CellEntry cell : filteredCellList) {
+					if(cell.getCell().getValue().equals(value)){
+						this.childElements.put( tag, (C) new GSCell(cell, (GSRow<GSCell>) this));
+						//this cell
+						filteredCellList.remove(cell);
+						break;
+					}
+				}
+				
+			}
+						
+		} else {
+			// TODO:
+		}
+	}
+	
 	/**
  	 * update content/value of a {@link CellEntry} identified by column index in this row
  	 * 
@@ -240,6 +282,7 @@ public class GSRow<C> extends GSBaseElement<C>{
 				.getParentElement().getBaseEntry();
 	
 			try {
+				this.getChildElements().clear();
 				this.populateClild(worksheet);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

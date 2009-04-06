@@ -70,7 +70,13 @@ public class GSWorksheet<C> extends GSBaseElement<C> {
 	 * @return
 	 */
 	public C getGSRow(int rowIndex) {
-		return getChildElement(Integer.toString(rowIndex));
+		
+		for(GSRow gsRow : ((GSWorksheet<GSRow>)this).getChildElements().values()){
+			if(gsRow.getRowIndex() == rowIndex){
+				return (C) gsRow;
+			}			
+		}
+		return null;
 	}	
 	
 	/**
@@ -99,9 +105,12 @@ public class GSWorksheet<C> extends GSBaseElement<C> {
 	 */
 	@SuppressWarnings("unchecked")
 	public GSCell getGSCell(int rowIndex, int colIndex) {
-		GSRow<GSCell> gsRow = (GSRow) getChildElement(Integer.toString(rowIndex));
-		return (GSCell) gsRow.getChildElement(Integer
-				.toString(colIndex));
+		for(GSRow gsRow : ((GSWorksheet<GSRow>)this).getChildElements().values()){
+			if(gsRow.getRowIndex() == rowIndex){
+				return (GSCell) gsRow.getGSCell(colIndex);
+			}	
+		}
+		return null;		
 	}	
 		
 	/**
@@ -125,7 +134,7 @@ public class GSWorksheet<C> extends GSBaseElement<C> {
 		int newRowIndex = this.getChildElements().size() + 2;
 		rowToAdd.elementListIndex= newRowIndex;
 		((GSWorksheet<GSRow>) this).addChildElement(
-				Integer.toString(rowToAdd.getRowIndex()), rowToAdd);
+				rowToAdd.getElementId(), rowToAdd);
 		this.setDirty();
 	}	
 	
@@ -147,7 +156,12 @@ public class GSWorksheet<C> extends GSBaseElement<C> {
 			return null;
 		}
 		int newRowIndex = this.getChildElements().size() + 1;
-		ListEntry newRow = new ListEntry();
+		
+		ListEntry newRow = new ListEntry();		
+		
+		//TODO: we need to set the id(cell) of this row here
+		//this.baseEntry.getService().insert(((WorksheetEntry)this.baseEntry).getListFeedUrl(), newRow);
+		
 		GSRow<GSCell> newGSRow = new GSRow(newRow, newRowIndex, this);
 		
 		for (int col = 1; col <= noOfColumns; col++) {
@@ -160,7 +174,7 @@ public class GSWorksheet<C> extends GSBaseElement<C> {
 
 		    GSCell newGSCell = new GSCell(newCell, newGSRow);
 			newGSCell.updateCellValue(values[col - 1]);
-			newGSRow.addChildElement(Integer.toString(col), newGSCell);
+			newGSRow.addChildElement(Integer.toString(col), newGSCell); //TODO: need to supply header tag here as key instead of colIndex
 		}
 
 		return newGSRow;
