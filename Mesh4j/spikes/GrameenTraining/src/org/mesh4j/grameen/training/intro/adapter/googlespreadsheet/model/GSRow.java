@@ -176,14 +176,16 @@ public class GSRow<C> extends GSBaseElement<C>{
 		}
 	}
 		
-	/**
-	 * Populate all the child {@link GSCell} of this {@link GSRow} from all available {@link CellEntry} in a {@link WorksheetEntry}
-	 * by wrapping up each valid {@link CellEntry} with a {@link GSCell} 
+/*	*//**
+	 * Populate all the child {@link GSCell} of this {@link GSRow} from all
+	 * available {@link CellEntry} in a {@link WorksheetEntry} by wrapping up
+	 * each valid {@link CellEntry} with a {@link GSCell}
 	 * 
-	 * @param cellList All cells in a worksheet
+	 * @param cellList
+	 *            All cells in a worksheet
 	 * @throws IOException
 	 * @throws ServiceException
-	 */
+	 *//*
 	@SuppressWarnings("unchecked")
 	@Deprecated
 	public void populateClild(List<CellEntry> cellList) throws IOException,
@@ -194,13 +196,14 @@ public class GSRow<C> extends GSBaseElement<C>{
 			for (CellEntry cell : cellList) {
 				if (cell.getCell().getRow() == this.elementListIndex) {
 					String key = Integer.toString(cell.getCell().getCol());
-					this.childElements.put( key, (C) new GSCell(cell, (GSRow<GSCell>) this));
+					this.childElements.put(key, (C) new GSCell(cell,
+							(GSRow<GSCell>) this));
 				}
 			}
 		} else {
 			// TODO:
 		}
-	}
+	}*/
 
 	public void populateClildWithHeaderTag(List<CellEntry> cellList) throws IOException,
 		ServiceException {

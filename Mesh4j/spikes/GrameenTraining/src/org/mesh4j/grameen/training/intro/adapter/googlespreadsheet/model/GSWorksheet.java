@@ -3,8 +3,12 @@ package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadsheetUtils;
 
 import sun.reflect.ReflectionFactory.GetReflectionFactoryAction;
 
@@ -180,10 +184,42 @@ public class GSWorksheet<C> extends GSBaseElement<C> {
 		return newGSRow;
 	}
 
+	
 	@Override
-	public void refreshMe() {
-		// TODO Auto-generated method stub
-		
+	public void refreshMe() throws IOException, ServiceException {
+		if(this.isDirty()){
+			
+			List<ListEntry> rowList = GoogleSpreadsheetUtils
+							.getAllRows((WorksheetEntry) this.baseEntry); // 1 http
+																			// request
+			List<CellEntry> cellList = GoogleSpreadsheetUtils
+							.getAllCells((WorksheetEntry) this.baseEntry); // 1 http
+																			// request
+			
+			if( rowList.size() > 0 && cellList.size() > 0 ){
+				//get the header row and put it as the 1st row in the rowlist
+				this.childElements.clear();
+				GSRow<GSCell> gsListHeaderEntry = new GSRow(
+						new ListEntry(), 1, this);
+				gsListHeaderEntry.populateClildWithHeaderTag(cellList);				
+				((GSWorksheet<GSRow>)this).getChildElements().put(gsListHeaderEntry.getElementId(), gsListHeaderEntry);			
+				
+				for (ListEntry row : rowList){
+					//create a custom row object and populate its child
+					GSRow<GSCell> gsListEntry = new GSRow(
+							row, rowList.indexOf(row) + 2, this); //+2 because #1 position is occupied by list header entry 
+					gsListEntry.populateClildWithHeaderTag(cellList);				
+					
+					//add a row to the custom worksheet object
+					((GSWorksheet<GSRow>)this).getChildElements().put(gsListEntry.getElementId(), gsListEntry);
+					//TODO: right now index has been used as key; mjrow.getId() could have used, this need to review
+				}
+			} // if
+			
+			
+			this.dirty = false;
+			this.deleteCandidate = false;
+		}	
 	}
 
 

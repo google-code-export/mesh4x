@@ -1,5 +1,6 @@
 package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
 
@@ -7,6 +8,7 @@ import org.mesh4j.sync.validations.MeshException;
 
 import com.google.gdata.data.BaseEntry;
 import com.google.gdata.data.IEntry;
+import com.google.gdata.util.ServiceException;
 
 /**
  * Provides an abstract class for various elements;
@@ -115,6 +117,6 @@ public abstract class GSBaseElement<C> implements IGSElement<C>{
 		this.childElements.put(key, element);
 	}	
 	
-	public abstract void refreshMe();
+	public abstract void refreshMe() throws IOException, ServiceException;
 	
 }
