@@ -629,14 +629,14 @@ public class GoogleSpreadsheetUtils {
 			GSWorksheet<GSRow> gsWorksheet = new GSWorksheet<GSRow>(
 					ws, wsList.indexOf(ws) + 1, gsSpreadsheet);
 			
-			List<ListEntry> rowList = getAllRows(service, ws); //1 http request
-			List<CellEntry> cellList = getAllCells(service, ws); //1 http request
+			List<ListEntry> rowList = getAllRows(ws); //1 http request
+			List<CellEntry> cellList = getAllCells(ws); //1 http request
 			
 			if( rowList.size() > 0 && cellList.size() > 0 ){
 				//get the header row and put it as the 1st row in the rowlist
 				GSRow<GSCell> gsListHeaderEntry = new GSRow(
 						new ListEntry(), 1, gsWorksheet);
-				gsListHeaderEntry.populateClild(cellList);				
+				gsListHeaderEntry.populateClildWithHeaderTag(cellList);				
 				gsWorksheet.getChildElements().put(gsListHeaderEntry.getElementId(), gsListHeaderEntry);			
 				
 				for (ListEntry row : rowList){
@@ -690,22 +690,30 @@ public class GoogleSpreadsheetUtils {
 	 * @return
 	 * @throws IOException
 	 * @throws ServiceException
+	 * 
+	 * use getAllRows({@link ListEntry}) instead
 	 */
+	@Deprecated
 	public static List<ListEntry> getAllRows(SpreadsheetService service,
 			WorksheetEntry worksheet) throws IOException,
+			ServiceException {
+
+		return getAllRows(worksheet);
+	}
+
+	public static List<ListEntry> getAllRows(WorksheetEntry worksheet) throws IOException,
 			ServiceException {
 
 		Guard.argumentNotNull(worksheet, "worksheet");
 
 		URL listFeedUrl = worksheet.getListFeedUrl();
-		ListFeed listFeed = service.getFeed(listFeedUrl,
+		ListFeed listFeed = worksheet.getService().getFeed(listFeedUrl,
 				ListFeed.class);
 		return listFeed.getEntries();
 	}
-
 	
 	/**
-	 * get all cells  form a worksheet
+	 * get all cells  form a worksheet 
 	 * 
 	 * @param service
 	 * @param spreadsheet
@@ -713,18 +721,27 @@ public class GoogleSpreadsheetUtils {
 	 * @return
 	 * @throws IOException
 	 * @throws ServiceException
+	 * 
+	 * use getAllCells({@link WorksheetEntry}) instead
 	 */
+	@Deprecated
 	public static List<CellEntry> getAllCells(SpreadsheetService service,
 			WorksheetEntry worksheet) throws IOException,
+			ServiceException {
+
+		return getAllCells(worksheet);
+	}
+
+	public static List<CellEntry> getAllCells(WorksheetEntry worksheet) throws IOException,
 			ServiceException {
 
 		Guard.argumentNotNull(worksheet, "worksheet");
 
 		URL cellFeedUrl = worksheet.getCellFeedUrl();
-		CellFeed cellFeed = service.getFeed(cellFeedUrl,
+		CellFeed cellFeed = worksheet.getService().getFeed(cellFeedUrl,
 				CellFeed.class);
 		return cellFeed.getEntries();
-	}
+	}	
 	
 	/**
 	 * get specific worksheet by index form a spreadsheet
@@ -778,15 +795,7 @@ public class GoogleSpreadsheetUtils {
 		return null;
 	}
 	
-	/**
-	 * 
-	 * @param worksheet
-	 * @param columnIndex
-	 * @param cellValue
-	 * @return
-	 * @author Raju
-	 */
-	public static GSRow getRow(GSWorksheet<GSRow<GSCell>> worksheet,int columnIndex,String cellValue){
+	public static GSRow<GSCell> getRow(GSWorksheet<GSRow<GSCell>> worksheet,int columnIndex,String cellValue){
 		GSRow<GSCell> row ;
 		for(Map.Entry<String, GSRow<GSCell>> mpRow : worksheet.getGSRows().entrySet()){
 			 row = mpRow.getValue();
