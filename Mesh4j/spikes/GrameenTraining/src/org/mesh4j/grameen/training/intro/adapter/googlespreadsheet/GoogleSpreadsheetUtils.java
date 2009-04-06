@@ -621,21 +621,21 @@ public class GoogleSpreadsheetUtils {
 				GSRow<GSCell> gsListHeaderEntry = new GSRow(
 						new ListEntry(), 1, gsWorksheet);
 				gsListHeaderEntry.populateClild(cellList);				
-				gsWorksheet.getChildElements().put(Integer.toString(gsListHeaderEntry.getRowIndex()), gsListHeaderEntry);			
+				gsWorksheet.getChildElements().put(gsListHeaderEntry.getElementId(), gsListHeaderEntry);			
 				
 				for (ListEntry row : rowList){
 					//create a custom row object and populate its child
 					GSRow<GSCell> gsListEntry = new GSRow(
 							row, rowList.indexOf(row) + 2, gsWorksheet); //+2 because #1 position is occupied by list header entry 
-					gsListEntry.populateClild(cellList);				
+					gsListEntry.populateClildWithHeaderTag(cellList);				
 					
 					//add a row to the custom worksheet object
-					gsWorksheet.getChildElements().put(Integer.toString(gsListEntry.getRowIndex()), gsListEntry);
+					gsWorksheet.getChildElements().put(gsListEntry.getElementId(), gsListEntry);
 					//TODO: right now index has been used as key; mjrow.getId() could have used, this need to review
 				}
 			} // if
 			//add a custom worksheet object to the custom spreadsheet object 
-			gsSpreadsheet.getChildElements().put(Integer.toString(gsWorksheet.getSheetIndex()),gsWorksheet);
+			gsSpreadsheet.getChildElements().put(gsWorksheet.getElementId(),gsWorksheet);
 		} //for		
 		
 		return gsSpreadsheet;
