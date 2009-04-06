@@ -1,14 +1,20 @@
 package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet;
 
+import java.io.IOException;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSCell;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSRow;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSWorksheet;
 import org.mesh4j.sync.validations.Guard;
+import org.mesh4j.sync.validations.MeshException;
 
 import com.google.gdata.data.spreadsheet.ListEntry;
+import com.google.gdata.util.ServiceException;
 /**
  * 
  * @author Raju
@@ -20,6 +26,7 @@ public class SpreadSheetToXMLMapper implements ISpreadSheetToXMLMapper{
 	private String idColumnName = "";
 	private String lastUpdateColumnName = "";
 	private int lastUpdateColumnPosition = -1;
+	private int idColumnPosition = 0;
 	
 	@Deprecated
 	public SpreadSheetToXMLMapper(String idColumnName,String lastUpdateColumnName){
@@ -29,11 +36,22 @@ public class SpreadSheetToXMLMapper implements ISpreadSheetToXMLMapper{
 		this.lastUpdateColumnName = lastUpdateColumnName;
 	}
 	
+	@Deprecated
 	public SpreadSheetToXMLMapper(String idColumnName,int lastUpdateColumnPosition){
 		Guard.argumentNotNullOrEmptyString(idColumnName, "idColumnName");
-		Guard.argumentNotNullOrEmptyString(lastUpdateColumnName, "lastUpdateColumnName");
+		Guard.argumentNotNull(lastUpdateColumnPosition, "lastUpdateColumnPosition");
 		this.idColumnName = idColumnName;
 		this.lastUpdateColumnPosition = lastUpdateColumnPosition;
+	}
+	public SpreadSheetToXMLMapper(String idColumnName,int idColumnPosition,int lastUpdateColumnPosition){
+		Guard.argumentNotNullOrEmptyString(idColumnName, "idColumnName");
+		Guard.argumentNotNull(idColumnPosition, "idColumnPosition");
+		Guard.argumentNotNull(lastUpdateColumnPosition, "lastUpdateColumnPosition");
+		this.idColumnName = idColumnName;
+		this.idColumnPosition = idColumnPosition;
+		this.lastUpdateColumnPosition = lastUpdateColumnPosition;
+	}
+	public SpreadSheetToXMLMapper(){
 	}
 	
 	@Override
@@ -61,20 +79,46 @@ public class SpreadSheetToXMLMapper implements ISpreadSheetToXMLMapper{
 	}
 
 	@Override
-	public GSRow convertXMLElementToRow(Element element, int rowIndex) {
+	public GSRow<GSCell> convertXMLElementToRow(GSWorksheet<GSRow<GSCell>> workSheet,Element element) {
+		Guard.argumentNotNull(workSheet, "workSheet");
 		Guard.argumentNotNull(element, "element");
 		
-		Element child;
-		ListEntry newRowEntry = new ListEntry();
+		List<String> list = new LinkedList<String>();
+		GSRow<GSCell> gsRow = null ;
 		
 		for (Iterator<Element> iterator = element.elementIterator(); iterator.hasNext();){
-			child = (Element) iterator.next();
-			newRowEntry.getCustomElements().setValueLocal(child.getName(), child.getText());
+			Element child = (Element) iterator.next();
+			list.add(child.getText());
 		}
-		GSRow gsRow = new GSRow(newRowEntry,rowIndex);
+		
+		String[] columnValues = list.toArray(new String[0]);
+		
+		try {
+			gsRow = workSheet.createNewRow(columnValues);
+		} catch (IOException e) {
+			throw new MeshException(e);
+		} catch (ServiceException e) {
+			throw new MeshException(e);
+		}
 		return gsRow;
 	}
 
+	@Override
+	public GSRow<GSCell> normalizeRow(GSWorksheet<GSRow<GSCell>> workSheet,
+									  Element payLoad, GSRow<GSCell> rowTobeUPdated) {
+		Guard.argumentNotNull(workSheet, "workSheet");
+		Guard.argumentNotNull(payLoad, "payLoad");
+		Guard.argumentNotNull(rowTobeUPdated, "rowTobeUPdated");
+		
+		for (Iterator<Element> iterator = payLoad.elementIterator(); iterator.hasNext();){
+			Element	child = (Element) iterator.next();
+			rowTobeUPdated.updateCellValue( child.getText() ,child.getName());
+		}
+		return rowTobeUPdated;
+	}
+	
+	
+	
 	@Override
 	public String getIdColumnName() {
 		return idColumnName;
@@ -89,6 +133,13 @@ public class SpreadSheetToXMLMapper implements ISpreadSheetToXMLMapper{
 	public int getLastUpdateColumnPosition() {
 		return this.lastUpdateColumnPosition;
 	}
+
+	@Override
+	public int getIdColumnPosition() {
+		return this.idColumnPosition;
+	}
+
+	
 
 	
 	

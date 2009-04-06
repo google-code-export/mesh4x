@@ -3,25 +3,18 @@ package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet;
 
 import java.io.IOException;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSBaseElement;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSCell;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSRow;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSSpreadsheet;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSWorksheet;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.IGSElement;
-import org.mesh4j.sync.adapters.SyncInfo;
-import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
-import org.mesh4j.sync.id.generator.IIdGenerator;
-import org.mesh4j.sync.model.Sync;
-import org.mesh4j.sync.parsers.SyncInfoParser;
-import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
@@ -785,6 +778,14 @@ public class GoogleSpreadsheetUtils {
 		return null;
 	}
 	
+	/**
+	 * 
+	 * @param worksheet
+	 * @param columnIndex
+	 * @param cellValue
+	 * @return
+	 * @author Raju
+	 */
 	public static GSRow getRow(GSWorksheet<GSRow<GSCell>> worksheet,int columnIndex,String cellValue){
 		GSRow<GSCell> row ;
 		for(Map.Entry<String, GSRow<GSCell>> mpRow : worksheet.getGSRows().entrySet()){
@@ -804,5 +805,33 @@ public class GoogleSpreadsheetUtils {
 		return null;
 	}
 	
+	/**
+	 * 
+	 * @param gsRow
+	 * @param cellValue
+	 * @return
+	 * @author Raju
+	 */
+	public static GSCell getCell(GSRow<GSCell> gsRow,String ColumName){
+		for(Map.Entry<String, GSCell> mapCell :gsRow.getGSCells().entrySet()){
+			GSCell cell = mapCell.getValue();
+			if(cell.getCellEntry().getCell().getValue().equals(ColumName)){
+				return cell;
+			}
+		}
+		return null;
+	}
 	
+	public static Date normalizeDate(String dateAsString,String format){
+		Guard.argumentNotNull(dateAsString, "dateAsString");
+		
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
+		Date dateAndTime;
+		try {
+			dateAndTime = simpleDateFormat.parse(dateAsString);
+		} catch (ParseException e) {
+			throw new MeshException(e);
+		}
+		return  dateAndTime;
+	}
 }

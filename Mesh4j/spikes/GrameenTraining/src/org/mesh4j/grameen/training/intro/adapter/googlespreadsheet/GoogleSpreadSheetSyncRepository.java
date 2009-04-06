@@ -38,6 +38,7 @@ public class GoogleSpreadSheetSyncRepository implements ISyncRepository,ISyncAwa
 	public final static String COLUMN_NAME_ENTITY_ID = "entityId";
 	public final static String COLUMN_NAME_VERSION = "version";
 	public final static String COLUMN_NAME_SYNC = "sync";
+	private final static int SYNC_ID_INDEX = 1;
 	
 	private IGoogleSpreadSheet spreadSheet = null;
 	private IIdentityProvider identityProvider = null;
@@ -46,18 +47,20 @@ public class GoogleSpreadSheetSyncRepository implements ISyncRepository,ISyncAwa
 	private GSWorksheet<GSRow<GSCell>> workSheet;
 	private ISpreadSheetToXMLMapper mapper;
 	
-	public GoogleSpreadSheetSyncRepository(IGoogleSpreadSheet spreadSheet,GSWorksheet workSheet,
+	public GoogleSpreadSheetSyncRepository(IGoogleSpreadSheet spreadSheet,GSWorksheet workSheet,ISpreadSheetToXMLMapper mapper,
 											IIdentityProvider identityProvider,IIdGenerator idGenerator,String sheetName){
 		
 		Guard.argumentNotNull(spreadSheet, "spreadSheet");
 		Guard.argumentNotNull(identityProvider, "identityProvider");
 		Guard.argumentNotNull(idGenerator, "idGenerator");
 		Guard.argumentNotNullOrEmptyString(sheetName, "sheetName");
+		Guard.argumentNotNull(mapper, "mapper");
 		
 		this.spreadSheet = spreadSheet;
 		this.identityProvider = identityProvider;
 		this.idGenerator = idGenerator;
 		this.workSheet = workSheet;
+		this.mapper = mapper;
 	}
 	
 	@Override
@@ -65,8 +68,7 @@ public class GoogleSpreadSheetSyncRepository implements ISyncRepository,ISyncAwa
 		Guard.argumentNotNullOrEmptyString(syncId, "syncId");
 		
 		GSRow row ;
-		int syncIdIndex = 1;
-		row = GoogleSpreadsheetUtils.getRow(workSheet,syncIdIndex,syncId);
+		row = GoogleSpreadsheetUtils.getRow(workSheet,SYNC_ID_INDEX,syncId);
 		if(row == null){
 			return null;
 		} else {
@@ -104,7 +106,7 @@ public class GoogleSpreadSheetSyncRepository implements ISyncRepository,ISyncAwa
 	public void save(SyncInfo syncInfo) {
 		Guard.argumentNotNull(syncInfo, "syncInfo");
 		
-		GSRow row = this.workSheet.getGSRow(Integer.parseInt(syncInfo.getSyncId()));
+		GSRow row = GoogleSpreadsheetUtils.getRow(this.workSheet, SYNC_ID_INDEX, syncInfo.getSyncId());
 		if(row == null){
 			addRow(syncInfo);
 		} else {
@@ -112,16 +114,19 @@ public class GoogleSpreadSheetSyncRepository implements ISyncRepository,ISyncAwa
 		}
 	}
 	private void addRow(SyncInfo syncInfo){
-		int rowIndex = this.workSheet.getGSRows().size() + 1;
 		Element payLoad = SyncInfoParser.convertSync2Element(syncInfo.getSync(), RssSyndicationFormat.INSTANCE, this.identityProvider);
-		GSRow row = mapper.convertXMLElementToRow(payLoad, rowIndex);
-		this.workSheet.addChildElement(String.valueOf(rowIndex), row);
-		
+		GSRow row = mapper.convertXMLElementToRow(this.workSheet,payLoad);
+		this.workSheet.addChildElement(row.getElementId(),row);
+		GoogleSpreadsheetUtils.flush(spreadSheet.getService(), spreadSheet.getGSSpreadsheet());
+		row.refreshMe();
 	}
-	private void updateRow(GSRow row  ,SyncInfo syncInfo){
+	private void updateRow(GSRow rowTobeUPdated  ,SyncInfo syncInfo){
 		Element payLoad = SyncInfoParser.convertSync2Element(syncInfo.getSync(), RssSyndicationFormat.INSTANCE, this.identityProvider);
-		GSRow updatedRow = mapper.convertXMLElementToRow(payLoad, row.getRowIndex());
+		GSRow updatedRow = mapper.normalizeRow(workSheet, payLoad, rowTobeUPdated);
 		this.workSheet.addChildElement(String.valueOf(updatedRow.getRowIndex()), updatedRow);
+		
+		GoogleSpreadsheetUtils.flush(spreadSheet.getService(), spreadSheet.getGSSpreadsheet());
+		updatedRow.refreshMe();
 	}
 	
 	@Override

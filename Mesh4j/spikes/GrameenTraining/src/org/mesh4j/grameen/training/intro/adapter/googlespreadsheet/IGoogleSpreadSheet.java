@@ -14,8 +14,11 @@ import com.google.gdata.client.spreadsheet.SpreadsheetService;
  */
 public interface IGoogleSpreadSheet {
 	
-	public GSSpreadsheet<GSWorksheet<GSRow<GSCell>>> getGSSpreadsheet();
+	public GSSpreadsheet<GSWorksheet> getGSSpreadsheet();
 	public SpreadsheetService getService();
+	public GSWorksheet getGSWorksheet(String sheetName);
+	public GSWorksheet getGSWorksheet(int sheetIndex);
 	public void setDirty();
 	public void flush();
+	public void refresh();
 }

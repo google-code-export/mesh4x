@@ -1,6 +1,7 @@
 package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet;
 
 import org.dom4j.Element;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSCell;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSRow;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSWorksheet;
 /**
@@ -16,6 +17,8 @@ public interface ISpreadSheetToXMLMapper {
 	//unique id a column is needed which will hold the id.basically we say
 	//this is idcolumnname.
 	public String getIdColumnName();
+	
+	public int getIdColumnPosition();
 
 	//whenever any item in entity is updated or changed its corresponding
 	//lasupdatecolumnname is also updated with date.
@@ -30,6 +33,10 @@ public interface ISpreadSheetToXMLMapper {
 
 	//before save the manipulated item or row to the spreadsheet we need to convert the
 	//mesh4x xml element to spreadsheet listEntry which is row.
-	public GSRow convertXMLElementToRow(Element element,int rowIndex);
+	public GSRow convertXMLElementToRow(GSWorksheet<GSRow<GSCell>> workSheet,Element element);
+	
+	public GSRow<GSCell> normalizeRow(GSWorksheet<GSRow<GSCell>> workSheet,Element payLoad,GSRow<GSCell> rowTobeUPdated);
+	
+	 
 	
 }

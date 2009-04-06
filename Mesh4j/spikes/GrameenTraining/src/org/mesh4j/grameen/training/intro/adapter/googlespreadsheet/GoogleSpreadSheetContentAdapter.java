@@ -1,5 +1,8 @@
 package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,6 +18,10 @@ import org.mesh4j.sync.adapters.split.IContentAdapter;
 import org.mesh4j.sync.model.IContent;
 import org.mesh4j.sync.utils.DateHelper;
 import org.mesh4j.sync.validations.Guard;
+
+import com.google.gdata.data.DateTime;
+import com.google.gdata.data.spreadsheet.CellEntry;
+import com.google.gdata.data.spreadsheet.ListEntry;
 /**
  * Basically implementation of CRUD operation in google spreadsheet through Mesh4x wrapper
  * API of GData API.
@@ -25,6 +32,7 @@ import org.mesh4j.sync.validations.Guard;
  */
 public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAware{
 
+	public final static String G_SPREADSHEET_DATE_FORMAT = "MM/dd/yyyy hh:mm:ss";
 	private String type = "";
 	private String sheetName = "";
 	//this property is for identify each row in spreadsheet
@@ -39,7 +47,7 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 	private IGoogleSpreadSheet spreadSheet = null;
 	
 	//represents a specific sheet of a google spreadsheet
-	private GSWorksheet<GSRow> workSheet;
+	private GSWorksheet<GSRow<GSCell>> workSheet;
 
 	private ISpreadSheetToXMLMapper mapper;
 	
@@ -48,11 +56,12 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 	 * @param spreadSheet the google spreadsheet
 	 * @param sheetName the particular sheet name of a spreadsheet 
 	 */
-	public GoogleSpreadSheetContentAdapter(IGoogleSpreadSheet spreadSheet,GSWorksheet workSheet,
+	public GoogleSpreadSheetContentAdapter(IGoogleSpreadSheet spreadSheet,GSWorksheet<GSRow<GSCell>> workSheet,
 											ISpreadSheetToXMLMapper mapper,String type){
 		
 		Guard.argumentNotNull(spreadSheet, "spreadSheet");
-		Guard.argumentNotNullOrEmptyString(sheetName, "sheetName");
+		Guard.argumentNotNull(workSheet, "workSheet");
+		Guard.argumentNotNullOrEmptyString(type, "type");
 		this.spreadSheet = spreadSheet;
 		this.workSheet = workSheet;
 		this.mapper = mapper;
@@ -60,6 +69,7 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 		//right now we are planning to give the entity name as the title of the each sheet
 		this.sheetName = workSheet.getName();
 		this.lastUpdateColumnIndex = mapper.getLastUpdateColumnPosition();
+		this.idColumnName = mapper.getIdColumnName();
 		
 	}
 	
@@ -68,53 +78,62 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 		Guard.argumentNotNull(content, "content");
 		
 		EntityContent entityContent = EntityContent.normalizeContent(content, this.sheetName, idColumnName);
-		GSRow row = this.workSheet.getGSRow(Integer.parseInt(entityContent.getId()));
+		GSRow row = GoogleSpreadsheetUtils.getRow(this.workSheet, mapper.getIdColumnPosition(), entityContent.getId());
 		if(row != null){
-			this.workSheet.deleteChildElement(entityContent.getId());
+			this.workSheet.deleteChildElement(row.getElementId());
+			GoogleSpreadsheetUtils.flush(spreadSheet.getService(), spreadSheet.getGSSpreadsheet());
 		}
 	}
 
 	@Override
 	public IContent get(String contentId) {
 		Guard.argumentNotNullOrEmptyString(contentId, "contentId");
-		
-		GSRow row = this.workSheet.getGSRow(Integer.parseInt(contentId));
+		//here contentId is entityid 
+		//GSRow row = this.workSheet.getGSRow(Integer.parseInt(contentId));
+		GSRow row = GoogleSpreadsheetUtils.getRow(this.workSheet, mapper.getIdColumnPosition(), contentId);
 		if(row != null){
 			Element payLoad = mapper.convertRowToXML(row, this.workSheet);
 			return new EntityContent(payLoad,this.sheetName,contentId);
 		}
 		return null;
 	}
-
+	
 	@Override
 	public List<IContent> getAll(Date since) {
 		Guard.argumentNotNull(since, "content");
 		
 		List<IContent> listOfAll = new LinkedList<IContent>();
-		for(Map.Entry<String,GSRow> rowMap :this.workSheet.getGSRows().entrySet()){
-			GSRow gsRow = rowMap.getValue();
-			
-			if(gsRow != null && rowHasChanged(gsRow, since)){
-				Element payLoad = mapper.convertRowToXML(gsRow, workSheet);
-				EntityContent entityContent = new EntityContent(
-						payLoad,this.sheetName,String.valueOf(gsRow.getRowIndex()));
+		//we will not count first row,since this is header row
+		//and here counting is starts from 1 not zero.so header row index will be 1
+		System.out.println(this.workSheet.getGSRows().size());
+		for(Map.Entry<String,GSRow<GSCell>> rowMap :this.workSheet.getGSRows().entrySet()){
+			GSRow<GSCell> gsRow = rowMap.getValue();
+			String entityId  = "";
+			if(gsRow.getElementListIndex() > 1 ){
+				if(gsRow != null && rowHasChanged(gsRow, since)){
+					Element payLoad = mapper.convertRowToXML(gsRow, workSheet);
+					
+//					 GSCell cell = gsRow.getChildElement(String.valueOf(mapper.getIdColumnPosition()));
+					 GSCell cell = gsRow.getGSCell(mapper.getIdColumnPosition());
+					 
+					 if(cell == null){
+						 System.out.println("cell is null");
+					 }else{
+						 CellEntry cellEntry = cell.getCellEntry();
+						 System.out.println("test");
+					 }
+					 
+					 entityId = cell.getCellEntry().getCell().getValue();
+				EntityContent entityContent = new EntityContent(payLoad,this.sheetName,entityId);
 				listOfAll.add(entityContent);
 			}
-//			 for (String columnHeader : gsRow.getRowEntry().getCustomElements().getTags()){
-//				 if(columnHeader != null && !columnHeader.equals("")){
-//					if(columnHeader.equalsIgnoreCase(lastUpdateColumn)){
-//						String dateTimeAsString = gsRow.getRowEntry().getCustomElements().getValue(columnHeader);
-//						System.out.println("Date is :" + dateTimeAsString);
-//						Date convertedDate = DateHelper.parseDateTime(dateTimeAsString);
-//						isRowChanged(gsRow, convertedDate);
-//						
-//					}
-//				 }
-//			 }
 		}
-		
+	}
 		return listOfAll;
 	}
+	
+	
+	
 	private boolean rowHasChanged(GSRow<GSCell> row,Date since){
 		if(lastUpdateColumnIndex == -1){
 			return true;
@@ -124,8 +143,8 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 				return true;
 			} else {
 				String dateTimeAsString = cell.getCellEntry().getCell().getValue();
-				Date lasUpdateDate = DateHelper.parseDateTime(dateTimeAsString);
-				return since.compareTo(lasUpdateDate) <= 0;
+				Date lasUpdateDateTime = GoogleSpreadsheetUtils.normalizeDate(dateTimeAsString, G_SPREADSHEET_DATE_FORMAT);
+				return since.compareTo(lasUpdateDateTime) <= 0;
 			}
 		}
 	}
@@ -140,29 +159,43 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 		Guard.argumentNotNull(content, "content");
 		
 		EntityContent entityContent = EntityContent.normalizeContent(content, this.sheetName, idColumnName);
-		//now find out the row from the spreadsheet
-		//here entity id is row index of the each row,since google spreadsheet has row index 
-		//implementation so right we don't need to put extra id column in the spreadsheet to
-		//identify the each row or item
-		//TODO We need to do the test to prove the  above concept. 
-		GSRow row = this.workSheet.getGSRow(Integer.parseInt(entityContent.getId()));
+		GSRow row = GoogleSpreadsheetUtils.getRow(this.workSheet, mapper.getIdColumnPosition(), entityContent.getId());
 		if(row == null){
 			addRow(entityContent);
 		}else{
-			updateRow(entityContent);
+			updateRow(entityContent,row);
 		}
 	}
 	
 	private void addRow(EntityContent entityContent){
-		int rowIndex = this.workSheet.getGSRows().size() + 1;
-		GSRow row = this.mapper.convertXMLElementToRow(entityContent.getPayload(), rowIndex );
-		this.workSheet.addChildElement(String.valueOf(rowIndex), row);
-		
+
+		GSRow<GSCell> row = this.mapper.convertXMLElementToRow(this.workSheet,entityContent.getPayload());
+		this.workSheet.addChildElement(row.getElementId(), row);
+		GoogleSpreadsheetUtils.flush(spreadSheet.getService(), spreadSheet.getGSSpreadsheet());
+		row.refreshMe();
 	}
-	private void updateRow(EntityContent entityContent){
-		int rowIndex = Integer.parseInt(entityContent.getId());
-		GSRow row = this.mapper.convertXMLElementToRow(entityContent.getPayload(), rowIndex);
-		this.workSheet.updateChildElement(entityContent.getId(), row);
+	
+	private void printTest(){
+		for(Map.Entry<String,GSRow<GSCell>> rowMap :this.workSheet.getGSRows().entrySet()){
+			GSRow<GSCell> gsRow = rowMap.getValue();
+			String entityId  = "";
+			if(gsRow.getRowIndex() > 1 ){
+				GSCell cell = gsRow.getGSCell(mapper.getIdColumnPosition());
+				if(cell != null){
+					CellEntry cellEntry = cell.getCellEntry();
+					System.out.println("cell value " + cellEntry.getCell().getValue());
+				}else{
+					System.out.println("cell is null");
+				}
+			}
+		}
+	}
+	private void updateRow(EntityContent entityContent,GSRow<GSCell> rowTobeUpdated){
+		GSRow row = this.mapper.normalizeRow(workSheet, entityContent.getPayload(), rowTobeUpdated);
+		this.workSheet.updateChildElement(row.getElementId(), row);
+		
+		GoogleSpreadsheetUtils.flush(spreadSheet.getService(), spreadSheet.getGSSpreadsheet());
+		row.refreshMe();
 	}
 	
 	@Override
