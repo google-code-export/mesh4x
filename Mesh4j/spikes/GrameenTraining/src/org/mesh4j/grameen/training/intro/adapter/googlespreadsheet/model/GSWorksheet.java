@@ -4,14 +4,21 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
+import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadsheetUtils;
 
 import sun.reflect.ReflectionFactory.GetReflectionFactoryAction;
 
+import com.google.gdata.client.spreadsheet.SpreadsheetService;
 import com.google.gdata.data.BaseEntry;
 import com.google.gdata.data.batch.BatchUtils;
 import com.google.gdata.data.spreadsheet.CellEntry;
@@ -129,6 +136,30 @@ public class GSWorksheet<C> extends GSBaseElement<C> {
 				.getPlainText();
 	}
 	
+	
+	/**
+	 * get the cell header tag as an ordered set according to their order in spreadsheet 
+	 * @return
+	 */
+	public List<String> getCellHeaderTagset() {
+		List<String> tagList = new ArrayList<String>();
+		if (this.getChildElements().size() > 0) {
+			if(this.getChildElements().size() > 1){
+				ListEntry listEntry = (ListEntry) ((GSWorksheet<GSRow>) this)
+						.getGSRow(2).baseEntry;
+				for(String tag :listEntry.getCustomElements().getTags()){
+					tagList.add(tag);
+				}
+				
+			}else{
+				//create a temporary row
+				//grab the tags
+				//delete the row
+			}
+		}
+		return tagList;
+	}
+	
 	/**
 	 * add a new row to the spreadsheet
 	 * 
@@ -150,6 +181,37 @@ public class GSWorksheet<C> extends GSBaseElement<C> {
 	 * @throws IOException
 	 * @throws ServiceException
 	 */
+	@SuppressWarnings("unchecked")
+	public GSRow<GSCell> createNewRow(LinkedHashMap<String, String> values) throws IOException, ServiceException {
+
+		int noOfColumns = ((GSWorksheet<GSRow>) this).getGSRow(1)
+				.getChildElements().size();
+
+		if (values.size() < noOfColumns) {
+			// TODO: throw exception
+			return null;
+		}
+		int newRowIndex = this.getChildElements().size() + 1;
+		
+		ListEntry newRow = new ListEntry();		
+		
+		GSRow<GSCell> newGSRow = new GSRow(newRow, newRowIndex, this);
+		
+		int col = 1; 	// entries in values make sure actual ordering in spreadsheet, 
+						// so we can assume they are in a position according to column order 1, 2, 3....   	
+		
+		for (String key : values.keySet()) {
+			CellEntry newCell = new CellEntry(newRowIndex, col, ""); //this is not supported for batch update :(
+		    GSCell newGSCell = new GSCell(newCell, newGSRow, key);
+			newGSCell.updateCellValue(values.get(key));
+			newGSRow.addChildElement(key, newGSCell);
+			col++;
+		}		
+		
+		return newGSRow;
+	}
+	
+	
 	public GSRow<GSCell> createNewRow(String[] values) throws IOException, ServiceException {
 
 		int noOfColumns = ((GSWorksheet<GSRow>) this).getGSRow(1)
@@ -163,28 +225,27 @@ public class GSWorksheet<C> extends GSBaseElement<C> {
 		
 		ListEntry newRow = new ListEntry();		
 		
-		//TODO: we need to set the id(cell) of this row here
-		//this.baseEntry.getService().insert(((WorksheetEntry)this.baseEntry).getListFeedUrl(), newRow);
-		
 		GSRow<GSCell> newGSRow = new GSRow(newRow, newRowIndex, this);
 		
 		for (int col = 1; col <= noOfColumns; col++) {
 			
-		    String batchId = "R" + newRowIndex + "C" + col;		    
-		    URL entryUrl = new URL( ((WorksheetEntry)this.getBaseEntry()).getCellFeedUrl().toString() + "/" + batchId);
-		    
-		    CellEntry newCell = ((WorksheetEntry)this.getBaseEntry()).getService().getEntry(entryUrl, CellEntry.class);			
-			//CellEntry newCell = new CellEntry(newRowIndex, col, values[col - 1]); //this is not supported for batch update :(
+		    String batchId = "R" + newRowIndex + "C" + col;
+			URL entryUrl = new URL(((WorksheetEntry) this.getBaseEntry())
+					.getCellFeedUrl().toString()
+					+ "/" + batchId);
 
-		    GSCell newGSCell = new GSCell(newCell, newGSRow);
+			CellEntry newCell = ((WorksheetEntry) this.getBaseEntry())
+					.getService().getEntry(entryUrl, CellEntry.class);			
+			
+		    GSCell newGSCell = new GSCell(newCell, newGSRow, "TODO: need to provide column tag");
 			newGSCell.updateCellValue(values[col - 1]);
 			newGSRow.addChildElement(Integer.toString(col), newGSCell); //TODO: need to supply header tag here as key instead of colIndex
 		}
 
 		return newGSRow;
-	}
-
-	
+	}	
+		
+	@SuppressWarnings("unchecked")
 	@Override
 	public void refreshMe() throws IOException, ServiceException {
 		if(this.isDirty()){
@@ -201,14 +262,14 @@ public class GSWorksheet<C> extends GSBaseElement<C> {
 				this.childElements.clear();
 				GSRow<GSCell> gsListHeaderEntry = new GSRow(
 						new ListEntry(), 1, this);
-				gsListHeaderEntry.populateClildWithHeaderTag(cellList);				
+				gsListHeaderEntry.populateClildWithHeaderTag(cellList, (WorksheetEntry)this.baseEntry);				
 				((GSWorksheet<GSRow>)this).getChildElements().put(gsListHeaderEntry.getElementId(), gsListHeaderEntry);			
 				
 				for (ListEntry row : rowList){
 					//create a custom row object and populate its child
 					GSRow<GSCell> gsListEntry = new GSRow(
 							row, rowList.indexOf(row) + 2, this); //+2 because #1 position is occupied by list header entry 
-					gsListEntry.populateClildWithHeaderTag(cellList);				
+					gsListEntry.populateClildWithHeaderTag(cellList, (WorksheetEntry)this.baseEntry);				
 					
 					//add a row to the custom worksheet object
 					((GSWorksheet<GSRow>)this).getChildElements().put(gsListEntry.getElementId(), gsListEntry);
@@ -219,7 +280,7 @@ public class GSWorksheet<C> extends GSBaseElement<C> {
 			
 			this.dirty = false;
 			this.deleteCandidate = false;
-		}	
+		}
 	}
 
 
