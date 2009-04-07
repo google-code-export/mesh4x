@@ -10,12 +10,12 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.mesh4j.sync.adapters.hibernate.mapping.IHibernateToXMLMapping;
-import org.mesh4j.sync.adapters.split.IContentAdapter;
+import org.mesh4j.sync.adapters.split.IIdentifiableContentAdapter;
 import org.mesh4j.sync.model.IContent;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
-public class HibernateContentAdapter implements IContentAdapter {
+public class HibernateContentAdapter implements IIdentifiableContentAdapter {
 
 	// MODEL VARIABLES
 	private IHibernateToXMLMapping mapping;
@@ -141,6 +141,16 @@ public class HibernateContentAdapter implements IContentAdapter {
 
 	public List<IContent> getAll() {
 		return getAll(null);
+	}
+
+	@Override
+	public String getID(IContent content) {
+		EntityContent entityContent = EntityContent.normalizeContent(content, this.getType(), this.getEntityIdNode());
+		if(entityContent == null){
+			return null;
+		} else {
+			return entityContent.getId();
+		}
 	}
 
 }

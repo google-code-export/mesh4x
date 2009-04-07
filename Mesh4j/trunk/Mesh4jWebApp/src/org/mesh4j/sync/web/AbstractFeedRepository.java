@@ -11,6 +11,7 @@ import org.mesh4j.geo.coder.GeoCoderLocationPropertyResolver;
 import org.mesh4j.geo.coder.GeoCoderLongitudePropertyResolver;
 import org.mesh4j.geo.coder.IGeoCoder;
 import org.mesh4j.sync.ISyncAdapter;
+import org.mesh4j.sync.ISyncAware;
 import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.adapters.InMemorySyncAdapter;
 import org.mesh4j.sync.adapters.feed.ContentReader;
@@ -39,6 +40,7 @@ import org.mesh4j.sync.payload.schema.xform.XFormRDFSchemaContentWriter;
 import org.mesh4j.sync.payload.schema.xform.XFormRDFSchemaInstanceContentReadWriter;
 import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.servlet.Format;
+import org.mesh4j.sync.utils.XMLHelper;
 import org.mesh4j.sync.validations.MeshException;
 
 public abstract class AbstractFeedRepository implements IFeedRepository{
@@ -111,6 +113,22 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 	
 	@Override
 	public void addNewFeed(String sourceID, ISyndicationFormat syndicationFormat, String link, String description, String schema, String mappings, String by) {
+	
+		ISyncAdapter parentAdapter = this.getParentSyncAdapter(sourceID);
+		
+		if(parentAdapter instanceof ISyncAware){
+			((ISyncAware)parentAdapter).beginSync();
+		}
+		
+		basicAddNewFeed(parentAdapter, sourceID, syndicationFormat, link, description, schema, mappings, by);
+		
+		if(parentAdapter instanceof ISyncAware){
+			((ISyncAware)parentAdapter).endSync();
+		}
+
+	}
+	
+	public void basicAddNewFeed(ISyncAdapter parentAdapter, String sourceID, ISyndicationFormat syndicationFormat, String link, String description, String schema, String mappings, String by) {
 		String title = getFeedTitle(sourceID);
 		Feed feed = new Feed(title, description, link);
 		
@@ -133,8 +151,8 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 		Sync sync = new Sync(sycnId, by, new Date(), false);
 		Item item = new Item(content, sync);
 		
-		ISyncAdapter parentAdapter = this.getParentSyncAdapter(sourceID);
 		parentAdapter.add(item);
+		
 	}
 
 	protected String getFeedTitle(String sourceID) {
@@ -281,12 +299,20 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 	public void deleteFeed(String sourceID, String link, String by) {
 		ISyncAdapter parentAdapter = this.getParentSyncAdapter(sourceID);
 		
+		if(parentAdapter instanceof ISyncAware){
+			((ISyncAware)parentAdapter).beginSync();
+		}
+		
 		List<Item> items = parentAdapter.getAll(new XMLContentLinkFilter(link));
 		if(!items.isEmpty()){
 			Item item = items.get(0);
 			parentAdapter.delete(item.getSyncId());
 			this.basicDeleteFeed(sourceID);
-		}		
+		}
+		
+		if(parentAdapter instanceof ISyncAware){
+			((ISyncAware)parentAdapter).endSync();
+		}
 	}
 
 	protected abstract void basicDeleteFeed(String sourceID);
@@ -294,11 +320,15 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 	@Override
 	public void updateFeed(String sourceID, ISyndicationFormat syndicationFormat, String link, String description, String schema, String mappings, String by) {
 		ISyncAdapter parentAdapter = this.getParentSyncAdapter(sourceID);
+				
+		if(parentAdapter instanceof ISyncAware){
+			((ISyncAware)parentAdapter).beginSync();
+		}
 		
 		List<Item> items = parentAdapter.getAll(new XMLContentLinkFilter(link));
 		if(items.isEmpty()){
 			
-			addNewFeed(sourceID, syndicationFormat, link, description, schema, mappings, by);
+			basicAddNewFeed(parentAdapter, sourceID, syndicationFormat, link, description, schema, mappings, by);
 			
 		} else{
 			
@@ -324,7 +354,32 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 			}
 			
 			((XMLContent)item.getContent()).setDescription(description);
+			
 			parentAdapter.update(item);
+			
+		}
+		
+		if(parentAdapter instanceof ISyncAware){
+			((ISyncAware)parentAdapter).endSync();
+		}
+	}
+	
+	public void addNewItemFromRawContent(String sourceID, String link, String xml){
+		ISyncAdapter adapter = getSyncAdapter(sourceID);
+		
+		if(adapter instanceof ISyncAware){
+			((ISyncAware)adapter).beginSync();
+		}
+		
+		String syncID = IdGenerator.INSTANCE.newID();
+		
+		Element payload = XMLHelper.parseElement(xml);
+		XMLContent content = new XMLContent(syncID, null, null, null, payload);
+		Item item = new Item(content, new Sync(syncID, "admin", new Date(), false));
+		adapter.add(item);
+		
+		if(adapter instanceof ISyncAware){
+			((ISyncAware)adapter).endSync();
 		}
 	}
 }

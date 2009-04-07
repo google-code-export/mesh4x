@@ -54,14 +54,18 @@ public class SplitAdapter extends AbstractSyncAdapter implements ISyncAware{
 			contentAdapter.save(content);
 		}
 		
-		if(content == null){
-			SyncInfo syncInfo = new SyncInfo(item.getSync(), contentAdapter.getType(), item.getContent().getId(), item.getContent().getVersion());
-			syncRepository.save(syncInfo);
+		String id;
+		if(contentAdapter instanceof IIdentifiableContentAdapter){
+			id = ((IIdentifiableContentAdapter)contentAdapter).getID(content);
+			if(id == null){
+				id = content.getId();
+			}
 		} else {
-			SyncInfo syncInfo = new SyncInfo(item.getSync(), contentAdapter.getType(), content.getId(), content.getVersion());
-			syncRepository.save(syncInfo);
+			id = content.getId();
 		}
-
+		
+		SyncInfo syncInfo = new SyncInfo(item.getSync(), contentAdapter.getType(), id, content.getVersion());
+		syncRepository.save(syncInfo);
 	}
 
 	@Override
@@ -102,7 +106,18 @@ public class SplitAdapter extends AbstractSyncAdapter implements ISyncAware{
 		}else{
 			IContent content = item.getContent();
 			contentAdapter.save(content);
-			SyncInfo syncInfo = new SyncInfo(item.getSync(), contentAdapter.getType(), content.getId(), content.getVersion());
+			
+			String id;
+			if(contentAdapter instanceof IIdentifiableContentAdapter){
+				id = ((IIdentifiableContentAdapter)contentAdapter).getID(content);
+				if(id == null){
+					id = content.getId();
+				}
+			} else {
+				id = content.getId();
+			}
+			
+			SyncInfo syncInfo = new SyncInfo(item.getSync(), contentAdapter.getType(), id, content.getVersion());
 			syncRepository.save(syncInfo);	
 		}
 	}

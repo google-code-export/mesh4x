@@ -167,6 +167,9 @@ public class FeedReader {
 				this.contentReader.readContent(sync.getId(), payload, contentElement);
 			}
 			
+			if(payload.elements().size() == 1){
+				payload = (Element)payload.elements().get(0);
+			}
 			XMLContent modelItem = new XMLContent(sync.getId(), title, description, link, payload);
 			return new Item(modelItem, sync);
 		}

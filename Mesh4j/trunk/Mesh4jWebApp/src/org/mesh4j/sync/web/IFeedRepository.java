@@ -33,4 +33,6 @@ public interface IFeedRepository {
 	void deleteFeed(String sourceID, String link, String by);
 
 	void cleanFeed(String sourceID);
+
+	void addNewItemFromRawContent(String sourceID, String link, String rawXml);
 }

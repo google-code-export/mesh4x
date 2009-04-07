@@ -125,7 +125,8 @@ public class SyncEngineUtil {
 	
 	
 	public static void updateCloudSyncWrapper(CloudSyncSessionWrapper cloud, Item item){
-		Element cloudSyncElement = item.getContent().getPayload().element("cloudSync");
+
+		Element cloudSyncElement = item.getContent().getPayload();
 		String start = cloudSyncElement.attributeValue("start");
 		Date startDate = DateHelper.parseDateYYYYMMDDHHMMSS(start, TimeZone.getDefault());
 		if(cloud.getStartDate() == null || cloud.getStartDate().getTime() < startDate.getTime()){

@@ -351,6 +351,10 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 	public static String makeSchemaURL(String url) {
 		return url + "/schema";
 	}
+	
+	public static String makeAddItemFromRawDataURL(String url) {
+		return url + "/add";
+	}
 
 	public static void uploadMeshDefinition(String url, String sourceId, String format, String description, ISchema schema, IMapping mappings) {
 		try{
@@ -412,4 +416,13 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 		return sb.toString();
 	}
 
+	public void addItemFromRowData(String rowDataContentXML) {
+		try{
+			URL urlAddItem = new URL(makeAddItemFromRawDataURL(this.url.toString()));
+			doPOST(urlAddItem, rowDataContentXML, "text/xml");
+		} catch (Exception e) {
+			Logger.error(e.getMessage(), e); 
+			throw new MeshException(e);
+		}
+	}
 }

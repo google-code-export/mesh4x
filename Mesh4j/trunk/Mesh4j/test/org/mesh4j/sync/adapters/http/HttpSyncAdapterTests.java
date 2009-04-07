@@ -121,4 +121,29 @@ public class HttpSyncAdapterTests {
 		Assert.assertNotNull(mappings);
 	}
 	
+	@Test
+	public void shouldAddNewItemFromRawData() throws InterruptedException{
+		String path = "http://localhost:8080/mesh4x/feeds/myMesh/myFeed";
+		HttpSyncAdapter httpAdapter = makeAdapter(path);
+		
+		int size = httpAdapter.getAll().size();
+
+		Element payload = DocumentHelper.createElement("foo");
+		payload.addElement("bar").setText(IdGenerator.INSTANCE.newID());
+		
+		String xml = payload.asXML();
+		httpAdapter.addItemFromRowData(xml);
+		
+		List<Item> items = httpAdapter.getAll();
+		Assert.assertEquals(size + 1, items.size());
+		
+		int matchNumber = 0;
+		for (Item item : items) {
+			if(xml.equals(item.getContent().getPayload().asXML())){
+				matchNumber++;
+			}
+		}
+		Assert.assertEquals(1, matchNumber);
+	}
+	
 }

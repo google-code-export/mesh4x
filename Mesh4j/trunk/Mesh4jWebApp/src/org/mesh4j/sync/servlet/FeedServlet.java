@@ -150,7 +150,7 @@ public class FeedServlet extends HttpServlet {
 		}
 		String responseContent = KMLExporter.generateKML(sourceID, items, mappingResolver);
 		
-		response.setContentType("text/plain");
+		response.setContentType("application/vnd.google-earth.kml+xml");
 		response.setContentLength(responseContent.length());
 		PrintWriter out = response.getWriter();
 		out.println(responseContent);
@@ -224,13 +224,22 @@ public class FeedServlet extends HttpServlet {
 			deleteFeed(request, response);
 		}else {
 			try{
-				synchronizeFeed(request, response);
+				if(isAddNewItemFromRawData(request)){ 
+					addNewItemFromRawData(request, response);
+				} else {			
+					synchronizeFeed(request, response);
+				}
 			} catch (Exception e) {
 				throw new ServletException(e);
 			}
 		}
 	}
 	
+	private boolean isAddNewItemFromRawData(HttpServletRequest request) {
+		String sourceId = this.getSourceID(request);
+		return sourceId.endsWith("/add");
+	}
+
 	private void cleanFeed(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		String sourceID = request.getParameter(PARAM_SOURCE_ID);
 		if(!this.feedRepository.existsFeed(sourceID)){
@@ -278,6 +287,25 @@ public class FeedServlet extends HttpServlet {
 					PrintWriter out = response.getWriter();
 					out.println(responseContent);
 				}
+			}
+		}
+	}
+	
+	private void addNewItemFromRawData(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		String sourceID = this.getSourceID(request);
+		sourceID = sourceID.substring(0, sourceID.length() - 4);  // 4 => "/add" size
+		
+		if(!this.feedRepository.existsFeed(sourceID)){
+			response.sendError(404, sourceID);
+		} else {		
+			String rawXml = this.readXML(request);
+			if(rawXml == null){
+				response.sendError(404, sourceID);
+			} else {
+				String link = getFeedLink(request);
+				link = link.substring(0, link.length() -4);
+				this.feedRepository.addNewItemFromRawContent(sourceID, link, rawXml);
+				response.sendRedirect(link);
 			}
 		}
 	}
