@@ -5,9 +5,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import com.google.gdata.client.spreadsheet.ListQuery;
-import com.google.gdata.client.spreadsheet.SpreadsheetService;
 
 import com.google.gdata.data.spreadsheet.CellEntry;
+import com.google.gdata.data.spreadsheet.ListEntry;
 import com.google.gdata.data.spreadsheet.ListFeed;
 import com.google.gdata.data.spreadsheet.WorksheetEntry;
 import com.google.gdata.util.ServiceException;
@@ -25,13 +25,16 @@ public class GSCell extends GSBaseElement {
 	
 	// MODEL VARIABLES
 	//all moved to base class
+	private String tmpCellValue;
+	private String columnTag;
 	
 	// BUSINESS METHODS	
-	public GSCell(CellEntry cellEntry, GSRow<GSCell> parentRow){
+	public GSCell(CellEntry cellEntry, GSRow<GSCell> parentRow, String columnTag){
 		super();
 		this.baseEntry = cellEntry;
 		this.parentElement = parentRow;
 		this.childElements = null;
+		this.columnTag = columnTag;
 	}	
 		
 	/**
@@ -70,9 +73,25 @@ public class GSCell extends GSBaseElement {
 	 * update content/value of this cell
 	 * @param value
 	 */
-	public void updateCellValue(String value){
+	public void updateCellValue(String value) {
+		tmpCellValue = value;
 		getCellEntry().changeInputValueLocal(value);
+		
+		if(columnTag!=null && columnTag.length()!=0)		
+			((ListEntry)this.getParentRow().getBaseEntry()).getCustomElements().setValueLocal(this.columnTag, value);
+		
 		this.setDirty();
+	} 	
+
+	/**
+	 * return content/value of this cell
+	 * @param value
+	 */
+	public String getCellValue() {
+		if (isDirty())
+			return tmpCellValue;
+		else
+			return getCellEntry().getCell().getInputValue();
 	} 	
 	
 	/**
@@ -85,7 +104,7 @@ public class GSCell extends GSBaseElement {
 	 * @throws ServiceException
 	 */
 	@Deprecated
-	public void populateParent(/*SpreadsheetService service,*/
+	public void populateParent_BLOCKED(/*SpreadsheetService service,*/
 			WorksheetEntry worksheet) throws IOException, ServiceException {
 		
 		if(this.parentElement != null) return;
@@ -110,7 +129,7 @@ public class GSCell extends GSBaseElement {
 		      System.out.print(feed.getEntries().get(0).getCustomElements().getValue(tag)+" \t");
 		}*/
 		
-		gsListEntry.populateClild(/*service,*/ worksheet);
+		gsListEntry.populateClild_BLOCKED(/*service,*/ worksheet);
 		
 		this.parentElement =  gsListEntry;
 	}

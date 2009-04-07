@@ -11,13 +11,13 @@ import java.util.Map;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadsheetUtils;
 
 import com.google.gdata.client.spreadsheet.CellQuery;
-import com.google.gdata.client.spreadsheet.SpreadsheetService;
 import com.google.gdata.data.spreadsheet.CellEntry;
 import com.google.gdata.data.spreadsheet.CellFeed;
 import com.google.gdata.data.spreadsheet.ListEntry;
 import com.google.gdata.data.spreadsheet.ListFeed;
 import com.google.gdata.data.spreadsheet.WorksheetEntry;
 import com.google.gdata.util.ServiceException;
+import com.sun.xml.internal.ws.api.server.WSWebServiceContext;
 
 /**
  * This class is to wrap a {@link ListEntry}, also contains a list of references
@@ -111,6 +111,7 @@ public class GSRow<C> extends GSBaseElement<C>{
 	 * @param colIndex
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	public C getGSCell(int colIndex){
 		for(GSCell gsCell : ((GSRow<GSCell>)this).getChildElements().values()){
 			if(gsCell.getCellEntry().getCell().getCol() == colIndex){
@@ -141,7 +142,7 @@ public class GSRow<C> extends GSBaseElement<C>{
 	 */
 	@SuppressWarnings("unchecked")
 	@Deprecated
-	public void populateClild(/*SpreadsheetService service,*/
+	public void populateClild_BLOCKED(/*SpreadsheetService service,*/
 			WorksheetEntry worksheet) throws IOException, ServiceException{
 		
 		if(getGSCells() != null && getGSCells().size() > 0) return;
@@ -172,7 +173,7 @@ public class GSRow<C> extends GSBaseElement<C>{
 		for(CellEntry cell:cFeed.getEntries()){
 			//getGsCells().add(new GSCell(cell, this));
 			String key = Integer.toString(cell.getCell().getCol());
-			this.childElements.put(key, (C) new GSCell(cell, (GSRow<GSCell>) this));
+			this.childElements.put(key, (C) new GSCell(cell, (GSRow<GSCell>) this, "TODO: have to provide tag"));
 		}
 	}
 		
@@ -205,12 +206,13 @@ public class GSRow<C> extends GSBaseElement<C>{
 		}
 	}*/
 
-	public void populateClildWithHeaderTag(List<CellEntry> cellList) throws IOException,
+	@SuppressWarnings("unchecked")
+	public void populateClildWithHeaderTag(List<CellEntry> cellList, WorksheetEntry ws) throws IOException,
 		ServiceException {
 		if (this.elementListIndex > 0) {
 			// iterate over all cells, only cells of corresponding row will be
 			// entered in this filtered list
-			List<CellEntry> filteredCellList = new ArrayList();
+			List<CellEntry> filteredCellList = new ArrayList<CellEntry>();
 			for (CellEntry cell : cellList) {
 				if (cell.getCell().getRow() == this.elementListIndex) {
 					//String key = Integer.toString(cell.getCell().getCol());
@@ -219,20 +221,34 @@ public class GSRow<C> extends GSBaseElement<C>{
 				}
 			}
 			
-			//pick a cell corresponding to a header tag and put it in the child map 
-			for (String tag : ((ListEntry) this.getBaseEntry())
-					.getCustomElements().getTags()) {							
-				String value = ((ListEntry) this.getBaseEntry())
-					.getCustomElements().getValue(tag);
-				
-				for (CellEntry cell : filteredCellList) {
-					if(cell.getCell().getValue().equals(value)){
-						this.childElements.put( tag, (C) new GSCell(cell, (GSRow<GSCell>) this));
-						//this cell
-						filteredCellList.remove(cell);
-						break;
+			//pick a cell corresponding to a header tag and put it in the child map
+			if(((ListEntry) this.getBaseEntry())
+					.getCustomElements().getTags().size() == 0) {
+
+				for (CellEntry cell : cellList) {
+					if (cell.getCell().getRow() == this.elementListIndex) {
+						String key = Integer.toString(cell.getCell().getCol());
+						this.childElements.put(key, (C) new GSCell(cell,
+								(GSRow<GSCell>) this, key)); //TODO: need to provide header tag
 					}
 				}
+				
+			}else{
+
+				for (String tag : ((ListEntry) this.getBaseEntry())
+						.getCustomElements().getTags()) {							
+					String value = ((ListEntry) this.getBaseEntry())
+						.getCustomElements().getValue(tag);
+					
+					for (CellEntry cell : filteredCellList) {
+						if(cell.getCell().getValue().equals(value)){
+							this.childElements.put( tag, (C) new GSCell(cell, (GSRow<GSCell>) this, tag));
+							//this cell
+							filteredCellList.remove(cell);
+							break;
+						}
+					}
+				}//for
 				
 			}
 						
@@ -249,8 +265,9 @@ public class GSRow<C> extends GSBaseElement<C>{
 	 */
 	public void updateCellValue(String value, int colIndex) {
 		GSCell cellToUpdate = (GSCell) getGSCell(colIndex); 
-		cellToUpdate.getCellEntry().changeInputValueLocal(value);
-		cellToUpdate.setDirty();
+		if (!cellToUpdate.getCellEntry().getCell().getInputValue()
+				.equals(value)) 
+			cellToUpdate.updateCellValue(value);
 	}
 
 	/**
@@ -261,13 +278,25 @@ public class GSRow<C> extends GSBaseElement<C>{
 	 */
 	public void updateCellValue(String value, String key) {
 		GSCell cellToUpdate = (GSCell) getGSCell(key); 
+		((ListEntry)cellToUpdate.getBaseEntry()).getCustomElements().setValueLocal(key, value);
 		if (!cellToUpdate.getCellEntry().getCell().getInputValue()
-				.equals(value)) {
-			cellToUpdate.getCellEntry().changeInputValueLocal(value);
-			cellToUpdate.setDirty();
-		}
+				.equals(value)) 
+			cellToUpdate.updateCellValue(value);
 	}
 
+	/**
+	 * return the content/value of a cell 
+	 * 
+	 * @param value
+	 * @param key
+	 * @return
+	 */
+	public String getCellValue(String value, String key) {
+		GSCell cell = (GSCell) getGSCell(key); 
+		return cell.getCellValue();
+	}	
+	
+	@SuppressWarnings("deprecation")
 	public void refreshMe(){
 		if(this.isDirty()){
 			try {
@@ -298,7 +327,7 @@ public class GSRow<C> extends GSBaseElement<C>{
 	
 			try {
 				this.getChildElements().clear();
-				this.populateClild(worksheet);
+				this.populateClild_BLOCKED(worksheet);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
