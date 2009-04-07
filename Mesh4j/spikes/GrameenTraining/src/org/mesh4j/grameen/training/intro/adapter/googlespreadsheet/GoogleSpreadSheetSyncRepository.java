@@ -1,5 +1,6 @@
 package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,9 @@ import org.mesh4j.sync.parsers.SyncInfoParser;
 import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
+
+import com.google.gdata.data.spreadsheet.CellEntry;
+import com.google.gdata.util.ServiceException;
 /**
  * Sync information repository, responsible for storing sync information
  * in google spreadsheet,basically CRUD operation
@@ -45,22 +49,21 @@ public class GoogleSpreadSheetSyncRepository implements ISyncRepository,ISyncAwa
 	private IIdGenerator idGenerator = null;
 	//represents a specific sheet of a google spreadsheet
 	private GSWorksheet<GSRow<GSCell>> workSheet;
-	private ISpreadSheetToXMLMapper mapper;
 	
-	public GoogleSpreadSheetSyncRepository(IGoogleSpreadSheet spreadSheet,GSWorksheet workSheet,ISpreadSheetToXMLMapper mapper,
+	
+	public GoogleSpreadSheetSyncRepository(IGoogleSpreadSheet spreadSheet,GSWorksheet workSheet,
 											IIdentityProvider identityProvider,IIdGenerator idGenerator,String sheetName){
 		
 		Guard.argumentNotNull(spreadSheet, "spreadSheet");
 		Guard.argumentNotNull(identityProvider, "identityProvider");
 		Guard.argumentNotNull(idGenerator, "idGenerator");
 		Guard.argumentNotNullOrEmptyString(sheetName, "sheetName");
-		Guard.argumentNotNull(mapper, "mapper");
+		
 		
 		this.spreadSheet = spreadSheet;
 		this.identityProvider = identityProvider;
 		this.idGenerator = idGenerator;
 		this.workSheet = workSheet;
-		this.mapper = mapper;
 	}
 	
 	@Override
@@ -114,29 +117,48 @@ public class GoogleSpreadSheetSyncRepository implements ISyncRepository,ISyncAwa
 		}
 	}
 	private void addRow(SyncInfo syncInfo){
-		Element payLoad = SyncInfoParser.convertSync2Element(syncInfo.getSync(), RssSyndicationFormat.INSTANCE, this.identityProvider);
-		GSRow row = mapper.convertXMLElementToRow(this.workSheet,payLoad);
+		GSRow<GSCell> row = createSyncRow(syncInfo);
 		this.workSheet.addChildElement(row.getElementId(),row);
 		GoogleSpreadsheetUtils.flush(spreadSheet.getService(), spreadSheet.getGSSpreadsheet());
 		row.refreshMe();
 	}
+	
+	private void printTest(GSRow<GSCell> row){
+		for(Map.Entry<String, GSCell> celMap :row.getGSCells().entrySet()){
+			System.out.println(celMap.getKey());
+			GSCell cell = celMap.getValue();
+			if(cell != null){
+				String value = cell.getCellEntry().getCell().getValue();
+				System.out.println("cell value:" + value);
+			}
+		}
+	}
+	
+	
+	
 	private void updateRow(GSRow rowTobeUPdated  ,SyncInfo syncInfo){
-		Element payLoad = SyncInfoParser.convertSync2Element(syncInfo.getSync(), RssSyndicationFormat.INSTANCE, this.identityProvider);
-		GSRow updatedRow = mapper.normalizeRow(workSheet, payLoad, rowTobeUPdated);
+		GSRow updatedRow = convertSyncInfoToRow(rowTobeUPdated, syncInfo);
 		this.workSheet.addChildElement(String.valueOf(updatedRow.getRowIndex()), updatedRow);
-		
 		GoogleSpreadsheetUtils.flush(spreadSheet.getService(), spreadSheet.getGSSpreadsheet());
 		updatedRow.refreshMe();
 	}
 	
-	@Override
-	public void beginSync() {
-		this.spreadSheet.setDirty();
-	}
-
-	@Override
-	public void endSync() {
-		this.spreadSheet.flush();
+	
+	/**
+	 * reflect the update syncInfo into the provided GSRow
+	 * @param rowTobeUPdated
+	 * @param syncInfo
+	 * @return
+	 */
+	private GSRow convertSyncInfoToRow(GSRow rowTobeUPdated,SyncInfo syncInfo){
+		Element syncPayLoad = SyncInfoParser.convertSync2Element(syncInfo.getSync(), RssSyndicationFormat.INSTANCE, this.identityProvider);
+		
+		rowTobeUPdated.updateCellValue( syncInfo.getSyncId() ,COLUMN_NAME_SYNC_ID);
+		rowTobeUPdated.updateCellValue( syncInfo.getType() ,COLUMN_NAME_ENTITY_NAME);
+		rowTobeUPdated.updateCellValue( syncInfo.getId() ,COLUMN_NAME_ENTITY_ID);
+		rowTobeUPdated.updateCellValue( String.valueOf(syncInfo.getVersion()) ,COLUMN_NAME_VERSION);
+		rowTobeUPdated.updateCellValue(syncPayLoad.asXML()  ,COLUMN_NAME_SYNC);
+		return rowTobeUPdated;
 	}
 	
 	private SyncInfo convertRowToSyncInfo(GSRow<GSCell> row){
@@ -153,5 +175,37 @@ public class GoogleSpreadSheetSyncRepository implements ISyncRepository,ISyncAwa
 			throw new MeshException(e);
 		}
 	}
+	private GSRow<GSCell> createSyncRow(SyncInfo syncInfo){
+		GSRow<GSCell>  gsRow = null;
+		Element payLoad = SyncInfoParser.convertSync2Element(syncInfo.getSync(), RssSyndicationFormat.INSTANCE, this.identityProvider);
+		
+		List<String> list = new LinkedList<String>();
+		list.add(syncInfo.getSyncId());
+		list.add(syncInfo.getType());
+		list.add(syncInfo.getId());
+		list.add(String.valueOf(syncInfo.getVersion()));
+		list.add(payLoad.asXML());
+		
+		String[] columnValues = list.toArray(new String[0]);
+		
+		try {
+			gsRow = this.workSheet.createNewRow(columnValues);
+		} catch (IOException e) {
+			throw new MeshException(e);
+		} catch (ServiceException e) {
+			throw new MeshException(e);
+		}
+		printTest(gsRow);
+		return gsRow;
+	}
+	
+	@Override
+	public void beginSync() {
+		this.spreadSheet.setDirty();
+	}
 
+	@Override
+	public void endSync() {
+		this.spreadSheet.flush();
+	}
 }
