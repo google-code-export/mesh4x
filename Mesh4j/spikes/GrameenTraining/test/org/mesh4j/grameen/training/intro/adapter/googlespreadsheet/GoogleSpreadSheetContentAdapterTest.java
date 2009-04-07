@@ -66,6 +66,7 @@ public class GoogleSpreadSheetContentAdapterTest {
 		Assert.assertEquals(3, adapter.getAll(new Date()).size());
 		
 		adapter.save(content);
+		//now flash 
 		
 		Assert.assertEquals(4, adapter.getAll(new Date()).size());
 		

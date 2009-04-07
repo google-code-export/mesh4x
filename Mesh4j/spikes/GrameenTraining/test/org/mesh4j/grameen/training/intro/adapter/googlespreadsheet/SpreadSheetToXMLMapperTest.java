@@ -18,7 +18,6 @@ public class SpreadSheetToXMLMapperTest {
 	public void ShouldConvertRowToXMLPayload(){
 		
 		String rawDataAsXML = "<user><id>1</id><name>Raju</name><age>18</age><city>Dhaka</city><country>Bangladesh</country><lastupdate>5/20/2009 1:01:01</lastupdate></user>";
-		
 		SpreadSheetToXMLMapper mapper = new SpreadSheetToXMLMapper("id",1,6);
 		
 		//put your user name and password
