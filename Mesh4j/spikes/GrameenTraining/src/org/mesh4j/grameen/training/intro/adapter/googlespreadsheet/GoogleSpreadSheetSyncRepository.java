@@ -23,17 +23,17 @@ import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
-import com.google.gdata.data.spreadsheet.CellEntry;
 import com.google.gdata.util.ServiceException;
 /**
  * Sync information repository, responsible for storing sync information
- * in google spreadsheet,basically CRUD operation
+ * in google spreadsheet.
  * 
  * @author Raju
  * @version 1.0,29/4/2009
  */
 public class GoogleSpreadSheetSyncRepository implements ISyncRepository,ISyncAware{
 
+	
 	//This attributes are usually used to represent the sync information
 	//in a spreadsheet,where every sync row will have following column to
 	//hold the items/contents necessary sync information.
@@ -123,6 +123,7 @@ public class GoogleSpreadSheetSyncRepository implements ISyncRepository,ISyncAwa
 		row.refreshMe();
 	}
 	
+	@SuppressWarnings("unused")
 	private void printTest(GSRow<GSCell> row){
 		for(Map.Entry<String, GSCell> celMap :row.getGSCells().entrySet()){
 			System.out.println(celMap.getKey());
@@ -133,7 +134,6 @@ public class GoogleSpreadSheetSyncRepository implements ISyncRepository,ISyncAwa
 			}
 		}
 	}
-	
 	
 	
 	private void updateRow(GSRow rowTobeUPdated  ,SyncInfo syncInfo){
@@ -195,7 +195,6 @@ public class GoogleSpreadSheetSyncRepository implements ISyncRepository,ISyncAwa
 		} catch (ServiceException e) {
 			throw new MeshException(e);
 		}
-		printTest(gsRow);
 		return gsRow;
 	}
 	
