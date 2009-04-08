@@ -142,18 +142,19 @@ public class FeedServlet extends HttpServlet {
 		
 		List<Item> items = this.feedRepository.getAll(sourceID, sinceDate);
 		
-		IMapping mappingResolver;
-		try {
-			mappingResolver = this.feedRepository.getMappings(sourceID, link, this.geoCoder);
+		try{
+			ISchema schema = this.feedRepository.getSchema(sourceID, link);
+			IMapping mapping= this.feedRepository.getMappings(sourceID, link, this.geoCoder);
+			
+			String responseContent = KMLExporter.generateKML(sourceID, items, schema, mapping);
+			
+			response.setContentType("application/vnd.google-earth.kml+xml");
+			response.setContentLength(responseContent.length());
+			PrintWriter out = response.getWriter();
+			out.println(responseContent);
 		} catch (Exception e) {
 			throw new ServletException(e);
 		}
-		String responseContent = KMLExporter.generateKML(sourceID, items, mappingResolver);
-		
-		response.setContentType("application/vnd.google-earth.kml+xml");
-		response.setContentLength(responseContent.length());
-		PrintWriter out = response.getWriter();
-		out.println(responseContent);
 	}
 
 	private void processGetSchema(HttpServletResponse response, String sourceID, String link, Format contentFormat) throws IOException, ServletException {
