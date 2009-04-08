@@ -18,13 +18,14 @@ public class GoogleSpreadSheetContentAdapterTest {
 	private GSWorksheet workSheet;
 	private String userName = "mesh4x@gmail.com";
 	private String passWord = "g@l@xy24";
+	private String GOOGLE_SPREADSHEET_FIELD = "pLUqch-enpf1-GcqnD6qjSA";
 	
 	@Before
 	public void setUp(){
 		String idColumName = "id";
 		int lastUpdateColumnPosition = 6;
 		int idColumnPosition = 1;
-		spreadsheet = new GoogleSpreadsheet("pLUqch-enpf1-GcqnD6qjSA",userName,passWord);
+		spreadsheet = new GoogleSpreadsheet(GOOGLE_SPREADSHEET_FIELD,userName,passWord);
 		mapper = new SpreadSheetToXMLMapper(idColumName,idColumnPosition,lastUpdateColumnPosition);
 		workSheet = spreadsheet.getGSWorksheet("user");
 	}
