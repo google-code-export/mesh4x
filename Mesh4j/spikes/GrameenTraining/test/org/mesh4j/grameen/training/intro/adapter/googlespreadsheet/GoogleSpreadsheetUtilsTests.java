@@ -2,6 +2,8 @@ package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import junit.framework.Assert;
 
@@ -141,16 +143,16 @@ public class GoogleSpreadsheetUtilsTests {
 		Assert.assertEquals(ws.getId(), ss.getChildElement("1").getId()); //get the first sheet from another method and check if they are equal
 		
 		GSCell gsCell_1 = ws.getGSCell(2, 1);		
-		gsCell_1.updateCellValue("GSL-A21x");		
+		gsCell_1.updateCellValue("GSL-A21abc");		
 		
 		GSCell gsCell_2 = ws.getGSCell(3, 1);
-		gsCell_2.updateCellValue("GSL-A21x");		
+		gsCell_2.updateCellValue("GSL-A21xyz");		
 		
 		GoogleSpreadsheetUtils.flush(gss.getService(), ss);		
 	}		
 	
 
-	@Test
+	//@Test 
 	public void shouldBatchUpdateRows() throws IOException, ServiceException {
 		GSSpreadsheet<GSWorksheet> ss = getSampleGoogleSpreadsheet();
 		GSWorksheet<GSRow> ws = ss.getGSWorksheet(1); //get the first sheet
@@ -160,16 +162,16 @@ public class GoogleSpreadsheetUtilsTests {
 		
 		GSRow gsRow_1 = ws.getGSRow(2);
 		
-		gsRow_1.updateCellValue("GSL-A21mm", 1);
+		gsRow_1.updateCellValue("GSL-A21cell", 1);
 		
 		GSRow gsRow_2 = ws.getGSRow(3);
-		gsRow_2.updateCellValue("GSL-A21mm", 1);
+		gsRow_2.updateCellValue("GSL-A21cell", 1);
 		
 		GoogleSpreadsheetUtils.flush(gss.getService(), ss);		
 	}		
 
 
-	//@Test  OK   
+	@Test   
 	public void shouldAddNweRow() throws IOException, ServiceException {
 		GSSpreadsheet<GSWorksheet> ss = getSampleGoogleSpreadsheet();
 		GSWorksheet<GSRow> ws = ss.getGSWorksheet(1); //get the first sheet
@@ -177,15 +179,22 @@ public class GoogleSpreadsheetUtilsTests {
 		Assert.assertNotNull(ws);		
 		Assert.assertEquals(ws.getId(), ss.getChildElement("1").getId()); //get the first sheet from another method and check if they are equal
 		
-		String [] values = {"new","new","new","new"};
+		//String [] values = {"newXy","newXy","newXy","newXy", "newXU"};
+		//GSRow<GSCell> newGSRow = ws.createNewRow(values);
+
+		LinkedHashMap<String, String> values = new LinkedHashMap<String, String>();
+		for(String key :  ws.getCellHeaderTagset()){
+			values.put( key, "New Cell");
+		}
 		GSRow<GSCell> newGSRow = ws.createNewRow(values);
+		
 		ws.addNewRow(newGSRow);
 		
 		GoogleSpreadsheetUtils.flush(gss.getService(), ss);		
 	}		
 	
-	
-	//@Test  OK   
+		
+	//@Test OK   
 	public void shouldDeleteRow() throws IOException, ServiceException {
 		GSSpreadsheet<GSWorksheet> ss = getSampleGoogleSpreadsheet();
 		GSWorksheet<GSRow> ws = ss.getGSWorksheet(1); //get the first sheet
@@ -224,7 +233,7 @@ public class GoogleSpreadsheetUtilsTests {
 		GSCell gsCell = gsRow_1.getGSCell(1);		
 		Assert.assertTrue( gsCell.isDirty() ); //cell is dirty
 		
-		Assert.assertEquals(gsCell.getCellEntry().getCell().getValue(), "GSL-A219"); //content is dirty
+		Assert.assertEquals(gsCell.getCellEntry().getCell().getValue(), null); //content is dirty
 		
 		gsRow_1.refreshMe(); //reload data from feed
 
@@ -232,7 +241,7 @@ public class GoogleSpreadsheetUtilsTests {
 		GSCell gsCellAfterRefresh = gsRow_1.getGSCell(1);		
 		Assert.assertFalse( gsCellAfterRefresh .isDirty() );
 		
-		Assert.assertEquals(gsCell.getCellEntry().getCell().getValue(), "GSL-A21"); //content should be updated
+		Assert.assertEquals(gsCellAfterRefresh.getCellEntry().getCell().getValue(), "GSL-A21"); //content should be updated
 		
 	}	
 /*	
