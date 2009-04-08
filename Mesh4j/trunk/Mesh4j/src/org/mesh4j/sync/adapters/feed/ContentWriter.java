@@ -49,8 +49,8 @@ public class ContentWriter implements IContentWriter {
 			String defaultDescription = "Id: " + item.getContent().getId() + " Version: " + item.getContent().getVersion();
 			
 			if(this.mapping != null){
-				title = this.mapping.getValue(item.getContent().getPayload(), ATTR_ITEM_TITLE);
-				desc = this.mapping.getValue(item.getContent().getPayload(), ATTR_ITEM_DESCRIPTION);
+				title = this.mapping.getValue(item.getContent().getPayload(), ISyndicationFormat.MAPPING_NAME_ITEM_TITLE);
+				desc = this.mapping.getValue(item.getContent().getPayload(), ISyndicationFormat.MAPPING_NAME_ITEM_DESCRIPTION);
 			}
 			
 			if(item.getContent() instanceof XMLContent){

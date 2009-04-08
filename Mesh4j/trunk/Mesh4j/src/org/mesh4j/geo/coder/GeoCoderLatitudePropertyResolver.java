@@ -9,6 +9,8 @@ import org.mesh4j.sync.validations.Guard;
 
 public class GeoCoderLatitudePropertyResolver implements IPropertyResolver {
 
+	public static final String MAPPING_NAME = "geo.latitude";
+	
 	// MODEL VARIABLES
 	private IGeoCoder geoCoder;
 	

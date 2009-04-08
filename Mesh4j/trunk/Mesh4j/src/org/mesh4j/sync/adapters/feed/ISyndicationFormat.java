@@ -12,6 +12,9 @@ import org.mesh4j.sync.model.Item;
 
 public interface ISyndicationFormat {
 	
+	public static final String MAPPING_NAME_ITEM_DESCRIPTION = "item.description";
+	public static final String MAPPING_NAME_ITEM_TITLE = "item.title";
+	
 	String getName();
 
 	String getContentType();

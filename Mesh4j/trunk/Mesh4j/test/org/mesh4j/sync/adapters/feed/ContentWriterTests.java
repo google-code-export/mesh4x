@@ -234,10 +234,10 @@ public class ContentWriterTests {
 			@Override public String asXMLText() {return null;}
 			@Override public String getMapping(String mappingName) {return null;}
 			@Override public String getValue(Element element, String mappingName) {
-				if(IContentWriter.ATTR_ITEM_TITLE.equals(mappingName)){
+				if(ISyndicationFormat.MAPPING_NAME_ITEM_TITLE.equals(mappingName)){
 					return "mapTitle";
 				}
-				if(IContentWriter.ATTR_ITEM_DESCRIPTION.equals(mappingName)){
+				if(ISyndicationFormat.MAPPING_NAME_ITEM_DESCRIPTION.equals(mappingName)){
 					return "mapDesc";
 				}
 				return null;

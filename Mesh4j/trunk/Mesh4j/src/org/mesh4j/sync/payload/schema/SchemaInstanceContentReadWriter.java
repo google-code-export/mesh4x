@@ -43,8 +43,8 @@ public class SchemaInstanceContentReadWriter implements IContentWriter, IContent
 			
 			Element plainXML = asInstanceXMLForMappingResolution(payload, item);
 						
-			String title = this.mapping.getValue(plainXML, ATTR_ITEM_TITLE);
-			String desc = this.mapping.getValue(plainXML, ATTR_ITEM_DESCRIPTION);
+			String title = this.mapping.getValue(plainXML, ISyndicationFormat.MAPPING_NAME_ITEM_TITLE);
+			String desc = this.mapping.getValue(plainXML, ISyndicationFormat.MAPPING_NAME_ITEM_DESCRIPTION);
 			
 			syndicationFormat.addFeedItemTitleElement(itemElement, title == null || title.length() == 0 ? item.getSyncId() : title);
 			syndicationFormat.addFeedItemDescriptionElement(itemElement, desc == null || desc.length() == 0 ? "Id: " + item.getContent().getId() + " Version: " + item.getContent().getVersion() : desc);

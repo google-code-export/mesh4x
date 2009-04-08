@@ -113,7 +113,9 @@ public class Mapping implements IMapping {
 	@Override
 	public String getMapping(String mappingName) {
 		Element propElement = XMLHelper.selectSingleNode(mappingName, this.mappings, new HashMap<String, String>());
-		
+		if(propElement == null && !mappingName.startsWith("//")){
+			propElement = XMLHelper.selectSingleNode("//"+mappingName, this.mappings, new HashMap<String, String>());
+		}
 		String template = "";
 		if(propElement != null){
 			template = propElement.getText();

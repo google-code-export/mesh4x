@@ -7,7 +7,7 @@ import junit.framework.Assert;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.junit.Test;
-import org.mesh4j.sync.adapters.feed.IContentWriter;
+import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.adapters.feed.atom.AtomSyndicationFormat;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.model.IContent;
@@ -87,10 +87,10 @@ public class SchemaInstanceContentReadWriterTests {
 			@Override public String asXMLText() {return null;}
 			@Override public String getMapping(String mappingName) {return null;}
 			@Override public String getValue(Element element, String mappingName) {
-				if(IContentWriter.ATTR_ITEM_TITLE.equals(mappingName)){
+				if(ISyndicationFormat.MAPPING_NAME_ITEM_TITLE.equals(mappingName)){
 					return "mapTitle";
 				}
-				if(IContentWriter.ATTR_ITEM_DESCRIPTION.equals(mappingName)){
+				if(ISyndicationFormat.MAPPING_NAME_ITEM_DESCRIPTION.equals(mappingName)){
 					return "mapDesc";
 				}
 				return null;
