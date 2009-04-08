@@ -911,12 +911,12 @@ public class MeshUI {
 					return null;
 				}
 				try {
-					SyncEngineUtil.generateKML(propertiesProvider
-							.getGeoCoderKey(), propertiesProvider
-							.getDefaultKMLTemplateFileName(), dataSource,
-							tableName, propertiesProvider.getBaseDirectory(),
-							sourceIdResolver, propertiesProvider
-									.getIdentityProvider());
+//	TODO			SyncEngineUtil.generateKML(propertiesProvider
+//							.getGeoCoderKey(), propertiesProvider
+//							.getDefaultKMLTemplateFileName(), dataSource,
+//							tableName, propertiesProvider.getBaseDirectory(),
+//							sourceIdResolver, propertiesProvider
+//									.getIdentityProvider());
 					consoleNotification.setEndSyncImageStatus();
 				} catch (Throwable t) {
 					consoleNotification.setErrorImageStatus();

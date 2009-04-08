@@ -14,35 +14,37 @@ import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.mesh4j.geo.coder.GeoCoderLocationPropertyResolver;
+import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.adapters.kml.KmlNames;
 import org.mesh4j.sync.adapters.kml.timespan.decorator.IKMLGenerator;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.payload.mappings.IMapping;
 import org.mesh4j.sync.payload.mappings.Mapping;
+import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
 public class KmlGenerator implements IKMLGenerator{
 
-	public static final String ATTR_PATIENT_UPDATE_TIMESTAMP = "//patient.updateTimestamp";
-	public static final String ATTR_PATIENT_ILL = "//patient.ill";
-	public static final String ATTR_ITEM_DESCRIPTION = "//item.description";
-	public static final String ATTR_ITEM_TITLE = "//item.title";
-	public static final String ATTR_GEO_LOCATION = "//geo.location";
+	public static final String ATTR_PATIENT_UPDATE_TIMESTAMP = "patient.updateTimestamp";
+	public static final String ATTR_PATIENT_ILL = "patient.ill";
 	
 	final static Log LOGGER = LogFactory.getLog(KmlGenerator.class);
 	final static SimpleDateFormat DATEONSET_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	// MODEL VARIABLE
+	private ISchema schema;
 	private IMapping mappingResolver;
 	private String templateFileName;
 	
 	// BUSINESS METHODS
 
-	public KmlGenerator(String templateFileName, IMapping mappingResolver){
+	public KmlGenerator(String templateFileName, ISchema schema, IMapping mappingResolver){
+		Guard.argumentNotNull(schema, "schema");
 		Guard.argumentNotNull(mappingResolver, "mappingResolver");
 		Guard.argumentNotNullOrEmptyString(templateFileName, "templateFileName");
 		
+		this.schema = schema;
 		this.mappingResolver = mappingResolver;
 		this.templateFileName = templateFileName;
 	}
@@ -77,11 +79,12 @@ public class KmlGenerator implements IKMLGenerator{
 			if(!item.isDeleted()){
 				
 				Element payload = item.getContent().getPayload();
-				String location = mappingResolver.getValue(payload, ATTR_GEO_LOCATION);
+				
+				String location = mappingResolver.getValue(payload, GeoCoderLocationPropertyResolver.MAPPING_NAME);
 				
 				if(location != null && location.trim().length() > 0){
-					String name = mappingResolver.getValue(payload, ATTR_ITEM_TITLE);
-					String description = mappingResolver.getValue(payload, ATTR_ITEM_DESCRIPTION);
+					String title = mappingResolver.getValue(payload, ISyndicationFormat.MAPPING_NAME_ITEM_TITLE);
+					String description = mappingResolver.getValue(payload, ISyndicationFormat.MAPPING_NAME_ITEM_DESCRIPTION);
 					
 					String ill = mappingResolver.getValue(payload, ATTR_PATIENT_ILL);
 					String style = "0".equals(ill) ? "#msn_ylw-pushpin0" : "#msn_ylw-pushpin";
@@ -91,7 +94,7 @@ public class KmlGenerator implements IKMLGenerator{
 						start = item.getLastUpdate().getWhen();
 					} 
 					
-					String xml = makePlacemark("'"+item.getSyncId()+"'", name, description, location, style, start);
+					String xml = makePlacemark("'"+item.getSyncId()+"'", title, description, location, style, start);
 	
 					Element itemElement = DocumentHelper.parseText(xml).getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT).element(KmlNames.KML_ELEMENT_PLACEMARK); 
 					document.getRootElement().element(KmlNames.KML_ELEMENT_DOCUMENT).add(itemElement.createCopy());
@@ -118,7 +121,9 @@ public class KmlGenerator implements IKMLGenerator{
 	@Override
 	public boolean hasItemChanged(Document document, Element itemElement, Item item) {
 		try{
-			String itemIll = mappingResolver.getValue(item.getContent().getPayload(), ATTR_PATIENT_ILL);
+			//Element payload = this.schema.asInstancePlainXML(item.getContent().getPayload(), ISchema.EMPTY_FORMATS);
+			Element payload = item.getContent().getPayload();
+			String itemIll = mappingResolver.getValue(payload, ATTR_PATIENT_ILL);
 			Element styleUrl = itemElement.element(KmlNames.KML_ELEMENT_STYLE_URL);
 			String actualItemIll = "#msn_ylw-pushpin0".equals(styleUrl.getText()) ?  "0" : "1";			
 			return !itemIll.equals(actualItemIll);
@@ -157,6 +162,7 @@ public class KmlGenerator implements IKMLGenerator{
 	}
 
 	private Date getUpdateTimeStamp(Item item) throws ParseException {
+		//Element payload = this.schema.asInstancePlainXML(item.getContent().getPayload(), ISchema.EMPTY_FORMATS);
 		Element payload = item.getContent().getPayload();
 		String dateOnSet = mappingResolver.getValue(payload, ATTR_PATIENT_UPDATE_TIMESTAMP);
 		if(dateOnSet == null || dateOnSet.trim().length() == 0){
@@ -168,15 +174,15 @@ public class KmlGenerator implements IKMLGenerator{
 	}
 
 	public static String getTitleMapping(Mapping mappingResolver) {
-		return mappingResolver.getMapping(ATTR_ITEM_TITLE);
+		return mappingResolver.getMapping(ISyndicationFormat.MAPPING_NAME_ITEM_TITLE);
 	}
 	
 	public static String getDescriptionMapping(Mapping mappingResolver) {
-		return mappingResolver.getMapping(ATTR_ITEM_DESCRIPTION);
+		return mappingResolver.getMapping(ISyndicationFormat.MAPPING_NAME_ITEM_DESCRIPTION);
 	}
 	
 	public static String getAddressMapping(Mapping mappingResolver) {
-		String geoLocMapping = mappingResolver.getAttribute(ATTR_GEO_LOCATION);
+		String geoLocMapping = mappingResolver.getAttribute(GeoCoderLocationPropertyResolver.MAPPING_NAME);
 		return GeoCoderLocationPropertyResolver.getMapping(geoLocMapping);
 	}
 	

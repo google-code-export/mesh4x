@@ -11,6 +11,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.mesh4j.geo.coder.GeoCoderLatitudePropertyResolver;
+import org.mesh4j.geo.coder.GeoCoderLocationPropertyResolver;
+import org.mesh4j.geo.coder.GeoCoderLongitudePropertyResolver;
+import org.mesh4j.geo.coder.GoogleGeoCoder;
+import org.mesh4j.geo.coder.IGeoCoder;
 import org.mesh4j.sync.IFilter;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.NullPreviewHandler;
@@ -255,22 +260,18 @@ public class SyncEngineUtil {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static File generateKML(String geoCoderKey, String templateFileName, String mdbFileName, String dataSourceAlias, String baseDirectory, SourceIdMapper sourceIdResolver, IIdentityProvider identityProvider) throws Exception{
+	public static File generateKML(SourceIdMapper sourceIdMapper, MSAccessDataSourceMapping dataSource, PropertiesProvider propertiesProvider) throws Exception{
 		
-//		String mappingsFileName = baseDirectory + "/" + dataSourceAlias + "_mappings.xml";
-//		
-//		File mappingsFile = new File(mappingsFileName);
-//		if(!mappingsFile.exists()){
-//			throw new IllegalArgumentException(MeshUITranslator.getErrorKMLMappingsNotFound());
-//		}
+		String sourceDefinition = sourceIdMapper.getSourceDefinition(dataSource.getAlias());
+		ISyncAdapterFactory syncFactory = makeSyncAdapterFactory(propertiesProvider.getBaseDirectory(), null);
 
-		String sourceDefinition = sourceIdResolver.getSourceDefinition(dataSourceAlias);
-		ISyncAdapterFactory syncFactory = makeSyncAdapterFactory(baseDirectory, null);
-
-		IKMLGeneratorFactory kmlGeneratorFactory = new KmlGeneratorFactory(baseDirectory, templateFileName, geoCoderKey);
-		KMLTimeSpanDecoratorSyncAdapterFactory kmlDecSyncFactory = new KMLTimeSpanDecoratorSyncAdapterFactory(baseDirectory, syncFactory, kmlGeneratorFactory);
+		ISchema schema = getSchema(dataSource, propertiesProvider);
+		IMapping mapping = getMappings(dataSource.getAlias(), propertiesProvider);
 		
-		KMLTimeSpanDecoratorSyncAdapter syncAdapter = kmlDecSyncFactory.createSyncAdapter(dataSourceAlias, sourceDefinition, identityProvider);
+		IKMLGeneratorFactory kmlGeneratorFactory = new KmlGeneratorFactory(propertiesProvider.getDefaultKMLTemplateFileName(), schema, mapping);
+		KMLTimeSpanDecoratorSyncAdapterFactory kmlDecSyncFactory = new KMLTimeSpanDecoratorSyncAdapterFactory(propertiesProvider.getBaseDirectory(), syncFactory, kmlGeneratorFactory);
+		
+		KMLTimeSpanDecoratorSyncAdapter syncAdapter = kmlDecSyncFactory.createSyncAdapter(dataSource.getAlias(), sourceDefinition, propertiesProvider.getIdentityProvider());
 		syncAdapter.beginSync();
 		
 		CompoundFilter filter = new CompoundFilter(NonDeletedFilter.INSTANCE);
@@ -409,9 +410,15 @@ public class SyncEngineUtil {
 		FileUtils.write(fileName, xmlSchema.getBytes());
 	}
 	
-	public static IMapping getMappings(String dataSource, PropertiesProvider propertiesProvider) throws Exception{
+	public static Mapping getMappings(String dataSource, PropertiesProvider propertiesProvider) throws Exception{
 		String mappingsFileName = getMappingsFileName(dataSource, propertiesProvider);
-		IMapping mapping = new Mapping(XMLHelper.readDocument(new File(mappingsFileName)).getRootElement());
+		Element root = XMLHelper.readDocument(new File(mappingsFileName)).getRootElement();
+		
+		IGeoCoder geoCoder = new GoogleGeoCoder(propertiesProvider.getGeoCoderKey());
+		GeoCoderLatitudePropertyResolver propertyResolverLat = new GeoCoderLatitudePropertyResolver(geoCoder);
+		GeoCoderLongitudePropertyResolver propertyResolverLon = new GeoCoderLongitudePropertyResolver(geoCoder);
+		GeoCoderLocationPropertyResolver propertyResolverLoc = new GeoCoderLocationPropertyResolver(geoCoder);
+		Mapping mapping = new Mapping(root, propertyResolverLat, propertyResolverLon, propertyResolverLoc);
 		return mapping;
 	}
 

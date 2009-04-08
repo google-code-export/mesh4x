@@ -344,17 +344,8 @@ public class MapsFrame extends JFrame implements IErrorListener, IDownloadListen
 			
 			File file = null;
 			try{
-				file = SyncEngineUtil.generateKML(
-						getGeoCoderKey(), 
-						getKmlTemplateFileName(), 
-						dataSource.getFileName(), 
-						dataSource.getAlias(), 
-						getBaseDirectory(), 
-						getSourceIdMapper(), 
-						getIdentityProvider());
-
+				file = SyncEngineUtil.generateKML(getSourceIdMapper(), dataSource, propertiesProvider);
     			setOk(MeshCompactUITranslator.getMapsWindowMessageMapCreationEnd());
-				
 				
     		} catch(Throwable e){
     			LogFrame.Logger.error(e.getMessage(), e);

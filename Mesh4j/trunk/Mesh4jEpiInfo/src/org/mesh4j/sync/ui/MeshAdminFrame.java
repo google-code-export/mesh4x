@@ -35,7 +35,6 @@ import org.mesh4j.sync.ui.tasks.OpenURLTask;
 import org.mesh4j.sync.ui.translator.MeshCompactUITranslator;
 import org.mesh4j.sync.ui.utils.IconManager;
 import org.mesh4j.sync.utils.KmlGenerator;
-import org.mesh4j.sync.utils.KmlGeneratorFactory;
 import org.mesh4j.sync.utils.SourceIdMapper;
 import org.mesh4j.sync.utils.SyncEngineUtil;
 
@@ -322,7 +321,7 @@ public class MeshAdminFrame extends JFrame implements IErrorListener {
 		return this.dataSource.getAlias() + "/" + attributeName;
 	}
 
-	public void setDataSource(MSAccessDataSourceMapping dataSource){
+	public void setDataSource(MSAccessDataSourceMapping dataSource) throws Exception{
 		this.dataSource = dataSource;
 		
 		Set<String> textFields = SourceIdMapper.getTableTextColumns(dataSource.getFileName(), dataSource.getTableName());
@@ -337,10 +336,7 @@ public class MeshAdminFrame extends JFrame implements IErrorListener {
 		
 		textFieldURL.setText(this.propertiesProvider.getMeshURL(dataSource.getAlias()));
 		
-		Mapping mappingResolver = KmlGeneratorFactory.createMappingResolver(
-			dataSource.getAlias(), 
-			this.propertiesProvider.getBaseDirectory(),  
-			this.propertiesProvider.getGeoCoderKey());
+		Mapping mappingResolver = SyncEngineUtil.getMappings(dataSource.getAlias(), propertiesProvider);
 		
 		if(mappingResolver == null){
 			textAreaTitle.setText("");

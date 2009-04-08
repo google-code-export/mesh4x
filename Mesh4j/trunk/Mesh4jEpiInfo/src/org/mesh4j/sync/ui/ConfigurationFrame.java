@@ -42,6 +42,7 @@ import org.mesh4j.sync.ui.utils.IconManager;
 import org.mesh4j.sync.utils.EndpointProvider;
 import org.mesh4j.sync.utils.SourceIdMapper;
 import org.mesh4j.sync.utils.SyncEngineUtil;
+import org.mesh4j.sync.validations.MeshException;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -416,7 +417,11 @@ public class ConfigurationFrame extends JFrame {
 					MSAccessDataSourceMapping dataSource = (MSAccessDataSourceMapping) listDataSources.getSelectedValue();
 					MeshAdminFrame meshFrame = owner.getMeshAdminFrame();
 					
-					meshFrame.setDataSource(dataSource);
+					try {
+						meshFrame.setDataSource(dataSource);
+					} catch (Exception e1) {
+						throw new MeshException(e1);
+					}
 					
 					if(meshFrame.isVisible()){
 						meshFrame.toFront();
