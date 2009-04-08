@@ -36,7 +36,7 @@ public abstract class GSBaseElement<C> implements IGSElement<C>{
 		this.deleteCandidate = true;
 	}
 	
-	public boolean isDeleteCandiddate() {
+	public boolean isDeleteCandidate() {
 		return this.deleteCandidate;
 	}
 	
@@ -119,4 +119,17 @@ public abstract class GSBaseElement<C> implements IGSElement<C>{
 	
 	public abstract void refreshMe() throws IOException, ServiceException;
 	
+	/** (non-Javadoc)
+	 * return the number of non-deleted childs
+	 */
+	public int getChildElementCount(){		
+		int nonDeletedElements = 0;
+		if(getChildElements()!= null){
+			for(C element: getChildElements().values()){
+				if(!((IGSElement)element).isDeleteCandidate())
+					nonDeletedElements++;
+			}			
+		}
+		return nonDeletedElements;
+	}
 }

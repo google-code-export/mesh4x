@@ -14,7 +14,7 @@ import com.google.gdata.data.BaseEntry;
  */
 public interface IGSElement<C> {
 	boolean isDirty();
-	boolean isDeleteCandiddate();
+	boolean isDeleteCandidate();
 	void setDirty();
 	void setDeleteCandidate();
 	
@@ -31,4 +31,5 @@ public interface IGSElement<C> {
 	void addChildElement(String key, C element);
 	void deleteChildElement(String key);
 	
+	int getChildElementCount();
 }
