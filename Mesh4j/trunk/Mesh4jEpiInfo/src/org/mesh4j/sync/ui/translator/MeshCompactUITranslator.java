@@ -507,8 +507,8 @@ public class MeshCompactUITranslator {
 		return MessageTranslator.translate("MESH_COMPACT_TOOLTIP_OPEN_MAPS_WINDOW");
 	}
 
-	public static String getMapsWindowTooltipDownloadMappings() {
-		return MessageTranslator.translate("MESH_COMPACT_MAPS_WINDOW_TOOLTIP_DOWNLOAD_MAPPINGS");
+	public static String getTooltipDownloadSchemaAndMappings() {
+		return MessageTranslator.translate("MESH_COMPACT_TOOLTIP_DOWNLOAD_SCHEMA_MAPPINGS");
 	}
 
 	public static String getMapsWindowTooltipViewCloudMap() {

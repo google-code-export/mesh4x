@@ -27,6 +27,8 @@ import org.mesh4j.sync.mappings.MSAccessDataSourceMapping;
 import org.mesh4j.sync.mappings.SyncMode;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.properties.PropertiesProvider;
+import org.mesh4j.sync.ui.tasks.DownloadSchemaAndMappingsTask;
+import org.mesh4j.sync.ui.tasks.IDownloadListener;
 import org.mesh4j.sync.ui.tasks.IErrorListener;
 import org.mesh4j.sync.ui.tasks.OpenFileTask;
 import org.mesh4j.sync.ui.tasks.OpenURLTask;
@@ -42,7 +44,7 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
-public class SyncCloudFrame extends JFrame implements IErrorListener{
+public class SyncCloudFrame extends JFrame implements IErrorListener, IDownloadListener{
 
 	private static final long serialVersionUID = 7380206163750504752L;
 
@@ -74,11 +76,11 @@ public class SyncCloudFrame extends JFrame implements IErrorListener{
 		getContentPane().setBackground(Color.WHITE);
 		setTitle(MeshCompactUITranslator.getSyncWindowTitle());
 		setResizable(false);
-		setBounds(100, 100, 596, 178);
+		setBounds(100, 100, 630, 178);
 		getContentPane().setLayout(new FormLayout(
 			new ColumnSpec[] {
 				ColumnSpec.decode("14dlu"),
-				ColumnSpec.decode("266dlu"),
+				ColumnSpec.decode("285dlu"),
 				ColumnSpec.decode("14dlu")},
 			new RowSpec[] {
 				FormFactory.RELATED_GAP_ROWSPEC,
@@ -96,6 +98,8 @@ public class SyncCloudFrame extends JFrame implements IErrorListener{
 				FormFactory.DEFAULT_COLSPEC,
 				FormFactory.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("218dlu"),
+				FormFactory.RELATED_GAP_COLSPEC,
+				FormFactory.DEFAULT_COLSPEC,
 				FormFactory.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("24dlu")},
 			new RowSpec[] {
@@ -124,17 +128,36 @@ public class SyncCloudFrame extends JFrame implements IErrorListener{
 		buttonOpenFeed.setToolTipText(MeshCompactUITranslator.getSyncWindowTooltipViewFeed());
 		buttonOpenFeed.setIcon(IconManager.getViewCloudIcon());
 		buttonOpenFeed.addActionListener(openFeedActionListener);
-		panelWeb.add(buttonOpenFeed, new CellConstraints(5, 1, CellConstraints.CENTER, CellConstraints.FILL));
+		panelWeb.add(buttonOpenFeed, new CellConstraints(7, 1, CellConstraints.CENTER, CellConstraints.FILL));
+
+		ActionListener downloadMappingsActionListener = new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				DownloadSchemaAndMappingsTask task = new DownloadSchemaAndMappingsTask(
+					SyncCloudFrame.this, SyncCloudFrame.this, SyncCloudFrame.this.propertiesProvider, textFieldURL.getText(), (MSAccessDataSourceMapping)comboBoxMappingDataSource.getSelectedItem()
+				);
+				task.execute();
+			}
+		};	
+		final JButton buttonDownload = new JButton();
+		buttonDownload.setContentAreaFilled(false);
+		buttonDownload.setBorderPainted(false);
+		buttonDownload.setBorder(new EmptyBorder(0, 0, 0, 0));
+		buttonDownload.setBackground(Color.WHITE);
+		buttonDownload.setText("");
+		buttonDownload.setToolTipText(MeshCompactUITranslator.getTooltipDownloadSchemaAndMappings());
+		buttonDownload.setIcon(IconManager.getDownloadImage());
+		buttonDownload.addActionListener(downloadMappingsActionListener);
+		panelWeb.add(buttonDownload, new CellConstraints(5, 1));
 
 		final JPanel panelSync = new JPanel();
 		panelSync.setBackground(Color.WHITE);
 		panelSync.setLayout(new FormLayout(
 			new ColumnSpec[] {
-				ColumnSpec.decode("75dlu"),
+				ColumnSpec.decode("86dlu"),
 				ColumnSpec.decode("2dlu"),
 				ColumnSpec.decode("17dlu"),
 				ColumnSpec.decode("6dlu"),
-				ColumnSpec.decode("98dlu"),
+				ColumnSpec.decode("117dlu"),
 				FormFactory.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("53dlu")},
 			new RowSpec[] {
@@ -171,7 +194,7 @@ public class SyncCloudFrame extends JFrame implements IErrorListener{
 		panelStatus.setBorder(new EmptyBorder(0, 0, 0, 0));
 		panelStatus.setLayout(new FormLayout(
 			new ColumnSpec[] {
-				ColumnSpec.decode("227dlu"),
+				ColumnSpec.decode("254dlu"),
 				FormFactory.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("17dlu")},
 			new RowSpec[] {

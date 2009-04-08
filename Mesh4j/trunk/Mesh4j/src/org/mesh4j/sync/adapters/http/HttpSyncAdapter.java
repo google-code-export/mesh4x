@@ -51,6 +51,7 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 	private URL url;
 	private FeedReader feedReader;
 	private FeedWriter feedWriter;
+	private IIdentityProvider identityProvider;
 	
 	// BUSINESS METHODS
 	public HttpSyncAdapter(String url, ISyndicationFormat syndicationFormat, IIdentityProvider identityProvider, 
@@ -67,6 +68,7 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 		} catch (MalformedURLException e) {
 			throw new MeshException(e);
 		}
+		this.identityProvider = identityProvider;
 		this.feedReader = new FeedReader(syndicationFormat, identityProvider, idGenerator, contentReader);
 		this.feedWriter = new FeedWriter(syndicationFormat, identityProvider, contentWriter);
 	}
@@ -356,7 +358,7 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 		return url + "/add";
 	}
 
-	public static void uploadMeshDefinition(String url, String sourceId, String format, String description, ISchema schema, IMapping mappings) {
+	public static void uploadMeshDefinition(String url, String sourceId, String format, String description, ISchema schema, IMapping mappings, String by) {
 		try{
 			URL baseURL = new URL(url);
 			
@@ -365,7 +367,8 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 					format, 
 					description, 
 					schema == null ? "" : schema.asXMLText(), 
-					mappings == null ? "" : mappings.asXMLText());
+					mappings == null ? "" : mappings.asXMLText(),
+					by);
 			doPOST(baseURL, content, "application/x-www-form-urlencoded");
 		} catch (Exception e) {
 			Logger.error(e.getMessage(), e); 
@@ -374,7 +377,7 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 	}
 
 	private static String makeMeshDefinitionContent(String sourceId,
-			String format, String description, String schema, String mappings) throws UnsupportedEncodingException {
+			String format, String description, String schema, String mappings, String by) throws UnsupportedEncodingException {
 		
 		StringBuffer sb = new StringBuffer();
 		
@@ -402,6 +405,12 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 
 		sb.append("&");
 
+		sb.append(URLEncoder.encode("by", "UTF-8"));
+		sb.append("=");
+		sb.append(URLEncoder.encode(by, "UTF-8"));
+		
+		sb.append("&");
+
 		sb.append(URLEncoder.encode("schema", "UTF-8"));
 		sb.append("=");
 		sb.append(URLEncoder.encode(schema, "UTF-8"));
@@ -416,10 +425,21 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 		return sb.toString();
 	}
 
-	public void addItemFromRowData(String rowDataContentXML) {
+	public void addItemFromRowData(String xml) {
 		try{
 			URL urlAddItem = new URL(makeAddItemFromRawDataURL(this.url.toString()));
-			doPOST(urlAddItem, rowDataContentXML, "text/xml");
+//			doPOST(urlAddItem, xml, "text/xml");
+			
+			StringBuffer sb = new StringBuffer();
+			sb.append(URLEncoder.encode("by", "UTF-8"));
+			sb.append("=");
+			sb.append(URLEncoder.encode(this.identityProvider.getAuthenticatedUser(), "UTF-8"));
+			sb.append("&");
+			sb.append(URLEncoder.encode("data", "UTF-8"));
+			sb.append("=");
+			sb.append(xml);
+			
+			doPOST(urlAddItem, sb.toString(), "application/x-www-form-urlencoded");
 		} catch (Exception e) {
 			Logger.error(e.getMessage(), e); 
 			throw new MeshException(e);

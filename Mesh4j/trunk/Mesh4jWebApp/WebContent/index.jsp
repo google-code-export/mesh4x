@@ -76,6 +76,7 @@
 	<br>
 	<form action="/mesh4x/feeds" method="post">
 		<input type="hidden" id="action" name="action" value="uploadMeshDefinition">
+		by: <input id="by" name="by" type="text" value="user name">
 		name: <input id="newSourceID" name="newSourceID" type="text" value="myMesh">
 		title: <input id="title" name="title" type="text" value="my own mesh">
 		description: <input id="description" name="description" type="text" value="my mesh is the best mesh">
@@ -90,6 +91,7 @@
 	<br>
 	<form action="/mesh4x/feeds" method="post">
 		<input type="hidden" id="action" name="action" value="uploadMeshDefinition">
+		by: <input id="by" name="by" type="text" value="user name">
 		name: <input id="newSourceID" name="newSourceID" type="text" value="myMesh/myFeed">
 		title: <input id="title" name="title" type="text" value="my own feed">
 		description: <input id="description" name="description" type="text" value="my feed is the best feed">
@@ -106,6 +108,7 @@
 	<br>
 	<form action="/mesh4x/feeds" method="post">
 		<input type="hidden" id="action" name="action" value="clean">
+		by: <input id="by" name="by" type="text" value="user name">
 		name: <input id="sourceID" name="sourceID" type="text" value="myMesh/myFeed">
 		<br>
 		<br>
@@ -117,6 +120,7 @@
 	<br>
 	<form action="/mesh4x/feeds" method="post">
 		<input type="hidden" id="action" name="action" value="delete">
+		by: <input id="by" name="by" type="text" value="user name">
 		name: <input id="sourceID" name="sourceID" type="text" value="myMesh/myFeed">
 		<br>
 		<br>

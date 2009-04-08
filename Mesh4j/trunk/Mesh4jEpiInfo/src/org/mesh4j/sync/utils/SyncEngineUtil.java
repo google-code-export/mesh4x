@@ -388,8 +388,9 @@ public class SyncEngineUtil {
 		IMapping mapping = getMappings(dataSource.getAlias(), propertiesProvider);
 		
 		// upload
-		HttpSyncAdapter.uploadMeshDefinition(propertiesProvider.getMeshSyncServerURL(), propertiesProvider.getMeshID(), RssSyndicationFormat.INSTANCE.getName(), propertiesProvider.getMeshID(), null, null);
-		HttpSyncAdapter.uploadMeshDefinition(propertiesProvider.getMeshSyncServerURL(), meshSourceId, RssSyndicationFormat.INSTANCE.getName(), description, rdfSchema, mapping);
+		String by = propertiesProvider.getIdentityProvider().getAuthenticatedUser();
+		HttpSyncAdapter.uploadMeshDefinition(propertiesProvider.getMeshSyncServerURL(), propertiesProvider.getMeshID(), RssSyndicationFormat.INSTANCE.getName(), propertiesProvider.getMeshID(), null, null, by);
+		HttpSyncAdapter.uploadMeshDefinition(propertiesProvider.getMeshSyncServerURL(), meshSourceId, RssSyndicationFormat.INSTANCE.getName(), description, rdfSchema, mapping, by);
 	}
 
 	private static String getSchemaFileName(String dataSource, PropertiesProvider propertiesProvider) {

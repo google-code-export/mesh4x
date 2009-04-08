@@ -5,40 +5,19 @@ import org.junit.Test;
 
 public class IdentityProviderTests {
 
-	@Test
-	public void shouldReturnsDefaultIdentity(){
-		Assert.assertNotNull(NullIdentityProvider.INSTANCE.getAuthenticatedUser());
-		Assert.assertEquals("admin", NullIdentityProvider.INSTANCE.getAuthenticatedUser());
-	}
-	
-	@Test
-	public void shouldAtomicDefaultIdentity(){
-		Assert.assertNotNull(NullIdentityProvider.INSTANCE.getAuthenticatedUser());
-		Assert.assertEquals("admin", NullIdentityProvider.INSTANCE.getAuthenticatedUser());
-		Assert.assertEquals("admin", NullIdentityProvider.INSTANCE.getAuthenticatedUser());
-		Assert.assertEquals("admin", NullIdentityProvider.INSTANCE.getAuthenticatedUser());
-	}
-	
-	@Test
-	public void shouldReturnsLoggedInIdentity(){
-		LoggedInIdentityProvider identityProvider = new LoggedInIdentityProvider();
-		
-		String identity = identityProvider.getAuthenticatedUser();
-		Assert.assertNotNull(identity);
-		Assert.assertTrue(identity.trim().length() > 0);
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldCreateFailsWhenUserIsNull(){
+		 new IdentityProvider(null);
 	}
 
-	@Test
-	public void shouldAtomicLoggedInIdentity(){
-		LoggedInIdentityProvider identityProvider = new LoggedInIdentityProvider();
-		
-		String identity = identityProvider.getAuthenticatedUser();
-		Assert.assertNotNull(identity);
-		Assert.assertTrue(identity.trim().length() > 0);
-		
-		Assert.assertEquals(identity, identityProvider.getAuthenticatedUser());		
-		Assert.assertEquals(identity, identityProvider.getAuthenticatedUser());
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldCreateFailsWhenUserIsEmpty(){
+		 new IdentityProvider("");
 	}
-
 	
+	@Test
+	public void shouldGetUser(){
+		IdentityProvider identityProvider = new IdentityProvider("jmt");
+		Assert.assertEquals("jmt", identityProvider.getAuthenticatedUser());
+	}
 }

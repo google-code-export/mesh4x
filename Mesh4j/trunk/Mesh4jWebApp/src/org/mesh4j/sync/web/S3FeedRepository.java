@@ -10,6 +10,7 @@ import org.mesh4j.sync.adapters.S3.amazon.S3Service;
 import org.mesh4j.sync.adapters.feed.Feed;
 import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.model.Item;
+import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.validations.Guard;
 
@@ -36,14 +37,14 @@ public class S3FeedRepository extends AbstractFeedRepository {
 	}
 
 	@Override
-	protected void addNewFeed(String sourceID, Feed feed, ISyndicationFormat syndicationFormat) {
+	protected void addNewFeed(String sourceID, Feed feed, ISyndicationFormat syndicationFormat, IIdentityProvider identityProvider) {
 		// nothing to do		
 	}
 
 	@Override
-	protected ISyncAdapter getParentSyncAdapter(String sourceID) {
+	protected ISyncAdapter getParentSyncAdapter(String sourceID, IIdentityProvider identityProvider) {
 		String parentID = this.getParentS3ID(sourceID);
-		return new S3Adapter(this.bucket, parentID, this.s3, NullIdentityProvider.INSTANCE);
+		return new S3Adapter(this.bucket, parentID, this.s3, identityProvider);
 	}
 
 	private String getParentS3ID(String sourceID) {
@@ -74,9 +75,9 @@ public class S3FeedRepository extends AbstractFeedRepository {
 	}
 	
 	@Override
-	protected ISyncAdapter getSyncAdapter(String sourceID) {
+	protected ISyncAdapter getSyncAdapter(String sourceID, IIdentityProvider identityProvider) {
 		String s3Id = this.getFeedS3ID(sourceID);
-		return new S3Adapter(this.bucket, s3Id, this.s3, NullIdentityProvider.INSTANCE);
+		return new S3Adapter(this.bucket, s3Id, this.s3, identityProvider);
 	}
 
 	@Override

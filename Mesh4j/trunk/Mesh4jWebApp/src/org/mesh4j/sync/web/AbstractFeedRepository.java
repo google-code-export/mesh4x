@@ -38,6 +38,8 @@ import org.mesh4j.sync.payload.schema.SchemaInstanceContentReadWriter;
 import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
 import org.mesh4j.sync.payload.schema.xform.XFormRDFSchemaContentWriter;
 import org.mesh4j.sync.payload.schema.xform.XFormRDFSchemaInstanceContentReadWriter;
+import org.mesh4j.sync.security.IIdentityProvider;
+import org.mesh4j.sync.security.IdentityProvider;
 import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.servlet.Format;
 import org.mesh4j.sync.utils.XMLHelper;
@@ -50,13 +52,13 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 		super();
 	}
 	
-	protected abstract ISyncAdapter getSyncAdapter(String sourceID);
-	protected abstract ISyncAdapter getParentSyncAdapter(String sourceID);
-	protected abstract void addNewFeed(String sourceID, Feed feed, ISyndicationFormat syndicationFormat);
+	protected abstract ISyncAdapter getSyncAdapter(String sourceID, IIdentityProvider identityProvider);
+	protected abstract ISyncAdapter getParentSyncAdapter(String sourceID, IIdentityProvider identityProvider);
+	protected abstract void addNewFeed(String sourceID, Feed feed, ISyndicationFormat syndicationFormat, IIdentityProvider identityProvider);
 
 	@Override
 	public List<Item> getAll(String sourceID, Date sinceDate) {
-		ISyncAdapter adapter = getSyncAdapter(sourceID);
+		ISyncAdapter adapter = getSyncAdapter(sourceID, NullIdentityProvider.INSTANCE);
 		List<Item> items = adapter.getAllSince(sinceDate);	
 		return items;
 	}
@@ -65,7 +67,7 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 	@Override
 	public String readFeed(String sourceID, String link, ISyndicationFormat syndicationFormat, Format contentFormat, IGeoCoder geoCoder, Date sinceDate) throws Exception {
 		
-		ISyncAdapter adapter = getSyncAdapter(sourceID);
+		ISyncAdapter adapter = getSyncAdapter(sourceID, NullIdentityProvider.INSTANCE);
 				
 		List<Item> items;
 		
@@ -88,19 +90,20 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 		
 		ISchema schema = this.getSchema(sourceID, link);
 		IMapping mapping = this.getMappings(sourceID, link, geoCoder);
-		String xml = writeFeedAsXml(feed, syndicationFormat, contentFormat, schema, mapping);
+		String xml = writeFeedAsXml(feed, syndicationFormat, contentFormat, schema, mapping, NullIdentityProvider.INSTANCE);
 		return xml;
 	}
 	
 	@Override
 	public String synchronize(String sourceID, String link, ISyndicationFormat syndicationFormat, Format contentFormat, IGeoCoder geoCoder, String feedXml) throws Exception {
 
+		IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
 		ISchema schema = this.getSchema(sourceID, link);
 		IMapping mapping = this.getMappings(sourceID, link, geoCoder);
 		Feed feedLoaded = this.readFeedFromXml(feedXml, syndicationFormat, contentFormat, schema, mapping);		
-		InMemorySyncAdapter inMemoryAdapter = new InMemorySyncAdapter(sourceID, NullIdentityProvider.INSTANCE, feedLoaded.getItems());
+		InMemorySyncAdapter inMemoryAdapter = new InMemorySyncAdapter(sourceID, identityProvider, feedLoaded.getItems());
 		
-		ISyncAdapter adapter = getSyncAdapter(sourceID);
+		ISyncAdapter adapter = getSyncAdapter(sourceID, identityProvider);
 		
 		SyncEngine syncEngine = new SyncEngine(adapter, inMemoryAdapter);
 		List<Item> conflicts = syncEngine.synchronize();
@@ -108,19 +111,19 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 		String title = getFeedTitle(sourceID);
 		Feed feedResult = new Feed(title, "conflicts", link);
 		feedResult.addItems(conflicts);
-		return this.writeFeedAsXml(feedResult, syndicationFormat, contentFormat, schema, mapping);
+		return this.writeFeedAsXml(feedResult, syndicationFormat, contentFormat, schema, mapping, identityProvider);
 	}
 	
 	@Override
 	public void addNewFeed(String sourceID, ISyndicationFormat syndicationFormat, String link, String description, String schema, String mappings, String by) {
-	
-		ISyncAdapter parentAdapter = this.getParentSyncAdapter(sourceID);
+		IIdentityProvider identityProvider = new IdentityProvider(by);
+		ISyncAdapter parentAdapter = this.getParentSyncAdapter(sourceID, identityProvider);
 		
 		if(parentAdapter instanceof ISyncAware){
 			((ISyncAware)parentAdapter).beginSync();
 		}
 		
-		basicAddNewFeed(parentAdapter, sourceID, syndicationFormat, link, description, schema, mappings, by);
+		basicAddNewFeed(parentAdapter, sourceID, syndicationFormat, link, description, schema, mappings, identityProvider);
 		
 		if(parentAdapter instanceof ISyncAware){
 			((ISyncAware)parentAdapter).endSync();
@@ -128,11 +131,11 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 
 	}
 	
-	public void basicAddNewFeed(ISyncAdapter parentAdapter, String sourceID, ISyndicationFormat syndicationFormat, String link, String description, String schema, String mappings, String by) {
+	public void basicAddNewFeed(ISyncAdapter parentAdapter, String sourceID, ISyndicationFormat syndicationFormat, String link, String description, String schema, String mappings, IIdentityProvider identityProvider) {
 		String title = getFeedTitle(sourceID);
 		Feed feed = new Feed(title, description, link);
 		
-		this.addNewFeed(sourceID, feed, syndicationFormat);
+		this.addNewFeed(sourceID, feed, syndicationFormat, identityProvider);
 		
 		Element parentPayload = DocumentHelper.createElement(ISyndicationFormat.ELEMENT_PAYLOAD);
 		
@@ -148,7 +151,7 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 		
 		String sycnId = IdGenerator.INSTANCE.newID();
 		XMLContent content = new XMLContent(sycnId, title, description, link, parentPayload);
-		Sync sync = new Sync(sycnId, by, new Date(), false);
+		Sync sync = new Sync(sycnId, identityProvider.getAuthenticatedUser(), new Date(), false);
 		Item item = new Item(content, sync);
 		
 		parentAdapter.add(item);
@@ -179,10 +182,10 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 		}
 	}
 
-	private String writeFeedAsXml(Feed feed, ISyndicationFormat syndicationFormat, Format contentFormat, ISchema meshSchema, IMapping mapping){
+	private String writeFeedAsXml(Feed feed, ISyndicationFormat syndicationFormat, Format contentFormat, ISchema meshSchema, IMapping mapping, IIdentityProvider identityProvider){
 		IContentWriter feedItemWriter = getContentWriter(contentFormat, meshSchema, mapping);
 		
-		FeedWriter writer = new FeedWriter(syndicationFormat, NullIdentityProvider.INSTANCE, feedItemWriter);
+		FeedWriter writer = new FeedWriter(syndicationFormat, identityProvider, feedItemWriter);
 		try {
 			return writer.writeAsXml(feed);
 		} catch (Exception e) {
@@ -229,7 +232,7 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 			return null;
 		}
 		
-		ISyncAdapter syncAdapter = this.getParentSyncAdapter(sourceID);
+		ISyncAdapter syncAdapter = this.getParentSyncAdapter(sourceID, NullIdentityProvider.INSTANCE);
 		List<Item> items = syncAdapter.getAll(new XMLContentLinkFilter(link));
 				
 		if(!items.isEmpty()){
@@ -265,7 +268,7 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 		if(sourceID == null){
 			return null;
 		}
-		ISyncAdapter syncAdapter = this.getParentSyncAdapter(sourceID);
+		ISyncAdapter syncAdapter = this.getParentSyncAdapter(sourceID, NullIdentityProvider.INSTANCE);
 		List<Item> items = syncAdapter.getAll(new XMLContentLinkFilter(link));
 				
 		Element mappings = null;
@@ -297,7 +300,7 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 
 	@Override
 	public void deleteFeed(String sourceID, String link, String by) {
-		ISyncAdapter parentAdapter = this.getParentSyncAdapter(sourceID);
+		ISyncAdapter parentAdapter = this.getParentSyncAdapter(sourceID, new IdentityProvider(by));
 		
 		if(parentAdapter instanceof ISyncAware){
 			((ISyncAware)parentAdapter).beginSync();
@@ -319,7 +322,9 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 
 	@Override
 	public void updateFeed(String sourceID, ISyndicationFormat syndicationFormat, String link, String description, String schema, String mappings, String by) {
-		ISyncAdapter parentAdapter = this.getParentSyncAdapter(sourceID);
+		
+		IIdentityProvider identityProvider = new IdentityProvider(by);
+		ISyncAdapter parentAdapter = this.getParentSyncAdapter(sourceID, identityProvider);
 				
 		if(parentAdapter instanceof ISyncAware){
 			((ISyncAware)parentAdapter).beginSync();
@@ -328,7 +333,7 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 		List<Item> items = parentAdapter.getAll(new XMLContentLinkFilter(link));
 		if(items.isEmpty()){
 			
-			basicAddNewFeed(parentAdapter, sourceID, syndicationFormat, link, description, schema, mappings, by);
+			basicAddNewFeed(parentAdapter, sourceID, syndicationFormat, link, description, schema, mappings, identityProvider);
 			
 		} else{
 			
@@ -364,8 +369,10 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 		}
 	}
 	
-	public void addNewItemFromRawContent(String sourceID, String link, String xml){
-		ISyncAdapter adapter = getSyncAdapter(sourceID);
+	@Override
+	public void addNewItemFromRawContent(String sourceID, String link, String xml, String by){
+		IIdentityProvider identityProvider = new IdentityProvider(by);
+		ISyncAdapter adapter = getSyncAdapter(sourceID, identityProvider);
 		
 		if(adapter instanceof ISyncAware){
 			((ISyncAware)adapter).beginSync();
@@ -375,7 +382,7 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 		
 		Element payload = XMLHelper.parseElement(xml);
 		XMLContent content = new XMLContent(syncID, null, null, null, payload);
-		Item item = new Item(content, new Sync(syncID, "admin", new Date(), false));
+		Item item = new Item(content, new Sync(syncID, by, new Date(), false));
 		adapter.add(item);
 		
 		if(adapter instanceof ISyncAware){

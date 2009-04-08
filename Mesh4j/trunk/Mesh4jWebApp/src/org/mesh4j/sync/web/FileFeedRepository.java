@@ -7,6 +7,7 @@ import org.mesh4j.sync.adapters.feed.FeedAdapter;
 import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.id.generator.IdGenerator;
+import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.security.NullIdentityProvider;
 
 public class FileFeedRepository extends AbstractFeedRepository {
@@ -61,29 +62,29 @@ public class FileFeedRepository extends AbstractFeedRepository {
 	}
 
 	@Override
-	protected void addNewFeed(String sourceID, Feed feed, ISyndicationFormat syndicationFormat) {
+	protected void addNewFeed(String sourceID, Feed feed, ISyndicationFormat syndicationFormat, IIdentityProvider identityProvider) {
 		String feedFileName = this.getFeedFileName(sourceID);
-		new FeedAdapter(feedFileName, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, syndicationFormat, feed);
+		new FeedAdapter(feedFileName, identityProvider, IdGenerator.INSTANCE, syndicationFormat, feed);
 	}
 
 	@Override
-	protected FeedAdapter getParentSyncAdapter(String sourceID) {
+	protected FeedAdapter getParentSyncAdapter(String sourceID, IIdentityProvider identityProvider) {
 		String parentFileName = this.getParentFileName(sourceID);
-		return new FeedAdapter(parentFileName, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		return new FeedAdapter(parentFileName, identityProvider, IdGenerator.INSTANCE);
 	}
 	
 	@Override
-	protected FeedAdapter getSyncAdapter(String sourceID) {
+	protected FeedAdapter getSyncAdapter(String sourceID, IIdentityProvider identityProvider) {
 		String feedFileName = this.getFeedFileName(sourceID);
 		
-		FeedAdapter adapter = new FeedAdapter(feedFileName, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		FeedAdapter adapter = new FeedAdapter(feedFileName, identityProvider, IdGenerator.INSTANCE);
 		adapter.refresh();
 		return adapter;
 	}
 	
 	@Override
 	public void cleanFeed(String sourceID) {
-		FeedAdapter feedAdapter = (FeedAdapter) getSyncAdapter(sourceID);
+		FeedAdapter feedAdapter = (FeedAdapter) getSyncAdapter(sourceID, NullIdentityProvider.INSTANCE);
 		feedAdapter.getFeed().deleteAllItems();
 		feedAdapter.flush();
 	}

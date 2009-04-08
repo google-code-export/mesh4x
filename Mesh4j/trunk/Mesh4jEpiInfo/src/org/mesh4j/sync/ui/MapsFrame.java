@@ -26,6 +26,8 @@ import org.mesh4j.sync.mappings.DataSourceMapping;
 import org.mesh4j.sync.mappings.MSAccessDataSourceMapping;
 import org.mesh4j.sync.properties.PropertiesProvider;
 import org.mesh4j.sync.security.IIdentityProvider;
+import org.mesh4j.sync.ui.tasks.DownloadSchemaAndMappingsTask;
+import org.mesh4j.sync.ui.tasks.IDownloadListener;
 import org.mesh4j.sync.ui.tasks.IErrorListener;
 import org.mesh4j.sync.ui.tasks.OpenFileTask;
 import org.mesh4j.sync.ui.translator.MeshCompactUITranslator;
@@ -39,7 +41,7 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
-public class MapsFrame extends JFrame implements IErrorListener{
+public class MapsFrame extends JFrame implements IErrorListener, IDownloadListener{
 
 	private static final long serialVersionUID = 7380206163750504752L;
 
@@ -106,21 +108,23 @@ public class MapsFrame extends JFrame implements IErrorListener{
 
 		ActionListener downloadMappingsActionListener = new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
-				DownloadMappingsTask task = new DownloadMappingsTask();
+				DownloadSchemaAndMappingsTask task = new DownloadSchemaAndMappingsTask(
+					MapsFrame.this, MapsFrame.this, MapsFrame.this.propertiesProvider, textFieldURL.getText(), (MSAccessDataSourceMapping)comboBoxMappingDataSource.getSelectedItem()
+				);
 				task.execute();
 			}
 		};	
 		
-		final JButton buttonDownloadMappings = new JButton();
-		buttonDownloadMappings.setContentAreaFilled(false);
-		buttonDownloadMappings.setBorderPainted(false);
-		buttonDownloadMappings.setBorder(new EmptyBorder(0, 0, 0, 0));
-		buttonDownloadMappings.setBackground(Color.WHITE);
-		buttonDownloadMappings.setText("");
-		buttonDownloadMappings.setToolTipText(MeshCompactUITranslator.getMapsWindowTooltipDownloadMappings());
-		buttonDownloadMappings.setIcon(IconManager.getDownloadImage());
-		buttonDownloadMappings.addActionListener(downloadMappingsActionListener);
-		panelWeb.add(buttonDownloadMappings, new CellConstraints(5, 1, CellConstraints.CENTER, CellConstraints.FILL));
+		final JButton buttonDownload = new JButton();
+		buttonDownload.setContentAreaFilled(false);
+		buttonDownload.setBorderPainted(false);
+		buttonDownload.setBorder(new EmptyBorder(0, 0, 0, 0));
+		buttonDownload.setBackground(Color.WHITE);
+		buttonDownload.setText("");
+		buttonDownload.setToolTipText(MeshCompactUITranslator.getTooltipDownloadSchemaAndMappings());
+		buttonDownload.setIcon(IconManager.getDownloadImage());
+		buttonDownload.addActionListener(downloadMappingsActionListener);
+		panelWeb.add(buttonDownload, new CellConstraints(5, 1, CellConstraints.CENTER, CellConstraints.FILL));
 		
 		ActionListener openCloudMapActionListener = new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
@@ -260,46 +264,6 @@ public class MapsFrame extends JFrame implements IErrorListener{
 			imageStatus.setText("");
 		}
 		return imageStatus;
-	}
-	
-	private class DownloadMappingsTask extends SwingWorker<Void, Void> {
-		 
-		public DownloadMappingsTask(){
-			super();
-		}
-		
-		@Override
-	    public Void doInBackground() {
-			setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-
-			setInProcess(MeshCompactUITranslator.getMapsWindowMessageDownloadMappingsStart());
-			String url = textFieldURL.getText();
-			if(!HttpSyncAdapterFactory.isValidURL(url)){
-    			setError(MeshCompactUITranslator.getErrorInvalidURL());
-				return null;
-			}
-			
-			MSAccessDataSourceMapping dataSource = (MSAccessDataSourceMapping) getComboBoxMappingDataSource().getSelectedItem();
-			if(dataSource == null || !MsAccessSyncAdapterFactory.isValidAccessTable(dataSource.getFileName(), dataSource.getTableName())){
-    			setError(MeshCompactUITranslator.getErrorInvalidMSAccessTable());
-				return null;
-			}
-			
-			try{
-    			SyncEngineUtil.downloadMappings(url, dataSource.getAlias(), propertiesProvider);
-    			SyncEngineUtil.downloadSchema(url, dataSource.getAlias(), propertiesProvider);
-    			setOk(MeshCompactUITranslator.getMapsWindowMessageDownloadMappingsEnd());
-    		} catch(Throwable e){
-    			LogFrame.Logger.error(e.getMessage(), e);
-    			setError(MeshCompactUITranslator.getMapsWindowMessageDownloadMappingsFailed());
-    		}
-			return null;
-	    }
-
-		@Override
-	    public void done() {
-			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-	    }
 	}
 	
 	private class OpenCloudMapTask extends SwingWorker<Void, Void> {

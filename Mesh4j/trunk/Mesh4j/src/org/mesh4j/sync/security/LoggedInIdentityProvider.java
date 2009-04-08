@@ -5,6 +5,7 @@ import java.net.UnknownHostException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
 
@@ -12,14 +13,32 @@ public class LoggedInIdentityProvider implements IIdentityProvider {
 
 	private static final Log Logger = LogFactory.getLog(LoggedInIdentityProvider.class);
 	
-	@Override
-	public String getAuthenticatedUser() {
-		String hostName = obtainsHostName();
-		String userName = System.getProperty("user.name");
-		return hostName + "_" + userName;
+	// MODEL VARIABLES
+	private String dataSource;
+	
+	// BUSINESS METHODS
+	public LoggedInIdentityProvider(){
+		super();
+	}
+
+	public LoggedInIdentityProvider(String dataSource){
+		Guard.argumentNotNullOrEmptyString(dataSource, "dataSource");
+		this.dataSource = dataSource;
 	}
 	
-	private String obtainsHostName(){
+	@Override
+	public String getAuthenticatedUser() {
+		String hostName = getHostName();
+		String userName = getUserName();
+		
+		if(this.dataSource == null){
+			return hostName + "_" + userName;
+		} else {
+			return hostName + "_" + userName  + "_" + dataSource;
+		}
+	}
+	
+	public static String getHostName(){
 		try {
 			InetAddress addr = InetAddress.getLocalHost();
 			return addr.getHostName();

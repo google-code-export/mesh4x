@@ -22,6 +22,7 @@ import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.payload.mappings.IMapping;
 import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.payload.schema.xform.SchemaToXFormTranslator;
+import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.utils.DateHelper;
 import org.mesh4j.sync.web.FeedRepositoryFactory;
 import org.mesh4j.sync.web.IFeedRepository;
@@ -29,12 +30,11 @@ import org.mesh4j.sync.web.geo.coder.GeoCoderFactory;
 
 public class FeedServlet extends HttpServlet {
 
-	private static final String USER_ADMIN = "admin";
-
 	private static final String PARAM_SOURCE_ID = "sourceID";
 	private static final String PARAM_DESCRIPTION = "description";
 	private static final String PARAM_NEW_SOURCE_ID = "newSourceID";
 	private static final String PARAM_ACTION = "action";
+	private static final String PARAM_BY = "by";
 	
 	private static final String PARAM_FORMAT = "format";
 	private static final String PARAM_CONTENT = "content";
@@ -257,7 +257,7 @@ public class FeedServlet extends HttpServlet {
 			response.sendError(404, sourceID);
 		} else {		
 			String link = getFeedLink(request)+ "/" + sourceID;
-			this.feedRepository.deleteFeed(sourceID, link, USER_ADMIN);
+			this.feedRepository.deleteFeed(sourceID, link, getBy(request));
 			response.sendRedirect(getFeedLink(request));
 		}
 	}
@@ -298,13 +298,14 @@ public class FeedServlet extends HttpServlet {
 		if(!this.feedRepository.existsFeed(sourceID)){
 			response.sendError(404, sourceID);
 		} else {		
-			String rawXml = this.readXML(request);
+			//String rawXml = this.readXML(request);
+			String rawXml = request.getParameter("data");
 			if(rawXml == null){
 				response.sendError(404, sourceID);
 			} else {
 				String link = getFeedLink(request);
 				link = link.substring(0, link.length() -4);
-				this.feedRepository.addNewItemFromRawContent(sourceID, link, rawXml);
+				this.feedRepository.addNewItemFromRawContent(sourceID, link, rawXml, getBy(request));
 				response.sendRedirect(link);
 			}
 		}
@@ -329,14 +330,24 @@ public class FeedServlet extends HttpServlet {
 			
 			String link = getFeedLink(request)+ "/" + newSourceID;
 			
+			String by = getBy(request);
+			
 			if(this.feedRepository.existsFeed(newSourceID)){
-				this.feedRepository.updateFeed(newSourceID, syndicationFormat, link, description, schema, mappings, USER_ADMIN);
+				this.feedRepository.updateFeed(newSourceID, syndicationFormat, link, description, schema, mappings, by);
 			} else {
-				this.feedRepository.addNewFeed(newSourceID, syndicationFormat, link, description, schema, mappings, USER_ADMIN);
+				this.feedRepository.addNewFeed(newSourceID, syndicationFormat, link, description, schema, mappings, by);
 			}
 			
 			response.sendRedirect(link);
 		}
+	}
+
+	private String getBy(HttpServletRequest request) {
+		String by = request.getParameter(PARAM_BY);
+		if(by == null || by.length() == 0){
+			by = NullIdentityProvider.INSTANCE.getAuthenticatedUser();
+		}
+		return by;
 	}
 
 	private String readXML(HttpServletRequest request) throws IOException{

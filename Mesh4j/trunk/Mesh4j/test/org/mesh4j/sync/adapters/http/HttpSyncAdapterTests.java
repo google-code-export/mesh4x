@@ -20,7 +20,7 @@ import org.mesh4j.sync.payload.mappings.IMapping;
 import org.mesh4j.sync.payload.mappings.Mapping;
 import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.payload.schema.Schema;
-import org.mesh4j.sync.security.NullIdentityProvider;
+import org.mesh4j.sync.security.IdentityProvider;
 import org.mesh4j.sync.test.utils.TestHelper;
 import org.mesh4j.sync.utils.XMLHelper;
 
@@ -34,7 +34,7 @@ public class HttpSyncAdapterTests {
 		String path = "http://localhost:8080/mesh4x/feeds";
 		
 		// add mesh
-		HttpSyncAdapter.uploadMeshDefinition(path, "myMesh", RssSyndicationFormat.NAME, "my mesh", null, null);
+		HttpSyncAdapter.uploadMeshDefinition(path, "myMesh", RssSyndicationFormat.NAME, "my mesh", null, null, "jmt");
 		
 		// add feed
 		Element schemaElement = XMLHelper.parseElement("<mySchema><id>33</id></mySchema>");
@@ -42,7 +42,7 @@ public class HttpSyncAdapterTests {
 		
 		Element elementMappings = XMLHelper.parseElement("<mappings><title>title</title></mappings>");
 		IMapping mapping = new Mapping(elementMappings);
-		HttpSyncAdapter.uploadMeshDefinition(path, "myMesh/myFeed", RssSyndicationFormat.NAME, "my description", schema, mapping);
+		HttpSyncAdapter.uploadMeshDefinition(path, "myMesh/myFeed", RssSyndicationFormat.NAME, "my description", schema, mapping, "jmt");
 		
 		// update feed
 		Element schemaElement1 = XMLHelper.parseElement("<mySchema><id>CODE</id><name>NAME</name></mySchema>");
@@ -51,7 +51,7 @@ public class HttpSyncAdapterTests {
 		Element elementMappings1 = XMLHelper.parseElement("<mappings><title>title</title><desc>desc</desc></mappings>");
 		IMapping mapping1 = new Mapping(elementMappings1);
 
-		HttpSyncAdapter.uploadMeshDefinition(path, "myMesh/myFeed", RssSyndicationFormat.NAME, "my description223", schema1, mapping1);
+		HttpSyncAdapter.uploadMeshDefinition(path, "myMesh/myFeed", RssSyndicationFormat.NAME, "my description223", schema1, mapping1, "jmt");
 	}
 	
 	@Test
@@ -63,7 +63,7 @@ public class HttpSyncAdapterTests {
 	}
 
 	private HttpSyncAdapter makeAdapter(String path) {
-		return new HttpSyncAdapter(path, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, ContentWriter.INSTANCE, ContentReader.INSTANCE);
+		return new HttpSyncAdapter(path, RssSyndicationFormat.INSTANCE, new IdentityProvider("jmt"), IdGenerator.INSTANCE, ContentWriter.INSTANCE, ContentReader.INSTANCE);
 	}
 	
 	@Test
@@ -100,6 +100,20 @@ public class HttpSyncAdapterTests {
 		Assert.assertEquals(0, result.size());
 		
 		List<Item> items = httpAdapter.getAll();
+		Assert.assertEquals(size + 1, items.size());
+		
+		items = httpAdapter.getAllSince(now);
+		Assert.assertEquals(size1 + 1, items.size());
+		
+		// update item
+		sync.update("jmt2", new Date());
+		content.getPayload().addElement("barfoo");
+		content.refreshVersion();
+		
+		result = httpAdapter.merge(feed.getItems());
+		Assert.assertEquals(0, result.size());
+		
+		items = httpAdapter.getAll();
 		Assert.assertEquals(size + 1, items.size());
 		
 		items = httpAdapter.getAllSince(now);

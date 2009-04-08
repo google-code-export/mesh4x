@@ -8,16 +8,16 @@ import org.apache.commons.logging.LogFactory;
 
 public class MessageTranslator {
 
-	private static final Log Logger = LogFactory.getLog(MessageTranslator.class);
-	private static final ResourceBundle Resources = ResourceBundle.getBundle("mesh4j_resources");
+	private static final Log LOGGER = LogFactory.getLog(MessageTranslator.class);
+	private static ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("mesh4j_resources");
 	
 	public static String translate(String key){
 		String messageText;
 		try{
-			messageText = Resources.getString(key);
+			messageText = RESOURCE_BUNDLE.getString(key);
 		}catch (Exception e) {
-			if(Logger.isInfoEnabled()){
-				Logger.info("Resource Bundle for key <"+ key +"> does not exist.");
+			if(LOGGER.isInfoEnabled()){
+				LOGGER.info("Resource Bundle for key <"+ key +"> does not exist.");
 			}
 			messageText = key;
 		}
