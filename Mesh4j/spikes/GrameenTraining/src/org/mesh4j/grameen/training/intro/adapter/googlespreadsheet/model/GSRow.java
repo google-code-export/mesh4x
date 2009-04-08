@@ -263,6 +263,7 @@ public class GSRow<C> extends GSBaseElement<C>{
 	 * @param value
 	 * @param colIndex
 	 */
+	@Deprecated
 	public void updateCellValue(String value, int colIndex) {
 		GSCell cellToUpdate = (GSCell) getGSCell(colIndex); 
 		if (!cellToUpdate.getCellEntry().getCell().getInputValue()
@@ -278,7 +279,7 @@ public class GSRow<C> extends GSBaseElement<C>{
 	 */
 	public void updateCellValue(String value, String key) {
 		GSCell cellToUpdate = (GSCell) getGSCell(key); 
-		((ListEntry)cellToUpdate.getBaseEntry()).getCustomElements().setValueLocal(key, value);
+		((ListEntry)cellToUpdate.getParentElement().getBaseEntry()).getCustomElements().setValueLocal(key, value);
 		if (!cellToUpdate.getCellEntry().getCell().getInputValue()
 				.equals(value)) 
 			cellToUpdate.updateCellValue(value);
