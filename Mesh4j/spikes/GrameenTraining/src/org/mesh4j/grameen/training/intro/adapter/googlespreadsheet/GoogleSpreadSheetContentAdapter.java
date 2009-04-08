@@ -1,8 +1,5 @@
 package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,12 +13,7 @@ import org.mesh4j.sync.ISyncAware;
 import org.mesh4j.sync.adapters.hibernate.EntityContent;
 import org.mesh4j.sync.adapters.split.IContentAdapter;
 import org.mesh4j.sync.model.IContent;
-import org.mesh4j.sync.utils.DateHelper;
 import org.mesh4j.sync.validations.Guard;
-
-import com.google.gdata.data.DateTime;
-import com.google.gdata.data.spreadsheet.CellEntry;
-import com.google.gdata.data.spreadsheet.ListEntry;
 /**
  * Basically implementation of CRUD operation in google spreadsheet through Mesh4x wrapper
  * API of GData API.
@@ -81,7 +73,7 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 		GSRow row = GoogleSpreadsheetUtils.getRow(this.workSheet, mapper.getIdColumnPosition(), entityContent.getId());
 		if(row != null){
 			this.workSheet.deleteChildElement(row.getElementId());
-			GoogleSpreadsheetUtils.flush(spreadSheet.getService(), spreadSheet.getGSSpreadsheet());
+			//GoogleSpreadsheetUtils.flush(spreadSheet.getService(), spreadSheet.getGSSpreadsheet());
 		}
 	}
 
@@ -89,7 +81,7 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 	public IContent get(String contentId) {
 		Guard.argumentNotNullOrEmptyString(contentId, "contentId");
 		//here contentId is entityid 
-		//GSRow row = this.workSheet.getGSRow(Integer.parseInt(contentId));
+//		GSRow row = this.workSheet.getGSRow(Integer.parseInt(contentId));
 		GSRow row = GoogleSpreadsheetUtils.getRow(this.workSheet, mapper.getIdColumnPosition(), contentId);
 		if(row != null){
 			Element payLoad = mapper.convertRowToXML(row, this.workSheet);
@@ -112,18 +104,12 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 			if(gsRow.getElementListIndex() > 1 ){
 				if(gsRow != null && rowHasChanged(gsRow, since)){
 					Element payLoad = mapper.convertRowToXML(gsRow, workSheet);
-					
-//					 GSCell cell = gsRow.getChildElement(String.valueOf(mapper.getIdColumnPosition()));
 					 GSCell cell = gsRow.getGSCell(mapper.getIdColumnPosition());
-					 
-					 if(cell == null){
-						 System.out.println("cell is null");
-					 }else{
-						 CellEntry cellEntry = cell.getCellEntry();
-						 System.out.println("test");
+					 if(cell != null){
+						 entityId = cell.getCellValue();
 					 }
-					 
-					 entityId = cell.getCellEntry().getCell().getValue();
+					 //TODO handle the else condition.
+	   		    entityId = cell.getCellValue();
 				EntityContent entityContent = new EntityContent(payLoad,this.sheetName,entityId);
 				listOfAll.add(entityContent);
 			}
@@ -142,7 +128,7 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 			if(cell == null){
 				return true;
 			} else {
-				String dateTimeAsString = cell.getCellEntry().getCell().getValue();
+				String dateTimeAsString = cell.getCellValue();
 				Date lasUpdateDateTime = GoogleSpreadsheetUtils.normalizeDate(dateTimeAsString, G_SPREADSHEET_DATE_FORMAT);
 				return since.compareTo(lasUpdateDateTime) <= 0;
 			}
@@ -171,8 +157,9 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 
 		GSRow<GSCell> row = this.mapper.convertXMLElementToRow(this.workSheet,entityContent.getPayload());
 		this.workSheet.addChildElement(row.getElementId(), row);
-		GoogleSpreadsheetUtils.flush(spreadSheet.getService(), spreadSheet.getGSSpreadsheet());
-		row.refreshMe();
+		//GoogleSpreadsheetUtils.flush(spreadSheet.getService(), spreadSheet.getGSSpreadsheet());
+		//row.refreshMe();
+		printTest();
 	}
 	
 	private void printTest(){
@@ -182,8 +169,8 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 			if(gsRow.getRowIndex() > 1 ){
 				GSCell cell = gsRow.getGSCell(mapper.getIdColumnPosition());
 				if(cell != null){
-					CellEntry cellEntry = cell.getCellEntry();
-					System.out.println("cell value " + cellEntry.getCell().getValue());
+					String value = cell.getCellValue();
+					System.out.println("cell value " + value);
 				}else{
 					System.out.println("cell is null");
 				}
@@ -194,8 +181,8 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 		GSRow row = this.mapper.normalizeRow(workSheet, entityContent.getPayload(), rowTobeUpdated);
 		this.workSheet.updateChildElement(row.getElementId(), row);
 		
-		GoogleSpreadsheetUtils.flush(spreadSheet.getService(), spreadSheet.getGSSpreadsheet());
-		row.refreshMe();
+		//GoogleSpreadsheetUtils.flush(spreadSheet.getService(), spreadSheet.getGSSpreadsheet());
+		//row.refreshMe();
 	}
 	
 	@Override
