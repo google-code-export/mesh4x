@@ -171,7 +171,7 @@ public class GoogleSpreadsheetUtils {
 			Map<String, GSBaseElement> deletePool) {
 		for (GSBaseElement subElement : element.getChildElements().values()) {
 			if (subElement.isDirty()) {
-				if (subElement.isDeleteCandiddate()) {
+				if (subElement.isDeleteCandidate()) {
 					// add subElement to delete pool
 					deletePool.put(subElement.getId(), subElement);
 				} else {
