@@ -40,7 +40,7 @@ public class GSSpreadsheet<C> extends GSBaseElement<C>{
 	 * @return
 	 */
 	public Map<String, C> getGSWorksheets() {
-		return getChildElements();
+		return getNonDeletedChildElements();
 	}	
 	
 	/**
@@ -68,7 +68,7 @@ public class GSSpreadsheet<C> extends GSBaseElement<C>{
 	 * @return
 	 */
 	public C getGSWorksheetBySheetName(String sheetName) {
-		for (C gsWorksheet : getChildElements().values()) {
+		for (C gsWorksheet : getNonDeletedChildElements().values()) {
 			if (((GSWorksheet<?>) gsWorksheet)
 					.getWorksheetEntry().getTitle().getPlainText()
 					.equalsIgnoreCase(sheetName))

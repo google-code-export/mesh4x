@@ -83,7 +83,7 @@ public class GSRow<C> extends GSBaseElement<C>{
 	 * @return
 	 */
 	public Map<String, C> getGSCells() {
-		return getChildElements();
+		return getNonDeletedChildElements();
 	}
 
 	/**
@@ -94,7 +94,7 @@ public class GSRow<C> extends GSBaseElement<C>{
 	 */
 	
 	public List<C> getGsCellsAsList() {
-		return new ArrayList<C>(getChildElements().values());
+		return new ArrayList<C>(getNonDeletedChildElements().values());
 	}
 	
 	/**
@@ -113,7 +113,7 @@ public class GSRow<C> extends GSBaseElement<C>{
 	 */
 	@SuppressWarnings("unchecked")
 	public C getGSCell(int colIndex){
-		for(GSCell gsCell : ((GSRow<GSCell>)this).getChildElements().values()){
+		for(GSCell gsCell : ((GSRow<GSCell>)this).getNonDeletedChildElements().values()){
 			if(gsCell.getCellEntry().getCell().getCol() == colIndex){
 				return (C) gsCell;
 			}			

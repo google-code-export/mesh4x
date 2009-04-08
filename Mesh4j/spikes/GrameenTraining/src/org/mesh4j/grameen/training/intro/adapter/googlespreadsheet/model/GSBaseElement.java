@@ -1,8 +1,10 @@
 package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model;
 
 import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.Map.Entry;
 
 import org.mesh4j.sync.validations.MeshException;
 
@@ -85,8 +87,25 @@ public abstract class GSBaseElement<C> implements IGSElement<C>{
 		return parentElement;
 	}
 
+	/** 
+	 * return nondeleted child elements
+	 */
 	public Map<String, C> getChildElements() {
 		return this.childElements;
+	}
+
+	public Map<String, C> getNonDeletedChildElements() {		
+		Map<String, C> nonDeletedClildElements = new LinkedHashMap();
+
+		for (String key : this.childElements.keySet()) {
+			if (!((GSBaseElement) this.childElements.get(key))
+					.isDeleteCandidate()) {
+				nonDeletedClildElements.put(key, (C) this.childElements
+						.get(key));
+			}
+		}
+
+		return nonDeletedClildElements;
 	}
 
 	/**
@@ -119,17 +138,4 @@ public abstract class GSBaseElement<C> implements IGSElement<C>{
 	
 	public abstract void refreshMe() throws IOException, ServiceException;
 	
-	/** (non-Javadoc)
-	 * return the number of non-deleted childs
-	 */
-	public int getChildElementCount(){		
-		int nonDeletedElements = 0;
-		if(getChildElements()!= null){
-			for(C element: getChildElements().values()){
-				if(!((IGSElement)element).isDeleteCandidate())
-					nonDeletedElements++;
-			}			
-		}
-		return nonDeletedElements;
-	}
 }

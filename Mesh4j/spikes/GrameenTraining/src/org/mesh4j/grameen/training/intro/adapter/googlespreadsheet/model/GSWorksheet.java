@@ -72,7 +72,7 @@ public class GSWorksheet<C> extends GSBaseElement<C> {
 	 * @return
 	 */
 	public Map<String, C> getGSRows() {
-		return getChildElements();  
+		return getNonDeletedChildElements();  
 	}
 	
 	/**
@@ -83,6 +83,14 @@ public class GSWorksheet<C> extends GSBaseElement<C> {
 	public C getGSRow(int rowIndex) {
 		
 		for(GSRow gsRow : ((GSWorksheet<GSRow>)this).getChildElements().values()){
+			if(gsRow.isDeleteCandidate()){ 
+				rowIndex ++; //see notes 
+				continue;
+			}	
+			// say 4 elements are identified by 1, 2, 3, 4 in an initial list, 
+			// element 2 is marked deleted; now non-deleted elements are 1, 3, 4. 
+			// so to get 2nd element u have to get one that is marked with 2+1 = 3 ;)  
+			
 			if(gsRow.getRowIndex() == rowIndex){
 				return (C) gsRow;
 			}			
@@ -116,7 +124,7 @@ public class GSWorksheet<C> extends GSBaseElement<C> {
 	 */
 	@SuppressWarnings("unchecked")
 	public GSCell getGSCell(int rowIndex, int colIndex) {
-		for(GSRow gsRow : ((GSWorksheet<GSRow>)this).getChildElements().values()){
+		for(GSRow gsRow : ((GSWorksheet<GSRow>)this).getNonDeletedChildElements().values()){
 			if(gsRow.getRowIndex() == rowIndex){
 				return (GSCell) gsRow.getGSCell(colIndex);
 			}	
@@ -166,7 +174,7 @@ public class GSWorksheet<C> extends GSBaseElement<C> {
 	 * @param rowToAdd
 	 */
 	public void addNewRow(GSRow rowToAdd) {		
-		int newRowIndex = this.getChildElements().size() + 2;
+		int newRowIndex = this.getNonDeletedChildElements().size() + 1;
 		rowToAdd.elementListIndex= newRowIndex;
 		((GSWorksheet<GSRow>) this).addChildElement(
 				rowToAdd.getElementId(), rowToAdd);
@@ -211,7 +219,7 @@ public class GSWorksheet<C> extends GSBaseElement<C> {
 		return newGSRow;
 	}
 	
-	
+	@Deprecated
 	public GSRow<GSCell> createNewRow(String[] values) throws IOException, ServiceException {
 
 		int noOfColumns = ((GSWorksheet<GSRow>) this).getGSRow(1)

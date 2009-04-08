@@ -31,5 +31,4 @@ public interface IGSElement<C> {
 	void addChildElement(String key, C element);
 	void deleteChildElement(String key);
 	
-	int getChildElementCount();
 }
