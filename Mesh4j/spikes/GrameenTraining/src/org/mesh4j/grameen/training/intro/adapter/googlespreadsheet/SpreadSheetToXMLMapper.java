@@ -2,8 +2,10 @@ package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet;
 
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -55,18 +57,17 @@ public class SpreadSheetToXMLMapper implements ISpreadSheetToXMLMapper{
 	}
 	
 	@Override
-	public Element convertRowToXML(GSRow gsRow, GSWorksheet worksheet) {
+	public Element convertRowToXML(GSRow<GSCell> gsRow, GSWorksheet worksheet) {
 		Guard.argumentNotNull(gsRow, "gsRow");
 		Guard.argumentNotNull(worksheet, "worksheet");
 		
 		Element rootElement = DocumentHelper.createElement(worksheet.getName());
-		
-		ListEntry rowEntry = gsRow.getRowEntry();
 		Element childElement ; 
 		
-		 for (String columnHeader : rowEntry.getCustomElements().getTags()){
-			 String columnContent = rowEntry.getCustomElements().getValue(columnHeader);
-			 childElement = rootElement.addElement(columnHeader);
+		for(Map.Entry<String, GSCell> rowMap :gsRow.getChildElements().entrySet()){
+			String columnHeader = rowMap.getKey();
+			String columnContent = rowMap.getValue().getCellValue();
+			childElement = rootElement.addElement(columnHeader);
 			 //TODO need to think about it how we can handle the null value
 			 //if a row contains null value in some of its column then how should handle it
 			 if(columnContent == null || columnContent.equals("")){
@@ -74,7 +75,19 @@ public class SpreadSheetToXMLMapper implements ISpreadSheetToXMLMapper{
 			 }else{
 				 childElement.setText(columnContent);
 			 }
-		 }
+		}
+		
+//		 for (String columnHeader : rowEntry.getCustomElements().getTags()){
+//			 String columnContent = rowEntry.getCustomElements().getValue(columnHeader);
+//			 childElement = rootElement.addElement(columnHeader);
+//			 //TODO need to think about it how we can handle the null value
+//			 //if a row contains null value in some of its column then how should handle it
+//			 if(columnContent == null || columnContent.equals("")){
+//				 childElement.setText("");	 
+//			 }else{
+//				 childElement.setText(columnContent);
+//			 }
+//		 }
 		return rootElement;
 	}
 
@@ -83,18 +96,17 @@ public class SpreadSheetToXMLMapper implements ISpreadSheetToXMLMapper{
 		Guard.argumentNotNull(workSheet, "workSheet");
 		Guard.argumentNotNull(element, "element");
 		
-		List<String> list = new LinkedList<String>();
+		LinkedHashMap<String,String> listMap = new LinkedHashMap<String, String>();
 		GSRow<GSCell> gsRow = null ;
 		
 		for (Iterator<Element> iterator = element.elementIterator(); iterator.hasNext();){
 			Element child = (Element) iterator.next();
-			list.add(child.getText());
+			listMap.put(child.getName(), child.getText());
 		}
-		
-		String[] columnValues = list.toArray(new String[0]);
+	
 		
 		try {
-			gsRow = workSheet.createNewRow(columnValues);
+			gsRow = workSheet.createNewRow(listMap);
 		} catch (IOException e) {
 			throw new MeshException(e);
 		} catch (ServiceException e) {

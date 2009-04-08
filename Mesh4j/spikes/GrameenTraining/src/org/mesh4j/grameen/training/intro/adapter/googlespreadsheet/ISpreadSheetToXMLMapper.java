@@ -29,7 +29,7 @@ public interface ISpreadSheetToXMLMapper {
 	public int getLastUpdateColumnPosition();
 	
 	//for mesh4x manipulation we need convert each row which is item to xml element
-	public Element convertRowToXML(GSRow gsRow ,GSWorksheet worksheet);
+	public Element convertRowToXML(GSRow<GSCell> gsRow ,GSWorksheet worksheet);
 
 	//before save the manipulated item or row to the spreadsheet we need to convert the
 	//mesh4x xml element to spreadsheet listEntry which is row.

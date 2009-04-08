@@ -842,11 +842,10 @@ public class GoogleSpreadsheetUtils {
 			 row = mpRow.getValue();
 			if(row.getGSCells().size()>0){
 				GSCell cell = row.getGSCell(columnIndex);
-				String cellContentAsString = cell.getCellEntry().getCell().getValue();
+				String cellContentAsString = cell.getCellValue();
 				if(cellContentAsString != null && !cellContentAsString.equals("")){
 					if(cellContentAsString.equals(cellValue)){
-						//comparision is successful so, the desired sync info row
-						//is current row
+						//comparison is successful so, the desired  row the is current row
 						 return row;
 					}
 				} 
