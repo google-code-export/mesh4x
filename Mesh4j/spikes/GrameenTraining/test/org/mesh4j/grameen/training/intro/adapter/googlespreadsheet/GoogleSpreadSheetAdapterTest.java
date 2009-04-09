@@ -1,9 +1,11 @@
 package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet;
 
 import java.util.Date;
+import java.util.List;
+
+import junit.framework.Assert;
 
 import org.dom4j.DocumentException;
-import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,7 +26,7 @@ import org.mesh4j.sync.utils.XMLHelper;
 public class GoogleSpreadSheetAdapterTest {
 	private IGoogleSpreadSheet spreadsheet;
 	private ISpreadSheetToXMLMapper mapper;
-	private GSWorksheet workSheet;
+//	private GSWorksheet workSheet;
 	String userName = "mesh4x@gmail.com";
 	String passWord = "g@l@xy24";
 	String GOOGLE_SPREADSHEET_FIELD = "pLUqch-enpf1-GcqnD6qjSA";
@@ -40,27 +42,33 @@ public class GoogleSpreadSheetAdapterTest {
 	
 	@Test
 	public void ShouldSync() throws DocumentException{
-		//emptySpreadSheet();
 		
 		
-		GSWorksheet workSheet0 = spreadsheet.getGSWorksheet(1);//user worksheet 1
-		GSWorksheet workSheet1 = spreadsheet.getGSWorksheet(2);//user worksheet 2
 		
-		SplitAdapter splitAdapterSource = getAdapter(workSheet0, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		GSWorksheet workSheetSource = spreadsheet.getGSWorksheet(1);//user entity source worksheet
+		GSWorksheet workSheetTarget = spreadsheet.getGSWorksheet(2);//user entity target worksheet
+		
+		GSWorksheet workSheetSourceSyncInfo = spreadsheet.getGSWorksheet(3);//user entity source syncinfo worksheet 
+		GSWorksheet workSheetTargetSyncInfo = spreadsheet.getGSWorksheet(4);//user entity target syncinfo worksheet
+	
+	
+		SplitAdapter splitAdapterSource = getAdapter(workSheetSource,workSheetSourceSyncInfo, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		splitAdapterSource.add(getItem1());
 		splitAdapterSource.add(getItem2());
 		
-		SplitAdapter splitAdapterTarget = getAdapter(workSheet1, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		SplitAdapter splitAdapterTarget = getAdapter(workSheetTarget,workSheetTargetSyncInfo, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		splitAdapterTarget.add(getItem3());
 		
 		SyncEngine syncEngine = new SyncEngine(splitAdapterSource,splitAdapterTarget);
-		syncEngine.synchronize();
+		List<Item> conflicts = syncEngine.synchronize();
+		
+		Assert.assertEquals(0, conflicts.size());
 		
 	}
 	
-	private SplitAdapter getAdapter(GSWorksheet workSheet,IIdentityProvider identityProvider,IIdGenerator idGenerator){
-		GoogleSpreadSheetContentAdapter contentRepo = new GoogleSpreadSheetContentAdapter(spreadsheet,workSheet,mapper,"user");
-		GoogleSpreadSheetSyncRepository  syncRepo = new GoogleSpreadSheetSyncRepository(spreadsheet,workSheet,identityProvider,idGenerator,"SYNC_INFO");
+	private SplitAdapter getAdapter(GSWorksheet contentWorkSheet,GSWorksheet syncWorkSheet,IIdentityProvider identityProvider,IIdGenerator idGenerator){
+		GoogleSpreadSheetContentAdapter contentRepo = new GoogleSpreadSheetContentAdapter(spreadsheet,contentWorkSheet,mapper,"user");
+		GoogleSpreadSheetSyncRepository  syncRepo = new GoogleSpreadSheetSyncRepository(spreadsheet,syncWorkSheet,identityProvider,idGenerator,"SYNC_INFO");
 		SplitAdapter splitAdapter = new SplitAdapter(syncRepo,contentRepo,identityProvider);
 		return splitAdapter;
 	}
@@ -124,18 +132,5 @@ public class GoogleSpreadSheetAdapterTest {
 		return new Item(content, sync);
 	}
 	
-	private void emptySpreadSheet(){
-		loadSpreadSheet();
-		GoogleSpreadSheetContentAdapter adapter = new GoogleSpreadSheetContentAdapter(spreadsheet,workSheet,mapper,"user");
-		for(IContent content : adapter.getAll(new Date())){
-			adapter.delete(content);	
-		}
-		adapter.beginSync();
-		adapter.endSync();
-	}
 	
-	private void loadSpreadSheet(){
-		spreadsheet = new GoogleSpreadsheet(GOOGLE_SPREADSHEET_FIELD,userName,passWord);
-		workSheet = spreadsheet.getGSWorksheet("user");
-	}	
 }
