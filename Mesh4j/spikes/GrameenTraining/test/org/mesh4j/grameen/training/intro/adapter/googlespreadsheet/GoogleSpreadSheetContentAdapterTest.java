@@ -11,6 +11,10 @@ import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSWorks
 import org.mesh4j.sync.adapters.feed.XMLContent;
 import org.mesh4j.sync.model.IContent;
 import org.mesh4j.sync.utils.XMLHelper;
+/**
+ * 
+ * @author Raju
+ */
 
 public class GoogleSpreadSheetContentAdapterTest {
 	private IGoogleSpreadSheet spreadsheet;
@@ -25,27 +29,17 @@ public class GoogleSpreadSheetContentAdapterTest {
 		String idColumName = "id";
 		int lastUpdateColumnPosition = 6;
 		int idColumnPosition = 1;
-		spreadsheet = new GoogleSpreadsheet(GOOGLE_SPREADSHEET_FIELD,userName,passWord);
 		mapper = new SpreadSheetToXMLMapper(idColumName,idColumnPosition,lastUpdateColumnPosition);
-		workSheet = spreadsheet.getGSWorksheet("user");
 	}
 	
-	//TODO will test later.rignt now some operation is working
-	//in Mesh4x GData wrapper layer
-	//@Test
-	public void ShouldDeleteAllFromPhysicalSpreedSheet(){
-		GoogleSpreadSheetContentAdapter adapter = new GoogleSpreadSheetContentAdapter(spreadsheet,workSheet,mapper,"user");
-		
-		for(IContent content : adapter.getAll(new Date())){
-			adapter.delete(content);
-		}
-		Assert.assertEquals(adapter.getAll(new Date()).size(), 0);
-		adapter.beginSync();
-		adapter.endSync();
-	}
+	
+	
 		
 	@Test
 	public void ShouldAddContent(){
+		
+		emptySpreadSheet();
+		
 		String id = "4";
 		String title = "User Info";
 		String description = "user Information(id,name,age,city,country)";
@@ -77,6 +71,7 @@ public class GoogleSpreadSheetContentAdapterTest {
 	@Test
 	public void ShouldGetContent(){
 		
+		emptySpreadSheet();
 		
 		String id = "4";
 		String title = "User Info";
@@ -109,6 +104,9 @@ public class GoogleSpreadSheetContentAdapterTest {
 	
 	@Test
 	public void ShouldUpdateContent(){
+		
+		emptySpreadSheet();
+		
 		String id = "";
 		String title = "";
 		String description = "";
@@ -186,11 +184,11 @@ public class GoogleSpreadSheetContentAdapterTest {
 		Assert.assertNotSame(contentDataAsXMLAfterUpdate,contentDataAsXMLBeforeUpdate);
 	}
 	
-	//TODO will test later.rignt now some operation is working
-	//in Mesh4x GData wrapper layer
-	//@Test
+	
+	@Test
 	public void ShouldDeleteContent(){
 		
+		emptySpreadSheet();
 		
 		String id = "";
 		String title = "";
@@ -246,6 +244,9 @@ public class GoogleSpreadSheetContentAdapterTest {
 	
 	@Test
 	public void ShouldAddContentToSpreadSheetAfterFinishEndSync(){
+		
+		emptySpreadSheet();
+		
 		String id = "";
 		String title = "";
 		String description = "";
@@ -299,6 +300,9 @@ public class GoogleSpreadSheetContentAdapterTest {
 	
 	@Test
 	public void ShouldUpdateContentToSpreadSheetAfterFinishEndSync(){
+		
+		emptySpreadSheet();
+		
 		String id = "";
 		String title = "";
 		String description = "";
@@ -382,6 +386,8 @@ public class GoogleSpreadSheetContentAdapterTest {
 	@Test
 	public void ShouldDeleteContentFromSpreadSheetAfterFinishEndSync(){
 		
+		emptySpreadSheet();
+		
 		String id = "";
 		String title = "";
 		String description = "";
@@ -436,10 +442,26 @@ public class GoogleSpreadSheetContentAdapterTest {
 		//only one content2
 	}
 	
+	
 	private IContent getContent(String id,String title,String description,String rawDataAsXML){
 		Element payload = XMLHelper.parseElement(rawDataAsXML);
 		IContent content = new XMLContent(id,title,description,payload);
 		return content;
 	}
 	
+	
+	private void emptySpreadSheet(){
+		loadSpreadSheet();
+		GoogleSpreadSheetContentAdapter adapter = new GoogleSpreadSheetContentAdapter(spreadsheet,workSheet,mapper,"user");
+		for(IContent content : adapter.getAll(new Date())){
+			adapter.delete(content);	
+		}
+		adapter.beginSync();
+		adapter.endSync();
+	}
+	
+	private void loadSpreadSheet(){
+		spreadsheet = new GoogleSpreadsheet(GOOGLE_SPREADSHEET_FIELD,userName,passWord);
+		workSheet = spreadsheet.getGSWorksheet("user");
+	}	
 }

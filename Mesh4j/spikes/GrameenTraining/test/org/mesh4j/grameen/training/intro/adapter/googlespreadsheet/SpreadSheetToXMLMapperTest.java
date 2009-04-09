@@ -1,29 +1,75 @@
 package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet;
 
+import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import junit.framework.Assert;
 
 import org.dom4j.Element;
+import org.junit.Before;
 import org.junit.Test;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSCell;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSRow;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSWorksheet;
+import org.mesh4j.sync.adapters.feed.XMLContent;
+import org.mesh4j.sync.model.IContent;
 import org.mesh4j.sync.utils.XMLHelper;
-
+/**
+ * 
+ * @author Raju
+ */
 public class SpreadSheetToXMLMapperTest {
 
+	private IGoogleSpreadSheet spreadsheet;
+	private ISpreadSheetToXMLMapper mapper;
+	private GSWorksheet workSheet;
+	private String userName = "mesh4x@gmail.com";
+	private String passWord = "g@l@xy24";
+	private String GOOGLE_SPREADSHEET_FIELD = "pLUqch-enpf1-GcqnD6qjSA";
+	
+	@Before
+	public void setUp(){
+		String idColumName = "id";
+		int lastUpdateColumnPosition = 6;
+		int idColumnPosition = 1;
+		mapper = new SpreadSheetToXMLMapper(idColumName,idColumnPosition,lastUpdateColumnPosition);
+	}
+	
 	@Test
 	public void ShouldConvertRowToXMLPayload(){
 		
-		String rawDataAsXML = "<user><id>1</id><name>Raju</name><age>18</age><city>Dhaka</city><country>Bangladesh</country><lastupdate>5/20/2009 1:01:01</lastupdate></user>";
-		SpreadSheetToXMLMapper mapper = new SpreadSheetToXMLMapper("id",1,6);
+		emptySpreadSheet();
 		
-		//put your user name and password
-		IGoogleSpreadSheet spreadsheet = new GoogleSpreadsheet("pTOwHlskRe06LOcTpClQ-Bw","saiful.raju@gmail.com","");
+		String id = "1";
+		String title = "User Info";
+		String description = "user Information(id,name,age,city,country)";
+		String rawDataAsXML = "<user>" +
+								"<id>1</id>" +
+								"<name>Raju</name>" +
+								"<age>18</age>" +
+								"<city>Dhaka</city>" +
+								"<country>Bangladesh</country>" +
+								"<lastupdate>6/11/2009 1:01:01</lastupdate>" +
+								"</user>";
+		
+		Element payload = XMLHelper.parseElement(rawDataAsXML);
+		IContent content = new XMLContent(id,title,description,payload);
+		GoogleSpreadSheetContentAdapter adapter = new GoogleSpreadSheetContentAdapter(spreadsheet,workSheet,mapper,"user");
+		
+		Assert.assertEquals(0, adapter.getAll(new Date()).size());
+		
+		adapter.save(content);
+		 
+		Assert.assertEquals(1, adapter.getAll(new Date()).size());
+		
+		IContent contentFromSpreadSheet = adapter.get("1");
+		
+		Assert.assertEquals(contentFromSpreadSheet.getPayload().asXML(), rawDataAsXML);
+		
+		
 		for(Entry<String, GSWorksheet> spSheet : spreadsheet.getGSSpreadsheet().getGSWorksheets().entrySet()){
-			String key = spSheet.getKey();
+			
 			GSWorksheet<GSRow<GSCell>> workSheet = spSheet.getValue();
 			for(Map.Entry<String, GSRow<GSCell>> gsRowMap :workSheet.getGSRows().entrySet()){
 				GSRow row = gsRowMap.getValue();
@@ -31,7 +77,6 @@ public class SpreadSheetToXMLMapperTest {
 					Element xmlElement = mapper.convertRowToXML(row, workSheet);
 					System.out.println(xmlElement.asXML());
 					Assert.assertEquals(xmlElement.asXML(), rawDataAsXML);
-					break;
 				}
 			}
 			break;
@@ -39,22 +84,128 @@ public class SpreadSheetToXMLMapperTest {
 		
 	}
 	
-	//@Test
+	@Test
 	public void ShouldConvertXMLToRow(){
-		String rawDataAsXML = "<user><name>Raju</name><age>18</age><city>Dhaka</city><country>Bangladesh</country></user>";
-		Element payLoad = XMLHelper.parseElement(rawDataAsXML);
 		
-		//put your user name and password
-		SpreadSheetToXMLMapper mapper = new SpreadSheetToXMLMapper("id",1,6);
-		IGoogleSpreadSheet spreadsheet = new GoogleSpreadsheet("pTOwHlskRe06LOcTpClQ-Bw","saiful.raju@gmail.com","");
-		for(Entry<String, GSWorksheet> spSheetMpa : spreadsheet.getGSSpreadsheet().getGSWorksheets().entrySet()){
-			GSWorksheet workSheet = spSheetMpa.getValue();
-			GSRow row = mapper.convertXMLElementToRow(workSheet,payLoad);
-			Element xmlElement = mapper.convertRowToXML(row, workSheet);
-			Assert.assertEquals(xmlElement.asXML(), rawDataAsXML);
+		emptySpreadSheet();
+		
+		String id = "1";
+		String title = "User Info";
+		String description = "user Information(id,name,age,city,country)";
+		String rawDataAsXML = "<user>" +
+								"<id>1</id>" +
+								"<name>Raju</name>" +
+								"<age>18</age>" +
+								"<city>Dhaka</city>" +
+								"<country>Bangladesh</country>" +
+								"<lastupdate>6/11/2009 1:01:01</lastupdate>" +
+								"</user>";
+		
+		Element payload = XMLHelper.parseElement(rawDataAsXML);
+		IContent content = new XMLContent(id,title,description,payload);
+		GoogleSpreadSheetContentAdapter adapter = new GoogleSpreadSheetContentAdapter(spreadsheet,workSheet,mapper,"user");
+		
+		Assert.assertEquals(0, adapter.getAll(new Date()).size());
+		
+		adapter.save(content);
+		
+		Assert.assertEquals(1, adapter.getAll(new Date()).size());
+		
+		IContent contentFromSpreadSheet = adapter.get("1");
+		
+		
+		for(Entry<String, GSWorksheet> spSheet : spreadsheet.getGSSpreadsheet().getGSWorksheets().entrySet()){
+			
+			GSWorksheet<GSRow<GSCell>> workSheet = spSheet.getValue();
+			for(Map.Entry<String, GSRow<GSCell>> gsRowMap :workSheet.getGSRows().entrySet()){
+				GSRow row = gsRowMap.getValue();
+				//ignoring the first row,as first row is row header
+				if(Integer.parseInt(row.getElementId()) > 1){
+					GSRow<GSCell> rowFromSpreaSheet = mapper.convertXMLElementToRow(workSheet, contentFromSpreadSheet.getPayload());
+					Assert.assertEquals(rowFromSpreaSheet.getGSCell("id").getCellValue(),"1");
+					Assert.assertEquals(rowFromSpreaSheet.getGSCell("name").getCellValue(),"Raju");
+					Assert.assertEquals(rowFromSpreaSheet.getGSCell("age").getCellValue(),"18");
+					Assert.assertEquals(rowFromSpreaSheet.getGSCell("city").getCellValue(),"Dhaka");
+					Assert.assertEquals(rowFromSpreaSheet.getGSCell("country").getCellValue(),"Bangladesh");
+					Assert.assertEquals(rowFromSpreaSheet.getGSCell("lastupdate").getCellValue(),"6/11/2009 1:01:01");
+				}
+			}
 			break;
 		}
 	}
 	
+	@Test
+	public void ShouldNormalizeRow(){
+		
+		emptySpreadSheet();
+		
+		String id = "1";
+		String title = "User Info";
+		String description = "user Information(id,name,age,city,country)";
+		String rawDataAsXML = "<user>" +
+								"<id>1</id>" +
+								"<name>Raju</name>" +
+								"<age>18</age>" +
+								"<city>Dhaka</city>" +
+								"<country>Bangladesh</country>" +
+								"<lastupdate>6/11/2009 1:01:01</lastupdate>" +
+								"</user>";
+		
+		//we are planning to update only age column
+		String rawUpdatedDataAsXML = "<user>" +
+								"<id>1</id>" +
+								"<name>Raju</name>" +
+								"<age>25</age>" +
+								"<city>Dhaka</city>" +
+								"<country>Bangladesh</country>" +
+								"<lastupdate>6/11/2009 1:01:01</lastupdate>" +
+								"</user>";
+		
+		Element payload = XMLHelper.parseElement(rawDataAsXML);
+		Element payLoadToBeUpdated = XMLHelper.parseElement(rawUpdatedDataAsXML);
+		
+		IContent content = new XMLContent(id,title,description,payload);
+		GoogleSpreadSheetContentAdapter adapter = new GoogleSpreadSheetContentAdapter(spreadsheet,workSheet,mapper,"user");
+		
+		Assert.assertEquals(0, adapter.getAll(new Date()).size());
+		
+		adapter.save(content);
+		
+		Assert.assertEquals(1, adapter.getAll(new Date()).size());
+		
+		for(Entry<String, GSWorksheet> spSheet : spreadsheet.getGSSpreadsheet().getGSWorksheets().entrySet()){
+			GSWorksheet<GSRow<GSCell>> workSheet = spSheet.getValue();
+			for(Map.Entry<String, GSRow<GSCell>> gsRowMap :workSheet.getGSRows().entrySet()){
+				GSRow rowTobeUPdated = gsRowMap.getValue();
+				//ignoring the first row,as first row is row header
+				if(Integer.parseInt(rowTobeUPdated.getElementId()) > 1){
+					GSRow<GSCell> updatedRow = mapper.normalizeRow(workSheet, payLoadToBeUpdated, rowTobeUPdated);
+					
+					Assert.assertEquals(updatedRow.getGSCell("id").getCellValue(),"1");
+					Assert.assertEquals(updatedRow.getGSCell("name").getCellValue(),"Raju");
+					Assert.assertEquals(updatedRow.getGSCell("age").getCellValue(),"25");
+					Assert.assertEquals(updatedRow.getGSCell("city").getCellValue(),"Dhaka");
+					Assert.assertEquals(updatedRow.getGSCell("country").getCellValue(),"Bangladesh");
+					Assert.assertEquals(updatedRow.getGSCell("lastupdate").getCellValue(),"6/11/2009 1:01:01");
+				}
+			}
+			break;
+		}
+	}
+	
+	private void emptySpreadSheet(){
+		loadSpreadSheet();
+		GoogleSpreadSheetContentAdapter adapter = new GoogleSpreadSheetContentAdapter(spreadsheet,workSheet,mapper,"user");
+		for(IContent content : adapter.getAll(new Date())){
+			adapter.delete(content);	
+		}
+		adapter.beginSync();
+		adapter.endSync();
+	}
+	
+	private void loadSpreadSheet(){
+		spreadsheet = new GoogleSpreadsheet(GOOGLE_SPREADSHEET_FIELD,userName,passWord);
+		workSheet = spreadsheet.getGSWorksheet("user");
+	}	
 	
 }
