@@ -10,20 +10,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSBaseElement;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSCell;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSRow;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSSpreadsheet;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSWorksheet;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.IGSElement;
-import org.mesh4j.sync.adapters.SyncInfo;
-import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
-import org.mesh4j.sync.id.generator.IIdGenerator;
-import org.mesh4j.sync.model.Sync;
-import org.mesh4j.sync.parsers.SyncInfoParser;
-import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
@@ -31,6 +23,7 @@ import com.google.gdata.client.spreadsheet.CellQuery;
 import com.google.gdata.client.spreadsheet.FeedURLFactory;
 import com.google.gdata.client.spreadsheet.ListQuery;
 import com.google.gdata.client.spreadsheet.SpreadsheetService;
+import com.google.gdata.data.BaseEntry;
 import com.google.gdata.data.Link;
 import com.google.gdata.data.batch.BatchOperationType;
 import com.google.gdata.data.batch.BatchStatus;
@@ -83,37 +76,57 @@ public class GoogleSpreadsheetUtils {
 							batchRequest.getEntries().add(
 									cellToUpdate.getCellEntry());
 						} 
-						// Submit the batch request.
-						CellFeed feed = service.getFeed(worksheet.getWorksheetEntry().getCellFeedUrl(), CellFeed.class);
-					    Link batchLink = feed.getLink(Link.Rel.FEED_BATCH, Link.Type.ATOM);
 						
-						CellFeed batchResultFeed = service.batch(new URL(batchLink.getHref()), batchRequest);			
-			
-						// Make sure all the operations were successful.
-						for (CellEntry entry : batchResultFeed.getEntries()) {
-						  String batchId = BatchUtils.getBatchId(entry);
-						  if (!BatchUtils.isSuccess(entry)) {
-						    BatchStatus status = BatchUtils.getBatchStatus(entry);
-						    String errorMsg = "Failed entry \t" + batchId + " failed (" + status.getReason() + ") " + status.getContent();
-						    System.err.println(errorMsg);
-						    throw new MeshException(new Exception(errorMsg));
-						    //TODO: Need to enhance the exception handling codes
-						    //TODO: Need to think about roll-back mechanism for partial update if such happens
-						  }	
-						}
+						if(updatePool.size() > 0){
+							// Submit the batch request.
+							CellFeed feed = service.getFeed(worksheet.getWorksheetEntry().getCellFeedUrl(), CellFeed.class);
+						    Link batchLink = feed.getLink(Link.Rel.FEED_BATCH, Link.Type.ATOM);
+							
+							CellFeed batchResultFeed = service.batch(new URL(batchLink.getHref()), batchRequest);			
+				
+							// Make sure all the operations were successful.
+							for (CellEntry entry : batchResultFeed.getEntries()) {
+							  String batchId = BatchUtils.getBatchId(entry);
+							  if (!BatchUtils.isSuccess(entry)) {
+							    BatchStatus status = BatchUtils.getBatchStatus(entry);
+							    String errorMsg = "Failed entry \t" + batchId + " failed (" + status.getReason() + ") " + status.getContent();
+							    System.err.println(errorMsg);
+							    throw new MeshException(new Exception(errorMsg));
+							    //TODO: Need to enhance the exception handling codes
+							    //TODO: Need to think about roll-back mechanism for partial update if such happens
+							  }	
+							}
+						
+							//update succeed, so mark the cells not dirty
+							for (GSBaseElement elementToUpdate : updatePool.values()) {
+								elementToUpdate.unsetDirty();
+							}
+						}	
 						
 					}catch (Exception e) {
 						throw new MeshException(e);
 					}finally{
 					}
 					
-
-					//process insert pool
+					//process insert/update pool (row)
 					for (GSBaseElement elementToInsert : insertPool.values()) {
 						if(elementToInsert instanceof GSRow){
 							ListEntry newEntry = (ListEntry) elementToInsert.getBaseEntry();
 							try {
-							   service.insert(worksheet.getWorksheetEntry().getListFeedUrl(), newEntry);
+								BaseEntry le = null;						
+								if(newEntry.getId() == null)
+									le = service
+											.insert(worksheet.getWorksheetEntry()
+													.getListFeedUrl(), newEntry);
+								else
+									le = elementToInsert.getBaseEntry().update();
+								
+								elementToInsert.setBaseEntry(le);
+								
+								//refresh this but not its childs!
+								elementToInsert.unsetDirty(false);
+								elementToInsert.refreshMe();
+							   
 							} catch (IOException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
@@ -123,15 +136,6 @@ public class GoogleSpreadsheetUtils {
 							}
 						}
 					}
-					
-/*					String batchId = "R" + newRowIndex + "C" + col;
-					URL entryUrl = new URL(((WorksheetEntry) this.getBaseEntry())
-							.getCellFeedUrl().toString()
-							+ "/" + batchId);
-
-					CellEntry newCell = ((WorksheetEntry) this.getBaseEntry())
-							.getService().getEntry(entryUrl, CellEntry.class);
-*/					
 					
 					
 					//process delete pool
@@ -147,9 +151,14 @@ public class GoogleSpreadsheetUtils {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
+						
 					}
 					
 				} // if(updatePool.size() > 0 || deletePool.size() > 0)
+				
+				//this will remove the deleted childs (if any) in memory and update list index of remaining childs
+				worksheet.refreshMe();
+				worksheet.unsetDirty();
 				
 			}// if (worksheet.isDirty())
 		}//end for
@@ -179,9 +188,26 @@ public class GoogleSpreadsheetUtils {
 					if (subElement instanceof GSCell) {
 						// add subElement to update pool
 						updatePool.put(subElement.getId(), subElement);
-					} else if (subElement instanceof GSRow && 
-							subElement.getBaseEntry().getId() == null ){//only for new rows
-						insertPool.put(subElement.getElementId(), subElement);  	
+					} else if (subElement instanceof GSRow){ 
+							if(subElement.getBaseEntry().getId() == null ){//only for new rows
+								insertPool.put(subElement.getElementId(), subElement);
+							}else{
+								//if all childs are new but row has an ID
+								//then add it to insert pool () 
+								boolean eligible = true;
+								for (IGSElement child : ((GSRow<GSCell>) subElement)
+									.getChildElements().values()) {
+									if (child.isDirty()
+										&& child.getBaseEntry().getId() != null) {
+										eligible = false;
+										break;
+									}										
+								}
+								if(eligible)
+									insertPool.put(subElement.getElementId(), subElement);
+								else
+									processElementForFlush(subElement, insertPool, updatePool, deletePool);
+							}	
 					} else
 						processElementForFlush(subElement, insertPool, updatePool, deletePool);
 				}
