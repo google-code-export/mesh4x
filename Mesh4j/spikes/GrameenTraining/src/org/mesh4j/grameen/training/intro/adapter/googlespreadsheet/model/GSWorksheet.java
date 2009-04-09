@@ -249,7 +249,7 @@ public class GSWorksheet<C> extends GSBaseElement<C> {
 		
 	@SuppressWarnings("unchecked")
 	@Override
-	public void refreshMe() throws IOException, ServiceException {
+	public void refreshMeFromFeed() throws IOException, ServiceException{
 		if(this.isDirty()){
 			
 			List<ListEntry> rowList = GoogleSpreadsheetUtils
@@ -283,6 +283,7 @@ public class GSWorksheet<C> extends GSBaseElement<C> {
 			this.dirty = false;
 			this.deleteCandidate = false;
 		}
+ 			
 	}
 
 

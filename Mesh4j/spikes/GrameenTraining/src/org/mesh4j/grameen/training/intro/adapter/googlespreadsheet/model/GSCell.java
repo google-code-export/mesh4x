@@ -140,7 +140,8 @@ public class GSCell extends GSBaseElement {
 	}
 
 
-	public void refreshMe(){
+	@Override
+	public void refreshMeFromFeed(){
 		if(this.isDirty()){
 			try {
 				URL entryUrl = new URL(((WorksheetEntry) this

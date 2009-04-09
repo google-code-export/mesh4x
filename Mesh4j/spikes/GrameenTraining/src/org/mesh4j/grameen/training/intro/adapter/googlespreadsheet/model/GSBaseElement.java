@@ -56,7 +56,7 @@ public abstract class GSBaseElement<C> implements IGSElement<C>{
 	 * child element check can be enabled or disabled by the flag forcedChildCheck  
 	 */
 	@SuppressWarnings("unchecked")
-	public void setRefresh(boolean forcedChildCheck){
+	public void unsetDirty(boolean forcedChildCheck){
 		//check if any of its child elements is dirty yet
 		if(forcedChildCheck && childElements != null){
 			for(C element: childElements.values()){
@@ -71,15 +71,15 @@ public abstract class GSBaseElement<C> implements IGSElement<C>{
 		this.dirty = false;
 		
 		if( getParentElement() !=null )
-			((IGSElement<?>) parentElement).setRefresh();
+			((IGSElement<?>) parentElement).unsetDirty();
 		
 	}
 	
 	/**
 	 * refresh an element, force child element check true by default   
 	 */
-	public void setRefresh(){
-		setRefresh(true);		
+	public void unsetDirty(){
+		unsetDirty(true);		
 	}
 	
 	/**
@@ -175,6 +175,36 @@ public abstract class GSBaseElement<C> implements IGSElement<C>{
 		this.childElements.put(key, element);
 	}	
 	
-	public abstract void refreshMe() throws IOException, ServiceException;
+	/**
+	 * this will remove the deleted entries in memory and update list index of remaining
+	 */
+	@SuppressWarnings("unchecked")
+	public void refreshMe(){
+		if (this.childElements == null || this.childElements.size() == 0)
+			return;
+
+		Map<String, C> nonDeletedClildElements = new LinkedHashMap();
+		int listIndex = 1;
+		
+		for (String key : this.childElements.keySet()) {
+			if (!((GSBaseElement) this.childElements.get(key))
+					.isDeleteCandidate()) {
+				
+				GSBaseElement e = (GSBaseElement) this.childElements.get(key);
+				e.elementListIndex = listIndex;
+				
+				if(e instanceof GSCell)
+					nonDeletedClildElements.put(key, (C) e);
+				else
+					nonDeletedClildElements.put(e.getElementId(), (C) e);
+				
+				listIndex++;
+			}
+		}
+
+		this.childElements.clear();	
+		this.childElements.putAll(nonDeletedClildElements);
+	}
 	
+	public abstract void refreshMeFromFeed() throws IOException, ServiceException;
 }

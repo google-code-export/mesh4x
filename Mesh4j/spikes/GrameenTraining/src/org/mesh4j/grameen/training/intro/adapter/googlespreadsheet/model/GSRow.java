@@ -1,7 +1,6 @@
 package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -297,9 +296,9 @@ public class GSRow<C> extends GSBaseElement<C>{
 	}	
 	
 	@SuppressWarnings("deprecation")
-	public void refreshMe(){
+	@Override
+	public void refreshMeFromFeed() throws IOException, ServiceException{
 		if(this.isDirty()){
-			try {
 				if (this.baseEntry.getId() == null) { //if it is a newly added row
 					this.baseEntry = GoogleSpreadsheetUtils
 							.getListEntryFromFeed(
@@ -311,30 +310,12 @@ public class GSRow<C> extends GSBaseElement<C>{
 					this.baseEntry = this.baseEntry.getService().getEntry(
 							entryUrl, ListEntry.class);
 				}
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ServiceException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 			
 			WorksheetEntry worksheet = (WorksheetEntry) this
 				.getParentElement().getBaseEntry();
 	
-			try {
 				this.getChildElements().clear();
 				this.populateClild_BLOCKED(worksheet);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ServiceException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 			
 			
 			this.dirty = false;

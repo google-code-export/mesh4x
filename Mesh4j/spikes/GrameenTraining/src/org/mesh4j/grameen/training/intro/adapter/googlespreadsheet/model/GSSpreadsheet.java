@@ -78,7 +78,7 @@ public class GSSpreadsheet<C> extends GSBaseElement<C>{
 	}
 
 	@Override
-	public void refreshMe() {
+	public void refreshMeFromFeed() {
 		// TODO Auto-generated method stub
 		
 	}
