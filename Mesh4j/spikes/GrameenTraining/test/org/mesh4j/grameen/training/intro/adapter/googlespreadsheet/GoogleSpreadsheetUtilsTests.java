@@ -184,17 +184,23 @@ public class GoogleSpreadsheetUtilsTests {
 
 		LinkedHashMap<String, String> values = new LinkedHashMap<String, String>();
 		for(String key :  ws.getCellHeaderTagset()){
-			values.put( key, "New Cell");
+			values.put( key, "New super Cool Cell");
 		}
 		GSRow<GSCell> newGSRow = ws.createNewRow(values);
 		
 		ws.addNewRow(newGSRow);
 		
-		GoogleSpreadsheetUtils.flush(gss.getService(), ss);		
+		GoogleSpreadsheetUtils.flush(gss.getService(), ss);	
+				
+		GSCell gsCell_1 = ws.getGSCell(newGSRow.getRowIndex(), 3);		
+		gsCell_1.updateCellValue("New super Hot cell");	
+
+		GoogleSpreadsheetUtils.flush(gss.getService(), ss);	
+		
 	}		
 	
 		
-	//@Test OK   
+	//@Test   
 	public void shouldDeleteRow() throws IOException, ServiceException {
 		GSSpreadsheet<GSWorksheet> ss = getSampleGoogleSpreadsheet();
 		GSWorksheet<GSRow> ws = ss.getGSWorksheet(1); //get the first sheet
@@ -202,7 +208,7 @@ public class GoogleSpreadsheetUtilsTests {
 		Assert.assertNotNull(ws);		
 		Assert.assertEquals(ws.getId(), ss.getChildElement("1").getId()); //get the first sheet from another method and check if they are equal
 
-		ws.deleteChildElement("7");		
+		ws.deleteChildElement("5");		
 		
 		GoogleSpreadsheetUtils.flush(gss.getService(), ss);		
 	}		
