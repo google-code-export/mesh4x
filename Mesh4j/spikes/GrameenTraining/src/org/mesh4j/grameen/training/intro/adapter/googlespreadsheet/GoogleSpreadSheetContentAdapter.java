@@ -60,7 +60,7 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 		this.type = type;
 		//right now we are planning to give the entity name as the title of the each sheet
 		this.sheetName = workSheet.getName();
-		this.lastUpdateColumnIndex = mapper.getLastUpdateColumnPosition();
+//		this.lastUpdateColumnIndex = mapper.getLastUpdateColumnPosition();
 		this.idColumnName = mapper.getIdColumnName();
 		
 	}
@@ -90,7 +90,7 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 	
 	@Override
 	public List<IContent> getAll(Date since) {
-		Guard.argumentNotNull(since, "content");
+//		Guard.argumentNotNull(since, "since");
 		
 		List<IContent> listOfAll = new LinkedList<IContent>();
 		//we will not count first row,since this is header row
