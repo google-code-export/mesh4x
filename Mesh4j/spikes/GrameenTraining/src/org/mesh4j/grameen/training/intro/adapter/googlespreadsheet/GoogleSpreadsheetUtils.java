@@ -138,7 +138,8 @@ public class GoogleSpreadsheetUtils {
 					for (GSBaseElement elementToDetete : deletePool.values()) {
 						
 						try {
-							elementToDetete.getBaseEntry().delete();
+							if(elementToDetete.getBaseEntry().getId() != null) //entry physically exists in the spreadsheet file
+								elementToDetete.getBaseEntry().delete();
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
