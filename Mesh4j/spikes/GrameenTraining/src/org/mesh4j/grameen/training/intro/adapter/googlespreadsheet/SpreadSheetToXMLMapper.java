@@ -3,8 +3,6 @@ package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import org.dom4j.DocumentHelper;
@@ -15,7 +13,6 @@ import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSWorks
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
-import com.google.gdata.data.spreadsheet.ListEntry;
 import com.google.gdata.util.ServiceException;
 /**
  * 
@@ -69,25 +66,13 @@ public class SpreadSheetToXMLMapper implements ISpreadSheetToXMLMapper{
 			String columnContent = rowMap.getValue().getCellValue();
 			childElement = rootElement.addElement(columnHeader);
 			 //TODO need to think about it how we can handle the null value
-			 //if a row contains null value in some of its column then how should handle it
+			 //if a row contains null value in some of its column, then how should handle it??
 			 if(columnContent == null || columnContent.equals("")){
 				 childElement.setText("");	 
 			 }else{
 				 childElement.setText(columnContent);
 			 }
 		}
-		
-//		 for (String columnHeader : rowEntry.getCustomElements().getTags()){
-//			 String columnContent = rowEntry.getCustomElements().getValue(columnHeader);
-//			 childElement = rootElement.addElement(columnHeader);
-//			 //TODO need to think about it how we can handle the null value
-//			 //if a row contains null value in some of its column then how should handle it
-//			 if(columnContent == null || columnContent.equals("")){
-//				 childElement.setText("");	 
-//			 }else{
-//				 childElement.setText(columnContent);
-//			 }
-//		 }
 		return rootElement;
 	}
 
@@ -103,7 +88,6 @@ public class SpreadSheetToXMLMapper implements ISpreadSheetToXMLMapper{
 			Element child = (Element) iterator.next();
 			listMap.put(child.getName(), child.getText());
 		}
-	
 		
 		try {
 			gsRow = workSheet.createNewRow(listMap);

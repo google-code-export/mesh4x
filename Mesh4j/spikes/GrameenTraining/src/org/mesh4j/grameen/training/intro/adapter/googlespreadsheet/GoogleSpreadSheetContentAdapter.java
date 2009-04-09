@@ -73,7 +73,6 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 		GSRow row = GoogleSpreadsheetUtils.getRow(this.workSheet, mapper.getIdColumnPosition(), entityContent.getId());
 		if(row != null){
 			this.workSheet.deleteChildElement(row.getElementId());
-			//GoogleSpreadsheetUtils.flush(spreadSheet.getService(), spreadSheet.getGSSpreadsheet());
 		}
 	}
 
@@ -81,7 +80,6 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 	public IContent get(String contentId) {
 		Guard.argumentNotNullOrEmptyString(contentId, "contentId");
 		//here contentId is entityid 
-//		GSRow row = this.workSheet.getGSRow(Integer.parseInt(contentId));
 		GSRow row = GoogleSpreadsheetUtils.getRow(this.workSheet, mapper.getIdColumnPosition(), contentId);
 		if(row != null){
 			Element payLoad = mapper.convertRowToXML(row, this.workSheet);
@@ -157,11 +155,9 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 
 		GSRow<GSCell> row = this.mapper.convertXMLElementToRow(this.workSheet,entityContent.getPayload());
 		this.workSheet.addChildElement(row.getElementId(), row);
-		//GoogleSpreadsheetUtils.flush(spreadSheet.getService(), spreadSheet.getGSSpreadsheet());
-		//row.refreshMe();
-		printTest();
 	}
 	
+	@SuppressWarnings("unused")
 	private void printTest(){
 		for(Map.Entry<String,GSRow<GSCell>> rowMap :this.workSheet.getGSRows().entrySet()){
 			GSRow<GSCell> gsRow = rowMap.getValue();
@@ -180,9 +176,6 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 	private void updateRow(EntityContent entityContent,GSRow<GSCell> rowTobeUpdated){
 		GSRow row = this.mapper.normalizeRow(workSheet, entityContent.getPayload(), rowTobeUpdated);
 		this.workSheet.updateChildElement(row.getElementId(), row);
-		
-		//GoogleSpreadsheetUtils.flush(spreadSheet.getService(), spreadSheet.getGSSpreadsheet());
-		//row.refreshMe();
 	}
 	
 	@Override

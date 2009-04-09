@@ -120,8 +120,6 @@ public class GoogleSpreadSheetSyncRepository implements ISyncRepository,ISyncAwa
 	private void addRow(SyncInfo syncInfo){
 		GSRow<GSCell> row = createSyncRow(syncInfo);
 		this.workSheet.addChildElement(row.getElementId(),row);
-		//GoogleSpreadsheetUtils.flush(spreadSheet.getService(), spreadSheet.getGSSpreadsheet());
-		//row.refreshMe();
 	}
 	
 	@SuppressWarnings("unused")
@@ -140,8 +138,6 @@ public class GoogleSpreadSheetSyncRepository implements ISyncRepository,ISyncAwa
 	private void updateRow(GSRow rowTobeUPdated  ,SyncInfo syncInfo){
 		GSRow updatedRow = convertSyncInfoToRow(rowTobeUPdated, syncInfo);
 		this.workSheet.updateChildElement(String.valueOf(updatedRow.getRowIndex()), updatedRow);
-		//GoogleSpreadsheetUtils.flush(spreadSheet.getService(), spreadSheet.getGSSpreadsheet());
-		//updatedRow.refreshMe();
 	}
 	
 	
