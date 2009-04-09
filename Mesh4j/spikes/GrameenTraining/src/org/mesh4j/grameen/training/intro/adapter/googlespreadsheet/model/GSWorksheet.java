@@ -1,26 +1,16 @@
 package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
-import java.util.Set;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadsheetUtils;
 
-import sun.reflect.ReflectionFactory.GetReflectionFactoryAction;
 
-import com.google.gdata.client.spreadsheet.SpreadsheetService;
 import com.google.gdata.data.BaseEntry;
-import com.google.gdata.data.batch.BatchUtils;
 import com.google.gdata.data.spreadsheet.CellEntry;
 import com.google.gdata.data.spreadsheet.ListEntry;
 import com.google.gdata.data.spreadsheet.WorksheetEntry;
@@ -80,6 +70,7 @@ public class GSWorksheet<C> extends GSBaseElement<C> {
 	 * @param rowIndex
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	public C getGSRow(int rowIndex) {
 		
 		for(GSRow gsRow : ((GSWorksheet<GSRow>)this).getChildElements().values()){
@@ -149,6 +140,7 @@ public class GSWorksheet<C> extends GSBaseElement<C> {
 	 * get the cell header tag as an ordered set according to their order in spreadsheet 
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	public List<String> getCellHeaderTagset() {
 		List<String> tagList = new ArrayList<String>();
 		if (this.getChildElements().size() > 0) {
@@ -173,6 +165,7 @@ public class GSWorksheet<C> extends GSBaseElement<C> {
 	 * 
 	 * @param rowToAdd
 	 */
+	@SuppressWarnings("unchecked")
 	public void addNewRow(GSRow rowToAdd) {		
 		int newRowIndex = this.getNonDeletedChildElements().size() + 1;
 		rowToAdd.elementListIndex= newRowIndex;
@@ -219,6 +212,7 @@ public class GSWorksheet<C> extends GSBaseElement<C> {
 		return newGSRow;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Deprecated
 	public GSRow<GSCell> createNewRow(String[] values) throws IOException, ServiceException {
 

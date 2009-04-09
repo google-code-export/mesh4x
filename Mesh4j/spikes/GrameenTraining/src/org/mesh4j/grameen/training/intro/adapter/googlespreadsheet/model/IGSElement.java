@@ -16,7 +16,10 @@ public interface IGSElement<C> {
 	boolean isDirty();
 	boolean isDeleteCandidate();
 	void setDirty();
-	void setDeleteCandidate();
+	void setDeleteCandidate();	
+	
+	void setRefresh();
+	void setRefresh(boolean forcedChildCheck);
 	
 	String getId();
 	int getElementListIndex();

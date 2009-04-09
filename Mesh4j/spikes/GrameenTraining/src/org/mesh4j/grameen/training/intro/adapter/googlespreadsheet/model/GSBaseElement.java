@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.Map.Entry;
 
 import org.mesh4j.sync.validations.MeshException;
 
@@ -53,6 +52,37 @@ public abstract class GSBaseElement<C> implements IGSElement<C>{
 	}	
 	
 	/**
+	 * refresh an element, 
+	 * child element check can be enabled or disabled by the flag forcedChildCheck  
+	 */
+	@SuppressWarnings("unchecked")
+	public void setRefresh(boolean forcedChildCheck){
+		//check if any of its child elements is dirty yet
+		if(forcedChildCheck && childElements != null){
+			for(C element: childElements.values()){
+				if(((GSBaseElement)element).isDeleteCandidate())
+					continue;
+				else if (((GSBaseElement)element).isDirty()){					
+					return;
+				}
+			}
+		}
+		
+		this.dirty = false;
+		
+		if( getParentElement() !=null )
+			((IGSElement<?>) parentElement).setRefresh();
+		
+	}
+	
+	/**
+	 * refresh an element, force child element check true by default   
+	 */
+	public void setRefresh(){
+		setRefresh(true);		
+	}
+	
+	/**
 	 * return the unique element id specified for that element in the spreadsheet 
 	 *   
 	 * @return
@@ -82,6 +112,10 @@ public abstract class GSBaseElement<C> implements IGSElement<C>{
 		return baseEntry;
 	}
 
+	public void setBaseEntry(BaseEntry<?> baseEntry){
+		this.baseEntry = baseEntry;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public GSBaseElement getParentElement(){
 		return parentElement;
@@ -94,6 +128,11 @@ public abstract class GSBaseElement<C> implements IGSElement<C>{
 		return this.childElements;
 	}
 
+	/**
+	 * returns a map of non-deleted child elements
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
 	public Map<String, C> getNonDeletedChildElements() {		
 		Map<String, C> nonDeletedClildElements = new LinkedHashMap();
 

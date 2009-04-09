@@ -83,6 +83,11 @@ public class GSCell extends GSBaseElement {
 		this.setDirty();
 	} 	
 
+	
+	public String getColumnTag() {
+		return columnTag;
+	}
+
 	/**
 	 * return content/value of this cell
 	 * @param value

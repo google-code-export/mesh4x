@@ -17,7 +17,6 @@ import com.google.gdata.data.spreadsheet.ListEntry;
 import com.google.gdata.data.spreadsheet.ListFeed;
 import com.google.gdata.data.spreadsheet.WorksheetEntry;
 import com.google.gdata.util.ServiceException;
-import com.sun.xml.internal.ws.api.server.WSWebServiceContext;
 
 /**
  * This class is to wrap a {@link ListEntry}, also contains a list of references
