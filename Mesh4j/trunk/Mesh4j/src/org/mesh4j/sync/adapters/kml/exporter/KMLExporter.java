@@ -19,35 +19,37 @@ public class KMLExporter {
 
 	private final static Log LOGGER = LogFactory.getLog(KMLExporter.class);
 	
-	public static void export(String fileName, String documentName, List<Item> items, ISchema schema, IMapping mappingResolver) throws Exception {
-		String kmlXml = generateKML(documentName, items, schema, mappingResolver);
+	public static void export(String fileName, String documentName, List<Item> items, ISchema schema, IMapping mapping) throws Exception {
+		String kmlXml = generateKML(documentName, items, schema, mapping);
 		FileUtils.write(fileName, kmlXml.getBytes());
 	}
 	
-	public static String generateKML(String documentName, List<Item> items, ISchema schema, IMapping mappingResolver) {
+	public static String generateKML(String documentName, List<Item> items, ISchema schema, IMapping mapping) {
 		StringBuffer sb = new StringBuffer();
 		sb.append(MessageFormat.format("<?xml version=\"1.0\" encoding=\"UTF-8\"?><kml xmlns=\"http://earth.google.com/kml/2.2\"><Document><name>{0}</name><open>1</open>", documentName));
 		for (Item item : items) {
 			Element element = schema.asInstancePlainXML(item.getContent().getPayload(), ISchema.EMPTY_FORMATS);
-			makeElement(sb, element, mappingResolver);
+			String xml = makePlacemark(element, mapping);
+			sb.append(xml);
 		}
 		sb.append("</Document></kml>");
 		return sb.toString();
 	}
 	
-	private static void makeElement(StringBuffer sb, Element element, IMapping mappingResolver) {
+	public static String makePlacemark(Element element, IMapping mapping) {
 		try{
-			String longitude= mappingResolver.getValue(element, GeoCoderLongitudePropertyResolver.MAPPING_NAME);
-			String latitude= mappingResolver.getValue(element, GeoCoderLatitudePropertyResolver.MAPPING_NAME);
+			String longitude= mapping.getValue(element, GeoCoderLongitudePropertyResolver.MAPPING_NAME);
+			String latitude= mapping.getValue(element, GeoCoderLatitudePropertyResolver.MAPPING_NAME);
 
 			if(longitude != null && longitude.trim().length() > 0 && latitude != null && latitude.trim().length() > 0){
-				String name = mappingResolver.getValue(element, ISyndicationFormat.MAPPING_NAME_ITEM_TITLE);
-				String description = mappingResolver.getValue(element, ISyndicationFormat.MAPPING_NAME_ITEM_DESCRIPTION);
-				sb.append(MessageFormat.format("<Placemark><name>{0}</name><description><![CDATA[{1}]]></description><Point><coordinates>{2},{3}</coordinates></Point></Placemark>", name, description, longitude, latitude));
+				String name = mapping.getValue(element, ISyndicationFormat.MAPPING_NAME_ITEM_TITLE);
+				String description = mapping.getValue(element, ISyndicationFormat.MAPPING_NAME_ITEM_DESCRIPTION);
+				return MessageFormat.format("<Placemark><name>{0}</name><description><![CDATA[{1}]]></description><Point><coordinates>{2},{3}</coordinates></Point></Placemark>", name, description, longitude, latitude);
 			}
 		} catch (MeshException e) {
 			LOGGER.error(e.getMessage(), e);
 		}
+		return null;
 	}
 
 }
