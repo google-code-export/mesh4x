@@ -9,9 +9,12 @@ import org.hibernate.HibernateException;
 import org.mesh4j.sync.adapters.hibernate.mapping.MappingGenerator;
 
 import com.healthmarketscience.jackcess.Column;
+import com.healthmarketscience.jackcess.ColumnBuilder;
+import com.healthmarketscience.jackcess.DataType;
 import com.healthmarketscience.jackcess.Database;
 import com.healthmarketscience.jackcess.Index;
 import com.healthmarketscience.jackcess.Table;
+import com.healthmarketscience.jackcess.TableBuilder;
 
 public class MsAccessHibernateMappingGenerator {
 
@@ -86,58 +89,48 @@ public class MsAccessHibernateMappingGenerator {
 		}
 	}
 
-//	public static void createSyncTableIfAbsent(String mdbFileName, String baseTableName) throws Exception {
-//
-//		File mdbFile = new File(mdbFileName);
-//		Database db = Database.open(mdbFile, false, true);
-//		String tableName = getSyncTableName(baseTableName);
-//		try{
-//			Table table = db.getTable(tableName);
-//			if(table == null){
-//				TableBuilder tableBuilder = new TableBuilder(tableName);
-//				
-//				Database dbTemplate = Database.open(new File(MsAccessHelper.class.getResource("template.mdb").getFile()));
-//				Table syncTemplateTable = dbTemplate.getTable("sync_info");
-//				tableBuilder.addColumn(syncTemplateTable.getColumn("sync_id"));
-//				tableBuilder.addColumn(syncTemplateTable.getColumn("entity_name"));
-//				tableBuilder.addColumn(syncTemplateTable.getColumn("entity_id"));
-//				tableBuilder.addColumn(syncTemplateTable.getColumn("entity_version"));
-//				tableBuilder.addColumn(syncTemplateTable.getColumn("sync_data"));
-//
-//				dbTemplate.close();
-//				
-//				table = tableBuilder.toTable(db);
-//				
-//				db.flush();
-//				table = new TableBuilder(tableName)
-//					.addColumn(new ColumnBuilder("sync_id")
-//						.setType(DataType.TEXT)
-//						.setMaxLength()
-//						.toColumn())
-//					.addColumn(new ColumnBuilder("entity_name")
-//						.setType(DataType.TEXT)
-//						.setMaxLength()
-//						.setCompressedUnicode(true)
-//						.toColumn())
-//					.addColumn(new ColumnBuilder("entity_id")
-//						.setType(DataType.TEXT)
-//						.setMaxLength()
-//						.setCompressedUnicode(true)
-//						.toColumn())
-//					.addColumn(new ColumnBuilder("entity_version")
-//						.setType(DataType.TEXT)
-//						.setMaxLength()
-//						.toColumn())
-//					.addColumn(new ColumnBuilder("sync_data")
-//						.setType(DataType.MEMO)
-//						.setCompressedUnicode(true)
-//						.toColumn())
-//					.toTable(db);
-//			}
-//		} finally{
-//			db.close();
-//		}
-//	}
+	public static void createSyncTableIfAbsent(String mdbFileName, String baseTableName) throws Exception {
+
+		File mdbFile = new File(mdbFileName);
+		Database db = Database.open(mdbFile, false, true);
+		String tableName = getSyncTableName(baseTableName);
+		try{
+			Table table = db.getTable(tableName);
+			if(table == null){
+							
+				table = new TableBuilder(tableName)
+					.addColumn(new ColumnBuilder("sync_id")
+						.setType(DataType.TEXT)
+						.setMaxLength()
+						.toColumn())
+					.addColumn(new ColumnBuilder("entity_name")
+						.setType(DataType.TEXT)
+						.setMaxLength()
+						.setCompressedUnicode(true)
+						.toColumn())
+					.addColumn(new ColumnBuilder("entity_id")
+						.setType(DataType.TEXT)
+						.setMaxLength()
+						.setCompressedUnicode(true)
+						.toColumn())
+					.addColumn(new ColumnBuilder("entity_version")
+						.setType(DataType.TEXT)
+						.setMaxLength()
+						.toColumn())
+					.addColumn(new ColumnBuilder("sync_data")
+						.setType(DataType.MEMO)
+						.setCompressedUnicode(true)
+						.toColumn())
+					.toTable(db);
+				
+				db.flush();
+			}
+		}catch(Exception e){
+			System.out.print(e.toString());
+		} finally{
+			db.close();
+		}
+	}
 
 	private static String getSyncTableName(String baseTableName) {
 		return baseTableName+"_sync";
