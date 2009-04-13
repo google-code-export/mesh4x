@@ -7,8 +7,9 @@ import org.mesh4j.sync.security.IIdentityProvider;
 public interface ISyncAdapterBuilder {
 
 	/**
+	 * creates adapter for excel repository
 	 * 
-	 * @param sheetName, the physical sheetname of the excel file 
+	 * @param sheetName, the physical sheet name of the excel file 
 	 * @param idColumnName, the name of the identity column of entity
 	 * @param contentFileName,the content file which actually contains the provided sheet
 	 * @param syncFileName,the sync file which actually contains the
