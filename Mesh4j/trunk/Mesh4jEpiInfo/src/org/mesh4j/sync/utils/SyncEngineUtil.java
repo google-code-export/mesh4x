@@ -412,7 +412,13 @@ public class SyncEngineUtil {
 	
 	public static Mapping getMappings(String dataSource, PropertiesProvider propertiesProvider) throws Exception{
 		String mappingsFileName = getMappingsFileName(dataSource, propertiesProvider);
-		Element root = XMLHelper.readDocument(new File(mappingsFileName)).getRootElement();
+		File file = new File(mappingsFileName);
+		if(!file.exists()){
+			return null;
+		}
+		
+		
+		Element root = XMLHelper.readDocument(file).getRootElement();
 		
 		IGeoCoder geoCoder = new GoogleGeoCoder(propertiesProvider.getGeoCoderKey());
 		GeoCoderLatitudePropertyResolver propertyResolverLat = new GeoCoderLatitudePropertyResolver(geoCoder);
