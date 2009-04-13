@@ -153,4 +153,8 @@ public class HibernateContentAdapter implements IIdentifiableContentAdapter {
 		}
 	}
 
+	public IHibernateToXMLMapping getMapping() {
+		return mapping;		
+	}
+
 }
