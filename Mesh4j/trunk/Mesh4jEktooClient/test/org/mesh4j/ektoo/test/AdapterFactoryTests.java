@@ -105,7 +105,7 @@ public class AdapterFactoryTests {
 	  Assert.assertTrue(feed.getItems().isEmpty());
 	 }
 	
-	//@Test
+	@Test
 	public void shouldCreateGoogleSpreadSheetAdapter() throws DocumentException{
 	
 		String idColumName = "id";
