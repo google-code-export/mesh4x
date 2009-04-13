@@ -23,7 +23,8 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder{
 		
 		MsExcel contentExcel = null;
 		MsExcel syncExcel = null;
-		//TODO if file doesnt exist then create with the help of schema
+		//TODO if file doesn't exist then create file with the help of schema
+		//request the client to provide the schema
 		if(contentFileName.equals(syncFileName)){
 			File file = getFile(contentFileName);
 			contentExcel = new MsExcel(file.getAbsolutePath());
