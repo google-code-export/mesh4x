@@ -1,6 +1,7 @@
 package org.mesh4j.ektoo.test;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 
 import org.dom4j.DocumentException;
@@ -23,6 +24,10 @@ import org.mesh4j.sync.adapters.hibernate.HibernateContentAdapter;
 import org.mesh4j.sync.adapters.hibernate.mapping.HibernateToRDFMapping;
 import org.mesh4j.sync.adapters.http.HttpSyncAdapter;
 import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
+import org.mesh4j.sync.adapters.msexcel.MSExcelToPlainXMLMapping;
+import org.mesh4j.sync.adapters.msexcel.MsExcel;
+import org.mesh4j.sync.adapters.msexcel.MsExcelContentAdapter;
+import org.mesh4j.sync.adapters.msexcel.MsExcelSyncRepository;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.IContent;
@@ -30,6 +35,7 @@ import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.Sync;
 import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
+import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.test.utils.TestHelper;
 import org.mesh4j.sync.utils.XMLHelper;
@@ -77,6 +83,17 @@ public class AdapterFactoryTests {
 	   Assert.assertEquals(1, syncAdapter.getAll().size());
 	}
 	
+	@Test
+	public void shouldCreateMsExcelAdapter() throws IOException, DocumentException{
+		
+	 SplitAdapter  excelAdapter = createMsExcelAdapter("user", "id", "excelA.xls", "syncA.xls", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+	 
+	 Assert.assertEquals(0,excelAdapter.getAll().size()); 
+	 
+	 excelAdapter.add(getItem());
+	 
+	 Assert.assertEquals(1,excelAdapter.getAll().size());
+	}
 	
 	@Test
 	 public void  shouldCreateFeedAdapter(){
@@ -88,7 +105,7 @@ public class AdapterFactoryTests {
 	  Assert.assertTrue(feed.getItems().isEmpty());
 	 }
 	
-	@Test
+	//@Test
 	public void shouldCreateGoogleSpreadSheetAdapter() throws DocumentException{
 	
 		String idColumName = "id";
@@ -175,5 +192,29 @@ public class AdapterFactoryTests {
 		IContent content = new EntityContent(payload, "user", id);
 		Sync sync = new Sync(IdGenerator.INSTANCE.newID(), "Raju", new Date(), false);
 		return new Item(content, sync);
+	}
+	
+	private SplitAdapter createMsExcelAdapter(String sheetName, String idColumnName, String contentFileName, String syncFileName, IIdentityProvider identityProvider, IdGenerator idGenerator) throws IOException {
+		
+		MsExcel contentExcel = null;
+		MsExcel syncExcel = null;
+		if(contentFileName.equals(syncFileName)){
+			File file = TestHelper.makeFileAndDeleteIfExists(contentFileName);
+			contentExcel = new MsExcel(file.getAbsolutePath());
+			syncExcel = contentExcel;
+		} else {
+			File fileData = TestHelper.makeFileAndDeleteIfExists(contentFileName);
+			File fileSync = TestHelper.makeFileAndDeleteIfExists(syncFileName);
+			
+			contentExcel = new MsExcel(fileData.getAbsolutePath());
+			syncExcel = new MsExcel(fileSync.getAbsolutePath());
+		}
+		
+		MsExcelSyncRepository syncRepo = new MsExcelSyncRepository(syncExcel, identityProvider, idGenerator);
+		MSExcelToPlainXMLMapping mapper = new MSExcelToPlainXMLMapping(idColumnName, null);
+		MsExcelContentAdapter contentAdapter = new MsExcelContentAdapter(contentExcel, mapper, sheetName);
+
+		SplitAdapter splitAdapter = new SplitAdapter(syncRepo, contentAdapter, identityProvider);
+		return splitAdapter;
 	}
 }
