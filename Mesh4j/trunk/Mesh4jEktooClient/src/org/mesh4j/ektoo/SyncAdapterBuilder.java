@@ -21,6 +21,7 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder{
 			IIdentityProvider identityProvider, IdGenerator idGenerator) {
 		
 		
+		
 		MsExcel contentExcel = null;
 		MsExcel syncExcel = null;
 		//TODO if file doesn't exist then create file with the help of schema
