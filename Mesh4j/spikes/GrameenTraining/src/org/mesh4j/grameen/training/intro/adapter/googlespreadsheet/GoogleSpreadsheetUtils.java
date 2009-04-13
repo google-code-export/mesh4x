@@ -16,6 +16,9 @@ import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSRow;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSSpreadsheet;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSWorksheet;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.IGSElement;
+import org.mesh4j.sync.adapters.split.SplitAdapter;
+import org.mesh4j.sync.id.generator.IIdGenerator;
+import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
@@ -909,5 +912,14 @@ public class GoogleSpreadsheetUtils {
 			throw new MeshException(e);
 		}
 		return  dateAndTime;
+	}
+	
+	
+	
+	public static SplitAdapter createGoogleSpreadSheetAdapter(IGoogleSpreadSheet spreadsheet,ISpreadSheetToXMLMapper mapper,GSWorksheet contentWorkSheet,GSWorksheet syncWorkSheet,IIdentityProvider identityProvider,IIdGenerator idGenerator){
+		GoogleSpreadSheetContentAdapter contentRepo = new GoogleSpreadSheetContentAdapter(spreadsheet,contentWorkSheet,mapper,"user");
+		GoogleSpreadSheetSyncRepository  syncRepo = new GoogleSpreadSheetSyncRepository(spreadsheet,syncWorkSheet,identityProvider,idGenerator,"SYNC_INFO");
+		SplitAdapter splitAdapter = new SplitAdapter(syncRepo,contentRepo,identityProvider);
+		return splitAdapter;
 	}
 }
