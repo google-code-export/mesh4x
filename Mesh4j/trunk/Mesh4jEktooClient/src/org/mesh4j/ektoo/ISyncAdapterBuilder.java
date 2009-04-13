@@ -19,8 +19,8 @@ public interface ISyncAdapterBuilder {
 	 * @param idGenerator
 	 * @return ISyncAdapter   
 	 */
-	public ISyncAdapter createMsExcelAdapter(String sheetName, String idColumnName,String lastUpdateColName, 
+	public ISyncAdapter createMsExcelAdapter(String sheetName, String idColumnName, 
 										String contentFileName, String syncFileName, 
 										IIdentityProvider identityProvider, 
-										IdGenerator idGenerator) throws IOException; 
+										IdGenerator idGenerator); 
 }
