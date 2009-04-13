@@ -1,5 +1,7 @@
 package org.mesh4j.ektoo;
 
+import java.io.IOException;
+
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.security.IIdentityProvider;
@@ -17,7 +19,8 @@ public interface ISyncAdapterBuilder {
 	 * @param idGenerator
 	 * @return ISyncAdapter   
 	 */
-	public ISyncAdapter createMsExcelAdapter(String sheetName, String idColumnName, 
+	public ISyncAdapter createMsExcelAdapter(String sheetName, String idColumnName,String lastUpdateColName, 
 										String contentFileName, String syncFileName, 
-										IIdentityProvider identityProvider, IdGenerator idGenerator); 
+										IIdentityProvider identityProvider, 
+										IdGenerator idGenerator) throws IOException; 
 }
