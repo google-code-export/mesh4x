@@ -36,11 +36,14 @@ public class FeedServlet extends HttpServlet {
 	private static final String PARAM_ACTION = "action";
 	private static final String PARAM_BY = "by";
 	
+	private static final String PARAM_SYNC_ID = "syncId";
+	
 	private static final String PARAM_FORMAT = "format";
 	private static final String PARAM_CONTENT = "content";
 
 	private static final String RESOURCE_MAPPINGS = "mappings";
 	private static final String RESOURCE_SCHEMA = "schema";
+	private static final String RESOURCE_HISTORY = "history";
 
 	private static final String ACTION_DELETE = "delete";
 	private static final String ACTION_UPLOAD_MESH_DEFINITION = "uploadMeshDefinition";
@@ -94,6 +97,8 @@ public class FeedServlet extends HttpServlet {
 			processGetSchema(response, sourceID, link, contentFormat);
 		} else if(sourceID != null && sourceID.endsWith(RESOURCE_MAPPINGS)){
 			processGetMappings(response, sourceID, link);
+		} else if(sourceID != null && sourceID.endsWith(RESOURCE_HISTORY)){
+			processGetHistory(request, response, sourceID, link);
 		} else {
 			if(sourceID != null && !this.feedRepository.existsFeed(sourceID)){  // sourceID == null ==> Get all feeds
 				response.sendError(404, sourceID);
@@ -188,6 +193,41 @@ public class FeedServlet extends HttpServlet {
 			}
 		} catch (Exception e) {
 			throw new ServletException(e);
+		}
+	}
+	
+	private void processGetHistory(HttpServletRequest request, HttpServletResponse response, String sourceID, String link) throws IOException, ServletException {
+		link = link.substring(0, link.length() - "/history".length());
+		sourceID = sourceID.substring(0, sourceID.length() - "/history".length());
+
+		if(!this.feedRepository.existsFeed(sourceID)){
+			response.sendError(404, sourceID);
+		} else {
+			try{
+				String formatName = request.getParameter(PARAM_FORMAT);     // format=rss20/atom10/kml
+				Format feedFormat = Format.getFormat(formatName);
+				ISyndicationFormat syndicationFormat = Format.getSyndicationFormat(feedFormat);
+				if(syndicationFormat == null){
+					response.sendError(404, formatName);
+				} else {
+					
+					String syncId = request.getParameter(PARAM_SYNC_ID);
+					if(syncId == null){
+						response.sendError(404, PARAM_SYNC_ID);
+					} else {
+						String responseContent = this.feedRepository.getHistory(sourceID, link, syndicationFormat, syncId);
+						responseContent = responseContent.replaceAll("&lt;", "<");	// TODO (JMT) remove ==>  xml.replaceAll("&lt;", "<"); 
+						responseContent = responseContent.replaceAll("&gt;", ">");
+						
+						response.setContentType(syndicationFormat.getContentType());
+						response.setContentLength(responseContent.length());
+						PrintWriter out = response.getWriter();
+						out.println(responseContent);
+					}
+				}
+			} catch (Exception e) {
+				throw new ServletException(e);
+			}
 		}
 	}
 	

@@ -389,4 +389,5 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 			((ISyncAware)adapter).endSync();
 		}
 	}
+	
 }

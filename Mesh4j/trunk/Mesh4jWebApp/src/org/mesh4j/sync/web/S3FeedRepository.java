@@ -116,4 +116,11 @@ public class S3FeedRepository extends AbstractFeedRepository {
 		
 	}
 	
+	@Override
+	public String getHistory(String sourceID, String link, ISyndicationFormat syndicationFormat, String syncId){
+		// Not supported operation
+		// TODO (JMT) supports history
+		return "";
+	}
+	
 }

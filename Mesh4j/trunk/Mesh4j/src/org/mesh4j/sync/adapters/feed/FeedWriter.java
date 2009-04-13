@@ -139,6 +139,15 @@ public class FeedWriter {
 		historyElement.addAttribute(SX_ATTRIBUTE_HISTORY_BY, history.getBy());
 	}
 	
+	public static void writeHistory(Element rootElement, String sequence, String when, String by){
+		Element historyElement = rootElement.addElement(SX_QNAME_HISTORY);
+		historyElement.addAttribute(SX_ATTRIBUTE_HISTORY_SEQUENCE, sequence);
+		if (when != null){
+			historyElement.addAttribute(SX_ATTRIBUTE_HISTORY_WHEN, when);
+		}
+		historyElement.addAttribute(SX_ATTRIBUTE_HISTORY_BY, by);
+	}
+	
 
 	protected void write(XMLWriter writer, Document document) throws IOException {
         writer.write( document );
