@@ -17,7 +17,7 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder{
 	
 	@Override
 	public ISyncAdapter createMsExcelAdapter(String sheetName,
-			String idColumnName,String lastUpdateColName, String contentFileName, String syncFileName,
+			String idColumnName, String contentFileName, String syncFileName,
 			IIdentityProvider identityProvider, IdGenerator idGenerator) {
 		
 		
@@ -38,7 +38,7 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder{
 		}
 		
 		MsExcelSyncRepository syncRepo = new MsExcelSyncRepository(syncExcel, identityProvider, idGenerator);
-		MSExcelToPlainXMLMapping mapper = new MSExcelToPlainXMLMapping(idColumnName, lastUpdateColName);
+		MSExcelToPlainXMLMapping mapper = new MSExcelToPlainXMLMapping(idColumnName, null);
 		MsExcelContentAdapter contentAdapter = new MsExcelContentAdapter(contentExcel, mapper, sheetName);
 
 		SplitAdapter splitAdapter = new SplitAdapter(syncRepo, contentAdapter, identityProvider);
