@@ -66,7 +66,7 @@ public class EktooUI extends JFrame {
 	private JTextField txtSourceFile = null;
 
 	private JLabel labelSourceWorksheet = null;
-	private JComboBox listSourceWorkSheet = null;
+	private JComboBox listSourceWorksheet = null;
 
 
 	private JLabel labelSourceWorksheetColumn = null;
@@ -104,6 +104,9 @@ public class EktooUI extends JFrame {
         this.setContentPane(getJPanel());
         if (chooser == null)
         	chooser = new JFileChooser();
+        
+        showHide(0,0);
+        showHide(0,1);
 	}
 
 	/**
@@ -116,7 +119,7 @@ public class EktooUI extends JFrame {
 		if (jPanel == null) {
 			txtConsole = new JLabel();
 			txtConsole.setBounds(new Rectangle(15, 389, 525, 16));
-			txtConsole.setText("JLabel");
+			txtConsole.setText("");
 			jPanel = new JPanel();
 			jPanel.setLayout(null);
 			jPanel.add(getSourcePane(), null);
@@ -147,7 +150,7 @@ public class EktooUI extends JFrame {
 			sourcePane.add(getlabelSourceFile(), null);
 			sourcePane.add(getTxtSourceFile(), null);
 			sourcePane.add(getlabelSourceWorksheet(), null);
-			sourcePane.add(getListSourceWorkSheet(), null);
+			sourcePane.add(getlistSourceWorksheet(), null);
 			sourcePane.add(getlabelSourceWorksheetColumn(), null);
 			sourcePane.add(getlistSourceWorksheetColumn(), null);
 			sourcePane.add(getBtnSourceFile(), null);
@@ -245,9 +248,12 @@ public class EktooUI extends JFrame {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					System.out.println("actionPerformed()"); // TODO Auto-generated Event stub actionPerformed()
 
-					String test = new EktooUIController().sync(sourceFile, targetFile);
-					
-					System.out.println("????????->" + test);
+				
+					txtConsole.setText("");
+					String result = new EktooUIController().sync(sourceFile, (String)listSourceWorksheet.getSelectedItem(), (String)listSourceWorksheetColumn.getSelectedItem(), 
+															   targetFile, (String)listTargetWorksheet.getSelectedItem(), (String)listTargetWorksheetColumn.getSelectedItem());
+					txtConsole.setText(result);
+					//System.out.println("????????->" + test);
 					//new EktooUIController().sync(sourceFile, sourceSyncFile, targetFile, targetSyncFile);
 
 				}
@@ -393,24 +399,24 @@ public class EktooUI extends JFrame {
 	}
 
 	/**
-	 * This method initializes listSourceWorkSheet
+	 * This method initializes listSourceWorksheet
 	 *
 	 * @return javax.swing.JTextField
 	 */
-	private JComboBox getListSourceWorkSheet() {
-		if (listSourceWorkSheet == null) {
-			listSourceWorkSheet = new JComboBox();
-			listSourceWorkSheet.setBounds(new Rectangle(119, 90, 194, 20));
-			listSourceWorkSheet.addItemListener(new java.awt.event.ItemListener() {
+	private JComboBox getlistSourceWorksheet() {
+		if (listSourceWorksheet == null) {
+			listSourceWorksheet = new JComboBox();
+			listSourceWorksheet.setBounds(new Rectangle(119, 90, 194, 20));
+			listSourceWorksheet.addItemListener(new java.awt.event.ItemListener() {
 				public void itemStateChanged(java.awt.event.ItemEvent e) {
 					System.out.println("itemStateChanged()"); // TODO Auto-generated Event stub itemStateChanged()
-					int sheetIndex = listSourceWorkSheet.getSelectedIndex();
+					int sheetIndex = listSourceWorksheet.getSelectedIndex();
 					if (sheetIndex != -1)
 						setColumnList( listSourceWorksheetColumn, sourceMsExcelFile, sheetIndex);
 				}
 			});
 		}
-		return listSourceWorkSheet;
+		return listSourceWorksheet;
 	}
 
 	/**
@@ -451,7 +457,6 @@ public class EktooUI extends JFrame {
 			rbWeb.setBounds(new Rectangle(18, 26, 95, 24));
 			rbWeb.setText("Web");
 			btngSyncVia.add(rbWeb);
-
 		}
 		return rbWeb;
 	}
@@ -481,6 +486,7 @@ public class EktooUI extends JFrame {
 			rbFile = new JRadioButton();
 			rbFile.setBounds(new Rectangle(19, 77, 107, 24));
 			rbFile.setText("File");
+			rbFile.setSelected(true);
 			btngSyncVia.add(rbFile);
 		}
 		return rbFile;
@@ -526,6 +532,7 @@ public class EktooUI extends JFrame {
 			rbSendReceive = new JRadioButton();
 			rbSendReceive.setBounds(new Rectangle(13, 78, 124, 21));
 			rbSendReceive.setText("Send & Receive");
+			rbSendReceive.setSelected(true);
 			btngSyncType.add(rbSendReceive);
 		}
 		return rbSendReceive;
@@ -602,7 +609,7 @@ public class EktooUI extends JFrame {
 							txtSourceFile.setText( sourceFile.getName() );
 							sourceMsExcelFile = new MsExcel(sourceFile.getAbsolutePath());
 
-							setWorksheetList( listSourceWorkSheet,  sourceMsExcelFile);
+							setWorksheetList( listSourceWorksheet,  sourceMsExcelFile);
 						}
 
 
@@ -732,7 +739,7 @@ public class EktooUI extends JFrame {
 					btnSourceFile.setVisible(true);
 
 					labelSourceWorksheet.setVisible(false);
-					listSourceWorkSheet.setVisible(false);
+					listSourceWorksheet.setVisible(false);
 
 					labelSourceWorksheetColumn.setVisible(false);
 					listSourceWorksheetColumn.setVisible(false);
@@ -758,7 +765,7 @@ public class EktooUI extends JFrame {
 				btnSourceFile.setVisible(false);
 
 				labelSourceWorksheet.setVisible(false);
-				listSourceWorkSheet.setVisible(false);
+				listSourceWorksheet.setVisible(false);
 
 				labelSourceWorksheetColumn.setVisible(false);
 				listSourceWorksheetColumn.setVisible(false);
@@ -786,7 +793,7 @@ public class EktooUI extends JFrame {
 				txtSourceFile.setVisible(true);
 
 				labelSourceWorksheet.setVisible(true);
-				listSourceWorkSheet.setVisible(true);
+				listSourceWorksheet.setVisible(true);
 
 				labelSourceWorksheetColumn.setVisible(true);
 				listSourceWorksheetColumn.setVisible(true);

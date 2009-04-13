@@ -30,8 +30,27 @@ public class EktooUIController
 	public String sync(File sourceContentFile, File sourceSyncFile, File targetContentFile, File targetSyncFile)
 	{
 		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder();
-		ISyncAdapter sourceAdapter = adapterBuilder.createMsExcelAdapter("CONT_INFO", "id", sourceContentFile.getAbsolutePath() , sourceSyncFile.getAbsolutePath(), NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
-		ISyncAdapter targetAdapter = adapterBuilder.createMsExcelAdapter("CONT_INFO", "id", targetContentFile.getAbsolutePath() , targetSyncFile.getAbsolutePath(), NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		ISyncAdapter sourceAdapter = adapterBuilder.createMsExcelAdapter("CONT_INFO", "Id", sourceContentFile.getAbsolutePath() , sourceSyncFile.getAbsolutePath(), NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		ISyncAdapter targetAdapter = adapterBuilder.createMsExcelAdapter("CONT_INFO", "Id", targetContentFile.getAbsolutePath() , targetSyncFile.getAbsolutePath(), NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+
+		SyncEngine engine = new SyncEngine(sourceAdapter, targetAdapter);
+		List items = engine.synchronize();
+		if (items != null && items.size() > 0)
+		{
+			return new String("Conflicts");
+		}
+		else
+		{
+			return new String("Sync succesfull");
+		}
+		
+	}
+	public String sync(File sourceFile, String sourceWorksheet, String sourceWorksheeColumn,
+					   File targetFile, String targetWorksheet, String targetWorksheeColumn)
+	{
+		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder();
+		ISyncAdapter sourceAdapter = adapterBuilder.createMsExcelAdapter(sourceWorksheet, sourceWorksheeColumn, sourceFile.getAbsolutePath() , sourceFile.getAbsolutePath(), NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		ISyncAdapter targetAdapter = adapterBuilder.createMsExcelAdapter(targetWorksheet, targetWorksheeColumn, targetFile.getAbsolutePath() , targetFile.getAbsolutePath(), NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 
 		SyncEngine engine = new SyncEngine(sourceAdapter, targetAdapter);
 		List items = engine.synchronize();
@@ -46,4 +65,5 @@ public class EktooUIController
 		
 	}
 
+	
 }  //  @jve:decl-index=0:visual-constraint="10,10"
