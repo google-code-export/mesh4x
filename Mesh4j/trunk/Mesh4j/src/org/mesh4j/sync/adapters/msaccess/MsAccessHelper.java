@@ -2,8 +2,15 @@ package org.mesh4j.sync.adapters.msaccess;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.Statement;
 import java.util.Set;
 import java.util.TreeSet;
+
+import org.mesh4j.sync.validations.MeshException;
+
+import sun.jdbc.odbc.JdbcOdbcDriver;
 
 import com.healthmarketscience.jackcess.Column;
 import com.healthmarketscience.jackcess.Database;
@@ -57,6 +64,23 @@ public class MsAccessHelper {
 		}
 		
 		return columnNames;
+	}
+
+	public static void createSyncTableIfAbsent(String mdbFileName, String syncTableName) {
+		if(!existTable(mdbFileName, syncTableName)){
+			 try {
+			        Class.forName(JdbcOdbcDriver.class.getName());
+	
+			        String dbURL = "jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=" + mdbFileName + ";DriverID=22;READONLY=false}";
+			        Connection con = DriverManager.getConnection(dbURL, "",""); 
+			        Statement s = con.createStatement();
+			        s.execute("create table " + syncTableName + " ( sync_id text, entity_name text, entity_id text, entity_version text, sync_data memo )"); // create a table
+			        s.close(); // close the Statement to let the database know we're done with it
+			        con.close(); // close the Connection to let the database know we're done with it
+			    } catch (Exception e) {
+			        throw new MeshException(e);
+			    }
+		}
 	}
 	
 }

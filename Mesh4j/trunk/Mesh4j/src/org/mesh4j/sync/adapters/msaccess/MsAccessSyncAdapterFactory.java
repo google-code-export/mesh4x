@@ -49,7 +49,9 @@ public class MsAccessSyncAdapterFactory implements ISyncAdapterFactory {
 		String syncMappingFileName =  this.baseDirectory + "/" + tableName + "_sync.hbm.xml";
 		
 		MsAccessHibernateMappingGenerator.createMappingsIfAbsent(mdbFileName, tableName, contentMappingFileName, syncMappingFileName);
-//		MsAccessHibernateMappingGenerator.createSyncTableIfAbsent(mdbFileName, tableName);
+		
+		String syncTableName = MsAccessHibernateMappingGenerator.getSyncTableName(tableName);
+		MsAccessHelper.createSyncTableIfAbsent(mdbFileName, syncTableName);
 		
 		IRDFSchema rdfSchema = getRDFSchema(sourceAlias, mdbFileName, tableName);
 		return createSyncAdapterFromFile(mdbFileName, tableName, contentMappingFileName, syncMappingFileName, rdfSchema);	
