@@ -19,6 +19,8 @@ public abstract class TableUI extends JPanel
 	private JFileChooser fileChooser = new JFileChooser();
 
 	private File file = null;
+	private String table = null;
+	private String column = null;
 
 	private JLabel labelFile = null;
 	private JTextField txtFile = null;
@@ -115,11 +117,11 @@ public abstract class TableUI extends JPanel
 					{
 						System.out.println("You chose to open this file: " +
 					            getFileChooser().getSelectedFile().getName());
-						file = getFileChooser().getSelectedFile();
-						if(file != null)
+						setFile(getFileChooser().getSelectedFile());
+						if(getFile() != null)
 						{
-							txtFile.setText( file.getName() );
-							setList(file);
+							txtFile.setText( getFile().getName() );
+							setList(getFile());
 							//sourceMsExcelFile = new MsExcel(sourceFile.getAbsolutePath());
 							//setWorksheetList( listSourceWorksheet,  sourceMsExcelFile);
 						}
@@ -156,7 +158,7 @@ public abstract class TableUI extends JPanel
 					if (sheetIndex != -1)
 					{
 						//setColumnList( listColumn, excelFile, sheetIndex);
-						setList(file, sheetIndex);
+						setList(getFile(), sheetIndex);
 					}
 				}
 			});
@@ -198,6 +200,24 @@ public abstract class TableUI extends JPanel
 		if(fileChooser == null)
 			fileChooser = new JFileChooser();
 		return fileChooser;
+	}
+	public void setTable(String table) {
+		this.table = table;
+	}
+	public String getTable() {
+		return table;
+	}
+	public void setColumn(String column) {
+		this.column = column;
+	}
+	public String getColumn() {
+		return column;
+	}
+	public void setFile(File file) {
+		this.file = file;
+	}
+	public File getFile() {
+		return file;
 	}
 
 
