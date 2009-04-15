@@ -2,80 +2,39 @@
  *
  */
 package org.mesh4j.ektoo.ui;
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.File;
-import java.util.Iterator;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.SwingUtilities;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.mesh4j.sync.adapters.msexcel.MsExcel;
-import org.mesh4j.sync.adapters.msexcel.MsExcelUtils;
+import org.mesh4j.ektoo.controller.EktooUIController;
 
 
 /**
- * @author Asus
+ * @author Bhuiyan Mohammad Iklash
  *
  */
 public class EktooUI extends JFrame {
 
 	private final static long serialVersionUID = 1L;
-	private final static String DYMMY_PANEL = "DUMMY_PANEL";
-	private final static String KML_PANEL = "KML";
-	private final static String MS_EXCEL_PANEL = "MS Excel";
-	private final static String GOOGLE_SPREADSHEET_PANEL = "Google Spreadsheet";
-	private final static String MS_ACCESS_PANEL = "MS Access";
-	private final static String SYNC_SERVER_PANEL = "Sync Server";
+	
+	SyncItemUI sourceItem = null;
+	SyncItemUI targetItem = null;
 
-	JPanel panels = null;
-	JPanel head = null;
-	JPanel firstPanel = new JPanel();
-	private MsExcelUI excelUI = null;
-	//private MsAccessUI accessUI = null;
-	//private KmlUI kmlUI = null;
-	//private SyncServerUI suncServerUI = null;
-
-	private final String SourceOrTargetType = "KML~Sync Server~MS Access~Google Spreadsheet~MS Excel";//EktooUITranslator.getDataSourceType();
-
-
-	private MsExcel sourceMsExcelFile = null;
-	private MsExcel targetMsExcelFile = null;
-
-	private File sourceFile = null;
-	private File targetFile = null;
-
-	private JPanel jPanel = null;
-	private JPanel sourcePane = null;
-	private JLayeredPane targetPane = null;
-	private JLayeredPane viaPane = null;
-	private JLayeredPane typePane = null;
+	private JPanel panel = null;
+	private JPanel viaPane = null;
+	private JPanel typePane = null;
 	private JButton btnSync = null;
-	private JComboBox sourceType = null;
-
-
-	private JLabel labelSourceType = null;
-	private JComboBox targetType = null;
-	private JLabel labelSourceType1 = null;
 
 	private JRadioButton rbWeb = null;
 	private JRadioButton rbSMS = null;
@@ -88,7 +47,6 @@ public class EktooUI extends JFrame {
 	private ButtonGroup btngSyncType = new ButtonGroup();
 	private JLabel txtConsole = null;
 
-	private JPanel jPanel2 = null;
 
 	/**
 	 * This method initializes this
@@ -100,26 +58,26 @@ public class EktooUI extends JFrame {
 	}
 
 	/**
-	 * This method initializes jPanel
+	 * This method initializes JPanel
 	 *
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJPanel()
 	{
-		if (jPanel == null) {
+		if (panel == null) {
 			txtConsole = new JLabel();
 			txtConsole.setBounds(new Rectangle(15, 389, 525, 16));
 			txtConsole.setText("");
-			jPanel = new JPanel();
-			jPanel.setLayout(null);
-			jPanel.add(getSourcePane(), null);
-			jPanel.add(getTargetPane(), null);
-			jPanel.add(getViaPane(), null);
-			jPanel.add(getTypePane(), null);
-			jPanel.add(getBtnSync(), null);
-			jPanel.add(txtConsole, null);
+			panel = new JPanel();
+			panel.setLayout(null);
+			panel.add(getSourcePane(), null);
+			panel.add(getTargetPane(), null);
+			panel.add(getViaPane(), null);
+			panel.add(getTypePane(), null);
+			panel.add(getBtnSync(), null);
+			panel.add(txtConsole, null);
 		}
-		return jPanel;
+		return panel;
 	}
 
 	/**
@@ -127,68 +85,34 @@ public class EktooUI extends JFrame {
 	 *
 	 * @return javax.swing.JPanel
 	 */
-	private JPanel getSourcePane() {
-		if (sourcePane == null) {
-			sourcePane = new JPanel();
-			//sourcePane.setLayout(new GridBagLayout());
-			sourcePane.setLayout(new BorderLayout());
-			sourcePane.setBorder(BorderFactory.createTitledBorder(
-		    "Source"));
-			sourcePane.setSize(new Dimension(350, 197));
-			sourcePane.setLocation(new Point(13, 36));
-			sourcePane.add(getSourceHeadPane(), BorderLayout.NORTH);
-			sourcePane.add(getSourceBodyPane(), BorderLayout.CENTER);
-		}
-		return sourcePane;
-	}
-	private JPanel getSourceHeadPane()
+	private JPanel getSourcePane() 
 	{
-		if (head == null)
+		if (sourceItem == null) 
 		{
-			head = new JPanel();
-			head.setBackground(Color.green);
-			head.setLayout(new FlowLayout());
-			head.add(getLabelSourceType(), null);
-			head.add(getSourceType(), null);
+			sourceItem = new SyncItemUI("Source");
+			sourceItem.setSize(new Dimension(350, 175));
+			sourceItem.setLocation(new Point(10, 10));
 		}
-		return head;
-
+		
+		return sourceItem;
 	}
-	private JPanel getSourceBodyPane()
-	{
-		if (panels == null)
-		{
-			panels = new JPanel();
-			panels.setBackground(Color.red);
-			panels.setLayout(new CardLayout());
 
-			//
-			firstPanel.setBackground(Color.red);
-			panels.add(firstPanel, DYMMY_PANEL);
 
-//			 add cards here
-			panels.add(getMsExcelUI(), MS_EXCEL_PANEL);
-
-		}
-		return panels;
-	}
 	/**
 	 * This method initializes targetPane
 	 *
 	 * @return javax.swing.JPanel
 	 */
-	private JLayeredPane getTargetPane()
+	private JPanel getTargetPane()
 	{
-		if (targetPane == null) {
-			targetPane = new JLayeredPane();
-			targetPane.setBorder(BorderFactory.createTitledBorder(
-		    "Target"));
-			targetPane.setSize(new Dimension(350, 166));
-			targetPane.setLocation(new Point(21, 244));
-			targetPane.add(getTargetType(), null);
-			targetPane.add(getLabelSourceType1(), null);
+		if(targetItem == null)
+		{
+			targetItem = new SyncItemUI("Target");
+			targetItem.setSize(new Dimension(350, 175));
+			targetItem.setLocation(new Point(10, 200));
 		}
-		return targetPane;
+		
+		return targetItem;
 	}
 
 	/**
@@ -196,14 +120,14 @@ public class EktooUI extends JFrame {
 	 *
 	 * @return javax.swing.JPanel
 	 */
-	private JLayeredPane getViaPane() {
+	private JPanel getViaPane() {
 		if (viaPane == null) {
-			viaPane = new JLayeredPane();
+			viaPane = new JPanel();
 			//viaPane.setLayout(new GridBagLayout());
 			viaPane.setBorder(BorderFactory.createTitledBorder(
 		    "Sync Via"));
-			viaPane.setSize(new Dimension(150, 164));
-			viaPane.setLocation(new Point(390, 16));
+			viaPane.setSize(new Dimension(150, 175));
+			viaPane.setLocation(new Point(390, 10));
 			viaPane.add(getRbWeb(), null);
 			viaPane.add(getRbSMS(), null);
 			viaPane.add(getRbFile(), null);
@@ -218,13 +142,13 @@ public class EktooUI extends JFrame {
 	 *
 	 * @return javax.swing.JPanel
 	 */
-	private JLayeredPane getTypePane() {
+	private JPanel getTypePane() {
 		if (typePane == null) {
-			typePane = new JLayeredPane();
+			typePane = new JPanel();
 			typePane.setBorder(BorderFactory.createTitledBorder(
 		    "Sync Type"));
-			typePane.setSize(new Dimension(150, 166));
-			typePane.setLocation(new Point(387, 210));
+			typePane.setSize(new Dimension(150, 175));
+			typePane.setLocation(new Point(387, 200));
 			typePane.add(getRbSent(), null);
 			typePane.add(getRbReceive(), null);
 			typePane.add(getRbSendReceive(), null);
@@ -247,113 +171,37 @@ public class EktooUI extends JFrame {
 					System.out.println("actionPerformed()"); // TODO Auto-generated Event stub actionPerformed()
 
 
-					//txtConsole.setText("");
-					//String result = new EktooUIController().sync(sourceFile, (String)listSourceWorksheet.getSelectedItem(), (String)listSourceWorksheetColumn.getSelectedItem(),
-															  // targetFile, (String)listTargetWorksheet.getSelectedItem(), (String)listTargetWorksheetColumn.getSelectedItem());
-					///txtConsole.setText(result);
-					//System.out.println("????????->" + test);
-					//new EktooUIController().sync(sourceFile, sourceSyncFile, targetFile, targetSyncFile);
+					txtConsole.setText("");
+					String result = null;
+					if (sourceItem.getSyncType().equals("TABLE"))
+					{
+						File sourceFile = sourceItem.getFile();
+						String sourceTable = sourceItem.getTable();
+						String sourceColumn = sourceItem.getColumn();
+						
+						File targetFile = targetItem.getFile();
+						String targetTable = targetItem.getTable();
+						String targetColumn = targetItem.getColumn();
 
+						result = new EktooUIController().sync( sourceFile, sourceTable, sourceColumn,
+								targetFile, targetTable, targetColumn);
+
+					}
+					else if (sourceItem.getSyncType().equals("URI"))
+					{
+						String sourceUri = sourceItem.getUri();
+						String targetUri = targetItem.getUri();
+						result = new EktooUIController().sync( sourceUri, targetUri );
+					}
+					System.out.println("Calling Sync...");
+					txtConsole.setText(result);
 				}
 			});
 		}
 		return btnSync;
 	}
 
-	/**
-	 * This method initializes sourceType
-	 *
-	 * @return javax.swing.JComboBox
-	 */
-	private JComboBox getSourceType() {
-		if (sourceType == null) {
-			sourceType = new JComboBox();
-			sourceType.setBounds(new Rectangle(107, 13, 230, 22));
-			if (SourceOrTargetType != null)
-			{
-				String[] types = SourceOrTargetType.split("~");
-
-				for(int i=0; i < types.length; i++)
-				{
-					if (types[i] != null && types[i].length()!= 0)
-						sourceType.addItem(types[i]);
-				}
-			}
-			sourceType.addItemListener(new java.awt.event.ItemListener() {
-				public void itemStateChanged(java.awt.event.ItemEvent e) {
-					System.out.println("itemStateChanged()"); // TODO Auto-generated Event stub itemStateChanged()
-					int index = sourceType.getSelectedIndex();
-					if (index != -1)
-						updateLayout((String)e.getItem());
-
-				}
-			});
-
-		}
-		return sourceType;
-	}
-
-	/**
-	 * This method initializes labelSourceType
-	 *
-	 * @return javax.swing.JLabel
-	 */
-	private JLabel getLabelSourceType() {
-		if (labelSourceType == null) {
-			labelSourceType = new JLabel();
-			labelSourceType.setText("Type");
-			labelSourceType.setBounds(new Rectangle(16, 18, 27, 16));
-			System.out.println("dsdsdsd");
-		}
-		return labelSourceType;
-	}
-
-	/**
-	 * This method initializes targetType
-	 *
-	 * @return javax.swing.JComboBox
-	 */
-	private JComboBox getTargetType() {
-		if (targetType == null) {
-			targetType = new JComboBox();
-			targetType.setBounds(new Rectangle(118, 22, 194, 20));
-
-			if (SourceOrTargetType != null)
-			{
-				String[] types = SourceOrTargetType.split("~");
-
-				for(int i=0; i < types.length; i++)
-				{
-					if (types[i] != null && types[i].length()!= 0)
-						targetType.addItem(types[i]);
-				}
-			}
-			targetType.addItemListener(new java.awt.event.ItemListener() {
-				public void itemStateChanged(java.awt.event.ItemEvent e) {
-					System.out.println("itemStateChanged()"); // TODO Auto-generated Event stub itemStateChanged()
-					//int index = targetType.getSelectedIndex();
-					//if (index != -1)
-					//	showHide(index, 1);
-				}
-			});
-
-		}
-		return targetType;
-	}
-
-	/**
-	 * This method initializes labelSourceType1
-	 *
-	 * @return javax.swing.JLabel
-	 */
-	private JLabel getLabelSourceType1() {
-		if (labelSourceType1 == null) {
-			labelSourceType1 = new JLabel();
-			labelSourceType1.setBounds(new Rectangle(16, 23, 54, 16));
-			labelSourceType1.setText("Type");
-		}
-		return labelSourceType1;
-	}
+	
 
 	/**
 	 * This method initializes rbWeb
@@ -447,19 +295,7 @@ public class EktooUI extends JFrame {
 		return rbSendReceive;
 	}
 
-	/**
-	 * This method initializes jPanel2
-	 *
-	 * @return javax.swing.JPanel
-	 */
-	private JPanel getJPanel2() {
-		if (jPanel2 == null) {
-			jPanel2 = new JPanel();
-			jPanel2.setLayout(new GridBagLayout());
-			jPanel2.setBackground(new Color(238, 65, 238));
-		}
-		return jPanel2;
-	}
+
 
 	/**
 	 * @param args
@@ -482,29 +318,5 @@ public class EktooUI extends JFrame {
 		super();
 		initialize();
 	}
-
-	private MsExcelUI getMsExcelUI()
-	{
-		if (excelUI == null) {
-			excelUI = new MsExcelUI("File", "Wroksheet", "Unique Column");
-			//excelUI.setBounds(6,55,337,126);
-			//excelUI.setBounds(new Rectangle(5, 21, 340, 30));
-			//excelUI.setSize(400, 95);
-			//excelUI.setLocation(8, 55);
-		}
-		return excelUI;
-	}
-
-	private void updateLayout(String item)
-	{
-		CardLayout cl = (CardLayout)(panels.getLayout());
-		if (item.equals(MS_EXCEL_PANEL))
-		{
-		    cl.show(panels, MS_EXCEL_PANEL);
-		}
-		else
-		{
-			cl.show(panels, DYMMY_PANEL);
-		}
-	}
+	
 }  //  @jve:decl-index=0:visual-constraint="10,10"
