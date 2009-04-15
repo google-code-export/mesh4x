@@ -62,7 +62,7 @@ public class AdapterFactoryTests {
 	    
 		HibernateContentAdapter contentAdapter = (HibernateContentAdapter)syncAdapter.getContentAdapter();
 		HibernateToRDFMapping mapping = (HibernateToRDFMapping)contentAdapter.getMapping();
-		IRDFSchema schema = mapping.getRDFSchema();
+		IRDFSchema schema = mapping.getSchema();
 // TODO Add to ISyncAdapter getSchema()?
 	   Assert.assertEquals(0, syncAdapter.getAll().size());
 	   

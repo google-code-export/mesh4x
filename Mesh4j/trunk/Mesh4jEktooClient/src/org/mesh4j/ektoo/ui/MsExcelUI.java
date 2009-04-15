@@ -18,6 +18,8 @@ import org.mesh4j.sync.adapters.msexcel.MsExcelUtils;
 public class MsExcelUI extends TableUI
 {
 
+	private static final long serialVersionUID = -5022572211883785527L;
+
 	private JFileChooser chooser = null;// = new JFileChooser();
 
 	/**
