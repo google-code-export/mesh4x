@@ -40,9 +40,8 @@ public class GoogleSpreadSheetAdapterTest {
 		spreadsheet = new GoogleSpreadsheet(GOOGLE_SPREADSHEET_FIELD,userName,passWord);
 	}
 	
-	@Test
+	//@Test
 	public void ShouldSync() throws DocumentException{
-		
 		
 		
 		GSWorksheet workSheetSource = spreadsheet.getGSWorksheet(1);//user entity source worksheet
@@ -64,6 +63,34 @@ public class GoogleSpreadSheetAdapterTest {
 		
 		Assert.assertEquals(0, conflicts.size());
 		
+	}
+	
+	@Test
+	public void ShouldSyncAfterDelete() throws DocumentException{
+		
+		GSWorksheet workSheetSource = spreadsheet.getGSWorksheet(1);//user entity source worksheet
+		GSWorksheet workSheetTarget = spreadsheet.getGSWorksheet(2);//user entity target worksheet
+		
+		GSWorksheet workSheetSourceSyncInfo = spreadsheet.getGSWorksheet(3);//user entity source syncinfo worksheet 
+		GSWorksheet workSheetTargetSyncInfo = spreadsheet.getGSWorksheet(4);//user entity target syncinfo worksheet
+		
+		SplitAdapter splitAdapterSource = getAdapter(workSheetSource,workSheetSourceSyncInfo, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		splitAdapterSource.add(getItem1());
+		splitAdapterSource.add(getItem2());
+		
+		
+		SplitAdapter splitAdapterTarget = getAdapter(workSheetTarget,workSheetTargetSyncInfo, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		splitAdapterTarget.add(getItem3());
+		
+		
+		Assert.assertEquals(splitAdapterSource.getAll().size(),2);
+		splitAdapterSource.delete(getItem1().getSyncId());
+		Assert.assertEquals(splitAdapterSource.getAll().size(),1);
+		
+		SyncEngine syncEngine = new SyncEngine(splitAdapterSource,splitAdapterTarget);
+		List<Item> conflicts = syncEngine.synchronize();
+		
+		Assert.assertEquals(0, conflicts.size());
 	}
 	
 	private SplitAdapter getAdapter(GSWorksheet contentWorkSheet,GSWorksheet syncWorkSheet,IIdentityProvider identityProvider,IIdGenerator idGenerator){
