@@ -2,8 +2,9 @@ package org.mesh4j.ektoo;
 
 import java.io.File;
 
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadSheetContentAdapter;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadSheetSyncRepository;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadsheet;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadsheetUtils;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.IGoogleSpreadSheet;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.ISpreadSheetToXMLMapper;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.SpreadSheetToXMLMapper;
@@ -15,13 +16,14 @@ import org.mesh4j.sync.adapters.msexcel.MsExcel;
 import org.mesh4j.sync.adapters.msexcel.MsExcelContentAdapter;
 import org.mesh4j.sync.adapters.msexcel.MsExcelSyncRepository;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
+import org.mesh4j.sync.id.generator.IIdGenerator;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
 public class SyncAdapterBuilder implements ISyncAdapterBuilder{
-
+	private IGoogleSpreadSheet spreadsheet;
 	
 	@Override
 	public ISyncAdapter createMsExcelAdapter(String sheetName,
@@ -79,16 +81,31 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder{
 		String GOOGLE_SPREADSHEET_FIELD = spreadSheetInfo.getGOOGLE_SPREADSHEET_FIELD();
 		
 		ISpreadSheetToXMLMapper mapper = new SpreadSheetToXMLMapper(idColumName,idColumnPosition,lastUpdateColumnPosition);
-		IGoogleSpreadSheet spreadsheet = new GoogleSpreadsheet(GOOGLE_SPREADSHEET_FIELD,userName,passWord);
+		IGoogleSpreadSheet gSpreadSheet = getSpreadSheet(GOOGLE_SPREADSHEET_FIELD,userName,passWord);
 		
-		GSWorksheet contentWorkSheet = spreadsheet.getGSWorksheet(spreadSheetInfo.getSheetName());
+		GSWorksheet contentWorkSheet = gSpreadSheet.getGSWorksheet(spreadSheetInfo.getSheetName());
 		String syncWorkSheetName = spreadSheetInfo.getSheetName() + "_sync";
-		GSWorksheet syncWorkSheet = spreadsheet.getGSWorksheet(syncWorkSheetName); 
+		GSWorksheet syncWorkSheet = gSpreadSheet.getGSWorksheet(syncWorkSheetName); 
 	
-		SplitAdapter spreadSheetAdapter = GoogleSpreadsheetUtils.createGoogleSpreadSheetAdapter(spreadsheet,mapper,contentWorkSheet,
+		SplitAdapter spreadSheetAdapter = createGoogleSpreadSheetAdapter(gSpreadSheet,mapper,contentWorkSheet,
 				syncWorkSheet,spreadSheetInfo.getIdentityProvider(),spreadSheetInfo.getIdGenerator());
 		
 		return spreadSheetAdapter;
+	}
+	
+	public IGoogleSpreadSheet getSpreadSheet(String spField,String userName,String passWord){
+		if(spreadsheet == null){
+			spreadsheet = new GoogleSpreadsheet(spField,userName,passWord);
+		}
+		return spreadsheet;
+	}
+	public static SplitAdapter createGoogleSpreadSheetAdapter(IGoogleSpreadSheet spreadsheet,ISpreadSheetToXMLMapper mapper,GSWorksheet contentWorkSheet,GSWorksheet syncWorkSheet,IIdentityProvider identityProvider,IIdGenerator idGenerator){
+		
+		GoogleSpreadSheetContentAdapter contentRepo = new GoogleSpreadSheetContentAdapter(spreadsheet,contentWorkSheet,mapper,contentWorkSheet.getName());
+		//TODO if sync sheet doesn't exist please create the sync sheet
+		GoogleSpreadSheetSyncRepository  syncRepo = new GoogleSpreadSheetSyncRepository(spreadsheet,syncWorkSheet,identityProvider,idGenerator,syncWorkSheet.getName());
+		SplitAdapter splitAdapter = new SplitAdapter(syncRepo,contentRepo,identityProvider);
+		return splitAdapter;
 	}
 	private File getFile(String fileName) {
 		File file = new File(fileName);
