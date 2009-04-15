@@ -2,6 +2,13 @@ package org.mesh4j.ektoo;
 
 import java.io.File;
 
+import org.junit.Assert;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadsheet;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadsheetUtils;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.IGoogleSpreadSheet;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.ISpreadSheetToXMLMapper;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.SpreadSheetToXMLMapper;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSWorksheet;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
 import org.mesh4j.sync.adapters.msexcel.MSExcelToPlainXMLMapping;
@@ -11,6 +18,7 @@ import org.mesh4j.sync.adapters.msexcel.MsExcelSyncRepository;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.security.IIdentityProvider;
+import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
@@ -51,7 +59,7 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder{
 
 
 	@Override
-	public ISyncAdapter createMsExcessAdapter(String baseDirectory,String rdfUrl,String sourceAlias,
+	public ISyncAdapter createMsAccessAdapter(String baseDirectory,String rdfUrl,String sourceAlias,
 										String mdbFileName, String tableName) {
 
 		MsAccessSyncAdapterFactory msAccesSyncAdapter  = new MsAccessSyncAdapterFactory(baseDirectory,rdfUrl);
@@ -61,6 +69,8 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder{
 			throw new MeshException(e);
 		}
 	}
+	
+	
 	
 	private File getFile(String fileName) {
 		File file = new File(fileName);

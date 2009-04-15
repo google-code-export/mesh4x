@@ -31,8 +31,9 @@ public interface ISyncAdapterBuilder {
 	 * @param tableName,the table name of the ms access database to be applied for sync.
 	 * @return ISyncAdapter
 	 */
-	public ISyncAdapter createMsExcessAdapter(String baseDirectory,String rdfUrl,String sourceAlias,
+	public ISyncAdapter createMsAccessAdapter(String baseDirectory,String rdfUrl,String sourceAlias,
 											 String mdbFileName,String tableName);
+	
 	
 	
 }
