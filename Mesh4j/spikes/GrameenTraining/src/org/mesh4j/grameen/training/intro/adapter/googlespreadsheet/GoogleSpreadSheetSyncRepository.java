@@ -38,9 +38,9 @@ public class GoogleSpreadSheetSyncRepository implements ISyncRepository,ISyncAwa
 	//This attributes are usually used to represent the sync information
 	//in a spreadsheet,where every sync row will have following column to
 	//hold the items/contents necessary sync information.
-	public final static String COLUMN_NAME_SYNC_ID = "syncId";
-	public final static String COLUMN_NAME_ENTITY_NAME = "entityName";
-	public final static String COLUMN_NAME_ENTITY_ID = "entityId";
+	public final static String COLUMN_NAME_SYNC_ID = "syncid";
+	public final static String COLUMN_NAME_ENTITY_NAME = "entityname";
+	public final static String COLUMN_NAME_ENTITY_ID = "entityid";
 	public final static String COLUMN_NAME_VERSION = "version";
 	public final static String COLUMN_NAME_SYNC = "sync";
 	private final static int SYNC_ID_INDEX = 1;
