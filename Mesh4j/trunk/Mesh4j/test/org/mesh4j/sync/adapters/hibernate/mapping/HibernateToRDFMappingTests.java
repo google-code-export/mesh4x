@@ -48,7 +48,7 @@ public class HibernateToRDFMappingTests {
 		
 		Assert.assertEquals("user", mapping.getEntityNode());
 		Assert.assertEquals("id", mapping.getIDNode());
-		Assert.assertEquals(RDF_SCHEMA, mapping.getRDFSchema());
+		Assert.assertEquals(RDF_SCHEMA, mapping.getSchema());
 	}
 	
 	@Test 
