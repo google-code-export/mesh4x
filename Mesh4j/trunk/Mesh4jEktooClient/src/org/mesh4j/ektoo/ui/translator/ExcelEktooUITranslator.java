@@ -11,4 +11,5 @@ public class ExcelEktooUITranslator {
 	public static String getReturnExcel() {
 		return EktooMessageTranslator.translate("RETURN_EXCEL");
 	}
+	
 }

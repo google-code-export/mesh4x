@@ -9,7 +9,7 @@ import org.apache.commons.logging.LogFactory;
 public class EktooMessageTranslator {
 	
 	private static final Log LOGGER = LogFactory.getLog(EktooMessageTranslator.class);
-	private static ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("mesh4j_resources");
+	private static ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("mesh4jektoo_resources");
 	
 	public static String translate(String key){
 		String messageText;
