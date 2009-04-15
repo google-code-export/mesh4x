@@ -7,6 +7,7 @@ import junit.framework.Assert;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.junit.Test;
+import org.mesh4j.ektoo.GoogleSpreadSheetInfo;
 import org.mesh4j.ektoo.ISyncAdapterBuilder;
 import org.mesh4j.ektoo.SyncAdapterBuilder;
 import org.mesh4j.sync.ISyncAdapter;
@@ -26,9 +27,32 @@ public class SyncAdapterBuilderTest {
 	
 	
 	@Test
+	public void shouldCreateGoogleSpreadSheetAdapter(){
+		
+		GoogleSpreadSheetInfo spreadSheetInfo = new GoogleSpreadSheetInfo();
+		spreadSheetInfo.setUserName("mesh4x@gmail.com");
+		spreadSheetInfo.setPassWord("g@l@xy24");
+		spreadSheetInfo.setGOOGLE_SPREADSHEET_FIELD("pLUqch-enpf1-GcqnD6qjSA");
+		
+		spreadSheetInfo.setIdColumnName("id");
+		spreadSheetInfo.setIdColumnPosition(1);
+		spreadSheetInfo.setLastUpdateColumnPosition(6);
+		spreadSheetInfo.setSheetName("user_source");
+		
+		
+		spreadSheetInfo.setIdentityProvider(NullIdentityProvider.INSTANCE);
+		spreadSheetInfo.setIdGenerator(IdGenerator.INSTANCE);
+		
+		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder();
+		ISyncAdapter syncAdapter = adapterBuilder.createGoogleSpreadSheetAdapter(spreadSheetInfo);
+		
+		Assert.assertEquals(0,syncAdapter.getAll().size());
+	}
+	
+	@Test
 	public void shouldCreateMsAccessAdapter() throws Exception{
 	    ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder();
-	    ISyncAdapter syncAdapter = adapterBuilder.createMsExcessAdapter(TestHelper.baseDirectoryForTest(), "http://mesh4x/feeds/grammen", "ektoo", "C:\\jtest\\ektoo.mdb", "ektoo");
+	    ISyncAdapter syncAdapter = adapterBuilder.createMsAccessAdapter(TestHelper.baseDirectoryForTest(), "http://mesh4x/feeds/grammen", "ektoo", "C:\\jtest\\ektoo.mdb", "ektoo");
 	    
 	   Assert.assertEquals(0, syncAdapter.getAll().size());
 

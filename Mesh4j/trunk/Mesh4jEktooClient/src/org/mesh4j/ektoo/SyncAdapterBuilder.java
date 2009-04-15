@@ -81,13 +81,13 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder{
 		ISpreadSheetToXMLMapper mapper = new SpreadSheetToXMLMapper(idColumName,idColumnPosition,lastUpdateColumnPosition);
 		IGoogleSpreadSheet spreadsheet = new GoogleSpreadsheet(GOOGLE_SPREADSHEET_FIELD,userName,passWord);
 		
-		GSWorksheet contentWorkSheet = spreadsheet.getGSWorksheet(spreadSheetInfo.getContentWorkSheetIndex());
-		GSWorksheet syncWorkSheet = spreadsheet.getGSWorksheet(spreadSheetInfo.getSyncWorkSheetIndex()); 
+		GSWorksheet contentWorkSheet = spreadsheet.getGSWorksheet(spreadSheetInfo.getSheetName());
+		String syncWorkSheetName = spreadSheetInfo.getSheetName() + "_sync";
+		GSWorksheet syncWorkSheet = spreadsheet.getGSWorksheet(syncWorkSheetName); 
 	
 		SplitAdapter spreadSheetAdapter = GoogleSpreadsheetUtils.createGoogleSpreadSheetAdapter(spreadsheet,mapper,contentWorkSheet,
 				syncWorkSheet,spreadSheetInfo.getIdentityProvider(),spreadSheetInfo.getIdGenerator());
 		
-			
 		return spreadSheetAdapter;
 	}
 	private File getFile(String fileName) {
