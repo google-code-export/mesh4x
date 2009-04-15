@@ -44,9 +44,15 @@ public class SyncAdapterBuilderTest {
 		spreadSheetInfo.setIdGenerator(IdGenerator.INSTANCE);
 		
 		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder();
-		ISyncAdapter syncAdapter = adapterBuilder.createGoogleSpreadSheetAdapter(spreadSheetInfo);
+		ISyncAdapter syncAdapterA = adapterBuilder.createGoogleSpreadSheetAdapter(spreadSheetInfo);
 		
-		Assert.assertEquals(0,syncAdapter.getAll().size());
+//		spreadSheetInfo.setSheetName("user_target");
+//		ISyncAdapter syncAdapterB = adapterBuilder.createGoogleSpreadSheetAdapter(spreadSheetInfo);
+//		
+//		SyncEngine engine = new SyncEngine(syncAdapterA,syncAdapterB);
+//		engine.synchronize();
+		
+		Assert.assertEquals(0,syncAdapterA.getAll().size());
 	}
 	
 	@Test

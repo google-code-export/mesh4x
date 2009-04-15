@@ -35,10 +35,19 @@ public interface ISyncAdapterBuilder {
 											 String mdbFileName,String tableName);
 	
 	/**
+	 * TODO create documentation
 	 * 
 	 * @param spreadSheetInfo
 	 * @return
 	 */
 	public ISyncAdapter createGoogleSpreadSheetAdapter(GoogleSpreadSheetInfo spreadSheetInfo);
 	
+	/** TODO create documentation
+	 * 
+	 * @param rootUrl
+	 * @param meshId
+	 * @param dataSetId
+	 * @return
+	 */
+	public ISyncAdapter createHttpSyncAdapter(String rootUrl,String meshId,String dataSetId);
 }

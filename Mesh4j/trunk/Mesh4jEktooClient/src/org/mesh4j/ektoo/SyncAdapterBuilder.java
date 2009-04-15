@@ -2,6 +2,7 @@ package org.mesh4j.ektoo;
 
 import java.io.File;
 
+import org.junit.Assert;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadSheetContentAdapter;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadSheetSyncRepository;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadsheet;
@@ -10,6 +11,11 @@ import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.ISpreadSheetT
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.SpreadSheetToXMLMapper;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSWorksheet;
 import org.mesh4j.sync.ISyncAdapter;
+import org.mesh4j.sync.adapters.feed.ContentReader;
+import org.mesh4j.sync.adapters.feed.ContentWriter;
+import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
+import org.mesh4j.sync.adapters.http.HttpSyncAdapter;
+import org.mesh4j.sync.adapters.http.HttpSyncAdapterFactory;
 import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
 import org.mesh4j.sync.adapters.msexcel.MSExcelToPlainXMLMapping;
 import org.mesh4j.sync.adapters.msexcel.MsExcel;
@@ -19,6 +25,9 @@ import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.id.generator.IIdGenerator;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.security.IIdentityProvider;
+import org.mesh4j.sync.security.IdentityProvider;
+import org.mesh4j.sync.security.LoggedInIdentityProvider;
+import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
@@ -91,6 +100,12 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder{
 				syncWorkSheet,spreadSheetInfo.getIdentityProvider(),spreadSheetInfo.getIdGenerator());
 		
 		return spreadSheetAdapter;
+	}
+	
+	public ISyncAdapter createHttpSyncAdapter(String rootUrl,String meshid, String datasetId){
+		rootUrl = "http://localhost:8080/mesh4x/feeds/" + meshid + "/" +  datasetId;
+		HttpSyncAdapter adapter = new HttpSyncAdapter(rootUrl, RssSyndicationFormat.INSTANCE, new LoggedInIdentityProvider(), IdGenerator.INSTANCE, ContentWriter.INSTANCE, ContentReader.INSTANCE);
+		return adapter;
 	}
 	
 	public IGoogleSpreadSheet getSpreadSheet(String spField,String userName,String passWord){
