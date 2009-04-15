@@ -1,6 +1,7 @@
 package org.mesh4j.sync.adapters.hibernate.mapping;
 
 import org.dom4j.Element;
+import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.validations.Guard;
 
 public class HibernateToPlainXMLMapping implements IHibernateToXMLMapping {
@@ -36,5 +37,10 @@ public class HibernateToPlainXMLMapping implements IHibernateToXMLMapping {
 	@Override
 	public String getIDNode() {
 		return this.idNode;
+	}
+
+	@Override
+	public ISchema getSchema() {
+		return null;
 	}
 }

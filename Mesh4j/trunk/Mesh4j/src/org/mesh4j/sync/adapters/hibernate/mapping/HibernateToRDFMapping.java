@@ -71,7 +71,7 @@ public class HibernateToRDFMapping implements IHibernateToXMLMapping {
 		return this.idNode;
 	}
 
-	public IRDFSchema getRDFSchema() {
+	public IRDFSchema getSchema() {
 		return this.schema;
 	}
 }

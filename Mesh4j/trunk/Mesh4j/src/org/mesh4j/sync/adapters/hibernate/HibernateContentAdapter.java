@@ -9,13 +9,15 @@ import org.hibernate.EntityMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.mesh4j.sync.ISupportSchema;
 import org.mesh4j.sync.adapters.hibernate.mapping.IHibernateToXMLMapping;
 import org.mesh4j.sync.adapters.split.IIdentifiableContentAdapter;
 import org.mesh4j.sync.model.IContent;
+import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
-public class HibernateContentAdapter implements IIdentifiableContentAdapter {
+public class HibernateContentAdapter implements IIdentifiableContentAdapter, ISupportSchema {
 
 	// MODEL VARIABLES
 	private IHibernateToXMLMapping mapping;
@@ -155,6 +157,11 @@ public class HibernateContentAdapter implements IIdentifiableContentAdapter {
 
 	public IHibernateToXMLMapping getMapping() {
 		return mapping;		
+	}
+
+	@Override
+	public ISchema getSchema() {
+			return this.mapping.getSchema();
 	}
 
 }
