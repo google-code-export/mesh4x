@@ -11,6 +11,7 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.mesh4j.ektoo.ui.translator.ExcelEktooUITranslator;
 import org.mesh4j.sync.adapters.msexcel.MsExcel;
 import org.mesh4j.sync.adapters.msexcel.MsExcelUtils;
 
@@ -39,7 +40,7 @@ public class MsExcelUI extends TableUI
 	 */
 	private void initialize()
 	{
-		this.getFileChooser().setDialogTitle("Select Microsoft Excel File");
+		this.getFileChooser().setDialogTitle(ExcelEktooUITranslator.getSelectExcel());
 		this.getFileChooser().setAcceptAllFileFilterUsed(false);
 		this.getFileChooser().addChoosableFileFilter(new MsExcelFilter());
 	}
@@ -109,6 +110,6 @@ class MsExcelFilter extends FileFilter {
 
     public String getDescription() 
     {
-        return "Microsoft Excel Files";
+        return ExcelEktooUITranslator.getReturnExcel();
     }
 }
