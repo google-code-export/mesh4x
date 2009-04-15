@@ -3,6 +3,7 @@ package org.mesh4j.ektoo;
 import java.io.File;
 
 import org.mesh4j.sync.ISyncAdapter;
+import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
 import org.mesh4j.sync.adapters.msexcel.MSExcelToPlainXMLMapping;
 import org.mesh4j.sync.adapters.msexcel.MsExcel;
 import org.mesh4j.sync.adapters.msexcel.MsExcelContentAdapter;
@@ -11,6 +12,7 @@ import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.validations.Guard;
+import org.mesh4j.sync.validations.MeshException;
 
 public class SyncAdapterBuilder implements ISyncAdapterBuilder{
 
@@ -47,6 +49,19 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder{
 		return splitAdapter;
 	}
 
+
+	@Override
+	public ISyncAdapter createMsExcessAdapter(String baseDirectory,String rdfUrl,String sourceAlias,
+										String mdbFileName, String tableName) {
+
+		MsAccessSyncAdapterFactory msAccesSyncAdapter  = new MsAccessSyncAdapterFactory(baseDirectory,rdfUrl);
+		try {
+			return msAccesSyncAdapter.createSyncAdapterFromFile(sourceAlias, mdbFileName, tableName);
+		} catch (Exception e) {
+			throw new MeshException(e);
+		}
+	}
+	
 	private File getFile(String fileName) {
 		File file = new File(fileName);
 		if(!file.exists()){
@@ -54,5 +69,5 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder{
 		}
 		return file;
 	}
-
+	
 }

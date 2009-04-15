@@ -1,7 +1,5 @@
 package org.mesh4j.ektoo;
 
-import java.io.IOException;
-
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.security.IIdentityProvider;
@@ -23,4 +21,18 @@ public interface ISyncAdapterBuilder {
 										String contentFileName, String syncFileName, 
 										IIdentityProvider identityProvider, 
 										IdGenerator idGenerator); 
+	
+	
+	/**
+	 * Creates adapter for access adapter
+	 * 
+	 * @param sourceAlias, the alias for source 
+	 * @param mdbFileName,the name of the ms access database file name.
+	 * @param tableName,the table name of the ms access database to be applied for sync.
+	 * @return ISyncAdapter
+	 */
+	public ISyncAdapter createMsExcessAdapter(String baseDirectory,String rdfUrl,String sourceAlias,
+											 String mdbFileName,String tableName);
+	
+	
 }
