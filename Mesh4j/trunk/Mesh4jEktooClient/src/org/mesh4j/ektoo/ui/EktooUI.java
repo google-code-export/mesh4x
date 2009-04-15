@@ -10,7 +10,6 @@ import java.io.File;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -191,7 +190,7 @@ public class EktooUI extends JFrame {
 					{
 						String sourceUri = sourceItem.getUri();
 						String targetUri = targetItem.getUri();
-						result = new EktooUIController().sync( sourceUri, targetUri );
+						//result = new EktooUIController().sync( sourceUri, targetUri );
 					}
 					System.out.println("Calling Sync...");
 					txtConsole.setText(result);
