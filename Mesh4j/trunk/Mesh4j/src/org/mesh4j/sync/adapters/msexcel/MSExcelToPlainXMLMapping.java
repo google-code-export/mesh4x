@@ -11,6 +11,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.utils.DateHelper;
 import org.mesh4j.sync.validations.Guard;
 
@@ -109,6 +110,11 @@ public class MSExcelToPlainXMLMapping implements IMsExcelToXMLMapping {
 	@Override
 	public String getLastUpdateColumnName() {
 		return this.lastUpdateColumnName;
+	}
+
+	@Override
+	public ISchema getSchema() {
+		return null;
 	}
 
 }

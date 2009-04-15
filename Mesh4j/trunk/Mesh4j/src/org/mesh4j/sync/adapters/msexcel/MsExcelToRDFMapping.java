@@ -199,4 +199,9 @@ public class MsExcelToRDFMapping implements IMsExcelToXMLMapping{
 	public void setLastUpdateColumnName(String columnName) {
 		this.lastUpdateColumnName = columnName;
 	}
+
+	@Override
+	public IRDFSchema getSchema() {
+		return rdfSchema;
+	}
 }

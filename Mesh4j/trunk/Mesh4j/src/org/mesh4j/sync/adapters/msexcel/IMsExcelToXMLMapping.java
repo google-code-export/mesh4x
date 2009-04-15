@@ -4,15 +4,17 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.dom4j.Element;
+import org.mesh4j.sync.payload.schema.ISchema;
 
 public interface IMsExcelToXMLMapping {
 
-	public String getIdColumnName();
+	String getIdColumnName();
 
-	public String getLastUpdateColumnName();
+	String getLastUpdateColumnName();
 
-	public void appliesXMLToRow(HSSFWorkbook wb, HSSFSheet sheet, HSSFRow row, Element payload);
+	void appliesXMLToRow(HSSFWorkbook wb, HSSFSheet sheet, HSSFRow row, Element payload);
 	
-	public Element convertRowToXML(HSSFWorkbook wb, HSSFSheet sheet, HSSFRow row);
-
+	Element convertRowToXML(HSSFWorkbook wb, HSSFSheet sheet, HSSFRow row);
+	
+	ISchema getSchema();
 }

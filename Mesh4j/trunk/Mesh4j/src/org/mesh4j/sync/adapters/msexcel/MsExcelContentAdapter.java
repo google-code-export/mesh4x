@@ -9,14 +9,16 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.dom4j.Element;
+import org.mesh4j.sync.ISupportSchema;
 import org.mesh4j.sync.ISyncAware;
 import org.mesh4j.sync.adapters.hibernate.EntityContent;
 import org.mesh4j.sync.adapters.split.IIdentifiableContentAdapter;
 import org.mesh4j.sync.model.IContent;
+import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
-public class MsExcelContentAdapter implements IIdentifiableContentAdapter, ISyncAware {
+public class MsExcelContentAdapter implements IIdentifiableContentAdapter, ISyncAware, ISupportSchema {
 
 	// MODEL VARIABLES
 	private IMsExcel excel;
@@ -198,7 +200,6 @@ public class MsExcelContentAdapter implements IIdentifiableContentAdapter, ISync
 		return this.sheetName;
 	}
 
-
 	@Override
 	public String getID(IContent content) {
 		EntityContent entityContent = EntityContent.normalizeContent(content, this.sheetName, this.mapping.getIdColumnName());
@@ -207,5 +208,10 @@ public class MsExcelContentAdapter implements IIdentifiableContentAdapter, ISync
 		} else {
 			return entityContent.getId();
 		}
+	}
+
+	@Override
+	public ISchema getSchema() {
+		return mapping.getSchema();
 	}
 }
