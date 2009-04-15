@@ -2,7 +2,6 @@ package org.mesh4j.ektoo;
 
 import java.io.File;
 
-import org.junit.Assert;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadsheet;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadsheetUtils;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.IGoogleSpreadSheet;
@@ -18,7 +17,6 @@ import org.mesh4j.sync.adapters.msexcel.MsExcelSyncRepository;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.security.IIdentityProvider;
-import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
@@ -70,8 +68,28 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder{
 		}
 	}
 	
+	@Override
+	public ISyncAdapter createGoogleSpreadSheetAdapter(GoogleSpreadSheetInfo spreadSheetInfo){
+		
+		String idColumName = spreadSheetInfo.getIdColumnName();
+		int lastUpdateColumnPosition = spreadSheetInfo.getLastUpdateColumnPosition();
+		int idColumnPosition = spreadSheetInfo.getIdColumnPosition();
+		String userName = spreadSheetInfo.getUserName();
+		String passWord = spreadSheetInfo.getPassWord();
+		String GOOGLE_SPREADSHEET_FIELD = spreadSheetInfo.getGOOGLE_SPREADSHEET_FIELD();
+		
+		ISpreadSheetToXMLMapper mapper = new SpreadSheetToXMLMapper(idColumName,idColumnPosition,lastUpdateColumnPosition);
+		IGoogleSpreadSheet spreadsheet = new GoogleSpreadsheet(GOOGLE_SPREADSHEET_FIELD,userName,passWord);
+		
+		GSWorksheet contentWorkSheet = spreadsheet.getGSWorksheet(spreadSheetInfo.getContentWorkSheetIndex());
+		GSWorksheet syncWorkSheet = spreadsheet.getGSWorksheet(spreadSheetInfo.getSyncWorkSheetIndex()); 
 	
-	
+		SplitAdapter spreadSheetAdapter = GoogleSpreadsheetUtils.createGoogleSpreadSheetAdapter(spreadsheet,mapper,contentWorkSheet,
+				syncWorkSheet,spreadSheetInfo.getIdentityProvider(),spreadSheetInfo.getIdGenerator());
+		
+			
+		return spreadSheetAdapter;
+	}
 	private File getFile(String fileName) {
 		File file = new File(fileName);
 		if(!file.exists()){

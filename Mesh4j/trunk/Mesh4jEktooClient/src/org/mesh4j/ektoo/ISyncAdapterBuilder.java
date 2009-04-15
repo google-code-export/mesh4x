@@ -34,6 +34,11 @@ public interface ISyncAdapterBuilder {
 	public ISyncAdapter createMsAccessAdapter(String baseDirectory,String rdfUrl,String sourceAlias,
 											 String mdbFileName,String tableName);
 	
-	
+	/**
+	 * 
+	 * @param spreadSheetInfo
+	 * @return
+	 */
+	public ISyncAdapter createGoogleSpreadSheetAdapter(GoogleSpreadSheetInfo spreadSheetInfo);
 	
 }
