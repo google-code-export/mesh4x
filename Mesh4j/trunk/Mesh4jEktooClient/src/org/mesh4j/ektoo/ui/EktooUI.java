@@ -2,7 +2,12 @@
  *
  */
 package org.mesh4j.ektoo.ui;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.File;
@@ -18,31 +23,41 @@ import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.mesh4j.ektoo.controller.EktooUIController;
 import org.mesh4j.sync.adapters.msexcel.MsExcel;
 import org.mesh4j.sync.adapters.msexcel.MsExcelUtils;
 
-/**
- * @author Asus
- *
- */
+
 /**
  * @author Asus
  *
  */
 public class EktooUI extends JFrame {
 
-	private static final long serialVersionUID = 1L;
-	private final String SourceOrTargetType = "KML~Sync Server~MS Access~Googll Spread Sheet~MS Excell";//EktooUITranslator.getDataSourceType();
+	private final static long serialVersionUID = 1L;
+	private final static String DYMMY_PANEL = "DUMMY_PANEL";
+	private final static String KML_PANEL = "KML";
+	private final static String MS_EXCEL_PANEL = "MS Excel";
+	private final static String GOOGLE_SPREADSHEET_PANEL = "Google Spreadsheet";
+	private final static String MS_ACCESS_PANEL = "MS Access";
+	private final static String SYNC_SERVER_PANEL = "Sync Server";
 
-	private JFileChooser chooser = null;// = new JFileChooser();
+	JPanel panels = null;
+	JPanel head = null;
+	JPanel firstPanel = new JPanel();
+	private MsExcelUI excelUI = null;
+	//private MsAccessUI accessUI = null;
+	//private KmlUI kmlUI = null;
+	//private SyncServerUI suncServerUI = null;
+
+	private final String SourceOrTargetType = "KML~Sync Server~MS Access~Google Spreadsheet~MS Excel";//EktooUITranslator.getDataSourceType();
+
+
 	private MsExcel sourceMsExcelFile = null;
 	private MsExcel targetMsExcelFile = null;
 
@@ -50,7 +65,7 @@ public class EktooUI extends JFrame {
 	private File targetFile = null;
 
 	private JPanel jPanel = null;
-	private JLayeredPane sourcePane = null;
+	private JPanel sourcePane = null;
 	private JLayeredPane targetPane = null;
 	private JLayeredPane viaPane = null;
 	private JLayeredPane typePane = null;
@@ -62,19 +77,6 @@ public class EktooUI extends JFrame {
 	private JComboBox targetType = null;
 	private JLabel labelSourceType1 = null;
 
-	private JLabel labelSourceFile = null;
-	private JTextField txtSourceFile = null;
-
-	private JLabel labelSourceWorksheet = null;
-	private JComboBox listSourceWorksheet = null;
-
-
-	private JLabel labelSourceWorksheetColumn = null;
-	private JComboBox listSourceWorksheetColumn = null;
-
-	private JButton btnSourceFile = null;
-
-
 	private JRadioButton rbWeb = null;
 	private JRadioButton rbSMS = null;
 	private JRadioButton rbFile = null;
@@ -82,19 +84,12 @@ public class EktooUI extends JFrame {
 	private JRadioButton rbReceive = null;
 	private JRadioButton rbSendReceive = null;
 
-	private JLabel labelTargetFile = null;
-	private JTextField txtTargetFile = null;
-	private JButton btnTargetFile = null;
-
-	private JLabel labelTargetWorksheet = null;
-	private JComboBox listTargetWorksheet = null;
-
-	private JLabel labelTargetWorksheetColumn = null;
-	private JComboBox listTargetWorksheetColumn = null;
-
 	private ButtonGroup btngSyncVia = new ButtonGroup();
 	private ButtonGroup btngSyncType = new ButtonGroup();
 	private JLabel txtConsole = null;
+
+	private JPanel jPanel2 = null;
+
 	/**
 	 * This method initializes this
 	 *
@@ -102,11 +97,6 @@ public class EktooUI extends JFrame {
 	private void initialize() {
         this.setSize(new Dimension(564, 511));
         this.setContentPane(getJPanel());
-        if (chooser == null)
-        	chooser = new JFileChooser();
-        
-        showHide(0,0);
-        showHide(0,1);
 	}
 
 	/**
@@ -137,27 +127,51 @@ public class EktooUI extends JFrame {
 	 *
 	 * @return javax.swing.JPanel
 	 */
-	private JLayeredPane getSourcePane() {
+	private JPanel getSourcePane() {
 		if (sourcePane == null) {
-			sourcePane = new JLayeredPane();
+			sourcePane = new JPanel();
 			//sourcePane.setLayout(new GridBagLayout());
+			sourcePane.setLayout(new BorderLayout());
 			sourcePane.setBorder(BorderFactory.createTitledBorder(
 		    "Source"));
-			sourcePane.setSize(new Dimension(350, 164));
-			sourcePane.setLocation(new Point(16, 16));
-			sourcePane.add(getSourceType(), null);
-			sourcePane.add(getLabelSourceType(), null);
-			sourcePane.add(getlabelSourceFile(), null);
-			sourcePane.add(getTxtSourceFile(), null);
-			sourcePane.add(getlabelSourceWorksheet(), null);
-			sourcePane.add(getlistSourceWorksheet(), null);
-			sourcePane.add(getlabelSourceWorksheetColumn(), null);
-			sourcePane.add(getlistSourceWorksheetColumn(), null);
-			sourcePane.add(getBtnSourceFile(), null);
+			sourcePane.setSize(new Dimension(350, 197));
+			sourcePane.setLocation(new Point(13, 36));
+			sourcePane.add(getSourceHeadPane(), BorderLayout.NORTH);
+			sourcePane.add(getSourceBodyPane(), BorderLayout.CENTER);
 		}
 		return sourcePane;
 	}
+	private JPanel getSourceHeadPane()
+	{
+		if (head == null)
+		{
+			head = new JPanel();
+			head.setBackground(Color.green);
+			head.setLayout(new FlowLayout());
+			head.add(getLabelSourceType(), null);
+			head.add(getSourceType(), null);
+		}
+		return head;
 
+	}
+	private JPanel getSourceBodyPane()
+	{
+		if (panels == null)
+		{
+			panels = new JPanel();
+			panels.setBackground(Color.red);
+			panels.setLayout(new CardLayout());
+
+			//
+			firstPanel.setBackground(Color.red);
+			panels.add(firstPanel, DYMMY_PANEL);
+
+//			 add cards here
+			panels.add(getMsExcelUI(), MS_EXCEL_PANEL);
+
+		}
+		return panels;
+	}
 	/**
 	 * This method initializes targetPane
 	 *
@@ -166,29 +180,13 @@ public class EktooUI extends JFrame {
 	private JLayeredPane getTargetPane()
 	{
 		if (targetPane == null) {
-			labelTargetWorksheetColumn = new JLabel();
-			labelTargetWorksheetColumn.setBounds(new Rectangle(16, 122, 56, 16));
-			labelTargetWorksheetColumn.setText("Id Column");
-			labelTargetWorksheet = new JLabel();
-			labelTargetWorksheet.setBounds(new Rectangle(16, 89, 69, 16));
-			labelTargetWorksheet.setText("Work Sheet");
-			labelTargetFile = new JLabel();
-			labelTargetFile.setBounds(new Rectangle(16, 56, 19, 16));
-			labelTargetFile.setText("File");
 			targetPane = new JLayeredPane();
 			targetPane.setBorder(BorderFactory.createTitledBorder(
 		    "Target"));
 			targetPane.setSize(new Dimension(350, 166));
-			targetPane.setLocation(new Point(15, 210));
+			targetPane.setLocation(new Point(21, 244));
 			targetPane.add(getTargetType(), null);
 			targetPane.add(getLabelSourceType1(), null);
-			targetPane.add(labelTargetFile, null);
-			targetPane.add(getTxtTargetFile(), null);
-			targetPane.add(labelTargetWorksheet, null);
-			targetPane.add(getlistTargetWorksheet(), null);
-			targetPane.add(labelTargetWorksheetColumn, null);
-			targetPane.add(getlistTargetWorksheetColumn(), null);
-			targetPane.add(getBtnTargetFile(), null);
 		}
 		return targetPane;
 	}
@@ -242,17 +240,17 @@ public class EktooUI extends JFrame {
 	private JButton getBtnSync() {
 		if (btnSync == null) {
 			btnSync = new JButton();
-			btnSync.setBounds(new Rectangle(219, 429, 127, 28));
+			btnSync.setBounds(new Rectangle(315, 427, 127, 28));
 			btnSync.setText("Sync Now");
 			btnSync.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					System.out.println("actionPerformed()"); // TODO Auto-generated Event stub actionPerformed()
 
-				
-					txtConsole.setText("");
-					String result = new EktooUIController().sync(sourceFile, (String)listSourceWorksheet.getSelectedItem(), (String)listSourceWorksheetColumn.getSelectedItem(), 
-															   targetFile, (String)listTargetWorksheet.getSelectedItem(), (String)listTargetWorksheetColumn.getSelectedItem());
-					txtConsole.setText(result);
+
+					//txtConsole.setText("");
+					//String result = new EktooUIController().sync(sourceFile, (String)listSourceWorksheet.getSelectedItem(), (String)listSourceWorksheetColumn.getSelectedItem(),
+															  // targetFile, (String)listTargetWorksheet.getSelectedItem(), (String)listTargetWorksheetColumn.getSelectedItem());
+					///txtConsole.setText(result);
 					//System.out.println("????????->" + test);
 					//new EktooUIController().sync(sourceFile, sourceSyncFile, targetFile, targetSyncFile);
 
@@ -270,8 +268,7 @@ public class EktooUI extends JFrame {
 	private JComboBox getSourceType() {
 		if (sourceType == null) {
 			sourceType = new JComboBox();
-			sourceType.setBounds(new Rectangle(118, 22, 194, 20));
-
+			sourceType.setBounds(new Rectangle(107, 13, 230, 22));
 			if (SourceOrTargetType != null)
 			{
 				String[] types = SourceOrTargetType.split("~");
@@ -287,7 +284,8 @@ public class EktooUI extends JFrame {
 					System.out.println("itemStateChanged()"); // TODO Auto-generated Event stub itemStateChanged()
 					int index = sourceType.getSelectedIndex();
 					if (index != -1)
-						showHide(index, 0);
+						updateLayout((String)e.getItem());
+
 				}
 			});
 
@@ -303,8 +301,9 @@ public class EktooUI extends JFrame {
 	private JLabel getLabelSourceType() {
 		if (labelSourceType == null) {
 			labelSourceType = new JLabel();
-			labelSourceType.setBounds(new Rectangle(15, 24, 75, 17));
 			labelSourceType.setText("Type");
+			labelSourceType.setBounds(new Rectangle(16, 18, 27, 16));
+			System.out.println("dsdsdsd");
 		}
 		return labelSourceType;
 	}
@@ -332,9 +331,9 @@ public class EktooUI extends JFrame {
 			targetType.addItemListener(new java.awt.event.ItemListener() {
 				public void itemStateChanged(java.awt.event.ItemEvent e) {
 					System.out.println("itemStateChanged()"); // TODO Auto-generated Event stub itemStateChanged()
-					int index = targetType.getSelectedIndex();
-					if (index != -1)
-						showHide(index, 1);
+					//int index = targetType.getSelectedIndex();
+					//if (index != -1)
+					//	showHide(index, 1);
 				}
 			});
 
@@ -354,96 +353,6 @@ public class EktooUI extends JFrame {
 			labelSourceType1.setText("Type");
 		}
 		return labelSourceType1;
-	}
-
-	/**
-	 * This method initializes labelSourceFile
-	 *
-	 * @return javax.swing.JLabel
-	 */
-	private JLabel getlabelSourceFile() {
-		if (labelSourceFile == null) {
-			labelSourceFile = new JLabel();
-			labelSourceFile.setBounds(new Rectangle(16, 57, 75, 17));
-			labelSourceFile.setText("File");
-		}
-		return labelSourceFile;
-	}
-
-	/**
-	 * This method initializes txtSourceFile
-	 *
-	 * @return javax.swing.JTextField
-	 */
-	private JTextField getTxtSourceFile() {
-		if (txtSourceFile == null) {
-			txtSourceFile = new JTextField();
-			txtSourceFile.setBounds(new Rectangle(119, 56, 149, 20));
-
-		}
-		return txtSourceFile;
-	}
-
-	/**
-	 * This method initializes labelSourceWorksheet
-	 *
-	 * @return javax.swing.JLabel
-	 */
-	private JLabel getlabelSourceWorksheet() {
-		if (labelSourceWorksheet == null) {
-			labelSourceWorksheet = new JLabel();
-			labelSourceWorksheet.setBounds(new Rectangle(15, 90, 75, 17));
-			labelSourceWorksheet.setText("Work Sheet");
-		}
-		return labelSourceWorksheet;
-	}
-
-	/**
-	 * This method initializes listSourceWorksheet
-	 *
-	 * @return javax.swing.JTextField
-	 */
-	private JComboBox getlistSourceWorksheet() {
-		if (listSourceWorksheet == null) {
-			listSourceWorksheet = new JComboBox();
-			listSourceWorksheet.setBounds(new Rectangle(119, 90, 194, 20));
-			listSourceWorksheet.addItemListener(new java.awt.event.ItemListener() {
-				public void itemStateChanged(java.awt.event.ItemEvent e) {
-					System.out.println("itemStateChanged()"); // TODO Auto-generated Event stub itemStateChanged()
-					int sheetIndex = listSourceWorksheet.getSelectedIndex();
-					if (sheetIndex != -1)
-						setColumnList( listSourceWorksheetColumn, sourceMsExcelFile, sheetIndex);
-				}
-			});
-		}
-		return listSourceWorksheet;
-	}
-
-	/**
-	 * This method initializes labelSourceWorksheetColumn
-	 *
-	 * @return javax.swing.JLabel
-	 */
-	private JLabel getlabelSourceWorksheetColumn() {
-		if (labelSourceWorksheetColumn == null) {
-			labelSourceWorksheetColumn = new JLabel();
-			labelSourceWorksheetColumn.setBounds(new Rectangle(14, 123, 75, 17));
-			labelSourceWorksheetColumn.setText("Id Column");
-		}
-		return labelSourceWorksheetColumn;
-	}
-
-	/**
-	 * This method initializes listSourceWorksheetColumn
-	 *
-	 * @return javax.swing.JTextField
-	 */
-	private JComboBox getlistSourceWorksheetColumn() {
-		if (listSourceWorksheetColumn == null) {
-			listSourceWorksheetColumn = new JComboBox();
-			listSourceWorksheetColumn.setBounds(new Rectangle(119, 124, 194, 20));
-		}
-		return listSourceWorksheetColumn;
 	}
 
 	/**
@@ -539,127 +448,17 @@ public class EktooUI extends JFrame {
 	}
 
 	/**
-	 * This method initializes txtTargetFile
+	 * This method initializes jPanel2
 	 *
-	 * @return javax.swing.JTextField
+	 * @return javax.swing.JPanel
 	 */
-	private JTextField getTxtTargetFile() {
-		if (txtTargetFile == null) {
-			txtTargetFile = new JTextField();
-			txtTargetFile.setBounds(new Rectangle(118, 57, 152, 20));
+	private JPanel getJPanel2() {
+		if (jPanel2 == null) {
+			jPanel2 = new JPanel();
+			jPanel2.setLayout(new GridBagLayout());
+			jPanel2.setBackground(new Color(238, 65, 238));
 		}
-		return txtTargetFile;
-	}
-
-	/**
-	 * This method initializes listTargetWorksheet
-	 *
-	 * @return javax.swing.JTextField
-	 */
-	private JComboBox getlistTargetWorksheet() {
-		if (listTargetWorksheet == null) {
-			listTargetWorksheet = new JComboBox();
-			listTargetWorksheet.setBounds(new Rectangle(118, 90, 203, 20));
-			listTargetWorksheet.addItemListener(new java.awt.event.ItemListener() {
-				public void itemStateChanged(java.awt.event.ItemEvent e) {
-					System.out.println("itemStateChanged()"); // TODO Auto-generated Event stub itemStateChanged()
-					int sheetIndex = listTargetWorksheet.getSelectedIndex();
-					if (sheetIndex != -1)
-						setColumnList( listTargetWorksheetColumn, targetMsExcelFile, sheetIndex);
-				}
-			});
-		}
-		return listTargetWorksheet;
-	}
-
-	/**
-	 * This method initializes listTargetWorksheetColumn
-	 *
-	 * @return javax.swing.JTextField
-	 */
-	private JComboBox getlistTargetWorksheetColumn() {
-		if (listTargetWorksheetColumn == null) {
-			listTargetWorksheetColumn = new JComboBox();
-			listTargetWorksheetColumn.setBounds(new Rectangle(118, 123, 203, 20));
-		}
-		return listTargetWorksheetColumn;
-	}
-
-	/**
-	 * This method initializes btnSourceFile
-	 *
-	 * @return javax.swing.JButton
-	 */
-	private JButton getBtnSourceFile() {
-		if (btnSourceFile == null) {
-			btnSourceFile = new JButton();
-			btnSourceFile.setBounds(new Rectangle(277, 55, 34, 20));
-			btnSourceFile.setText("...");
-			btnSourceFile.addActionListener(new java.awt.event.ActionListener() {
-				public void actionPerformed(java.awt.event.ActionEvent e) {
-					System.out.println("actionPerformed()"); // TODO Auto-generated Event stub actionPerformed()
-					int returnVal = chooser.showOpenDialog( getJPanel() );
-					if(returnVal == JFileChooser.APPROVE_OPTION)
-					{
-						System.out.println("You chose to open this file: " +
-					            chooser.getSelectedFile().getName());
-						sourceFile = chooser.getSelectedFile();
-						if(sourceFile != null)
-						{
-							txtSourceFile.setText( sourceFile.getName() );
-							sourceMsExcelFile = new MsExcel(sourceFile.getAbsolutePath());
-
-							setWorksheetList( listSourceWorksheet,  sourceMsExcelFile);
-						}
-
-
-
-					}
-
-				}
-			});
-		}
-		return btnSourceFile;
-	}
-
-	/**
-	 * This method initializes btnTargetFile
-	 *
-	 * @return javax.swing.JButton
-	 */
-	private JButton getBtnTargetFile() {
-		if (btnTargetFile == null) {
-			btnTargetFile = new JButton();
-			btnTargetFile.setBounds(new Rectangle(276, 58, 43, 20));
-			btnTargetFile.setText("...");
-			btnTargetFile.addActionListener(new java.awt.event.ActionListener() {
-				public void actionPerformed(java.awt.event.ActionEvent e) {
-					System.out.println("actionPerformed()"); // TODO Auto-generated Event stub actionPerformed()
-
-					int returnVal = chooser.showOpenDialog( getJPanel() );
-					if(returnVal == JFileChooser.APPROVE_OPTION)
-					{
-						System.out.println("You chose to open this file: " +
-					            chooser.getSelectedFile().getName());
-						targetFile = chooser.getSelectedFile();
-						if(targetFile != null)
-						{
-							txtTargetFile.setText( targetFile.getName() );
-							targetMsExcelFile = new MsExcel(targetFile.getAbsolutePath());
-
-							setWorksheetList( listTargetWorksheet,  targetMsExcelFile);
-						}
-
-
-
-					}
-
-
-				}
-			});
-
-		}
-		return btnTargetFile;
+		return jPanel2;
 	}
 
 	/**
@@ -669,7 +468,7 @@ public class EktooUI extends JFrame {
 		// TODO Auto-generated method stub
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				EktooUI thisClass = new EktooUI();
+				JFrame thisClass = new EktooUI();
 				thisClass.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				thisClass.setVisible(true);
 			}
@@ -684,134 +483,28 @@ public class EktooUI extends JFrame {
 		initialize();
 	}
 
-	private void setWorksheetList(JComboBox comp, MsExcel excelFile)
+	private MsExcelUI getMsExcelUI()
 	{
-		HSSFWorkbook workbook = excelFile.getWorkbook();
-		if(workbook != null)
-		{
-			int sheetNum = workbook.getNumberOfSheets();
-			for(int i=0; i < sheetNum; i++)
-			{
-				String sheetName = workbook.getSheetName(i);
-				if (sheetName != null)
-				{
-					comp.addItem(sheetName);
-				}
-			}
-
+		if (excelUI == null) {
+			excelUI = new MsExcelUI("File", "Wroksheet", "Unique Column");
+			//excelUI.setBounds(6,55,337,126);
+			//excelUI.setBounds(new Rectangle(5, 21, 340, 30));
+			//excelUI.setSize(400, 95);
+			//excelUI.setLocation(8, 55);
 		}
+		return excelUI;
 	}
 
-
-
-
-
-
-
-	private void setColumnList(JComboBox comp, MsExcel excelFile, int sheetIndex)
+	private void updateLayout(String item)
 	{
-		HSSFWorkbook workbook = excelFile.getWorkbook();
-		HSSFSheet sheet = workbook.getSheetAt(sheetIndex);
-		HSSFRow row = MsExcelUtils.getOrCreateRowHeaderIfAbsent(sheet);
-
-		HSSFCell cell = null;
-		String label = null;
-		Iterator cells = row.cellIterator();
-		while(cells.hasNext())
+		CardLayout cl = (CardLayout)(panels.getLayout());
+		if (item.equals(MS_EXCEL_PANEL))
 		{
-			cell = (HSSFCell) cells.next();
-			label = cell.getStringCellValue();
-			comp.addItem(label);
+		    cl.show(panels, MS_EXCEL_PANEL);
 		}
-
-	}
-
-
-	private void showHide(int index, int direcion)
-	{
-		switch(index)
+		else
 		{
-			case 0:
-				if (direcion == 0)
-				{
-					labelSourceFile.setVisible(true);
-					txtSourceFile.setVisible(true);
-					btnSourceFile.setVisible(true);
-
-					labelSourceWorksheet.setVisible(false);
-					listSourceWorksheet.setVisible(false);
-
-					labelSourceWorksheetColumn.setVisible(false);
-					listSourceWorksheetColumn.setVisible(false);
-				}
-				else
-				{
-					labelTargetFile.setVisible(true);
-					txtTargetFile.setVisible(true);
-					btnTargetFile.setVisible(true);
-
-					labelTargetWorksheet.setVisible(false);
-					listTargetWorksheet.setVisible(false);
-
-					labelTargetWorksheetColumn.setVisible(false);
-					listTargetWorksheetColumn.setVisible(false);
-				}
-				break;
-			case 1:
-				if (direcion == 0)
-				{
-				labelSourceFile.setVisible(true);
-				txtSourceFile.setVisible(true);
-				btnSourceFile.setVisible(false);
-
-				labelSourceWorksheet.setVisible(false);
-				listSourceWorksheet.setVisible(false);
-
-				labelSourceWorksheetColumn.setVisible(false);
-				listSourceWorksheetColumn.setVisible(false);
-				}
-				else
-				{
-					labelTargetFile.setVisible(true);
-					txtTargetFile.setVisible(true);
-					btnTargetFile.setVisible(false);
-
-					labelTargetWorksheet.setVisible(false);
-					listTargetWorksheet.setVisible(false);
-
-					labelTargetWorksheetColumn.setVisible(false);
-					listTargetWorksheetColumn.setVisible(false);
-				}
-				break;
-
-			case 2:
-			case 3:
-			case 4:
-				if (direcion == 0)
-				{
-				labelSourceFile.setVisible(true);
-				txtSourceFile.setVisible(true);
-
-				labelSourceWorksheet.setVisible(true);
-				listSourceWorksheet.setVisible(true);
-
-				labelSourceWorksheetColumn.setVisible(true);
-				listSourceWorksheetColumn.setVisible(true);
-				}
-				else
-				{
-					labelTargetFile.setVisible(true);
-					txtTargetFile.setVisible(true);
-
-					labelTargetWorksheet.setVisible(true);
-					listTargetWorksheet.setVisible(true);
-
-					labelTargetWorksheetColumn.setVisible(true);
-					listTargetWorksheetColumn.setVisible(true);
-
-				}
-			default:
-				break;
+			cl.show(panels, DYMMY_PANEL);
 		}
 	}
 }  //  @jve:decl-index=0:visual-constraint="10,10"
