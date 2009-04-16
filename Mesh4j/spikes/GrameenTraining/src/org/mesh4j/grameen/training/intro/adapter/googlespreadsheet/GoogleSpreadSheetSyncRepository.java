@@ -34,17 +34,22 @@ import com.google.gdata.util.ServiceException;
  */
 public class GoogleSpreadSheetSyncRepository implements ISyncRepository,ISyncAware{
 
+	public enum SyncColumn {
+		sync_id, entity_name, entity_id, entity_version, sync_data;
+		
+		/** 
+		 * return the name without '_', which is the tag for google spreadsheet column  
+		 */
+		public String toString(){
+			return this.name().replace("_", "");
+		}
+	}
 	
 	//This attributes are usually used to represent the sync information
 	//in a spreadsheet,where every sync row will have following column to
 	//hold the items/contents necessary sync information.
-	public final static String COLUMN_NAME_SYNC_ID = "syncid";
-	public final static String COLUMN_NAME_ENTITY_NAME = "entityname";
-	public final static String COLUMN_NAME_ENTITY_ID = "entityid";
-	public final static String COLUMN_NAME_VERSION = "version";
-	public final static String COLUMN_NAME_SYNC = "sync";
 	private final static int SYNC_ID_INDEX = 1;
-	
+
 	private IGoogleSpreadSheet spreadSheet = null;
 	private IIdentityProvider identityProvider = null;
 	private IIdGenerator idGenerator = null;
@@ -52,24 +57,23 @@ public class GoogleSpreadSheetSyncRepository implements ISyncRepository,ISyncAwa
 	private GSWorksheet<GSRow<GSCell>> workSheet;
 	
 	
-	public GoogleSpreadSheetSyncRepository(IGoogleSpreadSheet spreadSheet,GSWorksheet workSheet,
-											IIdentityProvider identityProvider,IIdGenerator idGenerator,String sheetName){
+	public GoogleSpreadSheetSyncRepository(IGoogleSpreadSheet spreadSheet,/*GSWorksheet workSheet,*/
+											IIdentityProvider identityProvider,IIdGenerator idGenerator,String syncWorksheetName){
 		
 		Guard.argumentNotNull(spreadSheet, "spreadSheet");
 		Guard.argumentNotNull(identityProvider, "identityProvider");
 		Guard.argumentNotNull(idGenerator, "idGenerator");
-		Guard.argumentNotNullOrEmptyString(sheetName, "sheetName");
-		
+		Guard.argumentNotNullOrEmptyString(syncWorksheetName, "syncWorksheetName");
 		
 		this.spreadSheet = spreadSheet;
 		this.identityProvider = identityProvider;
 		this.idGenerator = idGenerator;
-		this.workSheet = workSheet;
+		this.workSheet = GoogleSpreadsheetUtils.createSyncSheetIfAbsent(spreadSheet, syncWorksheetName);
 	}
 	
 	@Override
 	public SyncInfo get(String syncId) {
-		Guard.argumentNotNullOrEmptyString(syncId, "syncId");
+		Guard.argumentNotNullOrEmptyString(syncId, "syncid");
 		
 		GSRow row ;
 		row = GoogleSpreadsheetUtils.getRow(workSheet,SYNC_ID_INDEX,syncId);
@@ -137,7 +141,7 @@ public class GoogleSpreadSheetSyncRepository implements ISyncRepository,ISyncAwa
 	
 	private void updateRow(GSRow rowTobeUPdated  ,SyncInfo syncInfo){
 		GSRow updatedRow = convertSyncInfoToRow(rowTobeUPdated, syncInfo);
-		this.workSheet.updateChildElement(String.valueOf(updatedRow.getRowIndex()), updatedRow);
+		this.workSheet.updateChildElement(updatedRow.getElementId(), updatedRow);
 	}
 	
 	
@@ -150,12 +154,13 @@ public class GoogleSpreadSheetSyncRepository implements ISyncRepository,ISyncAwa
 	private GSRow convertSyncInfoToRow(GSRow rowTobeUPdated,SyncInfo syncInfo){
 		
 		Element syncPayLoad = SyncInfoParser.convertSync2Element(syncInfo.getSync(), RssSyndicationFormat.INSTANCE, this.identityProvider);
+		SyncColumn sc = SyncColumn.sync_id;
 		
-		rowTobeUPdated.updateCellValue( syncInfo.getSyncId() ,COLUMN_NAME_SYNC_ID);
-		rowTobeUPdated.updateCellValue( syncInfo.getType() ,COLUMN_NAME_ENTITY_NAME);
-		rowTobeUPdated.updateCellValue( syncInfo.getId() ,COLUMN_NAME_ENTITY_ID);
-		rowTobeUPdated.updateCellValue( String.valueOf(syncInfo.getVersion()) ,COLUMN_NAME_VERSION);
-		rowTobeUPdated.updateCellValue(syncPayLoad.asXML()  ,COLUMN_NAME_SYNC);
+		rowTobeUPdated.updateCellValue( syncInfo.getSyncId() , SyncColumn.sync_id.toString());
+		rowTobeUPdated.updateCellValue( syncInfo.getType() ,SyncColumn.entity_name.toString());
+		rowTobeUPdated.updateCellValue( syncInfo.getId() ,SyncColumn.entity_id.toString());
+		rowTobeUPdated.updateCellValue( String.valueOf(syncInfo.getVersion()) ,SyncColumn.entity_version.toString());
+		rowTobeUPdated.updateCellValue(syncPayLoad.asXML()  ,SyncColumn.sync_data.toString());
 		
 		return rowTobeUPdated;
 	}
@@ -182,11 +187,11 @@ public class GoogleSpreadSheetSyncRepository implements ISyncRepository,ISyncAwa
 		
 		LinkedHashMap<String, String> listMap = new LinkedHashMap<String, String>();
 		
-		listMap.put(COLUMN_NAME_SYNC_ID, syncInfo.getSyncId());
-		listMap.put(COLUMN_NAME_ENTITY_NAME, syncInfo.getType());
-		listMap.put(COLUMN_NAME_ENTITY_ID, syncInfo.getId());
-		listMap.put(COLUMN_NAME_VERSION, String.valueOf(syncInfo.getVersion()));
-		listMap.put(COLUMN_NAME_SYNC, payLoad.asXML());
+		listMap.put(SyncColumn.sync_id.toString(), syncInfo.getSyncId());
+		listMap.put(SyncColumn.entity_name.toString(), syncInfo.getType());
+		listMap.put(SyncColumn.entity_id.toString(), syncInfo.getId());
+		listMap.put(SyncColumn.entity_version.toString(), String.valueOf(syncInfo.getVersion()));
+		listMap.put(SyncColumn.sync_data.toString(), payLoad.asXML());
 		
 		try {
 			gsRow = this.workSheet.createNewRow(listMap);
