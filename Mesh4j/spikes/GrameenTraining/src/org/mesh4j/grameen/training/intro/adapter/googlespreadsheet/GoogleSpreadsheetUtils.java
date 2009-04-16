@@ -1,8 +1,12 @@
 package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet;
 
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -10,6 +14,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import junit.framework.Assert;
+
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadSheetSyncRepository.SyncColumn;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSBaseElement;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSCell;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSRow;
@@ -22,12 +29,15 @@ import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
+import sun.jdbc.odbc.JdbcOdbcDriver;
+
 import com.google.gdata.client.spreadsheet.CellQuery;
 import com.google.gdata.client.spreadsheet.FeedURLFactory;
 import com.google.gdata.client.spreadsheet.ListQuery;
 import com.google.gdata.client.spreadsheet.SpreadsheetService;
 import com.google.gdata.data.BaseEntry;
 import com.google.gdata.data.Link;
+import com.google.gdata.data.PlainTextConstruct;
 import com.google.gdata.data.batch.BatchOperationType;
 import com.google.gdata.data.batch.BatchStatus;
 import com.google.gdata.data.batch.BatchUtils;
@@ -40,6 +50,8 @@ import com.google.gdata.data.spreadsheet.SpreadsheetFeed;
 import com.google.gdata.data.spreadsheet.WorksheetEntry;
 import com.google.gdata.data.spreadsheet.WorksheetFeed;
 import com.google.gdata.util.ServiceException;
+import com.healthmarketscience.jackcess.Database;
+import com.healthmarketscience.jackcess.Table;
 
 /**
  * this is the utility class used by Google spreadsheet adapter
@@ -912,16 +924,72 @@ public class GoogleSpreadsheetUtils {
 			throw new MeshException(e);
 		}
 		return  dateAndTime;
-	}
+	}	
 	
-	
-	
-	public static SplitAdapter createGoogleSpreadSheetAdapter(IGoogleSpreadSheet spreadsheet,ISpreadSheetToXMLMapper mapper,GSWorksheet contentWorkSheet,GSWorksheet syncWorkSheet,IIdentityProvider identityProvider,IIdGenerator idGenerator){
+	public static SplitAdapter createGoogleSpreadSheetAdapter(
+			IGoogleSpreadSheet spreadsheet, ISpreadSheetToXMLMapper mapper,
+			GSWorksheet contentWorkSheet, GSWorksheet syncWorkSheet,
+			IIdentityProvider identityProvider, IIdGenerator idGenerator) {
 		
-		GoogleSpreadSheetContentAdapter contentRepo = new GoogleSpreadSheetContentAdapter(spreadsheet,contentWorkSheet,mapper,contentWorkSheet.getName());
-		//TODO if sync sheet doesn't exist please create the sync sheet
-		GoogleSpreadSheetSyncRepository  syncRepo = new GoogleSpreadSheetSyncRepository(spreadsheet,syncWorkSheet,identityProvider,idGenerator,syncWorkSheet.getName());
-		SplitAdapter splitAdapter = new SplitAdapter(syncRepo,contentRepo,identityProvider);
+		GoogleSpreadSheetContentAdapter contentRepo = new GoogleSpreadSheetContentAdapter(
+				spreadsheet, contentWorkSheet, mapper, contentWorkSheet
+						.getName());
+		
+		GoogleSpreadSheetSyncRepository syncRepo = new GoogleSpreadSheetSyncRepository(
+				spreadsheet, identityProvider, idGenerator,
+				getSyncWorksheetName(contentWorkSheet.getName()));
+		
+		SplitAdapter splitAdapter = new SplitAdapter(syncRepo, contentRepo,
+				identityProvider);
+		
 		return splitAdapter;
 	}
+
+	public static String getSyncWorksheetName(String baseWorksheetName) {
+		return baseWorksheetName+"_sync";
+	}
+	
+	public static GSWorksheet<GSRow<GSCell>> createSyncSheetIfAbsent(IGoogleSpreadSheet spreadsheet, String syncWorksheetName) {
+		
+		if(spreadsheet.getGSWorksheet(syncWorksheetName) == null){
+			 try {
+				    WorksheetEntry worksheet = new WorksheetEntry();
+					worksheet.setTitle(new PlainTextConstruct(syncWorksheetName));
+					worksheet.setRowCount(80);
+					worksheet.setColCount(10);
+					
+					worksheet = spreadsheet.getService().insert(
+							((SpreadsheetEntry) spreadsheet.getGSSpreadsheet()
+									.getBaseEntry()).getWorksheetFeedUrl(),
+							worksheet);
+					
+					GSWorksheet<GSRow<GSCell>> parentWorksheet =
+						new GSWorksheet<GSRow<GSCell>>(worksheet, spreadsheet.getGSSpreadsheet().getChildElements().size() + 1,
+								spreadsheet.getGSSpreadsheet());								
+					spreadsheet.getGSSpreadsheet().addChildElement(
+							parentWorksheet.getElementId(), parentWorksheet);
+					
+					GSRow<GSCell> parentRow = new GSRow<GSCell>(new ListEntry(), 1,
+							parentWorksheet);
+					parentWorksheet.addChildElement(parentRow.getElementId(), parentRow);
+					
+					int i = 1;
+					for (SyncColumn sc : SyncColumn.values()) {
+						CellEntry newCellEntry = new CellEntry(1, i++, sc.name());
+						newCellEntry = spreadsheet.getService().insert(worksheet.getCellFeedUrl(),
+								newCellEntry);
+						GSCell newGsCell = new GSCell(newCellEntry, parentRow,  sc.toString());
+						parentRow.addChildElement(newGsCell.getColumnTag(), newGsCell);
+						newGsCell.unsetDirty();
+					}
+					
+					return parentWorksheet;
+					
+				 } catch (Exception e) {
+				        throw new MeshException(e);
+				 }
+		}else
+			return spreadsheet.getGSWorksheet(syncWorksheetName);
+	}
+
 }
