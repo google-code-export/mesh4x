@@ -130,11 +130,6 @@ public class SyncItemUI extends JPanel
 	}
 	
 
-	
-
-
-
-
 	/**
 	 * This method initializes sourceType
 	 *
@@ -189,7 +184,7 @@ public class SyncItemUI extends JPanel
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				JFrame thisClass = new EktooUI();

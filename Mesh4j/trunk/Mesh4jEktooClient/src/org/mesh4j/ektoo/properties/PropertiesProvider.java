@@ -142,20 +142,13 @@ public class PropertiesProvider {
 	}
 	
 	public String getMeshURL(String alias) {
-		return getMeshSyncServerURL() + "/" + getMeshID(alias);
+		return getMeshSyncServerURL() + "/" + alias;
 	}
 	
 	public String getMeshSyncServerURL() {
 		return getString("mesh4x.sync.url");
 	}
 	
-	public String getMeshID() {
-		return getString("mesh4x.sync.meshID");
-	}
-	
-	public String getMeshID(String alias) {
-		return getMeshID() + "/" + alias;
-	}
 
 	public IMessageEncoding getDefaultMessageEncoding() {
 		return (IMessageEncoding) getInstance("default.sms.compress.method", NonMessageEncoding.INSTANCE);

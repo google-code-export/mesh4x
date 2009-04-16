@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.mesh4j.ektoo.GoogleSpreadSheetInfo;
 import org.mesh4j.ektoo.ISyncAdapterBuilder;
 import org.mesh4j.ektoo.SyncAdapterBuilder;
+import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.hibernate.EntityContent;
 import org.mesh4j.sync.id.generator.IdGenerator;
@@ -18,32 +19,24 @@ import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.Sync;
 import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
-import org.mesh4j.sync.security.NullIdentityProvider;
-import org.mesh4j.sync.test.utils.TestHelper;
 import org.mesh4j.sync.utils.XMLHelper;
 
 public class SyncAdapterBuilderTest {
 
 	
-	
 	@Test
 	public void shouldCreateGoogleSpreadSheetAdapter(){
 		
-		GoogleSpreadSheetInfo spreadSheetInfo = new GoogleSpreadSheetInfo();
-		spreadSheetInfo.setUserName("mesh4x@gmail.com");
-		spreadSheetInfo.setPassWord("g@l@xy24");
-		spreadSheetInfo.setGOOGLE_SPREADSHEET_FIELD("pLUqch-enpf1-GcqnD6qjSA");
+		GoogleSpreadSheetInfo spreadSheetInfo = new GoogleSpreadSheetInfo(
+				"pLUqch-enpf1-GcqnD6qjSA",
+				"id",
+				1,
+				6, 
+				"g@l@xy24", 
+				"mesh4x@gmail.com",
+				"user_source");
 		
-		spreadSheetInfo.setIdColumnName("id");
-		spreadSheetInfo.setIdColumnPosition(1);
-		spreadSheetInfo.setLastUpdateColumnPosition(6);
-		spreadSheetInfo.setSheetName("user_source");
-		
-		
-		spreadSheetInfo.setIdentityProvider(NullIdentityProvider.INSTANCE);
-		spreadSheetInfo.setIdGenerator(IdGenerator.INSTANCE);
-		
-		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder();
+		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
 		ISyncAdapter syncAdapterA = adapterBuilder.createGoogleSpreadSheetAdapter(spreadSheetInfo);
 		
 //		spreadSheetInfo.setSheetName("user_target");
@@ -57,8 +50,8 @@ public class SyncAdapterBuilderTest {
 	
 	@Test
 	public void shouldCreateMsAccessAdapter() throws Exception{
-	    ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder();
-	    ISyncAdapter syncAdapter = adapterBuilder.createMsAccessAdapter(TestHelper.baseDirectoryForTest(), "http://mesh4x/feeds/grammen", "ektoo", "C:\\jtest\\ektoo.mdb", "ektoo");
+	    ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
+	    ISyncAdapter syncAdapter = adapterBuilder.createMsAccessAdapter("C:\\jtest\\ektoo.mdb", "ektoo");
 	    
 	   Assert.assertEquals(0, syncAdapter.getAll().size());
 
@@ -69,8 +62,8 @@ public class SyncAdapterBuilderTest {
 	
 		String contentFile = "C:\\jtest\\contentFile.xls";
 		String syncFile = contentFile;
-		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder();
-		ISyncAdapter excelAdapter = adapterBuilder.createMsExcelAdapter("user", "id", contentFile, syncFile, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapter excelAdapter = adapterBuilder.createMsExcelAdapter("user", "id", contentFile);
 		
 		Assert.assertEquals(0, excelAdapter.getAll().size());
 		
@@ -82,51 +75,52 @@ public class SyncAdapterBuilderTest {
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
-	public void shouldGenarateExceptionIfSheetNameEmptyOrNull(){
+	public void shouldGenarateExceptionIfSheetNameEmptyOrNull()
+	{
 		String contentFile = "C:\\jtest\\contentFile.xls";
 		String syncFile = "C:\\jtest\\syncFile.xls";
-		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder();
-		ISyncAdapter excelAdapter = adapterBuilder.createMsExcelAdapter("", "id", contentFile, syncFile, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapter excelAdapter = adapterBuilder.createMsExcelAdapter("", "id", contentFile);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldGenarateExceptionIfIdEmptyOrNull(){
 		String contentFile = "C:\\jtest\\contentFile.xls";
 		String syncFile = "C:\\jtest\\syncFile.xls";
-		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder();
-		ISyncAdapter excelAdapter = adapterBuilder.createMsExcelAdapter("user", "", contentFile, syncFile, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapter excelAdapter = adapterBuilder.createMsExcelAdapter("user", "", contentFile);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldGenarateExceptionIfContenFileIsNull(){
 		String contentFile = "C:\\jtest\\contentFile.xls";
 		String syncFile = "C:\\jtest\\syncFile.xls";
-		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder();
-		ISyncAdapter excelAdapter = adapterBuilder.createMsExcelAdapter("user", "id", "", syncFile, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapter excelAdapter = adapterBuilder.createMsExcelAdapter("user", "id", "");
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldGenarateExceptionIfSyncFileIsNull(){
 		String contentFile = "C:\\jtest\\contentFile.xls";
 		String syncFile = "C:\\jtest\\syncFile.xls";
-		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder();
-		ISyncAdapter excelAdapter = adapterBuilder.createMsExcelAdapter("user", "id", contentFile, "", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapter excelAdapter = adapterBuilder.createMsExcelAdapter("user", "id", contentFile);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldGenarateExceptionIfIdentityIsNull(){
 		String contentFile = "C:\\jtest\\contentFile.xls";
 		String syncFile = "C:\\jtest\\syncFile.xls";
-		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder();
-		ISyncAdapter excelAdapter = adapterBuilder.createMsExcelAdapter("user", "id", contentFile, syncFile, null, IdGenerator.INSTANCE);
+		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapter excelAdapter = adapterBuilder.createMsExcelAdapter("user", "id", contentFile);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldGenarateExceptionIfIdGeneratorIsNull(){
 		String contentFile = "C:\\jtest\\contentFile.xls";
 		String syncFile = "C:\\jtest\\syncFile.xls";
-		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder();
-		ISyncAdapter excelAdapter = adapterBuilder.createMsExcelAdapter("user", "id", contentFile, syncFile, NullIdentityProvider.INSTANCE, null);
+		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapter excelAdapter = adapterBuilder.createMsExcelAdapter("user", "id", contentFile);
 	}
 	
 	private Item getItem() throws DocumentException {

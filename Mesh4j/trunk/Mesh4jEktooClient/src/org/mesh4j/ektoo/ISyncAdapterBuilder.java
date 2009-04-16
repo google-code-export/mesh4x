@@ -1,8 +1,6 @@
 package org.mesh4j.ektoo;
 
 import org.mesh4j.sync.ISyncAdapter;
-import org.mesh4j.sync.id.generator.IdGenerator;
-import org.mesh4j.sync.security.IIdentityProvider;
 
 public interface ISyncAdapterBuilder {
 
@@ -17,10 +15,7 @@ public interface ISyncAdapterBuilder {
 	 * @param idGenerator
 	 * @return ISyncAdapter   
 	 */
-	public ISyncAdapter createMsExcelAdapter(String sheetName, String idColumnName, 
-										String contentFileName, String syncFileName, 
-										IIdentityProvider identityProvider, 
-										IdGenerator idGenerator); 
+	public ISyncAdapter createMsExcelAdapter(String sheetName, String idColumnName, String contentFileName); 
 	
 	
 	/**
@@ -31,8 +26,7 @@ public interface ISyncAdapterBuilder {
 	 * @param tableName,the table name of the ms access database to be applied for sync.
 	 * @return ISyncAdapter
 	 */
-	public ISyncAdapter createMsAccessAdapter(String baseDirectory,String rdfUrl,String sourceAlias,
-											 String mdbFileName,String tableName);
+	public ISyncAdapter createMsAccessAdapter(String mdbFileName, String tableName);
 	
 	/**
 	 * TODO create documentation
@@ -49,5 +43,5 @@ public interface ISyncAdapterBuilder {
 	 * @param dataSetId
 	 * @return
 	 */
-	public ISyncAdapter createHttpSyncAdapter(String rootUrl,String meshId,String dataSetId);
+	public ISyncAdapter createHttpSyncAdapter(String meshId, String dataSetId);
 }

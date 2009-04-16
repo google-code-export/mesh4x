@@ -5,6 +5,8 @@ package org.mesh4j.ektoo.ui;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 
 import javax.swing.BorderFactory;
@@ -16,7 +18,11 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.SwingUtilities;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.controller.EktooUIController;
+import org.mesh4j.ektoo.properties.PropertiesProvider;
+import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 
 
 /**
@@ -25,10 +31,13 @@ import org.mesh4j.ektoo.controller.EktooUIController;
  */
 public class EktooUI extends JFrame {
 
+	// CONSTANTS
 	private final static long serialVersionUID = 1L;
+	private final Log LOGGER = LogFactory.getLog(EktooUI.class);
 	
-	SyncItemUI sourceItem = null;
-	SyncItemUI targetItem = null;
+	// MODEL VARIABLES
+	private SyncItemUI sourceItem = null;
+	private SyncItemUI targetItem = null;
 
 	private JPanel panel = null;
 	private JPanel viaPane = null;
@@ -46,12 +55,28 @@ public class EktooUI extends JFrame {
 	private ButtonGroup btngSyncType = new ButtonGroup();
 	private JLabel txtConsole = null;
 
+	EktooUIController controller;
+	
+	// BUSINESS METHODS
+	
+	public static void main(String[] args) {
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				JFrame thisClass = new EktooUI();
+				thisClass.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				thisClass.setVisible(true);
+			}
+		});
+	}
 
-	/**
-	 * This method initializes this
-	 *
-	 */
+	public EktooUI() {
+		super();
+		initialize();
+	}
+
 	private void initialize() {
+		this.controller = new EktooUIController(new PropertiesProvider());
+		
         this.setSize(new Dimension(564, 511));
         this.setContentPane(getJPanel());
 	}
@@ -88,7 +113,7 @@ public class EktooUI extends JFrame {
 	{
 		if (sourceItem == null) 
 		{
-			sourceItem = new SyncItemUI("Source");
+			sourceItem = new SyncItemUI(EktooUITranslator.getLabelSource());
 			sourceItem.setSize(new Dimension(350, 175));
 			sourceItem.setLocation(new Point(10, 10));
 		}
@@ -106,7 +131,7 @@ public class EktooUI extends JFrame {
 	{
 		if(targetItem == null)
 		{
-			targetItem = new SyncItemUI("Target");
+			targetItem = new SyncItemUI(EktooUITranslator.getLabelTarget());
 			targetItem.setSize(new Dimension(350, 175));
 			targetItem.setLocation(new Point(10, 200));
 		}
@@ -123,8 +148,7 @@ public class EktooUI extends JFrame {
 		if (viaPane == null) {
 			viaPane = new JPanel();
 			//viaPane.setLayout(new GridBagLayout());
-			viaPane.setBorder(BorderFactory.createTitledBorder(
-		    "Sync Via"));
+			viaPane.setBorder(BorderFactory.createTitledBorder("Sync Via"));
 			viaPane.setSize(new Dimension(150, 175));
 			viaPane.setLocation(new Point(390, 10));
 			viaPane.add(getRbWeb(), null);
@@ -165,10 +189,10 @@ public class EktooUI extends JFrame {
 			btnSync = new JButton();
 			btnSync.setBounds(new Rectangle(315, 427, 127, 28));
 			btnSync.setText("Sync Now");
-			btnSync.addActionListener(new java.awt.event.ActionListener() {
-				public void actionPerformed(java.awt.event.ActionEvent e) {
-					System.out.println("actionPerformed()"); // TODO Auto-generated Event stub actionPerformed()
-
+			btnSync.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					
+					log("actionPerformed()");
 
 					txtConsole.setText("");
 					String result = null;
@@ -182,19 +206,21 @@ public class EktooUI extends JFrame {
 						String targetTable = targetItem.getTable();
 						String targetColumn = targetItem.getColumn();
 
-						result = new EktooUIController().sync( sourceFile, sourceTable, sourceColumn,
+						result = controller.sync( sourceFile, sourceTable, sourceColumn,
 								targetFile, targetTable, targetColumn);
 
 					}
-					else if (sourceItem.getSyncType().equals("URI"))
-					{
-						String sourceUri = sourceItem.getUri();
-						String targetUri = targetItem.getUri();
-						//result = new EktooUIController().sync( sourceUri, targetUri );
-					}
-					System.out.println("Calling Sync...");
+//					else if (sourceItem.getSyncType().equals("URI"))
+//					{
+//						//String sourceUri = sourceItem.getUri();
+//						//String targetUri = targetItem.getUri();
+//						//result = controller.sync( sourceUri, targetUri );
+//						// TODO (Nobel) add sync api
+//					}
+					log("Calling Sync...");
 					txtConsole.setText(result);
 				}
+
 			});
 		}
 		return btnSync;
@@ -294,28 +320,9 @@ public class EktooUI extends JFrame {
 		return rbSendReceive;
 	}
 
-
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				JFrame thisClass = new EktooUI();
-				thisClass.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-				thisClass.setVisible(true);
-			}
-		});
+	private void log(String msg) {
+		if(LOGGER.isDebugEnabled()){
+			LOGGER.debug(msg);
+		}
 	}
-
-	/**
-	 * This is the default constructor
-	 */
-	public EktooUI() {
-		super();
-		initialize();
-	}
-	
 }  //  @jve:decl-index=0:visual-constraint="10,10"

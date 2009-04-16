@@ -2,20 +2,21 @@ package org.mesh4j.ektoo;
 
 import java.io.File;
 
-import org.junit.Assert;
+import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadSheetContentAdapter;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadSheetSyncRepository;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadsheet;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.IGoogleSpreadSheet;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.ISpreadSheetToXMLMapper;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.SpreadSheetToXMLMapper;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSCell;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSRow;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSWorksheet;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.feed.ContentReader;
 import org.mesh4j.sync.adapters.feed.ContentWriter;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.adapters.http.HttpSyncAdapter;
-import org.mesh4j.sync.adapters.http.HttpSyncAdapterFactory;
 import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
 import org.mesh4j.sync.adapters.msexcel.MSExcelToPlainXMLMapping;
 import org.mesh4j.sync.adapters.msexcel.MsExcel;
@@ -25,41 +26,36 @@ import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.id.generator.IIdGenerator;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.security.IIdentityProvider;
-import org.mesh4j.sync.security.IdentityProvider;
-import org.mesh4j.sync.security.LoggedInIdentityProvider;
-import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
 public class SyncAdapterBuilder implements ISyncAdapterBuilder{
-	private IGoogleSpreadSheet spreadsheet;
 	
+	// MODEL VARIABLEs
+	private PropertiesProvider propertiesProvider;
+	
+	// BUSINESS METHODS
+
+	public SyncAdapterBuilder(PropertiesProvider propertiesProvider) {
+		Guard.argumentNotNull(propertiesProvider, "propertiesProvider");
+		this.propertiesProvider = propertiesProvider;
+	}
+
+
 	@Override
-	public ISyncAdapter createMsExcelAdapter(String sheetName,
-			String idColumnName, String contentFileName, String syncFileName,
-			IIdentityProvider identityProvider, IdGenerator idGenerator) {
+	public ISyncAdapter createMsExcelAdapter(String sheetName, String idColumnName, String contentFileName) {
 		
-		
-		
-		MsExcel contentExcel = null;
-		MsExcel syncExcel = null;
 		//TODO if file doesn't exist then create file with the help of schema
 		//request the client to provide the schema
-		if(contentFileName.equals(syncFileName)){
-			File file = getFile(contentFileName);
-			contentExcel = new MsExcel(file.getAbsolutePath());
-			syncExcel = contentExcel;
-		} else {
-			File contentData = getFile(contentFileName);
-			File syncData = getFile(syncFileName);
-			
-			contentExcel = new MsExcel(contentData.getAbsolutePath());
-			syncExcel = new MsExcel(syncData.getAbsolutePath());
-		}
 		
-		MsExcelSyncRepository syncRepo = new MsExcelSyncRepository(syncExcel, identityProvider, idGenerator);
+		IIdentityProvider identityProvider = getIdentityProvider();
+		
+		File file = getFile(contentFileName);
+		MsExcel  excelFile = new MsExcel(file.getAbsolutePath());
+		
+		MsExcelSyncRepository syncRepo = new MsExcelSyncRepository(excelFile, getIdentityProvider(), getIdGenerator());
 		MSExcelToPlainXMLMapping mapper = new MSExcelToPlainXMLMapping(idColumnName, null);
-		MsExcelContentAdapter contentAdapter = new MsExcelContentAdapter(contentExcel, mapper, sheetName);
+		MsExcelContentAdapter contentAdapter = new MsExcelContentAdapter(excelFile, mapper, sheetName);
 
 		SplitAdapter splitAdapter = new SplitAdapter(syncRepo, contentAdapter, identityProvider);
 		
@@ -68,17 +64,17 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder{
 
 
 	@Override
-	public ISyncAdapter createMsAccessAdapter(String baseDirectory,String rdfUrl,String sourceAlias,
-										String mdbFileName, String tableName) {
+	public ISyncAdapter createMsAccessAdapter(String mdbFileName, String tableName) {
 
-		MsAccessSyncAdapterFactory msAccesSyncAdapter  = new MsAccessSyncAdapterFactory(baseDirectory,rdfUrl);
+		MsAccessSyncAdapterFactory msAccesSyncAdapter  = new MsAccessSyncAdapterFactory(this.getBaseDirectory(), this.getBaseRDFUrl());
 		try {
-			return msAccesSyncAdapter.createSyncAdapterFromFile(sourceAlias, mdbFileName, tableName);
+			return msAccesSyncAdapter.createSyncAdapterFromFile(tableName, mdbFileName, tableName);
 		} catch (Exception e) {
 			throw new MeshException(e);
 		}
 	}
-	
+
+	@SuppressWarnings("unchecked")
 	@Override
 	public ISyncAdapter createGoogleSpreadSheetAdapter(GoogleSpreadSheetInfo spreadSheetInfo){
 		
@@ -87,41 +83,34 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder{
 		int idColumnPosition = spreadSheetInfo.getIdColumnPosition();
 		String userName = spreadSheetInfo.getUserName();
 		String passWord = spreadSheetInfo.getPassWord();
-		String GOOGLE_SPREADSHEET_FIELD = spreadSheetInfo.getGOOGLE_SPREADSHEET_FIELD();
+		String googleSpreadSheetId = spreadSheetInfo.getGoogleSpreadSheetId();
 		
+		// create google spread sheet
 		ISpreadSheetToXMLMapper mapper = new SpreadSheetToXMLMapper(idColumName,idColumnPosition,lastUpdateColumnPosition);
-		IGoogleSpreadSheet gSpreadSheet = getSpreadSheet(GOOGLE_SPREADSHEET_FIELD,userName,passWord);
+		IGoogleSpreadSheet gSpreadSheet = new GoogleSpreadsheet(googleSpreadSheetId, userName, passWord);
 		
-		GSWorksheet contentWorkSheet = gSpreadSheet.getGSWorksheet(spreadSheetInfo.getSheetName());
+		// TODO (Sharif) create sync sheet automatically
+		GSWorksheet<GSRow<GSCell>> contentWorkSheet = gSpreadSheet.getGSWorksheet(spreadSheetInfo.getSheetName());
 		String syncWorkSheetName = spreadSheetInfo.getSheetName() + "_sync";
-		GSWorksheet syncWorkSheet = gSpreadSheet.getGSWorksheet(syncWorkSheetName); 
-	
-		SplitAdapter spreadSheetAdapter = createGoogleSpreadSheetAdapter(gSpreadSheet,mapper,contentWorkSheet,
-				syncWorkSheet,spreadSheetInfo.getIdentityProvider(),spreadSheetInfo.getIdGenerator());
+		GSWorksheet<GSRow<GSCell>> syncWorkSheet = gSpreadSheet.getGSWorksheet(syncWorkSheetName); 
+
+		// adapter creation
+		IIdentityProvider identityProvider = getIdentityProvider();
+		GoogleSpreadSheetContentAdapter contentRepo = new GoogleSpreadSheetContentAdapter(gSpreadSheet, contentWorkSheet, mapper, contentWorkSheet.getName());
+		GoogleSpreadSheetSyncRepository  syncRepo = new GoogleSpreadSheetSyncRepository(gSpreadSheet, syncWorkSheet, identityProvider, getIdGenerator(), syncWorkSheet.getName());
+		SplitAdapter splitAdapter = new SplitAdapter(syncRepo, contentRepo, identityProvider);
 		
-		return spreadSheetAdapter;
+		return splitAdapter;
 	}
 	
-	public ISyncAdapter createHttpSyncAdapter(String rootUrl,String meshid, String datasetId){
-		rootUrl = "http://localhost:8080/mesh4x/feeds/" + meshid + "/" +  datasetId;
-		HttpSyncAdapter adapter = new HttpSyncAdapter(rootUrl, RssSyndicationFormat.INSTANCE, new LoggedInIdentityProvider(), IdGenerator.INSTANCE, ContentWriter.INSTANCE, ContentReader.INSTANCE);
+	public ISyncAdapter createHttpSyncAdapter(String meshid, String datasetId){
+		String url = getSyncUrl(meshid, datasetId);
+		HttpSyncAdapter adapter = new HttpSyncAdapter(url, RssSyndicationFormat.INSTANCE, getIdentityProvider(), getIdGenerator(), ContentWriter.INSTANCE, ContentReader.INSTANCE);
 		return adapter;
 	}
 	
-	public IGoogleSpreadSheet getSpreadSheet(String spField,String userName,String passWord){
-		if(spreadsheet == null){
-			spreadsheet = new GoogleSpreadsheet(spField,userName,passWord);
-		}
-		return spreadsheet;
-	}
-	public static SplitAdapter createGoogleSpreadSheetAdapter(IGoogleSpreadSheet spreadsheet,ISpreadSheetToXMLMapper mapper,GSWorksheet contentWorkSheet,GSWorksheet syncWorkSheet,IIdentityProvider identityProvider,IIdGenerator idGenerator){
-		
-		GoogleSpreadSheetContentAdapter contentRepo = new GoogleSpreadSheetContentAdapter(spreadsheet,contentWorkSheet,mapper,contentWorkSheet.getName());
-		//TODO if sync sheet doesn't exist please create the sync sheet
-		GoogleSpreadSheetSyncRepository  syncRepo = new GoogleSpreadSheetSyncRepository(spreadsheet,syncWorkSheet,identityProvider,idGenerator,syncWorkSheet.getName());
-		SplitAdapter splitAdapter = new SplitAdapter(syncRepo,contentRepo,identityProvider);
-		return splitAdapter;
-	}
+	// ACCESSORS
+	
 	private File getFile(String fileName) {
 		File file = new File(fileName);
 		if(!file.exists()){
@@ -130,4 +119,26 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder{
 		return file;
 	}
 	
+	private String getSyncUrl(String meshid, String datasetId) {
+		return this.propertiesProvider.getMeshURL(meshid + "/" +  datasetId);
+	}
+	
+	private IIdentityProvider getIdentityProvider() {
+		return this.propertiesProvider.getIdentityProvider();
+	}
+	
+	private IIdGenerator getIdGenerator() {
+		return IdGenerator.INSTANCE;
+	}
+	
+	private String getBaseDirectory() {
+		return this.propertiesProvider.getBaseDirectory();
+	}
+
+
+	private String getBaseRDFUrl() {
+		// TODO (JMT) review
+		return this.propertiesProvider.getMeshSyncServerURL();
+	}
+
 }
