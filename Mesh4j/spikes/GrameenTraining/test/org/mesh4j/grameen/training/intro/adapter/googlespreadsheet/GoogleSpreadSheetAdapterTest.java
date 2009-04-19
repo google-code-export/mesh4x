@@ -95,7 +95,7 @@ public class GoogleSpreadSheetAdapterTest {
 	
 	private SplitAdapter getAdapter(GSWorksheet contentWorkSheet,GSWorksheet syncWorkSheet,IIdentityProvider identityProvider,IIdGenerator idGenerator){
 		GoogleSpreadSheetContentAdapter contentRepo = new GoogleSpreadSheetContentAdapter(spreadsheet,contentWorkSheet,mapper,"user");
-		GoogleSpreadSheetSyncRepository  syncRepo = new GoogleSpreadSheetSyncRepository(spreadsheet,syncWorkSheet,identityProvider,idGenerator,"SYNC_INFO");
+		GoogleSpreadSheetSyncRepository  syncRepo = new GoogleSpreadSheetSyncRepository(spreadsheet,/*syncWorkSheet,*/identityProvider,idGenerator,"SYNC_INFO");
 		SplitAdapter splitAdapter = new SplitAdapter(syncRepo,contentRepo,identityProvider);
 		return splitAdapter;
 	}
