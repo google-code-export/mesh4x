@@ -64,13 +64,15 @@ public class GoogleSpreadSheetAdapterTest {
 	public void ShouldSyncAfterAddedItemInEmptyWorkSheet() throws DocumentException{
 		
 		
+		
+		
 		GSWorksheet workSheetSource = spreadsheet.getGSWorksheet(1);//user entity source worksheet
 		GSWorksheet workSheetTarget = spreadsheet.getGSWorksheet(2);//user entity target worksheet
 		
 		//before start the process deleting all the previous content
 		clearContentOfWorkSheet(workSheetSource);
 		clearContentOfWorkSheet(workSheetTarget);
-		GoogleSpreadsheetUtils.flush(spreadsheet.getService(), spreadsheet.getGSSpreadsheet());
+		
 		
 		//delete the sync worksheet
 		GSWorksheet workSheet = null;
@@ -90,6 +92,7 @@ public class GoogleSpreadSheetAdapterTest {
 			deleteWorkSheet(workSheet);	
 		}
 		
+		GoogleSpreadsheetUtils.flush(spreadsheet.getService(), spreadsheet.getGSSpreadsheet());
 		
 		SplitAdapter splitAdapterSource = getAdapter(workSheetSource, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		splitAdapterSource.add(getItem1());
@@ -213,7 +216,6 @@ public class GoogleSpreadSheetAdapterTest {
 		if(workSheet != null){
 			deleteWorkSheet(workSheet);	
 		}
-		GoogleSpreadsheetUtils.flush(spreadsheet.getService(), spreadsheet.getGSSpreadsheet());
 	}
 	
 	
@@ -228,15 +230,7 @@ public class GoogleSpreadSheetAdapterTest {
 	}
 	
 	private void deleteWorkSheet(GSWorksheet<GSRow<GSCell>> workSheet){
-		try {
-			workSheet.getWorksheetEntry().delete();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ServiceException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		spreadsheet.getGSSpreadsheet().deleteChildElement(workSheet.getElementId());
 	}
 	
 	
