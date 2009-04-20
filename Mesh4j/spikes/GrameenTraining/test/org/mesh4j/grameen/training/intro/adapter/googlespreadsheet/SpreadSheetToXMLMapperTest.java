@@ -34,7 +34,7 @@ public class SpreadSheetToXMLMapperTest {
 		String idColumName = "id";
 		int lastUpdateColumnPosition = 6;
 		int idColumnPosition = 1;
-		mapper = new SpreadSheetToXMLMapper(idColumName,idColumnPosition,lastUpdateColumnPosition);
+		mapper = new SpreadSheetToXMLMapper("user",idColumName,idColumnPosition,lastUpdateColumnPosition);
 	}
 	
 	@Test
@@ -56,7 +56,7 @@ public class SpreadSheetToXMLMapperTest {
 		
 		Element payload = XMLHelper.parseElement(rawDataAsXML);
 		IContent content = new XMLContent(id,title,description,payload);
-		GoogleSpreadSheetContentAdapter adapter = new GoogleSpreadSheetContentAdapter(spreadsheet,workSheet,mapper,"user");
+		GoogleSpreadSheetContentAdapter adapter = new GoogleSpreadSheetContentAdapter(spreadsheet,workSheet,mapper);
 		
 		Assert.assertEquals(0, adapter.getAll(new Date()).size());
 		
@@ -104,7 +104,7 @@ public class SpreadSheetToXMLMapperTest {
 		
 		Element payload = XMLHelper.parseElement(rawDataAsXML);
 		IContent content = new XMLContent(id,title,description,payload);
-		GoogleSpreadSheetContentAdapter adapter = new GoogleSpreadSheetContentAdapter(spreadsheet,workSheet,mapper,"user");
+		GoogleSpreadSheetContentAdapter adapter = new GoogleSpreadSheetContentAdapter(spreadsheet,workSheet,mapper);
 		
 		Assert.assertEquals(0, adapter.getAll(new Date()).size());
 		
@@ -166,7 +166,7 @@ public class SpreadSheetToXMLMapperTest {
 		Element payLoadToBeUpdated = XMLHelper.parseElement(rawUpdatedDataAsXML);
 		
 		IContent content = new XMLContent(id,title,description,payload);
-		GoogleSpreadSheetContentAdapter adapter = new GoogleSpreadSheetContentAdapter(spreadsheet,workSheet,mapper,"user");
+		GoogleSpreadSheetContentAdapter adapter = new GoogleSpreadSheetContentAdapter(spreadsheet,workSheet,mapper);
 		
 		Assert.assertEquals(0, adapter.getAll(new Date()).size());
 		
@@ -196,7 +196,7 @@ public class SpreadSheetToXMLMapperTest {
 	
 	private void emptySpreadSheet(){
 		loadSpreadSheet();
-		GoogleSpreadSheetContentAdapter adapter = new GoogleSpreadSheetContentAdapter(spreadsheet,workSheet,mapper,"user");
+		GoogleSpreadSheetContentAdapter adapter = new GoogleSpreadSheetContentAdapter(spreadsheet,workSheet,mapper);
 		for(IContent content : adapter.getAll(new Date())){
 			adapter.delete(content);	
 		}

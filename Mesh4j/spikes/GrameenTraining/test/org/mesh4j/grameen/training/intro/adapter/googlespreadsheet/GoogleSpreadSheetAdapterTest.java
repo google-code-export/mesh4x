@@ -1,6 +1,5 @@
 package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -27,8 +26,6 @@ import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.utils.XMLHelper;
 
-import com.google.gdata.util.ServiceException;
-
 public class GoogleSpreadSheetAdapterTest {
 	private IGoogleSpreadSheet spreadsheet;
 	private ISpreadSheetToXMLMapper mapper;
@@ -42,11 +39,11 @@ public class GoogleSpreadSheetAdapterTest {
 		String idColumName = "id";
 		int lastUpdateColumnPosition = 6;
 		int idColumnPosition = 1;
-		mapper = new SpreadSheetToXMLMapper(idColumName,idColumnPosition,lastUpdateColumnPosition);
+		mapper = new SpreadSheetToXMLMapper("user",idColumName,idColumnPosition,lastUpdateColumnPosition);
 		spreadsheet = new GoogleSpreadsheet(GOOGLE_SPREADSHEET_FIELD,userName,passWord);
 	}
 	
-	//@Test
+	@Test
 	public void ShouldSyncTwoWorkSheet(){
 		GSWorksheet workSheetSource = spreadsheet.getGSWorksheet(1);//user entity source worksheet
 		GSWorksheet workSheetTarget = spreadsheet.getGSWorksheet(2);//user entity target worksheet
@@ -63,36 +60,10 @@ public class GoogleSpreadSheetAdapterTest {
 	@Test
 	public void ShouldSyncAfterAddedItemInEmptyWorkSheet() throws DocumentException{
 		
-		
-		
-		
 		GSWorksheet workSheetSource = spreadsheet.getGSWorksheet(1);//user entity source worksheet
 		GSWorksheet workSheetTarget = spreadsheet.getGSWorksheet(2);//user entity target worksheet
 		
-		//before start the process deleting all the previous content
-		clearContentOfWorkSheet(workSheetSource);
-		clearContentOfWorkSheet(workSheetTarget);
-		
-		
-		//delete the sync worksheet
-		GSWorksheet workSheet = null;
-		String syncWorkSheet = null;
-		
-		syncWorkSheet = workSheetSource.getName() + "_sync";
-		workSheet = spreadsheet.getGSWorksheet(syncWorkSheet);
-		
-		if(workSheet != null){
-			deleteWorkSheet(workSheet);	
-		}
-		
-		syncWorkSheet = workSheetTarget.getName() + "_sync";
-		workSheet = spreadsheet.getGSWorksheet(syncWorkSheet);
-		
-		if(workSheet != null){
-			deleteWorkSheet(workSheet);	
-		}
-		
-		GoogleSpreadsheetUtils.flush(spreadsheet.getService(), spreadsheet.getGSSpreadsheet());
+		cleanUp(workSheetSource, workSheetTarget);
 		
 		SplitAdapter splitAdapterSource = getAdapter(workSheetSource, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		splitAdapterSource.add(getItem1());
@@ -108,14 +79,15 @@ public class GoogleSpreadSheetAdapterTest {
 		
 	}
 	
-	//@Test
+	
+	
+	@Test
 	public void ShouldSyncAfterDelete() throws DocumentException{
 		
 		GSWorksheet workSheetSource = spreadsheet.getGSWorksheet(1);//user entity source worksheet
 		GSWorksheet workSheetTarget = spreadsheet.getGSWorksheet(2);//user entity target worksheet
 		
-		cleanUP(workSheetSource.getName());
-		cleanUP(workSheetTarget.getName());
+		cleanUp(workSheetSource, workSheetTarget);
 		
 		SplitAdapter splitAdapterSource = getAdapter(workSheetSource, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		splitAdapterSource.add(getItem1());
@@ -137,7 +109,7 @@ public class GoogleSpreadSheetAdapterTest {
 	}
 	
 	private SplitAdapter getAdapter(GSWorksheet contentWorkSheet,IIdentityProvider identityProvider,IIdGenerator idGenerator){
-		GoogleSpreadSheetContentAdapter contentRepo = new GoogleSpreadSheetContentAdapter(spreadsheet,contentWorkSheet,mapper,"user");
+		GoogleSpreadSheetContentAdapter contentRepo = new GoogleSpreadSheetContentAdapter(spreadsheet,contentWorkSheet,mapper);
 		String syncSheetName = contentWorkSheet.getName() + "_sync";
 		GoogleSpreadSheetSyncRepository  syncRepo = new GoogleSpreadSheetSyncRepository(spreadsheet,identityProvider,idGenerator,syncSheetName);
 		SplitAdapter splitAdapter = new SplitAdapter(syncRepo,contentRepo,identityProvider);
@@ -203,22 +175,33 @@ public class GoogleSpreadSheetAdapterTest {
 		return new Item(content, sync);
 	}
 	
-	private void cleanUP(String sheetName){
-		GSWorksheet<GSRow<GSCell>> workSheet = null;
-		
-		workSheet = spreadsheet.getGSWorksheet(sheetName);
-		//clear the content worksheet
-		clearContentOfWorkSheet(workSheet);
+	
+	
+	private void cleanUp(GSWorksheet workSheetSource,GSWorksheet workSheetTarget){
+		//before start the process deleting all the previous content
+		clearContentOfWorkSheet(workSheetSource);
+		clearContentOfWorkSheet(workSheetTarget);
 		
 		//delete the sync worksheet
-		String syncWorkSheet = sheetName + "_sync";
+		GSWorksheet workSheet = null;
+		String syncWorkSheet = null;
+		
+		syncWorkSheet = workSheetSource.getName() + "_sync";
 		workSheet = spreadsheet.getGSWorksheet(syncWorkSheet);
+		
 		if(workSheet != null){
 			deleteWorkSheet(workSheet);	
 		}
+		
+		syncWorkSheet = workSheetTarget.getName() + "_sync";
+		workSheet = spreadsheet.getGSWorksheet(syncWorkSheet);
+		
+		if(workSheet != null){
+			deleteWorkSheet(workSheet);	
+		}
+		
+		GoogleSpreadsheetUtils.flush(spreadsheet.getService(), spreadsheet.getGSSpreadsheet());
 	}
-	
-	
 	
 	private void clearContentOfWorkSheet(GSWorksheet<GSRow<GSCell>> workSheet){
 		for(Map.Entry<String, GSRow<GSCell>> mapRows : workSheet.getGSRows().entrySet()){

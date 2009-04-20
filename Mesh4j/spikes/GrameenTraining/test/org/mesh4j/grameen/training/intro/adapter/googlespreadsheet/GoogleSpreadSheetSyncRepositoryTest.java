@@ -24,8 +24,6 @@ import org.mesh4j.sync.security.NullIdentityProvider;
 public class GoogleSpreadSheetSyncRepositoryTest {
 	
 	private IGoogleSpreadSheet spreadsheet;
-	private IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
-	private IIdGenerator idGenerator = IdGenerator.INSTANCE;
 	private GSWorksheet<GSRow<GSCell>> workSheet;
 	String userName = "gspreadsheet.test@gmail.com";
 	String passWord = "java123456";
@@ -38,8 +36,11 @@ public class GoogleSpreadSheetSyncRepositoryTest {
 	@Test
 	public void ShouldSaveSyncInfo(){
 		
-		emptySpreadSheet();
-		
+		cleanUP();
+
+		IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
+		IIdGenerator idGenerator = IdGenerator.INSTANCE;
+
 	    Sync sync = null;
 		SyncInfo syncInfo = null;
 		
@@ -62,8 +63,10 @@ public class GoogleSpreadSheetSyncRepositoryTest {
 	@Test
 	public void ShouldSaveSyncInfoToSpreadSheetWithEndSyncOperation(){
 		
-		emptySpreadSheet();
-		
+		cleanUP();
+		IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
+		IIdGenerator idGenerator = IdGenerator.INSTANCE;
+
 	    Sync sync = null;
 		SyncInfo syncInfo = null;
 		
@@ -95,8 +98,11 @@ public class GoogleSpreadSheetSyncRepositoryTest {
 	@Test
 	public void ShouldNotSaveSyncInfoToPhysicalSpreadSheetWithoutEndSyncOperation(){
 		
-		emptySpreadSheet();
+		cleanUP();
 		
+		IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
+		IIdGenerator idGenerator = IdGenerator.INSTANCE;
+
 	    Sync sync = null;
 		SyncInfo syncInfo = null;
 		
@@ -125,8 +131,11 @@ public class GoogleSpreadSheetSyncRepositoryTest {
 	@Test
 	public void ShouldUpdateSyncInfo(){
 		
-		emptySpreadSheet();
+		cleanUP();
 		
+		IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
+		IIdGenerator idGenerator = IdGenerator.INSTANCE;
+
 		Sync sync = null;
 		SyncInfo syncInfo = null;
 		
@@ -154,8 +163,10 @@ public class GoogleSpreadSheetSyncRepositoryTest {
 	@Test
 	public void ShouldUpdateSyncInfoToSpreadSheetWithEndSyncOperation(){
 		
-		emptySpreadSheet();
-		
+		cleanUP();
+		IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
+		IIdGenerator idGenerator = IdGenerator.INSTANCE;
+
 		Sync sync = null;
 		SyncInfo syncInfo = null;
 		
@@ -191,8 +202,10 @@ public class GoogleSpreadSheetSyncRepositoryTest {
 	@Test
 	public void ShouldGetSyncInfo(){
 		
-		emptySpreadSheet();
-		
+		cleanUP();
+		IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
+		IIdGenerator idGenerator = IdGenerator.INSTANCE;
+
 		Sync sync = null;
 		SyncInfo syncInfo = null;
 		
@@ -217,8 +230,10 @@ public class GoogleSpreadSheetSyncRepositoryTest {
 	@Test
 	public void ShouldGetSyncInfoFromSpreadSheetWithEndSyncOperation(){
 		
-		emptySpreadSheet();
-		
+		cleanUP();
+		IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
+		IIdGenerator idGenerator = IdGenerator.INSTANCE;
+
 		Sync sync = null;
 		SyncInfo syncInfo = null;
 		
@@ -255,8 +270,10 @@ public class GoogleSpreadSheetSyncRepositoryTest {
 	@Test
 	public void ShouldGetAll(){
 		
-		emptySpreadSheet();
-		
+		cleanUP();
+		IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
+		IIdGenerator idGenerator = IdGenerator.INSTANCE;
+
 		Sync sync = null;
 		SyncInfo syncInfo = null;
 		
@@ -286,7 +303,10 @@ public class GoogleSpreadSheetSyncRepositoryTest {
 	@Test
 	public void ShouldGetAllFromSpreadSheetWithEndSyncOperaton(){
 		
-		emptySpreadSheet();
+		cleanUP();
+		IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
+		IIdGenerator idGenerator = IdGenerator.INSTANCE;
+
 		
 		Sync sync = null;
 		SyncInfo syncInfo = null;
@@ -333,11 +353,11 @@ public class GoogleSpreadSheetSyncRepositoryTest {
 	@Before
 	public void setUp(){
 		spreadsheet = new GoogleSpreadsheet(GOOGLE_SPREADSHEET_FIELD,userName,passWord);
-		workSheet = spreadsheet.getGSWorksheet("SYNC_INFO");
+		workSheet = GoogleSpreadsheetUtils.getOrCreateSyncSheetIfAbsent(spreadsheet,"sync_info");
 	}
 	
 	
-	private void emptySpreadSheet(){
+	private void cleanUP(){
 		
 		for(Map.Entry<String, GSRow<GSCell>> mapRows : workSheet.getGSRows().entrySet()){
 			//We should not delete the first header row
@@ -347,4 +367,6 @@ public class GoogleSpreadSheetSyncRepositoryTest {
 		}
 		GoogleSpreadsheetUtils.flush(spreadsheet.getService(), spreadsheet.getGSSpreadsheet());
 	}
+	
+	
 }
