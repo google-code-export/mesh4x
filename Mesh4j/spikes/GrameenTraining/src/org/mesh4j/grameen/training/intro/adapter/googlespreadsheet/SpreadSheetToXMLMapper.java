@@ -24,8 +24,10 @@ public class SpreadSheetToXMLMapper implements ISpreadSheetToXMLMapper{
 
 	private String idColumnName = "";
 	private String lastUpdateColumnName = "";
+	private String type = "";
 	private int lastUpdateColumnPosition = -1;
 	private int idColumnPosition = 0;
+	
 	
 	@Deprecated
 	public SpreadSheetToXMLMapper(String idColumnName,String lastUpdateColumnName){
@@ -42,10 +44,13 @@ public class SpreadSheetToXMLMapper implements ISpreadSheetToXMLMapper{
 		this.idColumnName = idColumnName;
 		this.lastUpdateColumnPosition = lastUpdateColumnPosition;
 	}
-	public SpreadSheetToXMLMapper(String idColumnName,int idColumnPosition,int lastUpdateColumnPosition){
+	public SpreadSheetToXMLMapper(String type,String idColumnName,int idColumnPosition,int lastUpdateColumnPosition){
+		Guard.argumentNotNullOrEmptyString(type, "type");
 		Guard.argumentNotNullOrEmptyString(idColumnName, "idColumnName");
 		Guard.argumentNotNull(idColumnPosition, "idColumnPosition");
 		Guard.argumentNotNull(lastUpdateColumnPosition, "lastUpdateColumnPosition");
+		
+		this.type = type;
 		this.idColumnName = idColumnName;
 		this.idColumnPosition = idColumnPosition;
 		this.lastUpdateColumnPosition = lastUpdateColumnPosition;
@@ -58,7 +63,7 @@ public class SpreadSheetToXMLMapper implements ISpreadSheetToXMLMapper{
 		Guard.argumentNotNull(gsRow, "gsRow");
 		Guard.argumentNotNull(worksheet, "worksheet");
 		
-		Element rootElement = DocumentHelper.createElement(worksheet.getName());
+		Element rootElement = DocumentHelper.createElement(this.getType());
 		Element childElement ; 
 		
 		for(Map.Entry<String, GSCell> rowMap :gsRow.getChildElements().entrySet()){
@@ -135,8 +140,10 @@ public class SpreadSheetToXMLMapper implements ISpreadSheetToXMLMapper{
 		return this.idColumnPosition;
 	}
 
-	
+	@Override
+	public String getType() {
+		return this.type;
+	}
 
-	
 	
 }

@@ -27,6 +27,9 @@ public interface ISpreadSheetToXMLMapper {
 
 	//provides the last update column position
 	public int getLastUpdateColumnPosition();
+
+	//which is basically entity name
+	public String getType();
 	
 	//for mesh4x manipulation we need convert each row which is item to xml element
 	public Element convertRowToXML(GSRow<GSCell> gsRow ,GSWorksheet worksheet);

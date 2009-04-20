@@ -25,8 +25,7 @@ import org.mesh4j.sync.validations.Guard;
 public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAware{
 
 	public final static String G_SPREADSHEET_DATE_FORMAT = "MM/dd/yyyy hh:mm:ss";
-	private String type = "";
-	private String sheetName = "";
+	private String entityName = "";
 	//this property is for identify each row in spreadsheet
 	//but as because google API provides api to identify each row
 	//we will not use this extra column id in spreadsheet like MsExcel Adapter
@@ -49,17 +48,19 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 	 * @param sheetName the particular sheet name of a spreadsheet 
 	 */
 	public GoogleSpreadSheetContentAdapter(IGoogleSpreadSheet spreadSheet,GSWorksheet<GSRow<GSCell>> workSheet,
-											ISpreadSheetToXMLMapper mapper,String type){
+											ISpreadSheetToXMLMapper mapper){
 		
 		Guard.argumentNotNull(spreadSheet, "spreadSheet");
 		Guard.argumentNotNull(workSheet, "workSheet");
-		Guard.argumentNotNullOrEmptyString(type, "type");
+		
 		this.spreadSheet = spreadSheet;
 		this.workSheet = workSheet;
 		this.mapper = mapper;
-		this.type = type;
-		//right now we are planning to give the entity name as the title of the each sheet
-		this.sheetName = workSheet.getName();
+		
+		//instead of providing sheet name as the entity name we using
+		//type as the entity name.because with google spreadsheet it is possible
+		//to create two worksheet(programatically) with the same name.
+		this.entityName = mapper.getType();
 //		this.lastUpdateColumnIndex = mapper.getLastUpdateColumnPosition();
 		this.idColumnName = mapper.getIdColumnName();
 		
@@ -69,7 +70,7 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 	public void delete(IContent content) {
 		Guard.argumentNotNull(content, "content");
 		
-		EntityContent entityContent = EntityContent.normalizeContent(content, this.sheetName, idColumnName);
+		EntityContent entityContent = EntityContent.normalizeContent(content, this.entityName, idColumnName);
 		GSRow row = GoogleSpreadsheetUtils.getRow(this.workSheet, mapper.getIdColumnPosition(), entityContent.getId());
 		if(row != null){
 			this.workSheet.deleteChildElement(row.getElementId());
@@ -83,7 +84,7 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 		GSRow row = GoogleSpreadsheetUtils.getRow(this.workSheet, mapper.getIdColumnPosition(), contentId);
 		if(row != null){
 			Element payLoad = mapper.convertRowToXML(row, this.workSheet);
-			return new EntityContent(payLoad,this.sheetName,contentId);
+			return new EntityContent(payLoad,this.entityName,contentId);
 		}
 		return null;
 	}
@@ -108,7 +109,7 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 					 }
 					 //TODO handle the else condition.
 	   		    entityId = cell.getCellValue();
-				EntityContent entityContent = new EntityContent(payLoad,this.sheetName,entityId);
+				EntityContent entityContent = new EntityContent(payLoad,this.entityName,entityId);
 				listOfAll.add(entityContent);
 			}
 		}
@@ -135,14 +136,14 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 	
 	@Override
 	public String getType() {
-		return this.type;
+		return this.entityName;
 	}
 
 	@Override
 	public void save(IContent content) {
 		Guard.argumentNotNull(content, "content");
 		
-		EntityContent entityContent = EntityContent.normalizeContent(content, this.sheetName, idColumnName);
+		EntityContent entityContent = EntityContent.normalizeContent(content, this.entityName, idColumnName);
 		GSRow row = GoogleSpreadsheetUtils.getRow(this.workSheet, mapper.getIdColumnPosition(), entityContent.getId());
 		if(row == null){
 			addRow(entityContent);

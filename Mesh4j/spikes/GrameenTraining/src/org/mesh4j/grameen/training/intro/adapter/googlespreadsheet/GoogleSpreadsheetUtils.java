@@ -936,8 +936,7 @@ public class GoogleSpreadsheetUtils {
 			IIdentityProvider identityProvider, IIdGenerator idGenerator) {
 		
 		GoogleSpreadSheetContentAdapter contentRepo = new GoogleSpreadSheetContentAdapter(
-				spreadsheet, contentWorkSheet, mapper, contentWorkSheet
-						.getName());
+				spreadsheet, contentWorkSheet, mapper);
 		
 		GoogleSpreadSheetSyncRepository syncRepo = new GoogleSpreadSheetSyncRepository(
 				spreadsheet, identityProvider, idGenerator,
