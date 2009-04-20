@@ -29,21 +29,17 @@ public class SyncAdapterBuilderTest {
 		
 		GoogleSpreadSheetInfo spreadSheetInfo = new GoogleSpreadSheetInfo(
 				"pLUqch-enpf1-GcqnD6qjSA",
+				"gspreadsheet.test@gmail.com",
+				"java123456",
 				"id",
 				1,
-				6, 
-				"g@l@xy24", 
-				"mesh4x@gmail.com",
-				"user_source");
+				6,
+				"user_source",
+				"user"
+				);
 		
 		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
 		ISyncAdapter syncAdapterA = adapterBuilder.createGoogleSpreadSheetAdapter(spreadSheetInfo);
-		
-//		spreadSheetInfo.setSheetName("user_target");
-//		ISyncAdapter syncAdapterB = adapterBuilder.createGoogleSpreadSheetAdapter(spreadSheetInfo);
-//		
-//		SyncEngine engine = new SyncEngine(syncAdapterA,syncAdapterB);
-//		engine.synchronize();
 		
 		Assert.assertEquals(0,syncAdapterA.getAll().size());
 	}
