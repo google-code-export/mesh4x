@@ -68,7 +68,7 @@ public class GoogleSpreadSheetSyncRepository implements ISyncRepository,ISyncAwa
 		this.spreadSheet = spreadSheet;
 		this.identityProvider = identityProvider;
 		this.idGenerator = idGenerator;
-		this.workSheet = GoogleSpreadsheetUtils.createSyncSheetIfAbsent(spreadSheet, syncWorksheetName);
+		this.workSheet = GoogleSpreadsheetUtils.getOrCreateSyncSheetIfAbsent(spreadSheet, syncWorksheetName);
 	}
 	
 	@Override

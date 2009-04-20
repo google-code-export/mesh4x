@@ -194,40 +194,44 @@ public class GoogleSpreadsheetUtils {
 			Map<String, GSBaseElement> insertPool,
 			Map<String, GSBaseElement> updatePool,
 			Map<String, GSBaseElement> deletePool) {
-		for (GSBaseElement subElement : element.getChildElements().values()) {
-			if (subElement.isDirty()) {
-				if (subElement.isDeleteCandidate()) {
-					// add subElement to delete pool
-					deletePool.put(subElement.getId(), subElement);
-				} else {
-					if (subElement instanceof GSCell) {
-						// add subElement to update pool
-						updatePool.put(subElement.getId(), subElement);
-					} else if (subElement instanceof GSRow){ 
-							if(subElement.getBaseEntry().getId() == null ){//only for new rows
-								insertPool.put(subElement.getElementId(), subElement);
-							}else{
-								//if all childs are new but row has an ID
-								//then add it to insert pool () 
-								boolean eligible = true;
-								for (IGSElement child : ((GSRow<GSCell>) subElement)
-									.getChildElements().values()) {
-									if (child.isDirty()
-										&& child.getBaseEntry().getId() != null) {
-										eligible = false;
-										break;
-									}										
-								}
-								if(eligible)
+		
+		if(element.isDeleteCandidate())
+			deletePool.put(element.getId(), element);
+		else
+			for (GSBaseElement subElement : element.getChildElements().values()) {
+				if (subElement.isDirty()) {
+					if (subElement.isDeleteCandidate()) {
+						// add subElement to delete pool
+						deletePool.put(subElement.getId(), subElement);
+					} else {
+						if (subElement instanceof GSCell) {
+							// add subElement to update pool
+							updatePool.put(subElement.getId(), subElement);
+						} else if (subElement instanceof GSRow){ 
+								if(subElement.getBaseEntry().getId() == null ){//only for new rows
 									insertPool.put(subElement.getElementId(), subElement);
-								else
-									processElementForFlush(subElement, insertPool, updatePool, deletePool);
-							}	
-					} else
-						processElementForFlush(subElement, insertPool, updatePool, deletePool);
+								}else{
+									//if all childs are new but row has an ID
+									//then add it to insert pool () 
+									boolean eligible = true;
+									for (IGSElement child : ((GSRow<GSCell>) subElement)
+										.getChildElements().values()) {
+										if (child.isDirty()
+											&& child.getBaseEntry().getId() != null) {
+											eligible = false;
+											break;
+										}										
+									}
+									if(eligible)
+										insertPool.put(subElement.getElementId(), subElement);
+									else
+										processElementForFlush(subElement, insertPool, updatePool, deletePool);
+								}	
+						} else
+							processElementForFlush(subElement, insertPool, updatePool, deletePool);
+					}
 				}
 			}
-		}
 
 	}
 
@@ -949,12 +953,13 @@ public class GoogleSpreadsheetUtils {
 		return baseWorksheetName+"_sync";
 	}
 	
-	public static GSWorksheet<GSRow<GSCell>> createSyncSheetIfAbsent(IGoogleSpreadSheet spreadsheet, String syncWorksheetName) {
+	public static GSWorksheet<GSRow<GSCell>> getOrCreateSyncSheetIfAbsent(IGoogleSpreadSheet spreadsheet, String syncWorksheetName) {
 		
 		if(spreadsheet.getGSWorksheet(syncWorksheetName) == null){
 			 try {
 				    WorksheetEntry worksheet = new WorksheetEntry();
 					worksheet.setTitle(new PlainTextConstruct(syncWorksheetName));
+					//TODO: need to review what should be the default row count of the sheet 
 					worksheet.setRowCount(80);
 					worksheet.setColCount(10);
 					
