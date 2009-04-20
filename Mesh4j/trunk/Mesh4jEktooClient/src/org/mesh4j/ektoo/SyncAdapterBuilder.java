@@ -43,7 +43,7 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder{
 
 
 	@Override
-	public ISyncAdapter createMsExcelAdapter(String sheetName, String idColumnName, String contentFileName) {
+	public ISyncAdapter createMsExcelAdapter(String contentFileName, String sheetName, String idColumnName) {
 		
 		//TODO if file doesn't exist then create file with the help of schema
 		//request the client to provide the schema
@@ -89,14 +89,15 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder{
 		ISpreadSheetToXMLMapper mapper = new SpreadSheetToXMLMapper(idColumName,idColumnPosition,lastUpdateColumnPosition);
 		IGoogleSpreadSheet gSpreadSheet = new GoogleSpreadsheet(googleSpreadSheetId, userName, passWord);
 		
+		// TODO (Sharif) create sync sheet automatically
 		GSWorksheet<GSRow<GSCell>> contentWorkSheet = gSpreadSheet.getGSWorksheet(spreadSheetInfo.getSheetName());
+		String syncWorkSheetName = spreadSheetInfo.getSheetName() + "_sync";
+		GSWorksheet<GSRow<GSCell>> syncWorkSheet = gSpreadSheet.getGSWorksheet(syncWorkSheetName); 
 
 		// adapter creation
 		IIdentityProvider identityProvider = getIdentityProvider();
 		GoogleSpreadSheetContentAdapter contentRepo = new GoogleSpreadSheetContentAdapter(gSpreadSheet, contentWorkSheet, mapper, contentWorkSheet.getName());
-		GoogleSpreadSheetSyncRepository  syncRepo = new GoogleSpreadSheetSyncRepository(gSpreadSheet, identityProvider, getIdGenerator(), 
-				getSyncWorksheetName(contentWorkSheet.getName()));
-		
+		GoogleSpreadSheetSyncRepository  syncRepo = new GoogleSpreadSheetSyncRepository(gSpreadSheet, identityProvider, getIdGenerator(), syncWorkSheet.getName());
 		SplitAdapter splitAdapter = new SplitAdapter(syncRepo, contentRepo, identityProvider);
 		
 		return splitAdapter;
@@ -140,8 +141,4 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder{
 		return this.propertiesProvider.getMeshSyncServerURL();
 	}
 
-	public static String getSyncWorksheetName(String contentWorksheetName) {
-		return contentWorksheetName+"_sync";
-	}
-	
 }
