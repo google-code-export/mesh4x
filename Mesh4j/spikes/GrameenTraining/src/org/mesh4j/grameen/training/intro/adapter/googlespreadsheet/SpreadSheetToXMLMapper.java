@@ -29,21 +29,7 @@ public class SpreadSheetToXMLMapper implements ISpreadSheetToXMLMapper{
 	private int idColumnPosition = 0;
 	
 	
-	@Deprecated
-	public SpreadSheetToXMLMapper(String idColumnName,String lastUpdateColumnName){
-		Guard.argumentNotNullOrEmptyString(idColumnName, "idColumnName");
-		Guard.argumentNotNullOrEmptyString(lastUpdateColumnName, "lastUpdateColumnName");
-		this.idColumnName = idColumnName;
-		this.lastUpdateColumnName = lastUpdateColumnName;
-	}
 	
-	@Deprecated
-	public SpreadSheetToXMLMapper(String idColumnName,int lastUpdateColumnPosition){
-		Guard.argumentNotNullOrEmptyString(idColumnName, "idColumnName");
-		Guard.argumentNotNull(lastUpdateColumnPosition, "lastUpdateColumnPosition");
-		this.idColumnName = idColumnName;
-		this.lastUpdateColumnPosition = lastUpdateColumnPosition;
-	}
 	public SpreadSheetToXMLMapper(String type,String idColumnName,int idColumnPosition,int lastUpdateColumnPosition){
 		Guard.argumentNotNullOrEmptyString(type, "type");
 		Guard.argumentNotNullOrEmptyString(idColumnName, "idColumnName");
@@ -55,8 +41,7 @@ public class SpreadSheetToXMLMapper implements ISpreadSheetToXMLMapper{
 		this.idColumnPosition = idColumnPosition;
 		this.lastUpdateColumnPosition = lastUpdateColumnPosition;
 	}
-	public SpreadSheetToXMLMapper(){
-	}
+	
 	
 	@Override
 	public Element convertRowToXML(GSRow<GSCell> gsRow, GSWorksheet worksheet) {
