@@ -27,9 +27,10 @@ public class GoogleSpreadSheetSyncRepositoryTest {
 	private IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
 	private IIdGenerator idGenerator = IdGenerator.INSTANCE;
 	private GSWorksheet<GSRow<GSCell>> workSheet;
-	private String userName = "mesh4x@gmail.com";
-	private String passWord = "g@l@xy24";
-	private String GOOGLE_SPREADSHEET_FIELD = "pLUqch-enpf1-GcqnD6qjSA";
+	String userName = "gspreadsheet.test@gmail.com";
+	String passWord = "java123456";
+	String GOOGLE_SPREADSHEET_FIELD = "peo4fu7AitTo8e3v0D8FCew";
+
 	
 	
 	

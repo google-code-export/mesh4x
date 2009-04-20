@@ -33,9 +33,9 @@ public class GoogleSpreadSheetAdapterTest {
 	private IGoogleSpreadSheet spreadsheet;
 	private ISpreadSheetToXMLMapper mapper;
 
-	String userName = "mesh4x@gmail.com";
-	String passWord = "g@l@xy24";
-	String GOOGLE_SPREADSHEET_FIELD = "pLUqch-enpf1-GcqnD6qjSA";
+	String userName = "gspreadsheet.test@gmail.com";
+	String passWord = "java123456";
+	String GOOGLE_SPREADSHEET_FIELD = "peo4fu7AitTo8e3v0D8FCew";
 	
 	@Before
 	public void setUp(){
