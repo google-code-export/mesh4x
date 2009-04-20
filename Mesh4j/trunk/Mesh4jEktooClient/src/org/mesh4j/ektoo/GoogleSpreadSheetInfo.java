@@ -9,18 +9,23 @@ public class GoogleSpreadSheetInfo {
 	private String idColumnName = "";
 	private int lastUpdateColumnPosition = 0;
 	private int idColumnPosition = 1;
+	
 	private String userName = "";
 	private String passWord = "";
+	private String googleSpreadSheetId = "";
 	
 	private String sheetName = "";
-	private String googleSpreadSheetId = "";
+	private String type = "";
+	 
+	
 	
 	// BUSINESS METHODS
 
-	public GoogleSpreadSheetInfo(String googleSpreadSheetId,
-			String idColumnName, int idColumnPosition,
-			int lastUpdateColumnPosition, String passWord, String sheetName,
-			String userName) {
+	public GoogleSpreadSheetInfo(String googleSpreadSheetId,String userName,String passWord,
+								   String idColumnName, int idColumnPosition,
+									int lastUpdateColumnPosition,  String sheetName,String type
+			)
+	{
 		
 		Guard.argumentNotNullOrEmptyString(googleSpreadSheetId, "googleSpreadSheetId");
 		// TODO (JMT) add parameters validations
@@ -31,9 +36,14 @@ public class GoogleSpreadSheetInfo {
 		this.lastUpdateColumnPosition = lastUpdateColumnPosition;
 		this.passWord = passWord;
 		this.sheetName = sheetName;
+		this.type = type;
 		this.userName = userName;
 	}
 	
+	public String getType() {
+		return type;
+	}
+
 	public String getSheetName() {
 		return sheetName;
 	}

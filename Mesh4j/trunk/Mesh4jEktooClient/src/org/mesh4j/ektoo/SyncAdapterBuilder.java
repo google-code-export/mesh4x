@@ -84,9 +84,11 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder{
 		String userName = spreadSheetInfo.getUserName();
 		String passWord = spreadSheetInfo.getPassWord();
 		String googleSpreadSheetId = spreadSheetInfo.getGoogleSpreadSheetId();
+		String type = spreadSheetInfo.getType();
 		
 		// create google spread sheet
-		ISpreadSheetToXMLMapper mapper = new SpreadSheetToXMLMapper(idColumName,idColumnPosition,lastUpdateColumnPosition);
+		ISpreadSheetToXMLMapper mapper = new SpreadSheetToXMLMapper(type,idColumName,
+				idColumnPosition,lastUpdateColumnPosition);
 		IGoogleSpreadSheet gSpreadSheet = new GoogleSpreadsheet(googleSpreadSheetId, userName, passWord);
 		
 		// TODO (Sharif) create sync sheet automatically
@@ -96,7 +98,7 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder{
 
 		// adapter creation
 		IIdentityProvider identityProvider = getIdentityProvider();
-		GoogleSpreadSheetContentAdapter contentRepo = new GoogleSpreadSheetContentAdapter(gSpreadSheet, contentWorkSheet, mapper, contentWorkSheet.getName());
+		GoogleSpreadSheetContentAdapter contentRepo = new GoogleSpreadSheetContentAdapter(gSpreadSheet, contentWorkSheet, mapper);
 		GoogleSpreadSheetSyncRepository  syncRepo = new GoogleSpreadSheetSyncRepository(gSpreadSheet, identityProvider, getIdGenerator(), syncWorkSheet.getName());
 		SplitAdapter splitAdapter = new SplitAdapter(syncRepo, contentRepo, identityProvider);
 		
