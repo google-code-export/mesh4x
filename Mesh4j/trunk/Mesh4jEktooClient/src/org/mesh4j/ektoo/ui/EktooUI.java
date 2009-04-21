@@ -17,6 +17,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -60,6 +62,7 @@ public class EktooUI extends JFrame {
 	// BUSINESS METHODS
 	
 	public static void main(String[] args) {
+		initLookAndFeel();
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				JFrame thisClass = new EktooUI();
@@ -323,6 +326,31 @@ public class EktooUI extends JFrame {
 	private void log(String msg) {
 		if(LOGGER.isDebugEnabled()){
 			LOGGER.debug(msg);
+		}
+	}
+	
+	
+	private static void initLookAndFeel()
+	{
+		try 
+		{
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		}
+		catch (ClassNotFoundException e) 
+		{
+			e.printStackTrace();
+		}
+		catch (InstantiationException e) 
+		{
+			e.printStackTrace();
+		}
+		catch (IllegalAccessException e) 
+		{
+			e.printStackTrace();
+		}
+		catch (UnsupportedLookAndFeelException e) 
+		{
+			e.printStackTrace();
 		}
 	}
 }  //  @jve:decl-index=0:visual-constraint="10,10"
