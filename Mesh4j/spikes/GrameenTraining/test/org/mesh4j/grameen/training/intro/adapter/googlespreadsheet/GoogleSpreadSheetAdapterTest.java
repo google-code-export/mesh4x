@@ -58,6 +58,66 @@ public class GoogleSpreadSheetAdapterTest {
 	}
 	
 	@Test
+	public void ShouldSyncTwoWorkSheetOfTwoSpreadSheetOfTwoDiffUser(){
+		String userName = "";
+		String passWord = "";
+		String spField = "";
+		
+		userName = "gspreadsheet.test@gmail.com";
+		passWord = "java123456";
+		spField = "peo4fu7AitTqkOhMSrecFRA";
+		IGoogleSpreadSheet sourceSpreadSheet = getGoogleSpreadSheet(spField, userName, passWord);
+		GSWorksheet workSheetSource = sourceSpreadSheet.getGSWorksheet(1);
+		
+		userName = "gspreadsheet.run@gmail.com";
+		passWord = "java123456";
+		spField = "pc5o5hLhHbIhQ9IEZKNLAJQ";
+		IGoogleSpreadSheet targetSpreadSheet = getGoogleSpreadSheet(spField, userName, passWord);
+		GSWorksheet workSheetTarget = targetSpreadSheet.getGSWorksheet(1);
+		
+		SplitAdapter splitAdapterSource = getAdapter(sourceSpreadSheet,workSheetSource, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		SplitAdapter splitAdapterTarget = getAdapter(targetSpreadSheet,workSheetTarget, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		
+		SyncEngine syncEngine = new SyncEngine(splitAdapterSource,splitAdapterTarget);
+		List<Item> conflicts = syncEngine.synchronize();
+		
+		Assert.assertEquals(0, conflicts.size());
+
+	}
+	@Test
+	public void ShouldSyncTwoWorkSheetOfTwoSpreadSheet(){
+		String userName = "";
+		String passWord = "";
+		String spField = "";
+		
+		userName = "gspreadsheet.test@gmail.com";
+		passWord = "java123456";
+		spField = "peo4fu7AitTo8e3v0D8FCew";
+		IGoogleSpreadSheet sourceSpreadSheet = getGoogleSpreadSheet(spField, userName, passWord);
+		GSWorksheet workSheetSource = sourceSpreadSheet.getGSWorksheet(1);
+		
+		
+		userName = "gspreadsheet.test@gmail.com";
+		passWord = "java123456";
+		spField = "peo4fu7AitTqkOhMSrecFRA";
+		IGoogleSpreadSheet targetSpreadSheet = getGoogleSpreadSheet(spField, userName, passWord);
+		GSWorksheet workSheetTarget = targetSpreadSheet.getGSWorksheet(1);
+		
+		SplitAdapter splitAdapterSource = getAdapter(sourceSpreadSheet,workSheetSource, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		SplitAdapter splitAdapterTarget = getAdapter(targetSpreadSheet,workSheetTarget, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		
+		SyncEngine syncEngine = new SyncEngine(splitAdapterSource,splitAdapterTarget);
+		List<Item> conflicts = syncEngine.synchronize();
+		
+		Assert.assertEquals(0, conflicts.size());
+		
+	}
+	
+	private IGoogleSpreadSheet getGoogleSpreadSheet(String spField,String userName,String passWord){
+		IGoogleSpreadSheet spreadsheet = new GoogleSpreadsheet(spField,userName,passWord);
+		return spreadsheet;
+	}
+	@Test
 	public void ShouldSyncAfterAddedItemInEmptyWorkSheet() throws DocumentException{
 		
 		GSWorksheet workSheetSource = spreadsheet.getGSWorksheet(1);//user entity source worksheet
@@ -108,6 +168,13 @@ public class GoogleSpreadSheetAdapterTest {
 		Assert.assertEquals(0, conflicts.size());
 	}
 	
+	private SplitAdapter getAdapter(IGoogleSpreadSheet spreadsheet,GSWorksheet contentWorkSheet,IIdentityProvider identityProvider,IIdGenerator idGenerator){
+		GoogleSpreadSheetContentAdapter contentRepo = new GoogleSpreadSheetContentAdapter(spreadsheet,contentWorkSheet,mapper);
+		String syncSheetName = contentWorkSheet.getName() + "_sync";
+		GoogleSpreadSheetSyncRepository  syncRepo = new GoogleSpreadSheetSyncRepository(spreadsheet,identityProvider,idGenerator,syncSheetName);
+		SplitAdapter splitAdapter = new SplitAdapter(syncRepo,contentRepo,identityProvider);
+		return splitAdapter;
+	}
 	private SplitAdapter getAdapter(GSWorksheet contentWorkSheet,IIdentityProvider identityProvider,IIdGenerator idGenerator){
 		GoogleSpreadSheetContentAdapter contentRepo = new GoogleSpreadSheetContentAdapter(spreadsheet,contentWorkSheet,mapper);
 		String syncSheetName = contentWorkSheet.getName() + "_sync";
