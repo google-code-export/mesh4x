@@ -63,6 +63,7 @@ public class EktooUI extends JFrame {
 	
 	public static void main(String[] args) {
 		initLookAndFeel();
+		
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				JFrame thisClass = new EktooUI();
@@ -330,27 +331,25 @@ public class EktooUI extends JFrame {
 	}
 	
 	
-	private static void initLookAndFeel()
-	{
-		try 
-		{
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+	private static void initLookAndFeel(){
+	
+		try{ 
+			//newly incorporated look & feel in J2SE 6.0
+			UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+			//native look and feel
+			//UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		}
-		catch (ClassNotFoundException e) 
-		{
+		catch (ClassNotFoundException e){ 
 			e.printStackTrace();
 		}
-		catch (InstantiationException e) 
-		{
+		catch (InstantiationException e){ 
 			e.printStackTrace();
 		}
-		catch (IllegalAccessException e) 
-		{
+		catch (IllegalAccessException e){ 
 			e.printStackTrace();
 		}
-		catch (UnsupportedLookAndFeelException e) 
-		{
+		catch (UnsupportedLookAndFeelException e){ 
 			e.printStackTrace();
 		}
 	}
-}  //  @jve:decl-index=0:visual-constraint="10,10"
+}  
