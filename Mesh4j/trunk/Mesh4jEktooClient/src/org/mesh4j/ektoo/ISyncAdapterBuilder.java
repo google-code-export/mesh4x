@@ -7,15 +7,12 @@ public interface ISyncAdapterBuilder {
 	/**
 	 * creates adapter for excel repository
 	 * 
+	 * @param contentFileName,the content file which actually contains the provided sheet
 	 * @param sheetName, the physical sheet name of the excel file 
 	 * @param idColumnName, the name of the identity column of entity
-	 * @param contentFileName,the content file which actually contains the provided sheet
-	 * @param syncFileName,the sync file which actually contains the
-	 * @param identityProvider
-	 * @param idGenerator
-	 * @return ISyncAdapter   
+	 *  
 	 */
-	public ISyncAdapter createMsExcelAdapter(String sheetName, String idColumnName, String contentFileName); 
+	public ISyncAdapter createMsExcelAdapter(String contentFileName, String sheetName, String idColumnName); 
 	
 	
 	/**
