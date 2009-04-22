@@ -1,48 +1,47 @@
 package org.mesh4j.ektoo.ui;
 
+import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.util.Iterator;
 
 import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.mesh4j.ektoo.controller.MsExcelUIController;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.sync.adapters.msexcel.MsExcel;
 import org.mesh4j.sync.adapters.msexcel.MsExcelUtils;
 
+/**
+ * @author Bhuiyan Mohammad Iklash
+ *
+ */
 public class MsExcelUI extends TableUI
 {
-
+	// CONSTANTS
 	private static final long serialVersionUID = -5022572211883785527L;
+	private MsExcelUIController controller;
 
-	private JFileChooser chooser = null;// = new JFileChooser();
-
-	/**
-	 * This method initializes
-	 *
-	 */
+	// BUSINESS METHODS
 	public MsExcelUI() {
 		super();
 		initialize();
 	}
 
-	public MsExcelUI(String fileLabel, String tableLable, String fieldLabel) {
-		super(fileLabel, tableLable, fieldLabel);
+	public MsExcelUI(MsExcelUIController controller) 
+	{
+		super();
+		this.controller = controller;
 		initialize();
 	}
 
-	/**
-	 * This method initializes this
-	 *
-	 */
 	private void initialize()
 	{
-		this.getFileChooser().setDialogTitle(EktooUITranslator.getSelectExcel());
+		this.getFileChooser().setDialogTitle(EktooUITranslator.getExcelFileSelectorTitle());
 		this.getFileChooser().setAcceptAllFileFilterUsed(false);
 		this.getFileChooser().addChoosableFileFilter(new MsExcelFilter());
 	}
@@ -50,7 +49,9 @@ public class MsExcelUI extends TableUI
 	@Override
 	public void setList(File file)
 	{
+	  System.out.println("1...");
 		JComboBox sheetList = getTableList();
+		sheetList.removeAllItems();
 
 		MsExcel excelFile = new MsExcel(file.getAbsolutePath());
 		HSSFWorkbook workbook = excelFile.getWorkbook();
@@ -66,32 +67,81 @@ public class MsExcelUI extends TableUI
 					sheetList.addItem(sheetName);
 				}
 			}
-
 		}
+		
+		try
+		{
+			this.controller.changeWorkbookName(file.getAbsolutePath()); 
+		}
+		catch(Exception e)
+		{
+			
+		}		
 	}
 
 	@Override
 	public void setList(File file, int tableIndex)
 	{
-		JComboBox sheetList = getColumnList();
+	  System.out.println("2...");
+		JComboBox columnList = getColumnList();
+		columnList.removeAllItems();
 
 		MsExcel excelFile = new MsExcel(file.getAbsolutePath());
 		HSSFWorkbook workbook = excelFile.getWorkbook();
 		HSSFSheet sheet = workbook.getSheetAt(tableIndex);
+		
 		HSSFRow row = MsExcelUtils.getOrCreateRowHeaderIfAbsent(sheet);
 
 		HSSFCell cell = null;
 		String label = null;
+
 		Iterator cells = row.cellIterator();
 		while(cells.hasNext())
 		{
 			cell = (HSSFCell) cells.next();
 			label = cell.getStringCellValue();
-			sheetList.addItem(label);
+			columnList.addItem(label);
 		}
-	}
-}  //  @jve:decl-index=0:visual-constraint="-4,-28"
 
+		try
+		{
+			this.controller.changeWorksheetName( workbook.getSheetName(tableIndex));
+		}
+		catch(Exception e)
+		{
+			
+		}		
+	}
+
+	@Override
+	public void setList(File file, int tableIndex, String columnName) 
+	{
+	  System.out.println("3...");
+		try
+		{
+			this.controller.changeUniqueColumnName(columnName);
+		}
+		catch(Exception e)
+		{
+			
+		}		
+	}
+
+	public void setController(MsExcelUIController controller) {
+		this.controller = controller;
+	}
+
+	public MsExcelUIController getController() {
+		return controller;
+	}
+
+	@Override
+	public void modelPropertyChange(final PropertyChangeEvent evt) 
+	{
+		System.out.println("Model changes....");
+	}
+
+}
 
 class MsExcelFilter extends FileFilter {
 
@@ -112,6 +162,6 @@ class MsExcelFilter extends FileFilter {
 
     public String getDescription() 
     {
-        return EktooUITranslator.getReturnExcel();
+        return EktooUITranslator.getExcelFileDescription();
     }
 }
