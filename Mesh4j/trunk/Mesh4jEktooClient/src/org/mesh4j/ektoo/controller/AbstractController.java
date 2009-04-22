@@ -85,9 +85,6 @@ public abstract class AbstractController implements PropertyChangeListener
 															}
 														  );
 				method.invoke(model, newValue);
-				System.out.println("Method->" + method.getName());
-				System.out.println("Model->" + model);
-				System.out.println("Value->" + model);
 			}
 			catch(Exception ex)
 			{
@@ -109,9 +106,6 @@ public abstract class AbstractController implements PropertyChangeListener
           if ( method.getName().equals("set"+propertyName))
           {
             method.invoke(model, newValue);
-            System.out.println("Method->" + method.getName());
-            System.out.println("Model->" + model);
-            System.out.println("Value->" + model);
             break;    
           }
         }
