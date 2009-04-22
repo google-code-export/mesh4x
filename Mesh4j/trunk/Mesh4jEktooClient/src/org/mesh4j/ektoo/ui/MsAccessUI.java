@@ -108,23 +108,22 @@ public class MsAccessUI extends TableUI
 
 class MsAccessFilter extends FileFilter 
 {
-    //Accept all directories and all xls files.
-    public boolean accept(File file) 
-    {
-        if (file.isDirectory())
-        	return true;
+  public boolean accept(File file) 
+  {
+    if (file.isDirectory())
+      return true;
         
-        int pos = file.getName().lastIndexOf(".");
-        String ext = file.getName().substring(pos);
+    int pos = file.getName().lastIndexOf(".");
+    String ext = file.getName().substring(pos);
         
-        if (ext != null && ext.equals(".mdb")) 
-        	return true;
+    if (ext != null && ext.equals(".mdb")) 
+      return true;
 
-        return false;
-    }
+    return false;
+  }
 
-    public String getDescription() 
-    {
-        return EktooUITranslator.getExcelFileDescription();
-    }
+  public String getDescription() 
+  {
+    return EktooUITranslator.getExcelFileDescription();
+  }
 }
