@@ -28,6 +28,11 @@ public class GoogleSpreadSheetInfo {
 	{
 		
 		Guard.argumentNotNullOrEmptyString(googleSpreadSheetId, "googleSpreadSheetId");
+		Guard.argumentNotNullOrEmptyString(userName, "userName");
+		Guard.argumentNotNullOrEmptyString(passWord, "passWord");
+		Guard.argumentNotNullOrEmptyString(idColumnName, "idColumnName");
+		
+		
 		// TODO (JMT) add parameters validations
 		
 		this.googleSpreadSheetId = googleSpreadSheetId;
