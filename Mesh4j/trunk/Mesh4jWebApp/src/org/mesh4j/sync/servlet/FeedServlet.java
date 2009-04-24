@@ -30,6 +30,8 @@ import org.mesh4j.sync.web.geo.coder.GeoCoderFactory;
 
 public class FeedServlet extends HttpServlet {
 
+	private static final String PROPERTY_HISTORY_ACTIVE = "history.active";
+	
 	private static final String PARAM_SOURCE_ID = "sourceID";
 	private static final String PARAM_DESCRIPTION = "description";
 	private static final String PARAM_NEW_SOURCE_ID = "newSourceID";
@@ -54,6 +56,7 @@ public class FeedServlet extends HttpServlet {
 	// MODEL VARIABLES
 	private IFeedRepository feedRepository;
 	private IGeoCoder geoCoder;
+	private boolean historyActive = false;
 	
 	// BUSINESS METHODS
 
@@ -71,6 +74,13 @@ public class FeedServlet extends HttpServlet {
 
 			this.feedRepository = FeedRepositoryFactory.createFeedRepository(this, prop); 
 			this.geoCoder = GeoCoderFactory.createGeoCoder(this, prop);
+			
+			String his = prop.getProperty(PROPERTY_HISTORY_ACTIVE);
+			if(his == null || his.length() == 0){
+				this.historyActive = false;
+			} else {
+				this.historyActive = Boolean.valueOf(his);
+			}
 		} catch(Exception e){
 			this.log(e.getMessage());
 			throw new ServletException(e);
@@ -197,40 +207,46 @@ public class FeedServlet extends HttpServlet {
 	}
 	
 	private void processGetHistory(HttpServletRequest request, HttpServletResponse response, String sourceID, String link) throws IOException, ServletException {
-		link = link.substring(0, link.length() - "/history".length());
-		sourceID = sourceID.substring(0, sourceID.length() - "/history".length());
-
-		if(!this.feedRepository.existsFeed(sourceID)){
-			response.sendError(404, sourceID);
+		if(!this.historyActive){
+			response.sendError(404, "item history is not active");
 		} else {
-			try{
-				String formatName = request.getParameter(PARAM_FORMAT);     // format=rss20/atom10/kml
-				Format feedFormat = Format.getFormat(formatName);
-				ISyndicationFormat syndicationFormat = Format.getSyndicationFormat(feedFormat);
-				if(syndicationFormat == null){
-					response.sendError(404, formatName);
-				} else {
-					
-					String syncId = request.getParameter(PARAM_SYNC_ID);
-					if(syncId == null){
-						response.sendError(404, PARAM_SYNC_ID);
+		
+			link = link.substring(0, link.length() - "/history".length());
+			sourceID = sourceID.substring(0, sourceID.length() - "/history".length());
+	
+			if(!this.feedRepository.existsFeed(sourceID)){
+				response.sendError(404, sourceID);
+			} else {
+				try{
+					String formatName = request.getParameter(PARAM_FORMAT);     // format=rss20/atom10/kml
+					Format feedFormat = Format.getFormat(formatName);
+					ISyndicationFormat syndicationFormat = Format.getSyndicationFormat(feedFormat);
+					if(syndicationFormat == null){
+						response.sendError(404, formatName);
 					} else {
-						String responseContent = this.feedRepository.getHistory(sourceID, link, syndicationFormat, syncId);
-						responseContent = responseContent.replaceAll("&lt;", "<");	// TODO (JMT) remove ==>  xml.replaceAll("&lt;", "<"); 
-						responseContent = responseContent.replaceAll("&gt;", ">");
 						
-						response.setContentType(syndicationFormat.getContentType());
-						response.setContentLength(responseContent.length());
-						PrintWriter out = response.getWriter();
-						out.println(responseContent);
+						String syncId = request.getParameter(PARAM_SYNC_ID);
+						if(syncId == null){
+							response.sendError(404, PARAM_SYNC_ID);
+						} else {
+							String responseContent = this.feedRepository.getHistory(sourceID, link, syndicationFormat, syncId);
+														
+							responseContent = responseContent.replaceAll("&lt;", "<");	// TODO (JMT) remove ==>  xml.replaceAll("&lt;", "<"); 
+							responseContent = responseContent.replaceAll("&gt;", ">");
+							
+							response.setContentType(syndicationFormat.getContentType());
+							response.setContentLength(responseContent.length());
+							PrintWriter out = response.getWriter();
+							out.println(responseContent);
+						}
 					}
+				} catch (Exception e) {
+					throw new ServletException(e);
 				}
-			} catch (Exception e) {
-				throw new ServletException(e);
 			}
 		}
 	}
-	
+
 	private void processGetMappings(HttpServletResponse response, String sourceID, String link) throws IOException, ServletException {
 		link = link.substring(0, link.length() - "/mappings".length());
 		sourceID = sourceID.substring(0, sourceID.length() - "/mappings".length());
