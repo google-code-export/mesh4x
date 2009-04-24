@@ -7,7 +7,7 @@ import org.mesh4j.sync.validations.MeshException;
 public class MsExcel implements IMsExcel {
 
 	// MODEL VARIABLES
-	private String fileName;
+	protected String fileName;
 	private HSSFWorkbook workbook;
 	private boolean dirty = false;
 	

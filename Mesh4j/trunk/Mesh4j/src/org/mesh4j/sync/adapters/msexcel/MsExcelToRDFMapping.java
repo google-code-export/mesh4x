@@ -28,7 +28,6 @@ public class MsExcelToRDFMapping implements IMsExcelToXMLMapping{
 	// BUSINESS METHODs
 	public MsExcelToRDFMapping(IRDFSchema schema, String idColumnName) {
 		super();
-
 		this.rdfSchema = schema;
 		this.idColumnName = idColumnName;
 	}
