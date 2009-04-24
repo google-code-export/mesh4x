@@ -117,4 +117,10 @@ public class MSExcelToPlainXMLMapping implements IMsExcelToXMLMapping {
 		return null;
 	}
 
+	@Override
+	public void createDataSource(String fileName) throws Exception {
+		HSSFWorkbook workbook = new HSSFWorkbook();			
+		MsExcelUtils.flush(workbook, fileName);		
+	}
+
 }

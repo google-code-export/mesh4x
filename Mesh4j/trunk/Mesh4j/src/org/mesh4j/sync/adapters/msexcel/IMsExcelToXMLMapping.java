@@ -17,4 +17,7 @@ public interface IMsExcelToXMLMapping {
 	Element convertRowToXML(HSSFWorkbook wb, HSSFSheet sheet, HSSFRow row);
 	
 	ISchema getSchema();
+
+	void createDataSource(String fileName) throws Exception;
+
 }

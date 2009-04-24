@@ -7,7 +7,7 @@ import org.mesh4j.sync.validations.MeshException;
 public class MsExcel implements IMsExcel {
 
 	// MODEL VARIABLES
-	protected String fileName;
+	private String fileName;
 	private HSSFWorkbook workbook;
 	private boolean dirty = false;
 	
@@ -41,5 +41,10 @@ public class MsExcel implements IMsExcel {
 			MsExcelUtils.flush(this.workbook, this.fileName);
 			this.dirty = false;
 		}	
+	}
+
+	@Override
+	public String getFileName() {
+		return this.fileName;
 	}
 }

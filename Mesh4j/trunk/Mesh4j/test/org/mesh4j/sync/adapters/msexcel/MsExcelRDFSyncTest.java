@@ -179,6 +179,11 @@ public class MsExcelRDFSyncTest {
 		public void setDirty() {
 			dirtyWasCalled = true;			
 		}
+
+		@Override
+		public String getFileName() {
+			return "myFile.xls";
+		}
 		
 	}
 }

@@ -34,7 +34,8 @@ public class MSExcelToRDFMappingTest {
 		IMsExcel excel = new IMsExcel(){
 			@Override public void flush() {}
 			@Override public HSSFWorkbook getWorkbook() {return getDefaultWorkbook();}
-			@Override public void setDirty() {}			
+			@Override public void setDirty() {}
+			@Override public String getFileName() {return "myFile.xls";}			
 		};
 		
 		RDFSchema rdfSchema = MsExcelToRDFMapping.extractRDFSchema(excel, SHEET_NAME);
@@ -60,7 +61,8 @@ public class MSExcelToRDFMappingTest {
 		IMsExcel excel = new IMsExcel(){
 			@Override public void flush() {}
 			@Override public HSSFWorkbook getWorkbook() {return getDefaultWorkbook();}
-			@Override public void setDirty() {}			
+			@Override public void setDirty() {}	
+			@Override public String getFileName() {return "myFile.xls";}
 		};
 		
 		RDFSchema rdfSchema = MsExcelToRDFMapping.extractRDFSchema(excel, SHEET_NAME);
@@ -151,7 +153,8 @@ public class MSExcelToRDFMappingTest {
 		IMsExcel excel = new IMsExcel(){
 			@Override public void flush() {}
 			@Override public HSSFWorkbook getWorkbook() {return getDefaultWorkbook();}
-			@Override public void setDirty() {}			
+			@Override public void setDirty() {}		
+			@Override public String getFileName() {return "myFile.xls";}
 		};
 		RDFSchema rdfSchema = MsExcelToRDFMapping.extractRDFSchema(excel, SHEET_NAME);
 		MsExcelToRDFMapping mapper = new MsExcelToRDFMapping(rdfSchema, COLUMN_CODE);
@@ -194,7 +197,8 @@ public class MSExcelToRDFMappingTest {
 		IMsExcel excel = new IMsExcel(){
 			@Override public void flush() {}
 			@Override public HSSFWorkbook getWorkbook() {return getDefaultWorkbook();}
-			@Override public void setDirty() {}			
+			@Override public void setDirty() {}	
+			@Override public String getFileName() {return "myFile.xls";}
 		};
 		
 		RDFSchema rdfSchema = MsExcelToRDFMapping.extractRDFSchema(excel, SHEET_NAME);

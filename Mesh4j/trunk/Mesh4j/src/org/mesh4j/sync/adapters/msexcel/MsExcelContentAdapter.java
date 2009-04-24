@@ -9,16 +9,21 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.dom4j.Element;
-import org.mesh4j.sync.ISupportSchema;
+import org.mesh4j.sync.ISupportReadSchema;
+import org.mesh4j.sync.ISupportWriteSchema;
 import org.mesh4j.sync.ISyncAware;
 import org.mesh4j.sync.adapters.hibernate.EntityContent;
 import org.mesh4j.sync.adapters.split.IIdentifiableContentAdapter;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.IContent;
 import org.mesh4j.sync.payload.schema.ISchema;
+import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
+import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
+import org.mesh4j.sync.test.utils.TestHelper;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
-public class MsExcelContentAdapter implements IIdentifiableContentAdapter, ISyncAware, ISupportSchema {
+public class MsExcelContentAdapter implements IIdentifiableContentAdapter, ISyncAware, ISupportReadSchema, ISupportWriteSchema {
 
 	// MODEL VARIABLES
 	private IMsExcel excel;
@@ -213,5 +218,16 @@ public class MsExcelContentAdapter implements IIdentifiableContentAdapter, ISync
 	@Override
 	public ISchema getSchema() {
 		return mapping.getSchema();
+	}
+
+
+	@Override
+	public void writeDataSourceFromSchema() {
+		try {
+			String newFileName = this.excel.getFileName();
+			this.mapping.createDataSource(newFileName);
+		} catch (Exception e) {
+			throw new MeshException(e);
+		}		
 	}
 }

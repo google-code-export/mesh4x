@@ -24,10 +24,10 @@
 	<classpathentry exported="true" kind="lib" path="lib/smsLib/smslib-3.3.0.jar" sourcepath="/SmsExchanger/lib/smsLib/smslib-v3.3.0-src.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/jakarta-poi/poi-3.2-FINAL-20081019.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jackcess/jackcess-1.1.18.jar" sourcepath="lib/jackcess/jackcess-1.1.18-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="etc"/>
 	<classpathentry exported="true" kind="lib" path="lib/jenna/jena.jar" sourcepath="E:/Clarius/java/Jena-2.5.7/Jena-2.5.7.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/jenna/xercesImpl.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jenna/iri.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jenna/icu4j_3_4.jar"/>
+	<classpathentry kind="lib" path="etc"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

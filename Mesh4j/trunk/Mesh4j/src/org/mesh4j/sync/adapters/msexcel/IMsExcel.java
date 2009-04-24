@@ -9,4 +9,6 @@ public interface IMsExcel {
 	public void setDirty();
 	
 	public void flush();
+
+	public String getFileName();
 }
