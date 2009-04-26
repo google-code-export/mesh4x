@@ -66,31 +66,31 @@ public class SpreadSheetToXMLMapper implements ISpreadSheetToXMLMapper{
 		return rootElement;
 	}
 
-	@Override
-	public GSRow<GSCell> convertXMLElementToRow(GSWorksheet<GSRow<GSCell>> workSheet,Element element) {
-		Guard.argumentNotNull(workSheet, "workSheet");
-		Guard.argumentNotNull(element, "element");
-		
-		LinkedHashMap<String,String> listMap = new LinkedHashMap<String, String>();
-		GSRow<GSCell> gsRow = null ;
-		
-		for (Iterator<Element> iterator = element.elementIterator(); iterator.hasNext();){
-			Element child = (Element) iterator.next();
-			listMap.put(child.getName(), child.getText());
-		}
-		
-		try {
-			gsRow = workSheet.createNewRow(listMap);
-		} catch (IOException e) {
-			throw new MeshException(e);
-		} catch (ServiceException e) {
-			throw new MeshException(e);
-		}
-		return gsRow;
-	}
+//	@Override
+//	public GSRow<GSCell> convertXMLElementToRow(GSWorksheet<GSRow<GSCell>> workSheet,Element element) {
+//		Guard.argumentNotNull(workSheet, "workSheet");
+//		Guard.argumentNotNull(element, "element");
+//		
+//		LinkedHashMap<String,String> listMap = new LinkedHashMap<String, String>();
+//		GSRow<GSCell> gsRow = null ;
+//		
+//		for (Iterator<Element> iterator = element.elementIterator(); iterator.hasNext();){
+//			Element child = (Element) iterator.next();
+//			listMap.put(child.getName(), child.getText());
+//		}
+//		
+//		try {
+//			gsRow = workSheet.createNewRow(listMap);
+//		} catch (IOException e) {
+//			throw new MeshException(e);
+//		} catch (ServiceException e) {
+//			throw new MeshException(e);
+//		}
+//		return gsRow;
+//	}
 
 	@Override
-	public GSRow<GSCell> normalizeRow(GSWorksheet<GSRow<GSCell>> workSheet,
+	public GSRow<GSCell> convertXMLElementToRow(GSWorksheet<GSRow<GSCell>> workSheet,
 									  Element payLoad, GSRow<GSCell> rowTobeUPdated) {
 		Guard.argumentNotNull(workSheet, "workSheet");
 		Guard.argumentNotNull(payLoad, "payLoad");

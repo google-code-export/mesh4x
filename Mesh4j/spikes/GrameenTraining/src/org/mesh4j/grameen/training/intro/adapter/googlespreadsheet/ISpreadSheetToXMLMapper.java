@@ -36,10 +36,10 @@ public interface ISpreadSheetToXMLMapper {
 
 	//before save the manipulated item or row to the spreadsheet we need to convert the
 	//mesh4x xml element to spreadsheet listEntry which is row.
-	public GSRow convertXMLElementToRow(GSWorksheet<GSRow<GSCell>> workSheet,Element element);
+	public GSRow convertXMLElementToRow(GSWorksheet<GSRow<GSCell>> workSheet,Element element,GSRow<GSCell> rowTobeUPdated);
 
 	//update the changes from payLoad into the provided rowTobeUPdated
-	public GSRow<GSCell> normalizeRow(GSWorksheet<GSRow<GSCell>> workSheet,Element payLoad,GSRow<GSCell> rowTobeUPdated);
+//	public GSRow<GSCell> normalizeRow(GSWorksheet<GSRow<GSCell>> workSheet,Element payLoad,GSRow<GSCell> rowTobeUPdated);
 	
 	 
 	

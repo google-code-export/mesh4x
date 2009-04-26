@@ -146,16 +146,14 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 		EntityContent entityContent = EntityContent.normalizeContent(content, this.entityName, idColumnName);
 		GSRow row = GoogleSpreadsheetUtils.getRow(this.workSheet, mapper.getIdColumnPosition(), entityContent.getId());
 		if(row == null){
-			addRow(entityContent);
-		}else{
-			updateRow(entityContent,row);
+			row = workSheet.createNewRow(workSheet.getChildElements().size() +1);
 		}
+		this.mapper.convertXMLElementToRow(workSheet, entityContent.getPayload(), row);
 	}
 	
 	private void addRow(EntityContent entityContent){
-
-		GSRow<GSCell> row = this.mapper.convertXMLElementToRow(this.workSheet,entityContent.getPayload());
-		this.workSheet.addChildElement(row.getElementId(), row);
+//		GSRow<GSCell> row = this.mapper.convertXMLElementToRow(this.workSheet,entityContent.getPayload());
+//		this.workSheet.addChildElement(row.getElementId(), row);
 	}
 	
 	@SuppressWarnings("unused")
@@ -175,8 +173,8 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 		}
 	}
 	private void updateRow(EntityContent entityContent,GSRow<GSCell> rowTobeUpdated){
-		GSRow row = this.mapper.normalizeRow(workSheet, entityContent.getPayload(), rowTobeUpdated);
-		this.workSheet.updateChildElement(row.getElementId(), row);
+//		GSRow row = this.mapper.normalizeRow(workSheet, entityContent.getPayload(), rowTobeUpdated);
+//		this.workSheet.updateChildElement(row.getElementId(), row);
 	}
 	
 	@Override
