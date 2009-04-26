@@ -9,7 +9,7 @@ public class KmlModel extends AbstractModel
 
 	public void setKmlUri(String kmlUri) 
 	{
-		firePropertyChange("userName", this.kmlUri, this.kmlUri = kmlUri); 
+		firePropertyChange("kmlUri", this.kmlUri, this.kmlUri = kmlUri); 
 	}
 
 	public String getKmlUri() 
