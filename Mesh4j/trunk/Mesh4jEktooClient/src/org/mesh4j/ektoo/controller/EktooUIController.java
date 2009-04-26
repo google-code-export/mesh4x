@@ -21,7 +21,8 @@ public class EktooUIController
 	ISyncAdapterBuilder adapterBuilder;
 	
 	// BUISINESS METHODS
-	public EktooUIController(PropertiesProvider propertiesProvider) {
+	public EktooUIController(PropertiesProvider propertiesProvider) 
+	{
 		Guard.argumentNotNull(propertiesProvider, "propertiesProvider");
 		this.adapterBuilder = new SyncAdapterBuilder(propertiesProvider);
 	}
@@ -40,23 +41,5 @@ public class EktooUIController
 			return EktooUITranslator.getMessageSyncConflicts();
 		}
 		return EktooUITranslator.getMessageSyncSyccessfuly();
-	}
-
-	// TODO (NBL) test, remove dependency of this method and remove this code section
-	public String syncC2C(String sourceMash, String sourceDataSet, String targetMash, String targetDataSet)
-	{
-		ISyncAdapter sourceAdapter = adapterBuilder.createHttpSyncAdapter(sourceMash, sourceDataSet);
-		ISyncAdapter targetAdapter = adapterBuilder.createHttpSyncAdapter(targetMash, targetDataSet);
-		
-		SyncEngine engine = new SyncEngine(sourceAdapter, targetAdapter);
-		List<Item> items = engine.synchronize();
-		if (items != null && items.size() > 0)
-		{
-			return EktooUITranslator.getMessageSyncConflicts();
-		}
-		else
-		{
-			return EktooUITranslator.getMessageSyncSyccessfuly();
-		}
 	}
 } 
