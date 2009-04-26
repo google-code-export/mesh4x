@@ -44,7 +44,17 @@ public class MsAccessUIController extends AbstractController implements IUIContr
 	public ISyncAdapter createAdapter() 
 	{
 		MsAccessModel model = (MsAccessModel)this.getModel();
-		return adapterBuilder.createMsAccessAdapter(model.getDatabaseName(), model.getTabletName());
+		if(model == null) return null;
+		
+		String databaseName = model.getDatabaseName();
+		if (databaseName == null || databaseName.trim().length() == 0)
+		  return null;
+		
+		String tableName = model.getTabletName();
+		if (tableName == null || tableName.trim().length() == 0)
+		  return null;
+		
+		return adapterBuilder.createMsAccessAdapter(databaseName, tableName);
 	}
 
 	@Override
