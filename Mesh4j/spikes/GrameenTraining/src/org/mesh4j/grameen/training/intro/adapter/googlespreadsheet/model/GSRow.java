@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadsheetUtils;
 
 import com.google.gdata.client.spreadsheet.CellQuery;
@@ -220,14 +221,25 @@ public class GSRow<C> extends GSBaseElement<C>{
 			}
 			
 			//pick a cell corresponding to a header tag and put it in the child map
-			if(((ListEntry) this.getBaseEntry())
-					.getCustomElements().getTags().size() == 0) {
-
+			/*if(((ListEntry) this.getBaseEntry())
+					.getCustomElements().getTags().size() == 0) {*/
+			if(this.elementListIndex == 1) {
 				for (CellEntry cell : cellList) {
 					if (cell.getCell().getRow() == this.elementListIndex) {
-						String key = Integer.toString(cell.getCell().getCol());
+										
+						//the gdata api doesn't provide column tag for cell's of first row
+						//that why it is generated from the cell's value
+						
+						String cellValue = cell.getCell().getValue();
+						//TODO: need to review later if cellValue is null 
+						/*if(cellValue == null || cellValue.length() ==0){							
+							cellValue = "Column"+cell.getCell().getCol();
+							cell.changeInputValueLocal(cellValue);
+						}*/
+
+						String key = extractCellHeadetTag(cellValue);						
 						this.childElements.put(key, (C) new GSCell(cell,
-								(GSRow<GSCell>) this, key)); //TODO: need to provide header tag
+								(GSRow<GSCell>) this, key)); 
 					}
 				}
 				
@@ -255,6 +267,16 @@ public class GSRow<C> extends GSBaseElement<C>{
 		}
 	}
 	
+	private String extractCellHeadetTag(String value) {
+		StringBuffer tag = new StringBuffer("");
+		for(char c: value.toLowerCase().toCharArray()){
+			if(Character.isLetterOrDigit(c)){
+				tag.append(c);
+			}
+		}		
+		return tag.toString();
+	}
+
 	/**
  	 * update content/value of a {@link CellEntry} identified by column index in this row
  	 * 
@@ -295,6 +317,37 @@ public class GSRow<C> extends GSBaseElement<C>{
 		return cell.getCellValue();
 	}	
 	
+	/**
+	 * this will create a new cell at column position col  
+	 * 
+	 * @param col
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public GSCell createNewCell(int col, String key, String value) {
+		CellEntry newCell = new CellEntry(this.elementListIndex, col, ""); //this is not supported for batch update :(
+		GSCell newGSCell = new GSCell(newCell, (GSRow<GSCell>) this, key);
+		newGSCell.updateCellValue(value);
+		return newGSCell;
+	}
+	
+	/**
+	 * this will create a new cell at column position col and add it to its child  
+	 * elements with key 'key', any existing cell element with that key will be replaced
+	 *  
+	 * @param col
+	 * @param key
+	 * @param value
+	 * @return 
+	 * @return
+	 */
+	public GSCell createAndAddNewCell(int col, String key, String value) {
+		GSCell cell = createNewCell(col, key, value);
+		this.addChildElement(key, (C) cell);
+		return cell;
+	}	
+    
 	@SuppressWarnings("deprecation")
 	@Override
 	public void refreshMeFromFeed() throws IOException, ServiceException{

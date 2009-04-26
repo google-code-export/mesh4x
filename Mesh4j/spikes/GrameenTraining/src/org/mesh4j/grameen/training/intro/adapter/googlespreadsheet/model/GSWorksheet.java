@@ -160,11 +160,11 @@ public class GSWorksheet<C> extends GSBaseElement<C> {
 		return tagList;
 	}
 	
-	/**
+/*	*//**
 	 * add a new row to the spreadsheet
 	 * 
 	 * @param rowToAdd
-	 */
+	 *//*
 	@SuppressWarnings("unchecked")
 	public void addNewRow(GSRow rowToAdd) {		
 		int newRowIndex = this.getNonDeletedChildElements().size() + 1;
@@ -172,7 +172,7 @@ public class GSWorksheet<C> extends GSBaseElement<C> {
 		((GSWorksheet<GSRow>) this).addChildElement(
 				rowToAdd.getElementId(), rowToAdd);
 		this.setDirty();
-	}	
+	}*/	
 	
 	/**
 	 * generate a new row for the worksheet 
@@ -192,22 +192,18 @@ public class GSWorksheet<C> extends GSBaseElement<C> {
 			// TODO: throw exception
 			return null;
 		}
-		int newRowIndex = this.getChildElements().size() + 1;
 		
+		int newRowIndex = this.getChildElements().size() + 1;		
 		ListEntry newRow = new ListEntry();		
-		
 		GSRow<GSCell> newGSRow = new GSRow(newRow, newRowIndex, this);
 		
 		int col = 1; 	// entries in values make sure actual ordering in spreadsheet, 
 						// so we can assume they are in a position according to column order 1, 2, 3....   	
 		
-		for (String key : values.keySet()) {
-			CellEntry newCell = new CellEntry(newRowIndex, col, ""); //this is not supported for batch update :(
-		    GSCell newGSCell = new GSCell(newCell, newGSRow, key);
-			newGSCell.updateCellValue(values.get(key));
-			newGSRow.addChildElement(key, newGSCell);
+		for (String key : values.keySet()) {	
+			newGSRow.createAndAddNewCell(col, key, values.get(key));
 			col++;
-		}		
+		}				
 		
 		return newGSRow;
 	}
@@ -247,6 +243,19 @@ public class GSWorksheet<C> extends GSBaseElement<C> {
 		return newGSRow;
 	}	
 		
+	
+    public GSRow<GSCell> createNewRow(int rowIndex){
+        ListEntry listEntry = new ListEntry();
+		GSRow<GSCell> row = new GSRow(listEntry , rowIndex, this);
+        return row;
+    }	
+	
+	public GSRow<GSCell> createAndAddNewRow(int rowIndex) {
+		GSRow<GSCell> row = createNewRow(rowIndex);
+		addChildElement(row.getElementId(), (C) row);
+		return row;
+	}    
+    
 	@SuppressWarnings("unchecked")
 	@Override
 	public void refreshMeFromFeed() throws IOException, ServiceException{

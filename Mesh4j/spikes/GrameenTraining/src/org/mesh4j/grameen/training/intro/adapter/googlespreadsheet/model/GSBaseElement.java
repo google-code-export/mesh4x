@@ -43,7 +43,7 @@ public abstract class GSBaseElement<C> implements IGSElement<C>{
 	
 	public void setDirty() {
 		if( getParentElement() !=null )
-			((IGSElement<?>) parentElement).setDirty();
+			 parentElement.setDirty();
 		this.dirty = true;
 	}
 
@@ -71,7 +71,7 @@ public abstract class GSBaseElement<C> implements IGSElement<C>{
 		this.dirty = false;
 		
 		if( getParentElement() !=null )
-			((IGSElement<?>) parentElement).unsetDirty();
+			 parentElement.unsetDirty();
 		
 	}
 	

@@ -3,6 +3,13 @@ package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadSheetContentAdapter;
+import org.mesh4j.sync.validations.Guard;
 
 import com.google.gdata.client.spreadsheet.ListQuery;
 
@@ -23,18 +30,36 @@ import com.google.gdata.util.ServiceException;
 @SuppressWarnings("unchecked")
 public class GSCell extends GSBaseElement {
 	
-	// MODEL VARIABLES
-	//all moved to base class
+	//CONSTANTS 
+	public static final int CELL_TYPE_TEXT 		= 0;
+	public static final int CELL_TYPE_LONG 		= 1;
+	public static final int CELL_TYPE_DOUBLE 	= 2;
+	public static final int CELL_TYPE_DATE 		= 3;
+    public static final int CELL_TYPE_BOOLEAN 	= 4;
+    public static final int CELL_TYPE_BLANK 	= 5;
+	public static final int CELL_TYPE_UNKNOWN 	= -1;
+	
+	public static final int BOOLEAN_CELL_VALE_AS_YES_NO = 10;
+	public static final int BOOLEAN_CELL_VALE_AS_TRUE_FALSE = 11;
+
+	// MODEL VARIABLES	
 	private String tmpCellValue;
 	private String columnTag;
 	
 	// BUSINESS METHODS	
 	public GSCell(CellEntry cellEntry, GSRow<GSCell> parentRow, String columnTag){
-		super();
+		
+		Guard.argumentNotNull(cellEntry, "cellEntry");
+		Guard.argumentNotNull(parentRow, "parentRow");
+		Guard.argumentNotNull(columnTag, "columnTag");
+		
 		this.baseEntry = cellEntry;
 		this.parentElement = parentRow;
 		this.childElements = null;
 		this.columnTag = columnTag;
+		
+		if(cellEntry.getCell() != null)
+			this.elementListIndex = cellEntry.getCell().getCol();
 	}	
 		
 	/**
@@ -167,4 +192,128 @@ public class GSCell extends GSBaseElement {
 			
 		}
 	}
+	
+	/**
+	 * return the cell value as appropriate object type with respect to cell type
+	 * 
+	 * @return
+	 */
+	public Object getCellValueAsType(){
+		int cellType = this.getCellType();
+		String cellValue = getCellValue();
+		switch (cellType) {
+			case CELL_TYPE_BOOLEAN:
+				if (cellValue.equalsIgnoreCase("true")
+						|| cellValue.equalsIgnoreCase("yes"))
+					return Boolean.valueOf(true);
+				else
+					return Boolean.valueOf(false);
+			case CELL_TYPE_DATE:
+				return new Date(Long.parseLong(cellValue));
+			case CELL_TYPE_LONG:
+				return Long.valueOf(cellValue);
+			case CELL_TYPE_DOUBLE:
+				return Double.valueOf(cellValue);
+			default:
+				return cellValue; //this including text & unknown type 
+		}
+	}
+	
+	
+	/**
+	 * return the cell value as appropriate object type with respect to cell type
+	 * 
+	 * @return
+	 */
+	public void setCellValueAsType(Object cellValue){
+		int cellType = this.getCellType();		
+		setCellValueAsType(cellValue, cellType);
+	}
+	
+	public void setCellValueAsType(Object cellValue, int cellType) {
+
+		switch (cellType) {
+		case CELL_TYPE_BOOLEAN:
+			if (getBooleanDataFormat() == BOOLEAN_CELL_VALE_AS_TRUE_FALSE){
+				updateCellValue(cellValue.toString());
+			}
+			else{
+				if((Boolean)cellValue)
+					updateCellValue("Yes");
+				else
+					updateCellValue("No");
+			}	
+			break;
+		case CELL_TYPE_DATE:		
+			SimpleDateFormat df = new SimpleDateFormat(
+					GoogleSpreadSheetContentAdapter.G_SPREADSHEET_DATE_FORMAT);
+			updateCellValue(df.format(cellValue));
+			break;
+		case CELL_TYPE_LONG:			
+			updateCellValue(cellValue.toString());
+			break;
+		case CELL_TYPE_DOUBLE:			
+			updateCellValue(cellValue.toString());
+			break;
+		default:		
+			updateCellValue(String.valueOf(cellValue));
+	}		
+	}
+	
+	private int getBooleanDataFormat() {
+		// TODO: need to come up with a solution for get/set the format(yes/no
+		// or true/false) for boolean type data in spreadsheet
+		return BOOLEAN_CELL_VALE_AS_TRUE_FALSE;
+	}
+
+	/**
+	 * return the content type of a cell
+	 * 
+	 * @return
+	 */
+	public int getCellType() {
+		Double cellDoubleValue = ((CellEntry) this.baseEntry).getCell()
+				.getDoubleValue();
+		String cellStringValue = ((CellEntry) this.baseEntry).getCell()
+				.getValue();
+
+		if (((CellEntry) this.baseEntry).getCell().getValue() == null)
+			return CELL_TYPE_BLANK;
+		else if (Double.isNaN(cellDoubleValue)) {
+			if (cellStringValue.equalsIgnoreCase("true")
+					|| cellStringValue.equalsIgnoreCase("false")
+					|| cellStringValue.equalsIgnoreCase("yes")
+					|| cellStringValue.equalsIgnoreCase("no"))
+				return CELL_TYPE_BOOLEAN;
+			else
+				return CELL_TYPE_TEXT;
+
+		} else {
+
+			try {
+				Double.parseDouble(cellStringValue);
+				try{
+					 Long.parseLong(cellStringValue);
+					 return CELL_TYPE_LONG;
+				}catch (Exception e){
+					 return CELL_TYPE_DOUBLE;
+				}
+			} catch (Exception e) {
+				try {
+					// if its a valid date formated, parsing will be ok
+					Date.parse(cellStringValue);
+
+					// the minimum date google spreadsheet supports is 1/1/0100,
+					// which is evaluated as double value -657436.0
+					if (cellDoubleValue >= -657436.0)
+						return CELL_TYPE_DATE;
+					else
+						return CELL_TYPE_TEXT;
+				} catch (Exception ee) {
+					return CELL_TYPE_UNKNOWN;
+				}
+			}
+		}
+	}
+
 }
