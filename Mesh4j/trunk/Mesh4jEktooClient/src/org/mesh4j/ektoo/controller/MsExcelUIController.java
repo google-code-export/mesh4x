@@ -15,11 +15,10 @@ import org.mesh4j.sync.validations.Guard;
  */
 public class MsExcelUIController extends AbstractController implements IUIController
 {
-    private static final String WORKBOOK_NAME_PROPERTY 		= "WorkbookName";
-    private static final String WORKSHEET_NAME_PROPERTY 	= "WorksheetName";    
-    private static final String UNIQUE_COLUMN_NAME_PROPERTY = "UniqueColumnName";
-    
-    
+  private static final String WORKBOOK_NAME_PROPERTY 		= "WorkbookName";
+  private static final String WORKSHEET_NAME_PROPERTY 	= "WorksheetName";    
+  private static final String UNIQUE_COLUMN_NAME_PROPERTY = "UniqueColumnName";
+      
 	private ISyncAdapterBuilder adapterBuilder;
 	private PropertiesProvider propertiesProvider;
 	
@@ -44,13 +43,26 @@ public class MsExcelUIController extends AbstractController implements IUIContro
 	{
 		setModelProperty( UNIQUE_COLUMN_NAME_PROPERTY, uniqueColumnName);
 	}
-
 	
 	@Override
 	public ISyncAdapter createAdapter() 
 	{
 		MsExcelModel model = (MsExcelModel)this.getModel();
-		return adapterBuilder.createMsExcelAdapter(model.getWorkbookName(), model.getWorksheetName(), model.getUniqueColumnName());
+		if (model == null) return null;
+		
+		String workbookName = model.getWorkbookName();
+		if(workbookName == null || workbookName.trim().length() == 0)
+		  return null;
+		
+		String worksheetName = model.getWorksheetName();
+		if (worksheetName == null || worksheetName.trim().length() == 0)
+		  return null;
+		
+		String uniqueColumnName = model.getUniqueColumnName();
+		if ( uniqueColumnName == null || uniqueColumnName.trim().length() == 0)
+		  return null;
+		
+		return adapterBuilder.createMsExcelAdapter(workbookName, worksheetName, uniqueColumnName);
 	}
 
 	@Override
