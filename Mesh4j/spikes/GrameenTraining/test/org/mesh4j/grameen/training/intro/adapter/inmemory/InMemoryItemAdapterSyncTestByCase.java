@@ -119,11 +119,11 @@ public class InMemoryItemAdapterSyncTestByCase {
 		//add item1 and item2 to SourceAdapter 
 		InMemoryItemAdapter sourceAdapter = new InMemoryItemAdapter("source",NullIdentityProvider.INSTANCE);
 		sourceAdapter.add(item1);
-		
+		sourceAdapter.add(item2);
 		
 		//initially target adapter is empty
 		InMemoryItemAdapter targetAdapter = new InMemoryItemAdapter("target",NullIdentityProvider.INSTANCE);
-		sourceAdapter.add(item2);
+		
 		
 		//sync process starts
 		SyncEngine syncEngine = new SyncEngine(sourceAdapter,targetAdapter);
