@@ -10,24 +10,39 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.*;
+import org.mesh4j.sync.validations.MeshException;
 
+import com.google.gdata.client.spreadsheet.FeedURLFactory;
+import com.google.gdata.client.spreadsheet.SpreadsheetService;
 import com.google.gdata.data.spreadsheet.ListEntry;
 import com.google.gdata.data.spreadsheet.SpreadsheetEntry;
 import com.google.gdata.data.spreadsheet.WorksheetEntry;
+import com.google.gdata.util.AuthenticationException;
 import com.google.gdata.util.ServiceException;
 
 public class GoogleSpreadsheetUtilsTests {
 	
-	private GoogleSpreadsheet gss;
+	//private GoogleSpreadsheet gss;
+	private SpreadsheetService service;
+	String username = "sharif.uddin.ku@gmail.com";
+	String password = "sharif123";
+	private FeedURLFactory factory;
 	
 	@Before
 	public void setUp() throws Exception {
-		String spreadsheetFileId = "pvQrTFmc5F8tXD89WRNiBVw";
+			
+		this.service = new SpreadsheetService("Mesh4j");
+		this.service.setProtocolVersion(SpreadsheetService.Versions.V1);
+
+		try {
+			this.service.setUserCredentials(username, password);
+
+		} catch (AuthenticationException e) {
+			throw new MeshException(e);
+		}
+
+		this.factory = FeedURLFactory.getDefault();		
 		
-		String username = "sharif.uddin.ku@gmail.com";
-		String password = "sharif123";
-		this.gss = new GoogleSpreadsheet(spreadsheetFileId,
-				username, password);
 	}
 	
 
@@ -38,6 +53,26 @@ public class GoogleSpreadsheetUtilsTests {
 		Assert.assertNotNull(sse);
 	}
 	
+	@Test
+	public void shouldCreatNewSpreadsheet(){
+		GSSpreadsheet spreadsheet = null;
+		try {
+			spreadsheet = GoogleSpreadsheetUtils.getOrCreateGSSpreadsheetIfAbsent(
+					this.factory, this.service, "");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ServiceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+		
+		Assert.assertNotNull(spreadsheet);		
+		Assert.assertNotNull(spreadsheet.getBaseEntry());
+		Assert.assertEquals(spreadsheet.getBaseEntry().getTitle(),"New Spredsheet");
+	}
+	
+	
 	@Deprecated
 	public void shouldGetRow(){
 		SpreadsheetEntry sse = getSampleGoogleSpreadsheet().getSpreadsheet();		
@@ -45,8 +80,8 @@ public class GoogleSpreadsheetUtilsTests {
 		ListEntry row = null;
 
 		try {
-			wse = GoogleSpreadsheetUtils.getWorksheet(gss.getService(), sse, 0);
-			row = GoogleSpreadsheetUtils.getRow(gss.getService(), wse, "firstname", "Sharif");
+			wse = GoogleSpreadsheetUtils.getWorksheet(this.service, sse, 0);
+			row = GoogleSpreadsheetUtils.getRow(this.service, wse, "firstname", "Sharif");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -60,14 +95,13 @@ public class GoogleSpreadsheetUtilsTests {
 	@Deprecated
 	public void shouldGetMJCell() throws IOException, ServiceException {
 		SpreadsheetEntry sse = getSampleGoogleSpreadsheet().getSpreadsheet();
-		WorksheetEntry wse = GoogleSpreadsheetUtils.getWorksheet(gss
-				.getService(), sse, 0);
+		WorksheetEntry wse = GoogleSpreadsheetUtils.getWorksheet(this.service, sse, 0);
 		Assert.assertNotNull(wse);
 		
 		int cellRowIndex = 2;
 		int cellColIndex = 2;
 		
-		GSCell gsCell = GoogleSpreadsheetUtils.getGSCell(gss.getService(),
+		GSCell gsCell = GoogleSpreadsheetUtils.getGSCell(this.service,
 				wse, cellRowIndex, cellColIndex);
 		
 		Assert.assertNotNull(gsCell);
@@ -97,13 +131,12 @@ public class GoogleSpreadsheetUtilsTests {
 	@Deprecated
 	public void shouldGetMJRow() throws IOException, ServiceException {
 		SpreadsheetEntry sse = getSampleGoogleSpreadsheet().getSpreadsheet();
-		WorksheetEntry wse = GoogleSpreadsheetUtils.getWorksheet(gss
-				.getService(), sse, 0);
+		WorksheetEntry wse = GoogleSpreadsheetUtils.getWorksheet(this.service, sse, 0);
 		Assert.assertNotNull(wse);
 		
 		int rowIndex = 1;
 		
-		GSRow gsRow = GoogleSpreadsheetUtils.getGSRow(gss.getService(),
+		GSRow gsRow = GoogleSpreadsheetUtils.getGSRow(this.service,
 				wse, rowIndex);
 		
 		Assert.assertNotNull(gsRow);
@@ -148,7 +181,7 @@ public class GoogleSpreadsheetUtilsTests {
 		GSCell gsCell_2 = ws.getGSCell(3, 1);
 		gsCell_2.updateCellValue("GSL-A21xyz");		
 		
-		GoogleSpreadsheetUtils.flush(gss.getService(), ss);		
+		GoogleSpreadsheetUtils.flush(this.service, ss);		
 	}		
 	
 
@@ -167,11 +200,11 @@ public class GoogleSpreadsheetUtilsTests {
 		GSRow gsRow_2 = ws.getGSRow(3);
 		gsRow_2.updateCellValue("GSL-A21cell", 1);
 		
-		GoogleSpreadsheetUtils.flush(gss.getService(), ss);		
+		GoogleSpreadsheetUtils.flush(this.service, ss);		
 	}		
 
 
-	@Test   
+	//@Test   
 	public void shouldAddNweRow() throws IOException, ServiceException {
 		GSSpreadsheet<GSWorksheet> ss = getSampleGoogleSpreadsheet();
 		GSWorksheet<GSRow> ws = ss.getGSWorksheet(1); //get the first sheet
@@ -184,18 +217,35 @@ public class GoogleSpreadsheetUtilsTests {
 
 		LinkedHashMap<String, String> values = new LinkedHashMap<String, String>();
 		for(String key :  ws.getCellHeaderTagset()){
-			values.put( key, "New super Cool Cell");
+			values.put( key, "New Cool Cell");
 		}
-		GSRow<GSCell> newGSRow = ws.createNewRow(values);
-		
-		ws.addNewRow(newGSRow);
-		
-		GoogleSpreadsheetUtils.flush(gss.getService(), ss);	
-				
-		GSCell gsCell_1 = ws.getGSCell(newGSRow.getRowIndex(), 3);		
-		gsCell_1.updateCellValue("New super Hot cell");	
+		GSRow<GSCell> newGSRow = ws.createNewRow(values);		
+		ws.addChildElement(newGSRow.getElementId(), newGSRow);
 
-		GoogleSpreadsheetUtils.flush(gss.getService(), ss);	
+		
+		for(String key :  ws.getCellHeaderTagset()){
+			values.put( key, "New Hot Cell");
+		}
+		newGSRow = ws.createNewRow(values);		
+		ws.addChildElement(newGSRow.getElementId(), newGSRow);
+
+		
+		GoogleSpreadsheetUtils.flush(this.service, ss);	
+
+
+		ws.deleteChildElement(""+ws.getNonDeletedChildElements().size());
+		/*GSCell gsCell_1 = ws.getGSCell(newGSRow.getRowIndex(), 3);		
+		gsCell_1.updateCellValue("New super Hot cell");	
+		 */
+		
+		try {
+			Thread.currentThread().sleep(5000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		GoogleSpreadsheetUtils.flush(this.service, ss);	
 		
 	}		
 	
@@ -210,7 +260,7 @@ public class GoogleSpreadsheetUtilsTests {
 
 		ws.deleteChildElement("5");		
 		
-		GoogleSpreadsheetUtils.flush(gss.getService(), ss);		
+		GoogleSpreadsheetUtils.flush(this.service, ss);		
 	}		
 	
 	
@@ -232,7 +282,7 @@ public class GoogleSpreadsheetUtilsTests {
 		
 		gsRow_1.updateCellValue("GSL-A21", 1);
 		
-		GoogleSpreadsheetUtils.flush(gss.getService(), ss);
+		GoogleSpreadsheetUtils.flush(this.service, ss);
 		
 		
 		Assert.assertTrue( gsRow_1.isDirty() );	//row is dirty	
@@ -258,7 +308,7 @@ public class GoogleSpreadsheetUtilsTests {
 				.getService(), sse, 0);
 		Assert.assertNotNull(wse);
 		
-		GSRow gsRow_4 = GoogleSpreadsheetUtils.getGSRow(gss.getService(),
+		GSRow gsRow_4 = GoogleSpreadsheetUtils.getGSRow(this.service,
 				wse, 4);
 		for(IGSElement gsCell: gsRow_4.getGsCells()) {
 			((GSCell)gsCell).getCellEntry().changeInputValueLocal("");
@@ -272,12 +322,31 @@ public class GoogleSpreadsheetUtilsTests {
 		gsRow_4.setDirty();
 		gss.addEntryToUpdate(gsRow_4);
 	
-		GoogleSpreadsheetUtils.flush(gss.getService(), wse);
+		GoogleSpreadsheetUtils.flush(this.service, wse);
 	}		
 	
 */	
-	private GSSpreadsheet<GSWorksheet> getSampleGoogleSpreadsheet() {
-		return gss.getGSSpreadsheet();
+	private GSSpreadsheet getSampleGoogleSpreadsheet() {
+		String spreadsheetFileId = "pvQrTFmc5F8tXD89WRNiBVw";
+		/*this.gss = new GoogleSpreadsheet(spreadsheetFileId,
+		username, password);		
+		return gss.getGSSpreadsheet();*/
+		
+		
+		try {
+		
+			return GoogleSpreadsheetUtils.getGSSpreadsheet(
+					this.factory, this.service, spreadsheetFileId);
+		
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ServiceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
 	}
 
 }

@@ -7,6 +7,8 @@ import junit.framework.Assert;
 import org.dom4j.Element;
 import org.junit.Before;
 import org.junit.Test;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.mapping.GoogleSpreadsheetToPlainXMLMapping;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.mapping.IGoogleSpreadsheetToXMLMapping;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSWorksheet;
 import org.mesh4j.sync.adapters.feed.XMLContent;
 import org.mesh4j.sync.model.IContent;
@@ -18,7 +20,7 @@ import org.mesh4j.sync.utils.XMLHelper;
 
 public class GoogleSpreadSheetContentAdapterTest {
 	private IGoogleSpreadSheet spreadsheet;
-	private ISpreadSheetToXMLMapper mapper;
+	private IGoogleSpreadsheetToXMLMapping mapper;
 	private GSWorksheet workSheet;
 	String userName = "gspreadsheet.test@gmail.com";
 	String passWord = "java123456";
@@ -30,7 +32,7 @@ public class GoogleSpreadSheetContentAdapterTest {
 		String idColumName = "id";
 		int lastUpdateColumnPosition = 6;
 		int idColumnPosition = 1;
-		mapper = new SpreadSheetToXMLMapper("user",idColumName,idColumnPosition,lastUpdateColumnPosition);
+		mapper = new GoogleSpreadsheetToPlainXMLMapping("user",idColumName,idColumnPosition,lastUpdateColumnPosition);
 	}
 	
 	

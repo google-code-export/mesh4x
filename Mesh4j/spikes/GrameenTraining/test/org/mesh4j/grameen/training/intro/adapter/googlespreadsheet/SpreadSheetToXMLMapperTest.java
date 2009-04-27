@@ -9,6 +9,8 @@ import junit.framework.Assert;
 import org.dom4j.Element;
 import org.junit.Before;
 import org.junit.Test;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.mapping.GoogleSpreadsheetToPlainXMLMapping;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.mapping.IGoogleSpreadsheetToXMLMapping;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSCell;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSRow;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSWorksheet;
@@ -22,7 +24,7 @@ import org.mesh4j.sync.utils.XMLHelper;
 public class SpreadSheetToXMLMapperTest {
 
 	private IGoogleSpreadSheet spreadsheet;
-	private ISpreadSheetToXMLMapper mapper;
+	private IGoogleSpreadsheetToXMLMapping mapper;
 	private GSWorksheet workSheet;
 	String userName = "gspreadsheet.test@gmail.com";
 	String passWord = "java123456";
@@ -34,7 +36,7 @@ public class SpreadSheetToXMLMapperTest {
 		String idColumName = "id";
 		int lastUpdateColumnPosition = 6;
 		int idColumnPosition = 1;
-		mapper = new SpreadSheetToXMLMapper("user",idColumName,idColumnPosition,lastUpdateColumnPosition);
+		mapper = new GoogleSpreadsheetToPlainXMLMapping("user",idColumName,idColumnPosition,lastUpdateColumnPosition);
 	}
 	
 	@Test
@@ -119,10 +121,13 @@ public class SpreadSheetToXMLMapperTest {
 			
 			GSWorksheet<GSRow<GSCell>> workSheet = spSheet.getValue();
 			for(Map.Entry<String, GSRow<GSCell>> gsRowMap :workSheet.getGSRows().entrySet()){
-				GSRow row = gsRowMap.getValue();
+				GSRow<GSCell> rowFromSpreaSheet = gsRowMap.getValue();
 				//ignoring the first row,as first row is row header
-				if(Integer.parseInt(row.getElementId()) > 1){
-					GSRow<GSCell> rowFromSpreaSheet = mapper.convertXMLElementToRow(workSheet, contentFromSpreadSheet.getPayload());
+				if(Integer.parseInt(rowFromSpreaSheet.getElementId()) > 1){
+					
+					//GSRow<GSCell> rowFromSpreaSheet = workSheet.createAndAddNewRow(workSheet.getChildElements().size() +1);
+					
+					mapper.applyXMLElementToRow(workSheet, rowFromSpreaSheet, contentFromSpreadSheet.getPayload());
 					Assert.assertEquals(rowFromSpreaSheet.getGSCell("id").getCellValue(),"1");
 					Assert.assertEquals(rowFromSpreaSheet.getGSCell("name").getCellValue(),"Raju");
 					Assert.assertEquals(rowFromSpreaSheet.getGSCell("age").getCellValue(),"18");
@@ -177,17 +182,17 @@ public class SpreadSheetToXMLMapperTest {
 		for(Entry<String, GSWorksheet> spSheet : spreadsheet.getGSSpreadsheet().getGSWorksheets().entrySet()){
 			GSWorksheet<GSRow<GSCell>> workSheet = spSheet.getValue();
 			for(Map.Entry<String, GSRow<GSCell>> gsRowMap :workSheet.getGSRows().entrySet()){
-				GSRow rowTobeUPdated = gsRowMap.getValue();
+				GSRow<GSCell> rowTobeUPdated = gsRowMap.getValue();
 				//ignoring the first row,as first row is row header
 				if(Integer.parseInt(rowTobeUPdated.getElementId()) > 1){
-					GSRow<GSCell> updatedRow = mapper.normalizeRow(workSheet, payLoadToBeUpdated, rowTobeUPdated);
+					mapper.applyXMLElementToRow(workSheet, rowTobeUPdated, payLoadToBeUpdated);
 					
-					Assert.assertEquals(updatedRow.getGSCell("id").getCellValue(),"1");
-					Assert.assertEquals(updatedRow.getGSCell("name").getCellValue(),"Raju");
-					Assert.assertEquals(updatedRow.getGSCell("age").getCellValue(),"25");
-					Assert.assertEquals(updatedRow.getGSCell("city").getCellValue(),"Dhaka");
-					Assert.assertEquals(updatedRow.getGSCell("country").getCellValue(),"Bangladesh");
-					Assert.assertEquals(updatedRow.getGSCell("lastupdate").getCellValue(),"6/11/2009 1:01:01");
+					Assert.assertEquals(rowTobeUPdated.getGSCell("id").getCellValue(),"1");
+					Assert.assertEquals(rowTobeUPdated.getGSCell("name").getCellValue(),"Raju");
+					Assert.assertEquals(rowTobeUPdated.getGSCell("age").getCellValue(),"25");
+					Assert.assertEquals(rowTobeUPdated.getGSCell("city").getCellValue(),"Dhaka");
+					Assert.assertEquals(rowTobeUPdated.getGSCell("country").getCellValue(),"Bangladesh");
+					Assert.assertEquals(rowTobeUPdated.getGSCell("lastupdate").getCellValue(),"6/11/2009 1:01:01");
 				}
 			}
 			break;
