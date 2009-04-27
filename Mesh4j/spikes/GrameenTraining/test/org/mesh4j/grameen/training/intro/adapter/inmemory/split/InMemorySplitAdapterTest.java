@@ -156,7 +156,7 @@ public class InMemorySplitAdapterTest {
 		List<Item> conflicts = syncEngine.synchronize();
 		Assert.assertEquals(0, conflicts.size());
 		
-		Assert.assertEquals(splitAdapterA.getAll().size(), 2);
+		Assert.assertEquals(2,splitAdapterA.getAll().size());
 		
 		List<SyncInfo> listOfSyncInfo = splitAdapterA.getSyncRepository().getAll("Student");
 		
@@ -164,7 +164,7 @@ public class InMemorySplitAdapterTest {
 			splitAdapterA.delete(syncInfo.getSyncId());
 		}
 		
-		Assert.assertEquals(splitAdapterA.getAll().size(), 2);
+		Assert.assertEquals(2,splitAdapterA.getAll().size());
 		
 		List<Item> items = splitAdapterA.getAll();
 		for (Item item : items) {
