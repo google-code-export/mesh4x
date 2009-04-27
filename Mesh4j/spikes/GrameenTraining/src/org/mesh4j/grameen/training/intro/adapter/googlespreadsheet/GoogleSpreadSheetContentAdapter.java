@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.dom4j.Element;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.mapping.IGoogleSpreadsheetToXMLMapping;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSCell;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSRow;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSWorksheet;
@@ -40,7 +41,7 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 	//represents a specific sheet of a google spreadsheet
 	private GSWorksheet<GSRow<GSCell>> workSheet;
 
-	private ISpreadSheetToXMLMapper mapper;
+	private IGoogleSpreadsheetToXMLMapping mapper;
 	
 	/**
 	 * 
@@ -48,7 +49,7 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 	 * @param sheetName the particular sheet name of a spreadsheet 
 	 */
 	public GoogleSpreadSheetContentAdapter(IGoogleSpreadSheet spreadSheet,GSWorksheet<GSRow<GSCell>> workSheet,
-											ISpreadSheetToXMLMapper mapper){
+			IGoogleSpreadsheetToXMLMapping mapper){
 		
 		Guard.argumentNotNull(spreadSheet, "spreadSheet");
 		Guard.argumentNotNull(workSheet, "workSheet");
@@ -146,9 +147,9 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 		EntityContent entityContent = EntityContent.normalizeContent(content, this.entityName, idColumnName);
 		GSRow row = GoogleSpreadsheetUtils.getRow(this.workSheet, mapper.getIdColumnPosition(), entityContent.getId());
 		if(row == null){
-			row = workSheet.createNewRow(workSheet.getChildElements().size() +1);
+			row = workSheet.createAndAddNewRow(workSheet.getChildElements().size() +1);
 		}
-		this.mapper.convertXMLElementToRow(workSheet, entityContent.getPayload(), row);
+		this.mapper.applyXMLElementToRow(workSheet, row, entityContent.getPayload());
 	}
 	
 	private void addRow(EntityContent entityContent){
