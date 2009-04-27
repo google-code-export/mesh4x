@@ -9,7 +9,6 @@ import java.util.Map;
 
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadsheetUtils;
 
-
 import com.google.gdata.data.BaseEntry;
 import com.google.gdata.data.spreadsheet.CellEntry;
 import com.google.gdata.data.spreadsheet.ListEntry;
@@ -72,6 +71,8 @@ public class GSWorksheet<C> extends GSBaseElement<C> {
 	 */
 	@SuppressWarnings("unchecked")
 	public C getGSRow(int rowIndex) {
+		if(rowIndex < 1)
+		 throw new IllegalArgumentException("rowIndex");
 		
 		for(GSRow gsRow : ((GSWorksheet<GSRow>)this).getChildElements().values()){
 			if(gsRow.isDeleteCandidate()){ 
@@ -245,12 +246,27 @@ public class GSWorksheet<C> extends GSBaseElement<C> {
 		
 	
     public GSRow<GSCell> createNewRow(int rowIndex){
+		if(rowIndex < 1)
+			 throw new IllegalArgumentException("rowIndex");
+    	
         ListEntry listEntry = new ListEntry();
 		GSRow<GSCell> row = new GSRow(listEntry , rowIndex, this);
+		
+		//create empty cells using tags from header cells and add to this row
+		GSRow<GSCell> headerRow = (GSRow<GSCell>) this.getGSRow(1);
+		if(headerRow != null){
+			for (GSCell headerCell : headerRow.childElements.values()) {
+				row.createAndAddNewCell(headerCell.getElementListIndex(),
+						headerCell.getColumnTag(), "");
+			}
+		}
         return row;
     }	
 	
 	public GSRow<GSCell> createAndAddNewRow(int rowIndex) {
+		if(rowIndex < 1)
+			 throw new IllegalArgumentException("rowIndex");
+		
 		GSRow<GSCell> row = createNewRow(rowIndex);
 		addChildElement(row.getElementId(), (C) row);
 		return row;

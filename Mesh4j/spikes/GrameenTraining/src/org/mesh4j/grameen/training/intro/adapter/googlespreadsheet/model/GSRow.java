@@ -298,8 +298,7 @@ public class GSRow<C> extends GSBaseElement<C>{
 	 * @param key
 	 */
 	public void updateCellValue(String value, String key) {
-		GSCell cellToUpdate = (GSCell) getGSCell(key); 
-		((ListEntry)cellToUpdate.getParentElement().getBaseEntry()).getCustomElements().setValueLocal(key, value);
+		GSCell cellToUpdate = (GSCell) getGSCell(key); 		
 		if (!cellToUpdate.getCellEntry().getCell().getInputValue()
 				.equals(value)) 
 			cellToUpdate.updateCellValue(value);
@@ -326,6 +325,9 @@ public class GSRow<C> extends GSBaseElement<C>{
 	 * @return
 	 */
 	public GSCell createNewCell(int col, String key, String value) {
+		if(col < 1)
+			 throw new IllegalArgumentException("colIndex");
+		
 		CellEntry newCell = new CellEntry(this.elementListIndex, col, ""); //this is not supported for batch update :(
 		GSCell newGSCell = new GSCell(newCell, (GSRow<GSCell>) this, key);
 		newGSCell.updateCellValue(value);
@@ -343,6 +345,9 @@ public class GSRow<C> extends GSBaseElement<C>{
 	 * @return
 	 */
 	public GSCell createAndAddNewCell(int col, String key, String value) {
+		if(col < 1)
+			 throw new IllegalArgumentException("colIndex");
+		
 		GSCell cell = createNewCell(col, key, value);
 		this.addChildElement(key, (C) cell);
 		return cell;
