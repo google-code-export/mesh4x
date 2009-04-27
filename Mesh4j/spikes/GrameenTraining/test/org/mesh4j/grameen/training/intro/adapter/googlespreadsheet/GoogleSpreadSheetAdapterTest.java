@@ -16,6 +16,7 @@ import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSCell;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSRow;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSWorksheet;
 import org.mesh4j.sync.SyncEngine;
+import org.mesh4j.sync.adapters.SyncInfo;
 import org.mesh4j.sync.adapters.feed.XMLContent;
 import org.mesh4j.sync.adapters.hibernate.EntityContent;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
@@ -151,23 +152,72 @@ public class GoogleSpreadSheetAdapterTest {
 		
 		cleanUp(workSheetSource, workSheetTarget);
 		
+		Item item1 = getItem1();
+		Item item2 = getItem2();
+		Item item3 = getItem3();
+		
 		SplitAdapter splitAdapterSource = getAdapter(workSheetSource, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
-		splitAdapterSource.add(getItem1());
-		splitAdapterSource.add(getItem2());
-		
-		
-		SplitAdapter splitAdapterTarget = getAdapter(workSheetTarget, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
-		splitAdapterTarget.add(getItem3());
-		
+		splitAdapterSource.add(item1);
+		splitAdapterSource.add(item2);
 		
 		Assert.assertEquals(2,splitAdapterSource.getAll().size());
-		splitAdapterSource.delete(getItem1().getSyncId());
-		Assert.assertEquals(1,splitAdapterSource.getAll().size());
+		
+		SplitAdapter splitAdapterTarget = getAdapter(workSheetTarget, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		splitAdapterTarget.add(item3);
+		
+		Assert.assertEquals(1,splitAdapterTarget.getAll().size());
+		
+		splitAdapterSource.delete(item1.getSyncId());
+		
+		Assert.assertEquals(2,splitAdapterSource.getAll().size());
+		
 		
 		SyncEngine syncEngine = new SyncEngine(splitAdapterSource,splitAdapterTarget);
 		List<Item> conflicts = syncEngine.synchronize();
 		
 		Assert.assertEquals(0, conflicts.size());
+		
+		
+	}
+	
+	@Test
+	public void ShouldDeleteItem() throws DocumentException{
+		GSWorksheet workSheetSource = spreadsheet.getGSWorksheet(1);//user entity source worksheet
+		GSWorksheet workSheetTarget = spreadsheet.getGSWorksheet(2);//user entity target worksheet
+		
+		cleanUp(workSheetSource, workSheetTarget);
+		Item item1 = getItem1();
+		Item item2 = getItem2();
+		
+		SplitAdapter splitAdapterSource = getAdapter(workSheetSource, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		splitAdapterSource.add(item1);
+		
+		Assert.assertEquals(1,splitAdapterSource.getAll().size());
+		
+		SplitAdapter splitAdapterTarget = getAdapter(workSheetTarget, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		splitAdapterTarget.add(item2);
+		
+		Assert.assertEquals(1,splitAdapterTarget.getAll().size());
+		
+		SyncEngine syncEngine = new SyncEngine(splitAdapterSource,splitAdapterTarget);
+		List<Item> conflicts = syncEngine.synchronize();
+		
+		Assert.assertEquals(0, conflicts.size());
+		Assert.assertEquals(2,splitAdapterSource.getAll().size());
+		Assert.assertEquals(2,splitAdapterTarget.getAll().size());
+		
+		List<SyncInfo> listOfSyncInfo = splitAdapterSource.getSyncRepository().getAll("user");
+		for(SyncInfo syncInfo : listOfSyncInfo){
+			splitAdapterSource.delete(syncInfo.getSyncId());
+		}
+		
+		Assert.assertEquals(2,splitAdapterSource.getAll().size());
+		
+		List<Item> items = splitAdapterSource.getAll();
+		for (Item item : items) {
+			Assert.assertTrue(item.isDeleted());
+		}
+		
 	}
 	
 	private SplitAdapter getAdapter(IGoogleSpreadSheet spreadsheet,GSWorksheet contentWorkSheet,IIdentityProvider identityProvider,IIdGenerator idGenerator){
