@@ -7,8 +7,8 @@ import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadS
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadSheetSyncRepository;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadsheet;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.IGoogleSpreadSheet;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.ISpreadSheetToXMLMapper;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.SpreadSheetToXMLMapper;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.mapping.GoogleSpreadsheetToPlainXMLMapping;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.mapping.IGoogleSpreadsheetToXMLMapping;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSCell;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSRow;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSWorksheet;
@@ -87,7 +87,7 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder{
 		String type = spreadSheetInfo.getType();
 		
 		// create google spread sheet
-		ISpreadSheetToXMLMapper mapper = new SpreadSheetToXMLMapper(type,idColumName,
+		IGoogleSpreadsheetToXMLMapping mapper = new GoogleSpreadsheetToPlainXMLMapping(type,idColumName,
 				idColumnPosition,lastUpdateColumnPosition);
 		IGoogleSpreadSheet gSpreadSheet = new GoogleSpreadsheet(googleSpreadSheetId, userName, passWord);
 		

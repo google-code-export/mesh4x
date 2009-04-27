@@ -11,8 +11,8 @@ import org.junit.Test;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadsheet;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadsheetUtils;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.IGoogleSpreadSheet;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.ISpreadSheetToXMLMapper;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.SpreadSheetToXMLMapper;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.mapping.GoogleSpreadsheetToPlainXMLMapping;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.mapping.IGoogleSpreadsheetToXMLMapping;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSWorksheet;
 import org.mesh4j.sync.adapters.feed.ContentReader;
 import org.mesh4j.sync.adapters.feed.ContentWriter;
@@ -115,7 +115,7 @@ public class AdapterFactoryTests {
 		String passWord = "java123456";
 		String GOOGLE_SPREADSHEET_FIELD = "peo4fu7AitTo8e3v0D8FCew";
 		
-		ISpreadSheetToXMLMapper mapper = new SpreadSheetToXMLMapper("user",idColumName,idColumnPosition,lastUpdateColumnPosition);
+		IGoogleSpreadsheetToXMLMapping mapper = new GoogleSpreadsheetToPlainXMLMapping("user",idColumName,idColumnPosition,lastUpdateColumnPosition);
 		IGoogleSpreadSheet spreadsheet = new GoogleSpreadsheet(GOOGLE_SPREADSHEET_FIELD,userName,passWord);
 		
 		GSWorksheet sourceRepo = spreadsheet.getGSWorksheet(1);
@@ -149,7 +149,7 @@ public class AdapterFactoryTests {
 		String passWord = "java123456";
 		String GOOGLE_SPREADSHEET_FIELD = "peo4fu7AitTo8e3v0D8FCew";
 		
-		ISpreadSheetToXMLMapper mapper = new SpreadSheetToXMLMapper("user",idColumName,idColumnPosition,lastUpdateColumnPosition);
+		IGoogleSpreadsheetToXMLMapping mapper = new GoogleSpreadsheetToPlainXMLMapping("user",idColumName,idColumnPosition,lastUpdateColumnPosition);
 		IGoogleSpreadSheet spreadsheet = new GoogleSpreadsheet(GOOGLE_SPREADSHEET_FIELD,userName,passWord);
 		
 		GSWorksheet sourceRepo = spreadsheet.getGSWorksheet(1);
