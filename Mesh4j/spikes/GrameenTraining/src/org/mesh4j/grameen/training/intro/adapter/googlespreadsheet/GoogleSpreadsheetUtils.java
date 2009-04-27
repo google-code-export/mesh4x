@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadSheetSyncRepository.SyncColumn;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.mapping.IGoogleSpreadsheetToXMLMapping;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSBaseElement;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSCell;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSRow;
@@ -932,7 +933,7 @@ public class GoogleSpreadsheetUtils {
 	}	
 	
 	public static SplitAdapter createGoogleSpreadSheetAdapter(
-			IGoogleSpreadSheet spreadsheet, ISpreadSheetToXMLMapper mapper,
+			IGoogleSpreadSheet spreadsheet, IGoogleSpreadsheetToXMLMapping mapper,
 			GSWorksheet contentWorkSheet, GSWorksheet syncWorkSheet,
 			IIdentityProvider identityProvider, IIdGenerator idGenerator) {
 		
