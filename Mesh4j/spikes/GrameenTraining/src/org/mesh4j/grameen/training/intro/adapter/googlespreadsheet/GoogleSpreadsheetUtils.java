@@ -1098,9 +1098,9 @@ public class GoogleSpreadsheetUtils {
 
 	public static GSRow<GSCell> getOrCreateHeaderRowIfAbsent(
 			GSWorksheet<GSRow<GSCell>> worksheet) {
-		GSRow<GSCell> row = worksheet.getGSRow(0);
+		GSRow<GSCell> row = worksheet.getGSRow(1);
 		if (row == null) {
-			row = worksheet.createAndAddNewRow(0);
+			row = worksheet.createAndAddNewRow(1);
 		}
 		return row;
 	}
