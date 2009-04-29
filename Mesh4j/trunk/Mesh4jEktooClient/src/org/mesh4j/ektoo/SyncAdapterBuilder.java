@@ -143,4 +143,13 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder{
 		return this.propertiesProvider.getMeshSyncServerURL();
 	}
 
+
+  @Override
+  public ISyncAdapter createMySQLAdapter(String hostName, int portNo,
+      String databaseName, String tableName)
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
 }
