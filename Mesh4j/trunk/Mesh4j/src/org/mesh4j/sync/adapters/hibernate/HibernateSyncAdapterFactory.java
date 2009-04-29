@@ -18,7 +18,6 @@ import org.hibernate.type.Type;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.ISyncAdapterFactory;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
-import org.mesh4j.sync.adapters.hibernate.schema.HibernateDOMMappingExporter;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.parsers.SyncInfoParser;
@@ -27,6 +26,7 @@ import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.utils.FileUtils;
 import org.mesh4j.sync.validations.Guard;
+import org.mesh4j.sync.validations.MeshException;
 
 public class HibernateSyncAdapterFactory implements ISyncAdapterFactory{
 
@@ -50,7 +50,7 @@ public class HibernateSyncAdapterFactory implements ISyncAdapterFactory{
 	
 	// ADAPTER CREATION
 	@SuppressWarnings("unchecked")
-	public static ISyncAdapter createHibernateAdapter(String connectionURL, String user, String password, Class driverClass, Class dialectClass, String tableName, String syncTableName, String rdfURL, String baseDirectory) throws Exception {
+	public static ISyncAdapter createHibernateAdapter(String connectionURL, String user, String password, Class driverClass, Class dialectClass, String tableName, String syncTableName, String rdfURL, String baseDirectory) {
 	
 		HibernateSessionFactoryBuilder builder = createHibernateFactoryBuilder(connectionURL, user, password, driverClass, dialectClass, null);
 		
@@ -116,7 +116,7 @@ public class HibernateSyncAdapterFactory implements ISyncAdapterFactory{
 		}
 	}
 	
-	public static PersistentClass createMappings(HibernateSessionFactoryBuilder builder, String tableName, String syncTableName, String baseDirectory) throws Exception{
+	public static PersistentClass createMappings(HibernateSessionFactoryBuilder builder, String tableName, String syncTableName, String baseDirectory) {
 		autodiscoveryMappings(builder, tableName, syncTableName, baseDirectory);
 
 		File contentMapping = new File(baseDirectory + tableName+".hbm.xml");
@@ -127,11 +127,15 @@ public class HibernateSyncAdapterFactory implements ISyncAdapterFactory{
 		boolean mustCreateTables = false;
 		File syncFileMapping = new File(baseDirectory + syncTableName+".hbm.xml");
 		if(!syncFileMapping.exists()){
-			byte[] templateBytes = FileUtils.read(HibernateSyncAdapterFactory.class.getResource("syncMappingTemplate.xml").getFile());
-			String template = new String(templateBytes, "UTF-8");		
-			String xml = MessageFormat.format(template, syncTableName);
-			FileUtils.write(syncFileMapping.getCanonicalPath(), xml.getBytes());
-			mustCreateTables = true;
+			try{
+				byte[] templateBytes = FileUtils.read(HibernateSyncAdapterFactory.class.getResource("syncMappingTemplate.xml").getFile());
+				String template = new String(templateBytes, "UTF-8");		
+				String xml = MessageFormat.format(template, syncTableName);
+				FileUtils.write(syncFileMapping.getCanonicalPath(), xml.getBytes());
+				mustCreateTables = true;
+			} catch (Exception e) {
+				throw new MeshException(e);
+			}
 		}
 		
 		builder.addMapping(syncFileMapping);

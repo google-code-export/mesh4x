@@ -1,4 +1,4 @@
-package org.mesh4j.sync.adapters.hibernate.schema;
+package org.mesh4j.sync.adapters.hibernate;
 
 import java.io.File;
 
@@ -6,7 +6,6 @@ import org.hibernate.cfg.JDBCMetaDataConfiguration;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.tool.hbm2x.HibernateMappingExporter;
 import org.hibernate.tool.hbm2x.pojo.POJOClass;
-import org.hibernate.util.StringHelper;
 
 public class HibernateDOMMappingExporter extends HibernateMappingExporter{
 

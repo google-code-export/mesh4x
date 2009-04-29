@@ -8,6 +8,7 @@ import org.hibernate.cfg.reveng.ReverseEngineeringSettings;
 import org.hibernate.tool.hbm2x.HibernateMappingExporter;
 import org.junit.Test;
 import org.mesh4j.sync.adapters.hibernate.HibernateSessionFactoryBuilder;
+import org.mesh4j.sync.test.utils.TestHelper;
 
 public class HibernateMappingExporterTests {
 
@@ -25,7 +26,7 @@ public class HibernateMappingExporterTests {
 		configurableNamingStrategy.setSettings(new ReverseEngineeringSettings(configurableNamingStrategy).setDefaultPackageName("org.reveng").setCreateCollectionForForeignKey(false));
 		cfg.setReverseEngineeringStrategy(configurableNamingStrategy);
 		
-		HibernateMappingExporter exporter = new HibernateMappingExporter(cfg, new File("E:\\mesh4x\\tests\\"));
+		HibernateMappingExporter exporter = new HibernateMappingExporter(cfg, new File(TestHelper.baseDirectoryRootForTest()));
 		exporter.start();
 	}
 	

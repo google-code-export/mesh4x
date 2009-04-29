@@ -16,6 +16,7 @@ import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.feed.ContentReader;
 import org.mesh4j.sync.adapters.feed.ContentWriter;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
+import org.mesh4j.sync.adapters.hibernate.HibernateSyncAdapterFactory;
 import org.mesh4j.sync.adapters.http.HttpSyncAdapter;
 import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
 import org.mesh4j.sync.adapters.msexcel.MSExcelToPlainXMLMapping;
@@ -148,8 +149,17 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder{
   public ISyncAdapter createMySQLAdapter(String hostName, int portNo,
       String databaseName, String tableName)
   {
-    // TODO Auto-generated method stub
-    return null;
+  	  //  Example 
+	  return HibernateSyncAdapterFactory.createHibernateAdapter(
+			"jdbc:mysql:///"+databaseName, 
+			"root",									// TODO db user  
+			"", 									// TODO db password
+			com.mysql.jdbc.Driver.class,
+			org.hibernate.dialect.MySQLDialect.class,
+			tableName, 
+			tableName+"_sync_info", 
+			getBaseRDFUrl()+tableName+"#",
+			getBaseDirectory());
   }
 
 }
