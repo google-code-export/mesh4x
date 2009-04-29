@@ -69,6 +69,10 @@ public class SyncMsAccessTests {
 		builderA.setProperty("hibernate.connection.url", database);
 		builderA.setProperty("hibernate.connection.username","");
 		builderA.setProperty("hibernate.connection.password","");
+//		builderA.setProperty("hibernate.show_sql", "true");
+//		builderA.setProperty("hibernate.format_sql","true");
+//		builderA.setProperty("hbm2ddl.auto", "create");
+
 		builderA.addMapping(new File(this.getClass().getResource("User.hbm.xml").getFile()));
 		builderA.addMapping(new File(this.getClass().getResource("SyncInfo.hbm.xml").getFile()));
 

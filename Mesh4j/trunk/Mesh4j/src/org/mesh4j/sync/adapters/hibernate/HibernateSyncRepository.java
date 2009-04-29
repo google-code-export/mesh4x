@@ -1,6 +1,5 @@
 package org.mesh4j.sync.adapters.hibernate;
 
-import static org.mesh4j.sync.parsers.SyncInfoParser.SYNC_INFO;
 import static org.mesh4j.sync.parsers.SyncInfoParser.SYNC_INFO_ATTR_ENTITY_NAME;
 
 import java.util.ArrayList;
@@ -61,7 +60,7 @@ public class HibernateSyncRepository implements ISyncRepository{
 	private Element getSyncInfo(String syncId) {
 		Session session = this.sessionFactory.openSession();
 		Session dom4jSession = session.getSession(EntityMode.DOM4J);
-		Element syncInfoElement = (Element) dom4jSession.get(SYNC_INFO, syncId);
+		Element syncInfoElement = (Element) dom4jSession.get(getEntityName(), syncId);
 		session.close();
 		return syncInfoElement;
 	}
@@ -79,7 +78,7 @@ public class HibernateSyncRepository implements ISyncRepository{
 		try{
 			tx = session.beginTransaction();
 			Session dom4jSession = session.getSession(EntityMode.DOM4J);
-			dom4jSession.saveOrUpdate(SYNC_INFO, syncInfoElement);
+			dom4jSession.saveOrUpdate(getEntityName(), syncInfoElement);
 			tx.commit();
 		}catch (RuntimeException e) {
 			if (tx != null) {
@@ -110,7 +109,7 @@ public class HibernateSyncRepository implements ISyncRepository{
 
 	@SuppressWarnings("unchecked")
 	private List<Element> getAllSyncInfo(String entityName) {
-		String syncQuery ="FROM " + SYNC_INFO + " WHERE " + SYNC_INFO_ATTR_ENTITY_NAME + " = '" + entityName + "'";
+		String syncQuery ="FROM " + getEntityName() + " WHERE " + SYNC_INFO_ATTR_ENTITY_NAME + " = '" + entityName + "'";
 		Session session = this.sessionFactory.openSession();
 		Session dom4jSession = session.getSession(EntityMode.DOM4J);
 
@@ -125,7 +124,7 @@ public class HibernateSyncRepository implements ISyncRepository{
 	}
 
 	public String getEntityName() {
-		return SYNC_INFO;
+		return this.syncInfoParser.getEntityName();
 	}
 	
 	public void initializeSessionFactory(IHibernateSessionFactoryBuilder sessionFactoryBuilder) {

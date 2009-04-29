@@ -1,6 +1,5 @@
 package org.mesh4j.sync.adapters.hibernate;
 
-import static org.mesh4j.sync.parsers.SyncInfoParser.SYNC_INFO;
 import static org.mesh4j.sync.parsers.SyncInfoParser.SYNC_INFO_ATTR_ENTITY_NAME;
 
 import java.util.ArrayList;
@@ -36,7 +35,7 @@ public class SyncDAO {
 	
 	public SyncInfo get(String syncId) {
 		Session session = getSession();
-		Element syncInfoElement = (Element) session.get(SYNC_INFO, syncId);
+		Element syncInfoElement = (Element) session.get(getEntityName(), syncId);
 		if(syncInfoElement == null){
 			return null;
 		}
@@ -54,12 +53,12 @@ public class SyncDAO {
 	public void save(SyncInfo syncInfo) {
 		Element syncInfoElement = syncInfoParser.convertSyncInfo2Element(syncInfo);
 		Session session = getSession();		
-		session.saveOrUpdate(SYNC_INFO, syncInfoElement);		
+		session.saveOrUpdate(getEntityName(), syncInfoElement);		
 	}
 
 	@SuppressWarnings("unchecked")
 	public List<SyncInfo> getAll(String entityName) {
-		String syncQuery ="FROM " + SYNC_INFO + " WHERE " + SYNC_INFO_ATTR_ENTITY_NAME + " = '" + entityName + "'";
+		String syncQuery ="FROM " + getEntityName() + " WHERE " + SYNC_INFO_ATTR_ENTITY_NAME + " = '" + entityName + "'";
 		Session session = getSession();
 		List<Element> syncElements = session.createQuery(syncQuery).list();
 		
@@ -83,7 +82,7 @@ public class SyncDAO {
 	}
 
 	public String getEntityName() {
-		return SYNC_INFO;
+		return this.syncInfoParser.getEntityName();
 	}
 
 	private Session getSession() {

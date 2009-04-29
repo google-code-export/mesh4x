@@ -32,8 +32,17 @@ public class HibernateSessionFactoryBuilder implements IHibernateSessionFactoryB
 	}
 	
 	public SessionFactory buildSessionFactory() {
-		Configuration hibernateConfiguration = new Configuration();
-		
+		Configuration hibernateConfiguration = buildConfiguration();	
+		return hibernateConfiguration.buildSessionFactory();
+	}
+
+	public Configuration buildConfiguration() {
+		Configuration hibernateConfiguration = new Configuration();		
+		initializeConfiguration(hibernateConfiguration);
+		return hibernateConfiguration;
+	}
+
+	public void initializeConfiguration(Configuration hibernateConfiguration) {
 		if(propertiesFile != null){
 			FileInputStream is = null;
 			try{
@@ -61,8 +70,6 @@ public class HibernateSessionFactoryBuilder implements IHibernateSessionFactoryB
 		for (File mapping : this.mappings) {
 			hibernateConfiguration.addFile(mapping);	
 		}
-	
-		return hibernateConfiguration.buildSessionFactory();
 	}
 
 	public void setProperty(String key, String value) {

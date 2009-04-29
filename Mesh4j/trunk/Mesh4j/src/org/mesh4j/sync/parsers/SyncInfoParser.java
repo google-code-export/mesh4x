@@ -19,7 +19,7 @@ import org.mesh4j.sync.validations.Guard;
 public class SyncInfoParser {
 
 	// CONSTANTS
-	public final static String SYNC_INFO = "SyncInfo";
+	private final static String SYNC_INFO = "SyncInfo";
 	private final static String SYNC_INFO_ATTR_SYNC_ID = "sync_id";
 	private final static String SYNC_INFO_ATTR_ENTITY_ID = "entity_id";
 	public final static String SYNC_INFO_ATTR_ENTITY_NAME = "entity_name";
@@ -30,17 +30,23 @@ public class SyncInfoParser {
 	private ISyndicationFormat format;
 	private IIdentityProvider identityProvider;
 	private IIdGenerator idGenerator;
+	private String syncEntity;
 
 	//BUSINESS METHODS 
-	
-	public SyncInfoParser(ISyndicationFormat format, IIdentityProvider identityProvider, IIdGenerator idGenerator) {
+	public SyncInfoParser(ISyndicationFormat format, IIdentityProvider identityProvider, IIdGenerator idGenerator, String syncEntity) {
 		Guard.argumentNotNull(format, "format");
 		Guard.argumentNotNull(identityProvider, "identityProvider");
 		Guard.argumentNotNull(idGenerator, "idGenerator");
+		Guard.argumentNotNull(syncEntity, "syncEntity");
 		
 		this.format = format;
 		this.identityProvider = identityProvider;
 		this.idGenerator = idGenerator;
+		this.syncEntity = syncEntity;
+	}
+	
+	public SyncInfoParser(ISyndicationFormat format, IIdentityProvider identityProvider, IIdGenerator idGenerator) {
+		this(format, identityProvider, idGenerator, SYNC_INFO);
 	}
 
 	public SyncInfo convertElement2SyncInfo(Element syncInfoElement) throws DocumentException {
@@ -73,7 +79,7 @@ public class SyncInfoParser {
 
 	
 	public Element convertSyncInfo2Element(SyncInfo syncInfo) {
-		Element syncElementRoot = DocumentHelper.createElement(SYNC_INFO);
+		Element syncElementRoot = DocumentHelper.createElement(this.syncEntity);
 		syncElementRoot.addElement(SYNC_INFO_ATTR_SYNC_ID).addText(syncInfo.getSyncId());
 		syncElementRoot.addElement(SYNC_INFO_ATTR_ENTITY_NAME).addText(syncInfo.getType());
 		syncElementRoot.addElement(SYNC_INFO_ATTR_ENTITY_ID).addText(syncInfo.getId());
@@ -108,5 +114,9 @@ public class SyncInfoParser {
 		
 		String syncAsXML = syncData.element(ISyndicationFormat.SX_QNAME_SYNC).asXML();
 		return syncAsXML;
+	}
+
+	public String getEntityName() {
+		return this.syncEntity;
 	}
 }
