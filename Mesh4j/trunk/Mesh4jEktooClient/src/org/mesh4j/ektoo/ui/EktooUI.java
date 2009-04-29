@@ -4,6 +4,8 @@
 package org.mesh4j.ektoo.ui;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -17,6 +19,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.SwingWorker;
+import javax.swing.border.TitledBorder;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -63,7 +66,8 @@ public class EktooUI extends JFrame
     initialize();
   }
 
-  public EktooUI(EktooUIController controller) {
+  public EktooUI(EktooUIController controller) 
+  {
     super();
     initialize();
     this.controller = controller;
@@ -72,13 +76,13 @@ public class EktooUI extends JFrame
   private void initialize() 
   {
     this.setSize(new Dimension(564, 511));
-        this.setContentPane(getJPanel());
+    this.setContentPane(getJPanel());
   }
 
   private JPanel getJPanel()
   {
-    if (panel == null) {
-
+    if (panel == null) 
+    {
       panel = new JPanel();
       panel.setLayout(null);
       panel.add(getSourcePane(), null);
@@ -133,11 +137,13 @@ public class EktooUI extends JFrame
 
 
   private JPanel getViaPane() {
-    if (viaPane == null) {
+    if (viaPane == null) 
+    {
       viaPane = new JPanel();
       viaPane.setBorder(BorderFactory.createTitledBorder( EktooUITranslator.getSyncViaLabel()));
       viaPane.setSize(new Dimension(150, 190));
       viaPane.setLocation(new Point(390, 10));
+      viaPane.setLayout(new GridLayout(3,1));
       viaPane.add(getRbWeb(), null);
       viaPane.add(getRbSMS(), null);
       viaPane.add(getRbFile(), null);
@@ -154,6 +160,7 @@ public class EktooUI extends JFrame
       typePane.setBorder(BorderFactory.createTitledBorder(EktooUITranslator.getSyncTypeLabel()));
       typePane.setSize(new Dimension(150, 190));
       typePane.setLocation(new Point(387, 210));
+      typePane.setLayout(new GridLayout(3,1));
       typePane.add(getRbSent(), null);
       typePane.add(getRbReceive(), null);
       typePane.add(getRbSendReceive(), null);
@@ -287,5 +294,6 @@ public class EktooUI extends JFrame
   {
     labelConsole.setText(msg);
   }
-  
 } 
+
+

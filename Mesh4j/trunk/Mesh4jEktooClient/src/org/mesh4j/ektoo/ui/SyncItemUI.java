@@ -11,6 +11,7 @@ import java.awt.Rectangle;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
+import java.util.StringTokenizer;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
@@ -19,12 +20,16 @@ import javax.swing.JPanel;
 
 import org.mesh4j.ektoo.ISyncTableTypeItem;
 import org.mesh4j.ektoo.IUIController;
+import org.mesh4j.ektoo.controller.CloudUIController;
 import org.mesh4j.ektoo.controller.GSSheetUIController;
 import org.mesh4j.ektoo.controller.MsAccessUIController;
 import org.mesh4j.ektoo.controller.MsExcelUIController;
+import org.mesh4j.ektoo.controller.MySQLUIController;
+import org.mesh4j.ektoo.model.CloudModel;
 import org.mesh4j.ektoo.model.GSSheetModel;
 import org.mesh4j.ektoo.model.MsAccessModel;
 import org.mesh4j.ektoo.model.MsExcelModel;
+import org.mesh4j.ektoo.model.MySQLAdapterModel;
 import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.sync.ISyncAdapter;
@@ -36,13 +41,15 @@ import org.mesh4j.sync.ISyncAdapter;
  */
 public class SyncItemUI extends JPanel implements ISyncTableTypeItem, IUIController 
 {
-	private final static long serialVersionUID = 1L;
-	private final static String DYMMY_PANEL = "DUMMY_PANEL";
-	private final static String KML_PANEL = "KML";
-	private final static String MS_EXCEL_PANEL = "MS Excel";
+  private final static long serialVersionUID = 1L;
+	
+	private final static String DYMMY_PANEL              = "DUMMY_PANEL";
+	private final static String KML_PANEL                = "KML";
+	private final static String MS_EXCEL_PANEL           = "MS Excel";
 	private final static String GOOGLE_SPREADSHEET_PANEL = "Google Spreadsheet";
-	private final static String MS_ACCESS_PANEL = "MS Access";
-	private final static String CLOUD_PANEL = "Cloud";
+	private final static String MS_ACCESS_PANEL          = "MS Access";
+	private final static String CLOUD_PANEL              = "Cloud";
+  private final static String MYSQL_PANEL              = "MySQL";	
 
 	private JPanel body = null;
 	private JPanel head = null;
@@ -59,24 +66,28 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem, IUIControl
 	private GSSheetUIController googleUIControler = null;
 	
 	private KmlUI kmlUI = null;
-	private CloudUI cloudUI = null;
 
-	private String SourceOrTargetType = "KML~Cloud~MS Access~Google Spreadsheet~MS Excel";//EktooUITranslator.getDataSourceType();
+	private CloudUI cloudUI = null;
+  private CloudUIController cloudUIControler = null;	
+
+  private MySQLUI mysqlUI = null;
+  private MySQLUIController mysqlUIControler = null;
+  
+	private String SourceOrTargetType = null;
 	
 	private JComboBox listType = null;
 	private JLabel labelType = null;
 	String title = null;
-
 
 	public SyncItemUI(String title)
 	{
 		this.title = title;
 		initialize();
 	}
-
 	
 	private void initialize() 
 	{
+	  SourceOrTargetType = EktooUITranslator.getDataSourceType();
 		setLayout(new BorderLayout());
 		setBorder(BorderFactory.createTitledBorder(this.title));
 		setSize(new Dimension(350, 250));
@@ -117,8 +128,8 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem, IUIControl
 			body.add(getGSSheetUI(), GOOGLE_SPREADSHEET_PANEL);
 			body.add(getKmlUI(), KML_PANEL);
 			body.add(getCloudUI(), CLOUD_PANEL);
-		}
-		
+			body.add(getMySQLUI(), MYSQL_PANEL);
+		}		
 		return body;
 	}
 	
@@ -130,19 +141,19 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem, IUIControl
 			getListType().setBounds(new Rectangle(107, 13, 230, 22));
 			if (SourceOrTargetType != null)
 			{
-				String[] types = SourceOrTargetType.split("~");
-
-				for(int i=0; i < types.length; i++)
+				StringTokenizer st = new StringTokenizer(SourceOrTargetType, "|"); 
+				String type = null;
+				while (st.hasMoreTokens()) 
 				{
-					if (types[i] != null && types[i].length()!= 0)
-						getListType().addItem(types[i]);
-				}
+				  type = st.nextToken();
+				  if (type != null && type.length()!= 0)
+            getListType().addItem(type);				  
+				} 
 			}
 			getListType().addItemListener(new ItemListener() 
 			{
 				public void itemStateChanged(ItemEvent e) 
 				{
-					//System.out.println("getDataSourceType()->itemStateChanged()");
 					int index = getListType().getSelectedIndex();
 					if (index != -1)
 						updateLayout((String)e.getItem());
@@ -154,11 +165,6 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem, IUIControl
 		return getListType();
 	}
 
-	/**
-	 * This method initializes labelSourceType
-	 *
-	 * @return javax.swing.JLabel
-	 */
 	private JLabel getTypeLabel() 
 	{
 		if (labelType == null) 
@@ -170,13 +176,11 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem, IUIControl
 		return labelType;
 	}
 
-
 	private MsExcelUI getMsExcelUI()
 	{
 		if (excelUI == null) 
 		{
-			//excelUI = new MsExcelUI( EktooUITranslator.getExcelFileLabel(), EktooUITranslator.getExcelWorksheetLabel(), EktooUITranslator.getExcelUniqueColumnLabel());
-			excelUIController = new MsExcelUIController(new PropertiesProvider());
+		  excelUIController = new MsExcelUIController(new PropertiesProvider());
 			excelUIController.addModel( new MsExcelModel());
 			
 			excelUI = new MsExcelUI( excelUIController );
@@ -189,10 +193,9 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem, IUIControl
 
 	private MsAccessUI getMsAccessUI()
 	{
-		if (accessUI == null) 
-		{
-			//accessUI = new MsAccessUI("Database", "Table");			
-			accessUIController = new MsAccessUIController(new PropertiesProvider());
+	  if (accessUI == null) 
+		{		
+	    accessUIController = new MsAccessUIController(new PropertiesProvider());
 			accessUIController.addModel(new MsAccessModel());
 			
 			accessUI = new MsAccessUI(accessUIController);	
@@ -230,12 +233,25 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem, IUIControl
 
 	private CloudUI getCloudUI()
 	{
-		if (cloudUI == null) {
-			cloudUI = new CloudUI("Mash", "Data Set");
+		if (cloudUI == null) 
+		{
+		  cloudUIControler = new CloudUIController(new PropertiesProvider());
+		  cloudUIControler.addModel(new CloudModel());
+			cloudUI = new CloudUI(cloudUIControler);
 		}
 		return cloudUI;
 	}	
 	
+  private MySQLUI getMySQLUI()
+  {
+    if (mysqlUI == null) 
+    {
+      mysqlUIControler = new MySQLUIController(new PropertiesProvider());
+      mysqlUIControler.addModel(new MySQLAdapterModel());
+      mysqlUI = new MySQLUI(mysqlUIControler);
+    }
+    return mysqlUI;
+  } 
 	
 	private void updateLayout(String item)
 	{
@@ -259,7 +275,12 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem, IUIControl
 		else if (item.equals(CLOUD_PANEL))
 		{
 			cl.show(body, CLOUD_PANEL);
-		}		else
+		}		
+		else if (item.equals(MYSQL_PANEL))
+    {
+      cl.show(body, MYSQL_PANEL);
+    }   
+  	else
 		{
 			cl.show(body, DYMMY_PANEL);
 		}
@@ -290,7 +311,6 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem, IUIControl
 		return column;
 	}
 
-
 	@Override
 	public File getFile() 
 	{
@@ -303,26 +323,28 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem, IUIControl
 		}
 		else if (item.equals(MS_ACCESS_PANEL))
 		{
-			System.out.println(">>>>>>" + accessUI.getFile());
 			file = accessUI.getFile();
 		}
 		else if (item.equals(GOOGLE_SPREADSHEET_PANEL))
 		{
 			//file = googleUI.getKey();
 		}
-		else
+    else if (item.equals(MYSQL_PANEL))
+    {
+      //file = mysqlUI.getDatabase();
+    }
+    else
 		{
-		}
-		
+		}		
 		return file;
 	}
-
-
+	
 	@Override
 	public String getTable() 
 	{
 		String table = null;
 		String item = (String)getDataSourceType().getSelectedItem();
+		
 		CardLayout cl = (CardLayout)(body.getLayout());
 		if (item.equals(MS_EXCEL_PANEL))
 		{
@@ -336,19 +358,23 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem, IUIControl
 		{
 			table = googleUI.getSheet();
 		}
+		else if (item.equals(MYSQL_PANEL))
+    {
+      table = mysqlUI.getTable();
+    }		
 		else
 		{
 		}
 		return table;
 	}
 
-
-	public void setListType(JComboBox listType) {
+	public void setListType(JComboBox listType) 
+	{
 		this.listType = listType;
 	}
 
-
-	public JComboBox getListType() {
+	public JComboBox getListType() 
+	{
 		return listType;
 	}
 
@@ -371,8 +397,9 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem, IUIControl
 		{
 			syncAdapter = googleUI.getController().createAdapter();
 		}
-		else
+		else if (item.equals(CLOUD_PANEL ))
 		{
+		  syncAdapter = cloudUI.getController().createAdapter();
 		}		
 		return syncAdapter;
 	}	

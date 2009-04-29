@@ -30,12 +30,12 @@ public class SynchronizeTask extends SwingWorker<String, Void> {
 		{
 			SyncItemUI sourceItem =  ui.getSourceItem();
 			SyncItemUI targetItem =  ui.getTargetItem();
-			
 			result = ui.getController().sync(sourceItem, targetItem);
 			return result;
 		} 
 		catch(Throwable t)
 		{
+		  t.printStackTrace();
 		}
 		
 		return null;

@@ -13,7 +13,8 @@ import org.mesh4j.sync.security.LoggedInIdentityProvider;
 import org.mesh4j.sync.validations.MeshException;
 
 
-public class PropertiesProvider {
+public class PropertiesProvider 
+{
 
 	private static final String MESH4J_PROPERTIES = "mesh4j.properties";
 	
