@@ -16,7 +16,7 @@ import org.mesh4j.sync.test.utils.TestHelper;
 public class SyncTests {
 
 	@Test
-	public void shouldSyncDBReadingRDFSchemaFromAdapterAandCreateingTableInAdapterB(){
+	public void shouldSyncDBReadingRDFSchemaFromAdapterAandCreateingTableInAdapterB() throws Exception{
 		ISyncAdapter adapterA = HibernateSyncAdapterFactory.createHibernateAdapter(
 			"jdbc:mysql:///mesh4xdb", 
 			"root", 
