@@ -32,6 +32,6 @@
 	<classpathentry kind="lib" path="lib/hibernate/freemarker.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate/jtidy-r8-20060801.jar"/>
 	<classpathentry kind="lib" path="etc"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/HibernateTools"/>
+	<classpathentry kind="lib" path="lib/hibernate/hibernate-tools.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
