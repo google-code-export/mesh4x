@@ -41,4 +41,7 @@ public interface ISyncAdapterBuilder {
 	 * @return
 	 */
 	public ISyncAdapter createHttpSyncAdapter(String meshId, String dataSetId);
+
+
+  public ISyncAdapter createMySQLAdapter(String hostName, int portNo, String databaseName, String tableName);
 }
