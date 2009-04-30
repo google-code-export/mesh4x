@@ -87,8 +87,8 @@ public class EktooUI extends JFrame
       panel.setLayout(null);
       panel.add(getSourcePane(), null);
       panel.add(getTargetPane(), null);
-      panel.add(getViaPane(), null);
-      panel.add(getTypePane(), null);
+      //panel.add(getViaPane(), null);
+      //panel.add(getTypePane(), null);
       panel.add(getBtnSync(), null);
       panel.add(getConsole(), null);
     }
@@ -104,7 +104,7 @@ public class EktooUI extends JFrame
       labelConsole.setSize(500, 16);
       labelConsole.setLocation(new Point(10, 400));
       labelConsole.setBackground(Color.red);
-      labelConsole.setText("Console....");    
+      //labelConsole.setText("Console....");    
     }
     
     return labelConsole;
@@ -154,8 +154,10 @@ public class EktooUI extends JFrame
   }
 
 
-  private JPanel getTypePane() {
-    if (typePane == null) {
+  private JPanel getTypePane() 
+  {
+    if (typePane == null) 
+    {
       typePane = new JPanel();
       typePane.setBorder(BorderFactory.createTitledBorder(EktooUITranslator.getSyncTypeLabel()));
       typePane.setSize(new Dimension(150, 190));
@@ -171,10 +173,11 @@ public class EktooUI extends JFrame
 
   private JButton getBtnSync() 
   {
-    if (btnSync == null) {
+    if (btnSync == null) 
+    {
       btnSync = new JButton();
       btnSync.setBounds(new Rectangle(315, 427, 127, 28));
-      btnSync.setText( EktooUITranslator.getSyncViaLabel());
+      btnSync.setText( EktooUITranslator.getSyncLabel());
       btnSync.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) 
         {

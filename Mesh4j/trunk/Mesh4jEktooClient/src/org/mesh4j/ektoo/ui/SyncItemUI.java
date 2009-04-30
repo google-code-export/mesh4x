@@ -33,6 +33,7 @@ import org.mesh4j.ektoo.model.MySQLAdapterModel;
 import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.sync.ISyncAdapter;
+import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 
 
 /**
@@ -400,7 +401,73 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem, IUIControl
 		else if (item.equals(CLOUD_PANEL ))
 		{
 		  syncAdapter = cloudUI.getController().createAdapter();
-		}		
+		}	
+		else if (item.equals(MYSQL_PANEL))
+    {
+		  syncAdapter = mysqlUI.getController().createAdapter();
+    }   
 		return syncAdapter;
-	}	
+	}
+
+  @Override
+  public IRDFSchema createSchema()
+  {
+    IRDFSchema rdfSchema = null;
+    
+    String item = (String)getDataSourceType().getSelectedItem();
+    CardLayout cl = (CardLayout)(body.getLayout());
+    if (item.equals(MS_EXCEL_PANEL))
+    {
+      rdfSchema = excelUI.getController().createSchema();
+    }
+    else if (item.equals(MS_ACCESS_PANEL))
+    {
+      rdfSchema = accessUI.getController().createSchema();
+    }
+    else if (item.equals(GOOGLE_SPREADSHEET_PANEL))
+    {
+      rdfSchema = googleUI.getController().createSchema();
+    }
+    else if (item.equals(CLOUD_PANEL ))
+    {
+      rdfSchema = cloudUI.getController().createSchema();
+    } 
+    else if (item.equals(MYSQL_PANEL))
+    {
+      rdfSchema = mysqlUI.getController().createSchema();
+    }   
+
+    return rdfSchema;
+  }
+
+  @Override
+  public ISyncAdapter createAdapter(IRDFSchema schema)
+  {
+    ISyncAdapter syncAdapter = null;
+    
+    String item = (String)getDataSourceType().getSelectedItem();
+    CardLayout cl = (CardLayout)(body.getLayout());
+    if (item.equals(MS_EXCEL_PANEL))
+    {
+      syncAdapter = excelUI.getController().createAdapter(schema);
+    }
+    else if (item.equals(MS_ACCESS_PANEL))
+    {
+      syncAdapter = accessUI.getController().createAdapter(schema);
+    }
+    else if (item.equals(GOOGLE_SPREADSHEET_PANEL))
+    {
+      syncAdapter = googleUI.getController().createAdapter(schema);
+    }
+    else if (item.equals(CLOUD_PANEL ))
+    {
+      syncAdapter = cloudUI.getController().createAdapter(schema);
+    } 
+    else if (item.equals(MYSQL_PANEL))
+    {
+      syncAdapter = mysqlUI.getController().createAdapter(schema);
+    }   
+    return syncAdapter;
+
+  }	
 }

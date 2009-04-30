@@ -11,9 +11,10 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.ArrayList;
+import java.util.Iterator;
 
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -24,11 +25,7 @@ import javax.swing.SwingWorker;
 import org.mesh4j.ektoo.controller.MySQLUIController;
 import org.mesh4j.ektoo.model.MySQLAdapterModel;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadsheet;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.IGoogleSpreadSheet;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSCell;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSRow;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSWorksheet;
+import org.mesh4j.ektoo.utils.MySQLDB;
 /**
  * @author Bhuiyan Mohammad Iklash
  *
@@ -61,11 +58,12 @@ public class MySQLUI extends JPanel
 	private JLabel labelColumn = null;
 	private JComboBox listColumn = null;
 	
+	private JButton btnConnect = null;
+	
 	private MySQLUIController controller = null;
 
-
-
-	public MySQLUI() {
+	public MySQLUI() 
+	{
 		super();
 		initialize();
 	}
@@ -75,7 +73,6 @@ public class MySQLUI extends JPanel
     super();
     this.controller = controller;
     initialize();
-
   }
   
 	private void initialize()
@@ -99,17 +96,35 @@ public class MySQLUI extends JPanel
 
     this.add(getDatabaseLabel(), null);
     this.add(getDatabaseText(), null);
+    
+    this.add(getConnectButton(), null);
 
 		this.add(getTableLabel(), null);
 		this.add(getTableList(), null);
 
-		//setDefaultValues();
+		setDefaultValues();
 	}
 	private void setDefaultValues()
 	{
-		txtUser.setText("gspreadsheet.test@gmail.com");
-		txtPass.setText("java123456");
-		txtDatabase.setText("peo4fu7AitTryKJCgRNloaQ");
+    String hostName = controller.getPropertiesProvider().getDefaultMySQLHost();
+    if (hostName == null) hostName = "";
+    txtHost.setText(hostName);
+       
+    String portNo = controller.getPropertiesProvider().getDefaultMySQLPort();
+    if (portNo == null) portNo = "";
+    txtPort.setText(portNo);
+    
+    String schemaName = controller.getPropertiesProvider().getDefaultMySQLSchema();
+    if (schemaName == null) schemaName = "";
+    txtDatabase.setText(schemaName);
+    
+    String userName = controller.getPropertiesProvider().getDefaultMySQLUser();
+    if (userName == null) userName = "";
+    txtUser.setText(userName);
+    
+    String userPassword = controller.getPropertiesProvider().getDefaultMySQLPassword();
+    if (userPassword == null) userPassword = "";
+    txtPass.setText(userPassword);
 	}
 	
 	private JLabel getUserLabel() 
@@ -292,7 +307,7 @@ public class MySQLUI extends JPanel
         {
           try 
           {
-            getController().changeHostName(txtPort.getText());
+            getController().changePortNo( Integer.parseInt(txtPort.getText()));
           } 
           catch (Exception e) 
           {
@@ -307,7 +322,7 @@ public class MySQLUI extends JPanel
         {
           try 
           {
-            getController().changeHostName( txtPort.getText());
+            getController().changePortNo(Integer.parseInt(txtPort.getText()));
           } 
           catch (Exception e) 
           {
@@ -337,7 +352,7 @@ public class MySQLUI extends JPanel
 		if (txtDatabase == null) 
 		{
 			txtDatabase = new JTextField();
-			txtDatabase.setBounds(new Rectangle(101, 80, 183, 20));
+			txtDatabase.setBounds(new Rectangle(101, 80, 140, 20));
 			txtDatabase.addActionListener(new ActionListener() 
 			{
 				public void actionPerformed(ActionEvent ae) 
@@ -350,21 +365,6 @@ public class MySQLUI extends JPanel
           {
             //  Handle exception
           } 					
-					
-					SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() 
-					{
-						public Void doInBackground() 
-						{
-							setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-							setList( getUser() , getPass(), getHost(), getPort(), txtDatabase.getText());
-							return null;
-				        }
-				        public void done() 
-				        {
-				        	setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-				        }
-					};
-				  worker.execute();					
 				}
 			});
 			
@@ -385,6 +385,38 @@ public class MySQLUI extends JPanel
 		}
 		return txtDatabase;
 	}
+	
+  private JButton getConnectButton() 
+  {
+    if (btnConnect == null) 
+    {
+      btnConnect = new JButton();
+      btnConnect.setBounds(new Rectangle(245, 80, 40, 20));
+      btnConnect.setText("C");
+      btnConnect.addActionListener(new ActionListener() 
+      {
+        public void actionPerformed(ActionEvent ae) 
+        {
+          SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() 
+          {
+            public Void doInBackground() 
+            {
+              setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+              setList( getUser() , getPass(), getHost(), getPort(), txtDatabase.getText());
+              return null;
+                }
+                public void done() 
+                {
+                  setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                }
+          };
+          worker.execute();         
+        }
+      });
+    }
+    return btnConnect;
+  }
+	
 
 	private JLabel getTableLabel() 
 	{
@@ -436,14 +468,24 @@ public class MySQLUI extends JPanel
 		return listTable;
 	}
 
-	public void setList(String user, String pass, String host, int port, String databaseName)
+	public void setList(String user, String pass, String host, int port, String schema)
 	{
 		JComboBox tableList = getTableList();
 		tableList.removeAllItems();
 
+		ArrayList<String> tables = MySQLDB.getTables(user, pass, host, port, schema);
+		
 		try
 		{
 		  // add tables in tableList here
+		  String table = null;
+		  Iterator itr = tables.iterator();
+		  while(itr.hasNext())
+		  {
+		    table = (String)itr.next();
+		    tableList.addItem(table); 
+		  }
+		  
 		}
 		catch(Exception e)
 		{

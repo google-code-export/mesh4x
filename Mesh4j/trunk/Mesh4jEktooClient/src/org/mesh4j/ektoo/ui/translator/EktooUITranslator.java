@@ -56,6 +56,8 @@ public class EktooUITranslator
 		//return "Conflicts";
 		return EktooMessageTranslator.translate("EKTOO_SYNC_PROCESS_CONFLICT_MESSAGE");
 	}
+	
+	
 	public static String getExcelFileDescription() 
 	{
 		//return "Microsoft Excel File(s)";
@@ -149,33 +151,27 @@ public class EktooUITranslator
   }
   public static String getTableLabel()
   {
-    //return "Table";
     return EktooMessageTranslator.translate("EKTOO_TABLE_FIELD_DEFAULT_LABEL");
   }
   public static String getFieldLabel()
   {
-    //return "Field";
     return EktooMessageTranslator.translate("EKTOO_FIELD_FIELD_DEFAULT_LABEL");
   }
   public static String getGoogleWorksheetColumnLabel()
   {
-    //return "Column";
     return EktooMessageTranslator.translate("EKTOO_GOOGLE_WORKSHEET_COLUMN_FIELD_LABEL");
   }
   public static String getKmlUriLabel()
   {
-    //return "Uri";
     return EktooMessageTranslator.translate("EKTOO_KML_URI_FIELD_LABEL");
   }
   public static String getSyncDataSourceType()
   {
-    //return "Data Source Type";
     return EktooMessageTranslator.translate("EKTOO_SYNC_PROCESS_DATA_SOURCE_LABEL");
   }
   public static String getSyncLabel()
   {
-    //return "Sync";
-    return EktooMessageTranslator.translate("EKTOO_SYNC_PROCESS_BUTTON_LABEL");
+    return EktooMessageTranslator.translate("EKTOO_SYNC_PROCESS_START_BUTTON_LABEL");
   }
 
   public static String getDataSourceType()

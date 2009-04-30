@@ -29,7 +29,16 @@ public class EktooUIController
 
 	public String sync(SyncItemUI source, SyncItemUI target)
 	{	
-		return sync(source.createAdapter(), target.createAdapter());	
+	  ISyncAdapter sourceAdapter = source.createAdapter();
+	  ISyncAdapter targetAdapter = target.createAdapter();
+	  
+	  // TODO (NBL) make it generic
+	  if (targetAdapter == null)
+	  {
+	    targetAdapter = target.createAdapter(source.createSchema());
+	  }
+	  
+		return sync(sourceAdapter, targetAdapter);	
 	}
 	
 	public String  sync(ISyncAdapter sourceAdapter, ISyncAdapter targetAdapter)

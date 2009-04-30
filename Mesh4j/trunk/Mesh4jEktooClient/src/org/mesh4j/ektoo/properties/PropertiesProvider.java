@@ -275,4 +275,30 @@ public class PropertiesProvider
 	public String getDefaultXFormTemplateFileName() {
 		return getString("default.xform.template.file.name");
 	}
+
+  public String getDefaultMySQLHost() 
+  {
+    return getString("default.mysql.host");
+  }
+
+  public String getDefaultMySQLPort() 
+  {
+    return getString("default.mysql.port");
+  } 
+
+  public String getDefaultMySQLUser() 
+  {
+    return getString("default.mysql.user");
+  } 
+
+  public String getDefaultMySQLPassword() 
+  {
+    return getString("default.mysql.password");
+  } 
+  
+	public String getDefaultMySQLSchema() 
+	{
+    return getString("default.mysql.schema");
+  }
+	
 }

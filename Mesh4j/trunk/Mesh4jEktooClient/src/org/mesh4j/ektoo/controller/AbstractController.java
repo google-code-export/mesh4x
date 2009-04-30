@@ -32,6 +32,7 @@ public abstract class AbstractController implements PropertyChangeListener
 	{
 		return this.registeredModels;
 	}
+	
 	public AbstractModel getModel()
 	{
 		if ( this.registeredModels.isEmpty() )
@@ -39,6 +40,7 @@ public abstract class AbstractController implements PropertyChangeListener
 			
 		return (AbstractModel)this.registeredModels.get(0);
 	}
+	
 	public AbstractModel getModel(int index)
 	{
 		if ( this.registeredModels.isEmpty() || this.registeredModels.size() < index)
@@ -46,7 +48,6 @@ public abstract class AbstractController implements PropertyChangeListener
 
 		return (AbstractModel)this.registeredModels.get(index);
 	}
-
 	
 	public void removeModel(AbstractModel model)
 	{
@@ -92,6 +93,7 @@ public abstract class AbstractController implements PropertyChangeListener
 			}
 		}
 	}
+	
   protected void setModelProperty(String propertyName, int newValue)
   {
     for(AbstractModel model :  registeredModels)
@@ -116,5 +118,4 @@ public abstract class AbstractController implements PropertyChangeListener
       }
     }
   }
-	
 }

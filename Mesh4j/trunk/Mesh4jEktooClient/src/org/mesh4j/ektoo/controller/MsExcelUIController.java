@@ -8,6 +8,10 @@ import org.mesh4j.ektoo.SyncAdapterBuilder;
 import org.mesh4j.ektoo.model.MsExcelModel;
 import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.sync.ISyncAdapter;
+import org.mesh4j.sync.adapters.hibernate.HibernateContentAdapter;
+import org.mesh4j.sync.adapters.split.SplitAdapter;
+import org.mesh4j.sync.payload.schema.ISchema;
+import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.validations.Guard;
 /**
  * @author Bhuiyan Mohammad Iklash
@@ -65,8 +69,38 @@ public class MsExcelUIController extends AbstractController implements IUIContro
 		return adapterBuilder.createMsExcelAdapter(workbookName, worksheetName, uniqueColumnName);
 	}
 
-	@Override
+  @Override
+  public ISyncAdapter createAdapter(IRDFSchema sourceSchema) 
+  {
+    MsExcelModel model = (MsExcelModel)this.getModel();
+    if (model == null) return null;
+    
+    String workbookName = model.getWorkbookName();
+    if(workbookName == null || workbookName.trim().length() == 0)
+      return null;
+    
+    String worksheetName = model.getWorksheetName();
+    if (worksheetName == null || worksheetName.trim().length() == 0)
+      return null;
+    
+    String uniqueColumnName = model.getUniqueColumnName();
+    if ( uniqueColumnName == null || uniqueColumnName.trim().length() == 0)
+      return null;
+    
+    return adapterBuilder.createMsExcelAdapter(sourceSchema, workbookName, worksheetName, uniqueColumnName);
+  }
+	
+	
+  @Override
+  public IRDFSchema createSchema()
+  {
+    //TODO (NBL) implement this
+    return null;
+  }
+
+  @Override
 	public void propertyChange(PropertyChangeEvent arg0) 
 	{
+    
 	}
 }
