@@ -14,7 +14,7 @@ public interface ISyncAdapterBuilder {
 	 *  
 	 */
 	public ISyncAdapter createMsExcelAdapter(IRDFSchema schema,String contentFileName, String sheetName, String idColumnName); 
-	
+  
 	@Deprecated
 	public ISyncAdapter createMsExcelAdapter(String contentFileName, String sheetName, String idColumnName);
 	
@@ -56,5 +56,5 @@ public interface ISyncAdapterBuilder {
 	 * @param tableName
 	 * @return
 	 */
-	public ISyncAdapter createMySQLAdapter(String userName,String password, String connectionURL, String tableName);
+	public ISyncAdapter createMySQLAdapter(String userName,String password, String hostName, String portNo, String databseName, String tableName);
 }
