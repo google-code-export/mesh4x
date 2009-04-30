@@ -21,10 +21,9 @@ public class InterRepositoryTest {
 		String user = "root";
 		String password = "test1234";
 		String tableName = "user";
-		String connectionURL = "jdbc:mysql:///mesh4xdb";
 		
 		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
-		ISyncAdapter sourceAsMySql =  builder.createMySQLAdapter(user, password, connectionURL,tableName);
+		ISyncAdapter sourceAsMySql =  builder.createMySQLAdapter(user, password,"localhost" ,3306,"mesh4xdb",tableName);
 		
 		
 		SplitAdapter splitAdapter = (SplitAdapter)sourceAsMySql;
