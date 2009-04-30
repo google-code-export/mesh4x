@@ -224,7 +224,7 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder{
 
 
   @Override
-  public ISyncAdapter createMySQLAdapter(String userName,String password,String hostName, String portNo, String databaseName, String tableName){
+  public ISyncAdapter createMySQLAdapter(String userName,String password,String hostName, int portNo, String databaseName, String tableName){
   
     String connectionUri = "jdbc:mysql://" + hostName + ":" + portNo + "/" + databaseName;
     
