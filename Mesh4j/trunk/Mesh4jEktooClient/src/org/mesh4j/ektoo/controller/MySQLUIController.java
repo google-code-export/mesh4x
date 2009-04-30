@@ -69,7 +69,13 @@ public class MySQLUIController extends AbstractController implements IUIControll
 	  MySQLAdapterModel model = (MySQLAdapterModel)this.getModel();
 	  if (model == null) return null;
 	  
-	  String hostName = model.getHostName();
+    String userName = model.getHostName();
+    if (userName == null) return null;
+
+    String userPassword = model.getUserPassword();
+    if (userPassword == null) return null;
+
+    String hostName = model.getHostName();
 	  if (hostName == null) return null;
 	  
 	  int portNo = model.getPortNo();
@@ -81,7 +87,7 @@ public class MySQLUIController extends AbstractController implements IUIControll
 	  String tableName = model.getTableName();
 	  if (tableName == null) return null;
 	  
-		return adapterBuilder.createMySQLAdapter(hostName, portNo, databaseName, tableName);
+		return adapterBuilder.createMySQLAdapter(userName, userPassword, hostName, portNo, databaseName, tableName);
 	}
 
   @Override
