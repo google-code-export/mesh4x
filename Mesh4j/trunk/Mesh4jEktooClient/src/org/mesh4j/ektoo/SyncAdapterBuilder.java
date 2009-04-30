@@ -19,7 +19,6 @@ import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.adapters.hibernate.HibernateSyncAdapterFactory;
 import org.mesh4j.sync.adapters.http.HttpSyncAdapter;
 import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
-import org.mesh4j.sync.adapters.msexcel.MSExcelToPlainXMLMapping;
 import org.mesh4j.sync.adapters.msexcel.MsExcel;
 import org.mesh4j.sync.adapters.msexcel.MsExcelContentAdapter;
 import org.mesh4j.sync.adapters.msexcel.MsExcelSyncRepository;
@@ -62,6 +61,7 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder{
 		RDFSchema schema;
 		try {
 			schema = MsExcelToRDFMapping.extractRDFSchema(excelFile, sheetName);
+			System.out.println(schema.asXML());
 		} catch (Exception e) {
 			throw new MeshException();
 		}
