@@ -16,7 +16,7 @@ public interface ISyncAdapterBuilder {
 	
 	
 	/**
-	 * Creates adapter for access adapter
+	 * Create adapter for access adapter
 	 * 
 	 * @param sourceAlias, the alias for source 
 	 * @param mdbFileName,the name of the ms access database file name.
@@ -26,14 +26,14 @@ public interface ISyncAdapterBuilder {
 	public ISyncAdapter createMsAccessAdapter(String mdbFileName, String tableName);
 	
 	/**
-	 * TODO create documentation
+	 * TODO create documentation (raju)
 	 * 
 	 * @param spreadSheetInfo
 	 * @return
 	 */
 	public ISyncAdapter createGoogleSpreadSheetAdapter(GoogleSpreadSheetInfo spreadSheetInfo);
 	
-	/** TODO create documentation
+	/** TODO create documentation (raju)
 	 * 
 	 * @param rootUrl
 	 * @param meshId
@@ -42,6 +42,16 @@ public interface ISyncAdapterBuilder {
 	 */
 	public ISyncAdapter createHttpSyncAdapter(String meshId, String dataSetId);
 
-
-  public ISyncAdapter createMySQLAdapter(String hostName, int portNo, String databaseName, String tableName);
+	/**
+	 * TODO create documentation (raju)
+	 * 
+	 * @param userName
+	 * @param password
+	 * @param hostName
+	 * @param portNo
+	 * @param databaseName
+	 * @param tableName
+	 * @return
+	 */
+	public ISyncAdapter createMySQLAdapter(String userName,String password,String hostName, int portNo, String databaseName, String tableName);
 }

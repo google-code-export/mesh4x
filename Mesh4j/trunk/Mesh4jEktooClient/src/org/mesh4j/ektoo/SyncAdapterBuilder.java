@@ -146,14 +146,14 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder{
 
 
   @Override
-  public ISyncAdapter createMySQLAdapter(String hostName, int portNo,
+  public ISyncAdapter createMySQLAdapter(String userName,String password,String hostName, int portNo,
       String databaseName, String tableName)
   {
   	  //  Example 
 	  return HibernateSyncAdapterFactory.createHibernateAdapter(
 			"jdbc:mysql:///"+databaseName, 
-			"root",									// TODO db user  
-			"", 									// TODO db password
+			userName,									// TODO db user  
+			password, 									// TODO db password
 			com.mysql.jdbc.Driver.class,
 			org.hibernate.dialect.MySQLDialect.class,
 			tableName, 
