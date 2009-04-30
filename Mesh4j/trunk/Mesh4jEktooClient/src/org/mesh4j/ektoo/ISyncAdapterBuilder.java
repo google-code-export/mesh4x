@@ -1,6 +1,7 @@
 package org.mesh4j.ektoo;
 
 import org.mesh4j.sync.ISyncAdapter;
+import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 
 public interface ISyncAdapterBuilder {
 
@@ -12,7 +13,7 @@ public interface ISyncAdapterBuilder {
 	 * @param idColumnName, the name of the identity column of entity
 	 *  
 	 */
-	public ISyncAdapter createMsExcelAdapter(String contentFileName, String sheetName, String idColumnName); 
+	public ISyncAdapter createMsExcelAdapter(IRDFSchema schema,String contentFileName, String sheetName, String idColumnName); 
 	
 	
 	/**
