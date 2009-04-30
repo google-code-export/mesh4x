@@ -194,9 +194,6 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder{
 	
 	private File getFile(String fileName) {
 		File file = new File(fileName);
-		if(!file.exists()){
-			Guard.throwsArgumentException(fileName);
-		}
 		return file;
 	}
 	
