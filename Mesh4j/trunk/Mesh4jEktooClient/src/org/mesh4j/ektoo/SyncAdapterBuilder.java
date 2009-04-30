@@ -246,7 +246,7 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder{
 	
 	File file = getFile(contentFileName);
 	//TODO (Raju) need to think about more,just for partial commit
-	if(file == null){
+	if(file == null || !file.exists()){
 	 return null;	
 	}
 	MsExcel  excelFile = new MsExcel(file.getAbsolutePath());
