@@ -224,10 +224,12 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder{
 
 
   @Override
-  public ISyncAdapter createMySQLAdapter(String userName,String password,String connectionURL, String tableName){
+  public ISyncAdapter createMySQLAdapter(String userName,String password,String hostName, String portNo, String databaseName, String tableName){
   
+    String connectionUri = "jdbc:mysql://" + hostName + ":" + portNo + "/" + databaseName;
+    
 	  return HibernateSyncAdapterFactory.createHibernateAdapter(
-			connectionURL,
+	    connectionUri,
 			userName,									// TODO db user  
 			password, 									// TODO db password
 			com.mysql.jdbc.Driver.class,
