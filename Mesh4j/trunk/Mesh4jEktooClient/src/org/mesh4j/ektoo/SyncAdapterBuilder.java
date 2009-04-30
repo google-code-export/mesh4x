@@ -1,7 +1,12 @@
 package org.mesh4j.ektoo;
 
 import java.io.File;
+import java.util.Iterator;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFDateUtil;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadSheetContentAdapter;
@@ -20,6 +25,7 @@ import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.adapters.hibernate.HibernateSyncAdapterFactory;
 import org.mesh4j.sync.adapters.http.HttpSyncAdapter;
 import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
+import org.mesh4j.sync.adapters.msexcel.IMsExcel;
 import org.mesh4j.sync.adapters.msexcel.MsExcel;
 import org.mesh4j.sync.adapters.msexcel.MsExcelContentAdapter;
 import org.mesh4j.sync.adapters.msexcel.MsExcelSyncRepository;
@@ -29,6 +35,7 @@ import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.id.generator.IIdGenerator;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
+import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
 import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
@@ -49,41 +56,48 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder{
 	@Override
 	public ISyncAdapter createMsExcelAdapter(IRDFSchema schema,String contentFileName, String sheetName, String idColumnName) {
 		
-		//TODO if file doesn't exist then create file with the help of schema
-		//request the client to provide the schema
+		System.out.println("provided schema is:" + schema.asXML());
 		SplitAdapter splitAdapter = null;
 		MsExcel  excel = null;
 		IRDFSchema extractedSchema = null;
 		MsExcelToRDFMapping mapper = new MsExcelToRDFMapping(schema,idColumnName);
-		File file = getFile(contentFileName);
+		File file = new File(contentFileName);
 		
 		if(file == null || !file.exists()){
 			//create the Msexcel file with the help of provided schema
-			HSSFWorkbook workbookSource = mapper.createDataSource();
-			MsExcelUtils.flush(workbookSource, contentFileName);
+			 try {
+				mapper.createDataSource(contentFileName);
+			} catch (Exception e) {
+				throw new MeshException(e);
+			}
 			excel = new MsExcel(file.getAbsolutePath()); 
-			mapper = new MsExcelToRDFMapping(schema,idColumnName);
 			splitAdapter = getExcelAdapter(excel,mapper,sheetName);
 		}else{
 			//extract schema from excel file sheet and compare the schema 
 			//with the provided schema.
-			//if provided scheam and extracted scheam are same then continue
-			//the next operation otherwise throw exception.
+			//if provided schema and extracted schema are same then continue otherwise throw exception.
 			 excel = new MsExcel(file.getAbsolutePath());
 			try {
-				extractedSchema = MsExcelToRDFMapping.extractRDFSchema(excel, sheetName);
+				extractedSchema = extractMsExcelRDFSchema(excel,sheetName);
+				System.out.println("MsExcel schema is:" + extractedSchema.asXML());
 			} catch (Exception e) {
 				throw new MeshException();
 			}
-			//now compare the both schema
-			if(extractedSchema.equals(schema)){//if both schema same
-				excel = new MsExcel(file.getAbsolutePath()); 
-				mapper = new MsExcelToRDFMapping(schema,idColumnName);
-				splitAdapter = getExcelAdapter(excel,mapper,sheetName);
-			}else{
-				//TODO ,implement feature for mapping the source and target schema in future
-				throw new MeshException("source and target schema is not equal");
-			}
+			//Right now we guess both RDF schema is same
+			//TODO, in future implement the RDF comparison 
+
+//			if(extractedSchema.equals(schema)){//if both schema same
+//				excel = new MsExcel(file.getAbsolutePath()); 
+//				mapper = new MsExcelToRDFMapping(schema,idColumnName);
+//				splitAdapter = getExcelAdapter(excel,mapper,sheetName);
+//			}else{
+//				//TODO ,implement feature for mapping the source and target schema in future
+//				throw new MeshException("source and target schema is not equal");
+//			}
+			
+			mapper = new MsExcelToRDFMapping(schema,idColumnName);
+			splitAdapter = getExcelAdapter(excel,mapper,sheetName);
+			
 		}
 		return splitAdapter;
 	}
@@ -93,7 +107,40 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder{
 		MsExcelContentAdapter contentAdapter = new MsExcelContentAdapter(excel, mapper, sheetName);
 		return new SplitAdapter(syncRepo, contentAdapter, getIdentityProvider());
 	}
+	
+	private RDFSchema extractMsExcelRDFSchema(IMsExcel excel,String sheetName){
+	
+		RDFSchema rdfSchema = new RDFSchema(sheetName, "http://mesh4x/MeshSyncExample/"+sheetName+"#", sheetName);
 		
+		String cellName;
+		HSSFWorkbook workbook = excel.getWorkbook();
+		HSSFSheet sheet = MsExcelUtils.getOrCreateSheetIfAbsent(workbook, sheetName);
+		HSSFCell cell;
+
+		HSSFRow headerRow = sheet.getRow(sheet.getFirstRowNum());
+		HSSFRow dataRow = sheet.getRow(sheet.getLastRowNum());
+		int cellType;
+		for (Iterator<HSSFCell> iterator = dataRow.cellIterator(); iterator.hasNext();) {
+			cell = iterator.next();
+			
+			cellName = headerRow.getCell(cell.getColumnIndex()).getRichStringCellValue().getString();
+			cellType = cell.getCellType();
+			if(HSSFCell.CELL_TYPE_STRING == cellType){
+				rdfSchema.addStringProperty(cellName, cellName, "en");
+			} else if(HSSFCell.CELL_TYPE_BOOLEAN == cellType){
+				rdfSchema.addBooleanProperty(cellName, cellName, "en");
+			} else if(HSSFCell.CELL_TYPE_NUMERIC == cellType){
+				if(HSSFDateUtil.isCellDateFormatted(cell)) {
+					rdfSchema.addDateTimeProperty(cellName, cellName, "en");
+				} else {
+					rdfSchema.addDoubleProperty(cellName, cellName, "en");
+		        }
+			}
+		}
+		
+		return rdfSchema;
+	}
+	
 	@Override
 	public ISyncAdapter createMsAccessAdapter(String mdbFileName, String tableName) {
 
@@ -176,13 +223,10 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder{
 
 
   @Override
-  public ISyncAdapter createMySQLAdapter(String userName,String password,String hostName, int portNo,
-      String databaseName, String tableName){
+  public ISyncAdapter createMySQLAdapter(String userName,String password,String connectionURL, String tableName){
   
-	  
-  	  //  Example 
 	  return HibernateSyncAdapterFactory.createHibernateAdapter(
-			"jdbc:mysql:///"+databaseName, 
+			connectionURL,
 			userName,									// TODO db user  
 			password, 									// TODO db password
 			com.mysql.jdbc.Driver.class,
