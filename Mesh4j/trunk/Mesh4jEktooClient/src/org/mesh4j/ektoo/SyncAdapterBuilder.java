@@ -26,6 +26,7 @@ import org.mesh4j.sync.adapters.hibernate.HibernateSyncAdapterFactory;
 import org.mesh4j.sync.adapters.http.HttpSyncAdapter;
 import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
 import org.mesh4j.sync.adapters.msexcel.IMsExcel;
+import org.mesh4j.sync.adapters.msexcel.MSExcelToPlainXMLMapping;
 import org.mesh4j.sync.adapters.msexcel.MsExcel;
 import org.mesh4j.sync.adapters.msexcel.MsExcelContentAdapter;
 import org.mesh4j.sync.adapters.msexcel.MsExcelSyncRepository;
@@ -236,5 +237,24 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder{
 			getBaseRDFUrl()+tableName+"#",
 			getBaseDirectory());
   }
+
+
+  @Override
+  public ISyncAdapter createMsExcelAdapter(String contentFileName,
+		String sheetName, String idColumnName) {
+
+	IIdentityProvider identityProvider = getIdentityProvider();
+	
+	File file = getFile(contentFileName);
+	MsExcel  excelFile = new MsExcel(file.getAbsolutePath());
+	
+	MsExcelSyncRepository syncRepo = new MsExcelSyncRepository(excelFile, getIdentityProvider(), getIdGenerator());
+	MSExcelToPlainXMLMapping mapper = new MSExcelToPlainXMLMapping(idColumnName, null);
+	MsExcelContentAdapter contentAdapter = new MsExcelContentAdapter(excelFile, mapper, sheetName);
+
+	SplitAdapter splitAdapter = new SplitAdapter(syncRepo, contentAdapter, identityProvider);
+	
+	return splitAdapter;
+}
 
 }

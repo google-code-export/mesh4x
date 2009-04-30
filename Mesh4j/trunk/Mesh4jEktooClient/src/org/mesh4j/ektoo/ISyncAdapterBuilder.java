@@ -15,6 +15,8 @@ public interface ISyncAdapterBuilder {
 	 */
 	public ISyncAdapter createMsExcelAdapter(IRDFSchema schema,String contentFileName, String sheetName, String idColumnName); 
 	
+	@Deprecated
+	public ISyncAdapter createMsExcelAdapter(String contentFileName, String sheetName, String idColumnName);
 	
 	/**
 	 * Create adapter for access adapter
