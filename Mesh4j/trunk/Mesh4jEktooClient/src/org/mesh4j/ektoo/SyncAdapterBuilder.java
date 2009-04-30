@@ -23,9 +23,11 @@ import org.mesh4j.sync.adapters.msexcel.MSExcelToPlainXMLMapping;
 import org.mesh4j.sync.adapters.msexcel.MsExcel;
 import org.mesh4j.sync.adapters.msexcel.MsExcelContentAdapter;
 import org.mesh4j.sync.adapters.msexcel.MsExcelSyncRepository;
+import org.mesh4j.sync.adapters.msexcel.MsExcelToRDFMapping;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.id.generator.IIdGenerator;
 import org.mesh4j.sync.id.generator.IdGenerator;
+import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
 import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
@@ -55,14 +57,23 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder{
 		MsExcel  excelFile = new MsExcel(file.getAbsolutePath());
 		
 		MsExcelSyncRepository syncRepo = new MsExcelSyncRepository(excelFile, getIdentityProvider(), getIdGenerator());
-		MSExcelToPlainXMLMapping mapper = new MSExcelToPlainXMLMapping(idColumnName, null);
+		
+		//implement the MsExcelToRDFMapping instead of MSExcelToPlainXMLMapping
+		RDFSchema schema;
+		try {
+			schema = MsExcelToRDFMapping.extractRDFSchema(excelFile, sheetName);
+		} catch (Exception e) {
+			throw new MeshException();
+		}
+		MsExcelToRDFMapping mapper = new MsExcelToRDFMapping(schema,idColumnName);
+		
+//		MSExcelToPlainXMLMapping mapper = new MSExcelToPlainXMLMapping(idColumnName, null);
 		MsExcelContentAdapter contentAdapter = new MsExcelContentAdapter(excelFile, mapper, sheetName);
 
 		SplitAdapter splitAdapter = new SplitAdapter(syncRepo, contentAdapter, identityProvider);
 		
 		return splitAdapter;
 	}
-
 
 	@Override
 	public ISyncAdapter createMsAccessAdapter(String mdbFileName, String tableName) {
