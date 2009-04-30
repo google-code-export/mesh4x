@@ -248,6 +248,10 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder{
 	IIdentityProvider identityProvider = getIdentityProvider();
 	
 	File file = getFile(contentFileName);
+	//TODO (Raju) need to think about more,just for partial commit
+	if(file == null){
+	 return null;	
+	}
 	MsExcel  excelFile = new MsExcel(file.getAbsolutePath());
 	
 	MsExcelSyncRepository syncRepo = new MsExcelSyncRepository(excelFile, getIdentityProvider(), getIdGenerator());
