@@ -13,47 +13,42 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.controller.CloudUIController;
-import org.mesh4j.ektoo.controller.GSSheetUIController;
+
 /**
  * @author Bhuiyan Mohammad Iklash
- *
+ * 
  */
-public class CloudUI extends JPanel
-{
-  // CONSTANTS
-  private final static long serialVersionUID = 1L;
-    
+public class CloudUI extends JPanel {
+	
+	private static final long serialVersionUID = 101977159720664976L;
+	private static final Log LOGGER = LogFactory.getLog(CloudUI.class);
+	
+	// MODEL VARIABLES
 	private JLabel labelMash = null;
-	private JTextField txtMash= null;
+	private JTextField txtMash = null;
 
 	private JLabel labelDataset = null;
-	private JTextField txtDataset= null;
+	private JTextField txtDataset = null;
 
 	private CloudUIController controller = null;
-	
-	public CloudUI() 
-	{
+
+	// BUSINESS METHODS
+	public CloudUI(CloudUIController controller) {
 		super();
+		this.controller = controller;
 		initialize();
+		initDefault();
 	}
 
-  public CloudUI(CloudUIController controller)
-  {
-    super();
-    this.controller = controller;
-    initialize();
-    initDefault();
-  }	
-
-	private void initDefault()
-	{
-	  getMashText().setText("EktooMesh");
-	  getDataSetText().setText("EktooFeed");
+	private void initDefault() {
+		getMashText().setText("EktooMesh");
+		getDataSetText().setText("EktooFeed");
 	}
 
-	private void initialize()
-	{
+	private void initialize() {
 		this.setSize(300, 135);
 		this.setLayout(null);
 		this.setPreferredSize(new Dimension(300, 95));
@@ -65,11 +60,9 @@ public class CloudUI extends JPanel
 		this.add(getDataSetLabel(), null);
 		this.add(getDataSetText(), null);
 	}
-	
-	private JLabel getMashLabel() 
-	{
-		if (labelMash == null) 
-		{
+
+	private JLabel getMashLabel() {
+		if (labelMash == null) {
 			labelMash = new JLabel();
 			labelMash.setText("User");
 			labelMash.setSize(new Dimension(85, 16));
@@ -79,50 +72,37 @@ public class CloudUI extends JPanel
 		return labelMash;
 	}
 
-	private JTextField getMashText() 
-	{
-		if (txtMash == null) 
-		{
+	private JTextField getMashText() {
+		if (txtMash == null) {
 			txtMash = new JTextField();
 			txtMash.setBounds(new Rectangle(101, 5, 183, 20));
-			txtMash.addActionListener(new ActionListener() 
-      {
-        public void actionPerformed(ActionEvent evt) 
-        {
-            try 
-            {
-              getController().changeMeshName( txtMash.getText() );
-            } 
-            catch (Exception e) 
-            {
-              //  Handle exception
-            }            
-        }
-      });
-			txtMash.addFocusListener(new FocusAdapter() 
-      {
-        public void focusLost(FocusEvent evt) 
-        {
-          try 
-          {
-            getController().changeMeshName( txtMash.getText() );
-          } 
-          catch (Exception e) 
-          {
-            //  Handle exception
-          }            
-        }
-      });     			
+			txtMash.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent evt) {
+					try {
+						getController().changeMeshName(txtMash.getText());
+					} catch (Exception e) {
+						LOGGER.error(e.getMessage(), e);
+						// TODO Handle exception
+					}
+				}
+			});
+			txtMash.addFocusListener(new FocusAdapter() {
+				public void focusLost(FocusEvent evt) {
+					try {
+						getController().changeMeshName(txtMash.getText());
+					} catch (Exception e) {
+						LOGGER.error(e.getMessage(), e);
+						// TODO Handle exception
+					}
+				}
+			});
 		}
 		return txtMash;
 	}
 
-
-	private JLabel getDataSetLabel() 
-	{
-		if (labelDataset == null) 
-		{
-			labelDataset= new JLabel();
+	private JLabel getDataSetLabel() {
+		if (labelDataset == null) {
+			labelDataset = new JLabel();
 			labelDataset.setText("Password");
 			labelDataset.setSize(new Dimension(85, 16));
 			labelDataset.setPreferredSize(new Dimension(85, 16));
@@ -131,46 +111,35 @@ public class CloudUI extends JPanel
 		return labelDataset;
 	}
 
-	private JTextField getDataSetText() 
-	{
-		if (txtDataset == null) 
-		{
+	private JTextField getDataSetText() {
+		if (txtDataset == null) {
 			txtDataset = new JTextField();
 			txtDataset.setBounds(new Rectangle(101, 30, 183, 20));
-			txtDataset.addActionListener(new ActionListener() 
-      {
-        public void actionPerformed(ActionEvent evt) 
-        {
-            try 
-            {
-              getController().changeDatasetName( txtDataset.getText() );
-            } 
-            catch (Exception e) 
-            {
-              //  Handle exception
-            }            
-        }
-      });
-			txtDataset.addFocusListener(new FocusAdapter() 
-      {
-        public void focusLost(FocusEvent evt) 
-        {
-          try 
-          {
-            getController().changeDatasetName( txtDataset.getText() );
-          } 
-          catch (Exception e) 
-          {
-            //  Handle exception
-          }            
-        }
-      });			
+			txtDataset.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent evt) {
+					try {
+						getController().changeDatasetName(txtDataset.getText());
+					} catch (Exception e) {
+						LOGGER.error(e.getMessage(), e);
+						// TODO Handle exception
+					}
+				}
+			});
+			txtDataset.addFocusListener(new FocusAdapter() {
+				public void focusLost(FocusEvent evt) {
+					try {
+						getController().changeDatasetName(txtDataset.getText());
+					} catch (Exception e) {
+						LOGGER.error(e.getMessage(), e);
+						// TODO Handle exception
+					}
+				}
+			});
 		}
 		return txtDataset;
 	}
 
-	public CloudUIController getController() 
-  {
-    return controller;
-  }
+	public CloudUIController getController() {
+		return controller;
+	}
 }

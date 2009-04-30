@@ -4,79 +4,127 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import org.mesh4j.ektoo.controller.KmlUIController;
-import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
+
 /**
  * @author Bhuiyan Mohammad Iklash
- *
+ * 
  */
-public class KmlUI extends JPanel
-{
-	private JLabel labelUri = null;
-	private JTextField txtUri= null;
-	private Object controller;
+public class KmlUI extends JPanel {
 
-	public KmlUI() {
+	private static final long serialVersionUID = 3586406415288503774L;
+	
+	// MODEL VARIABLES
+	private JLabel labelFileName = null;
+	private JTextField txtFileName = null;
+	private JButton btnFile = null;
+	
+	private KmlUIController controller;
+	private JFileChooser fileChooser = new JFileChooser();
+	private File file = null;
+
+	// BUSINESS METHODS
+	public KmlUI(String fileName, KmlUIController controller) {
 		super();
-		initialize();
+		this.controller = controller;
+		this.initialize();
+		this.file = new File(fileName);
+		this.txtFileName.setText(this.file.getName());
 	}
 
-	public KmlUI(String uri)
-	{
-		super();
-		initialize();
-		labelUri.setText(uri);
-
-	}
-
-	private void initialize()
-	{
-		this.setController(new KmlUIController(new PropertiesProvider()));		
-		this.setSize(300, 135);
+	private void initialize() {
+		this.setSize(300, 95);
 		this.setLayout(null);
 		this.setPreferredSize(new Dimension(300, 95));
 		this.setBackground(new Color(106, 237, 238));
-
-		this.add(getUriLabel(), null);
-		this.add(getUriText(), null);
-	}
-	private JLabel getUriLabel() 
-	{
-		if (labelUri == null) 
-		{
-			labelUri = new JLabel();
-			labelUri.setText(EktooUITranslator.getKmlUriLabel());
-			labelUri.setSize(new Dimension(85, 16));
-			labelUri.setPreferredSize(new Dimension(85, 16));
-			labelUri.setLocation(new Point(8, 9));
-		}
-		return labelUri;
+		this.add(getFileNameLabel(), null);
+		this.add(getFileNameText(), null);
+		this.add(getBtnFile(), null);
 	}
 
-	private JTextField getUriText() {
-		if (txtUri == null) {
-			txtUri = new JTextField();
-			txtUri.setBounds(new Rectangle(101, 5, 183, 20));
+	private JLabel getFileNameLabel() {
+		if (labelFileName == null) {
+			labelFileName = new JLabel();
+			labelFileName.setText(EktooUITranslator.getKmlFileNameLabel());
+			labelFileName.setSize(new Dimension(85, 16));
+			labelFileName.setPreferredSize(new Dimension(85, 16));
+			labelFileName.setLocation(new Point(8, 9));
 		}
-		return txtUri;
+		return labelFileName;
+	}
+
+	private JTextField getFileNameText() {
+		if (txtFileName == null) {
+			txtFileName = new JTextField();
+			txtFileName.setBounds(new Rectangle(99, 8, 149, 20));
+		}
+		return txtFileName;
+	}
+
+	public JButton getBtnFile() {
+		if (btnFile == null) {
+			btnFile = new JButton();
+			btnFile.setText(EktooUITranslator.getBrowseButtonLabel());
+			btnFile.setBounds(new Rectangle(259, 8, 34, 20));
+			btnFile.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					int returnVal = getFileChooser().showOpenDialog(btnFile);
+					if (returnVal == JFileChooser.APPROVE_OPTION) {
+						// System.out.println("You chose to open this file: " +
+						// getFileChooser().getSelectedFile().getName());
+						setFile(getFileChooser().getSelectedFile());
+						if (getFile() != null) {
+							txtFileName.setText(getFile().getName());
+						}
+					}
+				}
+			});
+		}
+		return btnFile;
+	}
+
+	
+	public String getFileName() {
+		try {
+			return this.file.getCanonicalPath();
+		} catch (IOException e) {
+			// nothing to do
+			return null;
+		}
 	}
 	
-	public String getUri()
-	{
-		return getUriText().getText();
-	}
-
-	public void setController(Object controller) {
-		this.controller = controller;
-	}
-
-	public Object getController() {
+	public KmlUIController getController() {
 		return controller;
 	}
-}  //  @jve:decl-index=0:visual-constraint="-4,-28"
+	
+	public void setFileChooser(JFileChooser fileChooser) {
+		this.fileChooser = fileChooser;
+	}
+
+	public JFileChooser getFileChooser() {
+		if (fileChooser == null)
+			fileChooser = new JFileChooser();
+		return fileChooser;
+	}
+	
+	public void setFile(File file) {
+		this.file = file;
+	}
+
+	public File getFile() {
+		return file;
+	}
+
+}

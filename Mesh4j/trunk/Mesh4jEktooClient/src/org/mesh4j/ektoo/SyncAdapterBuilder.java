@@ -24,6 +24,7 @@ import org.mesh4j.sync.adapters.feed.ContentWriter;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.adapters.hibernate.HibernateSyncAdapterFactory;
 import org.mesh4j.sync.adapters.http.HttpSyncAdapter;
+import org.mesh4j.sync.adapters.kml.KMLDOMLoaderFactory;
 import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
 import org.mesh4j.sync.adapters.msexcel.IMsExcel;
 import org.mesh4j.sync.adapters.msexcel.MSExcelToPlainXMLMapping;
@@ -41,11 +42,11 @@ import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
-public class SyncAdapterBuilder implements ISyncAdapterBuilder{
-	
+public class SyncAdapterBuilder implements ISyncAdapterBuilder {
+
 	// MODEL VARIABLEs
 	private PropertiesProvider propertiesProvider;
-	
+
 	// BUSINESS METHODS
 
 	public SyncAdapterBuilder(PropertiesProvider propertiesProvider) {
@@ -53,101 +54,116 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder{
 		this.propertiesProvider = propertiesProvider;
 	}
 
-
 	@Override
-	public ISyncAdapter createMsExcelAdapter(IRDFSchema schema,String contentFileName, String sheetName, String idColumnName) {
-		
+	public ISyncAdapter createMsExcelAdapter(IRDFSchema schema,
+			String contentFileName, String sheetName, String idColumnName) {
+
 		System.out.println("provided schema is:" + schema.asXML());
 		SplitAdapter splitAdapter = null;
-		MsExcel  excel = null;
+		MsExcel excel = null;
 		IRDFSchema extractedSchema = null;
-		MsExcelToRDFMapping mapper = new MsExcelToRDFMapping(schema,idColumnName);
+		MsExcelToRDFMapping mapper = new MsExcelToRDFMapping(schema,
+				idColumnName);
 		File file = new File(contentFileName);
-		
-		if(file == null || !file.exists()){
-			//create the Msexcel file with the help of provided schema
-			 try {
+
+		if (file == null || !file.exists()) {
+			// create the Msexcel file with the help of provided schema
+			try {
 				mapper.createDataSource(contentFileName);
 			} catch (Exception e) {
 				throw new MeshException(e);
 			}
-			excel = new MsExcel(file.getAbsolutePath()); 
-			splitAdapter = getExcelAdapter(excel,mapper,sheetName);
-		}else{
-			//extract schema from excel file sheet and compare the schema 
-			//with the provided schema.
-			//if provided schema and extracted schema are same then continue otherwise throw exception.
-			 excel = new MsExcel(file.getAbsolutePath());
+			excel = new MsExcel(file.getAbsolutePath());
+			splitAdapter = getExcelAdapter(excel, mapper, sheetName);
+		} else {
+			// extract schema from excel file sheet and compare the schema
+			// with the provided schema.
+			// if provided schema and extracted schema are same then continue
+			// otherwise throw exception.
+			excel = new MsExcel(file.getAbsolutePath());
 			try {
-				extractedSchema = extractMsExcelRDFSchema(excel,sheetName);
-				System.out.println("MsExcel schema is:" + extractedSchema.asXML());
+				extractedSchema = extractMsExcelRDFSchema(excel, sheetName);
+				System.out.println("MsExcel schema is:"
+						+ extractedSchema.asXML());
 			} catch (Exception e) {
 				throw new MeshException();
 			}
-			//Right now we guess both RDF schema is same
-			//TODO, in future implement the RDF comparison 
+			// Right now we guess both RDF schema is same
+			// TODO, in future implement the RDF comparison
 
-//			if(extractedSchema.equals(schema)){//if both schema same
-//				excel = new MsExcel(file.getAbsolutePath()); 
-//				mapper = new MsExcelToRDFMapping(schema,idColumnName);
-//				splitAdapter = getExcelAdapter(excel,mapper,sheetName);
-//			}else{
-//				//TODO ,implement feature for mapping the source and target schema in future
-//				throw new MeshException("source and target schema is not equal");
-//			}
-			
-			mapper = new MsExcelToRDFMapping(schema,idColumnName);
-			splitAdapter = getExcelAdapter(excel,mapper,sheetName);
-			
+			// if(extractedSchema.equals(schema)){//if both schema same
+			// excel = new MsExcel(file.getAbsolutePath());
+			// mapper = new MsExcelToRDFMapping(schema,idColumnName);
+			// splitAdapter = getExcelAdapter(excel,mapper,sheetName);
+			// }else{
+			// //TODO ,implement feature for mapping the source and target
+			// schema in future
+			// throw new MeshException("source and target schema is not equal");
+			// }
+
+			mapper = new MsExcelToRDFMapping(schema, idColumnName);
+			splitAdapter = getExcelAdapter(excel, mapper, sheetName);
+
 		}
 		return splitAdapter;
 	}
 
-	private SplitAdapter getExcelAdapter(MsExcel excel,MsExcelToRDFMapping mapper,String sheetName){
-		MsExcelSyncRepository syncRepo = new MsExcelSyncRepository(excel, getIdentityProvider(), getIdGenerator());
-		MsExcelContentAdapter contentAdapter = new MsExcelContentAdapter(excel, mapper, sheetName);
+	private SplitAdapter getExcelAdapter(MsExcel excel,
+			MsExcelToRDFMapping mapper, String sheetName) {
+		MsExcelSyncRepository syncRepo = new MsExcelSyncRepository(excel,
+				getIdentityProvider(), getIdGenerator());
+		MsExcelContentAdapter contentAdapter = new MsExcelContentAdapter(excel,
+				mapper, sheetName);
 		return new SplitAdapter(syncRepo, contentAdapter, getIdentityProvider());
 	}
-	
-	private RDFSchema extractMsExcelRDFSchema(IMsExcel excel,String sheetName){
-	
-		RDFSchema rdfSchema = new RDFSchema(sheetName, "http://mesh4x/MeshSyncExample/"+sheetName+"#", sheetName);
-		
+
+	@SuppressWarnings("unchecked")
+	private RDFSchema extractMsExcelRDFSchema(IMsExcel excel, String sheetName) {
+
+		RDFSchema rdfSchema = new RDFSchema(sheetName,
+				getBaseRDFUrl() + sheetName + "#", sheetName);
+
 		String cellName;
 		HSSFWorkbook workbook = excel.getWorkbook();
-		HSSFSheet sheet = MsExcelUtils.getOrCreateSheetIfAbsent(workbook, sheetName);
+		HSSFSheet sheet = MsExcelUtils.getOrCreateSheetIfAbsent(workbook,
+				sheetName);
 		HSSFCell cell;
 
 		HSSFRow headerRow = sheet.getRow(sheet.getFirstRowNum());
 		HSSFRow dataRow = sheet.getRow(sheet.getLastRowNum());
 		int cellType;
-		for (Iterator<HSSFCell> iterator = dataRow.cellIterator(); iterator.hasNext();) {
+		for (Iterator<HSSFCell> iterator = dataRow.cellIterator(); iterator
+				.hasNext();) {
 			cell = iterator.next();
-			
-			cellName = headerRow.getCell(cell.getColumnIndex()).getRichStringCellValue().getString();
+
+			cellName = headerRow.getCell(cell.getColumnIndex())
+					.getRichStringCellValue().getString();
 			cellType = cell.getCellType();
-			if(HSSFCell.CELL_TYPE_STRING == cellType){
+			if (HSSFCell.CELL_TYPE_STRING == cellType) {
 				rdfSchema.addStringProperty(cellName, cellName, "en");
-			} else if(HSSFCell.CELL_TYPE_BOOLEAN == cellType){
+			} else if (HSSFCell.CELL_TYPE_BOOLEAN == cellType) {
 				rdfSchema.addBooleanProperty(cellName, cellName, "en");
-			} else if(HSSFCell.CELL_TYPE_NUMERIC == cellType){
-				if(HSSFDateUtil.isCellDateFormatted(cell)) {
+			} else if (HSSFCell.CELL_TYPE_NUMERIC == cellType) {
+				if (HSSFDateUtil.isCellDateFormatted(cell)) {
 					rdfSchema.addDateTimeProperty(cellName, cellName, "en");
 				} else {
 					rdfSchema.addDoubleProperty(cellName, cellName, "en");
-		        }
+				}
 			}
 		}
-		
+
 		return rdfSchema;
 	}
-	
-	@Override
-	public ISyncAdapter createMsAccessAdapter(String mdbFileName, String tableName) {
 
-		MsAccessSyncAdapterFactory msAccesSyncAdapter  = new MsAccessSyncAdapterFactory(this.getBaseDirectory(), this.getBaseRDFUrl());
+	@Override
+	public ISyncAdapter createMsAccessAdapter(String mdbFileName,
+			String tableName) {
+
+		MsAccessSyncAdapterFactory msAccesSyncAdapter = new MsAccessSyncAdapterFactory(
+				this.getBaseDirectory(), this.getBaseRDFUrl());
 		try {
-			return msAccesSyncAdapter.createSyncAdapterFromFile(tableName, mdbFileName, tableName);
+			return msAccesSyncAdapter.createSyncAdapterFromFile(tableName,
+					mdbFileName, tableName);
 		} catch (Exception e) {
 			throw new MeshException(e);
 		}
@@ -155,109 +171,127 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder{
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public ISyncAdapter createGoogleSpreadSheetAdapter(GoogleSpreadSheetInfo spreadSheetInfo){
-		
+	public ISyncAdapter createGoogleSpreadSheetAdapter(
+			GoogleSpreadSheetInfo spreadSheetInfo) {
+
 		String idColumName = spreadSheetInfo.getIdColumnName();
-		int lastUpdateColumnPosition = spreadSheetInfo.getLastUpdateColumnPosition();
+		int lastUpdateColumnPosition = spreadSheetInfo
+				.getLastUpdateColumnPosition();
 		int idColumnPosition = spreadSheetInfo.getIdColumnPosition();
 		String userName = spreadSheetInfo.getUserName();
 		String passWord = spreadSheetInfo.getPassWord();
 		String googleSpreadSheetId = spreadSheetInfo.getGoogleSpreadSheetId();
 		String type = spreadSheetInfo.getType();
-		
+
 		// create google spread sheet
-		IGoogleSpreadsheetToXMLMapping mapper = new GoogleSpreadsheetToPlainXMLMapping(type,idColumName,
-				idColumnPosition,lastUpdateColumnPosition);
-		IGoogleSpreadSheet gSpreadSheet = new GoogleSpreadsheet(googleSpreadSheetId, userName, passWord);
-		
+		IGoogleSpreadsheetToXMLMapping mapper = new GoogleSpreadsheetToPlainXMLMapping(
+				type, idColumName, idColumnPosition, lastUpdateColumnPosition);
+		IGoogleSpreadSheet gSpreadSheet = new GoogleSpreadsheet(
+				googleSpreadSheetId, userName, passWord);
+
 		// TODO (Sharif) create sync sheet automatically
-		GSWorksheet<GSRow<GSCell>> contentWorkSheet = gSpreadSheet.getGSWorksheet(spreadSheetInfo.getSheetName());
+		GSWorksheet<GSRow<GSCell>> contentWorkSheet = gSpreadSheet
+				.getGSWorksheet(spreadSheetInfo.getSheetName());
 		String syncWorkSheetName = spreadSheetInfo.getSheetName() + "_sync";
-		GSWorksheet<GSRow<GSCell>> syncWorkSheet = gSpreadSheet.getGSWorksheet(syncWorkSheetName); 
+		GSWorksheet<GSRow<GSCell>> syncWorkSheet = gSpreadSheet
+				.getGSWorksheet(syncWorkSheetName);
 
 		// adapter creation
 		IIdentityProvider identityProvider = getIdentityProvider();
-		GoogleSpreadSheetContentAdapter contentRepo = new GoogleSpreadSheetContentAdapter(gSpreadSheet, contentWorkSheet, mapper);
-		GoogleSpreadSheetSyncRepository  syncRepo = new GoogleSpreadSheetSyncRepository(gSpreadSheet, identityProvider, getIdGenerator(), syncWorkSheet.getName());
-		SplitAdapter splitAdapter = new SplitAdapter(syncRepo, contentRepo, identityProvider);
-		
+		GoogleSpreadSheetContentAdapter contentRepo = new GoogleSpreadSheetContentAdapter(
+				gSpreadSheet, contentWorkSheet, mapper);
+		GoogleSpreadSheetSyncRepository syncRepo = new GoogleSpreadSheetSyncRepository(
+				gSpreadSheet, identityProvider, getIdGenerator(), syncWorkSheet
+						.getName());
+		SplitAdapter splitAdapter = new SplitAdapter(syncRepo, contentRepo,
+				identityProvider);
+
 		return splitAdapter;
 	}
-	
-	public ISyncAdapter createHttpSyncAdapter(String meshid, String datasetId){
+
+	public ISyncAdapter createHttpSyncAdapter(String meshid, String datasetId) {
 		String url = getSyncUrl(meshid, datasetId);
-		HttpSyncAdapter adapter = new HttpSyncAdapter(url, RssSyndicationFormat.INSTANCE, getIdentityProvider(), getIdGenerator(), ContentWriter.INSTANCE, ContentReader.INSTANCE);
+		HttpSyncAdapter adapter = new HttpSyncAdapter(url,
+				RssSyndicationFormat.INSTANCE, getIdentityProvider(),
+				getIdGenerator(), ContentWriter.INSTANCE,
+				ContentReader.INSTANCE);
 		return adapter;
 	}
-	
+
 	// ACCESSORS
-	
+
 	private File getFile(String fileName) {
 		File file = new File(fileName);
 		return file;
 	}
-	
+
 	private String getSyncUrl(String meshid, String datasetId) {
-		return this.propertiesProvider.getMeshURL(meshid + "/" +  datasetId);
+		return this.propertiesProvider.getMeshURL(meshid + "/" + datasetId);
 	}
-	
+
 	private IIdentityProvider getIdentityProvider() {
 		return this.propertiesProvider.getIdentityProvider();
 	}
-	
+
 	private IIdGenerator getIdGenerator() {
 		return IdGenerator.INSTANCE;
 	}
-	
+
 	private String getBaseDirectory() {
 		return this.propertiesProvider.getBaseDirectory();
 	}
-
 
 	private String getBaseRDFUrl() {
 		// TODO (JMT) review
 		return this.propertiesProvider.getMeshSyncServerURL();
 	}
 
+	@Override
+	public ISyncAdapter createMySQLAdapter(String userName, String password,
+			String hostName, int portNo, String databaseName, String tableName) {
 
-  @Override
-  public ISyncAdapter createMySQLAdapter(String userName,String password,String hostName, int portNo, String databaseName, String tableName){
-  
-    String connectionUri = "jdbc:mysql://" + hostName + ":" + portNo + "/" + databaseName;
-    
-	  return HibernateSyncAdapterFactory.createHibernateAdapter(
-	    connectionUri,
-			userName,									// TODO db user  
-			password, 									// TODO db password
-			com.mysql.jdbc.Driver.class,
-			org.hibernate.dialect.MySQLDialect.class,
-			tableName, 
-			tableName+"_sync_info", 
-			getBaseRDFUrl()+tableName+"#",
-			getBaseDirectory());
-  }
+		String connectionUri = "jdbc:mysql://" + hostName + ":" + portNo + "/"
+				+ databaseName;
 
-
-  @Override
-  public ISyncAdapter createMsExcelAdapter(String contentFileName,
-		String sheetName, String idColumnName) {
-
-	IIdentityProvider identityProvider = getIdentityProvider();
-	
-	File file = getFile(contentFileName);
-	//TODO (Raju) need to think about more,just for partial commit
-	if(file == null || !file.exists()){
-	 return null;	
+		return HibernateSyncAdapterFactory.createHibernateAdapter(
+				connectionUri,
+				userName, // TODO db user
+				password, // TODO db password
+				com.mysql.jdbc.Driver.class,
+				org.hibernate.dialect.MySQLDialect.class, tableName, tableName
+						+ "_sync_info", getBaseRDFUrl() + tableName + "#",
+				getBaseDirectory());
 	}
-	MsExcel  excelFile = new MsExcel(file.getAbsolutePath());
-	
-	MsExcelSyncRepository syncRepo = new MsExcelSyncRepository(excelFile, getIdentityProvider(), getIdGenerator());
-	MSExcelToPlainXMLMapping mapper = new MSExcelToPlainXMLMapping(idColumnName, null);
-	MsExcelContentAdapter contentAdapter = new MsExcelContentAdapter(excelFile, mapper, sheetName);
 
-	SplitAdapter splitAdapter = new SplitAdapter(syncRepo, contentAdapter, identityProvider);
-	
-	return splitAdapter;
-}
+	@Override
+	public ISyncAdapter createMsExcelAdapter(String contentFileName,
+			String sheetName, String idColumnName) {
+
+		IIdentityProvider identityProvider = getIdentityProvider();
+
+		File file = getFile(contentFileName);
+		// TODO (Raju) need to think about more,just for partial commit
+		if (file == null || !file.exists()) {
+			return null;
+		}
+		MsExcel excelFile = new MsExcel(file.getAbsolutePath());
+
+		MsExcelSyncRepository syncRepo = new MsExcelSyncRepository(excelFile,
+				getIdentityProvider(), getIdGenerator());
+		MSExcelToPlainXMLMapping mapper = new MSExcelToPlainXMLMapping(
+				idColumnName, null);
+		MsExcelContentAdapter contentAdapter = new MsExcelContentAdapter(
+				excelFile, mapper, sheetName);
+
+		SplitAdapter splitAdapter = new SplitAdapter(syncRepo, contentAdapter,
+				identityProvider);
+
+		return splitAdapter;
+	}
+
+	@Override
+	public ISyncAdapter createKMLAdapter(String kmlFileName) {
+		return KMLDOMLoaderFactory.createKMLAdapter(kmlFileName, getIdentityProvider());
+	}
 
 }

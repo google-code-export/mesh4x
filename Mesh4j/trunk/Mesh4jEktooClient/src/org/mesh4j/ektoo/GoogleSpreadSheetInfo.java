@@ -2,39 +2,32 @@ package org.mesh4j.ektoo;
 
 import org.mesh4j.sync.validations.Guard;
 
-
 public class GoogleSpreadSheetInfo {
 
 	// MODEL VARIABLES
 	private String idColumnName = "";
 	private int lastUpdateColumnPosition = 0;
 	private int idColumnPosition = 1;
-	
+
 	private String userName = "";
 	private String passWord = "";
 	private String googleSpreadSheetId = "";
-	
+
 	private String sheetName = "";
 	private String type = "";
-	 
-	
-	
+
 	// BUSINESS METHODS
 
-	public GoogleSpreadSheetInfo(String googleSpreadSheetId,String userName,String passWord,
-								   String idColumnName, int idColumnPosition,
-									int lastUpdateColumnPosition,  String sheetName,String type
-			)
-	{
-		
-		Guard.argumentNotNullOrEmptyString(googleSpreadSheetId, "googleSpreadSheetId");
+	public GoogleSpreadSheetInfo(String googleSpreadSheetId, String userName,
+			String passWord, String idColumnName, int idColumnPosition,
+			int lastUpdateColumnPosition, String sheetName, String type) {
+
+		Guard.argumentNotNullOrEmptyString(googleSpreadSheetId,
+				"googleSpreadSheetId");
 		Guard.argumentNotNullOrEmptyString(userName, "userName");
 		Guard.argumentNotNullOrEmptyString(passWord, "passWord");
 		Guard.argumentNotNullOrEmptyString(idColumnName, "idColumnName");
-		
-		
-		// TODO (JMT) add parameters validations
-		
+
 		this.googleSpreadSheetId = googleSpreadSheetId;
 		this.idColumnName = idColumnName;
 		this.idColumnPosition = idColumnPosition;
@@ -44,7 +37,7 @@ public class GoogleSpreadSheetInfo {
 		this.type = type;
 		this.userName = userName;
 	}
-	
+
 	public String getType() {
 		return type;
 	}
@@ -52,7 +45,7 @@ public class GoogleSpreadSheetInfo {
 	public String getSheetName() {
 		return sheetName;
 	}
-	
+
 	public String getIdColumnName() {
 		return idColumnName;
 	}

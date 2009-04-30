@@ -2,89 +2,73 @@ package org.mesh4j.ektoo.ui;
 
 import java.beans.PropertyChangeEvent;
 import java.io.File;
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.Set;
 
 import javax.swing.JComboBox;
 import javax.swing.filechooser.FileFilter;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.controller.MsAccessUIController;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.sync.adapters.msaccess.MsAccessHelper;
+
 /**
  * @author Bhuiyan Mohammad Iklash
- *
+ * 
  */
-public class MsAccessUI extends TableUI
-{
-	private static final long serialVersionUID = 1L;
+public class MsAccessUI extends TableUI {
+
+	private static final long serialVersionUID = 4708875346159085594L;
+	private static final Log LOGGER = LogFactory.getLog(MsAccessUI.class);
+
+	// MODEL VARIABLES
 	private MsAccessUIController controller;
 
-	public MsAccessUI() 
-	{
-		super();
-		initialize();
-	}
-	
-	public MsAccessUI(MsAccessUIController controller) 
-	{
+	// BUSINESS METHODS
+	public MsAccessUI(MsAccessUIController controller) {
 		super();
 		this.controller = controller;
 		initialize();
 	}
 
-	private void initialize()
-	{
+	private void initialize() {
 		this.showColumn(false);
-		this.getFileChooser().setDialogTitle( EktooUITranslator.getExcelFileSelectorTitle());
+		this.getFileChooser().setDialogTitle(EktooUITranslator.getExcelFileSelectorTitle());
 		this.getFileChooser().setAcceptAllFileFilterUsed(false);
 		this.getFileChooser().addChoosableFileFilter(new MsAccessFilter());
 	}
 
 	@Override
-	public void setList(File file)
-	{
+	public void setList(File file) {
 		JComboBox tableList = getTableList();
 		tableList.removeAllItems();
-		
-		try
-		{
+
+		try {
 			String tableName = null;
-			Set<String> tableNames = MsAccessHelper.getTableNames(file.getAbsolutePath());
+			Set<String> tableNames = MsAccessHelper.getTableNames(file
+					.getAbsolutePath());
 			Iterator<String> itr = tableNames.iterator();
-			while(itr.hasNext())
-			{
-				tableName = (String)itr.next();
+			while (itr.hasNext()) {
+				tableName = (String) itr.next();
 				tableList.addItem(tableName);
 			}
+
+			this.controller.changeDatabaseName(file.getAbsolutePath());
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
 		}
-		catch(IOException ioe)
-		{
-			
-		}
-		
-		try
-		{
-			this.controller.changeDatabaseName(file.getAbsolutePath()); 
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-		}		
 	}
 
 	@Override
-	public void setList(File file, int tableIndex)
-	{
-		try
-		{
-			this.controller.changeTableName( (String)getTableList().getSelectedItem() );
+	public void setList(File file, int tableIndex) {
+		try {
+			this.controller.changeTableName((String) getTableList()
+					.getSelectedItem());
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
 		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-		}		
 	}
 
 	public void setController(MsAccessUIController controller) {
@@ -96,34 +80,31 @@ public class MsAccessUI extends TableUI
 	}
 
 	@Override
-	public void modelPropertyChange(PropertyChangeEvent evt) 
-	{
+	public void modelPropertyChange(PropertyChangeEvent evt) {
+		// TODO modelPropertyChange
 	}
 
 	@Override
-	public void setList(File file, int tableIndex, String columnName) 
-	{
+	public void setList(File file, int tableIndex, String columnName) {
+		// TODO setList
 	}
 }
 
-class MsAccessFilter extends FileFilter 
-{
-  public boolean accept(File file) 
-  {
-    if (file.isDirectory())
-      return true;
-        
-    int pos = file.getName().lastIndexOf(".");
-    String ext = file.getName().substring(pos);
-        
-    if (ext != null && ext.equals(".mdb")) 
-      return true;
+class MsAccessFilter extends FileFilter {
+	public boolean accept(File file) {
+		if (file.isDirectory())
+			return true;
 
-    return false;
-  }
+		int pos = file.getName().lastIndexOf(".");
+		String ext = file.getName().substring(pos);
 
-  public String getDescription() 
-  {
-    return EktooUITranslator.getExcelFileDescription();
-  }
+		if (ext != null && ext.equals(".mdb"))
+			return true;
+
+		return false;
+	}
+
+	public String getDescription() {
+		return EktooUITranslator.getExcelFileDescription();
+	}
 }
