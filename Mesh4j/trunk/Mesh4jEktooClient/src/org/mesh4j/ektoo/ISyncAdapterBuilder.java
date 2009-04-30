@@ -54,5 +54,5 @@ public interface ISyncAdapterBuilder {
 	 * @param tableName
 	 * @return
 	 */
-	public ISyncAdapter createMySQLAdapter(String userName,String password,String hostName, int portNo, String databaseName, String tableName);
+	public ISyncAdapter createMySQLAdapter(String userName,String password, String connectionURL, String tableName);
 }
