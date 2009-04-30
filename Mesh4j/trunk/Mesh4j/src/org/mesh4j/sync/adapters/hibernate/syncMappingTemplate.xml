@@ -7,6 +7,6 @@
 		<property name="entity_name" column="entity_name" node="entity_name" type="string"/>
 		<property name="entity_id" column="entity_id" node="entity_id" type="string"/>
 		<property name="entity_version" column="entity_version" node="entity_version" type="string"/>
-		<property name="sync_data" column="sync_data" node="sync_data" type="string"/>
+		<property name="sync_data" column="sync_data" node="sync_data" type="string" length="65535"/>
 	</class>
 </hibernate-mapping>
