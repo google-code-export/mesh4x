@@ -47,6 +47,7 @@ public class SyncAdapterBuilderTest {
 	@Test
 	public void shouldCreateMsAccessAdapter() throws Exception{
 	    ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
+	    																// TODO remove folder harcode 
 	    ISyncAdapter syncAdapter = adapterBuilder.createMsAccessAdapter("C:\\jtest\\ektoo.mdb", "ektoo");
 	    
 	   Assert.assertEquals(0, syncAdapter.getAll().size());
@@ -56,6 +57,7 @@ public class SyncAdapterBuilderTest {
 	@Test
 	public void shouldCreateExcelAdapter() throws DocumentException{
 	
+		// TODO remove folder harcode
 		String contentFile = "C:\\jtest\\contentFile.xls";
 
 		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
@@ -73,6 +75,7 @@ public class SyncAdapterBuilderTest {
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldGenarateExceptionIfSheetNameEmptyOrNull()
 	{
+		// TODO remove folder harcode
 		String contentFile = "C:\\jtest\\contentFile.xls";
 		String syncFile = "C:\\jtest\\syncFile.xls";
 		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
@@ -81,6 +84,7 @@ public class SyncAdapterBuilderTest {
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldGenarateExceptionIfIdEmptyOrNull(){
+		// TODO remove folder harcode
 		String contentFile = "C:\\jtest\\contentFile.xls";
 		String syncFile = "C:\\jtest\\syncFile.xls";
 		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
@@ -89,6 +93,7 @@ public class SyncAdapterBuilderTest {
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldGenarateExceptionIfContenFileIsNull(){
+		// TODO remove folder harcode
 		String contentFile = "C:\\jtest\\contentFile.xls";
 		String syncFile = "C:\\jtest\\syncFile.xls";
 		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
@@ -97,6 +102,7 @@ public class SyncAdapterBuilderTest {
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldGenarateExceptionIfSyncFileIsNull(){
+		// TODO remove folder harcode
 		String contentFile = "C:\\jtest\\contentFile.xls";
 		String syncFile = "C:\\jtest\\syncFile.xls";
 		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
@@ -105,6 +111,7 @@ public class SyncAdapterBuilderTest {
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldGenarateExceptionIfIdentityIsNull(){
+		// TODO remove folder harcode
 		String contentFile = "C:\\jtest\\contentFile.xls";
 		String syncFile = "C:\\jtest\\syncFile.xls";
 		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
@@ -113,6 +120,7 @@ public class SyncAdapterBuilderTest {
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldGenarateExceptionIfIdGeneratorIsNull(){
+		// TODO remove folder harcode
 		String contentFile = "C:\\jtest\\contentFile.xls";
 		String syncFile = "C:\\jtest\\syncFile.xls";
 		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());

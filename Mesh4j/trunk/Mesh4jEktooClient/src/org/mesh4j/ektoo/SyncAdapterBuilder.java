@@ -58,6 +58,7 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 	@Override
 	public ISyncAdapter createGoogleSpreadSheetAdapter(GoogleSpreadSheetInfo spreadSheetInfo) {
 
+		// TODO create googleSpreadSheetSyncAdapterFactory in GeoogleSpreadSheet project
 		String idColumName = spreadSheetInfo.getIdColumnName();
 		int lastUpdateColumnPosition = spreadSheetInfo
 				.getLastUpdateColumnPosition();

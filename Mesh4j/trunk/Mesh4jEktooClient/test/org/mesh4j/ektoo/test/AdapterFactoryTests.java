@@ -41,207 +41,240 @@ import org.mesh4j.sync.test.utils.TestHelper;
 import org.mesh4j.sync.utils.XMLHelper;
 
 public class AdapterFactoryTests {
-	
-	
-	//@Before
-	public void setUp(){
+
+	// @Before
+	public void setUp() {
 	}
-	
+
 	@Test
-	public void shouldCreateHttpAdapter(){
+	public void shouldCreateHttpAdapter() {
 		String url = "http://localhost:8080/mesh4x/feeds/myMesh/myFeed";
-		HttpSyncAdapter adapter = new HttpSyncAdapter(url, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, ContentWriter.INSTANCE, ContentReader.INSTANCE);
-		//Assert.assertEquals(6, adapter.getAll());
+		HttpSyncAdapter adapter = new HttpSyncAdapter(url,
+				RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE,
+				IdGenerator.INSTANCE, ContentWriter.INSTANCE,
+				ContentReader.INSTANCE);
+		// Assert.assertEquals(6, adapter.getAll());
 		Assert.assertTrue(adapter.getAll().size() > 0);
 	}
-	
+
 	@Test
-	public void shouldCreateMsAccessAdapterWithRDF() throws Exception{
-		MsAccessSyncAdapterFactory adapterFactory = new MsAccessSyncAdapterFactory(TestHelper.baseDirectoryForTest(), "http://mesh4x/feeds/grammen");
-	    SplitAdapter syncAdapter = adapterFactory.createSyncAdapterFromFile("aktoo", TestHelper.baseDirectoryForTest() + "\\aktoo.mdb", "aktoo");
-// TODO (MSAccess auto create sync table)
-	    
-		HibernateContentAdapter contentAdapter = (HibernateContentAdapter)syncAdapter.getContentAdapter();
-		HibernateToRDFMapping mapping = (HibernateToRDFMapping)contentAdapter.getMapping();
+	public void shouldCreateMsAccessAdapterWithRDF() throws Exception {
+		MsAccessSyncAdapterFactory adapterFactory = new MsAccessSyncAdapterFactory(
+				TestHelper.baseDirectoryForTest(),
+				"http://mesh4x/feeds/grammen");
+		SplitAdapter syncAdapter = adapterFactory.createSyncAdapterFromFile(
+				"aktoo", TestHelper.baseDirectoryForTest() + "\\aktoo.mdb",
+				"aktoo");
+
+		HibernateContentAdapter contentAdapter = (HibernateContentAdapter) syncAdapter
+				.getContentAdapter();
+		HibernateToRDFMapping mapping = (HibernateToRDFMapping) contentAdapter
+				.getMapping();
 		IRDFSchema schema = mapping.getSchema();
-// TODO Add to ISyncAdapter getSchema()?
-	   Assert.assertEquals(0, syncAdapter.getAll().size());
-	   
-	   syncAdapter.add(makeRDFItem(schema));
-	   
-	   Assert.assertEquals(1, syncAdapter.getAll().size());
+		Assert.assertEquals(0, syncAdapter.getAll().size());
+
+		syncAdapter.add(makeRDFItem(schema));
+
+		Assert.assertEquals(1, syncAdapter.getAll().size());
 	}
-	
+
 	@Test
-	public void shouldCreateMsAccessAdapterWithoutRDF() throws Exception{
-		MsAccessSyncAdapterFactory adapterFactory = new MsAccessSyncAdapterFactory(TestHelper.baseDirectoryForTest(), null);
-	    SplitAdapter syncAdapter = adapterFactory.createSyncAdapterFromFile("aktoo", TestHelper.baseDirectoryForTest() + "\\aktoo.mdb", "aktoo");
-	    
-	   Assert.assertEquals(0, syncAdapter.getAll().size());
-	   
-	   syncAdapter.add(getEntityItem());
-	   
-	   Assert.assertEquals(1, syncAdapter.getAll().size());
+	public void shouldCreateMsAccessAdapterWithoutRDF() throws Exception {
+		MsAccessSyncAdapterFactory adapterFactory = new MsAccessSyncAdapterFactory(
+				TestHelper.baseDirectoryForTest(), null);
+		SplitAdapter syncAdapter = adapterFactory.createSyncAdapterFromFile(
+				"aktoo", TestHelper.baseDirectoryForTest() + "\\aktoo.mdb",
+				"aktoo");
+
+		Assert.assertEquals(0, syncAdapter.getAll().size());
+
+		syncAdapter.add(getEntityItem());
+
+		Assert.assertEquals(1, syncAdapter.getAll().size());
 	}
-	
+
 	@Test
-	public void shouldCreateMsExcelAdapter() throws IOException, DocumentException{
-		
-	 SplitAdapter  excelAdapter = createMsExcelAdapter("user", "id", "excelA.xls", "syncA.xls", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
-	 
-	 Assert.assertEquals(0,excelAdapter.getAll().size()); 
-	 
-	 excelAdapter.add(getItem());
-	 
-	 Assert.assertEquals(1,excelAdapter.getAll().size());
+	public void shouldCreateMsExcelAdapter() throws IOException,
+			DocumentException {
+
+		SplitAdapter excelAdapter = createMsExcelAdapter("user", "id",
+				"excelA.xls", "syncA.xls", NullIdentityProvider.INSTANCE,
+				IdGenerator.INSTANCE);
+
+		Assert.assertEquals(0, excelAdapter.getAll().size());
+
+		excelAdapter.add(getItem());
+
+		Assert.assertEquals(1, excelAdapter.getAll().size());
 	}
-	
+
 	@Test
-	 public void  shouldCreateFeedAdapter(){
-	  File file = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xml"));
-	  FeedAdapter repo = new FeedAdapter(file, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, new Feed());
-	  Feed feed = repo.getFeed();
-	  
-	  Assert.assertNotNull(feed);
-	  Assert.assertTrue(feed.getItems().isEmpty());
-	 }
-	
+	public void shouldCreateFeedAdapter() {
+		File file = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID()
+				+ ".xml"));
+		FeedAdapter repo = new FeedAdapter(file, RssSyndicationFormat.INSTANCE,
+				NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, new Feed());
+		Feed feed = repo.getFeed();
+
+		Assert.assertNotNull(feed);
+		Assert.assertTrue(feed.getItems().isEmpty());
+	}
+
 	@Test
-	public void shouldCreateGoogleSpreadSheetAdapter() throws DocumentException{
-	
+	public void shouldCreateGoogleSpreadSheetAdapter() throws DocumentException {
+
 		String idColumName = "id";
 		int lastUpdateColumnPosition = 6;
 		int idColumnPosition = 1;
 		String userName = "gspreadsheet.test@gmail.com";
 		String passWord = "java123456";
 		String GOOGLE_SPREADSHEET_FIELD = "peo4fu7AitTo8e3v0D8FCew";
-		
-		IGoogleSpreadsheetToXMLMapping mapper = new GoogleSpreadsheetToPlainXMLMapping("user",idColumName,idColumnPosition,lastUpdateColumnPosition);
-		IGoogleSpreadSheet spreadsheet = new GoogleSpreadsheet(GOOGLE_SPREADSHEET_FIELD,userName,passWord);
-		
+
+		IGoogleSpreadsheetToXMLMapping mapper = new GoogleSpreadsheetToPlainXMLMapping(
+				"user", idColumName, idColumnPosition, lastUpdateColumnPosition);
+		IGoogleSpreadSheet spreadsheet = new GoogleSpreadsheet(
+				GOOGLE_SPREADSHEET_FIELD, userName, passWord);
+
+		// TODO generics?
 		GSWorksheet sourceRepo = spreadsheet.getGSWorksheet(1);
-		GSWorksheet syncRepo = spreadsheet.getGSWorksheet(3); 
-		
-	
-		SplitAdapter spreadSheetAdapter = GoogleSpreadsheetUtils.createGoogleSpreadSheetAdapter(spreadsheet,mapper,sourceRepo,syncRepo,NullIdentityProvider.INSTANCE,IdGenerator.INSTANCE);
-		
+		GSWorksheet syncRepo = spreadsheet.getGSWorksheet(3);
+
+		SplitAdapter spreadSheetAdapter = GoogleSpreadsheetUtils
+				.createGoogleSpreadSheetAdapter(spreadsheet, mapper,
+						sourceRepo, syncRepo, NullIdentityProvider.INSTANCE,
+						IdGenerator.INSTANCE);
+
 		Assert.assertEquals(spreadSheetAdapter.getAll().size(), 0);
-		
+
 		spreadSheetAdapter.add(getItem());
-		
+
 		Assert.assertEquals(spreadSheetAdapter.getAll().size(), 1);
-		
+
 	}
-	
-	
+
 	@Test
-	public void shouldSyncExcelToGoogleSpreadsheet() throws IOException{
+	public void shouldSyncExcelToGoogleSpreadsheet() throws IOException {
 		SplitAdapter googleRepo = createGoogleSpreadSheetAdapter();
-		
-		SplitAdapter  excelRepo = createMsExcelAdapter("user", "id", "excelA.xls", "syncA.xls", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
-		
+
+		SplitAdapter excelRepo = createMsExcelAdapter("user", "id",
+				"excelA.xls", "syncA.xls", NullIdentityProvider.INSTANCE,
+				IdGenerator.INSTANCE);
+
+		// TODO test sync
 	}
-	
-	private SplitAdapter createGoogleSpreadSheetAdapter(){
+
+	private SplitAdapter createGoogleSpreadSheetAdapter() {
 		String idColumName = "id";
 		int lastUpdateColumnPosition = 6;
 		int idColumnPosition = 1;
 		String userName = "gspreadsheet.test@gmail.com";
 		String passWord = "java123456";
 		String GOOGLE_SPREADSHEET_FIELD = "peo4fu7AitTo8e3v0D8FCew";
-		
-		IGoogleSpreadsheetToXMLMapping mapper = new GoogleSpreadsheetToPlainXMLMapping("user",idColumName,idColumnPosition,lastUpdateColumnPosition);
-		IGoogleSpreadSheet spreadsheet = new GoogleSpreadsheet(GOOGLE_SPREADSHEET_FIELD,userName,passWord);
-		
+
+		IGoogleSpreadsheetToXMLMapping mapper = new GoogleSpreadsheetToPlainXMLMapping(
+				"user", idColumName, idColumnPosition, lastUpdateColumnPosition);
+		IGoogleSpreadSheet spreadsheet = new GoogleSpreadsheet(
+				GOOGLE_SPREADSHEET_FIELD, userName, passWord);
+
+		// TODO gerenrics?
 		GSWorksheet sourceRepo = spreadsheet.getGSWorksheet(1);
-		GSWorksheet syncRepo = spreadsheet.getGSWorksheet(3); 
-		
-	
-		SplitAdapter spreadSheetAdapter = GoogleSpreadsheetUtils.createGoogleSpreadSheetAdapter(spreadsheet,mapper,sourceRepo,syncRepo,NullIdentityProvider.INSTANCE,IdGenerator.INSTANCE);
+		GSWorksheet syncRepo = spreadsheet.getGSWorksheet(3);
+
+		SplitAdapter spreadSheetAdapter = GoogleSpreadsheetUtils
+				.createGoogleSpreadSheetAdapter(spreadsheet, mapper,
+						sourceRepo, syncRepo, NullIdentityProvider.INSTANCE,
+						IdGenerator.INSTANCE);
 		return spreadSheetAdapter;
 	}
-	private Item makeRDFItem(IRDFSchema schema){
-		
+
+	private Item makeRDFItem(IRDFSchema schema) {
+
 		String id = IdGenerator.INSTANCE.newID();
-		
-//		String rawDataAsXML = "<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:aktoo=\"http://mesh4x/feeds/grammen/aktoo#\" xmlns:owl=\"http://www.w3.org/2002/07/owl#\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema#\">"+
-//		  "<aktoo:aktoo rdf:about=\"uri:urn:"+ id +"\">"+
-//		   "<aktoo:Name rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">jose</aktoo:Name>"+
-//		    "<aktoo:Age rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">30</aktoo:Age>"+
-//		    "<aktoo:ID rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">"+ id +"</aktoo:ID>"+
-//		  "</aktoo:aktoo>"+
-//		"</rdf:RDF>";
-//		
-		String rawDataAsXML = "<aktoo>" +
-		"<ID>"+id+"</ID>" +
-		"<Name>Raju</Name>" +
-		"<Age>25</Age>" +
-		"</aktoo>";
+
+		// String rawDataAsXML =
+		// "<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:aktoo=\"http://mesh4x/feeds/grammen/aktoo#\" xmlns:owl=\"http://www.w3.org/2002/07/owl#\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema#\">"
+		// +
+		// "<aktoo:aktoo rdf:about=\"uri:urn:"+ id +"\">"+
+		// "<aktoo:Name rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">jose</aktoo:Name>"
+		// +
+		// "<aktoo:Age rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">30</aktoo:Age>"
+		// +
+		//"<aktoo:ID rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">"+
+		// id +"</aktoo:ID>"+
+		// "</aktoo:aktoo>"+
+		// "</rdf:RDF>";
+		//		
+		String rawDataAsXML = "<aktoo>" + "<ID>" + id + "</ID>"
+				+ "<Name>Raju</Name>" + "<Age>25</Age>" + "</aktoo>";
 
 		Element payload = XMLHelper.parseElement(rawDataAsXML);
-		payload = schema.getInstanceFromPlainXML(id, payload, ISchema.EMPTY_FORMATS);
-		
-		
+		payload = schema.getInstanceFromPlainXML(id, payload,
+				ISchema.EMPTY_FORMATS);
+
 		IContent content = new EntityContent(payload, "aktoo", id);
-		Sync sync = new Sync(IdGenerator.INSTANCE.newID(), "Raju", new Date(), false);
+		Sync sync = new Sync(IdGenerator.INSTANCE.newID(), "Raju", new Date(),
+				false);
 		return new Item(content, sync);
 	}
-	
+
 	private Item getEntityItem() throws DocumentException {
-		
+
 		String id = IdGenerator.INSTANCE.newID();
-		String rawDataAsXML = "<aktoo>" +
-								"<ID>"+id+"</ID>" +
-								"<Name>Raju</Name>" +
-								"<Age>25</Age>" +
-								"</aktoo>";
-		
+		String rawDataAsXML = "<aktoo>" + "<ID>" + id + "</ID>"
+				+ "<Name>Raju</Name>" + "<Age>25</Age>" + "</aktoo>";
+
 		Element payload = XMLHelper.parseElement(rawDataAsXML);
-		System.out.println("xml as:"+payload.asXML());
+		System.out.println("xml as:" + payload.asXML());
 		IContent content = new EntityContent(payload, "aktoo", id);
-		Sync sync = new Sync(IdGenerator.INSTANCE.newID(), "Raju", new Date(), false);
+		Sync sync = new Sync(IdGenerator.INSTANCE.newID(), "Raju", new Date(),
+				false);
 		return new Item(content, sync);
 	}
-	
+
 	private Item getItem() throws DocumentException {
-		
+
 		String id = IdGenerator.INSTANCE.newID();
-		String rawDataAsXML = "<user>" +
-								"<id>"+id+"</id>" +
-								"<name>Raju</name>" +
-								"<age>25</age>" +
-								"<city>Dhaka</city>" +
-								"<country>Bangladesh</country>" +
-								"<lastupdate>6/11/2009 1:01:01</lastupdate>" +
-								"</user>";
-		
+		String rawDataAsXML = "<user>" + "<id>" + id + "</id>"
+				+ "<name>Raju</name>" + "<age>25</age>" + "<city>Dhaka</city>"
+				+ "<country>Bangladesh</country>"
+				+ "<lastupdate>6/11/2009 1:01:01</lastupdate>" + "</user>";
+
 		Element payload = XMLHelper.parseElement(rawDataAsXML);
 		IContent content = new EntityContent(payload, "user", id);
-		Sync sync = new Sync(IdGenerator.INSTANCE.newID(), "Raju", new Date(), false);
+		Sync sync = new Sync(IdGenerator.INSTANCE.newID(), "Raju", new Date(),
+				false);
 		return new Item(content, sync);
 	}
-	
-	private SplitAdapter createMsExcelAdapter(String sheetName, String idColumnName, String contentFileName, String syncFileName, IIdentityProvider identityProvider, IdGenerator idGenerator) throws IOException {
-		
+
+	private SplitAdapter createMsExcelAdapter(String sheetName,
+			String idColumnName, String contentFileName, String syncFileName,
+			IIdentityProvider identityProvider, IdGenerator idGenerator)
+			throws IOException {
+
 		MsExcel contentExcel = null;
 		MsExcel syncExcel = null;
-		if(contentFileName.equals(syncFileName)){
+		if (contentFileName.equals(syncFileName)) {
 			File file = TestHelper.makeFileAndDeleteIfExists(contentFileName);
 			contentExcel = new MsExcel(file.getAbsolutePath());
 			syncExcel = contentExcel;
 		} else {
-			File fileData = TestHelper.makeFileAndDeleteIfExists(contentFileName);
+			File fileData = TestHelper
+					.makeFileAndDeleteIfExists(contentFileName);
 			File fileSync = TestHelper.makeFileAndDeleteIfExists(syncFileName);
-			
+
 			contentExcel = new MsExcel(fileData.getAbsolutePath());
 			syncExcel = new MsExcel(fileSync.getAbsolutePath());
 		}
-		
-		MsExcelSyncRepository syncRepo = new MsExcelSyncRepository(syncExcel, identityProvider, idGenerator);
-		MSExcelToPlainXMLMapping mapper = new MSExcelToPlainXMLMapping(idColumnName, null);
-		MsExcelContentAdapter contentAdapter = new MsExcelContentAdapter(contentExcel, mapper, sheetName);
 
-		SplitAdapter splitAdapter = new SplitAdapter(syncRepo, contentAdapter, identityProvider);
+		MsExcelSyncRepository syncRepo = new MsExcelSyncRepository(syncExcel,
+				identityProvider, idGenerator);
+		MSExcelToPlainXMLMapping mapper = new MSExcelToPlainXMLMapping(
+				idColumnName, null);
+		MsExcelContentAdapter contentAdapter = new MsExcelContentAdapter(
+				contentExcel, mapper, sheetName);
+
+		SplitAdapter splitAdapter = new SplitAdapter(syncRepo, contentAdapter,
+				identityProvider);
 		return splitAdapter;
 	}
 }
