@@ -34,7 +34,7 @@ public class InterRepositoryTest {
 		ISchema sourceSchema = ((HibernateContentAdapter)splitAdapter.getContentAdapter()).getMapping().getSchema();
 		
 		
-		ISyncAdapter targetAsExcel = builder.createMsExcelAdapter((IRDFSchema)sourceSchema, TestHelper.baseDirectoryForTest() + "contentFile.xls", "user", "id");
+		ISyncAdapter targetAsExcel = builder.createMsExcelAdapter(TestHelper.baseDirectoryForTest() + "contentFile.xls", "user", "id", (IRDFSchema)sourceSchema);
 	
 		SyncEngine engine = new SyncEngine(splitAdapter,targetAsExcel);
 		List<Item> listOfConflicts = engine.synchronize();

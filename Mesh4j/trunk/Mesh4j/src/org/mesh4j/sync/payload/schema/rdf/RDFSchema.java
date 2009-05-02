@@ -25,9 +25,6 @@ import com.hp.hpl.jena.shared.JenaException;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 import com.hp.hpl.jena.vocabulary.XSD;
 
-//TODO (JMT) RDF: Hibernate mappings generation from rdf schema
-//TODO (JMT) RDF: MSAccess creation from rdf schema
-
 //TODO (JMT) RDF: FeedWriter: write content as item element (use mesh4x namespace) 
 //TODO (JMT) RDF: FeedReader: read content from item elements (use mesh4x namespace)
 public class RDFSchema implements IRDFSchema{

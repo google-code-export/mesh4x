@@ -57,7 +57,7 @@ public class SyncAdapterBuilderTest {
 	public void shouldCreateExcelAdapter() throws DocumentException{
 	
 		String contentFile = "C:\\jtest\\contentFile.xls";
-		String syncFile = contentFile;
+
 		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
 		ISyncAdapter excelAdapter = adapterBuilder.createMsExcelAdapter("user", "id", contentFile);
 		

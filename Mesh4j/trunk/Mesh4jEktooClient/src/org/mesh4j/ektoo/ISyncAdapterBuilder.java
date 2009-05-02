@@ -16,11 +16,9 @@ public interface ISyncAdapterBuilder {
 	 *            , the name of the identity column of entity
 	 * 
 	 */
-	public ISyncAdapter createMsExcelAdapter(IRDFSchema schema,
-			String contentFileName, String sheetName, String idColumnName);
-	@Deprecated
 	public ISyncAdapter createMsExcelAdapter(String contentFileName, String sheetName, String idColumnName);
-
+	public ISyncAdapter createMsExcelAdapter(String contentFileName, String sheetName, String idColumnName, IRDFSchema sourceSchema);
+	
 	/**
 	 * Create adapter for access adapter
 	 * 

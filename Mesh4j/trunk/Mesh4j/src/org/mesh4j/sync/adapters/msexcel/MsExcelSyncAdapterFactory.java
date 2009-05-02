@@ -43,6 +43,10 @@ public class MsExcelSyncAdapterFactory implements ISyncAdapterFactory {
 		String sheetName = elements[1];
 		String idColumnName = elements[2];
 		
+		return createSyncAdapter(excelFileName, sheetName, idColumnName, identityProvider);
+	}
+
+	public SplitAdapter createSyncAdapter(String excelFileName, String sheetName, String idColumnName, IIdentityProvider identityProvider) {
 		MsExcel excel = new MsExcel(excelFileName);
 		MsExcelSyncRepository syncRepo = createSyncRepository(identityProvider, excel);
 		MsExcelContentAdapter contentAdapter = createContentAdapter(sheetName, idColumnName, excel);

@@ -15,6 +15,7 @@ import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.payload.schema.rdf.RDFInstance;
 import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
 import org.mesh4j.sync.utils.XMLHelper;
+import org.mesh4j.sync.validations.Guard;
 
 public class MsExcelToRDFMapping implements IMsExcelToXMLMapping{
 
@@ -34,8 +35,12 @@ public class MsExcelToRDFMapping implements IMsExcelToXMLMapping{
 	
 
 	@SuppressWarnings("unchecked")
-	public static RDFSchema extractRDFSchema(IMsExcel excel, String sheetName) throws Exception {
-		RDFSchema rdfSchema = new RDFSchema(sheetName, "http://mesh4x/epiinfo/"+sheetName+"#", sheetName);
+	public static RDFSchema extractRDFSchema(IMsExcel excel, String sheetName, String rdfURL){
+		Guard.argumentNotNull(excel, "excel");
+		Guard.argumentNotNullOrEmptyString(sheetName, "sheetName");
+		Guard.argumentNotNullOrEmptyString(rdfURL, "rdfURL");
+		
+		RDFSchema rdfSchema = new RDFSchema(sheetName, rdfURL+sheetName+"#", sheetName);
 		
 		String cellName;
 		

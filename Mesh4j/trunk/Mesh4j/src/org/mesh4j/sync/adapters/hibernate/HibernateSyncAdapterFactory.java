@@ -50,13 +50,13 @@ public class HibernateSyncAdapterFactory implements ISyncAdapterFactory{
 	
 	// ADAPTER CREATION
 	@SuppressWarnings("unchecked")
-	public static ISyncAdapter createHibernateAdapter(String connectionURL, String user, String password, Class driverClass, Class dialectClass, String tableName, String syncTableName, String rdfURL, String baseDirectory) {
+	public static SplitAdapter createHibernateAdapter(String connectionURL, String user, String password, Class driverClass, Class dialectClass, String tableName, String syncTableName, String rdfBaseURL, String baseDirectory) {
 	
 		HibernateSessionFactoryBuilder builder = createHibernateFactoryBuilder(connectionURL, user, password, driverClass, dialectClass, null);
 		
 		PersistentClass contentMapping = createMappings(builder, tableName, syncTableName, baseDirectory);
 		
-		RDFSchema schema = createRDFSchema(tableName, rdfURL, contentMapping);
+		RDFSchema schema = createRDFSchema(tableName, rdfBaseURL, contentMapping);
 		builder.addRDFSchema(schema);
 		
 		SyncInfoParser syncInfoParser = new SyncInfoParser(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, syncTableName);
@@ -68,8 +68,8 @@ public class HibernateSyncAdapterFactory implements ISyncAdapterFactory{
 	}
 
 	@SuppressWarnings("unchecked")
-	private static RDFSchema createRDFSchema(String tableName, String rdfURL, PersistentClass mapping) {
-		RDFSchema rdfSchema = new RDFSchema(tableName, rdfURL, tableName);
+	private static RDFSchema createRDFSchema(String tableName, String rdfBaseURL, PersistentClass mapping) {
+		RDFSchema rdfSchema = new RDFSchema(tableName, rdfBaseURL + tableName + "#", tableName);
 		
 		Property property = mapping.getIdentifierProperty();
 		addRDFProperty(rdfSchema, property);

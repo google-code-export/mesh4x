@@ -90,8 +90,7 @@ public class MsExcelUIController extends AbstractController implements
 			return null;
 		}
 
-		return adapterBuilder.createMsExcelAdapter(sourceSchema, workbookName,
-				worksheetName, uniqueColumnName);
+		return adapterBuilder.createMsExcelAdapter(workbookName, worksheetName, uniqueColumnName, sourceSchema);
 	}
 
 	@Override
