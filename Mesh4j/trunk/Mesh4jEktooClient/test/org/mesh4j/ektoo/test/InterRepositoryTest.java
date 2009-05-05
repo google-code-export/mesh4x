@@ -42,6 +42,24 @@ public class InterRepositoryTest {
 	}
 	
 	@Test
+	public void ShouldSyncExcelToMySql(){
+		String user = "root";
+		String password = "test1234";
+		String tableName = "user";
+		
+		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapter sourceAsExcel = builder.createMsExcelAdapter(TestHelper.baseDirectoryForTest() + "contentFile.xls", "user", "id");
+		
+		ISyncAdapter targetAsMySql =  builder.createMySQLAdapter(user, password,"localhost" ,3306,"mesh4xdb",tableName);
+		
+		SyncEngine engine = new SyncEngine(sourceAsExcel,targetAsMySql);
+		List<Item> listOfConflicts = engine.synchronize();
+		Assert.assertEquals(0, listOfConflicts.size());
+	}
+	
+	
+	
+	@Test
 	public void ShouldSyncMsAccessToExcelByRDF() throws IOException{
 		
 		String rdfBaseURl = "http://localhost:8080/mesh4x/feeds" +"/aktoo"+"#";
