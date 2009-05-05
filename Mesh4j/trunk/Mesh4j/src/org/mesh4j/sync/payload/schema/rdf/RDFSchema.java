@@ -260,6 +260,11 @@ public class RDFSchema implements IRDFSchema{
 	}
 	
 	@Override
+	public RDFInstance createNewInstanceFromProperties(String id, Map<String, Object> propertyValues){
+		return RDFInstance.buildFromProperties(this, id, propertyValues);
+	}
+	
+	@Override
 	public String asXMLText() {
 		return asXML();
 	}

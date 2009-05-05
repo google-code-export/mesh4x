@@ -7,7 +7,6 @@ import junit.framework.Assert;
 
 import org.dom4j.Element;
 import org.junit.Test;
-import org.mesh4j.grameen.training.intro.adapter.inmemory.InMemoryItemAdapter;
 import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.adapters.feed.XMLContent;
 import org.mesh4j.sync.id.generator.IdGenerator;

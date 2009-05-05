@@ -3,13 +3,11 @@ package org.mesh4j.grameen.training.intro.adapter.inmemory;
 import java.util.Date;
 import java.util.List;
 
+import org.dom4j.Element;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.dom4j.Element;
-
-import org.mesh4j.grameen.training.intro.adapter.inmemory.InMemoryListItemAdapter;
 import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.adapters.feed.XMLContent;
 import org.mesh4j.sync.id.generator.IdGenerator;

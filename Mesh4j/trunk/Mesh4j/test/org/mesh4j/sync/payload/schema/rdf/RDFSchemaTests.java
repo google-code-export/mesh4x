@@ -4,12 +4,14 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.HashMap;
 
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mesh4j.sync.payload.schema.ISchema;
+import org.mesh4j.sync.utils.DateHelper;
 import org.mesh4j.sync.utils.XMLHelper;
 import org.mesh4j.sync.validations.MeshException;
 
@@ -317,6 +319,43 @@ public class RDFSchemaTests {
 		String xml = "<example><decimal>10</decimal><long>9223372036854775807</long><double>1.7976931348623157E308</double><datetime>2009-06-01T05:31:01.001Z</datetime><boolean>true</boolean><integer>2147483647</integer><string>abc</string></example>";
 		Element element = XMLHelper.parseElement(xml);
 		Element rdfElement = schema.getInstanceFromPlainXML("1", element, ISchema.EMPTY_FORMATS);
+		
+		String rdfXml = "<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:example=\"http://mesh4x/example#\" xmlns:owl=\"http://www.w3.org/2002/07/owl#\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema#\">"+
+		"<example:example rdf:about=\"uri:urn:1\">"+
+		"<example:string rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">abc</example:string>"+
+		"<example:integer rdf:datatype=\"http://www.w3.org/2001/XMLSchema#int\">2147483647</example:integer>"+
+		"<example:boolean rdf:datatype=\"http://www.w3.org/2001/XMLSchema#boolean\">true</example:boolean>"+
+		"<example:datetime rdf:datatype=\"http://www.w3.org/2001/XMLSchema#dateTime\">2009-06-01T05:31:01.001Z</example:datetime>"+
+		"<example:double rdf:datatype=\"http://www.w3.org/2001/XMLSchema#double\">1.7976931348623157E308</example:double>"+
+		"<example:long rdf:datatype=\"http://www.w3.org/2001/XMLSchema#long\">9223372036854775807</example:long>"+
+		"<example:decimal rdf:datatype=\"http://www.w3.org/2001/XMLSchema#int\">10</example:decimal>"+
+		"</example:example>"+
+		"</rdf:RDF>";
+		
+		Assert.assertEquals(XMLHelper.canonicalizeXML(rdfXml), XMLHelper.canonicalizeXML(rdfElement));
+	}
+	
+	@Test
+	public void shouldGetInstanceFromProperties(){
+		RDFSchema schema = new RDFSchema("example", "http://mesh4x/example#", "example");
+		schema.addStringProperty("string", "string", "en");
+		schema.addIntegerProperty("integer", "int", "en");
+		schema.addBooleanProperty("boolean", "boolean", "en");
+		schema.addDateTimeProperty("datetime", "datetime", "en");
+		schema.addDoubleProperty("double", "double", "en");
+		schema.addLongProperty("long", "long", "en");
+		schema.addDecimalProperty("decimal", "decimal", "en");  
+		
+		HashMap<String, Object> propertyValues = new HashMap<String, Object>();
+		propertyValues.put("decimal", 10d);
+		propertyValues.put("long", 9223372036854775807l);
+		propertyValues.put("double", 1.7976931348623157E308d);
+		propertyValues.put("datetime", DateHelper.parseW3CDateTime("2009-06-01T05:31:01.001Z"));
+		propertyValues.put("boolean", true);
+		propertyValues.put("integer", 2147483647);
+		propertyValues.put("string", "abc");
+		
+		 Element rdfElement = XMLHelper.parseElement(schema.createNewInstanceFromProperties("1", propertyValues).asXML());
 		
 		String rdfXml = "<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:example=\"http://mesh4x/example#\" xmlns:owl=\"http://www.w3.org/2002/07/owl#\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema#\">"+
 		"<example:example rdf:about=\"uri:urn:1\">"+

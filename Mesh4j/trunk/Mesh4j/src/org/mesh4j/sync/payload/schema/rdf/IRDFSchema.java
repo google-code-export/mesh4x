@@ -27,8 +27,8 @@ public interface IRDFSchema extends ISchema {
 	public RDFInstance createNewInstance(String id);
 
 	public RDFInstance createNewInstanceFromRDFXML(String rdfXml);
-
 	public RDFInstance createNewInstanceFromPlainXML(String id, String plainXML, Map<String, ISchemaTypeFormat> formatters) throws ParseException;
+	public RDFInstance createNewInstanceFromProperties(String id, Map<String, Object> propertyValues);
 
 	public Object cannonicaliseValue(String propertyName, Object value);
 	

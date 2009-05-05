@@ -1,6 +1,6 @@
 package org.mesh4j.sync.adapters.msexcel;
 
-import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -10,16 +10,12 @@ import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.payload.schema.rdf.RDFInstance;
 import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
-import org.mesh4j.sync.utils.DateHelper;
 import org.mesh4j.sync.utils.XMLHelper;
 import org.mesh4j.sync.validations.Guard;
-import org.mesh4j.sync.validations.MeshException;
 
 public class MsExcelToRDFMapping implements IMsExcelToXMLMapping{
 
@@ -79,40 +75,29 @@ public class MsExcelToRDFMapping implements IMsExcelToXMLMapping{
 	@SuppressWarnings("unchecked")
 	public RDFInstance converRowToRDF(HSSFRow headerRow, HSSFRow row) {
 		
-		Element payload = DocumentHelper.createElement(rdfSchema.getOntologyClassName());
-		
+		// obtains properties values
 		HSSFCell cell;
-		HSSFCell cellHeader;
-		String columnName;
-		Object columnValue;
-		Element fieldElement;
-		String id = "";
+		String cellName;
+		Object cellValue;
+		Object propertyValue;
+
+		HashMap<String, Object> propertyValues = new HashMap<String, Object>();
 		for (Iterator<HSSFCell> iterator = row.cellIterator(); iterator.hasNext();) {
 			cell = iterator.next();
-			cellHeader = headerRow.getCell(cell.getColumnIndex());
+			cellName = headerRow.getCell(cell.getColumnIndex()).getRichStringCellValue().getString();
+			cellValue = MsExcelUtils.getCellValue(cell);
 			
-			columnName = cellHeader.getRichStringCellValue().getString();
-			columnValue = MsExcelUtils.getCellValue(cell);
-			
-			fieldElement = payload.addElement(columnName);
-			
-			if(columnValue instanceof Date){
-				fieldElement.addText(DateHelper.formatW3CDateTime((Date)columnValue));
-			} else {
-				fieldElement.addText(String.valueOf(columnValue));
-			}
-			
-			if(columnName.equals(this.idColumnName)){
-				id = String.valueOf(columnValue);
+			propertyValue = rdfSchema.cannonicaliseValue(cellName, cellValue);
+			if(propertyValue != null){
+				propertyValues.put(cellName, propertyValue);
 			}
 		}
-
-		try{
-			RDFInstance instance = this.rdfSchema.createNewInstanceFromPlainXML(id, payload.asXML(), ISchema.EMPTY_FORMATS);
-			return instance;
-		}catch (Exception e) {
-			throw new MeshException(e);
-		}
+		
+		// create rdf instance
+		String id = String.valueOf(propertyValues.get(this.idColumnName));
+		
+		RDFInstance rdfInstance = this.rdfSchema.createNewInstanceFromProperties(id, propertyValues);
+		return rdfInstance;
 	}
 
 	public void appliesRDFToRow(HSSFWorkbook wb, HSSFSheet sheet, HSSFRow row, RDFInstance rdfInstance) {

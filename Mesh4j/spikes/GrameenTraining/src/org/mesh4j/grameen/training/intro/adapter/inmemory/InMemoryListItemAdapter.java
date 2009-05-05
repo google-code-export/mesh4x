@@ -2,7 +2,6 @@ package org.mesh4j.grameen.training.intro.adapter.inmemory;
 
 import java.util.ArrayList;
 import java.util.Date;
-
 import java.util.List;
 
 import org.mesh4j.sync.AbstractSyncAdapter;

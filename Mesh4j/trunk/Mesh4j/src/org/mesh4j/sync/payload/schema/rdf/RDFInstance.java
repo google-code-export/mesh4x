@@ -127,6 +127,39 @@ public class RDFInstance {
 		return instance;
 	}
 	
+	protected static RDFInstance buildFromProperties(RDFSchema rdfSchema, String id, Map<String, Object> propertyValues){
+		Guard.argumentNotNull(rdfSchema, "rdfSchema");
+		Guard.argumentNotNullOrEmptyString(id, "id");
+		Guard.argumentNotNull(propertyValues, "propertyValues");
+		
+		if(propertyValues.isEmpty()){
+			Guard.throwsArgumentException("propertyValues"); 
+		}
+		
+		RDFInstance instance = new RDFInstance(rdfSchema, "uri:urn:"+id);
+		
+		Object fieldValue;
+		String dataTypeName;
+		
+		DatatypeProperty dataTypeProperty;
+		ExtendedIterator it = rdfSchema.getOWLSchema().listDatatypeProperties();
+		while(it.hasNext()){
+			dataTypeProperty = (DatatypeProperty)it.next();
+
+			dataTypeName = dataTypeProperty.getLocalName();
+			
+			fieldValue = propertyValues.get(dataTypeName);
+			if(fieldValue == null){
+				LOGGER.info("RDF: null value. Property: " + dataTypeName);
+			} else {
+				OntResource range = dataTypeProperty.getRange();
+				RDFDatatype dataType = TypeMapper.getInstance().getTypeByName(range.getURI());
+				instance.setProperty(dataTypeName, dataType.cannonicalise(fieldValue));
+			}
+		}
+		return instance;
+	}
+	
 	private void initializeBaseModel(RDFSchema schema) {
 		this.schema = schema;
 		

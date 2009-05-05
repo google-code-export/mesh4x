@@ -1,18 +1,12 @@
 package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.mapping;
 
-import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadsheetUtils;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.IGoogleSpreadSheet;
@@ -24,10 +18,6 @@ import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.payload.schema.rdf.RDFInstance;
 import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
 import org.mesh4j.sync.utils.XMLHelper;
-import org.mesh4j.sync.validations.Guard;
-import org.mesh4j.sync.validations.MeshException;
-
-import com.google.gdata.util.ServiceException;
 
 public class GoogleSpreadsheetToRDFMapping implements IGoogleSpreadsheetToXMLMapping{
 
@@ -91,7 +81,7 @@ public class GoogleSpreadsheetToRDFMapping implements IGoogleSpreadsheetToXMLMap
 		Object cellValue;
 		Object propertyValue;
 
-		HashMap<String, Object> properties = new HashMap<String, Object>();
+		HashMap<String, Object> propertyValues = new HashMap<String, Object>();
 		for (GSCell cell : row.getChildElements().values() ) {
 			
 			cellName = cell.getColumnTag();
@@ -99,20 +89,14 @@ public class GoogleSpreadsheetToRDFMapping implements IGoogleSpreadsheetToXMLMap
 
 			propertyValue = rdfSchema.cannonicaliseValue(cellName, cellValue);
 			if (propertyValue != null) {
-				properties.put(cellName, propertyValue);
+				propertyValues.put(cellName, propertyValue);
 			}
 		}
 		
 		// create rdf instance
-		String id = (String)properties.get(this.idColumnName);
+		String id = String.valueOf(propertyValues.get(this.idColumnName));
 		
-		RDFInstance rdfInstance = rdfSchema.createNewInstance("uri:urn:"+id);
-		
-		for (String propertyName : properties.keySet()) {
-			rdfInstance.setProperty(
-				propertyName, 
-				properties.get(propertyName));
-		}
+		RDFInstance rdfInstance = this.rdfSchema.createNewInstanceFromProperties(id, propertyValues);
 		return rdfInstance;
 	}
 

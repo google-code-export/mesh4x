@@ -2,14 +2,16 @@ package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.*;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSCell;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSRow;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSSpreadsheet;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSWorksheet;
 import org.mesh4j.sync.validations.MeshException;
 
 import com.google.gdata.client.spreadsheet.FeedURLFactory;

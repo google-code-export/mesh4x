@@ -13,6 +13,7 @@ import org.mesh4j.sync.payload.schema.ISchemaTypeFormat;
 import org.mesh4j.sync.payload.schema.SchemaTypeFormat;
 import org.mesh4j.sync.payload.schema.xform.XFormBooleanFormat;
 import org.mesh4j.sync.test.utils.TestHelper;
+import org.mesh4j.sync.utils.XMLHelper;
 import org.mesh4j.sync.validations.MeshException;
 
 public class RDFInstanceTest {
@@ -242,5 +243,70 @@ public class RDFInstanceTest {
         Assert.assertEquals(IRDFSchema.XLS_DOUBLE, instance.getPropertyType("double"));
         Assert.assertEquals(IRDFSchema.XLS_LONG, instance.getPropertyType("long"));
         Assert.assertEquals(IRDFSchema.XLS_DECIMAL, instance.getPropertyType("decimal"));
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldBuildInstanceFromPropertiesFailsIfPropertiesIsNull(){
+		RDFInstance.buildFromProperties(RDF_SCHEMA, "1", null);
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldBuildInstanceFromPropertiesFailsIfPropertiesIsEmpty(){
+		RDFInstance.buildFromProperties(RDF_SCHEMA, "1", new HashMap<String, Object>());
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldBuildInstanceFromPropertiesFailsIfRDFSchemaIsNull(){
+		HashMap<String, Object> propertyValues = new HashMap<String, Object>();
+        propertyValues.put("string", "abc");
+        propertyValues.put("integer", Integer.MAX_VALUE);
+        propertyValues.put("boolean", true);
+        propertyValues.put("datetime", DATE);
+        propertyValues.put("double", Double.MAX_VALUE);
+        propertyValues.put("long", Long.MAX_VALUE);
+        propertyValues.put("decimal", BigDecimal.TEN);
+		RDFInstance.buildFromProperties(null, "1", propertyValues);
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldBuildInstanceFromPropertiesFailsIfIdIsNull(){
+		HashMap<String, Object> propertyValues = new HashMap<String, Object>();
+        propertyValues.put("string", "abc");
+        propertyValues.put("integer", Integer.MAX_VALUE);
+        propertyValues.put("boolean", true);
+        propertyValues.put("datetime", DATE);
+        propertyValues.put("double", Double.MAX_VALUE);
+        propertyValues.put("long", Long.MAX_VALUE);
+        propertyValues.put("decimal", BigDecimal.TEN);
+		RDFInstance.buildFromProperties(RDF_SCHEMA, null, propertyValues);
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldBuildInstanceFromPropertiesFailsIfIdIsEmpty(){
+		HashMap<String, Object> propertyValues = new HashMap<String, Object>();
+        propertyValues.put("string", "abc");
+        propertyValues.put("integer", Integer.MAX_VALUE);
+        propertyValues.put("boolean", true);
+        propertyValues.put("datetime", DATE);
+        propertyValues.put("double", Double.MAX_VALUE);
+        propertyValues.put("long", Long.MAX_VALUE);
+        propertyValues.put("decimal", BigDecimal.TEN);
+		RDFInstance.buildFromProperties(RDF_SCHEMA, "", propertyValues);
+	}
+	
+	@Test
+	public void shouldBuildInstanceFromProperties(){
+		HashMap<String, Object> propertyValues = new HashMap<String, Object>();
+        propertyValues.put("string", "abc");
+        propertyValues.put("integer", Integer.MAX_VALUE);
+        propertyValues.put("boolean", true);
+        propertyValues.put("datetime", DATE);
+        propertyValues.put("double", Double.MAX_VALUE);
+        propertyValues.put("long", Long.MAX_VALUE);
+        propertyValues.put("decimal", BigDecimal.TEN);
+        RDFInstance instance = RDFInstance.buildFromProperties(RDF_SCHEMA, "1", propertyValues);
+        
+        Assert.assertNotNull(instance);
+        Assert.assertEquals(XMLHelper.canonicalizeXML(RDF_XML), XMLHelper.canonicalizeXML(XMLHelper.parseElement(instance.asXML())));
 	}
 }
