@@ -16,6 +16,7 @@ import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.payload.schema.rdf.RDFInstance;
 import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
 import org.mesh4j.sync.test.utils.TestHelper;
+import org.mesh4j.sync.utils.DateHelper;
 
 public class MSExcelToRDFMappingTest {
 
@@ -84,7 +85,7 @@ public class MSExcelToRDFMappingTest {
 		Assert.assertEquals(MsExcelUtils.getCellValue(row.getCell(2)), rdfInstance.getPropertyValue(COLUMN_AGE));
 		Assert.assertEquals(MsExcelUtils.getCellValue(row.getCell(3)), rdfInstance.getPropertyValue(COLUMN_SEX));
 		Assert.assertEquals(MsExcelUtils.getCellValue(row.getCell(4)), rdfInstance.getPropertyValue(COLUMN_ILL));
-		Assert.assertEquals(((Date)MsExcelUtils.getCellValue(row.getCell(5))).getTime(), ((Date)rdfInstance.getPropertyValue(COLUMN_DATE_ONSET)).getTime());
+		Assert.assertEquals(DateHelper.formatW3CDateTime((Date)MsExcelUtils.getCellValue(row.getCell(5))), DateHelper.formatW3CDateTime((Date)rdfInstance.getPropertyValue(COLUMN_DATE_ONSET)));
 		Assert.assertNull(rdfInstance.getPropertyValue(COLUMN_OTHER));
 	}
 	

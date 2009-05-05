@@ -248,4 +248,12 @@ public class SyncEngine {
 			((ISyncAware)this.target).endSync();
 		}		
 	}
+	
+	public ISyncAdapter getSource(){
+		return this.source;
+	}
+
+	public ISyncAdapter getTarget(){
+		return this.target;
+	}
 }

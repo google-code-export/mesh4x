@@ -23,6 +23,7 @@ import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.payload.schema.rdf.RDFInstance;
 import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
 import org.mesh4j.sync.security.NullIdentityProvider;
+import org.mesh4j.sync.utils.DateHelper;
 
 public class MsExcelRDFSyncTest {
 
@@ -116,7 +117,7 @@ public class MsExcelRDFSyncTest {
 		Assert.assertEquals(age, instance.getPropertyValue("AGE"));
 		Assert.assertEquals(sex, instance.getPropertyValue("SEX"));
 		Assert.assertEquals(ill, instance.getPropertyValue("ILL"));
-		Assert.assertEquals(dateOnset, instance.getPropertyValue("DateOnset"));
+		Assert.assertEquals(DateHelper.formatW3CDateTime(dateOnset), DateHelper.formatW3CDateTime((Date)instance.getPropertyValue("DateOnset")));
 		
 	}
 
