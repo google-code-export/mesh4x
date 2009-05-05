@@ -9,6 +9,7 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.JDBCMetaDataConfiguration;
 import org.hibernate.cfg.reveng.DefaultReverseEngineeringStrategy;
 import org.hibernate.cfg.reveng.SchemaSelection;
+import org.hibernate.mapping.Column;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.mapping.Property;
 import org.hibernate.tool.hbm2ddl.SchemaUpdate;
@@ -86,7 +87,7 @@ public class HibernateSyncAdapterFactory implements ISyncAdapterFactory{
 	private static void addRDFProperty(RDFSchema rdfSchema, Property property) {
 		String propertyName = null;
 		if (property.getValue().getColumnIterator().hasNext())
-			propertyName = ((org.hibernate.mapping.Column) property.getValue()
+			propertyName = ((Column) property.getValue()
 					.getColumnIterator().next()).getName();
 		else
 			property.getName();
