@@ -4,8 +4,6 @@ import java.util.List;
 
 import org.mesh4j.sync.merge.MergeResult;
 
-
-// TODO (JMT) JavaDoc
 public interface IPreviewImportHandler {
 
 	/// <summary>

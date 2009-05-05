@@ -1,6 +1,5 @@
 package org.mesh4j.sync.merge;
 
-// TODO (JMT) REFACTORING: remove merge behavior
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;

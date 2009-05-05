@@ -47,7 +47,10 @@ public class MsExcelRDFSyncAdapterFactory extends MsExcelSyncAdapterFactory{
 				throw new MeshException(e);
 			}
 
-			return super.createSyncAdapter(excelFileName, sheetName, idColumnName, identityProvider);
+			MsExcel excel = new MsExcel(excelFileName);
+			MsExcelSyncRepository syncRepo = createSyncRepository(identityProvider, excel);
+			MsExcelContentAdapter contentAdapter = new MsExcelContentAdapter(excel, mappings, sheetName);
+			return new SplitAdapter(syncRepo, contentAdapter, identityProvider);
 		} else {
 			SplitAdapter splitAdapter = super.createSyncAdapter(excelFileName, sheetName, idColumnName, identityProvider);
 			IRDFSchema rdfSchemaAutoGenetated = (IRDFSchema)((MsExcelContentAdapter)splitAdapter.getContentAdapter()).getSchema();

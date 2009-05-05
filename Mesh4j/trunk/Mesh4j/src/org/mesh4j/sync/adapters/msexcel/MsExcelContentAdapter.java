@@ -145,8 +145,9 @@ public class MsExcelContentAdapter implements IIdentifiableContentAdapter, ISync
 			if(row != null && this.hasChanged(row, since)){
 				cell = MsExcelUtils.getCell(getSheet(), row, this.mapping.getIdColumnName());
 				if(cell != null && cell.getCellType() != HSSFCell.CELL_TYPE_BLANK){
-					payload = this.translate(row);		
-					entityContent = new EntityContent(payload, this.sheetName, cell.getRichStringCellValue().getString());
+					payload = this.translate(row);
+					String entityID = String.valueOf(MsExcelUtils.getCellValue(cell));
+					entityContent = new EntityContent(payload, this.sheetName, entityID);
 					result.add(entityContent);
 				}
 			}

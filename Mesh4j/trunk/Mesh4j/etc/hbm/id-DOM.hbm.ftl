@@ -17,10 +17,10 @@
  </#foreach>   
   </composite-id>   
 <#elseif !c2j.isComponent(property)>
-	<id 
-        name="${property.name}"
-        type="${property.value.typeName}"
 <#foreach column in property.columnIterator>
+	<id 
+        name="${column.quotedName}"
+        type="${property.value.typeName}"
 		node="${column.quotedName}"
 </#foreach>
  <#if c2h.isUnsavedValue(property)>

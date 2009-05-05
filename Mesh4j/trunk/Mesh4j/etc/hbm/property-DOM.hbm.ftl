@@ -1,7 +1,7 @@
-    <property
-        name="${property.name}"
-        type="${property.value.typeName}"
   <#foreach column in property.columnIterator>
+    <property
+        name="${column.quotedName}"
+        type="${property.value.typeName}"
 		node="${column.quotedName}"
   </#foreach>
 <#if !property.updateable>

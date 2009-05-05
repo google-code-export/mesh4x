@@ -50,27 +50,27 @@ public class MSExcelToPlainXMLMappingTests {
 	public void shouldConvertRowToXML(){
 		
 		Date date = new Date();
-		HSSFWorkbook workbook = this.makeDefaultWorkbook("1", "jose", true, 30d, date);
+		HSSFWorkbook workbook = this.makeDefaultWorkbook("1", "jose", true, 30, date);
 		HSSFSheet sheet = workbook.getSheet(SHEET_NAME);
 		HSSFRow row = sheet.getRow(1);
 		
 		MSExcelToPlainXMLMapping mapping = new MSExcelToPlainXMLMapping(COLUMN_NAME_ID, null);
 		Element element = mapping.convertRowToXML(workbook, sheet, row);
 		
-		String xml = xmlForDefaultWoorbook("1", "jose", true, 30d, date, null);
+		String xml = xmlForDefaultWoorbook("1", "jose", true, 30, date, null);
 		Assert.assertEquals(xml, element.asXML());
 	}
 
 	@Test
 	public void shouldUpdateRowFromXML() throws DocumentException{
 		
-		HSSFWorkbook workbook = makeDefaultWorkbook("1", "jose", true, 30d, new Date());
+		HSSFWorkbook workbook = makeDefaultWorkbook("1", "jose", true, 30, new Date());
 		
 		HSSFSheet sheet = workbook.getSheet(SHEET_NAME);
 		HSSFRow row = sheet.getRow(1);
 
 		Date newDate = new Date();
-		String xml = xmlForDefaultWoorbook("1", "maria", false, 10d, newDate, null);
+		String xml = xmlForDefaultWoorbook("1", "maria", false, 10, newDate, null);
 		Element payload = DocumentHelper.parseText(xml).getRootElement();
 		
 		MSExcelToPlainXMLMapping mapping = new MSExcelToPlainXMLMapping(COLUMN_NAME_ID, null);
@@ -100,13 +100,13 @@ public class MSExcelToPlainXMLMappingTests {
 	@Test
 	public void shouldUpdateNewRowFromXML() throws DocumentException{
 		
-		HSSFWorkbook workbook = makeDefaultWorkbook("1", "jose", true, 30d, new Date());
+		HSSFWorkbook workbook = makeDefaultWorkbook("1", "jose", true, 30, new Date());
 		
 		HSSFSheet sheet = workbook.getSheet(SHEET_NAME);
 		HSSFRow row = sheet.createRow(sheet.getFirstRowNum() + 1);
 
 		Date newDate = new Date();
-		String xml = xmlForDefaultWoorbook("1", "maria", false, 10d, newDate, null);
+		String xml = xmlForDefaultWoorbook("1", "maria", false, 10, newDate, null);
 		Element payload = DocumentHelper.parseText(xml).getRootElement();
 		
 		MSExcelToPlainXMLMapping mapping = new MSExcelToPlainXMLMapping(COLUMN_NAME_ID, null);
@@ -126,7 +126,7 @@ public class MSExcelToPlainXMLMappingTests {
 		
 		cell = row.getCell(3);
 		Assert.assertNotNull(cell);
-		Assert.assertEquals("10.0", cell.getRichStringCellValue().getString());
+		Assert.assertEquals("10", cell.getRichStringCellValue().getString());
 		
 		cell = row.getCell(4);
 		Assert.assertNotNull(cell);
@@ -137,11 +137,11 @@ public class MSExcelToPlainXMLMappingTests {
 	@Test
 	public void shouldAddNewCellFromXML() throws DocumentException{
 		Date newDate = new Date();
-		String xml = xmlForDefaultWoorbook("1", "maria", false, 10d, newDate, "yes");
+		String xml = xmlForDefaultWoorbook("1", "maria", false, 10, newDate, "yes");
 		Element payload = DocumentHelper.parseText(xml).getRootElement();
 		
 		Date date = new Date();
-		HSSFWorkbook workbook = makeDefaultWorkbook("1", "maria", true, 30d, date);
+		HSSFWorkbook workbook = makeDefaultWorkbook("1", "maria", true, 30, date);
 		HSSFSheet sheet = workbook.getSheet(SHEET_NAME);
 		HSSFRow row = sheet.getRow(1);
 		
@@ -217,7 +217,7 @@ public class MSExcelToPlainXMLMappingTests {
 		return workbook;
 	}	
 
-	private String xmlForDefaultWoorbook(String columnValue1, String columnValue2, boolean columnValue3, double columnValue4, Date columnValue5, String columnValue6){
+	private String xmlForDefaultWoorbook(String columnValue1, String columnValue2, boolean columnValue3, long columnValue4, Date columnValue5, String columnValue6){
 		StringBuffer sb = new StringBuffer();
 		sb.append("<");
 		sb.append(SHEET_NAME);

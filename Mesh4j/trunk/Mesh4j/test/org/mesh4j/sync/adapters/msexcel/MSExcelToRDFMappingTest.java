@@ -47,7 +47,7 @@ public class MSExcelToRDFMappingTest {
 		Assert.assertEquals(6, rdfSchema.getPropertyCount());
 		Assert.assertEquals(IRDFSchema.XLS_STRING, rdfSchema.getPropertyType(COLUMN_NAME));
 		Assert.assertEquals(IRDFSchema.XLS_STRING, rdfSchema.getPropertyType(COLUMN_CODE));
-		Assert.assertEquals(IRDFSchema.XLS_DOUBLE, rdfSchema.getPropertyType(COLUMN_AGE));
+		Assert.assertEquals(IRDFSchema.XLS_LONG, rdfSchema.getPropertyType(COLUMN_AGE));
 		Assert.assertEquals(IRDFSchema.XLS_STRING, rdfSchema.getPropertyType(COLUMN_SEX));
 		Assert.assertEquals(IRDFSchema.XLS_BOOLEAN, rdfSchema.getPropertyType(COLUMN_ILL));
 		Assert.assertEquals(IRDFSchema.XLS_DATETIME, rdfSchema.getPropertyType(COLUMN_DATE_ONSET));
@@ -105,7 +105,7 @@ public class MSExcelToRDFMappingTest {
 		long millis = System.currentTimeMillis();
 		String name = "Name: " + millis;
 		String code = "P1";
-		Double age = 1d;
+		Long age = 1l;
 		String sex = "sex: " + millis;
 		Boolean ill = true;
 		Date dateOnset = new Date();
@@ -168,7 +168,7 @@ public class MSExcelToRDFMappingTest {
 		long millis = System.currentTimeMillis();
 		String name = "Name: " + millis;
 		String code = "Code: " + millis;
-		Double age = ((Double)MsExcelUtils.getCellValue(row.getCell(2))).doubleValue() + 1;
+		Long age = ((Long)MsExcelUtils.getCellValue(row.getCell(2))).longValue() + 1;
 		String sex = "sex: " + millis;
 		Boolean ill = ((Boolean)MsExcelUtils.getCellValue(row.getCell(4))) ? false : true;
 		Date dateOnset = new Date();

@@ -153,8 +153,6 @@ public class MsAccessSyncAdapterFactory implements ISyncAdapterFactory {
 		return tableName;
 	}
 
-	// TODO (JMT) Adapter should be supports dynamic source definition changes
-	// TODO (JMT) RDF: load rdf schema
 	public void changeSourceDefinition(String sourceAlias, String sourceDefinition, ISyncAdapter syncAdapter) {
 		try{
 			SplitAdapter splitAdapter = (SplitAdapter) syncAdapter;

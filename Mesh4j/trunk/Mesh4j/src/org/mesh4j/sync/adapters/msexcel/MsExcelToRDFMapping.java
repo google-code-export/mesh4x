@@ -64,7 +64,7 @@ public class MsExcelToRDFMapping implements IMsExcelToXMLMapping{
 				if(HSSFDateUtil.isCellDateFormatted(cell)) {
 					rdfSchema.addDateTimeProperty(cellName, cellName, "en");
 				} else {
-					rdfSchema.addDoubleProperty(cellName, cellName, "en");
+					rdfSchema.addLongProperty(cellName, cellName, "en");
 		        }
 			}
 		}
@@ -94,7 +94,7 @@ public class MsExcelToRDFMapping implements IMsExcelToXMLMapping{
 		}
 		
 		// create rdf instance
-		String id = (String)properties.get(this.idColumnName);
+		String id = String.valueOf(properties.get(this.idColumnName));
 		
 		RDFInstance rdfInstance = rdfSchema.createNewInstance("uri:urn:"+id);
 		
@@ -114,22 +114,23 @@ public class MsExcelToRDFMapping implements IMsExcelToXMLMapping{
 		int size = rdfInstance.getPropertyCount();
 		for (int i = 0; i < size; i++) {
 			String propertyName = rdfInstance.getPropertyName(i);
-			 propertyValue = rdfInstance.getPropertyValue(propertyName);
+			propertyValue = rdfInstance.getPropertyValue(propertyName);
 						
 			if(propertyValue != null){
 				HSSFRow headerRow = MsExcelUtils.getOrCreateRowHeaderIfAbsent(sheet);
 				HSSFCell headerCell = MsExcelUtils.getOrCreateCellStringIfAbsent(headerRow, propertyName);
 				
 				cell = row.getCell(headerCell.getColumnIndex());
+				propertyType = rdfInstance.getPropertyType(propertyName);
 				if(cell == null){
-					propertyType = rdfInstance.getPropertyType(propertyName);
 					cell = createCell(wb, row, headerCell.getColumnIndex(), propertyType);
 				}
 				MsExcelUtils.setCellValue(cell, propertyValue);	
 			}			
 		}		
 	}
-	// TODO (JMT) RDF: improve MSAccess to RDF type mapper
+	
+	// TODO (JMT) RDF: improve MSExcel to RDF type mapper
 	private HSSFCell createCell(HSSFWorkbook wb, HSSFRow row, int columnIndex, String propertyType) {
 
 		if(IRDFSchema.XLS_STRING.equals(propertyType)){

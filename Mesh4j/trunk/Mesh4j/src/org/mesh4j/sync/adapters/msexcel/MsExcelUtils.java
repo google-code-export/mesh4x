@@ -46,7 +46,7 @@ public class MsExcelUtils {
 			if(row != null){
 				cellId = row.getCell(columnIndex);
 				if(cellId != null && cellId.getCellType() != HSSFCell.CELL_TYPE_BLANK){
-					cellValue = cellId.getRichStringCellValue().getString();
+					cellValue = String.valueOf(getCellValue(cellId));
 					if(value.equals(cellValue)){
 						return row;
 					}
@@ -153,7 +153,7 @@ public class MsExcelUtils {
 			if(HSSFDateUtil.isCellDateFormatted(cell)) {
 				return cell.getDateCellValue();
 			} else {
-				return cell.getNumericCellValue();
+				return new Double(cell.getNumericCellValue()).longValue();
 		    }
 		} else {
 			return null;
@@ -166,12 +166,12 @@ public class MsExcelUtils {
 		if(HSSFCell.CELL_TYPE_STRING == type){
 			cell.setCellValue(new HSSFRichTextString(String.valueOf(value)));
 		} else if(HSSFCell.CELL_TYPE_BOOLEAN == type){
-			cell.setCellValue((Boolean)value);
+			cell.setCellValue(value instanceof String ? Boolean.valueOf((String) value): (Boolean)value);
 		} else if(HSSFCell.CELL_TYPE_NUMERIC == type){
 			if(HSSFDateUtil.isCellDateFormatted(cell)) {
 				cell.setCellValue((Date) value);
 			} else {
-				cell.setCellValue(((Number) value).doubleValue());
+				cell.setCellValue(value instanceof String ? Long.valueOf((String) value) : ((Number) value).doubleValue());
 		    }
 		} else {
 			cell.setCellValue(new HSSFRichTextString(String.valueOf(value)));
