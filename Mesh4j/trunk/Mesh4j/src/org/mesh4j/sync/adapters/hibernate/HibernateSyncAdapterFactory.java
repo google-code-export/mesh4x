@@ -84,7 +84,27 @@ public class HibernateSyncAdapterFactory implements ISyncAdapterFactory{
 	
 	// TODO (JMT) RDF: improve Hibernate type to RDF type mappings
 	private static void addRDFProperty(RDFSchema rdfSchema, Property property) {
-		String propertyName = property.getName();
+		String propertyName = null;
+		if (property.getValue().getColumnIterator().hasNext())
+			propertyName = ((org.hibernate.mapping.Column) property.getValue()
+					.getColumnIterator().next()).getName();
+		else
+			property.getName();
+		
+		/*code changed by Sharif: May 05, 2009
+		 
+		Reason: we need to use the column name (if available) rather than the property name itself 
+		because they might be different in case (see example below), in which case data (from database) of
+		corresponding column will not be synced with same column of other repository if the 
+		other repository is created automatically using the schema from the hibernate repository
+		
+		for example:
+		<property name="pass" type="string" node="PASS">
+            <column name="PASS" length="50" />
+        </property>
+        
+        */
+		
 		Type type = property.getType();
 		
 		if(Hibernate.STRING.equals(type)){
