@@ -1,5 +1,6 @@
 package org.mesh4j.ektoo;
 
+import java.awt.Color;
 import java.awt.EventQueue;
 import java.util.Enumeration;
 
@@ -42,33 +43,32 @@ public class Ektoo {
 		});
 	}
 
-	public Ektoo() {
+	public Ektoo() 
+	{
 		EktooUIController controller = new EktooUIController(new PropertiesProvider());
 		JFrame thisClass = new EktooUI(controller);
 		thisClass.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		thisClass.setVisible(true);
 	}
 	
-	// TODO (NBL) make it configurable from properties file
-	private static void initLookAndFeel() {
-		try {
-			// newly incorporated look & feel in J2SE 6.0
-			// UIManager.setLookAndFeel(
-			// "com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-			// native look and feel
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Exception e) {
+	private static void initLookAndFeel() 
+	{
+		try 
+		{
+			String lookAndFeel= new PropertiesProvider().getLookAndFeel();
+		  if (lookAndFeel != null && lookAndFeel.trim().length() != 0)
+		    UIManager.setLookAndFeel(lookAndFeel);
+		  else
+		    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		}
+		catch (Exception e) 
+		{
 			LOGGER.error(e.getMessage(), e);
 		} 
 	}
 
-	public static void setUIFont(javax.swing.plaf.FontUIResource f) {
-		//
-		// sets the default font for all Swing components.
-		// ex.
-		// setUIFont (new javax.swing.plaf.FontUIResource
-		// ("Serif",Font.ITALIC,12));
-		//
+	public static void setUIFont(javax.swing.plaf.FontUIResource f) 
+	{
 		Enumeration<Object> keys = UIManager.getDefaults().keys();
 		while (keys.hasMoreElements()) {
 			Object key = keys.nextElement();
