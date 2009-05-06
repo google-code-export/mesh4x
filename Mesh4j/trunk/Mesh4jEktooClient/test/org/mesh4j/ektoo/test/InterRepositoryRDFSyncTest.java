@@ -6,7 +6,6 @@ import java.util.List;
 import junit.framework.Assert;
 
 import org.junit.Test;
-import org.mesh4j.ektoo.GoogleSpreadSheetInfo;
 import org.mesh4j.ektoo.ISyncAdapterBuilder;
 import org.mesh4j.ektoo.SyncAdapterBuilder;
 import org.mesh4j.ektoo.properties.PropertiesProvider;
@@ -20,7 +19,7 @@ import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.test.utils.TestHelper;
 
-public class InterRepositoryTest {
+public class InterRepositoryRDFSyncTest {
 	
 	@Test
 	public void ShouldSyncMySQLToExcelByRDF(){
@@ -43,24 +42,6 @@ public class InterRepositoryTest {
 	}
 	
 	@Test
-	public void ShouldSyncExcelToMySqlWithoutRDFAssumeSameSchema(){
-		String user = "root";
-		String password = "test1234";
-		String tableName = "user";
-		
-		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
-		ISyncAdapter sourceAsExcel = builder.createMsExcelAdapter(TestHelper.baseDirectoryForTest() + "contentFile.xls", "user", "id");
-		
-		ISyncAdapter targetAsMySql =  builder.createMySQLAdapter(user, password,"localhost" ,3306,"mesh4xdb",tableName);
-		
-		SyncEngine engine = new SyncEngine(sourceAsExcel,targetAsMySql);
-		List<Item> listOfConflicts = engine.synchronize();
-		Assert.assertEquals(0, listOfConflicts.size());
-	}
-	
-	
-	
-	@Test
 	public void ShouldSyncMsAccessToExcelByRDF() throws IOException{
 		
 		String rdfBaseURl = "http://localhost:8080/mesh4x/feeds" +"/aktoo"+"#";
@@ -77,5 +58,4 @@ public class InterRepositoryTest {
 		Assert.assertEquals(0, listOfConflicts.size());
 		
 	}
-	
 }
