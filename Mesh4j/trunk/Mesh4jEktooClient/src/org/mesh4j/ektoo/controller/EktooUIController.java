@@ -9,7 +9,6 @@ import org.mesh4j.ektoo.ui.SyncItemUI;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.model.Item;
-import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.validations.Guard;
 
 /**

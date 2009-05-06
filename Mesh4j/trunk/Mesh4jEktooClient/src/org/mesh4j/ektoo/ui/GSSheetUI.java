@@ -367,8 +367,9 @@ public class GSSheetUI extends JPanel {
 					sheetList.addItem(workSheet.getName());
 				}
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Exception e) {			
+            LOGGER.error(e.getMessage(), e);
+            // TODO Handle exception
 		}
 	}
 

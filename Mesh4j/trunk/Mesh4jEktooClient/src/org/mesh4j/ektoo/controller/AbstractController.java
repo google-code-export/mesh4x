@@ -7,7 +7,6 @@ import java.util.ArrayList;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.mesh4j.ektoo.IUIController;
 import org.mesh4j.ektoo.model.AbstractModel;
 import org.mesh4j.ektoo.ui.AbstractUI;
 

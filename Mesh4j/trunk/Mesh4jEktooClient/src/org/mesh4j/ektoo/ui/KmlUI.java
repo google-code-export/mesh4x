@@ -15,6 +15,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.controller.KmlUIController;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 
@@ -25,6 +27,7 @@ import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 public class KmlUI extends JPanel {
 
 	private static final long serialVersionUID = 3586406415288503774L;
+	private static final Log LOGGER = LogFactory.getLog(KmlUI.class);
 	
 	// MODEL VARIABLES
 	private JLabel labelFileName = null;
@@ -99,6 +102,7 @@ public class KmlUI extends JPanel {
 		try {
 			return this.file.getCanonicalPath();
 		} catch (IOException e) {
+            LOGGER.debug(e.getMessage());
 			// nothing to do
 			return null;
 		}
