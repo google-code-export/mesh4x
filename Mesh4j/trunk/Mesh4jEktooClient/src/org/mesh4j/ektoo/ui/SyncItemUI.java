@@ -179,7 +179,7 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 
 			excelUI = new MsExcelUI(excelUIController);
 			excelUI.setLabelFile(EktooUITranslator.getExcelFileLabel());
-			excelUI.setLabelTable(EktooUITranslator.getExcelTableLabel());
+			excelUI.setLabelTable(EktooUITranslator.getExcelWorksheetLabel());
 			excelUI.setLabelColumn(EktooUITranslator
 					.getExcelUniqueColumnLabel());
 		}

@@ -6,6 +6,8 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.File;
 
 import javax.swing.JButton;
@@ -145,14 +147,17 @@ public abstract class TableUI extends AbstractUI {
 		if (listTable == null) {
 			listTable = new JComboBox();
 			listTable.setBounds(new Rectangle(99, 36, 194, 20));
-			listTable.addItemListener(new java.awt.event.ItemListener() {
-				public void itemStateChanged(java.awt.event.ItemEvent e) {
-					// System.out.println("getTableList()->itemStateChanged()");
-					int sheetIndex = listTable.getSelectedIndex();
-					if (sheetIndex != -1) {
-						table = (String) listTable.getSelectedItem();
-						setList(getFile(), sheetIndex);
-					}
+			listTable.addItemListener(new ItemListener() {
+				public void itemStateChanged(ItemEvent evt) 
+				{
+				  if (evt.getStateChange() == ItemEvent.SELECTED) 
+          {
+  				  int sheetIndex = listTable.getSelectedIndex();
+  					if (sheetIndex != -1) {
+  						table = (String) listTable.getSelectedItem();
+  						setList(getFile(), sheetIndex);
+  					}
+          }
 				}
 			});
 		}
@@ -181,17 +186,21 @@ public abstract class TableUI extends AbstractUI {
 		if (listColumn == null) {
 			listColumn = new JComboBox();
 			listColumn.setBounds(new Rectangle(99, 64, 194, 20));
-			listColumn.addItemListener(new java.awt.event.ItemListener() {
-				public void itemStateChanged(java.awt.event.ItemEvent e) {
-					int tableIndex = listTable.getSelectedIndex();
-					if (tableIndex != -1) {
-						table = (String) listTable.getSelectedItem();
-						int columnIndex = listColumn.getSelectedIndex();
-						if (columnIndex != -1) {
-							setList(getFile(), tableIndex, (String) listColumn
-									.getSelectedItem());
-						}
-					}
+			listColumn.addItemListener(new ItemListener() {
+				public void itemStateChanged(ItemEvent evt) 
+				{
+				  if (evt.getStateChange() == ItemEvent.SELECTED) 
+          {				
+  				  int tableIndex = listTable.getSelectedIndex();
+  					if (tableIndex != -1) {
+  						table = (String) listTable.getSelectedItem();
+  						int columnIndex = listColumn.getSelectedIndex();
+  						if (columnIndex != -1) {
+  							setList(getFile(), tableIndex, (String) listColumn
+  									.getSelectedItem());
+  						}
+  					}
+          }
 				}
 			});
 		}

@@ -198,42 +198,27 @@ public class GSSheetUI extends JPanel {
 		if (txtKey == null) {
 			txtKey = new JTextField();
 			txtKey.setBounds(new Rectangle(101, 55, 155, 20));
-			txtKey.addActionListener(new java.awt.event.ActionListener() {
-				public void actionPerformed(ActionEvent ae) {
-					try {
-						getController().changeSpreadsheetKey(txtKey.getText());
-					} catch (Exception e) {
-						LOGGER.error(e.getMessage(), e);
-						// TODO Handle exception
-					}
-
-					SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
-						public Void doInBackground() {
-							setCursor(Cursor
-									.getPredefinedCursor(Cursor.WAIT_CURSOR));
-							setList(getUser(), getPass(), getKey());
-							return null;
-						}
-
-						public void done() {
-							setCursor(Cursor
-									.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-						}
-					};
-					worker.execute();
-				}
-			});
-
+			
+			txtKey.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent evt) {
+          try {
+            getController().changeSpreadsheetKey(txtKey.getText());
+          } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            // TODO Handle exception
+          }
+        }
+      });
 			txtKey.addFocusListener(new FocusAdapter() {
-				public void focusLost(FocusEvent evt) {
-					try {
-						getController().changeSpreadsheetKey(txtKey.getText());
-					} catch (Exception e) {
-						LOGGER.error(e.getMessage(), e);
-						// TODO Handle exception
-					}
-				}
-			});
+        public void focusLost(FocusEvent evt) {
+          try {
+            getController().changeSpreadsheetKey(txtKey.getText());
+          } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            // TODO Handle exception
+          }
+        }
+      });
 		}
 		return txtKey;
 	}
@@ -244,9 +229,24 @@ public class GSSheetUI extends JPanel {
       btnConnect = new JButton();
       btnConnect.setBounds(new Rectangle(260, 55, 22, 20));
       btnConnect.setIcon(ImageManager.getDatabaseConnectionIcon());
-      btnConnect.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent ae) {
-          
+      btnConnect.addActionListener(new ActionListener() 
+      {
+        public void actionPerformed(ActionEvent ae) 
+        {
+          SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+            public Void doInBackground() {
+              setCursor(Cursor
+                  .getPredefinedCursor(Cursor.WAIT_CURSOR));
+              setList(getUser(), getPass(), getKey());
+              return null;
+            }
+
+            public void done() {
+              setCursor(Cursor
+                  .getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            }
+          };
+          worker.execute();
         }
       });
     }
@@ -270,29 +270,35 @@ public class GSSheetUI extends JPanel {
 
 			listTable.setBounds(new Rectangle(101, 80, 183, 20));
 
-			listTable.addItemListener(new ItemListener() {
-				public void itemStateChanged(ItemEvent e) {
-					getController().changeWorksheetName(
-							(String) listTable.getSelectedItem());
-
-					int sheetIndex = listTable.getSelectedIndex();
-					if (sheetIndex != -1) {
-						SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
-							public Void doInBackground() {
-								setCursor(Cursor
-										.getPredefinedCursor(Cursor.WAIT_CURSOR));
-								setList(getUser(), getPass(), getKey(),
-										(String) listTable.getSelectedItem());
-								return null;
-							}
-
-							public void done() {
-								setCursor(Cursor
-										.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-							}
-						};
-						worker.execute();
-					}
+			listTable.addItemListener(new ItemListener() 
+			{
+				public void itemStateChanged(ItemEvent evt) 
+				{
+				  if (evt.getStateChange() == ItemEvent.SELECTED) 
+				  {
+  					getController().changeWorksheetName(
+  							(String) listTable.getSelectedItem());
+  
+  					int sheetIndex = listTable.getSelectedIndex();
+  					if (sheetIndex != -1) 
+  					{
+  						SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+  							public Void doInBackground() {
+  								setCursor(Cursor
+  										.getPredefinedCursor(Cursor.WAIT_CURSOR));
+  								setList(getUser(), getPass(), getKey(),
+  										(String) listTable.getSelectedItem());
+  								return null;
+  							}
+  
+  							public void done() {
+  								setCursor(Cursor
+  										.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+  							}
+  						};
+  						worker.execute();
+  					}
+				  }
 				}
 			});
 
@@ -322,14 +328,22 @@ public class GSSheetUI extends JPanel {
 		if (listColumn == null) {
 			listColumn = new JComboBox();
 			listColumn.setBounds(new Rectangle(101, 105, 183, 20));
-			listColumn.addItemListener(new java.awt.event.ItemListener() {
-				public void itemStateChanged(java.awt.event.ItemEvent e) {
-					getController().changeUniqueColumnPosition(
-							listColumn.getSelectedIndex());
-					getController().changeUniqueColumnName(
-							(String) listColumn.getSelectedItem());
+			listColumn.addItemListener(new ItemListener() {
+				public void itemStateChanged(ItemEvent evt) 
+				{
+				  if (evt.getStateChange() == ItemEvent.SELECTED) 
+          {				  
+  					getController().changeUniqueColumnPosition(
+  							listColumn.getSelectedIndex() + 1);
+  					getController().changeUniqueColumnName(
+  							(String) listColumn.getSelectedItem());
+  					
+  					// TODO (NBL) need to improve of adapter creation api
+  					getController().changeLastUpdatedColumnPosition( listColumn.getItemCount());
+          }
 				}
 			});
+			
 
 		}
 		return listColumn;
@@ -339,7 +353,7 @@ public class GSSheetUI extends JPanel {
 	public void setList(String user, String pass, String key) {
 		JComboBox sheetList = getTableList();
 		sheetList.removeAllItems();
-
+		 
 		try {
 			IGoogleSpreadSheet spreadsheet = new GoogleSpreadsheet(key, user,
 					pass);
@@ -359,7 +373,7 @@ public class GSSheetUI extends JPanel {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void setList(String user, String pass, String key, String sheetName) {
+	public  void setList(String user, String pass, String key, String sheetName) {
 		JComboBox columnList = getColumnList();
 		columnList.removeAllItems();
 
@@ -379,6 +393,7 @@ public class GSSheetUI extends JPanel {
 			}
 			break;
 		}
+		
 	}
 
 	public String getUser() {
