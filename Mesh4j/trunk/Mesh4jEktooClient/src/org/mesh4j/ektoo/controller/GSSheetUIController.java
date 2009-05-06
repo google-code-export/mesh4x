@@ -72,7 +72,8 @@ public class GSSheetUIController extends AbstractController implements
 	@Override
 	public ISyncAdapter createAdapter() {
 		GSSheetModel model = (GSSheetModel) this.getModel();
-		GoogleSpreadSheetInfo spreadSheetInfo = 
+
+    GoogleSpreadSheetInfo spreadSheetInfo = 
 			new GoogleSpreadSheetInfo(
 				model.getSpreadsheetKey(), 
 				model.getUserName(), 

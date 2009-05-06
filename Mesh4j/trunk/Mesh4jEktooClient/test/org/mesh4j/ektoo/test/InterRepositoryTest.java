@@ -25,16 +25,16 @@ public class InterRepositoryTest {
 	@Test
 	public void ShouldSyncMySQLToExcelByRDF(){
 		String user = "root";
-		String password = "test1234";
-		String tableName = "user";
+		String password = "nuke22";
+		String tableName = "ektoo";
 		
 		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
-		ISyncAdapter sourceAsMySql =  builder.createMySQLAdapter(user, password,"localhost" ,3306,"mesh4xdb",tableName);
+		ISyncAdapter sourceAsMySql =  builder.createMySQLAdapter(user, password,"localhost" ,3306,"ektoo",tableName);
 		
 		SplitAdapter splitAdapterSource = (SplitAdapter)sourceAsMySql;
 		ISchema sourceSchema = ((HibernateContentAdapter)splitAdapterSource.getContentAdapter()).getMapping().getSchema();
 		
-		ISyncAdapter targetAsExcel = builder.createMsExcelAdapter(TestHelper.baseDirectoryForTest() + "contentFile.xls", "user", "id", (IRDFSchema)sourceSchema);
+		ISyncAdapter targetAsExcel = builder.createMsExcelAdapter(TestHelper.baseDirectoryForTest() + "contentFile.xls", "ektoo", "id", (IRDFSchema)sourceSchema);
 		
 		SyncEngine engine = new SyncEngine(splitAdapterSource,targetAsExcel);
 		List<Item> listOfConflicts = engine.synchronize();

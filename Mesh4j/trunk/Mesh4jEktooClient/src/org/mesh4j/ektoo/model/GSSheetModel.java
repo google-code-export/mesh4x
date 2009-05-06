@@ -90,4 +90,9 @@ public class GSSheetModel extends AbstractModel {
 	public int getLastUpdatedColumnPosition() {
 		return lastUpdatedColumnPosition;
 	}
+	
+  public String toString()
+  {
+    return "Cloud | " + getSpreadsheetKey() + " | " + getWorksheetName() ; 
+  } 	
 }

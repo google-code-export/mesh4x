@@ -42,6 +42,6 @@ public class MsExcelModel extends AbstractModel {
 	
 	public String toString()
 	{
-	  return "Ms Excel | " + getWorkbookName() + " | " + getWorksheetName() + " | " + getUniqueColumnName();
+	  return "Ms Excel | " + getWorkbookName() + " | " + getWorksheetName();
 	}
 }

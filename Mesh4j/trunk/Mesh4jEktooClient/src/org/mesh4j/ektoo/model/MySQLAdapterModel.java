@@ -4,8 +4,8 @@ package org.mesh4j.ektoo.model;
  * @author Bhuiyan Mohammad Iklash
  * 
  */
-public class MySQLAdapterModel extends AbstractModel {
-	
+public class MySQLAdapterModel extends AbstractModel 
+{
 	// MODEL VARIABLES
 	private String userName = null;
 	private String userPassword = null;
@@ -15,8 +15,8 @@ public class MySQLAdapterModel extends AbstractModel {
 	private String tableName = null;
 
 	// BUSINESS METHODS
-	
-	public void setUserName(String userName) {
+	public void setUserName(String userName) 
+	{
 		firePropertyChange("userName", this.userName, this.userName = userName);
 	}
 
@@ -24,7 +24,8 @@ public class MySQLAdapterModel extends AbstractModel {
 		return userName;
 	}
 
-	public void setUserPassword(String userPassword) {
+	public void setUserPassword(String userPassword) 
+	{
 		firePropertyChange("userPassword", this.userPassword,
 				this.userPassword = userPassword);
 	}
@@ -33,7 +34,8 @@ public class MySQLAdapterModel extends AbstractModel {
 		return userPassword;
 	}
 
-	public void setHostName(String hostName) {
+	public void setHostName(String hostName) 
+	{
 		firePropertyChange("hostName", this.hostName, this.hostName = hostName);
 	}
 
@@ -66,4 +68,9 @@ public class MySQLAdapterModel extends AbstractModel {
 	public String getTableName() {
 		return tableName;
 	}
+	
+  public String toString()
+  {
+     return "MySQL | " + getDatabaseName() + " | " + getTableName();
+  } 	
 }

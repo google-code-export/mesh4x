@@ -40,4 +40,9 @@ public class CloudModel extends AbstractModel {
 		return this.baseUri + "/" + (getMeshName() != null ? getMeshName() : "")
 				+ "/" + (getDatasetName() != null ? getDatasetName() : "");
 	}
+	
+  public String toString()
+  {
+    return "Cloud | " + getUri();
+  }	
 }

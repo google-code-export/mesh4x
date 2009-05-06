@@ -28,4 +28,9 @@ public class MsAccessModel extends AbstractModel {
 	public String getTabletName() {
 		return tableName;
 	}
+	
+  public String toString()
+  {
+     return "Ms Access | " + getDatabaseName() + " | " + getTabletName();
+  }	
 }

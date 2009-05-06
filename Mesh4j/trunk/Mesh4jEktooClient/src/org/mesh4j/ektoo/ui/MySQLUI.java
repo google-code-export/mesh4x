@@ -112,26 +112,27 @@ public class MySQLUI extends JPanel {
 		}
 		txtPort.setText(portNo);
 
-		String schemaName = controller.getDefaultMySQLSchema();
-		if (schemaName == null){
-			schemaName = "";
-		}
-		txtDatabase.setText(schemaName);
-
-		String userName = controller.getDefaultMySQLUser();
-		if (userName == null){
-			userName = "";
-		}
-		txtUser.setText(userName);
-
-		String userPassword = controller.getDefaultMySQLPassword();
-		if (userPassword == null){
-			userPassword = "";
-		}
-		txtPass.setText(userPassword);
+//		String schemaName = controller.getDefaultMySQLSchema();
+//		if (schemaName == null){
+//			schemaName = "";
+//		}
+//		txtDatabase.setText(schemaName);
+//
+//		String userName = controller.getDefaultMySQLUser();
+//		if (userName == null){
+//			userName = "";
+//		}
+//		txtUser.setText(userName);
+//
+//		String userPassword = controller.getDefaultMySQLPassword();
+//		if (userPassword == null){
+//			userPassword = "";
+//		}
+//		txtPass.setText(userPassword);
 	}
 
-	private JLabel getUserLabel() {
+	private JLabel getUserLabel() 
+	{
 		if (labelUser == null) {
 			labelUser = new JLabel();
 			labelUser.setText(EktooUITranslator.getMySQLUserLabel());
@@ -344,7 +345,11 @@ public class MySQLUI extends JPanel {
 			btnConnect.setBounds(new Rectangle(260, 80, 22, 20));
 			btnConnect.setIcon(ImageManager.getDatabaseConnectionIcon());
       btnConnect.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent ae) {
+				public void actionPerformed(ActionEvent ae) 
+				{
+				  getController().changeHostName( getHost());
+				  getController().changePortNo( getPort() );
+				  
 					SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 						public Void doInBackground() {
 							setCursor(Cursor

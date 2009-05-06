@@ -22,4 +22,9 @@ public class KmlModel extends AbstractModel {
 	public String getKmlFileName() {
 		return kmlFileName;
 	}
+	
+	 public String toString()
+	 {
+	    return "KML | " + getKmlFileName();
+	 }
 }
