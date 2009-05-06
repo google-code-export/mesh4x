@@ -70,7 +70,6 @@ public class EktooUITranslator {
     return EktooMessageTranslator
         .translate("EKTOO_SYNC_PROCESS_FAILED_MESSAGE", source, target, date);
   }
-  		
 	
 	public static String getExcelFileDescription() {
 		// return "Microsoft Excel File(s)";
@@ -79,77 +78,60 @@ public class EktooUITranslator {
 	}
 
 	public static String getExcelFileSelectorTitle() {
-		// return "Select Excel File (.xls)";
 		return EktooMessageTranslator
 				.translate("EKTOO_EXCEL_FILE_CHOOSER_TITLE");
 	}
 
 	public static String getExcelWorksheetLabel() {
-		// return "Worksheet";
 		return EktooMessageTranslator
 				.translate("EKTOO_EXCEL_WORKSHEET_FIELD_LABEL");
 	}
 
 	public static String getExcelUniqueColumnLabel() {
-		// return "Unique Column";
 		return EktooMessageTranslator
 				.translate("EKTOO_EXCEL_UNIQUE_COLUMN_FIELD_LABEL");
 	}
 
 	public static String getExcelFileLabel() {
-		// return "File";
 		return EktooMessageTranslator.translate("EKTOO_EXCEL_FILE_FIELD_LABEL");
 	}
 
 	public static String getGooglePasswordLabel() {
-		// return "Password";
 		return EktooMessageTranslator
 				.translate("EKTOO_GOOGLE_PASSWORD_FIELD_LABEL");
 	}
 
 	public static String getGoogleUserLabel() {
-		// return "User";
 		return EktooMessageTranslator
 				.translate("EKTOO_GOOGLE_USER_FIELD_LABEL");
 	}
 
 	public static String getGoogleWorksheetLabel() {
-		// return "Worksheet";
 		return EktooMessageTranslator
 				.translate("EKTOO_GOOGLE_WORKSHEET_FIELD_LABEL");
 	}
 
 	public static String getGoogleKeyLabel() {
-		// return "Key";
 		return EktooMessageTranslator.translate("EKTOO_GOOGLE_KEY_FIELD_LABEL");
 	}
 
 	public static String getUniqueColumnNameLabel() {
-		// return "Unique Column";
 		return EktooMessageTranslator
 				.translate("EKTOO_GOOGLE_UNIQUE_COLUMN_FIELD_LABEL");
 	}
 
 	public static String getSyncTypeLabel() {
-		// return "Sync Type";
 		return EktooMessageTranslator.translate("EKTOO_SYNC_TYPE_LABEL");
 	}
 
 	public static String getSourceSyncItemSelectorTitle() {
-		// return "Source";
 		return EktooMessageTranslator.translate("EKTOO_SYNC_SOURCE_LABEL");
 	}
 
 	public static String getTargetSyncItemSelectorTitle() {
-		// return "Target";
 		return EktooMessageTranslator.translate("EKTOO_SYNC_TARGET_LABEL");
 	}
 
-	public static String getExcelTableLabel() {
-		// return "Table";
-		return EktooMessageTranslator
-				.translate("EKTOO_EXCEL_TABLE_FIELD_LABEL");
-	}
 
 	public static String getAccessFileLabel() {
 		// return "Database";
@@ -252,6 +234,16 @@ public class EktooUITranslator {
     .translate("EKTOO_TITLE");
   }
 
-  
+  public static String getMeshNameFieldLabel()
+  {
+    return EktooMessageTranslator
+    .translate("EKTOO_CLOUD_MESH_NAME_FIELD_LABEL");
+  }
+
+  public static String getMeshDataSetFieldLabel()
+  {
+    return EktooMessageTranslator
+    .translate("EKTOO_CLOUD_MESH_DATASET_FIELD_LABEL");
+  }
 
 }
