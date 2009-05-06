@@ -78,4 +78,31 @@ public class InterRepositoryTest {
 		
 	}
 	
+	@Test
+	public void ShouldSyncMySQLToCloud(){	
+			
+		String user = "root";
+		String password = "admin";
+		String tableName = "user";
+
+		String meshName = "myMesh";
+		String feedName = "myFeed";
+
+		ISyncAdapterBuilder builder = new SyncAdapterBuilder(
+				new PropertiesProvider());
+		ISyncAdapter sourceAsMySql = builder.createMySQLAdapter(user, password,
+				"localhost", 3306, "mesh4xdb", tableName);
+
+		SplitAdapter sourceAdapter = (SplitAdapter) sourceAsMySql;
+
+		ISyncAdapter targetAdapter = builder.createHttpSyncAdapter(meshName, feedName);
+
+		SyncEngine engine = new SyncEngine(sourceAdapter, targetAdapter);
+
+		List<Item> listOfConflicts = engine.synchronize();
+		Assert.assertEquals(0, listOfConflicts.size());
+		Assert.assertEquals(sourceAdapter.getAll().size(), targetAdapter
+				.getAll().size());
+	}	
+	
 }
