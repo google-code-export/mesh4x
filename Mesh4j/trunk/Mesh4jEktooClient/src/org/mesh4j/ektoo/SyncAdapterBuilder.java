@@ -2,6 +2,7 @@ package org.mesh4j.ektoo;
 
 import java.io.File;
 
+import org.dom4j.DocumentException;
 import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadSheetContentAdapter;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadSheetSyncRepository;
@@ -95,14 +96,39 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 		return splitAdapter;
 	}
 
+
 	public ISyncAdapter createHttpSyncAdapter(String meshid, String datasetId) {
 		String url = getSyncUrl(meshid, datasetId);
+
 		HttpSyncAdapter adapter = new HttpSyncAdapter(url,
 				RssSyndicationFormat.INSTANCE, getIdentityProvider(),
 				getIdGenerator(), ContentWriter.INSTANCE,
 				ContentReader.INSTANCE);
+
+		//TODO: need to come up with better strategy for automatic creation of mesh/feed
+		//if not available
+		try {
+			adapter.getAll();
+		} catch (Exception e) {
+			if (e.getCause() instanceof DocumentException) {
+				if (e.getCause().getMessage().endsWith(datasetId)) {
+					HttpSyncAdapter.uploadMeshDefinition(propertiesProvider
+							.getMeshSyncServerURL(), meshid,
+							RssSyndicationFormat.NAME, "my mesh", null, null,
+							getIdentityProvider().getAuthenticatedUser());
+					
+					HttpSyncAdapter.uploadMeshDefinition(propertiesProvider
+							.getMeshSyncServerURL(), meshid + "/" + datasetId,
+							RssSyndicationFormat.NAME, "my description", null,
+							null, getIdentityProvider().getAuthenticatedUser());
+				}
+
+			}
+		}
+		
 		return adapter;
-	}
+	}	
+	
 
 	@Override
 	public ISyncAdapter createMySQLAdapter(String userName, String password,
