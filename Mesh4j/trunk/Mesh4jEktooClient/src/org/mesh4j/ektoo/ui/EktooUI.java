@@ -270,7 +270,7 @@ public class EktooUI extends JFrame {
 				{
 					log("actionPerformed()");
 					setConsole("");
-					SwingWorker<Boolean, Void> task = new SynchronizeTask(
+					SwingWorker<String, Void> task = new SynchronizeTask(
 							EktooUI.this);
 					task.execute();
 					log("Calling Sync...");

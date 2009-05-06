@@ -27,11 +27,11 @@ public class EktooUIController
 		this.adapterBuilder = new SyncAdapterBuilder(propertiesProvider);
 	}
 
-	public boolean sync(SyncItemUI source, SyncItemUI target) 
+	public String sync(SyncItemUI source, SyncItemUI target) 
 	{
-		ISyncAdapter sourceAdapter = source.createAdapter();
+	  
+	  ISyncAdapter sourceAdapter = source.createAdapter();
 		ISyncAdapter targetAdapter = target.createAdapter();
-
 		// TODO (NBL) make it generic
 		if (targetAdapter == null) 
 		{
@@ -40,13 +40,15 @@ public class EktooUIController
 		return sync(sourceAdapter, targetAdapter);
 	}
 
-	public boolean sync(ISyncAdapter sourceAdapter, ISyncAdapter targetAdapter) 
+	public String sync(ISyncAdapter sourceAdapter, ISyncAdapter targetAdapter) 
 	{
 		SyncEngine engine = new SyncEngine(sourceAdapter, targetAdapter);
+    
 		List<Item> items = engine.synchronize();
-		if (items != null && items.size() > 0) 
-		  return false;
 		
-		return true;
+		if (items != null && items.size() > 0) 
+		  return "failed";
+		
+		return "success";
 	}
 }

@@ -47,7 +47,7 @@ public class SyncAdapterBuilderTest {
 	@Test
 	public void shouldCreateMsAccessAdapter() throws Exception{
 	    ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
-	    																// TODO remove folder harcode 
+	    // TODO remove folder harcode 
 	    ISyncAdapter syncAdapter = adapterBuilder.createMsAccessAdapter("C:\\jtest\\ektoo.mdb", "ektoo");
 	    
 	   Assert.assertEquals(0, syncAdapter.getAll().size());

@@ -12,13 +12,13 @@ import org.mesh4j.ektoo.ui.EktooUI;
 import org.mesh4j.ektoo.ui.SyncItemUI;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 
-public class SynchronizeTask extends SwingWorker<Boolean, Void> {
+public class SynchronizeTask extends SwingWorker<String, Void> {
 
 	private final static Log LOGGER = LogFactory.getLog(SynchronizeTask.class);
 	
 	// MODEL VARIABLEs
 	private EktooUI ui;
-	private Boolean result = null;
+	private String result = null;
 
 	// BUSINESS METHODS
 	public SynchronizeTask(EktooUI ui) {
@@ -27,7 +27,7 @@ public class SynchronizeTask extends SwingWorker<Boolean, Void> {
 	}
 
 	@Override
-	public Boolean doInBackground() 
+	public String doInBackground() 
 	{
 		ui.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 		ui.setConsole(EktooUITranslator.getMessageStartSync(
@@ -41,10 +41,13 @@ public class SynchronizeTask extends SwingWorker<Boolean, Void> {
 			SyncItemUI sourceItem = ui.getSourceItem();
 			SyncItemUI targetItem = ui.getTargetItem();
 			result = ui.getController().sync(sourceItem, targetItem);
+			
 			return result;
 		}
 		catch (Throwable t) 
 		{
+		  //TODO (NBL) handle exception
+		  t.printStackTrace();
 			LOGGER.error(t.getMessage(), t);
 		}
 		return null;
@@ -56,7 +59,8 @@ public class SynchronizeTask extends SwingWorker<Boolean, Void> {
 	  try 
 		{
 			result = get();
-			if (result.booleanValue() )
+			System.out.println("Test..." + result);
+			if (result != null && result.startsWith("success")) 
 			{
 			  ui.setConsole(EktooUITranslator.getMessageSyncSyccessfuly(
             ui.getSourceItem().toString(),
