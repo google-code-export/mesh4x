@@ -25,6 +25,7 @@ import javax.swing.SwingWorker;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.controller.MySQLUIController;
+import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.sync.utils.SqlDBUtils;
 
@@ -70,11 +71,10 @@ public class MySQLUI extends JPanel {
 		initialize();
 	}
 
-	private void initialize() {
-		this.setSize(300, 135);
+	private void initialize() 
+	{
 		this.setLayout(null);
-		this.setPreferredSize(new Dimension(300, 95));
-		this.setBackground(new Color(106, 237, 238));
+		this.setBackground(Color.WHITE);
 
 		this.add(getUserLabel(), null);
 		this.add(getUserText(), null);
@@ -181,7 +181,8 @@ public class MySQLUI extends JPanel {
 		return labelPass;
 	}
 
-	private JPasswordField getPassText() {
+	private JPasswordField getPassText() 
+	{
 		if (txtPass == null) {
 			txtPass = new JPasswordField();
 			txtPass.setBounds(new Rectangle(101, 30, 183, 20));
@@ -307,7 +308,7 @@ public class MySQLUI extends JPanel {
 	private JTextField getDatabaseText() {
 		if (txtDatabase == null) {
 			txtDatabase = new JTextField();
-			txtDatabase.setBounds(new Rectangle(101, 80, 140, 20));
+			txtDatabase.setBounds(new Rectangle(101, 80, 155, 20));
 			txtDatabase.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent ae) {
 					try {
@@ -335,12 +336,14 @@ public class MySQLUI extends JPanel {
 		return txtDatabase;
 	}
 
-	private JButton getConnectButton() {
-		if (btnConnect == null) {
+	private JButton getConnectButton() 
+	{
+		if (btnConnect == null) 
+		{
 			btnConnect = new JButton();
-			btnConnect.setBounds(new Rectangle(245, 80, 40, 20));
-			btnConnect.setText("C");
-			btnConnect.addActionListener(new ActionListener() {
+			btnConnect.setBounds(new Rectangle(260, 80, 22, 20));
+			btnConnect.setIcon(ImageManager.getDatabaseConnectionIcon());
+      btnConnect.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent ae) {
 					SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 						public Void doInBackground() {
@@ -389,9 +392,6 @@ public class MySQLUI extends JPanel {
 							public Void doInBackground() {
 								setCursor(Cursor
 										.getPredefinedCursor(Cursor.WAIT_CURSOR));
-								// setList(getUser() , getPass(), getDatabase(),
-								// getPort(),
-								// (String)listTable.getSelectedItem());
 								return null;
 							}
 
@@ -412,7 +412,6 @@ public class MySQLUI extends JPanel {
 			String schema) {
 		JComboBox tableList = getTableList();
 		tableList.removeAllItems();
-
 		String url = SqlDBUtils.getMySqlUrlConnection(host, port, schema);
 		List<String> tables = SqlDBUtils.getTableNames(Driver.class, url, user,
 				pass);

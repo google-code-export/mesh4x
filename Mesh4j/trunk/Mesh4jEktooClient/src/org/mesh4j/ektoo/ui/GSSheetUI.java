@@ -14,6 +14,7 @@ import java.awt.event.ItemListener;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -24,6 +25,7 @@ import javax.swing.SwingWorker;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.controller.GSSheetUIController;
+import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadsheet;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.IGoogleSpreadSheet;
@@ -55,6 +57,8 @@ public class GSSheetUI extends JPanel {
 
 	private JLabel labelColumn = null;
 	private JComboBox listColumn = null;
+	 
+	private JButton btnConnect = null;
 	private GSSheetUIController controller = null;
 
 	// BUSINESS METHODS
@@ -70,10 +74,8 @@ public class GSSheetUI extends JPanel {
 	}
 
 	private void initialize() {
-		this.setSize(300, 135);
 		this.setLayout(null);
-		this.setPreferredSize(new Dimension(300, 95));
-		this.setBackground(new Color(106, 237, 238));
+		this.setBackground(Color.WHITE);
 
 		this.add(getUserLabel(), null);
 		this.add(getUserText(), null);
@@ -83,7 +85,8 @@ public class GSSheetUI extends JPanel {
 
 		this.add(getKeyLabel(), null);
 		this.add(getKeyText(), null);
-
+		this.add(getConnectButton(), null);
+		
 		this.add(getTableLabel(), null);
 		this.add(getTableList(), null);
 		this.add(getLabelColumn(), null);
@@ -92,7 +95,8 @@ public class GSSheetUI extends JPanel {
 		this.setDefaultValues();
 	}
 
-	private void setDefaultValues() {
+	private void setDefaultValues() 
+	{
 		//txtUser.setText("gspreadsheet.test@gmail.com");
 		//txtPass.setText("java123456");
 		// txtKey.setText("peo4fu7AitTo8e3v0D8FCew");
@@ -193,7 +197,7 @@ public class GSSheetUI extends JPanel {
 	private JTextField getKeyText() {
 		if (txtKey == null) {
 			txtKey = new JTextField();
-			txtKey.setBounds(new Rectangle(101, 55, 183, 20));
+			txtKey.setBounds(new Rectangle(101, 55, 155, 20));
 			txtKey.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(ActionEvent ae) {
 					try {
@@ -233,7 +237,22 @@ public class GSSheetUI extends JPanel {
 		}
 		return txtKey;
 	}
-
+	private JButton getConnectButton() 
+  {
+    if (btnConnect == null) 
+    {
+      btnConnect = new JButton();
+      btnConnect.setBounds(new Rectangle(260, 55, 22, 20));
+      btnConnect.setIcon(ImageManager.getDatabaseConnectionIcon());
+      btnConnect.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent ae) {
+          
+        }
+      });
+    }
+    return btnConnect;
+  }
+	
 	private JLabel getTableLabel() {
 		if (labelTable == null) {
 			labelTable = new JLabel();
