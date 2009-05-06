@@ -55,6 +55,41 @@ public class InterRepositorySyncTest {
 	}
 	
 	@Test
+	public void ShouldSyncGoogleSpreadSheetToGoogleSpreadSheetWithoutRDFAssumeSameSchema(){
+		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
+		GoogleSpreadSheetInfo spreadSheetInfoSource = new GoogleSpreadSheetInfo(
+				"peo4fu7AitTqkOhMSrecFRA",
+				"gspreadsheet.test@gmail.com",
+				"java123456",
+				"id",
+				1,
+				6,
+				"user_source",
+				"user"
+				);
+		
+		GoogleSpreadSheetInfo spreadSheetInfoTarget = new GoogleSpreadSheetInfo(
+				"peo4fu7AitTqkOhMSrecFRA",
+				"gspreadsheet.test@gmail.com",
+				"java123456",
+				"id",
+				1,
+				6,
+				"user_target",
+				"user"
+				);
+		
+		ISyncAdapter sourceAsGoogleSpreadSheet = builder.createGoogleSpreadSheetAdapter(spreadSheetInfoSource);
+		
+		ISyncAdapter targetAsGoogleSpreadSheet = builder.createGoogleSpreadSheetAdapter(spreadSheetInfoTarget);
+		
+		
+		SyncEngine engine = new SyncEngine(sourceAsGoogleSpreadSheet,targetAsGoogleSpreadSheet);
+		List<Item> listOfConflicts = engine.synchronize();
+		Assert.assertEquals(0, listOfConflicts.size());
+	}
+	
+	@Test
 	public void ShouldSyncExcelToExcelWithoutRDFAssumeSameSchema(){
 		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
 		
