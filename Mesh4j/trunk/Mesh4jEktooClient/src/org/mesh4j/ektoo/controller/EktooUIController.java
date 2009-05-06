@@ -37,7 +37,7 @@ public class EktooUIController
 	  if (targetAdapter == null || 
 	        (
 	            ( (String)target.getListType().getSelectedItem()).equals( SyncItemUI.MS_EXCEL_PANEL )
-	            && ( (String)source.getListType().getSelectedItem()).equals( SyncItemUI.MS_EXCEL_PANEL )
+	            && !( (String)source.getListType().getSelectedItem()).equals( SyncItemUI.MS_EXCEL_PANEL )
 	        )
 	      ) 
     {
