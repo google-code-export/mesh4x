@@ -28,10 +28,10 @@
 	<classpathentry exported="true" kind="lib" path="lib/jenna/xercesImpl.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jenna/iri.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jenna/icu4j_3_4.jar"/>
-	<classpathentry kind="lib" path="lib/hibernate/bsh-2.0b1.jar"/>
-	<classpathentry kind="lib" path="lib/hibernate/freemarker.jar"/>
-	<classpathentry kind="lib" path="lib/hibernate/jtidy-r8-20060801.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/hibernate/bsh-2.0b1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/hibernate/freemarker.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/hibernate/jtidy-r8-20060801.jar"/>
 	<classpathentry kind="lib" path="etc"/>
-	<classpathentry kind="lib" path="lib/hibernate/hibernate-tools.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/hibernate/hibernate-tools.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
