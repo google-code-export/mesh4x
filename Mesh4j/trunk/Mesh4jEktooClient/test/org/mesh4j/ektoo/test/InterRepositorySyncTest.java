@@ -53,4 +53,29 @@ public class InterRepositorySyncTest {
 		List<Item> listOfConflicts = engine.synchronize();
 		Assert.assertEquals(0, listOfConflicts.size());
 	}
+	
+	@Test
+	public void ShouldSyncExcelToExcelWithoutRDFAssumeSameSchema(){
+		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
+		
+		ISyncAdapter sourceAsExcel = builder.createMsExcelAdapter(TestHelper.baseDirectoryForTest() + "sourceContentFile.xls", "user", "id");
+		
+		ISyncAdapter targetAsExcel = builder.createMsExcelAdapter(TestHelper.baseDirectoryForTest() + "targetContentFile.xls", "user", "id");
+		
+		SyncEngine engine = new SyncEngine(sourceAsExcel,targetAsExcel);
+		List<Item> listOfConflicts = engine.synchronize();
+		Assert.assertEquals(0, listOfConflicts.size());
+	}
+	
+	@Test
+	public void ShouldAccessToAccessWithoutRDFAssumeSameSchema(){
+		
+		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapter sourceAsAccess = builder.createMsAccessAdapter(TestHelper.baseDirectoryForTest() +"aktoo_source.mdb" , "aktoo");
+		ISyncAdapter targetAsAccess = builder.createMsAccessAdapter(TestHelper.baseDirectoryForTest() +"aktoo_target.mdb" , "aktoo");
+		
+		SyncEngine engine = new SyncEngine(sourceAsAccess,targetAsAccess);
+		List<Item> listOfConflicts = engine.synchronize();
+		Assert.assertEquals(0, listOfConflicts.size());
+	}
 }
