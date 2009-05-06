@@ -1,6 +1,5 @@
 package org.mesh4j.ektoo;
 
-import java.awt.Color;
 import java.awt.EventQueue;
 import java.util.Enumeration;
 
