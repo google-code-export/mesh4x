@@ -49,7 +49,6 @@ public class ImageManager
   
   public static Icon getSourceImage(String source, boolean remote)
   {
-    System.out.println("Source?" + source);
     if(source == null)
     {
       return SwingResourceManager.getIcon(EktooUI.class, "/undefinedDataSource.png");
@@ -62,14 +61,18 @@ public class ImageManager
     {
       return SwingResourceManager.getIcon(EktooUI.class, "/kmlDataSource.png");
     } 
-    else if (source.matches("Access"))
+    else if (source.startsWith("MS Access"))
     {
       return SwingResourceManager.getIcon(EktooUI.class, "/msAccessDataSource.png");
     } 
-    else if (source.matches("Excel"))
+    else if (source.startsWith("MS Excel"))
     {
       return SwingResourceManager.getIcon(EktooUI.class, "/msExcelDataSource.png");
-    } 
+    }
+    else if (source.startsWith("MySQL"))
+    {
+      return SwingResourceManager.getIcon(EktooUI.class, "/MySQLDataSource.png");
+    }     
     else 
     {
       return SwingResourceManager.getIcon(EktooUI.class, "/undefinedDataSource.png");

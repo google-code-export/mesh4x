@@ -50,7 +50,7 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 	private static final long serialVersionUID = 8681801062827267140L;
 	private final static String DYMMY_PANEL              = "DUMMY_PANEL";
 	private final static String KML_PANEL                = "KML";
-	private final static String MS_EXCEL_PANEL           = "MS Excel";
+	public final static String MS_EXCEL_PANEL           = "MS Excel";
 	private final static String GOOGLE_SPREADSHEET_PANEL = "Google Spreadsheet";
 	private final static String MS_ACCESS_PANEL          = "MS Access";
 	private final static String CLOUD_PANEL              = "Cloud";
@@ -150,11 +150,14 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 				}
 			}
 			getListType().addItemListener(new ItemListener() {
-				public void itemStateChanged(ItemEvent e) {
-					int index = getListType().getSelectedIndex();
-					if (index != -1)
-						updateLayout((String) e.getItem());
-
+				public void itemStateChanged(ItemEvent evt) 
+				{
+				  if (evt.getStateChange() == ItemEvent.SELECTED) 
+				  {
+  				  int index = getListType().getSelectedIndex();
+  					if (index != -1)
+  						updateLayout((String) evt.getItem());
+				  }
 				}
 			});
 

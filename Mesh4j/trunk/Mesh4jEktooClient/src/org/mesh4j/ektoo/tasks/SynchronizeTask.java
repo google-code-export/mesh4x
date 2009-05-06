@@ -59,7 +59,6 @@ public class SynchronizeTask extends SwingWorker<String, Void> {
 	  try 
 		{
 			result = get();
-			System.out.println("Test..." + result);
 			if (result != null && result.startsWith("success")) 
 			{
 			  ui.setConsole(EktooUITranslator.getMessageSyncSyccessfuly(

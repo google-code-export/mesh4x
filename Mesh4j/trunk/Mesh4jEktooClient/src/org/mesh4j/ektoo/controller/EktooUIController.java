@@ -9,6 +9,7 @@ import org.mesh4j.ektoo.ui.SyncItemUI;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.model.Item;
+import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.validations.Guard;
 
 /**
@@ -29,14 +30,20 @@ public class EktooUIController
 
 	public String sync(SyncItemUI source, SyncItemUI target) 
 	{
-	  
 	  ISyncAdapter sourceAdapter = source.createAdapter();
-		ISyncAdapter targetAdapter = target.createAdapter();
-		// TODO (NBL) make it generic
-		if (targetAdapter == null) 
-		{
-			targetAdapter = target.createAdapter(source.createSchema());
-		}
+	  ISyncAdapter targetAdapter = target.createAdapter();
+    
+	  // TODO (NBL) make it generic and improve this code
+	  if (targetAdapter == null || 
+	        (
+	            ( (String)target.getListType().getSelectedItem()).equals( SyncItemUI.MS_EXCEL_PANEL )
+	            && ( (String)source.getListType().getSelectedItem()).equals( SyncItemUI.MS_EXCEL_PANEL )
+	        )
+	      ) 
+    {
+      targetAdapter = target.createAdapter(source.createSchema());
+    }
+	  
 		return sync(sourceAdapter, targetAdapter);
 	}
 
@@ -46,6 +53,7 @@ public class EktooUIController
     
 		List<Item> items = engine.synchronize();
 		
+		// TODO (NBL) change these hardcode string
 		if (items != null && items.size() > 0) 
 		  return "failed";
 		

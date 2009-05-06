@@ -223,9 +223,12 @@ public class EktooUI extends JFrame {
 			getSourceItem().setPreferredSize(new Dimension(350, 190));
 			getSourceItem().getListType().addItemListener(new ItemListener() 
 			{
-        public void itemStateChanged(ItemEvent e) 
+        public void itemStateChanged(ItemEvent evt) 
         {
-            setSourceIcon( ImageManager.getSourceImage((String) e.getItem(), false));
+          if (evt.getStateChange() == ItemEvent.SELECTED) 
+          {  
+            setSourceIcon( ImageManager.getSourceImage((String) evt.getItem(), false));
+          }
         }
       });
 		}
