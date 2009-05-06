@@ -57,11 +57,10 @@ public abstract class TableUI extends AbstractUI {
 
 	}
 
-	private void initialize() {
-		this.setSize(300, 95);
+	private void initialize() 
+	{
 		this.setLayout(null);
-		this.setPreferredSize(new Dimension(300, 95));
-		this.setBackground(new Color(106, 237, 238));
+		this.setBackground(Color.WHITE);
 		this.add(getLabelFile(), null);
 		this.add(getTxtFile(), null);
 		this.add(getBtnFile(), null);

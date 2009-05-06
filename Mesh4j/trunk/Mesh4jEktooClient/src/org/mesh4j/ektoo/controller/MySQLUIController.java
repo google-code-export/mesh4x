@@ -64,7 +64,8 @@ public class MySQLUIController extends AbstractController implements
 	}
 
 	@Override
-	public ISyncAdapter createAdapter() {
+	public ISyncAdapter createAdapter() 
+	{
 		MySQLAdapterModel model = (MySQLAdapterModel) this.getModel();
 		if (model == null){
 			return null;
@@ -106,9 +107,13 @@ public class MySQLUIController extends AbstractController implements
 
 	@Override
 	// TODO (NBL) improve this signature
-	public IRDFSchema createSchema() {
+	public IRDFSchema createSchema() 
+	{
 		ISyncAdapter mysqlAdapter = createAdapter();
+		if (mysqlAdapter == null) return null;
+		
 		SplitAdapter splitAdapter = (SplitAdapter) mysqlAdapter;
+		
 		ISchema sourceSchema = ((HibernateContentAdapter) splitAdapter
 				.getContentAdapter()).getMapping().getSchema();
 		return (IRDFSchema) sourceSchema;

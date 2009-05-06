@@ -315,4 +315,9 @@ public class PropertiesProvider {
 		}
 	}
 
+  public String getLookAndFeel()
+  {
+    return getString("default.look.and.feel.className");
+  }
+
 }

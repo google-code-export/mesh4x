@@ -6,7 +6,6 @@ package org.mesh4j.ektoo.ui;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Rectangle;
 import java.awt.event.ItemEvent;
@@ -21,6 +20,7 @@ import javax.swing.JPanel;
 
 import org.mesh4j.ektoo.ISyncTableTypeItem;
 import org.mesh4j.ektoo.IUIController;
+import org.mesh4j.ektoo.controller.AbstractController;
 import org.mesh4j.ektoo.controller.CloudUIController;
 import org.mesh4j.ektoo.controller.GSSheetUIController;
 import org.mesh4j.ektoo.controller.KmlUIController;
@@ -48,13 +48,13 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 		IUIController {
 	
 	private static final long serialVersionUID = 8681801062827267140L;
-	private final static String DYMMY_PANEL = "DUMMY_PANEL";
-	private final static String KML_PANEL = "KML";
-	private final static String MS_EXCEL_PANEL = "MS Excel";
+	private final static String DYMMY_PANEL              = "DUMMY_PANEL";
+	private final static String KML_PANEL                = "KML";
+	private final static String MS_EXCEL_PANEL           = "MS Excel";
 	private final static String GOOGLE_SPREADSHEET_PANEL = "Google Spreadsheet";
-	private final static String MS_ACCESS_PANEL = "MS Access";
-	private final static String CLOUD_PANEL = "Cloud";
-	private final static String MYSQL_PANEL = "MySQL";
+	private final static String MS_ACCESS_PANEL          = "MS Access";
+	private final static String CLOUD_PANEL              = "Cloud";
+	private final static String MYSQL_PANEL              = "MySQL";
 
 	// MODEL VARIABLES
 	private PropertiesProvider propertiesProvider;
@@ -99,7 +99,8 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 		SourceOrTargetType = EktooUITranslator.getDataSourceType();
 		setLayout(new BorderLayout());
 		setBorder(BorderFactory.createTitledBorder(this.title));
-		setSize(new Dimension(350, 250));
+		
+		setBackground(Color.WHITE);
 		add(getHeadPane(), BorderLayout.NORTH);
 		add(getBodyPane(), BorderLayout.CENTER);
 
@@ -109,7 +110,6 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 	private JPanel getHeadPane() {
 		if (head == null) {
 			head = new JPanel();
-			head.setBackground(Color.green);
 			head.setLayout(new FlowLayout());
 			head.add(getTypeLabel(), null);
 			head.add(getDataSourceType(), null);
@@ -120,10 +120,8 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 	private JPanel getBodyPane() {
 		if (body == null) {
 			body = new JPanel();
-			body.setBackground(Color.red);
 			body.setLayout(new CardLayout());
 
-			firstPanel.setBackground(Color.red);
 			body.add(firstPanel, DYMMY_PANEL);
 
 			// add cards here
@@ -370,11 +368,12 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 	}
 
 	@Override
-	public ISyncAdapter createAdapter(IRDFSchema schema) {
-		ISyncAdapter syncAdapter = null;
+	public ISyncAdapter createAdapter(IRDFSchema schema) 
+	{
+	  ISyncAdapter syncAdapter = null;
 
 		String item = (String) getDataSourceType().getSelectedItem();
-		//CardLayout cl = (CardLayout) (body.getLayout());
+
 		if (item.equals(MS_EXCEL_PANEL)) {
 			syncAdapter = excelUI.getController().createAdapter(schema);
 		} else if (item.equals(MS_ACCESS_PANEL)) {
@@ -387,6 +386,40 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 			syncAdapter = mysqlUI.getController().createAdapter(schema);
 		}
 		return syncAdapter;
-
+	}
+	
+	public String toString()
+	{
+	  return getCurrentController().toString();
+	}
+	
+	// TODO (NBL)improve this section
+	public AbstractController getCurrentController()
+	{
+	  AbstractController currrentController = null;
+	  
+	  String item = (String) getDataSourceType().getSelectedItem();
+    if (item.equals(MS_EXCEL_PANEL)) 
+    {
+      currrentController = excelUI.getController();
+    } 
+    else if (item.equals(MS_ACCESS_PANEL)) 
+    {
+      currrentController = accessUI.getController();
+    } 
+    else if (item.equals(GOOGLE_SPREADSHEET_PANEL)) 
+    {
+      currrentController = googleUI.getController();
+    } 
+    else if (item.equals(CLOUD_PANEL)) 
+    {
+      currrentController = cloudUI.getController();
+    } 
+    else if (item.equals(MYSQL_PANEL)) 
+    {
+      currrentController = mysqlUI.getController();
+    }
+	  
+    return currrentController;
 	}
 }

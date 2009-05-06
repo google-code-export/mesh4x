@@ -44,11 +44,10 @@ public class KmlUI extends JPanel {
 		this.txtFileName.setText(this.file.getName());
 	}
 
-	private void initialize() {
-		this.setSize(300, 95);
+	private void initialize() 
+	{
 		this.setLayout(null);
-		this.setPreferredSize(new Dimension(300, 95));
-		this.setBackground(new Color(106, 237, 238));
+		this.setBackground(Color.WHITE);
 		this.add(getFileNameLabel(), null);
 		this.add(getFileNameText(), null);
 		this.add(getBtnFile(), null);

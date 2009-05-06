@@ -1,5 +1,6 @@
 package org.mesh4j.ektoo.ui;
 
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -49,10 +50,8 @@ public class CloudUI extends JPanel {
 	}
 
 	private void initialize() {
-		this.setSize(300, 135);
 		this.setLayout(null);
-		this.setPreferredSize(new Dimension(300, 95));
-		this.setBackground(new Color(106, 237, 238));
+		this.setBackground(Color.WHITE);
 
 		this.add(getMashLabel(), null);
 		this.add(getMashText(), null);

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.mesh4j.ektoo.IUIController;
 import org.mesh4j.ektoo.model.AbstractModel;
 import org.mesh4j.ektoo.ui.AbstractUI;
 
@@ -14,38 +15,48 @@ import org.mesh4j.ektoo.ui.AbstractUI;
  * @author Bhuiyan Mohammad Iklash
  * 
  */
-public abstract class AbstractController implements PropertyChangeListener {
-	
-	private final static Log LOGGER = LogFactory.getLog(AbstractController.class);
+public abstract class AbstractController implements PropertyChangeListener
+{
+  private final static Log LOGGER = LogFactory.getLog(AbstractController.class);
 	
 	// MODEL VARIABLES
 	private ArrayList<AbstractUI> registeredViews = new ArrayList<AbstractUI>();
 	private ArrayList<AbstractModel> registeredModels = new ArrayList<AbstractModel>();
 
-	// BUSINESS METHODs
+	// BUSINESS METHODS
 	public AbstractController() {}
 
-	public void addModel(AbstractModel model) {
+	public void addModel(AbstractModel model) 
+	{
 		registeredModels.add(model);
 		model.addPropertyChangeListner(this);
 	}
-
-	public ArrayList<AbstractModel> getModels() {
+	
+	public String toString()
+  {
+	  AbstractModel model = getModel();
+	  
+    return (model == null) ? "" : model.toString();
+  }
+	
+	public ArrayList<AbstractModel> getModels() 
+	{
 		return this.registeredModels;
 	}
 
-	public AbstractModel getModel() {
-		if (this.registeredModels.isEmpty()){
+	public AbstractModel getModel() 
+	{
+		if (this.registeredModels.isEmpty())
 			return null;
-		}
+	
 		return this.registeredModels.get(0);
 	}
 
-	public AbstractModel getModel(int index) {
-		if (this.registeredModels.isEmpty()
-				|| this.registeredModels.size() < index){
+	public AbstractModel getModel(int index) 
+	{
+		if (this.registeredModels.isEmpty() || this.registeredModels.size() < index)
 			return null;
-		}
+
 		return this.registeredModels.get(index);
 	}
 
@@ -98,4 +109,6 @@ public abstract class AbstractController implements PropertyChangeListener {
 			}
 		}
 	}
+	
+	 
 }
