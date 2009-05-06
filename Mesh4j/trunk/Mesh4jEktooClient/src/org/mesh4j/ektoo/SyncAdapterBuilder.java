@@ -21,6 +21,7 @@ import org.mesh4j.sync.adapters.http.HttpSyncAdapter;
 import org.mesh4j.sync.adapters.kml.KMLDOMLoaderFactory;
 import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
 import org.mesh4j.sync.adapters.msexcel.MsExcelRDFSyncAdapterFactory;
+import org.mesh4j.sync.adapters.msexcel.MsExcelSyncAdapterFactory;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.id.generator.IIdGenerator;
 import org.mesh4j.sync.id.generator.IdGenerator;
@@ -34,7 +35,8 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 	// MODEL VARIABLEs
 	private PropertiesProvider propertiesProvider;
 	private MsAccessSyncAdapterFactory msAccesSyncAdapter;
-	private MsExcelRDFSyncAdapterFactory excelSyncFactory;
+	private MsExcelRDFSyncAdapterFactory excelRDFSyncFactory;
+	private MsExcelSyncAdapterFactory excelSyncFactory; 
 	
 	// BUSINESS METHODS
 
@@ -42,7 +44,8 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 		Guard.argumentNotNull(propertiesProvider, "propertiesProvider");
 		this.propertiesProvider = propertiesProvider;
 		this.msAccesSyncAdapter = new MsAccessSyncAdapterFactory(this.getBaseDirectory(), this.getBaseRDFUrl());
-		this.excelSyncFactory = new MsExcelRDFSyncAdapterFactory(this.getBaseRDFUrl());
+		this.excelRDFSyncFactory = new MsExcelRDFSyncAdapterFactory(this.getBaseRDFUrl());
+		this.excelSyncFactory = new MsExcelSyncAdapterFactory();
 	}
 
 	@Override
@@ -77,17 +80,15 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 		// TODO (Sharif) create sync sheet automatically
 		GSWorksheet<GSRow<GSCell>> contentWorkSheet = gSpreadSheet
 				.getGSWorksheet(spreadSheetInfo.getSheetName());
+		
 		String syncWorkSheetName = spreadSheetInfo.getSheetName() + "_sync";
-		GSWorksheet<GSRow<GSCell>> syncWorkSheet = gSpreadSheet
-				.getGSWorksheet(syncWorkSheetName);
 
 		// adapter creation
 		IIdentityProvider identityProvider = getIdentityProvider();
 		GoogleSpreadSheetContentAdapter contentRepo = new GoogleSpreadSheetContentAdapter(
 				gSpreadSheet, contentWorkSheet, mapper);
 		GoogleSpreadSheetSyncRepository syncRepo = new GoogleSpreadSheetSyncRepository(
-				gSpreadSheet, identityProvider, getIdGenerator(), syncWorkSheet
-						.getName());
+				gSpreadSheet, identityProvider, getIdGenerator(), syncWorkSheetName);
 		SplitAdapter splitAdapter = new SplitAdapter(syncRepo, contentRepo,
 				identityProvider);
 
@@ -123,18 +124,20 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 	}
 
 	@Override
-	public ISyncAdapter createMsExcelAdapter(String contentFileName, String sheetName, String idColumnName) {		
+	public ISyncAdapter createMsExcelAdapter(String contentFileName, String sheetName, String idColumnName) {
+		
+		
 		File file = getFile(contentFileName);
 		// TODO (Raju) need to think about more,just for partial commit
 		if (file == null || !file.exists()) {
-			return null;
+			return null;//TODO better throw exception
 		}
 		return this.excelSyncFactory.createSyncAdapter(file.getAbsolutePath(), sheetName, idColumnName, getIdentityProvider());
 	}
 	
 	@Override
 	public ISyncAdapter createMsExcelAdapter(String contentFileName, String sheetName, String idColumnName, IRDFSchema sourceSchema){
-		return this.excelSyncFactory.createSyncAdapter(contentFileName, sheetName, idColumnName, getIdentityProvider(), sourceSchema);
+		return this.excelRDFSyncFactory.createSyncAdapter(contentFileName, sheetName, idColumnName, getIdentityProvider(), sourceSchema);
 	}	
 	
 	@Override
