@@ -17,6 +17,7 @@ import javax.swing.JTextField;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.controller.CloudUIController;
+import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 
 /**
  * @author Bhuiyan Mohammad Iklash
@@ -63,7 +64,8 @@ public class CloudUI extends JPanel {
 	private JLabel getMashLabel() {
 		if (labelMash == null) {
 			labelMash = new JLabel();
-			labelMash.setText("User");
+			labelMash.setText( EktooUITranslator.getMeshNameFieldLabel());
+			
 			labelMash.setSize(new Dimension(85, 16));
 			labelMash.setPreferredSize(new Dimension(85, 16));
 			labelMash.setLocation(new Point(8, 9));
@@ -102,7 +104,7 @@ public class CloudUI extends JPanel {
 	private JLabel getDataSetLabel() {
 		if (labelDataset == null) {
 			labelDataset = new JLabel();
-			labelDataset.setText("Password");
+			labelDataset.setText( EktooUITranslator.getMeshDataSetFieldLabel() );
 			labelDataset.setSize(new Dimension(85, 16));
 			labelDataset.setPreferredSize(new Dimension(85, 16));
 			labelDataset.setLocation(new Point(8, 34));
