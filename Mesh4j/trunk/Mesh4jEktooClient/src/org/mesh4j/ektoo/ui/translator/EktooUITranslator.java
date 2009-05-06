@@ -1,5 +1,7 @@
 package org.mesh4j.ektoo.ui.translator;
 
+import java.util.Date;
+
 import org.mesh4j.translator.EktooMessageTranslator;
 
 public class EktooUITranslator {
@@ -39,23 +41,37 @@ public class EktooUITranslator {
 				.translate("EKTOO_SYNC_TYPE_SEND_AND_RECEIVE_FIELD_LABEL");
 	}
 
-	public static String getMessageSyncSyccessfuly() {
-		// return "Successfull";
+	public static String getMessageSyncSyccessfuly(String source, String target, Date date)
+	{
 		return EktooMessageTranslator
-				.translate("EKTOO_SYNC_PROCESS_SUCCESS_MESSAGE");
+				.translate("EKTOO_SYNC_PROCESS_SUCCESS_MESSAGE", source, target, date);
 	}
 
-	public static String getMessageSyncConflicts() {
-		// return "Conflicts";
+	public static String getMessageSyncConflicts(String source, String target, Date date) 
+	{
 		return EktooMessageTranslator
-				.translate("EKTOO_SYNC_PROCESS_CONFLICT_MESSAGE");
+				.translate("EKTOO_SYNC_PROCESS_CONFLICT_MESSAGE", source, target, date);
 	}
 
-	public static String getMessageStartSync() {
+	public static String getMessageStartSync(String source, String target, Date date)
+	{
 		return EktooMessageTranslator
-				.translate("EKTOO_SYNC_PROCESS_START_MESSAGE");
+				.translate("EKTOO_SYNC_PROCESS_START_MESSAGE", source, target, date);
 	}
 
+  public static String getMessageEndSync(String source, String target, Date date)
+  {
+    return EktooMessageTranslator
+        .translate("EKTOO_SYNC_PROCESS_END_MESSAGE", source, target, date);
+  }
+	
+  public static String getMessageSyncFailed(String source, String target, Date date)
+  {
+    return EktooMessageTranslator
+        .translate("EKTOO_SYNC_PROCESS_FAILED_MESSAGE", source, target, date);
+  }
+  		
+	
 	public static String getExcelFileDescription() {
 		// return "Microsoft Excel File(s)";
 		return EktooMessageTranslator
@@ -188,6 +204,13 @@ public class EktooUITranslator {
 				.translate("EKTOO_SYNC_PROCESS_START_BUTTON_LABEL");
 	}
 
+	public static String getSyncToolTip()
+  {
+    return EktooMessageTranslator
+    .translate("EKTOO_SYNC_PROCESS_START_BUTTON_TOOLTIP");
+  }
+
+	
 	public static String getDataSourceType() {
 		return EktooMessageTranslator
 				.translate("EKTOO_SYNC_PROCESS_DATA_SOURCE_LIST_LABEL");
@@ -222,5 +245,13 @@ public class EktooUITranslator {
 		return EktooMessageTranslator
 				.translate("EKTOO_MYSQL_USER_PASSWORD_FIELD_LABEL");
 	}
+
+  public static String getTitle()
+  {
+    return EktooMessageTranslator
+    .translate("EKTOO_TITLE");
+  }
+
+  
 
 }
