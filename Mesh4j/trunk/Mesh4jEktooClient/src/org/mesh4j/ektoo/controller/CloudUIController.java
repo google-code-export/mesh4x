@@ -15,8 +15,8 @@ import org.mesh4j.sync.validations.Guard;
  * @author Bhuiyan Mohammad Iklash
  * 
  */
-public class CloudUIController extends AbstractController implements
-		IUIController {
+public class CloudUIController extends AbstractController
+{
 	
 	private static final String MESH_NAME_PROPERTY = "MeshName";
 	private static final String DATASET_NAME_PROPERTY = "DatasetName";
@@ -64,7 +64,7 @@ public class CloudUIController extends AbstractController implements
 	}
 
 	@Override
-	public IRDFSchema createSchema() {
+	public IRDFSchema fetchSchema() {
 		// TODO create schema
 		return null;
 	}

@@ -15,8 +15,8 @@ import org.mesh4j.sync.validations.Guard;
  * @author Bhuiyan Mohammad Iklash
  * 
  */
-public class KmlUIController extends AbstractController implements IUIController {
-	
+public class KmlUIController extends AbstractController
+{
 	private static final String FILE_NAME_PROPERTY = "FileName";
 	
 	// MODEL VARIABLES
@@ -47,7 +47,7 @@ public class KmlUIController extends AbstractController implements IUIController
 	}
 
 	@Override
-	public IRDFSchema createSchema() {
+	public IRDFSchema fetchSchema() {
 		// TODO create Schema
 		return null;
 	}

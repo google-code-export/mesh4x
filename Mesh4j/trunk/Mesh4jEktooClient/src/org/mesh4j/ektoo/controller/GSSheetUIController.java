@@ -16,8 +16,8 @@ import org.mesh4j.sync.validations.Guard;
  * @author Bhuiyan Mohammad Iklash
  * 
  */
-public class GSSheetUIController extends AbstractController implements
-		IUIController {
+public class GSSheetUIController extends AbstractController
+{
 	private static final String USER_NAME_PROPERTY = "UserName";
 	private static final String USER_PASSWORD_PROPERTY = "UserPassword";
 	private static final String SPREADSHEET_KEY_PROPERTY = "SpreadsheetKey";
@@ -92,7 +92,7 @@ public class GSSheetUIController extends AbstractController implements
 	}
 
 	@Override
-	public IRDFSchema createSchema() {
+	public IRDFSchema fetchSchema() {
 		// TODO create Schema
 		return null;
 	}

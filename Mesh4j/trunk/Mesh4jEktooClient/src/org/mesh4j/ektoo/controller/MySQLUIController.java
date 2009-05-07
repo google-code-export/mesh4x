@@ -18,9 +18,8 @@ import org.mesh4j.sync.validations.Guard;
  * @author Bhuiyan Mohammad Iklash
  * 
  */
-public class MySQLUIController extends AbstractController implements
-		IUIController {
-	
+public class MySQLUIController extends AbstractController
+{	
 	private static final String USER_NAME_PROPERTY = "UserName";
 	private static final String USER_PASSWORD_PROPERTY = "UserPassword";
 	private static final String HOST_NAME_PROPERTY = "HostName";
@@ -107,12 +106,12 @@ public class MySQLUIController extends AbstractController implements
 
 	@Override
 	// TODO (NBL) improve this signature
-	public IRDFSchema createSchema() 
+	public IRDFSchema fetchSchema() 
 	{
-		ISyncAdapter mysqlAdapter = createAdapter();
-		if (mysqlAdapter == null) return null;
+		ISyncAdapter syncAdapter = createAdapter();
+		if (syncAdapter == null) return null;
 		
-		SplitAdapter splitAdapter = (SplitAdapter) mysqlAdapter;
+		SplitAdapter splitAdapter = (SplitAdapter) syncAdapter;
 		
 		ISchema sourceSchema = ((HibernateContentAdapter) splitAdapter
 				.getContentAdapter()).getMapping().getSchema();

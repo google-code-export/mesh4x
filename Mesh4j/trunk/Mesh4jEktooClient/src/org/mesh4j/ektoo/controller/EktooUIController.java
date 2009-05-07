@@ -9,6 +9,7 @@ import org.mesh4j.ektoo.ui.SyncItemUI;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.model.Item;
+import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.validations.Guard;
 
 /**
@@ -29,20 +30,31 @@ public class EktooUIController
 
 	public String sync(SyncItemUI source, SyncItemUI target) 
 	{
-	  ISyncAdapter sourceAdapter = source.createAdapter();
-	  ISyncAdapter targetAdapter = target.createAdapter();
-    
-	  // TODO (NBL) make it generic and improve this code
-	  if (targetAdapter == null || 
-	        (
-	            ( (String)target.getListType().getSelectedItem()).equals( SyncItemUI.MS_EXCEL_PANEL )
-	            && !( (String)source.getListType().getSelectedItem()).equals( SyncItemUI.MS_EXCEL_PANEL )
-	        )
-	      ) 
+    ISyncAdapter sourceAdapter = null;
+    ISyncAdapter targetAdapter = null;
+
+    if (((String)source.getListType().getSelectedItem()).equals( SyncItemUI.MS_EXCEL_PANEL) 
+        && ( (String)target.getListType().getSelectedItem()).equals( SyncItemUI.MYSQL_PANEL )
+        )
     {
-      targetAdapter = target.createAdapter(source.createSchema());
+      sourceAdapter = source.createAdapter(source.fetchSchema());
     }
-	  
+    else
+    {
+      sourceAdapter = source.createAdapter();
+    }
+
+    if (((String)target.getListType().getSelectedItem()).equals( SyncItemUI.MS_EXCEL_PANEL) 
+	      && ( (String)source.getListType().getSelectedItem()).equals( SyncItemUI.MYSQL_PANEL )
+	      )
+	  {
+	    targetAdapter = target.createAdapter(source.fetchSchema());
+	  }
+	  else
+	  {
+	    targetAdapter = target.createAdapter();
+	  }
+
 		return sync(sourceAdapter, targetAdapter);
 	}
 

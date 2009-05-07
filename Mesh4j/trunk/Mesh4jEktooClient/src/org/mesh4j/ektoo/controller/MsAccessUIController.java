@@ -17,8 +17,8 @@ import org.mesh4j.sync.validations.Guard;
  * @author Bhuiyan Mohammad Iklash
  * 
  */
-public class MsAccessUIController extends AbstractController implements
-		IUIController {
+public class MsAccessUIController extends AbstractController
+{
 	
 	private static final Log LOGGER = LogFactory.getLog(MsAccessUIController.class);
 	private static final String DATABASE_NAME_PROPERTY = "DatabaseName";
@@ -69,7 +69,7 @@ public class MsAccessUIController extends AbstractController implements
 	}
 
 	@Override
-	public IRDFSchema createSchema() {
+	public IRDFSchema fetchSchema() {
 		// TODO create Schema
 		return null;
 	}
