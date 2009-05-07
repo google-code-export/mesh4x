@@ -40,7 +40,7 @@ public class MsExcelToRDFMapping implements IMsExcelToXMLMapping{
 		Guard.argumentNotNullOrEmptyString(sheetName, "sheetName");
 		Guard.argumentNotNullOrEmptyString(rdfURL, "rdfURL");
 		
-		RDFSchema rdfSchema = new RDFSchema(sheetName, rdfURL+sheetName+"#", sheetName);
+		RDFSchema rdfSchema = new RDFSchema(sheetName, rdfURL+"/"+sheetName+"#", sheetName);
 		
 		String cellName;
 		

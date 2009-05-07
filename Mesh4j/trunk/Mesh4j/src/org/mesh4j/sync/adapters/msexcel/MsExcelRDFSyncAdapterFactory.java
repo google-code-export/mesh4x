@@ -38,15 +38,28 @@ public class MsExcelRDFSyncAdapterFactory extends MsExcelSyncAdapterFactory{
 		Guard.argumentNotNull(rdfSchema, "rdfSchema");
 		
 		File file = new File(excelFileName);
+		
+//		MsExcelToRDFMapping mappings = new MsExcelToRDFMapping(rdfSchema, idColumnName);
+//		if (!file.exists()) {
+//			try{
+//				mappings.createDataSource(excelFileName);
+//			}catch (Exception e) {
+//				throw new MeshException(e);
+//			}
+//		}
+//		
+//		MsExcel excel = new MsExcel(excelFileName);
+//		MsExcelSyncRepository syncRepo = createSyncRepository(identityProvider, excel);
+//		MsExcelContentAdapter contentAdapter = new MsExcelContentAdapter(excel, mappings, sheetName);
+//		return new SplitAdapter(syncRepo, contentAdapter, identityProvider);
 		if (!file.exists()) {
 			MsExcelToRDFMapping mappings = new MsExcelToRDFMapping(rdfSchema, idColumnName);
-			
 			try{
 				mappings.createDataSource(excelFileName);
 			}catch (Exception e) {
 				throw new MeshException(e);
 			}
-
+		
 			MsExcel excel = new MsExcel(excelFileName);
 			MsExcelSyncRepository syncRepo = createSyncRepository(identityProvider, excel);
 			MsExcelContentAdapter contentAdapter = new MsExcelContentAdapter(excel, mappings, sheetName);
@@ -55,6 +68,7 @@ public class MsExcelRDFSyncAdapterFactory extends MsExcelSyncAdapterFactory{
 			SplitAdapter splitAdapter = super.createSyncAdapter(excelFileName, sheetName, idColumnName, identityProvider);
 			IRDFSchema rdfSchemaAutoGenetated = (IRDFSchema)((MsExcelContentAdapter)splitAdapter.getContentAdapter()).getSchema();
 			if(!rdfSchema.asXML().equals(rdfSchemaAutoGenetated.asXML())){
+			//if(!rdfSchema.equals(rdfSchemaAutoGenetated)){
 				Guard.throwsException("INVALID_RDF_SCHEMA");
 			}
 			return splitAdapter;

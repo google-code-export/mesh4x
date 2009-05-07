@@ -31,7 +31,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/hibernate/bsh-2.0b1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/hibernate/freemarker.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/hibernate/jtidy-r8-20060801.jar"/>
-	<classpathentry exported="true" kind="lib" path="etc"/>
 	<classpathentry exported="true" kind="lib" path="lib/hibernate/hibernate-tools.jar"/>
+	<classpathentry exported="true" kind="lib" path="etc/toExport"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

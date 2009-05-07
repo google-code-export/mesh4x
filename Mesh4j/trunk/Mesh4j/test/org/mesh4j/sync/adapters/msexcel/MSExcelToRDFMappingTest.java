@@ -39,7 +39,7 @@ public class MSExcelToRDFMappingTest {
 			@Override public String getFileName() {return "myFile.xls";}			
 		};
 		
-		RDFSchema rdfSchema = MsExcelToRDFMapping.extractRDFSchema(excel, SHEET_NAME, "http://localhost:8080/mesh4x/feeds/MyExample/");
+		RDFSchema rdfSchema = MsExcelToRDFMapping.extractRDFSchema(excel, SHEET_NAME, "http://localhost:8080/mesh4x/feeds/MyExample");
 		
 		System.out.println(rdfSchema.asXML());
 		
@@ -66,7 +66,7 @@ public class MSExcelToRDFMappingTest {
 			@Override public String getFileName() {return "myFile.xls";}
 		};
 		
-		RDFSchema rdfSchema = MsExcelToRDFMapping.extractRDFSchema(excel, SHEET_NAME, "http://localhost:8080/mesh4x/feeds/MyExample/");
+		RDFSchema rdfSchema = MsExcelToRDFMapping.extractRDFSchema(excel, SHEET_NAME, "http://localhost:8080/mesh4x/feeds/MyExample");
 		MsExcelToRDFMapping mapper = new MsExcelToRDFMapping(rdfSchema, COLUMN_CODE);
 				
 		HSSFWorkbook workbook = getDefaultWorkbook();
@@ -157,7 +157,7 @@ public class MSExcelToRDFMappingTest {
 			@Override public void setDirty() {}		
 			@Override public String getFileName() {return "myFile.xls";}
 		};
-		RDFSchema rdfSchema = MsExcelToRDFMapping.extractRDFSchema(excel, SHEET_NAME, "http://localhost:8080/mesh4x/feeds/MyExample/");
+		RDFSchema rdfSchema = MsExcelToRDFMapping.extractRDFSchema(excel, SHEET_NAME, "http://localhost:8080/mesh4x/feeds/MyExample");
 		MsExcelToRDFMapping mapper = new MsExcelToRDFMapping(rdfSchema, COLUMN_CODE);
 		
 		RDFInstance rdfInstance = mapper.converRowToRDF(headerRow, row);
@@ -202,7 +202,7 @@ public class MSExcelToRDFMappingTest {
 			@Override public String getFileName() {return "myFile.xls";}
 		};
 		
-		RDFSchema rdfSchema = MsExcelToRDFMapping.extractRDFSchema(excel, SHEET_NAME, "http://localhost:8080/mesh4x/feeds/MyExample/");
+		RDFSchema rdfSchema = MsExcelToRDFMapping.extractRDFSchema(excel, SHEET_NAME, "http://localhost:8080/mesh4x/feeds/MyExample");
 		MsExcelToRDFMapping mapper = new MsExcelToRDFMapping(rdfSchema, COLUMN_CODE);
 		
 		// create new file

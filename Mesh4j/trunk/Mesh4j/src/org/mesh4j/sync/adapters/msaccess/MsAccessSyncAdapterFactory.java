@@ -16,6 +16,7 @@ import org.mesh4j.sync.parsers.SyncInfoParser;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.security.NullIdentityProvider;
+import org.mesh4j.sync.utils.FileUtils;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
@@ -45,8 +46,8 @@ public class MsAccessSyncAdapterFactory implements ISyncAdapterFactory {
 			return null;
 		}
 		
-		String contentMappingFileName = this.baseDirectory + "/" + tableName + ".hbm.xml";
-		String syncMappingFileName =  this.baseDirectory + "/" + tableName + "_sync.hbm.xml";
+		String contentMappingFileName = FileUtils.getFileName(this.baseDirectory , tableName + ".hbm.xml");
+		String syncMappingFileName =  FileUtils.getFileName(this.baseDirectory , tableName + "_sync.hbm.xml");
 		
 		MsAccessHibernateMappingGenerator.forceCreateMappings(mdbFileName, tableName, contentMappingFileName, syncMappingFileName);
 		
@@ -159,8 +160,8 @@ public class MsAccessSyncAdapterFactory implements ISyncAdapterFactory {
 			
 			String mdbFileName = getFileName(sourceDefinition);
 			String tableName = getTableName(sourceDefinition);
-			String contentMappingFileName = this.baseDirectory + "/" + tableName + ".hbm.xml";
-			String syncMappingFileName =  this.baseDirectory + "/" + tableName + "_sync.hbm.xml";
+			String contentMappingFileName = FileUtils.getFileName(this.baseDirectory , tableName + ".hbm.xml");
+			String syncMappingFileName =  FileUtils.getFileName(this.baseDirectory , tableName + "_sync.hbm.xml");
 			String user = "";
 			String password = "";
 	

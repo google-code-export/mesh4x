@@ -25,7 +25,7 @@ public class SyncTests {
 			org.hibernate.dialect.MySQLDialect.class,
 			"mesh_sync_example", 
 			"mesh_sync_info", 
-			"http://mesh4x/", 
+			"http://mesh4x/test", 
 			TestHelper.baseDirectoryRootForTest());
 
 		ISyncAdapter adapterB = new InMemorySyncAdapter("mesh_sync_example", NullIdentityProvider.INSTANCE);

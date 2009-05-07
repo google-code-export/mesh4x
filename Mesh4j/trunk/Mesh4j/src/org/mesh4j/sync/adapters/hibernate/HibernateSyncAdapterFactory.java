@@ -70,7 +70,7 @@ public class HibernateSyncAdapterFactory implements ISyncAdapterFactory{
 
 	@SuppressWarnings("unchecked")
 	private static RDFSchema createRDFSchema(String tableName, String rdfBaseURL, PersistentClass mapping) {
-		RDFSchema rdfSchema = new RDFSchema(tableName, rdfBaseURL + tableName + "#", tableName);
+		RDFSchema rdfSchema = new RDFSchema(tableName, rdfBaseURL+ "/" + tableName + "#", tableName);
 		
 		Property property = mapping.getIdentifierProperty();
 		addRDFProperty(rdfSchema, property);
@@ -140,13 +140,13 @@ public class HibernateSyncAdapterFactory implements ISyncAdapterFactory{
 	public static PersistentClass createMappings(HibernateSessionFactoryBuilder builder, String tableName, String syncTableName, String baseDirectory) {
 		autodiscoveryMappings(builder, tableName, syncTableName, baseDirectory);
 
-		File contentMapping = new File(baseDirectory + tableName+".hbm.xml");
+		File contentMapping = FileUtils.getFile(baseDirectory, tableName+".hbm.xml");
 		if(!contentMapping.exists()){
 			Guard.throwsException("INVALID_TABLE_NAME");
 		}
 		
 		boolean mustCreateTables = false;
-		File syncFileMapping = new File(baseDirectory + syncTableName+".hbm.xml");
+		File syncFileMapping = FileUtils.getFile(baseDirectory, syncTableName+".hbm.xml");
 		if(!syncFileMapping.exists()){
 			try{
 				String template = "<?xml version=\"1.0\"?><!DOCTYPE hibernate-mapping PUBLIC \"-//Hibernate/Hibernate Mapping DTD 3.0//EN\" \"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd\">"+

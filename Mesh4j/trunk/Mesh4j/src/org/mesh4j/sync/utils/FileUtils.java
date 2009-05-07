@@ -44,4 +44,16 @@ public class FileUtils {
 			output.close();
 		}
 	}
+	
+	public static String getFileName(String folderName, String fileName) {
+		if(folderName.endsWith(File.separator)){
+			return folderName + fileName;
+		} else {
+			return folderName + File.separator + fileName;
+		}
+	}
+
+	public static File getFile(String folderName, String fileName) {
+		return new File(getFileName(folderName, fileName));
+	}
 }

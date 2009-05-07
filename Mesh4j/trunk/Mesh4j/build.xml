@@ -9,7 +9,7 @@
 		<mkdir dir="dist"/>
 		<jar destfile="dist/mesh4j-1.0.0.jar">
 			<fileset dir="bin"/>
-			<fileset dir="etc"/>
+			<fileset dir="etc/toExport"/>
 		</jar>
 	</target>
 	

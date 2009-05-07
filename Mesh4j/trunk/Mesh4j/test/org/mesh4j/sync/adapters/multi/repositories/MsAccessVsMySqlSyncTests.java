@@ -24,7 +24,7 @@ public class MsAccessVsMySqlSyncTests {
 	@Test
 	public void shouldSync(){
 		
-		String ontologyBaseUri = "http://localhost:8080/mesh4x/myExample/";
+		String ontologyBaseUri = "http://localhost:8080/mesh4x/myExample";
 			
 		SplitAdapter adapterSource = makeHibernateAdapter(ontologyBaseUri);
 		IRDFSchema rdfSchemaSource = (IRDFSchema)((HibernateContentAdapter)adapterSource.getContentAdapter()).getMapping().getSchema();
@@ -85,7 +85,7 @@ public class MsAccessVsMySqlSyncTests {
 	@Test
 	public void shouldSyncEmulatingDifferentsSyncSessions(){
 		
-		String ontologyBaseUri = "http://localhost:8080/mesh4x/myExample/";
+		String ontologyBaseUri = "http://localhost:8080/mesh4x/myExample";
 		
 		SplitAdapter adapterSource = makeHibernateAdapter(ontologyBaseUri);
 		IRDFSchema rdfSchemaSource = (IRDFSchema)((HibernateContentAdapter)adapterSource.getContentAdapter()).getMapping().getSchema();
@@ -210,7 +210,7 @@ public class MsAccessVsMySqlSyncTests {
 	//@Test
 	public void shouldSyncSahana(){
 		
-		String ontologyBaseUri = "http://localhost:8080/mesh4x/sahana/";
+		String ontologyBaseUri = "http://localhost:8080/mesh4x/sahana";
 			
 		SplitAdapter adapterSource = HibernateSyncAdapterFactory.createHibernateAdapter(
 			"jdbc:mysql:///sahana", 
