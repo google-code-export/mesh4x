@@ -53,6 +53,7 @@ public class EktooUI extends JFrame {
 	private JLabel sourceImageLabel = null;
 	private JLabel targetImageLabel = null;
 	private JLabel directionImageLabel = null;
+	private JLabel syncImageLabel = null;
 
 	private EktooUIController controller;
 
@@ -146,7 +147,16 @@ public class EktooUI extends JFrame {
 
 		return panelImage;
 	}
-
+	 private JLabel getSyncImageLabel()
+	  {
+	    if ( syncImageLabel == null)
+	    {
+	      syncImageLabel = new JLabel(ImageManager.getSyncProcessIcon());
+	      syncImageLabel.setBackground(Color.WHITE);
+	    }
+	    return syncImageLabel;
+	  }
+	 
 	private JLabel getSourceImageLabel() {
 		if (sourceImageLabel == null) {
 			sourceImageLabel = new JLabel(ImageManager.getUndefinedSourceIcon());
