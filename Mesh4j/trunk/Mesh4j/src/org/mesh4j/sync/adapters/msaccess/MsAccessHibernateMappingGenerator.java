@@ -74,6 +74,18 @@ public class MsAccessHibernateMappingGenerator {
 		return null;
 	}
 
+	/**
+	 * create mapping file for source and sync repository if the file does not
+	 * exists. This method is no longer in use because of the the Issue#104
+	 * (http://code.google.com/p/mesh4x/issues/detail?id=104)
+	 * 
+	 * @param mdbFileName
+	 * @param tableName
+	 * @param contentMappingFileName
+	 * @param syncMappingFileName
+	 * @throws Exception
+	 */
+	@Deprecated
 	public static void createMappingsIfAbsent(String mdbFileName, String tableName, String contentMappingFileName, String syncMappingFileName) throws Exception {
 		File contentMappingFile = new File(contentMappingFileName);
 		if(!contentMappingFile.exists()){
@@ -86,6 +98,23 @@ public class MsAccessHibernateMappingGenerator {
 		}
 	}
 
+	/**
+	 * create mapping file for source and sync repository
+	 * Please see the Issue#104 (http://code.google.com/p/mesh4x/issues/detail?id=104)
+	 * 
+	 * @param mdbFileName
+	 * @param tableName
+	 * @param contentMappingFileName
+	 * @param syncMappingFileName
+	 * @throws Exception
+	 */
+	public static void forceCreateMappings(String mdbFileName, String tableName,
+			String contentMappingFileName, String syncMappingFileName)
+			throws Exception {
+		createMapping(mdbFileName, tableName, contentMappingFileName);
+		MappingGenerator.createSyncInfoMapping(syncMappingFileName,
+				getSyncTableName(tableName));
+	}
 
 	public static String getSyncTableName(String baseTableName) {
 		return baseTableName+"_sync";

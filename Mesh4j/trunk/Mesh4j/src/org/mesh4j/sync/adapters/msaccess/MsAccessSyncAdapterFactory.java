@@ -48,7 +48,7 @@ public class MsAccessSyncAdapterFactory implements ISyncAdapterFactory {
 		String contentMappingFileName = this.baseDirectory + "/" + tableName + ".hbm.xml";
 		String syncMappingFileName =  this.baseDirectory + "/" + tableName + "_sync.hbm.xml";
 		
-		MsAccessHibernateMappingGenerator.createMappingsIfAbsent(mdbFileName, tableName, contentMappingFileName, syncMappingFileName);
+		MsAccessHibernateMappingGenerator.forceCreateMappings(mdbFileName, tableName, contentMappingFileName, syncMappingFileName);
 		
 		String syncTableName = MsAccessHibernateMappingGenerator.getSyncTableName(tableName);
 		MsAccessHelper.createSyncTableIfAbsent(mdbFileName, syncTableName);
