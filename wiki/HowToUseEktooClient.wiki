@@ -51,9 +51,18 @@ The process consists of:
 If you want to synchronize Microsoft Excel data source with others repositories, you need to define a Microsoft Excel data source.
 
 The process consists of:
- # Select "MS Excel" data type from "Data Source Type" drop down list.
- # Browse Excel files adn select one that you want to synchronize.
-  * Available list of worksheet will be displayed in "Worksheet" drop down list.
- # Select worksheet from "Worksheet" drop down list.
+ # Select "MS Excel" data type from "<b>Data Source Type</b>" drop down list.
+ # Browse Excel files and select one that you want to synchronize.
+  * Available list of worksheet will be displayed in "<b>Worksheet</b>" drop down list.
+ # Select worksheet from "<b>Worksheet</b>" drop down list.
   * Available list of column will be displayed in "Unique Column" drop down list.
- # Select unique column from "Unique Column" drop down list.
+ # Select unique column from "<b>Unique Column</b>" drop down list.
+
+==Microsoft Access==
+To synchronize Microsoft Access data source with others repositories, you need to define a  data source.
+
+The process consists of:
+ # Select "MS Access" data type from "<b>Data Source Type</b>" drop down list.
+ # Browse Access database files and select one that you want to synchronize.
+  * Available list of table will be displayed in "<b>Table</b>" drop down list.
+ # Select table from "<b>Table</b>" drop down list.
