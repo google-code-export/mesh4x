@@ -5,7 +5,6 @@ import java.beans.PropertyChangeEvent;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.ISyncAdapterBuilder;
-import org.mesh4j.ektoo.IUIController;
 import org.mesh4j.ektoo.SyncAdapterBuilder;
 import org.mesh4j.ektoo.model.MsAccessModel;
 import org.mesh4j.ektoo.properties.PropertiesProvider;

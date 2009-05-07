@@ -4,7 +4,6 @@ import java.beans.PropertyChangeEvent;
 
 import org.mesh4j.ektoo.GoogleSpreadSheetInfo;
 import org.mesh4j.ektoo.ISyncAdapterBuilder;
-import org.mesh4j.ektoo.IUIController;
 import org.mesh4j.ektoo.SyncAdapterBuilder;
 import org.mesh4j.ektoo.model.GSSheetModel;
 import org.mesh4j.ektoo.properties.PropertiesProvider;
