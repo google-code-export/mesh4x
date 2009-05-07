@@ -1,4 +1,35 @@
 #summary A step-by-step guide for users to synchronize various data sources using EktooClient
 #labels HowTo
+=THIS PAGE IS UNDER CONSTRUCTION, PLEASE VISIT US SOON=
 
-=THIS PAGE IS NOW UNDER CONSTRUCTION, PLEASE VISIT US SOON=
+=Introduction=
+EktooClient is a desktop tool that helps user to synchronize data between various data repositories using mesh4x.
+
+This step-by-step guide shows how a user can use EktooClient to synchronize data between various data repositories.
+
+Currently mesh4x supports following data repositories:
+ # KML
+ # Microsoft Excel
+ # Microsoft Access
+ # Google Spreadsheet
+ # MySQL and other databases
+ # Cloud
+
+=What you need=
+You will need:
+ * JRE(Java Runtime Environment) installed in your system.
+ * EktooClient installed in your system
+ * Data repository
+
+=Data Synchronization=
+The process consists of:
+ # Select data source type from drop down list of source frame.
+  * Enter details information of source data source.
+ # Select target data source type from drop down list of target frame.
+  * Enter details information of target data source.
+ # Click on "Synchronize Now" button to start synchronization process.
+
+==Microsoft Excel==
+
+==Microsoft Access==
+==Database==
