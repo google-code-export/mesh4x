@@ -1,6 +1,7 @@
-#summary A step-by-step guide for users to synchronize various data sources using EktooClient
-#labels HowTo
+#labels HowTo,Tutorial
 =THIS PAGE IS UNDER CONSTRUCTION, PLEASE VISIT US SOON=
+
+#summary A step-by-step guide for users to synchronize various data sources using EktooClient
 
 =Introduction=
 EktooClient is a desktop tool that helps user to synchronize data between various data repositories using mesh4x.
@@ -17,7 +18,7 @@ Currently mesh4x supports following data repositories:
 
 =What you need=
 You will need:
- * JRE(Java Runtime Environment) installed in your system.
+ * JRE(Java Runtime Environment) 1.5 or later version installed in your system.
  * EktooClient installed in your system
  * Data repository
 
@@ -31,6 +32,7 @@ The process consists of:
 
 ==Microsoft Excel==
 If you want to synchronize Microsoft Excel data source with others repositories, you need to define a Microsoft Excel data source.
+
 The process consists of:
  # Select "MS Excel" data type from "Data Source Type" drop down list.
  # Browse Excel files adn select one that you want to synchronize.
@@ -38,6 +40,4 @@ The process consists of:
  # Select worksheet from "Worksheet" drop down list.
   * Available list of column will be displayed in "Unique Column" drop down list.
  # Select unique column from "Unique Column" drop down list.
-
-
 
