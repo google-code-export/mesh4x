@@ -19,7 +19,7 @@ public class ImageManager
 
   public static Icon getUndefinedSourceIcon() 
   {
-    return SwingResourceManager.getIcon(EktooUI.class, "/undefinedDataSource.png");
+    return SwingResourceManager.getIcon(EktooUI.class, "/ds.png");
   }
   
   public static Icon getDataSourceSmall() 
@@ -29,7 +29,7 @@ public class ImageManager
   
   public static Icon getDatabaseConnectionIcon() 
   {
-    return SwingResourceManager.getIcon(EktooUI.class, "/connect_db.jpg");
+    return SwingResourceManager.getIcon(EktooUI.class, "/connection_16.png");
   }
 
   public static Icon getSyncModeIcon(boolean sendChanges, boolean receiveChanges)
@@ -52,31 +52,35 @@ public class ImageManager
   {
     if(source == null)
     {
-      return SwingResourceManager.getIcon(EktooUI.class, "/undefinedDataSource.png");
+      return SwingResourceManager.getIcon(EktooUI.class, "/ds.png");
     } 
     else if (source.startsWith("Cloud"))
     {
-      return SwingResourceManager.getIcon(EktooUI.class, "/httpDataSource.png");      
+      return SwingResourceManager.getIcon(EktooUI.class, "/cloud_ds.png");      
     } 
     else if (source.startsWith("KML"))
     {
-      return SwingResourceManager.getIcon(EktooUI.class, "/kmlDataSource.png");
+      return SwingResourceManager.getIcon(EktooUI.class, "/kml_ds.png");
     } 
     else if (source.startsWith("MS Access"))
     {
-      return SwingResourceManager.getIcon(EktooUI.class, "/msAccessDataSource.png");
+      return SwingResourceManager.getIcon(EktooUI.class, "/access_ds.png");
     } 
     else if (source.startsWith("MS Excel"))
     {
-      return SwingResourceManager.getIcon(EktooUI.class, "/msExcelDataSource.png");
+      return SwingResourceManager.getIcon(EktooUI.class, "/excel_ds.png");
     }
     else if (source.startsWith("MySQL"))
     {
-      return SwingResourceManager.getIcon(EktooUI.class, "/MySQLDataSource.png");
-    }     
+      return SwingResourceManager.getIcon(EktooUI.class, "/mysql_ds.png");
+    } 
+    else if (source.startsWith("Google"))
+    {
+      return SwingResourceManager.getIcon(EktooUI.class, "/gs_ds.png");
+    }      
     else 
     {
-      return SwingResourceManager.getIcon(EktooUI.class, "/undefinedDataSource.png");
+      return SwingResourceManager.getIcon(EktooUI.class, "/ds.png");
     }
   }
   
