@@ -1,13 +1,14 @@
 #summary A step-by-step guide for users to synchronize various data sources using EktooClient
 #labels HowTo,Tutorial
 
-=THIS PAGE IS UNDER CONSTRUCTION, PLEASE VISIT US SOON=
+THIS PAGE IS UNDER CONSTRUCTION, PLEASE VISIT US SOON
+<wiki:toc max_depth="2" />
 
 =Introduction=
 EktooClient is a desktop tool that helps user to synchronize data between various data repositories using mesh4x.
 
 This step-by-step guide shows how a user can use EktooClient to synchronize data between various data repositories.
-
+=Overview=
 Currently mesh4x supports following data repositories:
  # KML
  # Microsoft Excel
