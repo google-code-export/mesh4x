@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.mesh4j.ektoo.IUIController;
 import org.mesh4j.ektoo.model.AbstractModel;
 import org.mesh4j.ektoo.ui.AbstractUI;
 
@@ -14,7 +15,7 @@ import org.mesh4j.ektoo.ui.AbstractUI;
  * @author Bhuiyan Mohammad Iklash
  * 
  */
-public abstract class AbstractController implements PropertyChangeListener
+public abstract class AbstractController implements PropertyChangeListener, IUIController
 {
   private final static Log LOGGER = LogFactory.getLog(AbstractController.class);
 	
