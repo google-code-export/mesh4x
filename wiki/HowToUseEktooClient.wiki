@@ -1,4 +1,4 @@
-#labels HowTo,Tutorial
+#labels HowTo
 =THIS PAGE IS UNDER CONSTRUCTION, PLEASE VISIT US SOON=
 
 #summary A step-by-step guide for users to synchronize various data sources using EktooClient
@@ -40,4 +40,3 @@ The process consists of:
  # Select worksheet from "Worksheet" drop down list.
   * Available list of column will be displayed in "Unique Column" drop down list.
  # Select unique column from "Unique Column" drop down list.
-
