@@ -10,6 +10,5 @@ public interface IUIController
 {
   public ISyncAdapter createAdapter();
   public ISyncAdapter createAdapter(IRDFSchema schema);
-  public IRDFSchema createSchema();
-  
+  public IRDFSchema fetchSchema(); 
 }
