@@ -1,14 +1,8 @@
 #summary A step-by-step guide for users to synchronize various data sources using EktooClient
 #labels HowTo
 
+THIS PAGE IS NOW UNDER CONSTRUCTION, PLEASE VISIT SOON
+
 = Introduction =
 
-Add your content here.
-
-
 = Details =
-
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
