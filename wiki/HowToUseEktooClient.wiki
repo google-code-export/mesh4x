@@ -1,4 +1,4 @@
-#summary One-sentence summary of this page.
+#summary A step-by-step guide for users to synchronize various data sources using EktooClient
 #labels HowTo
 
 = Introduction =
