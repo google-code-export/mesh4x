@@ -149,8 +149,19 @@ public class HibernateSyncAdapterFactory implements ISyncAdapterFactory{
 		File syncFileMapping = new File(baseDirectory + syncTableName+".hbm.xml");
 		if(!syncFileMapping.exists()){
 			try{
-				byte[] templateBytes = FileUtils.read(HibernateSyncAdapterFactory.class.getResource("syncMappingTemplate.xml").getFile());
-				String template = new String(templateBytes, "UTF-8");		
+				String template = "<?xml version=\"1.0\"?><!DOCTYPE hibernate-mapping PUBLIC \"-//Hibernate/Hibernate Mapping DTD 3.0//EN\" \"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd\">"+
+				"<hibernate-mapping>"+
+				"	<class entity-name=\"{0}\" node=\"{0}\" table=\"{0}\">"+
+				"		<id name=\"sync_id\" type=\"string\" column=\"sync_id\">"+
+				"			<generator class=\"assigned\"/>"+
+				"		</id>"+
+				"		<property name=\"entity_name\" column=\"entity_name\" node=\"entity_name\" type=\"string\"/>"+
+				"		<property name=\"entity_id\" column=\"entity_id\" node=\"entity_id\" type=\"string\"/>"+
+				"		<property name=\"entity_version\" column=\"entity_version\" node=\"entity_version\" type=\"string\"/>"+
+				"		<property name=\"sync_data\" column=\"sync_data\" node=\"sync_data\" type=\"string\" length=\"65535\"/>"+
+				"	</class>"+
+				"</hibernate-mapping>";
+				
 				String xml = MessageFormat.format(template, syncTableName);
 				FileUtils.write(syncFileMapping.getCanonicalPath(), xml.getBytes());
 				mustCreateTables = true;

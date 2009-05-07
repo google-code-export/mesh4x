@@ -14,9 +14,12 @@ public class FileUtils {
 	public static byte[] read(String fileName) throws IOException {
 		return read(new File(fileName));
 	}
-	
+
 	public static byte[] read(File file) throws IOException {
-		InputStream reader = new FileInputStream(file);
+		return read(new FileInputStream(file));
+	}
+	
+	public static byte[] read(InputStream reader) throws IOException {
 		BufferedInputStream bis = new BufferedInputStream(reader);
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 	    

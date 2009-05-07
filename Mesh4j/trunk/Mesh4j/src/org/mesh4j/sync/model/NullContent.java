@@ -7,7 +7,7 @@ import org.mesh4j.sync.validations.Guard;
 
 public class NullContent implements IContent {
 	
-	private static final Element PAYLOAD = DocumentHelper.createElement("payload");
+	public static final Element PAYLOAD = DocumentHelper.createElement("payload");
 	private String id;
 
 	public NullContent(String id)
