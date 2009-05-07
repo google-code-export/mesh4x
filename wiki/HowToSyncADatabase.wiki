@@ -4,7 +4,7 @@
 =Introduction=
 This howto shows how a developer can synchronize your database with other repositories using mesh4x. For this example we will use MySQL as one endpoint, and assume you want to synchronize via HTTP to a server
 
-You will neeed:
+You will need:
  * A way of connecting to your database
  * Your database schema
  * Basic knowledge about Java, Eclipse and Hibbernate
@@ -20,4 +20,3 @@ The process consists of:
 =Details=
 
 =Frequently Asked Questions=
-
