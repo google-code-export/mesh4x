@@ -24,6 +24,7 @@ import javax.swing.SwingWorker;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.mesh4j.ektoo.IValidationStatus;
 import org.mesh4j.ektoo.controller.MySQLUIController;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
@@ -36,8 +37,8 @@ import com.mysql.jdbc.Driver;
  * @author Bhuiyan Mohammad Iklash
  * 
  */
-public class MySQLUI extends JPanel {
-
+public class MySQLUI extends JPanel implements IValidationStatus
+{
 	private static final long serialVersionUID = 2622575852343500622L;
 	private static final Log LOGGER = LogFactory.getLog(MySQLUI.class);
 	
@@ -65,8 +66,8 @@ public class MySQLUI extends JPanel {
 	private MySQLUIController controller = null;
 
 	// BUSINESS METHODS
-
-	public MySQLUI(MySQLUIController controller) {
+	public MySQLUI(MySQLUIController controller) 
+	{
 		super();
 		this.controller = controller;
 		initialize();
@@ -144,8 +145,10 @@ public class MySQLUI extends JPanel {
 		return labelUser;
 	}
 
-	private JTextField getUserText() {
-		if (txtUser == null) {
+	private JTextField getUserText() 
+	{
+		if (txtUser == null) 
+		{
 			txtUser = new JTextField();
 			txtUser.setBounds(new Rectangle(101, 5, 183, 20));
 			txtUser.addActionListener(new ActionListener() {
@@ -345,14 +348,15 @@ public class MySQLUI extends JPanel {
 			btnConnect = new JButton();
 			btnConnect.setBounds(new Rectangle(260, 80, 22, 20));
 			btnConnect.setIcon(ImageManager.getDatabaseConnectionIcon());
-      btnConnect.addActionListener(new ActionListener() {
+      btnConnect.addActionListener(new ActionListener() 
+      {
 				public void actionPerformed(ActionEvent ae) 
 				{
 				  getController().changeHostName( getHost());
 				  getController().changePortNo( getPort() );
 				  
-				  //boolean valid = new MySQLConnectionValidator(MySQLUI.this  , controller.getModel()).verify();
-				  //if (valid)
+				  boolean valid = (new MySQLConnectionValidator(MySQLUI.this, controller.getModel())).verify();
+				  if (valid)
 				  {
   				  SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
   						public Void doInBackground() {
@@ -376,7 +380,8 @@ public class MySQLUI extends JPanel {
 		return btnConnect;
 	}
 
-	private JLabel getTableLabel() {
+	private JLabel getTableLabel() 
+	{
 		if (labelTable == null) {
 			labelTable = new JLabel();
 			labelTable.setText(EktooUITranslator.getMySQLTableLabel());
@@ -472,4 +477,15 @@ public class MySQLUI extends JPanel {
 	public String getTable() {
 		return (String) getTableList().getSelectedItem();
 	}
+
+  @Override
+  public void validationFailed()
+  {
+    System.out.println("Invalid form");
+  }
+
+  @Override
+  public void validationPassed()
+  {
+  }
 }

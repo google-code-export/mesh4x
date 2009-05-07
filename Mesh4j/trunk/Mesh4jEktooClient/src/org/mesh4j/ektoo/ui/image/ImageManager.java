@@ -122,4 +122,10 @@ public class ImageManager
   {
     return SwingResourceManager.getIcon(EktooUI.class, "/sync.gif");
   }
+
+  public static Image getSyncProcessImage()
+  {
+    return SwingResourceManager.getImage(EktooUI.class, "/sync.gif");
+  }
+
 }

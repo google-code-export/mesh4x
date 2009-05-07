@@ -95,6 +95,7 @@ public class SynchronizeTask extends SwingWorker<String, Void> {
           ));   		  
 			LOGGER.error(e.getMessage(), e);
 		}
+		ui.showSyncImageLabel(false);
 		ui.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 	}
 }

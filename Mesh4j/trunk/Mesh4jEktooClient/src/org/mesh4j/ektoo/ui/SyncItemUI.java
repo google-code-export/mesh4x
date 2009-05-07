@@ -6,6 +6,7 @@ package org.mesh4j.ektoo.ui;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Rectangle;
 import java.awt.event.ItemEvent;
@@ -48,13 +49,13 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 		IUIController {
 	
 	private static final long serialVersionUID = 8681801062827267140L;
-	private final static String DYMMY_PANEL              = "DUMMY_PANEL";
-	private final static String KML_PANEL                = "KML";
-	public final static String MS_EXCEL_PANEL            = "MS Excel";
-	private final static String GOOGLE_SPREADSHEET_PANEL = "Google Spreadsheet";
-	private final static String MS_ACCESS_PANEL          = "MS Access";
-	private final static String CLOUD_PANEL              = "Cloud";
-	public final static String MYSQL_PANEL               = "MySQL";
+	private final static String DYMMY_PANEL             = "DUMMY_PANEL";
+	public final static String KML_PANEL                = "KML";
+	public final static String MS_EXCEL_PANEL           = "MS Excel";
+	public final static String GOOGLE_SPREADSHEET_PANEL = "Google Spreadsheet";
+	public final static String MS_ACCESS_PANEL          = "MS Access";
+	public final static String CLOUD_PANEL              = "Cloud";
+	public final static String MYSQL_PANEL              = "MySQL";
 
 	// MODEL VARIABLES
 	private PropertiesProvider propertiesProvider;
@@ -108,20 +109,23 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 	}
 
 	private JPanel getHeadPane() {
-		if (head == null) {
+		if (head == null) 
+		{
 			head = new JPanel();
 			head.setLayout(new FlowLayout());
-			head.add(getTypeLabel(), null);
-			head.add(getDataSourceType(), null);
+			head.add(getTypeLabel());
+			head.add(getDataSourceType());
 		}
 		return head;
 	}
 
-	private JPanel getBodyPane() {
+	private JPanel getBodyPane() 
+	{
 		if (body == null) {
 			body = new JPanel();
 			body.setLayout(new CardLayout());
 
+			firstPanel.setBackground(Color.WHITE);
 			body.add(firstPanel, DYMMY_PANEL);
 
 			// add cards here
@@ -135,10 +139,14 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 		return body;
 	}
 
-	private JComboBox getDataSourceType() {
-		if (getListType() == null) {
+	private JComboBox getDataSourceType() 
+	{
+		if (getListType() == null) 
+		{
 			setListType(new JComboBox());
 			getListType().setBounds(new Rectangle(107, 13, 230, 22));
+			getListType().setPreferredSize( new Dimension(200, 22));
+			
 			if (SourceOrTargetType != null) {
 				StringTokenizer st = new StringTokenizer(SourceOrTargetType,
 						"|");
@@ -165,11 +173,13 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 		return getListType();
 	}
 
-	private JLabel getTypeLabel() {
-		if (labelType == null) {
+	private JLabel getTypeLabel() 
+	{
+		if (labelType == null) 
+		{
 			labelType = new JLabel();
 			labelType.setText(EktooUITranslator.getSyncDataSourceType());
-			labelType.setBounds(new Rectangle(16, 18, 27, 16));
+			labelType.setBounds(new Rectangle(16, 50, 27, 16));
 		}
 		return labelType;
 	}
@@ -267,6 +277,12 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 			cl.show(body, DYMMY_PANEL);
 		}
 	}
+	
+	public void showInitCard()
+	{
+	  CardLayout cl = (CardLayout) (body.getLayout());
+	  cl.show(body, DYMMY_PANEL);
+	}
 
 	@Override
 	public String getColumn() {
@@ -360,7 +376,11 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 	  
 	  String item = (String) getDataSourceType().getSelectedItem();
 	  
-    if (item.equals(MS_EXCEL_PANEL)) 
+    if (item.equals(KML_PANEL)) 
+    {
+      currrentController = kmlUI.getController();
+    } 
+    else if (item.equals(MS_EXCEL_PANEL)) 
     {
       currrentController = excelUI.getController();
     } 
