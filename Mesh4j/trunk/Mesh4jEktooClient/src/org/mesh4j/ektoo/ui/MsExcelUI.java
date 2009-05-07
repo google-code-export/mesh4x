@@ -22,8 +22,8 @@ import org.mesh4j.sync.adapters.msexcel.MsExcelUtils;
  * @author Bhuiyan Mohammad Iklash
  * 
  */
-public class MsExcelUI extends TableUI {
-	
+public class MsExcelUI extends TableUI 
+{	
 	// CONSTANTS
 	private static final long serialVersionUID = -5022572211883785527L;
 	private static final Log LOGGER = LogFactory.getLog(MsExcelUI.class);
@@ -32,13 +32,15 @@ public class MsExcelUI extends TableUI {
 	private MsExcelUIController controller;
 
 	// BUSINESS METHODS
-	public MsExcelUI(MsExcelUIController controller) {
+	public MsExcelUI(MsExcelUIController controller) 
+	{
 		super();
 		this.controller = controller;
 		initialize();
 	}
 
-	private void initialize() {
+	private void initialize() 
+	{
 		this.getFileChooser().setDialogTitle(
 				EktooUITranslator.getExcelFileSelectorTitle());
 		this.getFileChooser().setAcceptAllFileFilterUsed(false);
@@ -46,7 +48,8 @@ public class MsExcelUI extends TableUI {
 	}
 
 	@Override
-	public void setList(File file) {
+	public void setList(File file) 
+	{
 		JComboBox sheetList = getTableList();
 		sheetList.removeAllItems();
 
@@ -72,7 +75,8 @@ public class MsExcelUI extends TableUI {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void setList(File file, int tableIndex) {
+	public void setList(File file, int tableIndex) 
+	{
 		JComboBox columnList = getColumnList();
 		columnList.removeAllItems();
 
@@ -101,7 +105,8 @@ public class MsExcelUI extends TableUI {
 	}
 
 	@Override
-	public void setList(File file, int tableIndex, String columnName) {
+	public void setList(File file, int tableIndex, String columnName) 
+	{
 		try {
 			this.controller.changeUniqueColumnName(columnName);
 		} catch (Exception e) {
@@ -109,16 +114,19 @@ public class MsExcelUI extends TableUI {
 		}
 	}
 
-	public void setController(MsExcelUIController controller) {
+	public void setController(MsExcelUIController controller) 
+	{
 		this.controller = controller;
 	}
 
-	public MsExcelUIController getController() {
+	public MsExcelUIController getController() 
+	{
 		return controller;
 	}
 
 	@Override
-	public void modelPropertyChange(final PropertyChangeEvent evt) {
+	public void modelPropertyChange(final PropertyChangeEvent evt) 
+	{
 		LOGGER.debug("Model changes....");
 	}
 
@@ -127,7 +135,8 @@ public class MsExcelUI extends TableUI {
 class MsExcelFilter extends FileFilter {
 
 	// Accept all directories and all xls files.
-	public boolean accept(File file) {
+	public boolean accept(File file) 
+	{
 		if (file.isDirectory())
 			return true;
 
@@ -140,7 +149,8 @@ class MsExcelFilter extends FileFilter {
 		return false;
 	}
 
-	public String getDescription() {
+	public String getDescription() 
+	{
 		return EktooUITranslator.getExcelFileDescription();
 	}
 }
