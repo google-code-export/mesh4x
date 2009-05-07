@@ -7,7 +7,7 @@ Tools and products build with Mesh4x.
 
 === Ektoo Client ===
 
-Ektoo client is a tool to synchronize all data source supported by mesh4x
+Ektoo client is a tool to synchronize all data sources supported by mesh4x
 
 Uploaded: Coming soon
 
