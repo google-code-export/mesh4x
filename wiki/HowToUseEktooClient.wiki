@@ -1,4 +1,4 @@
-#labels HowTo
+#labels HowTo,Tutorial
 =THIS PAGE IS UNDER CONSTRUCTION, PLEASE VISIT US SOON=
 
 #summary A step-by-step guide for users to synchronize various data sources using EktooClient
