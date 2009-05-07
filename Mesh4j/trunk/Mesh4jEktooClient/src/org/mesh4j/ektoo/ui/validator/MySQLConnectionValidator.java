@@ -1,6 +1,6 @@
 package org.mesh4j.ektoo.ui.validator;
 
-import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 import org.mesh4j.ektoo.model.AbstractModel;
 import org.mesh4j.ektoo.model.MySQLAdapterModel;
@@ -8,13 +8,13 @@ import org.mesh4j.ektoo.validator.AbstractValidator;
 
 public class MySQLConnectionValidator extends AbstractValidator
 {
-  private Object parent;
+  private Object form;
   private Object model;
   
-  public MySQLConnectionValidator(JFrame parent, AbstractModel model)
+  public MySQLConnectionValidator(JPanel form, AbstractModel model)
   {
-    super(parent, model);
-    this.parent = parent;
+    super(form, model);
+    this.form = form;
     this.model = model;
   }
  

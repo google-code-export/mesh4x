@@ -14,7 +14,11 @@ public class ImageManager
 	
   public static Image getLogoSmall() 
   {
-    return SwingResourceManager.getImage(EktooUI.class, "/instedd_small.jpg");
+    return SwingResourceManager.getImage(EktooUI.class, "/instedd_small.png");
+  }
+  public static Image getMesh4xLogoSmall() 
+  {
+    return SwingResourceManager.getImage(EktooUI.class, "/mesh4x.png");
   }
 
   public static Icon getUndefinedSourceIcon() 
