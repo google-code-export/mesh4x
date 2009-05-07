@@ -351,21 +351,25 @@ public class MySQLUI extends JPanel {
 				  getController().changeHostName( getHost());
 				  getController().changePortNo( getPort() );
 				  
-				  SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
-						public Void doInBackground() {
-							setCursor(Cursor
-									.getPredefinedCursor(Cursor.WAIT_CURSOR));
-							setList(getUser(), getPass(), getHost(), getPort(),
-									txtDatabase.getText());
-							return null;
-						}
-
-						public void done() {
-							setCursor(Cursor
-									.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-						}
-					};
-					worker.execute();
+				  //boolean valid = new MySQLConnectionValidator(MySQLUI.this  , controller.getModel()).verify();
+				  //if (valid)
+				  {
+  				  SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+  						public Void doInBackground() {
+  							setCursor(Cursor
+  									.getPredefinedCursor(Cursor.WAIT_CURSOR));
+  							setList(getUser(), getPass(), getHost(), getPort(),
+  									txtDatabase.getText());
+  							return null;
+  						}
+  
+  						public void done() {
+  							setCursor(Cursor
+  									.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+  						}
+  					};
+  					worker.execute();
+				  }
 				}
 			});
 		}

@@ -34,8 +34,8 @@ import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
  * @author Bhuiyan Mohammad Iklash
  * 
  */
-public class EktooUI extends JFrame {
-
+public class EktooUI extends JFrame 
+{
 	private static final long serialVersionUID = -8703829301086394863L;
 	private final Log LOGGER = LogFactory.getLog(EktooUI.class);
 
@@ -58,13 +58,15 @@ public class EktooUI extends JFrame {
 	private EktooUIController controller;
 
 	// BUSINESS METHODS
-	public EktooUI(EktooUIController controller) {
+	public EktooUI(EktooUIController controller) 
+	{
 		super();
 		initialize();
 		this.controller = controller;
 	}
 
-	private void initialize() {
+	private void initialize() 
+	{
 		this.setSize(new Dimension(800, 500));
 		this.setContentPane(getJPanel());
 		this.setIconImage(ImageManager.getLogoSmall());
@@ -74,7 +76,8 @@ public class EktooUI extends JFrame {
 		// this.setResizable(false);
 	}
 
-	private JPanel getJPanel() {
+	private JPanel getJPanel() 
+	{
 		if (panel == null) {
 			panel = new JPanel();
 
@@ -123,7 +126,8 @@ public class EktooUI extends JFrame {
 		return panel;
 	}
 
-	private JPanel getImagePanel() {
+	private JPanel getImagePanel() 
+	{
 		if (panelImage == null) {
 			panelImage = new JPanel();
 			panelImage.setBackground(Color.WHITE);
@@ -132,9 +136,15 @@ public class EktooUI extends JFrame {
 
 			GridBagConstraints c = new GridBagConstraints();
 
+//			c.gridx = 0;
+//	    c.gridy = 0;
+//      c.gridwidth = 3;
+//	    panelImage.add(getSyncImageLabel(), c);
+			
 			c.gridx = 0;
-
-			panelImage.add(getSourceImageLabel(), c);
+			c.gridy = 1;
+      c.gridwidth = 1;
+      panelImage.add(getSourceImageLabel(), c);
 
 			c.fill = GridBagConstraints.CENTER;
 			c.gridx = 1;
@@ -152,6 +162,7 @@ public class EktooUI extends JFrame {
 	    if ( syncImageLabel == null)
 	    {
 	      syncImageLabel = new JLabel(ImageManager.getSyncProcessIcon());
+	      
 	      syncImageLabel.setBackground(Color.WHITE);
 	    }
 	    return syncImageLabel;
