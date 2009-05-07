@@ -16,6 +16,23 @@ Currently mesh4x supports following data repositories:
  # MySQL and other databases
  # Cloud
 
+EktooClient supports following scenarios of data synchronization currently
+ * Microsoft Excel to and/or from
+   * Microsoft Excel
+   * Google Spreadsheet
+   * MySQL
+   * Cloud
+ * Microsoft Access to and/or from
+   * Microsoft Access
+   * Cloud
+ * Google Spreadsheet to and/or from
+   * Google Spreadsheet
+   * Microsoft Excel
+   * Cloud
+ * MySQL to and/or from
+   * Microsoft Excel
+   * Cloud 
+
 =What you need=
 You will need:
  * JRE(Java Runtime Environment) 1.5 or later version installed in your system.
@@ -28,7 +45,7 @@ The process consists of:
   * Enter details information of source data source.
  # Select target data source type from drop down list of target frame.
   * Enter details information of target data source.
- # Click on "Synchronize Now" button to start synchronization process.
+ # Click on "<b>Synchronize Now</b>" button to start synchronization process.
 
 ==Microsoft Excel==
 If you want to synchronize Microsoft Excel data source with others repositories, you need to define a Microsoft Excel data source.
