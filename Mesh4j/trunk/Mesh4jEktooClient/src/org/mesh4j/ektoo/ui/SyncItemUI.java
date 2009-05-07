@@ -50,11 +50,11 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 	private static final long serialVersionUID = 8681801062827267140L;
 	private final static String DYMMY_PANEL              = "DUMMY_PANEL";
 	private final static String KML_PANEL                = "KML";
-	public final static String MS_EXCEL_PANEL           = "MS Excel";
+	public final static String MS_EXCEL_PANEL            = "MS Excel";
 	private final static String GOOGLE_SPREADSHEET_PANEL = "Google Spreadsheet";
 	private final static String MS_ACCESS_PANEL          = "MS Access";
 	private final static String CLOUD_PANEL              = "Cloud";
-	private final static String MYSQL_PANEL              = "MySQL";
+	public final static String MYSQL_PANEL               = "MySQL";
 
 	// MODEL VARIABLES
 	private PropertiesProvider propertiesProvider;
@@ -250,6 +250,7 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 
 	private void updateLayout(String item) {
 		CardLayout cl = (CardLayout) (body.getLayout());
+		
 		if (item.equals(MS_EXCEL_PANEL)) {
 			cl.show(body, MS_EXCEL_PANEL);
 		} else if (item.equals(MS_ACCESS_PANEL)) {
@@ -330,65 +331,21 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 	}
 
 	@Override
-	public ISyncAdapter createAdapter() {
-		ISyncAdapter syncAdapter = null;
-
-		String item = (String) getDataSourceType().getSelectedItem();
-		//CardLayout cl = (CardLayout) (body.getLayout());
-		if (item.equals(MS_EXCEL_PANEL)) {
-			syncAdapter = excelUI.getController().createAdapter();
-		} else if (item.equals(MS_ACCESS_PANEL)) {
-			syncAdapter = accessUI.getController().createAdapter();
-		} else if (item.equals(GOOGLE_SPREADSHEET_PANEL)) {
-			syncAdapter = googleUI.getController().createAdapter();
-		} else if (item.equals(CLOUD_PANEL)) {
-			syncAdapter = cloudUI.getController().createAdapter();
-		} else if (item.equals(MYSQL_PANEL)) {
-			syncAdapter = mysqlUI.getController().createAdapter();
-		}
-		return syncAdapter;
+	public ISyncAdapter createAdapter() 
+	{
+	  return getCurrentController().createAdapter();
 	}
 
 	@Override
-	public IRDFSchema createSchema() {
-		IRDFSchema rdfSchema = null;
-
-		String item = (String) getDataSourceType().getSelectedItem();
-		//CardLayout cl = (CardLayout) (body.getLayout());
-		if (item.equals(MS_EXCEL_PANEL)) {
-			rdfSchema = excelUI.getController().createSchema();
-		} else if (item.equals(MS_ACCESS_PANEL)) {
-			rdfSchema = accessUI.getController().createSchema();
-		} else if (item.equals(GOOGLE_SPREADSHEET_PANEL)) {
-			rdfSchema = googleUI.getController().createSchema();
-		} else if (item.equals(CLOUD_PANEL)) {
-			rdfSchema = cloudUI.getController().createSchema();
-		} else if (item.equals(MYSQL_PANEL)) {
-			rdfSchema = mysqlUI.getController().createSchema();
-		}
-
-		return rdfSchema;
+	public IRDFSchema fetchSchema() 
+	{
+	  return getCurrentController().fetchSchema();
 	}
 
 	@Override
 	public ISyncAdapter createAdapter(IRDFSchema schema) 
 	{
-	  ISyncAdapter syncAdapter = null;
-
-		String item = (String) getDataSourceType().getSelectedItem();
-
-		if (item.equals(MS_EXCEL_PANEL)) {
-			syncAdapter = excelUI.getController().createAdapter(schema);
-		} else if (item.equals(MS_ACCESS_PANEL)) {
-			syncAdapter = accessUI.getController().createAdapter(schema);
-		} else if (item.equals(GOOGLE_SPREADSHEET_PANEL)) {
-			syncAdapter = googleUI.getController().createAdapter(schema);
-		} else if (item.equals(CLOUD_PANEL)) {
-			syncAdapter = cloudUI.getController().createAdapter(schema);
-		} else if (item.equals(MYSQL_PANEL)) {
-			syncAdapter = mysqlUI.getController().createAdapter(schema);
-		}
-		return syncAdapter;
+	  return getCurrentController().createAdapter(schema);
 	}
 	
 	public String toString()
@@ -402,6 +359,7 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 	  AbstractController currrentController = null;
 	  
 	  String item = (String) getDataSourceType().getSelectedItem();
+	  
     if (item.equals(MS_EXCEL_PANEL)) 
     {
       currrentController = excelUI.getController();

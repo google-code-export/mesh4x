@@ -3,6 +3,7 @@ package org.mesh4j.ektoo.ui.image;
 import java.awt.Image;
 
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 
 import org.mesh4j.ektoo.ui.EktooUI;
 
@@ -107,5 +108,10 @@ public class ImageManager
 
   public static Icon getCloudIcon() {
     return SwingResourceManager.getIcon(EktooUI.class, "/cloud.jpg");
+  }
+
+  public static ImageIcon getSyncProcessIcon()
+  {
+    return SwingResourceManager.getIcon(EktooUI.class, "/sync.gif");
   }
 }

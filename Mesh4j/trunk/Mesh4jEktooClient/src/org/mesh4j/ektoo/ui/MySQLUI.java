@@ -27,6 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.controller.MySQLUIController;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
+import org.mesh4j.ektoo.ui.validator.MySQLConnectionValidator;
 import org.mesh4j.sync.utils.SqlDBUtils;
 
 import com.mysql.jdbc.Driver;
@@ -350,7 +351,7 @@ public class MySQLUI extends JPanel {
 				  getController().changeHostName( getHost());
 				  getController().changePortNo( getPort() );
 				  
-					SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+				  SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 						public Void doInBackground() {
 							setCursor(Cursor
 									.getPredefinedCursor(Cursor.WAIT_CURSOR));
