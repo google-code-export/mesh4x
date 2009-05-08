@@ -34,8 +34,7 @@ import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
  * @author Bhuiyan Mohammad Iklash
  * 
  */
-public class EktooUI extends JFrame 
-{
+public class EktooUI extends JFrame {
 	private static final long serialVersionUID = -8703829301086394863L;
 	private final Log LOGGER = LogFactory.getLog(EktooUI.class);
 
@@ -58,25 +57,23 @@ public class EktooUI extends JFrame
 	private EktooUIController controller;
 
 	// BUSINESS METHODS
-	public EktooUI(EktooUIController controller) 
-	{
+	public EktooUI(EktooUIController controller) {
 		super();
 		initialize();
 		this.controller = controller;
 	}
 
-	private void initialize() 
-	{
+	private void initialize() {
 		this.setSize(new Dimension(800, 500));
 		this.setContentPane(getJPanel());
 		this.setIconImage(ImageManager.getLogoSmall());
 
 		this.setTitle(EktooUITranslator.getTitle());
+		this.filterCombobox();
 		this.setResizable(false);
 	}
 
-	private JPanel getJPanel() 
-	{
+	private JPanel getJPanel() {
 		if (panel == null) {
 			panel = new JPanel();
 
@@ -125,8 +122,7 @@ public class EktooUI extends JFrame
 		return panel;
 	}
 
-	private JPanel getImagePanel() 
-	{
+	private JPanel getImagePanel() {
 		if (panelImage == null) {
 			panelImage = new JPanel();
 			panelImage.setOpaque(false);
@@ -134,26 +130,25 @@ public class EktooUI extends JFrame
 
 			GridBagConstraints c = new GridBagConstraints();
 			c.insets = new Insets(-15, 17, 0, 17);
-			
+
 			c.gridx = 0;
-	    c.gridy = 0;
-      c.gridwidth = 3;
+			c.gridy = 0;
+			c.gridwidth = 3;
 
-      JPanel tempPanel = new JPanel();
-      tempPanel.setPreferredSize(new Dimension(428,47));
-      tempPanel.setOpaque(false);
-      tempPanel.add(getSyncImageLabel());
-      panelImage.add(tempPanel, c); 
-      
-	    //panelImage.add(getSyncImageLabel(), c);
-      
+			JPanel tempPanel = new JPanel();
+			tempPanel.setPreferredSize(new Dimension(428, 47));
+			tempPanel.setOpaque(false);
+			tempPanel.add(getSyncImageLabel());
+			panelImage.add(tempPanel, c);
 
-	    c.fill = GridBagConstraints.CENTER;
+			// panelImage.add(getSyncImageLabel(), c);
+
+			c.fill = GridBagConstraints.CENTER;
 			c.gridx = 0;
 			c.gridy = 1;
-      c.gridwidth = 1;
+			c.gridwidth = 1;
 
-      panelImage.add(getSourceImageLabel(), c);
+			panelImage.add(getSourceImageLabel(), c);
 
 			c.fill = GridBagConstraints.CENTER;
 			c.gridx = 1;
@@ -166,23 +161,20 @@ public class EktooUI extends JFrame
 
 		return panelImage;
 	}
-	
-	private JLabel getSyncImageLabel()
-  {
-    if ( syncImageLabel == null)
-    {
-      syncImageLabel = new JLabel(ImageManager.getSyncProcessIcon());
-      syncImageLabel.setPreferredSize(new Dimension(428,47));
-      showSyncImageLabel(false);
-    }
-    return syncImageLabel;
-  }
-	
-	public void showSyncImageLabel(boolean bool)
-	{
-	  syncImageLabel.setVisible(bool);
+
+	private JLabel getSyncImageLabel() {
+		if (syncImageLabel == null) {
+			syncImageLabel = new JLabel(ImageManager.getSyncProcessIcon());
+			syncImageLabel.setPreferredSize(new Dimension(428, 47));
+			showSyncImageLabel(false);
+		}
+		return syncImageLabel;
 	}
-	
+
+	public void showSyncImageLabel(boolean bool) {
+		syncImageLabel.setVisible(bool);
+	}
+
 	private JLabel getSourceImageLabel() {
 		if (sourceImageLabel == null) {
 			sourceImageLabel = new JLabel(ImageManager.getUndefinedSourceIcon());
@@ -228,26 +220,22 @@ public class EktooUI extends JFrame
 		return labelConsole;
 	}
 
-	private JPanel getSourcePane() 
-	{
-		if (getSourceItem() == null) 
-		{
+	private JPanel getSourcePane() {
+		if (getSourceItem() == null) {
 			setSourceItem(new SyncItemUI(EktooUITranslator
 					.getSourceSyncItemSelectorTitle()));
 			getSourceItem().setPreferredSize(new Dimension(350, 190));
-			getSourceItem().getListType().addItemListener(new ItemListener() 
-			{
-				public void itemStateChanged(ItemEvent evt) 
-				{
-				  if (evt.getStateChange() == ItemEvent.SELECTED) 
-					{
-				    setSourceIcon(ImageManager.getSourceImage((String) evt
+			getSourceItem().getListType().addItemListener(new ItemListener() {
+				public void itemStateChanged(ItemEvent evt) {
+					if (evt.getStateChange() == ItemEvent.SELECTED) {
+						setSourceIcon(ImageManager.getSourceImage((String) evt
 								.getItem(), false));
-            filterCombobox();
+						filterCombobox();
 					}
 				}
 			});
-			setSourceIcon(ImageManager.getSourceImage((String) getSourceItem().getListType().getSelectedItem(), false));
+			setSourceIcon(ImageManager.getSourceImage((String) getSourceItem()
+					.getListType().getSelectedItem(), false));
 		}
 		return getSourceItem();
 	}
@@ -258,24 +246,22 @@ public class EktooUI extends JFrame
 					.getTargetSyncItemSelectorTitle()));
 			getTargetItem().setPreferredSize(new Dimension(350, 190));
 			getTargetItem().getListType().addItemListener(new ItemListener() {
-				public void itemStateChanged(ItemEvent evt) 
-				{
-				  if (evt.getStateChange() == ItemEvent.SELECTED) 
-          {
-  					setTargetIcon(ImageManager.getSourceImage((String) evt
-  							.getItem(), false));
-          }
+				public void itemStateChanged(ItemEvent evt) {
+					if (evt.getStateChange() == ItemEvent.SELECTED) {
+						setTargetIcon(ImageManager.getSourceImage((String) evt
+								.getItem(), false));
+					}
 				}
 			});
-			setTargetIcon(ImageManager.getSourceImage((String) getTargetItem().getListType().getSelectedItem(), false));			
+			setTargetIcon(ImageManager.getSourceImage((String) getTargetItem()
+					.getListType().getSelectedItem(), false));
 
 		}
 
 		return getTargetItem();
 	}
 
-	private JButton getBtnSync() 
-	{
+	private JButton getBtnSync() {
 		if (btnSync == null) {
 			btnSync = new JButton();
 			btnSync.setBounds(new Rectangle(315, 427, 127, 28));
@@ -284,15 +270,14 @@ public class EktooUI extends JFrame
 			btnSync.setFont(new Font("Arial", Font.PLAIN, 16));
 
 			btnSync.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) 
-				{
+				public void actionPerformed(ActionEvent e) {
 					log("actionPerformed()");
 					setConsole("");
 					showSyncImageLabel(true);
 					SwingWorker<String, Void> task = new SynchronizeTask(
 							EktooUI.this);
 					task.execute();
-					//showSyncImageLabel(false);
+					// showSyncImageLabel(false);
 					log("Calling Sync...");
 				}
 			});
@@ -323,8 +308,7 @@ public class EktooUI extends JFrame
 		return sourceItem;
 	}
 
-	public void setTargetItem(SyncItemUI targetItem) 
-	{
+	public void setTargetItem(SyncItemUI targetItem) {
 		this.targetItem = targetItem;
 	}
 
@@ -335,46 +319,52 @@ public class EktooUI extends JFrame
 	public void setConsole(String msg) {
 		labelConsole.setText(msg);
 	}
-	
-	//TODO (NBL) disables unsupported features from ui
-	private void filterCombobox()
-	{
-	  String item = (String) getSourceItem().getListType().getSelectedItem();
-	  if ( item.equals(SyncItemUI.MS_EXCEL_PANEL))
-	  {
-	    getTargetItem().getListType().removeAllItems();
-	    getTargetItem().getListType().addItem(SyncItemUI.MS_EXCEL_PANEL);
-	    //getTargetItem().getListType().addItem(SyncItemUI.MS_ACCESS_PANEL);
-	    getTargetItem().getListType().addItem(SyncItemUI.GOOGLE_SPREADSHEET_PANEL);
-	    getTargetItem().getListType().addItem(SyncItemUI.MYSQL_PANEL);
-	    getTargetItem().getListType().addItem(SyncItemUI.CLOUD_PANEL);
-	  }
-    else if ( item.equals(SyncItemUI.MS_ACCESS_PANEL))
-    {
-      getTargetItem().getListType().removeAllItems();
-      getTargetItem().getListType().addItem(SyncItemUI.MS_ACCESS_PANEL);
-      getTargetItem().getListType().addItem(SyncItemUI.CLOUD_PANEL);
-    }
-    else if ( item.equals(SyncItemUI.GOOGLE_SPREADSHEET_PANEL))
-    {
-      getTargetItem().getListType().removeAllItems();
-      getTargetItem().getListType().addItem(SyncItemUI.GOOGLE_SPREADSHEET_PANEL);
-      getTargetItem().getListType().addItem(SyncItemUI.MS_EXCEL_PANEL);
-      getTargetItem().getListType().addItem(SyncItemUI.CLOUD_PANEL);
-    }
-    else if ( item.equals(SyncItemUI.MYSQL_PANEL))
-    {
-      getTargetItem().getListType().removeAllItems();
-      getTargetItem().getListType().addItem(SyncItemUI.MS_EXCEL_PANEL);
-      getTargetItem().getListType().addItem(SyncItemUI.CLOUD_PANEL);
-    }
-    else
-    {
-      getTargetItem().getListType().removeAllItems();
-      setTargetIcon(ImageManager.getUndefinedSourceIcon());
-      getTargetItem().showInitCard();
-    }
 
+	// TODO (NBL) disables unsupported features from ui
+	private void filterCombobox() {
+		String item = (String) getSourceItem().getListType().getSelectedItem();
+		if (item.equals(SyncItemUI.MS_EXCEL_PANEL)) {
+			getTargetItem().getListType().removeAllItems();
+			getTargetItem().getListType().addItem(SyncItemUI.MS_EXCEL_PANEL);
+			getTargetItem().getListType().addItem(SyncItemUI.MS_ACCESS_PANEL);
+			getTargetItem().getListType().addItem(
+					SyncItemUI.GOOGLE_SPREADSHEET_PANEL);
+			getTargetItem().getListType().addItem(SyncItemUI.MYSQL_PANEL);
+			getTargetItem().getListType().addItem(SyncItemUI.CLOUD_PANEL);
+		} else if (item.equals(SyncItemUI.MS_ACCESS_PANEL)) {
+			getTargetItem().getListType().removeAllItems();
+			getTargetItem().getListType().addItem(SyncItemUI.MS_ACCESS_PANEL);
+			getTargetItem().getListType().addItem(SyncItemUI.CLOUD_PANEL);
+			getTargetItem().getListType().addItem(SyncItemUI.MYSQL_PANEL);
+			getTargetItem().getListType().addItem(SyncItemUI.MS_EXCEL_PANEL);
+		} else if (item.equals(SyncItemUI.GOOGLE_SPREADSHEET_PANEL)) {
+			getTargetItem().getListType().removeAllItems();
+			getTargetItem().getListType().addItem(
+					SyncItemUI.GOOGLE_SPREADSHEET_PANEL);
+			getTargetItem().getListType().addItem(SyncItemUI.MS_EXCEL_PANEL);
+			getTargetItem().getListType().addItem(SyncItemUI.CLOUD_PANEL);
+		} else if (item.equals(SyncItemUI.MYSQL_PANEL)) {
+			getTargetItem().getListType().removeAllItems();
+			getTargetItem().getListType().addItem(SyncItemUI.MS_EXCEL_PANEL);
+			getTargetItem().getListType().addItem(SyncItemUI.MS_ACCESS_PANEL);
+			getTargetItem().getListType().addItem(SyncItemUI.CLOUD_PANEL);
+			getTargetItem().getListType().addItem(SyncItemUI.MYSQL_PANEL);
+		} else if (item.equals(SyncItemUI.CLOUD_PANEL)) {
+			getTargetItem().getListType().removeAllItems();
+			getTargetItem().getListType().addItem(SyncItemUI.MS_EXCEL_PANEL);
+			getTargetItem().getListType().addItem(SyncItemUI.MS_ACCESS_PANEL);
+			getTargetItem().getListType().addItem(SyncItemUI.GOOGLE_SPREADSHEET_PANEL);
+			getTargetItem().getListType().addItem(SyncItemUI.MYSQL_PANEL);
+			getTargetItem().getListType().addItem(SyncItemUI.KML_PANEL);
+		} else if (item.equals(SyncItemUI.KML_PANEL)) {
+			getTargetItem().getListType().removeAllItems();
+			getTargetItem().getListType().addItem(SyncItemUI.CLOUD_PANEL);
+			getTargetItem().getListType().addItem(SyncItemUI.KML_PANEL);
+		} else {
+			getTargetItem().getListType().removeAllItems();
+			setTargetIcon(ImageManager.getUndefinedSourceIcon());
+			getTargetItem().showInitCard();
+		}
 
 	}
 }
