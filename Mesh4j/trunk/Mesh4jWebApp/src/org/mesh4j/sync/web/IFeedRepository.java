@@ -16,7 +16,7 @@ public interface IFeedRepository {
 
 	String synchronize(String sourceID, String link, ISyndicationFormat syndicationFormat, Format contentFormat, IGeoCoder geoCoder, String feedXml) throws Exception;
 
-	List<Item> getAll(String sourceID, Date sinceDate);
+	List<Item> getAll(String sourceID, String link, Date sinceDate);
 	
 	ISchema getSchema(String sourceID, String link) throws Exception;
 	

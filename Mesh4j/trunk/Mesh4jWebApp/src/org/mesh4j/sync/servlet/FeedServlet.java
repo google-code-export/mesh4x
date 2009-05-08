@@ -155,7 +155,7 @@ public class FeedServlet extends HttpServlet {
 	private void processGetKML(HttpServletRequest request, HttpServletResponse response, String sourceID, String link)throws ServletException, IOException {
 		Date sinceDate = this.getSinceDate(request);
 		
-		List<Item> items = this.feedRepository.getAll(sourceID, sinceDate);
+		List<Item> items = this.feedRepository.getAll(sourceID, link, sinceDate);
 		
 		try{
 			ISchema schema = this.feedRepository.getSchema(sourceID, link);

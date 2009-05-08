@@ -57,7 +57,7 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 	protected abstract void addNewFeed(String sourceID, Feed feed, ISyndicationFormat syndicationFormat, IIdentityProvider identityProvider);
 
 	@Override
-	public List<Item> getAll(String sourceID, Date sinceDate) {
+	public List<Item> getAll(String sourceID, String link, Date sinceDate) {
 		ISyncAdapter adapter = getSyncAdapter(sourceID, NullIdentityProvider.INSTANCE);
 		List<Item> items = adapter.getAllSince(sinceDate);	
 		return items;
