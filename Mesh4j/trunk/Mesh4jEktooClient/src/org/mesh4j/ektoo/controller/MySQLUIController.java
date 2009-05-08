@@ -106,12 +106,9 @@ public class MySQLUIController extends AbstractController
 
 	@Override
 	// TODO (NBL) improve this signature
-	public IRDFSchema fetchSchema() 
+	public IRDFSchema fetchSchema(ISyncAdapter adapter) 
 	{
-		ISyncAdapter syncAdapter = createAdapter();
-		if (syncAdapter == null) return null;
-		
-		SplitAdapter splitAdapter = (SplitAdapter) syncAdapter;
+		SplitAdapter splitAdapter = (SplitAdapter) adapter;
 		
 		ISchema sourceSchema = ((HibernateContentAdapter) splitAdapter
 				.getContentAdapter()).getMapping().getSchema();
@@ -148,6 +145,10 @@ public class MySQLUIController extends AbstractController
 
 	public String getDefaultMySQLPassword() {
 		return this.propertiesProvider.getDefaultMySQLPassword();
+	}
+
+	public String getDefaultMySQLTable() {
+		return this.propertiesProvider.getDefaultMySQLTable();
 	}
 
 }

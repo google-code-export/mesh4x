@@ -91,7 +91,7 @@ public class GSSheetUIController extends AbstractController
 	}
 
 	@Override
-	public IRDFSchema fetchSchema() {
+	public IRDFSchema fetchSchema(ISyncAdapter adapter) {
 		// TODO create Schema
 		return null;
 	}

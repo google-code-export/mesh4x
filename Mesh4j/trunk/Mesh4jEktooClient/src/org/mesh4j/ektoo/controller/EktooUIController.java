@@ -15,58 +15,56 @@ import org.mesh4j.sync.validations.Guard;
  * @author Bhuiyan Mohammad Iklash
  * 
  */
-public class EktooUIController 
-{
+public class EktooUIController {
 	// MODEL VARIABLESs
 	ISyncAdapterBuilder adapterBuilder;
 
 	// BUISINESS METHODS
-	public EktooUIController(PropertiesProvider propertiesProvider) 
-	{
+	public EktooUIController(PropertiesProvider propertiesProvider) {
 		Guard.argumentNotNull(propertiesProvider, "propertiesProvider");
 		this.adapterBuilder = new SyncAdapterBuilder(propertiesProvider);
 	}
 
-	public String sync(SyncItemUI source, SyncItemUI target) 
-	{
-    ISyncAdapter sourceAdapter = null;
-    ISyncAdapter targetAdapter = null;
+	public String sync(SyncItemUI source, SyncItemUI target) {
+		ISyncAdapter sourceAdapter = null;
+		ISyncAdapter targetAdapter = null;
 
-    if (((String)source.getListType().getSelectedItem()).equals( SyncItemUI.MS_EXCEL_PANEL) 
-        && ( (String)target.getListType().getSelectedItem()).equals( SyncItemUI.MYSQL_PANEL )
-        )
-    {
-      sourceAdapter = source.createAdapter(source.fetchSchema());
-    }
-    else
-    {
-      sourceAdapter = source.createAdapter();
-    }
+		if (((String) source.getListType().getSelectedItem())
+				.equals(SyncItemUI.MS_EXCEL_PANEL)
+				&& (((String) target.getListType().getSelectedItem())
+						.equals(SyncItemUI.MYSQL_PANEL) || ((String) target
+						.getListType().getSelectedItem())
+						.equals(SyncItemUI.MS_ACCESS_PANEL))) {
+			targetAdapter = target.createAdapter();
+			sourceAdapter = source.createAdapter(target.fetchSchema(targetAdapter));
 
-    if (((String)target.getListType().getSelectedItem()).equals( SyncItemUI.MS_EXCEL_PANEL) 
-	      && ( (String)source.getListType().getSelectedItem()).equals( SyncItemUI.MYSQL_PANEL )
-	      )
-	  {
-	    targetAdapter = target.createAdapter(source.fetchSchema());
-	  }
-	  else
-	  {
-	    targetAdapter = target.createAdapter();
-	  }
+		} else {
+			if (((String) target.getListType().getSelectedItem())
+					.equals(SyncItemUI.MS_EXCEL_PANEL)
+					&& (((String) source.getListType().getSelectedItem())
+							.equals(SyncItemUI.MYSQL_PANEL) || ((String) source
+							.getListType().getSelectedItem())
+							.equals(SyncItemUI.MS_ACCESS_PANEL))) {
+				sourceAdapter = source.createAdapter();
+				targetAdapter = target.createAdapter(source.fetchSchema(sourceAdapter));
+			} else {
+				sourceAdapter = source.createAdapter();
+				targetAdapter = target.createAdapter();
+			}
+		}
 
 		return sync(sourceAdapter, targetAdapter);
 	}
 
-	public String sync(ISyncAdapter sourceAdapter, ISyncAdapter targetAdapter) 
-	{
+	public String sync(ISyncAdapter sourceAdapter, ISyncAdapter targetAdapter) {
 		SyncEngine engine = new SyncEngine(sourceAdapter, targetAdapter);
-    
+
 		List<Item> items = engine.synchronize();
-		
+
 		// TODO (NBL) change these hardcode string
-		if (items != null && items.size() > 0) 
-		  return "failed";
-		
+		if (items != null && items.size() > 0)
+			return "failed";
+
 		return "success";
 	}
 }

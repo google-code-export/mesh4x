@@ -9,6 +9,8 @@ import org.mesh4j.ektoo.SyncAdapterBuilder;
 import org.mesh4j.ektoo.model.MsAccessModel;
 import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.sync.ISyncAdapter;
+import org.mesh4j.sync.adapters.hibernate.HibernateContentAdapter;
+import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.validations.Guard;
 
@@ -68,9 +70,8 @@ public class MsAccessUIController extends AbstractController
 	}
 
 	@Override
-	public IRDFSchema fetchSchema() {
-		// TODO create Schema
-		return null;
+	public IRDFSchema fetchSchema(ISyncAdapter adapter) {
+		return (IRDFSchema)((HibernateContentAdapter)((SplitAdapter)adapter).getContentAdapter()).getMapping().getSchema();
 	}
 
 	@Override

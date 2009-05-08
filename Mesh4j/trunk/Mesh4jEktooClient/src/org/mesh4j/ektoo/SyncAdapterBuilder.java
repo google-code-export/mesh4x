@@ -152,7 +152,6 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 	@Override
 	public ISyncAdapter createMsExcelAdapter(String contentFileName, String sheetName, String idColumnName) {
 		
-		
 		File file = getFile(contentFileName);
 		// TODO (Raju) need to think about more,just for partial commit
 		if (file == null || !file.exists()) {
@@ -194,7 +193,7 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 		return this.propertiesProvider.getBaseDirectory();
 	}
 
-	private String getBaseRDFUrl() {
+	public String getBaseRDFUrl() {
 		return this.propertiesProvider.getMeshSyncServerURL();
 	}
 

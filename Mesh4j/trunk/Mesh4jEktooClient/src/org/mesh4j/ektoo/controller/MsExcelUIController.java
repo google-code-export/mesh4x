@@ -2,13 +2,14 @@ package org.mesh4j.ektoo.controller;
 
 import java.beans.PropertyChangeEvent;
 
-import org.mesh4j.ektoo.ISyncAdapterBuilder;
 import org.mesh4j.ektoo.SyncAdapterBuilder;
 import org.mesh4j.ektoo.model.MsExcelModel;
 import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.msexcel.MsExcel;
+import org.mesh4j.sync.adapters.msexcel.MsExcelContentAdapter;
 import org.mesh4j.sync.adapters.msexcel.MsExcelToRDFMapping;
+import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.validations.Guard;
 
@@ -24,8 +25,7 @@ public class MsExcelUIController extends AbstractController
 	private static final String UNIQUE_COLUMN_NAME_PROPERTY = "UniqueColumnName";
 
 	// MODEL VARIABLES
-	private ISyncAdapterBuilder adapterBuilder;
-	
+	private SyncAdapterBuilder adapterBuilder;
 
 	// BUSINESS METHODS
 	public MsExcelUIController(PropertiesProvider propertiesProvider) 
@@ -67,8 +67,10 @@ public class MsExcelUIController extends AbstractController
 		if (uniqueColumnName == null || uniqueColumnName.trim().length() == 0){
 			return null;
 		}
+		
+		IRDFSchema rdfSchema = MsExcelToRDFMapping.extractRDFSchema(new MsExcel(workbookName), worksheetName, this.adapterBuilder.getBaseRDFUrl());
 		return adapterBuilder.createMsExcelAdapter(workbookName, worksheetName,
-				uniqueColumnName);
+				uniqueColumnName, rdfSchema);
 	}
 
 	@Override
@@ -97,31 +99,9 @@ public class MsExcelUIController extends AbstractController
 	}
 
 	@Override
-	public IRDFSchema fetchSchema() 
+	public IRDFSchema fetchSchema(ISyncAdapter adapter) 
 	{
-	  MsExcelModel model = (MsExcelModel) this.getModel();
-    if (model == null){
-      return null;
-    }
-
-    String workbookName = model.getWorkbookName();
-    if (workbookName == null || workbookName.trim().length() == 0){
-      return null;
-    }
-
-    String worksheetName = model.getWorksheetName();
-    if (worksheetName == null || worksheetName.trim().length() == 0){
-      return null;
-    }
-
-    String uniqueColumnName = model.getUniqueColumnName();
-    if (uniqueColumnName == null || uniqueColumnName.trim().length() == 0){
-      return null;
-    }
-	  
-	  MsExcel excel = new MsExcel(workbookName);
-	  IRDFSchema rdfSchema = MsExcelToRDFMapping.extractRDFSchema(excel, worksheetName,  new PropertiesProvider().getMeshSyncServerURL());
-	  return rdfSchema;
+		return (IRDFSchema)((MsExcelContentAdapter)((SplitAdapter)adapter).getContentAdapter()).getSchema();
 	}
 
 	@Override

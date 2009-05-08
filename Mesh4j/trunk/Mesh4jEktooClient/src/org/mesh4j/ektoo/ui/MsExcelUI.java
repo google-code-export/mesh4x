@@ -41,8 +41,7 @@ public class MsExcelUI extends TableUI
 
 	private void initialize() 
 	{
-		this.getFileChooser().setDialogTitle(
-				EktooUITranslator.getExcelFileSelectorTitle());
+		this.getFileChooser().setDialogTitle(EktooUITranslator.getExcelFileSelectorTitle());
 		this.getFileChooser().setAcceptAllFileFilterUsed(false);
 		this.getFileChooser().addChoosableFileFilter(new MsExcelFilter());
 	}

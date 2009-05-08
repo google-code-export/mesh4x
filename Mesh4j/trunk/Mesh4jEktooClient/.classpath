@@ -3,12 +3,11 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="src" path="images"/>
-	<classpathentry kind="src" path="properties"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/Mesh4j"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="lib" path="lib/forms-1.2.0.jar"/>
-	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/Mesh4jEpiInfo"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/GrameenTraining"/>
+	<classpathentry exported="true" kind="lib" path="lib/forms-1.2.0.jar"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/GrameenTraining"/>
+	<classpathentry kind="lib" path="properties"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

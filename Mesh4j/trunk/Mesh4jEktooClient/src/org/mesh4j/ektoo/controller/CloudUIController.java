@@ -63,7 +63,7 @@ public class CloudUIController extends AbstractController
 	}
 
 	@Override
-	public IRDFSchema fetchSchema() {
+	public IRDFSchema fetchSchema(ISyncAdapter adapter) {
 		// TODO create schema
 		return null;
 	}

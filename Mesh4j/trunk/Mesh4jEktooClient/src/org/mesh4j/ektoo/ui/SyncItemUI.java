@@ -353,9 +353,9 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 	}
 
 	@Override
-	public IRDFSchema fetchSchema() 
+	public IRDFSchema fetchSchema(ISyncAdapter adapter) 
 	{
-	  return getCurrentController().fetchSchema();
+	  return getCurrentController().fetchSchema(adapter);
 	}
 
 	@Override
