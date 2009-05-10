@@ -9,7 +9,7 @@ Tools and products build with Mesh4x.
 
 [http://downloads.instedd.org.s3.amazonaws.com/mesh4x/ektoo_0_0_1.7z Ektoo] client is a tool to synchronize all data sources supported by mesh4x
 
-Uploaded: Coming soon
+Uploaded: 2009-05-07
 
 === Kml Exhange ===
 
