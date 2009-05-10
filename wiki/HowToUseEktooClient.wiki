@@ -40,7 +40,7 @@ You will need:
  * EktooClient installed in your system
  * Data repository
 
-=Steps for Data Synchronization=
+=Steps to Synchronize=
 The process consists of:
  # Select data source type from drop down list of source frame.
   * Enter details information of source data source.
