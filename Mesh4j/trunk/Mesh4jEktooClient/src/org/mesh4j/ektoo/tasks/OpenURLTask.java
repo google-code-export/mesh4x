@@ -4,15 +4,18 @@ import java.awt.Cursor;
 import java.awt.Desktop;
 import java.net.URL;
 
-import javax.swing.JFrame;
 import javax.swing.SwingWorker;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.ui.EktooUI;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.sync.adapters.http.HttpSyncAdapterFactory;
 
-public class OpenURLTask extends SwingWorker<Void, Void> {
-	 
+public class OpenURLTask extends SwingWorker<Void, Void> 
+{
+  private final static Log LOGGER = LogFactory.getLog(OpenURLTask.class);	 
+  
 	// MODEL VARIABLEs
 	private String url;
 	private IErrorListener errorListener;
@@ -40,7 +43,7 @@ public class OpenURLTask extends SwingWorker<Void, Void> {
 						desktop.browse(new URL(url).toURI());
 					} catch(Exception e){
 						errorListener.notifyError(EktooUITranslator.getErrorOpenBrowser());
-						//LogFrame.Logger.error(e.getMessage(), e);
+						LOGGER.error(e.getMessage(), e);
 					}
 				} else {
 					errorListener.notifyError(EktooUITranslator.getMessageOpenBrowserActionNotSupported());
@@ -55,7 +58,8 @@ public class OpenURLTask extends SwingWorker<Void, Void> {
     }
 	
 	@Override
-    public void done() {
-		ui.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-    }
+  public void done() 
+	{
+	  ui.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+  }
 }

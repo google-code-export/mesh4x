@@ -1,7 +1,6 @@
 package org.mesh4j.ektoo.tasks;
 
-public interface IErrorListener {
-
+public interface IErrorListener 
+{
 	void notifyError(String error);
-
 }

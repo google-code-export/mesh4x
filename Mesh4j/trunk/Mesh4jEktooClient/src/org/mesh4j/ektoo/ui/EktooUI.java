@@ -14,6 +14,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -26,15 +28,19 @@ import javax.swing.SwingWorker;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.controller.EktooUIController;
+import org.mesh4j.ektoo.properties.PropertiesProvider;
+import org.mesh4j.ektoo.tasks.IErrorListener;
+import org.mesh4j.ektoo.tasks.OpenURLTask;
 import org.mesh4j.ektoo.tasks.SynchronizeTask;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
+import org.mesh4j.sync.translator.MessageTranslator;
 
 /**
  * @author Bhuiyan Mohammad Iklash
  * 
  */
-public class EktooUI extends JFrame {
+public class EktooUI extends JFrame implements IErrorListener{
 	private static final long serialVersionUID = -8703829301086394863L;
 	private final Log LOGGER = LogFactory.getLog(EktooUI.class);
 
@@ -53,7 +59,8 @@ public class EktooUI extends JFrame {
 	private JLabel targetImageLabel = null;
 	private JLabel directionImageLabel = null;
 	private JLabel syncImageLabel = null;
-
+  private JLabel poweredByLabel = null;
+	
 	private EktooUIController controller;
 
 	// BUSINESS METHODS
@@ -117,11 +124,39 @@ public class EktooUI extends JFrame {
 			c.gridy = 3;
 			c.gridwidth = 2;
 			panel.add(getBtnSync(), c);
+			
+      c.fill = GridBagConstraints.HORIZONTAL;
+      c.gridx = 0;
+      c.gridy = 4;
+      c.gridwidth = 2;
+      panel.add(getPoweredByLabel(), c);
+			
 
 		}
 		return panel;
 	}
 
+  private JLabel getPoweredByLabel() 
+  {
+    if (poweredByLabel == null) {
+      poweredByLabel = new JLabel( EktooUITranslator.getPoweredByLabel(), ImageManager.getTrademarkIcon(), JLabel.RIGHT);
+      poweredByLabel.setHorizontalTextPosition(JLabel.LEFT);
+      poweredByLabel.setVerticalTextPosition(JLabel.CENTER);
+      poweredByLabel.setIconTextGap(0);
+      poweredByLabel.setForeground(Color.BLUE);
+      poweredByLabel.setToolTipText(EktooUITranslator.getPoweredByLabelTooltip());
+      poweredByLabel.addMouseListener(new MouseAdapter() 
+      {
+        public void mouseClicked(MouseEvent e) 
+        { 
+          OpenURLTask task = new OpenURLTask(EktooUI.this, EktooUI.this,  new PropertiesProvider().getMesh4xURL());
+          task.execute();
+        }
+    });
+      
+    }
+    return poweredByLabel;
+  }
 	private JPanel getImagePanel() {
 		if (panelImage == null) {
 			panelImage = new JPanel();
@@ -367,4 +402,11 @@ public class EktooUI extends JFrame {
 		}
 
 	}
+
+  @Override
+  public void notifyError(String error)
+  {
+    // TODO Auto-generated method stub
+    
+  }
 }

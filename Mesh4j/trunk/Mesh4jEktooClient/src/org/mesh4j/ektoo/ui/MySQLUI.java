@@ -18,7 +18,6 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
@@ -26,7 +25,6 @@ import javax.swing.SwingWorker;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.IValidationStatus;
-import org.mesh4j.ektoo.controller.MsExcelUIController;
 import org.mesh4j.ektoo.controller.MySQLUIController;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
@@ -104,19 +102,20 @@ public class MySQLUI extends AbstractUI implements IValidationStatus
 		setDefaultValues();
 	}
 
-	private void setDefaultValues() {
+	private void setDefaultValues() 
+	{
 		String hostName = controller.getDefaultMySQLHost();
 		if (hostName == null){
 			hostName = "";
 		}
-		txtHost.setText(hostName);
-
+		controller.changeHostName(hostName);
+		
 		String portNo = controller.getDefaultMySQLPort();
 		if (portNo == null){
 			portNo = "";
 		}
-		txtPort.setText(portNo);
-
+		controller.changePortNo( Integer.parseInt(portNo) );
+		
 //		String schemaName = controller.getDefaultMySQLSchema();
 //		if (schemaName == null){
 //			schemaName = "";
@@ -351,17 +350,17 @@ public class MySQLUI extends AbstractUI implements IValidationStatus
 			btnConnect = new JButton();
 			btnConnect.setBounds(new Rectangle(260, 80, 22, 20));
 			btnConnect.setIcon(ImageManager.getDatabaseConnectionIcon());
+			btnConnect.setToolTipText( EktooUITranslator.getDatabaseConnectionTooltip());
       btnConnect.addActionListener(new ActionListener() 
       {
 				public void actionPerformed(ActionEvent ae) 
 				{
-				  getController().changeHostName( getHost());
-				  getController().changePortNo( getPort() );
-				  
 				  boolean valid = (new MySQLConnectionValidator(MySQLUI.this, controller.getModel())).verify();
 				  if (valid)
 				  {
-  				  SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+				    
+  				  SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() 
+  				  {
   						public Void doInBackground() {
   							setCursor(Cursor
   									.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -403,23 +402,6 @@ public class MySQLUI extends AbstractUI implements IValidationStatus
 				public void itemStateChanged(ItemEvent e) {
 					getController().changeTableName(
 							(String) listTable.getSelectedItem());
-
-					int sheetIndex = listTable.getSelectedIndex();
-					if (sheetIndex != -1) {
-						SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
-							public Void doInBackground() {
-								setCursor(Cursor
-										.getPredefinedCursor(Cursor.WAIT_CURSOR));
-								return null;
-							}
-
-							public void done() {
-								setCursor(Cursor
-										.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-							}
-						};
-						worker.execute();
-					}
 				}
 			});
 		}

@@ -47,7 +47,6 @@ public class SynchronizeTask extends SwingWorker<String, Void> {
 		catch (Throwable t) 
 		{
 		  //TODO (NBL) handle exception
-		  t.printStackTrace();
 			LOGGER.error(t.getMessage(), t);
 		}
 		return null;

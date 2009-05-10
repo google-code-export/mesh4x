@@ -2,6 +2,7 @@ package org.mesh4j.ektoo.ui.translator;
 
 import java.util.Date;
 
+import org.mesh4j.sync.translator.MessageTranslator;
 import org.mesh4j.translator.EktooMessageTranslator;
 
 public class EktooUITranslator {
@@ -246,4 +247,35 @@ public class EktooUITranslator {
     .translate("EKTOO_CLOUD_MESH_DATASET_FIELD_LABEL");
   }
 
+  public static String getPoweredByLabel()
+  {
+    return EktooMessageTranslator
+    .translate("EKTOO_TRADEMARK_LABEL");
+  }
+
+  
+  public static String getErrorOpenBrowser()
+  {
+    return EktooMessageTranslator.translate("EKTOO_ERROR_OPEN_BROWSER");
+  }
+
+  public static String getMessageOpenBrowserActionNotSupported()
+  {
+    return EktooMessageTranslator.translate("EKTOO_ERROR_OPEN_BROWSER_ACTION_NOT_SUPPORTED");
+  }
+
+  public static String getErrorInvalidURL()
+  {
+    return EktooMessageTranslator.translate("EKTOO_ERROR_INVALID_URL");
+  }
+
+  public static String getPoweredByLabelTooltip()
+  {
+    return EktooMessageTranslator.translate("EKTOO_TRADEMARK_LABEL_TOOLTIP");
+  }
+
+  public static String getDatabaseConnectionTooltip()
+  {
+    return EktooMessageTranslator.translate("EKTOO_MYSQL_CONNECT_BUTTON_TOOLTIP");
+  }
 }
