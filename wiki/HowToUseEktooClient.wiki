@@ -67,3 +67,16 @@ The process consists of:
  # Browse Access database files and select one that you want to synchronize.
   * Available list of table will be displayed in "<b>Table</b>" drop down list.
  # Select table from "<b>Table</b>" drop down list.
+
+==MySQL==
+To synchronize MySQL data source with others repositories, you need to define a  mysql data source.
+
+The process consists of:
+ # Select "MySQL" data type from "<b>Data Source Type</b>" drop down list.
+ # Enter user name in "<b>User</b>" text box
+ # Enter password in "<b>Password</b>" text box
+ # Enter host name and port no in "<b>Host</b>" first and second textvbox.
+ # Enter database in "<b>Database</b>" text box
+ # Click on connection icon
+   * After successful connection, available tables will be displayed in "<b>Table</b>" drop down list 
+ # Select table from "<b>Table</b>" drop down list.
