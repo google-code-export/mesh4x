@@ -42,15 +42,22 @@ You will need:
 
 =Steps to Synchronize=
 The process consists of:
- # Select data source type from drop down list of source frame.
-  * Enter details information of source data source.
- # Select target data source type from drop down list of target frame.
-  * Enter details information of target data source.
+ # Select data source type from drop down list of source pane.
+  * Enter details information to define source data source.
+ # Select target data source type from drop down list of target pane.
+  * Enter details information to define target data source.
  # Click on "<b>Synchronize Now</b>" button to start synchronization process.
 
-==Microsoft Excel==
-If you want to synchronize Microsoft Excel data source with others repositories, you need to define a Microsoft Excel data source.
 
+Defining various data source as source or target is a very simple process. Following sections describe how-to-define a data source of your desire data source type.
+
+==KML==
+The process consists of:
+ # Select "KML" data type from "<b>Data Source Type</b>" drop down list.
+ # Browse KML files and select one that you want to synchronize.
+
+
+==Microsoft Excel==
 The process consists of:
  # Select "MS Excel" data type from "<b>Data Source Type</b>" drop down list.
  # Browse Excel files and select one that you want to synchronize.
@@ -60,8 +67,6 @@ The process consists of:
  # Select unique column from "<b>Unique Column</b>" drop down list.
 
 ==Microsoft Access==
-To synchronize Microsoft Access data source with others repositories, you need to define a  data source.
-
 The process consists of:
  # Select "MS Access" data type from "<b>Data Source Type</b>" drop down list.
  # Browse Access database files and select one that you want to synchronize.
@@ -69,8 +74,6 @@ The process consists of:
  # Select table from "<b>Table</b>" drop down list.
 
 ==MySQL==
-To synchronize MySQL data source with others repositories, you need to define a  mysql data source.
-
 The process consists of:
  # Select "MySQL" data type from "<b>Data Source Type</b>" drop down list.
  # Enter user name in "<b>User</b>" text box
