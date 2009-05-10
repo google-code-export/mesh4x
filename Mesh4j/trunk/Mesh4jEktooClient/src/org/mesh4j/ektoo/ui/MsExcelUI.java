@@ -36,6 +36,7 @@ public class MsExcelUI extends TableUI
 	{
 		super();
 		this.controller = controller;
+		this.controller.addView(this);
 		initialize();
 	}
 
@@ -126,9 +127,26 @@ public class MsExcelUI extends TableUI
 	@Override
 	public void modelPropertyChange(final PropertyChangeEvent evt) 
 	{
-		LOGGER.debug("Model changes....");
-	}
+    if ( evt.getPropertyName().equals( MsExcelUIController.WORKBOOK_NAME_PROPERTY))
+    {
+      String newStringValue = evt.getNewValue().toString();
+      if (!  getTxtFile().getText().equals(newStringValue))
+        getTxtFile().setText(newStringValue);
+    }		
+    else if ( evt.getPropertyName().equals( MsExcelUIController.WORKSHEET_NAME_PROPERTY))
+    {
+      String newStringValue = evt.getNewValue().toString();
+      if (!  ((String)getTableList().getSelectedItem()).equals(newStringValue))
+        getTableList().setSelectedItem(newStringValue);
+    }   
+    else if ( evt.getPropertyName().equals( MsExcelUIController.UNIQUE_COLUMN_NAME_PROPERTY))
+    {
+      String newStringValue = evt.getNewValue().toString();
+      if (!  ((String)getColumnList().getSelectedItem()).equals(newStringValue))
+        getColumnList().setSelectedItem(newStringValue);
+    }   
 
+	}
 }
 
 class MsExcelFilter extends FileFilter {

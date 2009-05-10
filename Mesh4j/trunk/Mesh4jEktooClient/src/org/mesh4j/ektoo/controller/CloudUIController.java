@@ -17,8 +17,8 @@ import org.mesh4j.sync.validations.Guard;
 public class CloudUIController extends AbstractController
 {
 	
-	private static final String MESH_NAME_PROPERTY = "MeshName";
-	private static final String DATASET_NAME_PROPERTY = "DatasetName";
+	public static final String MESH_NAME_PROPERTY = "MeshName";
+	public static final String DATASET_NAME_PROPERTY = "DatasetName";
 
 	// MODEL VARIABLES
 	private ISyncAdapterBuilder adapterBuilder;
@@ -59,7 +59,7 @@ public class CloudUIController extends AbstractController
 
 	@Override
 	public void propertyChange(PropertyChangeEvent arg0) {
-		// TODO property Change
+	  super.propertyChanged(arg0);
 	}
 
 	@Override

@@ -5,8 +5,10 @@ import javax.swing.JFrame;
 
 import org.mesh4j.ektoo.IValidationStatus;
 import org.mesh4j.ektoo.model.AbstractModel;
-
-
+/**
+ * @author Bhuiyan Mohammad Iklash
+ *
+ */
 public abstract class AbstractValidator
 {
   private Object parent;

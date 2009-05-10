@@ -1,5 +1,6 @@
 package org.mesh4j.ektoo.model;
 
+import org.mesh4j.ektoo.controller.CloudUIController;
 import org.mesh4j.sync.validations.Guard;
 
 /**
@@ -20,7 +21,7 @@ public class CloudModel extends AbstractModel {
 	}
 
 	public void setMeshName(String mesh) {
-		firePropertyChange("meshName", this.meshName, this.meshName = mesh);
+		firePropertyChange( CloudUIController.MESH_NAME_PROPERTY, this.meshName, this.meshName = mesh);
 	}
 
 	public String getMeshName() {
@@ -28,7 +29,7 @@ public class CloudModel extends AbstractModel {
 	}
 
 	public void setDatasetName(String dataset) {
-		firePropertyChange("datasetName", this.datasetName,
+		firePropertyChange(CloudUIController.DATASET_NAME_PROPERTY, this.datasetName,
 				this.datasetName = dataset);
 	}
 

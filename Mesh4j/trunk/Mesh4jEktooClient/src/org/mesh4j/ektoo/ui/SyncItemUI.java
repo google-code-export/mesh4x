@@ -204,7 +204,6 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 			accessUIController = new MsAccessUIController(
 					this.propertiesProvider);
 			accessUIController.addModel(new MsAccessModel());
-
 			accessUI = new MsAccessUI(accessUIController);
 			accessUI.setLabelFile(EktooUITranslator.getAccessFileLabel());
 			accessUI.setLabelTable(EktooUITranslator.getAccessTableLabel());

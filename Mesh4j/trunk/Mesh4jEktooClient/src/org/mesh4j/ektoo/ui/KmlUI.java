@@ -6,13 +6,13 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import org.apache.commons.logging.Log;
@@ -24,7 +24,7 @@ import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
  * @author Bhuiyan Mohammad Iklash
  * 
  */
-public class KmlUI extends JPanel {
+public class KmlUI extends AbstractUI {
 
 	private static final long serialVersionUID = 3586406415288503774L;
 	private static final Log LOGGER = LogFactory.getLog(KmlUI.class);
@@ -42,6 +42,7 @@ public class KmlUI extends JPanel {
 	public KmlUI(String fileName, KmlUIController controller) {
 		super();
 		this.controller = controller;
+		this.controller.addView(this);
 		this.initialize();
 		this.file = new File(fileName);
 		this.txtFileName.setText(this.file.getName());
@@ -129,5 +130,16 @@ public class KmlUI extends JPanel {
 	public File getFile() {
 		return file;
 	}
+
+  @Override
+  public void modelPropertyChange(final PropertyChangeEvent evt)
+  {
+    if ( evt.getPropertyName().equals( KmlUIController.FILE_NAME_PROPERTY))
+    {
+      String newStringValue = evt.getNewValue().toString();
+      if (!  getFileNameText().getText().equals(newStringValue))
+        getFileNameText().setText(newStringValue);
+    }
+  }
 
 }

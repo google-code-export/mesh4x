@@ -1,18 +1,20 @@
 package org.mesh4j.ektoo.model;
 
+import org.mesh4j.ektoo.controller.MsAccessUIController;
+
 /**
  * @author Bhuiyan Mohammad Iklash
  * 
  */
-public class MsAccessModel extends AbstractModel {
-	
+public class MsAccessModel extends AbstractModel 
+{
 	// MODEL VARIABLES
 	private String databaseName = null;
 	private String tableName = null;
 
 	// BUSINESS METHODS
 	public void setDatabaseName(String databaseName) {
-		firePropertyChange("databaseName", this.databaseName,
+		firePropertyChange(MsAccessUIController.DATABASE_NAME_PROPERTY, this.databaseName,
 				this.databaseName = databaseName);
 	}
 
@@ -20,8 +22,9 @@ public class MsAccessModel extends AbstractModel {
 		return databaseName;
 	}
 
-	public void setTableName(String tableName) {
-		firePropertyChange("tableName", this.tableName,
+	public void setTableName(String tableName) 
+	{
+		firePropertyChange( MsAccessUIController.TABLE_NAME_PROPERTY, this.tableName,
 				this.tableName = tableName);
 	}
 

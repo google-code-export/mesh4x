@@ -30,6 +30,7 @@ public class MsAccessUI extends TableUI {
 	public MsAccessUI(MsAccessUIController controller) {
 		super();
 		this.controller = controller;
+		this.controller.addView(this);
 		initialize();
 	}
 
@@ -80,8 +81,20 @@ public class MsAccessUI extends TableUI {
 	}
 
 	@Override
-	public void modelPropertyChange(PropertyChangeEvent evt) {
-		// TODO modelPropertyChange
+	public void modelPropertyChange(final PropertyChangeEvent evt) 
+	{
+	  if ( evt.getPropertyName().equals( MsAccessUIController.DATABASE_NAME_PROPERTY ))
+	  {
+	    String newStringValue = evt.getNewValue().toString();
+	    if (! getTxtFile().getText().equals(newStringValue))
+	      getTxtFile().setText(newStringValue);
+	  }
+	  else if ( evt.getPropertyName().equals( MsAccessUIController.TABLE_NAME_PROPERTY))
+	  {
+      String newStringValue = evt.getNewValue().toString();
+      if (! ((String)getTableList().getSelectedItem()).equals(newStringValue))
+        getTableList().setSelectedItem((String)newStringValue);
+	  }
 	}
 
 	@Override
@@ -90,8 +103,10 @@ public class MsAccessUI extends TableUI {
 	}
 }
 
-class MsAccessFilter extends FileFilter {
-	public boolean accept(File file) {
+class MsAccessFilter extends FileFilter 
+{
+	public boolean accept(File file) 
+	{
 		if (file.isDirectory())
 			return true;
 

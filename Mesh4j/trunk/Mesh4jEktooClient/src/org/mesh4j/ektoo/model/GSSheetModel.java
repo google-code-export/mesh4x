@@ -1,10 +1,13 @@
 package org.mesh4j.ektoo.model;
 
+import org.mesh4j.ektoo.controller.GSSheetUIController;
+
 /**
  * @author Bhuiyan Mohammad Iklash
  * 
  */
-public class GSSheetModel extends AbstractModel {
+public class GSSheetModel extends AbstractModel 
+{
 	
 	// MODEL VARIABLES
 	private String userName = null;
@@ -20,7 +23,7 @@ public class GSSheetModel extends AbstractModel {
 
 	// BUSINESS METHODS
 	public void setUserName(String userName) {
-		firePropertyChange("userName", this.userName, this.userName = userName);
+		firePropertyChange(GSSheetUIController.USER_NAME_PROPERTY, this.userName, this.userName = userName);
 	}
 
 	public String getUserName() {
@@ -28,7 +31,7 @@ public class GSSheetModel extends AbstractModel {
 	}
 
 	public void setUserPassword(String userPassword) {
-		firePropertyChange("userPassword", this.userPassword,
+		firePropertyChange(GSSheetUIController.USER_PASSWORD_PROPERTY, this.userPassword,
 				this.userPassword = userPassword);
 	}
 
@@ -37,7 +40,7 @@ public class GSSheetModel extends AbstractModel {
 	}
 
 	public void setSpreadsheetKey(String spreadsheetKey) {
-		firePropertyChange("spreadsheetKey", this.spreadsheetKey,
+		firePropertyChange(GSSheetUIController.SPREADSHEET_KEY_PROPERTY, this.spreadsheetKey,
 				this.spreadsheetKey = spreadsheetKey);
 	}
 
@@ -46,7 +49,7 @@ public class GSSheetModel extends AbstractModel {
 	}
 
 	public void setWorksheetName(String worksheetName) {
-		firePropertyChange("worksheetName", this.worksheetName,
+		firePropertyChange(GSSheetUIController.WORKSHEET_NAME_PROPERTY, this.worksheetName,
 				this.worksheetName = worksheetName);
 	}
 
@@ -55,7 +58,7 @@ public class GSSheetModel extends AbstractModel {
 	}
 
 	public void setUniqueColumnName(String uniqueColumnName) {
-		firePropertyChange("uniqueColumnName", this.uniqueColumnName,
+		firePropertyChange(GSSheetUIController.UNIQUE_COLUMN_NAME_PROPERTY, this.uniqueColumnName,
 				this.uniqueColumnName = uniqueColumnName);
 	}
 
@@ -64,7 +67,7 @@ public class GSSheetModel extends AbstractModel {
 	}
 
 	public void setUniqueColumnPosition(int uniqueColumnPosition) {
-		firePropertyChange("uniqueColumnPosition", this.uniqueColumnPosition,
+		firePropertyChange(GSSheetUIController.UNIQUE_COLUMN_POSITION_PROPERTY, this.uniqueColumnPosition,
 				this.uniqueColumnPosition = uniqueColumnPosition);
 	}
 
@@ -73,7 +76,7 @@ public class GSSheetModel extends AbstractModel {
 	}
 
 	public void setLastUpdatedColumnName(String lastUpdatedColumnName) {
-		firePropertyChange("lastUpdatedColumnName", this.lastUpdatedColumnName,
+		firePropertyChange(GSSheetUIController.LASTUPDATE_COLUMN_NAME_PROPERTY, this.lastUpdatedColumnName,
 				this.lastUpdatedColumnName = lastUpdatedColumnName);
 	}
 
@@ -82,7 +85,7 @@ public class GSSheetModel extends AbstractModel {
 	}
 
 	public void setLastUpdatedColumnPosition(int lastUpdatedColumnPosition) {
-		firePropertyChange("lastUpdatedColumnPosition",
+		firePropertyChange(GSSheetUIController.LASTUPDATE_COLUMN_POSITION_PROPERTY,
 				this.lastUpdatedColumnPosition,
 				this.lastUpdatedColumnPosition = lastUpdatedColumnPosition);
 	}

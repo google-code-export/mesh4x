@@ -20,9 +20,9 @@ import org.mesh4j.sync.validations.Guard;
 public class MsExcelUIController extends AbstractController 
 {
 	
-	private static final String WORKBOOK_NAME_PROPERTY = "WorkbookName";
-	private static final String WORKSHEET_NAME_PROPERTY = "WorksheetName";
-	private static final String UNIQUE_COLUMN_NAME_PROPERTY = "UniqueColumnName";
+	public static final String WORKBOOK_NAME_PROPERTY = "WorkbookName";
+	public static final String WORKSHEET_NAME_PROPERTY = "WorksheetName";
+	public static final String UNIQUE_COLUMN_NAME_PROPERTY = "UniqueColumnName";
 
 	// MODEL VARIABLES
 	private SyncAdapterBuilder adapterBuilder;
@@ -106,6 +106,6 @@ public class MsExcelUIController extends AbstractController
 
 	@Override
 	public void propertyChange(PropertyChangeEvent arg0) {
-		// TODO (NBL) property Change
+	  super.propertyChanged(arg0);
 	}
 }

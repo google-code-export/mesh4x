@@ -16,7 +16,7 @@ import org.mesh4j.sync.validations.Guard;
  */
 public class KmlUIController extends AbstractController
 {
-	private static final String FILE_NAME_PROPERTY = "FileName";
+	public static final String FILE_NAME_PROPERTY = "FileName";
 	
 	// MODEL VARIABLES
 	ISyncAdapterBuilder adapterBuilder;
@@ -59,8 +59,7 @@ public class KmlUIController extends AbstractController
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		// TODO property Change
-		
+	  super.propertyChanged(evt);
 	}
 
 }

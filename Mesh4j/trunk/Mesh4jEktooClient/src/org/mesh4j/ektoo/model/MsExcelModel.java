@@ -1,5 +1,7 @@
 package org.mesh4j.ektoo.model;
 
+import org.mesh4j.ektoo.controller.MsExcelUIController;
+
 /**
  * @author Bhuiyan Mohammad Iklash
  * 
@@ -14,7 +16,7 @@ public class MsExcelModel extends AbstractModel {
 	// BUSINESS METHODS
 	
 	public void setWorkbookName(String workbookName) {
-		firePropertyChange("workbookName", this.workbookName,
+		firePropertyChange(MsExcelUIController.WORKBOOK_NAME_PROPERTY, this.workbookName,
 				this.workbookName = workbookName);
 	}
 
@@ -23,7 +25,7 @@ public class MsExcelModel extends AbstractModel {
 	}
 
 	public void setWorksheetName(String worksheetName) {
-		firePropertyChange("worksheetName", this.worksheetName,
+		firePropertyChange(MsExcelUIController.WORKSHEET_NAME_PROPERTY, this.worksheetName,
 				this.worksheetName = worksheetName);
 	}
 
@@ -32,7 +34,7 @@ public class MsExcelModel extends AbstractModel {
 	}
 
 	public void setUniqueColumnName(String uniqueColumnName) {
-		firePropertyChange("uniqueColumnName", this.uniqueColumnName,
+		firePropertyChange(MsExcelUIController.UNIQUE_COLUMN_NAME_PROPERTY, this.uniqueColumnName,
 				this.uniqueColumnName = uniqueColumnName);
 	}
 

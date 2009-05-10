@@ -1,5 +1,7 @@
 package org.mesh4j.ektoo.model;
 
+import org.mesh4j.ektoo.controller.KmlUIController;
+
 /**
  * @author Bhuiyan Mohammad Iklash
  * 
@@ -16,7 +18,7 @@ public class KmlModel extends AbstractModel {
 	}
 	
 	public void setKmlFileName(String kmlFileName) {
-		firePropertyChange("kmlFileName", this.kmlFileName, this.kmlFileName = kmlFileName);
+		firePropertyChange(KmlUIController.FILE_NAME_PROPERTY, this.kmlFileName, this.kmlFileName = kmlFileName);
 	}
 
 	public String getKmlFileName() {

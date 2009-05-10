@@ -1,5 +1,7 @@
 package org.mesh4j.ektoo.model;
 
+import org.mesh4j.ektoo.controller.MySQLUIController;
+
 /**
  * @author Bhuiyan Mohammad Iklash
  * 
@@ -17,7 +19,7 @@ public class MySQLAdapterModel extends AbstractModel
 	// BUSINESS METHODS
 	public void setUserName(String userName) 
 	{
-		firePropertyChange("userName", this.userName, this.userName = userName);
+		firePropertyChange(MySQLUIController.USER_NAME_PROPERTY, this.userName, this.userName = userName);
 	}
 
 	public String getUserName() {
@@ -26,7 +28,7 @@ public class MySQLAdapterModel extends AbstractModel
 
 	public void setUserPassword(String userPassword) 
 	{
-		firePropertyChange("userPassword", this.userPassword,
+		firePropertyChange(MySQLUIController.USER_PASSWORD_PROPERTY, this.userPassword,
 				this.userPassword = userPassword);
 	}
 
@@ -36,7 +38,7 @@ public class MySQLAdapterModel extends AbstractModel
 
 	public void setHostName(String hostName) 
 	{
-		firePropertyChange("hostName", this.hostName, this.hostName = hostName);
+		firePropertyChange(MySQLUIController.HOST_NAME_PROPERTY, this.hostName, this.hostName = hostName);
 	}
 
 	public String getHostName() {
@@ -44,7 +46,7 @@ public class MySQLAdapterModel extends AbstractModel
 	}
 
 	public void setPortNo(int portNo) {
-		firePropertyChange("portNo", this.portNo, this.portNo = portNo);
+		firePropertyChange(MySQLUIController.PORT_NO_PROPERTY, this.portNo, this.portNo = portNo);
 	}
 
 	public int getPortNo() {
@@ -52,7 +54,7 @@ public class MySQLAdapterModel extends AbstractModel
 	}
 
 	public void setDatabaseName(String databaseName) {
-		firePropertyChange("databaseName", this.databaseName,
+		firePropertyChange(MySQLUIController.DATABASE_NAME_PROPERTY, this.databaseName,
 				this.databaseName = databaseName);
 	}
 
@@ -61,7 +63,7 @@ public class MySQLAdapterModel extends AbstractModel
 	}
 
 	public void setTableName(String tableName) {
-		firePropertyChange("tableName", this.tableName,
+		firePropertyChange(MySQLUIController.TABLE_NAME_PROPERTY, this.tableName,
 				this.tableName = tableName);
 	}
 
@@ -71,6 +73,6 @@ public class MySQLAdapterModel extends AbstractModel
 	
   public String toString()
   {
-     return "MySQL | " + getDatabaseName() + " | " + getTableName();
+     return "MySQL | " + getHostName() + " | " + getPortNo() + " | " + getDatabaseName() + " | " + getTableName();
   } 	
 }

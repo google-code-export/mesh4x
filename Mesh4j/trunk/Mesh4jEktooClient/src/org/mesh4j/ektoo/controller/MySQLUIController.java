@@ -19,12 +19,12 @@ import org.mesh4j.sync.validations.Guard;
  */
 public class MySQLUIController extends AbstractController
 {	
-	private static final String USER_NAME_PROPERTY = "UserName";
-	private static final String USER_PASSWORD_PROPERTY = "UserPassword";
-	private static final String HOST_NAME_PROPERTY = "HostName";
-	private static final String PORT_NO_PROPERTY = "PortNo";
-	private static final String DATABASE_NAME_PROPERTY = "DatabaseName";
-	private static final String TABLE_NAME_PROPERTY = "TableName";
+	public static final String USER_NAME_PROPERTY = "UserName";
+	public static final String USER_PASSWORD_PROPERTY = "UserPassword";
+	public static final String HOST_NAME_PROPERTY = "HostName";
+	public static final String PORT_NO_PROPERTY = "PortNo";
+	public static final String DATABASE_NAME_PROPERTY = "DatabaseName";
+	public static final String TABLE_NAME_PROPERTY = "TableName";
 
 	// MODEL VARIABLES
 	private ISyncAdapterBuilder adapterBuilder;
@@ -123,7 +123,7 @@ public class MySQLUIController extends AbstractController
 
 	@Override
 	public void propertyChange(PropertyChangeEvent arg0) {
-		// TODO property Change
+	  super.propertyChanged(arg0);
 	}
 
 	// PROPERTIES

@@ -80,6 +80,7 @@ public abstract class AbstractController implements PropertyChangeListener, IUIC
 	}
 
 	protected void setModelProperty(String propertyName, Object newValue) {
+	  System.out.println("3...");
 		for (AbstractModel model : registeredModels) {
 			try {
 				Method method = model.getClass().getMethod(
@@ -109,6 +110,4 @@ public abstract class AbstractController implements PropertyChangeListener, IUIC
 			}
 		}
 	}
-	
-	 
 }

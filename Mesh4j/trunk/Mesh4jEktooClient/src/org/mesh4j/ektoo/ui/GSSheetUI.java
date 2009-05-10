@@ -11,13 +11,13 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.beans.PropertyChangeEvent;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
@@ -37,7 +37,7 @@ import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSWorks
  * @author Bhuiyan Mohammad Iklash
  * 
  */
-public class GSSheetUI extends JPanel {
+public class GSSheetUI extends AbstractUI {
 
 	private static final long serialVersionUID = 5090713642670266848L;
 	private static final Log LOGGER = LogFactory.getLog(GSSheetUI.class);
@@ -62,14 +62,10 @@ public class GSSheetUI extends JPanel {
 	private GSSheetUIController controller = null;
 
 	// BUSINESS METHODS
-	public GSSheetUI() {
-		super();
-		initialize();
-	}
-
 	public GSSheetUI(GSSheetUIController controller) {
 		super();
 		this.controller = controller;
+		this.controller.addView(this);
 		initialize();
 	}
 
@@ -453,4 +449,44 @@ public class GSSheetUI extends JPanel {
 		getLabelColumn().setText(uniqueColumnNameLabel);
 	}
 
+  @Override
+  public void modelPropertyChange(final PropertyChangeEvent evt)
+  {
+    if ( evt.getPropertyName().equals( GSSheetUIController.SPREADSHEET_KEY_PROPERTY))
+    {
+      String newStringValue = evt.getNewValue().toString();
+      if (!  getKeyText().getText().equals(newStringValue))
+        getKeyText().setText(newStringValue);
+    }
+    else if ( evt.getPropertyName().equals( GSSheetUIController.USER_NAME_PROPERTY))
+    {
+      String newStringValue = evt.getNewValue().toString();
+      if (!  getUserText().getText().equals(newStringValue))
+        getUserText().setText(newStringValue);
+    }
+    else if ( evt.getPropertyName().equals( GSSheetUIController.USER_PASSWORD_PROPERTY))
+    {
+      String newStringValue = evt.getNewValue().toString();
+      if (!  new String(getPassText().getPassword()).equals(newStringValue))
+        getPassText().setText(newStringValue);
+    }
+    else if ( evt.getPropertyName().equals( GSSheetUIController.WORKSHEET_NAME_PROPERTY))
+    {
+      String newStringValue = evt.getNewValue().toString();
+      if (!  ((String)getTableList().getSelectedItem()).equals(newStringValue))
+        getTableList().setSelectedItem(newStringValue);
+    }
+    else if ( evt.getPropertyName().equals( GSSheetUIController.UNIQUE_COLUMN_NAME_PROPERTY))
+    {
+      String newStringValue = evt.getNewValue().toString();
+      if (!  ((String)getColumnList().getSelectedItem()).equals(newStringValue))
+        getColumnList().setSelectedItem(newStringValue);
+    }
+    else if ( evt.getPropertyName().equals( GSSheetUIController.UNIQUE_COLUMN_POSITION_PROPERTY))
+    {
+      String newStringValue = evt.getNewValue().toString();
+      if (! ( getColumnList().getSelectedIndex() == Integer.parseInt(newStringValue)) )
+        getColumnList().setSelectedIndex(Integer.parseInt(newStringValue));
+    }
+  }
 }

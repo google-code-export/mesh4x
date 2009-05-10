@@ -17,14 +17,14 @@ import org.mesh4j.sync.validations.Guard;
  */
 public class GSSheetUIController extends AbstractController
 {
-	private static final String USER_NAME_PROPERTY = "UserName";
-	private static final String USER_PASSWORD_PROPERTY = "UserPassword";
-	private static final String SPREADSHEET_KEY_PROPERTY = "SpreadsheetKey";
-	private static final String WORKSHEET_NAME_PROPERTY = "WorksheetName";
-	private static final String UNIQUE_COLUMN_NAME_PROPERTY = "UniqueColumnName";
-	private static final String UNIQUE_COLUMN_POSITION_PROPERTY = "UniqueColumnPosition";
-	private static final String LASTUPDATE_COLUMN_NAME_PROPERTY = "LastUpdatedColumnName";
-	private static final String LASTUPDATE_COLUMN_POSITION_PROPERTY = "LastUpdatedColumnPosition";
+	public static final String USER_NAME_PROPERTY = "UserName";
+	public static final String USER_PASSWORD_PROPERTY = "UserPassword";
+	public static final String SPREADSHEET_KEY_PROPERTY = "SpreadsheetKey";
+	public static final String WORKSHEET_NAME_PROPERTY = "WorksheetName";
+	public static final String UNIQUE_COLUMN_NAME_PROPERTY = "UniqueColumnName";
+	public static final String UNIQUE_COLUMN_POSITION_PROPERTY = "UniqueColumnPosition";
+	public static final String LASTUPDATE_COLUMN_NAME_PROPERTY = "LastUpdatedColumnName";
+	public static final String LASTUPDATE_COLUMN_POSITION_PROPERTY = "LastUpdatedColumnPosition";
 
 	// MODEL VARIABLES
 	private ISyncAdapterBuilder adapterBuilder;
@@ -87,7 +87,7 @@ public class GSSheetUIController extends AbstractController
 
 	@Override
 	public void propertyChange(PropertyChangeEvent arg0) {
-		// TODO property Change
+	  super.propertyChanged(arg0);
 	}
 
 	@Override

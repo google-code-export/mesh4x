@@ -9,9 +9,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.beans.PropertyChangeEvent;
 
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import org.apache.commons.logging.Log;
@@ -23,7 +23,7 @@ import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
  * @author Bhuiyan Mohammad Iklash
  * 
  */
-public class CloudUI extends JPanel {
+public class CloudUI extends AbstractUI{
 	
 	private static final long serialVersionUID = 101977159720664976L;
 	private static final Log LOGGER = LogFactory.getLog(CloudUI.class);
@@ -41,8 +41,9 @@ public class CloudUI extends JPanel {
 	public CloudUI(CloudUIController controller) {
 		super();
 		this.controller = controller;
+		this.controller.addView(this);
 		initialize();
-		initDefault();
+		//initDefault();
 	}
 
 	private void initDefault() {
@@ -143,4 +144,21 @@ public class CloudUI extends JPanel {
 	public CloudUIController getController() {
 		return controller;
 	}
+
+  @Override
+  public void modelPropertyChange(final PropertyChangeEvent evt)
+  {
+    if ( evt.getPropertyName().equals( CloudUIController.MESH_NAME_PROPERTY))
+    {
+      String newStringValue = evt.getNewValue().toString();
+      if (! getMashText().getText().equals(newStringValue))
+        getMashText().setText(newStringValue);
+    }
+    else if ( evt.getPropertyName().equals( CloudUIController.DATASET_NAME_PROPERTY))
+    {
+      String newStringValue = evt.getNewValue().toString();
+      if (! getDataSetText().getText().equals(newStringValue))
+        getDataSetText().setText(newStringValue);
+    }    
+  }
 }

@@ -20,10 +20,9 @@ import org.mesh4j.sync.validations.Guard;
  */
 public class MsAccessUIController extends AbstractController
 {
-	
 	private static final Log LOGGER = LogFactory.getLog(MsAccessUIController.class);
-	private static final String DATABASE_NAME_PROPERTY = "DatabaseName";
-	private static final String TABLE_NAME_PROPERTY = "TableName";
+	public static final String DATABASE_NAME_PROPERTY = "DatabaseName";
+	public static final String TABLE_NAME_PROPERTY = "TableName";
 
 	// MODEL VARIABLEs
 	private ISyncAdapterBuilder adapterBuilder;
@@ -64,10 +63,6 @@ public class MsAccessUIController extends AbstractController
 		return adapterBuilder.createMsAccessAdapter(databaseName, tableName);
 	}
 
-	@Override
-	public void propertyChange(PropertyChangeEvent arg0) {
-		// TODO property Change
-	}
 
 	@Override
 	public IRDFSchema fetchSchema(ISyncAdapter adapter) {
@@ -79,4 +74,10 @@ public class MsAccessUIController extends AbstractController
 		// TODO create Adapter
 		return null;
 	}
+
+  @Override
+  public void propertyChange(PropertyChangeEvent arg0)
+  {
+    super.propertyChanged(arg0);
+  }
 }

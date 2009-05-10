@@ -11,6 +11,7 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.beans.PropertyChangeEvent;
 import java.util.Iterator;
 import java.util.List;
 
@@ -25,6 +26,7 @@ import javax.swing.SwingWorker;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.IValidationStatus;
+import org.mesh4j.ektoo.controller.MsExcelUIController;
 import org.mesh4j.ektoo.controller.MySQLUIController;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
@@ -37,7 +39,7 @@ import com.mysql.jdbc.Driver;
  * @author Bhuiyan Mohammad Iklash
  * 
  */
-public class MySQLUI extends JPanel implements IValidationStatus
+public class MySQLUI extends AbstractUI implements IValidationStatus
 {
 	private static final long serialVersionUID = 2622575852343500622L;
 	private static final Log LOGGER = LogFactory.getLog(MySQLUI.class);
@@ -70,6 +72,7 @@ public class MySQLUI extends JPanel implements IValidationStatus
 	{
 		super();
 		this.controller = controller;
+		this.controller.addView(this);
 		initialize();
 	}
 
@@ -487,5 +490,47 @@ public class MySQLUI extends JPanel implements IValidationStatus
   @Override
   public void validationPassed()
   {
+  }
+
+  @Override
+  public void modelPropertyChange(PropertyChangeEvent evt)
+  {
+    if ( evt.getPropertyName().equals( MySQLUIController.USER_NAME_PROPERTY))
+    {
+      String newStringValue = evt.getNewValue().toString();
+      if (!  getUserText().getText().equals(newStringValue))
+        getUserText().setText(newStringValue);
+    }     
+    else if ( evt.getPropertyName().equals( MySQLUIController.USER_PASSWORD_PROPERTY))
+    {
+      String newStringValue = evt.getNewValue().toString();
+      if (!  new String(getPassText().getPassword()).equals(newStringValue))
+        getPassText().setText(newStringValue);
+    }
+    else if ( evt.getPropertyName().equals( MySQLUIController.HOST_NAME_PROPERTY))
+    {
+      String newStringValue = evt.getNewValue().toString();
+      if (!  getHostText().getText().equals(newStringValue))
+        getHostText().setText(newStringValue);
+    }     
+    else if ( evt.getPropertyName().equals( MySQLUIController.PORT_NO_PROPERTY))
+    {
+      String newStringValue = evt.getNewValue().toString();
+      if (!  getPortText().getText().equals(newStringValue))
+        getPortText().setText(newStringValue);
+    }     
+    else if ( evt.getPropertyName().equals( MySQLUIController.DATABASE_NAME_PROPERTY))
+    {
+      String newStringValue = evt.getNewValue().toString();
+      if (!  getDatabaseText().getText().equals(newStringValue))
+        getDatabaseText().setText(newStringValue);
+    }     
+    else if ( evt.getPropertyName().equals( MySQLUIController.TABLE_NAME_PROPERTY))
+    {
+      String newStringValue = evt.getNewValue().toString();
+      if (!  ((String)getTableList().getSelectedItem()).equals(newStringValue))
+        getTableList().setSelectedItem(newStringValue);
+    }
+
   }
 }
