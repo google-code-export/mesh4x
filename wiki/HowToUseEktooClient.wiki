@@ -1,7 +1,6 @@
 #summary A step-by-step guide for users to synchronize various data sources using Ektoo client
 #labels HowTo,Tutorial
 
-THIS PAGE IS UNDER CONSTRUCTION, PLEASE VISIT US SOON
 <wiki:toc max_depth="2" />
 
 =Introduction=
