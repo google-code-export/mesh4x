@@ -28,6 +28,7 @@ import org.mesh4j.sync.id.generator.IIdGenerator;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.security.IIdentityProvider;
+import org.mesh4j.sync.test.utils.TestHelper;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
@@ -134,9 +135,14 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 	public ISyncAdapter createMySQLAdapter(String userName, String password,
 			String hostName, int portNo, String databaseName, String tableName) {
 
+		String baseDirectory = getBaseDirectory();
+		//create directory for keeping mapping file,mapping file directory will be the name of the
+		//provided database name
+		File mappingDirectory = new File(baseDirectory + File.separator + databaseName);
+		
 		String connectionUri = "jdbc:mysql://" + hostName + ":" + portNo + "/"
 				+ databaseName;
-
+		
 		return HibernateSyncAdapterFactory.createHibernateAdapter(
 				connectionUri,
 				userName, // TODO db user
@@ -146,7 +152,7 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 				tableName, 
 				tableName + "_sync_info", 
 				getBaseRDFUrl(),
-				getBaseDirectory());
+				mappingDirectory.getAbsolutePath());
 	}
 
 	@Override
