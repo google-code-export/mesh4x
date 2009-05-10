@@ -5,7 +5,7 @@ THIS PAGE IS UNDER CONSTRUCTION, PLEASE VISIT US SOON
 <wiki:toc max_depth="2" />
 
 =Introduction=
-EktooClient is a desktop tool that helps user to synchronize data between various data repositories using mesh4x.
+Ektoo is a desktop client that helps user to synchronize data between various data repositories using mesh4x.
 
 This step-by-step guide shows how a user can use EktooClient to synchronize data between various data repositories.
 =Overview=
