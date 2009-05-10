@@ -48,7 +48,7 @@ The process consists of:
   * Enter details information to define target data source.
  # Click on "<b>Synchronize Now</b>" button to start synchronization process.
 
-
+=How-To-Define Data Source=
 Defining various data source as source or target is a very simple process. Following sections describe how-to-define a data source of your desire data source type.
 
 ==KML==
@@ -63,6 +63,18 @@ The process consists of:
  # Browse Excel files and select one that you want to synchronize.
   * Available list of worksheet will be displayed in "<b>Worksheet</b>" drop down list.
  # Select worksheet from "<b>Worksheet</b>" drop down list.
+  * Available list of column will be displayed in "Unique Column" drop down list.
+ # Select unique column from "<b>Unique Column</b>" drop down list.
+
+==Google Spreadsheet==
+The process consists of:
+ # Select "Google Spreadsheet" data type from "<b>Data Source Type</b>" drop down list.
+ # Enter user name in "<b>User</b>" text box
+ # Enter password in "<b>Password</b>" text box
+ # Enter Google Spreadsheet Key in "<b>Key</b>" text box 
+ # Click on connection icon
+   * After successful connection, available sheets will be displayed in "<b>Worksheet</b>" drop down list
+ # Select a worksheet from "<b>Worksheet</b>" drop down list.
   * Available list of column will be displayed in "Unique Column" drop down list.
  # Select unique column from "<b>Unique Column</b>" drop down list.
 
