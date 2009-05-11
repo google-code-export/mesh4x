@@ -68,7 +68,7 @@ public class GoogleSpreadSheetSyncRepository implements ISyncRepository,ISyncAwa
 		this.spreadSheet = spreadSheet;
 		this.identityProvider = identityProvider;
 		this.idGenerator = idGenerator;
-		this.workSheet = GoogleSpreadsheetUtils.getOrCreateSyncSheetIfAbsent(spreadSheet, syncWorksheetName);
+		this.workSheet = GoogleSpreadsheetUtils.getOrCreateSyncSheetIfAbsent(spreadSheet.getGSSpreadsheet(), syncWorksheetName);
 	}
 	
 	@Override
@@ -123,7 +123,8 @@ public class GoogleSpreadSheetSyncRepository implements ISyncRepository,ISyncAwa
 	}
 	private void addRow(SyncInfo syncInfo){
 		GSRow<GSCell> row = createSyncRow(syncInfo);
-		this.workSheet.addChildElement(row.getElementId(),row);
+		//adding child has been done inside the method
+		//this.workSheet.addChildElement(row.getElementId(),row);
 	}
 	
 	@SuppressWarnings("unused")
