@@ -84,7 +84,7 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 		//here contentId is entityid 
 		GSRow row = GoogleSpreadsheetUtils.getRow(this.workSheet, mapper.getIdColumnPosition(), contentId);
 		if(row != null){
-			Element payLoad = mapper.convertRowToXML(row, this.workSheet);
+			Element payLoad = mapper.convertRowToXML(row);
 			return new EntityContent(payLoad,this.entityName,contentId);
 		}
 		return null;
@@ -97,13 +97,13 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 		List<IContent> listOfAll = new LinkedList<IContent>();
 		//we will not count first row,since this is header row
 		//and here counting is starts from 1 not zero.so header row index will be 1
-		System.out.println(this.workSheet.getGSRows().size());
+		//System.out.println(this.workSheet.getGSRows().size());
 		for(Map.Entry<String,GSRow<GSCell>> rowMap :this.workSheet.getGSRows().entrySet()){
 			GSRow<GSCell> gsRow = rowMap.getValue();
 			String entityId  = "";
 			if(gsRow.getElementListIndex() > 1 ){
 				if(gsRow != null && rowHasChanged(gsRow, since)){
-					Element payLoad = mapper.convertRowToXML(gsRow, workSheet);
+					Element payLoad = mapper.convertRowToXML(gsRow);
 					 GSCell cell = gsRow.getGSCell(mapper.getIdColumnPosition());
 					 if(cell != null){
 						 entityId = cell.getCellValue();
@@ -147,7 +147,7 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 		EntityContent entityContent = EntityContent.normalizeContent(content, this.entityName, idColumnName);
 		GSRow row = GoogleSpreadsheetUtils.getRow(this.workSheet, mapper.getIdColumnPosition(), entityContent.getId());
 		if(row == null){
-			row = workSheet.createAndAddNewRow(workSheet.getChildElements().size() +1);
+			row = workSheet.createNewRow(workSheet.getChildElements().size() +1);
 		}
 		this.mapper.applyXMLElementToRow(workSheet, row, entityContent.getPayload());
 	}
