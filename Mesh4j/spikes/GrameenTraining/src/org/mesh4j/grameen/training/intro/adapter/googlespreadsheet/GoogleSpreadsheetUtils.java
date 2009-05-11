@@ -225,7 +225,7 @@ public class GoogleSpreadsheetUtils {
 		else {
 
 			if (element.isDirty() && element instanceof GSWorksheet)
-				insertPool.put(element.getElementId(), element);
+				insertPool.put(element.getId(), element);
 
 			for (GSBaseElement subElement : element.getChildElements().values()) {
 				if (subElement.isDirty()) {
@@ -246,7 +246,7 @@ public class GoogleSpreadsheetUtils {
 																			// for
 																			// new
 																			// rows
-								insertPool.put(subElement.getElementId(),
+								insertPool.put(subElement.getId(),
 										subElement);
 							} else {
 								// if all childs are new but row has an ID
