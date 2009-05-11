@@ -77,7 +77,7 @@ public class SpreadSheetToXMLMapperTest {
 			for(Map.Entry<String, GSRow<GSCell>> gsRowMap :workSheet.getGSRows().entrySet()){
 				GSRow row = gsRowMap.getValue();
 				if(Integer.parseInt(row.getElementId()) > 1){
-					Element xmlElement = mapper.convertRowToXML(row, workSheet);
+					Element xmlElement = mapper.convertRowToXML(row);
 					System.out.println(xmlElement.asXML());
 					Assert.assertEquals(xmlElement.asXML(), rawDataAsXML);
 				}
