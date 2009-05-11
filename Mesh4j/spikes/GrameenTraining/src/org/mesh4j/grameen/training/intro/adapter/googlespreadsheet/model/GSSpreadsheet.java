@@ -3,7 +3,9 @@ package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import com.google.gdata.data.PlainTextConstruct;
 import com.google.gdata.data.spreadsheet.SpreadsheetEntry;
+import com.google.gdata.data.spreadsheet.WorksheetEntry;
 
 /**
  * This class is to wrap a {@link SpreadsheetEntry}, also contains a list of reference
@@ -67,11 +69,13 @@ public class GSSpreadsheet<C> extends GSBaseElement<C>{
 	 * @param sheetName
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	public C getGSWorksheetBySheetName(String sheetName) {
-		for (C gsWorksheet : getNonDeletedChildElements().values()) {
-			if (((GSWorksheet<?>) gsWorksheet)
+		for (C gsWorksheet : getChildElements().values()) {
+			if ( !((IGSElement)gsWorksheet).isDeleteCandidate()
+					&& ((GSWorksheet<?>) gsWorksheet)
 					.getWorksheetEntry().getTitle().getPlainText()
-					.equalsIgnoreCase(sheetName))
+					.equalsIgnoreCase(sheetName) )
 				return gsWorksheet;
 		}
 		return null;
@@ -83,5 +87,28 @@ public class GSSpreadsheet<C> extends GSBaseElement<C>{
 		
 	}
 
+	/**
+	 * create a new worksheet with a name worksheetName also add it as a child element
+	 * of this spreadsheet
+	 * 
+	 * @param worksheetName
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public GSWorksheet<GSRow<GSCell>> createNewWorksheet(String worksheetName) {
+		WorksheetEntry worksheet = new WorksheetEntry();
+		worksheet.setTitle(new PlainTextConstruct(worksheetName));
+		// TODO: need to review what should be the default row count of the
+		// sheet
+		worksheet.setRowCount(100);
+		worksheet.setColCount(10);
+
+		GSWorksheet<GSRow<GSCell>> gsWorksheet = new GSWorksheet<GSRow<GSCell>>(
+				worksheet, this.getChildElements().size() + 1, this);
+		
+		this.addChildElement(gsWorksheet.getElementId(), (C) gsWorksheet);
+
+		return gsWorksheet;
+	}	
 		
 }

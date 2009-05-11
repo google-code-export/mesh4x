@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadsheetUtils;
+import org.mesh4j.sync.validations.MeshException;
 
 import com.google.gdata.data.BaseEntry;
 import com.google.gdata.data.spreadsheet.CellEntry;
@@ -186,26 +187,30 @@ public class GSWorksheet<C> extends GSBaseElement<C> {
 	@SuppressWarnings("unchecked")
 	public GSRow<GSCell> createNewRow(LinkedHashMap<String, String> values) throws IOException, ServiceException {
 
-		int noOfColumns = ((GSWorksheet<GSRow>) this).getGSRow(1)
+		/*int noOfColumns = ((GSWorksheet<GSRow>) this).getGSRow(1)
 				.getChildElements().size();
 
 		if (values.size() < noOfColumns) {
 			// TODO: throw exception
 			return null;
-		}
+		}*/
 		
 		int newRowIndex = this.getChildElements().size() + 1;		
 		ListEntry newRow = new ListEntry();		
 		GSRow<GSCell> newGSRow = new GSRow(newRow, newRowIndex, this);
 		
-		int col = 1; 	// entries in values make sure actual ordering in spreadsheet, 
+		GSRow<GSCell> headeRow = ((GSWorksheet<GSRow>) this).getGSRow(1);
+		if(headeRow == null)
+			throw new MeshException("Header row not available...");
+		//int col = 1; 	// entries in values make sure actual ordering in spreadsheet, 
 						// so we can assume they are in a position according to column order 1, 2, 3....   	
 		
-		for (String key : values.keySet()) {	
-			newGSRow.createAndAddNewCell(col, key, values.get(key));
-			col++;
+		for (String key : values.keySet()) {
+			int colIndex = headeRow.getGSCell(key).elementListIndex;
+			newGSRow.createNewCell(colIndex, key, values.get(key));
 		}				
 		
+		this.addChildElement(newGSRow.getElementId(), (C) newGSRow);
 		return newGSRow;
 	}
 	
@@ -245,32 +250,25 @@ public class GSWorksheet<C> extends GSBaseElement<C> {
 	}	
 		
 	
-    public GSRow<GSCell> createNewRow(int rowIndex){
+    @SuppressWarnings("unchecked")
+	public GSRow<GSCell> createNewRow(int rowIndex){
 		if(rowIndex < 1)
 			 throw new IllegalArgumentException("rowIndex");
     	
         ListEntry listEntry = new ListEntry();
-		GSRow<GSCell> row = new GSRow(listEntry , rowIndex, this);
+		GSRow<GSCell> row = new GSRow(listEntry, rowIndex, this);
 		
 		//create empty cells using tags from header cells and add to this row
 		GSRow<GSCell> headerRow = (GSRow<GSCell>) this.getGSRow(1);
-		if(headerRow != null){
+		if(headerRow != null && headerRow.childElements.size() > 0){
 			for (GSCell headerCell : headerRow.childElements.values()) {
-				row.createAndAddNewCell(headerCell.getElementListIndex(),
+				row.createNewCell(headerCell.getElementListIndex(),
 						headerCell.getColumnTag(), "");
 			}
 		}
+		this.addChildElement(row.getElementId(), (C) row);
         return row;
-    }	
-	
-	public GSRow<GSCell> createAndAddNewRow(int rowIndex) {
-		if(rowIndex < 1)
-			 throw new IllegalArgumentException("rowIndex");
-		
-		GSRow<GSCell> row = createNewRow(rowIndex);
-		addChildElement(row.getElementId(), (C) row);
-		return row;
-	}    
+    }	  
     
 	@SuppressWarnings("unchecked")
 	@Override

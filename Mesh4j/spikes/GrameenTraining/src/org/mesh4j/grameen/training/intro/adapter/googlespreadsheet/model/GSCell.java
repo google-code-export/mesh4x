@@ -268,6 +268,7 @@ public class GSCell extends GSBaseElement {
 	 * 
 	 * @return
 	 */
+	@SuppressWarnings("deprecation")
 	public int getCellType() {
 		Double cellDoubleValue = ((CellEntry) this.baseEntry).getCell()
 				.getDoubleValue();

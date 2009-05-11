@@ -316,13 +316,15 @@ public class GSRow<C> extends GSBaseElement<C>{
 	}	
 	
 	/**
-	 * this will create a new cell at column position col  
-	 * 
+	 * this will create a new cell at column position col and add it to its child  
+	 * elements with key 'key', any existing cell element with that key will be replaced
+	 *  
 	 * @param col
 	 * @param key
 	 * @param value
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	public GSCell createNewCell(int col, String key, String value) {
 		if(col < 1)
 			 throw new IllegalArgumentException("colIndex");
@@ -330,28 +332,10 @@ public class GSRow<C> extends GSBaseElement<C>{
 		CellEntry newCell = new CellEntry(this.elementListIndex, col, ""); //this is not supported for batch update :(
 		GSCell newGSCell = new GSCell(newCell, (GSRow<GSCell>) this, key);
 		newGSCell.updateCellValue(value);
+		this.addChildElement(key, (C) newGSCell);
 		return newGSCell;
 	}
-	
-	/**
-	 * this will create a new cell at column position col and add it to its child  
-	 * elements with key 'key', any existing cell element with that key will be replaced
-	 *  
-	 * @param col
-	 * @param key
-	 * @param value
-	 * @return 
-	 * @return
-	 */
-	public GSCell createAndAddNewCell(int col, String key, String value) {
-		if(col < 1)
-			 throw new IllegalArgumentException("colIndex");
-		
-		GSCell cell = createNewCell(col, key, value);
-		this.addChildElement(key, (C) cell);
-		return cell;
-	}	
-    
+	    
 	@SuppressWarnings("deprecation")
 	@Override
 	public void refreshMeFromFeed() throws IOException, ServiceException{

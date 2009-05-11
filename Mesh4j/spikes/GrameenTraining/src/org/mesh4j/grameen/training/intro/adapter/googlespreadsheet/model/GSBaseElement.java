@@ -5,8 +5,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import org.mesh4j.sync.validations.MeshException;
-
 import com.google.gdata.data.BaseEntry;
 import com.google.gdata.data.IEntry;
 import com.google.gdata.util.ServiceException;
@@ -156,8 +154,9 @@ public abstract class GSBaseElement<C> implements IGSElement<C>{
 	}
 
 	public void deleteChildElement(String key) {
-		if(this.childElements.get(key) == null) //TODO: think later abt it 
-			throw new MeshException("Object not found with key: "+key);	 		
+		if(this.childElements.get(key) == null)  
+			return;
+			//throw new MeshException("Object not found with key: "+key);	 		
 		((IGSElement<?>)this.childElements.get(key)).setDirty();
 
 		if(this.childElements.get(key) instanceof GSCell) //TODO: cell is not deleted, only cell content is removed 
@@ -166,8 +165,14 @@ public abstract class GSBaseElement<C> implements IGSElement<C>{
 			((IGSElement<?>)this.childElements.get(key)).setDeleteCandidate();
 	}
 
+	/**
+	 * returns non deleted child element
+	 * 
+	 */
+	@SuppressWarnings("unchecked")
 	public C getChildElement(String key) {
-		return this.childElements.get(key);
+		C child = this.childElements.get(key);
+		return (child != null  && !((IGSElement)child).isDeleteCandidate()) ? child : null;
 	}
 
 	public void updateChildElement(String key, C element) {
