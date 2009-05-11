@@ -74,8 +74,7 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 		String type = spreadSheetInfo.getType();
 
 		// create google spread sheet
-		IGoogleSpreadsheetToXMLMapping mapper = new GoogleSpreadsheetToPlainXMLMapping(
-				type, idColumName, idColumnPosition, lastUpdateColumnPosition);
+		IGoogleSpreadsheetToXMLMapping mapper = new GoogleSpreadsheetToPlainXMLMapping(type, idColumName,null);
 		IGoogleSpreadSheet gSpreadSheet = new GoogleSpreadsheet(
 				googleSpreadSheetId, userName, passWord);
 
