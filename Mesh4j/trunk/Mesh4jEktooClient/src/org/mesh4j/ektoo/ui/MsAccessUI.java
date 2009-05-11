@@ -36,7 +36,6 @@ public class MsAccessUI extends TableUI {
 
 	private void initialize() {
 		this.showColumn(false);
-		this.getFileChooser().setDialogTitle(EktooUITranslator.getExcelFileSelectorTitle());
 		this.getFileChooser().setAcceptAllFileFilterUsed(false);
 		this.getFileChooser().addChoosableFileFilter(new MsAccessFilter());
 	}
@@ -120,6 +119,6 @@ class MsAccessFilter extends FileFilter
 	}
 
 	public String getDescription() {
-		return EktooUITranslator.getExcelFileDescription();
+		return EktooUITranslator.getMSAccessFileSelectorTitle();
 	}
 }

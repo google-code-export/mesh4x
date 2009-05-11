@@ -46,10 +46,10 @@ public class CloudUI extends AbstractUI{
 		//initDefault();
 	}
 
-	private void initDefault() {
-		getMashText().setText("EktooMesh");
-		getDataSetText().setText("EktooFeed");
-	}
+//	private void initDefault() {
+//		getMashText().setText("EktooMesh");
+//		getDataSetText().setText("EktooFeed");
+//	}
 
 	private void initialize() {
 		this.setLayout(null);

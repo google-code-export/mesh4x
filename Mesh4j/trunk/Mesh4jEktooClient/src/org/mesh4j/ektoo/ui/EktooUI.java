@@ -34,7 +34,6 @@ import org.mesh4j.ektoo.tasks.OpenURLTask;
 import org.mesh4j.ektoo.tasks.SynchronizeTask;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
-import org.mesh4j.sync.translator.MessageTranslator;
 
 /**
  * @author Bhuiyan Mohammad Iklash
@@ -358,32 +357,38 @@ public class EktooUI extends JFrame implements IErrorListener{
 	// TODO (NBL) disables unsupported features from ui
 	private void filterCombobox() {
 		String item = (String) getSourceItem().getListType().getSelectedItem();
-		if (item.equals(SyncItemUI.MS_EXCEL_PANEL)) {
+		if (item.equals(SyncItemUI.MS_EXCEL_PANEL) || item.equals(SyncItemUI.RSS_FILE_PANEL) || item.equals(SyncItemUI.ATOM_FILE_PANEL)) {
 			getTargetItem().getListType().removeAllItems();
 			getTargetItem().getListType().addItem(SyncItemUI.MS_EXCEL_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.MS_ACCESS_PANEL);
-			getTargetItem().getListType().addItem(
-					SyncItemUI.GOOGLE_SPREADSHEET_PANEL);
+			getTargetItem().getListType().addItem(SyncItemUI.GOOGLE_SPREADSHEET_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.MYSQL_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.CLOUD_PANEL);
+			getTargetItem().getListType().addItem(SyncItemUI.RSS_FILE_PANEL);
+			getTargetItem().getListType().addItem(SyncItemUI.ATOM_FILE_PANEL);
 		} else if (item.equals(SyncItemUI.MS_ACCESS_PANEL)) {
 			getTargetItem().getListType().removeAllItems();
 			getTargetItem().getListType().addItem(SyncItemUI.MS_ACCESS_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.CLOUD_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.MYSQL_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.MS_EXCEL_PANEL);
+			getTargetItem().getListType().addItem(SyncItemUI.RSS_FILE_PANEL);
+			getTargetItem().getListType().addItem(SyncItemUI.ATOM_FILE_PANEL);
 		} else if (item.equals(SyncItemUI.GOOGLE_SPREADSHEET_PANEL)) {
 			getTargetItem().getListType().removeAllItems();
-			getTargetItem().getListType().addItem(
-					SyncItemUI.GOOGLE_SPREADSHEET_PANEL);
+			getTargetItem().getListType().addItem(SyncItemUI.GOOGLE_SPREADSHEET_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.MS_EXCEL_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.CLOUD_PANEL);
+			getTargetItem().getListType().addItem(SyncItemUI.RSS_FILE_PANEL);
+			getTargetItem().getListType().addItem(SyncItemUI.ATOM_FILE_PANEL);
 		} else if (item.equals(SyncItemUI.MYSQL_PANEL)) {
 			getTargetItem().getListType().removeAllItems();
 			getTargetItem().getListType().addItem(SyncItemUI.MS_EXCEL_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.MS_ACCESS_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.CLOUD_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.MYSQL_PANEL);
+			getTargetItem().getListType().addItem(SyncItemUI.RSS_FILE_PANEL);
+			getTargetItem().getListType().addItem(SyncItemUI.ATOM_FILE_PANEL);
 		} else if (item.equals(SyncItemUI.CLOUD_PANEL)) {
 			getTargetItem().getListType().removeAllItems();
 			getTargetItem().getListType().addItem(SyncItemUI.MS_EXCEL_PANEL);
@@ -391,10 +396,14 @@ public class EktooUI extends JFrame implements IErrorListener{
 			getTargetItem().getListType().addItem(SyncItemUI.GOOGLE_SPREADSHEET_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.MYSQL_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.KML_PANEL);
+			getTargetItem().getListType().addItem(SyncItemUI.RSS_FILE_PANEL);
+			getTargetItem().getListType().addItem(SyncItemUI.ATOM_FILE_PANEL);
 		} else if (item.equals(SyncItemUI.KML_PANEL)) {
 			getTargetItem().getListType().removeAllItems();
 			getTargetItem().getListType().addItem(SyncItemUI.CLOUD_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.KML_PANEL);
+			getTargetItem().getListType().addItem(SyncItemUI.RSS_FILE_PANEL);
+			getTargetItem().getListType().addItem(SyncItemUI.ATOM_FILE_PANEL);
 		} else {
 			getTargetItem().getListType().removeAllItems();
 			setTargetIcon(ImageManager.getUndefinedSourceIcon());

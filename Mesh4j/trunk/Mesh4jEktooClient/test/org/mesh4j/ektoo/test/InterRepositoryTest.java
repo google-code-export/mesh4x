@@ -6,7 +6,6 @@ import java.util.List;
 import junit.framework.Assert;
 
 import org.junit.Test;
-import org.mesh4j.ektoo.GoogleSpreadSheetInfo;
 import org.mesh4j.ektoo.ISyncAdapterBuilder;
 import org.mesh4j.ektoo.SyncAdapterBuilder;
 import org.mesh4j.ektoo.properties.PropertiesProvider;

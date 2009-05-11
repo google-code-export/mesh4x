@@ -16,6 +16,9 @@ import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSWorks
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.feed.ContentReader;
 import org.mesh4j.sync.adapters.feed.ContentWriter;
+import org.mesh4j.sync.adapters.feed.Feed;
+import org.mesh4j.sync.adapters.feed.FeedAdapter;
+import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.adapters.hibernate.HibernateSyncAdapterFactory;
 import org.mesh4j.sync.adapters.http.HttpSyncAdapter;
@@ -171,6 +174,13 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 	@Override
 	public ISyncAdapter createKMLAdapter(String kmlFileName) {
 		return KMLDOMLoaderFactory.createKMLAdapter(kmlFileName, getIdentityProvider());
+	}
+	
+	@Override
+	public ISyncAdapter createFeedAdapter(String title, String description, String link, String fileName, ISyndicationFormat syndicationFormat) {
+		Feed feed = new Feed(title, description, link);
+		FeedAdapter adapter = new FeedAdapter(fileName, getIdentityProvider(), IdGenerator.INSTANCE, syndicationFormat, feed);
+		return adapter;
 	}
 	
 	// ACCESSORS

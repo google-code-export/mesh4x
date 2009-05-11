@@ -42,7 +42,6 @@ public class MsExcelUI extends TableUI
 
 	private void initialize() 
 	{
-		this.getFileChooser().setDialogTitle(EktooUITranslator.getExcelFileSelectorTitle());
 		this.getFileChooser().setAcceptAllFileFilterUsed(false);
 		this.getFileChooser().addChoosableFileFilter(new MsExcelFilter());
 	}
@@ -168,6 +167,6 @@ class MsExcelFilter extends FileFilter {
 
 	public String getDescription() 
 	{
-		return EktooUITranslator.getExcelFileDescription();
+		return EktooUITranslator.getExcelFileSelectorTitle();
 	}
 }

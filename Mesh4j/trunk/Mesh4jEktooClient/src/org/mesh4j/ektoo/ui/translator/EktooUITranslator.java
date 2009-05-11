@@ -2,7 +2,6 @@ package org.mesh4j.ektoo.ui.translator;
 
 import java.util.Date;
 
-import org.mesh4j.sync.translator.MessageTranslator;
 import org.mesh4j.translator.EktooMessageTranslator;
 
 public class EktooUITranslator {
@@ -42,36 +41,36 @@ public class EktooUITranslator {
 				.translate("EKTOO_SYNC_TYPE_SEND_AND_RECEIVE_FIELD_LABEL");
 	}
 
-	public static String getMessageSyncSyccessfuly(String source, String target, Date date)
-	{
-		return EktooMessageTranslator
-				.translate("EKTOO_SYNC_PROCESS_SUCCESS_MESSAGE", source, target, date);
+	public static String getMessageSyncSyccessfuly(String source,
+			String target, Date date) {
+		return EktooMessageTranslator.translate(
+				"EKTOO_SYNC_PROCESS_SUCCESS_MESSAGE", source, target, date);
 	}
 
-	public static String getMessageSyncConflicts(String source, String target, Date date) 
-	{
-		return EktooMessageTranslator
-				.translate("EKTOO_SYNC_PROCESS_CONFLICT_MESSAGE", source, target, date);
+	public static String getMessageSyncConflicts(String source, String target,
+			Date date) {
+		return EktooMessageTranslator.translate(
+				"EKTOO_SYNC_PROCESS_CONFLICT_MESSAGE", source, target, date);
 	}
 
-	public static String getMessageStartSync(String source, String target, Date date)
-	{
-		return EktooMessageTranslator
-				.translate("EKTOO_SYNC_PROCESS_START_MESSAGE", source, target, date);
+	public static String getMessageStartSync(String source, String target,
+			Date date) {
+		return EktooMessageTranslator.translate(
+				"EKTOO_SYNC_PROCESS_START_MESSAGE", source, target, date);
 	}
 
-  public static String getMessageEndSync(String source, String target, Date date)
-  {
-    return EktooMessageTranslator
-        .translate("EKTOO_SYNC_PROCESS_END_MESSAGE", source, target, date);
-  }
-	
-  public static String getMessageSyncFailed(String source, String target, Date date)
-  {
-    return EktooMessageTranslator
-        .translate("EKTOO_SYNC_PROCESS_FAILED_MESSAGE", source, target, date);
-  }
-	
+	public static String getMessageEndSync(String source, String target,
+			Date date) {
+		return EktooMessageTranslator.translate(
+				"EKTOO_SYNC_PROCESS_END_MESSAGE", source, target, date);
+	}
+
+	public static String getMessageSyncFailed(String source, String target,
+			Date date) {
+		return EktooMessageTranslator.translate(
+				"EKTOO_SYNC_PROCESS_FAILED_MESSAGE", source, target, date);
+	}
+
 	public static String getExcelFileDescription() {
 		// return "Microsoft Excel File(s)";
 		return EktooMessageTranslator
@@ -81,6 +80,21 @@ public class EktooUITranslator {
 	public static String getExcelFileSelectorTitle() {
 		return EktooMessageTranslator
 				.translate("EKTOO_EXCEL_FILE_CHOOSER_TITLE");
+	}
+	
+	public static String getKMLFileSelectorTitle() {
+		return EktooMessageTranslator
+		.translate("EKTOO_KML_FILE_CHOOSER_TITLE");
+	}
+
+	public static String getXMLFileSelectorTitle() {
+		return EktooMessageTranslator
+		.translate("EKTOO_XML_FILE_CHOOSER_TITLE");
+	}
+
+	public static String getMSAccessFileSelectorTitle() {
+		return EktooMessageTranslator
+		.translate("EKTOO_ACCESS_FILE_CHOOSER_TITLE");
 	}
 
 	public static String getExcelWorksheetLabel() {
@@ -133,7 +147,6 @@ public class EktooUITranslator {
 		return EktooMessageTranslator.translate("EKTOO_SYNC_TARGET_LABEL");
 	}
 
-
 	public static String getAccessFileLabel() {
 		// return "Database";
 		return EktooMessageTranslator
@@ -174,7 +187,8 @@ public class EktooUITranslator {
 	}
 
 	public static String getKmlFileNameLabel() {
-		return EktooMessageTranslator.translate("EKTOO_KML_FILE_NAME_FIELD_LABEL");
+		return EktooMessageTranslator
+				.translate("EKTOO_KML_FILE_NAME_FIELD_LABEL");
 	}
 
 	public static String getSyncDataSourceType() {
@@ -187,13 +201,11 @@ public class EktooUITranslator {
 				.translate("EKTOO_SYNC_PROCESS_START_BUTTON_LABEL");
 	}
 
-	public static String getSyncToolTip()
-  {
-    return EktooMessageTranslator
-    .translate("EKTOO_SYNC_PROCESS_START_BUTTON_TOOLTIP");
-  }
+	public static String getSyncToolTip() {
+		return EktooMessageTranslator
+				.translate("EKTOO_SYNC_PROCESS_START_BUTTON_TOOLTIP");
+	}
 
-	
 	public static String getDataSourceType() {
 		return EktooMessageTranslator
 				.translate("EKTOO_SYNC_PROCESS_DATA_SOURCE_LIST_LABEL");
@@ -229,53 +241,49 @@ public class EktooUITranslator {
 				.translate("EKTOO_MYSQL_USER_PASSWORD_FIELD_LABEL");
 	}
 
-  public static String getTitle()
-  {
-    return EktooMessageTranslator
-    .translate("EKTOO_TITLE");
-  }
+	public static String getTitle() {
+		return EktooMessageTranslator.translate("EKTOO_TITLE");
+	}
 
-  public static String getMeshNameFieldLabel()
-  {
-    return EktooMessageTranslator
-    .translate("EKTOO_CLOUD_MESH_NAME_FIELD_LABEL");
-  }
+	public static String getMeshNameFieldLabel() {
+		return EktooMessageTranslator
+				.translate("EKTOO_CLOUD_MESH_NAME_FIELD_LABEL");
+	}
 
-  public static String getMeshDataSetFieldLabel()
-  {
-    return EktooMessageTranslator
-    .translate("EKTOO_CLOUD_MESH_DATASET_FIELD_LABEL");
-  }
+	public static String getMeshDataSetFieldLabel() {
+		return EktooMessageTranslator
+				.translate("EKTOO_CLOUD_MESH_DATASET_FIELD_LABEL");
+	}
 
-  public static String getPoweredByLabel()
-  {
-    return EktooMessageTranslator
-    .translate("EKTOO_TRADEMARK_LABEL");
-  }
+	public static String getPoweredByLabel() {
+		return EktooMessageTranslator.translate("EKTOO_TRADEMARK_LABEL");
+	}
 
-  
-  public static String getErrorOpenBrowser()
-  {
-    return EktooMessageTranslator.translate("EKTOO_ERROR_OPEN_BROWSER");
-  }
+	public static String getErrorOpenBrowser() {
+		return EktooMessageTranslator.translate("EKTOO_ERROR_OPEN_BROWSER");
+	}
 
-  public static String getMessageOpenBrowserActionNotSupported()
-  {
-    return EktooMessageTranslator.translate("EKTOO_ERROR_OPEN_BROWSER_ACTION_NOT_SUPPORTED");
-  }
+	public static String getMessageOpenBrowserActionNotSupported() {
+		return EktooMessageTranslator
+				.translate("EKTOO_ERROR_OPEN_BROWSER_ACTION_NOT_SUPPORTED");
+	}
 
-  public static String getErrorInvalidURL()
-  {
-    return EktooMessageTranslator.translate("EKTOO_ERROR_INVALID_URL");
-  }
+	public static String getErrorInvalidURL() {
+		return EktooMessageTranslator.translate("EKTOO_ERROR_INVALID_URL");
+	}
 
-  public static String getPoweredByLabelTooltip()
-  {
-    return EktooMessageTranslator.translate("EKTOO_TRADEMARK_LABEL_TOOLTIP");
-  }
+	public static String getPoweredByLabelTooltip() {
+		return EktooMessageTranslator
+				.translate("EKTOO_TRADEMARK_LABEL_TOOLTIP");
+	}
 
-  public static String getDatabaseConnectionTooltip()
-  {
-    return EktooMessageTranslator.translate("EKTOO_MYSQL_CONNECT_BUTTON_TOOLTIP");
-  }
+	public static String getDatabaseConnectionTooltip() {
+		return EktooMessageTranslator
+				.translate("EKTOO_MYSQL_CONNECT_BUTTON_TOOLTIP");
+	}
+
+	public static String getFeedFileNameLabel() {
+		return EktooMessageTranslator.translate("EKTOO_FEED_FILE_NAME_FIELD_LABEL");
+	}
+
 }

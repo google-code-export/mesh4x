@@ -23,12 +23,14 @@ import org.mesh4j.ektoo.ISyncTableTypeItem;
 import org.mesh4j.ektoo.IUIController;
 import org.mesh4j.ektoo.controller.AbstractController;
 import org.mesh4j.ektoo.controller.CloudUIController;
+import org.mesh4j.ektoo.controller.FeedUIController;
 import org.mesh4j.ektoo.controller.GSSheetUIController;
 import org.mesh4j.ektoo.controller.KmlUIController;
 import org.mesh4j.ektoo.controller.MsAccessUIController;
 import org.mesh4j.ektoo.controller.MsExcelUIController;
 import org.mesh4j.ektoo.controller.MySQLUIController;
 import org.mesh4j.ektoo.model.CloudModel;
+import org.mesh4j.ektoo.model.FeedModel;
 import org.mesh4j.ektoo.model.GSSheetModel;
 import org.mesh4j.ektoo.model.KmlModel;
 import org.mesh4j.ektoo.model.MsAccessModel;
@@ -37,6 +39,8 @@ import org.mesh4j.ektoo.model.MySQLAdapterModel;
 import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.sync.ISyncAdapter;
+import org.mesh4j.sync.adapters.feed.atom.AtomSyndicationFormat;
+import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 
 /**
@@ -44,22 +48,24 @@ import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
  * 
  */
 
-// TODO filter combo box 
+// TODO filter combo box
 public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 		IUIController {
-	
+
 	private static final long serialVersionUID = 8681801062827267140L;
-	private final static String DYMMY_PANEL             = "DUMMY_PANEL";
-	public final static String KML_PANEL                = "KML";
-	public final static String MS_EXCEL_PANEL           = "MS Excel";
+	private final static String DYMMY_PANEL = "DUMMY_PANEL";
+	public final static String KML_PANEL = "KML";
+	public final static String MS_EXCEL_PANEL = "MS Excel";
 	public final static String GOOGLE_SPREADSHEET_PANEL = "Google Spreadsheet";
-	public final static String MS_ACCESS_PANEL          = "MS Access";
-	public final static String CLOUD_PANEL              = "Cloud";
-	public final static String MYSQL_PANEL              = "MySQL";
+	public final static String MS_ACCESS_PANEL = "MS Access";
+	public final static String CLOUD_PANEL = "Cloud";
+	public final static String MYSQL_PANEL = "MySQL";
+	public final static String RSS_FILE_PANEL = "Rss 2.0";
+	public final static String ATOM_FILE_PANEL = "Atom 1.0";
 
 	// MODEL VARIABLES
 	private PropertiesProvider propertiesProvider;
-	
+
 	private JPanel body = null;
 	private JPanel head = null;
 	private JPanel firstPanel = new JPanel();
@@ -82,6 +88,12 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 	private MySQLUI mysqlUI = null;
 	private MySQLUIController mysqlUIControler = null;
 
+	private FeedUI rssUI = null;
+	private FeedUIController rssUIControler = null;
+
+	private FeedUI atomUI = null;
+	private FeedUIController atomUIControler = null;
+
 	private String SourceOrTargetType = null;
 
 	private JComboBox listType = null;
@@ -96,11 +108,11 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 
 	private void initialize() {
 		this.propertiesProvider = new PropertiesProvider();
-		
+
 		SourceOrTargetType = EktooUITranslator.getDataSourceType();
 		setLayout(new BorderLayout());
 		setBorder(BorderFactory.createTitledBorder(this.title));
-		
+
 		setBackground(Color.WHITE);
 		add(getHeadPane(), BorderLayout.NORTH);
 		add(getBodyPane(), BorderLayout.CENTER);
@@ -109,8 +121,7 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 	}
 
 	private JPanel getHeadPane() {
-		if (head == null) 
-		{
+		if (head == null) {
 			head = new JPanel();
 			head.setLayout(new FlowLayout());
 			head.add(getTypeLabel());
@@ -119,8 +130,7 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 		return head;
 	}
 
-	private JPanel getBodyPane() 
-	{
+	private JPanel getBodyPane() {
 		if (body == null) {
 			body = new JPanel();
 			body.setLayout(new CardLayout());
@@ -135,18 +145,18 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 			body.add(getKmlUI(), KML_PANEL);
 			body.add(getCloudUI(), CLOUD_PANEL);
 			body.add(getMySQLUI(), MYSQL_PANEL);
+			body.add(getRSSFileUI(), RSS_FILE_PANEL);
+			body.add(getAtomFileUI(), ATOM_FILE_PANEL);
 		}
 		return body;
 	}
 
-	private JComboBox getDataSourceType() 
-	{
-		if (getListType() == null) 
-		{
+	private JComboBox getDataSourceType() {
+		if (getListType() == null) {
 			setListType(new JComboBox());
 			getListType().setBounds(new Rectangle(107, 13, 230, 22));
-			getListType().setPreferredSize( new Dimension(200, 22));
-			
+			getListType().setPreferredSize(new Dimension(200, 22));
+
 			if (SourceOrTargetType != null) {
 				StringTokenizer st = new StringTokenizer(SourceOrTargetType,
 						"|");
@@ -158,14 +168,12 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 				}
 			}
 			getListType().addItemListener(new ItemListener() {
-				public void itemStateChanged(ItemEvent evt) 
-				{
-				  if (evt.getStateChange() == ItemEvent.SELECTED) 
-				  {
-  				  int index = getListType().getSelectedIndex();
-  					if (index != -1)
-  						updateLayout((String) evt.getItem());
-				  }
+				public void itemStateChanged(ItemEvent evt) {
+					if (evt.getStateChange() == ItemEvent.SELECTED) {
+						int index = getListType().getSelectedIndex();
+						if (index != -1)
+							updateLayout((String) evt.getItem());
+					}
 				}
 			});
 
@@ -173,10 +181,8 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 		return getListType();
 	}
 
-	private JLabel getTypeLabel() 
-	{
-		if (labelType == null) 
-		{
+	private JLabel getTypeLabel() {
+		if (labelType == null) {
 			labelType = new JLabel();
 			labelType.setText(EktooUITranslator.getSyncDataSourceType());
 			labelType.setBounds(new Rectangle(16, 50, 27, 16));
@@ -186,8 +192,7 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 
 	private MsExcelUI getMsExcelUI() {
 		if (excelUI == null) {
-			excelUIController = new MsExcelUIController(
-					this.propertiesProvider);
+			excelUIController = new MsExcelUIController(this.propertiesProvider);
 			excelUIController.addModel(new MsExcelModel());
 
 			excelUI = new MsExcelUI(excelUIController);
@@ -213,8 +218,7 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 
 	private GSSheetUI getGSSheetUI() {
 		if (googleUI == null) {
-			googleUIControler = new GSSheetUIController(
-					this.propertiesProvider);
+			googleUIControler = new GSSheetUIController(this.propertiesProvider);
 			googleUIControler.addModel(new GSSheetModel());
 
 			googleUI = new GSSheetUI(googleUIControler);
@@ -233,8 +237,10 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 	private KmlUI getKmlUI() {
 		if (kmlUI == null) {
 			kmlUIControler = new KmlUIController(this.propertiesProvider);
-			kmlUIControler.addModel(new KmlModel(this.propertiesProvider.getDefaultKMLFile()));
-			kmlUI = new KmlUI(this.propertiesProvider.getDefaultKMLFile(), kmlUIControler);
+			kmlUIControler.addModel(new KmlModel(this.propertiesProvider
+					.getDefaultKMLFile()));
+			kmlUI = new KmlUI(this.propertiesProvider.getDefaultKMLFile(),
+					kmlUIControler);
 		}
 		return kmlUI;
 	}
@@ -242,7 +248,8 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 	private CloudUI getCloudUI() {
 		if (cloudUI == null) {
 			cloudUIControler = new CloudUIController(this.propertiesProvider);
-			cloudUIControler.addModel(new CloudModel(this.propertiesProvider.getMeshSyncServerURL()));
+			cloudUIControler.addModel(new CloudModel(this.propertiesProvider
+					.getMeshSyncServerURL()));
 			cloudUI = new CloudUI(cloudUIControler);
 		}
 		return cloudUI;
@@ -257,9 +264,37 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 		return mysqlUI;
 	}
 
+	private FeedUI getRSSFileUI() {
+		if (rssUI == null) {
+			rssUIControler = new FeedUIController(this.propertiesProvider);
+			rssUIControler.addModel(
+				new FeedModel(
+					this.propertiesProvider.getDefaultRSSFile(),
+					RssSyndicationFormat.INSTANCE,
+					this.propertiesProvider.getMeshSyncServerURL()));
+			rssUI = new FeedUI(this.propertiesProvider.getDefaultRSSFile(),
+					rssUIControler);
+		}
+		return rssUI;
+	}
+
+	private FeedUI getAtomFileUI() {
+		if (atomUI == null) {
+			atomUIControler = new FeedUIController(this.propertiesProvider);
+			atomUIControler.addModel(
+				new FeedModel(
+						this.propertiesProvider.getDefaultAtomFile(),
+						AtomSyndicationFormat.INSTANCE,
+						this.propertiesProvider.getMeshSyncServerURL()));
+			atomUI = new FeedUI(this.propertiesProvider.getDefaultAtomFile(),
+					atomUIControler);
+		}
+		return atomUI;
+	}
+
 	private void updateLayout(String item) {
 		CardLayout cl = (CardLayout) (body.getLayout());
-		
+
 		if (item.equals(MS_EXCEL_PANEL)) {
 			cl.show(body, MS_EXCEL_PANEL);
 		} else if (item.equals(MS_ACCESS_PANEL)) {
@@ -272,22 +307,25 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 			cl.show(body, CLOUD_PANEL);
 		} else if (item.equals(MYSQL_PANEL)) {
 			cl.show(body, MYSQL_PANEL);
+		} else if (item.equals(RSS_FILE_PANEL)) {
+			cl.show(body, RSS_FILE_PANEL);
+		} else if (item.equals(ATOM_FILE_PANEL)) {
+			cl.show(body, ATOM_FILE_PANEL);
 		} else {
 			cl.show(body, DYMMY_PANEL);
 		}
 	}
-	
-	public void showInitCard()
-	{
-	  CardLayout cl = (CardLayout) (body.getLayout());
-	  cl.show(body, DYMMY_PANEL);
+
+	public void showInitCard() {
+		CardLayout cl = (CardLayout) (body.getLayout());
+		cl.show(body, DYMMY_PANEL);
 	}
 
 	@Override
 	public String getColumn() {
 		String column = null;
 		String item = (String) getDataSourceType().getSelectedItem();
-		//CardLayout cl = (CardLayout) (body.getLayout());
+		// CardLayout cl = (CardLayout) (body.getLayout());
 		if (item.equals(MS_EXCEL_PANEL)) {
 			column = excelUI.getColumn();
 		} else if (item.equals(MS_ACCESS_PANEL)) {
@@ -304,7 +342,7 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 	public File getFile() {
 		File file = null;
 		String item = (String) getDataSourceType().getSelectedItem();
-		//CardLayout cl = (CardLayout) (body.getLayout());
+		// CardLayout cl = (CardLayout) (body.getLayout());
 		if (item.equals(MS_EXCEL_PANEL)) {
 			file = excelUI.getFile();
 		} else if (item.equals(MS_ACCESS_PANEL)) {
@@ -323,7 +361,7 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 		String table = null;
 		String item = (String) getDataSourceType().getSelectedItem();
 
-		//CardLayout cl = (CardLayout) (body.getLayout());
+		// CardLayout cl = (CardLayout) (body.getLayout());
 		if (item.equals(MS_EXCEL_PANEL)) {
 			table = excelUI.getTable();
 		} else if (item.equals(MS_ACCESS_PANEL)) {
@@ -346,60 +384,48 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 	}
 
 	@Override
-	public ISyncAdapter createAdapter() 
-	{
-	  return getCurrentController().createAdapter();
+	public ISyncAdapter createAdapter() {
+		return getCurrentController().createAdapter();
 	}
 
 	@Override
-	public IRDFSchema fetchSchema(ISyncAdapter adapter) 
-	{
-	  return getCurrentController().fetchSchema(adapter);
+	public IRDFSchema fetchSchema(ISyncAdapter adapter) {
+		return getCurrentController().fetchSchema(adapter);
 	}
 
 	@Override
-	public ISyncAdapter createAdapter(IRDFSchema schema) 
-	{
-	  return getCurrentController().createAdapter(schema);
+	public ISyncAdapter createAdapter(IRDFSchema schema) {
+		return getCurrentController().createAdapter(schema);
 	}
-	
-	public String toString()
-	{
-	  return getCurrentController().toString();
+
+	public String toString() {
+		return getCurrentController().toString();
 	}
-	
+
 	// TODO (NBL)improve this section
-	public AbstractController getCurrentController()
-	{
-	  AbstractController currrentController = null;
-	  
-	  String item = (String) getDataSourceType().getSelectedItem();
-	  
-    if (item.equals(KML_PANEL)) 
-    {
-      currrentController = kmlUI.getController();
-    } 
-    else if (item.equals(MS_EXCEL_PANEL)) 
-    {
-      currrentController = excelUI.getController();
-    } 
-    else if (item.equals(MS_ACCESS_PANEL)) 
-    {
-      currrentController = accessUI.getController();
-    } 
-    else if (item.equals(GOOGLE_SPREADSHEET_PANEL)) 
-    {
-      currrentController = googleUI.getController();
-    } 
-    else if (item.equals(CLOUD_PANEL)) 
-    {
-      currrentController = cloudUI.getController();
-    } 
-    else if (item.equals(MYSQL_PANEL)) 
-    {
-      currrentController = mysqlUI.getController();
-    }
-	  
-    return currrentController;
+	public AbstractController getCurrentController() {
+		AbstractController currrentController = null;
+
+		String item = (String) getDataSourceType().getSelectedItem();
+
+		if (item.equals(KML_PANEL)) {
+			currrentController = kmlUI.getController();
+		} else if (item.equals(MS_EXCEL_PANEL)) {
+			currrentController = excelUI.getController();
+		} else if (item.equals(MS_ACCESS_PANEL)) {
+			currrentController = accessUI.getController();
+		} else if (item.equals(GOOGLE_SPREADSHEET_PANEL)) {
+			currrentController = googleUI.getController();
+		} else if (item.equals(CLOUD_PANEL)) {
+			currrentController = cloudUI.getController();
+		} else if (item.equals(MYSQL_PANEL)) {
+			currrentController = mysqlUI.getController();
+		} else if (item.equals(RSS_FILE_PANEL)) {
+			currrentController = rssUI.getController();
+		} else if (item.equals(ATOM_FILE_PANEL)) {
+			currrentController = atomUI.getController();
+		}
+
+		return currrentController;
 	}
 }

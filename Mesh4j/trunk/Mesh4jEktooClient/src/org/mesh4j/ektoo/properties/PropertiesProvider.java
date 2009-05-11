@@ -45,7 +45,8 @@ public class PropertiesProvider {
 	}
 
 	public String getMsAccessFile() {
-		String defaultValue = this.properties.getProperty("default.mdb.file", "");
+		String defaultValue = this.properties.getProperty("default.mdb.file",
+				"");
 		File file = new File(defaultValue);
 		if (file.exists() && file.canRead()) {
 			defaultValue = file.getAbsolutePath();
@@ -56,9 +57,10 @@ public class PropertiesProvider {
 	public String getMsAccessTable() {
 		return this.properties.getProperty("default.mdb.table", "");
 	}
-	
+
 	public String getMsExcelFile() {
-		String defaultValue = this.properties.getProperty("default.excel.file", "");
+		String defaultValue = this.properties.getProperty("default.excel.file",
+				"");
 		File file = new File(defaultValue);
 		if (file.exists() && file.canRead()) {
 			defaultValue = file.getAbsolutePath();
@@ -73,7 +75,7 @@ public class PropertiesProvider {
 	public String getMsExcelUniqueColumnName() {
 		return this.properties.getProperty("default.excel.id", "");
 	}
-	
+
 	public IIdentityProvider getIdentityProvider() {
 		try {
 			String identityProviderClassName = this.properties.getProperty(
@@ -156,11 +158,11 @@ public class PropertiesProvider {
 	public String getDefaultMySQLSchema() {
 		return getString("default.mysql.schema");
 	}
+
 	public String getDefaultMySQLTable() {
 		return getString("default.mysql.table");
 	}
 
-	
 	public String getDefaultKMLFile() {
 		String fileName = getString("default.kml.file.name");
 		try {
@@ -171,10 +173,28 @@ public class PropertiesProvider {
 		}
 	}
 
-  public String getLookAndFeel()
-  {
-    return getString("default.look.and.feel.className");
-  }
+	public String getLookAndFeel() {
+		return getString("default.look.and.feel.className");
+	}
 
+	public String getDefaultRSSFile() {
+		String fileName = getString("default.rss.file.name");
+		try {
+			return new File(fileName).getCanonicalPath();
+		} catch (IOException e) {
+			// nothing to do
+			return "";
+		}
+	}
+
+	public String getDefaultAtomFile() {
+		String fileName = getString("default.atom.file.name");
+		try {
+			return new File(fileName).getCanonicalPath();
+		} catch (IOException e) {
+			// nothing to do
+			return "";
+		}
+	}
 
 }

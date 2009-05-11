@@ -1,6 +1,7 @@
 package org.mesh4j.ektoo;
 
 import org.mesh4j.sync.ISyncAdapter;
+import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 
 public interface ISyncAdapterBuilder {
@@ -71,5 +72,12 @@ public interface ISyncAdapterBuilder {
 	 * TODO create documentation (raju)
 	 */
 	public ISyncAdapter createKMLAdapter(String kmlFileName);
+	
+	
+	/**
+	 * TODO create documentation (raju)
+	 */
+	public ISyncAdapter createFeedAdapter(String title, String description,
+			String link, String fileName, ISyndicationFormat syndicationFormat);
 
 }

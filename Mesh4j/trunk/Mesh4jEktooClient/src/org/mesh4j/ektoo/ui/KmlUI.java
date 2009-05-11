@@ -14,6 +14,7 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,7 +36,7 @@ public class KmlUI extends AbstractUI {
 	private JButton btnFile = null;
 	
 	private KmlUIController controller;
-	private JFileChooser fileChooser = new JFileChooser();
+	private JFileChooser fileChooser = null;
 	private File file = null;
 
 	// BUSINESS METHODS
@@ -113,13 +114,12 @@ public class KmlUI extends AbstractUI {
 		return controller;
 	}
 	
-	public void setFileChooser(JFileChooser fileChooser) {
-		this.fileChooser = fileChooser;
-	}
-
 	public JFileChooser getFileChooser() {
-		if (fileChooser == null)
+		if (fileChooser == null){
 			fileChooser = new JFileChooser();
+			fileChooser.setAcceptAllFileFilterUsed(false);
+			fileChooser.setFileFilter(new FileNameExtensionFilter(EktooUITranslator.getKMLFileSelectorTitle(), "kml", "kmz", "KML", "KMZ"));
+		}		
 		return fileChooser;
 	}
 	
