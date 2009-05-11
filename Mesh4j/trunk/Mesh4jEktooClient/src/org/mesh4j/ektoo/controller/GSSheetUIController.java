@@ -1,7 +1,5 @@
 package org.mesh4j.ektoo.controller;
 
-import java.beans.PropertyChangeEvent;
-
 import org.mesh4j.ektoo.GoogleSpreadSheetInfo;
 import org.mesh4j.ektoo.ISyncAdapterBuilder;
 import org.mesh4j.ektoo.SyncAdapterBuilder;
@@ -83,11 +81,6 @@ public class GSSheetUIController extends AbstractController
 				model.getWorksheetName(),
 				model.getWorksheetName());
 		return adapterBuilder.createGoogleSpreadSheetAdapter(spreadSheetInfo);
-	}
-
-	@Override
-	public void propertyChange(PropertyChangeEvent arg0) {
-	  super.propertyChanged(arg0);
 	}
 
 	@Override

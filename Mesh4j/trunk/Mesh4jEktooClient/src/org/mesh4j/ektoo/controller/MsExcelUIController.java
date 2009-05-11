@@ -1,7 +1,5 @@
 package org.mesh4j.ektoo.controller;
 
-import java.beans.PropertyChangeEvent;
-
 import org.mesh4j.ektoo.SyncAdapterBuilder;
 import org.mesh4j.ektoo.model.MsExcelModel;
 import org.mesh4j.ektoo.properties.PropertiesProvider;
@@ -104,8 +102,4 @@ public class MsExcelUIController extends AbstractController
 		return (IRDFSchema)((MsExcelContentAdapter)((SplitAdapter)adapter).getContentAdapter()).getSchema();
 	}
 
-	@Override
-	public void propertyChange(PropertyChangeEvent arg0) {
-	  super.propertyChanged(arg0);
-	}
 }

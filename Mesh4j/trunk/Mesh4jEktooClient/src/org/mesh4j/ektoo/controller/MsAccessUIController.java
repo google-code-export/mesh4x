@@ -1,7 +1,5 @@
 package org.mesh4j.ektoo.controller;
 
-import java.beans.PropertyChangeEvent;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.ISyncAdapterBuilder;
@@ -75,9 +73,4 @@ public class MsAccessUIController extends AbstractController
 		return null;
 	}
 
-  @Override
-  public void propertyChange(PropertyChangeEvent arg0)
-  {
-    super.propertyChanged(arg0);
-  }
 }

@@ -73,14 +73,14 @@ public abstract class AbstractController implements PropertyChangeListener, IUIC
 		registeredViews.remove(view);
 	}
 
-	public void propertyChanged(PropertyChangeEvent evt) {
+	public void propertyChange(PropertyChangeEvent evt) 
+	{
 		for (AbstractUI view : registeredViews) {
 			view.modelPropertyChange(evt);
 		}
 	}
 
 	protected void setModelProperty(String propertyName, Object newValue) {
-	  System.out.println("3...");
 		for (AbstractModel model : registeredModels) {
 			try {
 				Method method = model.getClass().getMethod(
