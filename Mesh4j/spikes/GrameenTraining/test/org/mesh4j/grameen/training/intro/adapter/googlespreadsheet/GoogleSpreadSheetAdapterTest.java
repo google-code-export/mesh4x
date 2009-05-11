@@ -319,7 +319,7 @@ public class GoogleSpreadSheetAdapterTest {
 			deleteWorkSheet(workSheet);	
 		}
 		
-		GoogleSpreadsheetUtils.flush(spreadsheet.getService(), spreadsheet.getGSSpreadsheet());
+		GoogleSpreadsheetUtils.flush(spreadsheet.getSpreadsheetService(), spreadsheet.getGSSpreadsheet());
 	}
 	
 	private void clearContentOfWorkSheet(GSWorksheet<GSRow<GSCell>> workSheet){
