@@ -10,6 +10,8 @@ This step-by-step guide shows how a user can use Ektoo client to synchronize dat
 =Overview=
 Currently mesh4x supports following data repositories:
  # KML
+ # Rss 2.0
+ # Atom 1.0
  # Microsoft Excel
  # Microsoft Access
  # Google Spreadsheet
@@ -54,6 +56,16 @@ Defining various data source as source or target is a very simple process. Follo
 The process consists of:
  # Select "KML" data type from "<b>Data Source Type</b>" drop down list.
  # Browse KML files and select one that you want to synchronize.
+
+==Rss 2.0==
+The process consists of:
+ # Select "Rss 2.0" data type from "<b>Data Source Type</b>" drop down list.
+ # Browse rss XML files and select one that you want to synchronize.
+
+==Atom 1.0==
+The process consists of:
+ # Select "Atom 1.0" data type from "<b>Data Source Type</b>" drop down list.
+ # Browse atom xml files and select one that you want to synchronize.
 
 
 ==Microsoft Excel==
