@@ -1,5 +1,6 @@
 package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.mapping;
 
+import java.io.File;
 import java.util.HashMap;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -19,21 +20,24 @@ import org.mesh4j.sync.payload.schema.rdf.RDFInstance;
 import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
 import org.mesh4j.sync.utils.XMLHelper;
 
+import com.google.gdata.client.docs.DocsService;
+
 public class GoogleSpreadsheetToRDFMapping implements IGoogleSpreadsheetToXMLMapping{
 
 	// MODEL VARIABLES
 	private IRDFSchema rdfSchema;
-
+	private DocsService docService;
 	private String idColumnName;
 	private String lastUpdateColumnName = null;
 	
 	
 	// BUSINESS METHODs
-	public GoogleSpreadsheetToRDFMapping(IRDFSchema schema, String idColumnName) {
+	public GoogleSpreadsheetToRDFMapping(IRDFSchema schema, String idColumnName, DocsService docService) {
 		super();
 
 		this.rdfSchema = schema;
 		this.idColumnName = idColumnName;
+		this.docService = docService;
 	}
 	
 	//done
@@ -44,7 +48,7 @@ public class GoogleSpreadsheetToRDFMapping implements IGoogleSpreadsheetToXMLMap
 				workSheetName);
 
 		GSWorksheet<GSRow<GSCell>> worksheet = GoogleSpreadsheetUtils
-				.getOrCreateWorkSheetIfAbsent(gss, workSheetName);
+				.getOrCreateWorkSheetIfAbsent(gss.getGSSpreadsheet(), workSheetName);
 
 		GSRow<GSCell> dataRow = worksheet.getGSRow(worksheet.getChildElements()
 				.size());
@@ -121,7 +125,7 @@ public class GoogleSpreadsheetToRDFMapping implements IGoogleSpreadsheetToXMLMap
 				cell = row.getGSCell(propertyName);
 				
 				if (cell == null) {
-					cell = row.createAndAddNewCell(headerCell.getElementListIndex(),
+					cell = row.createNewCell(headerCell.getElementListIndex(),
 							propertyName, "");
 				}
 				cell.setCellValueAsType(propertyValue,
@@ -148,9 +152,15 @@ public class GoogleSpreadsheetToRDFMapping implements IGoogleSpreadsheetToXMLMap
 		}
 	}
 
-	public void createDataSource(String fileName) throws Exception {
+	public String createDataSource(String fileName) throws Exception {
+		//create a msexcel document using the rdf schema
 		HSSFWorkbook workbook = createDataSource();			
-		MsExcelUtils.flush(workbook, fileName);		
+		MsExcelUtils.flush(workbook, fileName);
+		
+		//upload the excel document
+		String spreadsheetId = GoogleSpreadsheetUtils
+				.uploadSpreadsheetDoc(new File(fileName), this.docService);
+		return spreadsheetId;
 	}
 
 	public HSSFWorkbook createDataSource() {
@@ -171,36 +181,15 @@ public class GoogleSpreadsheetToRDFMapping implements IGoogleSpreadsheetToXMLMap
 	}
 	
 	@Override
-	public Element convertRowToXML(GSRow<GSCell> row, GSWorksheet worksheet) {	
+	public Element convertRowToXML(GSRow<GSCell> row) {
 		RDFInstance rdfInstance = this.converRowToRDF(row);
 		return XMLHelper.parseElement(rdfInstance.asXML());		
 	}
 	
 	@Override
-	public void applyXMLElementToRow(GSWorksheet<GSRow<GSCell>> workSheet, GSRow<GSCell> row, Element rdfElement) {
-		/*Guard.argumentNotNull(workSheet, "workSheet");
-		Guard.argumentNotNull(element, "element");
-		
-		LinkedHashMap<String,String> listMap = new LinkedHashMap<String, String>();
-		GSRow<GSCell> gsRow = null ;
-		
-		for (Iterator<Element> iterator = element.elementIterator(); iterator.hasNext();){
-			Element child = (Element) iterator.next();
-			listMap.put(child.getName(), child.getText());
-		}
-		
-		try {
-			gsRow = workSheet.createNewRow(listMap);
-		} catch (IOException e) {
-			throw new MeshException(e);
-		} catch (ServiceException e) {
-			throw new MeshException(e);
-		}
-		return gsRow;*/
-		
+	public void applyXMLElementToRow(GSWorksheet<GSRow<GSCell>> workSheet, GSRow<GSCell> row, Element rdfElement) {		
 		RDFInstance rdfInstance = this.rdfSchema.createNewInstanceFromRDFXML(rdfElement.asXML());
-		this.appliesRDFToRow(workSheet, row, rdfInstance);
-		
+		this.appliesRDFToRow(workSheet, row, rdfInstance);		
 	}
 
 
@@ -208,7 +197,6 @@ public class GoogleSpreadsheetToRDFMapping implements IGoogleSpreadsheetToXMLMap
 	public String getIdColumnName() {
 		return this.idColumnName;
 	}
-
 
 	@Override
 	public String getLastUpdateColumnName() {
@@ -224,13 +212,11 @@ public class GoogleSpreadsheetToRDFMapping implements IGoogleSpreadsheetToXMLMap
 		return rdfSchema;
 	}
 
-
 	@Override
 	public int getIdColumnPosition() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
-
 
 	@Override
 	public int getLastUpdateColumnPosition() {
@@ -243,6 +229,5 @@ public class GoogleSpreadsheetToRDFMapping implements IGoogleSpreadsheetToXMLMap
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 
 }
