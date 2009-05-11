@@ -33,7 +33,7 @@ public class InterRepositoryRDFSyncTest {
 		SplitAdapter splitAdapterSource = (SplitAdapter)sourceAsMySql;
 		ISchema sourceSchema = ((HibernateContentAdapter)splitAdapterSource.getContentAdapter()).getMapping().getSchema();
 		
-		ISyncAdapter targetAsExcel = builder.createMsExcelAdapter(TestHelper.baseDirectoryForTest() + "contentFile.xls", "user", "id", (IRDFSchema)sourceSchema);
+		ISyncAdapter targetAsExcel = builder.createMsExcelAdapter(TestHelper.baseDirectoryForTest() + "s.xls", "user", "id", (IRDFSchema)sourceSchema);
 		
 		SyncEngine engine = new SyncEngine(splitAdapterSource,targetAsExcel);
 		List<Item> listOfConflicts = engine.synchronize();

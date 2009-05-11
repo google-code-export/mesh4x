@@ -131,7 +131,7 @@ public class AdapterFactoryTests {
 		String GOOGLE_SPREADSHEET_FIELD = "peo4fu7AitTo8e3v0D8FCew";
 
 		IGoogleSpreadsheetToXMLMapping mapper = new GoogleSpreadsheetToPlainXMLMapping(
-				"user", idColumName, idColumnPosition, lastUpdateColumnPosition);
+				"user", idColumName,null);
 		IGoogleSpreadSheet spreadsheet = new GoogleSpreadsheet(
 				GOOGLE_SPREADSHEET_FIELD, userName, passWord);
 
@@ -172,7 +172,7 @@ public class AdapterFactoryTests {
 		String GOOGLE_SPREADSHEET_FIELD = "peo4fu7AitTo8e3v0D8FCew";
 
 		IGoogleSpreadsheetToXMLMapping mapper = new GoogleSpreadsheetToPlainXMLMapping(
-				"user", idColumName, idColumnPosition, lastUpdateColumnPosition);
+				"user", idColumName,null);
 		IGoogleSpreadSheet spreadsheet = new GoogleSpreadsheet(
 				GOOGLE_SPREADSHEET_FIELD, userName, passWord);
 

@@ -155,9 +155,9 @@ public class InterRepositorySyncTest {
 
 		user = "root";
 		password = "test1234";
-		tableName = "user_target";
+		tableName = "user";
 
-		ISyncAdapter targetAsMySql =  builder.createMySQLAdapter(user, password,"localhost" ,3306,"mesh4xdb",tableName);
+		ISyncAdapter targetAsMySql =  builder.createMySQLAdapter(user, password,"localhost" ,3306,"mesh4xdbtarget",tableName);
 		
 		SyncEngine engine = new SyncEngine(sourceAsMySql,targetAsMySql);
 		List<Item> listOfConflicts = engine.synchronize();
