@@ -12,41 +12,30 @@ import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSCell;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSRow;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSSpreadsheet;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSWorksheet;
-import org.mesh4j.sync.validations.MeshException;
 
+import com.google.gdata.client.docs.DocsService;
 import com.google.gdata.client.spreadsheet.FeedURLFactory;
 import com.google.gdata.client.spreadsheet.SpreadsheetService;
-import com.google.gdata.data.spreadsheet.ListEntry;
 import com.google.gdata.data.spreadsheet.SpreadsheetEntry;
-import com.google.gdata.data.spreadsheet.WorksheetEntry;
-import com.google.gdata.util.AuthenticationException;
 import com.google.gdata.util.ServiceException;
 
 public class GoogleSpreadsheetUtilsTests {
 	
-	//private GoogleSpreadsheet gss;
 	private SpreadsheetService service;
-	String username = "sharif.uddin.ku@gmail.com";
-	String password = "sharif123";
+	private DocsService docService;
 	private FeedURLFactory factory;
+
+	String testCellValue = "New Cell";
+
 	
 	@Before
 	public void setUp() throws Exception {
-			
-		this.service = new SpreadsheetService("Mesh4j");
-		this.service.setProtocolVersion(SpreadsheetService.Versions.V1);
-
-		try {
-			this.service.setUserCredentials(username, password);
-
-		} catch (AuthenticationException e) {
-			throw new MeshException(e);
-		}
-
+		String username = "gspreadsheet.test@gmail.com";
+		String password = "java123456";
+		this.service = GoogleSpreadsheetUtils.getSpreadsheetService(username, password);
+		this.docService = GoogleSpreadsheetUtils.getDocService(username, password);
 		this.factory = FeedURLFactory.getDefault();		
-		
 	}
-	
 
 	public void shouldLoadSpreadsheetWhenFileExist()
 			throws FileNotFoundException, IOException {		
@@ -56,295 +45,255 @@ public class GoogleSpreadsheetUtilsTests {
 	}
 	
 	@Test
-	public void shouldCreatNewSpreadsheet(){
-		GSSpreadsheet spreadsheet = null;
-		try {
-			spreadsheet = GoogleSpreadsheetUtils.getOrCreateGSSpreadsheetIfAbsent(
-					this.factory, this.service, "");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ServiceException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}	
-		
-		Assert.assertNotNull(spreadsheet);		
+	public void shouldCreatNewSpreadsheet() throws IOException,
+			ServiceException {
+		GSSpreadsheet<?> spreadsheet = null;
+
+		spreadsheet = GoogleSpreadsheetUtils.getOrCreateGSSpreadsheetIfAbsent(
+				this.factory, this.service, this.docService, "");
+
+		Assert.assertNotNull(spreadsheet);
 		Assert.assertNotNull(spreadsheet.getBaseEntry());
-		Assert.assertEquals(spreadsheet.getBaseEntry().getTitle(),"New Spredsheet");
+		
+		//TODO: remove
+		System.out.println(spreadsheet.getId().substring(spreadsheet.getId().lastIndexOf("/") + 1));
+		
+		Assert.assertNotNull(spreadsheet.getBaseEntry().getId());
+		Assert.assertEquals(spreadsheet.getBaseEntry().getTitle()
+				.getPlainText(), GoogleSpreadsheetUtils.DEFAULT_NEW_SPREADSHEET_NAME);
+		
 	}
-	
-	
-	@Deprecated
-	public void shouldGetRow(){
-		SpreadsheetEntry sse = getSampleGoogleSpreadsheet().getSpreadsheet();		
-		WorksheetEntry wse = null;
-		ListEntry row = null;
+		
 
-		try {
-			wse = GoogleSpreadsheetUtils.getWorksheet(this.service, sse, 0);
-			row = GoogleSpreadsheetUtils.getRow(this.service, wse, "firstname", "Sharif");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ServiceException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		Assert.assertNotNull(row);
-	}
-	
-	@Deprecated
-	public void shouldGetMJCell() throws IOException, ServiceException {
-		SpreadsheetEntry sse = getSampleGoogleSpreadsheet().getSpreadsheet();
-		WorksheetEntry wse = GoogleSpreadsheetUtils.getWorksheet(this.service, sse, 0);
-		Assert.assertNotNull(wse);
-		
-		int cellRowIndex = 2;
-		int cellColIndex = 2;
-		
-		GSCell gsCell = GoogleSpreadsheetUtils.getGSCell(this.service,
-				wse, cellRowIndex, cellColIndex);
-		
-		Assert.assertNotNull(gsCell);
-		Assert.assertEquals(cellColIndex, gsCell.getCellEntry().getCell().getCol());
-		Assert.assertEquals(cellRowIndex, gsCell.getCellEntry().getCell().getRow());
-
-		Assert.assertEquals("Sharif", gsCell.getCellEntry().getCell().getValue());
-		
-		
-		Assert.assertNotNull(gsCell.getParentRow());		
-		
-		Assert.assertEquals(cellRowIndex - 1, gsCell.getParentRow().getRowIndex());
-		Assert.assertEquals(4, gsCell.getParentRow().getGSCells().size());
-		
-		//this cell should be the same as the one contained in the child cell list of its parent at position colIndex  
-		Assert.assertEquals(gsCell.getId(), ((GSCell) gsCell.getParentRow().getGSCell(cellColIndex)).getId());
-		
-		//get the parent row, pick 2 different child/cell, parent row ID of those two child should be same 
-		Assert.assertEquals(((GSCell) gsCell.getParentRow().getGSCell(cellColIndex + 1)).getParentRow().getId(),
-				((GSCell) gsCell.getParentRow().getGSCell(cellColIndex - 1)).getParentRow().getId());
-		
-		//get the parent row, pick 2 different child/cell, parent row index of those two child should be same 
-		Assert.assertEquals(((GSCell) gsCell.getParentRow().getGSCell(cellColIndex+1)).getParentRow().getRowIndex(),
-				((GSCell) gsCell.getParentRow().getGSCell(cellColIndex - 1)).getParentRow().getRowIndex());		
-	}		
-
-	@Deprecated
-	public void shouldGetMJRow() throws IOException, ServiceException {
-		SpreadsheetEntry sse = getSampleGoogleSpreadsheet().getSpreadsheet();
-		WorksheetEntry wse = GoogleSpreadsheetUtils.getWorksheet(this.service, sse, 0);
-		Assert.assertNotNull(wse);
-		
-		int rowIndex = 1;
-		
-		GSRow gsRow = GoogleSpreadsheetUtils.getGSRow(this.service,
-				wse, rowIndex);
-		
-		Assert.assertNotNull(gsRow);
-		Assert.assertEquals(rowIndex, gsRow.getRowIndex());
-		
-		Assert.assertNotNull(gsRow.getGSCells());
-		Assert.assertTrue(gsRow.getGSCells().size()>0);
-		
-/*		for (String tag : mjRow.getRowEntry().getCustomElements().getTags()) {
-		      //out.print(entry.getCustomElements().getValue(tag)+"\t");
-		      System.out.print(mjRow.getRowEntry().getCustomElements().getValue(tag)+" \t");
-		}    		    
-		System.out.println("");
-*/		    
-		/*//row/list's rowIndex will be 1 less than cells rowIndex!
-		Assert.assertEquals(rowIndex - 1, mjCell.getParentRow().getRowIndex());
-		Assert.assertEquals(4, mjCell.getParentRow().getMjCells().size());
-		
-		//this cell should be the same as the one contained in the child cell list of its parent at position colIndex  
-		Assert.assertEquals(mjCell.getId(), mjCell.getParentRow().getMjCell(colIndex).getId());
-		
-		//get the parent row, pick 2 different child/cell, parent row ID of those two child should be same 
-		Assert.assertEquals(mjCell.getParentRow().getMjCell(colIndex+1).getParentRow().getId(),
-				mjCell.getParentRow().getMjCell(colIndex - 1).getParentRow().getId());
-		
-		//get the parent row, pick 2 different child/cell, parent row index of those two child should be same 
-		Assert.assertEquals(mjCell.getParentRow().getMjCell(colIndex+1).getParentRow().getRowIndex(),
-				mjCell.getParentRow().getMjCell(colIndex - 1).getParentRow().getRowIndex());		*/
-	}		
-
-	//@Test
+	@SuppressWarnings("unchecked")
+	@Test
 	public void shouldBatchUpdateCells() throws IOException, ServiceException {
+		
 		GSSpreadsheet<GSWorksheet> ss = getSampleGoogleSpreadsheet();
 		GSWorksheet<GSRow> ws = ss.getGSWorksheet(1); //get the first sheet
 		
-		Assert.assertNotNull(ws);		
-		Assert.assertEquals(ws.getId(), ss.getChildElement("1").getId()); //get the first sheet from another method and check if they are equal
+		Assert.assertNotNull(ws);	
 		
-		GSCell gsCell_1 = ws.getGSCell(2, 1);		
-		gsCell_1.updateCellValue("GSL-A21abc");		
+		GSRow<GSCell> newGSRow = addTestRow(ws);
 		
-		GSCell gsCell_2 = ws.getGSCell(3, 1);
-		gsCell_2.updateCellValue("GSL-A21xyz");		
+		GoogleSpreadsheetUtils.flush(this.service, ss);			
+		//a new test row added
 		
-		GoogleSpreadsheetUtils.flush(this.service, ss);		
-	}		
-	
+		ss = getSampleGoogleSpreadsheet();
+		ws = ss.getGSWorksheet(1); //get the first sheet	
+		
+		GSRow<GSCell> gsRow = ws.getGSRow(newGSRow.getElementListIndex());		
+		
+		String updatedCellValue1 = "Updated Cell 1";
+		String updatedCellValue2 = "Updated Cell 2";
+		
+		GSCell gsCellToUpdate1 = gsRow.getGSCell(1);		
+		gsCellToUpdate1.updateCellValue(updatedCellValue1);		
+		
+		GSCell gsCellToUpdate2 = gsRow.getGSCell(2);
+		gsCellToUpdate2.updateCellValue(updatedCellValue2);		
+		
+		GoogleSpreadsheetUtils.flush(this.service, ss);			
+		
+		ss = getSampleGoogleSpreadsheet();
+		ws = ss.getGSWorksheet(1); //get the first sheet	
+		
+		gsRow = ws.getGSRow(newGSRow.getElementListIndex());					
+		GSCell gsCell1 = gsRow.getGSCell(1);			
+		GSCell gsCell2 = gsRow.getGSCell(2);
+		
+		Assert.assertNotNull(gsCell1);
+		Assert.assertNotNull(gsCell2);
+		Assert.assertEquals(updatedCellValue1, gsCell1.getCellValue());
+		Assert.assertEquals(updatedCellValue2, gsCell2.getCellValue());
+		
+		//test success, so remove the test row from the sheet
+		ws.deleteChildElement(String.valueOf(newGSRow.getElementListIndex()));
+		GoogleSpreadsheetUtils.flush(this.service, ss);	
+	}			
 
-	//@Test 
+	@Test 
+	@SuppressWarnings("unchecked")
 	public void shouldBatchUpdateRows() throws IOException, ServiceException {
 		GSSpreadsheet<GSWorksheet> ss = getSampleGoogleSpreadsheet();
 		GSWorksheet<GSRow> ws = ss.getGSWorksheet(1); //get the first sheet
 		
-		Assert.assertNotNull(ws);		
-		Assert.assertEquals(ws.getId(), ss.getChildElement("1").getId()); //get the first sheet from another method and check if they are equal
+		Assert.assertNotNull(ws);	
 		
-		GSRow gsRow_1 = ws.getGSRow(2);
+		GSRow<GSCell> newGSRow1 = addTestRow(ws);
+		GSRow<GSCell> newGSRow2 = addTestRow(ws);	
 		
-		gsRow_1.updateCellValue("GSL-A21cell", 1);
+		GoogleSpreadsheetUtils.flush(this.service, ss);			
+		//a new test row added
 		
-		GSRow gsRow_2 = ws.getGSRow(3);
-		gsRow_2.updateCellValue("GSL-A21cell", 1);
+		ss = getSampleGoogleSpreadsheet();
+		ws = ss.getGSWorksheet(1); //get the first sheet	
 		
-		GoogleSpreadsheetUtils.flush(this.service, ss);		
+		GSRow<GSCell> headerRow = ws.getGSRow(1);
+		GSRow<GSCell> gsRowToUpdate1 = ws.getGSRow(newGSRow1.getElementListIndex());	
+		GSRow<GSCell> gsRowToUpdate2 = ws.getGSRow(newGSRow2.getElementListIndex());	
+		
+		String keyToCellForUpdate = headerRow.getGSCells().keySet().iterator().next();
+		
+		String updatedCellValue1 = "Updated Cell 1";
+		String updatedCellValue2 = "Updated Cell 2";
+		
+		gsRowToUpdate1.updateCellValue(updatedCellValue1, keyToCellForUpdate);
+		
+		gsRowToUpdate2.updateCellValue(updatedCellValue2, keyToCellForUpdate);
+		
+		GoogleSpreadsheetUtils.flush(this.service, ss);	
+		
+		ss=null;ws=null;
+		ss = getSampleGoogleSpreadsheet();
+		ws = ss.getGSWorksheet(1); //get the first sheet
+		
+		GSRow<GSCell> gsRowUpdated1 = ws.getGSRow(newGSRow1.getElementListIndex());	
+		GSRow<GSCell> gsRowUpdated2 = ws.getGSRow(newGSRow2.getElementListIndex());	
+		
+		Assert.assertNotNull(gsRowUpdated1);
+		Assert.assertNotNull(gsRowUpdated2);
+		
+		Assert.assertEquals(updatedCellValue1, gsRowUpdated1.getGSCell(keyToCellForUpdate).getCellValue());
+		Assert.assertEquals(updatedCellValue2, gsRowUpdated2.getGSCell(keyToCellForUpdate).getCellValue());
+		
+		
+		//test success, now remove the test rows from the sheet
+		ws.deleteChildElement(String.valueOf(gsRowUpdated1.getElementListIndex()));
+		ws.deleteChildElement(String.valueOf(gsRowUpdated2.getElementListIndex()));
+		GoogleSpreadsheetUtils.flush(this.service, ss);			
 	}		
 
 
-	//@Test   
+	@SuppressWarnings("unchecked")
+	@Test   
 	public void shouldAddNweRow() throws IOException, ServiceException {
 		GSSpreadsheet<GSWorksheet> ss = getSampleGoogleSpreadsheet();
 		GSWorksheet<GSRow> ws = ss.getGSWorksheet(1); //get the first sheet
 		
-		Assert.assertNotNull(ws);		
-		Assert.assertEquals(ws.getId(), ss.getChildElement("1").getId()); //get the first sheet from another method and check if they are equal
+		Assert.assertNotNull(ws);	
 		
-		//String [] values = {"newXy","newXy","newXy","newXy", "newXU"};
-		//GSRow<GSCell> newGSRow = ws.createNewRow(values);
-
-		LinkedHashMap<String, String> values = new LinkedHashMap<String, String>();
-		for(String key :  ws.getCellHeaderTagset()){
-			values.put( key, "New Cool Cell");
-		}
-		GSRow<GSCell> newGSRow = ws.createNewRow(values);		
-		ws.addChildElement(newGSRow.getElementId(), newGSRow);
-
+		int rowCountBeforeAdd = ws.getChildElements().size();
+			
+		GSRow<GSCell> newGSRow = addTestRow(ws);		
 		
-		for(String key :  ws.getCellHeaderTagset()){
-			values.put( key, "New Hot Cell");
-		}
-		newGSRow = ws.createNewRow(values);		
-		ws.addChildElement(newGSRow.getElementId(), newGSRow);
+		//check row count
+		Assert.assertEquals(rowCountBeforeAdd + 1, ws.getChildElements().size());
 
-		
 		GoogleSpreadsheetUtils.flush(this.service, ss);	
 
-
-		ws.deleteChildElement(""+ws.getNonDeletedChildElements().size());
-		/*GSCell gsCell_1 = ws.getGSCell(newGSRow.getRowIndex(), 3);		
-		gsCell_1.updateCellValue("New super Hot cell");	
-		 */
+		ss=null;ws=null;
 		
-		try {
-			Thread.currentThread().sleep(5000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		ss = getSampleGoogleSpreadsheet();
+		ws = ss.getGSWorksheet(1); //get the first sheet
+		
+		Assert.assertEquals(rowCountBeforeAdd + 1, ws.getChildElements().size());
+		
+		GSRow<GSCell> gsRow = ws.getGSRow(newGSRow.getElementListIndex());
+		Assert.assertNotNull(gsRow);
+		
+		for(GSCell cell : gsRow.getChildElements().values()){
+			Assert.assertEquals(testCellValue, cell.getCellValue());
 		}
 		
+		//test success, so remove the test row from the sheet
+		ws.deleteChildElement(String.valueOf(newGSRow.getElementListIndex()));
 		GoogleSpreadsheetUtils.flush(this.service, ss);	
-		
 	}		
 	
 		
-	//@Test   
+	@SuppressWarnings("unchecked")
+	@Test   
 	public void shouldDeleteRow() throws IOException, ServiceException {
+		
 		GSSpreadsheet<GSWorksheet> ss = getSampleGoogleSpreadsheet();
 		GSWorksheet<GSRow> ws = ss.getGSWorksheet(1); //get the first sheet
 		
-		Assert.assertNotNull(ws);		
-		Assert.assertEquals(ws.getId(), ss.getChildElement("1").getId()); //get the first sheet from another method and check if they are equal
-
-		ws.deleteChildElement("5");		
+		Assert.assertNotNull(ws);	
 		
-		GoogleSpreadsheetUtils.flush(this.service, ss);		
-	}		
+		int rowCountBeforeAdd = ws.getChildElements().size();
+		
+		GSRow<GSCell> newGSRow = addTestRow(ws);		
+		
+		GoogleSpreadsheetUtils.flush(this.service, ss);			
+		
+		ss = getSampleGoogleSpreadsheet();
+		ws = ss.getGSWorksheet(1); //get the first sheet	
+		
+		int rowCountBeforeDelete = ws.getChildElements().size();
+		Assert.assertEquals(rowCountBeforeDelete - 1 , rowCountBeforeAdd);
+		
+		//remove the row from the sheet
+		ws.deleteChildElement(String.valueOf(newGSRow.getElementListIndex()));
+		
+		GoogleSpreadsheetUtils.flush(this.service, ss);			
+			
+		ss = getSampleGoogleSpreadsheet();
+		ws = ss.getGSWorksheet(1); 
+		
+		Assert.assertEquals(rowCountBeforeDelete - 1, ws.getChildElements().size());
+	}	
 	
-	
-	
-	//@Test
-	public void shouldRefreshRow() throws IOException, ServiceException {
+	@SuppressWarnings("unchecked")
+	@Test
+	public void ShouldCreateSyncSheetIfAbsent(){
 		GSSpreadsheet<GSWorksheet> ss = getSampleGoogleSpreadsheet();
-		GSWorksheet<GSRow> ws = ss.getGSWorksheet(1); //get the first sheet
+		String syncSheetName = "sync_info";
+		GSWorksheet syncSheet = ss.getGSWorksheetBySheetName(syncSheetName);
 		
-		Assert.assertNotNull(ws);		
-		Assert.assertEquals(ws.getId(), ss.getChildElement("1").getId()); //get the first sheet from another method and check if they are equal		
-		
-		//manually update a cell 2, 1 to specific value
-		//"GSL-A219"
-		
-		
-		//get a row that is going to be changed by batch update
-		GSRow<GSCell> gsRow_1 = ws.getGSRow(2);
-		
-		gsRow_1.updateCellValue("GSL-A21", 1);
+		if(syncSheet != null){
+			ss.deleteChildElement(String.valueOf(syncSheet.getElementListIndex()));	
+		}	
 		
 		GoogleSpreadsheetUtils.flush(this.service, ss);
 		
+		ss = null; syncSheet = null;
+		ss = getSampleGoogleSpreadsheet();
+		syncSheet = ss.getGSWorksheetBySheetName(syncSheetName);
 		
-		Assert.assertTrue( gsRow_1.isDirty() );	//row is dirty	
-		GSCell gsCell = gsRow_1.getGSCell(1);		
-		Assert.assertTrue( gsCell.isDirty() ); //cell is dirty
+		Assert.assertNull(syncSheet);
 		
-		Assert.assertEquals(gsCell.getCellEntry().getCell().getValue(), null); //content is dirty
+		GSWorksheet newSyncSheet = GoogleSpreadsheetUtils.getOrCreateSyncSheetIfAbsent(ss, syncSheetName);	
 		
-		gsRow_1.refreshMe(); //reload data from feed
-
-		Assert.assertFalse( gsRow_1.isDirty() );		
-		GSCell gsCellAfterRefresh = gsRow_1.getGSCell(1);		
-		Assert.assertFalse( gsCellAfterRefresh .isDirty() );
+		Assert.assertNotNull(newSyncSheet);
 		
-		Assert.assertEquals(gsCellAfterRefresh.getCellEntry().getCell().getValue(), "GSL-A21"); //content should be updated
+		GoogleSpreadsheetUtils.flush(this.service, ss);
 		
-	}	
-/*	
-	@Test //TODO: need to resolve phantom row issue
-	public void shouldBatchDeleteRow() throws IOException, ServiceException {
-		SpreadsheetEntry sse = getSampleGoogleSpreadsheet();
-		WorksheetEntry wse = GoogleSpreadsheetUtils.getWorksheet(gss
-				.getService(), sse, 0);
-		Assert.assertNotNull(wse);
+		ss = null; syncSheet = null;
+		ss = getSampleGoogleSpreadsheet();
+		syncSheet = ss.getGSWorksheetBySheetName(syncSheetName);		
+		Assert.assertNotNull(syncSheet);
 		
-		GSRow gsRow_4 = GoogleSpreadsheetUtils.getGSRow(this.service,
-				wse, 4);
-		for(IGSElement gsCell: gsRow_4.getGsCells()) {
-			((GSCell)gsCell).getCellEntry().changeInputValueLocal("");
-			gsCell.setDirty();
+		Assert.assertEquals(newSyncSheet.getId(), syncSheet.getId());
+	}
 		
-			BatchUtils.setBatchId(((GSCell)gsCell).getCellEntry(), ((GSCell)gsCell).getCellEntry().getId());
-			BatchUtils.setBatchOperationType(((GSCell)gsCell).getCellEntry(),
-					BatchOperationType.UPDATE);
+	@SuppressWarnings("unchecked")
+	private GSRow<GSCell> addTestRow(GSWorksheet<GSRow> ws) throws IOException,
+			ServiceException {
+		GSRow<GSCell> headerRow = ws.getGSRow(1);		
+		Assert.assertNotNull("No header row available in the sheet", headerRow);	
+		
+		//add a new row 
+		LinkedHashMap<String, String> values = new LinkedHashMap<String, String>();
+		for(String key : headerRow.getChildElements().keySet()){
+			values.put( key, testCellValue);
 		}
 		
-		gsRow_4.setDirty();
-		gss.addEntryToUpdate(gsRow_4);
-	
-		GoogleSpreadsheetUtils.flush(this.service, wse);
+		return ws.createNewRow(values);
 	}		
 	
-*/	
+	@SuppressWarnings("unchecked")
 	private GSSpreadsheet getSampleGoogleSpreadsheet() {
 		String spreadsheetFileId = "pvQrTFmc5F8tXD89WRNiBVw";
-		/*this.gss = new GoogleSpreadsheet(spreadsheetFileId,
-		username, password);		
-		return gss.getGSSpreadsheet();*/
-		
-		
+	
 		try {
 		
 			return GoogleSpreadsheetUtils.getGSSpreadsheet(
 					this.factory, this.service, spreadsheetFileId);
 		
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ServiceException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
