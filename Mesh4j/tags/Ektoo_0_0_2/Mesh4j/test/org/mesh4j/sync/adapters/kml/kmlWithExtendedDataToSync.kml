@@ -1,0 +1,32 @@
+<kml xmlns="http://earth.google.com/kml/2.2">
+<Document>
+  <name>ExtendedData Test</name>
+    <Schema name="TrailHeadType" id="TrailHeadTypeId">     
+    	<SimpleField type="string" name="TrailHeadName">       
+      		<displayName><![CDATA[<b>Trail Head Name</b>]]></displayName>     
+    	</SimpleField>     
+    	<SimpleField type="double" name="TrailLength">       
+      		<displayName><![CDATA[<i>The length in miles</i>]]></displayName>     
+    	</SimpleField>     
+    	<SimpleField type="int" name="ElevationGain">       
+      		<displayName><![CDATA[<i>change in altitude</i>]]></displayName>     
+    	</SimpleField>   
+ 	</Schema> 
+	<ExtendedData xmlns:camp="http://campsites.com">
+      <camp:number>14</camp:number>
+      <camp:parkingSpaces>2</camp:parkingSpaces>
+      <camp:tentSites>4</camp:tentSites>
+      <SchemaData schemaUrl="#TrailHeadTypeId">        
+        <SimpleData name="TrailHeadName">Pi in the sky</SimpleData>         
+        <SimpleData name="TrailLength">3.14159</SimpleData>         
+        <SimpleData name="ElevationGain">10</SimpleData>       
+      </SchemaData>
+      <Data name="holeNumber">
+          <displayName><![CDATA[
+            <b>This is hole </b>
+          ]]></displayName>
+          <value>1</value>
+       </Data>
+    </ExtendedData>
+</Document>
+</kml>
