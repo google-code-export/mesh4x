@@ -28,7 +28,6 @@ import org.mesh4j.sync.id.generator.IIdGenerator;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.security.IIdentityProvider;
-import org.mesh4j.sync.test.utils.TestHelper;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
@@ -65,9 +64,8 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 
 		// TODO create googleSpreadSheetSyncAdapterFactory in GeoogleSpreadSheet project
 		String idColumName = spreadSheetInfo.getIdColumnName();
-		int lastUpdateColumnPosition = spreadSheetInfo
-				.getLastUpdateColumnPosition();
-		int idColumnPosition = spreadSheetInfo.getIdColumnPosition();
+		//int lastUpdateColumnPosition = spreadSheetInfo.getLastUpdateColumnPosition();
+		//int idColumnPosition = spreadSheetInfo.getIdColumnPosition();
 		String userName = spreadSheetInfo.getUserName();
 		String passWord = spreadSheetInfo.getPassWord();
 		String googleSpreadSheetId = spreadSheetInfo.getGoogleSpreadSheetId();
