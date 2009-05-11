@@ -41,9 +41,8 @@ public class GoogleSpreadsheetToPlainXMLMapping implements IGoogleSpreadsheetToX
 	
 	
 	@Override
-	public Element convertRowToXML(GSRow<GSCell> gsRow, GSWorksheet worksheet) {
+	public Element convertRowToXML(GSRow<GSCell> gsRow) {
 		Guard.argumentNotNull(gsRow, "gsRow");
-		Guard.argumentNotNull(worksheet, "worksheet");
 		
 		Element rootElement = DocumentHelper.createElement(this.getType());
 		Element childElement ; 
