@@ -353,7 +353,7 @@ public class GoogleSpreadSheetSyncRepositoryTest {
 	@Before
 	public void setUp(){
 		spreadsheet = new GoogleSpreadsheet(GOOGLE_SPREADSHEET_FIELD,userName,passWord);
-		workSheet = GoogleSpreadsheetUtils.getOrCreateSyncSheetIfAbsent(spreadsheet,"sync_info");
+		workSheet = GoogleSpreadsheetUtils.getOrCreateSyncSheetIfAbsent(spreadsheet.getGSSpreadsheet(),"sync_info");
 	}
 	
 	
@@ -365,7 +365,7 @@ public class GoogleSpreadSheetSyncRepositoryTest {
 				workSheet.deleteChildElement(mapRows.getKey());	
 			}
 		}
-		GoogleSpreadsheetUtils.flush(spreadsheet.getService(), spreadsheet.getGSSpreadsheet());
+		GoogleSpreadsheetUtils.flush(spreadsheet.getSpreadsheetService(), spreadsheet.getGSSpreadsheet());
 	}
 	
 	
