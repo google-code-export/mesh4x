@@ -18,16 +18,10 @@ public interface IGoogleSpreadsheetToXMLMapping {
 	//unique id a column is needed which will hold the id.basically we say
 	//this is idcolumnname.
 	public String getIdColumnName();
-	
-	public int getIdColumnPosition();
 
 	//whenever any item in entity is updated or changed its corresponding
 	//lasupdatecolumnname is also updated with date.
-	@Deprecated
 	public String getLastUpdateColumnName();
-
-	//provides the last update column position
-	public int getLastUpdateColumnPosition();
 
 	//which is basically entity name
 	public String getType();

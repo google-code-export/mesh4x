@@ -213,18 +213,6 @@ public class GoogleSpreadsheetToRDFMapping implements IGoogleSpreadsheetToXMLMap
 	}
 
 	@Override
-	public int getIdColumnPosition() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int getLastUpdateColumnPosition() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
 	public String getType() {
 		// TODO Auto-generated method stub
 		return null;

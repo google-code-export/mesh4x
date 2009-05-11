@@ -34,6 +34,8 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 
 	//Which actually represents the lastupdatecolumnName position of SpreadSheetToXMLMapper
 	private int lastUpdateColumnIndex = -1;
+	//represents the id column name index or position in repository
+	private int entityIdIndex = -1;
 	
 	//represents the google spreadsheet
 	private IGoogleSpreadSheet spreadSheet = null;
@@ -48,6 +50,8 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 	 * @param spreadSheet the google spreadsheet
 	 * @param sheetName the particular sheet name of a spreadsheet 
 	 */
+	//TODO(raju)  no need to pass the workSheet instance, rather pass the worksheet name
+	// just pick the particular worksheet from IGoogleSpreadSheet
 	public GoogleSpreadSheetContentAdapter(IGoogleSpreadSheet spreadSheet,GSWorksheet<GSRow<GSCell>> workSheet,
 			IGoogleSpreadsheetToXMLMapping mapper){
 		
@@ -64,7 +68,20 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 		this.entityName = mapper.getType();
 //		this.lastUpdateColumnIndex = mapper.getLastUpdateColumnPosition();
 		this.idColumnName = mapper.getIdColumnName();
-		
+		init();
+	}
+	
+	private void init(){
+		for(Map.Entry<String, GSRow<GSCell>> rowMap:workSheet.getGSRows().entrySet()){
+			GSCell cell = GoogleSpreadsheetUtils.getCell(rowMap.getValue(), mapper.getIdColumnName());
+			entityIdIndex = cell.getColIndex();
+			
+			if(this.mapper.getLastUpdateColumnName() != null && !this.mapper.getLastUpdateColumnName().equals("")){
+				cell = GoogleSpreadsheetUtils.getCell(rowMap.getValue(), mapper.getLastUpdateColumnName());
+				lastUpdateColumnIndex = cell.getColIndex();		
+			}
+			break;
+		}
 	}
 	
 	@Override
@@ -72,7 +89,7 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 		Guard.argumentNotNull(content, "content");
 		
 		EntityContent entityContent = EntityContent.normalizeContent(content, this.entityName, idColumnName);
-		GSRow row = GoogleSpreadsheetUtils.getRow(this.workSheet, mapper.getIdColumnPosition(), entityContent.getId());
+		GSRow row = GoogleSpreadsheetUtils.getRow(this.workSheet, entityIdIndex, entityContent.getId());
 		if(row != null){
 			this.workSheet.deleteChildElement(row.getElementId());
 		}
@@ -82,7 +99,7 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 	public IContent get(String contentId) {
 		Guard.argumentNotNullOrEmptyString(contentId, "contentId");
 		//here contentId is entityid 
-		GSRow row = GoogleSpreadsheetUtils.getRow(this.workSheet, mapper.getIdColumnPosition(), contentId);
+		GSRow row = GoogleSpreadsheetUtils.getRow(this.workSheet, entityIdIndex, contentId);
 		if(row != null){
 			Element payLoad = mapper.convertRowToXML(row);
 			return new EntityContent(payLoad,this.entityName,contentId);
@@ -104,7 +121,7 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 			if(gsRow.getElementListIndex() > 1 ){
 				if(gsRow != null && rowHasChanged(gsRow, since)){
 					Element payLoad = mapper.convertRowToXML(gsRow);
-					 GSCell cell = gsRow.getGSCell(mapper.getIdColumnPosition());
+					 GSCell cell = gsRow.getGSCell(entityIdIndex);
 					 if(cell != null){
 						 entityId = cell.getCellValue();
 					 }
@@ -145,7 +162,7 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 		Guard.argumentNotNull(content, "content");
 		
 		EntityContent entityContent = EntityContent.normalizeContent(content, this.entityName, idColumnName);
-		GSRow row = GoogleSpreadsheetUtils.getRow(this.workSheet, mapper.getIdColumnPosition(), entityContent.getId());
+		GSRow row = GoogleSpreadsheetUtils.getRow(this.workSheet, entityIdIndex, entityContent.getId());
 		if(row == null){
 			row = workSheet.createNewRow(workSheet.getChildElements().size() +1);
 		}
@@ -163,7 +180,7 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 			GSRow<GSCell> gsRow = rowMap.getValue();
 			String entityId  = "";
 			if(gsRow.getRowIndex() > 1 ){
-				GSCell cell = gsRow.getGSCell(mapper.getIdColumnPosition());
+				GSCell cell = gsRow.getGSCell(entityIdIndex);
 				if(cell != null){
 					String value = cell.getCellValue();
 					System.out.println("cell value " + value);

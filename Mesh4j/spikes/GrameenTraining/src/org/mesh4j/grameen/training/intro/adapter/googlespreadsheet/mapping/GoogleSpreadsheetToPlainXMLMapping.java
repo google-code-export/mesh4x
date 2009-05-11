@@ -21,22 +21,17 @@ public class GoogleSpreadsheetToPlainXMLMapping implements IGoogleSpreadsheetToX
 	private String idColumnName = "";
 	private String lastUpdateColumnName = "";
 	private String type = "";
-	private int lastUpdateColumnPosition = -1;
-	private int idColumnPosition = 0;
+	
 	
 		
-	public GoogleSpreadsheetToPlainXMLMapping(String type, String idColumnName,
-			int idColumnPosition, int lastUpdateColumnPosition) {
+	public GoogleSpreadsheetToPlainXMLMapping(String type, String idColumnName,String lastUpdateColumnName){
 		Guard.argumentNotNullOrEmptyString(type, "type");
 		Guard.argumentNotNullOrEmptyString(idColumnName, "idColumnName");
-		Guard.argumentNotNull(idColumnPosition, "idColumnPosition");
-		Guard.argumentNotNull(lastUpdateColumnPosition,
-				"lastUpdateColumnPosition");
-
+		if(lastUpdateColumnName != null){
+			Guard.argumentNotNullOrEmptyString(lastUpdateColumnName, "lastUpdateColumnName");
+		}
 		this.type = type;
 		this.idColumnName = idColumnName;
-		this.idColumnPosition = idColumnPosition;
-		this.lastUpdateColumnPosition = lastUpdateColumnPosition;
 	}
 	
 	
@@ -107,16 +102,6 @@ public class GoogleSpreadsheetToPlainXMLMapping implements IGoogleSpreadsheetToX
 	@Override
 	public String getLastUpdateColumnName() {
 		return lastUpdateColumnName;
-	}
-
-	@Override
-	public int getLastUpdateColumnPosition() {
-		return this.lastUpdateColumnPosition;
-	}
-
-	@Override
-	public int getIdColumnPosition() {
-		return this.idColumnPosition;
 	}
 
 	@Override
