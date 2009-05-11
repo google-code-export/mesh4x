@@ -40,9 +40,7 @@ public class GoogleSpreadSheetAdapterTest {
 	@Before
 	public void setUp(){
 		String idColumName = "id";
-		int lastUpdateColumnPosition = 6;
-		int idColumnPosition = 1;
-		mapper = new GoogleSpreadsheetToPlainXMLMapping("user",idColumName,idColumnPosition,lastUpdateColumnPosition);
+		mapper = new GoogleSpreadsheetToPlainXMLMapping("user",idColumName,null);
 		spreadsheet = new GoogleSpreadsheet(GOOGLE_SPREADSHEET_FIELD,userName,passWord);
 	}
 	
@@ -66,15 +64,18 @@ public class GoogleSpreadSheetAdapterTest {
 		String passWord = "";
 		String spField = "";
 		
-		userName = "gspreadsheet.test@gmail.com";
-		passWord = "java123456";
-		spField = "peo4fu7AitTqkOhMSrecFRA";
-		IGoogleSpreadSheet sourceSpreadSheet = getGoogleSpreadSheet(spField, userName, passWord);
-		GSWorksheet workSheetSource = sourceSpreadSheet.getGSWorksheet(1);
+		
+		
 		
 		userName = "gspreadsheet.run@gmail.com";
 		passWord = "java123456";
 		spField = "pc5o5hLhHbIhQ9IEZKNLAJQ";
+		IGoogleSpreadSheet sourceSpreadSheet = getGoogleSpreadSheet(spField, userName, passWord);
+		GSWorksheet workSheetSource = sourceSpreadSheet.getGSWorksheet(1);
+		
+		userName = "gspreadsheet.test@gmail.com";
+		passWord = "java123456";
+		spField = "peo4fu7AitTo8e3v0D8FCew";
 		IGoogleSpreadSheet targetSpreadSheet = getGoogleSpreadSheet(spField, userName, passWord);
 		GSWorksheet workSheetTarget = targetSpreadSheet.getGSWorksheet(1);
 		
@@ -249,7 +250,6 @@ public class GoogleSpreadSheetAdapterTest {
 								"<age>25</age>" +
 								"<city>Buens aires</city>" +
 								"<country>Argentina</country>" +
-								"<lastupdate>6/11/2009 1:01:01</lastupdate>" +
 								"</user>";
 		
 		Element payload = XMLHelper.parseElement(rawDataAsXML);
@@ -267,7 +267,6 @@ public class GoogleSpreadSheetAdapterTest {
 								"<age>25</age>" +
 								"<city>Dhaka</city>" +
 								"<country>Bangladesh</country>" +
-								"<lastupdate>6/11/2009 1:01:01</lastupdate>" +
 								"</user>";
 		
 		Element payload = XMLHelper.parseElement(rawDataAsXML);
@@ -285,7 +284,6 @@ public class GoogleSpreadSheetAdapterTest {
 								"<age>25</age>" +
 								"<city>Dhaka</city>" +
 								"<country>Bangladesh</country>" +
-								"<lastupdate>6/11/2009 1:01:01</lastupdate>" +
 								"</user>";
 		
 		Element payload = XMLHelper.parseElement(rawDataAsXML);

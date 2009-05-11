@@ -34,9 +34,7 @@ public class SpreadSheetToXMLMapperTest {
 	@Before
 	public void setUp(){
 		String idColumName = "id";
-		int lastUpdateColumnPosition = 6;
-		int idColumnPosition = 1;
-		mapper = new GoogleSpreadsheetToPlainXMLMapping("user",idColumName,idColumnPosition,lastUpdateColumnPosition);
+		mapper = new GoogleSpreadsheetToPlainXMLMapping("user",idColumName,null);
 	}
 	
 	@Test
@@ -53,7 +51,6 @@ public class SpreadSheetToXMLMapperTest {
 								"<age>18</age>" +
 								"<city>Dhaka</city>" +
 								"<country>Bangladesh</country>" +
-								"<lastupdate>6/11/2009 1:01:01</lastupdate>" +
 								"</user>";
 		
 		Element payload = XMLHelper.parseElement(rawDataAsXML);
@@ -101,7 +98,6 @@ public class SpreadSheetToXMLMapperTest {
 								"<age>18</age>" +
 								"<city>Dhaka</city>" +
 								"<country>Bangladesh</country>" +
-								"<lastupdate>6/11/2009 1:01:01</lastupdate>" +
 								"</user>";
 		
 		Element payload = XMLHelper.parseElement(rawDataAsXML);
@@ -133,7 +129,6 @@ public class SpreadSheetToXMLMapperTest {
 					Assert.assertEquals(rowFromSpreaSheet.getGSCell("age").getCellValue(),"18");
 					Assert.assertEquals(rowFromSpreaSheet.getGSCell("city").getCellValue(),"Dhaka");
 					Assert.assertEquals(rowFromSpreaSheet.getGSCell("country").getCellValue(),"Bangladesh");
-					Assert.assertEquals(rowFromSpreaSheet.getGSCell("lastupdate").getCellValue(),"6/11/2009 1:01:01");
 				}
 			}
 			break;
@@ -154,7 +149,6 @@ public class SpreadSheetToXMLMapperTest {
 								"<age>18</age>" +
 								"<city>Dhaka</city>" +
 								"<country>Bangladesh</country>" +
-								"<lastupdate>6/11/2009 1:01:01</lastupdate>" +
 								"</user>";
 		
 		//we are planning to update only age column
@@ -164,7 +158,6 @@ public class SpreadSheetToXMLMapperTest {
 								"<age>25</age>" +
 								"<city>Dhaka</city>" +
 								"<country>Bangladesh</country>" +
-								"<lastupdate>6/11/2009 1:01:01</lastupdate>" +
 								"</user>";
 		
 		Element payload = XMLHelper.parseElement(rawDataAsXML);
@@ -192,7 +185,6 @@ public class SpreadSheetToXMLMapperTest {
 					Assert.assertEquals(rowTobeUPdated.getGSCell("age").getCellValue(),"25");
 					Assert.assertEquals(rowTobeUPdated.getGSCell("city").getCellValue(),"Dhaka");
 					Assert.assertEquals(rowTobeUPdated.getGSCell("country").getCellValue(),"Bangladesh");
-					Assert.assertEquals(rowTobeUPdated.getGSCell("lastupdate").getCellValue(),"6/11/2009 1:01:01");
 				}
 			}
 			break;
@@ -211,7 +203,7 @@ public class SpreadSheetToXMLMapperTest {
 	
 	private void loadSpreadSheet(){
 		spreadsheet = new GoogleSpreadsheet(GOOGLE_SPREADSHEET_FIELD,userName,passWord);
-		workSheet = spreadsheet.getGSWorksheet("user");
+		workSheet = spreadsheet.getGSWorksheet("user_source");
 	}	
 	
 }

@@ -30,14 +30,9 @@ public class GoogleSpreadSheetContentAdapterTest {
 	@Before
 	public void setUp(){
 		String idColumName = "id";
-		int lastUpdateColumnPosition = 6;
-		int idColumnPosition = 1;
-		mapper = new GoogleSpreadsheetToPlainXMLMapping("user",idColumName,idColumnPosition,lastUpdateColumnPosition);
+		mapper = new GoogleSpreadsheetToPlainXMLMapping("user",idColumName,null);
 	}
 	
-	
-	
-		
 	@Test
 	public void ShouldAddContent(){
 		
@@ -52,7 +47,6 @@ public class GoogleSpreadSheetContentAdapterTest {
 								"<age>18</age>" +
 								"<city>Dhaka</city>" +
 								"<country>Bangladesh</country>" +
-								"<lastupdate>6/11/2009 1:01:01</lastupdate>" +
 								"</user>";
 		
 		Element payload = XMLHelper.parseElement(rawDataAsXML);
@@ -86,7 +80,6 @@ public class GoogleSpreadSheetContentAdapterTest {
 								"<age>18</age>" +
 								"<city>Dhaka</city>" +
 								"<country>Bangladesh</country>" +
-								"<lastupdate>6/11/2009 1:01:01</lastupdate>" +
 								"</user>";
 		
 		Element payload = XMLHelper.parseElement(rawDataAsXML);
@@ -126,7 +119,6 @@ public class GoogleSpreadSheetContentAdapterTest {
 								"<age>25</age>" +
 								"<city>Dhaka</city>" +
 								"<country>Bangladesh</country>" +
-								"<lastupdate>6/11/2009 1:01:01</lastupdate>" +
 								"</user>";
 		
 		content1 = getContent(id, title, description, rawDataAsXML);
@@ -140,7 +132,6 @@ public class GoogleSpreadSheetContentAdapterTest {
 								"<age>25</age>" +
 								"<city>Dhaka</city>" +
 								"<country>Bangladesh</country>" +
-								"<lastupdate>6/11/2009 1:01:01</lastupdate>" +
 								"</user>";
 		
 		content2 = getContent(id, title, description, rawDataAsXML);
@@ -155,7 +146,6 @@ public class GoogleSpreadSheetContentAdapterTest {
 								"<age>18</age>" +
 								"<city>Dhaka</city>" +
 								"<country>Bangladesh</country>" +
-								"<lastupdate>6/11/2009 1:01:01</lastupdate>" +
 								"</user>";
 		
 		contentToBeUPdated = getContent(id, title, description, rawDataAsXML);
@@ -209,7 +199,6 @@ public class GoogleSpreadSheetContentAdapterTest {
 								"<age>25</age>" +
 								"<city>Dhaka</city>" +
 								"<country>Bangladesh</country>" +
-								"<lastupdate>6/11/2009 1:01:01</lastupdate>" +
 								"</user>";
 		
 		content1 = getContent(id, title, description, rawDataAsXML);
@@ -223,7 +212,6 @@ public class GoogleSpreadSheetContentAdapterTest {
 								"<age>25</age>" +
 								"<city>Dhaka</city>" +
 								"<country>Bangladesh</country>" +
-								"<lastupdate>6/11/2009 1:01:01</lastupdate>" +
 								"</user>";
 
 		content2 = getContent(id, title, description, rawDataAsXML);
@@ -266,7 +254,6 @@ public class GoogleSpreadSheetContentAdapterTest {
 								"<age>25</age>" +
 								"<city>Dhaka</city>" +
 								"<country>Bangladesh</country>" +
-								"<lastupdate>6/11/2009 1:01:01</lastupdate>" +
 								"</user>";
 		
 		content1 = getContent(id, title, description, rawDataAsXML);
@@ -280,7 +267,6 @@ public class GoogleSpreadSheetContentAdapterTest {
 								"<age>25</age>" +
 								"<city>Dhaka</city>" +
 								"<country>Bangladesh</country>" +
-								"<lastupdate>6/11/2009 1:01:01</lastupdate>" +
 								"</user>";
 		
 		content2 = getContent(id, title, description, rawDataAsXML);
@@ -322,7 +308,6 @@ public class GoogleSpreadSheetContentAdapterTest {
 								"<age>25</age>" +
 								"<city>Dhaka</city>" +
 								"<country>Bangladesh</country>" +
-								"<lastupdate>6/11/2009 1:01:01</lastupdate>" +
 								"</user>";
 		
 		content1 = getContent(id, title, description, rawDataAsXML);
@@ -336,7 +321,6 @@ public class GoogleSpreadSheetContentAdapterTest {
 								"<age>25</age>" +
 								"<city>Dhaka</city>" +
 								"<country>Bangladesh</country>" +
-								"<lastupdate>6/11/2009 1:01:01</lastupdate>" +
 								"</user>";
 		
 		content2 = getContent(id, title, description, rawDataAsXML);
@@ -351,7 +335,6 @@ public class GoogleSpreadSheetContentAdapterTest {
 								"<age>18</age>" +
 								"<city>Dhaka</city>" +
 								"<country>Bangladesh</country>" +
-								"<lastupdate>6/11/2009 1:01:01</lastupdate>" +
 								"</user>";
 		
 		contentToBeUPdated = getContent(id, title, description, rawDataAsXML);
@@ -407,7 +390,6 @@ public class GoogleSpreadSheetContentAdapterTest {
 								"<age>25</age>" +
 								"<city>Dhaka</city>" +
 								"<country>Bangladesh</country>" +
-								"<lastupdate>6/11/2009 1:01:01</lastupdate>" +
 								"</user>";
 		content1 = getContent(id, title, description, rawDataAsXML);
 		
@@ -420,7 +402,6 @@ public class GoogleSpreadSheetContentAdapterTest {
 								"<age>25</age>" +
 								"<city>Dhaka</city>" +
 								"<country>Bangladesh</country>" +
-								"<lastupdate>6/11/2009 1:01:01</lastupdate>" +
 								"</user>";
 		content2 = getContent(id, title, description, rawDataAsXML);
 		
