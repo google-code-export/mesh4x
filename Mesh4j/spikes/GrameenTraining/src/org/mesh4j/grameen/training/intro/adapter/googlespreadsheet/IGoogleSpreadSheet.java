@@ -13,7 +13,7 @@ import com.google.gdata.client.spreadsheet.SpreadsheetService;
 public interface IGoogleSpreadSheet {
 	
 	public GSSpreadsheet<GSWorksheet> getGSSpreadsheet();
-	public SpreadsheetService getService();
+	public SpreadsheetService getSpreadsheetService();
 	public GSWorksheet getGSWorksheet(String sheetName);
 	public GSWorksheet getGSWorksheet(int sheetIndex);
 	public void setDirty();
