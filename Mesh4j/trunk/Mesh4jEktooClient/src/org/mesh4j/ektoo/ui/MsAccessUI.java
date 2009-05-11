@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
 import org.apache.commons.logging.Log;
@@ -38,6 +39,7 @@ public class MsAccessUI extends TableUI {
 		this.showColumn(false);
 		this.getFileChooser().setAcceptAllFileFilterUsed(false);
 		this.getFileChooser().addChoosableFileFilter(new MsAccessFilter());
+		this.getFileChooser().setFileSelectionMode(JFileChooser.FILES_ONLY);
 	}
 
 	@Override

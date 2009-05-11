@@ -118,6 +118,7 @@ public class KmlUI extends AbstractUI {
 		if (fileChooser == null){
 			fileChooser = new JFileChooser();
 			fileChooser.setAcceptAllFileFilterUsed(false);
+			fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 			fileChooser.setFileFilter(new FileNameExtensionFilter(EktooUITranslator.getKMLFileSelectorTitle(), "kml", "kmz", "KML", "KMZ"));
 		}		
 		return fileChooser;

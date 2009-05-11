@@ -121,6 +121,7 @@ public class FeedUI extends AbstractUI {
 			fileChooser = new JFileChooser();
 			fileChooser.setAcceptAllFileFilterUsed(false);
 			fileChooser.setFileFilter(new FileNameExtensionFilter(EktooUITranslator.getXMLFileSelectorTitle(), "xml", "XML"));
+			fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		}		
 		return fileChooser;
 	}

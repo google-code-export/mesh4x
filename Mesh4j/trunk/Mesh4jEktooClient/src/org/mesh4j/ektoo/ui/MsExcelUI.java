@@ -5,6 +5,7 @@ import java.io.File;
 import java.util.Iterator;
 
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
 import org.apache.commons.logging.Log;
@@ -44,6 +45,7 @@ public class MsExcelUI extends TableUI
 	{
 		this.getFileChooser().setAcceptAllFileFilterUsed(false);
 		this.getFileChooser().addChoosableFileFilter(new MsExcelFilter());
+		this.getFileChooser().setFileSelectionMode(JFileChooser.FILES_ONLY);
 	}
 
 	@Override
