@@ -76,8 +76,6 @@ public class GSSheetUIController extends AbstractController
 				model.getUserName(), 
 				model.getUserPassword(), 
 				model.getUniqueColumnName(), 
-				model.getUniqueColumnPosition(), 
-				model.getLastUpdatedColumnPosition(), 
 				model.getWorksheetName(),
 				model.getWorksheetName());
 		return adapterBuilder.createGoogleSpreadSheetAdapter(spreadSheetInfo);
