@@ -67,8 +67,8 @@ public class MsExcelRDFSyncAdapterFactory extends MsExcelSyncAdapterFactory{
 		} else {
 			SplitAdapter splitAdapter = super.createSyncAdapter(excelFileName, sheetName, idColumnName, identityProvider);
 			IRDFSchema rdfSchemaAutoGenetated = (IRDFSchema)((MsExcelContentAdapter)splitAdapter.getContentAdapter()).getSchema();
-			if(!rdfSchema.asXML().equals(rdfSchemaAutoGenetated.asXML())){
-			//if(!rdfSchema.equals(rdfSchemaAutoGenetated)){
+			//if(!rdfSchema.asXML().equals(rdfSchemaAutoGenetated.asXML())){
+			if(!rdfSchema.equals(rdfSchemaAutoGenetated)){
 				Guard.throwsException("INVALID_RDF_SCHEMA");
 			}
 			return splitAdapter;
