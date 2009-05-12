@@ -1,15 +1,21 @@
 package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.mapping;
 
+import java.io.File;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadsheetUtils;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSCell;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSRow;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSWorksheet;
+import org.mesh4j.sync.adapters.msexcel.MsExcelUtils;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.validations.Guard;
+
+import com.google.gdata.client.docs.DocsService;
 /**
  * 
  * @author Raju
@@ -22,11 +28,11 @@ public class GoogleSpreadsheetToPlainXMLMapping implements IGoogleSpreadsheetToX
 	private String lastUpdateColumnName = "";
 	private String type = "";
 	private String sheetName = "";
+	private DocsService docService;
 	
-	
-
+/*	@Deprecated	
 	public GoogleSpreadsheetToPlainXMLMapping(String type, 
-						String idColumnName,String lastUpdateColumnName,String sheetName){
+						String idColumnName,String lastUpdateColumnName, String sheetName){
 		Guard.argumentNotNullOrEmptyString(type, "type");
 		Guard.argumentNotNullOrEmptyString(idColumnName, "idColumnName");
 		if(lastUpdateColumnName != null){
@@ -37,6 +43,21 @@ public class GoogleSpreadsheetToPlainXMLMapping implements IGoogleSpreadsheetToX
 		this.type = type;
 		this.idColumnName = idColumnName;
 		this.sheetName = sheetName;
+	}*/
+
+	public GoogleSpreadsheetToPlainXMLMapping(String type, String idColumnName,String lastUpdateColumnName, String sheetName, DocsService docService){
+		Guard.argumentNotNullOrEmptyString(type, "type");
+		Guard.argumentNotNullOrEmptyString(idColumnName, "idColumnName");
+		if(lastUpdateColumnName != null){
+			Guard.argumentNotNullOrEmptyString(lastUpdateColumnName, "lastUpdateColumnName");
+		}
+		Guard.argumentNotNullOrEmptyString(sheetName, "sheetName");
+		Guard.argumentNotNull(docService,	"docService");
+		
+		this.type = type;
+		this.idColumnName = idColumnName;
+		this.sheetName = sheetName;
+		this.docService = docService;
 	}
 	
 	
@@ -122,6 +143,16 @@ public class GoogleSpreadsheetToPlainXMLMapping implements IGoogleSpreadsheetToX
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
+	public String createDataSource(String fileName) throws Exception {
+		//create a msexcel document
+		HSSFWorkbook workbook = new HSSFWorkbook();			
+		MsExcelUtils.flush(workbook, fileName);
+		
+		//upload the excel document
+		String spreadsheetId = GoogleSpreadsheetUtils
+				.uploadSpreadsheetDoc(new File(fileName), this.docService);
+		return spreadsheetId;
+	}
 	
 }

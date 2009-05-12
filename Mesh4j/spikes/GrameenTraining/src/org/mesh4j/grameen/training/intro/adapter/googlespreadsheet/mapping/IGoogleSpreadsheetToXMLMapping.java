@@ -37,6 +37,8 @@ public interface IGoogleSpreadsheetToXMLMapping {
 
 	public String getSheetName();
 
+	public String  createDataSource(String fileName) throws Exception;
+	
 	//update the changes from payLoad into the provided rowTobeUPdated
 //	public GSRow<GSCell> normalizeRow(GSWorksheet<GSRow<GSCell>> workSheet,Element payLoad,GSRow<GSCell> rowTobeUPdated);
 	

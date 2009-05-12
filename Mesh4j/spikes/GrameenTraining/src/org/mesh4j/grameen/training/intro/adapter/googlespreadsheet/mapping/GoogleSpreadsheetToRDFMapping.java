@@ -22,6 +22,10 @@ import org.mesh4j.sync.utils.XMLHelper;
 
 import com.google.gdata.client.docs.DocsService;
 
+/**
+ * @author sharif
+ *
+ */
 public class GoogleSpreadsheetToRDFMapping implements IGoogleSpreadsheetToXMLMapping{
 
 	// MODEL VARIABLES
@@ -32,11 +36,12 @@ public class GoogleSpreadsheetToRDFMapping implements IGoogleSpreadsheetToXMLMap
 	
 	
 	// BUSINESS METHODs
-	public GoogleSpreadsheetToRDFMapping(IRDFSchema schema, String idColumnName, DocsService docService) {
+	public GoogleSpreadsheetToRDFMapping(IRDFSchema schema, String idColumnName, String lastUpdateColumnName, DocsService docService) {
 		super();
 
 		this.rdfSchema = schema;
 		this.idColumnName = idColumnName;
+		this.lastUpdateColumnName = lastUpdateColumnName;
 		this.docService = docService;
 	}
 	
