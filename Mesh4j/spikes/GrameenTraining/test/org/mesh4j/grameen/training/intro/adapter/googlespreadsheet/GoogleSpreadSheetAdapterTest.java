@@ -31,26 +31,28 @@ import org.mesh4j.sync.utils.XMLHelper;
 
 public class GoogleSpreadSheetAdapterTest {
 	private IGoogleSpreadSheet spreadsheet;
-	private IGoogleSpreadsheetToXMLMapping mapper;
-
 	String userName = "gspreadsheet.test@gmail.com";
 	String passWord = "java123456";
 	String GOOGLE_SPREADSHEET_FIELD = "peo4fu7AitTo8e3v0D8FCew";
 	
 	@Before
 	public void setUp(){
-		String idColumName = "id";
-		mapper = new GoogleSpreadsheetToPlainXMLMapping("user",idColumName,null);
 		spreadsheet = new GoogleSpreadsheet(GOOGLE_SPREADSHEET_FIELD,userName,passWord);
 	}
 	
 	@Test
 	public void ShouldSyncTwoWorkSheet(){
-		GSWorksheet workSheetSource = spreadsheet.getGSWorksheet(1);//user entity source worksheet
-		GSWorksheet workSheetTarget = spreadsheet.getGSWorksheet(2);//user entity target worksheet
 		
-		SplitAdapter splitAdapterSource = getAdapter(workSheetSource, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
-		SplitAdapter splitAdapterTarget = getAdapter(workSheetTarget, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		IGoogleSpreadsheetToXMLMapping mapper = null;
+		
+		String workSheetSource = spreadsheet.getGSWorksheet(1).getName();//user entity source worksheet
+		String workSheetTarget = spreadsheet.getGSWorksheet(2).getName();//user entity target worksheet
+
+		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheetSource);
+		SplitAdapter splitAdapterSource = getAdapter(mapper, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		
+		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheetTarget);
+		SplitAdapter splitAdapterTarget = getAdapter(mapper, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
 		SyncEngine syncEngine = new SyncEngine(splitAdapterSource,splitAdapterTarget);
 		List<Item> conflicts = syncEngine.synchronize();
@@ -63,24 +65,28 @@ public class GoogleSpreadSheetAdapterTest {
 		String userName = "";
 		String passWord = "";
 		String spField = "";
+		IGoogleSpreadsheetToXMLMapping mapper = null;
+		IGoogleSpreadSheet spreadSheet = null;
+		String workSheetName = "";
 		
-		
-		
-		
+		//source
 		userName = "gspreadsheet.run@gmail.com";
 		passWord = "java123456";
 		spField = "pc5o5hLhHbIhQ9IEZKNLAJQ";
-		IGoogleSpreadSheet sourceSpreadSheet = getGoogleSpreadSheet(spField, userName, passWord);
-		GSWorksheet workSheetSource = sourceSpreadSheet.getGSWorksheet(1);
+		spreadSheet = getGoogleSpreadSheet(spField, userName, passWord);
+		workSheetName = spreadSheet.getGSWorksheet(1).getName();
+		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheetName);
+		SplitAdapter splitAdapterSource = getAdapter(spreadSheet,mapper, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
+		
+		//target
 		userName = "gspreadsheet.test@gmail.com";
 		passWord = "java123456";
 		spField = "peo4fu7AitTo8e3v0D8FCew";
-		IGoogleSpreadSheet targetSpreadSheet = getGoogleSpreadSheet(spField, userName, passWord);
-		GSWorksheet workSheetTarget = targetSpreadSheet.getGSWorksheet(1);
-		
-		SplitAdapter splitAdapterSource = getAdapter(sourceSpreadSheet,workSheetSource, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
-		SplitAdapter splitAdapterTarget = getAdapter(targetSpreadSheet,workSheetTarget, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		spreadSheet = getGoogleSpreadSheet(spField, userName, passWord);
+		workSheetName = spreadSheet.getGSWorksheet(1).getName();
+		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheetName);
+		SplitAdapter splitAdapterTarget = getAdapter(spreadSheet,mapper, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
 		SyncEngine syncEngine = new SyncEngine(splitAdapterSource,splitAdapterTarget);
 		List<Item> conflicts = syncEngine.synchronize();
@@ -93,22 +99,27 @@ public class GoogleSpreadSheetAdapterTest {
 		String userName = "";
 		String passWord = "";
 		String spField = "";
-		
+		String workSheetName = "";
+		IGoogleSpreadsheetToXMLMapping mapper = null;
+		IGoogleSpreadSheet spreadSheet = null;
+	
+		//source 
 		userName = "gspreadsheet.test@gmail.com";
 		passWord = "java123456";
 		spField = "peo4fu7AitTo8e3v0D8FCew";
-		IGoogleSpreadSheet sourceSpreadSheet = getGoogleSpreadSheet(spField, userName, passWord);
-		GSWorksheet workSheetSource = sourceSpreadSheet.getGSWorksheet(1);
+		spreadSheet = getGoogleSpreadSheet(spField, userName, passWord);
+		workSheetName = spreadSheet.getGSWorksheet(1).getName();
+		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheetName);
+		SplitAdapter splitAdapterSource = getAdapter(spreadSheet,mapper, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);	
 		
-		
+		//target
 		userName = "gspreadsheet.test@gmail.com";
 		passWord = "java123456";
 		spField = "peo4fu7AitTqkOhMSrecFRA";
-		IGoogleSpreadSheet targetSpreadSheet = getGoogleSpreadSheet(spField, userName, passWord);
-		GSWorksheet workSheetTarget = targetSpreadSheet.getGSWorksheet(1);
-		
-		SplitAdapter splitAdapterSource = getAdapter(sourceSpreadSheet,workSheetSource, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
-		SplitAdapter splitAdapterTarget = getAdapter(targetSpreadSheet,workSheetTarget, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		spreadSheet = getGoogleSpreadSheet(spField, userName, passWord);
+		workSheetName = spreadSheet.getGSWorksheet(1).getName();
+		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheetName);
+		SplitAdapter splitAdapterTarget = getAdapter(spreadSheet,mapper, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
 		SyncEngine syncEngine = new SyncEngine(splitAdapterSource,splitAdapterTarget);
 		List<Item> conflicts = syncEngine.synchronize();
@@ -124,16 +135,20 @@ public class GoogleSpreadSheetAdapterTest {
 	@Test
 	public void ShouldSyncAfterAddedItemInEmptyWorkSheet() throws DocumentException{
 		
+		IGoogleSpreadsheetToXMLMapping mapper = null;
+		
 		GSWorksheet workSheetSource = spreadsheet.getGSWorksheet(1);//user entity source worksheet
 		GSWorksheet workSheetTarget = spreadsheet.getGSWorksheet(2);//user entity target worksheet
 		
 		cleanUp(workSheetSource, workSheetTarget);
 		
-		SplitAdapter splitAdapterSource = getAdapter(workSheetSource, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheetSource.getName());
+		SplitAdapter splitAdapterSource = getAdapter(mapper, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		splitAdapterSource.add(getItem1());
 		splitAdapterSource.add(getItem2());
 		
-		SplitAdapter splitAdapterTarget = getAdapter(workSheetTarget, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheetTarget.getName());
+		SplitAdapter splitAdapterTarget = getAdapter(mapper, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		splitAdapterTarget.add(getItem3());
 		
 		SyncEngine syncEngine = new SyncEngine(splitAdapterSource,splitAdapterTarget);
@@ -152,18 +167,21 @@ public class GoogleSpreadSheetAdapterTest {
 		GSWorksheet workSheetTarget = spreadsheet.getGSWorksheet(2);//user entity target worksheet
 		
 		cleanUp(workSheetSource, workSheetTarget);
+		IGoogleSpreadsheetToXMLMapping mapper = null;
 		
 		Item item1 = getItem1();
 		Item item2 = getItem2();
 		Item item3 = getItem3();
 		
-		SplitAdapter splitAdapterSource = getAdapter(workSheetSource, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheetSource.getName());
+		SplitAdapter splitAdapterSource = getAdapter(mapper, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		splitAdapterSource.add(item1);
 		splitAdapterSource.add(item2);
 		
 		Assert.assertEquals(2,splitAdapterSource.getAll().size());
 		
-		SplitAdapter splitAdapterTarget = getAdapter(workSheetTarget, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheetTarget.getName());
+		SplitAdapter splitAdapterTarget = getAdapter(mapper, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		splitAdapterTarget.add(item3);
 		
 		Assert.assertEquals(1,splitAdapterTarget.getAll().size());
@@ -187,15 +205,19 @@ public class GoogleSpreadSheetAdapterTest {
 		GSWorksheet workSheetTarget = spreadsheet.getGSWorksheet(2);//user entity target worksheet
 		
 		cleanUp(workSheetSource, workSheetTarget);
+		IGoogleSpreadsheetToXMLMapping mapper = null;
+		
 		Item item1 = getItem1();
 		Item item2 = getItem2();
 		
-		SplitAdapter splitAdapterSource = getAdapter(workSheetSource, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheetSource.getName());
+		SplitAdapter splitAdapterSource = getAdapter(mapper, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		splitAdapterSource.add(item1);
 		
 		Assert.assertEquals(1,splitAdapterSource.getAll().size());
 		
-		SplitAdapter splitAdapterTarget = getAdapter(workSheetTarget, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheetTarget.getName());
+		SplitAdapter splitAdapterTarget = getAdapter(mapper, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		splitAdapterTarget.add(item2);
 		
 		Assert.assertEquals(1,splitAdapterTarget.getAll().size());
@@ -221,16 +243,16 @@ public class GoogleSpreadSheetAdapterTest {
 		
 	}
 	
-	private SplitAdapter getAdapter(IGoogleSpreadSheet spreadsheet,GSWorksheet contentWorkSheet,IIdentityProvider identityProvider,IIdGenerator idGenerator){
-		GoogleSpreadSheetContentAdapter contentRepo = new GoogleSpreadSheetContentAdapter(spreadsheet,contentWorkSheet,mapper);
-		String syncSheetName = contentWorkSheet.getName() + "_sync";
+	private SplitAdapter getAdapter(IGoogleSpreadSheet spreadsheet,IGoogleSpreadsheetToXMLMapping mapper,IIdentityProvider identityProvider,IIdGenerator idGenerator){
+		GoogleSpreadSheetContentAdapter contentRepo = new GoogleSpreadSheetContentAdapter(spreadsheet,mapper);
+		String syncSheetName = mapper.getSheetName() + "_sync";
 		GoogleSpreadSheetSyncRepository  syncRepo = new GoogleSpreadSheetSyncRepository(spreadsheet,identityProvider,idGenerator,syncSheetName);
 		SplitAdapter splitAdapter = new SplitAdapter(syncRepo,contentRepo,identityProvider);
 		return splitAdapter;
 	}
-	private SplitAdapter getAdapter(GSWorksheet contentWorkSheet,IIdentityProvider identityProvider,IIdGenerator idGenerator){
-		GoogleSpreadSheetContentAdapter contentRepo = new GoogleSpreadSheetContentAdapter(spreadsheet,contentWorkSheet,mapper);
-		String syncSheetName = contentWorkSheet.getName() + "_sync";
+	private SplitAdapter getAdapter(IGoogleSpreadsheetToXMLMapping mapper,IIdentityProvider identityProvider,IIdGenerator idGenerator){
+		GoogleSpreadSheetContentAdapter contentRepo = new GoogleSpreadSheetContentAdapter(spreadsheet,mapper);
+		String syncSheetName = mapper.getSheetName() + "_sync";
 		GoogleSpreadSheetSyncRepository  syncRepo = new GoogleSpreadSheetSyncRepository(spreadsheet,identityProvider,idGenerator,syncSheetName);
 		SplitAdapter splitAdapter = new SplitAdapter(syncRepo,contentRepo,identityProvider);
 		return splitAdapter;
