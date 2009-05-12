@@ -10,11 +10,15 @@ import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.mapping.IGoog
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSCell;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSRow;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSWorksheet;
+import org.mesh4j.sync.ISupportReadSchema;
+import org.mesh4j.sync.ISupportWriteSchema;
 import org.mesh4j.sync.ISyncAware;
 import org.mesh4j.sync.adapters.hibernate.EntityContent;
 import org.mesh4j.sync.adapters.split.IContentAdapter;
 import org.mesh4j.sync.model.IContent;
+import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.validations.Guard;
+import org.mesh4j.sync.validations.MeshException;
 /**
  * Basically implementation of CRUD operation in google spreadsheet through Mesh4x wrapper
  * API of GData API.
@@ -23,7 +27,7 @@ import org.mesh4j.sync.validations.Guard;
  * @author Raju
  * @version 1.0,29/4/2009
  */
-public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAware{
+public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAware, ISupportReadSchema, ISupportWriteSchema{
 
 	public final static String G_SPREADSHEET_DATE_FORMAT = "MM/dd/yyyy hh:mm:ss";
 	private String entityName = "";
@@ -209,5 +213,18 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 	public void endSync() {
 		this.spreadSheet.flush();
 	}
-
+	
+	@Override
+	public ISchema getSchema() {
+		return mapper.getSchema();
+	}
+	
+	@Override
+	public void writeDataSourceFromSchema() {
+		try {
+			this.mapper.createDataSource(GoogleSpreadSheetRDFSyncAdapterFactory.DEFAULT_NEW_SPREADSHEET_FILENAME);
+		} catch (Exception e) {
+			throw new MeshException(e);
+		}		
+	}
 }
