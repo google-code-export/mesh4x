@@ -6,9 +6,6 @@ public class GoogleSpreadSheetInfo {
 
 	// MODEL VARIABLES
 	private String idColumnName = "";
-	private int lastUpdateColumnPosition = 0;
-	private int idColumnPosition = 1;
-
 	private String userName = "";
 	private String passWord = "";
 	private String googleSpreadSheetId = "";
@@ -19,19 +16,17 @@ public class GoogleSpreadSheetInfo {
 	// BUSINESS METHODS
 
 	public GoogleSpreadSheetInfo(String googleSpreadSheetId, String userName,
-			String passWord, String idColumnName, int idColumnPosition,
-			int lastUpdateColumnPosition, String sheetName, String type) {
+			String passWord, String idColumnName,String sheetName, String type) {
 
-		Guard.argumentNotNullOrEmptyString(googleSpreadSheetId,
-				"googleSpreadSheetId");
+		Guard.argumentNotNullOrEmptyString(googleSpreadSheetId,"googleSpreadSheetId");
 		Guard.argumentNotNullOrEmptyString(userName, "userName");
 		Guard.argumentNotNullOrEmptyString(passWord, "passWord");
 		Guard.argumentNotNullOrEmptyString(idColumnName, "idColumnName");
+		Guard.argumentNotNullOrEmptyString(sheetName, "sheetName");
+		Guard.argumentNotNullOrEmptyString(type, "type");
 
 		this.googleSpreadSheetId = googleSpreadSheetId;
 		this.idColumnName = idColumnName;
-		this.idColumnPosition = idColumnPosition;
-		this.lastUpdateColumnPosition = lastUpdateColumnPosition;
 		this.passWord = passWord;
 		this.sheetName = sheetName;
 		this.type = type;
@@ -48,14 +43,6 @@ public class GoogleSpreadSheetInfo {
 
 	public String getIdColumnName() {
 		return idColumnName;
-	}
-
-	public int getLastUpdateColumnPosition() {
-		return lastUpdateColumnPosition;
-	}
-
-	public int getIdColumnPosition() {
-		return idColumnPosition;
 	}
 
 	public String getUserName() {
