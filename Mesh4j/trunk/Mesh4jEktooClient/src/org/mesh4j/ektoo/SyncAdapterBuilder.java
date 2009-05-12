@@ -67,32 +67,24 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 
 		// TODO create googleSpreadSheetSyncAdapterFactory in GeoogleSpreadSheet project
 		String idColumName = spreadSheetInfo.getIdColumnName();
-		//int lastUpdateColumnPosition = spreadSheetInfo.getLastUpdateColumnPosition();
-		//int idColumnPosition = spreadSheetInfo.getIdColumnPosition();
 		String userName = spreadSheetInfo.getUserName();
 		String passWord = spreadSheetInfo.getPassWord();
 		String googleSpreadSheetId = spreadSheetInfo.getGoogleSpreadSheetId();
 		String type = spreadSheetInfo.getType();
+		String sheetName = spreadSheetInfo.getSheetName();
 
 		// create google spread sheet
-		IGoogleSpreadsheetToXMLMapping mapper = new GoogleSpreadsheetToPlainXMLMapping(type, idColumName,null);
-		IGoogleSpreadSheet gSpreadSheet = new GoogleSpreadsheet(
-				googleSpreadSheetId, userName, passWord);
-
-		// TODO (Sharif) create sync sheet automatically
-		GSWorksheet<GSRow<GSCell>> contentWorkSheet = gSpreadSheet
-				.getGSWorksheet(spreadSheetInfo.getSheetName());
-		
+		IGoogleSpreadsheetToXMLMapping mapper = new GoogleSpreadsheetToPlainXMLMapping(type, idColumName,null,sheetName);
+		IGoogleSpreadSheet gSpreadSheet = new GoogleSpreadsheet(googleSpreadSheetId, userName, passWord);
 		String syncWorkSheetName = spreadSheetInfo.getSheetName() + "_sync";
 
 		// adapter creation
 		IIdentityProvider identityProvider = getIdentityProvider();
-		GoogleSpreadSheetContentAdapter contentRepo = new GoogleSpreadSheetContentAdapter(
-				gSpreadSheet, contentWorkSheet, mapper);
+		GoogleSpreadSheetContentAdapter contentRepo = new GoogleSpreadSheetContentAdapter(gSpreadSheet, mapper);
 		GoogleSpreadSheetSyncRepository syncRepo = new GoogleSpreadSheetSyncRepository(
 				gSpreadSheet, identityProvider, getIdGenerator(), syncWorkSheetName);
-		SplitAdapter splitAdapter = new SplitAdapter(syncRepo, contentRepo,
-				identityProvider);
+		
+		SplitAdapter splitAdapter = new SplitAdapter(syncRepo, contentRepo,identityProvider);
 
 		return splitAdapter;
 	}

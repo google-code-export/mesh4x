@@ -3,7 +3,10 @@ package org.mesh4j.ektoo;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
-
+/**
+ * The builder interface for creating adapter with the
+ * minimum requirements
+ */
 public interface ISyncAdapterBuilder {
 
 	/**
@@ -18,6 +21,20 @@ public interface ISyncAdapterBuilder {
 	 * 
 	 */
 	public ISyncAdapter createMsExcelAdapter(String contentFileName, String sheetName, String idColumnName);
+	
+	/**
+	 * creates adapter for excel repository
+	 * 
+	 * @param contentFileName
+	 *            ,the content file which actually contains the provided sheet.
+	 * @param sheetName
+	 *            , the physical sheet name of the excel file.
+	 * @param idColumnName
+	 *            , the name of the identity column of entity.
+	 * @param  sourceSchema
+	 * 			 ,the rdf schema of which excel repository should be.  
+	 * @return ISyncAdapter,instance of the excel adapter         
+	 */
 	public ISyncAdapter createMsExcelAdapter(String contentFileName, String sheetName, String idColumnName, IRDFSchema sourceSchema);
 	
 	/**
