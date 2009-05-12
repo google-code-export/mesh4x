@@ -269,4 +269,56 @@ public class RDFSchema implements IRDFSchema{
 		return asXML();
 	}
 
+	@Override
+	public boolean equals(Object schema){
+		
+		if (this == schema) return true;
+		
+		if (schema == null || !(schema instanceof IRDFSchema)) return false;
+
+		RDFSchema rdfSchema = (RDFSchema) schema; 
+		
+		if (this.asXML().equalsIgnoreCase(rdfSchema.asXML())) return true;
+		
+		int size = rdfSchema.getPropertyCount();
+		for (int i = 0; i < size; i++) {
+			String propName = rdfSchema.getPropertyName(i);
+			String propTypeThis = this.getPropertyType(propName);
+			String propTypeThat = rdfSchema.getPropertyType(propName);
+			
+			if( propTypeThat == null || propTypeThat.isEmpty() ) {
+				//there is no property with the given name
+				return false;
+			} else {
+				if(propTypeThat.equalsIgnoreCase(propTypeThis)){
+					//this covers equality for String, Boolean and Date type property
+					continue;
+				}else{	//covers all numeric property
+					
+					//TODO (Sharif,jmt): need add the following enhancement here for numeric property type.
+					// Provide adapter specific comparison;
+					// say for rdf from similar type adapter it will match by one2one
+					// (i.e., int2int, long2long, float2float, double2double etc)
+					// but for different adapters the match might be
+					// flexible to some extent (say int/long 2 int/long, float/double 2 float/double etc).
+					// currently the flexibility is maximum (int/long/float/double 2 int/long/float/double) 
+					
+					if(IRDFSchema.XLS_INTEGER.equals(propTypeThis) 
+							|| IRDFSchema.XLS_LONG.equals(propTypeThis)
+							|| IRDFSchema.XLS_DOUBLE.equals(propTypeThis)
+							|| IRDFSchema.XLS_DECIMAL.equals(propTypeThis)){
+						
+						if (!(IRDFSchema.XLS_INTEGER.equals(propTypeThat) 
+								|| IRDFSchema.XLS_LONG.equals(propTypeThat)
+								|| IRDFSchema.XLS_DOUBLE.equals(propTypeThat)
+								|| IRDFSchema.XLS_DECIMAL.equals(propTypeThat))) return false;
+					}else{
+						//incompatible!
+						return false;
+					}
+				}
+			}			
+		}			
+		return true;
+	}
 }
