@@ -3,6 +3,7 @@ package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSSpreadsheet;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSWorksheet;
 
+import com.google.gdata.client.docs.DocsService;
 import com.google.gdata.client.spreadsheet.SpreadsheetService;
 
 /**
@@ -14,6 +15,7 @@ public interface IGoogleSpreadSheet {
 	
 	public GSSpreadsheet<GSWorksheet> getGSSpreadsheet();
 	public SpreadsheetService getSpreadsheetService();
+	public DocsService getDocsService();
 	public GSWorksheet getGSWorksheet(String sheetName);
 	public GSWorksheet getGSWorksheet(int sheetIndex);
 	public void setDirty();

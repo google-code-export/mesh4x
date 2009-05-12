@@ -18,7 +18,7 @@ public class GoogleSpreadsheet implements IGoogleSpreadSheet {
 	private GSSpreadsheet<GSWorksheet> spreadsheet;
 
 	private SpreadsheetService spreadsheetService;
-	DocsService docService;
+	DocsService docsService;
 	private FeedURLFactory factory;
 
 	private boolean dirty = false;
@@ -44,7 +44,7 @@ public class GoogleSpreadsheet implements IGoogleSpreadSheet {
 	 */
 	private void init() {
 		this.spreadsheetService = GoogleSpreadsheetUtils.getSpreadsheetService(username, password);
-		this.docService = GoogleSpreadsheetUtils.getDocService(username, password);
+		this.docsService = GoogleSpreadsheetUtils.getDocService(username, password);
 		this.factory = FeedURLFactory.getDefault();
 	}
 
@@ -105,8 +105,8 @@ public class GoogleSpreadsheet implements IGoogleSpreadSheet {
 		return spreadsheetService;
 	}
 
-	public DocsService getDocService() {
-		return docService;
+	public DocsService getDocsService() {
+		return docsService;
 	}
 
 	public FeedURLFactory getFactory() {
