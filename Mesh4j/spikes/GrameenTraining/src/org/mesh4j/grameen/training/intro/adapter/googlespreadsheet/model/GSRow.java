@@ -28,7 +28,6 @@ import com.google.gdata.util.ServiceException;
 public class GSRow<C> extends GSBaseElement<C>{
 	
 	// MODEL VARIABLES
-	//all moved to base class
 	
 	
 	// BUSINESS METHODS
@@ -140,7 +139,7 @@ public class GSRow<C> extends GSBaseElement<C>{
 	 */
 	@SuppressWarnings("unchecked")
 	@Deprecated
-	public void populateClild_BLOCKED(/*SpreadsheetService service,*/
+	public void populateClild(/*SpreadsheetService service,*/
 			WorksheetEntry worksheet) throws IOException, ServiceException{
 		
 		if(getGSCells() != null && getGSCells().size() > 0) return;
@@ -175,34 +174,6 @@ public class GSRow<C> extends GSBaseElement<C>{
 		}
 	}
 		
-/*	*//**
-	 * Populate all the child {@link GSCell} of this {@link GSRow} from all
-	 * available {@link CellEntry} in a {@link WorksheetEntry} by wrapping up
-	 * each valid {@link CellEntry} with a {@link GSCell}
-	 * 
-	 * @param cellList
-	 *            All cells in a worksheet
-	 * @throws IOException
-	 * @throws ServiceException
-	 *//*
-	@SuppressWarnings("unchecked")
-	@Deprecated
-	public void populateClild(List<CellEntry> cellList) throws IOException,
-			ServiceException {
-		if (this.elementListIndex > 0) {
-			// iterate over all cells, only cells of corresponding row will be
-			// entered in the child list
-			for (CellEntry cell : cellList) {
-				if (cell.getCell().getRow() == this.elementListIndex) {
-					String key = Integer.toString(cell.getCell().getCol());
-					this.childElements.put(key, (C) new GSCell(cell,
-							(GSRow<GSCell>) this));
-				}
-			}
-		} else {
-			// TODO:
-		}
-	}*/
 
 	@SuppressWarnings("unchecked")
 	public void populateClildWithHeaderTag(List<CellEntry> cellList, WorksheetEntry ws) throws IOException,
@@ -356,7 +327,7 @@ public class GSRow<C> extends GSBaseElement<C>{
 				.getParentElement().getBaseEntry();
 	
 				this.getChildElements().clear();
-				this.populateClild_BLOCKED(worksheet);
+				this.populateClild(worksheet);
 			
 			
 			this.dirty = false;

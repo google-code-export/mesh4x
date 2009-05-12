@@ -18,7 +18,7 @@ import com.google.gdata.data.spreadsheet.WorksheetEntry;
 public class GSSpreadsheet<C> extends GSBaseElement<C>{
 
 	// MODEL VARIABLES
-	//all moved to base class
+
 	
 	// BUSINESS METHODS	
 	public GSSpreadsheet(SpreadsheetEntry spreadsheet) {
@@ -83,8 +83,7 @@ public class GSSpreadsheet<C> extends GSBaseElement<C>{
 
 	@Override
 	public void refreshMeFromFeed() {
-		// TODO Auto-generated method stub
-		
+		// TODO Auto-generated method stub	
 	}
 
 	/**

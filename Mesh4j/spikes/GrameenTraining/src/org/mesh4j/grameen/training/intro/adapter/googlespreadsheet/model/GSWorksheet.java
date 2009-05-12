@@ -1,8 +1,6 @@
 package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model;
 
 import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,17 +17,9 @@ import com.google.gdata.util.ServiceException;
 public class GSWorksheet<C> extends GSBaseElement<C> {
 
 	// MODEL VARIABLES
-	//all moved to base class
+
 	
-	// BUSINESS METHODS	
-	@Deprecated
-	public GSWorksheet(WorksheetEntry worksheet, int sheetIndex) {
-		super();
-		this.baseEntry = worksheet;
-		this.elementListIndex = sheetIndex;
-		this.childElements = new LinkedHashMap<String, C>();
-	}
-	
+	// BUSINESS METHODS		
 	public GSWorksheet(WorksheetEntry worksheet, int sheetIndex,
 			GSSpreadsheet<?> parentElement) {
 		super();
@@ -139,45 +129,7 @@ public class GSWorksheet<C> extends GSBaseElement<C> {
 	
 	
 	/**
-	 * get the cell header tag as an ordered set according to their order in spreadsheet 
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	public List<String> getCellHeaderTagset() {
-		List<String> tagList = new ArrayList<String>();
-		if (this.getChildElements().size() > 0) {
-			if(this.getChildElements().size() > 1){
-				ListEntry listEntry = (ListEntry) ((GSWorksheet<GSRow>) this)
-						.getGSRow(2).baseEntry;
-				for(String tag :listEntry.getCustomElements().getTags()){
-					tagList.add(tag);
-				}
-				
-			}else{
-				//create a temporary row
-				//grab the tags
-				//delete the row
-			}
-		}
-		return tagList;
-	}
-	
-/*	*//**
-	 * add a new row to the spreadsheet
-	 * 
-	 * @param rowToAdd
-	 *//*
-	@SuppressWarnings("unchecked")
-	public void addNewRow(GSRow rowToAdd) {		
-		int newRowIndex = this.getNonDeletedChildElements().size() + 1;
-		rowToAdd.elementListIndex= newRowIndex;
-		((GSWorksheet<GSRow>) this).addChildElement(
-				rowToAdd.getElementId(), rowToAdd);
-		this.setDirty();
-	}*/	
-	
-	/**
-	 * generate a new row for the worksheet 
+	 * add a new row for the worksheet using cell/value map
 	 * 
 	 * @param values: cell value for each cell
 	 * @return
@@ -186,14 +138,6 @@ public class GSWorksheet<C> extends GSBaseElement<C> {
 	 */
 	@SuppressWarnings("unchecked")
 	public GSRow<GSCell> createNewRow(LinkedHashMap<String, String> values) throws IOException, ServiceException {
-
-		/*int noOfColumns = ((GSWorksheet<GSRow>) this).getGSRow(1)
-				.getChildElements().size();
-
-		if (values.size() < noOfColumns) {
-			// TODO: throw exception
-			return null;
-		}*/
 		
 		int newRowIndex = this.getChildElements().size() + 1;		
 		ListEntry newRow = new ListEntry();		
@@ -213,43 +157,14 @@ public class GSWorksheet<C> extends GSBaseElement<C> {
 		this.addChildElement(newGSRow.getElementId(), (C) newGSRow);
 		return newGSRow;
 	}
-	
-	@SuppressWarnings("unchecked")
-	@Deprecated
-	public GSRow<GSCell> createNewRow(String[] values) throws IOException, ServiceException {
-
-		int noOfColumns = ((GSWorksheet<GSRow>) this).getGSRow(1)
-				.getChildElements().size();
-
-		if (values.length < noOfColumns) {
-			// TODO: throw exception
-			return null;
-		}
-		int newRowIndex = this.getChildElements().size() + 1;
-		
-		ListEntry newRow = new ListEntry();		
-		
-		GSRow<GSCell> newGSRow = new GSRow(newRow, newRowIndex, this);
-		
-		for (int col = 1; col <= noOfColumns; col++) {
 			
-		    String batchId = "R" + newRowIndex + "C" + col;
-			URL entryUrl = new URL(((WorksheetEntry) this.getBaseEntry())
-					.getCellFeedUrl().toString()
-					+ "/" + batchId);
-
-			CellEntry newCell = ((WorksheetEntry) this.getBaseEntry())
-					.getService().getEntry(entryUrl, CellEntry.class);			
-			
-		    GSCell newGSCell = new GSCell(newCell, newGSRow, "TODO: need to provide column tag");
-			newGSCell.updateCellValue(values[col - 1]);
-			newGSRow.addChildElement(Integer.toString(col), newGSCell); //TODO: need to supply header tag here as key instead of colIndex
-		}
-
-		return newGSRow;
-	}	
-		
 	
+    /**
+     * create a new blank row in the position rowindex
+     * 
+     * @param rowIndex
+     * @return
+     */
     @SuppressWarnings("unchecked")
 	public GSRow<GSCell> createNewRow(int rowIndex){
 		if(rowIndex < 1)

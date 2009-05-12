@@ -120,46 +120,6 @@ public class GSCell extends GSBaseElement {
 		else
 			return getCellEntry().getCell().getInputValue();
 	} 	
-	
-	/**
-	 * populates the the {@link GSRow} that contains this {@link GSCell}
-	 * Note: this method involves a http request    
-	 * 
-	 * @param service
-	 * @param worksheet
-	 * @throws IOException
-	 * @throws ServiceException
-	 */
-	@Deprecated
-	public void populateParent_BLOCKED(/*SpreadsheetService service,*/
-			WorksheetEntry worksheet) throws IOException, ServiceException {
-		
-		if(this.parentElement != null) return;
-		
-		ListQuery query = new ListQuery(worksheet.getListFeedUrl());
-		query.setStartIndex(((CellEntry)this.baseEntry).getCell().getRow()-1); 
-		//why -1?: Google Spreadsheet's data row starts from it's 2nd row actually, 
-		//1st row contains the column headers. 
-		//So index of a row should be considered 1 less than row index returned from its cells.
-		//What a weird API! 
-		query.setMaxResults(1);
-
-		//ListFeed feed = service.query(query, ListFeed.class);
-		ListFeed feed = worksheet.getService().query(query, ListFeed.class);
-
-		GSRow<GSCell> gsListEntry = new GSRow(
-				feed.getEntries().get(0), ((CellEntry) this.baseEntry)
-						.getCell().getRow() - 1);
-		
-		/*for (String tag : feed.getEntries().get(0).getCustomElements().getTags()) {
-		      //out.print(entry.getCustomElements().getValue(tag)+"\t");
-		      System.out.print(feed.getEntries().get(0).getCustomElements().getValue(tag)+" \t");
-		}*/
-		
-		gsListEntry.populateClild_BLOCKED(/*service,*/ worksheet);
-		
-		this.parentElement =  gsListEntry;
-	}
 
 
 	@Override
