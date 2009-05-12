@@ -56,13 +56,15 @@ public class HibernateContentAdapter implements IIdentifiableContentAdapter {
 	}
 
 	public void save(IContent content) {
-	
+		EntityContent entityContent = EntityContent.normalizeContent(content,
+				this.entityName, this.mapping.getIDNode());
+		
 		Session session =  this.sessionFactory.openSession();
 		Transaction tx = null;
 		try{
 			tx = session.beginTransaction();
 			Session dom4jSession = session.getSession(EntityMode.DOM4J);
-			dom4jSession.saveOrUpdate(convertXMLToRow(content.getPayload()));
+			dom4jSession.saveOrUpdate(convertXMLToRow(entityContent.getPayload()));
 			tx.commit();
 		}catch (RuntimeException e) {
 			if (tx != null) {
@@ -98,6 +100,25 @@ public class HibernateContentAdapter implements IIdentifiableContentAdapter {
 		}
 	}
 
+	public void deleteAll() {
+		Session session = this.sessionFactory.openSession();
+		Transaction tx = null;
+		try{
+			tx = session.beginTransaction();
+			String hqlDelete = "delete " + this.getType();
+			Session dom4jSession = session.getSession(EntityMode.DOM4J);		
+			dom4jSession.createQuery(hqlDelete).executeUpdate();		
+			tx.commit();
+		}catch (RuntimeException e) {
+			if (tx != null) {
+				tx.rollback();
+			}
+			throw e;
+		}finally{
+			session.close();
+		}		
+	}
+	
 	@SuppressWarnings("unchecked")
 	public List<IContent> getAll(Date since) {
 		String hqlQuery ="FROM " + this.getType();
