@@ -1,5 +1,7 @@
-#summary A step-by-step guide for users to synchronize various data sources using [http://downloads.instedd.org/mesh4x/ektoo_0_0_2.7z Ektoo] client
+#summary A step-by-step guide for users to synchronize various data sources using Ektoo client
 #labels HowTo,Tutorial,Featured
+
+[http://downloads.instedd.org/mesh4x/ektoo_0_0_2.7z Download]
 
 <wiki:toc max_depth="2" />
 
