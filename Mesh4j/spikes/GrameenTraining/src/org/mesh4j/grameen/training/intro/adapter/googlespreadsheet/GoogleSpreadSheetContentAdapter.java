@@ -221,10 +221,11 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 	
 	@Override
 	public void writeDataSourceFromSchema() {
-		try {
-			this.mapper.createDataSource(GoogleSpreadSheetRDFSyncAdapterFactory.DEFAULT_NEW_SPREADSHEET_FILENAME);
-		} catch (Exception e) {
-			throw new MeshException(e);
-		}		
+		// TODO (sharif/raju)
+//		try {
+//			this.mapper.createDataSource(GoogleSpreadSheetRDFSyncAdapterFactory.DEFAULT_NEW_SPREADSHEET_FILENAME);
+//		} catch (Exception e) {
+//			throw new MeshException(e);
+//		}		
 	}
 }
