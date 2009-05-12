@@ -138,7 +138,7 @@ public class AdapterFactoryTests {
 		GSWorksheet sourceRepo = spreadsheet.getGSWorksheet(1);
 
 		IGoogleSpreadsheetToXMLMapping mapper = new GoogleSpreadsheetToPlainXMLMapping(
-				"user", idColumName,null,sourceRepo.getName());
+				"user", idColumName,null,sourceRepo.getName(), spreadsheet.getDocsService());
 		
 		SplitAdapter spreadSheetAdapter = GoogleSpreadsheetUtils
 				.createGoogleSpreadSheetAdapter(spreadsheet, mapper,
@@ -179,7 +179,7 @@ public class AdapterFactoryTests {
 		// TODO gerenrics?
 		GSWorksheet sourceRepo = spreadsheet.getGSWorksheet(1);
 		IGoogleSpreadsheetToXMLMapping mapper = new GoogleSpreadsheetToPlainXMLMapping(
-												"user", idColumName,null,sourceRepo.getName());
+												"user", idColumName,null,sourceRepo.getName(), spreadsheet.getDocsService());
 
 		
 		SplitAdapter spreadSheetAdapter = GoogleSpreadsheetUtils

@@ -10,9 +10,6 @@ import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreads
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.IGoogleSpreadSheet;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.mapping.GoogleSpreadsheetToPlainXMLMapping;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.mapping.IGoogleSpreadsheetToXMLMapping;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSCell;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSRow;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSWorksheet;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.feed.ContentReader;
 import org.mesh4j.sync.adapters.feed.ContentWriter;
@@ -61,7 +58,6 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public ISyncAdapter createGoogleSpreadSheetAdapter(GoogleSpreadSheetInfo spreadSheetInfo) {
 
@@ -74,8 +70,8 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 		String sheetName = spreadSheetInfo.getSheetName();
 
 		// create google spread sheet
-		IGoogleSpreadsheetToXMLMapping mapper = new GoogleSpreadsheetToPlainXMLMapping(type, idColumName,null,sheetName);
 		IGoogleSpreadSheet gSpreadSheet = new GoogleSpreadsheet(googleSpreadSheetId, userName, passWord);
+		IGoogleSpreadsheetToXMLMapping mapper = new GoogleSpreadsheetToPlainXMLMapping(type, idColumName, null, sheetName, gSpreadSheet.getDocsService());
 		String syncWorkSheetName = spreadSheetInfo.getSheetName() + "_sync";
 
 		// adapter creation
