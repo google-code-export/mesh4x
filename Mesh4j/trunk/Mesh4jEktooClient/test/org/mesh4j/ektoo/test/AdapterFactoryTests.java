@@ -130,19 +130,20 @@ public class AdapterFactoryTests {
 		String passWord = "java123456";
 		String GOOGLE_SPREADSHEET_FIELD = "peo4fu7AitTo8e3v0D8FCew";
 
-		IGoogleSpreadsheetToXMLMapping mapper = new GoogleSpreadsheetToPlainXMLMapping(
-				"user", idColumName,null);
+		
 		IGoogleSpreadSheet spreadsheet = new GoogleSpreadsheet(
 				GOOGLE_SPREADSHEET_FIELD, userName, passWord);
 
 		// TODO generics?
 		GSWorksheet sourceRepo = spreadsheet.getGSWorksheet(1);
-		GSWorksheet syncRepo = spreadsheet.getGSWorksheet(3);
 
+		IGoogleSpreadsheetToXMLMapping mapper = new GoogleSpreadsheetToPlainXMLMapping(
+				"user", idColumName,null,sourceRepo.getName());
+		
 		SplitAdapter spreadSheetAdapter = GoogleSpreadsheetUtils
 				.createGoogleSpreadSheetAdapter(spreadsheet, mapper,
-						sourceRepo, syncRepo, NullIdentityProvider.INSTANCE,
-						IdGenerator.INSTANCE);
+												NullIdentityProvider.INSTANCE,
+												IdGenerator.INSTANCE);
 
 		Assert.assertEquals(spreadSheetAdapter.getAll().size(), 0);
 
@@ -171,19 +172,20 @@ public class AdapterFactoryTests {
 		String passWord = "java123456";
 		String GOOGLE_SPREADSHEET_FIELD = "peo4fu7AitTo8e3v0D8FCew";
 
-		IGoogleSpreadsheetToXMLMapping mapper = new GoogleSpreadsheetToPlainXMLMapping(
-				"user", idColumName,null);
+		
 		IGoogleSpreadSheet spreadsheet = new GoogleSpreadsheet(
 				GOOGLE_SPREADSHEET_FIELD, userName, passWord);
-
+		
 		// TODO gerenrics?
 		GSWorksheet sourceRepo = spreadsheet.getGSWorksheet(1);
-		GSWorksheet syncRepo = spreadsheet.getGSWorksheet(3);
+		IGoogleSpreadsheetToXMLMapping mapper = new GoogleSpreadsheetToPlainXMLMapping(
+												"user", idColumName,null,sourceRepo.getName());
 
+		
 		SplitAdapter spreadSheetAdapter = GoogleSpreadsheetUtils
 				.createGoogleSpreadSheetAdapter(spreadsheet, mapper,
-						sourceRepo, syncRepo, NullIdentityProvider.INSTANCE,
-						IdGenerator.INSTANCE);
+												NullIdentityProvider.INSTANCE,
+												IdGenerator.INSTANCE);
 		return spreadSheetAdapter;
 	}
 
