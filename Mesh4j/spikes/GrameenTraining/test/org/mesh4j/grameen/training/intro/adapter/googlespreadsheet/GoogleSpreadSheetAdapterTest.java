@@ -48,10 +48,10 @@ public class GoogleSpreadSheetAdapterTest {
 		String workSheetSource = spreadsheet.getGSWorksheet(1).getName();//user entity source worksheet
 		String workSheetTarget = spreadsheet.getGSWorksheet(2).getName();//user entity target worksheet
 
-		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheetSource);
+		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheetSource, spreadsheet.getDocsService());
 		SplitAdapter splitAdapterSource = getAdapter(mapper, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
-		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheetTarget);
+		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheetSource, spreadsheet.getDocsService());
 		SplitAdapter splitAdapterTarget = getAdapter(mapper, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
 		SyncEngine syncEngine = new SyncEngine(splitAdapterSource,splitAdapterTarget);
@@ -75,7 +75,7 @@ public class GoogleSpreadSheetAdapterTest {
 		spField = "pc5o5hLhHbIhQ9IEZKNLAJQ";
 		spreadSheet = getGoogleSpreadSheet(spField, userName, passWord);
 		workSheetName = spreadSheet.getGSWorksheet(1).getName();
-		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheetName);
+		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheetName, spreadsheet.getDocsService());
 		SplitAdapter splitAdapterSource = getAdapter(spreadSheet,mapper, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
 		
@@ -85,7 +85,7 @@ public class GoogleSpreadSheetAdapterTest {
 		spField = "peo4fu7AitTo8e3v0D8FCew";
 		spreadSheet = getGoogleSpreadSheet(spField, userName, passWord);
 		workSheetName = spreadSheet.getGSWorksheet(1).getName();
-		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheetName);
+		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheetName, spreadsheet.getDocsService());
 		SplitAdapter splitAdapterTarget = getAdapter(spreadSheet,mapper, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
 		SyncEngine syncEngine = new SyncEngine(splitAdapterSource,splitAdapterTarget);
@@ -109,7 +109,7 @@ public class GoogleSpreadSheetAdapterTest {
 		spField = "peo4fu7AitTo8e3v0D8FCew";
 		spreadSheet = getGoogleSpreadSheet(spField, userName, passWord);
 		workSheetName = spreadSheet.getGSWorksheet(1).getName();
-		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheetName);
+		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheetName, spreadsheet.getDocsService());
 		SplitAdapter splitAdapterSource = getAdapter(spreadSheet,mapper, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);	
 		
 		//target
@@ -118,7 +118,7 @@ public class GoogleSpreadSheetAdapterTest {
 		spField = "peo4fu7AitTqkOhMSrecFRA";
 		spreadSheet = getGoogleSpreadSheet(spField, userName, passWord);
 		workSheetName = spreadSheet.getGSWorksheet(1).getName();
-		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheetName);
+		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheetName, spreadsheet.getDocsService());
 		SplitAdapter splitAdapterTarget = getAdapter(spreadSheet,mapper, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
 		SyncEngine syncEngine = new SyncEngine(splitAdapterSource,splitAdapterTarget);
@@ -142,12 +142,12 @@ public class GoogleSpreadSheetAdapterTest {
 		
 		cleanUp(workSheetSource, workSheetTarget);
 		
-		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheetSource.getName());
+		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheetSource.getName(), spreadsheet.getDocsService());
 		SplitAdapter splitAdapterSource = getAdapter(mapper, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		splitAdapterSource.add(getItem1());
 		splitAdapterSource.add(getItem2());
 		
-		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheetTarget.getName());
+		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheetTarget.getName(), spreadsheet.getDocsService());
 		SplitAdapter splitAdapterTarget = getAdapter(mapper, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		splitAdapterTarget.add(getItem3());
 		
@@ -173,14 +173,14 @@ public class GoogleSpreadSheetAdapterTest {
 		Item item2 = getItem2();
 		Item item3 = getItem3();
 		
-		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheetSource.getName());
+		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheetSource.getName(), spreadsheet.getDocsService());
 		SplitAdapter splitAdapterSource = getAdapter(mapper, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		splitAdapterSource.add(item1);
 		splitAdapterSource.add(item2);
 		
 		Assert.assertEquals(2,splitAdapterSource.getAll().size());
 		
-		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheetTarget.getName());
+		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheetTarget.getName(), spreadsheet.getDocsService());
 		SplitAdapter splitAdapterTarget = getAdapter(mapper, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		splitAdapterTarget.add(item3);
 		
@@ -210,13 +210,13 @@ public class GoogleSpreadSheetAdapterTest {
 		Item item1 = getItem1();
 		Item item2 = getItem2();
 		
-		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheetSource.getName());
+		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheetSource.getName(), spreadsheet.getDocsService());
 		SplitAdapter splitAdapterSource = getAdapter(mapper, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		splitAdapterSource.add(item1);
 		
 		Assert.assertEquals(1,splitAdapterSource.getAll().size());
 		
-		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheetTarget.getName());
+		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheetTarget.getName(), spreadsheet.getDocsService());
 		SplitAdapter splitAdapterTarget = getAdapter(mapper, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		splitAdapterTarget.add(item2);
 		
