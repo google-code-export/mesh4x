@@ -67,8 +67,6 @@ public class InterRepositorySyncTest {
 				"gspreadsheet.test@gmail.com",
 				"java123456",
 				"id",
-				1,
-				6,
 				"user_source",
 				"user"
 				);
@@ -90,8 +88,6 @@ public class InterRepositorySyncTest {
 				"gspreadsheet.test@gmail.com",
 				"java123456",
 				"id",
-				1,
-				6,
 				"user_source",
 				"user"
 				);
@@ -101,8 +97,6 @@ public class InterRepositorySyncTest {
 				"gspreadsheet.test@gmail.com",
 				"java123456",
 				"id",
-				1,
-				6,
 				"user_target",
 				"user"
 				);
