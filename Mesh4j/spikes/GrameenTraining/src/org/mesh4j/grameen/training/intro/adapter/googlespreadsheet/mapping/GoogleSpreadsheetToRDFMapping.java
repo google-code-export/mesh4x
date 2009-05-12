@@ -218,4 +218,10 @@ public class GoogleSpreadsheetToRDFMapping implements IGoogleSpreadsheetToXMLMap
 		return null;
 	}
 
+	@Override
+	public String getSheetName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

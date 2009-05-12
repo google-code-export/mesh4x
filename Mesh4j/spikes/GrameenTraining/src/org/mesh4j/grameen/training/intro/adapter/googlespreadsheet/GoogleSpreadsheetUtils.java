@@ -551,25 +551,18 @@ public class GoogleSpreadsheetUtils {
 	public static SplitAdapter createGoogleSpreadSheetAdapter(
 			IGoogleSpreadSheet spreadsheet,
 			IGoogleSpreadsheetToXMLMapping mapper,
-			GSWorksheet contentWorkSheet, GSWorksheet syncWorkSheet,
 			IIdentityProvider identityProvider, IIdGenerator idGenerator) {
 
-		GoogleSpreadSheetContentAdapter contentRepo = new GoogleSpreadSheetContentAdapter(
-				spreadsheet, contentWorkSheet, mapper);
+		GoogleSpreadSheetContentAdapter contentRepo = new GoogleSpreadSheetContentAdapter(spreadsheet, mapper);
 
 		GoogleSpreadSheetSyncRepository syncRepo = new GoogleSpreadSheetSyncRepository(
-				spreadsheet, identityProvider, idGenerator,
-				getSyncWorksheetName(contentWorkSheet.getName()));
+				spreadsheet, identityProvider, idGenerator,mapper.getSheetName() + "_sync");
 
-		SplitAdapter splitAdapter = new SplitAdapter(syncRepo, contentRepo,
-				identityProvider);
+		SplitAdapter splitAdapter = new SplitAdapter(syncRepo, contentRepo,identityProvider);
 
 		return splitAdapter;
 	}
 
-	public static String getSyncWorksheetName(String baseWorksheetName) {
-		return baseWorksheetName + "_sync";
-	}
 
 	/**
 	 * get sync sheet if available, otherwise create a new sync sheet and return that

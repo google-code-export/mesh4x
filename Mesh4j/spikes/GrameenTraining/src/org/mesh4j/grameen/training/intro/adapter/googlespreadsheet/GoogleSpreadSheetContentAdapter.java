@@ -52,26 +52,31 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 	 */
 	//TODO(raju)  no need to pass the workSheet instance, rather pass the worksheet name
 	// just pick the particular worksheet from IGoogleSpreadSheet
-	public GoogleSpreadSheetContentAdapter(IGoogleSpreadSheet spreadSheet,GSWorksheet<GSRow<GSCell>> workSheet,
-			IGoogleSpreadsheetToXMLMapping mapper){
+	public GoogleSpreadSheetContentAdapter(IGoogleSpreadSheet spreadSheet,IGoogleSpreadsheetToXMLMapping mapper){
 		
 		Guard.argumentNotNull(spreadSheet, "spreadSheet");
-		Guard.argumentNotNull(workSheet, "workSheet");
+		Guard.argumentNotNull(mapper, "mapper");
 		
 		this.spreadSheet = spreadSheet;
-		this.workSheet = workSheet;
 		this.mapper = mapper;
 		
-		//instead of providing sheet name as the entity name we using
+		//instead of providing sheet name as the entity name we are using
 		//type as the entity name.because with google spreadsheet it is possible
 		//to create two worksheet(programatically) with the same name.
 		this.entityName = mapper.getType();
-//		this.lastUpdateColumnIndex = mapper.getLastUpdateColumnPosition();
 		this.idColumnName = mapper.getIdColumnName();
+		this.workSheet = this.spreadSheet.getGSWorksheet(mapper.getSheetName());
 		init();
 	}
 	
+	
+	 /** 
+	 * Find out the id column position(entityIdIndex) of the entity from the 
+	 * worksheet. 
+	 * **/
+	 
 	private void init(){
+		
 		for(Map.Entry<String, GSRow<GSCell>> rowMap:workSheet.getGSRows().entrySet()){
 			GSCell cell = GoogleSpreadsheetUtils.getCell(rowMap.getValue(), mapper.getIdColumnName());
 			entityIdIndex = cell.getColIndex();

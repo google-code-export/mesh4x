@@ -35,6 +35,8 @@ public interface IGoogleSpreadsheetToXMLMapping {
 
 	IRDFSchema getSchema();
 
+	public String getSheetName();
+
 	//update the changes from payLoad into the provided rowTobeUPdated
 //	public GSRow<GSCell> normalizeRow(GSWorksheet<GSRow<GSCell>> workSheet,Element payLoad,GSRow<GSCell> rowTobeUPdated);
 	

@@ -21,17 +21,22 @@ public class GoogleSpreadsheetToPlainXMLMapping implements IGoogleSpreadsheetToX
 	private String idColumnName = "";
 	private String lastUpdateColumnName = "";
 	private String type = "";
+	private String sheetName = "";
 	
 	
-		
-	public GoogleSpreadsheetToPlainXMLMapping(String type, String idColumnName,String lastUpdateColumnName){
+
+	public GoogleSpreadsheetToPlainXMLMapping(String type, 
+						String idColumnName,String lastUpdateColumnName,String sheetName){
 		Guard.argumentNotNullOrEmptyString(type, "type");
 		Guard.argumentNotNullOrEmptyString(idColumnName, "idColumnName");
 		if(lastUpdateColumnName != null){
 			Guard.argumentNotNullOrEmptyString(lastUpdateColumnName, "lastUpdateColumnName");
 		}
+		Guard.argumentNotNullOrEmptyString(sheetName, "sheetName");
+		
 		this.type = type;
 		this.idColumnName = idColumnName;
+		this.sheetName = sheetName;
 	}
 	
 	
@@ -108,7 +113,10 @@ public class GoogleSpreadsheetToPlainXMLMapping implements IGoogleSpreadsheetToX
 	public String getType() {
 		return this.type;
 	}
-
+	@Override
+	public String getSheetName() {
+		return this.sheetName;
+	}
 	@Override
 	public IRDFSchema getSchema() {
 		// TODO Auto-generated method stub
