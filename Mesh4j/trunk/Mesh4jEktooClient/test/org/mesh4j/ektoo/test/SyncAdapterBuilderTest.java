@@ -1,5 +1,6 @@
 package org.mesh4j.ektoo.test;
 
+import java.io.File;
 import java.util.Date;
 
 import junit.framework.Assert;
@@ -12,6 +13,9 @@ import org.mesh4j.ektoo.ISyncAdapterBuilder;
 import org.mesh4j.ektoo.SyncAdapterBuilder;
 import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.sync.ISyncAdapter;
+import org.mesh4j.sync.adapters.feed.Feed;
+import org.mesh4j.sync.adapters.feed.FeedAdapter;
+import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.adapters.hibernate.EntityContent;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.IContent;
@@ -19,6 +23,8 @@ import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.Sync;
 import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
+import org.mesh4j.sync.security.NullIdentityProvider;
+import org.mesh4j.sync.test.utils.TestHelper;
 import org.mesh4j.sync.utils.XMLHelper;
 
 public class SyncAdapterBuilderTest {
@@ -45,29 +51,57 @@ public class SyncAdapterBuilderTest {
 	@Test
 	public void shouldCreateMsAccessAdapter() throws Exception{
 	    ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
-	    // TODO remove folder harcode 
-	    ISyncAdapter syncAdapter = adapterBuilder.createMsAccessAdapter("C:\\jtest\\ektoo.mdb", "ektoo");
+	    ISyncAdapter syncAdapter = adapterBuilder.createMsAccessAdapter(TestHelper.baseDirectoryForTest() + "ektoo.mdb", "ektoo");
 	    
 	   Assert.assertEquals(0, syncAdapter.getAll().size());
-
 	}
 	
 	@Test
 	public void shouldCreateExcelAdapter() throws DocumentException{
 	
-		// TODO remove folder harcode
-		String contentFile = "C:\\jtest\\contentFile.xls";
-
 		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
-		ISyncAdapter excelAdapter = adapterBuilder.createMsExcelAdapter("user", "id", contentFile);
+		ISyncAdapter excelAdapter = adapterBuilder.createMsExcelAdapter(TestHelper.baseDirectoryForTest() + "contentFile.xls","user", "id");
 		
 		Assert.assertEquals(0, excelAdapter.getAll().size());
-		
+ 		
 		excelAdapter.add(getItem());
 		
 		
 		Assert.assertEquals(1, excelAdapter.getAll().size());
 		
+	}
+	
+	@Test
+	public void ShouldCreateMySqlAdapter() throws DocumentException{
+		String userName = "root";
+		String password = "test1234";
+		String tableName = "user";
+		
+		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapter mysqlAdapter =  builder.createMySQLAdapter(userName, password,"localhost" ,3306,"mesh4xdb",tableName);
+		
+//		Assert.assertEquals(0, mysqlAdapter.getAll().size());
+		
+//		mysqlAdapter.add(getItem());
+		Assert.assertEquals(1, mysqlAdapter.getAll().size());
+	}
+	
+	@Test
+	public void ShouldCreateFeedAdapter() {
+		File file = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID()+ ".xml"));
+		String link = "http://localhost:8080/mesh4x/feeds";	
+		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapter feedAdapter = builder.createFeedAdapter("myFeed", "my data feed", link, file.getAbsolutePath(), RssSyndicationFormat.INSTANCE);
+		Assert.assertNotNull(feedAdapter);
+		Assert.assertEquals(0, feedAdapter.getAll().size());
+	}
+	
+	@Test
+	public void ShouldCreateKMLAdapter(){
+		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapter kmlAdapter = builder.createKMLAdapter(TestHelper.baseDirectoryForTest() + "kmlDummyForSync.kml");
+		Assert.assertNotNull(kmlAdapter);
+		Assert.assertEquals(0, kmlAdapter.getAll().size());
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
@@ -130,8 +164,8 @@ public class SyncAdapterBuilderTest {
 		String id = IdGenerator.INSTANCE.newID();
 		String rawDataAsXML = "<user>" +
 								"<id>"+id+"</id>" +
-								"<name>Marcelo</name>" +
 								"<age>25</age>" +
+								"<name>Marcelo</name>" +
 								"<city>Buens aires</city>" +
 								"<country>Argentina</country>" +
 								"</user>";
