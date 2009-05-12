@@ -41,4 +41,6 @@ public interface IRDFSchema extends ISchema {
 	public String getOntologyBaseUri();
 	public String getOntologyNameSpace();
 	public String getOntologyClassName();
+
+	public boolean isCompatible(IRDFSchema rdfSchema);
 }

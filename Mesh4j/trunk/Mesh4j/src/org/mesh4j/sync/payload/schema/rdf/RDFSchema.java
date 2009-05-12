@@ -270,14 +270,12 @@ public class RDFSchema implements IRDFSchema{
 	}
 
 	@Override
-	public boolean equals(Object schema){
+	public boolean isCompatible(IRDFSchema rdfSchema){
 		
 		if (this == schema) return true;
 		
 		if (schema == null || !(schema instanceof IRDFSchema)) return false;
 
-		RDFSchema rdfSchema = (RDFSchema) schema; 
-		
 		if (this.asXML().equalsIgnoreCase(rdfSchema.asXML())) return true;
 		
 		int size = rdfSchema.getPropertyCount();
