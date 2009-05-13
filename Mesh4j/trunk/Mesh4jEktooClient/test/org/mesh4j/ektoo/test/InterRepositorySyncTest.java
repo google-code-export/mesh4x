@@ -1,9 +1,11 @@
 package org.mesh4j.ektoo.test;
 
+import java.io.File;
 import java.util.List;
 
 import junit.framework.Assert;
 
+import org.dom4j.Element;
 import org.junit.Test;
 import org.mesh4j.ektoo.GoogleSpreadSheetInfo;
 import org.mesh4j.ektoo.ISyncAdapterBuilder;
@@ -11,7 +13,12 @@ import org.mesh4j.ektoo.SyncAdapterBuilder;
 import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.SyncEngine;
+import org.mesh4j.sync.adapters.feed.XMLContent;
+import org.mesh4j.sync.adapters.feed.atom.AtomSyndicationFormat;
+import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.Item;
+import org.mesh4j.sync.model.Sync;
 import org.mesh4j.sync.test.utils.TestHelper;
 
 public class InterRepositorySyncTest {
@@ -58,6 +65,71 @@ public class InterRepositorySyncTest {
 //		List<Item> listOfConflicts = engine.synchronize();
 //		Assert.assertEquals(0, listOfConflicts.size());
 //	}
+	
+	
+	@Test
+	public void ShouldSyncRssToRssWithoutRDFAssumeSameSchema(){
+		
+		String link = "";
+		Element element = TestHelper.makeElement("<payload><user><id>SyncId123</id><name>SyncId123</name><pass>123</pass></user></payload>");
+		XMLContent content = new XMLContent("SyncId123", "SyncId123", "SyncId123", element);
+		Item item = new Item(content, new Sync("SyncId123", "jmt", TestHelper.now(), false));
+		
+		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
+		 
+		File rssSourceFile = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID() + "_source.xml"));
+		ISyncAdapter sourceRSSAdapter = builder.createFeedAdapter("User", "user Info", link, 
+										rssSourceFile.getAbsolutePath(), RssSyndicationFormat.INSTANCE);
+		
+		sourceRSSAdapter.add(item);
+		
+		File rssTargetFile = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID() + "_target.xml"));
+		ISyncAdapter targetRSSAdapter = builder.createFeedAdapter("User", "user Info", link, 
+										rssTargetFile.getAbsolutePath(), RssSyndicationFormat.INSTANCE);
+		
+		Assert.assertEquals(1, sourceRSSAdapter.getAll().size());
+		Assert.assertEquals(0, targetRSSAdapter.getAll().size());
+		
+		SyncEngine syncEngine = new SyncEngine(sourceRSSAdapter,targetRSSAdapter);
+		List<Item> listOfConflicts = syncEngine.synchronize();
+		
+		Assert.assertEquals(0, listOfConflicts.size());
+		Assert.assertEquals(1, sourceRSSAdapter.getAll().size());
+		Assert.assertEquals(1, targetRSSAdapter.getAll().size());
+		
+	}
+	
+	@Test
+	public void ShouldSyncAtomToAtomWithoutRDFAssumeSameSchema(){
+		
+		String link = "";
+		Element element = TestHelper.makeElement("<payload><user><id>SyncId123</id><name>SyncId123</name><pass>123</pass></user></payload>");
+		XMLContent content = new XMLContent("SyncId123", "SyncId123", "SyncId123", element);
+		Item item = new Item(content, new Sync("SyncId123", "jmt", TestHelper.now(), false));
+		
+		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
+		 
+		File rssSourceFile = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID() + "_source.xml"));
+		ISyncAdapter sourceAtomAdapter = builder.createFeedAdapter("User", "user Info", link, 
+										rssSourceFile.getAbsolutePath(), AtomSyndicationFormat.INSTANCE);
+		
+		sourceAtomAdapter.add(item);
+		
+		File rssTargetFile = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID() + "_target.xml"));
+		ISyncAdapter targetAtomAdapter = builder.createFeedAdapter("User", "user Info", link, 
+										rssTargetFile.getAbsolutePath(), AtomSyndicationFormat.INSTANCE);
+		
+		Assert.assertEquals(1, sourceAtomAdapter.getAll().size());
+		Assert.assertEquals(0, targetAtomAdapter.getAll().size());
+		
+		SyncEngine syncEngine = new SyncEngine(sourceAtomAdapter,targetAtomAdapter);
+		List<Item> listOfConflicts = syncEngine.synchronize();
+		
+		Assert.assertEquals(0, listOfConflicts.size());
+		Assert.assertEquals(1, sourceAtomAdapter.getAll().size());
+		Assert.assertEquals(1, targetAtomAdapter.getAll().size());
+		
+	}
 	
 	@Test
 	public void ShouldSyncGoogleSpreadSheetToExcelWithoutRDFAssumeSameSchema(){
