@@ -13,8 +13,6 @@ import org.mesh4j.ektoo.ISyncAdapterBuilder;
 import org.mesh4j.ektoo.SyncAdapterBuilder;
 import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.sync.ISyncAdapter;
-import org.mesh4j.sync.adapters.feed.Feed;
-import org.mesh4j.sync.adapters.feed.FeedAdapter;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.adapters.hibernate.EntityContent;
 import org.mesh4j.sync.id.generator.IdGenerator;
@@ -23,7 +21,6 @@ import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.Sync;
 import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
-import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.test.utils.TestHelper;
 import org.mesh4j.sync.utils.XMLHelper;
 
@@ -34,7 +31,7 @@ public class SyncAdapterBuilderTest {
 	public void shouldCreateGoogleSpreadSheetAdapter(){
 		
 		GoogleSpreadSheetInfo spreadSheetInfo = new GoogleSpreadSheetInfo(
-				"pLUqch-enpf1-GcqnD6qjSA",
+				"peo4fu7AitTo8e3v0D8FCew",
 				"gspreadsheet.test@gmail.com",
 				"java123456",
 				"id",
@@ -44,8 +41,8 @@ public class SyncAdapterBuilderTest {
 		
 		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
 		ISyncAdapter syncAdapterA = adapterBuilder.createGoogleSpreadSheetAdapter(spreadSheetInfo);
+		Assert.assertNotNull(syncAdapterA);
 		
-		Assert.assertEquals(0,syncAdapterA.getAll().size());
 	}
 	
 	@Test
@@ -80,6 +77,7 @@ public class SyncAdapterBuilderTest {
 		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
 		ISyncAdapter mysqlAdapter =  builder.createMySQLAdapter(userName, password,"localhost" ,3306,"mesh4xdb",tableName);
 		
+		Assert.assertNotNull(mysqlAdapter);
 //		Assert.assertEquals(0, mysqlAdapter.getAll().size());
 		
 //		mysqlAdapter.add(getItem());
@@ -107,57 +105,26 @@ public class SyncAdapterBuilderTest {
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldGenarateExceptionIfSheetNameEmptyOrNull()
 	{
-		// TODO remove folder harcode
-		String contentFile = "C:\\jtest\\contentFile.xls";
-		String syncFile = "C:\\jtest\\syncFile.xls";
+		String contentFile = TestHelper.fileName("contentFile.xls");
 		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
-		ISyncAdapter excelAdapter = adapterBuilder.createMsExcelAdapter("", "id", contentFile);
+		ISyncAdapter excelAdapter = adapterBuilder.createMsExcelAdapter(contentFile, "", "id");
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldGenarateExceptionIfIdEmptyOrNull(){
-		// TODO remove folder harcode
-		String contentFile = "C:\\jtest\\contentFile.xls";
-		String syncFile = "C:\\jtest\\syncFile.xls";
+		
+		String contentFile = TestHelper.fileName("contentFile.xls");
 		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
-		ISyncAdapter excelAdapter = adapterBuilder.createMsExcelAdapter("user", "", contentFile);
+		ISyncAdapter excelAdapter = adapterBuilder.createMsExcelAdapter(contentFile, "user", "");
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
-	public void shouldGenarateExceptionIfContenFileIsNull(){
-		// TODO remove folder harcode
-		String contentFile = "C:\\jtest\\contentFile.xls";
-		String syncFile = "C:\\jtest\\syncFile.xls";
+	public void shouldReturnNUllIfContenFileIsNullOrEmpty(){
 		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
-		ISyncAdapter excelAdapter = adapterBuilder.createMsExcelAdapter("user", "id", "");
+		ISyncAdapter excelAdapter = adapterBuilder.createMsExcelAdapter(null, "user", "id");
 	}
 	
-	@Test(expected=IllegalArgumentException.class)
-	public void shouldGenarateExceptionIfSyncFileIsNull(){
-		// TODO remove folder harcode
-		String contentFile = "C:\\jtest\\contentFile.xls";
-		String syncFile = "C:\\jtest\\syncFile.xls";
-		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
-		ISyncAdapter excelAdapter = adapterBuilder.createMsExcelAdapter("user", "id", contentFile);
-	}
 	
-	@Test(expected=IllegalArgumentException.class)
-	public void shouldGenarateExceptionIfIdentityIsNull(){
-		// TODO remove folder harcode
-		String contentFile = "C:\\jtest\\contentFile.xls";
-		String syncFile = "C:\\jtest\\syncFile.xls";
-		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
-		ISyncAdapter excelAdapter = adapterBuilder.createMsExcelAdapter("user", "id", contentFile);
-	}
-	
-	@Test(expected=IllegalArgumentException.class)
-	public void shouldGenarateExceptionIfIdGeneratorIsNull(){
-		// TODO remove folder harcode
-		String contentFile = "C:\\jtest\\contentFile.xls";
-		String syncFile = "C:\\jtest\\syncFile.xls";
-		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
-		ISyncAdapter excelAdapter = adapterBuilder.createMsExcelAdapter("user", "id", contentFile);
-	}
 	
 	private Item getItem() throws DocumentException {
 		

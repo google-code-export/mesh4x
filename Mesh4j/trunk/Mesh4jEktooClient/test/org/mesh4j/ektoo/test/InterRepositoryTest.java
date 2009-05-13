@@ -19,6 +19,7 @@ import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.test.utils.TestHelper;
 
+@Deprecated
 public class InterRepositoryTest {
 	
 	@Test

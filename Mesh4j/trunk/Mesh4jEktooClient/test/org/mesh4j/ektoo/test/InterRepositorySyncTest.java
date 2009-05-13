@@ -16,6 +16,7 @@ import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.adapters.feed.XMLContent;
 import org.mesh4j.sync.adapters.feed.atom.AtomSyndicationFormat;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
+import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.Sync;
@@ -242,4 +243,31 @@ public class InterRepositorySyncTest {
 		List<Item> listOfConflicts = engine.synchronize();
 		Assert.assertEquals(0, listOfConflicts.size());
 	}
+	
+	@Test
+	public void ShouldSyncMySQLToCloud(){	
+			
+		String user = "root";
+		String password = "test1234";
+		String tableName = "user";
+
+		String meshName = "Mysql";
+		String feedName = "user";
+
+		ISyncAdapterBuilder builder = new SyncAdapterBuilder(
+				new PropertiesProvider());
+		ISyncAdapter sourceAsMySql = builder.createMySQLAdapter(user, password,
+				"localhost", 3306, "mesh4xdb", tableName);
+
+		SplitAdapter sourceAdapter = (SplitAdapter) sourceAsMySql;
+
+		ISyncAdapter targetAdapter = builder.createHttpSyncAdapter(meshName, feedName);
+
+		SyncEngine engine = new SyncEngine(sourceAdapter, targetAdapter);
+
+		List<Item> listOfConflicts = engine.synchronize();
+		Assert.assertEquals(0, listOfConflicts.size());
+		Assert.assertEquals(sourceAdapter.getAll().size(), targetAdapter
+				.getAll().size());
+	}	
 }
