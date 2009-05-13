@@ -146,10 +146,10 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 	@Override
 	public ISyncAdapter createMsExcelAdapter(String contentFileName, String sheetName, String idColumnName) {
 		
+		Guard.argumentNotNullOrEmptyString(contentFileName, "contentFileName");
 		File file = getFile(contentFileName);
-		// TODO (Raju) need to think about more,just for partial commit
 		if (file == null || !file.exists()) {
-			return null;//TODO better throw exception
+			Guard.argumentNotNullOrEmptyString(contentFileName, "contentFileName");
 		}
 		return this.excelSyncFactory.createSyncAdapter(file.getAbsolutePath(), sheetName, idColumnName, getIdentityProvider());
 	}
