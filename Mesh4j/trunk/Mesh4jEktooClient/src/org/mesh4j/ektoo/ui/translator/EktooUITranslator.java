@@ -286,4 +286,9 @@ public class EktooUITranslator {
 		return EktooMessageTranslator.translate("EKTOO_FEED_FILE_NAME_FIELD_LABEL");
 	}
 
+	public static String getFolderFileNameLabel() {
+		return EktooMessageTranslator
+		.translate("EKTOO_FOLDER_FILE_NAME_FIELD_LABEL");
+	}
+
 }

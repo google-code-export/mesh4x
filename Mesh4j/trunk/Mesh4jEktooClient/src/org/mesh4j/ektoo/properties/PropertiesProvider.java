@@ -197,4 +197,14 @@ public class PropertiesProvider {
 		}
 	}
 
+	public String getDefaultFolderFile() {
+		String fileName = getString("default.folder.name");
+		try {
+			return new File(fileName).getCanonicalPath();
+		} catch (IOException e) {
+			// nothing to do
+			return "";
+		}
+	}
+
 }

@@ -39,7 +39,7 @@ import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
  * @author Bhuiyan Mohammad Iklash
  * 
  */
-public class EktooUI extends JFrame implements IErrorListener{
+public class EktooUI extends JFrame implements IErrorListener {
 	private static final long serialVersionUID = -8703829301086394863L;
 	private final Log LOGGER = LogFactory.getLog(EktooUI.class);
 
@@ -58,8 +58,8 @@ public class EktooUI extends JFrame implements IErrorListener{
 	private JLabel targetImageLabel = null;
 	private JLabel directionImageLabel = null;
 	private JLabel syncImageLabel = null;
-  private JLabel poweredByLabel = null;
-	
+	private JLabel poweredByLabel = null;
+
 	private EktooUIController controller;
 
 	// BUSINESS METHODS
@@ -123,39 +123,40 @@ public class EktooUI extends JFrame implements IErrorListener{
 			c.gridy = 3;
 			c.gridwidth = 2;
 			panel.add(getBtnSync(), c);
-			
-      c.fill = GridBagConstraints.HORIZONTAL;
-      c.gridx = 0;
-      c.gridy = 4;
-      c.gridwidth = 2;
-      panel.add(getPoweredByLabel(), c);
-			
+
+			c.fill = GridBagConstraints.HORIZONTAL;
+			c.gridx = 0;
+			c.gridy = 4;
+			c.gridwidth = 2;
+			panel.add(getPoweredByLabel(), c);
 
 		}
 		return panel;
 	}
 
-  private JLabel getPoweredByLabel() 
-  {
-    if (poweredByLabel == null) {
-      poweredByLabel = new JLabel( EktooUITranslator.getPoweredByLabel(), ImageManager.getTrademarkIcon(), JLabel.RIGHT);
-      poweredByLabel.setHorizontalTextPosition(JLabel.LEFT);
-      poweredByLabel.setVerticalTextPosition(JLabel.CENTER);
-      poweredByLabel.setIconTextGap(0);
-      poweredByLabel.setForeground(Color.BLUE);
-      poweredByLabel.setToolTipText(EktooUITranslator.getPoweredByLabelTooltip());
-      poweredByLabel.addMouseListener(new MouseAdapter() 
-      {
-        public void mouseClicked(MouseEvent e) 
-        { 
-          OpenURLTask task = new OpenURLTask(EktooUI.this, EktooUI.this,  new PropertiesProvider().getMesh4xURL());
-          task.execute();
-        }
-    });
-      
-    }
-    return poweredByLabel;
-  }
+	private JLabel getPoweredByLabel() {
+		if (poweredByLabel == null) {
+			poweredByLabel = new JLabel(EktooUITranslator.getPoweredByLabel(),
+					ImageManager.getTrademarkIcon(), JLabel.RIGHT);
+			poweredByLabel.setHorizontalTextPosition(JLabel.LEFT);
+			poweredByLabel.setVerticalTextPosition(JLabel.CENTER);
+			poweredByLabel.setIconTextGap(0);
+			poweredByLabel.setForeground(Color.BLUE);
+			poweredByLabel.setToolTipText(EktooUITranslator
+					.getPoweredByLabelTooltip());
+			poweredByLabel.addMouseListener(new MouseAdapter() {
+				public void mouseClicked(MouseEvent e) {
+					OpenURLTask task = new OpenURLTask(EktooUI.this,
+							EktooUI.this, new PropertiesProvider()
+									.getMesh4xURL());
+					task.execute();
+				}
+			});
+
+		}
+		return poweredByLabel;
+	}
+
 	private JPanel getImagePanel() {
 		if (panelImage == null) {
 			panelImage = new JPanel();
@@ -357,7 +358,9 @@ public class EktooUI extends JFrame implements IErrorListener{
 	// TODO (NBL) disables unsupported features from ui
 	private void filterCombobox() {
 		String item = (String) getSourceItem().getListType().getSelectedItem();
-		if (item.equals(SyncItemUI.MS_EXCEL_PANEL) || item.equals(SyncItemUI.RSS_FILE_PANEL) || item.equals(SyncItemUI.ATOM_FILE_PANEL)) {
+		if (item.equals(SyncItemUI.MS_EXCEL_PANEL)
+				|| item.equals(SyncItemUI.RSS_FILE_PANEL)
+				|| item.equals(SyncItemUI.ATOM_FILE_PANEL)) {
 			getTargetItem().getListType().removeAllItems();
 			getTargetItem().getListType().addItem(SyncItemUI.MS_EXCEL_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.MS_ACCESS_PANEL);
@@ -369,9 +372,9 @@ public class EktooUI extends JFrame implements IErrorListener{
 		} else if (item.equals(SyncItemUI.MS_ACCESS_PANEL)) {
 			getTargetItem().getListType().removeAllItems();
 			getTargetItem().getListType().addItem(SyncItemUI.MS_ACCESS_PANEL);
-			getTargetItem().getListType().addItem(SyncItemUI.CLOUD_PANEL);
-			getTargetItem().getListType().addItem(SyncItemUI.MYSQL_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.MS_EXCEL_PANEL);
+			getTargetItem().getListType().addItem(SyncItemUI.MYSQL_PANEL);
+			getTargetItem().getListType().addItem(SyncItemUI.CLOUD_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.RSS_FILE_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.ATOM_FILE_PANEL);
 		} else if (item.equals(SyncItemUI.GOOGLE_SPREADSHEET_PANEL)) {
@@ -385,23 +388,29 @@ public class EktooUI extends JFrame implements IErrorListener{
 			getTargetItem().getListType().removeAllItems();
 			getTargetItem().getListType().addItem(SyncItemUI.MS_EXCEL_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.MS_ACCESS_PANEL);
-			getTargetItem().getListType().addItem(SyncItemUI.CLOUD_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.MYSQL_PANEL);
+			getTargetItem().getListType().addItem(SyncItemUI.CLOUD_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.RSS_FILE_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.ATOM_FILE_PANEL);
 		} else if (item.equals(SyncItemUI.CLOUD_PANEL)) {
 			getTargetItem().getListType().removeAllItems();
+			getTargetItem().getListType().addItem(SyncItemUI.KML_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.MS_EXCEL_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.MS_ACCESS_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.GOOGLE_SPREADSHEET_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.MYSQL_PANEL);
-			getTargetItem().getListType().addItem(SyncItemUI.KML_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.RSS_FILE_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.ATOM_FILE_PANEL);
 		} else if (item.equals(SyncItemUI.KML_PANEL)) {
 			getTargetItem().getListType().removeAllItems();
 			getTargetItem().getListType().addItem(SyncItemUI.CLOUD_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.KML_PANEL);
+			getTargetItem().getListType().addItem(SyncItemUI.RSS_FILE_PANEL);
+			getTargetItem().getListType().addItem(SyncItemUI.ATOM_FILE_PANEL);
+		} else if (item.equals(SyncItemUI.FOLDER_PANEL)) {
+			getTargetItem().getListType().removeAllItems();
+			getTargetItem().getListType().addItem(SyncItemUI.FOLDER_PANEL);
+			getTargetItem().getListType().addItem(SyncItemUI.CLOUD_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.RSS_FILE_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.ATOM_FILE_PANEL);
 		} else {
@@ -412,10 +421,9 @@ public class EktooUI extends JFrame implements IErrorListener{
 
 	}
 
-  @Override
-  public void notifyError(String error)
-  {
-    // TODO Auto-generated method stub
-    
-  }
+	@Override
+	public void notifyError(String error) {
+		// TODO Auto-generated method stub
+
+	}
 }

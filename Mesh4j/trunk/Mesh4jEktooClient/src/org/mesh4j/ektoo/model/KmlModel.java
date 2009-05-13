@@ -9,24 +9,24 @@ import org.mesh4j.ektoo.controller.KmlUIController;
 public class KmlModel extends AbstractModel {
 	
 	// MODEL VARIABLES
-	private String kmlFileName = null;
+	private String fileName = null;
 
 	// BUSINESS METHODS
-	public KmlModel(String kmlFileName) {
+	public KmlModel(String fileName) {
 		super();
-		this.kmlFileName = kmlFileName;
+		this.fileName = fileName;
 	}
 	
-	public void setKmlFileName(String kmlFileName) {
-		firePropertyChange(KmlUIController.FILE_NAME_PROPERTY, this.kmlFileName, this.kmlFileName = kmlFileName);
+	public void setFileName(String fileName) {
+		firePropertyChange(KmlUIController.FILE_NAME_PROPERTY, this.fileName, this.fileName = fileName);
 	}
 
-	public String getKmlFileName() {
-		return kmlFileName;
+	public String getFileName() {
+		return this.fileName;
 	}
 	
 	 public String toString()
 	 {
-	    return "KML | " + getKmlFileName();
+	    return "KML | " + getFileName();
 	 }
 }

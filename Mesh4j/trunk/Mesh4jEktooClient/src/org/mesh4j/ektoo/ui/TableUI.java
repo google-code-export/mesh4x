@@ -110,6 +110,7 @@ public abstract class TableUI extends AbstractUI {
 			btnFile.setBounds(new Rectangle(259, 8, 34, 20));
 			btnFile.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					getFileChooser().setSelectedFile(file);
 					int returnVal = getFileChooser().showOpenDialog(btnFile);
 					if (returnVal == JFileChooser.APPROVE_OPTION) {
 						// System.out.println("You chose to open this file: " +

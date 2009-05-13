@@ -97,4 +97,9 @@ public interface ISyncAdapterBuilder {
 	public ISyncAdapter createFeedAdapter(String title, String description,
 			String link, String fileName, ISyndicationFormat syndicationFormat);
 
+	/**
+	 * TODO create documentation (raju)
+	 */
+	public ISyncAdapter createFolderAdapter(String folderName);
+
 }

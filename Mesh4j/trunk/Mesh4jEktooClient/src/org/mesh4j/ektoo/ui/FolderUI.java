@@ -14,31 +14,29 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.mesh4j.ektoo.controller.FeedUIController;
+import org.mesh4j.ektoo.controller.FolderUIController;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 
-public class FeedUI extends AbstractUI {
+public class FolderUI extends AbstractUI {
 
+	private static final long serialVersionUID = 8670884881480486083L;
 
-	private static final long serialVersionUID = 2457237653577593698L;
-
-	private static final Log LOGGER = LogFactory.getLog(FeedUI.class);
+	private static final Log LOGGER = LogFactory.getLog(FolderUI.class);
 	
 	// MODEL VARIABLES
 	private JLabel labelFileName = null;
 	private JTextField txtFileName = null;
 	private JButton btnFile = null;
 	
-	private FeedUIController controller;
+	private FolderUIController controller;
 	private JFileChooser fileChooser = null;
 	private File file = null;
 
 	// BUSINESS METHODS
-	public FeedUI(String fileName, FeedUIController controller) {
+	public FolderUI(String fileName, FolderUIController controller) {
 		super();
 		this.controller = controller;
 		this.controller.addView(this);
@@ -59,7 +57,7 @@ public class FeedUI extends AbstractUI {
 	private JLabel getFileNameLabel() {
 		if (labelFileName == null) {
 			labelFileName = new JLabel();
-			labelFileName.setText(EktooUITranslator.getFeedFileNameLabel());
+			labelFileName.setText(EktooUITranslator.getFolderFileNameLabel());
 			labelFileName.setSize(new Dimension(85, 16));
 			labelFileName.setPreferredSize(new Dimension(85, 16));
 			labelFileName.setLocation(new Point(8, 9));
@@ -113,20 +111,15 @@ public class FeedUI extends AbstractUI {
 		}
 	}
 	
-	public FeedUIController getController() {
+	public FolderUIController getController() {
 		return controller;
 	}
 	
-	public void setFileChooser(JFileChooser fileChooser) {
-		this.fileChooser = fileChooser;
-	}
-
 	public JFileChooser getFileChooser() {
 		if (fileChooser == null){
 			fileChooser = new JFileChooser();
 			fileChooser.setAcceptAllFileFilterUsed(false);
-			fileChooser.setFileFilter(new FileNameExtensionFilter(EktooUITranslator.getXMLFileSelectorTitle(), "xml", "XML"));
-			fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+			fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		}		
 		return fileChooser;
 	}
@@ -142,7 +135,7 @@ public class FeedUI extends AbstractUI {
   @Override
   public void modelPropertyChange(final PropertyChangeEvent evt)
   {
-    if ( evt.getPropertyName().equals( FeedUIController.FILE_NAME_PROPERTY))
+    if ( evt.getPropertyName().equals( FolderUIController.FOLDER_NAME_PROPERTY))
     {
       String newStringValue = evt.getNewValue().toString();
       if (!  getFileNameText().getText().equals(newStringValue))

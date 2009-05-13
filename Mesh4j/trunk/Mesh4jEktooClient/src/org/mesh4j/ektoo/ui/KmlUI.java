@@ -84,13 +84,20 @@ public class KmlUI extends AbstractUI {
 			btnFile.setBounds(new Rectangle(259, 8, 34, 20));
 			btnFile.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					getFileChooser().setSelectedFile(file);
 					int returnVal = getFileChooser().showOpenDialog(btnFile);
 					if (returnVal == JFileChooser.APPROVE_OPTION) {
 						// System.out.println("You chose to open this file: " +
 						// getFileChooser().getSelectedFile().getName());
-						setFile(getFileChooser().getSelectedFile());
-						if (getFile() != null) {
-							txtFileName.setText(getFile().getName());
+						File selectedFile = getFileChooser().getSelectedFile();
+						if (selectedFile != null) {
+							try{
+								controller.changeFileName(selectedFile.getCanonicalPath());
+								txtFileName.setText(selectedFile.getName());
+								setFile(selectedFile);
+							} catch (Exception ex) {
+								LOGGER.error(ex.getMessage(), ex);
+							}
 						}
 					}
 				}

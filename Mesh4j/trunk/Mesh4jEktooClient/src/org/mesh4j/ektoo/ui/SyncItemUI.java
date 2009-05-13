@@ -24,6 +24,7 @@ import org.mesh4j.ektoo.IUIController;
 import org.mesh4j.ektoo.controller.AbstractController;
 import org.mesh4j.ektoo.controller.CloudUIController;
 import org.mesh4j.ektoo.controller.FeedUIController;
+import org.mesh4j.ektoo.controller.FolderUIController;
 import org.mesh4j.ektoo.controller.GSSheetUIController;
 import org.mesh4j.ektoo.controller.KmlUIController;
 import org.mesh4j.ektoo.controller.MsAccessUIController;
@@ -31,6 +32,7 @@ import org.mesh4j.ektoo.controller.MsExcelUIController;
 import org.mesh4j.ektoo.controller.MySQLUIController;
 import org.mesh4j.ektoo.model.CloudModel;
 import org.mesh4j.ektoo.model.FeedModel;
+import org.mesh4j.ektoo.model.FolderModel;
 import org.mesh4j.ektoo.model.GSSheetModel;
 import org.mesh4j.ektoo.model.KmlModel;
 import org.mesh4j.ektoo.model.MsAccessModel;
@@ -53,6 +55,7 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 		IUIController {
 
 	private static final long serialVersionUID = 8681801062827267140L;
+	
 	private final static String DYMMY_PANEL = "DUMMY_PANEL";
 	public final static String KML_PANEL = "KML";
 	public final static String MS_EXCEL_PANEL = "MS Excel";
@@ -62,6 +65,7 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 	public final static String MYSQL_PANEL = "MySQL";
 	public final static String RSS_FILE_PANEL = "Rss 2.0";
 	public final static String ATOM_FILE_PANEL = "Atom 1.0";
+	public final static String FOLDER_PANEL = "Folder";
 
 	// MODEL VARIABLES
 	private PropertiesProvider propertiesProvider;
@@ -94,6 +98,9 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 	private FeedUI atomUI = null;
 	private FeedUIController atomUIControler = null;
 
+	private FolderUI folderUI = null;
+	private FolderUIController folderUIController = null;
+	
 	private String SourceOrTargetType = null;
 
 	private JComboBox listType = null;
@@ -147,6 +154,7 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 			body.add(getMySQLUI(), MYSQL_PANEL);
 			body.add(getRSSFileUI(), RSS_FILE_PANEL);
 			body.add(getAtomFileUI(), ATOM_FILE_PANEL);
+			body.add(getFolderUI(), FOLDER_PANEL);
 		}
 		return body;
 	}
@@ -291,6 +299,15 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 		}
 		return atomUI;
 	}
+	
+	private FolderUI getFolderUI() {
+		if (folderUI == null) {
+			folderUIController = new FolderUIController(this.propertiesProvider);
+			folderUIController.addModel(new FolderModel(this.propertiesProvider.getDefaultFolderFile()));
+			folderUI = new FolderUI(this.propertiesProvider.getDefaultFolderFile(), folderUIController);
+		}
+		return folderUI;
+	}
 
 	private void updateLayout(String item) {
 		CardLayout cl = (CardLayout) (body.getLayout());
@@ -311,6 +328,8 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 			cl.show(body, RSS_FILE_PANEL);
 		} else if (item.equals(ATOM_FILE_PANEL)) {
 			cl.show(body, ATOM_FILE_PANEL);
+		} else if (item.equals(FOLDER_PANEL)) {
+			cl.show(body, FOLDER_PANEL);
 		} else {
 			cl.show(body, DYMMY_PANEL);
 		}
@@ -424,6 +443,8 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 			currrentController = rssUI.getController();
 		} else if (item.equals(ATOM_FILE_PANEL)) {
 			currrentController = atomUI.getController();
+		} else if (item.equals(FOLDER_PANEL)) {
+			currrentController = folderUI.getController();
 		}
 
 		return currrentController;

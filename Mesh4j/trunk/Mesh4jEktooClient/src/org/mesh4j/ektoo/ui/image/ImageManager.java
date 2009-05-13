@@ -6,6 +6,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 import org.mesh4j.ektoo.ui.EktooUI;
+import org.mesh4j.ektoo.ui.SyncItemUI;
 
 import com.swtdesigner.SwingResourceManager;
 
@@ -24,6 +25,11 @@ public class ImageManager
   public static Icon getUndefinedSourceIcon() 
   {
     return SwingResourceManager.getIcon(EktooUI.class, "/ds.png");
+  }
+  
+  public static Icon getFolderSourceIcon() 
+  {
+    return SwingResourceManager.getIcon(EktooUI.class, "/folder_ds.png");
   }
   
   public static Icon getDataSourceSmall() 
@@ -58,30 +64,42 @@ public class ImageManager
     {
       return SwingResourceManager.getIcon(EktooUI.class, "/ds.png");
     } 
-    else if (source.startsWith("Cloud"))
+    else if (source.startsWith(SyncItemUI.CLOUD_PANEL))
     {
       return SwingResourceManager.getIcon(EktooUI.class, "/cloud_ds.png");      
     } 
-    else if (source.startsWith("KML"))
+    else if (source.startsWith(SyncItemUI.KML_PANEL))
     {
       return SwingResourceManager.getIcon(EktooUI.class, "/kml_ds.png");
     } 
-    else if (source.startsWith("MS Access"))
+    else if (source.startsWith(SyncItemUI.MS_ACCESS_PANEL))
     {
       return SwingResourceManager.getIcon(EktooUI.class, "/access_ds.png");
     } 
-    else if (source.startsWith("MS Excel"))
+    else if (source.startsWith(SyncItemUI.MS_EXCEL_PANEL))
     {
       return SwingResourceManager.getIcon(EktooUI.class, "/excel_ds.png");
     }
-    else if (source.startsWith("MySQL"))
+    else if (source.startsWith(SyncItemUI.MYSQL_PANEL))
     {
       return SwingResourceManager.getIcon(EktooUI.class, "/mysql_ds.png");
     } 
-    else if (source.startsWith("Google"))
+    else if (source.startsWith(SyncItemUI.GOOGLE_SPREADSHEET_PANEL))
     {
       return SwingResourceManager.getIcon(EktooUI.class, "/gs_ds.png");
-    }      
+    }     
+    else if (source.startsWith(SyncItemUI.FOLDER_PANEL))
+    {
+      return SwingResourceManager.getIcon(EktooUI.class, "/folder_ds.png");
+    } 
+    else if (source.startsWith(SyncItemUI.RSS_FILE_PANEL))
+    {
+      return SwingResourceManager.getIcon(EktooUI.class, "/rss_ds.png");
+    } 
+    else if (source.startsWith(SyncItemUI.ATOM_FILE_PANEL))
+    {
+      return SwingResourceManager.getIcon(EktooUI.class, "/atom_ds.png");
+    } 
     else 
     {
       return SwingResourceManager.getIcon(EktooUI.class, "/ds.png");
