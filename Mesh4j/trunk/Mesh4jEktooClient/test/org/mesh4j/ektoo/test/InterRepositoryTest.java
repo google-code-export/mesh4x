@@ -81,11 +81,11 @@ public class InterRepositoryTest {
 	public void ShouldSyncMySQLToCloud(){	
 			
 		String user = "root";
-		String password = "admin";
+		String password = "test1234";
 		String tableName = "user";
 
-		String meshName = "myMesh";
-		String feedName = "myFeed";
+		String meshName = "Mysql";
+		String feedName = "user";
 
 		ISyncAdapterBuilder builder = new SyncAdapterBuilder(
 				new PropertiesProvider());
