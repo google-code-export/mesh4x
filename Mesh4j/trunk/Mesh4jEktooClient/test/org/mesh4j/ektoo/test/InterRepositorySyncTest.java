@@ -131,6 +131,10 @@ public class InterRepositorySyncTest {
 		
 	}
 	
+	public void ShouldSyncKmlToKmlWithoutRDFAssumeSameSchema(){
+		
+	}
+	
 	@Test
 	public void ShouldSyncGoogleSpreadSheetToExcelWithoutRDFAssumeSameSchema(){
 		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
