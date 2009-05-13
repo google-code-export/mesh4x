@@ -152,42 +152,7 @@ public class AdapterFactoryTests {
 		Assert.assertEquals(spreadSheetAdapter.getAll().size(), 1);
 
 	}
-
-	@Test
-	public void shouldSyncExcelToGoogleSpreadsheet() throws IOException {
-		SplitAdapter googleRepo = createGoogleSpreadSheetAdapter();
-
-		SplitAdapter excelRepo = createMsExcelAdapter("user", "id",
-				"excelA.xls", "syncA.xls", NullIdentityProvider.INSTANCE,
-				IdGenerator.INSTANCE);
-
-		// TODO test sync
-	}
-
-	private SplitAdapter createGoogleSpreadSheetAdapter() {
-		String idColumName = "id";
-		int lastUpdateColumnPosition = 6;
-		int idColumnPosition = 1;
-		String userName = "gspreadsheet.test@gmail.com";
-		String passWord = "java123456";
-		String GOOGLE_SPREADSHEET_FIELD = "peo4fu7AitTo8e3v0D8FCew";
-
-		
-		IGoogleSpreadSheet spreadsheet = new GoogleSpreadsheet(
-				GOOGLE_SPREADSHEET_FIELD, userName, passWord);
-		
-		// TODO gerenrics?
-		GSWorksheet sourceRepo = spreadsheet.getGSWorksheet(1);
-		IGoogleSpreadsheetToXMLMapping mapper = new GoogleSpreadsheetToPlainXMLMapping(
-												"user", idColumName,null,sourceRepo.getName(), spreadsheet.getDocsService());
-
-		
-		SplitAdapter spreadSheetAdapter = GoogleSpreadsheetUtils
-				.createGoogleSpreadSheetAdapter(spreadsheet, mapper,
-												NullIdentityProvider.INSTANCE,
-												IdGenerator.INSTANCE);
-		return spreadSheetAdapter;
-	}
+	
 
 	private Item makeRDFItem(IRDFSchema schema) {
 
