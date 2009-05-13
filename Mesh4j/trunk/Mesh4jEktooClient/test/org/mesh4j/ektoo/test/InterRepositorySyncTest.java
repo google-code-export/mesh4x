@@ -131,7 +131,16 @@ public class InterRepositorySyncTest {
 		
 	}
 	
+	@Test
 	public void ShouldSyncKmlToKmlWithoutRDFAssumeSameSchema(){
+		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapter sourceKamlAdapter = builder.createKMLAdapter(TestHelper.fileName("kmlSyncTestsGround.kml"));
+		ISyncAdapter targetKamlAdapter = builder.createKMLAdapter(TestHelper.fileName("kmlSyncTestsPlacemark.kml"));
+		
+		SyncEngine syncEngine = new SyncEngine(sourceKamlAdapter,targetKamlAdapter);
+		List<Item> listOfConflicts = syncEngine.synchronize();
+			
+		Assert.assertEquals(0, listOfConflicts.size());
 		
 	}
 	
