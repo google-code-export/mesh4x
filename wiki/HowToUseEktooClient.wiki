@@ -1,7 +1,7 @@
 #summary A step-by-step guide for users to synchronize various data sources using Ektoo client
 #labels HowTo,Tutorial,Featured
 
-[http://downloads.instedd.org/mesh4x/ektoo_0_0_2.7z Download]
+[http://downloads.instedd.org/mesh4x/ektoo_0_0_3.7z Download]
 
 <wiki:toc max_depth="2" />
 
@@ -18,7 +18,8 @@ Currently mesh4x supports following data repositories:
  # Microsoft Access
  # Google Spreadsheet
  # MySQL and other databases
- # Amazon S3 (cloud storage)
+ # Feed or Amazon S3 (cloud storage)
+ # Folder
 
 Ektoo client supports following scenarios of data synchronization currently
  * Microsoft Excel to and/or from
@@ -108,3 +109,8 @@ The process consists of:
  # Click on connection icon
    * After successful connection, available tables will be displayed in "<b>Table</b>" drop down list 
  # Select table from "<b>Table</b>" drop down list.
+
+==Folder==
+The process consists of:
+ # Select "Folder" data type from "<b>Data Source Type</b>" drop down list.
+ # Browse folders and select one that you want to synchronize.
