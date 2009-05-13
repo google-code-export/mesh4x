@@ -123,4 +123,12 @@ public class FolderContentAdapter implements IContentAdapter {
 		}
 	}
 
+	public File getFolder() {
+		return folder;
+	}
+
+	public FilenameFilter getFilenameFilter() {
+		return filenameFilter;
+	}
+
 }

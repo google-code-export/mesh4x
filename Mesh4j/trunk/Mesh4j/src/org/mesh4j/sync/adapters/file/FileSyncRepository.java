@@ -46,7 +46,7 @@ public class FileSyncRepository implements ISyncRepository{
 
 		this.syncInfoFile = syncInfoFile;
 		
-		this.initializeFile(syncInfoFile);
+		initializeFile(syncInfoFile);
 		
 		SAXReader saxReader = new SAXReader();
 		try {
@@ -58,7 +58,7 @@ public class FileSyncRepository implements ISyncRepository{
 		this.syncInfoParser = new SyncInfoParser(RssSyndicationFormat.INSTANCE, identityProvider, idGenerator);
 	}
 
-	private void initializeFile(File file) {
+	public static void initializeFile(File file) {
 		if(!file.exists()){
 			Element rootElement = DocumentHelper.createElement("Syncs");
 			Document document = DocumentHelper.createDocument(rootElement);
@@ -122,5 +122,9 @@ public class FileSyncRepository implements ISyncRepository{
 
 	private void flush() {
 		XMLHelper.write(this.syncDocument, this.syncInfoFile);
+	}
+
+	public File getFile() {
+		return this.syncInfoFile;
 	}
 }

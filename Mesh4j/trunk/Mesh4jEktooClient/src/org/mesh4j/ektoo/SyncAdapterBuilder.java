@@ -17,9 +17,7 @@ import org.mesh4j.sync.adapters.feed.Feed;
 import org.mesh4j.sync.adapters.feed.FeedAdapter;
 import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
-import org.mesh4j.sync.adapters.file.FileSyncRepository;
-import org.mesh4j.sync.adapters.folder.FilesFilter;
-import org.mesh4j.sync.adapters.folder.FolderContentAdapter;
+import org.mesh4j.sync.adapters.folder.FolderSyncAdapterFactory;
 import org.mesh4j.sync.adapters.hibernate.HibernateSyncAdapterFactory;
 import org.mesh4j.sync.adapters.http.HttpSyncAdapter;
 import org.mesh4j.sync.adapters.kml.KMLDOMLoaderFactory;
@@ -176,24 +174,7 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 	
 	@Override
 	public ISyncAdapter createFolderAdapter(String folderName) {
-		try{
-			File folder = new File(folderName);
-			if(!folder.exists()){
-				folder.mkdirs();
-			}
-			
-			File syncFile = new File(folder.getCanonicalPath() + File.separator + folder.getName() + "_sync.xml");
-			
-			
-			FilesFilter filter = new FilesFilter();
-			filter.excludeFileName(syncFile.getName());
-			FolderContentAdapter folderContent = new FolderContentAdapter(folder, filter);
-			FileSyncRepository syncRepo = new FileSyncRepository(syncFile, getIdentityProvider(), getIdGenerator());
-			SplitAdapter adapter = new SplitAdapter(syncRepo, folderContent, getIdentityProvider());
-			return adapter;
-		} catch (Exception e) {
-			throw new MeshException(e);
-		}
+		return FolderSyncAdapterFactory.createFolderAdapter(folderName, getIdentityProvider(), getIdGenerator());
 	}
 	
 	// ACCESSORS
