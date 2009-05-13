@@ -95,7 +95,7 @@ public class KMLDOMLoaderTests {
 		"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 		"<Document>"+
 		"<name>dummy</name>"+
-	   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\" >"+
+	   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org\" >"+
 		"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1547376435\">"+
       	"<sx:sync id=\"1\" updates=\"3\" deleted=\"false\" noconflicts=\"false\">"+
       	"<sx:history sequence=\"3\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/>"+
@@ -136,7 +136,7 @@ public class KMLDOMLoaderTests {
 		"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 		"<Document>"+
 		"<name>dummy</name>"+
-	   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+	   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org\">"+
 		"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"+
       	"<sx:sync id=\"1\" updates=\"3\" deleted=\"false\" noconflicts=\"false\">"+
       	"<sx:history sequence=\"3\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/>"+
@@ -172,7 +172,7 @@ public class KMLDOMLoaderTests {
 		File file = new File(fileName);
 		
 		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><kml xmlns=\"http://earth.google.com/kml/2.2\"><Document><name>"
-					+file.getName()+"</name><ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\"></ExtendedData></Document></kml>";
+					+file.getName()+"</name><ExtendedData xmlns:mesh4x=\"http://mesh4x.org\"></ExtendedData></Document></kml>";
 				 
 		FileManager fileManager = new FileManager();
 		KMLDOMLoader loader = new KMLDOMLoader(fileName, NullIdentityProvider.INSTANCE, KMLDOMLoaderFactory.createView(fileManager), fileManager);
@@ -198,7 +198,7 @@ public class KMLDOMLoaderTests {
 		"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 		"<Document>"+
 		"<name>dummy</name>"+
-	   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+	   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org\">"+
 		"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"+
       	"<sx:sync id=\"1\" updates=\"3\" deleted=\"false\" noconflicts=\"false\">"+
       	"<sx:history sequence=\"3\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/>"+

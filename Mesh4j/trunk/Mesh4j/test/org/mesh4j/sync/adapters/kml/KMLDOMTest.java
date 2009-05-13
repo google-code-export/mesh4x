@@ -27,7 +27,7 @@ public class KMLDOMTest {
 		"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 		"<Document>"+
 		"<name>dummy</name>"+
-	   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+	   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org\">"+
 		"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"+
       	"<sx:sync id=\"1\" updates=\"3\" deleted=\"false\" noconflicts=\"false\">"+
       	"<sx:history sequence=\"3\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/>"+
@@ -58,7 +58,7 @@ public class KMLDOMTest {
 		"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 		"<Document>"+
 		"<name>dummy</name>"+
-	   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+	   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org\">"+
 		"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"+
       	"<sx:sync id=\"1\" updates=\"3\" deleted=\"false\" noconflicts=\"false\">"+
       	"<sx:history sequence=\"3\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/>"+
@@ -278,7 +278,7 @@ public class KMLDOMTest {
 				"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 				"<Document>"+
 				"<name>dummy</name>"+
-			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org\">"+
 			   	"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"+
 		      	"<sx:sync id=\"2\" updates=\"3\" deleted=\"false\" noconflicts=\"false\">"+
 		      	"<sx:history sequence=\"3\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/>"+
@@ -307,7 +307,7 @@ public class KMLDOMTest {
 				"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 				"<Document>"+
 				"<name>dummy</name>"+
-			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org\">"+
 			   	"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"+
 		      	"<sx:sync id=\"2\" updates=\"3\" deleted=\"false\" noconflicts=\"false\">"+
 		      	"<sx:history sequence=\"3\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/>"+
@@ -347,7 +347,7 @@ public class KMLDOMTest {
 				"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 				"<Document>"+
 				"<name>dummy</name>"+
-			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org\">"+
 		      	"</ExtendedData>"+
 				"<Placemark xml:id=\"2\">"+
 				"<name>B</name>"+
@@ -391,7 +391,7 @@ public class KMLDOMTest {
 				"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 				"<Document>"+
 				"<name>dummy</name>"+
-			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org\">"+
 			   	"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"+
 		      	"<sx:sync id=\"1\" updates=\"3\" deleted=\"false\" noconflicts=\"false\">"+
 		      	"<sx:history sequence=\"3\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/>"+
@@ -433,7 +433,7 @@ public class KMLDOMTest {
 				"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 				"<Document>"+
 				"<name>dummy</name>"+
-			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org\">"+
 			   	"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"+
 		      	"<sx:sync id=\"1\" updates=\"3\" deleted=\"false\" noconflicts=\"false\">"+
 		      	"<sx:history sequence=\"3\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/>"+
@@ -491,7 +491,7 @@ public class KMLDOMTest {
 				"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 				"<Document>"+
 				"<name>dummy</name>"+
-			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org\">"+
 			   	"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"+
 		      	"<sx:sync id=\"1\" updates=\"3\" deleted=\"false\" noconflicts=\"false\">"+
 		      	"<sx:history sequence=\"3\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/>"+
@@ -551,7 +551,7 @@ public class KMLDOMTest {
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
 				"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 				"<Document>"+
-			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org\">"+
 		      	"</ExtendedData>"+
 				"<name>example</name>"+
 				"</Document>"+
@@ -611,7 +611,7 @@ public class KMLDOMTest {
 				"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 				"<Document>"+
 				"<name>example</name>"+
-			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org\">"+
 			   	"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"+
 		      	"<sx:sync id=\"1\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"+
 		      	"<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"+
@@ -680,7 +680,7 @@ public class KMLDOMTest {
 				"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 				"<Document>"+
 				"<name>example</name>"+
-			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org\">"+
 			   	"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"+
 		      	"<sx:sync id=\"1\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"+
 		      	"<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"+
@@ -737,7 +737,7 @@ public class KMLDOMTest {
 			"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 			"<Document>"+
 			"<name>dummy</name>"+
-			"<mesh4x:hierarchy xmlns:mesh4x=\"http://mesh4x.org/kml\" xml:id=\"33\" mesh4x:parentId=\"1\" mesh4x:childId=\"3\"/>"+
+			"<mesh4x:hierarchy xmlns:mesh4x=\"http://mesh4x.org\" xml:id=\"33\" mesh4x:parentId=\"1\" mesh4x:childId=\"3\"/>"+
 			"</Document>"+
 			"</kml>";
 	
@@ -786,7 +786,7 @@ public class KMLDOMTest {
 				"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 				"<Document>"+
 				"<name>example</name>"+
-			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org\">"+
 			   	"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"+
 		      	"<sx:sync id=\"1\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"+
 		      	"<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"+
@@ -864,7 +864,7 @@ public class KMLDOMTest {
 				"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 				"<Document>"+
 				"<name>example</name>"+
-			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org\">"+
 			   	"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"+
 		      	"<sx:sync id=\"1\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"+
 		      	"<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"+
@@ -904,7 +904,7 @@ public class KMLDOMTest {
 				"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 				"<Document>"+
 				"<name>dummy</name>"+
-				"<mesh4x:hierarchy xmlns:mesh4x=\"http://mesh4x.org/kml\" xml:id=\"3\" mesh4x:childId=\"2\" />"+
+				"<mesh4x:hierarchy xmlns:mesh4x=\"http://mesh4x.org\" xml:id=\"3\" mesh4x:childId=\"2\" />"+
 				"</Document>"+
 				"</kml>";
 		
@@ -951,7 +951,7 @@ public class KMLDOMTest {
 				"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 				"<Document>"+
 				"<name>example</name>"+
-			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org\">"+
 			   	"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"+
 		      	"<sx:sync id=\"1\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"+
 		      	"<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"+
@@ -1007,7 +1007,7 @@ public class KMLDOMTest {
 			"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 			"<Document>"+
 			"<name>dummy</name>"+
-			"<mesh4x:hierarchy xmlns:mesh4x=\"http://mesh4x.org/kml\" xml:id=\"4\" mesh4x:parentId=\"2\"  mesh4x:childId=\"3\" />"+
+			"<mesh4x:hierarchy xmlns:mesh4x=\"http://mesh4x.org\" xml:id=\"4\" mesh4x:parentId=\"2\"  mesh4x:childId=\"3\" />"+
 			"</Document>"+
 			"</kml>";
 	
@@ -1483,7 +1483,7 @@ public class KMLDOMTest {
 				"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 				"<Document>"+
 				"<name>dummy</name>"+
-			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org\">"+
 		      	"</ExtendedData>"+
 				"<Placemark xml:id=\"1\">"+
 				"<name>B</name>"+
@@ -1509,7 +1509,7 @@ public class KMLDOMTest {
 				"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 				"<Document>"+
 				"<name>dummy</name>"+
-			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org\">"+
 			   	"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"+
 		      	"<sx:sync id=\"1\" updates=\"3\" deleted=\"false\" noconflicts=\"false\">"+
 		      	"<sx:history sequence=\"eefdewf\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/>"+
@@ -1542,7 +1542,7 @@ public class KMLDOMTest {
 				"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 				"<Document>"+
 				"<name>dummy</name>"+
-			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org\">"+
 			   	"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"+
 		      	"<sx:sync id=\"2\" updates=\"3\" deleted=\"false\" noconflicts=\"false\">"+
 		      	"<sx:history sequence=\"3\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/>"+
@@ -1576,7 +1576,7 @@ public class KMLDOMTest {
 				"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 				"<Document>"+
 				"<name>dummy</name>"+
-			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org\">"+
 			   	"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"+
 		      	"<sx:sync id=\"2\" updates=\"3\" deleted=\"false\" noconflicts=\"false\">"+
 		      	"<sx:history sequence=\"3\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/>"+
@@ -1610,7 +1610,7 @@ public class KMLDOMTest {
 				"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 				"<Document>"+
 				"<name>dummy</name>"+
-			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org\">"+
 			   	"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"+
 		      	"<sx:sync id=\"2\" updates=\"3\" deleted=\"false\" noconflicts=\"false\">"+
 		      	"<sx:history sequence=\"3\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/>"+
@@ -1644,7 +1644,7 @@ public class KMLDOMTest {
 				"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 				"<Document>"+
 				"<name>dummy</name>"+
-			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org\">"+
 			   	"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"+
 		      	"<sx:sync id=\"2\" updates=\"3\" deleted=\"false\" noconflicts=\"false\">"+
 		      	"<sx:history sequence=\"3\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/>"+
@@ -1680,7 +1680,7 @@ public class KMLDOMTest {
 				"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 				"<Document>"+
 				"<name>dummy</name>"+
-			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+			   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org\">"+
 			   	"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"+
 		      	"<sx:sync id=\"2\" updates=\"3\" deleted=\"false\" noconflicts=\"false\">"+
 		      	"<sx:history sequence=\"3\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/>"+

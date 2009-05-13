@@ -15,7 +15,7 @@
       		<displayName><![CDATA[<i>change in altitude</i>]]></displayName>     
     	</SimpleField>   
  	</Schema> 
-	<ExtendedData xmlns:mesh4x="http://mesh4x.org/kml" xmlns:camp="http://campsites.com">
+	<ExtendedData xmlns:mesh4x="http://mesh4x.org" xmlns:camp="http://campsites.com">
       <camp:number>14</camp:number>
       <camp:parkingSpaces>2</camp:parkingSpaces>
       <camp:tentSites>4</camp:tentSites>
@@ -183,7 +183,7 @@
         </sx:sync>
       </mesh4x:sync> 
     </ExtendedData>  
-    <StyleMap xmlns:mesh4x="http://mesh4x.org/kml" id="msn_ylw-pushpin_65632af6-310b-4b75-afdc-125cc7547291" xml:id="65632af6-310b-4b75-afdc-125cc7547291" mesh4x:originalId="msn_ylw-pushpin">  
+    <StyleMap xmlns:mesh4x="http://mesh4x.org" id="msn_ylw-pushpin_65632af6-310b-4b75-afdc-125cc7547291" xml:id="65632af6-310b-4b75-afdc-125cc7547291" mesh4x:originalId="msn_ylw-pushpin">  
       <Pair> 
         <key>normal</key>  
         <styleUrl>#sn_ylw-pushpin_1de94ff2-0904-4187-9cbe-21d29f9567cc</styleUrl> 
@@ -193,7 +193,7 @@
         <styleUrl>#sh_ylw-pushpin_c46ef253-d1dc-4d6d-984e-c74fe01492cd</styleUrl> 
       </Pair> 
     </StyleMap>  
-    <StyleMap xmlns:mesh4x="http://mesh4x.org/kml" id="msn_ylw-pushpin_b5e1030d-eb92-4633-a650-dd96fd5828c7" xml:id="b5e1030d-eb92-4633-a650-dd96fd5828c7" mesh4x:originalId="msn_ylw-pushpin">  
+    <StyleMap xmlns:mesh4x="http://mesh4x.org" id="msn_ylw-pushpin_b5e1030d-eb92-4633-a650-dd96fd5828c7" xml:id="b5e1030d-eb92-4633-a650-dd96fd5828c7" mesh4x:originalId="msn_ylw-pushpin">  
       <Pair> 
         <key>normal</key>  
         <styleUrl>#sn_ylw-pushpin_1f4a5902-40ab-48a0-b2bd-6a2e5221a0dc</styleUrl> 
@@ -203,7 +203,7 @@
         <styleUrl>#sh_ylw-pushpin_957a49f2-71ca-4837-8a94-273f4392060d</styleUrl> 
       </Pair> 
     </StyleMap>  
-    <StyleMap xmlns:mesh4x="http://mesh4x.org/kml" id="msn_ylw-pushpin0_6fca4ad1-2f5a-4fb6-ab76-c369d9955845" xml:id="6fca4ad1-2f5a-4fb6-ab76-c369d9955845" mesh4x:originalId="msn_ylw-pushpin0">  
+    <StyleMap xmlns:mesh4x="http://mesh4x.org" id="msn_ylw-pushpin0_6fca4ad1-2f5a-4fb6-ab76-c369d9955845" xml:id="6fca4ad1-2f5a-4fb6-ab76-c369d9955845" mesh4x:originalId="msn_ylw-pushpin0">  
       <Pair> 
         <key>normal</key>  
         <styleUrl>#sn_ylw-pushpin0_1ad777ff-1d49-4f76-98d8-fb15c95c4c72</styleUrl> 
@@ -213,7 +213,7 @@
         <styleUrl>#sh_ylw-pushpin0_0d5c9998-962b-410b-9f58-832f6983b64d</styleUrl> 
       </Pair> 
     </StyleMap>  
-    <Style xmlns:mesh4x="http://mesh4x.org/kml" id="sn_ylw-pushpin_1de94ff2-0904-4187-9cbe-21d29f9567cc" xml:id="1de94ff2-0904-4187-9cbe-21d29f9567cc" mesh4x:originalId="sn_ylw-pushpin">  
+    <Style xmlns:mesh4x="http://mesh4x.org" id="sn_ylw-pushpin_1de94ff2-0904-4187-9cbe-21d29f9567cc" xml:id="1de94ff2-0904-4187-9cbe-21d29f9567cc" mesh4x:originalId="sn_ylw-pushpin">  
       <IconStyle> 
         <scale>1.1</scale>  
         <Icon> 
@@ -222,7 +222,7 @@
         <hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/> 
       </IconStyle> 
     </Style>  
-    <Style xmlns:mesh4x="http://mesh4x.org/kml" id="sh_ylw-pushpin_c46ef253-d1dc-4d6d-984e-c74fe01492cd" xml:id="c46ef253-d1dc-4d6d-984e-c74fe01492cd" mesh4x:originalId="sh_ylw-pushpin">  
+    <Style xmlns:mesh4x="http://mesh4x.org" id="sh_ylw-pushpin_c46ef253-d1dc-4d6d-984e-c74fe01492cd" xml:id="c46ef253-d1dc-4d6d-984e-c74fe01492cd" mesh4x:originalId="sh_ylw-pushpin">  
       <IconStyle> 
         <scale>1.3</scale>  
         <Icon> 
@@ -231,7 +231,7 @@
         <hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/> 
       </IconStyle> 
     </Style>  
-    <Style xmlns:mesh4x="http://mesh4x.org/kml" id="sn_ylw-pushpin_1f4a5902-40ab-48a0-b2bd-6a2e5221a0dc" xml:id="1f4a5902-40ab-48a0-b2bd-6a2e5221a0dc" mesh4x:originalId="sn_ylw-pushpin">  
+    <Style xmlns:mesh4x="http://mesh4x.org" id="sn_ylw-pushpin_1f4a5902-40ab-48a0-b2bd-6a2e5221a0dc" xml:id="1f4a5902-40ab-48a0-b2bd-6a2e5221a0dc" mesh4x:originalId="sn_ylw-pushpin">  
       <IconStyle> 
         <scale>1.1</scale>  
         <Icon> 
@@ -240,7 +240,7 @@
         <hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/> 
       </IconStyle> 
     </Style>  
-    <Style xmlns:mesh4x="http://mesh4x.org/kml" id="sh_ylw-pushpin_957a49f2-71ca-4837-8a94-273f4392060d" xml:id="957a49f2-71ca-4837-8a94-273f4392060d" mesh4x:originalId="sh_ylw-pushpin">  
+    <Style xmlns:mesh4x="http://mesh4x.org" id="sh_ylw-pushpin_957a49f2-71ca-4837-8a94-273f4392060d" xml:id="957a49f2-71ca-4837-8a94-273f4392060d" mesh4x:originalId="sh_ylw-pushpin">  
       <IconStyle> 
         <scale>1.3</scale>  
         <Icon> 
@@ -249,7 +249,7 @@
         <hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/> 
       </IconStyle> 
     </Style>  
-    <Style xmlns:mesh4x="http://mesh4x.org/kml" id="sn_ylw-pushpin0_1ad777ff-1d49-4f76-98d8-fb15c95c4c72" xml:id="1ad777ff-1d49-4f76-98d8-fb15c95c4c72" mesh4x:originalId="sn_ylw-pushpin0">  
+    <Style xmlns:mesh4x="http://mesh4x.org" id="sn_ylw-pushpin0_1ad777ff-1d49-4f76-98d8-fb15c95c4c72" xml:id="1ad777ff-1d49-4f76-98d8-fb15c95c4c72" mesh4x:originalId="sn_ylw-pushpin0">  
       <IconStyle> 
         <color>ff0000ff</color>  
         <scale>1.1</scale>  
@@ -262,7 +262,7 @@
         <color>ff0000ff</color> 
       </LabelStyle> 
     </Style>  
-    <Style xmlns:mesh4x="http://mesh4x.org/kml" id="sh_ylw-pushpin0_0d5c9998-962b-410b-9f58-832f6983b64d" xml:id="0d5c9998-962b-410b-9f58-832f6983b64d" mesh4x:originalId="sh_ylw-pushpin0">  
+    <Style xmlns:mesh4x="http://mesh4x.org" id="sh_ylw-pushpin0_0d5c9998-962b-410b-9f58-832f6983b64d" xml:id="0d5c9998-962b-410b-9f58-832f6983b64d" mesh4x:originalId="sh_ylw-pushpin0">  
       <IconStyle> 
         <color>ff0000ff</color>  
         <scale>1.3</scale>  

@@ -36,7 +36,11 @@ public class FileUtils {
 	}
 
 	public static void write(String fileName, byte[] bytes) throws IOException{		
-		FileOutputStream output = new FileOutputStream(new File(fileName));
+		write(new File(fileName), bytes);
+	}
+	
+	public static void write(File file, byte[] bytes) throws IOException{		
+		FileOutputStream output = new FileOutputStream(file);
 		try {
 			output.write(bytes);
 			output.flush();

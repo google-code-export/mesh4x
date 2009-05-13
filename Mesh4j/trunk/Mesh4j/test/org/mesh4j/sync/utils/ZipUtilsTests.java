@@ -114,7 +114,7 @@ public class ZipUtilsTests {
 		String newXml = 
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
 			"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
-			"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+			"<Document xmlns:mesh4x=\"http://mesh4x.org\">"+
 			"<name>dummy</name>"+
 		   	"<ExtendedData>"+
 			"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"+
@@ -165,7 +165,7 @@ public class ZipUtilsTests {
 		String newXml = 
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
 			"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
-			"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+			"<Document xmlns:mesh4x=\"http://mesh4x.org\">"+
 			"<name>dummy</name>"+
 		   	"<ExtendedData>"+
 			"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"+

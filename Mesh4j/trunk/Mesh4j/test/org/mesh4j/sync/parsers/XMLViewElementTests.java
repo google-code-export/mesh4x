@@ -63,7 +63,7 @@ public class XMLViewElementTests {
 		"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
 		"<Document>"+
 		"<name>dummy</name>"+
-	   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+	   	"<ExtendedData xmlns:mesh4x=\"http://mesh4x.org\">"+
 		"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"2096103467\">"+
       	"<sx:sync id=\"1\" updates=\"3\" deleted=\"false\" noconflicts=\"false\">"+
       	"<sx:history sequence=\"3\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/>"+
@@ -237,7 +237,7 @@ public class XMLViewElementTests {
 		
 		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
 		"<kml xmlns=\"http://earth.google.com/kml/2.2\">"+
-		"<Folder xmlns:mesh4x=\"http://mesh4x.org/kml\">"+
+		"<Folder xmlns:mesh4x=\"http://mesh4x.org\">"+
 		"<name>dummy</name>"+
 	   	"<ExtendedData>"+
 		"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"2096103467\">"+
@@ -593,7 +593,7 @@ public class XMLViewElementTests {
 	
 	@Test
 	public void shouldClean() throws DocumentException{
-		String xml = "<foo xmlns= \"http://earth.google.com/kml/2.2\"><Placemark xmlns:mesh4x=\"http://mesh4x.org/kml\" xml:id = \"1\" mesh4x:originalId=\"1\" ></Placemark></foo>";
+		String xml = "<foo xmlns= \"http://earth.google.com/kml/2.2\"><Placemark xmlns:mesh4x=\"http://mesh4x.org\" xml:id = \"1\" mesh4x:originalId=\"1\" ></Placemark></foo>";
 		Document document = DocumentHelper.parseText(xml);
 
 		Element element = document.getRootElement().element(KmlNames.KML_QNAME_PLACEMARK);

@@ -6,7 +6,7 @@
     <Placemark xml:id="74247a7a-0737-494e-9ed2-7045716941c6"> 
       <name>a</name> 
     </Placemark>  
-    <ExtendedData xmlns:mesh4x="http://mesh4x.org/kml">  
+    <ExtendedData xmlns:mesh4x="http://mesh4x.org">  
       <mesh4x:hierarchy xml:id="441d81a1-b978-4687-8985-4bd0942bed2f" mesh4x:childId="74247a7a-0737-494e-9ed2-7045716941c6"/>  
       <mesh4x:sync version="-2118764673"> 
         <sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="441d81a1-b978-4687-8985-4bd0942bed2f" updates="1" deleted="false" noconflicts="false">  

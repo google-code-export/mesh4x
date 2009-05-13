@@ -725,7 +725,7 @@ public class FileXMLViewElementTests {
 	
 	@Test
 	public void shouldClean() throws DocumentException{
-		String xml = "<foo><mesh4x:file xmlns:mesh4x=\"http://mesh4x.org/kml\"></mesh4x:file></foo>";
+		String xml = "<foo><mesh4x:file xmlns:mesh4x=\"http://mesh4x.org\"></mesh4x:file></foo>";
 		Document document = DocumentHelper.parseText(xml);
 
 		Element element = document.getRootElement().element(MeshNames.MESH_QNAME_FILE);

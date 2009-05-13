@@ -272,9 +272,9 @@ public class RDFSchema implements IRDFSchema{
 	@Override
 	public boolean isCompatible(IRDFSchema rdfSchema){
 		
-		if (this == schema) return true;
+		if (this == rdfSchema) return true;
 		
-		if (schema == null || !(schema instanceof IRDFSchema)) return false;
+		if (rdfSchema == null || !(rdfSchema instanceof IRDFSchema)) return false;
 
 		if (this.asXML().equalsIgnoreCase(rdfSchema.asXML())) return true;
 		

@@ -122,7 +122,7 @@ public class DOMAdapterTests {
 			+ "<kml xmlns=\"http://earth.google.com/kml/2.2\">"
 			+ "<Document>"
 			+ "<name>dummy</name>"
-			+ "<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"
+			+ "<ExtendedData xmlns:mesh4x=\"http://mesh4x.org\">"
 			+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"
 			+ "<sx:sync id=\"1\" updates=\"3\" deleted=\"false\" noconflicts=\"false\">"
 			+ "<sx:history sequence=\"3\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/>"
@@ -166,7 +166,7 @@ public class DOMAdapterTests {
 			+ "</sx:sync>"
 			+ "</mesh4x:sync>"
 			+ "</ExtendedData>"
-			+ "<StyleMap xmlns:mesh4x=\"http://mesh4x.org/kml\" id=\"msn_ylw-pushpin_4\" xml:id=\"4\" mesh4x:originalId=\"msn_ylw-pushpin\">"
+			+ "<StyleMap xmlns:mesh4x=\"http://mesh4x.org\" id=\"msn_ylw-pushpin_4\" xml:id=\"4\" mesh4x:originalId=\"msn_ylw-pushpin\">"
 			+ "	<Pair>"
 			+ "		<key>normal</key>"
 			+ "		<styleUrl>#sn_ylw-pushpin</styleUrl>"
@@ -176,7 +176,7 @@ public class DOMAdapterTests {
 			+ "		<styleUrl>#sh_ylw-pushpin</styleUrl>"
 			+ "	</Pair>"
 			+ "</StyleMap>"
-			+ "<Style xmlns:mesh4x=\"http://mesh4x.org/kml\" id=\"sn_ylw-pushpin_5\" xml:id=\"5\" mesh4x:originalId=\"sn_ylw-pushpin\">"
+			+ "<Style xmlns:mesh4x=\"http://mesh4x.org\" id=\"sn_ylw-pushpin_5\" xml:id=\"5\" mesh4x:originalId=\"sn_ylw-pushpin\">"
 			+ "	<IconStyle>"
 			+ "		<color>ff00ff55</color>"
 			+ "		<scale>1.1</scale>"
@@ -189,7 +189,7 @@ public class DOMAdapterTests {
 			+ "		<color>ff00ff55</color>"
 			+ "	</LabelStyle>"
 			+ "</Style>"
-			+ "<Style xmlns:mesh4x=\"http://mesh4x.org/kml\" id=\"sn_ylw-pushpin_6\" xml:id=\"6\" mesh4x:originalId=\"sn_ylw-pushpin\">"
+			+ "<Style xmlns:mesh4x=\"http://mesh4x.org\" id=\"sn_ylw-pushpin_6\" xml:id=\"6\" mesh4x:originalId=\"sn_ylw-pushpin\">"
 			+ "	<IconStyle>"
 			+ "		<color>ff00ff55</color>"
 			+ "		<scale>1.1</scale>"
@@ -229,7 +229,7 @@ public class DOMAdapterTests {
 		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 				+ "<kml xmlns=\"http://earth.google.com/kml/2.2\">"
 				+ "<Document>" + "<name>" + file.getName() + "</name>"
-				+ "<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\"></ExtendedData>" + "</Document>" + "</kml>";
+				+ "<ExtendedData xmlns:mesh4x=\"http://mesh4x.org\"></ExtendedData>" + "</Document>" + "</kml>";
 
 		Document expectedDocument = DocumentHelper.parseText(xml);
 		Assert.assertEquals(XMLHelper.canonicalizeXML(expectedDocument), XMLHelper.canonicalizeXML(document));
@@ -368,7 +368,7 @@ public class DOMAdapterTests {
 				+ "<kml xmlns=\"http://earth.google.com/kml/2.2\">"
 				+ "<Document>"
 				+ "<name>dummy</name>"
-				+ "<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"
+				+ "<ExtendedData xmlns:mesh4x=\"http://mesh4x.org\">"
 				+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"
 				+ "<sx:sync id=\"1\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"
 				+ "<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"
@@ -469,7 +469,7 @@ public class DOMAdapterTests {
 
 		String localXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 				+ "<kml xmlns=\"http://earth.google.com/kml/2.2\">"
-				+ "<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"
+				+ "<Document xmlns:mesh4x=\"http://mesh4x.org\">"
 				+ "<name>dummy</name>"
 				+ "<ExtendedData>"
 				+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"
@@ -550,7 +550,7 @@ public class DOMAdapterTests {
 
 		String localXMLUpdated = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 				+ "<kml xmlns=\"http://earth.google.com/kml/2.2\">"
-				+ "<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"
+				+ "<Document xmlns:mesh4x=\"http://mesh4x.org\">"
 				+ "<name>dummy</name>"
 				+ "<ExtendedData>"
 				+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"
@@ -740,7 +740,7 @@ public class DOMAdapterTests {
 				+ "<kml xmlns=\"http://earth.google.com/kml/2.2\">"
 				+ "<Document>"
 				+ "<name>dummy</name>"
-				+ "<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"
+				+ "<ExtendedData xmlns:mesh4x=\"http://mesh4x.org\">"
 				+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"
 				+ "<sx:sync id=\"1\" updates=\"3\" deleted=\"true\" noconflicts=\"false\">"
 				+ "<sx:history sequence=\"3\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/>"
@@ -764,7 +764,7 @@ public class DOMAdapterTests {
 	public void shouldGetReturnsNullContentBecauseItemWasDeletedExternally() {
 		String localXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 				+ "<kml xmlns=\"http://earth.google.com/kml/2.2\">"
-				+ "<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"
+				+ "<Document xmlns:mesh4x=\"http://mesh4x.org\">"
 				+ "<name>dummy</name>"
 				+ "<ExtendedData>"
 				+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"
@@ -896,7 +896,7 @@ public class DOMAdapterTests {
 
 		String localXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 				+ "<kml xmlns=\"http://earth.google.com/kml/2.2\">"
-				+ "<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"
+				+ "<Document xmlns:mesh4x=\"http://mesh4x.org\">"
 				+ "<name>dummy</name>"
 				+ "<ExtendedData>"
 				+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"
@@ -992,7 +992,7 @@ public class DOMAdapterTests {
 				+ "<kml xmlns=\"http://earth.google.com/kml/2.2\">"
 				+ "<Document>"
 				+ "<name>dummy</name>"
-				+ "<ExtendedData xmlns:mesh4x=\"http://mesh4x.org/kml\">"
+				+ "<ExtendedData xmlns:mesh4x=\"http://mesh4x.org\">"
 				+ "<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1\">"
 				+ "<sx:sync id=\"1\" updates=\"3\" deleted=\"true\" noconflicts=\"false\">"
 				+ "<sx:history sequence=\"3\" when=\"2005-05-21T11:43:33Z\" by=\"JEO2000\"/>"
@@ -1038,7 +1038,7 @@ public class DOMAdapterTests {
 
 		String localXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 				+ "<kml xmlns=\"http://earth.google.com/kml/2.2\">"
-				+ "<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"
+				+ "<Document xmlns:mesh4x=\"http://mesh4x.org\">"
 				+ "	<Placemark xml:id=\"3\" mesh4x:parentId=\"2\">"
 				+ "		<name>MuMu</name>" + "	</Placemark>" + "</Document>"
 				+ "</kml>";

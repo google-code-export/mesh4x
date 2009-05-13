@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 
 import junit.framework.Assert;
@@ -17,8 +18,10 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.adapters.kml.KmlNames;
 import org.mesh4j.sync.id.generator.IdGenerator;
+import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.utils.XMLHelper;
 import org.mesh4j.sync.utils.ZipUtils;
 import org.mesh4j.sync.validations.MeshException;
@@ -219,5 +222,27 @@ public class TestHelper {
 		}
 		Assert.assertFalse(file.exists());
 		return file;
+	}
+	
+	public static void syncAndAssert(SyncEngine syncEngine) {
+		List<Item> conflicts = syncEngine.synchronize();
+	
+		Assert.assertNotNull(conflicts);
+		Assert.assertTrue(conflicts.isEmpty());
+		
+		List<Item> sourceItems = syncEngine.getSource().getAll();
+		List<Item> targetItems = syncEngine.getTarget().getAll();
+		Assert.assertEquals(sourceItems.size(), targetItems.size());
+		
+		for (Item sourceItem : sourceItems) {
+			Item targetItem = syncEngine.getTarget().get(sourceItem.getSyncId());
+			boolean isOk = sourceItem.equals(targetItem);
+			if(!isOk){
+				System.out.println("Source: "+ sourceItem.getContent().getPayload().asXML());
+				System.out.println("Target: "+ targetItem.getContent().getPayload().asXML());
+				Assert.assertEquals(sourceItem.getContent().getPayload().asXML(), targetItem.getContent().getPayload().asXML());	
+			}
+			Assert.assertTrue(isOk);
+		}
 	}
 }

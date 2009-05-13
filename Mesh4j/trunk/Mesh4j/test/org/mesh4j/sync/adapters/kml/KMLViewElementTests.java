@@ -28,7 +28,7 @@ public class KMLViewElementTests {
 	public void shouldRefreshUpdateStyleReferences() throws DocumentException{
 		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 			+"<kml xmlns=\"http://earth.google.com/kml/2.2\">"
-				+"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"
+				+"<Document xmlns:mesh4x=\"http://mesh4x.org\">"
 				+"<name>syncDocB.kml</name>"
 				+"<ExtendedData>"
 				+"</ExtendedData>"
@@ -109,7 +109,7 @@ public class KMLViewElementTests {
 	public void shouldRefreshUpdateStyleReferencesEmulateGoogleEarth() throws DocumentException{
 		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 			+"<kml xmlns=\"http://earth.google.com/kml/2.2\">"
-				+"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"
+				+"<Document xmlns:mesh4x=\"http://mesh4x.org\">"
 				+"<name>syncDocB.kml</name>"
 				+"<ExtendedData>"
 				+"</ExtendedData>"
@@ -193,7 +193,7 @@ public class KMLViewElementTests {
 	public void shouldRefreshUpdateStyleMapReferences() throws DocumentException{
 		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 			+"<kml xmlns=\"http://earth.google.com/kml/2.2\">"
-				+"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"
+				+"<Document xmlns:mesh4x=\"http://mesh4x.org\">"
 				+"<name>syncDocB.kml</name>"
 				+"<ExtendedData>"
 				+"</ExtendedData>"
@@ -275,7 +275,7 @@ public class KMLViewElementTests {
 		
 		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 			+"<kml xmlns=\"http://earth.google.com/kml/2.2\">"
-			+"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"
+			+"<Document xmlns:mesh4x=\"http://mesh4x.org\">"
 				+"<name>a1.kml</name>"
 				+"<visibility>0</visibility>"
 				+"<open>1</open>"
@@ -323,7 +323,7 @@ public class KMLViewElementTests {
 	public void shouldRefreshCreateHierarchy() throws DocumentException{
 		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 			+"<kml xmlns=\"http://earth.google.com/kml/2.2\">"
-			+"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"
+			+"<Document xmlns:mesh4x=\"http://mesh4x.org\">"
 				+"<name>a1.kml</name>"
 				+"<visibility>0</visibility>"
 				+"<open>1</open>"
@@ -371,7 +371,7 @@ public class KMLViewElementTests {
 	public void shouldRefreshNoCreateHierarchy() throws DocumentException{
 		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 			+"<kml xmlns=\"http://earth.google.com/kml/2.2\">"
-			+"<Document xmlns:mesh4x=\"http://mesh4x.org/kml\">"
+			+"<Document xmlns:mesh4x=\"http://mesh4x.org\">"
 				+"<name>a1.kml</name>"
 				+"<visibility>0</visibility>"
 				+"<open>1</open>"
@@ -442,7 +442,7 @@ public class KMLViewElementTests {
 	
 	@Test
 	public void shouldClean() throws DocumentException{
-		String xml = "<foo xmlns= \"http://earth.google.com/kml/2.2\"><Placemark xmlns:mesh4x=\"http://mesh4x.org/kml\" xml:id = \"1\" mesh4x:originalId=\"1\" ></Placemark></foo>";
+		String xml = "<foo xmlns= \"http://earth.google.com/kml/2.2\"><Placemark xmlns:mesh4x=\"http://mesh4x.org\" xml:id = \"1\" mesh4x:originalId=\"1\" ></Placemark></foo>";
 		Document document = DocumentHelper.parseText(xml);
 
 		Element element = document.getRootElement().element(KmlNames.KML_QNAME_PLACEMARK);

@@ -1,7 +1,5 @@
 package org.mesh4j.sync.adapters.multi.repositories;
 
-import java.util.List;
-
 import junit.framework.Assert;
 
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -14,7 +12,6 @@ import org.mesh4j.sync.adapters.msexcel.MsExcelRDFSyncAdapterFactory;
 import org.mesh4j.sync.adapters.msexcel.MsExcelUtils;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.id.generator.IdGenerator;
-import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.test.utils.TestHelper;
@@ -41,10 +38,10 @@ public class MsAccessVsMySqlSyncTests {
 		SyncEngine syncEngine = syncAndAssert(adapterSource, adapterTarget);
 		
 		// sync to create excel
-		syncAndAssert(syncEngine);
+		TestHelper.syncAndAssert(syncEngine);
 	
 		// no changes - create again the adapters emulating other sync
-		syncAndAssert(syncEngine);
+		TestHelper.syncAndAssert(syncEngine);
 	
 		// add
 		excelContent.beginSync();
@@ -58,7 +55,7 @@ public class MsAccessVsMySqlSyncTests {
 		
 		Assert.assertEquals(size, adapterSource.getAll().size());
 		Assert.assertEquals(size + 1, adapterTarget.getAll().size());
-		syncAndAssert(syncEngine);
+		TestHelper.syncAndAssert(syncEngine);
 	
 		// update - create again the adapters emulating other sync
 		excelContent.beginSync();
@@ -68,7 +65,7 @@ public class MsAccessVsMySqlSyncTests {
 		
 		Assert.assertEquals(size + 1, adapterSource.getAll().size());
 		Assert.assertEquals(size + 1, adapterTarget.getAll().size());
-		syncAndAssert(syncEngine);
+		TestHelper.syncAndAssert(syncEngine);
 			
 		// delete - create again the adapters emulating other sync
 		excelContent.beginSync();
@@ -78,7 +75,7 @@ public class MsAccessVsMySqlSyncTests {
 		
 		Assert.assertEquals(size + 1, adapterSource.getAll().size());
 		Assert.assertEquals(size + 1, adapterTarget.getAll().size());
-		syncAndAssert(syncEngine);
+		TestHelper.syncAndAssert(syncEngine);
 		
 	}
 	
@@ -163,30 +160,8 @@ public class MsAccessVsMySqlSyncTests {
 		Assert.assertEquals(rdfSchemaSource.asXML(), rdfSchemaTarget.asXML());
 		
 		SyncEngine syncEngine = new SyncEngine(adapterTarget, adapterSource);
-		syncAndAssert(syncEngine);
+		TestHelper.syncAndAssert(syncEngine);
 		return syncEngine;
-	}
-
-	private void syncAndAssert(SyncEngine syncEngine) {
-		List<Item> conflicts = syncEngine.synchronize();
-	
-		Assert.assertNotNull(conflicts);
-		Assert.assertTrue(conflicts.isEmpty());
-		
-		List<Item> sourceItems = syncEngine.getSource().getAll();
-		List<Item> targetItems = syncEngine.getTarget().getAll();
-		Assert.assertEquals(sourceItems.size(), targetItems.size());
-		
-		for (Item sourceItem : sourceItems) {
-			Item targetItem = syncEngine.getTarget().get(sourceItem.getSyncId());
-			boolean isOk = sourceItem.equals(targetItem);
-			if(!isOk){
-				System.out.println("Source: "+ sourceItem.getContent().getPayload().asXML());
-				System.out.println("Target: "+ targetItem.getContent().getPayload().asXML());
-				Assert.assertEquals(sourceItem.getContent().getPayload().asXML(), targetItem.getContent().getPayload().asXML());	
-			}
-			Assert.assertTrue(isOk);
-		}
 	}
 
 	private SplitAdapter makeExcelAdapter(String ontologyBaseUri, IRDFSchema rdfSchema, String fileName) {
