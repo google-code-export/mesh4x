@@ -27,6 +27,11 @@ import org.mesh4j.sync.utils.XMLHelper;
 public class SyncAdapterBuilderTest {
 
 	
+	
+	/**
+	 * This test assumes you have a worksheet named "user_source" in your spreadsheet
+	 * with the provided gmail account(gspreadsheet.test@gmail.com)
+	 */
 	@Test
 	public void shouldCreateGoogleSpreadSheetAdapter(){
 		
@@ -99,7 +104,6 @@ public class SyncAdapterBuilderTest {
 		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
 		ISyncAdapter kmlAdapter = builder.createKMLAdapter(TestHelper.baseDirectoryForTest() + "kmlDummyForSync.kml");
 		Assert.assertNotNull(kmlAdapter);
-		Assert.assertEquals(0, kmlAdapter.getAll().size());
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
