@@ -40,11 +40,12 @@ import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.test.utils.TestHelper;
 import org.mesh4j.sync.utils.XMLHelper;
 
+@Deprecated
 public class AdapterFactoryTests {
 
 	
 
-	@Test
+	//@Test
 	public void shouldCreateHttpAdapter() {
 		String url = "http://localhost:8080/mesh4x/feeds/myMesh/myFeed";
 		HttpSyncAdapter adapter = new HttpSyncAdapter(url,
@@ -55,14 +56,14 @@ public class AdapterFactoryTests {
 		Assert.assertTrue(adapter.getAll().size() > 0);
 	}
 
-	@Test
+//	@Test
 	public void shouldCreateMsAccessAdapterWithRDF() throws Exception {
 		MsAccessSyncAdapterFactory adapterFactory = new MsAccessSyncAdapterFactory(
 				TestHelper.baseDirectoryForTest(),
 				"http://mesh4x/feeds/grammen");
 		SplitAdapter syncAdapter = adapterFactory.createSyncAdapterFromFile(
-				"aktoo", TestHelper.baseDirectoryForTest() + "\\aktoo.mdb",
-				"aktoo");
+				"ektoo", TestHelper.baseDirectoryForTest() + "\\Ektoo.mdb",
+				"ektoo");
 
 		HibernateContentAdapter contentAdapter = (HibernateContentAdapter) syncAdapter
 				.getContentAdapter();
@@ -76,7 +77,7 @@ public class AdapterFactoryTests {
 		Assert.assertEquals(1, syncAdapter.getAll().size());
 	}
 
-	@Test
+//	@Test
 	public void shouldCreateMsAccessAdapterWithoutRDF() throws Exception {
 		MsAccessSyncAdapterFactory adapterFactory = new MsAccessSyncAdapterFactory(
 				TestHelper.baseDirectoryForTest(), null);
@@ -91,7 +92,7 @@ public class AdapterFactoryTests {
 		Assert.assertEquals(1, syncAdapter.getAll().size());
 	}
 
-	@Test
+//	@Test
 	public void shouldCreateMsExcelAdapter() throws IOException,
 			DocumentException {
 
@@ -106,7 +107,7 @@ public class AdapterFactoryTests {
 		Assert.assertEquals(1, excelAdapter.getAll().size());
 	}
 
-	@Test
+//	@Test
 	public void shouldCreateFeedAdapter() {
 		File file = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID()
 				+ ".xml"));
@@ -118,7 +119,7 @@ public class AdapterFactoryTests {
 		Assert.assertTrue(feed.getItems().isEmpty());
 	}
 
-	@Test
+//	@Test
 	public void shouldCreateGoogleSpreadSheetAdapter() throws DocumentException {
 
 		String idColumName = "id";
