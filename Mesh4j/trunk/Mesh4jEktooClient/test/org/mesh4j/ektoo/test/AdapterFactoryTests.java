@@ -42,9 +42,7 @@ import org.mesh4j.sync.utils.XMLHelper;
 
 public class AdapterFactoryTests {
 
-	// @Before
-	public void setUp() {
-	}
+	
 
 	@Test
 	public void shouldCreateHttpAdapter() {
@@ -128,26 +126,23 @@ public class AdapterFactoryTests {
 		String passWord = "java123456";
 		String GOOGLE_SPREADSHEET_FIELD = "peo4fu7AitTo8e3v0D8FCew";
 
-		
-		IGoogleSpreadSheet spreadsheet = new GoogleSpreadsheet(
-				GOOGLE_SPREADSHEET_FIELD, userName, passWord);
-
-		// TODO generics?
+		IGoogleSpreadSheet spreadsheet = new GoogleSpreadsheet(GOOGLE_SPREADSHEET_FIELD, userName, passWord);
 		GSWorksheet sourceRepo = spreadsheet.getGSWorksheet(1);
 
-		IGoogleSpreadsheetToXMLMapping mapper = new GoogleSpreadsheetToPlainXMLMapping(
-				"user", idColumName,null,sourceRepo.getName(), spreadsheet.getDocsService());
+		IGoogleSpreadsheetToXMLMapping mapper = new GoogleSpreadsheetToPlainXMLMapping("user", idColumName,
+													null,sourceRepo.getName(), 
+													spreadsheet.getDocsService());
+				
 		
 		SplitAdapter spreadSheetAdapter = GoogleSpreadsheetUtils
-				.createGoogleSpreadSheetAdapter(spreadsheet, mapper,
+			.createGoogleSpreadSheetAdapter(spreadsheet, mapper,
 												NullIdentityProvider.INSTANCE,
 												IdGenerator.INSTANCE);
 
-		Assert.assertEquals(spreadSheetAdapter.getAll().size(), 0);
-
+		int size = spreadSheetAdapter.getAll().size();
 		spreadSheetAdapter.add(getItem());
 
-		Assert.assertEquals(spreadSheetAdapter.getAll().size(), 1);
+		Assert.assertEquals(size + 1,spreadSheetAdapter.getAll().size());
 
 	}
 	
@@ -199,10 +194,13 @@ public class AdapterFactoryTests {
 	private Item getItem() throws DocumentException {
 
 		String id = IdGenerator.INSTANCE.newID();
-		String rawDataAsXML = "<user>" + "<id>" + id + "</id>"
-				+ "<name>Raju</name>" + "<age>25</age>" + "<city>Dhaka</city>"
-				+ "<country>Bangladesh</country>"
-				+ "<lastupdate>6/11/2009 1:01:01</lastupdate>" + "</user>";
+		String rawDataAsXML = "<user>" + 
+								"<id>" + id + "</id>"
+								+"<name>Raju</name>" + 
+								"<age>25</age>" + 
+								"<city>Dhaka</city>"
+								+ "<country>Bangladesh</country>" +
+								"</user>";
 
 		Element payload = XMLHelper.parseElement(rawDataAsXML);
 		IContent content = new EntityContent(payload, "user", id);
