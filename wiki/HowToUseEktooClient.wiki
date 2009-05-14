@@ -13,7 +13,7 @@
 <wiki:toc max_depth="2" />
      </td>
      <td>
-[http://downloads.instedd.org/mesh4x/ektoo_0_0_3.7z Download]
+[http://downloads.instedd.org/mesh4x/ektoo_0_0_3.7z Download Ektoo Client Now]
      </td>
   </tr>
      
@@ -181,8 +181,6 @@ The process consists of:
   </tr>
 
 </table>
-
-
 
 
 
