@@ -38,6 +38,15 @@ public class GoogleSpreadSheetContentAdapterTest {
 	}
 	
 	
+	@Test(expected = IllegalArgumentException.class)
+	public void ShouldGenerateExceptionIfSpreadSheetIsNull(){
+		GoogleSpreadSheetContentAdapter adapter = new GoogleSpreadSheetContentAdapter(null,mapper);
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void ShouldGenerateExceptionIfMapperIsNull(){
+		GoogleSpreadSheetContentAdapter adapter = new GoogleSpreadSheetContentAdapter(spreadsheet,null);
+	}
 	
 	@Test
 	public void ShouldAddContent(){
