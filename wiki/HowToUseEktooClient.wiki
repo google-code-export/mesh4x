@@ -21,22 +21,6 @@ Currently mesh4x supports following data repositories:
  # Feed or Amazon S3 (cloud storage)
  # Folder
 
-Ektoo client supports following scenarios of data synchronization currently
- * Microsoft Excel to and/or from
-   * Microsoft Excel
-   * Google Spreadsheet
-   * MySQL
-   * Cloud
- * Microsoft Access to and/or from
-   * Microsoft Access
-   * Cloud
- * Google Spreadsheet to and/or from
-   * Google Spreadsheet
-   * Microsoft Excel
-   * Cloud
- * MySQL to and/or from
-   * Microsoft Excel
-   * Cloud 
 
 =What you need=
 You will need:
