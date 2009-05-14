@@ -149,7 +149,7 @@ public class InterRepositorySyncTest {
 	public void ShouldSyncGoogleSpreadSheetToExcelWithoutRDFAssumeSameSchema(){
 		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
 		GoogleSpreadSheetInfo spreadSheetInfo = new GoogleSpreadSheetInfo(
-				"peo4fu7AitTqkOhMSrecFRA",
+				"peo4fu7AitTo8e3v0D8FCew",
 				"gspreadsheet.test@gmail.com",
 				"java123456",
 				"id",
@@ -157,8 +157,10 @@ public class InterRepositorySyncTest {
 				"user"
 				);
 		
+		
+		File contentFile = new File(this.getClass().getResource("content1.xls").getFile());
 		ISyncAdapter sourceAsGoogleSpreadSheet = builder.createGoogleSpreadSheetAdapter(spreadSheetInfo);
-		ISyncAdapter targetAsExcel = builder.createMsExcelAdapter(TestHelper.baseDirectoryForTest() + "contentFile.xls", "user", "id");
+		ISyncAdapter targetAsExcel = builder.createMsExcelAdapter(contentFile.getAbsolutePath(), "user", "id");
 		
 		SyncEngine engine = new SyncEngine(sourceAsGoogleSpreadSheet,targetAsExcel);
 		List<Item> listOfConflicts = engine.synchronize();
@@ -201,10 +203,12 @@ public class InterRepositorySyncTest {
 	@Test
 	public void ShouldSyncExcelToExcelWithoutRDFAssumeSameSchema(){
 		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
+		File sourceFile = new File(this.getClass().getResource("content1.xls").getFile());
+		File targetFile = new File(this.getClass().getResource("content2.xls").getFile());
 		
-		ISyncAdapter sourceAsExcel = builder.createMsExcelAdapter(TestHelper.baseDirectoryForTest() + "sourceContentFile.xls", "user", "id");
+		ISyncAdapter sourceAsExcel = builder.createMsExcelAdapter(sourceFile.getAbsolutePath(), "user", "id");
 		
-		ISyncAdapter targetAsExcel = builder.createMsExcelAdapter(TestHelper.baseDirectoryForTest() + "targetContentFile.xls", "user", "id");
+		ISyncAdapter targetAsExcel = builder.createMsExcelAdapter(targetFile.getAbsolutePath(), "user", "id");
 		
 		SyncEngine engine = new SyncEngine(sourceAsExcel,targetAsExcel);
 		List<Item> listOfConflicts = engine.synchronize();
