@@ -42,6 +42,36 @@ public class SpreadSheetToXMLMapperTest {
 		adapter.endSync();
 	}
 	
+	@Test(expected = IllegalArgumentException.class)
+	public void ShouldGenerateExceptionIfTypeIsNullOrEmpty(){
+		GSWorksheet workSheet = spreadsheet.getGSWorksheet(1);
+		IGoogleSpreadsheetToXMLMapping mapper = new GoogleSpreadsheetToPlainXMLMapping("","id",null,
+												workSheet.getName(), spreadsheet.getDocsService());
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void ShouldGenerateExceptionIfIdIsNullOrEmpty(){
+		GSWorksheet workSheet = spreadsheet.getGSWorksheet(1);
+		IGoogleSpreadsheetToXMLMapping mapper = new GoogleSpreadsheetToPlainXMLMapping("user","",null,
+												workSheet.getName(), spreadsheet.getDocsService());
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void ShouldGenerateExceptionIfSheetNameIsNullOrEmpty(){
+		GSWorksheet workSheet = spreadsheet.getGSWorksheet(1);
+		IGoogleSpreadsheetToXMLMapping mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,
+												"", spreadsheet.getDocsService());
+	}
+	
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void ShouldGenerateExceptionIfDocsServiceIsNull(){
+		GSWorksheet workSheet = spreadsheet.getGSWorksheet(1);
+		IGoogleSpreadsheetToXMLMapping mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,
+												workSheet.getName(), null);
+	}
+	
+	
 	@Test
 	public void ShouldConvertRowToXMLPayload(){
 		
@@ -79,7 +109,6 @@ public class SpreadSheetToXMLMapperTest {
 				GSRow row = gsRowMap.getValue();
 				if(Integer.parseInt(row.getElementId()) > 1){
 					Element xmlElement = mapper.convertRowToXML(row);
-					System.out.println(xmlElement.asXML());
 					Assert.assertEquals(xmlElement.asXML(), rawDataAsXML);
 				}
 			}
