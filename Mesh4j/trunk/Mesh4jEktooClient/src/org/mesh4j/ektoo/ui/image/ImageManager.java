@@ -145,5 +145,28 @@ public class ImageManager
   {
     return SwingResourceManager.getImage(EktooUI.class, "/sync.gif");
   }
+  
+  public static Icon getErrorIcon()
+  {
+    return SwingResourceManager.getIcon(EktooUI.class, "/16x16/error.png");
+  }
 
+  public static Icon getWarningIcon()
+  {
+    return SwingResourceManager.getIcon(EktooUI.class, "/16x16/warning.png");
+  }
+
+  public static Icon getInfoIcon()
+  {
+    return SwingResourceManager.getIcon(EktooUI.class, "/16x16/info.png");
+  }
+
+  public static Icon getSuccessIcon()
+  {
+    return SwingResourceManager.getIcon(EktooUI.class, "/16x16/accept.png");
+  }
+  public static Icon getSeperatorIcon()
+  {
+    return SwingResourceManager.getIcon(EktooUI.class, "/separator.png");
+  }
 }

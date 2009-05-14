@@ -286,9 +286,24 @@ public class EktooUITranslator {
 		return EktooMessageTranslator.translate("EKTOO_FEED_FILE_NAME_FIELD_LABEL");
 	}
 
+  public static String getErrorEmptyOrNull(String name)
+  {
+    return EktooMessageTranslator.translate("EKTOO_ERROR_EMPTY_OR_NULL", name);
+  }
+
+  public static String getErrorInvalid(String name)
+  {
+    return EktooMessageTranslator.translate("EKTOO_ERROR_INVALID", name);
+  }
+
 	public static String getFolderFileNameLabel() {
 		return EktooMessageTranslator
 		.translate("EKTOO_FOLDER_FILE_NAME_FIELD_LABEL");
 	}
 
+  public static String getStatusbarMessage()
+  {
+    return EktooMessageTranslator
+    .translate("EKTOO_STATUSBAR_DEFAULT_MESSAGE");
+  }
 }

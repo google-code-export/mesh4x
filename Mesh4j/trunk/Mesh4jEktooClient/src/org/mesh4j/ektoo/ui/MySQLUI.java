@@ -12,6 +12,8 @@ import java.awt.event.FocusEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
@@ -24,11 +26,11 @@ import javax.swing.SwingWorker;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.mesh4j.ektoo.IValidationStatus;
 import org.mesh4j.ektoo.controller.MySQLUIController;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.ektoo.ui.validator.MySQLConnectionValidator;
+import org.mesh4j.ektoo.validator.IValidationStatus;
 import org.mesh4j.sync.utils.SqlDBUtils;
 
 import com.mysql.jdbc.Driver;
@@ -464,9 +466,20 @@ public class MySQLUI extends AbstractUI implements IValidationStatus
 	}
 
   @Override
-  public void validationFailed()
+  public void validationFailed(Hashtable errorTable)
   {
     System.out.println("Invalid form");
+    
+    String key = null;
+    String err = null;
+    Enumeration keys = errorTable.keys();
+    while(keys.hasMoreElements())
+    {
+     key = (String)keys.nextElement(); 
+     err = (String)errorTable.get(key);
+     System.out.println("Key:" + key +" : Error:" + err);
+    }
+    
   }
 
   @Override

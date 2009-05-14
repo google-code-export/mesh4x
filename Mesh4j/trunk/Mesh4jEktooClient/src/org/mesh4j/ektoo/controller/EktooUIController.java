@@ -56,14 +56,25 @@ public class EktooUIController {
 		return sync(sourceAdapter, targetAdapter);
 	}
 
-	public String sync(ISyncAdapter sourceAdapter, ISyncAdapter targetAdapter) {
-		SyncEngine engine = new SyncEngine(sourceAdapter, targetAdapter);
+	public String sync(ISyncAdapter sourceAdapter, ISyncAdapter targetAdapter) 
+	{
+	  try
+    {
+	    SyncEngine engine = new SyncEngine(sourceAdapter, targetAdapter);
+	    List<Item> items = engine.synchronize();
 
-		List<Item> items = engine.synchronize();
-
-		// TODO (NBL) change these hardcode string
-		if (items != null && items.size() > 0)
-			return "failed";
+	    // TODO (NBL) change these hardcode string
+	    if (items != null && items.size() > 0)
+	    {
+	      // try to grad reason of conflicts
+	      return "failed";
+	    }
+    }
+    catch (Exception e)
+    {
+      return "failed";
+    }
+		
 
 		return "success";
 	}

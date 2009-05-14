@@ -14,10 +14,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
-import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -28,10 +25,10 @@ import javax.swing.SwingWorker;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.controller.EktooUIController;
-import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.ektoo.tasks.IErrorListener;
-import org.mesh4j.ektoo.tasks.OpenURLTask;
+import org.mesh4j.ektoo.tasks.ISynchronizeTaskListener;
 import org.mesh4j.ektoo.tasks.SynchronizeTask;
+import org.mesh4j.ektoo.ui.component.statusbar.Statusbar;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 
@@ -39,7 +36,7 @@ import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
  * @author Bhuiyan Mohammad Iklash
  * 
  */
-public class EktooUI extends JFrame implements IErrorListener {
+public class EktooUI extends JFrame implements IErrorListener, ISynchronizeTaskListener {
 	private static final long serialVersionUID = -8703829301086394863L;
 	private final Log LOGGER = LogFactory.getLog(EktooUI.class);
 
@@ -60,6 +57,7 @@ public class EktooUI extends JFrame implements IErrorListener {
 	private JLabel syncImageLabel = null;
 	private JLabel poweredByLabel = null;
 
+	private Statusbar statusBar = null;
 	private EktooUIController controller;
 
 	// BUSINESS METHODS
@@ -82,7 +80,6 @@ public class EktooUI extends JFrame implements IErrorListener {
 	private JPanel getJPanel() {
 		if (panel == null) {
 			panel = new JPanel();
-
 			panel.setBackground(Color.WHITE);
 			GridBagLayout gridBagLayout = new GridBagLayout();
 
@@ -112,28 +109,35 @@ public class EktooUI extends JFrame implements IErrorListener {
 			// panel.add(getViaPane(), null);
 			// panel.add(getTypePane(), null);
 
-			c.fill = GridBagConstraints.HORIZONTAL;
-			c.gridx = 0;
-			c.gridy = 2;
-			c.gridwidth = 2;
-			panel.add(getConsole(), c);
+			//c.fill = GridBagConstraints.HORIZONTAL;
+			//c.gridx = 0;
+			//c.gridy = 2;
+			//c.gridwidth = 2;
+			//panel.add(getConsole(), c);
 
 			c.fill = GridBagConstraints.CENTER;
 			c.gridx = 0;
-			c.gridy = 3;
+			c.gridy = 2;
 			c.gridwidth = 2;
 			panel.add(getBtnSync(), c);
 
-			c.fill = GridBagConstraints.HORIZONTAL;
-			c.gridx = 0;
-			c.gridy = 4;
-			c.gridwidth = 2;
-			panel.add(getPoweredByLabel(), c);
+			//c.fill = GridBagConstraints.HORIZONTAL;
+			//c.gridx = 0;
+			//c.gridy = 3;
+			//c.gridwidth = 2;
+			//panel.add(getPoweredByLabel(), c);
 
+			c.insets = new Insets(0, 3, -17, 3);
+
+      c.fill = GridBagConstraints.HORIZONTAL;
+      c.gridx = 0;
+      c.gridy = 3;
+      c.gridwidth = 2;
+      panel.add(getStatusBar(), c);
 		}
 		return panel;
 	}
-
+	/*
 	private JLabel getPoweredByLabel() {
 		if (poweredByLabel == null) {
 			poweredByLabel = new JLabel(EktooUITranslator.getPoweredByLabel(),
@@ -156,7 +160,7 @@ public class EktooUI extends JFrame implements IErrorListener {
 		}
 		return poweredByLabel;
 	}
-
+  */
 	private JPanel getImagePanel() {
 		if (panelImage == null) {
 			panelImage = new JPanel();
@@ -245,16 +249,17 @@ public class EktooUI extends JFrame implements IErrorListener {
 		return directionImageLabel;
 	}
 
-	private JLabel getConsole() {
-		if (labelConsole == null) {
-			labelConsole = new JLabel();
-			labelConsole.setPreferredSize(new Dimension(600, 24));
-			labelConsole.setBorder(BorderFactory.createLineBorder(Color.gray));
-		}
 
-		return labelConsole;
-	}
+	private Statusbar getStatusBar()
+  {
+    if (statusBar == null) 
+    {
+      statusBar = new Statusbar(this);
+    }
 
+    return statusBar;
+  }
+	
 	private JPanel getSourcePane() {
 		if (getSourceItem() == null) {
 			setSourceItem(new SyncItemUI(EktooUITranslator
@@ -304,15 +309,15 @@ public class EktooUI extends JFrame implements IErrorListener {
 			btnSync.setToolTipText(EktooUITranslator.getSyncToolTip());
 			btnSync.setFont(new Font("Arial", Font.PLAIN, 16));
 
-			btnSync.addActionListener(new ActionListener() {
+			btnSync.addActionListener(new ActionListener() 
+			{
 				public void actionPerformed(ActionEvent e) {
 					log("actionPerformed()");
-					setConsole("");
+					setStatusbarText("", Statusbar.NORMAL_STATUS);
 					showSyncImageLabel(true);
 					SwingWorker<String, Void> task = new SynchronizeTask(
-							EktooUI.this);
+							EktooUI.this, EktooUI.this);
 					task.execute();
-					// showSyncImageLabel(false);
 					log("Calling Sync...");
 				}
 			});
@@ -351,10 +356,23 @@ public class EktooUI extends JFrame implements IErrorListener {
 		return targetItem;
 	}
 
-	public void setConsole(String msg) {
-		labelConsole.setText(msg);
-	}
+  public void setStatusbarText(String msg, int statusStyle) 
+  {
+    if (statusStyle == Statusbar.NORMAL_STATUS)
+    {
+      statusBar.setStaus(msg, Statusbar.NORMAL_COLOR, Statusbar.NORMAL_ICON);
+    }
+    else if (statusStyle == Statusbar.WARNING_STATUS)
+    {
+      statusBar.setStaus(msg, Statusbar.WARNING_COLOR, Statusbar.WARNING_ICON);
+    }
+    else if (statusStyle == Statusbar.ERROR_STATUS)
+    {
+      statusBar.setStaus(msg, Statusbar.ERROR_COLOR, Statusbar.ERROR_ICON);
+    } 
+  }
 
+  
 	// TODO (NBL) disables unsupported features from ui
 	private void filterCombobox() {
 		String item = (String) getSourceItem().getListType().getSelectedItem();
@@ -426,4 +444,24 @@ public class EktooUI extends JFrame implements IErrorListener {
 		// TODO Auto-generated method stub
 
 	}
+
+  @Override
+  public void notifySynchronizeTaskConflict(String conflict)
+  {
+    setStatusbarText(conflict, Statusbar.ERROR_STATUS);
+  }
+
+  @Override
+  public void notifySynchronizeTaskError(String error)
+  {
+    setStatusbarText( error, Statusbar.ERROR_STATUS); 
+  }
+
+  @Override
+  public void notifySynchronizeTaskSuccess(String success)
+  {
+    setStatusbarText(success,  Statusbar.SUCCESS_STATUS);   
+  }
+
+ 
 }

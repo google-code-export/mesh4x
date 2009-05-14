@@ -1,4 +1,4 @@
-package org.mesh4j.ektoo;
+package org.mesh4j.ektoo.ui.validator;
 
 public interface IMySQLConnectionValidation
 {

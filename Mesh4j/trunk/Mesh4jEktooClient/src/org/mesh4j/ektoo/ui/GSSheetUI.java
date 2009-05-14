@@ -229,6 +229,7 @@ public class GSSheetUI extends AbstractUI {
       {
         public void actionPerformed(ActionEvent ae) 
         {
+          System.out.println("1...");
           SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
             public Void doInBackground() {
               setCursor(Cursor
@@ -347,6 +348,8 @@ public class GSSheetUI extends AbstractUI {
 
 	@SuppressWarnings("unchecked")
 	public void setList(String user, String pass, String key) {
+	  System.out.println("2...");
+    
 		JComboBox sheetList = getTableList();
 		sheetList.removeAllItems();
 		 
@@ -359,11 +362,13 @@ public class GSSheetUI extends AbstractUI {
 
 				GSWorksheet<GSRow<GSCell>> workSheet = spSheet.getValue();
 				sheetName = workSheet.getName();
+				System.out.println("Worksheet->" + sheetName);
 				if (sheetName != null) {
 					sheetList.addItem(workSheet.getName());
 				}
 			}
-		} catch (Exception e) {			
+		} catch (Exception e) {	
+		  e.printStackTrace();
             LOGGER.error(e.getMessage(), e);
             // TODO Handle exception
 		}

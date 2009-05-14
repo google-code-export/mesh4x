@@ -150,8 +150,9 @@ public class MsExcelUI extends TableUI
 	}
 }
 
-class MsExcelFilter extends FileFilter {
 
+class MsExcelFilter extends FileFilter 
+{
 	// Accept all directories and all xls files.
 	public boolean accept(File file) 
 	{

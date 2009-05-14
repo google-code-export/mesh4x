@@ -10,6 +10,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.ui.EktooUI;
 import org.mesh4j.ektoo.ui.SyncItemUI;
+import org.mesh4j.ektoo.ui.component.statusbar.Statusbar;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 
 public class SynchronizeTask extends SwingWorker<String, Void> {
@@ -19,22 +20,24 @@ public class SynchronizeTask extends SwingWorker<String, Void> {
 	// MODEL VARIABLEs
 	private EktooUI ui;
 	private String result = null;
+	private ISynchronizeTaskListener synchronizeTaskListener = null;
 
 	// BUSINESS METHODS
-	public SynchronizeTask(EktooUI ui) {
+	public SynchronizeTask(EktooUI ui, ISynchronizeTaskListener synchronizeTaskListener) {
 		super();
 		this.ui = ui;
+		this.synchronizeTaskListener = synchronizeTaskListener;
 	}
 
 	@Override
 	public String doInBackground() 
 	{
 		ui.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-		ui.setConsole(EktooUITranslator.getMessageStartSync(
+		ui.setStatusbarText(EktooUITranslator.getMessageStartSync(
 		    ui.getSourceItem().toString(),
 		    ui.getTargetItem().toString(),
 		    new Date()
-		    ));
+		    ), Statusbar.NORMAL_STATUS);
 		
 		try 
 		{
@@ -46,8 +49,8 @@ public class SynchronizeTask extends SwingWorker<String, Void> {
 		}
 		catch (Throwable t) 
 		{
-		  //TODO (NBL) handle exception
 			LOGGER.error(t.getMessage(), t);
+			synchronizeTaskListener.notifySynchronizeTaskError(t.getMessage());
 		}
 		return null;
 	}
@@ -60,38 +63,40 @@ public class SynchronizeTask extends SwingWorker<String, Void> {
 			result = get();
 			if (result != null && result.startsWith("success")) 
 			{
-			  ui.setConsole(EktooUITranslator.getMessageSyncSyccessfuly(
+			  synchronizeTaskListener.notifySynchronizeTaskSuccess(
+			      EktooUITranslator.getMessageSyncSyccessfuly(
+            ui.getSourceItem().toString(),
+            ui.getTargetItem().toString(),
+            new Date()));
+			}
+			else if (result != null && result.startsWith("failed")) 
+			{
+			  synchronizeTaskListener.notifySynchronizeTaskConflict(EktooUITranslator.getMessageSyncConflicts(
             ui.getSourceItem().toString(),
             ui.getTargetItem().toString(),
             new Date()
-            ));			  
-			}
-			else
-			{
-			  ui.setConsole(EktooUITranslator.getMessageSyncConflicts(
-		        ui.getSourceItem().toString(),
-		        ui.getTargetItem().toString(),
-		        new Date()
-		        ));
+            ));			 
 			}
 			
 		} 
 		catch (InterruptedException e) 
 		{
-		  ui.setConsole(EktooUITranslator.getMessageSyncFailed(
+		  synchronizeTaskListener.notifySynchronizeTaskError(EktooUITranslator.getMessageSyncFailed(
           ui.getSourceItem().toString(),
           ui.getTargetItem().toString(),
           new Date()
-          ));		  
+          ));
+		  
+		  	  
 			LOGGER.error(e.getMessage(), e);
 		} 
 		catch (ExecutionException e) 
 		{
-		  ui.setConsole(EktooUITranslator.getMessageSyncFailed(
+		  synchronizeTaskListener.notifySynchronizeTaskError(EktooUITranslator.getMessageSyncFailed(
           ui.getSourceItem().toString(),
           ui.getTargetItem().toString(),
           new Date()
-          ));   		  
+          ));		  
 			LOGGER.error(e.getMessage(), e);
 		}
 		ui.showSyncImageLabel(false);
