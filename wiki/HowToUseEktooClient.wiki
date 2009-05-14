@@ -1,14 +1,31 @@
 #summary A step-by-step guide for users to synchronize various data sources using Ektoo client
 #labels HowTo,Tutorial,Featured
 
-[http://downloads.instedd.org/mesh4x/ektoo_0_0_3.7z Download]
 
+
+
+
+
+
+<table valign="top">
+  <tr>
+     <td>
 <wiki:toc max_depth="2" />
+     </td>
+     <td>
+[http://downloads.instedd.org/mesh4x/ektoo_0_0_3.7z Download]
+     </td>
+  </tr>
+     
+
+  <tr>
+     <td valign=top>
 
 =Introduction=
 Ektoo is a desktop client that helps user to synchronize data between various data repositories using mesh4x.
 
 This step-by-step guide shows how a user can use Ektoo client to synchronize data between various data repositories.
+
 =Overview=
 Currently mesh4x supports following data repositories:
  # KML
@@ -21,13 +38,24 @@ Currently mesh4x supports following data repositories:
  # Feed or Amazon S3 (cloud storage)
  # Folder
 
+     </td>
+     <td>[http://mesh4x.googlecode.com/svn/wiki/files/ektoo_1.gif]</td>
+  </tr>
 
+  <tr>
+     <td valign=top>
 =What you need=
 You will need:
  * JRE(Java Runtime Environment) 1.5 or later version installed in your system.
  * Ektoo client installed in your system
  * Data repository
+     </td>
+     <td></td>
+  </tr>
 
+
+  <tr>
+     <td valign=top>
 =Steps to Synchronize=
 The process consists of:
  # Select data source type from drop down list of source pane.
@@ -35,26 +63,51 @@ The process consists of:
  # Select target data source type from drop down list of target pane.
   * Enter details information to define target data source.
  # Click on "<b>Synchronize Now</b>" button to start synchronization process.
-
+     </td>
+     <td></td>
+  </tr>
+  <tr>
+     <td valign=top>
 =How-To-Define Data Source=
 Defining various data source as source or target is a very simple process. Following sections describe how-to-define a data source of your desire data source type.
+     </td>
+     <td></td>
+  </tr>
 
+  <tr>
+     <td valign=top>
 ==KML==
 The process consists of:
  # Select "KML" data type from "<b>Data Source Type</b>" drop down list.
  # Browse KML files and select one that you want to synchronize.
 
+     </td>
+     <td></td>
+  </tr>
+
+  <tr>
+     <td valign=top>
 ==Rss 2.0==
 The process consists of:
  # Select "Rss 2.0" data type from "<b>Data Source Type</b>" drop down list.
  # Browse rss XML files and select one that you want to synchronize.
+     </td>
+     <td>[http://mesh4x.googlecode.com/svn/wiki/files/ektoo_7.gif]</td>
+  </tr>
 
+  <tr>
+     <td valign=top>
 ==Atom 1.0==
 The process consists of:
  # Select "Atom 1.0" data type from "<b>Data Source Type</b>" drop down list.
  # Browse atom xml files and select one that you want to synchronize.
 
+     </td>
+     <td>[http://mesh4x.googlecode.com/svn/wiki/files/ektoo_8.gif]</td>
+  </tr>
 
+  <tr>
+     <td valign=top>
 ==Microsoft Excel==
 The process consists of:
  # Select "MS Excel" data type from "<b>Data Source Type</b>" drop down list.
@@ -64,6 +117,12 @@ The process consists of:
   * Available list of column will be displayed in "Unique Column" drop down list.
  # Select unique column from "<b>Unique Column</b>" drop down list.
 
+     </td>
+     <td>[http://mesh4x.googlecode.com/svn/wiki/files/ektoo_5.gif]</td>
+  </tr>
+
+  <tr>
+     <td valign=top>
 ==Google Spreadsheet==
 The process consists of:
  # Select "Google Spreadsheet" data type from "<b>Data Source Type</b>" drop down list.
@@ -76,6 +135,13 @@ The process consists of:
   * Available list of column will be displayed in "Unique Column" drop down list.
  # Select unique column from "<b>Unique Column</b>" drop down list.
 
+     </td>
+     <td>[http://mesh4x.googlecode.com/svn/wiki/files/ektoo_4.gif]</td>
+  </tr>
+
+
+  <tr>
+     <td valign=top>
 ==Microsoft Access==
 The process consists of:
  # Select "MS Access" data type from "<b>Data Source Type</b>" drop down list.
@@ -83,6 +149,12 @@ The process consists of:
   * Available list of table will be displayed in "<b>Table</b>" drop down list.
  # Select table from "<b>Table</b>" drop down list.
 
+     </td>
+     <td>[http://mesh4x.googlecode.com/svn/wiki/files/ektoo_3.gif]</td>
+  </tr>
+
+  <tr>
+     <td valign=top>
 ==MySQL==
 The process consists of:
  # Select "MySQL" data type from "<b>Data Source Type</b>" drop down list.
@@ -93,8 +165,34 @@ The process consists of:
  # Click on connection icon
    * After successful connection, available tables will be displayed in "<b>Table</b>" drop down list 
  # Select table from "<b>Table</b>" drop down list.
+     </td>
+     <td>[http://mesh4x.googlecode.com/svn/wiki/files/ektoo_6.gif]</td>
+  </tr>
 
+
+  <tr>
+     <td valign=top>
 ==Folder==
 The process consists of:
  # Select "Folder" data type from "<b>Data Source Type</b>" drop down list.
  # Browse folders and select one that you want to synchronize.
+     </td>
+     <td></td>
+  </tr>
+
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
