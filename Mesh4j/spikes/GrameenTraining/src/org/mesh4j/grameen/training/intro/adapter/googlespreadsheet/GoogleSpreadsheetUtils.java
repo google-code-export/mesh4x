@@ -547,22 +547,13 @@ public class GoogleSpreadsheetUtils {
 		return dateAndTime;
 	}
 
-	@SuppressWarnings("unchecked")
-	public static SplitAdapter createGoogleSpreadSheetAdapter(
-			IGoogleSpreadSheet spreadsheet,
-			IGoogleSpreadsheetToXMLMapping mapper,
-			IIdentityProvider identityProvider, IIdGenerator idGenerator) {
-
-		GoogleSpreadSheetContentAdapter contentRepo = new GoogleSpreadSheetContentAdapter(spreadsheet, mapper);
-
-		GoogleSpreadSheetSyncRepository syncRepo = new GoogleSpreadSheetSyncRepository(
-				spreadsheet, identityProvider, idGenerator,mapper.getSheetName() + "_sync");
-
-		SplitAdapter splitAdapter = new SplitAdapter(syncRepo, contentRepo,identityProvider);
-
+	public static SplitAdapter createGoogleSpreadSheetAdapter(IGoogleSpreadSheet spreadSheet,IGoogleSpreadsheetToXMLMapping mapper,IIdentityProvider identityProvider,IIdGenerator idGenerator){
+		GoogleSpreadSheetContentAdapter contentRepo = new GoogleSpreadSheetContentAdapter(spreadSheet,mapper);
+		String syncSheetName = mapper.getSheetName() + "_sync";
+		GoogleSpreadSheetSyncRepository  syncRepo = new GoogleSpreadSheetSyncRepository(spreadSheet,identityProvider,idGenerator,syncSheetName);
+		SplitAdapter splitAdapter = new SplitAdapter(syncRepo,contentRepo,identityProvider);
 		return splitAdapter;
 	}
-
 
 	/**
 	 * get sync sheet if available, otherwise create a new sync sheet and return that
