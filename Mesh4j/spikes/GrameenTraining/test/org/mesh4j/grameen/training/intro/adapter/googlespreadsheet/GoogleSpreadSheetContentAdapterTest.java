@@ -48,6 +48,19 @@ public class GoogleSpreadSheetContentAdapterTest {
 		GoogleSpreadSheetContentAdapter adapter = new GoogleSpreadSheetContentAdapter(spreadsheet,null);
 	}
 	
+	@Test(expected = IllegalArgumentException.class)
+	public void ShouldGenerateExceptionIfAddedContentIsNull(){
+		GoogleSpreadSheetContentAdapter adapter = new GoogleSpreadSheetContentAdapter(spreadsheet,mapper);
+		Assert.assertEquals(0, adapter.getAll(new Date()).size());
+		adapter.save(null);
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void ShouldGenerateExceptionIfContentIdIsNullOrEmpty(){
+		GoogleSpreadSheetContentAdapter adapter = new GoogleSpreadSheetContentAdapter(spreadsheet,mapper);
+		IContent loadedContent = adapter.get("");
+	}
+	
 	@Test
 	public void ShouldAddContent(){
 	
@@ -79,6 +92,8 @@ public class GoogleSpreadSheetContentAdapterTest {
 		
 	}
 	
+	
+	
 	@Test
 	public void ShouldGetContent(){
 		
@@ -108,6 +123,7 @@ public class GoogleSpreadSheetContentAdapterTest {
 		Assert.assertEquals(loadedContent.getId(), "4");
 		Assert.assertEquals(rawDataAsXML, loadedContent.getPayload().asXML());
 	}
+	
 	
 	
 	@Test
