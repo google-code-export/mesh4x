@@ -31,28 +31,35 @@ import org.mesh4j.sync.utils.XMLHelper;
 
 public class GoogleSpreadSheetAdapterTest {
 	private IGoogleSpreadSheet spreadsheet;
-	String userName = "gspreadsheet.test@gmail.com";
-	String passWord = "java123456";
-	String GOOGLE_SPREADSHEET_FIELD = "peo4fu7AitTo8e3v0D8FCew";
+	private String GOOGLE_SPREADSHEET_FIELD = "peo4fu7AitTo8e3v0D8FCew";
 	
 	@Before
 	public void setUp(){
+		String userName = "gspreadsheet.test@gmail.com";
+		String passWord = "java123456";
 		spreadsheet = new GoogleSpreadsheet(GOOGLE_SPREADSHEET_FIELD,userName,passWord);
 	}
 	
+	/**
+	 *this test assumes that you have to have two worksheet in your
+	 *google spread with same schema. 
+	 **/ 
 	@Test
 	public void ShouldSyncTwoWorkSheet(){
 		
-		IGoogleSpreadsheetToXMLMapping mapper = null;
-		
+		//source worksheet
 		String workSheetSource = spreadsheet.getGSWorksheet(1).getName();//user entity source worksheet
-		String workSheetTarget = spreadsheet.getGSWorksheet(2).getName();//user entity target worksheet
+		IGoogleSpreadsheetToXMLMapping sourceMapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",
+														null,workSheetSource, 
+														spreadsheet.getDocsService());
+		SplitAdapter splitAdapterSource = getAdapter(sourceMapper, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 
-		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheetSource, spreadsheet.getDocsService());
-		SplitAdapter splitAdapterSource = getAdapter(mapper, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
-		
-		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheetSource, spreadsheet.getDocsService());
-		SplitAdapter splitAdapterTarget = getAdapter(mapper, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		//target worksheet
+		String workSheetTarget = spreadsheet.getGSWorksheet(2).getName();//user entity target worksheet
+		IGoogleSpreadsheetToXMLMapping targetMapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",
+														null,workSheetTarget, 
+														spreadsheet.getDocsService());
+		SplitAdapter splitAdapterTarget = getAdapter(targetMapper, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
 		SyncEngine syncEngine = new SyncEngine(splitAdapterSource,splitAdapterTarget);
 		List<Item> conflicts = syncEngine.synchronize();
@@ -60,6 +67,11 @@ public class GoogleSpreadSheetAdapterTest {
 		Assert.assertEquals(0, conflicts.size());
 	}
 	
+	/**
+	 * For running this test you have to have two worksheet with the
+	 * provided two gmail account(gspreadsheet.run@gmail.com and gspreadsheet.test@gmail.com)
+	 * of which two worksheet must have same schema.
+	 */
 	@Test
 	public void ShouldSyncTwoWorkSheetOfTwoSpreadSheetOfTwoDiffUser(){
 		String userName = "";
@@ -74,7 +86,7 @@ public class GoogleSpreadSheetAdapterTest {
 		passWord = "java123456";
 		spField = "pc5o5hLhHbIhQ9IEZKNLAJQ";
 		spreadSheet = getGoogleSpreadSheet(spField, userName, passWord);
-		workSheetName = spreadSheet.getGSWorksheet(1).getName();
+		workSheetName = spreadSheet.getGSWorksheet(1).getName();//or provide the sheet name
 		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheetName, spreadsheet.getDocsService());
 		SplitAdapter splitAdapterSource = getAdapter(spreadSheet,mapper, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
@@ -84,7 +96,7 @@ public class GoogleSpreadSheetAdapterTest {
 		passWord = "java123456";
 		spField = "peo4fu7AitTo8e3v0D8FCew";
 		spreadSheet = getGoogleSpreadSheet(spField, userName, passWord);
-		workSheetName = spreadSheet.getGSWorksheet(1).getName();
+		workSheetName = spreadSheet.getGSWorksheet(1).getName();//or provide the sheet name
 		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheetName, spreadsheet.getDocsService());
 		SplitAdapter splitAdapterTarget = getAdapter(spreadSheet,mapper, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
@@ -94,6 +106,12 @@ public class GoogleSpreadSheetAdapterTest {
 		Assert.assertEquals(0, conflicts.size());
 
 	}
+	
+	/**
+	 * For running this test you have to have two worksheet with the
+	 * provided  gmail account(gspreadsheet.run@gmail.com) 
+	 * of which two worksheet must have same schema.
+	 */
 	@Test
 	public void ShouldSyncTwoWorkSheetOfTwoSpreadSheet(){
 		String userName = "";
@@ -128,10 +146,12 @@ public class GoogleSpreadSheetAdapterTest {
 		
 	}
 	
-	private IGoogleSpreadSheet getGoogleSpreadSheet(String spField,String userName,String passWord){
-		IGoogleSpreadSheet spreadsheet = new GoogleSpreadsheet(spField,userName,passWord);
-		return spreadsheet;
-	}
+	
+	/**
+	 * For running this test you have to have two worksheet with the
+	 * provided  gmail account in initial setup method  
+	 * of which two worksheet must have same schema represented here for test.
+	 */
 	@Test
 	public void ShouldSyncAfterAddedItemInEmptyWorkSheet() throws DocumentException{
 		
@@ -140,7 +160,7 @@ public class GoogleSpreadSheetAdapterTest {
 		GSWorksheet workSheetSource = spreadsheet.getGSWorksheet(1);//user entity source worksheet
 		GSWorksheet workSheetTarget = spreadsheet.getGSWorksheet(2);//user entity target worksheet
 		
-		cleanUp(workSheetSource, workSheetTarget);
+		clean(workSheetSource, workSheetTarget);
 		
 		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheetSource.getName(), spreadsheet.getDocsService());
 		SplitAdapter splitAdapterSource = getAdapter(mapper, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
@@ -159,14 +179,18 @@ public class GoogleSpreadSheetAdapterTest {
 	}
 	
 	
-	
+	/**
+	 * For running this test you have to have two worksheet with the
+	 * provided  gmail account in initial setup method  
+	 * of which two worksheet must have same schema represented here for test.
+	 */
 	@Test
 	public void ShouldSyncAfterDelete() throws DocumentException{
 		
 		GSWorksheet workSheetSource = spreadsheet.getGSWorksheet(1);//user entity source worksheet
 		GSWorksheet workSheetTarget = spreadsheet.getGSWorksheet(2);//user entity target worksheet
 		
-		cleanUp(workSheetSource, workSheetTarget);
+		clean(workSheetSource, workSheetTarget);
 		IGoogleSpreadsheetToXMLMapping mapper = null;
 		
 		Item item1 = getItem1();
@@ -199,12 +223,18 @@ public class GoogleSpreadSheetAdapterTest {
 		
 	}
 	
+	
+	/**
+	 * For running this test you have to have two worksheet with the
+	 * provided  gmail account in initial setup method  
+	 * of which two worksheet must have same schema represented here for test.
+	 */
 	@Test
 	public void ShouldDeleteItem() throws DocumentException{
 		GSWorksheet workSheetSource = spreadsheet.getGSWorksheet(1);//user entity source worksheet
 		GSWorksheet workSheetTarget = spreadsheet.getGSWorksheet(2);//user entity target worksheet
 		
-		cleanUp(workSheetSource, workSheetTarget);
+		clean(workSheetSource, workSheetTarget);
 		IGoogleSpreadsheetToXMLMapping mapper = null;
 		
 		Item item1 = getItem1();
@@ -263,6 +293,11 @@ public class GoogleSpreadSheetAdapterTest {
 		return content;
 	}
 	
+	private IGoogleSpreadSheet getGoogleSpreadSheet(String spField,String userName,String passWord){
+		IGoogleSpreadSheet spreadsheet = new GoogleSpreadsheet(spField,userName,passWord);
+		return spreadsheet;
+	}
+	
 	private Item getItem1() throws DocumentException {
 		
 		String id = IdGenerator.INSTANCE.newID();
@@ -316,7 +351,7 @@ public class GoogleSpreadSheetAdapterTest {
 	
 	
 	
-	private void cleanUp(GSWorksheet workSheetSource,GSWorksheet workSheetTarget){
+	private void clean(GSWorksheet workSheetSource,GSWorksheet workSheetTarget){
 		//before start the process deleting all the previous content
 		clearContentOfWorkSheet(workSheetSource);
 		clearContentOfWorkSheet(workSheetTarget);
