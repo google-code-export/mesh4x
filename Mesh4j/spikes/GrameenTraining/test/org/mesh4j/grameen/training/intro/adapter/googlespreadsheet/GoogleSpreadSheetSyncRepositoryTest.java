@@ -30,14 +30,60 @@ public class GoogleSpreadSheetSyncRepositoryTest {
 	String GOOGLE_SPREADSHEET_FIELD = "peo4fu7AitTo8e3v0D8FCew";
 
 	
+	@Before
+	public void setUp(){
+		spreadsheet = new GoogleSpreadsheet(GOOGLE_SPREADSHEET_FIELD,userName,passWord);
+		workSheet = GoogleSpreadsheetUtils.getOrCreateSyncSheetIfAbsent(spreadsheet.getGSSpreadsheet(),"sync_info");
+		clean();
+	}
 	
+	@Test(expected = IllegalArgumentException.class)
+	public void ShouldGenerateExceptionIfSpreadSheetIsNull(){
+		GoogleSpreadSheetSyncRepository syncRepository = new GoogleSpreadSheetSyncRepository(null,
+															 NullIdentityProvider.INSTANCE,
+															 IdGenerator.INSTANCE,"SYNC_INFO");
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void ShouldGenerateExceptionIfIdentityIsNull(){
+		GoogleSpreadSheetSyncRepository syncRepository = new GoogleSpreadSheetSyncRepository(spreadsheet,
+															 null,
+															 IdGenerator.INSTANCE,"SYNC_INFO");
+	}
 	
+	@Test(expected = IllegalArgumentException.class)
+	public void ShouldGenerateExceptionIfIdGeneratorIsNull(){
+		GoogleSpreadSheetSyncRepository syncRepository = new GoogleSpreadSheetSyncRepository(spreadsheet,
+															 NullIdentityProvider.INSTANCE,
+															 null,"SYNC_INFO");
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void ShouldGenerateExceptionIfSyncSheetNameIsNullOrEmpty(){
+		GoogleSpreadSheetSyncRepository syncRepository = new GoogleSpreadSheetSyncRepository(spreadsheet,
+															 NullIdentityProvider.INSTANCE,
+															 IdGenerator.INSTANCE,"");
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void ShouldGenerateExceptionIfSyncInfoIsNull(){
+		GoogleSpreadSheetSyncRepository syncRepository = new GoogleSpreadSheetSyncRepository(spreadsheet,
+				 NullIdentityProvider.INSTANCE,
+				 IdGenerator.INSTANCE,"");
+		syncRepository.save(null);
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void ShouldGenerateExceptionIfSyncIdIsNullOrEmpty(){
+		GoogleSpreadSheetSyncRepository syncRepository = new GoogleSpreadSheetSyncRepository(spreadsheet,
+				 NullIdentityProvider.INSTANCE,
+				 IdGenerator.INSTANCE,"");
+		syncRepository.get("");
+	}
 	
 	@Test
 	public void ShouldSaveSyncInfo(){
 		
-		cleanUP();
-
 		IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
 		IIdGenerator idGenerator = IdGenerator.INSTANCE;
 
@@ -63,7 +109,7 @@ public class GoogleSpreadSheetSyncRepositoryTest {
 	@Test
 	public void ShouldSaveSyncInfoToSpreadSheetWithEndSyncOperation(){
 		
-		cleanUP();
+		
 		IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
 		IIdGenerator idGenerator = IdGenerator.INSTANCE;
 
@@ -98,8 +144,6 @@ public class GoogleSpreadSheetSyncRepositoryTest {
 	@Test
 	public void ShouldNotSaveSyncInfoToPhysicalSpreadSheetWithoutEndSyncOperation(){
 		
-		cleanUP();
-		
 		IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
 		IIdGenerator idGenerator = IdGenerator.INSTANCE;
 
@@ -131,8 +175,6 @@ public class GoogleSpreadSheetSyncRepositoryTest {
 	@Test
 	public void ShouldUpdateSyncInfo(){
 		
-		cleanUP();
-		
 		IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
 		IIdGenerator idGenerator = IdGenerator.INSTANCE;
 
@@ -163,7 +205,6 @@ public class GoogleSpreadSheetSyncRepositoryTest {
 	@Test
 	public void ShouldUpdateSyncInfoToSpreadSheetWithEndSyncOperation(){
 		
-		cleanUP();
 		IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
 		IIdGenerator idGenerator = IdGenerator.INSTANCE;
 
@@ -202,7 +243,6 @@ public class GoogleSpreadSheetSyncRepositoryTest {
 	@Test
 	public void ShouldGetSyncInfo(){
 		
-		cleanUP();
 		IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
 		IIdGenerator idGenerator = IdGenerator.INSTANCE;
 
@@ -230,7 +270,6 @@ public class GoogleSpreadSheetSyncRepositoryTest {
 	@Test
 	public void ShouldGetSyncInfoFromSpreadSheetWithEndSyncOperation(){
 		
-		cleanUP();
 		IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
 		IIdGenerator idGenerator = IdGenerator.INSTANCE;
 
@@ -270,7 +309,6 @@ public class GoogleSpreadSheetSyncRepositoryTest {
 	@Test
 	public void ShouldGetAll(){
 		
-		cleanUP();
 		IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
 		IIdGenerator idGenerator = IdGenerator.INSTANCE;
 
@@ -303,7 +341,6 @@ public class GoogleSpreadSheetSyncRepositoryTest {
 	@Test
 	public void ShouldGetAllFromSpreadSheetWithEndSyncOperaton(){
 		
-		cleanUP();
 		IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
 		IIdGenerator idGenerator = IdGenerator.INSTANCE;
 
@@ -350,15 +387,8 @@ public class GoogleSpreadSheetSyncRepositoryTest {
 	}
 	
 
-	@Before
-	public void setUp(){
-		spreadsheet = new GoogleSpreadsheet(GOOGLE_SPREADSHEET_FIELD,userName,passWord);
-		workSheet = GoogleSpreadsheetUtils.getOrCreateSyncSheetIfAbsent(spreadsheet.getGSSpreadsheet(),"sync_info");
-	}
 	
-	
-	private void cleanUP(){
-		
+	private void clean(){
 		for(Map.Entry<String, GSRow<GSCell>> mapRows : workSheet.getGSRows().entrySet()){
 			//We should not delete the first header row
 			if(Integer.parseInt(mapRows.getKey()) > 1){
