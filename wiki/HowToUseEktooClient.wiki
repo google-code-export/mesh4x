@@ -27,6 +27,7 @@ Ektoo is a desktop client that helps user to synchronize data between various da
 This step-by-step guide shows how a user can use Ektoo client to synchronize data between various data repositories.
 
 =Overview=
+
 Currently mesh4x supports following data repositories:
  # KML
  # Rss 2.0
@@ -37,6 +38,13 @@ Currently mesh4x supports following data repositories:
  # MySQL and other databases
  # Feed or Amazon S3 (cloud storage)
  # Folder
+
+[http://mesh4x.googlecode.com/svn/wiki/files/ektoo_cloud_plain.png]
+[http://mesh4x.googlecode.com/svn/wiki/files/ektoo_kml_plain.png]
+[http://mesh4x.googlecode.com/svn/wiki/files/ektoo_gs_plain.png]
+[http://mesh4x.googlecode.com/svn/wiki/files/ektoo_excel_plain.png]
+[http://mesh4x.googlecode.com/svn/wiki/files/ektoo_access_plain.png]
+[http://mesh4x.googlecode.com/svn/wiki/files/ektoo_mysql_plain.png]
 
      </td>
      <td>[http://mesh4x.googlecode.com/svn/wiki/files/ektoo_1.gif]</td>
@@ -180,6 +188,4 @@ The process consists of:
   </tr>
 
 </table>
-
-
 
