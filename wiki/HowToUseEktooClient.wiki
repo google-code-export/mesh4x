@@ -2,11 +2,6 @@
 #labels HowTo,Tutorial,Featured
 
 
-
-
-
-
-
 <table valign="top">
   <tr>
      <td>
@@ -16,7 +11,12 @@
 [http://downloads.instedd.org/mesh4x/ektoo_0_0_3.7z Download Ektoo Client Now]
      </td>
   </tr>
-     
+</table>
+
+
+
+
+<table valign="top">
 
   <tr>
      <td valign=top>
@@ -180,8 +180,6 @@ The process consists of:
   </tr>
 
 </table>
-
-
 
 
 
