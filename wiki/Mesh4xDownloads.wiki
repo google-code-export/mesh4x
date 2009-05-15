@@ -12,9 +12,9 @@ Tools and products build with Mesh4x.
 
 <i><b>Downloads:</b></i>
 
-Click [http://downloads.instedd.org/mesh4x/ektoo_0_0_3.7z here] to download Ektoo client
+Click [http://downloads.instedd.org/mesh4x/ektoo_0_0_3.7z here] to download Ektoo client.
 
-Click [http://code.google.com/p/mesh4x/wiki/HowToUseEktooClient here] to download Ektoo client users guide
+Click [http://code.google.com/p/mesh4x/wiki/HowToUseEktooClient here] to download Ektoo client users guide.
 
 Uploaded: 2009-05-13 15:00
 
