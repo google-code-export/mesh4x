@@ -2,12 +2,12 @@
 #labels HowTo,Tutorial,Featured
 
 
-<table valign="top">
+<table border=1 width=100%>
   <tr>
-     <td>
-<wiki:toc max_depth="2" />
+     <td valign="top" width=50%>
+      <wiki:toc max_depth="2"/>
      </td>
-     <td>
+     <td valign="top" width=50%>
 [http://downloads.instedd.org/mesh4x/ektoo_0_0_3.7z Download Ektoo Client Now]
      </td>
   </tr>
@@ -180,8 +180,6 @@ The process consists of:
   </tr>
 
 </table>
-
-
 
 
 
