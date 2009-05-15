@@ -16,10 +16,10 @@
 
 
 
-<table valign="top">
+<table valign="top" width=100%>
 
   <tr>
-     <td valign=top>
+     <td valign=top width=50%>
 
 =Introduction=
 Ektoo is a desktop client that helps user to synchronize data between various data repositories using mesh4x.
@@ -180,8 +180,6 @@ The process consists of:
   </tr>
 
 </table>
-
-
 
 
 
