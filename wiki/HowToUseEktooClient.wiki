@@ -2,7 +2,7 @@
 #labels HowTo,Tutorial,Featured
 
 
-<table border=1 width=100%>
+<table border=0 width=100%>
   <tr>
      <td valign="top" width=50%>
       <wiki:toc max_depth="2"/>
@@ -180,8 +180,6 @@ The process consists of:
   </tr>
 
 </table>
-
-
 
 
 
