@@ -7,7 +7,6 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Rectangle;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -130,7 +129,8 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 	private JPanel getHeadPane() {
 		if (head == null) {
 			head = new JPanel();
-			head.setLayout(new FlowLayout(FlowLayout.LEFT));
+			head.setLayout(null);
+			head.setPreferredSize(new Dimension(390, 32));
 			head.add(getTypeLabel());
 			head.add(getDataSourceType());
 		}
@@ -162,7 +162,7 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 	private JComboBox getDataSourceType() {
 		if (getListType() == null) {
 			setListType(new JComboBox());
-//			getListType().setBounds(new Rectangle(107, 13, 230, 22));
+			getListType().setBounds(new Rectangle(100, 5, 230, 22));
 			getListType().setPreferredSize(new Dimension(200, 22));
 
 			if (SourceOrTargetType != null) {
@@ -193,7 +193,7 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 		if (labelType == null) {
 			labelType = new JLabel();
 			labelType.setText(EktooUITranslator.getSyncDataSourceType());
-//			labelType.setBounds(new Rectangle(16, 50, 27, 16));
+			labelType.setBounds(new Rectangle(5, 11, 27, 16));
 		}
 		return labelType;
 	}
