@@ -32,6 +32,8 @@ import org.mesh4j.ektoo.ui.component.statusbar.Statusbar;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 
+import com.sun.awt.AWTUtilities;
+
 /**
  * @author Bhuiyan Mohammad Iklash
  * 
