@@ -1,6 +1,7 @@
 package org.mesh4j.ektoo.test;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 
 import junit.framework.Assert;
@@ -27,6 +28,15 @@ import org.mesh4j.sync.utils.XMLHelper;
 public class SyncAdapterBuilderTest {
 
 	
+	
+	@Test
+	public void ShouldCreateFolderSyncAdapter() throws IOException{
+		
+		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapter folderAdapter = adapterBuilder.createFolderAdapter(TestHelper.baseDirectoryForTest() + "sourcefolder");
+		Assert.assertNotNull(folderAdapter);
+		Assert.assertNotNull(folderAdapter.getAll());
+	}
 	
 	/**
 	 * This test assumes you have a worksheet named "user_source" in your spreadsheet
