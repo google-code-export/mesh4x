@@ -8,9 +8,11 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.Icon;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 
 import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.ektoo.tasks.IErrorListener;
@@ -39,7 +41,7 @@ public class Statusbar extends JPanel implements IStatus
   public static final Color SUCCESS_COLOR = Color.GREEN;
   
   private JLabel labelConsole = null;
-  private JLabel labelSeparator= null;
+//  private JLabel labelSeparator= null;
   private JLabel poweredByLabel = null;
   
   private JFrame parent = null;
@@ -64,10 +66,10 @@ public class Statusbar extends JPanel implements IStatus
     c.weighty = 1.0;
     add(getConsole(), c);
 
-    c.fill = GridBagConstraints.NONE;
+    c.fill = GridBagConstraints.VERTICAL;
     c.gridx = 1;
     add( getSeperaor(), c);
-
+    
     c.gridx = 2;
     add( getPoweredByLabel(), c);
     
@@ -87,15 +89,16 @@ public class Statusbar extends JPanel implements IStatus
     return labelConsole;
   }
   
-  private JLabel getSeperaor() 
+  private JComponent getSeperaor() 
   {
-    if (labelSeparator == null) 
-    {
-      labelSeparator = new JLabel();
-      labelSeparator.setPreferredSize(new Dimension(7, 21));
-      labelSeparator.setIcon(ImageManager.getSeperatorIcon());
-    }
-    return labelSeparator;
+	  JSeparator separator = new JSeparator(JSeparator.VERTICAL);
+//    if (labelSeparator == null) 
+//    {
+//      labelSeparator = new JLabel();
+//      labelSeparator.setPreferredSize(new Dimension(7, 21));
+//      labelSeparator.setIcon(ImageManager.getSeperatorIcon());
+//    }
+    return separator;
   }
   private JLabel getPoweredByLabel() 
   {
