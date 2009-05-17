@@ -43,13 +43,7 @@ public class CloudUI extends AbstractUI{
 		this.controller = controller;
 		this.controller.addView(this);
 		initialize();
-		//initDefault();
 	}
-
-//	private void initDefault() {
-//		getMashText().setText("EktooMesh");
-//		getDataSetText().setText("EktooFeed");
-//	}
 
 	private void initialize() {
 		this.setLayout(null);

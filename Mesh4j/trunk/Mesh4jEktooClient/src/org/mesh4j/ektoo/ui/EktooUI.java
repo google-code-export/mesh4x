@@ -32,8 +32,6 @@ import org.mesh4j.ektoo.ui.component.statusbar.Statusbar;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 
-import com.sun.awt.AWTUtilities;
-
 /**
  * @author Bhuiyan Mohammad Iklash
  * 
@@ -48,7 +46,6 @@ public class EktooUI extends JFrame implements IErrorListener, ISynchronizeTaskL
 
 	private JPanel panel = null;
 	private JButton btnSync = null;
-
 
 	private JPanel panelImage = null;
 
@@ -203,7 +200,8 @@ public class EktooUI extends JFrame implements IErrorListener, ISynchronizeTaskL
 		return targetImageLabel;
 	}
 
-	private JLabel getDirectionImageLabel() {
+	private JLabel getDirectionImageLabel() 
+	{
 		if (directionImageLabel == null) {
 			directionImageLabel = new JLabel(ImageManager.getSyncModeIcon(true,
 					true));
@@ -274,13 +272,11 @@ public class EktooUI extends JFrame implements IErrorListener, ISynchronizeTaskL
 			btnSync.addActionListener(new ActionListener() 
 			{
 				public void actionPerformed(ActionEvent e) {
-					log("actionPerformed()");
 					setStatusbarText("", Statusbar.NORMAL_STATUS);
 					showSyncImageLabel(true);
 					SwingWorker<String, Void> task = new SynchronizeTask(
 							EktooUI.this, EktooUI.this);
 					task.execute();
-					log("Calling Sync...");
 				}
 			});
 

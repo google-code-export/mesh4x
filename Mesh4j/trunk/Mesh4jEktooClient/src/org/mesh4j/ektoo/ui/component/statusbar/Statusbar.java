@@ -12,7 +12,6 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JSeparator;
 
 import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.ektoo.tasks.IErrorListener;
@@ -40,10 +39,8 @@ public class Statusbar extends JPanel implements IStatus
   public static final Color ERROR_COLOR   = Color.RED;
   public static final Color SUCCESS_COLOR = Color.GREEN;
   
-  private JLabel labelConsole = null;
-//  private JLabel labelSeparator= null;
-  private JLabel poweredByLabel = null;
-  
+  private JLabel labelStatus = null;
+
   private JFrame parent = null;
   
   public Statusbar(JFrame parent)
@@ -79,31 +76,28 @@ public class Statusbar extends JPanel implements IStatus
   
   private JLabel getConsole() 
   {
-    if (labelConsole == null) 
+    
+    if (labelStatus == null) 
     {
-      labelConsole = new JLabel();
-      labelConsole.setPreferredSize(new Dimension(650, 22));
-      labelConsole.setIcon(ImageManager.getInfoIcon());
-      labelConsole.setText(EktooUITranslator.getStatusbarMessage());
+      labelStatus = new JLabel();
+      labelStatus.setPreferredSize(new Dimension(650, 22));
+      labelStatus.setIcon(ImageManager.getInfoIcon());
+      labelStatus.setText(EktooUITranslator.getStatusbarMessage());
     }
-    return labelConsole;
+    return labelStatus;
   }
   
   private JComponent getSeperaor() 
   {
-	  JSeparator separator = new JSeparator(JSeparator.VERTICAL);
-//    if (labelSeparator == null) 
-//    {
-//      labelSeparator = new JLabel();
-//      labelSeparator.setPreferredSize(new Dimension(7, 21));
-//      labelSeparator.setIcon(ImageManager.getSeperatorIcon());
-//    }
-    return separator;
+    JLabel labelSeparator = new JLabel();
+    labelSeparator.setPreferredSize(new Dimension(7, 21));
+    labelSeparator.setIcon(ImageManager.getSeperatorIcon());
+    return labelSeparator;
   }
+
   private JLabel getPoweredByLabel() 
   {
-    if (poweredByLabel == null) {
-      poweredByLabel = new JLabel(EktooUITranslator.getPoweredByLabel(),
+    JLabel poweredByLabel = new JLabel(EktooUITranslator.getPoweredByLabel(),
           ImageManager.getTrademarkIcon(), JLabel.RIGHT);
       poweredByLabel.setHorizontalTextPosition(JLabel.LEFT);
       poweredByLabel.setVerticalTextPosition(JLabel.CENTER);
@@ -119,18 +113,14 @@ public class Statusbar extends JPanel implements IStatus
           task.execute();
         }
       });
-    }
     return poweredByLabel;
   }
 
-  
   @Override
   public void setStaus(String message, Color color, Icon icon)
   {
-    labelConsole.setText(message);
-    labelConsole.setForeground(color);
-    labelConsole.setIcon(icon);
+    labelStatus.setText(message);
+    labelStatus.setForeground(color);
+    labelStatus.setIcon(icon);
   }
-  
-  
 }

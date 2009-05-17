@@ -15,8 +15,14 @@ import org.mesh4j.sync.validations.Guard;
  * @author Bhuiyan Mohammad Iklash
  * 
  */
-public class EktooUIController {
-	// MODEL VARIABLESs
+public class EktooUIController 
+{
+  public final static String SYNCHRONIZATION_FAILED    = "failed";
+  public final static String SYNCHRONIZATION_SUCCEED   = "succeed";
+  public final static String SYNCHRONIZATION_CONFLICTED= "conflicted";
+  
+
+  // MODEL VARIABLESs
 	ISyncAdapterBuilder adapterBuilder;
 
 	// BUISINESS METHODS
@@ -62,20 +68,16 @@ public class EktooUIController {
     {
 	    SyncEngine engine = new SyncEngine(sourceAdapter, targetAdapter);
 	    List<Item> items = engine.synchronize();
-
-	    // TODO (NBL) change these hardcode string
 	    if (items != null && items.size() > 0)
 	    {
-	      // try to grad reason of conflicts
-	      return "failed";
+	      return SYNCHRONIZATION_CONFLICTED;
 	    }
     }
     catch (Exception e)
     {
-      return "failed";
+      return SYNCHRONIZATION_FAILED;
     }
-		
 
-		return "success";
+		return SYNCHRONIZATION_SUCCEED;
 	}
 }

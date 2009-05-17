@@ -468,8 +468,6 @@ public class MySQLUI extends AbstractUI implements IValidationStatus
   @Override
   public void validationFailed(Hashtable errorTable)
   {
-    System.out.println("Invalid form");
-    
     String key = null;
     String err = null;
     Enumeration keys = errorTable.keys();

@@ -8,6 +8,7 @@ import javax.swing.SwingWorker;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.mesh4j.ektoo.controller.EktooUIController;
 import org.mesh4j.ektoo.ui.EktooUI;
 import org.mesh4j.ektoo.ui.SyncItemUI;
 import org.mesh4j.ektoo.ui.component.statusbar.Statusbar;
@@ -61,23 +62,41 @@ public class SynchronizeTask extends SwingWorker<String, Void> {
 	  try 
 		{
 			result = get();
-			if (result != null && result.startsWith("success")) 
+			if (result != null)
 			{
-			  synchronizeTaskListener.notifySynchronizeTaskSuccess(
-			      EktooUITranslator.getMessageSyncSyccessfuly(
-            ui.getSourceItem().toString(),
-            ui.getTargetItem().toString(),
-            new Date()));
+			  if ( result.equals(EktooUIController.SYNCHRONIZATION_SUCCEED))
+			  {
+			    synchronizeTaskListener.notifySynchronizeTaskSuccess(
+	            EktooUITranslator.getMessageSyncSyccessfuly(
+	            ui.getSourceItem().toString(),
+	            ui.getTargetItem().toString(),
+	            new Date()));
+			  }
+			  else if(result.equals(EktooUIController.SYNCHRONIZATION_CONFLICTED) ) 
+			  {
+			    synchronizeTaskListener.notifySynchronizeTaskConflict(EktooUITranslator.getMessageSyncConflicts(
+	            ui.getSourceItem().toString(),
+	            ui.getTargetItem().toString(),
+	            new Date()
+	            ));   
+			  }
+			  else if ( result.equals(EktooUIController.SYNCHRONIZATION_FAILED) ) 
+			  {
+			    synchronizeTaskListener.notifySynchronizeTaskError(EktooUITranslator.getMessageSyncFailed(
+	            ui.getSourceItem().toString(),
+	            ui.getTargetItem().toString(),
+	            new Date()
+	            )); 
+			  }
 			}
-			else if (result != null && result.startsWith("failed")) 
+			else
 			{
-			  synchronizeTaskListener.notifySynchronizeTaskConflict(EktooUITranslator.getMessageSyncConflicts(
-            ui.getSourceItem().toString(),
-            ui.getTargetItem().toString(),
-            new Date()
-            ));			 
+			  synchronizeTaskListener.notifySynchronizeTaskError(EktooUITranslator.getMessageSyncFailed(
+	          ui.getSourceItem().toString(),
+	          ui.getTargetItem().toString(),
+	          new Date()
+	          ));			  
 			}
-			
 		} 
 		catch (InterruptedException e) 
 		{
