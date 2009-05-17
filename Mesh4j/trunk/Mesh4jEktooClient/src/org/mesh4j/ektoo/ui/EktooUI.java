@@ -109,26 +109,13 @@ public class EktooUI extends JFrame implements IErrorListener, ISynchronizeTaskL
 			// panel.add(getViaPane(), null);
 			// panel.add(getTypePane(), null);
 
-			//c.fill = GridBagConstraints.HORIZONTAL;
-			//c.gridx = 0;
-			//c.gridy = 2;
-			//c.gridwidth = 2;
-			//panel.add(getConsole(), c);
-
 			c.fill = GridBagConstraints.CENTER;
 			c.gridx = 0;
 			c.gridy = 2;
 			c.gridwidth = 2;
 			panel.add(getBtnSync(), c);
 
-			//c.fill = GridBagConstraints.HORIZONTAL;
-			//c.gridx = 0;
-			//c.gridy = 3;
-			//c.gridwidth = 2;
-			//panel.add(getPoweredByLabel(), c);
-
 			c.insets = new Insets(0, 3, -17, 3);
-
       c.fill = GridBagConstraints.HORIZONTAL;
       c.gridx = 0;
       c.gridy = 3;
@@ -137,30 +124,7 @@ public class EktooUI extends JFrame implements IErrorListener, ISynchronizeTaskL
 		}
 		return panel;
 	}
-	/*
-	private JLabel getPoweredByLabel() {
-		if (poweredByLabel == null) {
-			poweredByLabel = new JLabel(EktooUITranslator.getPoweredByLabel(),
-					ImageManager.getTrademarkIcon(), JLabel.RIGHT);
-			poweredByLabel.setHorizontalTextPosition(JLabel.LEFT);
-			poweredByLabel.setVerticalTextPosition(JLabel.CENTER);
-			poweredByLabel.setIconTextGap(0);
-			poweredByLabel.setForeground(Color.BLUE);
-			poweredByLabel.setToolTipText(EktooUITranslator
-					.getPoweredByLabelTooltip());
-			poweredByLabel.addMouseListener(new MouseAdapter() {
-				public void mouseClicked(MouseEvent e) {
-					OpenURLTask task = new OpenURLTask(EktooUI.this,
-							EktooUI.this, new PropertiesProvider()
-									.getMesh4xURL());
-					task.execute();
-				}
-			});
-
-		}
-		return poweredByLabel;
-	}
-  */
+	
 	private JPanel getImagePanel() {
 		if (panelImage == null) {
 			panelImage = new JPanel();
