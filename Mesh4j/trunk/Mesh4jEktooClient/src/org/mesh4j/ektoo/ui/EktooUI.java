@@ -47,7 +47,6 @@ public class EktooUI extends JFrame implements IErrorListener, ISynchronizeTaskL
 	private JPanel panel = null;
 	private JButton btnSync = null;
 
-	private JLabel labelConsole = null;
 
 	private JPanel panelImage = null;
 
@@ -55,7 +54,7 @@ public class EktooUI extends JFrame implements IErrorListener, ISynchronizeTaskL
 	private JLabel targetImageLabel = null;
 	private JLabel directionImageLabel = null;
 	private JLabel syncImageLabel = null;
-	private JLabel poweredByLabel = null;
+
 
 	private Statusbar statusBar = null;
 	private EktooUIController controller;
@@ -106,8 +105,6 @@ public class EktooUI extends JFrame implements IErrorListener, ISynchronizeTaskL
 			c.gridx = 1;
 			c.gridy = 1;
 			panel.add(getTargetPane(), c);
-			// panel.add(getViaPane(), null);
-			// panel.add(getTypePane(), null);
 
 			c.fill = GridBagConstraints.CENTER;
 			c.gridx = 0;
@@ -144,7 +141,6 @@ public class EktooUI extends JFrame implements IErrorListener, ISynchronizeTaskL
 			tempPanel.add(getSyncImageLabel());
 			panelImage.add(tempPanel, c);
 
-			// panelImage.add(getSyncImageLabel(), c);
 
 			c.fill = GridBagConstraints.CENTER;
 			c.gridx = 0;
@@ -426,6 +422,4 @@ public class EktooUI extends JFrame implements IErrorListener, ISynchronizeTaskL
   {
     setStatusbarText(success,  Statusbar.SUCCESS_STATUS);   
   }
-
- 
 }
