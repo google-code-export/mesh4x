@@ -68,6 +68,18 @@ public class InterRepositorySyncTest {
 //	}
 	
 	
+	
+	@Test
+	public void ShouldSyncFolderToFolder(){
+		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapter sourceFolderAdapter = adapterBuilder.createFolderAdapter(TestHelper.baseDirectoryForTest() + "sourcefolder");
+		ISyncAdapter targetFolderAdapter = adapterBuilder.createFolderAdapter(TestHelper.baseDirectoryForTest() + "targetfolder");
+		SyncEngine syncEngine = new SyncEngine(sourceFolderAdapter,targetFolderAdapter);
+		List<Item> conflicts = syncEngine.synchronize();
+		Assert.assertEquals(0, conflicts.size());
+	}
+	
+	
 	@Test
 	public void ShouldSyncRssToRssWithoutRDFAssumeSameSchema(){
 		
@@ -273,5 +285,7 @@ public class InterRepositorySyncTest {
 		Assert.assertEquals(0, listOfConflicts.size());
 		Assert.assertEquals(sourceAdapter.getAll().size(), targetAdapter
 				.getAll().size());
-	}	
+	}
+	
+	
 }
