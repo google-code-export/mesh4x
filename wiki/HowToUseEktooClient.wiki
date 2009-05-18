@@ -8,7 +8,7 @@
       <wiki:toc max_depth="2"/>
      </td>
      <td valign="top" width=50%>
-[http://downloads.instedd.org/mesh4x/ektoo_0_0_3.7z Download Ektoo Client Now]
+[http://downloads.instedd.org/mesh4x/ektoo_0_0_4.zip Download Ektoo Client Now]
      </td>
   </tr>
 </table>
@@ -188,4 +188,3 @@ The process consists of:
   </tr>
 
 </table>
-
