@@ -45,6 +45,9 @@ Currently mesh4x supports following data repositories:
 [http://mesh4x.googlecode.com/svn/wiki/files/ektoo_excel_plain.png]
 [http://mesh4x.googlecode.com/svn/wiki/files/ektoo_access_plain.png]
 [http://mesh4x.googlecode.com/svn/wiki/files/ektoo_mysql_plain.png]
+[http://mesh4x.googlecode.com/svn/wiki/files/ektoo_rss_plain.png]
+[http://mesh4x.googlecode.com/svn/wiki/files/ektoo_folder_plain.png]
+
 
      </td>
      <td>[http://mesh4x.googlecode.com/svn/wiki/files/ektoo_1.gif]</td>
