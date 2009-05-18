@@ -328,6 +328,10 @@ public class EktooUI extends JFrame implements IErrorListener, ISynchronizeTaskL
     {
       statusBar.setStaus(msg, Statusbar.ERROR_COLOR, Statusbar.ERROR_ICON);
     } 
+    else if (statusStyle == Statusbar.SUCCESS_STATUS)
+    {
+      statusBar.setStaus(msg, Statusbar.SUCCESS_COLOR, Statusbar.SUCCESS_ICON);
+    } 
   }
 
   
