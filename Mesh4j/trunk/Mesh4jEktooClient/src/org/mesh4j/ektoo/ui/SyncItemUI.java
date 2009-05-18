@@ -38,6 +38,7 @@ import org.mesh4j.ektoo.model.MsAccessModel;
 import org.mesh4j.ektoo.model.MsExcelModel;
 import org.mesh4j.ektoo.model.MySQLAdapterModel;
 import org.mesh4j.ektoo.properties.PropertiesProvider;
+import org.mesh4j.ektoo.ui.component.RoundBorder;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.feed.atom.AtomSyndicationFormat;
@@ -117,7 +118,7 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 
 		SourceOrTargetType = EktooUITranslator.getDataSourceType();
 		setLayout(new BorderLayout());
-		setBorder(BorderFactory.createTitledBorder(this.title));
+		setBorder(BorderFactory.createTitledBorder( new RoundBorder(Color.LIGHT_GRAY), this.title));
 
 		setBackground(Color.WHITE);
 		add(getHeadPane(), BorderLayout.NORTH);
