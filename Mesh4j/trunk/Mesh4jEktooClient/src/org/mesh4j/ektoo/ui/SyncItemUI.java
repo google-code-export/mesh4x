@@ -194,7 +194,7 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 		if (labelType == null) {
 			labelType = new JLabel();
 			labelType.setText(EktooUITranslator.getSyncDataSourceType());
-			labelType.setBounds(new Rectangle(5, 11, 27, 16));
+			labelType.setBounds(new Rectangle(5, 11, 116, 16));
 		}
 		return labelType;
 	}
