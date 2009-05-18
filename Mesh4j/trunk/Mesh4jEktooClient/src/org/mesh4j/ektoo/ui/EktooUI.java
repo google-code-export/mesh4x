@@ -22,8 +22,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingWorker;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.controller.EktooUIController;
 import org.mesh4j.ektoo.tasks.IErrorListener;
 import org.mesh4j.ektoo.tasks.ISynchronizeTaskListener;
@@ -36,9 +34,9 @@ import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
  * @author Bhuiyan Mohammad Iklash
  * 
  */
-public class EktooUI extends JFrame implements IErrorListener, ISynchronizeTaskListener {
+public class EktooUI extends JFrame implements IErrorListener,
+		ISynchronizeTaskListener {
 	private static final long serialVersionUID = -8703829301086394863L;
-	private final Log LOGGER = LogFactory.getLog(EktooUI.class);
 
 	// MODEL VARIABLES
 	private SyncItemUI sourceItem = null;
@@ -53,7 +51,6 @@ public class EktooUI extends JFrame implements IErrorListener, ISynchronizeTaskL
 	private JLabel targetImageLabel = null;
 	private JLabel directionImageLabel = null;
 	private JLabel syncImageLabel = null;
-
 
 	private Statusbar statusBar = null;
 	private EktooUIController controller;
@@ -112,15 +109,15 @@ public class EktooUI extends JFrame implements IErrorListener, ISynchronizeTaskL
 			panel.add(getBtnSync(), c);
 
 			c.insets = new Insets(0, 3, -17, 3);
-      c.fill = GridBagConstraints.HORIZONTAL;
-      c.gridx = 0;
-      c.gridy = 3;
-      c.gridwidth = 2;
-      panel.add(getStatusBar(), c);
+			c.fill = GridBagConstraints.HORIZONTAL;
+			c.gridx = 0;
+			c.gridy = 3;
+			c.gridwidth = 2;
+			panel.add(getStatusBar(), c);
 		}
 		return panel;
 	}
-	
+
 	private JPanel getImagePanel() {
 		if (panelImage == null) {
 			panelImage = new JPanel();
@@ -139,7 +136,6 @@ public class EktooUI extends JFrame implements IErrorListener, ISynchronizeTaskL
 			tempPanel.setOpaque(false);
 			tempPanel.add(getSyncImageLabel());
 			panelImage.add(tempPanel, c);
-
 
 			c.fill = GridBagConstraints.CENTER;
 			c.gridx = 0;
@@ -200,8 +196,7 @@ public class EktooUI extends JFrame implements IErrorListener, ISynchronizeTaskL
 		return targetImageLabel;
 	}
 
-	private JLabel getDirectionImageLabel() 
-	{
+	private JLabel getDirectionImageLabel() {
 		if (directionImageLabel == null) {
 			directionImageLabel = new JLabel(ImageManager.getSyncModeIcon(true,
 					true));
@@ -209,17 +204,14 @@ public class EktooUI extends JFrame implements IErrorListener, ISynchronizeTaskL
 		return directionImageLabel;
 	}
 
+	private Statusbar getStatusBar() {
+		if (statusBar == null) {
+			statusBar = new Statusbar(this);
+		}
 
-	private Statusbar getStatusBar()
-  {
-    if (statusBar == null) 
-    {
-      statusBar = new Statusbar(this);
-    }
+		return statusBar;
+	}
 
-    return statusBar;
-  }
-	
 	private JPanel getSourcePane() {
 		if (getSourceItem() == null) {
 			setSourceItem(new SyncItemUI(EktooUITranslator
@@ -269,8 +261,7 @@ public class EktooUI extends JFrame implements IErrorListener, ISynchronizeTaskL
 			btnSync.setToolTipText(EktooUITranslator.getSyncToolTip());
 			btnSync.setFont(new Font("Arial", Font.PLAIN, 16));
 
-			btnSync.addActionListener(new ActionListener() 
-			{
+			btnSync.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					setStatusbarText("", Statusbar.NORMAL_STATUS);
 					showSyncImageLabel(true);
@@ -282,12 +273,6 @@ public class EktooUI extends JFrame implements IErrorListener, ISynchronizeTaskL
 
 		}
 		return btnSync;
-	}
-
-	private void log(String msg) {
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug(msg);
-		}
 	}
 
 	public void setController(EktooUIController controller) {
@@ -314,27 +299,22 @@ public class EktooUI extends JFrame implements IErrorListener, ISynchronizeTaskL
 		return targetItem;
 	}
 
-  public void setStatusbarText(String msg, int statusStyle) 
-  {
-    if (statusStyle == Statusbar.NORMAL_STATUS)
-    {
-      statusBar.setStaus(msg, Statusbar.NORMAL_COLOR, Statusbar.NORMAL_ICON);
-    }
-    else if (statusStyle == Statusbar.WARNING_STATUS)
-    {
-      statusBar.setStaus(msg, Statusbar.WARNING_COLOR, Statusbar.WARNING_ICON);
-    }
-    else if (statusStyle == Statusbar.ERROR_STATUS)
-    {
-      statusBar.setStaus(msg, Statusbar.ERROR_COLOR, Statusbar.ERROR_ICON);
-    } 
-    else if (statusStyle == Statusbar.SUCCESS_STATUS)
-    {
-      statusBar.setStaus(msg, Statusbar.SUCCESS_COLOR, Statusbar.SUCCESS_ICON);
-    } 
-  }
+	public void setStatusbarText(String msg, int statusStyle) {
+		if (statusStyle == Statusbar.NORMAL_STATUS) {
+			statusBar.setStaus(msg, Statusbar.NORMAL_COLOR,
+					Statusbar.NORMAL_ICON);
+		} else if (statusStyle == Statusbar.WARNING_STATUS) {
+			statusBar.setStaus(msg, Statusbar.WARNING_COLOR,
+					Statusbar.WARNING_ICON);
+		} else if (statusStyle == Statusbar.ERROR_STATUS) {
+			statusBar
+					.setStaus(msg, Statusbar.ERROR_COLOR, Statusbar.ERROR_ICON);
+		} else if (statusStyle == Statusbar.SUCCESS_STATUS) {
+			statusBar.setStaus(msg, Statusbar.SUCCESS_COLOR,
+					Statusbar.SUCCESS_ICON);
+		}
+	}
 
-  
 	// TODO (NBL) disables unsupported features from ui
 	private void filterCombobox() {
 		String item = (String) getSourceItem().getListType().getSelectedItem();
@@ -344,7 +324,8 @@ public class EktooUI extends JFrame implements IErrorListener, ISynchronizeTaskL
 			getTargetItem().getListType().removeAllItems();
 			getTargetItem().getListType().addItem(SyncItemUI.MS_EXCEL_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.MS_ACCESS_PANEL);
-			getTargetItem().getListType().addItem(SyncItemUI.GOOGLE_SPREADSHEET_PANEL);
+			getTargetItem().getListType().addItem(
+					SyncItemUI.GOOGLE_SPREADSHEET_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.MYSQL_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.CLOUD_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.RSS_FILE_PANEL);
@@ -359,7 +340,8 @@ public class EktooUI extends JFrame implements IErrorListener, ISynchronizeTaskL
 			getTargetItem().getListType().addItem(SyncItemUI.ATOM_FILE_PANEL);
 		} else if (item.equals(SyncItemUI.GOOGLE_SPREADSHEET_PANEL)) {
 			getTargetItem().getListType().removeAllItems();
-			getTargetItem().getListType().addItem(SyncItemUI.GOOGLE_SPREADSHEET_PANEL);
+			getTargetItem().getListType().addItem(
+					SyncItemUI.GOOGLE_SPREADSHEET_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.MS_EXCEL_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.CLOUD_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.RSS_FILE_PANEL);
@@ -377,7 +359,8 @@ public class EktooUI extends JFrame implements IErrorListener, ISynchronizeTaskL
 			getTargetItem().getListType().addItem(SyncItemUI.KML_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.MS_EXCEL_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.MS_ACCESS_PANEL);
-			getTargetItem().getListType().addItem(SyncItemUI.GOOGLE_SPREADSHEET_PANEL);
+			getTargetItem().getListType().addItem(
+					SyncItemUI.GOOGLE_SPREADSHEET_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.MYSQL_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.RSS_FILE_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.ATOM_FILE_PANEL);
@@ -403,25 +386,22 @@ public class EktooUI extends JFrame implements IErrorListener, ISynchronizeTaskL
 
 	@Override
 	public void notifyError(String error) {
-		// TODO Auto-generated method stub
+		// TODO (Nobel) error messages handling
 
 	}
 
-  @Override
-  public void notifySynchronizeTaskConflict(String conflict)
-  {
-    setStatusbarText(conflict, Statusbar.ERROR_STATUS);
-  }
+	@Override
+	public void notifySynchronizeTaskConflict(String conflict) {
+		setStatusbarText(conflict, Statusbar.ERROR_STATUS);
+	}
 
-  @Override
-  public void notifySynchronizeTaskError(String error)
-  {
-    setStatusbarText( error, Statusbar.ERROR_STATUS); 
-  }
+	@Override
+	public void notifySynchronizeTaskError(String error) {
+		setStatusbarText(error, Statusbar.ERROR_STATUS);
+	}
 
-  @Override
-  public void notifySynchronizeTaskSuccess(String success)
-  {
-    setStatusbarText(success,  Statusbar.SUCCESS_STATUS);   
-  }
+	@Override
+	public void notifySynchronizeTaskSuccess(String success) {
+		setStatusbarText(success, Statusbar.SUCCESS_STATUS);
+	}
 }

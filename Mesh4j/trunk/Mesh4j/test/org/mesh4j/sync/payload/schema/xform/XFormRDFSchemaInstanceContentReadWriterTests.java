@@ -181,14 +181,6 @@ public class XFormRDFSchemaInstanceContentReadWriterTests {
 	public void shouldReadSimpleElementWithEmptyPayload(){
 		Element elementPayload = DocumentHelper.createElement("payload");
 		
-		String xmlRow = "<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:User=\"http://localhost:8080/mesh4x/User#\" xmlns:owl=\"http://www.w3.org/2002/07/owl#\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema#\">"+
-		"<User:User rdf:about=\"uri:urn:1\">"+
-		"<User:id rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">1</User:id>"+
-		"<User:name rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">juan</User:name>"+
-		"<User:pass rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">123</User:pass>"+
-		"</User:User>"+
-		"</rdf:RDF>";
-		
 		String xml = "<User><pass>123</pass><name>juan</name><id>1</id></User>";
 		Element element = XMLHelper.parseElement(xml);
 				
@@ -209,14 +201,6 @@ public class XFormRDFSchemaInstanceContentReadWriterTests {
 		Element elementPayload = DocumentHelper.createElement("payload");
 		Element foo = elementPayload.addElement("foo");
 		foo.setText("bar");
-
-		String xmlRow = "<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:User=\"http://localhost:8080/mesh4x/User#\" xmlns:owl=\"http://www.w3.org/2002/07/owl#\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema#\">"+
-		"<User:User rdf:about=\"uri:urn:1\">"+
-		"<User:id rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">1</User:id>"+
-		"<User:name rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">juan</User:name>"+
-		"<User:pass rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">123</User:pass>"+
-		"</User:User>"+
-		"</rdf:RDF>";
 
 		String xml = "<User><pass>123</pass><name>juan</name><id>1</id></User>";
 		Element element = XMLHelper.parseElement(xml);

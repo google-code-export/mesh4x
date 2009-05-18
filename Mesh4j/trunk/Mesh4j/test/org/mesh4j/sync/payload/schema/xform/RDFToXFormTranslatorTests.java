@@ -9,8 +9,7 @@ public class RDFToXFormTranslatorTests {
 	
 	@Test
 	public void should(){
-		SchemaToXFormTranslator t = new SchemaToXFormTranslator();
-		String xmlXForm = t.translate(getDefaultRDFSchema());
+		String xmlXForm = SchemaToXFormTranslator.translate(getDefaultRDFSchema());
 		
 		System.out.println(xmlXForm);
 	}

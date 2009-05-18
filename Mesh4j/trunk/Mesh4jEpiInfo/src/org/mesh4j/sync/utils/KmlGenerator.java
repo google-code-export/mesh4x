@@ -193,4 +193,8 @@ public class KmlGenerator implements IKMLGenerator{
 	public static String getUpdateTimestampMapping(Mapping mappingResolver) {
 		return mappingResolver.getAttribute(ATTR_PATIENT_UPDATE_TIMESTAMP);
 	}
+	
+	public ISchema getSchema(){
+		return this.schema;
+	}
 }

@@ -483,6 +483,7 @@ public class MySQLUI extends AbstractUI implements IValidationStatus
   @Override
   public void validationPassed()
   {
+	  // TODO (Nobel)
   }
 
   @Override

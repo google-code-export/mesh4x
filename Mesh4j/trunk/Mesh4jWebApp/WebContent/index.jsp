@@ -22,7 +22,7 @@
 		<li>
 			<p><b>How to get all available Mesh</b>&nbsp;&nbsp;<a class="atomRssLink" href="/mesh4x/feeds?format=atom10">atom</a>&nbsp;|&nbsp;<a href="/mesh4x/feeds?format=rss20">rss</a></p>
 			<div class="description">Method: GET</div>
-			<div class="description">URL: /feeds?format[atom10/rss20]&[plain]&nbsp;&nbsp;&nbsp;(*)</div>
+			<div class="description">URL: /feeds?format[atom10/rss20]&#38;[plain]&nbsp;&nbsp;&nbsp;(*)</div>
 			<br>
 		</li>
 		<li>
@@ -31,16 +31,16 @@
 			<div class="description">URL: /feeds?format[atom10/rss20]&nbsp;&nbsp;&nbsp;(*)</div>
 			<div class="description">Parameters:</div>
 			<div class="description">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name="action" type="hidden text" value="uploadMeshDefinition"</div>
-			<div class="description">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name="newSourceID" type="text" value="myMesh"<div>
+			<div class="description">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name="newSourceID" type="text" value="myMesh"</div>
 			<div class="description">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name="title" type="text" value="my own mesh"</div>
-			<div class="description">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name="description" type="text" value="my mesh is the best mesh"</dic>
+			<div class="description">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name="description" type="text" value="my mesh is the best mesh"</div>
 			<div class="description">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name="format" type=text value=rss20/atom10</div>
 			<br>
 		</li>
 		<li>
 			<p><b>How to get all available feeds for a Mesh</b></p>
 			<div class="description">Method: GET</div>
-			<div class="description">URL: /feeds/{meshName}?format[atom10/rss20]&[plain]&nbsp;&nbsp;&nbsp;(*)</div>
+			<div class="description">URL: /feeds/{meshName}?format[atom10/rss20]&#38;[plain]&nbsp;&nbsp;&nbsp;(*)</div>
 			<br>
 		</li>
 		<li>
@@ -58,7 +58,7 @@
 		<li>
 			<p><b>How to get a Feed</b></p>
 			<div class="description">Method: GET</div>
-			<div class="description">URL: /feeds/{meshName}/{feedName}?format[atom10/rss20]&[plain]&nbsp;&nbsp;&nbsp;(*)</div>
+			<div class="description">URL: /feeds/{meshName}/{feedName}?format[atom10/rss20]&#38;[plain]&nbsp;&nbsp;&nbsp;(*)</div>
 			<br>
 		</li>
 		<li><p><b>How to synchronize a Feed</b></p>
