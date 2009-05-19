@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<kml xmlns="http://earth.google.com/kml/2.2">  
+  <Document> 
+    <name>default.kml</name>  
+    <visibility>0</visibility>  
+    <open>1</open>  
+    <StyleMap xmlns:mesh4x="http://mesh4x.org" id="msn_ylw-pushpin_a93a766b-5270-4abf-9b17-1db719066071" xml:id="a93a766b-5270-4abf-9b17-1db719066071" mesh4x:originalId="msn_ylw-pushpin">  
+      <Pair> 
+        <key>normal</key>  
+        <styleUrl>#sn_ylw-pushpin_0615ccf9-f011-4067-b5b7-c23b8291a7fe</styleUrl> 
+      </Pair>  
+      <Pair> 
+        <key>highlight</key>  
+        <styleUrl>#sh_ylw-pushpin_b4e22584-490a-4cfa-b418-acbfbee466ae</styleUrl> 
+      </Pair> 
+    </StyleMap>  
+    <Style xmlns:mesh4x="http://mesh4x.org" id="sn_ylw-pushpin_0615ccf9-f011-4067-b5b7-c23b8291a7fe" xml:id="0615ccf9-f011-4067-b5b7-c23b8291a7fe" mesh4x:originalId="sn_ylw-pushpin">  
+      <IconStyle> 
+        <color>ff00ffff</color>  
+        <scale>1.1</scale>  
+        <Icon> 
+          <href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href> 
+        </Icon>  
+        <hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/> 
+      </IconStyle>  
+      <LabelStyle> 
+        <color>ff00ffff</color> 
+      </LabelStyle> 
+    </Style>  
+    <Style xmlns:mesh4x="http://mesh4x.org" id="sh_ylw-pushpin_b4e22584-490a-4cfa-b418-acbfbee466ae" xml:id="b4e22584-490a-4cfa-b418-acbfbee466ae" mesh4x:originalId="sh_ylw-pushpin">  
+      <IconStyle> 
+        <color>ff00ffff</color>  
+        <scale>1.1</scale>  
+        <Icon> 
+          <href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href> 
+        </Icon>  
+        <hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/> 
+      </IconStyle>  
+      <LabelStyle> 
+        <color>ff00ffff</color> 
+      </LabelStyle> 
+    </Style>  
+    <Placemark xmlns:mesh4x="http://mesh4x.org" id="pm459_749c0e06-6b60-4d81-828a-8764f9fac797" xml:id="749c0e06-6b60-4d81-828a-8764f9fac797" mesh4x:originalId="pm459">  
+      <name>Baoro</name>  
+      <visibility>0</visibility>  
+      <Snippet maxLines="0">empty</Snippet>  
+      <description><![CDATA[<table cellpadding="1" cellspacing="1">
+<tr>
+<td>PCode:</td>
+<td>NM2</td>
+</tr>
+</table>]]></description>  
+      <styleUrl>#Style_7_copy31001_bee4c69e-df8a-49a6-b3ba-8c9ef837fc80</styleUrl>  
+      <Point id="g717"> 
+        <coordinates>15.954858,5.694712000000001,0</coordinates> 
+      </Point> 
+    </Placemark>  
+    <Placemark xmlns:mesh4x="http://mesh4x.org" id="pm449_07e478c5-95d5-47da-b791-1e1fc0772e15" xml:id="07e478c5-95d5-47da-b791-1e1fc0772e15" mesh4x:originalId="pm449">  
+      <name>Amada - Gaza</name>  
+      <visibility>0</visibility>  
+      <Snippet maxLines="0">empty</Snippet>  
+      <description><![CDATA[<table cellpadding="1" cellspacing="1">
+<tr>
+<td>PCode:</td>
+<td>MK2</td>
+</tr>
+</table>]]></description>  
+      <styleUrl>#Style_7_copy31001_bee4c69e-df8a-49a6-b3ba-8c9ef837fc80</styleUrl>  
+      <Point id="g707"> 
+        <coordinates>15.195602,4.772098,0</coordinates> 
+      </Point> 
+    </Placemark>  
+    <ExtendedData xmlns:mesh4x="http://mesh4x.org">  
+      <mesh4x:hierarchy xml:id="121fad14-45f8-4c63-9987-a7fd3d08b73e" mesh4x:childId="0615ccf9-f011-4067-b5b7-c23b8291a7fe"/>  
+      <mesh4x:sync version="-384156302"> 
+        <sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="121fad14-45f8-4c63-9987-a7fd3d08b73e" updates="1" deleted="false" noconflicts="false">  
+          <sx:history sequence="1" when="2009-05-07T15:42:12Z" by="iklash_Asus"/> 
+        </sx:sync> 
+      </mesh4x:sync>  
+      <mesh4x:sync version="965020268"> 
+        <sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="0615ccf9-f011-4067-b5b7-c23b8291a7fe" updates="1" deleted="false" noconflicts="false">  
+          <sx:history sequence="1" when="2009-05-07T15:42:12Z" by="iklash_Asus"/> 
+        </sx:sync> 
+      </mesh4x:sync>  
+      <mesh4x:hierarchy xml:id="c443a6e2-2884-408a-ab19-7ad2e45c5478" mesh4x:childId="b4e22584-490a-4cfa-b418-acbfbee466ae"/>  
+      <mesh4x:sync version="-2025654253"> 
+        <sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="c443a6e2-2884-408a-ab19-7ad2e45c5478" updates="1" deleted="false" noconflicts="false">  
+          <sx:history sequence="1" when="2009-05-07T15:42:12Z" by="iklash_Asus"/> 
+        </sx:sync> 
+      </mesh4x:sync>  
+      <mesh4x:sync version="-607091208"> 
+        <sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="b4e22584-490a-4cfa-b418-acbfbee466ae" updates="1" deleted="false" noconflicts="false">  
+          <sx:history sequence="1" when="2009-05-07T15:42:12Z" by="iklash_Asus"/> 
+        </sx:sync> 
+      </mesh4x:sync>  
+      <mesh4x:hierarchy xml:id="ea63c7af-db8f-4d01-beb2-b41c73cf054c" mesh4x:childId="a93a766b-5270-4abf-9b17-1db719066071"/>  
+      <mesh4x:sync version="1784933575"> 
+        <sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="ea63c7af-db8f-4d01-beb2-b41c73cf054c" updates="1" deleted="false" noconflicts="false">  
+          <sx:history sequence="1" when="2009-05-07T15:42:12Z" by="iklash_Asus"/> 
+        </sx:sync> 
+      </mesh4x:sync>  
+      <mesh4x:sync version="1183795871"> 
+        <sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="a93a766b-5270-4abf-9b17-1db719066071" updates="1" deleted="false" noconflicts="false">  
+          <sx:history sequence="1" when="2009-05-07T15:42:12Z" by="iklash_Asus"/> 
+        </sx:sync> 
+      </mesh4x:sync>  
+      <mesh4x:hierarchy xml:id="92bcbf53-2f21-477e-ba2b-83284d86c89a" mesh4x:childId="749c0e06-6b60-4d81-828a-8764f9fac797"/>  
+      <mesh4x:sync version="-1947708813"> 
+        <sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="92bcbf53-2f21-477e-ba2b-83284d86c89a" updates="1" deleted="false" noconflicts="false">  
+          <sx:history sequence="1" when="2009-05-07T15:42:12Z" by="iklash_Asus"/> 
+        </sx:sync> 
+      </mesh4x:sync>  
+      <mesh4x:sync version="234868671"> 
+        <sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="749c0e06-6b60-4d81-828a-8764f9fac797" updates="1" deleted="false" noconflicts="false">  
+          <sx:history sequence="1" when="2009-05-07T15:42:12Z" by="iklash_Asus"/> 
+        </sx:sync> 
+      </mesh4x:sync>  
+      <mesh4x:hierarchy xml:id="126c786b-a296-47da-a3b0-e3a57447f573" mesh4x:childId="07e478c5-95d5-47da-b791-1e1fc0772e15"/>  
+      <mesh4x:sync version="-54057197"> 
+        <sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="126c786b-a296-47da-a3b0-e3a57447f573" updates="1" deleted="false" noconflicts="false">  
+          <sx:history sequence="1" when="2009-05-07T15:42:12Z" by="iklash_Asus"/> 
+        </sx:sync> 
+      </mesh4x:sync>  
+      <mesh4x:sync version="829504494"> 
+        <sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="07e478c5-95d5-47da-b791-1e1fc0772e15" updates="1" deleted="false" noconflicts="false">  
+          <sx:history sequence="1" when="2009-05-07T15:42:12Z" by="iklash_Asus"/> 
+        </sx:sync> 
+      </mesh4x:sync>  
+      <mesh4x:sync version="-1663596244"> 
+        <sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="c9062c2c-ee80-4f97-bfbd-118ca146ee7a" updates="1" deleted="false" noconflicts="false">  
+          <sx:history sequence="1" when="2009-05-07T15:42:11Z" by="iklash_Asus"/> 
+        </sx:sync> 
+      </mesh4x:sync>  
+      <mesh4x:sync version="487604024"> 
+        <sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="4bc4abb0-a1d3-4ef7-9e42-3d02efb5df61" updates="1" deleted="false" noconflicts="false">  
+          <sx:history sequence="1" when="2009-05-07T15:42:11Z" by="iklash_Asus"/> 
+        </sx:sync> 
+      </mesh4x:sync>  
+      <mesh4x:sync version="-1186657093"> 
+        <sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="92078091-9789-42ea-822f-6880bf1a7c53" updates="1" deleted="false" noconflicts="false">  
+          <sx:history sequence="1" when="2009-05-07T15:42:11Z" by="iklash_Asus"/> 
+        </sx:sync> 
+      </mesh4x:sync>  
+      <mesh4x:sync version="-2010452053"> 
+        <sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="f1094532-411d-4486-b9da-32fc74d169e7" updates="1" deleted="false" noconflicts="false">  
+          <sx:history sequence="1" when="2009-05-07T15:42:11Z" by="iklash_Asus"/> 
+        </sx:sync> 
+      </mesh4x:sync>  
+      <mesh4x:sync version="1197085296"> 
+        <sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="8a432fad-481b-4e2c-9d97-69e152d25487" updates="1" deleted="false" noconflicts="false">  
+          <sx:history sequence="1" when="2009-05-07T15:42:12Z" by="iklash_Asus"/> 
+        </sx:sync> 
+      </mesh4x:sync>  
+      <mesh4x:hierarchy xml:id="d7386dc5-e02e-4539-9599-bcc2aa75009a" mesh4x:childId="c9062c2c-ee80-4f97-bfbd-118ca146ee7a"/>  
+      <mesh4x:sync version="-477260361"> 
+        <sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="d7386dc5-e02e-4539-9599-bcc2aa75009a" updates="1" deleted="false" noconflicts="false">  
+          <sx:history sequence="1" when="2009-05-07T15:42:11Z" by="iklash_Asus"/> 
+        </sx:sync> 
+      </mesh4x:sync>  
+      <mesh4x:hierarchy xml:id="0e3bf375-fcec-4b77-9508-9c9581c23e69" mesh4x:childId="4bc4abb0-a1d3-4ef7-9e42-3d02efb5df61"/>  
+      <mesh4x:sync version="-717440355"> 
+        <sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="0e3bf375-fcec-4b77-9508-9c9581c23e69" updates="1" deleted="false" noconflicts="false">  
+          <sx:history sequence="1" when="2009-05-07T15:42:11Z" by="iklash_Asus"/> 
+        </sx:sync> 
+      </mesh4x:sync>  
+      <mesh4x:hierarchy xml:id="ab4353b0-a2e8-4320-86b1-287ca60d7990" mesh4x:childId="92078091-9789-42ea-822f-6880bf1a7c53"/>  
+      <mesh4x:sync version="965038312"> 
+        <sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="ab4353b0-a2e8-4320-86b1-287ca60d7990" updates="1" deleted="false" noconflicts="false">  
+          <sx:history sequence="1" when="2009-05-07T15:42:11Z" by="iklash_Asus"/> 
+        </sx:sync> 
+      </mesh4x:sync>  
+      <mesh4x:hierarchy xml:id="050d9248-c6d9-4a06-bcb1-4e4cc79b1d84" mesh4x:childId="f1094532-411d-4486-b9da-32fc74d169e7"/>  
+      <mesh4x:sync version="1147111715"> 
+        <sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="050d9248-c6d9-4a06-bcb1-4e4cc79b1d84" updates="1" deleted="false" noconflicts="false">  
+          <sx:history sequence="1" when="2009-05-07T15:42:11Z" by="iklash_Asus"/> 
+        </sx:sync> 
+      </mesh4x:sync>  
+      <mesh4x:hierarchy xml:id="09630707-565d-4b30-82c3-1ac13569a30e" mesh4x:childId="8a432fad-481b-4e2c-9d97-69e152d25487"/>  
+      <mesh4x:sync version="-1352140385"> 
+        <sx:sync xmlns:sx="http://feedsync.org/2007/feedsync" id="09630707-565d-4b30-82c3-1ac13569a30e" updates="1" deleted="false" noconflicts="false">  
+          <sx:history sequence="1" when="2009-05-07T15:42:12Z" by="iklash_Asus"/> 
+        </sx:sync> 
+      </mesh4x:sync> 
+    </ExtendedData>  
+    <Style xmlns:mesh4x="http://mesh4x.org" id="sn_ylw-pushpin_c9062c2c-ee80-4f97-bfbd-118ca146ee7a" xml:id="c9062c2c-ee80-4f97-bfbd-118ca146ee7a" mesh4x:originalId="sn_ylw-pushpin">  
+      <IconStyle> 
+        <color>ff00ffff</color>  
+        <scale>1.1</scale>  
+        <Icon> 
+          <href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href> 
+        </Icon>  
+        <hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/> 
+      </IconStyle>  
+      <LabelStyle> 
+        <color>ff00ffff</color> 
+      </LabelStyle> 
+    </Style>  
+    <Style xmlns:mesh4x="http://mesh4x.org" id="sh_ylw-pushpin_4bc4abb0-a1d3-4ef7-9e42-3d02efb5df61" xml:id="4bc4abb0-a1d3-4ef7-9e42-3d02efb5df61" mesh4x:originalId="sh_ylw-pushpin">  
+      <IconStyle> 
+        <color>ff00ffff</color>  
+        <scale>1.1</scale>  
+        <Icon> 
+          <href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href> 
+        </Icon>  
+        <hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/> 
+      </IconStyle>  
+      <LabelStyle> 
+        <color>ff00ffff</color> 
+      </LabelStyle> 
+    </Style>  
+    <StyleMap xmlns:mesh4x="http://mesh4x.org" id="msn_ylw-pushpin_92078091-9789-42ea-822f-6880bf1a7c53" xml:id="92078091-9789-42ea-822f-6880bf1a7c53" mesh4x:originalId="msn_ylw-pushpin">  
+      <Pair> 
+        <key>normal</key>  
+        <styleUrl>#sn_ylw-pushpin_c9062c2c-ee80-4f97-bfbd-118ca146ee7a</styleUrl> 
+      </Pair>  
+      <Pair> 
+        <key>highlight</key>  
+        <styleUrl>#sh_ylw-pushpin_4bc4abb0-a1d3-4ef7-9e42-3d02efb5df61</styleUrl> 
+      </Pair> 
+    </StyleMap>  
+    <Placemark xmlns:mesh4x="http://mesh4x.org" id="pm459_f1094532-411d-4486-b9da-32fc74d169e7" xml:id="f1094532-411d-4486-b9da-32fc74d169e7" mesh4x:originalId="pm459">  
+      <name>Baoro</name>  
+      <visibility>0</visibility>  
+      <Snippet maxLines="0">empty</Snippet>  
+      <description><![CDATA[<table cellpadding="1" cellspacing="1">
+<tr>
+<td>PCode:</td>
+<td>NM2</td>
+</tr>
+</table>]]></description>  
+      <styleUrl>#Style_7_copy31001_bee4c69e-df8a-49a6-b3ba-8c9ef837fc80</styleUrl>  
+      <Point id="g717"> 
+        <coordinates>15.954858,5.694712000000001,0</coordinates> 
+      </Point> 
+    </Placemark>  
+    <Placemark xmlns:mesh4x="http://mesh4x.org" id="pm449_8a432fad-481b-4e2c-9d97-69e152d25487" xml:id="8a432fad-481b-4e2c-9d97-69e152d25487" mesh4x:originalId="pm449">  
+      <name>Amada - Gaza</name>  
+      <visibility>0</visibility>  
+      <Snippet maxLines="0">empty</Snippet>  
+      <description><![CDATA[<table cellpadding="1" cellspacing="1">
+<tr>
+<td>PCode:</td>
+<td>MK2</td>
+</tr>
+</table>]]></description>  
+      <styleUrl>#Style_7_copy31001_bee4c69e-df8a-49a6-b3ba-8c9ef837fc80</styleUrl>  
+      <Point id="g707"> 
+        <coordinates>15.195602,4.772098,0</coordinates> 
+      </Point> 
+    </Placemark> 
+  </Document> 
+</kml>

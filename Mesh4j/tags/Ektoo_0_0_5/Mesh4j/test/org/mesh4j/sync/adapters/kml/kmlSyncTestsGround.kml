@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://earth.google.com/kml/2.2">
+<Document>
+	<name>kmlSyncTests1.kml</name>
+	<visibility>0</visibility>
+	<open>1</open>
+	<Folder>
+		<name>Folder 1</name>
+		<visibility>0</visibility>
+		<open>1</open>
+		<GroundOverlay>
+			<name>my old name</name>
+			<visibility>0</visibility>
+			<Icon>
+				<href>KmlWeb/star.jpg</href>
+				<viewBoundScale>0.75</viewBoundScale>
+			</Icon>
+			<LatLonBox>
+				<north>78.34552932252129</north>
+				<south>-14.89023609730855</south>
+				<east>73.2767454687927</east>
+				<west>-73.2767454687927</west>
+			</LatLonBox>
+		</GroundOverlay>
+	</Folder>
+</Document>
+</kml>
