@@ -733,6 +733,138 @@ public class FolderContentAdapterTests {
 		folder.delete();
 	}	
 	
+	@Test
+	public void shouldFilterFolder() throws IOException{
+		File folder = makeNewFolder(IdGenerator.INSTANCE.newID());
+		Assert.assertNotNull(folder);
+		Assert.assertTrue(folder.exists());
+		
+		File folderLevel1 = makeNewFolder(folder, IdGenerator.INSTANCE.newID());
+		Assert.assertNotNull(folderLevel1);
+		Assert.assertTrue(folderLevel1.exists());
+		
+		File file = makeNewFile(folderLevel1, IdGenerator.INSTANCE.newID());
+		Assert.assertNotNull(file);
+		Assert.assertTrue(file.exists());
+		
+		FilesFilter filter = new FilesFilter();
+		FolderContentAdapter adapter = new FolderContentAdapter(folder, filter);
+		
+		// get all without filter
+		List<IContent> fileContents = adapter.getAll(null);
+		
+		Assert.assertNotNull(fileContents);
+		Assert.assertFalse(fileContents.isEmpty());
+		Assert.assertEquals(1, fileContents.size());	
+		Assert.assertEquals(folderLevel1.getName() + File.separator + file.getName(), fileContents.get(0).getId());
+		
+		// get all with filter
+		filter.setRootFolder(folder);
+		filter.excludeFolderName(folderLevel1.getName());
+		fileContents = adapter.getAll(null);
+		
+		Assert.assertNotNull(fileContents);
+		Assert.assertTrue(fileContents.isEmpty());
+
+		// remove all
+		
+		file.delete();
+		folderLevel1.delete();
+		folder.delete();
+	}
+	
+	@Test
+	public void shouldFilterSubFolder() throws IOException{
+		File folder = makeNewFolder(IdGenerator.INSTANCE.newID());
+		Assert.assertNotNull(folder);
+		Assert.assertTrue(folder.exists());
+		
+		File folderLevel1 = makeNewFolder(folder, IdGenerator.INSTANCE.newID());
+		Assert.assertNotNull(folderLevel1);
+		Assert.assertTrue(folderLevel1.exists());
+		
+		File folderLevel2 = makeNewFolder(folderLevel1, IdGenerator.INSTANCE.newID());
+		Assert.assertNotNull(folderLevel2);
+		Assert.assertTrue(folderLevel2.exists());
+		
+		File file = makeNewFile(folderLevel2, IdGenerator.INSTANCE.newID());
+		Assert.assertNotNull(file);
+		Assert.assertTrue(file.exists());
+		
+		FilesFilter filter = new FilesFilter();
+		FolderContentAdapter adapter = new FolderContentAdapter(folder, filter);
+		
+		// get all without filter
+		List<IContent> fileContents = adapter.getAll(null);
+		
+		Assert.assertNotNull(fileContents);
+		Assert.assertFalse(fileContents.isEmpty());
+		Assert.assertEquals(1, fileContents.size());	
+		Assert.assertEquals(folderLevel1.getName() + File.separator + folderLevel2.getName() + File.separator + file.getName(), fileContents.get(0).getId());
+		
+		// get all with filter
+		filter.excludeFolderName(folderLevel1.getName() + File.separator + folderLevel2.getName());
+		filter.setRootFolder(folder);
+		fileContents = adapter.getAll(null);
+		
+		Assert.assertNotNull(fileContents);
+		Assert.assertTrue(fileContents.isEmpty());
+
+		// remove all
+		
+		file.delete();
+		folderLevel1.delete();
+		folder.delete();
+	}
+	
+	@Test
+	public void shouldFilterSubSubFolder() throws IOException{
+		File folder = makeNewFolder(IdGenerator.INSTANCE.newID());
+		Assert.assertNotNull(folder);
+		Assert.assertTrue(folder.exists());
+		
+		File folderLevel1 = makeNewFolder(folder, IdGenerator.INSTANCE.newID());
+		Assert.assertNotNull(folderLevel1);
+		Assert.assertTrue(folderLevel1.exists());
+		
+		File folderLevel2 = makeNewFolder(folderLevel1, IdGenerator.INSTANCE.newID());
+		Assert.assertNotNull(folderLevel2);
+		Assert.assertTrue(folderLevel2.exists());
+		
+		File folderLevel3 = makeNewFolder(folderLevel2, IdGenerator.INSTANCE.newID());
+		Assert.assertNotNull(folderLevel3);
+		Assert.assertTrue(folderLevel3.exists());
+		
+		File file = makeNewFile(folderLevel3, IdGenerator.INSTANCE.newID());
+		Assert.assertNotNull(file);
+		Assert.assertTrue(file.exists());
+		
+		FilesFilter filter = new FilesFilter();
+		FolderContentAdapter adapter = new FolderContentAdapter(folder, filter);
+		
+		// get all without filter
+		List<IContent> fileContents = adapter.getAll(null);
+		
+		Assert.assertNotNull(fileContents);
+		Assert.assertFalse(fileContents.isEmpty());
+		Assert.assertEquals(1, fileContents.size());	
+		Assert.assertEquals(folderLevel1.getName() + File.separator + folderLevel2.getName() + File.separator + folderLevel3.getName() + File.separator + file.getName(), fileContents.get(0).getId());
+		
+		// get all with filter
+		filter.setRootFolder(folder);
+		filter.excludeFolderName(folderLevel1.getName() + File.separator + folderLevel2.getName() + File.separator + folderLevel3.getName());
+		fileContents = adapter.getAll(null);
+		
+		Assert.assertNotNull(fileContents);
+		Assert.assertTrue(fileContents.isEmpty());
+
+		// remove all
+		
+		file.delete();
+		folderLevel1.delete();
+		folder.delete();
+	}
+	
 	// ACCESS METHODS
 	private File getFile(String fileName) {
 		String fullFileName = this.getClass().getResource(fileName).getFile();
