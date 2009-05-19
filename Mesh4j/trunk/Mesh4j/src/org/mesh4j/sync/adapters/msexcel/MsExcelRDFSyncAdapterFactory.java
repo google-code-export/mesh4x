@@ -25,6 +25,10 @@ public class MsExcelRDFSyncAdapterFactory extends MsExcelSyncAdapterFactory{
 		Guard.argumentNotNull(excel, "excel");
 		Guard.argumentNotNullOrEmptyString(sheetName, "sheetName");
 		
+		File file = new File(excel.getFileName());
+		if(!file.exists()){
+			Guard.argumentNotNull(excel.getFileName(), "fileName");	
+		}
 		IRDFSchema rdfSchema = MsExcelToRDFMapping.extractRDFSchema(excel, sheetName, this.rdfBaseURL);
 		MsExcelToRDFMapping mappings = new MsExcelToRDFMapping(rdfSchema, idColumnName);
 		return new MsExcelContentAdapter(excel, mappings, sheetName);

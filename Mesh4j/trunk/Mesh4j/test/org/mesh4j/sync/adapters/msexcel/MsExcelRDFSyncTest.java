@@ -1,5 +1,8 @@
 package org.mesh4j.sync.adapters.msexcel;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -11,6 +14,7 @@ import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.junit.Test;
 import org.mesh4j.sync.ISyncAdapter;
@@ -22,7 +26,9 @@ import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.payload.schema.rdf.RDFInstance;
 import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
+import org.mesh4j.sync.security.LoggedInIdentityProvider;
 import org.mesh4j.sync.security.NullIdentityProvider;
+import org.mesh4j.sync.test.utils.TestHelper;
 import org.mesh4j.sync.utils.DateHelper;
 
 public class MsExcelRDFSyncTest {
@@ -88,22 +94,92 @@ public class MsExcelRDFSyncTest {
 		Assert.assertEquals(sourceItems.size(), targetItems.size());
 		Assert.assertEquals(6, sourceItems.size());
 		
-		assertItem(schema, contentAdapterSource, "juan1", "1", 30, "male", true, date1);
-		assertItem(schema, contentAdapterSource, "juan2", "2", 35, "female", true, date2);
-		assertItem(schema, contentAdapterSource, "juan3", "3", 3, "male", false, date3);
-		assertItem(schema, contentAdapterSource, "juan4", "4", 30, "male", true, date4);
-		assertItem(schema, contentAdapterSource, "juan5", "5", 35, "female", true, date5);
-		assertItem(schema, contentAdapterSource, "juan6", "6", 3, "male", false, date6);
+		assertRDFItem(schema, contentAdapterSource, "juan1", "1", 30, "male", true, date1);
+		assertRDFItem(schema, contentAdapterSource, "juan2", "2", 35, "female", true, date2);
+		assertRDFItem(schema, contentAdapterSource, "juan3", "3", 3, "male", false, date3);
+		assertRDFItem(schema, contentAdapterSource, "juan4", "4", 30, "male", true, date4);
+		assertRDFItem(schema, contentAdapterSource, "juan5", "5", 35, "female", true, date5);
+		assertRDFItem(schema, contentAdapterSource, "juan6", "6", 3, "male", false, date6);
 
-		assertItem(schema, contentAdapterTarget, "juan1", "1", 30, "male", true, date1);
-		assertItem(schema, contentAdapterTarget, "juan2", "2", 35, "female", true, date2);
-		assertItem(schema, contentAdapterTarget, "juan3", "3", 3, "male", false, date3);
-		assertItem(schema, contentAdapterTarget, "juan4", "4", 30, "male", true, date4);
-		assertItem(schema, contentAdapterTarget, "juan5", "5", 35, "female", true, date5);
-		assertItem(schema, contentAdapterTarget, "juan6", "6", 3, "male", false, date6);
+		assertRDFItem(schema, contentAdapterTarget, "juan1", "1", 30, "male", true, date1);
+		assertRDFItem(schema, contentAdapterTarget, "juan2", "2", 35, "female", true, date2);
+		assertRDFItem(schema, contentAdapterTarget, "juan3", "3", 3, "male", false, date3);
+		assertRDFItem(schema, contentAdapterTarget, "juan4", "4", 30, "male", true, date4);
+		assertRDFItem(schema, contentAdapterTarget, "juan5", "5", 35, "female", true, date5);
+		assertRDFItem(schema, contentAdapterTarget, "juan6", "6", 3, "male", false, date6);
 	}
 	
-	private void assertItem(IRDFSchema schema, MsExcelContentAdapter adapter, String name, String code,
+	@Test
+	public void shouldSyncSameFile() throws DocumentException, IOException{
+
+		String sheetName = "patient";
+		String idColumnName = "id";
+		
+		// create file A
+		File fileA = TestHelper.makeFileAndDeleteIfExists("dataAndSyncA_RDF.xls");
+		HSSFWorkbook workbookA = new HSSFWorkbook();
+		
+		HSSFSheet sheetA = MsExcelUtils.getOrCreateSheetIfAbsent(workbookA, sheetName);			
+		HSSFRow rowHeader = MsExcelUtils.getOrCreateRowHeaderIfAbsent(sheetA);						
+		MsExcelUtils.getOrCreateCellStringIfAbsent(rowHeader, idColumnName);
+		MsExcelUtils.getOrCreateCellStringIfAbsent(rowHeader, "firstname");
+
+		HSSFRow rowData = sheetA.createRow(sheetA.getLastRowNum() + 1);
+		
+		HSSFCell cellIdValue = rowData.createCell(0, HSSFCell.CELL_TYPE_STRING);
+		cellIdValue.setCellValue(new HSSFRichTextString("1"));
+		
+		HSSFCell cellNameValue = rowData.createCell(1, HSSFCell.CELL_TYPE_STRING);
+		cellNameValue.setCellValue(new HSSFRichTextString("juan"));
+		
+		rowData = sheetA.createRow(sheetA.getLastRowNum() + 1);
+		cellIdValue = rowData.createCell(0, HSSFCell.CELL_TYPE_STRING);
+		cellIdValue.setCellValue(new HSSFRichTextString("2"));
+		
+		cellNameValue = rowData.createCell(1, HSSFCell.CELL_TYPE_STRING);
+		cellNameValue.setCellValue(new HSSFRichTextString("jose"));
+		
+		workbookA.write(new FileOutputStream(fileA));
+		
+		// create file B
+		
+		File fileB = TestHelper.makeFileAndDeleteIfExists("dataAndSyncB_RDF.xls");
+
+		// create adapters and sync engine
+		
+		MsExcelRDFSyncAdapterFactory factory = new MsExcelRDFSyncAdapterFactory("http://localhost:8080/mesh4x/feeds");
+		SplitAdapter adapterA = factory.createSyncAdapter(fileA.getCanonicalPath(), sheetName, idColumnName, NullIdentityProvider.INSTANCE);
+		RDFSchema rdfSchema = (RDFSchema)((MsExcelContentAdapter)adapterA.getContentAdapter()).getSchema();
+		
+		SplitAdapter adapterB = factory.createSyncAdapter(fileB.getCanonicalPath(), sheetName, idColumnName, NullIdentityProvider.INSTANCE, rdfSchema);
+		
+		// sync
+		
+		SyncEngine syncEngine = new SyncEngine(adapterA, adapterB);
+		
+		TestHelper.syncAndAssert(syncEngine);		
+		
+		// no changes or updates are produced
+		TestHelper.syncAndAssert(syncEngine);
+		
+		adapterA = factory.createSyncAdapter(fileA.getCanonicalPath(), sheetName, idColumnName, new LoggedInIdentityProvider());		
+		adapterB = factory.createSyncAdapter(fileB.getCanonicalPath(), sheetName, idColumnName, new LoggedInIdentityProvider());
+		syncEngine = new SyncEngine(adapterA, adapterB);
+		
+		// no changes or updates are produced
+		TestHelper.syncAndAssert(syncEngine);		
+		TestHelper.syncAndAssert(syncEngine);
+		
+		List<Item> items = adapterA.getAll();
+		for (Item item : items) {
+			Assert.assertEquals(1, item.getSync().getUpdates());
+			Assert.assertEquals(1, item.getSync().getUpdatesHistory().size());
+			Assert.assertEquals(1, item.getLastUpdate().getSequence());
+		}
+	}
+	
+	
+	private void assertRDFItem(IRDFSchema schema, MsExcelContentAdapter adapter, String name, String code,
 			int age, String sex, boolean ill, Date dateOnset) {
 
 		IContent content = adapter.get(code);

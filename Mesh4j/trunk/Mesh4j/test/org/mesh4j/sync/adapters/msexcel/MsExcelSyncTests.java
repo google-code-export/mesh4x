@@ -65,14 +65,14 @@ public class MsExcelSyncTests {
 		String sheetName = "patient";
 		String idColumnName = "id";
 		
-		SplitAdapter adapterA = makeSplitAdapter(sheetName, idColumnName, "excelA.xls", "syncA.xls", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		SplitAdapter adapterA = makeSplitAdapter(sheetName, idColumnName, "excelA.xls", "syncA.xls", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, true);
 		makeHeader(adapterA);
 		adapterA.add(makeNewItem());
 		adapterA.add(makeNewItem());
 		adapterA.add(makeNewItem());
 		adapterA.add(makeNewItem());
 		
-		SplitAdapter adapterB = makeSplitAdapter(sheetName, idColumnName, "excelB.xls", "syncB.xls", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		SplitAdapter adapterB = makeSplitAdapter(sheetName, idColumnName, "excelB.xls", "syncB.xls", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, true);
 		makeHeader(adapterB);
 		adapterB.add(makeNewItem());
 		
@@ -90,21 +90,36 @@ public class MsExcelSyncTests {
 		String sheetName = "patient";
 		String idColumnName = "id";
 		
-		SplitAdapter adapterA = makeSplitAdapter(sheetName, idColumnName, "dataAndSyncA.xls", "dataAndSyncA.xls", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		SplitAdapter adapterA = makeSplitAdapter(sheetName, idColumnName, "dataAndSyncA.xls", "dataAndSyncA.xls", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, true);
 		makeHeader(adapterA);
 		adapterA.add(makeNewItem());
 		adapterA.add(makeNewItem());
 		adapterA.add(makeNewItem());
 		adapterA.add(makeNewItem());
 		
-		SplitAdapter adapterB = makeSplitAdapter(sheetName, idColumnName, "dataAndSyncB.xls", "dataAndSyncB.xls", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		SplitAdapter adapterB = makeSplitAdapter(sheetName, idColumnName, "dataAndSyncB.xls", "dataAndSyncB.xls", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, true);
 		
 		SyncEngine syncEngine = new SyncEngine(adapterA, adapterB);
 		
-		List<Item> conflicts = syncEngine.synchronize();
+		TestHelper.syncAndAssert(syncEngine);		
 		
-		Assert.assertEquals(0, conflicts.size());
+		// no changes or updates are produced
+		TestHelper.syncAndAssert(syncEngine);
 		
+		adapterA = makeSplitAdapter(sheetName, idColumnName, "dataAndSyncA.xls", "dataAndSyncA.xls", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, false);		
+		adapterB = makeSplitAdapter(sheetName, idColumnName, "dataAndSyncB.xls", "dataAndSyncB.xls", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, false);
+		syncEngine = new SyncEngine(adapterA, adapterB);
+		
+		// no changes or updates are produced
+		TestHelper.syncAndAssert(syncEngine);		
+		TestHelper.syncAndAssert(syncEngine);
+		
+		List<Item> items = adapterA.getAll();
+		for (Item item : items) {
+			Assert.assertEquals(1, item.getSync().getUpdates());
+			Assert.assertEquals(1, item.getSync().getUpdatesHistory().size());
+			Assert.assertEquals(1, item.getLastUpdate().getSequence());
+		}
 	}
 	
 	// PRIVATE METHODS
@@ -136,17 +151,17 @@ public class MsExcelSyncTests {
 		return new Item(content, sync);
 	}
 
-	private SplitAdapter makeSplitAdapter(String sheetName, String idColumnName, String contentFileName, String syncFileName, IIdentityProvider identityProvider, IdGenerator idGenerator) throws IOException {
+	private SplitAdapter makeSplitAdapter(String sheetName, String idColumnName, String contentFileName, String syncFileName, IIdentityProvider identityProvider, IdGenerator idGenerator, boolean mustDeleteFile) throws IOException {
 		
 		MsExcel contentExcel = null;
 		MsExcel syncExcel = null;
 		if(contentFileName.equals(syncFileName)){
-			File file = TestHelper.makeFileAndDeleteIfExists(contentFileName);
+			File file = getFile(contentFileName, mustDeleteFile);
 			contentExcel = new MsExcel(file.getAbsolutePath());
 			syncExcel = contentExcel;
 		} else {
-			File fileData = TestHelper.makeFileAndDeleteIfExists(contentFileName);
-			File fileSync = TestHelper.makeFileAndDeleteIfExists(syncFileName);
+			File fileData = getFile(contentFileName, mustDeleteFile);
+			File fileSync = getFile(syncFileName, mustDeleteFile);
 			
 			contentExcel = new MsExcel(fileData.getAbsolutePath());
 			syncExcel = new MsExcel(fileSync.getAbsolutePath());
@@ -158,5 +173,13 @@ public class MsExcelSyncTests {
 
 		SplitAdapter splitAdapter = new SplitAdapter(syncRepo, contentAdapter, identityProvider);
 		return splitAdapter;
+	}
+
+	private File getFile(String fileName, boolean mustDeleteFile) throws IOException {
+		if(mustDeleteFile){
+			return TestHelper.makeFileAndDeleteIfExists(fileName);
+		}else {
+			return new File(TestHelper.fileName(fileName));
+		}
 	}
 }
