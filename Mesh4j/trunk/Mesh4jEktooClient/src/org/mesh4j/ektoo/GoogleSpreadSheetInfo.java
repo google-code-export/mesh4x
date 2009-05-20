@@ -8,24 +8,26 @@ public class GoogleSpreadSheetInfo {
 	private String idColumnName = "";
 	private String userName = "";
 	private String passWord = "";
-	private String googleSpreadSheetId = "";
+	//private String googleSpreadSheetId = "";
+	private String googleSpreadSheetName = "";
 
 	private String sheetName = "";
 	private String type = "";
 
 	// BUSINESS METHODS
 
-	public GoogleSpreadSheetInfo(String googleSpreadSheetId, String userName,
+	public GoogleSpreadSheetInfo(String googleSpreadSheetName, String userName,
 			String passWord, String idColumnName,String sheetName, String type) {
 
-		Guard.argumentNotNullOrEmptyString(googleSpreadSheetId,"googleSpreadSheetId");
+		Guard.argumentNotNullOrEmptyString(googleSpreadSheetName,"googleSpreadSheetName");
 		Guard.argumentNotNullOrEmptyString(userName, "userName");
-		Guard.argumentNotNullOrEmptyString(passWord, "passWord");
+		Guard.argumentNotNullOrEmptyString(passWord, "passWord");		
 		Guard.argumentNotNullOrEmptyString(idColumnName, "idColumnName");
 		Guard.argumentNotNullOrEmptyString(sheetName, "sheetName");
 		Guard.argumentNotNullOrEmptyString(type, "type");
 
-		this.googleSpreadSheetId = googleSpreadSheetId;
+		//this.googleSpreadSheetId = googleSpreadSheetId;
+		this.googleSpreadSheetName = googleSpreadSheetName;
 		this.idColumnName = idColumnName;
 		this.passWord = passWord;
 		this.sheetName = sheetName;
@@ -53,7 +55,11 @@ public class GoogleSpreadSheetInfo {
 		return passWord;
 	}
 
-	public String getGoogleSpreadSheetId() {
-		return googleSpreadSheetId;
+	public String getGoogleSpreadSheetName() {
+		return googleSpreadSheetName;
 	}
+	
+/*	public String getGoogleSpreadSheetId() {
+		return googleSpreadSheetId;
+	}*/
 }
