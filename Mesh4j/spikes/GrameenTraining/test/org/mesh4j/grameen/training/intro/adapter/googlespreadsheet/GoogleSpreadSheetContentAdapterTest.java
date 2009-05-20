@@ -23,7 +23,8 @@ public class GoogleSpreadSheetContentAdapterTest {
 	private IGoogleSpreadsheetToXMLMapping mapper;
 	private String userName = "gspreadsheet.test@gmail.com";
 	private String passWord = "java123456";
-	private String GOOGLE_SPREADSHEET_FIELD = "peo4fu7AitTo8e3v0D8FCew";
+	//private String GOOGLE_SPREADSHEET_FIELD = "peo4fu7AitTo8e3v0D8FCew";
+	private String GOOGLE_SPREADSHEET_NAME  = "testspreadsheet";
 
 
 	@Before
@@ -451,7 +452,7 @@ public class GoogleSpreadSheetContentAdapterTest {
 		return content;
 	}
 	private void loadSpreadSheet(){
-		spreadsheet = new GoogleSpreadsheet(GOOGLE_SPREADSHEET_FIELD,userName,passWord);
+		spreadsheet = new GoogleSpreadsheet(GOOGLE_SPREADSHEET_NAME,userName, passWord);
 		GSWorksheet workSheet = spreadsheet.getGSWorksheet(1);
 		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheet.getName(), spreadsheet.getDocsService());
 	}		
