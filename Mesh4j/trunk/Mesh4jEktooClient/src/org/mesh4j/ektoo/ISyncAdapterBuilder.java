@@ -59,8 +59,8 @@ public interface ISyncAdapterBuilder {
 	 * @param rdfSchema
 	 * @return
 	 */
-	public ISyncAdapter createGoogleSpreadSheetAdapter(
-			GoogleSpreadSheetInfo spreadSheetInfo, IRDFSchema rdfSchema);
+	public ISyncAdapter createPlainXMLBasedGoogleSpreadSheetAdapter(
+			GoogleSpreadSheetInfo spreadSheetInfo);
 
 	/**
 	 * TODO create documentation (raju)
@@ -97,6 +97,10 @@ public interface ISyncAdapterBuilder {
 	 */
 	public ISyncAdapter createFeedAdapter(String title, String description,
 			String link, String fileName, ISyndicationFormat syndicationFormat);
+
+
+	public ISyncAdapter createRdfBasedGoogleSpreadSheetAdapter(
+			GoogleSpreadSheetInfo spreadSheetInfo, IRDFSchema sourceSchema);
 
 	/**
 	 * TODO create documentation (raju)
