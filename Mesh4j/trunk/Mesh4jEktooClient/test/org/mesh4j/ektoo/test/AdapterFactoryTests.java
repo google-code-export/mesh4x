@@ -124,9 +124,10 @@ public class AdapterFactoryTests {
 		String idColumName = "id";
 		String userName = "gspreadsheet.test@gmail.com";
 		String passWord = "java123456";
-		String GOOGLE_SPREADSHEET_FIELD = "peo4fu7AitTo8e3v0D8FCew";
-
-		IGoogleSpreadSheet spreadsheet = new GoogleSpreadsheet(GOOGLE_SPREADSHEET_FIELD, userName, passWord);
+		//String GOOGLE_SPREADSHEET_FIELD = "peo4fu7AitTo8e3v0D8FCew";
+		String spreadsheetName = "testspreadsheet";
+		
+		IGoogleSpreadSheet spreadsheet = new GoogleSpreadsheet(/*GOOGLE_SPREADSHEET_FIELD,*/ spreadsheetName, userName, passWord);
 		GSWorksheet sourceRepo = spreadsheet.getGSWorksheet(1);
 
 		IGoogleSpreadsheetToXMLMapping mapper = new GoogleSpreadsheetToPlainXMLMapping("user", idColumName,
