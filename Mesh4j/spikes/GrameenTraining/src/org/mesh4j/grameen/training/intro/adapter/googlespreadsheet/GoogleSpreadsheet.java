@@ -12,30 +12,18 @@ import com.google.gdata.client.spreadsheet.SpreadsheetService;
 public class GoogleSpreadsheet implements IGoogleSpreadSheet {
 
 	// MODEL VARIABLES
-	private String spreadsheetFileId;
+	private String spreadsheetFileName;
 	private String username;
 	private String password;
+	@SuppressWarnings("unchecked")
 	private GSSpreadsheet<GSWorksheet> spreadsheet;
 
 	private SpreadsheetService spreadsheetService;
-	DocsService docsService;
+	private DocsService docsService;
 	private FeedURLFactory factory;
 
 	private boolean dirty = false;
 
-	public static final String VISIBILITY_PRIVATE = "private";
-	public static final String VISIBILITY_PUBLIC = "public";
-
-	public static final String PROJECTION_PUBLIC = "full";
-	public static final String PROJECTION_VALUES = "values";
-	public static final String PROJECTION_BASIC = "basic";
-
-	public static final String DOC_ROOT = "http://spreadsheets.google.com/feeds";
-
-	public static final String DOC_ELEMENT_TYPE_CELL = "cells";
-	public static final String DOC_ELEMENT_TYPE_ROW = "list";
-	public static final String DOC_ELEMENT_TYPE_WORKSHEET = "worksheets";
-	public static final String DOC_ELEMENT_TYPE_SPREADSHEET = "spreadsheets";
 
 	// BUSINESS METHODS
 
@@ -56,23 +44,26 @@ public class GoogleSpreadsheet implements IGoogleSpreadSheet {
 	 * @param password
 	 */
 	@SuppressWarnings("unchecked")
-	public GoogleSpreadsheet(String spreadsheetFileId, String username,
+	public GoogleSpreadsheet(String spreadsheetFileName, String username,
 			String password) {
 		super();
-		Guard.argumentNotNullOrEmptyString(spreadsheetFileId,
-				"spreadsheetFileId");
+		Guard.argumentNotNullOrEmptyString(spreadsheetFileName,	"spreadsheetFileName");
 		Guard.argumentNotNullOrEmptyString(username, "username");
 		Guard.argumentNotNullOrEmptyString(password, "password");
 
-		this.spreadsheetFileId = spreadsheetFileId;
+		this.spreadsheetFileName = spreadsheetFileName;
 		this.username = username;
 		this.password = password;
 
 		init();
 
 		try {
-			this.spreadsheet = GoogleSpreadsheetUtils.getGSSpreadsheet(
-					this.factory, this.spreadsheetService, spreadsheetFileId);
+//			this.spreadsheet = GoogleSpreadsheetUtils.getGSSpreadsheet(
+//					this.factory, this.spreadsheetService, spreadsheetFileId);
+			this.spreadsheet = GoogleSpreadsheetUtils
+					.getOrCreateGSSpreadsheetIfAbsent(factory,
+							spreadsheetService, docsService, spreadsheetFileName);
+					
 		} catch (Exception e) {
 			throw new MeshException(e);
 		}
@@ -144,14 +135,6 @@ public class GoogleSpreadsheet implements IGoogleSpreadSheet {
 		this.dirty = true;
 	}
 
-	/*
-	 * public void addEntryToUpdate(GSCell toUpdate){
-	 * batchFeed.getEntries().add(toUpdate.getCellEntry()); }
-	 * 
-	 * public void addEntryToUpdate(GSRow toUpdate){ for(IGSElement gsCell :
-	 * toUpdate.getGsCells()){ if(gsCell.isDirty()){
-	 * addEntryToUpdate((GSCell)gsCell); toUpdate.setDirty(); } } }
-	 */
 	/**
 	 * transfer the current state of the spreadsheet in memory to spreadsheet
 	 * file in web
@@ -169,7 +152,7 @@ public class GoogleSpreadsheet implements IGoogleSpreadSheet {
 	public void refresh() {
 		try {
 			this.spreadsheet = GoogleSpreadsheetUtils.getGSSpreadsheet(
-					this.factory, this.spreadsheetService, spreadsheetFileId);
+					this.factory, this.spreadsheetService, spreadsheetFileName);
 			this.dirty = false;
 		} catch (Exception e) {
 			throw new MeshException(e);
