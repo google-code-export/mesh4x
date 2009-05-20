@@ -2,16 +2,20 @@ package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Date;
 import java.util.LinkedHashMap;
 
 import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.mapping.GoogleSpreadsheetToRDFMapping;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSCell;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSRow;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSSpreadsheet;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSWorksheet;
+import org.mesh4j.sync.payload.schema.rdf.RDFInstance;
+import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
 
 import com.google.gdata.client.docs.DocsService;
 import com.google.gdata.client.spreadsheet.FeedURLFactory;
@@ -48,23 +52,26 @@ public class GoogleSpreadsheetUtilsTests {
 	public void shouldCreatNewSpreadsheet() throws IOException,
 			ServiceException {
 		GSSpreadsheet<?> spreadsheet = null;
-
+		String newSpreadsheetName = "new test spreadsheet";
+		
 		spreadsheet = GoogleSpreadsheetUtils.getOrCreateGSSpreadsheetIfAbsent(
-				this.factory, this.service, this.docService, "");
+				this.factory, this.service, this.docService, newSpreadsheetName);
 
 		Assert.assertNotNull(spreadsheet);
 		Assert.assertNotNull(spreadsheet.getBaseEntry());
 		
 		//TODO: remove
-		System.out.println(spreadsheet.getId().substring(spreadsheet.getId().lastIndexOf("/") + 1));
+		System.out.println(spreadsheet.getBaseEntry().getTitle().getPlainText()
+				+ " : "
+				+ spreadsheet.getId().substring(spreadsheet.getId().lastIndexOf("/") + 1));
 		
 		Assert.assertNotNull(spreadsheet.getBaseEntry().getId());
-		Assert.assertEquals(spreadsheet.getBaseEntry().getTitle()
-				.getPlainText(), GoogleSpreadsheetUtils.DEFAULT_NEW_SPREADSHEET_NAME);
+		Assert.assertEquals(newSpreadsheetName, spreadsheet.getBaseEntry().getTitle()
+				.getPlainText());
 		
 	}
 		
-
+	
 	@SuppressWarnings("unchecked")
 	@Test
 	public void shouldBatchUpdateCells() throws IOException, ServiceException {
@@ -243,9 +250,8 @@ public class GoogleSpreadsheetUtilsTests {
 		
 		if(syncSheet != null){
 			ss.deleteChildElement(String.valueOf(syncSheet.getElementListIndex()));	
+			GoogleSpreadsheetUtils.flush(this.service, ss);
 		}	
-		
-		GoogleSpreadsheetUtils.flush(this.service, ss);
 		
 		ss = null; syncSheet = null;
 		ss = getSampleGoogleSpreadsheet();
@@ -266,7 +272,81 @@ public class GoogleSpreadsheetUtilsTests {
 		
 		Assert.assertEquals(newSyncSheet.getId(), syncSheet.getId());
 	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void ShouldCreateContentSheetIfAbsent(){
+		GSSpreadsheet<GSWorksheet> ss = getSampleGoogleSpreadsheet();
+		String contentSheetName = SHEET_NAME;
+		GSWorksheet contentSheet = ss.getGSWorksheetBySheetName(contentSheetName);
 		
+		if(contentSheet != null){
+			ss.deleteChildElement(String.valueOf(contentSheet.getElementListIndex()));	
+			GoogleSpreadsheetUtils.flush(this.service, ss);
+			
+			ss = null; contentSheet = null;
+			ss = getSampleGoogleSpreadsheet();
+			contentSheet = ss.getGSWorksheetBySheetName(contentSheetName);		
+		}	
+		
+		Assert.assertNull(contentSheet);	
+		
+		GSWorksheet newSyncSheet = GoogleSpreadsheetUtils.getOrCreateContentSheetIfAbsent(ss, createSampleGoogleSpreadsheetToRDFMapping());	
+		
+		Assert.assertNotNull(newSyncSheet);
+		
+		GoogleSpreadsheetUtils.flush(this.service, ss);
+		
+		ss = null; contentSheet = null;
+		ss = getSampleGoogleSpreadsheet();
+		contentSheet = ss.getGSWorksheetBySheetName(contentSheetName);		
+		Assert.assertNotNull(contentSheet);
+		
+		Assert.assertEquals(newSyncSheet.getId(), contentSheet.getId());
+	}	
+	
+	private static final String SHEET_NAME = "Person";
+	private static final String COLUMN_DATE_ONSET = "DateOnset";
+	private static final String COLUMN_ILL = "Ill";
+	private static final String COLUMN_SEX = "Sex";
+	private static final String COLUMN_AGE = "Age";
+	private static final String COLUMN_NAME = "Name";
+	private static final String COLUMN_ID = "Id";
+
+
+	private GoogleSpreadsheetToRDFMapping createSampleGoogleSpreadsheetToRDFMapping() {
+
+		String sheetName = SHEET_NAME;
+
+		RDFSchema schema = new RDFSchema(sheetName,
+				"http://mesh4x/googlespreadsheet/" + sheetName + "#", sheetName);
+		schema.addStringProperty(COLUMN_ID, "id", "en");
+		schema.addStringProperty(COLUMN_NAME, "name", "en");
+		schema.addIntegerProperty(COLUMN_AGE, "age", "en");
+		schema.addStringProperty(COLUMN_SEX, "sex", "en");
+		schema.addBooleanProperty(COLUMN_ILL, "ill", "en");
+		schema.addDateTimeProperty(COLUMN_DATE_ONSET, "dateOnset", "en");
+		
+		RDFInstance rdfInstance = schema.createNewInstance("uri:urn:id");
+
+		long millis = System.currentTimeMillis();
+		String name = "Name: " + millis;
+		String code = "GSL-A219";
+		Long age = 1l;
+		String sex = "sex: " + millis;
+		Boolean ill = true;
+		Date dateOnset = new Date();
+
+		rdfInstance.setProperty(COLUMN_ID, code);
+		rdfInstance.setProperty(COLUMN_NAME, name);
+		rdfInstance.setProperty(COLUMN_AGE, age);
+		rdfInstance.setProperty(COLUMN_SEX, sex);
+		rdfInstance.setProperty(COLUMN_ILL, ill);
+		rdfInstance.setProperty(COLUMN_DATE_ONSET, dateOnset);
+
+		return new GoogleSpreadsheetToRDFMapping(schema, SHEET_NAME, "id", null, docService);
+	}	
+	
 	@SuppressWarnings("unchecked")
 	private GSRow<GSCell> addTestRow(GSWorksheet<GSRow> ws) throws IOException,
 			ServiceException {
@@ -284,12 +364,13 @@ public class GoogleSpreadsheetUtilsTests {
 	
 	@SuppressWarnings("unchecked")
 	private GSSpreadsheet getSampleGoogleSpreadsheet() {
-		String spreadsheetFileId = "pvQrTFmc5F8tXD89WRNiBVw";
+		//String spreadsheetFileId = "pvQrTFmc5F8tXD89WRNiBVw";
+		String spreadsheetFileName = "gsl employee";
 	
 		try {
 		
 			return GoogleSpreadsheetUtils.getGSSpreadsheet(
-					this.factory, this.service, spreadsheetFileId);
+					this.factory, this.service, spreadsheetFileName);
 		
 		} catch (IOException e) {
 			e.printStackTrace();
