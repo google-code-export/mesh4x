@@ -27,12 +27,13 @@ public class GoogleSpreadSheetSyncRepositoryTest {
 	private GSWorksheet<GSRow<GSCell>> workSheet;
 	String userName = "gspreadsheet.test@gmail.com";
 	String passWord = "java123456";
-	String GOOGLE_SPREADSHEET_FIELD = "peo4fu7AitTo8e3v0D8FCew";
+	//String GOOGLE_SPREADSHEET_FIELD = "peo4fu7AitTo8e3v0D8FCew";
+	String GOOGLE_SPREADSHEET_FILE_NAME = "testspreadsheet";
 
 	
 	@Before
 	public void setUp(){
-		spreadsheet = new GoogleSpreadsheet(GOOGLE_SPREADSHEET_FIELD,userName,passWord);
+		spreadsheet = new GoogleSpreadsheet(GOOGLE_SPREADSHEET_FILE_NAME, userName, passWord);
 		workSheet = GoogleSpreadsheetUtils.getOrCreateSyncSheetIfAbsent(spreadsheet.getGSSpreadsheet(),"sync_info");
 		clean();
 	}
@@ -135,7 +136,7 @@ public class GoogleSpreadSheetSyncRepositoryTest {
 		
 		//now newly created spreadsheet adapter to test if it can capable to
 		//load the saved row from spreadsheet
-		IGoogleSpreadSheet newSpreadsheet = new GoogleSpreadsheet(GOOGLE_SPREADSHEET_FIELD,userName,passWord);
+		IGoogleSpreadSheet newSpreadsheet = new GoogleSpreadsheet(GOOGLE_SPREADSHEET_FILE_NAME, userName, passWord);
 		GSWorksheet newWorkSheet = newSpreadsheet.getGSWorksheet("SYNC_INFO");
 		GoogleSpreadSheetSyncRepository newSyncRepository = new GoogleSpreadSheetSyncRepository(newSpreadsheet,identityProvider,idGenerator,"SYNC_INFO");
 		Assert.assertEquals(2, newSyncRepository.getAll("user").size());
@@ -166,7 +167,7 @@ public class GoogleSpreadSheetSyncRepositoryTest {
 		
 		//now newly created spreadsheet adapter to test if it can capable to
 		//load the saved row from spreadsheet
-		IGoogleSpreadSheet newSpreadsheet = new GoogleSpreadsheet(GOOGLE_SPREADSHEET_FIELD,userName,passWord);
+		IGoogleSpreadSheet newSpreadsheet = new GoogleSpreadsheet(GOOGLE_SPREADSHEET_FILE_NAME, userName, passWord);
 		GSWorksheet newWorkSheet = newSpreadsheet.getGSWorksheet("SYNC_INFO");
 		GoogleSpreadSheetSyncRepository newSyncRepository = new GoogleSpreadSheetSyncRepository(newSpreadsheet,identityProvider,idGenerator,"SYNC_INFO");
 		Assert.assertEquals(0, newSyncRepository.getAll("user").size());
@@ -231,7 +232,7 @@ public class GoogleSpreadSheetSyncRepositoryTest {
 		syncRepository.beginSync();
 		syncRepository.endSync();
 		
-		IGoogleSpreadSheet newSpreadsheet = new GoogleSpreadsheet(GOOGLE_SPREADSHEET_FIELD,userName,passWord);
+		IGoogleSpreadSheet newSpreadsheet = new GoogleSpreadsheet(GOOGLE_SPREADSHEET_FILE_NAME, userName, passWord);
 		GSWorksheet newWorkSheet = newSpreadsheet.getGSWorksheet("SYNC_INFO");
 		GoogleSpreadSheetSyncRepository newSyncRepository = new GoogleSpreadSheetSyncRepository(newSpreadsheet,identityProvider,idGenerator,"SYNC_INFO");
 		
@@ -296,7 +297,7 @@ public class GoogleSpreadSheetSyncRepositoryTest {
 		syncRepository.beginSync();
 		syncRepository.endSync();
 		
-		IGoogleSpreadSheet newSpreadsheet = new GoogleSpreadsheet(GOOGLE_SPREADSHEET_FIELD,userName,passWord);
+		IGoogleSpreadSheet newSpreadsheet = new GoogleSpreadsheet(GOOGLE_SPREADSHEET_FILE_NAME, userName, passWord);
 		GSWorksheet newWorkSheet = newSpreadsheet.getGSWorksheet("SYNC_INFO");
 		GoogleSpreadSheetSyncRepository newSyncRepository = new GoogleSpreadSheetSyncRepository(newSpreadsheet,identityProvider,idGenerator,"SYNC_INFO");
 		
@@ -372,7 +373,7 @@ public class GoogleSpreadSheetSyncRepositoryTest {
 		syncRepository.beginSync();
 		syncRepository.endSync();
 		
-		IGoogleSpreadSheet newSpreadsheet = new GoogleSpreadsheet(GOOGLE_SPREADSHEET_FIELD,userName,passWord);
+		IGoogleSpreadSheet newSpreadsheet = new GoogleSpreadsheet(GOOGLE_SPREADSHEET_FILE_NAME, userName, passWord);
 		GSWorksheet newWorkSheet = newSpreadsheet.getGSWorksheet("SYNC_INFO");
 		GoogleSpreadSheetSyncRepository newSyncRepository = new GoogleSpreadSheetSyncRepository(newSpreadsheet,identityProvider,idGenerator,"SYNC_INFO");
 		
