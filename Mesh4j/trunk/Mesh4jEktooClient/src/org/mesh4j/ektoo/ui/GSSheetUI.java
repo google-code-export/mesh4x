@@ -347,15 +347,15 @@ public class GSSheetUI extends AbstractUI {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void setList(String user, String pass, String key) {
+	public void setList(String user, String pass, /*String key,*/ String spreadsheetName) {
 	  System.out.println("2...");
     
 		JComboBox sheetList = getTableList();
 		sheetList.removeAllItems();
 		 
 		try {
-			IGoogleSpreadSheet spreadsheet = new GoogleSpreadsheet(key, user,
-					pass);
+			IGoogleSpreadSheet spreadsheet = new GoogleSpreadsheet(/*key,*/ spreadsheetName,
+					user, pass);
 			String sheetName = null;
 			for (Entry<String, GSWorksheet> spSheet : spreadsheet
 					.getGSSpreadsheet().getGSWorksheets().entrySet()) {
@@ -375,11 +375,11 @@ public class GSSheetUI extends AbstractUI {
 	}
 
 	@SuppressWarnings("unchecked")
-	public  void setList(String user, String pass, String key, String sheetName) {
+	public  void setList(String user, String pass, /*String key,*/ String spreadsheetName, String sheetName) {
 		JComboBox columnList = getColumnList();
 		columnList.removeAllItems();
 
-		IGoogleSpreadSheet spreadsheet = new GoogleSpreadsheet(key, user, pass);
+		IGoogleSpreadSheet spreadsheet = new GoogleSpreadsheet(/*key,*/ spreadsheetName, user, pass);
 		GSWorksheet<GSRow<GSCell>> workSheet = spreadsheet.getGSSpreadsheet()
 				.getGSWorksheetBySheetName(sheetName);
 		String columnName = null;
