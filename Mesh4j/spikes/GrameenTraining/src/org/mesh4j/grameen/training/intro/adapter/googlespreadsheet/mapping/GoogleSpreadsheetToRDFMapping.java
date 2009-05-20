@@ -54,7 +54,7 @@ public class GoogleSpreadsheetToRDFMapping implements IGoogleSpreadsheetToXMLMap
 	}
 	
 	public static RDFSchema extractRDFSchema(IGoogleSpreadSheet gss,
-			String workSheetName, String rdfURL) throws Exception {
+			String workSheetName, String rdfURL) {
 		RDFSchema rdfSchema = new RDFSchema(workSheetName, rdfURL+"/"+workSheetName+"#", workSheetName);
 
 		GSWorksheet<GSRow<GSCell>> worksheet = GoogleSpreadsheetUtils
