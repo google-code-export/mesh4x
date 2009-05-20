@@ -61,6 +61,7 @@ public class GoogleSpreadSheetSyncRepository implements ISyncRepository,ISyncAwa
 											IIdentityProvider identityProvider,IIdGenerator idGenerator,String syncWorksheetName){
 		
 		Guard.argumentNotNull(spreadSheet, "spreadSheet");
+		Guard.argumentNotNull(spreadSheet.getGSSpreadsheet(), "spreadSheet.gssSpreadsheet");
 		Guard.argumentNotNull(identityProvider, "identityProvider");
 		Guard.argumentNotNull(idGenerator, "idGenerator");
 		Guard.argumentNotNullOrEmptyString(syncWorksheetName, "syncWorksheetName");
@@ -133,7 +134,7 @@ public class GoogleSpreadSheetSyncRepository implements ISyncRepository,ISyncAwa
 			System.out.println(celMap.getKey());
 			GSCell cell = celMap.getValue();
 			if(cell != null){
-				String value = cell.getCellEntry().getCell().getValue();
+				String value = cell.getCellValue();
 				System.out.println("cell value:" + value);
 			}
 		}
