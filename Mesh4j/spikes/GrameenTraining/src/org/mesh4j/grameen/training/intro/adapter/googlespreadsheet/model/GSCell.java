@@ -9,10 +9,8 @@ import java.util.Date;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadSheetContentAdapter;
 import org.mesh4j.sync.validations.Guard;
 
-import com.google.gdata.client.spreadsheet.ListQuery;
 import com.google.gdata.data.spreadsheet.CellEntry;
 import com.google.gdata.data.spreadsheet.ListEntry;
-import com.google.gdata.data.spreadsheet.ListFeed;
 import com.google.gdata.data.spreadsheet.WorksheetEntry;
 import com.google.gdata.util.ServiceException;
 
@@ -156,7 +154,7 @@ public class GSCell extends GSBaseElement {
 	 * @return
 	 */
 	public Object getCellValueAsType(){
-		int cellType = this.getCellType();
+		int cellType = this.getCellTypeFromContent();
 		String cellValue = getCellValue();
 		switch (cellType) {
 			case CELL_TYPE_BOOLEAN:
@@ -183,7 +181,7 @@ public class GSCell extends GSBaseElement {
 	 * @return
 	 */
 	public void setCellValueAsType(Object cellValue){
-		int cellType = this.getCellType();		
+		int cellType = this.getCellTypeFromContent();		
 		setCellValueAsType(cellValue, cellType);
 	}
 	
@@ -229,7 +227,7 @@ public class GSCell extends GSBaseElement {
 	 * @return
 	 */
 	@SuppressWarnings("deprecation")
-	public int getCellType() {
+	public int getCellTypeFromContent() {
 		Double cellDoubleValue = ((CellEntry) this.baseEntry).getCell()
 				.getDoubleValue();
 		String cellStringValue = ((CellEntry) this.baseEntry).getCell()
