@@ -90,6 +90,6 @@ public class GSSheetUIController extends AbstractController {
 				model.getSpreadsheetKey(), model.getUserName(), 
 				model.getUserPassword(), model.getUniqueColumnName(), 
 				model.getWorksheetName(), model.getWorksheetName());
-		return adapterBuilder.createGoogleSpreadSheetAdapter(spreadSheetInfo, schema);
+		return adapterBuilder.createRdfBasedGoogleSpreadSheetAdapter(spreadSheetInfo, schema);
 	}
 }
