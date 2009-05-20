@@ -19,6 +19,7 @@ import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.payload.schema.rdf.RDFInstance;
 import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
 import org.mesh4j.sync.utils.XMLHelper;
+import org.mesh4j.sync.validations.Guard;
 
 import com.google.gdata.client.docs.DocsService;
 
@@ -45,11 +46,14 @@ public class GoogleSpreadsheetToRDFMapping implements IGoogleSpreadsheetToXMLMap
 		this.docService = docService;
 	}
 	
-	//done
-	public static RDFSchema extractRDFSchema(IGoogleSpreadSheet gss,
-			String workSheetName) throws Exception {
+	public static RDFSchema extractRDFSchema(IGoogleSpreadSheet gss, String workSheetName, String rdfURL) {
+		
+		Guard.argumentNotNull(gss, "gss");
+		Guard.argumentNotNullOrEmptyString(workSheetName, "workSheetName");
+		Guard.argumentNotNullOrEmptyString(rdfURL, "rdfURL");
+		
 		RDFSchema rdfSchema = new RDFSchema(workSheetName,
-				"http://mesh4x/googlespreadsheet/" + workSheetName + "#",
+				rdfURL + "/" + workSheetName + "#",
 				workSheetName);
 
 		GSWorksheet<GSRow<GSCell>> worksheet = GoogleSpreadsheetUtils
@@ -219,14 +223,12 @@ public class GoogleSpreadsheetToRDFMapping implements IGoogleSpreadsheetToXMLMap
 
 	@Override
 	public String getType() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.getSheetName();
 	}
 
 	@Override
 	public String getSheetName() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.rdfSchema.getOntologyClassName();
 	}
 
 }
