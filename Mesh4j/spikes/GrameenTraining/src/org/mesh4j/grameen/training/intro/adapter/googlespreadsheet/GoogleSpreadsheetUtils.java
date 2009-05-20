@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -11,8 +13,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.time.DateUtils;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadSheetSyncRepository.SyncColumn;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.mapping.GoogleSpreadsheetToRDFMapping;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.mapping.IGoogleSpreadsheetToXMLMapping;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSBaseElement;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSCell;
@@ -23,6 +28,8 @@ import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.IGSElem
 import org.mesh4j.sync.adapters.msexcel.MsExcelUtils;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.id.generator.IIdGenerator;
+import org.mesh4j.sync.id.generator.IdGenerator;
+import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
 import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
@@ -38,6 +45,8 @@ import com.google.gdata.data.batch.BatchOperationType;
 import com.google.gdata.data.batch.BatchStatus;
 import com.google.gdata.data.batch.BatchUtils;
 import com.google.gdata.data.docs.DocumentEntry;
+import com.google.gdata.data.docs.DocumentListEntry;
+import com.google.gdata.data.docs.DocumentListFeed;
 import com.google.gdata.data.docs.DocumentListEntry.MediaType;
 import com.google.gdata.data.spreadsheet.CellEntry;
 import com.google.gdata.data.spreadsheet.CellFeed;
@@ -49,6 +58,11 @@ import com.google.gdata.data.spreadsheet.WorksheetEntry;
 import com.google.gdata.data.spreadsheet.WorksheetFeed;
 import com.google.gdata.util.AuthenticationException;
 import com.google.gdata.util.ServiceException;
+import com.hp.hpl.jena.datatypes.RDFDatatype;
+import com.hp.hpl.jena.datatypes.TypeMapper;
+import com.hp.hpl.jena.ontology.DatatypeProperty;
+import com.hp.hpl.jena.ontology.OntResource;
+import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
 /**
  * this is the utility class used by Google spreadsheet adapter
@@ -62,6 +76,12 @@ public class GoogleSpreadsheetUtils {
 	public static final String TMP_FILE_DIR = "/";
 	public static final String DEFAULT_NEW_WORKSHEET_NAME = "New Worksheet";
 	public static final String DEFAULT_NEW_SPREADSHEET_NAME = "New Spreadsheet";
+	
+	static final int SPREADSHEET_STATUS_SPREADSHEET_NONE = -1;
+	static final int SPREADSHEET_STATUS_CONTENTSHEET_NO_SYNCSHEET_NO = 0;
+	static final int SPREADSHEET_STATUS_CONTENTSHEET_NO_SYNCSHEET_YES = 1;
+	static final int SPREADSHEET_STATUS_CONTENTSHEET_YES_SYNCSHEET_NO = 2;
+	static final int SPREADSHEET_STATUS_CONTENTSHEET_YES_SYNCSHEET_YES = 3;
 
 	@SuppressWarnings("unchecked")
 	public static void flush(SpreadsheetService service,
@@ -242,12 +262,9 @@ public class GoogleSpreadsheetUtils {
 								insertPool.put(subElement.getId(), subElement);
 						} else if (subElement instanceof GSRow
 								&& subElement.getElementListIndex() > 1) {
-							if (subElement.getBaseEntry().getId() == null) {// only
-																			// for
-																			// new
-																			// rows
-								insertPool.put(subElement.getId(),
-										subElement);
+							if (subElement.getBaseEntry().getId() == null) {
+								// only for new rows
+								insertPool.put(subElement.getId(), subElement);
 							} else {
 								// if all childs are new but row has an ID
 								// then add it to insert pool ()
@@ -334,14 +351,14 @@ public class GoogleSpreadsheetUtils {
 	 * 
 	 * @param factory
 	 * @param service
-	 * @param sheetId
+	 * @param spreadsheetName
 	 * @return
 	 * @throws IOException
 	 * @throws ServiceException
 	 */
 	@SuppressWarnings("unchecked")
 	public static GSSpreadsheet getGSSpreadsheet(FeedURLFactory factory,
-			SpreadsheetService service, String sheetId) throws IOException,
+			SpreadsheetService service, String spreadsheetName) throws IOException,
 			ServiceException {
 
 		SpreadsheetFeed feed = service.getFeed(
@@ -351,13 +368,15 @@ public class GoogleSpreadsheetUtils {
 
 		// pickup the specific spreadsheet and build a custom spreadsheet object
 		for (SpreadsheetEntry ss : feed.getEntries()) {
-			if (ss.getId().substring(ss.getId().lastIndexOf("/") + 1).equals(
-					sheetId)) {
+			if (ss.getTitle().getPlainText().equals(
+					spreadsheetName)) {
 				gssSpreadsheet = new GSSpreadsheet<GSWorksheet>(ss);
 				break;
 			}
 		}
 
+		if(gssSpreadsheet == null) return null;
+			
 		return getGSSpreadsheet(factory, service, gssSpreadsheet);
 	}
 
@@ -527,7 +546,7 @@ public class GoogleSpreadsheetUtils {
 	public static GSCell getCell(GSRow<GSCell> gsRow, String ColumName) {
 		for (Map.Entry<String, GSCell> mapCell : gsRow.getGSCells().entrySet()) {
 			GSCell cell = mapCell.getValue();
-			if (cell.getCellEntry().getCell().getValue().equals(ColumName)) {
+			if (cell.getCellValue().equals(ColumName)) {
 				return cell;
 			}
 		}
@@ -590,17 +609,16 @@ public class GoogleSpreadsheetUtils {
 						.toString());
 				headerRow.addChildElement(newGsCell.getColumnTag(), newGsCell);
 			}
-
 		}
 
 		return syncWorksheet;
-	}
-
+	}	
+	
 	private static boolean isValidSyncSheet(
 			GSWorksheet<GSRow<GSCell>> syncWorksheet) {
 		if (syncWorksheet == null || syncWorksheet.getChildElements() == null)
 			return false;
-		if (syncWorksheet.getChildElements().size() == 1) {
+		if (syncWorksheet.getChildElements().size() >= 1) {
 			GSRow<GSCell> hederRow = syncWorksheet.getGSRow(1);
 			if (hederRow.getChildElements().size() == SyncColumn.values().length) {
 				for (SyncColumn sc : SyncColumn.values()) {
@@ -608,10 +626,82 @@ public class GoogleSpreadsheetUtils {
 					if (cell == null)
 						return false;
 				}
-			}
-		}
+			}else
+				return false;
+		}else
+			return false;
 		return true;
 	}
+
+
+	/**
+	 * get content sheet if available, otherwise create a new sync sheet using supplied mapping and return that
+	 * 
+	 * @param spreadsheet
+	 * @param syncWorksheetName
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static GSWorksheet<GSRow<GSCell>> getOrCreateContentSheetIfAbsent(
+			GSSpreadsheet<GSWorksheet> spreadsheet,	IGoogleSpreadsheetToXMLMapping mapper) {
+
+		GSWorksheet<GSRow<GSCell>> contentWorksheet = spreadsheet
+				.getGSWorksheetBySheetName(mapper.getSheetName());
+		
+		if (mapper.getSchema() == null) {
+			if(contentWorksheet == null)
+				throw new MeshException(new Exception("Unable to create content sheet because no schema available"));
+			else
+				return contentWorksheet;
+		}
+		
+		if (isValidContentSheet(contentWorksheet, (RDFSchema) mapper.getSchema()))
+			return contentWorksheet;
+		else {
+			if (contentWorksheet != null)
+				spreadsheet.deleteChildElement(String.valueOf(contentWorksheet
+						.getElementListIndex()));
+
+			contentWorksheet = getOrCreateWorkSheetIfAbsent(spreadsheet, mapper.getSheetName());
+
+			RDFSchema rdfSchema = (RDFSchema) mapper.getSchema();
+
+			GSRow<GSCell> headerRow = GoogleSpreadsheetUtils.getOrCreateHeaderRowIfAbsent(contentWorksheet);
+
+			int size = rdfSchema.getPropertyCount();
+			for (int i = size-1; i >= 0; i--) {
+				String propertyName = rdfSchema.getPropertyName(i);
+				if (propertyName != null && !propertyName.isEmpty()) {
+					GoogleSpreadsheetUtils.getOrCreateHeaderCellIfAbsent(headerRow, propertyName);
+				}
+			}
+		}
+		return contentWorksheet;
+	}		
+	
+	public static boolean isValidContentSheet(
+			GSWorksheet<GSRow<GSCell>> contentWorksheet, RDFSchema rdfSchema) {
+		if (contentWorksheet == null || contentWorksheet.getChildElements() == null)
+			return false;
+		
+		if (contentWorksheet.getChildElements().size() >= 1) {
+			GSRow<GSCell> hederRow = contentWorksheet.getGSRow(1);
+			int propertyCount = rdfSchema.getPropertyCount();
+			
+			if (hederRow.getChildElements().size() == propertyCount) {
+				for (int i = 0; i < propertyCount; i++) {
+					String propertyName = rdfSchema.getPropertyName(i);
+					if(propertyName!=null && !propertyName.isEmpty()){
+						GSCell cell = hederRow.getGSCell(propertyName);
+						if (cell == null) return false;
+					}
+				}
+			}else
+				return false;
+		
+		}
+		return true;
+	}	
 
 	/**
 	 * this will return a spreadsheet with id sheetId, if no such spreadsheet is
@@ -628,7 +718,7 @@ public class GoogleSpreadsheetUtils {
 	@SuppressWarnings("unchecked")
 	public static GSSpreadsheet getOrCreateGSSpreadsheetIfAbsent(
 			FeedURLFactory factory, SpreadsheetService service,
-			DocsService docService, String sheetId) throws IOException,
+			DocsService docService, String spreadsheetName) throws IOException,
 			ServiceException {
 
 		SpreadsheetFeed feed = service.getFeed(
@@ -638,8 +728,7 @@ public class GoogleSpreadsheetUtils {
 
 		// pickup the specific spreadsheet and build a custom spreadsheet object
 		for (SpreadsheetEntry ss : feed.getEntries()) {
-			if (ss.getId().substring(ss.getId().lastIndexOf("/") + 1).equals(
-					sheetId)) {
+			if (ss.getTitle().getPlainText().equals(spreadsheetName)) {
 				gssSpreadsheet = new GSSpreadsheet<GSWorksheet>(ss);
 				break;
 			}
@@ -648,22 +737,22 @@ public class GoogleSpreadsheetUtils {
 		if (gssSpreadsheet == null) {
 			// if there is no spreadsheet with the specified id
 			// create a blank spreadsheet and upload
-			createNewSpreadsheetDocAndUpload(DEFAULT_NEW_SPREADSHEET_NAME, docService);
+			if(spreadsheetName == null || spreadsheetName.isEmpty())
+				spreadsheetName = GoogleSpreadsheetUtils.DEFAULT_NEW_SPREADSHEET_NAME;
+			String newSpreadsheetName = createNewSpreadsheetDocAndUpload(spreadsheetName, docService);
 
 			feed = service.getFeed(factory.getSpreadsheetsFeedUrl(),
 					SpreadsheetFeed.class);
 
-			for (SpreadsheetEntry ss : feed.getEntries()) {
-				//TODO:remove
-				System.out.println(ss.getTitle().getPlainText());
-				if (ss.getTitle().getPlainText().equals(DEFAULT_NEW_SPREADSHEET_NAME)) {
+			for (SpreadsheetEntry ss : feed.getEntries()) {	
+				if (ss.getTitle().getPlainText().equals(newSpreadsheetName)) {
 					gssSpreadsheet = new GSSpreadsheet<GSWorksheet>(ss);
 					break;
 				}
 			}
 		}
-
-		return gssSpreadsheet;
+		
+		return getGSSpreadsheet(factory, service, gssSpreadsheet);
 	}
 
 	/**
@@ -672,17 +761,19 @@ public class GoogleSpreadsheetUtils {
 	 * @param fileName
 	 * @param docService
 	 * @return
-	 * @throws AuthenticationException
-	 * @throws MalformedURLException
+	 * @throws ServiceException 
+	 * @throws IOException 
 	 */
 	public static String createNewSpreadsheetDocAndUpload(String fileName,
-			DocsService docService) throws AuthenticationException,
-			MalformedURLException {
-
-		File documentFile = new File(TMP_FILE_DIR + fileName + ".xls");
+			DocsService docService) throws IOException, ServiceException {
+		Guard.argumentNotNullOrEmptyString(fileName, "fileName");
+		Guard.argumentNotNull(docService, "docService");
+		
+		File documentFile = new File(fileName);//new File(TMP_FILE_DIR + fileName + ".xls");
 		if (!documentFile.exists()) {
 			HSSFWorkbook workbook = new HSSFWorkbook();
-			workbook.createSheet(DEFAULT_NEW_WORKSHEET_NAME);
+			HSSFSheet sheet = workbook.createSheet(DEFAULT_NEW_WORKSHEET_NAME);
+			sheet.setFitToPage(true);
 			MsExcelUtils.flush(workbook, documentFile.getAbsolutePath());
 		}
 		
@@ -695,20 +786,30 @@ public class GoogleSpreadsheetUtils {
 	 * @param documentFile
 	 * @param docService
 	 * @return
-	 * @throws AuthenticationException
-	 * @throws MalformedURLException
+	 * @throws ServiceException 
+	 * @throws IOException 
 	 */
 	public static String uploadSpreadsheetDoc(File documentFile,
-			DocsService docService) throws AuthenticationException,
-			MalformedURLException {
+			DocsService docService) throws IOException, ServiceException {
 
 		URL documentListFeedUrl = new URL(DOC_FEED_URL);
 		DocumentEntry newDocument = new DocumentEntry();
 		newDocument.setFile(documentFile, MediaType.XLS.getMimeType());
-		newDocument.setTitle(new PlainTextConstruct(documentFile.getName()
-				.substring(0, documentFile.getName().length() - 4)));
+		String docTitle = documentFile.getName()/*.substring(0, documentFile.getName().length() - 4)*/;		
+		
+		//if the document with same title already exists add a number prefix to make it unique
+		DocumentListFeed feed = docService.getFeed(documentListFeedUrl, DocumentListFeed.class);
+        for (DocumentListEntry entry : feed.getEntries()) {
+        	if(entry.getTitle().getPlainText().equals(docTitle)){
+        		docTitle = docTitle + "_" +IdGenerator.INSTANCE.newID().substring(0,8);
+        	}	
+        }
+        
+		newDocument.setTitle(new PlainTextConstruct(docTitle));
+		
+		DocumentListEntry uploadedDocument = null;
 		try {
-			docService.insert(documentListFeedUrl, newDocument);
+			uploadedDocument = docService.insert(documentListFeedUrl, newDocument);
 		} catch (Exception e) {
 			//throw new MeshException(e);
 		} finally {
@@ -716,7 +817,26 @@ public class GoogleSpreadsheetUtils {
 				documentFile.delete();
 		}
 		
-		return newDocument.getId().substring(newDocument.getId().lastIndexOf("/") + 1);
+		if(uploadedDocument == null){
+			// wait .5 sec! otherwise the currently uploaded document night not
+			// be available in the following query!
+			try {
+				Thread.currentThread().sleep(500);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			
+		    feed = docService.getFeed(documentListFeedUrl, DocumentListFeed.class);
+	        for (DocumentListEntry entry : feed.getEntries()) {
+	        	if(entry.getTitle().getPlainText().equals(docTitle))
+	        		return entry.getTitle().getPlainText();
+	        		//return entry.getId().substring(entry.getId().lastIndexOf("%3A") + 3);
+	        }	
+	        return null;
+		}
+		else
+			return uploadedDocument.getTitle().getPlainText();
+			//return uploadedDocument.getId().substring(uploadedDocument.getId().lastIndexOf("%3A") + 3);
 	}	
 
 	@SuppressWarnings("unchecked")
@@ -734,7 +854,7 @@ public class GoogleSpreadsheetUtils {
 	public static GSRow<GSCell> getOrCreateHeaderRowIfAbsent(
 			GSWorksheet<GSRow<GSCell>> worksheet) {
 		GSRow<GSCell> row = worksheet.getGSRow(1);
-		if (row == null) {
+		if (row == null || row.isDeleteCandidate()) {
 			row = worksheet.createNewRow(1);
 		}
 		return row;
@@ -749,7 +869,48 @@ public class GoogleSpreadsheetUtils {
 		}
 		return cell;
 	}
+	
+	public static int getSpreadsheetStatus(String username, String password,
+			String spreadsheetFileName, String sheetName) throws IOException, ServiceException {
 
+		int status = SPREADSHEET_STATUS_SPREADSHEET_NONE;
+		
+		FeedURLFactory factory = FeedURLFactory.getDefault();
+		SpreadsheetService service = GoogleSpreadsheetUtils
+				.getSpreadsheetService(username, password);
+		SpreadsheetFeed feed;
+		try {
+			feed = service.getFeed(factory.getSpreadsheetsFeedUrl(),
+					SpreadsheetFeed.class);
+		} catch (Exception e) {
+			throw new MeshException(e);
+		}
+
+		if (feed != null) {
+			for (SpreadsheetEntry ss : feed.getEntries()) {
+//				if (ss.getId().substring(ss.getId().lastIndexOf("/") + 1)
+//						.equals(spreadsheetFileId)) {
+				if (ss.getTitle().getPlainText().equals(spreadsheetFileName)) {
+
+					status = status
+							& SPREADSHEET_STATUS_CONTENTSHEET_NO_SYNCSHEET_NO;
+
+					List<WorksheetEntry> wsList = getAllWorksheet(service, ss);
+
+					for (WorksheetEntry ws : wsList) {
+						if (ws.getTitle().getPlainText().equals(sheetName)) {
+							status = status	| SPREADSHEET_STATUS_CONTENTSHEET_YES_SYNCSHEET_NO;
+						} else if (ws.getTitle().getPlainText().equals(sheetName + "_sync")) {
+							status = status | SPREADSHEET_STATUS_CONTENTSHEET_NO_SYNCSHEET_YES;
+						}
+					}
+					break;
+				}
+			}
+		}
+		return status;
+	}
+	
 	/**
 	 * Service used to upload document in google docs
 	 * @param username
