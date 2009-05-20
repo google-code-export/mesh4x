@@ -48,7 +48,7 @@ public class MsExcelSyncAdapterFactory implements ISyncAdapterFactory {
 
 	public SplitAdapter createSyncAdapter(String excelFileName, String sheetName, String idColumnName, IIdentityProvider identityProvider) {
 		MsExcel excel = new MsExcel(excelFileName);
-		MsExcelSyncRepository syncRepo = createSyncRepository(identityProvider, excel);
+		MsExcelSyncRepository syncRepo = createSyncRepository(sheetName, identityProvider, excel);
 		MsExcelContentAdapter contentAdapter = createContentAdapter(sheetName, idColumnName, excel);
 		return new SplitAdapter(syncRepo, contentAdapter, identityProvider);
 	}
@@ -58,8 +58,8 @@ public class MsExcelSyncAdapterFactory implements ISyncAdapterFactory {
 		return new MsExcelContentAdapter(excel, mapping, sheetName);
 	}
 
-	protected MsExcelSyncRepository createSyncRepository(IIdentityProvider identityProvider, IMsExcel excel) {
-		return new MsExcelSyncRepository(excel, identityProvider, IdGenerator.INSTANCE);
+	protected MsExcelSyncRepository createSyncRepository(String sheetName, IIdentityProvider identityProvider, IMsExcel excel) {
+		return new MsExcelSyncRepository(excel, sheetName+"_sync", identityProvider, IdGenerator.INSTANCE);
 	}
 
 	@Override

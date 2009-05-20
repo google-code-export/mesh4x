@@ -52,7 +52,7 @@ public class MsExcelRDFSyncAdapterFactory extends MsExcelSyncAdapterFactory{
 			}
 		
 			MsExcel excel = new MsExcel(excelFileName);
-			MsExcelSyncRepository syncRepo = createSyncRepository(identityProvider, excel);
+			MsExcelSyncRepository syncRepo = createSyncRepository(sheetName, identityProvider, excel);
 			MsExcelContentAdapter contentAdapter = new MsExcelContentAdapter(excel, mappings, sheetName);
 			return new SplitAdapter(syncRepo, contentAdapter, identityProvider);
 		} else {

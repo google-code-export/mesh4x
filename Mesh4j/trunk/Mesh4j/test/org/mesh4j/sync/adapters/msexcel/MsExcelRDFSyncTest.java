@@ -61,7 +61,7 @@ public class MsExcelRDFSyncTest {
 		Assert.assertEquals(3, workbookSource.getSheet(sheetName).getLastRowNum()); 
 		
 		MockMsExcel excelSource = new MockMsExcel(workbookSource);
-		MsExcelSyncRepository syncRepoSource = new MsExcelSyncRepository(excelSource, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		MsExcelSyncRepository syncRepoSource = new MsExcelSyncRepository(excelSource, sheetName+"_sync", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		MsExcelContentAdapter contentAdapterSource = new MsExcelContentAdapter(excelSource, rdfMapping, sheetName);
 		ISyncAdapter source = new SplitAdapter(syncRepoSource, contentAdapterSource, NullIdentityProvider.INSTANCE);
 
@@ -76,7 +76,7 @@ public class MsExcelRDFSyncTest {
 		Assert.assertEquals(3, workbookTarget.getSheet(sheetName).getLastRowNum());
 		
 		MockMsExcel excelTarget = new MockMsExcel(workbookTarget);			
-		MsExcelSyncRepository syncRepoTarget = new MsExcelSyncRepository(excelTarget, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		MsExcelSyncRepository syncRepoTarget = new MsExcelSyncRepository(excelTarget, sheetName+"_sync", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		MsExcelContentAdapter contentAdapterTarget = new MsExcelContentAdapter(excelTarget, rdfMapping, sheetName);
 		ISyncAdapter target = new SplitAdapter(syncRepoTarget, contentAdapterTarget, NullIdentityProvider.INSTANCE);
 		

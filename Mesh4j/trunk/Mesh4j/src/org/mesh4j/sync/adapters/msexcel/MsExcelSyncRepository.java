@@ -24,8 +24,6 @@ import org.mesh4j.sync.validations.MeshException;
 public class MsExcelSyncRepository implements ISyncRepository, ISyncAware {
 	
 	// CONSTANTS
-	public final static String SHEET_NAME = "SYNC_INFO";
-	
 	public final static String COLUMN_NAME_SYNC_ID = "syncId";
 	public final static String COLUMN_NAME_ENTITY_NAME = "entityName";
 	public final static String COLUMN_NAME_ENTITY_ID = "entityId";
@@ -37,17 +35,21 @@ public class MsExcelSyncRepository implements ISyncRepository, ISyncAware {
 	private IIdGenerator idGenerator;
 	
 	private IMsExcel excel;
+	private String sheetName;
 	
 	// BUSINESS METHODS
-	public MsExcelSyncRepository(IMsExcel excel, IIdentityProvider identityProvider, IIdGenerator idGenerator){
+	public MsExcelSyncRepository(IMsExcel excel, String sheetName, IIdentityProvider identityProvider, IIdGenerator idGenerator){
 		super();
 		Guard.argumentNotNull(excel, "excel");
 		Guard.argumentNotNull(identityProvider, "identityProvider");
 		Guard.argumentNotNull(idGenerator, "idGenerator");
+		Guard.argumentNotNullOrEmptyString(sheetName, "sheetName");
 		
 		this.identityProvider = identityProvider;
 		this.idGenerator = idGenerator;
 		this.excel = excel;
+		this.sheetName = sheetName;
+		
 		this.initialize();
 	}
 
@@ -56,7 +58,7 @@ public class MsExcelSyncRepository implements ISyncRepository, ISyncAware {
 			
 			HSSFWorkbook workbook = this.excel.getWorkbook();
 			
-			HSSFSheet sheet = MsExcelUtils.getOrCreateSheetIfAbsent(workbook, SHEET_NAME);			
+			HSSFSheet sheet = MsExcelUtils.getOrCreateSheetIfAbsent(workbook, this.sheetName);			
 			
 			HSSFRow row = MsExcelUtils.getOrCreateRowHeaderIfAbsent(sheet);
 			
@@ -103,7 +105,7 @@ public class MsExcelSyncRepository implements ISyncRepository, ISyncAware {
 	}
 
 	private HSSFSheet getSheet(){
-		return this.excel.getWorkbook().getSheet(SHEET_NAME);
+		return this.excel.getWorkbook().getSheet(this.sheetName);
 	}
 	
 	public HSSFWorkbook getWorkbook() {

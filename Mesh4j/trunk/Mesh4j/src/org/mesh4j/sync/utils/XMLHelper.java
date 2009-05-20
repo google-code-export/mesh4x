@@ -26,40 +26,42 @@ import org.mesh4j.sync.validations.MeshException;
 import com.sun.org.apache.xml.internal.security.c14n.implementations.Canonicalizer20010315WithComments;
 
 public class XMLHelper {
-	
+
 	private final static Log Logger = LogFactory.getLog(XMLHelper.class);
 
-	public static String formatXML(Element element, OutputFormat format) throws IOException{
-		
+	public static String formatXML(Element element, OutputFormat format)
+			throws IOException {
+
 		element.normalize();
-		
+
 		StringWriter sw = new StringWriter();
-		
-        XMLWriter writer = new XMLWriter(sw, format);
-        writer.write( element );
-		
-        sw.flush();
+
+		XMLWriter writer = new XMLWriter(sw, format);
+		writer.write(element);
+
+		sw.flush();
 		String formatXML = sw.toString();
 		return formatXML;
 	}
-	
-	public static String formatXML(Document document, OutputFormat format) throws IOException{
+
+	public static String formatXML(Document document, OutputFormat format)
+			throws IOException {
 		document.normalize();
-		
+
 		StringWriter sw = new StringWriter();
-		
-        XMLWriter writer = new XMLWriter(sw, format);
-        writer.write( document );
-		
-        sw.flush();
+
+		XMLWriter writer = new XMLWriter(sw, format);
+		writer.write(document);
+
+		sw.flush();
 		String formatXML = sw.toString();
 		return formatXML;
 	}
-	
+
 	public static void write(Document document, File file) {
 		write(document, file, OutputFormat.createPrettyPrint());
 	}
-	
+
 	public static void write(Document document, File file, OutputFormat format) {
 		XMLWriter writer = null;
 		try {
@@ -68,13 +70,13 @@ public class XMLHelper {
 		} catch (IOException e) {
 			Logger.error(e.getMessage(), e);
 			throw new MeshException(e);
-		}finally{
-			try{
-				if(writer != null){
+		} finally {
+			try {
+				if (writer != null) {
 					writer.close();
 				}
 			} catch (IOException e) {
-				Logger.error(e.getMessage(), e); 
+				Logger.error(e.getMessage(), e);
 				throw new MeshException(e);
 			}
 		}
@@ -85,28 +87,30 @@ public class XMLHelper {
 		try {
 			document = DocumentHelper.parseText(xml);
 		} catch (DocumentException e) {
-			Logger.error(e.getMessage(), e); 
+			Logger.error(e.getMessage(), e);
 			throw new MeshException(e);
 		}
-		write(document, file);		
-	}		
-	
+		write(document, file);
+	}
+
 	@SuppressWarnings("unchecked")
-	public static List<Element> selectElements(String xpathExpression, Element root, Map<String, String> namespaces){
-		try{
-			List<Element> elements = new ArrayList<Element>();				
+	public static List<Element> selectElements(String xpathExpression,
+			Element root, Map<String, String> namespaces) {
+		try {
+			List<Element> elements = new ArrayList<Element>();
 			Dom4jXPath xpath = new Dom4jXPath(xpathExpression);
 			xpath.setNamespaceContext(new SimpleNamespaceContext(namespaces));
-			  
-			elements = xpath.selectNodes(root);			  
+
+			elements = xpath.selectNodes(root);
 			return elements;
 		} catch (JaxenException e) {
 			throw new MeshException(e);
 		}
 	}
-	
-	public static Element selectSingleNode(String xpathExpression, Element root, Map<String, String> namespaces) {
-		try{
+
+	public static Element selectSingleNode(String xpathExpression,
+			Element root, Map<String, String> namespaces) {
+		try {
 			Dom4jXPath xpath = new Dom4jXPath(xpathExpression);
 			xpath.setNamespaceContext(new SimpleNamespaceContext(namespaces));
 			return (Element) xpath.selectSingleNode(root);
@@ -119,14 +123,15 @@ public class XMLHelper {
 		SAXReader reader = new SAXReader();
 		return reader.read(file);
 	}
-	
-	public static Document readDocument(File file, Charset charset) throws DocumentException {
+
+	public static Document readDocument(File file, Charset charset)
+			throws DocumentException {
 		SAXReader reader = new SAXReader();
 		reader.setEncoding(charset.name());
 		return reader.read(file);
 	}
 
-	public static String canonicalizeXML(String xml){
+	public static String canonicalizeXML(String xml) {
 		try {
 			Canonicalizer20010315WithComments c = new Canonicalizer20010315WithComments();
 			byte[] result = c.engineCanonicalize(xml.getBytes("UTF-8"));
@@ -135,8 +140,8 @@ public class XMLHelper {
 			throw new MeshException(e);
 		}
 	}
-	
-	public static String canonicalizeXML(Element element){
+
+	public static String canonicalizeXML(Element element) {
 		try {
 			String xml = formatXML(element, OutputFormat.createCompactFormat());
 			xml = xml.trim();
@@ -146,8 +151,8 @@ public class XMLHelper {
 			throw new MeshException(e);
 		}
 	}
-	
-	public static String canonicalizeXML(Document document){
+
+	public static String canonicalizeXML(Document document) {
 		try {
 			String xml = formatXML(document, OutputFormat.createCompactFormat());
 			return canonicalizeXML(xml);
@@ -177,4 +182,32 @@ public class XMLHelper {
 		return sb.toString();
 	}
 
+	public static int calculateHashCode(Element element){
+//	    int h = hash;
+//	    if (h == 0) {
+//	    	int off = offset;
+//	    	char val[] = value;
+//	    	int len = count;
+//	    	for (int i = 0; i < len; i++) {
+//	    		h = 31*h + val[off++];
+//	    	}
+//	    	hash = h;
+//	    } 
+//	    return h;
+//	    
+//	    int hash = 0;
+//	    for (int i = 0; i < length(); i++) {
+//	      hash = 32 * hash + charAt(i);
+//	    }
+//	    return hash;
+
+		String xml = canonicalizeXML(element);
+	    int hash = 0;
+	    for (int i = 0; i < xml.length(); i++) {
+	      hash = (hash << 5) - hash + xml.charAt(i);
+	    }
+	    return hash;
+
+
+	}
 }
