@@ -24,27 +24,15 @@ import com.google.gdata.client.docs.DocsService;
  */
 public class GoogleSpreadsheetToPlainXMLMapping implements IGoogleSpreadsheetToXMLMapping{
 
+	//MODEL VARIABLES
 	private String idColumnName = "";
 	private String lastUpdateColumnName = "";
 	private String type = "";
 	private String sheetName = "";
 	private DocsService docService;
-	
-/*	@Deprecated	
-	public GoogleSpreadsheetToPlainXMLMapping(String type, 
-						String idColumnName,String lastUpdateColumnName, String sheetName){
-		Guard.argumentNotNullOrEmptyString(type, "type");
-		Guard.argumentNotNullOrEmptyString(idColumnName, "idColumnName");
-		if(lastUpdateColumnName != null){
-			Guard.argumentNotNullOrEmptyString(lastUpdateColumnName, "lastUpdateColumnName");
-		}
-		Guard.argumentNotNullOrEmptyString(sheetName, "sheetName");
-		
-		this.type = type;
-		this.idColumnName = idColumnName;
-		this.sheetName = sheetName;
-	}*/
 
+	
+	//BUSINESS METHDOS
 	public GoogleSpreadsheetToPlainXMLMapping(String type, String idColumnName,String lastUpdateColumnName, String sheetName, DocsService docService){
 		Guard.argumentNotNullOrEmptyString(type, "type");
 		Guard.argumentNotNullOrEmptyString(idColumnName, "idColumnName");
@@ -83,29 +71,7 @@ public class GoogleSpreadsheetToPlainXMLMapping implements IGoogleSpreadsheetToX
 		return rootElement;
 	}
 
-//	@Override
-//	public GSRow<GSCell> convertXMLElementToRow(GSWorksheet<GSRow<GSCell>> workSheet,Element element) {
-//		Guard.argumentNotNull(workSheet, "workSheet");
-//		Guard.argumentNotNull(element, "element");
-//		
-//		LinkedHashMap<String,String> listMap = new LinkedHashMap<String, String>();
-//		GSRow<GSCell> gsRow = null ;
-//		
-//		for (Iterator<Element> iterator = element.elementIterator(); iterator.hasNext();){
-//			Element child = (Element) iterator.next();
-//			listMap.put(child.getName(), child.getText());
-//		}
-//		
-//		try {
-//			gsRow = workSheet.createNewRow(listMap);
-//		} catch (IOException e) {
-//			throw new MeshException(e);
-//		} catch (ServiceException e) {
-//			throw new MeshException(e);
-//		}
-//		return gsRow;
-//	}
-
+	@SuppressWarnings("unchecked")
 	@Override
 	public void applyXMLElementToRow(GSWorksheet<GSRow<GSCell>> workSheet,
 									 GSRow<GSCell> rowTobeUPdated, Element payLoad) {
@@ -150,9 +116,7 @@ public class GoogleSpreadsheetToPlainXMLMapping implements IGoogleSpreadsheetToX
 		MsExcelUtils.flush(workbook, fileName);
 		
 		//upload the excel document
-		String spreadsheetId = GoogleSpreadsheetUtils
-				.uploadSpreadsheetDoc(new File(fileName), this.docService);
-		return spreadsheetId;
+		return GoogleSpreadsheetUtils.uploadSpreadsheetDoc(new File(fileName), this.docService);
 	}
 	
 }
