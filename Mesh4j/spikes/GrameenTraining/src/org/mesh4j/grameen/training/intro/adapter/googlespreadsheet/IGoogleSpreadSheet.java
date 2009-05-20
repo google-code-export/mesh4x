@@ -11,6 +11,7 @@ import com.google.gdata.client.spreadsheet.SpreadsheetService;
  * @author Raju
  * @version 1.0,29/4/2009
  */
+@SuppressWarnings("unchecked")
 public interface IGoogleSpreadSheet {
 	
 	public GSSpreadsheet<GSWorksheet> getGSSpreadsheet();
