@@ -117,7 +117,7 @@ public class RDFInstance {
 				}else {
 					RDFDatatype dataType = TypeMapper.getInstance().getTypeByName(range.getURI());
 					if(dataType.isValid(fieldValue)){
-						instance.setProperty(dataTypeName, dataType.cannonicalise(dataType.parse(fieldValue)));
+						instance.setProperty(dataTypeName, rdfSchema.cannonicaliseValue(dataTypeName, dataType.parse(fieldValue)));
 					} else {
 						LOGGER.info("RDF: invalid value. Property: " + dataTypeName + " Type: " + dataType.getURI() + " value: " + fieldValue);
 					}
@@ -152,9 +152,7 @@ public class RDFInstance {
 			if(fieldValue == null){
 				LOGGER.info("RDF: null value. Property: " + dataTypeName);
 			} else {
-				OntResource range = dataTypeProperty.getRange();
-				RDFDatatype dataType = TypeMapper.getInstance().getTypeByName(range.getURI());
-				instance.setProperty(dataTypeName, dataType.cannonicalise(fieldValue));
+				instance.setProperty(dataTypeName, rdfSchema.cannonicaliseValue(dataTypeName, fieldValue));
 			}
 		}
 		return instance;
@@ -197,7 +195,8 @@ public class RDFInstance {
 		this.model.write(sw, "RDF/XML-ABBREV");
 		
 		this.model.add(this.schema.getRDFModel());
-		return XMLHelper.canonicalizeXML(sw.toString());
+		Element element = XMLHelper.parseElement(sw.toString());
+		return XMLHelper.canonicalizeXML(element);
 	}
 
 	public String asPlainXML() {

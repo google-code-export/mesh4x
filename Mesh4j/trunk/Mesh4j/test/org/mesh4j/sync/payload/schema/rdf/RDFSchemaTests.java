@@ -316,7 +316,7 @@ public class RDFSchemaTests {
 		schema.addLongProperty("long", "long", "en");
 		schema.addDecimalProperty("decimal", "decimal", "en");  
 	       
-		String xml = "<example><decimal>10</decimal><long>9223372036854775807</long><double>1.7976931348623157E308</double><datetime>2009-06-01T05:31:01.001Z</datetime><boolean>true</boolean><integer>2147483647</integer><string>abc</string></example>";
+		String xml = "<example><decimal>10.8</decimal><long>9223372036854775807</long><double>1.7976931348623157E308</double><datetime>2009-06-01T05:31:01.001Z</datetime><boolean>true</boolean><integer>2147483647</integer><string>abc</string></example>";
 		Element element = XMLHelper.parseElement(xml);
 		Element rdfElement = schema.getInstanceFromPlainXML("1", element, ISchema.EMPTY_FORMATS);
 		
@@ -328,7 +328,7 @@ public class RDFSchemaTests {
 		"<example:datetime rdf:datatype=\"http://www.w3.org/2001/XMLSchema#dateTime\">2009-06-01T05:31:01.001Z</example:datetime>"+
 		"<example:double rdf:datatype=\"http://www.w3.org/2001/XMLSchema#double\">1.7976931348623157E308</example:double>"+
 		"<example:long rdf:datatype=\"http://www.w3.org/2001/XMLSchema#long\">9223372036854775807</example:long>"+
-		"<example:decimal rdf:datatype=\"http://www.w3.org/2001/XMLSchema#int\">10</example:decimal>"+
+		"<example:decimal rdf:datatype=\"http://www.w3.org/2001/XMLSchema#decimal\">10.8</example:decimal>"+
 		"</example:example>"+
 		"</rdf:RDF>";
 		
@@ -365,7 +365,7 @@ public class RDFSchemaTests {
 		"<example:datetime rdf:datatype=\"http://www.w3.org/2001/XMLSchema#dateTime\">2009-06-01T05:31:01.001Z</example:datetime>"+
 		"<example:double rdf:datatype=\"http://www.w3.org/2001/XMLSchema#double\">1.7976931348623157E308</example:double>"+
 		"<example:long rdf:datatype=\"http://www.w3.org/2001/XMLSchema#long\">9223372036854775807</example:long>"+
-		"<example:decimal rdf:datatype=\"http://www.w3.org/2001/XMLSchema#int\">10</example:decimal>"+
+		"<example:decimal rdf:datatype=\"http://www.w3.org/2001/XMLSchema#decimal\">10</example:decimal>"+
 		"</example:example>"+
 		"</rdf:RDF>";
 		

@@ -23,6 +23,7 @@ public interface IRDFSchema extends ISchema {
 	public static final String XLS_DOUBLE = XSD.xdouble.getURI();
 	public static final String XLS_LONG = XSD.xlong.getURI();
 	public static final String XLS_DECIMAL = XSD.decimal.getURI();
+	public static final String XLS_FLOAT = XSD.xfloat.getURI();
 
 	public RDFInstance createNewInstance(String id);
 

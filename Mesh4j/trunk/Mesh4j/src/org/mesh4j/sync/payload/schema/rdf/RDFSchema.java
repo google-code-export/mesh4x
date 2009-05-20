@@ -4,6 +4,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringWriter;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -108,6 +109,10 @@ public class RDFSchema implements IRDFSchema{
 		this.addProperty(propertyName, label, lang, XSD.decimal);	
 	}
 	
+	public void addFloatProperty(String propertyName, String label, String lang) {
+		this.addProperty(propertyName, label, lang, XSD.xfloat);		
+	}
+	
 	private void addProperty(String propertyName, String label, String lang, Resource xsd){
 		String propertyUri = this.ontologyBaseUri + propertyName;
 		DatatypeProperty domainProperty = this.schema.createDatatypeProperty(propertyUri);
@@ -182,7 +187,52 @@ public class RDFSchema implements IRDFSchema{
 		} else {
 			OntResource range = datatypeProperty.getRange();
 			RDFDatatype dataType = TypeMapper.getInstance().getTypeByName(range.getURI());
-			return dataType.cannonicalise(value);
+			
+			if(IRDFSchema.XLS_DOUBLE.equals(range.getURI())){
+				if(value instanceof Double){
+					return value;
+				} else {
+					if(value instanceof Number){
+						Number number = (Number) value;
+						return new Double(number.doubleValue());
+					} else if(value instanceof String){
+						String valueAsString = (String) value;
+						if(dataType.isValid(valueAsString)){
+							return dataType.parse((String)value);
+						} 
+					}
+				}
+			} else if(IRDFSchema.XLS_FLOAT.equals(range.getURI())){
+				if(value instanceof Float){
+					return value;
+				} else {
+					if(value instanceof Number){
+						Number number = (Number) value;
+						return new Float(number.floatValue());
+					} else if(value instanceof String){
+						String valueAsString = (String) value;
+						if(dataType.isValid(valueAsString)){
+							return dataType.parse((String)value);
+						} 
+					}
+				}
+			} else if(IRDFSchema.XLS_DECIMAL.equals(range.getURI())){
+				if(value instanceof BigDecimal){
+					return value;
+				} else {
+					if(value instanceof Number){
+						return new BigDecimal(value.toString());
+					} else if(value instanceof String){
+						String valueAsString = (String) value;
+						if(dataType.isValid(valueAsString)){
+							return dataType.parse((String)value);
+						}
+					}
+				}
+			} else {
+				return dataType.cannonicalise(value);
+			}
+			return null;
 		}
 	}
 
@@ -304,12 +354,14 @@ public class RDFSchema implements IRDFSchema{
 					if(IRDFSchema.XLS_INTEGER.equals(propTypeThis) 
 							|| IRDFSchema.XLS_LONG.equals(propTypeThis)
 							|| IRDFSchema.XLS_DOUBLE.equals(propTypeThis)
-							|| IRDFSchema.XLS_DECIMAL.equals(propTypeThis)){
+							|| IRDFSchema.XLS_DECIMAL.equals(propTypeThis)
+							|| IRDFSchema.XLS_FLOAT.equals(propTypeThis)){
 						
 						if (!(IRDFSchema.XLS_INTEGER.equals(propTypeThat) 
 								|| IRDFSchema.XLS_LONG.equals(propTypeThat)
 								|| IRDFSchema.XLS_DOUBLE.equals(propTypeThat)
-								|| IRDFSchema.XLS_DECIMAL.equals(propTypeThat))) return false;
+								|| IRDFSchema.XLS_DECIMAL.equals(propTypeThat)
+								|| IRDFSchema.XLS_FLOAT.equals(propTypeThat))) return false;
 					}else{
 						//incompatible!
 						return false;
@@ -319,4 +371,5 @@ public class RDFSchema implements IRDFSchema{
 		}			
 		return true;
 	}
+
 }

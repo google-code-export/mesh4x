@@ -86,11 +86,12 @@ public class HibernateSyncAdapterFactory implements ISyncAdapterFactory{
 	// TODO (JMT) RDF: improve Hibernate type to RDF type mappings
 	private static void addRDFProperty(RDFSchema rdfSchema, Property property) {
 		String propertyName = null;
-		if (property.getValue().getColumnIterator().hasNext())
+		if (property.getValue().getColumnIterator().hasNext()){
 			propertyName = ((Column) property.getValue()
 					.getColumnIterator().next()).getName();
-		else
+		}else{
 			property.getName();
+		}
 		
 		/*code changed by Sharif: May 05, 2009
 		 
@@ -134,6 +135,10 @@ public class HibernateSyncAdapterFactory implements ISyncAdapterFactory{
 
 		if(Hibernate.BIG_DECIMAL.equals(type)){
 			rdfSchema.addDecimalProperty(propertyName, propertyName, "en");
+		}
+		
+		if(Hibernate.FLOAT.equals(type)){
+			rdfSchema.addFloatProperty(propertyName, propertyName, "en");
 		}
 	}
 	

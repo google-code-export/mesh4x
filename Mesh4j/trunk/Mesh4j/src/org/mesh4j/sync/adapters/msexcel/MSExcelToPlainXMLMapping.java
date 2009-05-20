@@ -89,8 +89,8 @@ public class MSExcelToPlainXMLMapping implements IMsExcelToXMLMapping {
 			cellHeader = rowHeader.getCell(cell.getColumnIndex());
 			
 			columnName = cellHeader.getRichStringCellValue().getString();
-			columnValue = MsExcelUtils.getCellValue(cell);
-			
+			columnValue = MsExcelUtils.getCellValue(cell); 
+			  
 			fieldElement = payload.addElement(columnName);
 			
 			if(columnValue instanceof Date){
@@ -123,4 +123,24 @@ public class MSExcelToPlainXMLMapping implements IMsExcelToXMLMapping {
 		MsExcelUtils.flush(workbook, fileName);		
 	}
 
+	@Override
+	public String getIdColumnValue(HSSFSheet sheet, HSSFRow row) {
+		HSSFCell cell = MsExcelUtils.getCell(sheet, row, this.getIdColumnName());
+		if(cell != null && cell.getCellType() != HSSFCell.CELL_TYPE_BLANK){
+			Object cellValue = MsExcelUtils.getCellValue(cell);
+			return String.valueOf(cellValue);
+		} else {
+			return null;
+		}
+	}
+	
+	@Override
+	public Date getLastUpdateColumnValue(HSSFSheet sheet, HSSFRow row) {
+		HSSFCell cell = MsExcelUtils.getCell(sheet, row, this.getLastUpdateColumnName());
+		if(cell != null && cell.getCellType() != HSSFCell.CELL_TYPE_BLANK && cell.getCellType() == HSSFCell.CELL_TYPE_NUMERIC && HSSFDateUtil.isCellDateFormatted(cell)){
+			return cell.getDateCellValue();
+		} else {
+			return null;
+		}
+	}
 }

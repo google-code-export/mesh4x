@@ -153,7 +153,12 @@ public class MsExcelUtils {
 			if(HSSFDateUtil.isCellDateFormatted(cell)) {
 				return cell.getDateCellValue();
 			} else {
-				return new Double(cell.getNumericCellValue()).longValue();
+				Double doubleCellValue = new Double(cell.getNumericCellValue());
+				if(doubleCellValue.doubleValue() - doubleCellValue.longValue() == 0){
+					return doubleCellValue.longValue();
+				} else {
+					return doubleCellValue;	
+				}				
 		    }
 		} else {
 			return null;

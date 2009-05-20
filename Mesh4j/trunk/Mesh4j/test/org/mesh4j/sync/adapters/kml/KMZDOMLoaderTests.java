@@ -93,7 +93,7 @@ public class KMZDOMLoaderTests {
      	"</sx:sync>"+
 		"</mesh4x:sync>"+
 		"<mesh4x:hierarchy xml:id=\"2\" mesh4x:childId=\"1\" />"+
-		"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"233732010\">"+
+		"<mesh4x:sync xmlns:sx=\"http://feedsync.org/2007/feedsync\" version=\"1293992389\">"+
       	"<sx:sync id=\"2\" updates=\"1\" deleted=\"false\" noconflicts=\"false\">"+
       	"<sx:history sequence=\"1\" when=\"2005-05-21T09:43:33Z\" by=\"REO1750\"/>"+
      	"</sx:sync>"+

@@ -136,17 +136,15 @@ public class MsExcelContentAdapter implements IIdentifiableContentAdapter, ISync
 		ArrayList<IContent> result = new ArrayList<IContent>();
 		
 		HSSFRow row;
-		HSSFCell cell;
 		Element payload;
 		IContent entityContent;
 		for (int i = getSheet().getFirstRowNum()+1; i <= getSheet().getLastRowNum(); i++) {
 			row = getSheet().getRow(i);
 			
 			if(row != null && this.hasChanged(row, since)){
-				cell = MsExcelUtils.getCell(getSheet(), row, this.mapping.getIdColumnName());
-				if(cell != null && cell.getCellType() != HSSFCell.CELL_TYPE_BLANK){
+				String entityID = this.mapping.getIdColumnValue(getSheet(), row);
+				if(entityID != null){
 					payload = this.translate(row);
-					String entityID = String.valueOf(MsExcelUtils.getCellValue(cell));
 					entityContent = new EntityContent(payload, this.sheetName, entityID);
 					result.add(entityContent);
 				}
@@ -159,11 +157,10 @@ public class MsExcelContentAdapter implements IIdentifiableContentAdapter, ISync
 		if(this.lastUpdateIndex == -1){
 			return true;
 		} else {
-			HSSFCell cell = row.getCell(this.lastUpdateIndex);
-			if(cell == null){
+			Date lastUpdate = this.mapping.getLastUpdateColumnValue(getSheet(), row);
+			if(lastUpdate == null){
 				return true;
 			} else {
-				Date lastUpdate = (Date)MsExcelUtils.getCellValue(cell);
 				return since.compareTo(lastUpdate) <= 0;
 			}
 		}

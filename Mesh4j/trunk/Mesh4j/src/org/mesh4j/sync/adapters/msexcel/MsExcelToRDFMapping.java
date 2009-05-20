@@ -1,5 +1,6 @@
 package org.mesh4j.sync.adapters.msexcel;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -64,7 +65,7 @@ public class MsExcelToRDFMapping implements IMsExcelToXMLMapping{
 				if(HSSFDateUtil.isCellDateFormatted(cell)) {
 					rdfSchema.addDateTimeProperty(cellName, cellName, "en");
 				} else {
-					rdfSchema.addLongProperty(cellName, cellName, "en");
+					rdfSchema.addDoubleProperty(cellName, cellName, "en");
 		        }
 			}
 		}
@@ -134,7 +135,8 @@ public class MsExcelToRDFMapping implements IMsExcelToXMLMapping{
 		}else if(IRDFSchema.XLS_INTEGER.equals(propertyType) 
 				|| IRDFSchema.XLS_LONG.equals(propertyType)
 				|| IRDFSchema.XLS_DOUBLE.equals(propertyType)
-				|| IRDFSchema.XLS_DECIMAL.equals(propertyType)){
+				|| IRDFSchema.XLS_DECIMAL.equals(propertyType)
+				|| IRDFSchema.XLS_FLOAT.equals(propertyType)){
 			return row.createCell(columnIndex, HSSFCell.CELL_TYPE_NUMERIC);
 		}else if(IRDFSchema.XLS_DATETIME.equals(propertyType)){
 			HSSFCellStyle cellStyle = wb.createCellStyle();
@@ -202,5 +204,26 @@ public class MsExcelToRDFMapping implements IMsExcelToXMLMapping{
 	@Override
 	public IRDFSchema getSchema() {
 		return rdfSchema;
+	}
+
+	@Override
+	public String getIdColumnValue(HSSFSheet sheet, HSSFRow row) {
+		HSSFCell cell = MsExcelUtils.getCell(sheet, row, this.getIdColumnName());
+		if(cell != null && cell.getCellType() != HSSFCell.CELL_TYPE_BLANK){
+			Object cellValue = MsExcelUtils.getCellValue(cell);
+			return String.valueOf(rdfSchema.cannonicaliseValue(this.getIdColumnName(), cellValue));
+		} else {
+			return null;
+		}
+	}
+	
+	@Override
+	public Date getLastUpdateColumnValue(HSSFSheet sheet, HSSFRow row) {
+		HSSFCell cell = MsExcelUtils.getCell(sheet, row, this.getLastUpdateColumnName());
+		if(cell != null && cell.getCellType() != HSSFCell.CELL_TYPE_BLANK && cell.getCellType() == HSSFCell.CELL_TYPE_NUMERIC && HSSFDateUtil.isCellDateFormatted(cell)){
+			return cell.getDateCellValue();
+		} else {
+			return null;
+		}
 	}
 }

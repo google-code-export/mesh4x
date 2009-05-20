@@ -1,5 +1,7 @@
 package org.mesh4j.sync.adapters.msexcel;
 
+import java.util.Date;
+
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -19,5 +21,9 @@ public interface IMsExcelToXMLMapping {
 	ISchema getSchema();
 
 	void createDataSource(String fileName) throws Exception;
+
+	String getIdColumnValue(HSSFSheet sheet, HSSFRow row);
+
+	Date getLastUpdateColumnValue(HSSFSheet sheet, HSSFRow row);
 
 }

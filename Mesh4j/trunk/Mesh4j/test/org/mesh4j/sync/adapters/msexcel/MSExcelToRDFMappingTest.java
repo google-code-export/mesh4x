@@ -48,7 +48,7 @@ public class MSExcelToRDFMappingTest {
 		Assert.assertEquals(6, rdfSchema.getPropertyCount());
 		Assert.assertEquals(IRDFSchema.XLS_STRING, rdfSchema.getPropertyType(COLUMN_NAME));
 		Assert.assertEquals(IRDFSchema.XLS_STRING, rdfSchema.getPropertyType(COLUMN_CODE));
-		Assert.assertEquals(IRDFSchema.XLS_LONG, rdfSchema.getPropertyType(COLUMN_AGE));
+		Assert.assertEquals(IRDFSchema.XLS_DOUBLE, rdfSchema.getPropertyType(COLUMN_AGE));
 		Assert.assertEquals(IRDFSchema.XLS_STRING, rdfSchema.getPropertyType(COLUMN_SEX));
 		Assert.assertEquals(IRDFSchema.XLS_BOOLEAN, rdfSchema.getPropertyType(COLUMN_ILL));
 		Assert.assertEquals(IRDFSchema.XLS_DATETIME, rdfSchema.getPropertyType(COLUMN_DATE_ONSET));
@@ -137,7 +137,7 @@ public class MSExcelToRDFMappingTest {
 		Assert.assertEquals(6, row.getLastCellNum());
 		Assert.assertTrue(name.equals(MsExcelUtils.getCellValue(row.getCell(0))));
 		Assert.assertTrue(code.equals(MsExcelUtils.getCellValue(row.getCell(1))));
-		Assert.assertTrue(age.equals(MsExcelUtils.getCellValue(row.getCell(2))));
+		Assert.assertTrue(age.equals(((Number)MsExcelUtils.getCellValue(row.getCell(2))).longValue()));
 		Assert.assertTrue(sex.equals(MsExcelUtils.getCellValue(row.getCell(3))));
 		Assert.assertTrue(ill.equals(MsExcelUtils.getCellValue(row.getCell(4))));
 		Assert.assertTrue(dateOnset.getTime() == ((Date)MsExcelUtils.getCellValue(row.getCell(5))).getTime());
@@ -169,7 +169,7 @@ public class MSExcelToRDFMappingTest {
 		long millis = System.currentTimeMillis();
 		String name = "Name: " + millis;
 		String code = "Code: " + millis;
-		Long age = ((Long)MsExcelUtils.getCellValue(row.getCell(2))).longValue() + 1;
+		Long age = ((Number)MsExcelUtils.getCellValue(row.getCell(2))).longValue() + 1;
 		String sex = "sex: " + millis;
 		Boolean ill = ((Boolean)MsExcelUtils.getCellValue(row.getCell(4))) ? false : true;
 		Date dateOnset = new Date();
@@ -186,7 +186,7 @@ public class MSExcelToRDFMappingTest {
 		Assert.assertEquals(6, row.getLastCellNum());
 		Assert.assertTrue(name.equals(MsExcelUtils.getCellValue(row.getCell(0))));
 		Assert.assertTrue(code.equals(MsExcelUtils.getCellValue(row.getCell(1))));
-		Assert.assertTrue(age.equals(MsExcelUtils.getCellValue(row.getCell(2))));
+		Assert.assertTrue(age.equals(((Number)MsExcelUtils.getCellValue(row.getCell(2))).longValue()));
 		Assert.assertTrue(sex.equals(MsExcelUtils.getCellValue(row.getCell(3))));
 		Assert.assertTrue(ill.equals(MsExcelUtils.getCellValue(row.getCell(4))));
 		Assert.assertTrue(dateOnset.getTime() == ((Date)MsExcelUtils.getCellValue(row.getCell(5))).getTime());
