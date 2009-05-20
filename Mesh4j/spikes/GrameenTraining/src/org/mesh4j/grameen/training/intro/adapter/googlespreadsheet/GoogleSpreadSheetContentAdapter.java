@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.dom4j.Element;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.mapping.GoogleSpreadsheetToRDFMapping;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.mapping.IGoogleSpreadsheetToXMLMapping;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSCell;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSRow;
@@ -19,7 +18,6 @@ import org.mesh4j.sync.adapters.split.IContentAdapter;
 import org.mesh4j.sync.model.IContent;
 import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.validations.Guard;
-import org.mesh4j.sync.validations.MeshException;
 /**
  * Basically implementation of CRUD operation in google spreadsheet through Mesh4x wrapper
  * API of GData API.
@@ -183,11 +181,6 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 		this.mapper.applyXMLElementToRow(workSheet, row, entityContent.getPayload());
 	}
 	
-	private void addRow(EntityContent entityContent){
-//		GSRow<GSCell> row = this.mapper.convertXMLElementToRow(this.workSheet,entityContent.getPayload());
-//		this.workSheet.addChildElement(row.getElementId(), row);
-	}
-	
 	@SuppressWarnings("unused")
 	private void printTest(){
 		for(Map.Entry<String,GSRow<GSCell>> rowMap :this.workSheet.getGSRows().entrySet()){
@@ -203,10 +196,6 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 				}
 			}
 		}
-	}
-	private void updateRow(EntityContent entityContent,GSRow<GSCell> rowTobeUpdated){
-//		GSRow row = this.mapper.normalizeRow(workSheet, entityContent.getPayload(), rowTobeUpdated);
-//		this.workSheet.updateChildElement(row.getElementId(), row);
 	}
 	
 	@Override

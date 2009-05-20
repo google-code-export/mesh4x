@@ -2,10 +2,7 @@ package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -13,11 +10,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadSheetSyncRepository.SyncColumn;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.mapping.GoogleSpreadsheetToRDFMapping;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.mapping.IGoogleSpreadsheetToXMLMapping;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSBaseElement;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSCell;
@@ -58,11 +53,6 @@ import com.google.gdata.data.spreadsheet.WorksheetEntry;
 import com.google.gdata.data.spreadsheet.WorksheetFeed;
 import com.google.gdata.util.AuthenticationException;
 import com.google.gdata.util.ServiceException;
-import com.hp.hpl.jena.datatypes.RDFDatatype;
-import com.hp.hpl.jena.datatypes.TypeMapper;
-import com.hp.hpl.jena.ontology.DatatypeProperty;
-import com.hp.hpl.jena.ontology.OntResource;
-import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
 /**
  * this is the utility class used by Google spreadsheet adapter
@@ -818,10 +808,10 @@ public class GoogleSpreadsheetUtils {
 		}
 		
 		if(uploadedDocument == null){
-			// wait .5 sec! otherwise the currently uploaded document night not
+			// TODO (SHARIf/RAJU) wait .5 sec! otherwise the currently uploaded document night not
 			// be available in the following query!
 			try {
-				Thread.currentThread().sleep(500);
+				Thread.sleep(500);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

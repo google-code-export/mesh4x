@@ -122,8 +122,10 @@ public class GoogleSpreadSheetSyncRepository implements ISyncRepository,ISyncAwa
 			updateRow(row,syncInfo);
 		}
 	}
+	
 	private void addRow(SyncInfo syncInfo){
-		GSRow<GSCell> row = createSyncRow(syncInfo);
+		createSyncRow(syncInfo);
+		//GSRow<GSCell> row = createSyncRow(syncInfo);
 		//adding child has been done inside the method
 		//this.workSheet.addChildElement(row.getElementId(),row);
 	}
@@ -156,8 +158,7 @@ public class GoogleSpreadSheetSyncRepository implements ISyncRepository,ISyncAwa
 	private GSRow convertSyncInfoToRow(GSRow rowTobeUPdated,SyncInfo syncInfo){
 		
 		Element syncPayLoad = SyncInfoParser.convertSync2Element(syncInfo.getSync(), RssSyndicationFormat.INSTANCE, this.identityProvider);
-		SyncColumn sc = SyncColumn.sync_id;
-		
+	
 		rowTobeUPdated.updateCellValue( syncInfo.getSyncId() , SyncColumn.sync_id.toString());
 		rowTobeUPdated.updateCellValue( syncInfo.getType() ,SyncColumn.entity_name.toString());
 		rowTobeUPdated.updateCellValue( syncInfo.getId() ,SyncColumn.entity_id.toString());

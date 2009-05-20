@@ -11,10 +11,12 @@ import org.mesh4j.sync.validations.Guard;
 
 public class InMemoryContentRepository implements IContentAdapter  {
 
+	// MODEL VARIABLES
 	private Storage storage = null;
 	private String repositoryType = "";
 	private String entityName = "";
 	
+	// BUSINESS METHODS
 	public InMemoryContentRepository(Storage storage,String repositoryType,String entityName){
 			
 			Guard.argumentNotNull(storage, "storage");
@@ -60,6 +62,8 @@ public class InMemoryContentRepository implements IContentAdapter  {
 		storage.addRow(content);
 	}
 
-	
+	public String getEntityName(){
+		return this.entityName;
+	}
 
 }
