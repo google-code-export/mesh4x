@@ -5,10 +5,12 @@ import java.io.File;
 import org.dom4j.DocumentException;
 import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadSheetContentAdapter;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadSheetRDFSyncAdapterFactory;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadSheetSyncAdapterFactory;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadSheetSyncRepository;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadsheet;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.IGoogleSpreadSheet;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.mapping.GoogleSpreadsheetToRDFMapping;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.mapping.GoogleSpreadsheetToPlainXMLMapping;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.mapping.IGoogleSpreadsheetToXMLMapping;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.feed.ContentReader;
@@ -39,6 +41,9 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 	private MsAccessSyncAdapterFactory msAccesSyncAdapter;
 	private MsExcelRDFSyncAdapterFactory excelRDFSyncFactory;
 	private MsExcelSyncAdapterFactory excelSyncFactory; 
+	private GoogleSpreadSheetSyncAdapterFactory googleSpreadSheetSyncAdapterFactory;
+	private GoogleSpreadSheetRDFSyncAdapterFactory googleSpreadSheetRDFSyncAdapterFactory;
+	
 	
 	// BUSINESS METHODS
 
@@ -48,6 +53,8 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 		this.msAccesSyncAdapter = new MsAccessSyncAdapterFactory(this.getBaseDirectory(), this.getBaseRDFUrl());
 		this.excelRDFSyncFactory = new MsExcelRDFSyncAdapterFactory(this.getBaseRDFUrl());
 		this.excelSyncFactory = new MsExcelSyncAdapterFactory();
+		this.googleSpreadSheetSyncAdapterFactory = new GoogleSpreadSheetSyncAdapterFactory();
+		this.googleSpreadSheetRDFSyncAdapterFactory = new GoogleSpreadSheetRDFSyncAdapterFactory(this.getBaseRDFUrl());
 	}
 
 	@Override
@@ -59,34 +66,53 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 		}
 	}
 
+	/**
+	 * google spreadsheet adapter without rdf
+	 */
 	@Override
-	public ISyncAdapter createGoogleSpreadSheetAdapter(GoogleSpreadSheetInfo spreadSheetInfo, IRDFSchema rdfSchema) {
-
-		// TODO create googleSpreadSheetSyncAdapterFactory in GeoogleSpreadSheet project
+	public ISyncAdapter createPlainXMLBasedGoogleSpreadSheetAdapter(GoogleSpreadSheetInfo spreadSheetInfo) {
 		String idColumName = spreadSheetInfo.getIdColumnName();
 		String userName = spreadSheetInfo.getUserName();
 		String passWord = spreadSheetInfo.getPassWord();
-		String googleSpreadSheetId = spreadSheetInfo.getGoogleSpreadSheetId();
-		//String type = spreadSheetInfo.getType();
-		//String sheetName = spreadSheetInfo.getSheetName();
-
-		// create google spread sheet
-		IGoogleSpreadSheet gSpreadSheet = new GoogleSpreadsheet(googleSpreadSheetId, userName, passWord);
-		IGoogleSpreadsheetToXMLMapping mapper = new GoogleSpreadsheetToRDFMapping(rdfSchema, idColumName, null, gSpreadSheet.getDocsService());
-		String syncWorkSheetName = spreadSheetInfo.getSheetName() + "_sync";
-
-		// adapter creation
-		IIdentityProvider identityProvider = getIdentityProvider();
-		GoogleSpreadSheetContentAdapter contentRepo = new GoogleSpreadSheetContentAdapter(gSpreadSheet, mapper);
-		GoogleSpreadSheetSyncRepository syncRepo = new GoogleSpreadSheetSyncRepository(
-				gSpreadSheet, identityProvider, getIdGenerator(), syncWorkSheetName);
+		String spreadsheetName = spreadSheetInfo.getGoogleSpreadSheetName();
+		String type = spreadSheetInfo.getType();
+		String sheetName = spreadSheetInfo.getSheetName();
 		
-		SplitAdapter splitAdapter = new SplitAdapter(syncRepo, contentRepo,identityProvider);
+		IIdentityProvider identityProvider = getIdentityProvider();
+		SplitAdapter splitAdapter = googleSpreadSheetSyncAdapterFactory
+				.createSyncAdapter(userName, passWord, spreadsheetName,
+						sheetName, idColumName, null, identityProvider, type);
 
 		return splitAdapter;
 	}
 
+	/**
+	 * google spreadsheet adapter with rdf
+	 * 
+	 * when googlespreadsheet adapter works as source, no need to supply rdf schema
+	 */
 	@Override
+	public ISyncAdapter createRdfBasedGoogleSpreadSheetAdapter(GoogleSpreadSheetInfo spreadSheetInfo, IRDFSchema sourceSchema) {
+		String idColumnName = spreadSheetInfo.getIdColumnName();
+		String username = spreadSheetInfo.getUserName();
+		String password = spreadSheetInfo.getPassWord();
+		String spreadsheetName = spreadSheetInfo.getGoogleSpreadSheetName();
+		String sourceAlias = spreadSheetInfo.getType();
+		String cotentSheetName = spreadSheetInfo.getSheetName();
+		String lastUpdateColumnName = null;
+		
+		IIdentityProvider identityProvider = getIdentityProvider();
+
+		if(sourceSchema == null)
+			return googleSpreadSheetRDFSyncAdapterFactory
+			.createSyncAdapter(username, password, spreadsheetName,
+					cotentSheetName, idColumnName, lastUpdateColumnName, identityProvider, sourceAlias);
+		else
+			return this.googleSpreadSheetRDFSyncAdapterFactory.createSyncAdapter(
+				username, password, spreadsheetName, cotentSheetName,
+				idColumnName, lastUpdateColumnName, identityProvider, sourceSchema, sourceAlias);
+	}	
+
 	public ISyncAdapter createHttpSyncAdapter(String meshid, String datasetId) {
 		String url = getSyncUrl(meshid, datasetId);
 
@@ -119,6 +145,7 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 		return adapter;
 	}	
 	
+
 	@Override
 	public ISyncAdapter createMySQLAdapter(String userName, String password,
 			String hostName, int portNo, String databaseName, String tableName) {
