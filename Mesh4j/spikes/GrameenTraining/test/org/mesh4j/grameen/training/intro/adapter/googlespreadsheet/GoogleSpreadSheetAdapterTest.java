@@ -31,13 +31,14 @@ import org.mesh4j.sync.utils.XMLHelper;
 
 public class GoogleSpreadSheetAdapterTest {
 	private IGoogleSpreadSheet spreadsheet;
-	private String GOOGLE_SPREADSHEET_FIELD = "peo4fu7AitTo8e3v0D8FCew";
+	//private String GOOGLE_SPREADSHEET_FIELD = "peo4fu7AitTo8e3v0D8FCew";
+	private String spreadsheetName = "testspreadsheet";
 	
 	@Before
 	public void setUp(){
 		String userName = "gspreadsheet.test@gmail.com";
 		String passWord = "java123456";
-		spreadsheet = new GoogleSpreadsheet(GOOGLE_SPREADSHEET_FIELD,userName,passWord);
+		spreadsheet = new GoogleSpreadsheet(spreadsheetName,userName, passWord);
 	}
 	
 	/**
@@ -76,29 +77,34 @@ public class GoogleSpreadSheetAdapterTest {
 	public void ShouldSyncTwoWorkSheetOfTwoSpreadSheetOfTwoDiffUser(){
 		String userName = "";
 		String passWord = "";
-		String spField = "";
-		IGoogleSpreadsheetToXMLMapping mapper = null;
-		IGoogleSpreadSheet spreadSheet = null;
+		//String spField = "";
+		String spName = "";
+		IGoogleSpreadsheetToXMLMapping mapperA = null;
+		IGoogleSpreadsheetToXMLMapping mapperB = null;
+		IGoogleSpreadSheet spreadSheetA = null;
+		IGoogleSpreadSheet spreadSheetB = null;
 		String workSheetName = "";
 		
 		//source
 		userName = "gspreadsheet.run@gmail.com";
 		passWord = "java123456";
-		spField = "pc5o5hLhHbIhQ9IEZKNLAJQ";
-		spreadSheet = getGoogleSpreadSheet(spField, userName, passWord);
-		workSheetName = spreadSheet.getGSWorksheet(1).getName();//or provide the sheet name
-		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheetName, spreadsheet.getDocsService());
-		SplitAdapter splitAdapterSource = getAdapter(spreadSheet,mapper, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		//spField = "pc5o5hLhHbIhQ9IEZKNLAJQ";
+		spName = "spreadtest";
+		spreadSheetA = getGoogleSpreadSheet(/*spField*/spName, userName, passWord);
+		workSheetName = spreadSheetA.getGSWorksheet(1).getName();//or provide the sheet name
+		mapperA = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheetName, spreadSheetA.getDocsService());
+		SplitAdapter splitAdapterSource = getAdapter(spreadSheetA,mapperA, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
 		
 		//target
 		userName = "gspreadsheet.test@gmail.com";
 		passWord = "java123456";
-		spField = "peo4fu7AitTo8e3v0D8FCew";
-		spreadSheet = getGoogleSpreadSheet(spField, userName, passWord);
-		workSheetName = spreadSheet.getGSWorksheet(1).getName();//or provide the sheet name
-		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheetName, spreadsheet.getDocsService());
-		SplitAdapter splitAdapterTarget = getAdapter(spreadSheet,mapper, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		//spField = "peo4fu7AitTo8e3v0D8FCew";
+		spName = "testspreadsheet";
+		spreadSheetB = getGoogleSpreadSheet(/*spField*/spName, userName, passWord);
+		workSheetName = spreadSheetB.getGSWorksheet(1).getName();//or provide the sheet name
+		mapperB = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheetName, spreadSheetB.getDocsService());
+		SplitAdapter splitAdapterTarget = getAdapter(spreadSheetB,mapperB, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
 		SyncEngine syncEngine = new SyncEngine(splitAdapterSource,splitAdapterTarget);
 		List<Item> conflicts = syncEngine.synchronize();
@@ -116,7 +122,8 @@ public class GoogleSpreadSheetAdapterTest {
 	public void ShouldSyncTwoWorkSheetOfTwoSpreadSheet(){
 		String userName = "";
 		String passWord = "";
-		String spField = "";
+		//String spField = "";
+		String spName = "";
 		String workSheetName = "";
 		IGoogleSpreadsheetToXMLMapping mapper = null;
 		IGoogleSpreadSheet spreadSheet = null;
@@ -124,19 +131,21 @@ public class GoogleSpreadSheetAdapterTest {
 		//source 
 		userName = "gspreadsheet.test@gmail.com";
 		passWord = "java123456";
-		spField = "peo4fu7AitTo8e3v0D8FCew";
-		spreadSheet = getGoogleSpreadSheet(spField, userName, passWord);
+		//spField = "peo4fu7AitTo8e3v0D8FCew";
+		spName = "testspreadsheet";
+		spreadSheet = getGoogleSpreadSheet(/*spField,*/spName, userName, passWord);
 		workSheetName = spreadSheet.getGSWorksheet(1).getName();
-		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheetName, spreadsheet.getDocsService());
+		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheetName, spreadSheet.getDocsService());
 		SplitAdapter splitAdapterSource = getAdapter(spreadSheet,mapper, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);	
 		
 		//target
 		userName = "gspreadsheet.test@gmail.com";
 		passWord = "java123456";
-		spField = "peo4fu7AitTqkOhMSrecFRA";
-		spreadSheet = getGoogleSpreadSheet(spField, userName, passWord);
+		//spField = "peo4fu7AitTqkOhMSrecFRA";
+		spName = "spreadsheettest2";
+		spreadSheet = getGoogleSpreadSheet(/*spField,*/spName, userName, passWord);
 		workSheetName = spreadSheet.getGSWorksheet(1).getName();
-		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheetName, spreadsheet.getDocsService());
+		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheetName, spreadSheet.getDocsService());
 		SplitAdapter splitAdapterTarget = getAdapter(spreadSheet,mapper, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
 		SyncEngine syncEngine = new SyncEngine(splitAdapterSource,splitAdapterTarget);
@@ -293,8 +302,8 @@ public class GoogleSpreadSheetAdapterTest {
 		return content;
 	}
 	
-	private IGoogleSpreadSheet getGoogleSpreadSheet(String spField,String userName,String passWord){
-		IGoogleSpreadSheet spreadsheet = new GoogleSpreadsheet(spField,userName,passWord);
+	private IGoogleSpreadSheet getGoogleSpreadSheet(String spreadsheetName,String userName,String passWord){
+		IGoogleSpreadSheet spreadsheet = new GoogleSpreadsheet(/*spField,*/spreadsheetName,userName, passWord);
 		return spreadsheet;
 	}
 	
