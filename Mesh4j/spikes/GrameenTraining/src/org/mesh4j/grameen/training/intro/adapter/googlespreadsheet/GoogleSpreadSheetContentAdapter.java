@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.dom4j.Element;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.mapping.GoogleSpreadsheetToRDFMapping;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.mapping.IGoogleSpreadsheetToXMLMapping;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSCell;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSRow;
@@ -56,9 +57,10 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 	 */
 	//TODO(raju)  no need to pass the workSheet instance, rather pass the worksheet name
 	// just pick the particular worksheet from IGoogleSpreadSheet
-	public GoogleSpreadSheetContentAdapter(IGoogleSpreadSheet spreadSheet,IGoogleSpreadsheetToXMLMapping mapper){
+	public GoogleSpreadSheetContentAdapter(IGoogleSpreadSheet spreadSheet, IGoogleSpreadsheetToXMLMapping mapper){
 		
 		Guard.argumentNotNull(spreadSheet, "spreadSheet");
+		Guard.argumentNotNull(spreadSheet.getGSSpreadsheet(), "spreadSheet.gssSpreadsheet");
 		Guard.argumentNotNull(mapper, "mapper");
 		
 		this.spreadSheet = spreadSheet;
@@ -69,7 +71,10 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 		//to create two worksheet(programatically) with the same name.
 		this.entityName = mapper.getType();
 		this.idColumnName = mapper.getIdColumnName();
-		this.workSheet = this.spreadSheet.getGSWorksheet(mapper.getSheetName());
+		this.workSheet = GoogleSpreadsheetUtils.getOrCreateContentSheetIfAbsent(
+						spreadSheet.getGSSpreadsheet(),	mapper);
+			//this.spreadSheet.getGSWorksheet(mapper.getSheetName());
+		
 		init();
 	}
 	
