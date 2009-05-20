@@ -27,8 +27,8 @@ public class SpreadSheetToXMLMapperTest {
 	private IGoogleSpreadsheetToXMLMapping mapper;
 	String userName = "gspreadsheet.test@gmail.com";
 	String passWord = "java123456";
-	String GOOGLE_SPREADSHEET_FIELD = "peo4fu7AitTo8e3v0D8FCew";
-
+	//String GOOGLE_SPREADSHEET_FIELD = "peo4fu7AitTo8e3v0D8FCew";
+	String GOOGLE_SPREADSHEET_FILE_NAME = "testspreadsheet";
 	
 	
 	@Before
@@ -222,7 +222,7 @@ public class SpreadSheetToXMLMapperTest {
 	
 	
 	private void loadSpreadSheet(){
-		spreadsheet = new GoogleSpreadsheet(GOOGLE_SPREADSHEET_FIELD,userName,passWord);
+		spreadsheet = new GoogleSpreadsheet(GOOGLE_SPREADSHEET_FILE_NAME, userName, passWord);
 		GSWorksheet workSheet = spreadsheet.getGSWorksheet(1);
 		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheet.getName(), spreadsheet.getDocsService());
 	}	
