@@ -229,7 +229,7 @@ public class AdapterFactoryTests {
 			syncExcel = new MsExcel(fileSync.getAbsolutePath());
 		}
 
-		MsExcelSyncRepository syncRepo = new MsExcelSyncRepository(syncExcel,
+		MsExcelSyncRepository syncRepo = new MsExcelSyncRepository(syncExcel,sheetName+"_sync",
 				identityProvider, idGenerator);
 		MSExcelToPlainXMLMapping mapper = new MSExcelToPlainXMLMapping(
 				idColumnName, null);
