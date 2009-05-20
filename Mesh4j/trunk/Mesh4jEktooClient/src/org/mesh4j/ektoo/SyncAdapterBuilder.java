@@ -4,14 +4,8 @@ import java.io.File;
 
 import org.dom4j.DocumentException;
 import org.mesh4j.ektoo.properties.PropertiesProvider;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadSheetContentAdapter;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadSheetRDFSyncAdapterFactory;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadSheetSyncAdapterFactory;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadSheetSyncRepository;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadsheet;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.IGoogleSpreadSheet;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.mapping.GoogleSpreadsheetToPlainXMLMapping;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.mapping.IGoogleSpreadsheetToXMLMapping;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.feed.ContentReader;
 import org.mesh4j.sync.adapters.feed.ContentWriter;

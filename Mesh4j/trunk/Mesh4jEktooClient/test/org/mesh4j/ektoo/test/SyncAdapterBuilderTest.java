@@ -22,8 +22,6 @@ import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.mapping.IGoog
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSCell;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSRow;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSWorksheet;
-
-
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.adapters.hibernate.EntityContent;
@@ -34,11 +32,8 @@ import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.Sync;
 import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
-
 import org.mesh4j.sync.payload.schema.rdf.RDFInstance;
 import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
-import org.mesh4j.sync.test.utils.TestHelper;
-
 import org.mesh4j.sync.utils.XMLHelper;
 import org.mesh4j.sync.validations.MeshException;
 
