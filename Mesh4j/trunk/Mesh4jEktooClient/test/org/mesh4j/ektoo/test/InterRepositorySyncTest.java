@@ -1,10 +1,16 @@
 package org.mesh4j.ektoo.test;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import junit.framework.Assert;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRichTextString;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.dom4j.Element;
 import org.junit.Test;
 import org.mesh4j.ektoo.GoogleSpreadSheetInfo;
@@ -19,11 +25,13 @@ import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.adapters.feed.XMLContent;
 import org.mesh4j.sync.adapters.feed.atom.AtomSyndicationFormat;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
+import org.mesh4j.sync.adapters.msexcel.MsExcelUtils;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.Sync;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
+import org.mesh4j.sync.validations.MeshException;
 
 public class InterRepositorySyncTest {
 	
@@ -161,12 +169,12 @@ public class InterRepositorySyncTest {
 	}
 	
 	@Test
-	public void ShouldSyncGoogleSpreadSheetToExcel(){
+	public void ShouldSyncGoogleSpreadSheetToExcel() throws Exception{
 		
 		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
 		
 		GoogleSpreadSheetInfo spreadSheetInfo = new GoogleSpreadSheetInfo(
-				"peo4fu7AitTo8e3v0D8FCew",
+				"testspreadsheet",
 				"gspreadsheet.test@gmail.com",
 				"java123456",
 				"id",
@@ -175,11 +183,11 @@ public class InterRepositorySyncTest {
 				);
 		
 		String rdfUrl = "http://localhost:8080/mesh4x/feeds";
-		IGoogleSpreadSheet gss = new GoogleSpreadsheet(spreadSheetInfo.getGoogleSpreadSheetId(), spreadSheetInfo.getUserName(), spreadSheetInfo.getPassWord());
+		IGoogleSpreadSheet gss = new GoogleSpreadsheet(spreadSheetInfo.getGoogleSpreadSheetName(), spreadSheetInfo.getUserName(), spreadSheetInfo.getPassWord());
 		IRDFSchema rdfSchema = GoogleSpreadsheetToRDFMapping.extractRDFSchema(gss, spreadSheetInfo.getSheetName(), rdfUrl);
 		
 		File contentFile = new File(this.getClass().getResource("content1.xls").getFile());
-		ISyncAdapter sourceAsGoogleSpreadSheet = builder.createGoogleSpreadSheetAdapter(spreadSheetInfo, rdfSchema);
+		ISyncAdapter sourceAsGoogleSpreadSheet = builder.createRdfBasedGoogleSpreadSheetAdapter(spreadSheetInfo, rdfSchema);
 		ISyncAdapter targetAsExcel = builder.createMsExcelAdapter(contentFile.getAbsolutePath(), "user", "id", rdfSchema);
 		
 		SyncEngine engine = new SyncEngine(sourceAsGoogleSpreadSheet, targetAsExcel);
@@ -187,13 +195,12 @@ public class InterRepositorySyncTest {
 		Assert.assertEquals(0, listOfConflicts.size());
 	}
 	
-	
 	@Test
-	public void ShouldSyncGoogleSpreadSheetToGoogleSpreadSheet(){
+	public void ShouldSyncGoogleSpreadSheetToGoogleSpreadSheet() throws Exception{
 		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
 		
 		GoogleSpreadSheetInfo spreadSheetInfoSource = new GoogleSpreadSheetInfo(
-				"peo4fu7AitTqkOhMSrecFRA",
+				"testspreadsheet",
 				"gspreadsheet.test@gmail.com",
 				"java123456",
 				"id",
@@ -203,7 +210,7 @@ public class InterRepositorySyncTest {
 		
 		
 		GoogleSpreadSheetInfo spreadSheetInfoTarget = new GoogleSpreadSheetInfo(
-				"peo4fu7AitTqkOhMSrecFRA",
+				"testspreadsheet",
 				"gspreadsheet.test@gmail.com",
 				"java123456",
 				"id",
@@ -213,14 +220,13 @@ public class InterRepositorySyncTest {
 		
 		String rdfUrl = "http://localhost:8080/mesh4x/feeds";
 		
-		IGoogleSpreadSheet gssSource = new GoogleSpreadsheet(spreadSheetInfoSource.getGoogleSpreadSheetId(), spreadSheetInfoSource.getUserName(), spreadSheetInfoSource.getPassWord());
+		IGoogleSpreadSheet gssSource = new GoogleSpreadsheet(spreadSheetInfoSource.getGoogleSpreadSheetName(), spreadSheetInfoSource.getUserName(), spreadSheetInfoSource.getPassWord());
 		IRDFSchema rdfSchemaSource = GoogleSpreadsheetToRDFMapping.extractRDFSchema(gssSource, spreadSheetInfoSource.getSheetName(), rdfUrl);
-		ISyncAdapter sourceAsGoogleSpreadSheet = builder.createGoogleSpreadSheetAdapter(spreadSheetInfoSource, rdfSchemaSource);
+		ISyncAdapter sourceAsGoogleSpreadSheet = builder.createRdfBasedGoogleSpreadSheetAdapter(spreadSheetInfoSource, rdfSchemaSource);
 		
-		IGoogleSpreadSheet gssTarget = new GoogleSpreadsheet(spreadSheetInfoTarget.getGoogleSpreadSheetId(), spreadSheetInfoTarget.getUserName(), spreadSheetInfoTarget.getPassWord());
+		IGoogleSpreadSheet gssTarget = new GoogleSpreadsheet(spreadSheetInfoTarget.getGoogleSpreadSheetName(), spreadSheetInfoTarget.getUserName(), spreadSheetInfoTarget.getPassWord());
 		IRDFSchema rdfSchemaTarget = GoogleSpreadsheetToRDFMapping.extractRDFSchema(gssTarget, spreadSheetInfoTarget.getSheetName(), rdfUrl);
-		ISyncAdapter targetAsGoogleSpreadSheet = builder.createGoogleSpreadSheetAdapter(spreadSheetInfoTarget, rdfSchemaTarget);
-		
+		ISyncAdapter targetAsGoogleSpreadSheet = builder.createRdfBasedGoogleSpreadSheetAdapter(spreadSheetInfoTarget, rdfSchemaTarget);
 		
 		SyncEngine engine = new SyncEngine(sourceAsGoogleSpreadSheet,targetAsGoogleSpreadSheet);
 		List<Item> listOfConflicts = engine.synchronize();
@@ -231,12 +237,12 @@ public class InterRepositorySyncTest {
 	@Test
 	public void ShouldSyncExcelToExcelWithoutRDFAssumeSameSchema(){
 		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
-		File sourceFile = new File(this.getClass().getResource("content1.xls").getFile());
-		File targetFile = new File(this.getClass().getResource("content2.xls").getFile());
 		
-		ISyncAdapter sourceAsExcel = builder.createMsExcelAdapter(sourceFile.getAbsolutePath(), "user", "id");
+		ISyncAdapter sourceAsExcel = builder.createMsExcelAdapter(
+				createMsExcelFileForTest("sourceContentFile.xls", true), "user", "id");
 		
-		ISyncAdapter targetAsExcel = builder.createMsExcelAdapter(targetFile.getAbsolutePath(), "user", "id");
+		ISyncAdapter targetAsExcel = builder.createMsExcelAdapter(
+				createMsExcelFileForTest("targetContentFile.xls", false), "user", "id");
 		
 		SyncEngine engine = new SyncEngine(sourceAsExcel,targetAsExcel);
 		List<Item> listOfConflicts = engine.synchronize();
@@ -275,7 +281,7 @@ public class InterRepositorySyncTest {
 		List<Item> listOfConflicts = engine.synchronize();
 		Assert.assertEquals(0, listOfConflicts.size());
 	}
-	
+
 	@Test
 	public void ShouldSyncMySQLToCloud(){	
 			
@@ -303,5 +309,61 @@ public class InterRepositorySyncTest {
 				.getAll().size());
 	}
 	
-	
+		
+	private String createMsExcelFileForTest(String filename, boolean addSampleRow){
+		//String filename = "contentFile.xls";
+		String sheetName = "user";
+		String idColumn = "id";
+
+		File file;
+		try {
+			file = TestHelper.makeFileAndDeleteIfExists(filename);
+		} catch (IOException e) {
+			throw new MeshException(e);
+		}
+		
+		HSSFWorkbook workbook = new HSSFWorkbook();
+		HSSFSheet sheet = workbook.createSheet(sheetName);
+		sheet.createRow(0);
+		HSSFRow row = sheet.getRow(0);
+		HSSFCell cell;
+
+		cell = row.createCell(0, HSSFCell.CELL_TYPE_STRING);
+		cell.setCellValue(new HSSFRichTextString(idColumn));
+
+		cell = row.createCell(1, HSSFCell.CELL_TYPE_STRING);
+		cell.setCellValue(new HSSFRichTextString("name"));
+
+		cell = row.createCell(2, HSSFCell.CELL_TYPE_STRING);
+		cell.setCellValue(new HSSFRichTextString("age"));
+
+		cell = row.createCell(3, HSSFCell.CELL_TYPE_STRING);
+		cell.setCellValue(new HSSFRichTextString("city"));
+
+		cell = row.createCell(4, HSSFCell.CELL_TYPE_STRING);
+		cell.setCellValue(new HSSFRichTextString("country"));
+
+		if(addSampleRow){
+			row = sheet.createRow(1);	
+
+			cell = row.createCell(0, HSSFCell.CELL_TYPE_STRING);
+			cell.setCellValue(new HSSFRichTextString("123"));
+
+			cell = row.createCell(1, HSSFCell.CELL_TYPE_STRING);
+			cell.setCellValue(new HSSFRichTextString("sharif"));
+
+			cell = row.createCell(2, HSSFCell.CELL_TYPE_STRING);
+			cell.setCellValue(new HSSFRichTextString("29"));
+
+			cell = row.createCell(3, HSSFCell.CELL_TYPE_STRING);
+			cell.setCellValue(new HSSFRichTextString("dhaka"));
+
+			cell = row.createCell(4, HSSFCell.CELL_TYPE_STRING);
+			cell.setCellValue(new HSSFRichTextString("bangladesh"));		
+		}
+		
+		MsExcelUtils.flush(workbook, file.getAbsolutePath());
+
+		return file.getAbsolutePath();
+	}
 }
