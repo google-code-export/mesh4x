@@ -9,7 +9,7 @@ public class GoogleSpreadSheetInfoTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldGenerateExceptionIfSpreadSheetFiledIsNullOrEmpty(){
-		GoogleSpreadSheetInfo spreadSheetInfo = new GoogleSpreadSheetInfo(
+		new GoogleSpreadSheetInfo(
 				"",
 				"gspreadsheet.test@gmail.com",
 				"java123456",
@@ -21,7 +21,7 @@ public class GoogleSpreadSheetInfoTest {
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldGenerateExceptionIfUserNameIsNullOrEmpty(){
-		GoogleSpreadSheetInfo spreadSheetInfo = new GoogleSpreadSheetInfo(
+		new GoogleSpreadSheetInfo(
 				"peo4fu7AitTo8e3v0D8FCew",
 				"",
 				"java123456",
@@ -33,7 +33,7 @@ public class GoogleSpreadSheetInfoTest {
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldGenerateExceptionIfPasswordIsNullOrEmpty(){
-		GoogleSpreadSheetInfo spreadSheetInfo = new GoogleSpreadSheetInfo(
+		new GoogleSpreadSheetInfo(
 				"peo4fu7AitTo8e3v0D8FCew",
 				"gspreadsheet.test@gmail.com",
 				"",
@@ -45,7 +45,7 @@ public class GoogleSpreadSheetInfoTest {
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldGenerateExceptionIfIdIsNullOrEmpty(){
-		GoogleSpreadSheetInfo spreadSheetInfo = new GoogleSpreadSheetInfo(
+		new GoogleSpreadSheetInfo(
 				"peo4fu7AitTo8e3v0D8FCew",
 				"gspreadsheet.test@gmail.com",
 				"java123456",
@@ -57,7 +57,7 @@ public class GoogleSpreadSheetInfoTest {
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldGenerateExceptionIfSheetNameIsNullOrEmpty(){
-		GoogleSpreadSheetInfo spreadSheetInfo = new GoogleSpreadSheetInfo(
+		new GoogleSpreadSheetInfo(
 				"peo4fu7AitTo8e3v0D8FCew",
 				"gspreadsheet.test@gmail.com",
 				"java123456",
@@ -69,7 +69,7 @@ public class GoogleSpreadSheetInfoTest {
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldGenerateExceptionIfTypeIsNullOrEmpty(){
-		GoogleSpreadSheetInfo spreadSheetInfo = new GoogleSpreadSheetInfo(
+		new GoogleSpreadSheetInfo(
 				"peo4fu7AitTo8e3v0D8FCew",
 				"gspreadsheet.test@gmail.com",
 				"java123456",

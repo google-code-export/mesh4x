@@ -1,11 +1,15 @@
 package org.mesh4j.ektoo.controller;
 
 import org.mesh4j.ektoo.GoogleSpreadSheetInfo;
-import org.mesh4j.ektoo.ISyncAdapterBuilder;
 import org.mesh4j.ektoo.SyncAdapterBuilder;
 import org.mesh4j.ektoo.model.GSSheetModel;
 import org.mesh4j.ektoo.properties.PropertiesProvider;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadsheet;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.IGoogleSpreadSheet;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.mapping.GoogleSpreadsheetToRDFMapping;
 import org.mesh4j.sync.ISyncAdapter;
+import org.mesh4j.sync.adapters.msexcel.MsExcelContentAdapter;
+import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.validations.Guard;
 
@@ -13,8 +17,7 @@ import org.mesh4j.sync.validations.Guard;
  * @author Bhuiyan Mohammad Iklash
  * 
  */
-public class GSSheetUIController extends AbstractController
-{
+public class GSSheetUIController extends AbstractController {
 	public static final String USER_NAME_PROPERTY = "UserName";
 	public static final String USER_PASSWORD_PROPERTY = "UserPassword";
 	public static final String SPREADSHEET_KEY_PROPERTY = "SpreadsheetKey";
@@ -25,8 +28,8 @@ public class GSSheetUIController extends AbstractController
 	public static final String LASTUPDATE_COLUMN_POSITION_PROPERTY = "LastUpdatedColumnPosition";
 
 	// MODEL VARIABLES
-	private ISyncAdapterBuilder adapterBuilder;
-	
+	private SyncAdapterBuilder adapterBuilder;
+
 	// BUSINESS METHODS
 	public GSSheetUIController(PropertiesProvider propertiesProvider) {
 		Guard.argumentNotNull(propertiesProvider, "propertiesProvider");
@@ -69,27 +72,24 @@ public class GSSheetUIController extends AbstractController
 	@Override
 	public ISyncAdapter createAdapter() {
 		GSSheetModel model = (GSSheetModel) this.getModel();
-
-    GoogleSpreadSheetInfo spreadSheetInfo = 
-			new GoogleSpreadSheetInfo(
-				model.getSpreadsheetKey(), 
-				model.getUserName(), 
-				model.getUserPassword(), 
-				model.getUniqueColumnName(), 
-				model.getWorksheetName(),
-				model.getWorksheetName());
-		return adapterBuilder.createGoogleSpreadSheetAdapter(spreadSheetInfo);
+		IGoogleSpreadSheet gss = new GoogleSpreadsheet(model.getSpreadsheetKey(), model.getUserName(), model.getUserPassword());
+		IRDFSchema rdfSchema = GoogleSpreadsheetToRDFMapping.extractRDFSchema(gss, model.getWorksheetName(), this.adapterBuilder.getBaseRDFUrl());
+		return createAdapter(rdfSchema);
 	}
 
 	@Override
 	public IRDFSchema fetchSchema(ISyncAdapter adapter) {
-		// TODO create Schema
-		return null;
+		return (IRDFSchema)((MsExcelContentAdapter)((SplitAdapter)adapter).getContentAdapter()).getSchema();
 	}
 
 	@Override
 	public ISyncAdapter createAdapter(IRDFSchema schema) {
-		// TODO create Adapter
-		return null;
+		GSSheetModel model = (GSSheetModel) this.getModel();
+
+		GoogleSpreadSheetInfo spreadSheetInfo = new GoogleSpreadSheetInfo(
+				model.getSpreadsheetKey(), model.getUserName(), 
+				model.getUserPassword(), model.getUniqueColumnName(), 
+				model.getWorksheetName(), model.getWorksheetName());
+		return adapterBuilder.createGoogleSpreadSheetAdapter(spreadSheetInfo, schema);
 	}
 }

@@ -324,8 +324,7 @@ public class EktooUI extends JFrame implements IErrorListener,
 			getTargetItem().getListType().removeAllItems();
 			getTargetItem().getListType().addItem(SyncItemUI.MS_EXCEL_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.MS_ACCESS_PANEL);
-			getTargetItem().getListType().addItem(
-					SyncItemUI.GOOGLE_SPREADSHEET_PANEL);
+			getTargetItem().getListType().addItem(SyncItemUI.GOOGLE_SPREADSHEET_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.MYSQL_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.CLOUD_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.RSS_FILE_PANEL);
@@ -340,9 +339,10 @@ public class EktooUI extends JFrame implements IErrorListener,
 			getTargetItem().getListType().addItem(SyncItemUI.ATOM_FILE_PANEL);
 		} else if (item.equals(SyncItemUI.GOOGLE_SPREADSHEET_PANEL)) {
 			getTargetItem().getListType().removeAllItems();
-			getTargetItem().getListType().addItem(
-					SyncItemUI.GOOGLE_SPREADSHEET_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.MS_EXCEL_PANEL);
+			getTargetItem().getListType().addItem(SyncItemUI.MS_ACCESS_PANEL);
+			getTargetItem().getListType().addItem(SyncItemUI.GOOGLE_SPREADSHEET_PANEL);
+			getTargetItem().getListType().addItem(SyncItemUI.MYSQL_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.CLOUD_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.RSS_FILE_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.ATOM_FILE_PANEL);

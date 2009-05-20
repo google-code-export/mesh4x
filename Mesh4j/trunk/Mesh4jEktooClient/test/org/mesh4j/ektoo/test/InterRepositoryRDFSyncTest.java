@@ -17,7 +17,6 @@ import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
-import org.mesh4j.sync.test.utils.TestHelper;
 
 public class InterRepositoryRDFSyncTest {
 	

@@ -39,11 +39,10 @@ import com.mysql.jdbc.Driver;
  * @author Bhuiyan Mohammad Iklash
  * 
  */
-public class MySQLUI extends AbstractUI implements IValidationStatus
-{
+public class MySQLUI extends AbstractUI implements IValidationStatus {
 	private static final long serialVersionUID = 2622575852343500622L;
 	private static final Log LOGGER = LogFactory.getLog(MySQLUI.class);
-	
+
 	// MODEL VARIABLES
 	private JLabel labelUser = null;
 	private JTextField txtUser = null;
@@ -68,16 +67,14 @@ public class MySQLUI extends AbstractUI implements IValidationStatus
 	private MySQLUIController controller = null;
 
 	// BUSINESS METHODS
-	public MySQLUI(MySQLUIController controller) 
-	{
+	public MySQLUI(MySQLUIController controller) {
 		super();
 		this.controller = controller;
 		this.controller.addView(this);
 		initialize();
 	}
 
-	private void initialize() 
-	{
+	private void initialize() {
 		this.setLayout(null);
 		this.setBackground(Color.WHITE);
 
@@ -104,41 +101,39 @@ public class MySQLUI extends AbstractUI implements IValidationStatus
 		setDefaultValues();
 	}
 
-	private void setDefaultValues() 
-	{
+	private void setDefaultValues() {
 		String hostName = controller.getDefaultMySQLHost();
-		if (hostName == null){
+		if (hostName == null) {
 			hostName = "";
 		}
 		controller.changeHostName(hostName);
-		
+
 		String portNo = controller.getDefaultMySQLPort();
-		if (portNo == null){
+		if (portNo == null) {
 			portNo = "";
 		}
-		controller.changePortNo( Integer.parseInt(portNo) );
-		
-//		String schemaName = controller.getDefaultMySQLSchema();
-//		if (schemaName == null){
-//			schemaName = "";
-//		}
-//		txtDatabase.setText(schemaName);
-//
-//		String userName = controller.getDefaultMySQLUser();
-//		if (userName == null){
-//			userName = "";
-//		}
-//		txtUser.setText(userName);
-//
-//		String userPassword = controller.getDefaultMySQLPassword();
-//		if (userPassword == null){
-//			userPassword = "";
-//		}
-//		txtPass.setText(userPassword);
+		controller.changePortNo(Integer.parseInt(portNo));
+
+		// String schemaName = controller.getDefaultMySQLSchema();
+		// if (schemaName == null){
+		// schemaName = "";
+		// }
+		// txtDatabase.setText(schemaName);
+		//
+		// String userName = controller.getDefaultMySQLUser();
+		// if (userName == null){
+		// userName = "";
+		// }
+		// txtUser.setText(userName);
+		//
+		// String userPassword = controller.getDefaultMySQLPassword();
+		// if (userPassword == null){
+		// userPassword = "";
+		// }
+		// txtPass.setText(userPassword);
 	}
 
-	private JLabel getUserLabel() 
-	{
+	private JLabel getUserLabel() {
 		if (labelUser == null) {
 			labelUser = new JLabel();
 			labelUser.setText(EktooUITranslator.getMySQLUserLabel());
@@ -149,10 +144,8 @@ public class MySQLUI extends AbstractUI implements IValidationStatus
 		return labelUser;
 	}
 
-	private JTextField getUserText() 
-	{
-		if (txtUser == null) 
-		{
+	private JTextField getUserText() {
+		if (txtUser == null) {
 			txtUser = new JTextField();
 			txtUser.setBounds(new Rectangle(101, 5, 183, 20));
 			txtUser.addActionListener(new ActionListener() {
@@ -190,8 +183,7 @@ public class MySQLUI extends AbstractUI implements IValidationStatus
 		return labelPass;
 	}
 
-	private JPasswordField getPassText() 
-	{
+	private JPasswordField getPassText() {
 		if (txtPass == null) {
 			txtPass = new JPasswordField();
 			txtPass.setBounds(new Rectangle(101, 30, 183, 20));
@@ -345,47 +337,42 @@ public class MySQLUI extends AbstractUI implements IValidationStatus
 		return txtDatabase;
 	}
 
-	private JButton getConnectButton() 
-	{
-		if (btnConnect == null) 
-		{
+	private JButton getConnectButton() {
+		if (btnConnect == null) {
 			btnConnect = new JButton();
 			btnConnect.setBounds(new Rectangle(260, 80, 22, 20));
 			btnConnect.setIcon(ImageManager.getDatabaseConnectionIcon());
-			btnConnect.setToolTipText( EktooUITranslator.getDatabaseConnectionTooltip());
-      btnConnect.addActionListener(new ActionListener() 
-      {
-				public void actionPerformed(ActionEvent ae) 
-				{
-				  boolean valid = (new MySQLConnectionValidator(MySQLUI.this, controller.getModel())).verify();
-				  if (valid)
-				  {
-				    
-  				  SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() 
-  				  {
-  						public Void doInBackground() {
-  							setCursor(Cursor
-  									.getPredefinedCursor(Cursor.WAIT_CURSOR));
-  							setList(getUser(), getPass(), getHost(), getPort(),
-  									txtDatabase.getText());
-  							return null;
-  						}
-  
-  						public void done() {
-  							setCursor(Cursor
-  									.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-  						}
-  					};
-  					worker.execute();
-				  }
+			btnConnect.setToolTipText(EktooUITranslator
+					.getDatabaseConnectionTooltip());
+			btnConnect.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent ae) {
+					boolean valid = (new MySQLConnectionValidator(MySQLUI.this,
+							controller.getModel())).verify();
+					if (valid) {
+
+						SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+							public Void doInBackground() {
+								setCursor(Cursor
+										.getPredefinedCursor(Cursor.WAIT_CURSOR));
+								setList(getUser(), getPass(), getHost(),
+										getPort(), txtDatabase.getText());
+								return null;
+							}
+
+							public void done() {
+								setCursor(Cursor
+										.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+							}
+						};
+						worker.execute();
+					}
 				}
 			});
 		}
 		return btnConnect;
 	}
 
-	private JLabel getTableLabel() 
-	{
+	private JLabel getTableLabel() {
 		if (labelTable == null) {
 			labelTable = new JLabel();
 			labelTable.setText(EktooUITranslator.getMySQLTableLabel());
@@ -465,66 +452,57 @@ public class MySQLUI extends AbstractUI implements IValidationStatus
 		return (String) getTableList().getSelectedItem();
 	}
 
-  @Override
-  public void validationFailed(Hashtable errorTable)
-  {
-    String key = null;
-    String err = null;
-    Enumeration keys = errorTable.keys();
-    while(keys.hasMoreElements())
-    {
-     key = (String)keys.nextElement(); 
-     err = (String)errorTable.get(key);
-     System.out.println("Key:" + key +" : Error:" + err);
-    }
-    
-  }
+	@Override
+	public void validationFailed(Hashtable<Object, String> errorTable) {
+		String key = null;
+		String err = null;
+		Enumeration<Object> keys = errorTable.keys();
+		while (keys.hasMoreElements()) {
+			key = (String) keys.nextElement();
+			err = errorTable.get(key);
+			System.out.println("Key:" + key + " : Error:" + err);
+		}
 
-  @Override
-  public void validationPassed()
-  {
-	  // TODO (Nobel)
-  }
+	}
 
-  @Override
-  public void modelPropertyChange(PropertyChangeEvent evt)
-  {
-    if ( evt.getPropertyName().equals( MySQLUIController.USER_NAME_PROPERTY))
-    {
-      String newStringValue = evt.getNewValue().toString();
-      if (!  getUserText().getText().equals(newStringValue))
-        getUserText().setText(newStringValue);
-    }     
-    else if ( evt.getPropertyName().equals( MySQLUIController.USER_PASSWORD_PROPERTY))
-    {
-      String newStringValue = evt.getNewValue().toString();
-      if (!  new String(getPassText().getPassword()).equals(newStringValue))
-        getPassText().setText(newStringValue);
-    }
-    else if ( evt.getPropertyName().equals( MySQLUIController.HOST_NAME_PROPERTY))
-    {
-      String newStringValue = evt.getNewValue().toString();
-      if (!  getHostText().getText().equals(newStringValue))
-        getHostText().setText(newStringValue);
-    }     
-    else if ( evt.getPropertyName().equals( MySQLUIController.PORT_NO_PROPERTY))
-    {
-      String newStringValue = evt.getNewValue().toString();
-      if (!  getPortText().getText().equals(newStringValue))
-        getPortText().setText(newStringValue);
-    }     
-    else if ( evt.getPropertyName().equals( MySQLUIController.DATABASE_NAME_PROPERTY))
-    {
-      String newStringValue = evt.getNewValue().toString();
-      if (!  getDatabaseText().getText().equals(newStringValue))
-        getDatabaseText().setText(newStringValue);
-    }     
-    else if ( evt.getPropertyName().equals( MySQLUIController.TABLE_NAME_PROPERTY))
-    {
-      String newStringValue = evt.getNewValue().toString();
-      if (!  ((String)getTableList().getSelectedItem()).equals(newStringValue))
-        getTableList().setSelectedItem(newStringValue);
-    }
+	@Override
+	public void validationPassed() {
+		// TODO (Nobel)
+	}
 
-  }
+	@Override
+	public void modelPropertyChange(PropertyChangeEvent evt) {
+		if (evt.getPropertyName().equals(MySQLUIController.USER_NAME_PROPERTY)) {
+			String newStringValue = evt.getNewValue().toString();
+			if (!getUserText().getText().equals(newStringValue))
+				getUserText().setText(newStringValue);
+		} else if (evt.getPropertyName().equals(
+				MySQLUIController.USER_PASSWORD_PROPERTY)) {
+			String newStringValue = evt.getNewValue().toString();
+			if (!new String(getPassText().getPassword()).equals(newStringValue))
+				getPassText().setText(newStringValue);
+		} else if (evt.getPropertyName().equals(
+				MySQLUIController.HOST_NAME_PROPERTY)) {
+			String newStringValue = evt.getNewValue().toString();
+			if (!getHostText().getText().equals(newStringValue))
+				getHostText().setText(newStringValue);
+		} else if (evt.getPropertyName().equals(
+				MySQLUIController.PORT_NO_PROPERTY)) {
+			String newStringValue = evt.getNewValue().toString();
+			if (!getPortText().getText().equals(newStringValue))
+				getPortText().setText(newStringValue);
+		} else if (evt.getPropertyName().equals(
+				MySQLUIController.DATABASE_NAME_PROPERTY)) {
+			String newStringValue = evt.getNewValue().toString();
+			if (!getDatabaseText().getText().equals(newStringValue))
+				getDatabaseText().setText(newStringValue);
+		} else if (evt.getPropertyName().equals(
+				MySQLUIController.TABLE_NAME_PROPERTY)) {
+			String newStringValue = evt.getNewValue().toString();
+			if (!((String) getTableList().getSelectedItem())
+					.equals(newStringValue))
+				getTableList().setSelectedItem(newStringValue);
+		}
+
+	}
 }

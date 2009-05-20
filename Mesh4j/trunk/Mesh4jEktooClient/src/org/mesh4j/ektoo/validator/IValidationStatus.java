@@ -4,6 +4,6 @@ import java.util.Hashtable;
 
 public interface IValidationStatus
 {
-  void validationFailed(Hashtable errorTable);
+  void validationFailed(Hashtable<Object, String> errorTable);
   void validationPassed();
 }

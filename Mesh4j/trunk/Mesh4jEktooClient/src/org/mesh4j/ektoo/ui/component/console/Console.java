@@ -9,60 +9,57 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 
+public class Console extends JTextPane implements IConsole {
+	
+	private static final long serialVersionUID = -6075253103119892815L;
 
-public class Console extends JTextPane  implements IConsole
-{
-  public static final int ERROR = 1;
-  public static final int WARNING = 2;
-  
-  private JFrame parent = null;
-  public Console(JFrame parent)
-  {
-    this.parent =  parent;
-  }
-  
-  public void setMessage(String message, int messageType)
-  {
-    if ( messageType == Console.ERROR)
-    {
-      setError( message);
-    }
-    else if ( messageType == Console.WARNING)
-    {
-      setWarning( message);
-    }
-    else
-    {
-      setMessage( message);
-    }
-  }
- 
-  private void setMessage(String message)
-  {
-    setMessage(message, Color.BLACK);
-  }
+	public static final int ERROR = 1;
+	public static final int WARNING = 2;
 
-  private void setWarning(String message)
-  {
-    setMessage(message, Color.YELLOW);
-  }
+	// MODEL VARIABLES
+	private JFrame parent = null;
+	
+	// BUSINESS METHODS
+	
+	public Console(JFrame parent) {
+		this.parent = parent;
+	}
 
-  private void setError(String message)
-  {
-    setMessage(message, Color.RED);
-  }
+	public void setMessage(String message, int messageType) {
+		if (messageType == Console.ERROR) {
+			setError(message);
+		} else if (messageType == Console.WARNING) {
+			setWarning(message);
+		} else {
+			setMessage(message);
+		}
+	}
 
-  
-  private void setMessage(String message, Color color)
-  {
-    StyleContext sc = StyleContext.getDefaultStyleContext();
-    AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY,
-                                        StyleConstants.Foreground, color);
-  
-    int len = getDocument().getLength();
-    setCaretPosition(len);
-    setCharacterAttributes(aset, false);
-    replaceSelection(message); 
-    
-  }
+	private void setMessage(String message) {
+		setMessage(message, Color.BLACK);
+	}
+
+	private void setWarning(String message) {
+		setMessage(message, Color.YELLOW);
+	}
+
+	private void setError(String message) {
+		setMessage(message, Color.RED);
+	}
+
+	private void setMessage(String message, Color color) {
+		StyleContext sc = StyleContext.getDefaultStyleContext();
+		AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY,
+				StyleConstants.Foreground, color);
+
+		int len = getDocument().getLength();
+		setCaretPosition(len);
+		setCharacterAttributes(aset, false);
+		replaceSelection(message);
+
+	}
+	
+	protected JFrame getLocalParent(){
+		return this.parent;
+	}
 }

@@ -35,21 +35,22 @@ public class EktooUIController
 		ISyncAdapter sourceAdapter = null;
 		ISyncAdapter targetAdapter = null;
 
-		if (((String) source.getListType().getSelectedItem())
-				.equals(SyncItemUI.MS_EXCEL_PANEL)
-				&& (((String) target.getListType().getSelectedItem())
-						.equals(SyncItemUI.MYSQL_PANEL) || ((String) target
-						.getListType().getSelectedItem())
-						.equals(SyncItemUI.MS_ACCESS_PANEL))) {
+		String selectedSourceItem = (String) source.getListType().getSelectedItem();
+		String selectedTargetItem = (String) target.getListType().getSelectedItem();
+		
+		if ((selectedSourceItem.equals(SyncItemUI.MS_EXCEL_PANEL) || selectedSourceItem.equals(SyncItemUI.GOOGLE_SPREADSHEET_PANEL)
+				&& (selectedTargetItem
+						.equals(SyncItemUI.MYSQL_PANEL) || 
+					selectedTargetItem
+						.equals(SyncItemUI.MS_ACCESS_PANEL)))) {
 			targetAdapter = target.createAdapter();
 			sourceAdapter = source.createAdapter(target.fetchSchema(targetAdapter));
 
 		} else {
-			if (((String) target.getListType().getSelectedItem())
-					.equals(SyncItemUI.MS_EXCEL_PANEL)
-					&& (((String) source.getListType().getSelectedItem())
-							.equals(SyncItemUI.MYSQL_PANEL) || ((String) source
-							.getListType().getSelectedItem())
+			if ((selectedTargetItem.equals(SyncItemUI.MS_EXCEL_PANEL) || selectedTargetItem.equals(SyncItemUI.GOOGLE_SPREADSHEET_PANEL))
+					&& (selectedSourceItem
+							.equals(SyncItemUI.MYSQL_PANEL) || 
+						selectedSourceItem
 							.equals(SyncItemUI.MS_ACCESS_PANEL))) {
 				sourceAdapter = source.createAdapter();
 				targetAdapter = target.createAdapter(source.fetchSchema(sourceAdapter));

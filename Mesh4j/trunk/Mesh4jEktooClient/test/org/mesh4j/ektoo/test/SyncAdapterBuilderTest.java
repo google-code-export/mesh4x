@@ -13,6 +13,9 @@ import org.mesh4j.ektoo.GoogleSpreadSheetInfo;
 import org.mesh4j.ektoo.ISyncAdapterBuilder;
 import org.mesh4j.ektoo.SyncAdapterBuilder;
 import org.mesh4j.ektoo.properties.PropertiesProvider;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadsheet;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.IGoogleSpreadSheet;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.mapping.GoogleSpreadsheetToRDFMapping;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.adapters.hibernate.EntityContent;
@@ -22,7 +25,6 @@ import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.Sync;
 import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
-import org.mesh4j.sync.test.utils.TestHelper;
 import org.mesh4j.sync.utils.XMLHelper;
 
 public class SyncAdapterBuilderTest {
@@ -54,8 +56,13 @@ public class SyncAdapterBuilderTest {
 				"user"
 				);
 		
+		String rdfUrl = "http://localhost:8080/mesh4x/feeds";
+		
+		IGoogleSpreadSheet gss = new GoogleSpreadsheet(spreadSheetInfo.getGoogleSpreadSheetId(), spreadSheetInfo.getUserName(), spreadSheetInfo.getPassWord());
+		IRDFSchema rdfSchema = GoogleSpreadsheetToRDFMapping.extractRDFSchema(gss, spreadSheetInfo.getSheetName(), rdfUrl);
+			
 		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
-		ISyncAdapter syncAdapterA = adapterBuilder.createGoogleSpreadSheetAdapter(spreadSheetInfo);
+		ISyncAdapter syncAdapterA = adapterBuilder.createGoogleSpreadSheetAdapter(spreadSheetInfo, rdfSchema);
 		Assert.assertNotNull(syncAdapterA);
 		
 	}
@@ -121,7 +128,7 @@ public class SyncAdapterBuilderTest {
 	{
 		String contentFile = TestHelper.fileName("contentFile.xls");
 		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
-		ISyncAdapter excelAdapter = adapterBuilder.createMsExcelAdapter(contentFile, "", "id");
+		adapterBuilder.createMsExcelAdapter(contentFile, "", "id");
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
@@ -129,13 +136,13 @@ public class SyncAdapterBuilderTest {
 		
 		String contentFile = TestHelper.fileName("contentFile.xls");
 		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
-		ISyncAdapter excelAdapter = adapterBuilder.createMsExcelAdapter(contentFile, "user", "");
+		adapterBuilder.createMsExcelAdapter(contentFile, "user", "");
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldReturnNUllIfContenFileIsNullOrEmpty(){
 		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
-		ISyncAdapter excelAdapter = adapterBuilder.createMsExcelAdapter(null, "user", "id");
+		adapterBuilder.createMsExcelAdapter(null, "user", "id");
 	}
 	
 	
@@ -156,7 +163,8 @@ public class SyncAdapterBuilderTest {
 		Sync sync = new Sync(IdGenerator.INSTANCE.newID(), "Raju", new Date(), false);
 		return new Item(content, sync);
 	}
-	private Item makeRDFItem(IRDFSchema schema){
+	
+	protected Item makeRDFItem(IRDFSchema schema){
 		
 		String id = IdGenerator.INSTANCE.newID();
 		

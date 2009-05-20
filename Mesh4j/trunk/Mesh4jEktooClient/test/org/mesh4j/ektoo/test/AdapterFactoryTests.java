@@ -7,7 +7,6 @@ import java.util.Date;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.junit.Assert;
-import org.junit.Test;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadsheet;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadsheetUtils;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.IGoogleSpreadSheet;
@@ -37,7 +36,6 @@ import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.security.NullIdentityProvider;
-import org.mesh4j.sync.test.utils.TestHelper;
 import org.mesh4j.sync.utils.XMLHelper;
 
 @Deprecated
@@ -120,6 +118,7 @@ public class AdapterFactoryTests {
 	}
 
 //	@Test
+	@SuppressWarnings("unchecked")
 	public void shouldCreateGoogleSpreadSheetAdapter() throws DocumentException {
 
 		String idColumName = "id";

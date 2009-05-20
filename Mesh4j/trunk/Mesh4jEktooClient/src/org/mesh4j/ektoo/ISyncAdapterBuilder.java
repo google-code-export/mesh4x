@@ -56,10 +56,11 @@ public interface ISyncAdapterBuilder {
 	 * TODO create documentation (raju)
 	 * 
 	 * @param spreadSheetInfo
+	 * @param rdfSchema
 	 * @return
 	 */
 	public ISyncAdapter createGoogleSpreadSheetAdapter(
-			GoogleSpreadSheetInfo spreadSheetInfo);
+			GoogleSpreadSheetInfo spreadSheetInfo, IRDFSchema rdfSchema);
 
 	/**
 	 * TODO create documentation (raju)

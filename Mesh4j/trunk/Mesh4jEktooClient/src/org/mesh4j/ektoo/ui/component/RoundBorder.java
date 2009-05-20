@@ -9,8 +9,8 @@ import javax.swing.border.LineBorder;
 public class RoundBorder extends LineBorder
 {
   private static final long serialVersionUID = -7231786606013473646L;
-  private static final int ARC_WIDTH = 15;
-  private static final int ARC_HEIGHT= 15;
+//  private static final int ARC_WIDTH = 15;
+//  private static final int ARC_HEIGHT= 15;
     
   Color fillColor = Color.LIGHT_GRAY;
 

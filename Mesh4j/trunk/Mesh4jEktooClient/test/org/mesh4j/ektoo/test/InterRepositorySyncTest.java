@@ -11,6 +11,9 @@ import org.mesh4j.ektoo.GoogleSpreadSheetInfo;
 import org.mesh4j.ektoo.ISyncAdapterBuilder;
 import org.mesh4j.ektoo.SyncAdapterBuilder;
 import org.mesh4j.ektoo.properties.PropertiesProvider;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadsheet;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.IGoogleSpreadSheet;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.mapping.GoogleSpreadsheetToRDFMapping;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.adapters.feed.XMLContent;
@@ -20,7 +23,7 @@ import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.Sync;
-import org.mesh4j.sync.test.utils.TestHelper;
+import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 
 public class InterRepositorySyncTest {
 	
@@ -158,8 +161,10 @@ public class InterRepositorySyncTest {
 	}
 	
 	@Test
-	public void ShouldSyncGoogleSpreadSheetToExcelWithoutRDFAssumeSameSchema(){
+	public void ShouldSyncGoogleSpreadSheetToExcel(){
+		
 		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
+		
 		GoogleSpreadSheetInfo spreadSheetInfo = new GoogleSpreadSheetInfo(
 				"peo4fu7AitTo8e3v0D8FCew",
 				"gspreadsheet.test@gmail.com",
@@ -169,20 +174,24 @@ public class InterRepositorySyncTest {
 				"user"
 				);
 		
+		String rdfUrl = "http://localhost:8080/mesh4x/feeds";
+		IGoogleSpreadSheet gss = new GoogleSpreadsheet(spreadSheetInfo.getGoogleSpreadSheetId(), spreadSheetInfo.getUserName(), spreadSheetInfo.getPassWord());
+		IRDFSchema rdfSchema = GoogleSpreadsheetToRDFMapping.extractRDFSchema(gss, spreadSheetInfo.getSheetName(), rdfUrl);
 		
 		File contentFile = new File(this.getClass().getResource("content1.xls").getFile());
-		ISyncAdapter sourceAsGoogleSpreadSheet = builder.createGoogleSpreadSheetAdapter(spreadSheetInfo);
-		ISyncAdapter targetAsExcel = builder.createMsExcelAdapter(contentFile.getAbsolutePath(), "user", "id");
+		ISyncAdapter sourceAsGoogleSpreadSheet = builder.createGoogleSpreadSheetAdapter(spreadSheetInfo, rdfSchema);
+		ISyncAdapter targetAsExcel = builder.createMsExcelAdapter(contentFile.getAbsolutePath(), "user", "id", rdfSchema);
 		
-		SyncEngine engine = new SyncEngine(sourceAsGoogleSpreadSheet,targetAsExcel);
+		SyncEngine engine = new SyncEngine(sourceAsGoogleSpreadSheet, targetAsExcel);
 		List<Item> listOfConflicts = engine.synchronize();
 		Assert.assertEquals(0, listOfConflicts.size());
 	}
 	
 	
 	@Test
-	public void ShouldSyncGoogleSpreadSheetToGoogleSpreadSheetWithoutRDFAssumeSameSchema(){
+	public void ShouldSyncGoogleSpreadSheetToGoogleSpreadSheet(){
 		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
+		
 		GoogleSpreadSheetInfo spreadSheetInfoSource = new GoogleSpreadSheetInfo(
 				"peo4fu7AitTqkOhMSrecFRA",
 				"gspreadsheet.test@gmail.com",
@@ -191,6 +200,7 @@ public class InterRepositorySyncTest {
 				"user_source",
 				"user"
 				);
+		
 		
 		GoogleSpreadSheetInfo spreadSheetInfoTarget = new GoogleSpreadSheetInfo(
 				"peo4fu7AitTqkOhMSrecFRA",
@@ -201,9 +211,15 @@ public class InterRepositorySyncTest {
 				"user"
 				);
 		
-		ISyncAdapter sourceAsGoogleSpreadSheet = builder.createGoogleSpreadSheetAdapter(spreadSheetInfoSource);
+		String rdfUrl = "http://localhost:8080/mesh4x/feeds";
 		
-		ISyncAdapter targetAsGoogleSpreadSheet = builder.createGoogleSpreadSheetAdapter(spreadSheetInfoTarget);
+		IGoogleSpreadSheet gssSource = new GoogleSpreadsheet(spreadSheetInfoSource.getGoogleSpreadSheetId(), spreadSheetInfoSource.getUserName(), spreadSheetInfoSource.getPassWord());
+		IRDFSchema rdfSchemaSource = GoogleSpreadsheetToRDFMapping.extractRDFSchema(gssSource, spreadSheetInfoSource.getSheetName(), rdfUrl);
+		ISyncAdapter sourceAsGoogleSpreadSheet = builder.createGoogleSpreadSheetAdapter(spreadSheetInfoSource, rdfSchemaSource);
+		
+		IGoogleSpreadSheet gssTarget = new GoogleSpreadsheet(spreadSheetInfoTarget.getGoogleSpreadSheetId(), spreadSheetInfoTarget.getUserName(), spreadSheetInfoTarget.getPassWord());
+		IRDFSchema rdfSchemaTarget = GoogleSpreadsheetToRDFMapping.extractRDFSchema(gssTarget, spreadSheetInfoTarget.getSheetName(), rdfUrl);
+		ISyncAdapter targetAsGoogleSpreadSheet = builder.createGoogleSpreadSheetAdapter(spreadSheetInfoTarget, rdfSchemaTarget);
 		
 		
 		SyncEngine engine = new SyncEngine(sourceAsGoogleSpreadSheet,targetAsGoogleSpreadSheet);

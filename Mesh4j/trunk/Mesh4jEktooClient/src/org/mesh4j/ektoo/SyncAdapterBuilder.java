@@ -8,7 +8,7 @@ import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadS
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadSheetSyncRepository;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadsheet;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.IGoogleSpreadSheet;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.mapping.GoogleSpreadsheetToPlainXMLMapping;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.mapping.GoogleSpreadsheetToRDFMapping;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.mapping.IGoogleSpreadsheetToXMLMapping;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.feed.ContentReader;
@@ -60,19 +60,19 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 	}
 
 	@Override
-	public ISyncAdapter createGoogleSpreadSheetAdapter(GoogleSpreadSheetInfo spreadSheetInfo) {
+	public ISyncAdapter createGoogleSpreadSheetAdapter(GoogleSpreadSheetInfo spreadSheetInfo, IRDFSchema rdfSchema) {
 
 		// TODO create googleSpreadSheetSyncAdapterFactory in GeoogleSpreadSheet project
 		String idColumName = spreadSheetInfo.getIdColumnName();
 		String userName = spreadSheetInfo.getUserName();
 		String passWord = spreadSheetInfo.getPassWord();
 		String googleSpreadSheetId = spreadSheetInfo.getGoogleSpreadSheetId();
-		String type = spreadSheetInfo.getType();
-		String sheetName = spreadSheetInfo.getSheetName();
+		//String type = spreadSheetInfo.getType();
+		//String sheetName = spreadSheetInfo.getSheetName();
 
 		// create google spread sheet
 		IGoogleSpreadSheet gSpreadSheet = new GoogleSpreadsheet(googleSpreadSheetId, userName, passWord);
-		IGoogleSpreadsheetToXMLMapping mapper = new GoogleSpreadsheetToPlainXMLMapping(type, idColumName, null, sheetName, gSpreadSheet.getDocsService());
+		IGoogleSpreadsheetToXMLMapping mapper = new GoogleSpreadsheetToRDFMapping(rdfSchema, idColumName, null, gSpreadSheet.getDocsService());
 		String syncWorkSheetName = spreadSheetInfo.getSheetName() + "_sync";
 
 		// adapter creation
@@ -86,7 +86,7 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 		return splitAdapter;
 	}
 
-
+	@Override
 	public ISyncAdapter createHttpSyncAdapter(String meshid, String datasetId) {
 		String url = getSyncUrl(meshid, datasetId);
 
@@ -119,7 +119,6 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 		return adapter;
 	}	
 	
-
 	@Override
 	public ISyncAdapter createMySQLAdapter(String userName, String password,
 			String hostName, int portNo, String databaseName, String tableName) {
