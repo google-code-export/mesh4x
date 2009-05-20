@@ -20,6 +20,7 @@ import org.mesh4j.sync.payload.schema.rdf.RDFInstance;
 import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
 import org.mesh4j.sync.utils.XMLHelper;
 import org.mesh4j.sync.validations.Guard;
+import org.mesh4j.sync.validations.MeshException;
 
 import com.google.gdata.client.docs.DocsService;
 
@@ -32,35 +33,39 @@ public class GoogleSpreadsheetToRDFMapping implements IGoogleSpreadsheetToXMLMap
 	// MODEL VARIABLES
 	private IRDFSchema rdfSchema;
 	private DocsService docService;
+	private String type;
 	private String idColumnName;
 	private String lastUpdateColumnName = null;
 	
 	
 	// BUSINESS METHODs
-	public GoogleSpreadsheetToRDFMapping(IRDFSchema schema, String idColumnName, String lastUpdateColumnName, DocsService docService) {
+	public GoogleSpreadsheetToRDFMapping(IRDFSchema schema, String type, String idColumnName, String lastUpdateColumnName, DocsService docService) {
 		super();
-
+		Guard.argumentNotNull(schema,	"schema");
+		Guard.argumentNotNullOrEmptyString(type, "type");
+		Guard.argumentNotNullOrEmptyString(idColumnName, "idColumnName");
+		Guard.argumentNotNull(docService,	"docService");
+		
 		this.rdfSchema = schema;
+		this.type = type;
 		this.idColumnName = idColumnName;
 		this.lastUpdateColumnName = lastUpdateColumnName;
 		this.docService = docService;
 	}
 	
-	public static RDFSchema extractRDFSchema(IGoogleSpreadSheet gss, String workSheetName, String rdfURL) {
-		
-		Guard.argumentNotNull(gss, "gss");
-		Guard.argumentNotNullOrEmptyString(workSheetName, "workSheetName");
-		Guard.argumentNotNullOrEmptyString(rdfURL, "rdfURL");
-		
-		RDFSchema rdfSchema = new RDFSchema(workSheetName,
-				rdfURL + "/" + workSheetName + "#",
-				workSheetName);
+	public static RDFSchema extractRDFSchema(IGoogleSpreadSheet gss,
+			String workSheetName, String rdfURL) throws Exception {
+		RDFSchema rdfSchema = new RDFSchema(workSheetName, rdfURL+"/"+workSheetName+"#", workSheetName);
 
 		GSWorksheet<GSRow<GSCell>> worksheet = GoogleSpreadsheetUtils
 				.getOrCreateWorkSheetIfAbsent(gss.getGSSpreadsheet(), workSheetName);
 
-		GSRow<GSCell> dataRow = worksheet.getGSRow(worksheet.getChildElements()
-				.size());
+		int rowCount = worksheet.getChildElements().size();
+		
+		if(rowCount < 2)
+			throw new MeshException("No rata row available in the worksheet: " + workSheetName);
+		
+		GSRow<GSCell> dataRow = worksheet.getGSRow(worksheet.getChildElements().size());
 
 		int cellType;
 		String cellName;
@@ -69,7 +74,7 @@ public class GoogleSpreadsheetToRDFMapping implements IGoogleSpreadsheetToXMLMap
 		for (String key : dataRow.getChildElements().keySet()) {
 			gsCell = dataRow.getChildElements().get(key);
 			cellName = gsCell.getColumnTag();
-			cellType = gsCell.getCellType();
+			cellType = gsCell.getCellTypeFromContent();
 
 			if (GSCell.CELL_TYPE_BOOLEAN == cellType) {
 				rdfSchema.addBooleanProperty(cellName, cellName, "en");
@@ -87,7 +92,6 @@ public class GoogleSpreadsheetToRDFMapping implements IGoogleSpreadsheetToXMLMap
 		return rdfSchema;
 	}
 
-	//done
 	public RDFInstance converRowToRDF(GSRow<GSCell> row) {
 
 		String cellName;
@@ -167,14 +171,13 @@ public class GoogleSpreadsheetToRDFMapping implements IGoogleSpreadsheetToXMLMap
 		MsExcelUtils.flush(workbook, fileName);
 		
 		//upload the excel document
-		String spreadsheetId = GoogleSpreadsheetUtils
-				.uploadSpreadsheetDoc(new File(fileName), this.docService);
-		return spreadsheetId;
+		return GoogleSpreadsheetUtils.uploadSpreadsheetDoc(new File(fileName), this.docService);
 	}
 
 	public HSSFWorkbook createDataSource() {
 		HSSFWorkbook workbook = new HSSFWorkbook();
 		HSSFSheet sheet = workbook.createSheet(this.rdfSchema.getOntologyNameSpace());
+		sheet.setFitToPage(true);
 		HSSFRow headerRow = sheet.createRow(0);
 		HSSFCell headerCell;
 		
@@ -223,12 +226,12 @@ public class GoogleSpreadsheetToRDFMapping implements IGoogleSpreadsheetToXMLMap
 
 	@Override
 	public String getType() {
-		return this.getSheetName();
+		return this.type;
 	}
 
 	@Override
 	public String getSheetName() {
-		return this.rdfSchema.getOntologyClassName();
+		return rdfSchema.getOntologyNameSpace();
 	}
 
 }
