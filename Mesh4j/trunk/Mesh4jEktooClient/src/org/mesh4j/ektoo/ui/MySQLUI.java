@@ -17,6 +17,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -112,25 +113,8 @@ public class MySQLUI extends AbstractUI implements IValidationStatus {
 		if (portNo == null) {
 			portNo = "";
 		}
-		controller.changePortNo(Integer.parseInt(portNo));
 
-		// String schemaName = controller.getDefaultMySQLSchema();
-		// if (schemaName == null){
-		// schemaName = "";
-		// }
-		// txtDatabase.setText(schemaName);
-		//
-		// String userName = controller.getDefaultMySQLUser();
-		// if (userName == null){
-		// userName = "";
-		// }
-		// txtUser.setText(userName);
-		//
-		// String userPassword = controller.getDefaultMySQLPassword();
-		// if (userPassword == null){
-		// userPassword = "";
-		// }
-		// txtPass.setText(userPassword);
+		controller.changePortNo( Integer.parseInt(portNo) );
 	}
 
 	private JLabel getUserLabel() {
@@ -144,10 +128,11 @@ public class MySQLUI extends AbstractUI implements IValidationStatus {
 		return labelUser;
 	}
 
-	private JTextField getUserText() {
+	public JTextField getUserText() {
 		if (txtUser == null) {
 			txtUser = new JTextField();
 			txtUser.setBounds(new Rectangle(101, 5, 183, 20));
+			txtUser.setToolTipText( EktooUITranslator.getMySQLUserNameFieldTooltip());
 			txtUser.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					try {
@@ -183,10 +168,11 @@ public class MySQLUI extends AbstractUI implements IValidationStatus {
 		return labelPass;
 	}
 
-	private JPasswordField getPassText() {
+	public JPasswordField getPassText() {
 		if (txtPass == null) {
 			txtPass = new JPasswordField();
 			txtPass.setBounds(new Rectangle(101, 30, 183, 20));
+			txtPass.setToolTipText(EktooUITranslator.getMySQLUserPasswordFieldTooltip());
 			txtPass.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					try {
@@ -224,10 +210,11 @@ public class MySQLUI extends AbstractUI implements IValidationStatus {
 		return labelHost;
 	}
 
-	private JTextField getHostText() {
+	public JTextField getHostText() {
 		if (txtHost == null) {
 			txtHost = new JTextField();
 			txtHost.setBounds(new Rectangle(101, 55, 125, 20));
+			txtHost.setToolTipText(EktooUITranslator.getMySQLHostFieldTooltip());
 			txtHost.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent ae) {
 					try {
@@ -264,10 +251,11 @@ public class MySQLUI extends AbstractUI implements IValidationStatus {
 		return labelPort;
 	}
 
-	private JTextField getPortText() {
+	public JTextField getPortText() {
 		if (txtPort == null) {
 			txtPort = new JTextField();
 			txtPort.setBounds(new Rectangle(234, 55, 50, 20));
+			txtPort.setToolTipText(EktooUITranslator.getMySQLPortFieldTooltip());
 			txtPort.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent ae) {
 					try {
@@ -306,10 +294,11 @@ public class MySQLUI extends AbstractUI implements IValidationStatus {
 		return labelDatabase;
 	}
 
-	private JTextField getDatabaseText() {
+	public JTextField getDatabaseText() {
 		if (txtDatabase == null) {
 			txtDatabase = new JTextField();
 			txtDatabase.setBounds(new Rectangle(101, 80, 155, 20));
+			txtDatabase.setToolTipText(EktooUITranslator.getMySQLDatabaseFieldTooltip());
 			txtDatabase.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent ae) {
 					try {
@@ -452,15 +441,23 @@ public class MySQLUI extends AbstractUI implements IValidationStatus {
 		return (String) getTableList().getSelectedItem();
 	}
 
+  
 	@Override
 	public void validationFailed(Hashtable<Object, String> errorTable) {
-		String key = null;
+		Object key = null;
 		String err = null;
 		Enumeration<Object> keys = errorTable.keys();
 		while (keys.hasMoreElements()) {
-			key = (String) keys.nextElement();
-			err = errorTable.get(key);
-			System.out.println("Key:" + key + " : Error:" + err);
+			key = keys.nextElement(); 
+	    err = err  + "n" + (String)errorTable.get(key);
+	    if ( key instanceof JTextField || key instanceof JPasswordField )
+	     {
+	      ((JTextField)key).setBorder(BorderFactory.createLineBorder(Color.RED));
+	     }
+	     else if ( key instanceof  JComboBox )
+	     {
+	       ((JComboBox)key).setBorder(BorderFactory.createLineBorder(Color.RED));
+	     }
 		}
 
 	}

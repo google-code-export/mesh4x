@@ -299,21 +299,30 @@ public class EktooUI extends JFrame implements IErrorListener,
 		return targetItem;
 	}
 
-	public void setStatusbarText(String msg, int statusStyle) {
-		if (statusStyle == Statusbar.NORMAL_STATUS) {
-			statusBar.setStaus(msg, Statusbar.NORMAL_COLOR,
-					Statusbar.NORMAL_ICON);
-		} else if (statusStyle == Statusbar.WARNING_STATUS) {
-			statusBar.setStaus(msg, Statusbar.WARNING_COLOR,
-					Statusbar.WARNING_ICON);
-		} else if (statusStyle == Statusbar.ERROR_STATUS) {
-			statusBar
-					.setStaus(msg, Statusbar.ERROR_COLOR, Statusbar.ERROR_ICON);
-		} else if (statusStyle == Statusbar.SUCCESS_STATUS) {
-			statusBar.setStaus(msg, Statusbar.SUCCESS_COLOR,
-					Statusbar.SUCCESS_ICON);
-		}
-	}
+
+  public void setStatusbarText(String msg, int statusStyle) 
+  {
+    if (statusStyle == Statusbar.NORMAL_STATUS)
+    {
+      statusBar.setStaus(msg, Statusbar.NORMAL_COLOR, Statusbar.NORMAL_ICON);
+    }
+    else if (statusStyle == Statusbar.WARNING_STATUS)
+    {
+      statusBar.setStaus(msg, Statusbar.WARNING_COLOR, Statusbar.WARNING_ICON);
+    }
+    else if (statusStyle == Statusbar.ERROR_STATUS)
+    {
+      statusBar.setStaus(msg, Statusbar.ERROR_COLOR, Statusbar.ERROR_ICON);
+    } 
+    else if (statusStyle == Statusbar.SUCCESS_STATUS)
+    {
+      statusBar.setStaus(msg, Statusbar.SUCCESS_COLOR, Statusbar.SUCCESS_ICON);
+    } 
+    else if (statusStyle == Statusbar.PROGRESS_STATUS)
+    {
+      statusBar.setStaus(msg, Statusbar.PROGRESS_COLOR, Statusbar.PROGRESS_ICON);
+    }     
+  }
 
 	// TODO (NBL) disables unsupported features from ui
 	private void filterCombobox() {

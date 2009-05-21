@@ -38,7 +38,7 @@ public class SynchronizeTask extends SwingWorker<String, Void> {
 		    ui.getSourceItem().toString(),
 		    ui.getTargetItem().toString(),
 		    new Date()
-		    ), Statusbar.NORMAL_STATUS);
+		    ), Statusbar.PROGRESS_STATUS);
 		
 		try 
 		{

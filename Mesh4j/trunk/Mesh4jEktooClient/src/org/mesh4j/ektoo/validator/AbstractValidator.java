@@ -11,11 +11,12 @@ import org.mesh4j.ektoo.model.AbstractModel;
  * @author Bhuiyan Mohammad Iklash
  * 
  */
-public abstract class AbstractValidator implements IValidator {
-	
-	// MODEL VARIABLES
-	private Object parent;
-	private Object form;
+
+public abstract class AbstractValidator implements IValidator
+{
+  private Object parent;
+  protected Object form;
+
 	private Hashtable<Object, String> errorTable = new Hashtable<Object, String>();
 
 	// BUSINESS METHODS

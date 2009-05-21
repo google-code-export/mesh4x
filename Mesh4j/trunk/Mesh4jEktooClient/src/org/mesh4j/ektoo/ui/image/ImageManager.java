@@ -169,4 +169,8 @@ public class ImageManager
   {
     return SwingResourceManager.getIcon(EktooUI.class, "/separator.png");
   }
+  public static Icon getProgressIcon()
+  {
+    return SwingResourceManager.getIcon(EktooUI.class, "/16x16/progress.gif");
+  }
 }

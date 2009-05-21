@@ -28,16 +28,19 @@ public class Statusbar extends JPanel implements IStatus
   public static final int WARNING_STATUS = 2;
   public static final int ERROR_STATUS   = 3;
   public static final int SUCCESS_STATUS = 4;
+  public static final int PROGRESS_STATUS = 5;
   
   public static final Icon NORMAL_ICON  = ImageManager.getInfoIcon();
   public static final Icon WARNING_ICON = ImageManager.getWarningIcon();
   public static final Icon ERROR_ICON   = ImageManager.getErrorIcon();
   public static final Icon SUCCESS_ICON = ImageManager.getSuccessIcon();
+  public static final Icon PROGRESS_ICON = ImageManager.getProgressIcon();
   
   public static final Color NORMAL_COLOR  = Color.BLACK;
   public static final Color WARNING_COLOR = Color.YELLOW;
   public static final Color ERROR_COLOR   = Color.RED;
   public static final Color SUCCESS_COLOR = Color.GREEN;
+  public static final Color PROGRESS_COLOR = Color.BLACK;
   
   private JLabel labelStatus = null;
 
