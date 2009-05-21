@@ -306,4 +306,40 @@ public class EktooUITranslator {
     return EktooMessageTranslator
     .translate("EKTOO_STATUSBAR_DEFAULT_MESSAGE");
   }
+
+  public static String getMySQLUserNameFieldTooltip()
+  {
+    return EktooMessageTranslator
+    .translate("EKTOO_MYSQL_USER_NAME_FIELD_TOOLTIP");
+  }
+  
+  public static String getMySQLUserPasswordFieldTooltip()
+  {
+    return EktooMessageTranslator
+    .translate("EKTOO_MYSQL_USER_PASSWORD_FIELD_TOOLTIP");
+  }
+  
+  public static String getMySQLHostFieldTooltip()
+  {
+    return EktooMessageTranslator
+    .translate("EKTOO_MYSQL_HOST_NAME_FIELD_TOOLTIP");
+  }
+
+  public static String getMySQLPortFieldTooltip()
+  {
+    return EktooMessageTranslator
+    .translate("EKTOO_MYSQL_PORT_NO_FIELD_TOOLTIP");
+  }
+
+  public static String getMySQLDatabaseFieldTooltip()
+  {
+    return EktooMessageTranslator
+    .translate("EKTOO_MYSQL_DATABASE_NAME_FIELD_TOOLTIP");
+  }
+
+  public static String getMySQLTableFieldTooltip()
+  {
+    return EktooMessageTranslator
+    .translate("EKTOO_MYSQL_TABLE_NAME_FIELD_TOOLTIP");
+  }
 }
