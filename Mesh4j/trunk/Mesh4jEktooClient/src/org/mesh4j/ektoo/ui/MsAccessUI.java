@@ -114,7 +114,7 @@ class MsAccessFilter extends FileFilter
 		int pos = file.getName().lastIndexOf(".");
 		String ext = file.getName().substring(pos);
 
-		if (ext != null && ext.equals(".mdb"))
+		if (ext != null && ext.equalsIgnoreCase(".mdb"))
 			return true;
 
 		return false;

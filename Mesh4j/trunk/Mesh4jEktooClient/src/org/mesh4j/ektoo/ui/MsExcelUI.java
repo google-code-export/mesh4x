@@ -162,7 +162,7 @@ class MsExcelFilter extends FileFilter
 		int pos = file.getName().lastIndexOf(".");
 		String ext = file.getName().substring(pos);
 
-		if (ext != null && ext.equals(".xls"))
+		if (ext != null && ( ext.equalsIgnoreCase(".xls") ||ext.equalsIgnoreCase(".xlsx") ))
 			return true;
 
 		return false;
