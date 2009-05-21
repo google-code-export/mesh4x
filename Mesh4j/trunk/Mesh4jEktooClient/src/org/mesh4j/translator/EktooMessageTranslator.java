@@ -1,6 +1,7 @@
 package org.mesh4j.translator;
 
 import java.text.MessageFormat;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 import org.apache.commons.logging.Log;
@@ -9,9 +10,18 @@ import org.apache.commons.logging.LogFactory;
 public class EktooMessageTranslator {
 	
 	private static final Log LOGGER = LogFactory.getLog(EktooMessageTranslator.class);
-	private static ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("ektoo_resources");
+	//private static ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("ektoo_resources");
+	
+	private static String defaultLocate = "en_US";
+	private static String systemLocale = Locale.getDefault().toString();
+  
+	private static ResourceBundle RESOURCE_BUNDLE = ( ResourceBundle.getBundle(systemLocale) != null)  
+	                                                  ? ResourceBundle.getBundle(systemLocale) 
+	                                                    : ResourceBundle.getBundle(defaultLocate);
 
-	public static String translate(String key) {
+	public static String translate(String key) 
+	{
+	  
 		String messageText;
 		try {
 			messageText = RESOURCE_BUNDLE.getString(key);
