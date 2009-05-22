@@ -7,10 +7,10 @@ import java.util.List;
 
 import junit.framework.Assert;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRichTextString;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -124,20 +124,21 @@ public class MsExcelSyncTests {
 	
 	// PRIVATE METHODS
 	private void makeHeader(SplitAdapter adapter) {
-		HSSFSheet sheet = ((MsExcelContentAdapter)adapter.getContentAdapter()).getSheet();
-		HSSFRow row = sheet.getRow(0);
+		Workbook workbook = ((MsExcelContentAdapter)adapter.getContentAdapter()).getWorkbook();
+		Sheet sheet = ((MsExcelContentAdapter)adapter.getContentAdapter()).getSheet();
+		Row row = sheet.getRow(0);
 			
-		HSSFCell cell = row.createCell(1, HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString("name"));
+		Cell cell = row.createCell(1, Cell.CELL_TYPE_STRING);
+		cell.setCellValue(MsExcelUtils.getRichTextString(workbook, "name"));
 			
-		cell = row.createCell(2, HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString("age"));
+		cell = row.createCell(2, Cell.CELL_TYPE_STRING);
+		cell.setCellValue(MsExcelUtils.getRichTextString(workbook, "age"));
 		
-		cell = row.createCell(3, HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString("country"));
+		cell = row.createCell(3, Cell.CELL_TYPE_STRING);
+		cell.setCellValue(MsExcelUtils.getRichTextString(workbook, "country"));
 		
-		cell = row.createCell(4, HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString("city"));
+		cell = row.createCell(4, Cell.CELL_TYPE_STRING);
+		cell.setCellValue(MsExcelUtils.getRichTextString(workbook, "city"));
 	}
 	
 	private Item makeNewItem() throws DocumentException {

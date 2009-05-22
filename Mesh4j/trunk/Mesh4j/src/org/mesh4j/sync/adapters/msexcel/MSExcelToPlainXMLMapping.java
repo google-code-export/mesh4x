@@ -1,14 +1,14 @@
 package org.mesh4j.sync.adapters.msexcel;
 
+import java.io.File;
 import java.util.Date;
 import java.util.Iterator;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
-import org.apache.poi.hssf.usermodel.HSSFRichTextString;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.mesh4j.sync.payload.schema.ISchema;
@@ -34,29 +34,29 @@ public class MSExcelToPlainXMLMapping implements IMsExcelToXMLMapping {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void appliesXMLToRow(HSSFWorkbook wb, HSSFSheet sheet, HSSFRow row, Element payload){
+	public void appliesXMLToRow(Workbook wb, Sheet sheet, Row row, Element payload){
 		
-		HSSFRow rowHeader = sheet.getRow(0);
-		HSSFCell cellHeader;
+		Row rowHeader = sheet.getRow(0);
+		Cell cellHeader;
 		
 		Element child;
 		for (Iterator<Element> iterator = payload.elementIterator(); iterator.hasNext();) {
 			child = (Element) iterator.next();
-			HSSFCell cell = MsExcelUtils.getCell(sheet, row, child.getName());
+			Cell cell = MsExcelUtils.getCell(sheet, row, child.getName());
 			if(cell == null){
-				cellHeader = MsExcelUtils.getOrCreateCellStringIfAbsent(rowHeader, child.getName());
+				cellHeader = MsExcelUtils.getOrCreateCellStringIfAbsent(wb, rowHeader, child.getName());
 				cell = row.createCell(cellHeader.getColumnIndex());
 			}
-			this.setCellValue(cell, child.getText());
+			this.setCellValue(wb, cell, child.getText());
 			
 		}
 	}
 	
-	private void setCellValue(HSSFCell cell, String valueAsString) {
-		if(HSSFCell.CELL_TYPE_BOOLEAN == cell.getCellType()){
+	private void setCellValue(Workbook wb, Cell cell, String valueAsString) {
+		if(Cell.CELL_TYPE_BOOLEAN == cell.getCellType()){
 			cell.setCellValue(Boolean.valueOf(valueAsString));
-		} else if(HSSFCell.CELL_TYPE_NUMERIC == cell.getCellType()){
-			if(HSSFDateUtil.isCellDateFormatted(cell)){
+		} else if(Cell.CELL_TYPE_NUMERIC == cell.getCellType()){
+			if(DateUtil.isCellDateFormatted(cell)){
 				Date date = DateHelper.parseW3CDateTime(valueAsString);
 				cell.setCellValue(date);
 			} else {
@@ -64,27 +64,26 @@ public class MSExcelToPlainXMLMapping implements IMsExcelToXMLMapping {
 				cell.setCellValue(num);				
 			}
 		} else {
-			cell.setCellValue(new HSSFRichTextString(valueAsString));
+			cell.setCellValue(MsExcelUtils.getRichTextString(wb, valueAsString));
 		}
 		
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public Element convertRowToXML(HSSFWorkbook wb, HSSFSheet sheet, HSSFRow row){
+	public Element convertRowToXML(Workbook wb, Sheet sheet, Row row){
 		String sheetName = wb.getSheetName(wb.getSheetIndex(sheet));
 		
 		Element payload = DocumentHelper.createElement(sheetName);
 		
-		HSSFRow rowHeader = sheet.getRow(0);
+		Row rowHeader = sheet.getRow(0);
 		
-		HSSFCell cell;
-		HSSFCell cellHeader;
+		Cell cell;
+		Cell cellHeader;
 		String columnName;
 		Object columnValue;
 		Element fieldElement;
 		
-		for (Iterator<HSSFCell> iterator = row.cellIterator(); iterator.hasNext();) {
+		for (Iterator<Cell> iterator = row.cellIterator(); iterator.hasNext();) {
 			cell = iterator.next();
 			cellHeader = rowHeader.getCell(cell.getColumnIndex());
 			
@@ -118,15 +117,21 @@ public class MSExcelToPlainXMLMapping implements IMsExcelToXMLMapping {
 	}
 
 	@Override
-	public void createDataSource(String fileName) throws Exception {
-		HSSFWorkbook workbook = new HSSFWorkbook();			
-		MsExcelUtils.flush(workbook, fileName);		
+	public Workbook createDataSource(String fileName) throws Exception {
+		File file = new File(fileName);
+		if(file.exists()){
+			return MsExcelUtils.getOrCreateWorkbookIfAbsent(fileName);
+		} else {
+			Workbook workbook = MsExcelUtils.getOrCreateWorkbookIfAbsent(fileName);
+			MsExcelUtils.flush(workbook, fileName);  // discard workbook for bug in POI library
+			return MsExcelUtils.getOrCreateWorkbookIfAbsent(fileName);
+		}
 	}
 
 	@Override
-	public String getIdColumnValue(HSSFSheet sheet, HSSFRow row) {
-		HSSFCell cell = MsExcelUtils.getCell(sheet, row, this.getIdColumnName());
-		if(cell != null && cell.getCellType() != HSSFCell.CELL_TYPE_BLANK){
+	public String getIdColumnValue(Sheet sheet, Row row) {
+		Cell cell = MsExcelUtils.getCell(sheet, row, this.getIdColumnName());
+		if(cell != null && cell.getCellType() != Cell.CELL_TYPE_BLANK){
 			Object cellValue = MsExcelUtils.getCellValue(cell);
 			return String.valueOf(cellValue);
 		} else {
@@ -135,9 +140,9 @@ public class MSExcelToPlainXMLMapping implements IMsExcelToXMLMapping {
 	}
 	
 	@Override
-	public Date getLastUpdateColumnValue(HSSFSheet sheet, HSSFRow row) {
-		HSSFCell cell = MsExcelUtils.getCell(sheet, row, this.getLastUpdateColumnName());
-		if(cell != null && cell.getCellType() != HSSFCell.CELL_TYPE_BLANK && cell.getCellType() == HSSFCell.CELL_TYPE_NUMERIC && HSSFDateUtil.isCellDateFormatted(cell)){
+	public Date getLastUpdateColumnValue(Sheet sheet, Row row) {
+		Cell cell = MsExcelUtils.getCell(sheet, row, this.getLastUpdateColumnName());
+		if(cell != null && cell.getCellType() != Cell.CELL_TYPE_BLANK && cell.getCellType() == Cell.CELL_TYPE_NUMERIC && DateUtil.isCellDateFormatted(cell)){
 			return cell.getDateCellValue();
 		} else {
 			return null;

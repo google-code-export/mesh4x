@@ -10,11 +10,14 @@ import java.util.List;
 import junit.framework.Assert;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
-import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -133,7 +136,7 @@ public class MsExcelContentAdapterTests {
 	@Test
 	public void shouldGetTypeReturnsSheetName(){
 		MSExcelToPlainXMLMapping mapper = new MSExcelToPlainXMLMapping("oid", null);
-		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel("myfile.xmls"), mapper, "test");
+		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel("myfile.xls"), mapper, "test");
 		Assert.assertEquals("test", adapter.getType());
 	}
 
@@ -359,8 +362,8 @@ public class MsExcelContentAdapterTests {
 
 		Assert.assertEquals(7, adapter.getWorkbook().getSheet("sheet").getPhysicalNumberOfRows());
 		
-		HSSFSheet sheet = adapter.getWorkbook().getSheet("sheet");
-		HSSFRow row = sheet.getRow(sheet.getPhysicalNumberOfRows()-1);
+		Sheet sheet = adapter.getWorkbook().getSheet("sheet");
+		Row row = sheet.getRow(sheet.getPhysicalNumberOfRows()-1);
 		Assert.assertEquals("6", row.getCell(0).getRichStringCellValue().getString());
 		Assert.assertEquals("mrs", row.getCell(1).getRichStringCellValue().getString());
 	}
@@ -387,8 +390,8 @@ public class MsExcelContentAdapterTests {
 
 		Assert.assertEquals(6, adapter.getWorkbook().getSheet("sheet").getPhysicalNumberOfRows());
 		
-		HSSFSheet sheet = adapter.getWorkbook().getSheet("sheet");
-		HSSFRow row = sheet.getRow(sheet.getPhysicalNumberOfRows()-1);
+		Sheet sheet = adapter.getWorkbook().getSheet("sheet");
+		Row row = sheet.getRow(sheet.getPhysicalNumberOfRows()-1);
 		Assert.assertEquals("5", row.getCell(0).getRichStringCellValue().getString());
 		Assert.assertEquals("mrs", row.getCell(1).getRichStringCellValue().getString());
 	}
@@ -523,17 +526,17 @@ public class MsExcelContentAdapterTests {
 	// PRIVATE METHODS
 	
 	private void addEntityHeader(MsExcelContentAdapter adapter, String sheetName, String columnName) {
-		HSSFSheet sheet = adapter.getWorkbook().getSheet(sheetName);
-		HSSFRow row = sheet.getRow(0);
-		HSSFCell cell = row.createCell(1, HSSFCell.CELL_TYPE_STRING);
+		Sheet sheet = adapter.getWorkbook().getSheet(sheetName);
+		Row row = sheet.getRow(0);
+		Cell cell = row.createCell(1, HSSFCell.CELL_TYPE_STRING);
 		cell.setCellValue(new HSSFRichTextString(columnName));
 	}
 	
 	private void addEntityHeader(MsExcelContentAdapter adapter, String sheetName, String columnName, String lastUpdateColumnName) {
-		HSSFSheet sheet = adapter.getWorkbook().getSheet(sheetName);
-		HSSFRow row = sheet.getRow(0);
+		Sheet sheet = adapter.getWorkbook().getSheet(sheetName);
+		Row row = sheet.getRow(0);
 
-		HSSFCell cell = row.createCell(1, HSSFCell.CELL_TYPE_STRING);
+		Cell cell = row.createCell(1, HSSFCell.CELL_TYPE_STRING);
 		cell.setCellValue(new HSSFRichTextString(lastUpdateColumnName));
 		
 		cell = row.createCell(2, HSSFCell.CELL_TYPE_STRING);
@@ -541,9 +544,9 @@ public class MsExcelContentAdapterTests {
 	}
 	
 	private void addEntity(MsExcelContentAdapter adapter, String sheetName, String id, String name) {
-		HSSFSheet sheet = adapter.getWorkbook().getSheet(sheetName);
-		HSSFRow row = sheet.createRow(sheet.getPhysicalNumberOfRows());
-		HSSFCell cell = row.createCell(0, HSSFCell.CELL_TYPE_STRING);
+		Sheet sheet = adapter.getWorkbook().getSheet(sheetName);
+		Row row = sheet.createRow(sheet.getPhysicalNumberOfRows());
+		Cell cell = row.createCell(0, HSSFCell.CELL_TYPE_STRING);
 		cell.setCellValue(new HSSFRichTextString(id));
 		
 		cell = row.createCell(1, HSSFCell.CELL_TYPE_STRING);
@@ -551,13 +554,13 @@ public class MsExcelContentAdapterTests {
 	}
 	
 	private void addEntity(MsExcelContentAdapter adapter, String sheetName, String id, String name, Date lastUpdate) {
-		HSSFSheet sheet = adapter.getWorkbook().getSheet(sheetName);
-		HSSFRow row = sheet.createRow(sheet.getPhysicalNumberOfRows());
-		HSSFCell cell = row.createCell(0, HSSFCell.CELL_TYPE_STRING);
+		Sheet sheet = adapter.getWorkbook().getSheet(sheetName);
+		Row row = sheet.createRow(sheet.getPhysicalNumberOfRows());
+		Cell cell = row.createCell(0, HSSFCell.CELL_TYPE_STRING);
 		cell.setCellValue(new HSSFRichTextString(id));
 	
 		cell = row.createCell(1, HSSFCell.CELL_TYPE_NUMERIC);
-		HSSFCellStyle cellStyle = adapter.getWorkbook().createCellStyle();
+		CellStyle cellStyle = adapter.getWorkbook().createCellStyle();
 	    cellStyle.setDataFormat(adapter.getWorkbook().createDataFormat().getFormat("m/d/yy h:mm"));
 		cell.setCellStyle(cellStyle);
 		cell.setCellValue(lastUpdate);
@@ -568,16 +571,16 @@ public class MsExcelContentAdapterTests {
 	
 	}
 	
-	private void validateWorkbook(String sheetName, String idColumn, HSSFWorkbook wookbook) {
-		HSSFSheet sheet = wookbook.getSheet(sheetName);
+	private void validateWorkbook(String sheetName, String idColumn, Workbook wookbook) {
+		Sheet sheet = wookbook.getSheet(sheetName);
 		Assert.assertNotNull(sheet);
 		Assert.assertEquals(0, sheet.getLastRowNum());
 		
-		HSSFRow row = sheet.getRow(0);
+		Row row = sheet.getRow(0);
 		Assert.assertNotNull(row);
 		Assert.assertEquals(1, row.getPhysicalNumberOfCells());
 		
-		HSSFCell cell = row.getCell(0);
+		Cell cell = row.getCell(0);
 		Assert.assertNotNull(cell);
 		Assert.assertEquals(HSSFCell.CELL_TYPE_STRING, cell.getCellType());
 		Assert.assertNotNull(cell.getRichStringCellValue());
@@ -585,8 +588,8 @@ public class MsExcelContentAdapterTests {
 	}
 	
 	private void addPhantomRow(MsExcelContentAdapter adapter, String sheetName, int numOfCell) {
-		HSSFSheet sheet = adapter.getWorkbook().getSheet(sheetName);
-		HSSFRow row = sheet.createRow(sheet.getPhysicalNumberOfRows());
+		Sheet sheet = adapter.getWorkbook().getSheet(sheetName);
+		Row row = sheet.createRow(sheet.getPhysicalNumberOfRows());
 		for (int i = 0; i < numOfCell; i++) {
 			row.createCell(i, HSSFCell.CELL_TYPE_BLANK);
 		}

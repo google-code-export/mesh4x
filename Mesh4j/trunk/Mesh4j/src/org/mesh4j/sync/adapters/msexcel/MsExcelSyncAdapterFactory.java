@@ -7,6 +7,7 @@ import org.mesh4j.sync.adapters.ISyncAdapterFactory;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.security.IIdentityProvider;
+import org.mesh4j.sync.validations.Guard;
 
 public class MsExcelSyncAdapterFactory implements ISyncAdapterFactory {
 
@@ -59,6 +60,7 @@ public class MsExcelSyncAdapterFactory implements ISyncAdapterFactory {
 	}
 
 	protected MsExcelSyncRepository createSyncRepository(String sheetName, IIdentityProvider identityProvider, IMsExcel excel) {
+		Guard.argumentNotNullOrEmptyString(sheetName, "sheetName");
 		return new MsExcelSyncRepository(excel, sheetName+"_sync", identityProvider, IdGenerator.INSTANCE);
 	}
 

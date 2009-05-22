@@ -3,12 +3,12 @@ package org.mesh4j.sync.adapters.msexcel;
 import java.io.FileInputStream;
 import java.util.Date;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFRichTextString;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mesh4j.sync.id.generator.IdGenerator;
@@ -34,7 +34,7 @@ public class MSExcelToRDFMappingTest {
 		
 		IMsExcel excel = new IMsExcel(){
 			@Override public void flush() {}
-			@Override public HSSFWorkbook getWorkbook() {return getDefaultWorkbook();}
+			@Override public Workbook getWorkbook() {return getDefaultWorkbook();}
 			@Override public void setDirty() {}
 			@Override public String getFileName() {return "myFile.xls";}			
 		};
@@ -61,7 +61,7 @@ public class MSExcelToRDFMappingTest {
 		
 		IMsExcel excel = new IMsExcel(){
 			@Override public void flush() {}
-			@Override public HSSFWorkbook getWorkbook() {return getDefaultWorkbook();}
+			@Override public Workbook getWorkbook() {return getDefaultWorkbook();}
 			@Override public void setDirty() {}	
 			@Override public String getFileName() {return "myFile.xls";}
 		};
@@ -69,10 +69,10 @@ public class MSExcelToRDFMappingTest {
 		RDFSchema rdfSchema = MsExcelToRDFMapping.extractRDFSchema(excel, SHEET_NAME, "http://localhost:8080/mesh4x/feeds/MyExample");
 		MsExcelToRDFMapping mapper = new MsExcelToRDFMapping(rdfSchema, COLUMN_CODE);
 				
-		HSSFWorkbook workbook = getDefaultWorkbook();
-		HSSFSheet sheet = MsExcelUtils.getOrCreateSheetIfAbsent(workbook, SHEET_NAME);
-		HSSFRow row = sheet.getRow(sheet.getLastRowNum());
-		HSSFRow headerRow = sheet.getRow(sheet.getFirstRowNum());
+		Workbook workbook = getDefaultWorkbook();
+		Sheet sheet = MsExcelUtils.getOrCreateSheetIfAbsent(workbook, SHEET_NAME);
+		Row row = sheet.getRow(sheet.getLastRowNum());
+		Row headerRow = sheet.getRow(sheet.getFirstRowNum());
 		
 		RDFInstance rdfInstance = mapper.converRowToRDF(headerRow, row);
 		Assert.assertNotNull(rdfInstance);
@@ -119,17 +119,17 @@ public class MSExcelToRDFMappingTest {
 		rdfInstance.setProperty(COLUMN_DATE_ONSET, dateOnset);
 
 		// Excel
-		HSSFWorkbook workbook = new HSSFWorkbook();
-		HSSFSheet sheet = MsExcelUtils.getOrCreateSheetIfAbsent(workbook, sheetName);
-		HSSFRow headerRow = MsExcelUtils.getOrCreateRowHeaderIfAbsent(sheet);
-		MsExcelUtils.getOrCreateCellStringIfAbsent(headerRow, COLUMN_NAME);
-		MsExcelUtils.getOrCreateCellStringIfAbsent(headerRow, COLUMN_CODE);
-		MsExcelUtils.getOrCreateCellStringIfAbsent(headerRow, COLUMN_AGE);
-		MsExcelUtils.getOrCreateCellStringIfAbsent(headerRow, COLUMN_SEX);
-		MsExcelUtils.getOrCreateCellStringIfAbsent(headerRow, COLUMN_ILL);
-		MsExcelUtils.getOrCreateCellStringIfAbsent(headerRow, COLUMN_DATE_ONSET);
+		Workbook workbook = new HSSFWorkbook();
+		Sheet sheet = MsExcelUtils.getOrCreateSheetIfAbsent(workbook, sheetName);
+		Row headerRow = MsExcelUtils.getOrCreateRowHeaderIfAbsent(sheet);
+		MsExcelUtils.getOrCreateCellStringIfAbsent(workbook, headerRow, COLUMN_NAME);
+		MsExcelUtils.getOrCreateCellStringIfAbsent(workbook, headerRow, COLUMN_CODE);
+		MsExcelUtils.getOrCreateCellStringIfAbsent(workbook, headerRow, COLUMN_AGE);
+		MsExcelUtils.getOrCreateCellStringIfAbsent(workbook, headerRow, COLUMN_SEX);
+		MsExcelUtils.getOrCreateCellStringIfAbsent(workbook, headerRow, COLUMN_ILL);
+		MsExcelUtils.getOrCreateCellStringIfAbsent(workbook, headerRow, COLUMN_DATE_ONSET);
 		
-		HSSFRow row = sheet.createRow(1);
+		Row row = sheet.createRow(1);
 		
 		MsExcelToRDFMapping mapper = new MsExcelToRDFMapping(schema, COLUMN_CODE);
 		mapper.appliesRDFToRow(workbook, sheet, row, rdfInstance);
@@ -146,14 +146,14 @@ public class MSExcelToRDFMappingTest {
 	@Test 
 	public void shouldChangeExcelRowFromRDFIndividual() throws Exception{
 		
-		HSSFWorkbook workbook = getDefaultWorkbook();
-		HSSFSheet sheet = MsExcelUtils.getOrCreateSheetIfAbsent(workbook, SHEET_NAME);
-		HSSFRow row = sheet.getRow(sheet.getLastRowNum());
-		HSSFRow headerRow = sheet.getRow(sheet.getFirstRowNum());
+		Workbook workbook = getDefaultWorkbook();
+		Sheet sheet = MsExcelUtils.getOrCreateSheetIfAbsent(workbook, SHEET_NAME);
+		Row row = sheet.getRow(sheet.getLastRowNum());
+		Row headerRow = sheet.getRow(sheet.getFirstRowNum());
 		
 		IMsExcel excel = new IMsExcel(){
 			@Override public void flush() {}
-			@Override public HSSFWorkbook getWorkbook() {return getDefaultWorkbook();}
+			@Override public Workbook getWorkbook() {return getDefaultWorkbook();}
 			@Override public void setDirty() {}		
 			@Override public String getFileName() {return "myFile.xls";}
 		};
@@ -197,7 +197,7 @@ public class MSExcelToRDFMappingTest {
 
 		IMsExcel excel = new IMsExcel(){
 			@Override public void flush() {}
-			@Override public HSSFWorkbook getWorkbook() {return getDefaultWorkbook();}
+			@Override public Workbook getWorkbook() {return getDefaultWorkbook();}
 			@Override public void setDirty() {}	
 			@Override public String getFileName() {return "myFile.xls";}
 		};
@@ -209,80 +209,80 @@ public class MSExcelToRDFMappingTest {
 		String newFileName = TestHelper.fileName("testRDFExcel"+IdGenerator.INSTANCE.newID()+".xls");
 		mapper.createDataSource(newFileName);
 		
-		HSSFWorkbook wb = new HSSFWorkbook(new FileInputStream(newFileName));
-		HSSFSheet sheet = wb.getSheet(SHEET_NAME);
+		Workbook wb = new HSSFWorkbook(new FileInputStream(newFileName));
+		Sheet sheet = wb.getSheet(SHEET_NAME);
 		Assert.assertNotNull(sheet);
 		
-		HSSFRow row = sheet.getRow(0);
+		Row row = sheet.getRow(0);
 		Assert.assertNotNull(row);
 		
-		HSSFCell cell = row.getCell(0);
-		Assert.assertEquals(HSSFCell.CELL_TYPE_STRING, cell.getCellType());
+		Cell cell = row.getCell(0);
+		Assert.assertEquals(Cell.CELL_TYPE_STRING, cell.getCellType());
 		Assert.assertEquals(COLUMN_NAME, cell.getRichStringCellValue().getString());
 		
 		cell = row.getCell(1);
-		Assert.assertEquals(HSSFCell.CELL_TYPE_STRING, cell.getCellType());
+		Assert.assertEquals(Cell.CELL_TYPE_STRING, cell.getCellType());
 		Assert.assertEquals(COLUMN_CODE, cell.getRichStringCellValue().getString());
 		
 		cell = row.getCell(2);
-		Assert.assertEquals(HSSFCell.CELL_TYPE_STRING, cell.getCellType());
+		Assert.assertEquals(Cell.CELL_TYPE_STRING, cell.getCellType());
 		Assert.assertEquals(COLUMN_AGE, cell.getRichStringCellValue().getString());
 		
 		cell = row.getCell(3);
-		Assert.assertEquals(HSSFCell.CELL_TYPE_STRING, cell.getCellType());
+		Assert.assertEquals(Cell.CELL_TYPE_STRING, cell.getCellType());
 		Assert.assertEquals(COLUMN_SEX, cell.getRichStringCellValue().getString());
 		
 		cell = row.getCell(4);
-		Assert.assertEquals(HSSFCell.CELL_TYPE_STRING, cell.getCellType());
+		Assert.assertEquals(Cell.CELL_TYPE_STRING, cell.getCellType());
 		Assert.assertEquals(COLUMN_ILL, cell.getRichStringCellValue().getString());
 		
 		cell = row.getCell(5);
-		Assert.assertEquals(HSSFCell.CELL_TYPE_STRING, cell.getCellType());
+		Assert.assertEquals(Cell.CELL_TYPE_STRING, cell.getCellType());
 		Assert.assertEquals(COLUMN_DATE_ONSET, cell.getRichStringCellValue().getString());
 	}
 	
-	protected HSSFWorkbook getDefaultWorkbook() {
-		HSSFWorkbook workbook = new HSSFWorkbook();
-		HSSFSheet sheet = workbook.createSheet(SHEET_NAME);
-		HSSFRow rowHeader = sheet.createRow(0);
+	protected Workbook getDefaultWorkbook() {
+		Workbook workbook = new HSSFWorkbook();
+		Sheet sheet = workbook.createSheet(SHEET_NAME);
+		Row rowHeader = sheet.createRow(0);
 		
-		HSSFCell cell = rowHeader.createCell(0, HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString(COLUMN_NAME));
+		Cell cell = rowHeader.createCell(0, Cell.CELL_TYPE_STRING);
+		cell.setCellValue(MsExcelUtils.getRichTextString(workbook, COLUMN_NAME));
 		
-		cell = rowHeader.createCell(1, HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString(COLUMN_CODE));
+		cell = rowHeader.createCell(1, Cell.CELL_TYPE_STRING);
+		cell.setCellValue(MsExcelUtils.getRichTextString(workbook, COLUMN_CODE));
 		
-		cell = rowHeader.createCell(2, HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString(COLUMN_AGE));
+		cell = rowHeader.createCell(2, Cell.CELL_TYPE_STRING);
+		cell.setCellValue(MsExcelUtils.getRichTextString(workbook, COLUMN_AGE));
 		
-		cell = rowHeader.createCell(3, HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString(COLUMN_SEX));
+		cell = rowHeader.createCell(3, Cell.CELL_TYPE_STRING);
+		cell.setCellValue(MsExcelUtils.getRichTextString(workbook, COLUMN_SEX));
 		
-		cell = rowHeader.createCell(4, HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString(COLUMN_ILL));
+		cell = rowHeader.createCell(4, Cell.CELL_TYPE_STRING);
+		cell.setCellValue(MsExcelUtils.getRichTextString(workbook, COLUMN_ILL));
 		
-		cell = rowHeader.createCell(5, HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString(COLUMN_DATE_ONSET));
+		cell = rowHeader.createCell(5, Cell.CELL_TYPE_STRING);
+		cell.setCellValue(MsExcelUtils.getRichTextString(workbook, COLUMN_DATE_ONSET));
 	    
-		HSSFRow rowData = sheet.createRow(1);
+		Row rowData = sheet.createRow(1);
 		
-		cell = rowData.createCell(0, HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString("juan"));
+		cell = rowData.createCell(0, Cell.CELL_TYPE_STRING);
+		cell.setCellValue(MsExcelUtils.getRichTextString(workbook, "juan"));
 		
-		cell = rowData.createCell(1, HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString("P1"));
+		cell = rowData.createCell(1, Cell.CELL_TYPE_STRING);
+		cell.setCellValue(MsExcelUtils.getRichTextString(workbook, "P1"));
 		
-		cell = rowData.createCell(2, HSSFCell.CELL_TYPE_NUMERIC);
+		cell = rowData.createCell(2, Cell.CELL_TYPE_NUMERIC);
 		cell.setCellValue(30);
 		
-		cell = rowData.createCell(3, HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString("male"));
+		cell = rowData.createCell(3, Cell.CELL_TYPE_STRING);
+		cell.setCellValue(MsExcelUtils.getRichTextString(workbook, "male"));
 		
-		cell = rowData.createCell(4, HSSFCell.CELL_TYPE_BOOLEAN);
+		cell = rowData.createCell(4, Cell.CELL_TYPE_BOOLEAN);
 		cell.setCellValue(true);
 		
-		cell = rowData.createCell(5, HSSFCell.CELL_TYPE_NUMERIC);
-		HSSFCellStyle cellStyle = workbook.createCellStyle();
+		cell = rowData.createCell(5, Cell.CELL_TYPE_NUMERIC);
+		CellStyle cellStyle = workbook.createCellStyle();
 	    cellStyle.setDataFormat(workbook.createDataFormat().getFormat("m/d/yy h:mm"));
 	    cell.setCellStyle(cellStyle);
 	    cell.setCellValue(new Date());

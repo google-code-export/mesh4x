@@ -7,11 +7,12 @@ import java.io.IOException;
 
 import junit.framework.Assert;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Test;
 import org.mesh4j.sync.test.utils.TestHelper;
 import org.mesh4j.sync.validations.MeshException;
@@ -41,9 +42,9 @@ public class MsExcelUtilsTests {
 		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
 	
 		HSSFWorkbook workbook = new HSSFWorkbook();
-		HSSFSheet sheet = workbook.createSheet(sheetName);
-		HSSFRow row = sheet.createRow(0);
-		HSSFCell cell = row.createCell(0, HSSFCell.CELL_TYPE_STRING);
+		Sheet sheet = workbook.createSheet(sheetName);
+		Row row = sheet.createRow(0);
+		Cell cell = row.createCell(0, Cell.CELL_TYPE_STRING);
 		cell.setCellValue(new HSSFRichTextString(cellValue));
 		MsExcelUtils.flush(workbook, file.getAbsolutePath());
 		
@@ -60,7 +61,7 @@ public class MsExcelUtilsTests {
 		
 		cell = row.getCell(0);
 		Assert.assertNotNull(cell);
-		Assert.assertEquals(HSSFCell.CELL_TYPE_STRING, cell.getCellType());
+		Assert.assertEquals(Cell.CELL_TYPE_STRING, cell.getCellType());
 		Assert.assertNotNull(cell.getRichStringCellValue());
 		Assert.assertEquals(cellValue, cell.getRichStringCellValue().getString());
 
@@ -74,9 +75,9 @@ public class MsExcelUtilsTests {
 		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
 	
 		HSSFWorkbook workbook = new HSSFWorkbook();
-		HSSFSheet sheet = workbook.createSheet(sheetName);
-		HSSFRow row = sheet.createRow(0);
-		HSSFCell cell = row.createCell(0, HSSFCell.CELL_TYPE_STRING);
+		Sheet sheet = workbook.createSheet(sheetName);
+		Row row = sheet.createRow(0);
+		Cell cell = row.createCell(0, Cell.CELL_TYPE_STRING);
 		cell.setCellValue(new HSSFRichTextString(cellValue));
 		MsExcelUtils.flush(workbook, file.getAbsolutePath());
 		
@@ -85,7 +86,7 @@ public class MsExcelUtilsTests {
 		workbook = new HSSFWorkbook(new FileInputStream(file));
 		sheet = workbook.getSheet(sheetName);
 		row = sheet.createRow(1);
-		cell = row.createCell(0, HSSFCell.CELL_TYPE_STRING);
+		cell = row.createCell(0, Cell.CELL_TYPE_STRING);
 		cell.setCellValue(new HSSFRichTextString(cellValue));
 		MsExcelUtils.flush(workbook, file.getAbsolutePath());
 		
@@ -102,7 +103,7 @@ public class MsExcelUtilsTests {
 		
 		cell = row.getCell(0);
 		Assert.assertNotNull(cell);
-		Assert.assertEquals(HSSFCell.CELL_TYPE_STRING, cell.getCellType());
+		Assert.assertEquals(Cell.CELL_TYPE_STRING, cell.getCellType());
 		Assert.assertNotNull(cell.getRichStringCellValue());
 		Assert.assertEquals(cellValue, cell.getRichStringCellValue().getString());
 		
@@ -112,61 +113,61 @@ public class MsExcelUtilsTests {
 		
 		cell = row.getCell(0);
 		Assert.assertNotNull(cell);
-		Assert.assertEquals(HSSFCell.CELL_TYPE_STRING, cell.getCellType());
+		Assert.assertEquals(Cell.CELL_TYPE_STRING, cell.getCellType());
 		Assert.assertNotNull(cell.getRichStringCellValue());
 		Assert.assertEquals(cellValue, cell.getRichStringCellValue().getString());
 	}
 	
 	@Test
 	public void shouldGetRow(){
-		HSSFSheet sheet = makeDefaultWorkbook().getSheetAt(0);
-		HSSFRow row = MsExcelUtils.getRow(sheet, 3, "VAL23");
+		Sheet sheet = makeDefaultWorkbook().getSheetAt(0);
+		Row row = MsExcelUtils.getRow(sheet, 3, "VAL23");
 		Assert.assertNotNull(row);
 	}
 	
 	@Test
 	public void shouldGetRowReturnsNull(){
-		HSSFSheet sheet = makeDefaultWorkbook().getSheetAt(0);
-		HSSFRow row = MsExcelUtils.getRow(sheet, 3, "dsadfdaf");
+		Sheet sheet = makeDefaultWorkbook().getSheetAt(0);
+		Row row = MsExcelUtils.getRow(sheet, 3, "dsadfdaf");
 		Assert.assertNull(row);
 	}
 
 	@Test
 	public void shouldGetCell(){
-		HSSFSheet sheet = makeDefaultWorkbook().getSheetAt(0);
+		Sheet sheet = makeDefaultWorkbook().getSheetAt(0);
 
-		HSSFRow row = sheet.getRow(1);
+		Row row = sheet.getRow(1);
 		Assert.assertNotNull(row);
 		
-		HSSFCell cell = MsExcelUtils.getCell(sheet, row, "COL4");
+		Cell cell = MsExcelUtils.getCell(sheet, row, "COL4");
 		Assert.assertNotNull(cell);
 		Assert.assertEquals("VAL4", cell.getRichStringCellValue().getString());
 	}
 	
 	@Test
 	public void shouldGetCellReturnsNull(){
-		HSSFSheet sheet = makeDefaultWorkbook().getSheetAt(0);
+		Sheet sheet = makeDefaultWorkbook().getSheetAt(0);
 
-		HSSFRow row = sheet.getRow(1);
+		Row row = sheet.getRow(1);
 		Assert.assertNotNull(row);
 		
-		HSSFCell cell = MsExcelUtils.getCell(sheet, row, "fhejsfbjes");
+		Cell cell = MsExcelUtils.getCell(sheet, row, "fhejsfbjes");
 		Assert.assertNull(cell);
 	}
 	
 	@Test
-	public void shouldCreateWookbookWhenFileDoesNotExist() throws FileNotFoundException, IOException{
+	public void shouldCreateWookbookWhenFileDoesNotExist() throws Exception{
 		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
 		
-		HSSFWorkbook workbook = MsExcelUtils.getOrCreateWorkbookIfAbsent(file.getAbsolutePath());
+		Workbook workbook = MsExcelUtils.getOrCreateWorkbookIfAbsent(file.getAbsolutePath());
 		Assert.assertNotNull(workbook);
 		Assert.assertFalse(file.exists());
 	}
 
 	@Test
-	public void shouldLoadWookbookWhenFileExist() throws FileNotFoundException, IOException{
+	public void shouldLoadWookbookWhenFileExist() throws Exception{
 		String fileName = TestHelper.fileName("myExcel.xls");
-		HSSFWorkbook workbook = makeDefaultWorkbook();
+		Workbook workbook = makeDefaultWorkbook();
 		MsExcelUtils.flush(workbook, fileName);
 			
 		File file = new File(fileName);
@@ -182,10 +183,10 @@ public class MsExcelUtilsTests {
 	@Test 
 	public void shouldGetSheet(){
 		HSSFWorkbook workbook = makeDefaultWorkbook();
-		HSSFSheet sheet = workbook.getSheet("EXAMPLE");
+		Sheet sheet = workbook.getSheet("EXAMPLE");
 		Assert.assertNotNull(sheet);
 		
-		HSSFSheet sheet1 = MsExcelUtils.getOrCreateSheetIfAbsent(workbook, "EXAMPLE");
+		Sheet sheet1 = MsExcelUtils.getOrCreateSheetIfAbsent(workbook, "EXAMPLE");
 		Assert.assertNotNull(sheet1);
 		
 		Assert.assertEquals(sheet, sheet1);
@@ -194,10 +195,10 @@ public class MsExcelUtilsTests {
 	@Test 
 	public void shouldAddSheet(){
 		HSSFWorkbook workbook = makeDefaultWorkbook();
-		HSSFSheet sheet = workbook.getSheet("EXAMPLE1");
+		Sheet sheet = workbook.getSheet("EXAMPLE1");
 		Assert.assertNull(sheet);
 		
-		HSSFSheet sheet1 = MsExcelUtils.getOrCreateSheetIfAbsent(workbook, "EXAMPLE1");
+		Sheet sheet1 = MsExcelUtils.getOrCreateSheetIfAbsent(workbook, "EXAMPLE1");
 		Assert.assertNotNull(sheet1);
 		
 		sheet = workbook.getSheet("EXAMPLE1");
@@ -209,10 +210,10 @@ public class MsExcelUtilsTests {
 	@Test 
 	public void shouldAddSheetWhenWorkbookIsEmpty(){
 		HSSFWorkbook workbook = new HSSFWorkbook();
-		HSSFSheet sheet = workbook.getSheet("EXAMPLE");
+		Sheet sheet = workbook.getSheet("EXAMPLE");
 		Assert.assertNull(sheet);
 		
-		HSSFSheet sheet1 = MsExcelUtils.getOrCreateSheetIfAbsent(workbook, "EXAMPLE");
+		Sheet sheet1 = MsExcelUtils.getOrCreateSheetIfAbsent(workbook, "EXAMPLE");
 		Assert.assertNotNull(sheet1);
 		
 		sheet = workbook.getSheet("EXAMPLE");
@@ -224,13 +225,13 @@ public class MsExcelUtilsTests {
 	@Test
 	public void shouldGetRowHeader(){
 		HSSFWorkbook workbook = makeDefaultWorkbook();
-		HSSFSheet sheet = workbook.getSheet("EXAMPLE");
+		Sheet sheet = workbook.getSheet("EXAMPLE");
 		Assert.assertNotNull(sheet);
 	
-		HSSFRow originalRow = sheet.getRow(0);
+		Row originalRow = sheet.getRow(0);
 		Assert.assertNotNull(originalRow);
 		
-		HSSFRow row = MsExcelUtils.getOrCreateRowHeaderIfAbsent(sheet);
+		Row row = MsExcelUtils.getOrCreateRowHeaderIfAbsent(sheet);
 	
 		Assert.assertNotNull(row);
 		Assert.assertEquals(originalRow, row);
@@ -239,12 +240,12 @@ public class MsExcelUtilsTests {
 	@Test
 	public void shouldGetRowHeaderCreateRowWhenHeaderDoesNotExist(){
 		HSSFWorkbook workbook = new HSSFWorkbook();
-		HSSFSheet sheet = workbook.createSheet("EXAMPLE");
+		Sheet sheet = workbook.createSheet("EXAMPLE");
 		Assert.assertNotNull(sheet);
 	
 		Assert.assertNull(sheet.getRow(0));
 		
-		HSSFRow row = MsExcelUtils.getOrCreateRowHeaderIfAbsent(sheet);
+		Row row = MsExcelUtils.getOrCreateRowHeaderIfAbsent(sheet);
 	
 		Assert.assertNotNull(row);
 		Assert.assertEquals(row, sheet.getRow(0));
@@ -252,14 +253,14 @@ public class MsExcelUtilsTests {
 	
 	@Test
 	public void shouldGetOrCreateCellExecuteGet(){
-		HSSFWorkbook workbook = makeDefaultWorkbook();
-		HSSFSheet sheet = workbook.getSheet("EXAMPLE");
+		Workbook workbook = makeDefaultWorkbook();
+		Sheet sheet = workbook.getSheet("EXAMPLE");
 		Assert.assertNotNull(sheet);
 	
-		HSSFRow row = sheet.getRow(1);
+		Row row = sheet.getRow(1);
 		Assert.assertNotNull(row);
 		
-		HSSFCell cell = MsExcelUtils.getOrCreateCellStringIfAbsent(row, "VAL0");
+		Cell cell = MsExcelUtils.getOrCreateCellStringIfAbsent(workbook,row, "VAL0");
 	
 		Assert.assertNotNull(cell);
 		Assert.assertEquals(cell, row.getCell(0));
@@ -267,14 +268,14 @@ public class MsExcelUtilsTests {
 	
 	@Test
 	public void shouldGetOrCreateCellExecuteCreate(){
-		HSSFWorkbook workbook = makeDefaultWorkbook();
-		HSSFSheet sheet = workbook.getSheet("EXAMPLE");
+		Workbook workbook = makeDefaultWorkbook();
+		Sheet sheet = workbook.getSheet("EXAMPLE");
 		Assert.assertNotNull(sheet);
 	
-		HSSFRow row = sheet.getRow(1);
+		Row row = sheet.getRow(1);
 		Assert.assertNotNull(row);
 		
-		HSSFCell cell = MsExcelUtils.getOrCreateCellStringIfAbsent(row, "VAL?");
+		Cell cell = MsExcelUtils.getOrCreateCellStringIfAbsent(workbook,row, "VAL?");
 	
 		Assert.assertNotNull(cell);
 		Assert.assertEquals(cell, row.getCell(row.getPhysicalNumberOfCells()-1));
@@ -282,13 +283,13 @@ public class MsExcelUtilsTests {
 	
 	@Test
 	public void shouldUpdateOrCreateCellExecuteUpdate(){
-		HSSFWorkbook workbook = makeDefaultWorkbook();
-		HSSFSheet sheet = workbook.getSheet("EXAMPLE");
-		HSSFRow row = sheet.getRow(1);
-		HSSFCell cell = row.getCell(2);
+		Workbook workbook = makeDefaultWorkbook();
+		Sheet sheet = workbook.getSheet("EXAMPLE");
+		Row row = sheet.getRow(1);
+		Cell cell = row.getCell(2);
 		Assert.assertNotNull(cell);
 		
-		MsExcelUtils.updateOrCreateCellStringIfAbsent(row, 2, "NEW_VALUE");
+		MsExcelUtils.updateOrCreateCellStringIfAbsent(workbook,row, 2, "NEW_VALUE");
 		
 		cell = row.getCell(2);
 		Assert.assertNotNull(cell);
@@ -298,13 +299,13 @@ public class MsExcelUtilsTests {
 	
 	@Test
 	public void shouldUpdateOrCreateCellExecuteCreate(){
-		HSSFWorkbook workbook = makeDefaultWorkbook();
-		HSSFSheet sheet = workbook.getSheet("EXAMPLE");
-		HSSFRow row = sheet.getRow(1);
-		HSSFCell cell = row.getCell(5);
+		Workbook workbook = makeDefaultWorkbook();
+		Sheet sheet = workbook.getSheet("EXAMPLE");
+		Row row = sheet.getRow(1);
+		Cell cell = row.getCell(5);
 		Assert.assertNull(cell);
 		
-		MsExcelUtils.updateOrCreateCellStringIfAbsent(row, 5, "NEW_VALUE");
+		MsExcelUtils.updateOrCreateCellStringIfAbsent(workbook,row, 5, "NEW_VALUE");
 		
 		cell = row.getCell(5);
 		Assert.assertNotNull(cell);
@@ -314,14 +315,14 @@ public class MsExcelUtilsTests {
 		
 	// PRIVATE METHODS
 	
-	private void assertDefaultWorkbook(HSSFWorkbook workbook) {
-		HSSFSheet sheet = workbook.getSheet("EXAMPLE");
+	private void assertDefaultWorkbook(Workbook workbook) {
+		Sheet sheet = workbook.getSheet("EXAMPLE");
 		Assert.assertNotNull(sheet);
 		
-		HSSFRow row = sheet.getRow(0);
+		Row row = sheet.getRow(0);
 		Assert.assertNotNull(row);
 		
-		HSSFCell cell = row.getCell(0);
+		Cell cell = row.getCell(0);
 		Assert.assertNotNull(cell);
 		Assert.assertEquals("COL0", cell.getRichStringCellValue().getString());
 		
@@ -390,56 +391,56 @@ public class MsExcelUtilsTests {
 
 	private HSSFWorkbook makeDefaultWorkbook() {
 		HSSFWorkbook workbook = new HSSFWorkbook();
-		HSSFSheet sheet = workbook.createSheet("EXAMPLE");
-		HSSFRow row = sheet.createRow(0);
+		Sheet sheet = workbook.createSheet("EXAMPLE");
+		Row row = sheet.createRow(0);
 		
-		HSSFCell cell = row.createCell(0, HSSFCell.CELL_TYPE_STRING);
+		Cell cell = row.createCell(0, Cell.CELL_TYPE_STRING);
 		cell.setCellValue(new HSSFRichTextString("COL0"));
 		
-		cell = row.createCell(1, HSSFCell.CELL_TYPE_STRING);
+		cell = row.createCell(1, Cell.CELL_TYPE_STRING);
 		cell.setCellValue(new HSSFRichTextString("COL1"));
 		
-		cell = row.createCell(2, HSSFCell.CELL_TYPE_STRING);
+		cell = row.createCell(2, Cell.CELL_TYPE_STRING);
 		cell.setCellValue(new HSSFRichTextString("COL2"));
 		
-		cell = row.createCell(3, HSSFCell.CELL_TYPE_STRING);
+		cell = row.createCell(3, Cell.CELL_TYPE_STRING);
 		cell.setCellValue(new HSSFRichTextString("COL3"));
 		
-		cell = row.createCell(4, HSSFCell.CELL_TYPE_STRING);
+		cell = row.createCell(4, Cell.CELL_TYPE_STRING);
 		cell.setCellValue(new HSSFRichTextString("COL4"));
 		
 		row = sheet.createRow(1);
 		
-		cell = row.createCell(0, HSSFCell.CELL_TYPE_STRING);
+		cell = row.createCell(0, Cell.CELL_TYPE_STRING);
 		cell.setCellValue(new HSSFRichTextString("VAL0"));
 		
-		cell = row.createCell(1, HSSFCell.CELL_TYPE_STRING);
+		cell = row.createCell(1, Cell.CELL_TYPE_STRING);
 		cell.setCellValue(new HSSFRichTextString("VAL1"));
 		
-		cell = row.createCell(2, HSSFCell.CELL_TYPE_STRING);
+		cell = row.createCell(2, Cell.CELL_TYPE_STRING);
 		cell.setCellValue(new HSSFRichTextString("VAL2"));
 		
-		cell = row.createCell(3, HSSFCell.CELL_TYPE_STRING);
+		cell = row.createCell(3, Cell.CELL_TYPE_STRING);
 		cell.setCellValue(new HSSFRichTextString("VAL3"));
 		
-		cell = row.createCell(4, HSSFCell.CELL_TYPE_STRING);
+		cell = row.createCell(4, Cell.CELL_TYPE_STRING);
 		cell.setCellValue(new HSSFRichTextString("VAL4"));
 
 		row = sheet.createRow(2);
 		
-		cell = row.createCell(0, HSSFCell.CELL_TYPE_STRING);
+		cell = row.createCell(0, Cell.CELL_TYPE_STRING);
 		cell.setCellValue(new HSSFRichTextString("VAL20"));
 		
-		cell = row.createCell(1, HSSFCell.CELL_TYPE_STRING);
+		cell = row.createCell(1, Cell.CELL_TYPE_STRING);
 		cell.setCellValue(new HSSFRichTextString("VAL21"));
 		
-		cell = row.createCell(2, HSSFCell.CELL_TYPE_STRING);
+		cell = row.createCell(2, Cell.CELL_TYPE_STRING);
 		cell.setCellValue(new HSSFRichTextString("VAL22"));
 		
-		cell = row.createCell(3, HSSFCell.CELL_TYPE_STRING);
+		cell = row.createCell(3, Cell.CELL_TYPE_STRING);
 		cell.setCellValue(new HSSFRichTextString("VAL23"));
 		
-		cell = row.createCell(4, HSSFCell.CELL_TYPE_STRING);
+		cell = row.createCell(4, Cell.CELL_TYPE_STRING);
 		cell.setCellValue(new HSSFRichTextString("VAL24"));
 		return workbook;
 	}

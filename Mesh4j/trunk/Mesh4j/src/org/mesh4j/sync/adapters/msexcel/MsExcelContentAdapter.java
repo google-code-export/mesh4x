@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.dom4j.Element;
 import org.mesh4j.sync.ISupportReadSchema;
 import org.mesh4j.sync.ISupportWriteSchema;
@@ -48,14 +48,14 @@ public class MsExcelContentAdapter implements IIdentifiableContentAdapter, ISync
 
 	private void initialize() {
 		try{
-			HSSFWorkbook workbook = excel.getWorkbook();			
-			HSSFSheet sheet = MsExcelUtils.getOrCreateSheetIfAbsent(workbook, this.sheetName);			
-			HSSFRow row = MsExcelUtils.getOrCreateRowHeaderIfAbsent(sheet);						
-			HSSFCell cell = MsExcelUtils.getOrCreateCellStringIfAbsent(row, this.mapping.getIdColumnName());
+			Workbook workbook = excel.getWorkbook();			
+			Sheet sheet = MsExcelUtils.getOrCreateSheetIfAbsent(workbook, this.sheetName);			
+			Row row = MsExcelUtils.getOrCreateRowHeaderIfAbsent(sheet);						
+			Cell cell = MsExcelUtils.getOrCreateCellStringIfAbsent(workbook, row, this.mapping.getIdColumnName());
 			this.entityIdIndex = cell.getColumnIndex();
 			
 			if(this.mapping.getLastUpdateColumnName() != null){
-				cell = MsExcelUtils.getOrCreateCellStringIfAbsent(row, this.mapping.getLastUpdateColumnName());
+				cell = MsExcelUtils.getOrCreateCellStringIfAbsent(workbook, row, this.mapping.getLastUpdateColumnName());
 				this.lastUpdateIndex = cell.getColumnIndex();
 			}
 		} catch (Exception e) {
@@ -63,11 +63,11 @@ public class MsExcelContentAdapter implements IIdentifiableContentAdapter, ISync
 		}
 	}
 	
-	protected Element translate(HSSFRow row) {
+	protected Element translate(Row row) {
 		return this.mapping.convertRowToXML(getWorkbook(), getSheet(), row);
 	}
 	
-	protected void updateRow(HSSFRow row, EntityContent entityContent) {
+	protected void updateRow(Row row, EntityContent entityContent) {
 		this.mapping.appliesXMLToRow(getWorkbook(), getSheet(), row, entityContent.getPayload());
 	}
 
@@ -78,15 +78,15 @@ public class MsExcelContentAdapter implements IIdentifiableContentAdapter, ISync
 			this.numberOfPhantomRows--;
 		} 
 		
-		HSSFRow row = getSheet().createRow(index);
+		Row row = getSheet().createRow(index);
 		this.updateRow(row, entityContent);		
 	}
 	
-	public HSSFWorkbook getWorkbook() {
+	public Workbook getWorkbook() {
 		return this.excel.getWorkbook();
 	}
 	
-	public HSSFSheet getSheet() {
+	public Sheet getSheet() {
 		return getWorkbook().getSheet(this.sheetName);
 	}
 	
@@ -99,7 +99,7 @@ public class MsExcelContentAdapter implements IIdentifiableContentAdapter, ISync
 	@Override
 	public void save(IContent content) {
 		EntityContent entityContent = EntityContent.normalizeContent(content, this.sheetName, this.mapping.getIdColumnName());
-		HSSFRow row = MsExcelUtils.getRow(getSheet(), this.entityIdIndex, entityContent.getId());
+		Row row = MsExcelUtils.getRow(getSheet(), this.entityIdIndex, entityContent.getId());
 		if(row == null){
 			this.addRow(entityContent);
 		} else {
@@ -110,7 +110,7 @@ public class MsExcelContentAdapter implements IIdentifiableContentAdapter, ISync
 	@Override
 	public void delete(IContent content) {
 		EntityContent entityContent = EntityContent.normalizeContent(content, this.sheetName, this.mapping.getIdColumnName());
-		HSSFRow row = MsExcelUtils.getRow(getSheet(), this.entityIdIndex, entityContent.getId());
+		Row row = MsExcelUtils.getRow(getSheet(), this.entityIdIndex, entityContent.getId());
 		if(row != null){
 			this.numberOfPhantomRows++;
 			getSheet().removeRow(row);
@@ -122,7 +122,7 @@ public class MsExcelContentAdapter implements IIdentifiableContentAdapter, ISync
 
 	@Override
 	public IContent get(String entityId) {
-		HSSFRow row = MsExcelUtils.getRow(getSheet(), this.entityIdIndex, entityId);
+		Row row = MsExcelUtils.getRow(getSheet(), this.entityIdIndex, entityId);
 		if(row == null){
 			return null;
 		} else {
@@ -135,7 +135,7 @@ public class MsExcelContentAdapter implements IIdentifiableContentAdapter, ISync
 	public List<IContent> getAll(Date since) {
 		ArrayList<IContent> result = new ArrayList<IContent>();
 		
-		HSSFRow row;
+		Row row;
 		Element payload;
 		IContent entityContent;
 		for (int i = getSheet().getFirstRowNum()+1; i <= getSheet().getLastRowNum(); i++) {
@@ -153,7 +153,7 @@ public class MsExcelContentAdapter implements IIdentifiableContentAdapter, ISync
 		return result;
 	}
 
-	private boolean hasChanged(HSSFRow row, Date since) {
+	private boolean hasChanged(Row row, Date since) {
 		if(this.lastUpdateIndex == -1){
 			return true;
 		} else {
@@ -177,7 +177,7 @@ public class MsExcelContentAdapter implements IIdentifiableContentAdapter, ISync
 	public void beginSync() {
 		this.numberOfPhantomRows = 0;
 		for (int i = getSheet().getFirstRowNum()+1; i <= getSheet().getLastRowNum(); i++) {
-			HSSFRow row = getSheet().getRow(i);
+			Row row = getSheet().getRow(i);
 			
 			if(MsExcelUtils.isPhantomRow(row)){
 				this.numberOfPhantomRows++;

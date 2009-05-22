@@ -44,31 +44,31 @@ public class MsExcelRDFSyncAdapterFactoryTests {
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateAdapterFailsIfSheetNameIsNull(){
 		MsExcelRDFSyncAdapterFactory factory = new MsExcelRDFSyncAdapterFactory("http://localhost:8080/mesh4x/myExample");
-		factory.createSyncAdapter("excelFileName", null, "idColumnName", NullIdentityProvider.INSTANCE);
+		factory.createSyncAdapter("excelFileName.xls", null, "idColumnName", NullIdentityProvider.INSTANCE);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateAdapterFailsIfSheetNameIsEmpty(){
 		MsExcelRDFSyncAdapterFactory factory = new MsExcelRDFSyncAdapterFactory("http://localhost:8080/mesh4x/myExample");
-		factory.createSyncAdapter("excelFileName", "", "idColumnName", NullIdentityProvider.INSTANCE);
+		factory.createSyncAdapter("excelFileName.xls", "", "idColumnName", NullIdentityProvider.INSTANCE);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateAdapterFailsIfIdColumnIsNull(){
 		MsExcelRDFSyncAdapterFactory factory = new MsExcelRDFSyncAdapterFactory("http://localhost:8080/mesh4x/myExample");
-		factory.createSyncAdapter("excelFileName", "sheetName", null, NullIdentityProvider.INSTANCE);
+		factory.createSyncAdapter("excelFileName.xls", "sheetName", null, NullIdentityProvider.INSTANCE);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateAdapterFailsIfIdColumnIsEmpty(){
 		MsExcelRDFSyncAdapterFactory factory = new MsExcelRDFSyncAdapterFactory("http://localhost:8080/mesh4x/myExample");
-		factory.createSyncAdapter("excelFileName", "sheetName", "", NullIdentityProvider.INSTANCE);
+		factory.createSyncAdapter("excelFileName.xls", "sheetName", "", NullIdentityProvider.INSTANCE);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateAdapterFailsIfIdentityProviderIsNull(){
 		MsExcelRDFSyncAdapterFactory factory = new MsExcelRDFSyncAdapterFactory("http://localhost:8080/mesh4x/myExample");
-		factory.createSyncAdapter("excelFileName", "sheetName", "idColumnName", null);
+		factory.createSyncAdapter("excelFileName.xls", "sheetName", "idColumnName", null);
 	}
 	
 	@Test
@@ -101,41 +101,41 @@ public class MsExcelRDFSyncAdapterFactoryTests {
 	public void shouldCreateAdapterFromRDFFailsIfSheetNameIsNull(){
 		RDFSchema rdfSchema = new RDFSchema("Oswego", "http://localhost:8080/mesh4x/myExample/Oswego#", "Oswego");
 		MsExcelRDFSyncAdapterFactory factory = new MsExcelRDFSyncAdapterFactory("http://localhost:8080/mesh4x/myExample");
-		factory.createSyncAdapter("excelFileName", null, "idColumnName", NullIdentityProvider.INSTANCE, rdfSchema);
+		factory.createSyncAdapter("excelFileName.xls", null, "idColumnName", NullIdentityProvider.INSTANCE, rdfSchema);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateAdapterFromRDFFailsIfSheetNameIsEmpty(){
 		RDFSchema rdfSchema = new RDFSchema("Oswego", "http://localhost:8080/mesh4x/myExample/Oswego#", "Oswego");
 		MsExcelRDFSyncAdapterFactory factory = new MsExcelRDFSyncAdapterFactory("http://localhost:8080/mesh4x/myExample");
-		factory.createSyncAdapter("excelFileName", "", "idColumnName", NullIdentityProvider.INSTANCE, rdfSchema);
+		factory.createSyncAdapter("excelFileName.xls", "", "idColumnName", NullIdentityProvider.INSTANCE, rdfSchema);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateAdapterFromRDFFailsIfIdColumnIsNull(){
 		RDFSchema rdfSchema = new RDFSchema("Oswego", "http://localhost:8080/mesh4x/myExample/Oswego#", "Oswego");
 		MsExcelRDFSyncAdapterFactory factory = new MsExcelRDFSyncAdapterFactory("http://localhost:8080/mesh4x/myExample");
-		factory.createSyncAdapter("excelFileName", "sheetName", null, NullIdentityProvider.INSTANCE, rdfSchema);
+		factory.createSyncAdapter("excelFileName.xls", "sheetName", null, NullIdentityProvider.INSTANCE, rdfSchema);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateAdapterFromRDFFailsIfIdColumnIsEmpty(){
 		RDFSchema rdfSchema = new RDFSchema("Oswego", "http://localhost:8080/mesh4x/myExample/Oswego#", "Oswego");
 		MsExcelRDFSyncAdapterFactory factory = new MsExcelRDFSyncAdapterFactory("http://localhost:8080/mesh4x/myExample");
-		factory.createSyncAdapter("excelFileName", "sheetName", "", NullIdentityProvider.INSTANCE, rdfSchema);
+		factory.createSyncAdapter("excelFileName.xls", "sheetName", "", NullIdentityProvider.INSTANCE, rdfSchema);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateAdapterFromRDFFailsIfIdentityProviderIsNull(){
 		RDFSchema rdfSchema = new RDFSchema("Oswego", "http://localhost:8080/mesh4x/myExample/Oswego#", "Oswego");
 		MsExcelRDFSyncAdapterFactory factory = new MsExcelRDFSyncAdapterFactory("http://localhost:8080/mesh4x/myExample");
-		factory.createSyncAdapter("excelFileName", "sheetName", "idColumnName", null, rdfSchema);
+		factory.createSyncAdapter("excelFileName.xls", "sheetName", "idColumnName", null, rdfSchema);
 	}
 
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateAdapterFromRDFFailsIfRDFSchemaIsNull(){
 		MsExcelRDFSyncAdapterFactory factory = new MsExcelRDFSyncAdapterFactory("http://localhost:8080/mesh4x/myExample");
-		factory.createSyncAdapter("excelFileName", "sheetName", "idColumnName", NullIdentityProvider.INSTANCE, null);
+		factory.createSyncAdapter("excelFileName.xls", "sheetName", "idColumnName", NullIdentityProvider.INSTANCE, null);
 	}
 	
 	@Test

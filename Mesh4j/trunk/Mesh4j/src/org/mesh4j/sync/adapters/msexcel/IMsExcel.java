@@ -1,10 +1,12 @@
 package org.mesh4j.sync.adapters.msexcel;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Workbook;
+
+
 
 public interface IMsExcel {
 
-	public HSSFWorkbook getWorkbook();
+	public Workbook getWorkbook();
 	
 	public void setDirty();
 	

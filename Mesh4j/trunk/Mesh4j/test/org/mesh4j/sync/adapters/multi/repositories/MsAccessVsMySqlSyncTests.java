@@ -2,7 +2,7 @@ package org.mesh4j.sync.adapters.multi.repositories;
 
 import junit.framework.Assert;
 
-import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.ss.usermodel.Row;
 import org.junit.Test;
 import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.adapters.hibernate.HibernateContentAdapter;
@@ -47,10 +47,10 @@ public class MsAccessVsMySqlSyncTests {
 		excelContent.beginSync();
 		String value = IdGenerator.INSTANCE.newID();
 		int rowNum = excelContent.getSheet().getPhysicalNumberOfRows();
-		HSSFRow row = excelContent.getSheet().createRow(rowNum);
-		MsExcelUtils.updateOrCreateCellStringIfAbsent(row, 0, value);
-		MsExcelUtils.updateOrCreateCellStringIfAbsent(row, 1, value);
-		MsExcelUtils.updateOrCreateCellStringIfAbsent(row, 2, value);
+		Row row = excelContent.getSheet().createRow(rowNum);
+		MsExcelUtils.updateOrCreateCellStringIfAbsent(excelContent.getWorkbook(), row, 0, value);
+		MsExcelUtils.updateOrCreateCellStringIfAbsent(excelContent.getWorkbook(), row, 1, value);
+		MsExcelUtils.updateOrCreateCellStringIfAbsent(excelContent.getWorkbook(), row, 2, value);
 		excelContent.endSync();
 		
 		Assert.assertEquals(size, adapterSource.getAll().size());
@@ -60,7 +60,7 @@ public class MsAccessVsMySqlSyncTests {
 		// update - create again the adapters emulating other sync
 		excelContent.beginSync();
 		row = excelContent.getSheet().getRow(rowNum);
-		MsExcelUtils.updateOrCreateCellStringIfAbsent(row, 2, IdGenerator.INSTANCE.newID());
+		MsExcelUtils.updateOrCreateCellStringIfAbsent(excelContent.getWorkbook(), row, 2, IdGenerator.INSTANCE.newID());
 		excelContent.endSync();
 		
 		Assert.assertEquals(size + 1, adapterSource.getAll().size());
@@ -113,10 +113,10 @@ public class MsAccessVsMySqlSyncTests {
 		excelContent.beginSync();
 		String value = IdGenerator.INSTANCE.newID();
 		int rowNum = excelContent.getSheet().getPhysicalNumberOfRows();
-		HSSFRow row = excelContent.getSheet().createRow(rowNum);
-		MsExcelUtils.updateOrCreateCellStringIfAbsent(row, 0, value);
-		MsExcelUtils.updateOrCreateCellStringIfAbsent(row, 1, value);
-		MsExcelUtils.updateOrCreateCellStringIfAbsent(row, 2, value);
+		Row row = excelContent.getSheet().createRow(rowNum);
+		MsExcelUtils.updateOrCreateCellStringIfAbsent(excelContent.getWorkbook(), row, 0, value);
+		MsExcelUtils.updateOrCreateCellStringIfAbsent(excelContent.getWorkbook(), row, 1, value);
+		MsExcelUtils.updateOrCreateCellStringIfAbsent(excelContent.getWorkbook(), row, 2, value);
 		excelContent.endSync();
 		
 		Assert.assertEquals(size, adapterSource.getAll().size());
@@ -130,7 +130,7 @@ public class MsAccessVsMySqlSyncTests {
 		
 		excelContent.beginSync();
 		row = excelContent.getSheet().getRow(rowNum);
-		MsExcelUtils.updateOrCreateCellStringIfAbsent(row, 2, IdGenerator.INSTANCE.newID());
+		MsExcelUtils.updateOrCreateCellStringIfAbsent(excelContent.getWorkbook(), row, 2, IdGenerator.INSTANCE.newID());
 		excelContent.endSync();
 		
 		Assert.assertEquals(size + 1, adapterSource.getAll().size());

@@ -4,13 +4,14 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
-import org.apache.poi.hssf.usermodel.HSSFRichTextString;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.dom4j.Element;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.payload.schema.rdf.RDFInstance;
@@ -34,8 +35,6 @@ public class MsExcelToRDFMapping implements IMsExcelToXMLMapping{
 		this.idColumnName = idColumnName;
 	}
 	
-
-	@SuppressWarnings("unchecked")
 	public static RDFSchema extractRDFSchema(IMsExcel excel, String sheetName, String rdfURL){
 		Guard.argumentNotNull(excel, "excel");
 		Guard.argumentNotNullOrEmptyString(sheetName, "sheetName");
@@ -45,24 +44,24 @@ public class MsExcelToRDFMapping implements IMsExcelToXMLMapping{
 		
 		String cellName;
 		
-		HSSFWorkbook workbook = excel.getWorkbook();
-		HSSFSheet sheet = MsExcelUtils.getOrCreateSheetIfAbsent(workbook, sheetName);
-		HSSFCell cell;
+		Workbook workbook = excel.getWorkbook();
+		Sheet sheet = MsExcelUtils.getOrCreateSheetIfAbsent(workbook, sheetName);
+		Cell cell;
 
-		HSSFRow headerRow = sheet.getRow(sheet.getFirstRowNum());
-		HSSFRow dataRow = sheet.getRow(sheet.getLastRowNum());
+		Row headerRow = sheet.getRow(sheet.getFirstRowNum());
+		Row dataRow = sheet.getRow(sheet.getLastRowNum());
 		int cellType;
-		for (Iterator<HSSFCell> iterator = dataRow.cellIterator(); iterator.hasNext();) {
+		for (Iterator<Cell> iterator = dataRow.cellIterator(); iterator.hasNext();) {
 			cell = iterator.next();
 			
 			cellName = headerRow.getCell(cell.getColumnIndex()).getRichStringCellValue().getString();
 			cellType = cell.getCellType();
-			if(HSSFCell.CELL_TYPE_STRING == cellType){
+			if(Cell.CELL_TYPE_STRING == cellType){
 				rdfSchema.addStringProperty(cellName, cellName, "en");
-			} else if(HSSFCell.CELL_TYPE_BOOLEAN == cellType){
+			} else if(Cell.CELL_TYPE_BOOLEAN == cellType){
 				rdfSchema.addBooleanProperty(cellName, cellName, "en");
-			} else if(HSSFCell.CELL_TYPE_NUMERIC == cellType){
-				if(HSSFDateUtil.isCellDateFormatted(cell)) {
+			} else if(Cell.CELL_TYPE_NUMERIC == cellType){
+				if(DateUtil.isCellDateFormatted(cell)) {
 					rdfSchema.addDateTimeProperty(cellName, cellName, "en");
 				} else {
 					rdfSchema.addDoubleProperty(cellName, cellName, "en");
@@ -73,17 +72,16 @@ public class MsExcelToRDFMapping implements IMsExcelToXMLMapping{
 		return rdfSchema;
 	}
 
-	@SuppressWarnings("unchecked")
-	public RDFInstance converRowToRDF(HSSFRow headerRow, HSSFRow row) {
+	public RDFInstance converRowToRDF(Row headerRow, Row row) {
 		
 		// obtains properties values
-		HSSFCell cell;
+		Cell cell;
 		String cellName;
 		Object cellValue;
 		Object propertyValue;
 
 		HashMap<String, Object> propertyValues = new HashMap<String, Object>();
-		for (Iterator<HSSFCell> iterator = row.cellIterator(); iterator.hasNext();) {
+		for (Iterator<Cell> iterator = row.cellIterator(); iterator.hasNext();) {
 			cell = iterator.next();
 			cellName = headerRow.getCell(cell.getColumnIndex()).getRichStringCellValue().getString();
 			cellValue = MsExcelUtils.getCellValue(cell);
@@ -101,8 +99,8 @@ public class MsExcelToRDFMapping implements IMsExcelToXMLMapping{
 		return rdfInstance;
 	}
 
-	public void appliesRDFToRow(HSSFWorkbook wb, HSSFSheet sheet, HSSFRow row, RDFInstance rdfInstance) {
-		HSSFCell cell;
+	public void appliesRDFToRow(Workbook wb, Sheet sheet, Row row, RDFInstance rdfInstance) {
+		Cell cell;
 		Object propertyValue;
 		String propertyType;
 		
@@ -112,54 +110,71 @@ public class MsExcelToRDFMapping implements IMsExcelToXMLMapping{
 			propertyValue = rdfInstance.getPropertyValue(propertyName);
 						
 			if(propertyValue != null){
-				HSSFRow headerRow = MsExcelUtils.getOrCreateRowHeaderIfAbsent(sheet);
-				HSSFCell headerCell = MsExcelUtils.getOrCreateCellStringIfAbsent(headerRow, propertyName);
+				Row headerRow = MsExcelUtils.getOrCreateRowHeaderIfAbsent(sheet);
+				Cell headerCell = MsExcelUtils.getOrCreateCellStringIfAbsent(wb, headerRow, propertyName);
 				
 				cell = row.getCell(headerCell.getColumnIndex());
 				propertyType = rdfInstance.getPropertyType(propertyName);
 				if(cell == null){
 					cell = createCell(wb, row, headerCell.getColumnIndex(), propertyType);
 				}
-				MsExcelUtils.setCellValue(cell, propertyValue);	
+				MsExcelUtils.setCellValue(wb, cell, getCellType(propertyType), propertyValue);	
 			}			
 		}		
 	}
 	
 	// TODO (JMT) RDF: improve MSExcel to RDF type mapper
-	private HSSFCell createCell(HSSFWorkbook wb, HSSFRow row, int columnIndex, String propertyType) {
+	private int getCellType(String propertyType) {
 
 		if(IRDFSchema.XLS_STRING.equals(propertyType)){
-			return row.createCell(columnIndex, HSSFCell.CELL_TYPE_STRING);			
+			return Cell.CELL_TYPE_STRING;			
 		}else if(IRDFSchema.XLS_BOOLEAN.equals(propertyType)){
-			return row.createCell(columnIndex, HSSFCell.CELL_TYPE_BOOLEAN);
+			return Cell.CELL_TYPE_BOOLEAN;
 		}else if(IRDFSchema.XLS_INTEGER.equals(propertyType) 
 				|| IRDFSchema.XLS_LONG.equals(propertyType)
 				|| IRDFSchema.XLS_DOUBLE.equals(propertyType)
 				|| IRDFSchema.XLS_DECIMAL.equals(propertyType)
 				|| IRDFSchema.XLS_FLOAT.equals(propertyType)){
-			return row.createCell(columnIndex, HSSFCell.CELL_TYPE_NUMERIC);
+			return Cell.CELL_TYPE_NUMERIC;
 		}else if(IRDFSchema.XLS_DATETIME.equals(propertyType)){
-			HSSFCellStyle cellStyle = wb.createCellStyle();
-		    cellStyle.setDataFormat(wb.createDataFormat().getFormat("m/d/yy h:mm"));
+			return Cell.CELL_TYPE_NUMERIC;
+		} else {
+			return Cell.CELL_TYPE_STRING;
+		}
+	}
+	
+	// TODO (JMT) RDF: improve MSExcel to RDF type mapper
+	private Cell createCell(Workbook wb, Row row, int columnIndex, String propertyType) {
+
+		if(IRDFSchema.XLS_STRING.equals(propertyType)){
+			return row.createCell(columnIndex, Cell.CELL_TYPE_STRING);			
+		}else if(IRDFSchema.XLS_BOOLEAN.equals(propertyType)){
+			return row.createCell(columnIndex, Cell.CELL_TYPE_BOOLEAN);
+		}else if(IRDFSchema.XLS_INTEGER.equals(propertyType) 
+				|| IRDFSchema.XLS_LONG.equals(propertyType)
+				|| IRDFSchema.XLS_DOUBLE.equals(propertyType)
+				|| IRDFSchema.XLS_DECIMAL.equals(propertyType)
+				|| IRDFSchema.XLS_FLOAT.equals(propertyType)){
+			return row.createCell(columnIndex, Cell.CELL_TYPE_NUMERIC);
+		}else if(IRDFSchema.XLS_DATETIME.equals(propertyType)){
+			CellStyle cellStyle = wb.createCellStyle();
+		    cellStyle.setDataFormat(wb.createDataFormat().getFormat("m/d/yyyy h:mm"));
 		    
-		    HSSFCell cell = row.createCell(columnIndex, HSSFCell.CELL_TYPE_NUMERIC);
+		    Cell cell = row.createCell(columnIndex, Cell.CELL_TYPE_NUMERIC);
 		    cell.setCellStyle(cellStyle);
 		    return cell;
 		} else {
-			return row.createCell(columnIndex, HSSFCell.CELL_TYPE_STRING);
+			return row.createCell(columnIndex, Cell.CELL_TYPE_STRING);
 		}
 	}
 
-	public void createDataSource(String fileName) throws Exception {
-		HSSFWorkbook workbook = createDataSource();			
-		MsExcelUtils.flush(workbook, fileName);		
-	}
+	@Override
+	public Workbook createDataSource(String fileName) throws Exception {
+		Workbook workbook = MsExcelUtils.getOrCreateWorkbookIfAbsent(fileName);
 
-	public HSSFWorkbook createDataSource() {
-		HSSFWorkbook workbook = new HSSFWorkbook();
-		HSSFSheet sheet = workbook.createSheet(this.rdfSchema.getOntologyNameSpace());
-		HSSFRow headerRow = sheet.createRow(0);
-		HSSFCell headerCell;
+		Sheet sheet = workbook.createSheet(this.rdfSchema.getOntologyNameSpace());
+		Row headerRow = sheet.createRow(0);
+		Cell headerCell;
 		
 		int size = this.rdfSchema.getPropertyCount();
 		String propertyName;
@@ -167,20 +182,22 @@ public class MsExcelToRDFMapping implements IMsExcelToXMLMapping{
 			propertyName = this.rdfSchema.getPropertyName(size - 1 - j);	
 			
 			headerCell = headerRow.createCell(j);
-			headerCell.setCellValue(new HSSFRichTextString(propertyName));			
+			headerCell.setCellValue(MsExcelUtils.getRichTextString(workbook, propertyName));			
 		}
+		MsExcelUtils.flush(workbook, fileName);
+		workbook = MsExcelUtils.getOrCreateWorkbookIfAbsent(fileName);
 		return workbook;
 	}
 	
 	@Override
-	public Element convertRowToXML(HSSFWorkbook wb, HSSFSheet sheet, HSSFRow row){
-		HSSFRow headerRow = sheet.getRow(sheet.getFirstRowNum());
+	public Element convertRowToXML(Workbook wb, Sheet sheet, Row row){
+		Row headerRow = sheet.getRow(sheet.getFirstRowNum());
 		RDFInstance rdfInstance = this.converRowToRDF(headerRow, row);
 		return XMLHelper.parseElement(rdfInstance.asXML());
 	}
 	
 	@Override
-	public void appliesXMLToRow(HSSFWorkbook wb, HSSFSheet sheet, HSSFRow row, Element rdfElement){
+	public void appliesXMLToRow(Workbook wb, Sheet sheet, Row row, Element rdfElement){
 		RDFInstance rdfInstance = this.rdfSchema.createNewInstanceFromRDFXML(rdfElement.asXML());
 		this.appliesRDFToRow(wb, sheet, row, rdfInstance);
 	}
@@ -207,9 +224,9 @@ public class MsExcelToRDFMapping implements IMsExcelToXMLMapping{
 	}
 
 	@Override
-	public String getIdColumnValue(HSSFSheet sheet, HSSFRow row) {
-		HSSFCell cell = MsExcelUtils.getCell(sheet, row, this.getIdColumnName());
-		if(cell != null && cell.getCellType() != HSSFCell.CELL_TYPE_BLANK){
+	public String getIdColumnValue(Sheet sheet, Row row) {
+		Cell cell = MsExcelUtils.getCell(sheet, row, this.getIdColumnName());
+		if(cell != null && cell.getCellType() != Cell.CELL_TYPE_BLANK){
 			Object cellValue = MsExcelUtils.getCellValue(cell);
 			return String.valueOf(rdfSchema.cannonicaliseValue(this.getIdColumnName(), cellValue));
 		} else {
@@ -218,9 +235,9 @@ public class MsExcelToRDFMapping implements IMsExcelToXMLMapping{
 	}
 	
 	@Override
-	public Date getLastUpdateColumnValue(HSSFSheet sheet, HSSFRow row) {
-		HSSFCell cell = MsExcelUtils.getCell(sheet, row, this.getLastUpdateColumnName());
-		if(cell != null && cell.getCellType() != HSSFCell.CELL_TYPE_BLANK && cell.getCellType() == HSSFCell.CELL_TYPE_NUMERIC && HSSFDateUtil.isCellDateFormatted(cell)){
+	public Date getLastUpdateColumnValue(Sheet sheet, Row row) {
+		Cell cell = MsExcelUtils.getCell(sheet, row, this.getLastUpdateColumnName());
+		if(cell != null && cell.getCellType() != Cell.CELL_TYPE_BLANK && cell.getCellType() == Cell.CELL_TYPE_NUMERIC && DateUtil.isCellDateFormatted(cell)){
 			return cell.getDateCellValue();
 		} else {
 			return null;

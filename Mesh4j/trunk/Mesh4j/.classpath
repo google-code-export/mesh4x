@@ -22,7 +22,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/jakarta-commons/commons-codec-1.3.jar"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry exported="true" kind="lib" path="lib/smsLib/smslib-3.3.0.jar" sourcepath="/SmsExchanger/lib/smsLib/smslib-v3.3.0-src.zip"/>
-	<classpathentry exported="true" kind="lib" path="lib/jakarta-poi/poi-3.2-FINAL-20081019.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jackcess/jackcess-1.1.18.jar" sourcepath="lib/jackcess/jackcess-1.1.18-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jenna/jena.jar" sourcepath="E:/Clarius/java/Jena-2.5.7/Jena-2.5.7.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/jenna/xercesImpl.jar"/>
@@ -34,5 +33,11 @@
 	<classpathentry exported="true" kind="lib" path="lib/hibernate/hibernate-tools.jar"/>
 	<classpathentry exported="true" kind="lib" path="etc/toExport"/>
 	<classpathentry kind="lib" path="etc/localProperties"/>
+	<classpathentry kind="lib" path="lib/jakarta-poi/poi-3.5-beta5-20090219.jar" sourcepath="E:/Clarius/java/poi-src-3.5-beta5-20090219.zip"/>
+	<classpathentry kind="lib" path="lib/jakarta-poi/poi-contrib-3.5-beta5-20090219.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta-poi/poi-ooxml-3.5-beta5-20090219.jar" sourcepath="E:/Clarius/java/poi-src-3.5-beta5-20090219.zip"/>
+	<classpathentry kind="lib" path="lib/jakarta-poi/poi-scratchpad-3.5-beta5-20090219.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta-poi/ooxml-schemas-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta-poi/xmlbeans-2.3.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

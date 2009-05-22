@@ -8,12 +8,12 @@ import java.util.List;
 
 import junit.framework.Assert;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFRichTextString;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.junit.Test;
@@ -51,7 +51,7 @@ public class MsExcelRDFSyncTest {
 		MsExcelToRDFMapping rdfMapping = new MsExcelToRDFMapping(schema, idColumn);
 		
 		// source split adapter
-		HSSFWorkbook workbookSource = rdfMapping.createDataSource();	
+		Workbook workbookSource = rdfMapping.createDataSource(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xls"));	
 		Date date1 = new Date();
 		Date date2 = new Date();
 		Date date3 = new Date();
@@ -66,7 +66,7 @@ public class MsExcelRDFSyncTest {
 		ISyncAdapter source = new SplitAdapter(syncRepoSource, contentAdapterSource, NullIdentityProvider.INSTANCE);
 
 		// target split adapter
-		HSSFWorkbook workbookTarget = rdfMapping.createDataSource();
+		Workbook workbookTarget = rdfMapping.createDataSource(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xls"));
 		Date date4 = new Date();
 		Date date5 = new Date();
 		Date date6 = new Date();
@@ -117,27 +117,27 @@ public class MsExcelRDFSyncTest {
 		
 		// create file A
 		File fileA = TestHelper.makeFileAndDeleteIfExists("dataAndSyncA_RDF.xls");
-		HSSFWorkbook workbookA = new HSSFWorkbook();
+		Workbook workbookA = new HSSFWorkbook();
 		
-		HSSFSheet sheetA = MsExcelUtils.getOrCreateSheetIfAbsent(workbookA, sheetName);			
-		HSSFRow rowHeader = MsExcelUtils.getOrCreateRowHeaderIfAbsent(sheetA);						
-		MsExcelUtils.getOrCreateCellStringIfAbsent(rowHeader, idColumnName);
-		MsExcelUtils.getOrCreateCellStringIfAbsent(rowHeader, "firstname");
+		Sheet sheetA = MsExcelUtils.getOrCreateSheetIfAbsent(workbookA, sheetName);			
+		Row rowHeader = MsExcelUtils.getOrCreateRowHeaderIfAbsent(sheetA);						
+		MsExcelUtils.getOrCreateCellStringIfAbsent(workbookA, rowHeader, idColumnName);
+		MsExcelUtils.getOrCreateCellStringIfAbsent(workbookA, rowHeader, "firstname");
 
-		HSSFRow rowData = sheetA.createRow(sheetA.getLastRowNum() + 1);
+		Row rowData = sheetA.createRow(sheetA.getLastRowNum() + 1);
 		
-		HSSFCell cellIdValue = rowData.createCell(0, HSSFCell.CELL_TYPE_STRING);
-		cellIdValue.setCellValue(new HSSFRichTextString("1"));
+		Cell cellIdValue = rowData.createCell(0, Cell.CELL_TYPE_STRING);
+		cellIdValue.setCellValue(MsExcelUtils.getRichTextString(workbookA, "1"));
 		
-		HSSFCell cellNameValue = rowData.createCell(1, HSSFCell.CELL_TYPE_STRING);
-		cellNameValue.setCellValue(new HSSFRichTextString("juan"));
+		Cell cellNameValue = rowData.createCell(1, Cell.CELL_TYPE_STRING);
+		cellNameValue.setCellValue(MsExcelUtils.getRichTextString(workbookA, "juan"));
 		
 		rowData = sheetA.createRow(sheetA.getLastRowNum() + 1);
-		cellIdValue = rowData.createCell(0, HSSFCell.CELL_TYPE_STRING);
-		cellIdValue.setCellValue(new HSSFRichTextString("2"));
+		cellIdValue = rowData.createCell(0, Cell.CELL_TYPE_STRING);
+		cellIdValue.setCellValue(MsExcelUtils.getRichTextString(workbookA, "2"));
 		
-		cellNameValue = rowData.createCell(1, HSSFCell.CELL_TYPE_STRING);
-		cellNameValue.setCellValue(new HSSFRichTextString("jose"));
+		cellNameValue = rowData.createCell(1, Cell.CELL_TYPE_STRING);
+		cellNameValue.setCellValue(MsExcelUtils.getRichTextString(workbookA, "jose"));
 		
 		workbookA.write(new FileOutputStream(fileA));
 		
@@ -197,29 +197,29 @@ public class MsExcelRDFSyncTest {
 		
 	}
 
-	private void addData(HSSFWorkbook workbook, String sheetName, String name,
+	private void addData(Workbook workbook, String sheetName, String name,
 			String code, int age, String sex, boolean ill, Date dateOnset) {
 
-		HSSFSheet sheet = workbook.getSheet(sheetName);		
-		HSSFRow rowData = sheet.createRow(sheet.getLastRowNum() + 1);
+		Sheet sheet = workbook.getSheet(sheetName);		
+		Row rowData = sheet.createRow(sheet.getLastRowNum() + 1);
 		
-		HSSFCell cell = rowData.createCell(0, HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString(name));
+		Cell cell = rowData.createCell(0, Cell.CELL_TYPE_STRING);
+		cell.setCellValue(MsExcelUtils.getRichTextString(workbook, name));
 		
-		cell = rowData.createCell(1, HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString(code));
+		cell = rowData.createCell(1, Cell.CELL_TYPE_STRING);
+		cell.setCellValue(MsExcelUtils.getRichTextString(workbook, code));
 		
-		cell = rowData.createCell(2, HSSFCell.CELL_TYPE_NUMERIC);
+		cell = rowData.createCell(2, Cell.CELL_TYPE_NUMERIC);
 		cell.setCellValue(age);
 		
-		cell = rowData.createCell(3, HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString(sex));
+		cell = rowData.createCell(3, Cell.CELL_TYPE_STRING);
+		cell.setCellValue(MsExcelUtils.getRichTextString(workbook, sex));
 		
-		cell = rowData.createCell(4, HSSFCell.CELL_TYPE_BOOLEAN);
+		cell = rowData.createCell(4, Cell.CELL_TYPE_BOOLEAN);
 		cell.setCellValue(ill);
 		
-		cell = rowData.createCell(5, HSSFCell.CELL_TYPE_NUMERIC);
-		HSSFCellStyle cellStyle = workbook.createCellStyle();
+		cell = rowData.createCell(5, Cell.CELL_TYPE_NUMERIC);
+		CellStyle cellStyle = workbook.createCellStyle();
 	    cellStyle.setDataFormat(workbook.createDataFormat().getFormat("m/d/yy h:mm"));
 	    cell.setCellStyle(cellStyle);
 	    cell.setCellValue(dateOnset);	
@@ -227,11 +227,11 @@ public class MsExcelRDFSyncTest {
 
 	private class MockMsExcel implements IMsExcel{
 
-		private HSSFWorkbook workbook;
+		private Workbook workbook;
 		private boolean flushWasCalled = false;
 		private boolean dirtyWasCalled = false;
 		
-		private MockMsExcel(HSSFWorkbook workbook){
+		private MockMsExcel(Workbook workbook){
 			this.workbook = workbook;
 		}
 		
@@ -248,7 +248,7 @@ public class MsExcelRDFSyncTest {
 		}
 
 		@Override
-		public HSSFWorkbook getWorkbook() {
+		public Workbook getWorkbook() {
 			return workbook;
 		}
 

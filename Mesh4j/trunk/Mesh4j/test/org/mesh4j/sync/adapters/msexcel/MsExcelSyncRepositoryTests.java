@@ -6,11 +6,11 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRichTextString;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.dom4j.Element;
 import org.junit.Assert;
 import org.junit.Test;
@@ -61,7 +61,7 @@ public class MsExcelSyncRepositoryTests {
 		
 		MsExcelSyncRepository repo = new MsExcelSyncRepository(new MsExcel(file.getAbsolutePath()), "user_sync", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
-		HSSFWorkbook workbook = repo.getWorkbook();
+		Workbook workbook = repo.getWorkbook();
 		Assert.assertNotNull(workbook);
 		assertValidSyncWorkbook(workbook);
 	}
@@ -70,13 +70,13 @@ public class MsExcelSyncRepositoryTests {
 	public void shouldCreateSyncRepoLoadWorkbook() throws FileNotFoundException, IOException{
 		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
 		
-		HSSFWorkbook workbook = makeValidSyncWorkbook();
+		Workbook workbook = makeValidSyncWorkbook();
 		MsExcelUtils.flush(workbook, file.getAbsolutePath());
 		Assert.assertTrue(file.exists());
 		
 		MsExcelSyncRepository repo = new MsExcelSyncRepository(new MsExcel(file.getAbsolutePath()), "user_sync", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
-		HSSFWorkbook workbook1 = repo.getWorkbook();
+		Workbook workbook1 = repo.getWorkbook();
 		Assert.assertNotNull(workbook1);
 		assertValidSyncWorkbook(workbook1);
 		Assert.assertEquals(workbook.getSheet("user_sync").getLastRowNum(), workbook1.getSheet("user_sync").getLastRowNum());
@@ -86,13 +86,13 @@ public class MsExcelSyncRepositoryTests {
 	public void shouldCreateSyncRepoLoadWorkbookAndAddSyncSheet() throws FileNotFoundException, IOException{
 		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
 		
-		HSSFWorkbook workbook = new HSSFWorkbook();
+		Workbook workbook = new HSSFWorkbook();
 		MsExcelUtils.flush(workbook, file.getAbsolutePath());
 		Assert.assertTrue(file.exists());
 		
 		MsExcelSyncRepository repo = new MsExcelSyncRepository(new MsExcel(file.getAbsolutePath()), "user_sync", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
-		HSSFWorkbook workbook1 = repo.getWorkbook();
+		Workbook workbook1 = repo.getWorkbook();
 		Assert.assertNotNull(workbook1);
 		assertValidSyncWorkbook(workbook1);
 	}
@@ -108,7 +108,7 @@ public class MsExcelSyncRepositoryTests {
 		
 		MsExcelSyncRepository repo = new MsExcelSyncRepository(new MsExcel(file.getAbsolutePath()), "user_sync", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
-		HSSFWorkbook workbook1 = repo.getWorkbook();
+		Workbook workbook1 = repo.getWorkbook();
 		Assert.assertNotNull(workbook1);
 		assertValidSyncWorkbook(workbook1);
 	}
@@ -117,15 +117,15 @@ public class MsExcelSyncRepositoryTests {
 	public void shouldCreateSyncRepoLoadWorkbookAndAddSyncCells() throws FileNotFoundException, IOException{
 		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
 		
-		HSSFWorkbook workbook = new HSSFWorkbook();
-		HSSFSheet sheet = workbook.createSheet("user_sync");
+		Workbook workbook = new HSSFWorkbook();
+		Sheet sheet = workbook.createSheet("user_sync");
 		sheet.createRow(0);
 		MsExcelUtils.flush(workbook, file.getAbsolutePath());
 		Assert.assertTrue(file.exists());
 		
 		MsExcelSyncRepository repo = new MsExcelSyncRepository(new MsExcel(file.getAbsolutePath()), "user_sync", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
-		HSSFWorkbook workbook1 = repo.getWorkbook();
+		Workbook workbook1 = repo.getWorkbook();
 		Assert.assertNotNull(workbook1);
 		assertValidSyncWorkbook(workbook1);
 	}
@@ -417,36 +417,36 @@ public class MsExcelSyncRepositoryTests {
 		
 	}
 	
-	private void addNewSyncRow(Sync sync, String entityName, String entityId, int version, HSSFWorkbook workbook) throws Exception{
-		HSSFSheet sheet = workbook.getSheet("user_sync");
-		HSSFRow row = sheet.createRow(sheet.getPhysicalNumberOfRows());
+	private void addNewSyncRow(Sync sync, String entityName, String entityId, int version, Workbook workbook) throws Exception{
+		Sheet sheet = workbook.getSheet("user_sync");
+		Row row = sheet.createRow(sheet.getPhysicalNumberOfRows());
 		
-		HSSFCell cell = row.createCell(0, HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString(sync.getId()));
+		Cell cell = row.createCell(0, Cell.CELL_TYPE_STRING);
+		cell.setCellValue(MsExcelUtils.getRichTextString(workbook, sync.getId()));
 		
-		cell = row.createCell(1, HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString(entityName));
+		cell = row.createCell(1, Cell.CELL_TYPE_STRING);
+		cell.setCellValue(MsExcelUtils.getRichTextString(workbook, entityName));
 		
-		cell = row.createCell(2, HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString(entityId));
+		cell = row.createCell(2, Cell.CELL_TYPE_STRING);
+		cell.setCellValue(MsExcelUtils.getRichTextString(workbook, entityId));
 		
-		cell = row.createCell(3, HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString(String.valueOf(version)));
+		cell = row.createCell(3, Cell.CELL_TYPE_STRING);
+		cell.setCellValue(MsExcelUtils.getRichTextString(workbook, String.valueOf(version)));
 		
-		cell = row.createCell(4, HSSFCell.CELL_TYPE_STRING);
+		cell = row.createCell(4, Cell.CELL_TYPE_STRING);
 		
 		Element syncElement = SyncInfoParser.convertSync2Element(sync, RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE);
-		cell.setCellValue(new HSSFRichTextString(syncElement.asXML()));
+		cell.setCellValue(MsExcelUtils.getRichTextString(workbook, syncElement.asXML()));
 	}
 	
-	private void assertValidSyncWorkbook(HSSFWorkbook workbook) {
-		HSSFSheet sheet = workbook.getSheet("user_sync");
+	private void assertValidSyncWorkbook(Workbook workbook) {
+		Sheet sheet = workbook.getSheet("user_sync");
 		Assert.assertNotNull(sheet);
 		
-		HSSFRow row = sheet.getRow(0);
+		Row row = sheet.getRow(0);
 		Assert.assertNotNull(row);
 		
-		HSSFCell cell = row.getCell(0);
+		Cell cell = row.getCell(0);
 		Assert.assertNotNull(cell);
 		Assert.assertEquals(MsExcelSyncRepository.COLUMN_NAME_SYNC_ID, cell.getRichStringCellValue().getString());
 		
@@ -467,27 +467,27 @@ public class MsExcelSyncRepositoryTests {
 		Assert.assertEquals(MsExcelSyncRepository.COLUMN_NAME_SYNC, cell.getRichStringCellValue().getString());
 	}
 	
-	private HSSFWorkbook makeValidSyncWorkbook() {
+	private Workbook makeValidSyncWorkbook() {
 		HSSFWorkbook workbook = new HSSFWorkbook();
 		
-		HSSFSheet sheet = workbook.createSheet("user_sync");
+		Sheet sheet = workbook.createSheet("user_sync");
 		
-		HSSFRow row = sheet.createRow(0);
+		Row row = sheet.createRow(0);
 				
-		HSSFCell cell = row.createCell(0, HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString(MsExcelSyncRepository.COLUMN_NAME_SYNC_ID));
+		Cell cell = row.createCell(0, Cell.CELL_TYPE_STRING);
+		cell.setCellValue(MsExcelUtils.getRichTextString(workbook, MsExcelSyncRepository.COLUMN_NAME_SYNC_ID));
 		
-		cell = row.createCell(1, HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString(MsExcelSyncRepository.COLUMN_NAME_ENTITY_NAME));
+		cell = row.createCell(1, Cell.CELL_TYPE_STRING);
+		cell.setCellValue(MsExcelUtils.getRichTextString(workbook, MsExcelSyncRepository.COLUMN_NAME_ENTITY_NAME));
 		
-		cell = row.createCell(2, HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString(MsExcelSyncRepository.COLUMN_NAME_ENTITY_ID));
+		cell = row.createCell(2, Cell.CELL_TYPE_STRING);
+		cell.setCellValue(MsExcelUtils.getRichTextString(workbook, MsExcelSyncRepository.COLUMN_NAME_ENTITY_ID));
 		
-		cell = row.createCell(3, HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString(MsExcelSyncRepository.COLUMN_NAME_VERSION));
+		cell = row.createCell(3, Cell.CELL_TYPE_STRING);
+		cell.setCellValue(MsExcelUtils.getRichTextString(workbook, MsExcelSyncRepository.COLUMN_NAME_VERSION));
 		
-		cell = row.createCell(4, HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString(MsExcelSyncRepository.COLUMN_NAME_SYNC));
+		cell = row.createCell(4, Cell.CELL_TYPE_STRING);
+		cell.setCellValue(MsExcelUtils.getRichTextString(workbook, MsExcelSyncRepository.COLUMN_NAME_SYNC));
 		
 		return workbook;
 	}

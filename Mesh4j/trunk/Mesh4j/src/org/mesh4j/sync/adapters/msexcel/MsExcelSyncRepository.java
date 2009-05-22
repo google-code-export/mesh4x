@@ -3,9 +3,9 @@ package org.mesh4j.sync.adapters.msexcel;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -56,32 +56,33 @@ public class MsExcelSyncRepository implements ISyncRepository, ISyncAware {
 	private void initialize() {
 		try{
 			
-			HSSFWorkbook workbook = this.excel.getWorkbook();
+			Workbook workbook = this.excel.getWorkbook();
 			
-			HSSFSheet sheet = MsExcelUtils.getOrCreateSheetIfAbsent(workbook, this.sheetName);			
+			Sheet sheet = MsExcelUtils.getOrCreateSheetIfAbsent(workbook, this.sheetName);			
 			
-			HSSFRow row = MsExcelUtils.getOrCreateRowHeaderIfAbsent(sheet);
+			Row row = MsExcelUtils.getOrCreateRowHeaderIfAbsent(sheet);
 			
-			MsExcelUtils.getOrCreateCellStringIfAbsent(row, COLUMN_NAME_SYNC_ID);
-			MsExcelUtils.getOrCreateCellStringIfAbsent(row, COLUMN_NAME_ENTITY_NAME);
-			MsExcelUtils.getOrCreateCellStringIfAbsent(row, COLUMN_NAME_ENTITY_ID);
-			MsExcelUtils.getOrCreateCellStringIfAbsent(row, COLUMN_NAME_VERSION);
-			MsExcelUtils.getOrCreateCellStringIfAbsent(row, COLUMN_NAME_SYNC);
+			MsExcelUtils.getOrCreateCellStringIfAbsent(workbook, row, COLUMN_NAME_SYNC_ID);
+			MsExcelUtils.getOrCreateCellStringIfAbsent(workbook, row, COLUMN_NAME_ENTITY_NAME);
+			MsExcelUtils.getOrCreateCellStringIfAbsent(workbook, row, COLUMN_NAME_ENTITY_ID);
+			MsExcelUtils.getOrCreateCellStringIfAbsent(workbook, row, COLUMN_NAME_VERSION);
+			MsExcelUtils.getOrCreateCellStringIfAbsent(workbook, row, COLUMN_NAME_SYNC);
 			
 		} catch (Exception e) {
 			throw new MeshException(e);
 		}
 	}
 	
-	private SyncInfo translate(HSSFRow row) {
+	private SyncInfo translate(Row row) {
 		try{
 			//String syncId = row.getCell(0).getRichStringCellValue().getString();
 			String entityName = row.getCell(1).getRichStringCellValue().getString();
 			String entityId = row.getCell(2).getRichStringCellValue().getString();
 			int version = Integer.valueOf(row.getCell(3).getRichStringCellValue().getString());
 			
-			String syncXml = row.getCell(4).getRichStringCellValue().getString();
-			Document doc = DocumentHelper.parseText(syncXml);
+			String xml = row.getCell(4).getRichStringCellValue().getString();
+			Document doc = DocumentHelper.parseText(xml);
+			
 			Sync sync = SyncInfoParser.convertSyncElement2Sync(doc.getRootElement(), RssSyndicationFormat.INSTANCE, this.identityProvider, this.idGenerator);
 			return new SyncInfo(sync, entityName, entityId, version);
 		} catch (Exception e) {
@@ -89,26 +90,28 @@ public class MsExcelSyncRepository implements ISyncRepository, ISyncAware {
 		}
 	}
 	
-	private void updateRow(SyncInfo syncInfo, HSSFRow row) throws Exception {
-		MsExcelUtils.updateOrCreateCellStringIfAbsent(row, 0, syncInfo.getSyncId());
-		MsExcelUtils.updateOrCreateCellStringIfAbsent(row, 1, syncInfo.getType());
-		MsExcelUtils.updateOrCreateCellStringIfAbsent(row, 2, syncInfo.getId());
-		MsExcelUtils.updateOrCreateCellStringIfAbsent(row, 3, String.valueOf(syncInfo.getVersion()));
+	private void updateRow(SyncInfo syncInfo, Row row) throws Exception {
+	   	Workbook workbook = getWorkbook();
+		MsExcelUtils.updateOrCreateCellStringIfAbsent(workbook, row, 0, syncInfo.getSyncId());
+		MsExcelUtils.updateOrCreateCellStringIfAbsent(workbook, row, 1, syncInfo.getType());
+		MsExcelUtils.updateOrCreateCellStringIfAbsent(workbook, row, 2, syncInfo.getId());
+		MsExcelUtils.updateOrCreateCellStringIfAbsent(workbook, row, 3, String.valueOf(syncInfo.getVersion()));
 		
 		Element syncElement = SyncInfoParser.convertSync2Element(syncInfo.getSync(), RssSyndicationFormat.INSTANCE, this.identityProvider);
-		MsExcelUtils.updateOrCreateCellStringIfAbsent(row, 4, syncElement.asXML());
+		String xml = syncElement.asXML();
+		MsExcelUtils.updateOrCreateCellStringIfAbsent(workbook, row, 4, xml);
 	}
 	
 	private void addRow(SyncInfo syncInfo) throws Exception {
-		HSSFRow row = getSheet().createRow(getSheet().getPhysicalNumberOfRows());
+		Row row = getSheet().createRow(getSheet().getPhysicalNumberOfRows());
 		this.updateRow(syncInfo, row);		
 	}
 
-	private HSSFSheet getSheet(){
+	private Sheet getSheet(){
 		return this.excel.getWorkbook().getSheet(this.sheetName);
 	}
 	
-	public HSSFWorkbook getWorkbook() {
+	public Workbook getWorkbook() {
 		return this.excel.getWorkbook();
 	}
 
@@ -116,7 +119,7 @@ public class MsExcelSyncRepository implements ISyncRepository, ISyncAware {
 	
 	@Override
 	public SyncInfo get(String syncId) {
-		HSSFRow row = MsExcelUtils.getRow(getSheet(), 0, syncId);
+		Row row = MsExcelUtils.getRow(getSheet(), 0, syncId);
 		if(row == null){
 			return null;
 		} else {
@@ -129,7 +132,7 @@ public class MsExcelSyncRepository implements ISyncRepository, ISyncAware {
 	public List<SyncInfo> getAll(String type) {
 		ArrayList<SyncInfo> result = new ArrayList<SyncInfo>();
 		
-		HSSFRow row;
+		Row row;
 		SyncInfo syncInfo;
 		for (int i = getSheet().getFirstRowNum()+1; i <= getSheet().getLastRowNum(); i++) {
 			row = getSheet().getRow(i);
@@ -151,7 +154,7 @@ public class MsExcelSyncRepository implements ISyncRepository, ISyncAware {
 	@Override
 	public void save(SyncInfo syncInfo) {
 		try{
-			HSSFRow row = MsExcelUtils.getRow(getSheet(), 0, syncInfo.getSyncId());
+			Row row = MsExcelUtils.getRow(getSheet(), 0, syncInfo.getSyncId());
 			if(row == null){
 				this.addRow(syncInfo);
 			} else {
