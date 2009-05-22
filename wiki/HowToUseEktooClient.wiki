@@ -8,7 +8,7 @@
       <wiki:toc max_depth="2"/>
      </td>
      <td valign="top" width=50%>
-[http://downloads.instedd.org/mesh4x/ektoo_0_0_5.zip Download Ektoo Client Beta version Now]
+[http://downloads.instedd.org/mesh4x/ektoo_0_0_6.zip Download Ektoo Client Beta version Now]
      </td>
   </tr>
 </table>
