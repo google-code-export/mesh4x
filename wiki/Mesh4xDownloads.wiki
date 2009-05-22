@@ -8,11 +8,11 @@ Tools and products build with Mesh4x.
 
 === Ektoo Client ===
 
-[http://downloads.instedd.org/mesh4x/ektoo_0_0_5.zip Ektoo] client is a tool to synchronize all data sources supported by mesh4x.
+[http://downloads.instedd.org/mesh4x/ektoo_0_0_6.zip Ektoo] client is a tool to synchronize all data sources supported by mesh4x.
 
 <i><b>Downloads:</b></i>
 
-Click [http://downloads.instedd.org/mesh4x/ektoo_0_0_5.zip here] to download Ektoo client.
+Click [http://downloads.instedd.org/mesh4x/ektoo_0_0_6.zip here] to download Ektoo client.
 
 Click [http://code.google.com/p/mesh4x/wiki/HowToUseEktooClient here] to download Ektoo client users guide.
 
