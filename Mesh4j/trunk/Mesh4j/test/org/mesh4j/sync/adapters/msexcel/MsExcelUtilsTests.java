@@ -13,12 +13,29 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Test;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.test.utils.TestHelper;
 import org.mesh4j.sync.validations.MeshException;
 
 public class MsExcelUtilsTests {
 
+	@Test
+	public void shouldGetWoorkbookReturnsXLS() throws Exception{
+		Assert.assertTrue(MsExcelUtils.getOrCreateWorkbookIfAbsent(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xls")) instanceof HSSFWorkbook);
+	}
+	
+	@Test
+	public void shouldGetWoorkbookReturnsXLSX() throws Exception{
+		Assert.assertTrue(MsExcelUtils.getOrCreateWorkbookIfAbsent(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xlsx")) instanceof XSSFWorkbook);
+	}
+	
+	@Test
+	public void shouldGetWoorkbookFailsIfFileNameIsNotXLSorXLSX() throws Exception{
+		Assert.assertNull(MsExcelUtils.getOrCreateWorkbookIfAbsent(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xml")));
+	}
+	
 	@Test(expected=MeshException.class)
 	public void shouldFlushFailWhenWorkbookIsNull(){
 		MsExcelUtils.flush(null, TestHelper.fileName("file.xls"));
@@ -445,4 +462,5 @@ public class MsExcelUtilsTests {
 		return workbook;
 	}
 
+	
 }

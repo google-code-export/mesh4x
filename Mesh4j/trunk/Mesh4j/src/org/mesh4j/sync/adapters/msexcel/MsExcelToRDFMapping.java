@@ -172,7 +172,7 @@ public class MsExcelToRDFMapping implements IMsExcelToXMLMapping{
 	public Workbook createDataSource(String fileName) throws Exception {
 		Workbook workbook = MsExcelUtils.getOrCreateWorkbookIfAbsent(fileName);
 
-		Sheet sheet = workbook.createSheet(this.rdfSchema.getOntologyNameSpace());
+		Sheet sheet = workbook.createSheet(this.rdfSchema.getOntologyClassName());
 		Row headerRow = sheet.createRow(0);
 		Cell headerCell;
 		
