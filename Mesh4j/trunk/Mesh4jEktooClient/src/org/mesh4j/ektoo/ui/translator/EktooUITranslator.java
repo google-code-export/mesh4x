@@ -81,20 +81,18 @@ public class EktooUITranslator {
 		return EktooMessageTranslator
 				.translate("EKTOO_EXCEL_FILE_CHOOSER_TITLE");
 	}
-	
+
 	public static String getKMLFileSelectorTitle() {
-		return EktooMessageTranslator
-		.translate("EKTOO_KML_FILE_CHOOSER_TITLE");
+		return EktooMessageTranslator.translate("EKTOO_KML_FILE_CHOOSER_TITLE");
 	}
 
 	public static String getXMLFileSelectorTitle() {
-		return EktooMessageTranslator
-		.translate("EKTOO_XML_FILE_CHOOSER_TITLE");
+		return EktooMessageTranslator.translate("EKTOO_XML_FILE_CHOOSER_TITLE");
 	}
 
 	public static String getMSAccessFileSelectorTitle() {
 		return EktooMessageTranslator
-		.translate("EKTOO_ACCESS_FILE_CHOOSER_TITLE");
+				.translate("EKTOO_ACCESS_FILE_CHOOSER_TITLE");
 	}
 
 	public static String getExcelWorksheetLabel() {
@@ -283,63 +281,68 @@ public class EktooUITranslator {
 	}
 
 	public static String getFeedFileNameLabel() {
-		return EktooMessageTranslator.translate("EKTOO_FEED_FILE_NAME_FIELD_LABEL");
+		return EktooMessageTranslator
+				.translate("EKTOO_FEED_FILE_NAME_FIELD_LABEL");
 	}
 
-  public static String getErrorEmptyOrNull(String name)
-  {
-    return EktooMessageTranslator.translate("EKTOO_ERROR_EMPTY_OR_NULL", name);
-  }
+	public static String getErrorEmptyOrNull(String name) {
+		return EktooMessageTranslator.translate("EKTOO_ERROR_EMPTY_OR_NULL",
+				name);
+	}
 
-  public static String getErrorInvalid(String name)
-  {
-    return EktooMessageTranslator.translate("EKTOO_ERROR_INVALID", name);
-  }
+	public static String getErrorInvalid(String name) {
+		return EktooMessageTranslator.translate("EKTOO_ERROR_INVALID", name);
+	}
 
 	public static String getFolderFileNameLabel() {
 		return EktooMessageTranslator
-		.translate("EKTOO_FOLDER_FILE_NAME_FIELD_LABEL");
+				.translate("EKTOO_FOLDER_FILE_NAME_FIELD_LABEL");
 	}
 
-  public static String getStatusbarMessage()
-  {
-    return EktooMessageTranslator
-    .translate("EKTOO_STATUSBAR_DEFAULT_MESSAGE");
-  }
+	public static String getStatusbarMessage() {
+		return EktooMessageTranslator
+				.translate("EKTOO_STATUSBAR_DEFAULT_MESSAGE");
+	}
 
-  public static String getMySQLUserNameFieldTooltip()
-  {
-    return EktooMessageTranslator
-    .translate("EKTOO_MYSQL_USER_NAME_FIELD_TOOLTIP");
-  }
-  
-  public static String getMySQLUserPasswordFieldTooltip()
-  {
-    return EktooMessageTranslator
-    .translate("EKTOO_MYSQL_USER_PASSWORD_FIELD_TOOLTIP");
-  }
-  
-  public static String getMySQLHostFieldTooltip()
-  {
-    return EktooMessageTranslator
-    .translate("EKTOO_MYSQL_HOST_NAME_FIELD_TOOLTIP");
-  }
+	public static String getMySQLUserNameFieldTooltip() {
+		return EktooMessageTranslator
+				.translate("EKTOO_MYSQL_USER_NAME_FIELD_TOOLTIP");
+	}
 
-  public static String getMySQLPortFieldTooltip()
-  {
-    return EktooMessageTranslator
-    .translate("EKTOO_MYSQL_PORT_NO_FIELD_TOOLTIP");
-  }
+	public static String getMySQLUserPasswordFieldTooltip() {
+		return EktooMessageTranslator
+				.translate("EKTOO_MYSQL_USER_PASSWORD_FIELD_TOOLTIP");
+	}
 
-  public static String getMySQLDatabaseFieldTooltip()
-  {
-    return EktooMessageTranslator
-    .translate("EKTOO_MYSQL_DATABASE_NAME_FIELD_TOOLTIP");
-  }
+	public static String getMySQLHostFieldTooltip() {
+		return EktooMessageTranslator
+				.translate("EKTOO_MYSQL_HOST_NAME_FIELD_TOOLTIP");
+	}
 
-  public static String getMySQLTableFieldTooltip()
-  {
-    return EktooMessageTranslator
-    .translate("EKTOO_MYSQL_TABLE_NAME_FIELD_TOOLTIP");
-  }
+	public static String getMySQLPortFieldTooltip() {
+		return EktooMessageTranslator
+				.translate("EKTOO_MYSQL_PORT_NO_FIELD_TOOLTIP");
+	}
+
+	public static String getMySQLDatabaseFieldTooltip() {
+		return EktooMessageTranslator
+				.translate("EKTOO_MYSQL_DATABASE_NAME_FIELD_TOOLTIP");
+	}
+
+	public static String getMySQLTableFieldTooltip() {
+		return EktooMessageTranslator
+				.translate("EKTOO_MYSQL_TABLE_NAME_FIELD_TOOLTIP");
+	}
+
+	public static String getErrorImpossibleToOpenFileBecauseFileDoesNotExists() {
+		return EktooMessageTranslator.translate("EKTOO_ERROR_IMPOSSIBLE_OPEN_FILE_BECAUSE_FILE_DOES_NOT_EXISTS");
+	}
+
+	public static String getErrorOpenFileActionNotSupported() {
+		return EktooMessageTranslator.translate("EKTOO_ERROR_OPEN_FILE_ACTION_NOT_SUPPORTED");
+	}
+
+	public static String getTooltipView() {
+		return EktooMessageTranslator.translate("EKTOO_TOOLTIP_VIEW_DATA_SOURCE");
+	}
 }

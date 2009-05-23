@@ -202,9 +202,9 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 	private MsExcelUI getMsExcelUI() {
 		if (excelUI == null) {
 			excelUIController = new MsExcelUIController(this.propertiesProvider);
-			excelUIController.addModel(new MsExcelModel());
+			excelUIController.addModel(new MsExcelModel(this.propertiesProvider.getMsExcelFile()));
 
-			excelUI = new MsExcelUI(excelUIController);
+			excelUI = new MsExcelUI(this.propertiesProvider.getMsExcelFile(), excelUIController);
 			excelUI.setLabelFile(EktooUITranslator.getExcelFileLabel());
 			excelUI.setLabelTable(EktooUITranslator.getExcelWorksheetLabel());
 			excelUI.setLabelColumn(EktooUITranslator
@@ -215,10 +215,9 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 
 	private MsAccessUI getMsAccessUI() {
 		if (accessUI == null) {
-			accessUIController = new MsAccessUIController(
-					this.propertiesProvider);
-			accessUIController.addModel(new MsAccessModel());
-			accessUI = new MsAccessUI(accessUIController);
+			accessUIController = new MsAccessUIController(this.propertiesProvider);
+			accessUIController.addModel(new MsAccessModel(this.propertiesProvider.getMsAccessFile()));
+			accessUI = new MsAccessUI(this.propertiesProvider.getMsAccessFile(), accessUIController);
 			accessUI.setLabelFile(EktooUITranslator.getAccessFileLabel());
 			accessUI.setLabelTable(EktooUITranslator.getAccessTableLabel());
 		}
@@ -259,7 +258,7 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 			cloudUIControler = new CloudUIController(this.propertiesProvider);
 			cloudUIControler.addModel(new CloudModel(this.propertiesProvider
 					.getMeshSyncServerURL()));
-			cloudUI = new CloudUI(cloudUIControler);
+			cloudUI = new CloudUI(this.propertiesProvider.getMeshSyncServerURL(), cloudUIControler);
 		}
 		return cloudUI;
 	}

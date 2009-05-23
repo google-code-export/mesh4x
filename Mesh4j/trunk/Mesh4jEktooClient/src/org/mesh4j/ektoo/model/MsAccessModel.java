@@ -13,6 +13,11 @@ public class MsAccessModel extends AbstractModel
 	private String tableName = null;
 
 	// BUSINESS METHODS
+	public MsAccessModel(String databaseName){
+		super();
+		this.databaseName = databaseName;
+	}
+	
 	public void setDatabaseName(String databaseName) {
 		firePropertyChange(MsAccessUIController.DATABASE_NAME_PROPERTY, this.databaseName,
 				this.databaseName = databaseName);

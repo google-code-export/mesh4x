@@ -107,4 +107,10 @@ public interface ISyncAdapterBuilder {
 	 */
 	public ISyncAdapter createFolderAdapter(String folderName);
 
+	/**
+	 * TODO create documentation (raju)
+	 */
+	public String generateMySqlFeed(String userName, String password, String hostName,
+			int portNo, String databaseName, String tableName);
+
 }

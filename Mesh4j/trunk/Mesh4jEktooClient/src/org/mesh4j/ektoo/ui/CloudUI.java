@@ -11,12 +11,18 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.beans.PropertyChangeEvent;
 
+import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.controller.CloudUIController;
+import org.mesh4j.ektoo.tasks.IErrorListener;
+import org.mesh4j.ektoo.tasks.OpenURLTask;
+import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 
 /**
@@ -36,13 +42,17 @@ public class CloudUI extends AbstractUI{
 	private JTextField txtDataset = null;
 
 	private CloudUIController controller = null;
+	
+	private JButton btnView = null;
+	private JTextField txtURL = null;
 
 	// BUSINESS METHODS
-	public CloudUI(CloudUIController controller) {
+	public CloudUI(String baseURL, CloudUIController controller) {
 		super();
 		this.controller = controller;
 		this.controller.addView(this);
 		initialize();
+		this.txtURL.setText(baseURL);
 	}
 
 	private void initialize() {
@@ -54,6 +64,8 @@ public class CloudUI extends AbstractUI{
 
 		this.add(getDataSetLabel(), null);
 		this.add(getDataSetText(), null);
+		this.add(getURLText(), null);
+		this.add(getBtnView(), null);
 	}
 
 	private JLabel getMashLabel() {
@@ -134,7 +146,54 @@ public class CloudUI extends AbstractUI{
 		}
 		return txtDataset;
 	}
+	
+	private JTextField getURLText() {
+		if (txtURL == null) {
+			txtURL = new JTextField();
+			txtURL.setBounds(new Rectangle(0, 60, 400, 20));
+			txtURL.setEditable(false);
+		}
+		return txtURL;
+	}
 
+	public JButton getBtnView() {
+		if (btnView == null) {
+			btnView = new JButton();
+			btnView.setIcon(ImageManager.getViewIcon());
+			btnView.setContentAreaFilled(false);
+			btnView.setBorderPainted(false);
+			btnView.setBorder(new EmptyBorder(0, 0, 0, 0));
+			btnView.setBackground(Color.WHITE);
+			btnView.setText("");
+			btnView.setToolTipText(EktooUITranslator.getTooltipView());
+			btnView.setBounds(new Rectangle(290, 5, 34, 40));
+			btnView.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					JFrame frame = CloudUI.this.getRootFrame();
+					String url = txtURL.getText();
+					
+					if(txtMash.getText() != null && txtMash.getText().length() > 0){
+						url = url.concat("/").concat(txtMash.getText());
+						
+						if(txtDataset.getText() != null && txtDataset.getText().length() > 0){
+							url = url.concat("/").concat(txtDataset.getText());
+						}
+					}
+					
+					OpenURLTask task = new OpenURLTask(frame, (IErrorListener)frame, url);
+					task.execute();
+				}
+			});
+		}
+		return btnView;
+	}
+	
+	// TODO (nobel) improve it
+	protected JFrame getRootFrame() {
+		return (JFrame)this.getParent().getParent().getParent().getParent().getParent().getParent();
+	}
+	
+	
 	public CloudUIController getController() {
 		return controller;
 	}

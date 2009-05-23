@@ -13,9 +13,14 @@ import java.io.File;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
 
+import org.mesh4j.ektoo.tasks.IErrorListener;
+import org.mesh4j.ektoo.tasks.OpenFileTask;
+import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 
 /**
@@ -43,6 +48,7 @@ public abstract class TableUI extends AbstractUI {
 	private JComboBox listColumn = null;
 
 	private JButton btnFile = null;
+	private JButton btnView = null;
 
 	// BUSINESS METHODS
 	public TableUI() {
@@ -66,6 +72,7 @@ public abstract class TableUI extends AbstractUI {
 		this.add(getLabelFile(), null);
 		this.add(getTxtFile(), null);
 		this.add(getBtnFile(), null);
+		this.add(getBtnView(), null);
 
 		this.add(getlabelTable(), null);
 		this.add(getTableList(), null);
@@ -125,6 +132,33 @@ public abstract class TableUI extends AbstractUI {
 			});
 		}
 		return btnFile;
+	}
+	
+	public JButton getBtnView() {
+		if (btnView == null) {
+			btnView = new JButton();
+			btnView.setIcon(ImageManager.getViewIcon());
+			btnView.setContentAreaFilled(false);
+			btnView.setBorderPainted(false);
+			btnView.setBorder(new EmptyBorder(0, 0, 0, 0));
+			btnView.setBackground(Color.WHITE);
+			btnView.setText("");
+			btnView.setToolTipText(EktooUITranslator.getTooltipView());
+			btnView.setBounds(new Rectangle(299, 8, 34, 40));
+			btnView.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					JFrame frame = TableUI.this.getRootFrame();
+					OpenFileTask task = new OpenFileTask(frame, (IErrorListener)frame, file.getAbsolutePath());
+					task.execute();
+				}
+			});
+		}
+		return btnView;
+	}
+
+	// TODO (nobel) improve it
+	protected JFrame getRootFrame() {
+		return (JFrame)this.getParent().getParent().getParent().getParent().getParent().getParent();
 	}
 
 	private JLabel getlabelTable() {

@@ -1,17 +1,22 @@
 package org.mesh4j.ektoo;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import org.dom4j.DocumentException;
 import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadSheetRDFSyncAdapterFactory;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadSheetSyncAdapterFactory;
 import org.mesh4j.sync.ISyncAdapter;
+import org.mesh4j.sync.adapters.InMemorySyncAdapter;
 import org.mesh4j.sync.adapters.feed.ContentReader;
 import org.mesh4j.sync.adapters.feed.ContentWriter;
 import org.mesh4j.sync.adapters.feed.Feed;
 import org.mesh4j.sync.adapters.feed.FeedAdapter;
 import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
+import org.mesh4j.sync.adapters.feed.XMLContent;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.adapters.folder.FolderSyncAdapterFactory;
 import org.mesh4j.sync.adapters.hibernate.HibernateSyncAdapterFactory;
@@ -23,8 +28,13 @@ import org.mesh4j.sync.adapters.msexcel.MsExcelSyncAdapterFactory;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.id.generator.IIdGenerator;
 import org.mesh4j.sync.id.generator.IdGenerator;
+import org.mesh4j.sync.model.Item;
+import org.mesh4j.sync.model.NullContent;
+import org.mesh4j.sync.model.Sync;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.security.IIdentityProvider;
+import org.mesh4j.sync.utils.FileUtils;
+import org.mesh4j.sync.utils.SqlDBUtils;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
@@ -197,7 +207,54 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 		return FolderSyncAdapterFactory.createFolderAdapter(folderName, getIdentityProvider(), getIdGenerator());
 	}
 	
+	@Override
+	public String generateMySqlFeed(String userName, String password, String hostName, int portNo, String databaseName, String tableName) {
+		
+		String fileName = (userName+"_"+databaseName+"_"+tableName+"_"+IdGenerator.INSTANCE.newID()+".xml").replace(" ", "");
+		
+		String fullFileName = FileUtils.getFileName(this.propertiesProvider.getBaseDirectory() + File.separator + "temp", fileName);
+		
+		ISyncAdapter adapter;
+		
+		if(tableName == null || tableName.length() == 0){
+			adapter = createMySQLTableDiscoveryAdapter(userName, password, hostName, portNo, databaseName);
+		} else {
+			adapter = createMySQLAdapter(userName, password, hostName, portNo, databaseName, tableName);
+		}
+
+		List<Item> items = adapter.getAll();
+		Feed feed = new Feed();
+		feed.addItems(items);
+		
+		FeedAdapter feedAdapter = new FeedAdapter(fullFileName, this.propertiesProvider.getIdentityProvider(), IdGenerator.INSTANCE, RssSyndicationFormat.INSTANCE, feed);
+		feedAdapter.flush();
+		return fullFileName;
+	}
+	
 	// ACCESSORS
+	private ISyncAdapter createMySQLTableDiscoveryAdapter(String userName, String password, String hostName, int portNo, String databaseName) {
+		
+		IIdentityProvider identityProvider = this.propertiesProvider.getIdentityProvider();
+		List<String> tableNames = getTableNames(userName, password, hostName, portNo, databaseName);
+		
+		List<Item> items = new ArrayList<Item>();
+		for (String tableName : tableNames) {
+			String sycnId = IdGenerator.INSTANCE.newID();
+			XMLContent content = new XMLContent(sycnId, "table name: "+ tableName, "table name: " + tableName, "", NullContent.PAYLOAD);
+			Sync sync = new Sync(sycnId, identityProvider.getAuthenticatedUser(), new Date(), false);
+			Item item = new Item(content, sync);
+			items.add(item);
+		}
+		
+		InMemorySyncAdapter adapter = new InMemorySyncAdapter(databaseName, identityProvider, items);
+		return adapter;
+	}
+
+	private List<String> getTableNames(String userName, String password, String hostName, int portNo, String databaseName) {
+		String connectionUri = "jdbc:mysql://" + hostName + ":" + portNo + "/" + databaseName;
+		return SqlDBUtils.getTableNames(com.mysql.jdbc.Driver.class, connectionUri, userName, password);
+	}
+	
 
 	private File getFile(String fileName) {
 		File file = new File(fileName);

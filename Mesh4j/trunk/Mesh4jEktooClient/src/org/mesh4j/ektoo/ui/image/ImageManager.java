@@ -173,4 +173,7 @@ public class ImageManager
   {
     return SwingResourceManager.getIcon(EktooUI.class, "/16x16/progress.gif");
   }
+public static Icon getViewIcon() {
+	return SwingResourceManager.getIcon(EktooUI.class, "/view.jpg");
+}
 }

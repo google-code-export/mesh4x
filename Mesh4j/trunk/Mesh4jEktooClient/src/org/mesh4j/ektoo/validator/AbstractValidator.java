@@ -12,10 +12,11 @@ import org.mesh4j.ektoo.model.AbstractModel;
  * 
  */
 
-public abstract class AbstractValidator implements IValidator
-{
-  private Object parent;
-  protected Object form;
+public abstract class AbstractValidator implements IValidator {
+	
+	// MODEL VARIABLES
+	private Object parent;
+	protected Object form;
 
 	private Hashtable<Object, String> errorTable = new Hashtable<Object, String>();
 
@@ -60,8 +61,8 @@ public abstract class AbstractValidator implements IValidator
 	public Hashtable<Object, String> getErrorTable() {
 		return this.errorTable;
 	}
-	
-	protected Object getLocalParent(){
+
+	protected Object getLocalParent() {
 		return this.parent;
 	}
 }

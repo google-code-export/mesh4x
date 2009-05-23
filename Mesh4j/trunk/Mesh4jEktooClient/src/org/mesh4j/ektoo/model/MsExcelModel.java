@@ -15,6 +15,11 @@ public class MsExcelModel extends AbstractModel {
 
 	// BUSINESS METHODS
 	
+	public MsExcelModel(String workbookName){
+		super();
+		this.workbookName = workbookName;
+	}
+	
 	public void setWorkbookName(String workbookName) {
 		firePropertyChange(MsExcelUIController.WORKBOOK_NAME_PROPERTY, this.workbookName,
 				this.workbookName = workbookName);

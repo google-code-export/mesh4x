@@ -17,14 +17,18 @@ import java.util.Map.Entry;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
+import javax.swing.border.EmptyBorder;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.controller.GSSheetUIController;
+import org.mesh4j.ektoo.tasks.IErrorListener;
+import org.mesh4j.ektoo.tasks.OpenURLTask;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadsheet;
@@ -60,6 +64,9 @@ public class GSSheetUI extends AbstractUI {
 	 
 	private JButton btnConnect = null;
 	private GSSheetUIController controller = null;
+	
+	private JButton btnView = null;
+	private JTextField txtURL = null;
 
 	// BUSINESS METHODS
 	public GSSheetUI(GSSheetUIController controller) {
@@ -67,6 +74,8 @@ public class GSSheetUI extends AbstractUI {
 		this.controller = controller;
 		this.controller.addView(this);
 		initialize();
+		// TODO (RAJU/SHARIF) remove harcode url
+		this.txtURL.setText("http://docs.google.com/");
 	}
 
 	private void initialize() {
@@ -87,16 +96,8 @@ public class GSSheetUI extends AbstractUI {
 		this.add(getTableList(), null);
 		this.add(getLabelColumn(), null);
 		this.add(getColumnList(), null);
-
-		this.setDefaultValues();
-	}
-
-	private void setDefaultValues() 
-	{
-		//txtUser.setText("gspreadsheet.test@gmail.com");
-		//txtPass.setText("java123456");
-		// txtKey.setText("peo4fu7AitTo8e3v0D8FCew");
-		//txtKey.setText("peo4fu7AitTryKJCgRNloaQ");
+		this.add(getURLText(), null);
+		this.add(getBtnView(), null);
 	}
 
 	private JLabel getUserLabel() {
@@ -398,6 +399,45 @@ public class GSSheetUI extends AbstractUI {
 		
 	}
 
+	private JTextField getURLText() {
+		if (txtURL == null) {
+			txtURL = new JTextField();
+			txtURL.setBounds(new Rectangle(0, 140, 400, 20));
+			txtURL.setEditable(false);
+		}
+		return txtURL;
+	}
+
+	public JButton getBtnView() {
+		if (btnView == null) {
+			btnView = new JButton();
+			btnView.setIcon(ImageManager.getViewIcon());
+			btnView.setContentAreaFilled(false);
+			btnView.setBorderPainted(false);
+			btnView.setBorder(new EmptyBorder(0, 0, 0, 0));
+			btnView.setBackground(Color.WHITE);
+			btnView.setText("");
+			btnView.setToolTipText(EktooUITranslator.getTooltipView());
+			btnView.setBounds(new Rectangle(290, 5, 34, 40));
+			btnView.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					JFrame frame = GSSheetUI.this.getRootFrame();
+					String url = txtURL.getText();
+					// TODO (RAJU/SHARIF) add to base url the spreadshet data
+					
+					OpenURLTask task = new OpenURLTask(frame, (IErrorListener)frame, url);
+					task.execute();
+				}
+			});
+		}
+		return btnView;
+	}
+	
+	// TODO (nobel) improve it
+	protected JFrame getRootFrame() {
+		return (JFrame)this.getParent().getParent().getParent().getParent().getParent().getParent();
+	}
+	
 	public String getUser() {
 		return getUserText().getText();
 	}

@@ -20,14 +20,18 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
+import javax.swing.border.EmptyBorder;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.controller.MySQLUIController;
+import org.mesh4j.ektoo.tasks.IErrorListener;
+import org.mesh4j.ektoo.tasks.OpenMySqlFeedTask;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.ektoo.ui.validator.MySQLConnectionValidator;
@@ -41,6 +45,7 @@ import com.mysql.jdbc.Driver;
  * 
  */
 public class MySQLUI extends AbstractUI implements IValidationStatus {
+	
 	private static final long serialVersionUID = 2622575852343500622L;
 	private static final Log LOGGER = LogFactory.getLog(MySQLUI.class);
 
@@ -67,6 +72,8 @@ public class MySQLUI extends AbstractUI implements IValidationStatus {
 
 	private MySQLUIController controller = null;
 
+	private JButton btnView = null;
+	
 	// BUSINESS METHODS
 	public MySQLUI(MySQLUIController controller) {
 		super();
@@ -99,6 +106,7 @@ public class MySQLUI extends AbstractUI implements IValidationStatus {
 		this.add(getTableLabel(), null);
 		this.add(getTableList(), null);
 
+		this.add(getBtnView(), null);
 		setDefaultValues();
 	}
 
@@ -336,7 +344,7 @@ public class MySQLUI extends AbstractUI implements IValidationStatus {
 			btnConnect.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent ae) {
 					boolean valid = (new MySQLConnectionValidator(MySQLUI.this,
-							controller.getModel())).verify();
+							controller.getModel())).validateToConnect();
 					if (valid) {
 
 						SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
@@ -386,6 +394,33 @@ public class MySQLUI extends AbstractUI implements IValidationStatus {
 		return listTable;
 	}
 
+	public JButton getBtnView() {
+		if (btnView == null) {
+			btnView = new JButton();
+			btnView.setIcon(ImageManager.getViewIcon());
+			btnView.setContentAreaFilled(false);
+			btnView.setBorderPainted(false);
+			btnView.setBorder(new EmptyBorder(0, 0, 0, 0));
+			btnView.setBackground(Color.WHITE);
+			btnView.setText("");
+			btnView.setToolTipText(EktooUITranslator.getTooltipView());
+			btnView.setBounds(new Rectangle(299, 8, 34, 40));
+			btnView.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					JFrame frame = MySQLUI.this.getRootFrame();
+					OpenMySqlFeedTask task = new OpenMySqlFeedTask(frame, (IErrorListener)frame, MySQLUI.this.controller);
+					task.execute();
+				}
+			});
+		}
+		return btnView;
+	}
+
+	// TODO (nobel) improve it
+	protected JFrame getRootFrame() {
+		return (JFrame)this.getParent().getParent().getParent().getParent().getParent().getParent();
+	}
+	
 	public void setList(String user, String pass, String host, int port,
 			String schema) {
 		JComboBox tableList = getTableList();

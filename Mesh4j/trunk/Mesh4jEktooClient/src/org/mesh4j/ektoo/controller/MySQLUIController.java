@@ -74,9 +74,6 @@ public class MySQLUIController extends AbstractController
 		}
 
 		String userPassword = model.getUserPassword();
-		if (userPassword == null){
-			return null;
-		}
 
 		String hostName = model.getHostName();
 		if (hostName == null){
@@ -144,4 +141,42 @@ public class MySQLUIController extends AbstractController
 		return this.propertiesProvider.getDefaultMySQLTable();
 	}
 
+	public String generateFeed() {
+		MySQLAdapterModel model = (MySQLAdapterModel) this.getModel();
+		if (model == null){
+			return null;
+		}
+
+		String userName = model.getUserName();
+		if (userName == null){
+			return null;
+		}
+
+		String hostName = model.getHostName();
+		if (hostName == null){
+			return null;
+		}
+
+		int portNo = model.getPortNo();
+		if (portNo < 0){
+			return null;
+		}
+
+		String databaseName = model.getDatabaseName();
+		if (databaseName == null){
+			return null;
+		}
+
+		String tableName = model.getTableName();
+		if (tableName == null){
+			tableName = "";
+		}
+		
+		String userPassword = model.getUserPassword();
+		if (userPassword == null){
+			userPassword = "";
+		}
+		
+		return this.adapterBuilder.generateMySqlFeed(userName, userPassword, hostName, portNo, databaseName, tableName);
+	}
 }

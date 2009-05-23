@@ -6,14 +6,14 @@ import java.util.Iterator;
 
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.mesh4j.ektoo.controller.MsExcelUIController;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.sync.adapters.msexcel.MsExcel;
@@ -33,18 +33,22 @@ public class MsExcelUI extends TableUI
 	private MsExcelUIController controller;
 
 	// BUSINESS METHODS
-	public MsExcelUI(MsExcelUIController controller) 
+	public MsExcelUI(String fileName, MsExcelUIController controller) 
 	{
 		super();
 		this.controller = controller;
 		this.controller.addView(this);
 		initialize();
+		File file = new File(fileName);
+		setFile(file);
+		this.getTxtFile().setText(file.getName());
+		setList(file);
 	}
 
 	private void initialize() 
 	{
 		this.getFileChooser().setAcceptAllFileFilterUsed(false);
-		this.getFileChooser().addChoosableFileFilter(new MsExcelFilter());
+		this.getFileChooser().setFileFilter(new FileNameExtensionFilter(EktooUITranslator.getExcelFileSelectorTitle(), "xls", "xlsx", "XLS", "XLSX"));
 		this.getFileChooser().setFileSelectionMode(JFileChooser.FILES_ONLY);
 	}
 
@@ -55,7 +59,7 @@ public class MsExcelUI extends TableUI
 		sheetList.removeAllItems();
 
 		MsExcel excelFile = new MsExcel(file.getAbsolutePath());
-		HSSFWorkbook workbook = excelFile.getWorkbook();
+		Workbook workbook = excelFile.getWorkbook();
 
 		if (workbook != null) {
 			int sheetNum = workbook.getNumberOfSheets();
@@ -82,17 +86,17 @@ public class MsExcelUI extends TableUI
 		columnList.removeAllItems();
 
 		MsExcel excelFile = new MsExcel(file.getAbsolutePath());
-		HSSFWorkbook workbook = excelFile.getWorkbook();
-		HSSFSheet sheet = workbook.getSheetAt(tableIndex);
+		Workbook workbook = excelFile.getWorkbook();
+		Sheet sheet = workbook.getSheetAt(tableIndex);
 
-		HSSFRow row = MsExcelUtils.getOrCreateRowHeaderIfAbsent(sheet);
+		Row row = MsExcelUtils.getOrCreateRowHeaderIfAbsent(sheet);
 
-		HSSFCell cell = null;
+		Cell cell = null;
 		String label = null;
 
 		Iterator cells = row.cellIterator();
 		while (cells.hasNext()) {
-			cell = (HSSFCell) cells.next();
+			cell = (Cell) cells.next();
 			label = cell.getRichStringCellValue().getString();
 			columnList.addItem(label);
 		}
@@ -147,29 +151,5 @@ public class MsExcelUI extends TableUI
         getColumnList().setSelectedItem(newStringValue);
     }   
 
-	}
-}
-
-
-class MsExcelFilter extends FileFilter 
-{
-	// Accept all directories and all xls files.
-	public boolean accept(File file) 
-	{
-		if (file.isDirectory())
-			return true;
-
-		int pos = file.getName().lastIndexOf(".");
-		String ext = file.getName().substring(pos);
-
-		if (ext != null && ( ext.equalsIgnoreCase(".xls") ||ext.equalsIgnoreCase(".xlsx") ))
-			return true;
-
-		return false;
-	}
-
-	public String getDescription() 
-	{
-		return EktooUITranslator.getExcelFileSelectorTitle();
 	}
 }

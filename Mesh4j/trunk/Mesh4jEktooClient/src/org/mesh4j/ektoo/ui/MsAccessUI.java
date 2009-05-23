@@ -7,7 +7,7 @@ import java.util.Set;
 
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -28,17 +28,22 @@ public class MsAccessUI extends TableUI {
 	private MsAccessUIController controller;
 
 	// BUSINESS METHODS
-	public MsAccessUI(MsAccessUIController controller) {
+	public MsAccessUI(String fileName, MsAccessUIController controller) {
 		super();
 		this.controller = controller;
 		this.controller.addView(this);
 		initialize();
+		
+		File file = new File(fileName);
+		setFile(file);
+		setList(file);
+		getTxtFile().setText(file.getName());
 	}
 
 	private void initialize() {
 		this.showColumn(false);
 		this.getFileChooser().setAcceptAllFileFilterUsed(false);
-		this.getFileChooser().addChoosableFileFilter(new MsAccessFilter());
+		this.getFileChooser().setFileFilter(new FileNameExtensionFilter(EktooUITranslator.getMSAccessFileSelectorTitle(), "mdb", "MDB"));
 		this.getFileChooser().setFileSelectionMode(JFileChooser.FILES_ONLY);
 	}
 
@@ -101,26 +106,5 @@ public class MsAccessUI extends TableUI {
 	@Override
 	public void setList(File file, int tableIndex, String columnName) {
 		// TODO setList
-	}
-}
-
-class MsAccessFilter extends FileFilter 
-{
-	public boolean accept(File file) 
-	{
-		if (file.isDirectory())
-			return true;
-
-		int pos = file.getName().lastIndexOf(".");
-		String ext = file.getName().substring(pos);
-
-		if (ext != null && ext.equalsIgnoreCase(".mdb"))
-			return true;
-
-		return false;
-	}
-
-	public String getDescription() {
-		return EktooUITranslator.getMSAccessFileSelectorTitle();
 	}
 }
