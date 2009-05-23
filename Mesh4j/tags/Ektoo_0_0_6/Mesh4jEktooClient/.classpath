@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="test"/>
+	<classpathentry kind="src" path="images"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/GrameenTraining"/>
+	<classpathentry kind="lib" path="etc"/>
+	<classpathentry kind="lib" path="lib/activation.jar"/>
+	<classpathentry kind="lib" path="lib/antlr-2.7.6.jar"/>
+	<classpathentry kind="lib" path="lib/asm.jar"/>
+	<classpathentry kind="lib" path="lib/bsh-2.0b1.jar"/>
+	<classpathentry kind="lib" path="lib/commons-codec-1.3.jar"/>
+	<classpathentry kind="lib" path="lib/commons-collections-2.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons-lang.jar"/>
+	<classpathentry kind="lib" path="lib/commons-logging-1.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/commons-net-1.4.1.jar"/>
+	<classpathentry kind="lib" path="lib/dom4j-1.6.1.jar"/>
+	<classpathentry kind="lib" path="lib/ehcache-1.2.3.jar"/>
+	<classpathentry kind="lib" path="lib/forms-1.2.0.jar"/>
+	<classpathentry kind="lib" path="lib/freemarker.jar"/>
+	<classpathentry kind="lib" path="lib/gdata-client-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/gdata-client-meta-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/gdata-core-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/gdata-docs-2.0.jar"/>
+	<classpathentry kind="lib" path="lib/gdata-docs-meta-2.0.jar"/>
+	<classpathentry kind="lib" path="lib/gdata-media-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/gdata-spreadsheet-2.0.jar"/>
+	<classpathentry kind="lib" path="lib/gdata-spreadsheet-meta-2.0.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate-tools.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate3.jar"/>
+	<classpathentry kind="lib" path="lib/icu4j_3_4.jar"/>
+	<classpathentry kind="lib" path="lib/iri.jar"/>
+	<classpathentry kind="lib" path="lib/jackcess-1.1.18.jar"/>
+	<classpathentry kind="lib" path="lib/jaxen-1.1-beta-7.jar"/>
+	<classpathentry kind="lib" path="lib/jena.jar"/>
+	<classpathentry kind="lib" path="lib/jta.jar"/>
+	<classpathentry kind="lib" path="lib/jtidy-r8-20060801.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-1.2.11.jar"/>
+	<classpathentry kind="lib" path="lib/mail.jar"/>
+	<classpathentry kind="lib" path="lib/mysql-connector-java-5.1.6-bin.jar"/>
+	<classpathentry kind="lib" path="lib/xercesImpl.jar"/>
+	<classpathentry kind="lib" path="lib/mesh4j-1.0.0.jar"/>
+	<classpathentry kind="lib" path="/Mesh4j/lib/jakarta-poi/ooxml-schemas-1.0.jar"/>
+	<classpathentry kind="lib" path="/Mesh4j/lib/jakarta-poi/poi-3.5-beta5-20090219.jar" sourcepath="E:/Clarius/java/poi-src-3.5-beta5-20090219.zip"/>
+	<classpathentry kind="lib" path="/Mesh4j/lib/jakarta-poi/poi-contrib-3.5-beta5-20090219.jar"/>
+	<classpathentry kind="lib" path="/Mesh4j/lib/jakarta-poi/poi-ooxml-3.5-beta5-20090219.jar" sourcepath="E:/Clarius/java/poi-src-3.5-beta5-20090219.zip"/>
+	<classpathentry kind="lib" path="/Mesh4j/lib/jakarta-poi/poi-scratchpad-3.5-beta5-20090219.jar"/>
+	<classpathentry kind="lib" path="/Mesh4j/lib/jakarta-poi/xmlbeans-2.3.0.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

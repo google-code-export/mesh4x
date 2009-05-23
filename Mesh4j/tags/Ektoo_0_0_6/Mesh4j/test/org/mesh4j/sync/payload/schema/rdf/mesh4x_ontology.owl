@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<!DOCTYPE rdf:RDF [
+    <!ENTITY oswego  "http://mesh4x/oswego#">
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#">
+]>
+    
+<rdf:RDF 
+    xmlns     ="&oswego;" 
+    xmlns:oswego ="&oswego;" 
+    xml:base  ="&oswego;" 
+
+    xmlns:owl ="http://www.w3.org/2002/07/owl#"
+    xmlns:rdf ="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:xsd ="http://www.w3.org/2001/XMLSchema#"> 
+
+	<owl:Ontology rdf:about=""> 
+	  <rdfs:comment>An example OWL ontology</rdfs:comment>
+	  <owl:priorVersion rdf:resource="1.0"/> 
+	  <rdfs:label>Patient Ontology</rdfs:label> 
+	 </owl:Ontology>
+	 
+	<owl:Class rdf:ID="Sex">
+	  <owl:oneOf rdf:parseType="Collection">
+	    <Sex rdf:about="#Male">
+	    	<rdfs:label xml:lang="en">Male</rdfs:label>
+	 		<rdfs:label xml:lang="es">Hombre</rdfs:label> 
+	    </Sex>
+	    <Sex rdf:about="#Female">
+	    	<rdfs:label xml:lang="en">Female</rdfs:label>
+	 		<rdfs:label xml:lang="es">Mujer</rdfs:label> 
+	    </Sex>
+	  </owl:oneOf>
+	</owl:Class>
+	
+	 <owl:Class rdf:ID="Patient">
+	 	<rdfs:label xml:lang="en">Patient</rdfs:label>
+	 	<rdfs:label xml:lang="es">Paciente</rdfs:label> 
+	 </owl:Class>
+	 
+	 <owl:DatatypeProperty rdf:ID="code">
+		<rdfs:domain rdf:resource="#Patient"/> 
+		<rdfs:range rdf:resource="&xsd;string"/>
+		<rdfs:label>Code</rdfs:label> 
+		<rdfs:comment>Unique code of patient</rdfs:comment>
+	 </owl:DatatypeProperty> 
+	 
+	<owl:DatatypeProperty rdf:ID="name">
+	  <rdfs:domain rdf:resource="#Patient"/> 
+	  <rdfs:range rdf:resource="&xsd;string"/>
+	  <rdfs:label>Name</rdfs:label> 
+	  <rdfs:comment>Name of patient</rdfs:comment>
+	</owl:DatatypeProperty>
+	
+	<owl:ObjectProperty rdf:ID="sex">
+	  <rdfs:domain rdf:resource="#Patient"/> 
+	  <rdfs:range rdf:resource="#Sex"/>
+	  <rdfs:label>Sex</rdfs:label> 
+	  <rdfs:comment>Male or Famale</rdfs:comment>
+	</owl:ObjectProperty>
+	
+	<owl:DatatypeProperty rdf:ID="ill">
+	  <rdfs:domain rdf:resource="#Patient"/> 
+	  <rdfs:range rdf:resource="&xsd;boolean"/>
+	  <rdfs:label>Ill</rdfs:label> 
+	  <rdfs:comment>True if patient is ill false otherwise</rdfs:comment>	  
+	</owl:DatatypeProperty>
+	
+	<owl:DatatypeProperty rdf:ID="dateOnset">
+	  <rdfs:domain rdf:resource="#Patient"/> 
+	  <rdfs:range rdf:resource="&xsd;datetime"/>
+	  <rdfs:label>DateOnset</rdfs:label> 
+	  <rdfs:comment>Last patient status update</rdfs:comment>
+	</owl:DatatypeProperty>
+	
+	<owl:DatatypeProperty rdf:ID="address">
+	  <rdfs:domain rdf:resource="#Patient"/> 
+	  <rdfs:range rdf:resource="&xsd;string"/>
+	  <rdfs:label>Address</rdfs:label> 
+	  <rdfs:comment>Patient address</rdfs:comment>
+	</owl:DatatypeProperty>
+	 
+ </rdf:RDF>
