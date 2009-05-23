@@ -3,11 +3,11 @@ package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.mapping;
 import java.io.File;
 import java.util.HashMap;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRichTextString;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.dom4j.Element;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadsheetUtils;
 import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.IGoogleSpreadSheet;
@@ -167,19 +167,19 @@ public class GoogleSpreadsheetToRDFMapping implements IGoogleSpreadsheetToXMLMap
 
 	public String createDataSource(String fileName) throws Exception {
 		//create a msexcel document using the rdf schema
-		HSSFWorkbook workbook = createDataSource();			
+		Workbook workbook = createDataSource();			
 		MsExcelUtils.flush(workbook, fileName);
 		
 		//upload the excel document
 		return GoogleSpreadsheetUtils.uploadSpreadsheetDoc(new File(fileName), this.docService);
 	}
 
-	public HSSFWorkbook createDataSource() {
-		HSSFWorkbook workbook = new HSSFWorkbook();
-		HSSFSheet sheet = workbook.createSheet(this.rdfSchema.getOntologyNameSpace());
+	public Workbook createDataSource() {
+		Workbook workbook = new HSSFWorkbook();
+		Sheet sheet = workbook.createSheet(this.rdfSchema.getOntologyClassName());
 		sheet.setFitToPage(true);
-		HSSFRow headerRow = sheet.createRow(0);
-		HSSFCell headerCell;
+		Row headerRow = sheet.createRow(0);
+		Cell headerCell;
 		
 		int size = this.rdfSchema.getPropertyCount();
 		String propertyName;
@@ -187,7 +187,7 @@ public class GoogleSpreadsheetToRDFMapping implements IGoogleSpreadsheetToXMLMap
 			propertyName = this.rdfSchema.getPropertyName(size - 1 - j);	
 			
 			headerCell = headerRow.createCell(j);
-			headerCell.setCellValue(new HSSFRichTextString(propertyName));			
+			headerCell.setCellValue(MsExcelUtils.getRichTextString(workbook, propertyName));			
 		}
 		return workbook;
 	}
