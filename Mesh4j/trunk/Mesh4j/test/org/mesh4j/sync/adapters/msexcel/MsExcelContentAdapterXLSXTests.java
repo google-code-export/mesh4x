@@ -10,13 +10,13 @@ import java.util.List;
 import junit.framework.Assert;
 
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -90,7 +90,7 @@ public class MsExcelContentAdapterXLSXTests {
 		String sheetName = "sheet";
 		String idColumn = "oid";
 		
-		Workbook workbook = new HSSFWorkbook();
+		Workbook workbook = new XSSFWorkbook();
 		workbook.createSheet("test");
 		MsExcelUtils.flush(workbook, file.getAbsolutePath());
 		
@@ -106,7 +106,7 @@ public class MsExcelContentAdapterXLSXTests {
 		String sheetName = "sheet";
 		String idColumn = "oid";
 		
-		HSSFWorkbook workbook = new HSSFWorkbook();
+		Workbook workbook = new XSSFWorkbook();
 		workbook.createSheet(sheetName);
 		MsExcelUtils.flush(workbook, file.getAbsolutePath());
 		
@@ -122,7 +122,7 @@ public class MsExcelContentAdapterXLSXTests {
 		String sheetName = "sheet";
 		String idColumn = "oid";
 		
-		HSSFWorkbook workbook = new HSSFWorkbook();
+		Workbook workbook = new XSSFWorkbook();
 		Sheet sheet = workbook.createSheet(sheetName);
 		sheet.createRow(0);
 		MsExcelUtils.flush(workbook, file.getAbsolutePath());
