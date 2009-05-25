@@ -54,6 +54,29 @@ public class MsExcelSyncXLSXTests {
 	}
 	
 	@Test
+	public void ShouldSyncXLSXAndXLS() throws IOException, DocumentException{
+		String sheetName = "patient";
+		String idColumnName = "id";
+		
+		SplitAdapter adapterA = makeSplitAdapter(sheetName, idColumnName, "excelA.xls", "syncA.xls", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, true);
+		makeHeader(adapterA);
+		adapterA.add(makeNewItem());
+		adapterA.add(makeNewItem());
+		adapterA.add(makeNewItem());
+		adapterA.add(makeNewItem());
+		
+		SplitAdapter adapterB = makeSplitAdapter(sheetName, idColumnName, "excelB.xlsx", "syncB.xlsx", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, true);
+		makeHeader(adapterB);
+		adapterB.add(makeNewItem());
+		
+		SyncEngine syncEngine = new SyncEngine(adapterA, adapterB);
+		
+		List<Item> conflicts = syncEngine.synchronize();
+		
+		Assert.assertEquals(0, conflicts.size());
+	}
+	
+	@Test
 	public void shouldSyncSameFile() throws DocumentException, IOException{
 		
 		String sheetName = "patient";
