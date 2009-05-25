@@ -3,8 +3,7 @@ package org.mesh4j.sync.adapters.msexcel;
 import java.io.File;
 import java.util.Date;
 
-import org.apache.poi.hssf.usermodel.HSSFRichTextString;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
@@ -247,41 +246,41 @@ public class MSExcelToRDFMappingXLSXTest {
 	}
 	
 	protected Workbook getDefaultWorkbook() {
-		Workbook workbook = new HSSFWorkbook();
+		Workbook workbook = new XSSFWorkbook();
 		Sheet sheet = workbook.createSheet(SHEET_NAME);
 		Row rowHeader = sheet.createRow(0);
 		
 		Cell cell = rowHeader.createCell(0, Cell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString(COLUMN_NAME));
+		cell.setCellValue(MsExcelUtils.getRichTextString(workbook, COLUMN_NAME));
 		
 		cell = rowHeader.createCell(1, Cell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString(COLUMN_CODE));
+		cell.setCellValue(MsExcelUtils.getRichTextString(workbook, COLUMN_CODE));
 		
 		cell = rowHeader.createCell(2, Cell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString(COLUMN_AGE));
+		cell.setCellValue(MsExcelUtils.getRichTextString(workbook, COLUMN_AGE));
 		
 		cell = rowHeader.createCell(3, Cell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString(COLUMN_SEX));
+		cell.setCellValue(MsExcelUtils.getRichTextString(workbook, COLUMN_SEX));
 		
 		cell = rowHeader.createCell(4, Cell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString(COLUMN_ILL));
+		cell.setCellValue(MsExcelUtils.getRichTextString(workbook, COLUMN_ILL));
 		
 		cell = rowHeader.createCell(5, Cell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString(COLUMN_DATE_ONSET));
+		cell.setCellValue(MsExcelUtils.getRichTextString(workbook, COLUMN_DATE_ONSET));
 	    
 		Row rowData = sheet.createRow(1);
 		
 		cell = rowData.createCell(0, Cell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString("juan"));
+		cell.setCellValue(MsExcelUtils.getRichTextString(workbook, "juan"));
 		
 		cell = rowData.createCell(1, Cell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString("P1"));
+		cell.setCellValue(MsExcelUtils.getRichTextString(workbook, "P1"));
 		
 		cell = rowData.createCell(2, Cell.CELL_TYPE_NUMERIC);
 		cell.setCellValue(30);
 		
 		cell = rowData.createCell(3, Cell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString("male"));
+		cell.setCellValue(MsExcelUtils.getRichTextString(workbook, "male"));
 		
 		cell = rowData.createCell(4, Cell.CELL_TYPE_BOOLEAN);
 		cell.setCellValue(true);

@@ -6,11 +6,11 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.dom4j.Element;
 import org.junit.Assert;
 import org.junit.Test;
@@ -37,22 +37,22 @@ public class MsExcelSyncRepositoryXLSXTests {
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateSyncRepoFailsWhenSheetNameIsNull(){
-		new MsExcelSyncRepository(new MsExcel("myfile.xml"), null, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		new MsExcelSyncRepository(new MsExcel("myfile.xlsx"), null, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateSyncRepoFailsWhenSheetNameIsEmpty(){
-		new MsExcelSyncRepository(new MsExcel("myfile.xml"), "", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);	
+		new MsExcelSyncRepository(new MsExcel("myfile.xlsx"), "", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);	
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateSyncRepoFailsWhenIdentityProviderIsNull(){
-		new MsExcelSyncRepository(new MsExcel("myfile.xml"), "user_sync", null, IdGenerator.INSTANCE);
+		new MsExcelSyncRepository(new MsExcel("myfile.xlsx"), "user_sync", null, IdGenerator.INSTANCE);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateSyncRepoFailsWhenIdGeneratorIsNull(){
-		new MsExcelSyncRepository(new MsExcel("myfile.xml"), "user_sync", NullIdentityProvider.INSTANCE, null);
+		new MsExcelSyncRepository(new MsExcel("myfile.xlsx"), "user_sync", NullIdentityProvider.INSTANCE, null);
 	}
 	
 	@Test
@@ -86,7 +86,7 @@ public class MsExcelSyncRepositoryXLSXTests {
 	public void shouldCreateSyncRepoLoadWorkbookAndAddSyncSheet() throws FileNotFoundException, IOException{
 		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xlsx");
 		
-		Workbook workbook = new HSSFWorkbook();
+		Workbook workbook = new XSSFWorkbook();
 		MsExcelUtils.flush(workbook, file.getAbsolutePath());
 		Assert.assertTrue(file.exists());
 		
@@ -101,7 +101,7 @@ public class MsExcelSyncRepositoryXLSXTests {
 	public void shouldCreateSyncRepoLoadWorkbookAndAddSyncRowHeader() throws FileNotFoundException, IOException{
 		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xlsx");
 		
-		Workbook workbook = new HSSFWorkbook();
+		Workbook workbook = new XSSFWorkbook();
 		workbook.createSheet("user_sync");
 		MsExcelUtils.flush(workbook, file.getAbsolutePath());
 		Assert.assertTrue(file.exists());
@@ -117,7 +117,7 @@ public class MsExcelSyncRepositoryXLSXTests {
 	public void shouldCreateSyncRepoLoadWorkbookAndAddSyncCells() throws FileNotFoundException, IOException{
 		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xlsx");
 		
-		Workbook workbook = new HSSFWorkbook();
+		Workbook workbook = new XSSFWorkbook();
 		Sheet sheet = workbook.createSheet("user_sync");
 		sheet.createRow(0);
 		MsExcelUtils.flush(workbook, file.getAbsolutePath());
@@ -518,7 +518,7 @@ public class MsExcelSyncRepositoryXLSXTests {
 	}
 	
 	private Workbook makeValidSyncWorkbook() {
-		Workbook workbook = new HSSFWorkbook();
+		Workbook workbook = new XSSFWorkbook();
 		
 		Sheet sheet = workbook.createSheet("user_sync");
 		

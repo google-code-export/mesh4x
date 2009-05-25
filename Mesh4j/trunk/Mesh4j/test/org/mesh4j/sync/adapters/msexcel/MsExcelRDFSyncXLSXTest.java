@@ -8,13 +8,12 @@ import java.util.List;
 
 import junit.framework.Assert;
 
-
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.junit.Test;
@@ -120,7 +119,7 @@ public class MsExcelRDFSyncXLSXTest {
 		
 		// create file A
 		File fileA = TestHelper.makeFileAndDeleteIfExists("dataAndSyncA_RDF.xlsx");
-		Workbook workbookA = new HSSFWorkbook();
+		Workbook workbookA = new XSSFWorkbook();
 		
 		Sheet sheetA = MsExcelUtils.getOrCreateSheetIfAbsent(workbookA, sheetName);			
 		Row rowHeader = MsExcelUtils.getOrCreateRowHeaderIfAbsent(sheetA);						
