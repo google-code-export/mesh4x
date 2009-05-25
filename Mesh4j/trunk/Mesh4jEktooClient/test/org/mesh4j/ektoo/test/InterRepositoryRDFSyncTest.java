@@ -33,9 +33,7 @@ import org.mesh4j.sync.adapters.hibernate.EntityContent;
 import org.mesh4j.sync.adapters.hibernate.HibernateContentAdapter;
 import org.mesh4j.sync.adapters.hibernate.mapping.IHibernateToXMLMapping;
 import org.mesh4j.sync.adapters.msaccess.MsAccessRDFSchemaGenerator;
-import org.mesh4j.sync.adapters.msexcel.MsExcel;
 import org.mesh4j.sync.adapters.msexcel.MsExcelContentAdapter;
-import org.mesh4j.sync.adapters.msexcel.MsExcelToRDFMapping;
 import org.mesh4j.sync.adapters.msexcel.MsExcelUtils;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.id.generator.IdGenerator;
@@ -50,8 +48,9 @@ public class InterRepositoryRDFSyncTest {
 	
 	
 	
+	//TODO (raju & sharif this manipulation has some bug.it creates two content instead of one)
 	@Test
-	public void ShouldSyncGoogleSpreadSheetToExcelByRDF() throws Exception{
+	public void ShouldSyncGoogleSpreadSheetToExcelByRDFAndMustCreateTargetSchema() throws Exception{
 		
 		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
 		
@@ -64,7 +63,8 @@ public class InterRepositoryRDFSyncTest {
 				"user"
 				);
 		
-		String rdfUrl = "http://localhost:8080/mesh4x/feeds";
+//		String rdfUrl = "http://localhost:8080/mesh4x/feeds";
+		String rdfUrl = new PropertiesProvider().getMeshSyncServerURL();
 		IGoogleSpreadSheet gss = new GoogleSpreadsheet(spreadSheetInfo.getGoogleSpreadSheetName(), spreadSheetInfo.getUserName(), spreadSheetInfo.getPassWord());
 		IRDFSchema rdfSchema = GoogleSpreadsheetToRDFMapping.extractRDFSchema(gss, spreadSheetInfo.getSheetName(), rdfUrl);
 		
@@ -78,7 +78,7 @@ public class InterRepositoryRDFSyncTest {
 	}
 	
 	@Test
-	public void ShouldSyncMsExcelToMsExcelByRDFMustCreateTargetSchemafromSourceSchema(){
+	public void ShouldSyncMsExcelToMsExcelByRDFAndMustCreateTargetSchema(){
 
 //		PropertiesProvider propertiesProvider = new PropertiesProvider();
 //		String rdfUrl = propertiesProvider.getMeshSyncServerURL();
@@ -123,7 +123,7 @@ public class InterRepositoryRDFSyncTest {
 	@Test
 	public void ShouldSyncMySQLToExistingGoogleSpreadsheetByRDF(){
 		String user = "root";
-		String password = "admin";
+		String password = "test1234";
 		String tableName = "user";
 		String dbname = "mesh4xdb";
 		boolean addSampleData = true;

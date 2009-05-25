@@ -173,7 +173,7 @@ public class InterRepositorySyncTest {
 	}
 	
 	@Test
-	public void ShouldSyncGoogleSpreadSheetToExcel() throws Exception{
+	public void ShouldSyncGoogleSpreadSheetToExcelWithoutRDFAssumeSameSchema() throws Exception{
 		
 		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
 		
