@@ -6,11 +6,12 @@ import java.util.List;
 
 import junit.framework.Assert;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRichTextString;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.dom4j.Element;
 import org.junit.Test;
 import org.mesh4j.ektoo.GoogleSpreadSheetInfo;
@@ -32,6 +33,9 @@ import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.Sync;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.validations.MeshException;
+
+
+
 
 public class InterRepositorySyncTest {
 	
@@ -186,7 +190,7 @@ public class InterRepositorySyncTest {
 		IGoogleSpreadSheet gss = new GoogleSpreadsheet(spreadSheetInfo.getGoogleSpreadSheetName(), spreadSheetInfo.getUserName(), spreadSheetInfo.getPassWord());
 		IRDFSchema rdfSchema = GoogleSpreadsheetToRDFMapping.extractRDFSchema(gss, spreadSheetInfo.getSheetName(), rdfUrl);
 		
-		File contentFile = new File(this.getClass().getResource("content1.xls").getFile());
+		File contentFile = new File(TestHelper.baseDirectoryForTest() + "contentFile.xls");
 		ISyncAdapter sourceAsGoogleSpreadSheet = builder.createRdfBasedGoogleSpreadSheetAdapter(spreadSheetInfo, rdfSchema);
 		ISyncAdapter targetAsExcel = builder.createMsExcelAdapter(contentFile.getAbsolutePath(), "user", "id", rdfSchema);
 		
@@ -239,10 +243,10 @@ public class InterRepositorySyncTest {
 		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
 		
 		ISyncAdapter sourceAsExcel = builder.createMsExcelAdapter(
-				createMsExcelFileForTest("sourceContentFile.xls", true), "user", "id");
+				createMsExcelFileForTest("sourceContentFile.xls", true), "user", "id",false);
 		
 		ISyncAdapter targetAsExcel = builder.createMsExcelAdapter(
-				createMsExcelFileForTest("targetContentFile.xls", false), "user", "id");
+				createMsExcelFileForTest("targetContentFile.xls", false), "user", "id",false);
 		
 		SyncEngine engine = new SyncEngine(sourceAsExcel,targetAsExcel);
 		List<Item> listOfConflicts = engine.synchronize();
@@ -322,48 +326,56 @@ public class InterRepositorySyncTest {
 			throw new MeshException(e);
 		}
 		
-		HSSFWorkbook workbook = new HSSFWorkbook();
-		HSSFSheet sheet = workbook.createSheet(sheetName);
+		Workbook workbook = new HSSFWorkbook();
+		Sheet sheet = workbook.createSheet(sheetName);
 		sheet.createRow(0);
-		HSSFRow row = sheet.getRow(0);
-		HSSFCell cell;
+		Row row = sheet.getRow(0);
+		Cell cell;
 
-		cell = row.createCell(0, HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString(idColumn));
+		cell = row.createCell(0, Cell.CELL_TYPE_STRING);
+		cell.setCellValue(getRichTextString(workbook,idColumn));
+		
 
-		cell = row.createCell(1, HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString("name"));
+		cell = row.createCell(1, Cell.CELL_TYPE_STRING);
+		cell.setCellValue(getRichTextString(workbook,"name"));
+		
+		
 
-		cell = row.createCell(2, HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString("age"));
+		cell = row.createCell(2, Cell.CELL_TYPE_STRING);
+		cell.setCellValue(getRichTextString(workbook,"age"));
 
-		cell = row.createCell(3, HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString("city"));
+		cell = row.createCell(3, Cell.CELL_TYPE_STRING);
+		cell.setCellValue(getRichTextString(workbook,"city"));
 
-		cell = row.createCell(4, HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(new HSSFRichTextString("country"));
+		cell = row.createCell(4, Cell.CELL_TYPE_STRING);
+		cell.setCellValue(getRichTextString(workbook,"country"));
 
 		if(addSampleRow){
 			row = sheet.createRow(1);	
 
-			cell = row.createCell(0, HSSFCell.CELL_TYPE_STRING);
-			cell.setCellValue(new HSSFRichTextString("123"));
+			cell = row.createCell(0, Cell.CELL_TYPE_STRING);
+			cell.setCellValue(getRichTextString(workbook,"123"));
 
-			cell = row.createCell(1, HSSFCell.CELL_TYPE_STRING);
-			cell.setCellValue(new HSSFRichTextString("sharif"));
+			cell = row.createCell(1, Cell.CELL_TYPE_STRING);
+			cell.setCellValue(getRichTextString(workbook,"sharif"));
 
-			cell = row.createCell(2, HSSFCell.CELL_TYPE_STRING);
-			cell.setCellValue(new HSSFRichTextString("29"));
+			cell = row.createCell(2, Cell.CELL_TYPE_STRING);
+			cell.setCellValue(getRichTextString(workbook,"29"));
 
-			cell = row.createCell(3, HSSFCell.CELL_TYPE_STRING);
-			cell.setCellValue(new HSSFRichTextString("dhaka"));
+			cell = row.createCell(3, Cell.CELL_TYPE_STRING);
+			cell.setCellValue(getRichTextString(workbook,"dhaka"));
 
-			cell = row.createCell(4, HSSFCell.CELL_TYPE_STRING);
-			cell.setCellValue(new HSSFRichTextString("bangladesh"));		
+			cell = row.createCell(4, Cell.CELL_TYPE_STRING);
+			cell.setCellValue(getRichTextString(workbook,"bangladesh"));
 		}
 		
 		MsExcelUtils.flush(workbook, file.getAbsolutePath());
 
 		return file.getAbsolutePath();
 	}
+	
+	public static RichTextString getRichTextString(Workbook workbook,String value){
+		return workbook.getCreationHelper().createRichTextString(value);
+	}
+	
 }

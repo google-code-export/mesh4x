@@ -1,5 +1,6 @@
 package org.mesh4j.ektoo.test;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -9,6 +10,12 @@ import java.util.List;
 
 import junit.framework.Assert;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -23,6 +30,9 @@ import org.mesh4j.sync.adapters.hibernate.EntityContent;
 import org.mesh4j.sync.adapters.hibernate.HibernateContentAdapter;
 import org.mesh4j.sync.adapters.hibernate.mapping.IHibernateToXMLMapping;
 import org.mesh4j.sync.adapters.msaccess.MsAccessRDFSchemaGenerator;
+import org.mesh4j.sync.adapters.msexcel.MsExcelContentAdapter;
+import org.mesh4j.sync.adapters.msexcel.MsExcelToRDFMapping;
+import org.mesh4j.sync.adapters.msexcel.MsExcelUtils;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.IContent;
@@ -30,13 +40,31 @@ import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.Sync;
 import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
+import org.mesh4j.sync.validations.MeshException;
 
 public class InterRepositoryRDFSyncTest {
+	
+	
+	@Test
+	public void ShouldSyncMsExcelToMsExcelByRDF(){
+		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
+		String contentFilePathAsString = createMsExcelFileForTest("source.xls");
+		ISyncAdapter sourceAsExcel = builder.createMsExcelAdapter(contentFilePathAsString, "user", "id",true);
+		
+		SplitAdapter splitAdapterSource = ((SplitAdapter)sourceAsExcel);
+		ISchema sourceSchema = ((MsExcelContentAdapter)splitAdapterSource.getContentAdapter()).getSchema();
+		
+		ISyncAdapter targetAsExcel = builder.createMsExcelAdapter(TestHelper.baseDirectoryForTest() + "target.xls", "user", "id",(IRDFSchema)sourceSchema);
+		
+		SyncEngine engine = new SyncEngine(sourceAsExcel,targetAsExcel);
+		List<Item> listOfConflicts = engine.synchronize();
+		Assert.assertEquals(0, listOfConflicts.size());	
+	}
 	
 	@Test
 	public void ShouldSyncMySQLToExcelByRDF(){
 		String user = "root";
-		String password = "admin";
+		String password = "test1234";
 		String tableName = "user";
 		
 		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
@@ -124,14 +152,14 @@ public class InterRepositoryRDFSyncTest {
 	@Test
 	public void ShouldSyncMsAccessToExcelByRDF() throws IOException{
 		
-		String rdfBaseURl = "http://localhost:8080/mesh4x/feeds" +"/aktoo"+"#";
+		String rdfBaseURl = "http://localhost:8080/mesh4x/feeds" +"/ektoo"+"#";
 		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
 		
-		ISyncAdapter sourceAsAccess = builder.createMsAccessAdapter(TestHelper.baseDirectoryForTest() +"aktoo.mdb" , "aktoo");
+		ISyncAdapter sourceAsAccess = builder.createMsAccessAdapter(TestHelper.baseDirectoryForTest() +"ektoo.mdb" , "ektoo");
 		SplitAdapter splitAdapterSource = (SplitAdapter)sourceAsAccess;
-		IRDFSchema sourceSchema = MsAccessRDFSchemaGenerator.extractRDFSchema(TestHelper.baseDirectoryForTest() +"aktoo.mdb", "aktoo", "aktoo", rdfBaseURl);
+		IRDFSchema sourceSchema = MsAccessRDFSchemaGenerator.extractRDFSchema(TestHelper.baseDirectoryForTest() +"ektoo.mdb", "ektoo", "ektoo", rdfBaseURl);
 		
-		ISyncAdapter targetAsExcel = builder.createMsExcelAdapter(TestHelper.baseDirectoryForTest() + "contentFile.xls", "aktoo", "id", sourceSchema);
+		ISyncAdapter targetAsExcel = builder.createMsExcelAdapter(TestHelper.baseDirectoryForTest() + "contentFile.xls", "ektoo", "id", sourceSchema);
 		
 		SyncEngine engine = new SyncEngine(splitAdapterSource,targetAsExcel);
 		List<Item> listOfConflicts = engine.synchronize();
@@ -229,4 +257,68 @@ public class InterRepositoryRDFSyncTest {
 		}		 
 	}
 
+	private String createMsExcelFileForTest(String filename){
+		
+		String sheetName = "user";
+		String idColumn = "id";
+
+		File file;
+		try {
+			file = TestHelper.makeFileAndDeleteIfExists(filename);
+		} catch (IOException e) {
+			throw new MeshException(e);
+		}
+		
+		Workbook workbook = new HSSFWorkbook();
+		Sheet sheet = workbook.createSheet(sheetName);
+		sheet.createRow(0);
+		Row row = sheet.getRow(0);
+		Cell cell;
+
+		cell = row.createCell(0, Cell.CELL_TYPE_STRING);
+		cell.setCellValue(getRichTextString(workbook,idColumn));
+		
+
+		cell = row.createCell(1, Cell.CELL_TYPE_STRING);
+		cell.setCellValue(getRichTextString(workbook,"name"));
+		
+		
+
+		cell = row.createCell(2, Cell.CELL_TYPE_STRING);
+		cell.setCellValue(getRichTextString(workbook,"age"));
+
+		cell = row.createCell(3, Cell.CELL_TYPE_STRING);
+		cell.setCellValue(getRichTextString(workbook,"city"));
+
+		cell = row.createCell(4, Cell.CELL_TYPE_STRING);
+		cell.setCellValue(getRichTextString(workbook,"country"));
+
+		//add sample data
+		row = sheet.createRow(1);	
+
+		cell = row.createCell(0, Cell.CELL_TYPE_STRING);
+		cell.setCellValue(getRichTextString(workbook,"1"));
+
+		cell = row.createCell(1, Cell.CELL_TYPE_STRING);
+		cell.setCellValue(getRichTextString(workbook,"raju"));
+
+		cell = row.createCell(2, Cell.CELL_TYPE_STRING);
+		cell.setCellValue(getRichTextString(workbook,"29"));
+
+		cell = row.createCell(3, Cell.CELL_TYPE_STRING);
+		cell.setCellValue(getRichTextString(workbook,"dhaka"));
+
+		cell = row.createCell(4, Cell.CELL_TYPE_STRING);
+		cell.setCellValue(getRichTextString(workbook,"bangladesh"));
+
+		MsExcelUtils.flush(workbook, file.getAbsolutePath());
+
+		return file.getAbsolutePath();
+	}
+	
+	
+	
+	public static RichTextString getRichTextString(Workbook workbook,String value){
+		return workbook.getCreationHelper().createRichTextString(value);
+	}
 }

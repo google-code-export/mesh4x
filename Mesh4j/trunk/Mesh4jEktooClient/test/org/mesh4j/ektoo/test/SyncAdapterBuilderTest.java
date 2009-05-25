@@ -358,22 +358,20 @@ public class SyncAdapterBuilderTest {
 	public void shouldCreateMsAccessAdapter() throws Exception{
 	    ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
 	    ISyncAdapter syncAdapter = adapterBuilder.createMsAccessAdapter(TestHelper.baseDirectoryForTest() + "ektoo.mdb", "ektoo");
-	    
-	   Assert.assertEquals(0, syncAdapter.getAll().size());
+	    Assert.assertNotNull(syncAdapter);
 	}
 	
 	@Test
 	public void shouldCreateExcelAdapter() throws DocumentException{
 	
 		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
-		ISyncAdapter excelAdapter = adapterBuilder.createMsExcelAdapter(TestHelper.baseDirectoryForTest() + "contentFile.xls","user", "id");
+		ISyncAdapter excelAdapter = adapterBuilder.createMsExcelAdapter(TestHelper.baseDirectoryForTest() + "contentFile.xls","user", "id",false);
 		
-		Assert.assertEquals(0, excelAdapter.getAll().size());
- 		
+		int size = excelAdapter.getAll().size();
 		excelAdapter.add(getItem());
 		
 		
-		Assert.assertEquals(1, excelAdapter.getAll().size());
+		Assert.assertEquals(size + 1, excelAdapter.getAll().size());
 		
 	}
 	
@@ -386,11 +384,12 @@ public class SyncAdapterBuilderTest {
 		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
 		ISyncAdapter mysqlAdapter =  builder.createMySQLAdapter(userName, password,"localhost" ,3306,"mesh4xdb",tableName);
 		
-		Assert.assertNotNull(mysqlAdapter);
-//		Assert.assertEquals(0, mysqlAdapter.getAll().size());
+//		int size = mysqlAdapter.getAll().size();
 		
+		Assert.assertNotNull(mysqlAdapter);
+
 //		mysqlAdapter.add(getItem());
-		Assert.assertEquals(1, mysqlAdapter.getAll().size());
+//		Assert.assertEquals(size + 1, mysqlAdapter.getAll().size());
 	}
 	
 	@Test
@@ -415,7 +414,7 @@ public class SyncAdapterBuilderTest {
 	{
 		String contentFile = TestHelper.fileName("contentFile.xls");
 		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
-		adapterBuilder.createMsExcelAdapter(contentFile, "", "id");
+		adapterBuilder.createMsExcelAdapter(contentFile, "", "id",true);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
@@ -423,14 +422,22 @@ public class SyncAdapterBuilderTest {
 		
 		String contentFile = TestHelper.fileName("contentFile.xls");
 		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
-		adapterBuilder.createMsExcelAdapter(contentFile, "user", "");
+		adapterBuilder.createMsExcelAdapter(contentFile, "user", "",true);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
-	public void shouldReturnNUllIfContenFileIsNullOrEmpty(){
+	public void shouldReturnExceptionIfContenFileIsNullOrEmpty(){
 		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
-		adapterBuilder.createMsExcelAdapter(null, "user", "id");
+		adapterBuilder.createMsExcelAdapter(null, "user", "id",true);
 	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldReturnExceptionIfRDFIsNullOrEmpty(){
+		String contentFile = TestHelper.fileName("contentFile.xls");
+		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
+		adapterBuilder.createMsExcelAdapter(contentFile, "user", "id",null);
+	}
+	
 	
 	private static final String SHEET_NAME = "user";
 	private static final String COLUMN_PASS = "Pass";
