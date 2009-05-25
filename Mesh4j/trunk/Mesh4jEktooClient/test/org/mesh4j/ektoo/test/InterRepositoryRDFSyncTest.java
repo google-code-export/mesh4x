@@ -24,12 +24,16 @@ import org.mesh4j.ektoo.GoogleSpreadSheetInfo;
 import org.mesh4j.ektoo.ISyncAdapterBuilder;
 import org.mesh4j.ektoo.SyncAdapterBuilder;
 import org.mesh4j.ektoo.properties.PropertiesProvider;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadsheet;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.IGoogleSpreadSheet;
+import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.mapping.GoogleSpreadsheetToRDFMapping;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.adapters.hibernate.EntityContent;
 import org.mesh4j.sync.adapters.hibernate.HibernateContentAdapter;
 import org.mesh4j.sync.adapters.hibernate.mapping.IHibernateToXMLMapping;
 import org.mesh4j.sync.adapters.msaccess.MsAccessRDFSchemaGenerator;
+import org.mesh4j.sync.adapters.msexcel.MsExcel;
 import org.mesh4j.sync.adapters.msexcel.MsExcelContentAdapter;
 import org.mesh4j.sync.adapters.msexcel.MsExcelToRDFMapping;
 import org.mesh4j.sync.adapters.msexcel.MsExcelUtils;
@@ -45,16 +49,52 @@ import org.mesh4j.sync.validations.MeshException;
 public class InterRepositoryRDFSyncTest {
 	
 	
+	
 	@Test
-	public void ShouldSyncMsExcelToMsExcelByRDF(){
+	public void ShouldSyncGoogleSpreadSheetToExcelByRDF() throws Exception{
+		
+		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
+		
+		GoogleSpreadSheetInfo spreadSheetInfo = new GoogleSpreadSheetInfo(
+				"testspreadsheet",
+				"gspreadsheet.test@gmail.com",
+				"java123456",
+				"id",
+				"user_source",
+				"user"
+				);
+		
+		String rdfUrl = "http://localhost:8080/mesh4x/feeds";
+		IGoogleSpreadSheet gss = new GoogleSpreadsheet(spreadSheetInfo.getGoogleSpreadSheetName(), spreadSheetInfo.getUserName(), spreadSheetInfo.getPassWord());
+		IRDFSchema rdfSchema = GoogleSpreadsheetToRDFMapping.extractRDFSchema(gss, spreadSheetInfo.getSheetName(), rdfUrl);
+		
+		File contentFile = new File(TestHelper.baseDirectoryForTest() + "contentFile.xls");
+		ISyncAdapter sourceAsGoogleSpreadSheet = builder.createRdfBasedGoogleSpreadSheetAdapter(spreadSheetInfo, rdfSchema);
+		ISyncAdapter targetAsExcel = builder.createMsExcelAdapter(contentFile.getAbsolutePath(), "user", "id", rdfSchema);
+		
+		SyncEngine engine = new SyncEngine(sourceAsGoogleSpreadSheet, targetAsExcel);
+		List<Item> listOfConflicts = engine.synchronize();
+		Assert.assertEquals(0, listOfConflicts.size());
+	}
+	
+	@Test
+	public void ShouldSyncMsExcelToMsExcelByRDFMustCreateTargetSchemafromSourceSchema(){
+
+//		PropertiesProvider propertiesProvider = new PropertiesProvider();
+//		String rdfUrl = propertiesProvider.getMeshSyncServerURL();
+		
 		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
 		String contentFilePathAsString = createMsExcelFileForTest("source.xls");
 		ISyncAdapter sourceAsExcel = builder.createMsExcelAdapter(contentFilePathAsString, "user", "id",true);
+
+//		MsExcel msExcel = new MsExcel(contentFilePathAsString);
+//		IRDFSchema rdfSchema = MsExcelToRDFMapping.extractRDFSchema(msExcel, "user", rdfUrl);
 		
 		SplitAdapter splitAdapterSource = ((SplitAdapter)sourceAsExcel);
 		ISchema sourceSchema = ((MsExcelContentAdapter)splitAdapterSource.getContentAdapter()).getSchema();
+		IRDFSchema rdfSchema = (IRDFSchema)sourceSchema;
 		
-		ISyncAdapter targetAsExcel = builder.createMsExcelAdapter(TestHelper.baseDirectoryForTest() + "target.xls", "user", "id",(IRDFSchema)sourceSchema);
+		ISyncAdapter targetAsExcel = builder.createMsExcelAdapter(TestHelper.baseDirectoryForTest() + "target.xls", "user", "id",rdfSchema);
 		
 		SyncEngine engine = new SyncEngine(sourceAsExcel,targetAsExcel);
 		List<Item> listOfConflicts = engine.synchronize();
