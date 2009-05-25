@@ -174,13 +174,18 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 				mappingDirectory.getAbsolutePath());
 	}
 
+	
 	@Override
-	public ISyncAdapter createMsExcelAdapter(String contentFileName, String sheetName, String idColumnName) {
+	public ISyncAdapter createMsExcelAdapter(String contentFileName, String sheetName, String idColumnName,boolean isRDF) {
 		
 		Guard.argumentNotNullOrEmptyString(contentFileName, "contentFileName");
+		Guard.argumentNotNull(isRDF, "isRDF");
 		File file = getFile(contentFileName);
 		if (file == null || !file.exists()) {
 			Guard.argumentNotNullOrEmptyString(contentFileName, "contentFileName");
+		}
+		if(isRDF){
+			return this.excelRDFSyncFactory.createSyncAdapter(file.getAbsolutePath(), sheetName, idColumnName, getIdentityProvider());	
 		}
 		return this.excelSyncFactory.createSyncAdapter(file.getAbsolutePath(), sheetName, idColumnName, getIdentityProvider());
 	}
@@ -280,5 +285,7 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 	public String getBaseRDFUrl() {
 		return this.propertiesProvider.getMeshSyncServerURL();
 	}
+
+	
 
 }

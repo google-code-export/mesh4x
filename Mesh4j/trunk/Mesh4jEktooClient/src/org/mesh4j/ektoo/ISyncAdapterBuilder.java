@@ -18,9 +18,12 @@ public interface ISyncAdapterBuilder {
 	 *            , the physical sheet name of the excel file
 	 * @param idColumnName
 	 *            , the name of the identity column of entity
-	 * 
+	 * @param isRDF
+	 * 			,which actually represents if the adapter going to create is RDF based or without RDF.<l>
+	 * 			if user make to true then created excel adapter will be based on RDF and it must have RDF schema<l>
+	 * 			and user can easilly get the schema from its Content adapter.
 	 */
-	public ISyncAdapter createMsExcelAdapter(String contentFileName, String sheetName, String idColumnName);
+	public ISyncAdapter createMsExcelAdapter(String contentFileName, String sheetName, String idColumnName,boolean isRDF);
 	
 	/**
 	 * creates adapter for excel repository
