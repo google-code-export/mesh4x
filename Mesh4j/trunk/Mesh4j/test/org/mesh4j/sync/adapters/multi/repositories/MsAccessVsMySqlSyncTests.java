@@ -38,10 +38,10 @@ public class MsAccessVsMySqlSyncTests {
 		SyncEngine syncEngine = syncAndAssert(adapterSource, adapterTarget);
 		
 		// sync to create excel
-		TestHelper.syncAndAssert(syncEngine);
+		TestHelper.assertSync(syncEngine);
 	
 		// no changes - create again the adapters emulating other sync
-		TestHelper.syncAndAssert(syncEngine);
+		TestHelper.assertSync(syncEngine);
 	
 		// add
 		excelContent.beginSync();
@@ -55,7 +55,7 @@ public class MsAccessVsMySqlSyncTests {
 		
 		Assert.assertEquals(size, adapterSource.getAll().size());
 		Assert.assertEquals(size + 1, adapterTarget.getAll().size());
-		TestHelper.syncAndAssert(syncEngine);
+		TestHelper.assertSync(syncEngine);
 	
 		// update - create again the adapters emulating other sync
 		excelContent.beginSync();
@@ -65,7 +65,7 @@ public class MsAccessVsMySqlSyncTests {
 		
 		Assert.assertEquals(size + 1, adapterSource.getAll().size());
 		Assert.assertEquals(size + 1, adapterTarget.getAll().size());
-		TestHelper.syncAndAssert(syncEngine);
+		TestHelper.assertSync(syncEngine);
 			
 		// delete - create again the adapters emulating other sync
 		excelContent.beginSync();
@@ -75,7 +75,7 @@ public class MsAccessVsMySqlSyncTests {
 		
 		Assert.assertEquals(size + 1, adapterSource.getAll().size());
 		Assert.assertEquals(size + 1, adapterTarget.getAll().size());
-		TestHelper.syncAndAssert(syncEngine);
+		TestHelper.assertSync(syncEngine);
 		
 	}
 	
@@ -160,7 +160,7 @@ public class MsAccessVsMySqlSyncTests {
 		Assert.assertEquals(rdfSchemaSource.asXML(), rdfSchemaTarget.asXML());
 		
 		SyncEngine syncEngine = new SyncEngine(adapterTarget, adapterSource);
-		TestHelper.syncAndAssert(syncEngine);
+		TestHelper.assertSync(syncEngine);
 		return syncEngine;
 	}
 

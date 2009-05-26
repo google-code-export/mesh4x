@@ -56,7 +56,7 @@ public class SyncTests {
 	
 		// sync
 		SyncEngine syncEngine = new SyncEngine(adapterSource, adapterTarget);
-		TestHelper.syncAndAssert(syncEngine);
+		TestHelper.assertSync(syncEngine);
 		
 		// delete all
 		deleteAll(folderSource);
@@ -95,7 +95,7 @@ public class SyncTests {
 	
 		// sync
 		SyncEngine syncEngine = new SyncEngine(adapterSource, adapterTarget);
-		TestHelper.syncAndAssert(syncEngine);
+		TestHelper.assertSync(syncEngine);
 		
 		// delete all
 		deleteAll(folderSource);

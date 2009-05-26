@@ -93,18 +93,18 @@ public class MsExcelSyncXLSXTests {
 		
 		SyncEngine syncEngine = new SyncEngine(adapterA, adapterB);
 		
-		TestHelper.syncAndAssert(syncEngine);		
+		TestHelper.assertSync(syncEngine);		
 		
 		// no changes or updates are produced
-		TestHelper.syncAndAssert(syncEngine);
+		TestHelper.assertSync(syncEngine);
 		
 		adapterA = makeSplitAdapter(sheetName, idColumnName, "dataAndSyncA.xlsx", "dataAndSyncA.xlsx", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, true);		
 		adapterB = makeSplitAdapter(sheetName, idColumnName, "dataAndSyncB.xlsx", "dataAndSyncB.xlsx", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, true);
 		syncEngine = new SyncEngine(adapterA, adapterB);
 		
 		// no changes or updates are produced
-		TestHelper.syncAndAssert(syncEngine);		
-		TestHelper.syncAndAssert(syncEngine);
+		TestHelper.assertSync(syncEngine);		
+		TestHelper.assertSync(syncEngine);
 		
 		List<Item> items = adapterA.getAll();
 		for (Item item : items) {

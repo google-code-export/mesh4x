@@ -165,18 +165,18 @@ public class MsExcelRDFSyncXLSXTest {
 		
 		SyncEngine syncEngine = new SyncEngine(adapterA, adapterB);
 		
-		TestHelper.syncAndAssert(syncEngine);		
+		TestHelper.assertSync(syncEngine);		
 		
 		// no changes or updates are produced
-		TestHelper.syncAndAssert(syncEngine);
+		TestHelper.assertSync(syncEngine);
 		
 		adapterA = factory.createSyncAdapter(fileA.getCanonicalPath(), sheetName, idColumnName, new LoggedInIdentityProvider());		
 		adapterB = factory.createSyncAdapter(fileB.getCanonicalPath(), sheetName, idColumnName, new LoggedInIdentityProvider());
 		syncEngine = new SyncEngine(adapterA, adapterB);
 		
 		// no changes or updates are produced
-		TestHelper.syncAndAssert(syncEngine);		
-		TestHelper.syncAndAssert(syncEngine);
+		TestHelper.assertSync(syncEngine);		
+		TestHelper.assertSync(syncEngine);
 		
 		List<Item> items = adapterA.getAll();
 		for (Item item : items) {

@@ -34,7 +34,7 @@ public class HibernateTypesTests {
 		ISyncAdapter adapterTarget = new FeedAdapter(fileName, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, RssSyndicationFormat.INSTANCE, feed);
 		
 		SyncEngine syncEngine = new SyncEngine(adapterSource, adapterTarget);
-		TestHelper.syncAndAssert(syncEngine);
+		TestHelper.assertSync(syncEngine);
 	}
 	
 	@Test
@@ -61,8 +61,8 @@ public class HibernateTypesTests {
 		ISyncAdapter adapterTarget = msExcelFactory.createSyncAdapter(excelFileName, tableName, "uid", NullIdentityProvider.INSTANCE, rdfSchema);
 					
 		SyncEngine syncEngine = new SyncEngine(adapterSource, adapterTarget);
-		TestHelper.syncAndAssert(syncEngine);
+		TestHelper.assertSync(syncEngine);
 		
-		TestHelper.syncAndAssert(syncEngine);
+		TestHelper.assertSync(syncEngine);
 	}
 }

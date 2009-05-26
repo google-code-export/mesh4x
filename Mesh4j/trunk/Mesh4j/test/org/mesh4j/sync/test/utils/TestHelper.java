@@ -18,6 +18,7 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.adapters.kml.KmlNames;
 import org.mesh4j.sync.id.generator.IdGenerator;
@@ -224,7 +225,7 @@ public class TestHelper {
 		return file;
 	}
 	
-	public static void syncAndAssert(SyncEngine syncEngine) {
+	public static void assertSync(SyncEngine syncEngine) {
 		List<Item> conflicts = syncEngine.synchronize();
 	
 		Assert.assertNotNull(conflicts);
@@ -234,8 +235,15 @@ public class TestHelper {
 		List<Item> targetItems = syncEngine.getTarget().getAll();
 		Assert.assertEquals(sourceItems.size(), targetItems.size());
 		
+		ISyncAdapter targetAdapter = syncEngine.getTarget();
 		for (Item sourceItem : sourceItems) {
-			Item targetItem = syncEngine.getTarget().get(sourceItem.getSyncId());
+			assertItem(sourceItem, targetAdapter);
+		}
+	}
+	
+	public static void assertItem(Item sourceItem, ISyncAdapter... adapters) {
+		for (ISyncAdapter syncAdapter : adapters) {
+			Item targetItem = syncAdapter.get(sourceItem.getSyncId());
 			boolean isOk = sourceItem.equals(targetItem);
 			if(!isOk){
 				System.out.println("Source: "+ sourceItem.getContent().getPayload().asXML());

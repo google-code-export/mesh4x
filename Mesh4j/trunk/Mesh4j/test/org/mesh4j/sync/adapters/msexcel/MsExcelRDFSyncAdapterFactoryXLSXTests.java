@@ -212,6 +212,6 @@ public class MsExcelRDFSyncAdapterFactoryXLSXTests {
 		Assert.assertEquals(0, adapterTarget.getAll().size());
 		
 		SyncEngine syncEngine = new SyncEngine(adapterTarget, adapterSource);
-		TestHelper.syncAndAssert(syncEngine);
+		TestHelper.assertSync(syncEngine);
 	}
 }
