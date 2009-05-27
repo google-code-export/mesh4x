@@ -1,4 +1,4 @@
-package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet;
+package org.mesh4j.sync.adapters.googlespreadsheet;
 
 import java.util.Date;
 import java.util.Map;
@@ -7,10 +7,14 @@ import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSCell;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSRow;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSWorksheet;
 import org.mesh4j.sync.adapters.SyncInfo;
+import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadSheetSyncRepository;
+import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadsheet;
+import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadsheetUtils;
+import org.mesh4j.sync.adapters.googlespreadsheet.IGoogleSpreadSheet;
+import org.mesh4j.sync.adapters.googlespreadsheet.model.GSCell;
+import org.mesh4j.sync.adapters.googlespreadsheet.model.GSRow;
+import org.mesh4j.sync.adapters.googlespreadsheet.model.GSWorksheet;
 import org.mesh4j.sync.id.generator.IIdGenerator;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.Sync;

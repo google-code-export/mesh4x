@@ -1,4 +1,4 @@
-package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet;
+package org.mesh4j.sync.adapters.googlespreadsheet;
 
 import java.util.Date;
 import java.util.Map;
@@ -9,12 +9,15 @@ import junit.framework.Assert;
 import org.dom4j.Element;
 import org.junit.Before;
 import org.junit.Test;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.mapping.GoogleSpreadsheetToPlainXMLMapping;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.mapping.IGoogleSpreadsheetToXMLMapping;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSCell;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSRow;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSWorksheet;
 import org.mesh4j.sync.adapters.feed.XMLContent;
+import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadSheetContentAdapter;
+import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadsheet;
+import org.mesh4j.sync.adapters.googlespreadsheet.IGoogleSpreadSheet;
+import org.mesh4j.sync.adapters.googlespreadsheet.mapping.GoogleSpreadsheetToPlainXMLMapping;
+import org.mesh4j.sync.adapters.googlespreadsheet.mapping.IGoogleSpreadsheetToXMLMapping;
+import org.mesh4j.sync.adapters.googlespreadsheet.model.GSCell;
+import org.mesh4j.sync.adapters.googlespreadsheet.model.GSRow;
+import org.mesh4j.sync.adapters.googlespreadsheet.model.GSWorksheet;
 import org.mesh4j.sync.model.IContent;
 import org.mesh4j.sync.utils.XMLHelper;
 /**

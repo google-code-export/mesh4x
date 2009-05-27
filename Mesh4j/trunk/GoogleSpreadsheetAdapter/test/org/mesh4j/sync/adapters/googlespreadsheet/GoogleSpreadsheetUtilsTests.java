@@ -1,4 +1,4 @@
-package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet;
+package org.mesh4j.sync.adapters.googlespreadsheet;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -9,11 +9,12 @@ import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.mapping.GoogleSpreadsheetToRDFMapping;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSCell;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSRow;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSSpreadsheet;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSWorksheet;
+import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadsheetUtils;
+import org.mesh4j.sync.adapters.googlespreadsheet.mapping.GoogleSpreadsheetToRDFMapping;
+import org.mesh4j.sync.adapters.googlespreadsheet.model.GSCell;
+import org.mesh4j.sync.adapters.googlespreadsheet.model.GSRow;
+import org.mesh4j.sync.adapters.googlespreadsheet.model.GSSpreadsheet;
+import org.mesh4j.sync.adapters.googlespreadsheet.model.GSWorksheet;
 import org.mesh4j.sync.payload.schema.rdf.RDFInstance;
 import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
 
