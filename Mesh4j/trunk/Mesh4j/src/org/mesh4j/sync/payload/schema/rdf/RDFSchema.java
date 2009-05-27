@@ -229,6 +229,32 @@ public class RDFSchema implements IRDFSchema{
 						}
 					}
 				}
+			} else if(IRDFSchema.XLS_LONG.equals(range.getURI())){
+				if(value instanceof Long){
+					return value;
+				} else {
+					if(value instanceof Number){
+						return new Long(value.toString());
+					} else if(value instanceof String){
+						String valueAsString = (String) value;
+						if(dataType.isValid(valueAsString)){
+							return dataType.parse((String)value);
+						}
+					}
+				}
+			} else if(IRDFSchema.XLS_INTEGER.equals(range.getURI())){
+				if(value instanceof Integer){
+					return value;
+				} else {
+					if(value instanceof Number){
+						return new Integer(value.toString());
+					} else if(value instanceof String){
+						String valueAsString = (String) value;
+						if(dataType.isValid(valueAsString)){
+							return dataType.parse((String)value);
+						}
+					}
+				}
 			} else {
 				return dataType.cannonicalise(value);
 			}
