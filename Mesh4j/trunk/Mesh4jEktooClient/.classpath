@@ -5,7 +5,7 @@
 	<classpathentry kind="src" path="images"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/GrameenTraining"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/GoogleSpreadsheetAdapter"/>
 	<classpathentry kind="lib" path="etc"/>
 	<classpathentry kind="lib" path="lib/activation.jar"/>
 	<classpathentry kind="lib" path="lib/antlr-2.7.6.jar"/>
