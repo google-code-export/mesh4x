@@ -18,15 +18,17 @@ import org.mesh4j.ektoo.GoogleSpreadSheetInfo;
 import org.mesh4j.ektoo.ISyncAdapterBuilder;
 import org.mesh4j.ektoo.SyncAdapterBuilder;
 import org.mesh4j.ektoo.properties.PropertiesProvider;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadsheet;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.IGoogleSpreadSheet;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.mapping.GoogleSpreadsheetToRDFMapping;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.adapters.feed.XMLContent;
 import org.mesh4j.sync.adapters.feed.atom.AtomSyndicationFormat;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
+import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadSheetContentAdapter;
+import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadsheet;
+import org.mesh4j.sync.adapters.googlespreadsheet.IGoogleSpreadSheet;
+import org.mesh4j.sync.adapters.googlespreadsheet.mapping.GoogleSpreadsheetToRDFMapping;
 import org.mesh4j.sync.adapters.msexcel.MsExcelUtils;
+import org.mesh4j.sync.adapters.split.IContentAdapter;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.Item;
@@ -186,13 +188,12 @@ public class InterRepositorySyncTest {
 				"user"
 				);
 		
-		String rdfUrl = "http://localhost:8080/mesh4x/feeds";
-		IGoogleSpreadSheet gss = new GoogleSpreadsheet(spreadSheetInfo.getGoogleSpreadSheetName(), spreadSheetInfo.getUserName(), spreadSheetInfo.getPassWord());
-		IRDFSchema rdfSchema = GoogleSpreadsheetToRDFMapping.extractRDFSchema(gss, spreadSheetInfo.getSheetName(), rdfUrl);
 		
-		File contentFile = new File(TestHelper.baseDirectoryForTest() + "contentFile.xls");
-		ISyncAdapter sourceAsGoogleSpreadSheet = builder.createRdfBasedGoogleSpreadSheetAdapter(spreadSheetInfo, rdfSchema);
-		ISyncAdapter targetAsExcel = builder.createMsExcelAdapter(contentFile.getAbsolutePath(), "user", "id", rdfSchema);
+		ISyncAdapter sourceAsGoogleSpreadSheet = builder.createRdfBasedGoogleSpreadSheetAdapter(spreadSheetInfo, null);
+		
+		IRDFSchema rdfSchema = (IRDFSchema) ((GoogleSpreadSheetContentAdapter)((SplitAdapter)sourceAsGoogleSpreadSheet).getContentAdapter()).getSchema();
+		
+		ISyncAdapter targetAsExcel = builder.createMsExcelAdapter(createMsExcelFileForTest("content1.xls", "user_source", "id", true), "user_source", "id", rdfSchema);
 		
 		SyncEngine engine = new SyncEngine(sourceAsGoogleSpreadSheet, targetAsExcel);
 		List<Item> listOfConflicts = engine.synchronize();
@@ -222,15 +223,17 @@ public class InterRepositorySyncTest {
 				"user"
 				);
 		
-		String rdfUrl = "http://localhost:8080/mesh4x/feeds";
 		
-		IGoogleSpreadSheet gssSource = new GoogleSpreadsheet(spreadSheetInfoSource.getGoogleSpreadSheetName(), spreadSheetInfoSource.getUserName(), spreadSheetInfoSource.getPassWord());
-		IRDFSchema rdfSchemaSource = GoogleSpreadsheetToRDFMapping.extractRDFSchema(gssSource, spreadSheetInfoSource.getSheetName(), rdfUrl);
-		ISyncAdapter sourceAsGoogleSpreadSheet = builder.createRdfBasedGoogleSpreadSheetAdapter(spreadSheetInfoSource, rdfSchemaSource);
+//"http://localhost:8080/mesh4x/feeds";
 		
-		IGoogleSpreadSheet gssTarget = new GoogleSpreadsheet(spreadSheetInfoTarget.getGoogleSpreadSheetName(), spreadSheetInfoTarget.getUserName(), spreadSheetInfoTarget.getPassWord());
-		IRDFSchema rdfSchemaTarget = GoogleSpreadsheetToRDFMapping.extractRDFSchema(gssTarget, spreadSheetInfoTarget.getSheetName(), rdfUrl);
-		ISyncAdapter targetAsGoogleSpreadSheet = builder.createRdfBasedGoogleSpreadSheetAdapter(spreadSheetInfoTarget, rdfSchemaTarget);
+//		IGoogleSpreadSheet gssSource = new GoogleSpreadsheet(spreadSheetInfoSource.getGoogleSpreadSheetName(), spreadSheetInfoSource.getUserName(), spreadSheetInfoSource.getPassWord());
+//		IRDFSchema rdfSchemaSource = GoogleSpreadsheetToRDFMapping.extractRDFSchema(gssSource, spreadSheetInfoSource.getSheetName(), rdfUrl);
+		ISyncAdapter sourceAsGoogleSpreadSheet = builder.createRdfBasedGoogleSpreadSheetAdapter(spreadSheetInfoSource, null);
+		IRDFSchema rdfSchemaSource = (IRDFSchema) ((GoogleSpreadSheetContentAdapter)((SplitAdapter)sourceAsGoogleSpreadSheet).getContentAdapter()).getSchema();
+			
+//		IGoogleSpreadSheet gssTarget = new GoogleSpreadsheet(spreadSheetInfoTarget.getGoogleSpreadSheetName(), spreadSheetInfoTarget.getUserName(), spreadSheetInfoTarget.getPassWord());
+//		IRDFSchema rdfSchemaTarget = GoogleSpreadsheetToRDFMapping.extractRDFSchema(gssTarget, spreadSheetInfoTarget.getSheetName(), rdfUrl);
+		ISyncAdapter targetAsGoogleSpreadSheet = builder.createRdfBasedGoogleSpreadSheetAdapter(spreadSheetInfoTarget, rdfSchemaSource);
 		
 		SyncEngine engine = new SyncEngine(sourceAsGoogleSpreadSheet,targetAsGoogleSpreadSheet);
 		List<Item> listOfConflicts = engine.synchronize();
@@ -243,10 +246,10 @@ public class InterRepositorySyncTest {
 		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
 		
 		ISyncAdapter sourceAsExcel = builder.createMsExcelAdapter(
-				createMsExcelFileForTest("sourceContentFile.xls", true), "user", "id",false);
+				createMsExcelFileForTest("sourceContentFile.xls", "user", "id", true), "user", "id",false);
 		
 		ISyncAdapter targetAsExcel = builder.createMsExcelAdapter(
-				createMsExcelFileForTest("targetContentFile.xls", false), "user", "id",false);
+				createMsExcelFileForTest("targetContentFile.xls", "user", "id", false), "user", "id",false);
 		
 		SyncEngine engine = new SyncEngine(sourceAsExcel,targetAsExcel);
 		List<Item> listOfConflicts = engine.synchronize();
@@ -314,10 +317,10 @@ public class InterRepositorySyncTest {
 	}
 	
 		
-	private String createMsExcelFileForTest(String filename, boolean addSampleRow){
+	private String createMsExcelFileForTest(String filename, String sheetName, String idColumn, boolean addSampleRow){
 		//String filename = "contentFile.xls";
-		String sheetName = "user";
-		String idColumn = "id";
+//		String sheetName = "user_source";
+//		String idColumn = "id";
 
 		File file;
 		try {
@@ -354,13 +357,13 @@ public class InterRepositorySyncTest {
 			row = sheet.createRow(1);	
 
 			cell = row.createCell(0, Cell.CELL_TYPE_STRING);
-			cell.setCellValue(getRichTextString(workbook,"123"));
+			cell.setCellValue(getRichTextString(workbook,"gsl-123"));
 
 			cell = row.createCell(1, Cell.CELL_TYPE_STRING);
 			cell.setCellValue(getRichTextString(workbook,"sharif"));
 
-			cell = row.createCell(2, Cell.CELL_TYPE_STRING);
-			cell.setCellValue(getRichTextString(workbook,"29"));
+			cell = row.createCell(2, Cell.CELL_TYPE_NUMERIC);
+			cell.setCellValue(29);
 
 			cell = row.createCell(3, Cell.CELL_TYPE_STRING);
 			cell.setCellValue(getRichTextString(workbook,"dhaka"));
