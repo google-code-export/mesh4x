@@ -1,4 +1,4 @@
-package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model;
+package org.mesh4j.sync.adapters.googlespreadsheet.model;
 
 import java.util.Map;
 

@@ -1,4 +1,4 @@
-package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model;
+package org.mesh4j.sync.adapters.googlespreadsheet.model;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -6,7 +6,7 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadSheetContentAdapter;
+import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadSheetContentAdapter;
 import org.mesh4j.sync.validations.Guard;
 
 import com.google.gdata.data.spreadsheet.CellEntry;

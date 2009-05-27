@@ -1,7 +1,7 @@
-package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet;
+package org.mesh4j.sync.adapters.googlespreadsheet;
 
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSSpreadsheet;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSWorksheet;
+import org.mesh4j.sync.adapters.googlespreadsheet.model.GSSpreadsheet;
+import org.mesh4j.sync.adapters.googlespreadsheet.model.GSWorksheet;
 
 import com.google.gdata.client.docs.DocsService;
 import com.google.gdata.client.spreadsheet.SpreadsheetService;

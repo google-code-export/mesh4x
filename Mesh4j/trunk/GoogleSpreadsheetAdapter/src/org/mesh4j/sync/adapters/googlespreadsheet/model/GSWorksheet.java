@@ -1,11 +1,11 @@
-package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model;
+package org.mesh4j.sync.adapters.googlespreadsheet.model;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadsheetUtils;
+import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadsheetUtils;
 import org.mesh4j.sync.validations.MeshException;
 
 import com.google.gdata.data.BaseEntry;

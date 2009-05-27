@@ -1,4 +1,4 @@
-package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet;
+package org.mesh4j.sync.adapters.googlespreadsheet;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,14 +12,14 @@ import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadSheetSyncRepository.SyncColumn;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.mapping.IGoogleSpreadsheetToXMLMapping;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSBaseElement;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSCell;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSRow;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSSpreadsheet;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSWorksheet;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.IGSElement;
+import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadSheetSyncRepository.SyncColumn;
+import org.mesh4j.sync.adapters.googlespreadsheet.mapping.IGoogleSpreadsheetToXMLMapping;
+import org.mesh4j.sync.adapters.googlespreadsheet.model.GSBaseElement;
+import org.mesh4j.sync.adapters.googlespreadsheet.model.GSCell;
+import org.mesh4j.sync.adapters.googlespreadsheet.model.GSRow;
+import org.mesh4j.sync.adapters.googlespreadsheet.model.GSSpreadsheet;
+import org.mesh4j.sync.adapters.googlespreadsheet.model.GSWorksheet;
+import org.mesh4j.sync.adapters.googlespreadsheet.model.IGSElement;
 import org.mesh4j.sync.adapters.msexcel.MsExcelUtils;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.id.generator.IIdGenerator;

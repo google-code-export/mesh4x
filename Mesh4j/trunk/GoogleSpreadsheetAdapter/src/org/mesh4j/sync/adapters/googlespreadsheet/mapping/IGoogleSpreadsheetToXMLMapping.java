@@ -1,9 +1,9 @@
-package org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.mapping;
+package org.mesh4j.sync.adapters.googlespreadsheet.mapping;
 
 import org.dom4j.Element;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSCell;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSRow;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSWorksheet;
+import org.mesh4j.sync.adapters.googlespreadsheet.model.GSCell;
+import org.mesh4j.sync.adapters.googlespreadsheet.model.GSRow;
+import org.mesh4j.sync.adapters.googlespreadsheet.model.GSWorksheet;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 /**
  * convert entity(row,item) to xml element and xml element to
