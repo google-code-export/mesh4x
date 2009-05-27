@@ -31,11 +31,11 @@ import org.mesh4j.ektoo.tasks.IErrorListener;
 import org.mesh4j.ektoo.tasks.OpenURLTask;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadsheet;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.IGoogleSpreadSheet;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSCell;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSRow;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.model.GSWorksheet;
+import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadsheet;
+import org.mesh4j.sync.adapters.googlespreadsheet.IGoogleSpreadSheet;
+import org.mesh4j.sync.adapters.googlespreadsheet.model.GSCell;
+import org.mesh4j.sync.adapters.googlespreadsheet.model.GSRow;
+import org.mesh4j.sync.adapters.googlespreadsheet.model.GSWorksheet;
 
 /**
  * @author Bhuiyan Mohammad Iklash

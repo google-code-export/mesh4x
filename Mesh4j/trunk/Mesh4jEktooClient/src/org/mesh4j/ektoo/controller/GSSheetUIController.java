@@ -4,10 +4,11 @@ import org.mesh4j.ektoo.GoogleSpreadSheetInfo;
 import org.mesh4j.ektoo.SyncAdapterBuilder;
 import org.mesh4j.ektoo.model.GSSheetModel;
 import org.mesh4j.ektoo.properties.PropertiesProvider;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadsheet;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.IGoogleSpreadSheet;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.mapping.GoogleSpreadsheetToRDFMapping;
 import org.mesh4j.sync.ISyncAdapter;
+import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadSheetContentAdapter;
+import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadsheet;
+import org.mesh4j.sync.adapters.googlespreadsheet.IGoogleSpreadSheet;
+import org.mesh4j.sync.adapters.googlespreadsheet.mapping.GoogleSpreadsheetToRDFMapping;
 import org.mesh4j.sync.adapters.msexcel.MsExcelContentAdapter;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
@@ -79,7 +80,7 @@ public class GSSheetUIController extends AbstractController {
 
 	@Override
 	public IRDFSchema fetchSchema(ISyncAdapter adapter) {
-		return (IRDFSchema)((MsExcelContentAdapter)((SplitAdapter)adapter).getContentAdapter()).getSchema();
+		return (IRDFSchema)((GoogleSpreadSheetContentAdapter)((SplitAdapter)adapter).getContentAdapter()).getSchema();
 	}
 
 	@Override

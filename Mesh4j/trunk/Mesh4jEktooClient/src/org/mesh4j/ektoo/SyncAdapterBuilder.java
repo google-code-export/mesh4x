@@ -7,8 +7,6 @@ import java.util.List;
 
 import org.dom4j.DocumentException;
 import org.mesh4j.ektoo.properties.PropertiesProvider;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadSheetRDFSyncAdapterFactory;
-import org.mesh4j.grameen.training.intro.adapter.googlespreadsheet.GoogleSpreadSheetSyncAdapterFactory;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.InMemorySyncAdapter;
 import org.mesh4j.sync.adapters.feed.ContentReader;
@@ -19,6 +17,8 @@ import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.adapters.feed.XMLContent;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.adapters.folder.FolderSyncAdapterFactory;
+import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadSheetRDFSyncAdapterFactory;
+import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadSheetSyncAdapterFactory;
 import org.mesh4j.sync.adapters.hibernate.HibernateSyncAdapterFactory;
 import org.mesh4j.sync.adapters.http.HttpSyncAdapter;
 import org.mesh4j.sync.adapters.kml.KMLDOMLoaderFactory;
