@@ -90,7 +90,10 @@ public class HibernateSyncAdapterFactory implements ISyncAdapterFactory{
 			String syncTableName = getSyncTableName(tableName);
 			PersistentClass contentMapping = contentMappings.get(tableName);
 			IRDFSchema rdfSchema = createRDFSchema(tableName, rdfBaseURL, contentMapping);
-			builder.addRDFSchema(tableName, rdfSchema);
+			if(rdfSchema != null){
+				builder.addRDFSchema(tableName, rdfSchema);
+			}
+			
 			SyncInfoParser syncInfoParser = new SyncInfoParser(RssSyndicationFormat.INSTANCE, identityProvider, IdGenerator.INSTANCE, syncTableName);
 		
 			HibernateSyncRepository syncRepository = new HibernateSyncRepository(builder, syncInfoParser);
@@ -104,6 +107,10 @@ public class HibernateSyncAdapterFactory implements ISyncAdapterFactory{
 
 	@SuppressWarnings("unchecked")
 	private static RDFSchema createRDFSchema(String tableName, String rdfBaseURL, PersistentClass mapping) {
+		if(rdfBaseURL == null){
+			return null;
+		}
+		
 		RDFSchema rdfSchema = new RDFSchema(tableName, rdfBaseURL+ "/" + tableName + "#", tableName);
 		
 		Property property = mapping.getIdentifierProperty();
