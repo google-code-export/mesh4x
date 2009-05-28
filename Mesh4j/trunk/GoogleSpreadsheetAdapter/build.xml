@@ -22,12 +22,11 @@
     </target>
 	
 	<!-- ================================= 
-          target: compile the google spreadsheet adapter with the
-          help of mesh4x core and other library ,TODO(raju)             
+          TODO: compile the google spreadsheet adapter with the
+          help of mesh4x core and other library (raju)
          ================================= -->
     <target name="compile" depends="clean" description="comile">
-    	<echo message="compiling java srouce files"/>
-    	
+    	<echo message="NO implementation"/>
     </target>
 
 	<!-- ================================= 
