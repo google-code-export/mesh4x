@@ -484,7 +484,7 @@ public class SyncAdapterBuilderTest {
 				"</user>";
 				
 		Element payload = XMLHelper.parseElement(rawDataAsXML);
-		IContent content = new EntityContent(payload, "user", id);
+		IContent content = new EntityContent(payload, "user", "id", id);
 		Sync sync = new Sync(IdGenerator.INSTANCE.newID(), "Raju", new Date(), false);
 		return new Item(content, sync);
 	}
@@ -499,7 +499,7 @@ public class SyncAdapterBuilderTest {
 
 		Element payload = XMLHelper.parseElement(rawDataAsXML);
 		payload = schema.getInstanceFromPlainXML(id, payload, ISchema.EMPTY_FORMATS);
-		IContent content = new EntityContent(payload, "ektoo", id);
+		IContent content = new EntityContent(payload, "ektoo", "id", id);
 		Sync sync = new Sync(IdGenerator.INSTANCE.newID(), "Raju", new Date(), false);
 		return new Item(content, sync);
 	}

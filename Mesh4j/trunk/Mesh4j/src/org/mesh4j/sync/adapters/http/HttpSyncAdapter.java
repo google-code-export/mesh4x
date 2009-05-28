@@ -350,6 +350,10 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 		return url + "/mappings";
 	}
 	
+	public static String makeMeshGroupURLToSync(String url) {
+		return url + "?viewALLGroupMeshItems";
+	}
+		
 	public static String makeSchemaURL(String url) {
 		return url + "/schema";
 	}

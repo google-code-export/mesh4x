@@ -26,6 +26,10 @@ public class HttpSyncAdapterFactory implements ISyncAdapterFactory {
 	public HttpSyncAdapter createSyncAdapter(String sourceAlias, String sourceDefinition, IIdentityProvider identityProvider) throws Exception {
 		return new HttpSyncAdapter(sourceDefinition, RssSyndicationFormat.INSTANCE, identityProvider, IdGenerator.INSTANCE, ContentWriter.INSTANCE, ContentReader.INSTANCE);
 	}
+	
+	public static HttpSyncAdapter createSyncAdapter(String url, IIdentityProvider identityProvider){
+		return new HttpSyncAdapter(url, RssSyndicationFormat.INSTANCE, identityProvider, IdGenerator.INSTANCE, ContentWriter.INSTANCE, ContentReader.INSTANCE);
+	}
 
 	@Override
 	public String getSourceType() {

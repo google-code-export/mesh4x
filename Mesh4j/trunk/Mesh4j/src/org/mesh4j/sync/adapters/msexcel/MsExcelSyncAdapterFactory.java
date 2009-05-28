@@ -51,7 +51,7 @@ public class MsExcelSyncAdapterFactory implements ISyncAdapterFactory {
 		return createSyncAdapter(excelFileName, sheetName, idColumnName, identityProvider);
 	}
 	
-	public ISyncAdapter createSyncAdapterForMultiSheets(String excelFileName, IIdentityProvider identityProvider, Map<String, String> sheets, ISyncAdapter opaqueAdapter) {
+	public CompositeSyncAdapter createSyncAdapterForMultiSheets(String excelFileName, IIdentityProvider identityProvider, Map<String, String> sheets, ISyncAdapter opaqueAdapter) {
 		MsExcel excel = new MsExcel(excelFileName);
 		
 		IIdentifiableSyncAdapter[] adapters = new IIdentifiableSyncAdapter[sheets.size()];

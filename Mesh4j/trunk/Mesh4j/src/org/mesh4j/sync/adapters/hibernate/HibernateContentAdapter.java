@@ -51,7 +51,7 @@ public class HibernateContentAdapter implements IIdentifiableContentAdapter {
 		if(entityElement == null){
 			return null;
 		} else {
-			return new EntityContent(convertRowToXML(entityId, entityElement), this.getType(), entityId);
+			return new EntityContent(convertRowToXML(entityId, entityElement), this.getType(), this.mapping.getIDNode(), entityId);
 		}
 	}
 
@@ -130,7 +130,7 @@ public class HibernateContentAdapter implements IIdentifiableContentAdapter {
 		ArrayList<IContent> result = new ArrayList<IContent>();
 		for (Element entityElement : entities) {
 			String entityID = entityElement.element(getEntityIdNode()).getText();
-			EntityContent entity = new EntityContent(convertRowToXML(entityID, entityElement), this.getType(), entityID);
+			EntityContent entity = new EntityContent(convertRowToXML(entityID, entityElement), this.getType(), this.mapping.getIDNode(), entityID);
 			result.add(entity);
 		}
 		return result;

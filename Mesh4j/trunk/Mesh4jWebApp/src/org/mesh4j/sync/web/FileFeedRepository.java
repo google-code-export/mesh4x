@@ -5,19 +5,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.mesh4j.sync.ISyncAdapter;
+import org.mesh4j.sync.adapters.composite.CompositeSyncAdapter;
+import org.mesh4j.sync.adapters.composite.IIdentifiableSyncAdapter;
+import org.mesh4j.sync.adapters.composite.IdentifiableSyncAdapter;
 import org.mesh4j.sync.adapters.feed.Feed;
 import org.mesh4j.sync.adapters.feed.FeedAdapter;
 import org.mesh4j.sync.adapters.feed.FeedWriter;
 import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
+import org.mesh4j.sync.adapters.feed.XMLContent;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.adapters.history.FeedHistoryRepository;
 import org.mesh4j.sync.adapters.history.HistoryChangeContentWriter;
 import org.mesh4j.sync.adapters.history.HistorySyncAdapter;
 import org.mesh4j.sync.adapters.history.IHistoryRepository;
+import org.mesh4j.sync.filter.NonDeletedFilter;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.security.NullIdentityProvider;
+import org.mesh4j.sync.servlet.Format;
 import org.mesh4j.sync.validations.MeshException;
 
 public class FileFeedRepository extends AbstractFeedRepository {
@@ -85,7 +91,33 @@ public class FileFeedRepository extends AbstractFeedRepository {
 	
 	@Override
 	protected ISyncAdapter getSyncAdapter(String sourceID, IIdentityProvider identityProvider) {
-		FeedAdapter feedAdapter = getFeedAdapter(sourceID, identityProvider);
+		return createFeedAdapterWithHistory(sourceID, identityProvider);
+	}
+	
+	@Override
+	protected ISyncAdapter getSyncMeshGroupAdapter(String sourceID, IIdentityProvider identityProvider, ISyndicationFormat syndicationFormat, Format contentFormat){
+		FeedAdapter feedAdapter = createFeedAdapter(sourceID, identityProvider);
+		feedAdapter.refresh();
+		
+		List<Item> items = feedAdapter.getAll(NonDeletedFilter.INSTANCE);
+		
+		IIdentifiableSyncAdapter[] adapters = new IIdentifiableSyncAdapter[items.size()];
+		
+		int i = 0;
+		for (Item item : items) {
+			String type = ((XMLContent)item.getContent()).getTitle();
+			
+			ISyncAdapter feedDataSetAdapter = createFeedAdapterWithHistory(sourceID + "/" + type, identityProvider);
+			IdentifiableSyncAdapter adapter = new IdentifiableSyncAdapter(type, feedDataSetAdapter);
+			adapters[i] = adapter;
+			i = i +1;
+		}
+		FeedAdapter opaqueAdapter = createOpaqueFeedAdapter(sourceID, identityProvider);
+		return new CompositeSyncAdapter("Feed file composite", opaqueAdapter, identityProvider, adapters);
+	}
+
+	private ISyncAdapter createFeedAdapterWithHistory(String sourceID, IIdentityProvider identityProvider) {
+		FeedAdapter feedAdapter = createFeedAdapter(sourceID, identityProvider);
 		feedAdapter.refresh();
 		
 		IHistoryRepository historyRepository = getFeedHistoryRepository(sourceID, "");
@@ -97,7 +129,7 @@ public class FileFeedRepository extends AbstractFeedRepository {
 		}
 	}
 	
-	protected FeedAdapter getFeedAdapter(String sourceID, IIdentityProvider identityProvider) {
+	protected FeedAdapter createFeedAdapter(String sourceID, IIdentityProvider identityProvider) {
 		String feedFileName = this.getFeedFileName(sourceID);
 		
 		FeedAdapter adapter = new FeedAdapter(feedFileName, identityProvider, IdGenerator.INSTANCE);
@@ -107,7 +139,7 @@ public class FileFeedRepository extends AbstractFeedRepository {
 	
 	@Override
 	public void cleanFeed(String sourceID) {
-		FeedAdapter feedAdapter = getFeedAdapter(sourceID, NullIdentityProvider.INSTANCE);
+		FeedAdapter feedAdapter = createFeedAdapter(sourceID, NullIdentityProvider.INSTANCE);
 		feedAdapter.getFeed().deleteAllItems();
 		feedAdapter.flush();
 	}
@@ -165,5 +197,28 @@ public class FileFeedRepository extends AbstractFeedRepository {
 		}
 	}
 
+	private FeedAdapter createOpaqueFeedAdapter(String sourceID, IIdentityProvider identityProvider) {
+		String fileName = getFeedOpaqueFileName(sourceID);
+		if(fileName == null){
+			return null;
+		} else {
+			Feed defaultFeed = new Feed(sourceID, sourceID, "");
+			FeedAdapter adapter = new FeedAdapter(fileName, identityProvider, IdGenerator.INSTANCE, RssSyndicationFormat.INSTANCE, defaultFeed);
+			adapter.refresh();
+			return adapter;
+		}
+	}
+	
+	private String getFeedOpaqueFileName(String sourceID) {
+		if(sourceID == null){
+			return null;
+		} else {
+			if(sourceID.indexOf("/") == -1 || sourceID.indexOf("/") == sourceID.length()){
+				return this.rootPath + "mesh_" + sourceID + "_opaque.xml";
+			} else {
+				return null;
+			}
+		}
+	}
 
 }

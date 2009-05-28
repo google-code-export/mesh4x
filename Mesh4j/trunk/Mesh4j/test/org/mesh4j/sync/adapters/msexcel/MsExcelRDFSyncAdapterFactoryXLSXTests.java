@@ -203,7 +203,7 @@ public class MsExcelRDFSyncAdapterFactoryXLSXTests {
         
         String xml = rdfInstance.asXML();
         Element payload = XMLHelper.parseElement(xml);
-        Item item = new Item(new EntityContent(payload, "example", "1"), new Sync(IdGenerator.INSTANCE.newID(), LoggedInIdentityProvider.getUserName(), new Date(), false));
+        Item item = new Item(new EntityContent(payload, "example", "code", "1"), new Sync(IdGenerator.INSTANCE.newID(), LoggedInIdentityProvider.getUserName(), new Date(), false));
         
 		String newFileNameSource = TestHelper.fileName("MsExcel_RDF_SOURCE_"+IdGenerator.INSTANCE.newID()+".xlsx");
 		SplitAdapter adapterSource = factory.createSyncAdapter(newFileNameSource, "example", "code", NullIdentityProvider.INSTANCE, rdfSchema);

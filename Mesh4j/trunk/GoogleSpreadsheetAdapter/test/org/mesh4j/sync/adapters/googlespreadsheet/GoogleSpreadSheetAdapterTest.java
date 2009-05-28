@@ -324,7 +324,7 @@ public class GoogleSpreadSheetAdapterTest {
 								"</user>";
 		
 		Element payload = XMLHelper.parseElement(rawDataAsXML);
-		IContent content = new EntityContent(payload, "user", id);
+		IContent content = new EntityContent(payload, "user", "id", id);
 		Sync sync = new Sync(IdGenerator.INSTANCE.newID(), "Raju", new Date(), false);
 		return new Item(content, sync);
 	}
@@ -341,7 +341,7 @@ public class GoogleSpreadSheetAdapterTest {
 								"</user>";
 		
 		Element payload = XMLHelper.parseElement(rawDataAsXML);
-		IContent content = new EntityContent(payload, "user", id);
+		IContent content = new EntityContent(payload, "user", "id", id);
 		Sync sync = new Sync(IdGenerator.INSTANCE.newID(), "Raju", new Date(), false);
 		return new Item(content, sync);
 	}
@@ -358,7 +358,7 @@ public class GoogleSpreadSheetAdapterTest {
 								"</user>";
 		
 		Element payload = XMLHelper.parseElement(rawDataAsXML);
-		IContent content = new EntityContent(payload, "user", id);
+		IContent content = new EntityContent(payload, "user", "id", id);
 		Sync sync = new Sync(IdGenerator.INSTANCE.newID(), "Raju", new Date(), false);
 		return new Item(content, sync);
 	}

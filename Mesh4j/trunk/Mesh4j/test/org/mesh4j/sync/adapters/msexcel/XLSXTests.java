@@ -67,7 +67,7 @@ public class XLSXTests {
 		cell.setCellValue(new Date());
 
 		SyncInfo syncInfo = new SyncInfo(new Sync(IdGenerator.INSTANCE.newID(), LoggedInIdentityProvider.getUserName(), new Date(), false), "type", "1", IdGenerator.INSTANCE.newID().hashCode());
-		SyncInfoParser parser = new SyncInfoParser(RssSyndicationFormat.INSTANCE, new LoggedInIdentityProvider(), IdGenerator.INSTANCE);
+		SyncInfoParser parser = new SyncInfoParser(RssSyndicationFormat.INSTANCE, new LoggedInIdentityProvider(), IdGenerator.INSTANCE, "a_sync");
 		Element element = parser.convertSyncInfo2Element(syncInfo);
 		
 		cell = rowData.createCell(4, Cell.CELL_TYPE_STRING);

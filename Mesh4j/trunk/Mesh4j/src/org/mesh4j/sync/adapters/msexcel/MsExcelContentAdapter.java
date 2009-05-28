@@ -127,7 +127,7 @@ public class MsExcelContentAdapter implements IIdentifiableContentAdapter, ISync
 			return null;
 		} else {
 			Element payload = this.translate(row);
-			return new EntityContent(payload, this.sheetName, entityId);
+			return new EntityContent(payload, this.sheetName, this.mapping.getIdColumnName(), entityId);
 		}
 	}
 
@@ -145,7 +145,7 @@ public class MsExcelContentAdapter implements IIdentifiableContentAdapter, ISync
 				String entityID = this.mapping.getIdColumnValue(getSheet(), row);
 				if(entityID != null){
 					payload = this.translate(row);
-					entityContent = new EntityContent(payload, this.sheetName, entityID);
+					entityContent = new EntityContent(payload, this.sheetName, this.mapping.getIdColumnName(), entityID);
 					result.add(entityContent);
 				}
 			}

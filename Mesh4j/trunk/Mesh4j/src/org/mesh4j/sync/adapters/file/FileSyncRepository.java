@@ -55,7 +55,7 @@ public class FileSyncRepository implements ISyncRepository{
 			throw new MeshException(e);
 		}
 		
-		this.syncInfoParser = new SyncInfoParser(RssSyndicationFormat.INSTANCE, identityProvider, idGenerator);
+		this.syncInfoParser = new SyncInfoParser(RssSyndicationFormat.INSTANCE, identityProvider, idGenerator, "SyncInfo");
 	}
 
 	public static void initializeFile(File file) {

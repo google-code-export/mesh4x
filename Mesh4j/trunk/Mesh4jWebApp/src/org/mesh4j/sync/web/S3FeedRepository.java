@@ -12,6 +12,7 @@ import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.security.NullIdentityProvider;
+import org.mesh4j.sync.servlet.Format;
 import org.mesh4j.sync.validations.Guard;
 
 public class S3FeedRepository extends AbstractFeedRepository {
@@ -121,6 +122,15 @@ public class S3FeedRepository extends AbstractFeedRepository {
 		// Not supported operation
 		// TODO (JMT) supports history
 		return "";
+	}
+
+	@Override
+	protected ISyncAdapter getSyncMeshGroupAdapter(String sourceID,
+			IIdentityProvider identityProvider,
+			ISyndicationFormat syndicationFormat, Format contentFormat) {
+		// Not supported operation
+		// TODO (JMT) supports mesh group
+		return null;
 	}
 	
 }

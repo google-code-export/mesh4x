@@ -37,6 +37,7 @@ public class FeedServlet extends HttpServlet {
 	private static final String PARAM_NEW_SOURCE_ID = "newSourceID";
 	private static final String PARAM_ACTION = "action";
 	private static final String PARAM_BY = "by";
+	private static final String PARAM_VIEW_GROUP_MESH_ITEMS = "viewALLGroupMeshItems";
 	
 	private static final String PARAM_SYNC_ID = "syncId";
 	
@@ -141,7 +142,14 @@ public class FeedServlet extends HttpServlet {
 			response.sendError(404, feedFormat.name());
 		} else {
 			Date sinceDate = this.getSinceDate(request);
-			String responseContent = this.feedRepository.readFeed(sourceID, link, syndicationFormat, contentFormat, this.geoCoder, sinceDate);
+			
+			String responseContent = "";
+			if(this.feedRepository.isMeshGroup(sourceID) && mustViewAllItems(request)){
+				responseContent = this.feedRepository.readFeedGroup(sourceID, link, syndicationFormat, contentFormat, this.geoCoder, sinceDate);	
+			} else {
+				responseContent = this.feedRepository.readFeed(sourceID, link, syndicationFormat, contentFormat, this.geoCoder, sinceDate);
+			}
+						
 			responseContent = responseContent.replaceAll("&lt;", "<");	// TODO (JMT) remove ==>  xml.replaceAll("&lt;", "<"); 
 			responseContent = responseContent.replaceAll("&gt;", ">");
 			
@@ -150,6 +158,10 @@ public class FeedServlet extends HttpServlet {
 			PrintWriter out = response.getWriter();
 			out.println(responseContent);
 		}
+	}
+
+	private boolean mustViewAllItems(HttpServletRequest request) {
+		return request.getParameter(PARAM_VIEW_GROUP_MESH_ITEMS) != null;
 	}
 
 	private void processGetKML(HttpServletRequest request, HttpServletResponse response, String sourceID, String link)throws ServletException, IOException {

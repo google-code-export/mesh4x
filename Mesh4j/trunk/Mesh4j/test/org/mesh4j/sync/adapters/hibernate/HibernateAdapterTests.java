@@ -27,7 +27,7 @@ public class HibernateAdapterTests {
 		if(repo == null ){
 			HibernateSessionFactoryBuilder builder = new HibernateSessionFactoryBuilder();
 			builder.addMapping(new File(HibernateAdapterTests.class.getResource("User.hbm.xml").getFile()));
-			builder.addMapping(new File(this.getClass().getResource("SyncInfo.hbm.xml").getFile()));
+			builder.addMapping(new File(this.getClass().getResource("User_sync.hbm.xml").getFile()));
 			builder.setPropertiesFile(new File(this.getClass().getResource("xx_hibernate.properties").getFile()));
 			
 			repo = new HibernateAdapter(builder, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
@@ -37,7 +37,7 @@ public class HibernateAdapterTests {
 	
 	private IContent makeNewUser(String id) throws DocumentException {
 		Element element = TestHelper.makeElement("<user><id>"+id+"</id><name>"+id+"</name><pass>123</pass></user>");
-		IContent user = new EntityContent(element, "user", id);
+		IContent user = new EntityContent(element, "user", "id", id);
 		return user;
 	}
 	

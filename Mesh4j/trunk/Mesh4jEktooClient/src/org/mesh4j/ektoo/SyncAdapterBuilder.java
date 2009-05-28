@@ -164,12 +164,11 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 		
 		return HibernateSyncAdapterFactory.createHibernateAdapter(
 				connectionUri,
-				userName, // TODO db user
-				password, // TODO db password
+				userName,
+				password,
 				com.mysql.jdbc.Driver.class,
 				org.hibernate.dialect.MySQLDialect.class, 
 				tableName, 
-				tableName + "_sync_info", 
 				getBaseRDFUrl(),
 				mappingDirectory.getAbsolutePath(),
 				this.getIdentityProvider());

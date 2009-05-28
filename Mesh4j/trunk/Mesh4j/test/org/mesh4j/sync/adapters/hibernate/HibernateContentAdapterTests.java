@@ -132,14 +132,14 @@ public class HibernateContentAdapterTests {
 	protected IHibernateSessionFactoryBuilder getBuilder() {
 		HibernateSessionFactoryBuilder builder = new HibernateSessionFactoryBuilder();
 		builder.addMapping(new File(HibernateAdapterTests.class.getResource("User.hbm.xml").getFile()));
-		builder.addMapping(new File(this.getClass().getResource("SyncInfo.hbm.xml").getFile()));
+		builder.addMapping(new File(this.getClass().getResource("User_sync.hbm.xml").getFile()));
 		builder.setPropertiesFile(new File(this.getClass().getResource("xx_hibernate.properties").getFile()));
 		return builder;
 	}
 	
 	protected IContent makeContent(String id, String name, String pass) throws DocumentException {
 		Element element = TestHelper.makeElement("<user><id>"+id+"</id><name>"+name+"</name><pass>"+pass+"</pass></user>");
-		IContent user = new EntityContent(element, "user", id);
+		IContent user = new EntityContent(element, "user", "id", id);
 		return user;
 	}
 	

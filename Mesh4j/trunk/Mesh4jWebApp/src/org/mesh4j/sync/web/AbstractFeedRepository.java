@@ -52,6 +52,7 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 		super();
 	}
 	
+	protected abstract ISyncAdapter getSyncMeshGroupAdapter(String sourceID, IIdentityProvider identityProvider, ISyndicationFormat syndicationFormat, Format contentFormat);
 	protected abstract ISyncAdapter getSyncAdapter(String sourceID, IIdentityProvider identityProvider);
 	protected abstract ISyncAdapter getParentSyncAdapter(String sourceID, IIdentityProvider identityProvider);
 	protected abstract void addNewFeed(String sourceID, Feed feed, ISyndicationFormat syndicationFormat, IIdentityProvider identityProvider);
@@ -63,12 +64,22 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 		return items;
 	}
 	
-	@SuppressWarnings("unchecked")
+	@Override
+	public String readFeedGroup(String sourceID, String link, ISyndicationFormat syndicationFormat, Format contentFormat, IGeoCoder geoCoder, Date sinceDate) throws Exception {
+		ISyncAdapter adapter = getSyncMeshGroupAdapter(sourceID, NullIdentityProvider.INSTANCE, syndicationFormat, contentFormat);
+		return readFeed(adapter, sourceID, link, syndicationFormat, contentFormat, geoCoder, sinceDate);
+	}
+	
+
 	@Override
 	public String readFeed(String sourceID, String link, ISyndicationFormat syndicationFormat, Format contentFormat, IGeoCoder geoCoder, Date sinceDate) throws Exception {
-		
 		ISyncAdapter adapter = getSyncAdapter(sourceID, NullIdentityProvider.INSTANCE);
-				
+		return readFeed(adapter, sourceID, link, syndicationFormat, contentFormat, geoCoder, sinceDate);
+	}
+	
+	@SuppressWarnings("unchecked")
+	private String readFeed(ISyncAdapter adapter, String sourceID, String link, ISyndicationFormat syndicationFormat, Format contentFormat, IGeoCoder geoCoder, Date sinceDate) throws Exception {
+		
 		List<Item> items;
 		
 		if(contentFormat != null && contentFormat.isPlainXML()){
@@ -96,24 +107,39 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 	
 	@Override
 	public String synchronize(String sourceID, String link, ISyndicationFormat syndicationFormat, Format contentFormat, IGeoCoder geoCoder, String feedXml) throws Exception {
-
 		IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
-		ISchema schema = this.getSchema(sourceID, link);
-		IMapping mapping = this.getMappings(sourceID, link, geoCoder);
-		Feed feedLoaded = this.readFeedFromXml(feedXml, syndicationFormat, contentFormat, schema, mapping);		
-		InMemorySyncAdapter inMemoryAdapter = new InMemorySyncAdapter(sourceID, identityProvider, feedLoaded.getItems());
+
+		if(isMeshGroup(sourceID)){
+			Feed feedLoaded = this.readFeedFromXml(feedXml, syndicationFormat, contentFormat, null, null);		
+			InMemorySyncAdapter inMemoryAdapter = new InMemorySyncAdapter(sourceID, identityProvider, feedLoaded.getItems());
+			
+			ISyncAdapter adapter = getSyncMeshGroupAdapter(sourceID, identityProvider, syndicationFormat, contentFormat);
+			SyncEngine syncEngine = new SyncEngine(adapter, inMemoryAdapter);
+			List<Item> conflicts = syncEngine.synchronize();
 		
-		ISyncAdapter adapter = getSyncAdapter(sourceID, identityProvider);
+			String title = getFeedTitle(sourceID);
+			Feed feedResult = new Feed(title, "conflicts", link);
+			feedResult.addItems(conflicts);
+			return this.writeFeedAsXml(feedResult, syndicationFormat, contentFormat, null, null, identityProvider);
+
+		} else {
+			ISchema schema = this.getSchema(sourceID, link);
+			IMapping mapping = this.getMappings(sourceID, link, geoCoder);
+			ISyncAdapter adapter = getSyncAdapter(sourceID, identityProvider);
+			Feed feedLoaded = this.readFeedFromXml(feedXml, syndicationFormat, contentFormat, schema, mapping);		
+			InMemorySyncAdapter inMemoryAdapter = new InMemorySyncAdapter(sourceID, identityProvider, feedLoaded.getItems());
 		
-		SyncEngine syncEngine = new SyncEngine(adapter, inMemoryAdapter);
-		List<Item> conflicts = syncEngine.synchronize();
+			SyncEngine syncEngine = new SyncEngine(adapter, inMemoryAdapter);
+			List<Item> conflicts = syncEngine.synchronize();
 		
-		String title = getFeedTitle(sourceID);
-		Feed feedResult = new Feed(title, "conflicts", link);
-		feedResult.addItems(conflicts);
-		return this.writeFeedAsXml(feedResult, syndicationFormat, contentFormat, schema, mapping, identityProvider);
+			String title = getFeedTitle(sourceID);
+			Feed feedResult = new Feed(title, "conflicts", link);
+			feedResult.addItems(conflicts);
+			return this.writeFeedAsXml(feedResult, syndicationFormat, contentFormat, schema, mapping, identityProvider);
+		}
 	}
 	
+
 	@Override
 	public void addNewFeed(String sourceID, ISyndicationFormat syndicationFormat, String link, String description, String schema, String mappings, String by) {
 		IIdentityProvider identityProvider = new IdentityProvider(by);
@@ -167,7 +193,7 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 		}
 	}
 
-	public boolean isAddNewFeedAction(String sourceID) {
+	public boolean isMeshGroup(String sourceID) {
 		return sourceID == null || (sourceID.indexOf("/") == -1 || sourceID.indexOf("/") == sourceID.length());
 	}
 	
@@ -211,8 +237,7 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 		return feedItemWriter;
 	}
 	
-	private IContentReader getContentReader(Format contentFormat,
-			ISchema meshSchema, IMapping mapping) {
+	private IContentReader getContentReader(Format contentFormat, ISchema meshSchema, IMapping mapping) {
 		IContentReader feedItemReader;
 		if(meshSchema == null){
 			feedItemReader = ContentReader.INSTANCE;

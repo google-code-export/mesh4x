@@ -23,7 +23,7 @@ public class HibernateSchemaExporterTest {
 		
 		HibernateSessionFactoryBuilder builder = new HibernateSessionFactoryBuilder();
 		builder.addMapping(new File(this.getClass().getResource("User.hbm.xml").getFile()));
-		builder.addMapping(new File(this.getClass().getResource("SyncInfo.hbm.xml").getFile()));
+		builder.addMapping(new File(this.getClass().getResource("User_sync.hbm.xml").getFile()));
 	
 		builder.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
 		builder.setProperty("hibernate.connection.driver_class", "com.mysql.jdbc.Driver");

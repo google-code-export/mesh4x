@@ -94,7 +94,7 @@ public class HibernateContentadapterWithMsAccessTest {
 		HibernateContentAdapter adapter = createAdapter();		
 		String id = IdGenerator.INSTANCE.newID();
 		Element payload = TestHelper.makeElement("<user><id>"+id+"</id><name>"+id+"</name><pass>"+id+"</pass></user>");
-		EntityContent entity = new EntityContent(payload, "user", id);
+		EntityContent entity = new EntityContent(payload, "user", "id", id);
 		
 		adapter.save(entity);
 		EntityContent entityAdded = adapter.get(id);
@@ -110,7 +110,7 @@ public class HibernateContentadapterWithMsAccessTest {
 		HibernateContentAdapter adapter = createAdapter();		
 		String id = IdGenerator.INSTANCE.newID();
 		Element payload = TestHelper.makeElement("<user><id>"+id+"</id><name>"+id+"</name><pass>"+id+"</pass></user>");
-		EntityContent entity = new EntityContent(payload, "user", id);
+		EntityContent entity = new EntityContent(payload, "user", "id", id);
 		
 		adapter.save(entity);
 		EntityContent entityAdded = adapter.get(id);
@@ -118,7 +118,7 @@ public class HibernateContentadapterWithMsAccessTest {
 		Assert.assertNotNull(entityAdded);
 		
 		payload = TestHelper.makeElement("<user><id>"+id+"</id><name>5555</name><pass>5555</pass></user>");
-		entity = new EntityContent(payload, "user", id);
+		entity = new EntityContent(payload, "user", "id", id);
 		adapter.save(entity);
 
 		EntityContent entityUpdated = adapter.get(id);
@@ -133,7 +133,7 @@ public class HibernateContentadapterWithMsAccessTest {
 		HibernateContentAdapter adapter = createAdapter();		
 		String id = IdGenerator.INSTANCE.newID();
 		Element payload = TestHelper.makeElement("<user><id>"+id+"</id><name>"+id+"</name><pass>123</pass></user>");
-		EntityContent entity = new EntityContent(payload, "user", id);
+		EntityContent entity = new EntityContent(payload, "user", "id", id);
 		
 		adapter.save(entity);
 		EntityContent entityAdded = adapter.get(id);

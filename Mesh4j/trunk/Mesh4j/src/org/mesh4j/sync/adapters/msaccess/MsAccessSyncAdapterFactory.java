@@ -80,7 +80,7 @@ public class MsAccessSyncAdapterFactory implements ISyncAdapterFactory {
 	
 	private SplitAdapter createSplitAdapter(String dbURL, String tableName, String user, String password, String contentMappingFileName, String syncMappingFileName, IRDFSchema rdfSchema, IIdentityProvider identityProvider) {
 		HibernateSessionFactoryBuilder builder = createHibernateSessionBuilder(dbURL, tableName, user, password, contentMappingFileName, syncMappingFileName, rdfSchema);
-		SyncInfoParser syncInfoParser = new SyncInfoParser(RssSyndicationFormat.INSTANCE, identityProvider, IdGenerator.INSTANCE);
+		SyncInfoParser syncInfoParser = new SyncInfoParser(RssSyndicationFormat.INSTANCE, identityProvider, IdGenerator.INSTANCE, MsAccessHibernateMappingGenerator.getSyncTableName(tableName));
 		HibernateSyncRepository syncRepository = new HibernateSyncRepository(builder, syncInfoParser);
 		
 		HibernateContentAdapter contentAdapter = new HibernateContentAdapter(builder, tableName);

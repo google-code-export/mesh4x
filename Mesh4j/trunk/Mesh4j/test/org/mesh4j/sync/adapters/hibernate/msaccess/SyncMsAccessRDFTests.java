@@ -44,7 +44,7 @@ public class SyncMsAccessRDFTests {
 		builderA.setProperty("hibernate.connection.username","");
 		builderA.setProperty("hibernate.connection.password","");
 		builderA.addMapping(new File(this.getClass().getResource("User.hbm.xml").getFile()));
-		builderA.addMapping(new File(this.getClass().getResource("SyncInfo.hbm.xml").getFile()));
+		builderA.addMapping(new File(this.getClass().getResource("User_sync.hbm.xml").getFile()));
 		
 		RDFSchema schemaA = new RDFSchema("user", "http://mesh4x/user#", "user");
 		schemaA.addStringProperty("id", "id", "en");
@@ -52,7 +52,7 @@ public class SyncMsAccessRDFTests {
 		schemaA.addStringProperty("name", "name", "en");
 		builderA.addRDFSchema("user", schemaA);
 		
-		SyncInfoParser syncInfoParser = new SyncInfoParser(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		SyncInfoParser syncInfoParser = new SyncInfoParser(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, "user_sync");
 		
 		HibernateSyncRepository syncRepositoryA = new HibernateSyncRepository(builderA, syncInfoParser);
 		HibernateContentAdapter contentAdapterA = new HibernateContentAdapter(builderA, "user");
@@ -66,7 +66,7 @@ public class SyncMsAccessRDFTests {
 		builderB.setProperty("hibernate.connection.username","");
 		builderB.setProperty("hibernate.connection.password","");
 		builderB.addMapping(new File(this.getClass().getResource("User.hbm.xml").getFile()));
-		builderB.addMapping(new File(this.getClass().getResource("SyncInfo.hbm.xml").getFile()));
+		builderB.addMapping(new File(this.getClass().getResource("User_sync.hbm.xml").getFile()));
 
 		RDFSchema schemaB = new RDFSchema("user", "http://mesh4x/user#", "user");
 		schemaB.addStringProperty("id", "id", "en");
@@ -109,7 +109,7 @@ public class SyncMsAccessRDFTests {
 		builderA.setProperty("hibernate.connection.username","");
 		builderA.setProperty("hibernate.connection.password","");
 		builderA.addMapping(new File(this.getClass().getResource("User.hbm.xml").getFile()));
-		builderA.addMapping(new File(this.getClass().getResource("SyncInfo.hbm.xml").getFile()));
+		builderA.addMapping(new File(this.getClass().getResource("User_sync.hbm.xml").getFile()));
 		
 		RDFSchema schemaA = new RDFSchema("user", "http://mesh4x/user#", "user");
 		schemaA.addStringProperty("id", "id", "en");
@@ -117,7 +117,7 @@ public class SyncMsAccessRDFTests {
 		schemaA.addStringProperty("name", "name", "en");
 		builderA.addRDFSchema("user", schemaA);
 		
-		SyncInfoParser syncInfoParser = new SyncInfoParser(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		SyncInfoParser syncInfoParser = new SyncInfoParser(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, "user_sync");
 		
 		HibernateSyncRepository syncRepositoryA = new HibernateSyncRepository(builderA, syncInfoParser);
 		HibernateContentAdapter contentAdapterA = new HibernateContentAdapter(builderA, "user");

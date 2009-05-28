@@ -23,13 +23,12 @@ public class SyncTests {
 			"", 
 			com.mysql.jdbc.Driver.class,
 			org.hibernate.dialect.MySQLDialect.class,
-			"mesh_sync_example", 
-			"mesh_sync_info", 
+			"mesh_example", 
 			"http://mesh4x/test", 
 			TestHelper.baseDirectoryRootForTest(),
 			NullIdentityProvider.INSTANCE);
 
-		ISyncAdapter adapterB = new InMemorySyncAdapter("mesh_sync_example", NullIdentityProvider.INSTANCE);
+		ISyncAdapter adapterB = new InMemorySyncAdapter("mesh_example", NullIdentityProvider.INSTANCE);
 		
 		SyncEngine syncEngine = new SyncEngine(adapterA, adapterB);
 		List<Item> conflicts = syncEngine.synchronize();

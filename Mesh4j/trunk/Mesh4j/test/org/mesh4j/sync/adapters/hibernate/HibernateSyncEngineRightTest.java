@@ -22,7 +22,7 @@ public class HibernateSyncEngineRightTest extends AbstractSyncEngineTest {
 	protected ISyncAdapter makeRightRepository(Item... items) {
 		HibernateSessionFactoryBuilder builder = new HibernateSessionFactoryBuilder();
 		builder.addMapping(new File(this.getClass().getResource("User.hbm.xml").getFile()));
-		builder.addMapping(new File(this.getClass().getResource("SyncInfo.hbm.xml").getFile()));
+		builder.addMapping(new File(this.getClass().getResource("User_sync.hbm.xml").getFile()));
 		builder.setPropertiesFile(new File(this.getClass().getResource("xx_hibernate.properties").getFile()));
 		
 		HibernateAdapter repo = new HibernateAdapter(builder, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);

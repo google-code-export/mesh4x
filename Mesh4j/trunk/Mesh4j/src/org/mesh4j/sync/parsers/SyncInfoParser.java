@@ -19,7 +19,6 @@ import org.mesh4j.sync.validations.Guard;
 public class SyncInfoParser {
 
 	// CONSTANTS
-	private final static String SYNC_INFO = "SyncInfo";
 	private final static String SYNC_INFO_ATTR_SYNC_ID = "sync_id";
 	private final static String SYNC_INFO_ATTR_ENTITY_ID = "entity_id";
 	public final static String SYNC_INFO_ATTR_ENTITY_NAME = "entity_name";
@@ -45,10 +44,6 @@ public class SyncInfoParser {
 		this.syncEntity = syncEntity;
 	}
 	
-	public SyncInfoParser(ISyndicationFormat format, IIdentityProvider identityProvider, IIdGenerator idGenerator) {
-		this(format, identityProvider, idGenerator, SYNC_INFO);
-	}
-
 	public SyncInfo convertElement2SyncInfo(Element syncInfoElement) throws DocumentException {
 		Sync sync = this.convertElement2Sync(syncInfoElement);
 		String entityName = syncInfoElement.element(SYNC_INFO_ATTR_ENTITY_NAME).getText();

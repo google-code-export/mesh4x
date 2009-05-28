@@ -24,8 +24,7 @@ public class HibernateTypesTests {
 			"", 
 			com.mysql.jdbc.Driver.class,
 			org.hibernate.dialect.MySQLDialect.class,
-			"mesh_example_1", 
-			"mesh_example_1_sync", 
+			"mesh_example_1",  
 			"http://mesh4x/test", 
 			TestHelper.baseDirectoryRootForTest(),
 			NullIdentityProvider.INSTANCE);
@@ -51,7 +50,6 @@ public class HibernateTypesTests {
 			com.mysql.jdbc.Driver.class,
 			org.hibernate.dialect.MySQLDialect.class,
 			tableName, 
-			tableName + "_sync", 
 			rdfBaseURL, 
 			TestHelper.baseDirectoryRootForTest(),
 			NullIdentityProvider.INSTANCE);

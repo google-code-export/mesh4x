@@ -142,7 +142,7 @@ public class MsExcelSyncXLSXTests {
 		String xml = "<patient><id>"+id+"</id><name>marcelo</name><age>33</age><country>Argentina</country><city>Brandsen</city></patient>";
 		Element payload = DocumentHelper.parseText(xml).getRootElement();
 		
-		IContent content = new EntityContent(payload, "patient", id);
+		IContent content = new EntityContent(payload, "patient", "id", id);
 		Sync sync = new Sync(IdGenerator.INSTANCE.newID(), "jmt", new Date(), false);
 		return new Item(content, sync);
 	}

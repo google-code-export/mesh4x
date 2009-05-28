@@ -227,7 +227,7 @@ public class InterRepositoryRDFSyncTest {
 			e.printStackTrace();
 		}
 		
-		IContent content = new EntityContent(payload, "user", id);
+		IContent content = new EntityContent(payload, "user", "id", id);
 		Sync sync = new Sync(IdGenerator.INSTANCE.newID(), "sharif", new Date(), false);
 		return new Item(content, sync);
 	}
@@ -242,7 +242,7 @@ public class InterRepositoryRDFSyncTest {
 		String url = "jdbc:mysql://localhost:3306/mysql";
 		String drivername = "com.mysql.jdbc.Driver";
 		
-		String syncTableName = dataTablename+"_sync_info"; 
+		String syncTableName = dataTablename+"_sync"; 
 		
 		String dropDatabase = "DROP DATABASE IF EXISTS "+ dbname+"; ";
 		String createDatabase =	"CREATE DATABASE "+dbname+"; ";

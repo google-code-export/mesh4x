@@ -15,15 +15,20 @@ import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.ISyncAware;
 import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.adapters.InMemorySyncAdapter;
+import org.mesh4j.sync.adapters.composite.CompositeSyncAdapter;
+import org.mesh4j.sync.adapters.composite.IIdentifiableSyncAdapter;
+import org.mesh4j.sync.adapters.composite.IdentifiableSyncAdapter;
 import org.mesh4j.sync.adapters.feed.ContentReader;
 import org.mesh4j.sync.adapters.feed.ContentWriter;
 import org.mesh4j.sync.adapters.feed.Feed;
+import org.mesh4j.sync.adapters.feed.FeedAdapter;
 import org.mesh4j.sync.adapters.feed.FeedReader;
 import org.mesh4j.sync.adapters.feed.FeedWriter;
 import org.mesh4j.sync.adapters.feed.IContentReader;
 import org.mesh4j.sync.adapters.feed.IContentWriter;
 import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.adapters.feed.XMLContent;
+import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.adapters.hibernate.HibernateContentAdapter;
 import org.mesh4j.sync.adapters.hibernate.HibernateSyncAdapterFactory;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
@@ -141,11 +146,15 @@ public class DBFeedRepository implements IFeedRepository {
 		return schema;
 	}
 	
-	@SuppressWarnings("unchecked")
+	
 	@Override
-	public String readFeed(String sourceID, String link,
-			ISyndicationFormat syndicationFormat, Format contentFormat,
-			IGeoCoder geoCoder, Date sinceDate) throws Exception {
+	public String readFeedGroup(String sourceID, String link, ISyndicationFormat syndicationFormat, Format contentFormat, IGeoCoder geoCoder, Date sinceDate) throws Exception {
+		ISyncAdapter adapter = this.getSyncMeshGroupAdapter(link, sourceID, NullIdentityProvider.INSTANCE, syndicationFormat, contentFormat);
+		return readFeed(adapter, null, sourceID, link, syndicationFormat, contentFormat, geoCoder, sinceDate);	
+	}
+	
+	@Override
+	public String readFeed(String sourceID, String link, ISyndicationFormat syndicationFormat, Format contentFormat, IGeoCoder geoCoder, Date sinceDate) throws Exception {
 		
 		String databaseName = getDBName(sourceID);
 		String tableName = getDBTableName(sourceID);
@@ -163,6 +172,12 @@ public class DBFeedRepository implements IFeedRepository {
 			}
 		}
 		
+		return readFeed(adapter, schema, sourceID, link, syndicationFormat, contentFormat, geoCoder, sinceDate); 
+	}
+	
+	@SuppressWarnings("unchecked")
+	public String readFeed(ISyncAdapter adapter, ISchema schema, String sourceID, String link, ISyndicationFormat syndicationFormat, Format contentFormat, IGeoCoder geoCoder, Date sinceDate) throws Exception {
+			
 		List<Item> items;
 		
 		if(contentFormat != null && contentFormat.isPlainXML()){
@@ -192,24 +207,59 @@ public class DBFeedRepository implements IFeedRepository {
 			ISyndicationFormat syndicationFormat, Format contentFormat,
 			IGeoCoder geoCoder, String feedXml) throws Exception {
 		
-		String databaseName = getDBName(sourceID);
-		String tableName = getDBTableName(sourceID);
 		IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
+		if(isMeshGroup(sourceID)){
+			Feed feedLoaded = this.readFeedFromXml(feedXml, syndicationFormat, contentFormat, null, null);		
+			InMemorySyncAdapter inMemoryAdapter = new InMemorySyncAdapter(sourceID, identityProvider, feedLoaded.getItems());
+			
+			ISyncAdapter adapter = getSyncMeshGroupAdapter(link, sourceID, identityProvider, syndicationFormat, contentFormat);
+			SyncEngine syncEngine = new SyncEngine(adapter, inMemoryAdapter);
+			List<Item> conflicts = syncEngine.synchronize();
 		
-		SplitAdapter adapter = getSyncAdapter(link, databaseName, tableName, identityProvider);
-		ISchema schema = ((HibernateContentAdapter)adapter.getContentAdapter()).getMapping().getSchema();
+			String title = getFeedTitle(sourceID);
+			Feed feedResult = new Feed(title, "conflicts", link);
+			feedResult.addItems(conflicts);
+			return this.writeFeedAsXml(feedResult, syndicationFormat, contentFormat, null, null, identityProvider);
+		} else {
+			String databaseName = getDBName(sourceID);
+			String tableName = getDBTableName(sourceID);
+			
+			SplitAdapter adapter = getSyncAdapter(link, databaseName, tableName, identityProvider);
+			ISchema schema = ((HibernateContentAdapter)adapter.getContentAdapter()).getMapping().getSchema();
+			
+			IMapping mapping = this.getMappings(sourceID, link, geoCoder);
+			Feed feedLoaded = this.readFeedFromXml(feedXml, syndicationFormat, contentFormat, schema, mapping);		
+			InMemorySyncAdapter inMemoryAdapter = new InMemorySyncAdapter(sourceID, identityProvider, feedLoaded.getItems());
+			
+			SyncEngine syncEngine = new SyncEngine(adapter, inMemoryAdapter);
+			List<Item> conflicts = syncEngine.synchronize();
+			
+			String title = getFeedTitle(sourceID);
+			Feed feedResult = new Feed(title, "conflicts", link);
+			feedResult.addItems(conflicts);
+			return this.writeFeedAsXml(feedResult, syndicationFormat, contentFormat, schema, mapping, identityProvider);
+		}
+	}		
+	
+	protected ISyncAdapter getSyncMeshGroupAdapter(String link, String sourceID, IIdentityProvider identityProvider, ISyndicationFormat syndicationFormat, Format contentFormat){
+		String databaseName = getDBName(sourceID);
+		ISyncAdapter tableAdapter = getTableAdapter(link, databaseName, identityProvider);
 		
-		IMapping mapping = this.getMappings(sourceID, link, geoCoder);
-		Feed feedLoaded = this.readFeedFromXml(feedXml, syndicationFormat, contentFormat, schema, mapping);		
-		InMemorySyncAdapter inMemoryAdapter = new InMemorySyncAdapter(sourceID, identityProvider, feedLoaded.getItems());
+		List<Item> items = tableAdapter.getAll();
 		
-		SyncEngine syncEngine = new SyncEngine(adapter, inMemoryAdapter);
-		List<Item> conflicts = syncEngine.synchronize();
+		IIdentifiableSyncAdapter[] adapters = new IIdentifiableSyncAdapter[items.size()];
 		
-		String title = getFeedTitle(sourceID);
-		Feed feedResult = new Feed(title, "conflicts", link);
-		feedResult.addItems(conflicts);
-		return this.writeFeedAsXml(feedResult, syndicationFormat, contentFormat, schema, mapping, identityProvider);
+		int i = 0;
+		for (Item item : items) {
+			String tableName = ((XMLContent)item.getContent()).getTitle();
+			String tableLink = ((XMLContent)item.getContent()).getLink();
+			ISyncAdapter feedDataSetAdapter = getSyncAdapter(tableLink, databaseName, tableName, identityProvider);
+			IdentifiableSyncAdapter adapter = new IdentifiableSyncAdapter(tableName, feedDataSetAdapter);
+			adapters[i] = adapter;
+			i = i +1;
+		}
+		FeedAdapter opaqueAdapter = createOpaqueFeedAdapter(sourceID, identityProvider);
+		return new CompositeSyncAdapter("Feed file composite", opaqueAdapter, identityProvider, adapters);
 	}
 
 	protected ISyncAdapter getTableAdapter(String link, String databaseName, IIdentityProvider identityProvider) {
@@ -221,7 +271,7 @@ public class DBFeedRepository implements IFeedRepository {
 			if(!tableName.endsWith(this.syncInfoSubfixed)){
 				String sycnId = IdGenerator.INSTANCE.newID();
 				String linkTable = link + "/" + tableName;
-				XMLContent content = new XMLContent(sycnId, "table name: "+ tableName, "table name: " + tableName, linkTable, NullContent.PAYLOAD);
+				XMLContent content = new XMLContent(sycnId, tableName, "table name: " + tableName, linkTable, NullContent.PAYLOAD);
 				Sync sync = new Sync(sycnId, identityProvider.getAuthenticatedUser(), new Date(), false);
 				Item item = new Item(content, sync);
 				items.add(item);
@@ -259,7 +309,6 @@ public class DBFeedRepository implements IFeedRepository {
 				this.driverClass,
 				this.dialectClass, 
 				tableName, 
-				tableName + this.syncInfoSubfixed, 
 				rdfLink,
 				this.baseDirectory,
 				identityProvider);	
@@ -381,15 +430,14 @@ public class DBFeedRepository implements IFeedRepository {
 		return SqlDBUtils.getTableNames(this.driverClass, this.connectionUri + databaseName, this.userName, this.password);
 	}
 
+	@Override
+	public boolean isMeshGroup(String sourceID) {
+		return sourceID == null || (sourceID.indexOf("/") == -1 || sourceID.indexOf("/") == sourceID.length());
+	}
+	
 	
 	// UNSUPPORTED OPERATIONS
 	
-	@Override
-	public boolean isAddNewFeedAction(String sourceID) {
-		return false;
-	}
-
-
 	@Override
 	public void updateFeed(String sourceID,
 			ISyndicationFormat syndicationFormat, String link,
@@ -417,4 +465,27 @@ public class DBFeedRepository implements IFeedRepository {
 		throw new UnsupportedOperationException();
 	}
 
+	private FeedAdapter createOpaqueFeedAdapter(String sourceID, IIdentityProvider identityProvider) {
+		String fileName = getFeedOpaqueFileName(sourceID);
+		if(fileName == null){
+			return null;
+		} else {
+			Feed defaultFeed = new Feed(sourceID, sourceID, "");
+			FeedAdapter adapter = new FeedAdapter(fileName, identityProvider, IdGenerator.INSTANCE, RssSyndicationFormat.INSTANCE, defaultFeed);
+			adapter.refresh();
+			return adapter;
+		}
+	}
+	
+	private String getFeedOpaqueFileName(String sourceID) {
+		if(sourceID == null){
+			return null;
+		} else {
+			if(sourceID.indexOf("/") == -1 || sourceID.indexOf("/") == sourceID.length()){
+				return this.baseDirectory + "mesh_" + sourceID + "_opaque.xml";
+			} else {
+				return null;
+			}
+		}
+	}
 }

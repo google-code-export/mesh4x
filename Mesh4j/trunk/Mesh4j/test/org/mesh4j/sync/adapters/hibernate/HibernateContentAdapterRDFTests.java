@@ -21,7 +21,7 @@ public class HibernateContentAdapterRDFTests extends HibernateContentAdapterTest
 		
 		HibernateSessionFactoryBuilder builder = new HibernateSessionFactoryBuilder();
 		builder.addMapping(new File(HibernateAdapterTests.class.getResource("User.hbm.xml").getFile()));
-		builder.addMapping(new File(this.getClass().getResource("SyncInfo.hbm.xml").getFile()));
+		builder.addMapping(new File(this.getClass().getResource("User_sync.hbm.xml").getFile()));
 		builder.setPropertiesFile(new File(this.getClass().getResource("xx_hibernate.properties").getFile()));
 		builder.addRDFSchema("user", schema);
 		return builder;
@@ -35,7 +35,7 @@ public class HibernateContentAdapterRDFTests extends HibernateContentAdapterTest
 		
 		String rdfXml = rdfInstance.asXML();
 		Element payload = XMLHelper.parseElement(rdfXml);
-		IContent user = new EntityContent(payload, "user", id);
+		IContent user = new EntityContent(payload, "user", "id", id);
 		return user;
 	}
 	

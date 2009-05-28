@@ -172,7 +172,7 @@ public class AdapterFactoryTests {
 		payload = schema.getInstanceFromPlainXML(id, payload,
 				ISchema.EMPTY_FORMATS);
 
-		IContent content = new EntityContent(payload, "aktoo", id);
+		IContent content = new EntityContent(payload, "aktoo", "ID", id);
 		Sync sync = new Sync(IdGenerator.INSTANCE.newID(), "Raju", new Date(),
 				false);
 		return new Item(content, sync);
@@ -186,7 +186,7 @@ public class AdapterFactoryTests {
 
 		Element payload = XMLHelper.parseElement(rawDataAsXML);
 		System.out.println("xml as:" + payload.asXML());
-		IContent content = new EntityContent(payload, "aktoo", id);
+		IContent content = new EntityContent(payload, "aktoo", "ID", id);
 		Sync sync = new Sync(IdGenerator.INSTANCE.newID(), "Raju", new Date(),
 				false);
 		return new Item(content, sync);
@@ -204,7 +204,7 @@ public class AdapterFactoryTests {
 								"</user>";
 
 		Element payload = XMLHelper.parseElement(rawDataAsXML);
-		IContent content = new EntityContent(payload, "user", id);
+		IContent content = new EntityContent(payload, "user", "id", id);
 		Sync sync = new Sync(IdGenerator.INSTANCE.newID(), "Raju", new Date(),
 				false);
 		return new Item(content, sync);

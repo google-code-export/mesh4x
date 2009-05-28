@@ -30,7 +30,7 @@ public class EntityDAO {
 		if(entityElement == null){
 			return null;
 		} else {
-			return new EntityContent(this.mapping.convertRowToXML(entityId, entityElement), this.getEntityName(), entityId);
+			return new EntityContent(this.mapping.convertRowToXML(entityId, entityElement), this.getEntityName(), this.mapping.getIDNode(), entityId);
 		}
 	}
 
@@ -65,7 +65,7 @@ public class EntityDAO {
 		ArrayList<EntityContent> result = new ArrayList<EntityContent>();
 		for (Element entityElement : entities) {
 			String entityID = entityElement.element(getIDNode()).getText();
-			EntityContent entity = new EntityContent(this.mapping.convertRowToXML(entityID, entityElement), this.getEntityName(), entityID);
+			EntityContent entity = new EntityContent(this.mapping.convertRowToXML(entityID, entityElement), this.getEntityName(), this.mapping.getIDNode(), entityID);
 			result.add(entity);
 		}
 		return result;

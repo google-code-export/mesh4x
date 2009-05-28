@@ -14,7 +14,7 @@ public class ContentReader implements IContentReader {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public void readContent(String id, Element payload, Element contentElement) {
+	public void readContent(String syncId, Element payload, Element contentElement) {
 		if(payload == null || contentElement == null){
 			return;
 		}

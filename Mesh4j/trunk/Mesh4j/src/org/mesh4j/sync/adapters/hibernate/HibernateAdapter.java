@@ -51,11 +51,11 @@ public class HibernateAdapter extends AbstractSyncAdapter implements ISessionPro
 		
 		this.sessionFactory = builder.buildSessionFactory();
 		
-		this.syncDAO = new SyncDAO(this, new SyncInfoParser(RssSyndicationFormat.INSTANCE, this.identityProvider, this.idGenerator));
-		
 		ClassMetadata classMetadata = this.getClassMetadata();
 		String entityName = classMetadata.getEntityName();
 		String entityIDNode = classMetadata.getIdentifierPropertyName();
+
+		this.syncDAO = new SyncDAO(this, new SyncInfoParser(RssSyndicationFormat.INSTANCE, this.identityProvider, this.idGenerator, entityName+"_sync"));
 		this.entityDAO = new EntityDAO(this, builder.buildMeshMapping(entityName, entityIDNode));
 	}
 
@@ -63,7 +63,7 @@ public class HibernateAdapter extends AbstractSyncAdapter implements ISessionPro
 	private ClassMetadata getClassMetadata(){
 		Map<String, ClassMetadata> map = sessionFactory.getAllClassMetadata();
 		for (String entityName : map.keySet()) {
-			if(!syncDAO.getEntityName().equals(entityName)){
+			if(!entityName.endsWith("_sync")){
 				ClassMetadata classMetadata = map.get(entityName);
 				return classMetadata;
 			}

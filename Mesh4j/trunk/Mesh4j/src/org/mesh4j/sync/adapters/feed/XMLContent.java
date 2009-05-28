@@ -59,7 +59,7 @@ public class XMLContent extends Content {
                 	(this.getLink() == null && otherXmlItem.getLink() == null ||
 	                	this.getLink() != null && this.getLink().equals(otherXmlItem.getLink()));
         	} else{
-        		return super.equals(obj);
+        		return obj.equals(this);
         	}
         }
         return false;

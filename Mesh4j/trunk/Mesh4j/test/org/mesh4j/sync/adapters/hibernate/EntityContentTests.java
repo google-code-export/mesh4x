@@ -12,36 +12,36 @@ public class EntityContentTests {
 
 	@Test
 	public void shouldReturnsEqualsTrueWithClones(){
-		Element payload = TestHelper.makeElement("<foo>bar</foo>");
-		EntityContent c = new EntityContent(payload, "foo", "bar");
+		Element payload = TestHelper.makeElement("<foo><id>1</id></foo>");
+		EntityContent c = new EntityContent(payload, "foo", "id", "bar");
 		Assert.assertEquals(c, c.clone());
 	}
 	
 	@Test
 	public void shouldBeClonesHasSameHasCodes(){
-		Element payload = TestHelper.makeElement("<foo>bar</foo>");
-		EntityContent c = new EntityContent(payload, "foo", "bar");
+		Element payload = TestHelper.makeElement("<foo><id>1</id></foo>");
+		EntityContent c = new EntityContent(payload, "foo", "id", "bar");
 		Assert.assertTrue(c.hashCode() == c.clone().hashCode());
 	}
 	
 	@Test
 	public void shouldReturnsFalse(){
-		Element payload = TestHelper.makeElement("<foo>bar</foo>");
-		EntityContent c = new EntityContent(payload, "foo", "bar");
+		Element payload = TestHelper.makeElement("<foo><id>1</id></foo>");
+		EntityContent c = new EntityContent(payload, "foo", "id", "bar");
 		Assert.assertFalse(c.equals("qq"));
 	}
 	
 	@Test
 	public void shouldReturnsSameFalseWithClones(){
-		Element payload = TestHelper.makeElement("<foo>bar</foo>");
-		EntityContent c = new EntityContent(payload, "foo", "bar");
+		Element payload = TestHelper.makeElement("<foo><id>1</id></foo>");
+		EntityContent c = new EntityContent(payload, "foo", "id", "bar");
 		Assert.assertFalse(c == c.clone());
 	}
 	
 	@Test
 	public void shouldNormalizeFromHibernateContent(){
 		Element e = TestHelper.makeElement("<foo><id>1</id></foo>");
-		EntityContent c = new EntityContent(e, "foo", "id");
+		EntityContent c = new EntityContent(e, "foo", "id", "id");
 		EntityDAO dao = new EntityDAO(null, new HibernateToPlainXMLMapping("foo", "id"));
 		
 		Assert.assertSame(c, dao.normalizeContent(c));

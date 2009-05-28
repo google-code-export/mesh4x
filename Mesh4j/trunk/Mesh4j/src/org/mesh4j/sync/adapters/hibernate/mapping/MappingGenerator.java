@@ -56,7 +56,7 @@ public class MappingGenerator {
 
 		StringWriter writer = new StringWriter();
 		writeHeader(writer);
-		writerClass(writer, "SyncInfo", tableName);
+		writerClass(writer, tableName, tableName);
 		writeID(writer, "sync_id", "sync_id", "string");
 		writeProperty(writer, "entity_name", "entity_name", "string");
 		writeProperty(writer, "entity_id", "entity_id", "string");

@@ -166,7 +166,7 @@ public class MsAccessVsMySqlSyncTests {
 
 	private SplitAdapter makeExcelAdapter(String ontologyBaseUri, IRDFSchema rdfSchema, String fileName) {
 		MsExcelRDFSyncAdapterFactory factory = new MsExcelRDFSyncAdapterFactory(ontologyBaseUri);
-		return factory.createSyncAdapter(fileName, "mesh_sync_example", "uid", NullIdentityProvider.INSTANCE, rdfSchema);
+		return factory.createSyncAdapter(fileName, "mesh_example", "uid", NullIdentityProvider.INSTANCE, rdfSchema);
 	}
 
 	private SplitAdapter makeHibernateAdapter(String ontologyBaseUri) {
@@ -176,8 +176,7 @@ public class MsAccessVsMySqlSyncTests {
 			"", 
 			com.mysql.jdbc.Driver.class,
 			org.hibernate.dialect.MySQLDialect.class,
-			"mesh_sync_example", 
-			"mesh_sync_info", 
+			"mesh_example", 
 			ontologyBaseUri, 
 			TestHelper.baseDirectoryRootForTest(),
 			NullIdentityProvider.INSTANCE);
@@ -195,7 +194,6 @@ public class MsAccessVsMySqlSyncTests {
 			com.mysql.jdbc.Driver.class,
 			org.hibernate.dialect.MySQLDialect.class,
 			"users", 
-			"mesh4x_users_syncinfo", 
 			ontologyBaseUri, 
 			TestHelper.baseDirectoryRootForTest(),
 			NullIdentityProvider.INSTANCE);

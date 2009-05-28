@@ -311,7 +311,7 @@ public class MsExcelContentAdapterXLSXTests {
 		
 		String xml = "<sheet><id>45</id><name>jjl</name></sheet>";
 		Element payload = DocumentHelper.parseText(xml).getRootElement();
-		IContent content = new EntityContent(payload, "sheet", "45");
+		IContent content = new EntityContent(payload, "sheet", "id", "45");
 		adapter.delete(content);
 
 		Assert.assertEquals(6, adapter.getWorkbook().getSheet("sheet").getPhysicalNumberOfRows());
@@ -335,7 +335,7 @@ public class MsExcelContentAdapterXLSXTests {
 		
 		String xml = "<sheet><id>5</id><name>msa</name></sheet>";
 		Element payload = DocumentHelper.parseText(xml).getRootElement();
-		IContent content = new EntityContent(payload, "sheet", "5");
+		IContent content = new EntityContent(payload, "sheet", "id", "5");
 		adapter.delete(content);
 
 		Assert.assertEquals(5, adapter.getWorkbook().getSheet("sheet").getPhysicalNumberOfRows());
@@ -358,7 +358,7 @@ public class MsExcelContentAdapterXLSXTests {
 		
 		String xml = "<sheet><id>6</id><name>mrs</name></sheet>";
 		Element payload = DocumentHelper.parseText(xml).getRootElement();
-		IContent content = new EntityContent(payload, "sheet", "6");
+		IContent content = new EntityContent(payload, "sheet", "id", "6");
 		adapter.save(content);
 
 		Assert.assertEquals(7, adapter.getWorkbook().getSheet("sheet").getPhysicalNumberOfRows());
@@ -386,7 +386,7 @@ public class MsExcelContentAdapterXLSXTests {
 		
 		String xml = "<sheet><id>5</id><name>mrs</name></sheet>";
 		Element payload = DocumentHelper.parseText(xml).getRootElement();
-		IContent content = new EntityContent(payload, "sheet", "5");
+		IContent content = new EntityContent(payload, "sheet", "id", "5");
 		adapter.save(content);
 
 		Assert.assertEquals(6, adapter.getWorkbook().getSheet("sheet").getPhysicalNumberOfRows());
@@ -457,7 +457,7 @@ public class MsExcelContentAdapterXLSXTests {
 		
 		String xml = "<sheet><id>1</id><name>jct</name></sheet>";
 		Element payload = DocumentHelper.parseText(xml).getRootElement();
-		IContent content = new EntityContent(payload, "sheet", "1");
+		IContent content = new EntityContent(payload, "sheet", "id", "1");
 		
 		Assert.assertEquals(0, adapter.getNumberOfPhantomRows());
 		
@@ -523,7 +523,7 @@ public class MsExcelContentAdapterXLSXTests {
 		
 		String xml = "<sheet><id>32</id><name>dnkndfk</name></sheet>";
 		Element payload = DocumentHelper.parseText(xml).getRootElement();
-		IContent content = new EntityContent(payload, "sheet", "32");
+		IContent content = new EntityContent(payload, "sheet", "id", "32");
 		
 		adapter.save(content);
 		

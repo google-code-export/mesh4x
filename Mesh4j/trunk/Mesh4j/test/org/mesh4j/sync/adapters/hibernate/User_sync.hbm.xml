@@ -2,7 +2,7 @@
  "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>  
-<class entity-name="SyncInfo" node="SyncInfo" table="MESH_SYNC_INFO">
+<class entity-name="user_sync" node="user_sync" table="mesh_example_sync">
 <id name="sync_id" type="string" column="sync_id">   
 	<generator class="assigned"/>
 </id>   

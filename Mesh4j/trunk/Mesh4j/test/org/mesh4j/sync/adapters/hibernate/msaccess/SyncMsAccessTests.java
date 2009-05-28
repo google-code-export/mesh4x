@@ -74,13 +74,13 @@ public class SyncMsAccessTests {
 //		builderA.setProperty("hbm2ddl.auto", "create");
 
 		builderA.addMapping(new File(this.getClass().getResource("User.hbm.xml").getFile()));
-		builderA.addMapping(new File(this.getClass().getResource("SyncInfo.hbm.xml").getFile()));
+		builderA.addMapping(new File(this.getClass().getResource("User_sync.hbm.xml").getFile()));
 
 		HibernateContentAdapter contentAdapter = new HibernateContentAdapter(builderA, "user");
 		List<IContent> contents = contentAdapter.getAll();
 		Assert.assertFalse(contents.isEmpty());		
 		
-		SyncInfoParser syncInfoParser = new SyncInfoParser(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		SyncInfoParser syncInfoParser = new SyncInfoParser(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, "user_sync");
 		
 		HibernateSyncRepository syncRepository = new HibernateSyncRepository(builderA, syncInfoParser);
 		List<SyncInfo> syncInfos = syncRepository.getAll(contentAdapter.getType());
@@ -105,13 +105,13 @@ public class SyncMsAccessTests {
 		builderA.setProperty("hibernate.connection.username","");
 		builderA.setProperty("hibernate.connection.password","");
 		builderA.addMapping(new File(this.getClass().getResource("User.hbm.xml").getFile()));
-		builderA.addMapping(new File(this.getClass().getResource("SyncInfo.hbm.xml").getFile()));
+		builderA.addMapping(new File(this.getClass().getResource("User_sync.hbm.xml").getFile()));
 
 		HibernateContentAdapter contentAdapter = new HibernateContentAdapter(builderA, "user");
 		List<IContent> contents = contentAdapter.getAll();
 		Assert.assertFalse(contents.isEmpty());		
 		
-		SyncInfoParser syncInfoParser = new SyncInfoParser(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		SyncInfoParser syncInfoParser = new SyncInfoParser(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, "user_sync");
 		
 		HibernateSyncRepository syncRepository = new HibernateSyncRepository(builderA, syncInfoParser);
 		List<SyncInfo> syncInfos = syncRepository.getAll(contentAdapter.getType());
@@ -142,9 +142,9 @@ public class SyncMsAccessTests {
 		builderA.setProperty("hibernate.connection.username","");
 		builderA.setProperty("hibernate.connection.password","");
 		builderA.addMapping(new File(this.getClass().getResource("User.hbm.xml").getFile()));
-		builderA.addMapping(new File(this.getClass().getResource("SyncInfo.hbm.xml").getFile()));
+		builderA.addMapping(new File(this.getClass().getResource("User_sync.hbm.xml").getFile()));
 
-		SyncInfoParser syncInfoParser = new SyncInfoParser(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
+		SyncInfoParser syncInfoParser = new SyncInfoParser(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, "user_sync");
 		
 		HibernateSyncRepository syncRepositoryA = new HibernateSyncRepository(builderA, syncInfoParser);
 		HibernateContentAdapter contentAdapterA = new HibernateContentAdapter(builderA, "user");
@@ -158,7 +158,7 @@ public class SyncMsAccessTests {
 		builderB.setProperty("hibernate.connection.username","");
 		builderB.setProperty("hibernate.connection.password","");
 		builderB.addMapping(new File(this.getClass().getResource("User.hbm.xml").getFile()));
-		builderB.addMapping(new File(this.getClass().getResource("SyncInfo.hbm.xml").getFile()));
+		builderB.addMapping(new File(this.getClass().getResource("User_sync.hbm.xml").getFile()));
 		
 		HibernateSyncRepository syncRepositoryB = new HibernateSyncRepository(builderB, syncInfoParser);
 		HibernateContentAdapter contentAdapterB = new HibernateContentAdapter(builderB, "user");

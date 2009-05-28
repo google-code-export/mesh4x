@@ -4,6 +4,6 @@ import org.dom4j.Element;
 
 public interface IContentReader {
 
-	void readContent(String id, Element payload, Element contentElement);
+	void readContent(String syncId, Element payload, Element contentElement);
 
 }

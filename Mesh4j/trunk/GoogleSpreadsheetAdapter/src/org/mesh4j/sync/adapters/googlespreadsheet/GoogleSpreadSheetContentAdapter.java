@@ -114,7 +114,7 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 		GSRow row = GoogleSpreadsheetUtils.getRow(this.workSheet, entityIdIndex, contentId);
 		if(row != null){
 			Element payLoad = mapper.convertRowToXML(row);
-			return new EntityContent(payLoad,this.entityName,contentId);
+			return new EntityContent(payLoad,this.entityName, this.idColumnName, contentId);
 		}
 		return null;
 	}
@@ -139,7 +139,7 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 					 }
 					 //TODO handle the else condition.
 	   		    entityId = cell.getCellValue();
-				EntityContent entityContent = new EntityContent(payLoad,this.entityName,entityId);
+				EntityContent entityContent = new EntityContent(payLoad,this.entityName, this.idColumnName, entityId);
 				listOfAll.add(entityContent);
 			}
 		}

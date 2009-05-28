@@ -1,20 +1,13 @@
-DROP TABLE mesh_sync_info;
-
-CREATE TABLE mesh_sync_info (
-  sync_id varchar(100) PRIMARY KEY not null,
-  entity_name varchar(100) not null,
-  entity_id varchar(100) not null,
-  entity_version int not null,
-  sync_data LONGTEXT);
   
-  
-DROP TABLE mesh_sync_example;
+DROP TABLE mesh_example;
 
-CREATE TABLE mesh_sync_example (
+CREATE TABLE mesh_example (
   uid varchar(100) PRIMARY KEY not null,
   name varchar(100) not null,
   pass varchar(100) not null);
-
+  
+ insert into mesh_example (uid, name, pass) values (1, "jmt", "123")
+  
   
 DROP TABLE mesh_example_1;
 

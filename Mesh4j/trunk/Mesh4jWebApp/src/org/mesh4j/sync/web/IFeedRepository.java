@@ -12,6 +12,7 @@ import org.mesh4j.sync.servlet.Format;
 
 public interface IFeedRepository {
 
+	String readFeedGroup(String sourceID, String link, ISyndicationFormat syndicationFormat, Format contentFormat, IGeoCoder geoCoder, Date sinceDate) throws Exception;
 	String readFeed(String sourceID, String link, ISyndicationFormat syndicationFormat, Format contentFormat, IGeoCoder geoCoder, Date sinceDate) throws Exception;
 
 	String synchronize(String sourceID, String link, ISyndicationFormat syndicationFormat, Format contentFormat, IGeoCoder geoCoder, String feedXml) throws Exception;
@@ -21,8 +22,6 @@ public interface IFeedRepository {
 	ISchema getSchema(String sourceID, String link) throws Exception;
 	
 	IMapping getMappings(String sourceID, String link, IGeoCoder geoCoder) throws Exception;
-
-	boolean isAddNewFeedAction(String sourceID);
 
 	boolean existsFeed(String sourceID);
 
@@ -37,4 +36,6 @@ public interface IFeedRepository {
 	void addNewItemFromRawContent(String sourceID, String link, String rawXml, String by);
 
 	String getHistory(String sourceID, String link, ISyndicationFormat syndicationFormat, String syncId);
+
+	boolean isMeshGroup(String sourceID);
 }

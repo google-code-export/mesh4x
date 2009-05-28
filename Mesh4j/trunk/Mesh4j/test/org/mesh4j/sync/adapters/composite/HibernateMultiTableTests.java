@@ -2,6 +2,7 @@ package org.mesh4j.sync.adapters.composite;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 
 import junit.framework.Assert;
 
@@ -13,6 +14,7 @@ import org.mesh4j.sync.adapters.hibernate.HibernateContentAdapter;
 import org.mesh4j.sync.adapters.hibernate.HibernateSyncAdapterFactory;
 import org.mesh4j.sync.adapters.msexcel.MsExcelRDFSyncAdapterFactory;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
+import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.test.utils.TestHelper;
@@ -24,9 +26,7 @@ public class HibernateMultiTableTests {
 		
 		InMemorySyncAdapter adapterOpaque = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
 		
-		HashMap<String, String> tables = new HashMap<String, String>();
-		tables.put("mesh_sync_example", "mesh_sync_example_sync");
-		tables.put("mesh_example_1", "mesh_example_1_sync");
+		String[] tables = new String[]{"mesh_example", "mesh_example_1"};
 		
 		ISyncAdapter adapterSource = HibernateSyncAdapterFactory.createSyncAdapterForMultiTables(
 			"jdbc:mysql:///mesh4xdb", 
@@ -56,10 +56,7 @@ public class HibernateMultiTableTests {
 		// hibernate 
 		InMemorySyncAdapter adapterOpaqueSource = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
 		
-		// TODO (JMT) improve this structure
-		HashMap<String, String> tables = new HashMap<String, String>();
-		tables.put("mesh_sync_example", "mesh_sync_example_sync");
-		tables.put("mesh_example_1", "mesh_example_1_sync");
+		String[] tables = new String[]{"mesh_example", "mesh_example_1"};
 		
 		CompositeSyncAdapter adapterSource = HibernateSyncAdapterFactory.createSyncAdapterForMultiTables(
 			"jdbc:mysql:///mesh4xdb", 
@@ -101,6 +98,10 @@ public class HibernateMultiTableTests {
 		TestHelper.assertSync(syncEngine);
 		
 		Assert.assertEquals(0, adapterOpaqueSource.getAll().size());
-		Assert.assertEquals(21, adapterOpaqueTarget.getAll().size());
+		
+		List<Item> items = adapterOpaqueTarget.getAll();
+		for (Item item : items) {
+			Assert.assertTrue(item.isDeleted());
+		}
 	}
 }
