@@ -179,7 +179,8 @@ public class MsAccessVsMySqlSyncTests {
 			"mesh_sync_example", 
 			"mesh_sync_info", 
 			ontologyBaseUri, 
-			TestHelper.baseDirectoryRootForTest());
+			TestHelper.baseDirectoryRootForTest(),
+			NullIdentityProvider.INSTANCE);
 	}
 	
 	//@Test
@@ -196,7 +197,8 @@ public class MsAccessVsMySqlSyncTests {
 			"users", 
 			"mesh4x_users_syncinfo", 
 			ontologyBaseUri, 
-			TestHelper.baseDirectoryRootForTest());
+			TestHelper.baseDirectoryRootForTest(),
+			NullIdentityProvider.INSTANCE);
 
 		IRDFSchema rdfSchemaSource = (IRDFSchema)((HibernateContentAdapter)adapterSource.getContentAdapter()).getMapping().getSchema();
 		

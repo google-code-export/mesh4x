@@ -64,7 +64,7 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 	@Override
 	public ISyncAdapter createMsAccessAdapter(String mdbFileName, String tableName) {
 		try {
-			return this.msAccesSyncAdapter.createSyncAdapterFromFile(tableName, mdbFileName, tableName);
+			return this.msAccesSyncAdapter.createSyncAdapterFromFile(tableName, mdbFileName, tableName, this.getIdentityProvider());
 		} catch (Exception e) {
 			throw new MeshException(e);
 		}
@@ -171,7 +171,8 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 				tableName, 
 				tableName + "_sync_info", 
 				getBaseRDFUrl(),
-				mappingDirectory.getAbsolutePath());
+				mappingDirectory.getAbsolutePath(),
+				this.getIdentityProvider());
 	}
 
 	

@@ -1,9 +1,13 @@
 package org.mesh4j.sync.adapters.msexcel;
 
 import java.io.File;
+import java.util.Map;
 
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.ISyncAdapterFactory;
+import org.mesh4j.sync.adapters.composite.CompositeSyncAdapter;
+import org.mesh4j.sync.adapters.composite.IIdentifiableSyncAdapter;
+import org.mesh4j.sync.adapters.composite.IdentifiableSyncAdapter;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.security.IIdentityProvider;
@@ -46,9 +50,30 @@ public class MsExcelSyncAdapterFactory implements ISyncAdapterFactory {
 		
 		return createSyncAdapter(excelFileName, sheetName, idColumnName, identityProvider);
 	}
-
+	
+	public ISyncAdapter createSyncAdapterForMultiSheets(String excelFileName, IIdentityProvider identityProvider, Map<String, String> sheets, ISyncAdapter opaqueAdapter) {
+		MsExcel excel = new MsExcel(excelFileName);
+		
+		IIdentifiableSyncAdapter[] adapters = new IIdentifiableSyncAdapter[sheets.size()];
+		
+		int i = 0;
+		for (String sheetName : sheets.keySet()) {
+			String idColumnName = sheets.get(sheetName);
+			SplitAdapter syncAdapter = this.createSyncAdapter(excel, sheetName, idColumnName, identityProvider);
+			IdentifiableSyncAdapter adapter = new IdentifiableSyncAdapter(sheetName, syncAdapter);
+			adapters[i] = adapter;
+			i = i +1;
+		}
+		
+		return new CompositeSyncAdapter("MsExcel composite", opaqueAdapter, identityProvider, adapters);
+	}
+		
 	public SplitAdapter createSyncAdapter(String excelFileName, String sheetName, String idColumnName, IIdentityProvider identityProvider) {
 		MsExcel excel = new MsExcel(excelFileName);
+		return createSyncAdapter(excel, sheetName, idColumnName, identityProvider);
+	}
+	
+	public SplitAdapter createSyncAdapter(IMsExcel excel, String sheetName, String idColumnName, IIdentityProvider identityProvider) {
 		MsExcelSyncRepository syncRepo = createSyncRepository(sheetName, identityProvider, excel);
 		MsExcelContentAdapter contentAdapter = createContentAdapter(sheetName, idColumnName, excel);
 		return new SplitAdapter(syncRepo, contentAdapter, identityProvider);

@@ -20,7 +20,7 @@ public interface IMsExcelToXMLMapping {
 	
 	ISchema getSchema();
 
-	Workbook createDataSource(String fileName) throws Exception;
+	void createDataSource(IMsExcel excel);
 
 	String getIdColumnValue(Sheet sheet, Row row);
 

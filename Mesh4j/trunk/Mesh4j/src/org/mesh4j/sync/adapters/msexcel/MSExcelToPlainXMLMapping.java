@@ -1,6 +1,5 @@
 package org.mesh4j.sync.adapters.msexcel;
 
-import java.io.File;
 import java.util.Date;
 import java.util.Iterator;
 
@@ -117,15 +116,9 @@ public class MSExcelToPlainXMLMapping implements IMsExcelToXMLMapping {
 	}
 
 	@Override
-	public Workbook createDataSource(String fileName) throws Exception {
-		File file = new File(fileName);
-		if(file.exists()){
-			return MsExcelUtils.getOrCreateWorkbookIfAbsent(fileName);
-		} else {
-			Workbook workbook = MsExcelUtils.getOrCreateWorkbookIfAbsent(fileName);
-			MsExcelUtils.flush(workbook, fileName);  // discard workbook for bug in POI library
-			return MsExcelUtils.getOrCreateWorkbookIfAbsent(fileName);
-		}
+	public void createDataSource(IMsExcel excel){
+		excel.setDirty();
+		excel.flush();
 	}
 
 	@Override

@@ -2,13 +2,16 @@ package org.mesh4j.sync.adapters.hibernate;
 
 import java.io.File;
 import java.text.MessageFormat;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.hibernate.Hibernate;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.JDBCMetaDataConfiguration;
 import org.hibernate.cfg.reveng.DefaultReverseEngineeringStrategy;
 import org.hibernate.cfg.reveng.SchemaSelection;
+import org.hibernate.dialect.Dialect;
 import org.hibernate.mapping.Column;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.mapping.Property;
@@ -18,13 +21,16 @@ import org.hibernate.tool.hbmlint.detector.TableSelectorStrategy;
 import org.hibernate.type.Type;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.ISyncAdapterFactory;
+import org.mesh4j.sync.adapters.composite.CompositeSyncAdapter;
+import org.mesh4j.sync.adapters.composite.IIdentifiableSyncAdapter;
+import org.mesh4j.sync.adapters.composite.IdentifiableSyncAdapter;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.parsers.SyncInfoParser;
+import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
 import org.mesh4j.sync.security.IIdentityProvider;
-import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.utils.FileUtils;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
@@ -50,22 +56,51 @@ public class HibernateSyncAdapterFactory implements ISyncAdapterFactory{
 	}
 	
 	// ADAPTER CREATION
-	@SuppressWarnings("unchecked")
-	public static SplitAdapter createHibernateAdapter(String connectionURL, String user, String password, Class driverClass, Class dialectClass, String tableName, String syncTableName, String rdfBaseURL, String baseDirectory) {
+	public static <T extends java.sql.Driver, F extends Dialect> SplitAdapter createHibernateAdapter(String connectionURL, String user, String password, Class<T> driverClass, Class<F> dialectClass, String tableName, String syncTableName, String rdfBaseURL, String baseDirectory, IIdentityProvider identityProvider) {
+		HashMap<String, String> tables = new HashMap<String, String>();
+		tables.put(tableName, syncTableName);
+		
+		SplitAdapter[] adapters = createHibernateAdapters(connectionURL, user, password, driverClass, dialectClass, tables, rdfBaseURL, baseDirectory, identityProvider);
+		return adapters[0];
+	}
+	
+	public static <T extends java.sql.Driver, F extends Dialect> CompositeSyncAdapter createSyncAdapterForMultiTables(String connectionURL, String user, String password, Class<T> driverClass, Class<F> dialectClass, HashMap<String, String> tables, String rdfBaseURL, String baseDirectory, IIdentityProvider identityProvider, ISyncAdapter opaqueAdapter) {
+		SplitAdapter[] splitAdapters = createHibernateAdapters(connectionURL, user, password, driverClass, dialectClass, tables, rdfBaseURL, baseDirectory, identityProvider);
+		
+		IIdentifiableSyncAdapter[] adapters =  new IIdentifiableSyncAdapter[splitAdapters.length];
+		int i = 0;
+		for (SplitAdapter splitAdapter : splitAdapters) {
+			HibernateContentAdapter contentAdapter = (HibernateContentAdapter)splitAdapter.getContentAdapter();
+			String type = contentAdapter.getType();
+			adapters[i] = new IdentifiableSyncAdapter(type, splitAdapter);
+			i = i +1;
+		}
+		
+		return new CompositeSyncAdapter("Hibernate composite", opaqueAdapter, identityProvider, adapters);
+	}
+	
+	private static <T extends java.sql.Driver, F extends Dialect> SplitAdapter[] createHibernateAdapters(String connectionURL, String user, String password, Class<T> driverClass, Class<F> dialectClass, HashMap<String, String> tables, String rdfBaseURL, String baseDirectory, IIdentityProvider identityProvider) {
 	
 		HibernateSessionFactoryBuilder builder = createHibernateFactoryBuilder(connectionURL, user, password, driverClass, dialectClass, null);
 		
-		PersistentClass contentMapping = createMappings(builder, tableName, syncTableName, baseDirectory);
+		HashMap<String, PersistentClass> contentMappings = createMappings(builder, baseDirectory, tables);
+
+		SplitAdapter[] splitAdapters = new SplitAdapter[tables.size()];
+		int i = 0;
+		for (String tableName : contentMappings.keySet()) {
+			String syncTableName = tables.get(tableName);
+			PersistentClass contentMapping = contentMappings.get(tableName);
+			IRDFSchema rdfSchema = createRDFSchema(tableName, rdfBaseURL, contentMapping);
+			builder.addRDFSchema(tableName, rdfSchema);
+			SyncInfoParser syncInfoParser = new SyncInfoParser(RssSyndicationFormat.INSTANCE, identityProvider, IdGenerator.INSTANCE, syncTableName);
 		
-		RDFSchema schema = createRDFSchema(tableName, rdfBaseURL, contentMapping);
-		builder.addRDFSchema(schema);
-		
-		SyncInfoParser syncInfoParser = new SyncInfoParser(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, syncTableName);
-		
-		HibernateSyncRepository syncRepository = new HibernateSyncRepository(builder, syncInfoParser);
-		HibernateContentAdapter contentAdapter = new HibernateContentAdapter(builder, tableName);
-		SplitAdapter splitAdapter = new SplitAdapter(syncRepository, contentAdapter, NullIdentityProvider.INSTANCE);
-		return splitAdapter;
+			HibernateSyncRepository syncRepository = new HibernateSyncRepository(builder, syncInfoParser);
+			HibernateContentAdapter contentAdapter = new HibernateContentAdapter(builder, tableName);
+			SplitAdapter splitAdapter = new SplitAdapter(syncRepository, contentAdapter, identityProvider);
+			splitAdapters[i] = splitAdapter;
+			i = i +1;
+		}
+		return splitAdapters;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -142,42 +177,47 @@ public class HibernateSyncAdapterFactory implements ISyncAdapterFactory{
 		}
 	}
 	
-	public static PersistentClass createMappings(HibernateSessionFactoryBuilder builder, String tableName, String syncTableName, String baseDirectory) {
-		autodiscoveryMappings(builder, tableName, syncTableName, baseDirectory);
+	public static HashMap<String, PersistentClass> createMappings(HibernateSessionFactoryBuilder builder, String baseDirectory, Map<String, String> tables) {
+		
+		autodiscoveryMappings(builder, baseDirectory, tables);
 
-		File contentMapping = FileUtils.getFile(baseDirectory, tableName+".hbm.xml");
-		if(!contentMapping.exists()){
-			Guard.throwsException("INVALID_TABLE_NAME");
-		}
-		
 		boolean mustCreateTables = false;
-		File syncFileMapping = FileUtils.getFile(baseDirectory, syncTableName+".hbm.xml");
-		if(!syncFileMapping.exists()){
-			try{
-				String template = "<?xml version=\"1.0\"?><!DOCTYPE hibernate-mapping PUBLIC \"-//Hibernate/Hibernate Mapping DTD 3.0//EN\" \"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd\">"+
-				"<hibernate-mapping>"+
-				"	<class entity-name=\"{0}\" node=\"{0}\" table=\"{0}\">"+
-				"		<id name=\"sync_id\" type=\"string\" column=\"sync_id\">"+
-				"			<generator class=\"assigned\"/>"+
-				"		</id>"+
-				"		<property name=\"entity_name\" column=\"entity_name\" node=\"entity_name\" type=\"string\"/>"+
-				"		<property name=\"entity_id\" column=\"entity_id\" node=\"entity_id\" type=\"string\"/>"+
-				"		<property name=\"entity_version\" column=\"entity_version\" node=\"entity_version\" type=\"string\"/>"+
-				"		<property name=\"sync_data\" column=\"sync_data\" node=\"sync_data\" type=\"string\" length=\"65535\"/>"+
-				"	</class>"+
-				"</hibernate-mapping>";
-				
-				String xml = MessageFormat.format(template, syncTableName);
-				FileUtils.write(syncFileMapping.getCanonicalPath(), xml.getBytes());
-				mustCreateTables = true;
-			} catch (Exception e) {
-				throw new MeshException(e);
+		String syncTableName;
+		for (String tableName : tables.keySet()) {
+			syncTableName = tables.get(tableName);
+			
+			File contentMapping = FileUtils.getFile(baseDirectory, tableName+".hbm.xml");
+			if(!contentMapping.exists()){
+				Guard.throwsException("INVALID_TABLE_NAME");
+			}			
+			
+			File syncFileMapping = FileUtils.getFile(baseDirectory, syncTableName+".hbm.xml");
+			if(!syncFileMapping.exists()){
+				try{
+					String template = "<?xml version=\"1.0\"?><!DOCTYPE hibernate-mapping PUBLIC \"-//Hibernate/Hibernate Mapping DTD 3.0//EN\" \"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd\">"+
+					"<hibernate-mapping>"+
+					"	<class entity-name=\"{0}\" node=\"{0}\" table=\"{0}\">"+
+					"		<id name=\"sync_id\" type=\"string\" column=\"sync_id\">"+
+					"			<generator class=\"assigned\"/>"+
+					"		</id>"+
+					"		<property name=\"entity_name\" column=\"entity_name\" node=\"entity_name\" type=\"string\"/>"+
+					"		<property name=\"entity_id\" column=\"entity_id\" node=\"entity_id\" type=\"string\"/>"+
+					"		<property name=\"entity_version\" column=\"entity_version\" node=\"entity_version\" type=\"string\"/>"+
+					"		<property name=\"sync_data\" column=\"sync_data\" node=\"sync_data\" type=\"string\" length=\"65535\"/>"+
+					"	</class>"+
+					"</hibernate-mapping>";
+					
+					String xml = MessageFormat.format(template, syncTableName);
+					FileUtils.write(syncFileMapping.getCanonicalPath(), xml.getBytes());
+					mustCreateTables = true;
+				} catch (Exception e) {
+					throw new MeshException(e);
+				}
 			}
+			
+			builder.addMapping(syncFileMapping);
+			builder.addMapping(contentMapping);
 		}
-		
-		builder.addMapping(syncFileMapping);
-		builder.addMapping(contentMapping);
-		
 		
 		Configuration cfg = builder.buildConfiguration();
 		if(mustCreateTables){			
@@ -185,29 +225,41 @@ public class HibernateSyncAdapterFactory implements ISyncAdapterFactory{
 			schemaExport.execute(true, true);
 		}
 		
-		PersistentClass mapping = cfg.getClassMapping(syncTableName);
-		if(mapping == null){
-			Guard.throwsException("INVALID_TABLE_NAME");
+		HashMap<String, PersistentClass> mappings = new HashMap<String, PersistentClass>();
+		
+		
+		for (String tableName : tables.keySet()) {
+			syncTableName = tables.get(tableName);
+
+			PersistentClass syncMapping = cfg.getClassMapping(syncTableName);
+			if(syncMapping == null){
+				Guard.throwsException("INVALID_TABLE_NAME");
+			}
+			
+			PersistentClass contentMapping = cfg.getClassMapping(tableName);
+			if(contentMapping == null){  // TODO (JMT) create tables automatically if absent from RDF schema
+				Guard.throwsException("INVALID_TABLE_NAME");
+			}
+			
+			mappings.put(tableName, contentMapping);
 		}
 		
-		mapping = cfg.getClassMapping(tableName);
-		if(contentMapping == null){  // TODO (JMT) create tables automatically if absent from RDF schema
-			Guard.throwsException("INVALID_TABLE_NAME");
-		}
-		
-		return mapping;
+		return mappings;
 		
 	}
 
-	private static void autodiscoveryMappings(
-			HibernateSessionFactoryBuilder builder, String tableName,
-			String syncTableName, String baseDirectory) {
+	private static void autodiscoveryMappings(HibernateSessionFactoryBuilder builder, String baseDirectory, Map<String, String> tables) {
 		JDBCMetaDataConfiguration cfg = new JDBCMetaDataConfiguration();
 		builder.initializeConfiguration(cfg);		
 		
 		TableSelectorStrategy reverseEngineeringStrategy = new TableSelectorStrategy(new DefaultReverseEngineeringStrategy());
-		reverseEngineeringStrategy.addSchemaSelection(new SchemaSelection(null, null, tableName));
-		reverseEngineeringStrategy.addSchemaSelection(new SchemaSelection(null, null, syncTableName));
+		
+		for (String tableName : tables.keySet()) {
+			String syncTableName = tables.get(tableName);
+			
+			reverseEngineeringStrategy.addSchemaSelection(new SchemaSelection(null, null, tableName));
+			reverseEngineeringStrategy.addSchemaSelection(new SchemaSelection(null, null, syncTableName));
+		}
 		
 		cfg.setReverseEngineeringStrategy(reverseEngineeringStrategy);
 		cfg.readFromJDBC();		
@@ -217,8 +269,7 @@ public class HibernateSyncAdapterFactory implements ISyncAdapterFactory{
 		exporter.start();
 	}
 
-	@SuppressWarnings("unchecked")
-	public static HibernateSessionFactoryBuilder createHibernateFactoryBuilder(String connectionURL, String user, String password, Class driverClass, Class dialectClass, File propertyFile) {
+	public static <T extends java.sql.Driver, F extends Dialect> HibernateSessionFactoryBuilder createHibernateFactoryBuilder(String connectionURL, String user, String password, Class<T> driverClass, Class<F> dialectClass, File propertyFile) {
 		
 		HibernateSessionFactoryBuilder builder = new HibernateSessionFactoryBuilder();
 		builder.setProperty("hibernate.dialect", dialectClass.getName());

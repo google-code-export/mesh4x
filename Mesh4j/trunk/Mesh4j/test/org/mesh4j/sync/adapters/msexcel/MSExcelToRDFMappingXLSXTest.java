@@ -37,7 +37,10 @@ public class MSExcelToRDFMappingXLSXTest {
 			@Override public void flush() {}
 			@Override public Workbook getWorkbook() {return getDefaultWorkbook();}
 			@Override public void setDirty() {}
-			@Override public String getFileName() {return "myFile.xlsx";}			
+			@Override public String getFileName() {return "myFile.xlsx";}
+			@Override public void reload() {}
+			@Override public boolean fileExists() {return false;}
+			@Override public Sheet getSheet(String sheetName) {return null;}
 		};
 		
 		RDFSchema rdfSchema = MsExcelToRDFMapping.extractRDFSchema(excel, SHEET_NAME, "http://localhost:8080/mesh4x/feeds/MyExample");
@@ -65,6 +68,9 @@ public class MSExcelToRDFMappingXLSXTest {
 			@Override public Workbook getWorkbook() {return getDefaultWorkbook();}
 			@Override public void setDirty() {}	
 			@Override public String getFileName() {return "myFile.xlsx";}
+			@Override public void reload() {}
+			@Override public boolean fileExists() {return false;}
+			@Override public Sheet getSheet(String sheetName) {return null;}
 		};
 		
 		RDFSchema rdfSchema = MsExcelToRDFMapping.extractRDFSchema(excel, SHEET_NAME, "http://localhost:8080/mesh4x/feeds/MyExample");
@@ -160,6 +166,9 @@ public class MSExcelToRDFMappingXLSXTest {
 			@Override public Workbook getWorkbook() {return getDefaultWorkbook();}
 			@Override public void setDirty() {}		
 			@Override public String getFileName() {return "myFile.xlsx";}
+			@Override public void reload() {}
+			@Override public boolean fileExists() {return false;}
+			@Override public Sheet getSheet(String sheetName) {return null;}
 		};
 		RDFSchema rdfSchema = MsExcelToRDFMapping.extractRDFSchema(excel, SHEET_NAME, "http://localhost:8080/mesh4x/feeds/MyExample");
 		MsExcelToRDFMapping mapper = new MsExcelToRDFMapping(rdfSchema, COLUMN_CODE);
@@ -204,6 +213,9 @@ public class MSExcelToRDFMappingXLSXTest {
 			@Override public Workbook getWorkbook() {return getDefaultWorkbook();}
 			@Override public void setDirty() {}	
 			@Override public String getFileName() {return "myFile.xlsx";}
+			@Override public void reload() {}
+			@Override public boolean fileExists() {return false;}
+			@Override public Sheet getSheet(String sheetName) {return null;}
 		};
 		
 		RDFSchema rdfSchema = MsExcelToRDFMapping.extractRDFSchema(excel, SHEET_NAME, "http://localhost:8080/mesh4x/feeds/MyExample");
@@ -211,7 +223,7 @@ public class MSExcelToRDFMappingXLSXTest {
 		
 		// create new file
 		String newFileName = TestHelper.fileName("testRDFExcel"+IdGenerator.INSTANCE.newID()+".xlsx");
-		mapper.createDataSource(newFileName);
+		mapper.createDataSource(new MsExcel(newFileName));
 		
 		Workbook wb = new XSSFWorkbook(new File(newFileName).getAbsolutePath());
 		Sheet sheet = wb.getSheet(SHEET_NAME);

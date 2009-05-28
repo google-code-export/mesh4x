@@ -27,7 +27,8 @@ public class HibernateTypesTests {
 			"mesh_example_1", 
 			"mesh_example_1_sync", 
 			"http://mesh4x/test", 
-			TestHelper.baseDirectoryRootForTest());
+			TestHelper.baseDirectoryRootForTest(),
+			NullIdentityProvider.INSTANCE);
 		
 		String fileName = TestHelper.fileName(IdGenerator.INSTANCE.newID() + "_feed_test_hibernate_types.xml");
 		Feed feed = new Feed("test", "test", "http://mesh4x/test/testHibernateTypes");
@@ -52,7 +53,8 @@ public class HibernateTypesTests {
 			tableName, 
 			tableName + "_sync", 
 			rdfBaseURL, 
-			TestHelper.baseDirectoryRootForTest());
+			TestHelper.baseDirectoryRootForTest(),
+			NullIdentityProvider.INSTANCE);
 
 		RDFSchema rdfSchema = (RDFSchema)((HibernateContentAdapter)adapterSource.getContentAdapter()).getMapping().getSchema();
 		

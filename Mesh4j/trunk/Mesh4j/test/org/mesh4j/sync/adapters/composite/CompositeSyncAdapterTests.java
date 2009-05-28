@@ -47,21 +47,21 @@ public class CompositeSyncAdapterTests {
 	@Test
 	public void shouldGetName(){
 		InMemorySyncAdapter opaqueAdapter = new InMemorySyncAdapter("source1", NullIdentityProvider.INSTANCE);
-		CompositeSyncAdapter composite = new CompositeSyncAdapter("test", opaqueAdapter, NullIdentityProvider.INSTANCE, new IdentifiableSyncAdapter("type", "id", opaqueAdapter));
+		CompositeSyncAdapter composite = new CompositeSyncAdapter("test", opaqueAdapter, NullIdentityProvider.INSTANCE, new IdentifiableSyncAdapter("type", opaqueAdapter));
 		Assert.assertEquals("test", composite.getFriendlyName());
 	}
 
 	@Test
 	public void shouldGetAuthenticatedUser(){
 		InMemorySyncAdapter opaqueAdapter = new InMemorySyncAdapter("source1", NullIdentityProvider.INSTANCE);
-		CompositeSyncAdapter composite = new CompositeSyncAdapter("test", opaqueAdapter, NullIdentityProvider.INSTANCE, new IdentifiableSyncAdapter("type", "id", opaqueAdapter));
+		CompositeSyncAdapter composite = new CompositeSyncAdapter("test", opaqueAdapter, NullIdentityProvider.INSTANCE, new IdentifiableSyncAdapter("type", opaqueAdapter));
 		Assert.assertEquals(NullIdentityProvider.INSTANCE.getAuthenticatedUser(), composite.getAuthenticatedUser());
 	}
 	
 	@Test
 	public void shouldAddItem(){
 		InMemorySyncAdapter opaqueAdapter = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
-		IIdentifiableSyncAdapter adapter = new IdentifiableSyncAdapter("foo", "id", new InMemorySyncAdapter("foo", NullIdentityProvider.INSTANCE));
+		IIdentifiableSyncAdapter adapter = new IdentifiableSyncAdapter("foo", new InMemorySyncAdapter("foo", NullIdentityProvider.INSTANCE));
 		CompositeSyncAdapter composite = new CompositeSyncAdapter("composite", opaqueAdapter, NullIdentityProvider.INSTANCE, adapter);
 		
 		Item foo = makeItem("foo");
@@ -77,7 +77,7 @@ public class CompositeSyncAdapterTests {
 	@Test
 	public void shouldAddOpaqueItem(){
 		InMemorySyncAdapter opaqueAdapter = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
-		IIdentifiableSyncAdapter adapter = new IdentifiableSyncAdapter("foo", "id", new InMemorySyncAdapter("foo", NullIdentityProvider.INSTANCE));
+		IIdentifiableSyncAdapter adapter = new IdentifiableSyncAdapter("foo", new InMemorySyncAdapter("foo", NullIdentityProvider.INSTANCE));
 		CompositeSyncAdapter composite = new CompositeSyncAdapter("composite", opaqueAdapter, NullIdentityProvider.INSTANCE, adapter);
 		
 		Item bar = makeItem("bar");
@@ -92,7 +92,7 @@ public class CompositeSyncAdapterTests {
 	@Test
 	public void shouldUpdateItem(){
 		InMemorySyncAdapter opaqueAdapter = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
-		IIdentifiableSyncAdapter adapter = new IdentifiableSyncAdapter("foo", "id", new InMemorySyncAdapter("foo", NullIdentityProvider.INSTANCE));
+		IIdentifiableSyncAdapter adapter = new IdentifiableSyncAdapter("foo", new InMemorySyncAdapter("foo", NullIdentityProvider.INSTANCE));
 		CompositeSyncAdapter composite = new CompositeSyncAdapter("composite", opaqueAdapter, NullIdentityProvider.INSTANCE, adapter);
 
 		Item foo = makeItem("foo");
@@ -111,7 +111,7 @@ public class CompositeSyncAdapterTests {
 	@Test
 	public void shouldUpdateOpaqueItem(){
 		InMemorySyncAdapter opaqueAdapter = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
-		IIdentifiableSyncAdapter adapter = new IdentifiableSyncAdapter("foo", "id", new InMemorySyncAdapter("foo", NullIdentityProvider.INSTANCE));
+		IIdentifiableSyncAdapter adapter = new IdentifiableSyncAdapter("foo", new InMemorySyncAdapter("foo", NullIdentityProvider.INSTANCE));
 		CompositeSyncAdapter composite = new CompositeSyncAdapter("composite", opaqueAdapter, NullIdentityProvider.INSTANCE, adapter);
 
 		Item bar = makeItem("bar");
@@ -130,7 +130,7 @@ public class CompositeSyncAdapterTests {
 	@Test
 	public void shouldDeleteItem(){
 		InMemorySyncAdapter opaqueAdapter = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
-		IIdentifiableSyncAdapter adapter = new IdentifiableSyncAdapter("foo", "id", new InMemorySyncAdapter("foo", NullIdentityProvider.INSTANCE));
+		IIdentifiableSyncAdapter adapter = new IdentifiableSyncAdapter("foo", new InMemorySyncAdapter("foo", NullIdentityProvider.INSTANCE));
 		CompositeSyncAdapter composite = new CompositeSyncAdapter("composite", opaqueAdapter, NullIdentityProvider.INSTANCE, adapter);
 		
 		Item foo = makeItem("foo");
@@ -156,7 +156,7 @@ public class CompositeSyncAdapterTests {
 	@Test
 	public void shouldDeleteOpaqueItem(){
 		InMemorySyncAdapter opaqueAdapter = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
-		IIdentifiableSyncAdapter adapter = new IdentifiableSyncAdapter("foo", "id", new InMemorySyncAdapter("foo", NullIdentityProvider.INSTANCE));
+		IIdentifiableSyncAdapter adapter = new IdentifiableSyncAdapter("foo", new InMemorySyncAdapter("foo", NullIdentityProvider.INSTANCE));
 		CompositeSyncAdapter composite = new CompositeSyncAdapter("composite", opaqueAdapter, NullIdentityProvider.INSTANCE, adapter);
 		
 		Item foo = makeItem("foo");
@@ -182,7 +182,7 @@ public class CompositeSyncAdapterTests {
 	@Test
 	public void shouldGetItem(){
 		InMemorySyncAdapter opaqueAdapter = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
-		IIdentifiableSyncAdapter adapter = new IdentifiableSyncAdapter("foo", "id", new InMemorySyncAdapter("foo", NullIdentityProvider.INSTANCE));
+		IIdentifiableSyncAdapter adapter = new IdentifiableSyncAdapter("foo", new InMemorySyncAdapter("foo", NullIdentityProvider.INSTANCE));
 		CompositeSyncAdapter composite = new CompositeSyncAdapter("composite", opaqueAdapter, NullIdentityProvider.INSTANCE, adapter);
 		
 		Item foo = makeItem("foo");
@@ -197,7 +197,7 @@ public class CompositeSyncAdapterTests {
 	@Test
 	public void shouldGetOpaqueItem(){
 		InMemorySyncAdapter opaqueAdapter = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
-		IIdentifiableSyncAdapter adapter = new IdentifiableSyncAdapter("foo", "id", new InMemorySyncAdapter("foo", NullIdentityProvider.INSTANCE));
+		IIdentifiableSyncAdapter adapter = new IdentifiableSyncAdapter("foo", new InMemorySyncAdapter("foo", NullIdentityProvider.INSTANCE));
 		CompositeSyncAdapter composite = new CompositeSyncAdapter("composite", opaqueAdapter, NullIdentityProvider.INSTANCE, adapter);
 		
 		Item foo = makeItem("foo");
@@ -212,7 +212,7 @@ public class CompositeSyncAdapterTests {
 	@Test
 	public void shouldGetAll(){
 		InMemorySyncAdapter opaqueAdapter = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
-		IIdentifiableSyncAdapter adapter = new IdentifiableSyncAdapter("foo", "id", new InMemorySyncAdapter("foo", NullIdentityProvider.INSTANCE));
+		IIdentifiableSyncAdapter adapter = new IdentifiableSyncAdapter("foo", new InMemorySyncAdapter("foo", NullIdentityProvider.INSTANCE));
 		CompositeSyncAdapter composite = new CompositeSyncAdapter("composite", opaqueAdapter, NullIdentityProvider.INSTANCE, adapter);
 		
 		Item foo = makeItem("foo");
@@ -246,7 +246,7 @@ public class CompositeSyncAdapterTests {
 	@Test
 	public void shouldGetAllSinceDateAndFilter() throws InterruptedException{
 		InMemorySyncAdapter opaqueAdapter = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
-		IIdentifiableSyncAdapter adapter = new IdentifiableSyncAdapter("foo", "id", new InMemorySyncAdapter("foo", NullIdentityProvider.INSTANCE));
+		IIdentifiableSyncAdapter adapter = new IdentifiableSyncAdapter("foo", new InMemorySyncAdapter("foo", NullIdentityProvider.INSTANCE));
 		CompositeSyncAdapter composite = new CompositeSyncAdapter("composite", opaqueAdapter, NullIdentityProvider.INSTANCE, adapter);
 
 		Date date = TestHelper.makeDate(2008, 1, 1, 1, 1, 1, 1);
@@ -381,10 +381,10 @@ public class CompositeSyncAdapterTests {
 		items2.add(bar3);
 		
 		InMemorySyncAdapter adapterSourceM1 = new InMemorySyncAdapter("source1", NullIdentityProvider.INSTANCE, items1);
-		IdentifiableSyncAdapter adapterSource1 = new IdentifiableSyncAdapter("foo", "id", adapterSourceM1);
+		IdentifiableSyncAdapter adapterSource1 = new IdentifiableSyncAdapter("foo", adapterSourceM1);
 		
 		InMemorySyncAdapter adapterSourceM2 = new InMemorySyncAdapter("source2", NullIdentityProvider.INSTANCE, items2);
-		IdentifiableSyncAdapter adapterSource2 = new IdentifiableSyncAdapter("bar", "id", adapterSourceM2);
+		IdentifiableSyncAdapter adapterSource2 = new IdentifiableSyncAdapter("bar", adapterSourceM2);
 		
 		ISyncAdapter opaqueAdapter = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
 		ISyncAdapter adapterSource = new CompositeSyncAdapter("composite", opaqueAdapter, NullIdentityProvider.INSTANCE, adapterSource1, adapterSource2);
@@ -437,10 +437,10 @@ public class CompositeSyncAdapterTests {
 		items2.add(bar3);
 		
 		InMemorySyncAdapter adapterSourceM1 = new InMemorySyncAdapter("source1", NullIdentityProvider.INSTANCE, items1);
-		IdentifiableSyncAdapter adapterSource1 = new IdentifiableSyncAdapter("foo", "id", adapterSourceM1);
+		IdentifiableSyncAdapter adapterSource1 = new IdentifiableSyncAdapter("foo", adapterSourceM1);
 		
 		InMemorySyncAdapter adapterSourceM2 = new InMemorySyncAdapter("source2", NullIdentityProvider.INSTANCE, items2);
-		IdentifiableSyncAdapter adapterSource2 = new IdentifiableSyncAdapter("bar", "id", adapterSourceM2);
+		IdentifiableSyncAdapter adapterSource2 = new IdentifiableSyncAdapter("bar", adapterSourceM2);
 		
 		ISyncAdapter opaqueAdapter = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
 		ISyncAdapter adapterSource = new CompositeSyncAdapter("composite", opaqueAdapter, NullIdentityProvider.INSTANCE, adapterSource1, adapterSource2);
@@ -452,10 +452,10 @@ public class CompositeSyncAdapterTests {
 		items4.add(bar4);
 		
 		InMemorySyncAdapter adapterTargetM3 = new InMemorySyncAdapter("source1", NullIdentityProvider.INSTANCE, items3);
-		IdentifiableSyncAdapter adapterTarget1 = new IdentifiableSyncAdapter("foo", "id", adapterTargetM3);
+		IdentifiableSyncAdapter adapterTarget1 = new IdentifiableSyncAdapter("foo", adapterTargetM3);
 		
 		InMemorySyncAdapter adapterTargetM4 = new InMemorySyncAdapter("target2", NullIdentityProvider.INSTANCE, items4);
-		IdentifiableSyncAdapter adapterTarget2 = new IdentifiableSyncAdapter("bar", "id", adapterTargetM4);
+		IdentifiableSyncAdapter adapterTarget2 = new IdentifiableSyncAdapter("bar", adapterTargetM4);
 		
 		ISyncAdapter opaqueAdapter2 = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
 		ISyncAdapter adapterTarget = new CompositeSyncAdapter("composite target", opaqueAdapter2, NullIdentityProvider.INSTANCE, adapterTarget1, adapterTarget2);
@@ -486,10 +486,10 @@ public class CompositeSyncAdapterTests {
 	public void shouldSyncCompositeAdapterAddItemsToOpaqueSubAdapter(){
 		
 		InMemorySyncAdapter adapterM1 = new InMemorySyncAdapter("source1", NullIdentityProvider.INSTANCE);
-		IdentifiableSyncAdapter adapterSource1 = new IdentifiableSyncAdapter("foo", "id", adapterM1);
+		IdentifiableSyncAdapter adapterSource1 = new IdentifiableSyncAdapter("foo", adapterM1);
 		
 		InMemorySyncAdapter adapterM2 = new InMemorySyncAdapter("source2", NullIdentityProvider.INSTANCE);
-		IdentifiableSyncAdapter adapterSource2 = new IdentifiableSyncAdapter("bar", "id", adapterM2);
+		IdentifiableSyncAdapter adapterSource2 = new IdentifiableSyncAdapter("bar", adapterM2);
 
 		ISyncAdapter opaqueAdapter = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
 		ISyncAdapter compositeAdapter = new CompositeSyncAdapter("composite", opaqueAdapter, NullIdentityProvider.INSTANCE, adapterSource1, adapterSource2);
@@ -540,7 +540,6 @@ public class CompositeSyncAdapterTests {
 		public boolean beginSyncWasCalled() {return this.beginWasCalled;}
 		public void endSync() {this.endWasCalled = true; }
 		public boolean endSyncWasCalled() {return this.endWasCalled;}
-		@Override public String getIdName() {return null;}
 		@Override public String getType() {return null;}
 		@Override public void add(Item item) {}
 		@Override public void delete(String id) {}

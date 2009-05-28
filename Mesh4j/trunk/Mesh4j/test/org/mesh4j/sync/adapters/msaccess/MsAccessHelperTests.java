@@ -9,6 +9,7 @@ import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.Item;
+import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.test.utils.TestHelper;
 
 public class MsAccessHelperTests {
@@ -26,12 +27,14 @@ public class MsAccessHelperTests {
 		ISyncAdapter syncAdapterA = factory.createSyncAdapterFromFile(
 			"Oswego",
 			TestHelper.baseDirectoryRootForTest() + "ms-access\\epiinfo\\test1\\epiinfo.mdb", 
-			"Oswego");
+			"Oswego",
+			NullIdentityProvider.INSTANCE);
 			
 		ISyncAdapter syncAdapterB = factory.createSyncAdapterFromFile(
 			"Oswego",
 			TestHelper.baseDirectoryRootForTest() + "ms-access\\epiinfo\\test2\\epiinfo.mdb", 
-			"Oswego");
+			"Oswego",
+			NullIdentityProvider.INSTANCE);
 	
 		SyncEngine syncEngine = new SyncEngine(syncAdapterA, syncAdapterB);
 		

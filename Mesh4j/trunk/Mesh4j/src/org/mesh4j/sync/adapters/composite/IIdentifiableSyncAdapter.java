@@ -6,5 +6,4 @@ public interface IIdentifiableSyncAdapter extends ISyncAdapter {
 
 	String getType();
 
-	String getIdName();
 }

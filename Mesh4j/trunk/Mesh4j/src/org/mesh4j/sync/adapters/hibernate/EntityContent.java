@@ -4,7 +4,6 @@ import org.dom4j.Element;
 import org.mesh4j.sync.model.Content;
 import org.mesh4j.sync.model.IContent;
 
-
 public class EntityContent extends Content{
 	
 	// MODEL VARIABLESs

@@ -41,12 +41,12 @@
 	<classpathentry kind="lib" path="lib/mail.jar"/>
 	<classpathentry kind="lib" path="lib/mysql-connector-java-5.1.6-bin.jar"/>
 	<classpathentry kind="lib" path="lib/xercesImpl.jar"/>
-	<classpathentry kind="lib" path="lib/mesh4j-1.0.0.jar"/>
 	<classpathentry kind="lib" path="/Mesh4j/lib/jakarta-poi/ooxml-schemas-1.0.jar"/>
 	<classpathentry kind="lib" path="/Mesh4j/lib/jakarta-poi/poi-3.5-beta5-20090219.jar" sourcepath="E:/Clarius/java/poi-src-3.5-beta5-20090219.zip"/>
 	<classpathentry kind="lib" path="/Mesh4j/lib/jakarta-poi/poi-contrib-3.5-beta5-20090219.jar"/>
 	<classpathentry kind="lib" path="/Mesh4j/lib/jakarta-poi/poi-ooxml-3.5-beta5-20090219.jar" sourcepath="E:/Clarius/java/poi-src-3.5-beta5-20090219.zip"/>
 	<classpathentry kind="lib" path="/Mesh4j/lib/jakarta-poi/poi-scratchpad-3.5-beta5-20090219.jar"/>
 	<classpathentry kind="lib" path="/Mesh4j/lib/jakarta-poi/xmlbeans-2.3.0.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Mesh4j"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

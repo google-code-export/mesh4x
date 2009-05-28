@@ -51,8 +51,9 @@ public class MsExcelRDFSyncXLSXTest {
 		MsExcelToRDFMapping rdfMapping = new MsExcelToRDFMapping(schema, idColumn);
 		
 		// source split adapter
-		File fileSource = TestHelper.makeFileAndDeleteIfExists("myFileSource.xlsx");
-		Workbook workbookSource = rdfMapping.createDataSource(fileSource.getCanonicalPath());	
+		IMsExcel excel1 = new MsExcel(TestHelper.makeFileAndDeleteIfExists("myFileSource.xlsx").getCanonicalPath());
+		rdfMapping.createDataSource(excel1);
+		Workbook workbookSource = excel1.getWorkbook();
 		Date date1 = new Date();
 		Date date2 = new Date();
 		Date date3 = new Date();
@@ -61,14 +62,15 @@ public class MsExcelRDFSyncXLSXTest {
 		addData(workbookSource, sheetName, "juan3", "3", 3, "male", false, date3);
 		Assert.assertEquals(3, workbookSource.getSheet(sheetName).getLastRowNum()); 
 		
-		MockMsExcel excelSource = new MockMsExcel(workbookSource);
+		MockMsExcel excelSource = new MockMsExcel(excel1);
 		MsExcelSyncRepository syncRepoSource = new MsExcelSyncRepository(excelSource, sheetName+"_sync", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		MsExcelContentAdapter contentAdapterSource = new MsExcelContentAdapter(excelSource, rdfMapping, sheetName);
 		ISyncAdapter source = new SplitAdapter(syncRepoSource, contentAdapterSource, NullIdentityProvider.INSTANCE);
 
 		// target split adapter
-		File fileTarget = TestHelper.makeFileAndDeleteIfExists("myFileSource.xlsx");
-		Workbook workbookTarget = rdfMapping.createDataSource(fileTarget.getCanonicalPath());
+		IMsExcel excel2 = new MsExcel(TestHelper.makeFileAndDeleteIfExists("myFileSource.xlsx").getCanonicalPath());
+		rdfMapping.createDataSource(excel2);
+		Workbook workbookTarget = excel2.getWorkbook();
 		Date date4 = new Date();
 		Date date5 = new Date();
 		Date date6 = new Date();
@@ -77,7 +79,7 @@ public class MsExcelRDFSyncXLSXTest {
 		addData(workbookTarget, sheetName, "juan6", "6", 3, "male", false, date6);
 		Assert.assertEquals(3, workbookTarget.getSheet(sheetName).getLastRowNum());
 		
-		MockMsExcel excelTarget = new MockMsExcel(workbookTarget);			
+		MockMsExcel excelTarget = new MockMsExcel(excel2);			
 		MsExcelSyncRepository syncRepoTarget = new MsExcelSyncRepository(excelTarget, sheetName+"_sync", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		MsExcelContentAdapter contentAdapterTarget = new MsExcelContentAdapter(excelTarget, rdfMapping, sheetName);
 		ISyncAdapter target = new SplitAdapter(syncRepoTarget, contentAdapterTarget, NullIdentityProvider.INSTANCE);
@@ -238,15 +240,16 @@ public class MsExcelRDFSyncXLSXTest {
 
 	private class MockMsExcel implements IMsExcel{
 
-		private Workbook workbook;
+		private IMsExcel excel;
 		private boolean flushWasCalled = false;
 		private boolean dirtyWasCalled = false;
 		
-		private MockMsExcel(Workbook workbook){
-			this.workbook = workbook;
+		private MockMsExcel(IMsExcel excel){
+			this.excel = excel;
 		}
 		
 		@Override public void flush() {
+			this.excel.flush();
 			flushWasCalled = true;
 		}
 
@@ -260,17 +263,33 @@ public class MsExcelRDFSyncXLSXTest {
 
 		@Override
 		public Workbook getWorkbook() {
-			return workbook;
+			return this.excel.getWorkbook();
 		}
 
 		@Override
 		public void setDirty() {
+			this.excel.setDirty();
 			dirtyWasCalled = true;			
 		}
 
 		@Override
 		public String getFileName() {
-			return "myFile.xlsx";
+			return this.excel.getFileName();
+		}
+
+		@Override
+		public void reload() {
+			this.excel.reload();
+		}
+
+		@Override
+		public boolean fileExists() {
+			return this.excel.fileExists();
+		}
+
+		@Override
+		public Sheet getSheet(String sheetName) {
+			return this.excel.getSheet(sheetName);
 		}
 		
 	}

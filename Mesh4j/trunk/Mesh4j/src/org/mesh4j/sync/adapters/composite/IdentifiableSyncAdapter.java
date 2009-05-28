@@ -13,24 +13,16 @@ public class IdentifiableSyncAdapter implements IIdentifiableSyncAdapter, ISyncA
 
 	// MODEL VARIABLES
 	private String type;
-	private String idName;
 	private ISyncAdapter syncAdapter;
 	
 	// BUSINESS METHODS
 
-	public IdentifiableSyncAdapter(String type, String idName, ISyncAdapter syncAdapter) {
+	public IdentifiableSyncAdapter(String type, ISyncAdapter syncAdapter) {
 		Guard.argumentNotNullOrEmptyString(type, "type");
-		Guard.argumentNotNullOrEmptyString(idName, "idName");
 		Guard.argumentNotNull(syncAdapter, "syncAdapter");
 		
-		this.idName = idName;
 		this.syncAdapter = syncAdapter;
 		this.type = type;
-	}
-	
-	@Override
-	public String getIdName() {
-		return this.idName;
 	}
 
 	@Override
@@ -105,6 +97,10 @@ public class IdentifiableSyncAdapter implements IIdentifiableSyncAdapter, ISyncA
 		if(this.syncAdapter instanceof ISyncAware){
 			((ISyncAware) this.syncAdapter).endSync();
 		}		
+	}
+
+	public ISyncAdapter getSyncAdapter() {
+		return this.syncAdapter;
 	}
 
 }

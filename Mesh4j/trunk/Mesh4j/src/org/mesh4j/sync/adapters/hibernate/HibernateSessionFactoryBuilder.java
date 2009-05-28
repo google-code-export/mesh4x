@@ -2,6 +2,7 @@ package org.mesh4j.sync.adapters.hibernate;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
@@ -23,7 +24,7 @@ public class HibernateSessionFactoryBuilder implements IHibernateSessionFactoryB
 	private Set<File> mappings = new TreeSet<File>();
 	private Properties properties = new Properties();
 	private File propertiesFile;
-	private IRDFSchema rdfSchema;
+	private HashMap<String, IRDFSchema> rdfSchemas = new HashMap<String, IRDFSchema>();
 	
 	// BUSINESS METHODS
 	
@@ -100,7 +101,8 @@ public class HibernateSessionFactoryBuilder implements IHibernateSessionFactoryB
 
 	@Override
 	public IHibernateToXMLMapping buildMeshMapping(String entityName, String idNode) {
-		if(this.rdfSchema != null){
+		IRDFSchema rdfSchema = this.rdfSchemas.get(entityName);
+		if(rdfSchema != null){
 			return new HibernateToRDFMapping(rdfSchema, entityName, idNode);
 		} else {
 			return new HibernateToPlainXMLMapping(entityName, idNode);
@@ -112,8 +114,8 @@ public class HibernateSessionFactoryBuilder implements IHibernateSessionFactoryB
 		return buildMeshMapping(entityName, this.getIdentifierPropertyName(entityName));
 	}
 	
-	public void addRDFSchema(IRDFSchema schema){
-		this.rdfSchema = schema;
+	public void addRDFSchema(String tableName, IRDFSchema rdfSchema){
+		this.rdfSchemas.put(tableName, rdfSchema);
 	}
 
 }

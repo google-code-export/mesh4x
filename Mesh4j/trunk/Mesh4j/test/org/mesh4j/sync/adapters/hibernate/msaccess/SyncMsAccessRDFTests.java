@@ -21,6 +21,8 @@ import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
 import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.test.utils.TestHelper;
 
+import sun.jdbc.odbc.JdbcOdbcDriver;
+
 public class SyncMsAccessRDFTests {
 
 	@Test
@@ -37,7 +39,7 @@ public class SyncMsAccessRDFTests {
 		// CREATE SPLIT A
 		HibernateSessionFactoryBuilder builderA = new HibernateSessionFactoryBuilder();
 		builderA.setProperty("hibernate.dialect", MsAccessDialect.class.getName());
-		builderA.setProperty("hibernate.connection.driver_class","sun.jdbc.odbc.JdbcOdbcDriver");
+		builderA.setProperty("hibernate.connection.driver_class", JdbcOdbcDriver.class.getName());
 		builderA.setProperty("hibernate.connection.url",databaseA);
 		builderA.setProperty("hibernate.connection.username","");
 		builderA.setProperty("hibernate.connection.password","");
@@ -48,7 +50,7 @@ public class SyncMsAccessRDFTests {
 		schemaA.addStringProperty("id", "id", "en");
 		schemaA.addStringProperty("pass", "password", "en");
 		schemaA.addStringProperty("name", "name", "en");
-		builderA.addRDFSchema(schemaA);
+		builderA.addRDFSchema("user", schemaA);
 		
 		SyncInfoParser syncInfoParser = new SyncInfoParser(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
@@ -70,7 +72,7 @@ public class SyncMsAccessRDFTests {
 		schemaB.addStringProperty("id", "id", "en");
 		schemaB.addStringProperty("pass", "password", "en");
 		schemaB.addStringProperty("name", "name", "en");
-		builderB.addRDFSchema(schemaB);
+		builderB.addRDFSchema("user", schemaB);
 		
 		HibernateSyncRepository syncRepositoryB = new HibernateSyncRepository(builderB, syncInfoParser);
 		HibernateContentAdapter contentAdapterB = new HibernateContentAdapter(builderB, "user");
@@ -113,7 +115,7 @@ public class SyncMsAccessRDFTests {
 		schemaA.addStringProperty("id", "id", "en");
 		schemaA.addStringProperty("pass", "password", "en");
 		schemaA.addStringProperty("name", "name", "en");
-		builderA.addRDFSchema(schemaA);
+		builderA.addRDFSchema("user", schemaA);
 		
 		SyncInfoParser syncInfoParser = new SyncInfoParser(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		

@@ -1,5 +1,8 @@
 package org.mesh4j.sync.adapters.msexcel;
 
+import java.io.File;
+
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
@@ -51,5 +54,21 @@ public class MsExcel implements IMsExcel {
 	@Override
 	public String getFileName() {
 		return this.fileName;
+	}
+
+	@Override
+	public void reload() {
+		this.dirty = false;
+		this.getOrCreateWorkbookIfAbsent(this.fileName);
+	}
+
+	@Override
+	public boolean fileExists() {
+		return new File(this.fileName).exists();
+	}
+
+	@Override
+	public Sheet getSheet(String sheetName) {
+		return this.workbook.getSheet(sheetName);
 	}
 }

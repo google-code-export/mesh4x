@@ -169,8 +169,9 @@ public class MsExcelToRDFMapping implements IMsExcelToXMLMapping{
 	}
 
 	@Override
-	public Workbook createDataSource(String fileName) throws Exception {
-		Workbook workbook = MsExcelUtils.getOrCreateWorkbookIfAbsent(fileName);
+	public void createDataSource(IMsExcel excel) {
+		excel.setDirty();
+		Workbook workbook = excel.getWorkbook();
 
 		Sheet sheet = workbook.createSheet(this.rdfSchema.getOntologyClassName());
 		Row headerRow = sheet.createRow(0);
@@ -184,9 +185,7 @@ public class MsExcelToRDFMapping implements IMsExcelToXMLMapping{
 			headerCell = headerRow.createCell(j);
 			headerCell.setCellValue(MsExcelUtils.getRichTextString(workbook, propertyName));			
 		}
-		MsExcelUtils.flush(workbook, fileName);
-		workbook = MsExcelUtils.getOrCreateWorkbookIfAbsent(fileName);
-		return workbook;
+		excel.flush();
 	}
 	
 	@Override

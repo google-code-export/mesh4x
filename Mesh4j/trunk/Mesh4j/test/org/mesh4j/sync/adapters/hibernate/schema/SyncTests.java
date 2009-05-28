@@ -26,7 +26,8 @@ public class SyncTests {
 			"mesh_sync_example", 
 			"mesh_sync_info", 
 			"http://mesh4x/test", 
-			TestHelper.baseDirectoryRootForTest());
+			TestHelper.baseDirectoryRootForTest(),
+			NullIdentityProvider.INSTANCE);
 
 		ISyncAdapter adapterB = new InMemorySyncAdapter("mesh_sync_example", NullIdentityProvider.INSTANCE);
 		

@@ -8,7 +8,6 @@ import org.mesh4j.sync.AbstractSyncAdapter;
 import org.mesh4j.sync.IFilter;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.ISyncAware;
-import org.mesh4j.sync.adapters.hibernate.EntityContent;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.validations.Guard;
@@ -36,30 +35,36 @@ public class CompositeSyncAdapter extends AbstractSyncAdapter implements ISyncAw
 
 	@Override
 	public void add(Item item) {
-		EntityContent entityContent = normalize(item);
-		if(entityContent == null){
+		if(item.isDeleted()){
 			this.opaqueAdapter.add(item);
 		} else {
-			IIdentifiableSyncAdapter syncAdapter = this.getAdapter(entityContent);
-			syncAdapter.add(item);
+			IIdentifiableSyncAdapter syncAdapter = this.getAdapter(item);
+			if(syncAdapter == null){
+				this.opaqueAdapter.add(item);
+			} else {
+				syncAdapter.add(item);
+			}
 		}
 	}
 	
 	@Override
 	public void update(Item item) {
-		EntityContent entityContent = normalize(item);
-		if(entityContent == null){
-			this.opaqueAdapter.update(item);
+		if(item.isDeleted()){
+			delete(item.getSyncId());
 		} else {
-			IIdentifiableSyncAdapter syncAdapter = this.getAdapter(entityContent);
-			syncAdapter.update(item);
+			IIdentifiableSyncAdapter syncAdapter = this.getAdapter(item);
+			if(syncAdapter == null){
+				this.opaqueAdapter.update(item);
+			} else {
+				syncAdapter.update(item);
+			}
 		}
 	}
 
 	@Override
 	public void delete(String id) {
 		for (IIdentifiableSyncAdapter syncAdapter : this.adapters) {
-			// TODO improve it
+			// TODO (JMT) improve delete
 			syncAdapter.delete(id);
 		}
 		this.opaqueAdapter.delete(id);
@@ -123,24 +128,26 @@ public class CompositeSyncAdapter extends AbstractSyncAdapter implements ISyncAw
 		}
 	}
 
-	private EntityContent normalize(Item item) {
-		EntityContent entityContent;
-		for (IIdentifiableSyncAdapter syncAdapter : this.adapters) {
-			entityContent = EntityContent.normalizeContent(item.getContent(), syncAdapter.getType(), syncAdapter.getIdName());
-			if(entityContent != null){
-				return entityContent;
-			}
-		}		
-		return null;
+	public IIdentifiableSyncAdapter[] getAdapters() {
+		return this.adapters;
 	}
 
-	private IIdentifiableSyncAdapter getAdapter(EntityContent entityContent) {
+	private IIdentifiableSyncAdapter getAdapter(Item item) {
 		for (IIdentifiableSyncAdapter syncAdapter : this.adapters) {
-			if(syncAdapter.getType().equals(entityContent.getType())){
+			if(isAdapterForItem(syncAdapter, item)){
 				return syncAdapter;
 			}
 		}		
 		return null;
 	}
+
+	private boolean isAdapterForItem(IIdentifiableSyncAdapter syncAdapter, Item item) {
+		String entityNode = syncAdapter.getType();
 	
+		if(entityNode.equals(item.getContent().getPayload().getName())){
+			return true;
+		}else{
+			return item.getContent().getPayload().element(entityNode) != null;
+		}
+	}
 }

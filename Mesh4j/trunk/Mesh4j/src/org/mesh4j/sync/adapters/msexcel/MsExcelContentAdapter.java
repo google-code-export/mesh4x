@@ -217,11 +217,6 @@ public class MsExcelContentAdapter implements IIdentifiableContentAdapter, ISync
 
 	@Override
 	public void writeDataSourceFromSchema() {
-		try {
-			String newFileName = this.excel.getFileName();
-			this.mapping.createDataSource(newFileName);
-		} catch (Exception e) {
-			throw new MeshException(e);
-		}		
+		this.mapping.createDataSource(this.excel);
 	}
 }

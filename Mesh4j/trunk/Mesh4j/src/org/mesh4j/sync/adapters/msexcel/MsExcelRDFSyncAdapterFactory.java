@@ -1,7 +1,12 @@
 package org.mesh4j.sync.adapters.msexcel;
 
 import java.io.File;
+import java.util.Map;
 
+import org.mesh4j.sync.ISyncAdapter;
+import org.mesh4j.sync.adapters.composite.CompositeSyncAdapter;
+import org.mesh4j.sync.adapters.composite.IIdentifiableSyncAdapter;
+import org.mesh4j.sync.adapters.composite.IdentifiableSyncAdapter;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.security.IIdentityProvider;
@@ -35,28 +40,31 @@ public class MsExcelRDFSyncAdapterFactory extends MsExcelSyncAdapterFactory{
 	}
 
 	public SplitAdapter createSyncAdapter(String excelFileName, String sheetName, String idColumnName, IIdentityProvider identityProvider, IRDFSchema rdfSchema) {
-		Guard.argumentNotNullOrEmptyString(idColumnName, "idColumnName");
 		Guard.argumentNotNullOrEmptyString(excelFileName, "excelFileName");
+		MsExcel excel = new MsExcel(excelFileName);
+		return createSyncAdapter(excel, sheetName, idColumnName, identityProvider, rdfSchema); 
+	}
+	
+	public SplitAdapter createSyncAdapter(IMsExcel excel, String sheetName, String idColumnName, IIdentityProvider identityProvider, IRDFSchema rdfSchema) {
+		Guard.argumentNotNullOrEmptyString(idColumnName, "idColumnName");
+		Guard.argumentNotNull(excel, "excel");
 		Guard.argumentNotNullOrEmptyString(sheetName, "sheetName");
 		Guard.argumentNotNull(identityProvider, "identityProvider");
 		Guard.argumentNotNull(rdfSchema, "rdfSchema");
 		
-		File file = new File(excelFileName);
-
-		if (!file.exists()) {
+		if (!excel.fileExists() || excel.getSheet(sheetName) == null) {
 			MsExcelToRDFMapping mappings = new MsExcelToRDFMapping(rdfSchema, idColumnName);
 			try{
-				mappings.createDataSource(excelFileName);
+				mappings.createDataSource(excel);
 			}catch (Exception e) {
 				throw new MeshException(e);
 			}
 		
-			MsExcel excel = new MsExcel(excelFileName);
 			MsExcelSyncRepository syncRepo = createSyncRepository(sheetName, identityProvider, excel);
 			MsExcelContentAdapter contentAdapter = new MsExcelContentAdapter(excel, mappings, sheetName);
 			return new SplitAdapter(syncRepo, contentAdapter, identityProvider);
 		} else {
-			SplitAdapter splitAdapter = super.createSyncAdapter(excelFileName, sheetName, idColumnName, identityProvider);
+			SplitAdapter splitAdapter = super.createSyncAdapter(excel, sheetName, idColumnName, identityProvider);
 			IRDFSchema rdfSchemaAutoGenetated = (IRDFSchema)((MsExcelContentAdapter)splitAdapter.getContentAdapter()).getSchema();
 			if(!rdfSchema.isCompatible(rdfSchemaAutoGenetated)){
 				Guard.throwsException("INVALID_RDF_SCHEMA");
@@ -64,4 +72,22 @@ public class MsExcelRDFSyncAdapterFactory extends MsExcelSyncAdapterFactory{
 			return splitAdapter;
 		}
 	}	
+
+	public ISyncAdapter createSyncAdapterForMultiSheets(String excelFileName, IIdentityProvider identityProvider, ISyncAdapter opaqueAdapter, Map<IRDFSchema, String> sheets) {
+		MsExcel excel = new MsExcel(excelFileName);
+		
+		IIdentifiableSyncAdapter[] adapters = new IIdentifiableSyncAdapter[sheets.size()];
+		
+		int i = 0;
+		for (IRDFSchema rdfSchema : sheets.keySet()) {
+			String sheetName = rdfSchema.getOntologyClassName();
+			String idColumnName = sheets.get(rdfSchema);
+			SplitAdapter splitAdapter = this.createSyncAdapter(excel, sheetName, idColumnName, identityProvider, rdfSchema);
+			IdentifiableSyncAdapter adapter = new IdentifiableSyncAdapter(sheetName, splitAdapter);
+			adapters[i] = adapter;
+			i = i +1;
+		}
+		
+		return new CompositeSyncAdapter("MsExcel composite", opaqueAdapter, identityProvider, adapters);
+	}
 }

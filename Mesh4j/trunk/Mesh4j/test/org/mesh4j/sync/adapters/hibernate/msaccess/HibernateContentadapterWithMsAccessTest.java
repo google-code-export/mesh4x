@@ -85,8 +85,8 @@ public class HibernateContentadapterWithMsAccessTest {
 		HibernateContentAdapter adapter = createAdapter();
 		EntityContent entity = adapter.get("1");
 		Assert.assertNotNull(entity);
-		Assert.assertEquals("marcelo", entity.getPayload().element("name").getText());
-		Assert.assertEquals("jmt", entity.getPayload().element("pass").getText());
+		Assert.assertEquals("jmt", entity.getPayload().element("name").getText());
+		Assert.assertEquals("123", entity.getPayload().element("pass").getText());
 	}
 	
 	@Test

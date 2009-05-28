@@ -10,7 +10,7 @@ import org.mesh4j.sync.utils.ZipUtils;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
-public class FileContent extends Content implements IContent {
+public class FileContent extends Content{
 
 	// BUSINESS  METHODS
 	private FileContent(Element payload, String id) {

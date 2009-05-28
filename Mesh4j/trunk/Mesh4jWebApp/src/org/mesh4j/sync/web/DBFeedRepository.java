@@ -256,12 +256,13 @@ public class DBFeedRepository implements IFeedRepository {
 				this.connectionUri + databaseName,
 				this.userName,
 				this.password,
-				this.dialectClass,
+				this.driverClass,
 				this.dialectClass, 
 				tableName, 
 				tableName + this.syncInfoSubfixed, 
 				rdfLink,
-				this.baseDirectory);	
+				this.baseDirectory,
+				identityProvider);	
 	}
 	
 	

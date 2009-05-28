@@ -23,7 +23,7 @@ public class HibernateContentAdapterRDFTests extends HibernateContentAdapterTest
 		builder.addMapping(new File(HibernateAdapterTests.class.getResource("User.hbm.xml").getFile()));
 		builder.addMapping(new File(this.getClass().getResource("SyncInfo.hbm.xml").getFile()));
 		builder.setPropertiesFile(new File(this.getClass().getResource("xx_hibernate.properties").getFile()));
-		builder.addRDFSchema(schema);
+		builder.addRDFSchema("user", schema);
 		return builder;
 	}
 	

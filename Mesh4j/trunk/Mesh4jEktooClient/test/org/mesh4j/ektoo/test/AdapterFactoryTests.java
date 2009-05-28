@@ -61,7 +61,7 @@ public class AdapterFactoryTests {
 				"http://mesh4x/feeds/grammen");
 		SplitAdapter syncAdapter = adapterFactory.createSyncAdapterFromFile(
 				"ektoo", TestHelper.baseDirectoryForTest() + "\\Ektoo.mdb",
-				"ektoo");
+				"ektoo", NullIdentityProvider.INSTANCE);
 
 		HibernateContentAdapter contentAdapter = (HibernateContentAdapter) syncAdapter
 				.getContentAdapter();
@@ -81,7 +81,7 @@ public class AdapterFactoryTests {
 				TestHelper.baseDirectoryForTest(), null);
 		SplitAdapter syncAdapter = adapterFactory.createSyncAdapterFromFile(
 				"aktoo", TestHelper.baseDirectoryForTest() + "\\aktoo.mdb",
-				"aktoo");
+				"aktoo", NullIdentityProvider.INSTANCE);
 
 		Assert.assertEquals(0, syncAdapter.getAll().size());
 
