@@ -22,7 +22,7 @@ import org.mesh4j.sync.test.utils.TestHelper;
 public class HibernateMultiTableTests {
 
 	@Test
-	public void shouldSyncMultiTables(){
+	public void shouldSyncMultiTablesRDF(){
 		
 		InMemorySyncAdapter adapterOpaque = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
 		
@@ -36,6 +36,35 @@ public class HibernateMultiTableTests {
 			org.hibernate.dialect.MySQLDialect.class,
 			tables, 
 			"http://mesh4x/test", 
+			TestHelper.baseDirectoryRootForTest(),
+			NullIdentityProvider.INSTANCE,
+			adapterOpaque);
+		
+		// Sync example
+		InMemorySyncAdapter adapterTarget = new InMemorySyncAdapter("target", NullIdentityProvider.INSTANCE);
+				
+		SyncEngine syncEngine = new SyncEngine(adapterSource, adapterTarget);
+		TestHelper.assertSync(syncEngine);
+		
+		Assert.assertEquals(0, adapterOpaque.getAll().size());
+
+	}
+	
+	@Test
+	public void shouldSyncMultiTablesPlainXML(){
+		
+		InMemorySyncAdapter adapterOpaque = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
+		
+		String[] tables = new String[]{"mesh_example", "mesh_example_1"};
+		
+		ISyncAdapter adapterSource = HibernateSyncAdapterFactory.createSyncAdapterForMultiTables(
+			"jdbc:mysql:///mesh4xdb", 
+			"root", 
+			"", 
+			com.mysql.jdbc.Driver.class,
+			org.hibernate.dialect.MySQLDialect.class,
+			tables, 
+			null, 
 			TestHelper.baseDirectoryRootForTest(),
 			NullIdentityProvider.INSTANCE,
 			adapterOpaque);
