@@ -16,6 +16,7 @@ public class MessageTranslator {
 		try{
 			messageText = RESOURCE_BUNDLE.getString(key);
 		}catch (Exception e) {
+			e.printStackTrace();
 			if(LOGGER.isInfoEnabled()){
 				LOGGER.info("Resource Bundle for key <"+ key +"> does not exist.");
 			}
