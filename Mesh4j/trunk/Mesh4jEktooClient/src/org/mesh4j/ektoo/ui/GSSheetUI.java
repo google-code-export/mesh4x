@@ -184,8 +184,8 @@ public class GSSheetUI extends AbstractUI {
 		if (labelKey == null) {
 			labelKey = new JLabel();
 			labelKey.setText(EktooUITranslator.getGoogleKeyLabel());
-			labelKey.setSize(new Dimension(85, 16));
-			labelKey.setPreferredSize(new Dimension(85, 16));
+			labelKey.setSize(new Dimension(100, 16));
+			labelKey.setPreferredSize(new Dimension(100, 16));
 			labelKey.setLocation(new Point(8, 59));
 		}
 		return labelKey;
