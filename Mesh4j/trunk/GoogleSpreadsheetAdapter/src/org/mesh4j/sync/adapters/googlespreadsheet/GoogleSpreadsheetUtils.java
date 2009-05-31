@@ -365,7 +365,8 @@ public class GoogleSpreadsheetUtils {
 			}
 		}
 
-		if(gssSpreadsheet == null) return null;
+		if(gssSpreadsheet == null || gssSpreadsheet
+				.getSpreadsheet() == null) return null;
 			
 		return getGSSpreadsheet(factory, service, gssSpreadsheet);
 	}
@@ -431,6 +432,25 @@ public class GoogleSpreadsheetUtils {
 		return gsSpreadsheet;
 	}
 
+	
+	/**
+	 * 
+	 * @param factory
+	 * @param service
+	 * @return
+	 * @throws IOException
+	 * @throws ServiceException
+	 */
+	public static List<SpreadsheetEntry> getAllSpreadsheet(
+			FeedURLFactory factory, SpreadsheetService service)
+			throws IOException, ServiceException {
+
+		SpreadsheetFeed feed = service.getFeed(
+				factory.getSpreadsheetsFeedUrl(), SpreadsheetFeed.class);
+
+		return feed.getEntries();
+	}
+	
 	/**
 	 * get all worksheet form a spreadsheet
 	 * 
@@ -554,14 +574,6 @@ public class GoogleSpreadsheetUtils {
 			throw new MeshException(e);
 		}
 		return dateAndTime;
-	}
-
-	public static SplitAdapter createGoogleSpreadSheetAdapter(IGoogleSpreadSheet spreadSheet,IGoogleSpreadsheetToXMLMapping mapper,IIdentityProvider identityProvider,IIdGenerator idGenerator){
-		GoogleSpreadSheetContentAdapter contentRepo = new GoogleSpreadSheetContentAdapter(spreadSheet,mapper);
-		String syncSheetName = mapper.getSheetName() + "_sync";
-		GoogleSpreadSheetSyncRepository  syncRepo = new GoogleSpreadSheetSyncRepository(spreadSheet,identityProvider,idGenerator,syncSheetName);
-		SplitAdapter splitAdapter = new SplitAdapter(syncRepo,contentRepo,identityProvider);
-		return splitAdapter;
 	}
 
 	/**
@@ -934,6 +946,14 @@ public class GoogleSpreadsheetUtils {
 			throw new MeshException(e);
 		}
 		return service;
+	}
+	
+	/**
+	 * returns the Spreadsheet FeedURLFactory 
+	 * @return
+	 */
+	public static FeedURLFactory getSpreadsheetFeedURLFactory(){
+		return FeedURLFactory.getDefault();
 	}
 
 }
