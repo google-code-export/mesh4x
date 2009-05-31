@@ -12,7 +12,7 @@ import org.mesh4j.sync.validations.Guard;
  * @author Bhuiyan Mohammad Iklash
  * 
  */
-public class KmlUIController extends AbstractController
+public class KmlUIController extends AbstractUIController
 {
 	public static final String FILE_NAME_PROPERTY = "FileName";
 	

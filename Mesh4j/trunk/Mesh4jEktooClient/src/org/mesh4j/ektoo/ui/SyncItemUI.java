@@ -20,7 +20,7 @@ import javax.swing.JPanel;
 
 import org.mesh4j.ektoo.ISyncTableTypeItem;
 import org.mesh4j.ektoo.IUIController;
-import org.mesh4j.ektoo.controller.AbstractController;
+import org.mesh4j.ektoo.controller.AbstractUIController;
 import org.mesh4j.ektoo.controller.CloudUIController;
 import org.mesh4j.ektoo.controller.FeedUIController;
 import org.mesh4j.ektoo.controller.FolderUIController;
@@ -422,8 +422,8 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 	}
 
 	// TODO (NBL)improve this section
-	public AbstractController getCurrentController() {
-		AbstractController currrentController = null;
+	public AbstractUIController getCurrentController() {
+		AbstractUIController currrentController = null;
 
 		String item = (String) getDataSourceType().getSelectedItem();
 

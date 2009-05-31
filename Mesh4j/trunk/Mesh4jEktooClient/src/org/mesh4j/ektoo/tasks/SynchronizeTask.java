@@ -8,8 +8,8 @@ import javax.swing.SwingWorker;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.mesh4j.ektoo.controller.EktooUIController;
-import org.mesh4j.ektoo.ui.EktooUI;
+import org.mesh4j.ektoo.controller.EktooController;
+import org.mesh4j.ektoo.ui.EktooFrame;
 import org.mesh4j.ektoo.ui.SyncItemUI;
 import org.mesh4j.ektoo.ui.component.statusbar.Statusbar;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
@@ -19,12 +19,12 @@ public class SynchronizeTask extends SwingWorker<String, Void> {
 	private final static Log LOGGER = LogFactory.getLog(SynchronizeTask.class);
 	
 	// MODEL VARIABLEs
-	private EktooUI ui;
+	private EktooFrame ui;
 	private String result = null;
 	private ISynchronizeTaskListener synchronizeTaskListener = null;
 
 	// BUSINESS METHODS
-	public SynchronizeTask(EktooUI ui, ISynchronizeTaskListener synchronizeTaskListener) {
+	public SynchronizeTask(EktooFrame ui, ISynchronizeTaskListener synchronizeTaskListener) {
 		super();
 		this.ui = ui;
 		this.synchronizeTaskListener = synchronizeTaskListener;
@@ -64,7 +64,7 @@ public class SynchronizeTask extends SwingWorker<String, Void> {
 			result = get();
 			if (result != null)
 			{
-			  if ( result.equals(EktooUIController.SYNCHRONIZATION_SUCCEED))
+			  if ( result.equals(EktooController.SYNCHRONIZATION_SUCCEED))
 			  {
 			    synchronizeTaskListener.notifySynchronizeTaskSuccess(
 	            EktooUITranslator.getMessageSyncSyccessfuly(
@@ -72,7 +72,7 @@ public class SynchronizeTask extends SwingWorker<String, Void> {
 	            ui.getTargetItem().toString(),
 	            new Date()));
 			  }
-			  else if(result.equals(EktooUIController.SYNCHRONIZATION_CONFLICTED) ) 
+			  else if(result.equals(EktooController.SYNCHRONIZATION_CONFLICTED) ) 
 			  {
 			    synchronizeTaskListener.notifySynchronizeTaskConflict(EktooUITranslator.getMessageSyncConflicts(
 	            ui.getSourceItem().toString(),
@@ -80,7 +80,7 @@ public class SynchronizeTask extends SwingWorker<String, Void> {
 	            new Date()
 	            ));   
 			  }
-			  else if ( result.equals(EktooUIController.SYNCHRONIZATION_FAILED) ) 
+			  else if ( result.equals(EktooController.SYNCHRONIZATION_FAILED) ) 
 			  {
 			    synchronizeTaskListener.notifySynchronizeTaskError(EktooUITranslator.getMessageSyncFailed(
 	            ui.getSourceItem().toString(),

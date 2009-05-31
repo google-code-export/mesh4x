@@ -17,7 +17,7 @@ import org.mesh4j.sync.validations.Guard;
  * @author Bhuiyan Mohammad Iklash
  * 
  */
-public class GSSheetUIController extends AbstractController {
+public class GSSheetUIController extends AbstractUIController {
 	public static final String USER_NAME_PROPERTY = "UserName";
 	public static final String USER_PASSWORD_PROPERTY = "UserPassword";
 	public static final String SPREADSHEET_KEY_PROPERTY = "SpreadsheetKey";

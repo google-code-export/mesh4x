@@ -9,7 +9,7 @@ import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.validations.Guard;
 
 
-public class FeedUIController extends AbstractController
+public class FeedUIController extends AbstractUIController
 {
 	public static final String FILE_NAME_PROPERTY = "FileName";
 	

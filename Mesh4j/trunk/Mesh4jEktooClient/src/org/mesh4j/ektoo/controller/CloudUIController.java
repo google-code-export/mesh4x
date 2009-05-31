@@ -12,7 +12,7 @@ import org.mesh4j.sync.validations.Guard;
  * @author Bhuiyan Mohammad Iklash
  * 
  */
-public class CloudUIController extends AbstractController
+public class CloudUIController extends AbstractUIController
 {
 	
 	public static final String MESH_NAME_PROPERTY = "MeshName";

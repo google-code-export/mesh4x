@@ -15,7 +15,7 @@ import org.mesh4j.sync.validations.Guard;
  * @author Bhuiyan Mohammad Iklash
  * 
  */
-public class MsExcelUIController extends AbstractController 
+public class MsExcelUIController extends AbstractUIController 
 {
 	
 	public static final String WORKBOOK_NAME_PROPERTY = "WorkbookName";

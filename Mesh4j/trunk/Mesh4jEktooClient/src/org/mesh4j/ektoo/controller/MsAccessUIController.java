@@ -16,7 +16,7 @@ import org.mesh4j.sync.validations.Guard;
  * @author Bhuiyan Mohammad Iklash
  * 
  */
-public class MsAccessUIController extends AbstractController
+public class MsAccessUIController extends AbstractUIController
 {
 	private static final Log LOGGER = LogFactory.getLog(MsAccessUIController.class);
 	public static final String DATABASE_NAME_PROPERTY = "DatabaseName";

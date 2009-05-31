@@ -15,7 +15,7 @@ import org.mesh4j.sync.validations.Guard;
  * @author Bhuiyan Mohammad Iklash
  * 
  */
-public class MySQLUIController extends AbstractController
+public class MySQLUIController extends AbstractUIController
 {	
 	public static final String USER_NAME_PROPERTY = "UserName";
 	public static final String USER_PASSWORD_PROPERTY = "UserPassword";

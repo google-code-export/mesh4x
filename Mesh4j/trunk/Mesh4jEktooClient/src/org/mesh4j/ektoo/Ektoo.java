@@ -9,9 +9,9 @@ import javax.swing.plaf.FontUIResource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.mesh4j.ektoo.controller.EktooUIController;
+import org.mesh4j.ektoo.controller.EktooController;
 import org.mesh4j.ektoo.properties.PropertiesProvider;
-import org.mesh4j.ektoo.ui.EktooUI;
+import org.mesh4j.ektoo.ui.EktooFrame;
 import org.mesh4j.translator.EktooMessageTranslator;
 
 /**
@@ -44,8 +44,8 @@ public class Ektoo {
 
 	public Ektoo() 
 	{
-		EktooUIController controller = new EktooUIController(new PropertiesProvider());
-		JFrame thisClass = new EktooUI(controller);
+		EktooController controller = new EktooController(new PropertiesProvider());
+		JFrame thisClass = new EktooFrame(controller);
 		thisClass.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		thisClass.setVisible(true);
 	}

@@ -8,7 +8,7 @@ import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.validations.Guard;
 
-public class FolderUIController extends AbstractController
+public class FolderUIController extends AbstractUIController
 {
 	public static final String FOLDER_NAME_PROPERTY = "FolderName";
 	
