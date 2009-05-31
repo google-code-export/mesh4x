@@ -24,6 +24,10 @@ public class EktooUITranslator {
 		return EktooMessageTranslator
 				.translate("EKTOO_SYNC_CHANNEL_FILE_FIELD_LABEL");
 	}
+	public static String getSyncURILabel(){
+		return EktooMessageTranslator
+		.translate("EKTOO_SYNC_CHANNEL_URI_FIELD_LABEL");
+	}
 
 	public static String getSyncTypeSendLabel() {
 		return EktooMessageTranslator

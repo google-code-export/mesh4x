@@ -38,6 +38,9 @@ public class CloudUI extends AbstractUI{
 	private JLabel labelMash = null;
 	private JTextField txtMash = null;
 
+	private JLabel labelSyncURI = null;
+	private JTextField syncTextURI = null;
+	
 	private JLabel labelDataset = null;
 	private JTextField txtDataset = null;
 
@@ -64,10 +67,36 @@ public class CloudUI extends AbstractUI{
 
 		this.add(getDataSetLabel(), null);
 		this.add(getDataSetText(), null);
+		
+		this.add(getSyncURILabel(), null);
+		this.add(getSyncURIText(), null);
+		
 		this.add(getURLText(), null);
+		
 		this.add(getBtnView(), null);
+		
 	}
 
+	private JTextField getSyncURIText(){
+		if (syncTextURI == null) {
+			syncTextURI = new JTextField();
+			syncTextURI.setBounds(new Rectangle(101, 59, 183, 20));
+		}
+		return syncTextURI;
+	}
+	private JLabel getSyncURILabel() {
+		
+		if (labelSyncURI == null) {
+			labelSyncURI = new JLabel();
+			labelSyncURI.setText( EktooUITranslator.getSyncURILabel());
+			
+			labelSyncURI.setSize(new Dimension(85, 16));
+			labelSyncURI.setPreferredSize(new Dimension(85, 16));
+			labelSyncURI.setLocation(new Point(8, 59));
+		}
+		return labelSyncURI;
+	}
+	
 	private JLabel getMashLabel() {
 		if (labelMash == null) {
 			labelMash = new JLabel();
@@ -150,7 +179,7 @@ public class CloudUI extends AbstractUI{
 	private JTextField getURLText() {
 		if (txtURL == null) {
 			txtURL = new JTextField();
-			txtURL.setBounds(new Rectangle(0, 60, 400, 20));
+			txtURL.setBounds(new Rectangle(1, 89, 375, 20));
 			txtURL.setEditable(false);
 		}
 		return txtURL;
