@@ -2,7 +2,7 @@
 
 = Introduction =
 
-http://sync.instedd.org
+http://sync.staging.instedd.org:8080/mesh4x
 
 
 = Details =
