@@ -233,7 +233,8 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 			googleUI.setUserLabel(EktooUITranslator.getGoogleUserLabel());
 			googleUI.setPasswordLabel(EktooUITranslator
 					.getGooglePasswordLabel());
-			googleUI.setKeyLabel(EktooUITranslator.getGoogleKeyLabel());
+//			googleUI.setKeyLabel(EktooUITranslator.getGoogleKeyLabel());
+			googleUI.setNameLabel(EktooUITranslator.getGoogleSpreadsheetNameLabel());
 			googleUI
 					.WorksheetLabel(EktooUITranslator.getGoogleWorksheetLabel());
 			googleUI.setUniqueColumnLabel(EktooUITranslator
