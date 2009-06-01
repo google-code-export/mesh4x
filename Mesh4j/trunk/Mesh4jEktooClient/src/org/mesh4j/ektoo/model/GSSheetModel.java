@@ -12,7 +12,8 @@ public class GSSheetModel extends AbstractModel
 	// MODEL VARIABLES
 	private String userName = null;
 	private String userPassword = null;
-	private String spreadsheetKey = null;
+//	private String spreadsheetKey = null;
+	private String spreadsheetName = null;
 	private String worksheetName = null;
 
 	// TODO (NBL) Think how we can eliminate these items from gui
@@ -39,13 +40,22 @@ public class GSSheetModel extends AbstractModel
 		return userPassword;
 	}
 
-	public void setSpreadsheetKey(String spreadsheetKey) {
-		firePropertyChange(GSSheetUIController.SPREADSHEET_KEY_PROPERTY, this.spreadsheetKey,
-				this.spreadsheetKey = spreadsheetKey);
+//	public void setSpreadsheetKey(String spreadsheetKey) {
+//		firePropertyChange(GSSheetUIController.SPREADSHEET_KEY_PROPERTY, this.spreadsheetKey,
+//				this.spreadsheetKey = spreadsheetKey);
+//	}
+	
+//	public String getSpreadsheetKey() {
+//		return spreadsheetKey;
+//	}
+	
+	public void setSpreadsheetName(String spreadsheetName) {
+		firePropertyChange(GSSheetUIController.SPREADSHEET_NAME_PROPERTY, this.spreadsheetName,
+				this.spreadsheetName = spreadsheetName);
 	}
-
-	public String getSpreadsheetKey() {
-		return spreadsheetKey;
+	
+	public String getSpreadsheetName() {
+		return spreadsheetName;
 	}
 
 	public void setWorksheetName(String worksheetName) {
@@ -96,6 +106,6 @@ public class GSSheetModel extends AbstractModel
 	
   public String toString()
   {
-    return "Cloud | " + getSpreadsheetKey() + " | " + getWorksheetName() ; 
+    return "Cloud | " + getSpreadsheetName() + " | " + getWorksheetName() ; 
   } 	
 }
