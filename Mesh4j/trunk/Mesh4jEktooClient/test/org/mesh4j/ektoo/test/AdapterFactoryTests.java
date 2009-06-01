@@ -135,15 +135,15 @@ public class AdapterFactoryTests {
 													spreadsheet.getDocsService());
 				
 		
-		SplitAdapter spreadSheetAdapter = GoogleSpreadsheetUtils
-			.createGoogleSpreadSheetAdapter(spreadsheet, mapper,
-												NullIdentityProvider.INSTANCE,
-												IdGenerator.INSTANCE);
-
-		int size = spreadSheetAdapter.getAll().size();
-		spreadSheetAdapter.add(getItem());
-
-		Assert.assertEquals(size + 1,spreadSheetAdapter.getAll().size());
+//		SplitAdapter spreadSheetAdapter = GoogleSpreadsheetUtils
+//			.createGoogleSpreadSheetAdapter(spreadsheet, mapper,
+//												NullIdentityProvider.INSTANCE,
+//												IdGenerator.INSTANCE);
+//
+//		int size = spreadSheetAdapter.getAll().size();
+//		spreadSheetAdapter.add(getItem());
+//
+//		Assert.assertEquals(size + 1,spreadSheetAdapter.getAll().size());
 
 	}
 	
