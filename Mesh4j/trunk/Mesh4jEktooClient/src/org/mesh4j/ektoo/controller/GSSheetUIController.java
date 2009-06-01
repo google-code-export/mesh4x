@@ -20,7 +20,8 @@ import org.mesh4j.sync.validations.Guard;
 public class GSSheetUIController extends AbstractUIController {
 	public static final String USER_NAME_PROPERTY = "UserName";
 	public static final String USER_PASSWORD_PROPERTY = "UserPassword";
-	public static final String SPREADSHEET_KEY_PROPERTY = "SpreadsheetKey";
+//	public static final String SPREADSHEET_KEY_PROPERTY = "SpreadsheetKey";
+	public static final String SPREADSHEET_NAME_PROPERTY = "SpreadsheetName";
 	public static final String WORKSHEET_NAME_PROPERTY = "WorksheetName";
 	public static final String UNIQUE_COLUMN_NAME_PROPERTY = "UniqueColumnName";
 	public static final String UNIQUE_COLUMN_POSITION_PROPERTY = "UniqueColumnPosition";
@@ -44,10 +45,14 @@ public class GSSheetUIController extends AbstractUIController {
 		setModelProperty(USER_PASSWORD_PROPERTY, userPassword);
 	}
 
-	public void changeSpreadsheetKey(String spreadsheetKey) {
-		setModelProperty(SPREADSHEET_KEY_PROPERTY, spreadsheetKey);
+//	public void changeSpreadsheetKey(String spreadsheetKey) {
+//		setModelProperty(SPREADSHEET_KEY_PROPERTY, spreadsheetKey);
+//	}
+	
+	public void changeSpreadsheetName(String spreadsheetName) {
+		setModelProperty(SPREADSHEET_NAME_PROPERTY, spreadsheetName);
 	}
-
+	
 	public void changeWorksheetName(String worksheetName) {
 		setModelProperty(WORKSHEET_NAME_PROPERTY, worksheetName);
 	}
@@ -72,7 +77,7 @@ public class GSSheetUIController extends AbstractUIController {
 	@Override
 	public ISyncAdapter createAdapter() {
 		GSSheetModel model = (GSSheetModel) this.getModel();
-		IGoogleSpreadSheet gss = new GoogleSpreadsheet(model.getSpreadsheetKey(), model.getUserName(), model.getUserPassword());
+		IGoogleSpreadSheet gss = new GoogleSpreadsheet(/*model.getSpreadsheetKey()*/model.getSpreadsheetName(), model.getUserName(), model.getUserPassword());
 		IRDFSchema rdfSchema = GoogleSpreadsheetToRDFMapping.extractRDFSchema(gss, model.getWorksheetName(), this.adapterBuilder.getBaseRDFUrl());
 		return createAdapter(rdfSchema);
 	}
@@ -87,7 +92,8 @@ public class GSSheetUIController extends AbstractUIController {
 		GSSheetModel model = (GSSheetModel) this.getModel();
 
 		GoogleSpreadSheetInfo spreadSheetInfo = new GoogleSpreadSheetInfo(
-				model.getSpreadsheetKey(), model.getUserName(), 
+				/*model.getSpreadsheetKey()*/
+				model.getSpreadsheetName(), model.getUserName(), 
 				model.getUserPassword(), model.getUniqueColumnName(), 
 				model.getWorksheetName(), model.getWorksheetName());
 		return adapterBuilder.createRdfBasedGoogleSpreadSheetAdapter(spreadSheetInfo, schema);
