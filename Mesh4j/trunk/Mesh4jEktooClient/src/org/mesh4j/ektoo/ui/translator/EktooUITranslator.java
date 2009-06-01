@@ -128,10 +128,14 @@ public class EktooUITranslator {
 				.translate("EKTOO_GOOGLE_WORKSHEET_FIELD_LABEL");
 	}
 
-	public static String getGoogleKeyLabel() {
-		return EktooMessageTranslator.translate("EKTOO_GOOGLE_KEY_FIELD_LABEL");
+//	public static String getGoogleKeyLabel() {
+//		return EktooMessageTranslator.translate("EKTOO_GOOGLE_KEY_FIELD_LABEL");
+//	}
+	
+	public static String getGoogleSpreadsheetNameLabel() {
+		return EktooMessageTranslator.translate("EKTOO_GOOGLE_SPREADSHEET_NAME_FIELD_LABEL");
 	}
-
+	
 	public static String getUniqueColumnNameLabel() {
 		return EktooMessageTranslator
 				.translate("EKTOO_GOOGLE_UNIQUE_COLUMN_FIELD_LABEL");
@@ -349,4 +353,8 @@ public class EktooUITranslator {
 	public static String getTooltipView() {
 		return EktooMessageTranslator.translate("EKTOO_TOOLTIP_VIEW_DATA_SOURCE");
 	}
+	
+	public static String getTooltipFetchSpreadsheets() {
+		return EktooMessageTranslator.translate("EKTOO_TOOLTIP_VIEW_FETCH_SPREADSHEETS");
+	}	
 }
