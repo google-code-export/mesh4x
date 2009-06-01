@@ -12,6 +12,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -32,10 +33,15 @@ import org.mesh4j.ektoo.tasks.OpenURLTask;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadsheet;
+import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadsheetUtils;
 import org.mesh4j.sync.adapters.googlespreadsheet.IGoogleSpreadSheet;
 import org.mesh4j.sync.adapters.googlespreadsheet.model.GSCell;
 import org.mesh4j.sync.adapters.googlespreadsheet.model.GSRow;
 import org.mesh4j.sync.adapters.googlespreadsheet.model.GSWorksheet;
+
+import com.google.gdata.client.spreadsheet.FeedURLFactory;
+import com.google.gdata.client.spreadsheet.SpreadsheetService;
+import com.google.gdata.data.spreadsheet.SpreadsheetEntry;
 
 /**
  * @author Bhuiyan Mohammad Iklash
@@ -53,9 +59,12 @@ public class GSSheetUI extends AbstractUI {
 	private JLabel labelPass = null;
 	private JPasswordField txtPass = null;
 
-	private JLabel labelKey = null;
-	private JTextField txtKey = null;
+//	private JLabel labelKey = null;
+//	private JTextField txtKey = null;
 
+	private JLabel labelName = null;
+	private JComboBox listName = null;	
+	
 	private JLabel labelTable = null;
 	private JComboBox listTable = null;
 
@@ -88,8 +97,11 @@ public class GSSheetUI extends AbstractUI {
 		this.add(getPassLabel(), null);
 		this.add(getPassText(), null);
 
-		this.add(getKeyLabel(), null);
-		this.add(getKeyText(), null);
+//		this.add(getKeyLabel(), null);
+//		this.add(getKeyText(), null);
+		
+		this.add(getNameLabel(), null);
+		this.add(getNameList(), null);		
 		this.add(getConnectButton(), null);
 		
 		this.add(getTableLabel(), null);
@@ -180,7 +192,7 @@ public class GSSheetUI extends AbstractUI {
 		return txtPass;
 	}
 
-	private JLabel getKeyLabel() {
+/*	private JLabel getKeyLabel() {
 		if (labelKey == null) {
 			labelKey = new JLabel();
 			labelKey.setText(EktooUITranslator.getGoogleKeyLabel());
@@ -218,14 +230,65 @@ public class GSSheetUI extends AbstractUI {
       });
 		}
 		return txtKey;
+	}*/
+	
+
+	private JLabel getNameLabel() {
+		if (labelName == null) {
+			labelName = new JLabel();
+			labelName.setText(EktooUITranslator.getGoogleSpreadsheetNameLabel());
+			labelName.setLocation(new Point(8, 59));
+			labelName.setSize(new Dimension(85, 16));
+			labelName.setPreferredSize(new Dimension(85, 16));
+		}
+		return labelName;
 	}
+
+
+	public JComboBox getNameList() {
+		if (listName == null) {
+			listName = new JComboBox();
+			listName.setBounds(new Rectangle(101, 55, 160, 20));
+			listName.addItemListener(new ItemListener() {
+				public void itemStateChanged(ItemEvent e) {
+					if (e.getStateChange() == ItemEvent.SELECTED) 
+					{
+						getController().changeSpreadsheetName(
+							(String) listName.getSelectedItem());
+						
+						int sheetIndex = listName.getSelectedIndex();
+	  					if (sheetIndex != -1) 
+	  					{
+	  						SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+	  							public Void doInBackground() {
+	  								setCursor(Cursor
+	  										.getPredefinedCursor(Cursor.WAIT_CURSOR));
+	  								setWorksheetList(getUser(), getPass(), getSpreadsheetName());
+	  								return null;
+	  							}
+	  
+	  							public void done() {
+	  								setCursor(Cursor
+	  										.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+	  							}
+	  						};
+	  						worker.execute();
+	  					}
+					}
+				}
+			});
+		}
+		return listName;
+	}	
+	
 	private JButton getConnectButton() 
   {
     if (btnConnect == null) 
     {
       btnConnect = new JButton();
-      btnConnect.setBounds(new Rectangle(260, 55, 22, 20));
+      btnConnect.setBounds(new Rectangle(264, 55, 20, 20));
       btnConnect.setIcon(ImageManager.getDatabaseConnectionIcon());
+      btnConnect.setToolTipText(EktooUITranslator.getTooltipFetchSpreadsheets());
       btnConnect.addActionListener(new ActionListener() 
       {
         public void actionPerformed(ActionEvent ae) 
@@ -235,7 +298,7 @@ public class GSSheetUI extends AbstractUI {
             public Void doInBackground() {
               setCursor(Cursor
                   .getPredefinedCursor(Cursor.WAIT_CURSOR));
-              setList(getUser(), getPass(), getKey());
+              setSpreadsheetList(getUser(), getPass());
               return null;
             }
 
@@ -284,7 +347,7 @@ public class GSSheetUI extends AbstractUI {
   							public Void doInBackground() {
   								setCursor(Cursor
   										.getPredefinedCursor(Cursor.WAIT_CURSOR));
-  								setList(getUser(), getPass(), getKey(),
+  								setList(getUser(), getPass(), /*getKey()*/ getSpreadsheetName(),
   										(String) listTable.getSelectedItem());
   								return null;
   							}
@@ -302,8 +365,8 @@ public class GSSheetUI extends AbstractUI {
 
 		}
 		return listTable;
-	}
-
+	}	
+	
 	private JLabel getLabelColumn() {
 		if (labelColumn == null) {
 			labelColumn = new JLabel();
@@ -347,9 +410,36 @@ public class GSSheetUI extends AbstractUI {
 		return listColumn;
 	}
 
-	@SuppressWarnings("unchecked")
-	public void setList(String user, String pass, /*String key,*/ String spreadsheetName) {
+
+	public void setSpreadsheetList(String user, String pass) {
 	  System.out.println("2...");
+    
+		JComboBox sheetList = getNameList();
+		sheetList.removeAllItems();
+
+		JComboBox worksheetList = getTableList();
+		worksheetList.removeAllItems();
+		
+		JComboBox columnList = getColumnList();
+		columnList.removeAllItems();		
+		
+		try {
+			List<SpreadsheetEntry> spreadsheetList = GoogleSpreadsheetUtils
+					.getAllSpreadsheet(user, pass);
+			for (SpreadsheetEntry spSheet : spreadsheetList) {
+				sheetList.addItem(spSheet.getTitle().getPlainText());
+			}
+		} catch (Exception e) {	
+		  e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
+            // TODO Handle exception
+		}
+	}	
+	
+	
+	@SuppressWarnings("unchecked")
+	public void setWorksheetList(String user, String pass, /*String key,*/ String spreadsheetName) {
+	  System.out.println("3...");
     
 		JComboBox sheetList = getTableList();
 		sheetList.removeAllItems();
@@ -446,9 +536,13 @@ public class GSSheetUI extends AbstractUI {
 		return new String(getPassText().getPassword());
 	}
 
-	public String getKey() {
-		return getKeyText().getText();
-	}
+//	public String getKey() {
+//		return getKeyText().getText();
+//	}
+	
+	public String getSpreadsheetName(){
+		return (String) getNameList().getSelectedItem();
+	}	
 
 	public String getSheet() {
 		return (String) getTableList().getSelectedItem();
@@ -482,9 +576,12 @@ public class GSSheetUI extends AbstractUI {
 		getPassLabel().setText(googlePasswordLabel);
 	}
 
-	public void setKeyLabel(String googleKeyLabel) {
-		getKeyLabel().setText(googleKeyLabel);
-	}
+//	public void setKeyLabel(String googleKeyLabel) {
+//		getKeyLabel().setText(googleKeyLabel);
+//	}
+	public void setNameLabel(String googleNameLabel) {
+		getNameLabel().setText(googleNameLabel);
+	}	
 
 	public void WorksheetLabel(String googleWSorksheetLabel) {
 		getTableLabel().setText(googleWSorksheetLabel);
@@ -497,12 +594,18 @@ public class GSSheetUI extends AbstractUI {
   @Override
   public void modelPropertyChange(final PropertyChangeEvent evt)
   {
-    if ( evt.getPropertyName().equals( GSSheetUIController.SPREADSHEET_KEY_PROPERTY))
+//    if ( evt.getPropertyName().equals( GSSheetUIController.SPREADSHEET_KEY_PROPERTY))
+//    {
+//      String newStringValue = evt.getNewValue().toString();
+//      if (!  getKeyText().getText().equals(newStringValue))
+//        getKeyText().setText(newStringValue);
+//    }
+	if ( evt.getPropertyName().equals( GSSheetUIController.SPREADSHEET_NAME_PROPERTY))
     {
       String newStringValue = evt.getNewValue().toString();
-      if (!  getKeyText().getText().equals(newStringValue))
-        getKeyText().setText(newStringValue);
-    }
+      if (!  ((String)getNameList().getSelectedItem()).equals(newStringValue))
+    	  getNameList().setSelectedItem(newStringValue);
+    }	  
     else if ( evt.getPropertyName().equals( GSSheetUIController.USER_NAME_PROPERTY))
     {
       String newStringValue = evt.getNewValue().toString();
@@ -530,7 +633,8 @@ public class GSSheetUI extends AbstractUI {
     else if ( evt.getPropertyName().equals( GSSheetUIController.UNIQUE_COLUMN_POSITION_PROPERTY))
     {
       String newStringValue = evt.getNewValue().toString();
-      if (! ( getColumnList().getSelectedIndex() == Integer.parseInt(newStringValue)) )
+      if (!( getColumnList().getSelectedIndex() == Integer.parseInt(newStringValue))
+    		  && getColumnList().getItemCount() > Integer.parseInt(newStringValue))
         getColumnList().setSelectedIndex(Integer.parseInt(newStringValue));
     }
   }
