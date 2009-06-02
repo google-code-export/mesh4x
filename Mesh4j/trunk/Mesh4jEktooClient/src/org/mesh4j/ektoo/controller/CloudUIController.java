@@ -52,7 +52,8 @@ public class CloudUIController extends AbstractUIController
 			return null;
 		}
 
-		return adapterBuilder.createHttpSyncAdapter(meshName, datasetName);
+		String baseSyncURI = model.getBaseUri();
+		return adapterBuilder.createHttpSyncAdapter(meshName, datasetName,baseSyncURI);
 	}
 
 	@Override

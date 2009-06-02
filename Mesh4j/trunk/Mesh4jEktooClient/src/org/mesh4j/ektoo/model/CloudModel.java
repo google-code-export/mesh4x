@@ -9,6 +9,8 @@ import org.mesh4j.sync.validations.Guard;
  */
 public class CloudModel extends AbstractModel {
 	
+	
+
 	// MODEL VARIABLES
 	private String baseUri;
 	private String meshName = null;
@@ -36,8 +38,11 @@ public class CloudModel extends AbstractModel {
 	public String getDatasetName() {
 		return datasetName;
 	}
-
-	public String getUri() {
+	 
+	public String getBaseUri(){
+		return this.baseUri;
+	}
+	private String getUri() {
 		return this.baseUri + "/" + (getMeshName() != null ? getMeshName() : "")
 				+ "/" + (getDatasetName() != null ? getDatasetName() : "");
 	}

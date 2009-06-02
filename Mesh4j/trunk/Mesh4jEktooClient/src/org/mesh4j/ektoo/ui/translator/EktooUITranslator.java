@@ -250,7 +250,23 @@ public class EktooUITranslator {
 	public static String getTitle() {
 		return EktooMessageTranslator.translate("EKTOO_TITLE");
 	}
-
+	
+	public static String getSchemaCreationCheckboxLabel() {
+		return EktooMessageTranslator.translate("EKTOO_SYNC_PROCESS_CHECK_BUTTON_LABEL");
+	}
+	
+	public static String getHelpText(){
+		return EktooMessageTranslator.translate("EKTOO_HELP_TEXT");
+	}
+	
+	public static String getAboutText(){
+		return EktooMessageTranslator.translate("EKTOO_ABOUT_TEXT");
+	}
+	
+	public static String getSettingsText(){
+		return EktooMessageTranslator.translate("EKTOO_SETTINGS_TEXT");
+	}
+	
 	public static String getMeshNameFieldLabel() {
 		return EktooMessageTranslator
 				.translate("EKTOO_CLOUD_MESH_NAME_FIELD_LABEL");

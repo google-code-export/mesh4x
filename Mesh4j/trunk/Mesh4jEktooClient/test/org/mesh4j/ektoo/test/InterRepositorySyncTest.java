@@ -290,7 +290,7 @@ public class InterRepositorySyncTest {
 
 		String meshName = "Mysql";
 		String feedName = "user";
-
+		String url = "http://localhost:8080/mesh4x/feeds";
 		ISyncAdapterBuilder builder = new SyncAdapterBuilder(
 				new PropertiesProvider());
 		ISyncAdapter sourceAsMySql = builder.createMySQLAdapter(user, password,
@@ -298,7 +298,7 @@ public class InterRepositorySyncTest {
 
 		SplitAdapter sourceAdapter = (SplitAdapter) sourceAsMySql;
 
-		ISyncAdapter targetAdapter = builder.createHttpSyncAdapter(meshName, feedName);
+		ISyncAdapter targetAdapter = builder.createHttpSyncAdapter(meshName, feedName,url);
 
 		SyncEngine engine = new SyncEngine(sourceAdapter, targetAdapter);
 

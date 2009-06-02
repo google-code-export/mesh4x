@@ -135,6 +135,10 @@ public class PropertiesProvider {
 		return getString("mesh4x.url");
 	}
 
+	public String getMesh4xEktooURL() {
+		return getString("mesh4x.ektoo.url");
+	}
+	
 	public String getLoggedUserName() {
 		return LoggedInIdentityProvider.getUserName();
 	}

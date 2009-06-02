@@ -117,9 +117,11 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 				idColumnName, lastUpdateColumnName, identityProvider, sourceSchema, sourceAlias);
 	}	
 
-	public ISyncAdapter createHttpSyncAdapter(String meshid, String datasetId) {
-		String url = getSyncUrl(meshid, datasetId);
+	public ISyncAdapter createHttpSyncAdapter(String meshid, String datasetId,String baseSyncURI) {
+//		String url = getSyncUrl(meshid, datasetId);
 
+		String url = baseSyncURI + "/" + meshid + "/" +datasetId;
+		
 		HttpSyncAdapter adapter = new HttpSyncAdapter(url,
 				RssSyndicationFormat.INSTANCE, getIdentityProvider(),
 				getIdGenerator(), ContentWriter.INSTANCE,

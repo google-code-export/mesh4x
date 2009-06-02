@@ -3,8 +3,11 @@
  */
 package org.mesh4j.ektoo.ui;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -14,18 +17,24 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingWorker;
 
 import org.mesh4j.ektoo.controller.EktooController;
+import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.ektoo.tasks.IErrorListener;
 import org.mesh4j.ektoo.tasks.ISynchronizeTaskListener;
+import org.mesh4j.ektoo.tasks.OpenURLTask;
 import org.mesh4j.ektoo.tasks.SynchronizeTask;
+import org.mesh4j.ektoo.ui.component.HyperLink;
 import org.mesh4j.ektoo.ui.component.statusbar.Statusbar;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
@@ -46,6 +55,7 @@ public class EktooFrame extends JFrame implements IErrorListener,
 	private JButton btnSync = null;
 
 	private JPanel panelImage = null;
+	private JPanel headerPanel = null;
 
 	private JLabel sourceImageLabel = null;
 	private JLabel targetImageLabel = null;
@@ -54,6 +64,7 @@ public class EktooFrame extends JFrame implements IErrorListener,
 
 	private Statusbar statusBar = null;
 	private EktooController controller;
+	
 
 	// BUSINESS METHODS
 	public EktooFrame(EktooController controller) {
@@ -64,7 +75,9 @@ public class EktooFrame extends JFrame implements IErrorListener,
 
 	private void initialize() {
 		this.setSize(new Dimension(800, 500));
-		this.setContentPane(getJPanel());
+		this.getContentPane().setLayout(new BorderLayout());
+		this.add(getHeaderPanel(),BorderLayout.NORTH);
+		this.add(getJPanel(),BorderLayout.CENTER);
 		this.setIconImage(ImageManager.getLogoSmall());
 
 		this.setTitle(EktooUITranslator.getTitle());
@@ -72,6 +85,62 @@ public class EktooFrame extends JFrame implements IErrorListener,
 		this.setResizable(false);
 	}
 
+	private JPanel getHeaderPanel(){
+		if(headerPanel == null){
+			headerPanel = new JPanel(new BorderLayout(10,10));	
+			headerPanel.setBackground(Color.WHITE);
+			
+			JPanel linkPanel = new JPanel();
+			headerPanel.add(linkPanel,BorderLayout.EAST);
+			linkPanel.setOpaque(false);
+			
+			HyperLink settingsLink = new HyperLink(EktooUITranslator.getSettingsText());
+			HyperLink helpLink = new HyperLink(EktooUITranslator.getHelpText());
+			HyperLink aboutLink = new HyperLink(EktooUITranslator.getAboutText());
+			
+			settingsLink.addMouseListener(new MouseAdapter(){
+				 public void mouseClicked(MouseEvent e) {
+					 loadSettingsUI();
+				 }
+			});
+			
+			helpLink.addMouseListener(new MouseAdapter(){
+				 public void mouseClicked(MouseEvent e) {
+					 gotToMesh4xHelpSite();
+				 }
+			});
+			
+			aboutLink.addMouseListener(new MouseAdapter(){
+				 public void mouseClicked(MouseEvent e) {
+					 loadAboutUI();
+				 }
+			});
+			
+			linkPanel.add(settingsLink);
+			linkPanel.add(helpLink);
+			linkPanel.add(aboutLink);
+		}
+		 
+	
+		return headerPanel;
+	}
+	
+	//TODO(raju) please user PropertiesProvider class as single tone for the application
+	//because its not necessary to load property file every time.
+	private void gotToMesh4xHelpSite(){
+		OpenURLTask openURLTask = new OpenURLTask(this,this,new PropertiesProvider().getMesh4xEktooURL());
+		openURLTask.execute();
+	}
+	private void loadSettingsUI(){
+		
+	}
+	//TODO(raju) please user PropertiesProvider class as single tone for the application
+	//because its not necessary to load property file every time.
+	private void loadAboutUI(){
+		OpenURLTask openURLTask = new OpenURLTask(this,this,new PropertiesProvider().getMesh4xURL());
+		openURLTask.execute();
+	}
+	
 	private JPanel getJPanel() {
 		if (panel == null) {
 			panel = new JPanel();
@@ -102,22 +171,37 @@ public class EktooFrame extends JFrame implements IErrorListener,
 			c.gridy = 1;
 			panel.add(getTargetPane(), c);
 
+			
 			c.fill = GridBagConstraints.CENTER;
 			c.gridx = 0;
 			c.gridy = 2;
 			c.gridwidth = 2;
+			panel.add(getCheckBox(), c);
+			
+			
+			c.fill = GridBagConstraints.CENTER;
+			c.gridx = 0;
+			c.gridy = 3;
+			c.gridwidth = 2;
 			panel.add(getBtnSync(), c);
 
+			
+			
 			c.insets = new Insets(0, 3, -17, 3);
 			c.fill = GridBagConstraints.HORIZONTAL;
 			c.gridx = 0;
-			c.gridy = 3;
+			c.gridy = 4;
 			c.gridwidth = 2;
 			panel.add(getStatusBar(), c);
 		}
 		return panel;
 	}
 
+	private JCheckBox getCheckBox(){
+		JCheckBox schemaCreationChkBox = new JCheckBox(EktooUITranslator.getSchemaCreationCheckboxLabel());
+		schemaCreationChkBox.setOpaque(false);
+		return schemaCreationChkBox;
+	}
 	private JPanel getImagePanel() {
 		if (panelImage == null) {
 			panelImage = new JPanel();
