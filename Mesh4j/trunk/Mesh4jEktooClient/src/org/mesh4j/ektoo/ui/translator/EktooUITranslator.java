@@ -366,11 +366,65 @@ public class EktooUITranslator {
 		return EktooMessageTranslator.translate("EKTOO_ERROR_OPEN_FILE_ACTION_NOT_SUPPORTED");
 	}
 
+	
+	//google spreadsheet specific tooltip
+	
 	public static String getTooltipView() {
 		return EktooMessageTranslator.translate("EKTOO_TOOLTIP_VIEW_DATA_SOURCE");
 	}
 	
 	public static String getTooltipFetchSpreadsheets() {
-		return EktooMessageTranslator.translate("EKTOO_TOOLTIP_VIEW_FETCH_SPREADSHEETS");
+		return EktooMessageTranslator.translate("EKTOO_TOOLTIP_GOOGLE_VIEW_FETCH_SPREADSHEETS");
 	}	
+	
+	public static String getTooltipGoogleDocsUsername() {
+		return EktooMessageTranslator.translate("EKTOO_TOOLTIP_GOOGLE_DOCS_USERNAME");
+	}
+	
+	public static String getTooltipGoogleDocsPassword() {
+		return EktooMessageTranslator.translate("EKTOO_TOOLTIP_GOOGLE_DOCS_PASSWORD");
+	}
+	
+	public static String getTooltipGoogleSpreadsheetName() {
+		return EktooMessageTranslator.translate("EKTOO_TOOLTIP_GOOGLE_SPREADSHEET_NAME");
+	}
+	
+	public static String getTooltipSelectWorksheet() {
+		return EktooMessageTranslator.translate("EKTOO_TOOLTIP_SELECT_WORKSHEET");
+	}
+	
+	public static String getTooltipSelectTable() {
+		return EktooMessageTranslator.translate("EKTOO_TOOLTIP_SELECT_TABLE");
+	}
+	
+	public static String getTooltipIdColumnName() {
+		return EktooMessageTranslator.translate("EKTOO_TOOLTIP_ID_COLUMN_NAME");
+	}
+
+	//cloud specific tooltip
+	
+	public static String getTooltipCloudMeshname() {
+		return EktooMessageTranslator.translate("EKTOO_TOOLTIP_CLOUD_MESHNAME");
+	}
+	
+	public static String getTooltipCloudDatasetname() {
+		return EktooMessageTranslator.translate("EKTOO_TOOLTIP_CLOUD_DATASETNAME");
+	}	
+	
+	public static String getTooltipCloudSyncServerURI() {
+		return EktooMessageTranslator.translate("EKTOO_TOOLTIP_CLOUD_SYNCSERVER_URI");
+	}	
+	
+	//folder specific tooltip
+	
+	public static String getTooltipFolderSeleceFile() {
+		return EktooMessageTranslator.translate("EKTOO_TOOLTIP_FOLDER_SELECT_FOLDER");
+	}
+
+	//Kml/feed/Access/Excel specific tooltip
+	
+	public static String getTooltipSeleceDataFile(String fileType) {
+		return EktooMessageTranslator.translate("EKTOO_TOOLTIP_SELECT_FILE", fileType);
+	}
+	
 }
