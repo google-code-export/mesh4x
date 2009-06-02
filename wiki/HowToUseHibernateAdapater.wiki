@@ -1,5 +1,5 @@
+#summary How to create/use a hibernate adapter.
 #labels Phase-Implementation
-# How to create/use a hibernate adapter.
 
 = Introduction =
 
