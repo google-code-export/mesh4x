@@ -127,6 +127,7 @@ public class GSSheetUI extends AbstractUI {
 		if (txtUser == null) {
 			txtUser = new JTextField();
 			txtUser.setBounds(new Rectangle(101, 5, 183, 20));
+			txtUser.setToolTipText(EktooUITranslator.getTooltipGoogleDocsUsername());
 			txtUser.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					try {
@@ -165,6 +166,7 @@ public class GSSheetUI extends AbstractUI {
 	private JPasswordField getPassText() {
 		if (txtPass == null) {
 			txtPass = new JPasswordField();
+			txtPass.setToolTipText(EktooUITranslator.getTooltipGoogleDocsPassword());
 			txtPass.setBounds(new Rectangle(101, 30, 183, 20));
 			txtPass.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
@@ -249,6 +251,7 @@ public class GSSheetUI extends AbstractUI {
 		if (listName == null) {
 			listName = new JComboBox();
 			listName.setBounds(new Rectangle(101, 55, 160, 20));
+			listName.setToolTipText(EktooUITranslator.getTooltipGoogleSpreadsheetName());
 			listName.addItemListener(new ItemListener() {
 				public void itemStateChanged(ItemEvent e) {
 					if (e.getStateChange() == ItemEvent.SELECTED) 
@@ -330,7 +333,8 @@ public class GSSheetUI extends AbstractUI {
 			listTable = new JComboBox();
 
 			listTable.setBounds(new Rectangle(101, 80, 183, 20));
-
+			listTable.setToolTipText(EktooUITranslator.getTooltipSelectWorksheet());
+			
 			listTable.addItemListener(new ItemListener() 
 			{
 				public void itemStateChanged(ItemEvent evt) 
@@ -370,8 +374,7 @@ public class GSSheetUI extends AbstractUI {
 	private JLabel getLabelColumn() {
 		if (labelColumn == null) {
 			labelColumn = new JLabel();
-			labelColumn.setText(EktooUITranslator
-					.getGoogleWorksheetColumnLabel());
+			labelColumn.setText(EktooUITranslator.getGoogleWorksheetColumnLabel());
 			labelColumn.setSize(new Dimension(85, 16));
 			labelColumn.setPreferredSize(new Dimension(85, 16));
 			labelColumn.setLocation(new Point(8, 109));
@@ -389,6 +392,7 @@ public class GSSheetUI extends AbstractUI {
 		if (listColumn == null) {
 			listColumn = new JComboBox();
 			listColumn.setBounds(new Rectangle(101, 105, 183, 20));
+			listColumn.setToolTipText(EktooUITranslator.getTooltipIdColumnName());
 			listColumn.addItemListener(new ItemListener() {
 				public void itemStateChanged(ItemEvent evt) 
 				{
