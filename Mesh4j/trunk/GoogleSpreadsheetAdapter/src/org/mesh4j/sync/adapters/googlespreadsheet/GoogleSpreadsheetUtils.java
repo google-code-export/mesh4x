@@ -451,6 +451,18 @@ public class GoogleSpreadsheetUtils {
 		return feed.getEntries();
 	}
 	
+	public static List<SpreadsheetEntry> getAllSpreadsheet(String username,
+			String password) throws IOException, ServiceException {
+		FeedURLFactory factory = getSpreadsheetFeedURLFactory();
+		SpreadsheetService service = getSpreadsheetService(username, password);
+
+		SpreadsheetFeed feed = service.getFeed(
+				factory.getSpreadsheetsFeedUrl(), SpreadsheetFeed.class);
+
+		return feed.getEntries();
+	}
+	
+	
 	/**
 	 * get all worksheet form a spreadsheet
 	 * 
