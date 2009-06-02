@@ -15,6 +15,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.mesh4j.ektoo.controller.MsExcelUIController;
+import org.mesh4j.ektoo.model.AbstractModel;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.sync.adapters.msexcel.MsExcel;
 import org.mesh4j.sync.adapters.msexcel.MsExcelUtils;
@@ -152,4 +153,33 @@ public class MsExcelUI extends TableUI
     }   
 
 	}
+	
+	public void updateUiForSchemaCreation(boolean isEanble,String table,String column){
+		getTableList().setEnabled(isEanble);
+		getColumnList().setEnabled(isEanble);
+		
+		changeUniqueColumnName(column);
+		changeWorksheetName(table);
+		//changeWorkBookName();
+	}
+
+	public void updateUiForSchemaCreation(boolean isEanble){
+		getTableList().setEnabled(isEanble);
+		getColumnList().setEnabled(isEanble);
+		this.setFile(getFile());
+	}
+	
+	private void changeUniqueColumnName(String columnName){
+		this.controller.changeUniqueColumnName(columnName);
+	}
+	
+	private void changeWorksheetName(String workSheetName){
+		this.controller.changeWorksheetName(workSheetName);		
+	}
+	
+	private void changeWorkBookName(String workBookName){
+		this.controller.changeWorkbookName(workBookName);		
+	}
+	
+
 }

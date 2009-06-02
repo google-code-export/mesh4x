@@ -505,6 +505,7 @@ public class MySQLUI extends AbstractUI implements IValidationStatus {
 
 	@Override
 	public void modelPropertyChange(PropertyChangeEvent evt) {
+		
 		if (evt.getPropertyName().equals(MySQLUIController.USER_NAME_PROPERTY)) {
 			String newStringValue = evt.getNewValue().toString();
 			if (!getUserText().getText().equals(newStringValue))

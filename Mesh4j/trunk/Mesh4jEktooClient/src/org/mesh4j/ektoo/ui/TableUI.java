@@ -83,6 +83,7 @@ public abstract class TableUI extends AbstractUI {
 	public abstract void setList(File file);
 	public abstract void setList(File file, int tableIndex);
 	public abstract void setList(File file, int tableIndex, String columnName);
+	
 
 	private JLabel getLabelFile() {
 		if (labelFile == null) {

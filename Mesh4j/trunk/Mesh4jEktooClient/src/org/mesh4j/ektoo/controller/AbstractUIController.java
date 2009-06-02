@@ -18,6 +18,7 @@ import org.mesh4j.ektoo.ui.AbstractUI;
 public abstract class AbstractUIController implements PropertyChangeListener, IUIController
 {
   private final static Log LOGGER = LogFactory.getLog(AbstractUIController.class);
+  public static final String PROPERTY_CREATE_SCHEMA = "PROPERTY_CREATE_SCHEMA"; 
 	
 	// MODEL VARIABLES
 	private ArrayList<AbstractUI> registeredViews = new ArrayList<AbstractUI>();

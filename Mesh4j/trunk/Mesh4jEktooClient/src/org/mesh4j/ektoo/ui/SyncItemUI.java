@@ -29,6 +29,7 @@ import org.mesh4j.ektoo.controller.KmlUIController;
 import org.mesh4j.ektoo.controller.MsAccessUIController;
 import org.mesh4j.ektoo.controller.MsExcelUIController;
 import org.mesh4j.ektoo.controller.MySQLUIController;
+import org.mesh4j.ektoo.model.AbstractModel;
 import org.mesh4j.ektoo.model.CloudModel;
 import org.mesh4j.ektoo.model.FeedModel;
 import org.mesh4j.ektoo.model.FolderModel;
@@ -449,5 +450,19 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 		}
 
 		return currrentController;
+	}
+	
+	//TODO(raju) as mesh4x core adapters supports schema creation, implement this 
+	public void updateUiForSchemaCreation(boolean isEanble,String table,String column){
+		String type = (String) getDataSourceType().getSelectedItem();
+		if(type.equals(MS_EXCEL_PANEL)){
+			excelUI.updateUiForSchemaCreation(isEanble,table,column);
+		}else{
+			//do nothing...
+		}
+	}
+	
+	public void setOldValue(boolean isEanble){
+		excelUI.updateUiForSchemaCreation(isEanble);
 	}
 }

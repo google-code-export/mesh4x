@@ -34,10 +34,12 @@ public class MsExcelUIController extends AbstractUIController
 
 	public void changeWorkbookName(String workbookName) {
 		setModelProperty(WORKBOOK_NAME_PROPERTY, workbookName);
+		
 	}
 
 	public void changeWorksheetName(String worksheetName) {
 		setModelProperty(WORKSHEET_NAME_PROPERTY, worksheetName);
+		
 	}
 
 	public void changeUniqueColumnName(String uniqueColumnName) {
