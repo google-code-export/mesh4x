@@ -81,6 +81,7 @@ public class CloudUI extends AbstractUI{
 		if (syncTextURI == null) {
 			syncTextURI = new JTextField();
 			syncTextURI.setBounds(new Rectangle(101, 59, 183, 20));
+			syncTextURI.setToolTipText(EktooUITranslator.getTooltipCloudSyncServerURI());
 		}
 		return syncTextURI;
 	}
@@ -113,6 +114,7 @@ public class CloudUI extends AbstractUI{
 		if (txtMash == null) {
 			txtMash = new JTextField();
 			txtMash.setBounds(new Rectangle(101, 5, 183, 20));
+			txtMash.setToolTipText(EktooUITranslator.getTooltipCloudMeshname());
 			txtMash.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					try {
@@ -152,6 +154,7 @@ public class CloudUI extends AbstractUI{
 		if (txtDataset == null) {
 			txtDataset = new JTextField();
 			txtDataset.setBounds(new Rectangle(101, 30, 183, 20));
+			txtDataset.setToolTipText(EktooUITranslator.getTooltipCloudDatasetname());
 			txtDataset.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					try {

@@ -114,6 +114,10 @@ public abstract class TableUI extends AbstractUI {
 		if (btnFile == null) {
 			btnFile = new JButton();
 			btnFile.setText(EktooUITranslator.getBrowseButtonLabel());
+			if(this instanceof MsAccessUI)
+				btnFile.setToolTipText(EktooUITranslator.getTooltipSeleceDataFile("Access"));
+			else
+				btnFile.setToolTipText(EktooUITranslator.getTooltipSeleceDataFile("Excel"));			
 			btnFile.setBounds(new Rectangle(259, 8, 34, 20));
 			btnFile.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -182,17 +186,21 @@ public abstract class TableUI extends AbstractUI {
 		if (listTable == null) {
 			listTable = new JComboBox();
 			listTable.setBounds(new Rectangle(99, 36, 194, 20));
+			if(this instanceof MsExcelUI)
+				listTable.setToolTipText(EktooUITranslator.getTooltipSelectWorksheet());
+			else
+				listTable.setToolTipText(EktooUITranslator.getTooltipSelectTable());
 			listTable.addItemListener(new ItemListener() {
 				public void itemStateChanged(ItemEvent evt) 
 				{
 				  if (evt.getStateChange() == ItemEvent.SELECTED) 
-          {
+				  {
   				  int sheetIndex = listTable.getSelectedIndex();
   					if (sheetIndex != -1) {
   						table = (String) listTable.getSelectedItem();
   						setList(getFile(), sheetIndex);
   					}
-          }
+				  }
 				}
 			});
 		}
@@ -221,6 +229,7 @@ public abstract class TableUI extends AbstractUI {
 		if (listColumn == null) {
 			listColumn = new JComboBox();
 			listColumn.setBounds(new Rectangle(99, 64, 194, 20));
+			listColumn.setToolTipText(EktooUITranslator.getTooltipIdColumnName());
 			listColumn.addItemListener(new ItemListener() {
 				public void itemStateChanged(ItemEvent evt) 
 				{

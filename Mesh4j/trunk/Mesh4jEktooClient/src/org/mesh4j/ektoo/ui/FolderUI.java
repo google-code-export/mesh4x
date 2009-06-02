@@ -85,6 +85,7 @@ public class FolderUI extends AbstractUI {
 			btnFile = new JButton();
 			btnFile.setText(EktooUITranslator.getBrowseButtonLabel());
 			btnFile.setBounds(new Rectangle(259, 8, 34, 20));
+			btnFile.setToolTipText(EktooUITranslator.getTooltipFolderSeleceFile());
 			btnFile.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					getFileChooser().setSelectedFile(file);

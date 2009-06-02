@@ -384,6 +384,7 @@ public class MySQLUI extends AbstractUI implements IValidationStatus {
 		if (listTable == null) {
 			listTable = new JComboBox();
 			listTable.setBounds(new Rectangle(101, 105, 183, 20));
+			listTable.setToolTipText(EktooUITranslator.getTooltipSelectTable());
 			listTable.addItemListener(new ItemListener() {
 				public void itemStateChanged(ItemEvent e) {
 					getController().changeTableName(
