@@ -11,7 +11,8 @@ Ms-excel adapter supports RDF schema and plain xml. With the help of RDF schema 
 Both type of adapter creation is the process of creating SplitAdapter based on MsExcelSyncRepository  and  MsExcelContentAdapter. There's another easy alternative way of creating ms-excel adapter which is use the adapter factory. Example code here represents the adapter factory MsExcelSyncAdapterFactory  and  MsExcelRDFSyncAdapterFactory
 
 *Plain xml based MsExcel adapter*
-Plain xml based MsExcel adapter can be created with the following method  of MsExcelSyncAdapterFactory
+ Plain xml based MsExcel adapter can be created with the following method  of MsExcelSyncAdapterFactory
+
 {{{
 createSyncAdapter(String excelFileName, String sheetName, String idColumnName, IIdentityProvider identityProvider)
 }}}
