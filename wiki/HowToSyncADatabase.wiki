@@ -18,5 +18,6 @@ The process consists of:
  # Triggering the synchronization
 
 =Details=
+See HowToUseHibernateAdapater for more information.
 
 =Frequently Asked Questions=
