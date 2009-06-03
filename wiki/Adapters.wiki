@@ -11,10 +11,12 @@
 We have also set up a demo server to show how you can sync to the HTTP sync server and back. If you use the KML adapter sample application you can sync between two local KML files, a local KML and an http server we are hosting, or 2 http servers.
 
 
-==Microsoft Excel Adapter==
-The Excel Adapter helps syncrhonize data kept in Excel. It takes a simple approach to taking a Sheet in excel act as a table, where the first row is assumed to be the titles of the columns, and every row is taken as the entity to be shared (i.e. conflicts happen at granularities of rows, not cells). Also this adapter takes the contents of the cells as data i.e. it doesn't preserve formulas or conditional computations. 
-See HowToUseMsExcelAdapter for more information.
+==Google Spreadsheets Adapter==
+The Google Spreadsheets Adapter helps synchronize data kept in Google Spreadsheets. It takes a simple approach to taking a Sheet act as a table, where the first row is assumed to be the titles of the columns, and every row is taken as the entity to be shared (i.e. conflicts happen at granularities of rows, not cells). Also this adapter takes the contents of the cells as data i.e. it doesn't preserve formulas or conditional computations. 
 
+==Microsoft Excel Adapter==
+The Excel Adapter helps synchronize data kept in Excel. It takes a simple approach to taking a Sheet in excel act as a table, where the first row is assumed to be the titles of the columns, and every row is taken as the entity to be shared (i.e. conflicts happen at granularities of rows, not cells). Also this adapter takes the contents of the cells as data i.e. it doesn't preserve formulas or conditional computations. 
+See HowToUseMsExcelAdapter for more information.
 
 ==Microsoft Access Adapter==
 The Access Adapter allows you to synchronize to Access databases. It uses Hibernate's XML to table mappings, and accesses the MDB via ODBC. This has the drawback that the MDB has to be closed to be able to write to it. This will be addressed in future versions depending on user demand (ideally this adapter should be hosted in-process in the access application itself as a plugin, instead of a separate standalone application 'on the side')
@@ -37,6 +39,9 @@ Transport adapters are designed to help synchronization happen in a distributed 
 
 ==File Adapter==
 The file adapter allows you to sync from/to a file. The file is really an XML (RSS/Atom) file that you can save on a USB drive and then sync with again. This file is also what you would transfer ("beam") to sync over Infrared or Bluetooth in a peer-to-peer fashion between mobiles.
+
+==Folder Adapter==
+The folder adapter allows you to sync from/to a folder. The folder is really an XML (RSS/Atom) file that you can save on a USB drive and then sync with again. This file is also what you would transfer ("beam") to sync over Infrared or Bluetooth in a peer-to-peer fashion between mobiles.
 
 ==HTTP Adapter==
 The HTTP adapter synchronizes to a server that supports the REST APIs for Feedsync. We have an implementation of such server in the source tree too (it's what you are synchronizing to when using the KML demo)
