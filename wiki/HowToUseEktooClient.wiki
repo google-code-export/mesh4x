@@ -7,15 +7,14 @@
      <td valign="top" width=40%>
       <wiki:toc max_depth="2"/>
      </td>
-     <td valign="top" width=60%>
+     <td valign="top" align="center" width=60%>
+[http://mesh4x.googlecode.com/svn/wiki/files/ektoo_1.gif]
+<br/>
 *Get Ektoo Client Beta version Now* [http://downloads.instedd.org/mesh4x/ektoo_0_0_6.zip http://mesh4x.googlecode.com/svn/wiki/files/download_2.png]
-     </td>
+     
+</td>
   </tr>
   
-  <tr>
-  <td></td>
-  <td>[http://mesh4x.googlecode.com/svn/wiki/files/ektoo_1.gif]</td>
-  </tr>
 </table>
 
 
@@ -55,7 +54,7 @@ Currently mesh4x supports following data repositories:
 
 
      </td>
-     <td>[http://mesh4x.googlecode.com/svn/wiki/files/ektoo_1.gif]</td>
+     <td></td>
   </tr>
 
   <tr>
