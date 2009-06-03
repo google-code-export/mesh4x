@@ -110,7 +110,7 @@ The process consists of:
  # Browse KML files and select one that you want to synchronize.
 
      </td>
-     <td></td>
+      <td>[http://mesh4x.googlecode.com/svn/wiki/files/ektoo_10.gif]</td>
   </tr>
 
   <tr>
@@ -156,11 +156,12 @@ The process consists of:
  # Select "Google Spreadsheet" data type from "<b>Data Source Type</b>" drop down list.
  # Enter user name in "<b>User</b>" text box
  # Enter password in "<b>Password</b>" text box
- # Enter Google Spreadsheet Key in "<b>Key</b>" text box 
  # Click on connection icon
-   * After successful connection, available sheets will be displayed in "<b>Worksheet</b>" drop down list
+   * After successful connection, all spreadsheet will be displayed in "<b>Spreadsheet</b>" drop down list 
+ # Select a spreadsheet from the "<b>Spreadsheet</b>" drop down list
+   * Available worksheets will be displayed in "<b>Worksheet</b>" drop down list
  # Select a worksheet from "<b>Worksheet</b>" drop down list.
-  * Available list of column will be displayed in "Unique Column" drop down list.
+   * Available list of column will be displayed in "Unique Column" drop down list.
  # Select unique column from "<b>Unique Column</b>" drop down list.
 
      </td>
@@ -197,6 +198,17 @@ The process consists of:
      <td>[http://mesh4x.googlecode.com/svn/wiki/files/ektoo_6.gif]</td>
   </tr>
 
+  <tr>
+     <td valign=top>
+==Cloud==
+The process consists of:
+ # Enter the Mesh name in "<b>Mesh Name</b>" text box.
+ # Enter the Feed/Data set name in "<b>Data Set</b>" text box.
+ # Enter the URI of sync server in "<b>Sync Server Uri</b>" text box.
+ 
+     </td>
+     <td>[http://mesh4x.googlecode.com/svn/wiki/files/ektoo_2.gif]</td>
+  </tr>
 
   <tr>
      <td valign=top>
@@ -205,7 +217,7 @@ The process consists of:
  # Select "Folder" data type from "<b>Data Source Type</b>" drop down list.
  # Browse folders and select one that you want to synchronize.
      </td>
-     <td></td>
+     <td>[http://mesh4x.googlecode.com/svn/wiki/files/ektoo_9.gif]</td>
   </tr>
 
 </table>
