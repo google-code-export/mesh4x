@@ -55,7 +55,7 @@ Currently mesh4x supports following data repositories:
 
   <tr>
      <td valign=top>
-=What you need=
+=Prerequisites=
 You will need:
  * JRE(Java Runtime Environment) 1.5 or later version installed in your system.
  * Ektoo client installed in your system
