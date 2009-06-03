@@ -23,6 +23,8 @@ If you want to control how that metadata is stored and where, or if your reposit
 This versioning metadata information is, however, very general in nature and can be easily externalized from your repository (i.e. keep it in a separate database/table). Hence, we also provide a standard SyncRepository that takes care of managing this metadata, and a simplified interface you can implement for your actual content items: IContentAdapter. This interface works with the raw item content of your repository, so you don't need to worry about the versioning information, which is coordinated automatically by a SplitAdapter with the standard SyncRepository and your IContentAdapter. The IContentAdapter exposes simple CRUD methods that work with just your content payloads. See [http://code.google.com/p/mesh4x/source/browse/Mesh4j/trunk/src/org/mesh4j/sync/adapters/split/IContentAdapter.java the source]
 
 ==For more specific information you can see==
-HowToUseMsExcelAdapter    
-HowToUseHibernateAdapater   
-HowToUseMsAccessAdapter  
+HowToUseMsExcelAdapter
+
+HowToUseHibernateAdapater
+
+HowToUseMsAccessAdapter
