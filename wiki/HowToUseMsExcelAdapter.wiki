@@ -61,7 +61,27 @@ ISyncAdapter targetMsExcelAdapter = factory.createSyncAdapter(targetExcelFileNam
 This rdf based target excel adapter ensure that target excel file must have same schema of source excel file.
 
 =Synchronization=
+
 *Sync two excel file based on RDF*
+
+{{{
+String sourceExcelFile ="c:/source.xls";
+String targetExcelFile ="c:/target.xls";
+
+String ontologyBaseUri = "http://localhost:8080/mesh4x/myExample";
+MsExcelRDFSyncAdapterFactory factory = new MsExcelRDFSyncAdapterFactory(ontologyBaseUri);
+		
+	
+SplitAdapter sourceAdapter = factory.createSyncAdapter(sourceExcelFile , "user", "id", NullIdentityProvider.INSTANCE);
+	
+ISyncAdapter targetAdapter = factory.createSyncAdapter(targetExcelFile , "user", "id", NullIdentityProvider.INSTANCE);
+		
+		
+SyncEngine engine = new SyncEngine(sourceAdapter,targetAdapter);
+engine.synchronize();
+}}}
+
+*Sync two excel file based on RDF using the source rdf schema*
 
 {{{
 String sourceExcelFile ="c:/source.xls";
