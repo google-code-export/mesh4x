@@ -4,11 +4,11 @@
 
 <table border=0 width=100%>
   <tr>
-     <td valign="top" width=50%>
+     <td valign="top" width=40%>
       <wiki:toc max_depth="2"/>
      </td>
-     <td valign="top" width=50%>
-[http://downloads.instedd.org/mesh4x/ektoo_0_0_6.zip Download Ektoo Client Beta version Now]
+     <td valign="top" width=60%>
+*Get Ektoo Client Beta version Now* [http://downloads.instedd.org/mesh4x/ektoo_0_0_6.zip http://mesh4x.googlecode.com/svn/wiki/files/download_2.png]
      </td>
   </tr>
 </table>
