@@ -73,10 +73,10 @@ ISyncAdapter syncAdapter = factory.createSyncAdapter(tableName, sourceDefinition
 Following method is used for creating adapter for Multi mode sync:
 
 {{{
-createSyncAdapterForMultiTables(String mdbFileName, String[] tables, IIdentityProvider identityProvider, InMemorySyncAdapter adapterOpaque);
+createSyncAdapterForMultiTables(String mdbFileName, String[] tables, IIdentityProvider identityProvider, ISyncAdapter adapterOpaque);
 }}}
 
-The differences here with respect to the previous method are in this mode user need to provide an instance of `org.mesh4j.sync.adapters.InMemorySyncAdapter` as _opaqueAdapter_ and an array of string as _tables_ containing the table names to sync.
+The differences here with respect to the previous method are in this mode user need to provide an instance of  `ISyncAdapter` (for example `org.mesh4j.sync.adapters.InMemorySyncAdapter`) as _opaqueAdapter_ and an array of string as _tables_ containing the table names to sync.
 
 Following is an examle of using this method to get an instance of MsAccess adapter for multi mode sync.
 
