@@ -84,6 +84,7 @@ public abstract class TableUI extends AbstractUI {
 	public abstract void setList(File file, int tableIndex);
 	public abstract void setList(File file, int tableIndex, String columnName);
 	
+	
 
 	private JLabel getLabelFile() {
 		if (labelFile == null) {
@@ -102,6 +103,9 @@ public abstract class TableUI extends AbstractUI {
 		}
 	}
 
+	public String getFilePath(){
+		return getTxtFile().getText().trim();
+	}
 	public JTextField getTxtFile() {
 		if (txtFile == null) {
 			txtFile = new JTextField();
@@ -138,6 +142,7 @@ public abstract class TableUI extends AbstractUI {
 		}
 		return btnFile;
 	}
+	
 	
 	public JButton getBtnView() {
 		if (btnView == null) {

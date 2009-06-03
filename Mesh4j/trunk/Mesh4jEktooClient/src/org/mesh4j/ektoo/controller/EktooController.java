@@ -8,6 +8,8 @@ import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.ektoo.ui.SyncItemUI;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.SyncEngine;
+import org.mesh4j.sync.adapters.hibernate.HibernateContentAdapter;
+import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.validations.Guard;
 
@@ -47,12 +49,20 @@ public class EktooController
 			sourceAdapter = source.createAdapter(target.fetchSchema(targetAdapter));
 
 		} else {
-			if ((selectedTargetItem.equals(SyncItemUI.MS_EXCEL_PANEL) || selectedTargetItem.equals(SyncItemUI.GOOGLE_SPREADSHEET_PANEL))
-					&& (selectedSourceItem
-							.equals(SyncItemUI.MYSQL_PANEL) || 
-						selectedSourceItem
-							.equals(SyncItemUI.MS_ACCESS_PANEL))) {
+			if ((selectedTargetItem.equals(SyncItemUI.MS_EXCEL_PANEL) || 
+					selectedTargetItem.equals(SyncItemUI.GOOGLE_SPREADSHEET_PANEL))
+					&& (selectedSourceItem.equals(SyncItemUI.MYSQL_PANEL) || 
+						selectedSourceItem.equals(SyncItemUI.MS_ACCESS_PANEL))) {
+				
 				sourceAdapter = source.createAdapter();
+				//for automatic schema creation for ms excel
+				
+				if(target.isCreateSchema()){
+					if(selectedSourceItem.equals(SyncItemUI.MYSQL_PANEL) && selectedTargetItem
+							.equals(SyncItemUI.MS_EXCEL_PANEL)){
+						processAutomaticSchemaCreation(sourceAdapter,target);	
+					}	
+				}
 				targetAdapter = target.createAdapter(source.fetchSchema(sourceAdapter));
 			} else {
 				sourceAdapter = source.createAdapter();
@@ -63,6 +73,21 @@ public class EktooController
 		return sync(sourceAdapter, targetAdapter);
 	}
 
+	
+	private void processAutomaticSchemaCreation(ISyncAdapter sourceAdapter,SyncItemUI target){
+	
+			SplitAdapter splitAdapter = ((SplitAdapter)sourceAdapter);
+			String idNode = ((HibernateContentAdapter)splitAdapter.getContentAdapter()).getMapping().getIDNode();
+			String entity = ((HibernateContentAdapter)splitAdapter.getContentAdapter()).getMapping().getEntityNode();
+			String targetFilePath = target.getTargetFilePath();
+			
+			MsExcelUIController controller = (MsExcelUIController)target.getCurrentController();
+			controller.changeWorksheetName(entity);
+			controller.changeUniqueColumnName(idNode);
+			controller.changeWorkbookName(targetFilePath);
+	
+	}
+	
 	public String sync(ISyncAdapter sourceAdapter, ISyncAdapter targetAdapter) 
 	{
 	  try

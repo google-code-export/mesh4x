@@ -94,15 +94,15 @@ public class EktooFrame extends JFrame implements IErrorListener,
 			headerPanel.add(linkPanel,BorderLayout.EAST);
 			linkPanel.setOpaque(false);
 			
-			HyperLink settingsLink = new HyperLink(EktooUITranslator.getSettingsText());
+//			HyperLink settingsLink = new HyperLink(EktooUITranslator.getSettingsText());
 			HyperLink helpLink = new HyperLink(EktooUITranslator.getHelpText());
 			HyperLink aboutLink = new HyperLink(EktooUITranslator.getAboutText());
 			
-			settingsLink.addMouseListener(new MouseAdapter(){
-				 public void mouseClicked(MouseEvent e) {
-					 loadSettingsUI();
-				 }
-			});
+//			settingsLink.addMouseListener(new MouseAdapter(){
+//				 public void mouseClicked(MouseEvent e) {
+//					 loadSettingsUI();
+//				 }
+//			});
 			
 			helpLink.addMouseListener(new MouseAdapter(){
 				 public void mouseClicked(MouseEvent e) {
@@ -116,7 +116,7 @@ public class EktooFrame extends JFrame implements IErrorListener,
 				 }
 			});
 			
-			linkPanel.add(settingsLink);
+//			linkPanel.add(settingsLink);
 			linkPanel.add(helpLink);
 			linkPanel.add(aboutLink);
 		}
@@ -206,11 +206,11 @@ public class EktooFrame extends JFrame implements IErrorListener,
 				AbstractButton abstractButton = (AbstractButton) e.getSource();
 		        boolean isSelected = abstractButton.getModel().isSelected();
 		        if(isSelected){
-		        	String table = getSourceItem().getTable();
-		        	String column = getSourceItem().getColumn();
-		        	getTargetItem().updateUiForSchemaCreation(false,table,column);
+		        	getTargetItem().updateUiForSchemaCreation(false);
+		        	getTargetItem().setCreateSchema(true);
 		        }else{
-		        	getTargetItem().setOldValue(true);
+		        	getTargetItem().updateUiForSchemaCreation(true);
+		        	getTargetItem().setCreateSchema(false);
 		        }
 			}
 		});
@@ -218,6 +218,8 @@ public class EktooFrame extends JFrame implements IErrorListener,
 		schemaCreationChkBox.setVisible(false);
 		return schemaCreationChkBox;
 	}
+	
+	
 	private JPanel getImagePanel() {
 		if (panelImage == null) {
 			panelImage = new JPanel();

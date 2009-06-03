@@ -194,6 +194,10 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 	
 	@Override
 	public ISyncAdapter createMsExcelAdapter(String contentFileName, String sheetName, String idColumnName, IRDFSchema sourceSchema){
+		
+		if(idColumnName == null || idColumnName.equals("")){
+			
+		}
 		return this.excelRDFSyncFactory.createSyncAdapter(contentFileName, sheetName, idColumnName, getIdentityProvider(), sourceSchema);
 	}	
 	
