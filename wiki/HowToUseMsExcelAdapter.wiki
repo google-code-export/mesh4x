@@ -1,4 +1,4 @@
-#How to create/use mesh4x ms-excel adapter
+#summary How to create/use mesh4x ms-excel adapter
 
 =Introduction=
 Mesh4x ms-excel adapter supports both .xls and .xlsx file format. Ms-excel adapter is based on SplitAdapter concept in mesh4x core. The concept of SplitAdapter is separate the data and sync information. Idea is your business data and sync information stores in separate ms-excel worksheet or in two different ms-excel file. You can sync two worksheet of ms-excel file or you can sync two ms-excel file where your source file might be .xls and target might be .xlsx format.Mesh4x of course support sync operation between heterogeneous repository, for example you can sync between Google spreadsheet and ms-excel or it could be ms-excel to mysql(any RDBMS).
