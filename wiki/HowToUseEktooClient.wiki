@@ -11,6 +11,11 @@
 *Get Ektoo Client Beta version Now* [http://downloads.instedd.org/mesh4x/ektoo_0_0_6.zip http://mesh4x.googlecode.com/svn/wiki/files/download_2.png]
      </td>
   </tr>
+  
+  <tr>
+  <td></td>
+  <td>[http://mesh4x.googlecode.com/svn/wiki/files/ektoo_1.gif]</td>
+  </tr>
 </table>
 
 
