@@ -81,7 +81,7 @@ SyncEngine engine = new SyncEngine(sourceAdapter,targetAdapter);
 engine.synchronize();
 }}}
 
-*Sync two excel file based on RDF using the source rdf schema*
+*Sync two excel file based on RDF (checking source and target rdf compatibility)*
 
 {{{
 String sourceExcelFile ="c:/source.xls";
@@ -92,7 +92,7 @@ MsExcelRDFSyncAdapterFactory factory = new MsExcelRDFSyncAdapterFactory(ontology
 		
 	
 SplitAdapter sourceAdapter = factory.createSyncAdapter(sourceExcelFile , "user", "id", NullIdentityProvider.INSTANCE);
-IRDFSchema rdfSchema = (IRDFSchema((ISupportReadSchema)sourceAdapter.getContentAdapter()).getSchema();
+IRDFSchema rdfSchema = (IRDFSchema)((ISupportReadSchema)sourceAdapter.getContentAdapter()).getSchema();
 		
 	
 ISyncAdapter targetAdapter = factory.createSyncAdapter(targetExcelFile , "user", "id", NullIdentityProvider.INSTANCE, rdfSchema);
