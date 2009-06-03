@@ -1,12 +1,12 @@
 package org.mesh4j.ektoo.ui.component;
 
 import java.awt.Cursor;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 import javax.swing.JLabel;
 
 public class HyperLink extends JLabel {
+
+	private static final long serialVersionUID = 1941291683152038599L;
 
 	public HyperLink(String linlText){
 		

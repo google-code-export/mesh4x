@@ -131,9 +131,7 @@ public class EktooFrame extends JFrame implements IErrorListener,
 		OpenURLTask openURLTask = new OpenURLTask(this,this,new PropertiesProvider().getMesh4xEktooURL());
 		openURLTask.execute();
 	}
-	private void loadSettingsUI(){
-		
-	}
+
 	//TODO(raju) please user PropertiesProvider class as single tone for the application
 	//because its not necessary to load property file every time.
 	private void goToMesh4xEktooHelpSite(){

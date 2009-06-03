@@ -107,14 +107,15 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 		
 		IIdentityProvider identityProvider = getIdentityProvider();
 
-		if(sourceSchema == null)
+		if(sourceSchema == null){
 			return googleSpreadSheetRDFSyncAdapterFactory
 			.createSyncAdapter(username, password, spreadsheetName,
 					cotentSheetName, idColumnName, lastUpdateColumnName, identityProvider, sourceAlias);
-		else
+		}else{
 			return this.googleSpreadSheetRDFSyncAdapterFactory.createSyncAdapter(
 				username, password, spreadsheetName, cotentSheetName,
 				idColumnName, lastUpdateColumnName, identityProvider, sourceSchema, sourceAlias);
+		}
 	}	
 
 	public ISyncAdapter createHttpSyncAdapter(String meshid, String datasetId,String baseSyncURI) {
@@ -194,10 +195,6 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 	
 	@Override
 	public ISyncAdapter createMsExcelAdapter(String contentFileName, String sheetName, String idColumnName, IRDFSchema sourceSchema){
-		
-		if(idColumnName == null || idColumnName.equals("")){
-			
-		}
 		return this.excelRDFSyncFactory.createSyncAdapter(contentFileName, sheetName, idColumnName, getIdentityProvider(), sourceSchema);
 	}	
 	
@@ -272,10 +269,6 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 		return file;
 	}
 
-	private String getSyncUrl(String meshid, String datasetId) {
-		return this.propertiesProvider.getMeshURL(meshid + "/" + datasetId);
-	}
-
 	private IIdentityProvider getIdentityProvider() {
 		return this.propertiesProvider.getIdentityProvider();
 	}
@@ -291,7 +284,5 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 	public String getBaseRDFUrl() {
 		return this.propertiesProvider.getMeshSyncServerURL();
 	}
-
 	
-
 }

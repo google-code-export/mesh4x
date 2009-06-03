@@ -39,8 +39,6 @@ import org.mesh4j.sync.adapters.googlespreadsheet.model.GSCell;
 import org.mesh4j.sync.adapters.googlespreadsheet.model.GSRow;
 import org.mesh4j.sync.adapters.googlespreadsheet.model.GSWorksheet;
 
-import com.google.gdata.client.spreadsheet.FeedURLFactory;
-import com.google.gdata.client.spreadsheet.SpreadsheetService;
 import com.google.gdata.data.spreadsheet.SpreadsheetEntry;
 
 /**

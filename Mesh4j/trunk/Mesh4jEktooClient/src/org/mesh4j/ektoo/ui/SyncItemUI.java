@@ -457,8 +457,6 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 		String type = (String) getDataSourceType().getSelectedItem();
 		if(type.equals(MS_EXCEL_PANEL)){
 			excelUI.updateUiForSchemaCreation(isEanble);
-		}else{
-			//do nothing...
 		}
 	}
 	
