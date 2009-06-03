@@ -13,14 +13,17 @@ We have also set up a demo server to show how you can sync to the HTTP sync serv
 
 ==Microsoft Excel Adapter==
 The Excel Adapter helps syncrhonize data kept in Excel. It takes a simple approach to taking a Sheet in excel act as a table, where the first row is assumed to be the titles of the columns, and every row is taken as the entity to be shared (i.e. conflicts happen at granularities of rows, not cells). Also this adapter takes the contents of the cells as data i.e. it doesn't preserve formulas or conditional computations. 
+HowToUseMsExcelAdapter
 
 ==Microsoft Access Adapter==
 The Access Adapter allows you to synchronize to Access databases. It uses Hibernate's XML to table mappings, and accesses the MDB via ODBC. This has the drawback that the MDB has to be closed to be able to write to it. This will be addressed in future versions depending on user demand (ideally this adapter should be hosted in-process in the access application itself as a plugin, instead of a separate standalone application 'on the side')
+HowToUseMsAccessAdapter
 
 =Generic Purpose Persistence Adapters=
 ==Hibernate OR/M for Databases Adapter==
 The Hibernate Adapter allows you to synchronize to any database through the Hibernate 
 OR/M library, which allows support for pretty much most databases available today. 
+HowToUseHibernateAdapater
 
 ==Amazon Web Services S3 Adapter==
 This adapter can be used in conjunction with the storage web service (hosted in EC2) for a highly scalable cloud-based storage node.
