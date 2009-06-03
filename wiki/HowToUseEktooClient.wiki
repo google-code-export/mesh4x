@@ -66,6 +66,24 @@ You will need:
 
   <tr>
      <td valign=top>
+=Download and Installation=
+  # Download the latest version Ektoo client release (at the top right corner of this page there is a download links for obtaining the latest release).
+  # Extract the zip distribution to a suitable location. The distribution cntains 4 folders and a .jar file as the following:
+   * data : Contains sample/default data files 
+   * database : Contains sample db schema
+   * logs : Contains application log
+   * properties : Contains application runtime properties and locale file
+   * ektooClient.jar : Ektoo client as an executable jar archive
+  # Double click the ektooClient.jar to run the program. You can also run the jar from command line as the following
+{{{
+java -jar [folderLocation/]ektooClient.jar
+}}}
+     </td>
+     <td></td>
+  </tr>
+
+  <tr>
+     <td valign=top>
 =Steps to Synchronize=
 The process consists of:
  # Select data source type from drop down list of source pane.
