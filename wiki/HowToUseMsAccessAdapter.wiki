@@ -1,5 +1,5 @@
 #summary How to create/use Ms-access adapter
-#labels Phase-Implementation
+#labels Phase-Implementation,HowTo
 
 = Introduction =
 
