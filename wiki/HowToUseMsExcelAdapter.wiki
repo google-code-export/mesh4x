@@ -1,0 +1,102 @@
+#How to create/use mesh4x ms-excel adapter
+
+=Introduction=
+Mesh4x ms-excel adapter supports both .xls and .xlsx file format.Ms-excel adapter is based on SplitAdapter concept in mesh4x core.The concept of SplitAdapter is separate the data and sync information.Idea is your business data and sync information sotres in separate ms-excel worksheet or in two  differerent ms-excel file.You can sync two worksheet of ms-excel file or you can sync two ms-excel file where your source file might be .xls and target might be .xlsx format.Mesh4x offcourse support sync operation between hetarogenious repository,for example you can sync between google spreadsheet and ms-excel or it could be ms-excel to mysql(any RDBMS).
+
+= Details =
+_*Building Ms-excel adapter* _
+  Ms-excel adapter supports RDF schema and palin xml.With the help of RDF schema ms-excel adapter is capable to create repository(excel file) automatically.Adapter can be used in two following ways,
+  * Plain xml based MsExcel adapter.
+  * Rdf based MsExcel adapter.
+  
+ Both type of adapter creation is the process of creating SplitAdapter based on MsExcelSyncRepository  and MsExcelContentAdapter.There's another easy alternative way of creating ms-excel adapter is use the adapter factory.Example code here represents the adapter factory MsExcelSyncAdapterFactory and  MsExcelRDFSyncAdapterFactory
+
+*Plain xml based MsExcel adapter*
+Plain xml based MsExcel adapter can be created with the following method  of MsExcelSyncAdapterFactory
+{{{
+createSyncAdapter(String excelFileName, String sheetName, String idColumnName, IIdentityProvider identityProvider)
+}}}
+
+Lets create the adapter:
+
+   {{{
+String excelFileName ="c:/content.xls";
+String sheetName = "user";
+String idColumnName = "id";
+MsExcelSyncAdapterFactory adapterFactory = new MsExcelSyncAdapterFactory();
+ISyncAdapter msExcelAdapter = adapterFactory.createSyncAdapter(excelFileName, sheetName, idColumnName, NullIdentityProvider.INSTANCE);
+}}}
+
+*Rdf based MsExcel adapter*
+ Rdf based MsExcel adapter can be created with the following method of MsExcelRDFSyncAdapterFactory
+
+{{{
+createSyncAdapter(String excelFileName, String sheetName, String idColumnName, IIdentityProvider identityProvider)
+}}}
+
+Lets create the adapter:
+
+{{{
+String excelFileName ="c:/content.xls";
+String sheetName = "user";
+String idColumnName = "id";
+
+MsExcelRDFSyncAdapterFactory factory = new MsExcelRDFSyncAdapterFactory("http://localhost:8080/mesh4x/myExample");
+ISyncAdapter msExcelAdapter = factory.createSyncAdapter(excelFileName, sheetName, idColumnName, NullIdentityProvider.INSTANCE);
+}}}
+
+The adapter you created with the above is rdf adapter lets say this is source adapter.So you can extract the RDF schema of your excel file and pass it to the target adapter.
+
+Extract the RDF schema,
+{{{
+IRDFSchema rdfSchema = (IRDFSchema)((ISupportReadSchema)msExcelAdapter .getContentAdapter()).getSchema();
+}}}
+
+Now you pass the rdf schema to the target excel adapter with the following code
+{{{
+String targetExcelFileName ="c:/target.xls";
+ISyncAdapter targetMsExcelAdapter = factory.createSyncAdapter(targetExcelFileName , "user", "id", NullIdentityProvider.INSTANCE, rdfSchema);
+}}}
+
+this rdf based target excel adapter ensure that target excel file must have same schema of source excel file.
+
+=Synchronization=
+*Sync two excel file based on RDF*
+
+{{{
+String sourceExcelFile ="c:/source.xls";
+String targetExcelFile ="c:/target.xls";
+
+String ontologyBaseUri = "http://localhost:8080/mesh4x/myExample";
+MsExcelRDFSyncAdapterFactory factory = new MsExcelRDFSyncAdapterFactory(ontologyBaseUri);
+		
+	
+SplitAdapter sourceAdapter = factory.createSyncAdapter(sourceExcelFile , "user", "id", NullIdentityProvider.INSTANCE);
+IRDFSchema rdfSchema = (IRDFSchema((ISupportReadSchema)sourceAdapter.getContentAdapter()).getSchema();
+		
+	
+ISyncAdapter targetAdapter = factory.createSyncAdapter(targetExcelFile , "user", "id", NullIdentityProvider.INSTANCE, rdfSchema);
+		
+		
+SyncEngine engine = new SyncEngine(sourceAdapter,targetAdapter);
+engine.synchronize();
+}}}
+
+*Sync two excel file based on plain xml*
+
+{{{
+String sourceExcelFile ="c:/source.xls";
+String targetExcelFile ="c:/target.xls";
+String sheetName = "user";
+String idColumnName = "id";
+		
+MsExcelSyncAdapterFactory adapterFactory = new MsExcelSyncAdapterFactory();
+ISyncAdapter sourceAdapter = adapterFactory.createSyncAdapter(sourceExcelFile, sheetName, idColumnName, NullIdentityProvider.INSTANCE);
+		
+ISyncAdapter targetAdapter = adapterFactory.createSyncAdapter(targetExcelFile, sheetName, idColumnName, NullIdentityProvider.INSTANCE);
+		
+SyncEngine engine = new SyncEngine(sourceAdapter,targetAdapter);
+engine.synchronize();
+}}}
+
+
