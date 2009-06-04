@@ -17,7 +17,7 @@ import org.mesh4j.ektoo.validator.AbstractValidator;
  */
 public class MySQLConnectionValidator extends AbstractValidator {
 	
-	private boolean mustValidateTable = false;
+	
 	// BUSINESS METHODS
 //	public MySQLConnectionValidator(JComponent form, AbstractModel model) {
 //		super(form, model);
