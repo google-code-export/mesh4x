@@ -33,7 +33,6 @@ public class MsExcelMultiSheetsTests {
 		
 		MsExcelRDFSyncAdapterFactory factory = new MsExcelRDFSyncAdapterFactory("http://localhost:8080/mesh4x/feeds");
 		
-		// TODO (JMT) improve this structure
 		Map<String, String> sheets = new HashMap<String, String>();
 		sheets.put("sheet1", "Code");
 		sheets.put("sheet2", "Code");

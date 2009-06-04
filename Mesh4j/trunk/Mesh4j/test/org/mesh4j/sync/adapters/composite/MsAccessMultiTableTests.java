@@ -55,7 +55,6 @@ public class MsAccessMultiTableTests {
 
 		// create sheets
 		
-		// TODO (JMT) improve this structure
 		HashMap<IRDFSchema, String> sheets = new HashMap<IRDFSchema, String>();
 		
 		for (IIdentifiableSyncAdapter identifiableAdapter : adapterSource.getAdapters()) {

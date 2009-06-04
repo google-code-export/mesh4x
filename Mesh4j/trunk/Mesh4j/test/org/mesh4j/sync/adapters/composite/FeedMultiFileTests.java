@@ -22,7 +22,6 @@ public class FeedMultiFileTests {
 		// Composite adapter
 		InMemorySyncAdapter adapterOpaque = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
 		
-		// TODO (JMT) improve this structure
 		Map<String, String> feeds = new HashMap<String, String>();
 		feeds.put("sheet1", TestHelper.makeFileAndDeleteIfExists("composite_Feed_MsExcel_sheet1.xml").getCanonicalPath());
 		feeds.put("sheet2", TestHelper.makeFileAndDeleteIfExists("composite_Feed_MsExcel_sheet2.xml").getCanonicalPath());
@@ -36,7 +35,6 @@ public class FeedMultiFileTests {
 		InMemorySyncAdapter adapterOpaqueTarget = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
 		MsExcelRDFSyncAdapterFactory factory = new MsExcelRDFSyncAdapterFactory("http://localhost:8080/mesh4x/feeds");
 		
-		// TODO (JMT) improve this structure
 		Map<String, String> sheets = new HashMap<String, String>();
 		sheets.put("sheet1", "Code");
 		sheets.put("sheet2", "Code");
