@@ -18,7 +18,6 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -499,13 +498,12 @@ public class MySQLUI extends AbstractUI implements IValidationStatus {
 	@Override
 	public void validationFailed(Hashtable<Object, String> errorTable) {
 		Object key = null;
-		String err = "";
+		StringBuffer err = new StringBuffer();
 		Enumeration<Object> keys = errorTable.keys();
 		while (keys.hasMoreElements()) {
 			key = keys.nextElement(); 
-	    err =  (String)errorTable.get(key);
+			err.append(errorTable.get(key) + "\n");
 	    
-	    MessageDialog.showErrorMessage(JOptionPane.getRootFrame(), err);
 //	    if ( key instanceof JTextField || key instanceof JPasswordField )
 //	     {
 //	      ((JTextField)key).setBorder(BorderFactory.createLineBorder(Color.RED));
@@ -516,7 +514,7 @@ public class MySQLUI extends AbstractUI implements IValidationStatus {
 //	       ((JComboBox)key).setBorder(BorderFactory.createLineBorder(Color.RED));
 //	     }
 		}
-		
+		MessageDialog.showErrorMessage(JOptionPane.getRootFrame(), err.toString());
 	}
 
 	
