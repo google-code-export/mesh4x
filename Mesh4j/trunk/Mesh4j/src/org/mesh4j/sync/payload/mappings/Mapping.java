@@ -134,7 +134,6 @@ public class Mapping implements IMapping {
 	}
 
 	@SuppressWarnings("unchecked")
-	@Override
 	public String asXMLText() {
 		StringBuffer sbMappings = new StringBuffer();
 		List<Element> mappingElements = this.mappings.elements();

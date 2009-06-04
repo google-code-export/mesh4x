@@ -400,6 +400,7 @@ public class HibernateAdapter extends AbstractSyncAdapter implements ISessionPro
 	}
 
 	private Session newSession() {
+		closeSession();
 		currentSession = this.sessionFactory.openSession();
 		return currentSession;
 	}

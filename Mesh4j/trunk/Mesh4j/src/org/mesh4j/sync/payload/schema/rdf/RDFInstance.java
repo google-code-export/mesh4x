@@ -277,6 +277,17 @@ public class RDFInstance {
 			}
 		}
 	}
+	
+	public String getPropertyValueAsLexicalForm(String propertyName) {
+		String propertyUri = this.schema.getOntologyBaseUri()+ propertyName;
+		Property domainObjectProperty = this.model.getProperty(propertyUri);
+		Literal literal = (Literal)this.domainObject.getPropertyValue(domainObjectProperty);
+		if(literal == null){
+			return null;
+		} else {
+			return literal.getLexicalForm();
+		}
+	}
 
 	public String getPropertyName(int index) {
 		DatatypeProperty domainObjectProperty = (DatatypeProperty)this.model.listDatatypeProperties().toList().get(index);

@@ -60,8 +60,12 @@ public class HibernateSyncRepository implements ISyncRepository{
 	private Element getSyncInfo(String syncId) {
 		Session session = this.sessionFactory.openSession();
 		Session dom4jSession = session.getSession(EntityMode.DOM4J);
-		Element syncInfoElement = (Element) dom4jSession.get(getEntityName(), syncId);
-		session.close();
+		Element syncInfoElement = null;
+		try{
+			syncInfoElement = (Element) dom4jSession.get(getEntityName(), syncId);
+		} finally{
+			session.close();
+		}
 		return syncInfoElement;
 	}
 
@@ -113,9 +117,13 @@ public class HibernateSyncRepository implements ISyncRepository{
 		Session session = this.sessionFactory.openSession();
 		Session dom4jSession = session.getSession(EntityMode.DOM4J);
 
-		List<Element> syncElements = dom4jSession.createQuery(syncQuery).list();
+		List<Element> syncElements = null;
 		
-		session.close();
+		try{
+			syncElements = dom4jSession.createQuery(syncQuery).list();
+		} finally{
+			session.close();
+		}
 		return syncElements;
 	}
 

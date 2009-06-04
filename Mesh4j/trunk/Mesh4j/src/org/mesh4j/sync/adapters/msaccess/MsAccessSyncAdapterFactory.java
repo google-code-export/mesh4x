@@ -5,7 +5,6 @@ import java.io.IOException;
 
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.ISyncAdapterFactory;
-import org.mesh4j.sync.adapters.InMemorySyncAdapter;
 import org.mesh4j.sync.adapters.composite.CompositeSyncAdapter;
 import org.mesh4j.sync.adapters.composite.IIdentifiableSyncAdapter;
 import org.mesh4j.sync.adapters.composite.IdentifiableSyncAdapter;
@@ -184,7 +183,7 @@ public class MsAccessSyncAdapterFactory implements ISyncAdapterFactory {
 		}
 	}
 
-	public CompositeSyncAdapter createSyncAdapterForMultiTables(String mdbFileName, String[] tables, IIdentityProvider identityProvider, InMemorySyncAdapter adapterOpaque){
+	public CompositeSyncAdapter createSyncAdapterForMultiTables(String mdbFileName, String[] tables, IIdentityProvider identityProvider, ISyncAdapter adapterOpaque){
 		try{
 			IIdentifiableSyncAdapter[] adapters = new IIdentifiableSyncAdapter[tables.length];
 			int i = 0;

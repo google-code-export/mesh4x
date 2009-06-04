@@ -45,8 +45,13 @@ public class HibernateContentAdapter implements IIdentifiableContentAdapter {
 	public EntityContent get(String entityId) {
 		Session session = this.sessionFactory.openSession();
 		Session dom4jSession = session.getSession(EntityMode.DOM4J);
-		Element entityElement = (Element) dom4jSession.get(this.getType(), entityId);
-		session.close();
+		Element entityElement = null;
+		
+		try{
+			entityElement = (Element) dom4jSession.get(this.getType(), entityId);
+		}finally{
+			session.close();
+		}
 		
 		if(entityElement == null){
 			return null;
@@ -79,10 +84,15 @@ public class HibernateContentAdapter implements IIdentifiableContentAdapter {
 	public void delete(IContent content) {
 		Session session =  this.sessionFactory.openSession();
 		Session dom4jSession = session.getSession(EntityMode.DOM4J);
-		Element entityElement = (Element) dom4jSession.get(this.getType(), content.getId());
-		if(entityElement == null){
-			session.close();
-			return;
+		Element entityElement = null;
+		
+		try{
+			entityElement = (Element) dom4jSession.get(this.getType(), content.getId());
+		}finally{
+			if(entityElement == null){
+				session.close();
+				return;
+			}
 		}
 		
 		Transaction tx = null;
@@ -124,8 +134,13 @@ public class HibernateContentAdapter implements IIdentifiableContentAdapter {
 		String hqlQuery ="FROM " + this.getType();
 		Session session = this.sessionFactory.openSession();
 		Session dom4jSession = session.getSession(EntityMode.DOM4J);		
-		List<Element> entities = dom4jSession.createQuery(hqlQuery).list();
-		session.close();
+		List<Element> entities = null;
+		
+		try{
+			entities = dom4jSession.createQuery(hqlQuery).list();
+		}finally{
+			session.close();
+		}
 		
 		ArrayList<IContent> result = new ArrayList<IContent>();
 		for (Element entityElement : entities) {

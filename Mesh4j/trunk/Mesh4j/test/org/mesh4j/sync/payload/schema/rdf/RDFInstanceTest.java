@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import junit.framework.Assert;
 
@@ -286,5 +288,22 @@ public class RDFInstanceTest {
         
         Assert.assertNotNull(instance);
         Assert.assertEquals(XMLHelper.canonicalizeXML(rdfXml), XMLHelper.canonicalizeXML(XMLHelper.parseElement(instance.asXML())));
+	}
+	
+	@Test
+	public void shouldGetValueAsLexicalForm(){
+        
+        SimpleDateFormat dateFormater = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",Locale.US);
+        dateFormater.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+        RDFInstance instance = RDF_INSTANCE;
+        
+        Assert.assertEquals("abc", instance.getPropertyValueAsLexicalForm("string"));
+        Assert.assertEquals(String.valueOf(Integer.MAX_VALUE), instance.getPropertyValueAsLexicalForm("integer"));
+        Assert.assertEquals(String.valueOf(true), instance.getPropertyValueAsLexicalForm("boolean"));
+        Assert.assertEquals(String.valueOf(Double.MAX_VALUE), instance.getPropertyValueAsLexicalForm("double"));
+        Assert.assertEquals(String.valueOf(Long.MAX_VALUE), instance.getPropertyValueAsLexicalForm("long"));
+        Assert.assertEquals(String.valueOf(BigDecimal.TEN), instance.getPropertyValueAsLexicalForm("decimal"));
+        Assert.assertEquals(dateFormater.format(DATE), instance.getPropertyValueAsLexicalForm("datetime"));
 	}
 }

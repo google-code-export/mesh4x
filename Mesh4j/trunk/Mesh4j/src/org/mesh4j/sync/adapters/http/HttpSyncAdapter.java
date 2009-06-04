@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
+import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -34,9 +35,12 @@ import org.mesh4j.sync.id.generator.IIdGenerator;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.payload.mappings.IMapping;
 import org.mesh4j.sync.payload.schema.ISchema;
+import org.mesh4j.sync.payload.schema.Schema;
+import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
 import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.translator.MessageTranslator;
 import org.mesh4j.sync.utils.DateHelper;
+import org.mesh4j.sync.utils.XMLHelper;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
@@ -285,11 +289,20 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 	}
 
 	public static String getSchema(String url) {
+		try{
+			URL baseURL = new URL(url);		
+			return getSchema(baseURL);
+		} catch(Exception e){
+			throw new MeshException(e);
+		}
+	}
+	
+	private static String getSchema(URL url) {
 		String result = null;
 		HttpURLConnection conn = null;
 	    try{
-	    	URL baseURL = new URL(url);
-	    	String urlSchemaString = baseURL.getProtocol() + "://"+ baseURL.getHost() +":"+ baseURL.getPort()+ baseURL.getPath()+ "/" + "schema";
+
+	    	String urlSchemaString = url.getProtocol() + "://"+ url.getHost() +":"+ url.getPort()+ url.getPath()+ "/" + "schema";
 	    	
 	    	URL urlSchema = new URL(urlSchemaString);
 			conn = (HttpURLConnection) urlSchema.openConnection();
@@ -370,8 +383,8 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 					sourceId, 
 					format, 
 					description, 
-					schema == null ? "" : schema.asXMLText(), 
-					mappings == null ? "" : mappings.asXMLText(),
+					schema == null ? "" : schema.asXML(), 
+					mappings == null ? "" : mappings.asXML(),
 					by);
 			doPOST(baseURL, content, "application/x-www-form-urlencoded");
 		} catch (Exception e) {
@@ -448,5 +461,23 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 			Logger.error(e.getMessage(), e); 
 			throw new MeshException(e);
 		}
+	}
+
+	public ISchema getSchema() {
+		ISchema schema= null;
+		String schemaXML = getSchema(this.url);
+		if(schemaXML != null && schemaXML.length() != 0){
+			if(schemaXML.trim().equals("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>")){
+				return null;
+			}
+			
+			if(schemaXML.startsWith("<?xml version=\"1.0\" encoding=\"UTF-8\" ?><rdf") || schemaXML.startsWith("<rdf")){
+				StringReader xmlReader = new StringReader(schemaXML);
+				schema =  new RDFSchema(xmlReader);
+			} else {
+				schema = new Schema(XMLHelper.parseElement(schemaXML));
+			}
+		}
+		return schema;
 	}
 }

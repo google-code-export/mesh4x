@@ -5,10 +5,12 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.dom4j.Element;
+import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.payload.schema.ISchemaTypeFormat;
 import org.mesh4j.sync.utils.XMLHelper;
 import org.mesh4j.sync.validations.Guard;
@@ -126,7 +128,8 @@ public class RDFSchema implements IRDFSchema{
 	public String asXML(){
 		StringWriter sw = new StringWriter();
 		this.schema.write(sw, "RDF/XML-ABBREV");
-		return sw.toString();
+		String xml = sw.toString();
+		return XMLHelper.canonicalizeXML(xml);
 	}
 
 	public String getOntologyBaseUri() {
@@ -341,20 +344,39 @@ public class RDFSchema implements IRDFSchema{
 	}
 	
 	@Override
-	public String asXMLText() {
-		return asXML();
-	}
+	public boolean isCompatible(ISchema schema){
+		
+		if (this == schema) {
+			return true;
+		}
+		
+		if (schema == null || !(schema instanceof IRDFSchema)) {
+			return false;
+		}
 
-	@Override
-	public boolean isCompatible(IRDFSchema rdfSchema){
+		if (this.asXML().equalsIgnoreCase(schema.asXML())) {
+			return true;
+		}
 		
-		if (this == rdfSchema) return true;
-		
-		if (rdfSchema == null || !(rdfSchema instanceof IRDFSchema)) return false;
-
-		if (this.asXML().equalsIgnoreCase(rdfSchema.asXML())) return true;
-		
+		IRDFSchema rdfSchema = (IRDFSchema) schema;
 		int size = rdfSchema.getPropertyCount();
+		
+		if(size != this.getPropertyCount()){
+			return false;
+		}
+		
+//		if(!this.getOntologyBaseUri().equals(rdfSchema.getOntologyBaseUri())){
+//			return false;
+//		}
+//
+//		if(!this.getOntologyClassName().equals(rdfSchema.getOntologyClassName())){
+//			return false;
+//		}
+//		
+//		if(!this.getOntologyNameSpace().equals(rdfSchema.getOntologyNameSpace())){
+//			return false;
+//		}
+		
 		for (int i = 0; i < size; i++) {
 			String propName = rdfSchema.getPropertyName(i);
 			String propTypeThis = this.getPropertyType(propName);
@@ -396,6 +418,27 @@ public class RDFSchema implements IRDFSchema{
 			}			
 		}			
 		return true;
+	}
+
+	@Override
+	public Map<String, String> getPropertiesAsLexicalFormMap(Element element) {
+		HashMap<String, String> result = new HashMap<String, String>();
+		RDFInstance instance = createNewInstanceFromRDFXML(element.asXML());
+		if(instance != null){
+			int size = this.getPropertyCount();
+			for (int i = 0; i < size; i++) {
+				String propertyName = this.getPropertyName(i);
+				String propertyValue = instance.getPropertyValueAsLexicalForm(propertyName);
+				result.put(propertyName, propertyValue);
+
+//				if(propertyValue instanceof Date){
+//					context.put(propertyName, DateHelper.formatW3CDateTime((Date)propertyValue));
+//				} else {
+//					context.put(propertyName, propertyValue);
+//				}
+			}
+		}
+		return result;
 	}
 
 }

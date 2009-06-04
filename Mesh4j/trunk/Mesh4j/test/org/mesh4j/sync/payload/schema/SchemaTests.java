@@ -1,5 +1,7 @@
 package org.mesh4j.sync.payload.schema;
 
+import java.util.Map;
+
 import junit.framework.Assert;
 
 import org.dom4j.DocumentException;
@@ -21,11 +23,6 @@ public class SchemaTests {
 		Assert.assertEquals("<name>Name of patient: {patient/name} {patient/lastName}.</name>", schema.asXML());
 	}
 	
-	@Test
-	public void shouldAsXmlText() throws DocumentException{
-		Schema schema = new Schema(XMLHelper.parseElement("<name>Name of patient: {patient/name} {patient/lastName}.</name>"));
-		Assert.assertEquals("<name>Name of patient: {patient/name} {patient/lastName}.</name>", schema.asXML());
-	}
 	
 	@Test
 	public void shouldAsInstancePlainXML() {
@@ -46,5 +43,40 @@ public class SchemaTests {
 		Element element = DocumentHelper.createElement("foo");
 		Schema schema = new Schema(XMLHelper.parseElement("<name>Name of patient: {patient/name} {patient/lastName}.</name>"));
 		Assert.assertEquals(element, schema.getInstanceFromXML(element));
+	}
+	
+	@Test
+	public void shouldIsCompatibleReturnsFalseWhenSchemaParameterIsNull(){
+		Schema schema = new Schema(XMLHelper.parseElement("<name>Name of patient: {patient/name} {patient/lastName}.</name>"));
+		Assert.assertFalse(schema.isCompatible(null));
+	}
+
+	@Test
+	public void shouldIsCompatibleReturnsFalseWhenSchemaParameterIsNotSchemaInstance(){
+		ISchema mockSchema = new ISchema(){
+			@Override public Element asInstancePlainXML(Element element, Map<String, ISchemaTypeFormat> typeFormats) {return null;}
+			@Override public String asXML() {return null;}
+			@Override public Element getInstanceFromPlainXML(String id, Element element, Map<String, ISchemaTypeFormat> typeFormats) {return null;}
+			@Override public Element getInstanceFromXML(Element element) {return null;}
+			@Override public Map<String, String> getPropertiesAsLexicalFormMap(Element element) {return null;}
+			@Override public boolean isCompatible(ISchema schema) {return false;}			
+		};
+		
+		Schema schema = new Schema(XMLHelper.parseElement("<name>Name of patient: {patient/name} {patient/lastName}.</name>"));
+		Assert.assertFalse(schema.isCompatible(mockSchema));
+	}
+	
+	@Test
+	public void shouldIsCompatibleReturnsFalseWhenSchemaHasNotSameXml(){
+		Schema schema = new Schema(XMLHelper.parseElement("<name>Name of patient: {patient/name} {patient/lastName}.</name>"));
+		Schema schemaOther = new Schema(XMLHelper.parseElement("<name1>Name of patient: {patient/name} {patient/lastName}.</name1>"));
+		Assert.assertFalse(schema.isCompatible(schemaOther));
+	}
+	
+	@Test
+	public void shouldIsCompatibleReturnsTrueWhenSchemaHasSameXml(){
+		Schema schema = new Schema(XMLHelper.parseElement("<name>Name of patient: {patient/name} {patient/lastName}.</name>"));
+		Schema schemaOther = new Schema(XMLHelper.parseElement("<name>Name of patient: {patient/name} {patient/lastName}.</name>"));
+		Assert.assertTrue(schema.isCompatible(schemaOther));
 	}
 }

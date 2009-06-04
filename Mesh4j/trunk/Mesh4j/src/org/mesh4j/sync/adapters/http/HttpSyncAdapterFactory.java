@@ -9,7 +9,9 @@ import org.mesh4j.sync.adapters.feed.ContentReader;
 import org.mesh4j.sync.adapters.feed.ContentWriter;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.id.generator.IdGenerator;
+import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.security.IIdentityProvider;
+import org.mesh4j.sync.validations.Guard;
 
 public class HttpSyncAdapterFactory implements ISyncAdapterFactory {
 
@@ -70,6 +72,39 @@ public class HttpSyncAdapterFactory implements ISyncAdapterFactory {
 		} catch (MalformedURLException e) {
 			return true;
 		}
+	}
+
+	public static HttpSyncAdapter createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(String serverUrl, String meshGroup, String dataSetId, IIdentityProvider identityProvider, ISchema schema) {
+		String url = serverUrl + "/" + meshGroup + "/" + dataSetId;
+		HttpSyncAdapter adapter = createSyncAdapter(url, identityProvider);
+		
+		//TODO: need to come up with better strategy for automatic creation of mesh/feed
+		//if not available
+		ISchema cloudSchema = adapter.getSchema();
+		if(cloudSchema == null){
+			HttpSyncAdapter.uploadMeshDefinition(
+					serverUrl, 
+					meshGroup,
+					RssSyndicationFormat.NAME, 
+					"", 
+					null, 
+					null,
+					identityProvider.getAuthenticatedUser());
+			
+			HttpSyncAdapter.uploadMeshDefinition(
+					serverUrl, 
+					meshGroup + "/" + dataSetId,
+					RssSyndicationFormat.NAME, 
+					"", 
+					schema,
+					null, 
+					identityProvider.getAuthenticatedUser());
+		} else {
+			if(!cloudSchema.isCompatible(schema)){
+				Guard.throwsException("INCOMPATIBLE_SCHEMA");
+			}
+		}
+		return adapter;
 	}
 
 }

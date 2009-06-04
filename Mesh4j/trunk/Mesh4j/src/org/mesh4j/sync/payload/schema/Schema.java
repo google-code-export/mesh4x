@@ -1,5 +1,7 @@
 package org.mesh4j.sync.payload.schema;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.dom4j.Element;
@@ -37,9 +39,25 @@ public class Schema implements ISchema {
 		return element;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public String asXMLText() {
-		return asXML();
+	public Map<String, String> getPropertiesAsLexicalFormMap(Element element){
+		HashMap<String, String> result = new HashMap<String, String>();
+		
+		List<Element> elements = element.elements();
+		for (Element ele : elements) {
+			String propertyName = ele.getName();
+			String propertyValue = ele.getText();
+			result.put(propertyName, propertyValue);
+		}
+		return result;
 	}
 	
+	@Override
+	public boolean isCompatible(ISchema schema){		
+		if (this == schema) return true;		
+		if (schema == null || !(schema instanceof Schema)) return false;
+		if (this.asXML().equalsIgnoreCase(schema.asXML())) return true;
+		return false;
+	}
 }

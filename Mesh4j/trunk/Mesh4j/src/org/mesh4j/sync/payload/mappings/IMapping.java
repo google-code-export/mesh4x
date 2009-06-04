@@ -12,5 +12,4 @@ public interface IMapping {
 
 	String asXML();
 
-	String asXMLText();
 }

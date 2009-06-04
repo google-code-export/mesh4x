@@ -20,9 +20,13 @@ import org.mesh4j.sync.payload.mappings.IMapping;
 import org.mesh4j.sync.payload.mappings.Mapping;
 import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.payload.schema.Schema;
+import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
+import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.security.IdentityProvider;
+import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.test.utils.TestHelper;
 import org.mesh4j.sync.utils.XMLHelper;
+import org.mesh4j.sync.validations.MeshException;
 
 
 public class HttpSyncAdapterTests {
@@ -160,4 +164,147 @@ public class HttpSyncAdapterTests {
 		Assert.assertEquals(1, matchNumber);
 	}
 	
+	
+	@Test
+	public void shoulCreateMeshGroupAndDataSetOnCloudIfAbsent(){
+		String serverUrl = "http://localhost:8080/mesh4x/feeds";
+		String meshGroup = "meshGroup" + IdGenerator.INSTANCE.newID().substring(0, 5);
+		String dataSetId = "dataSetId" + IdGenerator.INSTANCE.newID().substring(0, 5);
+		IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
+		String url = serverUrl+"/"+meshGroup+"/"+dataSetId;
+		
+		RDFSchema rdfSchema = new RDFSchema("example", url+"#", dataSetId);
+		rdfSchema.addStringProperty("string", "string", "en");
+		rdfSchema.addIntegerProperty("integer", "int", "en");
+		rdfSchema.addBooleanProperty("boolean", "boolean", "en");
+		rdfSchema.addDateTimeProperty("datetime", "datetime", "en");
+		rdfSchema.addDoubleProperty("double", "double", "en");
+		rdfSchema.addLongProperty("long", "long", "en");
+		rdfSchema.addDecimalProperty("decimal", "decimal", "en");  
+		
+		HttpSyncAdapter adapter = HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverUrl, meshGroup, dataSetId, identityProvider, rdfSchema);
+		Assert.assertNotNull(adapter);
+		
+		ISchema schema = adapter.getSchema();
+		Assert.assertNotNull(schema);
+		Assert.assertTrue(rdfSchema.isCompatible(schema));
+	}
+	
+	@Test
+	public void shoulUpdateMeshGroupAndDataSetOnCloudIfExistsWithNullSchema(){
+		String serverUrl = "http://localhost:8080/mesh4x/feeds";
+		String meshGroup = "meshGroup" + IdGenerator.INSTANCE.newID().substring(0, 5);
+		String dataSetId = "dataSetId" + IdGenerator.INSTANCE.newID().substring(0, 5);
+		IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
+		String url = serverUrl+"/"+meshGroup+"/"+dataSetId;
+		
+		HttpSyncAdapter adapter = HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverUrl, meshGroup, dataSetId, identityProvider, null);
+		Assert.assertNotNull(adapter);
+		
+		RDFSchema rdfSchema = new RDFSchema("example", url+"#", dataSetId);
+		rdfSchema.addStringProperty("string", "string", "en");
+		rdfSchema.addIntegerProperty("integer", "int", "en");
+		rdfSchema.addBooleanProperty("boolean", "boolean", "en");
+		rdfSchema.addDateTimeProperty("datetime", "datetime", "en");
+		rdfSchema.addDoubleProperty("double", "double", "en");
+		rdfSchema.addLongProperty("long", "long", "en");
+		rdfSchema.addDecimalProperty("decimal", "decimal", "en");  
+		
+		adapter = HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverUrl, meshGroup, dataSetId, identityProvider, rdfSchema);
+		Assert.assertNotNull(adapter);
+		
+		ISchema schema = adapter.getSchema();
+		Assert.assertNotNull(schema);
+		Assert.assertTrue(rdfSchema.isCompatible(schema));
+	}
+	
+	@Test(expected=MeshException.class)
+	public void shoulCreateMeshGroupAndDataSetOnCloudFailsIfSchemaAreNotCompatibles(){
+		String serverUrl = "http://localhost:8080/mesh4x/feeds";
+		String meshGroup = "meshGroup" + IdGenerator.INSTANCE.newID().substring(0, 5);
+		String dataSetId = "dataSetId" + IdGenerator.INSTANCE.newID().substring(0, 5);
+		IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
+		String url = serverUrl+"/"+meshGroup+"/"+dataSetId;
+		
+		RDFSchema rdfSchema = new RDFSchema("example", url+"#", dataSetId);
+		rdfSchema.addStringProperty("string", "string", "en");
+		rdfSchema.addIntegerProperty("integer", "int", "en");
+		rdfSchema.addBooleanProperty("boolean", "boolean", "en");
+		rdfSchema.addDateTimeProperty("datetime", "datetime", "en");
+		rdfSchema.addDoubleProperty("double", "double", "en");
+		rdfSchema.addLongProperty("long", "long", "en");
+		rdfSchema.addDecimalProperty("decimal", "decimal", "en");  
+		
+		HttpSyncAdapter adapter = HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverUrl, meshGroup, dataSetId, identityProvider, rdfSchema);
+		Assert.assertNotNull(adapter);
+		
+		ISchema schema = adapter.getSchema();
+		Assert.assertNotNull(schema);
+		Assert.assertTrue(rdfSchema.isCompatible(schema));
+		
+		RDFSchema rdfSchema2 = new RDFSchema("example", url+"#", dataSetId);
+		
+		HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverUrl, meshGroup, dataSetId, identityProvider, rdfSchema2);
+
+	}
+	
+	@Test
+	public void shouldGetSchemaReturnsNullWhenDataSetHasNotSchema(){
+		String serverUrl = "http://localhost:8080/mesh4x/feeds";
+		String meshGroup = "meshGroup" + IdGenerator.INSTANCE.newID().substring(0, 5);
+		String dataSetId = "dataSetId" + IdGenerator.INSTANCE.newID().substring(0, 5);
+		IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
+				
+		HttpSyncAdapter adapter = HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverUrl, meshGroup, dataSetId, identityProvider, null);
+		Assert.assertNotNull(adapter);
+		
+		ISchema schema = adapter.getSchema();
+		Assert.assertNull(schema);
+
+	}
+
+	@Test
+	public void shouldGetSchemaReturnsSchemaWhenDataSetWasCreatedWithBasicSchema(){
+		String serverUrl = "http://localhost:8080/mesh4x/feeds";
+		String meshGroup = "meshGroup" + IdGenerator.INSTANCE.newID().substring(0, 5);
+		String dataSetId = "dataSetId" + IdGenerator.INSTANCE.newID().substring(0, 5);
+		IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
+		
+		Element schemaElement = XMLHelper.parseElement("<mySchema><id>is an string</id></mySchema>");
+		Schema basicSchema = new Schema(schemaElement);
+		
+		HttpSyncAdapter adapter = HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverUrl, meshGroup, dataSetId, identityProvider, basicSchema);
+		Assert.assertNotNull(adapter);
+		
+		ISchema schema = adapter.getSchema();
+		Assert.assertNotNull(schema);
+		Assert.assertEquals(basicSchema.asXML(), schema.asXML());
+		Assert.assertTrue(basicSchema.isCompatible(schema));
+	}
+
+	@Test
+	public void shouldGetSchemaReturnsRDFSchemaWhenDataSetWasCreatedWithRDFSchema(){
+		String serverUrl = "http://localhost:8080/mesh4x/feeds";
+		String meshGroup = "meshGroup" + IdGenerator.INSTANCE.newID().substring(0, 5);
+		String dataSetId = "dataSetId" + IdGenerator.INSTANCE.newID().substring(0, 5);
+		IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
+		String url = serverUrl+"/"+meshGroup+"/"+dataSetId;
+		
+		RDFSchema rdfSchema = new RDFSchema(dataSetId, url+"#", dataSetId);
+		rdfSchema.addStringProperty("string", "string", "en");
+		rdfSchema.addIntegerProperty("integer", "int", "en");
+		rdfSchema.addBooleanProperty("boolean", "boolean", "en");
+		rdfSchema.addDateTimeProperty("datetime", "datetime", "en");
+		rdfSchema.addDoubleProperty("double", "double", "en");
+		rdfSchema.addLongProperty("long", "long", "en");
+		rdfSchema.addDecimalProperty("decimal", "decimal", "en");  
+		
+		HttpSyncAdapter adapter = HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverUrl, meshGroup, dataSetId, identityProvider, rdfSchema);
+		Assert.assertNotNull(adapter);
+		
+		ISchema schema = adapter.getSchema();
+		Assert.assertNotNull(schema);
+		Assert.assertEquals(rdfSchema.asXML(), schema.asXML());
+		Assert.assertTrue(rdfSchema.isCompatible(schema));
+	}
 }

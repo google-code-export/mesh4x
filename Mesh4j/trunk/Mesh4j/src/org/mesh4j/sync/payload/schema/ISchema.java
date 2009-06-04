@@ -12,10 +12,12 @@ public interface ISchema {
 
 	public String asXML();
 
-	public Element getInstanceFromXML(Element elementXMLRDF);
-	public Element getInstanceFromPlainXML(String id, Element elementPlainXML, Map<String, ISchemaTypeFormat> typeFormats);
-	public Element asInstancePlainXML(Element elementXMLRDF, Map<String, ISchemaTypeFormat> typeFormats);
+	public Element getInstanceFromXML(Element element);
+	public Element getInstanceFromPlainXML(String id, Element element, Map<String, ISchemaTypeFormat> typeFormats);
+	public Element asInstancePlainXML(Element element, Map<String, ISchemaTypeFormat> typeFormats);
 
-	public String asXMLText();
+	public Map<String, String> getPropertiesAsLexicalFormMap(Element element);
+	
+	public boolean isCompatible(ISchema schema);
 
 }

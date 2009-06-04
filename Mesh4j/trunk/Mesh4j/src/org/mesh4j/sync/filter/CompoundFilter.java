@@ -22,7 +22,7 @@ public class CompoundFilter implements IFilter<Item> {
 	@Override
 	public boolean applies(Item item) {
 		for (IFilter<Item> filter : this.filters) {
-			if(!filter.applies(item)){
+			if(filter != null && !filter.applies(item)){
 				return false;
 			}
 		}
