@@ -32,7 +32,6 @@ import org.mesh4j.ektoo.ui.component.messagedialog.MessageDialog;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.ektoo.ui.validator.CloudUIValidator;
-import org.mesh4j.ektoo.ui.validator.MySQLConnectionValidator;
 import org.mesh4j.ektoo.validator.IValidationStatus;
 
 /**
@@ -260,7 +259,7 @@ public class CloudUI extends AbstractUI implements IValidationStatus {
 	
 	// TODO (nobel) improve it
 	protected JFrame getRootFrame() {
-		return (JFrame)this.getParent().getParent().getParent().getParent().getParent().getParent();
+		return (JFrame)this.getParent().getParent().getParent().getParent().getParent().getParent().getParent();
 	}	
 	
 	public CloudUIController getController() {
