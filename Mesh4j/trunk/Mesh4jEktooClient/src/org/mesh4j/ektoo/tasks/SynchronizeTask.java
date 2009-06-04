@@ -4,6 +4,7 @@ import java.awt.Cursor;
 import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
+import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 
 import org.apache.commons.logging.Log;
@@ -11,6 +12,7 @@ import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.controller.EktooController;
 import org.mesh4j.ektoo.ui.EktooFrame;
 import org.mesh4j.ektoo.ui.SyncItemUI;
+import org.mesh4j.ektoo.ui.component.messagedialog.MessageDialog;
 import org.mesh4j.ektoo.ui.component.statusbar.Statusbar;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 
@@ -51,7 +53,8 @@ public class SynchronizeTask extends SwingWorker<String, Void> {
 		catch (Throwable t) 
 		{
 			LOGGER.error(t.getMessage(), t);
-			synchronizeTaskListener.notifySynchronizeTaskError(t.getMessage());
+			//synchronizeTaskListener.notifySynchronizeTaskError(t.getMessage());
+			MessageDialog.showErrorMessage(ui, t.getLocalizedMessage());
 		}
 		return null;
 	}
