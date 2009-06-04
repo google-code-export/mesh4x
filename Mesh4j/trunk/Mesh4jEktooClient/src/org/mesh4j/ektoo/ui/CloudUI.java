@@ -285,25 +285,21 @@ public class CloudUI extends AbstractUI implements IValidationStatus {
 
 	@Override
 	public boolean verify() {
-		List<JComponent> uiFieldListForValidation = new ArrayList<JComponent>();
-		uiFieldListForValidation.add(getMashText());
-		uiFieldListForValidation.add(getDataSetText());
-		uiFieldListForValidation.add(getSyncURIText());
 		boolean valid = (new CloudUIValidator(CloudUI.this,
-				controller.getModel(), uiFieldListForValidation)).verify();
+				controller.getModel(), null)).verify();
 		return valid;
 	}
 
 	@Override
 	public void validationFailed(Hashtable<Object, String> errorTable) {
 		Object key = null;
-		String err = "";
+		StringBuffer err = new StringBuffer();
 		Enumeration<Object> keys = errorTable.keys();
 		while (keys.hasMoreElements()) {
 			key = keys.nextElement(); 
-			err =  (String)errorTable.get(key);
-			MessageDialog.showErrorMessage(JOptionPane.getRootFrame(), err);
+			err.append(errorTable.get(key) + "\n");
 		}
+		MessageDialog.showErrorMessage(JOptionPane.getRootFrame(), err.toString());
 	}
 
 	@Override
