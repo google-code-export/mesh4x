@@ -11,19 +11,19 @@ import javax.swing.JOptionPane;
  */
 public class MessageDialog {
 
-	public static void showSimpleMessage(JFrame frame, String message) {
+	public static void showSimpleMessage(Frame frame, String message) {
 
 		JOptionPane.showMessageDialog(frame, message, "",
 				JOptionPane.PLAIN_MESSAGE);
 	}
 
-	public static void showWarningMessage(JFrame frame, String message) {
+	public static void showWarningMessage(Frame frame, String message) {
 
 		JOptionPane.showMessageDialog(frame, message, "Warning",
 				JOptionPane.WARNING_MESSAGE);
 	}
 
-	public static void showInformationMessage(JFrame frame, String message) {
+	public static void showInformationMessage(Frame frame, String message) {
 
 		JOptionPane.showMessageDialog(frame, message, "Info",
 				JOptionPane.INFORMATION_MESSAGE);
