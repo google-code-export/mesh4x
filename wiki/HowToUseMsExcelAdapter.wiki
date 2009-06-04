@@ -17,6 +17,11 @@ Both type of adapter creation is the process of creating SplitAdapter based on M
 {{{
 createSyncAdapter(String excelFileName, String sheetName, String idColumnName, IIdentityProvider identityProvider)
 }}}
+parameter definition of above method:
+ * String excelFileName:  The excel file name(with its absolute path)which contains the sheet.
+ * String sheetName:  The sheet name which needs to be synchronized,this is the entity name.
+ * String idColumnName:  idColumnName field is called entity id which is for identify each row/item in the sheet of excel file.
+ * IIdentityProvider identityProvider: Identity of the user.Please see {{{org.mesh4j.sync.security.LoggedInIdentityProvider}}} and {{{org.mesh4j.sync.security.NullIdentityProvider}} in mesh4x core.LoggedInIdentityProvider provides the logged in user and NullIdentityProvider provides default "admin" as identity.
 
 Lets create the palin xml based adapter:
 
@@ -41,8 +46,9 @@ Lets create the rdf based adapter:
 String excelFileName ="c:/content.xls";
 String sheetName = "user";
 String idColumnName = "id";
+String ontologyBaseUri = "http://localhost:8080/mesh4x/myExample";
 
-MsExcelRDFSyncAdapterFactory factory = new MsExcelRDFSyncAdapterFactory("http://localhost:8080/mesh4x/myExample");
+MsExcelRDFSyncAdapterFactory factory = new MsExcelRDFSyncAdapterFactory(ontologyBaseUri);
 ISyncAdapter msExcelAdapter = factory.createSyncAdapter(excelFileName, sheetName, idColumnName, NullIdentityProvider.INSTANCE);
 }}}
 
@@ -59,7 +65,7 @@ String targetExcelFileName ="c:/target.xls";
 ISyncAdapter targetMsExcelAdapter = factory.createSyncAdapter(targetExcelFileName , "user", "id", NullIdentityProvider.INSTANCE, rdfSchema);
 }}}
 
-This rdf based target excel adapter ensure that target excel file must have same schema of source excel file.
+This rdf based target excel adapter ensures that target excel file must have same schema of source excel file.
 
 =Synchronization=
 
