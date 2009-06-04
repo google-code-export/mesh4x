@@ -12,14 +12,19 @@ import java.awt.event.FocusEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
@@ -28,10 +33,15 @@ import javax.swing.border.EmptyBorder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.controller.GSSheetUIController;
+import org.mesh4j.ektoo.controller.MySQLUIController;
 import org.mesh4j.ektoo.tasks.IErrorListener;
 import org.mesh4j.ektoo.tasks.OpenURLTask;
+import org.mesh4j.ektoo.ui.component.messagedialog.MessageDialog;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
+import org.mesh4j.ektoo.ui.validator.GssUIValidator;
+import org.mesh4j.ektoo.ui.validator.MySQLConnectionValidator;
+import org.mesh4j.ektoo.validator.IValidationStatus;
 import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadsheet;
 import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadsheetUtils;
 import org.mesh4j.sync.adapters.googlespreadsheet.IGoogleSpreadSheet;
@@ -45,7 +55,7 @@ import com.google.gdata.data.spreadsheet.SpreadsheetEntry;
  * @author Bhuiyan Mohammad Iklash
  * 
  */
-public class GSSheetUI extends AbstractUI {
+public class GSSheetUI extends AbstractUI  implements IValidationStatus {
 
 	private static final long serialVersionUID = 5090713642670266848L;
 	private static final Log LOGGER = LogFactory.getLog(GSSheetUI.class);
@@ -121,7 +131,7 @@ public class GSSheetUI extends AbstractUI {
 		return labelUser;
 	}
 
-	private JTextField getUserText() {
+	public JTextField getUserText() {
 		if (txtUser == null) {
 			txtUser = new JTextField();
 			txtUser.setBounds(new Rectangle(101, 5, 183, 20));
@@ -161,7 +171,7 @@ public class GSSheetUI extends AbstractUI {
 		return labelPass;
 	}
 
-	private JPasswordField getPassText() {
+	public JPasswordField getPassText() {
 		if (txtPass == null) {
 			txtPass = new JPasswordField();
 			txtPass.setToolTipText(EktooUITranslator.getTooltipGoogleDocsPassword());
@@ -294,21 +304,31 @@ public class GSSheetUI extends AbstractUI {
       {
         public void actionPerformed(ActionEvent ae) 
         {
-          System.out.println("1...");
-          SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
-            public Void doInBackground() {
-              setCursor(Cursor
-                  .getPredefinedCursor(Cursor.WAIT_CURSOR));
-              setSpreadsheetList(getUser(), getPass());
-              return null;
-            }
-
-            public void done() {
-              setCursor(Cursor
-                  .getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-            }
-          };
-          worker.execute();
+			List<JComponent> uiFieldListForValidation = new ArrayList<JComponent>();
+			uiFieldListForValidation.add(getUserText());
+			uiFieldListForValidation.add(getPassText());
+			
+			boolean valid = (new GssUIValidator(GSSheetUI.this,
+					controller.getModel(), uiFieldListForValidation)).verify();
+			if (valid) {
+				
+	          System.out.println("1...");
+	          SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+	            public Void doInBackground() {
+	              setCursor(Cursor
+	                  .getPredefinedCursor(Cursor.WAIT_CURSOR));
+	              setSpreadsheetList(getUser(), getPass());
+	              return null;
+	            }
+	
+	            public void done() {
+	              setCursor(Cursor
+	                  .getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+	            }
+	          };
+	          worker.execute();
+          
+        	}
         }
       });
     }
@@ -641,9 +661,29 @@ public class GSSheetUI extends AbstractUI {
     }
   }
 
-@Override
-public boolean verify() {
-	// TODO Auto-generated method stub
-	return false;
-}
+  
+	@Override
+	public void validationFailed(Hashtable<Object, String> errorTable) {
+		Object key = null;
+		StringBuffer err = new StringBuffer();
+		Enumeration<Object> keys = errorTable.keys();
+		while (keys.hasMoreElements()) {
+			key = keys.nextElement(); 
+			err.append(errorTable.get(key) + "\n");
+		}
+		MessageDialog.showErrorMessage(JOptionPane.getRootFrame(), err.toString());
+	}
+
+	
+	@Override
+	public void validationPassed() {
+		// TODO (Nobel)
+	}
+
+	@Override
+	public boolean verify() {
+		boolean valid = (new GssUIValidator(this,
+				controller.getModel(), null)).verify();
+		return valid;
+	}
 }
