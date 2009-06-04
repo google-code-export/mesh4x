@@ -10,10 +10,16 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.beans.PropertyChangeEvent;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
@@ -22,14 +28,18 @@ import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.controller.CloudUIController;
 import org.mesh4j.ektoo.tasks.IErrorListener;
 import org.mesh4j.ektoo.tasks.OpenURLTask;
+import org.mesh4j.ektoo.ui.component.messagedialog.MessageDialog;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
+import org.mesh4j.ektoo.ui.validator.CloudUIValidator;
+import org.mesh4j.ektoo.ui.validator.MySQLConnectionValidator;
+import org.mesh4j.ektoo.validator.IValidationStatus;
 
 /**
  * @author Bhuiyan Mohammad Iklash
  * 
  */
-public class CloudUI extends AbstractUI{
+public class CloudUI extends AbstractUI implements IValidationStatus {
 	
 	private static final long serialVersionUID = 101977159720664976L;
 	private static final Log LOGGER = LogFactory.getLog(CloudUI.class);
@@ -77,11 +87,31 @@ public class CloudUI extends AbstractUI{
 		
 	}
 
-	private JTextField getSyncURIText(){
+	public JTextField getSyncURIText(){
 		if (syncTextURI == null) {
 			syncTextURI = new JTextField();
 			syncTextURI.setBounds(new Rectangle(101, 59, 183, 20));
 			syncTextURI.setToolTipText(EktooUITranslator.getTooltipCloudSyncServerURI());
+			syncTextURI.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent evt) {
+					try {
+						getController().changeSyncServerUri(syncTextURI.getText());
+					} catch (Exception e) {
+						LOGGER.error(e.getMessage(), e);
+						// TODO Handle exception
+					}
+				}
+			});
+			syncTextURI.addFocusListener(new FocusAdapter() {
+				public void focusLost(FocusEvent evt) {
+					try {
+						getController().changeSyncServerUri(syncTextURI.getText());
+					} catch (Exception e) {
+						LOGGER.error(e.getMessage(), e);
+						// TODO Handle exception
+					}
+				}
+			});		
 		}
 		return syncTextURI;
 	}
@@ -110,7 +140,7 @@ public class CloudUI extends AbstractUI{
 		return labelMash;
 	}
 
-	private JTextField getMashText() {
+	public JTextField getMashText() {
 		if (txtMash == null) {
 			txtMash = new JTextField();
 			txtMash.setBounds(new Rectangle(101, 5, 183, 20));
@@ -150,7 +180,7 @@ public class CloudUI extends AbstractUI{
 		return labelDataset;
 	}
 
-	private JTextField getDataSetText() {
+	public JTextField getDataSetText() {
 		if (txtDataset == null) {
 			txtDataset = new JTextField();
 			txtDataset.setBounds(new Rectangle(101, 30, 183, 20));
@@ -179,7 +209,7 @@ public class CloudUI extends AbstractUI{
 		return txtDataset;
 	}
 	
-	private JTextField getURLText() {
+	public JTextField getURLText() {
 		if (txtURL == null) {
 			txtURL = new JTextField();
 			txtURL.setBounds(new Rectangle(1, 89, 375, 20));
@@ -212,8 +242,16 @@ public class CloudUI extends AbstractUI{
 						}
 					}
 					
-					OpenURLTask task = new OpenURLTask(frame, (IErrorListener)frame, url);
-					task.execute();
+					List<JComponent> uiFieldListForValidation = new ArrayList<JComponent>();
+					uiFieldListForValidation.add(getMashText());
+					uiFieldListForValidation.add(getDataSetText());
+					uiFieldListForValidation.add(getSyncURIText());
+					boolean valid = (new CloudUIValidator(CloudUI.this,
+							controller.getModel(), uiFieldListForValidation)).verify();
+					if(valid){
+						OpenURLTask task = new OpenURLTask(frame, (IErrorListener)frame, url);
+						task.execute();
+					}
 				}
 			});
 		}
@@ -223,8 +261,7 @@ public class CloudUI extends AbstractUI{
 	// TODO (nobel) improve it
 	protected JFrame getRootFrame() {
 		return (JFrame)this.getParent().getParent().getParent().getParent().getParent().getParent();
-	}
-	
+	}	
 	
 	public CloudUIController getController() {
 		return controller;
@@ -247,9 +284,32 @@ public class CloudUI extends AbstractUI{
     }    
   }
 
-@Override
-public boolean verify() {
-	// TODO Auto-generated method stub
-	return false;
-}
+	@Override
+	public boolean verify() {
+		List<JComponent> uiFieldListForValidation = new ArrayList<JComponent>();
+		uiFieldListForValidation.add(getMashText());
+		uiFieldListForValidation.add(getDataSetText());
+		uiFieldListForValidation.add(getSyncURIText());
+		boolean valid = (new CloudUIValidator(CloudUI.this,
+				controller.getModel(), uiFieldListForValidation)).verify();
+		return valid;
+	}
+
+	@Override
+	public void validationFailed(Hashtable<Object, String> errorTable) {
+		Object key = null;
+		String err = "";
+		Enumeration<Object> keys = errorTable.keys();
+		while (keys.hasMoreElements()) {
+			key = keys.nextElement(); 
+			err =  (String)errorTable.get(key);
+			MessageDialog.showErrorMessage(JOptionPane.getRootFrame(), err);
+		}
+	}
+
+	@Override
+	public void validationPassed() {
+		// TODO Auto-generated method stub
+		
+	}
 }

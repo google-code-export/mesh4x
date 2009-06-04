@@ -17,6 +17,7 @@ public class CloudUIController extends AbstractUIController
 	
 	public static final String MESH_NAME_PROPERTY = "MeshName";
 	public static final String DATASET_NAME_PROPERTY = "DatasetName";
+	public static final String SYNC_SERVER_URI = "BaseUri";
 
 	// MODEL VARIABLES
 	private ISyncAdapterBuilder adapterBuilder;
@@ -35,6 +36,10 @@ public class CloudUIController extends AbstractUIController
 		setModelProperty(DATASET_NAME_PROPERTY, datasetName);
 	}
 
+	public void changeSyncServerUri(String syncServerURI) {
+		setModelProperty(SYNC_SERVER_URI, syncServerURI);
+	}
+	
 	@Override
 	public ISyncAdapter createAdapter() {
 		CloudModel model = (CloudModel) this.getModel();

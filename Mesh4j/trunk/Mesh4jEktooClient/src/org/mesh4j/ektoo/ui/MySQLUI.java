@@ -562,15 +562,8 @@ public class MySQLUI extends AbstractUI implements IValidationStatus {
 
 	@Override
 	public boolean verify() {
-		List<JComponent> uiFieldListForValidation = new ArrayList<JComponent>();
-		uiFieldListForValidation.add(getUserText());
-		uiFieldListForValidation.add(getPassText());
-		uiFieldListForValidation.add(getHostText());
-		uiFieldListForValidation.add(getPortText());
-		uiFieldListForValidation.add(getDatabaseText());
-		uiFieldListForValidation.add(getTableList());
 		boolean valid = (new MySQLConnectionValidator(MySQLUI.this,
-				controller.getModel(), uiFieldListForValidation)).verify();
+				controller.getModel(), null)).verify();
 		return valid;
 	}
 }

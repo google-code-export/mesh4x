@@ -42,6 +42,11 @@ public class CloudModel extends AbstractModel {
 	public String getBaseUri(){
 		return this.baseUri;
 	}
+	
+	public void setBaseUri(String baseUri) {
+		this.baseUri = baseUri;
+	}
+	
 	private String getUri() {
 		return this.baseUri + "/" + (getMeshName() != null ? getMeshName() : "")
 				+ "/" + (getDatasetName() != null ? getDatasetName() : "");
