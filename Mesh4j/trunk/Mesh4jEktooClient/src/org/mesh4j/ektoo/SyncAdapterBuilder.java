@@ -5,12 +5,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.dom4j.DocumentException;
 import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.InMemorySyncAdapter;
-import org.mesh4j.sync.adapters.feed.ContentReader;
-import org.mesh4j.sync.adapters.feed.ContentWriter;
 import org.mesh4j.sync.adapters.feed.Feed;
 import org.mesh4j.sync.adapters.feed.FeedAdapter;
 import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
@@ -20,7 +17,7 @@ import org.mesh4j.sync.adapters.folder.FolderSyncAdapterFactory;
 import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadSheetRDFSyncAdapterFactory;
 import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadSheetSyncAdapterFactory;
 import org.mesh4j.sync.adapters.hibernate.HibernateSyncAdapterFactory;
-import org.mesh4j.sync.adapters.http.HttpSyncAdapter;
+import org.mesh4j.sync.adapters.http.HttpSyncAdapterFactory;
 import org.mesh4j.sync.adapters.kml.KMLDOMLoaderFactory;
 import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
 import org.mesh4j.sync.adapters.msexcel.MsExcelRDFSyncAdapterFactory;
@@ -118,38 +115,9 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 		}
 	}	
 
-	public ISyncAdapter createHttpSyncAdapter(String meshid, String datasetId,String baseSyncURI) {
-//		String url = getSyncUrl(meshid, datasetId);
-
-		String url = baseSyncURI + "/" + meshid + "/" +datasetId;
-		
-		HttpSyncAdapter adapter = new HttpSyncAdapter(url,
-				RssSyndicationFormat.INSTANCE, getIdentityProvider(),
-				getIdGenerator(), ContentWriter.INSTANCE,
-				ContentReader.INSTANCE);
-
-		//TODO: need to come up with better strategy for automatic creation of mesh/feed
-		//if not available
-		try {
-			adapter.getAll();
-		} catch (Exception e) {
-			if (e.getCause() instanceof DocumentException) {
-				if (e.getCause().getMessage().endsWith(datasetId)) {
-					HttpSyncAdapter.uploadMeshDefinition(propertiesProvider
-							.getMeshSyncServerURL(), meshid,
-							RssSyndicationFormat.NAME, "my mesh", null, null,
-							getIdentityProvider().getAuthenticatedUser());
-					
-					HttpSyncAdapter.uploadMeshDefinition(propertiesProvider
-							.getMeshSyncServerURL(), meshid + "/" + datasetId,
-							RssSyndicationFormat.NAME, "my description", null,
-							null, getIdentityProvider().getAuthenticatedUser());
-				}
-
-			}
-		}
-		
-		return adapter;
+	@Override
+	public ISyncAdapter createHttpSyncAdapter(String serverUrl, String meshGroup, String dataSetId, IRDFSchema rdfSchema) {
+		return HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverUrl, meshGroup, dataSetId, getIdentityProvider(), rdfSchema);
 	}	
 	
 

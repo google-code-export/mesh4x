@@ -48,8 +48,7 @@ public class EktooController
 			targetAdapter = target.createAdapter();
 			sourceAdapter = source.createAdapter(target.fetchSchema(targetAdapter));
 
-		} else {
-			if ((selectedTargetItem.equals(SyncItemUI.MS_EXCEL_PANEL) || 
+		} else if ((selectedTargetItem.equals(SyncItemUI.MS_EXCEL_PANEL) || 
 					selectedTargetItem.equals(SyncItemUI.GOOGLE_SPREADSHEET_PANEL))
 					&& (selectedSourceItem.equals(SyncItemUI.MYSQL_PANEL) || 
 						selectedSourceItem.equals(SyncItemUI.MS_ACCESS_PANEL))) {
@@ -64,10 +63,19 @@ public class EktooController
 					}	
 				}
 				targetAdapter = target.createAdapter(source.fetchSchema(sourceAdapter));
-			} else {
-				sourceAdapter = source.createAdapter();
-				targetAdapter = target.createAdapter();
-			}
+		} else if(selectedSourceItem.equals(SyncItemUI.MS_EXCEL_PANEL) || selectedSourceItem.equals(SyncItemUI.GOOGLE_SPREADSHEET_PANEL)
+				|| selectedSourceItem.equals(SyncItemUI.MYSQL_PANEL) || selectedSourceItem.equals(SyncItemUI.MS_ACCESS_PANEL)
+				&& selectedTargetItem.equals(SyncItemUI.CLOUD_PANEL)){ 
+			sourceAdapter = source.createAdapter();
+			targetAdapter = target.createAdapter(source.fetchSchema(sourceAdapter));
+		} else if(selectedTargetItem.equals(SyncItemUI.MS_EXCEL_PANEL) || selectedTargetItem.equals(SyncItemUI.GOOGLE_SPREADSHEET_PANEL)
+				|| selectedTargetItem.equals(SyncItemUI.MYSQL_PANEL) || selectedTargetItem.equals(SyncItemUI.MS_ACCESS_PANEL)
+				&& selectedSourceItem.equals(SyncItemUI.CLOUD_PANEL)){ 
+			targetAdapter = target.createAdapter();
+			sourceAdapter = source.createAdapter(target.fetchSchema(targetAdapter));
+		} else {
+			sourceAdapter = source.createAdapter();
+			targetAdapter = target.createAdapter();
 		}
 
 		return sync(sourceAdapter, targetAdapter);

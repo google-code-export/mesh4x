@@ -73,7 +73,7 @@ public interface ISyncAdapterBuilder {
 	 * @param dataSetId
 	 * @return
 	 */
-	public ISyncAdapter createHttpSyncAdapter(String meshId, String dataSetId,String baseSyncURI);
+	public ISyncAdapter createHttpSyncAdapter(String serverUrl, String meshGroup, String dataSetId, IRDFSchema rdfSchema);
 
 	/**
 	 * TODO create documentation (raju)

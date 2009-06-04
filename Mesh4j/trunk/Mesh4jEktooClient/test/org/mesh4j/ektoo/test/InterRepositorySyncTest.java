@@ -24,11 +24,7 @@ import org.mesh4j.sync.adapters.feed.XMLContent;
 import org.mesh4j.sync.adapters.feed.atom.AtomSyndicationFormat;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadSheetContentAdapter;
-import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadsheet;
-import org.mesh4j.sync.adapters.googlespreadsheet.IGoogleSpreadSheet;
-import org.mesh4j.sync.adapters.googlespreadsheet.mapping.GoogleSpreadsheetToRDFMapping;
 import org.mesh4j.sync.adapters.msexcel.MsExcelUtils;
-import org.mesh4j.sync.adapters.split.IContentAdapter;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.Item;
@@ -291,14 +287,16 @@ public class InterRepositorySyncTest {
 		String meshName = "Mysql";
 		String feedName = "user";
 		String url = "http://localhost:8080/mesh4x/feeds";
+		
 		ISyncAdapterBuilder builder = new SyncAdapterBuilder(
 				new PropertiesProvider());
+		
 		ISyncAdapter sourceAsMySql = builder.createMySQLAdapter(user, password,
 				"localhost", 3306, "mesh4xdb", tableName);
 
 		SplitAdapter sourceAdapter = (SplitAdapter) sourceAsMySql;
 
-		ISyncAdapter targetAdapter = builder.createHttpSyncAdapter(meshName, feedName,url);
+		ISyncAdapter targetAdapter = builder.createHttpSyncAdapter(url, meshName, feedName, null);
 
 		SyncEngine engine = new SyncEngine(sourceAdapter, targetAdapter);
 
