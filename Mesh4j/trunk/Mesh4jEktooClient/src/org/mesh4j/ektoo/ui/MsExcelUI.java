@@ -2,10 +2,13 @@ package org.mesh4j.ektoo.ui;
 
 import java.beans.PropertyChangeEvent;
 import java.io.File;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Iterator;
 
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.apache.commons.logging.Log;
@@ -15,7 +18,11 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.mesh4j.ektoo.controller.MsExcelUIController;
+import org.mesh4j.ektoo.ui.component.messagedialog.MessageDialog;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
+import org.mesh4j.ektoo.ui.validator.MsExcelUIValidator;
+import org.mesh4j.ektoo.ui.validator.MySQLConnectionValidator;
+import org.mesh4j.ektoo.validator.IValidationStatus;
 import org.mesh4j.sync.adapters.msexcel.MsExcel;
 import org.mesh4j.sync.adapters.msexcel.MsExcelUtils;
 
@@ -23,8 +30,7 @@ import org.mesh4j.sync.adapters.msexcel.MsExcelUtils;
  * @author Bhuiyan Mohammad Iklash
  * 
  */
-public class MsExcelUI extends TableUI 
-{	
+public class MsExcelUI extends TableUI implements IValidationStatus {	
 	// CONSTANTS
 	private static final long serialVersionUID = -5022572211883785527L;
 	private static final Log LOGGER = LogFactory.getLog(MsExcelUI.class);
@@ -163,17 +169,31 @@ public class MsExcelUI extends TableUI
 		getTableList().setEnabled(isEanble);
 		getColumnList().setEnabled(isEanble);
 	}
+	  
+	@Override
+	public void validationFailed(Hashtable<Object, String> errorTable) {
+		Object key = null;
+		StringBuffer err = new StringBuffer();
+		Enumeration<Object> keys = errorTable.keys();
+		while (keys.hasMoreElements()) {
+			key = keys.nextElement(); 
+			err.append(errorTable.get(key) + "\n");
+		}
+		MessageDialog.showErrorMessage(JOptionPane.getRootFrame(), err.toString());
+	}
+
+	
+	@Override
+	public void validationPassed() {
+		// TODO (Nobel)
+	}
 
 	@Override
 	public boolean verify() {
-		// TODO Auto-generated method stub
-		return true;
+		boolean valid = (new MsExcelUIValidator(this,
+				controller.getModel(), null)).verify();
+		return valid;
 	}
-	
-	
-	
-
-	
 	
 
 }
