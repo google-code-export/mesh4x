@@ -76,7 +76,7 @@ public class RDFInstance {
 		if(it.hasNext()){
 			instance.domainObject = (Individual)it.next();
 		} else {
-			Guard.throwsArgumentException("rdfXml");
+			Guard.throwsArgumentException("ERROR_READING_RDFXML");
 		}
 		return instance;
 	}
