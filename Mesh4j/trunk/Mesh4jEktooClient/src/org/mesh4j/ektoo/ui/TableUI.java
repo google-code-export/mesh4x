@@ -170,7 +170,7 @@ public abstract class TableUI extends AbstractUI {
 
 	// TODO (raju) improve it
 	protected JFrame getRootFrame() {
-		return (JFrame)this.getParent().getParent().getParent().getParent().getParent().getParent();
+		return (JFrame)this.getParent().getParent().getParent().getParent().getParent().getParent().getParent();
 	}
 
 	private JLabel getlabelTable() {
