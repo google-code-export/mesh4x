@@ -9,11 +9,14 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.Enumeration;
+import java.util.Hashtable;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -23,14 +26,17 @@ import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.controller.KmlUIController;
 import org.mesh4j.ektoo.tasks.IErrorListener;
 import org.mesh4j.ektoo.tasks.OpenFileTask;
+import org.mesh4j.ektoo.ui.component.messagedialog.MessageDialog;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
+import org.mesh4j.ektoo.ui.validator.KmlUIValidator;
+import org.mesh4j.ektoo.validator.IValidationStatus;
 
 /**
  * @author Bhuiyan Mohammad Iklash
  * 
  */
-public class KmlUI extends AbstractUI {
+public class KmlUI extends AbstractUI implements IValidationStatus {
 
 	private static final long serialVersionUID = 3586406415288503774L;
 	private static final Log LOGGER = LogFactory.getLog(KmlUI.class);
@@ -76,7 +82,7 @@ public class KmlUI extends AbstractUI {
 		return labelFileName;
 	}
 
-	private JTextField getFileNameText() {
+	public JTextField getFileNameText() {
 		if (txtFileName == null) {
 			txtFileName = new JTextField();
 			txtFileName.setBounds(new Rectangle(99, 8, 149, 20));
@@ -173,21 +179,40 @@ public class KmlUI extends AbstractUI {
 		return file;
 	}
 
-  @Override
-  public void modelPropertyChange(final PropertyChangeEvent evt)
-  {
-    if ( evt.getPropertyName().equals( KmlUIController.FILE_NAME_PROPERTY))
+    @Override
+    public void modelPropertyChange(final PropertyChangeEvent evt)
     {
-      String newStringValue = evt.getNewValue().toString();
-      if (!  getFileNameText().getText().equals(newStringValue))
-        getFileNameText().setText(newStringValue);
+      if ( evt.getPropertyName().equals( KmlUIController.FILE_NAME_PROPERTY))
+      {
+        String newStringValue = evt.getNewValue().toString();
+        if (!  getFileNameText().getText().equals(newStringValue))
+          getFileNameText().setText(newStringValue);
+      }
     }
-  }
 
-@Override
-public boolean verify() {
-	// TODO Auto-generated method stub
-	return false;
-}
+	@Override
+	public void validationFailed(Hashtable<Object, String> errorTable) {
+		Object key = null;
+		StringBuffer err = new StringBuffer();
+		Enumeration<Object> keys = errorTable.keys();
+		while (keys.hasMoreElements()) {
+			key = keys.nextElement(); 
+			err.append(errorTable.get(key) + "\n");
+		}
+		MessageDialog.showErrorMessage(JOptionPane.getRootFrame(), err.toString());
+	}
+
+	
+	@Override
+	public void validationPassed() {
+		// TODO (Nobel)
+	}
+
+	@Override
+	public boolean verify() {
+		boolean valid = (new KmlUIValidator(this,
+				controller.getModel(), null)).verify();
+		return valid;
+	}
 
 }
