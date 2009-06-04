@@ -18,10 +18,10 @@ Both type of adapter creation is the process of creating SplitAdapter based on M
 createSyncAdapter(String excelFileName, String sheetName, String idColumnName, IIdentityProvider identityProvider)
 }}}
 parameter definition of above method:
- * String excelFileName:  The excel file name(with its absolute path)which contains the sheet.
- * String sheetName:  The sheet name which needs to be synchronized,this is the entity name.
- * String idColumnName:  idColumnName field is called entity id which is for identify each row/item in the sheet of excel file.
- * IIdentityProvider identityProvider: Identity of the user.Please see {{{org.mesh4j.sync.security.LoggedInIdentityProvider}}} and {{{org.mesh4j.sync.security.NullIdentityProvider}}} in mesh4x core.LoggedInIdentityProvider provides logged in user and NullIdentityProvider provides default "admin" as identity.
+ * *excelFileName:*  The excel file name(with its absolute path)which contains the sheet.
+ * *sheetName:*  The sheet name which needs to be synchronized,this is the entity name.
+ * *idColumnName:*  idColumnName field is called entity id which is for identify each row/item in the sheet of excel file.
+ * *identityProvider:* Identity of the user.Please see {{{org.mesh4j.sync.security.LoggedInIdentityProvider}}} and {{{org.mesh4j.sync.security.NullIdentityProvider}}} in mesh4x core.LoggedInIdentityProvider provides logged in user and NullIdentityProvider provides default "admin" as identity.
 
 Lets create the palin xml based adapter:
 
