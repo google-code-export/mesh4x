@@ -12,12 +12,11 @@ import org.mesh4j.sync.servlet.Format;
 
 public interface IFeedRepository {
 
-	String readFeedGroup(String sourceID, String link, ISyndicationFormat syndicationFormat, Format contentFormat, IGeoCoder geoCoder, Date sinceDate) throws Exception;
-	String readFeed(String sourceID, String link, ISyndicationFormat syndicationFormat, Format contentFormat, IGeoCoder geoCoder, Date sinceDate) throws Exception;
-
+	String readFeedGroup(String sourceID, String link, ISyndicationFormat syndicationFormat, Format contentFormat, IGeoCoder geoCoder, Date sinceDate, String filterQuery) throws Exception;
+	String readFeed(String sourceID, String link, ISyndicationFormat syndicationFormat, Format contentFormat, IGeoCoder geoCoder, Date sinceDate, String filterQuery) throws Exception;
+	List<Item> getAll(String sourceID, String link, Date sinceDate, String filterQuery, ISchema schema, IMapping mapping);
+	
 	String synchronize(String sourceID, String link, ISyndicationFormat syndicationFormat, Format contentFormat, IGeoCoder geoCoder, String feedXml) throws Exception;
-
-	List<Item> getAll(String sourceID, String link, Date sinceDate);
 	
 	ISchema getSchema(String sourceID, String link) throws Exception;
 	

@@ -11,6 +11,7 @@ import org.mesh4j.geo.coder.GeoCoderLatitudePropertyResolver;
 import org.mesh4j.geo.coder.GeoCoderLocationPropertyResolver;
 import org.mesh4j.geo.coder.GeoCoderLongitudePropertyResolver;
 import org.mesh4j.geo.coder.IGeoCoder;
+import org.mesh4j.sync.IFilter;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.ISyncAware;
 import org.mesh4j.sync.SyncEngine;
@@ -33,6 +34,7 @@ import org.mesh4j.sync.adapters.hibernate.HibernateContentAdapter;
 import org.mesh4j.sync.adapters.hibernate.HibernateSyncAdapterFactory;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.filter.CompoundFilter;
+import org.mesh4j.sync.filter.FilterQuery;
 import org.mesh4j.sync.filter.NonDeletedFilter;
 import org.mesh4j.sync.filter.SinceLastUpdateFilter;
 import org.mesh4j.sync.id.generator.IdGenerator;
@@ -129,12 +131,17 @@ public class DBFeedRepository implements IFeedRepository {
 	}
 
 	@Override
-	public List<Item> getAll(String sourceID, String link, Date sinceDate) {
+	public List<Item> getAll(String sourceID, String link, Date sinceDate, String filterQuery, ISchema schema, IMapping mapping){
 		String databaseName = getDBName(sourceID);
 		String tableName = getDBTableName(sourceID);
 		ISyncAdapter adapter = getSyncAdapter(link, databaseName, tableName, NullIdentityProvider.INSTANCE);
-		List<Item> items = adapter.getAllSince(sinceDate);	
-		return items;
+		
+		IFilter<Item> filter = new FilterQuery(filterQuery, schema);
+		if(filter == null){
+			return adapter.getAllSince(sinceDate);
+		} else {
+			return adapter.getAllSince(sinceDate, filter);
+		}
 	}
 
 	@Override
@@ -148,13 +155,13 @@ public class DBFeedRepository implements IFeedRepository {
 	
 	
 	@Override
-	public String readFeedGroup(String sourceID, String link, ISyndicationFormat syndicationFormat, Format contentFormat, IGeoCoder geoCoder, Date sinceDate) throws Exception {
+	public String readFeedGroup(String sourceID, String link, ISyndicationFormat syndicationFormat, Format contentFormat, IGeoCoder geoCoder, Date sinceDate, String filterQuery) throws Exception {
 		ISyncAdapter adapter = this.getSyncMeshGroupAdapter(link, sourceID, NullIdentityProvider.INSTANCE, syndicationFormat, contentFormat);
-		return readFeed(adapter, null, sourceID, link, syndicationFormat, contentFormat, geoCoder, sinceDate);	
+		return readFeed(adapter, null, sourceID, link, syndicationFormat, contentFormat, geoCoder, sinceDate, filterQuery);	
 	}
 	
 	@Override
-	public String readFeed(String sourceID, String link, ISyndicationFormat syndicationFormat, Format contentFormat, IGeoCoder geoCoder, Date sinceDate) throws Exception {
+	public String readFeed(String sourceID, String link, ISyndicationFormat syndicationFormat, Format contentFormat, IGeoCoder geoCoder, Date sinceDate, String filterQuery) throws Exception {
 		
 		String databaseName = getDBName(sourceID);
 		String tableName = getDBTableName(sourceID);
@@ -172,25 +179,26 @@ public class DBFeedRepository implements IFeedRepository {
 			}
 		}
 		
-		return readFeed(adapter, schema, sourceID, link, syndicationFormat, contentFormat, geoCoder, sinceDate); 
+		return readFeed(adapter, schema, sourceID, link, syndicationFormat, contentFormat, geoCoder, sinceDate, filterQuery); 
 	}
 	
 	@SuppressWarnings("unchecked")
-	public String readFeed(ISyncAdapter adapter, ISchema schema, String sourceID, String link, ISyndicationFormat syndicationFormat, Format contentFormat, IGeoCoder geoCoder, Date sinceDate) throws Exception {
+	public String readFeed(ISyncAdapter adapter, ISchema schema, String sourceID, String link, ISyndicationFormat syndicationFormat, Format contentFormat, IGeoCoder geoCoder, Date sinceDate, String filterQuery) throws Exception {
 			
 		List<Item> items;
 		
+		IFilter<Item> filter = new FilterQuery(filterQuery, schema);
 		if(contentFormat != null && contentFormat.isPlainXML()){
 			CompoundFilter compoundFilter;
 			if(sinceDate == null){
-				compoundFilter = new CompoundFilter(NonDeletedFilter.INSTANCE);
+				compoundFilter = new CompoundFilter(NonDeletedFilter.INSTANCE, filter);
 			}else {
 				SinceLastUpdateFilter sinceFilter = new SinceLastUpdateFilter(sinceDate);
-				compoundFilter = new CompoundFilter(NonDeletedFilter.INSTANCE, sinceFilter);
+				compoundFilter = new CompoundFilter(NonDeletedFilter.INSTANCE, sinceFilter, filter);
 			}
 			items = adapter.getAll(compoundFilter);
 		} else {
-			items = adapter.getAllSince(sinceDate);	
+			items = adapter.getAllSince(sinceDate, filter);	
 		}
 		
 		String title = getFeedTitle(sourceID);

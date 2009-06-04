@@ -10,6 +10,7 @@ import org.mesh4j.geo.coder.GeoCoderLatitudePropertyResolver;
 import org.mesh4j.geo.coder.GeoCoderLocationPropertyResolver;
 import org.mesh4j.geo.coder.GeoCoderLongitudePropertyResolver;
 import org.mesh4j.geo.coder.IGeoCoder;
+import org.mesh4j.sync.IFilter;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.ISyncAware;
 import org.mesh4j.sync.SyncEngine;
@@ -24,6 +25,7 @@ import org.mesh4j.sync.adapters.feed.IContentWriter;
 import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.adapters.feed.XMLContent;
 import org.mesh4j.sync.filter.CompoundFilter;
+import org.mesh4j.sync.filter.FilterQuery;
 import org.mesh4j.sync.filter.NonDeletedFilter;
 import org.mesh4j.sync.filter.SinceLastUpdateFilter;
 import org.mesh4j.sync.filter.XMLContentLinkFilter;
@@ -58,49 +60,55 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 	protected abstract void addNewFeed(String sourceID, Feed feed, ISyndicationFormat syndicationFormat, IIdentityProvider identityProvider);
 
 	@Override
-	public List<Item> getAll(String sourceID, String link, Date sinceDate) {
+	public List<Item> getAll(String sourceID, String link, Date sinceDate, String filterQuery, ISchema schema, IMapping mapping) {
 		ISyncAdapter adapter = getSyncAdapter(sourceID, NullIdentityProvider.INSTANCE);
-		List<Item> items = adapter.getAllSince(sinceDate);	
-		return items;
+		
+		IFilter<Item> filter = new FilterQuery(filterQuery, schema);
+		if(filter == null){
+			return adapter.getAllSince(sinceDate);
+		} else {
+			return adapter.getAllSince(sinceDate, filter);
+		}
 	}
 	
 	@Override
-	public String readFeedGroup(String sourceID, String link, ISyndicationFormat syndicationFormat, Format contentFormat, IGeoCoder geoCoder, Date sinceDate) throws Exception {
+	public String readFeedGroup(String sourceID, String link, ISyndicationFormat syndicationFormat, Format contentFormat, IGeoCoder geoCoder, Date sinceDate, String filterQuery) throws Exception {
 		ISyncAdapter adapter = getSyncMeshGroupAdapter(sourceID, NullIdentityProvider.INSTANCE, syndicationFormat, contentFormat);
-		return readFeed(adapter, sourceID, link, syndicationFormat, contentFormat, geoCoder, sinceDate);
+		return readFeed(adapter, sourceID, link, syndicationFormat, contentFormat, geoCoder, sinceDate, filterQuery);
 	}
 	
 
 	@Override
-	public String readFeed(String sourceID, String link, ISyndicationFormat syndicationFormat, Format contentFormat, IGeoCoder geoCoder, Date sinceDate) throws Exception {
+	public String readFeed(String sourceID, String link, ISyndicationFormat syndicationFormat, Format contentFormat, IGeoCoder geoCoder, Date sinceDate, String filterQuery) throws Exception {
 		ISyncAdapter adapter = getSyncAdapter(sourceID, NullIdentityProvider.INSTANCE);
-		return readFeed(adapter, sourceID, link, syndicationFormat, contentFormat, geoCoder, sinceDate);
+		return readFeed(adapter, sourceID, link, syndicationFormat, contentFormat, geoCoder, sinceDate, filterQuery);
 	}
 	
 	@SuppressWarnings("unchecked")
-	private String readFeed(ISyncAdapter adapter, String sourceID, String link, ISyndicationFormat syndicationFormat, Format contentFormat, IGeoCoder geoCoder, Date sinceDate) throws Exception {
-		
+	private String readFeed(ISyncAdapter adapter, String sourceID, String link, ISyndicationFormat syndicationFormat, Format contentFormat, IGeoCoder geoCoder, Date sinceDate, String filterQuery) throws Exception {
+
+		ISchema schema = this.getSchema(sourceID, link);
+		IMapping mapping = this.getMappings(sourceID, link, geoCoder);
+
 		List<Item> items;
-		
+		IFilter<Item> filter = new FilterQuery(filterQuery, schema);
 		if(contentFormat != null && contentFormat.isPlainXML()){
 			CompoundFilter compoundFilter;
 			if(sinceDate == null){
-				compoundFilter = new CompoundFilter(NonDeletedFilter.INSTANCE);
+				compoundFilter = new CompoundFilter(NonDeletedFilter.INSTANCE, filter);
 			}else {
 				SinceLastUpdateFilter sinceFilter = new SinceLastUpdateFilter(sinceDate);
-				compoundFilter = new CompoundFilter(NonDeletedFilter.INSTANCE, sinceFilter);
+				compoundFilter = new CompoundFilter(NonDeletedFilter.INSTANCE, sinceFilter, filter);
 			}
 			items = adapter.getAll(compoundFilter);
 		} else {
-			items = adapter.getAllSince(sinceDate);	
+			items = adapter.getAllSince(sinceDate, filter);	
 		}
 		
 		String title = getFeedTitle(sourceID);
 		Feed feed = new Feed(title, title, link);
 		feed.addItems(items);
 		
-		ISchema schema = this.getSchema(sourceID, link);
-		IMapping mapping = this.getMappings(sourceID, link, geoCoder);
 		String xml = writeFeedAsXml(feed, syndicationFormat, contentFormat, schema, mapping, NullIdentityProvider.INSTANCE);
 		return xml;
 	}
@@ -280,7 +288,7 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 					StringReader xmlReader = new StringReader(schemaXML);
 					return new RDFSchema(xmlReader);
 				} else {
-					return new Schema(schema.createCopy());
+					return new Schema(XMLHelper.parseElement(schemaXML));
 				}
 			}
 		} else {

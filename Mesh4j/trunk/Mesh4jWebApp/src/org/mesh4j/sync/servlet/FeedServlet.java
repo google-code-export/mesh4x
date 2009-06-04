@@ -32,6 +32,7 @@ public class FeedServlet extends HttpServlet {
 
 	private static final String PROPERTY_HISTORY_ACTIVE = "history.active";
 	
+	private static final String PARAM_FILTER = "filter";
 	private static final String PARAM_SOURCE_ID = "sourceID";
 	private static final String PARAM_DESCRIPTION = "description";
 	private static final String PARAM_NEW_SOURCE_ID = "newSourceID";
@@ -142,12 +143,12 @@ public class FeedServlet extends HttpServlet {
 			response.sendError(404, feedFormat.name());
 		} else {
 			Date sinceDate = this.getSinceDate(request);
-			
+			String filterQuery = request.getParameter("filter");
 			String responseContent = "";
 			if(this.feedRepository.isMeshGroup(sourceID) && mustViewAllItems(request)){
-				responseContent = this.feedRepository.readFeedGroup(sourceID, link, syndicationFormat, contentFormat, this.geoCoder, sinceDate);	
+				responseContent = this.feedRepository.readFeedGroup(sourceID, link, syndicationFormat, contentFormat, this.geoCoder, sinceDate, filterQuery);	
 			} else {
-				responseContent = this.feedRepository.readFeed(sourceID, link, syndicationFormat, contentFormat, this.geoCoder, sinceDate);
+				responseContent = this.feedRepository.readFeed(sourceID, link, syndicationFormat, contentFormat, this.geoCoder, sinceDate, filterQuery);
 			}
 						
 			responseContent = responseContent.replaceAll("&lt;", "<");	// TODO (JMT) remove ==>  xml.replaceAll("&lt;", "<"); 
@@ -166,13 +167,13 @@ public class FeedServlet extends HttpServlet {
 
 	private void processGetKML(HttpServletRequest request, HttpServletResponse response, String sourceID, String link)throws ServletException, IOException {
 		Date sinceDate = this.getSinceDate(request);
-		
-		List<Item> items = this.feedRepository.getAll(sourceID, link, sinceDate);
-		
+		String filterQuery = this.getFilterQuery(request);
+			
 		try{
 			ISchema schema = this.feedRepository.getSchema(sourceID, link);
 			IMapping mapping= this.feedRepository.getMappings(sourceID, link, this.geoCoder);
-			
+		
+			List<Item> items = this.feedRepository.getAll(sourceID, link, sinceDate, filterQuery, schema, mapping);
 			String responseContent = KMLExporter.generateKML(sourceID, items, schema, mapping);
 			
 			response.setContentType("application/vnd.google-earth.kml+xml");
@@ -460,5 +461,10 @@ public class FeedServlet extends HttpServlet {
 		} else {
 			return null;
 		}
+	}
+	
+	private String getFilterQuery(HttpServletRequest request) {
+		String filterQuery = request.getParameter(PARAM_FILTER);
+		return filterQuery;
 	}
 }
