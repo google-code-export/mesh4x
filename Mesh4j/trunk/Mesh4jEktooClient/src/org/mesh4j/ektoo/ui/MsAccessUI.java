@@ -2,24 +2,31 @@ package org.mesh4j.ektoo.ui;
 
 import java.beans.PropertyChangeEvent;
 import java.io.File;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Set;
 
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.controller.MsAccessUIController;
+import org.mesh4j.ektoo.ui.component.messagedialog.MessageDialog;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
+import org.mesh4j.ektoo.ui.validator.MsAccessUIValidator;
+import org.mesh4j.ektoo.ui.validator.MySQLConnectionValidator;
+import org.mesh4j.ektoo.validator.IValidationStatus;
 import org.mesh4j.sync.adapters.msaccess.MsAccessHelper;
 
 /**
  * @author Bhuiyan Mohammad Iklash
  * 
  */
-public class MsAccessUI extends TableUI {
+public class MsAccessUI extends TableUI implements IValidationStatus {
 
 	private static final long serialVersionUID = 4708875346159085594L;
 	private static final Log LOGGER = LogFactory.getLog(MsAccessUI.class);
@@ -109,8 +116,26 @@ public class MsAccessUI extends TableUI {
 	}
 
 	@Override
+	public void validationFailed(Hashtable<Object, String> errorTable) {
+		Object key = null;
+		StringBuffer err = new StringBuffer();
+		Enumeration<Object> keys = errorTable.keys();
+		while (keys.hasMoreElements()) {
+			key = keys.nextElement(); 
+			err.append(errorTable.get(key) + "\n");
+		}
+		MessageDialog.showErrorMessage(JOptionPane.getRootFrame(), err.toString());
+	}
+	
+	@Override
+	public void validationPassed() {
+		// TODO (Nobel)
+	}
+
+	@Override
 	public boolean verify() {
-		// TODO Auto-generated method stub
-		return false;
+		boolean valid = (new MsAccessUIValidator(this,
+				controller.getModel(), null)).verify();
+		return valid;
 	}
 }

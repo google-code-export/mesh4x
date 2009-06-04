@@ -26,17 +26,20 @@ public abstract class AbstractValidator implements IValidator {
 	// BUSINESS METHODS
 	protected AbstractModel model;
 
-	public AbstractValidator(JFrame parent, JComponent form, List<JComponent> uiFieldListForValidation) {
+	public AbstractValidator(JFrame parent, JComponent form,
+			List<JComponent> uiFieldListForValidation) {
 		this.parent = parent;
 		this.form = form;
 		this.uiFieldListForValidation = uiFieldListForValidation == null ? new ArrayList<JComponent>()
 				: uiFieldListForValidation;
 	}
 
-	public AbstractValidator(JComponent form, AbstractModel model, List<JComponent> uiFieldListForValidation) {
+	public AbstractValidator(JComponent form, AbstractModel model,
+			List<JComponent> uiFieldListForValidation) {
 		this.form = form;
 		this.model = model;
-		this.uiFieldListForValidation = uiFieldListForValidation == null ? new ArrayList<JComponent>():uiFieldListForValidation;
+		this.uiFieldListForValidation = uiFieldListForValidation == null ? new ArrayList<JComponent>()
+				: uiFieldListForValidation;
 	}
 
 	protected abstract boolean validate();
