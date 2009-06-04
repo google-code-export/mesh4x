@@ -1,5 +1,7 @@
 package org.mesh4j.ektoo.ui.validator;
 
+import java.util.List;
+
 import javax.swing.JComponent;
 
 import org.mesh4j.ektoo.controller.MySQLUIController;
@@ -21,9 +23,13 @@ public class MySQLConnectionValidator extends AbstractValidator {
 //		super(form, model);
 //	}
 	
-	public MySQLConnectionValidator(JComponent form, AbstractModel model,boolean mustValidateTable) {
+/*	public MySQLConnectionValidator(JComponent form, AbstractModel model, boolean mustValidateTable) {
 		super(form, model);
 		this.mustValidateTable = mustValidateTable;
+	}*/
+	
+	public MySQLConnectionValidator(JComponent form, AbstractModel model, List<JComponent> uiFieldListForValidation) {
+		super(form, model, uiFieldListForValidation);
 	}
 	
 	@Override
@@ -32,7 +38,7 @@ public class MySQLConnectionValidator extends AbstractValidator {
 		// return validate((MySQLAdapterModel)this.model);
 		
 		// form based validation
-		return validate((MySQLUI) this.form, this.mustValidateTable);
+		return validate((MySQLUI) this.form);
 	
 	}
 
@@ -76,58 +82,60 @@ public class MySQLConnectionValidator extends AbstractValidator {
 		return isValid;
 	}
 
-	private boolean validate(JComponent form, boolean mustValidateTable) {
+	private boolean validate(JComponent form) {
 		boolean isValid = true;
 
 		MySQLUI ui = (MySQLUI) form;
 
-		if (ui.getUserText().getText().trim().length() == 0) {
+		if ((getUiFieldListForValidation().isEmpty() || getUiFieldListForValidation().contains(ui.getUserText()))
+				&& ui.getUserText().getText().trim().length() == 0) {
 			setError(ui.getUserText(), EktooUITranslator
 					.getErrorEmptyOrNull(MySQLUIController.USER_NAME_PROPERTY));
 			isValid = false;
 		}
 
-		if (new String(ui.getPassText().getPassword()).trim().length() == 0) {
-			setError(
-					ui.getPassText(),
-					EktooUITranslator
-							.getErrorEmptyOrNull(MySQLUIController.USER_PASSWORD_PROPERTY));
+		if ((getUiFieldListForValidation().isEmpty() || getUiFieldListForValidation().contains(ui.getPassText()))
+				&& new String(ui.getPassText().getPassword()).trim().length() == 0) {
+			setError(ui.getPassText(), EktooUITranslator
+					.getErrorEmptyOrNull(MySQLUIController.USER_PASSWORD_PROPERTY));
 			isValid = false;
 		}
 
-		if (ui.getHostText().getText().trim().length() == 0) {
+		if ((getUiFieldListForValidation().isEmpty() || getUiFieldListForValidation().contains(ui.getHostText()))
+				&& ui.getHostText().getText().trim().length() == 0) {
 			setError(ui.getHostText(), EktooUITranslator
 					.getErrorEmptyOrNull(MySQLUIController.HOST_NAME_PROPERTY));
 			isValid = false;
 		}
 
-		if (ui.getPortText().getText().trim().length() == 0) {
+		if ((getUiFieldListForValidation().isEmpty() || getUiFieldListForValidation().contains(ui.getPortText()))
+				&& ui.getPortText().getText().trim().length() == 0) {
 			setError(ui.getPortText(), EktooUITranslator
 					.getErrorEmptyOrNull(MySQLUIController.PORT_NO_PROPERTY));
 			isValid = false;
 		}
 
-		if (ui.getDatabaseText().getText().trim().length() == 0) {
-			setError(
-					ui.getDatabaseText(),
-					EktooUITranslator
-							.getErrorEmptyOrNull(MySQLUIController.DATABASE_NAME_PROPERTY));
+		if ((getUiFieldListForValidation().isEmpty() || getUiFieldListForValidation().contains(ui.getDatabaseText()))
+				&& ui.getDatabaseText().getText().trim().length() == 0) {
+			setError(ui.getDatabaseText(), EktooUITranslator
+					.getErrorEmptyOrNull(MySQLUIController.DATABASE_NAME_PROPERTY));
 			isValid = false;
 		}
 
 		//validating the table 
-		if(mustValidateTable){
-			if (ui.getTableList().getItemCount() == 0) {
-				setError(ui.getTableList(), EktooUITranslator
-						.getErrorEmptyOrNull(MySQLUIController.TABLE_NAME_PROPERTY));
-				isValid = false;
-			}
-		} 
+		//if(mustValidateTable){
+		if ((getUiFieldListForValidation().isEmpty() || getUiFieldListForValidation().contains(ui.getTableList()))
+				&& ui.getTableList().getItemCount() == 0) {
+			setError(ui.getTableList(), EktooUITranslator
+					.getErrorEmptyOrNull(MySQLUIController.TABLE_NAME_PROPERTY));
+			isValid = false;
+		}
+		//} 
 
 		return isValid;
 	}
 
-	public boolean validateToConnect() {
-		return validate((MySQLUI) this.form, false); 
-	}
+//	public boolean validateToConnect() {
+//		return validate((MySQLUI) this.form); 
+//	}
 }

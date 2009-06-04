@@ -12,6 +12,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -20,6 +21,7 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -349,8 +351,16 @@ public class MySQLUI extends AbstractUI implements IValidationStatus {
 					.getDatabaseConnectionTooltip());
 			btnConnect.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent ae) {
+					
+					List<JComponent> uiFieldListForValidation = new ArrayList<JComponent>();
+					uiFieldListForValidation.add(getUserText());
+					uiFieldListForValidation.add(getPassText());
+					uiFieldListForValidation.add(getHostText());
+					uiFieldListForValidation.add(getPortText());
+					uiFieldListForValidation.add(getDatabaseText());
+					
 					boolean valid = (new MySQLConnectionValidator(MySQLUI.this,
-							controller.getModel(),false)).verify();
+							controller.getModel(), uiFieldListForValidation)).verify();
 					if (valid) {
 
 						SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
@@ -554,8 +564,15 @@ public class MySQLUI extends AbstractUI implements IValidationStatus {
 
 	@Override
 	public boolean verify() {
+		List<JComponent> uiFieldListForValidation = new ArrayList<JComponent>();
+		uiFieldListForValidation.add(getUserText());
+		uiFieldListForValidation.add(getPassText());
+		uiFieldListForValidation.add(getHostText());
+		uiFieldListForValidation.add(getPortText());
+		uiFieldListForValidation.add(getDatabaseText());
+		uiFieldListForValidation.add(getTableList());
 		boolean valid = (new MySQLConnectionValidator(MySQLUI.this,
-				controller.getModel(),true)).verify();
+				controller.getModel(), uiFieldListForValidation)).verify();
 		return valid;
 	}
 }

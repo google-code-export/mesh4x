@@ -1,6 +1,8 @@
 package org.mesh4j.ektoo.validator;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -17,20 +19,24 @@ public abstract class AbstractValidator implements IValidator {
 	// MODEL VARIABLES
 	private Object parent;
 	protected Object form;
+	private List<JComponent> uiFieldListForValidation = new ArrayList<JComponent>();
 
 	private Hashtable<Object, String> errorTable = new Hashtable<Object, String>();
 
 	// BUSINESS METHODS
 	protected AbstractModel model;
 
-	public AbstractValidator(JFrame parent, JComponent form) {
+	public AbstractValidator(JFrame parent, JComponent form, List<JComponent> uiFieldListForValidation) {
 		this.parent = parent;
 		this.form = form;
+		this.uiFieldListForValidation = uiFieldListForValidation == null ? new ArrayList<JComponent>()
+				: uiFieldListForValidation;
 	}
 
-	public AbstractValidator(JComponent form, AbstractModel model) {
+	public AbstractValidator(JComponent form, AbstractModel model, List<JComponent> uiFieldListForValidation) {
 		this.form = form;
 		this.model = model;
+		this.uiFieldListForValidation = uiFieldListForValidation;
 	}
 
 	protected abstract boolean validate();
@@ -64,5 +70,9 @@ public abstract class AbstractValidator implements IValidator {
 
 	protected Object getLocalParent() {
 		return this.parent;
+	}
+
+	public List<JComponent> getUiFieldListForValidation() {
+		return uiFieldListForValidation;
 	}
 }
