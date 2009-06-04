@@ -380,11 +380,13 @@ public class EktooFrame extends JFrame implements IErrorListener,
 
 			btnSync.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					setStatusbarText("", Statusbar.NORMAL_STATUS);
-					showSyncImageLabel(true);
-					SwingWorker<String, Void> task = new SynchronizeTask(
-							EktooFrame.this, EktooFrame.this);
-					task.execute();
+					if(getSourceItem().verify() && getTargetItem().verify()){
+						setStatusbarText("", Statusbar.NORMAL_STATUS);
+						showSyncImageLabel(true);
+						SwingWorker<String, Void> task = new SynchronizeTask(
+								EktooFrame.this, EktooFrame.this);
+						task.execute();	
+					}
 				}
 			});
 

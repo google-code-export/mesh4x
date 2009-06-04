@@ -17,6 +17,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.table.AbstractTableModel;
 
 import org.mesh4j.ektoo.ISyncTableTypeItem;
 import org.mesh4j.ektoo.IUIController;
@@ -452,6 +453,31 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 		return currrentController;
 	}
 	
+	public AbstractUI getCurrentView(){
+		AbstractUI currentUI = null; 
+		String type = (String) getDataSourceType().getSelectedItem();
+		if (type.equals(KML_PANEL)) {
+			currentUI = kmlUI;
+		} else if (type.equals(MS_EXCEL_PANEL)) {
+			currentUI = excelUI;
+		} else if (type.equals(MS_ACCESS_PANEL)) {
+			currentUI = accessUI;
+		} else if (type.equals(GOOGLE_SPREADSHEET_PANEL)) {
+			currentUI = googleUI;
+		} else if (type.equals(CLOUD_PANEL)) {
+			currentUI = cloudUI;
+		} else if (type.equals(MYSQL_PANEL)) {
+			currentUI = mysqlUI;
+		} else if (type.equals(RSS_FILE_PANEL)) {
+			currentUI = rssUI;
+		} else if (type.equals(ATOM_FILE_PANEL)) {
+			currentUI = atomUI;
+		} else if (type.equals(FOLDER_PANEL)) {
+			currentUI = folderUI;
+		}
+		return currentUI;
+	}
+	
 	//TODO(raju) as mesh4x core adapters supports schema creation, implement this 
 	public void updateUiForSchemaCreation(boolean isEanble){
 		String type = (String) getDataSourceType().getSelectedItem();
@@ -475,4 +501,8 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 	public String getTargetFilePath(){
 		return this.excelUI.getFilePath();
 	}
+	public boolean verify(){
+		return getCurrentView().verify();
+	}
+	
 }

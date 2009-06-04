@@ -107,4 +107,10 @@ public class MsAccessUI extends TableUI {
 	public void setList(File file, int tableIndex, String columnName) {
 		// TODO setList
 	}
+
+	@Override
+	public boolean verify() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

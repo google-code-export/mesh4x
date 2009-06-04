@@ -640,4 +640,10 @@ public class GSSheetUI extends AbstractUI {
         getColumnList().setSelectedIndex(Integer.parseInt(newStringValue));
     }
   }
+
+@Override
+public boolean verify() {
+	// TODO Auto-generated method stub
+	return false;
+}
 }

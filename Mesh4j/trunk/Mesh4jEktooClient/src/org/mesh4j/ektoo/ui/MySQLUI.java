@@ -22,6 +22,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
@@ -32,6 +33,7 @@ import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.controller.MySQLUIController;
 import org.mesh4j.ektoo.tasks.IErrorListener;
 import org.mesh4j.ektoo.tasks.OpenMySqlFeedTask;
+import org.mesh4j.ektoo.ui.component.messagedialog.MessageDialog;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.ektoo.ui.validator.MySQLConnectionValidator;
@@ -267,6 +269,8 @@ public class MySQLUI extends AbstractUI implements IValidationStatus {
 			txtPort.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent ae) {
 					try {
+						//TODO (raju) please avoid the exception or let the user
+						//know the message
 						getController().changePortNo(
 								Integer.parseInt(txtPort.getText()));
 					} catch (Exception e) {
@@ -279,6 +283,8 @@ public class MySQLUI extends AbstractUI implements IValidationStatus {
 			txtPort.addFocusListener(new FocusAdapter() {
 				public void focusLost(FocusEvent evt) {
 					try {
+						//TODO (raju) please avoid the exception or let the user
+						//know the message
 						getController().changePortNo(
 								Integer.parseInt(txtPort.getText()));
 					} catch (Exception e) {
@@ -344,7 +350,7 @@ public class MySQLUI extends AbstractUI implements IValidationStatus {
 			btnConnect.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent ae) {
 					boolean valid = (new MySQLConnectionValidator(MySQLUI.this,
-							controller.getModel())).validateToConnect();
+							controller.getModel(),false)).verify();
 					if (valid) {
 
 						SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
@@ -369,6 +375,8 @@ public class MySQLUI extends AbstractUI implements IValidationStatus {
 		return btnConnect;
 	}
 
+	
+	
 	private JLabel getTableLabel() {
 		if (labelTable == null) {
 			labelTable = new JLabel();
@@ -481,23 +489,27 @@ public class MySQLUI extends AbstractUI implements IValidationStatus {
 	@Override
 	public void validationFailed(Hashtable<Object, String> errorTable) {
 		Object key = null;
-		String err = null;
+		String err = "";
 		Enumeration<Object> keys = errorTable.keys();
 		while (keys.hasMoreElements()) {
 			key = keys.nextElement(); 
-	    err = err  + "n" + (String)errorTable.get(key);
-	    if ( key instanceof JTextField || key instanceof JPasswordField )
-	     {
-	      ((JTextField)key).setBorder(BorderFactory.createLineBorder(Color.RED));
-	     }
-	     else if ( key instanceof  JComboBox )
-	     {
-	       ((JComboBox)key).setBorder(BorderFactory.createLineBorder(Color.RED));
-	     }
+	    err =  (String)errorTable.get(key);
+	    
+	    MessageDialog.showErrorMessage(JOptionPane.getRootFrame(), err);
+//	    if ( key instanceof JTextField || key instanceof JPasswordField )
+//	     {
+//	      ((JTextField)key).setBorder(BorderFactory.createLineBorder(Color.RED));
+//	      
+//	     }
+//	     else if ( key instanceof  JComboBox )
+//	     {
+//	       ((JComboBox)key).setBorder(BorderFactory.createLineBorder(Color.RED));
+//	     }
 		}
-
+		
 	}
 
+	
 	@Override
 	public void validationPassed() {
 		// TODO (Nobel)
@@ -538,5 +550,12 @@ public class MySQLUI extends AbstractUI implements IValidationStatus {
 				getTableList().setSelectedItem(newStringValue);
 		}
 
+	}
+
+	@Override
+	public boolean verify() {
+		boolean valid = (new MySQLConnectionValidator(MySQLUI.this,
+				controller.getModel(),true)).verify();
+		return valid;
 	}
 }

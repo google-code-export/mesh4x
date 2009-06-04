@@ -246,4 +246,10 @@ public class CloudUI extends AbstractUI{
         getDataSetText().setText(newStringValue);
     }    
   }
+
+@Override
+public boolean verify() {
+	// TODO Auto-generated method stub
+	return false;
+}
 }

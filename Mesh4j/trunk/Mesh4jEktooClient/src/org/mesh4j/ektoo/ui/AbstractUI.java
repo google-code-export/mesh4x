@@ -12,4 +12,5 @@ public abstract class AbstractUI extends JPanel
 	private static final long serialVersionUID = 7515686485315720840L;
 	
 	public abstract void modelPropertyChange(PropertyChangeEvent evt);
+	public abstract boolean verify();
 }

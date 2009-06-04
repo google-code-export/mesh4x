@@ -163,6 +163,12 @@ public class MsExcelUI extends TableUI
 		getTableList().setEnabled(isEanble);
 		getColumnList().setEnabled(isEanble);
 	}
+
+	@Override
+	public boolean verify() {
+		// TODO Auto-generated method stub
+		return true;
+	}
 	
 	
 	

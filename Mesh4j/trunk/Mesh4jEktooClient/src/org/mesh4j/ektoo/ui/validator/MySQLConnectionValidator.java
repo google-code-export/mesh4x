@@ -15,18 +15,25 @@ import org.mesh4j.ektoo.validator.AbstractValidator;
  */
 public class MySQLConnectionValidator extends AbstractValidator {
 	
+	private boolean mustValidateTable = false;
 	// BUSINESS METHODS
-	public MySQLConnectionValidator(JComponent form, AbstractModel model) {
+//	public MySQLConnectionValidator(JComponent form, AbstractModel model) {
+//		super(form, model);
+//	}
+	
+	public MySQLConnectionValidator(JComponent form, AbstractModel model,boolean mustValidateTable) {
 		super(form, model);
+		this.mustValidateTable = mustValidateTable;
 	}
-
+	
 	@Override
 	protected boolean validate() {
 		// model based validation
 		// return validate((MySQLAdapterModel)this.model);
-
+		
 		// form based validation
-		return validate((MySQLUI) this.form, true);
+		return validate((MySQLUI) this.form, this.mustValidateTable);
+	
 	}
 
 	protected boolean validate(MySQLAdapterModel mysqlModel) {
@@ -80,13 +87,13 @@ public class MySQLConnectionValidator extends AbstractValidator {
 			isValid = false;
 		}
 
-//		if (new String(ui.getPassText().getPassword()).trim().length() == 0) {
-//			setError(
-//					ui.getPassText(),
-//					EktooUITranslator
-//							.getErrorEmptyOrNull(MySQLUIController.USER_PASSWORD_PROPERTY));
-//			isValid = false;
-//		}
+		if (new String(ui.getPassText().getPassword()).trim().length() == 0) {
+			setError(
+					ui.getPassText(),
+					EktooUITranslator
+							.getErrorEmptyOrNull(MySQLUIController.USER_PASSWORD_PROPERTY));
+			isValid = false;
+		}
 
 		if (ui.getHostText().getText().trim().length() == 0) {
 			setError(ui.getHostText(), EktooUITranslator
@@ -108,13 +115,14 @@ public class MySQLConnectionValidator extends AbstractValidator {
 			isValid = false;
 		}
 
+		//validating the table 
 		if(mustValidateTable){
 			if (ui.getTableList().getItemCount() == 0) {
 				setError(ui.getTableList(), EktooUITranslator
 						.getErrorEmptyOrNull(MySQLUIController.TABLE_NAME_PROPERTY));
 				isValid = false;
 			}
-		}
+		} 
 
 		return isValid;
 	}

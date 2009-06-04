@@ -184,4 +184,10 @@ public class KmlUI extends AbstractUI {
     }
   }
 
+@Override
+public boolean verify() {
+	// TODO Auto-generated method stub
+	return false;
+}
+
 }
