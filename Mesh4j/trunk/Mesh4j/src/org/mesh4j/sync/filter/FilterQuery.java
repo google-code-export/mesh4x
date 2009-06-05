@@ -26,6 +26,7 @@ public class FilterQuery implements IFilter<Item> {
 	// MODEL VARIABLES
 	private OgnlCondition condition;
 	private ISchema schema;
+	private String conditionExpression;
 	
 	// BUSINESS METHODs
 	/** 
@@ -42,6 +43,7 @@ public class FilterQuery implements IFilter<Item> {
 			this.condition = new OgnlCondition(conditionExpression);
 		} 
 		this.schema = schema;
+		this.conditionExpression = conditionExpression;
 	}
 
 	/**
@@ -85,5 +87,9 @@ public class FilterQuery implements IFilter<Item> {
 		} else {
 			return this.schema.getPropertiesAsLexicalFormMap(element);
 		}
+	}
+
+	public String getConditionExpression() {
+		return this.conditionExpression;
 	}
 }

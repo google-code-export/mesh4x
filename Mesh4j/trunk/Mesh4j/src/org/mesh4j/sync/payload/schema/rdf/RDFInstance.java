@@ -189,14 +189,21 @@ public class RDFInstance {
 	}
 
 	public String asXML() {
+		Element element = this.asElementXML();
+		return XMLHelper.canonicalizeXML(element);
+	}
+	
+	public Element asElementXML() {
 		this.model.remove(this.schema.getRDFModel());
 		
 		StringWriter sw = new StringWriter();
 		this.model.write(sw, "RDF/XML-ABBREV");
 		
 		this.model.add(this.schema.getRDFModel());
-		Element element = XMLHelper.parseElement(sw.toString());
-		return XMLHelper.canonicalizeXML(element);
+		
+		String xml = sw.toString();
+		Element element = XMLHelper.parseElement(xml);
+		return XMLHelper.parseElement(XMLHelper.canonicalizeXML(element));
 	}
 
 	public String asPlainXML() {

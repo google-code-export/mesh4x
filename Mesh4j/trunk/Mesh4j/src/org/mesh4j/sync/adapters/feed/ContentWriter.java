@@ -37,16 +37,15 @@ public class ContentWriter implements IContentWriter {
 		}
 		
 		if(item.isDeleted()){
-			String title = "Element was DELETED, content id = " + item.getContent().getId() + ", sync Id = "+ item.getSyncId();
+			String title = "Element was DELETED, content id = " + item.getContent().getId() + ", sync Id = "+ getDefaultTitle(item);
 			syndicationFormat.addFeedItemTitleElement(itemElement, title);
 			syndicationFormat.addFeedItemDescriptionElement(itemElement, "---DELETED---");
 		}else{
-
 			String title = null;
 			String desc = null;
 			
-			String defaultTitle = item.getSyncId();
-			String defaultDescription = "Id: " + item.getContent().getId() + " Version: " + item.getContent().getVersion();
+			String defaultTitle = getDefaultTitle(item);
+			String defaultDescription = getDefaultDescription(item);
 			
 			if(this.mapping != null){
 				title = this.mapping.getValue(item.getContent().getPayload(), ISyndicationFormat.MAPPING_NAME_ITEM_TITLE);
@@ -61,6 +60,14 @@ public class ContentWriter implements IContentWriter {
 				syndicationFormat.addFeedItemPayloadElement(itemElement, item.getContent().getPayload().createCopy());
 			}
 		}
+	}
+
+	public String getDefaultDescription(Item item) {
+		return "Id: " + item.getContent().getId() + " Version: " + item.getContent().getVersion();
+	}
+
+	public String getDefaultTitle(Item item) {
+		return item.getSyncId();
 	}
 
 	@SuppressWarnings("unchecked")

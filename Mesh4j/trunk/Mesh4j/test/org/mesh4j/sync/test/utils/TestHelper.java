@@ -248,7 +248,7 @@ public class TestHelper {
 			if(!isOk){
 				System.out.println("Source: "+ sourceItem.getContent().getPayload().asXML());
 				System.out.println("Target: "+ targetItem.getContent().getPayload().asXML());
-				Assert.assertEquals(sourceItem.getContent().getPayload().asXML(), targetItem.getContent().getPayload().asXML());	
+				Assert.assertEquals(XMLHelper.canonicalizeXML(sourceItem.getContent().getPayload()), XMLHelper.canonicalizeXML(targetItem.getContent().getPayload()));	
 			}
 			Assert.assertTrue(isOk);
 		}

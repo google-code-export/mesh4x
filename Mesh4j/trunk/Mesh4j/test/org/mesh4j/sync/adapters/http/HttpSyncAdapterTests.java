@@ -124,6 +124,48 @@ public class HttpSyncAdapterTests {
 		Assert.assertEquals(size1 + 1, items.size());
 	}
 
+	@Test
+	public void shouldMakeMeshGroupURLToSync() {
+		Assert.assertEquals("http://localhost:8080/mesh4x/feeds/myMesh/myFeed?viewALLGroupMeshItems", HttpSyncAdapter.makeMeshGroupURLToSync("http://localhost:8080/mesh4x/feeds/myMesh/myFeed"));
+		Assert.assertEquals("http://localhost:8080/mesh4x/feeds/myMesh/myFeed/?viewALLGroupMeshItems", HttpSyncAdapter.makeMeshGroupURLToSync("http://localhost:8080/mesh4x/feeds/myMesh/myFeed/"));
+		Assert.assertEquals("http://localhost:8080/mesh4x/feeds/myMesh/myFeed?format=rdf&viewALLGroupMeshItems", HttpSyncAdapter.makeMeshGroupURLToSync("http://localhost:8080/mesh4x/feeds/myMesh/myFeed?format=rdf"));
+	}
+	
+	@Test
+	public void shouldMakeMappingsURL() {
+		Assert.assertEquals("http://localhost:8080/mesh4x/feeds/myMesh/myFeed/mappings", HttpSyncAdapter.makeMappingsURL("http://localhost:8080/mesh4x/feeds/myMesh/myFeed"));
+		Assert.assertEquals("http://localhost:8080/mesh4x/feeds/myMesh/myFeed/mappings", HttpSyncAdapter.makeMappingsURL("http://localhost:8080/mesh4x/feeds/myMesh/myFeed/"));
+		Assert.assertEquals("http://localhost:8080/mesh4x/feeds/myMesh/myFeed/mappings?format=rdf", HttpSyncAdapter.makeMappingsURL("http://localhost:8080/mesh4x/feeds/myMesh/myFeed?format=rdf"));
+	}
+	
+	@Test
+	public void shouldMakeSchemaURL() {
+		Assert.assertEquals("http://localhost:8080/mesh4x/feeds/myMesh/myFeed/schema", HttpSyncAdapter.makeSchemaURL("http://localhost:8080/mesh4x/feeds/myMesh/myFeed"));
+		Assert.assertEquals("http://localhost:8080/mesh4x/feeds/myMesh/myFeed/schema", HttpSyncAdapter.makeSchemaURL("http://localhost:8080/mesh4x/feeds/myMesh/myFeed/"));
+		Assert.assertEquals("http://localhost:8080/mesh4x/feeds/myMesh/myFeed/schema?format=rdf", HttpSyncAdapter.makeSchemaURL("http://localhost:8080/mesh4x/feeds/myMesh/myFeed?format=rdf"));
+	}
+	
+	@Test
+	public void shouldMakeAddItemFromRawDataURL() {
+		Assert.assertEquals("http://localhost:8080/mesh4x/feeds/myMesh/myFeed/add", HttpSyncAdapter.makeAddItemFromRawDataURL("http://localhost:8080/mesh4x/feeds/myMesh/myFeed"));
+		Assert.assertEquals("http://localhost:8080/mesh4x/feeds/myMesh/myFeed/add", HttpSyncAdapter.makeAddItemFromRawDataURL("http://localhost:8080/mesh4x/feeds/myMesh/myFeed/"));
+		Assert.assertEquals("http://localhost:8080/mesh4x/feeds/myMesh/myFeed/add?format=rdf", HttpSyncAdapter.makeAddItemFromRawDataURL("http://localhost:8080/mesh4x/feeds/myMesh/myFeed?format=rdf"));
+	}
+
+	@Test
+	public void shouldMakeGetURL() {
+		Assert.assertEquals("http://localhost:8080/mesh4x/feeds/myMesh/myFeed", HttpSyncAdapter.makeGetURL("http://localhost:8080/mesh4x/feeds/myMesh/myFeed", null));
+		Assert.assertEquals("http://localhost:8080/mesh4x/feeds/myMesh/myFeed/", HttpSyncAdapter.makeGetURL("http://localhost:8080/mesh4x/feeds/myMesh/myFeed/", null));
+		
+		Assert.assertEquals("http://localhost:8080/mesh4x/feeds/myMesh/myFeed", HttpSyncAdapter.makeGetURL("http://localhost:8080/mesh4x/feeds/myMesh/myFeed", ""));
+		Assert.assertEquals("http://localhost:8080/mesh4x/feeds/myMesh/myFeed/", HttpSyncAdapter.makeGetURL("http://localhost:8080/mesh4x/feeds/myMesh/myFeed/", ""));
+		
+		Assert.assertEquals("http://localhost:8080/mesh4x/feeds/myMesh/myFeed?filter=Name=JMT", HttpSyncAdapter.makeGetURL("http://localhost:8080/mesh4x/feeds/myMesh/myFeed", "Name=JMT"));
+		Assert.assertEquals("http://localhost:8080/mesh4x/feeds/myMesh/myFeed/?filter=Name=JMT", HttpSyncAdapter.makeGetURL("http://localhost:8080/mesh4x/feeds/myMesh/myFeed/", "Name=JMT"));
+
+		Assert.assertEquals("http://localhost:8080/mesh4x/feeds/myMesh/myFeed?format=rdf&filter=Name=JMT", HttpSyncAdapter.makeGetURL("http://localhost:8080/mesh4x/feeds/myMesh/myFeed?format=rdf", "Name=JMT"));
+		Assert.assertEquals("http://localhost:8080/mesh4x/feeds/myMesh/myFeed/?format=rdf&filter=Name=JMT", HttpSyncAdapter.makeGetURL("http://localhost:8080/mesh4x/feeds/myMesh/myFeed/?format=rdf", "Name=JMT"));
+	}	
 	
 	@Test
 	public void shouldObtainsSchema(){
@@ -307,4 +349,6 @@ public class HttpSyncAdapterTests {
 		Assert.assertEquals(rdfSchema.asXML(), schema.asXML());
 		Assert.assertTrue(rdfSchema.isCompatible(schema));
 	}
+	
+
 }

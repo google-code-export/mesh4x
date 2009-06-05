@@ -29,6 +29,7 @@ import org.mesh4j.sync.adapters.feed.IContentReader;
 import org.mesh4j.sync.adapters.feed.IContentWriter;
 import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.filter.ConflictsFilter;
+import org.mesh4j.sync.filter.FilterQuery;
 import org.mesh4j.sync.filter.NullFilter;
 import org.mesh4j.sync.filter.SinceLastUpdateFilter;
 import org.mesh4j.sync.id.generator.IIdGenerator;
@@ -117,11 +118,18 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 	protected List<Item> getAll(Date since, IFilter<Item> filter){
 		ArrayList<Item> result = new ArrayList<Item>();
 		try {
+			String filterCondition = null;
+			if(filter instanceof FilterQuery){
+				filterCondition = ((FilterQuery) filter).getConditionExpression();
+			}
+			
+			URL getURL = new URL(makeGetURL(this.url.toExternalForm(), filterCondition));
+			
 			Feed feed = null;
 			if(since == null){
-				feed = feedReader.read(this.url);
+				feed = feedReader.read(getURL);
 			} else {
-				String xml = doGET(since);
+				String xml = doGET(getURL, since);
 				if(xml == null || xml.trim().length() == 0){
 					return result;
 				}
@@ -154,11 +162,11 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 		return MessageTranslator.translate(this.getClass().getName());
 	}
 	
-	protected String doGET(Date since){
+	protected String doGET(URL getURL, Date since){
 		String result = null;
 		HttpURLConnection conn = null;
 	    try{
-			conn = (HttpURLConnection) this.url.openConnection();
+			conn = (HttpURLConnection) getURL.openConnection();
 
 			if(since != null){
 				conn.setIfModifiedSince(since.getTime());
@@ -303,7 +311,7 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 	    try{
 
 	    	String urlSchemaString = url.getProtocol() + "://"+ url.getHost() +":"+ url.getPort()+ url.getPath()+ "/" + "schema";
-	    	
+
 	    	URL urlSchema = new URL(urlSchemaString);
 			conn = (HttpURLConnection) urlSchema.openConnection();
 			
@@ -359,20 +367,63 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 		return result;
 	}
 
-	public static String makeMappingsURL(String url) {
-		return url + "/mappings";
+	public static String makeMeshGroupURLToSync(String url) {
+		return addQueryParamater(url, "viewALLGroupMeshItems");
 	}
 	
-	public static String makeMeshGroupURLToSync(String url) {
-		return url + "?viewALLGroupMeshItems";
+	public static String makeMappingsURL(String url) {
+		return addSubdomain(url, "mappings");
 	}
-		
+
 	public static String makeSchemaURL(String url) {
-		return url + "/schema";
+		return addSubdomain(url, "schema");
 	}
 	
 	public static String makeAddItemFromRawDataURL(String url) {
-		return url + "/add";
+		return addSubdomain(url, "add");
+	}
+	
+	public static String makeGetURL(String url, String conditionExpression) {
+		if(conditionExpression == null || conditionExpression.length() == 0){
+			return url;
+		} else {
+			return addQueryParamater(url, "filter=" + conditionExpression);
+		}
+	}
+	
+	private static String addSubdomain(String url, String subDomain) {
+		try{
+			if(url.contains("?")){
+				URL fullURL = new URL(url);
+				String query = fullURL.getQuery();
+				String baseURL = url.substring(0, url.length() - (query.length() + 1));
+				if(baseURL.endsWith("/")){
+					return baseURL + subDomain + "?" + query;
+				} else {
+					return baseURL + "/" + subDomain + "?" + query;
+				}
+			} else {
+				if(url.endsWith("/")){
+					return url + subDomain;
+				} else {
+					return url + "/" + subDomain;
+				}
+			}
+		} catch (Exception e) {
+			throw new MeshException(e);
+		}
+	}
+	
+	private static String addQueryParamater(String url, String queryParamater) {
+		if(queryParamater == null || queryParamater.length() == 0){
+			return url;
+		} else {
+			if(url.contains("?")){
+				return url + "&" + queryParamater;
+			} else {
+				return url + "?" + queryParamater;
+			}
+		}
 	}
 
 	public static void uploadMeshDefinition(String url, String sourceId, String format, String description, ISchema schema, IMapping mappings, String by) {
