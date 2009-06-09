@@ -523,6 +523,17 @@ public class MsExcelContentAdapterTests {
 		Assert.assertEquals(1, adapter.getNumberOfPhantomRows());		
 	}
 	
+	@Test
+	public void ShouldGetMapping() throws IOException{
+		File file = TestHelper.makeFileAndDeleteIfExists("myExcel.xls");
+		IMsExcelToXMLMapping mapper = new MSExcelToPlainXMLMapping("id", null);
+		MsExcelContentAdapter adapter = new MsExcelContentAdapter(new MsExcel(file.getAbsolutePath()), mapper, "sheet");
+		
+		Assert.assertEquals(mapper.getIdColumnName(), adapter.getMapping().getIdColumnName());
+		Assert.assertEquals(mapper, adapter.getMapping());
+		
+	}
+	
 	// PRIVATE METHODS
 	
 	private void addEntityHeader(MsExcelContentAdapter adapter, String sheetName, String columnName) {

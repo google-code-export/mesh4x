@@ -214,6 +214,9 @@ public class MsExcelContentAdapter implements IIdentifiableContentAdapter, ISync
 		return mapping.getSchema();
 	}
 
+	public IMsExcelToXMLMapping getMapping(){
+		return this.mapping;
+	}
 
 	@Override
 	public void writeDataSourceFromSchema() {
