@@ -436,7 +436,7 @@ public class MySQLUI extends AbstractUI implements IValidationStatus {
 
 	// TODO (nobel) improve it
 	protected JFrame getRootFrame() {
-		return (JFrame)this.getParent().getParent().getParent().getParent().getParent().getParent();
+		return (JFrame)this.getParent().getParent().getParent().getParent().getParent().getParent().getParent();
 	}
 	
 	public void setList(String user, String pass, String host, int port,

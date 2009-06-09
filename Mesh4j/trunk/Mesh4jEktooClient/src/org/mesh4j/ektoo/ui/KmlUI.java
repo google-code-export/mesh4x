@@ -144,7 +144,7 @@ public class KmlUI extends AbstractUI implements IValidationStatus {
 	
 	// TODO (nobel) improve it
 	protected JFrame getRootFrame() {
-		return (JFrame)this.getParent().getParent().getParent().getParent().getParent().getParent();
+		return (JFrame)this.getParent().getParent().getParent().getParent().getParent().getParent().getParent();
 	}
 	
 	public String getFileName() {

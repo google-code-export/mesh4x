@@ -56,7 +56,7 @@ public class CloudUI extends AbstractUI implements IValidationStatus {
 	private CloudUIController controller = null;
 	
 	private JButton btnView = null;
-	private JTextField txtURL = null;
+//	private JTextField txtURL = null;
 
 	// BUSINESS METHODS
 	public CloudUI(String baseURL, CloudUIController controller) {
@@ -64,7 +64,8 @@ public class CloudUI extends AbstractUI implements IValidationStatus {
 		this.controller = controller;
 		this.controller.addView(this);
 		initialize();
-		this.txtURL.setText(baseURL);
+//		this.txtURL.setText(baseURL);
+		this.syncTextURI.setText(baseURL);
 	}
 
 	private void initialize() {
@@ -80,7 +81,7 @@ public class CloudUI extends AbstractUI implements IValidationStatus {
 		this.add(getSyncURILabel(), null);
 		this.add(getSyncURIText(), null);
 		
-		this.add(getURLText(), null);
+//		this.add(getURLText(), null);
 		
 		this.add(getBtnView(), null);
 		
@@ -208,14 +209,14 @@ public class CloudUI extends AbstractUI implements IValidationStatus {
 		return txtDataset;
 	}
 	
-	public JTextField getURLText() {
-		if (txtURL == null) {
-			txtURL = new JTextField();
-			txtURL.setBounds(new Rectangle(1, 89, 375, 20));
-			txtURL.setEditable(false);
-		}
-		return txtURL;
-	}
+//	public JTextField getURLText() {
+//		if (txtURL == null) {
+//			txtURL = new JTextField();
+//			txtURL.setBounds(new Rectangle(1, 89, 375, 20));
+//			txtURL.setEditable(false);
+//		}
+//		return txtURL;
+//	}
 
 	public JButton getBtnView() {
 		if (btnView == null) {
@@ -231,7 +232,7 @@ public class CloudUI extends AbstractUI implements IValidationStatus {
 			btnView.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					JFrame frame = CloudUI.this.getRootFrame();
-					String url = txtURL.getText();
+					String url = syncTextURI.getText();
 					
 					if(txtMash.getText() != null && txtMash.getText().length() > 0){
 						url = url.concat("/").concat(txtMash.getText());
