@@ -212,7 +212,8 @@ public class FeedUI extends AbstractUI  implements IValidationStatus {
 		boolean valid = (new FeedUIValidator(this,
 				controller.getModel(), null)).verify();
 		return valid;
-	}	
+	}
+
 	
 	
 }

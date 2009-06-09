@@ -17,7 +17,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.table.AbstractTableModel;
 
 import org.mesh4j.ektoo.ISyncTableTypeItem;
 import org.mesh4j.ektoo.IUIController;
@@ -106,7 +105,8 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 
 	private JComboBox listType = null;
 	private JLabel labelType = null;
-	private boolean isCreateSchema = false;
+	private boolean mustCreateSchema = false;
+	
 	String title = null;
 
 	// BUSINESS MODEL
@@ -490,19 +490,21 @@ public class SyncItemUI extends JPanel implements ISyncTableTypeItem,
 		excelUI.updateUiForSchemaCreation(isEanble);
 	}
 	
-	public boolean isCreateSchema() {
-		return isCreateSchema;
-	}
-
-	public void setCreateSchema(boolean isCreateSchema) {
-		this.isCreateSchema = isCreateSchema;
-	}
-
+	
 	public String getTargetFilePath(){
 		return this.excelUI.getFilePath();
 	}
 	public boolean verify(){
 		return getCurrentView().verify();
 	}
+
+	public boolean isMustCreateSchema() {
+		return getCurrentView().isMustCreateSchema();
+	}
+
+	public void setMustCreateSchema(boolean mustCreateSchema) {
+		getCurrentView().setMustCreateSchema(mustCreateSchema);
+	}
+
 	
 }

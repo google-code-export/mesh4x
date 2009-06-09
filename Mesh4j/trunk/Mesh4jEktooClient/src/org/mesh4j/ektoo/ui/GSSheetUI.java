@@ -33,14 +33,12 @@ import javax.swing.border.EmptyBorder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.controller.GSSheetUIController;
-import org.mesh4j.ektoo.controller.MySQLUIController;
 import org.mesh4j.ektoo.tasks.IErrorListener;
 import org.mesh4j.ektoo.tasks.OpenURLTask;
 import org.mesh4j.ektoo.ui.component.messagedialog.MessageDialog;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.ektoo.ui.validator.GssUIValidator;
-import org.mesh4j.ektoo.ui.validator.MySQLConnectionValidator;
 import org.mesh4j.ektoo.validator.IValidationStatus;
 import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadsheet;
 import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadsheetUtils;
@@ -686,4 +684,5 @@ public class GSSheetUI extends AbstractUI  implements IValidationStatus {
 				controller.getModel(), null)).verify();
 		return valid;
 	}
+
 }

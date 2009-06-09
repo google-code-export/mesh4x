@@ -205,10 +205,10 @@ public class EktooFrame extends JFrame implements IErrorListener,
 		        boolean isSelected = abstractButton.getModel().isSelected();
 		        if(isSelected){
 		        	getTargetItem().updateUiForSchemaCreation(false);
-		        	getTargetItem().setCreateSchema(true);
+		        	getTargetItem().setMustCreateSchema(true);
 		        }else{
 		        	getTargetItem().updateUiForSchemaCreation(true);
-		        	getTargetItem().setCreateSchema(false);
+		        	getTargetItem().setMustCreateSchema(false);
 		        }
 			}
 		});
@@ -394,6 +394,9 @@ public class EktooFrame extends JFrame implements IErrorListener,
 		return btnSync;
 	}
 
+	
+	
+	
 	public void setController(EktooController controller) {
 		this.controller = controller;
 	}

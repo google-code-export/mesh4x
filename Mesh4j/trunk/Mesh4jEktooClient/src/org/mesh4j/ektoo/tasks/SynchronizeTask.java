@@ -4,7 +4,6 @@ import java.awt.Cursor;
 import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
-import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 
 import org.apache.commons.logging.Log;
@@ -124,4 +123,10 @@ public class SynchronizeTask extends SwingWorker<String, Void> {
 		ui.showSyncImageLabel(false);
 		ui.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 	}
+
+	
+	
+	
+	  
+
 }

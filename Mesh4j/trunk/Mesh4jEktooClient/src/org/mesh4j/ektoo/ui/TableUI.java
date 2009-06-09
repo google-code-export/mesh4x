@@ -135,7 +135,7 @@ public abstract class TableUI extends AbstractUI {
 						// getFileChooser().getSelectedFile().getName());
 						setFile(getFileChooser().getSelectedFile());
 						if (getFile() != null) {
-							txtFile.setText(getFile().getName());
+							txtFile.setText(getFile().getAbsolutePath());
 							setList(getFile());
 						}
 					}
@@ -202,6 +202,9 @@ public abstract class TableUI extends AbstractUI {
 			
 			listTable.addItemListener(new ItemListener() {
 				public void itemStateChanged(ItemEvent evt){
+					if(!listTable.isEnabled()){
+						return;
+					}
 				  if (evt.getStateChange() == ItemEvent.SELECTED){
   				  int sheetIndex = listTable.getSelectedIndex();
   					if (sheetIndex != -1) {

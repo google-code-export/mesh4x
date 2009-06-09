@@ -18,7 +18,6 @@ import org.mesh4j.ektoo.controller.MsAccessUIController;
 import org.mesh4j.ektoo.ui.component.messagedialog.MessageDialog;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.ektoo.ui.validator.MsAccessUIValidator;
-import org.mesh4j.ektoo.ui.validator.MySQLConnectionValidator;
 import org.mesh4j.ektoo.validator.IValidationStatus;
 import org.mesh4j.sync.adapters.msaccess.MsAccessHelper;
 
@@ -138,4 +137,5 @@ public class MsAccessUI extends TableUI implements IValidationStatus {
 				controller.getModel(), null)).verify();
 		return valid;
 	}
+
 }

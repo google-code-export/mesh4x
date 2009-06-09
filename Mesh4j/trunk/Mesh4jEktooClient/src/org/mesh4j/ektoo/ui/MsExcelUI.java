@@ -5,8 +5,11 @@ import java.io.File;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -21,7 +24,6 @@ import org.mesh4j.ektoo.controller.MsExcelUIController;
 import org.mesh4j.ektoo.ui.component.messagedialog.MessageDialog;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.ektoo.ui.validator.MsExcelUIValidator;
-import org.mesh4j.ektoo.ui.validator.MySQLConnectionValidator;
 import org.mesh4j.ektoo.validator.IValidationStatus;
 import org.mesh4j.sync.adapters.msexcel.MsExcel;
 import org.mesh4j.sync.adapters.msexcel.MsExcelUtils;
@@ -139,30 +141,56 @@ public class MsExcelUI extends TableUI implements IValidationStatus {
 	@Override
 	public void modelPropertyChange(final PropertyChangeEvent evt) 
 	{
-    if ( evt.getPropertyName().equals( MsExcelUIController.WORKBOOK_NAME_PROPERTY))
-    {
+    if ( evt.getPropertyName().equals( MsExcelUIController.WORKBOOK_NAME_PROPERTY)){
       String newStringValue = evt.getNewValue().toString();
       if (!  getTxtFile().getText().equals(newStringValue))
         getTxtFile().setText(newStringValue);
     }		
-    else if ( evt.getPropertyName().equals( MsExcelUIController.WORKSHEET_NAME_PROPERTY))
-    {
+    else if ( evt.getPropertyName().equals( MsExcelUIController.WORKSHEET_NAME_PROPERTY)){
       String newStringValue = evt.getNewValue().toString();
-      if (!  ((String)getTableList().getSelectedItem()).equals(newStringValue))
-        getTableList().setSelectedItem(newStringValue);
+      if(isMustCreateSchema()){
+    	  if(comboContains(getTableList(), newStringValue)){
+    		  getTableList().setSelectedItem(newStringValue);
+    	  }else {
+    		  getTableList().addItem(newStringValue);  
+    		  getTableList().setSelectedItem(newStringValue);
+    	  }
+    	    
+      } else {
+    	  if (!((String)getTableList().getSelectedItem()).equals(newStringValue))
+    		  getTableList().setSelectedItem(newStringValue);
+      }
     }   
-    else if ( evt.getPropertyName().equals( MsExcelUIController.UNIQUE_COLUMN_NAME_PROPERTY))
-    {
-      String newStringValue = evt.getNewValue().toString();
-      if (!  ((String)getColumnList().getSelectedItem()).equals(newStringValue))
-        getColumnList().setSelectedItem(newStringValue);
+    else if ( evt.getPropertyName().equals( MsExcelUIController.UNIQUE_COLUMN_NAME_PROPERTY)){
+    	String newStringValue = evt.getNewValue().toString();
+    	if(isMustCreateSchema()){
+    		if(comboContains(getColumnList(), newStringValue)){
+    			getColumnList().setSelectedItem(newStringValue);	
+    		} else {
+    			getColumnList().addItem(newStringValue);
+    			getColumnList().setSelectedItem(newStringValue);
+    		}
+    	} else {
+    		if (!  ((String)getColumnList().getSelectedItem()).equals(newStringValue))
+    	        getColumnList().setSelectedItem(newStringValue);	
+    	}
     }   
 
 	}
 	
-	public void updateUiForSchemaCreation(boolean isEanble,String table,String column){
-		getTableList().setEnabled(isEanble);
-		getColumnList().setEnabled(isEanble);
+	//checks the combo box model if it contains the provided value
+	//TODO(raju) improve and use it in modelPropertyChange() method
+	private boolean comboContains(JComboBox comboBox,String value){
+		int size = comboBox.getModel().getSize();
+		for(int i = 0 ; i<size ; i++){
+			String retrivedValue = comboBox.getModel().getElementAt(i).toString();
+			if(retrivedValue == null || retrivedValue.equals("")){
+				return false;
+			}else if(retrivedValue.equals(value)){
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public void updateUiForSchemaCreation(boolean isEanble){
@@ -190,10 +218,16 @@ public class MsExcelUI extends TableUI implements IValidationStatus {
 
 	@Override
 	public boolean verify() {
-		boolean valid = (new MsExcelUIValidator(this,
+		if(isMustCreateSchema()){//just verify the file name or location
+			List<JComponent> uiFieldList = new LinkedList<JComponent>();
+			uiFieldList.add(getTxtFile());
+			return (new MsExcelUIValidator(this,controller.getModel(), uiFieldList)).verify();
+		}
+		return (new MsExcelUIValidator(this,
 				controller.getModel(), null)).verify();
-		return valid;
 	}
+
+	
 	
 
 }

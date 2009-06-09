@@ -566,4 +566,5 @@ public class MySQLUI extends AbstractUI implements IValidationStatus {
 				controller.getModel(), null)).verify();
 		return valid;
 	}
+
 }
