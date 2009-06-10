@@ -86,6 +86,7 @@ public class HibernateMultiTableTests {
 		InMemorySyncAdapter adapterOpaqueSource = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
 		
 		String[] tables = new String[]{"mesh_example", "mesh_example_1"};
+		String rdfURL = "http://localhost:8080/mesh4x/feeds";
 		
 		CompositeSyncAdapter adapterSource = HibernateSyncAdapterFactory.createSyncAdapterForMultiTables(
 			"jdbc:mysql:///mesh4xdb", 
@@ -94,7 +95,7 @@ public class HibernateMultiTableTests {
 			com.mysql.jdbc.Driver.class,
 			org.hibernate.dialect.MySQLDialect.class,
 			tables, 
-			"http://mesh4x/test", 
+			rdfURL, 
 			TestHelper.baseDirectoryRootForTest(),
 			NullIdentityProvider.INSTANCE,
 			adapterOpaqueSource);
@@ -117,7 +118,7 @@ public class HibernateMultiTableTests {
 		// msExcel
 		File file = TestHelper.makeFileAndDeleteIfExists("composite_Hibernate_MsExcel.xlsx");
 		InMemorySyncAdapter adapterOpaqueTarget = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
-		MsExcelRDFSyncAdapterFactory factory = new MsExcelRDFSyncAdapterFactory("http://localhost:8080/mesh4x/feeds");
+		MsExcelRDFSyncAdapterFactory factory = new MsExcelRDFSyncAdapterFactory(rdfURL);
 
 		ISyncAdapter adapterTarget = factory.createSyncAdapterForMultiSheets(file.getCanonicalPath(), NullIdentityProvider.INSTANCE, adapterOpaqueTarget, sheets);
 		
