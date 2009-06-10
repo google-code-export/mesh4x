@@ -8,6 +8,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -17,14 +19,14 @@ public class SqlDBUtils {
 
 	private final static Log LOGGER = LogFactory.getLog(SqlDBUtils.class);
 
-	public static <T extends java.sql.Driver> List<String> getTableNames(Class<T> driverClass, String urlConnection, String user, String password) {
+	public static <T extends java.sql.Driver> Set<String> getTableNames(Class<T> driverClass, String urlConnection, String user, String password) {
 		
 		Guard.argumentNotNull(driverClass, "driverClass");
 		Guard.argumentNotNullOrEmptyString(urlConnection, "urlConnection");
 		Guard.argumentNotNullOrEmptyString(user, "user");
 		Guard.argumentNotNull(password, "password");
 		
-		ArrayList<String> tables = new ArrayList<String>();
+		TreeSet<String> tables = new TreeSet<String>();
 
 		LOGGER.info("Listing all table name in Database!");
 		

@@ -18,10 +18,8 @@ import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import javax.swing.AbstractButton;
 import javax.swing.Icon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -38,10 +36,6 @@ import org.mesh4j.ektoo.ui.component.statusbar.Statusbar;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 
-/**
- * @author Bhuiyan Mohammad Iklash
- * 
- */
 public class EktooFrame extends JFrame implements IErrorListener,
 		ISynchronizeTaskListener {
 	private static final long serialVersionUID = -8703829301086394863L;
@@ -63,8 +57,6 @@ public class EktooFrame extends JFrame implements IErrorListener,
 
 	private Statusbar statusBar = null;
 	private EktooController controller;
-	private JCheckBox schemaCreationChkBox = null;
-	
 
 	// BUSINESS METHODS
 	public EktooFrame(EktooController controller) {
@@ -128,14 +120,14 @@ public class EktooFrame extends JFrame implements IErrorListener,
 	//TODO(raju) please user PropertiesProvider class as single tone for the application
 	//because its not necessary to load property file every time.
 	private void gotToMesh4xHelpSite(){
-		OpenURLTask openURLTask = new OpenURLTask(this,this,new PropertiesProvider().getMesh4xEktooURL());
+		OpenURLTask openURLTask = new OpenURLTask(this,this,new PropertiesProvider().getMesh4xURL());
 		openURLTask.execute();
 	}
 
 	//TODO(raju) please user PropertiesProvider class as single tone for the application
 	//because its not necessary to load property file every time.
 	private void goToMesh4xEktooHelpSite(){
-		OpenURLTask openURLTask = new OpenURLTask(this,this,new PropertiesProvider().getMesh4xURL());
+		OpenURLTask openURLTask = new OpenURLTask(this,this,new PropertiesProvider().getMesh4xEktooURL());
 		openURLTask.execute();
 	}
 	
@@ -172,13 +164,6 @@ public class EktooFrame extends JFrame implements IErrorListener,
 			
 			c.fill = GridBagConstraints.CENTER;
 			c.gridx = 0;
-			c.gridy = 2;
-			c.gridwidth = 2;
-			panel.add(getCheckBox(), c);
-			
-			
-			c.fill = GridBagConstraints.CENTER;
-			c.gridx = 0;
 			c.gridy = 3;
 			c.gridwidth = 2;
 			panel.add(getBtnSync(), c);
@@ -194,29 +179,6 @@ public class EktooFrame extends JFrame implements IErrorListener,
 		}
 		return panel;
 	}
-
-	private JCheckBox getCheckBox(){
-		schemaCreationChkBox = new JCheckBox(EktooUITranslator.getSchemaCreationCheckboxLabel());
-		schemaCreationChkBox.setOpaque(false);
-		schemaCreationChkBox.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				AbstractButton abstractButton = (AbstractButton) e.getSource();
-		        boolean isSelected = abstractButton.getModel().isSelected();
-		        if(isSelected){
-		        	getTargetItem().updateUiForSchemaCreation(false);
-		        	getTargetItem().setMustCreateSchema(true);
-		        }else{
-		        	getTargetItem().updateUiForSchemaCreation(true);
-		        	getTargetItem().setMustCreateSchema(false);
-		        }
-			}
-		});
-
-		schemaCreationChkBox.setVisible(false);
-		return schemaCreationChkBox;
-	}
-	
 	
 	private JPanel getImagePanel() {
 		if (panelImage == null) {
@@ -315,7 +277,7 @@ public class EktooFrame extends JFrame implements IErrorListener,
 	private JPanel getSourcePane() {
 		if (getSourceItem() == null) {
 			setSourceItem(new SyncItemUI(EktooUITranslator
-					.getSourceSyncItemSelectorTitle()));
+					.getSourceSyncItemSelectorTitle(), false));
 			getSourceItem().setPreferredSize(new Dimension(350, 190));
 			getSourceItem().getListType().addItemListener(new ItemListener() {
 				public void itemStateChanged(ItemEvent evt) {
@@ -323,7 +285,6 @@ public class EktooFrame extends JFrame implements IErrorListener,
 						setSourceIcon(ImageManager.getSourceImage((String) evt
 								.getItem(), false));
 						filterCombobox();
-						showHideSchemaChkBox();
 					}
 				}
 			});
@@ -336,14 +297,13 @@ public class EktooFrame extends JFrame implements IErrorListener,
 	private JPanel getTargetPane() {
 		if (getTargetItem() == null) {
 			setTargetItem(new SyncItemUI(EktooUITranslator
-					.getTargetSyncItemSelectorTitle()));
+					.getTargetSyncItemSelectorTitle(), true));
 			getTargetItem().setPreferredSize(new Dimension(350, 190));
 			getTargetItem().getListType().addItemListener(new ItemListener() {
 				public void itemStateChanged(ItemEvent evt) {
 					if (evt.getStateChange() == ItemEvent.SELECTED) {
 						setTargetIcon(ImageManager.getSourceImage((String) evt
 								.getItem(), false));
-						showHideSchemaChkBox();
 					}
 				}
 			});
@@ -354,22 +314,7 @@ public class EktooFrame extends JFrame implements IErrorListener,
 
 		return getTargetItem();
 	}
-
-	//TODO(raju) refactor this implementation later.
-	private void showHideSchemaChkBox(){
-		
-		String sourceType = (String)getSourceItem().getListType().getSelectedItem();
-		String targetType = (String)getTargetItem().getListType().getSelectedItem();
-		if(sourceType.equals(SyncItemUI.MS_EXCEL_PANEL) && 
-				targetType.equals(SyncItemUI.MS_EXCEL_PANEL)){
-			schemaCreationChkBox.setVisible(true);
-		}else if(sourceType.equals(SyncItemUI.MYSQL_PANEL) && 
-				targetType.equals(SyncItemUI.MS_EXCEL_PANEL)){
-			schemaCreationChkBox.setVisible(true);
-		}else{
-			schemaCreationChkBox.setVisible(false);
-		}
-	}
+	
 	private JButton getBtnSync() {
 		if (btnSync == null) {
 			btnSync = new JButton();
@@ -517,7 +462,7 @@ public class EktooFrame extends JFrame implements IErrorListener,
 
 	@Override
 	public void notifyError(String error) {
-		// TODO (Nobel) error messages handling
+		setStatusbarText(error, Statusbar.ERROR_STATUS);
 
 	}
 

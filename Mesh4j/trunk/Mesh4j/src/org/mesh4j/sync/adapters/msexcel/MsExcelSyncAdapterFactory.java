@@ -1,8 +1,15 @@
 package org.mesh4j.sync.adapters.msexcel;
 
 import java.io.File;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.ISyncAdapterFactory;
 import org.mesh4j.sync.adapters.composite.CompositeSyncAdapter;
@@ -93,4 +100,46 @@ public class MsExcelSyncAdapterFactory implements ISyncAdapterFactory {
 	public String getSourceType() {
 		return SOURCE_TYPE;
 	}
+
+	public static Set<String> getSheetNames(String fileName) {
+		
+		TreeSet<String> result = new TreeSet<String>();
+		MsExcel excelFile = new MsExcel(fileName);
+		Workbook workbook = excelFile.getWorkbook();
+
+		if (workbook != null) {
+			int sheetNum = workbook.getNumberOfSheets();
+			for (int i = 0; i < sheetNum; i++) {
+				String sheetName = workbook.getSheetName(i);
+				if (sheetName != null) {
+					if(!sheetName.toLowerCase().endsWith("_sync")){
+						result.add(sheetName);
+					}
+				}
+			}
+		}
+		return result;
+	}
+
+	public static Set<String> getColumnHeaderNames(String fileName, String sheetName) {
+		MsExcel excelFile = new MsExcel(fileName);
+		Workbook workbook = excelFile.getWorkbook();
+		Sheet sheet = workbook.getSheet(sheetName);
+		
+		Row row = MsExcelUtils.getOrCreateRowHeaderIfAbsent(sheet);
+
+		Cell cell = null;
+		String label = null;
+
+		TreeSet<String> result = new TreeSet<String>();
+		
+		Iterator<Cell> cells = row.cellIterator();
+		while (cells.hasNext()) {
+			cell = cells.next();
+			label = cell.getRichStringCellValue().getString();
+			result.add(label);
+		}
+		return result;
+	}
+	
 }

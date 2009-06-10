@@ -21,8 +21,7 @@ public class MsExcelModel extends AbstractModel {
 	}
 	
 	public void setWorkbookName(String workbookName) {
-		firePropertyChange(MsExcelUIController.WORKBOOK_NAME_PROPERTY, this.workbookName,
-				this.workbookName = workbookName);
+		firePropertyChange(MsExcelUIController.WORKBOOK_NAME_PROPERTY, this.workbookName, this.workbookName = workbookName);
 	}
 
 	public String getWorkbookName() {
@@ -30,8 +29,7 @@ public class MsExcelModel extends AbstractModel {
 	}
 
 	public void setWorksheetName(String worksheetName) {
-		firePropertyChange(MsExcelUIController.WORKSHEET_NAME_PROPERTY, this.worksheetName,
-				this.worksheetName = worksheetName);
+		firePropertyChange(MsExcelUIController.WORKSHEET_NAME_PROPERTY, this.worksheetName, this.worksheetName = worksheetName);
 	}
 
 	public String getWorksheetName() {
@@ -39,8 +37,7 @@ public class MsExcelModel extends AbstractModel {
 	}
 
 	public void setUniqueColumnName(String uniqueColumnName) {
-		firePropertyChange(MsExcelUIController.UNIQUE_COLUMN_NAME_PROPERTY, this.uniqueColumnName,
-				this.uniqueColumnName = uniqueColumnName);
+		firePropertyChange(MsExcelUIController.UNIQUE_COLUMN_NAME_PROPERTY, this.uniqueColumnName, this.uniqueColumnName = uniqueColumnName);
 	}
 
 	public String getUniqueColumnName() {

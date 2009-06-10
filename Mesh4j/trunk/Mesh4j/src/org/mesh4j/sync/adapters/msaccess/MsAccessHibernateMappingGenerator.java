@@ -119,5 +119,9 @@ public class MsAccessHibernateMappingGenerator {
 	public static String getSyncTableName(String baseTableName) {
 		return baseTableName+"_sync";
 	}
+
+	public static boolean isSyncTableName(String tableName) {
+		return tableName != null && tableName.toLowerCase().endsWith("_sync");
+	}
 	
 }

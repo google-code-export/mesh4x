@@ -2,13 +2,8 @@ package org.mesh4j.ektoo.ui.component.messagedialog;
 
 import java.awt.Frame;
 
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-/**
- * @author sharif uddin
- *
- */
 public class MessageDialog {
 
 	public static void showSimpleMessage(Frame frame, String message) {
@@ -30,8 +25,12 @@ public class MessageDialog {
 	}
 
 	public static void showErrorMessage(Frame frame, String message) {
-
 		JOptionPane.showMessageDialog(frame, message, "Error",
+				JOptionPane.ERROR_MESSAGE);
+	}
+	
+	public static void showErrorMessage(Frame frame, String title, String message) {
+		JOptionPane.showMessageDialog(frame, message, "Error: " + title,
 				JOptionPane.ERROR_MESSAGE);
 	}
 }

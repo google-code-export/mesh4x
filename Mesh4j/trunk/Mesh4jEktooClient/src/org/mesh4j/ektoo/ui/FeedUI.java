@@ -6,17 +6,16 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
-import java.io.IOException;
-import java.util.Enumeration;
 import java.util.Hashtable;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -26,7 +25,6 @@ import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.controller.FeedUIController;
 import org.mesh4j.ektoo.tasks.IErrorListener;
 import org.mesh4j.ektoo.tasks.OpenFileTask;
-import org.mesh4j.ektoo.ui.component.messagedialog.MessageDialog;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.ektoo.ui.validator.FeedUIValidator;
@@ -41,21 +39,24 @@ public class FeedUI extends AbstractUI  implements IValidationStatus {
 	// MODEL VARIABLES
 	private JLabel labelFileName = null;
 	private JTextField txtFileName = null;
+	
 	private JButton btnFile = null;
 	private JButton btnView = null;
 
 	private FeedUIController controller;
 	private JFileChooser fileChooser = null;
-	private File file = null;
 
+	private JTextField txtMessages = null;
+	
 	// BUSINESS METHODS
 	public FeedUI(String fileName, FeedUIController controller) {
 		super();
 		this.controller = controller;
 		this.controller.addView(this);
 		this.initialize();
-		this.file = new File(fileName);
-		this.txtFileName.setText(this.file.getName());
+		this.txtFileName.setText(fileName);
+		this.txtFileName.setToolTipText(fileName);
+		this.txtMessages.setText("");
 	}
 
 	private void initialize() {
@@ -65,6 +66,16 @@ public class FeedUI extends AbstractUI  implements IValidationStatus {
 		this.add(getFileNameText(), null);
 		this.add(getBtnFile(), null);
 		this.add(getBtnView(), null);
+		this.add(getMessagesText(), null);
+	}
+	
+	private JTextField getMessagesText() {
+		if (txtMessages == null) {
+			txtMessages = new JTextField();
+			txtMessages.setBounds(new Rectangle(0, 140, 400, 20));
+			txtMessages.setEditable(false);
+		}
+		return txtMessages;
 	}
 
 	private JLabel getFileNameLabel() {
@@ -82,6 +93,16 @@ public class FeedUI extends AbstractUI  implements IValidationStatus {
 		if (txtFileName == null) {
 			txtFileName = new JTextField();
 			txtFileName.setBounds(new Rectangle(99, 8, 149, 20));
+			txtFileName.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent evt) {
+					fileNameChanged(txtFileName.getText());
+				}
+			});
+			txtFileName.addFocusListener(new FocusAdapter() {
+				public void focusLost(FocusEvent evt) {
+					fileNameChanged(txtFileName.getText());		
+				}
+			});		
 		}
 		return txtFileName;
 	}
@@ -94,19 +115,18 @@ public class FeedUI extends AbstractUI  implements IValidationStatus {
 			btnFile.setToolTipText(EktooUITranslator.getTooltipSeleceDataFile("Feed"));
 			btnFile.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					getFileChooser().setSelectedFile(file);
+					getFileChooser().setSelectedFile(new File(txtFileName.getText()));
 					int returnVal = getFileChooser().showOpenDialog(btnFile);
 					if (returnVal == JFileChooser.APPROVE_OPTION) {
 						File selectedFile = getFileChooser().getSelectedFile();
 						if (selectedFile != null) {
-							try {
-								controller.changeFileName(selectedFile
-										.getCanonicalPath());
-								txtFileName.setText(selectedFile.getName());
-								setFile(selectedFile);
-							} catch (Exception ex) {
-								LOGGER.error(ex.getMessage(), ex);
-							}
+							try{
+								txtFileName.setText(selectedFile.getCanonicalPath());
+								fileNameChanged(txtFileName.getText());
+							}catch (Exception ex) {
+								LOGGER.debug(ex.getMessage(), ex);
+							}	
+							
 						}
 					}
 				}
@@ -129,7 +149,7 @@ public class FeedUI extends AbstractUI  implements IValidationStatus {
 			btnView.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					JFrame frame = FeedUI.this.getRootFrame();
-					OpenFileTask task = new OpenFileTask(frame, (IErrorListener)frame, file.getAbsolutePath());
+					OpenFileTask task = new OpenFileTask(frame, (IErrorListener)frame, txtFileName.getText());
 					task.execute();
 				}
 			});
@@ -137,19 +157,9 @@ public class FeedUI extends AbstractUI  implements IValidationStatus {
 		return btnView;
 	}
 	
-	// TODO (nobel) improve it
+	// TODO (raju) improve it
 	protected JFrame getRootFrame() {
 		return (JFrame)this.getParent().getParent().getParent().getParent().getParent().getParent().getParent();
-	}
-	
-	public String getFileName() {
-		try {
-			return this.file.getCanonicalPath();
-		} catch (IOException e) {
-			LOGGER.debug(e.getMessage());
-			// nothing to do
-			return null;
-		}
 	}
 
 	public FeedUIController getController() {
@@ -171,14 +181,6 @@ public class FeedUI extends AbstractUI  implements IValidationStatus {
 		return fileChooser;
 	}
 
-	public void setFile(File file) {
-		this.file = file;
-	}
-
-	public File getFile() {
-		return file;
-	}
-
 	@Override
 	public void modelPropertyChange(final PropertyChangeEvent evt) {
 		if (evt.getPropertyName().equals(FeedUIController.FILE_NAME_PROPERTY)) {
@@ -190,30 +192,33 @@ public class FeedUI extends AbstractUI  implements IValidationStatus {
 
 	@Override
 	public void validationFailed(Hashtable<Object, String> errorTable) {
-		Object key = null;
-		StringBuffer err = new StringBuffer();
-		Enumeration<Object> keys = errorTable.keys();
-		while (keys.hasMoreElements()) {
-			key = keys.nextElement(); 
-			err.append(errorTable.get(key) + "\n");
-		}
-		MessageDialog.showErrorMessage(JOptionPane.getRootFrame(), err.toString());
+		((SyncItemUI)this.getParent().getParent()).openErrorPopUp(errorTable);
 	}
-
 	
 	@Override
 	public void validationPassed() {
-		// TODO (Nobel)
+		// TODO (raju)
 	}
-
 
 	@Override
 	public boolean verify() {
-		boolean valid = (new FeedUIValidator(this,
-				controller.getModel(), null)).verify();
+		boolean valid = (new FeedUIValidator(this, controller.getModel(), null)).verify();
 		return valid;
 	}
-
 	
-	
+	protected void fileNameChanged(String fileName) {
+		txtFileName.setToolTipText(fileName);
+		getController().changeFileName(fileName);
+		
+		File file = new File(fileName);
+		if(!file.exists()){
+			if(this.getController().acceptsCreateDataset()){
+				this.txtMessages.setText(EktooUITranslator.getMessageNewFile());
+			} else {
+				this.txtMessages.setText(EktooUITranslator.getMessageUpdateFile());	
+			}
+		} else {
+			this.txtMessages.setText(EktooUITranslator.getMessageUpdateFile());
+		}
+	}
 }

@@ -2,29 +2,21 @@ package org.mesh4j.ektoo.ui;
 
 import java.beans.PropertyChangeEvent;
 import java.io.File;
-import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.Set;
 
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.controller.MsAccessUIController;
-import org.mesh4j.ektoo.ui.component.messagedialog.MessageDialog;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.ektoo.ui.validator.MsAccessUIValidator;
 import org.mesh4j.ektoo.validator.IValidationStatus;
-import org.mesh4j.sync.adapters.msaccess.MsAccessHelper;
+import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
 
-/**
- * @author Bhuiyan Mohammad Iklash
- * 
- */
 public class MsAccessUI extends TableUI implements IValidationStatus {
 
 	private static final long serialVersionUID = 4708875346159085594L;
@@ -38,44 +30,45 @@ public class MsAccessUI extends TableUI implements IValidationStatus {
 		super();
 		this.controller = controller;
 		this.controller.addView(this);
-		initialize();
-		
-		File file = new File(fileName);
-		setFile(file);
-		setList(file);
-		getTxtFile().setText(file.getName());
-	}
 
-	private void initialize() {
 		this.showColumn(false);
 		this.getFileChooser().setAcceptAllFileFilterUsed(false);
-		this.getFileChooser().setFileFilter(new FileNameExtensionFilter(EktooUITranslator.getMSAccessFileSelectorTitle(), "mdb", "MDB"));
+		this.getFileChooser().setFileFilter(
+				new FileNameExtensionFilter(EktooUITranslator
+						.getMSAccessFileSelectorTitle(), "mdb", "MDB"));
 		this.getFileChooser().setFileSelectionMode(JFileChooser.FILES_ONLY);
+
+		getTxtFile().setText(fileName);
+		getTxtFile().setToolTipText(fileName);
+		setList(fileName);
 	}
 
 	@Override
-	public void setList(File file) {
+	public void setList(String fileName) {
 		JComboBox tableList = getTableList();
 		tableList.removeAllItems();
 
+		JComboBox columnList = getColumnList();
+		columnList.removeAllItems();
+		
 		try {
-			String tableName = null;
-			Set<String> tableNames = MsAccessHelper.getTableNames(file
-					.getAbsolutePath());
-			Iterator<String> itr = tableNames.iterator();
-			while (itr.hasNext()) {
-				tableName = (String) itr.next();
-				tableList.addItem(tableName);
+			File file = new File(fileName);
+			if(file.exists()){
+				Set<String> tableNames = MsAccessSyncAdapterFactory.getTableNames(fileName);
+				for (String tableName : tableNames) {
+					tableList.addItem(tableName);
+				}
+			} else {
+				((SyncItemUI)this.getParent().getParent()).openErrorPopUp(EktooUITranslator.getErrorImpossibleToOpenFileBecauseFileDoesNotExists());
 			}
-
-			this.controller.changeDatabaseName(file.getAbsolutePath());
+			this.controller.changeDatabaseName(fileName);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 		}
 	}
 
 	@Override
-	public void setList(File file, int tableIndex) {
+	public void setList(String fileName, String table) {
 		try {
 			this.controller.changeTableName((String) getTableList()
 					.getSelectedItem());
@@ -93,48 +86,41 @@ public class MsAccessUI extends TableUI implements IValidationStatus {
 	}
 
 	@Override
-	public void modelPropertyChange(final PropertyChangeEvent evt) 
-	{
-	  if ( evt.getPropertyName().equals( MsAccessUIController.DATABASE_NAME_PROPERTY ))
-	  {
-	    String newStringValue = evt.getNewValue().toString();
-	    if (! getTxtFile().getText().equals(newStringValue))
-	      getTxtFile().setText(newStringValue);
-	  }
-	  else if ( evt.getPropertyName().equals( MsAccessUIController.TABLE_NAME_PROPERTY))
-	  {
-      String newStringValue = evt.getNewValue().toString();
-      if (! ((String)getTableList().getSelectedItem()).equals(newStringValue))
-        getTableList().setSelectedItem((String)newStringValue);
-	  }
+	public void modelPropertyChange(final PropertyChangeEvent evt) {
+		if (evt.getPropertyName().equals(
+				MsAccessUIController.DATABASE_NAME_PROPERTY)) {
+			String newStringValue = evt.getNewValue().toString();
+			if (!getTxtFile().getText().equals(newStringValue))
+				getTxtFile().setText(newStringValue);
+		} else if (evt.getPropertyName().equals(
+				MsAccessUIController.TABLE_NAME_PROPERTY)) {
+			String newStringValue = evt.getNewValue().toString();
+			if (!((String) getTableList().getSelectedItem())
+					.equals(newStringValue)) {
+				getTableList().setSelectedItem((String) newStringValue);
+			}
+		}
 	}
 
 	@Override
-	public void setList(File file, int tableIndex, String columnName) {
+	public void setList(String fileName, String table, String columnName) {
 		// TODO setList
 	}
 
 	@Override
 	public void validationFailed(Hashtable<Object, String> errorTable) {
-		Object key = null;
-		StringBuffer err = new StringBuffer();
-		Enumeration<Object> keys = errorTable.keys();
-		while (keys.hasMoreElements()) {
-			key = keys.nextElement(); 
-			err.append(errorTable.get(key) + "\n");
-		}
-		MessageDialog.showErrorMessage(JOptionPane.getRootFrame(), err.toString());
+		((SyncItemUI)this.getParent().getParent()).openErrorPopUp(errorTable);
 	}
-	
+
 	@Override
 	public void validationPassed() {
-		// TODO (Nobel)
+		// TODO (raju)
 	}
 
 	@Override
 	public boolean verify() {
-		boolean valid = (new MsAccessUIValidator(this,
-				controller.getModel(), null)).verify();
+		boolean valid = (new MsAccessUIValidator(this, controller.getModel(),
+				null)).verify();
 		return valid;
 	}
 

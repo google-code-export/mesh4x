@@ -222,4 +222,10 @@ public class MsExcelContentAdapter implements IIdentifiableContentAdapter, ISync
 	public void writeDataSourceFromSchema() {
 		this.mapping.createDataSource(this.excel);
 	}
+
+
+	@Override
+	public String getIdNode() {
+		return this.mapping.getIdColumnName();
+	}
 }

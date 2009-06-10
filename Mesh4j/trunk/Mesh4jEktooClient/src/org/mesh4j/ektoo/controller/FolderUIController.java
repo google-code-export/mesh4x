@@ -2,10 +2,10 @@ package org.mesh4j.ektoo.controller;
 
 import org.mesh4j.ektoo.ISyncAdapterBuilder;
 import org.mesh4j.ektoo.SyncAdapterBuilder;
+import org.mesh4j.ektoo.UISchema;
 import org.mesh4j.ektoo.model.FolderModel;
 import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.sync.ISyncAdapter;
-import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.validations.Guard;
 
 public class FolderUIController extends AbstractUIController
@@ -16,7 +16,9 @@ public class FolderUIController extends AbstractUIController
 	ISyncAdapterBuilder adapterBuilder;
 
 	// BUSINESS METHODS
-	public FolderUIController(PropertiesProvider propertiesProvider) {
+	public FolderUIController(PropertiesProvider propertiesProvider, boolean acceptsCreateDataset) {
+		super(acceptsCreateDataset);
+		
 		Guard.argumentNotNull(propertiesProvider, "propertiesProvider");
 		this.adapterBuilder = new SyncAdapterBuilder(propertiesProvider);
 	}
@@ -40,14 +42,12 @@ public class FolderUIController extends AbstractUIController
 	}
 
 	@Override
-	public IRDFSchema fetchSchema(ISyncAdapter adapter) {
-		// TODO create Schema
+	public UISchema fetchSchema(ISyncAdapter adapter) {
 		return null;
 	}
 
 	@Override
-	public ISyncAdapter createAdapter(IRDFSchema schema) {
-		// TODO create Adapter
+	public ISyncAdapter createAdapter(UISchema schema) {
 		return null;
 	}
 

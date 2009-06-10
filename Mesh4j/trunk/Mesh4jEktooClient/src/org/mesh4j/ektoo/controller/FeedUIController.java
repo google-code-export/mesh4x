@@ -2,10 +2,10 @@ package org.mesh4j.ektoo.controller;
 
 import org.mesh4j.ektoo.ISyncAdapterBuilder;
 import org.mesh4j.ektoo.SyncAdapterBuilder;
+import org.mesh4j.ektoo.UISchema;
 import org.mesh4j.ektoo.model.FeedModel;
 import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.sync.ISyncAdapter;
-import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.validations.Guard;
 
 
@@ -17,7 +17,9 @@ public class FeedUIController extends AbstractUIController
 	ISyncAdapterBuilder adapterBuilder;
 
 	// BUSINESS METHODS
-	public FeedUIController(PropertiesProvider propertiesProvider) {
+	public FeedUIController(PropertiesProvider propertiesProvider, boolean acceptsCreateDataset) {
+		super(acceptsCreateDataset);
+		
 		Guard.argumentNotNull(propertiesProvider, "propertiesProvider");
 		this.adapterBuilder = new SyncAdapterBuilder(propertiesProvider);
 	}
@@ -41,15 +43,13 @@ public class FeedUIController extends AbstractUIController
 	}
 
 	@Override
-	public IRDFSchema fetchSchema(ISyncAdapter adapter) {
-		// TODO create Schema
+	public UISchema fetchSchema(ISyncAdapter adapter) {
 		return null;
 	}
 
 	@Override
-	public ISyncAdapter createAdapter(IRDFSchema schema) {
-		// TODO create Adapter
-		return null;
+	public ISyncAdapter createAdapter(UISchema schema) {
+		return createAdapter();
 	}
 
 }

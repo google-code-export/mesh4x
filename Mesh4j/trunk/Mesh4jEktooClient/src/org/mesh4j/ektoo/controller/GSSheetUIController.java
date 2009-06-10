@@ -2,6 +2,7 @@ package org.mesh4j.ektoo.controller;
 
 import org.mesh4j.ektoo.GoogleSpreadSheetInfo;
 import org.mesh4j.ektoo.SyncAdapterBuilder;
+import org.mesh4j.ektoo.UISchema;
 import org.mesh4j.ektoo.model.GSSheetModel;
 import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.sync.ISyncAdapter;
@@ -9,18 +10,15 @@ import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadSheetContentAdapte
 import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadsheet;
 import org.mesh4j.sync.adapters.googlespreadsheet.IGoogleSpreadSheet;
 import org.mesh4j.sync.adapters.googlespreadsheet.mapping.GoogleSpreadsheetToRDFMapping;
+import org.mesh4j.sync.adapters.googlespreadsheet.mapping.IGoogleSpreadsheetToXMLMapping;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.validations.Guard;
 
-/**
- * @author Bhuiyan Mohammad Iklash
- * 
- */
 public class GSSheetUIController extends AbstractUIController {
+	
 	public static final String USER_NAME_PROPERTY = "UserName";
 	public static final String USER_PASSWORD_PROPERTY = "UserPassword";
-//	public static final String SPREADSHEET_KEY_PROPERTY = "SpreadsheetKey";
 	public static final String SPREADSHEET_NAME_PROPERTY = "SpreadsheetName";
 	public static final String WORKSHEET_NAME_PROPERTY = "WorksheetName";
 	public static final String UNIQUE_COLUMN_NAME_PROPERTY = "UniqueColumnName";
@@ -32,7 +30,9 @@ public class GSSheetUIController extends AbstractUIController {
 	private SyncAdapterBuilder adapterBuilder;
 
 	// BUSINESS METHODS
-	public GSSheetUIController(PropertiesProvider propertiesProvider) {
+	public GSSheetUIController(PropertiesProvider propertiesProvider, boolean acceptsCreateDataset) {
+		super(acceptsCreateDataset);
+		
 		Guard.argumentNotNull(propertiesProvider, "propertiesProvider");
 		this.adapterBuilder = new SyncAdapterBuilder(propertiesProvider);
 	}
@@ -45,10 +45,6 @@ public class GSSheetUIController extends AbstractUIController {
 		setModelProperty(USER_PASSWORD_PROPERTY, userPassword);
 	}
 
-//	public void changeSpreadsheetKey(String spreadsheetKey) {
-//		setModelProperty(SPREADSHEET_KEY_PROPERTY, spreadsheetKey);
-//	}
-	
 	public void changeSpreadsheetName(String spreadsheetName) {
 		setModelProperty(SPREADSHEET_NAME_PROPERTY, spreadsheetName);
 	}
@@ -77,25 +73,35 @@ public class GSSheetUIController extends AbstractUIController {
 	@Override
 	public ISyncAdapter createAdapter() {
 		GSSheetModel model = (GSSheetModel) this.getModel();
-		IGoogleSpreadSheet gss = new GoogleSpreadsheet(/*model.getSpreadsheetKey()*/model.getSpreadsheetName(), model.getUserName(), model.getUserPassword());
+		IGoogleSpreadSheet gss = new GoogleSpreadsheet(model.getSpreadsheetName(), model.getUserName(), model.getUserPassword());
 		IRDFSchema rdfSchema = GoogleSpreadsheetToRDFMapping.extractRDFSchema(gss, model.getWorksheetName(), this.adapterBuilder.getBaseRDFUrl());
-		return createAdapter(rdfSchema);
-	}
-
-	@Override
-	public IRDFSchema fetchSchema(ISyncAdapter adapter) {
-		return (IRDFSchema)((GoogleSpreadSheetContentAdapter)((SplitAdapter)adapter).getContentAdapter()).getSchema();
-	}
-
-	@Override
-	public ISyncAdapter createAdapter(IRDFSchema schema) {
-		GSSheetModel model = (GSSheetModel) this.getModel();
 
 		GoogleSpreadSheetInfo spreadSheetInfo = new GoogleSpreadSheetInfo(
-				/*model.getSpreadsheetKey()*/
 				model.getSpreadsheetName(), model.getUserName(), 
 				model.getUserPassword(), model.getUniqueColumnName(), 
 				model.getWorksheetName(), model.getWorksheetName());
-		return adapterBuilder.createRdfBasedGoogleSpreadSheetAdapter(spreadSheetInfo, schema);
+
+		return adapterBuilder.createRdfBasedGoogleSpreadSheetAdapter(spreadSheetInfo, rdfSchema);
+	}
+
+	@Override
+	public UISchema fetchSchema(ISyncAdapter adapter) {
+		GoogleSpreadSheetContentAdapter contentAdapter = (GoogleSpreadSheetContentAdapter)((SplitAdapter)adapter).getContentAdapter();
+		IRDFSchema rdfSchema = (IRDFSchema) contentAdapter.getSchema();
+		IGoogleSpreadsheetToXMLMapping mapper = contentAdapter.getMapper();
+		return new UISchema(rdfSchema, mapper.getIdColumnName());
+	}
+
+	@Override
+	public ISyncAdapter createAdapter(UISchema schema) {
+		GSSheetModel model = (GSSheetModel) this.getModel();
+
+		GoogleSpreadSheetInfo spreadSheetInfo = new GoogleSpreadSheetInfo(
+				model.getSpreadsheetName(), model.getUserName(), 
+				model.getUserPassword(), model.getUniqueColumnName(), 
+				model.getWorksheetName(), model.getWorksheetName());
+		
+		IRDFSchema rdfSchema = schema == null ? null : schema.getRDFSchema();
+		return adapterBuilder.createRdfBasedGoogleSpreadSheetAdapter(spreadSheetInfo, rdfSchema);
 	}
 }

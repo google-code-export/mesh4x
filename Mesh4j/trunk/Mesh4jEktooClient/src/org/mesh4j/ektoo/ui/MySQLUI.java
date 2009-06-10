@@ -13,17 +13,15 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
@@ -34,14 +32,11 @@ import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.controller.MySQLUIController;
 import org.mesh4j.ektoo.tasks.IErrorListener;
 import org.mesh4j.ektoo.tasks.OpenMySqlFeedTask;
-import org.mesh4j.ektoo.ui.component.messagedialog.MessageDialog;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.ektoo.ui.validator.MySQLConnectionValidator;
 import org.mesh4j.ektoo.validator.IValidationStatus;
-import org.mesh4j.sync.utils.SqlDBUtils;
-
-import com.mysql.jdbc.Driver;
+import org.mesh4j.sync.adapters.hibernate.HibernateSyncAdapterFactory;
 
 /**
  * @author Bhuiyan Mohammad Iklash
@@ -77,6 +72,8 @@ public class MySQLUI extends AbstractUI implements IValidationStatus {
 
 	private JButton btnView = null;
 	
+	private JTextField txtMessages = null;
+	
 	// BUSINESS METHODS
 	public MySQLUI(MySQLUIController controller) {
 		super();
@@ -110,6 +107,8 @@ public class MySQLUI extends AbstractUI implements IValidationStatus {
 		this.add(getTableList(), null);
 
 		this.add(getBtnView(), null);
+		
+		this.add(getMessagesText(), null);
 		setDefaultValues();
 	}
 
@@ -346,8 +345,7 @@ public class MySQLUI extends AbstractUI implements IValidationStatus {
 			btnConnect = new JButton();
 			btnConnect.setBounds(new Rectangle(260, 80, 22, 20));
 			btnConnect.setIcon(ImageManager.getDatabaseConnectionIcon());
-			btnConnect.setToolTipText(EktooUITranslator
-					.getDatabaseConnectionTooltip());
+			btnConnect.setToolTipText(EktooUITranslator.getDatabaseConnectionTooltip());
 			btnConnect.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent ae) {
 					
@@ -439,25 +437,13 @@ public class MySQLUI extends AbstractUI implements IValidationStatus {
 		return (JFrame)this.getParent().getParent().getParent().getParent().getParent().getParent().getParent();
 	}
 	
-	public void setList(String user, String pass, String host, int port,
-			String schema) {
+	public void setList(String user, String pass, String host, int port, String schema) {
 		JComboBox tableList = getTableList();
 		tableList.removeAllItems();
-		String url = SqlDBUtils.getMySqlUrlConnection(host, port, schema);
-		List<String> tables = SqlDBUtils.getTableNames(Driver.class, url, user,
-				pass);
-
-		try {
-			// add tables in tableList here
-			String table = null;
-			Iterator<String> itr = tables.iterator();
-			while (itr.hasNext()) {
-				table = itr.next();
-				tableList.addItem(table);
-			}
-
-		} catch (Exception e) {
-			LOGGER.error(e.getMessage(), e);
+		
+		Set<String> tableNames = HibernateSyncAdapterFactory.getMySqlTableNames(host, port, schema, user, pass);
+		for (String tableName : tableNames) {
+			tableList.addItem(tableName);
 		}
 	}
 
@@ -497,24 +483,7 @@ public class MySQLUI extends AbstractUI implements IValidationStatus {
   
 	@Override
 	public void validationFailed(Hashtable<Object, String> errorTable) {
-		Object key = null;
-		StringBuffer err = new StringBuffer();
-		Enumeration<Object> keys = errorTable.keys();
-		while (keys.hasMoreElements()) {
-			key = keys.nextElement(); 
-			err.append(errorTable.get(key) + "\n");
-	    
-//	    if ( key instanceof JTextField || key instanceof JPasswordField )
-//	     {
-//	      ((JTextField)key).setBorder(BorderFactory.createLineBorder(Color.RED));
-//	      
-//	     }
-//	     else if ( key instanceof  JComboBox )
-//	     {
-//	       ((JComboBox)key).setBorder(BorderFactory.createLineBorder(Color.RED));
-//	     }
-		}
-		MessageDialog.showErrorMessage(JOptionPane.getRootFrame(), err.toString());
+		((SyncItemUI)this.getParent().getParent()).openErrorPopUp(errorTable);
 	}
 
 	
@@ -567,4 +536,12 @@ public class MySQLUI extends AbstractUI implements IValidationStatus {
 		return valid;
 	}
 
+	private JTextField getMessagesText() {
+		if (txtMessages == null) {
+			txtMessages = new JTextField();
+			txtMessages.setBounds(new Rectangle(0, 140, 400, 20));
+			txtMessages.setEditable(false);
+		}
+		return txtMessages;
+	}
 }

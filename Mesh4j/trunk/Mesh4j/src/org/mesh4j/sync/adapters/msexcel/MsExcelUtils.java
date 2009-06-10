@@ -51,6 +51,12 @@ public class MsExcelUtils {
 	public static void flush(Workbook workbook, String fileName) {
 		FileOutputStream fos = null;
 		try{
+			File file = new File(fileName);
+			if(!file.exists()){
+				if(!file.getParentFile().exists()){
+					file.getParentFile().mkdirs();
+				}
+			}
 			fos = new FileOutputStream(fileName);
 			workbook.write(fos);
 		}catch (Exception e) {

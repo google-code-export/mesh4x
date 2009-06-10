@@ -1,6 +1,6 @@
 package org.mesh4j.sync.utils;
 
-import java.util.List;
+import java.util.Set;
 
 import junit.framework.Assert;
 
@@ -42,7 +42,7 @@ public class SqlDBUtilsTests {
 	
 	@Test
 	public void shouldObtainTables(){
-		List<String> tableNames = SqlDBUtils.getTableNames(Driver.class, "jdbc:mysql:///mesh4xdb", "root", "");
+		Set<String> tableNames = SqlDBUtils.getTableNames(Driver.class, "jdbc:mysql:///mesh4xdb", "root", "");
 		Assert.assertNotNull(tableNames);
 		Assert.assertTrue(tableNames.size() > 0);
 	}

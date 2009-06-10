@@ -4,6 +4,8 @@ import java.io.File;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.hibernate.Hibernate;
 import org.hibernate.cfg.Configuration;
@@ -31,8 +33,11 @@ import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
 import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.utils.FileUtils;
+import org.mesh4j.sync.utils.SqlDBUtils;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
+
+import com.mysql.jdbc.Driver;
 
 public class HibernateSyncAdapterFactory implements ISyncAdapterFactory{
 
@@ -294,6 +299,19 @@ public class HibernateSyncAdapterFactory implements ISyncAdapterFactory{
 			builder.setPropertiesFile(propertyFile);
 		}
 		return builder;
+	}
+
+	public static Set<String> getMySqlTableNames(String host, int port, String schema, String user, String password) {
+		String url = SqlDBUtils.getMySqlUrlConnection(host, port, schema);
+		Set<String> tableNames = SqlDBUtils.getTableNames(Driver.class, url, user, password);
+		TreeSet<String> result = new TreeSet<String>();
+		
+		for (String tableName : tableNames) {
+			if(!tableName.toLowerCase().endsWith("_sync")){
+				result.add(tableName);
+			}
+		}
+		return result;
 	}
 
 }

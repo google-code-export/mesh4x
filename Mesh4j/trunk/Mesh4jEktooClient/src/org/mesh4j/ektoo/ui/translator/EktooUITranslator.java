@@ -39,6 +39,14 @@ public class EktooUITranslator {
 				.translate("EKTOO_SYNC_TYPE_RECEIVE_FIELD_LABEL");
 	}
 
+	public static String getMessageNewFile() {
+		return EktooMessageTranslator.translate("EKTOO_MESSAGE_NEW_FILE");
+	}
+
+	public static String getMessageUpdateFile() {
+		return EktooMessageTranslator.translate("EKTOO_MESSAGE_UPDATE_FILE");
+	}	
+	
 	public static String getSyncTypeSendAndReceiveLabel() {
 		// return "Send & Receive";
 		return EktooMessageTranslator
@@ -310,10 +318,13 @@ public class EktooUITranslator {
 	}
 
 	public static String getErrorEmptyOrNull(String name) {
-		return EktooMessageTranslator.translate("EKTOO_ERROR_EMPTY_OR_NULL",
-				name);
+		return EktooMessageTranslator.translate("EKTOO_ERROR_EMPTY_OR_NULL", name);
 	}
 
+	public static String getErrorNotExists(String name) {
+		return EktooMessageTranslator.translate("EKTOO_ERROR_NOT_EXISTS", name);
+	}
+	
 	public static String getErrorInvalid(String name) {
 		return EktooMessageTranslator.translate("EKTOO_ERROR_INVALID", name);
 	}
@@ -426,5 +437,4 @@ public class EktooUITranslator {
 	public static String getTooltipSeleceDataFile(String fileType) {
 		return EktooMessageTranslator.translate("EKTOO_TOOLTIP_SELECT_FILE", fileType);
 	}
-	
 }

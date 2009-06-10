@@ -12,6 +12,7 @@ import org.hibernate.Transaction;
 import org.mesh4j.sync.adapters.hibernate.mapping.IHibernateToXMLMapping;
 import org.mesh4j.sync.adapters.split.IIdentifiableContentAdapter;
 import org.mesh4j.sync.model.IContent;
+import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
@@ -144,7 +145,7 @@ public class HibernateContentAdapter implements IIdentifiableContentAdapter {
 		
 		ArrayList<IContent> result = new ArrayList<IContent>();
 		for (Element entityElement : entities) {
-			String entityID = entityElement.element(getEntityIdNode()).getText();
+			String entityID = entityElement.element(getIdNode()).getText();
 			EntityContent entity = new EntityContent(convertRowToXML(entityID, entityElement), this.getType(), this.mapping.getIDNode(), entityID);
 			result.add(entity);
 		}
@@ -171,7 +172,8 @@ public class HibernateContentAdapter implements IIdentifiableContentAdapter {
 		}
 	}
 	
-	private String getEntityIdNode() {
+	@Override
+	public String getIdNode() {
 		return this.mapping.getIDNode();
 	}
 
@@ -181,7 +183,7 @@ public class HibernateContentAdapter implements IIdentifiableContentAdapter {
 
 	@Override
 	public String getID(IContent content) {
-		EntityContent entityContent = EntityContent.normalizeContent(content, this.getType(), this.getEntityIdNode());
+		EntityContent entityContent = EntityContent.normalizeContent(content, this.getType(), this.getIdNode());
 		if(entityContent == null){
 			return null;
 		} else {
@@ -190,7 +192,12 @@ public class HibernateContentAdapter implements IIdentifiableContentAdapter {
 	}
 
 	public IHibernateToXMLMapping getMapping() {
-		return mapping;		
+		return this.mapping;		
+	}
+	
+	@Override
+	public ISchema getSchema(){
+		return this.mapping.getSchema();
 	}
 	
 }

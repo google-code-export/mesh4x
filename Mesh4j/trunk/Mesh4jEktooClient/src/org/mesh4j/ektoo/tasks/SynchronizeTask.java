@@ -52,7 +52,6 @@ public class SynchronizeTask extends SwingWorker<String, Void> {
 		catch (Throwable t) 
 		{
 			LOGGER.error(t.getMessage(), t);
-			//synchronizeTaskListener.notifySynchronizeTaskError(t.getMessage());
 			MessageDialog.showErrorMessage(ui, t.getLocalizedMessage());
 		}
 		return null;

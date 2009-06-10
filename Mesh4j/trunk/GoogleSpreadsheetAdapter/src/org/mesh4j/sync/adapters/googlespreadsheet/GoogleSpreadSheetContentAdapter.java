@@ -15,6 +15,7 @@ import org.mesh4j.sync.adapters.googlespreadsheet.model.GSRow;
 import org.mesh4j.sync.adapters.googlespreadsheet.model.GSWorksheet;
 import org.mesh4j.sync.adapters.hibernate.EntityContent;
 import org.mesh4j.sync.adapters.split.IContentAdapter;
+import org.mesh4j.sync.adapters.split.IIdentifiableContentAdapter;
 import org.mesh4j.sync.model.IContent;
 import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.validations.Guard;
@@ -26,7 +27,7 @@ import org.mesh4j.sync.validations.Guard;
  * @author Raju
  * @version 1.0,29/4/2009
  */
-public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAware, ISupportReadSchema, ISupportWriteSchema{
+public class GoogleSpreadSheetContentAdapter implements IContentAdapter, ISyncAware, ISupportReadSchema, ISupportWriteSchema, IIdentifiableContentAdapter{
 
 	public final static String G_SPREADSHEET_DATE_FORMAT = "MM/dd/yyyy hh:mm:ss";
 	private String entityName = "";
@@ -221,5 +222,27 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 //		} catch (Exception e) {
 //			throw new MeshException(e);
 //		}		
+	}
+
+
+	public IGoogleSpreadsheetToXMLMapping getMapper() {
+		return this.mapper;
+	}
+
+
+	@Override
+	public String getID(IContent content) {
+		EntityContent entityContent = EntityContent.normalizeContent(content, this.entityName, this.mapper.getIdColumnName());
+		if(entityContent == null){
+			return null;
+		} else {
+			return entityContent.getId();
+		}
+	}
+
+
+	@Override
+	public String getIdNode() {
+		return this.mapper.getIdColumnName();
 	}
 }

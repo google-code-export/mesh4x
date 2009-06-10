@@ -49,7 +49,11 @@ public class PropertiesProvider {
 				"");
 		File file = new File(defaultValue);
 		if (file.exists() && file.canRead()) {
-			defaultValue = file.getAbsolutePath();
+			try{
+				defaultValue = file.getCanonicalPath();
+			} catch (Exception e) {
+				throw new MeshException(e);
+			}
 		}
 		return defaultValue;
 	}
@@ -59,11 +63,14 @@ public class PropertiesProvider {
 	}
 
 	public String getMsExcelFile() {
-		String defaultValue = this.properties.getProperty("default.excel.file",
-				"");
+		String defaultValue = this.properties.getProperty("default.excel.file", "");
 		File file = new File(defaultValue);
 		if (file.exists() && file.canRead()) {
-			defaultValue = file.getAbsolutePath();
+			try{
+				defaultValue = file.getCanonicalPath();
+			} catch (Exception e) {
+				throw new MeshException(e);
+			}
 		}
 		return defaultValue;
 	}

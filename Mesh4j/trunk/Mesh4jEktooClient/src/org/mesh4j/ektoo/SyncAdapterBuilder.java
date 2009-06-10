@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.sync.ISyncAdapter;
@@ -31,7 +32,6 @@ import org.mesh4j.sync.model.Sync;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.utils.FileUtils;
-import org.mesh4j.sync.utils.SqlDBUtils;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
@@ -211,7 +211,7 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 	private ISyncAdapter createMySQLTableDiscoveryAdapter(String userName, String password, String hostName, int portNo, String databaseName) {
 		
 		IIdentityProvider identityProvider = this.propertiesProvider.getIdentityProvider();
-		List<String> tableNames = getTableNames(userName, password, hostName, portNo, databaseName);
+		Set<String> tableNames = HibernateSyncAdapterFactory.getMySqlTableNames(hostName, portNo, databaseName, userName, password);
 		
 		List<Item> items = new ArrayList<Item>();
 		for (String tableName : tableNames) {
@@ -225,12 +225,6 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 		InMemorySyncAdapter adapter = new InMemorySyncAdapter(databaseName, identityProvider, items);
 		return adapter;
 	}
-
-	private List<String> getTableNames(String userName, String password, String hostName, int portNo, String databaseName) {
-		String connectionUri = "jdbc:mysql://" + hostName + ":" + portNo + "/" + databaseName;
-		return SqlDBUtils.getTableNames(com.mysql.jdbc.Driver.class, connectionUri, userName, password);
-	}
-	
 
 	private File getFile(String fileName) {
 		File file = new File(fileName);

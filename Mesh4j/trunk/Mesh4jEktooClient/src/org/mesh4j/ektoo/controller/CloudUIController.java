@@ -2,6 +2,7 @@ package org.mesh4j.ektoo.controller;
 
 import org.mesh4j.ektoo.ISyncAdapterBuilder;
 import org.mesh4j.ektoo.SyncAdapterBuilder;
+import org.mesh4j.ektoo.UISchema;
 import org.mesh4j.ektoo.model.CloudModel;
 import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.sync.ISyncAdapter;
@@ -25,7 +26,9 @@ public class CloudUIController extends AbstractUIController
 	private ISyncAdapterBuilder adapterBuilder;
 
 	// BUSINESS METHODS
-	public CloudUIController(PropertiesProvider propertiesProvider) {
+	public CloudUIController(PropertiesProvider propertiesProvider, boolean acceptsCreateDataset) {
+		super(acceptsCreateDataset);
+		
 		Guard.argumentNotNull(propertiesProvider, "propertiesProvider");
 		this.adapterBuilder = new SyncAdapterBuilder(propertiesProvider);
 	}
@@ -48,17 +51,17 @@ public class CloudUIController extends AbstractUIController
 	}
 
 	@Override
-	public IRDFSchema fetchSchema(ISyncAdapter adapter) {
+	public UISchema fetchSchema(ISyncAdapter adapter) {
 		ISchema schema = ((HttpSyncAdapter) adapter).getSchema();
 		if(schema instanceof IRDFSchema){
-			return (IRDFSchema) schema;
+			return new UISchema((IRDFSchema) schema, null);
 		} else{
 			return null;
 		}
 	}
 
 	@Override
-	public ISyncAdapter createAdapter(IRDFSchema schema) {
+	public ISyncAdapter createAdapter(UISchema schema) {
 		CloudModel model = (CloudModel) this.getModel();
 		if (model == null){
 			return null;
@@ -75,7 +78,18 @@ public class CloudUIController extends AbstractUIController
 		}
 
 		String baseSyncURI = model.getBaseUri();
-		return adapterBuilder.createHttpSyncAdapter(baseSyncURI, meshName, datasetName, schema);
+		
+		IRDFSchema rdfSchema = schema == null ? null : schema.getRDFSchema(); 
+		return adapterBuilder.createHttpSyncAdapter(baseSyncURI, meshName, datasetName, rdfSchema);
+	}
+
+	public String getUri() {
+		CloudModel model = (CloudModel) this.getModel();
+		if (model == null){
+			return null;
+		} else {
+			return model.getUri();
+		}
 	}
 
 

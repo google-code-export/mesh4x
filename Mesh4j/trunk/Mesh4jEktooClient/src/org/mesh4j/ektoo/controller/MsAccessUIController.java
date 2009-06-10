@@ -4,10 +4,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.ISyncAdapterBuilder;
 import org.mesh4j.ektoo.SyncAdapterBuilder;
+import org.mesh4j.ektoo.UISchema;
 import org.mesh4j.ektoo.model.MsAccessModel;
 import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.hibernate.HibernateContentAdapter;
+import org.mesh4j.sync.adapters.hibernate.mapping.IHibernateToXMLMapping;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.validations.Guard;
@@ -26,7 +28,9 @@ public class MsAccessUIController extends AbstractUIController
 	private ISyncAdapterBuilder adapterBuilder;
 
 	// BUSINESS METHODS
-	public MsAccessUIController(PropertiesProvider propertiesProvider) {
+	public MsAccessUIController(PropertiesProvider propertiesProvider, boolean acceptsCreateDataset) {
+		super(acceptsCreateDataset);
+		
 		Guard.argumentNotNull(propertiesProvider, "propertiesProvider");
 		this.adapterBuilder = new SyncAdapterBuilder(propertiesProvider);
 	}
@@ -63,14 +67,25 @@ public class MsAccessUIController extends AbstractUIController
 
 
 	@Override
-	public IRDFSchema fetchSchema(ISyncAdapter adapter) {
-		return (IRDFSchema)((HibernateContentAdapter)((SplitAdapter)adapter).getContentAdapter()).getMapping().getSchema();
+	public UISchema fetchSchema(ISyncAdapter adapter) {
+		HibernateContentAdapter hibernateContentAdapter = (HibernateContentAdapter)((SplitAdapter)adapter).getContentAdapter();
+		IHibernateToXMLMapping mapping = hibernateContentAdapter.getMapping();
+		IRDFSchema rdfSchema = (IRDFSchema) mapping.getSchema();
+		return new UISchema(rdfSchema, mapping.getIDNode());
 	}
 
 	@Override
-	public ISyncAdapter createAdapter(IRDFSchema schema) {
-		// TODO create Adapter
-		return null;
+	public ISyncAdapter createAdapter(UISchema schema) {
+		ISyncAdapter syncAdapter = this.createAdapter();
+		UISchema localSchema = this.fetchSchema(syncAdapter);
+		if(localSchema == null){
+			return null;
+		}
+		
+		if(localSchema.getRDFSchema() != null && schema.getRDFSchema() != null && !localSchema.getRDFSchema().isCompatible(schema.getRDFSchema())){
+			return null;
+		}
+		return syncAdapter;
 	}
 
 }

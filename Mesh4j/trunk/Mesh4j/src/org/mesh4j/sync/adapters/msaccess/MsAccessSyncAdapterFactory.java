@@ -2,6 +2,8 @@ package org.mesh4j.sync.adapters.msaccess;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.ISyncAdapterFactory;
@@ -197,5 +199,16 @@ public class MsAccessSyncAdapterFactory implements ISyncAdapterFactory {
 		} catch (Exception e) {
 			throw new MeshException(e);
 		}
+	}
+
+	public static Set<String> getTableNames(String fileName) throws IOException {
+		TreeSet<String> result = new TreeSet<String>();
+		Set<String> tableNames = MsAccessHelper.getTableNames(fileName);
+		for (String tableName : tableNames) {
+			if(!MsAccessHibernateMappingGenerator.isSyncTableName(tableName)){
+				result.add(tableName);
+			}
+		}
+		return result;
 	}
 }

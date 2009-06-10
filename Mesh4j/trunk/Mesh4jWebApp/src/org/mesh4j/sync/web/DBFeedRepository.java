@@ -4,6 +4,7 @@ import java.sql.Driver;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.dom4j.Element;
 import org.hibernate.dialect.Dialect;
@@ -124,7 +125,7 @@ public class DBFeedRepository implements IFeedRepository {
 		
 		String tableName = getDBTableName(sourceID);
 		if(tableName != null){
-			List<String> tableNames = getTableNames(databaseName);	
+			Set<String> tableNames = getTableNames(databaseName);	
 			return tableNames.contains(tableName);
 		} 
 		return true;
@@ -272,7 +273,7 @@ public class DBFeedRepository implements IFeedRepository {
 
 	protected ISyncAdapter getTableAdapter(String link, String databaseName, IIdentityProvider identityProvider) {
 		
-		List<String> tableNames = getTableNames(databaseName);
+		Set<String> tableNames = getTableNames(databaseName);
 		
 		List<Item> items = new ArrayList<Item>();
 		for (String tableName : tableNames) {
@@ -434,7 +435,7 @@ public class DBFeedRepository implements IFeedRepository {
 		return dbNames;
 	}
 
-	private List<String> getTableNames(String databaseName) {
+	private Set<String> getTableNames(String databaseName) {
 		return SqlDBUtils.getTableNames(this.driverClass, this.connectionUri + databaseName, this.userName, this.password);
 	}
 

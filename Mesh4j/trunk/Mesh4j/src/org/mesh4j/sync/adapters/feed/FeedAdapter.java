@@ -49,6 +49,9 @@ public class FeedAdapter extends AbstractSyncAdapter{
 		if(!this.feedFile.exists()){
 			this.feed = defaultFeed;
 			try{
+				if(!this.feedFile.getParentFile().exists()){
+					this.feedFile.getParentFile().mkdirs();
+				}
 				this.feedFile.createNewFile();
 				this.flush();
 			} catch (Exception e) {
@@ -128,6 +131,9 @@ public class FeedAdapter extends AbstractSyncAdapter{
 		this.feed = feed;
 		
 		if(!file.exists()){
+			if(!file.getParentFile().exists()){
+				file.getParentFile().mkdirs();
+			}
 			this.flush();
 		}
 	}

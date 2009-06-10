@@ -2,12 +2,12 @@ package org.mesh4j.ektoo.controller;
 
 import org.mesh4j.ektoo.ISyncAdapterBuilder;
 import org.mesh4j.ektoo.SyncAdapterBuilder;
+import org.mesh4j.ektoo.UISchema;
 import org.mesh4j.ektoo.model.MySQLAdapterModel;
 import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.hibernate.HibernateContentAdapter;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
-import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.validations.Guard;
 
@@ -29,8 +29,9 @@ public class MySQLUIController extends AbstractUIController
 	private PropertiesProvider propertiesProvider;
 
 	// BUSINESS METHODS
-	public MySQLUIController(PropertiesProvider propertiesProvider) 
-	{
+	public MySQLUIController(PropertiesProvider propertiesProvider, boolean acceptsCreateDataset) {
+		super(acceptsCreateDataset);
+		
 		Guard.argumentNotNull(propertiesProvider, "propertiesProvider");
 		this.adapterBuilder = new SyncAdapterBuilder(propertiesProvider);
 		this.propertiesProvider = propertiesProvider;
@@ -100,20 +101,27 @@ public class MySQLUIController extends AbstractUIController
 	}
 
 	@Override
-	// TODO (NBL) improve this signature
-	public IRDFSchema fetchSchema(ISyncAdapter adapter) 
+	public UISchema fetchSchema(ISyncAdapter adapter) 
 	{
 		SplitAdapter splitAdapter = (SplitAdapter) adapter;
-		
-		ISchema sourceSchema = ((HibernateContentAdapter) splitAdapter
-				.getContentAdapter()).getMapping().getSchema();
-		return (IRDFSchema) sourceSchema;
+		HibernateContentAdapter contentAdapter = (HibernateContentAdapter) splitAdapter.getContentAdapter();
+		IRDFSchema rdfsSchema = (IRDFSchema) contentAdapter.getMapping().getSchema();
+		return  new UISchema(rdfsSchema, contentAdapter.getMapping().getIDNode());
 	}
 
 	@Override
-	public ISyncAdapter createAdapter(IRDFSchema schema) {
-		// TODO create Adapter
-		return null;
+	public ISyncAdapter createAdapter(UISchema schema) {
+		ISyncAdapter syncAdapter = this.createAdapter();
+		UISchema localSchema = this.fetchSchema(syncAdapter);
+		
+		if(localSchema == null){
+			return null;
+		}
+		
+		if(localSchema.getRDFSchema() != null && schema.getRDFSchema() != null && !localSchema.getRDFSchema().isCompatible(schema.getRDFSchema())){
+			return null;
+		}
+		return syncAdapter;
 	}
 
 	// PROPERTIES

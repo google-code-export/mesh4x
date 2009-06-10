@@ -94,12 +94,12 @@ public class MySQLConnectionValidator extends AbstractValidator {
 			isValid = false;
 		}
 
-		if ((getUiFieldListForValidation().isEmpty() || getUiFieldListForValidation().contains(ui.getPassText()))
-				&& new String(ui.getPassText().getPassword()).trim().length() == 0) {
-			setError(ui.getPassText(), EktooUITranslator
-					.getErrorEmptyOrNull(MySQLUIController.USER_PASSWORD_PROPERTY));
-			isValid = false;
-		}
+//		if ((getUiFieldListForValidation().isEmpty() || getUiFieldListForValidation().contains(ui.getPassText()))
+//				&& new String(ui.getPassText().getPassword()).trim().length() == 0) {
+//			setError(ui.getPassText(), EktooUITranslator
+//					.getErrorEmptyOrNull(MySQLUIController.USER_PASSWORD_PROPERTY));
+//			isValid = false;
+//		}
 
 		if ((getUiFieldListForValidation().isEmpty() || getUiFieldListForValidation().contains(ui.getHostText()))
 				&& ui.getHostText().getText().trim().length() == 0) {

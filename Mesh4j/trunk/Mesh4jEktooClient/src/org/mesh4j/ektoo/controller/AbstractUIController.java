@@ -11,21 +11,18 @@ import org.mesh4j.ektoo.IUIController;
 import org.mesh4j.ektoo.model.AbstractModel;
 import org.mesh4j.ektoo.ui.AbstractUI;
 
-/**
- * @author Bhuiyan Mohammad Iklash
- * 
- */
-public abstract class AbstractUIController implements PropertyChangeListener, IUIController
-{
+public abstract class AbstractUIController implements PropertyChangeListener, IUIController{
   private final static Log LOGGER = LogFactory.getLog(AbstractUIController.class);
-  public static final String PROPERTY_CREATE_SCHEMA = "PROPERTY_CREATE_SCHEMA"; 
 	
 	// MODEL VARIABLES
 	private ArrayList<AbstractUI> registeredViews = new ArrayList<AbstractUI>();
 	private ArrayList<AbstractModel> registeredModels = new ArrayList<AbstractModel>();
+	private boolean acceptsCreateDataset = false;
 
 	// BUSINESS METHODS
-	public AbstractUIController() {}
+	public AbstractUIController(boolean acceptsCreateDataset) {
+		this.acceptsCreateDataset = acceptsCreateDataset;
+	}
 
 	public void addModel(AbstractModel model) 
 	{
@@ -111,5 +108,9 @@ public abstract class AbstractUIController implements PropertyChangeListener, IU
 				LOGGER.error(e.getMessage(), e);
 			}
 		}
+	}
+	
+	public boolean acceptsCreateDataset() {
+		return this.acceptsCreateDataset;
 	}
 }
