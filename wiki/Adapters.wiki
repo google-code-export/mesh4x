@@ -42,6 +42,7 @@ The file adapter allows you to sync from/to a file. The file is really an XML (R
 
 ==Folder Adapter==
 The folder adapter allows you to sync from/to a folder. The folder is really an XML (RSS/Atom) file that you can save on a USB drive and then sync with again. This file is also what you would transfer ("beam") to sync over Infrared or Bluetooth in a peer-to-peer fashion between mobiles.
+See HowToUseFolderAdapter for more information.
 
 ==HTTP Adapter==
 The HTTP adapter synchronizes to a server that supports the REST APIs for Feedsync. We have an implementation of such server in the source tree too (it's what you are synchronizing to when using the KML demo)
