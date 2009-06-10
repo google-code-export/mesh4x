@@ -19,6 +19,7 @@ import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.adapters.InMemorySyncAdapter;
 import org.mesh4j.sync.adapters.msexcel.MsExcelContentAdapter;
 import org.mesh4j.sync.adapters.msexcel.MsExcelRDFSyncAdapterFactory;
+import org.mesh4j.sync.adapters.msexcel.MsExcelSyncAdapterFactory;
 import org.mesh4j.sync.adapters.msexcel.MsExcelUtils;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
@@ -117,7 +118,7 @@ public class MsExcelMultiSheetsTests {
 	}
 	
 	@Test
-	public void ShouldSyncAllSheetsOfTwoExcelformat() throws Exception{
+	public void ShouldSyncAllSheetsOfTwoExcelformatByRDF() throws Exception{
 		String sourceExcelFile = createMsExcelFile("composite_MsExcel_source.xls");
 		String targetExcelFile = createMsExcelFile("composite_MsExcel_target.xlsx");
 	
@@ -141,6 +142,28 @@ public class MsExcelMultiSheetsTests {
 		TestHelper.assertSync(syncEngine);
 	}
 	
+	@Test
+	public void ShouldSyncAllSheetOfTwoExceFileByPlainXML() throws Exception{
+		String sourceExcelFile = createMsExcelFile("composite_MsExcel_source.xlsx");
+		String targetExcelFile = createMsExcelFile("composite_MsExcel_target.xlsx");
+		
+		Map<String, String> sheets = new HashMap<String, String>();
+		sheets.put("sheet1", "Code");
+		sheets.put("sheet2", "Code");
+		sheets.put("sheet3", "Code");
+		
+		MsExcelSyncAdapterFactory factory = new MsExcelSyncAdapterFactory();
+		
+		InMemorySyncAdapter opaqueAdapterSource = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
+		ISyncAdapter adapterSource = factory.createSyncAdapterForMultiSheets(sourceExcelFile, NullIdentityProvider.INSTANCE, sheets,opaqueAdapterSource);
+		
+		InMemorySyncAdapter opaqueAdapterTarget = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
+		ISyncAdapter adapterTarget = factory.createSyncAdapterForMultiSheets(targetExcelFile, NullIdentityProvider.INSTANCE, sheets,opaqueAdapterTarget);
+		
+		SyncEngine syncEngine = new SyncEngine(adapterSource, adapterTarget);
+		syncEngine.synchronize();
+		TestHelper.assertSync(syncEngine);
+	}
 	public static String createMsExcelFile(String fileName) throws Exception {
 		
 		// Make MsExcel file
