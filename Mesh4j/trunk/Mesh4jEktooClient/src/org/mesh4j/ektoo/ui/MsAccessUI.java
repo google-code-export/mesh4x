@@ -2,7 +2,6 @@ package org.mesh4j.ektoo.ui;
 
 import java.beans.PropertyChangeEvent;
 import java.io.File;
-import java.util.Hashtable;
 import java.util.Set;
 
 import javax.swing.JComboBox;
@@ -14,10 +13,9 @@ import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.controller.MsAccessUIController;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.ektoo.ui.validator.MsAccessUIValidator;
-import org.mesh4j.ektoo.validator.IValidationStatus;
 import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
 
-public class MsAccessUI extends TableUI implements IValidationStatus {
+public class MsAccessUI extends TableUI {
 
 	private static final long serialVersionUID = 4708875346159085594L;
 	private static final Log LOGGER = LogFactory.getLog(MsAccessUI.class);
@@ -105,16 +103,6 @@ public class MsAccessUI extends TableUI implements IValidationStatus {
 	@Override
 	public void setList(String fileName, String table, String columnName) {
 		// TODO setList
-	}
-
-	@Override
-	public void validationFailed(Hashtable<Object, String> errorTable) {
-		((SyncItemUI)this.getParent().getParent()).openErrorPopUp(errorTable);
-	}
-
-	@Override
-	public void validationPassed() {
-		// TODO (raju)
 	}
 
 	@Override

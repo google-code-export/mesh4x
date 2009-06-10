@@ -11,10 +11,6 @@ import org.mesh4j.ektoo.ui.FeedUI;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.ektoo.validator.AbstractValidator;
 
-/**
- * @author Bhuiyan Mohammad Iklash
- * 
- */
 public class FeedUIValidator extends AbstractValidator {
 	
 	

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.mesh4j.ektoo.ISyncAdapterBuilder;
 import org.mesh4j.ektoo.SyncAdapterBuilder;
+import org.mesh4j.ektoo.UISchema;
 import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.ektoo.ui.SyncItemUI;
 import org.mesh4j.sync.ISyncAdapter;
@@ -15,6 +16,7 @@ public class EktooController {
 	public final static String SYNCHRONIZATION_FAILED = "failed";
 	public final static String SYNCHRONIZATION_SUCCEED = "succeed";
 	public final static String SYNCHRONIZATION_CONFLICTED = "conflicted";
+	public final static String SYNCHRONIZATION_ERROR_CREATING_ADAPTER = "error_creating_adapter";
 
 	// MODEL VARIABLESs
 	ISyncAdapterBuilder adapterBuilder;
@@ -27,9 +29,10 @@ public class EktooController {
 
 	public String sync(SyncItemUI source, SyncItemUI target) {
 		ISyncAdapter sourceAdapter = source.createAdapter();
-		ISyncAdapter targetAdapter = target.createAdapter(source.fetchSchema(sourceAdapter));
+		UISchema schema = source.fetchSchema(sourceAdapter);
+		ISyncAdapter targetAdapter = target.createAdapter(schema);
 		if(sourceAdapter == null || targetAdapter == null){
-			return SYNCHRONIZATION_FAILED;  // TODO (RAJU) set error for incompatible types....
+			return SYNCHRONIZATION_ERROR_CREATING_ADAPTER;
 		}
 		return sync(sourceAdapter, targetAdapter);
 	}

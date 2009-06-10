@@ -39,6 +39,14 @@ public class EktooUITranslator {
 				.translate("EKTOO_SYNC_TYPE_RECEIVE_FIELD_LABEL");
 	}
 
+	public static String getMessageNewFolder() {
+		return EktooMessageTranslator.translate("EKTOO_MESSAGE_NEW_FOLDER");
+	}
+
+	public static String getMessageUpdateFolder() {
+		return EktooMessageTranslator.translate("EKTOO_MESSAGE_UPDATE_FOLDER");
+	}	
+	
 	public static String getMessageNewFile() {
 		return EktooMessageTranslator.translate("EKTOO_MESSAGE_NEW_FILE");
 	}
@@ -53,6 +61,12 @@ public class EktooUITranslator {
 				.translate("EKTOO_SYNC_TYPE_SEND_AND_RECEIVE_FIELD_LABEL");
 	}
 
+	public static String getMessageSyncErrorInAdapterCreation(String source,
+			String target, Date date) {
+		return EktooMessageTranslator.translate(
+				"EKTOO_SYNC_PROCESS_ERROR_ADAPTER_CREATION_MESSAGE", source, target, date);
+	}
+	
 	public static String getMessageSyncSyccessfuly(String source,
 			String target, Date date) {
 		return EktooMessageTranslator.translate(

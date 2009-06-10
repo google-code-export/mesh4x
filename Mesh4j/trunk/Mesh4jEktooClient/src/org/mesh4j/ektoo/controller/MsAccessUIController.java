@@ -14,10 +14,6 @@ import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.validations.Guard;
 
-/**
- * @author Bhuiyan Mohammad Iklash
- * 
- */
 public class MsAccessUIController extends AbstractUIController
 {
 	private static final Log LOGGER = LogFactory.getLog(MsAccessUIController.class);

@@ -86,12 +86,12 @@ public class MsExcelUIController extends AbstractUIController {
 			return null;
 		}
 
-		String worksheetName = sourceSchema.getRDFSchema().getOntologyClassName();
+		String worksheetName = model.getWorksheetName() == null || model.getWorksheetName().trim().length() == 0 ? sourceSchema.getRDFSchema().getOntologyClassName() : model.getWorksheetName();
 		if (worksheetName == null || worksheetName.trim().length() == 0) {
 			return null;
 		}
 		
-		String uniqueColumnName = sourceSchema.getIdNode();
+		String uniqueColumnName = model.getUniqueColumnName() == null || model.getUniqueColumnName().trim().length() == 0 ? sourceSchema.getIdNode() : model.getUniqueColumnName();
 		if (uniqueColumnName == null || uniqueColumnName.trim().length() == 0) {
 			return null;
 		}

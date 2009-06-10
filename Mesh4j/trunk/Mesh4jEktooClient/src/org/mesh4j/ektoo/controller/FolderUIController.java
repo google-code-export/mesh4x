@@ -29,6 +29,20 @@ public class FolderUIController extends AbstractUIController
 
 	@Override
 	public ISyncAdapter createAdapter() {
+		return createAdapter(null);
+	}
+
+	@Override
+	public UISchema fetchSchema(ISyncAdapter adapter) {
+		return null;
+	}
+
+	@Override
+	public ISyncAdapter createAdapter(UISchema schema) {
+		if(schema != null){
+			return null;
+		}
+		
 		FolderModel model = (FolderModel) this.getModel();
 		if (model == null){
 			return null;
@@ -39,16 +53,6 @@ public class FolderUIController extends AbstractUIController
 			return null;
 		}
 		return this.adapterBuilder.createFolderAdapter(folderName);
-	}
-
-	@Override
-	public UISchema fetchSchema(ISyncAdapter adapter) {
-		return null;
-	}
-
-	@Override
-	public ISyncAdapter createAdapter(UISchema schema) {
-		return null;
 	}
 
 }

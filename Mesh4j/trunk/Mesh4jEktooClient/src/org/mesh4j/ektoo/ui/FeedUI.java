@@ -10,7 +10,6 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
-import java.util.Hashtable;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -46,8 +45,6 @@ public class FeedUI extends AbstractUI  implements IValidationStatus {
 	private FeedUIController controller;
 	private JFileChooser fileChooser = null;
 
-	private JTextField txtMessages = null;
-	
 	// BUSINESS METHODS
 	public FeedUI(String fileName, FeedUIController controller) {
 		super();
@@ -56,7 +53,7 @@ public class FeedUI extends AbstractUI  implements IValidationStatus {
 		this.initialize();
 		this.txtFileName.setText(fileName);
 		this.txtFileName.setToolTipText(fileName);
-		this.txtMessages.setText("");
+		this.setMessageText("");
 	}
 
 	private void initialize() {
@@ -69,15 +66,6 @@ public class FeedUI extends AbstractUI  implements IValidationStatus {
 		this.add(getMessagesText(), null);
 	}
 	
-	private JTextField getMessagesText() {
-		if (txtMessages == null) {
-			txtMessages = new JTextField();
-			txtMessages.setBounds(new Rectangle(0, 140, 400, 20));
-			txtMessages.setEditable(false);
-		}
-		return txtMessages;
-	}
-
 	private JLabel getFileNameLabel() {
 		if (labelFileName == null) {
 			labelFileName = new JLabel();
@@ -156,11 +144,6 @@ public class FeedUI extends AbstractUI  implements IValidationStatus {
 		}
 		return btnView;
 	}
-	
-	// TODO (raju) improve it
-	protected JFrame getRootFrame() {
-		return (JFrame)this.getParent().getParent().getParent().getParent().getParent().getParent().getParent();
-	}
 
 	public FeedUIController getController() {
 		return controller;
@@ -191,16 +174,6 @@ public class FeedUI extends AbstractUI  implements IValidationStatus {
 	}
 
 	@Override
-	public void validationFailed(Hashtable<Object, String> errorTable) {
-		((SyncItemUI)this.getParent().getParent()).openErrorPopUp(errorTable);
-	}
-	
-	@Override
-	public void validationPassed() {
-		// TODO (raju)
-	}
-
-	@Override
 	public boolean verify() {
 		boolean valid = (new FeedUIValidator(this, controller.getModel(), null)).verify();
 		return valid;
@@ -213,12 +186,12 @@ public class FeedUI extends AbstractUI  implements IValidationStatus {
 		File file = new File(fileName);
 		if(!file.exists()){
 			if(this.getController().acceptsCreateDataset()){
-				this.txtMessages.setText(EktooUITranslator.getMessageNewFile());
+				this.setMessageText(EktooUITranslator.getMessageNewFile());
 			} else {
-				this.txtMessages.setText(EktooUITranslator.getMessageUpdateFile());	
+				this.setMessageText(EktooUITranslator.getMessageUpdateFile());	
 			}
 		} else {
-			this.txtMessages.setText(EktooUITranslator.getMessageUpdateFile());
+			this.setMessageText(EktooUITranslator.getMessageUpdateFile());
 		}
 	}
 }

@@ -1,6 +1,5 @@
 package org.mesh4j.ektoo.ui;
 
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -11,7 +10,6 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -29,9 +27,8 @@ import org.mesh4j.ektoo.tasks.OpenURLTask;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.ektoo.ui.validator.CloudUIValidator;
-import org.mesh4j.ektoo.validator.IValidationStatus;
 
-public class CloudUI extends AbstractUI implements IValidationStatus {
+public class CloudUI extends AbstractUI {
 	
 	private static final long serialVersionUID = 101977159720664976L;
 	private static final Log LOGGER = LogFactory.getLog(CloudUI.class);
@@ -49,7 +46,6 @@ public class CloudUI extends AbstractUI implements IValidationStatus {
 	private CloudUIController controller = null;
 	
 	private JButton btnView = null;
-	private JTextField txtURL = null;
 
 	// BUSINESS METHODS
 	public CloudUI(String baseURL, CloudUIController controller) {
@@ -57,8 +53,8 @@ public class CloudUI extends AbstractUI implements IValidationStatus {
 		this.controller = controller;
 		this.controller.addView(this);
 		initialize();
-		this.txtURL.setText(baseURL);
 		this.txtServerURL.setText(baseURL);
+		this.setMessageText(baseURL);
 	}
 
 	private void initialize() {
@@ -74,7 +70,7 @@ public class CloudUI extends AbstractUI implements IValidationStatus {
 		this.add(getDataSetLabel(), null);
 		this.add(getDataSetText(), null);
 		
-		this.add(getURLText(), null);
+		this.add(getMessagesText(), null);
 		this.add(getBtnView(), null);
 		
 	}
@@ -207,15 +203,6 @@ public class CloudUI extends AbstractUI implements IValidationStatus {
 		return txtDataset;
 	}
 	
-	public JTextField getURLText() {
-		if (txtURL == null) {
-			txtURL = new JTextField();
-			txtURL.setBounds(new Rectangle(0, 140, 400, 20));
-			txtURL.setEditable(false);
-		}
-		return txtURL;
-	}
-
 	public JButton getBtnView() {
 		if (btnView == null) {
 			btnView = new JButton();
@@ -247,11 +234,6 @@ public class CloudUI extends AbstractUI implements IValidationStatus {
 		return btnView;
 	}
 	
-	// TODO (nobel) improve it
-	protected JFrame getRootFrame() {
-		return (JFrame)this.getParent().getParent().getParent().getParent().getParent().getParent().getParent();
-	}	
-	
 	public CloudUIController getController() {
 		return controller;
 	}
@@ -279,18 +261,8 @@ public class CloudUI extends AbstractUI implements IValidationStatus {
 		return valid;
 	}
 
-	@Override
-	public void validationFailed(Hashtable<Object, String> errorTable) {
-		((SyncItemUI)this.getParent().getParent()).openErrorPopUp(errorTable);
+	private void setResultURL(){
+		this.setMessageText(this.getController().getUri());
 	}
 
-	private void setResultURL(){
-		this.txtURL.setText(this.getController().getUri());
-	}
-	
-	@Override
-	public void validationPassed() {
-		// TODO (raju)
-		
-	}
 }

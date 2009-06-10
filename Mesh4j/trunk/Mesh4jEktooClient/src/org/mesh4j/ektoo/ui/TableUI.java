@@ -35,7 +35,7 @@ public abstract class TableUI extends AbstractUI {
 
 	private final static Log LOGGER = LogFactory.getLog(TableUI.class);
 	private static final long serialVersionUID = 6283863045120436837L;
-	
+
 	// MODEL VARIABLES
 	private JFileChooser fileChooser = new JFileChooser();
 
@@ -53,8 +53,6 @@ public abstract class TableUI extends AbstractUI {
 
 	private JButton btnFile = null;
 	private JButton btnView = null;
-	
-	private JTextField txtMessages = null;
 
 	// BUSINESS METHODS
 	public TableUI() {
@@ -71,8 +69,7 @@ public abstract class TableUI extends AbstractUI {
 
 	}
 
-	protected void initialize() 
-	{
+	protected void initialize() {
 		this.setLayout(null);
 		this.setBackground(Color.WHITE);
 		this.add(getLabelFile(), null);
@@ -88,10 +85,11 @@ public abstract class TableUI extends AbstractUI {
 	}
 
 	public abstract void setList(String fileName);
+
 	public abstract void setList(String fileName, String tableName);
-	public abstract void setList(String fileName, String tableName, String columnName);
-	
-	
+
+	public abstract void setList(String fileName, String tableName,
+			String columnName);
 
 	private JLabel getLabelFile() {
 		if (labelFile == null) {
@@ -110,9 +108,10 @@ public abstract class TableUI extends AbstractUI {
 		}
 	}
 
-	public String getFilePath(){
+	public String getFilePath() {
 		return getTxtFile().getText().trim();
 	}
+
 	public JTextField getTxtFile() {
 		if (txtFileName == null) {
 			txtFileName = new JTextField();
@@ -132,13 +131,13 @@ public abstract class TableUI extends AbstractUI {
 				public void focusLost(FocusEvent evt) {
 					try {
 						txtFileName.setToolTipText(txtFileName.getText());
-						setList(txtFileName.getText());						
+						setList(txtFileName.getText());
 					} catch (Exception e) {
 						LOGGER.error(e.getMessage(), e);
 						// TODO Handle exception
 					}
 				}
-			});		
+			});
 		}
 		return txtFileName;
 	}
@@ -148,23 +147,28 @@ public abstract class TableUI extends AbstractUI {
 		if (btnFile == null) {
 			btnFile = new JButton();
 			btnFile.setText(EktooUITranslator.getBrowseButtonLabel());
-			if(this instanceof MsAccessUI){
-				btnFile.setToolTipText(EktooUITranslator.getTooltipSeleceDataFile("Access"));
-			}else{
-				btnFile.setToolTipText(EktooUITranslator.getTooltipSeleceDataFile("Excel"));
+			if (this instanceof MsAccessUI) {
+				btnFile.setToolTipText(EktooUITranslator
+						.getTooltipSeleceDataFile("Access"));
+			} else {
+				btnFile.setToolTipText(EktooUITranslator
+						.getTooltipSeleceDataFile("Excel"));
 			}
-			
+
 			btnFile.setBounds(new Rectangle(259, 8, 34, 20));
 			btnFile.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					getFileChooser().setSelectedFile(new File(txtFileName.getText()));
+					getFileChooser().setSelectedFile(
+							new File(txtFileName.getText()));
 					int returnVal = getFileChooser().showOpenDialog(btnFile);
 					if (returnVal == JFileChooser.APPROVE_OPTION) {
 						File selectedFile = getFileChooser().getSelectedFile();
 						if (selectedFile != null) {
-							try{
-								txtFileName.setText(selectedFile.getCanonicalPath());
-								txtFileName.setToolTipText(txtFileName.getText());
+							try {
+								txtFileName.setText(selectedFile
+										.getCanonicalPath());
+								txtFileName.setToolTipText(txtFileName
+										.getText());
 								setList(txtFileName.getText());
 							} catch (Exception ex) {
 								LOGGER.debug(ex.getMessage(), ex);
@@ -176,8 +180,7 @@ public abstract class TableUI extends AbstractUI {
 		}
 		return btnFile;
 	}
-	
-	
+
 	public JButton getBtnView() {
 		if (btnView == null) {
 			btnView = new JButton();
@@ -192,8 +195,10 @@ public abstract class TableUI extends AbstractUI {
 			btnView.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					JFrame frame = TableUI.this.getRootFrame();
-					IErrorListener errorListener = TableUI.this.getErrorListener();
-					OpenFileTask task = new OpenFileTask(frame, errorListener, txtFileName.getText());
+					IErrorListener errorListener = TableUI.this
+							.getErrorListener();
+					OpenFileTask task = new OpenFileTask(frame, errorListener,
+							txtFileName.getText());
 					task.execute();
 				}
 			});
@@ -201,13 +206,8 @@ public abstract class TableUI extends AbstractUI {
 		return btnView;
 	}
 
-	// TODO (raju) improve it
-	protected JFrame getRootFrame() {
-		return (JFrame)this.getParent().getParent().getParent().getParent().getParent().getParent().getParent();
-	}
-	
-	protected IErrorListener getErrorListener(){
-		return (IErrorListener)getRootFrame();
+	protected IErrorListener getErrorListener() {
+		return (IErrorListener) getRootFrame();
 	}
 
 	private JLabel getlabelTable() {
@@ -231,24 +231,26 @@ public abstract class TableUI extends AbstractUI {
 		if (listTable == null) {
 			listTable = new JComboBox();
 			listTable.setBounds(new Rectangle(99, 36, 194, 20));
-			if(this instanceof MsExcelUI){
-				listTable.setToolTipText(EktooUITranslator.getTooltipSelectWorksheet());
-			}else{
-				listTable.setToolTipText(EktooUITranslator.getTooltipSelectTable());
+			if (this instanceof MsExcelUI) {
+				listTable.setToolTipText(EktooUITranslator
+						.getTooltipSelectWorksheet());
+			} else {
+				listTable.setToolTipText(EktooUITranslator
+						.getTooltipSelectTable());
 			}
-			
+
 			listTable.addItemListener(new ItemListener() {
-				public void itemStateChanged(ItemEvent evt){
-					if(!listTable.isEnabled()){
+				public void itemStateChanged(ItemEvent evt) {
+					if (!listTable.isEnabled()) {
 						return;
 					}
-				  if (evt.getStateChange() == ItemEvent.SELECTED){
-  				  int sheetIndex = listTable.getSelectedIndex();
-  					if (sheetIndex != -1) {
-  						table = (String) listTable.getSelectedItem();
-  						setList(txtFileName.getText(), table);
-  					}
-				  }
+					if (evt.getStateChange() == ItemEvent.SELECTED) {
+						int sheetIndex = listTable.getSelectedIndex();
+						if (sheetIndex != -1) {
+							table = (String) listTable.getSelectedItem();
+							setList(txtFileName.getText(), table);
+						}
+					}
 				}
 			});
 		}
@@ -277,21 +279,21 @@ public abstract class TableUI extends AbstractUI {
 		if (listColumn == null) {
 			listColumn = new JComboBox();
 			listColumn.setBounds(new Rectangle(99, 64, 194, 20));
-			listColumn.setToolTipText(EktooUITranslator.getTooltipIdColumnName());
+			listColumn.setToolTipText(EktooUITranslator
+					.getTooltipIdColumnName());
 			listColumn.addItemListener(new ItemListener() {
-				public void itemStateChanged(ItemEvent evt) 
-				{
-				  if (evt.getStateChange() == ItemEvent.SELECTED) 
-          {				
-  				  int tableIndex = listTable.getSelectedIndex();
-  					if (tableIndex != -1) {
-  						table = (String) listTable.getSelectedItem();
-  						int columnIndex = listColumn.getSelectedIndex();
-  						if (columnIndex != -1) {
-  							setList(txtFileName.getText(), table, (String) listColumn.getSelectedItem());
-  						}
-  					}
-          }
+				public void itemStateChanged(ItemEvent evt) {
+					if (evt.getStateChange() == ItemEvent.SELECTED) {
+						int tableIndex = listTable.getSelectedIndex();
+						if (tableIndex != -1) {
+							table = (String) listTable.getSelectedItem();
+							int columnIndex = listColumn.getSelectedIndex();
+							if (columnIndex != -1) {
+								setList(txtFileName.getText(), table,
+										(String) listColumn.getSelectedItem());
+							}
+						}
+					}
 				}
 			});
 		}
@@ -335,16 +337,4 @@ public abstract class TableUI extends AbstractUI {
 		getColumnList().setVisible(bool);
 	}
 
-	private JTextField getMessagesText() {
-		if (txtMessages == null) {
-			txtMessages = new JTextField();
-			txtMessages.setBounds(new Rectangle(0, 140, 400, 20));
-			txtMessages.setEditable(false);
-		}
-		return txtMessages;
-	}
-	
-	protected void setMessage(String message){
-		this.txtMessages.setText(message);
-	}
 }

@@ -2,7 +2,6 @@ package org.mesh4j.ektoo.ui;
 
 import java.beans.PropertyChangeEvent;
 import java.io.File;
-import java.util.Hashtable;
 import java.util.Set;
 
 import javax.swing.JComboBox;
@@ -63,15 +62,15 @@ public class MsExcelUI extends TableUI implements IValidationStatus {
 			if(this.getController().acceptsCreateDataset()){
 				File file = new File(fileName);
 				if(!file.exists()){
-					this.setMessage(EktooUITranslator.getMessageNewFile());
+					this.setMessageText(EktooUITranslator.getMessageNewFile());
 				} else {
-					this.setMessage(EktooUITranslator.getMessageUpdateFile());
+					this.setMessageText(EktooUITranslator.getMessageUpdateFile());
 				}
 			} else {
-				this.setMessage(EktooUITranslator.getMessageUpdateFile());
+				this.setMessageText(EktooUITranslator.getMessageUpdateFile());
 			}
 		} else {
-			this.setMessage(EktooUITranslator.getMessageUpdateFile());
+			this.setMessageText(EktooUITranslator.getMessageUpdateFile());
 		}
 		this.controller.changeWorkbookName(fileName);
 	}
@@ -124,16 +123,6 @@ public class MsExcelUI extends TableUI implements IValidationStatus {
 				getColumnList().setSelectedItem(newStringValue);
 			}
 		}
-	}
-
-	@Override
-	public void validationFailed(Hashtable<Object, String> errorTable) {
-		((SyncItemUI)this.getParent().getParent()).openErrorPopUp(errorTable);
-	}
-
-	@Override
-	public void validationPassed() {
-		// TODO (raju)
 	}
 
 	@Override

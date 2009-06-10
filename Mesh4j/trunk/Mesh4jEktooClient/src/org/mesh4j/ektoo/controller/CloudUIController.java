@@ -11,10 +11,6 @@ import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.validations.Guard;
 
-/**
- * @author Bhuiyan Mohammad Iklash
- * 
- */
 public class CloudUIController extends AbstractUIController
 {
 	

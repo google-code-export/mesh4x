@@ -13,7 +13,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
 
@@ -35,14 +34,10 @@ import org.mesh4j.ektoo.tasks.OpenMySqlFeedTask;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.ektoo.ui.validator.MySQLConnectionValidator;
-import org.mesh4j.ektoo.validator.IValidationStatus;
 import org.mesh4j.sync.adapters.hibernate.HibernateSyncAdapterFactory;
 
-/**
- * @author Bhuiyan Mohammad Iklash
- * 
- */
-public class MySQLUI extends AbstractUI implements IValidationStatus {
+
+public class MySQLUI extends AbstractUI {
 	
 	private static final long serialVersionUID = 2622575852343500622L;
 	private static final Log LOGGER = LogFactory.getLog(MySQLUI.class);
@@ -71,8 +66,6 @@ public class MySQLUI extends AbstractUI implements IValidationStatus {
 	private MySQLUIController controller = null;
 
 	private JButton btnView = null;
-	
-	private JTextField txtMessages = null;
 	
 	// BUSINESS METHODS
 	public MySQLUI(MySQLUIController controller) {
@@ -432,11 +425,6 @@ public class MySQLUI extends AbstractUI implements IValidationStatus {
 		return btnView;
 	}
 
-	// TODO (nobel) improve it
-	protected JFrame getRootFrame() {
-		return (JFrame)this.getParent().getParent().getParent().getParent().getParent().getParent().getParent();
-	}
-	
 	public void setList(String user, String pass, String host, int port, String schema) {
 		JComboBox tableList = getTableList();
 		tableList.removeAllItems();
@@ -482,17 +470,6 @@ public class MySQLUI extends AbstractUI implements IValidationStatus {
 
   
 	@Override
-	public void validationFailed(Hashtable<Object, String> errorTable) {
-		((SyncItemUI)this.getParent().getParent()).openErrorPopUp(errorTable);
-	}
-
-	
-	@Override
-	public void validationPassed() {
-		// TODO (Nobel)
-	}
-
-	@Override
 	public void modelPropertyChange(PropertyChangeEvent evt) {
 		
 		if (evt.getPropertyName().equals(MySQLUIController.USER_NAME_PROPERTY)) {
@@ -526,7 +503,6 @@ public class MySQLUI extends AbstractUI implements IValidationStatus {
 					.equals(newStringValue))
 				getTableList().setSelectedItem(newStringValue);
 		}
-
 	}
 
 	@Override
@@ -536,12 +512,4 @@ public class MySQLUI extends AbstractUI implements IValidationStatus {
 		return valid;
 	}
 
-	private JTextField getMessagesText() {
-		if (txtMessages == null) {
-			txtMessages = new JTextField();
-			txtMessages.setBounds(new Rectangle(0, 140, 400, 20));
-			txtMessages.setEditable(false);
-		}
-		return txtMessages;
-	}
 }

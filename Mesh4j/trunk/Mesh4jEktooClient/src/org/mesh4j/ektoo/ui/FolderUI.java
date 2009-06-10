@@ -6,9 +6,10 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
-import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -24,6 +25,7 @@ import org.mesh4j.ektoo.tasks.IErrorListener;
 import org.mesh4j.ektoo.tasks.OpenFileTask;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
+import org.mesh4j.ektoo.ui.validator.FolderUIValidator;
 
 public class FolderUI extends AbstractUI {
 
@@ -39,7 +41,6 @@ public class FolderUI extends AbstractUI {
 
 	private FolderUIController controller;
 	private JFileChooser fileChooser = null;
-	private File file = null;
 
 	// BUSINESS METHODS
 	public FolderUI(String fileName, FolderUIController controller) {
@@ -47,8 +48,8 @@ public class FolderUI extends AbstractUI {
 		this.controller = controller;
 		this.controller.addView(this);
 		this.initialize();
-		this.file = new File(fileName);
-		this.txtFileName.setText(this.file.getName());
+		this.txtFileName.setText(fileName);
+		this.txtFileName.setToolTipText(fileName);
 	}
 
 	private void initialize() {
@@ -58,6 +59,7 @@ public class FolderUI extends AbstractUI {
 		this.add(getFileNameText(), null);
 		this.add(getBtnFile(), null);
 		this.add(getBtnView(), null);
+		this.add(getMessagesText(), null);
 	}
 
 	private JLabel getFileNameLabel() {
@@ -71,10 +73,20 @@ public class FolderUI extends AbstractUI {
 		return labelFileName;
 	}
 
-	private JTextField getFileNameText() {
+	public JTextField getFileNameText() {
 		if (txtFileName == null) {
 			txtFileName = new JTextField();
 			txtFileName.setBounds(new Rectangle(99, 8, 149, 20));
+			txtFileName.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent evt) {
+					fileNameChanged(txtFileName.getText());
+				}
+			});
+			txtFileName.addFocusListener(new FocusAdapter() {
+				public void focusLost(FocusEvent evt) {
+					fileNameChanged(txtFileName.getText());		
+				}
+			});		
 		}
 		return txtFileName;
 	}
@@ -88,16 +100,14 @@ public class FolderUI extends AbstractUI {
 					.getTooltipFolderSeleceFile());
 			btnFile.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					getFileChooser().setSelectedFile(file);
+					getFileChooser().setSelectedFile(new File(txtFileName.getText()));
 					int returnVal = getFileChooser().showOpenDialog(btnFile);
 					if (returnVal == JFileChooser.APPROVE_OPTION) {
 						File selectedFile = getFileChooser().getSelectedFile();
 						if (selectedFile != null) {
 							try {
-								controller.changeFileName(selectedFile
-										.getCanonicalPath());
-								txtFileName.setText(selectedFile.getName());
-								setFile(selectedFile);
+								txtFileName.setText(selectedFile.getCanonicalPath());
+								fileNameChanged(txtFileName.getText());								
 							} catch (Exception ex) {
 								LOGGER.error(ex.getMessage(), ex);
 							}
@@ -123,31 +133,14 @@ public class FolderUI extends AbstractUI {
 			btnView.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					JFrame frame = FolderUI.this.getRootFrame();
-					OpenFileTask task = new OpenFileTask(frame,
-							(IErrorListener) frame, file.getAbsolutePath());
+					OpenFileTask task = new OpenFileTask(frame, (IErrorListener) frame, txtFileName.getText());
 					task.execute();
 				}
 			});
 		}
 		return btnView;
 	}
-
-	// TODO (nobel) improve it
-	protected JFrame getRootFrame() {
-		return (JFrame) this.getParent().getParent().getParent().getParent()
-				.getParent().getParent();
-	}
-
-	public String getFileName() {
-		try {
-			return this.file.getCanonicalPath();
-		} catch (IOException e) {
-			LOGGER.debug(e.getMessage());
-			// nothing to do
-			return null;
-		}
-	}
-
+	
 	public FolderUIController getController() {
 		return controller;
 	}
@@ -159,14 +152,6 @@ public class FolderUI extends AbstractUI {
 			fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		}
 		return fileChooser;
-	}
-
-	public void setFile(File file) {
-		this.file = file;
-	}
-
-	public File getFile() {
-		return file;
 	}
 
 	@Override
@@ -181,8 +166,20 @@ public class FolderUI extends AbstractUI {
 
 	@Override
 	public boolean verify() {
-		// TODO (raju)
-		return false;
+		boolean valid = (new FolderUIValidator(this, controller.getModel(), null)).verify();
+		return valid;
 	}
 
+	protected void fileNameChanged(String fileName) {
+		txtFileName.setToolTipText(fileName);
+		getController().changeFileName(fileName);
+		
+		File file = new File(fileName);
+		if(!file.exists()){
+			this.setMessageText(EktooUITranslator.getMessageNewFolder());
+		} else {
+			this.setMessageText(EktooUITranslator.getMessageUpdateFolder());
+		}
+	}
+	
 }

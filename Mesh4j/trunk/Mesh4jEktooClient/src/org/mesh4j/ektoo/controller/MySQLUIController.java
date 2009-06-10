@@ -11,10 +11,6 @@ import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.validations.Guard;
 
-/**
- * @author Bhuiyan Mohammad Iklash
- * 
- */
 public class MySQLUIController extends AbstractUIController
 {	
 	public static final String USER_NAME_PROPERTY = "UserName";

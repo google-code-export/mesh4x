@@ -13,7 +13,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -36,7 +35,6 @@ import org.mesh4j.ektoo.tasks.OpenURLTask;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.ektoo.ui.validator.GssUIValidator;
-import org.mesh4j.ektoo.validator.IValidationStatus;
 import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadsheet;
 import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadsheetUtils;
 import org.mesh4j.sync.adapters.googlespreadsheet.IGoogleSpreadSheet;
@@ -46,7 +44,7 @@ import org.mesh4j.sync.adapters.googlespreadsheet.model.GSWorksheet;
 
 import com.google.gdata.data.spreadsheet.SpreadsheetEntry;
 
-public class GSSheetUI extends AbstractUI implements IValidationStatus {
+public class GSSheetUI extends AbstractUI {
 
 	private static final long serialVersionUID = 5090713642670266848L;
 	private static final Log LOGGER = LogFactory.getLog(GSSheetUI.class);
@@ -71,16 +69,17 @@ public class GSSheetUI extends AbstractUI implements IValidationStatus {
 	private GSSheetUIController controller = null;
 
 	private JButton btnView = null;
-	private JTextField txtURL = null;
+	
+	private String googleURL = "";
 
 	// BUSINESS METHODS
-	public GSSheetUI(GSSheetUIController controller) {
+	public GSSheetUI(GSSheetUIController controller, String googleURL) {
 		super();
+		this.googleURL = googleURL;
 		this.controller = controller;
 		this.controller.addView(this);
 		initialize();
-		// TODO (RAJU/SHARIF) remove harcode url
-		this.txtURL.setText("http://docs.google.com/");
+		this.setMessageText(googleURL);
 	}
 
 	private void initialize() {
@@ -93,9 +92,6 @@ public class GSSheetUI extends AbstractUI implements IValidationStatus {
 		this.add(getPassLabel(), null);
 		this.add(getPassText(), null);
 
-		// this.add(getKeyLabel(), null);
-		// this.add(getKeyText(), null);
-
 		this.add(getNameLabel(), null);
 		this.add(getNameList(), null);
 		this.add(getConnectButton(), null);
@@ -104,7 +100,7 @@ public class GSSheetUI extends AbstractUI implements IValidationStatus {
 		this.add(getTableList(), null);
 		this.add(getLabelColumn(), null);
 		this.add(getColumnList(), null);
-		this.add(getURLText(), null);
+		this.add(getMessagesText(), null);
 		this.add(getBtnView(), null);
 	}
 
@@ -468,15 +464,6 @@ public class GSSheetUI extends AbstractUI implements IValidationStatus {
 
 	}
 
-	private JTextField getURLText() {
-		if (txtURL == null) {
-			txtURL = new JTextField();
-			txtURL.setBounds(new Rectangle(0, 140, 400, 20));
-			txtURL.setEditable(false);
-		}
-		return txtURL;
-	}
-
 	public JButton getBtnView() {
 		if (btnView == null) {
 			btnView = new JButton();
@@ -491,22 +478,13 @@ public class GSSheetUI extends AbstractUI implements IValidationStatus {
 			btnView.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					JFrame frame = GSSheetUI.this.getRootFrame();
-					String url = txtURL.getText();
-					// TODO (RAJU/SHARIF) add to base url the spreadshet data
-
-					OpenURLTask task = new OpenURLTask(frame,
-							(IErrorListener) frame, url);
+				
+					OpenURLTask task = new OpenURLTask(frame, (IErrorListener) frame, googleURL);
 					task.execute();
 				}
 			});
 		}
 		return btnView;
-	}
-
-	// TODO (raju) improve it
-	protected JFrame getRootFrame() {
-		return (JFrame) this.getParent().getParent().getParent().getParent()
-				.getParent().getParent();
 	}
 
 	public String getUser() {
@@ -605,16 +583,6 @@ public class GSSheetUI extends AbstractUI implements IValidationStatus {
 				getColumnList().setSelectedIndex(
 						Integer.parseInt(newStringValue));
 		}
-	}
-
-	@Override
-	public void validationFailed(Hashtable<Object, String> errorTable) {
-		((SyncItemUI) this.getParent().getParent()).openErrorPopUp(errorTable);
-	}
-
-	@Override
-	public void validationPassed() {
-		// TODO (Nobel)
 	}
 
 	@Override

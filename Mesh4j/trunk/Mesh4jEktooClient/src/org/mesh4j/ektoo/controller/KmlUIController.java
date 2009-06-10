@@ -52,7 +52,10 @@ public class KmlUIController extends AbstractUIController
 
 	@Override
 	public ISyncAdapter createAdapter(UISchema schema) {
-		return null;
+		if(schema != null){
+			return null;
+		} 
+		return createAdapter();
 	}
 
 }

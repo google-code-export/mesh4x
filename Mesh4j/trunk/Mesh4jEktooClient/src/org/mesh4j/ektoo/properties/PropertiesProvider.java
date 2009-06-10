@@ -218,4 +218,8 @@ public class PropertiesProvider {
 		}
 	}
 
+	public String getGoogleDocsURL() {
+		return getString("google.docs.url");
+	}
+
 }

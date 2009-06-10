@@ -10,7 +10,6 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
-import java.util.Hashtable;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -28,9 +27,8 @@ import org.mesh4j.ektoo.tasks.OpenFileTask;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.ektoo.ui.validator.KmlUIValidator;
-import org.mesh4j.ektoo.validator.IValidationStatus;
 
-public class KmlUI extends AbstractUI implements IValidationStatus {
+public class KmlUI extends AbstractUI {
 
 	private static final long serialVersionUID = 3586406415288503774L;
 	private static final Log LOGGER = LogFactory.getLog(KmlUI.class);
@@ -44,8 +42,6 @@ public class KmlUI extends AbstractUI implements IValidationStatus {
 	private KmlUIController controller;
 	private JFileChooser fileChooser = null;
 	
-	private JTextField txtMessages = null;
-
 	// BUSINESS METHODS
 	public KmlUI(String fileName, KmlUIController controller) {
 		super();
@@ -145,11 +141,6 @@ public class KmlUI extends AbstractUI implements IValidationStatus {
 		return btnView;
 	}
 	
-	// TODO (raju) improve it
-	protected JFrame getRootFrame() {
-		return (JFrame)this.getParent().getParent().getParent().getParent().getParent().getParent();
-	}
-	
 	public KmlUIController getController() {
 		return controller;
 	}
@@ -175,31 +166,11 @@ public class KmlUI extends AbstractUI implements IValidationStatus {
       }
     }
 
-	@Override
-	public void validationFailed(Hashtable<Object, String> errorTable) {
-		((SyncItemUI)this.getParent().getParent()).openErrorPopUp(errorTable);
-	}
-
-	
-	@Override
-	public void validationPassed() {
-		// TODO (raju)
-	}
-
-	@Override
+    @Override
 	public boolean verify() {
 		boolean valid = (new KmlUIValidator(this,
 				controller.getModel(), null)).verify();
 		return valid;
-	}
-	
-	private JTextField getMessagesText() {
-		if (txtMessages == null) {
-			txtMessages = new JTextField();
-			txtMessages.setBounds(new Rectangle(0, 140, 400, 20));
-			txtMessages.setEditable(false);
-		}
-		return txtMessages;
 	}
 	
 	protected void fileNameChanged(String fileName) {
@@ -209,13 +180,12 @@ public class KmlUI extends AbstractUI implements IValidationStatus {
 		File file = new File(fileName);
 		if(!file.exists()){
 			if(this.getController().acceptsCreateDataset()){
-				this.txtMessages.setText(EktooUITranslator.getMessageNewFile());
+				this.setMessageText(EktooUITranslator.getMessageNewFile());
 			} else {
-				this.txtMessages.setText(EktooUITranslator.getMessageUpdateFile());	
+				this.setMessageText(EktooUITranslator.getMessageUpdateFile());	
 			}
 		} else {
-			this.txtMessages.setText(EktooUITranslator.getMessageUpdateFile());
+			this.setMessageText(EktooUITranslator.getMessageUpdateFile());
 		}
 	}
-
 }

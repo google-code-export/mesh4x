@@ -226,7 +226,7 @@ public class SyncItemUI extends JPanel implements IUIController {
 			googleUIControler = new GSSheetUIController(this.propertiesProvider, this.acceptsCreateDataset);
 			googleUIControler.addModel(new GSSheetModel());
 
-			googleUI = new GSSheetUI(googleUIControler);
+			googleUI = new GSSheetUI(googleUIControler, this.propertiesProvider.getGoogleDocsURL());
 			googleUI.setUserLabel(EktooUITranslator.getGoogleUserLabel());
 			googleUI.setPasswordLabel(EktooUITranslator.getGooglePasswordLabel());
 			googleUI.setNameLabel(EktooUITranslator.getGoogleSpreadsheetNameLabel());
@@ -434,6 +434,10 @@ public class SyncItemUI extends JPanel implements IUIController {
 	
 	public void openErrorPopUp(String error) {
 		MessageDialog.showErrorMessage(JOptionPane.getRootFrame(), this.title, error);
+	}
+
+	public void cleanMessaged() {
+		getCurrentView().cleanMessages();		
 	}
 
 }

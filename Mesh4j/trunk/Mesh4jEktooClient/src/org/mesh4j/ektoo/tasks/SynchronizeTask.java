@@ -18,39 +18,34 @@ import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 public class SynchronizeTask extends SwingWorker<String, Void> {
 
 	private final static Log LOGGER = LogFactory.getLog(SynchronizeTask.class);
-	
+
 	// MODEL VARIABLEs
 	private EktooFrame ui;
 	private String result = null;
 	private ISynchronizeTaskListener synchronizeTaskListener = null;
 
 	// BUSINESS METHODS
-	public SynchronizeTask(EktooFrame ui, ISynchronizeTaskListener synchronizeTaskListener) {
+	public SynchronizeTask(EktooFrame ui,
+			ISynchronizeTaskListener synchronizeTaskListener) {
 		super();
 		this.ui = ui;
 		this.synchronizeTaskListener = synchronizeTaskListener;
 	}
 
 	@Override
-	public String doInBackground() 
-	{
+	public String doInBackground() {
 		ui.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-		ui.setStatusbarText(EktooUITranslator.getMessageStartSync(
-		    ui.getSourceItem().toString(),
-		    ui.getTargetItem().toString(),
-		    new Date()
-		    ), Statusbar.PROGRESS_STATUS);
-		
-		try 
-		{
+		ui.setStatusbarText(EktooUITranslator.getMessageStartSync(ui
+				.getSourceItem().toString(), ui.getTargetItem().toString(),
+				new Date()), Statusbar.PROGRESS_STATUS);
+
+		try {
 			SyncItemUI sourceItem = ui.getSourceItem();
 			SyncItemUI targetItem = ui.getTargetItem();
 			result = ui.getController().sync(sourceItem, targetItem);
-			
+
 			return result;
-		}
-		catch (Throwable t) 
-		{
+		} catch (Throwable t) {
 			LOGGER.error(t.getMessage(), t);
 			MessageDialog.showErrorMessage(ui, t.getLocalizedMessage());
 		}
@@ -58,74 +53,70 @@ public class SynchronizeTask extends SwingWorker<String, Void> {
 	}
 
 	@Override
-	public void done() 
-	{
-	  try 
-		{
+	public void done() {
+		try {
 			result = get();
-			if (result != null)
-			{
-			  if ( result.equals(EktooController.SYNCHRONIZATION_SUCCEED))
-			  {
-			    synchronizeTaskListener.notifySynchronizeTaskSuccess(
-	            EktooUITranslator.getMessageSyncSyccessfuly(
-	            ui.getSourceItem().toString(),
-	            ui.getTargetItem().toString(),
-	            new Date()));
-			  }
-			  else if(result.equals(EktooController.SYNCHRONIZATION_CONFLICTED) ) 
-			  {
-			    synchronizeTaskListener.notifySynchronizeTaskConflict(EktooUITranslator.getMessageSyncConflicts(
-	            ui.getSourceItem().toString(),
-	            ui.getTargetItem().toString(),
-	            new Date()
-	            ));   
-			  }
-			  else if ( result.equals(EktooController.SYNCHRONIZATION_FAILED) ) 
-			  {
-			    synchronizeTaskListener.notifySynchronizeTaskError(EktooUITranslator.getMessageSyncFailed(
-	            ui.getSourceItem().toString(),
-	            ui.getTargetItem().toString(),
-	            new Date()
-	            )); 
-			  }
+			if (result != null) {
+				if (result
+						.equals(EktooController.SYNCHRONIZATION_ERROR_CREATING_ADAPTER)) {
+					synchronizeTaskListener
+					.notifySynchronizeTaskError(EktooUITranslator
+							.getMessageSyncErrorInAdapterCreation(ui
+									.getSourceItem().toString(), ui
+									.getTargetItem().toString(),
+									new Date()));
+				} else if (result
+						.equals(EktooController.SYNCHRONIZATION_SUCCEED)) {
+					synchronizeTaskListener
+							.notifySynchronizeTaskSuccess(EktooUITranslator
+									.getMessageSyncSyccessfuly(ui
+											.getSourceItem().toString(), ui
+											.getTargetItem().toString(),
+											new Date()));
+					ui.getSourceItem().cleanMessaged();
+					ui.getTargetItem().cleanMessaged();
+				} else if (result
+						.equals(EktooController.SYNCHRONIZATION_CONFLICTED)) {
+					synchronizeTaskListener
+							.notifySynchronizeTaskConflict(EktooUITranslator
+									.getMessageSyncConflicts(ui.getSourceItem()
+											.toString(), ui.getTargetItem()
+											.toString(), new Date()));
+				} else if (result
+						.equals(EktooController.SYNCHRONIZATION_FAILED)) {
+					synchronizeTaskListener
+							.notifySynchronizeTaskError(EktooUITranslator
+									.getMessageSyncFailed(ui.getSourceItem()
+											.toString(), ui.getTargetItem()
+											.toString(), new Date()));
+				}
+			} else {
+				synchronizeTaskListener
+						.notifySynchronizeTaskError(EktooUITranslator
+								.getMessageSyncFailed(ui.getSourceItem()
+										.toString(), ui.getTargetItem()
+										.toString(), new Date()));
 			}
-			else
-			{
-			  synchronizeTaskListener.notifySynchronizeTaskError(EktooUITranslator.getMessageSyncFailed(
-	          ui.getSourceItem().toString(),
-	          ui.getTargetItem().toString(),
-	          new Date()
-	          ));			  
-			}
-		} 
-		catch (InterruptedException e) 
-		{
-		  synchronizeTaskListener.notifySynchronizeTaskError(EktooUITranslator.getMessageSyncFailed(
-          ui.getSourceItem().toString(),
-          ui.getTargetItem().toString(),
-          new Date()
-          ));
-		  
-		  	  
+		} catch (InterruptedException e) {
+			synchronizeTaskListener
+					.notifySynchronizeTaskError(EktooUITranslator
+							.getMessageSyncFailed(
+									ui.getSourceItem().toString(), ui
+											.getTargetItem().toString(),
+									new Date()));
+
 			LOGGER.error(e.getMessage(), e);
-		} 
-		catch (ExecutionException e) 
-		{
-		  synchronizeTaskListener.notifySynchronizeTaskError(EktooUITranslator.getMessageSyncFailed(
-          ui.getSourceItem().toString(),
-          ui.getTargetItem().toString(),
-          new Date()
-          ));		  
+		} catch (ExecutionException e) {
+			synchronizeTaskListener
+					.notifySynchronizeTaskError(EktooUITranslator
+							.getMessageSyncFailed(
+									ui.getSourceItem().toString(), ui
+											.getTargetItem().toString(),
+									new Date()));
 			LOGGER.error(e.getMessage(), e);
 		}
 		ui.showSyncImageLabel(false);
 		ui.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 	}
-
-	
-	
-	
-	  
 
 }
