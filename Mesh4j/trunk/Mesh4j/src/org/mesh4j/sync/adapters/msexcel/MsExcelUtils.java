@@ -119,6 +119,14 @@ public class MsExcelUtils {
 		return worksheet;
 	}
 	
+
+	public static Sheet getOrCreateSheetHiddenIfAbsent(Workbook workbook, String sheetName) {
+		Sheet sheet = getOrCreateSheetIfAbsent(workbook, sheetName);
+		int index  = workbook.getSheetIndex(sheet);
+		workbook.setSheetHidden(index, true);
+		return sheet;
+	}
+	
 	public static Row getOrCreateRowHeaderIfAbsent(Sheet worksheet){
 		Row row = worksheet.getRow(0);
 		if(row == null){
@@ -208,5 +216,6 @@ public class MsExcelUtils {
 	public static RichTextString getRichTextString(Workbook workbook,String value){
 		return workbook.getCreationHelper().createRichTextString(value);
 	}
+
 }
 

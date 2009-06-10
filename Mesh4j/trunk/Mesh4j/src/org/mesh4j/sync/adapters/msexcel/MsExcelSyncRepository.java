@@ -58,7 +58,7 @@ public class MsExcelSyncRepository implements ISyncRepository, ISyncAware {
 			
 			Workbook workbook = this.excel.getWorkbook();
 			
-			Sheet sheet = MsExcelUtils.getOrCreateSheetIfAbsent(workbook, this.sheetName);			
+			Sheet sheet = MsExcelUtils.getOrCreateSheetHiddenIfAbsent(workbook, this.sheetName);			
 			
 			Row row = MsExcelUtils.getOrCreateRowHeaderIfAbsent(sheet);
 			
