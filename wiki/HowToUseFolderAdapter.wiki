@@ -1,4 +1,5 @@
 #summary HowTo create/use FolderAdapter
+#labels HowTo
 
 = Introduction =
 Mesh4x folder adapter supports synchronization between folders or directory where directory or folder contains sub-directory/sub-folder or any kind of file.
@@ -33,6 +34,4 @@ ISyncAdapter targetAdapter = FolderSyncAdapterFactory.createFolderAdapter(target
 SyncEngine engine = new SyncEngine(sourceAdapter,targetAdapter);
 engine.synchronize();
 }}}
-
-
 
