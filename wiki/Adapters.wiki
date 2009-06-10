@@ -27,7 +27,7 @@ See HowToUseMsAccessAdapter for more information.
 ==Hibernate OR/M for Databases Adapter==
 The Hibernate Adapter allows you to synchronize to any database through the Hibernate 
 OR/M library, which allows support for pretty much most databases available today. 
-See HowToUseHibernateAdapater for more information.
+See HowToUseHibernateAdapater for more information (example of Hibernate adapter for <b>MySQL</b> databse)
 
 
 ==Amazon Web Services S3 Adapter==
