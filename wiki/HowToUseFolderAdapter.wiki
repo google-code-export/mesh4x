@@ -1,4 +1,4 @@
-#summary HowTo create/use FolderAdapter
+#summary How to create/use FolderAdapter
 #labels HowTo
 
 = Introduction =
@@ -34,4 +34,3 @@ ISyncAdapter targetAdapter = FolderSyncAdapterFactory.createFolderAdapter(target
 SyncEngine engine = new SyncEngine(sourceAdapter,targetAdapter);
 engine.synchronize();
 }}}
-
