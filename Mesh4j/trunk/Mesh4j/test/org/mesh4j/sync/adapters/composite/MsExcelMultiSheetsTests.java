@@ -13,11 +13,15 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Test;
+import org.mesh4j.sync.ISupportReadSchema;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.adapters.InMemorySyncAdapter;
+import org.mesh4j.sync.adapters.msexcel.MsExcelContentAdapter;
 import org.mesh4j.sync.adapters.msexcel.MsExcelRDFSyncAdapterFactory;
 import org.mesh4j.sync.adapters.msexcel.MsExcelUtils;
+import org.mesh4j.sync.adapters.split.SplitAdapter;
+import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.test.utils.TestHelper;
 
@@ -49,6 +53,94 @@ public class MsExcelMultiSheetsTests {
 		Assert.assertEquals(0, adapterOpaque.getAll().size());
 	}
 
+	@Test
+	public void ShouldSyncAllSheetsOfTwoExcelFileByRDF() throws Exception{
+		
+		String sourceExcelFile = createMsExcelFile("composite_MsExcel_source.xlsx");
+		String targetExcelFile = createMsExcelFile("composite_MsExcel_target.xlsx");
+	
+		
+		MsExcelRDFSyncAdapterFactory factory = new MsExcelRDFSyncAdapterFactory("http://localhost:8080/mesh4x/feeds");
+		
+	
+		Map<String, String> sheets = new HashMap<String, String>();
+		sheets.put("sheet1", "Code");
+		sheets.put("sheet2", "Code");
+		sheets.put("sheet3", "Code");
+		
+		InMemorySyncAdapter opaqueAdapterSource = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
+		ISyncAdapter adapterSource = factory.createSyncAdapterForMultiSheets(sourceExcelFile, NullIdentityProvider.INSTANCE, sheets,opaqueAdapterSource);
+	
+		
+		InMemorySyncAdapter opaqueAdapterTarget = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
+		ISyncAdapter adapterTarget = factory.createSyncAdapterForMultiSheets(targetExcelFile, NullIdentityProvider.INSTANCE, sheets,opaqueAdapterTarget);
+		
+		SyncEngine syncEngine = new SyncEngine(adapterSource, adapterTarget);
+		TestHelper.assertSync(syncEngine);
+		
+	}
+	
+	
+	@Test
+	public void ShouldCreateTargetAndSyncAllSheetsOfTwoExcelFileByRDF() throws Exception{
+		
+		String sourceExcelFile = createMsExcelFile("composite_MsExcel_source.xlsx");
+		String targetExcelFile = TestHelper.baseDirectoryForTest() + "composite_MsExcel_target.xls";
+	
+		
+		MsExcelRDFSyncAdapterFactory factory = new MsExcelRDFSyncAdapterFactory("http://localhost:8080/mesh4x/feeds");
+		
+	
+		Map<String, String> sourceSheets = new HashMap<String, String>();
+		sourceSheets.put("sheet1", "Code");
+		sourceSheets.put("sheet2", "Code");
+		sourceSheets.put("sheet3", "Code");
+		Map<IRDFSchema, String> targetSheets = new HashMap<IRDFSchema, String>();
+		
+		InMemorySyncAdapter opaqueAdapterSource = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
+		ISyncAdapter adapterSource = factory.createSyncAdapterForMultiSheets(sourceExcelFile, NullIdentityProvider.INSTANCE,sourceSheets,opaqueAdapterSource);
+	
+		for(IIdentifiableSyncAdapter identifiableAdapter :((CompositeSyncAdapter)adapterSource).getAdapters()){
+			SplitAdapter adapter = (SplitAdapter)((IdentifiableSyncAdapter)identifiableAdapter).getSyncAdapter();
+			IRDFSchema rdfSchema = (IRDFSchema)((ISupportReadSchema)adapter.getContentAdapter()).getSchema();
+			String idColumnName = ((MsExcelContentAdapter)((SplitAdapter)adapter).getContentAdapter()).getMapping().getIdColumnName();
+			targetSheets.put(rdfSchema, idColumnName);
+		}
+		
+		
+		InMemorySyncAdapter opaqueAdapterTarget = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
+		ISyncAdapter adapterTarget = factory.createSyncAdapterForMultiSheets(targetExcelFile, NullIdentityProvider.INSTANCE, opaqueAdapterTarget,targetSheets);
+		
+		SyncEngine syncEngine = new SyncEngine(adapterSource, adapterTarget);
+		TestHelper.assertSync(syncEngine);
+		
+	}
+	
+	@Test
+	public void ShouldSyncAllSheetsOfTwoExcelformat() throws Exception{
+		String sourceExcelFile = createMsExcelFile("composite_MsExcel_source.xls");
+		String targetExcelFile = createMsExcelFile("composite_MsExcel_target.xlsx");
+	
+		
+		MsExcelRDFSyncAdapterFactory factory = new MsExcelRDFSyncAdapterFactory("http://localhost:8080/mesh4x/feeds");
+		
+	
+		Map<String, String> sheets = new HashMap<String, String>();
+		sheets.put("sheet1", "Code");
+		sheets.put("sheet2", "Code");
+		sheets.put("sheet3", "Code");
+		
+		InMemorySyncAdapter opaqueAdapterSource = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
+		ISyncAdapter adapterSource = factory.createSyncAdapterForMultiSheets(sourceExcelFile, NullIdentityProvider.INSTANCE, sheets,opaqueAdapterSource);
+	
+		
+		InMemorySyncAdapter opaqueAdapterTarget = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
+		ISyncAdapter adapterTarget = factory.createSyncAdapterForMultiSheets(targetExcelFile, NullIdentityProvider.INSTANCE, sheets,opaqueAdapterTarget);
+		
+		SyncEngine syncEngine = new SyncEngine(adapterSource, adapterTarget);
+		TestHelper.assertSync(syncEngine);
+	}
+	
 	public static String createMsExcelFile(String fileName) throws Exception {
 		
 		// Make MsExcel file
