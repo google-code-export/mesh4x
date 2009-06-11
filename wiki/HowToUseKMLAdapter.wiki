@@ -36,7 +36,7 @@ ISyncAdapter kmlAdapter = KMLDOMLoaderFactory.createKMLAdapter(kmlFileName, iden
 
 //non-static version
 KMLDOMLoaderFactory kmlFactory = new KMLDOMLoaderFactory();
-String sourceAlias= "kml:123"; //right now this parameter is of no use, but will be used in future for applying new feature.  
+String sourceAlias= "kml:myfile.kml"; //right now this parameter is of no use, but will be used in future for applying new feature.  
 ISyncAdapter kmlAdapter = kmlFactory.createSyncAdapter(sourceAlias, sourceDefinition, identityProvider);
 
 }}}
