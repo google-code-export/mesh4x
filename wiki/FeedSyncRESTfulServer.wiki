@@ -1,10 +1,12 @@
 = Introduction =
 
-Mesh4x FeedSync server is a java servlet that supports RESTfull API to synchonize data with uploaded mesh4x feeds through the basic HTTP GET and POST method.
+Mesh4x FeedSync server is a java servlet that supports RESTfull API to synchronize data with uploaded mesh4x feeds through the basic HTTP GET and POST method.
 
 Current implementation in java can be download from Mesh4xDownloads section.
 
 Test server is hosted on http://sync.staging.instedd.org:8080/mesh4x
+
+http://mesh4x.googlecode.com/svn/wiki/files/mesh4xFeedSyncRestfullServer.png
 
 = Details =
 The information in the server is organized with the following logic structure:
@@ -15,7 +17,7 @@ The information in the server is organized with the following logic structure:
 In order to describe the protocol we assume a mesh group named Epiinfo with and a dataset named Oswego in this mesh group. This is a real mesh4x use case , Oswego is a MsAccess table of Epiinfo application. For more information see [http://taha.instedd.org/search/label/Mesh Taha Kass-Hout's (taha) Blog]
 
 
-=== Get protocol for Mesh Groups ===
+==== Get protocol for Mesh Groups ====
  * Get all mesh groups, feed rss20 with all mesh groups in the server
 {{{
 http://sync.staging.instedd.org:8080/mesh4x/feeds
@@ -26,7 +28,7 @@ http://sync.staging.instedd.org:8080/mesh4x/feeds
 http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo
 }}}
 
-=== Get protocol for Datasets ===
+==== Get protocol for Datasets ====
  * Get datatset schema, rdfxml of Oswego dataset schema(Oswego table structure expressed as RDF
 {{{
 http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo/Oswego/schema
@@ -93,7 +95,7 @@ http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo/Oswego?filter=Country=
 http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo/Oswego/history?syncId=1234	
 }}}
 
-== Util URLs examples ==
+==== Util URLs, Java Rosa example ====
  * Java rosa: feed atom10, each item is a Oswego dataset patient where Country attribute is equals to 'Argentine', payload as xform instance (translated from rdf schema)
 {{{
 http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo/Oswego?format=atom10&content=xform&filter=Country=Argentine
@@ -101,7 +103,7 @@ http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo/Oswego?format=atom10&c
 
 
 == POST protocol ==
-=== Create a new Mesh Group ===
+==== Create a new Mesh Group ====
  * mesh administration, create/update/clean a mesh group
  Required parameters:
 	# action=uploadMeshDefinition
@@ -115,7 +117,7 @@ http://sync.staging.instedd.org:8080/mesh4x/feeds
 }}}
 
 
-=== Create a new Dataset into a mesh group ===
+==== Create a new Dataset into a mesh group ====
  * dataset administration, create/update/clean a dataset
  Required parameters:
 	# action=uploadMeshDefinition
@@ -129,13 +131,13 @@ http://sync.staging.instedd.org:8080/mesh4x/feeds
 http://sync.staging.instedd.org:8080/mesh4x/feeds	
 }}}
 
-=== Synchronize data ===
+==== Synchronize data ====
  * execute sync process, post a feed rss20 with payload as rdfxml instance and sync information
 {{{
 http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo/Oswego	
 }}}
 	
- * 	execute sync process, post a feed atom10 with payload as xform instance and sync information
+ * execute sync process, post a feed atom10 with payload as xform instance and sync information
 {{{
 http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo/Oswego?format=atom10&content=xform	
 }}}
@@ -143,6 +145,12 @@ http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo/Oswego?format=atom10&c
  * add a new item, post a xml payload as rdf
 {{{
 http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo/Oswego/add	
-}}}	
+}}}
+
+ * execute multi sync process, post a feed rss20 with payload as rdfxml instance and sync information, items can be an union of all items of each dataset in mesh group
+{{{
+http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo
+}}}
+
 
 
