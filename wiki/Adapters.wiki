@@ -37,7 +37,7 @@ This adapter can be used in conjunction with the storage web service (hosted in 
 =Adapters used as Transports=
 Transport adapters are designed to help synchronization happen in a distributed system. 
 
-==File Adapter <b title="How To Use FolderAdapter ">[http://code.google.com/p/mesh4x/wiki/HowToUseFolderAdapter http://mesh4x.googlecode.com/svn/wiki/files/howTo.png]</b>==
+==File Adapter <b title="How To Use File Adapter ">[http://code.google.com/p/mesh4x/wiki/HowToUseFeedAdapter http://mesh4x.googlecode.com/svn/wiki/files/howTo.png]</b>==
 The file adapter allows you to sync from/to a file. The file is really an XML (RSS/Atom) file that you can save on a USB drive and then sync with again. This file is also what you would transfer ("beam") to sync over Infrared or Bluetooth in a peer-to-peer fashion between mobiles.
 
 ==Folder Adapter <b title="How To Use FolderAdapter">[http://code.google.com/p/mesh4x/wiki/HowToUseFolderAdapter http://mesh4x.googlecode.com/svn/wiki/files/howTo.png]</b>==
