@@ -72,7 +72,7 @@ You will need:
      <td valign=top>
 =Download and Installation=
   # Download the latest version Ektoo client release ([http://downloads.instedd.org/mesh4x/ektoo_0_0_6.zip Ektoo Client Beta]).
-  # Extract the zip distribution to a suitable location. The distribution cntains 4 folders and a .jar file as the following:
+  # Extract the zip distribution to a suitable location. The distribution contains 4 folders and a .jar file as the following:
    * data : Contains sample/default data files 
    * database : Contains sample db schema
    * logs : Contains application log
@@ -193,7 +193,7 @@ The process consists of:
  # Select "MySQL" data type from "<b>Data Source Type</b>" drop down list.
  # Enter user name in "<b>User</b>" text box
  # Enter password in "<b>Password</b>" text box
- # Enter host name and port no in "<b>Host</b>" first and second textvbox.
+ # Enter host name and port no in "<b>Host</b>" first and second text box.
  # Enter database in "<b>Database</b>" text box
  # Click on connection icon
    * After successful connection, available tables will be displayed in "<b>Table</b>" drop down list 
