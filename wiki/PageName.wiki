@@ -1,0 +1,37 @@
+#summary How to create/use KMLAdapter.
+
+= Introduction =
+
+KML, or Keyhole Markup Language, is an XML grammar and file format for modeling and storing geographic features such as points, lines, images, polygons, and models for display in Google Earth, Google Maps and other applications. You can use KML to share places and information with other users of these applications.
+The purpose of Mesh4x KMLAdapter? is to sync a KML file with other KML file or other supported repository say Cloud or Feed (RSS/Atom).
+
+
+= Build a KML adapter for sync =
+
+Factory class:
+{{{
+org.mesh4j.sync.adapters.kml.KMLDOMLoaderFactory
+}}}
+
+Methods for creating adapter instance: 
+{{{
+public static ISyncAdapter createKMLAdapter(String kmlFileName, IIdentityProvider identityProvider);
+
+public ISyncAdapter createSyncAdapter(String sourceAlias, String sourceDefinition, IIdentityProvider identityProvider);	
+}}}
+
+Example:
+{{{
+String kmlFileName = "kmlSyncTestsPlacemark.kml";
+String sourceDefinition = KMLDOMLoaderFactory.createSourceDefinition(kmlFileName);
+IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
+
+//static version
+ISyncAdapter kmlAdapter = KMLDOMLoaderFactory.createKMLAdapter(kmlFileName, identityProvider);
+
+//non-static version
+KMLDOMLoaderFactory kmlFactory = new KMLDOMLoaderFactory();
+String sourceId = "kml:123";
+ISyncAdapter kmlAdapter = kmlFactory.createSyncAdapter(sourceId, sourceDefinition, identityProvider);
+
+}}}
