@@ -30,11 +30,11 @@ HowToUseHibernateAdapater
 
 HowToUseMsAccessAdapter
 
-HowToUseHTTPAdapter
+[http://code.google.com/p/mesh4x/wiki/HowToUseHTTPAdapter HowToUseHTTPAdapter]
 
-HowToUseKMLAdapter
+[http://code.google.com/p/mesh4x/wiki/HowToUseKMLAdapter HowToUseKMLAdapter]
 
-HowToUseDOMAdapter
+[http://code.google.com/p/mesh4x/wiki/HowToUseDOMAdapter HowToUseDOMAdapter]
 
 HowToUseFeedAdapter
 
