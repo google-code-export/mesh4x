@@ -30,7 +30,7 @@ HowToUseHibernateAdapater
 
 HowToUseMsAccessAdapter
 
-HowToUseHTTPAdapter 
+HowToUseHTTPAdapter
 
 HowToUseKMLAdapter
 
