@@ -11,7 +11,7 @@ The information in the server is organized with the following logic structure:
  * Mesh groups: is the first level, is a group of data sets. Each item is a dataset in the mesh group with the information of schema and mappings.
  * Datasets: is the second level, represents the dataset content, each item has a payload with business information as rdf instance or plain xml and feedSync information.
 
-== Get protocol ==
+== GET protocol ==
 In order to describe the protocol we assume a mesh group named Epiinfo with and a dataset named Oswego in this mesh group. This is a real mesh4x use case , Oswego is a MsAccess table of Epiinfo application. For more information see [http://taha.instedd.org/search/label/Mesh Taha Kass-Hout's (taha) Blog]
 
 
@@ -100,6 +100,49 @@ http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo/Oswego?format=atom10&c
 }}}
 
 
+== POST protocol ==
+=== Create a new Mesh Group ===
+ * mesh administration, create/update/clean a mesh group
+ Required parameters:
+	# action=uploadMeshDefinition
+	# format=rss20|atom10
+	# newSourceId=mesh group name, example 'Epiinfo'
+	# description=<a description>
+	# schema=<rdfxml or null>
+	# mappings=<mappings xml or null>
+{{{
+http://sync.staging.instedd.org:8080/mesh4x/feeds 
+}}}
 
 
+=== Create a new Dataset into a mesh group ===
+ * dataset administration, create/update/clean a dataset
+ Required parameters:
+	# action=uploadMeshDefinition
+	# format=rss20|atom10
+	# newSourceId=meshgroup/dataset name, example 'Epiinfo/Oswego'
+	# description=<a description>
+	# schema=<rdfxml or null>
+	# mappings=<mappings xml or null>
+
+{{{
+http://sync.staging.instedd.org:8080/mesh4x/feeds	
+}}}
+
+=== Synchronize data ===
+ * execute sync process, post a feed rss20 with payload as rdfxml instance and sync information
+{{{
+http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo/Oswego	
+}}}
 	
+ * 	execute sync process, post a feed atom10 with payload as xform instance and sync information
+{{{
+http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo/Oswego?format=atom10&content=xform	
+}}}
+
+ * add a new item, post a xml payload as rdf
+{{{
+http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo/Oswego/add	
+}}}	
+
+
