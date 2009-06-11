@@ -1,4 +1,5 @@
 #summary How to create/use GoogleSpreadsheet Adapter (Incomplete!).
+#labels HowTo
 
 = Introduction =
 
