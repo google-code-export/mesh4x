@@ -73,7 +73,7 @@ String path = "http://sync.staging.instedd.org:8080/mesh4x/feeds/EktooMesh/Ektoo
 }}}
 
 
-Following method of HttpSyncAdapterFactory class  upload mesh,feed and rdf schema(if schema not present in the server)
+You could also do the all task(upload mesh,schema,mapping,dataset) with the following method of HttpSyncAdapterFactory class.This method is very useful because if the server doesnt have schema it uploads the schema.
 
 
 
