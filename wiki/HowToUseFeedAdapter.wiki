@@ -1,4 +1,5 @@
 #summary How to use/create FeedAdapter
+#labels HowTo
 
 = Introduction =
 Mesh4x FeedAdapter supports Rss 2.0 and Atom 1.0 feed.FeedAdapter operates on Feed class.Feed class represents standard Rss 2.0 and Atom 1.0 feed format.You can sync two Rss 2.0 feed or two Atom 1.0 feed or it could be synchronization between Rss and Atom.
@@ -68,4 +69,3 @@ ISyncAdapter targetAdapter = FeedSyncAdapterFactory.createSyncAdapter(targetFeed
 SyncEngine engine = new SyncEngine(sourceAdapter,targetAdapter);
 engine.synchronize();
 }}}
-
