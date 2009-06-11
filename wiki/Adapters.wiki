@@ -45,7 +45,8 @@ The folder adapter allows you to sync from/to a folder. The folder is really an 
 See HowToUseFolderAdapter for more information.
 
 ==HTTP Adapter <b title="How To Use HTTPAdapter">[http://code.google.com/p/mesh4x/wiki/HowToUseHTTPAdapter http://mesh4x.googlecode.com/svn/wiki/files/howTo.png]</b>==
-The HTTP adapter synchronizes to a server that supports the REST APIs for Feedsync. We have an implementation of such server in the source tree too (it's what you are synchronizing to when using the KML demo)
+The HTTP adapter synchronizes to a server that supports the REST APIs for Feedsync. We have an implementation of such server in the source tree too (it's what you are synchronizing to when using the KML demo).
+For more information see [FeedSyncRESTfulServer Mesh4x FeedSync RESTfull Server]
 
 ==SMS Adapter==
 The SMSAdapter allows you to synchronize over SMS messages. It implements an optimized version of the FeedSync protocol specifically designed to minimize the number of messages exchanged. For example you could use this to synchronize J2ME RMS records with a PC or server or two PCs (with phones plugged in). Read more here: [SMSAdapter].
