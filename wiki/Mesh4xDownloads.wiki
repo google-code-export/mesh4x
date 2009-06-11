@@ -40,6 +40,7 @@ Uploaded: 2009-02-05
 === Mesh4x FeedSync server (RESTFull) ===
 
 [http://downloads.instedd.org/mesh4x/mesh4x_war_0_0_8.7z Mesh4J FeedSync server (war)]. Supports different types of feed repositories (S3, file).
+For more information see [FeedSyncRESTfulServer Mesh4x FeedSync RESTfull Server]
 
 Uploaded: 2009-02-05
 
