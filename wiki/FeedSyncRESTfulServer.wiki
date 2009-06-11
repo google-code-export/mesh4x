@@ -22,51 +22,84 @@ http://sync.staging.instedd.org:8080/mesh4x/feeds
 }}}
 
  * Get all datasets for mesh group named Epiinfo, feed rss20 with all dataset in mesh group Epiinfo
+{{{
 http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo
+}}}
 
 === Get protocol for Datasets ===
  * Get datatset schema, rdfxml of Oswego dataset schema(Oswego table structure expressed as RDF
+{{{
 http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo/Oswego/schema
+}}}
 
  * Get dataset schema as xform, XForm of Oswego dataset generated from Oswego rdf schema
+{{{
 http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo/Oswego/schema?content=xform
+}}}
 
  * Get dataset mappings, Xml mappings of Oswego dataset
+{{{
 http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo/Oswego/mappings
+}}}
 
 ==== Get protocol for Datasets content ====
  * Get all items, feed rss20, each item is a Oswego dataset patient with payload as rdf
+{{{
 http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo/Oswego	
+}}}
 
  * Get all items as rss syndication protocol, feed rss20, each item is a Oswego dataset patient with payload as rdf
+{{{
 http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo/Oswego?format=rss20
+}}}
 
  * Get all items as atom syndication protocol, feed atom10, each item is a Oswego dataset patient with payload as rdf
+{{{
 http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo/Oswego?format=atom10	
+}}}
 
 ==== Get protocol for Datasets content translation to other formats ====
- * Get kml, each placemark is a Oswego dataset patient, rdf schema and mappings are used to translate placemarks title and geo lat/lon data http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo/Oswego?format=kml	
+ * Get kml, each placemark is a Oswego dataset patient, rdf schema and mappings are used to translate placemarks title and geo lat/lon data
+{{{
+http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo/Oswego?format=kml	
+}}}
 	
- * Get xform, feed rss20, each item is a Oswego dataset patient with payload as xform instance (translated from rdf schema) http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo/Oswego?content=xform	
+ * Get xform, feed rss20, each item is a Oswego dataset patient with payload as xform instance (translated from rdf schema) 
+{{{
+http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo/Oswego?content=xform	
+}}}
 
- * Get xform without feed sync information, feed rss20, each item is a Oswego dataset patient with payload as xform instance (translated from rdf schema) without feedSync information http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo/Oswego?content=plain_xform	
+ * Get xform without feed sync information, feed rss20, each item is a Oswego dataset patient with payload as xform instance (translated from rdf schema) without feedSync information
+{{{
+http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo/Oswego?content=plain_xform	
+}}}
 
-  * Get plain xml without feed sync information, feed rss20, each item is a Oswego dataset patient with payload as plain xml instance (translated from rdf schema) without feedSync information http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo/Oswego?content=plain_xml	
+  * Get plain xml without feed sync information, feed rss20, each item is a Oswego dataset patient with payload as plain xml instance (translated from rdf schema) without feedSync information
+{{{
+http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo/Oswego?content=plain_xml	
+}}}
 
 ==== Get protocol for Datasets content filtering ====
  * Get items filtering by rdf instance attribute, feed rss20, each item is a Oswego dataset patient that Country attribute is equals to 'Argentine', payload as rdf instance
+{{{
 http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo/Oswego?filter=Country=Argentine
-
+}}} 
+or
+{{{
 http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo/Oswego?filter=Country=Argentine or (Ill=true and dateOnSet>2009-01-01T10:30:00Z)
+}}}
 	
 ==== Get protocol for Datasets content history ====
  * Get history changes for an Item, feed rss20, each item is a history change of Oswego dataset patient information for the item with syncId equals to '1234'
+{{{
 http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo/Oswego/history?syncId=1234	
+}}}
 
-
-== Util URLs ==
- * Example: feed atom10, each item is a Oswego dataset patient where Country attribute is equals to 'Argentine' and is patient ill attribute is equals to true, payload as xform instance (translated from rdf schema)
+== Util URLs examples ==
+ * Java rosa: feed atom10, each item is a Oswego dataset patient where Country attribute is equals to 'Argentine' and is patient ill attribute is equals to true, payload as xform instance (translated from rdf schema)
+{{{
 http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo/Oswego?format=atom10&content=xform&filter=Country=Argentine and Ill=true
+}}}
 
 
 
