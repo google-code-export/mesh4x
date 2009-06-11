@@ -1,56 +1,74 @@
-#summary One-sentence summary of this page.
-
 = Introduction =
 
-FeedSync server that supports RESTful API to synchonize data with uploaded feed through the basic HTTP GET and POST method.
+Mesh4x FeedSync server that supports RESTfull API to synchonize data with uploaded feed through the basic HTTP GET and POST method.
+
+Current implementation in java can be download from Mesh4xDownloads section.
+
+Test server is hosted on http://sync.staging.instedd.org:8080/mesh4x
 
 
 = Details =
 
-feed rss20 with all mesh groups in the server
-http://localhost:8080/mesh4x/feeds
+== Get protocol ==
+ * feed rss20 with all mesh groups in the server
+ 
+http://sync.staging.instedd.org:8080/mesh4x/feeds
 
-feed rss20 with all dataset in mesh group Epiinfo
-http://localhost:8080/mesh4x/feeds/Epiinfo
+ * feed rss20 with all dataset in mesh group Epiinfo
 
-Oswego schema as rdfxml (Oswego table structure expressed as RDF)
-http://localhost:8080/mesh4x/feeds/Epiinfo/Oswego/schema
+http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo
 
-Oswego schema as XForm generated from rdf schema
-http://localhost:8080/mesh4x/feeds/Epiinfo/Oswego/schema?content=xform
+ * rdfxml of Oswego dataset schema(Oswego table structure expressed as RDF)
 
-Oswego mappings
-http://localhost:8080/mesh4x/feeds/Epiinfo/Oswego/mappings
+http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo/Oswego/schema
 
-feed rss20, each item is a patient with payload as rdf
-http://localhost:8080/mesh4x/feeds/Epiinfo/Oswego	
+ * XForm of Oswego dataset generated from Oswego rdf schema
 
-feed rss20, each item is a patient with payload as rdf
-http://localhost:8080/mesh4x/feeds/Epiinfo/Oswego?format=rss20
+http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo/Oswego/schema?content=xform
 
-feed atom10, each item is a patient with payload as rdf	
-http://localhost:8080/mesh4x/feeds/Epiinfo/Oswego?format=atom10	
+ * Xml mappings of Oswego dataset
+ 
+http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo/Oswego/mappings
 
-kml, each placemark is a patient, use rdf and mappings for translate placemark title and geo lat/lon data
-http://localhost:8080/mesh4x/feeds/Epiinfo/Oswego?format=kml	
+ * feed rss20, each item is a patient with payload as rdf
+ 
+http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo/Oswego	
+
+ * feed rss20, each item is a patient with payload as rdf
+ 
+http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo/Oswego?format=rss20
+
+ * feed atom10, each item is a patient with payload as rdf
+ 
+http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo/Oswego?format=atom10	
+
+ * kml, each placemark is a patient, use rdf and mappings for translate placemark title and geo lat/lon data
+ 
+http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo/Oswego?format=kml	
 	
-feed rss20, each item is a patient with payload as xform instance (translated from rdf schema)
-http://localhost:8080/mesh4x/feeds/Epiinfo/Oswego?content=xform	
+ * feed rss20, each item is a patient with payload as xform instance (translated from rdf schema)
+ 
+http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo/Oswego?content=xform	
 
-feed rss20, each item is a patient with payload as xform instance (translated from rdf schema) without feedSync information
-http://localhost:8080/mesh4x/feeds/Epiinfo/Oswego?content=plain_xform	
+ * feed rss20, each item is a patient with payload as xform instance (translated from rdf schema) without feedSync information
+ 
+http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo/Oswego?content=plain_xform	
 
-feed rss20, each item is a patient with payload as plain xml instance (translated from rdf schema) without feedSync information
-http://localhost:8080/mesh4x/feeds/Epiinfo/Oswego?content=plain_xml	
+ * feed rss20, each item is a patient with payload as plain xml instance (translated from rdf schema) without feedSync information
+ 
+http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo/Oswego?content=plain_xml	
 
-feed rss20, each item is a patient that Country attribute is equals to 'Argentine', payload as rdf instance
-http://localhost:8080/mesh4x/feeds/Epiinfo/Oswego?filter=Country=Argentine
+ * feed rss20, each item is a patient that Country attribute is equals to 'Argentine', payload as rdf instance
+ 
+http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo/Oswego?filter=Country=Argentine
 	
-feed rss20, each item is a history change of patient information for the item with syncId equals to '1234'
-http://localhost:8080/mesh4x/feeds/Epiinfo/Oswego/history?syncId=1234	
+ * feed rss20, each item is a history change of patient information for the item with syncId equals to '1234'
+ 
+http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo/Oswego/history?syncId=1234	
 
 
-Combinations are supported:
-feed atom10, each item is a patient that Country attribute is equals to 'Argentine' and is ill, payload as xform instance (translated from rdf schema)
-http://localhost:8080/mesh4x/feeds/Epiinfo/Oswego?format=atom10&content=xform&filter=Country=Argentine and Ill=true
+== Combinations are supported ==
+ * feed atom10, each item is a patient that Country attribute is equals to 'Argentine' and is ill, payload as xform instance (translated from rdf schema)
+ 
+http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo/Oswego?format=atom10&content=xform&filter=Country=Argentine and Ill=true
 	
