@@ -1,7 +1,7 @@
 #summary List of adapters and what they do
 
 =Adapters for Productivity Apps=
-==KML Adapter==
+==KML Adapter== [http://code.google.com/p/mesh4x/wiki/HowToUseKMLAdapter http://mesh4x.googlecode.com/svn/wiki/files/howTo.png]
 #The Mesh4x KML adapter allows you to synchronize KML / KMZ files, including all their placemarks (pushpins, polygons, lines, etc) styles and for KMZ files the embedded resources (photos, icons).
 
 [http://edjez.instedd.org/2008/05/build-maps-collaboratively-with-new.html Build maps collaboratively with new Mesh4x KML adapter]
