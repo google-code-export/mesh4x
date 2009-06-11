@@ -2,7 +2,7 @@
 #labels Howto
 
 = Introduction =
-Mesh4x HttpSyncAdapter basically communicates with the mesh4x FeedSync server to sync its feed. Mesh4x has its own HTTP [[FeedSyncRESTfulServer FeedSync RESTful server(Feedsync server)]. This server supports synchoronization with uploaded feed through the basic HTTP GET and POST method.So HttpSyncAdapter actually make request to sync server to add/update/get  mesh or feed.HttpSyncAdapter supports its own merge implementation through ISupportMerge.
+Mesh4x HttpSyncAdapter basically communicates with the mesh4x FeedSync server to sync its feed. Mesh4x has its own HTTP [FeedSyncRESTfulServer FeedSync RESTful server(Feedsync server)]. This server supports synchoronization with uploaded feed through the basic HTTP GET and POST method.So HttpSyncAdapter actually make request to sync server to add/update/get  mesh or feed.HttpSyncAdapter supports its own merge implementation through ISupportMerge.
 
 
 = Building HttpSyncAdapter  =
