@@ -13,7 +13,7 @@ GoogleSpreadsheetAdapter can interact with content data in either in
 or 
   RDF form: to sync data between google spreadsheet and other different media type for example MsExcel, MySql etc.
 
-Following are more details on how to use the adapater factory classes to create appropriate adapter instance.
+Following are more details on how to use the adapter factory classes to create appropriate adapter instance.
 
 ===Plain xml based GoogleSpreadsheet? adapter ===
 
@@ -107,13 +107,13 @@ String sourceAlias = "user";
 
 //Scenario 1:
 /*
-when the spreadsheet/worksheet is not avaliable, user need to provide a schema in
+when the spreadsheet/worksheet is not available, user need to provide a schema in
 _sourceSchema_ that contains schema of other data repository 
 with which user attempts to perform sync operation. Using which this schema 
 GoogleSpreadsheetAdapter can automatically create new spreadsheet/worksheet before 
 sync operation. If the spreadsheet as well as worksheet both available it will 
 extract its own schema and compare with the given schema if both are compatible for sync.
-Sync is only possible with 2 different repository when the corresponding schema 
+Sync is only possible with 2 different repositories when the corresponding schemas 
 of the repositories are compatible with each other. 
 
 This is mainly used when the adapter acts as a target adapter in the sync operation.
@@ -126,7 +126,7 @@ ISyncAdapter targetAdapter = factory.createSyncAdapter(username,
 
 //Scenario 2:
 /*
-when the spreadsheet/worksheet is avaliable and the schema is compatible with 
+when the spreadsheet/worksheet is available and the schema is compatible with 
 other repository to sync, user no need to provide an external schema and hence can 
 call this method.
 
