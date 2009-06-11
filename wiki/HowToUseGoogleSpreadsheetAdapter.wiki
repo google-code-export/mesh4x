@@ -3,7 +3,7 @@
 
 = Introduction =
 
-Mesh4x GoogleSpreadsheet adapter is to sync spreadsheet data stored in cloud (http://docs.google.com). GoogleSpreadsheet adapter is based on SplitAdapter? concept of Mesh4x core. The concept of SplitAdapter? is to separate the business data and sync information; that is business data and sync information stores in different worksheet. GoogleSpreadsheet adapter support sync operation with other heterogeneous data repository, for example you can sync a Google spreadsheet with Ms-excel, MsAccess or MySql (any RDBMS) etc. 
+The purpose of Mesh4x GoogleSpreadsheet adapter is to sync spreadsheet data stored in cloud environment (http://docs.google.com). This adapter is based on SplitAdapter? concept of Mesh4x core. The concept of SplitAdapter? is to separate the business data and sync information; that is business data and sync information stores in different worksheet. GoogleSpreadsheet adapter support sync operation with other heterogeneous data repository, for example you can sync a Google spreadsheet with Ms-excel, MsAccess or MySql (any RDBMS) etc. 
 
 
 = Build a GoogleSpreadsheetAdapter for sync =
