@@ -28,6 +28,7 @@ ISyncAdapter feedAdapter = FeedSyncAdapterFactory.createSyncAdapter(feedFileName
 }}}
 
 =Synchronization=
+
 For better understanding Following code creates rss file automatically and then add item into the feed file.After creating the source feed file and target feed file  mesh4x sync process incorporates changes between two feed file.
 
 
@@ -50,10 +51,21 @@ syncEngine.synchronize();
 
 }}}
 
-With the above to create element you can use any xml library instead of TestHelper class in mesh4x.You could use dom4j DocumentHelper class also.Following code represents how to create xml Element object from string by DocumentHelper class of dom4j.
+With the above code to create element you can use any xml library instead of TestHelper class in mesh4x.You could use dom4j DocumentHelper class also.Following code represents how to create xml Element object from string by DocumentHelper class of dom4j.
 
 {{{
 Element element  = DocumentHelper.parseText("<payload><user><id>SyncId123</id><name>SyncId123</name><pass>123</pass></user></payload>").getRootElement();
 }}}
 
+If you have Rss or Atom feed file you could synchronize with the following way
+
+{{{
+String sourceFeedFile = "c:/rss1.xml";
+String targetFeedFile = "c:/rss2.xml";
+ISyncAdapter sourceAdapter = FeedSyncAdapterFactory.createSyncAdapter(sourceFeedFile, NullIdentityProvider.INSTANCE);
+ISyncAdapter targetAdapter = FeedSyncAdapterFactory.createSyncAdapter(targetFeedFile, NullIdentityProvider.INSTANCE);
+		
+SyncEngine engine = new SyncEngine(sourceAdapter,targetAdapter);
+engine.synchronize();
+}}}
 
