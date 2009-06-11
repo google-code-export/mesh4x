@@ -43,7 +43,7 @@ The idea is to share KML files between two PCs with a phone plugged in, the appl
 
 http://mesh4x.googlecode.com/svn/wiki/files/desktopClient1.png
 
-You can read about the demo in [http://jtondato.clariusconsulting.net/2008/10/mesh4x-sms-adapter-desktop-pc.html Mesh4x SMS Adapter Desktop PC]
+You can read about the demo in [http://jtondato.clariusconsulting.net/2008/10/mesh4x-sms-adapter-desktop-pc.html Mesh4x SMS Adapter Desktop PC]. 
 
 The demo requires the "Java Communications Library" installed in your PC, please check the following [http://www.smslib.org/doc/installation/ installation instructions] (only Java Communications Library section).
 
@@ -73,6 +73,8 @@ http://mesh4x.googlecode.com/svn/wiki/files/javarosa2.png
 
 
 == More Information ==
+[http://taha.instedd.org/search/label/Mesh Epi Info a real use case]
+
 [http://edjez.instedd.org/2008/06/mesh4x-sms-adapter-sync-data-without.html Mesh4x SMS Adapter: Sync data without an Internet connection]
 
 [http://edjez.instedd.org/2008/10/mesh4x-goes-mobile-with-javarosa-allows.html Mesh4x goes mobile with JavaROSA, allows you to sync data on your handset with no Internet]
