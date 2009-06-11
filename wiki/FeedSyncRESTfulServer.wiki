@@ -1,18 +1,25 @@
 = Introduction =
 
-Mesh4x FeedSync server that supports RESTfull API to synchonize data with uploaded feed through the basic HTTP GET and POST method.
+Mesh4x FeedSync server is a java servlet that supports RESTfull API to synchonize data with uploaded mesh4x feeds through the basic HTTP GET and POST method.
 
 Current implementation in java can be download from Mesh4xDownloads section.
 
 Test server is hosted on http://sync.staging.instedd.org:8080/mesh4x
 
 = Details =
+The information in the server has the following logic structure:
+ * Mesh groups: is the first level, is a group of data sets.
+ * Datasets: is the second level, is a list of data items with feedSync information.
+
+Examples mesh group Epiinfo dataset Oswego, in this case Oswego is MsAccess table of Epiinfo application.
 
 == Get protocol ==
 
 === Get protocol for Mesh Groups ===
  * Get all mesh groups, feed rss20 with all mesh groups in the server
+{{{
 http://sync.staging.instedd.org:8080/mesh4x/feeds
+}}}
 
  * Get all datasets for mesh group named Epiinfo, feed rss20 with all dataset in mesh group Epiinfo
 http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo
