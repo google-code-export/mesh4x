@@ -1,4 +1,4 @@
-#summary How to use HTTP adapter
+#summary How to use HTTP sync adapter
 #labels Howto
 
 = Introduction =
