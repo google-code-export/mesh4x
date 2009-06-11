@@ -1,0 +1,77 @@
+#summary How to use HTTP adapter
+#labels Howto
+
+= Introduction =
+Mesh4x HttpSyncAdapter basically communicates with the cloud server to sync its feed .Mesh4x has its own HTTP sync RESTful server(Feedsync server).This server supports
+Synchoronization with uploaded feed through the basic HTTP GET and POST method.So HttpSyncAdapter actually make request to sync server to add/update/get  mesh or feed.HttpSyncAdapter supports its own merge implementation through ISupportMerge.
+
+
+= Building HttpSyncAdapter  =
+Creating HttpSyncAdapter is very easy way through the factory class HttpSyncAdapterFactory.
+With the factory you can create the adapter in many different ways. Here we represent the efficient way of creating adapter.Following method of HttpSyncAdapterFactory class creates the adapter.
+
+{{{
+createSyncAdapter(String url, IIdentityProvider identityProvider){
+}}}
+
+parameter definition:
+
+ * *url:* The url of the feed sync server specifying with mesh name and feed name.
+ * *identityProvider:* Identity of the user.Please see {{{org.mesh4j.sync.security.LoggedInIdentityProvider}}} and {{{org.mesh4j.sync.security.NullIdentityProvider}}} in mesh4x core.LoggedInIdentityProvider provides logged in user and NullIdentityProvider provides default "admin" as identity.
+
+Lets create the adapter:
+
+{{{
+String meshGroup = "myMesh";
+String dataSetId = "myFeed";
+String serverUrl = "http://localhost:8080/mesh4x/feeds";
+
+String url = serverUrl + "/" + meshGroup + "/" + dataSetId;
+
+HttpSyncAdapter httpSyncAdapter = HttpSyncAdapterFactory.createSyncAdapter(url, identityProvider);
+}}}
+
+So after creating the HttpSyncAdapter you need to make sure that cloud server must contain
+rdf schema.
+check the colud server rdf schema
+{{{
+ISchema cloudSchema = adapter.getSchema();
+}}}
+If the colud schema is null then it means server doesnt have rdf schema and you have to upload the schema before you start synchronization with the server.HttpSyncAdapter does  support RDF schema.Following method of HttpSyncAdapterFactory class  upload mesh,feed and rdf schema(if schema not present in the server)
+
+{{{
+createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(String serverUrl, String meshGroup, String dataSetId, IIdentityProvider identityProvider, ISchema schema)
+}}}
+
+parameter defination:
+ * *serverUrl:* The base url of the sync server(ex,http://localhost:8080/mesh4x/feeds)
+ * *meshGroup:* The mesh name in the server(ex,myMesh or mySqlMesh)
+ * *dataSetId:* The data set name.Under one mesh you may have multiple data set(ex,under mySqlMesh you may have user,address,customer data set).
+ * *identityProvider:* Identity of the user.Please see {{{org.mesh4j.sync.security.LoggedInIdentityProvider}}} and {{{org.mesh4j.sync.security.NullIdentityProvider}}} in mesh4x core.LoggedInIdentityProvider provides logged in user and NullIdentityProvider provides default "admin" as identity.
+ * *schema:* The RDF schema which cloud server will follow to validate mesh.
+
+
+Lets jump into the code part of how to upload mesh,dataset and schema at the same time when adapter is created,here we create a simple rdf schema for explanation but you dont need to create schema always.If you are going to sync between ms-excel to cloud then definitely you create RDF based ms-excel adapter and then  extract the schema to upload it to the server.
+
+{{{
+String meshGroup = "myMesh";
+String dataSetId = "myFeed";
+String serverUrl = "http://localhost:8080/mesh4x/feeds";
+String url = serverUrl + "/" + meshGroup + "/" + dataSetId;
+IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
+
+//creating demo rdf schema
+RDFSchema rdfSchema = new RDFSchema("example", url+"#", dataSetId);
+rdfSchema.addStringProperty("string", "string", "en");
+rdfSchema.addIntegerProperty("integer", "int", "en");
+rdfSchema.addBooleanProperty("boolean", "boolean", "en");
+rdfSchema.addDateTimeProperty("datetime", "datetime", "en");
+rdfSchema.addDoubleProperty("double", "double", "en");
+rdfSchema.addLongProperty("long", "long", "en");
+rdfSchema.addDecimalProperty("decimal", "decimal", "en");  
+
+HttpSyncAdapter httpSyncAdapter = HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverUrl, meshGroup, dataSetId , identityProvider, rdfSchema);
+
+}}}
+
+Now the created instance of HttpSyncAdapter can be used as target adapter in synchronization process of  *SyncEngine*
