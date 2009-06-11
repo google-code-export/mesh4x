@@ -29,3 +29,15 @@ HowToUseMsExcelAdapter
 HowToUseHibernateAdapater
 
 HowToUseMsAccessAdapter
+
+HowToUseHTTPAdapter 
+
+HowToUseKMLAdapter
+
+HowToUseDOMAdapter
+
+HowToUseFeedAdapter
+
+HowToUseGoogleSpreadsheetAdapter
+
+HowToUseFolderAdapter
