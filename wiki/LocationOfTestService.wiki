@@ -4,9 +4,3 @@
 
 http://sync.staging.instedd.org:8080/mesh4x
 
-
-= Details =
-
-You can create a feed. Protocol isn't documented but there is a java adapter (HttpSyncAdapter or something like that) that talks to the service
-
--- bab
