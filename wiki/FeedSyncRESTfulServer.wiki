@@ -12,8 +12,7 @@ http://mesh4x.googlecode.com/svn/wiki/files/mesh4xFeedSyncRestfullServer.png
 The information in the server is organized with the following logic structure:
  * Mesh groups: is the first level, is a group of data sets. Each item is a dataset in the mesh group with the information of schema and mappings.
  * Datasets: is the second level, represents the dataset content, each item has a payload with business information as rdf instance or plain xml and feedSync information.
-
-All informations is stored in the server as Feed file, Database or S3 amazon.
+All information is stored in the server as Feed file, Database or S3 amazon depending of server configuration.
 
 
 == GET protocol ==
@@ -154,4 +153,3 @@ http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo/Oswego/add
 {{{
 http://sync.staging.instedd.org:8080/mesh4x/feeds/Epiinfo
 }}}
-
