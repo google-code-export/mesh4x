@@ -48,7 +48,9 @@ See HowToUseFolderAdapter for more information.
 The HTTP adapter synchronizes to a server that supports the REST APIs for Feedsync. We have an implementation of such server in the source tree too (it's what you are synchronizing to when using the KML demo)
 
 ==SMS Adapter==
-The SMSAdapter allows you to synchronize over SMS messages. It implements an optimized version of the FeedSync protocol specifically designed to minimize the number of messages exchanged. For example you could use this to synchronize J2ME RMS records with a PC or server or two PCs (with phones plugged in). Read more here: [SMSAdapter] 
+The SMSAdapter allows you to synchronize over SMS messages. It implements an optimized version of the FeedSync protocol specifically designed to minimize the number of messages exchanged. For example you could use this to synchronize J2ME RMS records with a PC or server or two PCs (with phones plugged in). Read more here: [SMSAdapter].
+
+[http://taha.instedd.org/search/label/Mesh Epi info a real use case]
 
 
 =Adapters for developer extensibility=
