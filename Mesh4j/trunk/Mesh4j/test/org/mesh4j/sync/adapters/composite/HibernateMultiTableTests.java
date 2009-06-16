@@ -3,6 +3,7 @@ package org.mesh4j.sync.adapters.composite;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TreeSet;
 
 import junit.framework.Assert;
 
@@ -26,7 +27,9 @@ public class HibernateMultiTableTests {
 		
 		InMemorySyncAdapter adapterOpaque = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
 		
-		String[] tables = new String[]{"mesh_example", "mesh_example_1"};
+		TreeSet<String> tables = new TreeSet<String>();
+		tables.add("mesh_example");
+		tables.add("mesh_example_1");
 		
 		ISyncAdapter adapterSource = HibernateSyncAdapterFactory.createSyncAdapterForMultiTables(
 			"jdbc:mysql:///mesh4xdb", 
@@ -55,7 +58,9 @@ public class HibernateMultiTableTests {
 		
 		InMemorySyncAdapter adapterOpaque = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
 		
-		String[] tables = new String[]{"mesh_example", "mesh_example_1"};
+		TreeSet<String> tables = new TreeSet<String>();
+		tables.add("mesh_example");
+		tables.add("mesh_example_1");
 		
 		ISyncAdapter adapterSource = HibernateSyncAdapterFactory.createSyncAdapterForMultiTables(
 			"jdbc:mysql:///mesh4xdb", 
@@ -85,7 +90,10 @@ public class HibernateMultiTableTests {
 		// hibernate 
 		InMemorySyncAdapter adapterOpaqueSource = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
 		
-		String[] tables = new String[]{"mesh_example", "mesh_example_1"};
+		TreeSet<String> tables = new TreeSet<String>();
+		tables.add("mesh_example");
+		tables.add("mesh_example_1");
+		
 		String rdfURL = "http://localhost:8080/mesh4x/feeds";
 		
 		CompositeSyncAdapter adapterSource = HibernateSyncAdapterFactory.createSyncAdapterForMultiTables(
@@ -140,14 +148,19 @@ public class HibernateMultiTableTests {
 
 		//To run this test you have to have two database
 		//and this test operates on three existing tables.
-		String[] tables = new String[]{"user","person","country"};
+		TreeSet<String> tables = new TreeSet<String>();
+		tables.add("user");
+		tables.add("person");
+		tables.add("country");
+		
+		
 		String rdfURL = "http://localhost:8080/mesh4x/feeds";
 		
 		InMemorySyncAdapter adapterOpaqueSource = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
 		CompositeSyncAdapter adapterSource = HibernateSyncAdapterFactory.createSyncAdapterForMultiTables(
 			"jdbc:mysql:///mesh4xdb", 
 			"root", 
-			"test1234", 
+			"", 
 			com.mysql.jdbc.Driver.class,
 			org.hibernate.dialect.MySQLDialect.class,
 			tables, 
@@ -156,12 +169,16 @@ public class HibernateMultiTableTests {
 			NullIdentityProvider.INSTANCE,
 			adapterOpaqueSource);
 		
-		String[] tables1 = new String[]{"user","person","country"};
+		TreeSet<String> tables1 = new TreeSet<String>();
+		tables1.add("user");
+		tables1.add("person");
+		tables1.add("country");
+		
 		InMemorySyncAdapter adapterOpaqueTarget = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
 		CompositeSyncAdapter adapterTarget = HibernateSyncAdapterFactory.createSyncAdapterForMultiTables(
 				"jdbc:mysql:///mesh4xdbtarget", 
 				"root", 
-				"test1234", 
+				"", 
 				com.mysql.jdbc.Driver.class,
 				org.hibernate.dialect.MySQLDialect.class,
 				tables1, 
@@ -180,7 +197,10 @@ public class HibernateMultiTableTests {
 
 		//To run this test you have to have two database
 		//and this test operates on three existing tables.
-		String[] tables = new String[]{"user","person","country"};
+		TreeSet<String> tables = new TreeSet<String>();
+		tables.add("user");
+		tables.add("person");
+		tables.add("country");
 	
 		InMemorySyncAdapter adapterOpaqueSource = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
 		CompositeSyncAdapter adapterSource = HibernateSyncAdapterFactory.createSyncAdapterForMultiTables(
@@ -195,7 +215,11 @@ public class HibernateMultiTableTests {
 			NullIdentityProvider.INSTANCE,
 			adapterOpaqueSource);
 		
-		String[] tables1 = new String[]{"user","person","country"};
+		TreeSet<String> tables1 = new TreeSet<String>();
+		tables1.add("user");
+		tables1.add("person");
+		tables1.add("country");
+		
 		InMemorySyncAdapter adapterOpaqueTarget = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
 		CompositeSyncAdapter adapterTarget = HibernateSyncAdapterFactory.createSyncAdapterForMultiTables(
 				"jdbc:mysql:///mesh4xdbtarget", 

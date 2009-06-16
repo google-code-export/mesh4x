@@ -12,7 +12,7 @@ public interface ISyncRepository {
 
 	SyncInfo get(String syncId);
 
-	List<SyncInfo> getAll(String entityName);
+	List<SyncInfo> getAll(String type);
 
 	String newSyncID(IContent content);
 }

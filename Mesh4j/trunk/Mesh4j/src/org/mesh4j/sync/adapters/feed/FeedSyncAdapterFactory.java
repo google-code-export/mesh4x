@@ -9,6 +9,7 @@ import org.mesh4j.sync.adapters.composite.CompositeSyncAdapter;
 import org.mesh4j.sync.adapters.composite.IIdentifiableSyncAdapter;
 import org.mesh4j.sync.adapters.composite.IdentifiableSyncAdapter;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
+import org.mesh4j.sync.adapters.feed.zip.ZipFeedsSyncAdapter;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.security.IIdentityProvider;
 
@@ -43,7 +44,7 @@ public class FeedSyncAdapterFactory implements ISyncAdapterFactory {
 		return createSyncAdapter(fileName, identityProvider);
 	}
 
-	public static ISyncAdapter createSyncAdapter(String fileName, IIdentityProvider identityProvider) {
+	public static FeedAdapter createSyncAdapter(String fileName, IIdentityProvider identityProvider) {
 		File file = new File(fileName);
 		if(file.exists()){
 			return new FeedAdapter(fileName, identityProvider, IdGenerator.INSTANCE);
@@ -70,6 +71,10 @@ public class FeedSyncAdapterFactory implements ISyncAdapterFactory {
 		}
 		
 		return new CompositeSyncAdapter("Feed file composite", opaqueAdapter, identityProvider, adapters);
+	}
+
+	public static ZipFeedsSyncAdapter createSyncAdapterForMultiFilesAsZip(String zipFileName, IIdentityProvider identityProvider, String tempDirectoryName){
+		return new ZipFeedsSyncAdapter(zipFileName, identityProvider, tempDirectoryName);
 	}
 
 }

@@ -239,4 +239,8 @@ public class FeedAdapter extends AbstractSyncAdapter{
 			}			
 		}
 	}
+
+	public File getFile(){
+		return this.feedFile;
+	}
 }

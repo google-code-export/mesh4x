@@ -87,7 +87,6 @@ public class ZipUtils {
 			ZipOutputStream zip = new ZipOutputStream(os);
 
 			ZipFile zipFile = new ZipFile(file);
-
 			Enumeration<? extends ZipEntry> zipEntries = zipFile.entries();
 			while (zipEntries.hasMoreElements()) {
 				ZipEntry entry = zipEntries.nextElement();

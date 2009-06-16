@@ -1,6 +1,7 @@
 package org.mesh4j.sync.adapters.composite;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -18,7 +19,7 @@ public class CompositeSyncAdapter extends AbstractSyncAdapter implements ISyncAw
 	private String name;
 	private IIdentityProvider identityProvider;
 	private ISyncAdapter opaqueAdapter;
-	private IIdentifiableSyncAdapter[] adapters;
+	private ArrayList<IIdentifiableSyncAdapter> adapters = new ArrayList<IIdentifiableSyncAdapter>();
 	
 	// BUSINESS METHODS
 	
@@ -29,8 +30,11 @@ public class CompositeSyncAdapter extends AbstractSyncAdapter implements ISyncAw
 		
 		this.name = name;
 		this.identityProvider = identityProvider;
-		this.adapters = adapters;
 		this.opaqueAdapter = opaqueAdapter;
+		
+		for (IIdentifiableSyncAdapter identifiableSyncAdapter : adapters) {
+			this.adapters.add(identifiableSyncAdapter);
+		}
 	}
 
 	@Override
@@ -128,7 +132,7 @@ public class CompositeSyncAdapter extends AbstractSyncAdapter implements ISyncAw
 		}
 	}
 
-	public IIdentifiableSyncAdapter[] getAdapters() {
+	public Collection<IIdentifiableSyncAdapter> getAdapters() {
 		return this.adapters;
 	}
 
@@ -149,5 +153,13 @@ public class CompositeSyncAdapter extends AbstractSyncAdapter implements ISyncAw
 		}else{
 			return item.getContent().getPayload().element(entityNode) != null;
 		}
+	}
+
+	public ISyncAdapter getOpaqueAdapter() {
+		return this.opaqueAdapter;
+	}
+
+	public void addSyncAdapter(IIdentifiableSyncAdapter adapter) {
+		this.adapters.add(adapter);		
 	}
 }

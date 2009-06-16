@@ -2,6 +2,7 @@ package org.mesh4j.sync.adapters.composite;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.TreeSet;
 
 import junit.framework.Assert;
 
@@ -25,7 +26,10 @@ public class MsAccessMultiTableTests {
 		InMemorySyncAdapter adapterOpaque = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
 		
 		String mdbFileName = TestHelper.baseDirectoryRootForTest() + "ms-access/DevDB.mdb";
-		String[] tables = new String[]{"user", "Oswego"};
+		
+		TreeSet<String> tables = new TreeSet<String>();
+		tables.add("user");
+		tables.add("Oswego");
 
 		MsAccessSyncAdapterFactory factory = new MsAccessSyncAdapterFactory(TestHelper.baseDirectoryRootForTest(), "http://mesh4x/test");
 		ISyncAdapter adapterSource = factory.createSyncAdapterForMultiTables(mdbFileName, tables, NullIdentityProvider.INSTANCE, adapterOpaque);
@@ -47,7 +51,10 @@ public class MsAccessMultiTableTests {
 		InMemorySyncAdapter adapterOpaque = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
 		
 		String mdbFileName = TestHelper.baseDirectoryRootForTest() + "ms-access/DevDB.mdb";
-		String[] tables = new String[]{"user", "Oswego"};
+
+		TreeSet<String> tables = new TreeSet<String>();
+		tables.add("user");
+		tables.add("Oswego");
 
 		MsAccessSyncAdapterFactory factory = new MsAccessSyncAdapterFactory(TestHelper.baseDirectoryRootForTest(), "http://mesh4x/test");
 		CompositeSyncAdapter adapterSource = factory.createSyncAdapterForMultiTables(mdbFileName, tables, NullIdentityProvider.INSTANCE, adapterOpaque);

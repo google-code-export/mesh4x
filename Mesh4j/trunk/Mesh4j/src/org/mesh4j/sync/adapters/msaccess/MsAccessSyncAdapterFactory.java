@@ -185,9 +185,9 @@ public class MsAccessSyncAdapterFactory implements ISyncAdapterFactory {
 		}
 	}
 
-	public CompositeSyncAdapter createSyncAdapterForMultiTables(String mdbFileName, String[] tables, IIdentityProvider identityProvider, ISyncAdapter adapterOpaque){
+	public CompositeSyncAdapter createSyncAdapterForMultiTables(String mdbFileName, Set<String> tables, IIdentityProvider identityProvider, ISyncAdapter adapterOpaque){
 		try{
-			IIdentifiableSyncAdapter[] adapters = new IIdentifiableSyncAdapter[tables.length];
+			IIdentifiableSyncAdapter[] adapters = new IIdentifiableSyncAdapter[tables.size()];
 			int i = 0;
 			for (String tableName : tables) {
 				SplitAdapter syncAdapter = createSyncAdapterFromFile(tableName, mdbFileName, tableName, identityProvider);

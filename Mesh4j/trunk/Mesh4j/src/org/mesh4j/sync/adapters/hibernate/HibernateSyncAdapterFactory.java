@@ -61,14 +61,14 @@ public class HibernateSyncAdapterFactory implements ISyncAdapterFactory{
 	
 	// ADAPTER CREATION
 	public static <T extends java.sql.Driver, F extends Dialect> SplitAdapter createHibernateAdapter(String connectionURL, String user, String password, Class<T> driverClass, Class<F> dialectClass, String tableName, String rdfBaseURL, String baseDirectory, IIdentityProvider identityProvider) {
-		String[] tables = new String[1];
-		tables[0] = tableName;
+		TreeSet<String> tables = new TreeSet<String>();
+		tables.add(tableName);
 		
 		SplitAdapter[] adapters = createHibernateAdapters(connectionURL, user, password, driverClass, dialectClass, tables, rdfBaseURL, baseDirectory, identityProvider);
 		return adapters[0];
 	}
 	
-	public static <T extends java.sql.Driver, F extends Dialect> CompositeSyncAdapter createSyncAdapterForMultiTables(String connectionURL, String user, String password, Class<T> driverClass, Class<F> dialectClass, String[] tables, String rdfBaseURL, String baseDirectory, IIdentityProvider identityProvider, ISyncAdapter opaqueAdapter) {
+	public static <T extends java.sql.Driver, F extends Dialect> CompositeSyncAdapter createSyncAdapterForMultiTables(String connectionURL, String user, String password, Class<T> driverClass, Class<F> dialectClass, Set<String> tables, String rdfBaseURL, String baseDirectory, IIdentityProvider identityProvider, ISyncAdapter opaqueAdapter) {
 		SplitAdapter[] splitAdapters = createHibernateAdapters(connectionURL, user, password, driverClass, dialectClass, tables, rdfBaseURL, baseDirectory, identityProvider);
 		
 		IIdentifiableSyncAdapter[] adapters =  new IIdentifiableSyncAdapter[splitAdapters.length];
@@ -83,13 +83,13 @@ public class HibernateSyncAdapterFactory implements ISyncAdapterFactory{
 		return new CompositeSyncAdapter("Hibernate composite", opaqueAdapter, identityProvider, adapters);
 	}
 	
-	private static <T extends java.sql.Driver, F extends Dialect> SplitAdapter[] createHibernateAdapters(String connectionURL, String user, String password, Class<T> driverClass, Class<F> dialectClass, String[] tables, String rdfBaseURL, String baseDirectory, IIdentityProvider identityProvider) {
+	private static <T extends java.sql.Driver, F extends Dialect> SplitAdapter[] createHibernateAdapters(String connectionURL, String user, String password, Class<T> driverClass, Class<F> dialectClass, Set<String> tables, String rdfBaseURL, String baseDirectory, IIdentityProvider identityProvider) {
 	
 		HibernateSessionFactoryBuilder builder = createHibernateFactoryBuilder(connectionURL, user, password, driverClass, dialectClass, null);
 		
 		HashMap<String, PersistentClass> contentMappings = createMappings(builder, baseDirectory, tables);
 
-		SplitAdapter[] splitAdapters = new SplitAdapter[tables.length];
+		SplitAdapter[] splitAdapters = new SplitAdapter[tables.size()];
 		int i = 0;
 		for (String tableName : contentMappings.keySet()) {
 			String syncTableName = getSyncTableName(tableName);
@@ -188,7 +188,7 @@ public class HibernateSyncAdapterFactory implements ISyncAdapterFactory{
 		}
 	}
 	
-	public static HashMap<String, PersistentClass> createMappings(HibernateSessionFactoryBuilder builder, String baseDirectory, String[] tables) {
+	public static HashMap<String, PersistentClass> createMappings(HibernateSessionFactoryBuilder builder, String baseDirectory, Set<String> tables) {
 		
 		autodiscoveryMappings(builder, baseDirectory, tables);
 
@@ -259,7 +259,7 @@ public class HibernateSyncAdapterFactory implements ISyncAdapterFactory{
 		
 	}
 
-	private static void autodiscoveryMappings(HibernateSessionFactoryBuilder builder, String baseDirectory, String[] tables) {
+	private static void autodiscoveryMappings(HibernateSessionFactoryBuilder builder, String baseDirectory, Set<String> tables) {
 		JDBCMetaDataConfiguration cfg = new JDBCMetaDataConfiguration();
 		builder.initializeConfiguration(cfg);		
 		

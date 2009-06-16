@@ -60,4 +60,18 @@ public class FileUtils {
 	public static File getFile(String folderName, String fileName) {
 		return new File(getFileName(folderName, fileName));
 	}
+
+	public static void delete(File file) {
+		if(file.exists()){
+			if(file.isDirectory()){
+				File[] files = file.listFiles();
+				for (File f : files) {
+					delete(f);
+				}
+			}
+			file.delete();
+		} 
+
+		
+	}
 }
