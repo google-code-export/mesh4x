@@ -284,11 +284,12 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 				return null;
 			} else {
 				String schemaXML = schema.getText();
-				if(schemaXML.startsWith("<rdf")){
+				Element schemaElement = XMLHelper.parseElement(schemaXML);
+				if(RDFSchema.isRDF(schemaElement)){
 					StringReader xmlReader = new StringReader(schemaXML);
 					return new RDFSchema(xmlReader);
 				} else {
-					return new Schema(XMLHelper.parseElement(schemaXML));
+					return new Schema(schemaElement);
 				}
 			}
 		} else {
