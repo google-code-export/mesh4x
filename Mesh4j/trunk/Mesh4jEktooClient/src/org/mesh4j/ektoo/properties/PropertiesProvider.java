@@ -222,4 +222,14 @@ public class PropertiesProvider {
 		return getString("google.docs.url");
 	}
 
+	public String getDefaultZipFileName() {
+		String fileName = getString("default.zip.name");
+		try {
+			return new File(fileName).getCanonicalPath();
+		} catch (IOException e) {
+			// nothing to do
+			return "";
+		}
+	}
+
 }

@@ -116,4 +116,8 @@ public interface ISyncAdapterBuilder {
 	public String generateMySqlFeed(String userName, String password, String hostName,
 			int portNo, String databaseName, String tableName);
 
+	
+	public ISyncAdapter createZipFeedAdapter(String zipFileName);
+
+	ISyncAdapter createMsAccessMultiTablesAdapter(String mdbFileName, Object[] tables);
 }

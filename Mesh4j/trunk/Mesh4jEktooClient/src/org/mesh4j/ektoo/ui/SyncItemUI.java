@@ -28,17 +28,21 @@ import org.mesh4j.ektoo.controller.FeedUIController;
 import org.mesh4j.ektoo.controller.FolderUIController;
 import org.mesh4j.ektoo.controller.GSSheetUIController;
 import org.mesh4j.ektoo.controller.KmlUIController;
+import org.mesh4j.ektoo.controller.MsAccessMultiTableUIController;
 import org.mesh4j.ektoo.controller.MsAccessUIController;
 import org.mesh4j.ektoo.controller.MsExcelUIController;
 import org.mesh4j.ektoo.controller.MySQLUIController;
+import org.mesh4j.ektoo.controller.ZipFeedUIController;
 import org.mesh4j.ektoo.model.CloudModel;
 import org.mesh4j.ektoo.model.FeedModel;
 import org.mesh4j.ektoo.model.FolderModel;
 import org.mesh4j.ektoo.model.GSSheetModel;
 import org.mesh4j.ektoo.model.KmlModel;
 import org.mesh4j.ektoo.model.MsAccessModel;
+import org.mesh4j.ektoo.model.MsAccessMultiTableModel;
 import org.mesh4j.ektoo.model.MsExcelModel;
 import org.mesh4j.ektoo.model.MySQLAdapterModel;
+import org.mesh4j.ektoo.model.ZipFeedModel;
 import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.ektoo.ui.component.RoundBorder;
 import org.mesh4j.ektoo.ui.component.messagedialog.MessageDialog;
@@ -56,6 +60,8 @@ public class SyncItemUI extends JPanel implements IUIController {
 	public final static String MS_EXCEL_PANEL = "MS Excel";
 	public final static String GOOGLE_SPREADSHEET_PANEL = "Google Spreadsheet";
 	public final static String MS_ACCESS_PANEL = "MS Access";
+	public final static String MS_ACCESS_MULTI_TABLE_PANEL = "MS Access Multi Tables";
+	public final static String ZIP_FILE_PANEL = "Zip feeds";
 	public final static String CLOUD_PANEL = "Cloud";
 	public final static String MYSQL_PANEL = "MySQL";
 	public final static String RSS_FILE_PANEL = "Rss 2.0";
@@ -74,6 +80,9 @@ public class SyncItemUI extends JPanel implements IUIController {
 
 	private MsAccessUI accessUI = null;
 	private MsAccessUIController accessUIController = null;
+	
+	private MsAccessMultiTableUI accessMultiTableUI = null;
+	private MsAccessMultiTableUIController accessMultiTableUIController = null;
 
 	private GSSheetUI googleUI = null;
 	private GSSheetUIController googleUIControler = null;
@@ -89,6 +98,9 @@ public class SyncItemUI extends JPanel implements IUIController {
 
 	private FeedUI rssUI = null;
 	private FeedUIController rssUIControler = null;
+	
+	private ZipFeedUI zipRssUI = null;
+	private ZipFeedUIController zipRssUIControler = null;
 
 	private FeedUI atomUI = null;
 	private FeedUIController atomUIControler = null;
@@ -147,11 +159,13 @@ public class SyncItemUI extends JPanel implements IUIController {
 			// add cards here
 			body.add(getMsExcelUI(), MS_EXCEL_PANEL);
 			body.add(getMsAccessUI(), MS_ACCESS_PANEL);
+			body.add(getMsAccessMultiTableUI(), MS_ACCESS_MULTI_TABLE_PANEL);
 			body.add(getGSSheetUI(), GOOGLE_SPREADSHEET_PANEL);
 			body.add(getKmlUI(), KML_PANEL);
 			body.add(getCloudUI(), CLOUD_PANEL);
 			body.add(getMySQLUI(), MYSQL_PANEL);
 			body.add(getRSSFileUI(), RSS_FILE_PANEL);
+			body.add(getZipRSSFileUI(), ZIP_FILE_PANEL);
 			body.add(getAtomFileUI(), ATOM_FILE_PANEL);
 			body.add(getFolderUI(), FOLDER_PANEL);
 		}
@@ -201,24 +215,39 @@ public class SyncItemUI extends JPanel implements IUIController {
 		if (excelUI == null) {
 			excelUIController = new MsExcelUIController(this.propertiesProvider, this.acceptsCreateDataset);
 			excelUIController.addModel(new MsExcelModel(this.propertiesProvider.getMsExcelFile()));
-
 			excelUI = new MsExcelUI(this.propertiesProvider.getMsExcelFile(), excelUIController);
-			excelUI.setLabelFile(EktooUITranslator.getExcelFileLabel());
-			excelUI.setLabelTable(EktooUITranslator.getExcelWorksheetLabel());
-			excelUI.setLabelColumn(EktooUITranslator.getExcelUniqueColumnLabel());
 		}
 		return excelUI;
 	}
 
 	private MsAccessUI getMsAccessUI() {
 		if (accessUI == null) {
-			accessUIController = new MsAccessUIController(this.propertiesProvider, this.acceptsCreateDataset);
-			accessUIController.addModel(new MsAccessModel(this.propertiesProvider.getMsAccessFile()));
-			accessUI = new MsAccessUI(this.propertiesProvider.getMsAccessFile(), accessUIController);
-			accessUI.setLabelFile(EktooUITranslator.getAccessFileLabel());
-			accessUI.setLabelTable(EktooUITranslator.getAccessTableLabel());
+			accessUI = new MsAccessUI(this.propertiesProvider.getMsAccessFile(), getMsAccessUIController());
 		}
 		return accessUI;
+	}
+	
+	private MsAccessMultiTableUI getMsAccessMultiTableUI() {
+		if (accessMultiTableUI == null) {
+			accessMultiTableUI = new MsAccessMultiTableUI(this.propertiesProvider.getMsAccessFile(), getMsAccessMultiTableUIController());
+		}
+		return accessMultiTableUI;
+	}
+
+	private MsAccessUIController getMsAccessUIController() {
+		if(accessUIController == null){
+			accessUIController = new MsAccessUIController(this.propertiesProvider, this.acceptsCreateDataset);
+			accessUIController.addModel(new MsAccessModel(this.propertiesProvider.getMsAccessFile()));
+		}
+		return accessUIController;
+	}
+	
+	private MsAccessMultiTableUIController getMsAccessMultiTableUIController() {
+		if(accessMultiTableUIController == null){
+			accessMultiTableUIController = new MsAccessMultiTableUIController(this.propertiesProvider, this.acceptsCreateDataset);
+			accessMultiTableUIController.addModel(new MsAccessMultiTableModel(this.propertiesProvider.getMsAccessFile()));
+		}
+		return accessMultiTableUIController;
 	}
 
 	private GSSheetUI getGSSheetUI() {
@@ -277,6 +306,15 @@ public class SyncItemUI extends JPanel implements IUIController {
 		return rssUI;
 	}
 
+	private ZipFeedUI getZipRSSFileUI() {
+		if (zipRssUI == null) {
+			zipRssUIControler = new ZipFeedUIController(this.propertiesProvider, this.acceptsCreateDataset);
+			zipRssUIControler.addModel(new ZipFeedModel(this.propertiesProvider.getDefaultZipFileName()));
+			zipRssUI = new ZipFeedUI(this.propertiesProvider.getDefaultZipFileName(), zipRssUIControler);
+		}
+		return zipRssUI;
+	}
+	
 	private FeedUI getAtomFileUI() {
 		if (atomUI == null) {
 			atomUIControler = new FeedUIController(this.propertiesProvider, this.acceptsCreateDataset);
@@ -306,6 +344,8 @@ public class SyncItemUI extends JPanel implements IUIController {
 			cl.show(body, MS_EXCEL_PANEL);
 		} else if (item.equals(MS_ACCESS_PANEL)) {
 			cl.show(body, MS_ACCESS_PANEL);
+		} else if (item.equals(MS_ACCESS_MULTI_TABLE_PANEL)) {
+			cl.show(body, MS_ACCESS_MULTI_TABLE_PANEL);
 		} else if (item.equals(GOOGLE_SPREADSHEET_PANEL)) {
 			cl.show(body, GOOGLE_SPREADSHEET_PANEL);
 		} else if (item.equals(KML_PANEL)) {
@@ -319,7 +359,9 @@ public class SyncItemUI extends JPanel implements IUIController {
 		} else if (item.equals(ATOM_FILE_PANEL)) {
 			cl.show(body, ATOM_FILE_PANEL);
 		} else if (item.equals(FOLDER_PANEL)) {
-			cl.show(body, FOLDER_PANEL);
+			cl.show(body, FOLDER_PANEL);	
+		} else if (item.equals(ZIP_FILE_PANEL)) {
+				cl.show(body, ZIP_FILE_PANEL);
 		} else {
 			cl.show(body, DYMMY_PANEL);
 		}
@@ -372,6 +414,8 @@ public class SyncItemUI extends JPanel implements IUIController {
 			currrentController = excelUI.getController();
 		} else if (item.equals(MS_ACCESS_PANEL)) {
 			currrentController = accessUI.getController();
+		} else if (item.equals(MS_ACCESS_MULTI_TABLE_PANEL)) {
+			currrentController = accessMultiTableUI.getController();
 		} else if (item.equals(GOOGLE_SPREADSHEET_PANEL)) {
 			currrentController = googleUI.getController();
 		} else if (item.equals(CLOUD_PANEL)) {
@@ -384,6 +428,8 @@ public class SyncItemUI extends JPanel implements IUIController {
 			currrentController = atomUI.getController();
 		} else if (item.equals(FOLDER_PANEL)) {
 			currrentController = folderUI.getController();
+		}else if (item.equals(ZIP_FILE_PANEL)) {
+			currrentController = zipRssUI.getController();
 		}
 
 		return currrentController;
@@ -398,6 +444,8 @@ public class SyncItemUI extends JPanel implements IUIController {
 			currentUI = excelUI;
 		} else if (type.equals(MS_ACCESS_PANEL)) {
 			currentUI = accessUI;
+		} else if (type.equals(MS_ACCESS_MULTI_TABLE_PANEL)) {
+			currentUI = accessMultiTableUI;
 		} else if (type.equals(GOOGLE_SPREADSHEET_PANEL)) {
 			currentUI = googleUI;
 		} else if (type.equals(CLOUD_PANEL)) {
@@ -410,6 +458,8 @@ public class SyncItemUI extends JPanel implements IUIController {
 			currentUI = atomUI;
 		} else if (type.equals(FOLDER_PANEL)) {
 			currentUI = folderUI;
+		}else if (type.equals(ZIP_FILE_PANEL)) {
+			currentUI = zipRssUI;
 		}
 		return currentUI;
 	}

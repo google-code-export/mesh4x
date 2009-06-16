@@ -5,12 +5,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.InMemorySyncAdapter;
 import org.mesh4j.sync.adapters.feed.Feed;
 import org.mesh4j.sync.adapters.feed.FeedAdapter;
+import org.mesh4j.sync.adapters.feed.FeedSyncAdapterFactory;
 import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.adapters.feed.XMLContent;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
@@ -45,7 +47,6 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 	private GoogleSpreadSheetSyncAdapterFactory googleSpreadSheetSyncAdapterFactory;
 	private GoogleSpreadSheetRDFSyncAdapterFactory googleSpreadSheetRDFSyncAdapterFactory;
 	
-	
 	// BUSINESS METHODS
 
 	public SyncAdapterBuilder(PropertiesProvider propertiesProvider) {
@@ -65,6 +66,17 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 		} catch (Exception e) {
 			throw new MeshException(e);
 		}
+	}
+	
+	@Override
+	public ISyncAdapter createMsAccessMultiTablesAdapter(String mdbFileName, Object[] selectedTables){
+		Set<String> tables = new TreeSet<String>();			
+		for (Object tableName : selectedTables) {
+			tables.add((String)tableName);
+		}
+		
+		InMemorySyncAdapter adapterOpaque = new InMemorySyncAdapter("opaque", getIdentityProvider());
+		return this.msAccesSyncAdapter.createSyncAdapterForMultiTables(mdbFileName, tables, getIdentityProvider(), adapterOpaque);
 	}
 
 	/**
@@ -176,6 +188,11 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 		Feed feed = new Feed(title, description, link);
 		FeedAdapter adapter = new FeedAdapter(fileName, getIdentityProvider(), IdGenerator.INSTANCE, syndicationFormat, feed);
 		return adapter;
+	}
+	
+	@Override
+	public ISyncAdapter createZipFeedAdapter(String zipFileName) {
+		return FeedSyncAdapterFactory.createSyncAdapterForMultiFilesAsZip(zipFileName, getIdentityProvider(), getBaseDirectory());
 	}
 	
 	@Override

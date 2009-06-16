@@ -36,8 +36,8 @@ import org.mesh4j.ektoo.ui.component.statusbar.Statusbar;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 
-public class EktooFrame extends JFrame implements IErrorListener,
-		ISynchronizeTaskListener {
+public class EktooFrame extends JFrame implements IErrorListener, ISynchronizeTaskListener {
+	
 	private static final long serialVersionUID = -8703829301086394863L;
 
 	// MODEL VARIABLES
@@ -86,15 +86,8 @@ public class EktooFrame extends JFrame implements IErrorListener,
 			headerPanel.add(linkPanel,BorderLayout.EAST);
 			linkPanel.setOpaque(false);
 			
-//			HyperLink settingsLink = new HyperLink(EktooUITranslator.getSettingsText());
 			HyperLink helpLink = new HyperLink(EktooUITranslator.getHelpText());
 			HyperLink aboutLink = new HyperLink(EktooUITranslator.getAboutText());
-			
-//			settingsLink.addMouseListener(new MouseAdapter(){
-//				 public void mouseClicked(MouseEvent e) {
-//					 loadSettingsUI();
-//				 }
-//			});
 			
 			helpLink.addMouseListener(new MouseAdapter(){
 				 public void mouseClicked(MouseEvent e) {
@@ -108,7 +101,6 @@ public class EktooFrame extends JFrame implements IErrorListener,
 				 }
 			});
 			
-//			linkPanel.add(settingsLink);
 			linkPanel.add(helpLink);
 			linkPanel.add(aboutLink);
 		}
@@ -276,8 +268,7 @@ public class EktooFrame extends JFrame implements IErrorListener,
 
 	private JPanel getSourcePane() {
 		if (getSourceItem() == null) {
-			setSourceItem(new SyncItemUI(EktooUITranslator
-					.getSourceSyncItemSelectorTitle(), false));
+			setSourceItem(new SyncItemUI(EktooUITranslator.getSourceSyncItemSelectorTitle(), false));
 			getSourceItem().setPreferredSize(new Dimension(350, 190));
 			getSourceItem().getListType().addItemListener(new ItemListener() {
 				public void itemStateChanged(ItemEvent evt) {
@@ -452,6 +443,10 @@ public class EktooFrame extends JFrame implements IErrorListener,
 			getTargetItem().getListType().addItem(SyncItemUI.CLOUD_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.RSS_FILE_PANEL);
 			getTargetItem().getListType().addItem(SyncItemUI.ATOM_FILE_PANEL);
+		} else if (item.equals(SyncItemUI.MS_ACCESS_MULTI_TABLE_PANEL)) {
+			getTargetItem().getListType().removeAllItems();
+			getTargetItem().getListType().addItem(SyncItemUI.CLOUD_PANEL);
+			getTargetItem().getListType().addItem(SyncItemUI.ZIP_FILE_PANEL);
 		} else {
 			getTargetItem().getListType().removeAllItems();
 			setTargetIcon(ImageManager.getUndefinedSourceIcon());

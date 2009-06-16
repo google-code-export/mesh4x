@@ -8,54 +8,57 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.util.Set;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.mesh4j.ektoo.controller.MsAccessMultiTableUIController;
 import org.mesh4j.ektoo.controller.MsAccessUIController;
 import org.mesh4j.ektoo.tasks.IErrorListener;
 import org.mesh4j.ektoo.tasks.OpenFileTask;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
-import org.mesh4j.ektoo.ui.validator.MsAccessUIValidator;
+import org.mesh4j.ektoo.ui.validator.MsAccessMultiTableUIValidator;
 import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
 
-public class MsAccessUI extends AbstractUI{
+public class MsAccessMultiTableUI extends AbstractUI{
 
 	private static final long serialVersionUID = 4708875346159085594L;
-	private static final Log LOGGER = LogFactory.getLog(MsAccessUI.class);
+	private static final Log LOGGER = LogFactory.getLog(MsAccessMultiTableUI.class);
 
 	// MODEL VARIABLES
 	private JFileChooser fileChooser = new JFileChooser();
 
-	private String table = null;
-
 	private JLabel labelFile = null;
 	private JTextField txtFileName = null;
 
-	private JLabel labelTable = null;
-	private JComboBox listTable = null;
+	private JLabel labelTables = null;
+	private JList listTables = null;
 
 	private JButton btnFile = null;
 	private JButton btnView = null;
 	
-	private MsAccessUIController controller;
+	private MsAccessMultiTableUIController controller;
 
 	// BUSINESS METHODS
-	public MsAccessUI(String fileName, MsAccessUIController controller) {
+	public MsAccessMultiTableUI(String fileName, MsAccessMultiTableUIController controller) {
 		super();
 		initialize();
 		
@@ -70,7 +73,7 @@ public class MsAccessUI extends AbstractUI{
 
 		getTxtFile().setText(fileName);
 		getTxtFile().setToolTipText(fileName);
-		setList(fileName);
+		changeDatabaseName(fileName);
 	}
 	
 	protected void initialize() {
@@ -81,45 +84,53 @@ public class MsAccessUI extends AbstractUI{
 		this.add(getBtnFile(), null);
 		this.add(getBtnView(), null);
 
-		this.add(getlabelTable(), null);
-		this.add(getTableList(), null);
+		this.add(getlabelTables(), null);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBorder(new BevelBorder(BevelBorder.LOWERED));
+		scrollPane.setViewportView(getListTables());
+		scrollPane.setBounds(new Rectangle(99, 36, 194, 90));
+		
+		this.add(scrollPane, null);
 		this.add(getMessagesText(), null);
 	}
 
-	public void setList(String fileName) {
-		JComboBox tableList = getTableList();
-		tableList.removeAllItems();
+	public void changeDatabaseName(String fileName) {
+		this.getListTables().setSelectedIndex(-1);
 		
+		DefaultListModel listModel = (DefaultListModel)this.getListTables().getModel();
+		listModel.removeAllElements();
+
 		try {
 			File file = new File(fileName);
 			if(file.exists()){
 				Set<String> tableNames = MsAccessSyncAdapterFactory.getTableNames(fileName);
 				for (String tableName : tableNames) {
-					tableList.addItem(tableName);
+					listModel.addElement(tableName);
 				}
 			} else {
 				((SyncItemUI)this.getParent().getParent()).openErrorPopUp(EktooUITranslator.getErrorImpossibleToOpenFileBecauseFileDoesNotExists());
 			}
+			this.getListTables().repaint();
 			this.controller.changeDatabaseName(fileName);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 		}
 	}
 
-	public void setList(String fileName, String table) {
+	public void changeTablesSelections() {
 		try {
-			this.controller.changeTableName((String) getTableList()
-					.getSelectedItem());
+			this.controller.changeTableNames(getListTables().getSelectedValues());
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 		}
 	}
 
-	public void setController(MsAccessUIController controller) {
+	public void setController(MsAccessMultiTableUIController controller) {
 		this.controller = controller;
 	}
 
-	public MsAccessUIController getController() {
+	public MsAccessMultiTableUIController getController() {
 		return controller;
 	}
 
@@ -133,16 +144,25 @@ public class MsAccessUI extends AbstractUI{
 		} else if (evt.getPropertyName().equals(
 				MsAccessUIController.TABLE_NAME_PROPERTY)) {
 			String newStringValue = evt.getNewValue().toString();
-			if (!((String) getTableList().getSelectedItem())
-					.equals(newStringValue)) {
-				getTableList().setSelectedItem((String) newStringValue);
+			if (!isSelected(newStringValue)){
+				getListTables().setSelectedValue(newStringValue, true);
 			}
 		}
 	}
 
+	private boolean isSelected(String tableName) {
+		Object[] selected = getListTables().getSelectedValues();
+		for (Object selectedValue : selected) {
+			if(((String) selectedValue).equals(tableName)){
+				return true;
+			}
+		}
+		return false;
+	}
+
 	@Override
 	public boolean verify() {
-		boolean valid = (new MsAccessUIValidator(this, controller.getModel(),
+		boolean valid = (new MsAccessMultiTableUIValidator(this, controller.getModel(),
 				null)).verify();
 		return valid;
 	}
@@ -150,12 +170,18 @@ public class MsAccessUI extends AbstractUI{
 	private JLabel getLabelFile() {
 		if (labelFile == null) {
 			labelFile = new JLabel();
-			labelFile.setText(EktooUITranslator.getAccessFileLabel());
+			labelFile.setText(EktooUITranslator.getFileLabel());
 			labelFile.setSize(new Dimension(85, 16));
 			labelFile.setPreferredSize(new Dimension(85, 16));
 			labelFile.setLocation(new Point(8, 11));
 		}
 		return labelFile;
+	}
+
+	public void setLabelFile(String label) {
+		if (labelFile != null) {
+			labelFile.setText(label);
+		}
 	}
 
 	public String getFilePath() {
@@ -170,7 +196,7 @@ public class MsAccessUI extends AbstractUI{
 				public void actionPerformed(ActionEvent evt) {
 					try {
 						txtFileName.setToolTipText(txtFileName.getText());
-						setList(txtFileName.getText());
+						changeDatabaseName(txtFileName.getText());
 					} catch (Exception e) {
 						LOGGER.error(e.getMessage(), e);
 						// TODO Handle exception
@@ -181,7 +207,7 @@ public class MsAccessUI extends AbstractUI{
 				public void focusLost(FocusEvent evt) {
 					try {
 						txtFileName.setToolTipText(txtFileName.getText());
-						setList(txtFileName.getText());
+						changeDatabaseName(txtFileName.getText());
 					} catch (Exception e) {
 						LOGGER.error(e.getMessage(), e);
 						// TODO Handle exception
@@ -212,7 +238,7 @@ public class MsAccessUI extends AbstractUI{
 										.getCanonicalPath());
 								txtFileName.setToolTipText(txtFileName
 										.getText());
-								setList(txtFileName.getText());
+								changeDatabaseName(txtFileName.getText());
 							} catch (Exception ex) {
 								LOGGER.debug(ex.getMessage(), ex);
 							}
@@ -237,8 +263,8 @@ public class MsAccessUI extends AbstractUI{
 			btnView.setBounds(new Rectangle(299, 8, 34, 40));
 			btnView.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					JFrame frame = MsAccessUI.this.getRootFrame();
-					IErrorListener errorListener = MsAccessUI.this
+					JFrame frame = MsAccessMultiTableUI.this.getRootFrame();
+					IErrorListener errorListener = MsAccessMultiTableUI.this
 							.getErrorListener();
 					OpenFileTask task = new OpenFileTask(frame, errorListener,
 							txtFileName.getText());
@@ -253,38 +279,42 @@ public class MsAccessUI extends AbstractUI{
 		return (IErrorListener) getRootFrame();
 	}
 
-	private JLabel getlabelTable() {
-		if (labelTable == null) {
-			labelTable = new JLabel();
-			labelTable.setText(EktooUITranslator.getAccessTableLabel());
-			labelTable.setLocation(new Point(8, 38));
-			labelTable.setSize(new Dimension(85, 16));
-			labelTable.setPreferredSize(new Dimension(85, 16));
+	private JLabel getlabelTables() {
+		if (labelTables == null) {
+			labelTables = new JLabel();
+			labelTables.setText(EktooUITranslator.getTableLabel());
+			labelTables.setLocation(new Point(8, 38));
+			labelTables.setSize(new Dimension(85, 16));
+			labelTables.setPreferredSize(new Dimension(85, 16));
 		}
-		return labelTable;
+		return labelTables;
 	}
 
-	public JComboBox getTableList() {
-		if (listTable == null) {
-			listTable = new JComboBox();
-			listTable.setBounds(new Rectangle(99, 36, 194, 20));
-			listTable.setToolTipText(EktooUITranslator.getTooltipSelectTable());
-			listTable.addItemListener(new ItemListener() {
-				public void itemStateChanged(ItemEvent evt) {
-					if (!listTable.isEnabled()) {
-						return;
-					}
-					if (evt.getStateChange() == ItemEvent.SELECTED) {
-						int sheetIndex = listTable.getSelectedIndex();
-						if (sheetIndex != -1) {
-							table = (String) listTable.getSelectedItem();
-							setList(txtFileName.getText(), table);
-						}
-					}
-				}
-			});
+	public void setLabelTable(String label) {
+		if (labelTables != null) {
+			labelTables.setText(label);
 		}
-		return listTable;
+	}
+
+	public JList getListTables() {
+		if (listTables == null) {
+			listTables = new JList(new DefaultListModel());
+			listTables.setToolTipText(EktooUITranslator.getTooltipSelectTable());
+			listTables.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+			listTables.setLayoutOrientation(JList.VERTICAL);
+			listTables.setAutoscrolls(true);
+			listTables.setVisibleRowCount(-1);
+			
+			ListSelectionListener selectionListener = new ListSelectionListener(){
+				public void valueChanged(ListSelectionEvent e) {
+				    if (e.getValueIsAdjusting() == false) {
+				        changeTablesSelections();
+				    }
+				}
+			};
+			listTables.addListSelectionListener(selectionListener);
+		}
+		return listTables;
 	}
 
 	public void setFileChooser(JFileChooser fileChooser) {
@@ -296,14 +326,5 @@ public class MsAccessUI extends AbstractUI{
 			fileChooser = new JFileChooser();
 		return fileChooser;
 	}
-
-	public void setTable(String table) {
-		this.table = table;
-	}
-
-	public String getTable() {
-		return table;
-	}
-
 
 }
