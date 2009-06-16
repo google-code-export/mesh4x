@@ -133,4 +133,83 @@ public class HibernateMultiTableTests {
 			Assert.assertTrue(item.isDeleted());
 		}
 	}
+
+	
+	@Test
+	public void ShouldSyncAllTablesOfTwoDatabaseByRDF(){
+
+		//To run this test you have to have two database
+		//and this test operates on three existing tables.
+		String[] tables = new String[]{"user","person","country"};
+		String rdfURL = "http://localhost:8080/mesh4x/feeds";
+		
+		InMemorySyncAdapter adapterOpaqueSource = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
+		CompositeSyncAdapter adapterSource = HibernateSyncAdapterFactory.createSyncAdapterForMultiTables(
+			"jdbc:mysql:///mesh4xdb", 
+			"root", 
+			"test1234", 
+			com.mysql.jdbc.Driver.class,
+			org.hibernate.dialect.MySQLDialect.class,
+			tables, 
+			rdfURL, 
+			TestHelper.baseDirectoryRootForTest() + "source",//directory name for source meta information
+			NullIdentityProvider.INSTANCE,
+			adapterOpaqueSource);
+		
+		String[] tables1 = new String[]{"user","person","country"};
+		InMemorySyncAdapter adapterOpaqueTarget = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
+		CompositeSyncAdapter adapterTarget = HibernateSyncAdapterFactory.createSyncAdapterForMultiTables(
+				"jdbc:mysql:///mesh4xdbtarget", 
+				"root", 
+				"test1234", 
+				com.mysql.jdbc.Driver.class,
+				org.hibernate.dialect.MySQLDialect.class,
+				tables1, 
+				rdfURL, 
+				TestHelper.baseDirectoryRootForTest() +"target",//directory name for target meta information
+				NullIdentityProvider.INSTANCE,
+				adapterOpaqueTarget);
+		
+		SyncEngine syncEngine = new SyncEngine(adapterSource, adapterTarget);
+		TestHelper.assertSync(syncEngine);
+	}
+	
+	
+	@Test
+	public void ShouldSyncAllTablesOfTwoDatabaseByPlainXML(){
+
+		//To run this test you have to have two database
+		//and this test operates on three existing tables.
+		String[] tables = new String[]{"user","person","country"};
+	
+		InMemorySyncAdapter adapterOpaqueSource = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
+		CompositeSyncAdapter adapterSource = HibernateSyncAdapterFactory.createSyncAdapterForMultiTables(
+			"jdbc:mysql:///mesh4xdb", 
+			"root", 
+			"test1234", 
+			com.mysql.jdbc.Driver.class,
+			org.hibernate.dialect.MySQLDialect.class,
+			tables,
+			null,
+			TestHelper.baseDirectoryRootForTest() + "source",//directory name for source meta information
+			NullIdentityProvider.INSTANCE,
+			adapterOpaqueSource);
+		
+		String[] tables1 = new String[]{"user","person","country"};
+		InMemorySyncAdapter adapterOpaqueTarget = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
+		CompositeSyncAdapter adapterTarget = HibernateSyncAdapterFactory.createSyncAdapterForMultiTables(
+				"jdbc:mysql:///mesh4xdbtarget", 
+				"root", 
+				"test1234", 
+				com.mysql.jdbc.Driver.class,
+				org.hibernate.dialect.MySQLDialect.class,
+				tables1, 
+				null, 
+				TestHelper.baseDirectoryRootForTest() +"target",//directory name for target meta information
+				NullIdentityProvider.INSTANCE,
+				adapterOpaqueTarget);
+		
+		SyncEngine syncEngine = new SyncEngine(adapterSource, adapterTarget);
+		TestHelper.assertSync(syncEngine);
+	}
 }
