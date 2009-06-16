@@ -14,6 +14,7 @@ import com.hp.hpl.jena.vocabulary.XSD;
 public interface IRDFSchema extends ISchema {
 
 	public static final Namespace NS_RDF = DocumentHelper.createNamespace("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
+	public static final String ELEMENT_RDF = "RDF";
 	public static final QName QNAME_RDF = DocumentHelper.createQName("RDF", NS_RDF);
 	
 	public static final String XLS_STRING = XSD.xstring.getURI();

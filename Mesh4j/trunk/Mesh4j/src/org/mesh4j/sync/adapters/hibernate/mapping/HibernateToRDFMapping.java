@@ -48,7 +48,7 @@ public class HibernateToRDFMapping implements IHibernateToXMLMapping {
 	public Element convertXMLToRow(Element element) throws Exception {
 		String rdfXml;
 		if(ISyndicationFormat.ELEMENT_PAYLOAD.equals(element.getName())){
-			Element rdfElement = element.element("RDF");
+			Element rdfElement = element.element(IRDFSchema.ELEMENT_RDF);
 			if(rdfElement == null){
 				Guard.throwsArgumentException("payload");
 			}

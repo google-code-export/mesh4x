@@ -255,5 +255,19 @@ public class ZipUtilsTests {
 		Assert.assertArrayEquals(file3, fileZip3);
 
 	}
-	
+
+	@Test
+	public void shouldIsZipReturnsTrue(){
+		Assert.assertTrue(ZipUtils.isZip("myFile.zip"));
+	}
+
+	@Test
+	public void shouldIsZipReturnsFalse(){
+		Assert.assertFalse(ZipUtils.isZip("myFile.xml"));
+	}
+
+	@Test
+	public void shouldIsZipReturnsFalseIfFileNameHasNotExtenzion(){
+		Assert.assertFalse(ZipUtils.isZip("myFile"));
+	}
 }

@@ -74,4 +74,16 @@ public class FileUtils {
 
 		
 	}
+
+	public static String getFileNameWithOutExtension(File file) {
+		String name = file.getName();
+		int i = name.indexOf(".");
+		int size = name.length();
+		
+		if(i > -1){
+			size = i;
+		}
+		return name.substring(0, size);
+	}
+	
 }

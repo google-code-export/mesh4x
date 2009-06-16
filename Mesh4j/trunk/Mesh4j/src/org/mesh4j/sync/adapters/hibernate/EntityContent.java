@@ -3,6 +3,7 @@ package org.mesh4j.sync.adapters.hibernate;
 import org.dom4j.Element;
 import org.mesh4j.sync.model.Content;
 import org.mesh4j.sync.model.IContent;
+import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
 
 public class EntityContent extends Content{
 	
@@ -69,8 +70,7 @@ public class EntityContent extends Content{
 					return null;
 				} else {
 					String entityID = idElement.getText();
-					// TODO (JMT) RDF
-					if(content.getPayload().getName().equals("RDF")){
+					if(RDFSchema.isRDF(content.getPayload())){
 						entityElement = content.getPayload();
 					}
 					return new EntityContent(entityElement, entityNode, entityIDNode, entityID);

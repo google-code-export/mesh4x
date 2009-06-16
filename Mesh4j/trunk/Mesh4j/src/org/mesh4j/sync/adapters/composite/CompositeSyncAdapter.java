@@ -135,6 +135,15 @@ public class CompositeSyncAdapter extends AbstractSyncAdapter implements ISyncAw
 	public Collection<IIdentifiableSyncAdapter> getAdapters() {
 		return this.adapters;
 	}
+	
+	public IIdentifiableSyncAdapter getAdapter(String type) {
+		for (IIdentifiableSyncAdapter syncAdapter : this.adapters) {
+			if(syncAdapter.getType().equals(type)){
+				return syncAdapter;
+			}
+		}
+		return null;
+	}
 
 	private IIdentifiableSyncAdapter getAdapter(Item item) {
 		for (IIdentifiableSyncAdapter syncAdapter : this.adapters) {

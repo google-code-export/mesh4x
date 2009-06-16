@@ -383,4 +383,8 @@ public class ZipUtils {
 		return bos.toString("UTF-8");
 	}
 
+	public static boolean isZip(String fileName) {
+		return fileName.trim().toLowerCase().endsWith(".zip");
+	}
+
 }

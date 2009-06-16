@@ -7,7 +7,9 @@ import java.util.List;
 import org.dom4j.Element;
 import org.mesh4j.sync.IFilter;
 import org.mesh4j.sync.ISyncAdapter;
+import org.mesh4j.sync.adapters.composite.IIdentifiableSyncAdapter;
 import org.mesh4j.sync.model.Item;
+import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
 import org.mesh4j.sync.validations.Guard;
 
 public class ZipFeedsOpaqueSyncAdapter implements ISyncAdapter {
@@ -24,27 +26,35 @@ public class ZipFeedsOpaqueSyncAdapter implements ISyncAdapter {
 	@Override
 	public void add(Item item) {
 		String datasetName = getDataSetName(item);
-		this.zipFeedsSyncAdapter.addNewSyncAdapter(datasetName);
-		zipFeedsSyncAdapter.add(item);
+		IIdentifiableSyncAdapter syncAdapter = this.zipFeedsSyncAdapter.addNewSyncAdapter(datasetName);
+		if(syncAdapter != null){
+			zipFeedsSyncAdapter.add(item);
+		}
 	}
 
 	@Override
 	public void update(Item item) {
 		String datasetName = getDataSetName(item);
-		this.zipFeedsSyncAdapter.addNewSyncAdapter(datasetName);
-		zipFeedsSyncAdapter.update(item);
+		IIdentifiableSyncAdapter syncAdapter = this.zipFeedsSyncAdapter.addNewSyncAdapter(datasetName);
+		if(syncAdapter != null){
+			syncAdapter.add(item);
+			//zipFeedsSyncAdapter.update(item);
+		}
 	}
 
 	@Override
 	public void update(Item item, boolean resolveConflicts) {
 		String datasetName = getDataSetName(item);
-		this.zipFeedsSyncAdapter.addNewSyncAdapter(datasetName);
-		zipFeedsSyncAdapter.update(item, resolveConflicts);
+		IIdentifiableSyncAdapter syncAdapter = this.zipFeedsSyncAdapter.addNewSyncAdapter(datasetName);
+		if(syncAdapter != null){
+			syncAdapter.add(item);			
+			//zipFeedsSyncAdapter.update(item, resolveConflicts);
+		}
 	}
 
-	private String getDataSetName(Item item) {
+	public String getDataSetName(Item item) {
 		String datasetName = item.getContent().getPayload().getName();
-		if(datasetName.trim().toLowerCase().startsWith("rdf") || datasetName.trim().toLowerCase().startsWith("payload")){
+		if(RDFSchema.isRDF(item.getContent().getPayload()) || datasetName.trim().toLowerCase().startsWith("payload")){
 			datasetName = ((Element)item.getContent().getPayload().elements().get(0)).getName();
 		}
 		return datasetName;
@@ -88,6 +98,10 @@ public class ZipFeedsOpaqueSyncAdapter implements ISyncAdapter {
 	@Override
 	public String getFriendlyName() {
 		return "zip opaque adapter";
+	}
+
+	public ZipFeedsSyncAdapter getZipAdapter() {
+		return this.zipFeedsSyncAdapter;
 	}
 
 }

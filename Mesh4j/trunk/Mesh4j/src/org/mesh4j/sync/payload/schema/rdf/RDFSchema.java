@@ -441,4 +441,8 @@ public class RDFSchema implements IRDFSchema{
 		return result;
 	}
 
+	public static boolean isRDF(Element schemaElement) {
+		return schemaElement != null && schemaElement.getName().trim().toLowerCase().equals("rdf");
+	}
+
 }

@@ -19,6 +19,7 @@ import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.utils.FileUtils;
 import org.mesh4j.sync.utils.ZipUtils;
+import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
 public class ZipFeedsSyncAdapter implements ISyncAdapter, ISyncAware{
@@ -32,14 +33,21 @@ public class ZipFeedsSyncAdapter implements ISyncAdapter, ISyncAware{
 	// BUSINESS METHODS
 	
 	public ZipFeedsSyncAdapter(String zipFileName, IIdentityProvider identityProvider, String tempDirectoryName) {
-		super();
+		Guard.argumentNotNullOrEmptyString(zipFileName, "zipFileName");
+		Guard.argumentNotNull(identityProvider, "identityProvider");
+		Guard.argumentNotNullOrEmptyString(tempDirectoryName, "tempDirectoryName");
+		
+		if(!ZipUtils.isZip(zipFileName)){
+			Guard.throwsArgumentException("zipFileName", zipFileName);
+		}
+		
 		this.identityProvider = identityProvider;
 		this.zipFile = new File(zipFileName);
 		
-		String entryName = this.zipFile.getName().substring(0, this.zipFile.getName().length() - 4);
+		String entryName = FileUtils.getFileNameWithOutExtension(this.zipFile);
 		this.tempDirectory = FileUtils.getFile(tempDirectoryName, entryName);
 
-		this.compositeSyncAdapter  = makeCompositeAdapterFromZip();
+		//this.compositeSyncAdapter  = makeCompositeAdapterFromZip();
 	}
 	
 	@Override
@@ -119,7 +127,9 @@ public class ZipFeedsSyncAdapter implements ISyncAdapter, ISyncAware{
 				entries.put(feedFile.getName(), FileUtils.read(feedFile));
 			}
 			
-			ZipUtils.write(this.zipFile, entries);
+			if(!entries.isEmpty()){
+				ZipUtils.write(this.zipFile, entries);
+			}
 		} catch (Exception e) {
 			throw new MeshException(e);
 		}
@@ -141,7 +151,7 @@ public class ZipFeedsSyncAdapter implements ISyncAdapter, ISyncAware{
 				File feedFile = new File(fileName);
 				FileUtils.write(feedFile, entries.get(entryName));
 				
-				String dataset = feedFile.getName().substring(0, feedFile.getName().length() - 4);
+				String dataset = FileUtils.getFileNameWithOutExtension(feedFile);
 				IdentifiableSyncAdapter adapter = makeNewSyncAdapter(fileName, dataset);
 				adapters.add(adapter);
 			}
@@ -153,17 +163,20 @@ public class ZipFeedsSyncAdapter implements ISyncAdapter, ISyncAware{
 		}
 	}
 
-	public void addNewSyncAdapter(String datasetName) {
+	public IIdentifiableSyncAdapter addNewSyncAdapter(String datasetName) {
 		try{
-			String dataset = datasetName.toLowerCase().endsWith(".xml") ? datasetName.substring(0, datasetName.length() -4): datasetName;
+			String dataset = datasetName.toLowerCase().endsWith(".xml") ? datasetName.substring(0, datasetName.length() -4) : datasetName;
 			String feedFileName = datasetName.toLowerCase().endsWith(".xml") ? datasetName : datasetName + ".xml";
-	
-			String fileName = FileUtils.getFileName(this.tempDirectory.getCanonicalPath(), feedFileName);
-			FeedAdapter feedAdapter = FeedSyncAdapterFactory.createSyncAdapter(fileName, this.identityProvider);
-			IdentifiableSyncAdapter adapter = new IdentifiableSyncAdapter(dataset, feedAdapter);
-			
-			adapter.beginSync();
-			this.compositeSyncAdapter.addSyncAdapter(adapter);
+
+			if(this.getCompositeAdapter().getAdapter(dataset) == null){
+				String fileName = FileUtils.getFileName(this.tempDirectory.getCanonicalPath(), feedFileName);
+				IdentifiableSyncAdapter adapter = makeNewSyncAdapter(fileName, dataset);			
+				adapter.beginSync();
+				this.compositeSyncAdapter.addSyncAdapter(adapter);
+				return adapter;
+			} else {
+				return null;
+			}
 		} catch (Exception e) {
 			throw new MeshException(e);
 		}
@@ -183,10 +196,17 @@ public class ZipFeedsSyncAdapter implements ISyncAdapter, ISyncAware{
 	private void removeTempDirectory() {
 		FileUtils.delete(this.tempDirectory);
 	}
+	
+	public File getTempFolder(){
+		return this.tempDirectory;
+	}
 
 	public CompositeSyncAdapter getCompositeAdapter() {
 		return this.compositeSyncAdapter;
 	}
-	
+
+	public File getZipFile(){
+		return this.zipFile;
+	}
 
 }
