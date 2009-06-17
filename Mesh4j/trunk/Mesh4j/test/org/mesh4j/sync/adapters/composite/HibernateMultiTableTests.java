@@ -160,7 +160,7 @@ public class HibernateMultiTableTests {
 		CompositeSyncAdapter adapterSource = HibernateSyncAdapterFactory.createSyncAdapterForMultiTables(
 			"jdbc:mysql:///mesh4xdb", 
 			"root", 
-			"", 
+			"",//provide your password here 
 			com.mysql.jdbc.Driver.class,
 			org.hibernate.dialect.MySQLDialect.class,
 			tables, 
@@ -169,19 +169,15 @@ public class HibernateMultiTableTests {
 			NullIdentityProvider.INSTANCE,
 			adapterOpaqueSource);
 		
-		TreeSet<String> tables1 = new TreeSet<String>();
-		tables1.add("user");
-		tables1.add("person");
-		tables1.add("country");
 		
 		InMemorySyncAdapter adapterOpaqueTarget = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
 		CompositeSyncAdapter adapterTarget = HibernateSyncAdapterFactory.createSyncAdapterForMultiTables(
 				"jdbc:mysql:///mesh4xdbtarget", 
 				"root", 
-				"", 
+				"",//provide your password here 
 				com.mysql.jdbc.Driver.class,
 				org.hibernate.dialect.MySQLDialect.class,
-				tables1, 
+				tables, 
 				rdfURL, 
 				TestHelper.baseDirectoryRootForTest() +"target",//directory name for target meta information
 				NullIdentityProvider.INSTANCE,
@@ -206,7 +202,7 @@ public class HibernateMultiTableTests {
 		CompositeSyncAdapter adapterSource = HibernateSyncAdapterFactory.createSyncAdapterForMultiTables(
 			"jdbc:mysql:///mesh4xdb", 
 			"root", 
-			"test1234", 
+			"",//provide your password here 
 			com.mysql.jdbc.Driver.class,
 			org.hibernate.dialect.MySQLDialect.class,
 			tables,
@@ -215,19 +211,15 @@ public class HibernateMultiTableTests {
 			NullIdentityProvider.INSTANCE,
 			adapterOpaqueSource);
 		
-		TreeSet<String> tables1 = new TreeSet<String>();
-		tables1.add("user");
-		tables1.add("person");
-		tables1.add("country");
-		
+
 		InMemorySyncAdapter adapterOpaqueTarget = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
 		CompositeSyncAdapter adapterTarget = HibernateSyncAdapterFactory.createSyncAdapterForMultiTables(
 				"jdbc:mysql:///mesh4xdbtarget", 
 				"root", 
-				"test1234", 
+				"",//provide you password here 
 				com.mysql.jdbc.Driver.class,
 				org.hibernate.dialect.MySQLDialect.class,
-				tables1, 
+				tables, 
 				null, 
 				TestHelper.baseDirectoryRootForTest() +"target",//directory name for target meta information
 				NullIdentityProvider.INSTANCE,
