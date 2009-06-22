@@ -457,7 +457,7 @@ public class EktooFrame extends JFrame implements IErrorListener,
 	JRadioButton getSingleModeRadio(){
 		if (singleModeRadio == null) {
 		    singleModeRadio = new JRadioButton("Single Mode Sync");
-		    
+		    singleModeRadio.setToolTipText(EktooUITranslator.getTooltipSyncModeSingle());
 		    singleModeRadio.addChangeListener(new ChangeListener(){
 				@Override
 				public void stateChanged(ChangeEvent e) {
@@ -478,7 +478,7 @@ public class EktooFrame extends JFrame implements IErrorListener,
 	JRadioButton getMultiModeRadio(){
 		if (multiModeRadio == null) {
 		    multiModeRadio = new JRadioButton("Multi Mode Sync");
-		    
+		    multiModeRadio.setToolTipText(EktooUITranslator.getTooltipSyncModeMulti());
 		    multiModeRadio.addChangeListener(new ChangeListener(){
 				@Override
 				public void stateChanged(ChangeEvent e) {
