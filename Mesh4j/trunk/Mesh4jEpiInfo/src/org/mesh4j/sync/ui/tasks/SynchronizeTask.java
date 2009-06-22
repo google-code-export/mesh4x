@@ -4,7 +4,7 @@ import java.awt.Cursor;
 
 import javax.swing.SwingWorker;
 
-import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
+import org.mesh4j.sync.adapters.hibernate.msaccess.MsAccessHibernateSyncAdapterFactory;
 import org.mesh4j.sync.mappings.EndpointMapping;
 import org.mesh4j.sync.mappings.MSAccessDataSourceMapping;
 import org.mesh4j.sync.mappings.SyncMode;
@@ -29,7 +29,7 @@ public class SynchronizeTask extends SwingWorker<Void, Void> {
 		
 		try{
 			MSAccessDataSourceMapping dataSource = (MSAccessDataSourceMapping)ui.getComboBoxMappingDataSource().getSelectedItem();
-			if(dataSource == null || !MsAccessSyncAdapterFactory.isValidAccessTable(dataSource.getFileName(), dataSource.getTableName())){
+			if(dataSource == null || !MsAccessHibernateSyncAdapterFactory.isValidAccessTable(dataSource.getFileName(), dataSource.getTableName())){
     			ui.getSyncSessionView().setError(MeshCompactUITranslator.getErrorInvalidMSAccessTable());
 				return null;
 			}

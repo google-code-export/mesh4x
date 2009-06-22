@@ -20,8 +20,8 @@ import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 
+import org.mesh4j.sync.adapters.hibernate.msaccess.MsAccessHibernateSyncAdapterFactory;
 import org.mesh4j.sync.adapters.http.HttpSyncAdapterFactory;
-import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
 import org.mesh4j.sync.mappings.DataSourceMapping;
 import org.mesh4j.sync.mappings.MSAccessDataSourceMapping;
 import org.mesh4j.sync.mappings.SyncMode;
@@ -298,7 +298,7 @@ public class SyncCloudFrame extends JFrame implements IErrorListener, IDownloadL
 			}
 			
 			MSAccessDataSourceMapping dataSource = (MSAccessDataSourceMapping) getComboBoxMappingDataSource().getSelectedItem();
-			if(dataSource == null || !MsAccessSyncAdapterFactory.isValidAccessTable(dataSource.getFileName(), dataSource.getTableName())){
+			if(dataSource == null || !MsAccessHibernateSyncAdapterFactory.isValidAccessTable(dataSource.getFileName(), dataSource.getTableName())){
     			setError(MeshCompactUITranslator.getErrorInvalidMSAccessTable());
 				return null;
 			}

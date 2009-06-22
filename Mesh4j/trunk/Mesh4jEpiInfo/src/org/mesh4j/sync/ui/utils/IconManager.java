@@ -5,9 +5,9 @@ import java.awt.Image;
 import javax.swing.Icon;
 
 import org.mesh4j.sync.adapters.feed.FeedSyncAdapterFactory;
+import org.mesh4j.sync.adapters.hibernate.msaccess.MsAccessHibernateSyncAdapterFactory;
 import org.mesh4j.sync.adapters.http.HttpSyncAdapterFactory;
 import org.mesh4j.sync.adapters.kml.KMLDOMLoaderFactory;
-import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
 import org.mesh4j.sync.adapters.msexcel.MsExcelSyncAdapterFactory;
 import org.mesh4j.sync.ui.MeshCompactUI;
 
@@ -29,7 +29,7 @@ public class IconManager {
 			return "/httpDataSource.png";
 		} else if (source.startsWith(KMLDOMLoaderFactory.SOURCE_TYPE)){
 			return "/kmlDataSource.png";
-		} else if (source.startsWith(MsAccessSyncAdapterFactory.SOURCE_TYPE)){
+		} else if (source.startsWith(MsAccessHibernateSyncAdapterFactory.SOURCE_TYPE)){
 			if(remote){
 				return "/msAccessDataSourceRemote.png";
 			} else {

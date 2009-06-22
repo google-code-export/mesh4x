@@ -5,8 +5,8 @@ import java.awt.Cursor;
 import javax.swing.JFrame;
 import javax.swing.SwingWorker;
 
+import org.mesh4j.sync.adapters.hibernate.msaccess.MsAccessHibernateSyncAdapterFactory;
 import org.mesh4j.sync.adapters.http.HttpSyncAdapterFactory;
-import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
 import org.mesh4j.sync.mappings.MSAccessDataSourceMapping;
 import org.mesh4j.sync.properties.PropertiesProvider;
 import org.mesh4j.sync.ui.LogFrame;
@@ -45,7 +45,7 @@ public class DownloadSchemaAndMappingsTask extends SwingWorker<Void, Void> {
 			return null;
 		}
 		
-		if(dataSource == null || !MsAccessSyncAdapterFactory.isValidAccessTable(dataSource.getFileName(), dataSource.getTableName())){
+		if(dataSource == null || !MsAccessHibernateSyncAdapterFactory.isValidAccessTable(dataSource.getFileName(), dataSource.getTableName())){
 			downloadListener.setError(MeshCompactUITranslator.getErrorInvalidMSAccessTable());
 			return null;
 		}

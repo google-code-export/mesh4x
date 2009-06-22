@@ -12,8 +12,8 @@ import java.util.TreeSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.mesh4j.sync.adapters.hibernate.msaccess.MsAccessHibernateSyncAdapterFactory;
 import org.mesh4j.sync.adapters.msaccess.MsAccessHelper;
-import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
 import org.mesh4j.sync.mappings.DataSourceMapping;
 import org.mesh4j.sync.mappings.MSAccessDataSourceMapping;
 import org.mesh4j.sync.message.core.repository.ISourceIdMapper;
@@ -58,7 +58,7 @@ public class SourceIdMapper implements ISourceIdMapper {
 	}
 	public boolean isDataSourceAvailable(String alias) {
 		MSAccessDataSourceMapping dataSource = getDataSource(alias);
-		if(dataSource == null || !MsAccessSyncAdapterFactory.isValidAccessTable(dataSource.getFileName(), dataSource.getTableName())){
+		if(dataSource == null || !MsAccessHibernateSyncAdapterFactory.isValidAccessTable(dataSource.getFileName(), dataSource.getTableName())){
 			return false;
 		}
 		return true;
@@ -117,8 +117,8 @@ public class SourceIdMapper implements ISourceIdMapper {
 					
 					String alias = (String)entry.getKey();
 					String sourceDefinition = (String)entry.getValue();
-					String tableName = MsAccessSyncAdapterFactory.getTableName(sourceDefinition);
-					String fileName= MsAccessSyncAdapterFactory.getFileName(sourceDefinition);
+					String tableName = MsAccessHibernateSyncAdapterFactory.getTableName(sourceDefinition);
+					String fileName= MsAccessHibernateSyncAdapterFactory.getFileName(sourceDefinition);
 					String mdbName= new File(fileName).getName();
 					MSAccessDataSourceMapping dataSourceMapping = new MSAccessDataSourceMapping(alias, mdbName, tableName, fileName);
 					this.dataSourceMappings.add(dataSourceMapping);
@@ -138,7 +138,7 @@ public class SourceIdMapper implements ISourceIdMapper {
 			Properties prop = new Properties();
 			
 			for (MSAccessDataSourceMapping dataSourceMapping : this.dataSourceMappings) {
-				String sourceDefinition = MsAccessSyncAdapterFactory.createSourceDefinition(dataSourceMapping.getFileName(), dataSourceMapping.getTableName());
+				String sourceDefinition = MsAccessHibernateSyncAdapterFactory.createSourceDefinition(dataSourceMapping.getFileName(), dataSourceMapping.getTableName());
 				prop.put(dataSourceMapping.getAlias(), sourceDefinition);
 			}
 			
@@ -153,7 +153,7 @@ public class SourceIdMapper implements ISourceIdMapper {
 	public String getSourceDefinition(String sourceId) {
 		MSAccessDataSourceMapping dataSourceMapping = getDataSource(sourceId);
 		if(dataSourceMapping != null){
-			return MsAccessSyncAdapterFactory.createSourceDefinition(dataSourceMapping.getFileName(), dataSourceMapping.getTableName());
+			return MsAccessHibernateSyncAdapterFactory.createSourceDefinition(dataSourceMapping.getFileName(), dataSourceMapping.getTableName());
 		} else {
 			return null;
 		}

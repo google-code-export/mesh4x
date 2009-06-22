@@ -33,9 +33,9 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.mesh4j.sync.adapters.hibernate.msaccess.MsAccessHibernateSyncAdapterFactory;
 import org.mesh4j.sync.adapters.http.HttpSyncAdapterFactory;
 import org.mesh4j.sync.adapters.msaccess.MsAccessHelper;
-import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
 import org.mesh4j.sync.mappings.SyncMode;
 import org.mesh4j.sync.message.IMessageSyncAware;
 import org.mesh4j.sync.message.IMessageSyncProtocol;
@@ -733,7 +733,7 @@ public class MeshUI {
 
 				String dataSource = textFieldDataSource.getText();
 				String tableName = (String) comboTables.getSelectedItem();
-				if (!MsAccessSyncAdapterFactory.isValidAccessTable(dataSource,
+				if (!MsAccessHibernateSyncAdapterFactory.isValidAccessTable(dataSource,
 						tableName)) {
 					consoleNotification.log(MeshUITranslator
 							.getErrorInvalidMSAccessTable());
@@ -776,7 +776,7 @@ public class MeshUI {
 
 				String dataSource = textFieldDataSource.getText();
 				String tableName = (String) comboTables.getSelectedItem();
-				if (!MsAccessSyncAdapterFactory.isValidAccessTable(dataSource,
+				if (!MsAccessHibernateSyncAdapterFactory.isValidAccessTable(dataSource,
 						tableName)) {
 					consoleNotification.log(MeshUITranslator
 							.getErrorInvalidMSAccessTable());
@@ -806,7 +806,7 @@ public class MeshUI {
 			if (action == CANCEL_SYNC) {
 				String dataSource = textFieldDataSource.getText();
 				String tableName = (String) comboTables.getSelectedItem();
-				if (!MsAccessSyncAdapterFactory.isValidAccessTable(dataSource,
+				if (!MsAccessHibernateSyncAdapterFactory.isValidAccessTable(dataSource,
 						tableName)) {
 					consoleNotification.log(MeshUITranslator
 							.getErrorInvalidMSAccessTable());
@@ -825,7 +825,7 @@ public class MeshUI {
 				try {
 					String dataSource = textFieldDataSource.getText();
 					String tableName = (String) comboTables.getSelectedItem();
-					if (!MsAccessSyncAdapterFactory.isValidAccessTable(
+					if (!MsAccessHibernateSyncAdapterFactory.isValidAccessTable(
 							dataSource, tableName)) {
 						consoleNotification.log(MeshUITranslator
 								.getErrorInvalidMSAccessTable());
@@ -903,7 +903,7 @@ public class MeshUI {
 			if (action == GENERATE_KML) {
 				String dataSource = textFieldDataSource.getText();
 				String tableName = (String) comboTables.getSelectedItem();
-				if (!MsAccessSyncAdapterFactory.isValidAccessTable(dataSource,
+				if (!MsAccessHibernateSyncAdapterFactory.isValidAccessTable(dataSource,
 						tableName)) {
 					consoleNotification.setErrorImageStatus();
 					consoleNotification.log(MeshUITranslator
@@ -936,7 +936,7 @@ public class MeshUI {
 
 				String dataSource = textFieldDataSource.getText();
 				String tableName = (String) comboTables.getSelectedItem();
-				if (!MsAccessSyncAdapterFactory.isValidAccessTable(dataSource,
+				if (!MsAccessHibernateSyncAdapterFactory.isValidAccessTable(dataSource,
 						tableName)) {
 					consoleNotification.setErrorImageStatus();
 					consoleNotification.log(MeshUITranslator
@@ -972,7 +972,7 @@ public class MeshUI {
 
 				String dataSource = textFieldDataSource.getText();
 				String tableName = (String) comboTables.getSelectedItem();
-				if (!MsAccessSyncAdapterFactory.isValidAccessTable(dataSource,
+				if (!MsAccessHibernateSyncAdapterFactory.isValidAccessTable(dataSource,
 						tableName)) {
 					consoleNotification.setErrorImageStatus();
 					consoleNotification.log(MeshUITranslator
@@ -1002,7 +1002,7 @@ public class MeshUI {
 
 				String dataSource = textFieldDataSource.getText();
 				String tableName = (String) comboTables.getSelectedItem();
-				if (!MsAccessSyncAdapterFactory.isValidAccessTable(dataSource,
+				if (!MsAccessHibernateSyncAdapterFactory.isValidAccessTable(dataSource,
 						tableName)) {
 					consoleNotification.setErrorImageStatus();
 					consoleNotification.log(MeshUITranslator

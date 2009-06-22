@@ -30,7 +30,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
+import org.mesh4j.sync.adapters.hibernate.msaccess.MsAccessHibernateSyncAdapterFactory;
 import org.mesh4j.sync.mappings.DataSourceMapping;
 import org.mesh4j.sync.mappings.EndpointMapping;
 import org.mesh4j.sync.mappings.MSAccessDataSourceMapping;
@@ -353,7 +353,7 @@ public class ConfigurationFrame extends JFrame {
 						String newSourceDefinition = owner.getSourceIdMapper().getSourceDefinition(oldDataSourceMapping.getAlias());
 						MessageSyncAdapter msgSyncAdapter = (MessageSyncAdapter)owner.getSyncEngine().getSource(sourceId);
 						if(msgSyncAdapter != null){
-							MsAccessSyncAdapterFactory msAccessSyncAdapterFactory = (MsAccessSyncAdapterFactory) msgSyncAdapter.getSyncAdapterFactory();
+							MsAccessHibernateSyncAdapterFactory msAccessSyncAdapterFactory = (MsAccessHibernateSyncAdapterFactory) msgSyncAdapter.getSyncAdapterFactory();
 							msAccessSyncAdapterFactory.changeSourceDefinition(sourceId, newSourceDefinition, msgSyncAdapter.getSyncAdapter());
 						}
 //********************************************************************************************************************

@@ -25,12 +25,12 @@ import org.mesh4j.sync.adapters.feed.Feed;
 import org.mesh4j.sync.adapters.feed.FeedAdapter;
 import org.mesh4j.sync.adapters.feed.XMLContent;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
+import org.mesh4j.sync.adapters.hibernate.msaccess.MsAccessHibernateSyncAdapterFactory;
 import org.mesh4j.sync.adapters.http.HttpSyncAdapter;
 import org.mesh4j.sync.adapters.kml.timespan.decorator.IKMLGeneratorFactory;
 import org.mesh4j.sync.adapters.kml.timespan.decorator.KMLTimeSpanDecoratorSyncAdapter;
 import org.mesh4j.sync.adapters.kml.timespan.decorator.KMLTimeSpanDecoratorSyncAdapterFactory;
 import org.mesh4j.sync.adapters.msaccess.MsAccessRDFSchemaGenerator;
-import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
 import org.mesh4j.sync.filter.CompoundFilter;
 import org.mesh4j.sync.filter.NonDeletedFilter;
 import org.mesh4j.sync.id.generator.IdGenerator;
@@ -71,6 +71,7 @@ import org.mesh4j.sync.payload.mappings.Mapping;
 import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.payload.schema.SchemaInstanceContentReadWriter;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
+import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
 import org.mesh4j.sync.properties.PropertiesProvider;
 import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.ui.SyncSessionsFrame.CloudSyncSessionWrapper;
@@ -215,7 +216,7 @@ public class SyncEngineUtil {
 	}
 
 	private static ISyncAdapterFactory makeSyncAdapterFactory(String baseDirectory, String baseRDFUri) {
-		MsAccessSyncAdapterFactory msAccessSyncFactory = new MsAccessSyncAdapterFactory(baseDirectory, baseRDFUri);
+		MsAccessHibernateSyncAdapterFactory msAccessSyncFactory = new MsAccessHibernateSyncAdapterFactory(baseDirectory, baseRDFUri);
 		return msAccessSyncFactory;
 	}
 	
@@ -400,7 +401,7 @@ public class SyncEngineUtil {
 	
 	public static IRDFSchema getSchema(MSAccessDataSourceMapping dataSource, PropertiesProvider propertiesProvider) throws Exception{
 		String fileName = getSchemaFileName(dataSource.getAlias(), propertiesProvider);
-		return MsAccessRDFSchemaGenerator.readSchema(fileName);
+		return RDFSchema.readSchema(fileName);
 	}
 
 	public static void downloadSchema(String url, String dataSource, PropertiesProvider propertiesProvider) throws Exception {

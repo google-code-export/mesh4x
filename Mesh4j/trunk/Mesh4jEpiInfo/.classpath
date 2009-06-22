@@ -2,8 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry exported="true" kind="lib" path="etc"/>
-	<classpathentry exported="true" kind="lib" path="images"/>
 	<classpathentry exported="true" kind="lib" path="lib/activation.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/antlr-2.7.6.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/asm.jar"/>
@@ -16,7 +14,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/ehcache-1.2.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/forms-1.2.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/hibernate3.jar" sourcepath="E:/Clarius/java/hibernate-3.2.6.ga_src.zip"/>
-	<classpathentry exported="true" kind="lib" path="lib/jackcess-1.1.18.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jaxen-1.1-beta-7.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jta.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/log4j-1.2.11.jar"/>
@@ -25,5 +22,8 @@
 	<classpathentry exported="true" kind="lib" path="lib/poi-3.2-FINAL-20081019.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/smslib-3.3.0.jar"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/Mesh4j"/>
+	<classpathentry kind="lib" path="etc"/>
+	<classpathentry kind="lib" path="/Mesh4jEktooClient/images"/>
+	<classpathentry kind="lib" path="lib/jackcess-1.1.19.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
