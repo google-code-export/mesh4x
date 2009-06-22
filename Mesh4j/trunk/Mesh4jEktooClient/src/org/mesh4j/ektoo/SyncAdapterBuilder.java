@@ -22,9 +22,9 @@ import org.mesh4j.sync.adapters.folder.FolderSyncAdapterFactory;
 import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadSheetRDFSyncAdapterFactory;
 import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadSheetSyncAdapterFactory;
 import org.mesh4j.sync.adapters.hibernate.HibernateSyncAdapterFactory;
+import org.mesh4j.sync.adapters.hibernate.msaccess.MsAccessHibernateSyncAdapterFactory;
 import org.mesh4j.sync.adapters.http.HttpSyncAdapterFactory;
 import org.mesh4j.sync.adapters.kml.KMLDOMLoaderFactory;
-import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
 import org.mesh4j.sync.adapters.msexcel.MsExcelRDFSyncAdapterFactory;
 import org.mesh4j.sync.adapters.msexcel.MsExcelSyncAdapterFactory;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
@@ -33,6 +33,7 @@ import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.NullContent;
 import org.mesh4j.sync.model.Sync;
+import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.security.NullIdentityProvider;
@@ -44,7 +45,7 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 
 	// MODEL VARIABLEs
 	private PropertiesProvider propertiesProvider;
-	private MsAccessSyncAdapterFactory msAccesSyncAdapter;
+	private MsAccessHibernateSyncAdapterFactory msAccesSyncAdapter;
 	private MsExcelRDFSyncAdapterFactory excelRDFSyncFactory;
 	private MsExcelSyncAdapterFactory excelSyncFactory; 
 	private GoogleSpreadSheetSyncAdapterFactory googleSpreadSheetSyncAdapterFactory;
@@ -55,7 +56,7 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 	public SyncAdapterBuilder(PropertiesProvider propertiesProvider) {
 		Guard.argumentNotNull(propertiesProvider, "propertiesProvider");
 		this.propertiesProvider = propertiesProvider;
-		this.msAccesSyncAdapter = new MsAccessSyncAdapterFactory(this.getBaseDirectory(), this.getBaseRDFUrl());
+		this.msAccesSyncAdapter = new MsAccessHibernateSyncAdapterFactory(this.getBaseDirectory(), this.getBaseRDFUrl());
 		this.excelRDFSyncFactory = new MsExcelRDFSyncAdapterFactory(this.getBaseRDFUrl());
 		this.excelSyncFactory = new MsExcelSyncAdapterFactory();
 		this.googleSpreadSheetSyncAdapterFactory = new GoogleSpreadSheetSyncAdapterFactory();
@@ -135,9 +136,14 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 		return HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverUrl, meshGroup, dataSetId, getIdentityProvider(), rdfSchema);
 	}	
 	
+	// TODO (JMT) Transform HashMap<IRDFSchema, String> to Set<IRDFSchema> ==> IRDFSchema must give the Id node value
 	@Override
 	public ISyncAdapter createHttpSyncAdapterForMultiDataset(String serverUrl, String meshGroup, HashMap<IRDFSchema, String> rdfSchemas){
-		return HttpSyncAdapterFactory.createSyncAdapterForMultiDataset(serverUrl, meshGroup, getIdentityProvider(), rdfSchemas);
+		List<ISchema> schemas = new ArrayList<ISchema>();
+		for (IRDFSchema rdfschema : rdfSchemas.keySet()) {
+			schemas.add(rdfschema);
+		}
+		return HttpSyncAdapterFactory.createSyncAdapterForMultiDataset(serverUrl, meshGroup, getIdentityProvider(), schemas);
 	}
 	
 	@Override

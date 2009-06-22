@@ -32,7 +32,6 @@
 	<classpathentry kind="lib" path="lib/hibernate3.jar"/>
 	<classpathentry kind="lib" path="lib/icu4j_3_4.jar"/>
 	<classpathentry kind="lib" path="lib/iri.jar"/>
-	<classpathentry kind="lib" path="lib/jackcess-1.1.18.jar"/>
 	<classpathentry kind="lib" path="lib/jaxen-1.1-beta-7.jar"/>
 	<classpathentry kind="lib" path="lib/jena.jar"/>
 	<classpathentry kind="lib" path="lib/jta.jar"/>
@@ -48,5 +47,6 @@
 	<classpathentry kind="lib" path="/Mesh4j/lib/jakarta-poi/poi-scratchpad-3.5-beta5-20090219.jar"/>
 	<classpathentry kind="lib" path="/Mesh4j/lib/jakarta-poi/xmlbeans-2.3.0.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Mesh4j"/>
+	<classpathentry kind="lib" path="lib/jackcess-1.1.19.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

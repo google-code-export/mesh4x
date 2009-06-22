@@ -13,7 +13,6 @@ import org.mesh4j.sync.adapters.feed.Feed;
 import org.mesh4j.sync.adapters.feed.FeedAdapter;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadsheet;
-import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadsheetUtils;
 import org.mesh4j.sync.adapters.googlespreadsheet.IGoogleSpreadSheet;
 import org.mesh4j.sync.adapters.googlespreadsheet.mapping.GoogleSpreadsheetToPlainXMLMapping;
 import org.mesh4j.sync.adapters.googlespreadsheet.mapping.IGoogleSpreadsheetToXMLMapping;
@@ -21,8 +20,8 @@ import org.mesh4j.sync.adapters.googlespreadsheet.model.GSWorksheet;
 import org.mesh4j.sync.adapters.hibernate.EntityContent;
 import org.mesh4j.sync.adapters.hibernate.HibernateContentAdapter;
 import org.mesh4j.sync.adapters.hibernate.mapping.HibernateToRDFMapping;
+import org.mesh4j.sync.adapters.hibernate.msaccess.MsAccessHibernateSyncAdapterFactory;
 import org.mesh4j.sync.adapters.http.HttpSyncAdapter;
-import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
 import org.mesh4j.sync.adapters.msexcel.MSExcelToPlainXMLMapping;
 import org.mesh4j.sync.adapters.msexcel.MsExcel;
 import org.mesh4j.sync.adapters.msexcel.MsExcelContentAdapter;
@@ -56,7 +55,7 @@ public class AdapterFactoryTests {
 
 //	@Test
 	public void shouldCreateMsAccessAdapterWithRDF() throws Exception {
-		MsAccessSyncAdapterFactory adapterFactory = new MsAccessSyncAdapterFactory(
+		MsAccessHibernateSyncAdapterFactory adapterFactory = new MsAccessHibernateSyncAdapterFactory(
 				TestHelper.baseDirectoryForTest(),
 				"http://mesh4x/feeds/grammen");
 		SplitAdapter syncAdapter = adapterFactory.createSyncAdapterFromFile(
@@ -77,7 +76,7 @@ public class AdapterFactoryTests {
 
 //	@Test
 	public void shouldCreateMsAccessAdapterWithoutRDF() throws Exception {
-		MsAccessSyncAdapterFactory adapterFactory = new MsAccessSyncAdapterFactory(
+		MsAccessHibernateSyncAdapterFactory adapterFactory = new MsAccessHibernateSyncAdapterFactory(
 				TestHelper.baseDirectoryForTest(), null);
 		SplitAdapter syncAdapter = adapterFactory.createSyncAdapterFromFile(
 				"aktoo", TestHelper.baseDirectoryForTest() + "\\aktoo.mdb",
@@ -129,11 +128,11 @@ public class AdapterFactoryTests {
 		
 		IGoogleSpreadSheet spreadsheet = new GoogleSpreadsheet(/*GOOGLE_SPREADSHEET_FIELD,*/ spreadsheetName, userName, passWord);
 		GSWorksheet sourceRepo = spreadsheet.getGSWorksheet(1);
-
-		IGoogleSpreadsheetToXMLMapping mapper = new GoogleSpreadsheetToPlainXMLMapping("user", idColumName,
-													null,sourceRepo.getName(), 
-													spreadsheet.getDocsService());
-				
+//
+//		IGoogleSpreadsheetToXMLMapping mapper = new GoogleSpreadsheetToPlainXMLMapping("user", idColumName,
+//													null,sourceRepo.getName(), 
+//													spreadsheet.getDocsService());
+//				
 		
 //		SplitAdapter spreadSheetAdapter = GoogleSpreadsheetUtils
 //			.createGoogleSpreadSheetAdapter(spreadsheet, mapper,

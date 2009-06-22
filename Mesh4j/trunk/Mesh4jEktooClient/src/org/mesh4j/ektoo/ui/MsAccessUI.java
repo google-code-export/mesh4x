@@ -34,7 +34,8 @@ import org.mesh4j.ektoo.tasks.OpenFileTask;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.ektoo.ui.validator.MsAccessUIValidator;
-import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
+import org.mesh4j.sync.adapters.hibernate.msaccess.MsAccessHibernateSyncAdapterFactory;
+import org.mesh4j.sync.adapters.jackcess.msaccess.MsAccessJackcessSyncAdapterFactory;
 
 public class MsAccessUI extends AbstractUI{
 
@@ -98,7 +99,7 @@ public class MsAccessUI extends AbstractUI{
 		try {
 			File file = new File(fileName);
 			if(file.exists()){
-				Set<String> tableNames = MsAccessSyncAdapterFactory.getTableNames(fileName);
+				Set<String> tableNames = MsAccessHibernateSyncAdapterFactory.getTableNames(fileName);
 				tableList.setListData(tableNames.toArray());
 //				for (String tableName : tableNames) {
 //					tableList.addItem(tableName);
