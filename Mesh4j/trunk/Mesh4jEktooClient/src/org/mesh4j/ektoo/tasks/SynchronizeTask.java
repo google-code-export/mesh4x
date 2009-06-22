@@ -13,6 +13,7 @@ import org.mesh4j.ektoo.ui.EktooFrame;
 import org.mesh4j.ektoo.ui.SyncItemUI;
 import org.mesh4j.ektoo.ui.component.messagedialog.MessageDialog;
 import org.mesh4j.ektoo.ui.component.statusbar.Statusbar;
+import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 
 public class SynchronizeTask extends SwingWorker<String, Void> {
@@ -34,6 +35,7 @@ public class SynchronizeTask extends SwingWorker<String, Void> {
 
 	@Override
 	public String doInBackground() {
+		ui.getBtnSync().setIcon(ImageManager.getSyncIcon(true));
 		ui.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 		ui.setStatusbarText(EktooUITranslator.getMessageStartSync(ui
 				.getSourceItem().toString(), ui.getTargetItem().toString(),
@@ -46,6 +48,9 @@ public class SynchronizeTask extends SwingWorker<String, Void> {
 
 			return result;
 		} catch (Throwable t) {
+			ui.getBtnSync().setIcon(ImageManager.getSyncIcon(false));
+			ui.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+			
 			LOGGER.error(t.getMessage(), t);
 			MessageDialog.showErrorMessage(ui, t.getLocalizedMessage());
 		}
@@ -54,6 +59,8 @@ public class SynchronizeTask extends SwingWorker<String, Void> {
 
 	@Override
 	public void done() {
+		ui.getBtnSync().setIcon(ImageManager.getSyncIcon(false));
+		ui.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 		try {
 			result = get();
 			if (result != null) {
@@ -115,8 +122,7 @@ public class SynchronizeTask extends SwingWorker<String, Void> {
 									new Date()));
 			LOGGER.error(e.getMessage(), e);
 		}
-		ui.showSyncImageLabel(false);
-		ui.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		//ui.showSyncImageLabel(false);
 	}
 
 }
