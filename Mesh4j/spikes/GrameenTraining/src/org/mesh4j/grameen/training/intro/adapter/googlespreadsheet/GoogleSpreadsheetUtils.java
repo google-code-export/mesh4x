@@ -543,19 +543,6 @@ public class GoogleSpreadsheetUtils {
 		return null;
 	}
 
-	public static Date normalizeDate(String dateAsString, String format) {
-		Guard.argumentNotNull(dateAsString, "dateAsString");
-
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
-		Date dateAndTime;
-		try {
-			dateAndTime = simpleDateFormat.parse(dateAsString);
-		} catch (ParseException e) {
-			throw new MeshException(e);
-		}
-		return dateAndTime;
-	}
-
 	public static SplitAdapter createGoogleSpreadSheetAdapter(IGoogleSpreadSheet spreadSheet,IGoogleSpreadsheetToXMLMapping mapper,IIdentityProvider identityProvider,IIdGenerator idGenerator){
 		GoogleSpreadSheetContentAdapter contentRepo = new GoogleSpreadSheetContentAdapter(spreadSheet,mapper);
 		String syncSheetName = mapper.getSheetName() + "_sync";

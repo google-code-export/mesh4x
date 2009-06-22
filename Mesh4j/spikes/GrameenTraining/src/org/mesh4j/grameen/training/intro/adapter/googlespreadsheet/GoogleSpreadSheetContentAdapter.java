@@ -17,6 +17,7 @@ import org.mesh4j.sync.adapters.hibernate.EntityContent;
 import org.mesh4j.sync.adapters.split.IContentAdapter;
 import org.mesh4j.sync.model.IContent;
 import org.mesh4j.sync.payload.schema.ISchema;
+import org.mesh4j.sync.utils.DateHelper;
 import org.mesh4j.sync.validations.Guard;
 /**
  * Basically implementation of CRUD operation in google spreadsheet through Mesh4x wrapper
@@ -114,7 +115,7 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 		GSRow row = GoogleSpreadsheetUtils.getRow(this.workSheet, entityIdIndex, contentId);
 		if(row != null){
 			Element payLoad = mapper.convertRowToXML(row);
-			return new EntityContent(payLoad,this.entityName,contentId);
+			return new EntityContent(payLoad,this.entityName, this.idColumnName, contentId);
 		}
 		return null;
 	}
@@ -139,7 +140,7 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 					 }
 					 //TODO handle the else condition.
 	   		    entityId = cell.getCellValue();
-				EntityContent entityContent = new EntityContent(payLoad,this.entityName,entityId);
+				EntityContent entityContent = new EntityContent(payLoad,this.entityName, this.idColumnName, entityId);
 				listOfAll.add(entityContent);
 			}
 		}
@@ -158,7 +159,7 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter,ISyncAwa
 				return true;
 			} else {
 				String dateTimeAsString = cell.getCellValue();
-				Date lasUpdateDateTime = GoogleSpreadsheetUtils.normalizeDate(dateTimeAsString, G_SPREADSHEET_DATE_FORMAT);
+				Date lasUpdateDateTime = DateHelper.parseDate(dateTimeAsString, G_SPREADSHEET_DATE_FORMAT);
 				return since.compareTo(lasUpdateDateTime) <= 0;
 			}
 		}
