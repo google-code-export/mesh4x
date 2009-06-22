@@ -11,17 +11,19 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.StringTokenizer;
 
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.ButtonModel;
 import javax.swing.Icon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -36,6 +38,7 @@ import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.ektoo.tasks.IErrorListener;
 import org.mesh4j.ektoo.tasks.ISynchronizeTaskListener;
 import org.mesh4j.ektoo.tasks.OpenURLTask;
+import org.mesh4j.ektoo.tasks.SchemaViewTask;
 import org.mesh4j.ektoo.tasks.SynchronizeTask;
 import org.mesh4j.ektoo.ui.component.HyperLink;
 import org.mesh4j.ektoo.ui.component.statusbar.Statusbar;
@@ -70,6 +73,9 @@ public class EktooFrame extends JFrame implements IErrorListener,
 
 	private Statusbar statusBar = null;
 	private EktooController controller;
+
+	private JButton sourceSchemaViewButton;
+	private JButton targetSchemaViewButton;
 
 	// BUSINESS METHODS
 	public EktooFrame(EktooController controller) {
@@ -179,20 +185,62 @@ public class EktooFrame extends JFrame implements IErrorListener,
 			c.gridy = 2;
 			panel.add(getTargetPane(), c);
 			
-			c.fill = GridBagConstraints.CENTER;
+			//put the view schema button for source
 			c.gridx = 0;
 			c.gridy = 3;
+			c.anchor= GridBagConstraints.NORTH;
+			panel.add(getSourceSchemaViewButton(), c);
+			
+			//put the view schema button for target
+			c.gridx = 1;
+			c.gridy = 3;
+			c.anchor= GridBagConstraints.NORTH;
+			panel.add(getTargetSchemaViewButton(), c);
+			
+			c.fill = GridBagConstraints.CENTER;
+			c.gridx = 0;
+			c.gridy = 4;
 			c.gridwidth = 2;
 			panel.add(getBtnSync(), c);		
 			
 			c.insets = new Insets(0, 3, -17, 3);
 			c.fill = GridBagConstraints.HORIZONTAL;
 			c.gridx = 0;
-			c.gridy = 4;
+			c.gridy = 5;
 			c.gridwidth = 2;
 			panel.add(getStatusBar(), c);
 		}
 		return panel;
+	}
+	
+	private JButton getSourceSchemaViewButton(){
+		if(sourceSchemaViewButton == null){
+			sourceSchemaViewButton = new JButton("View source schema");
+			sourceSchemaViewButton.addActionListener(new ActionListener(){
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					SchemaViewTask task = new SchemaViewTask(EktooFrame.this, getSourceItem(), EktooFrame.this);
+					task.execute();
+				}
+			});
+		}
+		return sourceSchemaViewButton;
+	}
+	
+	
+	
+	private JButton getTargetSchemaViewButton(){
+		if(targetSchemaViewButton == null){
+			targetSchemaViewButton = new JButton("View target schema");
+			targetSchemaViewButton.addActionListener(new ActionListener(){
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					SchemaViewTask task = new SchemaViewTask(EktooFrame.this,getTargetItem(), EktooFrame.this);
+					task.execute();
+				}
+			});
+		}
+		return targetSchemaViewButton;
 	}
 	
 	private JPanel getImagePanel() {
@@ -372,8 +420,7 @@ public class EktooFrame extends JFrame implements IErrorListener,
 			btnSync.setBounds(new Rectangle(315, 427, 50, 50));			
 			btnSync.setToolTipText(EktooUITranslator.getSyncToolTip());
 
-			btnSync.addMouseListener(new MouseListener(){
-
+			btnSync.addMouseListener(new MouseAdapter(){
 				@Override
 				public void mouseClicked(MouseEvent e) {
 					if(getSourceItem().verify() && getTargetItem().verify()){
@@ -383,22 +430,6 @@ public class EktooFrame extends JFrame implements IErrorListener,
 						task.execute();	
 					}
 				}
-
-				@Override
-				public void mouseEntered(MouseEvent e) {
-				}
-
-				@Override
-				public void mouseExited(MouseEvent e) {
-				}
-
-				@Override
-				public void mousePressed(MouseEvent e) {
-				}
-
-				@Override
-				public void mouseReleased(MouseEvent e) {
-				}	
 			});
 
 		}

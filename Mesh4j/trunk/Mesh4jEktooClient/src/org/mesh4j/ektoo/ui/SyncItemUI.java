@@ -111,6 +111,8 @@ public class SyncItemUI extends JPanel implements IUIController {
 	private String title = null;
 	private boolean acceptsCreateDataset;
 
+	
+
 	// BUSINESS MODEL
 	public SyncItemUI(String title, boolean acceptsCreateDataset) {
 		this.title = title;
@@ -128,10 +130,9 @@ public class SyncItemUI extends JPanel implements IUIController {
 		setBackground(Color.WHITE);
 		add(getHeadPane(), BorderLayout.NORTH);
 		add(getBodyPane(), BorderLayout.CENTER);
-
 		updateLayout((String) getListType().getSelectedItem());
 	}
-
+	
 	private JPanel getHeadPane() {
 		if (head == null) {
 			head = new JPanel();
