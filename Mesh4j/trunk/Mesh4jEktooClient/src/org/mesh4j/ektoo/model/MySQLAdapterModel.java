@@ -14,7 +14,7 @@ public class MySQLAdapterModel extends AbstractModel
 	private String hostName = null;
 	private int portNo = -1;
 	private String databaseName = null;
-	private String tableName = null;
+	private String[] tableNames = null;
 
 	// BUSINESS METHODS
 	public void setUserName(String userName) 
@@ -62,17 +62,17 @@ public class MySQLAdapterModel extends AbstractModel
 		return databaseName;
 	}
 
-	public void setTableName(String tableName) {
-		firePropertyChange(MySQLUIController.TABLE_NAME_PROPERTY, this.tableName,
-				this.tableName = tableName);
+	public void setTableNames(String[] tableNames) {
+		firePropertyChange(MySQLUIController.TABLE_NAME_PROPERTY, this.tableNames,
+				this.tableNames = tableNames);
 	}
 
-	public String getTableName() {
-		return tableName;
+	public String[] getTableNames() {
+		return tableNames;
 	}
 	
   public String toString()
   {
-     return "MySQL | " + getHostName() + " | " + getPortNo() + " | " + getDatabaseName() + " | " + getTableName();
+     return "MySQL | " + getHostName() + " | " + getPortNo() + " | " + getDatabaseName() + " | " + getTableNames().toString();
   } 	
 }

@@ -10,7 +10,7 @@ public class MsAccessModel extends AbstractModel
 {
 	// MODEL VARIABLES
 	private String databaseName = null;
-	private String tableName = null;
+	private String [] tableNames = null;
 
 	// BUSINESS METHODS
 	public MsAccessModel(String databaseName){
@@ -27,18 +27,17 @@ public class MsAccessModel extends AbstractModel
 		return databaseName;
 	}
 
-	public void setTableName(String tableName) 
+	public void setTableNames(String [] tableNames) 
 	{
-		firePropertyChange( MsAccessUIController.TABLE_NAME_PROPERTY, this.tableName,
-				this.tableName = tableName);
+		firePropertyChange( MsAccessUIController.TABLE_NAME_PROPERTY, this.tableNames,
+				this.tableNames = tableNames);
 	}
 
-	public String getTabletName() {
-		return tableName;
+	public String[] getTableNames() {
+		return tableNames;
 	}
-	
-  public String toString()
-  {
-     return "Ms Access | " + getDatabaseName() + " | " + getTabletName();
-  }	
+
+	public String toString(){
+	     return "Ms Access | " + getDatabaseName() + " | " + getTableNames().toString();
+	}	
 }
