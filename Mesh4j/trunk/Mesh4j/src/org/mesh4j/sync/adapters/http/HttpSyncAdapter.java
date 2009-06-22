@@ -426,6 +426,25 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 		}
 	}
 
+	public boolean isMeshDefinitionAvailable(String meshName){
+		String result=null;
+		URL meshChkUrl;
+		try {
+			meshChkUrl = new URL(url.toString()+"/"+meshName+ "?format=atom10");
+		} catch (MalformedURLException e1) {
+			Logger.error(e1.getMessage(), e1); 
+			throw new MeshException(e1);
+		}
+		try{
+			result = doGET(meshChkUrl, new Date());
+		}catch(Exception e){
+			Logger.error(e.getMessage(), e); 
+			throw new MeshException(e);
+		}
+		
+		return result !=null ? true : false;
+	}	
+
 	public static void uploadMeshDefinition(String url, String sourceId, String format, String description, ISchema schema, IMapping mappings, String by) {
 		try{
 			URL baseURL = new URL(url);
