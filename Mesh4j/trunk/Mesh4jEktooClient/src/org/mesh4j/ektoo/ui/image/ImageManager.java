@@ -39,20 +39,6 @@ public class ImageManager {
 				"/connection_16.png");
 	}
 
-	public static Icon getSyncModeIcon(boolean sendChanges,
-			boolean receiveChanges) {
-		if (sendChanges && receiveChanges) {
-			return SwingResourceManager.getIcon(EktooFrame.class,
-					"/2WaySync.png");
-		} else if (sendChanges) {
-			return SwingResourceManager.getIcon(EktooFrame.class,
-					"/sendChangesOnly.png");
-		} else {
-			return SwingResourceManager.getIcon(EktooFrame.class,
-					"/receiveChangesOnly.png");
-		}
-	}
-
 	public static Icon getSourceImage(String source, boolean remote) {
 		if (source == null) {
 			return SwingResourceManager.getIcon(EktooFrame.class, "/ds.png");
@@ -62,8 +48,7 @@ public class ImageManager {
 		} else if (source.startsWith(SyncItemUI.KML_PANEL)) {
 			return SwingResourceManager
 					.getIcon(EktooFrame.class, "/kml_ds.png");
-		} else if (source.startsWith(SyncItemUI.MS_ACCESS_PANEL)
-				|| source.startsWith(SyncItemUI.MS_ACCESS_MULTI_TABLE_PANEL)) {
+		} else if (source.startsWith(SyncItemUI.MS_ACCESS_PANEL)) {
 			return SwingResourceManager.getIcon(EktooFrame.class,
 					"/access_ds.png");
 		} else if (source.startsWith(SyncItemUI.MS_EXCEL_PANEL)) {
@@ -91,6 +76,25 @@ public class ImageManager {
 		}
 	}
 
+	public static Icon getSyncModeIcon(boolean sendChanges, boolean receiveChanges) {
+		if(sendChanges && receiveChanges){
+			return SwingResourceManager.getIcon(EktooFrame.class, "/2WaySync.png");
+		}
+		else if(sendChanges){
+			return SwingResourceManager.getIcon(EktooFrame.class, "/sendChangesOnly.png");
+		} else {
+			return SwingResourceManager.getIcon(EktooFrame.class, "/receiveChangesOnly.png");
+		}
+	}  
+  
+	public static Icon getSyncIcon(boolean active) {
+		if (active) {
+			return SwingResourceManager.getIcon(EktooFrame.class, "/sync_active.gif");
+		} else {
+			return SwingResourceManager.getIcon(EktooFrame.class, "/sync_inactive.gif");
+		}
+	} 
+  
 	public static Icon getStatusErrorIcon() {
 		return SwingResourceManager.getIcon(EktooFrame.class, "/error.png");
 	}
@@ -112,7 +116,7 @@ public class ImageManager {
 	public static Icon getTrademarkIcon() {
 		return SwingResourceManager.getIcon(EktooFrame.class, "/mesh4x.png");
 	}
-
+	
 	public static Icon getCloudErrorIcon() {
 		return SwingResourceManager
 				.getIcon(EktooFrame.class, "/cloudError.jpg");
