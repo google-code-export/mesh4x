@@ -411,7 +411,7 @@ public class MySQLUI extends AbstractUI {
 		if (listTable == null) {
 			listTable = new JList();
 			//listTable.setBounds(new Rectangle(101, 105, 183, 180));
-			listTable.setToolTipText(EktooUITranslator.getTooltipSelectTable());
+			listTable.setToolTipText(EktooUITranslator.getTooltipSelectSingleTable());
 			//listTable.setVisibleRowCount(6);
 			//listTable.setBorder(new EmptyBorder(1, 1, 1, 1));
 
@@ -428,6 +428,10 @@ public class MySQLUI extends AbstractUI {
 		listTable.setSelectionMode(EktooFrame.multiModeSync ? 
 				ListSelectionModel.MULTIPLE_INTERVAL_SELECTION : ListSelectionModel.SINGLE_SELECTION);
 
+		listTable.setToolTipText(EktooFrame.multiModeSync ? EktooUITranslator
+				.getTooltipSelectMultiTable() : EktooUITranslator
+				.getTooltipSelectSingleTable());
+				
 		return listTable;
 	}
 	
