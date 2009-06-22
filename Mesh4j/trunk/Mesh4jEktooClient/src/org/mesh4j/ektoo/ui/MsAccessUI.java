@@ -301,7 +301,7 @@ public class MsAccessUI extends AbstractUI{
 	public JList getTableList() {
 		if (listTable == null) {
 			listTable = new JList();
-			listTable.setToolTipText(EktooUITranslator.getTooltipSelectTable());
+			listTable.setToolTipText(EktooUITranslator.getTooltipSelectSingleTable());
 
 			listTable.addListSelectionListener(new ListSelectionListener() {
 						@Override
