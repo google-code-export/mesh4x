@@ -239,6 +239,11 @@ public class EktooUITranslator {
 				.translate("EKTOO_SYNC_PROCESS_DATA_SOURCE_LIST_LABEL");
 	}
 
+	public static String getMultiModeSyncSupportedDataSourceType() {
+		return EktooMessageTranslator
+				.translate("EKTOO_SYNC_PROCESS_MULTIMODE_SYNC_SUPPORTED_DATA_SOURCE_LIST_LABEL");
+	}
+	
 	public static String getMySQLHostLabel() {
 		return EktooMessageTranslator
 				.translate("EKTOO_MYSQL_HOST_NAME_FIELD_LABEL");
@@ -330,7 +335,11 @@ public class EktooUITranslator {
 		return EktooMessageTranslator
 				.translate("EKTOO_FEED_FILE_NAME_FIELD_LABEL");
 	}
-
+	
+	public static String getErrorEmptySelection(String name) {
+		return EktooMessageTranslator.translate("EKTOO_ERROR_EMPTY_SELECTION", name);
+	}
+	
 	public static String getErrorEmptyOrNull(String name) {
 		return EktooMessageTranslator.translate("EKTOO_ERROR_EMPTY_OR_NULL", name);
 	}
