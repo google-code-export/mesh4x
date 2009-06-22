@@ -284,7 +284,7 @@ public class MsExcelUI extends AbstractUI implements IValidationStatus {
 		return (IErrorListener) getRootFrame();
 	}
 
-	private JLabel getlabelTable() {
+	protected JLabel getlabelTable() {
 		if (labelTable == null) {
 			labelTable = new JLabel();
 			labelTable.setText(EktooUITranslator.getExcelWorksheetLabel());
@@ -319,7 +319,7 @@ public class MsExcelUI extends AbstractUI implements IValidationStatus {
 		return listTable;
 	}
 
-	private JLabel getLabelColumn() {
+	protected JLabel getLabelColumn() {
 		if (labelColumn == null) {
 			labelColumn = new JLabel();
 			labelColumn.setText(EktooUITranslator.getExcelUniqueColumnLabel());

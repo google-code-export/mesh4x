@@ -25,7 +25,7 @@ public abstract class AbstractUI extends JPanel implements IValidationStatus {
 	protected JTextField getMessagesText() {
 		if (txtMessages == null) {
 			txtMessages = new JTextField();
-			txtMessages.setBounds(new Rectangle(0, 140, 400, 20));
+			txtMessages.setBounds(new Rectangle(0, 170, 400, 20));
 			txtMessages.setEditable(false);
 		}
 		return txtMessages;

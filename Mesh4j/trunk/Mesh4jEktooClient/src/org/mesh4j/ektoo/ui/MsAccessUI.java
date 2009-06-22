@@ -8,19 +8,22 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
+import java.util.Arrays;
 import java.util.Set;
 
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.apache.commons.logging.Log;
@@ -47,8 +50,10 @@ public class MsAccessUI extends AbstractUI{
 	private JTextField txtFileName = null;
 
 	private JLabel labelTable = null;
-	private JComboBox listTable = null;
-
+	//private JComboBox listTable = null;
+	private JList listTable = null;
+	private JScrollPane listTableScroller =null;
+	
 	private JButton btnFile = null;
 	private JButton btnView = null;
 	
@@ -82,21 +87,22 @@ public class MsAccessUI extends AbstractUI{
 		this.add(getBtnView(), null);
 
 		this.add(getlabelTable(), null);
-		this.add(getTableList(), null);
+		this.add(getListTableScroller(), null);
 		this.add(getMessagesText(), null);
 	}
 
 	public void setList(String fileName) {
-		JComboBox tableList = getTableList();
-		tableList.removeAllItems();
+		JList tableList = getTableList();
+		tableList.removeAll();
 		
 		try {
 			File file = new File(fileName);
 			if(file.exists()){
 				Set<String> tableNames = MsAccessSyncAdapterFactory.getTableNames(fileName);
-				for (String tableName : tableNames) {
-					tableList.addItem(tableName);
-				}
+				tableList.setListData(tableNames.toArray());
+//				for (String tableName : tableNames) {
+//					tableList.addItem(tableName);
+//				}
 			} else {
 				((SyncItemUI)this.getParent().getParent()).openErrorPopUp(EktooUITranslator.getErrorImpossibleToOpenFileBecauseFileDoesNotExists());
 			}
@@ -108,8 +114,9 @@ public class MsAccessUI extends AbstractUI{
 
 	public void setList(String fileName, String table) {
 		try {
-			this.controller.changeTableName((String) getTableList()
-					.getSelectedItem());
+			String[] str = new String[getTableList().getSelectedValues().length];
+			Arrays.asList(getTableList().getSelectedValues()).toArray(str);
+			this.controller.changeTableNames(str);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 		}
@@ -133,9 +140,13 @@ public class MsAccessUI extends AbstractUI{
 		} else if (evt.getPropertyName().equals(
 				MsAccessUIController.TABLE_NAME_PROPERTY)) {
 			String newStringValue = evt.getNewValue().toString();
-			if (!((String) getTableList().getSelectedItem())
-					.equals(newStringValue)) {
-				getTableList().setSelectedItem((String) newStringValue);
+//			if (!((String) getTableList().getSelectedItem())
+//					.equals(newStringValue)) {
+//				getTableList().setSelectedItem((String) newStringValue);
+//			}
+			if (!getTableList().getSelectedValues().toString()
+					.equals(newStringValue)){
+				getTableList().setSelectedValue(newStringValue, true);
 			}
 		}
 	}
@@ -264,7 +275,7 @@ public class MsAccessUI extends AbstractUI{
 		return labelTable;
 	}
 
-	public JComboBox getTableList() {
+/*	public JComboBox getTableList() {
 		if (listTable == null) {
 			listTable = new JComboBox();
 			listTable.setBounds(new Rectangle(99, 36, 194, 20));
@@ -285,8 +296,38 @@ public class MsAccessUI extends AbstractUI{
 			});
 		}
 		return listTable;
-	}
+	}*/
 
+	public JList getTableList() {
+		if (listTable == null) {
+			listTable = new JList();
+			listTable.setToolTipText(EktooUITranslator.getTooltipSelectTable());
+
+			listTable.addListSelectionListener(new ListSelectionListener() {
+						@Override
+						public void valueChanged(ListSelectionEvent listselectionevent) {
+							String[] str = new String[listTable.getSelectedValues().length];
+							Arrays.asList(listTable.getSelectedValues()).toArray(str);
+							getController().changeTableNames(str);
+						}
+					});
+		}
+
+		listTable.setSelectionMode(EktooFrame.multiModeSync ? 
+				ListSelectionModel.MULTIPLE_INTERVAL_SELECTION : ListSelectionModel.SINGLE_SELECTION);
+
+		return listTable;
+	}	
+	
+	private JScrollPane getListTableScroller(){		
+		if(listTableScroller == null){
+			listTableScroller = new JScrollPane(getTableList());
+			listTableScroller.setBounds(new Rectangle(99, 36, 183, 60));
+			listTableScroller.setPreferredSize(new Dimension(183, 60));
+		}
+		return listTableScroller;
+	}
+	
 	public void setFileChooser(JFileChooser fileChooser) {
 		this.fileChooser = fileChooser;
 	}

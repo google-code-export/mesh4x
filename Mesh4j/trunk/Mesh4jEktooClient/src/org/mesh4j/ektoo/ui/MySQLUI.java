@@ -9,22 +9,25 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPasswordField;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -59,8 +62,9 @@ public class MySQLUI extends AbstractUI {
 	private JTextField txtDatabase = null;
 
 	private JLabel labelTable = null;
-	private JComboBox listTable = null;
-
+	private JList listTable = null;
+	private JScrollPane listTableScroller = null;
+	
 	private JButton btnConnect = null;
 
 	private MySQLUIController controller = null;
@@ -78,7 +82,7 @@ public class MySQLUI extends AbstractUI {
 	private void initialize() {
 		this.setLayout(null);
 		this.setBackground(Color.WHITE);
-
+		
 		this.add(getUserLabel(), null);
 		this.add(getUserText(), null);
 
@@ -97,8 +101,8 @@ public class MySQLUI extends AbstractUI {
 		this.add(getConnectButton(), null);
 
 		this.add(getTableLabel(), null);
-		this.add(getTableList(), null);
-
+		this.add(getListTableScroller(), null);
+		
 		this.add(getBtnView(), null);
 		
 		this.add(getMessagesText(), null);
@@ -374,8 +378,6 @@ public class MySQLUI extends AbstractUI {
 		}
 		return btnConnect;
 	}
-
-	
 	
 	private JLabel getTableLabel() {
 		if (labelTable == null) {
@@ -388,21 +390,56 @@ public class MySQLUI extends AbstractUI {
 		return labelTable;
 	}
 
-	public JComboBox getTableList() {
-		if (listTable == null) {
-			listTable = new JComboBox();
-			listTable.setBounds(new Rectangle(101, 105, 183, 20));
-			listTable.setToolTipText(EktooUITranslator.getTooltipSelectTable());
-			listTable.addItemListener(new ItemListener() {
-				public void itemStateChanged(ItemEvent e) {
-					getController().changeTableName(
-							(String) listTable.getSelectedItem());
-				}
-			});
+/*	public JComponent getTableList() {
+		if (EktooFrame.multiModeSync){
+			if(! Arrays.asList(this.getComponents()).contains(getTableListMultiSelectScroller())){
+				this.remove(getTableListSingleSelect());
+				this.add(getTableListMultiSelectScroller());
+			}
+			return getTableListMultiSelect();
+		}else{
+			if(! Arrays.asList(this.getComponents()).contains(getTableListSingleSelect())){
+				this.remove(getTableListMultiSelectScroller());
+				this.add(getTableListSingleSelect());
+			}
+			return getTableListSingleSelect();
 		}
+	}
+*/
+
+	public JList getTableList() {
+		if (listTable == null) {
+			listTable = new JList();
+			//listTable.setBounds(new Rectangle(101, 105, 183, 180));
+			listTable.setToolTipText(EktooUITranslator.getTooltipSelectTable());
+			//listTable.setVisibleRowCount(6);
+			//listTable.setBorder(new EmptyBorder(1, 1, 1, 1));
+
+			listTable.addListSelectionListener(new ListSelectionListener() {
+						@Override
+						public void valueChanged(ListSelectionEvent listselectionevent) {
+							String[] str = new String[listTable.getSelectedValues().length];
+							Arrays.asList(listTable.getSelectedValues()).toArray(str);
+							getController().changeTableNames(str);
+						}
+					});
+		}
+
+		listTable.setSelectionMode(EktooFrame.multiModeSync ? 
+				ListSelectionModel.MULTIPLE_INTERVAL_SELECTION : ListSelectionModel.SINGLE_SELECTION);
+
 		return listTable;
 	}
-
+	
+	private JScrollPane getListTableScroller(){		
+		if(listTableScroller == null){
+			listTableScroller = new JScrollPane(getTableList());
+			listTableScroller.setBounds(new Rectangle(101, 105, 183, 60));
+			listTableScroller.setPreferredSize(new Dimension(183, 60));
+		}
+		return listTableScroller;
+	}
+	
 	public JButton getBtnView() {
 		if (btnView == null) {
 			btnView = new JButton();
@@ -426,18 +463,14 @@ public class MySQLUI extends AbstractUI {
 	}
 
 	public void setList(String user, String pass, String host, int port, String schema) {
-		JComboBox tableList = getTableList();
-		tableList.removeAllItems();
-		
+		JList tableList = getTableList();
+		tableList.removeAll();
 		Set<String> tableNames = HibernateSyncAdapterFactory.getMySqlTableNames(host, port, schema, user, pass);
-		for (String tableName : tableNames) {
-			tableList.addItem(tableName);
-		}
+		tableList.setListData(tableNames.toArray());
 	}
 
 	public void setList(String user, String pass, String host, int port,
 			String databaseName, String tableName) {
-
 	}
 
 	public void setController(MySQLUIController controller) {
@@ -464,8 +497,12 @@ public class MySQLUI extends AbstractUI {
 		return Integer.parseInt(getPortText().getText());
 	}
 
-	public String getTable() {
-		return (String) getTableList().getSelectedItem();
+	public String[] getTables() {
+//		if(EktooFrame.multiModeSync)
+//			return (String []) ((JList)listTableMultiSelect).getSelectedValues();
+//		else
+//			return new String []{(String) ((JComboBox)listTableSingleSelect).getSelectedItem()};
+		return (String[]) getTableList().getSelectedValues();
 	}
 
   
@@ -497,11 +534,25 @@ public class MySQLUI extends AbstractUI {
 			if (!getDatabaseText().getText().equals(newStringValue))
 				getDatabaseText().setText(newStringValue);
 		} else if (evt.getPropertyName().equals(
-				MySQLUIController.TABLE_NAME_PROPERTY)) {
-			String newStringValue = evt.getNewValue().toString();
-			if (!((String) getTableList().getSelectedItem())
-					.equals(newStringValue))
-				getTableList().setSelectedItem(newStringValue);
+				MySQLUIController.TABLE_NAME_PROPERTY)) {	
+//			String newStringValue = evt.getNewValue().toString();
+//			if (!((String) getTableList().getSelectedItem())
+//					.equals(newStringValue))
+//				getTableList().setSelectedItem(newStringValue);
+			
+			
+//			if(EktooFrame.multiModeSync){
+				String[] newStringValue = (String[]) evt.getNewValue();
+				if (!((JList)getTableList()).getSelectedValues().toString()
+						.equals(newStringValue))
+					((JList)getTableList()).setSelectedValue(newStringValue, true);				
+//			}
+//			else{
+//				String[] newStringValue = (String[]) evt.getNewValue();
+//				if (newStringValue.length != 0 && newStringValue[0] != null && !((String) ((JComboBox)getTableList()).getSelectedItem()).equals(newStringValue[0]))
+//					((JComboBox)getTableList()).setSelectedItem(newStringValue[0]);			
+//			}
+
 		}
 	}
 

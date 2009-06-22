@@ -78,7 +78,8 @@ public class CloudUI extends AbstractUI {
 	public JTextField getServerURLText(){
 		if (this.txtServerURL == null) {
 			this.txtServerURL = new JTextField();
-			this.txtServerURL.setBounds(new Rectangle(101, 59, 183, 20));
+			this.txtServerURL.setBounds(new Rectangle(101, 5, 183, 20));
+//			this.txtServerURL.setBounds(new Rectangle(101, 59, 183, 20));
 			this.txtServerURL.setToolTipText(EktooUITranslator.getTooltipCloudSyncServerURI());
 			this.txtServerURL.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
@@ -111,9 +112,12 @@ public class CloudUI extends AbstractUI {
 			this.labelServerURL = new JLabel();
 			this.labelServerURL.setText( EktooUITranslator.getSyncURILabel());
 			
-			this.labelServerURL.setSize(new Dimension(85, 16));
-			this.labelServerURL.setPreferredSize(new Dimension(85, 16));
-			this.labelServerURL.setLocation(new Point(8, 59));
+			labelServerURL.setSize(new Dimension(85, 16));
+			labelServerURL.setPreferredSize(new Dimension(85, 16));
+			labelServerURL.setLocation(new Point(8, 9));
+//			this.labelServerURL.setSize(new Dimension(85, 16));
+//			this.labelServerURL.setPreferredSize(new Dimension(85, 16));
+//			this.labelServerURL.setLocation(new Point(8, 59));
 		}
 		return this.labelServerURL;
 	}
@@ -125,7 +129,11 @@ public class CloudUI extends AbstractUI {
 			
 			labelMesh.setSize(new Dimension(85, 16));
 			labelMesh.setPreferredSize(new Dimension(85, 16));
-			labelMesh.setLocation(new Point(8, 9));
+			labelMesh.setLocation(new Point(8, 34));
+		
+//			labelMesh.setSize(new Dimension(85, 16));
+//			labelMesh.setPreferredSize(new Dimension(85, 16));
+//			labelMesh.setLocation(new Point(8, 9));
 		}
 		return labelMesh;
 	}
@@ -133,7 +141,8 @@ public class CloudUI extends AbstractUI {
 	public JTextField getMeshText() {
 		if (txtMesh == null) {
 			txtMesh = new JTextField();
-			txtMesh.setBounds(new Rectangle(101, 5, 183, 20));
+			txtMesh.setBounds(new Rectangle(101, 30, 183, 20));
+//			txtMesh.setBounds(new Rectangle(101, 5, 183, 20));
 			txtMesh.setToolTipText(EktooUITranslator.getTooltipCloudMeshname());
 			txtMesh.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
@@ -161,13 +170,17 @@ public class CloudUI extends AbstractUI {
 		return txtMesh;
 	}
 
-	private JLabel getDataSetLabel() {
+	protected JLabel getDataSetLabel() {
 		if (labelDataset == null) {
 			labelDataset = new JLabel();
 			labelDataset.setText( EktooUITranslator.getMeshDataSetFieldLabel() );
+
 			labelDataset.setSize(new Dimension(85, 16));
 			labelDataset.setPreferredSize(new Dimension(85, 16));
-			labelDataset.setLocation(new Point(8, 34));
+			labelDataset.setLocation(new Point(8, 59));			
+//			labelDataset.setSize(new Dimension(85, 16));
+//			labelDataset.setPreferredSize(new Dimension(85, 16));
+//			labelDataset.setLocation(new Point(8, 34));
 		}
 		return labelDataset;
 	}
@@ -175,7 +188,8 @@ public class CloudUI extends AbstractUI {
 	public JTextField getDataSetText() {
 		if (txtDataset == null) {
 			txtDataset = new JTextField();
-			txtDataset.setBounds(new Rectangle(101, 30, 183, 20));
+			txtDataset.setBounds(new Rectangle(101, 59, 183, 20));
+//			txtDataset.setBounds(new Rectangle(101, 30, 183, 20));
 			txtDataset.setToolTipText(EktooUITranslator.getTooltipCloudDatasetname());
 			txtDataset.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
@@ -257,7 +271,14 @@ public class CloudUI extends AbstractUI {
 
 	@Override
 	public boolean verify() {
-		boolean valid = (new CloudUIValidator(CloudUI.this, controller.getModel(), null)).verify();
+		List<JComponent> uiFieldListForValidation = new ArrayList<JComponent>();
+		if(EktooFrame.multiModeSync){
+			uiFieldListForValidation.add(getServerURLText());
+			uiFieldListForValidation.add(getMeshText());
+		}else{
+			uiFieldListForValidation = null;
+		}
+		boolean valid = (new CloudUIValidator(CloudUI.this, controller.getModel(), uiFieldListForValidation)).verify();
 		return valid;
 	}
 
