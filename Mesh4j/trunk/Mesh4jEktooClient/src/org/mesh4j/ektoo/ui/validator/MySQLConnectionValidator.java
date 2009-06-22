@@ -125,9 +125,13 @@ public class MySQLConnectionValidator extends AbstractValidator {
 		//validating the table 
 		//if(mustValidateTable){
 		if ((getUiFieldListForValidation().isEmpty() || getUiFieldListForValidation().contains(ui.getTableList()))
-				&& ui.getTableList().getItemCount() == 0) {
-			setError(ui.getTableList(), EktooUITranslator
-					.getErrorEmptyOrNull(MySQLUIController.TABLE_NAME_PROPERTY));
+				&& (ui.getTableList().getModel().getSize() == 0 || ui.getTableList().getSelectedIndices().length == 0)) {
+			
+			if(ui.getTableList().getModel().getSize() == 0)
+				setError(ui.getTableList(), EktooUITranslator.getErrorEmptyOrNull(MySQLUIController.TABLE_NAME_PROPERTY));
+			else
+				setError(ui.getTableList(), EktooUITranslator.getErrorEmptySelection(MySQLUIController.TABLE_NAME_PROPERTY));
+			
 			isValid = false;
 		}
 		//} 

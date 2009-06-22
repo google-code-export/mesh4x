@@ -1,5 +1,7 @@
 package org.mesh4j.ektoo.ui.validator;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 
 import javax.swing.JComponent;
@@ -41,6 +43,14 @@ public class CloudUIValidator extends AbstractValidator {
 			setError(ui.getServerURLText(), EktooUITranslator
 					.getErrorEmptyOrNull(CloudUIController.SYNC_SERVER_URI));
 			isValid = false;
+		}else{
+			try {
+				new URL(ui.getServerURLText().getText().trim());
+			} catch (MalformedURLException e) {
+				setError(ui.getServerURLText(), EktooUITranslator
+						.getErrorInvalidURL());
+				isValid = false;
+			}
 		}
 		
 		if ((getUiFieldListForValidation().isEmpty() || getUiFieldListForValidation().contains(ui.getMeshText()))

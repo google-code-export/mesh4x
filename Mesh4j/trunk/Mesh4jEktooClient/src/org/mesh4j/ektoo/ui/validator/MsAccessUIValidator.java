@@ -6,6 +6,7 @@ import java.util.List;
 import javax.swing.JComponent;
 
 import org.mesh4j.ektoo.controller.MsAccessUIController;
+import org.mesh4j.ektoo.controller.MySQLUIController;
 import org.mesh4j.ektoo.model.AbstractModel;
 import org.mesh4j.ektoo.ui.MsAccessUI;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
@@ -46,10 +47,14 @@ public class MsAccessUIValidator extends AbstractValidator {
 		}
 
 		if ((getUiFieldListForValidation().isEmpty() || getUiFieldListForValidation().contains(ui.getTableList()))
-				&& ui.getTableList().getItemCount() == 0) {
-			setError(ui.getTableList(), EktooUITranslator
-					.getErrorEmptyOrNull(MsAccessUIController.TABLE_NAME_PROPERTY));
-			isValid = false;
+				&&  (ui.getTableList().getModel().getSize() == 0 || ui.getTableList().getSelectedIndices().length == 0)) {
+					
+					if(ui.getTableList().getModel().getSize() == 0)
+						setError(ui.getTableList(), EktooUITranslator.getErrorEmptyOrNull(MySQLUIController.TABLE_NAME_PROPERTY));
+					else
+						setError(ui.getTableList(), EktooUITranslator.getErrorEmptySelection(MySQLUIController.TABLE_NAME_PROPERTY));
+					
+					isValid = false;
 		}
 
 		return isValid;
