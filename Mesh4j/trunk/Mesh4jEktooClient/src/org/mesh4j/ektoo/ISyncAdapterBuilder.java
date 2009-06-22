@@ -1,7 +1,10 @@
 package org.mesh4j.ektoo;
 
+import java.util.HashMap;
+
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
+import org.mesh4j.sync.adapters.http.HttpSyncAdapter;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 /**
  * The builder interface for creating adapter with the
@@ -56,6 +59,14 @@ public interface ISyncAdapterBuilder {
 			String tableName);
 
 	/**
+	 * Creates MsAccess adapter for multi table
+	 * 
+	 * @param mdbFileName
+	 * @param tables
+	 * @return
+	 */
+	public ISyncAdapter createMsAccessMultiTablesAdapter(String mdbFileName, String [] tables);
+	/**
 	 * TODO create documentation (raju)
 	 * 
 	 * @param spreadSheetInfo
@@ -75,6 +86,16 @@ public interface ISyncAdapterBuilder {
 	 */
 	public ISyncAdapter createHttpSyncAdapter(String serverUrl, String meshGroup, String dataSetId, IRDFSchema rdfSchema);
 
+	/**
+	 * Create {@link HttpSyncAdapter} for multi dataset 
+	 * 
+	 * @param serverUrl
+	 * @param meshGroup
+	 * @param rdfSchemas
+	 * @return
+	 */
+	public ISyncAdapter createHttpSyncAdapterForMultiDataset(String serverUrl, String meshGroup, HashMap<IRDFSchema, String> rdfSchemas);
+	
 	/**
 	 * TODO create documentation (raju)
 	 * 
@@ -116,8 +137,29 @@ public interface ISyncAdapterBuilder {
 	public String generateMySqlFeed(String userName, String password, String hostName,
 			int portNo, String databaseName, String tableName);
 
-	
+	/**
+	 * This returns a composite adapter for sync multiple table using mysql/hibernate adapter 
+	 * @param userName
+	 * @param password
+	 * @param hostName
+	 * @param portNo
+	 * @param databaseName
+	 * @param tables
+	 * @return
+	 */
+	public ISyncAdapter createMySQLAdapterForMultiTables(String userName,
+			String password, String hostName, int portNo, String databaseName,
+			String[] tables);
+
+	/**
+	 * This returns a composite adapter for sync multiple sheet using MsExcel adapter 
+	 * @param contentFileName
+	 * @param sheets
+	 * @return
+	 */
+	public ISyncAdapter createMsExcelAdapterForMultiSheets(String contentFileName,
+			HashMap<IRDFSchema, String> sheets);
+
 	public ISyncAdapter createZipFeedAdapter(String zipFileName);
 
-	ISyncAdapter createMsAccessMultiTablesAdapter(String mdbFileName, Object[] tables);
 }

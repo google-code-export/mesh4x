@@ -2,7 +2,9 @@ package org.mesh4j.ektoo;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -33,6 +35,7 @@ import org.mesh4j.sync.model.NullContent;
 import org.mesh4j.sync.model.Sync;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.security.IIdentityProvider;
+import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.utils.FileUtils;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
@@ -69,10 +72,10 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 	}
 	
 	@Override
-	public ISyncAdapter createMsAccessMultiTablesAdapter(String mdbFileName, Object[] selectedTables){
+	public ISyncAdapter createMsAccessMultiTablesAdapter(String mdbFileName, String[] selectedTables){
 		Set<String> tables = new TreeSet<String>();			
-		for (Object tableName : selectedTables) {
-			tables.add((String)tableName);
+		for (String tableName : selectedTables) {
+			tables.add(tableName);
 		}
 		
 		InMemorySyncAdapter adapterOpaque = new InMemorySyncAdapter("opaque", getIdentityProvider());
@@ -132,7 +135,11 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 		return HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverUrl, meshGroup, dataSetId, getIdentityProvider(), rdfSchema);
 	}	
 	
-
+	@Override
+	public ISyncAdapter createHttpSyncAdapterForMultiDataset(String serverUrl, String meshGroup, HashMap<IRDFSchema, String> rdfSchemas){
+		return HttpSyncAdapterFactory.createSyncAdapterForMultiDataset(serverUrl, meshGroup, getIdentityProvider(), rdfSchemas);
+	}
+	
 	@Override
 	public ISyncAdapter createMySQLAdapter(String userName, String password,
 			String hostName, int portNo, String databaseName, String tableName) {
@@ -157,10 +164,36 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 				this.getIdentityProvider());
 	}
 
+	@Override
+	public ISyncAdapter createMySQLAdapterForMultiTables(String userName, String password,
+			String hostName, int portNo, String databaseName, String[] tables) {
+
+		String baseDirectory = getBaseDirectory();
+		//create directory for keeping mapping file,mapping file directory will be the name of the
+		//provided database name
+		File mappingDirectory = new File(baseDirectory + File.separator + databaseName);
+		
+		String connectionUri = "jdbc:mysql://" + hostName + ":" + portNo + "/" + databaseName;
+		
+		InMemorySyncAdapter adapterOpaque = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
+		
+		TreeSet<String> syncTables = new TreeSet<String>(Arrays.asList(tables));
+		
+		return HibernateSyncAdapterFactory.createSyncAdapterForMultiTables(
+				connectionUri,
+				userName,
+				password,
+				com.mysql.jdbc.Driver.class,
+				org.hibernate.dialect.MySQLDialect.class, 
+				syncTables, 
+				getBaseRDFUrl(),
+				mappingDirectory.getAbsolutePath(),
+				this.getIdentityProvider(),
+				adapterOpaque);
+	}
 	
 	@Override
 	public ISyncAdapter createMsExcelAdapter(String contentFileName, String sheetName, String idColumnName,boolean isRDF) {
-		
 		Guard.argumentNotNullOrEmptyString(contentFileName, "contentFileName");
 		Guard.argumentNotNull(isRDF, "isRDF");
 		File file = getFile(contentFileName);
@@ -177,6 +210,19 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 	public ISyncAdapter createMsExcelAdapter(String contentFileName, String sheetName, String idColumnName, IRDFSchema sourceSchema){
 		return this.excelRDFSyncFactory.createSyncAdapter(contentFileName, sheetName, idColumnName, getIdentityProvider(), sourceSchema);
 	}	
+	
+	@Override
+	public ISyncAdapter createMsExcelAdapterForMultiSheets(String contentFileName, HashMap<IRDFSchema, String> sheets) {
+		Guard.argumentNotNullOrEmptyString(contentFileName, "contentFileName");
+		
+		File file = getFile(contentFileName);
+		if (file == null || !file.exists()) {
+			Guard.argumentNotNullOrEmptyString(contentFileName, "contentFileName");
+		}
+		
+		InMemorySyncAdapter adapterOpaque = new InMemorySyncAdapter("opaque", getIdentityProvider());
+		return  excelRDFSyncFactory.createSyncAdapterForMultiSheets(file.getAbsolutePath(), getIdentityProvider(), adapterOpaque, sheets);
+	}
 	
 	@Override
 	public ISyncAdapter createKMLAdapter(String kmlFileName) {
