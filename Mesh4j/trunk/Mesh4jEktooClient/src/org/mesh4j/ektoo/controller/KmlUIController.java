@@ -1,11 +1,13 @@
 package org.mesh4j.ektoo.controller;
 
+import java.util.HashMap;
+
 import org.mesh4j.ektoo.ISyncAdapterBuilder;
 import org.mesh4j.ektoo.SyncAdapterBuilder;
-import org.mesh4j.ektoo.UISchema;
 import org.mesh4j.ektoo.model.KmlModel;
 import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.sync.ISyncAdapter;
+import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.validations.Guard;
 
 /**
@@ -46,13 +48,13 @@ public class KmlUIController extends AbstractUIController
 	}
 
 	@Override
-	public UISchema fetchSchema(ISyncAdapter adapter) {
+	public HashMap<IRDFSchema, String> fetchSchema(ISyncAdapter adapter) {
 		return null;
 	}
 
 	@Override
-	public ISyncAdapter createAdapter(UISchema schema) {
-		if(schema != null){
+	public ISyncAdapter createAdapter(HashMap<IRDFSchema, String> schema) {
+		if(schema != null && schema.size() > 0 ){
 			return null;
 		} 
 		return createAdapter();

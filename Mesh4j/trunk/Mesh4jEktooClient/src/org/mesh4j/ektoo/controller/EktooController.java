@@ -1,15 +1,16 @@
 package org.mesh4j.ektoo.controller;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.mesh4j.ektoo.ISyncAdapterBuilder;
 import org.mesh4j.ektoo.SyncAdapterBuilder;
-import org.mesh4j.ektoo.UISchema;
 import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.ektoo.ui.SyncItemUI;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.model.Item;
+import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.validations.Guard;
 
 public class EktooController {
@@ -28,9 +29,13 @@ public class EktooController {
 	}
 
 	public String sync(SyncItemUI source, SyncItemUI target) {
-		ISyncAdapter sourceAdapter = source.createAdapter();
-		UISchema schema = source.fetchSchema(sourceAdapter);
-		ISyncAdapter targetAdapter = target.createAdapter(schema);
+		ISyncAdapter sourceAdapter = null;
+		ISyncAdapter targetAdapter = null;
+		
+		sourceAdapter = source.createAdapter();
+		HashMap<IRDFSchema, String> schemas = source.fetchSchema(sourceAdapter);
+		targetAdapter = target.createAdapter(schemas);
+
 		if(sourceAdapter == null || targetAdapter == null){
 			return SYNCHRONIZATION_ERROR_CREATING_ADAPTER;
 		}

@@ -1,12 +1,19 @@
 package org.mesh4j.ektoo.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.mesh4j.ektoo.ISyncAdapterBuilder;
 import org.mesh4j.ektoo.SyncAdapterBuilder;
-import org.mesh4j.ektoo.UISchema;
 import org.mesh4j.ektoo.model.MySQLAdapterModel;
 import org.mesh4j.ektoo.properties.PropertiesProvider;
+import org.mesh4j.ektoo.ui.EktooFrame;
 import org.mesh4j.sync.ISyncAdapter;
+import org.mesh4j.sync.adapters.composite.CompositeSyncAdapter;
+import org.mesh4j.sync.adapters.composite.IIdentifiableSyncAdapter;
+import org.mesh4j.sync.adapters.composite.IdentifiableSyncAdapter;
 import org.mesh4j.sync.adapters.hibernate.HibernateContentAdapter;
+import org.mesh4j.sync.adapters.hibernate.mapping.IHibernateToXMLMapping;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.validations.Guard;
@@ -18,7 +25,7 @@ public class MySQLUIController extends AbstractUIController
 	public static final String HOST_NAME_PROPERTY = "HostName";
 	public static final String PORT_NO_PROPERTY = "PortNo";
 	public static final String DATABASE_NAME_PROPERTY = "DatabaseName";
-	public static final String TABLE_NAME_PROPERTY = "TableName";
+	public static final String TABLE_NAME_PROPERTY = "TableNames";
 
 	// MODEL VARIABLES
 	private ISyncAdapterBuilder adapterBuilder;
@@ -53,8 +60,8 @@ public class MySQLUIController extends AbstractUIController
 		setModelProperty(DATABASE_NAME_PROPERTY, databaseName);
 	}
 
-	public void changeTableName(String tableName) {
-		setModelProperty(TABLE_NAME_PROPERTY, tableName);
+	public void changeTableNames(String[] tableNames) {
+		setModelProperty(TABLE_NAME_PROPERTY, tableNames);
 	}
 
 	@Override
@@ -87,38 +94,94 @@ public class MySQLUIController extends AbstractUIController
 			return null;
 		}
 
-		String tableName = model.getTableName();
-		if (tableName == null){
+		String[] tableNames = model.getTableNames();
+		if (tableNames == null || tableNames.length == 0){
 			return null;
-		}
-
-		return adapterBuilder.createMySQLAdapter(userName, userPassword,
-				hostName, portNo, databaseName, tableName);
+		}		
+		
+		if (EktooFrame.multiModeSync)
+			return adapterBuilder.createMySQLAdapterForMultiTables(userName,
+					userPassword, hostName, portNo, databaseName, tableNames);
+		else
+			return adapterBuilder.createMySQLAdapter(userName, userPassword,
+					hostName, portNo, databaseName, tableNames[0]);
 	}
 
 	@Override
-	public UISchema fetchSchema(ISyncAdapter adapter) 
-	{
-		SplitAdapter splitAdapter = (SplitAdapter) adapter;
-		HibernateContentAdapter contentAdapter = (HibernateContentAdapter) splitAdapter.getContentAdapter();
-		IRDFSchema rdfsSchema = (IRDFSchema) contentAdapter.getMapping().getSchema();
-		return  new UISchema(rdfsSchema, contentAdapter.getMapping().getIDNode());
-	}
-
-	@Override
-	public ISyncAdapter createAdapter(UISchema schema) {
-		ISyncAdapter syncAdapter = this.createAdapter();
-		UISchema localSchema = this.fetchSchema(syncAdapter);
-		
-		if(localSchema == null){
-			return null;
+	public HashMap<IRDFSchema, String> fetchSchema(ISyncAdapter adapter) {
+		HashMap<IRDFSchema, String> schema = new HashMap<IRDFSchema, String>();
+		if(EktooFrame.multiModeSync && adapter instanceof CompositeSyncAdapter){
+			for (IIdentifiableSyncAdapter identifiableAdapter : ((CompositeSyncAdapter) adapter).getAdapters()) {
+				SplitAdapter splitAdapter = (SplitAdapter)((IdentifiableSyncAdapter)identifiableAdapter).getSyncAdapter();
+				HibernateContentAdapter hibernateContentAdapter = (HibernateContentAdapter)splitAdapter.getContentAdapter();
+				String id = hibernateContentAdapter.getMapping().getIDNode();
+				IRDFSchema rdfSchema = (IRDFSchema)hibernateContentAdapter.getMapping().getSchema();
+				schema.put(rdfSchema, id);
+			}			
+		} else {
+			HibernateContentAdapter hibernateContentAdapter = (HibernateContentAdapter)((SplitAdapter)adapter).getContentAdapter();
+			IHibernateToXMLMapping mapping = hibernateContentAdapter.getMapping();
+			IRDFSchema rdfSchema = (IRDFSchema) mapping.getSchema();
+			schema.put(rdfSchema, mapping.getIDNode());
 		}
+		return schema;
+	}	
+	
+	@Override
+	public ISyncAdapter createAdapter(HashMap<IRDFSchema, String> schema) {
+		ISyncAdapter syncAdapter = null; 
 		
-		if(localSchema.getRDFSchema() != null && schema.getRDFSchema() != null && !localSchema.getRDFSchema().isCompatible(schema.getRDFSchema())){
-			return null;
+		if(EktooFrame.multiModeSync){
+		
+			syncAdapter = this.createAdapter();
+			HashMap<IRDFSchema, String> localSchema = this.fetchSchema(syncAdapter);
+			if (localSchema == null || localSchema.size() == 0) {
+				return null;
+			}			
+			
+			// the following logic has been implemented for making sure all the
+			// selected source tables are available in target with compatible schema
+			if(localSchema.size() != schema.size())
+				Guard.throwsException("INVALID_COMBINATION_OF_SELECTION");
+
+			boolean compatible = true;
+			for (Map.Entry<IRDFSchema, String> remoteSchemaEntry : schema.entrySet()){
+				boolean subCompatible = false;
+				for (Map.Entry<IRDFSchema, String> localSchemaEntry : localSchema.entrySet()){
+					if(remoteSchemaEntry.getKey().isCompatible(localSchemaEntry.getKey())){
+						//found a match
+						localSchema.remove(localSchemaEntry);
+						subCompatible = true;
+						break;
+					}	
+				}
+				if(subCompatible){
+					continue;
+				}else{
+					compatible = false;
+					Guard.throwsException("INCOMPATIBLE_RDF_SCHEMA");
+					//break;
+				}
+			}
+			return compatible ? syncAdapter : null;
+			
+		} else {
+			syncAdapter = this.createAdapter();
+			HashMap<IRDFSchema, String> localSchema = this.fetchSchema(syncAdapter);
+			if (localSchema == null || localSchema.size() == 0) {
+				return null;
+			}
+			
+			IRDFSchema schemaLocal = localSchema.entrySet().iterator().next().getKey();
+			IRDFSchema schemaRemote = schema.entrySet().iterator().next().getKey();
+
+			if (schemaLocal != null && schemaRemote != null
+					&& !schemaLocal.isCompatible(schemaRemote)) {
+				return null;
+			}
 		}
 		return syncAdapter;
-	}
+	}	
 
 	// PROPERTIES
 	public String getDefaultMySQLHost() {
@@ -171,9 +234,9 @@ public class MySQLUIController extends AbstractUIController
 			return null;
 		}
 
-		String tableName = model.getTableName();
-		if (tableName == null){
-			tableName = "";
+		String[] tableNames = model.getTableNames();
+		if (tableNames == null || tableNames.length == 0){
+			tableNames = new String[]{""};
 		}
 		
 		String userPassword = model.getUserPassword();
@@ -181,6 +244,6 @@ public class MySQLUIController extends AbstractUIController
 			userPassword = "";
 		}
 		
-		return this.adapterBuilder.generateMySqlFeed(userName, userPassword, hostName, portNo, databaseName, tableName);
+		return this.adapterBuilder.generateMySqlFeed(userName, userPassword, hostName, portNo, databaseName, tableNames[0]);
 	}
 }

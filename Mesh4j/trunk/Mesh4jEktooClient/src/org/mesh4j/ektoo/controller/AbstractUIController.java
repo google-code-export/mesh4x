@@ -113,4 +113,5 @@ public abstract class AbstractUIController implements PropertyChangeListener, IU
 	public boolean acceptsCreateDataset() {
 		return this.acceptsCreateDataset;
 	}
+
 }

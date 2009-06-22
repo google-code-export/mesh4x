@@ -1,11 +1,14 @@
 package org.mesh4j.ektoo.controller;
 
+import java.util.HashMap;
+
 import org.mesh4j.ektoo.GoogleSpreadSheetInfo;
 import org.mesh4j.ektoo.SyncAdapterBuilder;
-import org.mesh4j.ektoo.UISchema;
 import org.mesh4j.ektoo.model.GSSheetModel;
 import org.mesh4j.ektoo.properties.PropertiesProvider;
+import org.mesh4j.ektoo.ui.EktooFrame;
 import org.mesh4j.sync.ISyncAdapter;
+import org.mesh4j.sync.adapters.composite.CompositeSyncAdapter;
 import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadSheetContentAdapter;
 import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadsheet;
 import org.mesh4j.sync.adapters.googlespreadsheet.IGoogleSpreadSheet;
@@ -85,15 +88,21 @@ public class GSSheetUIController extends AbstractUIController {
 	}
 
 	@Override
-	public UISchema fetchSchema(ISyncAdapter adapter) {
-		GoogleSpreadSheetContentAdapter contentAdapter = (GoogleSpreadSheetContentAdapter)((SplitAdapter)adapter).getContentAdapter();
-		IRDFSchema rdfSchema = (IRDFSchema) contentAdapter.getSchema();
-		IGoogleSpreadsheetToXMLMapping mapper = contentAdapter.getMapper();
-		return new UISchema(rdfSchema, mapper.getIdColumnName());
+	public HashMap<IRDFSchema, String> fetchSchema(ISyncAdapter adapter) {
+		HashMap<IRDFSchema, String> schema = new HashMap<IRDFSchema, String>();
+		if(EktooFrame.multiModeSync && adapter instanceof CompositeSyncAdapter){
+			
+		} else {
+			GoogleSpreadSheetContentAdapter contentAdapter = (GoogleSpreadSheetContentAdapter)((SplitAdapter)adapter).getContentAdapter();
+			IRDFSchema rdfSchema = (IRDFSchema) contentAdapter.getSchema();
+			IGoogleSpreadsheetToXMLMapping mapper = contentAdapter.getMapper();
+			schema.put(rdfSchema, mapper.getIdColumnName());
+		}
+		return schema;
 	}
-
+	
 	@Override
-	public ISyncAdapter createAdapter(UISchema schema) {
+	public ISyncAdapter createAdapter(HashMap<IRDFSchema, String> schemas) {
 		GSSheetModel model = (GSSheetModel) this.getModel();
 
 		GoogleSpreadSheetInfo spreadSheetInfo = new GoogleSpreadSheetInfo(
@@ -101,7 +110,7 @@ public class GSSheetUIController extends AbstractUIController {
 				model.getUserPassword(), model.getUniqueColumnName(), 
 				model.getWorksheetName(), model.getWorksheetName());
 		
-		IRDFSchema rdfSchema = schema == null ? null : schema.getRDFSchema();
+		IRDFSchema rdfSchema = schemas == null || schemas.size() == 0 ? null : schemas.keySet().iterator().next();
 		return adapterBuilder.createRdfBasedGoogleSpreadSheetAdapter(spreadSheetInfo, rdfSchema);
 	}
 }

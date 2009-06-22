@@ -1,10 +1,14 @@
 package org.mesh4j.ektoo.controller;
 
+import java.util.HashMap;
+import java.util.Map.Entry;
+
 import org.mesh4j.ektoo.SyncAdapterBuilder;
-import org.mesh4j.ektoo.UISchema;
 import org.mesh4j.ektoo.model.MsExcelModel;
 import org.mesh4j.ektoo.properties.PropertiesProvider;
+import org.mesh4j.ektoo.ui.EktooFrame;
 import org.mesh4j.sync.ISyncAdapter;
+import org.mesh4j.sync.adapters.composite.CompositeSyncAdapter;
 import org.mesh4j.sync.adapters.msexcel.MsExcel;
 import org.mesh4j.sync.adapters.msexcel.MsExcelContentAdapter;
 import org.mesh4j.sync.adapters.msexcel.MsExcelToRDFMapping;
@@ -71,38 +75,63 @@ public class MsExcelUIController extends AbstractUIController {
 	}
 
 	@Override
-	public ISyncAdapter createAdapter(UISchema sourceSchema) {
-		if(sourceSchema == null || sourceSchema.getRDFSchema() == null){
-			return null;
+	public ISyncAdapter createAdapter(HashMap<IRDFSchema, String> schemas) {
+		
+		if(EktooFrame.multiModeSync){
+			MsExcelModel model = (MsExcelModel) this.getModel();
+			if (model == null) { return null; }
+			
+			String workbookName = model.getWorkbookName();
+			if (workbookName == null || workbookName.trim().length() == 0) {
+				return null;
+			}
+			return adapterBuilder.createMsExcelAdapterForMultiSheets(workbookName, schemas);		
+		
+		} else {
+					
+			if (schemas == null || schemas.size() == 0) {
+				return null;
+			}
+			
+			Entry<IRDFSchema, String> schemaEntry = schemas.entrySet().iterator().next();
+			IRDFSchema sourceSchema = schemaEntry.getKey();
+			String idNode = schemaEntry.getValue();
+			
+			MsExcelModel model = (MsExcelModel) this.getModel();
+			if (model == null) {
+				return null;
+			}
+	
+			String workbookName = model.getWorkbookName();
+			if (workbookName == null || workbookName.trim().length() == 0) {
+				return null;
+			}
+	
+			String worksheetName = model.getWorksheetName() == null || model.getWorksheetName().trim().length() == 0 ? sourceSchema.getOntologyClassName() : model.getWorksheetName();
+			if (worksheetName == null || worksheetName.trim().length() == 0) {
+				return null;
+			}
+			
+			String uniqueColumnName = model.getUniqueColumnName() == null || model.getUniqueColumnName().trim().length() == 0 ? idNode : model.getUniqueColumnName();
+			if (uniqueColumnName == null || uniqueColumnName.trim().length() == 0) {
+				return null;
+			}
+			return adapterBuilder.createMsExcelAdapter(workbookName, worksheetName, uniqueColumnName, sourceSchema);
 		}
 		
-		MsExcelModel model = (MsExcelModel) this.getModel();
-		if (model == null) {
-			return null;
-		}
-
-		String workbookName = model.getWorkbookName();
-		if (workbookName == null || workbookName.trim().length() == 0) {
-			return null;
-		}
-
-		String worksheetName = model.getWorksheetName() == null || model.getWorksheetName().trim().length() == 0 ? sourceSchema.getRDFSchema().getOntologyClassName() : model.getWorksheetName();
-		if (worksheetName == null || worksheetName.trim().length() == 0) {
-			return null;
-		}
-		
-		String uniqueColumnName = model.getUniqueColumnName() == null || model.getUniqueColumnName().trim().length() == 0 ? sourceSchema.getIdNode() : model.getUniqueColumnName();
-		if (uniqueColumnName == null || uniqueColumnName.trim().length() == 0) {
-			return null;
-		}
-		return adapterBuilder.createMsExcelAdapter(workbookName, worksheetName, uniqueColumnName, sourceSchema.getRDFSchema());
 	}
 
 	@Override
-	public UISchema fetchSchema(ISyncAdapter adapter) {
-		MsExcelContentAdapter contentAdapter = (MsExcelContentAdapter) ((SplitAdapter) adapter).getContentAdapter();
-		IRDFSchema rdfSchema = (IRDFSchema)contentAdapter.getSchema();
-		return new UISchema(rdfSchema, contentAdapter.getMapping().getIdColumnName());
+	public HashMap<IRDFSchema, String> fetchSchema(ISyncAdapter adapter) {
+		HashMap<IRDFSchema, String> schema = new HashMap<IRDFSchema, String>();
+		if(EktooFrame.multiModeSync && adapter instanceof CompositeSyncAdapter){
+			
+		} else {
+			MsExcelContentAdapter contentAdapter = (MsExcelContentAdapter) ((SplitAdapter) adapter).getContentAdapter();
+			IRDFSchema rdfSchema = (IRDFSchema)contentAdapter.getSchema();
+			schema.put(rdfSchema, contentAdapter.getMapping().getIdColumnName());
+		}
+		return schema;
 	}
 
 }
