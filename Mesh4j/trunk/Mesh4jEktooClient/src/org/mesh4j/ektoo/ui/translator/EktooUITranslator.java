@@ -427,8 +427,20 @@ public class EktooUITranslator {
 		return EktooMessageTranslator.translate("EKTOO_TOOLTIP_SELECT_WORKSHEET");
 	}
 	
-	public static String getTooltipSelectTable() {
-		return EktooMessageTranslator.translate("EKTOO_TOOLTIP_SELECT_TABLE");
+	public static String getTooltipSelectSingleTable() {
+		return EktooMessageTranslator.translate("EKTOO_TOOLTIP_SELECT_SINGLE_TABLE");
+	}
+	
+	public static String getTooltipSelectMultiTable() {
+		return EktooMessageTranslator.translate("EKTOO_TOOLTIP_SELECT_MULTI_TABLE");
+	}
+	
+	public static String getTooltipSyncModeSingle() {
+		return EktooMessageTranslator.translate("EKTOO_TOOLTIP_SYNC_MODE_SINGLE");
+	}
+	
+	public static String getTooltipSyncModeMulti() {
+		return EktooMessageTranslator.translate("EKTOO_TOOLTIP_SYNC_MODE_MULTI");
 	}
 	
 	public static String getTooltipIdColumnName() {
