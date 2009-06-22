@@ -4,8 +4,11 @@ import java.io.IOException;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.test.utils.TestHelper;
+import org.mesh4j.sync.utils.FileUtils;
+import org.mesh4j.sync.validations.MeshException;
 
 public class MsAccessRDFSchemaGeneratorTests {
 
@@ -49,7 +52,7 @@ public class MsAccessRDFSchemaGeneratorTests {
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldExtractRDFSchemaFailsIfTableNameIsNull(){
-		String fileName = TestHelper.baseDirectoryRootForTest() + "\\ms-access\\epiinfo\\test1\\epiinfo.mdb";
+		String fileName = getMsAccessFileNameToTest();
 		String tableName = null;
 		String ontologyNS = "Oswego";
 		String ontologyURI = "http://mesh4x/Oswego#";
@@ -63,7 +66,7 @@ public class MsAccessRDFSchemaGeneratorTests {
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldExtractRDFSchemaFailsIfTableNameIsEmpty(){
-		String fileName = TestHelper.baseDirectoryRootForTest() + "\\ms-access\\epiinfo\\test1\\epiinfo.mdb";
+		String fileName = getMsAccessFileNameToTest();
 		String tableName = "";
 		String ontologyNS = "Oswego";
 		String ontologyURI = "http://mesh4x/Oswego#";
@@ -77,7 +80,7 @@ public class MsAccessRDFSchemaGeneratorTests {
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldExtractRDFSchemaFailsIfTableDoesNotExist(){
-		String fileName = TestHelper.baseDirectoryRootForTest() + "\\ms-access\\epiinfo\\test1\\epiinfo.mdb";
+		String fileName = getMsAccessFileNameToTest();
 		String tableName = "OswegoXXXX";
 		String ontologyNS = "Oswego";
 		String ontologyURI = "http://mesh4x/Oswego#";
@@ -91,7 +94,7 @@ public class MsAccessRDFSchemaGeneratorTests {
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldExtractRDFSchemaFailsIfOntologyNSIsNull(){
-		String fileName = TestHelper.baseDirectoryRootForTest() + "\\ms-access\\epiinfo\\test1\\epiinfo.mdb";
+		String fileName = getMsAccessFileNameToTest();
 		String tableName = "Oswego";
 		String ontologyNS = null;
 		String ontologyURI = "http://mesh4x/Oswego#";
@@ -105,7 +108,7 @@ public class MsAccessRDFSchemaGeneratorTests {
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldExtractRDFSchemaFailsIfOntologyNSIsEmpty(){
-		String fileName = TestHelper.baseDirectoryRootForTest() + "\\ms-access\\epiinfo\\test1\\epiinfo.mdb";
+		String fileName = getMsAccessFileNameToTest();
 		String tableName = "Oswego";
 		String ontologyNS = "";
 		String ontologyURI = "http://mesh4x/Oswego#";
@@ -119,7 +122,7 @@ public class MsAccessRDFSchemaGeneratorTests {
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldExtractRDFSchemaFailsIfOntologyURIIsNull(){
-		String fileName = TestHelper.baseDirectoryRootForTest() + "\\ms-access\\epiinfo\\test1\\epiinfo.mdb";
+		String fileName = getMsAccessFileNameToTest();
 		String tableName = "Oswego";
 		String ontologyNS = "Oswego";
 		String ontologyURI = null;
@@ -133,7 +136,7 @@ public class MsAccessRDFSchemaGeneratorTests {
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldExtractRDFSchemaFailsIfOntologyURIIsEmpty(){
-		String fileName = TestHelper.baseDirectoryRootForTest() + "\\ms-access\\epiinfo\\test1\\epiinfo.mdb";
+		String fileName = getMsAccessFileNameToTest();
 		String tableName = "Oswego";
 		String ontologyNS = "Oswego";
 		String ontologyURI = "";
@@ -147,14 +150,14 @@ public class MsAccessRDFSchemaGeneratorTests {
 	
 	@Test
 	public void shouldExtractRDFSchema() throws Exception{
-		String fileName = TestHelper.baseDirectoryRootForTest() + "\\ms-access\\epiinfo\\epiinfo.mdb";
+		String fileName = getMsAccessFileNameToTest();
 		String tableName = "Oswego";
 		String ontologyNS = "Oswego";
 		String ontologyURI = "http://mesh4x/Oswego#";
 		
 		IRDFSchema rdfSchema = MsAccessRDFSchemaGenerator.extractRDFSchema(fileName, tableName, ontologyNS, ontologyURI);
 		Assert.assertNotNull(rdfSchema);
-System.out.println(rdfSchema.asXML());
+		System.out.println(rdfSchema.asXML());
 
 		Assert.assertEquals(24, rdfSchema.getPropertyCount());
 		Assert.assertEquals(IRDFSchema.XLS_STRING, rdfSchema.getPropertyType("Name"));
@@ -181,6 +184,16 @@ System.out.println(rdfSchema.asXML());
 		Assert.assertEquals(IRDFSchema.XLS_INTEGER, rdfSchema.getPropertyType("RecStatus"));
 		Assert.assertEquals(IRDFSchema.XLS_STRING, rdfSchema.getPropertyType("Address"));
 		Assert.assertEquals(IRDFSchema.XLS_STRING, rdfSchema.getPropertyType("County"));
-		
+	}
+	
+	private String getMsAccessFileNameToTest() {
+		try{
+			String localFileName = this.getClass().getResource("epiinfo.mdb").getFile();
+			String fileName = TestHelper.fileName("msAccess"+IdGenerator.INSTANCE.newID()+".mdb");
+			FileUtils.copyFile(localFileName, fileName);
+			return fileName;
+		} catch (Exception e) {
+			throw new MeshException(e);
+		}
 	}
 }

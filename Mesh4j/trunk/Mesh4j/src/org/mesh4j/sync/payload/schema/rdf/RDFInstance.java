@@ -118,8 +118,6 @@ public class RDFInstance {
 					RDFDatatype dataType = TypeMapper.getInstance().getTypeByName(range.getURI());
 					if(dataType.isValid(fieldValue)){
 						instance.setProperty(dataTypeName, rdfSchema.cannonicaliseValue(dataTypeName, dataType.parse(fieldValue)));
-					} else {
-						LOGGER.info("RDF: invalid value. Property: " + dataTypeName + " Type: " + dataType.getURI() + " value: " + fieldValue);
 					}
 				}
 			}
@@ -149,9 +147,7 @@ public class RDFInstance {
 			dataTypeName = dataTypeProperty.getLocalName();
 			
 			fieldValue = propertyValues.get(dataTypeName);
-			if(fieldValue == null){
-				LOGGER.info("RDF: null value. Property: " + dataTypeName);
-			} else {
+			if(fieldValue != null){
 				instance.setProperty(dataTypeName, rdfSchema.cannonicaliseValue(dataTypeName, fieldValue));
 			}
 		}
@@ -179,7 +175,7 @@ public class RDFInstance {
 		Object propertyValue = null;
 		if(value instanceof Date){
 			Calendar cal = Calendar.getInstance();
-			cal.setTime((Date)value);
+			cal.setTimeInMillis(((Date)value).getTime());
 			propertyValue = cal;
 		} else {
 			propertyValue = value;

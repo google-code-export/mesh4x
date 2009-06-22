@@ -1,6 +1,7 @@
 package org.mesh4j.sync.utils;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -10,6 +11,8 @@ import java.util.TimeZone;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.mesh4j.sync.validations.Guard;
+import org.mesh4j.sync.validations.MeshException;
 
 public class DateHelper {
 	
@@ -289,4 +292,18 @@ public class DateHelper {
 			return new Date(sDate);
 		}
 	}
+
+	public static Date parseDate(String dateAsString, String format) {
+		Guard.argumentNotNull(dateAsString, "dateAsString");
+
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
+		Date dateAndTime;
+		try {
+			dateAndTime = simpleDateFormat.parse(dateAsString);
+		} catch (ParseException e) {
+			throw new MeshException(e);
+		}
+		return dateAndTime;
+	}
+	
 }

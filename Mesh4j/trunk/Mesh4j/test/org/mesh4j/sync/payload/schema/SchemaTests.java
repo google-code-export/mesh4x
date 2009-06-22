@@ -59,7 +59,9 @@ public class SchemaTests {
 			@Override public Element getInstanceFromPlainXML(String id, Element element, Map<String, ISchemaTypeFormat> typeFormats) {return null;}
 			@Override public Element getInstanceFromXML(Element element) {return null;}
 			@Override public Map<String, String> getPropertiesAsLexicalFormMap(Element element) {return null;}
-			@Override public boolean isCompatible(ISchema schema) {return false;}			
+			@Override public Map<String, Object> getPropertiesAsMap(Element element) {return null;}
+			@Override public boolean isCompatible(ISchema schema) {return false;}
+			@Override public String getName() {return null;}			
 		};
 		
 		Schema schema = new Schema(XMLHelper.parseElement("<name>Name of patient: {patient/name} {patient/lastName}.</name>"));

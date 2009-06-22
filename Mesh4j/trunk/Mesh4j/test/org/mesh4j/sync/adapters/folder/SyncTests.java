@@ -59,8 +59,8 @@ public class SyncTests {
 		TestHelper.assertSync(syncEngine);
 		
 		// delete all
-		deleteAll(folderSource);
-		deleteAll(folderTarget);
+		FileUtils.delete(folderSource);
+		FileUtils.delete(folderTarget);
 		
 	}
 	
@@ -98,7 +98,7 @@ public class SyncTests {
 		TestHelper.assertSync(syncEngine);
 		
 		// delete all
-		deleteAll(folderSource);
+		FileUtils.delete(folderSource);
 
 	}
 	
@@ -128,16 +128,4 @@ public class SyncTests {
 		return subFolder;
 	}
 	
-	private void deleteAll(File folder) {
-		File[] files = folder.listFiles();
-		for (File file : files) {
-			if(file.isFile()){
-				file.delete();
-			} else {
-				deleteAll(file);
-			}
-		}
-		
-		folder.delete();
-	}
 }

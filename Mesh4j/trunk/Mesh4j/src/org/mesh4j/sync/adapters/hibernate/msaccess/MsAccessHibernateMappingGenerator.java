@@ -1,12 +1,14 @@
-package org.mesh4j.sync.adapters.msaccess;
+package org.mesh4j.sync.adapters.hibernate.msaccess;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.StringWriter;
 import java.sql.SQLException;
+import java.text.MessageFormat;
 
 import org.hibernate.HibernateException;
 import org.mesh4j.sync.adapters.hibernate.mapping.MappingGenerator;
+import org.mesh4j.sync.validations.Guard;
 
 import com.healthmarketscience.jackcess.Column;
 import com.healthmarketscience.jackcess.Database;
@@ -24,13 +26,32 @@ public class MsAccessHibernateMappingGenerator {
 		try{
 
 			Table table = db.getTable(tableName);
-						
+			
+			if(table == null){
+				Guard.throwsArgumentException("tableName", tableName);
+			}
+			
 			MappingGenerator.writeHeader(writer);
 			MappingGenerator.writerClass(writer, getEntityName(tableName), tableName);
 			
 			String columnNamePrimaryKey = getPrimaryKey(table);
 			Column columnID = table.getColumn(columnNamePrimaryKey);
-			MappingGenerator.writeID(writer, getNodeName(columnID.getName()), columnID.getName(), getHibernateType(columnID));
+			
+			if(columnID.getType().name().equals("GUID")){
+				writer.write("\n");
+				writer.write("\t\t");
+				// type=\"{1}\"
+				writer.write(MessageFormat.format("<id name=\"{0}\" type=\"{1}\" column=\"{2}\">", getNodeName(columnID.getName()), UUIDType.class.getName(), columnID.getName()));
+				writer.write("\n");
+				writer.write("\t\t\t");
+				//writer.write("<generator class=\"uuid\"/>");
+				writer.write("<generator class=\"assigned\"/>");
+				writer.write("\n");
+				writer.write("\t\t");
+				writer.write("</id>");	
+			} else {
+				MappingGenerator.writeID(writer, getNodeName(columnID.getName()), columnID.getName(), getHibernateType(columnID));
+			}
 			
 			for (Column column : table.getColumns()) {
 				if(!column.getName().equals(columnNamePrimaryKey) && !column.isAutoNumber() ){

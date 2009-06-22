@@ -19,6 +19,7 @@ import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
 import org.mesh4j.sync.security.LoggedInIdentityProvider;
 import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.test.utils.TestHelper;
+import org.mesh4j.sync.utils.FileUtils;
 import org.mesh4j.sync.utils.XMLHelper;
 import org.mesh4j.sync.validations.MeshException;
 
@@ -86,7 +87,7 @@ public class MsExcelRDFSyncAdapterFactoryXLSXTests {
 	
 	@Test
 	public void shouldCreateAdapter(){
-		String fileName = this.getClass().getResource("epiinfo.xlsx").getFile();
+		String fileName = getFileNameToTest();
 		MsExcelRDFSyncAdapterFactory factory = new MsExcelRDFSyncAdapterFactory("http://localhost:8080/mesh4x/myExample");
 		ISyncAdapter adapter = factory.createSyncAdapter(fileName, "Oswego", "Code", NullIdentityProvider.INSTANCE);
 		
@@ -154,7 +155,7 @@ public class MsExcelRDFSyncAdapterFactoryXLSXTests {
 	
 	@Test
 	public void shouldCreateAdapterFromRDFFileExistsEqualRDFSchema(){
-		String fileName = this.getClass().getResource("epiinfo.xlsx").getFile();
+		String fileName = getFileNameToTest();
 		RDFSchema rdfSchema = MsExcelToRDFMapping.extractRDFSchema(new MsExcel(fileName), "Oswego", "http://localhost:8080/mesh4x/myExample");
 
 		MsExcelRDFSyncAdapterFactory factory = new MsExcelRDFSyncAdapterFactory("http://localhost:8080/mesh4x/myExample");
@@ -167,7 +168,7 @@ public class MsExcelRDFSyncAdapterFactoryXLSXTests {
 	@Test(expected=MeshException.class)
 	public void shouldCreateAdapterFromRDFFileFailsWhenFileExistsNotEqualRDFSchema(){
 		RDFSchema rdfSchema = new RDFSchema("Oswego", "http://localhost:8080/mesh4x/myExample/Oswego#", "Oswego");
-		String fileName = this.getClass().getResource("epiinfo.xlsx").getFile();
+		String fileName = getFileNameToTest();
 		MsExcelRDFSyncAdapterFactory factory = new MsExcelRDFSyncAdapterFactory("http://localhost:8080/mesh4x/myExample");
 		ISyncAdapter adapter = factory.createSyncAdapter(fileName, "Oswego", "Code", NullIdentityProvider.INSTANCE, rdfSchema);
 		
@@ -222,5 +223,16 @@ public class MsExcelRDFSyncAdapterFactoryXLSXTests {
 		
 		SyncEngine syncEngine = new SyncEngine(adapterTarget, adapterSource);
 		TestHelper.assertSync(syncEngine);
+	}
+	
+	private String getFileNameToTest() {
+		try{
+			String originalFileName = this.getClass().getResource("epiinfo.xlsx").getFile();
+			String fileName = TestHelper.fileName("MsExcel_"+IdGenerator.INSTANCE.newID()+".xlsx");
+			FileUtils.copyFile(originalFileName, fileName);
+			return fileName;
+		}catch(Exception e){
+			throw new MeshException(e);
+		}
 	}
 }

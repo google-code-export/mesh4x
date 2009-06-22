@@ -53,11 +53,30 @@ public class Schema implements ISchema {
 		return result;
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Override
+	public Map<String, Object> getPropertiesAsMap(Element element){
+		HashMap<String, Object> result = new HashMap<String, Object>();
+		
+		List<Element> elements = element.elements();
+		for (Element ele : elements) {
+			String propertyName = ele.getName();
+			String propertyValue = ele.getText();
+			result.put(propertyName, propertyValue);
+		}
+		return result;
+	}
+	
 	@Override
 	public boolean isCompatible(ISchema schema){		
 		if (this == schema) return true;		
 		if (schema == null || !(schema instanceof Schema)) return false;
 		if (this.asXML().equalsIgnoreCase(schema.asXML())) return true;
 		return false;
+	}
+
+	@Override
+	public String getName() {
+		return this.schema.getName();
 	}
 }

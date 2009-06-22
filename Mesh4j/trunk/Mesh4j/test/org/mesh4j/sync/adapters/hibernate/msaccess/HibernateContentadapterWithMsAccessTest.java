@@ -13,10 +13,11 @@ import org.junit.Test;
 import org.mesh4j.sync.adapters.hibernate.EntityContent;
 import org.mesh4j.sync.adapters.hibernate.HibernateContentAdapter;
 import org.mesh4j.sync.adapters.hibernate.HibernateSessionFactoryBuilder;
-import org.mesh4j.sync.adapters.msaccess.MsAccessDialect;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.IContent;
 import org.mesh4j.sync.test.utils.TestHelper;
+import org.mesh4j.sync.utils.FileUtils;
+import org.mesh4j.sync.validations.MeshException;
 
 import sun.jdbc.odbc.JdbcOdbcDriver;
 
@@ -28,7 +29,7 @@ public class HibernateContentadapterWithMsAccessTest {
 		JdbcOdbcDriver driver = (JdbcOdbcDriver)Class.forName("sun.jdbc.odbc.JdbcOdbcDriver").newInstance();
 		Assert.assertNotNull(driver);
 		
-		String mdbFileName = TestHelper.baseDirectoryRootForTest() + "ms-access/DevDB.mdb";
+		String mdbFileName = getMsAccessFileNameToTest();
 		String dbURL = "jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=" + mdbFileName.trim() + ";DriverID=22;READONLY=false}";
 		Connection conn = DriverManager.getConnection(dbURL,"","");
 		
@@ -52,7 +53,7 @@ public class HibernateContentadapterWithMsAccessTest {
 		JdbcOdbcDriver driver = (JdbcOdbcDriver)Class.forName("sun.jdbc.odbc.JdbcOdbcDriver").newInstance();
 		Assert.assertNotNull(driver);
 		
-		String mdbFileName = TestHelper.baseDirectoryRootForTest() + "ms-access/DevDB.mdb";
+		String mdbFileName = getMsAccessFileNameToTest();
 		String dbURL = "jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=" + mdbFileName.trim() + ";DriverID=22;READONLY=false}";
 		Connection conn = DriverManager.getConnection(dbURL,"","");
 		Statement command = conn.createStatement();
@@ -146,7 +147,7 @@ public class HibernateContentadapterWithMsAccessTest {
 	}
 	
 	private HibernateContentAdapter createAdapter() {
-		String mdbFileName = TestHelper.baseDirectoryRootForTest() + "ms-access/DevDB.mdb";
+		String mdbFileName = getMsAccessFileNameToTest();
 		String dbURL = "jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=" + mdbFileName.trim() + ";DriverID=22;READONLY=false}";
 		
 		HibernateSessionFactoryBuilder builder = new HibernateSessionFactoryBuilder();
@@ -159,5 +160,16 @@ public class HibernateContentadapterWithMsAccessTest {
 
 		HibernateContentAdapter adapter = new HibernateContentAdapter(builder, "user");
 		return adapter;
+	}
+	
+	private String getMsAccessFileNameToTest() {
+		try{
+			String localFileName = this.getClass().getResource("DevDB2003.mdb").getFile();
+			String fileName = TestHelper.fileName("DevDB.mdb");
+			FileUtils.copyFile(localFileName, fileName);
+			return fileName;
+		} catch (Exception e) {
+			throw new MeshException(e);
+		}
 	}
 }

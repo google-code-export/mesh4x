@@ -1,4 +1,4 @@
-package org.mesh4j.sync.adapters.msaccess;
+package org.mesh4j.sync.adapters.hibernate.msaccess;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,6 +15,8 @@ import org.mesh4j.sync.adapters.hibernate.HibernateContentAdapter;
 import org.mesh4j.sync.adapters.hibernate.HibernateSessionFactoryBuilder;
 import org.mesh4j.sync.adapters.hibernate.HibernateSyncRepository;
 import org.mesh4j.sync.adapters.hibernate.IHibernateSessionFactoryBuilder;
+import org.mesh4j.sync.adapters.msaccess.MsAccessHelper;
+import org.mesh4j.sync.adapters.msaccess.MsAccessRDFSchemaGenerator;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.parsers.SyncInfoParser;
@@ -26,7 +28,13 @@ import org.mesh4j.sync.validations.MeshException;
 
 import sun.jdbc.odbc.JdbcOdbcDriver;
 
-public class MsAccessSyncAdapterFactory implements ISyncAdapterFactory {
+/**
+ * MsAccessHibernateSyncAdapterFactory is a factory of ISyncAdapter(SplitAdapter) for MsAccess file via odbc.
+ * Using sun JdbcOdbcDriver.
+ * Pk is required
+ * No Supports GUID and Auto numeric fields
+ */
+public class MsAccessHibernateSyncAdapterFactory implements ISyncAdapterFactory {
 
 	public static final String SOURCE_TYPE = "MsAccess";
 	private static final String MS_ACCESS = SOURCE_TYPE+":";		
@@ -37,7 +45,7 @@ public class MsAccessSyncAdapterFactory implements ISyncAdapterFactory {
 	private String rdfBaseUri;
 
 	// BUSINESS METHODS
-	public MsAccessSyncAdapterFactory(String baseDirectory, String rdfBaseUri){
+	public MsAccessHibernateSyncAdapterFactory(String baseDirectory, String rdfBaseUri){
 		super();
 		Guard.argumentNotNull(baseDirectory, "baseDirectory");
 		
@@ -143,7 +151,7 @@ public class MsAccessSyncAdapterFactory implements ISyncAdapterFactory {
 	}
 	
 	public static String getFileName(String sourceDefinition) {
-		String source = MsAccessSyncAdapterFactory.getDataSource(sourceDefinition);
+		String source = MsAccessHibernateSyncAdapterFactory.getDataSource(sourceDefinition);
 		String[] elements = source.split(DEFAULT_SEPARATOR);
 		//String tableName = elements[1];
 		String fileName= elements[0];
@@ -151,7 +159,7 @@ public class MsAccessSyncAdapterFactory implements ISyncAdapterFactory {
 	}
 
 	public static String getTableName(String sourceDefinition) {
-		String source = MsAccessSyncAdapterFactory.getDataSource(sourceDefinition);
+		String source = MsAccessHibernateSyncAdapterFactory.getDataSource(sourceDefinition);
 		String[] elements = source.split(DEFAULT_SEPARATOR);
 		String tableName = elements[1];
 		//String fileName= elements[0];

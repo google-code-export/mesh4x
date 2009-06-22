@@ -143,7 +143,7 @@ public class HibernateMultiTableTests {
 	}
 
 	
-	@Test
+	//@Test
 	public void ShouldSyncAllTablesOfTwoDatabaseByRDF(){
 
 		//To run this test you have to have two database
@@ -188,7 +188,7 @@ public class HibernateMultiTableTests {
 	}
 	
 	
-	@Test
+	//@Test
 	public void ShouldSyncAllTablesOfTwoDatabaseByPlainXML(){
 
 		//To run this test you have to have two database

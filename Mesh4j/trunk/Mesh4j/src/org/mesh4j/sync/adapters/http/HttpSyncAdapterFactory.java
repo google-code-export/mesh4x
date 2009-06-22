@@ -3,7 +3,7 @@ package org.mesh4j.sync.adapters.http;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
+import java.util.List;
 
 import org.mesh4j.sync.adapters.ISyncAdapterFactory;
 import org.mesh4j.sync.adapters.feed.ContentReader;
@@ -11,7 +11,6 @@ import org.mesh4j.sync.adapters.feed.ContentWriter;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.payload.schema.ISchema;
-import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.validations.Guard;
 
@@ -109,22 +108,18 @@ public class HttpSyncAdapterFactory implements ISyncAdapterFactory {
 		return adapter;
 	}
 	
-
-	public static HttpSyncAdapter createSyncAdapterForMultiDataset(String serverUrl,
-			String meshGroup, IIdentityProvider identityProvider, HashMap<IRDFSchema, String> rdfSchemas) {
+	public static HttpSyncAdapter createSyncAdapterForMultiDataset(String serverUrl, String meshGroup, IIdentityProvider identityProvider, List<ISchema> schemas) {
 		
 		// create mesh group
-		HttpSyncAdapter tmpAdapter = createSyncAdapter(serverUrl, identityProvider);
-
-		if (!tmpAdapter.isMeshDefinitionAvailable(meshGroup)){
+		if (!HttpSyncAdapter.isMeshDefinitionAvailable(serverUrl+"/"+meshGroup)){
 			HttpSyncAdapter.uploadMeshDefinition(serverUrl, meshGroup,
 					RssSyndicationFormat.NAME, "", null, null, identityProvider
 							.getAuthenticatedUser());
 		}
 		
 		// create mesh data sets
-		for (IRDFSchema rdfSchema : rdfSchemas.keySet()) {
-			String feedName = rdfSchema.getOntologyClassName();
+		for (ISchema schema : schemas) {
+			String feedName = schema.getName();
 			
 			String tmpUrl = serverUrl + "/" + meshGroup + "/" + feedName;
 			HttpSyncAdapter adapter = createSyncAdapter(tmpUrl, identityProvider);
@@ -132,10 +127,10 @@ public class HttpSyncAdapterFactory implements ISyncAdapterFactory {
 			
 			if (cloudSchema == null) {
 				HttpSyncAdapter.uploadMeshDefinition(serverUrl, meshGroup + "/"
-						+ feedName, RssSyndicationFormat.NAME, "", rdfSchema,
+						+ feedName, RssSyndicationFormat.NAME, "", schema,
 						null, identityProvider.getAuthenticatedUser());
 			} else {
-				if(!cloudSchema.isCompatible(rdfSchema)){
+				if(!cloudSchema.isCompatible(schema)){
 					Guard.throwsException("INCOMPATIBLE_SCHEMA");
 				}
 			}

@@ -19,6 +19,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.mesh4j.sync.ISyncAdapter;
+import org.mesh4j.sync.ISyncAware;
 import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.adapters.kml.KmlNames;
 import org.mesh4j.sync.id.generator.IdGenerator;
@@ -231,14 +232,32 @@ public class TestHelper {
 		Assert.assertNotNull(conflicts);
 		Assert.assertTrue(conflicts.isEmpty());
 		
-		List<Item> sourceItems = syncEngine.getSource().getAll();
-		List<Item> targetItems = syncEngine.getTarget().getAll();
+		ISyncAdapter source = syncEngine.getSource();
+		ISyncAdapter target = syncEngine.getTarget();
+		
+		if(source instanceof ISyncAware){
+			((ISyncAware) source).beginSync();
+		}
+		if(target instanceof ISyncAware){
+			((ISyncAware) target).beginSync();
+		}
+		
+		List<Item> sourceItems = source.getAll();
+		List<Item> targetItems = target.getAll();
 		Assert.assertEquals(sourceItems.size(), targetItems.size());
 		
 		ISyncAdapter targetAdapter = syncEngine.getTarget();
 		for (Item sourceItem : sourceItems) {
 			assertItem(sourceItem, targetAdapter);
 		}
+
+		if(source instanceof ISyncAware){
+			((ISyncAware) source).endSync();
+		}
+		if(target instanceof ISyncAware){
+			((ISyncAware) target).endSync();
+		}
+		
 	}
 	
 	public static void assertItem(Item sourceItem, ISyncAdapter... adapters) {

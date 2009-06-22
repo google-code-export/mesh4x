@@ -61,6 +61,10 @@ public class FileUtils {
 		return new File(getFileName(folderName, fileName));
 	}
 
+	public static void delete(String fileName) {
+		delete(new File(fileName));
+	}
+	
 	public static void delete(File file) {
 		if(file.exists()){
 			if(file.isDirectory()){
@@ -71,8 +75,6 @@ public class FileUtils {
 			}
 			file.delete();
 		} 
-
-		
 	}
 
 	public static String getFileNameWithOutExtension(File file) {
@@ -86,4 +88,8 @@ public class FileUtils {
 		return name.substring(0, size);
 	}
 	
+	public static void copyFile(String sourceFileName, String targetFileName) throws IOException{
+		byte[] bytes = FileUtils.read(sourceFileName);
+		FileUtils.write(new File(targetFileName), bytes);
+	}
 }

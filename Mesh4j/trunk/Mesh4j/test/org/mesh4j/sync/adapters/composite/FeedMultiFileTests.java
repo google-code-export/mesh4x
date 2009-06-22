@@ -1,25 +1,34 @@
 package org.mesh4j.sync.adapters.composite;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
 import junit.framework.Assert;
 
+import org.dom4j.DocumentHelper;
 import org.junit.Test;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.adapters.InMemorySyncAdapter;
 import org.mesh4j.sync.adapters.feed.FeedSyncAdapterFactory;
-import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.adapters.feed.zip.ZipFeedsSyncAdapter;
 import org.mesh4j.sync.adapters.hibernate.HibernateSyncAdapterFactory;
+import org.mesh4j.sync.adapters.hibernate.msaccess.MsAccessHibernateSyncAdapterFactory;
 import org.mesh4j.sync.adapters.http.HttpSyncAdapter;
 import org.mesh4j.sync.adapters.http.HttpSyncAdapterFactory;
-import org.mesh4j.sync.adapters.msaccess.MsAccessSyncAdapterFactory;
+import org.mesh4j.sync.adapters.jackcess.msaccess.MsAccess;
+import org.mesh4j.sync.adapters.jackcess.msaccess.MsAccessJackcessSyncAdapterFactory;
 import org.mesh4j.sync.adapters.msexcel.MsExcelRDFSyncAdapterFactory;
+import org.mesh4j.sync.id.generator.IdGenerator;
+import org.mesh4j.sync.payload.schema.ISchema;
+import org.mesh4j.sync.payload.schema.Schema;
 import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.test.utils.TestHelper;
+import org.mesh4j.sync.utils.FileUtils;
+import org.mesh4j.sync.validations.MeshException;
 
 public class FeedMultiFileTests {
 
@@ -133,7 +142,7 @@ public class FeedMultiFileTests {
 	}
 	
 	@Test
-	public void shouldSyncAllFeedFilesAsZipVsMsAccess() throws Exception{
+	public void shouldSyncAllFeedFilesAsZipVsMsAccessWithJackcess() throws Exception{
 		
 		TreeSet<String> tables = new TreeSet<String>();
 		tables.add("user");
@@ -147,9 +156,39 @@ public class FeedMultiFileTests {
 		// excel
 		InMemorySyncAdapter targetAdapterOpaque = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
 				
-		String mdbFileName = TestHelper.baseDirectoryRootForTest() + "ms-access/DevDB.mdb";
+		String mdbFileName = getMsAccessFileNameToTest();
 
-		MsAccessSyncAdapterFactory factory = new MsAccessSyncAdapterFactory(TestHelper.baseDirectoryRootForTest(), "http://mesh4x/test");
+		ISyncAdapter target = MsAccessJackcessSyncAdapterFactory.createSyncAdapterForMultiTables(new MsAccess(mdbFileName), tables, NullIdentityProvider.INSTANCE, targetAdapterOpaque, "http://mesh4x/test");
+						
+		// sync
+		SyncEngine syncEngine = new SyncEngine(source, target);
+		TestHelper.assertSync(syncEngine);
+		
+		Assert.assertEquals(0, source.getCompositeAdapter().getOpaqueAdapter().getAll().size());
+		Assert.assertEquals(0, targetAdapterOpaque.getAll().size());
+
+		TestHelper.assertSync(syncEngine);
+		TestHelper.assertSync(syncEngine);
+	}
+	
+	@Test
+	public void shouldSyncAllFeedFilesAsZipVsMsAccessWithHibernate() throws Exception{
+		
+		TreeSet<String> tables = new TreeSet<String>();
+		tables.add("user");
+		tables.add("Oswego");
+
+		// zip adapter
+		String zipFileName = TestHelper.fileName("exampleMSAccess.zip");
+		ZipFeedsSyncAdapter source = FeedSyncAdapterFactory.createSyncAdapterForMultiFilesAsZip(zipFileName, NullIdentityProvider.INSTANCE, TestHelper.baseDirectoryForTest());
+		//ZipFeedsSyncAdapter source = FeedSyncAdapterFactory.createSyncAdapterForMultiFilesAsZip(zipFileName, NullIdentityProvider.INSTANCE, TestHelper.baseDirectoryForTest(), tables);
+		
+		// excel
+		InMemorySyncAdapter targetAdapterOpaque = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
+				
+		String mdbFileName = getMsAccessFileNameToTest();
+
+		MsAccessHibernateSyncAdapterFactory factory = new MsAccessHibernateSyncAdapterFactory(TestHelper.baseDirectoryRootForTest(), "http://mesh4x/test");
 		ISyncAdapter target = factory.createSyncAdapterForMultiTables(mdbFileName, tables, NullIdentityProvider.INSTANCE, targetAdapterOpaque);
 						
 		// sync
@@ -160,6 +199,7 @@ public class FeedMultiFileTests {
 		Assert.assertEquals(0, targetAdapterOpaque.getAll().size());
 
 		TestHelper.assertSync(syncEngine);
+		TestHelper.assertSync(syncEngine);
 	}
 	
 	@Test
@@ -168,27 +208,24 @@ public class FeedMultiFileTests {
 		// zip adapter
 		String zipFileName = TestHelper.fileName("exampleMSExcel.zip");
 		ZipFeedsSyncAdapter source = FeedSyncAdapterFactory.createSyncAdapterForMultiFilesAsZip(zipFileName, NullIdentityProvider.INSTANCE, TestHelper.baseDirectoryForTest());
+		source.beginSync();
 		
 		// Cloud
 		String baseURL = "http://localhost:8080/mesh4x/feeds";
 		String meshGroup = "compositeHTTPZipFeedFile";
 		
-		// create mesh group
-		HttpSyncAdapter.uploadMeshDefinition(baseURL, meshGroup, RssSyndicationFormat.NAME, "my mesh", null, null, "jmt");
-		
-		// create mesh data sets
+		// extract schemas
+		List<ISchema> schemas = new ArrayList<ISchema>();
 		for (IIdentifiableSyncAdapter identifiableAdapter : source.getCompositeAdapter().getAdapters()) {
 			IdentifiableSyncAdapter adapter = (IdentifiableSyncAdapter)identifiableAdapter;
 			
 			String feedName = adapter.getType();
-			
-			HttpSyncAdapter.uploadMeshDefinition(baseURL, meshGroup + "/" + feedName, RssSyndicationFormat.NAME, "my description", null, null, "jmt");	
+			schemas.add(new Schema(DocumentHelper.createElement(feedName)));
 		}
 				
 		// create http sync adapter
-		String url = HttpSyncAdapter.makeMeshGroupURLToSync(baseURL + "/" + meshGroup);
-		HttpSyncAdapter target = HttpSyncAdapterFactory.createSyncAdapter(url, NullIdentityProvider.INSTANCE);
-	
+		HttpSyncAdapter target = HttpSyncAdapterFactory.createSyncAdapterForMultiDataset(baseURL, meshGroup, NullIdentityProvider.INSTANCE, schemas);
+			
 		// sync
 		SyncEngine syncEngine = new SyncEngine(target, source);
 		TestHelper.assertSync(syncEngine);
@@ -196,5 +233,17 @@ public class FeedMultiFileTests {
 		Assert.assertEquals(0, source.getCompositeAdapter().getOpaqueAdapter().getAll().size());
 
 		TestHelper.assertSync(syncEngine);
+		TestHelper.assertSync(syncEngine);
+	}
+	
+	private String getMsAccessFileNameToTest() {
+		try{
+			String localFileName = this.getClass().getResource("DevDB2003.mdb").getFile();
+			String fileName = TestHelper.fileName("msAccess"+IdGenerator.INSTANCE.newID()+".mdb");
+			FileUtils.copyFile(localFileName, fileName);
+			return fileName;
+		} catch (Exception e) {
+			throw new MeshException(e);
+		}
 	}
 }

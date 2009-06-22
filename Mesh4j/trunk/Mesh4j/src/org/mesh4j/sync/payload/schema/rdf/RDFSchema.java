@@ -1,5 +1,6 @@
 package org.mesh4j.sync.payload.schema.rdf;
 
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
@@ -39,7 +40,7 @@ public class RDFSchema implements IRDFSchema{
 	
 	private OntModel schema;
 	private OntClass domainClass;
-	
+		
 	// BUSINESS METHODS
 	
 	public RDFSchema(Reader reader){
@@ -258,7 +259,7 @@ public class RDFSchema implements IRDFSchema{
 						}
 					}
 				}
-			} else {
+			}else {
 				return dataType.cannonicalise(value);
 			}
 			return null;
@@ -440,9 +441,39 @@ public class RDFSchema implements IRDFSchema{
 		}
 		return result;
 	}
+	
+	
+	@Override
+	public Map<String, Object> getPropertiesAsMap(Element element) {
+		HashMap<String, Object> result = new HashMap<String, Object>();
+		RDFInstance instance = createNewInstanceFromRDFXML(element.asXML());
+		if(instance != null){
+			int size = this.getPropertyCount();
+			for (int i = 0; i < size; i++) {
+				String propertyName = this.getPropertyName(i);
+				Object propertyValue = instance.getPropertyValue(propertyName);
+				result.put(propertyName, propertyValue);
+			}
+		}
+		return result;
+	}
 
 	public static boolean isRDF(Element schemaElement) {
 		return schemaElement != null && schemaElement.getName().trim().toLowerCase().equals("rdf");
 	}
 
+	public static RDFSchema readSchema(String fileName) throws Exception {
+		FileReader reader = new FileReader(fileName);
+		try{
+			RDFSchema rdfSchema = new RDFSchema(reader);
+			return rdfSchema;
+		} finally{
+			reader.close();
+		}
+	}
+
+	@Override
+	public String getName() {
+		return this.ontologyClassName;
+	}
 }

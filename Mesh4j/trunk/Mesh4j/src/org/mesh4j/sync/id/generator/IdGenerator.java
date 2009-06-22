@@ -7,7 +7,7 @@ public class IdGenerator implements IIdGenerator {
 	public final static IdGenerator INSTANCE = new IdGenerator();
 	
 	public String newID() {
-		return UUID.randomUUID().toString();
+		return UUID.randomUUID().toString().toUpperCase();
 	}
 
 }

@@ -12,7 +12,6 @@ import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.adapters.hibernate.HibernateContentAdapter;
 import org.mesh4j.sync.adapters.hibernate.HibernateSessionFactoryBuilder;
 import org.mesh4j.sync.adapters.hibernate.HibernateSyncRepository;
-import org.mesh4j.sync.adapters.msaccess.MsAccessDialect;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.Item;
@@ -20,6 +19,8 @@ import org.mesh4j.sync.parsers.SyncInfoParser;
 import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
 import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.test.utils.TestHelper;
+import org.mesh4j.sync.utils.FileUtils;
+import org.mesh4j.sync.validations.MeshException;
 
 import sun.jdbc.odbc.JdbcOdbcDriver;
 
@@ -28,11 +29,11 @@ public class SyncMsAccessRDFTests {
 	@Test
 	public void shouldSync2MSAccessTablesWithRDFMapping(){
 
-		String filenameA = TestHelper.baseDirectoryRootForTest() + "ms-access/DevDB.mdb";
+		String filenameA = getMsAccessFileNameToTest("DevDB.mdb");
 		String databaseA = "jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=";
 		databaseA+= filenameA.trim() + ";DriverID=22;READONLY=false}"; // add on to the end 
 
-		String filenameB = TestHelper.baseDirectoryRootForTest() + "ms-access/DevDB2.mdb";
+		String filenameB = getMsAccessFileNameToTest("DevDB2.mdb");
 		String databaseB = "jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=";
 		databaseB+= filenameB.trim() + ";DriverID=22;READONLY=false}"; // add on to the end
 		
@@ -97,7 +98,7 @@ public class SyncMsAccessRDFTests {
 	@Test
 	public void shouldSyncMSAccessToFeedWithRDFMapping() throws Exception{
 
-		String filenameA = TestHelper.baseDirectoryRootForTest() + "ms-access/DevDB.mdb";
+		String filenameA = getMsAccessFileNameToTest("DevDB.mdb");
 		String databaseA = "jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=";
 		databaseA+= filenameA.trim() + ";DriverID=22;READONLY=false}"; // add on to the end 
 		
@@ -144,5 +145,15 @@ public class SyncMsAccessRDFTests {
 
 		Assert.assertEquals(itemsA.size(), itemsB.size());
 	}
-	
+
+	private String getMsAccessFileNameToTest(String name) {
+		try{
+			String localFileName = this.getClass().getResource("DevDB2003.mdb").getFile();
+			String fileName = TestHelper.fileName(name);
+			FileUtils.copyFile(localFileName, fileName);
+			return fileName;
+		} catch (Exception e) {
+			throw new MeshException(e);
+		}
+	}
 }
