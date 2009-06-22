@@ -3,6 +3,7 @@ package org.mesh4j.sync.adapters.http;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 
 import org.mesh4j.sync.adapters.ISyncAdapterFactory;
 import org.mesh4j.sync.adapters.feed.ContentReader;
@@ -10,6 +11,7 @@ import org.mesh4j.sync.adapters.feed.ContentWriter;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.payload.schema.ISchema;
+import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.validations.Guard;
 
@@ -105,6 +107,43 @@ public class HttpSyncAdapterFactory implements ISyncAdapterFactory {
 			}
 		}
 		return adapter;
+	}
+	
+
+	public static HttpSyncAdapter createSyncAdapterForMultiDataset(String serverUrl,
+			String meshGroup, IIdentityProvider identityProvider, HashMap<IRDFSchema, String> rdfSchemas) {
+		
+		// create mesh group
+		HttpSyncAdapter tmpAdapter = createSyncAdapter(serverUrl, identityProvider);
+
+		if (!tmpAdapter.isMeshDefinitionAvailable(meshGroup)){
+			HttpSyncAdapter.uploadMeshDefinition(serverUrl, meshGroup,
+					RssSyndicationFormat.NAME, "", null, null, identityProvider
+							.getAuthenticatedUser());
+		}
+		
+		// create mesh data sets
+		for (IRDFSchema rdfSchema : rdfSchemas.keySet()) {
+			String feedName = rdfSchema.getOntologyClassName();
+			
+			String tmpUrl = serverUrl + "/" + meshGroup + "/" + feedName;
+			HttpSyncAdapter adapter = createSyncAdapter(tmpUrl, identityProvider);
+			ISchema cloudSchema = adapter.getSchema();
+			
+			if (cloudSchema == null) {
+				HttpSyncAdapter.uploadMeshDefinition(serverUrl, meshGroup + "/"
+						+ feedName, RssSyndicationFormat.NAME, "", rdfSchema,
+						null, identityProvider.getAuthenticatedUser());
+			} else {
+				if(!cloudSchema.isCompatible(rdfSchema)){
+					Guard.throwsException("INCOMPATIBLE_SCHEMA");
+				}
+			}
+		}
+				
+		// create http sync adapter
+		String url = HttpSyncAdapter.makeMeshGroupURLToSync(serverUrl + "/" + meshGroup);
+		return createSyncAdapter(url, identityProvider);
 	}
 
 }
