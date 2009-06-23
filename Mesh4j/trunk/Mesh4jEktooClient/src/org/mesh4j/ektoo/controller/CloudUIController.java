@@ -89,13 +89,7 @@ public class CloudUIController extends AbstractUIController
 			}
 			
 			IRDFSchema rdfSchema = schemas == null || schemas.size() == 0 ? null : schemas.entrySet().iterator().next().getKey();
-			//TODO (raju) refactor this later.change the calling mechanism for view schema and sync process.
-			if(rdfSchema == null){
-				return adapterBuilder.createHttpSyncAdapter(baseSyncURI, meshName, datasetName);
-			} else {
-				return adapterBuilder.createHttpSyncAdapter(baseSyncURI, meshName, datasetName, rdfSchema);	
-			}
-			
+			return adapterBuilder.createHttpSyncAdapter(baseSyncURI, meshName, datasetName, rdfSchema);	
 		}
 	}
 

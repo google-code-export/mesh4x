@@ -78,14 +78,6 @@ public interface ISyncAdapterBuilder {
 
 	/**
 	 * TODO create documentation (raju)
-	 * @param serverUrl
-	 * @param meshGroup
-	 * @param dataSetId
-	 * @return
-	 */
-	public ISyncAdapter createHttpSyncAdapter(String serverUrl,String meshGroup,String dataSetId);
-	/**
-	 * TODO create documentation (raju)
 	 * 
 	 * @param rootUrl
 	 * @param meshId

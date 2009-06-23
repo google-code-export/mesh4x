@@ -132,11 +132,6 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 	}	
 
 	@Override
-	public ISyncAdapter createHttpSyncAdapter(String serverUrl,String meshGroup,String dataSetId){
-		String url = serverUrl + "/" +meshGroup + "/"+ dataSetId;
-		return HttpSyncAdapterFactory.createSyncAdapter(url, getIdentityProvider());
-	}
-	@Override
 	public ISyncAdapter createHttpSyncAdapter(String serverUrl, String meshGroup, String dataSetId, IRDFSchema rdfSchema) {
 		return HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverUrl, meshGroup, dataSetId, getIdentityProvider(), rdfSchema);
 	}	
