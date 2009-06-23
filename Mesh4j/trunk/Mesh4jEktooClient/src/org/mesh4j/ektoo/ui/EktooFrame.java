@@ -24,6 +24,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.ButtonModel;
 import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -41,6 +42,7 @@ import org.mesh4j.ektoo.tasks.OpenURLTask;
 import org.mesh4j.ektoo.tasks.SchemaViewTask;
 import org.mesh4j.ektoo.tasks.SynchronizeTask;
 import org.mesh4j.ektoo.ui.component.HyperLink;
+import org.mesh4j.ektoo.ui.component.PopupDialog;
 import org.mesh4j.ektoo.ui.component.statusbar.Statusbar;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
@@ -782,5 +784,13 @@ public class EktooFrame extends JFrame implements IErrorListener,
 	@Override
 	public void notifySynchronizeTaskSuccess(String success) {
 		setStatusbarText(success, Statusbar.SUCCESS_STATUS);
+	}
+	
+	public void showViewInPopup(JComponent component){
+		PopupDialog dialog = new PopupDialog(this,"schema");
+		dialog.setLayout(new BorderLayout());
+		dialog.add(component);
+		dialog.setSize(getWidth() - 100, getHeight()/2);
+		dialog.setVisible(true);
 	}
 }

@@ -72,7 +72,6 @@ public class CloudUI extends AbstractUI {
 		
 		this.add(getMessagesText(), null);
 		this.add(getBtnView(), null);
-		
 	}
 
 	public JTextField getServerURLText(){

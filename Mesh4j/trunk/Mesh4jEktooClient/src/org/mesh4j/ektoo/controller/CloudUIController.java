@@ -45,7 +45,9 @@ public class CloudUIController extends AbstractUIController
 	
 	@Override
 	public ISyncAdapter createAdapter() {
+		
 		return createAdapter(null);
+//		
 	}
 
 	@Override
@@ -62,6 +64,7 @@ public class CloudUIController extends AbstractUIController
 
 	@Override
 	public ISyncAdapter createAdapter(HashMap<IRDFSchema, String> schemas) {
+		
 		CloudModel model = (CloudModel) this.getModel();
 		if (model == null){
 			return null;
@@ -85,8 +88,14 @@ public class CloudUIController extends AbstractUIController
 				return null;
 			}
 			
-			IRDFSchema rdfSchema = schemas == null || schemas.size() == 0 ? null : schemas.entrySet().iterator().next().getKey(); 
-			return adapterBuilder.createHttpSyncAdapter(baseSyncURI, meshName, datasetName, rdfSchema);
+			IRDFSchema rdfSchema = schemas == null || schemas.size() == 0 ? null : schemas.entrySet().iterator().next().getKey();
+			//TODO (raju) refactor this later.change the calling mechanism for view schema and sync process.
+			if(rdfSchema == null){
+				return adapterBuilder.createHttpSyncAdapter(baseSyncURI, meshName, datasetName);
+			} else {
+				return adapterBuilder.createHttpSyncAdapter(baseSyncURI, meshName, datasetName, rdfSchema);	
+			}
+			
 		}
 	}
 

@@ -22,7 +22,7 @@ public class SchemaViewUI extends AbstractUI{
 	
 	public SchemaViewUI(IRDFSchema schema){
 		this.schema = schema;
-		this.setLayout(new BorderLayout());
+		this.setLayout(new BorderLayout(0,0));
 		initilize();
 	}
 	private void initilize(){
@@ -36,14 +36,7 @@ public class SchemaViewUI extends AbstractUI{
 		}
     	JXmlTreeTable xmlTable = new JXmlTreeTable(xmlTreeTableMode);
     	xmlTable.getTree().setCellRenderer(new JXmlTreeTableCellRenderer());
-    	
-    	//empty JScrollPane implementation for removing column header
-    	JScrollPane scroll = new JScrollPane() {
-    	public void setColumnHeaderView(Component component) {
-    	}
-    	};
-    	scroll.setViewportView(xmlTable);
-    	this.add(scroll,BorderLayout.CENTER);
+    	this.add(xmlTable,BorderLayout.CENTER);
 	}
 	@Override
 	public void modelPropertyChange(PropertyChangeEvent evt) {
