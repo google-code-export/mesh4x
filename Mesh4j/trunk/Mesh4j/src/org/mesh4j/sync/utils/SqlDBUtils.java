@@ -118,13 +118,13 @@ public class SqlDBUtils {
 		Guard.argumentNotNull(scriptFileName, "scriptFileName");
 
 		File scriptFile = new File(scriptFileName);
-		Statement stmt;
 		try {
 			Class.forName(driverClass.getName());
 			Connection con = DriverManager.getConnection(urlConnection, user, password);
 			try {
-				stmt = con.createStatement();
-
+				Statement stmt = con.createStatement();
+				
+				//read the file and identify all the individual query
 				BufferedReader reader = new BufferedReader(new FileReader(scriptFile));
 				String line;
 				StringBuffer query = new StringBuffer();
