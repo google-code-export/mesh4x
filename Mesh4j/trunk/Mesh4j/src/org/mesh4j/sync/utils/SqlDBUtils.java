@@ -1,11 +1,16 @@
 package org.mesh4j.sync.utils;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -102,5 +107,59 @@ public class SqlDBUtils {
 			LOGGER.error(e.getMessage(), e);
 		}
 		return dbNames;
+	}
+	
+	public static void executeSqlScript(Class<?> driverClass,
+			String urlConnection, String user, String password,	String scriptFileName) {
+		Guard.argumentNotNull(driverClass, "driverClass");
+		Guard.argumentNotNullOrEmptyString(urlConnection, "urlConnection");
+		Guard.argumentNotNullOrEmptyString(user, "user");
+		Guard.argumentNotNull(password, "password");
+		Guard.argumentNotNull(scriptFileName, "scriptFileName");
+
+		File scriptFile = new File(scriptFileName);
+		Statement stmt;
+		try {
+			Class.forName(driverClass.getName());
+			Connection con = DriverManager.getConnection(urlConnection, user, password);
+			try {
+				stmt = con.createStatement();
+
+				BufferedReader reader = new BufferedReader(new FileReader(scriptFile));
+				String line;
+				StringBuffer query = new StringBuffer();
+				boolean queryEnds = false;
+
+				LOGGER.info("Listing individualt query...");
+				while ((line = reader.readLine()) != null) {
+					if (isComment(line))
+						continue;
+					queryEnds = line.indexOf(';') != -1;
+					query.append(line);
+					if (queryEnds) {
+						LOGGER.info("# " + query);
+						stmt.addBatch(query.toString());
+						query.setLength(0);
+					}
+				}
+
+				stmt.executeBatch();
+
+			} catch (IOException e) {
+				LOGGER.error(e.getMessage(), e);
+			} catch (SQLException e) {
+				LOGGER.error(e.getMessage(), e);
+			} finally {
+				con.close();
+			}
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+		}
+	}
+	
+	private static boolean isComment(String line) {
+		if ((line != null) && (line.length() > 0))
+			return (line.charAt(0) == '#');
+		return false;
 	}
 }

@@ -90,4 +90,14 @@ public class SqlDBUtilsTests {
 		Assert.assertNotNull(url);
 		Assert.assertEquals("jdbc:mysql://localhost:4343/mesh4xdb", url);
 	}
+	
+	@Test
+	public void shouldExecuteSqlScript(){
+		String sqlFileName = this.getClass().getResource("mesh4j_table_mysql.sql").getFile();
+		SqlDBUtils.executeSqlScript(Driver.class, "jdbc:mysql:///mesh4xdb",  "root", "admin", sqlFileName);	
+		Set<String> tableNames = SqlDBUtils.getTableNames(Driver.class, "jdbc:mysql:///mesh4xdb", "root", "admin");
+		Assert.assertNotNull(tableNames);
+		Assert.assertTrue(tableNames.contains("mesh_example"));
+		Assert.assertTrue(tableNames.contains("mesh_example_1"));
+	}
 }
