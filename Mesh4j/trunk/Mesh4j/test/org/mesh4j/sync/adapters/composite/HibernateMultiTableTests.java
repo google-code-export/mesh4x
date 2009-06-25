@@ -7,6 +7,7 @@ import java.util.TreeSet;
 
 import junit.framework.Assert;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.SyncEngine;
@@ -19,9 +20,27 @@ import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.test.utils.TestHelper;
+import org.mesh4j.sync.utils.FileUtils;
+import org.mesh4j.sync.utils.SqlDBUtils;
+
+import com.mysql.jdbc.Driver;
 
 public class HibernateMultiTableTests {
 
+	@BeforeClass
+	public static void setUpDB(){
+		//create database/tables for source
+		String sqlFileName = FileUtils.getResourceFileURL("mesh4j_table_mysql.sql").getFile();
+		SqlDBUtils.executeSqlScript(Driver.class, "jdbc:mysql://localhost", "mesh4xdb", "root", "", sqlFileName);	
+		
+		//create database/tables for target
+		sqlFileName = FileUtils.getResourceFileURL("mesh4j_table_mysql_target.sql").getFile();
+		SqlDBUtils.executeSqlScript(Driver.class, "jdbc:mysql://localhost", "mesh4xdbtarget", "root", "", sqlFileName);	
+		
+		//cleanup existing hbm.xml files
+		FileUtils.cleanupDirectory(TestHelper.baseDirectoryRootForTest());
+	}
+	
 	@Test
 	public void shouldSyncMultiTablesRDF(){
 		
@@ -34,7 +53,7 @@ public class HibernateMultiTableTests {
 		ISyncAdapter adapterSource = HibernateSyncAdapterFactory.createSyncAdapterForMultiTables(
 			"jdbc:mysql:///mesh4xdb", 
 			"root", 
-			"", 
+			"", //provide your password here 
 			com.mysql.jdbc.Driver.class,
 			org.hibernate.dialect.MySQLDialect.class,
 			tables, 
@@ -50,12 +69,11 @@ public class HibernateMultiTableTests {
 		TestHelper.assertSync(syncEngine);
 		
 		Assert.assertEquals(0, adapterOpaque.getAll().size());
-
 	}
 	
 	@Test
 	public void shouldSyncMultiTablesPlainXML(){
-		
+
 		InMemorySyncAdapter adapterOpaque = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
 		
 		TreeSet<String> tables = new TreeSet<String>();
@@ -65,7 +83,7 @@ public class HibernateMultiTableTests {
 		ISyncAdapter adapterSource = HibernateSyncAdapterFactory.createSyncAdapterForMultiTables(
 			"jdbc:mysql:///mesh4xdb", 
 			"root", 
-			"", 
+			"", //provide your password here 
 			com.mysql.jdbc.Driver.class,
 			org.hibernate.dialect.MySQLDialect.class,
 			tables, 
@@ -99,7 +117,7 @@ public class HibernateMultiTableTests {
 		CompositeSyncAdapter adapterSource = HibernateSyncAdapterFactory.createSyncAdapterForMultiTables(
 			"jdbc:mysql:///mesh4xdb", 
 			"root", 
-			"", 
+			"", //provide your password here 
 			com.mysql.jdbc.Driver.class,
 			org.hibernate.dialect.MySQLDialect.class,
 			tables, 
@@ -142,10 +160,12 @@ public class HibernateMultiTableTests {
 		}
 	}
 
-	
-	//@Test
+	@Test
 	public void ShouldSyncAllTablesOfTwoDatabaseByRDF(){
-
+		//cleanup existing hbm.xml files
+		FileUtils.cleanupDirectory(TestHelper.baseDirectoryRootForTest() + "source");
+		FileUtils.cleanupDirectory(TestHelper.baseDirectoryRootForTest() + "target");
+		
 		//To run this test you have to have two database
 		//and this test operates on three existing tables.
 		TreeSet<String> tables = new TreeSet<String>();
@@ -188,9 +208,12 @@ public class HibernateMultiTableTests {
 	}
 	
 	
-	//@Test
+	@Test
 	public void ShouldSyncAllTablesOfTwoDatabaseByPlainXML(){
-
+		//cleanup existing hbm.xml files
+		FileUtils.cleanupDirectory(TestHelper.baseDirectoryRootForTest() + "source");
+		FileUtils.cleanupDirectory(TestHelper.baseDirectoryRootForTest() + "target");
+		
 		//To run this test you have to have two database
 		//and this test operates on three existing tables.
 		TreeSet<String> tables = new TreeSet<String>();
