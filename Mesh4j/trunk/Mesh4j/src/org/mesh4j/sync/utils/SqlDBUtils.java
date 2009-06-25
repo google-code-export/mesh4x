@@ -109,20 +109,33 @@ public class SqlDBUtils {
 		return dbNames;
 	}
 	
+	/**
+	 * executes a sql script for a database with name dbName. Database will be created automatically if not exists
+	 * 
+	 * @param driverClass : Class for jdbc driver 
+	 * @param serverUrl : server URL (example jdbc:mysql://localhost:3306)
+	 * @param dbName : database name
+	 * @param username : username for authentication
+	 * @param password : password for authentication
+	 * @param scriptFileName : file containing sql queries
+	 */
 	public static void executeSqlScript(Class<?> driverClass,
-			String urlConnection, String user, String password,	String scriptFileName) {
+			String serverUrl, String dbName, String username, String password,	String scriptFileName) {
 		Guard.argumentNotNull(driverClass, "driverClass");
-		Guard.argumentNotNullOrEmptyString(urlConnection, "urlConnection");
-		Guard.argumentNotNullOrEmptyString(user, "user");
+		Guard.argumentNotNullOrEmptyString(serverUrl, "serverUrl");
+		Guard.argumentNotNullOrEmptyString(dbName, "urlConnection");	
+		Guard.argumentNotNullOrEmptyString(username, "user");
 		Guard.argumentNotNull(password, "password");
 		Guard.argumentNotNull(scriptFileName, "scriptFileName");
 
 		File scriptFile = new File(scriptFileName);
 		try {
 			Class.forName(driverClass.getName());
-			Connection con = DriverManager.getConnection(urlConnection, user, password);
+			Connection con = DriverManager.getConnection(serverUrl, username, password);
 			try {
 				Statement stmt = con.createStatement();
+				
+				createDBIfNotExist(stmt, dbName, username, password);
 				
 				//read the file and identify all the individual query
 				BufferedReader reader = new BufferedReader(new FileReader(scriptFile));
@@ -130,6 +143,8 @@ public class SqlDBUtils {
 				StringBuffer query = new StringBuffer();
 				boolean queryEnds = false;
 
+				stmt.addBatch("USE "+ dbName + ";");	
+				
 				LOGGER.info("Listing individualt query...");
 				while ((line = reader.readLine()) != null) {
 					if (isComment(line))
@@ -154,6 +169,33 @@ public class SqlDBUtils {
 			}
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
+		}
+	}
+	
+	private static void createDBIfNotExist(Statement stmt, String dbName, String username, String password) throws SQLException {
+		String createDatabase =	"CREATE DATABASE "+dbName+"; ";
+		String allowGrant = "GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP ON "+dbName+".* TO "+username+"@localhost IDENTIFIED BY '"+password+"';";		
+				
+		try{	
+			stmt.execute(createDatabase);
+			stmt.execute(allowGrant);
+		}catch (SQLException e) {
+			try {
+				if(stmt.getConnection().getMetaData().getDatabaseProductName().equalsIgnoreCase("MySQL")){
+						if(e.getErrorCode() != 1007){ //1007 = ER_DB_CREATE_EXISTS, so ignore the exception
+							throw e; //for other than db exists error, just throw the exception
+						}
+				}
+//need to add entry for other database as well because the error code for "database already exists" is vendor specific 
+//				else if(stmt.getConnection().getMetaData().getDatabaseProductName().equalsIgnoreCase("MySQL")){
+//					if(e.getErrorCode() != 1007){ //ER_DB_CREATE_EXISTS
+//						throw e;
+//					}
+//				}
+				
+			} catch (SQLException e1) {
+				throw e1;
+			}
 		}
 	}
 	
