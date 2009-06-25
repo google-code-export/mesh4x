@@ -7,6 +7,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+
+import org.mesh4j.sync.validations.MeshException;
 
 public class FileUtils {
 
@@ -61,6 +64,10 @@ public class FileUtils {
 		return new File(getFileName(folderName, fileName));
 	}
 
+	public static URL getResourceFileURL(String fileName) {
+		return ClassLoader.getSystemClassLoader().getResource(fileName);
+	}		
+	
 	public static void delete(String fileName) {
 		delete(new File(fileName));
 	}
@@ -77,6 +84,22 @@ public class FileUtils {
 		} 
 	}
 
+	/**
+	 * Cleanup files from a directory
+	 * 
+	 * @param dirName
+	 */
+	public static void cleanupDirectory(String dirName) {
+		File directory = new File(dirName);
+		if (directory.isDirectory()) {
+			for (File file : directory.listFiles()) {
+				if (file.isFile() && !file.delete()) {
+					throw new MeshException("Failed to delete " + file + " in directory "+ dirName);
+				}
+			}
+		}
+	}	
+	
 	public static String getFileNameWithOutExtension(File file) {
 		String name = file.getName();
 		int i = name.indexOf(".");
