@@ -11,6 +11,8 @@ import java.awt.event.FocusEvent;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.JButton;
@@ -31,11 +33,13 @@ import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.controller.MsAccessUIController;
 import org.mesh4j.ektoo.tasks.IErrorListener;
 import org.mesh4j.ektoo.tasks.OpenFileTask;
+import org.mesh4j.ektoo.tasks.SchemaViewTask;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.ektoo.ui.validator.MsAccessUIValidator;
 import org.mesh4j.sync.adapters.hibernate.msaccess.MsAccessHibernateSyncAdapterFactory;
 import org.mesh4j.sync.adapters.jackcess.msaccess.MsAccessJackcessSyncAdapterFactory;
+import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 
 public class MsAccessUI extends AbstractUI{
 
@@ -90,8 +94,22 @@ public class MsAccessUI extends AbstractUI{
 		this.add(getlabelTable(), null);
 		this.add(getListTableScroller(), null);
 		this.add(getMessagesText(), null);
+		this.add(getSchemaViewButton(), null);
 	}
 
+
+	private JButton getSchemaViewButton(){
+		getSchemaButton().addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				EktooFrame ektooFrame = ((EktooFrame)MsAccessUI.this.getRootFrame());
+				SchemaViewTask task = new SchemaViewTask(ektooFrame,MsAccessUI.this.controller,ektooFrame);
+				task.execute();
+			}
+		});
+		return getSchemaButton(); 
+	}
+	
 	public void setList(String fileName) {
 		JList tableList = getTableList();
 		tableList.removeAll();

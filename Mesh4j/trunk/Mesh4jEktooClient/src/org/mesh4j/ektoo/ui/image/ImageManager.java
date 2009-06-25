@@ -166,4 +166,7 @@ public class ImageManager {
 	public static Icon getViewIcon() {
 		return SwingResourceManager.getIcon(EktooFrame.class, "/view.jpg");
 	}
+	public static Icon getSchemaViewIcon() {
+		return SwingResourceManager.getIcon(EktooFrame.class, "/schema.JPG");
+	}
 }

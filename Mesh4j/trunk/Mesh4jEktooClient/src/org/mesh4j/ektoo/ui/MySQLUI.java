@@ -34,6 +34,7 @@ import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.controller.MySQLUIController;
 import org.mesh4j.ektoo.tasks.IErrorListener;
 import org.mesh4j.ektoo.tasks.OpenMySqlFeedTask;
+import org.mesh4j.ektoo.tasks.SchemaViewTask;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.ektoo.ui.validator.MySQLConnectionValidator;
@@ -106,9 +107,24 @@ public class MySQLUI extends AbstractUI {
 		this.add(getBtnView(), null);
 		
 		this.add(getMessagesText(), null);
+		this.add(getSchemaViewButton(), null);
 		setDefaultValues();
+		
 	}
-
+	
+	private JButton getSchemaViewButton(){
+		getSchemaButton().addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				EktooFrame ektooFrame = ((EktooFrame)MySQLUI.this.getRootFrame());
+				SchemaViewTask task = new SchemaViewTask(ektooFrame,MySQLUI.this.controller,ektooFrame);
+				task.execute();
+			}
+		});
+		return getSchemaButton();
+	}
+	
+	
 	private void setDefaultValues() {
 		String hostName = controller.getDefaultMySQLHost();
 		if (hostName == null) {

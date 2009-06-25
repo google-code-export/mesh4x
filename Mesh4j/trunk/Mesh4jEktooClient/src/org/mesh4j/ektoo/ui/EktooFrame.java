@@ -187,18 +187,6 @@ public class EktooFrame extends JFrame implements IErrorListener,
 			c.gridy = 2;
 			panel.add(getTargetPane(), c);
 			
-			//put the view schema button for source
-			c.gridx = 0;
-			c.gridy = 3;
-			c.anchor= GridBagConstraints.NORTH;
-			panel.add(getSourceSchemaViewButton(), c);
-			
-			//put the view schema button for target
-			c.gridx = 1;
-			c.gridy = 3;
-			c.anchor= GridBagConstraints.NORTH;
-			panel.add(getTargetSchemaViewButton(), c);
-			
 			c.fill = GridBagConstraints.CENTER;
 			c.gridx = 0;
 			c.gridy = 4;
@@ -215,35 +203,6 @@ public class EktooFrame extends JFrame implements IErrorListener,
 		return panel;
 	}
 	
-	private JButton getSourceSchemaViewButton(){
-		if(sourceSchemaViewButton == null){
-			sourceSchemaViewButton = new JButton("View source schema");
-			sourceSchemaViewButton.addActionListener(new ActionListener(){
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					SchemaViewTask task = new SchemaViewTask(EktooFrame.this, getSourceItem(), EktooFrame.this);
-					task.execute();
-				}
-			});
-		}
-		return sourceSchemaViewButton;
-	}
-	
-	
-	
-	private JButton getTargetSchemaViewButton(){
-		if(targetSchemaViewButton == null){
-			targetSchemaViewButton = new JButton("View target schema");
-			targetSchemaViewButton.addActionListener(new ActionListener(){
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					SchemaViewTask task = new SchemaViewTask(EktooFrame.this,getTargetItem(), EktooFrame.this);
-					task.execute();
-				}
-			});
-		}
-		return targetSchemaViewButton;
-	}
 	
 	private JPanel getImagePanel() {
 		if (panelImage == null) {
@@ -786,8 +745,8 @@ public class EktooFrame extends JFrame implements IErrorListener,
 		setStatusbarText(success, Statusbar.SUCCESS_STATUS);
 	}
 	
-	public void showViewInPopup(JComponent component){
-		PopupDialog dialog = new PopupDialog(this,"schema");
+	public void showViewInPopup(String title,JComponent component){
+		PopupDialog dialog = new PopupDialog(this,title);
 		dialog.setLayout(new BorderLayout());
 		dialog.add(component);
 		dialog.setSize(getWidth() - 100, getHeight()/2);

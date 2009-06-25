@@ -13,28 +13,31 @@ import javax.swing.SwingWorker;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.mesh4j.ektoo.controller.AbstractUIController;
 import org.mesh4j.ektoo.ui.EktooFrame;
 import org.mesh4j.ektoo.ui.SchemaViewUI;
-import org.mesh4j.ektoo.ui.SyncItemUI;
 import org.mesh4j.ektoo.ui.component.RoundBorder;
+import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 
 public class SchemaViewTask extends SwingWorker<String, Void>{
 
 	private static Log Logger = LogFactory.getLog(SchemaViewTask.class);
 	private EktooFrame ui;
-	private SyncItemUI syncItemUI;
 	private IErrorListener errorListener;
+	private AbstractUIController controller;
 	
-	public SchemaViewTask(EktooFrame ui,SyncItemUI syncItemUI,IErrorListener errorListener){
+
+	public SchemaViewTask(EktooFrame ui,AbstractUIController controller, IErrorListener errorListener){
 		this.ui = ui;
-		this.syncItemUI = syncItemUI;
 		this.errorListener = errorListener;
+		this.controller = controller;
 	}
+	//TODO (raju) implement the listener and log the error
 	@Override
 	protected String doInBackground() throws Exception {
 		ui.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-		HashMap<IRDFSchema , String> shcemaList = syncItemUI.fetchSchema(syncItemUI.createAdapter());
+		HashMap<IRDFSchema , String> shcemaList = controller.fetchSchema(controller.createAdapter());
 		showSchemaInPopup(createSchemaView(shcemaList));
 		return null;
 	}
@@ -64,7 +67,7 @@ public class SchemaViewTask extends SwingWorker<String, Void>{
 	}
 	
 	private void showSchemaInPopup(JScrollPane schemaUI){
-		this.ui.showViewInPopup(schemaUI);
+		this.ui.showViewInPopup(EktooUITranslator.getTitleOfSchemaViewPopUp(),schemaUI);
 	}
 	
 }

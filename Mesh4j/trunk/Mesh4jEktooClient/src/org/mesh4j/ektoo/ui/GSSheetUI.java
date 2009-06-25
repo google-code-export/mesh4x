@@ -32,6 +32,7 @@ import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.controller.GSSheetUIController;
 import org.mesh4j.ektoo.tasks.IErrorListener;
 import org.mesh4j.ektoo.tasks.OpenURLTask;
+import org.mesh4j.ektoo.tasks.SchemaViewTask;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.ektoo.ui.validator.GssUIValidator;
@@ -102,8 +103,21 @@ public class GSSheetUI extends AbstractUI {
 		this.add(getColumnList(), null);
 		this.add(getMessagesText(), null);
 		this.add(getBtnView(), null);
+		this.add(getSchemaViewButton(), null);
 	}
 
+	private JButton getSchemaViewButton(){
+		getSchemaButton().addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				EktooFrame ektooFrame = ((EktooFrame)GSSheetUI.this.getRootFrame());
+				SchemaViewTask task = new SchemaViewTask(ektooFrame,GSSheetUI.this.controller,ektooFrame);
+				task.execute();
+			}
+		});
+		return getSchemaButton();
+	}
+	
 	private JLabel getUserLabel() {
 		if (labelUser == null) {
 			labelUser = new JLabel();

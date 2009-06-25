@@ -28,6 +28,7 @@ import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.controller.MsExcelUIController;
 import org.mesh4j.ektoo.tasks.IErrorListener;
 import org.mesh4j.ektoo.tasks.OpenFileTask;
+import org.mesh4j.ektoo.tasks.SchemaViewTask;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.ektoo.ui.validator.MsExcelUIValidator;
@@ -92,8 +93,21 @@ public class MsExcelUI extends AbstractUI implements IValidationStatus {
 		this.add(getLabelColumn(), null);
 		this.add(getColumnList(), null);
 		this.add(getMessagesText(), null);
+		this.add(getSchemaViewButton(), null);
 	}
 	
+	
+	private JButton getSchemaViewButton(){
+		getSchemaButton().addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				EktooFrame ektooFrame = ((EktooFrame)MsExcelUI.this.getRootFrame());
+				SchemaViewTask task = new SchemaViewTask(ektooFrame,MsExcelUI.this.controller,ektooFrame);
+				task.execute();
+			}
+		});
+		return getSchemaButton();
+	}
 	public void setList(String fileName) {
 		JComboBox sheetList = getTableList();
 		sheetList.removeAllItems();

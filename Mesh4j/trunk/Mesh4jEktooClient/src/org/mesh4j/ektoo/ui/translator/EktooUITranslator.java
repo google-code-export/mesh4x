@@ -407,6 +407,14 @@ public class EktooUITranslator {
 		return EktooMessageTranslator.translate("EKTOO_TOOLTIP_VIEW_DATA_SOURCE");
 	}
 	
+	public static String getTooltipSchemaView() {
+		return EktooMessageTranslator.translate("EKTOO_TOOLTIP_VIEW_SCHEMA");
+	}
+	
+	public static String getTitleOfSchemaViewPopUp() {
+		return EktooMessageTranslator.translate("EKTOO_SCHEMA_VIEW_POPUP_TITLE");
+	}
+	
 	public static String getTooltipFetchSpreadsheets() {
 		return EktooMessageTranslator.translate("EKTOO_TOOLTIP_GOOGLE_VIEW_FETCH_SPREADSHEETS");
 	}	
