@@ -26,6 +26,8 @@ import org.mesh4j.sync.id.generator.IIdGenerator;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
 import org.mesh4j.sync.security.IIdentityProvider;
+import org.mesh4j.sync.test.utils.TestHelper;
+import org.mesh4j.sync.utils.FileUtils;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
@@ -783,12 +785,13 @@ public class GoogleSpreadsheetUtils {
 		Guard.argumentNotNullOrEmptyString(fileName, "fileName");
 		Guard.argumentNotNull(docService, "docService");
 		
-		File documentFile = new File(fileName);//new File(TMP_FILE_DIR + fileName + ".xls");
+		String localFileName = FileUtils.getResourceFileURL("default.xls").getFile();
+		String remoteFileName = localFileName.substring(0, localFileName.lastIndexOf('/')+1) + (fileName);
+		FileUtils.copyFile(localFileName, remoteFileName);
+		File documentFile = new File(remoteFileName);
+		
 		if (!documentFile.exists()) {
-			HSSFWorkbook workbook = new HSSFWorkbook();
-			HSSFSheet sheet = workbook.createSheet(DEFAULT_NEW_WORKSHEET_NAME);
-			sheet.setFitToPage(true);
-			MsExcelUtils.flush(workbook, documentFile.getAbsolutePath());
+			throw new MeshException("Error in creating default spreadsheet for upload...");
 		}
 		
 		return uploadSpreadsheetDoc(documentFile, docService);
