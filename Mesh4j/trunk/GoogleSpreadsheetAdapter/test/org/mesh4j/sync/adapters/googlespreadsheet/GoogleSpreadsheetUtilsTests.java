@@ -55,7 +55,7 @@ public class GoogleSpreadsheetUtilsTests {
 		String newSpreadsheetName = "new test spreadsheet";
 		
 		spreadsheet = GoogleSpreadsheetUtils.getOrCreateGSSpreadsheetIfAbsent(
-				this.factory, this.service, this.docService, newSpreadsheetName);
+				factory, service, docService, newSpreadsheetName);
 
 		Assert.assertNotNull(spreadsheet);
 		Assert.assertNotNull(spreadsheet.getBaseEntry());
@@ -83,7 +83,7 @@ public class GoogleSpreadsheetUtilsTests {
 		
 		GSRow<GSCell> newGSRow = addTestRow(ws);
 		
-		GoogleSpreadsheetUtils.flush(this.service, ss);			
+		GoogleSpreadsheetUtils.flush(service, ss);			
 		//a new test row added
 		
 		ss = getSampleGoogleSpreadsheet();
@@ -100,7 +100,7 @@ public class GoogleSpreadsheetUtilsTests {
 		GSCell gsCellToUpdate2 = gsRow.getGSCell(2);
 		gsCellToUpdate2.updateCellValue(updatedCellValue2);		
 		
-		GoogleSpreadsheetUtils.flush(this.service, ss);			
+		GoogleSpreadsheetUtils.flush(service, ss);			
 		
 		ss = getSampleGoogleSpreadsheet();
 		ws = ss.getGSWorksheet(1); //get the first sheet	
@@ -116,7 +116,7 @@ public class GoogleSpreadsheetUtilsTests {
 		
 		//test success, so remove the test row from the sheet
 		ws.deleteChildElement(String.valueOf(newGSRow.getElementListIndex()));
-		GoogleSpreadsheetUtils.flush(this.service, ss);	
+		GoogleSpreadsheetUtils.flush(service, ss);	
 	}			
 
 	@Test 
@@ -130,7 +130,7 @@ public class GoogleSpreadsheetUtilsTests {
 		GSRow<GSCell> newGSRow1 = addTestRow(ws);
 		GSRow<GSCell> newGSRow2 = addTestRow(ws);	
 		
-		GoogleSpreadsheetUtils.flush(this.service, ss);			
+		GoogleSpreadsheetUtils.flush(service, ss);			
 		//a new test row added
 		
 		ss = getSampleGoogleSpreadsheet();
@@ -149,7 +149,7 @@ public class GoogleSpreadsheetUtilsTests {
 		
 		gsRowToUpdate2.updateCellValue(updatedCellValue2, keyToCellForUpdate);
 		
-		GoogleSpreadsheetUtils.flush(this.service, ss);	
+		GoogleSpreadsheetUtils.flush(service, ss);	
 		
 		ss=null;ws=null;
 		ss = getSampleGoogleSpreadsheet();
@@ -168,7 +168,7 @@ public class GoogleSpreadsheetUtilsTests {
 		//test success, now remove the test rows from the sheet
 		ws.deleteChildElement(String.valueOf(gsRowUpdated1.getElementListIndex()));
 		ws.deleteChildElement(String.valueOf(gsRowUpdated2.getElementListIndex()));
-		GoogleSpreadsheetUtils.flush(this.service, ss);			
+		GoogleSpreadsheetUtils.flush(service, ss);			
 	}		
 
 
@@ -187,7 +187,7 @@ public class GoogleSpreadsheetUtilsTests {
 		//check row count
 		Assert.assertEquals(rowCountBeforeAdd + 1, ws.getChildElements().size());
 
-		GoogleSpreadsheetUtils.flush(this.service, ss);	
+		GoogleSpreadsheetUtils.flush(service, ss);	
 
 		ss=null;ws=null;
 		
@@ -205,7 +205,7 @@ public class GoogleSpreadsheetUtilsTests {
 		
 		//test success, so remove the test row from the sheet
 		ws.deleteChildElement(String.valueOf(newGSRow.getElementListIndex()));
-		GoogleSpreadsheetUtils.flush(this.service, ss);	
+		GoogleSpreadsheetUtils.flush(service, ss);	
 	}		
 	
 		
@@ -222,7 +222,7 @@ public class GoogleSpreadsheetUtilsTests {
 		
 		GSRow<GSCell> newGSRow = addTestRow(ws);		
 		
-		GoogleSpreadsheetUtils.flush(this.service, ss);			
+		GoogleSpreadsheetUtils.flush(service, ss);			
 		
 		ss = getSampleGoogleSpreadsheet();
 		ws = ss.getGSWorksheet(1); //get the first sheet	
@@ -233,7 +233,7 @@ public class GoogleSpreadsheetUtilsTests {
 		//remove the row from the sheet
 		ws.deleteChildElement(String.valueOf(newGSRow.getElementListIndex()));
 		
-		GoogleSpreadsheetUtils.flush(this.service, ss);			
+		GoogleSpreadsheetUtils.flush(service, ss);			
 			
 		ss = getSampleGoogleSpreadsheet();
 		ws = ss.getGSWorksheet(1); 
@@ -250,7 +250,7 @@ public class GoogleSpreadsheetUtilsTests {
 		
 		if(syncSheet != null){
 			ss.deleteChildElement(String.valueOf(syncSheet.getElementListIndex()));	
-			GoogleSpreadsheetUtils.flush(this.service, ss);
+			GoogleSpreadsheetUtils.flush(service, ss);
 		}	
 		
 		ss = null; syncSheet = null;
@@ -263,7 +263,7 @@ public class GoogleSpreadsheetUtilsTests {
 		
 		Assert.assertNotNull(newSyncSheet);
 		
-		GoogleSpreadsheetUtils.flush(this.service, ss);
+		GoogleSpreadsheetUtils.flush(service, ss);
 		
 		ss = null; syncSheet = null;
 		ss = getSampleGoogleSpreadsheet();
@@ -282,7 +282,7 @@ public class GoogleSpreadsheetUtilsTests {
 		
 		if(contentSheet != null){
 			ss.deleteChildElement(String.valueOf(contentSheet.getElementListIndex()));	
-			GoogleSpreadsheetUtils.flush(this.service, ss);
+			GoogleSpreadsheetUtils.flush(service, ss);
 			
 			ss = null; contentSheet = null;
 			ss = getSampleGoogleSpreadsheet();
@@ -295,7 +295,7 @@ public class GoogleSpreadsheetUtilsTests {
 		
 		Assert.assertNotNull(newSyncSheet);
 		
-		GoogleSpreadsheetUtils.flush(this.service, ss);
+		GoogleSpreadsheetUtils.flush(service, ss);
 		
 		ss = null; contentSheet = null;
 		ss = getSampleGoogleSpreadsheet();
@@ -370,7 +370,7 @@ public class GoogleSpreadsheetUtilsTests {
 		try {
 		
 			return GoogleSpreadsheetUtils.getGSSpreadsheet(
-					this.factory, this.service, spreadsheetFileName);
+					factory, service, spreadsheetFileName);
 		
 		} catch (IOException e) {
 			e.printStackTrace();
