@@ -7,9 +7,8 @@ import java.util.LinkedHashMap;
 
 import junit.framework.Assert;
 
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadsheetUtils;
 import org.mesh4j.sync.adapters.googlespreadsheet.mapping.GoogleSpreadsheetToRDFMapping;
 import org.mesh4j.sync.adapters.googlespreadsheet.model.GSCell;
 import org.mesh4j.sync.adapters.googlespreadsheet.model.GSRow;
@@ -26,20 +25,20 @@ import com.google.gdata.util.ServiceException;
 
 public class GoogleSpreadsheetUtilsTests {
 	
-	private SpreadsheetService service;
-	private DocsService docService;
-	private FeedURLFactory factory;
+	private static SpreadsheetService service;
+	private static DocsService docService;
+	private static FeedURLFactory factory;
 
 	String testCellValue = "New Cell";
 
 	
-	@Before
-	public void setUp() throws Exception {
+	@BeforeClass
+	public static void setUp() throws Exception {
 		String username = "gspreadsheet.test@gmail.com";
 		String password = "java123456";
-		this.service = GoogleSpreadsheetUtils.getSpreadsheetService(username, password);
-		this.docService = GoogleSpreadsheetUtils.getDocService(username, password);
-		this.factory = FeedURLFactory.getDefault();		
+		service = GoogleSpreadsheetUtils.getSpreadsheetService(username, password);
+		docService = GoogleSpreadsheetUtils.getDocService(username, password);
+		factory = FeedURLFactory.getDefault();		
 	}
 
 	public void shouldLoadSpreadsheetWhenFileExist()
