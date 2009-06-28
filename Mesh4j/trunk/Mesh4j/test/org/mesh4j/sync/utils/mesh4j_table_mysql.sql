@@ -1,4 +1,4 @@
-DROP TABLE mesh_example;
+DROP TABLE IF EXISTS mesh_example;
 
 CREATE TABLE mesh_example (
   uid varchar(100) PRIMARY KEY not null,
@@ -7,7 +7,7 @@ CREATE TABLE mesh_example (
 
 insert into mesh_example (uid, name, pass) values (1, "jmt", "123");
 
-DROP TABLE mesh_example_1;
+DROP TABLE IF EXISTS mesh_example_1;
 
 CREATE TABLE mesh_example_1 (
   uid varchar(100) PRIMARY KEY not null,
