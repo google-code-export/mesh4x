@@ -116,14 +116,14 @@ public class GoogleSpreadsheetToRDFMapping extends AbstractRDFIdentifiableMappin
 		List<String> idValues = new ArrayList<String>();
 		Object idCellValue;
 		for (String idColumnName : idColumnNames) {
-			idCellValue = row.getGSCell(idColumnName);
+			idCellValue = row.getGSCell(idColumnName).getCellValue();
 			if(idCellValue == null){
 				return null;
 			} else {
 				idValues.add(String.valueOf(idCellValue));
 			}
 		}
-		return this.makeId(idValues);
+		return makeId(idValues);
 	}
 
 	public void appliesRDFToRow(GSWorksheet<GSRow<GSCell>> workSheet, GSRow<GSCell> row,

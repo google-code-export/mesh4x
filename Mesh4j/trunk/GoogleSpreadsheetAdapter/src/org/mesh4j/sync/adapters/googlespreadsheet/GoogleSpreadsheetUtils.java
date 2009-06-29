@@ -530,8 +530,7 @@ public class GoogleSpreadsheetUtils {
 
 	public static GSRow<GSCell> getRow(GSWorksheet<GSRow<GSCell>> worksheet, int columnIndex, String cellValue) {
 		GSRow<GSCell> row;
-		for (Map.Entry<String, GSRow<GSCell>> mpRow : worksheet.getGSRows()
-				.entrySet()) {
+		for (Map.Entry<String, GSRow<GSCell>> mpRow : worksheet.getGSRows().entrySet()) {
 			row = mpRow.getValue();
 			if (row.getGSCells().size() > 0) {
 				GSCell cell = row.getGSCell(columnIndex);
@@ -539,8 +538,7 @@ public class GoogleSpreadsheetUtils {
 				if (cellContentAsString != null
 						&& !cellContentAsString.equals("")) {
 					if (cellContentAsString.equals(cellValue)) {
-						// comparison is successful so, the desired row the is
-						// current row
+						// comparison is successful so, the desired row the is current row
 						return row;
 					}
 				}
@@ -558,11 +556,15 @@ public class GoogleSpreadsheetUtils {
 				for (int j = 0; j < columnNames.length; j++) {
 					String columnName = columnNames[j];
 					GSCell cell = row.getGSCell(columnName);
-					String cellContentAsString = cell.getCellValue();
-					if (cellContentAsString != null && !cellContentAsString.equals("")) {
-						if(cellValues[j].equals(cellContentAsString)){
-							ok = ok +1;
+					if(cell != null){
+						String cellContentAsString = cell.getCellValue();
+						if (cellContentAsString != null && !cellContentAsString.equals("")) {
+							if(cellValues[j].equals(cellContentAsString)){
+								ok = ok +1;
+							}
 						}
+					} else {
+						int i = 0;
 					}
 				}
 				if(ok == columnNames.length){
