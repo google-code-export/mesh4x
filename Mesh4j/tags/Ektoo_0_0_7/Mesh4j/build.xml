@@ -1,0 +1,26 @@
+<project default="jars">
+	<property file="build.properties"/>
+	
+	<target name="delete">
+		<mkdir dir="dist"/>
+		<delete file="dist/*"/>
+	</target>
+	
+	<target name="jars" depends="delete">
+		<mkdir dir="dist"/>
+		<jar destfile="dist/${jarname}-${version}.jar">
+			<fileset dir="bin"/>
+			<fileset dir="etc/toExport"/>
+		</jar>
+	</target>
+	
+	<target name="dist" depends="jars">
+		<zip destfile="dist/${jarname}-${version}.zip">
+			<zipfileset prefix="${jarname}-${version}" dir="dist" includes="${jarname}-${version}.jar"/>
+			<zipfileset prefix="${jarname}-${version}" dir="." includes="etc/**/*"/>
+			<zipfileset prefix="${jarname}-${version}" dir="." includes="lib/**/*"/>
+			<zipfileset prefix="${jarname}-${version}" dir="." includes="src/**/*"/>
+			<zipfileset prefix="${jarname}-${version}" dir="." includes="test/**/*"/>
+		</zip>
+	</target>
+</project>

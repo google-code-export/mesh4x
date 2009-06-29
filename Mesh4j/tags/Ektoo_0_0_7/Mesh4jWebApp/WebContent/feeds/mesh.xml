@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<rss xmlns:sx="http://feedsync.org/2007/feedsync" version="2.0">
+  <channel>
+    <title>Mesh</title>
+    <description>Available mesh for sync</description>
+    <link>/mesh</link>
+ 
+  </channel>
+</rss>

@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!DOCTYPE rdf:RDF [<!ENTITY xsd "http://www.w3.org/2001/XMLSchema#">]>
+<rdf:RDF   
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"  
+  xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+  xml:base="http://mesh4x/oswego">
+	
+	<rdfs:Class rdf:ID="Patient"/>
+	
+	<rdf:Property rdf:ID="code">
+		<rdfs:domain rdf:resource="#Patient"/> 
+		<rdfs:range rdf:resource="&xsd;string"/>
+		<rdfs:label>Code</rdfs:label> 
+	</rdf:Property>
+
+</rdf:RDF>
