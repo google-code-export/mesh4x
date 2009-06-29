@@ -103,7 +103,7 @@ public class MsAccessUI extends AbstractUI{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				EktooFrame ektooFrame = ((EktooFrame)MsAccessUI.this.getRootFrame());
-				SchemaViewTask task = new SchemaViewTask(ektooFrame,MsAccessUI.this.controller,ektooFrame);
+				SchemaViewTask task = new SchemaViewTask(ektooFrame, MsAccessUI.this.controller, ektooFrame);
 				task.execute();
 			}
 		});

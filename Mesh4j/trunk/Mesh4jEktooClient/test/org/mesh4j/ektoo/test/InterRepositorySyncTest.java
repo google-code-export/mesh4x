@@ -188,7 +188,7 @@ public class InterRepositorySyncTest {
 		
 		IRDFSchema rdfSchema = (IRDFSchema) ((GoogleSpreadSheetContentAdapter)((SplitAdapter)sourceAsGoogleSpreadSheet).getContentAdapter()).getSchema();
 		
-		ISyncAdapter targetAsExcel = builder.createMsExcelAdapter(createMsExcelFileForTest("content1.xls", "user_source", "id", true), "user_source", "id", rdfSchema);
+		ISyncAdapter targetAsExcel = builder.createMsExcelAdapter(createMsExcelFileForTest("content1.xls", "user_source", "id", true), rdfSchema);
 		
 		SyncEngine engine = new SyncEngine(sourceAsGoogleSpreadSheet, targetAsExcel);
 		List<Item> listOfConflicts = engine.synchronize();
@@ -234,10 +234,10 @@ public class InterRepositorySyncTest {
 		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
 		
 		ISyncAdapter sourceAsExcel = builder.createMsExcelAdapter(
-				createMsExcelFileForTest("sourceContentFile.xls", "user", "id", true), "user", "id",false);
+				createMsExcelFileForTest("sourceContentFile.xls", "user", "id", true), "user", new String[]{"id"},false);
 		
 		ISyncAdapter targetAsExcel = builder.createMsExcelAdapter(
-				createMsExcelFileForTest("targetContentFile.xls", "user", "id", false), "user", "id",false);
+				createMsExcelFileForTest("targetContentFile.xls", "user", "id", false), "user", new String[]{"id"},false);
 		
 		SyncEngine engine = new SyncEngine(sourceAsExcel,targetAsExcel);
 		List<Item> listOfConflicts = engine.synchronize();

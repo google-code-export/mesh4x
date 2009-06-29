@@ -11,8 +11,8 @@ import java.awt.Rectangle;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import javax.swing.BorderFactory;
@@ -383,15 +383,15 @@ public class SyncItemUI extends JPanel implements IUIController {
 	}
 
 	@Override
-	public HashMap<IRDFSchema, String> fetchSchema(ISyncAdapter adapter) {
+	public List<IRDFSchema> fetchSchema(ISyncAdapter adapter) {
 		AbstractUIController uiController = getCurrentController();
 		return uiController.fetchSchema(adapter);
 	}
 	
 	@Override
-	public ISyncAdapter createAdapter(HashMap<IRDFSchema, String> schema) {
+	public ISyncAdapter createAdapter(List<IRDFSchema> schemas) {
 		AbstractUIController uiController = getCurrentController();
-		return uiController.createAdapter(schema);
+		return uiController.createAdapter(schemas);
 	}
 	
 	public String toString() {

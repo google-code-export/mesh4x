@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -25,6 +24,7 @@ import org.mesh4j.sync.adapters.hibernate.HibernateSyncAdapterFactory;
 import org.mesh4j.sync.adapters.hibernate.msaccess.MsAccessHibernateSyncAdapterFactory;
 import org.mesh4j.sync.adapters.http.HttpSyncAdapterFactory;
 import org.mesh4j.sync.adapters.kml.KMLDOMLoaderFactory;
+import org.mesh4j.sync.adapters.msexcel.MsExcel;
 import org.mesh4j.sync.adapters.msexcel.MsExcelRDFSyncAdapterFactory;
 import org.mesh4j.sync.adapters.msexcel.MsExcelSyncAdapterFactory;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
@@ -46,7 +46,6 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 	// MODEL VARIABLEs
 	private PropertiesProvider propertiesProvider;
 	private MsAccessHibernateSyncAdapterFactory msAccesSyncAdapter;
-	private MsExcelRDFSyncAdapterFactory excelRDFSyncFactory;
 	private MsExcelSyncAdapterFactory excelSyncFactory; 
 	private GoogleSpreadSheetSyncAdapterFactory googleSpreadSheetSyncAdapterFactory;
 	private GoogleSpreadSheetRDFSyncAdapterFactory googleSpreadSheetRDFSyncAdapterFactory;
@@ -57,7 +56,6 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 		Guard.argumentNotNull(propertiesProvider, "propertiesProvider");
 		this.propertiesProvider = propertiesProvider;
 		this.msAccesSyncAdapter = new MsAccessHibernateSyncAdapterFactory(this.getBaseDirectory(), this.getBaseRDFUrl());
-		this.excelRDFSyncFactory = new MsExcelRDFSyncAdapterFactory(this.getBaseRDFUrl());
 		this.excelSyncFactory = new MsExcelSyncAdapterFactory();
 		this.googleSpreadSheetSyncAdapterFactory = new GoogleSpreadSheetSyncAdapterFactory();
 		this.googleSpreadSheetRDFSyncAdapterFactory = new GoogleSpreadSheetRDFSyncAdapterFactory(this.getBaseRDFUrl());
@@ -109,7 +107,7 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 	 * when googlespreadsheet adapter works as source, no need to supply rdf schema
 	 */
 	@Override
-	public ISyncAdapter createRdfBasedGoogleSpreadSheetAdapter(GoogleSpreadSheetInfo spreadSheetInfo, IRDFSchema sourceSchema) {
+	public SplitAdapter createRdfBasedGoogleSpreadSheetAdapter(GoogleSpreadSheetInfo spreadSheetInfo, IRDFSchema sourceSchema) {
 		String idColumnName = spreadSheetInfo.getIdColumnName();
 		String username = spreadSheetInfo.getUserName();
 		String password = spreadSheetInfo.getPassWord();
@@ -136,18 +134,17 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 		return HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverUrl, meshGroup, dataSetId, getIdentityProvider(), rdfSchema);
 	}	
 	
-	// TODO (JMT) Transform HashMap<IRDFSchema, String> to Set<IRDFSchema> ==> IRDFSchema must give the Id node value
 	@Override
-	public ISyncAdapter createHttpSyncAdapterForMultiDataset(String serverUrl, String meshGroup, HashMap<IRDFSchema, String> rdfSchemas){
+	public ISyncAdapter createHttpSyncAdapterForMultiDataset(String serverUrl, String meshGroup, List<IRDFSchema> rdfSchemas){
 		List<ISchema> schemas = new ArrayList<ISchema>();
-		for (IRDFSchema rdfschema : rdfSchemas.keySet()) {
+		for (IRDFSchema rdfschema : rdfSchemas) {
 			schemas.add(rdfschema);
 		}
 		return HttpSyncAdapterFactory.createSyncAdapterForMultiDataset(serverUrl, meshGroup, getIdentityProvider(), schemas);
 	}
 	
 	@Override
-	public ISyncAdapter createMySQLAdapter(String userName, String password,
+	public SplitAdapter createMySQLAdapter(String userName, String password,
 			String hostName, int portNo, String databaseName, String tableName) {
 
 		String baseDirectory = getBaseDirectory();
@@ -199,7 +196,7 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 	}
 	
 	@Override
-	public ISyncAdapter createMsExcelAdapter(String contentFileName, String sheetName, String idColumnName,boolean isRDF) {
+	public SplitAdapter createMsExcelAdapter(String contentFileName, String sheetName, String[] idColumnNames, boolean isRDF) {
 		Guard.argumentNotNullOrEmptyString(contentFileName, "contentFileName");
 		Guard.argumentNotNull(isRDF, "isRDF");
 		File file = getFile(contentFileName);
@@ -207,18 +204,18 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 			Guard.argumentNotNullOrEmptyString(contentFileName, "contentFileName");
 		}
 		if(isRDF){
-			return this.excelRDFSyncFactory.createSyncAdapter(file.getAbsolutePath(), sheetName, idColumnName, getIdentityProvider());	
+			return MsExcelRDFSyncAdapterFactory.createSyncAdapter(new MsExcel(file.getAbsolutePath()), sheetName, idColumnNames, null, getIdentityProvider(), getBaseRDFUrl());	
 		}
-		return this.excelSyncFactory.createSyncAdapter(file.getAbsolutePath(), sheetName, idColumnName, getIdentityProvider());
+		return this.excelSyncFactory.createSyncAdapter(file.getAbsolutePath(), sheetName, idColumnNames[0], getIdentityProvider());
 	}
 	
 	@Override
-	public ISyncAdapter createMsExcelAdapter(String contentFileName, String sheetName, String idColumnName, IRDFSchema sourceSchema){
-		return this.excelRDFSyncFactory.createSyncAdapter(contentFileName, sheetName, idColumnName, getIdentityProvider(), sourceSchema);
+	public ISyncAdapter createMsExcelAdapter(String contentFileName, IRDFSchema sourceSchema){
+		return MsExcelRDFSyncAdapterFactory.createSyncAdapter(new MsExcel(contentFileName), getIdentityProvider(), sourceSchema);
 	}	
 	
 	@Override
-	public ISyncAdapter createMsExcelAdapterForMultiSheets(String contentFileName, HashMap<IRDFSchema, String> sheets) {
+	public ISyncAdapter createMsExcelAdapterForMultiSheets(String contentFileName, List<IRDFSchema> sheets) {
 		Guard.argumentNotNullOrEmptyString(contentFileName, "contentFileName");
 		
 		File file = getFile(contentFileName);
@@ -227,7 +224,7 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 		}
 		
 		InMemorySyncAdapter adapterOpaque = new InMemorySyncAdapter("opaque", getIdentityProvider());
-		return  excelRDFSyncFactory.createSyncAdapterForMultiSheets(file.getAbsolutePath(), getIdentityProvider(), adapterOpaque, sheets);
+		return MsExcelRDFSyncAdapterFactory.createSyncAdapterForMultiSheets(file.getAbsolutePath(), getIdentityProvider(), adapterOpaque, sheets);
 	}
 	
 	@Override
@@ -314,6 +311,5 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 
 	public String getBaseRDFUrl() {
 		return this.propertiesProvider.getMeshSyncServerURL();
-	}
-	
+	}	
 }

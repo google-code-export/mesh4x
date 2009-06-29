@@ -1,10 +1,11 @@
 package org.mesh4j.ektoo;
 
-import java.util.HashMap;
+import java.util.List;
 
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.adapters.http.HttpSyncAdapter;
+import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 /**
  * The builder interface for creating adapter with the
@@ -26,7 +27,7 @@ public interface ISyncAdapterBuilder {
 	 * 			if user make to true then created excel adapter will be based on RDF and it must have RDF schema<l>
 	 * 			and user can easilly get the schema from its Content adapter.
 	 */
-	public ISyncAdapter createMsExcelAdapter(String contentFileName, String sheetName, String idColumnName,boolean isRDF);
+	public SplitAdapter createMsExcelAdapter(String contentFileName, String sheetName, String[] idColumnNames, boolean isRDF);
 	
 	/**
 	 * creates adapter for excel repository
@@ -41,7 +42,7 @@ public interface ISyncAdapterBuilder {
 	 * 			 ,the rdf schema of which excel repository should be.  
 	 * @return ISyncAdapter,instance of the excel adapter         
 	 */
-	public ISyncAdapter createMsExcelAdapter(String contentFileName, String sheetName, String idColumnName, IRDFSchema sourceSchema);
+	public ISyncAdapter createMsExcelAdapter(String contentFileName, IRDFSchema sourceSchema);
 	
 	/**
 	 * Create adapter for access adapter
@@ -55,8 +56,7 @@ public interface ISyncAdapterBuilder {
 	 *            sync.
 	 * @return ISyncAdapter
 	 */
-	public ISyncAdapter createMsAccessAdapter(String mdbFileName,
-			String tableName);
+	public ISyncAdapter createMsAccessAdapter(String mdbFileName, String tableName);
 
 	/**
 	 * Creates MsAccess adapter for multi table
@@ -65,7 +65,8 @@ public interface ISyncAdapterBuilder {
 	 * @param tables
 	 * @return
 	 */
-	public ISyncAdapter createMsAccessMultiTablesAdapter(String mdbFileName, String [] tables);
+	public ISyncAdapter createMsAccessMultiTablesAdapter(String mdbFileName, String[] tables);
+	
 	/**
 	 * TODO create documentation (raju)
 	 * 
@@ -73,8 +74,7 @@ public interface ISyncAdapterBuilder {
 	 * @param rdfSchema
 	 * @return
 	 */
-	public ISyncAdapter createPlainXMLBasedGoogleSpreadSheetAdapter(
-			GoogleSpreadSheetInfo spreadSheetInfo);
+	public ISyncAdapter createPlainXMLBasedGoogleSpreadSheetAdapter(GoogleSpreadSheetInfo spreadSheetInfo);
 
 	/**
 	 * TODO create documentation (raju)
@@ -94,7 +94,7 @@ public interface ISyncAdapterBuilder {
 	 * @param rdfSchemas
 	 * @return
 	 */
-	public ISyncAdapter createHttpSyncAdapterForMultiDataset(String serverUrl, String meshGroup, HashMap<IRDFSchema, String> rdfSchemas);
+	public ISyncAdapter createHttpSyncAdapterForMultiDataset(String serverUrl, String meshGroup, List<IRDFSchema> rdfSchemas);
 	
 	/**
 	 * TODO create documentation (raju)
@@ -107,7 +107,7 @@ public interface ISyncAdapterBuilder {
 	 * @param tableName
 	 * @return
 	 */
-	public ISyncAdapter createMySQLAdapter(String userName, String password,
+	public SplitAdapter createMySQLAdapter(String userName, String password,
 			String hostName, int portNo, String databseName, String tableName);
 	
 	/**
@@ -123,7 +123,7 @@ public interface ISyncAdapterBuilder {
 			String link, String fileName, ISyndicationFormat syndicationFormat);
 
 
-	public ISyncAdapter createRdfBasedGoogleSpreadSheetAdapter(
+	public SplitAdapter createRdfBasedGoogleSpreadSheetAdapter(
 			GoogleSpreadSheetInfo spreadSheetInfo, IRDFSchema sourceSchema);
 
 	/**
@@ -157,8 +157,7 @@ public interface ISyncAdapterBuilder {
 	 * @param sheets
 	 * @return
 	 */
-	public ISyncAdapter createMsExcelAdapterForMultiSheets(String contentFileName,
-			HashMap<IRDFSchema, String> sheets);
+	public ISyncAdapter createMsExcelAdapterForMultiSheets(String contentFileName, List<IRDFSchema> sheets);
 
 	public ISyncAdapter createZipFeedAdapter(String zipFileName);
 

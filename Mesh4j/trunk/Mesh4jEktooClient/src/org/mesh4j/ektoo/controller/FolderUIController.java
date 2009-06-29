@@ -1,6 +1,6 @@
 package org.mesh4j.ektoo.controller;
 
-import java.util.HashMap;
+import java.util.List;
 
 import org.mesh4j.ektoo.ISyncAdapterBuilder;
 import org.mesh4j.ektoo.SyncAdapterBuilder;
@@ -35,12 +35,12 @@ public class FolderUIController extends AbstractUIController
 	}
 
 	@Override
-	public HashMap<IRDFSchema, String> fetchSchema(ISyncAdapter adapter) {
+	public List<IRDFSchema> fetchSchema(ISyncAdapter adapter) {
 		return null;
 	}
 
 	@Override
-	public ISyncAdapter createAdapter(HashMap<IRDFSchema, String> schema) {
+	public ISyncAdapter createAdapter(List<IRDFSchema> schema) {
 		if(schema != null && schema.size() > 0){
 			return null;
 		}

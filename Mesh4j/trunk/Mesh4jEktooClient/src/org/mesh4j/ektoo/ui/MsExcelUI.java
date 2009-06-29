@@ -177,12 +177,14 @@ public class MsExcelUI extends AbstractUI implements IValidationStatus {
 			}
 		} else if (evt.getPropertyName().equals(MsExcelUIController.WORKSHEET_NAME_PROPERTY)) {
 			String newStringValue = evt.getNewValue().toString();
-			if (!((String) getTableList().getSelectedItem()).equals(newStringValue)){
+			String selectedWorksheet = (String) getTableList().getSelectedItem();
+			if (selectedWorksheet != null && !(selectedWorksheet.equals(newStringValue))){
 				getTableList().setSelectedItem(newStringValue);
 			}
 		} else if (evt.getPropertyName().equals(MsExcelUIController.UNIQUE_COLUMN_NAME_PROPERTY)) {
 			String newStringValue = evt.getNewValue().toString();
-			if (!((String) getColumnList().getSelectedItem()).equals(newStringValue)){
+			String selectedColumn = (String) getColumnList().getSelectedItem();
+			if (selectedColumn != null && !(selectedColumn.equals(newStringValue))){
 				getColumnList().setSelectedItem(newStringValue);
 			}
 		}

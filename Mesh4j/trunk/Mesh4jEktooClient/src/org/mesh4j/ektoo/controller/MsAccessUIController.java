@@ -1,7 +1,8 @@
 package org.mesh4j.ektoo.controller;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -75,70 +76,70 @@ public class MsAccessUIController extends AbstractUIController
 	}
 
 	@Override
-	public HashMap<IRDFSchema, String> fetchSchema(ISyncAdapter adapter) {
-		HashMap<IRDFSchema, String> schema = new HashMap<IRDFSchema, String>();
+	public List<IRDFSchema> fetchSchema(ISyncAdapter adapter) {
+		ArrayList<IRDFSchema> schema = new ArrayList<IRDFSchema>();
 		if(EktooFrame.multiModeSync && adapter instanceof CompositeSyncAdapter){
 			for (IIdentifiableSyncAdapter identifiableAdapter : ((CompositeSyncAdapter) adapter).getAdapters()) {
 				SplitAdapter splitAdapter = (SplitAdapter)((IdentifiableSyncAdapter)identifiableAdapter).getSyncAdapter();
 				HibernateContentAdapter hibernateContentAdapter = (HibernateContentAdapter)splitAdapter.getContentAdapter();
-				String id = hibernateContentAdapter.getMapping().getIDNode();
 				IRDFSchema rdfSchema = (IRDFSchema)hibernateContentAdapter.getMapping().getSchema();
-				schema.put(rdfSchema, id);
+				schema.add(rdfSchema);
 			}			
 		} else {
 			HibernateContentAdapter hibernateContentAdapter = (HibernateContentAdapter)((SplitAdapter)adapter).getContentAdapter();
 			IHibernateToXMLMapping mapping = hibernateContentAdapter.getMapping();
 			IRDFSchema rdfSchema = (IRDFSchema) mapping.getSchema();
-			schema.put(rdfSchema, mapping.getIDNode());
+			schema.add(rdfSchema);
 		}
 		return schema;
 	}
 
 	@Override
-	public ISyncAdapter createAdapter(HashMap<IRDFSchema, String> schema) {
+	public ISyncAdapter createAdapter(List<IRDFSchema> schemas) {
 		ISyncAdapter syncAdapter = null; 
 		
 		if(EktooFrame.multiModeSync){
 			syncAdapter = this.createAdapter();
-			HashMap<IRDFSchema, String> localSchema = this.fetchSchema(syncAdapter);
-			if (localSchema == null || localSchema.size() == 0) {
+			List<IRDFSchema> localSchemas = this.fetchSchema(syncAdapter);
+			if (localSchemas == null || localSchemas.isEmpty()) {
 				return null;
 			}			
 			
 			// the following logic has been implemented for making sure all the
 			// selected source tables are available in target with compatible schema
-			if(localSchema.size() != schema.size())
+			if(localSchemas.size() != schemas.size())
 				Guard.throwsException("INVALID_COMBINATION_OF_SELECTION");
 			
 			boolean compatible = true;
-			for (Map.Entry<IRDFSchema, String> remoteSchemaEntry : schema.entrySet()){
+			for (IRDFSchema remoteSchema : schemas){
 				boolean subCompatible = false;
-				for (Map.Entry<IRDFSchema, String> localSchemaEntry : localSchema.entrySet()){
-					if(remoteSchemaEntry.getKey().isCompatible(localSchemaEntry.getKey())){
+				
+				IRDFSchema localSchema = null;
+				Iterator<IRDFSchema> it = localSchemas.iterator();
+				while(it.hasNext()){
+					localSchema = it.next();
+					if(remoteSchema.isCompatible(localSchema)){
 						//found a match
-						localSchema.remove(localSchemaEntry);
 						subCompatible = true;
 						break;
 					}	
 				}
-				if(subCompatible){
-					continue;
-				}else{
-					compatible = false;
+				if(!subCompatible){
 					Guard.throwsException("INCOMPATIBLE_RDF_SCHEMA");
-					//break;
+				}else{
+					localSchemas.remove(localSchema);
 				}
 			}
 			return compatible ? syncAdapter : null;			
 		} else {
 			syncAdapter = this.createAdapter();
-			HashMap<IRDFSchema, String> localSchema = this.fetchSchema(syncAdapter);
+			List<IRDFSchema> localSchema = this.fetchSchema(syncAdapter);
 			if (localSchema == null || localSchema.size() == 0) {
 				return null;
 			}
 			
-			IRDFSchema schemaLocal = localSchema.entrySet().iterator().next().getKey();
-			IRDFSchema schemaRemote = schema.entrySet().iterator().next().getKey();
+			IRDFSchema schemaLocal = localSchema.get(0);
+			IRDFSchema schemaRemote = schemas.get(0);
 
 			if (schemaLocal != null && schemaRemote != null
 					&& !schemaLocal.isCompatible(schemaRemote)) {

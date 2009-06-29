@@ -1,6 +1,7 @@
 package org.mesh4j.ektoo.controller;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.mesh4j.ektoo.ISyncAdapterBuilder;
 import org.mesh4j.ektoo.SyncAdapterBuilder;
@@ -51,11 +52,11 @@ public class CloudUIController extends AbstractUIController
 	}
 
 	@Override
-	public HashMap<IRDFSchema, String> fetchSchema(ISyncAdapter adapter) {
+	public List<IRDFSchema> fetchSchema(ISyncAdapter adapter) {
 		ISchema schema = ((HttpSyncAdapter) adapter).getSchema();
 		if(schema instanceof IRDFSchema){
-			HashMap<IRDFSchema, String> schemas = new HashMap<IRDFSchema, String>();
-			schemas.put((IRDFSchema) schema, null);
+			List<IRDFSchema> schemas = new ArrayList<IRDFSchema>();
+			schemas.add((IRDFSchema) schema);
 			return schemas;
 		} else{
 			return null;
@@ -63,7 +64,7 @@ public class CloudUIController extends AbstractUIController
 	}
 
 	@Override
-	public ISyncAdapter createAdapter(HashMap<IRDFSchema, String> schemas) {
+	public ISyncAdapter createAdapter(List<IRDFSchema> schemas) {
 		
 		CloudModel model = (CloudModel) this.getModel();
 		if (model == null){
@@ -88,7 +89,7 @@ public class CloudUIController extends AbstractUIController
 				return null;
 			}
 			
-			IRDFSchema rdfSchema = schemas == null || schemas.size() == 0 ? null : schemas.entrySet().iterator().next().getKey();
+			IRDFSchema rdfSchema = schemas == null || schemas.size() == 0 ? null : schemas.get(0);
 			return adapterBuilder.createHttpSyncAdapter(baseSyncURI, meshName, datasetName, rdfSchema);	
 		}
 	}

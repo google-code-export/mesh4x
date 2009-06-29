@@ -5,10 +5,8 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-
-import junit.framework.Assert;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -16,7 +14,6 @@ import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.junit.Test;
@@ -26,12 +23,14 @@ import org.mesh4j.ektoo.SyncAdapterBuilder;
 import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.SyncEngine;
+import org.mesh4j.sync.adapters.IIdentifiableMapping;
+import org.mesh4j.sync.adapters.IdentifiableContent;
+import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadSheetContentAdapter;
 import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadsheet;
 import org.mesh4j.sync.adapters.googlespreadsheet.IGoogleSpreadSheet;
 import org.mesh4j.sync.adapters.googlespreadsheet.mapping.GoogleSpreadsheetToRDFMapping;
-import org.mesh4j.sync.adapters.hibernate.EntityContent;
 import org.mesh4j.sync.adapters.hibernate.HibernateContentAdapter;
-import org.mesh4j.sync.adapters.hibernate.mapping.IHibernateToXMLMapping;
+import org.mesh4j.sync.adapters.hibernate.mapping.HibernateToRDFMapping;
 import org.mesh4j.sync.adapters.msaccess.MsAccessRDFSchemaGenerator;
 import org.mesh4j.sync.adapters.msexcel.MsExcelContentAdapter;
 import org.mesh4j.sync.adapters.msexcel.MsExcelUtils;
@@ -45,9 +44,7 @@ import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.validations.MeshException;
 
 public class InterRepositoryRDFSyncTest {
-	
-	
-	
+		
 	//TODO (raju & sharif this manipulation has some bug.it creates two content instead of one)
 	@Test
 	public void ShouldSyncGoogleSpreadSheetToExcelByRDFAndMustCreateTargetSchema() throws Exception{
@@ -66,15 +63,22 @@ public class InterRepositoryRDFSyncTest {
 //		String rdfUrl = "http://localhost:8080/mesh4x/feeds";
 		String rdfUrl = new PropertiesProvider().getMeshSyncServerURL();
 		IGoogleSpreadSheet gss = new GoogleSpreadsheet(spreadSheetInfo.getGoogleSpreadSheetName(), spreadSheetInfo.getUserName(), spreadSheetInfo.getPassWord());
-		IRDFSchema rdfSchema = GoogleSpreadsheetToRDFMapping.extractRDFSchema(gss, spreadSheetInfo.getSheetName(), rdfUrl);
+		
+		ArrayList<String> pks = new ArrayList<String>();
+		pks.add(spreadSheetInfo.getIdColumnName());
+		IRDFSchema rdfSchema = GoogleSpreadsheetToRDFMapping.extractRDFSchema(
+			gss, 
+			spreadSheetInfo.getSheetName(), 
+			pks,
+			null,
+			rdfUrl);
 		
 		File contentFile = new File(TestHelper.baseDirectoryForTest() + "contentFile.xls");
 		ISyncAdapter sourceAsGoogleSpreadSheet = builder.createRdfBasedGoogleSpreadSheetAdapter(spreadSheetInfo, rdfSchema);
-		ISyncAdapter targetAsExcel = builder.createMsExcelAdapter(contentFile.getAbsolutePath(), "user", "id", rdfSchema);
+		ISyncAdapter targetAsExcel = builder.createMsExcelAdapter(contentFile.getAbsolutePath(), rdfSchema);
 		
-		SyncEngine engine = new SyncEngine(sourceAsGoogleSpreadSheet, targetAsExcel);
-		List<Item> listOfConflicts = engine.synchronize();
-		Assert.assertEquals(0, listOfConflicts.size());
+		SyncEngine syncEngine = new SyncEngine(sourceAsGoogleSpreadSheet, targetAsExcel);
+		TestHelper.syncAndAssert(syncEngine);
 	}
 	
 	@Test
@@ -85,7 +89,7 @@ public class InterRepositoryRDFSyncTest {
 		
 		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
 		String contentFilePathAsString = createMsExcelFileForTest("source.xls");
-		ISyncAdapter sourceAsExcel = builder.createMsExcelAdapter(contentFilePathAsString, "user", "id",true);
+		ISyncAdapter sourceAsExcel = builder.createMsExcelAdapter(contentFilePathAsString, "user", new String[]{"id"}, true);
 
 //		MsExcel msExcel = new MsExcel(contentFilePathAsString);
 //		IRDFSchema rdfSchema = MsExcelToRDFMapping.extractRDFSchema(msExcel, "user", rdfUrl);
@@ -94,11 +98,11 @@ public class InterRepositoryRDFSyncTest {
 		ISchema sourceSchema = ((MsExcelContentAdapter)splitAdapterSource.getContentAdapter()).getSchema();
 		IRDFSchema rdfSchema = (IRDFSchema)sourceSchema;
 		
-		ISyncAdapter targetAsExcel = builder.createMsExcelAdapter(TestHelper.baseDirectoryForTest() + "target.xls", "user", "id",rdfSchema);
+		ISyncAdapter targetAsExcel = builder.createMsExcelAdapter(TestHelper.baseDirectoryForTest() + "target.xls", rdfSchema);
 		
-		SyncEngine engine = new SyncEngine(sourceAsExcel,targetAsExcel);
-		List<Item> listOfConflicts = engine.synchronize();
-		Assert.assertEquals(0, listOfConflicts.size());	
+		SyncEngine syncEngine = new SyncEngine(sourceAsExcel, targetAsExcel);
+		TestHelper.syncAndAssert(syncEngine);
+
 	}
 	
 	@Test
@@ -113,11 +117,11 @@ public class InterRepositoryRDFSyncTest {
 		SplitAdapter splitAdapterSource = (SplitAdapter)sourceAsMySql;
 		ISchema sourceSchema = ((HibernateContentAdapter)splitAdapterSource.getContentAdapter()).getMapping().getSchema();
 		
-		ISyncAdapter targetAsExcel = builder.createMsExcelAdapter(TestHelper.baseDirectoryForTest() + "s.xls", "user", "id", (IRDFSchema)sourceSchema);
+		ISyncAdapter targetAsExcel = builder.createMsExcelAdapter(TestHelper.baseDirectoryForTest() + "s.xls", (IRDFSchema)sourceSchema);
 		
-		SyncEngine engine = new SyncEngine(splitAdapterSource,targetAsExcel);
-		List<Item> listOfConflicts = engine.synchronize();
-		Assert.assertEquals(0, listOfConflicts.size());	
+		SyncEngine syncEngine = new SyncEngine(splitAdapterSource, targetAsExcel);
+		TestHelper.syncAndAssert(syncEngine);
+
 	}
 	
 	@Test
@@ -126,32 +130,26 @@ public class InterRepositoryRDFSyncTest {
 		String password = "test1234";
 		String tableName = "user";
 		String dbname = "mesh4xdb";
-		boolean addSampleData = true;
-		
-		//createMysqlTableForTest(dbname, user, password, tableName, addSampleData);
-		
+
 		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
-		ISyncAdapter sourceAsMySql =  builder.createMySQLAdapter(user, password, "localhost" ,3306, dbname,tableName);
-		
-		SplitAdapter splitAdapterSource = (SplitAdapter)sourceAsMySql;
-		IHibernateToXMLMapping mapping = ((HibernateContentAdapter)splitAdapterSource.getContentAdapter()).getMapping();
+		SplitAdapter sourceAsMySql =  builder.createMySQLAdapter(user, password, "localhost" ,3306, dbname,tableName);
+		HibernateToRDFMapping mapping = (HibernateToRDFMapping)((HibernateContentAdapter)sourceAsMySql.getContentAdapter()).getMapping();
 		
 		GoogleSpreadSheetInfo spreadSheetInfo = new GoogleSpreadSheetInfo(
 				"spreadsheettest2",
 				"gspreadsheet.test@gmail.com",
 				"java123456",
-				mapping.getIDNode(),
-				mapping.getEntityNode(),
-				mapping.getEntityNode()
+				mapping.getSchema().getIdentifiablePropertyNames().get(0),
+				mapping.getType(),
+				mapping.getType()
 				);
-		ISyncAdapter targetAsGoogleSpreadsheet = builder.createRdfBasedGoogleSpreadSheetAdapter(spreadSheetInfo, (IRDFSchema) mapping.getSchema());
 		
-		targetAsGoogleSpreadsheet.add(makeNewItem());
+		SplitAdapter targetAsGoogleSpreadsheet = builder.createRdfBasedGoogleSpreadSheetAdapter(spreadSheetInfo, (IRDFSchema) mapping.getSchema());
+			
+		targetAsGoogleSpreadsheet.add(makeNewItem(((GoogleSpreadSheetContentAdapter)targetAsGoogleSpreadsheet.getContentAdapter()).getMapper()));
 		
-		SyncEngine engine = new SyncEngine(splitAdapterSource, targetAsGoogleSpreadsheet);
-		List<Item> listOfConflicts = engine.synchronize();
-		Assert.assertEquals(0, listOfConflicts.size());
-		Assert.assertEquals(splitAdapterSource.getAll().size(), targetAsGoogleSpreadsheet.getAll().size());	
+		SyncEngine syncEngine = new SyncEngine(sourceAsMySql, targetAsGoogleSpreadsheet);
+		TestHelper.syncAndAssert(syncEngine);
 	}
 
 	@Test
@@ -160,32 +158,27 @@ public class InterRepositoryRDFSyncTest {
 		String password = "admin";
 		String tableName = "user";
 		String dbname = "mesh4xdb";
-		boolean addSampleData = true;
-		
-		//createMysqlTableForTest(dbname, user, password, tableName, addSampleData);
 		
 		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
-		ISyncAdapter sourceAsMySql =  builder.createMySQLAdapter(user, password, "localhost" ,3306, dbname,tableName);
+		SplitAdapter sourceAsMySql =  builder.createMySQLAdapter(user, password, "localhost" ,3306, dbname,tableName);
 		
-		SplitAdapter splitAdapterSource = (SplitAdapter)sourceAsMySql;
-		IHibernateToXMLMapping mapping = ((HibernateContentAdapter)splitAdapterSource.getContentAdapter()).getMapping();
+		HibernateToRDFMapping mapping = (HibernateToRDFMapping)((HibernateContentAdapter)sourceAsMySql.getContentAdapter()).getMapping();
 		
 		GoogleSpreadSheetInfo spreadSheetInfo = new GoogleSpreadSheetInfo(
 				"new spreadsheet",
 				"gspreadsheet.test@gmail.com",
 				"java123456",
-				mapping.getIDNode(),
-				mapping.getEntityNode(),
-				mapping.getEntityNode()
+				mapping.getSchema().getIdentifiablePropertyNames().get(0),
+				mapping.getType(),
+				mapping.getType()
 				);
-		ISyncAdapter targetAsGoogleSpreadsheet = builder.createRdfBasedGoogleSpreadSheetAdapter(spreadSheetInfo, (IRDFSchema) mapping.getSchema());
 		
-		targetAsGoogleSpreadsheet.add(makeNewItem());
+		SplitAdapter targetAsGoogleSpreadsheet = builder.createRdfBasedGoogleSpreadSheetAdapter(spreadSheetInfo, (IRDFSchema) mapping.getSchema());
 		
-		SyncEngine engine = new SyncEngine(splitAdapterSource, targetAsGoogleSpreadsheet);
-		List<Item> listOfConflicts = engine.synchronize();
-		Assert.assertEquals(0, listOfConflicts.size());
-		Assert.assertEquals(splitAdapterSource.getAll().size(), targetAsGoogleSpreadsheet.getAll().size());	
+		targetAsGoogleSpreadsheet.add(makeNewItem(((GoogleSpreadSheetContentAdapter)targetAsGoogleSpreadsheet.getContentAdapter()).getMapper()));
+		
+		SyncEngine syncEngine = new SyncEngine(sourceAsMySql, targetAsGoogleSpreadsheet);
+		TestHelper.syncAndAssert(syncEngine);
 	}
 
 	
@@ -199,37 +192,34 @@ public class InterRepositoryRDFSyncTest {
 		SplitAdapter splitAdapterSource = (SplitAdapter)sourceAsAccess;
 		IRDFSchema sourceSchema = MsAccessRDFSchemaGenerator.extractRDFSchema(TestHelper.baseDirectoryForTest() +"ektoo.mdb", "ektoo", "ektoo", rdfBaseURl);
 		
-		ISyncAdapter targetAsExcel = builder.createMsExcelAdapter(TestHelper.baseDirectoryForTest() + "contentFile.xls", "ektoo", "id", sourceSchema);
+		ISyncAdapter targetAsExcel = builder.createMsExcelAdapter(TestHelper.baseDirectoryForTest() + "contentFile.xls", sourceSchema);
 		
-		SyncEngine engine = new SyncEngine(splitAdapterSource,targetAsExcel);
-		List<Item> listOfConflicts = engine.synchronize();
-		Assert.assertEquals(0, listOfConflicts.size());
+		SyncEngine syncEngine = new SyncEngine(splitAdapterSource, targetAsExcel);
+		TestHelper.syncAndAssert(syncEngine);
+
 		
 	}
 	
-	private Item makeNewItem(){
-		
-		String id = IdGenerator.INSTANCE.newID();
-		
-		String xml = "<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:owl=\"http://www.w3.org/2002/07/owl#\" xmlns:user=\"http://localhost:8080/mesh4x/feeds/user#\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema#\"> " +
-		  "<user:user rdf:about=\"uri:urn:r213\">"+
-		    "<user:id rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">r213</user:id>"+
-		    "<user:name rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">iklas</user:name>"+
-		    "<user:pass rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">hummm</user:pass>"+
-		  "</user:user>"+
-		"</rdf:RDF>";
-		
-		Element payload = null;
-		try {
-			payload = DocumentHelper.parseText(xml).getRootElement();
-		} catch (DocumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	private Item makeNewItem(IIdentifiableMapping mapping){
+		try{
+			String id = IdGenerator.INSTANCE.newID();
+			
+			String xml = "<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:owl=\"http://www.w3.org/2002/07/owl#\" xmlns:user=\"http://localhost:8080/mesh4x/feeds/user#\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema#\"> " +
+			  "<user:user rdf:about=\"uri:urn:r213\">"+
+			    "<user:id rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">r213</user:id>"+
+			    "<user:name rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">iklas</user:name>"+
+			    "<user:pass rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">hummm</user:pass>"+
+			  "</user:user>"+
+			"</rdf:RDF>";
+			
+			Element payload = DocumentHelper.parseText(xml).getRootElement();
+			
+			IContent content = new IdentifiableContent(payload, mapping, id);
+			Sync sync = new Sync(IdGenerator.INSTANCE.newID(), "sharif", new Date(), false);
+			return new Item(content, sync);
+		} catch (Exception e) {
+			throw new MeshException(e);
 		}
-		
-		IContent content = new EntityContent(payload, "user", "id", id);
-		Sync sync = new Sync(IdGenerator.INSTANCE.newID(), "sharif", new Date(), false);
-		return new Item(content, sync);
 	}
 	
 	
@@ -355,8 +345,7 @@ public class InterRepositoryRDFSyncTest {
 
 		return file.getAbsolutePath();
 	}
-	
-	
+		
 	
 	public static RichTextString getRichTextString(Workbook workbook,String value){
 		return workbook.getCreationHelper().createRichTextString(value);

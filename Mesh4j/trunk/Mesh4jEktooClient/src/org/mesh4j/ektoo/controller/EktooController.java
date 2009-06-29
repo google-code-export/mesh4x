@@ -1,6 +1,5 @@
 package org.mesh4j.ektoo.controller;
 
-import java.util.HashMap;
 import java.util.List;
 
 import org.mesh4j.ektoo.ISyncAdapterBuilder;
@@ -33,7 +32,7 @@ public class EktooController {
 		ISyncAdapter targetAdapter = null;
 		
 		sourceAdapter = source.createAdapter();
-		HashMap<IRDFSchema, String> schemas = source.fetchSchema(sourceAdapter);
+		List<IRDFSchema> schemas = source.fetchSchema(sourceAdapter);
 		targetAdapter = target.createAdapter(schemas);
 
 		if(sourceAdapter == null || targetAdapter == null){

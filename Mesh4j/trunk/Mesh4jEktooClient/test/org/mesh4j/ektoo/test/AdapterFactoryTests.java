@@ -7,17 +7,13 @@ import java.util.Date;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.junit.Assert;
+import org.mesh4j.sync.adapters.IIdentifiableMapping;
+import org.mesh4j.sync.adapters.IdentifiableContent;
 import org.mesh4j.sync.adapters.feed.ContentReader;
 import org.mesh4j.sync.adapters.feed.ContentWriter;
 import org.mesh4j.sync.adapters.feed.Feed;
 import org.mesh4j.sync.adapters.feed.FeedAdapter;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
-import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadsheet;
-import org.mesh4j.sync.adapters.googlespreadsheet.IGoogleSpreadSheet;
-import org.mesh4j.sync.adapters.googlespreadsheet.mapping.GoogleSpreadsheetToPlainXMLMapping;
-import org.mesh4j.sync.adapters.googlespreadsheet.mapping.IGoogleSpreadsheetToXMLMapping;
-import org.mesh4j.sync.adapters.googlespreadsheet.model.GSWorksheet;
-import org.mesh4j.sync.adapters.hibernate.EntityContent;
 import org.mesh4j.sync.adapters.hibernate.HibernateContentAdapter;
 import org.mesh4j.sync.adapters.hibernate.mapping.HibernateToRDFMapping;
 import org.mesh4j.sync.adapters.hibernate.msaccess.MsAccessHibernateSyncAdapterFactory;
@@ -39,8 +35,6 @@ import org.mesh4j.sync.utils.XMLHelper;
 
 @Deprecated
 public class AdapterFactoryTests {
-
-	
 
 	//@Test
 	public void shouldCreateHttpAdapter() {
@@ -69,7 +63,7 @@ public class AdapterFactoryTests {
 		IRDFSchema schema = mapping.getSchema();
 		Assert.assertEquals(0, syncAdapter.getAll().size());
 
-		syncAdapter.add(makeRDFItem(schema));
+		syncAdapter.add(makeRDFItem(schema, mapping));
 
 		Assert.assertEquals(1, syncAdapter.getAll().size());
 	}
@@ -84,7 +78,7 @@ public class AdapterFactoryTests {
 
 		Assert.assertEquals(0, syncAdapter.getAll().size());
 
-		syncAdapter.add(getEntityItem());
+		syncAdapter.add(getEntityItem(((HibernateContentAdapter)syncAdapter.getContentAdapter()).getMapping()));
 
 		Assert.assertEquals(1, syncAdapter.getAll().size());
 	}
@@ -99,7 +93,7 @@ public class AdapterFactoryTests {
 
 		Assert.assertEquals(0, excelAdapter.getAll().size());
 
-		excelAdapter.add(getItem());
+		excelAdapter.add(getItem(((MsExcelContentAdapter)excelAdapter.getContentAdapter()).getMapping()));
 
 		Assert.assertEquals(1, excelAdapter.getAll().size());
 	}
@@ -117,17 +111,17 @@ public class AdapterFactoryTests {
 	}
 
 //	@Test
-	@SuppressWarnings("unchecked")
+	//@SuppressWarnings("unchecked")
 	public void shouldCreateGoogleSpreadSheetAdapter() throws DocumentException {
 
-		String idColumName = "id";
-		String userName = "gspreadsheet.test@gmail.com";
-		String passWord = "java123456";
+	//	String idColumName = "id";
+		//String userName = "gspreadsheet.test@gmail.com";
+		//String passWord = "java123456";
 		//String GOOGLE_SPREADSHEET_FIELD = "peo4fu7AitTo8e3v0D8FCew";
-		String spreadsheetName = "testspreadsheet";
+		//String spreadsheetName = "testspreadsheet";
 		
-		IGoogleSpreadSheet spreadsheet = new GoogleSpreadsheet(/*GOOGLE_SPREADSHEET_FIELD,*/ spreadsheetName, userName, passWord);
-		GSWorksheet sourceRepo = spreadsheet.getGSWorksheet(1);
+	//	IGoogleSpreadSheet spreadsheet = new GoogleSpreadsheet(/*GOOGLE_SPREADSHEET_FIELD,*/ spreadsheetName, userName, passWord);
+		//GSWorksheet sourceRepo = spreadsheet.getGSWorksheet(1);
 //
 //		IGoogleSpreadsheetToXMLMapping mapper = new GoogleSpreadsheetToPlainXMLMapping("user", idColumName,
 //													null,sourceRepo.getName(), 
@@ -147,7 +141,7 @@ public class AdapterFactoryTests {
 	}
 	
 
-	private Item makeRDFItem(IRDFSchema schema) {
+	private Item makeRDFItem(IRDFSchema schema, IIdentifiableMapping mapping) {
 
 		String id = IdGenerator.INSTANCE.newID();
 
@@ -171,13 +165,13 @@ public class AdapterFactoryTests {
 		payload = schema.getInstanceFromPlainXML(id, payload,
 				ISchema.EMPTY_FORMATS);
 
-		IContent content = new EntityContent(payload, "aktoo", "ID", id);
+		IContent content = new IdentifiableContent(payload, mapping, id);
 		Sync sync = new Sync(IdGenerator.INSTANCE.newID(), "Raju", new Date(),
 				false);
 		return new Item(content, sync);
 	}
 
-	private Item getEntityItem() throws DocumentException {
+	private Item getEntityItem(IIdentifiableMapping mapping) throws DocumentException {
 
 		String id = IdGenerator.INSTANCE.newID();
 		String rawDataAsXML = "<aktoo>" + "<ID>" + id + "</ID>"
@@ -185,13 +179,13 @@ public class AdapterFactoryTests {
 
 		Element payload = XMLHelper.parseElement(rawDataAsXML);
 		System.out.println("xml as:" + payload.asXML());
-		IContent content = new EntityContent(payload, "aktoo", "ID", id);
+		IContent content = new IdentifiableContent(payload, mapping, id);
 		Sync sync = new Sync(IdGenerator.INSTANCE.newID(), "Raju", new Date(),
 				false);
 		return new Item(content, sync);
 	}
 
-	private Item getItem() throws DocumentException {
+	private Item getItem(IIdentifiableMapping mapping) throws DocumentException {
 
 		String id = IdGenerator.INSTANCE.newID();
 		String rawDataAsXML = "<user>" + 
@@ -203,7 +197,7 @@ public class AdapterFactoryTests {
 								"</user>";
 
 		Element payload = XMLHelper.parseElement(rawDataAsXML);
-		IContent content = new EntityContent(payload, "user", "id", id);
+		IContent content = new IdentifiableContent(payload, mapping, id);
 		Sync sync = new Sync(IdGenerator.INSTANCE.newID(), "Raju", new Date(),
 				false);
 		return new Item(content, sync);
@@ -231,10 +225,8 @@ public class AdapterFactoryTests {
 
 		MsExcelSyncRepository syncRepo = new MsExcelSyncRepository(syncExcel,sheetName+"_sync",
 				identityProvider, idGenerator);
-		MSExcelToPlainXMLMapping mapper = new MSExcelToPlainXMLMapping(
-				idColumnName, null);
-		MsExcelContentAdapter contentAdapter = new MsExcelContentAdapter(
-				contentExcel, mapper, sheetName);
+		MSExcelToPlainXMLMapping mapper = new MSExcelToPlainXMLMapping(sheetName, idColumnName, null, null);
+		MsExcelContentAdapter contentAdapter = new MsExcelContentAdapter(contentExcel, mapper);
 
 		SplitAdapter splitAdapter = new SplitAdapter(syncRepo, contentAdapter,
 				identityProvider);

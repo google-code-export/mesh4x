@@ -14,17 +14,18 @@ import org.mesh4j.ektoo.ISyncAdapterBuilder;
 import org.mesh4j.ektoo.SyncAdapterBuilder;
 import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.sync.ISyncAdapter;
+import org.mesh4j.sync.adapters.IIdentifiableMapping;
+import org.mesh4j.sync.adapters.IdentifiableContent;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadSheetContentAdapter;
 import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadsheet;
 import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadsheetUtils;
 import org.mesh4j.sync.adapters.googlespreadsheet.IGoogleSpreadSheet;
 import org.mesh4j.sync.adapters.googlespreadsheet.mapping.GoogleSpreadsheetToRDFMapping;
-import org.mesh4j.sync.adapters.googlespreadsheet.mapping.IGoogleSpreadsheetToXMLMapping;
 import org.mesh4j.sync.adapters.googlespreadsheet.model.GSCell;
 import org.mesh4j.sync.adapters.googlespreadsheet.model.GSRow;
 import org.mesh4j.sync.adapters.googlespreadsheet.model.GSWorksheet;
-import org.mesh4j.sync.adapters.hibernate.EntityContent;
+import org.mesh4j.sync.adapters.msexcel.MsExcelContentAdapter;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.IContent;
@@ -82,6 +83,7 @@ public class SyncAdapterBuilderTest {
 		Assert.assertNotNull(syncAdapter);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Test //ok
 	public void shouldCreateRdfBasedGoogleSpreadSheetAdapterUsingOwnRDFSchemaIfDataRowAvailable(){
 			GoogleSpreadSheetInfo spreadSheetInfo = new GoogleSpreadSheetInfo(
@@ -318,11 +320,13 @@ public class SyncAdapterBuilderTest {
 		sourceSchema.addStringProperty("id", "id", "en");
 		sourceSchema.addStringProperty("name", "Name", "en");
 		sourceSchema.addStringProperty("pass", "pass", "en");
+		sourceSchema.setIdentifiablePropertyName("id");
 
-		ISyncAdapter syncAdapter = adapterBuilder.createRdfBasedGoogleSpreadSheetAdapter(spreadSheetInfo, (IRDFSchema) sourceSchema);
+		SplitAdapter syncAdapter = adapterBuilder.createRdfBasedGoogleSpreadSheetAdapter(spreadSheetInfo, (IRDFSchema) sourceSchema);
 		Assert.assertNotNull(syncAdapter);
 		
-		IRDFSchema rdfSchema = (IRDFSchema)((GoogleSpreadSheetContentAdapter)((SplitAdapter)syncAdapter).getContentAdapter()).getSchema();
+		IRDFSchema rdfSchema = (IRDFSchema)((GoogleSpreadSheetContentAdapter)syncAdapter.getContentAdapter()).getSchema();
+		IIdentifiableMapping mapping = (IIdentifiableMapping)((GoogleSpreadSheetContentAdapter)syncAdapter.getContentAdapter()).getMapper();
 		Assert.assertNotNull(rdfSchema);
 		Assert.assertTrue(sourceSchema.isCompatible(rdfSchema));
 
@@ -330,26 +334,26 @@ public class SyncAdapterBuilderTest {
 		Assert.assertNotNull(syncAdapterA);
 		
 		Assert.assertEquals(0, syncAdapter.getAll().size());
-		syncAdapter.add(makeRDFItem(sourceSchema));
+		syncAdapter.add(makeRDFItem(sourceSchema, mapping));
 		Assert.assertEquals(1, syncAdapter.getAll().size());
 	}
 	
 	
 	@Test
 	public void shouldCreateRdfBasedGoogleSpreadSheetAdapterUsingOtherRDFWhenSpreadsheetNotAvailable(){		
-		IGoogleSpreadsheetToXMLMapping mapping = createSampleGoogleSpreadsheetToRDFMapping();
+		GoogleSpreadsheetToRDFMapping mapping = createSampleGoogleSpreadsheetToRDFMapping();
 		
 		GoogleSpreadSheetInfo spreadSheetInfo = new GoogleSpreadSheetInfo(
 				"no spreadsheet",
 				"gspreadsheet.test@gmail.com",
 				"java123456",
-				mapping.getIdColumnName(),
-				mapping.getSheetName(),
+				mapping.getSchema().getIdentifiablePropertyNames().get(0),
+				mapping.getType(),
 				mapping.getType()
 				);
 			
 		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
-		ISyncAdapter syncAdapter = adapterBuilder.createRdfBasedGoogleSpreadSheetAdapter(spreadSheetInfo, mapping.getSchema());
+		SplitAdapter syncAdapter = adapterBuilder.createRdfBasedGoogleSpreadSheetAdapter(spreadSheetInfo, mapping.getSchema());
 		Assert.assertNotNull(syncAdapter);
 	}	
 	
@@ -365,10 +369,10 @@ public class SyncAdapterBuilderTest {
 	public void shouldCreateExcelAdapter() throws DocumentException{
 	
 		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
-		ISyncAdapter excelAdapter = adapterBuilder.createMsExcelAdapter(TestHelper.baseDirectoryForTest() + "contentFile.xls","user", "id",false);
-		
+		SplitAdapter excelAdapter = adapterBuilder.createMsExcelAdapter(TestHelper.baseDirectoryForTest() + "contentFile.xls","user", new String[]{"id"}, false);
+		IIdentifiableMapping mapping = ((MsExcelContentAdapter) excelAdapter.getContentAdapter()).getMapping();
 		int size = excelAdapter.getAll().size();
-		excelAdapter.add(getItem());
+		excelAdapter.add(getItem(mapping));
 		
 		
 		Assert.assertEquals(size + 1, excelAdapter.getAll().size());
@@ -414,7 +418,7 @@ public class SyncAdapterBuilderTest {
 	{
 		String contentFile = TestHelper.fileName("contentFile.xls");
 		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
-		adapterBuilder.createMsExcelAdapter(contentFile, "", "id",true);
+		adapterBuilder.createMsExcelAdapter(contentFile, "", new String[]{"id"}, true);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
@@ -422,20 +426,20 @@ public class SyncAdapterBuilderTest {
 		
 		String contentFile = TestHelper.fileName("contentFile.xls");
 		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
-		adapterBuilder.createMsExcelAdapter(contentFile, "user", "",true);
+		adapterBuilder.createMsExcelAdapter(contentFile, "user", new String[]{"id"}, true);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldReturnExceptionIfContenFileIsNullOrEmpty(){
 		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
-		adapterBuilder.createMsExcelAdapter(null, "user", "id",true);
+		adapterBuilder.createMsExcelAdapter(null, "user", new String[]{"id"}, true);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldReturnExceptionIfRDFIsNullOrEmpty(){
 		String contentFile = TestHelper.fileName("contentFile.xls");
 		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
-		adapterBuilder.createMsExcelAdapter(contentFile, "user", "id",null);
+		adapterBuilder.createMsExcelAdapter(contentFile, null);
 	}
 	
 	
@@ -452,7 +456,7 @@ public class SyncAdapterBuilderTest {
 		schema.addStringProperty("id", "id", "en");
 		schema.addStringProperty("name", "Name", "en");
 		schema.addStringProperty("pass", "pass", "en");
-
+		schema.setIdentifiablePropertyName("id");
 		RDFInstance rdfInstance = schema.createNewInstance("uri:urn:id");
 
 		long millis = System.currentTimeMillis();
@@ -464,10 +468,10 @@ public class SyncAdapterBuilderTest {
 		rdfInstance.setProperty(COLUMN_NAME, name);
 		rdfInstance.setProperty(COLUMN_PASS, pass);
 
-		return new GoogleSpreadsheetToRDFMapping(schema, SHEET_NAME, "id", null, new DocsService(""));
+		return new GoogleSpreadsheetToRDFMapping(schema, new DocsService(""));
 	}		
 	
-	private Item getItem() throws DocumentException {
+	private Item getItem(IIdentifiableMapping mapping) throws DocumentException {
 		
 		String id = IdGenerator.INSTANCE.newID();
 /*		String rawDataAsXML = "<user>" +
@@ -484,12 +488,12 @@ public class SyncAdapterBuilderTest {
 				"</user>";
 				
 		Element payload = XMLHelper.parseElement(rawDataAsXML);
-		IContent content = new EntityContent(payload, "user", "id", id);
+		IContent content = new IdentifiableContent(payload, mapping, id);
 		Sync sync = new Sync(IdGenerator.INSTANCE.newID(), "Raju", new Date(), false);
 		return new Item(content, sync);
 	}
 
-	private Item makeRDFItem(IRDFSchema schema){		
+	private Item makeRDFItem(IRDFSchema schema, IIdentifiableMapping mapping){		
 		String id = IdGenerator.INSTANCE.newID();		
 		String rawDataAsXML = "<user>" +
 				"<id>"+id+"</id>" +
@@ -499,7 +503,7 @@ public class SyncAdapterBuilderTest {
 
 		Element payload = XMLHelper.parseElement(rawDataAsXML);
 		payload = schema.getInstanceFromPlainXML(id, payload, ISchema.EMPTY_FORMATS);
-		IContent content = new EntityContent(payload, "ektoo", "id", id);
+		IContent content = new IdentifiableContent(payload, mapping, id);
 		Sync sync = new Sync(IdGenerator.INSTANCE.newID(), "Raju", new Date(), false);
 		return new Item(content, sync);
 	}
