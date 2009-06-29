@@ -2,7 +2,7 @@ package org.mesh4j.sync.adapters.hibernate;
 
 import java.io.File;
 import java.text.MessageFormat;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
@@ -120,11 +120,24 @@ public class HibernateSyncAdapterFactory implements ISyncAdapterFactory{
 		RDFSchema rdfSchema = new RDFSchema(tableName, rdfBaseURL+ "/" + tableName + "#", tableName);
 		
 		Property property = mapping.getIdentifierProperty();
-		addRDFProperty(rdfSchema, property);
+		if(property.isComposite()){
+			org.hibernate.type.ComponentType componentType = (org.hibernate.type.ComponentType)property.getType();
+			String[] propertyNames = componentType.getPropertyNames();
+			Type[] propertyTypes = componentType.getSubtypes();
+			
+			for (int i = 0; i < propertyTypes.length; i++) {
+				addRDFProperty(rdfSchema, propertyNames[i], propertyTypes[i]);	
+			}
+						
+			rdfSchema.setIdentifiablePropertyNames(Arrays.asList(propertyNames));
+		} else {
+			String propertyName = getPropertyName(property);
+			Type propertyType = property.getType();
+			
+			addRDFProperty(rdfSchema, propertyName, propertyType);
+			rdfSchema.setIdentifiablePropertyName(propertyName);
+		}
 		
-		ArrayList<String> identifiablePropertyNames = new ArrayList<String>();
-		identifiablePropertyNames.add(getPropertyName(property));
-		rdfSchema.setIdentifiablePropertyNames(identifiablePropertyNames);
 		
 		Property version = mapping.getVersion();
 		if(version != null){
@@ -134,16 +147,13 @@ public class HibernateSyncAdapterFactory implements ISyncAdapterFactory{
 		Iterator<Property> it = mapping.getPropertyIterator();
 		while(it.hasNext()){
 			property = it.next();
-			addRDFProperty(rdfSchema, property);
+			addRDFProperty(rdfSchema, getPropertyName(property), property.getType());
 		}
 		return rdfSchema;
 	}
 	
 	// TODO (JMT) RDF: improve Hibernate type to RDF type mappings
-	private static void addRDFProperty(RDFSchema rdfSchema, Property property) {
-		String propertyName = getPropertyName(property);
-		
-		Type type = property.getType();
+	private static void addRDFProperty(RDFSchema rdfSchema, String propertyName, Type type) {
 		
 		if(Hibernate.STRING.equals(type)){
 			rdfSchema.addStringProperty(propertyName, propertyName, "en");

@@ -31,6 +31,7 @@ public interface IRDFSchema extends ISchema {
 
 	public RDFInstance createNewInstanceFromRDFXML(String rdfXml);
 	public RDFInstance createNewInstanceFromPlainXML(String id, String plainXML, Map<String, ISchemaTypeFormat> formatters) throws ParseException;
+	public RDFInstance createNewInstanceFromPlainXML(String id, String plainXML, Map<String, ISchemaTypeFormat> formatters, String[] splitElements) throws ParseException;
 	public RDFInstance createNewInstanceFromProperties(String id, Map<String, Object> propertyValues);
 
 	public Object cannonicaliseValue(String propertyName, Object value);
@@ -45,6 +46,8 @@ public interface IRDFSchema extends ISchema {
 	public String getOntologyNameSpace();
 	public String getOntologyClassName();
 
+
+	public boolean hasCompositeId();
 	List<String> getIdentifiablePropertyNames();
 
 	String getVersionPropertyName();
@@ -52,5 +55,7 @@ public interface IRDFSchema extends ISchema {
 	public boolean isGUID(String propertyName);
 
 	public String getBaseRDFURL();
+
+
 
 }

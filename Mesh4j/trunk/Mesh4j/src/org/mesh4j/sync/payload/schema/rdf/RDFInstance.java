@@ -5,6 +5,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -84,6 +85,10 @@ public class RDFInstance {
 	}
 	
 	protected static RDFInstance buildFromPlainXML(RDFSchema rdfSchema, String id, String plainXML, Map<String, ISchemaTypeFormat> typeFormats){
+		return buildFromPlainXML(rdfSchema, id, plainXML, typeFormats, null);
+	}
+	
+	protected static RDFInstance buildFromPlainXML(RDFSchema rdfSchema, String id, String plainXML, Map<String, ISchemaTypeFormat> typeFormats, String[] splitElements){
 		Guard.argumentNotNull(rdfSchema, "rdfSchema");
 		Guard.argumentNotNullOrEmptyString(id, "id");
 		Guard.argumentNotNullOrEmptyString(plainXML, "plainXML");
@@ -102,7 +107,7 @@ public class RDFInstance {
 
 			dataTypeName = dataTypeProperty.getLocalName();
 			
-			fieldElement = element.element(dataTypeName);
+			fieldElement = getFieldElement(dataTypeName, element, splitElements);
 			if(fieldElement != null){
 				fieldValue = fieldElement.getText();
 				
@@ -125,6 +130,20 @@ public class RDFInstance {
 		return instance;
 	}
 	
+	private static Element getFieldElement(String dataTypeName, Element element, String[] splitElements) {
+		Element fieldElement = element.element(dataTypeName);
+		if(fieldElement == null && splitElements != null){
+			for (String elementName : splitElements) {
+				Element splitedElement = element.element(elementName);
+				fieldElement = splitedElement.element(dataTypeName);
+				if(fieldElement != null){
+					return fieldElement;
+				}
+			}
+		} 
+		return fieldElement;
+	}
+
 	protected static RDFInstance buildFromProperties(RDFSchema rdfSchema, String id, Map<String, Object> propertyValues){
 		Guard.argumentNotNull(rdfSchema, "rdfSchema");
 		Guard.argumentNotNullOrEmptyString(id, "id");
@@ -201,17 +220,27 @@ public class RDFInstance {
 	}
 
 	public String asPlainXML() {
-		return asPlainXML(ISchema.EMPTY_FORMATS);
+		return asPlainXML(ISchema.EMPTY_FORMATS, null);
 	}
 	
 	public String asPlainXML(Map<String, ISchemaTypeFormat> typeFormats) {
+		return asPlainXML(typeFormats, null);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public String asPlainXML(Map<String, ISchemaTypeFormat> typeFormats, Map<String, String> joinProperties) {
 
 		StringBuffer sb = new StringBuffer();
 
 		sb.append("<");
 		sb.append(this.schema.getOntologyClassName());
 		sb.append(">");
-	 
+		
+		String fieldName;
+		Object fieldValue;
+		
+		
+		HashMap<String, Object> properties = new HashMap<String, Object>();
 		
 		StmtIterator it = this.domainObject.listProperties();
 		Statement statement;
@@ -223,9 +252,9 @@ public class RDFInstance {
 			RDFNode object = statement.getObject();
 			
 			 if(!RDF.type.getURI().equals(predicate.getURI())){
-	            String fieldName = predicate.getLocalName();
+	            fieldName = predicate.getLocalName();
 	            Literal literal = (Literal) object;
-	            Object fieldValue = literal.getValue();
+	            fieldValue = literal.getValue();
 	            
 	            ISchemaTypeFormat format = typeFormats.get(literal.getDatatypeURI());
 	            if(format != null){
@@ -236,8 +265,33 @@ public class RDFInstance {
 	            	}
 	            }
 	            
-           		writePlainXMLProperty(sb, fieldName, fieldValue);
+	            if(joinProperties != null){
+	            	String joinPropertyName = joinProperties.get(fieldName);
+	            	if(joinPropertyName != null){
+	            		HashMap<String, Object> joinValues = (HashMap<String, Object>) properties.get(joinPropertyName);
+	            		if(joinValues == null){
+	            			System.out.println(joinProperties);
+	            			
+	            			joinValues = new HashMap<String, Object>();
+	            			for (String joinName : joinProperties.keySet()) {
+								joinValues.put(joinName, null);
+								System.out.println(joinName);
+							}	            			
+	            			properties.put(joinPropertyName, joinValues);
+	            		}
+	            		joinValues.put(fieldName, fieldValue);
+	            	} else {	            
+		            	properties.put(fieldName, fieldValue);
+		            }
+	            } else {	            
+	            	properties.put(fieldName, fieldValue);
+	            }
 			 }
+		}
+		
+		for (String propName : properties.keySet()) {
+			fieldValue = properties.get(propName);
+			writePlainXMLProperty(sb, propName, fieldValue);
 		}
 		
 		sb.append("</");
@@ -249,11 +303,21 @@ public class RDFInstance {
 		return XMLHelper.canonicalizeXML(element);
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void writePlainXMLProperty(StringBuffer sb, String fieldName, Object fieldValue){
 		 sb.append("<");
 		 sb.append(fieldName);
 		 sb.append(">");
-		 sb.append(fieldValue);
+		 
+		 if(fieldValue instanceof HashMap){
+			 HashMap<String, Object> propValues = (HashMap<String, Object>) fieldValue;
+			 for (String propName : propValues.keySet()) {
+				 writePlainXMLProperty(sb, propName, propValues.get(propName));
+			 }
+		 } else {
+			 sb.append(fieldValue);
+		 }		 
+		 
 		 sb.append("</");
 		 sb.append(fieldName);
 		 sb.append(">");

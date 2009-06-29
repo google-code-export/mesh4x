@@ -50,7 +50,6 @@
 <#else>
     <composite-id
 		name="${property.name}"
-        class="${property.value.getComponentClassName()}"
 <#if c2h.isUnsavedValue(property)>
         unsaved-value="${c2h.getUnsavedValue(property)}"
 </#if>
@@ -60,7 +59,7 @@
     >		
     <#foreach keyproperty in property.value.propertyIterator>
 	  <#if !c2h.isManyToOne(keyproperty)>
-	        <key-property name="${keyproperty.name}" type="${keyproperty.value.typeName}">
+	        <key-property name="${keyproperty.name}" node="${keyproperty.name}" type="${keyproperty.value.typeName}">
 	        <#foreach column in keyproperty.columnIterator>
 	           <#include "pkcolumn.hbm.ftl">
 	        </#foreach>	

@@ -368,6 +368,11 @@ public class RDFSchema implements IRDFSchema{
 	}
 	
 	@Override
+	public RDFInstance createNewInstanceFromPlainXML(String id, String plainXML, Map<String, ISchemaTypeFormat> formatters, String[] splitElements){
+		return RDFInstance.buildFromPlainXML(this, id, plainXML, formatters, splitElements);
+	}
+	
+	@Override
 	public RDFInstance createNewInstanceFromProperties(String id, Map<String, Object> propertyValues){
 		return RDFInstance.buildFromProperties(this, id, propertyValues);
 	}
@@ -638,6 +643,11 @@ public class RDFSchema implements IRDFSchema{
 	public String getBaseRDFURL() {
 		return this.ontologyBaseUri.substring(0, this.ontologyBaseUri.length() - (this.ontologyClassName.length() +2));
 		// + 2 because add 1 for / and 1 for #
+	}
+
+	@Override
+	public boolean hasCompositeId() {
+		return this.getIdentifiablePropertyNames().size() > 1;
 	}
 
 }
