@@ -15,45 +15,28 @@ public class HibernateToRDFMappingTests {
 		RDF_SCHEMA.addStringProperty("id", "id", "en");
 		RDF_SCHEMA.addStringProperty("name", "name", "en");
 		RDF_SCHEMA.addStringProperty("pass", "pass", "en");
+		
+		RDF_SCHEMA.setIdentifiablePropertyName("id");
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateFailsIfSchemaIsNull(){
-		new HibernateToRDFMapping(null, "user", "id");
-	}
-	
-	@Test(expected=IllegalArgumentException.class)
-	public void shouldCreateFailsIfIDNodeIsNull(){
-		new HibernateToRDFMapping(RDF_SCHEMA, "user", null);
-	}
-	
-	@Test(expected=IllegalArgumentException.class)
-	public void shouldCreateFailsIfIDNodeIsEmpty(){
-		new HibernateToRDFMapping(RDF_SCHEMA, "user", "");
-	}
-
-	@Test(expected=IllegalArgumentException.class)
-	public void shouldCreateFailsIfEntityNodeIsNull(){
-		new HibernateToRDFMapping(RDF_SCHEMA, null, "id");
-	}
-	
-	@Test(expected=IllegalArgumentException.class)
-	public void shouldCreateFailsIfEntityNodeIsEmpty(){
-		new HibernateToRDFMapping(RDF_SCHEMA, "", "id");
+		new HibernateToRDFMapping(null);
 	}
 	
 	@Test
 	public void shouldCreateMapping(){
-		HibernateToRDFMapping mapping = new HibernateToRDFMapping(RDF_SCHEMA, "user", "id");
+		HibernateToRDFMapping mapping = new HibernateToRDFMapping(RDF_SCHEMA);
 		
-		Assert.assertEquals("user", mapping.getEntityNode());
-		Assert.assertEquals("id", mapping.getIDNode());
+		Assert.assertEquals("User", mapping.getType());
+		Assert.assertEquals(1, mapping.getSchema().getIdentifiablePropertyNames().size());
+		Assert.assertEquals("id", mapping.getSchema().getIdentifiablePropertyNames().get(0));
 		Assert.assertEquals(RDF_SCHEMA, mapping.getSchema());
 	}
 	
 	@Test 
 	public void shouldConvertRowToXML() throws Exception{
-		HibernateToRDFMapping mapping = new HibernateToRDFMapping(RDF_SCHEMA, "user", "id");
+		HibernateToRDFMapping mapping = new HibernateToRDFMapping(RDF_SCHEMA);
 		
 		String xml = "<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:User=\"http://localhost:8080/mesh4x/User#\" xmlns:owl=\"http://www.w3.org/2002/07/owl#\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema#\">"+
 		"<User:User rdf:about=\"uri:urn:1\">"+
@@ -73,7 +56,7 @@ public class HibernateToRDFMappingTests {
 	
 	@Test 
 	public void shouldConvertXMLToRow() throws Exception{
-		HibernateToRDFMapping mapping = new HibernateToRDFMapping(RDF_SCHEMA, "User", "id");
+		HibernateToRDFMapping mapping = new HibernateToRDFMapping(RDF_SCHEMA);
 		
 		String xml = "<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:User=\"http://localhost:8080/mesh4x/User#\" xmlns:owl=\"http://www.w3.org/2002/07/owl#\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema#\">"+
 		"<User:User rdf:about=\"uri:urn:1\">"+
@@ -94,7 +77,7 @@ public class HibernateToRDFMappingTests {
 	
 	@Test 
 	public void shouldConvertXMLToRowMultiPlayload() throws Exception{
-		HibernateToRDFMapping mapping = new HibernateToRDFMapping(RDF_SCHEMA, "User", "id");
+		HibernateToRDFMapping mapping = new HibernateToRDFMapping(RDF_SCHEMA);
 		
 		String xml = "<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:User=\"http://localhost:8080/mesh4x/User#\" xmlns:owl=\"http://www.w3.org/2002/07/owl#\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema#\">"+
 		"<User:User rdf:about=\"uri:urn:1\">"+
@@ -114,7 +97,7 @@ public class HibernateToRDFMappingTests {
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldConvertXMLToRowMultiPlayloadFailsIfRDFElementDoesNotExists() throws Exception{
-		HibernateToRDFMapping mapping = new HibernateToRDFMapping(RDF_SCHEMA, "User", "id");
+		HibernateToRDFMapping mapping = new HibernateToRDFMapping(RDF_SCHEMA);
 		
 		Element rowAsRDF = XMLHelper.parseElement("<payload><foo1>bar</foo1><foo>bar</foo></payload>");
 		mapping.convertXMLToRow(rowAsRDF);

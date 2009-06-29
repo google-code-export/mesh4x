@@ -7,7 +7,5 @@ public interface IIdentifiableContentAdapter extends IContentAdapter {
 
 	String getID(IContent content);
 	
-	String getIdNode();
-	
 	ISchema getSchema();
 }

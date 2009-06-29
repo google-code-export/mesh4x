@@ -31,8 +31,8 @@ public class HibernateToPlainXMLMappingTests {
 	public void shouldCreateMapping(){
 		HibernateToPlainXMLMapping mapping = new HibernateToPlainXMLMapping("user", "id");
 		
-		Assert.assertEquals("user", mapping.getEntityNode());
-		Assert.assertEquals("id", mapping.getIDNode());
+		Assert.assertEquals("user", mapping.getType());
+		Assert.assertEquals("id", mapping.getIdColumnName());
 	}
 	
 	@Test 

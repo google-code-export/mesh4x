@@ -12,8 +12,10 @@ import org.hibernate.Transaction;
 import org.hibernate.metadata.ClassMetadata;
 import org.mesh4j.sync.AbstractSyncAdapter;
 import org.mesh4j.sync.IFilter;
+import org.mesh4j.sync.adapters.IdentifiableContent;
 import org.mesh4j.sync.adapters.SyncInfo;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
+import org.mesh4j.sync.adapters.hibernate.mapping.IHibernateToXMLMapping;
 import org.mesh4j.sync.filter.SinceLastUpdateFilter;
 import org.mesh4j.sync.id.generator.IIdGenerator;
 import org.mesh4j.sync.model.Item;
@@ -77,7 +79,7 @@ public class HibernateAdapter extends AbstractSyncAdapter implements ISessionPro
 		
 		Guard.argumentNotNull(item, "item");
 
-		EntityContent entity = entityDAO.normalizeContent(item.getContent());
+		IdentifiableContent entity = entityDAO.normalizeContent(item.getContent());
 		
 		Session session =  newSession();
 		Transaction tx = null;
@@ -151,7 +153,7 @@ public class HibernateAdapter extends AbstractSyncAdapter implements ISessionPro
 			if(syncInfo != null){
 				session = newSession();
 				syncInfo.updateSync(item.getSync());
-				EntityContent entity;
+				IdentifiableContent entity;
 				try{
 					entity = entityDAO.get(syncInfo.getId());
 				} catch (Exception e) {
@@ -185,7 +187,7 @@ public class HibernateAdapter extends AbstractSyncAdapter implements ISessionPro
 			Transaction tx = null;
 			try{
 				tx = session.beginTransaction();
-				EntityContent entity = entityDAO.normalizeContent(item.getContent());
+				IdentifiableContent entity = entityDAO.normalizeContent(item.getContent());
 				entityDAO.save(entity);
 				SyncInfo syncInfo = new SyncInfo(item.getSync(), entity.getType(), entity.getId(), entity.getVersion());
 				syncDAO.save(syncInfo);	
@@ -213,7 +215,7 @@ public class HibernateAdapter extends AbstractSyncAdapter implements ISessionPro
 			return null;
 		}
 		
-		EntityContent entity = null;
+		IdentifiableContent entity = null;
 		try{
 			entity = entityDAO.get(syncInfo.getId());
 		}catch (Exception e) {
@@ -233,7 +235,7 @@ public class HibernateAdapter extends AbstractSyncAdapter implements ISessionPro
 		}
 	}
 
-	private void updateSyncIfChanged(EntityContent entity, SyncInfo syncInfo){
+	private void updateSyncIfChanged(IdentifiableContent entity, SyncInfo syncInfo){
 		Session session = newSession();
 		Transaction tx = null;
 		try{
@@ -284,7 +286,7 @@ public class HibernateAdapter extends AbstractSyncAdapter implements ISessionPro
 	
 		ArrayList<Item> result = new ArrayList<Item>();
 		
-		List<EntityContent> entities;
+		List<IdentifiableContent> entities;
 		List<SyncInfo> syncInfos;
 		
 		Session session = newSession();
@@ -299,7 +301,7 @@ public class HibernateAdapter extends AbstractSyncAdapter implements ISessionPro
 		
 		Map<String, SyncInfo> syncInfoAsMapByEntity = this.makeSyncMapByEntity(syncInfos);
  
-		for (EntityContent entity : entities) {
+		for (IdentifiableContent entity : entities) {
 			
 			SyncInfo syncInfo = syncInfoAsMapByEntity.get(entity.getId());			
 
@@ -413,5 +415,9 @@ public class HibernateAdapter extends AbstractSyncAdapter implements ISessionPro
 	@Override
 	public String getAuthenticatedUser() {
 		return this.identityProvider.getAuthenticatedUser();
+	}
+
+	public IHibernateToXMLMapping getMapping() {
+		return this.entityDAO.getMapping();
 	}
 }

@@ -4,7 +4,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.dom4j.DocumentHelper;
@@ -119,6 +121,12 @@ public class RDFSchemaTests {
 		Assert.assertEquals("Oswego", schema.getOntologyClassName());
 	}
 
+	@Test
+	public void shouldGetBaseRDFURL(){
+		RDFSchema schema = new RDFSchema("Oswego", "http://localhost:8080/mesh4x/feeds/Epiinfo/Oswego#", "Oswego");
+		Assert.assertEquals("http://localhost:8080/mesh4x/feeds/Epiinfo", schema.getBaseRDFURL());
+	}
+	
 	@Test
 	public void shouldGetPropertyTypeReturnsNullIfPropertyDoesNotExists() throws FileNotFoundException{
 		Reader reader = new FileReader(this.getClass().getResource("oswego.owl").getFile());
@@ -589,5 +597,174 @@ public class RDFSchemaTests {
 		
 		Assert.assertFalse(schema.asXML().equals(otherSchema.asXML()));
 		Assert.assertTrue(schema.isCompatible(otherSchema));
+	}
+	
+	@Test
+	public void shouldMarkIdentifiablesPropertyNames(){
+		RDFSchema schema = new RDFSchema("example", "http://mesh4x/example#", "example");
+		schema.addStringProperty("id1", "id1", "en");
+		schema.addStringProperty("id2", "id2", "en");
+		schema.addStringProperty("name", "name", "en");
+
+		ArrayList<String> pks = new ArrayList<String>();
+		pks.add("id1");
+		pks.add("id2");
+		schema.setIdentifiablePropertyNames(pks);
+		schema.setVersionPropertyName("datetime");
+	
+		List<String> pksLoaded = schema.getIdentifiablePropertyNames();
+		Assert.assertEquals("id1", pksLoaded.get(0));
+		Assert.assertEquals("id2", pksLoaded.get(1));
+		
+		
+		String rdfXml = "<rdf:RDF xmlns:example=\"http://mesh4x/example#\" xmlns:owl=\"http://www.w3.org/2002/07/owl#\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:rdfs=\"http://www.w3.org/2000/01/rdf-schema#\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema#\">\n"+
+		"  <owl:Class rdf:about=\"http://mesh4x/example#mesh4xMetadata\"></owl:Class>\n"+
+		"  <owl:Class rdf:about=\"http://mesh4x/example#example\"></owl:Class>\n"+
+		"  <owl:DatatypeProperty rdf:about=\"http://mesh4x/example#name\">\n"+
+		"    <rdfs:label xml:lang=\"en\">name</rdfs:label>\n"+
+		"    <rdfs:range rdf:resource=\"http://www.w3.org/2001/XMLSchema#string\"></rdfs:range>\n"+
+		"    <rdfs:domain rdf:resource=\"http://mesh4x/example#example\"></rdfs:domain>\n"+
+		"  </owl:DatatypeProperty>\n"+
+		"  <owl:DatatypeProperty rdf:about=\"http://mesh4x/example/mesh4xMetadata#versionProperty\">\n"+
+		"    <rdfs:comment xml:lang=\"en\">datetime</rdfs:comment>\n"+
+		"    <rdfs:range rdf:resource=\"http://www.w3.org/2001/XMLSchema#string\"></rdfs:range>\n"+
+		"    <rdfs:domain rdf:resource=\"http://mesh4x/example#mesh4xMetadata\"></rdfs:domain>\n"+
+		"  </owl:DatatypeProperty>\n"+
+		"  <owl:DatatypeProperty rdf:about=\"http://mesh4x/example#id1\">\n"+
+		"    <rdfs:label xml:lang=\"en\">id1</rdfs:label>\n"+
+		"    <rdfs:range rdf:resource=\"http://www.w3.org/2001/XMLSchema#string\"></rdfs:range>\n"+
+		"    <rdfs:domain rdf:resource=\"http://mesh4x/example#example\"></rdfs:domain>\n"+
+		"  </owl:DatatypeProperty>\n"+
+		"  <owl:DatatypeProperty rdf:about=\"http://mesh4x/example#id2\">\n"+
+		"    <rdfs:label xml:lang=\"en\">id2</rdfs:label>\n"+
+		"    <rdfs:range rdf:resource=\"http://www.w3.org/2001/XMLSchema#string\"></rdfs:range>\n"+
+		"    <rdfs:domain rdf:resource=\"http://mesh4x/example#example\"></rdfs:domain>\n"+
+		"  </owl:DatatypeProperty>\n"+
+		"  <owl:DatatypeProperty rdf:about=\"http://mesh4x/example/mesh4xMetadata#identifiableProperties\">\n"+
+		"    <rdfs:comment xml:lang=\"en\">id1,id2</rdfs:comment>\n"+
+		"    <rdfs:range rdf:resource=\"http://www.w3.org/2001/XMLSchema#string\"></rdfs:range>\n"+
+		"    <rdfs:domain rdf:resource=\"http://mesh4x/example#mesh4xMetadata\"></rdfs:domain>\n"+
+		"  </owl:DatatypeProperty>\n"+
+		"</rdf:RDF>";
+		
+		
+		Assert.assertEquals(rdfXml, schema.asXML());
+	
+	}
+	
+	@Test
+	public void shouldReadRDFSchemaWithIdentifiableProperties(){
+		String serverUrl = "http://localhost:8080/mesh4x/feeds";
+		String meshGroup = "meshGroup";
+		String dataSetId = "dataSetId";
+
+		String url = serverUrl+"/"+meshGroup+"/"+dataSetId;
+		
+		RDFSchema rdfSchema = new RDFSchema(dataSetId, url+"#", dataSetId);
+		rdfSchema.addStringProperty("id1", "id1", "en");
+		rdfSchema.addStringProperty("id2", "id2", "en");
+		rdfSchema.addStringProperty("string", "string", "en");
+		rdfSchema.addIntegerProperty("integer", "int", "en");
+		rdfSchema.addBooleanProperty("boolean", "boolean", "en");
+		rdfSchema.addDateTimeProperty("datetime", "datetime", "en");
+		rdfSchema.addDoubleProperty("double", "double", "en");
+		rdfSchema.addLongProperty("long", "long", "en");
+		rdfSchema.addDecimalProperty("decimal", "decimal", "en");  
+		
+		ArrayList<String> pks = new ArrayList<String>();
+		pks.add("id1");
+		pks.add("id2");
+		rdfSchema.setIdentifiablePropertyNames(pks);
+		rdfSchema.setVersionPropertyName("datetime");
+		RDFSchema schema = new RDFSchema(new StringReader(rdfSchema.asXML()));
+		
+		Assert.assertNotNull(schema);
+		Assert.assertTrue(rdfSchema.isCompatible(schema));
+		
+		Assert.assertEquals("id1", ((RDFSchema)schema).getIdentifiablePropertyNames().get(0));
+		Assert.assertEquals("id2", ((RDFSchema)schema).getIdentifiablePropertyNames().get(1));
+	}
+
+	
+	@Test
+	public void shouldRDFSchemaIsCompatibleWithIdentifiableProperties(){
+		String serverUrl = "http://localhost:8080/mesh4x/feeds";
+		String meshGroup = "meshGroup";
+		String dataSetId = "dataSetId";
+
+		String url = serverUrl+"/"+meshGroup+"/"+dataSetId;
+		
+		RDFSchema rdfSchema = new RDFSchema(dataSetId, url+"#", dataSetId);
+		rdfSchema.addStringProperty("id1", "id1", "en");
+		rdfSchema.addStringProperty("id2", "id2", "en");
+		rdfSchema.addStringProperty("string", "string", "en");
+		
+		RDFSchema otherRdfSchema = new RDFSchema(dataSetId, url+"#", dataSetId);
+		otherRdfSchema.addStringProperty("id1", "id1", "en");
+		otherRdfSchema.addStringProperty("id2", "id2", "en");
+		otherRdfSchema.addStringProperty("string", "string", "en");
+				
+		Assert.assertTrue(rdfSchema.isCompatible(otherRdfSchema));
+		
+		ArrayList<String> pks = new ArrayList<String>();
+		pks.add("id1");
+		pks.add("id2");
+		
+		rdfSchema.setIdentifiablePropertyNames(pks);
+		rdfSchema.setVersionPropertyName("datetime");
+				
+		Assert.assertEquals("id1", rdfSchema.getIdentifiablePropertyNames().get(0));
+		Assert.assertEquals("id2", rdfSchema.getIdentifiablePropertyNames().get(1));
+	
+		otherRdfSchema.setIdentifiablePropertyNames(pks);
+		otherRdfSchema.setVersionPropertyName("datetime");
+				
+		Assert.assertEquals("id1", otherRdfSchema.getIdentifiablePropertyNames().get(0));
+		Assert.assertEquals("id2", otherRdfSchema.getIdentifiablePropertyNames().get(1));
+		
+		Assert.assertTrue(rdfSchema.isCompatible(otherRdfSchema));
+	}
+	
+	@Test
+	public void shouldRDFSchemaIsNotCompatibleWithIdentifiableProperties(){
+		String serverUrl = "http://localhost:8080/mesh4x/feeds";
+		String meshGroup = "meshGroup";
+		String dataSetId = "dataSetId";
+
+		String url = serverUrl+"/"+meshGroup+"/"+dataSetId;
+		
+		RDFSchema rdfSchema = new RDFSchema(dataSetId, url+"#", dataSetId);
+		rdfSchema.addStringProperty("id1", "id1", "en");
+		rdfSchema.addStringProperty("id2", "id2", "en");
+		rdfSchema.addStringProperty("string", "string", "en");
+		
+		RDFSchema otherRdfSchema = new RDFSchema(dataSetId, url+"#", dataSetId);
+		otherRdfSchema.addStringProperty("id1", "id1", "en");
+		otherRdfSchema.addStringProperty("id2", "id2", "en");
+		otherRdfSchema.addStringProperty("string", "string", "en");
+				
+		Assert.assertTrue(rdfSchema.isCompatible(otherRdfSchema));
+		
+		ArrayList<String> pks = new ArrayList<String>();
+		pks.add("id1");
+		pks.add("id2");
+		
+		rdfSchema.setIdentifiablePropertyNames(pks);
+		rdfSchema.setVersionPropertyName("datetime");
+				
+		Assert.assertEquals("id1", rdfSchema.getIdentifiablePropertyNames().get(0));
+		Assert.assertEquals("id2", rdfSchema.getIdentifiablePropertyNames().get(1));
+	
+		
+		ArrayList<String> pks2 = new ArrayList<String>();
+		pks2.add("id2");
+		pks2.add("id1");
+		otherRdfSchema.setIdentifiablePropertyNames(pks2);
+		otherRdfSchema.setVersionPropertyName("datetime");
+				
+		Assert.assertEquals("id2", otherRdfSchema.getIdentifiablePropertyNames().get(0));
+		Assert.assertEquals("id1", otherRdfSchema.getIdentifiablePropertyNames().get(1));
+		
+		Assert.assertFalse(rdfSchema.isCompatible(otherRdfSchema));
 	}
 }

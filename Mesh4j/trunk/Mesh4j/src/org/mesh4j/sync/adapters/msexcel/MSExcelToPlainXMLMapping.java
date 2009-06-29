@@ -10,25 +10,14 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.mesh4j.sync.payload.schema.ISchema;
+import org.mesh4j.sync.payload.schema.AbstractPlainXmlIdentifiableMapping;
 import org.mesh4j.sync.utils.DateHelper;
-import org.mesh4j.sync.validations.Guard;
 
-public class MSExcelToPlainXMLMapping implements IMsExcelToXMLMapping {
+public class MSExcelToPlainXMLMapping extends AbstractPlainXmlIdentifiableMapping implements IMsExcelToXMLMapping {
 
-	// MODEL VARIABLES
-	private String idColumnName;
-	private String lastUpdateColumnName;
-	
 	// BUSINESS METHODS
-	public MSExcelToPlainXMLMapping(String idColumnName, String lastUpdateColumnName) {
-		Guard.argumentNotNullOrEmptyString(idColumnName, "idColumnName");
-		if(lastUpdateColumnName != null){
-			Guard.argumentNotNullOrEmptyString(lastUpdateColumnName, "lastUpdateColumnName");
-		}		
-
-		this.idColumnName = idColumnName;
-		this.lastUpdateColumnName = lastUpdateColumnName;
+	public MSExcelToPlainXMLMapping(String type, String idColumnName, String lastUpdateColumnName, String lastUpdateColumnDateTimeFormat) {
+		super(type, idColumnName, lastUpdateColumnName, lastUpdateColumnDateTimeFormat);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -100,29 +89,14 @@ public class MSExcelToPlainXMLMapping implements IMsExcelToXMLMapping {
 		return payload;
 	}
 
-	@Override
-	public String getIdColumnName() {
-		return this.idColumnName;
-	}
-
-	@Override
-	public String getLastUpdateColumnName() {
-		return this.lastUpdateColumnName;
-	}
-
-	@Override
-	public ISchema getSchema() {
-		return null;
-	}
-
-	@Override
+	//@Override
 	public void createDataSource(IMsExcel excel){
 		excel.setDirty();
 		excel.flush();
 	}
 
 	@Override
-	public String getIdColumnValue(Sheet sheet, Row row) {
+	public String getId(Sheet sheet, Row row) {
 		Cell cell = MsExcelUtils.getCell(sheet, row, this.getIdColumnName());
 		if(cell != null && cell.getCellType() != Cell.CELL_TYPE_BLANK){
 			Object cellValue = MsExcelUtils.getCellValue(cell);
@@ -133,12 +107,27 @@ public class MSExcelToPlainXMLMapping implements IMsExcelToXMLMapping {
 	}
 	
 	@Override
-	public Date getLastUpdateColumnValue(Sheet sheet, Row row) {
+	public Date getLastUpdate(Sheet sheet, Row row) {
 		Cell cell = MsExcelUtils.getCell(sheet, row, this.getLastUpdateColumnName());
 		if(cell != null && cell.getCellType() != Cell.CELL_TYPE_BLANK && cell.getCellType() == Cell.CELL_TYPE_NUMERIC && DateUtil.isCellDateFormatted(cell)){
 			return cell.getDateCellValue();
 		} else {
 			return null;
 		}
+	}
+
+	@Override
+	public Row getRow(Sheet sheet, String id) {
+		return MsExcelUtils.getRow(sheet, new String[]{this.idColumnName}, new String[]{id});
+	}
+
+	@Override
+	public void initializeHeaderRow(Workbook wb, Sheet sheet, Row row) {
+		MsExcelUtils.getOrCreateCellStringIfAbsent(wb, row, this.idColumnName);
+
+		if(this.lastUpdateColumnName != null){
+			MsExcelUtils.getOrCreateCellStringIfAbsent(wb, row, this.lastUpdateColumnName);
+		}
+		
 	}
 }

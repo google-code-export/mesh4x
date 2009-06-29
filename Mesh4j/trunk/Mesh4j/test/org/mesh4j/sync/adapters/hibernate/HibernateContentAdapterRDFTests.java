@@ -4,6 +4,7 @@ import java.io.File;
 
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
+import org.mesh4j.sync.adapters.IdentifiableContent;
 import org.mesh4j.sync.model.IContent;
 import org.mesh4j.sync.payload.schema.rdf.RDFInstance;
 import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
@@ -18,6 +19,7 @@ public class HibernateContentAdapterRDFTests extends HibernateContentAdapterTest
 		schema.addStringProperty("id", "id", "en");
 		schema.addStringProperty("pass", "password", "en");
 		schema.addStringProperty("name", "name", "en");
+		schema.setIdentifiablePropertyName("id");
 		
 		HibernateSessionFactoryBuilder builder = new HibernateSessionFactoryBuilder();
 		builder.addMapping(new File(HibernateAdapterTests.class.getResource("User.hbm.xml").getFile()));
@@ -27,7 +29,7 @@ public class HibernateContentAdapterRDFTests extends HibernateContentAdapterTest
 		return builder;
 	}
 	
-	protected IContent makeContent(String id, String name, String pass) throws DocumentException {
+	protected IContent makeContent(String id, String name, String pass, HibernateContentAdapter adapter) throws DocumentException {
 		RDFInstance rdfInstance = this.schema.createNewInstance("uri:urn:"+id);
 		rdfInstance.setProperty("name", name);
 		rdfInstance.setProperty("pass", pass);
@@ -35,7 +37,7 @@ public class HibernateContentAdapterRDFTests extends HibernateContentAdapterTest
 		
 		String rdfXml = rdfInstance.asXML();
 		Element payload = XMLHelper.parseElement(rdfXml);
-		IContent user = new EntityContent(payload, "user", "id", id);
+		IContent user = new IdentifiableContent(payload, adapter.getMapping(), id);
 		return user;
 	}
 	

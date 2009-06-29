@@ -87,8 +87,8 @@ public class MsExcelSyncAdapterFactory implements ISyncAdapterFactory {
 	}
 
 	protected MsExcelContentAdapter createContentAdapter(String sheetName, String idColumnName, IMsExcel excel) {
-		MSExcelToPlainXMLMapping mapping = new MSExcelToPlainXMLMapping(idColumnName, null);
-		return new MsExcelContentAdapter(excel, mapping, sheetName);
+		MSExcelToPlainXMLMapping mapping = new MSExcelToPlainXMLMapping(sheetName, idColumnName, null, null);
+		return new MsExcelContentAdapter(excel, mapping);
 	}
 
 	protected MsExcelSyncRepository createSyncRepository(String sheetName, IIdentityProvider identityProvider, IMsExcel excel) {

@@ -10,7 +10,7 @@ import java.util.UUID;
 import org.dom4j.Element;
 import org.junit.Assert;
 import org.junit.Test;
-import org.mesh4j.sync.adapters.hibernate.EntityContent;
+import org.mesh4j.sync.adapters.IdentifiableContent;
 import org.mesh4j.sync.adapters.jackcess.msaccess.IMsAccessToXMLMapping;
 import org.mesh4j.sync.adapters.jackcess.msaccess.MsAccess;
 import org.mesh4j.sync.adapters.jackcess.msaccess.MsAccessContentAdapter;
@@ -25,6 +25,7 @@ import org.mesh4j.sync.utils.DateHelper;
 import org.mesh4j.sync.utils.FileUtils;
 import org.mesh4j.sync.validations.MeshException;
 
+import com.healthmarketscience.jackcess.Cursor;
 import com.healthmarketscience.jackcess.Table;
 
 
@@ -32,40 +33,58 @@ public class MsAccessContentAdapterTests {
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateAdapterFailsWhenMsAccessIsNull(){
-		new MsAccessContentAdapter(null, new MockMsAccessToXmlMapping(), "myTable");
+		MsAccess msaccess = makeEmptyMDBFile("myTable");
+		new MsAccessContentAdapter(null, makeMapping(msaccess, "myTable"));
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateAdapterFailsWhenFileNameIsNull(){
-		new MsAccessContentAdapter(new MsAccess(null), new MockMsAccessToXmlMapping(), "myTable");
+		MsAccess msaccess = makeEmptyMDBFile("myTable");
+		new MsAccessContentAdapter(new MsAccess(null), makeMapping(msaccess, "myTable"));
 	}
 
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateAdapterFailsWhenFileNameIsEmpty(){
-		new MsAccessContentAdapter(new MsAccess(""), new MockMsAccessToXmlMapping(), "myTable");
+		MsAccess msaccess = makeEmptyMDBFile("myTable");
+		new MsAccessContentAdapter(new MsAccess(""), makeMapping(msaccess, "myTable"));
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateAdapterFailsWhenMappingIsNull(){
-		new MsAccessContentAdapter(new MsAccess("myfile.mdb"), null, "myTable");
+		new MsAccessContentAdapter(new MsAccess("myfile.mdb"), null);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateAdapterFailsWhenTableNameIsNull(){
-		new MsAccessContentAdapter(new MsAccess("myfile.mdb"), new MockMsAccessToXmlMapping(), null);
+		MsAccess msaccess = makeEmptyMDBFile("myTable");
+		new MsAccessContentAdapter(msaccess, makeMapping(msaccess, null));
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateAdapterFailsWhenTableNameIsEmpty(){
-		new MsAccessContentAdapter(new MsAccess("myfile.mdb"), new MockMsAccessToXmlMapping(), "");
+		MsAccess msaccess = makeEmptyMDBFile("myTable");
+		new MsAccessContentAdapter(msaccess, makeMapping(msaccess, ""));
 	}
 	
 	@Test
 	public void shouldCreateAdapterFailsWhenTableDoesNotExist(){
+		
+		IMsAccessToXMLMapping mapping = new IMsAccessToXMLMapping(){
+			@Override public Date getLastUpdate(Map<String, Object> row) {return null;}
+			@Override public ISchema getSchema() {return null;}
+			@Override public Element translateAsElement(Map<String, Object> row) {return null;}
+			@Override public Map<String, Object> translateAsRow(Element payload) {return null;}
+			@Override public String getId(Map<String, Object> row) {return null;}
+			@Override public String getId(Element payload) {return null;}
+			@Override public String getType() {return "xxx";}
+			@Override public Element getTypeElement(Element payload) {return null;}
+			@Override public boolean findRow(Cursor cursor, String meshid) {return false;}
+		};
+		
 		MsAccess msaccess = makeEmptyMDBFile("myTable");
 		boolean isOk = false;
 		try{			
-			new MsAccessContentAdapter(msaccess, makeMapping(msaccess, "myTable"), "xxxxx");			
+			new MsAccessContentAdapter(msaccess, mapping);			
 		}catch(IllegalArgumentException e){
 			isOk = true;
 		}
@@ -77,7 +96,7 @@ public class MsAccessContentAdapterTests {
 	public void shouldGetTypeReturnsTableName(){
 		MsAccess msaccess = makeEmptyMDBFile("mytable");
 		MsAccessToRDFMapping mapper = makeMapping(msaccess, "mytable");
-		MsAccessContentAdapter adapter = new MsAccessContentAdapter(msaccess, mapper, "mytable");
+		MsAccessContentAdapter adapter = new MsAccessContentAdapter(msaccess, mapper);
 		Assert.assertEquals("mytable", adapter.getType());
 		
 		FileUtils.delete(new File(msaccess.getFileName()));
@@ -86,7 +105,7 @@ public class MsAccessContentAdapterTests {
 	@Test
 	public void shouldGetAllReturnsEmpty(){
 		MsAccess msaccess = makeEmptyMDBFile("mytable");
-		MsAccessContentAdapter adapter = new MsAccessContentAdapter(msaccess, makeMapping(msaccess, "mytable"), "mytable");
+		MsAccessContentAdapter adapter = new MsAccessContentAdapter(msaccess, makeMapping(msaccess, "mytable"));
 		Assert.assertEquals(0, adapter.getAll(new Date()).size());
 
 		FileUtils.delete(new File(msaccess.getFileName()));
@@ -95,7 +114,7 @@ public class MsAccessContentAdapterTests {
 	@Test
 	public void shouldGetReturnsNullBecauseItemDoesNotExistsOnTable(){
 		MsAccess msaccess = makeEmptyMDBFile("mytable");
-		MsAccessContentAdapter adapter = new MsAccessContentAdapter(msaccess, makeMapping(msaccess, "mytable"), "mytable");
+		MsAccessContentAdapter adapter = new MsAccessContentAdapter(msaccess, makeMapping(msaccess, "mytable"));
 		Assert.assertNull(adapter.get("1"));
 		FileUtils.delete(new File(msaccess.getFileName()));
 	}	
@@ -114,7 +133,7 @@ public class MsAccessContentAdapterTests {
 		addRow(msaccess, tableName, id2, "jmt2", 2, date);
 		addRow(msaccess, tableName, id3, "jmt3", 3, date);
 		
-		MsAccessContentAdapter adapter = new MsAccessContentAdapter(msaccess, makeMapping(msaccess, tableName), tableName);
+		MsAccessContentAdapter adapter = new MsAccessContentAdapter(msaccess, makeMapping(msaccess, tableName));
 		adapter.beginSync();
 		
 		List<IContent> items = adapter.getAll(null);
@@ -142,7 +161,7 @@ public class MsAccessContentAdapterTests {
 		addRow(msaccess, tableName, id2, "jmt2", 2, date);
 		addRow(msaccess, tableName, id3, "jmt3", 3, date);
 		
-		MsAccessContentAdapter adapter = new MsAccessContentAdapter(msaccess, makeMapping(msaccess, tableName), tableName);
+		MsAccessContentAdapter adapter = new MsAccessContentAdapter(msaccess, makeMapping(msaccess, tableName));
 		adapter.beginSync();
 		
 		List<IContent> items = adapter.getAll(null);
@@ -178,9 +197,9 @@ public class MsAccessContentAdapterTests {
 		addRow(msaccess, tableName, id5, "jmt5", 5, lastUpdate2);
 		
 		MsAccessToRDFMapping mapping = makeMapping(msaccess, tableName);
-		mapping.setLastUpdateColumnName("birthDate");
+		((RDFSchema)mapping.getSchema()).setVersionPropertyName("birthDate");
 		
-		MsAccessContentAdapter adapter = new MsAccessContentAdapter(msaccess, mapping, tableName);
+		MsAccessContentAdapter adapter = new MsAccessContentAdapter(msaccess, mapping);
 		adapter.beginSync();
 		
 		List<IContent> items = adapter.getAll(since);
@@ -210,7 +229,7 @@ public class MsAccessContentAdapterTests {
 		addRow(msaccess, tableName, id3, "jmt3", 3, date);
 		
 		MsAccessToRDFMapping mapping = makeMapping(msaccess, tableName);
-		MsAccessContentAdapter adapter = new MsAccessContentAdapter(msaccess, mapping, tableName);
+		MsAccessContentAdapter adapter = new MsAccessContentAdapter(msaccess, mapping);
 		adapter.beginSync();
 		
 		String idToDelete = IdGenerator.INSTANCE.newID(); 
@@ -221,7 +240,7 @@ public class MsAccessContentAdapterTests {
 		rowMap.put("birthDate", date);
 		
 		Element payload = mapping.translateAsElement(rowMap);
-		EntityContent content = new EntityContent(payload, tableName, "id", idToDelete);
+		IdentifiableContent content = new IdentifiableContent(payload, mapping, idToDelete);
 		adapter.delete(content);
 
 		List<IContent> items = adapter.getAll(null);
@@ -251,7 +270,7 @@ public class MsAccessContentAdapterTests {
 		addRow(msaccess, tableName, id3, "jmt3", 3, date);
 		
 		MsAccessToRDFMapping mapping = makeMapping(msaccess, tableName);
-		MsAccessContentAdapter adapter = new MsAccessContentAdapter(msaccess, mapping, tableName);
+		MsAccessContentAdapter adapter = new MsAccessContentAdapter(msaccess, mapping);
 		adapter.beginSync();
 		
 		Map<String, Object> rowMap = new HashMap<String, Object>();
@@ -261,7 +280,7 @@ public class MsAccessContentAdapterTests {
 		rowMap.put("birthDate", date);
 		
 		Element payload = mapping.translateAsElement(rowMap);
-		EntityContent content = new EntityContent(payload, tableName, "id", id1);
+		IdentifiableContent content = new IdentifiableContent(payload, mapping, id1);
 		adapter.delete(content);
 
 		List<IContent> items = adapter.getAll(null);
@@ -288,7 +307,7 @@ public class MsAccessContentAdapterTests {
 		addRow(msaccess, tableName, id3, "jmt3", 3, date);
 		
 		MsAccessToRDFMapping mapping = makeMapping(msaccess, tableName);
-		MsAccessContentAdapter adapter = new MsAccessContentAdapter(msaccess, mapping, tableName);
+		MsAccessContentAdapter adapter = new MsAccessContentAdapter(msaccess, mapping);
 		adapter.beginSync();
 		
 		String id4 = IdGenerator.INSTANCE.newID();
@@ -299,7 +318,7 @@ public class MsAccessContentAdapterTests {
 		rowMap.put("birthDate", date);
 		
 		Element payload = mapping.translateAsElement(rowMap);
-		EntityContent content = new EntityContent(payload, tableName, "id", id4);
+		IdentifiableContent content = new IdentifiableContent(payload, mapping, id4);
 		adapter.save(content);
 
 		List<IContent> items = adapter.getAll(null);
@@ -328,7 +347,7 @@ public class MsAccessContentAdapterTests {
 		addRow(msaccess, tableName, id3, "jmt3", 3, date);
 		
 		MsAccessToRDFMapping mapping = makeMapping(msaccess, tableName);
-		MsAccessContentAdapter adapter = new MsAccessContentAdapter(msaccess, mapping, tableName);
+		MsAccessContentAdapter adapter = new MsAccessContentAdapter(msaccess, mapping);
 		adapter.beginSync();
 		
 		String id4 = IdGenerator.INSTANCE.newID();
@@ -339,7 +358,7 @@ public class MsAccessContentAdapterTests {
 		rowMap.put("birthDate", date);
 		
 		Element payload = mapping.translateAsElement(rowMap);
-		EntityContent content = new EntityContent(payload, tableName, "id", id4);
+		IdentifiableContent content = new IdentifiableContent(payload, mapping, id4);
 		adapter.save(content);
 
 		List<IContent> items = adapter.getAll(null);
@@ -358,7 +377,7 @@ public class MsAccessContentAdapterTests {
 		rowMapToUpdate.put("birthDate", newdate);
 		
 		Element payloadToUpdate = mapping.translateAsElement(rowMapToUpdate);
-		EntityContent contentToUpdate = new EntityContent(payloadToUpdate, tableName, "id", id4);
+		IdentifiableContent contentToUpdate = new IdentifiableContent(payloadToUpdate, mapping, id4);
 		adapter.save(contentToUpdate);
 
 		items = adapter.getAll(null);
@@ -420,7 +439,6 @@ public class MsAccessContentAdapterTests {
 
 		Assert.assertNotNull(content);
 
-		
 		RDFInstance instance = ((RDFSchema)adapter.getSchema()).createNewInstanceFromRDFXML(content.getPayload().asXML());
 		String idRow = (String)instance.getPropertyValue("id");
 		String nameRow = (String)instance.getPropertyValue("name");
@@ -433,15 +451,4 @@ public class MsAccessContentAdapterTests {
 		Assert.assertEquals(DateHelper.formatW3CDateTime(birthDate), DateHelper.formatW3CDateTime(birthDateRow));
 	}
 	
-	private class MockMsAccessToXmlMapping implements IMsAccessToXMLMapping{
-		@Override public String getIdColumnName() {return null;}
-		@Override public String getLastUpdateColumnName() {return null;}
-		@Override public Date getLastUpdateColumnValue(Map<String, Object> row) {return null;}
-		@Override public ISchema getSchema() {return null;}
-		@Override public Element translateAsElement(Map<String, Object> row) {return null;}
-		@Override public Map<String, Object> translateAsRow(Element payload) {return null;}
-		@Override public String getMeshIdValue(Map<String, Object> row) {return null;}
-		@Override public String normalizeAsMeshID(String msAccessId) {return null;}
-		@Override public String normalizeAsMsAccessID(String meshID) {return null;}
-	}
 }

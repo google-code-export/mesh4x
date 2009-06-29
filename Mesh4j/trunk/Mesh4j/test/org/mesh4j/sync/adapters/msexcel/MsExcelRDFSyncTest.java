@@ -42,13 +42,13 @@ public class MsExcelRDFSyncTest {
 
 		RDFSchema schema = new RDFSchema(sheetName, "http://mesh4x/epiinfo/"+sheetName+"#", sheetName);
 		schema.addStringProperty("Name", "name", "en");
-		schema.addStringProperty("Code", "code", "en");
+		schema.addStringProperty(idColumn, "code", "en");
 		schema.addIntegerProperty("AGE", "age", "en");
 		schema.addStringProperty("SEX", "sex", "en");
 		schema.addBooleanProperty("ILL", "ill", "en");
 		schema.addDateTimeProperty("DateOnset", "dateOnset", "en");
-		
-		MsExcelToRDFMapping rdfMapping = new MsExcelToRDFMapping(schema, idColumn);
+		schema.setIdentifiablePropertyName(idColumn);
+		MsExcelToRDFMapping rdfMapping = new MsExcelToRDFMapping(schema);
 		
 		// source split adapter
 		IMsExcel excel1 = new MsExcel(TestHelper.fileName(IdGenerator.INSTANCE.newID()+".xls"));
@@ -65,7 +65,7 @@ public class MsExcelRDFSyncTest {
 		
 		MockMsExcel excelSource = new MockMsExcel(excel1);
 		MsExcelSyncRepository syncRepoSource = new MsExcelSyncRepository(excelSource, sheetName+"_sync", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
-		MsExcelContentAdapter contentAdapterSource = new MsExcelContentAdapter(excelSource, rdfMapping, sheetName);
+		MsExcelContentAdapter contentAdapterSource = new MsExcelContentAdapter(excelSource, rdfMapping);
 		ISyncAdapter source = new SplitAdapter(syncRepoSource, contentAdapterSource, NullIdentityProvider.INSTANCE);
 
 		// target split adapter
@@ -83,7 +83,7 @@ public class MsExcelRDFSyncTest {
 		
 		MockMsExcel excelTarget = new MockMsExcel(excel2);			
 		MsExcelSyncRepository syncRepoTarget = new MsExcelSyncRepository(excelTarget, sheetName+"_sync", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
-		MsExcelContentAdapter contentAdapterTarget = new MsExcelContentAdapter(excelTarget, rdfMapping, sheetName);
+		MsExcelContentAdapter contentAdapterTarget = new MsExcelContentAdapter(excelTarget, rdfMapping);
 		ISyncAdapter target = new SplitAdapter(syncRepoTarget, contentAdapterTarget, NullIdentityProvider.INSTANCE);
 		
 		// sync
@@ -153,11 +153,10 @@ public class MsExcelRDFSyncTest {
 
 		// create adapters and sync engine
 		
-		MsExcelRDFSyncAdapterFactory factory = new MsExcelRDFSyncAdapterFactory("http://localhost:8080/mesh4x/feeds");
-		SplitAdapter adapterA = factory.createSyncAdapter(fileA.getCanonicalPath(), sheetName, idColumnName, NullIdentityProvider.INSTANCE);
+		SplitAdapter adapterA = MsExcelRDFSyncAdapterFactory.createSyncAdapter(new MsExcel(fileA.getCanonicalPath()), sheetName, new String[]{idColumnName}, null, new LoggedInIdentityProvider(), "http://localhost:8080/mesh4x/feeds");
 		RDFSchema rdfSchema = (RDFSchema)((MsExcelContentAdapter)adapterA.getContentAdapter()).getSchema();
 		
-		SplitAdapter adapterB = factory.createSyncAdapter(fileB.getCanonicalPath(), sheetName, idColumnName, NullIdentityProvider.INSTANCE, rdfSchema);
+		SplitAdapter adapterB = MsExcelRDFSyncAdapterFactory.createSyncAdapter(new MsExcel(fileB.getCanonicalPath()), new LoggedInIdentityProvider(), rdfSchema);
 		
 		// sync
 		
@@ -168,8 +167,8 @@ public class MsExcelRDFSyncTest {
 		// no changes or updates are produced
 		TestHelper.assertSync(syncEngine);
 		
-		adapterA = factory.createSyncAdapter(fileA.getCanonicalPath(), sheetName, idColumnName, new LoggedInIdentityProvider());		
-		adapterB = factory.createSyncAdapter(fileB.getCanonicalPath(), sheetName, idColumnName, new LoggedInIdentityProvider());
+		adapterA = MsExcelRDFSyncAdapterFactory.createSyncAdapter(new MsExcel(fileA.getCanonicalPath()), sheetName, new String[]{idColumnName}, null, new LoggedInIdentityProvider(), "http://localhost:8080/mesh4x/feeds");		
+		adapterB = MsExcelRDFSyncAdapterFactory.createSyncAdapter(new MsExcel(fileB.getCanonicalPath()), sheetName, new String[]{idColumnName}, null, new LoggedInIdentityProvider(), "http://localhost:8080/mesh4x/feeds");
 		syncEngine = new SyncEngine(adapterA, adapterB);
 		
 		// no changes or updates are produced

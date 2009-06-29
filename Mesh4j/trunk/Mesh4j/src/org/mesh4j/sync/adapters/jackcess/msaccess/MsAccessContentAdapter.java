@@ -2,20 +2,18 @@ package org.mesh4j.sync.adapters.jackcess.msaccess;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.dom4j.Element;
 import org.mesh4j.sync.ISyncAware;
-import org.mesh4j.sync.adapters.hibernate.EntityContent;
+import org.mesh4j.sync.adapters.IdentifiableContent;
 import org.mesh4j.sync.adapters.split.IIdentifiableContentAdapter;
 import org.mesh4j.sync.model.IContent;
 import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
-import com.healthmarketscience.jackcess.Column;
 import com.healthmarketscience.jackcess.Cursor;
 import com.healthmarketscience.jackcess.Table;
 
@@ -25,22 +23,18 @@ public class MsAccessContentAdapter implements IIdentifiableContentAdapter, ISyn
 	private IMsAccess msaccess;
 	private IMsAccessToXMLMapping mapping;
 	
-	private String tableName;
-	
 	// BUSINESS METHODS
-	public MsAccessContentAdapter(IMsAccess msaccess, IMsAccessToXMLMapping mapping, String tableName){
+	public MsAccessContentAdapter(IMsAccess msaccess, IMsAccessToXMLMapping mapping){
 		super();
 		Guard.argumentNotNull(msaccess, "msaccess");
 		Guard.argumentNotNull(mapping, "mapping");
-		Guard.argumentNotNullOrEmptyString(tableName, "tableName");
-		
-		this.tableName = tableName;
+
 		this.msaccess = msaccess;
 		this.mapping = mapping;
 		
-		Table table = this.msaccess.getTable(tableName);
+		Table table = this.msaccess.getTable(mapping.getType());
 		if(table == null){
-			Guard.throwsArgumentException("tableName", tableName);
+			Guard.throwsArgumentException("tableName", mapping.getType());
 		}
 	}
 
@@ -48,20 +42,19 @@ public class MsAccessContentAdapter implements IIdentifiableContentAdapter, ISyn
 	
 	@Override
 	public String getType() {
-		return this.tableName;
+		return mapping.getType();
 	}
 
 	@Override
 	public void save(IContent content) {
-		EntityContent entityContent = EntityContent.normalizeContent(content, this.getType(), this.getIdNode());
-		Map<String, Object> rowMap = this.mapping.translateAsRow(entityContent.getPayload());
-		
+		IdentifiableContent entityContent = IdentifiableContent.normalizeContent(content, this.mapping);
 		try{
-			Table table = msaccess.getTable(tableName);
-			Cursor c = Cursor.createCursor(table);
-			Column column = table.getColumn(this.getIdNode());
+			Map<String, Object> rowMap = this.mapping.translateAsRow(entityContent.getPayload());
 			
-			if(c.findRow(column, rowMap.get(this.getIdNode()))){
+			Table table = getTable();
+			Cursor c = Cursor.createCursor(table);
+			
+			if(this.mapping.findRow(c, entityContent.getId())){
 				c.deleteCurrentRow();
 				table.addRow(table.asRow(rowMap));
 			} else {
@@ -74,14 +67,11 @@ public class MsAccessContentAdapter implements IIdentifiableContentAdapter, ISyn
 	
 	@Override
 	public void delete(IContent content) {
-		EntityContent entityContent = EntityContent.normalizeContent(content, this.getType(), this.getIdNode());
-		Map<String, Object> rowMap = this.mapping.translateAsRow(entityContent.getPayload());
+		IdentifiableContent entityContent = IdentifiableContent.normalizeContent(content, this.mapping);
 		try{
-			Table table = msaccess.getTable(tableName);
+			Table table = getTable();
 			Cursor c = Cursor.createCursor(table);
-			Column column = table.getColumn(this.getIdNode());
-			
-			if(c.findRow(column, rowMap.get(this.getIdNode()))){
+			if(this.mapping.findRow(c, entityContent.getId())){
 				c.deleteCurrentRow();
 			}
 		} catch (Exception e) {
@@ -92,20 +82,22 @@ public class MsAccessContentAdapter implements IIdentifiableContentAdapter, ISyn
 	@Override
 	public IContent get(String entityId) {
 		try{
-			Table table = msaccess.getTable(tableName);
-			Map<String, Object> rowPattern = new HashMap<String, Object>();
-			rowPattern.put(this.getIdNode(), this.mapping.normalizeAsMsAccessID(entityId));
-						
-			Map<String, Object> row = Cursor.findRow(table, rowPattern);
-			if(row != null){
+			Table table = getTable();
+			Cursor c = Cursor.createCursor(table);
+			if(this.mapping.findRow(c, entityId)){
+				Map<String, Object> row = c.getCurrentRow();
 				Element payload = this.mapping.translateAsElement(row);
-				return new EntityContent(payload, this.getType(), this.getIdNode(), entityId);
+				return new IdentifiableContent(payload, this.mapping, entityId);
 			} else {
 				return null;
 			}
 		}catch (Exception e) {
 			throw new MeshException(e);
 		}
+	}
+
+	private Table getTable() {
+		return msaccess.getTable(this.getType());
 	}
 
 	@Override
@@ -115,16 +107,16 @@ public class MsAccessContentAdapter implements IIdentifiableContentAdapter, ISyn
 			IContent entityContent;
 			
 			ArrayList<IContent> result = new ArrayList<IContent>();
-			Table table = msaccess.getTable(tableName);
+			Table table = getTable();
 			Cursor c = Cursor.createCursor(table);
 			
 			Map<String, Object> row = c.getNextRow();
 			while(row != null){
 				if(this.hasChanged(row, since)){
-					String entityID = this.mapping.getMeshIdValue(row);
+					String entityID = this.mapping.getId(row);
 					if(entityID != null){
 						payload = this.mapping.translateAsElement(row);
-						entityContent = new EntityContent(payload, this.getType(), this.getIdNode(), entityID);
+						entityContent = new IdentifiableContent(payload, this.mapping, entityID);
 						result.add(entityContent);
 					}
 				}
@@ -137,7 +129,7 @@ public class MsAccessContentAdapter implements IIdentifiableContentAdapter, ISyn
 	}
 
 	private boolean hasChanged(Map<String, Object> row, Date since) {
-		Date lastUpdate = this.mapping.getLastUpdateColumnValue(row);
+		Date lastUpdate = this.mapping.getLastUpdate(row);
 		if(lastUpdate == null){
 			return true;
 		} else {
@@ -176,13 +168,8 @@ public class MsAccessContentAdapter implements IIdentifiableContentAdapter, ISyn
 	}
 
 	@Override
-	public String getIdNode() {
-		return this.mapping.getIdColumnName();
-	}
-	
-	@Override
 	public String getID(IContent content) {
-		EntityContent entityContent = EntityContent.normalizeContent(content, this.getType(), this.getIdNode());
+		IdentifiableContent entityContent = IdentifiableContent.normalizeContent(content, this.mapping);
 		if(entityContent == null){
 			return null;
 		} else {

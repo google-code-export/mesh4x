@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.adapters.hibernate.HibernateContentAdapter;
 import org.mesh4j.sync.adapters.hibernate.HibernateSyncAdapterFactory;
+import org.mesh4j.sync.adapters.msexcel.MsExcel;
 import org.mesh4j.sync.adapters.msexcel.MsExcelContentAdapter;
 import org.mesh4j.sync.adapters.msexcel.MsExcelRDFSyncAdapterFactory;
 import org.mesh4j.sync.adapters.msexcel.MsExcelUtils;
@@ -165,8 +166,7 @@ public class MsAccessVsMySqlSyncTests {
 	}
 
 	private SplitAdapter makeExcelAdapter(String ontologyBaseUri, IRDFSchema rdfSchema, String fileName) {
-		MsExcelRDFSyncAdapterFactory factory = new MsExcelRDFSyncAdapterFactory(ontologyBaseUri);
-		return factory.createSyncAdapter(fileName, "mesh_example", "uid", NullIdentityProvider.INSTANCE, rdfSchema);
+		return MsExcelRDFSyncAdapterFactory.createSyncAdapter(new MsExcel(fileName), NullIdentityProvider.INSTANCE, rdfSchema);
 	}
 
 	private SplitAdapter makeHibernateAdapter(String ontologyBaseUri) {
@@ -200,10 +200,8 @@ public class MsAccessVsMySqlSyncTests {
 
 		IRDFSchema rdfSchemaSource = (IRDFSchema)((HibernateContentAdapter)adapterSource.getContentAdapter()).getMapping().getSchema();
 		
-		MsExcelRDFSyncAdapterFactory factory = new MsExcelRDFSyncAdapterFactory(ontologyBaseUri);
-		//String newFileName = TestHelper.fileName("sahana_users_"+IdGenerator.INSTANCE.newID()+".xls");
 		String newFileName = TestHelper.fileName("sahana_users.xls");
-		SplitAdapter adapterTarget = factory.createSyncAdapter(newFileName, "users", "p_uuid", NullIdentityProvider.INSTANCE, rdfSchemaSource);
+		SplitAdapter adapterTarget = MsExcelRDFSyncAdapterFactory.createSyncAdapter(new MsExcel(newFileName), NullIdentityProvider.INSTANCE, rdfSchemaSource);
 		
 		IRDFSchema rdfSchemaTarget = (IRDFSchema)((MsExcelContentAdapter)adapterTarget.getContentAdapter()).getSchema();
 		

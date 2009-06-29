@@ -8,6 +8,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.junit.Assert;
 import org.junit.Test;
+import org.mesh4j.sync.adapters.IdentifiableContent;
 import org.mesh4j.sync.model.IContent;
 import org.mesh4j.sync.test.utils.TestHelper;
 
@@ -39,7 +40,7 @@ public class HibernateContentAdapterTests {
 		HibernateContentAdapter adapter = new HibernateContentAdapter(getBuilder(), "user");
 		
 		String id = TestHelper.newID();
-		IContent content = makeContent(id, "juan", "123");
+		IContent content = makeContent(id, "juan", "123", adapter);
 		adapter.save(content);
 	}
 	
@@ -48,7 +49,7 @@ public class HibernateContentAdapterTests {
 		HibernateContentAdapter adapter = new HibernateContentAdapter(getBuilder(), "user");
 
 		String id = TestHelper.newID();
-		IContent content = makeContent(id, "juan", "123");
+		IContent content = makeContent(id, "juan", "123", adapter);
 
 		adapter.save(content);
 		
@@ -64,7 +65,7 @@ public class HibernateContentAdapterTests {
 		HibernateContentAdapter adapter = new HibernateContentAdapter(getBuilder(), "user");
 		
 		String id = TestHelper.newID();
-		IContent content = makeContent(id, "juan", "123");
+		IContent content = makeContent(id, "juan", "123", adapter);
 		
 		adapter.save(content);
 		
@@ -83,13 +84,13 @@ public class HibernateContentAdapterTests {
 		HibernateContentAdapter adapter = new HibernateContentAdapter(getBuilder(), "user");
 		
 		String id = TestHelper.newID();
-		IContent content = makeContent(id, "juan", "123");
+		IContent content = makeContent(id, "juan", "123", adapter);
 		adapter.save(content);
 		
 		IContent contentLoaded = adapter.get(id);
 		Assert.assertNotNull(contentLoaded);		
 		
-		IContent contentUpdated = makeContent(id, "jose", "456");
+		IContent contentUpdated = makeContent(id, "jose", "456", adapter);
 		adapter.save(contentUpdated);
 		
 		contentLoaded = adapter.get(id);
@@ -106,11 +107,11 @@ public class HibernateContentAdapterTests {
 		Date sinceDate = TestHelper.nowSubtractDays(1);
 		
 		String id0 = TestHelper.newID();
-		IContent content0 = makeContent(id0, "juan", "123");
+		IContent content0 = makeContent(id0, "juan", "123", adapter);
 		adapter.save(content0);
 		
 		String id1 = TestHelper.newID();
-		IContent content1 = makeContent(id1, "marcelo", "456");
+		IContent content1 = makeContent(id1, "marcelo", "456", adapter);
 		adapter.save(content1);
 		
 		List<IContent> results = adapter.getAll(sinceDate);
@@ -137,9 +138,9 @@ public class HibernateContentAdapterTests {
 		return builder;
 	}
 	
-	protected IContent makeContent(String id, String name, String pass) throws DocumentException {
+	protected IContent makeContent(String id, String name, String pass, HibernateContentAdapter adapter) throws DocumentException {
 		Element element = TestHelper.makeElement("<user><id>"+id+"</id><name>"+name+"</name><pass>"+pass+"</pass></user>");
-		IContent user = new EntityContent(element, "user", "id", id);
+		IContent user = new IdentifiableContent(element, adapter.getMapping(), id);
 		return user;
 	}
 	

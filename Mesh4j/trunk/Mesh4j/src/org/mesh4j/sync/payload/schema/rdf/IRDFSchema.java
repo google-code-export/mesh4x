@@ -1,6 +1,7 @@
 package org.mesh4j.sync.payload.schema.rdf;
 
 import java.text.ParseException;
+import java.util.List;
 import java.util.Map;
 
 import org.dom4j.DocumentHelper;
@@ -43,5 +44,13 @@ public interface IRDFSchema extends ISchema {
 	public String getOntologyBaseUri();
 	public String getOntologyNameSpace();
 	public String getOntologyClassName();
+
+	List<String> getIdentifiablePropertyNames();
+
+	String getVersionPropertyName();
+
+	public boolean isGUID(String propertyName);
+
+	public String getBaseRDFURL();
 
 }

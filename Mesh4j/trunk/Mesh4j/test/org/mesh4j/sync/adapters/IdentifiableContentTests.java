@@ -1,47 +1,50 @@
-package org.mesh4j.sync.adapters.hibernate;
+package org.mesh4j.sync.adapters;
 
 import org.dom4j.Element;
 import org.junit.Assert;
 import org.junit.Test;
+import org.mesh4j.sync.adapters.IIdentifiableMapping;
+import org.mesh4j.sync.adapters.IdentifiableContent;
+import org.mesh4j.sync.adapters.hibernate.EntityDAO;
 import org.mesh4j.sync.adapters.hibernate.mapping.HibernateToPlainXMLMapping;
 import org.mesh4j.sync.model.IContent;
 import org.mesh4j.sync.test.utils.TestHelper;
 
 
-public class EntityContentTests {
+public class IdentifiableContentTests {
 
 	@Test
 	public void shouldReturnsEqualsTrueWithClones(){
 		Element payload = TestHelper.makeElement("<foo><id>1</id></foo>");
-		EntityContent c = new EntityContent(payload, "foo", "id", "bar");
+		IdentifiableContent c = new IdentifiableContent(payload, new MockIdentifiableMapping(), "1");
 		Assert.assertEquals(c, c.clone());
 	}
 	
 	@Test
 	public void shouldBeClonesHasSameHasCodes(){
 		Element payload = TestHelper.makeElement("<foo><id>1</id></foo>");
-		EntityContent c = new EntityContent(payload, "foo", "id", "bar");
+		IdentifiableContent c = new IdentifiableContent(payload, new MockIdentifiableMapping(), "1");
 		Assert.assertTrue(c.hashCode() == c.clone().hashCode());
 	}
 	
 	@Test
 	public void shouldReturnsFalse(){
 		Element payload = TestHelper.makeElement("<foo><id>1</id></foo>");
-		EntityContent c = new EntityContent(payload, "foo", "id", "bar");
+		IdentifiableContent c = new IdentifiableContent(payload, new MockIdentifiableMapping(), "1");
 		Assert.assertFalse(c.equals("qq"));
 	}
 	
 	@Test
 	public void shouldReturnsSameFalseWithClones(){
 		Element payload = TestHelper.makeElement("<foo><id>1</id></foo>");
-		EntityContent c = new EntityContent(payload, "foo", "id", "bar");
+		IdentifiableContent c = new IdentifiableContent(payload, new MockIdentifiableMapping(), "1");
 		Assert.assertFalse(c == c.clone());
 	}
 	
 	@Test
 	public void shouldNormalizeFromHibernateContent(){
 		Element e = TestHelper.makeElement("<foo><id>1</id></foo>");
-		EntityContent c = new EntityContent(e, "foo", "id", "id");
+		IdentifiableContent c = new IdentifiableContent(e, new MockIdentifiableMapping(), "1");
 		EntityDAO dao = new EntityDAO(null, new HibernateToPlainXMLMapping("foo", "id"));
 		
 		Assert.assertSame(c, dao.normalizeContent(c));
@@ -77,6 +80,24 @@ public class EntityContentTests {
 		Assert.assertNull(dao.normalizeContent(c));
 	}	
 
+	private class MockIdentifiableMapping implements IIdentifiableMapping{
+
+		@Override
+		public String getId(Element payload) {
+			return null;
+		}
+
+		@Override
+		public String getType() {
+			return "foo";
+		}
+
+		@Override
+		public Element getTypeElement(Element payload) {
+			return null;
+		}
+		
+	}
 	
 	private class MyContent implements IContent{
 		

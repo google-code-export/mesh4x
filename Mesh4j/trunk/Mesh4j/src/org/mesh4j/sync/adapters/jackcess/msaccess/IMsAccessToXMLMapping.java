@@ -4,27 +4,23 @@ import java.util.Date;
 import java.util.Map;
 
 import org.dom4j.Element;
+import org.mesh4j.sync.adapters.IIdentifiableMapping;
 import org.mesh4j.sync.payload.schema.ISchema;
 
-public interface IMsAccessToXMLMapping {
+import com.healthmarketscience.jackcess.Cursor;
 
-	String getIdColumnName();
-
-	String getLastUpdateColumnName();
+public interface IMsAccessToXMLMapping extends IIdentifiableMapping {
 
 	ISchema getSchema();
-
 
 	Map<String, Object> translateAsRow(Element payload);
 
 	Element translateAsElement(Map<String, Object> row);
 
-	String getMeshIdValue(Map<String, Object> row);
+	String getId(Map<String, Object> row);
 
-	Date getLastUpdateColumnValue(Map<String, Object> row);
+	Date getLastUpdate(Map<String, Object> row);
 
-	String normalizeAsMsAccessID(String meshID);
-	
-	String normalizeAsMeshID(String msAccessId);
+	boolean findRow(Cursor cursor, String meshid);
 
 }

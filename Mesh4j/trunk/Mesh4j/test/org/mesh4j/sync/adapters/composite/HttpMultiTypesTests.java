@@ -15,6 +15,7 @@ import org.mesh4j.sync.adapters.http.HttpSyncAdapterFactory;
 import org.mesh4j.sync.adapters.msexcel.MsExcelContentAdapter;
 import org.mesh4j.sync.adapters.msexcel.MsExcelRDFSyncAdapterFactory;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.test.utils.TestHelper;
@@ -25,19 +26,18 @@ public class HttpMultiTypesTests {
 	public void shouldSyncMultiTypes() throws Exception{
 		
 		String baseURL = "http://localhost:8080/mesh4x/feeds";
-		String meshGroup = "compositeHTTPMSExcel";
+		String meshGroup = "HTTPMSExcel"+IdGenerator.INSTANCE.newID().substring(0, 5);
 		
 		// ms excel creation - multi sheet adapter
-		String excelFileName = MsExcelMultiSheetsTests.createMsExcelFile("composite_HTTP_MsExcel.xlsx");
+		String excelFileName = MsExcelMultiSheetsTests.createMsExcelFile(meshGroup+".xlsx");
 		
-		Map<String, String> sheets = new HashMap<String, String>();
-		sheets.put("sheet1", "Code");
-		sheets.put("sheet2", "Code");
-		sheets.put("sheet3", "Code");
+		Map<String, String[]> sheets = new HashMap<String, String[]>();
+		sheets.put("sheet1", new String[]{"Code"});
+		sheets.put("sheet2", new String[]{"Code"});
+		sheets.put("sheet3", new String[]{"Code"});
 		
 		InMemorySyncAdapter opaqueAdapter = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
-		MsExcelRDFSyncAdapterFactory factory = new MsExcelRDFSyncAdapterFactory(baseURL);
-		CompositeSyncAdapter msExcelMultiSheetsAdapter = factory.createSyncAdapterForMultiSheets(excelFileName, NullIdentityProvider.INSTANCE, sheets, opaqueAdapter);
+		CompositeSyncAdapter msExcelMultiSheetsAdapter = MsExcelRDFSyncAdapterFactory.createSyncAdapterForMultiSheets(excelFileName, NullIdentityProvider.INSTANCE, sheets, opaqueAdapter, baseURL);
 		
 		// extract rdfSchemas
 		List<ISchema> rdfSchemas = new ArrayList<ISchema>();

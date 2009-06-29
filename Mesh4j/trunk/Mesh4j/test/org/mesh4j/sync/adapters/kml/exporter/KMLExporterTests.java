@@ -44,7 +44,7 @@ public class KMLExporterTests {
 		Element element = XMLHelper.parseElement(dataXML);
 		
 		String placemark = KMLExporter.makePlacemark(element, mapping);
-		Assert.assertEquals("<Placemark><name>Patient: Juan</name><description><![CDATA[Adress: Buenos Aires]]></description><Point><coordinates>-58.417309,-34.611781</coordinates></Point></Placemark>", placemark);
+		Assert.assertEquals("<Placemark><name>Patient: Juan</name><description><![CDATA[Adress: Buenos Aires]]></description><Point><coordinates>-58.3731613,-34.6084175</coordinates></Point></Placemark>", placemark);
 	}
 	
 	@Test

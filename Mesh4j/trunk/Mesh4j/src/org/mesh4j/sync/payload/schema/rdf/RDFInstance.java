@@ -2,8 +2,10 @@ package org.mesh4j.sync.payload.schema.rdf;
 
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -95,10 +97,8 @@ public class RDFInstance {
 		String fieldValue;
 		String dataTypeName;
 		
-		DatatypeProperty dataTypeProperty;
-		ExtendedIterator it = rdfSchema.getOWLSchema().listDatatypeProperties();
-		while(it.hasNext()){
-			dataTypeProperty = (DatatypeProperty)it.next();
+		List<DatatypeProperty> domainProperties = rdfSchema.getDomainProperties();
+		for (DatatypeProperty dataTypeProperty : domainProperties) {
 
 			dataTypeName = dataTypeProperty.getLocalName();
 			
@@ -139,10 +139,8 @@ public class RDFInstance {
 		Object fieldValue;
 		String dataTypeName;
 		
-		DatatypeProperty dataTypeProperty;
-		ExtendedIterator it = rdfSchema.getOWLSchema().listDatatypeProperties();
-		while(it.hasNext()){
-			dataTypeProperty = (DatatypeProperty)it.next();
+		List<DatatypeProperty> domainProperties = rdfSchema.getDomainProperties();
+		for (DatatypeProperty dataTypeProperty : domainProperties) {
 
 			dataTypeName = dataTypeProperty.getLocalName();
 			
@@ -262,7 +260,7 @@ public class RDFInstance {
 	}
 
 	public int getPropertyCount() {
-		return this.model.listDatatypeProperties().toSet().size();
+		return this.getDomainProperties().size();
 	}
 
 	public Object getPropertyValue(String propertyName) {
@@ -293,7 +291,7 @@ public class RDFInstance {
 	}
 
 	public String getPropertyName(int index) {
-		DatatypeProperty domainObjectProperty = (DatatypeProperty)this.model.listDatatypeProperties().toList().get(index);
+		DatatypeProperty domainObjectProperty = getDomainProperties().get(index);
 		return domainObjectProperty.getLocalName();
 	}
 
@@ -301,4 +299,25 @@ public class RDFInstance {
 		return this.schema.getPropertyType(propertyName);
 	}
 
+	
+	protected List<DatatypeProperty> getDomainProperties() {
+		ArrayList<DatatypeProperty> domainProperties = new ArrayList<DatatypeProperty>();
+		ExtendedIterator it = this.model.listDatatypeProperties();
+		while(it.hasNext()){
+			DatatypeProperty datatypeProperty = (DatatypeProperty)it.next();
+			if(datatypeProperty.getDomain().equals(this.schema.getDomainClass())){
+				domainProperties.add(datatypeProperty);
+			}
+		}
+		return domainProperties;
+	}
+
+	public String getId() {
+		String id = this.domainObject.getURI();
+		if(id.startsWith("uri:urn:")){
+			return id.substring("uri:urn:".length(), id.length());
+		} else {
+			return id;
+		}
+	}
 }

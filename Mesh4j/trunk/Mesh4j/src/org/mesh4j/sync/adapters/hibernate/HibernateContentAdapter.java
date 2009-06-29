@@ -9,6 +9,7 @@ import org.hibernate.EntityMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.mesh4j.sync.adapters.IdentifiableContent;
 import org.mesh4j.sync.adapters.hibernate.mapping.IHibernateToXMLMapping;
 import org.mesh4j.sync.adapters.split.IIdentifiableContentAdapter;
 import org.mesh4j.sync.model.IContent;
@@ -21,29 +22,26 @@ public class HibernateContentAdapter implements IIdentifiableContentAdapter {
 	// MODEL VARIABLES
 	private IHibernateToXMLMapping mapping;
 	private SessionFactory sessionFactory;
-	private String entityName;
 	
 	// BUSINESS METHODS
 	
 	public HibernateContentAdapter(IHibernateSessionFactoryBuilder sessionFactoryBuilder, String entityName){
 		Guard.argumentNotNull(sessionFactoryBuilder, "sessionFactoryBuilder");
 		Guard.argumentNotNullOrEmptyString(entityName, "entityName");
-		
-		this.entityName = entityName;
-		initializeSessionFactory(sessionFactoryBuilder);
+		initializeSessionFactory(sessionFactoryBuilder, entityName);
 	}
 
-	public void initializeSessionFactory(IHibernateSessionFactoryBuilder sessionFactoryBuilder) {
+	public void initializeSessionFactory(IHibernateSessionFactoryBuilder sessionFactoryBuilder, String entityName) {
 		if(this.sessionFactory != null){
 			this.sessionFactory.close();
 		}
 		
 		this.sessionFactory = sessionFactoryBuilder.buildSessionFactory();
-		this.mapping = sessionFactoryBuilder.buildMeshMapping(this.entityName);
+		this.mapping = sessionFactoryBuilder.buildMeshMapping(entityName);
 	}
 
 	@Override
-	public EntityContent get(String entityId) {
+	public IdentifiableContent get(String entityId) {
 		Session session = this.sessionFactory.openSession();
 		Session dom4jSession = session.getSession(EntityMode.DOM4J);
 		Element entityElement = null;
@@ -57,13 +55,12 @@ public class HibernateContentAdapter implements IIdentifiableContentAdapter {
 		if(entityElement == null){
 			return null;
 		} else {
-			return new EntityContent(convertRowToXML(entityId, entityElement), this.getType(), this.mapping.getIDNode(), entityId);
+			return new IdentifiableContent(convertRowToXML(entityId, entityElement), this.mapping, entityId);
 		}
 	}
 
 	public void save(IContent content) {
-		EntityContent entityContent = EntityContent.normalizeContent(content,
-				this.entityName, this.mapping.getIDNode());
+		IdentifiableContent entityContent = IdentifiableContent.normalizeContent(content, this.mapping);
 		
 		Session session =  this.sessionFactory.openSession();
 		Transaction tx = null;
@@ -83,12 +80,13 @@ public class HibernateContentAdapter implements IIdentifiableContentAdapter {
 	}
 
 	public void delete(IContent content) {
+		IdentifiableContent entityContent = IdentifiableContent.normalizeContent(content, this.mapping);
 		Session session =  this.sessionFactory.openSession();
 		Session dom4jSession = session.getSession(EntityMode.DOM4J);
 		Element entityElement = null;
 		
 		try{
-			entityElement = (Element) dom4jSession.get(this.getType(), content.getId());
+			entityElement = (Element) dom4jSession.get(this.getType(), entityContent.getId());
 		}finally{
 			if(entityElement == null){
 				session.close();
@@ -145,15 +143,15 @@ public class HibernateContentAdapter implements IIdentifiableContentAdapter {
 		
 		ArrayList<IContent> result = new ArrayList<IContent>();
 		for (Element entityElement : entities) {
-			String entityID = entityElement.element(getIdNode()).getText();
-			EntityContent entity = new EntityContent(convertRowToXML(entityID, entityElement), this.getType(), this.mapping.getIDNode(), entityID);
+			String entityID = this.mapping.getMeshId(entityElement);
+			IdentifiableContent entity = new IdentifiableContent(convertRowToXML(entityID, entityElement), this.mapping, entityID);
 			result.add(entity);
 		}
 		return result;
 	}
 	
 	public String getType() {
-		return this.entityName;
+		return this.mapping.getType();
 	}
 	
 	private Element convertXMLToRow(Element payload) {
@@ -172,18 +170,13 @@ public class HibernateContentAdapter implements IIdentifiableContentAdapter {
 		}
 	}
 	
-	@Override
-	public String getIdNode() {
-		return this.mapping.getIDNode();
-	}
-
 	public List<IContent> getAll() {
 		return getAll(null);
 	}
 
 	@Override
 	public String getID(IContent content) {
-		EntityContent entityContent = EntityContent.normalizeContent(content, this.getType(), this.getIdNode());
+		IdentifiableContent entityContent = IdentifiableContent.normalizeContent(content, this.mapping);
 		if(entityContent == null){
 			return null;
 		} else {

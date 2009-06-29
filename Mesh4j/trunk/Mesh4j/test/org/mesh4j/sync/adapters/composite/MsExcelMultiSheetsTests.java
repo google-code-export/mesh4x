@@ -1,8 +1,10 @@
 package org.mesh4j.sync.adapters.composite;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import junit.framework.Assert;
@@ -13,7 +15,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Test;
-import org.mesh4j.sync.ISupportReadSchema;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.adapters.InMemorySyncAdapter;
@@ -36,14 +37,12 @@ public class MsExcelMultiSheetsTests {
 		// Composite adapter
 		InMemorySyncAdapter adapterOpaque = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
 		
-		MsExcelRDFSyncAdapterFactory factory = new MsExcelRDFSyncAdapterFactory("http://localhost:8080/mesh4x/feeds");
+		Map<String, String[]> sheets = new HashMap<String, String[]>();
+		sheets.put("sheet1", new String[]{"Code"});
+		sheets.put("sheet2", new String[]{"Code"});
+		sheets.put("sheet3", new String[]{"Code"});;
 		
-		Map<String, String> sheets = new HashMap<String, String>();
-		sheets.put("sheet1", "Code");
-		sheets.put("sheet2", "Code");
-		sheets.put("sheet3", "Code");
-		
-		ISyncAdapter adapterSource = factory.createSyncAdapterForMultiSheets(excelFileName, NullIdentityProvider.INSTANCE, sheets, adapterOpaque);
+		ISyncAdapter adapterSource = MsExcelRDFSyncAdapterFactory.createSyncAdapterForMultiSheets(excelFileName, NullIdentityProvider.INSTANCE, sheets, adapterOpaque, "http://localhost:8080/mesh4x/feeds");
 		
 		// Sync example
 		InMemorySyncAdapter adapterTarget = new InMemorySyncAdapter("target", NullIdentityProvider.INSTANCE);
@@ -60,21 +59,17 @@ public class MsExcelMultiSheetsTests {
 		String sourceExcelFile = createMsExcelFile("composite_MsExcel_source.xlsx");
 		String targetExcelFile = createMsExcelFile("composite_MsExcel_target.xlsx");
 	
-		
-		MsExcelRDFSyncAdapterFactory factory = new MsExcelRDFSyncAdapterFactory("http://localhost:8080/mesh4x/feeds");
-		
-	
-		Map<String, String> sheets = new HashMap<String, String>();
-		sheets.put("sheet1", "Code");
-		sheets.put("sheet2", "Code");
-		sheets.put("sheet3", "Code");
+		Map<String, String[]> sheets = new HashMap<String, String[]>();
+		sheets.put("sheet1", new String[]{"Code"});
+		sheets.put("sheet2", new String[]{"Code"});
+		sheets.put("sheet3", new String[]{"Code"});
 		
 		InMemorySyncAdapter opaqueAdapterSource = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
-		ISyncAdapter adapterSource = factory.createSyncAdapterForMultiSheets(sourceExcelFile, NullIdentityProvider.INSTANCE, sheets,opaqueAdapterSource);
+		ISyncAdapter adapterSource = MsExcelRDFSyncAdapterFactory.createSyncAdapterForMultiSheets(sourceExcelFile, NullIdentityProvider.INSTANCE, sheets,opaqueAdapterSource, "http://localhost:8080/mesh4x/feeds");
 	
 		
 		InMemorySyncAdapter opaqueAdapterTarget = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
-		ISyncAdapter adapterTarget = factory.createSyncAdapterForMultiSheets(targetExcelFile, NullIdentityProvider.INSTANCE, sheets,opaqueAdapterTarget);
+		ISyncAdapter adapterTarget = MsExcelRDFSyncAdapterFactory.createSyncAdapterForMultiSheets(targetExcelFile, NullIdentityProvider.INSTANCE, sheets,opaqueAdapterTarget, "http://localhost:8080/mesh4x/feeds");
 		
 		SyncEngine syncEngine = new SyncEngine(adapterSource, adapterTarget);
 		TestHelper.assertSync(syncEngine);
@@ -88,29 +83,24 @@ public class MsExcelMultiSheetsTests {
 		String sourceExcelFile = createMsExcelFile("composite_MsExcel_source.xlsx");
 		String targetExcelFile = TestHelper.baseDirectoryForTest() + "composite_MsExcel_target.xls";
 	
+		Map<String, String[]> sourceSheets = new HashMap<String, String[]>();
+		sourceSheets.put("sheet1", new String[]{"Code"});
+		sourceSheets.put("sheet2", new String[]{"Code"});
+		sourceSheets.put("sheet3", new String[]{"Code"});
 		
-		MsExcelRDFSyncAdapterFactory factory = new MsExcelRDFSyncAdapterFactory("http://localhost:8080/mesh4x/feeds");
-		
-	
-		Map<String, String> sourceSheets = new HashMap<String, String>();
-		sourceSheets.put("sheet1", "Code");
-		sourceSheets.put("sheet2", "Code");
-		sourceSheets.put("sheet3", "Code");
-		Map<IRDFSchema, String> targetSheets = new HashMap<IRDFSchema, String>();
+		List<IRDFSchema> targetSheets = new ArrayList<IRDFSchema>();
 		
 		InMemorySyncAdapter opaqueAdapterSource = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
-		ISyncAdapter adapterSource = factory.createSyncAdapterForMultiSheets(sourceExcelFile, NullIdentityProvider.INSTANCE,sourceSheets,opaqueAdapterSource);
+		ISyncAdapter adapterSource = MsExcelRDFSyncAdapterFactory.createSyncAdapterForMultiSheets(sourceExcelFile, NullIdentityProvider.INSTANCE, sourceSheets, opaqueAdapterSource, "http://localhost:8080/mesh4x/feeds");
 	
 		for(IIdentifiableSyncAdapter identifiableAdapter :((CompositeSyncAdapter)adapterSource).getAdapters()){
 			SplitAdapter adapter = (SplitAdapter)((IdentifiableSyncAdapter)identifiableAdapter).getSyncAdapter();
-			IRDFSchema rdfSchema = (IRDFSchema)((ISupportReadSchema)adapter.getContentAdapter()).getSchema();
-			String idColumnName = ((MsExcelContentAdapter)((SplitAdapter)adapter).getContentAdapter()).getMapping().getIdColumnName();
-			targetSheets.put(rdfSchema, idColumnName);
+			IRDFSchema rdfSchema = (IRDFSchema)((MsExcelContentAdapter)adapter.getContentAdapter()).getSchema();
+			targetSheets.add(rdfSchema);
 		}
 		
-		
 		InMemorySyncAdapter opaqueAdapterTarget = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
-		ISyncAdapter adapterTarget = factory.createSyncAdapterForMultiSheets(targetExcelFile, NullIdentityProvider.INSTANCE, opaqueAdapterTarget,targetSheets);
+		ISyncAdapter adapterTarget = MsExcelRDFSyncAdapterFactory.createSyncAdapterForMultiSheets(targetExcelFile, NullIdentityProvider.INSTANCE, opaqueAdapterTarget, targetSheets);
 		
 		SyncEngine syncEngine = new SyncEngine(adapterSource, adapterTarget);
 		TestHelper.assertSync(syncEngine);
@@ -122,21 +112,17 @@ public class MsExcelMultiSheetsTests {
 		String sourceExcelFile = createMsExcelFile("composite_MsExcel_source.xls");
 		String targetExcelFile = createMsExcelFile("composite_MsExcel_target.xlsx");
 	
-		
-		MsExcelRDFSyncAdapterFactory factory = new MsExcelRDFSyncAdapterFactory("http://localhost:8080/mesh4x/feeds");
-		
-	
-		Map<String, String> sheets = new HashMap<String, String>();
-		sheets.put("sheet1", "Code");
-		sheets.put("sheet2", "Code");
-		sheets.put("sheet3", "Code");
+		Map<String, String[]> sheets = new HashMap<String, String[]>();
+		sheets.put("sheet1", new String[]{"Code"});
+		sheets.put("sheet2", new String[]{"Code"});
+		sheets.put("sheet3", new String[]{"Code"});
 		
 		InMemorySyncAdapter opaqueAdapterSource = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
-		ISyncAdapter adapterSource = factory.createSyncAdapterForMultiSheets(sourceExcelFile, NullIdentityProvider.INSTANCE, sheets,opaqueAdapterSource);
+		ISyncAdapter adapterSource = MsExcelRDFSyncAdapterFactory.createSyncAdapterForMultiSheets(sourceExcelFile, NullIdentityProvider.INSTANCE, sheets, opaqueAdapterSource, "http://localhost:8080/mesh4x/feeds");
 	
 		
 		InMemorySyncAdapter opaqueAdapterTarget = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
-		ISyncAdapter adapterTarget = factory.createSyncAdapterForMultiSheets(targetExcelFile, NullIdentityProvider.INSTANCE, sheets,opaqueAdapterTarget);
+		ISyncAdapter adapterTarget = MsExcelRDFSyncAdapterFactory.createSyncAdapterForMultiSheets(targetExcelFile, NullIdentityProvider.INSTANCE, sheets, opaqueAdapterTarget, "http://localhost:8080/mesh4x/feeds");
 		
 		SyncEngine syncEngine = new SyncEngine(adapterSource, adapterTarget);
 		TestHelper.assertSync(syncEngine);

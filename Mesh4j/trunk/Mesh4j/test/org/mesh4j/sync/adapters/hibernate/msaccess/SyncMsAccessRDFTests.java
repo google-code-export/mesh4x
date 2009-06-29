@@ -51,6 +51,7 @@ public class SyncMsAccessRDFTests {
 		schemaA.addStringProperty("id", "id", "en");
 		schemaA.addStringProperty("pass", "password", "en");
 		schemaA.addStringProperty("name", "name", "en");
+		schemaA.setIdentifiablePropertyName("id");
 		builderA.addRDFSchema("user", schemaA);
 		
 		SyncInfoParser syncInfoParser = new SyncInfoParser(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, "user_sync");
@@ -73,6 +74,7 @@ public class SyncMsAccessRDFTests {
 		schemaB.addStringProperty("id", "id", "en");
 		schemaB.addStringProperty("pass", "password", "en");
 		schemaB.addStringProperty("name", "name", "en");
+		schemaB.setIdentifiablePropertyName("id");
 		builderB.addRDFSchema("user", schemaB);
 		
 		HibernateSyncRepository syncRepositoryB = new HibernateSyncRepository(builderB, syncInfoParser);
@@ -116,6 +118,7 @@ public class SyncMsAccessRDFTests {
 		schemaA.addStringProperty("id", "id", "en");
 		schemaA.addStringProperty("pass", "password", "en");
 		schemaA.addStringProperty("name", "name", "en");
+		schemaA.setIdentifiablePropertyName("id");
 		builderA.addRDFSchema("user", schemaA);
 		
 		SyncInfoParser syncInfoParser = new SyncInfoParser(RssSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, "user_sync");

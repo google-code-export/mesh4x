@@ -184,7 +184,7 @@ public class MsAccessHibernateSyncAdapterFactory implements ISyncAdapterFactory 
 			IHibernateSessionFactoryBuilder builder = createHibernateSessionBuilder(dbURL, tableName, user, password, contentMappingFileName, syncMappingFileName, rdfSchema);
 			
 			HibernateContentAdapter contentAdapter = (HibernateContentAdapter) splitAdapter.getContentAdapter();
-			contentAdapter.initializeSessionFactory(builder);
+			contentAdapter.initializeSessionFactory(builder, tableName);
 			
 			HibernateSyncRepository syncRepo = (HibernateSyncRepository) splitAdapter.getSyncRepository();
 			syncRepo.initializeSessionFactory(builder);

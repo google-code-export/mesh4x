@@ -10,7 +10,7 @@ import java.util.List;
 import org.dom4j.Element;
 import org.junit.Assert;
 import org.junit.Test;
-import org.mesh4j.sync.adapters.hibernate.EntityContent;
+import org.mesh4j.sync.adapters.IdentifiableContent;
 import org.mesh4j.sync.adapters.hibernate.HibernateContentAdapter;
 import org.mesh4j.sync.adapters.hibernate.HibernateSessionFactoryBuilder;
 import org.mesh4j.sync.id.generator.IdGenerator;
@@ -84,7 +84,7 @@ public class HibernateContentadapterWithMsAccessTest {
 	@Test
 	public void shouldHibernateGet(){
 		HibernateContentAdapter adapter = createAdapter();
-		EntityContent entity = adapter.get("1");
+		IdentifiableContent entity = adapter.get("1");
 		Assert.assertNotNull(entity);
 		Assert.assertEquals("jmt", entity.getPayload().element("name").getText());
 		Assert.assertEquals("123", entity.getPayload().element("pass").getText());
@@ -92,13 +92,14 @@ public class HibernateContentadapterWithMsAccessTest {
 	
 	@Test
 	public void shouldHibernateAdd(){
-		HibernateContentAdapter adapter = createAdapter();		
+		HibernateContentAdapter adapter = createAdapter();
+		
 		String id = IdGenerator.INSTANCE.newID();
 		Element payload = TestHelper.makeElement("<user><id>"+id+"</id><name>"+id+"</name><pass>"+id+"</pass></user>");
-		EntityContent entity = new EntityContent(payload, "user", "id", id);
+		IdentifiableContent entity = new IdentifiableContent(payload, adapter.getMapping(), id);
 		
 		adapter.save(entity);
-		EntityContent entityAdded = adapter.get(id);
+		IdentifiableContent entityAdded = adapter.get(id);
 
 		Assert.assertNotNull(entityAdded);
 		Assert.assertEquals(id, entityAdded.getPayload().element("id").getText());
@@ -111,18 +112,18 @@ public class HibernateContentadapterWithMsAccessTest {
 		HibernateContentAdapter adapter = createAdapter();		
 		String id = IdGenerator.INSTANCE.newID();
 		Element payload = TestHelper.makeElement("<user><id>"+id+"</id><name>"+id+"</name><pass>"+id+"</pass></user>");
-		EntityContent entity = new EntityContent(payload, "user", "id", id);
+		IdentifiableContent entity = new IdentifiableContent(payload, adapter.getMapping(), id);
 		
 		adapter.save(entity);
-		EntityContent entityAdded = adapter.get(id);
+		IdentifiableContent entityAdded = adapter.get(id);
 
 		Assert.assertNotNull(entityAdded);
 		
 		payload = TestHelper.makeElement("<user><id>"+id+"</id><name>5555</name><pass>5555</pass></user>");
-		entity = new EntityContent(payload, "user", "id", id);
+		entity = new IdentifiableContent(payload, adapter.getMapping(), id);
 		adapter.save(entity);
 
-		EntityContent entityUpdated = adapter.get(id);
+		IdentifiableContent entityUpdated = adapter.get(id);
 		Assert.assertNotNull(entityUpdated);
 		Assert.assertEquals("5555", entityUpdated.getPayload().element("name").getText());
 		Assert.assertEquals("5555", entityUpdated.getPayload().element("pass").getText());
@@ -134,14 +135,14 @@ public class HibernateContentadapterWithMsAccessTest {
 		HibernateContentAdapter adapter = createAdapter();		
 		String id = IdGenerator.INSTANCE.newID();
 		Element payload = TestHelper.makeElement("<user><id>"+id+"</id><name>"+id+"</name><pass>123</pass></user>");
-		EntityContent entity = new EntityContent(payload, "user", "id", id);
+		IdentifiableContent entity = new IdentifiableContent(payload, adapter.getMapping(), id);
 		
 		adapter.save(entity);
-		EntityContent entityAdded = adapter.get(id);
+		IdentifiableContent entityAdded = adapter.get(id);
 		Assert.assertNotNull(entityAdded);
 		
 		adapter.delete(entityAdded);
-		EntityContent entityDeleted = adapter.get(id);
+		IdentifiableContent entityDeleted = adapter.get(id);
 		Assert.assertNull(entityDeleted);
 
 	}

@@ -1,5 +1,6 @@
 package org.mesh4j.sync.adapters.composite;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -49,14 +50,13 @@ public class FeedMultiFileTests {
 		String excelFileName = MsExcelMultiSheetsTests.createMsExcelFile("composite_Feed_MsExcel.xlsx");
 		
 		InMemorySyncAdapter adapterOpaqueTarget = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
-		MsExcelRDFSyncAdapterFactory factory = new MsExcelRDFSyncAdapterFactory("http://localhost:8080/mesh4x/feeds");
+				
+		Map<String, String[]> sheets = new HashMap<String, String[]>();
+		sheets.put("sheet1", new String[]{"Code"});
+		sheets.put("sheet2", new String[]{"Code"});
+		sheets.put("sheet3", new String[]{"Code"});
 		
-		Map<String, String> sheets = new HashMap<String, String>();
-		sheets.put("sheet1", "Code");
-		sheets.put("sheet2", "Code");
-		sheets.put("sheet3", "Code");
-		
-		ISyncAdapter adapterTarget = factory.createSyncAdapterForMultiSheets(excelFileName, NullIdentityProvider.INSTANCE, sheets, adapterOpaqueTarget);
+		ISyncAdapter adapterTarget = MsExcelRDFSyncAdapterFactory.createSyncAdapterForMultiSheets(excelFileName, NullIdentityProvider.INSTANCE, sheets, adapterOpaqueTarget, "http://localhost:8080/mesh4x/feeds");
 				
 		SyncEngine syncEngine = new SyncEngine(adapterSource, adapterTarget);
 		TestHelper.assertSync(syncEngine);
@@ -65,34 +65,31 @@ public class FeedMultiFileTests {
 		Assert.assertEquals(0, adapterOpaqueTarget.getAll().size());
 		
 		TestHelper.assertSync(syncEngine);
+		
+		
+		Assert.assertEquals(0, adapterOpaque.getAll().size());
+		Assert.assertEquals(0, adapterOpaqueTarget.getAll().size());
 	}
 	
 	@Test
 	public void shouldSyncAllFeedFilesAsZipVsMsExcel() throws Exception{
 		
 		// zip adapter
-		String zipFileName = TestHelper.fileName("exampleMSExcel.zip");
+		File zipFile = TestHelper.makeFileAndDeleteIfExists("exampleMSExcel.zip");
 		
-		//TreeSet<String> requiredEntries = new TreeSet<String>();
-		//requiredEntries.add("sheet1");
-		//requiredEntries.add("sheet2");
-		//requiredEntries.add("sheet3");
-		//
-		//ZipFeedsSyncAdapter source = FeedSyncAdapterFactory.createSyncAdapterForMultiFilesAsZip(zipFileName, NullIdentityProvider.INSTANCE, TestHelper.baseDirectoryForTest(), requiredEntries);
-		ZipFeedsSyncAdapter source = FeedSyncAdapterFactory.createSyncAdapterForMultiFilesAsZip(zipFileName, NullIdentityProvider.INSTANCE, TestHelper.baseDirectoryForTest());
+		ZipFeedsSyncAdapter source = FeedSyncAdapterFactory.createSyncAdapterForMultiFilesAsZip(zipFile.getCanonicalPath(), NullIdentityProvider.INSTANCE, TestHelper.baseDirectoryForTest());
 		
 		// excel
 		String excelFileName = MsExcelMultiSheetsTests.createMsExcelFile("composite_Feed_MsExcel.xlsx");
 		
 		InMemorySyncAdapter adapterOpaqueTarget = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
-		MsExcelRDFSyncAdapterFactory factory = new MsExcelRDFSyncAdapterFactory("http://localhost:8080/mesh4x/feeds");
 		
-		Map<String, String> sheets = new HashMap<String, String>();
-		sheets.put("sheet1", "Code");
-		sheets.put("sheet2", "Code");
-		sheets.put("sheet3", "Code");
+		Map<String, String[]> sheets = new HashMap<String, String[]>();
+		sheets.put("sheet1", new String[]{"Code"});
+		sheets.put("sheet2", new String[]{"Code"});
+		sheets.put("sheet3", new String[]{"Code"});
 		
-		ISyncAdapter target = factory.createSyncAdapterForMultiSheets(excelFileName, NullIdentityProvider.INSTANCE, sheets, adapterOpaqueTarget);
+		ISyncAdapter target = MsExcelRDFSyncAdapterFactory.createSyncAdapterForMultiSheets(excelFileName, NullIdentityProvider.INSTANCE, sheets, adapterOpaqueTarget, "http://localhost:8080/mesh4x/feeds");
 				
 		// sync
 		SyncEngine syncEngine = new SyncEngine(source, target);
@@ -102,6 +99,9 @@ public class FeedMultiFileTests {
 		Assert.assertEquals(0, adapterOpaqueTarget.getAll().size());
 		
 		TestHelper.assertSync(syncEngine);
+		
+		Assert.assertEquals(0, source.getCompositeAdapter().getOpaqueAdapter().getAll().size());
+		Assert.assertEquals(0, adapterOpaqueTarget.getAll().size());
 	}
 	
 	@Test
@@ -139,6 +139,9 @@ public class FeedMultiFileTests {
 		Assert.assertEquals(0, targetAdapterOpaque.getAll().size());
 
 		TestHelper.assertSync(syncEngine);
+		
+		Assert.assertEquals(0, source.getCompositeAdapter().getOpaqueAdapter().getAll().size());
+		Assert.assertEquals(0, targetAdapterOpaque.getAll().size());
 	}
 	
 	@Test
@@ -168,7 +171,8 @@ public class FeedMultiFileTests {
 		Assert.assertEquals(0, targetAdapterOpaque.getAll().size());
 
 		TestHelper.assertSync(syncEngine);
-		TestHelper.assertSync(syncEngine);
+		Assert.assertEquals(0, source.getCompositeAdapter().getOpaqueAdapter().getAll().size());
+		Assert.assertEquals(0, targetAdapterOpaque.getAll().size());
 	}
 	
 	@Test
@@ -199,7 +203,8 @@ public class FeedMultiFileTests {
 		Assert.assertEquals(0, targetAdapterOpaque.getAll().size());
 
 		TestHelper.assertSync(syncEngine);
-		TestHelper.assertSync(syncEngine);
+		Assert.assertEquals(0, source.getCompositeAdapter().getOpaqueAdapter().getAll().size());
+		Assert.assertEquals(0, targetAdapterOpaque.getAll().size());
 	}
 	
 	@Test
@@ -233,7 +238,7 @@ public class FeedMultiFileTests {
 		Assert.assertEquals(0, source.getCompositeAdapter().getOpaqueAdapter().getAll().size());
 
 		TestHelper.assertSync(syncEngine);
-		TestHelper.assertSync(syncEngine);
+		Assert.assertEquals(0, source.getCompositeAdapter().getOpaqueAdapter().getAll().size());
 	}
 	
 	private String getMsAccessFileNameToTest() {

@@ -1,7 +1,8 @@
 package org.mesh4j.sync.adapters.composite;
 
 import java.io.File;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeSet;
 
 import junit.framework.Assert;
@@ -68,24 +69,22 @@ public class MsAccessMultiTableTests {
 
 		// create sheets
 		
-		HashMap<IRDFSchema, String> sheets = new HashMap<IRDFSchema, String>();
+		List<IRDFSchema> sheets = new ArrayList<IRDFSchema>();
 		
 		for (IIdentifiableSyncAdapter identifiableAdapter : adapterSource.getAdapters()) {
 			SplitAdapter splitAdapter = (SplitAdapter)((IdentifiableSyncAdapter)identifiableAdapter).getSyncAdapter();
 			HibernateContentAdapter hibernateContentAdapter = (HibernateContentAdapter)splitAdapter.getContentAdapter();
 			
-			String id = hibernateContentAdapter.getMapping().getIDNode();
 			IRDFSchema rdfSchema = (IRDFSchema)hibernateContentAdapter.getMapping().getSchema();
 			
-			sheets.put(rdfSchema, id);
+			sheets.add(rdfSchema);
 		}
 		
 		// msExcel
 		File file = TestHelper.makeFileAndDeleteIfExists("composite_MSAccess_MSExcel.xlsx");
 		InMemorySyncAdapter adapterOpaqueTarget = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
-		MsExcelRDFSyncAdapterFactory excelFactory = new MsExcelRDFSyncAdapterFactory("http://localhost:8080/mesh4x/feeds");
-
-		ISyncAdapter adapterTarget = excelFactory.createSyncAdapterForMultiSheets(file.getCanonicalPath(), NullIdentityProvider.INSTANCE, adapterOpaqueTarget, sheets);
+		
+		ISyncAdapter adapterTarget = MsExcelRDFSyncAdapterFactory.createSyncAdapterForMultiSheets(file.getCanonicalPath(), NullIdentityProvider.INSTANCE, adapterOpaqueTarget, sheets);
 		
 		// sync
 		SyncEngine syncEngine = new SyncEngine(adapterSource, adapterTarget);
@@ -139,24 +138,21 @@ public class MsAccessMultiTableTests {
 		
 		// create sheets
 		
-		HashMap<IRDFSchema, String> sheets = new HashMap<IRDFSchema, String>();
+		List<IRDFSchema> sheets = new ArrayList<IRDFSchema>();
 		
 		for (IIdentifiableSyncAdapter identifiableAdapter : adapterSource.getAdapters()) {
 			SplitAdapter splitAdapter = (SplitAdapter)((IdentifiableSyncAdapter)identifiableAdapter).getSyncAdapter();
 			MsAccessContentAdapter contentAdapter = (MsAccessContentAdapter)splitAdapter.getContentAdapter();
 			
-			String id = contentAdapter.getMapping().getIdColumnName();
 			IRDFSchema rdfSchema = (IRDFSchema)contentAdapter.getMapping().getSchema();
 			
-			sheets.put(rdfSchema, id);
+			sheets.add(rdfSchema);
 		}
 		
 		// msExcel
 		File file = TestHelper.makeFileAndDeleteIfExists("composite_MSAccess_MSExcel.xlsx");
 		InMemorySyncAdapter adapterOpaqueTarget = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
-		MsExcelRDFSyncAdapterFactory excelFactory = new MsExcelRDFSyncAdapterFactory("http://localhost:8080/mesh4x/feeds");
-
-		ISyncAdapter adapterTarget = excelFactory.createSyncAdapterForMultiSheets(file.getCanonicalPath(), NullIdentityProvider.INSTANCE, adapterOpaqueTarget, sheets);
+		ISyncAdapter adapterTarget = MsExcelRDFSyncAdapterFactory.createSyncAdapterForMultiSheets(file.getCanonicalPath(), NullIdentityProvider.INSTANCE, adapterOpaqueTarget, sheets);
 		
 		// sync
 		SyncEngine syncEngine = new SyncEngine(adapterSource, adapterTarget);

@@ -53,7 +53,7 @@ public class MsAccessJackcessSyncAdapterFactory {
 		
 		MsAccessToRDFMapping mapping = MsAccessRDFSchemaGenerator.extractRDFSchemaAndMappings(msAccess.getFileName(), tableName, rdfBaseURL);
 		
-		MsAccessContentAdapter contentAdapter = new MsAccessContentAdapter(msAccess, mapping, tableName);
+		MsAccessContentAdapter contentAdapter = new MsAccessContentAdapter(msAccess, mapping);
 		return new SplitAdapter(syncRepo, contentAdapter, identityProvider); 
 	}
 	

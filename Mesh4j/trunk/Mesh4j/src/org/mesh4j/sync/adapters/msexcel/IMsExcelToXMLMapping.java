@@ -6,13 +6,10 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.dom4j.Element;
+import org.mesh4j.sync.adapters.IIdentifiableMapping;
 import org.mesh4j.sync.payload.schema.ISchema;
 
-public interface IMsExcelToXMLMapping {
-
-	String getIdColumnName();
-
-	String getLastUpdateColumnName();
+public interface IMsExcelToXMLMapping extends IIdentifiableMapping {
 
 	void appliesXMLToRow(Workbook wb, Sheet sheet, Row row, Element payload);
 	
@@ -20,10 +17,12 @@ public interface IMsExcelToXMLMapping {
 	
 	ISchema getSchema();
 
-	void createDataSource(IMsExcel excel);
+	String getId(Sheet sheet, Row row);
 
-	String getIdColumnValue(Sheet sheet, Row row);
+	Date getLastUpdate(Sheet sheet, Row row);
 
-	Date getLastUpdateColumnValue(Sheet sheet, Row row);
+	void initializeHeaderRow(Workbook wb, Sheet sheet, Row row);
+
+	Row getRow(Sheet sheet, String id);
 
 }

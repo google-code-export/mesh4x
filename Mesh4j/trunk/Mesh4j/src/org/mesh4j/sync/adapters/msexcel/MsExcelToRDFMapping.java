@@ -1,10 +1,11 @@
 package org.mesh4j.sync.adapters.msexcel;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-
-
+import java.util.List;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -13,29 +14,33 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.dom4j.Element;
+import org.mesh4j.sync.payload.schema.rdf.AbstractRDFIdentifiableMapping;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.payload.schema.rdf.RDFInstance;
 import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
 import org.mesh4j.sync.utils.XMLHelper;
 import org.mesh4j.sync.validations.Guard;
 
-public class MsExcelToRDFMapping implements IMsExcelToXMLMapping{
+public class MsExcelToRDFMapping extends AbstractRDFIdentifiableMapping implements IMsExcelToXMLMapping{
 
-	// MODEL VARIABLES
-	private IRDFSchema rdfSchema;
-
-	private String idColumnName;
-	private String lastUpdateColumnName = null;
-	
-	
 	// BUSINESS METHODs
-	public MsExcelToRDFMapping(IRDFSchema schema, String idColumnName) {
-		super();
-		this.rdfSchema = schema;
-		this.idColumnName = idColumnName;
+	public MsExcelToRDFMapping(IRDFSchema rdfSchema) {
+		super(rdfSchema);
+		
+		List<String> idList = rdfSchema.getIdentifiablePropertyNames();
+		if(idList.isEmpty()){
+			Guard.throwsArgumentException("rdfSchema");
+		}else {
+			for (String idProperttName : idList) {
+				Guard.argumentNotNullOrEmptyString(idProperttName, "rdfSchema");
+			}
+		}
 	}
 	
-	public static RDFSchema extractRDFSchema(IMsExcel excel, String sheetName, String rdfURL){
+	public static RDFSchema extractRDFSchema(IMsExcel excel, String sheetName, String[] identifiablePropertyNames, String lastUpdateColumnName, String rdfURL){
+		return extractRDFSchema(excel, sheetName, Arrays.asList(identifiablePropertyNames), lastUpdateColumnName, rdfURL);
+	}
+	public static RDFSchema extractRDFSchema(IMsExcel excel, String sheetName, List<String> identifiablePropertyNames, String lastUpdateColumnName, String rdfURL){
 		Guard.argumentNotNull(excel, "excel");
 		Guard.argumentNotNullOrEmptyString(sheetName, "sheetName");
 		Guard.argumentNotNullOrEmptyString(rdfURL, "rdfURL");
@@ -56,7 +61,7 @@ public class MsExcelToRDFMapping implements IMsExcelToXMLMapping{
 			
 			cellName = headerRow.getCell(cell.getColumnIndex()).getRichStringCellValue().getString();
 			cellType = cell.getCellType();
-			if(Cell.CELL_TYPE_STRING == cellType){
+			if(Cell.CELL_TYPE_STRING == cellType || Cell.CELL_TYPE_FORMULA == cellType){
 				rdfSchema.addStringProperty(cellName, cellName, "en");
 			} else if(Cell.CELL_TYPE_BOOLEAN == cellType){
 				rdfSchema.addBooleanProperty(cellName, cellName, "en");
@@ -69,10 +74,12 @@ public class MsExcelToRDFMapping implements IMsExcelToXMLMapping{
 			}
 		}
 		
+		rdfSchema.setIdentifiablePropertyNames(identifiablePropertyNames);
+		rdfSchema.setVersionPropertyName(lastUpdateColumnName);
 		return rdfSchema;
 	}
 
-	public RDFInstance converRowToRDF(Row headerRow, Row row) {
+	public RDFInstance converRowToRDF(Sheet sheet, Row headerRow, Row row) {
 		
 		// obtains properties values
 		Cell cell;
@@ -86,14 +93,14 @@ public class MsExcelToRDFMapping implements IMsExcelToXMLMapping{
 			cellName = headerRow.getCell(cell.getColumnIndex()).getRichStringCellValue().getString();
 			cellValue = MsExcelUtils.getCellValue(cell);
 			
-			propertyValue = rdfSchema.cannonicaliseValue(cellName, cellValue);
+			propertyValue = this.rdfSchema.cannonicaliseValue(cellName, cellValue);
 			if(propertyValue != null){
 				propertyValues.put(cellName, propertyValue);
 			}
 		}
 		
 		// create rdf instance
-		String id = String.valueOf(propertyValues.get(this.idColumnName));
+		String id = getId(sheet, row);
 		
 		RDFInstance rdfInstance = this.rdfSchema.createNewInstanceFromProperties(id, propertyValues);
 		return rdfInstance;
@@ -168,7 +175,7 @@ public class MsExcelToRDFMapping implements IMsExcelToXMLMapping{
 		}
 	}
 
-	@Override
+//	@Override
 	public void createDataSource(IMsExcel excel) {
 		excel.setDirty();
 		Workbook workbook = excel.getWorkbook();
@@ -191,7 +198,7 @@ public class MsExcelToRDFMapping implements IMsExcelToXMLMapping{
 	@Override
 	public Element convertRowToXML(Workbook wb, Sheet sheet, Row row){
 		Row headerRow = sheet.getRow(sheet.getFirstRowNum());
-		RDFInstance rdfInstance = this.converRowToRDF(headerRow, row);
+		RDFInstance rdfInstance = this.converRowToRDF(sheet, headerRow, row);
 		return XMLHelper.parseElement(rdfInstance.asXML());
 	}
 	
@@ -201,45 +208,56 @@ public class MsExcelToRDFMapping implements IMsExcelToXMLMapping{
 		this.appliesRDFToRow(wb, sheet, row, rdfInstance);
 	}
 
-
 	@Override
-	public String getIdColumnName() {
-		return this.idColumnName;
+	public String getId(Sheet sheet, Row row) {
+		List<String> idColumnNames = this.rdfSchema.getIdentifiablePropertyNames();
+		List<String> idValues = new ArrayList<String>();
+		String idCellValue;
+		for (String idColumnName : idColumnNames) {
+			idCellValue = getCellValue(sheet, row, idColumnName);
+			if(idCellValue == null){
+				return null;
+			} else {
+				idValues.add(idCellValue);
+			}
+		}
+		return makeId(idValues);		
 	}
 
-
-	@Override
-	public String getLastUpdateColumnName() {
-		return this.lastUpdateColumnName;
-	}
-	
-	public void setLastUpdateColumnName(String columnName) {
-		this.lastUpdateColumnName = columnName;
-	}
-
-	@Override
-	public IRDFSchema getSchema() {
-		return rdfSchema;
-	}
-
-	@Override
-	public String getIdColumnValue(Sheet sheet, Row row) {
-		Cell cell = MsExcelUtils.getCell(sheet, row, this.getIdColumnName());
+	private String getCellValue(Sheet sheet, Row row, String columnName) {
+		Cell cell = MsExcelUtils.getCell(sheet, row, columnName);
 		if(cell != null && cell.getCellType() != Cell.CELL_TYPE_BLANK){
-			Object cellValue = MsExcelUtils.getCellValue(cell);
-			return String.valueOf(rdfSchema.cannonicaliseValue(this.getIdColumnName(), cellValue));
+ 			Object cellValue = MsExcelUtils.getCellValue(cell);
+			return String.valueOf(rdfSchema.cannonicaliseValue(columnName, cellValue));
 		} else {
 			return null;
 		}
 	}
 	
 	@Override
-	public Date getLastUpdateColumnValue(Sheet sheet, Row row) {
-		Cell cell = MsExcelUtils.getCell(sheet, row, this.getLastUpdateColumnName());
+	public Date getLastUpdate(Sheet sheet, Row row) {
+		Cell cell = MsExcelUtils.getCell(sheet, row, this.rdfSchema.getVersionPropertyName());
 		if(cell != null && cell.getCellType() != Cell.CELL_TYPE_BLANK && cell.getCellType() == Cell.CELL_TYPE_NUMERIC && DateUtil.isCellDateFormatted(cell)){
 			return cell.getDateCellValue();
 		} else {
 			return null;
 		}
 	}
+
+	@Override
+	public Row getRow(Sheet sheet, String id) {
+		return MsExcelUtils.getRow(sheet, this.rdfSchema.getIdentifiablePropertyNames().toArray(new String[0]), this.getIds(id));
+	}
+
+	@Override
+	public void initializeHeaderRow(Workbook wb, Sheet sheet, Row row) {
+		for (String columName : this.rdfSchema.getIdentifiablePropertyNames()) {
+			MsExcelUtils.getOrCreateCellStringIfAbsent(wb, row, columName);
+		}
+		
+		if(this.rdfSchema.getVersionPropertyName() != null){
+			MsExcelUtils.getOrCreateCellStringIfAbsent(wb, row, this.rdfSchema.getVersionPropertyName());
+		}
+	}
+
 }

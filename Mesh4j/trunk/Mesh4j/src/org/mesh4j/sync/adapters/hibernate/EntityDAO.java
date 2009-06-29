@@ -6,6 +6,7 @@ import java.util.List;
 import org.dom4j.Element;
 import org.hibernate.EntityMode;
 import org.hibernate.Session;
+import org.mesh4j.sync.adapters.IdentifiableContent;
 import org.mesh4j.sync.adapters.hibernate.mapping.IHibernateToXMLMapping;
 import org.mesh4j.sync.model.IContent;
 
@@ -24,22 +25,22 @@ public class EntityDAO {
 		this.sessionProvider = sessionProvider;
 	}
 
-	public EntityContent get(String entityId) throws Exception {
+	public IdentifiableContent get(String entityId) throws Exception {
 		Session session = getSession();
 		Element entityElement = (Element) session.get(this.getEntityName(), entityId);
 		if(entityElement == null){
 			return null;
 		} else {
-			return new EntityContent(this.mapping.convertRowToXML(entityId, entityElement), this.getEntityName(), this.mapping.getIDNode(), entityId);
+			return new IdentifiableContent(this.mapping.convertRowToXML(entityId, entityElement), this.mapping, entityId);
 		}
 	}
 
-	public void save(EntityContent entity) throws Exception {
+	public void save(IdentifiableContent entity) throws Exception {
 		Session session = getSession();
 		session.saveOrUpdate(this.mapping.convertXMLToRow(entity.getPayload().createCopy()));
 	}
 
-	public void delete(EntityContent entity) {
+	public void delete(IdentifiableContent entity) {
 		this.delete(entity.getId());
 	}
 	
@@ -51,40 +52,40 @@ public class EntityDAO {
 		}	
 	}
 
-	public void update(EntityContent entity) throws Exception {
+	public void update(IdentifiableContent entity) throws Exception {
 		Session session = getSession();
 		session.saveOrUpdate(this.mapping.convertXMLToRow(entity.getPayload().createCopy()));
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<EntityContent> getAll() throws Exception {
+	public List<IdentifiableContent> getAll() throws Exception {
 		String hqlQuery ="FROM " + this.getEntityName();
 		Session session = this.getSession();
 		
 		List<Element> entities = session.createQuery(hqlQuery).list();
-		ArrayList<EntityContent> result = new ArrayList<EntityContent>();
+		ArrayList<IdentifiableContent> result = new ArrayList<IdentifiableContent>();
 		for (Element entityElement : entities) {
-			String entityID = entityElement.element(getIDNode()).getText();
-			EntityContent entity = new EntityContent(this.mapping.convertRowToXML(entityID, entityElement), this.getEntityName(), this.mapping.getIDNode(), entityID);
+			String entityID = this.mapping.getMeshId(entityElement);
+			IdentifiableContent entity = new IdentifiableContent(this.mapping.convertRowToXML(entityID, entityElement), this.mapping, entityID);
 			result.add(entity);
 		}
 		return result;
 	}
 
-	private String getIDNode() {
-		return this.mapping.getIDNode();
-	}
-
-	public EntityContent normalizeContent(IContent content){
-		return EntityContent.normalizeContent(content, this.getEntityName(), this.getIDNode());
+	public IdentifiableContent normalizeContent(IContent content){
+		return IdentifiableContent.normalizeContent(content, this.mapping);
 	}
 	
 	public String getEntityName() {
-		return this.mapping.getEntityNode();
+		return this.mapping.getType();
 	}
 	
 	private Session getSession() {
 		return this.sessionProvider.getCurrentSession().getSession(EntityMode.DOM4J);
+	}
+
+	public IHibernateToXMLMapping getMapping() {
+		return this.mapping;
 	}
 
 }

@@ -2,6 +2,7 @@ package org.mesh4j.sync.adapters.hibernate;
 
 import java.io.File;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
@@ -121,6 +122,15 @@ public class HibernateSyncAdapterFactory implements ISyncAdapterFactory{
 		Property property = mapping.getIdentifierProperty();
 		addRDFProperty(rdfSchema, property);
 		
+		ArrayList<String> identifiablePropertyNames = new ArrayList<String>();
+		identifiablePropertyNames.add(getPropertyName(property));
+		rdfSchema.setIdentifiablePropertyNames(identifiablePropertyNames);
+		
+		Property version = mapping.getVersion();
+		if(version != null){
+			rdfSchema.setVersionPropertyName(getPropertyName(version));
+		}
+		
 		Iterator<Property> it = mapping.getPropertyIterator();
 		while(it.hasNext()){
 			property = it.next();
@@ -131,27 +141,7 @@ public class HibernateSyncAdapterFactory implements ISyncAdapterFactory{
 	
 	// TODO (JMT) RDF: improve Hibernate type to RDF type mappings
 	private static void addRDFProperty(RDFSchema rdfSchema, Property property) {
-		String propertyName = null;
-		if (property.getValue().getColumnIterator().hasNext()){
-			propertyName = ((Column) property.getValue()
-					.getColumnIterator().next()).getName();
-		}else{
-			property.getName();
-		}
-		
-		/*code changed by Sharif: May 05, 2009
-		 
-		Reason: we need to use the column name (if available) rather than the property name itself 
-		because they might be different in case (see example below), in which case data (from database) of
-		corresponding column will not be synced with same column of other repository if the 
-		other repository is created automatically using the schema from the hibernate repository
-		
-		for example:
-		<property name="pass" type="string" node="PASS">
-            <column name="PASS" length="50" />
-        </property>
-        
-        */
+		String propertyName = getPropertyName(property);
 		
 		Type type = property.getType();
 		
@@ -186,6 +176,31 @@ public class HibernateSyncAdapterFactory implements ISyncAdapterFactory{
 		if(Hibernate.FLOAT.equals(type)){
 			rdfSchema.addFloatProperty(propertyName, propertyName, "en");
 		}
+	}
+
+	private static String getPropertyName(Property property) {
+		String propertyName = null;
+		if (property.getValue().getColumnIterator().hasNext()){
+			propertyName = ((Column) property.getValue()
+					.getColumnIterator().next()).getName();
+		}else{
+			property.getName();
+		}
+		
+		/*code changed by Sharif: May 05, 2009
+		 
+		Reason: we need to use the column name (if available) rather than the property name itself 
+		because they might be different in case (see example below), in which case data (from database) of
+		corresponding column will not be synced with same column of other repository if the 
+		other repository is created automatically using the schema from the hibernate repository
+		
+		for example:
+		<property name="pass" type="string" node="PASS">
+            <column name="PASS" length="50" />
+        </property>
+        
+        */
+		return propertyName;
 	}
 	
 	public static HashMap<String, PersistentClass> createMappings(HibernateSessionFactoryBuilder builder, String baseDirectory, Set<String> tables) {

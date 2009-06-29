@@ -1,5 +1,6 @@
 package org.mesh4j.sync.adapters.http;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -215,7 +216,7 @@ public class HttpSyncAdapterTests {
 		IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
 		String url = serverUrl+"/"+meshGroup+"/"+dataSetId;
 		
-		RDFSchema rdfSchema = new RDFSchema("example", url+"#", dataSetId);
+		RDFSchema rdfSchema = new RDFSchema(dataSetId, url+"#", dataSetId);
 		rdfSchema.addStringProperty("string", "string", "en");
 		rdfSchema.addIntegerProperty("integer", "int", "en");
 		rdfSchema.addBooleanProperty("boolean", "boolean", "en");
@@ -243,7 +244,7 @@ public class HttpSyncAdapterTests {
 		HttpSyncAdapter adapter = HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverUrl, meshGroup, dataSetId, identityProvider, null);
 		Assert.assertNotNull(adapter);
 		
-		RDFSchema rdfSchema = new RDFSchema("example", url+"#", dataSetId);
+		RDFSchema rdfSchema = new RDFSchema(dataSetId, url+"#", dataSetId);
 		rdfSchema.addStringProperty("string", "string", "en");
 		rdfSchema.addIntegerProperty("integer", "int", "en");
 		rdfSchema.addBooleanProperty("boolean", "boolean", "en");
@@ -268,7 +269,7 @@ public class HttpSyncAdapterTests {
 		IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
 		String url = serverUrl+"/"+meshGroup+"/"+dataSetId;
 		
-		RDFSchema rdfSchema = new RDFSchema("example", url+"#", dataSetId);
+		RDFSchema rdfSchema = new RDFSchema(dataSetId, url+"#", dataSetId);
 		rdfSchema.addStringProperty("string", "string", "en");
 		rdfSchema.addIntegerProperty("integer", "int", "en");
 		rdfSchema.addBooleanProperty("boolean", "boolean", "en");
@@ -284,7 +285,7 @@ public class HttpSyncAdapterTests {
 		Assert.assertNotNull(schema);
 		Assert.assertTrue(rdfSchema.isCompatible(schema));
 		
-		RDFSchema rdfSchema2 = new RDFSchema("example", url+"#", dataSetId);
+		RDFSchema rdfSchema2 = new RDFSchema(dataSetId, url+"#", dataSetId);
 		
 		HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverUrl, meshGroup, dataSetId, identityProvider, rdfSchema2);
 
@@ -333,6 +334,8 @@ public class HttpSyncAdapterTests {
 		String url = serverUrl+"/"+meshGroup+"/"+dataSetId;
 		
 		RDFSchema rdfSchema = new RDFSchema(dataSetId, url+"#", dataSetId);
+		rdfSchema.addStringProperty("id1", "id1", "en");
+		rdfSchema.addStringProperty("id2", "id2", "en");
 		rdfSchema.addStringProperty("string", "string", "en");
 		rdfSchema.addIntegerProperty("integer", "int", "en");
 		rdfSchema.addBooleanProperty("boolean", "boolean", "en");
@@ -341,6 +344,13 @@ public class HttpSyncAdapterTests {
 		rdfSchema.addLongProperty("long", "long", "en");
 		rdfSchema.addDecimalProperty("decimal", "decimal", "en");  
 		
+		ArrayList<String> pks = new ArrayList<String>();
+		pks.add("id1");
+		pks.add("id2");
+		rdfSchema.setIdentifiablePropertyNames(pks);
+		rdfSchema.setVersionPropertyName("datetime");
+		
+		
 		HttpSyncAdapter adapter = HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverUrl, meshGroup, dataSetId, identityProvider, rdfSchema);
 		Assert.assertNotNull(adapter);
 		
@@ -348,6 +358,9 @@ public class HttpSyncAdapterTests {
 		Assert.assertNotNull(schema);
 		Assert.assertEquals(rdfSchema.asXML(), schema.asXML());
 		Assert.assertTrue(rdfSchema.isCompatible(schema));
+		
+		Assert.assertEquals("id1", ((RDFSchema)schema).getIdentifiablePropertyNames().get(0));
+		Assert.assertEquals("id2", ((RDFSchema)schema).getIdentifiablePropertyNames().get(1));
 	}
 	
 

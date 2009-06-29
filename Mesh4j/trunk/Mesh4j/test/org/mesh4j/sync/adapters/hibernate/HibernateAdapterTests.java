@@ -10,6 +10,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mesh4j.sync.ISupportMerge;
+import org.mesh4j.sync.adapters.IdentifiableContent;
 import org.mesh4j.sync.filter.NullFilter;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.IContent;
@@ -37,7 +38,7 @@ public class HibernateAdapterTests {
 	
 	private IContent makeNewUser(String id) throws DocumentException {
 		Element element = TestHelper.makeElement("<user><id>"+id+"</id><name>"+id+"</name><pass>123</pass></user>");
-		IContent user = new EntityContent(element, "user", "id", id);
+		IContent user = new IdentifiableContent(element, repo.getMapping(), id);
 		return user;
 	}
 	

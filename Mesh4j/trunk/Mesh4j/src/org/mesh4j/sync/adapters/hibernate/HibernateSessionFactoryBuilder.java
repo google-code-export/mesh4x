@@ -103,7 +103,7 @@ public class HibernateSessionFactoryBuilder implements IHibernateSessionFactoryB
 	public IHibernateToXMLMapping buildMeshMapping(String entityName, String idNode) {
 		IRDFSchema rdfSchema = this.rdfSchemas.get(entityName);
 		if(rdfSchema != null){
-			return new HibernateToRDFMapping(rdfSchema, entityName, idNode);
+			return new HibernateToRDFMapping(rdfSchema);
 		} else {
 			return new HibernateToPlainXMLMapping(entityName, idNode);
 		}

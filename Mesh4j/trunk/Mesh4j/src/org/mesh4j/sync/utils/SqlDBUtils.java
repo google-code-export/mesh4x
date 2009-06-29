@@ -132,8 +132,9 @@ public class SqlDBUtils {
 		try {
 			Class.forName(driverClass.getName());
 			Connection con = DriverManager.getConnection(serverUrl, username, password);
+			Statement stmt = null;
 			try {
-				Statement stmt = con.createStatement();
+				stmt = con.createStatement();
 				
 				createDBIfNotExist(stmt, dbName, username, password);
 				
@@ -165,6 +166,9 @@ public class SqlDBUtils {
 			} catch (SQLException e) {
 				LOGGER.error(e.getMessage(), e);
 			} finally {
+				if(stmt != null){
+					stmt.close();
+				}
 				con.close();
 			}
 		} catch (Exception e) {

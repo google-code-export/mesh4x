@@ -72,6 +72,32 @@ public class MsExcelUtils {
 		}
 	}
 	
+	public static Row getRow(Sheet worksheet, String[] columnNames, String[] values) {
+		Row row;
+		Cell cellId;
+		String cellValue;
+		for (int i = worksheet.getFirstRowNum()+1; i <= worksheet.getLastRowNum(); i++) {
+			row = worksheet.getRow(i);
+			if(row != null){
+				int ok = 0;
+				for (int j = 0; j < columnNames.length; j++) {
+					String columnName = columnNames[j];
+					 
+					cellId = getCell(worksheet, row, columnName);
+					if(cellId != null && cellId.getCellType() != Cell.CELL_TYPE_BLANK){
+						cellValue = String.valueOf(getCellValue(cellId));
+						if(values[j].equals(cellValue)){
+							ok = ok +1;
+						}
+					}
+				}
+				if(ok == columnNames.length){
+					return row;
+				}
+			}
+		}
+		return null;
+	}
 	
 	public static Row getRow(Sheet worksheet, int columnIndex, String value) {
 		Row row;
@@ -93,6 +119,11 @@ public class MsExcelUtils {
 	}
 	
 	public static Cell getCell(Sheet worksheet, Row row, String columnName) {
+		
+		if(columnName == null || row == null || worksheet == null){
+			return null;
+		}
+		
 		Row rowHeader = worksheet.getRow(0);
 		Cell cell;
 		for (Iterator<Cell> iterator = rowHeader.cellIterator(); iterator.hasNext();) {
@@ -179,6 +210,8 @@ public class MsExcelUtils {
 			return cell.getRichStringCellValue().getString();
 		} else if(Cell.CELL_TYPE_BOOLEAN == type){
 			return cell.getBooleanCellValue();
+		}else if(Cell.CELL_TYPE_FORMULA  == type){
+			return cell.getRichStringCellValue().getString();
 		} else if(Cell.CELL_TYPE_NUMERIC == type){
 			if(DateUtil.isCellDateFormatted(cell)) {
 				return cell.getDateCellValue();

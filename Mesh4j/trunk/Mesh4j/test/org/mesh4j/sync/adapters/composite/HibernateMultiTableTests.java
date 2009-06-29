@@ -1,7 +1,7 @@
 package org.mesh4j.sync.adapters.composite;
 
 import java.io.File;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -129,24 +129,21 @@ public class HibernateMultiTableTests {
 
 		// create sheets
 		
-		HashMap<IRDFSchema, String> sheets = new HashMap<IRDFSchema, String>();
+		List<IRDFSchema> sheets = new ArrayList<IRDFSchema>();
 		
 		for (IIdentifiableSyncAdapter identifiableAdapter : adapterSource.getAdapters()) {
 			SplitAdapter splitAdapter = (SplitAdapter)((IdentifiableSyncAdapter)identifiableAdapter).getSyncAdapter();
 			HibernateContentAdapter hibernateContentAdapter = (HibernateContentAdapter)splitAdapter.getContentAdapter();
 			
-			String id = hibernateContentAdapter.getMapping().getIDNode();
 			IRDFSchema rdfSchema = (IRDFSchema)hibernateContentAdapter.getMapping().getSchema();
 			
-			sheets.put(rdfSchema, id);
+			sheets.add(rdfSchema);
 		}
 		
 		// msExcel
 		File file = TestHelper.makeFileAndDeleteIfExists("composite_Hibernate_MsExcel.xlsx");
 		InMemorySyncAdapter adapterOpaqueTarget = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
-		MsExcelRDFSyncAdapterFactory factory = new MsExcelRDFSyncAdapterFactory(rdfURL);
-
-		ISyncAdapter adapterTarget = factory.createSyncAdapterForMultiSheets(file.getCanonicalPath(), NullIdentityProvider.INSTANCE, adapterOpaqueTarget, sheets);
+		ISyncAdapter adapterTarget = MsExcelRDFSyncAdapterFactory.createSyncAdapterForMultiSheets(file.getCanonicalPath(), NullIdentityProvider.INSTANCE, adapterOpaqueTarget, sheets);
 		
 		// sync
 		SyncEngine syncEngine = new SyncEngine(adapterSource, adapterTarget);

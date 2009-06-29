@@ -16,7 +16,7 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.junit.Test;
 import org.mesh4j.sync.SyncEngine;
-import org.mesh4j.sync.adapters.hibernate.EntityContent;
+import org.mesh4j.sync.adapters.IdentifiableContent;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.id.generator.IIdGenerator;
 import org.mesh4j.sync.id.generator.IdGenerator;
@@ -40,15 +40,15 @@ public class MsExcelSyncTests {
 		MsExcel excelA = new MsExcel(TestHelper.fileName("fileA.xls"));
 		MsExcelSyncRepository syncRepoA = new MsExcelSyncRepository(excelA, sheetName+"_sync", identityProvider, idGenerator);
 		
-		MSExcelToPlainXMLMapping mapperA = new MSExcelToPlainXMLMapping(idColumnName, null);
-		MsExcelContentAdapter contentAdapterA = new MsExcelContentAdapter(excelA, mapperA, sheetName);
+		MSExcelToPlainXMLMapping mapperA = new MSExcelToPlainXMLMapping(sheetName, idColumnName, null, null);
+		MsExcelContentAdapter contentAdapterA = new MsExcelContentAdapter(excelA, mapperA);
 		SplitAdapter splitAdapterA = new SplitAdapter(syncRepoA, contentAdapterA, identityProvider);
 
 		MsExcel excelB = new MsExcel(TestHelper.fileName("fileB.xls"));
 		MsExcelSyncRepository syncRepoB = new MsExcelSyncRepository(excelB, sheetName+"_sync", identityProvider, idGenerator);
 		
-		MSExcelToPlainXMLMapping mapperB = new MSExcelToPlainXMLMapping(idColumnName, null);
-		MsExcelContentAdapter contentAdapterB = new MsExcelContentAdapter(excelB, mapperB, sheetName);
+		MSExcelToPlainXMLMapping mapperB = new MSExcelToPlainXMLMapping(sheetName, idColumnName, null, null);
+		MsExcelContentAdapter contentAdapterB = new MsExcelContentAdapter(excelB, mapperB);
 		SplitAdapter splitAdapterB = new SplitAdapter(syncRepoB, contentAdapterB, identityProvider);		
 
 		SyncEngine syncEngine = new SyncEngine(splitAdapterA, splitAdapterB);
@@ -66,15 +66,19 @@ public class MsExcelSyncTests {
 		String idColumnName = "id";
 		
 		SplitAdapter adapterA = makeSplitAdapter(sheetName, idColumnName, "excelA.xls", "syncA.xls", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, true);
+		
+		IMsExcelToXMLMapping mapping = ((MsExcelContentAdapter)adapterA.getContentAdapter()).getMapping();
+		
 		makeHeader(adapterA);
-		adapterA.add(makeNewItem());
-		adapterA.add(makeNewItem());
-		adapterA.add(makeNewItem());
-		adapterA.add(makeNewItem());
+		adapterA.add(makeNewItem(mapping));
+		adapterA.add(makeNewItem(mapping));
+		adapterA.add(makeNewItem(mapping));
+		adapterA.add(makeNewItem(mapping));
 		
 		SplitAdapter adapterB = makeSplitAdapter(sheetName, idColumnName, "excelB.xls", "syncB.xls", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, true);
+		IMsExcelToXMLMapping mappingB = ((MsExcelContentAdapter)adapterB.getContentAdapter()).getMapping();
 		makeHeader(adapterB);
-		adapterB.add(makeNewItem());
+		adapterB.add(makeNewItem(mappingB));
 		
 		SyncEngine syncEngine = new SyncEngine(adapterA, adapterB);
 		
@@ -91,11 +95,13 @@ public class MsExcelSyncTests {
 		String idColumnName = "id";
 		
 		SplitAdapter adapterA = makeSplitAdapter(sheetName, idColumnName, "dataAndSyncA.xls", "dataAndSyncA.xls", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, true);
+		IMsExcelToXMLMapping mapping = ((MsExcelContentAdapter)adapterA.getContentAdapter()).getMapping();
+		
 		makeHeader(adapterA);
-		adapterA.add(makeNewItem());
-		adapterA.add(makeNewItem());
-		adapterA.add(makeNewItem());
-		adapterA.add(makeNewItem());
+		adapterA.add(makeNewItem(mapping));
+		adapterA.add(makeNewItem(mapping));
+		adapterA.add(makeNewItem(mapping));
+		adapterA.add(makeNewItem(mapping));
 		
 		SplitAdapter adapterB = makeSplitAdapter(sheetName, idColumnName, "dataAndSyncB.xls", "dataAndSyncB.xls", NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, true);
 		
@@ -141,13 +147,13 @@ public class MsExcelSyncTests {
 		cell.setCellValue(MsExcelUtils.getRichTextString(workbook, "city"));
 	}
 	
-	private Item makeNewItem() throws DocumentException {
+	private Item makeNewItem(IMsExcelToXMLMapping mapping) throws DocumentException {
 		
 		String id = IdGenerator.INSTANCE.newID();
 		String xml = "<patient><id>"+id+"</id><name>marcelo</name><age>33</age><country>Argentina</country><city>Brandsen</city></patient>";
 		Element payload = DocumentHelper.parseText(xml).getRootElement();
 		
-		IContent content = new EntityContent(payload, "patient", "id", id);
+		IContent content = new IdentifiableContent(payload, mapping, id);
 		Sync sync = new Sync(IdGenerator.INSTANCE.newID(), "jmt", new Date(), false);
 		return new Item(content, sync);
 	}
@@ -169,8 +175,8 @@ public class MsExcelSyncTests {
 		}
 		
 		MsExcelSyncRepository syncRepo = new MsExcelSyncRepository(syncExcel, sheetName+"_sync", identityProvider, idGenerator);
-		MSExcelToPlainXMLMapping mapper = new MSExcelToPlainXMLMapping(idColumnName, null);
-		MsExcelContentAdapter contentAdapter = new MsExcelContentAdapter(contentExcel, mapper, sheetName);
+		MSExcelToPlainXMLMapping mapper = new MSExcelToPlainXMLMapping(sheetName, idColumnName, null, null);
+		MsExcelContentAdapter contentAdapter = new MsExcelContentAdapter(contentExcel, mapper);
 
 		SplitAdapter splitAdapter = new SplitAdapter(syncRepo, contentAdapter, identityProvider);
 		return splitAdapter;

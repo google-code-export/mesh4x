@@ -43,7 +43,7 @@ public class MSExcelToRDFMappingXLSXTest {
 			@Override public Sheet getSheet(String sheetName) {return null;}
 		};
 		
-		RDFSchema rdfSchema = MsExcelToRDFMapping.extractRDFSchema(excel, SHEET_NAME, "http://localhost:8080/mesh4x/feeds/MyExample");
+		RDFSchema rdfSchema = MsExcelToRDFMapping.extractRDFSchema(excel, SHEET_NAME, new String[]{COLUMN_CODE}, null, "http://localhost:8080/mesh4x/feeds/MyExample");
 		
 		System.out.println(rdfSchema.asXML());
 		
@@ -73,15 +73,15 @@ public class MSExcelToRDFMappingXLSXTest {
 			@Override public Sheet getSheet(String sheetName) {return null;}
 		};
 		
-		RDFSchema rdfSchema = MsExcelToRDFMapping.extractRDFSchema(excel, SHEET_NAME, "http://localhost:8080/mesh4x/feeds/MyExample");
-		MsExcelToRDFMapping mapper = new MsExcelToRDFMapping(rdfSchema, COLUMN_CODE);
+		RDFSchema rdfSchema = MsExcelToRDFMapping.extractRDFSchema(excel, SHEET_NAME, new String[]{COLUMN_CODE}, null, "http://localhost:8080/mesh4x/feeds/MyExample");
+		MsExcelToRDFMapping mapper = new MsExcelToRDFMapping(rdfSchema);
 				
 		Workbook workbook = getDefaultWorkbook();
 		Sheet sheet = MsExcelUtils.getOrCreateSheetIfAbsent(workbook, SHEET_NAME);
 		Row row = sheet.getRow(sheet.getLastRowNum());
 		Row headerRow = sheet.getRow(sheet.getFirstRowNum());
 		
-		RDFInstance rdfInstance = mapper.converRowToRDF(headerRow, row);
+		RDFInstance rdfInstance = mapper.converRowToRDF(sheet, headerRow, row);
 		Assert.assertNotNull(rdfInstance);
 		
 		System.out.println(rdfInstance.asXML());
@@ -108,6 +108,8 @@ public class MSExcelToRDFMappingXLSXTest {
 		schema.addStringProperty(COLUMN_SEX, "sex", "en");
 		schema.addBooleanProperty(COLUMN_ILL, "ill", "en");
 		schema.addDateTimeProperty(COLUMN_DATE_ONSET, "dateOnset", "en");
+		schema.setIdentifiablePropertyName(COLUMN_CODE);
+		
 		RDFInstance rdfInstance = schema.createNewInstance("uri:urn:P1");
 		
 		long millis = System.currentTimeMillis();
@@ -138,7 +140,7 @@ public class MSExcelToRDFMappingXLSXTest {
 		
 		Row row = sheet.createRow(1);
 		
-		MsExcelToRDFMapping mapper = new MsExcelToRDFMapping(schema, COLUMN_CODE);
+		MsExcelToRDFMapping mapper = new MsExcelToRDFMapping(schema);
 		mapper.appliesRDFToRow(workbook, sheet, row, rdfInstance);
 		
 		Assert.assertEquals(6, row.getLastCellNum());
@@ -170,10 +172,10 @@ public class MSExcelToRDFMappingXLSXTest {
 			@Override public boolean fileExists() {return false;}
 			@Override public Sheet getSheet(String sheetName) {return null;}
 		};
-		RDFSchema rdfSchema = MsExcelToRDFMapping.extractRDFSchema(excel, SHEET_NAME, "http://localhost:8080/mesh4x/feeds/MyExample");
-		MsExcelToRDFMapping mapper = new MsExcelToRDFMapping(rdfSchema, COLUMN_CODE);
+		RDFSchema rdfSchema = MsExcelToRDFMapping.extractRDFSchema(excel, SHEET_NAME, new String[]{COLUMN_CODE}, null, "http://localhost:8080/mesh4x/feeds/MyExample");
+		MsExcelToRDFMapping mapper = new MsExcelToRDFMapping(rdfSchema);
 		
-		RDFInstance rdfInstance = mapper.converRowToRDF(headerRow, row);
+		RDFInstance rdfInstance = mapper.converRowToRDF(sheet, headerRow, row);
 		Assert.assertNotNull(rdfInstance);
 		
 		
@@ -218,8 +220,8 @@ public class MSExcelToRDFMappingXLSXTest {
 			@Override public Sheet getSheet(String sheetName) {return null;}
 		};
 		
-		RDFSchema rdfSchema = MsExcelToRDFMapping.extractRDFSchema(excel, SHEET_NAME, "http://localhost:8080/mesh4x/feeds/MyExample");
-		MsExcelToRDFMapping mapper = new MsExcelToRDFMapping(rdfSchema, COLUMN_CODE);
+		RDFSchema rdfSchema = MsExcelToRDFMapping.extractRDFSchema(excel, SHEET_NAME, new String[]{COLUMN_CODE}, null, "http://localhost:8080/mesh4x/feeds/MyExample");
+		MsExcelToRDFMapping mapper = new MsExcelToRDFMapping(rdfSchema);
 		
 		// create new file
 		String newFileName = TestHelper.fileName("testRDFExcel"+IdGenerator.INSTANCE.newID()+".xlsx");

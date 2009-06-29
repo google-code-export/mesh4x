@@ -6,6 +6,7 @@ import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.adapters.feed.Feed;
 import org.mesh4j.sync.adapters.feed.FeedAdapter;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
+import org.mesh4j.sync.adapters.msexcel.MsExcel;
 import org.mesh4j.sync.adapters.msexcel.MsExcelRDFSyncAdapterFactory;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.id.generator.IdGenerator;
@@ -57,8 +58,8 @@ public class HibernateTypesTests {
 		RDFSchema rdfSchema = (RDFSchema)((HibernateContentAdapter)adapterSource.getContentAdapter()).getMapping().getSchema();
 		
 		String excelFileName = TestHelper.fileName(IdGenerator.INSTANCE.newID() + "_test_hibernate_types.xls");
-		MsExcelRDFSyncAdapterFactory msExcelFactory = new MsExcelRDFSyncAdapterFactory(rdfBaseURL);
-		ISyncAdapter adapterTarget = msExcelFactory.createSyncAdapter(excelFileName, tableName, "uid", NullIdentityProvider.INSTANCE, rdfSchema);
+
+		ISyncAdapter adapterTarget = MsExcelRDFSyncAdapterFactory.createSyncAdapter(new MsExcel(excelFileName), NullIdentityProvider.INSTANCE, rdfSchema);
 					
 		SyncEngine syncEngine = new SyncEngine(adapterSource, adapterTarget);
 		TestHelper.assertSync(syncEngine);

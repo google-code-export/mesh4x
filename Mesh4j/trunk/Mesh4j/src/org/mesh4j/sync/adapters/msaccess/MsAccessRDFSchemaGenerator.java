@@ -32,6 +32,8 @@ public class MsAccessRDFSchemaGenerator {
 			Guard.throwsArgumentException("mdbFileName", mdbFileName);
 		}
 		
+		ArrayList<String> identifiablePropertyNames = new ArrayList<String>();		
+		
 		RDFSchema rdfSchema = new RDFSchema(ontologyNameSpace, ontologyBaseUri, getEntityName(tableName));
 		Database db = Database.open(mdbFile);
 		try{
@@ -43,7 +45,21 @@ public class MsAccessRDFSchemaGenerator {
 			
 			for (Column column : table.getColumns()) {
 				addProperty(rdfSchema, column);
+				
+				if(DataType.GUID.equals(column.getType())){
+					identifiablePropertyNames.add(column.getName());
+				}
 			}
+			
+			List<ColumnDescriptor> pks = getPrimaryKeys(table);
+			if(!pks.isEmpty()){
+				identifiablePropertyNames = new ArrayList<String>();
+				for (ColumnDescriptor columnDescriptor : pks) {
+					identifiablePropertyNames.add(columnDescriptor.getName());	
+				}				
+			}
+			rdfSchema.setIdentifiablePropertyNames(identifiablePropertyNames);			
+			
 		} finally{
 			db.close();
 		}
@@ -113,8 +129,7 @@ public class MsAccessRDFSchemaGenerator {
 		
 		String className = getEntityName(tableName);
 		RDFSchema rdfSchema = new RDFSchema(className, rdfBaseURL+"/"+className+"#", className);
-		String idColumnName = null;
-		boolean isGuid = false;
+
 		Database db = null;
 		try{
 			db = Database.open(mdbFile);
@@ -123,19 +138,28 @@ public class MsAccessRDFSchemaGenerator {
 				Guard.throwsArgumentException("tableName", table);
 			}
 			
+			ArrayList<String> identifiablePropertyNames = new ArrayList<String>();
+			ArrayList<String> guidPropertyNames = new ArrayList<String>();
+			
 			for (Column column : table.getColumns()) {
 				addProperty(rdfSchema, column);
 				
 				if(DataType.GUID.equals(column.getType())){
-					idColumnName = column.getName();
-					isGuid = true;
+					guidPropertyNames.add(column.getName());
+					identifiablePropertyNames.add(column.getName());
 				}
 			}
 			
 			List<ColumnDescriptor> pks = getPrimaryKeys(table);
 			if(!pks.isEmpty()){
-				idColumnName = pks.get(0).getName();
+				identifiablePropertyNames = new ArrayList<String>();
+				for (ColumnDescriptor columnDescriptor : pks) {
+					identifiablePropertyNames.add(columnDescriptor.getName());	
+				}	
 			}
+			
+			rdfSchema.setIdentifiablePropertyNames(identifiablePropertyNames);
+			rdfSchema.setGUIDPropertyNames(guidPropertyNames);
 		} catch (Exception e) {
 			throw new MeshException(e);
 		}finally{
@@ -148,7 +172,7 @@ public class MsAccessRDFSchemaGenerator {
 			}
 		}		
 		
-		MsAccessToRDFMapping mapping = new MsAccessToRDFMapping(rdfSchema, idColumnName, isGuid);
+		MsAccessToRDFMapping mapping = new MsAccessToRDFMapping(rdfSchema);
 		return mapping;
 	}
 	

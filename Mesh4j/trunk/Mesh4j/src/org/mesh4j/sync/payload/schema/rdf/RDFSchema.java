@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +35,12 @@ import com.hp.hpl.jena.vocabulary.XSD;
 //TODO (JMT) RDF: FeedReader: read content from item elements (use mesh4x namespace)
 public class RDFSchema implements IRDFSchema{
 
+	// CONSTANTs
+	private final static String MESH_METADATA_CLASS_NAME = "mesh4xMetadata";
+	private final static String MESH_METADATA_IDENTIFIABLE_PROPERTY_NAME = "identifiableProperties";
+	private final static String MESH_METADATA_VERSION_PROPERTY_NAME = "versionProperty";
+	private final static String MESH_METADATA_GUID_PROPERTY_NAME = "guidProperties";
+	
 	// MODEL VARIABLES
 	private String ontologyBaseUri;
 	private String ontologyNameSpace;
@@ -40,6 +48,7 @@ public class RDFSchema implements IRDFSchema{
 	
 	private OntModel schema;
 	private OntClass domainClass;
+	private OntClass meshMetadataClass;
 		
 	// BUSINESS METHODS
 	
@@ -54,9 +63,22 @@ public class RDFSchema implements IRDFSchema{
 		}
 		
 		ExtendedIterator it = this.schema.listClasses();
-		if(it.hasNext()){
-			this.domainClass = (OntClass)this.schema.listClasses().next();
-		} else {
+		while(it.hasNext()){
+			OntClass ontClass = (OntClass)it.next();
+			if(MESH_METADATA_CLASS_NAME.equals(ontClass.getLocalName())){
+				if(this.meshMetadataClass != null){
+					Guard.throwsArgumentException("reader");
+				}
+				this.meshMetadataClass = ontClass;
+			} else {
+				if(this.domainClass != null){
+					Guard.throwsArgumentException("reader");
+				}
+				this.domainClass = ontClass;
+			}
+		}
+			
+		if(this.domainClass == null){
 			Guard.throwsArgumentException("reader");			
 		}
 
@@ -65,7 +87,11 @@ public class RDFSchema implements IRDFSchema{
 		this.ontologyClassName = this.domainClass.getLocalName();
 		this.ontologyNameSpace = uri[1];
 		this.schema.setNsPrefix(this.ontologyNameSpace, this.ontologyBaseUri);
-
+		
+		if(this.meshMetadataClass == null){
+			String meshNameUri = this.ontologyBaseUri + MESH_METADATA_CLASS_NAME;
+			this.meshMetadataClass = schema.createClass(meshNameUri);
+		}
 	}
 	
 	public RDFSchema(String ontologyNameSpace, String ontologyBaseUri, String ontologyClassName){
@@ -82,6 +108,9 @@ public class RDFSchema implements IRDFSchema{
 	
 		String classNameUri = this.ontologyBaseUri + this.ontologyClassName;
 		this.domainClass = schema.createClass(classNameUri);
+		
+		String meshNameUri = this.ontologyBaseUri + MESH_METADATA_CLASS_NAME;
+		this.meshMetadataClass = schema.createClass(meshNameUri);
 	}
 		
 	public void addStringProperty(String propertyName, String label, String lang){
@@ -159,7 +188,7 @@ public class RDFSchema implements IRDFSchema{
 	}
 
 	public int getPropertyCount() {
-		return this.schema.listDatatypeProperties().toSet().size();
+		return this.getDomainProperties().size();
 	}
 
 	public String getPropertyType(String propertyName) {
@@ -266,9 +295,8 @@ public class RDFSchema implements IRDFSchema{
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	public String getPropertyName(int index) {	
-		List<DatatypeProperty> items = this.schema.listDatatypeProperties().toList();
+		List<DatatypeProperty> items = this.getDomainProperties();
 		if(items.isEmpty() || items.size() <= index){
 			return null;
 		} else {
@@ -366,17 +394,17 @@ public class RDFSchema implements IRDFSchema{
 			return false;
 		}
 		
-//		if(!this.getOntologyBaseUri().equals(rdfSchema.getOntologyBaseUri())){
-//			return false;
-//		}
-//
-//		if(!this.getOntologyClassName().equals(rdfSchema.getOntologyClassName())){
-//			return false;
-//		}
-//		
-//		if(!this.getOntologyNameSpace().equals(rdfSchema.getOntologyNameSpace())){
-//			return false;
-//		}
+		if(!this.getOntologyBaseUri().equals(rdfSchema.getOntologyBaseUri())){
+			return false;
+		}
+
+		if(!this.getOntologyClassName().equals(rdfSchema.getOntologyClassName())){
+			return false;
+		}
+		
+		if(!this.getOntologyNameSpace().equals(rdfSchema.getOntologyNameSpace())){
+			return false;
+		}
 		
 		for (int i = 0; i < size; i++) {
 			String propName = rdfSchema.getPropertyName(i);
@@ -418,6 +446,20 @@ public class RDFSchema implements IRDFSchema{
 				}
 			}			
 		}			
+		
+		List<String> localIds = this.getIdentifiablePropertyNames();
+		List<String> otherIds = rdfSchema.getIdentifiablePropertyNames();
+		if(localIds.size() != otherIds.size()){
+			return false;
+		}
+		
+		for (int i = 0; i < localIds.size(); i++) {
+			String idName = localIds.get(i);
+			String otherIdName = otherIds.get(i);
+			if(!idName.equals(otherIdName)){
+				return false;
+			}
+		}		
 		return true;
 	}
 
@@ -476,4 +518,126 @@ public class RDFSchema implements IRDFSchema{
 	public String getName() {
 		return this.ontologyClassName;
 	}
+
+	public void setIdentifiablePropertyName(String propertyName) {
+		ArrayList<String> identifiablePropertyNames = new ArrayList<String>();
+		identifiablePropertyNames.add(propertyName);
+		setIdentifiablePropertyNames(identifiablePropertyNames);		
+	}
+	
+	public void setIdentifiablePropertyNames(List<String> identifiablePropertyNames) {
+		StringBuffer sb = new StringBuffer();
+		
+		for (int j = 0; j < identifiablePropertyNames.size(); j++) {
+			sb.append(identifiablePropertyNames.get(j));
+			if(j < identifiablePropertyNames.size() -1){
+				sb.append(",");	
+			}
+		}		
+		
+		String[] uri = this.meshMetadataClass.getURI().split("#");
+		String propertyUri = uri[0] + "/" + MESH_METADATA_CLASS_NAME + "#"+ MESH_METADATA_IDENTIFIABLE_PROPERTY_NAME;
+		DatatypeProperty domainProperty = this.schema.createDatatypeProperty(propertyUri);
+		
+		domainProperty.addDomain(this.meshMetadataClass);
+		domainProperty.addRange(XSD.xstring);
+		domainProperty.addComment(sb.toString(), "en");
+
+	}
+	
+	public void setVersionPropertyName(String versionPropertyName) {
+		if(versionPropertyName != null){
+			String[] uri = this.meshMetadataClass.getURI().split("#");
+			String propertyUri = uri[0] + "/" + MESH_METADATA_CLASS_NAME + "#"+ MESH_METADATA_VERSION_PROPERTY_NAME;
+			DatatypeProperty domainProperty = this.schema.createDatatypeProperty(propertyUri);
+			
+			domainProperty.addDomain(this.meshMetadataClass);
+			domainProperty.addRange(XSD.xstring);
+			domainProperty.addComment(versionPropertyName, "en");
+		}
+	}
+	
+	public void setGUIDPropertyNames(List<String> guidPropertyNames) {
+		StringBuffer sb = new StringBuffer();
+		
+		for (int j = 0; j < guidPropertyNames.size(); j++) {
+			sb.append(guidPropertyNames.get(j));
+			if(j < guidPropertyNames.size() -1){
+				sb.append(",");	
+			}
+		}		
+		
+		String[] uri = this.meshMetadataClass.getURI().split("#");
+		String propertyUri = uri[0] + "/" + MESH_METADATA_CLASS_NAME + "#"+ MESH_METADATA_GUID_PROPERTY_NAME;
+		DatatypeProperty domainProperty = this.schema.createDatatypeProperty(propertyUri);
+		
+		domainProperty.addDomain(this.meshMetadataClass);
+		domainProperty.addRange(XSD.xstring);
+		domainProperty.addComment(sb.toString(), "en");
+
+	}
+
+	@Override
+	public List<String> getIdentifiablePropertyNames() {
+		ExtendedIterator it = this.schema.listDatatypeProperties();
+		while(it.hasNext()){
+			DatatypeProperty datatypeProperty = (DatatypeProperty)it.next();
+			if(datatypeProperty.getDomain().equals(this.meshMetadataClass) && datatypeProperty.getLocalName().equals(MESH_METADATA_IDENTIFIABLE_PROPERTY_NAME)){
+				String comment = datatypeProperty.getComment("en");
+				String[] pks = comment.split(",");
+				return Arrays.asList(pks);
+			}
+		}
+		return new ArrayList<String>();
+	}
+	
+	public List<String> getGUIDPropertyNames() {
+		ExtendedIterator it = this.schema.listDatatypeProperties();
+		while(it.hasNext()){
+			DatatypeProperty datatypeProperty = (DatatypeProperty)it.next();
+			if(datatypeProperty.getDomain().equals(this.meshMetadataClass) && datatypeProperty.getLocalName().equals(MESH_METADATA_GUID_PROPERTY_NAME)){
+				String comment = datatypeProperty.getComment("en");
+				String[] pks = comment.split(",");
+				return Arrays.asList(pks);
+			}
+		}
+		return new ArrayList<String>();
+	}
+	
+	@Override
+	public String getVersionPropertyName() {
+		ExtendedIterator it = this.schema.listDatatypeProperties();
+		while(it.hasNext()){
+			DatatypeProperty datatypeProperty = (DatatypeProperty)it.next();
+			if(datatypeProperty.getDomain().equals(this.meshMetadataClass) && datatypeProperty.getLocalName().equals(MESH_METADATA_VERSION_PROPERTY_NAME)){
+				String comment = datatypeProperty.getComment("en");
+				return comment;
+			}
+		}
+		return null;
+	}
+	
+	protected List<DatatypeProperty> getDomainProperties() {
+		ArrayList<DatatypeProperty> domainProperties = new ArrayList<DatatypeProperty>();
+		ExtendedIterator it = this.schema.listDatatypeProperties();
+		while(it.hasNext()){
+			DatatypeProperty datatypeProperty = (DatatypeProperty)it.next();
+			if(datatypeProperty.getDomain().equals(this.domainClass)){
+				domainProperties.add(datatypeProperty);
+			}
+		}
+		return domainProperties;
+	}
+
+	@Override
+	public boolean isGUID(String propertyName) {
+		return getGUIDPropertyNames().contains(propertyName);
+	}
+
+	@Override
+	public String getBaseRDFURL() {
+		return this.ontologyBaseUri.substring(0, this.ontologyBaseUri.length() - (this.ontologyClassName.length() +2));
+		// + 2 because add 1 for / and 1 for #
+	}
+
 }

@@ -26,27 +26,6 @@ public class MSExcelToPlainXMLMappingXLSXTests {
 	private static final String COLUMN_NAME_OTHER = "other";
 	private static final String SHEET_NAME = "Oswego";
 	
-	@Test(expected=IllegalArgumentException.class)
-	public void shouldCreateMapperFailsWhenIDColumnNameIsNull(){
-		new MSExcelToPlainXMLMapping(null, "columnLastUpdate");
-	}
-
-	@Test(expected=IllegalArgumentException.class)
-	public void shouldCreateMapperFailsWhenIDColumnNameIsEmpty(){
-		new MSExcelToPlainXMLMapping("", "columnLastUpdate");
-	}
-
-	@Test(expected=IllegalArgumentException.class)
-	public void shouldCreateMapperFailsWhenLastUpdateColumnNameIsEmpty(){
-		new MSExcelToPlainXMLMapping("id", "");
-	}
-	
-
-	@Test
-	public void shouldCreateMapperAcceptsNullLastUpdateColumnName(){
-		new MSExcelToPlainXMLMapping("id", null);
-	}
-	
 	@Test
 	public void shouldConvertRowToXML(){
 		
@@ -55,7 +34,7 @@ public class MSExcelToPlainXMLMappingXLSXTests {
 		Sheet sheet = workbook.getSheet(SHEET_NAME);
 		Row row = sheet.getRow(1);
 		
-		MSExcelToPlainXMLMapping mapping = new MSExcelToPlainXMLMapping(COLUMN_NAME_ID, null);
+		MSExcelToPlainXMLMapping mapping = new MSExcelToPlainXMLMapping(SHEET_NAME, COLUMN_NAME_ID, null, null);
 		Element element = mapping.convertRowToXML(workbook, sheet, row);
 		
 		String xml = xmlForDefaultWoorbook("1", "jose", true, 30, date, null);
@@ -74,7 +53,7 @@ public class MSExcelToPlainXMLMappingXLSXTests {
 		String xml = xmlForDefaultWoorbook("1", "maria", false, 10, newDate, null);
 		Element payload = DocumentHelper.parseText(xml).getRootElement();
 		
-		MSExcelToPlainXMLMapping mapping = new MSExcelToPlainXMLMapping(COLUMN_NAME_ID, null);
+		MSExcelToPlainXMLMapping mapping = new MSExcelToPlainXMLMapping(SHEET_NAME, COLUMN_NAME_ID, null, null);
 		mapping.appliesXMLToRow(workbook, sheet, row, payload);
 		
 		Cell cell = row.getCell(0);
@@ -110,7 +89,7 @@ public class MSExcelToPlainXMLMappingXLSXTests {
 		String xml = xmlForDefaultWoorbook("1", "maria", false, 10, newDate, null);
 		Element payload = DocumentHelper.parseText(xml).getRootElement();
 		
-		MSExcelToPlainXMLMapping mapping = new MSExcelToPlainXMLMapping(COLUMN_NAME_ID, null);
+		MSExcelToPlainXMLMapping mapping = new MSExcelToPlainXMLMapping(SHEET_NAME, COLUMN_NAME_ID, null, null);
 		mapping.appliesXMLToRow(workbook, sheet, row, payload);
 		
 		Cell cell = row.getCell(0);
@@ -146,7 +125,7 @@ public class MSExcelToPlainXMLMappingXLSXTests {
 		Sheet sheet = workbook.getSheet(SHEET_NAME);
 		Row row = sheet.getRow(1);
 		
-		MSExcelToPlainXMLMapping mapping = new MSExcelToPlainXMLMapping(COLUMN_NAME_ID, null);
+		MSExcelToPlainXMLMapping mapping = new MSExcelToPlainXMLMapping(SHEET_NAME, COLUMN_NAME_ID, null, null);
 		mapping.appliesXMLToRow(workbook, sheet, row, payload);
 		
 		Cell cell = row.getCell(0);

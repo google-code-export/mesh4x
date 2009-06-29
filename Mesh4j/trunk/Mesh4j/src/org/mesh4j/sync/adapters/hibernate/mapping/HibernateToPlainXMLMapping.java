@@ -1,22 +1,13 @@
 package org.mesh4j.sync.adapters.hibernate.mapping;
 
 import org.dom4j.Element;
-import org.mesh4j.sync.payload.schema.ISchema;
-import org.mesh4j.sync.validations.Guard;
+import org.mesh4j.sync.payload.schema.AbstractPlainXmlIdentifiableMapping;
 
-public class HibernateToPlainXMLMapping implements IHibernateToXMLMapping {
+public class HibernateToPlainXMLMapping extends AbstractPlainXmlIdentifiableMapping implements IHibernateToXMLMapping {
 
-	// MODEL VARIABLES
-	private String entityNode;
-	private String idNode;
-	
 	// BUSINESS METHODS
 	public HibernateToPlainXMLMapping(String entityNode, String idNode){
-		Guard.argumentNotNullOrEmptyString(entityNode, "entityNode");
-		Guard.argumentNotNullOrEmptyString(idNode, "idNode");
-		
-		this.entityNode = entityNode;
-		this.idNode = idNode;
+		super(entityNode, idNode, null, null);
 	}
 	
 	@Override
@@ -30,17 +21,16 @@ public class HibernateToPlainXMLMapping implements IHibernateToXMLMapping {
 	}
 
 	@Override
-	public String getEntityNode() {
-		return this.entityNode;
+	public String getMeshId(Element entityElement) {
+		if(entityElement == null){
+			return null;
+		}
+
+		Element idElement = entityElement.element(idColumnName);
+		if(idElement == null){
+			return null;
+		}
+		return idElement.getText();
 	}
 
-	@Override
-	public String getIDNode() {
-		return this.idNode;
-	}
-
-	@Override
-	public ISchema getSchema() {
-		return null;
-	}
 }
