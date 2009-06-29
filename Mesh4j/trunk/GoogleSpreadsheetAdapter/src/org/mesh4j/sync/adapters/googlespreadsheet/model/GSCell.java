@@ -1,18 +1,12 @@
 package org.mesh4j.sync.adapters.googlespreadsheet.model;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadSheetContentAdapter;
 import org.mesh4j.sync.validations.Guard;
 
 import com.google.gdata.data.spreadsheet.CellEntry;
 import com.google.gdata.data.spreadsheet.ListEntry;
-import com.google.gdata.data.spreadsheet.WorksheetEntry;
-import com.google.gdata.util.ServiceException;
 
 /**
  * This class is to wrap a {@link CellEntry}, also contains a reference
@@ -26,6 +20,8 @@ import com.google.gdata.util.ServiceException;
 public class GSCell extends GSBaseElement {
 	
 	//CONSTANTS 
+	public final static String G_SPREADSHEET_DATE_FORMAT = "MM/dd/yyyy hh:mm:ss";
+	
 	public static final int CELL_TYPE_TEXT 		= 0;
 	public static final int CELL_TYPE_LONG 		= 1;
 	public static final int CELL_TYPE_DOUBLE 	= 2;
@@ -120,33 +116,6 @@ public class GSCell extends GSBaseElement {
 	} 	
 
 
-	@Override
-	public void refreshMeFromFeed(){
-		if(this.isDirty()){
-			try {
-				URL entryUrl = new URL(((WorksheetEntry) this
-						.getParentElement().getParentElement().getBaseEntry())
-						.getCellFeedUrl().toString()
-						+ "/" + ((CellEntry) this.baseEntry).getId());
-
-				this.baseEntry = this.baseEntry.getService().getEntry(entryUrl,
-						CellEntry.class);
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ServiceException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			this.dirty = false;
-			this.deleteCandidate = false;
-			
-		}
-	}
 	
 	/**
 	 * return the cell value as appropriate object type with respect to cell type
@@ -200,8 +169,7 @@ public class GSCell extends GSBaseElement {
 			}	
 			break;
 		case CELL_TYPE_DATE:		
-			SimpleDateFormat df = new SimpleDateFormat(
-					GoogleSpreadSheetContentAdapter.G_SPREADSHEET_DATE_FORMAT);
+			SimpleDateFormat df = new SimpleDateFormat(G_SPREADSHEET_DATE_FORMAT);
 			updateCellValue(df.format(cellValue));
 			break;
 		case CELL_TYPE_LONG:			
@@ -216,8 +184,7 @@ public class GSCell extends GSBaseElement {
 	}
 	
 	private int getBooleanDataFormat() {
-		// TODO: need to come up with a solution for get/set the format(yes/no
-		// or true/false) for boolean type data in spreadsheet
+		// TODO: need to come up with a solution for get/set the format(yes/no or true/false) for boolean type data in spreadsheet
 		return BOOLEAN_CELL_VALE_AS_TRUE_FALSE;
 	}
 

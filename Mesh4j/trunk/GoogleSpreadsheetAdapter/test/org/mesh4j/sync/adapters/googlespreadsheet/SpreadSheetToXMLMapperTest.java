@@ -26,18 +26,18 @@ import org.mesh4j.sync.utils.XMLHelper;
  */
 public class SpreadSheetToXMLMapperTest {
 
+	// MODEL VARIABLES
 	private IGoogleSpreadSheet spreadsheet;
 	private IGoogleSpreadsheetToXMLMapping mapper;
 	String userName = "gspreadsheet.test@gmail.com";
 	String passWord = "java123456";
-	//String GOOGLE_SPREADSHEET_FIELD = "peo4fu7AitTo8e3v0D8FCew";
 	String GOOGLE_SPREADSHEET_FILE_NAME = "testspreadsheet";
 	
-	
+	// TEST METHODS
 	@Before
 	public void init(){
 		loadSpreadSheet();
-		GoogleSpreadSheetContentAdapter adapter = new GoogleSpreadSheetContentAdapter(spreadsheet,mapper);
+		GoogleSpreadSheetContentAdapter adapter = new GoogleSpreadSheetContentAdapter(spreadsheet, mapper);
 		for(IContent content : adapter.getAll(new Date())){
 			adapter.delete(content);	
 		}
@@ -47,38 +47,22 @@ public class SpreadSheetToXMLMapperTest {
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldGenerateExceptionIfTypeIsNullOrEmpty(){
-		GSWorksheet workSheet = spreadsheet.getGSWorksheet(1);
-		IGoogleSpreadsheetToXMLMapping mapper = new GoogleSpreadsheetToPlainXMLMapping("","id",null,
-												workSheet.getName(), spreadsheet.getDocsService());
+		new GoogleSpreadsheetToPlainXMLMapping("", "id", null, spreadsheet.getDocsService());
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldGenerateExceptionIfIdIsNullOrEmpty(){
-		GSWorksheet workSheet = spreadsheet.getGSWorksheet(1);
-		IGoogleSpreadsheetToXMLMapping mapper = new GoogleSpreadsheetToPlainXMLMapping("user","",null,
-												workSheet.getName(), spreadsheet.getDocsService());
+		new GoogleSpreadsheetToPlainXMLMapping("user", "", null, spreadsheet.getDocsService());
 	}
-	
-	@Test(expected = IllegalArgumentException.class)
-	public void ShouldGenerateExceptionIfSheetNameIsNullOrEmpty(){
-		GSWorksheet workSheet = spreadsheet.getGSWorksheet(1);
-		IGoogleSpreadsheetToXMLMapping mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,
-												"", spreadsheet.getDocsService());
-	}
-	
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldGenerateExceptionIfDocsServiceIsNull(){
-		GSWorksheet workSheet = spreadsheet.getGSWorksheet(1);
-		IGoogleSpreadsheetToXMLMapping mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,
-												workSheet.getName(), null);
+		new GoogleSpreadsheetToPlainXMLMapping("user", "id", null, null);
 	}
-	
-	
+		
+	@SuppressWarnings("unchecked")
 	@Test
-	public void ShouldConvertRowToXMLPayload(){
-		
-		
+	public void ShouldConvertRowToXMLPayload(){		
 		String id = "1";
 		String title = "User Info";
 		String description = "user Information(id,name,age,city,country)";
@@ -92,7 +76,7 @@ public class SpreadSheetToXMLMapperTest {
 		
 		Element payload = XMLHelper.parseElement(rawDataAsXML);
 		IContent content = new XMLContent(id,title,description,payload);
-		GoogleSpreadSheetContentAdapter adapter = new GoogleSpreadSheetContentAdapter(spreadsheet,mapper);
+		GoogleSpreadSheetContentAdapter adapter = new GoogleSpreadSheetContentAdapter(spreadsheet, mapper);
 		
 		Assert.assertEquals(0, adapter.getAll(new Date()).size());
 		
@@ -120,6 +104,7 @@ public class SpreadSheetToXMLMapperTest {
 		
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Test
 	public void ShouldConvertXMLToRow(){
 		
@@ -169,6 +154,7 @@ public class SpreadSheetToXMLMapperTest {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Test
 	public void ShouldNormalizeRow(){
 		
@@ -196,7 +182,7 @@ public class SpreadSheetToXMLMapperTest {
 		Element payLoadToBeUpdated = XMLHelper.parseElement(rawUpdatedDataAsXML);
 		
 		IContent content = new XMLContent(id,title,description,payload);
-		GoogleSpreadSheetContentAdapter adapter = new GoogleSpreadSheetContentAdapter(spreadsheet,mapper);
+		GoogleSpreadSheetContentAdapter adapter = new GoogleSpreadSheetContentAdapter(spreadsheet, mapper);
 		
 		Assert.assertEquals(0, adapter.getAll(new Date()).size());
 		
@@ -226,8 +212,7 @@ public class SpreadSheetToXMLMapperTest {
 	
 	private void loadSpreadSheet(){
 		spreadsheet = new GoogleSpreadsheet(GOOGLE_SPREADSHEET_FILE_NAME, userName, passWord);
-		GSWorksheet workSheet = spreadsheet.getGSWorksheet(1);
-		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheet.getName(), spreadsheet.getDocsService());
+		mapper = new GoogleSpreadsheetToPlainXMLMapping("user", "id", null, spreadsheet.getDocsService());
 	}	
 	
 }

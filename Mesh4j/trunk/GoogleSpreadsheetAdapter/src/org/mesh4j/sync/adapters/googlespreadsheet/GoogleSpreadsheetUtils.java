@@ -10,7 +10,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadSheetSyncRepository.SyncColumn;
 import org.mesh4j.sync.adapters.googlespreadsheet.mapping.IGoogleSpreadsheetToXMLMapping;
 import org.mesh4j.sync.adapters.googlespreadsheet.model.GSBaseElement;
 import org.mesh4j.sync.adapters.googlespreadsheet.model.GSCell;
@@ -161,8 +160,6 @@ public class GoogleSpreadsheetUtils {
 											+ batchId + " failed ("
 											+ status.getReason() + ") "
 											+ status.getContent();
-									//TODO: remove
-									System.err.println(errorMsg);
 									throw new MeshException(new Exception(
 											errorMsg));
 									// TODO: Need to enhance the exception
@@ -531,8 +528,7 @@ public class GoogleSpreadsheetUtils {
 		return null;
 	}
 
-	public static GSRow<GSCell> getRow(GSWorksheet<GSRow<GSCell>> worksheet,
-			int columnIndex, String cellValue) {
+	public static GSRow<GSCell> getRow(GSWorksheet<GSRow<GSCell>> worksheet, int columnIndex, String cellValue) {
 		GSRow<GSCell> row;
 		for (Map.Entry<String, GSRow<GSCell>> mpRow : worksheet.getGSRows()
 				.entrySet()) {
@@ -547,6 +543,30 @@ public class GoogleSpreadsheetUtils {
 						// current row
 						return row;
 					}
+				}
+			}
+		}
+		return null;
+	}
+	
+	public static GSRow<GSCell> getRow(GSWorksheet<GSRow<GSCell>> worksheet, String[] columnNames, String[] cellValues) {
+		GSRow<GSCell> row;
+		for (Map.Entry<String, GSRow<GSCell>> mpRow : worksheet.getGSRows().entrySet()) {
+			row = mpRow.getValue();
+			if (row.getGSCells().size() > 0) {
+				int ok = 0;
+				for (int j = 0; j < columnNames.length; j++) {
+					String columnName = columnNames[j];
+					GSCell cell = row.getGSCell(columnName);
+					String cellContentAsString = cell.getCellValue();
+					if (cellContentAsString != null && !cellContentAsString.equals("")) {
+						if(cellValues[j].equals(cellContentAsString)){
+							ok = ok +1;
+						}
+					}
+				}
+				if(ok == columnNames.length){
+					return row;
 				}
 			}
 		}
@@ -655,7 +675,7 @@ public class GoogleSpreadsheetUtils {
 			GSSpreadsheet<GSWorksheet> spreadsheet,	IGoogleSpreadsheetToXMLMapping mapper) {
 
 		GSWorksheet<GSRow<GSCell>> contentWorksheet = spreadsheet
-				.getGSWorksheetBySheetName(mapper.getSheetName());
+				.getGSWorksheetBySheetName(mapper.getType());
 		
 		if (mapper.getSchema() == null) {
 			if(contentWorksheet == null)
@@ -671,7 +691,7 @@ public class GoogleSpreadsheetUtils {
 				spreadsheet.deleteChildElement(String.valueOf(contentWorksheet
 						.getElementListIndex()));
 
-			contentWorksheet = getOrCreateWorkSheetIfAbsent(spreadsheet, mapper.getSheetName());
+			contentWorksheet = getOrCreateWorkSheetIfAbsent(spreadsheet, mapper.getType());
 
 			RDFSchema rdfSchema = (RDFSchema) mapper.getSchema();
 

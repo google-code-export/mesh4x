@@ -1,6 +1,7 @@
 package org.mesh4j.sync.adapters.googlespreadsheet.mapping;
 
 import java.io.File;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -12,7 +13,7 @@ import org.mesh4j.sync.adapters.googlespreadsheet.model.GSCell;
 import org.mesh4j.sync.adapters.googlespreadsheet.model.GSRow;
 import org.mesh4j.sync.adapters.googlespreadsheet.model.GSWorksheet;
 import org.mesh4j.sync.adapters.msexcel.MsExcelUtils;
-import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
+import org.mesh4j.sync.payload.schema.AbstractPlainXmlIdentifiableMapping;
 import org.mesh4j.sync.validations.Guard;
 
 import com.google.gdata.client.docs.DocsService;
@@ -22,29 +23,18 @@ import com.google.gdata.client.docs.DocsService;
  * @version 1.0,30/3/2009
  * @see IGoogleSpreadsheetToXMLMapping 
  */
-public class GoogleSpreadsheetToPlainXMLMapping implements IGoogleSpreadsheetToXMLMapping{
+public class GoogleSpreadsheetToPlainXMLMapping extends AbstractPlainXmlIdentifiableMapping implements IGoogleSpreadsheetToXMLMapping{
 
 	//MODEL VARIABLES
-	private String idColumnName = "";
-	private String lastUpdateColumnName = "";
-	private String type = "";
-	private String sheetName = "";
 	private DocsService docService;
-
 	
 	//BUSINESS METHDOS
-	public GoogleSpreadsheetToPlainXMLMapping(String type, String idColumnName,String lastUpdateColumnName, String sheetName, DocsService docService){
-		Guard.argumentNotNullOrEmptyString(type, "type");
-		Guard.argumentNotNullOrEmptyString(idColumnName, "idColumnName");
-		if(lastUpdateColumnName != null){
-			Guard.argumentNotNullOrEmptyString(lastUpdateColumnName, "lastUpdateColumnName");
-		}
-		Guard.argumentNotNullOrEmptyString(sheetName, "sheetName");
+	public GoogleSpreadsheetToPlainXMLMapping(String type, String idColumnName, String lastUpdateColumnName, DocsService docService){
+		
+		super(type, idColumnName, lastUpdateColumnName, GSCell.G_SPREADSHEET_DATE_FORMAT);
+
 		Guard.argumentNotNull(docService,	"docService");
 		
-		this.type = type;
-		this.idColumnName = idColumnName;
-		this.sheetName = sheetName;
 		this.docService = docService;
 	}
 	
@@ -86,30 +76,6 @@ public class GoogleSpreadsheetToPlainXMLMapping implements IGoogleSpreadsheetToX
 
 	}
 		
-	@Override
-	public String getIdColumnName() {
-		return idColumnName;
-	}
-
-	@Override
-	public String getLastUpdateColumnName() {
-		return lastUpdateColumnName;
-	}
-
-	@Override
-	public String getType() {
-		return this.type;
-	}
-	@Override
-	public String getSheetName() {
-		return this.sheetName;
-	}
-	@Override
-	public IRDFSchema getSchema() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
 	public String createDataSource(String fileName) throws Exception {
 		//create a msexcel document
 		HSSFWorkbook workbook = new HSSFWorkbook();			
@@ -117,6 +83,36 @@ public class GoogleSpreadsheetToPlainXMLMapping implements IGoogleSpreadsheetToX
 		
 		//upload the excel document
 		return GoogleSpreadsheetUtils.uploadSpreadsheetDoc(new File(fileName), this.docService);
+	}
+
+
+	@Override
+	public String getId(GSRow<GSCell> gsRow) {
+		 GSCell cell = gsRow.getGSCell(this.getIdColumnName());
+		 if(cell == null){
+			 return null;
+		 } else {
+			 return cell.getCellValue();
+		 }
+	}
+
+
+	@Override
+	public Date getLastUpdate(GSRow<GSCell> row) {
+		GSCell cell = row.getGSCell(this.getLastUpdateColumnName());
+		if(cell == null){
+			return null;
+		} else {
+			String dateTimeAsString = cell.getCellValue();
+			Date lasUpdateDateTime = GoogleSpreadsheetUtils.normalizeDate(dateTimeAsString, GSCell.G_SPREADSHEET_DATE_FORMAT);
+			return lasUpdateDateTime;
+		}
+	}
+
+
+	@Override
+	public GSRow<GSCell> getRow(GSWorksheet<GSRow<GSCell>> workSheet, String id) {
+		return GoogleSpreadsheetUtils.getRow(workSheet, new String[]{this.getIdColumnName()}, new String[]{id});
 	}
 	
 }

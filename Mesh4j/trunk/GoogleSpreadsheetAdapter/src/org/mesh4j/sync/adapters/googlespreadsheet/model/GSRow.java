@@ -1,19 +1,13 @@
 package org.mesh4j.sync.adapters.googlespreadsheet.model;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadsheetUtils;
-
-import com.google.gdata.client.spreadsheet.CellQuery;
 import com.google.gdata.data.spreadsheet.CellEntry;
-import com.google.gdata.data.spreadsheet.CellFeed;
 import com.google.gdata.data.spreadsheet.ListEntry;
-import com.google.gdata.data.spreadsheet.ListFeed;
 import com.google.gdata.data.spreadsheet.WorksheetEntry;
 import com.google.gdata.util.ServiceException;
 
@@ -128,52 +122,6 @@ public class GSRow<C> extends GSBaseElement<C>{
 		return getChildElement(key);
 	}
 	
-	/**
-	 * populate the {@link GSCell} entries from the feed to be contained in this {@link GSRow}.
- 	 * Note: this method involves a http request
- 	 *     
-	 * @param service
-	 * @param worksheet
-	 * @throws IOException
-	 * @throws ServiceException
-	 */
-	@SuppressWarnings("unchecked")
-	@Deprecated
-	public void populateClild(/*SpreadsheetService service,*/
-			WorksheetEntry worksheet) throws IOException, ServiceException{
-		
-		if(getGSCells() != null && getGSCells().size() > 0) return;
-			
-		if(this.elementListIndex == 0){
-			//ListFeed lFeed = service.getFeed(worksheet.getListFeedUrl(), ListFeed.class);
-			ListFeed lFeed = worksheet.getService().getFeed(worksheet.getListFeedUrl(), ListFeed.class);
-	
-			//int rowIndex = lFeed.getEntries().contains(this.rowEntry);
-			//TODO: unfortunately this is not working :(; may be need to override equals method... 
-			
-			int rowIndex=2; 
-			for (; rowIndex <= lFeed.getEntries().size(); rowIndex++){
-				if(lFeed.getEntries().get(rowIndex-1).getId().equals(((IGSElement)this.baseEntry).getId()))
-					break;
-			}
-	
-			this.elementListIndex = rowIndex;
-		}
-		
-		CellQuery query = new CellQuery(worksheet.getCellFeedUrl());
-		query.setMinimumRow(this.elementListIndex ); //cell row# is 1 more that row#
-		query.setMaximumRow(this.elementListIndex );
-		
-		//CellFeed cFeed = service.query(query, CellFeed.class);
-		CellFeed cFeed = worksheet.getService().query(query, CellFeed.class);
-		
-		for(CellEntry cell:cFeed.getEntries()){
-			//getGsCells().add(new GSCell(cell, this));
-			String key = Integer.toString(cell.getCell().getCol());
-			this.childElements.put(key, (C) new GSCell(cell, (GSRow<GSCell>) this, "TODO: have to provide tag"));
-		}
-	}
-		
 
 	@SuppressWarnings("unchecked")
 	public void populateClildWithHeaderTag(List<CellEntry> cellList, WorksheetEntry ws) throws IOException,
@@ -233,7 +181,7 @@ public class GSRow<C> extends GSBaseElement<C>{
 			}
 						
 		} else {
-			// TODO:
+			// TODO (SHARIF/RAJU) ????
 		}
 	}
 	
@@ -306,34 +254,5 @@ public class GSRow<C> extends GSBaseElement<C>{
 		this.addChildElement(key, (C) newGSCell);
 		return newGSCell;
 	}
-	    
-	@SuppressWarnings("deprecation")
-	@Override
-	public void refreshMeFromFeed() throws IOException, ServiceException{
-		if(this.isDirty()){
-				if (this.baseEntry.getId() == null) { //if it is a newly added row
-					this.baseEntry = GoogleSpreadsheetUtils
-							.getListEntryFromFeed(
-									(WorksheetEntry) this.parentElement.baseEntry,
-									this.elementListIndex);
-				} else {
-					URL entryUrl = new URL(((ListEntry) this.baseEntry).getId());
-
-					this.baseEntry = this.baseEntry.getService().getEntry(
-							entryUrl, ListEntry.class);
-				}
-			
-			WorksheetEntry worksheet = (WorksheetEntry) this
-				.getParentElement().getBaseEntry();
-	
-				this.getChildElements().clear();
-				this.populateClild(worksheet);
-			
-			
-			this.dirty = false;
-			this.deleteCandidate = false;
-						
-		}
-	}
-	
+	    	
 }

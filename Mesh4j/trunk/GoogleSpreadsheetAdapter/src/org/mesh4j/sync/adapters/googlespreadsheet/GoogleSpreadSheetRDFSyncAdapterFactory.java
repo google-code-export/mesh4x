@@ -1,5 +1,7 @@
 package org.mesh4j.sync.adapters.googlespreadsheet;
 
+import java.util.ArrayList;
+
 import org.mesh4j.sync.adapters.googlespreadsheet.mapping.GoogleSpreadsheetToRDFMapping;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
@@ -31,9 +33,7 @@ public class GoogleSpreadSheetRDFSyncAdapterFactory extends GoogleSpreadSheetSyn
 	}
 	
 	@Override
-	protected GoogleSpreadSheetContentAdapter createContentAdapter(
-			IGoogleSpreadSheet spreadSheet, String idColumnName,
-			String lastUpdateColumnName, String sheetName, String type) {
+	protected GoogleSpreadSheetContentAdapter createContentAdapter(IGoogleSpreadSheet spreadSheet, String idColumnName, String lastUpdateColumnName, String sheetName, String type) {
 		Guard.argumentNotNull(spreadSheet, "spreadSheet");
 		Guard.argumentNotNullOrEmptyString(idColumnName, "idColumnName");
 		Guard.argumentNotNullOrEmptyString(sheetName, "sheetName");
@@ -41,12 +41,14 @@ public class GoogleSpreadSheetRDFSyncAdapterFactory extends GoogleSpreadSheetSyn
 		
 		IRDFSchema rdfSchema;
 		try {
-			rdfSchema = GoogleSpreadsheetToRDFMapping.extractRDFSchema(spreadSheet, sheetName, this.rdfBaseURL);
+			ArrayList<String> pks = new ArrayList<String>();
+			pks.add(idColumnName);
+			rdfSchema = GoogleSpreadsheetToRDFMapping.extractRDFSchema(spreadSheet, sheetName, pks, lastUpdateColumnName, this.rdfBaseURL);
 		} catch (Exception e) {
 			throw new MeshException(e);
 		}
 		
-		GoogleSpreadsheetToRDFMapping mappings = new GoogleSpreadsheetToRDFMapping(rdfSchema, type, idColumnName, lastUpdateColumnName, spreadSheet.getDocsService());
+		GoogleSpreadsheetToRDFMapping mappings = new GoogleSpreadsheetToRDFMapping(rdfSchema, spreadSheet.getDocsService());
 		
 		return new GoogleSpreadSheetContentAdapter(spreadSheet, mappings);
 	}
@@ -74,7 +76,7 @@ public class GoogleSpreadSheetRDFSyncAdapterFactory extends GoogleSpreadSheetSyn
 			case GoogleSpreadsheetUtils.SPREADSHEET_STATUS_CONTENTSHEET_NO_SYNCSHEET_NO:	
 			case GoogleSpreadsheetUtils.SPREADSHEET_STATUS_CONTENTSHEET_NO_SYNCSHEET_YES:{
 				//spreadsheet doesn't exists
-				GoogleSpreadsheetToRDFMapping mappings = new GoogleSpreadsheetToRDFMapping(rdfSchema, sourceAlias, idColumnName, lastUpdateColumnName, GoogleSpreadsheetUtils.getDocService(username, password));
+				GoogleSpreadsheetToRDFMapping mappings = new GoogleSpreadsheetToRDFMapping(rdfSchema, GoogleSpreadsheetUtils.getDocService(username, password));
 				
 				if(spreadStatus == GoogleSpreadsheetUtils.SPREADSHEET_STATUS_SPREADSHEET_NONE){
 					//create new spreadsheet

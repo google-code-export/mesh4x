@@ -81,11 +81,6 @@ public class GSSpreadsheet<C> extends GSBaseElement<C>{
 		return null;
 	}
 
-	@Override
-	public void refreshMeFromFeed() {
-		// TODO Auto-generated method stub	
-	}
-
 	/**
 	 * create a new worksheet with a name worksheetName also add it as a child element
 	 * of this spreadsheet

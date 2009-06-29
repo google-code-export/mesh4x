@@ -34,16 +34,7 @@ import com.google.gdata.util.ServiceException;
  */
 public class GoogleSpreadSheetSyncRepository implements ISyncRepository,ISyncAware{
 
-	public enum SyncColumn {
-		sync_id, entity_name, entity_id, entity_version, sync_data;
-		
-		/** 
-		 * return the name without '_', which is the tag for google spreadsheet column  
-		 */
-		public String toString(){
-			return this.name().replace("_", "");
-		}
-	}
+	// MODEL VARIABLES
 	
 	//This attributes are usually used to represent the sync information
 	//in a spreadsheet,where every sync row will have following column to
@@ -53,12 +44,11 @@ public class GoogleSpreadSheetSyncRepository implements ISyncRepository,ISyncAwa
 	private IGoogleSpreadSheet spreadSheet = null;
 	private IIdentityProvider identityProvider = null;
 	private IIdGenerator idGenerator = null;
-	//represents a specific sheet of a google spreadsheet
-	private GSWorksheet<GSRow<GSCell>> workSheet;
+	private GSWorksheet<GSRow<GSCell>> workSheet; //represents a specific sheet of a google spreadsheet
 	
+	// BUSINESS METHODS	
 	
-	public GoogleSpreadSheetSyncRepository(IGoogleSpreadSheet spreadSheet,/*GSWorksheet workSheet,*/
-											IIdentityProvider identityProvider,IIdGenerator idGenerator,String syncWorksheetName){
+	public GoogleSpreadSheetSyncRepository(IGoogleSpreadSheet spreadSheet, IIdentityProvider identityProvider, IIdGenerator idGenerator, String syncWorksheetName){
 		
 		Guard.argumentNotNull(spreadSheet, "spreadSheet");
 		Guard.argumentNotNull(spreadSheet.getGSSpreadsheet(), "spreadSheet.gssSpreadsheet");
@@ -72,12 +62,12 @@ public class GoogleSpreadSheetSyncRepository implements ISyncRepository,ISyncAwa
 		this.workSheet = GoogleSpreadsheetUtils.getOrCreateSyncSheetIfAbsent(spreadSheet.getGSSpreadsheet(), syncWorksheetName);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public SyncInfo get(String syncId) {
 		Guard.argumentNotNullOrEmptyString(syncId, "syncid");
 		
-		GSRow row ;
-		row = GoogleSpreadsheetUtils.getRow(workSheet,SYNC_ID_INDEX,syncId);
+		GSRow row = GoogleSpreadsheetUtils.getRow(workSheet,SYNC_ID_INDEX, syncId);
 		if(row == null){
 			return null;
 		} else {
@@ -88,6 +78,7 @@ public class GoogleSpreadSheetSyncRepository implements ISyncRepository,ISyncAwa
 
 	
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<SyncInfo> getAll(String entityName) {
 		Guard.argumentNotNullOrEmptyString(entityName, "entityName");
@@ -111,6 +102,7 @@ public class GoogleSpreadSheetSyncRepository implements ISyncRepository,ISyncAwa
 		return this.idGenerator.newID();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void save(SyncInfo syncInfo) {
 		Guard.argumentNotNull(syncInfo, "syncInfo");
@@ -125,24 +117,9 @@ public class GoogleSpreadSheetSyncRepository implements ISyncRepository,ISyncAwa
 	
 	private void addRow(SyncInfo syncInfo){
 		createSyncRow(syncInfo);
-		//GSRow<GSCell> row = createSyncRow(syncInfo);
-		//adding child has been done inside the method
-		//this.workSheet.addChildElement(row.getElementId(),row);
 	}
 	
-	@SuppressWarnings("unused")
-	private void printTest(GSRow<GSCell> row){
-		for(Map.Entry<String, GSCell> celMap :row.getGSCells().entrySet()){
-			System.out.println(celMap.getKey());
-			GSCell cell = celMap.getValue();
-			if(cell != null){
-				String value = cell.getCellValue();
-				System.out.println("cell value:" + value);
-			}
-		}
-	}
-	
-	
+	@SuppressWarnings("unchecked")
 	private void updateRow(GSRow rowTobeUPdated  ,SyncInfo syncInfo){
 		GSRow updatedRow = convertSyncInfoToRow(rowTobeUPdated, syncInfo);
 		this.workSheet.updateChildElement(updatedRow.getElementId(), updatedRow);
@@ -155,6 +132,7 @@ public class GoogleSpreadSheetSyncRepository implements ISyncRepository,ISyncAwa
 	 * @param syncInfo
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	private GSRow convertSyncInfoToRow(GSRow rowTobeUPdated,SyncInfo syncInfo){
 		
 		Element syncPayLoad = SyncInfoParser.convertSync2Element(syncInfo.getSync(), RssSyndicationFormat.INSTANCE, this.identityProvider);

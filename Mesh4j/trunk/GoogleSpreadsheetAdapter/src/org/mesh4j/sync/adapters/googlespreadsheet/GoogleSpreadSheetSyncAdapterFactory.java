@@ -103,8 +103,7 @@ public class GoogleSpreadSheetSyncAdapterFactory implements ISyncAdapterFactory 
 			String lastUpdateColumnName, String sheetName, String type) {
 
 		IGoogleSpreadsheetToXMLMapping mapper = new GoogleSpreadsheetToPlainXMLMapping(
-				type, idColumnName, lastUpdateColumnName, sheetName,
-				spreadSheet.getDocsService());
+				type, idColumnName, lastUpdateColumnName, spreadSheet.getDocsService());
 
 		return new GoogleSpreadSheetContentAdapter(spreadSheet, mapper);
 	}

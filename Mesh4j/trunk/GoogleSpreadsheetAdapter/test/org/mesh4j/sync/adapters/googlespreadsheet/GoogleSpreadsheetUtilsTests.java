@@ -59,8 +59,7 @@ public class GoogleSpreadsheetUtilsTests {
 
 		Assert.assertNotNull(spreadsheet);
 		Assert.assertNotNull(spreadsheet.getBaseEntry());
-		
-		//TODO: remove
+
 		System.out.println(spreadsheet.getBaseEntry().getTitle().getPlainText()
 				+ " : "
 				+ spreadsheet.getId().substring(spreadsheet.getId().lastIndexOf("/") + 1));
@@ -326,8 +325,9 @@ public class GoogleSpreadsheetUtilsTests {
 		schema.addStringProperty(COLUMN_SEX, "sex", "en");
 		schema.addBooleanProperty(COLUMN_ILL, "ill", "en");
 		schema.addDateTimeProperty(COLUMN_DATE_ONSET, "dateOnset", "en");
+		schema.setIdentifiablePropertyName(COLUMN_ID);
 		
-		RDFInstance rdfInstance = schema.createNewInstance("uri:urn:id");
+		RDFInstance rdfInstance = schema.createNewInstance("uri:urn:GSL-A219");
 
 		long millis = System.currentTimeMillis();
 		String name = "Name: " + millis;
@@ -344,7 +344,7 @@ public class GoogleSpreadsheetUtilsTests {
 		rdfInstance.setProperty(COLUMN_ILL, ill);
 		rdfInstance.setProperty(COLUMN_DATE_ONSET, dateOnset);
 
-		return new GoogleSpreadsheetToRDFMapping(schema, SHEET_NAME, "id", null, docService);
+		return new GoogleSpreadsheetToRDFMapping(schema, docService);
 	}	
 	
 	@SuppressWarnings("unchecked")

@@ -8,12 +8,8 @@ import org.dom4j.Element;
 import org.junit.Before;
 import org.junit.Test;
 import org.mesh4j.sync.adapters.feed.XMLContent;
-import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadSheetContentAdapter;
-import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadsheet;
-import org.mesh4j.sync.adapters.googlespreadsheet.IGoogleSpreadSheet;
 import org.mesh4j.sync.adapters.googlespreadsheet.mapping.GoogleSpreadsheetToPlainXMLMapping;
 import org.mesh4j.sync.adapters.googlespreadsheet.mapping.IGoogleSpreadsheetToXMLMapping;
-import org.mesh4j.sync.adapters.googlespreadsheet.model.GSWorksheet;
 import org.mesh4j.sync.model.IContent;
 import org.mesh4j.sync.utils.XMLHelper;
 /**
@@ -22,14 +18,16 @@ import org.mesh4j.sync.utils.XMLHelper;
  */
 
 public class GoogleSpreadSheetContentAdapterTest {
+
+	// MODEL VARIABLES
 	private IGoogleSpreadSheet spreadsheet;
 	private IGoogleSpreadsheetToXMLMapping mapper;
 	private String userName = "gspreadsheet.test@gmail.com";
 	private String passWord = "java123456";
-	//private String GOOGLE_SPREADSHEET_FIELD = "peo4fu7AitTo8e3v0D8FCew";
 	private String GOOGLE_SPREADSHEET_NAME  = "testspreadsheet";
 
 
+	// TEST METHODS
 	@Before
 	public void init(){
 		loadSpreadSheet();
@@ -44,12 +42,12 @@ public class GoogleSpreadSheetContentAdapterTest {
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldGenerateExceptionIfSpreadSheetIsNull(){
-		GoogleSpreadSheetContentAdapter adapter = new GoogleSpreadSheetContentAdapter(null,mapper);
+		new GoogleSpreadSheetContentAdapter(null,mapper);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldGenerateExceptionIfMapperIsNull(){
-		GoogleSpreadSheetContentAdapter adapter = new GoogleSpreadSheetContentAdapter(spreadsheet,null);
+		new GoogleSpreadSheetContentAdapter(spreadsheet,null);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
@@ -62,7 +60,7 @@ public class GoogleSpreadSheetContentAdapterTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldGenerateExceptionIfContentIdIsNullOrEmpty(){
 		GoogleSpreadSheetContentAdapter adapter = new GoogleSpreadSheetContentAdapter(spreadsheet,mapper);
-		IContent loadedContent = adapter.get("");
+		adapter.get("");
 	}
 	
 	@Test
@@ -81,7 +79,7 @@ public class GoogleSpreadSheetContentAdapterTest {
 		
 		Element payload = XMLHelper.parseElement(rawDataAsXML);
 		IContent content = new XMLContent(id,title,description,payload);
-		GoogleSpreadSheetContentAdapter adapter = new GoogleSpreadSheetContentAdapter(spreadsheet,mapper);
+		GoogleSpreadSheetContentAdapter adapter = new GoogleSpreadSheetContentAdapter(spreadsheet, mapper);
 		
 		Assert.assertEquals(0, adapter.getAll(new Date()).size());
 		
@@ -114,7 +112,7 @@ public class GoogleSpreadSheetContentAdapterTest {
 		
 		Element payload = XMLHelper.parseElement(rawDataAsXML);
 		IContent content = new XMLContent(id,title,description,payload);
-		GoogleSpreadSheetContentAdapter adapter = new GoogleSpreadSheetContentAdapter(spreadsheet,mapper);
+		GoogleSpreadSheetContentAdapter adapter = new GoogleSpreadSheetContentAdapter(spreadsheet, mapper);
 		
 		Assert.assertEquals(0, adapter.getAll(new Date()).size());
 		
@@ -180,7 +178,7 @@ public class GoogleSpreadSheetContentAdapterTest {
 		contentToBeUPdated = getContent(id, title, description, rawDataAsXML);
 		
 		
-		GoogleSpreadSheetContentAdapter adapter = new GoogleSpreadSheetContentAdapter(spreadsheet,mapper);
+		GoogleSpreadSheetContentAdapter adapter = new GoogleSpreadSheetContentAdapter(spreadsheet, mapper);
 		
 		Assert.assertEquals(0, adapter.getAll(new Date()).size());
 		
@@ -243,7 +241,7 @@ public class GoogleSpreadSheetContentAdapterTest {
 
 		content2 = getContent(id, title, description, rawDataAsXML);
 		
-		GoogleSpreadSheetContentAdapter adapter = new GoogleSpreadSheetContentAdapter(spreadsheet,mapper);
+		GoogleSpreadSheetContentAdapter adapter = new GoogleSpreadSheetContentAdapter(spreadsheet, mapper);
 		
 		Assert.assertEquals(0, adapter.getAll(new Date()).size());
 		
@@ -296,7 +294,7 @@ public class GoogleSpreadSheetContentAdapterTest {
 		
 		content2 = getContent(id, title, description, rawDataAsXML);
 		
-		GoogleSpreadSheetContentAdapter adapter = new GoogleSpreadSheetContentAdapter(spreadsheet,mapper);
+		GoogleSpreadSheetContentAdapter adapter = new GoogleSpreadSheetContentAdapter(spreadsheet, mapper);
 		
 		Assert.assertEquals(0, adapter.getAll(new Date()).size());
 		
@@ -363,7 +361,7 @@ public class GoogleSpreadSheetContentAdapterTest {
 		contentToBeUPdated = getContent(id, title, description, rawDataAsXML);
 		
 		
-		GoogleSpreadSheetContentAdapter adapter = new GoogleSpreadSheetContentAdapter(spreadsheet,mapper);
+		GoogleSpreadSheetContentAdapter adapter = new GoogleSpreadSheetContentAdapter(spreadsheet, mapper);
 		
 		Assert.assertEquals(0, adapter.getAll(new Date()).size());
 		
@@ -426,7 +424,7 @@ public class GoogleSpreadSheetContentAdapterTest {
 								"</user>";
 		content2 = getContent(id, title, description, rawDataAsXML);
 		
-		GoogleSpreadSheetContentAdapter adapter = new GoogleSpreadSheetContentAdapter(spreadsheet,mapper);
+		GoogleSpreadSheetContentAdapter adapter = new GoogleSpreadSheetContentAdapter(spreadsheet, mapper);
 		
 		Assert.assertEquals(0, adapter.getAll(new Date()).size());
 		
@@ -454,10 +452,12 @@ public class GoogleSpreadSheetContentAdapterTest {
 		IContent content = new XMLContent(id,title,description,payload);
 		return content;
 	}
+	
 	private void loadSpreadSheet(){
 		spreadsheet = new GoogleSpreadsheet(GOOGLE_SPREADSHEET_NAME,userName, passWord);
-		GSWorksheet workSheet = spreadsheet.getGSWorksheet(1);
-		mapper = new GoogleSpreadsheetToPlainXMLMapping("user","id",null,workSheet.getName(), spreadsheet.getDocsService());
+		//GSWorksheet workSheet = spreadsheet.getGSWorksheet(1);
+		//workSheet.getName(), 
+		mapper = new GoogleSpreadsheetToPlainXMLMapping("user", "id", null, spreadsheet.getDocsService());
 	}		
 	
 }

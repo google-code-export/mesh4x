@@ -1,7 +1,10 @@
 package org.mesh4j.sync.adapters.googlespreadsheet.mapping;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -15,6 +18,7 @@ import org.mesh4j.sync.adapters.googlespreadsheet.model.GSCell;
 import org.mesh4j.sync.adapters.googlespreadsheet.model.GSRow;
 import org.mesh4j.sync.adapters.googlespreadsheet.model.GSWorksheet;
 import org.mesh4j.sync.adapters.msexcel.MsExcelUtils;
+import org.mesh4j.sync.payload.schema.rdf.AbstractRDFIdentifiableMapping;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.payload.schema.rdf.RDFInstance;
 import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
@@ -28,37 +32,23 @@ import com.google.gdata.client.docs.DocsService;
  * @author sharif
  *
  */
-public class GoogleSpreadsheetToRDFMapping implements IGoogleSpreadsheetToXMLMapping{
+public class GoogleSpreadsheetToRDFMapping extends AbstractRDFIdentifiableMapping implements IGoogleSpreadsheetToXMLMapping{
 
 	// MODEL VARIABLES
-	private IRDFSchema rdfSchema;
 	private DocsService docService;
-	private String type;
-	private String idColumnName;
-	private String lastUpdateColumnName = null;
-	
 	
 	// BUSINESS METHODs
-	public GoogleSpreadsheetToRDFMapping(IRDFSchema schema, String type, String idColumnName, String lastUpdateColumnName, DocsService docService) {
-		super();
-		Guard.argumentNotNull(schema,	"schema");
-		Guard.argumentNotNullOrEmptyString(type, "type");
-		Guard.argumentNotNullOrEmptyString(idColumnName, "idColumnName");
-		Guard.argumentNotNull(docService,	"docService");
+	public GoogleSpreadsheetToRDFMapping(IRDFSchema rdfSchema, DocsService docService) {		
+		super(rdfSchema);
 		
-		this.rdfSchema = schema;
-		this.type = type;
-		this.idColumnName = idColumnName;
-		this.lastUpdateColumnName = lastUpdateColumnName;
+		Guard.argumentNotNull(docService,	"docService");
 		this.docService = docService;
 	}
 	
-	public static RDFSchema extractRDFSchema(IGoogleSpreadSheet gss,
-			String workSheetName, String rdfURL) {
+	public static RDFSchema extractRDFSchema(IGoogleSpreadSheet gss, String workSheetName, List<String> identifiablePropertyNames, String lastUpdateColumnName, String rdfURL) {
 		RDFSchema rdfSchema = new RDFSchema(workSheetName, rdfURL+"/"+workSheetName+"#", workSheetName);
 
-		GSWorksheet<GSRow<GSCell>> worksheet = GoogleSpreadsheetUtils
-				.getOrCreateWorkSheetIfAbsent(gss.getGSSpreadsheet(), workSheetName);
+		GSWorksheet<GSRow<GSCell>> worksheet = GoogleSpreadsheetUtils.getOrCreateWorkSheetIfAbsent(gss.getGSSpreadsheet(), workSheetName);
 
 		int rowCount = worksheet.getChildElements().size();
 		
@@ -84,11 +74,14 @@ public class GoogleSpreadsheetToRDFMapping implements IGoogleSpreadsheetToXMLMap
 				rdfSchema.addDoubleProperty(cellName, cellName, "en");
 			} else if (GSCell.CELL_TYPE_DATE == cellType) {
 				rdfSchema.addDateTimeProperty(cellName, cellName, "en");
-			} else
+			} else {
 				// text and unknown type goes here
 				rdfSchema.addStringProperty(cellName, cellName, "en");
+			}
 		}
 
+		rdfSchema.setIdentifiablePropertyNames(identifiablePropertyNames);
+		rdfSchema.setVersionPropertyName(lastUpdateColumnName);
 		return rdfSchema;
 	}
 
@@ -111,10 +104,26 @@ public class GoogleSpreadsheetToRDFMapping implements IGoogleSpreadsheetToXMLMap
 		}
 		
 		// create rdf instance
-		String id = String.valueOf(propertyValues.get(this.idColumnName));
+		String id = getId(row);
 		
 		RDFInstance rdfInstance = this.rdfSchema.createNewInstanceFromProperties(id, propertyValues);
 		return rdfInstance;
+	}
+
+	@Override
+	public String getId(GSRow<GSCell> row) {
+		List<String> idColumnNames = this.rdfSchema.getIdentifiablePropertyNames();
+		List<String> idValues = new ArrayList<String>();
+		Object idCellValue;
+		for (String idColumnName : idColumnNames) {
+			idCellValue = row.getGSCell(idColumnName);
+			if(idCellValue == null){
+				return null;
+			} else {
+				idValues.add(String.valueOf(idCellValue));
+			}
+		}
+		return this.makeId(idValues);
 	}
 
 	public void appliesRDFToRow(GSWorksheet<GSRow<GSCell>> workSheet, GSRow<GSCell> row,
@@ -204,34 +213,25 @@ public class GoogleSpreadsheetToRDFMapping implements IGoogleSpreadsheetToXMLMap
 		this.appliesRDFToRow(workSheet, row, rdfInstance);		
 	}
 
-
 	@Override
-	public String getIdColumnName() {
-		return this.idColumnName;
+	public Date getLastUpdate(GSRow<GSCell> row) {
+		if(this.rdfSchema.getVersionPropertyName() == null || this.rdfSchema.getVersionPropertyName().length() == 0){
+			return null;
+		}
+		
+		GSCell cell = row.getGSCell(this.rdfSchema.getVersionPropertyName());
+		if(cell == null){
+			return null;
+		} else {
+			String dateTimeAsString = cell.getCellValue();
+			Date lasUpdateDateTime = GoogleSpreadsheetUtils.normalizeDate(dateTimeAsString, GSCell.G_SPREADSHEET_DATE_FORMAT);
+			return lasUpdateDateTime;
+		}
 	}
 
 	@Override
-	public String getLastUpdateColumnName() {
-		return this.lastUpdateColumnName;
-	}
-	
-	public void setLastUpdateColumnName(String columnName) {
-		this.lastUpdateColumnName = columnName;
-	}
-
-	@Override
-	public IRDFSchema getSchema() {
-		return rdfSchema;
-	}
-
-	@Override
-	public String getType() {
-		return this.type;
-	}
-
-	@Override
-	public String getSheetName() {
-		return rdfSchema.getOntologyNameSpace();
+	public GSRow<GSCell> getRow(GSWorksheet<GSRow<GSCell>> workSheet, String id) {
+		return GoogleSpreadsheetUtils.getRow(workSheet, this.rdfSchema.getIdentifiablePropertyNames().toArray(new String[0]), this.getIds(id));
 	}
 
 }

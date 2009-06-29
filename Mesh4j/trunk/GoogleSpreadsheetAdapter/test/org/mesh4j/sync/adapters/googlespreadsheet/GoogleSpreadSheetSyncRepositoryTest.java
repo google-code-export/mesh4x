@@ -44,30 +44,33 @@ public class GoogleSpreadSheetSyncRepositoryTest {
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldGenerateExceptionIfSpreadSheetIsNull(){
-		GoogleSpreadSheetSyncRepository syncRepository = new GoogleSpreadSheetSyncRepository(null,
-															 NullIdentityProvider.INSTANCE,
-															 IdGenerator.INSTANCE,"SYNC_INFO");
+		new GoogleSpreadSheetSyncRepository(null,
+			 NullIdentityProvider.INSTANCE,
+			 IdGenerator.INSTANCE,
+			 "SYNC_INFO");
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldGenerateExceptionIfIdentityIsNull(){
-		GoogleSpreadSheetSyncRepository syncRepository = new GoogleSpreadSheetSyncRepository(spreadsheet,
-															 null,
-															 IdGenerator.INSTANCE,"SYNC_INFO");
+		new GoogleSpreadSheetSyncRepository(spreadsheet,
+				null,
+				IdGenerator.INSTANCE,
+				"SYNC_INFO");
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldGenerateExceptionIfIdGeneratorIsNull(){
-		GoogleSpreadSheetSyncRepository syncRepository = new GoogleSpreadSheetSyncRepository(spreadsheet,
-															 NullIdentityProvider.INSTANCE,
-															 null,"SYNC_INFO");
+		new GoogleSpreadSheetSyncRepository(spreadsheet,
+				NullIdentityProvider.INSTANCE,
+				null,
+				"SYNC_INFO");
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldGenerateExceptionIfSyncSheetNameIsNullOrEmpty(){
-		GoogleSpreadSheetSyncRepository syncRepository = new GoogleSpreadSheetSyncRepository(spreadsheet,
-															 NullIdentityProvider.INSTANCE,
-															 IdGenerator.INSTANCE,"");
+		new GoogleSpreadSheetSyncRepository(spreadsheet,
+				NullIdentityProvider.INSTANCE,
+				IdGenerator.INSTANCE,"");
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
@@ -141,7 +144,7 @@ public class GoogleSpreadSheetSyncRepositoryTest {
 		//now newly created spreadsheet adapter to test if it can capable to
 		//load the saved row from spreadsheet
 		IGoogleSpreadSheet newSpreadsheet = new GoogleSpreadsheet(GOOGLE_SPREADSHEET_FILE_NAME, userName, passWord);
-		GSWorksheet newWorkSheet = newSpreadsheet.getGSWorksheet("SYNC_INFO");
+
 		GoogleSpreadSheetSyncRepository newSyncRepository = new GoogleSpreadSheetSyncRepository(newSpreadsheet,identityProvider,idGenerator,"SYNC_INFO");
 		Assert.assertEquals(2, newSyncRepository.getAll("user").size());
 	}
@@ -172,7 +175,7 @@ public class GoogleSpreadSheetSyncRepositoryTest {
 		//now newly created spreadsheet adapter to test if it can capable to
 		//load the saved row from spreadsheet
 		IGoogleSpreadSheet newSpreadsheet = new GoogleSpreadsheet(GOOGLE_SPREADSHEET_FILE_NAME, userName, passWord);
-		GSWorksheet newWorkSheet = newSpreadsheet.getGSWorksheet("SYNC_INFO");
+		
 		GoogleSpreadSheetSyncRepository newSyncRepository = new GoogleSpreadSheetSyncRepository(newSpreadsheet,identityProvider,idGenerator,"SYNC_INFO");
 		Assert.assertEquals(0, newSyncRepository.getAll("user").size());
 	}
@@ -237,7 +240,7 @@ public class GoogleSpreadSheetSyncRepositoryTest {
 		syncRepository.endSync();
 		
 		IGoogleSpreadSheet newSpreadsheet = new GoogleSpreadsheet(GOOGLE_SPREADSHEET_FILE_NAME, userName, passWord);
-		GSWorksheet newWorkSheet = newSpreadsheet.getGSWorksheet("SYNC_INFO");
+		
 		GoogleSpreadSheetSyncRepository newSyncRepository = new GoogleSpreadSheetSyncRepository(newSpreadsheet,identityProvider,idGenerator,"SYNC_INFO");
 		
 		String updateBy = newSyncRepository.get(sync.getId()).getSync().getLastUpdate().getBy();
@@ -302,7 +305,7 @@ public class GoogleSpreadSheetSyncRepositoryTest {
 		syncRepository.endSync();
 		
 		IGoogleSpreadSheet newSpreadsheet = new GoogleSpreadsheet(GOOGLE_SPREADSHEET_FILE_NAME, userName, passWord);
-		GSWorksheet newWorkSheet = newSpreadsheet.getGSWorksheet("SYNC_INFO");
+		
 		GoogleSpreadSheetSyncRepository newSyncRepository = new GoogleSpreadSheetSyncRepository(newSpreadsheet,identityProvider,idGenerator,"SYNC_INFO");
 		
 		//compare the entity the id
@@ -378,7 +381,7 @@ public class GoogleSpreadSheetSyncRepositoryTest {
 		syncRepository.endSync();
 		
 		IGoogleSpreadSheet newSpreadsheet = new GoogleSpreadsheet(GOOGLE_SPREADSHEET_FILE_NAME, userName, passWord);
-		GSWorksheet newWorkSheet = newSpreadsheet.getGSWorksheet("SYNC_INFO");
+		
 		GoogleSpreadSheetSyncRepository newSyncRepository = new GoogleSpreadSheetSyncRepository(newSpreadsheet,identityProvider,idGenerator,"SYNC_INFO");
 		
 		Assert.assertEquals(2,newSyncRepository.getAll("user").size());

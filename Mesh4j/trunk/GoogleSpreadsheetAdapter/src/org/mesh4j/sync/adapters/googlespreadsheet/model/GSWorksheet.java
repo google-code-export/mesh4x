@@ -2,14 +2,11 @@ package org.mesh4j.sync.adapters.googlespreadsheet.model;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
-import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadsheetUtils;
 import org.mesh4j.sync.validations.MeshException;
 
 import com.google.gdata.data.BaseEntry;
-import com.google.gdata.data.spreadsheet.CellEntry;
 import com.google.gdata.data.spreadsheet.ListEntry;
 import com.google.gdata.data.spreadsheet.WorksheetEntry;
 import com.google.gdata.util.ServiceException;
@@ -184,45 +181,4 @@ public class GSWorksheet<C> extends GSBaseElement<C> {
 		this.addChildElement(row.getElementId(), (C) row);
         return row;
     }	  
-    
-	@SuppressWarnings("unchecked")
-	@Override
-	public void refreshMeFromFeed() throws IOException, ServiceException{
-		if(this.isDirty()){
-			
-			List<ListEntry> rowList = GoogleSpreadsheetUtils
-							.getAllRows((WorksheetEntry) this.baseEntry); // 1 http
-																			// request
-			List<CellEntry> cellList = GoogleSpreadsheetUtils
-							.getAllCells((WorksheetEntry) this.baseEntry); // 1 http
-																			// request
-			
-			if( rowList.size() > 0 && cellList.size() > 0 ){
-				//get the header row and put it as the 1st row in the rowlist
-				this.childElements.clear();
-				GSRow<GSCell> gsListHeaderEntry = new GSRow(
-						new ListEntry(), 1, this);
-				gsListHeaderEntry.populateClildWithHeaderTag(cellList, (WorksheetEntry)this.baseEntry);				
-				((GSWorksheet<GSRow>)this).getChildElements().put(gsListHeaderEntry.getElementId(), gsListHeaderEntry);			
-				
-				for (ListEntry row : rowList){
-					//create a custom row object and populate its child
-					GSRow<GSCell> gsListEntry = new GSRow(
-							row, rowList.indexOf(row) + 2, this); //+2 because #1 position is occupied by list header entry 
-					gsListEntry.populateClildWithHeaderTag(cellList, (WorksheetEntry)this.baseEntry);				
-					
-					//add a row to the custom worksheet object
-					((GSWorksheet<GSRow>)this).getChildElements().put(gsListEntry.getElementId(), gsListEntry);
-					//TODO: right now index has been used as key; mjrow.getId() could have used, this need to review
-				}
-			} // if
-			
-			
-			this.dirty = false;
-			this.deleteCandidate = false;
-		}
- 			
-	}
-
-
 }

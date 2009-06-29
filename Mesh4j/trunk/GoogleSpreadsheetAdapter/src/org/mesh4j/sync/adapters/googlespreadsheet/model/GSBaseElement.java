@@ -1,13 +1,11 @@
 package org.mesh4j.sync.adapters.googlespreadsheet.model;
 
-import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
 import com.google.gdata.data.BaseEntry;
 import com.google.gdata.data.IEntry;
-import com.google.gdata.util.ServiceException;
 
 /**
  * Provides an abstract class for various elements;
@@ -210,6 +208,4 @@ public abstract class GSBaseElement<C> implements IGSElement<C>{
 		this.childElements.clear();	
 		this.childElements.putAll(nonDeletedClildElements);
 	}
-	
-	public abstract void refreshMeFromFeed() throws IOException, ServiceException;
 }
