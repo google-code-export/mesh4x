@@ -20,12 +20,12 @@ import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 public class SchemaViewTask extends SwingWorker<String, Void>{
 
 	private EktooFrame ui;
-	private IErrorListener errorListener;
+//	private IErrorListener errorListener;
 	private AbstractUIController controller;
 	
 	public SchemaViewTask(EktooFrame ui, AbstractUIController controller, IErrorListener errorListener){
 		this.ui = ui;
-		this.errorListener = errorListener;
+//		this.errorListener = errorListener;
 		this.controller = controller;
 	}
 	@Override

@@ -443,12 +443,11 @@ public class GSSheetUI extends AbstractUI {
 
 				GSWorksheet<GSRow<GSCell>> workSheet = spSheet.getValue();
 				sheetName = workSheet.getName();
-				if (sheetName != null) {
+				if (sheetName != null && !sheetName.endsWith("_sync")) {
 					sheetList.addItem(workSheet.getName());
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
 			LOGGER.error(e.getMessage(), e);
 			// TODO Handle exception
 		}
