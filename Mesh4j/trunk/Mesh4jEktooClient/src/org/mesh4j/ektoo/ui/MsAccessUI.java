@@ -11,8 +11,6 @@ import java.awt.event.FocusEvent;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 import javax.swing.JButton;
@@ -38,8 +36,6 @@ import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.ektoo.ui.validator.MsAccessUIValidator;
 import org.mesh4j.sync.adapters.hibernate.msaccess.MsAccessHibernateSyncAdapterFactory;
-import org.mesh4j.sync.adapters.jackcess.msaccess.MsAccessJackcessSyncAdapterFactory;
-import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 
 public class MsAccessUI extends AbstractUI{
 

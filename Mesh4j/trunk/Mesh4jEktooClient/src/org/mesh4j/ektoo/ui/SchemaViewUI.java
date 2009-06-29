@@ -1,11 +1,8 @@
 package org.mesh4j.ektoo.ui;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.beans.PropertyChangeEvent;
 import java.io.StringReader;
-
-import javax.swing.JScrollPane;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -17,6 +14,7 @@ import org.xml.sax.InputSource;
 
 public class SchemaViewUI extends AbstractUI{
 
+	private static final long serialVersionUID = 9007453368340141274L;
 	private static final Log LOGGER = LogFactory.getLog(SchemaViewUI.class);
 	private IRDFSchema schema = null;
 	

@@ -5,6 +5,8 @@ import javax.swing.JFrame;
 
 public class PopupDialog extends JDialog{
 
+	private static final long serialVersionUID = -7827052159523997807L;
+
 	public PopupDialog(JFrame owner,String title){
 		super(owner,title);
 		setAlwaysOnTop(true);
