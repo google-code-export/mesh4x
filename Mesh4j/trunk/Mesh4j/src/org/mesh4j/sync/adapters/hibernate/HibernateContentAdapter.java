@@ -41,13 +41,13 @@ public class HibernateContentAdapter implements IIdentifiableContentAdapter {
 	}
 
 	@Override
-	public IdentifiableContent get(String entityId) {
+	public IdentifiableContent get(String meshId) {
 		Session session = this.sessionFactory.openSession();
 		Session dom4jSession = session.getSession(EntityMode.DOM4J);
 		Element entityElement = null;
 		
 		try{
-			entityElement = (Element) dom4jSession.get(this.getType(), entityId);
+			entityElement = (Element) dom4jSession.get(this.getType(), this.mapping.getHibernateId(meshId));
 		}finally{
 			session.close();
 		}
@@ -55,7 +55,7 @@ public class HibernateContentAdapter implements IIdentifiableContentAdapter {
 		if(entityElement == null){
 			return null;
 		} else {
-			return new IdentifiableContent(convertRowToXML(entityId, entityElement), this.mapping, entityId);
+			return new IdentifiableContent(convertRowToXML(meshId, entityElement), this.mapping, meshId);
 		}
 	}
 
@@ -86,7 +86,7 @@ public class HibernateContentAdapter implements IIdentifiableContentAdapter {
 		Element entityElement = null;
 		
 		try{
-			entityElement = (Element) dom4jSession.get(this.getType(), entityContent.getId());
+			entityElement = (Element) dom4jSession.get(this.getType(), this.mapping.getHibernateId(entityContent.getId()));
 		}finally{
 			if(entityElement == null){
 				session.close();
@@ -162,9 +162,9 @@ public class HibernateContentAdapter implements IIdentifiableContentAdapter {
 		}
 	}
 
-	private Element convertRowToXML(String id, Element entityElement){
+	private Element convertRowToXML(String meshId, Element entityElement){
 		try{
-			return this.mapping.convertRowToXML(id, entityElement);
+			return this.mapping.convertRowToXML(meshId, entityElement);
 		}catch (Exception e) {
 			throw new MeshException(e);
 		}

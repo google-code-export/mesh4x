@@ -1,3 +1,15 @@
+DROP TABLE IF EXISTS mesh_multi_key;
+
+CREATE TABLE mesh_multi_key (
+  id1 varchar(100) not null,
+  id2 varchar(100) not null,
+  name varchar(100) not null,
+  PRIMARY KEY(id1, id2));
+  
+insert into mesh_multi_key (id1, id2, name) values ('1', '2', 'jmt');
+insert into mesh_multi_key (id1, id2, name) values ('1', '1', 'bia');
+
+
 DROP TABLE IF EXISTS mesh_example;
 DROP TABLE IF EXISTS mesh_example_sync;
 

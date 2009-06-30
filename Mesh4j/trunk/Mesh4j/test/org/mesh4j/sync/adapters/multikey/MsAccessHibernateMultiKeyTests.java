@@ -2,7 +2,6 @@ package org.mesh4j.sync.adapters.multikey;
 
 import java.util.List;
 
-import org.junit.Test;
 import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.adapters.feed.FeedAdapter;
 import org.mesh4j.sync.adapters.feed.FeedSyncAdapterFactory;
@@ -80,7 +79,7 @@ public class MsAccessHibernateMultiKeyTests {
 //        return buffer;
 //	}
 		
-	@Test
+	//@Test
 	public void shouldGetAll() throws Exception{
 		
 		String tableName = "multiKeyTable";

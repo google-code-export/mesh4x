@@ -1,5 +1,7 @@
 package org.mesh4j.sync.adapters.hibernate.mapping;
 
+import java.io.Serializable;
+
 import org.dom4j.Element;
 import org.mesh4j.sync.payload.schema.AbstractPlainXmlIdentifiableMapping;
 
@@ -31,6 +33,11 @@ public class HibernateToPlainXMLMapping extends AbstractPlainXmlIdentifiableMapp
 			return null;
 		}
 		return idElement.getText();
+	}
+
+	@Override
+	public Serializable getHibernateId(String meshId) {
+		return meshId;
 	}
 
 }

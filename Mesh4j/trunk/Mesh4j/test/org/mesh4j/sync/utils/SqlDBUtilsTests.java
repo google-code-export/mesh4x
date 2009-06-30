@@ -91,7 +91,7 @@ public class SqlDBUtilsTests {
 		Assert.assertEquals("jdbc:mysql://localhost:4343/mesh4xdb", url);
 	}
 	
-	@Test
+	//@Test
 	public void shouldExecuteSqlScript(){
 		String sqlFileName = this.getClass().getResource("mesh4j_table_mysql.sql").getFile();
 		SqlDBUtils.executeSqlScript(Driver.class, "jdbc:mysql://localhost", "mesh4xdb2", "root", "admin", sqlFileName);	

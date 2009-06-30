@@ -1,5 +1,6 @@
 package org.mesh4j.sync.adapters.hibernate.mapping;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.dom4j.Element;
+import org.dom4j.tree.DefaultElement;
 import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.payload.schema.ISchemaTypeFormat;
 import org.mesh4j.sync.payload.schema.SchemaTypeFormat;
@@ -31,12 +33,12 @@ public class HibernateToRDFMapping extends AbstractRDFIdentifiableMapping implem
 	}
 	
 	@Override
-	public Element convertRowToXML(String id, Element element) throws Exception {
+	public Element convertRowToXML(String meshId, Element element) throws Exception {
 		RDFInstance instance = null;
 		if(this.rdfSchema.hasCompositeId()){
-			instance = this.rdfSchema.createNewInstanceFromPlainXML(id, element.asXML(), FORMATS, new String[]{"id"}); 
+			instance = this.rdfSchema.createNewInstanceFromPlainXML(meshId, element.asXML(), FORMATS, new String[]{"id"}); 
 		} else {
-			instance = this.rdfSchema.createNewInstanceFromPlainXML(id, element.asXML(), FORMATS); 
+			instance = this.rdfSchema.createNewInstanceFromPlainXML(meshId, element.asXML(), FORMATS); 
 		}
 		String rdfXml = instance.asXML();
 		return XMLHelper.parseElement(rdfXml);
@@ -97,5 +99,32 @@ public class HibernateToRDFMapping extends AbstractRDFIdentifiableMapping implem
 			}
 		}
 		return makeId(idValues);	
+	}
+
+	@Override
+	public Serializable getHibernateId(String meshId) {
+		if(this.rdfSchema.hasCompositeId()){
+			String[] meshIds = getIds(meshId);
+			List<String> propertyNames = this.rdfSchema.getIdentifiablePropertyNames();
+			
+			StringBuffer sb = new StringBuffer();
+			sb.append("<id>");
+			for (int i = 0; i < propertyNames.size(); i++) {
+				String propertyName = propertyNames.get(i);
+				sb.append("<");
+				sb.append(propertyName);
+				sb.append(">");
+				sb.append(meshIds[i]);
+				sb.append("</");
+				sb.append(propertyName);
+				sb.append(">");	
+			}						
+			sb.append("</id>");
+			
+			return (DefaultElement)XMLHelper.parseElement(sb.toString());
+			
+		} else {
+			return meshId;
+		}
 	}
 }
