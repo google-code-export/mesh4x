@@ -1,5 +1,6 @@
 package org.mesh4j.sync.adapters.multikey;
 
+import java.io.File;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -221,7 +222,8 @@ public class HibernateMultiKeyTests {
 				"mesh_multi_key", 
 				"http://localhost:8080/mesh4x/feeds",
 				TestHelper.baseDirectoryForTest(),
-				NullIdentityProvider.INSTANCE);
+				NullIdentityProvider.INSTANCE,
+				new File(this.getClass().getResource("test_mysql_hibernate.properties").getFile()));
 		return adapter;
 	}
 }

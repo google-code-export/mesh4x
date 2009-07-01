@@ -164,7 +164,8 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 				tableName, 
 				getBaseRDFUrl(),
 				mappingDirectory.getAbsolutePath(),
-				this.getIdentityProvider());
+				this.getIdentityProvider(),
+				null);
 	}
 
 	@Override
@@ -192,7 +193,8 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 				getBaseRDFUrl(),
 				mappingDirectory.getAbsolutePath(),
 				this.getIdentityProvider(),
-				adapterOpaque);
+				adapterOpaque,
+				null);
 	}
 	
 	@Override

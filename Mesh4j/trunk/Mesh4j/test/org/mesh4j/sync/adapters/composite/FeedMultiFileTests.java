@@ -129,7 +129,8 @@ public class FeedMultiFileTests {
 			"http://mesh4x/test", 
 			TestHelper.baseDirectoryRootForTest(),
 			NullIdentityProvider.INSTANCE,
-			targetAdapterOpaque);
+			targetAdapterOpaque,
+			new File(this.getClass().getResource("test_mysql_hibernate.properties").getFile()));
 						
 		// sync
 		SyncEngine syncEngine = new SyncEngine(source, target);

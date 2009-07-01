@@ -29,7 +29,7 @@ import com.healthmarketscience.jackcess.Cursor;
 import com.healthmarketscience.jackcess.Table;
 
 
-public class MsAccessContentAdapterTests {
+public class MsAccessContentAdapterReplicationIDTests {
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldCreateAdapterFailsWhenMsAccessIsNull(){

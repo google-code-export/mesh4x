@@ -562,6 +562,12 @@ public class RDFSchema implements IRDFSchema{
 		}
 	}
 	
+	public void setGUIDPropertyName(String propertyName) {
+		ArrayList<String> identifiablePropertyNames = new ArrayList<String>();
+		identifiablePropertyNames.add(propertyName);
+		setGUIDPropertyNames(identifiablePropertyNames);	
+	}
+	
 	public void setGUIDPropertyNames(List<String> guidPropertyNames) {
 		StringBuffer sb = new StringBuffer();
 		

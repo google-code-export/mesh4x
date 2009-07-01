@@ -1,5 +1,7 @@
 package org.mesh4j.sync.adapters.multi.repositories;
 
+import java.io.File;
+
 import junit.framework.Assert;
 
 import org.apache.poi.ss.usermodel.Row;
@@ -179,7 +181,8 @@ public class MsAccessVsMySqlSyncTests {
 			"mesh_example", 
 			ontologyBaseUri, 
 			TestHelper.baseDirectoryRootForTest(),
-			NullIdentityProvider.INSTANCE);
+			NullIdentityProvider.INSTANCE,
+			new File(this.getClass().getResource("test_mysql_hibernate.properties").getFile()));
 	}
 	
 	//@Test
@@ -196,7 +199,8 @@ public class MsAccessVsMySqlSyncTests {
 			"users", 
 			ontologyBaseUri, 
 			TestHelper.baseDirectoryRootForTest(),
-			NullIdentityProvider.INSTANCE);
+			NullIdentityProvider.INSTANCE,
+			new File(this.getClass().getResource("test_mysql_hibernate.properties").getFile()));
 
 		IRDFSchema rdfSchemaSource = (IRDFSchema)((HibernateContentAdapter)adapterSource.getContentAdapter()).getMapping().getSchema();
 		

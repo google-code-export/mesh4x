@@ -60,7 +60,8 @@ public class HibernateMultiTableTests {
 			"http://mesh4x/test", 
 			TestHelper.baseDirectoryRootForTest(),
 			NullIdentityProvider.INSTANCE,
-			adapterOpaque);
+			adapterOpaque,
+			new File(this.getClass().getResource("test_mysql_hibernate.properties").getFile()));
 		
 		// Sync example
 		InMemorySyncAdapter adapterTarget = new InMemorySyncAdapter("target", NullIdentityProvider.INSTANCE);
@@ -90,7 +91,8 @@ public class HibernateMultiTableTests {
 			null, 
 			TestHelper.baseDirectoryRootForTest(),
 			NullIdentityProvider.INSTANCE,
-			adapterOpaque);
+			adapterOpaque,
+			new File(this.getClass().getResource("test_mysql_hibernate.properties").getFile()));
 		
 		// Sync example
 		InMemorySyncAdapter adapterTarget = new InMemorySyncAdapter("target", NullIdentityProvider.INSTANCE);
@@ -124,7 +126,8 @@ public class HibernateMultiTableTests {
 			rdfURL, 
 			TestHelper.baseDirectoryRootForTest(),
 			NullIdentityProvider.INSTANCE,
-			adapterOpaqueSource);
+			adapterOpaqueSource,
+			new File(this.getClass().getResource("test_mysql_hibernate.properties").getFile()));
 
 
 		// create sheets
@@ -184,7 +187,8 @@ public class HibernateMultiTableTests {
 			rdfURL, 
 			TestHelper.baseDirectoryRootForTest() + "source",//directory name for source meta information
 			NullIdentityProvider.INSTANCE,
-			adapterOpaqueSource);
+			adapterOpaqueSource,
+			new File(this.getClass().getResource("test_mysql_hibernate.properties").getFile()));
 		
 		
 		InMemorySyncAdapter adapterOpaqueTarget = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
@@ -198,7 +202,8 @@ public class HibernateMultiTableTests {
 				rdfURL, 
 				TestHelper.baseDirectoryRootForTest() +"target",//directory name for target meta information
 				NullIdentityProvider.INSTANCE,
-				adapterOpaqueTarget);
+				adapterOpaqueTarget,
+				new File(this.getClass().getResource("test_mysql_hibernate.properties").getFile()));
 		
 		SyncEngine syncEngine = new SyncEngine(adapterSource, adapterTarget);
 		TestHelper.assertSync(syncEngine);
@@ -229,7 +234,8 @@ public class HibernateMultiTableTests {
 			null,
 			TestHelper.baseDirectoryRootForTest() + "source",//directory name for source meta information
 			NullIdentityProvider.INSTANCE,
-			adapterOpaqueSource);
+			adapterOpaqueSource,
+			new File(this.getClass().getResource("test_mysql_hibernate.properties").getFile()));
 		
 
 		InMemorySyncAdapter adapterOpaqueTarget = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
@@ -243,7 +249,8 @@ public class HibernateMultiTableTests {
 				null, 
 				TestHelper.baseDirectoryRootForTest() +"target",//directory name for target meta information
 				NullIdentityProvider.INSTANCE,
-				adapterOpaqueTarget);
+				adapterOpaqueTarget,
+				new File(this.getClass().getResource("test_mysql_hibernate.properties").getFile()));
 		
 		SyncEngine syncEngine = new SyncEngine(adapterSource, adapterTarget);
 		TestHelper.assertSync(syncEngine);

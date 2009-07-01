@@ -1,5 +1,6 @@
 package org.mesh4j.sync.adapters.hibernate.schema;
 
+import java.io.File;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -26,7 +27,8 @@ public class SyncTests {
 			"mesh_example", 
 			"http://mesh4x/test", 
 			TestHelper.baseDirectoryRootForTest(),
-			NullIdentityProvider.INSTANCE);
+			NullIdentityProvider.INSTANCE,
+			new File(this.getClass().getResource("test_mysql_hibernate.properties").getFile()));
 
 		ISyncAdapter adapterB = new InMemorySyncAdapter("mesh_example", NullIdentityProvider.INSTANCE);
 		

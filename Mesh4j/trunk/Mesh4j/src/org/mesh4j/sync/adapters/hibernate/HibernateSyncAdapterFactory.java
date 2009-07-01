@@ -61,16 +61,16 @@ public class HibernateSyncAdapterFactory implements ISyncAdapterFactory{
 	}
 	
 	// ADAPTER CREATION
-	public static <T extends java.sql.Driver, F extends Dialect> SplitAdapter createHibernateAdapter(String connectionURL, String user, String password, Class<T> driverClass, Class<F> dialectClass, String tableName, String rdfBaseURL, String baseDirectory, IIdentityProvider identityProvider) {
+	public static <T extends java.sql.Driver, F extends Dialect> SplitAdapter createHibernateAdapter(String connectionURL, String user, String password, Class<T> driverClass, Class<F> dialectClass, String tableName, String rdfBaseURL, String baseDirectory, IIdentityProvider identityProvider, File propertiesFile) {
 		TreeSet<String> tables = new TreeSet<String>();
 		tables.add(tableName);
 		
-		SplitAdapter[] adapters = createHibernateAdapters(connectionURL, user, password, driverClass, dialectClass, tables, rdfBaseURL, baseDirectory, identityProvider);
+		SplitAdapter[] adapters = createHibernateAdapters(connectionURL, user, password, driverClass, dialectClass, tables, rdfBaseURL, baseDirectory, identityProvider, propertiesFile);
 		return adapters[0];
 	}
 	
-	public static <T extends java.sql.Driver, F extends Dialect> CompositeSyncAdapter createSyncAdapterForMultiTables(String connectionURL, String user, String password, Class<T> driverClass, Class<F> dialectClass, Set<String> tables, String rdfBaseURL, String baseDirectory, IIdentityProvider identityProvider, ISyncAdapter opaqueAdapter) {
-		SplitAdapter[] splitAdapters = createHibernateAdapters(connectionURL, user, password, driverClass, dialectClass, tables, rdfBaseURL, baseDirectory, identityProvider);
+	public static <T extends java.sql.Driver, F extends Dialect> CompositeSyncAdapter createSyncAdapterForMultiTables(String connectionURL, String user, String password, Class<T> driverClass, Class<F> dialectClass, Set<String> tables, String rdfBaseURL, String baseDirectory, IIdentityProvider identityProvider, ISyncAdapter opaqueAdapter, File propertiesFile) {
+		SplitAdapter[] splitAdapters = createHibernateAdapters(connectionURL, user, password, driverClass, dialectClass, tables, rdfBaseURL, baseDirectory, identityProvider, propertiesFile);
 		
 		IIdentifiableSyncAdapter[] adapters =  new IIdentifiableSyncAdapter[splitAdapters.length];
 		int i = 0;
@@ -84,9 +84,9 @@ public class HibernateSyncAdapterFactory implements ISyncAdapterFactory{
 		return new CompositeSyncAdapter("Hibernate composite", opaqueAdapter, identityProvider, adapters);
 	}
 	
-	private static <T extends java.sql.Driver, F extends Dialect> SplitAdapter[] createHibernateAdapters(String connectionURL, String user, String password, Class<T> driverClass, Class<F> dialectClass, Set<String> tables, String rdfBaseURL, String baseDirectory, IIdentityProvider identityProvider) {
+	private static <T extends java.sql.Driver, F extends Dialect> SplitAdapter[] createHibernateAdapters(String connectionURL, String user, String password, Class<T> driverClass, Class<F> dialectClass, Set<String> tables, String rdfBaseURL, String baseDirectory, IIdentityProvider identityProvider, File propertiesFile) {
 	
-		HibernateSessionFactoryBuilder builder = createHibernateFactoryBuilder(connectionURL, user, password, driverClass, dialectClass, null);
+		HibernateSessionFactoryBuilder builder = createHibernateFactoryBuilder(connectionURL, user, password, driverClass, dialectClass, propertiesFile);
 		
 		HashMap<String, PersistentClass> contentMappings = createMappings(builder, baseDirectory, tables);
 
@@ -136,6 +136,9 @@ public class HibernateSyncAdapterFactory implements ISyncAdapterFactory{
 			
 			addRDFProperty(rdfSchema, propertyName, propertyType);
 			rdfSchema.setIdentifiablePropertyName(propertyName);
+			if(Hibernate.BINARY.equals(propertyType)){
+				rdfSchema.setGUIDPropertyName(propertyName);
+			}
 		}
 		
 		
@@ -155,7 +158,7 @@ public class HibernateSyncAdapterFactory implements ISyncAdapterFactory{
 	// TODO (JMT) RDF: improve Hibernate type to RDF type mappings
 	private static void addRDFProperty(RDFSchema rdfSchema, String propertyName, Type type) {
 		
-		if(Hibernate.STRING.equals(type)){
+		if(Hibernate.STRING.equals(type) || Hibernate.BINARY.equals(type)){
 			rdfSchema.addStringProperty(propertyName, propertyName, "en");
 		}
 		
@@ -214,6 +217,14 @@ public class HibernateSyncAdapterFactory implements ISyncAdapterFactory{
 	}
 	
 	public static HashMap<String, PersistentClass> createMappings(HibernateSessionFactoryBuilder builder, String baseDirectory, Set<String> tables) {
+		
+		for (String tableName : tables) {
+			String syncTableName = getSyncTableName(tableName);
+			File contentMapping = FileUtils.getFile(baseDirectory, tableName+".hbm.xml");
+			FileUtils.delete(contentMapping);
+			File syncFileMapping = FileUtils.getFile(baseDirectory, syncTableName+".hbm.xml");
+			FileUtils.delete(syncFileMapping);
+		}
 		
 		autodiscoveryMappings(builder, baseDirectory, tables);
 

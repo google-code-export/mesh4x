@@ -767,4 +767,5 @@ public class RDFSchemaTests {
 		
 		Assert.assertFalse(rdfSchema.isCompatible(otherRdfSchema));
 	}
+	
 }

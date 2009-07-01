@@ -320,7 +320,8 @@ public class DBFeedRepository implements IFeedRepository {
 				tableName, 
 				rdfLink,
 				this.baseDirectory,
-				identityProvider);	
+				identityProvider,
+				null);	
 	}
 	
 	
