@@ -66,6 +66,9 @@ public class SyncItemUI extends JPanel implements IUIController {
 	public final static String ATOM_FILE_PANEL = "Atom 1.0";
 	public final static String FOLDER_PANEL = "Folder";
 
+	public static final String UI_AS_SOURCE = "source";
+	public static final String UI_AS_TARGET = "target";
+	
 	// MODEL VARIABLES
 	private PropertiesProvider propertiesProvider;
 
@@ -110,13 +113,14 @@ public class SyncItemUI extends JPanel implements IUIController {
 	
 	private String title = null;
 	private boolean acceptsCreateDataset;
-
+	private String uiType = null;
 	
 
 	// BUSINESS MODEL
-	public SyncItemUI(String title, boolean acceptsCreateDataset) {
+	public SyncItemUI(String title, boolean acceptsCreateDataset, String uiType) {
 		this.title = title;
 		this.acceptsCreateDataset = acceptsCreateDataset;
+		this.uiType = uiType;
 		initialize();
 	}
 
@@ -482,4 +486,12 @@ public class SyncItemUI extends JPanel implements IUIController {
 		getCurrentView().cleanMessages();		
 	}
 
+	/**
+	 * return whether UI Items available here for source or target
+	 * @return
+	 */
+	public String getUiType() {
+		return uiType;
+	}
+	
 }

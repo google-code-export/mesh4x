@@ -21,7 +21,6 @@ import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.ButtonModel;
 import javax.swing.Icon;
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -72,9 +71,6 @@ public class EktooFrame extends JFrame implements IErrorListener,
 
 	private Statusbar statusBar = null;
 	private EktooController controller;
-
-	private JButton sourceSchemaViewButton;
-	private JButton targetSchemaViewButton;
 
 	// BUSINESS METHODS
 	public EktooFrame(EktooController controller) {
@@ -298,7 +294,7 @@ public class EktooFrame extends JFrame implements IErrorListener,
 	private JPanel getSourcePane() {
 		if (getSourceItem() == null) {
 			setSourceItem(new SyncItemUI(EktooUITranslator
-					.getSourceSyncItemSelectorTitle(), false));
+					.getSourceSyncItemSelectorTitle(), false, SyncItemUI.UI_AS_SOURCE));
 			getSourceItem().setPreferredSize(new Dimension(370, 250));
 			getSourceItem().getListType().addItemListener(new ItemListener() {
 				public void itemStateChanged(ItemEvent evt) {
@@ -318,7 +314,7 @@ public class EktooFrame extends JFrame implements IErrorListener,
 	private JPanel getTargetPane() {
 		if (getTargetItem() == null) {
 			setTargetItem(new SyncItemUI(EktooUITranslator
-					.getTargetSyncItemSelectorTitle(), true));
+					.getTargetSyncItemSelectorTitle(), true, SyncItemUI.UI_AS_TARGET));
 			getTargetItem().setPreferredSize(new Dimension(370, 250));
 			getTargetItem().getListType().addItemListener(new ItemListener() {
 				public void itemStateChanged(ItemEvent evt) {
