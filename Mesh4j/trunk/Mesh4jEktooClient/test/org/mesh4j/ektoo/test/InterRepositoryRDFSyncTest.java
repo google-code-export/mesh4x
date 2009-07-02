@@ -70,7 +70,7 @@ public class InterRepositoryRDFSyncTest {
 			gss, 
 			spreadSheetInfo.getSheetName(), 
 			pks,
-			null,
+			/*null,*/
 			rdfUrl);
 		
 		File contentFile = new File(TestHelper.baseDirectoryForTest() + "contentFile.xls");

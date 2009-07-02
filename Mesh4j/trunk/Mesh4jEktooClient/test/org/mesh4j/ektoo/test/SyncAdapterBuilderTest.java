@@ -38,8 +38,6 @@ import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
 import org.mesh4j.sync.utils.XMLHelper;
 import org.mesh4j.sync.validations.MeshException;
 
-import com.google.gdata.client.docs.DocsService;
-
 public class SyncAdapterBuilderTest {
 
 	@Test
@@ -70,11 +68,11 @@ public class SyncAdapterBuilderTest {
 	@Test
 	public void shouldCreatePlainXMLBasedGoogleSpreadSheetAdapterWhenSpreadsheetWithTheGivenNameAvailable() throws Exception{
 		GoogleSpreadSheetInfo spreadSheetInfo = new GoogleSpreadSheetInfo(
-				"spreadsheettest2",
+				"SyncAdapterBuilderTest",
 				"gspreadsheet.test@gmail.com",
 				"java123456",
 				"id",
-				"user_source",
+				"user",
 				"user"
 				);
 
@@ -87,7 +85,7 @@ public class SyncAdapterBuilderTest {
 	@Test //ok
 	public void shouldCreateRdfBasedGoogleSpreadSheetAdapterUsingOwnRDFSchemaIfDataRowAvailable(){
 			GoogleSpreadSheetInfo spreadSheetInfo = new GoogleSpreadSheetInfo(
-					"spreadsheettest2",
+					"SyncAdapterBuilderTest",
 					"gspreadsheet.test@gmail.com",
 					"java123456",
 					"id",
@@ -173,7 +171,7 @@ public class SyncAdapterBuilderTest {
 	@Test //ok
 	public void shouldCreateRdfBasedGoogleSpreadSheetAdapterUsingOtherRDFWhenSpreadsheetAvailableAndWorksheetAvailableWithCompatibleSchema(){
 		GoogleSpreadSheetInfo spreadSheetInfo = new GoogleSpreadSheetInfo(
-				"spreadsheettest2",
+				"SyncAdapterBuilderTest",
 				"gspreadsheet.test@gmail.com",
 				"java123456",
 				"id",
@@ -468,7 +466,7 @@ public class SyncAdapterBuilderTest {
 		rdfInstance.setProperty(COLUMN_NAME, name);
 		rdfInstance.setProperty(COLUMN_PASS, pass);
 
-		return new GoogleSpreadsheetToRDFMapping(schema, new DocsService(""));
+		return new GoogleSpreadsheetToRDFMapping(schema);
 	}		
 	
 	private Item getItem(IIdentifiableMapping mapping) throws DocumentException {
