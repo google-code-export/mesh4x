@@ -10,6 +10,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.controller.EktooController;
 import org.mesh4j.ektoo.ui.EktooFrame;
+import org.mesh4j.ektoo.ui.GSSheetUI;
 import org.mesh4j.ektoo.ui.SyncItemUI;
 import org.mesh4j.ektoo.ui.component.messagedialog.MessageDialog;
 import org.mesh4j.ektoo.ui.component.statusbar.Statusbar;
@@ -82,6 +83,19 @@ public class SynchronizeTask extends SwingWorker<String, Void> {
 											new Date()));
 					ui.getSourceItem().cleanMessaged();
 					ui.getTargetItem().cleanMessaged();
+					
+					// this is to handle an exceptional situation when user
+					// choose to create a new spreadsheet on target 
+					if (ui.getTargetItem().getCurrentView() instanceof GSSheetUI){
+						GSSheetUI gsUI = (GSSheetUI) ui.getTargetItem().getCurrentView();
+						if( gsUI.getNewSpreadsheetNameIndex() != -1){
+							Object oldSelection = gsUI.getNameList().getSelectedItem();
+							gsUI.getConnectButton().doClick();
+							//TODO: need to make current thread waiting till the click event finish
+							gsUI.getNameList().setSelectedItem(oldSelection);
+						}
+					}
+					
 				} else if (result
 						.equals(EktooController.SYNCHRONIZATION_CONFLICTED)) {
 					synchronizeTaskListener
