@@ -17,6 +17,7 @@ import org.mesh4j.sync.adapters.googlespreadsheet.mapping.GoogleSpreadsheetToRDF
 import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.validations.Guard;
+import org.mesh4j.sync.validations.MeshException;
 
 public class GSSheetUIController extends AbstractUIController {
 	
@@ -25,9 +26,6 @@ public class GSSheetUIController extends AbstractUIController {
 	public static final String SPREADSHEET_NAME_PROPERTY = "SpreadsheetName";
 	public static final String WORKSHEET_NAME_PROPERTY = "WorksheetName";
 	public static final String UNIQUE_COLUMN_NAME_PROPERTY = "UniqueColumnName";
-	public static final String UNIQUE_COLUMN_POSITION_PROPERTY = "UniqueColumnPosition";
-	public static final String LASTUPDATE_COLUMN_NAME_PROPERTY = "LastUpdatedColumnName";
-	public static final String LASTUPDATE_COLUMN_POSITION_PROPERTY = "LastUpdatedColumnPosition";
 
 	// MODEL VARIABLES
 	private SyncAdapterBuilder adapterBuilder;
@@ -60,19 +58,6 @@ public class GSSheetUIController extends AbstractUIController {
 		setModelProperty(UNIQUE_COLUMN_NAME_PROPERTY, uniqueColumnName);
 	}
 
-	public void changeUniqueColumnPosition(int uniqueColumnPosition) {
-		setModelProperty(UNIQUE_COLUMN_POSITION_PROPERTY, uniqueColumnPosition);
-	}
-
-	public void changeLastUpdatedColumnName(String lastUpdatedColumnName) {
-		setModelProperty(LASTUPDATE_COLUMN_NAME_PROPERTY, lastUpdatedColumnName);
-	}
-
-	public void changeLastUpdatedColumnPosition(int lastUpdatedColumnPosition) {
-		setModelProperty(LASTUPDATE_COLUMN_POSITION_PROPERTY,
-				lastUpdatedColumnPosition);
-	}
-
 	@Override
 	public ISyncAdapter createAdapter() {
 		GSSheetModel model = (GSSheetModel) this.getModel();
@@ -85,7 +70,7 @@ public class GSSheetUIController extends AbstractUIController {
 			gss, 
 			model.getWorksheetName(),
 			pks, 
-			model.getLastUpdatedColumnName(),
+			/*model.getLastUpdatedColumnName(),*/
 			this.adapterBuilder.getBaseRDFUrl());
 
 		GoogleSpreadSheetInfo spreadSheetInfo = new GoogleSpreadSheetInfo(
@@ -100,7 +85,9 @@ public class GSSheetUIController extends AbstractUIController {
 	public List<IRDFSchema> fetchSchema(ISyncAdapter adapter) {
 		List<IRDFSchema> schema = new ArrayList<IRDFSchema>();
 		if(EktooFrame.multiModeSync && adapter instanceof CompositeSyncAdapter){
-			// TODO (SHARIF/RAJU) ????
+			// TODO: more code will be added here in future when gss adapter is
+			// upgraded to work in Multi mode sync.
+			// see the method fetchSchema(...) in MsAccessUIController
 		} else {
 			GoogleSpreadSheetContentAdapter contentAdapter = (GoogleSpreadSheetContentAdapter)((SplitAdapter)adapter).getContentAdapter();
 			IRDFSchema rdfSchema = (IRDFSchema) contentAdapter.getSchema();
@@ -112,13 +99,27 @@ public class GSSheetUIController extends AbstractUIController {
 	@Override
 	public ISyncAdapter createAdapter(List<IRDFSchema> schemas) {
 		GSSheetModel model = (GSSheetModel) this.getModel();
+		IRDFSchema rdfSchema = schemas == null || schemas.size() == 0 ? null : schemas.get(0);
+		
+		
+		String worksheetName = model.getWorksheetName(); 
+		String uniqueColumnName = model.getUniqueColumnName();
 
+		// when user provides a new spreadsheet name in target, worksheet name and
+		// uniqueColumn name is not taken from user as input rather it will be taken from source schema.
+		// if source schema is not available this is ended up with an exception
+		if( worksheetName == null && uniqueColumnName == null){
+			if(rdfSchema != null) {
+				worksheetName = rdfSchema.getName();
+				uniqueColumnName = rdfSchema.getIdentifiablePropertyNames().get(0);
+			} else
+				throw new MeshException("Unable to create target datasource without source schema.");
+		}
+		
 		GoogleSpreadSheetInfo spreadSheetInfo = new GoogleSpreadSheetInfo(
 				model.getSpreadsheetName(), model.getUserName(), 
-				model.getUserPassword(), model.getUniqueColumnName(), 
-				model.getWorksheetName(), model.getWorksheetName());
+				model.getUserPassword(), uniqueColumnName, worksheetName, worksheetName);
 		
-		IRDFSchema rdfSchema = schemas == null || schemas.size() == 0 ? null : schemas.get(0);
 		return adapterBuilder.createRdfBasedGoogleSpreadSheetAdapter(spreadSheetInfo, rdfSchema);
 	}
 }
