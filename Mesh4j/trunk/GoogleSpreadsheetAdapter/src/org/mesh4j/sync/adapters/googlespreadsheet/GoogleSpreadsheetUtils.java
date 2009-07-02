@@ -564,9 +564,7 @@ public class GoogleSpreadsheetUtils {
 								ok = ok +1;
 							}
 						}
-					} else {
-						int i = 0;
-					}
+					} 
 				}
 				if(ok == columnNames.length){
 					return row;
