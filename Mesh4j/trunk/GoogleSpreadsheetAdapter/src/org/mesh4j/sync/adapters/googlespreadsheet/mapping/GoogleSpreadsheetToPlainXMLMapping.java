@@ -1,22 +1,17 @@
 package org.mesh4j.sync.adapters.googlespreadsheet.mapping;
 
-import java.io.File;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadsheetUtils;
 import org.mesh4j.sync.adapters.googlespreadsheet.model.GSCell;
 import org.mesh4j.sync.adapters.googlespreadsheet.model.GSRow;
 import org.mesh4j.sync.adapters.googlespreadsheet.model.GSWorksheet;
-import org.mesh4j.sync.adapters.msexcel.MsExcelUtils;
 import org.mesh4j.sync.payload.schema.AbstractPlainXmlIdentifiableMapping;
 import org.mesh4j.sync.validations.Guard;
-
-import com.google.gdata.client.docs.DocsService;
 /**
  * 
  * @author Raju
@@ -26,18 +21,11 @@ import com.google.gdata.client.docs.DocsService;
 public class GoogleSpreadsheetToPlainXMLMapping extends AbstractPlainXmlIdentifiableMapping implements IGoogleSpreadsheetToXMLMapping{
 
 	//MODEL VARIABLES
-	private DocsService docService;
 	
 	//BUSINESS METHDOS
-	public GoogleSpreadsheetToPlainXMLMapping(String type, String idColumnName, String lastUpdateColumnName, DocsService docService){
-		
+	public GoogleSpreadsheetToPlainXMLMapping(String type, String idColumnName, String lastUpdateColumnName){
 		super(type, idColumnName, lastUpdateColumnName, GSCell.G_SPREADSHEET_DATE_FORMAT);
-
-		Guard.argumentNotNull(docService,	"docService");
-		
-		this.docService = docService;
 	}
-	
 	
 	@Override
 	public Element convertRowToXML(GSRow<GSCell> gsRow) {
@@ -76,16 +64,6 @@ public class GoogleSpreadsheetToPlainXMLMapping extends AbstractPlainXmlIdentifi
 
 	}
 		
-	public String createDataSource(String fileName) throws Exception {
-		//create a msexcel document
-		HSSFWorkbook workbook = new HSSFWorkbook();			
-		MsExcelUtils.flush(workbook, fileName);
-		
-		//upload the excel document
-		return GoogleSpreadsheetUtils.uploadSpreadsheetDoc(new File(fileName), this.docService);
-	}
-
-
 	@Override
 	public String getId(GSRow<GSCell> gsRow) {
 		 GSCell cell = gsRow.getGSCell(this.getIdColumnName());

@@ -1,32 +1,28 @@
 package org.mesh4j.sync.adapters.googlespreadsheet.mapping;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.dom4j.Element;
 import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadsheetUtils;
 import org.mesh4j.sync.adapters.googlespreadsheet.IGoogleSpreadSheet;
 import org.mesh4j.sync.adapters.googlespreadsheet.model.GSCell;
 import org.mesh4j.sync.adapters.googlespreadsheet.model.GSRow;
+import org.mesh4j.sync.adapters.googlespreadsheet.model.GSSpreadsheet;
 import org.mesh4j.sync.adapters.googlespreadsheet.model.GSWorksheet;
-import org.mesh4j.sync.adapters.msexcel.MsExcelUtils;
 import org.mesh4j.sync.payload.schema.rdf.AbstractRDFIdentifiableMapping;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.payload.schema.rdf.RDFInstance;
 import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
 import org.mesh4j.sync.utils.XMLHelper;
-import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
 import com.google.gdata.client.docs.DocsService;
+import com.google.gdata.client.spreadsheet.FeedURLFactory;
+import com.google.gdata.client.spreadsheet.SpreadsheetService;
 
 /**
  * @author sharif
@@ -35,17 +31,13 @@ import com.google.gdata.client.docs.DocsService;
 public class GoogleSpreadsheetToRDFMapping extends AbstractRDFIdentifiableMapping implements IGoogleSpreadsheetToXMLMapping{
 
 	// MODEL VARIABLES
-	private DocsService docService;
 	
 	// BUSINESS METHODs
-	public GoogleSpreadsheetToRDFMapping(IRDFSchema rdfSchema, DocsService docService) {		
+	public GoogleSpreadsheetToRDFMapping(IRDFSchema rdfSchema) {		
 		super(rdfSchema);
-		
-		Guard.argumentNotNull(docService,	"docService");
-		this.docService = docService;
 	}
 	
-	public static RDFSchema extractRDFSchema(IGoogleSpreadSheet gss, String workSheetName, List<String> identifiablePropertyNames, String lastUpdateColumnName, String rdfURL) {
+	public static RDFSchema extractRDFSchema(IGoogleSpreadSheet gss, String workSheetName, List<String> identifiablePropertyNames, String rdfURL) {
 		RDFSchema rdfSchema = new RDFSchema(workSheetName, rdfURL+"/"+workSheetName+"#", workSheetName);
 
 		GSWorksheet<GSRow<GSCell>> worksheet = GoogleSpreadsheetUtils.getOrCreateWorkSheetIfAbsent(gss.getGSSpreadsheet(), workSheetName);
@@ -54,7 +46,6 @@ public class GoogleSpreadsheetToRDFMapping extends AbstractRDFIdentifiableMappin
 		
 		if(rowCount < 2)
 			throw new MeshException("No rata row available in the worksheet: " + workSheetName);
-		
 		GSRow<GSCell> dataRow = worksheet.getGSRow(worksheet.getChildElements().size());
 
 		int cellType;
@@ -63,7 +54,7 @@ public class GoogleSpreadsheetToRDFMapping extends AbstractRDFIdentifiableMappin
 
 		for (String key : dataRow.getChildElements().keySet()) {
 			gsCell = dataRow.getChildElements().get(key);
-			cellName = gsCell.getColumnTag();
+			cellName = key;
 			cellType = gsCell.getCellTypeFromContent();
 
 			if (GSCell.CELL_TYPE_BOOLEAN == cellType) {
@@ -81,7 +72,7 @@ public class GoogleSpreadsheetToRDFMapping extends AbstractRDFIdentifiableMappin
 		}
 
 		rdfSchema.setIdentifiablePropertyNames(identifiablePropertyNames);
-		rdfSchema.setVersionPropertyName(lastUpdateColumnName);
+		//rdfSchema.setVersionPropertyName(lastUpdateColumnName);
 		return rdfSchema;
 	}
 
@@ -92,10 +83,10 @@ public class GoogleSpreadsheetToRDFMapping extends AbstractRDFIdentifiableMappin
 		Object propertyValue;
 
 		HashMap<String, Object> propertyValues = new HashMap<String, Object>();
-		for (GSCell cell : row.getChildElements().values() ) {
+		for (Entry<String, GSCell> cellEntry : row.getChildElements().entrySet()) {
 			
-			cellName = cell.getColumnTag();
-			cellValue = cell.getCellValueAsType();
+			cellName = /*cell.getColumnTag()*/cellEntry.getKey();
+			cellValue = /*cell.getCellValueAsType()*/cellEntry.getValue().getCellValueAsType();
 
 			propertyValue = rdfSchema.cannonicaliseValue(cellName, cellValue);
 			if (propertyValue != null) {
@@ -174,33 +165,18 @@ public class GoogleSpreadsheetToRDFMapping extends AbstractRDFIdentifiableMappin
 		}
 	}
 
-	public String createDataSource(String fileName) throws Exception {
-		//create a msexcel document using the rdf schema
-		Workbook workbook = createDataSource();			
-		MsExcelUtils.flush(workbook, fileName);
+	@SuppressWarnings("unchecked")
+	public String createDataSource(String fileName, String username, String password, String tempDirectory) throws Exception {
+		SpreadsheetService service = GoogleSpreadsheetUtils.getSpreadsheetService(username, password);
+		DocsService docService = GoogleSpreadsheetUtils.getDocService(username,password);
+		FeedURLFactory factory = GoogleSpreadsheetUtils.getSpreadsheetFeedURLFactory();
 		
-		//upload the excel document
-		return GoogleSpreadsheetUtils.uploadSpreadsheetDoc(new File(fileName), this.docService);
+		GSSpreadsheet<GSWorksheet> ss = GoogleSpreadsheetUtils
+				.getOrCreateGSSpreadsheetIfAbsent(factory, service, docService,	fileName, tempDirectory);
+
+		return ss.getBaseEntry().getTitle().getPlainText();
 	}
 
-	public Workbook createDataSource() {
-		Workbook workbook = new HSSFWorkbook();
-		Sheet sheet = workbook.createSheet(this.rdfSchema.getOntologyClassName());
-		sheet.setFitToPage(true);
-		Row headerRow = sheet.createRow(0);
-		Cell headerCell;
-		
-		int size = this.rdfSchema.getPropertyCount();
-		String propertyName;
-		for (int j = 0; j < size; j++) {
-			propertyName = this.rdfSchema.getPropertyName(size - 1 - j);	
-			
-			headerCell = headerRow.createCell(j);
-			headerCell.setCellValue(MsExcelUtils.getRichTextString(workbook, propertyName));			
-		}
-		return workbook;
-	}
-	
 	@Override
 	public Element convertRowToXML(GSRow<GSCell> row) {
 		RDFInstance rdfInstance = this.converRowToRDF(row);
