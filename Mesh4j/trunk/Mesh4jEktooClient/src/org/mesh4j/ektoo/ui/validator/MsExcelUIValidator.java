@@ -23,6 +23,8 @@ public class MsExcelUIValidator extends AbstractValidator {
 	
 	}
 
+	//TODO (raju)needs to refactor the condition and process
+	//this validation process will be used by also schema view ui.
 	private boolean validate(MsExcelUI ui) {
 		boolean isValid = true;
 
@@ -53,6 +55,18 @@ public class MsExcelUIValidator extends AbstractValidator {
 			isValid = false;
 		}		
 
+		
+		if ((getUiFieldListForValidation().isEmpty() || getUiFieldListForValidation().contains(ui.getColumnList()))
+				&& ui.getController().acceptsCreateDataset() && ui.getColumnList().getItemCount() == 0) {
+			File file = new File(ui.getTxtFile().getText());
+			if(file.exists()){//user must provide unique column name
+				setError(ui.getColumnList(), EktooUITranslator
+						.getErrorEmptyOrNull(MsExcelUIController.UNIQUE_COLUMN_NAME_PROPERTY));
+				isValid = false;	
+			}
+		}
+		
+		
 		return isValid;
 	}
 

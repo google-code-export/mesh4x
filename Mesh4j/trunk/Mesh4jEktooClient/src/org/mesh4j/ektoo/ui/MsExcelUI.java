@@ -94,6 +94,7 @@ public class MsExcelUI extends AbstractUI implements IValidationStatus {
 		this.add(getColumnList(), null);
 		this.add(getMessagesText(), null);
 		this.add(getSchemaViewButton(), null);
+		
 	}
 	
 	
@@ -101,13 +102,17 @@ public class MsExcelUI extends AbstractUI implements IValidationStatus {
 		getSchemaButton().addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				EktooFrame ektooFrame = ((EktooFrame)MsExcelUI.this.getRootFrame());
-				SchemaViewTask task = new SchemaViewTask(ektooFrame,MsExcelUI.this.controller,ektooFrame);
-				task.execute();
+				if(MsExcelUI.this.verify()){
+					EktooFrame ektooFrame = ((EktooFrame)MsExcelUI.this.getRootFrame());
+					SchemaViewTask task = new SchemaViewTask(ektooFrame,MsExcelUI.this.controller,ektooFrame);
+					task.execute();	
+				}
 			}
 		});
 		return getSchemaButton();
 	}
+	
+	
 	public void setList(String fileName) {
 		JComboBox sheetList = getTableList();
 		sheetList.removeAllItems();
@@ -348,6 +353,7 @@ public class MsExcelUI extends AbstractUI implements IValidationStatus {
 	}
 
 	public JComboBox getColumnList() {
+		System.out.println("this is test");
 		if (listColumn == null) {
 			listColumn = new JComboBox();
 			listColumn.setBounds(new Rectangle(99, 64, 194, 20));

@@ -13,15 +13,16 @@ public class JXmlTreeTableCellRenderer extends DefaultTreeCellRenderer{
     
 	Color elementColor = new Color(0, 0, 128);
     Color attributeColor = new Color(0, 128, 0);
- 
+   
     public JXmlTreeTableCellRenderer(){
         setOpenIcon(null);
         setClosedIcon(null);
         setLeafIcon(null);
-        
     }
  
     public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus){
+    	
+    
         Node node = (Node)value;
         StringBuffer buff = new StringBuffer();
         switch(node.getNodeType()){

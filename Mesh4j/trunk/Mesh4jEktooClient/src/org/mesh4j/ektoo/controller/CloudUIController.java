@@ -46,9 +46,7 @@ public class CloudUIController extends AbstractUIController
 	
 	@Override
 	public ISyncAdapter createAdapter() {
-		
 		return createAdapter(null);
-//		
 	}
 
 	@Override

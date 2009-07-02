@@ -23,6 +23,16 @@ public class JXmlTreeTable extends JTreeTable{
         getTree().setShowsRootHandles(true);
     } 
  
+    public JXmlTreeTable(TreeTableModel  baseModel,TreeTableModel  treeTableModel){ 
+        super(treeTableModel); 
+        setShowGrid(true); 
+        setGridColor(new Color(234, 234, 234)); 
+ 
+        setIntercellSpacing(new Dimension(1, 1)); 
+        new TableColumnResizer(this); 
+        getTree().setRootVisible(true); 
+        getTree().setShowsRootHandles(true);
+    } 
     //mouse press intended for resize shouldn't change row/col/cell celection
     @Override
     public void changeSelection(int row, int column, boolean toggle, boolean extend) { 

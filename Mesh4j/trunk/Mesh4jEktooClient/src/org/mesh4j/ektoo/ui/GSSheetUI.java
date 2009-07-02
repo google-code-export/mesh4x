@@ -110,9 +110,11 @@ public class GSSheetUI extends AbstractUI {
 		getSchemaButton().addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				EktooFrame ektooFrame = ((EktooFrame)GSSheetUI.this.getRootFrame());
-				SchemaViewTask task = new SchemaViewTask(ektooFrame,GSSheetUI.this.controller,ektooFrame);
-				task.execute();
+				if(GSSheetUI.this.verify()){
+					EktooFrame ektooFrame = ((EktooFrame)GSSheetUI.this.getRootFrame());
+					SchemaViewTask task = new SchemaViewTask(ektooFrame,GSSheetUI.this.controller,ektooFrame);
+					task.execute();	
+				}
 			}
 		});
 		return getSchemaButton();
@@ -391,14 +393,12 @@ public class GSSheetUI extends AbstractUI {
 			listColumn.addItemListener(new ItemListener() {
 				public void itemStateChanged(ItemEvent evt) {
 					if (evt.getStateChange() == ItemEvent.SELECTED) {
-						getController().changeUniqueColumnPosition(
-								listColumn.getSelectedIndex() + 1);
-						getController().changeUniqueColumnName(
-								(String) listColumn.getSelectedItem());
-
-						// TODO (NBL) need to improve of adapter creation api
-						getController().changeLastUpdatedColumnPosition(
-								listColumn.getItemCount());
+							int columnIndex = listColumn.getSelectedIndex();
+							if (columnIndex != -1) {
+							String colum =(String) listColumn.getSelectedItem();
+							getController().changeUniqueColumnName(
+									colum);
+							}
 					}
 				}
 			});

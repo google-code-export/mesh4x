@@ -116,9 +116,11 @@ public class MySQLUI extends AbstractUI {
 		getSchemaButton().addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				EktooFrame ektooFrame = ((EktooFrame)MySQLUI.this.getRootFrame());
-				SchemaViewTask task = new SchemaViewTask(ektooFrame,MySQLUI.this.controller,ektooFrame);
-				task.execute();
+				if(MySQLUI.this.verify()){
+					EktooFrame ektooFrame = ((EktooFrame)MySQLUI.this.getRootFrame());
+					SchemaViewTask task = new SchemaViewTask(ektooFrame,MySQLUI.this.controller,ektooFrame);
+					task.execute();	
+				}
 			}
 		});
 		return getSchemaButton();

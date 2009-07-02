@@ -294,6 +294,11 @@ public class EktooUITranslator {
 		return EktooMessageTranslator.translate("EKTOO_SETTINGS_TEXT");
 	}
 	
+	public static String getSchemaComarisonLinkText(){
+		return EktooMessageTranslator.translate("EKTOO_SCHEMA_COMPARISON_LINK");
+	}
+
+	
 	public static String getMeshNameFieldLabel() {
 		return EktooMessageTranslator
 				.translate("EKTOO_CLOUD_MESH_NAME_FIELD_LABEL");
@@ -400,6 +405,13 @@ public class EktooUITranslator {
 		return EktooMessageTranslator.translate("EKTOO_ERROR_OPEN_FILE_ACTION_NOT_SUPPORTED");
 	}
 
+	public static String getErrorOnShowingSchemaComparison(){
+		return EktooMessageTranslator.translate("EKTOO_ERROR_SCHEMA_COMPARISON_FAILED");
+	}
+	
+	public static String getWarningMessageForUnEqualSourceTargetEntityName(){
+		return EktooMessageTranslator.translate("EKTOO_WARNING_SOURCE_TARGET_TABLE_SHEET_NOT_SAME");
+	}
 	
 	//google spreadsheet specific tooltip
 	

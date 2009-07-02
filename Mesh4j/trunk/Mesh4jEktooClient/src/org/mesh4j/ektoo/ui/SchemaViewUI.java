@@ -20,10 +20,15 @@ public class SchemaViewUI extends AbstractUI{
 	
 	public SchemaViewUI(IRDFSchema schema){
 		this.schema = schema;
-		this.setLayout(new BorderLayout(0,0));
 		initilize();
 	}
+	public SchemaViewUI(IRDFSchema schema,boolean isSource){
+		this.schema = schema;
+		initilize();
+	}
+	
 	private void initilize(){
+		this.setLayout(new BorderLayout(0,0));
 		StringReader reader = new StringReader(schema.asXML());
 		InputSource is = new InputSource(reader);
     	JXmlTreeTableModel xmlTreeTableMode = null;
@@ -32,10 +37,13 @@ public class SchemaViewUI extends AbstractUI{
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 		}
+		
     	JXmlTreeTable xmlTable = new JXmlTreeTable(xmlTreeTableMode);
     	xmlTable.getTree().setCellRenderer(new JXmlTreeTableCellRenderer());
     	this.add(xmlTable,BorderLayout.CENTER);
 	}
+	
+	
 	@Override
 	public void modelPropertyChange(PropertyChangeEvent evt) {
 		// TODO Auto-generated method stub

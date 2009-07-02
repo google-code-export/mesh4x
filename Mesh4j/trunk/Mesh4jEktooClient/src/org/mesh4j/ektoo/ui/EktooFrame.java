@@ -21,6 +21,7 @@ import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.ButtonModel;
 import javax.swing.Icon;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -36,6 +37,7 @@ import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.ektoo.tasks.IErrorListener;
 import org.mesh4j.ektoo.tasks.ISynchronizeTaskListener;
 import org.mesh4j.ektoo.tasks.OpenURLTask;
+import org.mesh4j.ektoo.tasks.SchemaComparisonViewTask;
 import org.mesh4j.ektoo.tasks.SynchronizeTask;
 import org.mesh4j.ektoo.ui.component.HyperLink;
 import org.mesh4j.ektoo.ui.component.PopupDialog;
@@ -68,9 +70,12 @@ public class EktooFrame extends JFrame implements IErrorListener,
 	private JLabel targetImageLabel = null;
 	private JLabel directionImageLabel = null;
 	private JLabel syncImageLabel = null;
+	private HyperLink schemaComarisonLink = null;
 
 	private Statusbar statusBar = null;
 	private EktooController controller;
+
+	private JButton compareViewButton;
 
 	// BUSINESS METHODS
 	public EktooFrame(EktooController controller) {
@@ -91,6 +96,18 @@ public class EktooFrame extends JFrame implements IErrorListener,
 		this.setResizable(false);
 	}
 
+	private HyperLink getSchemaComarisonLink(){
+		if(schemaComarisonLink == null){
+			schemaComarisonLink = new HyperLink(EktooUITranslator.getSchemaComarisonLinkText());
+			schemaComarisonLink.addMouseListener(new MouseAdapter(){
+				 public void mouseClicked(MouseEvent e) {
+					 SchemaComparisonViewTask task = new SchemaComparisonViewTask(EktooFrame.this,EktooFrame.this);
+					 task.execute();
+				 }
+			});
+		}
+		return schemaComarisonLink;
+	}
 	private JPanel getHeaderPanel(){
 		if(headerPanel == null){
 			headerPanel = new JPanel(new BorderLayout(10,10));	
@@ -130,14 +147,14 @@ public class EktooFrame extends JFrame implements IErrorListener,
 		return headerPanel;
 	}
 	
-	//TODO(raju) please user PropertiesProvider class as single tone for the application
+	//TODO(raju)  user PropertiesProvider class as single tone for the application
 	//because its not necessary to load property file every time.
 	private void gotToMesh4xHelpSite(){
 		OpenURLTask openURLTask = new OpenURLTask(this,this,new PropertiesProvider().getMesh4xURL());
 		openURLTask.execute();
 	}
 
-	//TODO(raju) please user PropertiesProvider class as single tone for the application
+	//TODO(raju)  user PropertiesProvider class as single tone for the application
 	//because its not necessary to load property file every time.
 	private void goToMesh4xEktooHelpSite(){
 		OpenURLTask openURLTask = new OpenURLTask(this,this,new PropertiesProvider().getMesh4xEktooURL());
@@ -180,16 +197,25 @@ public class EktooFrame extends JFrame implements IErrorListener,
 			c.gridy = 2;
 			panel.add(getTargetPane(), c);
 			
+			
 			c.fill = GridBagConstraints.CENTER;
 			c.gridx = 0;
 			c.gridy = 4;
 			c.gridwidth = 2;
-			panel.add(getBtnSync(), c);		
+			panel.add(getSchemaComarisonLink(), c);
+			
+			
+			c.fill = GridBagConstraints.CENTER;
+			c.gridx = 0;
+			c.gridy = 5;
+			c.gridwidth = 2;
+			panel.add(getBtnSync(), c);
+			
 			
 			c.insets = new Insets(0, 3, -17, 3);
 			c.fill = GridBagConstraints.HORIZONTAL;
 			c.gridx = 0;
-			c.gridy = 5;
+			c.gridy = 6;
 			c.gridwidth = 2;
 			panel.add(getStatusBar(), c);
 		}
@@ -205,16 +231,6 @@ public class EktooFrame extends JFrame implements IErrorListener,
 
 			GridBagConstraints c = new GridBagConstraints();
 			c.insets = new Insets(-2, 17, 0, 17);
-
-//			c.gridx = 0;
-//			c.gridy = 0;
-//			c.gridwidth = 3;
-//
-//			JPanel tempPanel = new JPanel();
-//			tempPanel.setPreferredSize(new Dimension(428, 47));
-//			tempPanel.setOpaque(false);
-//			tempPanel.add(getSyncImageLabel());
-//			panelImage.add(tempPanel, c);
 
 			c.fill = GridBagConstraints.CENTER;
 			c.gridx = 0;
@@ -742,7 +758,7 @@ public class EktooFrame extends JFrame implements IErrorListener,
 		PopupDialog dialog = new PopupDialog(this,title);
 		dialog.setLayout(new BorderLayout());
 		dialog.add(component);
-		dialog.setSize(getWidth() - 100, getHeight()/2);
+		dialog.setSize(getWidth() , getHeight()/2);
 		dialog.setVisible(true);
 	}
 }

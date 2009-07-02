@@ -46,6 +46,7 @@ public class SchemaViewTask extends SwingWorker<String, Void>{
 		int row = shcemaList.size();
 		schemaPanel.setLayout(new GridLayout(row,0,0,0));
 		for(IRDFSchema  schema :  shcemaList){			
+			
 			schemaViewUI = new SchemaViewUI(schema);
 			schemaViewUI.setBorder(BorderFactory.createTitledBorder( new RoundBorder(Color.LIGHT_GRAY), 
 					schema.getOntologyClassName()));
