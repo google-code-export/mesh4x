@@ -44,41 +44,6 @@ public class MySQLConnectionValidator extends AbstractValidator {
 
 	protected boolean validate(MySQLAdapterModel mysqlModel) {
 		boolean isValid = true;
-		if (mysqlModel == null) {
-			setError(MySQLAdapterModel.class.getName(), EktooUITranslator
-					.getErrorEmptyOrNull(MySQLAdapterModel.class.getName()));
-			isValid = false;
-		}
-
-		String userName = mysqlModel.getUserName();
-		if (userName == null || userName.trim().length() == 0) {
-			setError(MySQLUIController.USER_NAME_PROPERTY, EktooUITranslator
-					.getErrorEmptyOrNull(MySQLUIController.USER_NAME_PROPERTY));
-			isValid = false;
-		}
-
-		String hostName = mysqlModel.getHostName();
-		if (hostName == null || hostName.trim().length() == 0) {
-			setError(MySQLUIController.HOST_NAME_PROPERTY, EktooUITranslator
-					.getErrorEmptyOrNull(MySQLUIController.HOST_NAME_PROPERTY));
-			isValid = false;
-		}
-
-		int portNo = mysqlModel.getPortNo();
-		if (portNo < 0) {
-			setError(MySQLUIController.PORT_NO_PROPERTY, EktooUITranslator
-					.getErrorInvalid(MySQLUIController.PORT_NO_PROPERTY));
-			isValid = false;
-		}
-
-		String databaseName = mysqlModel.getDatabaseName();
-		if (databaseName == null || databaseName.trim().length() == 0) {
-			setError(
-					MySQLUIController.DATABASE_NAME_PROPERTY,
-					EktooUITranslator
-							.getErrorEmptyOrNull(MySQLUIController.DATABASE_NAME_PROPERTY));
-			isValid = false;
-		}
 		return isValid;
 	}
 

@@ -357,6 +357,10 @@ public class EktooUITranslator {
 		return EktooMessageTranslator.translate("EKTOO_ERROR_INVALID", name);
 	}
 
+	public static String getErrorInvalidCredentials() {
+		return EktooMessageTranslator.translate("EKTOO_ERROR_INVALID_CREDENTIALS");
+	}
+	
 	public static String getFolderFileNameLabel() {
 		return EktooMessageTranslator
 				.translate("EKTOO_FOLDER_FILE_NAME_FIELD_LABEL");
@@ -419,7 +423,6 @@ public class EktooUITranslator {
 	public static String getNewItemTextforSchema(){
 		return EktooMessageTranslator.translate("EKTOO_SCHEMA_COMPARISON_NEW_ITEM_OR_NOT_EXIST");
 	}
-
 	
 	//google spreadsheet specific tooltip
 	
@@ -500,4 +503,5 @@ public class EktooUITranslator {
 	public static String getTooltipSeleceDataFile(String fileType) {
 		return EktooMessageTranslator.translate("EKTOO_TOOLTIP_SELECT_FILE", fileType);
 	}
+
 }
