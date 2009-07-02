@@ -47,17 +47,17 @@ public class SpreadSheetToXMLMapperTest {
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldGenerateExceptionIfTypeIsNullOrEmpty(){
-		new GoogleSpreadsheetToPlainXMLMapping("", "id", null, spreadsheet.getDocsService());
+		new GoogleSpreadsheetToPlainXMLMapping("", "id", null);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldGenerateExceptionIfIdIsNullOrEmpty(){
-		new GoogleSpreadsheetToPlainXMLMapping("user", "", null, spreadsheet.getDocsService());
+		new GoogleSpreadsheetToPlainXMLMapping("user", "", null);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldGenerateExceptionIfDocsServiceIsNull(){
-		new GoogleSpreadsheetToPlainXMLMapping("user", "id", null, null);
+		new GoogleSpreadsheetToPlainXMLMapping("user", "id", null);
 	}
 		
 	@SuppressWarnings("unchecked")
@@ -212,7 +212,7 @@ public class SpreadSheetToXMLMapperTest {
 	
 	private void loadSpreadSheet(){
 		spreadsheet = new GoogleSpreadsheet(GOOGLE_SPREADSHEET_FILE_NAME, userName, passWord);
-		mapper = new GoogleSpreadsheetToPlainXMLMapping("user", "id", null, spreadsheet.getDocsService());
+		mapper = new GoogleSpreadsheetToPlainXMLMapping("user", "id", null);
 	}	
 	
 }

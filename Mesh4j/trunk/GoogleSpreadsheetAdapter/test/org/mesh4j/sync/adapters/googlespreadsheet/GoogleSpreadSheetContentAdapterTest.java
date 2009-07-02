@@ -457,7 +457,7 @@ public class GoogleSpreadSheetContentAdapterTest {
 		spreadsheet = new GoogleSpreadsheet(GOOGLE_SPREADSHEET_NAME,userName, passWord);
 		//GSWorksheet workSheet = spreadsheet.getGSWorksheet(1);
 		//workSheet.getName(), 
-		mapper = new GoogleSpreadsheetToPlainXMLMapping("user", "id", null, spreadsheet.getDocsService());
+		mapper = new GoogleSpreadsheetToPlainXMLMapping("user", "id", null);
 	}		
 	
 }

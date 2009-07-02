@@ -16,6 +16,7 @@ import org.mesh4j.sync.adapters.googlespreadsheet.model.GSSpreadsheet;
 import org.mesh4j.sync.adapters.googlespreadsheet.model.GSWorksheet;
 import org.mesh4j.sync.payload.schema.rdf.RDFInstance;
 import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
+import org.mesh4j.sync.test.utils.TestHelper;
 
 import com.google.gdata.client.docs.DocsService;
 import com.google.gdata.client.spreadsheet.FeedURLFactory;
@@ -55,7 +56,7 @@ public class GoogleSpreadsheetUtilsTests {
 		String newSpreadsheetName = "new test spreadsheet";
 		
 		spreadsheet = GoogleSpreadsheetUtils.getOrCreateGSSpreadsheetIfAbsent(
-				factory, service, docService, newSpreadsheetName);
+				factory, service, docService, newSpreadsheetName, TestHelper.baseDirectoryForTest());
 
 		Assert.assertNotNull(spreadsheet);
 		Assert.assertNotNull(spreadsheet.getBaseEntry());
@@ -344,7 +345,7 @@ public class GoogleSpreadsheetUtilsTests {
 		rdfInstance.setProperty(COLUMN_ILL, ill);
 		rdfInstance.setProperty(COLUMN_DATE_ONSET, dateOnset);
 
-		return new GoogleSpreadsheetToRDFMapping(schema, docService);
+		return new GoogleSpreadsheetToRDFMapping(schema);
 	}	
 	
 	@SuppressWarnings("unchecked")
