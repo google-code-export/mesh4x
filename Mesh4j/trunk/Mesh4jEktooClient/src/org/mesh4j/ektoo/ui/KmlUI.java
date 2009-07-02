@@ -24,7 +24,6 @@ import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.controller.KmlUIController;
 import org.mesh4j.ektoo.tasks.IErrorListener;
 import org.mesh4j.ektoo.tasks.OpenFileTask;
-import org.mesh4j.ektoo.tasks.SchemaViewTask;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.ektoo.ui.validator.KmlUIValidator;
@@ -62,22 +61,8 @@ public class KmlUI extends AbstractUI {
 		this.add(getBtnFile(), null);
 		this.add(getBtnView(), null);
 		this.add(getMessagesText(), null);
-		this.add(getSchemaViewButton(), null);
 	}
 
-	private JButton getSchemaViewButton(){
-		getSchemaButton().addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if(KmlUI.this.verify()){
-					EktooFrame ektooFrame = ((EktooFrame)KmlUI.this.getRootFrame());
-					SchemaViewTask task = new SchemaViewTask(ektooFrame,KmlUI.this.controller,ektooFrame);
-					task.execute();	
-				}
-			}
-		});
-		return getSchemaButton();
-	}
 	private JLabel getFileNameLabel() {
 		if (labelFileName == null) {
 			labelFileName = new JLabel();
