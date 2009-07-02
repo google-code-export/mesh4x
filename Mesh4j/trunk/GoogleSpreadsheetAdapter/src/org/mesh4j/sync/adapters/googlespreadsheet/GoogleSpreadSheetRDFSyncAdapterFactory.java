@@ -1,5 +1,6 @@
 package org.mesh4j.sync.adapters.googlespreadsheet;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import org.mesh4j.sync.adapters.googlespreadsheet.mapping.GoogleSpreadsheetToRDFMapping;
@@ -18,6 +19,7 @@ public class GoogleSpreadSheetRDFSyncAdapterFactory extends GoogleSpreadSheetSyn
 	
 	// MODEL VARIABLES
 	private String rdfBaseURL;
+	private String baseDirectory;
 	
 	static final String DEFAULT_NEW_SPREADSHEET_FILENAME = "new spreadsheet";
 	static final Byte SPREADSHEET_STATUS_SPREADSHEET_NONE = 0;
@@ -26,10 +28,12 @@ public class GoogleSpreadSheetRDFSyncAdapterFactory extends GoogleSpreadSheetSyn
 	static final Byte SPREADSHEET_STATUS_CONTENTSHEET_YES_SYNCSHEET_YES = 3;
 
 	// BUSINESS METHODS
-	public GoogleSpreadSheetRDFSyncAdapterFactory(String rdfBaseURL){
+	public GoogleSpreadSheetRDFSyncAdapterFactory(String baseDirectory, String rdfBaseURL){
 		super();
+		Guard.argumentNotNullOrEmptyString(baseDirectory, "baseDirectory");
 		Guard.argumentNotNullOrEmptyString(rdfBaseURL, "rdfBaseURL");
 		this.rdfBaseURL = rdfBaseURL;
+		this.baseDirectory = baseDirectory;
 	}
 	
 	@Override
@@ -43,12 +47,12 @@ public class GoogleSpreadSheetRDFSyncAdapterFactory extends GoogleSpreadSheetSyn
 		try {
 			ArrayList<String> pks = new ArrayList<String>();
 			pks.add(idColumnName);
-			rdfSchema = GoogleSpreadsheetToRDFMapping.extractRDFSchema(spreadSheet, sheetName, pks, lastUpdateColumnName, this.rdfBaseURL);
+			rdfSchema = GoogleSpreadsheetToRDFMapping.extractRDFSchema(spreadSheet, sheetName, pks, this.rdfBaseURL);
 		} catch (Exception e) {
 			throw new MeshException(e);
 		}
 		
-		GoogleSpreadsheetToRDFMapping mappings = new GoogleSpreadsheetToRDFMapping(rdfSchema, spreadSheet.getDocsService());
+		GoogleSpreadsheetToRDFMapping mappings = new GoogleSpreadsheetToRDFMapping(rdfSchema);
 		
 		return new GoogleSpreadSheetContentAdapter(spreadSheet, mappings);
 	}
@@ -76,12 +80,14 @@ public class GoogleSpreadSheetRDFSyncAdapterFactory extends GoogleSpreadSheetSyn
 			case GoogleSpreadsheetUtils.SPREADSHEET_STATUS_CONTENTSHEET_NO_SYNCSHEET_NO:	
 			case GoogleSpreadsheetUtils.SPREADSHEET_STATUS_CONTENTSHEET_NO_SYNCSHEET_YES:{
 				//spreadsheet doesn't exists
-				GoogleSpreadsheetToRDFMapping mappings = new GoogleSpreadsheetToRDFMapping(rdfSchema, GoogleSpreadsheetUtils.getDocService(username, password));
+				GoogleSpreadsheetToRDFMapping mappings = new GoogleSpreadsheetToRDFMapping(rdfSchema);
+				
+				File tempDirectory = new File (baseDirectory + File.separator + "temp");
 				
 				if(spreadStatus == GoogleSpreadsheetUtils.SPREADSHEET_STATUS_SPREADSHEET_NONE){
 					//create new spreadsheet
 					try{
-						spreadsheetName = mappings.createDataSource(spreadsheetName);
+						spreadsheetName = mappings.createDataSource(spreadsheetName, username, password, tempDirectory.getAbsolutePath());
 					}catch (Exception e) {
 						throw new MeshException(e);
 					}

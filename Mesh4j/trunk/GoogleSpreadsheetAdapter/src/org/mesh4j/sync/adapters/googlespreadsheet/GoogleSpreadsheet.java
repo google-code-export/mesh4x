@@ -58,11 +58,11 @@ public class GoogleSpreadsheet implements IGoogleSpreadSheet {
 		init();
 
 		try {
-//			this.spreadsheet = GoogleSpreadsheetUtils.getGSSpreadsheet(
-//					this.factory, this.spreadsheetService, spreadsheetFileId);
-			this.spreadsheet = GoogleSpreadsheetUtils
-					.getOrCreateGSSpreadsheetIfAbsent(factory,
-							spreadsheetService, docsService, spreadsheetFileName);
+			this.spreadsheet = GoogleSpreadsheetUtils.getGSSpreadsheet(
+					this.factory, this.spreadsheetService, spreadsheetFileName);
+//			this.spreadsheet = GoogleSpreadsheetUtils
+//					.getOrCreateGSSpreadsheetIfAbsent(factory,
+//							spreadsheetService, docsService, spreadsheetFileName, tempDirectory);
 					
 		} catch (Exception e) {
 			throw new MeshException(e);

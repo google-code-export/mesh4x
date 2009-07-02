@@ -137,11 +137,11 @@ public class GoogleSpreadSheetSyncRepository implements ISyncRepository,ISyncAwa
 		
 		Element syncPayLoad = SyncInfoParser.convertSync2Element(syncInfo.getSync(), RssSyndicationFormat.INSTANCE, this.identityProvider);
 	
-		rowTobeUPdated.updateCellValue( syncInfo.getSyncId() , SyncColumn.sync_id.toString());
-		rowTobeUPdated.updateCellValue( syncInfo.getType() ,SyncColumn.entity_name.toString());
-		rowTobeUPdated.updateCellValue( syncInfo.getId() ,SyncColumn.entity_id.toString());
-		rowTobeUPdated.updateCellValue( String.valueOf(syncInfo.getVersion()) ,SyncColumn.entity_version.toString());
-		rowTobeUPdated.updateCellValue(syncPayLoad.asXML()  ,SyncColumn.sync_data.toString());
+		rowTobeUPdated.updateCellValue( syncInfo.getSyncId() , SyncColumn.sync_id.name());
+		rowTobeUPdated.updateCellValue( syncInfo.getType() ,SyncColumn.entity_name.name());
+		rowTobeUPdated.updateCellValue( syncInfo.getId() ,SyncColumn.entity_id.name());
+		rowTobeUPdated.updateCellValue( String.valueOf(syncInfo.getVersion()) ,SyncColumn.entity_version.name());
+		rowTobeUPdated.updateCellValue(syncPayLoad.asXML()  ,SyncColumn.sync_data.name());
 		
 		return rowTobeUPdated;
 	}
@@ -168,11 +168,11 @@ public class GoogleSpreadSheetSyncRepository implements ISyncRepository,ISyncAwa
 		
 		LinkedHashMap<String, String> listMap = new LinkedHashMap<String, String>();
 		
-		listMap.put(SyncColumn.sync_id.toString(), syncInfo.getSyncId());
-		listMap.put(SyncColumn.entity_name.toString(), syncInfo.getType());
-		listMap.put(SyncColumn.entity_id.toString(), syncInfo.getId());
-		listMap.put(SyncColumn.entity_version.toString(), String.valueOf(syncInfo.getVersion()));
-		listMap.put(SyncColumn.sync_data.toString(), payLoad.asXML());
+		listMap.put(SyncColumn.sync_id.name(), syncInfo.getSyncId());
+		listMap.put(SyncColumn.entity_name.name(), syncInfo.getType());
+		listMap.put(SyncColumn.entity_id.name(), syncInfo.getId());
+		listMap.put(SyncColumn.entity_version.name(), String.valueOf(syncInfo.getVersion()));
+		listMap.put(SyncColumn.sync_data.name(), payLoad.asXML());
 		
 		try {
 			gsRow = this.workSheet.createNewRow(listMap);
