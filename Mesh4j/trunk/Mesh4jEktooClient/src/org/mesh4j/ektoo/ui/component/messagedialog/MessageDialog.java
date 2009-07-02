@@ -33,4 +33,8 @@ public class MessageDialog {
 		JOptionPane.showMessageDialog(frame, message, "Error: " + title,
 				JOptionPane.ERROR_MESSAGE);
 	}
+	
+	public static String showInputDialogue(Frame frame, String message){
+		return JOptionPane.showInputDialog(frame, message);
+	}
 }

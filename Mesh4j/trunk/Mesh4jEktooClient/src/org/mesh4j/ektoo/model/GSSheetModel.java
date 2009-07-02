@@ -18,9 +18,7 @@ public class GSSheetModel extends AbstractModel
 
 	// TODO (NBL) Think how we can eliminate these items from gui
 	private String uniqueColumnName = null;
-	private int uniqueColumnPosition = -1;
-	private String lastUpdatedColumnName = null;
-	private int lastUpdatedColumnPosition = -1;
+
 
 	// BUSINESS METHODS
 	public void setUserName(String userName) {
@@ -76,34 +74,6 @@ public class GSSheetModel extends AbstractModel
 		return uniqueColumnName;
 	}
 
-	public void setUniqueColumnPosition(int uniqueColumnPosition) {
-		firePropertyChange(GSSheetUIController.UNIQUE_COLUMN_POSITION_PROPERTY, this.uniqueColumnPosition,
-				this.uniqueColumnPosition = uniqueColumnPosition);
-	}
-
-	public int getUniqueColumnPosition() {
-		return uniqueColumnPosition;
-	}
-
-	public void setLastUpdatedColumnName(String lastUpdatedColumnName) {
-		firePropertyChange(GSSheetUIController.LASTUPDATE_COLUMN_NAME_PROPERTY, this.lastUpdatedColumnName,
-				this.lastUpdatedColumnName = lastUpdatedColumnName);
-	}
-
-	public String getLastUpdatedColumnName() {
-		return lastUpdatedColumnName;
-	}
-
-	public void setLastUpdatedColumnPosition(int lastUpdatedColumnPosition) {
-		firePropertyChange(GSSheetUIController.LASTUPDATE_COLUMN_POSITION_PROPERTY,
-				this.lastUpdatedColumnPosition,
-				this.lastUpdatedColumnPosition = lastUpdatedColumnPosition);
-	}
-
-	public int getLastUpdatedColumnPosition() {
-		return lastUpdatedColumnPosition;
-	}
-	
   public String toString()
   {
     return "Cloud | " + getSpreadsheetName() + " | " + getWorksheetName() ; 

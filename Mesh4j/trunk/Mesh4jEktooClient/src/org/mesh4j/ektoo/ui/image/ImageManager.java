@@ -67,7 +67,7 @@ public class ImageManager {
 					.getIcon(EktooFrame.class, "/rss_ds.png");
 		} else if (source.startsWith(SyncItemUI.ATOM_FILE_PANEL)) {
 			return SwingResourceManager.getIcon(EktooFrame.class,
-					"/atom_ds.png");
+					"/atom_ds1.png");
 		} else if (source.startsWith(SyncItemUI.ZIP_FILE_PANEL)) {
 			return SwingResourceManager.getIcon(EktooFrame.class,
 					"/zip_ds.png");

@@ -1,7 +1,6 @@
 package org.mesh4j.ektoo.ui;
 
 import java.awt.Color;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -13,8 +12,8 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.swing.JButton;
@@ -32,6 +31,7 @@ import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.controller.GSSheetUIController;
 import org.mesh4j.ektoo.tasks.IErrorListener;
 import org.mesh4j.ektoo.tasks.OpenURLTask;
+import org.mesh4j.ektoo.ui.component.messagedialog.MessageDialog;
 import org.mesh4j.ektoo.tasks.SchemaViewTask;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
@@ -43,6 +43,7 @@ import org.mesh4j.sync.adapters.googlespreadsheet.model.GSCell;
 import org.mesh4j.sync.adapters.googlespreadsheet.model.GSRow;
 import org.mesh4j.sync.adapters.googlespreadsheet.model.GSWorksheet;
 
+import com.google.gdata.client.GoogleService.InvalidCredentialsException;
 import com.google.gdata.data.spreadsheet.SpreadsheetEntry;
 
 public class GSSheetUI extends AbstractUI {
@@ -51,6 +52,8 @@ public class GSSheetUI extends AbstractUI {
 	private static final Log LOGGER = LogFactory.getLog(GSSheetUI.class);
 
 	// MODEL VARIABLES
+	private IGoogleSpreadSheet spreadsheet = null;
+	
 	private JLabel labelUser = null;
 	private JTextField txtUser = null;
 
@@ -72,6 +75,8 @@ public class GSSheetUI extends AbstractUI {
 	private JButton btnView = null;
 	
 	private String googleURL = "";
+	
+	private int newSpreadsheetNameIndex = -1;
 
 	// BUSINESS METHODS
 	public GSSheetUI(GSSheetUIController controller, String googleURL) {
@@ -106,6 +111,10 @@ public class GSSheetUI extends AbstractUI {
 		this.add(getSchemaViewButton(), null);
 	}
 
+	public int getNewSpreadsheetNameIndex() {
+		return newSpreadsheetNameIndex;
+	}
+	
 	private JButton getSchemaViewButton(){
 		getSchemaButton().addActionListener(new ActionListener(){
 			@Override
@@ -134,6 +143,7 @@ public class GSSheetUI extends AbstractUI {
 	public JTextField getUserText() {
 		if (txtUser == null) {
 			txtUser = new JTextField();
+			//txtUser.setText("gspreadsheet.test@gmail.com"); //todo: remove
 			txtUser.setBounds(new Rectangle(101, 5, 183, 20));
 			txtUser.setToolTipText(EktooUITranslator
 					.getTooltipGoogleDocsUsername());
@@ -175,6 +185,7 @@ public class GSSheetUI extends AbstractUI {
 	public JPasswordField getPassText() {
 		if (txtPass == null) {
 			txtPass = new JPasswordField();
+			//txtPass.setText("java123456");//todo: remove
 			txtPass.setToolTipText(EktooUITranslator
 					.getTooltipGoogleDocsPassword());
 			txtPass.setBounds(new Rectangle(101, 30, 183, 20));
@@ -246,24 +257,64 @@ public class GSSheetUI extends AbstractUI {
 					if (e.getStateChange() == ItemEvent.SELECTED) {
 						getController().changeSpreadsheetName(
 								(String) listName.getSelectedItem());
+						
+						if(((String) listName.getSelectedItem()).equals(DROPDOWN_CREATE_NEW_ITEM)){
+							String newSpreadsheetName = MessageDialog.showInputDialogue(getRootFrame(), "Please enter new spreadsheet name...");
+							if(newSpreadsheetName == null){
+								listName.setSelectedIndex(0);
+							}else{
+								//MessageDialog.showInformationMessage(getRootFrame(), newSpreadsheetName);
+								addNewSpreadsheetNameInCombo(newSpreadsheetName);
+							}
+							//return;
+						}
+						
+						if(newSpreadsheetNameIndex != -1 && newSpreadsheetNameIndex == listName.getSelectedIndex()){
+							//listName.setEditable(true);
+							getMe().remove(getTableLabel());
+							getMe().remove(getTableList());
+							getMe().remove(getLabelColumn());
+							getMe().remove(getColumnList());
+							getMe().updateUI();
+							return;
+						}else{
+							//listName.setEditable(false);
+							if(! Arrays.asList(getMe().getComponents()).contains(getTableLabel()) ){
+								getMe().add(getTableLabel());
+								getMe().add(getTableList());
+								getMe().add(getLabelColumn());
+								getMe().add(getColumnList());
+								getMe().updateUI();
+							}
+						}
 
 						int sheetIndex = listName.getSelectedIndex();
-						if (sheetIndex != -1) {
+						if (sheetIndex != 0) {
+							
+							LOGGER.info("Populating worksheet list...");
+							spreadsheet = null;
+							
 							SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 								public Void doInBackground() {
-									setCursor(Cursor
-											.getPredefinedCursor(Cursor.WAIT_CURSOR));
+//									setCursor(Cursor
+//											.getPredefinedCursor(Cursor.WAIT_CURSOR));
+									frzzeUI(true);
+									
 									setWorksheetList(getUser(), getPass(),
 											getSpreadsheetName());
 									return null;
 								}
 
 								public void done() {
-									setCursor(Cursor
-											.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+//									setCursor(Cursor
+//											.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+									frzzeUI(false);
 								}
 							};
 							worker.execute();
+						}else{
+							getTableList().removeAllItems();
+							getColumnList().removeAllItems();
 						}
 					}
 				}
@@ -272,7 +323,25 @@ public class GSSheetUI extends AbstractUI {
 		return listName;
 	}
 
-	private JButton getConnectButton() {
+	private void addNewSpreadsheetNameInCombo(String newSpreadsheetName) {
+		LOGGER.debug("adding new item in dropdown...");
+		ItemListener[] tmp = listName.getItemListeners();
+		
+		listName.removeItemListener(tmp[0]);
+				
+		if(newSpreadsheetNameIndex != -1) //remove old one if any
+			listName.removeItemAt(newSpreadsheetNameIndex); 
+
+		listName.removeItem(DROPDOWN_CREATE_NEW_ITEM);
+		listName.addItem(newSpreadsheetName);
+		newSpreadsheetNameIndex = listName.getItemCount() - 1;
+		listName.setSelectedIndex(newSpreadsheetNameIndex);
+		listName.addItem(DROPDOWN_CREATE_NEW_ITEM);
+		getController().changeSpreadsheetName((String) listName.getSelectedItem());
+		listName.addItemListener(tmp[0]);
+	}	
+	
+	public JButton getConnectButton() {
 		if (btnConnect == null) {
 			btnConnect = new JButton();
 			btnConnect.setBounds(new Rectangle(264, 55, 20, 20));
@@ -290,18 +359,30 @@ public class GSSheetUI extends AbstractUI {
 							.verify();
 					if (valid) {
 
-						System.out.println("1...");
+						//System.out.println("1...");
+						LOGGER.info("Populating spreadsheet list...");
+						spreadsheet = null;
+						
 						SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 							public Void doInBackground() {
-								setCursor(Cursor
-										.getPredefinedCursor(Cursor.WAIT_CURSOR));
-								setSpreadsheetList(getUser(), getPass());
+//								setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+								frzzeUI(true);
+								
+								try{
+									setSpreadsheetList(getUser(), getPass());
+								}catch (Exception e) {
+									if (e.getCause() instanceof InvalidCredentialsException){
+										MessageDialog.showErrorMessage(getRootFrame(), EktooUITranslator.getErrorInvalidCredentials());
+									}
+									LOGGER.error(e.getMessage(), e);
+									return null;
+								}
 								return null;
 							}
 
 							public void done() {
-								setCursor(Cursor
-										.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+//								setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+								frzzeUI(false);
 							}
 						};
 						worker.execute();
@@ -339,11 +420,16 @@ public class GSSheetUI extends AbstractUI {
 								(String) listTable.getSelectedItem());
 
 						int sheetIndex = listTable.getSelectedIndex();
-						if (sheetIndex != -1) {
+						
+						if (sheetIndex != 0) {
+							
+							LOGGER.info("Populating column list...");
+							
 							SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 								public Void doInBackground() {
-									setCursor(Cursor
-											.getPredefinedCursor(Cursor.WAIT_CURSOR));
+//									setCursor(Cursor
+//											.getPredefinedCursor(Cursor.WAIT_CURSOR));
+									frzzeUI(true);
 									setList(getUser(), getPass(), /* getKey() */
 											getSpreadsheetName(),
 											(String) listTable
@@ -352,11 +438,14 @@ public class GSSheetUI extends AbstractUI {
 								}
 
 								public void done() {
-									setCursor(Cursor
-											.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+//									setCursor(Cursor
+//											.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+									frzzeUI(false);
 								}
 							};
 							worker.execute();
+						}else{
+							getColumnList().removeAllItems();
 						}
 					}
 				}
@@ -393,12 +482,19 @@ public class GSSheetUI extends AbstractUI {
 			listColumn.addItemListener(new ItemListener() {
 				public void itemStateChanged(ItemEvent evt) {
 					if (evt.getStateChange() == ItemEvent.SELECTED) {
+						
+						int tableIndex = listTable.getSelectedIndex();
+						if (tableIndex != -1) {
+							
 							int columnIndex = listColumn.getSelectedIndex();
 							if (columnIndex != -1) {
-							String colum =(String) listColumn.getSelectedItem();
-							getController().changeUniqueColumnName(
-									colum);
-							}
+								getController().changeUniqueColumnName(
+										(String) listColumn.getSelectedItem());
+								
+							}	
+						}
+						
+						
 					}
 				}
 			});
@@ -407,7 +503,8 @@ public class GSSheetUI extends AbstractUI {
 		return listColumn;
 	}
 
-	public void setSpreadsheetList(String user, String pass) {
+
+	public void setSpreadsheetList(String user, String pass) throws Exception {
 		JComboBox sheetList = getNameList();
 		sheetList.removeAllItems();
 
@@ -416,17 +513,25 @@ public class GSSheetUI extends AbstractUI {
 
 		JComboBox columnList = getColumnList();
 		columnList.removeAllItems();
+		
+		newSpreadsheetNameIndex = -1;
 
 		try {
 			List<SpreadsheetEntry> spreadsheetList = GoogleSpreadsheetUtils
 					.getAllSpreadsheet(user, pass);
+			
+			sheetList.addItem(DROPDOWN_SELECT_ITEM);
+			
 			for (SpreadsheetEntry spSheet : spreadsheetList) {
 				sheetList.addItem(spSheet.getTitle().getPlainText());
 			}
+			
+			if(this.isUIForTarget())
+				sheetList.addItem(DROPDOWN_CREATE_NEW_ITEM);
+			
 		} catch (Exception e) {
-			e.printStackTrace();
 			LOGGER.error(e.getMessage(), e);
-			// TODO Handle exception
+			throw e;
 		}
 	}
 
@@ -435,9 +540,16 @@ public class GSSheetUI extends AbstractUI {
 		JComboBox sheetList = getTableList();
 		sheetList.removeAllItems();
 
+		JComboBox columnList = getColumnList();
+		columnList.removeAllItems();
+
 		try {
-			IGoogleSpreadSheet spreadsheet = new GoogleSpreadsheet(spreadsheetName, user, pass);
+			spreadsheet = spreadsheet != null ? spreadsheet : new GoogleSpreadsheet(spreadsheetName, user, pass);
 			String sheetName = null;
+			
+			if( spreadsheet.getGSSpreadsheet().getGSWorksheets().entrySet().size() > 0)
+				sheetList.addItem(DROPDOWN_SELECT_ITEM);
+			
 			for (Entry<String, GSWorksheet> spSheet : spreadsheet
 					.getGSSpreadsheet().getGSWorksheets().entrySet()) {
 
@@ -449,7 +561,7 @@ public class GSSheetUI extends AbstractUI {
 			}
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
-			// TODO Handle exception
+			MessageDialog.showErrorMessage(getRootFrame(), e.getMessage());
 		}
 	}
 
@@ -458,23 +570,18 @@ public class GSSheetUI extends AbstractUI {
 		JComboBox columnList = getColumnList();
 		columnList.removeAllItems();
 
-		IGoogleSpreadSheet spreadsheet = new GoogleSpreadsheet(spreadsheetName, user, pass);
+		spreadsheet = spreadsheet != null ? spreadsheet : new GoogleSpreadsheet(spreadsheetName, user, pass);
 		GSWorksheet<GSRow<GSCell>> workSheet = spreadsheet.getGSSpreadsheet()
 				.getGSWorksheetBySheetName(sheetName);
-		String columnName = null;
-		for (Map.Entry<String, GSRow<GSCell>> gsRowMap : workSheet.getGSRows()
-				.entrySet()) {
-			GSRow<GSCell> row = gsRowMap.getValue();
-			for (Map.Entry<String, GSCell> cell : row.getGSCells().entrySet()) {
-				columnName = cell.getValue().getCellValue();
-
-				if (columnName != null) {
-					columnList.addItem(columnName);
-				}
-			}
-			break;
+		
+		GSRow<GSCell> headerRow = workSheet.getGSRow(1);
+		
+//		if(headerRow.getGSCells().size() > 0)
+//			columnList.addItem(DROPDOWN_SELECT_ITEM);
+		
+		for(String columnName : headerRow.getGSCells().keySet()){
+			columnList.addItem(columnName);		
 		}
-
 	}
 
 	public JButton getBtnView() {
@@ -586,21 +693,21 @@ public class GSSheetUI extends AbstractUI {
 			if (!((String) getColumnList().getSelectedItem())
 					.equals(newStringValue))
 				getColumnList().setSelectedItem(newStringValue);
-		} else if (evt.getPropertyName().equals(
-				GSSheetUIController.UNIQUE_COLUMN_POSITION_PROPERTY)) {
-			String newStringValue = evt.getNewValue().toString();
-			if (!(getColumnList().getSelectedIndex() == Integer
-					.parseInt(newStringValue))
-					&& getColumnList().getItemCount() > Integer
-							.parseInt(newStringValue))
-				getColumnList().setSelectedIndex(
-						Integer.parseInt(newStringValue));
 		}
 	}
 
 	@Override
 	public boolean verify() {
-		boolean valid = (new GssUIValidator(this, controller.getModel(), null))
+		List<JComponent> uiFieldListForValidation = new ArrayList<JComponent>();
+		uiFieldListForValidation.add(getUserText());
+		uiFieldListForValidation.add(getPassText());
+		uiFieldListForValidation.add(getNameList());
+		if(newSpreadsheetNameIndex == -1){
+			uiFieldListForValidation.add(getTableList());
+			uiFieldListForValidation.add(getColumnList());
+		}
+		
+		boolean valid = (new GssUIValidator(this, controller.getModel(), uiFieldListForValidation))
 				.verify();
 		return valid;
 	}
