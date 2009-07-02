@@ -413,6 +413,14 @@ public class EktooUITranslator {
 		return EktooMessageTranslator.translate("EKTOO_WARNING_SOURCE_TARGET_TABLE_SHEET_NOT_SAME");
 	}
 	
+	public static String getConflictsTextforSchema(){
+		return EktooMessageTranslator.translate("EKTOO_SCHEMA_COMPARISON_CONFLICT_TEXT");
+	}
+	public static String getNewItemTextforSchema(){
+		return EktooMessageTranslator.translate("EKTOO_SCHEMA_COMPARISON_NEW_ITEM_OR_NOT_EXIST");
+	}
+
+	
 	//google spreadsheet specific tooltip
 	
 	public static String getTooltipView() {

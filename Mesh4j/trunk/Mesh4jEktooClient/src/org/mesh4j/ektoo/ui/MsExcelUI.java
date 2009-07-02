@@ -353,7 +353,6 @@ public class MsExcelUI extends AbstractUI implements IValidationStatus {
 	}
 
 	public JComboBox getColumnList() {
-		System.out.println("this is test");
 		if (listColumn == null) {
 			listColumn = new JComboBox();
 			listColumn.setBounds(new Rectangle(99, 64, 194, 20));

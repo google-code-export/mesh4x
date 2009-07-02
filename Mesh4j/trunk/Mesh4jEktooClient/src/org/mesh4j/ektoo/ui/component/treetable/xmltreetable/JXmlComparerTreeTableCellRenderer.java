@@ -16,7 +16,7 @@ public class JXmlComparerTreeTableCellRenderer extends DefaultTreeCellRenderer{
 	Color elementColor = new Color(0, 0, 128);
     Color attributeColor = new Color(0, 128, 0);
     private Color conflictColor = Color.RED;
-    private Color newItemOrAttributeColor = Color.ORANGE;
+    private Color newItemOrAttributeColor = Color.BLUE;
     
     
     TreeModel baseModel;
