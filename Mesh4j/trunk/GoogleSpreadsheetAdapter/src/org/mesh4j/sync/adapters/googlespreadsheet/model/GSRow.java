@@ -5,10 +5,12 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+
+import org.mesh4j.sync.validations.MeshException;
 
 import com.google.gdata.data.spreadsheet.CellEntry;
 import com.google.gdata.data.spreadsheet.ListEntry;
-import com.google.gdata.data.spreadsheet.WorksheetEntry;
 import com.google.gdata.util.ServiceException;
 
 /**
@@ -124,7 +126,7 @@ public class GSRow<C> extends GSBaseElement<C>{
 	
 
 	@SuppressWarnings("unchecked")
-	public void populateClildWithHeaderTag(List<CellEntry> cellList, WorksheetEntry ws) throws IOException,
+	public void populateClildWithHeaderTag(List<CellEntry> cellList, GSWorksheet<GSRow> gsWs) throws IOException,
 		ServiceException {
 		if (this.elementListIndex > 0) {
 			// iterate over all cells, only cells of corresponding row will be
@@ -156,21 +158,26 @@ public class GSRow<C> extends GSBaseElement<C>{
 						}*/
 
 						String key = extractCellHeadetTag(cellValue);						
-						this.childElements.put(key, (C) new GSCell(cell,
+						this.childElements.put(/*key*/cellValue, (C) new GSCell(cell,
 								(GSRow<GSCell>) this, key)); 
 					}
 				}
 				
 			}else{
-
+				GSRow headerRow = gsWs.getGSRow(1);
+				
 				for (String tag : ((ListEntry) this.getBaseEntry())
 						.getCustomElements().getTags()) {							
 					String value = ((ListEntry) this.getBaseEntry())
 						.getCustomElements().getValue(tag);
-					
+					//TODO: determine the column position from tag position and see if it matches with column in cell
 					for (CellEntry cell : filteredCellList) {
 						if(cell.getCell().getValue().equals(value)){
-							this.childElements.put( tag, (C) new GSCell(cell, (GSRow<GSCell>) this, tag));
+							
+							//my test
+							//this.childElements.put( tag, (C) new GSCell(cell, (GSRow<GSCell>) this, tag));
+							this.childElements.put( headerRow.getCellValueFromColumnTag(tag), (C) new GSCell(cell, (GSRow<GSCell>) this, tag));
+							
 							//this cell
 							filteredCellList.remove(cell);
 							break;
@@ -181,7 +188,7 @@ public class GSRow<C> extends GSBaseElement<C>{
 			}
 						
 		} else {
-			// TODO (SHARIF/RAJU) ????
+			throw new MeshException("Element index cannot be less than 1");
 		}
 	}
 	
@@ -216,6 +223,7 @@ public class GSRow<C> extends GSBaseElement<C>{
 	 * @param key
 	 */
 	public void updateCellValue(String value, String key) {
+		//get header row and convert the key
 		GSCell cellToUpdate = (GSCell) getGSCell(key); 		
 		if (!cellToUpdate.getCellEntry().getCell().getInputValue()
 				.equals(value)) 
@@ -225,14 +233,22 @@ public class GSRow<C> extends GSBaseElement<C>{
 	/**
 	 * return the content/value of a cell 
 	 * 
-	 * @param value
 	 * @param key
 	 * @return
 	 */
-	public String getCellValue(String value, String key) {
+	public String getCellValue(String key) {
 		GSCell cell = (GSCell) getGSCell(key); 
 		return cell.getCellValue();
 	}	
+	
+	public String getCellValueFromColumnTag(String tag) {
+		for(Entry<String, C> cellEntry : this.getChildElements().entrySet()){
+			GSCell cell  = (GSCell) cellEntry.getValue();
+			if(cell.getColumnTag().equals(tag))
+				return cell.getCellValue();
+		}
+		return null;
+	}
 	
 	/**
 	 * this will create a new cell at column position col and add it to its child  
@@ -249,7 +265,7 @@ public class GSRow<C> extends GSBaseElement<C>{
 			 throw new IllegalArgumentException("colIndex");
 		
 		CellEntry newCell = new CellEntry(this.elementListIndex, col, ""); //this is not supported for batch update :(
-		GSCell newGSCell = new GSCell(newCell, (GSRow<GSCell>) this, key);
+		GSCell newGSCell = new GSCell(newCell, (GSRow<GSCell>) this, extractCellHeadetTag(key));
 		newGSCell.updateCellValue(value);
 		this.addChildElement(key, (C) newGSCell);
 		return newGSCell;

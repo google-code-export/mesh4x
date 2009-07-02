@@ -3,6 +3,7 @@ package org.mesh4j.sync.adapters.googlespreadsheet.model;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.mesh4j.sync.validations.MeshException;
 
@@ -173,9 +174,9 @@ public class GSWorksheet<C> extends GSBaseElement<C> {
 		//create empty cells using tags from header cells and add to this row
 		GSRow<GSCell> headerRow = (GSRow<GSCell>) this.getGSRow(1);
 		if(headerRow != null && headerRow.childElements.size() > 0){
-			for (GSCell headerCell : headerRow.childElements.values()) {
-				row.createNewCell(headerCell.getElementListIndex(),
-						headerCell.getColumnTag(), "");
+			for (Entry<String, GSCell> headerCellEntry : headerRow.childElements.entrySet()) {
+				row.createNewCell(headerCellEntry.getValue().getElementListIndex(),
+						/*headerCell.getColumnTag()*/ headerCellEntry.getKey(), "");
 			}
 		}
 		this.addChildElement(row.getElementId(), (C) row);
