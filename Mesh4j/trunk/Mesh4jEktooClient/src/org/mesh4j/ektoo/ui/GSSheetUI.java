@@ -143,7 +143,6 @@ public class GSSheetUI extends AbstractUI {
 	public JTextField getUserText() {
 		if (txtUser == null) {
 			txtUser = new JTextField();
-			//txtUser.setText("gspreadsheet.test@gmail.com"); //todo: remove
 			txtUser.setBounds(new Rectangle(101, 5, 183, 20));
 			txtUser.setToolTipText(EktooUITranslator
 					.getTooltipGoogleDocsUsername());
@@ -185,7 +184,6 @@ public class GSSheetUI extends AbstractUI {
 	public JPasswordField getPassText() {
 		if (txtPass == null) {
 			txtPass = new JPasswordField();
-			//txtPass.setText("java123456");//todo: remove
 			txtPass.setToolTipText(EktooUITranslator
 					.getTooltipGoogleDocsPassword());
 			txtPass.setBounds(new Rectangle(101, 30, 183, 20));
@@ -298,7 +296,7 @@ public class GSSheetUI extends AbstractUI {
 								public Void doInBackground() {
 //									setCursor(Cursor
 //											.getPredefinedCursor(Cursor.WAIT_CURSOR));
-									frzzeUI(true);
+									freezeUI(true);
 									
 									setWorksheetList(getUser(), getPass(),
 											getSpreadsheetName());
@@ -308,7 +306,7 @@ public class GSSheetUI extends AbstractUI {
 								public void done() {
 //									setCursor(Cursor
 //											.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-									frzzeUI(false);
+									freezeUI(false);
 								}
 							};
 							worker.execute();
@@ -366,7 +364,7 @@ public class GSSheetUI extends AbstractUI {
 						SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 							public Void doInBackground() {
 //								setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-								frzzeUI(true);
+								freezeUI(true);
 								
 								try{
 									setSpreadsheetList(getUser(), getPass());
@@ -382,7 +380,7 @@ public class GSSheetUI extends AbstractUI {
 
 							public void done() {
 //								setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-								frzzeUI(false);
+								freezeUI(false);
 							}
 						};
 						worker.execute();
@@ -429,7 +427,7 @@ public class GSSheetUI extends AbstractUI {
 								public Void doInBackground() {
 //									setCursor(Cursor
 //											.getPredefinedCursor(Cursor.WAIT_CURSOR));
-									frzzeUI(true);
+									freezeUI(true);
 									setList(getUser(), getPass(), /* getKey() */
 											getSpreadsheetName(),
 											(String) listTable
@@ -440,7 +438,7 @@ public class GSSheetUI extends AbstractUI {
 								public void done() {
 //									setCursor(Cursor
 //											.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-									frzzeUI(false);
+									freezeUI(false);
 								}
 							};
 							worker.execute();
@@ -493,8 +491,6 @@ public class GSSheetUI extends AbstractUI {
 								
 							}	
 						}
-						
-						
 					}
 				}
 			});

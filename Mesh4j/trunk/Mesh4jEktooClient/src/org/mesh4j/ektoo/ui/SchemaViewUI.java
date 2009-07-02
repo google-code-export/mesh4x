@@ -46,12 +46,12 @@ public class SchemaViewUI extends AbstractUI{
 	
 	@Override
 	public void modelPropertyChange(PropertyChangeEvent evt) {
-		// TODO Auto-generated method stub
+		// TODO (raju)
 	}
 
 	@Override
 	public boolean verify() {
-		// TODO Auto-generated method stub
+		// TODO (raju)
 		return false;
 	}
 

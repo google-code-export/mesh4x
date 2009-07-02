@@ -21,7 +21,6 @@ import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.ButtonModel;
 import javax.swing.Icon;
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -70,12 +69,10 @@ public class EktooFrame extends JFrame implements IErrorListener,
 	private JLabel targetImageLabel = null;
 	private JLabel directionImageLabel = null;
 	private JLabel syncImageLabel = null;
-	private HyperLink schemaComarisonLink = null;
+	private HyperLink schemaComparisonLink = null;
 
 	private Statusbar statusBar = null;
 	private EktooController controller;
-
-	private JButton compareViewButton;
 
 	// BUSINESS METHODS
 	public EktooFrame(EktooController controller) {
@@ -97,16 +94,16 @@ public class EktooFrame extends JFrame implements IErrorListener,
 	}
 
 	private HyperLink getSchemaComarisonLink(){
-		if(schemaComarisonLink == null){
-			schemaComarisonLink = new HyperLink(EktooUITranslator.getSchemaComarisonLinkText());
-			schemaComarisonLink.addMouseListener(new MouseAdapter(){
+		if(schemaComparisonLink == null){
+			schemaComparisonLink = new HyperLink(EktooUITranslator.getSchemaComarisonLinkText());
+			schemaComparisonLink.addMouseListener(new MouseAdapter(){
 				 public void mouseClicked(MouseEvent e) {
 					 SchemaComparisonViewTask task = new SchemaComparisonViewTask(EktooFrame.this,EktooFrame.this);
 					 task.execute();
 				 }
 			});
 		}
-		return schemaComarisonLink;
+		return schemaComparisonLink;
 	}
 	private JPanel getHeaderPanel(){
 		if(headerPanel == null){

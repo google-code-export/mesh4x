@@ -98,7 +98,7 @@ public abstract class AbstractUI extends JPanel implements IValidationStatus {
 	 * get localized UI Type name (Source/Target)
 	 * @return
 	 */
-	private String getLocalizedUITypeName() {
+	protected String getLocalizedUITypeName() {
 		return isUIForSource() ? EktooUITranslator
 				.getSourceSyncItemSelectorTitle():EktooUITranslator
 				.getTargetSyncItemSelectorTitle();
@@ -111,7 +111,7 @@ public abstract class AbstractUI extends JPanel implements IValidationStatus {
 	 * 
 	 * @param shouldFreeze
 	 */
-	public void frzzeUI(boolean shouldFreeze){
+	public void freezeUI(boolean shouldFreeze){
 		setCursor(Cursor.getPredefinedCursor(shouldFreeze ? Cursor.WAIT_CURSOR : Cursor.DEFAULT_CURSOR));
 		for (Component comp : this.getComponents()){
 			comp.setEnabled(!shouldFreeze);
