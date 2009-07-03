@@ -528,11 +528,6 @@ public class GoogleSpreadsheetUtils {
 		return cellFeed.getEntries();
 	}
 
-	public Date getDate(String dateString) {
-
-		return null;
-	}
-
 	public static GSRow<GSCell> getRow(GSWorksheet<GSRow<GSCell>> worksheet, int columnIndex, String cellValue) {
 		GSRow<GSCell> row;
 		for (Map.Entry<String, GSRow<GSCell>> mpRow : worksheet.getGSRows().entrySet()) {

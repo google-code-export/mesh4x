@@ -7,6 +7,7 @@ public class GoogleSpreadSheetMultiKeyTests {
 
 	@Test
 	public void should(){
-		Assert.fail("pending task, see org.mesh4j.sync.adapters.multikey.MsExcelMultyKeyTests");
+		// TODO (Sharif)
+		Assert.fail("pending task, see org.mesh4j.sync.adapters.multikey.MsExcelMultyKeyTests, org.mesh4j.sync.adapters.msexcel.MsExcelToRDFMapping, pay attention to RDFSchema.normalizePropertyName use.");
 	}
 }
