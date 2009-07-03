@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import org.dom4j.Element;
+import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadsheet;
 import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadsheetUtils;
 import org.mesh4j.sync.adapters.googlespreadsheet.IGoogleSpreadSheet;
 import org.mesh4j.sync.adapters.googlespreadsheet.model.GSCell;
@@ -166,15 +167,16 @@ public class GoogleSpreadsheetToRDFMapping extends AbstractRDFIdentifiableMappin
 	}
 
 	@SuppressWarnings("unchecked")
-	public String createDataSource(String fileName, String username, String password, String tempDirectory) throws Exception {
+	public GoogleSpreadsheet createDataSource(String fileName, String username, String password) throws Exception {
 		SpreadsheetService service = GoogleSpreadsheetUtils.getSpreadsheetService(username, password);
 		DocsService docService = GoogleSpreadsheetUtils.getDocService(username,password);
 		FeedURLFactory factory = GoogleSpreadsheetUtils.getSpreadsheetFeedURLFactory();
 		
 		GSSpreadsheet<GSWorksheet> ss = GoogleSpreadsheetUtils
-				.getOrCreateGSSpreadsheetIfAbsent(factory, service, docService,	fileName, tempDirectory);
+				.getOrCreateGSSpreadsheetIfAbsent(factory, service, docService,	fileName);
 
-		return ss.getBaseEntry().getTitle().getPlainText();
+		//return ss.getBaseEntry().getTitle().getPlainText();
+		return new GoogleSpreadsheet(docService, service, factory, ss.getBaseEntry().getTitle().getPlainText(), ss);
 	}
 
 	@Override
