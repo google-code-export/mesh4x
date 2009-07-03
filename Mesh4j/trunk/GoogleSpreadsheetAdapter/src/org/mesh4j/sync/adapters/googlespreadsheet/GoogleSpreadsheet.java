@@ -24,7 +24,6 @@ public class GoogleSpreadsheet implements IGoogleSpreadSheet {
 
 	private boolean dirty = false;
 
-
 	// BUSINESS METHODS
 
 	/**
@@ -69,6 +68,25 @@ public class GoogleSpreadsheet implements IGoogleSpreadSheet {
 		}
 	}
 
+	
+	
+	@SuppressWarnings("unchecked")
+	public GoogleSpreadsheet(DocsService docsService, SpreadsheetService spreadsheetService, FeedURLFactory factory,
+			String spreadsheetFileName, GSSpreadsheet<GSWorksheet> spreadsheet) {
+		super();
+		Guard.argumentNotNull(docsService,	"docsService");
+		Guard.argumentNotNull(spreadsheetService, "spreadsheetService");
+		Guard.argumentNotNull(factory, "factory");
+		Guard.argumentNotNullOrEmptyString(spreadsheetFileName,	"spreadsheetFileName");
+		Guard.argumentNotNull(spreadsheet, "spreadsheet");
+
+		this.docsService = docsService;
+		this.factory = factory;
+		this.spreadsheet = spreadsheet;
+		this.spreadsheetFileName = spreadsheetFileName;
+		this.spreadsheetService = spreadsheetService;
+	}
+
 	/**
 	 * load spreadsheet by sheet index
 	 * 
@@ -104,6 +122,10 @@ public class GoogleSpreadsheet implements IGoogleSpreadSheet {
 		return factory;
 	}
 
+	public String getSpreadsheetFileName() {
+		return spreadsheetFileName;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public GSSpreadsheet getGSSpreadsheet() {
 		return this.spreadsheet;

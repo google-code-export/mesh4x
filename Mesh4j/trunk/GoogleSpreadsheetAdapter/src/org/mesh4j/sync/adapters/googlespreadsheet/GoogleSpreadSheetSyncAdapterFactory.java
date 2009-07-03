@@ -7,6 +7,7 @@ import org.mesh4j.sync.adapters.googlespreadsheet.mapping.IGoogleSpreadsheetToXM
 import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.security.IIdentityProvider;
+import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
 /**
@@ -98,6 +99,36 @@ public class GoogleSpreadSheetSyncAdapterFactory implements ISyncAdapterFactory 
 		return new SplitAdapter(syncRepo, contentAdapter, identityProvider);
 	}
 
+	/**
+	 * this method should be used when spreadSheet is already loaded previously
+	 * 
+	 * @param spreadSheet
+	 * @param contentSheetName
+	 * @param idColumnName
+	 * @param lastUpdateColumnName
+	 * @param identityProvider
+	 * @param sourceAlias
+	 * @return
+	 */
+	public SplitAdapter createSyncAdapter(IGoogleSpreadSheet spreadSheet,
+			String contentSheetName, String idColumnName,
+			String lastUpdateColumnName, IIdentityProvider identityProvider,
+			String sourceAlias) {
+		
+		Guard.argumentNotNull(spreadSheet,"spreadSheet");
+		Guard.argumentNotNull(spreadSheet.getGSSpreadsheet(),"gsSpreadsheet");
+
+		GoogleSpreadSheetSyncRepository syncRepo = createSyncRepository(
+				spreadSheet, contentSheetName + DEFAULT_SYNCSHEET_POSTFIX,
+				identityProvider);
+
+		GoogleSpreadSheetContentAdapter contentAdapter = createContentAdapter(
+				spreadSheet, idColumnName, lastUpdateColumnName,
+				contentSheetName, sourceAlias);
+
+		return new SplitAdapter(syncRepo, contentAdapter, identityProvider);	
+	}
+	
 	protected GoogleSpreadSheetContentAdapter createContentAdapter(
 			IGoogleSpreadSheet spreadSheet, String idColumnName,
 			String lastUpdateColumnName, String sheetName, String type) {

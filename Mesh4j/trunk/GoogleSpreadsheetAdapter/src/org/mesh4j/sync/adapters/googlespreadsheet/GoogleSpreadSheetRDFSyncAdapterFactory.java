@@ -1,6 +1,5 @@
 package org.mesh4j.sync.adapters.googlespreadsheet;
 
-import java.io.File;
 import java.util.ArrayList;
 
 import org.mesh4j.sync.adapters.googlespreadsheet.mapping.GoogleSpreadsheetToRDFMapping;
@@ -19,7 +18,6 @@ public class GoogleSpreadSheetRDFSyncAdapterFactory extends GoogleSpreadSheetSyn
 	
 	// MODEL VARIABLES
 	private String rdfBaseURL;
-	private String baseDirectory;
 	
 	static final String DEFAULT_NEW_SPREADSHEET_FILENAME = "new spreadsheet";
 	static final Byte SPREADSHEET_STATUS_SPREADSHEET_NONE = 0;
@@ -28,12 +26,10 @@ public class GoogleSpreadSheetRDFSyncAdapterFactory extends GoogleSpreadSheetSyn
 	static final Byte SPREADSHEET_STATUS_CONTENTSHEET_YES_SYNCSHEET_YES = 3;
 
 	// BUSINESS METHODS
-	public GoogleSpreadSheetRDFSyncAdapterFactory(String baseDirectory, String rdfBaseURL){
+	public GoogleSpreadSheetRDFSyncAdapterFactory(String rdfBaseURL){
 		super();
-		Guard.argumentNotNullOrEmptyString(baseDirectory, "baseDirectory");
 		Guard.argumentNotNullOrEmptyString(rdfBaseURL, "rdfBaseURL");
 		this.rdfBaseURL = rdfBaseURL;
-		this.baseDirectory = baseDirectory;
 	}
 	
 	@Override
@@ -81,20 +77,19 @@ public class GoogleSpreadSheetRDFSyncAdapterFactory extends GoogleSpreadSheetSyn
 			case GoogleSpreadsheetUtils.SPREADSHEET_STATUS_CONTENTSHEET_NO_SYNCSHEET_YES:{
 				//spreadsheet doesn't exists
 				GoogleSpreadsheetToRDFMapping mappings = new GoogleSpreadsheetToRDFMapping(rdfSchema);
-				
-				File tempDirectory = new File (baseDirectory + File.separator + "temp");
+				IGoogleSpreadSheet spreadSheet = null;
 				
 				if(spreadStatus == GoogleSpreadsheetUtils.SPREADSHEET_STATUS_SPREADSHEET_NONE){
 					//create new spreadsheet
 					try{
-						spreadsheetName = mappings.createDataSource(spreadsheetName, username, password, tempDirectory.getAbsolutePath());
+						spreadSheet = mappings.createDataSource(spreadsheetName, username, password);
 					}catch (Exception e) {
 						throw new MeshException(e);
 					}
 				}
 				
 				//load the new spreadsheet
-				IGoogleSpreadSheet spreadSheet = new GoogleSpreadsheet(spreadsheetName,	username, password);
+				//IGoogleSpreadSheet spreadSheet = new GoogleSpreadsheet(spreadsheetName,	username, password);
 				
 				//TODO:need to review whether keep it or let it handle by the Guard in adapter constructor
 				if(spreadSheet.getGSSpreadsheet() == null ) return null;
@@ -121,8 +116,63 @@ public class GoogleSpreadSheetRDFSyncAdapterFactory extends GoogleSpreadSheetSyn
 				return splitAdapter;	
 			}	
 		}
-		
 		return null;	
-	
+	}
+
+	/**
+	 * This is only used when google spreadsheet is already loaded 
+	 * 
+	 * @param gss
+	 * @param cotentSheetName
+	 * @param idColumnName
+	 * @param lastUpdateColumnName
+	 * @param identityProvider
+	 * @param sourceSchema
+	 * @param sourceAlias
+	 * @return
+	 */
+	public SplitAdapter createSyncAdapter(IGoogleSpreadSheet spreadSheet, String cotentSheetName, 
+			String idColumnName, String lastUpdateColumnName, IIdentityProvider 
+			identityProvider, IRDFSchema sourceSchema, String sourceAlias) {
+		Guard.argumentNotNull(spreadSheet, "spreadSheet");
+		Guard.argumentNotNullOrEmptyString(idColumnName, "idColumnName");
+		Guard.argumentNotNullOrEmptyString(cotentSheetName, "cotentSheetName");
+		Guard.argumentNotNull(identityProvider, "identityProvider");
+		Guard.argumentNotNull(sourceSchema, "rdfSchema");
+		
+		int	spreadStatus = GoogleSpreadsheetUtils.getSpreadsheetStatus(spreadSheet, cotentSheetName);
+		
+		switch(spreadStatus){
+			case GoogleSpreadsheetUtils.SPREADSHEET_STATUS_SPREADSHEET_NONE:{
+				throw new MeshException("No spreadsheet loaded...");
+			}
+			case GoogleSpreadsheetUtils.SPREADSHEET_STATUS_CONTENTSHEET_NO_SYNCSHEET_NO:	
+			case GoogleSpreadsheetUtils.SPREADSHEET_STATUS_CONTENTSHEET_NO_SYNCSHEET_YES:{
+
+				GoogleSpreadsheetToRDFMapping mappings = new GoogleSpreadsheetToRDFMapping(sourceSchema);
+				
+				GoogleSpreadSheetSyncRepository syncRepo = createSyncRepository(
+						spreadSheet, cotentSheetName+DEFAULT_SYNCSHEET_POSTFIX, identityProvider);
+							
+				GoogleSpreadSheetContentAdapter contentAdapter = new GoogleSpreadSheetContentAdapter(spreadSheet, mappings);
+				
+				return new SplitAdapter(syncRepo, contentAdapter, identityProvider);
+			}
+			case GoogleSpreadsheetUtils.SPREADSHEET_STATUS_CONTENTSHEET_YES_SYNCSHEET_NO:
+			case GoogleSpreadsheetUtils.SPREADSHEET_STATUS_CONTENTSHEET_YES_SYNCSHEET_YES:{
+				//spreadsheet already exists with a valid content worksheet
+				SplitAdapter splitAdapter = super.createSyncAdapter(spreadSheet, cotentSheetName, idColumnName,  
+						lastUpdateColumnName, identityProvider, sourceAlias);
+					
+				//createSyncAdapter(excelFileName, sheetName, idColumnName, identityProvider);
+				IRDFSchema rdfSchemaAutoGenetated = (IRDFSchema)((GoogleSpreadSheetContentAdapter)splitAdapter.getContentAdapter()).getSchema();
+				//if(!rdfSchema.asXML().equals(rdfSchemaAutoGenetated.asXML())){
+				if(!sourceSchema.isCompatible(rdfSchemaAutoGenetated)){
+					Guard.throwsException("INVALID_RDF_SCHEMA");
+				}
+				return splitAdapter;	
+			}	
+		}
+		return null;	
 	}	
 }
