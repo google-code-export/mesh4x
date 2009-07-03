@@ -81,6 +81,10 @@ public class RDFSchema implements IRDFSchema{
 		if(this.domainClass == null){
 			Guard.throwsArgumentException("reader");			
 		}
+		
+		for (DatatypeProperty datatypeProperty : this.getDomainProperties()) {
+			validatePropertyName(datatypeProperty.getLocalName());
+		}		
 
 		String[] uri = this.domainClass.getURI().split("#");
 		this.ontologyBaseUri = uri[0]+"#";
@@ -146,12 +150,30 @@ public class RDFSchema implements IRDFSchema{
 	}
 	
 	private void addProperty(String propertyName, String label, String lang, Resource xsd){
+		validateProperty(propertyName, label, lang);
+		
+		// add property
 		String propertyUri = this.ontologyBaseUri + propertyName;
 		DatatypeProperty domainProperty = this.schema.createDatatypeProperty(propertyUri);
 		
 		domainProperty.addDomain(domainClass);
 		domainProperty.addRange(xsd);
 		domainProperty.addLabel(label, lang);
+	}
+
+	private void validateProperty(String propertyName, String label, String lang) {
+		Guard.argumentNotNullOrEmptyString(label, "label");
+		Guard.argumentNotNullOrEmptyString(lang, "lang");
+		
+		validatePropertyName(propertyName);
+	}
+	
+	private void validatePropertyName(String propertyName) {
+		Guard.argumentNotNullOrEmptyString(propertyName, "propertyName");
+		
+		if(propertyName.contains(" ")){
+			Guard.throwsArgumentException("propertyName", propertyName);
+		}
 	}
 	
 	@Override
@@ -202,6 +224,10 @@ public class RDFSchema implements IRDFSchema{
 		}
 	}
 
+	public String getPropertyLabel(String propertyName) {
+		return getPropertyLabel(propertyName, "");
+	}
+	
 	public String getPropertyLabel(String propertyName, String lang) {
 		String propertyUri = this.ontologyBaseUri + propertyName;
 		DatatypeProperty datatypeProperty = this.schema.getDatatypeProperty(propertyUri);
@@ -546,7 +572,7 @@ public class RDFSchema implements IRDFSchema{
 		
 		domainProperty.addDomain(this.meshMetadataClass);
 		domainProperty.addRange(XSD.xstring);
-		domainProperty.addComment(sb.toString(), "en");
+		domainProperty.addComment(sb.toString(), DEFAULT_LANGUAGE);
 
 	}
 	
@@ -558,7 +584,7 @@ public class RDFSchema implements IRDFSchema{
 			
 			domainProperty.addDomain(this.meshMetadataClass);
 			domainProperty.addRange(XSD.xstring);
-			domainProperty.addComment(versionPropertyName, "en");
+			domainProperty.addComment(versionPropertyName, DEFAULT_LANGUAGE);
 		}
 	}
 	
@@ -584,7 +610,7 @@ public class RDFSchema implements IRDFSchema{
 		
 		domainProperty.addDomain(this.meshMetadataClass);
 		domainProperty.addRange(XSD.xstring);
-		domainProperty.addComment(sb.toString(), "en");
+		domainProperty.addComment(sb.toString(), DEFAULT_LANGUAGE);
 
 	}
 
@@ -594,7 +620,7 @@ public class RDFSchema implements IRDFSchema{
 		while(it.hasNext()){
 			DatatypeProperty datatypeProperty = (DatatypeProperty)it.next();
 			if(datatypeProperty.getDomain().equals(this.meshMetadataClass) && datatypeProperty.getLocalName().equals(MESH_METADATA_IDENTIFIABLE_PROPERTY_NAME)){
-				String comment = datatypeProperty.getComment("en");
+				String comment = datatypeProperty.getComment(IRDFSchema.DEFAULT_LANGUAGE);
 				String[] pks = comment.split(",");
 				return Arrays.asList(pks);
 			}
@@ -607,7 +633,7 @@ public class RDFSchema implements IRDFSchema{
 		while(it.hasNext()){
 			DatatypeProperty datatypeProperty = (DatatypeProperty)it.next();
 			if(datatypeProperty.getDomain().equals(this.meshMetadataClass) && datatypeProperty.getLocalName().equals(MESH_METADATA_GUID_PROPERTY_NAME)){
-				String comment = datatypeProperty.getComment("en");
+				String comment = datatypeProperty.getComment(IRDFSchema.DEFAULT_LANGUAGE);
 				String[] pks = comment.split(",");
 				return Arrays.asList(pks);
 			}
@@ -621,7 +647,7 @@ public class RDFSchema implements IRDFSchema{
 		while(it.hasNext()){
 			DatatypeProperty datatypeProperty = (DatatypeProperty)it.next();
 			if(datatypeProperty.getDomain().equals(this.meshMetadataClass) && datatypeProperty.getLocalName().equals(MESH_METADATA_VERSION_PROPERTY_NAME)){
-				String comment = datatypeProperty.getComment("en");
+				String comment = datatypeProperty.getComment(IRDFSchema.DEFAULT_LANGUAGE);
 				return comment;
 			}
 		}
@@ -656,4 +682,22 @@ public class RDFSchema implements IRDFSchema{
 		return this.getIdentifiablePropertyNames().size() > 1;
 	}
 
+	public static String normalizePropertyName(String propertyName){
+		Guard.argumentNotNullOrEmptyString(propertyName, "propertyName");
+		String name = propertyName.replaceAll(" ", "_");
+		return name;
+//		StringBuffer sb = new StringBuffer();
+//		for(char c: name.toCharArray()){
+//			if(Character.isDigit(c)){
+//				sb.append(c);
+//			} else if(Character.isWhitespace(c)){
+//				sb.append("_");
+//			} else if(Character.isUpperCase(c)){
+//				sb.append(Character.toLowerCase(c));
+//			} else {
+//				sb.append(c);
+//			}
+//		}		
+//		return sb.toString();
+	}
 }

@@ -16,6 +16,7 @@ import org.mesh4j.sync.model.NullContent;
 import org.mesh4j.sync.model.Sync;
 import org.mesh4j.sync.payload.mappings.IMapping;
 import org.mesh4j.sync.payload.mappings.Mapping;
+import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
 import org.mesh4j.sync.utils.XMLHelper;
 
@@ -25,9 +26,9 @@ public class SchemaInstanceContentReadWriterTests {
 	
 	{
 		RDF_SCHEMA = new RDFSchema("User", "http://localhost:8080/mesh4x/User#", "User");
-		RDF_SCHEMA.addStringProperty("id", "id", "en");
-		RDF_SCHEMA.addStringProperty("name", "name", "en");
-		RDF_SCHEMA.addStringProperty("pass", "pass", "en");
+		RDF_SCHEMA.addStringProperty("id", "id", IRDFSchema.DEFAULT_LANGUAGE);
+		RDF_SCHEMA.addStringProperty("name", "name", IRDFSchema.DEFAULT_LANGUAGE);
+		RDF_SCHEMA.addStringProperty("pass", "pass", IRDFSchema.DEFAULT_LANGUAGE);
 	}
 	
 	

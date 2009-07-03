@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
 import org.mesh4j.sync.utils.FileUtils;
 import org.mesh4j.sync.utils.XMLHelper;
@@ -14,13 +15,13 @@ public class SchemaToXFormTranslatorTests {
 	public void shouldGenerateXForm() throws IOException{
 		
 		RDFSchema schema = new RDFSchema("example", "http://mesh4x/example#", "example");
-		schema.addStringProperty("string", "string", "en");
-		schema.addIntegerProperty("integer", "int", "en");
-		schema.addBooleanProperty("boolean", "boolean", "en");
-		schema.addDateTimeProperty("datetime", "datetime", "en");
-		schema.addDoubleProperty("double", "double", "en");
-		schema.addLongProperty("long", "long", "en");
-		schema.addDecimalProperty("decimal", "decimal", "en");
+		schema.addStringProperty("string", "string", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addIntegerProperty("integer", "int", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addBooleanProperty("boolean", "boolean", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addDateTimeProperty("datetime", "datetime", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addDoubleProperty("double", "double", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addLongProperty("long", "long", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addDecimalProperty("decimal", "decimal", IRDFSchema.DEFAULT_LANGUAGE);
 		
 		String xml = XMLHelper.canonicalizeXML(SchemaToXFormTranslator.translate(schema));
 

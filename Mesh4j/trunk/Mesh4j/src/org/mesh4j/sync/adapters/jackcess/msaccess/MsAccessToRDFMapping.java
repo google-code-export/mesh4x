@@ -1,6 +1,7 @@
 package org.mesh4j.sync.adapters.jackcess.msaccess;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -25,46 +26,70 @@ public class MsAccessToRDFMapping extends AbstractRDFIdentifiableMapping impleme
 	@Override
 	public Element translateAsElement(Map<String, Object> row) {		
 		List<String> idNames = this.rdfSchema.getIdentifiablePropertyNames();
-		List<String> idValues = new ArrayList<String>();
-		String idValue;
-		for (String idName : idNames) {
-			idValue = String.valueOf(row.get(idName));
-			if(idValue == null){
-				return null;
-			} else {
-				String id = idValue;
-				if(this.rdfSchema.isGUID(idName)){
-					if(id.startsWith("{") && id.endsWith("}")){
-						id = id.substring(1, id.length() -1);
+		String[] idValues = new String[idNames.size()];
+		
+		HashMap<String, Object> properties = new HashMap<String, Object>();
+		int size = this.rdfSchema.getPropertyCount();
+		int idAdded = 0;
+		for (int i = 0; i < size; i++) {
+			String propertyName = this.rdfSchema.getPropertyName(i);
+			Object propertyValue = getValue(row, propertyName);
+			
+			if(propertyValue != null){
+				if(idNames.contains(propertyName)){
+					int idx = idNames.indexOf(propertyName);
+					String id = String.valueOf(propertyValue);
+					if(this.rdfSchema.isGUID(propertyName)){
+						if(id.startsWith("{") && id.endsWith("}")){
+							id = id.substring(1, id.length() -1);
+						}
 					}
+					idValues[idx] = id;	
+					properties.put(propertyName, id);
+					idAdded++;
+				} else {
+					properties.put(propertyName, propertyValue);
 				}
-				idValues.add(id);
-				row.put(idName, id);
 			}
 		}
-		String id = makeId(idValues);	
+
+		if(idNames.size() != idAdded){
+			return null;
+		}
+		
+		String id = makeId(Arrays.asList(idValues));	
 				
-		RDFInstance rdfInstance = this.rdfSchema.createNewInstanceFromProperties(id, row);
+		RDFInstance rdfInstance = this.rdfSchema.createNewInstanceFromProperties(id, properties);
 		return XMLHelper.parseElement(rdfInstance.asXML());
 	}
 
 	@Override
 	public Map<String, Object> translateAsRow(Element payload) {
-		Map<String, Object> row = this.rdfSchema.getPropertiesAsMap(payload);
+		Map<String, Object> properties = this.rdfSchema.getPropertiesAsMap(payload);
+		HashMap<String, Object> row = new HashMap<String, Object>();
+		
 		List<String> idNames = this.rdfSchema.getIdentifiablePropertyNames();
-		for (String idName : idNames) {
-			String idValue = String.valueOf(row.get(idName));
-			String id = idValue;
-			if(this.rdfSchema.isGUID(idName)){
-				if(!id.startsWith("{")){
-					id = "{"+id;
+		
+		for (String propertyName : properties.keySet()) {
+			String label = this.rdfSchema.getPropertyLabel(propertyName);
+			Object propertyValue = properties.get(propertyName);
+			
+			if(idNames.contains(propertyName)){
+				String id = String.valueOf(propertyValue);
+				if(this.rdfSchema.isGUID(propertyName)){
+					if(!id.startsWith("{")){
+						id = "{"+id;
+					}
+					if(!id.endsWith("}")){
+						id = id + "}";
+					}
 				}
-				if(!id.endsWith("}")){
-					id = id + "}";
-				}
+				row.put(label, id);	
+			} else {
+				row.put(label, propertyValue);
 			}
-			row.put(idName, id);
 		}
+		
 		return row;
 	}
 	
@@ -73,7 +98,8 @@ public class MsAccessToRDFMapping extends AbstractRDFIdentifiableMapping impleme
 		if(this.rdfSchema.getVersionPropertyName() == null){
 			return null;
 		} else {
-			return (Date)row.get(this.rdfSchema.getVersionPropertyName());
+			Object propertyValue = getValue(row, this.rdfSchema.getVersionPropertyName());
+			return (Date)propertyValue;
 		}
 	}
 
@@ -81,13 +107,13 @@ public class MsAccessToRDFMapping extends AbstractRDFIdentifiableMapping impleme
 	public String getId(Map<String, Object> row) {
 		List<String> idNames = this.rdfSchema.getIdentifiablePropertyNames();
 		List<String> idValues = new ArrayList<String>();
-		String idValue;
+		
 		for (String idName : idNames) {
-			idValue = String.valueOf(row.get(idName));
+			Object idValue = getValue(row, idName);
 			if(idValue == null){
 				return null;
 			} else {
-				String id = idValue;
+				String id = String.valueOf(idValue);
 				if(this.rdfSchema.isGUID(idName)){
 					if(id.startsWith("{") && id.endsWith("}")){
 						id = id.substring(1, id.length() -1);
@@ -118,11 +144,22 @@ public class MsAccessToRDFMapping extends AbstractRDFIdentifiableMapping impleme
 						idValue = idValue + "}";
 					}
 				}
-				rowPattern.put(idName, idValue);			
+				
+				String label = this.rdfSchema.getPropertyLabel(idName);
+				rowPattern.put(label, idValue);			
 			}
 			return cursor.findRow(rowPattern);
 		} catch (Exception e) {
 			throw new MeshException(e);
 		}
+	}
+	
+	private Object getValue(Map<String, Object> row, String propertyName) {
+		Object propertyValue = row.get(propertyName);
+		if(propertyValue == null){
+			String label = this.rdfSchema.getPropertyLabel(propertyName);
+			propertyValue = row.get(label);
+		}
+		return propertyValue;
 	}
 }

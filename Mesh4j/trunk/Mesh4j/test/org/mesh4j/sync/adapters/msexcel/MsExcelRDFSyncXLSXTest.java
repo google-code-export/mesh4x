@@ -41,12 +41,12 @@ public class MsExcelRDFSyncXLSXTest {
 		String idColumn = "Code";
 
 		RDFSchema schema = new RDFSchema(sheetName, "http://mesh4x/epiinfo/"+sheetName+"#", sheetName);
-		schema.addStringProperty("Name", "name", "en");
-		schema.addStringProperty("Code", "code", "en");
-		schema.addIntegerProperty("AGE", "age", "en");
-		schema.addStringProperty("SEX", "sex", "en");
-		schema.addBooleanProperty("ILL", "ill", "en");
-		schema.addDateTimeProperty("DateOnset", "dateOnset", "en");
+		schema.addStringProperty("Name", "Name", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addStringProperty("Code", "Code", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addIntegerProperty("AGE", "AGE", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addStringProperty("SEX", "SEX", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addBooleanProperty("ILL", "ILL", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addDateTimeProperty("DateOnset", "DateOnset", IRDFSchema.DEFAULT_LANGUAGE);
 		
 		schema.setIdentifiablePropertyName(idColumn);
 		

@@ -111,7 +111,12 @@ public class CSVFile {
 	}
 
 	public String getSheetName() {
-		return this.file.getName();
+		String fileName = this.file.getName();
+		if(fileName.toLowerCase().endsWith(".csv")){
+			return fileName.substring(0, fileName.length() - 4);
+		} else {
+			return fileName;
+		}
 	}
 
 	public CSVRow newRow(String id) {

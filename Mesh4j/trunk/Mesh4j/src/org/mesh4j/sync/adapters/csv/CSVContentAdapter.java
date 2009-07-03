@@ -68,12 +68,14 @@ public class CSVContentAdapter implements IIdentifiableContentAdapter, ISyncAwar
 		} else {
 			this.updateRow(row, entityContent);
 		}
+		this.csvFile.setDirty();
 	}
 	
 	@Override
 	public void delete(IContent content) {
 		String id = getID(content);
 		this.csvFile.remove(id);
+		this.csvFile.setDirty();
 	}
 
 	@Override

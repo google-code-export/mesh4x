@@ -10,6 +10,7 @@ import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.Sync;
 import org.mesh4j.sync.payload.schema.Schema;
+import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.payload.schema.rdf.RDFInstance;
 import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
 import org.mesh4j.sync.utils.XMLHelper;
@@ -84,13 +85,13 @@ public class FilterQueryTests {
 	@Test
 	public void shouldAppliesUseRDFInstancePropertyValuesAsLexicalFormIfFilterExpressionIsNotNullAndSchemaIsRDFSchema(){
 		RDFSchema rdfSchema = new RDFSchema("example", "http://mesh4x/example#", "example");
-		rdfSchema.addStringProperty("string", "string", "en");
-        rdfSchema.addIntegerProperty("integer", "int", "en");
-        rdfSchema.addBooleanProperty("boolean", "boolean", "en");
-        rdfSchema.addDateTimeProperty("datetime", "datetime", "en");
-        rdfSchema.addDoubleProperty("double", "double", "en");
-        rdfSchema.addLongProperty("long", "long", "en");
-        rdfSchema.addDecimalProperty("decimal", "decimal", "en");        
+		rdfSchema.addStringProperty("string", "string", IRDFSchema.DEFAULT_LANGUAGE);
+        rdfSchema.addIntegerProperty("integer", "int", IRDFSchema.DEFAULT_LANGUAGE);
+        rdfSchema.addBooleanProperty("boolean", "boolean", IRDFSchema.DEFAULT_LANGUAGE);
+        rdfSchema.addDateTimeProperty("datetime", "datetime", IRDFSchema.DEFAULT_LANGUAGE);
+        rdfSchema.addDoubleProperty("double", "double", IRDFSchema.DEFAULT_LANGUAGE);
+        rdfSchema.addLongProperty("long", "long", IRDFSchema.DEFAULT_LANGUAGE);
+        rdfSchema.addDecimalProperty("decimal", "decimal", IRDFSchema.DEFAULT_LANGUAGE);        
     	
         RDFInstance rdfInstance = rdfSchema.createNewInstance("uri:urn:1");
         rdfInstance.setProperty("string", "abc");

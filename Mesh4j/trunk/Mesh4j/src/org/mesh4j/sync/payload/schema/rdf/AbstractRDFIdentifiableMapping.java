@@ -15,6 +15,15 @@ public abstract class AbstractRDFIdentifiableMapping implements IIdentifiableMap
 	public AbstractRDFIdentifiableMapping(IRDFSchema rdfSchema){
 		Guard.argumentNotNull(rdfSchema, "rdfSchema");
 		this.rdfSchema = rdfSchema;
+		
+		List<String> idList = rdfSchema.getIdentifiablePropertyNames();
+		if(idList.isEmpty()){
+			Guard.throwsArgumentException("rdfSchema");
+		}else {
+			for (String idProperttName : idList) {
+				Guard.argumentNotNullOrEmptyString(idProperttName, "rdfSchema");
+			}
+		}
 	}
 	
 	@Override

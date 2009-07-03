@@ -21,6 +21,7 @@ import org.mesh4j.sync.payload.mappings.IMapping;
 import org.mesh4j.sync.payload.mappings.Mapping;
 import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.payload.schema.Schema;
+import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
 import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.security.IdentityProvider;
@@ -217,13 +218,13 @@ public class HttpSyncAdapterTests {
 		String url = serverUrl+"/"+meshGroup+"/"+dataSetId;
 		
 		RDFSchema rdfSchema = new RDFSchema(dataSetId, url+"#", dataSetId);
-		rdfSchema.addStringProperty("string", "string", "en");
-		rdfSchema.addIntegerProperty("integer", "int", "en");
-		rdfSchema.addBooleanProperty("boolean", "boolean", "en");
-		rdfSchema.addDateTimeProperty("datetime", "datetime", "en");
-		rdfSchema.addDoubleProperty("double", "double", "en");
-		rdfSchema.addLongProperty("long", "long", "en");
-		rdfSchema.addDecimalProperty("decimal", "decimal", "en");  
+		rdfSchema.addStringProperty("string", "string", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addIntegerProperty("integer", "int", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addBooleanProperty("boolean", "boolean", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addDateTimeProperty("datetime", "datetime", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addDoubleProperty("double", "double", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addLongProperty("long", "long", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addDecimalProperty("decimal", "decimal", IRDFSchema.DEFAULT_LANGUAGE);  
 		
 		HttpSyncAdapter adapter = HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverUrl, meshGroup, dataSetId, identityProvider, rdfSchema);
 		Assert.assertNotNull(adapter);
@@ -245,13 +246,13 @@ public class HttpSyncAdapterTests {
 		Assert.assertNotNull(adapter);
 		
 		RDFSchema rdfSchema = new RDFSchema(dataSetId, url+"#", dataSetId);
-		rdfSchema.addStringProperty("string", "string", "en");
-		rdfSchema.addIntegerProperty("integer", "int", "en");
-		rdfSchema.addBooleanProperty("boolean", "boolean", "en");
-		rdfSchema.addDateTimeProperty("datetime", "datetime", "en");
-		rdfSchema.addDoubleProperty("double", "double", "en");
-		rdfSchema.addLongProperty("long", "long", "en");
-		rdfSchema.addDecimalProperty("decimal", "decimal", "en");  
+		rdfSchema.addStringProperty("string", "string", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addIntegerProperty("integer", "int", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addBooleanProperty("boolean", "boolean", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addDateTimeProperty("datetime", "datetime", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addDoubleProperty("double", "double", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addLongProperty("long", "long", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addDecimalProperty("decimal", "decimal", IRDFSchema.DEFAULT_LANGUAGE);  
 		
 		adapter = HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverUrl, meshGroup, dataSetId, identityProvider, rdfSchema);
 		Assert.assertNotNull(adapter);
@@ -270,13 +271,13 @@ public class HttpSyncAdapterTests {
 		String url = serverUrl+"/"+meshGroup+"/"+dataSetId;
 		
 		RDFSchema rdfSchema = new RDFSchema(dataSetId, url+"#", dataSetId);
-		rdfSchema.addStringProperty("string", "string", "en");
-		rdfSchema.addIntegerProperty("integer", "int", "en");
-		rdfSchema.addBooleanProperty("boolean", "boolean", "en");
-		rdfSchema.addDateTimeProperty("datetime", "datetime", "en");
-		rdfSchema.addDoubleProperty("double", "double", "en");
-		rdfSchema.addLongProperty("long", "long", "en");
-		rdfSchema.addDecimalProperty("decimal", "decimal", "en");  
+		rdfSchema.addStringProperty("string", "string", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addIntegerProperty("integer", "int", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addBooleanProperty("boolean", "boolean", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addDateTimeProperty("datetime", "datetime", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addDoubleProperty("double", "double", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addLongProperty("long", "long", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addDecimalProperty("decimal", "decimal", IRDFSchema.DEFAULT_LANGUAGE);  
 		
 		HttpSyncAdapter adapter = HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverUrl, meshGroup, dataSetId, identityProvider, rdfSchema);
 		Assert.assertNotNull(adapter);
@@ -334,15 +335,15 @@ public class HttpSyncAdapterTests {
 		String url = serverUrl+"/"+meshGroup+"/"+dataSetId;
 		
 		RDFSchema rdfSchema = new RDFSchema(dataSetId, url+"#", dataSetId);
-		rdfSchema.addStringProperty("id1", "id1", "en");
-		rdfSchema.addStringProperty("id2", "id2", "en");
-		rdfSchema.addStringProperty("string", "string", "en");
-		rdfSchema.addIntegerProperty("integer", "int", "en");
-		rdfSchema.addBooleanProperty("boolean", "boolean", "en");
-		rdfSchema.addDateTimeProperty("datetime", "datetime", "en");
-		rdfSchema.addDoubleProperty("double", "double", "en");
-		rdfSchema.addLongProperty("long", "long", "en");
-		rdfSchema.addDecimalProperty("decimal", "decimal", "en");  
+		rdfSchema.addStringProperty("id1", "id1", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addStringProperty("id2", "id2", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addStringProperty("string", "string", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addIntegerProperty("integer", "int", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addBooleanProperty("boolean", "boolean", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addDateTimeProperty("datetime", "datetime", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addDoubleProperty("double", "double", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addLongProperty("long", "long", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addDecimalProperty("decimal", "decimal", IRDFSchema.DEFAULT_LANGUAGE);  
 		
 		ArrayList<String> pks = new ArrayList<String>();
 		pks.add("id1");

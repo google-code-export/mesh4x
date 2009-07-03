@@ -48,22 +48,22 @@ public class RDFSchemaTests {
 		Assert.assertEquals(6, schema.getPropertyCount());
 		
 		Assert.assertEquals(IRDFSchema.XLS_STRING, schema.getPropertyType("Code"));
-		Assert.assertEquals("Code", schema.getPropertyLabel("Code", "en"));
+		Assert.assertEquals("Code", schema.getPropertyLabel("Code", IRDFSchema.DEFAULT_LANGUAGE));
 
 		Assert.assertEquals(IRDFSchema.XLS_STRING, schema.getPropertyType("Name"));
-		Assert.assertEquals("Name", schema.getPropertyLabel("Name", "en"));
+		Assert.assertEquals("Name", schema.getPropertyLabel("Name", IRDFSchema.DEFAULT_LANGUAGE));
 
 		Assert.assertEquals(IRDFSchema.XLS_DATETIME, schema.getPropertyType("DateOnset"));
-		Assert.assertEquals("DateOnset", schema.getPropertyLabel("DateOnset", "en"));
+		Assert.assertEquals("DateOnset", schema.getPropertyLabel("DateOnset", IRDFSchema.DEFAULT_LANGUAGE));
 
 		Assert.assertEquals(IRDFSchema.XLS_BOOLEAN, schema.getPropertyType("ILL"));
-		Assert.assertEquals("ILL", schema.getPropertyLabel("ILL", "en"));
+		Assert.assertEquals("ILL", schema.getPropertyLabel("ILL", IRDFSchema.DEFAULT_LANGUAGE));
 		
 		Assert.assertEquals(IRDFSchema.XLS_DOUBLE, schema.getPropertyType("AGE"));
-		Assert.assertEquals("AGE", schema.getPropertyLabel("AGE", "en"));
+		Assert.assertEquals("AGE", schema.getPropertyLabel("AGE", IRDFSchema.DEFAULT_LANGUAGE));
 
 		Assert.assertEquals(IRDFSchema.XLS_INTEGER, schema.getPropertyType("RecStatus"));
-		Assert.assertEquals("RecStatus", schema.getPropertyLabel("RecStatus", "en"));
+		Assert.assertEquals("RecStatus", schema.getPropertyLabel("RecStatus", IRDFSchema.DEFAULT_LANGUAGE));
 
 		Assert.assertEquals("Oswego", schema.getOntologyNameSpace());
 		Assert.assertEquals("http://localhost:8080/mesh4x/feeds/Epiinfo/Oswego#", schema.getOntologyBaseUri());
@@ -148,7 +148,7 @@ public class RDFSchemaTests {
 		Reader reader = new FileReader(this.getClass().getResource("oswego.owl").getFile());
 		RDFSchema schema = new RDFSchema(reader);
 		Assert.assertNotNull(schema);
-		Assert.assertNull(schema.getPropertyLabel("undefined", "en"));
+		Assert.assertNull(schema.getPropertyLabel("undefined", IRDFSchema.DEFAULT_LANGUAGE));
 	}
 	
 	@Test
@@ -164,7 +164,8 @@ public class RDFSchemaTests {
 		Reader reader = new FileReader(this.getClass().getResource("oswego.owl").getFile());
 		RDFSchema schema = new RDFSchema(reader);
 		Assert.assertNotNull(schema);
-		Assert.assertEquals("Name", schema.getPropertyLabel("Name", "en"));
+		Assert.assertEquals("Name", schema.getPropertyLabel("Name", IRDFSchema.DEFAULT_LANGUAGE));
+		Assert.assertEquals("Name", schema.getPropertyLabel("Name"));
 	}
 
 	@Test
@@ -195,7 +196,7 @@ public class RDFSchemaTests {
 	public void shouldGetPropertyNameReturnsNullIfIndexIsOutOfRange(){
 		RDFSchema schema = new RDFSchema("Oswego", "http://localhost:8080/mesh4x/feeds/Epiinfo/Oswego#", "Oswego");
 		Assert.assertNotNull(schema);
-		schema.addStringProperty("name", "name", "en");
+		schema.addStringProperty("name", "name", IRDFSchema.DEFAULT_LANGUAGE);
 		Assert.assertEquals(1, schema.getPropertyCount());
 		
 		Assert.assertNull(schema.getPropertyName(1));
@@ -205,8 +206,8 @@ public class RDFSchemaTests {
 	public void shouldGetPropertyName(){
 		RDFSchema schema = new RDFSchema("Oswego", "http://localhost:8080/mesh4x/feeds/Epiinfo/Oswego#", "Oswego");
 		Assert.assertNotNull(schema);
-		schema.addStringProperty("name", "name", "en");
-		schema.addStringProperty("code", "code", "en");
+		schema.addStringProperty("name", "name", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addStringProperty("code", "code", IRDFSchema.DEFAULT_LANGUAGE);
 		Assert.assertEquals(2, schema.getPropertyCount());
 		
 		Assert.assertEquals("name", schema.getPropertyName(1));
@@ -260,16 +261,16 @@ public class RDFSchemaTests {
         
         Element element = XMLHelper.parseElement(rdfXml);
 		RDFSchema schema = new RDFSchema("example", "http://mesh4x/example#", "example");
-		schema.addStringProperty("string", "string", "en");
-		schema.addIntegerProperty("integer", "int", "en");
-		schema.addBooleanProperty("boolean", "boolean", "en");
-		schema.addDateTimeProperty("datetime", "datetime", "en");
-		schema.addDoubleProperty("double", "double", "en");
-		schema.addLongProperty("long", "long", "en");
-		schema.addDecimalProperty("decimal", "decimal", "en");  
+		schema.addStringProperty("string", "string", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addIntegerProperty("integer", "int", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addBooleanProperty("boolean", "boolean", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addDateTimeProperty("datetime", "datetime", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addDoubleProperty("double", "double", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addLongProperty("long", "long", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addDecimalProperty("decimal", "decimal", IRDFSchema.DEFAULT_LANGUAGE);  
         
 		Element plainElement = schema.asInstancePlainXML(element, ISchema.EMPTY_FORMATS);
-		Assert.assertEquals("<example><decimal>10</decimal><long>9223372036854775807</long><double>1.7976931348623157E308</double><datetime>2009-06-01T05:31:01.001Z</datetime><boolean>true</boolean><integer>2147483647</integer><string>abc</string></example>", plainElement.asXML());
+		Assert.assertEquals("<example><integer>2147483647</integer><string>abc</string><boolean>true</boolean><datetime>2009-06-01T05:31:01.001Z</datetime><double>1.7976931348623157E308</double><long>9223372036854775807</long><decimal>10</decimal></example>", plainElement.asXML());
 	}
 	
 	@Test
@@ -291,16 +292,16 @@ public class RDFSchemaTests {
 	    element.add(elementSub);
 	    
 		RDFSchema schema = new RDFSchema("example", "http://mesh4x/example#", "example");
-		schema.addStringProperty("string", "string", "en");
-		schema.addIntegerProperty("integer", "int", "en");
-		schema.addBooleanProperty("boolean", "boolean", "en");
-		schema.addDateTimeProperty("datetime", "datetime", "en");
-		schema.addDoubleProperty("double", "double", "en");
-		schema.addLongProperty("long", "long", "en");
-		schema.addDecimalProperty("decimal", "decimal", "en");  
+		schema.addStringProperty("string", "string", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addIntegerProperty("integer", "int", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addBooleanProperty("boolean", "boolean", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addDateTimeProperty("datetime", "datetime", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addDoubleProperty("double", "double", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addLongProperty("long", "long", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addDecimalProperty("decimal", "decimal", IRDFSchema.DEFAULT_LANGUAGE);  
 	        
 		Element plainElement = schema.asInstancePlainXML(element, ISchema.EMPTY_FORMATS);
-		Assert.assertEquals("<example><decimal>10</decimal><long>9223372036854775807</long><double>1.7976931348623157E308</double><datetime>2009-06-01T05:31:01.001Z</datetime><boolean>true</boolean><integer>2147483647</integer><string>abc</string></example>", plainElement.asXML());
+		Assert.assertEquals("<example><integer>2147483647</integer><string>abc</string><boolean>true</boolean><datetime>2009-06-01T05:31:01.001Z</datetime><double>1.7976931348623157E308</double><long>9223372036854775807</long><decimal>10</decimal></example>", plainElement.asXML());
 
 	}
 	
@@ -308,13 +309,13 @@ public class RDFSchemaTests {
 	@Test
 	public void shouldGetInstanceFromPlainXML(){
 		RDFSchema schema = new RDFSchema("example", "http://mesh4x/example#", "example");
-		schema.addStringProperty("string", "string", "en");
-		schema.addIntegerProperty("integer", "int", "en");
-		schema.addBooleanProperty("boolean", "boolean", "en");
-		schema.addDateTimeProperty("datetime", "datetime", "en");
-		schema.addDoubleProperty("double", "double", "en");
-		schema.addLongProperty("long", "long", "en");
-		schema.addDecimalProperty("decimal", "decimal", "en");  
+		schema.addStringProperty("string", "string", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addIntegerProperty("integer", "int", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addBooleanProperty("boolean", "boolean", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addDateTimeProperty("datetime", "datetime", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addDoubleProperty("double", "double", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addLongProperty("long", "long", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addDecimalProperty("decimal", "decimal", IRDFSchema.DEFAULT_LANGUAGE);  
 	       
 		String xml = "<example><decimal>10.8</decimal><long>9223372036854775807</long><double>1.7976931348623157E308</double><datetime>2009-06-01T05:31:01.001Z</datetime><boolean>true</boolean><integer>2147483647</integer><string>abc</string></example>";
 		Element element = XMLHelper.parseElement(xml);
@@ -338,13 +339,13 @@ public class RDFSchemaTests {
 	@Test
 	public void shouldGetInstanceFromProperties(){
 		RDFSchema schema = new RDFSchema("example", "http://mesh4x/example#", "example");
-		schema.addStringProperty("string", "string", "en");
-		schema.addIntegerProperty("integer", "int", "en");
-		schema.addBooleanProperty("boolean", "boolean", "en");
-		schema.addDateTimeProperty("datetime", "datetime", "en");
-		schema.addDoubleProperty("double", "double", "en");
-		schema.addLongProperty("long", "long", "en");
-		schema.addDecimalProperty("decimal", "decimal", "en");  
+		schema.addStringProperty("string", "string", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addIntegerProperty("integer", "int", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addBooleanProperty("boolean", "boolean", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addDateTimeProperty("datetime", "datetime", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addDoubleProperty("double", "double", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addLongProperty("long", "long", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addDecimalProperty("decimal", "decimal", IRDFSchema.DEFAULT_LANGUAGE);  
 		
 		HashMap<String, Object> propertyValues = new HashMap<String, Object>();
 		propertyValues.put("decimal", 10d);
@@ -376,13 +377,13 @@ public class RDFSchemaTests {
 	public void shouldGetPropertiesAsMap(){
 		
 		RDFSchema schema = new RDFSchema("example", "http://mesh4x/example#", "example");
-		schema.addStringProperty("string", "string", "en");
-		schema.addIntegerProperty("integer", "int", "en");
-		schema.addBooleanProperty("boolean", "boolean", "en");
-		schema.addDateTimeProperty("datetime", "datetime", "en");
-		schema.addDoubleProperty("double", "double", "en");
-		schema.addLongProperty("long", "long", "en");
-		schema.addDecimalProperty("decimal", "decimal", "en");  
+		schema.addStringProperty("string", "string", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addIntegerProperty("integer", "int", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addBooleanProperty("boolean", "boolean", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addDateTimeProperty("datetime", "datetime", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addDoubleProperty("double", "double", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addLongProperty("long", "long", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addDecimalProperty("decimal", "decimal", IRDFSchema.DEFAULT_LANGUAGE);  
 		
 		String rdfXml = "<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:example=\"http://mesh4x/example#\" xmlns:owl=\"http://www.w3.org/2002/07/owl#\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema#\">"+
 		"<example:example rdf:about=\"uri:urn:1\">"+
@@ -412,13 +413,13 @@ public class RDFSchemaTests {
 	@Test
 	public void shouldIsCompatibleReturnsTrueIfParameterSchemaIsSameInstance(){
 		RDFSchema schema = new RDFSchema("example", "http://mesh4x/example#", "example");
-		schema.addStringProperty("string", "string", "en");
-		schema.addIntegerProperty("integer", "int", "en");
-		schema.addBooleanProperty("boolean", "boolean", "en");
-		schema.addDateTimeProperty("datetime", "datetime", "en");
-		schema.addDoubleProperty("double", "double", "en");
-		schema.addLongProperty("long", "long", "en");
-		schema.addDecimalProperty("decimal", "decimal", "en");  
+		schema.addStringProperty("string", "string", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addIntegerProperty("integer", "int", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addBooleanProperty("boolean", "boolean", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addDateTimeProperty("datetime", "datetime", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addDoubleProperty("double", "double", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addLongProperty("long", "long", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addDecimalProperty("decimal", "decimal", IRDFSchema.DEFAULT_LANGUAGE);  
 		
 		Assert.assertTrue(schema.isCompatible(schema));
 	}
@@ -426,13 +427,13 @@ public class RDFSchemaTests {
 	@Test
 	public void shouldIsCompatibleReturnsFalseIfParameterSchemaIsNull(){
 		RDFSchema schema = new RDFSchema("example", "http://mesh4x/example#", "example");
-		schema.addStringProperty("string", "string", "en");
-		schema.addIntegerProperty("integer", "int", "en");
-		schema.addBooleanProperty("boolean", "boolean", "en");
-		schema.addDateTimeProperty("datetime", "datetime", "en");
-		schema.addDoubleProperty("double", "double", "en");
-		schema.addLongProperty("long", "long", "en");
-		schema.addDecimalProperty("decimal", "decimal", "en");  
+		schema.addStringProperty("string", "string", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addIntegerProperty("integer", "int", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addBooleanProperty("boolean", "boolean", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addDateTimeProperty("datetime", "datetime", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addDoubleProperty("double", "double", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addLongProperty("long", "long", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addDecimalProperty("decimal", "decimal", IRDFSchema.DEFAULT_LANGUAGE);  
 		
 		Assert.assertFalse(schema.isCompatible(null));
 	}
@@ -451,13 +452,13 @@ public class RDFSchemaTests {
 		};
 		
 		RDFSchema schema = new RDFSchema("example", "http://mesh4x/example#", "example");
-		schema.addStringProperty("string", "string", "en");
-		schema.addIntegerProperty("integer", "int", "en");
-		schema.addBooleanProperty("boolean", "boolean", "en");
-		schema.addDateTimeProperty("datetime", "datetime", "en");
-		schema.addDoubleProperty("double", "double", "en");
-		schema.addLongProperty("long", "long", "en");
-		schema.addDecimalProperty("decimal", "decimal", "en");  
+		schema.addStringProperty("string", "string", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addIntegerProperty("integer", "int", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addBooleanProperty("boolean", "boolean", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addDateTimeProperty("datetime", "datetime", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addDoubleProperty("double", "double", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addLongProperty("long", "long", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addDecimalProperty("decimal", "decimal", IRDFSchema.DEFAULT_LANGUAGE);  
 		
 		Assert.assertFalse(schema.isCompatible(mockSchema));
 	}
@@ -465,22 +466,22 @@ public class RDFSchemaTests {
 	@Test
 	public void shouldIsCompatibleReturnsTrueIfParameterSchemaHasSameRDFXml(){
 		RDFSchema schema = new RDFSchema("example", "http://mesh4x/example#", "example");
-		schema.addStringProperty("string", "string", "en");
-		schema.addIntegerProperty("integer", "int", "en");
-		schema.addBooleanProperty("boolean", "boolean", "en");
-		schema.addDateTimeProperty("datetime", "datetime", "en");
-		schema.addDoubleProperty("double", "double", "en");
-		schema.addLongProperty("long", "long", "en");
-		schema.addDecimalProperty("decimal", "decimal", "en");  
+		schema.addStringProperty("string", "string", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addIntegerProperty("integer", "int", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addBooleanProperty("boolean", "boolean", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addDateTimeProperty("datetime", "datetime", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addDoubleProperty("double", "double", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addLongProperty("long", "long", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addDecimalProperty("decimal", "decimal", IRDFSchema.DEFAULT_LANGUAGE);  
 		
 		RDFSchema otherSchema = new RDFSchema("example", "http://mesh4x/example#", "example");
-		otherSchema.addStringProperty("string", "string", "en");
-		otherSchema.addIntegerProperty("integer", "int", "en");
-		otherSchema.addBooleanProperty("boolean", "boolean", "en");
-		otherSchema.addDateTimeProperty("datetime", "datetime", "en");
-		otherSchema.addDoubleProperty("double", "double", "en");
-		otherSchema.addLongProperty("long", "long", "en");
-		otherSchema.addDecimalProperty("decimal", "decimal", "en");  
+		otherSchema.addStringProperty("string", "string", IRDFSchema.DEFAULT_LANGUAGE);
+		otherSchema.addIntegerProperty("integer", "int", IRDFSchema.DEFAULT_LANGUAGE);
+		otherSchema.addBooleanProperty("boolean", "boolean", IRDFSchema.DEFAULT_LANGUAGE);
+		otherSchema.addDateTimeProperty("datetime", "datetime", IRDFSchema.DEFAULT_LANGUAGE);
+		otherSchema.addDoubleProperty("double", "double", IRDFSchema.DEFAULT_LANGUAGE);
+		otherSchema.addLongProperty("long", "long", IRDFSchema.DEFAULT_LANGUAGE);
+		otherSchema.addDecimalProperty("decimal", "decimal", IRDFSchema.DEFAULT_LANGUAGE);  
 		
 		Assert.assertEquals(schema.asXML(), otherSchema.asXML());
 		Assert.assertTrue(schema.isCompatible(otherSchema));
@@ -489,22 +490,22 @@ public class RDFSchemaTests {
 	@Test
 	public void shouldIsCompatibleReturnsTrueIfParameterSchemaHasSameProperties(){
 		RDFSchema schema = new RDFSchema("example", "http://mesh4x/example#", "example");
-		schema.addStringProperty("string", "string", "en");
-		schema.addIntegerProperty("integer", "int", "en");
-		schema.addBooleanProperty("boolean", "boolean", "en");
-		schema.addDateTimeProperty("datetime", "datetime", "en");
-		schema.addDoubleProperty("double", "double", "en");
-		schema.addLongProperty("long", "long", "en");
-		schema.addDecimalProperty("decimal", "decimal", "en");  
+		schema.addStringProperty("string", "string", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addIntegerProperty("integer", "int", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addBooleanProperty("boolean", "boolean", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addDateTimeProperty("datetime", "datetime", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addDoubleProperty("double", "double", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addLongProperty("long", "long", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addDecimalProperty("decimal", "decimal", IRDFSchema.DEFAULT_LANGUAGE);  
 		
 		RDFSchema otherSchema = new RDFSchema("example", "http://mesh4x/example#", "example");
-		otherSchema.addIntegerProperty("integer", "int", "en");
-		otherSchema.addBooleanProperty("boolean", "boolean", "en");
-		otherSchema.addStringProperty("string", "string", "en");
-		otherSchema.addDateTimeProperty("datetime", "datetime", "en");
-		otherSchema.addLongProperty("long", "long", "en");
-		otherSchema.addDecimalProperty("decimal", "decimal", "en");
-		otherSchema.addDoubleProperty("double", "double", "en");
+		otherSchema.addIntegerProperty("integer", "int", IRDFSchema.DEFAULT_LANGUAGE);
+		otherSchema.addBooleanProperty("boolean", "boolean", IRDFSchema.DEFAULT_LANGUAGE);
+		otherSchema.addStringProperty("string", "string", IRDFSchema.DEFAULT_LANGUAGE);
+		otherSchema.addDateTimeProperty("datetime", "datetime", IRDFSchema.DEFAULT_LANGUAGE);
+		otherSchema.addLongProperty("long", "long", IRDFSchema.DEFAULT_LANGUAGE);
+		otherSchema.addDecimalProperty("decimal", "decimal", IRDFSchema.DEFAULT_LANGUAGE);
+		otherSchema.addDoubleProperty("double", "double", IRDFSchema.DEFAULT_LANGUAGE);
 		
 		Assert.assertEquals(schema.asXML(), otherSchema.asXML());
 		Assert.assertTrue(schema.isCompatible(otherSchema));
@@ -513,18 +514,18 @@ public class RDFSchemaTests {
 	@Test
 	public void shouldIsCompatibleReturnsFalseIfParameterSchemaHasNotSamePropertiesCount(){
 		RDFSchema schema = new RDFSchema("example", "http://mesh4x/example#", "example");
-		schema.addStringProperty("string", "string", "en");
-		schema.addIntegerProperty("integer", "int", "en");
-		schema.addBooleanProperty("boolean", "boolean", "en");
-		schema.addDateTimeProperty("datetime", "datetime", "en");
-		schema.addDoubleProperty("double", "double", "en");
-		schema.addLongProperty("long", "long", "en");
-		schema.addDecimalProperty("decimal", "decimal", "en");  
+		schema.addStringProperty("string", "string", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addIntegerProperty("integer", "int", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addBooleanProperty("boolean", "boolean", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addDateTimeProperty("datetime", "datetime", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addDoubleProperty("double", "double", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addLongProperty("long", "long", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addDecimalProperty("decimal", "decimal", IRDFSchema.DEFAULT_LANGUAGE);  
 		
 		RDFSchema otherSchema = new RDFSchema("example", "http://mesh4x/example#", "example");
-		otherSchema.addIntegerProperty("integer", "int", "en");
-		otherSchema.addBooleanProperty("boolean", "boolean", "en");
-		otherSchema.addStringProperty("string", "string", "en");
+		otherSchema.addIntegerProperty("integer", "int", IRDFSchema.DEFAULT_LANGUAGE);
+		otherSchema.addBooleanProperty("boolean", "boolean", IRDFSchema.DEFAULT_LANGUAGE);
+		otherSchema.addStringProperty("string", "string", IRDFSchema.DEFAULT_LANGUAGE);
 		
 		Assert.assertFalse(schema.isCompatible(otherSchema));
 	}
@@ -532,22 +533,22 @@ public class RDFSchemaTests {
 	@Test
 	public void shouldIsCompatibleReturnsFalseIfParameterSchemaHasNotSamePropertyNames(){
 		RDFSchema schema = new RDFSchema("example", "http://mesh4x/example#", "example");
-		schema.addStringProperty("string", "string", "en");
-		schema.addIntegerProperty("integer", "int", "en");
-		schema.addBooleanProperty("boolean", "boolean", "en");
-		schema.addDateTimeProperty("datetime", "datetime", "en");
-		schema.addDoubleProperty("double", "double", "en");
-		schema.addLongProperty("long", "long", "en");
-		schema.addDecimalProperty("decimal", "decimal", "en");  
+		schema.addStringProperty("string", "string", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addIntegerProperty("integer", "int", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addBooleanProperty("boolean", "boolean", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addDateTimeProperty("datetime", "datetime", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addDoubleProperty("double", "double", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addLongProperty("long", "long", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addDecimalProperty("decimal", "decimal", IRDFSchema.DEFAULT_LANGUAGE);  
 		
 		RDFSchema otherSchema = new RDFSchema("example", "http://mesh4x/example#", "example");
-		otherSchema.addIntegerProperty("integer", "int", "en");
-		otherSchema.addBooleanProperty("boolean", "boolean", "en");
-		otherSchema.addStringProperty("string", "string", "en");
-		otherSchema.addDateTimeProperty("datetime", "datetime", "en");
-		otherSchema.addLongProperty("long", "long", "en");
-		otherSchema.addDecimalProperty("decimal", "decimal", "en");
-		otherSchema.addDoubleProperty("double2", "double", "en");
+		otherSchema.addIntegerProperty("integer", "int", IRDFSchema.DEFAULT_LANGUAGE);
+		otherSchema.addBooleanProperty("boolean", "boolean", IRDFSchema.DEFAULT_LANGUAGE);
+		otherSchema.addStringProperty("string", "string", IRDFSchema.DEFAULT_LANGUAGE);
+		otherSchema.addDateTimeProperty("datetime", "datetime", IRDFSchema.DEFAULT_LANGUAGE);
+		otherSchema.addLongProperty("long", "long", IRDFSchema.DEFAULT_LANGUAGE);
+		otherSchema.addDecimalProperty("decimal", "decimal", IRDFSchema.DEFAULT_LANGUAGE);
+		otherSchema.addDoubleProperty("double2", "double", IRDFSchema.DEFAULT_LANGUAGE);
 		
 		Assert.assertFalse(schema.isCompatible(otherSchema));
 	}
@@ -555,22 +556,22 @@ public class RDFSchemaTests {
 	@Test
 	public void shouldIsCompatibleReturnsFalseIfParameterSchemaHasNotSamePropertyTypes(){
 		RDFSchema schema = new RDFSchema("example", "http://mesh4x/example#", "example");
-		schema.addStringProperty("string", "string", "en");
-		schema.addIntegerProperty("integer", "int", "en");
-		schema.addBooleanProperty("boolean", "boolean", "en");
-		schema.addDateTimeProperty("datetime", "datetime", "en");
-		schema.addDoubleProperty("double", "double", "en");
-		schema.addLongProperty("long", "long", "en");
-		schema.addDecimalProperty("decimal", "decimal", "en");  
+		schema.addStringProperty("string", "string", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addIntegerProperty("integer", "int", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addBooleanProperty("boolean", "boolean", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addDateTimeProperty("datetime", "datetime", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addDoubleProperty("double", "double", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addLongProperty("long", "long", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addDecimalProperty("decimal", "decimal", IRDFSchema.DEFAULT_LANGUAGE);  
 		
 		RDFSchema otherSchema = new RDFSchema("example", "http://mesh4x/example#", "example");
-		otherSchema.addIntegerProperty("integer", "int", "en");
-		otherSchema.addBooleanProperty("boolean", "boolean", "en");
-		otherSchema.addStringProperty("string", "string", "en");
-		otherSchema.addDateTimeProperty("datetime", "datetime", "en");
-		otherSchema.addLongProperty("long", "long", "en");
-		otherSchema.addDecimalProperty("decimal", "decimal", "en");
-		otherSchema.addStringProperty("double", "double", "en");
+		otherSchema.addIntegerProperty("integer", "int", IRDFSchema.DEFAULT_LANGUAGE);
+		otherSchema.addBooleanProperty("boolean", "boolean", IRDFSchema.DEFAULT_LANGUAGE);
+		otherSchema.addStringProperty("string", "string", IRDFSchema.DEFAULT_LANGUAGE);
+		otherSchema.addDateTimeProperty("datetime", "datetime", IRDFSchema.DEFAULT_LANGUAGE);
+		otherSchema.addLongProperty("long", "long", IRDFSchema.DEFAULT_LANGUAGE);
+		otherSchema.addDecimalProperty("decimal", "decimal", IRDFSchema.DEFAULT_LANGUAGE);
+		otherSchema.addStringProperty("double", "double", IRDFSchema.DEFAULT_LANGUAGE);
 		
 		Assert.assertFalse(schema.isCompatible(otherSchema));
 	}
@@ -578,22 +579,22 @@ public class RDFSchemaTests {
 	@Test
 	public void shouldIsCompatibleReturnsTrueIfParameterSchemaHasCompatiblePropertyTypes(){
 		RDFSchema schema = new RDFSchema("example", "http://mesh4x/example#", "example");
-		schema.addStringProperty("string", "string", "en");
-		schema.addIntegerProperty("integer", "int", "en");
-		schema.addBooleanProperty("boolean", "boolean", "en");
-		schema.addDateTimeProperty("datetime", "datetime", "en");
-		schema.addDoubleProperty("double", "double", "en");
-		schema.addLongProperty("long", "long", "en");
-		schema.addDecimalProperty("decimal", "decimal", "en");  
+		schema.addStringProperty("string", "string", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addIntegerProperty("integer", "int", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addBooleanProperty("boolean", "boolean", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addDateTimeProperty("datetime", "datetime", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addDoubleProperty("double", "double", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addLongProperty("long", "long", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addDecimalProperty("decimal", "decimal", IRDFSchema.DEFAULT_LANGUAGE);  
 		
 		RDFSchema otherSchema = new RDFSchema("example", "http://mesh4x/example#", "example");
-		otherSchema.addStringProperty("string", "string", "en");
-		otherSchema.addDoubleProperty("integer", "int", "en");
-		otherSchema.addBooleanProperty("boolean", "boolean", "en");
-		otherSchema.addDateTimeProperty("datetime", "datetime", "en");
-		otherSchema.addLongProperty("double", "double", "en");
-		otherSchema.addDecimalProperty("long", "long", "en");
-		otherSchema.addIntegerProperty("decimal", "decimal", "en");  
+		otherSchema.addStringProperty("string", "string", IRDFSchema.DEFAULT_LANGUAGE);
+		otherSchema.addDoubleProperty("integer", "int", IRDFSchema.DEFAULT_LANGUAGE);
+		otherSchema.addBooleanProperty("boolean", "boolean", IRDFSchema.DEFAULT_LANGUAGE);
+		otherSchema.addDateTimeProperty("datetime", "datetime", IRDFSchema.DEFAULT_LANGUAGE);
+		otherSchema.addLongProperty("double", "double", IRDFSchema.DEFAULT_LANGUAGE);
+		otherSchema.addDecimalProperty("long", "long", IRDFSchema.DEFAULT_LANGUAGE);
+		otherSchema.addIntegerProperty("decimal", "decimal", IRDFSchema.DEFAULT_LANGUAGE);  
 		
 		Assert.assertFalse(schema.asXML().equals(otherSchema.asXML()));
 		Assert.assertTrue(schema.isCompatible(otherSchema));
@@ -602,9 +603,9 @@ public class RDFSchemaTests {
 	@Test
 	public void shouldMarkIdentifiablesPropertyNames(){
 		RDFSchema schema = new RDFSchema("example", "http://mesh4x/example#", "example");
-		schema.addStringProperty("id1", "id1", "en");
-		schema.addStringProperty("id2", "id2", "en");
-		schema.addStringProperty("name", "name", "en");
+		schema.addStringProperty("id1", "id1", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addStringProperty("id2", "id2", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addStringProperty("name", "name", IRDFSchema.DEFAULT_LANGUAGE);
 
 		ArrayList<String> pks = new ArrayList<String>();
 		pks.add("id1");
@@ -661,15 +662,15 @@ public class RDFSchemaTests {
 		String url = serverUrl+"/"+meshGroup+"/"+dataSetId;
 		
 		RDFSchema rdfSchema = new RDFSchema(dataSetId, url+"#", dataSetId);
-		rdfSchema.addStringProperty("id1", "id1", "en");
-		rdfSchema.addStringProperty("id2", "id2", "en");
-		rdfSchema.addStringProperty("string", "string", "en");
-		rdfSchema.addIntegerProperty("integer", "int", "en");
-		rdfSchema.addBooleanProperty("boolean", "boolean", "en");
-		rdfSchema.addDateTimeProperty("datetime", "datetime", "en");
-		rdfSchema.addDoubleProperty("double", "double", "en");
-		rdfSchema.addLongProperty("long", "long", "en");
-		rdfSchema.addDecimalProperty("decimal", "decimal", "en");  
+		rdfSchema.addStringProperty("id1", "id1", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addStringProperty("id2", "id2", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addStringProperty("string", "string", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addIntegerProperty("integer", "int", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addBooleanProperty("boolean", "boolean", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addDateTimeProperty("datetime", "datetime", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addDoubleProperty("double", "double", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addLongProperty("long", "long", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addDecimalProperty("decimal", "decimal", IRDFSchema.DEFAULT_LANGUAGE);  
 		
 		ArrayList<String> pks = new ArrayList<String>();
 		pks.add("id1");
@@ -695,14 +696,14 @@ public class RDFSchemaTests {
 		String url = serverUrl+"/"+meshGroup+"/"+dataSetId;
 		
 		RDFSchema rdfSchema = new RDFSchema(dataSetId, url+"#", dataSetId);
-		rdfSchema.addStringProperty("id1", "id1", "en");
-		rdfSchema.addStringProperty("id2", "id2", "en");
-		rdfSchema.addStringProperty("string", "string", "en");
+		rdfSchema.addStringProperty("id1", "id1", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addStringProperty("id2", "id2", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addStringProperty("string", "string", IRDFSchema.DEFAULT_LANGUAGE);
 		
 		RDFSchema otherRdfSchema = new RDFSchema(dataSetId, url+"#", dataSetId);
-		otherRdfSchema.addStringProperty("id1", "id1", "en");
-		otherRdfSchema.addStringProperty("id2", "id2", "en");
-		otherRdfSchema.addStringProperty("string", "string", "en");
+		otherRdfSchema.addStringProperty("id1", "id1", IRDFSchema.DEFAULT_LANGUAGE);
+		otherRdfSchema.addStringProperty("id2", "id2", IRDFSchema.DEFAULT_LANGUAGE);
+		otherRdfSchema.addStringProperty("string", "string", IRDFSchema.DEFAULT_LANGUAGE);
 				
 		Assert.assertTrue(rdfSchema.isCompatible(otherRdfSchema));
 		
@@ -734,14 +735,14 @@ public class RDFSchemaTests {
 		String url = serverUrl+"/"+meshGroup+"/"+dataSetId;
 		
 		RDFSchema rdfSchema = new RDFSchema(dataSetId, url+"#", dataSetId);
-		rdfSchema.addStringProperty("id1", "id1", "en");
-		rdfSchema.addStringProperty("id2", "id2", "en");
-		rdfSchema.addStringProperty("string", "string", "en");
+		rdfSchema.addStringProperty("id1", "id1", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addStringProperty("id2", "id2", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addStringProperty("string", "string", IRDFSchema.DEFAULT_LANGUAGE);
 		
 		RDFSchema otherRdfSchema = new RDFSchema(dataSetId, url+"#", dataSetId);
-		otherRdfSchema.addStringProperty("id1", "id1", "en");
-		otherRdfSchema.addStringProperty("id2", "id2", "en");
-		otherRdfSchema.addStringProperty("string", "string", "en");
+		otherRdfSchema.addStringProperty("id1", "id1", IRDFSchema.DEFAULT_LANGUAGE);
+		otherRdfSchema.addStringProperty("id2", "id2", IRDFSchema.DEFAULT_LANGUAGE);
+		otherRdfSchema.addStringProperty("string", "string", IRDFSchema.DEFAULT_LANGUAGE);
 				
 		Assert.assertTrue(rdfSchema.isCompatible(otherRdfSchema));
 		
@@ -768,4 +769,127 @@ public class RDFSchemaTests {
 		Assert.assertFalse(rdfSchema.isCompatible(otherRdfSchema));
 	}
 	
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldDontAcceptPropertyNameWithBlanks(){
+		String serverUrl = "http://localhost:8080/mesh4x/feeds";
+		String meshGroup = "meshGroup";
+		String dataSetId = "dataSetId";
+
+		String url = serverUrl+"/"+meshGroup+"/"+dataSetId;
+		
+		RDFSchema rdfSchema = new RDFSchema(dataSetId, url+"#", dataSetId);
+		rdfSchema.addStringProperty("id     1   dwq", "id1", IRDFSchema.DEFAULT_LANGUAGE);		
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldAddPropertyFailsWhenPropertyNameIsNull(){
+		String serverUrl = "http://localhost:8080/mesh4x/feeds";
+		String meshGroup = "meshGroup";
+		String dataSetId = "dataSetId";
+
+		String url = serverUrl+"/"+meshGroup+"/"+dataSetId;
+		
+		RDFSchema rdfSchema = new RDFSchema(dataSetId, url+"#", dataSetId);
+		rdfSchema.addStringProperty(null, "id1", IRDFSchema.DEFAULT_LANGUAGE);		
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldAddPropertyFailsWhenPropertyNameIsEmpty(){
+		String serverUrl = "http://localhost:8080/mesh4x/feeds";
+		String meshGroup = "meshGroup";
+		String dataSetId = "dataSetId";
+
+		String url = serverUrl+"/"+meshGroup+"/"+dataSetId;
+		
+		RDFSchema rdfSchema = new RDFSchema(dataSetId, url+"#", dataSetId);
+		rdfSchema.addStringProperty("", "id1", IRDFSchema.DEFAULT_LANGUAGE);		
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldAddPropertyFailsWhenPropertyNameHasOneBlank(){
+		String serverUrl = "http://localhost:8080/mesh4x/feeds";
+		String meshGroup = "meshGroup";
+		String dataSetId = "dataSetId";
+
+		String url = serverUrl+"/"+meshGroup+"/"+dataSetId;
+		
+		RDFSchema rdfSchema = new RDFSchema(dataSetId, url+"#", dataSetId);
+		rdfSchema.addStringProperty("id 1", "id1", IRDFSchema.DEFAULT_LANGUAGE);		
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldAddPropertyFailsWhenPropertyNameHasBlanks(){
+		String serverUrl = "http://localhost:8080/mesh4x/feeds";
+		String meshGroup = "meshGroup";
+		String dataSetId = "dataSetId";
+
+		String url = serverUrl+"/"+meshGroup+"/"+dataSetId;
+		
+		RDFSchema rdfSchema = new RDFSchema(dataSetId, url+"#", dataSetId);
+		rdfSchema.addStringProperty("id 1", "id1", IRDFSchema.DEFAULT_LANGUAGE);		
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldAddPropertyFailsWhenLabelIsNull(){
+		String serverUrl = "http://localhost:8080/mesh4x/feeds";
+		String meshGroup = "meshGroup";
+		String dataSetId = "dataSetId";
+
+		String url = serverUrl+"/"+meshGroup+"/"+dataSetId;
+		
+		RDFSchema rdfSchema = new RDFSchema(dataSetId, url+"#", dataSetId);
+		rdfSchema.addStringProperty("id1", null, IRDFSchema.DEFAULT_LANGUAGE);		
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldAddPropertyFailsWhenLabelIsEmpty(){
+		String serverUrl = "http://localhost:8080/mesh4x/feeds";
+		String meshGroup = "meshGroup";
+		String dataSetId = "dataSetId";
+
+		String url = serverUrl+"/"+meshGroup+"/"+dataSetId;
+		
+		RDFSchema rdfSchema = new RDFSchema(dataSetId, url+"#", dataSetId);
+		rdfSchema.addStringProperty("id1", "", IRDFSchema.DEFAULT_LANGUAGE);		
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldAddPropertyFailsWhenLanguageIsNull(){
+		String serverUrl = "http://localhost:8080/mesh4x/feeds";
+		String meshGroup = "meshGroup";
+		String dataSetId = "dataSetId";
+
+		String url = serverUrl+"/"+meshGroup+"/"+dataSetId;
+		
+		RDFSchema rdfSchema = new RDFSchema(dataSetId, url+"#", dataSetId);
+		rdfSchema.addStringProperty("id1", "id1", null);		
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldAddPropertyFailsWhenLanguageIsEmpty(){
+		String serverUrl = "http://localhost:8080/mesh4x/feeds";
+		String meshGroup = "meshGroup";
+		String dataSetId = "dataSetId";
+
+		String url = serverUrl+"/"+meshGroup+"/"+dataSetId;
+		
+		RDFSchema rdfSchema = new RDFSchema(dataSetId, url+"#", dataSetId);
+		rdfSchema.addStringProperty("id1", "id1", "");		
+	}
+	
+	@Test
+	public void shouldNormalizePropertyName(){
+		Assert.assertEquals("My_Name", RDFSchema.normalizePropertyName("My Name"));
+		Assert.assertEquals("My_Second_Name", RDFSchema.normalizePropertyName("My Second Name"));
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldNormalizePropertyNameFailsIfPropertyNameIsNull(){
+		RDFSchema.normalizePropertyName(null);
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldNormalizePropertyNameFailsIfPropertyNameIsEmpty(){
+		RDFSchema.normalizePropertyName("");
+	}
 }

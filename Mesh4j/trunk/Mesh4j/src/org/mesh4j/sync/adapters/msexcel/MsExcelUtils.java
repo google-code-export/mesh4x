@@ -166,8 +166,15 @@ public class MsExcelUtils {
 		return row;
 	}
 	
-	public static Cell getOrCreateCellStringIfAbsent(Workbook workbook,Row row, String value){
-		
+	public static Cell getOrCreateCellStringIfAbsent(Workbook workbook, Row row, String value) {
+		Cell cell = getCellString(workbook, row, value);
+		if(cell == null){
+			cell = createCellString(workbook, row, value);
+		}
+		return cell;
+	}
+	
+	public static Cell getCellString(Workbook workbook, Row row, String value){
 		for (Iterator<Cell> iterator = row.cellIterator(); iterator.hasNext();) {
 			Cell cell = iterator.next();
 			String cellValue = cell.getRichStringCellValue().getString();
@@ -175,7 +182,10 @@ public class MsExcelUtils {
 				return cell;
 			}
 		}
-		
+		return null;
+	}
+	
+	public static Cell createCellString(Workbook workbook, Row row, String value){
 		Cell cell = row.createCell(row.getPhysicalNumberOfCells(), Cell.CELL_TYPE_STRING);
 		cell.setCellValue(getRichTextString(workbook, value));
 		return cell;
@@ -249,6 +259,7 @@ public class MsExcelUtils {
 	public static RichTextString getRichTextString(Workbook workbook,String value){
 		return workbook.getCreationHelper().createRichTextString(value);
 	}
+
 
 }
 

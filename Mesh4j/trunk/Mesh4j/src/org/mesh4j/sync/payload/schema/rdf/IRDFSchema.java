@@ -18,6 +18,8 @@ public interface IRDFSchema extends ISchema {
 	public static final String ELEMENT_RDF = "RDF";
 	public static final QName QNAME_RDF = DocumentHelper.createQName("RDF", NS_RDF);
 	
+	public static final String DEFAULT_LANGUAGE = "en";
+	
 	public static final String XLS_STRING = XSD.xstring.getURI();
 	public static final String XLS_INTEGER = XSD.integer.getURI();
 	public static final String XLS_BOOLEAN = XSD.xboolean.getURI();
@@ -40,6 +42,7 @@ public interface IRDFSchema extends ISchema {
 	
 	public String getPropertyName(int index);
 	public String getPropertyType(String propertyName);
+	public String getPropertyLabel(String propertyName);
 	public String getPropertyLabel(String propertyName, String lang);
 	
 	public String getOntologyBaseUri();

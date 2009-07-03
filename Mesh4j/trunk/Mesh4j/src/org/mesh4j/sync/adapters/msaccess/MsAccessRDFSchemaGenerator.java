@@ -47,7 +47,7 @@ public class MsAccessRDFSchemaGenerator {
 				addProperty(rdfSchema, column);
 				
 				if(DataType.GUID.equals(column.getType())){
-					identifiablePropertyNames.add(column.getName());
+					identifiablePropertyNames.add(RDFSchema.normalizePropertyName(column.getName()));
 				}
 			}
 			
@@ -55,7 +55,7 @@ public class MsAccessRDFSchemaGenerator {
 			if(!pks.isEmpty()){
 				identifiablePropertyNames = new ArrayList<String>();
 				for (ColumnDescriptor columnDescriptor : pks) {
-					identifiablePropertyNames.add(columnDescriptor.getName());	
+					identifiablePropertyNames.add(RDFSchema.normalizePropertyName(columnDescriptor.getName()));	
 				}				
 			}
 			rdfSchema.setIdentifiablePropertyNames(identifiablePropertyNames);			
@@ -69,42 +69,44 @@ public class MsAccessRDFSchemaGenerator {
 
 	// TODO (JMT) RDF: improve MSAccess to RDF type mapper
 	private static void addProperty(RDFSchema rdfSchema, Column column) {
-		String propertyName = getNodeName(column);
+		String columName = column.getName();
+		String propertyName = RDFSchema.normalizePropertyName(columName);
+				
 		if(column.isAutoNumber()){
 			if(DataType.GUID.equals(column.getType())){
-				rdfSchema.addStringProperty(propertyName, propertyName, "en");
+				rdfSchema.addStringProperty(propertyName, columName, IRDFSchema.DEFAULT_LANGUAGE);
 			}
 		} else {
 			if(DataType.GUID.equals(column.getType())){
-				rdfSchema.addStringProperty(propertyName, propertyName, "en");
+				rdfSchema.addStringProperty(propertyName, columName, IRDFSchema.DEFAULT_LANGUAGE);
 			}
 			
 			if(DataType.BOOLEAN.equals(column.getType())){
-				rdfSchema.addBooleanProperty(propertyName, propertyName, "en");
+				rdfSchema.addBooleanProperty(propertyName, columName, IRDFSchema.DEFAULT_LANGUAGE);
 			}
 			
 			if(DataType.SHORT_DATE_TIME.equals(column.getType())){
-				rdfSchema.addDateTimeProperty(propertyName, propertyName, "en");
+				rdfSchema.addDateTimeProperty(propertyName, columName, IRDFSchema.DEFAULT_LANGUAGE);
 			}
 			
 			if(DataType.TEXT.equals(column.getType())  || DataType.MEMO.equals(column.getType()) ){
-				rdfSchema.addStringProperty(propertyName, propertyName, "en");
+				rdfSchema.addStringProperty(propertyName, columName, IRDFSchema.DEFAULT_LANGUAGE);
 			}
 	
 			if(DataType.BYTE.equals(column.getType()) || DataType.LONG.equals(column.getType())){
-				rdfSchema.addLongProperty(propertyName, propertyName, "en");
+				rdfSchema.addLongProperty(propertyName, columName, IRDFSchema.DEFAULT_LANGUAGE);
 			}
 			
 			if(DataType.INT.equals(column.getType())){
-				rdfSchema.addIntegerProperty(propertyName, propertyName, "en");
+				rdfSchema.addIntegerProperty(propertyName, columName, IRDFSchema.DEFAULT_LANGUAGE);
 			}
 	
 			if(DataType.DOUBLE.equals(column.getType())){
-				rdfSchema.addDoubleProperty(propertyName, propertyName, "en");
+				rdfSchema.addDoubleProperty(propertyName, columName, IRDFSchema.DEFAULT_LANGUAGE);
 			}
 	
 			if(DataType.NUMERIC.equals(column.getType())){
-				rdfSchema.addDecimalProperty(propertyName, propertyName, "en");
+				rdfSchema.addDecimalProperty(propertyName, columName, IRDFSchema.DEFAULT_LANGUAGE);
 			}
 		}
 	}
@@ -113,10 +115,6 @@ public class MsAccessRDFSchemaGenerator {
 		return tableName.trim().replaceAll(" ", "_");
 	}
 	
-	private static String getNodeName(Column column) {
-		return column.getName().trim().replaceAll(" ", "_");
-	}
-
 	public static MsAccessToRDFMapping extractRDFSchemaAndMappings(String fileName, String tableName, String rdfBaseURL) {
 		Guard.argumentNotNullOrEmptyString(fileName, "mdbFileName");
 		Guard.argumentNotNullOrEmptyString(tableName, "tableName");
@@ -145,8 +143,9 @@ public class MsAccessRDFSchemaGenerator {
 				addProperty(rdfSchema, column);
 				
 				if(DataType.GUID.equals(column.getType())){
-					guidPropertyNames.add(column.getName());
-					identifiablePropertyNames.add(column.getName());
+					String propertyName = RDFSchema.normalizePropertyName(column.getName());
+					guidPropertyNames.add(propertyName);
+					identifiablePropertyNames.add(propertyName);
 				}
 			}
 			
@@ -154,7 +153,7 @@ public class MsAccessRDFSchemaGenerator {
 			if(!pks.isEmpty()){
 				identifiablePropertyNames = new ArrayList<String>();
 				for (ColumnDescriptor columnDescriptor : pks) {
-					identifiablePropertyNames.add(columnDescriptor.getName());	
+					identifiablePropertyNames.add(RDFSchema.normalizePropertyName(columnDescriptor.getName()));	
 				}	
 			}
 			

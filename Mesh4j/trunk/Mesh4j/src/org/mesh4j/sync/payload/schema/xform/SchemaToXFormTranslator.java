@@ -51,7 +51,7 @@ public class SchemaToXFormTranslator {
 		for (int i = 0; i < size; i++) {
 			String propertyName = schema.getPropertyName(i);
 			String propertyType = schema.getPropertyType(propertyName);
-			String propertyLabel = schema.getPropertyLabel(propertyName, "en");
+			String propertyLabel = schema.getPropertyLabel(propertyName);
 			
 			writeComponent(model, propertyName, propertyLabel, propertyType, writerHeadInstance, writerHeadBinIds, writerBody);
 		}

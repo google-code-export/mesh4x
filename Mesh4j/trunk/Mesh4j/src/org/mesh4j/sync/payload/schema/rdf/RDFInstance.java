@@ -227,8 +227,7 @@ public class RDFInstance {
 		return asPlainXML(typeFormats, null);
 	}
 	
-	@SuppressWarnings("unchecked")
-	public String asPlainXML(Map<String, ISchemaTypeFormat> typeFormats, Map<String, String> joinProperties) {
+	public String asPlainXML(Map<String, ISchemaTypeFormat> typeFormats, CompositeProperty[] compositeProperties) {
 
 		StringBuffer sb = new StringBuffer();
 
@@ -265,26 +264,12 @@ public class RDFInstance {
 	            	}
 	            }
 	            
-	            if(joinProperties != null){
-	            	String joinPropertyName = joinProperties.get(fieldName);
-	            	if(joinPropertyName != null){
-	            		HashMap<String, Object> joinValues = (HashMap<String, Object>) properties.get(joinPropertyName);
-	            		if(joinValues == null){
-	            			System.out.println(joinProperties);
-	            			
-	            			joinValues = new HashMap<String, Object>();
-	            			for (String joinName : joinProperties.keySet()) {
-								joinValues.put(joinName, null);
-								System.out.println(joinName);
-							}	            			
-	            			properties.put(joinPropertyName, joinValues);
-	            		}
-	            		joinValues.put(fieldName, fieldValue);
-	            	} else {	            
-		            	properties.put(fieldName, fieldValue);
-		            }
-	            } else {	            
+	            CompositeProperty compositeProperty = getCompositeProperty(compositeProperties, fieldName);
+	            if(compositeProperty == null){
 	            	properties.put(fieldName, fieldValue);
+	            } else {	            	
+	            	compositeProperty.setPropertyValue(fieldName, fieldValue);
+	            	properties.put(compositeProperty.getCompositeName(), compositeProperty);
 	            }
 			 }
 		}
@@ -303,16 +288,31 @@ public class RDFInstance {
 		return XMLHelper.canonicalizeXML(element);
 	}
 	
-	@SuppressWarnings("unchecked")
+	private CompositeProperty getCompositeProperty(CompositeProperty[] compositeProperties, String fieldName) {
+		if(compositeProperties == null){
+			return null;
+		}
+		
+		for (CompositeProperty compositeProperty : compositeProperties) {
+			if(compositeProperty.containsPropery(fieldName)){
+				return compositeProperty;
+			}
+		}
+		return null;
+	}
+
 	private void writePlainXMLProperty(StringBuffer sb, String fieldName, Object fieldValue){
 		 sb.append("<");
 		 sb.append(fieldName);
 		 sb.append(">");
 		 
-		 if(fieldValue instanceof HashMap){
-			 HashMap<String, Object> propValues = (HashMap<String, Object>) fieldValue;
-			 for (String propName : propValues.keySet()) {
-				 writePlainXMLProperty(sb, propName, propValues.get(propName));
+		 if(fieldValue instanceof CompositeProperty){
+			 CompositeProperty compositeProperty = (CompositeProperty) fieldValue;
+			 if(compositeProperty.isCompleted()){
+				 for (String propName : compositeProperty.getPropertyNames()){
+					 Object propValue = compositeProperty.getPropertyValue(propName);
+					 writePlainXMLProperty(sb, propName, propValue);
+				 }
 			 }
 		 } else {
 			 sb.append(fieldValue);
@@ -383,5 +383,9 @@ public class RDFInstance {
 		} else {
 			return id;
 		}
+	}
+
+	public String getPropertyLabel(String propertyName) {
+		return this.schema.getPropertyLabel(propertyName);
 	}
 }

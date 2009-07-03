@@ -2,7 +2,7 @@ package org.mesh4j.sync.adapters.hibernate;
 
 import java.io.File;
 import java.text.MessageFormat;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
@@ -20,6 +20,7 @@ import org.hibernate.mapping.Property;
 import org.hibernate.tool.hbm2ddl.SchemaUpdate;
 import org.hibernate.tool.hbm2x.HibernateMappingExporter;
 import org.hibernate.tool.hbmlint.detector.TableSelectorStrategy;
+import org.hibernate.type.ComponentType;
 import org.hibernate.type.Type;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.ISyncAdapterFactory;
@@ -121,20 +122,26 @@ public class HibernateSyncAdapterFactory implements ISyncAdapterFactory{
 		
 		Property property = mapping.getIdentifierProperty();
 		if(property.isComposite()){
-			org.hibernate.type.ComponentType componentType = (org.hibernate.type.ComponentType)property.getType();
+			ComponentType componentType = (ComponentType)property.getType();
 			String[] propertyNames = componentType.getPropertyNames();
 			Type[] propertyTypes = componentType.getSubtypes();
 			
+			ArrayList<String> ids = new ArrayList<String>();
 			for (int i = 0; i < propertyTypes.length; i++) {
-				addRDFProperty(rdfSchema, propertyNames[i], propertyTypes[i]);	
+				String propName = propertyNames[i];
+				String idName = RDFSchema.normalizePropertyName(propName);
+				ids.add(idName);
+				
+				addRDFProperty(rdfSchema, idName, propName, propertyTypes[i]);	
 			}
 						
-			rdfSchema.setIdentifiablePropertyNames(Arrays.asList(propertyNames));
+			rdfSchema.setIdentifiablePropertyNames(ids);
 		} else {
-			String propertyName = getPropertyName(property);
+			String hibernatePropertyName = getHibernatePropertyName(property);
+			String propertyName = RDFSchema.normalizePropertyName(hibernatePropertyName);
 			Type propertyType = property.getType();
 			
-			addRDFProperty(rdfSchema, propertyName, propertyType);
+			addRDFProperty(rdfSchema, propertyName, hibernatePropertyName, propertyType);
 			rdfSchema.setIdentifiablePropertyName(propertyName);
 			if(Hibernate.BINARY.equals(propertyType)){
 				rdfSchema.setGUIDPropertyName(propertyName);
@@ -144,54 +151,59 @@ public class HibernateSyncAdapterFactory implements ISyncAdapterFactory{
 		
 		Property version = mapping.getVersion();
 		if(version != null){
-			rdfSchema.setVersionPropertyName(getPropertyName(version));
+			String hibernatePropertyName = getHibernatePropertyName(version);
+			String propertyName = RDFSchema.normalizePropertyName(hibernatePropertyName);
+			rdfSchema.setVersionPropertyName(propertyName);
 		}
 		
 		Iterator<Property> it = mapping.getPropertyIterator();
 		while(it.hasNext()){
 			property = it.next();
-			addRDFProperty(rdfSchema, getPropertyName(property), property.getType());
+			
+			String hibernatePropertyName = getHibernatePropertyName(property);
+			String propertyName = RDFSchema.normalizePropertyName(hibernatePropertyName);
+			addRDFProperty(rdfSchema, propertyName, hibernatePropertyName, property.getType());
 		}
 		return rdfSchema;
 	}
 	
 	// TODO (JMT) RDF: improve Hibernate type to RDF type mappings
-	private static void addRDFProperty(RDFSchema rdfSchema, String propertyName, Type type) {
+	private static void addRDFProperty(RDFSchema rdfSchema, String propertyName, String label, Type type) {
 		
 		if(Hibernate.STRING.equals(type) || Hibernate.BINARY.equals(type)){
-			rdfSchema.addStringProperty(propertyName, propertyName, "en");
+			rdfSchema.addStringProperty(propertyName, label, IRDFSchema.DEFAULT_LANGUAGE);
 		}
 		
 		if(Hibernate.BOOLEAN.equals(type)){
-			rdfSchema.addBooleanProperty(propertyName, propertyName, "en");
+			rdfSchema.addBooleanProperty(propertyName, label, IRDFSchema.DEFAULT_LANGUAGE);
 		}
 		
 		if(Hibernate.DATE.equals(type) || Hibernate.TIMESTAMP.equals(type)){
-			rdfSchema.addDateTimeProperty(propertyName, propertyName, "en");
+			rdfSchema.addDateTimeProperty(propertyName, label, IRDFSchema.DEFAULT_LANGUAGE);
 		}
 
 		if(Hibernate.LONG.equals(type)){
-			rdfSchema.addLongProperty(propertyName, propertyName, "en");
+			rdfSchema.addLongProperty(propertyName, label, IRDFSchema.DEFAULT_LANGUAGE);
 		}
 		
 		if(Hibernate.INTEGER.equals(type)){
-			rdfSchema.addIntegerProperty(propertyName, propertyName, "en");
+			rdfSchema.addIntegerProperty(propertyName, label, IRDFSchema.DEFAULT_LANGUAGE);
 		}
 
 		if(Hibernate.DOUBLE.equals(type)){
-			rdfSchema.addDoubleProperty(propertyName, propertyName, "en");
+			rdfSchema.addDoubleProperty(propertyName, label, IRDFSchema.DEFAULT_LANGUAGE);
 		}
 
 		if(Hibernate.BIG_DECIMAL.equals(type)){
-			rdfSchema.addDecimalProperty(propertyName, propertyName, "en");
+			rdfSchema.addDecimalProperty(propertyName, label, IRDFSchema.DEFAULT_LANGUAGE);
 		}
 		
 		if(Hibernate.FLOAT.equals(type)){
-			rdfSchema.addFloatProperty(propertyName, propertyName, "en");
+			rdfSchema.addFloatProperty(propertyName, label, IRDFSchema.DEFAULT_LANGUAGE);
 		}
 	}
 
-	private static String getPropertyName(Property property) {
+	private static String getHibernatePropertyName(Property property) {
 		String propertyName = null;
 		if (property.getValue().getColumnIterator().hasNext()){
 			propertyName = ((Column) property.getValue()

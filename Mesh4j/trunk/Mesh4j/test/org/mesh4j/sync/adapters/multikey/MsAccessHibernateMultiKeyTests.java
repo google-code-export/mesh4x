@@ -1,14 +1,25 @@
 package org.mesh4j.sync.adapters.multikey;
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
+import junit.framework.Assert;
+
+import org.junit.Test;
 import org.mesh4j.sync.SyncEngine;
+import org.mesh4j.sync.adapters.IdentifiableContent;
 import org.mesh4j.sync.adapters.feed.FeedAdapter;
 import org.mesh4j.sync.adapters.feed.FeedSyncAdapterFactory;
+import org.mesh4j.sync.adapters.hibernate.HibernateContentAdapter;
+import org.mesh4j.sync.adapters.hibernate.mapping.HibernateToRDFMapping;
 import org.mesh4j.sync.adapters.hibernate.msaccess.MsAccessHibernateSyncAdapterFactory;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.Item;
+import org.mesh4j.sync.model.Sync;
+import org.mesh4j.sync.payload.schema.rdf.RDFInstance;
+import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
 import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.test.utils.TestHelper;
 import org.mesh4j.sync.utils.FileUtils;
@@ -16,107 +27,186 @@ import org.mesh4j.sync.validations.MeshException;
 
 public class MsAccessHibernateMultiKeyTests {
 
-//	//@Test
-//	public void testReplicationID()throws Exception{
-//		String filename = TestHelper.baseDirectoryRootForTest() + "ms-access/multikey.mdb";
-//		String database = "jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=";
-//		database+= filename.trim() + ";DriverID=22;READONLY=false}"; // add on to the end 
-// 
-//		JdbcOdbcDriver driver = (JdbcOdbcDriver)Class.forName("sun.jdbc.odbc.JdbcOdbcDriver").newInstance();
-//		Assert.assertNotNull(driver);
-//		
-//		java.util.Properties prop = new java.util.Properties();
-//	     //prop.put("charSet", "UTF-16");
-//	       prop.put("user", "");
-//	       prop.put("password", "");
-//
-//		Connection conn = DriverManager.getConnection(database, prop);
-//		
-//		Statement command = conn.createStatement();
-//		ResultSet rs = command.executeQuery("select settlement0_.id as id2_, settlement0_.Field1 as Field2_2_, settlement0_.Field2 as Field3_2_, settlement0_.Field3 as Field4_2_, settlement0_.Field4 as Field5_2_, settlement0_.Field5 as Field6_2_, settlement0_.Field6 as Field7_2_, settlement0_.Field7 as Field8_2_, settlement0_.Field8 as Field9_2_, settlement0_.Field9 as Field10_2_, settlement0_.Field10 as Field11_2_, settlement0_.Field11 as Field12_2_, settlement0_.Field12 as Field13_2_ from Settlement_2_Query settlement0_");
-//		while (rs.next())
-//		{
-//			System.out.println("2802E845-7DB0-412D-B318-820116F801EF");
-//			byte[] bytes0 = "2802E8457DB0412DB318820116F801EF".getBytes();
-//			printBytes(bytes0);
-//			
-//			byte[] bytesutf16 = "2802E845-7DB0-412D-B318-820116F801EF".getBytes(Charset.forName("UTF-16"));
-//			printBytes(bytesutf16);
-//
-//			byte[] bytes1 = rs.getBytes("id2_");
-//			printBytes(bytes1);
-//			
-//			InputStream is = rs.getBinaryStream("id2_");
-//			byte[] bytes = readInputStream(is, 32);
-//			printBytes(bytes);
-//		}
-//		
-//	}
-//
-//	private void printBytes(byte[] bytesutf16) {
-//		
-//		System.out.print("[");
-//		for (byte b : bytesutf16) {
-//			System.out.print(b);
-//			System.out.print(" ");
-//		}
-//		System.out.println("]");
-//		
-//	}
-//	
-//	public byte[] readInputStream(InputStream inputStream, int maxCycles) throws Exception{
-//        byte[]    buffer = new byte[maxCycles];
-//        int       bytesRead = 0;
-//        int    cycle = 0;
-//            
-//        // read first byte
-//
-//        bytesRead = inputStream.read(buffer, cycle++, 1);
-//        while (bytesRead != -1 && cycle < maxCycles) {
-//                // read next byte.  give offset of previously read bytes.
-//        	bytesRead = inputStream.read(buffer, cycle++, 1);
-//        }
-//        return buffer;
-//	}
+	@Test
+	public void shouldGetAll(){
+		SplitAdapter adapter = makeAdapter();
+		//RDFSchema rdfSchema = (RDFSchema)((HibernateContentAdapter)adapter.getContentAdapter()).getSchema();
+
+		List<Item> items = adapter.getAll();
 		
-	//@Test
-	public void shouldGetAll() throws Exception{
-		
-		String tableName = "multiKeyTable";
-		String fileName = TestHelper.fileName("msAccess_multikey_1_"+IdGenerator.INSTANCE.newID()+".mdb");
-		String mdbFileName = getMsAccessFileNameToTest(fileName);
-		
-		MsAccessHibernateSyncAdapterFactory factory = new MsAccessHibernateSyncAdapterFactory(TestHelper.baseDirectoryForTest(), "http://localhost:8008/mesh4x/feeds");
-		
-		SplitAdapter adapter = factory.createSyncAdapterFromFile(tableName, mdbFileName, tableName, NullIdentityProvider.INSTANCE);
+		Assert.assertNotNull(items);
+		Assert.assertFalse(items.isEmpty());
+		//assertItem("1,2", "1", "2", "jmt", items.get(0), rdfSchema, 1);
+		//assertItem("1,1", "1", "1", "bia", items.get(1), rdfSchema, 1);
+	}
+
+	@Test
+	public void shouldGet(){
+		SplitAdapter adapter = makeAdapter();
+		List<Item> items = adapter.getAll();
+		TestHelper.assertItem(items.get(0), adapter);
+	}
+	
+	@Test
+	public void shouldAdd(){
+		SplitAdapter adapter = makeAdapter();
+		RDFSchema rdfSchema = (RDFSchema)((HibernateContentAdapter)adapter.getContentAdapter()).getSchema();
+		HibernateToRDFMapping mapping = (HibernateToRDFMapping)((HibernateContentAdapter)adapter.getContentAdapter()).getMapping();
 	
 		List<Item> items = adapter.getAll();
-		for (Item item : items) {
-			System.out.println(item.getContent().getId());
-			System.out.println(item.getContent().getPayload().asXML());
+		int size = items.size();
+		Assert.assertNotNull(items);
+		Assert.assertFalse(items.isEmpty());
+		
+		String id2 = IdGenerator.INSTANCE.newID();
+		HashMap<String, Object> properties = new HashMap<String, Object>();
+		properties.put("id1", "1");
+		properties.put("id2", id2);
+		properties.put("name", "sol");
+		RDFInstance instance = rdfSchema.createNewInstanceFromProperties("1,"+id2, properties);
+		
+		IdentifiableContent identifiableContent = new IdentifiableContent(instance.asElementXML(), mapping, "1,"+id2);
+		Item item = new Item(identifiableContent, new Sync(IdGenerator.INSTANCE.newID(), "jmt", new Date(), false));
+		adapter.add(item);	
+		
+		items = adapter.getAll();
+		Assert.assertNotNull(items);
+		Assert.assertEquals(size +1, items.size());
+		
+		TestHelper.assertItem(item, adapter);
+	}
+	
+	@Test
+	public void shouldUpdate(){
+		SplitAdapter adapter = makeAdapter();
+		RDFSchema rdfSchema = (RDFSchema)((HibernateContentAdapter)adapter.getContentAdapter()).getSchema();
+		HibernateToRDFMapping mapping = (HibernateToRDFMapping)((HibernateContentAdapter)adapter.getContentAdapter()).getMapping();
+
+		List<Item> items = adapter.getAll();
+		
+		Assert.assertNotNull(items);
+		Assert.assertFalse(items.isEmpty());
+		int size = items.size();
+		
+		String id2 = IdGenerator.INSTANCE.newID();
+		HashMap<String, Object> properties = new HashMap<String, Object>();
+		properties.put("id1", "1");
+		properties.put("id2", id2);
+		properties.put("name", "sol");
+		RDFInstance instance = rdfSchema.createNewInstanceFromProperties("1,"+id2, properties);
+		
+		IdentifiableContent identifiableContent = new IdentifiableContent(instance.asElementXML(), mapping, "1,"+id2);
+		Item item = new Item(identifiableContent, new Sync(IdGenerator.INSTANCE.newID(), "jmt", new Date(), false));
+		adapter.add(item);	
+		
+		items = adapter.getAll();		
+		Assert.assertNotNull(items);
+		Assert.assertFalse(items.isEmpty());
+		Assert.assertEquals(size+1, items.size());
+		size = items.size();
+		
+		properties = new HashMap<String, Object>();
+		properties.put("id1", "1");
+		properties.put("id2", id2);
+		properties.put("name", "name"+IdGenerator.INSTANCE.newID());
+		instance = rdfSchema.createNewInstanceFromProperties("1,"+id2, properties);
+		
+		identifiableContent = new IdentifiableContent(instance.asElementXML(), mapping, "1,"+id2);
+		Item itemToUpdate = new Item(identifiableContent, item.getSync().clone().update("jmt", new Date(), false));
+		adapter.update(itemToUpdate);	
+		
+		items = adapter.getAll();
+		Assert.assertNotNull(items);
+		Assert.assertEquals(size, items.size());
+		
+		TestHelper.assertItem(itemToUpdate, adapter);
+	}
+	
+	@Test
+	public void shouldDelete(){
+		SplitAdapter adapter = makeAdapter();
+		RDFSchema rdfSchema = (RDFSchema)((HibernateContentAdapter)adapter.getContentAdapter()).getSchema();
+		HibernateToRDFMapping mapping = (HibernateToRDFMapping)((HibernateContentAdapter)adapter.getContentAdapter()).getMapping();
+
+		List<Item> items = adapter.getAll();
+		
+		Assert.assertNotNull(items);
+		Assert.assertFalse(items.isEmpty());
+		int size = items.size();
+		
+		String id2 = IdGenerator.INSTANCE.newID();
+		HashMap<String, Object> properties = new HashMap<String, Object>();
+		properties.put("id1", "1");
+		properties.put("id2", id2);
+		properties.put("name", "sol");
+		RDFInstance instance = rdfSchema.createNewInstanceFromProperties("1,"+id2, properties);
+		
+		IdentifiableContent identifiableContent = new IdentifiableContent(instance.asElementXML(), mapping, "1,"+id2);
+		Item item = new Item(identifiableContent, new Sync(IdGenerator.INSTANCE.newID(), "jmt", new Date(), false));
+		adapter.add(item);	
+		
+		Item itemToDelete = item.clone();
+		itemToDelete.getSync().delete("jmt", new Date());
+		adapter.update(itemToDelete);	
+		
+		Item resultItem = adapter.get(item.getSyncId());
+		Assert.assertTrue(resultItem.isDeleted());
+		
+		id2 = IdGenerator.INSTANCE.newID();
+		properties = new HashMap<String, Object>();
+		properties.put("id1", "1");
+		properties.put("id2", id2);
+		properties.put("name", "sol");
+		instance = rdfSchema.createNewInstanceFromProperties("1,"+id2, properties);
+		
+		identifiableContent = new IdentifiableContent(instance.asElementXML(), mapping, "1,"+id2);
+		item = new Item(identifiableContent, new Sync(IdGenerator.INSTANCE.newID(), "jmt", new Date(), false));
+		adapter.add(item);	
+		
+		adapter.delete(item.getSyncId());
+
+		resultItem = adapter.get(item.getSyncId());
+		Assert.assertTrue(resultItem.isDeleted());
+				
+		items = adapter.getAll();
+			
+		Assert.assertNotNull(items);
+		Assert.assertFalse(items.isEmpty());
+		Assert.assertEquals(size + 2, items.size());
+		
+	}
+	
+	@Test
+	public void shouldSync(){
+		String fileName = TestHelper.fileName("msExcel_multikey_"+IdGenerator.INSTANCE.newID());
+		FeedAdapter feedAdapter = FeedSyncAdapterFactory.createSyncAdapter(fileName+".xml", NullIdentityProvider.INSTANCE);
+
+		SplitAdapter adapter = makeAdapter();
+
+		SyncEngine syncEngine = new SyncEngine(feedAdapter, adapter);
+		
+		TestHelper.assertSync(syncEngine);
+		
+		TestHelper.assertSync(syncEngine);
+	}
+	
+	// PRIVATE
+	
+	private SplitAdapter makeAdapter() {
+		try{
+			String tableName = "mesh_multi_key";
+			String fileName = TestHelper.fileName("msAccess_multikey_1_"+IdGenerator.INSTANCE.newID()+".mdb");
+			String mdbFileName = getMsAccessFileNameToTest(fileName);
+			
+			MsAccessHibernateSyncAdapterFactory factory = new MsAccessHibernateSyncAdapterFactory(TestHelper.baseDirectoryForTest(), "http://localhost:8008/mesh4x/feeds");
+			
+			SplitAdapter adapter = factory.createSyncAdapterFromFile(tableName, mdbFileName, tableName, NullIdentityProvider.INSTANCE);
+			return adapter;
+		} catch (Exception e) {
+			throw new MeshException(e);
 		}
 	}
-	
-	//@Test
-	public void shouldSync() throws Exception{
-	
-		String fileName = TestHelper.fileName("msAccess_multikey_"+IdGenerator.INSTANCE.newID());
-		FeedAdapter feedAdapter = FeedSyncAdapterFactory.createSyncAdapter(fileName+".xml", NullIdentityProvider.INSTANCE);
-		
-		MsAccessHibernateSyncAdapterFactory factory = new MsAccessHibernateSyncAdapterFactory(TestHelper.baseDirectoryForTest(), "http://localhost:8008/mesh4x/feeds");
-		
-		String tableName = "multiKeyTable";
-		String mdbFileName = getMsAccessFileNameToTest(fileName+".mdb");
-		SplitAdapter msaccessAdapter = factory.createSyncAdapterFromFile(tableName, mdbFileName, tableName, NullIdentityProvider.INSTANCE);
-	
-		SyncEngine syncEngine = new SyncEngine(feedAdapter, msaccessAdapter);
-		
-		TestHelper.assertSync(syncEngine);
-		
-		TestHelper.assertSync(syncEngine);
-		
-	}
-	
+
 	private String getMsAccessFileNameToTest(String fileName) {
 		try{
 			String localFileName = this.getClass().getResource("DevDB2003.mdb").getFile();
@@ -128,29 +218,5 @@ public class MsAccessHibernateMultiKeyTests {
 	}
 	
 	
-//	@Test
-//	public void shouldtest(){
-//		RDFSchema schema = new RDFSchema("multiKeyTable", "http://mesh4x/multiKeyTable#", "multiKeyTable");
-//		schema.addStringProperty("id1", "id1", "en");
-//		schema.addStringProperty("id2", "id2", "en");
-//		schema.addStringProperty("name", "name", "en");
-//		schema.setIdentifiablePropertyNames(Arrays.asList(new String[]{"id1", "id2"}));
-//		
-//		String fileName = TestHelper.fileName("msAccess_multikey_3_"+IdGenerator.INSTANCE.newID()+".mdb");
-//		String mdbFileName = getMsAccessFileNameToTest(fileName+".mdb");
-//		String dbURL = "jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=" + mdbFileName.trim() + ";DriverID=22;READONLY=false}";
-//		HibernateSessionFactoryBuilder builder = new HibernateSessionFactoryBuilder();
-//		builder.setProperty("hibernate.dialect", MsAccessDialect.class.getName());
-//		builder.setProperty("hibernate.connection.driver_class", JdbcOdbcDriver.class.getName());
-//		builder.setProperty("hibernate.connection.url", dbURL);
-//		builder.setProperty("hibernate.connection.username", "");
-//		builder.setProperty("hibernate.connection.password", "");
-//		builder.addMapping(new File(TestHelper.fileName("multiKeyTable.hbm.xml")));
-//		builder.addMapping(new File(TestHelper.fileName("multiKeyTable_sync.hbm.xml")));
-//		builder.addRDFSchema("multiKeyTable", schema);
-//		
-//		HibernateContentAdapter adapter = new HibernateContentAdapter(builder, "multiKeyTable");
-//		List<IContent> result = adapter.getAll();
-//	}
 	
 }

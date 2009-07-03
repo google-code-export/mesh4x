@@ -16,13 +16,13 @@ public class RDFToXFormTranslatorTests {
 
 	private IRDFSchema getDefaultRDFSchema() {
 		RDFSchema rdfSchema = new RDFSchema("Oswego", "http://mesh4x/Oswego#", "Patient");
-		rdfSchema.addBooleanProperty("ill", "ill", "en");
-		rdfSchema.addDateTimeProperty("dateOnset", "dateOnSet", "en");
-		rdfSchema.addDecimalProperty("decimal", "decimal", "en");
-		rdfSchema.addDoubleProperty("AgeDouble", "ageDouble", "en");
-		rdfSchema.addIntegerProperty("AgeInt", "ageInt", "en");
-		rdfSchema.addLongProperty("AgeLong", "ageLong", "en");
-		rdfSchema.addStringProperty("name", "name", "en");
+		rdfSchema.addBooleanProperty("ill", "ill", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addDateTimeProperty("dateOnset", "dateOnSet", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addDecimalProperty("decimal", "decimal", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addDoubleProperty("AgeDouble", "ageDouble", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addIntegerProperty("AgeInt", "ageInt", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addLongProperty("AgeLong", "ageLong", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addStringProperty("name", "name", IRDFSchema.DEFAULT_LANGUAGE);
 	
 		return rdfSchema;
 	

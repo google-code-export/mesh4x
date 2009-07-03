@@ -5,6 +5,8 @@ import java.io.FileWriter;
 import java.io.StringWriter;
 import java.sql.SQLException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.mesh4j.sync.adapters.hibernate.mapping.MappingGenerator;
@@ -14,6 +16,7 @@ import com.healthmarketscience.jackcess.Column;
 import com.healthmarketscience.jackcess.Database;
 import com.healthmarketscience.jackcess.Index;
 import com.healthmarketscience.jackcess.Table;
+import com.healthmarketscience.jackcess.Index.ColumnDescriptor;
 
 public class MsAccessHibernateMappingGenerator {
 
@@ -34,29 +37,66 @@ public class MsAccessHibernateMappingGenerator {
 			MappingGenerator.writeHeader(writer);
 			MappingGenerator.writerClass(writer, getEntityName(tableName), tableName);
 			
-			String columnNamePrimaryKey = getPrimaryKey(table);
-			Column columnID = table.getColumn(columnNamePrimaryKey);
+			List<ColumnDescriptor> ids =  getPrimaryKey(table);
+			if(ids == null || ids.isEmpty()){
+				Guard.throwsArgumentException("PKs", tableName);
+			}
 			
-			if(columnID.getType().name().equals("GUID")){
-				writer.write("\n");
-				writer.write("\t\t");
-				// type=\"{1}\"
-				writer.write(MessageFormat.format("<id name=\"{0}\" type=\"{1}\" column=\"{2}\">", getNodeName(columnID.getName()), UUIDType.class.getName(), columnID.getName()));
-				writer.write("\n");
-				writer.write("\t\t\t");
-				//writer.write("<generator class=\"uuid\"/>");
-				writer.write("<generator class=\"assigned\"/>");
-				writer.write("\n");
-				writer.write("\t\t");
-				writer.write("</id>");	
+			ArrayList<String> idNames = new ArrayList<String>();
+			if(ids.size() == 1){
+				ColumnDescriptor columnDescriptor = ids.get(0);
+				Column columnID = columnDescriptor.getColumn();
+				String propertyName = getNodeName(columnID.getName());
+				String msAccessColumnName = getMsAccessColumnName(columnID.getName());				
+				
+				if(columnID.getType().name().equals("GUID")){
+					writer.write("\n");
+					writer.write("\t\t");
+					writer.write(MessageFormat.format("<id name=\"{0}\" type=\"{1}\" column=\"{2}\">", propertyName, UUIDType.class.getName(), msAccessColumnName));
+					writer.write("\n");
+					writer.write("\t\t\t");
+					writer.write("<generator class=\"assigned\"/>");
+					writer.write("\n");
+					writer.write("\t\t");
+					writer.write("</id>");	
+					
+				} else {
+					MappingGenerator.writeID(writer, propertyName, msAccessColumnName, getHibernateType(columnID));
+				}
+				
+				idNames.add(propertyName);
 			} else {
-				MappingGenerator.writeID(writer, getNodeName(columnID.getName()), columnID.getName(), getHibernateType(columnID));
+				writer.write("\n");
+				writer.write("\t\t");
+				writer.write("<composite-id name=\"id\">");	
+				
+				for (ColumnDescriptor columnDescriptor : ids) {
+					Column column = columnDescriptor.getColumn();
+					String propertyName = getNodeName(column.getName());
+					String msAccessColumnName = getMsAccessColumnName(column.getName());					
+					idNames.add(propertyName);
+					
+					writer.write("\n");
+					writer.write("\t\t\t");
+					writer.write(MessageFormat.format("<key-property name=\"{0}\" node=\"{0}\" type=\"{1}\">", propertyName, getHibernateType(column)));
+					writer.write("\n");
+					writer.write("\t\t\t\t");
+					writer.write(MessageFormat.format("<column name=\"{0}\"/>", msAccessColumnName));
+					writer.write("\n");
+					writer.write("\t\t\t");
+					writer.write("</key-property>");
+				}
+				writer.write("\n");
+				writer.write("\t\t");
+				writer.write("</composite-id>");	
 			}
 			
 			for (Column column : table.getColumns()) {
-				if(!column.getName().equals(columnNamePrimaryKey) && !column.isAutoNumber() ){
-					String columnName = column.getName();
-					MappingGenerator.writeProperty(writer, getNodeName(columnName), columnName, getHibernateType(column));
+				String columnName = column.getName();
+				String propertyName = getNodeName(columnName);
+				String msAccessColumnName = getMsAccessColumnName(columnName);
+				if(!idNames.contains(propertyName) && !column.isAutoNumber() ){					
+					MappingGenerator.writeProperty(writer, propertyName, msAccessColumnName, getHibernateType(column));
 				}
 			}
 			MappingGenerator.writerFooter(writer);
@@ -81,15 +121,18 @@ public class MsAccessHibernateMappingGenerator {
 	private static String getNodeName(String columnName) {
 		return columnName.trim().replaceAll(" ", "_");
 	}
+	private static String getMsAccessColumnName(String column) {
+		return column.contains(" ") ? "["+column+"]" : column;
+	}	
 
 	private static String getHibernateType(Column column) throws HibernateException, SQLException {
 		return MsAccessDialect.INSTANCE.getHibernateTypeName(column.getSQLType());
 	}
 
-	private static String getPrimaryKey(Table table) {
+	private static List<ColumnDescriptor> getPrimaryKey(Table table) {
 		for (Index index : table.getIndexes()) {
-			if(index.isPrimaryKey()){
-				return index.getColumns().get(0).getName();
+			if(index.isPrimaryKey()){				
+				return index.getColumns();				
 			}
 		}
 		return null;
@@ -144,5 +187,5 @@ public class MsAccessHibernateMappingGenerator {
 	public static boolean isSyncTableName(String tableName) {
 		return tableName != null && tableName.toLowerCase().endsWith("_sync");
 	}
-	
+
 }

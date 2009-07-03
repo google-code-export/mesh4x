@@ -5,7 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.dom4j.Element;
 import org.dom4j.tree.DefaultElement;
@@ -13,6 +12,7 @@ import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.payload.schema.ISchemaTypeFormat;
 import org.mesh4j.sync.payload.schema.SchemaTypeFormat;
 import org.mesh4j.sync.payload.schema.rdf.AbstractRDFIdentifiableMapping;
+import org.mesh4j.sync.payload.schema.rdf.CompositeProperty;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.payload.schema.rdf.RDFInstance;
 import org.mesh4j.sync.utils.XMLHelper;
@@ -60,12 +60,8 @@ public class HibernateToRDFMapping extends AbstractRDFIdentifiableMapping implem
 		
 		String xml = null;
 		if(this.rdfSchema.hasCompositeId()){
-			Map<String, String> joinedProperties = new HashMap<String, String>();
-			for (String propertyName : this.rdfSchema.getIdentifiablePropertyNames()) {
-				joinedProperties.put(propertyName, "id");
-			}
-			
-			xml = instance.asPlainXML(FORMATS, joinedProperties);
+			CompositeProperty compositeId = new CompositeProperty("id", this.rdfSchema.getIdentifiablePropertyNames());			
+			xml = instance.asPlainXML(FORMATS, new CompositeProperty[]{compositeId});
 		} else {
 			xml = instance.asPlainXML(FORMATS);
 		}

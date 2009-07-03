@@ -102,12 +102,12 @@ public class MSExcelToRDFMappingXLSXTest {
 		String sheetName = SHEET_NAME;
 		
 		RDFSchema schema = new RDFSchema(sheetName, "http://mesh4x/epiinfo/"+sheetName+"#", sheetName);
-		schema.addStringProperty(COLUMN_NAME, "name", "en");
-		schema.addStringProperty(COLUMN_CODE, "code", "en");
-		schema.addIntegerProperty(COLUMN_AGE, "age", "en");
-		schema.addStringProperty(COLUMN_SEX, "sex", "en");
-		schema.addBooleanProperty(COLUMN_ILL, "ill", "en");
-		schema.addDateTimeProperty(COLUMN_DATE_ONSET, "dateOnset", "en");
+		schema.addStringProperty(COLUMN_NAME, "name", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addStringProperty(COLUMN_CODE, "code", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addIntegerProperty(COLUMN_AGE, "age", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addStringProperty(COLUMN_SEX, "sex", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addBooleanProperty(COLUMN_ILL, "ill", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addDateTimeProperty(COLUMN_DATE_ONSET, "dateOnset", IRDFSchema.DEFAULT_LANGUAGE);
 		schema.setIdentifiablePropertyName(COLUMN_CODE);
 		
 		RDFInstance rdfInstance = schema.createNewInstance("uri:urn:P1");

@@ -26,20 +26,12 @@ public class MsExcelToRDFMapping extends AbstractRDFIdentifiableMapping implemen
 	// BUSINESS METHODs
 	public MsExcelToRDFMapping(IRDFSchema rdfSchema) {
 		super(rdfSchema);
-		
-		List<String> idList = rdfSchema.getIdentifiablePropertyNames();
-		if(idList.isEmpty()){
-			Guard.throwsArgumentException("rdfSchema");
-		}else {
-			for (String idProperttName : idList) {
-				Guard.argumentNotNullOrEmptyString(idProperttName, "rdfSchema");
-			}
-		}
 	}
 	
 	public static RDFSchema extractRDFSchema(IMsExcel excel, String sheetName, String[] identifiablePropertyNames, String lastUpdateColumnName, String rdfURL){
 		return extractRDFSchema(excel, sheetName, Arrays.asList(identifiablePropertyNames), lastUpdateColumnName, rdfURL);
 	}
+	
 	public static RDFSchema extractRDFSchema(IMsExcel excel, String sheetName, List<String> identifiablePropertyNames, String lastUpdateColumnName, String rdfURL){
 		Guard.argumentNotNull(excel, "excel");
 		Guard.argumentNotNullOrEmptyString(sheetName, "sheetName");
@@ -48,6 +40,7 @@ public class MsExcelToRDFMapping extends AbstractRDFIdentifiableMapping implemen
 		RDFSchema rdfSchema = new RDFSchema(sheetName, rdfURL+"/"+sheetName+"#", sheetName);
 		
 		String cellName;
+		String propertyName;
 		
 		Workbook workbook = excel.getWorkbook();
 		Sheet sheet = MsExcelUtils.getOrCreateSheetIfAbsent(workbook, sheetName);
@@ -61,15 +54,17 @@ public class MsExcelToRDFMapping extends AbstractRDFIdentifiableMapping implemen
 			
 			cellName = headerRow.getCell(cell.getColumnIndex()).getRichStringCellValue().getString();
 			cellType = cell.getCellType();
+			propertyName = RDFSchema.normalizePropertyName(cellName);
+			
 			if(Cell.CELL_TYPE_STRING == cellType || Cell.CELL_TYPE_FORMULA == cellType){
-				rdfSchema.addStringProperty(cellName, cellName, "en");
+				rdfSchema.addStringProperty(propertyName, cellName, IRDFSchema.DEFAULT_LANGUAGE);
 			} else if(Cell.CELL_TYPE_BOOLEAN == cellType){
-				rdfSchema.addBooleanProperty(cellName, cellName, "en");
+				rdfSchema.addBooleanProperty(propertyName, cellName, IRDFSchema.DEFAULT_LANGUAGE);
 			} else if(Cell.CELL_TYPE_NUMERIC == cellType){
 				if(DateUtil.isCellDateFormatted(cell)) {
-					rdfSchema.addDateTimeProperty(cellName, cellName, "en");
+					rdfSchema.addDateTimeProperty(propertyName, cellName, IRDFSchema.DEFAULT_LANGUAGE);
 				} else {
-					rdfSchema.addDoubleProperty(cellName, cellName, "en");
+					rdfSchema.addDoubleProperty(propertyName, cellName, IRDFSchema.DEFAULT_LANGUAGE);
 		        }
 			}
 		}
@@ -84,6 +79,7 @@ public class MsExcelToRDFMapping extends AbstractRDFIdentifiableMapping implemen
 		// obtains properties values
 		Cell cell;
 		String cellName;
+		String propertyName;
 		Object cellValue;
 		Object propertyValue;
 
@@ -91,11 +87,12 @@ public class MsExcelToRDFMapping extends AbstractRDFIdentifiableMapping implemen
 		for (Iterator<Cell> iterator = row.cellIterator(); iterator.hasNext();) {
 			cell = iterator.next();
 			cellName = headerRow.getCell(cell.getColumnIndex()).getRichStringCellValue().getString();
+			propertyName = RDFSchema.normalizePropertyName(cellName);
 			cellValue = MsExcelUtils.getCellValue(cell);
 			
-			propertyValue = this.rdfSchema.cannonicaliseValue(cellName, cellValue);
+			propertyValue = this.rdfSchema.cannonicaliseValue(propertyName, cellValue);
 			if(propertyValue != null){
-				propertyValues.put(cellName, propertyValue);
+				propertyValues.put(propertyName, propertyValue);
 			}
 		}
 		
@@ -107,21 +104,19 @@ public class MsExcelToRDFMapping extends AbstractRDFIdentifiableMapping implemen
 	}
 
 	public void appliesRDFToRow(Workbook wb, Sheet sheet, Row row, RDFInstance rdfInstance) {
-		Cell cell;
-		Object propertyValue;
-		String propertyType;
-		
+	
 		int size = rdfInstance.getPropertyCount();
 		for (int i = 0; i < size; i++) {
 			String propertyName = rdfInstance.getPropertyName(i);
-			propertyValue = rdfInstance.getPropertyValue(propertyName);
+			Object propertyValue = rdfInstance.getPropertyValue(propertyName);
 						
 			if(propertyValue != null){
 				Row headerRow = MsExcelUtils.getOrCreateRowHeaderIfAbsent(sheet);
-				Cell headerCell = MsExcelUtils.getOrCreateCellStringIfAbsent(wb, headerRow, propertyName);
+				String propertyLabel = rdfInstance.getPropertyLabel(propertyName);
+				Cell headerCell = getCellOrCreateHeaderCell(wb, headerRow, propertyName, propertyLabel);
 				
-				cell = row.getCell(headerCell.getColumnIndex());
-				propertyType = rdfInstance.getPropertyType(propertyName);
+				Cell cell = row.getCell(headerCell.getColumnIndex());
+				String propertyType = rdfInstance.getPropertyType(propertyName);
 				if(cell == null){
 					cell = createCell(wb, row, headerCell.getColumnIndex(), propertyType);
 				}
@@ -130,7 +125,24 @@ public class MsExcelToRDFMapping extends AbstractRDFIdentifiableMapping implemen
 		}		
 	}
 	
-	// TODO (JMT) RDF: improve MSExcel to RDF type mapper
+	private Cell getCellOrCreateHeaderCell(Workbook wb, Row row, String propertyName, String propertyLabel) {
+		Cell cell = MsExcelUtils.getCellString(wb, row, propertyName);
+		if(cell == null){
+			if(propertyLabel.equals(propertyName)){
+				cell = MsExcelUtils.createCellString(wb, row, propertyName);
+			} else {
+				if(propertyLabel != null){
+					cell = MsExcelUtils.getCellString(wb, row, propertyLabel);
+				}
+				
+				if(cell == null){
+					cell = MsExcelUtils.createCellString(wb, row, propertyName);	
+				}
+			}
+		}
+		return cell;
+	}
+
 	private int getCellType(String propertyType) {
 
 		if(IRDFSchema.XLS_STRING.equals(propertyType)){
@@ -150,7 +162,6 @@ public class MsExcelToRDFMapping extends AbstractRDFIdentifiableMapping implemen
 		}
 	}
 	
-	// TODO (JMT) RDF: improve MSExcel to RDF type mapper
 	private Cell createCell(Workbook wb, Row row, int columnIndex, String propertyType) {
 
 		if(IRDFSchema.XLS_STRING.equals(propertyType)){
@@ -175,7 +186,6 @@ public class MsExcelToRDFMapping extends AbstractRDFIdentifiableMapping implemen
 		}
 	}
 
-//	@Override
 	public void createDataSource(IMsExcel excel) {
 		excel.setDirty();
 		Workbook workbook = excel.getWorkbook();
@@ -185,12 +195,11 @@ public class MsExcelToRDFMapping extends AbstractRDFIdentifiableMapping implemen
 		Cell headerCell;
 		
 		int size = this.rdfSchema.getPropertyCount();
-		String propertyName;
 		for (int j = 0; j < size; j++) {
-			propertyName = this.rdfSchema.getPropertyName(size - 1 - j);	
-			
+			String propertyName = this.rdfSchema.getPropertyName(size - 1 - j);	
+			String label = this.rdfSchema.getPropertyLabel(propertyName);
 			headerCell = headerRow.createCell(j);
-			headerCell.setCellValue(MsExcelUtils.getRichTextString(workbook, propertyName));			
+			headerCell.setCellValue(MsExcelUtils.getRichTextString(workbook, label));			
 		}
 		excel.flush();
 	}
@@ -212,9 +221,10 @@ public class MsExcelToRDFMapping extends AbstractRDFIdentifiableMapping implemen
 	public String getId(Sheet sheet, Row row) {
 		List<String> idColumnNames = this.rdfSchema.getIdentifiablePropertyNames();
 		List<String> idValues = new ArrayList<String>();
-		String idCellValue;
+		
 		for (String idColumnName : idColumnNames) {
-			idCellValue = getCellValue(sheet, row, idColumnName);
+			String label = this.rdfSchema.getPropertyLabel(idColumnName);
+			String idCellValue = getCellValue(sheet, row, idColumnName, label);
 			if(idCellValue == null){
 				return null;
 			} else {
@@ -224,9 +234,9 @@ public class MsExcelToRDFMapping extends AbstractRDFIdentifiableMapping implemen
 		return makeId(idValues);		
 	}
 
-	private String getCellValue(Sheet sheet, Row row, String columnName) {
-		Cell cell = MsExcelUtils.getCell(sheet, row, columnName);
-		if(cell != null && cell.getCellType() != Cell.CELL_TYPE_BLANK){
+	private String getCellValue(Sheet sheet, Row row, String columnName, String label) {
+		Cell cell = getCell(sheet, row, columnName, label);
+		if(cell != null){
  			Object cellValue = MsExcelUtils.getCellValue(cell);
 			return String.valueOf(rdfSchema.cannonicaliseValue(columnName, cellValue));
 		} else {
@@ -234,9 +244,22 @@ public class MsExcelToRDFMapping extends AbstractRDFIdentifiableMapping implemen
 		}
 	}
 	
+	private Cell getCell(Sheet sheet, Row row, String columnName, String label) {
+		Cell cell = MsExcelUtils.getCell(sheet, row, columnName);
+		if(cell == null){
+			cell = MsExcelUtils.getCell(sheet, row, label);
+		}
+		if(cell != null && cell.getCellType() != Cell.CELL_TYPE_BLANK){
+ 			return cell;
+		} else {
+			return null;
+		}
+	}
+
+	
 	@Override
 	public Date getLastUpdate(Sheet sheet, Row row) {
-		Cell cell = MsExcelUtils.getCell(sheet, row, this.rdfSchema.getVersionPropertyName());
+		Cell cell = getCell(sheet, row, this.rdfSchema.getVersionPropertyName(), this.rdfSchema.getPropertyLabel(this.rdfSchema.getVersionPropertyName()));
 		if(cell != null && cell.getCellType() != Cell.CELL_TYPE_BLANK && cell.getCellType() == Cell.CELL_TYPE_NUMERIC && DateUtil.isCellDateFormatted(cell)){
 			return cell.getDateCellValue();
 		} else {
@@ -246,17 +269,50 @@ public class MsExcelToRDFMapping extends AbstractRDFIdentifiableMapping implemen
 
 	@Override
 	public Row getRow(Sheet sheet, String id) {
-		return MsExcelUtils.getRow(sheet, this.rdfSchema.getIdentifiablePropertyNames().toArray(new String[0]), this.getIds(id));
+		List<String> propertyNames = this.rdfSchema.getIdentifiablePropertyNames();
+		String[] values = this.getIds(id);
+		
+		for (int i = sheet.getFirstRowNum()+1; i <= sheet.getLastRowNum(); i++) {
+			Row row = sheet.getRow(i);
+			if(row != null){
+				int ok = 0;
+				for (int j = 0; j < propertyNames.size(); j++) {
+					String propertyName = propertyNames.get(j);
+					 
+					Cell cellId = MsExcelUtils.getCell(sheet, row, propertyName);
+					if(cellId == null){
+						String label = this.rdfSchema.getPropertyLabel(propertyName);
+						cellId = MsExcelUtils.getCell(sheet, row, label);
+					}
+					
+					if(cellId != null && cellId.getCellType() != Cell.CELL_TYPE_BLANK){
+						Object cellValue = MsExcelUtils.getCellValue(cellId);
+						String idCellValue = String.valueOf(rdfSchema.cannonicaliseValue(propertyName, cellValue));
+						if(values[j].equals(idCellValue)){
+							ok = ok +1;
+						}
+					}
+				}
+				if(ok == propertyNames.size()){
+					return row;
+				}
+			}
+		}
+		return null;
 	}
 
 	@Override
 	public void initializeHeaderRow(Workbook wb, Sheet sheet, Row row) {
-		for (String columName : this.rdfSchema.getIdentifiablePropertyNames()) {
-			MsExcelUtils.getOrCreateCellStringIfAbsent(wb, row, columName);
+		for (String propertyName : this.rdfSchema.getIdentifiablePropertyNames()) {
+			String label = this.rdfSchema.getPropertyLabel(propertyName);
+			getCellOrCreateHeaderCell(wb, row, propertyName, label);
 		}
 		
 		if(this.rdfSchema.getVersionPropertyName() != null){
-			MsExcelUtils.getOrCreateCellStringIfAbsent(wb, row, this.rdfSchema.getVersionPropertyName());
+			String propertyName = this.rdfSchema.getVersionPropertyName();
+			String label = this.rdfSchema.getPropertyLabel(propertyName);
+			getCellOrCreateHeaderCell(wb, row, propertyName, label);
+
 		}
 	}
 

@@ -2,6 +2,7 @@ package org.mesh4j.sync.payload.schema.rdf;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -27,13 +28,13 @@ public class RDFInstanceTest {
 	private static String PLAIN_XML;
 	{
 		RDF_SCHEMA = new RDFSchema("example", "http://mesh4x/example#", "example");
-		RDF_SCHEMA.addStringProperty("string", "string", "en");
-        RDF_SCHEMA.addIntegerProperty("integer", "int", "en");
-        RDF_SCHEMA.addBooleanProperty("boolean", "boolean", "en");
-        RDF_SCHEMA.addDateTimeProperty("datetime", "datetime", "en");
-        RDF_SCHEMA.addDoubleProperty("double", "double", "en");
-        RDF_SCHEMA.addLongProperty("long", "long", "en");
-        RDF_SCHEMA.addDecimalProperty("decimal", "decimal", "en");        
+		RDF_SCHEMA.addStringProperty("string", "string", IRDFSchema.DEFAULT_LANGUAGE);
+        RDF_SCHEMA.addIntegerProperty("integer", "int", IRDFSchema.DEFAULT_LANGUAGE);
+        RDF_SCHEMA.addBooleanProperty("boolean", "boolean", IRDFSchema.DEFAULT_LANGUAGE);
+        RDF_SCHEMA.addDateTimeProperty("datetime", "datetime", IRDFSchema.DEFAULT_LANGUAGE);
+        RDF_SCHEMA.addDoubleProperty("double", "double", IRDFSchema.DEFAULT_LANGUAGE);
+        RDF_SCHEMA.addLongProperty("long", "long", IRDFSchema.DEFAULT_LANGUAGE);
+        RDF_SCHEMA.addDecimalProperty("decimal", "decimal", IRDFSchema.DEFAULT_LANGUAGE);        
     	
         RDF_INSTANCE = new RDFInstance(RDF_SCHEMA, "uri:urn:1");
         RDF_INSTANCE.setProperty("string", "abc");
@@ -45,7 +46,7 @@ public class RDFInstanceTest {
         RDF_INSTANCE.setProperty("decimal", BigDecimal.TEN);
         
         RDF_XML = "<rdf:RDF xmlns:example=\"http://mesh4x/example#\" xmlns:owl=\"http://www.w3.org/2002/07/owl#\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema#\"><example:example rdf:about=\"uri:urn:1\"><example:decimal rdf:datatype=\"http://www.w3.org/2001/XMLSchema#decimal\">10</example:decimal><example:long rdf:datatype=\"http://www.w3.org/2001/XMLSchema#long\">9223372036854775807</example:long><example:double rdf:datatype=\"http://www.w3.org/2001/XMLSchema#double\">1.7976931348623157E308</example:double><example:datetime rdf:datatype=\"http://www.w3.org/2001/XMLSchema#dateTime\">2009-06-01T05:31:01.001Z</example:datetime><example:boolean rdf:datatype=\"http://www.w3.org/2001/XMLSchema#boolean\">true</example:boolean><example:integer rdf:datatype=\"http://www.w3.org/2001/XMLSchema#int\">2147483647</example:integer><example:string rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">abc</example:string></example:example></rdf:RDF>";
-        PLAIN_XML = "<example><decimal>10</decimal><long>9223372036854775807</long><double>1.7976931348623157E308</double><datetime>2009-05-01T05:31:01.001Z</datetime><boolean>true</boolean><integer>2147483647</integer><string>abc</string></example>";
+        PLAIN_XML = "<example><integer>2147483647</integer><string>abc</string><boolean>true</boolean><datetime>2009-05-01T05:31:01.001Z</datetime><double>1.7976931348623157E308</double><long>9223372036854775807</long><decimal>10</decimal></example>";
       }
 	
 	@Test(expected=IllegalArgumentException.class)
@@ -167,7 +168,7 @@ public class RDFInstanceTest {
 	public void shouldAsPlainXMLWithTypeFormats() {
 		RDFInstance instance = RDF_INSTANCE;
         
-		String plainXML = "<example><decimal>10</decimal><long>9223372036854775807</long><double>1.7976931348623157E308</double><datetime>2009-05-01</datetime><boolean>true</boolean><integer>2147483647</integer><string>abc</string></example>";
+		String plainXML = "<example><integer>2147483647</integer><string>abc</string><boolean>true</boolean><datetime>2009-05-01</datetime><double>1.7976931348623157E308</double><long>9223372036854775807</long><decimal>10</decimal></example>";
 		
 		HashMap<String, ISchemaTypeFormat> formats = new HashMap<String, ISchemaTypeFormat>();
 		formats.put(IRDFSchema.XLS_DATETIME, new SchemaTypeFormat(new SimpleDateFormat("yyyy-MM-dd")));
@@ -176,7 +177,24 @@ public class RDFInstanceTest {
 		
         Assert.assertEquals(plainXML, instance.asPlainXML(formats));
 	}
-
+	
+	@Test
+	public void shouldAsPlainXMLWithTypeFormatsAndCompositeId() {
+		RDFInstance instance = RDF_INSTANCE;
+        
+		String plainXML = "<example><composite2><datetime>2009-05-01</datetime><double>1.7976931348623157E308</double></composite2><long>9223372036854775807</long><composite1><integer>2147483647</integer><string>abc</string><boolean>true</boolean></composite1><decimal>10</decimal></example>";
+		
+		HashMap<String, ISchemaTypeFormat> formats = new HashMap<String, ISchemaTypeFormat>();
+		formats.put(IRDFSchema.XLS_DATETIME, new SchemaTypeFormat(new SimpleDateFormat("yyyy-MM-dd")));
+		formats.put(IRDFSchema.XLS_BOOLEAN, XFormBooleanFormat.INSTANCE);
+		
+		CompositeProperty compositeProperty1 = new CompositeProperty("composite1", Arrays.asList(new String[]{"integer", "string", "boolean"}));
+		CompositeProperty compositeProperty2 = new CompositeProperty("composite2", Arrays.asList(new String[]{"datetime", "double"}));
+		
+		CompositeProperty[] compositeProperties = new CompositeProperty[]{compositeProperty1, compositeProperty2};
+        Assert.assertEquals(plainXML, instance.asPlainXML(formats, compositeProperties));
+	}
+	
 	@Test
 	public void shouldGetPropertyCount() {
 		RDFInstance instance = RDF_INSTANCE;        

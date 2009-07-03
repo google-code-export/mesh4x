@@ -139,7 +139,7 @@ public class MsExcelRDFSyncAdapterFactoryTests {
 	@Test(expected=MeshException.class)
 	public void shouldCreateAdapterFromRDFFileFailsWhenFileExistsNotEqualRDFSchema(){
 		RDFSchema rdfSchema = new RDFSchema("Oswego", "http://localhost:8080/mesh4x/myExample/Oswego#", "Oswego");
-		rdfSchema.addStringProperty("Code", "code", "en");
+		rdfSchema.addStringProperty("Code", "code", IRDFSchema.DEFAULT_LANGUAGE);
 		rdfSchema.setIdentifiablePropertyName("Code");
 		
 		String fileName = getFileNameToTest();

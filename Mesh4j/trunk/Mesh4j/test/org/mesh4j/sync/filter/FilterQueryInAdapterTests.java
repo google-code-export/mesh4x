@@ -14,6 +14,7 @@ import org.mesh4j.sync.adapters.http.HttpSyncAdapterFactory;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.Sync;
+import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.payload.schema.rdf.RDFInstance;
 import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
 import org.mesh4j.sync.security.NullIdentityProvider;
@@ -30,8 +31,8 @@ public class FilterQueryInAdapterTests {
 		String url = serverUrl+"/"+meshGroup+"/"+dataSetId;
 		
 		RDFSchema rdfSchema = new RDFSchema(dataSetId, url+"#", dataSetId);
-		rdfSchema.addStringProperty("name", "name", "en");
-		rdfSchema.addDateTimeProperty("birthDate", "birth date", "en");
+		rdfSchema.addStringProperty("name", "name", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addDateTimeProperty("birthDate", "birth date", IRDFSchema.DEFAULT_LANGUAGE);
 		
 		RDFInstance rdfInstance1 = rdfSchema.createNewInstance("uri:urn:"+ IdGenerator.INSTANCE.newID());
 		rdfInstance1.setProperty("name", "JMT");
@@ -93,8 +94,8 @@ public class FilterQueryInAdapterTests {
 		String url = serverUrl+"/"+meshGroup+"/"+dataSetId;
 		
 		RDFSchema rdfSchema = new RDFSchema(dataSetId, url+"#", dataSetId);
-		rdfSchema.addStringProperty("name", "name", "en");
-		rdfSchema.addDateTimeProperty("birthDate", "birth date", "en");
+		rdfSchema.addStringProperty("name", "name", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addDateTimeProperty("birthDate", "birth date", IRDFSchema.DEFAULT_LANGUAGE);
 		
 		RDFInstance rdfInstance1 = rdfSchema.createNewInstance("uri:urn:"+ IdGenerator.INSTANCE.newID());
 		rdfInstance1.setProperty("name", "JMT");

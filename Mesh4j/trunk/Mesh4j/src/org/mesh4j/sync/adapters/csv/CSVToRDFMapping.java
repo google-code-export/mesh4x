@@ -37,15 +37,16 @@ public class CSVToRDFMapping extends AbstractRDFIdentifiableMapping implements I
 		String cellName;
 		String cellValue;
 		Object propertyValue;
+		String propertyName;
 		
 		HashMap<String, Object> propertyValues = new HashMap<String, Object>();
 		for (int i = 0; i < row.getCellCount(); i++) {
 			cellName = row.getHeader(i);
 			cellValue = row.getCellValue(i);
-			
-			propertyValue = rdfSchema.cannonicaliseValue(cellName, cellValue);
+			propertyName = RDFSchema.normalizePropertyName(cellName);
+			propertyValue = rdfSchema.cannonicaliseValue(propertyName, cellValue);
 			if(propertyValue != null){
-				propertyValues.put(cellName, propertyValue);
+				propertyValues.put(propertyName, propertyValue);
 			}
 		}
 		
@@ -56,14 +57,18 @@ public class CSVToRDFMapping extends AbstractRDFIdentifiableMapping implements I
 		return rdfInstance;
 	}
 
-
 	@Override
 	public String getHeader(CSVFile csvFile) {
 		StringBuffer sb = new StringBuffer();
 		
+		String propertyName;
+		String propertyLabel;
+		
 		int size = this.rdfSchema.getPropertyCount();
 		for (int i = 0; i < size; i++) {
-			sb.append(this.rdfSchema.getPropertyName(i));
+			propertyName = this.rdfSchema.getPropertyName(size - i -1);
+			propertyLabel = this.rdfSchema.getPropertyLabel(propertyName);
+			sb.append(propertyLabel);
 			if(i <= size -2){
 				sb.append(",");
 			}			
@@ -79,6 +84,10 @@ public class CSVToRDFMapping extends AbstractRDFIdentifiableMapping implements I
 		for (String idColumnName : idColumnNames) {
 			idCellValue = row.getCellValue(idColumnName);
 			if(idCellValue == null){
+				String label = this.rdfSchema.getPropertyLabel(idColumnName);
+				idCellValue = row.getCellValue(label);
+			}
+			if(idCellValue == null){
 				return null;
 			} else {
 				idValues.add(idCellValue);
@@ -90,10 +99,14 @@ public class CSVToRDFMapping extends AbstractRDFIdentifiableMapping implements I
 	@Override
 	public Date getLastUpdate(CSVFile csvFile, CSVRow row) {
 		String cellValue = row.getCellValue(this.rdfSchema.getVersionPropertyName());
-		if(cellValue != null){
-			return (Date) this.rdfSchema.cannonicaliseValue(this.rdfSchema.getVersionPropertyName(), cellValue);
-		} else {
+		if(cellValue == null){
+			String label = this.rdfSchema.getPropertyLabel(this.rdfSchema.getVersionPropertyName());
+			cellValue = row.getCellValue(label);
+		}
+		if(cellValue == null){
 			return null;
+		} else {
+			return (Date) this.rdfSchema.cannonicaliseValue(this.rdfSchema.getVersionPropertyName(), cellValue);
 		}
 	}
 
@@ -107,7 +120,12 @@ public class CSVToRDFMapping extends AbstractRDFIdentifiableMapping implements I
 			propertyValue = rdfInstance.getPropertyValueAsLexicalForm(propertyName);
 						
 			if(propertyValue != null){
-				row.setCellValue(propertyName, propertyValue);	
+				if(row.hashHeader(propertyName)){
+					row.setCellValue(propertyName, propertyValue);
+				} else {
+					String propertyLabel = this.rdfSchema.getPropertyLabel(propertyName);
+					row.setCellValue(propertyLabel, propertyValue);
+				}
 			}			
 		}		
 	}
@@ -119,8 +137,9 @@ public class CSVToRDFMapping extends AbstractRDFIdentifiableMapping implements I
 		
 		String sheetName = csvFile.getSheetName();
 		RDFSchema rdfSchema = new RDFSchema(sheetName, rdfBaseURL +"/"+ sheetName +"#", sheetName);
-		for (String propertyName : header.getColumnNames()) {
-			rdfSchema.addStringProperty(propertyName, propertyName, "en");
+		for (String columnName : header.getColumnNames()) {
+			String propertyName = RDFSchema.normalizePropertyName(columnName);
+			rdfSchema.addStringProperty(propertyName, columnName, IRDFSchema.DEFAULT_LANGUAGE);
 		}
 		rdfSchema.setIdentifiablePropertyNames(Arrays.asList(identifiablePropertyNames));
 		rdfSchema.setVersionPropertyName(versionPropertyName);

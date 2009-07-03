@@ -1,6 +1,7 @@
 package org.mesh4j.sync.adapters.csv;
 
 import java.io.StringWriter;
+import java.util.Arrays;
 
 import org.mesh4j.sync.validations.Guard;
 
@@ -74,6 +75,10 @@ public class CSVRow {
 
 	public String getHeader(int cellIndex) {
 		return this.header.getColumnName(cellIndex);
+	}
+
+	public boolean hashHeader(String propertyName) {
+		return Arrays.asList(this.header.getColumnNames()).contains(propertyName);
 	}
 
 }

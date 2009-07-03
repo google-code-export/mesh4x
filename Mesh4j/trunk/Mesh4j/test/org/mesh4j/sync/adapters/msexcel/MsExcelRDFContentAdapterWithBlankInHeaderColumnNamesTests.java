@@ -1,7 +1,6 @@
-package org.mesh4j.sync.adapters.multikey;
+package org.mesh4j.sync.adapters.msexcel;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -15,10 +14,6 @@ import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.adapters.IdentifiableContent;
 import org.mesh4j.sync.adapters.feed.FeedAdapter;
 import org.mesh4j.sync.adapters.feed.FeedSyncAdapterFactory;
-import org.mesh4j.sync.adapters.msexcel.MsExcel;
-import org.mesh4j.sync.adapters.msexcel.MsExcelContentAdapter;
-import org.mesh4j.sync.adapters.msexcel.MsExcelRDFSyncAdapterFactory;
-import org.mesh4j.sync.adapters.msexcel.MsExcelToRDFMapping;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.Item;
@@ -30,17 +25,14 @@ import org.mesh4j.sync.test.utils.TestHelper;
 import org.mesh4j.sync.utils.FileUtils;
 import org.mesh4j.sync.validations.MeshException;
 
-public class MsExcelMultyKeyTests {
+public class MsExcelRDFContentAdapterWithBlankInHeaderColumnNamesTests {
 
 	@Test
 	public void shouldCreate(){
-		RDFSchema rdfSchema = new RDFSchema("sheet1", "http://localhost:8080/mesh4x/feeds/sheet1#", "sheet1");
-		rdfSchema.addStringProperty("id1", "id1", "en");
-		rdfSchema.addStringProperty("id2", "id2", "en");
-		rdfSchema.addStringProperty("name", "name", "en");
-		rdfSchema.setIdentifiablePropertyNames(Arrays.asList(new String[]{"id1", "id2"}));
-				
-		String fileName = TestHelper.fileName("msExcel_multiKey"+IdGenerator.INSTANCE.newID()+".xls");
+		MsExcel excel = new MsExcel(this.getClass().getResource("excelWithBlankInHeader.xlsx").getFile());
+		RDFSchema rdfSchema = MsExcelToRDFMapping.extractRDFSchema(excel, "sheet1", new String[]{"Code"}, null, "http://localhost:8080/mesh4x/feeds");
+		
+		String fileName = TestHelper.fileName("msExcel_"+IdGenerator.INSTANCE.newID()+".xlsx");
 		File file = new File(fileName);
 		Assert.assertFalse(file.exists());
 		
@@ -59,17 +51,19 @@ public class MsExcelMultyKeyTests {
 		Sheet sheet = wb.getSheet("sheet1");
 		Row row = sheet.getRow(0);
 
-		Assert.assertEquals("id1", row.getCell(0).getRichStringCellValue().getString());
-		Assert.assertEquals("id2", row.getCell(1).getRichStringCellValue().getString());
-		Assert.assertEquals("name", row.getCell(2).getRichStringCellValue().getString());
-		
+		Assert.assertEquals("Code", row.getCell(0).getRichStringCellValue().getString());
+		Assert.assertEquals("First Name", row.getCell(1).getRichStringCellValue().getString());
+		Assert.assertEquals("Middle Name", row.getCell(2).getRichStringCellValue().getString());
+		Assert.assertEquals("Last Name", row.getCell(3).getRichStringCellValue().getString());
+		Assert.assertEquals("Country and Nationality", row.getCell(4).getRichStringCellValue().getString());
+		Assert.assertEquals("Age", row.getCell(5).getRichStringCellValue().getString());
 		FileUtils.delete(fileName);
 	}
 	
 	@Test
 	public void shouldGetAll(){
 		
-		String fileName = TestHelper.fileName("msExcel_multiKey"+IdGenerator.INSTANCE.newID()+".xlsx");
+		String fileName = TestHelper.fileName("msExcel_"+IdGenerator.INSTANCE.newID()+".xlsx");
 				
 		SplitAdapter adapter = makeAdapter(fileName);
 		adapter.beginSync();
@@ -79,31 +73,30 @@ public class MsExcelMultyKeyTests {
 		RDFSchema rdfSchema = (RDFSchema)((MsExcelContentAdapter)adapter.getContentAdapter()).getSchema();
 		
 		Assert.assertNotNull(items);
-		Assert.assertEquals(2, items.size());
-		assertItem("1,2", "1", "2", "jmt", items.get(0), rdfSchema, 1);
-		assertItem("1,1", "1", "1", "bia", items.get(1), rdfSchema, 1);
+		Assert.assertEquals(1, items.size());
+		assertItem("P1", "juan", "Marcelo", "Tondato", 28, "Argentino", items.get(0), rdfSchema, 1);
 		FileUtils.delete(fileName);
 	}
 
 	@Test
 	public void shouldGet(){
-		String fileName = TestHelper.fileName("msExcel_multiKey"+IdGenerator.INSTANCE.newID()+".xlsx");
+		String fileName = TestHelper.fileName("msExcel_"+IdGenerator.INSTANCE.newID()+".xlsx");
 		
 		SplitAdapter adapter = makeAdapter(fileName);
 		adapter.beginSync();
 		
 		List<Item> items = adapter.getAll();
-		Item item = adapter.get(items.get(1).getSyncId());
+		Item item = adapter.get(items.get(0).getSyncId());
 		
 		RDFSchema rdfSchema = (RDFSchema)((MsExcelContentAdapter)adapter.getContentAdapter()).getSchema();
 		
-		assertItem("1,1", "1", "1", "bia", item, rdfSchema, 1);
+		assertItem("P1", "juan", "Marcelo", "Tondato", 28, "Argentino", item, rdfSchema, 1);
 		FileUtils.delete(fileName);
 	}
 	
 	@Test
 	public void shouldAdd(){
-		String fileName = TestHelper.fileName("msExcel_multiKey"+IdGenerator.INSTANCE.newID()+".xlsx");
+		String fileName = TestHelper.fileName("msExcel_"+IdGenerator.INSTANCE.newID()+".xlsx");
 		
 		SplitAdapter adapter = makeAdapter(fileName);
 		adapter.beginSync();
@@ -114,33 +107,35 @@ public class MsExcelMultyKeyTests {
 		List<Item> items = adapter.getAll();
 		
 		Assert.assertNotNull(items);
-		Assert.assertEquals(2, items.size());
-		assertItem("1,2", "1", "2", "jmt", items.get(0), rdfSchema, 1);
-		assertItem("1,1", "1", "1", "bia", items.get(1), rdfSchema, 1);
+		Assert.assertEquals(1, items.size());
+		assertItem("P1", "juan", "Marcelo", "Tondato", 28, "Argentino", items.get(0), rdfSchema, 1);
 		
+		String id = IdGenerator.INSTANCE.newID();
 		HashMap<String, Object> properties = new HashMap<String, Object>();
-		properties.put("id1", "1");
-		properties.put("id2", "3");
-		properties.put("name", "sol");
-		RDFInstance instance = rdfSchema.createNewInstanceFromProperties("1,3", properties);
+		properties.put("Code", id);
+		properties.put("First_Name", "sol");
+		properties.put("Middle_Name","bia");
+		properties.put("Last_Name", "juani");
+		properties.put("Age", 28);
+		properties.put("Country_and_Nationality", "Argento");
+		RDFInstance instance = rdfSchema.createNewInstanceFromProperties(id, properties);
 		
-		IdentifiableContent identifiableContent = new IdentifiableContent(instance.asElementXML(), mapping, "1,3");
+		IdentifiableContent identifiableContent = new IdentifiableContent(instance.asElementXML(), mapping, id);
 		Item item = new Item(identifiableContent, new Sync(IdGenerator.INSTANCE.newID(), "jmt", new Date(), false));
 		adapter.add(item);	
 		
 		items = adapter.getAll();
 		Assert.assertNotNull(items);
-		Assert.assertEquals(3, items.size());
-		assertItem("1,2", "1", "2", "jmt", items.get(0), rdfSchema, 1);
-		assertItem("1,1", "1", "1", "bia", items.get(1), rdfSchema, 1);
-		assertItem("1,3", "1", "3", "sol", items.get(2), rdfSchema, 1);
+		Assert.assertEquals(2, items.size());
+		assertItem("P1", "juan", "Marcelo", "Tondato", 28, "Argentino", items.get(0), rdfSchema, 1);
+		assertItem(id, "sol", "bia", "juani", 28, "Argento", items.get(1), rdfSchema, 1);
 		
 		FileUtils.delete(fileName);
 	}
 	
 	@Test
 	public void shouldUpdate(){
-		String fileName = TestHelper.fileName("msExcel_multiKey"+IdGenerator.INSTANCE.newID()+".xlsx");
+		String fileName = TestHelper.fileName("msExcel_"+IdGenerator.INSTANCE.newID()+".xlsx");
 		
 		SplitAdapter adapter = makeAdapter(fileName);
 		adapter.beginSync();
@@ -151,46 +146,61 @@ public class MsExcelMultyKeyTests {
 		List<Item> items = adapter.getAll();
 		
 		Assert.assertNotNull(items);
-		Assert.assertEquals(2, items.size());
-		assertItem("1,2", "1", "2", "jmt", items.get(0), rdfSchema, 1);
-		assertItem("1,1", "1", "1", "bia", items.get(1), rdfSchema, 1);
+		Assert.assertEquals(1, items.size());
+		
+		String id = items.get(0).getContent().getId();
 		
 		HashMap<String, Object> properties = new HashMap<String, Object>();
-		properties.put("id1", "1");
-		properties.put("id2", "2");
-		properties.put("name", "sol");
-		RDFInstance instance = rdfSchema.createNewInstanceFromProperties("1,2", properties);
+		properties.put("Code", id);
+		properties.put("First_Name", "sol");
+		properties.put("Middle_Name","bia");
+		properties.put("Last_Name", "juani");
+		properties.put("Age", 30);
+		properties.put("Country_and_Nationality", "Argento");
+		RDFInstance instance = rdfSchema.createNewInstanceFromProperties(id, properties);
 		
-		IdentifiableContent identifiableContent = new IdentifiableContent(instance.asElementXML(), mapping, "1,2");
+		IdentifiableContent identifiableContent = new IdentifiableContent(instance.asElementXML(), mapping, id);
 		Item item = new Item(identifiableContent, items.get(0).getSync().clone().update("jmt", new Date(), false));
 		adapter.update(item);	
 		
 		items = adapter.getAll();
 		Assert.assertNotNull(items);
-		Assert.assertEquals(2, items.size());
-		assertItem("1,2", "1", "2", "sol", items.get(0), rdfSchema, 2);
-		assertItem("1,1", "1", "1", "bia", items.get(1), rdfSchema, 1);
+		Assert.assertEquals(1, items.size());
+		assertItem(id, "sol", "bia", "juani", 30, "Argento", items.get(0), rdfSchema, 2);
 		
 		FileUtils.delete(fileName);
 	}
 	
 	@Test
 	public void shouldDelete(){
-		String fileName = TestHelper.fileName("msExcel_multiKey"+IdGenerator.INSTANCE.newID()+".xlsx");
+		String fileName = TestHelper.fileName("msExcel_"+IdGenerator.INSTANCE.newID()+".xlsx");
 		
 		SplitAdapter adapter = makeAdapter(fileName);
 		adapter.beginSync();
 		
 		RDFSchema rdfSchema = (RDFSchema)((MsExcelContentAdapter)adapter.getContentAdapter()).getSchema();
+		MsExcelToRDFMapping mapping = (MsExcelToRDFMapping)((MsExcelContentAdapter)adapter.getContentAdapter()).getMapping();
 		
 		List<Item> items = adapter.getAll();
 		
 		Assert.assertNotNull(items);
-		Assert.assertEquals(2, items.size());
-		assertItem("1,2", "1", "2", "jmt", items.get(0), rdfSchema, 1);
-		assertItem("1,1", "1", "1", "bia", items.get(1), rdfSchema, 1);
+		Assert.assertEquals(1, items.size());
+
+		String id = IdGenerator.INSTANCE.newID();
+		HashMap<String, Object> properties = new HashMap<String, Object>();
+		properties.put("Code", id);
+		properties.put("First_Name", "sol");
+		properties.put("Middle_Name","bia");
+		properties.put("Last_Name", "juani");
+		properties.put("Age", 28);
+		properties.put("Country_and_Nationality", "Argento");
+		RDFInstance instance = rdfSchema.createNewInstanceFromProperties(id, properties);
 		
-		Item item = items.get(0).clone();
+		IdentifiableContent identifiableContent = new IdentifiableContent(instance.asElementXML(), mapping, id);
+		Item item = new Item(identifiableContent, new Sync(IdGenerator.INSTANCE.newID(), "jmt", new Date(), false));
+		adapter.add(item);	
+		
+		item = item.clone();
 		item.getSync().delete("jmt", new Date());
 		
 		adapter.update(item);	
@@ -198,10 +208,9 @@ public class MsExcelMultyKeyTests {
 		items = adapter.getAll();
 		Assert.assertNotNull(items);
 		Assert.assertEquals(2, items.size());
-		Assert.assertTrue(items.get(1).isDeleted());
 		Assert.assertFalse(items.get(0).isDeleted());
-		assertItem("1,1", "1", "1", "bia", items.get(0), rdfSchema, 1);
-		
+		Assert.assertTrue(items.get(1).isDeleted());
+				
 		adapter.delete(items.get(0).getSyncId());
 				
 		items = adapter.getAll();
@@ -215,9 +224,8 @@ public class MsExcelMultyKeyTests {
 	
 	@Test
 	public void shouldSync(){
-		String fileName = TestHelper.fileName("msExcel_multikey_"+IdGenerator.INSTANCE.newID());
+		String fileName = TestHelper.fileName("msExcel_"+IdGenerator.INSTANCE.newID());
 		FeedAdapter feedAdapter = FeedSyncAdapterFactory.createSyncAdapter(fileName+".xml", NullIdentityProvider.INSTANCE);
-		
 
 		SplitAdapter adapter = makeAdapter(fileName+".xlsx"); 
 
@@ -233,7 +241,7 @@ public class MsExcelMultyKeyTests {
 		SplitAdapter adapter = MsExcelRDFSyncAdapterFactory.createSyncAdapter(
 			makeMsExcel(fileName), 
 			"sheet1",
-			new String[]{"id1", "id2"},
+			new String[]{"Code"},
 			null,
 			NullIdentityProvider.INSTANCE, 
 			"http://localhost:8080/mesh4x/feeds");
@@ -242,7 +250,7 @@ public class MsExcelMultyKeyTests {
 	
 	private MsExcel makeMsExcel(String fileName){
 		try{
-			String sourceFileName = this.getClass().getResource("msExcel_multiKey.xlsx").getFile();
+			String sourceFileName = this.getClass().getResource("excelWithBlankInHeader.xlsx").getFile();
 			FileUtils.copyFile(sourceFileName, fileName);
 			return new MsExcel(fileName);
 		}catch (Exception e) {
@@ -250,7 +258,7 @@ public class MsExcelMultyKeyTests {
 		}
 	}
 	
-	private void assertItem(String id, String id1, String id2, String name, Item item, RDFSchema rdfSchema, int seq) {
+	private void assertItem(String id, String firstName, String middleName, String lastName, int age, String country, Item item, RDFSchema rdfSchema, int seq) {
 		Assert.assertNotNull(item);
 		Assert.assertFalse(item.isDeleted());
 		Assert.assertEquals(seq, item.getLastUpdate().getSequence());
@@ -259,9 +267,14 @@ public class MsExcelMultyKeyTests {
 		
 		RDFInstance instance = rdfSchema.createNewInstanceFromRDFXML(item.getContent().getPayload().asXML());
 		Assert.assertEquals(id, instance.getId());
-		Assert.assertEquals(id1, instance.getPropertyValue("id1"));
-		Assert.assertEquals(id2, instance.getPropertyValue("id2"));
-		Assert.assertEquals(name, instance.getPropertyValue("name"));
+		Assert.assertEquals(id, instance.getPropertyValue("Code"));
+		Assert.assertEquals(firstName, instance.getPropertyValue("First_Name"));
+		Assert.assertEquals(middleName, instance.getPropertyValue("Middle_Name"));
+		Assert.assertEquals(lastName, instance.getPropertyValue("Last_Name"));
+		Assert.assertEquals(age, instance.getPropertyValue("Age"));
+		Assert.assertEquals(country, instance.getPropertyValue("Country_and_Nationality"));
+
+		
 		
 	}
 }

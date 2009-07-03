@@ -16,6 +16,7 @@ import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.parsers.SyncInfoParser;
+import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
 import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.test.utils.TestHelper;
@@ -48,9 +49,9 @@ public class SyncMsAccessRDFTests {
 		builderA.addMapping(new File(this.getClass().getResource("User_sync.hbm.xml").getFile()));
 		
 		RDFSchema schemaA = new RDFSchema("user", "http://mesh4x/user#", "user");
-		schemaA.addStringProperty("id", "id", "en");
-		schemaA.addStringProperty("pass", "password", "en");
-		schemaA.addStringProperty("name", "name", "en");
+		schemaA.addStringProperty("id", "id", IRDFSchema.DEFAULT_LANGUAGE);
+		schemaA.addStringProperty("pass", "password", IRDFSchema.DEFAULT_LANGUAGE);
+		schemaA.addStringProperty("name", "name", IRDFSchema.DEFAULT_LANGUAGE);
 		schemaA.setIdentifiablePropertyName("id");
 		builderA.addRDFSchema("user", schemaA);
 		
@@ -71,9 +72,9 @@ public class SyncMsAccessRDFTests {
 		builderB.addMapping(new File(this.getClass().getResource("User_sync.hbm.xml").getFile()));
 
 		RDFSchema schemaB = new RDFSchema("user", "http://mesh4x/user#", "user");
-		schemaB.addStringProperty("id", "id", "en");
-		schemaB.addStringProperty("pass", "password", "en");
-		schemaB.addStringProperty("name", "name", "en");
+		schemaB.addStringProperty("id", "id", IRDFSchema.DEFAULT_LANGUAGE);
+		schemaB.addStringProperty("pass", "password", IRDFSchema.DEFAULT_LANGUAGE);
+		schemaB.addStringProperty("name", "name", IRDFSchema.DEFAULT_LANGUAGE);
 		schemaB.setIdentifiablePropertyName("id");
 		builderB.addRDFSchema("user", schemaB);
 		
@@ -115,9 +116,9 @@ public class SyncMsAccessRDFTests {
 		builderA.addMapping(new File(this.getClass().getResource("User_sync.hbm.xml").getFile()));
 		
 		RDFSchema schemaA = new RDFSchema("user", "http://mesh4x/user#", "user");
-		schemaA.addStringProperty("id", "id", "en");
-		schemaA.addStringProperty("pass", "password", "en");
-		schemaA.addStringProperty("name", "name", "en");
+		schemaA.addStringProperty("id", "id", IRDFSchema.DEFAULT_LANGUAGE);
+		schemaA.addStringProperty("pass", "password", IRDFSchema.DEFAULT_LANGUAGE);
+		schemaA.addStringProperty("name", "name", IRDFSchema.DEFAULT_LANGUAGE);
 		schemaA.setIdentifiablePropertyName("id");
 		builderA.addRDFSchema("user", schemaA);
 		

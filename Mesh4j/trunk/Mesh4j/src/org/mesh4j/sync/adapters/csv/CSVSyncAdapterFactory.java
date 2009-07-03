@@ -13,7 +13,7 @@ public class CSVSyncAdapterFactory{
 	public static SplitAdapter createSyncAdapter(String fileName, String[] idColumnNames, String lastUpdateColumnName, IIdentityProvider identityProvider, String rdfBaseURL) {
 		Guard.argumentNotNullOrEmptyString(fileName, "fileName");
 		
-		String syncFileName = fileName.substring(0, fileName.length() - 3) + "_sync.csv";
+		String syncFileName = fileName.substring(0, fileName.length() - 4) + "_sync.csv";
 		CSVSyncRepository syncRepo =  new CSVSyncRepository(syncFileName, identityProvider, IdGenerator.INSTANCE);
 		CSVContentAdapter contentAdapter = createContentAdapter(fileName, idColumnNames, lastUpdateColumnName, rdfBaseURL);
 		SplitAdapter splitAdapter = new SplitAdapter(syncRepo, contentAdapter, identityProvider);
@@ -25,7 +25,7 @@ public class CSVSyncAdapterFactory{
 		Guard.argumentNotNull(identityProvider, "identityProvider");
 		Guard.argumentNotNull(rdfSchema, "rdfSchema");
 		
-		String syncFileName = fileName.substring(0, fileName.length() - 3) + "_sync.csv";
+		String syncFileName = fileName.substring(0, fileName.length() - 4) + "_sync.csv";
 	
 		CSVToRDFMapping mappings = new CSVToRDFMapping(rdfSchema);
 		CSVSyncRepository syncRepo =  new CSVSyncRepository(syncFileName, identityProvider, IdGenerator.INSTANCE);

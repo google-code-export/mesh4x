@@ -3,6 +3,7 @@ package org.mesh4j.sync.adapters.hibernate.mapping;
 import org.dom4j.Element;
 import org.junit.Assert;
 import org.junit.Test;
+import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
 import org.mesh4j.sync.utils.XMLHelper;
 
@@ -12,9 +13,9 @@ public class HibernateToRDFMappingTests {
 	
 	{
 		RDF_SCHEMA = new RDFSchema("User", "http://localhost:8080/mesh4x/User#", "User");
-		RDF_SCHEMA.addStringProperty("id", "id", "en");
-		RDF_SCHEMA.addStringProperty("name", "name", "en");
-		RDF_SCHEMA.addStringProperty("pass", "pass", "en");
+		RDF_SCHEMA.addStringProperty("id", "id", IRDFSchema.DEFAULT_LANGUAGE);
+		RDF_SCHEMA.addStringProperty("name", "name", IRDFSchema.DEFAULT_LANGUAGE);
+		RDF_SCHEMA.addStringProperty("pass", "pass", IRDFSchema.DEFAULT_LANGUAGE);
 		
 		RDF_SCHEMA.setIdentifiablePropertyName("id");
 	}
@@ -66,7 +67,7 @@ public class HibernateToRDFMappingTests {
 		"</User:User>"+
 		"</rdf:RDF>";
 		  
-		String xmlRow = "<User><pass>123</pass><name>juan</name><id>1</id></User>";
+		String xmlRow = "<User><id>1</id><name>juan</name><pass>123</pass></User>";
 		Element rowAsRDF = XMLHelper.parseElement(xml);
 		Element row = mapping.convertXMLToRow(rowAsRDF);
 		
@@ -87,7 +88,7 @@ public class HibernateToRDFMappingTests {
 		"</User:User>"+
 		"</rdf:RDF>";
 		  
-		String xmlRow = "<User><pass>123</pass><name>juan</name><id>1</id></User>";
+		String xmlRow = "<User><id>1</id><name>juan</name><pass>123</pass></User>";
 		Element rowAsRDF = XMLHelper.parseElement("<payload><foo1>bar</foo1>"+xml+"<foo>bar</foo></payload>");
 		Element row = mapping.convertXMLToRow(rowAsRDF);
 		

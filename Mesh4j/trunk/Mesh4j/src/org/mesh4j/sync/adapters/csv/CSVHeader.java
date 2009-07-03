@@ -25,7 +25,7 @@ public class CSVHeader {
 				writer.append(",");
 			}
 		}
-		
+		writer.append("\n");
 	}
 
 	public int getCellIndex(String columnName) {
