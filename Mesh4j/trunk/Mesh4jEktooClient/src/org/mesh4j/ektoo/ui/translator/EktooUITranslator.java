@@ -97,6 +97,10 @@ public class EktooUITranslator {
 				"EKTOO_SYNC_PROCESS_FAILED_MESSAGE", source, target, date);
 	}
 
+	public static String getMessageNewSpreadsheetName() {
+		return EktooMessageTranslator.translate("EKTOO_MESSAGE_NEW_SPREADSHEETNAME");
+	}	
+	
 	public static String getExcelFileDescription() {
 		// return "Microsoft Excel File(s)";
 		return EktooMessageTranslator
@@ -411,6 +415,10 @@ public class EktooUITranslator {
 
 	public static String getErrorOnShowingSchemaComparison(){
 		return EktooMessageTranslator.translate("EKTOO_ERROR_SCHEMA_COMPARISON_FAILED");
+	}
+	
+	public static String getErrorSpreadsheetNameAlreadyExists(String spreadsheetName) {
+		return EktooMessageTranslator.translate("EKTOO_ERROR_SPREADSHEET_NAME_ALREADY_EXISTS", spreadsheetName);
 	}
 	
 	public static String getWarningMessageForUnEqualSourceTargetEntityName(){
