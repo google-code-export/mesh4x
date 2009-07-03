@@ -1,6 +1,7 @@
 package org.mesh4j.ektoo.model;
 
 import org.mesh4j.ektoo.controller.GSSheetUIController;
+import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadsheet;
 
 /**
  * @author Bhuiyan Mohammad Iklash
@@ -15,6 +16,7 @@ public class GSSheetModel extends AbstractModel
 //	private String spreadsheetKey = null;
 	private String spreadsheetName = null;
 	private String worksheetName = null;
+	private GoogleSpreadsheet gSpreadsheet;
 
 	// TODO (NBL) Think how we can eliminate these items from gui
 	private String uniqueColumnName = null;
@@ -74,6 +76,15 @@ public class GSSheetModel extends AbstractModel
 		return uniqueColumnName;
 	}
 
+	public GoogleSpreadsheet getGSpreadsheet() {
+		return gSpreadsheet;
+	}
+
+	public void setGSpreadsheet(GoogleSpreadsheet spreadsheet) {
+		firePropertyChange(GSSheetUIController.GOOGLE_SPREADSHEET_PROPERTY, this.gSpreadsheet,
+				this.gSpreadsheet = spreadsheet);
+	}	
+	
   public String toString()
   {
     return "Cloud | " + getSpreadsheetName() + " | " + getWorksheetName() ; 

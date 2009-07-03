@@ -55,6 +55,7 @@ public class EktooController {
 			}
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
+			//TODO: need to add a popup message here
 			return SYNCHRONIZATION_FAILED;
 		}
 

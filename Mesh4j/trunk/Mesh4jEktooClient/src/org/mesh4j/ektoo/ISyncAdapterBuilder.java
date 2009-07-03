@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
+import org.mesh4j.sync.adapters.googlespreadsheet.IGoogleSpreadSheet;
 import org.mesh4j.sync.adapters.http.HttpSyncAdapter;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
@@ -76,6 +77,7 @@ public interface ISyncAdapterBuilder {
 	 */
 	public ISyncAdapter createPlainXMLBasedGoogleSpreadSheetAdapter(GoogleSpreadSheetInfo spreadSheetInfo);
 
+	public ISyncAdapter createPlainXMLBasedGoogleSpreadSheetAdapter(GoogleSpreadSheetInfo spreadSheetInfo, IGoogleSpreadSheet gss);
 	/**
 	 * TODO create documentation (raju)
 	 * 
@@ -126,6 +128,10 @@ public interface ISyncAdapterBuilder {
 	public SplitAdapter createRdfBasedGoogleSpreadSheetAdapter(
 			GoogleSpreadSheetInfo spreadSheetInfo, IRDFSchema sourceSchema);
 
+	public SplitAdapter createRdfBasedGoogleSpreadSheetAdapter(
+			GoogleSpreadSheetInfo spreadSheetInfo, IGoogleSpreadSheet gss,
+			IRDFSchema sourceSchema);
+	
 	/**
 	 * TODO create documentation (raju)
 	 */

@@ -26,6 +26,7 @@ public class GSSheetUIController extends AbstractUIController {
 	public static final String SPREADSHEET_NAME_PROPERTY = "SpreadsheetName";
 	public static final String WORKSHEET_NAME_PROPERTY = "WorksheetName";
 	public static final String UNIQUE_COLUMN_NAME_PROPERTY = "UniqueColumnName";
+	public static final String GOOGLE_SPREADSHEET_PROPERTY = "GSpreadsheet";
 
 	// MODEL VARIABLES
 	private SyncAdapterBuilder adapterBuilder;
@@ -58,16 +59,26 @@ public class GSSheetUIController extends AbstractUIController {
 		setModelProperty(UNIQUE_COLUMN_NAME_PROPERTY, uniqueColumnName);
 	}
 
+	public void changeGSpreadsheet(IGoogleSpreadSheet gSpreadsheet) {
+		setModelProperty(GOOGLE_SPREADSHEET_PROPERTY, gSpreadsheet);
+	}
+	
 	@Override
 	public ISyncAdapter createAdapter() {
 		GSSheetModel model = (GSSheetModel) this.getModel();
-		IGoogleSpreadSheet gss = new GoogleSpreadsheet(model.getSpreadsheetName(), model.getUserName(), model.getUserPassword());
-
+		
+		IGoogleSpreadSheet gss;
+		
+		if(model.getGSpreadsheet() == null){
+			gss = new GoogleSpreadsheet(model.getSpreadsheetName(), model.getUserName(), model.getUserPassword());
+			model.setGSpreadsheet((GoogleSpreadsheet) gss);
+		}
+		
 		ArrayList<String> pks = new ArrayList<String>();
 		pks.add(model.getUniqueColumnName());
 		
 		IRDFSchema rdfSchema = GoogleSpreadsheetToRDFMapping.extractRDFSchema(
-			gss, 
+			model.getGSpreadsheet(), 
 			model.getWorksheetName(),
 			pks, 
 			/*model.getLastUpdatedColumnName(),*/
@@ -77,8 +88,9 @@ public class GSSheetUIController extends AbstractUIController {
 				model.getSpreadsheetName(), model.getUserName(), 
 				model.getUserPassword(), model.getUniqueColumnName(), 
 				model.getWorksheetName(), model.getWorksheetName());
-
-		return adapterBuilder.createRdfBasedGoogleSpreadSheetAdapter(spreadSheetInfo, rdfSchema);
+		
+//		return adapterBuilder.createRdfBasedGoogleSpreadSheetAdapter(spreadSheetInfo, rdfSchema);
+		return adapterBuilder.createRdfBasedGoogleSpreadSheetAdapter(spreadSheetInfo, model.getGSpreadsheet(), rdfSchema);
 	}
 
 	@Override

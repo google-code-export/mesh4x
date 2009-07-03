@@ -20,6 +20,7 @@ import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.adapters.folder.FolderSyncAdapterFactory;
 import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadSheetRDFSyncAdapterFactory;
 import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadSheetSyncAdapterFactory;
+import org.mesh4j.sync.adapters.googlespreadsheet.IGoogleSpreadSheet;
 import org.mesh4j.sync.adapters.hibernate.HibernateSyncAdapterFactory;
 import org.mesh4j.sync.adapters.hibernate.msaccess.MsAccessHibernateSyncAdapterFactory;
 import org.mesh4j.sync.adapters.http.HttpSyncAdapterFactory;
@@ -58,7 +59,7 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 		this.msAccesSyncAdapter = new MsAccessHibernateSyncAdapterFactory(this.getBaseDirectory(), this.getBaseRDFUrl());
 		this.excelSyncFactory = new MsExcelSyncAdapterFactory();
 		this.googleSpreadSheetSyncAdapterFactory = new GoogleSpreadSheetSyncAdapterFactory();
-		this.googleSpreadSheetRDFSyncAdapterFactory = new GoogleSpreadSheetRDFSyncAdapterFactory(this.getBaseDirectory(), this.getBaseRDFUrl());
+		this.googleSpreadSheetRDFSyncAdapterFactory = new GoogleSpreadSheetRDFSyncAdapterFactory(this.getBaseRDFUrl());
 	}
 
 	@Override
@@ -102,6 +103,22 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 	}
 
 	/**
+	 * google spreadsheet adapter without rdf
+	 */
+	@Override
+	public ISyncAdapter createPlainXMLBasedGoogleSpreadSheetAdapter(GoogleSpreadSheetInfo spreadSheetInfo,
+			IGoogleSpreadSheet gss) {
+		String idColumName = spreadSheetInfo.getIdColumnName();
+		String type = spreadSheetInfo.getType();
+		String sheetName = spreadSheetInfo.getSheetName();
+		
+		IIdentityProvider identityProvider = getIdentityProvider();
+		SplitAdapter splitAdapter = googleSpreadSheetSyncAdapterFactory
+				.createSyncAdapter(gss, sheetName, idColumName, null, identityProvider, type);
+
+		return splitAdapter;
+	}
+	/**
 	 * google spreadsheet adapter with rdf
 	 * 
 	 * when googlespreadsheet adapter works as source, no need to supply rdf schema
@@ -129,6 +146,25 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 		}
 	}	
 
+	@Override
+	public SplitAdapter createRdfBasedGoogleSpreadSheetAdapter(GoogleSpreadSheetInfo spreadSheetInfo,
+			IGoogleSpreadSheet gss, IRDFSchema sourceSchema) {
+		String idColumnName = spreadSheetInfo.getIdColumnName();
+		String sourceAlias = spreadSheetInfo.getType();
+		String cotentSheetName = spreadSheetInfo.getSheetName();
+		String lastUpdateColumnName = null;
+
+		IIdentityProvider identityProvider = getIdentityProvider();
+		
+		if(sourceSchema == null){
+			return googleSpreadSheetRDFSyncAdapterFactory.createSyncAdapter(gss,
+					cotentSheetName, idColumnName, lastUpdateColumnName, identityProvider, sourceAlias);
+		}else{
+			return this.googleSpreadSheetRDFSyncAdapterFactory.createSyncAdapter(gss, cotentSheetName,
+				idColumnName, lastUpdateColumnName, identityProvider, sourceSchema, sourceAlias);
+		}
+	}	
+	
 	@Override
 	public ISyncAdapter createHttpSyncAdapter(String serverUrl, String meshGroup, String dataSetId, IRDFSchema rdfSchema) {
 		return HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverUrl, meshGroup, dataSetId, getIdentityProvider(), rdfSchema);

@@ -257,12 +257,17 @@ public class GSSheetUI extends AbstractUI {
 								(String) listName.getSelectedItem());
 						
 						if(((String) listName.getSelectedItem()).equals(DROPDOWN_CREATE_NEW_ITEM)){
-							String newSpreadsheetName = MessageDialog.showInputDialogue(getRootFrame(), "Please enter new spreadsheet name...");
+							String newSpreadsheetName = MessageDialog.showInputDialogue(getRootFrame(), 
+									EktooUITranslator.getMessageNewSpreadsheetName());
 							if(newSpreadsheetName == null){
 								listName.setSelectedIndex(0);
 							}else{
-								//MessageDialog.showInformationMessage(getRootFrame(), newSpreadsheetName);
-								addNewSpreadsheetNameInCombo(newSpreadsheetName);
+								if(!isSpreadsheetNameUnique(newSpreadsheetName)){
+									MessageDialog.showErrorMessage(getRootFrame(), EktooUITranslator.
+											getErrorSpreadsheetNameAlreadyExists(newSpreadsheetName));
+									listName.setSelectedIndex(0);
+								}else
+									addNewSpreadsheetNameInCombo(newSpreadsheetName);
 							}
 							//return;
 						}
@@ -319,6 +324,15 @@ public class GSSheetUI extends AbstractUI {
 			});
 		}
 		return listName;
+	}
+
+	protected boolean isSpreadsheetNameUnique(String newSpreadsheetName) {
+		int itemCount = listName.getItemCount();
+		for(int i=0; i < itemCount; i++){
+			if (newSpreadsheetName.equals((String)listName.getItemAt(i)))
+				return false;
+		}
+		return true;
 	}
 
 	private void addNewSpreadsheetNameInCombo(String newSpreadsheetName) {
@@ -428,7 +442,7 @@ public class GSSheetUI extends AbstractUI {
 //									setCursor(Cursor
 //											.getPredefinedCursor(Cursor.WAIT_CURSOR));
 									freezeUI(true);
-									setList(getUser(), getPass(), /* getKey() */
+									setColumnList(getUser(), getPass(), /* getKey() */
 											getSpreadsheetName(),
 											(String) listTable
 													.getSelectedItem());
@@ -527,6 +541,7 @@ public class GSSheetUI extends AbstractUI {
 			
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
+			MessageDialog.showErrorMessage(getRootFrame(), e.getMessage());
 			throw e;
 		}
 	}
@@ -540,7 +555,11 @@ public class GSSheetUI extends AbstractUI {
 		columnList.removeAllItems();
 
 		try {
-			spreadsheet = spreadsheet != null ? spreadsheet : new GoogleSpreadsheet(spreadsheetName, user, pass);
+			if(spreadsheet == null) {
+				spreadsheet = new GoogleSpreadsheet(spreadsheetName, user, pass);
+				getController().changeGSpreadsheet(spreadsheet);
+			}
+			
 			String sheetName = null;
 			
 			if( spreadsheet.getGSSpreadsheet().getGSWorksheets().entrySet().size() > 0)
@@ -562,11 +581,15 @@ public class GSSheetUI extends AbstractUI {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void setList(String user, String pass, String spreadsheetName, String sheetName) {
+	public void setColumnList(String user, String pass, String spreadsheetName, String sheetName) {
 		JComboBox columnList = getColumnList();
 		columnList.removeAllItems();
 
-		spreadsheet = spreadsheet != null ? spreadsheet : new GoogleSpreadsheet(spreadsheetName, user, pass);
+		if(spreadsheet == null) {
+			spreadsheet = new GoogleSpreadsheet(spreadsheetName, user, pass);
+			getController().changeGSpreadsheet(spreadsheet);
+		}
+		
 		GSWorksheet<GSRow<GSCell>> workSheet = spreadsheet.getGSSpreadsheet()
 				.getGSWorksheetBySheetName(sheetName);
 		
