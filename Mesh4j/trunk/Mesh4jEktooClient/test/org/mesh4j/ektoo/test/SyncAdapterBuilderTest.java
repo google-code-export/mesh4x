@@ -213,9 +213,9 @@ public class SyncAdapterBuilderTest {
 		
 		RDFSchema sourceSchema = new RDFSchema("user",
 				"http://localhost:8080/mesh4x/feeds/user#", "user");
-		sourceSchema.addStringProperty("id", "id", "en");
-		sourceSchema.addStringProperty("name", "Name", "en");
-		sourceSchema.addStringProperty("pass", "pass", "en");
+		sourceSchema.addStringProperty("id", "id", IRDFSchema.DEFAULT_LANGUAGE);
+		sourceSchema.addStringProperty("name", "Name", IRDFSchema.DEFAULT_LANGUAGE);
+		sourceSchema.addStringProperty("pass", "pass", IRDFSchema.DEFAULT_LANGUAGE);
 
 		ISyncAdapter syncAdapter = adapterBuilder.createRdfBasedGoogleSpreadSheetAdapter(spreadSheetInfo, (IRDFSchema) sourceSchema);
 		Assert.assertNotNull(syncAdapter);
@@ -272,9 +272,9 @@ public class SyncAdapterBuilderTest {
 		
 		RDFSchema sourceSchema = new RDFSchema("user",
 				"http://localhost:8080/mesh4x/feeds/user#", "user");
-		sourceSchema.addStringProperty("id", "id", "en");
-		sourceSchema.addStringProperty("name", "Name", "en");
-		sourceSchema.addStringProperty("pass", "pass", "en");
+		sourceSchema.addStringProperty("id", "id", IRDFSchema.DEFAULT_LANGUAGE);
+		sourceSchema.addStringProperty("name", "Name", IRDFSchema.DEFAULT_LANGUAGE);
+		sourceSchema.addStringProperty("pass", "pass", IRDFSchema.DEFAULT_LANGUAGE);
 
 		ISyncAdapter syncAdapter = adapterBuilder.createRdfBasedGoogleSpreadSheetAdapter(spreadSheetInfo, (IRDFSchema) sourceSchema);
 		Assert.assertNull(syncAdapter);
@@ -315,9 +315,9 @@ public class SyncAdapterBuilderTest {
 		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
 		
 		RDFSchema sourceSchema = new RDFSchema("user", "http://localhost:8080/mesh4x/feeds/user#", "user");
-		sourceSchema.addStringProperty("id", "id", "en");
-		sourceSchema.addStringProperty("name", "Name", "en");
-		sourceSchema.addStringProperty("pass", "pass", "en");
+		sourceSchema.addStringProperty("id", "id", IRDFSchema.DEFAULT_LANGUAGE);
+		sourceSchema.addStringProperty("name", "Name", IRDFSchema.DEFAULT_LANGUAGE);
+		sourceSchema.addStringProperty("pass", "pass", IRDFSchema.DEFAULT_LANGUAGE);
 		sourceSchema.setIdentifiablePropertyName("id");
 
 		SplitAdapter syncAdapter = adapterBuilder.createRdfBasedGoogleSpreadSheetAdapter(spreadSheetInfo, (IRDFSchema) sourceSchema);
@@ -451,9 +451,9 @@ public class SyncAdapterBuilderTest {
 		String sheetName = SHEET_NAME;
 
 		RDFSchema schema = new RDFSchema(sheetName, "http://localhost:8080/mesh4x/feeds/user#", sheetName);
-		schema.addStringProperty("id", "id", "en");
-		schema.addStringProperty("name", "Name", "en");
-		schema.addStringProperty("pass", "pass", "en");
+		schema.addStringProperty("id", "id", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addStringProperty("name", "Name", IRDFSchema.DEFAULT_LANGUAGE);
+		schema.addStringProperty("pass", "pass", IRDFSchema.DEFAULT_LANGUAGE);
 		schema.setIdentifiablePropertyName("id");
 		RDFInstance rdfInstance = schema.createNewInstance("uri:urn:id");
 
