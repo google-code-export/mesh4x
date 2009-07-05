@@ -12,11 +12,12 @@ import org.w3c.dom.Node;
 
 
 public class JXmlComparerTreeTableCellRenderer extends DefaultTreeCellRenderer{
-    
+   
+	private static final long serialVersionUID = 1L;
 	Color elementColor = new Color(0, 0, 128);
     Color attributeColor = new Color(0, 128, 0);
     private Color conflictColor = Color.RED;
-    private Color newItemOrAttributeColor = Color.BLUE;
+    private Color newItemOrAttributeColor = Color.GREEN;
     
     
     TreeModel baseModel;
@@ -77,9 +78,9 @@ public class JXmlComparerTreeTableCellRenderer extends DefaultTreeCellRenderer{
     
     private void processAttribute(Node nodeTobeProcessed){
     	String attributeName = nodeTobeProcessed.getNodeName();
-    	if(!attributeName.startsWith(XML_NS)){
-    		return;
-    	}
+    	if(attributeName.startsWith(XML_NS)){
+    		
+    	
 //    	String attributeValue = nodeTobeProcessed.getNodeValue();
     	Node sourceAttributeNode = getAttribute(attributeName);
     	if(sourceAttributeNode == null){
@@ -92,6 +93,9 @@ public class JXmlComparerTreeTableCellRenderer extends DefaultTreeCellRenderer{
     			setForeground(conflictColor);
     		}
     	}
+    } else {
+    	setForeground(attributeColor);
+    }
     }
     
     
@@ -111,6 +115,8 @@ public class JXmlComparerTreeTableCellRenderer extends DefaultTreeCellRenderer{
     				setForeground(conflictColor);
     			}
     		}
+    	} else {
+    		setForeground(elementColor);
     	}
 	}
     

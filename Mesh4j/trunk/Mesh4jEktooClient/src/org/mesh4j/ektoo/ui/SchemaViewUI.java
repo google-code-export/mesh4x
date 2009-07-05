@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.beans.PropertyChangeEvent;
 import java.io.StringReader;
 
+import javax.swing.JPanel;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.ui.component.treetable.xmltreetable.JXmlTreeTable;
@@ -12,7 +14,7 @@ import org.mesh4j.ektoo.ui.component.treetable.xmltreetable.JXmlTreeTableModel;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.xml.sax.InputSource;
 
-public class SchemaViewUI extends AbstractUI{
+public class SchemaViewUI extends JPanel{
 
 	private static final long serialVersionUID = 9007453368340141274L;
 	private static final Log LOGGER = LogFactory.getLog(SchemaViewUI.class);
@@ -44,15 +46,5 @@ public class SchemaViewUI extends AbstractUI{
 	}
 	
 	
-	@Override
-	public void modelPropertyChange(PropertyChangeEvent evt) {
-		// TODO (raju)
-	}
-
-	@Override
-	public boolean verify() {
-		// TODO (raju)
-		return false;
-	}
 
 }

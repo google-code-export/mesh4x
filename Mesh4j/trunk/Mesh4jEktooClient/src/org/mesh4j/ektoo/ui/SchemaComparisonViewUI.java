@@ -91,7 +91,7 @@ public class SchemaComparisonViewUI extends JPanel{
 		
 		JLabel newItemLabelText = new JLabel(EktooUITranslator.getNewItemTextforSchema());
 		JPanel newItemColor = new JPanel();
-		newItemColor.setBackground(Color.BLUE);
+		newItemColor.setBackground(Color.GREEN);
 		//newItemColor.setBorder(BorderFactory.createTitledBorder( new RoundBorder(Color.LIGHT_GRAY)));
 		
 		containerPanel.add(conflictItemLabelText);

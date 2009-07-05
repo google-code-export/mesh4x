@@ -82,6 +82,6 @@ public class SchemaComparisonViewTask extends SwingWorker<String, Void>{
 	}
 	
 	private void showSchemaComparisonInPopUP(JPanel schemaComparisonUI){
-		this.ui.showViewInPopup(EktooUITranslator.getTitleOfSchemaViewPopUp(),schemaComparisonUI);
+		this.ui.showViewInPopup(EktooUITranslator.getTitleOfSchemaViewComparisonPopUp(),schemaComparisonUI);
 	}
 }

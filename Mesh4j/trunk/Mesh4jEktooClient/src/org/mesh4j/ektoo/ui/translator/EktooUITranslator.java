@@ -445,6 +445,9 @@ public class EktooUITranslator {
 	public static String getTitleOfSchemaViewPopUp() {
 		return EktooMessageTranslator.translate("EKTOO_SCHEMA_VIEW_POPUP_TITLE");
 	}
+	public static String getTitleOfSchemaViewComparisonPopUp() {
+		return EktooMessageTranslator.translate("EKTOO_SCHEMA_COMPARISON_VIEW_TITLE");
+	}
 	
 	public static String getTooltipFetchSpreadsheets() {
 		return EktooMessageTranslator.translate("EKTOO_TOOLTIP_GOOGLE_VIEW_FETCH_SPREADSHEETS");
