@@ -15,12 +15,14 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Date;
 import java.util.StringTokenizer;
 
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.ButtonModel;
 import javax.swing.Icon;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -31,6 +33,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.mesh4j.ektoo.controller.EktooController;
 import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.ektoo.tasks.IErrorListener;
@@ -40,15 +43,27 @@ import org.mesh4j.ektoo.tasks.SchemaComparisonViewTask;
 import org.mesh4j.ektoo.tasks.SynchronizeTask;
 import org.mesh4j.ektoo.ui.component.HyperLink;
 import org.mesh4j.ektoo.ui.component.PopupDialog;
+import org.mesh4j.ektoo.ui.component.messagedialog.MessageDialog;
 import org.mesh4j.ektoo.ui.component.statusbar.Statusbar;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 
+import com.toedter.calendar.JDateChooser;
+
 public class EktooFrame extends JFrame implements IErrorListener,
 		ISynchronizeTaskListener {
+	//CONSTANTS
 	private static final long serialVersionUID = -8703829301086394863L;
-
+	
+	public static String DATE_FILTER_SYNC_ALL = "Sync All Items";
+	public static String DATE_FILTER_SYNC_LAST_DAY = "Sync Last Day";
+	public static String DATE_FILTER_SYNC_LAST_WEEK = "Sync Last Week";
+	public static String DATE_FILTER_SYNC_LAST_MONTH = "Sync Last Month";
+	public static String DATE_FILTER_SYNC_CUSTOM_DATE = "Sync for a Date";
+	
 	// MODEL VARIABLES
+	private Date syncSince = null;
+	
 	private SyncItemUI sourceItem = null;
 	private SyncItemUI targetItem = null;
 
@@ -62,8 +77,14 @@ public class EktooFrame extends JFrame implements IErrorListener,
 	public static boolean multiModeSync = false;
 	
 	private JPanel panelSyncMode = null;
+	private JPanel panelDateFilter = null;
+	private JPanel panelSyncConfig = null;
+	
 	private JRadioButton singleModeRadio;
 	private JRadioButton multiModeRadio;
+	private JComboBox dateFilter;
+	
+	private JPanel dateInputPanel;
 	
 	private JLabel sourceImageLabel = null;
 	private JLabel targetImageLabel = null;
@@ -91,6 +112,10 @@ public class EktooFrame extends JFrame implements IErrorListener,
 		this.setTitle(EktooUITranslator.getTitle());
 		this.filterCombobox();
 		this.setResizable(false);
+	}
+
+	public Date getSyncSince() {
+		return syncSince;
 	}
 
 	private HyperLink getSchemaComarisonLink(){
@@ -181,7 +206,7 @@ public class EktooFrame extends JFrame implements IErrorListener,
 			c.gridx = 0;
 			c.gridy = 1;
 			c.gridwidth = 2;
-			panel.add(getSyncModePanel(), c);			
+			panel.add(getSyncConfigPanel(), c);			
 			
 			// c.fill = GridBagConstraints.HORIZONTAL;
 			c.gridx = 0;
@@ -390,6 +415,13 @@ public class EktooFrame extends JFrame implements IErrorListener,
 			btnSync.addMouseListener(new MouseAdapter(){
 				@Override
 				public void mouseClicked(MouseEvent e) {
+					
+					syncSince = ((JDateChooser)dateInputPanel).getDate();
+					if(dateFilter.getSelectedItem().equals(DATE_FILTER_SYNC_CUSTOM_DATE) && syncSince == null){
+						MessageDialog.showErrorMessage(getEktooFrame(), EktooUITranslator.getErrorInvalidSyncDate());
+						return;
+					}
+					
 					if(getSourceItem().verify() && getTargetItem().verify()){
 						setStatusbarText("", Statusbar.NORMAL_STATUS);
 						SwingWorker<String, Void> task = new SynchronizeTask(
@@ -401,6 +433,22 @@ public class EktooFrame extends JFrame implements IErrorListener,
 
 		}
 		return btnSync;
+	}
+	
+	JPanel getSyncConfigPanel(){
+		if (panelSyncConfig == null) {
+			panelSyncConfig = new JPanel();
+			panelSyncConfig.setOpaque(false);
+			
+			GridLayout gl = new GridLayout(1,2);
+			gl.setHgap(10);
+			panelSyncConfig.setLayout(gl);			
+			
+			panelSyncConfig.add(getSyncModePanel());
+			panelSyncConfig.add(getDateFilterPanel());
+			
+		}
+		return panelSyncConfig;			
 	}
 	
 	JPanel getSyncModePanel(){
@@ -421,6 +469,23 @@ public class EktooFrame extends JFrame implements IErrorListener,
 		return panelSyncMode;		
 	}
 
+	JPanel getDateFilterPanel(){
+		if (panelDateFilter == null) {
+			panelDateFilter = new JPanel();
+			panelDateFilter.setOpaque(false);
+			
+			GridLayout gl = new GridLayout(1,2);
+			gl.setHgap(2);
+			panelDateFilter.setLayout(gl);			
+			panelDateFilter.add(getDateFilter());
+			
+			dateInputPanel = new JDateChooser("yyyy/MM/dd", "####/##/##", '_');
+			dateInputPanel.setEnabled(false);
+			panelDateFilter.add(dateInputPanel);
+		}
+		return panelDateFilter;		
+	}
+	
 	JRadioButton getSingleModeRadio(){
 		if (singleModeRadio == null) {
 		    singleModeRadio = new JRadioButton("Single Mode Sync");
@@ -489,7 +554,57 @@ public class EktooFrame extends JFrame implements IErrorListener,
 		} 
 	    return multiModeRadio;
 	}
-    
+  
+	public JComboBox getDateFilter() {
+		if (dateFilter == null) {
+			dateFilter = new JComboBox();
+			dateFilter.setBounds(new Rectangle(101, 105, 183, 20));
+			dateFilter.setToolTipText(EktooUITranslator.getTooltipDateFilter());
+			
+			dateFilter.addItem(DATE_FILTER_SYNC_ALL);
+			dateFilter.addItem(DATE_FILTER_SYNC_LAST_DAY);
+			dateFilter.addItem(DATE_FILTER_SYNC_LAST_WEEK);
+			dateFilter.addItem(DATE_FILTER_SYNC_LAST_MONTH);
+			dateFilter.addItem(DATE_FILTER_SYNC_CUSTOM_DATE);
+			
+			dateFilter.addItemListener(new ItemListener() {
+				public void itemStateChanged(ItemEvent evt) {
+					if (evt.getStateChange() == ItemEvent.SELECTED ) {
+							int columnIndex = dateFilter.getSelectedIndex();
+							if (columnIndex != -1) {
+								String selectedValue  = (String) dateFilter.getSelectedItem();
+								
+								dateInputPanel.setEnabled(false);
+								
+								if(selectedValue.equals(DATE_FILTER_SYNC_ALL)){
+									((JDateChooser)dateInputPanel).setDate(null);
+								}
+								else if(selectedValue.equals(DATE_FILTER_SYNC_LAST_DAY)){
+									((JDateChooser)dateInputPanel).setDate(DateUtils.addDays(new Date(),-1));
+								}
+								else if(selectedValue.equals(DATE_FILTER_SYNC_LAST_WEEK)){
+									((JDateChooser)dateInputPanel).setDate(DateUtils.addWeeks(new Date(),-1));
+								}
+								else if(selectedValue.equals(DATE_FILTER_SYNC_LAST_MONTH)){
+									((JDateChooser)dateInputPanel).setDate(DateUtils.addMonths(new Date(),-1));
+								}
+								else if(selectedValue.equals(DATE_FILTER_SYNC_CUSTOM_DATE)){
+									dateInputPanel.setEnabled(true);
+								}
+								
+							}	
+					}
+				}
+			});
+
+		}
+		return dateFilter;
+	}	
+	
+	public EktooFrame getEktooFrame(){
+		return this;
+	}
+	
 	public void setController(EktooController controller) {
 		this.controller = controller;
 	}
