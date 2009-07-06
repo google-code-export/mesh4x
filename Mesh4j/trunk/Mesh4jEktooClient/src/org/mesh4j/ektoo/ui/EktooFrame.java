@@ -103,7 +103,7 @@ public class EktooFrame extends JFrame implements IErrorListener,
 	}
 
 	private void initialize() {
-		this.setSize(new Dimension(800, 570));
+		this.setSize(new Dimension(800, 600));
 		this.getContentPane().setLayout(new BorderLayout());
 		this.add(getHeaderPanel(),BorderLayout.NORTH);
 		this.add(getJPanel(),BorderLayout.CENTER);
