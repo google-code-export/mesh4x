@@ -365,6 +365,10 @@ public class EktooUITranslator {
 		return EktooMessageTranslator.translate("EKTOO_ERROR_INVALID_CREDENTIALS");
 	}
 	
+	public static String getErrorInvalidSyncDate() {
+		return EktooMessageTranslator.translate("EKTOO_ERROR_INVALID_SYNC_DATE");
+	}
+	
 	public static String getFolderFileNameLabel() {
 		return EktooMessageTranslator
 				.translate("EKTOO_FOLDER_FILE_NAME_FIELD_LABEL");
@@ -513,6 +517,10 @@ public class EktooUITranslator {
 	
 	public static String getTooltipSeleceDataFile(String fileType) {
 		return EktooMessageTranslator.translate("EKTOO_TOOLTIP_SELECT_FILE", fileType);
+	}
+
+	public static String getTooltipDateFilter() {
+		return EktooMessageTranslator.translate("EKTOO_TOOLTIP_DATE_FILTER");
 	}
 
 }
