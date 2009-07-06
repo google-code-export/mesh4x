@@ -1,5 +1,6 @@
 package org.mesh4j.ektoo.controller;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -32,7 +33,7 @@ public class EktooController {
 		this.adapterBuilder = new SyncAdapterBuilder(propertiesProvider);
 	}
 
-	public String sync(SyncItemUI source, SyncItemUI target) {
+	public String sync(SyncItemUI source, SyncItemUI target, Date since) {
 		ISyncAdapter sourceAdapter = null;
 		ISyncAdapter targetAdapter = null;
 		
@@ -43,13 +44,13 @@ public class EktooController {
 		if(sourceAdapter == null || targetAdapter == null){
 			return SYNCHRONIZATION_ERROR_CREATING_ADAPTER;
 		}
-		return sync(sourceAdapter, targetAdapter);
+		return sync(sourceAdapter, targetAdapter, since);
 	}
 
-	public String sync(ISyncAdapter sourceAdapter, ISyncAdapter targetAdapter) {
+	public String sync(ISyncAdapter sourceAdapter, ISyncAdapter targetAdapter, Date since) {
 		try {
 			SyncEngine engine = new SyncEngine(sourceAdapter, targetAdapter);
-			List<Item> items = engine.synchronize();
+			List<Item> items = engine.synchronize(since);
 			if (items != null && items.size() > 0) {
 				return SYNCHRONIZATION_CONFLICTED;
 			}
