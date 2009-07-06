@@ -813,9 +813,9 @@ public class GoogleSpreadsheetUtils {
 				}
 				
 				if(gssSpreadsheet == null){
-					log.info("/n-----------------");
-					log.info("cann't access the newly uploaded spreadsheet '"+newSpreadsheetName+"'...trying agin after 5 seconds...");
-					log.info("-----------------/n");
+					log.info("-----------------");
+					log.info("unable to access the newly uploaded spreadsheet '"+newSpreadsheetName+"'...trying agin after 5 seconds...");
+					log.info("-----------------");
 					try {
 						Thread.sleep(5000);
 						count++;
