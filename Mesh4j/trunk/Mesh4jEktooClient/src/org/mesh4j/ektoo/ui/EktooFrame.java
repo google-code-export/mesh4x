@@ -67,15 +67,19 @@ public class EktooFrame extends JFrame implements IErrorListener,
 	private SyncItemUI sourceItem = null;
 	private SyncItemUI targetItem = null;
 
+	//TODO (raju) need not as instance variable,need to refactor
 	private JPanel panel = null;
 	//private JButton btnSync = null;
 	private JLabel btnSync = null;
 
+	//TODO (raju) need not as instance variable,need to refactor
 	private JPanel panelImage = null;
+	//TODO (raju) need not as instance variable,need to refactor
 	private JPanel headerPanel = null;
 
 	public static boolean multiModeSync = false;
 	
+	//TODO (raju) need not as instance variable,need to refactor
 	private JPanel panelSyncMode = null;
 	private JPanel panelDateFilter = null;
 	private JPanel panelSyncConfig = null;
@@ -139,15 +143,8 @@ public class EktooFrame extends JFrame implements IErrorListener,
 			headerPanel.add(linkPanel,BorderLayout.EAST);
 			linkPanel.setOpaque(false);
 			
-//			HyperLink settingsLink = new HyperLink(EktooUITranslator.getSettingsText());
 			HyperLink helpLink = new HyperLink(EktooUITranslator.getHelpText());
 			HyperLink aboutLink = new HyperLink(EktooUITranslator.getAboutText());
-			
-//			settingsLink.addMouseListener(new MouseAdapter(){
-//				 public void mouseClicked(MouseEvent e) {
-//					 loadSettingsUI();
-//				 }
-//			});
 			
 			helpLink.addMouseListener(new MouseAdapter(){
 				 public void mouseClicked(MouseEvent e) {
@@ -161,22 +158,20 @@ public class EktooFrame extends JFrame implements IErrorListener,
 				 }
 			});
 			
-//			linkPanel.add(settingsLink);
 			linkPanel.add(helpLink);
 			linkPanel.add(aboutLink);
 		}
-	
 		return headerPanel;
 	}
 	
-	//TODO(raju)  user PropertiesProvider class as single tone for the application
+	//TODO(raju)  use PropertiesProvider class as single tone for the application
 	//because its not necessary to load property file every time.
 	private void gotToMesh4xHelpSite(){
 		OpenURLTask openURLTask = new OpenURLTask(this,this,new PropertiesProvider().getMesh4xURL());
 		openURLTask.execute();
 	}
 
-	//TODO(raju)  user PropertiesProvider class as single tone for the application
+	//TODO(raju)  use PropertiesProvider class as single tone for the application
 	//because its not necessary to load property file every time.
 	private void goToMesh4xEktooHelpSite(){
 		OpenURLTask openURLTask = new OpenURLTask(this,this,new PropertiesProvider().getMesh4xEktooURL());
@@ -370,36 +365,6 @@ public class EktooFrame extends JFrame implements IErrorListener,
 		return getTargetItem();
 	}
 	
-/*	public JButton getBtnSync() {
-		if (btnSync == null) {
-			btnSync = new JButton();
-			btnSync.setIcon(ImageManager.getSyncIcon(false));
-			
-			btnSync.setContentAreaFilled(false);
-			btnSync.setBorderPainted(false);
-			btnSync.setBorder(new EmptyBorder(0, 0, 0, 0));
-			btnSync.setBackground(Color.WHITE);
-			btnSync.setText("");
-			btnSync.setBounds(new Rectangle(315, 427, 50, 50));			
-			//btnSync.setText(EktooUITranslator.getSyncLabel());
-			btnSync.setToolTipText(EktooUITranslator.getSyncToolTip());
-			//btnSync.setFont(new Font("Arial", Font.PLAIN, 16));
-
-			btnSync.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					if(getSourceItem().verify() && getTargetItem().verify()){
-						setStatusbarText("", Statusbar.NORMAL_STATUS);
-						//showSyncImageLabel(true);
-						SwingWorker<String, Void> task = new SynchronizeTask(
-								EktooFrame.this, EktooFrame.this);
-						task.execute();	
-					}
-				}
-			});
-
-		}
-		return btnSync;
-	}*/
 
 	public JLabel getBtnSync() {
 		if (btnSync == null) {
@@ -488,73 +453,105 @@ public class EktooFrame extends JFrame implements IErrorListener,
 	
 	JRadioButton getSingleModeRadio(){
 		if (singleModeRadio == null) {
-		    singleModeRadio = new JRadioButton("Single Mode Sync");
+		    singleModeRadio = new JRadioButton(EktooUITranslator.getTextSyncModeSingle());
 		    singleModeRadio.setToolTipText(EktooUITranslator.getTooltipSyncModeSingle());
-		    singleModeRadio.addChangeListener(new ChangeListener(){
+		    singleModeRadio.addItemListener(new ItemListener(){
 				@Override
-				public void stateChanged(ChangeEvent e) {
-				    AbstractButton aButton = (AbstractButton)e.getSource();
-			        ButtonModel aModel = aButton.getModel();
-			        boolean selected = aModel.isSelected();
-			        boolean previousMode = multiModeSync;
-			        multiModeSync = selected ? false : true;
-			        if(previousMode != multiModeSync){
-			        	updateSourceAdapterList();
-			        }
+				public void itemStateChanged(ItemEvent e) {
+					if(e.getStateChange() == e.SELECTED){
+						boolean previousMode = multiModeSync;
+						multiModeSync = false;
+						if(previousMode != multiModeSync){
+							updateSourceAdapterList();	
+						}
+			   		} 
 				}
 		    });
+		    
+//		    singleModeRadio.addChangeListener(new ChangeListener(){
+//				@Override
+//				public void stateChanged(ChangeEvent e) {
+//				    AbstractButton aButton = (AbstractButton)e.getSource();
+//			        ButtonModel aModel = aButton.getModel();
+//			        boolean selected = aModel.isSelected();
+//			        boolean previousMode = multiModeSync;
+//			        multiModeSync = selected ? false : true;
+//			        if(previousMode != multiModeSync){
+//			        	updateSourceAdapterList();
+//			        }
+//				}
+//		    });
 		}
 	    return singleModeRadio;
 	}
 	
 	JRadioButton getMultiModeRadio(){
 		if (multiModeRadio == null) {
-		    multiModeRadio = new JRadioButton("Multi Mode Sync");
+			multiModeRadio = new JRadioButton(EktooUITranslator.getTextSyncModeMulti());
 		    multiModeRadio.setToolTipText(EktooUITranslator.getTooltipSyncModeMulti());
-		    multiModeRadio.addChangeListener(new ChangeListener(){
+		    
+		    multiModeRadio.addItemListener(new ItemListener(){
 				@Override
-				public void stateChanged(ChangeEvent e) {
-				    AbstractButton aButton = (AbstractButton)e.getSource();
-			        ButtonModel aModel = aButton.getModel();
-			        boolean selected = aModel.isSelected();
-			        boolean previousMode = multiModeSync;
-			        multiModeSync = selected? true : false;
-			        if(previousMode != multiModeSync){
-			        	if(getSourceItem() != null){
-				        	if(getSourceItem().getCurrentView() instanceof MySQLUI){
-				        		MySQLUI mui = (MySQLUI) getSourceItem().getCurrentView();
-				        		int i[] = mui.getTableList().getSelectedIndices();
-				        		mui.getTableList().setSelectedIndex(i.length == 0 ? 0 : i[0]);
-				        		mui.repaint();
-				        	} else if(getSourceItem().getCurrentView() instanceof MsAccessUI){
-				        		MsAccessUI mui = (MsAccessUI) getSourceItem().getCurrentView();
-				        		int i[] = mui.getTableList().getSelectedIndices();
-				        		mui.getTableList().setSelectedIndex(i.length == 0 ? 0 : i[0]);
-				        		mui.repaint();
-				        	}
-			        	}
-			        	if(getTargetItem() != null){
-				        	if(getTargetItem().getCurrentView() instanceof MySQLUI){
-				        		MySQLUI mui = (MySQLUI) getTargetItem().getCurrentView();
-				        		int i[] = mui.getTableList().getSelectedIndices();
-				        		mui.getTableList().setSelectedIndex(i.length == 0 ? 0 : i[0]);
-				        		mui.repaint();
-				        	} else if(getTargetItem().getCurrentView() instanceof MsAccessUI){
-				        		MsAccessUI mui = (MsAccessUI) getTargetItem().getCurrentView();
-				        		int i[] = mui.getTableList().getSelectedIndices();
-				        		mui.getTableList().setSelectedIndex(i.length == 0 ? 0 : i[0]);
-				        		mui.repaint();
-				        	}			        		
-			        	}
-			        	updateSourceAdapterList();
-			        }
-				    
+				public void itemStateChanged(ItemEvent e) {
+					if(e.getStateChange() == e.SELECTED){
+						 boolean previousMode = multiModeSync;
+						 multiModeSync = true;
+						if(previousMode != multiModeSync){
+							updateUiForMultiModeSync();
+				        	updateSourceAdapterList();
+				        }
+			   		} 
 				}
-		    });	    
+		    });
+		    
+//		    multiModeRadio.addChangeListener(new ChangeListener(){
+//				@Override
+//				public void stateChanged(ChangeEvent e) {
+//				    AbstractButton aButton = (AbstractButton)e.getSource();
+//			        ButtonModel aModel = aButton.getModel();
+//			        boolean selected = aModel.isSelected();
+//			        boolean previousMode = multiModeSync;
+//			        multiModeSync = selected? true : false;
+//			        if(previousMode != multiModeSync){
+//			        	updateUiForMultiModeSync();
+//			        	updateSourceAdapterList();
+//			        }
+//				    
+//				}
+//		    });	    
 		} 
 	    return multiModeRadio;
 	}
   
+	private void updateUiForMultiModeSync(){
+    	if(getSourceItem() != null){
+        	if(getSourceItem().getCurrentView() instanceof MySQLUI){
+        		MySQLUI mui = (MySQLUI) getSourceItem().getCurrentView();
+        		int i[] = mui.getTableList().getSelectedIndices();
+        		mui.getTableList().setSelectedIndex(i.length == 0 ? 0 : i[0]);
+        		mui.repaint();
+        	} else if(getSourceItem().getCurrentView() instanceof MsAccessUI){
+        		MsAccessUI mui = (MsAccessUI) getSourceItem().getCurrentView();
+        		int i[] = mui.getTableList().getSelectedIndices();
+        		mui.getTableList().setSelectedIndex(i.length == 0 ? 0 : i[0]);
+        		mui.repaint();
+        	}
+    	}
+    	if(getTargetItem() != null){
+        	if(getTargetItem().getCurrentView() instanceof MySQLUI){
+        		MySQLUI mui = (MySQLUI) getTargetItem().getCurrentView();
+        		int i[] = mui.getTableList().getSelectedIndices();
+        		mui.getTableList().setSelectedIndex(i.length == 0 ? 0 : i[0]);
+        		mui.repaint();
+        	} else if(getTargetItem().getCurrentView() instanceof MsAccessUI){
+        		MsAccessUI mui = (MsAccessUI) getTargetItem().getCurrentView();
+        		int i[] = mui.getTableList().getSelectedIndices();
+        		mui.getTableList().setSelectedIndex(i.length == 0 ? 0 : i[0]);
+        		mui.repaint();
+        	}			        		
+    	}
+    }
+	
 	public JComboBox getDateFilter() {
 		if (dateFilter == null) {
 			dateFilter = new JComboBox();
@@ -629,26 +626,17 @@ public class EktooFrame extends JFrame implements IErrorListener,
 		return targetItem;
 	}
 
-  public void setStatusbarText(String msg, int statusStyle) 
-  {
-    if (statusStyle == Statusbar.NORMAL_STATUS)
-    {
+  public void setStatusbarText(String msg, int statusStyle){ 
+   
+	if (statusStyle == Statusbar.NORMAL_STATUS){
       statusBar.setStaus(msg, Statusbar.NORMAL_COLOR, Statusbar.NORMAL_ICON);
-    }
-    else if (statusStyle == Statusbar.WARNING_STATUS)
-    {
+    } else if (statusStyle == Statusbar.WARNING_STATUS){
       statusBar.setStaus(msg, Statusbar.WARNING_COLOR, Statusbar.WARNING_ICON);
-    }
-    else if (statusStyle == Statusbar.ERROR_STATUS)
-    {
+    } else if (statusStyle == Statusbar.ERROR_STATUS){
       statusBar.setStaus(msg, Statusbar.ERROR_COLOR, Statusbar.ERROR_ICON);
-    } 
-    else if (statusStyle == Statusbar.SUCCESS_STATUS)
-    {
+    } else if (statusStyle == Statusbar.SUCCESS_STATUS){
       statusBar.setStaus(msg, Statusbar.SUCCESS_COLOR, Statusbar.SUCCESS_ICON);
-    } 
-    else if (statusStyle == Statusbar.PROGRESS_STATUS)
-    {
+    } else if (statusStyle == Statusbar.PROGRESS_STATUS){
       statusBar.setStaus(msg, Statusbar.PROGRESS_COLOR, Statusbar.PROGRESS_ICON);
     }     
   }
