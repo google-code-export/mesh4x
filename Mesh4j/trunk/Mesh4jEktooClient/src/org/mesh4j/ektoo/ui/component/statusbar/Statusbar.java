@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -12,6 +13,8 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import javax.swing.SwingConstants;
 
 import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.ektoo.tasks.IErrorListener;
@@ -90,12 +93,18 @@ public class Statusbar extends JPanel implements IStatus
     return labelStatus;
   }
   
-  private JComponent getSeperaor() 
-  {
-    JLabel labelSeparator = new JLabel();
-    labelSeparator.setPreferredSize(new Dimension(7, 21));
-    labelSeparator.setIcon(ImageManager.getSeperatorIcon());
-    return labelSeparator;
+  private JComponent getSeperaor(){ 
+ 	  
+	 JSeparator separator = null;
+	 JPanel spePanel = new JPanel(new GridLayout(1,2,0,0));
+	 spePanel.setOpaque(false);
+
+	 separator = new JSeparator(SwingConstants.VERTICAL);
+	 spePanel.add(separator);
+	 
+	 separator = new JSeparator(SwingConstants.VERTICAL);
+	 spePanel.add(separator);
+    return spePanel;
   }
 
   private JLabel getPoweredByLabel() 

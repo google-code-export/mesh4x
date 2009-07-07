@@ -1,6 +1,3 @@
-/**
- *
- */
 package org.mesh4j.ektoo.ui;
 
 import java.awt.BorderLayout;
@@ -18,9 +15,8 @@ import java.awt.event.MouseEvent;
 import java.util.Date;
 import java.util.StringTokenizer;
 
-import javax.swing.AbstractButton;
+import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
-import javax.swing.ButtonModel;
 import javax.swing.Icon;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -30,8 +26,6 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.mesh4j.ektoo.controller.EktooController;
@@ -43,6 +37,7 @@ import org.mesh4j.ektoo.tasks.SchemaComparisonViewTask;
 import org.mesh4j.ektoo.tasks.SynchronizeTask;
 import org.mesh4j.ektoo.ui.component.HyperLink;
 import org.mesh4j.ektoo.ui.component.PopupDialog;
+import org.mesh4j.ektoo.ui.component.RoundBorder;
 import org.mesh4j.ektoo.ui.component.messagedialog.MessageDialog;
 import org.mesh4j.ektoo.ui.component.statusbar.Statusbar;
 import org.mesh4j.ektoo.ui.image.ImageManager;
@@ -107,7 +102,7 @@ public class EktooFrame extends JFrame implements IErrorListener,
 	}
 
 	private void initialize() {
-		this.setSize(new Dimension(800, 600));
+		this.setSize(new Dimension(800, 560));
 		this.getContentPane().setLayout(new BorderLayout());
 		this.add(getHeaderPanel(),BorderLayout.NORTH);
 		this.add(getJPanel(),BorderLayout.CENTER);
@@ -122,9 +117,18 @@ public class EktooFrame extends JFrame implements IErrorListener,
 		return syncSince;
 	}
 
+	private JPanel getSchemaComparisonPanel(){
+		JPanel schemaComparisonPanel = new JPanel();
+		schemaComparisonPanel.setPreferredSize(new Dimension(150,25));
+		schemaComparisonPanel.setOpaque(false);
+		schemaComparisonPanel.add(getSchemaComarisonLink());
+		return schemaComparisonPanel;
+	}
+	
 	private HyperLink getSchemaComarisonLink(){
 		if(schemaComparisonLink == null){
 			schemaComparisonLink = new HyperLink(EktooUITranslator.getSchemaComarisonLinkText());
+			schemaComparisonLink.setToolTipText(EktooUITranslator.getSchemaComarisonLinkTooltipText());
 			schemaComparisonLink.addMouseListener(new MouseAdapter(){
 				 public void mouseClicked(MouseEvent e) {
 					 SchemaComparisonViewTask task = new SchemaComparisonViewTask(EktooFrame.this,EktooFrame.this);
@@ -134,6 +138,7 @@ public class EktooFrame extends JFrame implements IErrorListener,
 		}
 		return schemaComparisonLink;
 	}
+	
 	private JPanel getHeaderPanel(){
 		if(headerPanel == null){
 			headerPanel = new JPanel(new BorderLayout(10,10));	
@@ -214,14 +219,14 @@ public class EktooFrame extends JFrame implements IErrorListener,
 			c.gridy = 2;
 			panel.add(getTargetPane(), c);
 			
-			
+			c.insets = new Insets(-20, 0, 0, 0);
 			c.fill = GridBagConstraints.CENTER;
 			c.gridx = 0;
 			c.gridy = 4;
 			c.gridwidth = 2;
-			panel.add(getSchemaComarisonLink(), c);
+			panel.add(getSchemaComparisonPanel(), c);
 			
-			
+			c.insets = new Insets(-15, 0, 0, 0);
 			c.fill = GridBagConstraints.CENTER;
 			c.gridx = 0;
 			c.gridy = 5;
@@ -229,7 +234,7 @@ public class EktooFrame extends JFrame implements IErrorListener,
 			panel.add(getBtnSync(), c);
 			
 			
-			c.insets = new Insets(0, 3, -17, 3);
+			c.insets = new Insets(-25, 3, -17, 3);
 			c.fill = GridBagConstraints.HORIZONTAL;
 			c.gridx = 0;
 			c.gridy = 6;
@@ -335,6 +340,7 @@ public class EktooFrame extends JFrame implements IErrorListener,
 						setSourceIcon(ImageManager.getSourceImage((String) evt
 								.getItem(), false));
 						filterCombobox();
+						showHideSchemaComparison();
 					}
 				}
 			});
@@ -344,6 +350,26 @@ public class EktooFrame extends JFrame implements IErrorListener,
 		return getSourceItem();
 	}
 
+	private void showHideSchemaComparison(){
+		String sourceItem = (String) getSourceItem().getListType().getSelectedItem();
+		String targetItem = (String) getTargetItem().getListType().getSelectedItem();
+		
+		if(sourceItem.equals(SyncItemUI.KML_PANEL) || 
+				sourceItem.equals(SyncItemUI.RSS_FILE_PANEL)||
+				sourceItem.equals(SyncItemUI.ATOM_FILE_PANEL)||
+				sourceItem.equals(SyncItemUI.FOLDER_PANEL)||
+				targetItem.equals(SyncItemUI.KML_PANEL)||
+				targetItem.equals(SyncItemUI.RSS_FILE_PANEL)||
+				targetItem.equals(SyncItemUI.ATOM_FILE_PANEL)||
+				targetItem.equals(SyncItemUI.FOLDER_PANEL)||
+				targetItem.equals(SyncItemUI.ZIP_FILE_PANEL)
+				){
+			getSchemaComarisonLink().setVisible(false);
+		} else {
+			getSchemaComarisonLink().setVisible(true);
+		}
+	}
+	
 	private JPanel getTargetPane() {
 		if (getTargetItem() == null) {
 			setTargetItem(new SyncItemUI(EktooUITranslator
@@ -354,6 +380,7 @@ public class EktooFrame extends JFrame implements IErrorListener,
 					if (evt.getStateChange() == ItemEvent.SELECTED) {
 						setTargetIcon(ImageManager.getSourceImage((String) evt
 								.getItem(), false));
+						showHideSchemaComparison();
 					}
 				}
 			});
@@ -420,6 +447,8 @@ public class EktooFrame extends JFrame implements IErrorListener,
 		if (panelSyncMode == null) {
 			panelSyncMode = new JPanel();
 			panelSyncMode.setOpaque(false);
+			panelSyncMode.setBorder(BorderFactory.createTitledBorder( new RoundBorder(Color.LIGHT_GRAY), 
+					EktooUITranslator.getSyncModeText())); 
 			panelSyncMode.setLayout(new GridLayout(1,2));			
 			
 			panelSyncMode.add(getSingleModeRadio());
@@ -438,7 +467,8 @@ public class EktooFrame extends JFrame implements IErrorListener,
 		if (panelDateFilter == null) {
 			panelDateFilter = new JPanel();
 			panelDateFilter.setOpaque(false);
-			
+			panelDateFilter.setBorder(BorderFactory.createTitledBorder( new RoundBorder(Color.LIGHT_GRAY),
+					EktooUITranslator.getSyncFilterTypeText()));
 			GridLayout gl = new GridLayout(1,2);
 			gl.setHgap(2);
 			panelDateFilter.setLayout(gl);			
@@ -454,6 +484,7 @@ public class EktooFrame extends JFrame implements IErrorListener,
 	JRadioButton getSingleModeRadio(){
 		if (singleModeRadio == null) {
 		    singleModeRadio = new JRadioButton(EktooUITranslator.getTextSyncModeSingle());
+		    singleModeRadio.setOpaque(false);
 		    singleModeRadio.setToolTipText(EktooUITranslator.getTooltipSyncModeSingle());
 		    singleModeRadio.addItemListener(new ItemListener(){
 				@Override
@@ -489,7 +520,7 @@ public class EktooFrame extends JFrame implements IErrorListener,
 		if (multiModeRadio == null) {
 			multiModeRadio = new JRadioButton(EktooUITranslator.getTextSyncModeMulti());
 		    multiModeRadio.setToolTipText(EktooUITranslator.getTooltipSyncModeMulti());
-		    
+		    multiModeRadio.setOpaque(false);
 		    multiModeRadio.addItemListener(new ItemListener(){
 				@Override
 				public void itemStateChanged(ItemEvent e) {

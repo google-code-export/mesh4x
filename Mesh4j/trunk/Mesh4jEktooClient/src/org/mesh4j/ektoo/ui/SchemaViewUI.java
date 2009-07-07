@@ -1,7 +1,6 @@
 package org.mesh4j.ektoo.ui;
 
 import java.awt.BorderLayout;
-import java.beans.PropertyChangeEvent;
 import java.io.StringReader;
 
 import javax.swing.JPanel;

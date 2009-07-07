@@ -6,10 +6,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.io.StringReader;
 
-import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -17,7 +15,6 @@ import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.SwingConstants;
 
-import org.mesh4j.ektoo.ui.component.RoundBorder;
 import org.mesh4j.ektoo.ui.component.treetable.xmltreetable.JXmlComparerTreeTableCellRenderer;
 import org.mesh4j.ektoo.ui.component.treetable.xmltreetable.JXmlTreeTable;
 import org.mesh4j.ektoo.ui.component.treetable.xmltreetable.JXmlTreeTableCellRenderer;
@@ -28,6 +25,7 @@ import org.xml.sax.InputSource;
 
 public class SchemaComparisonViewUI extends JPanel{
 
+	private static final long serialVersionUID = -5276991241631676689L;
 	
 	private IRDFSchema source ;
 	private IRDFSchema target;

@@ -299,9 +299,20 @@ public class EktooUITranslator {
 	}
 	
 	public static String getSchemaComarisonLinkText(){
-		return EktooMessageTranslator.translate("EKTOO_SCHEMA_COMPARISON_LINK");
+		return EktooMessageTranslator.translate("EKTOO_SCHEMA_COMPARISON_LINK_TEXT");
 	}
 
+	public static String getSchemaComarisonLinkTooltipText(){
+		return EktooMessageTranslator.translate("EKTOO_SCHEMA_COMPARISON_LINK_TOOLTIP");
+	}
+	
+	public static String getSyncModeText(){
+		return EktooMessageTranslator.translate("EKTOO_SYNC_MODE_TEXT");
+	}
+	
+	public static String getSyncFilterTypeText(){
+		return EktooMessageTranslator.translate("EKTOO_FILTER_TYPE_TEXT");
+	}
 	
 	public static String getMeshNameFieldLabel() {
 		return EktooMessageTranslator
