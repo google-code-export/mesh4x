@@ -518,6 +518,14 @@ public class EktooUITranslator {
 	public static String getTooltipSeleceDataFile(String fileType) {
 		return EktooMessageTranslator.translate("EKTOO_TOOLTIP_SELECT_FILE", fileType);
 	}
+	
+	
+	public static String getTextSyncModeSingle(){
+		return EktooMessageTranslator.translate("EKTOO_SYNC_MODE_SINGLE");
+	}
+	public static String getTextSyncModeMulti(){
+		return EktooMessageTranslator.translate("EKTOO_SYNC_MODE_MULTI");
+	}
 
 	public static String getTooltipDateFilter() {
 		return EktooMessageTranslator.translate("EKTOO_TOOLTIP_DATE_FILTER");
