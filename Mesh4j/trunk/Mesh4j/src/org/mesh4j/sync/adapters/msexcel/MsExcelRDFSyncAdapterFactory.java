@@ -30,6 +30,7 @@ public class MsExcelRDFSyncAdapterFactory{
 		if(!file.exists()){
 			Guard.throwsArgumentException("fileName", excel.getFileName());	
 		}
+		
 		IRDFSchema rdfSchema = MsExcelToRDFMapping.extractRDFSchema(excel, sheetName, idColumnNames, lastUpdateColumnName, rdfBaseURL);
 		MsExcelToRDFMapping mappings = new MsExcelToRDFMapping(rdfSchema);
 		return new MsExcelContentAdapter(excel, mappings);
@@ -38,7 +39,8 @@ public class MsExcelRDFSyncAdapterFactory{
 	public static SplitAdapter createSyncAdapter(IMsExcel excel, String sheetName, String[] idColumnNames, String lastUpdateColumnName, IIdentityProvider identityProvider, String rdfBaseURL) {
 		Guard.argumentNotNull(excel, "excel");
 		
-		MsExcelSyncRepository syncRepo =  new MsExcelSyncRepository(excel, sheetName+"_sync", identityProvider, IdGenerator.INSTANCE);
+		String entityName = MsExcelToRDFMapping.getEntityName(sheetName);
+		MsExcelSyncRepository syncRepo =  new MsExcelSyncRepository(excel, entityName+"_sync", identityProvider, IdGenerator.INSTANCE);
 		MsExcelContentAdapter contentAdapter = createContentAdapter(sheetName, idColumnNames, lastUpdateColumnName, excel, rdfBaseURL);
 		SplitAdapter splitAdapter = new SplitAdapter(syncRepo, contentAdapter, identityProvider);
 		return splitAdapter;
@@ -84,8 +86,11 @@ public class MsExcelRDFSyncAdapterFactory{
 		int i = 0;
 		for (String sheetName : sheets.keySet()) {
 			String[] idColumnNames = sheets.get(sheetName);
+			
 			SplitAdapter syncAdapter = createSyncAdapter(excel, sheetName, idColumnNames, null, identityProvider, rdfBaseURL);
-			IdentifiableSyncAdapter adapter = new IdentifiableSyncAdapter(sheetName, syncAdapter);
+			
+			String entityName = MsExcelToRDFMapping.getEntityName(sheetName);
+			IdentifiableSyncAdapter adapter = new IdentifiableSyncAdapter(entityName, syncAdapter);
 			adapters[i] = adapter;
 			i = i +1;
 		}
@@ -109,4 +114,7 @@ public class MsExcelRDFSyncAdapterFactory{
 		
 		return new CompositeSyncAdapter("MsExcel composite", opaqueAdapter, identityProvider, adapters);
 	}
+
+
+
 }

@@ -39,7 +39,7 @@ public class MsExcelContentAdapter implements IIdentifiableContentAdapter, ISync
 	private void initialize() {
 		try{
 			Workbook workbook = excel.getWorkbook();			
-			Sheet sheet = MsExcelUtils.getOrCreateSheetIfAbsent(workbook, this.getSheetName());			
+			Sheet sheet = this.mapping.getSheet(workbook);
 			Row row = MsExcelUtils.getOrCreateRowHeaderIfAbsent(sheet);						
 			this.mapping.initializeHeaderRow(workbook, sheet, row);
 		} catch (Exception e) {
@@ -71,7 +71,7 @@ public class MsExcelContentAdapter implements IIdentifiableContentAdapter, ISync
 	}
 	
 	public Sheet getSheet() {
-		return getWorkbook().getSheet(this.getSheetName());
+		return this.mapping.getSheet(getWorkbook());
 	}
 	
 	public int getNumberOfPhantomRows() {
@@ -173,10 +173,6 @@ public class MsExcelContentAdapter implements IIdentifiableContentAdapter, ISync
 	@Override
 	public void endSync() {
 		this.excel.flush();		
-	}
-	
-	public String getSheetName(){
-		return this.getType();
 	}
 
 	@Override

@@ -130,4 +130,14 @@ public class MSExcelToPlainXMLMapping extends AbstractPlainXmlIdentifiableMappin
 		}
 		
 	}
+
+	@Override
+	public Sheet getSheet(Workbook workbook) {
+		String sheetName = this.getType();
+		Sheet sheet = workbook.getSheet(sheetName);
+		if(sheet == null){
+			sheet = MsExcelUtils.getOrCreateSheetIfAbsent(workbook, sheetName);
+		}
+		return sheet;
+	}
 }

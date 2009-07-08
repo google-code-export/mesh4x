@@ -25,4 +25,6 @@ public interface IMsExcelToXMLMapping extends IIdentifiableMapping {
 
 	Row getRow(Sheet sheet, String id);
 
+	Sheet getSheet(Workbook workbook);
+
 }

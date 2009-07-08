@@ -37,7 +37,8 @@ public class MsExcelToRDFMapping extends AbstractRDFIdentifiableMapping implemen
 		Guard.argumentNotNullOrEmptyString(sheetName, "sheetName");
 		Guard.argumentNotNullOrEmptyString(rdfURL, "rdfURL");
 		
-		RDFSchema rdfSchema = new RDFSchema(sheetName, rdfURL+"/"+sheetName+"#", sheetName);
+		String entityName = getEntityName(sheetName);
+		RDFSchema rdfSchema = new RDFSchema(entityName, rdfURL+"/"+entityName+"#", entityName);
 		
 		String cellName;
 		String propertyName;
@@ -255,7 +256,6 @@ public class MsExcelToRDFMapping extends AbstractRDFIdentifiableMapping implemen
 			return null;
 		}
 	}
-
 	
 	@Override
 	public Date getLastUpdate(Sheet sheet, Row row) {
@@ -316,4 +316,22 @@ public class MsExcelToRDFMapping extends AbstractRDFIdentifiableMapping implemen
 		}
 	}
 
+	public static String getEntityName(String sheetName) {
+		return sheetName.trim().replaceAll(" ", "_");
+	}
+
+	@Override
+	public Sheet getSheet(Workbook workbook) {
+		String sheetName = this.getType();
+		Sheet sheet = workbook.getSheet(sheetName);
+		if(sheet == null){
+			sheetName = sheetName.replaceAll("_", " ");
+			sheet = workbook.getSheet(sheetName);
+		}
+
+		if(sheet == null){
+			sheet = MsExcelUtils.getOrCreateSheetIfAbsent(workbook, this.getType());
+		}
+		return sheet;
+	}
 }
