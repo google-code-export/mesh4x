@@ -374,14 +374,14 @@ public class SyncEngineUtil {
 
 	public static void uploadMeshDefinition(MSAccessDataSourceMapping dataSource, String description, PropertiesProvider propertiesProvider) throws Exception {
 		
-		String meshSourceId = propertiesProvider.getMeshID(dataSource.getAlias());
+		String meshSourceId = propertiesProvider.getMeshID();
 		
 		// schema
 		IRDFSchema rdfSchema = MsAccessRDFSchemaGenerator.extractRDFSchema(
 			dataSource.getFileName(), 
 			dataSource.getTableName(), 
-			dataSource.getAlias(),
-			propertiesProvider.getMeshSyncServerURL()+"/"+meshSourceId+"#");
+//			dataSource.getAlias(),
+			propertiesProvider.getMeshSyncServerURL()+"/"+meshSourceId);
 		
 		String fileName = getSchemaFileName(dataSource.getAlias(), propertiesProvider);
 		FileUtils.write(fileName, rdfSchema.asXML().getBytes());

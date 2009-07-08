@@ -185,12 +185,12 @@ public class InterRepositoryRDFSyncTest {
 	@Test
 	public void ShouldSyncMsAccessToExcelByRDF() throws IOException{
 		
-		String rdfBaseURl = "http://localhost:8080/mesh4x/feeds" +"/ektoo"+"#";
+		String rdfBaseURl = "http://localhost:8080/mesh4x/feeds";
 		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
 		
 		ISyncAdapter sourceAsAccess = builder.createMsAccessAdapter(TestHelper.baseDirectoryForTest() +"ektoo.mdb" , "ektoo");
 		SplitAdapter splitAdapterSource = (SplitAdapter)sourceAsAccess;
-		IRDFSchema sourceSchema = MsAccessRDFSchemaGenerator.extractRDFSchema(TestHelper.baseDirectoryForTest() +"ektoo.mdb", "ektoo", "ektoo", rdfBaseURl);
+		IRDFSchema sourceSchema = MsAccessRDFSchemaGenerator.extractRDFSchema(TestHelper.baseDirectoryForTest() +"ektoo.mdb", "ektoo", rdfBaseURl);
 		
 		ISyncAdapter targetAsExcel = builder.createMsExcelAdapter(TestHelper.baseDirectoryForTest() + "contentFile.xls", sourceSchema);
 		

@@ -17,145 +17,89 @@ public class MsAccessRDFSchemaGeneratorTests {
 	public void shouldExtractRDFSchemaFailsIfFileIsNull(){
 		String fileName = null;
 		String tableName = "Oswego";
-		String ontologyNS = "Oswego";
-		String ontologyURI = "http://mesh4x/Oswego#";
-		
-		try{
-			MsAccessRDFSchemaGenerator.extractRDFSchema(fileName, tableName, ontologyNS, ontologyURI);
-		} catch (IOException e) {
-			Assert.fail();
-		}
+
+		String ontologyURI = "http://mesh4x";
+		MsAccessRDFSchemaGenerator.extractRDFSchema(fileName, tableName, ontologyURI);
+
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldExtractRDFSchemaFailsIfFileIsEmpty(){
 		String fileName = "";
 		String tableName = "Oswego";
-		String ontologyNS = "Oswego";
-		String ontologyURI = "http://mesh4x/Oswego#";
+
+		String ontologyURI = "http://mesh4x";
 		
-		try{
-			MsAccessRDFSchemaGenerator.extractRDFSchema(fileName, tableName, ontologyNS, ontologyURI);
-		} catch (IOException e) {
-			Assert.fail();
-		}
+		MsAccessRDFSchemaGenerator.extractRDFSchema(fileName, tableName, ontologyURI);
 	}
+
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldExtractRDFSchemaFailsIfFileDoesNotExist() throws IOException{
 		String fileName = "epiinfo.mdb";
 		String tableName = "Oswego";
-		String ontologyNS = "Oswego";
-		String ontologyURI = "http://mesh4x/Oswego#";
+
+		String ontologyURI = "http://mesh4x";
 		
-		MsAccessRDFSchemaGenerator.extractRDFSchema(fileName, tableName, ontologyNS, ontologyURI);
+		MsAccessRDFSchemaGenerator.extractRDFSchema(fileName, tableName, ontologyURI);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldExtractRDFSchemaFailsIfTableNameIsNull(){
 		String fileName = getMsAccessFileNameToTest();
 		String tableName = null;
-		String ontologyNS = "Oswego";
-		String ontologyURI = "http://mesh4x/Oswego#";
+
+		String ontologyURI = "http://mesh4x";
 		
-		try{
-			MsAccessRDFSchemaGenerator.extractRDFSchema(fileName, tableName, ontologyNS, ontologyURI);
-		} catch (IOException e) {
-			Assert.fail();
-		}
+		MsAccessRDFSchemaGenerator.extractRDFSchema(fileName, tableName, ontologyURI);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldExtractRDFSchemaFailsIfTableNameIsEmpty(){
 		String fileName = getMsAccessFileNameToTest();
 		String tableName = "";
-		String ontologyNS = "Oswego";
-		String ontologyURI = "http://mesh4x/Oswego#";
+
+		String ontologyURI = "http://mesh4x";
 		
-		try{
-			MsAccessRDFSchemaGenerator.extractRDFSchema(fileName, tableName, ontologyNS, ontologyURI);
-		} catch (IOException e) {
-			Assert.fail();
-		}
+		MsAccessRDFSchemaGenerator.extractRDFSchema(fileName, tableName, ontologyURI);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldExtractRDFSchemaFailsIfTableDoesNotExist(){
 		String fileName = getMsAccessFileNameToTest();
 		String tableName = "OswegoXXXX";
-		String ontologyNS = "Oswego";
-		String ontologyURI = "http://mesh4x/Oswego#";
+
+		String ontologyURI = "http://mesh4x";
 		
-		try{
-			MsAccessRDFSchemaGenerator.extractRDFSchema(fileName, tableName, ontologyNS, ontologyURI);
-		} catch (IOException e) {
-			Assert.fail();
-		}
-	}
-	
-	@Test(expected=IllegalArgumentException.class)
-	public void shouldExtractRDFSchemaFailsIfOntologyNSIsNull(){
-		String fileName = getMsAccessFileNameToTest();
-		String tableName = "Oswego";
-		String ontologyNS = null;
-		String ontologyURI = "http://mesh4x/Oswego#";
-		
-		try{
-			MsAccessRDFSchemaGenerator.extractRDFSchema(fileName, tableName, ontologyNS, ontologyURI);
-		} catch (IOException e) {
-			Assert.fail();
-		}
-	}
-	
-	@Test(expected=IllegalArgumentException.class)
-	public void shouldExtractRDFSchemaFailsIfOntologyNSIsEmpty(){
-		String fileName = getMsAccessFileNameToTest();
-		String tableName = "Oswego";
-		String ontologyNS = "";
-		String ontologyURI = "http://mesh4x/Oswego#";
-		
-		try{
-			MsAccessRDFSchemaGenerator.extractRDFSchema(fileName, tableName, ontologyNS, ontologyURI);
-		} catch (IOException e) {
-			Assert.fail();
-		}
+		MsAccessRDFSchemaGenerator.extractRDFSchema(fileName, tableName, ontologyURI);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldExtractRDFSchemaFailsIfOntologyURIIsNull(){
 		String fileName = getMsAccessFileNameToTest();
 		String tableName = "Oswego";
-		String ontologyNS = "Oswego";
+
 		String ontologyURI = null;
 		
-		try{
-			MsAccessRDFSchemaGenerator.extractRDFSchema(fileName, tableName, ontologyNS, ontologyURI);
-		} catch (IOException e) {
-			Assert.fail();
-		}
+		MsAccessRDFSchemaGenerator.extractRDFSchema(fileName, tableName, ontologyURI);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldExtractRDFSchemaFailsIfOntologyURIIsEmpty(){
 		String fileName = getMsAccessFileNameToTest();
 		String tableName = "Oswego";
-		String ontologyNS = "Oswego";
+
 		String ontologyURI = "";
 		
-		try{
-			MsAccessRDFSchemaGenerator.extractRDFSchema(fileName, tableName, ontologyNS, ontologyURI);
-		} catch (IOException e) {
-			Assert.fail();
-		}
+		MsAccessRDFSchemaGenerator.extractRDFSchema(fileName, tableName,  ontologyURI);
 	}
 	
 	@Test
 	public void shouldExtractRDFSchema() throws Exception{
 		String fileName = getMsAccessFileNameToTest();
 		String tableName = "Oswego";
-		String ontologyNS = "Oswego";
-		String ontologyURI = "http://mesh4x/Oswego#";
+		String ontologyURI = "http://mesh4x";
 		
-		IRDFSchema rdfSchema = MsAccessRDFSchemaGenerator.extractRDFSchema(fileName, tableName, ontologyNS, ontologyURI);
+		IRDFSchema rdfSchema = MsAccessRDFSchemaGenerator.extractRDFSchema(fileName, tableName, ontologyURI);
 		Assert.assertNotNull(rdfSchema);
 		System.out.println(rdfSchema.asXML());
 

@@ -38,6 +38,7 @@ public class MsExcelRDFSyncAdapterFactory{
 
 	public static SplitAdapter createSyncAdapter(IMsExcel excel, String sheetName, String[] idColumnNames, String lastUpdateColumnName, IIdentityProvider identityProvider, String rdfBaseURL) {
 		Guard.argumentNotNull(excel, "excel");
+		Guard.argumentNotNullOrEmptyString(sheetName, "sheetName");
 		
 		String entityName = MsExcelToRDFMapping.getEntityName(sheetName);
 		MsExcelSyncRepository syncRepo =  new MsExcelSyncRepository(excel, entityName+"_sync", identityProvider, IdGenerator.INSTANCE);

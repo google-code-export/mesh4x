@@ -1,7 +1,6 @@
 package org.mesh4j.sync.adapters.msaccess;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,12 +19,11 @@ import com.healthmarketscience.jackcess.Index.ColumnDescriptor;
 
 public class MsAccessRDFSchemaGenerator {
 	
-	public static IRDFSchema extractRDFSchema(String mdbFileName, String tableName, String ontologyNameSpace, String ontologyBaseUri) throws IOException{
+	public static IRDFSchema extractRDFSchema(String mdbFileName, String tableName, String rdfBaseUri){
 
 		Guard.argumentNotNullOrEmptyString(mdbFileName, "mdbFileName");
 		Guard.argumentNotNullOrEmptyString(tableName, "tableName");
-		Guard.argumentNotNullOrEmptyString(ontologyNameSpace, "ontologyNameSpace");
-		Guard.argumentNotNullOrEmptyString(ontologyBaseUri, "ontologyBaseUri");
+		Guard.argumentNotNullOrEmptyString(rdfBaseUri, "rdfBaseUri");
 			
 		File mdbFile = new File(mdbFileName);
 		if(!mdbFile.exists()){
@@ -35,39 +33,48 @@ public class MsAccessRDFSchemaGenerator {
 		ArrayList<String> identifiablePropertyNames = new ArrayList<String>();		
 		ArrayList<String> guidPropertyNames = new ArrayList<String>();
 		
-		RDFSchema rdfSchema = new RDFSchema(ontologyNameSpace, ontologyBaseUri, getEntityName(tableName));
-		Database db = Database.open(mdbFile);
+		String entityName = getEntityName(tableName);
+		RDFSchema rdfSchema = new RDFSchema(entityName, rdfBaseUri+"/"+entityName+"#", entityName);
 		try{
-
-			Table table = db.getTable(tableName);
-			if(table == null){
-				Guard.throwsArgumentException("tableName", table);
-			}
-			
-			for (Column column : table.getColumns()) {
-				addProperty(rdfSchema, column);
-				
-				if(DataType.GUID.equals(column.getType())){
-					String propName = RDFSchema.normalizePropertyName(column.getName());
-					identifiablePropertyNames.add(propName);
-					guidPropertyNames.add(propName);
+			Database db = Database.open(mdbFile);
+			try{
+	
+				Table table = db.getTable(entityName);
+				if(table == null){
+					table = db.getTable(entityName.trim().replaceAll("_", " "));
+					if(table == null){
+						Guard.throwsArgumentException("tableName", tableName);
+					}
 				}
+				
+				for (Column column : table.getColumns()) {
+					addProperty(rdfSchema, column);
+					
+					if(DataType.GUID.equals(column.getType())){
+						String propName = RDFSchema.normalizePropertyName(column.getName());
+						identifiablePropertyNames.add(propName);
+						guidPropertyNames.add(propName);
+					}
+				}
+				
+				List<ColumnDescriptor> pks = getPrimaryKeys(table);
+				if(!pks.isEmpty()){
+					identifiablePropertyNames = new ArrayList<String>();
+					for (ColumnDescriptor columnDescriptor : pks) {
+						identifiablePropertyNames.add(RDFSchema.normalizePropertyName(columnDescriptor.getName()));	
+					}				
+				}
+				rdfSchema.setIdentifiablePropertyNames(identifiablePropertyNames);	
+				rdfSchema.setGUIDPropertyNames(guidPropertyNames);
+				
+			} finally{
+				db.close();
 			}
-			
-			List<ColumnDescriptor> pks = getPrimaryKeys(table);
-			if(!pks.isEmpty()){
-				identifiablePropertyNames = new ArrayList<String>();
-				for (ColumnDescriptor columnDescriptor : pks) {
-					identifiablePropertyNames.add(RDFSchema.normalizePropertyName(columnDescriptor.getName()));	
-				}				
-			}
-			rdfSchema.setIdentifiablePropertyNames(identifiablePropertyNames);	
-			rdfSchema.setGUIDPropertyNames(guidPropertyNames);
-			
-		} finally{
-			db.close();
+		}catch(IllegalArgumentException iae){
+			throw iae;
+		}catch (Exception e) {
+			throw new MeshException(e);
 		}
-		
 		return rdfSchema;
 	}
 
@@ -120,61 +127,7 @@ public class MsAccessRDFSchemaGenerator {
 	}
 	
 	public static MsAccessToRDFMapping extractRDFSchemaAndMappings(String fileName, String tableName, String rdfBaseURL) {
-		Guard.argumentNotNullOrEmptyString(fileName, "mdbFileName");
-		Guard.argumentNotNullOrEmptyString(tableName, "tableName");
-		Guard.argumentNotNullOrEmptyString(rdfBaseURL, "rdfBaseURL");
-			
-		File mdbFile = new File(fileName);
-		if(!mdbFile.exists()){
-			Guard.throwsArgumentException("mdbFileName", fileName);
-		}
-		
-		String className = getEntityName(tableName);
-		RDFSchema rdfSchema = new RDFSchema(className, rdfBaseURL+"/"+className+"#", className);
-
-		Database db = null;
-		try{
-			db = Database.open(mdbFile);
-			Table table = db.getTable(tableName);
-			if(table == null){
-				Guard.throwsArgumentException("tableName", table);
-			}
-			
-			ArrayList<String> identifiablePropertyNames = new ArrayList<String>();
-			ArrayList<String> guidPropertyNames = new ArrayList<String>();
-			
-			for (Column column : table.getColumns()) {
-				addProperty(rdfSchema, column);
-				
-				if(DataType.GUID.equals(column.getType())){
-					String propertyName = RDFSchema.normalizePropertyName(column.getName());
-					guidPropertyNames.add(propertyName);
-					identifiablePropertyNames.add(propertyName);
-				}
-			}
-			
-			List<ColumnDescriptor> pks = getPrimaryKeys(table);
-			if(!pks.isEmpty()){
-				identifiablePropertyNames = new ArrayList<String>();
-				for (ColumnDescriptor columnDescriptor : pks) {
-					identifiablePropertyNames.add(RDFSchema.normalizePropertyName(columnDescriptor.getName()));	
-				}	
-			}
-			
-			rdfSchema.setIdentifiablePropertyNames(identifiablePropertyNames);
-			rdfSchema.setGUIDPropertyNames(guidPropertyNames);
-		} catch (Exception e) {
-			throw new MeshException(e);
-		}finally{
-			if(db != null){
-				try{
-					db.close();
-				}catch (Exception e) {
-					throw new MeshException(e);
-				}			
-			}
-		}		
-		
+		IRDFSchema rdfSchema = extractRDFSchema(fileName, tableName, rdfBaseURL);
 		MsAccessToRDFMapping mapping = new MsAccessToRDFMapping(rdfSchema);
 		return mapping;
 	}

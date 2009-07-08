@@ -44,7 +44,8 @@ public class MsExcelToRDFMapping extends AbstractRDFIdentifiableMapping implemen
 		String propertyName;
 		
 		Workbook workbook = excel.getWorkbook();
-		Sheet sheet = MsExcelUtils.getOrCreateSheetIfAbsent(workbook, sheetName);
+		Sheet sheet = getSheet(workbook, sheetName);
+				
 		Cell cell;
 
 		Row headerRow = sheet.getRow(sheet.getFirstRowNum());
@@ -322,15 +323,18 @@ public class MsExcelToRDFMapping extends AbstractRDFIdentifiableMapping implemen
 
 	@Override
 	public Sheet getSheet(Workbook workbook) {
-		String sheetName = this.getType();
+		return getSheet(workbook, this.getType()) ;
+	}
+	
+	public static Sheet getSheet(Workbook workbook, String sheetName) {
 		Sheet sheet = workbook.getSheet(sheetName);
 		if(sheet == null){
-			sheetName = sheetName.replaceAll("_", " ");
-			sheet = workbook.getSheet(sheetName);
+			String sheetNameWithBlanks = sheetName.replaceAll("_", " ");
+			sheet = workbook.getSheet(sheetNameWithBlanks);
 		}
 
 		if(sheet == null){
-			sheet = MsExcelUtils.getOrCreateSheetIfAbsent(workbook, this.getType());
+			sheet = MsExcelUtils.getOrCreateSheetIfAbsent(workbook, sheetName);
 		}
 		return sheet;
 	}
