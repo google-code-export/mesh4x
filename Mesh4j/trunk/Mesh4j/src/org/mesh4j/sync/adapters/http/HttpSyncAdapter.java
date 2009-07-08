@@ -197,6 +197,8 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 	
 		try{
 			is = conn.getInputStream();
+		} catch (java.net.ConnectException ce) {
+			throw ce;
 		} catch(Exception e){
 			InputStream es = conn.getErrorStream();
 			

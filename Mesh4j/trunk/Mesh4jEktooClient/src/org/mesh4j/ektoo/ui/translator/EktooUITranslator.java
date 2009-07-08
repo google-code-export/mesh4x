@@ -542,4 +542,12 @@ public class EktooUITranslator {
 		return EktooMessageTranslator.translate("EKTOO_TOOLTIP_DATE_FILTER");
 	}
 
+	public static String getErrorInvalidMeshName() {
+		return EktooMessageTranslator.translate("EKTOO_ERROR_INVALID_MESH_NAME");
+	}
+
+	public static String getErrorInvalidDataSetName() {
+		return EktooMessageTranslator.translate("EKTOO_ERROR_INVALID_DATA_SET");
+	}
+
 }

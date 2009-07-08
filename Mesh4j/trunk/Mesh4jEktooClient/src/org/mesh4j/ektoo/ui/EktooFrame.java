@@ -489,7 +489,7 @@ public class EktooFrame extends JFrame implements IErrorListener,
 		    singleModeRadio.addItemListener(new ItemListener(){
 				@Override
 				public void itemStateChanged(ItemEvent e) {
-					if(e.getStateChange() == e.SELECTED){
+					if(e.getStateChange() == ItemEvent.SELECTED){
 						boolean previousMode = multiModeSync;
 						multiModeSync = false;
 						if(previousMode != multiModeSync){
@@ -524,7 +524,7 @@ public class EktooFrame extends JFrame implements IErrorListener,
 		    multiModeRadio.addItemListener(new ItemListener(){
 				@Override
 				public void itemStateChanged(ItemEvent e) {
-					if(e.getStateChange() == e.SELECTED){
+					if(e.getStateChange() == ItemEvent.SELECTED){
 						 boolean previousMode = multiModeSync;
 						 multiModeSync = true;
 						if(previousMode != multiModeSync){
