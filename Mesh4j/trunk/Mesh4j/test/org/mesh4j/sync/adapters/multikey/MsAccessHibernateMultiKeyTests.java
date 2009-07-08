@@ -12,7 +12,7 @@ import org.mesh4j.sync.adapters.IdentifiableContent;
 import org.mesh4j.sync.adapters.feed.FeedAdapter;
 import org.mesh4j.sync.adapters.feed.FeedSyncAdapterFactory;
 import org.mesh4j.sync.adapters.hibernate.HibernateContentAdapter;
-import org.mesh4j.sync.adapters.hibernate.mapping.HibernateToRDFMapping;
+import org.mesh4j.sync.adapters.hibernate.mapping.HibernateMsAccessToRDFMapping;
 import org.mesh4j.sync.adapters.hibernate.msaccess.MsAccessHibernateSyncAdapterFactory;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.id.generator.IdGenerator;
@@ -51,7 +51,7 @@ public class MsAccessHibernateMultiKeyTests {
 	public void shouldAdd(){
 		SplitAdapter adapter = makeAdapter();
 		RDFSchema rdfSchema = (RDFSchema)((HibernateContentAdapter)adapter.getContentAdapter()).getSchema();
-		HibernateToRDFMapping mapping = (HibernateToRDFMapping)((HibernateContentAdapter)adapter.getContentAdapter()).getMapping();
+		HibernateMsAccessToRDFMapping mapping = (HibernateMsAccessToRDFMapping)((HibernateContentAdapter)adapter.getContentAdapter()).getMapping();
 	
 		List<Item> items = adapter.getAll();
 		int size = items.size();
@@ -80,7 +80,7 @@ public class MsAccessHibernateMultiKeyTests {
 	public void shouldUpdate(){
 		SplitAdapter adapter = makeAdapter();
 		RDFSchema rdfSchema = (RDFSchema)((HibernateContentAdapter)adapter.getContentAdapter()).getSchema();
-		HibernateToRDFMapping mapping = (HibernateToRDFMapping)((HibernateContentAdapter)adapter.getContentAdapter()).getMapping();
+		HibernateMsAccessToRDFMapping mapping = (HibernateMsAccessToRDFMapping)((HibernateContentAdapter)adapter.getContentAdapter()).getMapping();
 
 		List<Item> items = adapter.getAll();
 		
@@ -126,7 +126,7 @@ public class MsAccessHibernateMultiKeyTests {
 	public void shouldDelete(){
 		SplitAdapter adapter = makeAdapter();
 		RDFSchema rdfSchema = (RDFSchema)((HibernateContentAdapter)adapter.getContentAdapter()).getSchema();
-		HibernateToRDFMapping mapping = (HibernateToRDFMapping)((HibernateContentAdapter)adapter.getContentAdapter()).getMapping();
+		HibernateMsAccessToRDFMapping mapping = (HibernateMsAccessToRDFMapping)((HibernateContentAdapter)adapter.getContentAdapter()).getMapping();
 
 		List<Item> items = adapter.getAll();
 		

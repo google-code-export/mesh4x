@@ -15,7 +15,7 @@ import org.mesh4j.sync.adapters.composite.IdentifiableSyncAdapter;
 import org.mesh4j.sync.adapters.feed.FeedSyncAdapterFactory;
 import org.mesh4j.sync.adapters.feed.zip.ZipFeedsSyncAdapter;
 import org.mesh4j.sync.adapters.hibernate.HibernateContentAdapter;
-import org.mesh4j.sync.adapters.hibernate.mapping.HibernateToRDFMapping;
+import org.mesh4j.sync.adapters.hibernate.mapping.HibernateMsAccessToRDFMapping;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.Item;
@@ -73,7 +73,7 @@ public class HibernateWithMsAccessMultiTablesWithRelationshipTests {
 		// add item mytable1
 		source.beginSync();
 		IdentifiableSyncAdapter adapter1 = (IdentifiableSyncAdapter)target.getAdapter("mytable1");
-		HibernateToRDFMapping mapping1 = (HibernateToRDFMapping)((HibernateContentAdapter)((SplitAdapter)adapter1.getSyncAdapter()).getContentAdapter()).getMapping();
+		HibernateMsAccessToRDFMapping mapping1 = (HibernateMsAccessToRDFMapping)((HibernateContentAdapter)((SplitAdapter)adapter1.getSyncAdapter()).getContentAdapter()).getMapping();
 		IRDFSchema rdfSchema1 = mapping1.getSchema();
 		
 		String id1 = IdGenerator.INSTANCE.newID();
@@ -89,7 +89,7 @@ public class HibernateWithMsAccessMultiTablesWithRelationshipTests {
 		
 		// add item mytable2
 		IdentifiableSyncAdapter adapter2 = (IdentifiableSyncAdapter)target.getAdapter("mytable2");
-		HibernateToRDFMapping mapping2 = (HibernateToRDFMapping)((HibernateContentAdapter)((SplitAdapter)adapter2.getSyncAdapter()).getContentAdapter()).getMapping();
+		HibernateMsAccessToRDFMapping mapping2 = (HibernateMsAccessToRDFMapping)((HibernateContentAdapter)((SplitAdapter)adapter2.getSyncAdapter()).getContentAdapter()).getMapping();
 		IRDFSchema rdfSchema2 = mapping2.getSchema();
 		
 		String id2 = IdGenerator.INSTANCE.newID();
