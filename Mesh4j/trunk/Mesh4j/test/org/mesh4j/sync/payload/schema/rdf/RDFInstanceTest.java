@@ -144,6 +144,31 @@ public class RDFInstanceTest {
 	}
 
 	@Test
+	public void shouldBuildInstanceFromPlainXmlWithTypeFormats(){
+		
+		String plainXml = "<example><integer>2147483647</integer><string>abc</string><boolean>true</boolean><datetime>2009-05-01</datetime><double>1.7976931348623157E308</double><long>9223372036854775807</long><decimal>10</decimal></example>";
+		
+		HashMap<String, ISchemaTypeFormat> formats = new HashMap<String, ISchemaTypeFormat>();
+		formats.put(IRDFSchema.XLS_DATETIME, new SchemaTypeFormat(new SimpleDateFormat("yyyy-MM-dd")));
+		formats.put(IRDFSchema.XLS_BOOLEAN, XFormBooleanFormat.INSTANCE);
+		
+		Assert.assertEquals("<example><integer>2147483647</integer><string>abc</string><boolean>true</boolean><long>9223372036854775807</long><double>1.7976931348623157E308</double><datetime>2009-05-01</datetime><decimal>10</decimal></example>", RDFInstance.buildFromPlainXML(RDF_SCHEMA, "1", plainXml, formats).asPlainXML(formats));
+
+	}
+	
+	@Test
+	public void shouldBuildInstanceFromPlainXmlWithPropertyNameTypeFormats(){
+		
+		String plainXml = "<example><integer>2147483647</integer><string>abc</string><boolean>true</boolean><datetime>2009-05-01</datetime><double>1.7976931348623157E308</double><long>9223372036854775807</long><decimal>10</decimal></example>";
+		
+		HashMap<String, ISchemaTypeFormat> formats = new HashMap<String, ISchemaTypeFormat>();
+		formats.put("datetime", new SchemaTypeFormat(new SimpleDateFormat("yyyy-MM-dd")));
+		formats.put("boolean", XFormBooleanFormat.INSTANCE);
+		
+		Assert.assertEquals("<example><integer>2147483647</integer><string>abc</string><boolean>true</boolean><long>9223372036854775807</long><double>1.7976931348623157E308</double><datetime>2009-05-01</datetime><decimal>10</decimal></example>", RDFInstance.buildFromPlainXML(RDF_SCHEMA, "1", plainXml, formats).asPlainXML(formats));
+	}
+	
+	@Test
 	public void shouldSetProperty() {
 		RDFInstance instance = new RDFInstance(RDF_SCHEMA, "uri:urn:1");
 		instance.setProperty("string", "abc");
@@ -173,8 +198,7 @@ public class RDFInstanceTest {
 		HashMap<String, ISchemaTypeFormat> formats = new HashMap<String, ISchemaTypeFormat>();
 		formats.put(IRDFSchema.XLS_DATETIME, new SchemaTypeFormat(new SimpleDateFormat("yyyy-MM-dd")));
 		formats.put(IRDFSchema.XLS_BOOLEAN, XFormBooleanFormat.INSTANCE);
-		
-		
+			
         Assert.assertEquals(plainXML, instance.asPlainXML(formats));
 	}
 	
@@ -187,6 +211,37 @@ public class RDFInstanceTest {
 		HashMap<String, ISchemaTypeFormat> formats = new HashMap<String, ISchemaTypeFormat>();
 		formats.put(IRDFSchema.XLS_DATETIME, new SchemaTypeFormat(new SimpleDateFormat("yyyy-MM-dd")));
 		formats.put(IRDFSchema.XLS_BOOLEAN, XFormBooleanFormat.INSTANCE);
+		
+		CompositeProperty compositeProperty1 = new CompositeProperty("composite1", Arrays.asList(new String[]{"integer", "string", "boolean"}));
+		CompositeProperty compositeProperty2 = new CompositeProperty("composite2", Arrays.asList(new String[]{"datetime", "double"}));
+		
+		CompositeProperty[] compositeProperties = new CompositeProperty[]{compositeProperty1, compositeProperty2};
+        Assert.assertEquals(plainXML, instance.asPlainXML(formats, compositeProperties));
+	}
+	
+	@Test
+	public void shouldAsPlainXMLWithPropertyNameTypeFormats() {
+		RDFInstance instance = RDF_INSTANCE;
+        
+		String plainXML = "<example><integer>2147483647</integer><string>abc</string><boolean>true</boolean><datetime>2009-05-01</datetime><double>1.7976931348623157E308</double><long>9223372036854775807</long><decimal>10</decimal></example>";
+		
+		HashMap<String, ISchemaTypeFormat> formats = new HashMap<String, ISchemaTypeFormat>();
+		formats.put("datetime", new SchemaTypeFormat(new SimpleDateFormat("yyyy-MM-dd")));
+		formats.put("boolean", XFormBooleanFormat.INSTANCE);
+		
+		
+        Assert.assertEquals(plainXML, instance.asPlainXML(formats));
+	}
+	
+	@Test
+	public void shouldAsPlainXMLWithPropertyNameTypeFormatsAndCompositeId() {
+		RDFInstance instance = RDF_INSTANCE;
+        
+		String plainXML = "<example><composite2><datetime>2009-05-01</datetime><double>1.7976931348623157E308</double></composite2><long>9223372036854775807</long><composite1><integer>2147483647</integer><string>abc</string><boolean>true</boolean></composite1><decimal>10</decimal></example>";
+		
+		HashMap<String, ISchemaTypeFormat> formats = new HashMap<String, ISchemaTypeFormat>();
+		formats.put("datetime", new SchemaTypeFormat(new SimpleDateFormat("yyyy-MM-dd")));
+		formats.put("boolean", XFormBooleanFormat.INSTANCE);
 		
 		CompositeProperty compositeProperty1 = new CompositeProperty("composite1", Arrays.asList(new String[]{"integer", "string", "boolean"}));
 		CompositeProperty compositeProperty2 = new CompositeProperty("composite2", Arrays.asList(new String[]{"datetime", "double"}));
@@ -226,7 +281,6 @@ public class RDFInstanceTest {
 		Assert.assertEquals("boolean", instance.getPropertyName(6));
     
 	}
-
 
 	@Test
 	public void shouldGetPropertyType() {
