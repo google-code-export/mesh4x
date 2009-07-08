@@ -119,7 +119,7 @@ public class MsAccessSyncTests {
 	private String getMsAccessFileNameToTest(String localName) {
 		try{
 			String localFileName = this.getClass().getResource(localName).getFile();
-			String fileName = TestHelper.fileName(localName+IdGenerator.INSTANCE.newID()+".mdb");
+			String fileName = TestHelper.fileName(localName.substring(0, localName.length() -4)+IdGenerator.INSTANCE.newID()+".mdb");
 			FileUtils.copyFile(localFileName, fileName);
 			return fileName;
 		} catch (Exception e) {

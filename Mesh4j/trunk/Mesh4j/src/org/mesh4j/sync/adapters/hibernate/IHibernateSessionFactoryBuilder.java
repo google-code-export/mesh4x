@@ -13,4 +13,6 @@ public interface IHibernateSessionFactoryBuilder {
 
 	public IHibernateToXMLMapping buildMeshMapping(String entityName);
 
+	public boolean isMsAccess();
+
 }

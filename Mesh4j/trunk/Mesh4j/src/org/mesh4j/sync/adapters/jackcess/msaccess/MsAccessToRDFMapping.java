@@ -43,6 +43,7 @@ public class MsAccessToRDFMapping extends AbstractRDFIdentifiableMapping impleme
 						if(id.startsWith("{") && id.endsWith("}")){
 							id = id.substring(1, id.length() -1);
 						}
+						id= id.toLowerCase();
 					}
 					idValues[idx] = id;	
 					properties.put(propertyName, id);
@@ -83,6 +84,7 @@ public class MsAccessToRDFMapping extends AbstractRDFIdentifiableMapping impleme
 					if(!id.endsWith("}")){
 						id = id + "}";
 					}
+					id=id.toUpperCase();
 				}
 				row.put(label, id);	
 			} else {
@@ -118,6 +120,7 @@ public class MsAccessToRDFMapping extends AbstractRDFIdentifiableMapping impleme
 					if(id.startsWith("{") && id.endsWith("}")){
 						id = id.substring(1, id.length() -1);
 					}
+					id=id.toLowerCase();
 				}
 				idValues.add(id);
 			}
@@ -143,6 +146,7 @@ public class MsAccessToRDFMapping extends AbstractRDFIdentifiableMapping impleme
 					if(!idValue.endsWith("}")){
 						idValue = idValue + "}";
 					}
+					idValue = idValue.toUpperCase();
 				}
 				
 				String label = this.rdfSchema.getPropertyLabel(idName);

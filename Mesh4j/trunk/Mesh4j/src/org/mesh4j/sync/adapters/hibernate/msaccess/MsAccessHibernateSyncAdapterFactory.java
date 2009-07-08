@@ -53,31 +53,18 @@ public class MsAccessHibernateSyncAdapterFactory implements ISyncAdapterFactory 
 		this.rdfBaseUri = rdfBaseUri;
 	}	
 	
-	public SplitAdapter createSyncAdapterFromFile(String sourceAlias, String mdbFileName, String tableName, IIdentityProvider identityProvider) throws Exception{
-		if(mdbFileName == null || mdbFileName.length() == 0 || tableName == null || tableName.length() == 0){
-			return null;
-		}
-		
-		String contentMappingFileName = FileUtils.getFileName(this.baseDirectory , tableName + ".hbm.xml");
-		String syncMappingFileName =  FileUtils.getFileName(this.baseDirectory , tableName + "_sync.hbm.xml");
-		
-		MsAccessHibernateMappingGenerator.forceCreateMappings(mdbFileName, tableName, contentMappingFileName, syncMappingFileName);
-		
-		String syncTableName = MsAccessHibernateMappingGenerator.getSyncTableName(tableName);
-		MsAccessHelper.createSyncTableIfAbsent(mdbFileName, syncTableName);
-		
-		IRDFSchema rdfSchema = getRDFSchema(sourceAlias, mdbFileName, tableName);
-		return createSyncAdapterFromFile(mdbFileName, tableName, contentMappingFileName, syncMappingFileName, rdfSchema, identityProvider);	
+	public SplitAdapter createSyncAdapterFromFile(String sourceAlias, String mdbFileName, String tableName, IIdentityProvider identityProvider) {
+		return createHibernateAdapter(mdbFileName, tableName, this.rdfBaseUri, this.baseDirectory, identityProvider);
 	}
 
-	private IRDFSchema getRDFSchema(String sourceAlias, String mdbFileName, String tableName) throws IOException {
-		if(this.rdfBaseUri == null){
+	private static IRDFSchema getRDFSchema(String sourceAlias, String mdbFileName, String tableName, String rdfBaseUri) throws IOException {
+		if(rdfBaseUri == null){
 			return null;
 		}			
-		return MsAccessRDFSchemaGenerator.extractRDFSchema(mdbFileName, tableName, sourceAlias, this.rdfBaseUri+"/"+sourceAlias+"#");
+		return MsAccessRDFSchemaGenerator.extractRDFSchema(mdbFileName, tableName, sourceAlias, rdfBaseUri+"/"+sourceAlias+"#");
 	}
 
-	public SplitAdapter createSyncAdapterFromFile(String mdbFileName, String tableName, String contentMappingFileName, String syncMappingFileName, IRDFSchema rdfSchema, IIdentityProvider identityProvider){
+	public static SplitAdapter createSyncAdapterFromFile(String mdbFileName, String tableName, String contentMappingFileName, String syncMappingFileName, IRDFSchema rdfSchema, IIdentityProvider identityProvider){
 		String dbURL = "jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=" + mdbFileName.trim() + ";DriverID=22;READONLY=false}"; 
 		return createSplitAdapter(dbURL, tableName, "", "", contentMappingFileName, syncMappingFileName, rdfSchema, identityProvider);	
 	}
@@ -87,7 +74,7 @@ public class MsAccessHibernateSyncAdapterFactory implements ISyncAdapterFactory 
 		return createSplitAdapter(tableName, user, password, dbURL, contentMappingFileName, syncMappingFileName, rdfSchema, identityProvider);	
 	}
 	
-	private SplitAdapter createSplitAdapter(String dbURL, String tableName, String user, String password, String contentMappingFileName, String syncMappingFileName, IRDFSchema rdfSchema, IIdentityProvider identityProvider) {
+	private static SplitAdapter createSplitAdapter(String dbURL, String tableName, String user, String password, String contentMappingFileName, String syncMappingFileName, IRDFSchema rdfSchema, IIdentityProvider identityProvider) {
 		HibernateSessionFactoryBuilder builder = createHibernateSessionBuilder(dbURL, tableName, user, password, contentMappingFileName, syncMappingFileName, rdfSchema);
 		SyncInfoParser syncInfoParser = new SyncInfoParser(RssSyndicationFormat.INSTANCE, identityProvider, IdGenerator.INSTANCE, MsAccessHibernateMappingGenerator.getSyncTableName(tableName));
 		HibernateSyncRepository syncRepository = new HibernateSyncRepository(builder, syncInfoParser);
@@ -96,7 +83,7 @@ public class MsAccessHibernateSyncAdapterFactory implements ISyncAdapterFactory 
 		return new SplitAdapter(syncRepository, contentAdapter, identityProvider);
 	}
 	
-	public HibernateSessionFactoryBuilder createHibernateSessionBuilder(String dbURL, String tableName, String user, String password, String contentMappingFileName, String syncMappingFileName, IRDFSchema rdfSchema) {
+	public static HibernateSessionFactoryBuilder createHibernateSessionBuilder(String dbURL, String tableName, String user, String password, String contentMappingFileName, String syncMappingFileName, IRDFSchema rdfSchema) {
 		
 		HibernateSessionFactoryBuilder builder = new HibernateSessionFactoryBuilder();
 		builder.setProperty("hibernate.dialect", MsAccessDialect.class.getName());
@@ -179,7 +166,7 @@ public class MsAccessHibernateSyncAdapterFactory implements ISyncAdapterFactory 
 	
 			String dbURL = "jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=" + mdbFileName.trim() + ";DriverID=22;READONLY=false}"; 
 			
-			IRDFSchema rdfSchema = getRDFSchema(sourceAlias, mdbFileName, tableName);
+			IRDFSchema rdfSchema = getRDFSchema(sourceAlias, mdbFileName, tableName, this.rdfBaseUri);
 	
 			IHibernateSessionFactoryBuilder builder = createHibernateSessionBuilder(dbURL, tableName, user, password, contentMappingFileName, syncMappingFileName, rdfSchema);
 			
@@ -218,5 +205,27 @@ public class MsAccessHibernateSyncAdapterFactory implements ISyncAdapterFactory 
 			}
 		}
 		return result;
+	}
+
+	public static SplitAdapter createHibernateAdapter(String mdbFileName, String tableName, String rdfBaseUri, String baseDirectory, IIdentityProvider identityProvider) {
+		
+		if(mdbFileName == null || mdbFileName.length() == 0 || tableName == null || tableName.length() == 0){
+			return null;
+		}
+		
+		try{
+			String contentMappingFileName = FileUtils.getFileName(baseDirectory , tableName + ".hbm.xml");
+			String syncMappingFileName =  FileUtils.getFileName(baseDirectory , tableName + "_sync.hbm.xml");
+			
+			MsAccessHibernateMappingGenerator.forceCreateMappings(mdbFileName, tableName, contentMappingFileName, syncMappingFileName);
+			
+			String syncTableName = MsAccessHibernateMappingGenerator.getSyncTableName(tableName);
+			MsAccessHelper.createSyncTableIfAbsent(mdbFileName, syncTableName);
+			
+			IRDFSchema rdfSchema = getRDFSchema(tableName, mdbFileName, tableName, rdfBaseUri);
+			return createSyncAdapterFromFile(mdbFileName, tableName, contentMappingFileName, syncMappingFileName, rdfSchema, identityProvider);
+		}catch (Exception e) {
+			throw new MeshException(e);
+		}
 	}
 }

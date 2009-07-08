@@ -14,7 +14,7 @@ public interface IHibernateToXMLMapping extends IIdentifiableMapping{
 	
 	ISchema getSchema();
 
-	String getMeshId(Element entityElement);
+	String getMeshId(Element entityElement) throws Exception;
 
-	Serializable getHibernateId(String meshId);
+	Serializable getHibernateId(String meshId) throws Exception;
 }

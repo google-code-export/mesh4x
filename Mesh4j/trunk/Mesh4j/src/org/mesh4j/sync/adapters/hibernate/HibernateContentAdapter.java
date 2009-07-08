@@ -48,6 +48,8 @@ public class HibernateContentAdapter implements IIdentifiableContentAdapter {
 		
 		try{
 			entityElement = (Element) dom4jSession.get(this.getType(), this.mapping.getHibernateId(meshId));
+		}catch (Exception e) {
+			throw new MeshException(e);
 		}finally{
 			session.close();
 		}
@@ -87,6 +89,8 @@ public class HibernateContentAdapter implements IIdentifiableContentAdapter {
 		
 		try{
 			entityElement = (Element) dom4jSession.get(this.getType(), this.mapping.getHibernateId(entityContent.getId()));
+		}catch (Exception e) {
+			throw new MeshException(e);
 		}finally{
 			if(entityElement == null){
 				session.close();
@@ -143,9 +147,13 @@ public class HibernateContentAdapter implements IIdentifiableContentAdapter {
 		
 		ArrayList<IContent> result = new ArrayList<IContent>();
 		for (Element entityElement : entities) {
-			String entityID = this.mapping.getMeshId(entityElement);
-			IdentifiableContent entity = new IdentifiableContent(convertRowToXML(entityID, entityElement), this.mapping, entityID);
-			result.add(entity);
+			try{
+				String entityID = this.mapping.getMeshId(entityElement);
+				IdentifiableContent entity = new IdentifiableContent(convertRowToXML(entityID, entityElement), this.mapping, entityID);
+				result.add(entity);
+			}catch (Exception e) {
+				throw new MeshException(e);
+			}
 		}
 		return result;
 	}

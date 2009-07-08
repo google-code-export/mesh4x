@@ -96,7 +96,7 @@ public class HibernateSyncAdapterFactory implements ISyncAdapterFactory{
 		for (String tableName : contentMappings.keySet()) {
 			String syncTableName = getSyncTableName(tableName);
 			PersistentClass contentMapping = contentMappings.get(tableName);
-			IRDFSchema rdfSchema = createRDFSchema(tableName, rdfBaseURL, contentMapping);
+			IRDFSchema rdfSchema = createRDFSchema(builder, tableName, rdfBaseURL, contentMapping);
 			if(rdfSchema != null){
 				builder.addRDFSchema(tableName, rdfSchema);
 			}
@@ -113,7 +113,7 @@ public class HibernateSyncAdapterFactory implements ISyncAdapterFactory{
 	}
 
 	@SuppressWarnings("unchecked")
-	private static RDFSchema createRDFSchema(String tableName, String rdfBaseURL, PersistentClass mapping) {
+	private static RDFSchema createRDFSchema(IHibernateSessionFactoryBuilder builder, String tableName, String rdfBaseURL, PersistentClass mapping) {
 		if(rdfBaseURL == null){
 			return null;
 		}
@@ -127,15 +127,22 @@ public class HibernateSyncAdapterFactory implements ISyncAdapterFactory{
 			Type[] propertyTypes = componentType.getSubtypes();
 			
 			ArrayList<String> ids = new ArrayList<String>();
+			ArrayList<String> guids = new ArrayList<String>();
+
 			for (int i = 0; i < propertyTypes.length; i++) {
 				String propName = propertyNames[i];
 				String idName = RDFSchema.normalizePropertyName(propName);
 				ids.add(idName);
 				
-				addRDFProperty(rdfSchema, idName, propName, propertyTypes[i]);	
+				Type propertyType = propertyTypes[i];
+				if(Hibernate.BINARY.equals(propertyType) && builder.isMsAccess()){
+					rdfSchema.setGUIDPropertyName(idName);
+				}
+				addRDFProperty(rdfSchema, idName, propName, propertyType);
 			}
-						
+
 			rdfSchema.setIdentifiablePropertyNames(ids);
+			rdfSchema.setGUIDPropertyNames(guids);
 		} else {
 			String hibernatePropertyName = getHibernatePropertyName(property);
 			String propertyName = RDFSchema.normalizePropertyName(hibernatePropertyName);
@@ -143,7 +150,7 @@ public class HibernateSyncAdapterFactory implements ISyncAdapterFactory{
 			
 			addRDFProperty(rdfSchema, propertyName, hibernatePropertyName, propertyType);
 			rdfSchema.setIdentifiablePropertyName(propertyName);
-			if(Hibernate.BINARY.equals(propertyType)){
+			if(Hibernate.BINARY.equals(propertyType) && builder.isMsAccess()){
 				rdfSchema.setGUIDPropertyName(propertyName);
 			}
 		}

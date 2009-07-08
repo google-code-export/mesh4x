@@ -33,6 +33,7 @@ public class MsAccessRDFSchemaGenerator {
 		}
 		
 		ArrayList<String> identifiablePropertyNames = new ArrayList<String>();		
+		ArrayList<String> guidPropertyNames = new ArrayList<String>();
 		
 		RDFSchema rdfSchema = new RDFSchema(ontologyNameSpace, ontologyBaseUri, getEntityName(tableName));
 		Database db = Database.open(mdbFile);
@@ -47,7 +48,9 @@ public class MsAccessRDFSchemaGenerator {
 				addProperty(rdfSchema, column);
 				
 				if(DataType.GUID.equals(column.getType())){
-					identifiablePropertyNames.add(RDFSchema.normalizePropertyName(column.getName()));
+					String propName = RDFSchema.normalizePropertyName(column.getName());
+					identifiablePropertyNames.add(propName);
+					guidPropertyNames.add(propName);
 				}
 			}
 			
@@ -58,7 +61,8 @@ public class MsAccessRDFSchemaGenerator {
 					identifiablePropertyNames.add(RDFSchema.normalizePropertyName(columnDescriptor.getName()));	
 				}				
 			}
-			rdfSchema.setIdentifiablePropertyNames(identifiablePropertyNames);			
+			rdfSchema.setIdentifiablePropertyNames(identifiablePropertyNames);	
+			rdfSchema.setGUIDPropertyNames(guidPropertyNames);
 			
 		} finally{
 			db.close();

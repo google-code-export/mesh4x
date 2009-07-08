@@ -12,9 +12,11 @@ import java.util.TreeSet;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.metadata.ClassMetadata;
+import org.mesh4j.sync.adapters.hibernate.mapping.HibernateMsAccessToRDFMapping;
 import org.mesh4j.sync.adapters.hibernate.mapping.HibernateToPlainXMLMapping;
 import org.mesh4j.sync.adapters.hibernate.mapping.HibernateToRDFMapping;
 import org.mesh4j.sync.adapters.hibernate.mapping.IHibernateToXMLMapping;
+import org.mesh4j.sync.adapters.hibernate.msaccess.MsAccessDialect;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.validations.MeshException;
 
@@ -103,10 +105,21 @@ public class HibernateSessionFactoryBuilder implements IHibernateSessionFactoryB
 	public IHibernateToXMLMapping buildMeshMapping(String entityName, String idNode) {
 		IRDFSchema rdfSchema = this.rdfSchemas.get(entityName);
 		if(rdfSchema != null){
-			return new HibernateToRDFMapping(rdfSchema);
+			if(this.isMsAccess()){
+				return new HibernateMsAccessToRDFMapping(rdfSchema);
+			} else {
+				return new HibernateToRDFMapping(rdfSchema);
+			}
 		} else {
 			return new HibernateToPlainXMLMapping(entityName, idNode);
 		}
+	}
+
+	@Override
+	public boolean isMsAccess() {
+		String dialect = (String)this.properties.get("hibernate.dialect");
+		return  dialect != null && MsAccessDialect.class.getName().equals(dialect); 
+// TODO(JMT) XHTT driver, add this line  ==> || HxttAccessDialect.class.getName().equals(dialect);
 	}
 
 	@Override

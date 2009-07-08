@@ -8,6 +8,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.mesh4j.sync.adapters.hibernate.mapping.MappingGenerator;
 import org.mesh4j.sync.validations.Guard;
@@ -52,7 +53,7 @@ public class MsAccessHibernateMappingGenerator {
 				if(columnID.getType().name().equals("GUID")){
 					writer.write("\n");
 					writer.write("\t\t");
-					writer.write(MessageFormat.format("<id name=\"{0}\" type=\"{1}\" column=\"{2}\">", propertyName, UUIDType.class.getName(), msAccessColumnName));
+					writer.write(MessageFormat.format("<id name=\"{0}\" type=\"{1}\" column=\"{2}\">", propertyName, Hibernate.BINARY.getName(), msAccessColumnName));
 					writer.write("\n");
 					writer.write("\t\t\t");
 					writer.write("<generator class=\"assigned\"/>");

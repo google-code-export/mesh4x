@@ -112,7 +112,11 @@ public class RDFInstance {
 				fieldValue = fieldElement.getText();
 				
 				OntResource range = dataTypeProperty.getRange();
-				ISchemaTypeFormat format = typeFormats.get(range.getURI());
+				ISchemaTypeFormat format = typeFormats.get(dataTypeName);
+				if(format == null){
+					format = typeFormats.get(range.getURI());
+				}
+				
 				if(format != null){
 					try{
 						instance.setProperty(dataTypeName, format.parseObject(fieldValue));
@@ -255,13 +259,21 @@ public class RDFInstance {
 	            Literal literal = (Literal) object;
 	            fieldValue = literal.getValue();
 	            
-	            ISchemaTypeFormat format = typeFormats.get(literal.getDatatypeURI());
+	            ISchemaTypeFormat format = typeFormats.get(fieldName);
+	            if(format == null){
+	            	format = typeFormats.get(literal.getDatatypeURI());
+	            }
+	            
 	            if(format != null){
-	            	if(fieldValue instanceof XSDDateTime){
-	            		fieldValue = format.format(((XSDDateTime)fieldValue).asCalendar().getTime());
-	            	} else {
-	            		fieldValue = format.format(fieldValue);
-	            	}
+	            	try{
+		            	if(fieldValue instanceof XSDDateTime){
+		            		fieldValue = format.format(((XSDDateTime)fieldValue).asCalendar().getTime());
+		            	} else {
+		            		fieldValue = format.format(fieldValue);
+		            	}
+	            	} catch (Exception e) {
+						throw new MeshException(e);
+					}
 	            }
 	            
 	            CompositeProperty compositeProperty = getCompositeProperty(compositeProperties, fieldName);
