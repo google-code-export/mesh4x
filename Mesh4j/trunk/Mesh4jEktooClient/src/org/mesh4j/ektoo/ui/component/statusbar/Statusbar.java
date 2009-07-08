@@ -71,7 +71,7 @@ public class Statusbar extends JPanel implements IStatus
 
     c.fill = GridBagConstraints.VERTICAL;
     c.gridx = 1;
-    add( getSeperaor(), c);
+    add( getSeperator(), c);
     
     c.gridx = 2;
     add( getPoweredByLabel(), c);
@@ -93,7 +93,7 @@ public class Statusbar extends JPanel implements IStatus
     return labelStatus;
   }
   
-  private JComponent getSeperaor(){ 
+  private JComponent getSeperator(){ 
  	  
 	 JSeparator separator = null;
 	 JPanel spePanel = new JPanel(new GridLayout(1,2,0,0));
