@@ -38,8 +38,7 @@ public class MsAccessMultiTableTests {
 		tables.add("user");
 		tables.add("Oswego");
 
-		MsAccessHibernateSyncAdapterFactory factory = new MsAccessHibernateSyncAdapterFactory(TestHelper.baseDirectoryRootForTest(), "http://mesh4x/test");
-		ISyncAdapter adapterSource = factory.createSyncAdapterForMultiTables(mdbFileName, tables, NullIdentityProvider.INSTANCE, adapterOpaque);
+		ISyncAdapter adapterSource = MsAccessHibernateSyncAdapterFactory.createSyncAdapterForMultiTables(mdbFileName, tables, "http://mesh4x/test", TestHelper.baseDirectoryRootForTest(), NullIdentityProvider.INSTANCE, adapterOpaque);
 		
 		// Sync example
 		InMemorySyncAdapter adapterTarget = new InMemorySyncAdapter("target", NullIdentityProvider.INSTANCE);
@@ -63,9 +62,7 @@ public class MsAccessMultiTableTests {
 		tables.add("user");
 		tables.add("Oswego");
 
-		MsAccessHibernateSyncAdapterFactory factory = new MsAccessHibernateSyncAdapterFactory(TestHelper.baseDirectoryRootForTest(), "http://mesh4x/test");
-		CompositeSyncAdapter adapterSource = factory.createSyncAdapterForMultiTables(mdbFileName, tables, NullIdentityProvider.INSTANCE, adapterOpaque);
-		
+		CompositeSyncAdapter adapterSource = MsAccessHibernateSyncAdapterFactory.createSyncAdapterForMultiTables(mdbFileName, tables, "http://mesh4x/test", TestHelper.baseDirectoryRootForTest(), NullIdentityProvider.INSTANCE, adapterOpaque);
 
 		// create sheets
 		

@@ -57,9 +57,7 @@ public class HibernateWithMsAccessMultiTablesWithRelationshipTests {
 		
 		// excel
 		InMemorySyncAdapter targetAdapterOpaque = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
-	
-		MsAccessHibernateSyncAdapterFactory factory = new MsAccessHibernateSyncAdapterFactory(TestHelper.baseDirectoryRootForTest(), "http://mesh4x/test");
-		CompositeSyncAdapter target = factory.createSyncAdapterForMultiTables(mdbFileName, tables, NullIdentityProvider.INSTANCE, targetAdapterOpaque);
+		CompositeSyncAdapter target = MsAccessHibernateSyncAdapterFactory.createSyncAdapterForMultiTables(mdbFileName, tables, "http://mesh4x/test", TestHelper.baseDirectoryRootForTest(), NullIdentityProvider.INSTANCE, targetAdapterOpaque);
 						
 		// sync
 		SyncEngine syncEngine = new SyncEngine(source, target);

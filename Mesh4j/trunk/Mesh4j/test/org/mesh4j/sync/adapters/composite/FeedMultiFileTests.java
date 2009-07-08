@@ -193,8 +193,7 @@ public class FeedMultiFileTests {
 				
 		String mdbFileName = getMsAccessFileNameToTest();
 
-		MsAccessHibernateSyncAdapterFactory factory = new MsAccessHibernateSyncAdapterFactory(TestHelper.baseDirectoryRootForTest(), "http://mesh4x/test");
-		ISyncAdapter target = factory.createSyncAdapterForMultiTables(mdbFileName, tables, NullIdentityProvider.INSTANCE, targetAdapterOpaque);
+		ISyncAdapter target = MsAccessHibernateSyncAdapterFactory.createSyncAdapterForMultiTables(mdbFileName, tables, "http://mesh4x/test", TestHelper.baseDirectoryRootForTest(), NullIdentityProvider.INSTANCE, targetAdapterOpaque);
 						
 		// sync
 		SyncEngine syncEngine = new SyncEngine(source, target);

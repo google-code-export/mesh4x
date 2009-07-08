@@ -40,13 +40,11 @@ import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.utils.FileUtils;
 import org.mesh4j.sync.validations.Guard;
-import org.mesh4j.sync.validations.MeshException;
 
 public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 
 	// MODEL VARIABLEs
 	private PropertiesProvider propertiesProvider;
-	private MsAccessHibernateSyncAdapterFactory msAccesSyncAdapter;
 	private MsExcelSyncAdapterFactory excelSyncFactory; 
 	private GoogleSpreadSheetSyncAdapterFactory googleSpreadSheetSyncAdapterFactory;
 	private GoogleSpreadSheetRDFSyncAdapterFactory googleSpreadSheetRDFSyncAdapterFactory;
@@ -56,7 +54,6 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 	public SyncAdapterBuilder(PropertiesProvider propertiesProvider) {
 		Guard.argumentNotNull(propertiesProvider, "propertiesProvider");
 		this.propertiesProvider = propertiesProvider;
-		this.msAccesSyncAdapter = new MsAccessHibernateSyncAdapterFactory(this.getBaseDirectory(), this.getBaseRDFUrl());
 		this.excelSyncFactory = new MsExcelSyncAdapterFactory();
 		this.googleSpreadSheetSyncAdapterFactory = new GoogleSpreadSheetSyncAdapterFactory();
 		this.googleSpreadSheetRDFSyncAdapterFactory = new GoogleSpreadSheetRDFSyncAdapterFactory(this.getBaseRDFUrl());
@@ -64,11 +61,7 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 
 	@Override
 	public ISyncAdapter createMsAccessAdapter(String mdbFileName, String tableName) {
-		try {
-			return this.msAccesSyncAdapter.createSyncAdapterFromFile(tableName, mdbFileName, tableName, this.getIdentityProvider());
-		} catch (Exception e) {
-			throw new MeshException(e);
-		}
+		return MsAccessHibernateSyncAdapterFactory.createHibernateAdapter(mdbFileName, tableName, this.getBaseRDFUrl(), this.getBaseDirectory(), this.getIdentityProvider());
 	}
 	
 	@Override
@@ -79,7 +72,7 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 		}
 		
 		InMemorySyncAdapter adapterOpaque = new InMemorySyncAdapter("opaque", getIdentityProvider());
-		return this.msAccesSyncAdapter.createSyncAdapterForMultiTables(mdbFileName, tables, getIdentityProvider(), adapterOpaque);
+		return MsAccessHibernateSyncAdapterFactory.createSyncAdapterForMultiTables(mdbFileName, tables, this.getBaseRDFUrl(), this.getBaseDirectory(), getIdentityProvider(), adapterOpaque);
 	}
 
 	/**

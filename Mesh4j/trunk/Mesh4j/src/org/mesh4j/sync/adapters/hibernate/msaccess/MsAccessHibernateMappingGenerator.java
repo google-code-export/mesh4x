@@ -96,8 +96,12 @@ public class MsAccessHibernateMappingGenerator {
 				String columnName = column.getName();
 				String propertyName = getNodeName(columnName);
 				String msAccessColumnName = getMsAccessColumnName(columnName);
-				if(!idNames.contains(propertyName) && !column.isAutoNumber() ){					
-					MappingGenerator.writeProperty(writer, propertyName, msAccessColumnName, getHibernateType(column));
+				if(!idNames.contains(propertyName) && !column.isAutoNumber() ){	
+					if(column.getType().name().equals("GUID")){
+						MappingGenerator.writeProperty(writer, propertyName, msAccessColumnName, Hibernate.BINARY.getName());
+					} else {
+						MappingGenerator.writeProperty(writer, propertyName, msAccessColumnName, getHibernateType(column));
+					}
 				}
 			}
 			MappingGenerator.writerFooter(writer);

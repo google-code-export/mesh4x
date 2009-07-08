@@ -180,12 +180,12 @@ public class MsAccessHibernateSyncAdapterFactory implements ISyncAdapterFactory 
 		}
 	}
 
-	public CompositeSyncAdapter createSyncAdapterForMultiTables(String mdbFileName, Set<String> tables, IIdentityProvider identityProvider, ISyncAdapter adapterOpaque){
+	public static CompositeSyncAdapter createSyncAdapterForMultiTables(String mdbFileName, Set<String> tables, String rdfBaseUri, String baseDirectory, IIdentityProvider identityProvider, ISyncAdapter adapterOpaque){
 		try{
 			IIdentifiableSyncAdapter[] adapters = new IIdentifiableSyncAdapter[tables.size()];
 			int i = 0;
 			for (String tableName : tables) {
-				SplitAdapter syncAdapter = createSyncAdapterFromFile(tableName, mdbFileName, tableName, identityProvider);
+				SplitAdapter syncAdapter = createHibernateAdapter(mdbFileName, tableName, rdfBaseUri, baseDirectory, identityProvider);
 				HibernateContentAdapter hibernateContentAdapter = (HibernateContentAdapter)syncAdapter.getContentAdapter();
 				adapters[i] = new IdentifiableSyncAdapter(hibernateContentAdapter.getType(), syncAdapter);
 				i = i +1;
