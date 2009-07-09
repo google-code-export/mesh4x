@@ -90,7 +90,7 @@ public class GoogleSpreadsheetToPlainXMLMapping extends AbstractPlainXmlIdentifi
 
 	@Override
 	public GSRow<GSCell> getRow(GSWorksheet<GSRow<GSCell>> workSheet, String id) {
-		return GoogleSpreadsheetUtils.getRow(workSheet, new String[]{this.getIdColumnName()}, new String[]{id});
+		return GoogleSpreadsheetUtils.getRow(workSheet, new String[]{this.getIdColumnName()}, new String[]{id}, null);
 	}
 	
 }

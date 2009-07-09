@@ -20,6 +20,7 @@ import org.mesh4j.sync.adapters.googlespreadsheet.model.GSSpreadsheet;
 import org.mesh4j.sync.adapters.googlespreadsheet.model.GSWorksheet;
 import org.mesh4j.sync.adapters.googlespreadsheet.model.IGSElement;
 import org.mesh4j.sync.id.generator.IdGenerator;
+import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
 import org.mesh4j.sync.utils.FileUtils;
 import org.mesh4j.sync.validations.Guard;
@@ -547,7 +548,7 @@ public class GoogleSpreadsheetUtils {
 		return null;
 	}
 	
-	public static GSRow<GSCell> getRow(GSWorksheet<GSRow<GSCell>> worksheet, String[] columnNames, String[] cellValues) {
+	public static GSRow<GSCell> getRow(GSWorksheet<GSRow<GSCell>> worksheet, String[] columnNames, String[] cellValues, IRDFSchema schema) {
 		GSRow<GSCell> row;
 		for (Map.Entry<String, GSRow<GSCell>> mpRow : worksheet.getGSRows().entrySet()) {
 			row = mpRow.getValue();
@@ -556,6 +557,11 @@ public class GoogleSpreadsheetUtils {
 				for (int j = 0; j < columnNames.length; j++) {
 					String columnName = columnNames[j];
 					GSCell cell = row.getGSCell(columnName);
+					if(cell == null && schema != null){
+						String label = schema.getPropertyLabel(columnName);
+						cell = row.getGSCell(label);
+					}
+					
 					if(cell != null){
 						String cellContentAsString = cell.getCellValue();
 						if (cellContentAsString != null && !cellContentAsString.equals("")) {
@@ -721,8 +727,9 @@ public class GoogleSpreadsheetUtils {
 			int size = rdfSchema.getPropertyCount();
 			for (int i = size-1; i >= 0; i--) {
 				String propertyName = rdfSchema.getPropertyName(i);
-				if (propertyName != null && !propertyName.isEmpty()) {
-					GoogleSpreadsheetUtils.getOrCreateHeaderCellIfAbsent(headerRow, propertyName);
+				String propertyLabel = rdfSchema.getPropertyLabel(propertyName);
+				if (propertyLabel != null && !propertyLabel.isEmpty()) {
+					GoogleSpreadsheetUtils.getOrCreateHeaderCellIfAbsent(headerRow, propertyLabel);
 				}
 			}
 		}
@@ -741,8 +748,9 @@ public class GoogleSpreadsheetUtils {
 			if (hederRow.getChildElements().size() == propertyCount) {
 				for (int i = 0; i < propertyCount; i++) {
 					String propertyName = rdfSchema.getPropertyName(i);
-					if(propertyName!=null && !propertyName.isEmpty()){
-						GSCell cell = hederRow.getGSCell(propertyName);
+					String propertyLabel = rdfSchema.getPropertyLabel(propertyName);
+					if(propertyLabel!=null && !propertyLabel.isEmpty()){
+						GSCell cell = hederRow.getGSCell(propertyLabel);
 						if (cell == null) return false;
 					}
 				}

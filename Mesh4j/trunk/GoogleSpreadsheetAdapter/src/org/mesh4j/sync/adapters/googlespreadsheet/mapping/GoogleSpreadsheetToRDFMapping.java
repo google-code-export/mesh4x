@@ -31,8 +31,6 @@ import com.google.gdata.client.spreadsheet.SpreadsheetService;
  */
 public class GoogleSpreadsheetToRDFMapping extends AbstractRDFIdentifiableMapping implements IGoogleSpreadsheetToXMLMapping{
 
-	// MODEL VARIABLES
-	
 	// BUSINESS METHODs
 	public GoogleSpreadsheetToRDFMapping(IRDFSchema rdfSchema) {		
 		super(rdfSchema);
@@ -52,23 +50,25 @@ public class GoogleSpreadsheetToRDFMapping extends AbstractRDFIdentifiableMappin
 		int cellType;
 		String cellName;
 		GSCell gsCell;
-
+		String propertyName;
+		
 		for (String key : dataRow.getChildElements().keySet()) {
 			gsCell = dataRow.getChildElements().get(key);
 			cellName = key;
 			cellType = gsCell.getCellTypeFromContent();
-
+			propertyName = RDFSchema.normalizePropertyName(cellName);
+			
 			if (GSCell.CELL_TYPE_BOOLEAN == cellType) {
-				rdfSchema.addBooleanProperty(cellName, cellName, "en");
+				rdfSchema.addBooleanProperty(propertyName, cellName, "en");
 			} else if (GSCell.CELL_TYPE_LONG == cellType) {
-				rdfSchema.addLongProperty(cellName, cellName, "en");
+				rdfSchema.addLongProperty(propertyName, cellName, "en");
 			} else if (GSCell.CELL_TYPE_DOUBLE == cellType) {
-				rdfSchema.addDoubleProperty(cellName, cellName, "en");
+				rdfSchema.addDoubleProperty(propertyName, cellName, "en");
 			} else if (GSCell.CELL_TYPE_DATE == cellType) {
-				rdfSchema.addDateTimeProperty(cellName, cellName, "en");
+				rdfSchema.addDateTimeProperty(propertyName, cellName, "en");
 			} else {
 				// text and unknown type goes here
-				rdfSchema.addStringProperty(cellName, cellName, "en");
+				rdfSchema.addStringProperty(propertyName, cellName, "en");
 			}
 		}
 
@@ -80,6 +80,7 @@ public class GoogleSpreadsheetToRDFMapping extends AbstractRDFIdentifiableMappin
 	public RDFInstance converRowToRDF(GSRow<GSCell> row) {
 
 		String cellName;
+		String propertyName;
 		Object cellValue;
 		Object propertyValue;
 
@@ -88,10 +89,11 @@ public class GoogleSpreadsheetToRDFMapping extends AbstractRDFIdentifiableMappin
 			
 			cellName = /*cell.getColumnTag()*/cellEntry.getKey();
 			cellValue = /*cell.getCellValueAsType()*/cellEntry.getValue().getCellValueAsType();
-
-			propertyValue = rdfSchema.cannonicaliseValue(cellName, cellValue);
+			propertyName = RDFSchema.normalizePropertyName(cellName);
+			
+			propertyValue = rdfSchema.cannonicaliseValue(propertyName, cellValue);
 			if (propertyValue != null) {
-				propertyValues.put(cellName, propertyValue);
+				propertyValues.put(propertyName, propertyValue);
 			}
 		}
 		
@@ -108,42 +110,51 @@ public class GoogleSpreadsheetToRDFMapping extends AbstractRDFIdentifiableMappin
 		List<String> idValues = new ArrayList<String>();
 		Object idCellValue;
 		for (String idColumnName : idColumnNames) {
-			idCellValue = row.getGSCell(idColumnName).getCellValue();
-			if(idCellValue == null){
+			GSCell cell = getCell(row, idColumnName);
+			if(cell == null){
 				return null;
 			} else {
-				idValues.add(String.valueOf(idCellValue));
+				idCellValue = cell.getCellValue();
+				if(idCellValue == null){
+					return null;
+				} else {
+					idValues.add(String.valueOf(idCellValue));
+				}
 			}
 		}
 		return makeId(idValues);
 	}
 
-	public void appliesRDFToRow(GSWorksheet<GSRow<GSCell>> workSheet, GSRow<GSCell> row,
-			RDFInstance rdfInstance) {
-		GSCell cell;
-		Object propertyValue;
-		String propertyType;
+	private GSCell getCell(GSRow<GSCell> row, String columnName) {
+		GSCell cell = row.getGSCell(columnName);
+		if(cell == null){
+			String label = this.rdfSchema.getPropertyLabel(columnName);
+			cell = row.getGSCell(label);
+		}
+		return cell;
+	}
 
+	public void appliesRDFToRow(GSWorksheet<GSRow<GSCell>> workSheet, GSRow<GSCell> row, RDFInstance rdfInstance) {
 		int size = rdfInstance.getPropertyCount();
 		for (int i = 0; i < size; i++) {
 			String propertyName = rdfInstance.getPropertyName(i);
-			propertyValue = rdfInstance.getPropertyValue(propertyName);
+			String label = rdfInstance.getPropertyLabel(propertyName);
+			Object propertyValue = rdfInstance.getPropertyValue(propertyName);
 
 			if (propertyValue != null) {
-				GSRow<GSCell> headerRow = GoogleSpreadsheetUtils
-						.getOrCreateHeaderRowIfAbsent(workSheet);
-				GSCell headerCell = GoogleSpreadsheetUtils
-						.getOrCreateHeaderCellIfAbsent(headerRow, propertyName);
-
-				propertyType = rdfInstance.getPropertyType(propertyName);
-				cell = row.getGSCell(propertyName);
+				GSRow<GSCell> headerRow = GoogleSpreadsheetUtils.getOrCreateHeaderRowIfAbsent(workSheet);
+				GSCell headerCell = getCell(headerRow, propertyName);
+				if(headerCell == null){
+					headerRow.createNewCell(headerRow.getChildElements().size() + 1, propertyName, label);	
+				}
+								
+				String propertyType = rdfInstance.getPropertyType(propertyName);
+				GSCell cell = getCell(row, propertyName);
 				
 				if (cell == null) {
-					cell = row.createNewCell(headerCell.getElementListIndex(),
-							propertyName, "");
+					cell = row.createNewCell(headerCell.getElementListIndex(), propertyName, "");
 				}
-				cell.setCellValueAsType(propertyValue,
-						translatePropertyTypeToCellType(propertyType));
+				cell.setCellValueAsType(propertyValue, translatePropertyTypeToCellType(propertyType));
 			}
 		}
 	}
@@ -172,8 +183,7 @@ public class GoogleSpreadsheetToRDFMapping extends AbstractRDFIdentifiableMappin
 		DocsService docService = GoogleSpreadsheetUtils.getDocService(username,password);
 		FeedURLFactory factory = GoogleSpreadsheetUtils.getSpreadsheetFeedURLFactory();
 		
-		GSSpreadsheet<GSWorksheet> ss = GoogleSpreadsheetUtils
-				.getOrCreateGSSpreadsheetIfAbsent(factory, service, docService,	fileName);
+		GSSpreadsheet<GSWorksheet> ss = GoogleSpreadsheetUtils.getOrCreateGSSpreadsheetIfAbsent(factory, service, docService, fileName);
 
 		//return ss.getBaseEntry().getTitle().getPlainText();
 		return new GoogleSpreadsheet(docService, service, factory, ss.getBaseEntry().getTitle().getPlainText(), ss);
@@ -196,8 +206,7 @@ public class GoogleSpreadsheetToRDFMapping extends AbstractRDFIdentifiableMappin
 		if(this.rdfSchema.getVersionPropertyName() == null || this.rdfSchema.getVersionPropertyName().length() == 0){
 			return null;
 		}
-		
-		GSCell cell = row.getGSCell(this.rdfSchema.getVersionPropertyName());
+		GSCell cell = getCell(row, this.rdfSchema.getVersionPropertyName());
 		if(cell == null){
 			return null;
 		} else {
@@ -209,7 +218,7 @@ public class GoogleSpreadsheetToRDFMapping extends AbstractRDFIdentifiableMappin
 
 	@Override
 	public GSRow<GSCell> getRow(GSWorksheet<GSRow<GSCell>> workSheet, String id) {
-		return GoogleSpreadsheetUtils.getRow(workSheet, this.rdfSchema.getIdentifiablePropertyNames().toArray(new String[0]), this.getIds(id));
+		return GoogleSpreadsheetUtils.getRow(workSheet, this.rdfSchema.getIdentifiablePropertyNames().toArray(new String[0]), this.getIds(id), this.rdfSchema);
 	}
 
 }
