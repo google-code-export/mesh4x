@@ -50,12 +50,21 @@ public class MsExcelToRDFMapping extends AbstractRDFIdentifiableMapping implemen
 
 		Row headerRow = sheet.getRow(sheet.getFirstRowNum());
 		Row dataRow = sheet.getRow(sheet.getLastRowNum());
-		int cellType;
+		// it has been found that sometimes manually deleting last row clears
+		// data from cells not the column itself
+		// and thats why its not safe to attempt creation of rdfSchema from last
+		// row, before proceed with last row check if cells are available
+		// otherwise pick the previous row
+		int lastRowIndex = sheet.getLastRowNum();
+		while(!dataRow.cellIterator().hasNext() && lastRowIndex > 0){
+			dataRow = sheet.getRow(--lastRowIndex);
+		}
+		
 		for (Iterator<Cell> iterator = dataRow.cellIterator(); iterator.hasNext();) {
 			cell = iterator.next();
 			
 			cellName = headerRow.getCell(cell.getColumnIndex()).getRichStringCellValue().getString();
-			cellType = cell.getCellType();
+			int cellType = cell.getCellType();
 			propertyName = RDFSchema.normalizePropertyName(cellName);
 			
 			if(Cell.CELL_TYPE_STRING == cellType || Cell.CELL_TYPE_FORMULA == cellType){
@@ -225,6 +234,9 @@ public class MsExcelToRDFMapping extends AbstractRDFIdentifiableMapping implemen
 		List<String> idValues = new ArrayList<String>();
 		
 		for (String idColumnName : idColumnNames) {
+			//this is needed for identifiable property including space char,
+			idColumnName = idColumnName.replaceAll(" ", "_"); // without this a property name including
+															  // space character will not be available
 			String label = this.rdfSchema.getPropertyLabel(idColumnName);
 			String idCellValue = getCellValue(sheet, row, idColumnName, label);
 			if(idCellValue == null){
@@ -280,6 +292,10 @@ public class MsExcelToRDFMapping extends AbstractRDFIdentifiableMapping implemen
 				for (int j = 0; j < propertyNames.size(); j++) {
 					String propertyName = propertyNames.get(j);
 					 
+					//this is needed for identifiable property including space char,
+					propertyName = propertyName.replaceAll(" ", "_"); // without this a property name including
+																	  // space character will not be available
+					
 					Cell cellId = MsExcelUtils.getCell(sheet, row, propertyName);
 					if(cellId == null){
 						String label = this.rdfSchema.getPropertyLabel(propertyName);
