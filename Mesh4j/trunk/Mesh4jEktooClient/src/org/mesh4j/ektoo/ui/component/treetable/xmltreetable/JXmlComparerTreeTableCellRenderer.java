@@ -13,17 +13,18 @@ import org.w3c.dom.Node;
 
 public class JXmlComparerTreeTableCellRenderer extends DefaultTreeCellRenderer{
    
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -3031014823745556620L;
 	Color elementColor = new Color(0, 0, 128);
     Color attributeColor = new Color(0, 128, 0);
     private Color conflictColor = Color.RED;
     private Color newItemOrAttributeColor = Color.GREEN;
     
     
-    TreeModel baseModel;
+    private TreeModel baseModel;
     private static String OWL_DatatypeProperty = "owl:DatatypeProperty";
 	private static String OWL_Class = "owl:Class";
-	private static String XML_NS = "xmlns";
+	private static String XML_ns = "xmlns";
+	private static String RDF_about = "rdf:about";
 	 
 	
     public JXmlComparerTreeTableCellRenderer(TreeModel baseModel){
@@ -78,9 +79,7 @@ public class JXmlComparerTreeTableCellRenderer extends DefaultTreeCellRenderer{
     
     private void processAttribute(Node nodeTobeProcessed){
     	String attributeName = nodeTobeProcessed.getNodeName();
-    	if(attributeName.startsWith(XML_NS)){
-    		
-    	
+    	if(attributeName.startsWith(XML_ns)){
 //    	String attributeValue = nodeTobeProcessed.getNodeValue();
     	Node sourceAttributeNode = getAttribute(attributeName);
     	if(sourceAttributeNode == null){
@@ -103,10 +102,11 @@ public class JXmlComparerTreeTableCellRenderer extends DefaultTreeCellRenderer{
     	String nodeName = nodeTobeProcessed.getNodeName();
     	if(nodeName.equals(OWL_DatatypeProperty) || 
     			nodeName.equals(OWL_Class)){
-    		String propName = nodeTobeProcessed.getAttributes().getNamedItem("rdf:about").getNodeValue();
+    		String propName = nodeTobeProcessed.getAttributes().getNamedItem(RDF_about).getNodeValue();
     		Node sourceNode = getNode(propName,nodeName);
-    		if(sourceNode == null){//no equvalent node found in source,
-    			// means this is new attribute
+    		if(sourceNode == null){
+    			//no  equivalent node found in source,
+    			//it means this is new attribute.
     			setForeground(newItemOrAttributeColor);
     		} else {
     			if(nodeTobeProcessed.isEqualNode(sourceNode)){
@@ -116,7 +116,7 @@ public class JXmlComparerTreeTableCellRenderer extends DefaultTreeCellRenderer{
     			}
     		}
     	} else {
-    		setForeground(elementColor);
+    		setForeground(elementColor);//default color
     	}
 	}
     
@@ -150,7 +150,7 @@ public class JXmlComparerTreeTableCellRenderer extends DefaultTreeCellRenderer{
 			} else if(node.getNodeType() == Node.ELEMENT_NODE){
 				String thisNodeName = node.getNodeName();
 				if(thisNodeName.equals(nodeName)){
-					String propName =  node.getAttributes().getNamedItem("rdf:about").getNodeValue();
+					String propName =  node.getAttributes().getNamedItem(RDF_about).getNodeValue();
 					if(propName.equals(value)){
 						return node;
 					}

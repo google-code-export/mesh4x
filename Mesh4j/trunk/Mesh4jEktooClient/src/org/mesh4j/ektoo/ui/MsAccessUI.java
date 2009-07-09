@@ -21,7 +21,6 @@ import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -32,7 +31,6 @@ import org.mesh4j.ektoo.controller.MsAccessUIController;
 import org.mesh4j.ektoo.tasks.IErrorListener;
 import org.mesh4j.ektoo.tasks.OpenFileTask;
 import org.mesh4j.ektoo.tasks.SchemaViewTask;
-import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.ektoo.ui.validator.MsAccessUIValidator;
 import org.mesh4j.sync.adapters.hibernate.msaccess.MsAccessHibernateSyncAdapterFactory;
@@ -56,7 +54,7 @@ public class MsAccessUI extends AbstractUI{
 	private JScrollPane listTableScroller =null;
 	
 	private JButton btnFile = null;
-	private JButton btnView = null;
+//	private JButton btnView = null;
 	
 	private MsAccessUIController controller;
 
@@ -250,18 +248,8 @@ public class MsAccessUI extends AbstractUI{
 		return btnFile;
 	}
 
-	public JButton getBtnView() {
-		if (btnView == null) {
-			btnView = new JButton();
-			btnView.setIcon(ImageManager.getViewIcon());
-			btnView.setContentAreaFilled(false);
-			btnView.setBorderPainted(false);
-			btnView.setBorder(new EmptyBorder(0, 0, 0, 0));
-			btnView.setBackground(Color.WHITE);
-			btnView.setText("");
-			btnView.setToolTipText(EktooUITranslator.getTooltipView());
-			btnView.setBounds(new Rectangle(299, 8, 34, 40));
-			btnView.addActionListener(new ActionListener() {
+	private JButton getBtnView() {
+		getViewButton().addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					JFrame frame = MsAccessUI.this.getRootFrame();
 					IErrorListener errorListener = MsAccessUI.this
@@ -271,8 +259,7 @@ public class MsAccessUI extends AbstractUI{
 					task.execute();
 				}
 			});
-		}
-		return btnView;
+		return getViewButton();
 	}
 
 	protected IErrorListener getErrorListener() {

@@ -321,6 +321,7 @@ public class SyncItemUI extends JPanel implements IUIController {
 		return folderUI;
 	}
 
+	
 	private void updateLayout(String item) {
 		CardLayout cl = (CardLayout) (body.getLayout());
 
@@ -347,9 +348,11 @@ public class SyncItemUI extends JPanel implements IUIController {
 			if(EktooFrame.multiModeSync){				
 				getCloudUI().getDataSetLabel().setVisible(false);
 				getCloudUI().getDataSetText().setVisible(false);
+				getCloudUI().getSchemaButton().setVisible(false);
 			}else{
 				getCloudUI().getDataSetLabel().setVisible(true);
 				getCloudUI().getDataSetText().setVisible(true);
+				getCloudUI().getSchemaButton().setVisible(true);
 			}			
 			cl.show(body, CLOUD_PANEL);
 		} else if (item.equals(MYSQL_PANEL)) {

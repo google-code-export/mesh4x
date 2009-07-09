@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.mesh4j.ektoo.Event;
 import org.mesh4j.ektoo.IUIController;
 import org.mesh4j.ektoo.model.AbstractModel;
 import org.mesh4j.ektoo.ui.AbstractUI;
@@ -18,6 +19,7 @@ public abstract class AbstractUIController implements PropertyChangeListener, IU
 	private ArrayList<AbstractUI> registeredViews = new ArrayList<AbstractUI>();
 	private ArrayList<AbstractModel> registeredModels = new ArrayList<AbstractModel>();
 	private boolean acceptsCreateDataset = false;
+	private Event currentEvent = null;
 
 	// BUSINESS METHODS
 	public AbstractUIController(boolean acceptsCreateDataset) {
@@ -67,6 +69,13 @@ public abstract class AbstractUIController implements PropertyChangeListener, IU
 		registeredViews.add(view);
 	}
 
+	protected AbstractUI getView(){
+		if(!this.registeredViews.isEmpty()){
+			return this.registeredViews.get(0);
+		}
+		return null;
+	}
+	
 	public void removeModel(AbstractUI view) {
 		registeredViews.remove(view);
 	}
@@ -110,6 +119,12 @@ public abstract class AbstractUIController implements PropertyChangeListener, IU
 		}
 	}
 	
+	public void setCurrentEvent(Event currentEvent){
+		this.currentEvent = currentEvent;
+	}
+	public Event getCurrentEvent(){
+		return this.currentEvent;
+	}
 	public boolean acceptsCreateDataset() {
 		return this.acceptsCreateDataset;
 	}

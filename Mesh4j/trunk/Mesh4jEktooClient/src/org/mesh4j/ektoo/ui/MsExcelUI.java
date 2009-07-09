@@ -20,7 +20,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
-import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.apache.commons.logging.Log;
@@ -29,7 +28,6 @@ import org.mesh4j.ektoo.controller.MsExcelUIController;
 import org.mesh4j.ektoo.tasks.IErrorListener;
 import org.mesh4j.ektoo.tasks.OpenFileTask;
 import org.mesh4j.ektoo.tasks.SchemaViewTask;
-import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.ektoo.ui.validator.MsExcelUIValidator;
 import org.mesh4j.ektoo.validator.IValidationStatus;
@@ -57,7 +55,7 @@ public class MsExcelUI extends AbstractUI implements IValidationStatus {
 	private JComboBox listColumn = null;
 
 	private JButton btnFile = null;
-	private JButton btnView = null;
+//	private JButton btnView = null;
 	private MsExcelUIController controller;
 
 	// BUSINESS METHODS
@@ -277,18 +275,8 @@ public class MsExcelUI extends AbstractUI implements IValidationStatus {
 		return btnFile;
 	}
 
-	public JButton getBtnView() {
-		if (btnView == null) {
-			btnView = new JButton();
-			btnView.setIcon(ImageManager.getViewIcon());
-			btnView.setContentAreaFilled(false);
-			btnView.setBorderPainted(false);
-			btnView.setBorder(new EmptyBorder(0, 0, 0, 0));
-			btnView.setBackground(Color.WHITE);
-			btnView.setText("");
-			btnView.setToolTipText(EktooUITranslator.getTooltipView());
-			btnView.setBounds(new Rectangle(299, 8, 34, 40));
-			btnView.addActionListener(new ActionListener() {
+	private JButton getBtnView() {
+		getViewButton().addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					JFrame frame = MsExcelUI.this.getRootFrame();
 					IErrorListener errorListener = MsExcelUI.this.getErrorListener();
@@ -297,8 +285,7 @@ public class MsExcelUI extends AbstractUI implements IValidationStatus {
 					task.execute();
 				}
 			});
-		}
-		return btnView;
+		return getViewButton();
 	}
 
 	protected IErrorListener getErrorListener() {

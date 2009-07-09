@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.mesh4j.ektoo.Event;
 import org.mesh4j.ektoo.ISyncAdapterBuilder;
 import org.mesh4j.ektoo.SyncAdapterBuilder;
 import org.mesh4j.ektoo.properties.PropertiesProvider;
@@ -36,6 +37,9 @@ public class EktooController {
 	public String sync(SyncItemUI source, SyncItemUI target, Date since) {
 		ISyncAdapter sourceAdapter = null;
 		ISyncAdapter targetAdapter = null;
+		
+		source.getCurrentController().setCurrentEvent(Event.sync_event);
+		target.getCurrentController().setCurrentEvent(Event.sync_event);
 		
 		sourceAdapter = source.createAdapter();
 		List<IRDFSchema> schemas = source.fetchSchema(sourceAdapter);

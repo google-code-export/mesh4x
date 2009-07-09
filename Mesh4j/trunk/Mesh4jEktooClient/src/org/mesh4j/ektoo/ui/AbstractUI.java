@@ -28,11 +28,13 @@ public abstract class AbstractUI extends JPanel implements IValidationStatus {
 	// MODEL VARIABLES
 	private JTextField txtMessages = null;
 	private JButton schemaViewButton = null;
+	private JButton viewButtion = null;
 	
 	// BUSINESS METHODS
 	
 	public abstract void modelPropertyChange(PropertyChangeEvent evt);
 	public abstract boolean verify();
+	
 	
 
 	protected JTextField getMessagesText() {
@@ -44,7 +46,7 @@ public abstract class AbstractUI extends JPanel implements IValidationStatus {
 		return txtMessages;
 	}
 	
-	protected JButton getSchemaButton(){
+	public JButton getSchemaButton(){
 		if(schemaViewButton == null){
 			schemaViewButton = new JButton();
 			schemaViewButton.setIcon(ImageManager.getSchemaViewIcon());
@@ -56,6 +58,21 @@ public abstract class AbstractUI extends JPanel implements IValidationStatus {
 			schemaViewButton.setToolTipText(EktooUITranslator.getTooltipSchemaView());
 		}
 		return schemaViewButton;
+	}
+	
+	protected JButton getViewButton(){
+		if (viewButtion == null) {
+			viewButtion = new JButton();
+			viewButtion.setIcon(ImageManager.getViewIcon());
+			viewButtion.setContentAreaFilled(false);
+			viewButtion.setBorderPainted(false);
+			viewButtion.setBorder(new EmptyBorder(0, 0, 0, 0));
+			viewButtion.setBackground(Color.WHITE);
+			viewButtion.setText("");
+			viewButtion.setToolTipText(EktooUITranslator.getTooltipView());
+			viewButtion.setBounds(new Rectangle(295, 0, 30, 40));
+		}
+		return viewButtion;
 	}
 	
 	public void setMessageText(String msg){

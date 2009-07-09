@@ -78,6 +78,15 @@ public interface ISyncAdapterBuilder {
 	public ISyncAdapter createPlainXMLBasedGoogleSpreadSheetAdapter(GoogleSpreadSheetInfo spreadSheetInfo);
 
 	public ISyncAdapter createPlainXMLBasedGoogleSpreadSheetAdapter(GoogleSpreadSheetInfo spreadSheetInfo, IGoogleSpreadSheet gss);
+	
+	/**
+	 * Basic method to create http adapter.
+	 * @param serverUrl,the base feed server url
+	 * @param meshGroup,the mesh name in the feed server
+	 * @param dataSetId, the dataset name under provide meshGroup
+	 * @return ISyncAdapter 
+	 */
+	public ISyncAdapter createHttpSyncAdapter(String serverUrl,String meshGroup,String dataSetId);
 	/**
 	 * TODO create documentation (raju)
 	 * 

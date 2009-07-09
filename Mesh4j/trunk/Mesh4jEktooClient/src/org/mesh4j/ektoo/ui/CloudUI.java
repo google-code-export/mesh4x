@@ -17,14 +17,14 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
-import javax.swing.border.EmptyBorder;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.mesh4j.ektoo.Event;
 import org.mesh4j.ektoo.controller.CloudUIController;
 import org.mesh4j.ektoo.tasks.IErrorListener;
 import org.mesh4j.ektoo.tasks.OpenURLTask;
-import org.mesh4j.ektoo.ui.image.ImageManager;
+import org.mesh4j.ektoo.tasks.SchemaViewTask;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.ektoo.ui.validator.CloudUIValidator;
 
@@ -45,7 +45,7 @@ public class CloudUI extends AbstractUI {
 
 	private CloudUIController controller = null;
 	
-	private JButton btnView = null;
+//	private JButton btnView = null;
 
 	// BUSINESS METHODS
 	public CloudUI(String baseURL, CloudUIController controller) {
@@ -72,8 +72,24 @@ public class CloudUI extends AbstractUI {
 		
 		this.add(getMessagesText(), null);
 		this.add(getBtnView(), null);
+		this.add(getSchemaViewButton(), null);
 	}
 
+	private JButton getSchemaViewButton(){
+		getSchemaButton().addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(CloudUI.this.verify()){
+					CloudUI.this.controller.setCurrentEvent(Event.schema_view_event);
+					EktooFrame ektooFrame = ((EktooFrame)CloudUI.this.getRootFrame());
+					SchemaViewTask task = new SchemaViewTask(ektooFrame,CloudUI.this.controller,ektooFrame);
+					task.execute();	
+				}
+			}
+		});
+		return getSchemaButton();
+	}
+	
 	public JTextField getServerURLText(){
 		if (this.txtServerURL == null) {
 			this.txtServerURL = new JTextField();
@@ -216,18 +232,8 @@ public class CloudUI extends AbstractUI {
 		return txtDataset;
 	}
 	
-	public JButton getBtnView() {
-		if (btnView == null) {
-			btnView = new JButton();
-			btnView.setIcon(ImageManager.getViewIcon());
-			btnView.setContentAreaFilled(false);
-			btnView.setBorderPainted(false);
-			btnView.setBorder(new EmptyBorder(0, 0, 0, 0));
-			btnView.setBackground(Color.WHITE);
-			btnView.setText("");
-			btnView.setToolTipText(EktooUITranslator.getTooltipView());
-			btnView.setBounds(new Rectangle(290, 5, 34, 40));
-			btnView.addActionListener(new ActionListener() {
+	private JButton getBtnView() {
+			getViewButton().addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					List<JComponent> uiFieldListForValidation = new ArrayList<JComponent>();
 					uiFieldListForValidation.add(getMeshText());
@@ -237,14 +243,12 @@ public class CloudUI extends AbstractUI {
 					if(valid){
 						JFrame frame = CloudUI.this.getRootFrame();
 						String url = getController().getUri();
-						
 						OpenURLTask task = new OpenURLTask(frame, (IErrorListener)frame, url);
 						task.execute();
 					}
 				}
 			});
-		}
-		return btnView;
+		return getViewButton();
 	}
 	
 	public CloudUIController getController() {

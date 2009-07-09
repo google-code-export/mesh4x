@@ -16,14 +16,12 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
-import javax.swing.border.EmptyBorder;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.controller.FolderUIController;
 import org.mesh4j.ektoo.tasks.IErrorListener;
 import org.mesh4j.ektoo.tasks.OpenFileTask;
-import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.ektoo.ui.validator.FolderUIValidator;
 
@@ -37,7 +35,7 @@ public class FolderUI extends AbstractUI {
 	private JLabel labelFileName = null;
 	private JTextField txtFileName = null;
 	private JButton btnFile = null;
-	private JButton btnView = null;
+//	private JButton btnView = null;
 
 	private FolderUIController controller;
 	private JFileChooser fileChooser = null;
@@ -119,26 +117,15 @@ public class FolderUI extends AbstractUI {
 		return btnFile;
 	}
 
-	public JButton getBtnView() {
-		if (btnView == null) {
-			btnView = new JButton();
-			btnView.setIcon(ImageManager.getViewIcon());
-			btnView.setContentAreaFilled(false);
-			btnView.setBorderPainted(false);
-			btnView.setBorder(new EmptyBorder(0, 0, 0, 0));
-			btnView.setBackground(Color.WHITE);
-			btnView.setText("");
-			btnView.setToolTipText(EktooUITranslator.getTooltipView());
-			btnView.setBounds(new Rectangle(299, 8, 34, 40));
-			btnView.addActionListener(new ActionListener() {
+	private JButton getBtnView() {
+		getViewButton().addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					JFrame frame = FolderUI.this.getRootFrame();
 					OpenFileTask task = new OpenFileTask(frame, (IErrorListener) frame, txtFileName.getText());
 					task.execute();
 				}
 			});
-		}
-		return btnView;
+		return getViewButton();
 	}
 	
 	public FolderUIController getController() {

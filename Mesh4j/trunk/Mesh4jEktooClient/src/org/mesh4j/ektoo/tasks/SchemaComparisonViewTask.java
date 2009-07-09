@@ -11,6 +11,7 @@ import javax.swing.SwingWorker;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.mesh4j.ektoo.Event;
 import org.mesh4j.ektoo.ui.EktooFrame;
 import org.mesh4j.ektoo.ui.SchemaComparisonViewUI;
 import org.mesh4j.ektoo.ui.component.RoundBorder;
@@ -43,15 +44,33 @@ public class SchemaComparisonViewTask extends SwingWorker<String, Void>{
 		ui.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 	}
 	
+	 
 	
 	private void processSchemaComparison(){
 		
-		try{
+	try{
+		ui.getSourceItem().getCurrentController().setCurrentEvent(Event.schema_view_event);
 		ISyncAdapter sourceAdapter = ui.getSourceItem().getCurrentController().createAdapter();
+		if(sourceAdapter == null){
+			MessageDialog.showErrorMessage(ui, 
+					EktooUITranslator.getMessageSchemaComparisonViewErrorInSourceAdapterCreation());
+		}
 		List<IRDFSchema> sourceSchemaList = ui.getSourceItem().getCurrentController().fetchSchema(sourceAdapter);
-		
+		if(sourceSchemaList == null){
+			MessageDialog.showErrorMessage(ui, 
+					EktooUITranslator.getMessageSchemaViewErrorSchemaNotFoundInSource());
+		}
+		ui.getTargetItem().getCurrentController().setCurrentEvent(Event.schema_view_event);
 		ISyncAdapter targetAdapter = ui.getTargetItem().getCurrentController().createAdapter();
+		if(targetAdapter == null){
+			MessageDialog.showErrorMessage(ui, 
+					EktooUITranslator.getMessageSchemaComparisonViewErrorInTargetAdapterCreation());
+		}
 		List<IRDFSchema> targetSchemaList = ui.getTargetItem().getCurrentController().fetchSchema(targetAdapter);
+		if(targetSchemaList == null){
+			MessageDialog.showErrorMessage(ui, 
+					EktooUITranslator.getMessageSchemaViewErrorSchemaNotFoundInTarget());
+		}
 		
 		JPanel schemaComparisonPanel = new JPanel(new GridLayout(sourceSchemaList.size(),1));
 		boolean isCompatibleEntityFound = false;

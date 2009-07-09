@@ -498,20 +498,6 @@ public class EktooFrame extends JFrame implements IErrorListener,
 			   		} 
 				}
 		    });
-		    
-//		    singleModeRadio.addChangeListener(new ChangeListener(){
-//				@Override
-//				public void stateChanged(ChangeEvent e) {
-//				    AbstractButton aButton = (AbstractButton)e.getSource();
-//			        ButtonModel aModel = aButton.getModel();
-//			        boolean selected = aModel.isSelected();
-//			        boolean previousMode = multiModeSync;
-//			        multiModeSync = selected ? false : true;
-//			        if(previousMode != multiModeSync){
-//			        	updateSourceAdapterList();
-//			        }
-//				}
-//		    });
 		}
 	    return singleModeRadio;
 	}
@@ -534,22 +520,6 @@ public class EktooFrame extends JFrame implements IErrorListener,
 			   		} 
 				}
 		    });
-		    
-//		    multiModeRadio.addChangeListener(new ChangeListener(){
-//				@Override
-//				public void stateChanged(ChangeEvent e) {
-//				    AbstractButton aButton = (AbstractButton)e.getSource();
-//			        ButtonModel aModel = aButton.getModel();
-//			        boolean selected = aModel.isSelected();
-//			        boolean previousMode = multiModeSync;
-//			        multiModeSync = selected? true : false;
-//			        if(previousMode != multiModeSync){
-//			        	updateUiForMultiModeSync();
-//			        	updateSourceAdapterList();
-//			        }
-//				    
-//				}
-//		    });	    
 		} 
 	    return multiModeRadio;
 	}

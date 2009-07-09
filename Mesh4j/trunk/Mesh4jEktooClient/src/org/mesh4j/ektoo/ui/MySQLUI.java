@@ -25,7 +25,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingWorker;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -70,7 +69,7 @@ public class MySQLUI extends AbstractUI {
 
 	private MySQLUIController controller = null;
 
-	private JButton btnView = null;
+//	private JButton btnView = null;
 	
 	// BUSINESS METHODS
 	public MySQLUI(MySQLUIController controller) {
@@ -462,26 +461,15 @@ public class MySQLUI extends AbstractUI {
 		return listTableScroller;
 	}
 	
-	public JButton getBtnView() {
-		if (btnView == null) {
-			btnView = new JButton();
-			btnView.setIcon(ImageManager.getViewIcon());
-			btnView.setContentAreaFilled(false);
-			btnView.setBorderPainted(false);
-			btnView.setBorder(new EmptyBorder(0, 0, 0, 0));
-			btnView.setBackground(Color.WHITE);
-			btnView.setText("");
-			btnView.setToolTipText(EktooUITranslator.getTooltipView());
-			btnView.setBounds(new Rectangle(299, 8, 34, 40));
-			btnView.addActionListener(new ActionListener() {
+	private JButton getBtnView() {
+		getViewButton().addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					JFrame frame = MySQLUI.this.getRootFrame();
 					OpenMySqlFeedTask task = new OpenMySqlFeedTask(frame, (IErrorListener)frame, MySQLUI.this.controller);
 					task.execute();
 				}
 			});
-		}
-		return btnView;
+		return getViewButton();
 	}
 
 	public void setList(String user, String pass, String host, int port, String schema) {

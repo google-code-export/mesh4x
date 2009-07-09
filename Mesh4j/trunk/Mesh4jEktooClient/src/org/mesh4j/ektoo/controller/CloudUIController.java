@@ -3,6 +3,7 @@ package org.mesh4j.ektoo.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.mesh4j.ektoo.Event;
 import org.mesh4j.ektoo.ISyncAdapterBuilder;
 import org.mesh4j.ektoo.SyncAdapterBuilder;
 import org.mesh4j.ektoo.model.CloudModel;
@@ -20,6 +21,7 @@ public class CloudUIController extends AbstractUIController
 	public static final String MESH_NAME_PROPERTY = "MeshName";
 	public static final String DATASET_NAME_PROPERTY = "DatasetName";
 	public static final String SYNC_SERVER_URI = "BaseUri";
+	
 
 	// MODEL VARIABLES
 	private ISyncAdapterBuilder adapterBuilder;
@@ -43,6 +45,7 @@ public class CloudUIController extends AbstractUIController
 	public void changeSyncServerUri(String syncServerURI) {
 		setModelProperty(SYNC_SERVER_URI, syncServerURI);
 	}
+
 	
 	@Override
 	public ISyncAdapter createAdapter() {
@@ -63,6 +66,7 @@ public class CloudUIController extends AbstractUIController
 
 	@Override
 	public ISyncAdapter createAdapter(List<IRDFSchema> schemas) {
+		
 		
 		CloudModel model = (CloudModel) this.getModel();
 		if (model == null){
@@ -88,10 +92,17 @@ public class CloudUIController extends AbstractUIController
 			}
 			
 			IRDFSchema rdfSchema = schemas == null || schemas.size() == 0 ? null : schemas.get(0);
-			return adapterBuilder.createHttpSyncAdapter(baseSyncURI, meshName, datasetName, rdfSchema);	
+			//if this is schema view task
+			if(getCurrentEvent().equals(Event.schema_view_event)){
+				return adapterBuilder.createHttpSyncAdapter(baseSyncURI, meshName, datasetName);
+			} else {
+				return adapterBuilder.createHttpSyncAdapter(baseSyncURI, meshName, datasetName, rdfSchema);	
+			}
+				
 		}
 	}
 
+	
 	public String getUri() {
 		CloudModel model = (CloudModel) this.getModel();
 		if (model == null){

@@ -67,6 +67,27 @@ public class EktooUITranslator {
 				"EKTOO_SYNC_PROCESS_ERROR_ADAPTER_CREATION_MESSAGE", source, target, date);
 	}
 	
+	public static String getMessageSchemaViewErrorInAdapterCreation(){
+		return EktooMessageTranslator.translate("EKTOO_SCHEMA_VIEW_ERROR_ADAPTER_CREATION_MESSAGE");
+	}
+	
+	public static String getMessageSchemaComparisonViewErrorInSourceAdapterCreation(){
+		return EktooMessageTranslator.translate("EKTOO_SCHEMA_VIEW_COMPARISON_ERROR_SOURCE_ADAPTER_CREATION_MESSAGE");
+	}
+	public static String getMessageSchemaComparisonViewErrorInTargetAdapterCreation(){
+		return EktooMessageTranslator.translate("EKTOO_SCHEMA_VIEW_COMPARISON_ERROR_TARGET_ADAPTER_CREATION_MESSAGE");
+	}
+	public static String getMessageSchemaViewErrorSchemaNotFound(){
+		return EktooMessageTranslator.translate("EKTOO_SCHEMA_VIEW_ERROR_SCHEMA_NOT_FOUND_MESSAGE");
+	}
+	public static String getMessageSchemaViewErrorSchemaNotFoundInSource(){
+		return EktooMessageTranslator.translate("EKTOO_SCHEMA_VIEW_ERROR_SOURCE_SCHEMA_NOT_FOUND_MESSAGE");
+	}
+	
+	public static String getMessageSchemaViewErrorSchemaNotFoundInTarget(){
+		return EktooMessageTranslator.translate("EKTOO_SCHEMA_VIEW_ERROR_TARGET_SCHEMA_NOT_FOUND_MESSAGE");
+	}
+	
 	public static String getMessageSyncSyccessfuly(String source,
 			String target, Date date) {
 		return EktooMessageTranslator.translate(

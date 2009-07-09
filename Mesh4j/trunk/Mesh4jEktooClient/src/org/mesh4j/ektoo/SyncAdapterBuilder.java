@@ -159,6 +159,12 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 	}	
 	
 	@Override
+	public ISyncAdapter createHttpSyncAdapter(String serverUrl,String meshGroup,String dataSetId){
+		String absoluteURL = serverUrl + "/" + meshGroup + "/" + dataSetId;
+		return HttpSyncAdapterFactory.createSyncAdapter(absoluteURL, getIdentityProvider());
+	}
+	
+	@Override
 	public ISyncAdapter createHttpSyncAdapter(String serverUrl, String meshGroup, String dataSetId, IRDFSchema rdfSchema) {
 		return HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverUrl, meshGroup, dataSetId, getIdentityProvider(), rdfSchema);
 	}	
@@ -300,6 +306,7 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 		feed.addItems(items);
 		
 		FeedAdapter feedAdapter = new FeedAdapter(fullFileName, this.propertiesProvider.getIdentityProvider(), IdGenerator.INSTANCE, RssSyndicationFormat.INSTANCE, feed);
+		
 		feedAdapter.flush();
 		return fullFileName;
 	}
