@@ -44,7 +44,7 @@ public class GoogleSpreadsheetToRDFMapping extends AbstractRDFIdentifiableMappin
 		int rowCount = worksheet.getChildElements().size();
 		
 		if(rowCount < 2)
-			throw new MeshException("No rata row available in the worksheet: " + workSheetName);
+			throw new MeshException("No data row available in the worksheet: " + workSheetName);
 		GSRow<GSCell> dataRow = worksheet.getGSRow(worksheet.getChildElements().size());
 
 		int cellType;
