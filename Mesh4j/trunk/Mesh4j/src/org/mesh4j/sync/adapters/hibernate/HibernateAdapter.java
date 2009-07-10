@@ -31,6 +31,8 @@ import org.mesh4j.sync.validations.MeshException;
 public class HibernateAdapter extends AbstractSyncAdapter implements ISessionProvider {
 	
 	// MODEL VARIABLES
+	private IHibernateSessionFactoryBuilder sessionFactoryBuilder;
+	
 	private SyncDAO syncDAO;
 	private EntityDAO entityDAO;
 	private SessionFactory sessionFactory;
@@ -47,7 +49,7 @@ public class HibernateAdapter extends AbstractSyncAdapter implements ISessionPro
 	}
 	
 	private void initialize(IHibernateSessionFactoryBuilder builder, IIdentityProvider identityProvider, IIdGenerator idGenerator) {
-
+		this.sessionFactoryBuilder = builder;
 		this.identityProvider = identityProvider;
 		this.idGenerator = idGenerator;
 		
@@ -58,12 +60,12 @@ public class HibernateAdapter extends AbstractSyncAdapter implements ISessionPro
 		String entityIDNode = classMetadata.getIdentifierPropertyName();
 
 		this.syncDAO = new SyncDAO(this, new SyncInfoParser(RssSyndicationFormat.INSTANCE, this.identityProvider, this.idGenerator, entityName+"_sync"));
-		this.entityDAO = new EntityDAO(this, builder.buildMeshMapping(entityName, entityIDNode));
+		this.entityDAO = new EntityDAO(this, builder.buildMeshMapping(this.sessionFactory, entityName, entityIDNode));
 	}
 
 	@SuppressWarnings("unchecked")
 	private ClassMetadata getClassMetadata(){
-		Map<String, ClassMetadata> map = sessionFactory.getAllClassMetadata();
+		Map<String, ClassMetadata> map = this.sessionFactory.getAllClassMetadata();
 		for (String entityName : map.keySet()) {
 			if(!entityName.endsWith("_sync")){
 				ClassMetadata classMetadata = map.get(entityName);
@@ -98,7 +100,7 @@ public class HibernateAdapter extends AbstractSyncAdapter implements ISessionPro
 			syncDAO.save(syncInfo);
 			
 			tx.commit();
-		}catch (Exception e) {
+		}catch (Throwable e) {
 			if (tx != null) {
 				tx.rollback();
 			}
@@ -114,8 +116,14 @@ public class HibernateAdapter extends AbstractSyncAdapter implements ISessionPro
 		Guard.argumentNotNullOrEmptyString(syncId, "id");
 
 		Session session = newSession();
-		SyncInfo syncInfo = syncDAO.get(syncId);
-		closeSession();
+		SyncInfo syncInfo = null;
+		try{
+			syncInfo = syncDAO.get(syncId);
+		} catch (Throwable e) {
+			throw new MeshException(e);
+		} finally{
+			closeSession();
+		}
 		
 		session = newSession();
 		Transaction tx = null;
@@ -130,11 +138,11 @@ public class HibernateAdapter extends AbstractSyncAdapter implements ISessionPro
 			}
 			
 			tx.commit();
-		}catch (RuntimeException e) {
+		}catch (Throwable e) {
 			if (tx != null) {
 				tx.rollback();
 			}
-			throw e;
+			throw new MeshException(e);
 		}finally{
 			closeSession();
 		}
@@ -148,15 +156,20 @@ public class HibernateAdapter extends AbstractSyncAdapter implements ISessionPro
 		if (item.isDeleted())
 		{
 			Session session = newSession();
-			SyncInfo syncInfo = syncDAO.get(item.getSyncId());
-			closeSession();
+			SyncInfo syncInfo = null;
+			try{
+				syncInfo = syncDAO.get(item.getSyncId());
+			} finally{
+				closeSession();
+			}			
+			
 			if(syncInfo != null){
 				session = newSession();
-				syncInfo.updateSync(item.getSync());
 				IdentifiableContent entity;
 				try{
+					syncInfo.updateSync(item.getSync());
 					entity = entityDAO.get(syncInfo.getId());
-				} catch (Exception e) {
+				} catch (Throwable e) {
 					throw new MeshException(e);
 				} finally{
 					closeSession();
@@ -171,11 +184,11 @@ public class HibernateAdapter extends AbstractSyncAdapter implements ISessionPro
 					}
 					syncDAO.save(syncInfo);
 					tx.commit();
-				}catch (RuntimeException e) {
+				}catch (Throwable e) {
 					if (tx != null) {
 						tx.rollback();
 					}
-					throw e;
+					throw new MeshException(e);
 				}finally{
 					closeSession();
 				}
@@ -192,7 +205,7 @@ public class HibernateAdapter extends AbstractSyncAdapter implements ISessionPro
 				SyncInfo syncInfo = new SyncInfo(item.getSync(), entity.getType(), entity.getId(), entity.getVersion());
 				syncDAO.save(syncInfo);	
 				tx.commit();
-			}catch (Exception e) {
+			}catch (Throwable e) {
 				if (tx != null) {
 					tx.rollback();
 				}
@@ -209,23 +222,30 @@ public class HibernateAdapter extends AbstractSyncAdapter implements ISessionPro
 		Guard.argumentNotNullOrEmptyString(syncId, "id");
 
 		newSession();
-		SyncInfo syncInfo = syncDAO.get(syncId);
-		
+		SyncInfo syncInfo = null;		
+		try{
+			syncInfo = syncDAO.get(syncId);
+		} catch (Throwable e) {
+			throw new MeshException(e);
+		} finally{
+			closeSession();
+		}
+
 		if(syncInfo == null){
 			return null;
 		}
 		
+		newSession();
 		IdentifiableContent entity = null;
 		try{
 			entity = entityDAO.get(syncInfo.getId());
-		}catch (Exception e) {
+		}catch (Throwable e) {
 			throw new MeshException(e);
 		}finally{
 			closeSession();
 		}
 		
 		this.updateSyncIfChanged(entity, syncInfo);
-		
 		
 		if(syncInfo.isDeleted()){
 			NullContent nullEntity = new NullContent(syncInfo.getSyncId());
@@ -271,11 +291,11 @@ public class HibernateAdapter extends AbstractSyncAdapter implements ISessionPro
 				}
 			}
 			tx.commit();
-		}catch (RuntimeException e) {
+		}catch (Throwable e) {
 			if (tx != null) {
 				tx.rollback();
 			}
-			throw e;
+			throw new MeshException(e);
 		}finally{
 			closeSession();
 		}
@@ -293,7 +313,7 @@ public class HibernateAdapter extends AbstractSyncAdapter implements ISessionPro
 		try{
 			entities = entityDAO.getAll();
 			syncInfos = syncDAO.getAll(entityDAO.getEntityName());
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			throw new MeshException(e);
 		} finally {
 			closeSession();
@@ -317,11 +337,11 @@ public class HibernateAdapter extends AbstractSyncAdapter implements ISessionPro
 					tx = session.beginTransaction();
 					syncDAO.save(newSyncInfo);
 					tx.commit();
-				}catch (RuntimeException e) {
+				}catch (Throwable e) {
 					if (tx != null) {
 						tx.rollback();
 					}
-					throw e;
+					throw new MeshException(e);
 				}finally{
 					closeSession();
 				}	
@@ -383,11 +403,11 @@ public class HibernateAdapter extends AbstractSyncAdapter implements ISessionPro
 			session.createQuery( hqlDelete ).executeUpdate();
 			
 			tx.commit();
-		}catch (RuntimeException e) {
+		}catch (Throwable e) {
 			if (tx != null) {
 				tx.rollback();
 			}
-			throw e;
+			throw new MeshException(e);
 		}finally{
 			closeSession();
 		}		
@@ -419,5 +439,23 @@ public class HibernateAdapter extends AbstractSyncAdapter implements ISessionPro
 
 	public IHibernateToXMLMapping getMapping() {
 		return this.entityDAO.getMapping();
+	}
+
+	@Override
+	public void beginSync() {
+		if(this.sessionFactory == null || this.sessionFactory.isClosed()){
+			this.initialize(this.sessionFactoryBuilder, this.identityProvider, this.idGenerator);
+		}
+	}
+
+	@Override
+	public void endSync() {
+		try{
+			SessionFactory factory = this.sessionFactory;
+			this.sessionFactory = null;
+			factory.close();
+		} catch (Throwable e) {
+			throw new MeshException(e);
+		}
 	}
 }

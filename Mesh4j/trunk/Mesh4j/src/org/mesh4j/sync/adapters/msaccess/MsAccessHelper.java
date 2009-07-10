@@ -4,10 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.mesh4j.sync.validations.MeshException;
 
 import sun.jdbc.odbc.JdbcOdbcDriver;
@@ -17,6 +20,8 @@ import com.healthmarketscience.jackcess.Database;
 import com.healthmarketscience.jackcess.Table;
 
 public class MsAccessHelper {
+	
+	private final static Log LOGGER = LogFactory.getLog(MsAccessHelper.class);
 
 	public static Set<String> getTableNames(String mdbFileName) throws IOException {
 		Set<String> tableNames = null;
@@ -68,17 +73,37 @@ public class MsAccessHelper {
 
 	public static void createSyncTableIfAbsent(String mdbFileName, String syncTableName) {
 		if(!existTable(mdbFileName, syncTableName)){
+			Connection con = null;
+			Statement s = null;
 			 try {
 			        Class.forName(JdbcOdbcDriver.class.getName());
 	
 			        String dbURL = "jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=" + mdbFileName + ";DriverID=22;READONLY=false}";
-			        Connection con = DriverManager.getConnection(dbURL, "",""); 
-			        Statement s = con.createStatement();
+			        
+			        con = DriverManager.getConnection(dbURL, "","");      
+			        
+			        s = con.createStatement();
+			        
 			        s.execute("create table " + syncTableName + " ( sync_id text, entity_name text, entity_id text, entity_version text, sync_data memo )"); // create a table
-			        s.close(); // close the Statement to let the database know we're done with it
-			        con.close(); // close the Connection to let the database know we're done with it
-			    } catch (Exception e) {
+			    } catch (Throwable e) {
+			    	LOGGER.error(e.getMessage(), e);
 			        throw new MeshException(e);
+			    }finally{
+			    	if(s != null){
+			    		try{
+			    			s.close(); // close the Statement to let the database know we're done with it
+			    		}catch (SQLException sqle) {
+			    			LOGGER.error(sqle.getMessage(), sqle);
+						}
+			    	}
+			    	
+			    	if(con != null){
+			    		try{
+				    		con.close(); // close the Connection to let the database know we're done with it
+			    		}catch (SQLException sqle) {
+			    			LOGGER.error(sqle.getMessage(), sqle);
+						}
+			    	}
 			    }
 		}
 	}

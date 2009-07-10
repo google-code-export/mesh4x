@@ -10,6 +10,7 @@ import org.mesh4j.sync.adapters.feed.XMLContent;
 import org.mesh4j.sync.filter.DeletedFilter;
 import org.mesh4j.sync.model.History;
 import org.mesh4j.sync.model.Item;
+import org.mesh4j.sync.model.NullContent;
 import org.mesh4j.sync.model.Sync;
 import org.mesh4j.sync.observer.IObserverItem;
 import org.mesh4j.sync.test.utils.TestHelper;
@@ -22,13 +23,9 @@ public abstract class AbstractSyncEngineTest {
 		ISyncAdapter left = this.makeLeftRepository(createItem("fizz", TestHelper.newID(), new History("kzu")));
 		ISyncAdapter right = this.makeRightRepository(createItem("buzz", TestHelper.newID(), new History("vga")));
 
-		SyncEngine engine = new SyncEngine(left, right);
+		SyncEngine syncEngine = new SyncEngine(left, right);
 
-		List<Item> conflicts = engine.synchronize();
-
-		Assert.assertEquals(0, conflicts.size());
-		Assert.assertEquals(2, left.getAll().size());
-		Assert.assertEquals(2, right.getAll().size());
+		TestHelper.assertSync(syncEngine);
 	}
 
 	protected abstract ISyncAdapter makeLeftRepository(Item ... items);
@@ -55,20 +52,16 @@ public abstract class AbstractSyncEngineTest {
 			) 	
 		);
 
-		SyncEngine engine = new SyncEngine(left, right);
+		SyncEngine syncEngine = new SyncEngine(left, right);
 
-		List<Item> conflicts = engine.synchronize();
-
-		Assert.assertEquals(0, conflicts.size());
-		Assert.assertEquals(2, right.get(a.getSync().getId()).getSync().getUpdates());
-		Assert.assertEquals(2, left.get(b.getSync().getId()).getSync().getUpdates());
+		TestHelper.assertSync(syncEngine);
 	}
 
 	@Test
 	public void ShouldMarkItemDeleted() {
 		Item a = createItem("fizz", TestHelper.newID(), new History("kzu"));
 		Item b = createItem("buzz", TestHelper.newID(), new History("vga"));
-		Item bDeleted = new Item(b.getContent(), b.getSync().clone().update("vga", TestHelper.now(), true));
+		Item bDeleted = new Item(new NullContent(b.getSyncId()), b.getSync().clone().update("vga", TestHelper.now(), true));
 		
 		ISyncAdapter left = this.makeLeftRepository(a, b);
 		ISyncAdapter right = this.makeRightRepository(
@@ -76,13 +69,20 @@ public abstract class AbstractSyncEngineTest {
 				bDeleted
 		);
 
-		SyncEngine engine = new SyncEngine(left, right);
+		SyncEngine syncEngine = new SyncEngine(left, right);
 
-		List<Item> conflicts = engine.synchronize();
+		TestHelper.assertSync(syncEngine);
 
-		Assert.assertEquals(0, conflicts.size());
-
+		if(left instanceof ISyncAware){
+			((ISyncAware)left).beginSync();
+		}
+		
 		List<Item> deletedItems = left.getAll(new DeletedFilter<Item>());
+		
+		if(left instanceof ISyncAware){
+			((ISyncAware)left).endSync();
+		}
+		
 		Assert.assertEquals(1, deletedItems.size());
 	}
 
@@ -94,13 +94,9 @@ public abstract class AbstractSyncEngineTest {
 		ISyncAdapter left = this.makeLeftRepository(a);
 		ISyncAdapter right = this.makeRightRepository(b);
 
-		SyncEngine engine = new SyncEngine(left, right);
+		SyncEngine syncEngine = new SyncEngine(left, right);
 
-		List<Item> conflicts = engine.synchronize(TestHelper.now());
-
-		Assert.assertEquals(0, conflicts.size());
-		Assert.assertEquals(1, left.getAll().size());
-		Assert.assertEquals(1, right.getAll().size());
+		TestHelper.assertSync(syncEngine);
 	}
 
 	@Test
@@ -119,8 +115,23 @@ public abstract class AbstractSyncEngineTest {
 		List<Item> conflicts = engine.synchronize();
 
 		Assert.assertEquals(1, conflicts.size());
+		
+		if(left instanceof ISyncAware){
+			((ISyncAware)left).beginSync();
+		}
+		if(right instanceof ISyncAware){
+			((ISyncAware)right).beginSync();
+		}
+		
 		Assert.assertEquals(1, right.get(a.getSyncId()).getSync().getConflicts().size());
 		Assert.assertEquals(1, left.get(a.getSyncId()).getSync().getConflicts().size());
+		
+		if(left instanceof ISyncAware){
+			((ISyncAware)left).endSync();
+		}
+		if(right instanceof ISyncAware){
+			((ISyncAware)right).endSync();
+		}
 	}
 
 	@Test
@@ -128,8 +139,14 @@ public abstract class AbstractSyncEngineTest {
 		ISyncAdapter left = this.makeLeftRepository();
 		ISyncAdapter right = this.makeRightRepository();
 		
+		if(left instanceof ISyncAware){
+			((ISyncAware)left).beginSync();
+		}
+		if(right instanceof ISyncAware){
+			((ISyncAware)right).beginSync();
+		}
+		
 		String by = "jmt";
-		SyncEngine engine = new SyncEngine(left, right);
 
 		String id = TestHelper.newID();
 		Sync sync = new Sync(id, by, TestHelper.nowSubtractMinutes(2), false);
@@ -156,8 +173,23 @@ public abstract class AbstractSyncEngineTest {
 
 		right.update(incomingItem);
 
+		if(left instanceof ISyncAware){
+			((ISyncAware)left).endSync();
+		}
+		if(right instanceof ISyncAware){
+			((ISyncAware)right).endSync();
+		}
+		
+		SyncEngine engine = new SyncEngine(left, right);
 		List<Item> conflicts = engine.synchronize();
 
+		if(left instanceof ISyncAware){
+			((ISyncAware)left).beginSync();
+		}
+		if(right instanceof ISyncAware){
+			((ISyncAware)right).beginSync();
+		}
+		
 		Assert.assertEquals(1, conflicts.size());
 		Assert.assertEquals(1, left.getAll().size());
 		Assert.assertEquals("remote", getUserName(left.get(id)));
@@ -166,6 +198,13 @@ public abstract class AbstractSyncEngineTest {
 
 		Assert.assertEquals(1, left.getConflicts().size());
 		Assert.assertEquals(1, right.getConflicts().size());
+		
+		if(left instanceof ISyncAware){
+			((ISyncAware)left).endSync();
+		}
+		if(right instanceof ISyncAware){
+			((ISyncAware)right).endSync();
+		}
 	}
 
 	protected abstract String getUserName(Item item);
@@ -175,7 +214,13 @@ public abstract class AbstractSyncEngineTest {
 		ISyncAdapter left = this.makeLeftRepository();
 		ISyncAdapter right = this.makeRightRepository();
 		
-		SyncEngine engine = new SyncEngine(left, right);
+		if(left instanceof ISyncAware){
+			((ISyncAware)left).beginSync();
+		}
+		if(right instanceof ISyncAware){
+			((ISyncAware)right).beginSync();
+		}
+		
 		String by = "jmt";
 
 		String id = TestHelper.newID();
@@ -192,6 +237,14 @@ public abstract class AbstractSyncEngineTest {
 
 		right.add(item);
 
+		if(left instanceof ISyncAware){
+			((ISyncAware)left).endSync();
+		}
+		if(right instanceof ISyncAware){
+			((ISyncAware)right).endSync();
+		}
+		
+		SyncEngine engine = new SyncEngine(left, right);
 		MockItemReceivedObserver itemReceivedObserver = new MockItemReceivedObserver();
 		MockItemSentObserver itemSenObserver = new MockItemSentObserver();
 
@@ -200,12 +253,26 @@ public abstract class AbstractSyncEngineTest {
 
 		engine.synchronize();
 
+		if(left instanceof ISyncAware){
+			((ISyncAware)left).beginSync();
+		}
+		if(right instanceof ISyncAware){
+			((ISyncAware)right).beginSync();
+		}
+		
 		Assert.assertEquals(2, left.getAll().size());
 		Assert.assertEquals(2, right.getAll().size());
 
 		// Receives the item that was sent first plus the existing remote one.
 		Assert.assertEquals(2, itemReceivedObserver.getNumberOfreceivedItems());
 		Assert.assertEquals(1, itemSenObserver.getNumberOfSentItems());
+		
+		if(left instanceof ISyncAware){
+			((ISyncAware)left).endSync();
+		}
+		if(right instanceof ISyncAware){
+			((ISyncAware)right).endSync();
+		}
 	}
 
 	@Test
@@ -214,7 +281,12 @@ public abstract class AbstractSyncEngineTest {
 		ISyncAdapter left = this.makeLeftRepository();
 		ISyncAdapter right = this.makeRightRepository();
 		
-		SyncEngine engine = new SyncEngine(left, right);
+		if(left instanceof ISyncAware){
+			((ISyncAware)left).beginSync();
+		}
+		if(right instanceof ISyncAware){
+			((ISyncAware)right).beginSync();
+		}
 
 		Date nowSubtract2Minutes = TestHelper.nowSubtractMinutes(2);
 		Date nowSubtract5Minutes = TestHelper.nowSubtractMinutes(5);
@@ -236,15 +308,31 @@ public abstract class AbstractSyncEngineTest {
 		element = TestHelper.makeElement("<payload><user><id>"+id+"</id><name>"+id+"</name><pass>123</pass></user></payload>");
 		item = new Item(new XMLContent(id, "foo", "bar", element), sync);
 		right.add(item);
-
+		
+		if(left instanceof ISyncAware){
+			((ISyncAware)left).endSync();
+		}
+		if(right instanceof ISyncAware){
+			((ISyncAware)right).endSync();
+		}
+		
 		MockItemReceivedObserver itemReceivedObserver = new MockItemReceivedObserver();
 		MockItemSentObserver itemSenObserver = new MockItemSentObserver();
+		SyncEngine engine = new SyncEngine(left, right);
 
 		engine.registerItemReceivedObserver(itemReceivedObserver);
 		engine.registerItemSentObserver(itemSenObserver);
 
 		engine.synchronize(nowSubtract5Minutes);
 
+		
+		if(left instanceof ISyncAware){
+			((ISyncAware)left).beginSync();
+		}
+		if(right instanceof ISyncAware){
+			((ISyncAware)right).beginSync();
+		}
+		
 		// No new item would have been received from target as it was
 		// modified in the past.
 		Assert.assertEquals(1, left.getAll().size());
@@ -254,6 +342,13 @@ public abstract class AbstractSyncEngineTest {
 		// sending and then receiving.
 		Assert.assertEquals(1, itemReceivedObserver.getNumberOfreceivedItems());
 		Assert.assertEquals(1, itemSenObserver.getNumberOfSentItems());
+		
+		if(left instanceof ISyncAware){
+			((ISyncAware)left).endSync();
+		}
+		if(right instanceof ISyncAware){
+			((ISyncAware)right).endSync();
+		}
 	}
 	
 	private Item createItem(String title, String id, History history) {

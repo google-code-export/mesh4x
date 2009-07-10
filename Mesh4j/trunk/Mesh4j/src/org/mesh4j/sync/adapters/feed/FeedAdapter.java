@@ -12,6 +12,7 @@ import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 import org.mesh4j.sync.AbstractSyncAdapter;
 import org.mesh4j.sync.IFilter;
+import org.mesh4j.sync.ISyncAware;
 import org.mesh4j.sync.adapters.feed.atom.AtomSyndicationFormat;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.filter.SinceLastUpdateFilter;
@@ -25,7 +26,7 @@ import org.mesh4j.sync.validations.MeshException;
 
 
 // TODO (JMT) Streaming xml.
-public class FeedAdapter extends AbstractSyncAdapter{
+public class FeedAdapter extends AbstractSyncAdapter implements ISyncAware{
 
 	// MODEL VARIABLES
 	private File feedFile;
@@ -33,6 +34,7 @@ public class FeedAdapter extends AbstractSyncAdapter{
 	private FeedReader feedReader;
 	private FeedWriter feedWriter;
 	private IIdentityProvider identityProvider;
+	private boolean dirty = false;
 	
 	// BUSINESS METHODS
 	public FeedAdapter(String fileName, IIdentityProvider identityProvider, IIdGenerator idGenerator, ISyndicationFormat syndicationFormat, Feed defaultFeed){
@@ -141,7 +143,7 @@ public class FeedAdapter extends AbstractSyncAdapter{
 	@Override
 	public void add(Item item) {
 		this.feed.addItem(item);
-		this.flush();
+		this.setDirty();
 	}
 
 	@Override
@@ -149,7 +151,7 @@ public class FeedAdapter extends AbstractSyncAdapter{
 		Item item = this.get(id);
 		if(item != null){
 			this.feed.deleteItem(item);
-			this.flush();
+			this.setDirty();
 		}		
 	}
 
@@ -196,7 +198,7 @@ public class FeedAdapter extends AbstractSyncAdapter{
 			}
 			
 			this.feed.addItem(newItem);
-			this.flush();
+			this.setDirty();
 		}
 	}
 	
@@ -242,5 +244,22 @@ public class FeedAdapter extends AbstractSyncAdapter{
 
 	public File getFile(){
 		return this.feedFile;
+	}
+
+	@Override
+	public void beginSync() {
+		// nothing to do
+	}
+
+	@Override
+	public void endSync() {
+		if(this.dirty){
+			this.flush();
+			this.dirty = false;
+		}		
+	}
+	
+	public void setDirty(){
+		this.dirty = true;
 	}
 }

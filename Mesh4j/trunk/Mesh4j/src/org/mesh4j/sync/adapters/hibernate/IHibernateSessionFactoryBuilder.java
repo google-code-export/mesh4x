@@ -7,11 +7,11 @@ public interface IHibernateSessionFactoryBuilder {
 
 	public SessionFactory buildSessionFactory();
 
-	public String getIdentifierPropertyName(String entityName);
+	public String getIdentifierPropertyName(SessionFactory sessionFactory, String entityName);
 	
-	public IHibernateToXMLMapping buildMeshMapping(String entityName, String idNode);
-
-	public IHibernateToXMLMapping buildMeshMapping(String entityName);
+	public IHibernateToXMLMapping buildMeshMapping(SessionFactory sessionFactory, String entityName);
+	
+	public IHibernateToXMLMapping buildMeshMapping(SessionFactory sessionFactory, String entityName, String idNode);
 
 	public boolean isMsAccess();
 

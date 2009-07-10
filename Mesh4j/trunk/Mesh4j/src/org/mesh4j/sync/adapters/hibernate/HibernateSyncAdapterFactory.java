@@ -330,7 +330,7 @@ public class HibernateSyncAdapterFactory implements ISyncAdapterFactory{
 		cfg.setReverseEngineeringStrategy(reverseEngineeringStrategy);
 		cfg.readFromJDBC();		
 		cfg.buildMappings();
-		
+	
 		HibernateMappingExporter exporter = new HibernateDOMMappingExporter(cfg, new File(baseDirectory));
 		exporter.start();
 	}

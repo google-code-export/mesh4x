@@ -41,5 +41,6 @@
 	<classpathentry kind="lib" path="lib/javassist/javassist-3.6.ga.jar"/>
 	<classpathentry kind="lib" path="etc/localProperties"/>
 	<classpathentry kind="lib" path="lib/jackcess/jackcess-1.1.19.jar" sourcepath="E:/Clarius/java/jackcess-1.1.19-sources.jar"/>
+	<classpathentry kind="lib" path="lib/c3p0/c3p0-0.9.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

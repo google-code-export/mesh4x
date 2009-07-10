@@ -35,6 +35,8 @@ public class HibernateWithMsAccessRDFContentAdapterWithBlankInTableNameTests {
 		
 		List<Item> items = adapter.getAll();
 		
+		adapter.endSync();
+		
 		RDFSchema rdfSchema = (RDFSchema)((HibernateContentAdapter)adapter.getContentAdapter()).getSchema();
 		
 		Assert.assertNotNull(items);
@@ -42,6 +44,7 @@ public class HibernateWithMsAccessRDFContentAdapterWithBlankInTableNameTests {
 		assertItem("1", "1", "bia", items.get(0), rdfSchema, 1);
 		assertItem("2", "2", "jmt", items.get(1), rdfSchema, 1);
 		FileUtils.delete(fileName);
+		
 	}
 
 	@Test
@@ -52,8 +55,11 @@ public class HibernateWithMsAccessRDFContentAdapterWithBlankInTableNameTests {
 		adapter.beginSync();
 		
 		List<Item> items = adapter.getAll();
-		Item item = adapter.get(items.get(0).getSyncId());
+		adapter.endSync();
 		
+		adapter.beginSync();
+		Item item = adapter.get(items.get(0).getSyncId());
+		adapter.endSync();
 		RDFSchema rdfSchema = (RDFSchema)((HibernateContentAdapter)adapter.getContentAdapter()).getSchema();
 		
 		assertItem("1", "1", "bia", item, rdfSchema, 1);
@@ -89,6 +95,9 @@ public class HibernateWithMsAccessRDFContentAdapterWithBlankInTableNameTests {
 		adapter.add(item);	
 		
 		items = adapter.getAll();
+		
+		adapter.endSync();
+		
 		Assert.assertNotNull(items);
 		Assert.assertEquals(3, items.size());
 		assertItem("1", "1", "bia", items.get(0), rdfSchema, 1);
@@ -126,6 +135,8 @@ public class HibernateWithMsAccessRDFContentAdapterWithBlankInTableNameTests {
 		adapter.update(item);	
 		
 		items = adapter.getAll();
+		adapter.endSync();
+		
 		Assert.assertNotNull(items);
 		Assert.assertEquals(2, items.size());
 		assertItem("1", "1", "bia", items.get(0), rdfSchema, 1);
@@ -165,6 +176,9 @@ public class HibernateWithMsAccessRDFContentAdapterWithBlankInTableNameTests {
 		adapter.delete(items.get(0).getSyncId());
 				
 		items = adapter.getAll();
+		
+		adapter.endSync();
+		
 		Assert.assertNotNull(items);
 		Assert.assertEquals(2, items.size());
 		Assert.assertTrue(items.get(0).isDeleted());

@@ -13,26 +13,29 @@ import org.hibernate.EntityMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.mesh4j.sync.ISyncAware;
 import org.mesh4j.sync.adapters.SyncInfo;
 import org.mesh4j.sync.adapters.split.ISyncRepository;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.IContent;
 import org.mesh4j.sync.parsers.SyncInfoParser;
+import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
 
-public class HibernateSyncRepository implements ISyncRepository{
+public class HibernateSyncRepository implements ISyncRepository, ISyncAware{
 
 	// CONSTANTS	
 	private final static Log Logger = LogFactory.getLog(HibernateSyncRepository.class);
 	
 	// MODEL VARIABLES
+	private IHibernateSessionFactoryBuilder sessionFactoryBuilder;
 	private SyncInfoParser syncInfoParser;
 	private SessionFactory sessionFactory;
 	
 	// BUSINESS METHODS
 	public HibernateSyncRepository(IHibernateSessionFactoryBuilder sessionFactoryBuilder, SyncInfoParser syncInfoParser) {
-		super();
+		Guard.argumentNotNull(sessionFactoryBuilder, "sessionFactoryBuilder");
 		this.syncInfoParser = syncInfoParser;
 		initializeSessionFactory(sessionFactoryBuilder);
 	}
@@ -84,11 +87,11 @@ public class HibernateSyncRepository implements ISyncRepository{
 			Session dom4jSession = session.getSession(EntityMode.DOM4J);
 			dom4jSession.saveOrUpdate(getEntityName(), syncInfoElement);
 			tx.commit();
-		}catch (RuntimeException e) {
+		}catch (Throwable e) {
 			if (tx != null) {
 				tx.rollback();
 			}
-			throw e;
+			throw new MeshException(e);
 		}finally{
 			session.close();
 		}
@@ -136,6 +139,8 @@ public class HibernateSyncRepository implements ISyncRepository{
 	}
 	
 	public void initializeSessionFactory(IHibernateSessionFactoryBuilder sessionFactoryBuilder) {
+		this.sessionFactoryBuilder = sessionFactoryBuilder;
+		
 		if(this.sessionFactory != null){
 			this.sessionFactory.close();
 		}
@@ -143,5 +148,21 @@ public class HibernateSyncRepository implements ISyncRepository{
 		this.sessionFactory = sessionFactoryBuilder.buildSessionFactory();
 	}
 
+	@Override
+	public void beginSync() {
+		if(this.sessionFactory == null || this.sessionFactory.isClosed()){
+			initializeSessionFactory(this.sessionFactoryBuilder);
+		}
+	}
 
+	@Override
+	public void endSync() {
+		try{
+			SessionFactory factory = this.sessionFactory;
+			this.sessionFactory = null;
+			factory.close();
+		} catch (Throwable e) {
+			throw new MeshException(e);
+		}
+	}
 }

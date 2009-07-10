@@ -43,7 +43,7 @@ import sun.jdbc.odbc.JdbcOdbcDriver;
 public class HibernateWithMsAccessContentAdapterReplicationIDTests {
 
 	@Test
-	public void testReplicationID()throws Exception{
+	public void testReplicationID() throws Exception{
 		String guid="B98A34A6-EE0A-4FB7-8A7A-AC5BAC0FAF5F";
 		
 		String fileName = TestHelper.fileName("msAccess_hibernate_repId_"+IdGenerator.INSTANCE.newID()+".mdb");
@@ -59,14 +59,41 @@ public class HibernateWithMsAccessContentAdapterReplicationIDTests {
 		prop.put("user", "");
 		prop.put("password", "");
 
-		Connection conn = DriverManager.getConnection(database, prop);
+		String uuidStr = null;
+		Connection conn = null;
+		Statement command = null;
+		ResultSet rs = null;
 		
-		Statement command = conn.createStatement();
-		ResultSet rs = command.executeQuery("select * from mytable");
-		rs.next();
-		byte[] bytes = (byte[])Hibernate.BINARY.get(rs, "id");
-		String hexStr = Hibernate.BINARY.toString(bytes);
-		String uuidStr = (String)UUIDStringToHexStringSchemaTypeFormat.INSTANCE.parseObject(hexStr);
+		try{
+			conn = DriverManager.getConnection(database, prop);
+			command = conn.createStatement();
+			rs = command.executeQuery("select * from mytable");
+			
+			rs.next();
+			byte[] bytes = (byte[])Hibernate.BINARY.get(rs, "id");
+			String hexStr = Hibernate.BINARY.toString(bytes);
+			uuidStr = (String)UUIDStringToHexStringSchemaTypeFormat.INSTANCE.parseObject(hexStr);
+		}finally{
+			if(rs != null){
+				try{
+					rs.close();
+				}catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			if(command != null){
+				try{
+					command.close();
+				}catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			
+			if(conn != null){
+				conn.close();
+			}
+		}
+			
 		Assert.assertEquals(guid, uuidStr.toUpperCase());		
 	}
 	
@@ -311,6 +338,8 @@ public class HibernateWithMsAccessContentAdapterReplicationIDTests {
 	
 		List<Item> items = adapter.getAll();
 		
+		adapter.endSync();
+		
 		Assert.assertNotNull(items);
 		Assert.assertFalse(items.isEmpty());
 		Assert.assertEquals(1, items.size());
@@ -330,6 +359,7 @@ public class HibernateWithMsAccessContentAdapterReplicationIDTests {
 		SplitAdapter adapter = makeAdapter();
 		List<Item> items = adapter.getAll();
 		TestHelper.assertItem(items.get(0), adapter);
+		adapter.endSync();
 	}
 	
 	@Test
@@ -354,10 +384,12 @@ public class HibernateWithMsAccessContentAdapterReplicationIDTests {
 		adapter.add(item);	
 		
 		items = adapter.getAll();
+		
 		Assert.assertNotNull(items);
 		Assert.assertEquals(size +1, items.size());
 		
 		TestHelper.assertItem(item, adapter);
+		adapter.endSync();
 	}
 	
 	@Test
@@ -398,10 +430,12 @@ public class HibernateWithMsAccessContentAdapterReplicationIDTests {
 		adapter.update(itemToUpdate);	
 		
 		items = adapter.getAll();
+				
 		Assert.assertNotNull(items);
 		Assert.assertEquals(size, items.size());
 		
 		TestHelper.assertItem(itemToUpdate, adapter);
+		adapter.endSync();
 	}
 	
 	@Test
@@ -449,7 +483,8 @@ public class HibernateWithMsAccessContentAdapterReplicationIDTests {
 		Assert.assertTrue(resultItem.isDeleted());
 				
 		items = adapter.getAll();
-			
+		adapter.endSync();
+		
 		Assert.assertNotNull(items);
 		Assert.assertFalse(items.isEmpty());
 		Assert.assertEquals(size + 2, items.size());

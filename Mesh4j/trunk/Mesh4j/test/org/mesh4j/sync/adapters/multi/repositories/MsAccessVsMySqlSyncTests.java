@@ -1,7 +1,5 @@
 package org.mesh4j.sync.adapters.multi.repositories;
 
-import java.io.File;
-
 import junit.framework.Assert;
 
 import org.apache.poi.ss.usermodel.Row;
@@ -36,6 +34,7 @@ public class MsAccessVsMySqlSyncTests {
 		Assert.assertNotNull(adapterTarget);
 		Assert.assertEquals(0, adapterTarget.getAll().size());
 
+		adapterSource.beginSync();
 		int size = adapterSource.getAll().size();
 	
 		SyncEngine syncEngine = syncAndAssert(adapterSource, adapterTarget);
@@ -47,34 +46,37 @@ public class MsAccessVsMySqlSyncTests {
 		TestHelper.assertSync(syncEngine);
 	
 		// add
-		excelContent.beginSync();
+		adapterSource.beginSync();
+		adapterTarget.beginSync();
+		
 		String value = IdGenerator.INSTANCE.newID();
 		int rowNum = excelContent.getSheet().getPhysicalNumberOfRows();
 		Row row = excelContent.getSheet().createRow(rowNum);
 		MsExcelUtils.updateOrCreateCellStringIfAbsent(excelContent.getWorkbook(), row, 0, value);
 		MsExcelUtils.updateOrCreateCellStringIfAbsent(excelContent.getWorkbook(), row, 1, value);
 		MsExcelUtils.updateOrCreateCellStringIfAbsent(excelContent.getWorkbook(), row, 2, value);
-		excelContent.endSync();
+		
 		
 		Assert.assertEquals(size, adapterSource.getAll().size());
 		Assert.assertEquals(size + 1, adapterTarget.getAll().size());
 		TestHelper.assertSync(syncEngine);
 	
 		// update - create again the adapters emulating other sync
-		excelContent.beginSync();
+		adapterTarget.beginSync();
+		adapterSource.beginSync();
 		row = excelContent.getSheet().getRow(rowNum);
 		MsExcelUtils.updateOrCreateCellStringIfAbsent(excelContent.getWorkbook(), row, 2, IdGenerator.INSTANCE.newID());
-		excelContent.endSync();
 		
 		Assert.assertEquals(size + 1, adapterSource.getAll().size());
 		Assert.assertEquals(size + 1, adapterTarget.getAll().size());
 		TestHelper.assertSync(syncEngine);
 			
 		// delete - create again the adapters emulating other sync
-		excelContent.beginSync();
+		adapterTarget.beginSync();
+		adapterSource.beginSync();
+		
 		row = excelContent.getSheet().getRow(rowNum);
 		excelContent.getSheet().removeRow(row);
-		excelContent.endSync();
 		
 		Assert.assertEquals(size + 1, adapterSource.getAll().size());
 		Assert.assertEquals(size + 1, adapterTarget.getAll().size());
@@ -182,7 +184,8 @@ public class MsAccessVsMySqlSyncTests {
 			ontologyBaseUri, 
 			TestHelper.baseDirectoryRootForTest(),
 			NullIdentityProvider.INSTANCE,
-			new File(this.getClass().getResource("test_mysql_hibernate.properties").getFile()));
+			null);
+			//new File(this.getClass().getResource("test_mysql_hibernate.properties").getFile()));
 	}
 	
 	//@Test
@@ -200,7 +203,8 @@ public class MsAccessVsMySqlSyncTests {
 			ontologyBaseUri, 
 			TestHelper.baseDirectoryRootForTest(),
 			NullIdentityProvider.INSTANCE,
-			new File(this.getClass().getResource("test_mysql_hibernate.properties").getFile()));
+			null);
+			//new File(this.getClass().getResource("test_mysql_hibernate.properties").getFile()));
 
 		IRDFSchema rdfSchemaSource = (IRDFSchema)((HibernateContentAdapter)adapterSource.getContentAdapter()).getMapping().getSchema();
 		

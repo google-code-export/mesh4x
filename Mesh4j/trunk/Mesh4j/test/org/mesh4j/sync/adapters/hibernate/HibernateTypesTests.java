@@ -1,7 +1,5 @@
 package org.mesh4j.sync.adapters.hibernate;
 
-import java.io.File;
-
 import org.junit.Test;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.SyncEngine;
@@ -31,7 +29,8 @@ public class HibernateTypesTests {
 			"http://mesh4x/test", 
 			TestHelper.baseDirectoryRootForTest(),
 			NullIdentityProvider.INSTANCE,
-			new File(this.getClass().getResource("test_mysql_hibernate.properties").getFile()));
+			null);
+			//new File(this.getClass().getResource("test_mysql_hibernate.properties").getFile()));
 		
 		String fileName = TestHelper.fileName(IdGenerator.INSTANCE.newID() + "_feed_test_hibernate_types.xml");
 		Feed feed = new Feed("test", "test", "http://mesh4x/test/testHibernateTypes");
@@ -57,7 +56,8 @@ public class HibernateTypesTests {
 			rdfBaseURL, 
 			TestHelper.baseDirectoryRootForTest(),
 			NullIdentityProvider.INSTANCE,
-			new File(this.getClass().getResource("test_mysql_hibernate.properties").getFile()));
+			null);
+			//new File(this.getClass().getResource("test_mysql_hibernate.properties").getFile()));
 
 		RDFSchema rdfSchema = (RDFSchema)((HibernateContentAdapter)adapterSource.getContentAdapter()).getMapping().getSchema();
 		

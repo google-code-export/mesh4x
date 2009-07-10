@@ -86,6 +86,9 @@ public class MsAccessHibernateSyncAdapterFactory implements ISyncAdapterFactory 
 		builder.setProperty("hibernate.connection.url", dbURL);
 		builder.setProperty("hibernate.connection.username",user);
 		builder.setProperty("hibernate.connection.password",password);
+		builder.setProperty("hibernate.show_sql", "true");
+		builder.setProperty("hibernate.format_sql", "true");
+		
 		builder.addMapping(new File(contentMappingFileName));
 		builder.addMapping(new File(syncMappingFileName));
 		builder.addRDFSchema(tableName, rdfSchema);

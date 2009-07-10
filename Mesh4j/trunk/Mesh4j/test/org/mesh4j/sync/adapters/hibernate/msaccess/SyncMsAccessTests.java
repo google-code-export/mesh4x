@@ -26,8 +26,6 @@ import org.mesh4j.sync.test.utils.TestHelper;
 import org.mesh4j.sync.utils.FileUtils;
 import org.mesh4j.sync.validations.MeshException;
 
-import sun.jdbc.odbc.JdbcOdbcDriver;
-
 import com.healthmarketscience.jackcess.Database;
 
 public class SyncMsAccessTests {
@@ -45,21 +43,41 @@ public class SyncMsAccessTests {
 		String database = "jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=";
 		database+= filename.trim() + ";DriverID=22;READONLY=false}"; // add on to the end 
  
-		JdbcOdbcDriver driver = (JdbcOdbcDriver)Class.forName("sun.jdbc.odbc.JdbcOdbcDriver").newInstance();
-		Assert.assertNotNull(driver);
+		Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+				
+		Connection conn = null;
+		Statement command = null;
+		ResultSet rs = null;
+		try{
+			conn = DriverManager.getConnection(database,"mesh4j","mesh4j");
 		
-		Connection conn = DriverManager.getConnection(database,"mesh4j","mesh4j");
-//		System.out.println("catalog:" + conn.getCatalog());
-//		conn.getMetaData();
-//		conn.getClientInfo();
-		
-		Statement command = conn.createStatement();
-		ResultSet rs = command.executeQuery("select user0_.id as id1_, user0_.name as name1_, user0_.pass as pass1_ from User user0_");
-		while (rs.next())
-		{
-			System.out.println(rs.getString(1));
-			System.out.println(rs.getString(2));
-			System.out.println(rs.getString(3));
+			command = conn.createStatement();
+			rs = command.executeQuery("select user0_.id as id1_, user0_.name as name1_, user0_.pass as pass1_ from User user0_");
+			while (rs.next())
+			{
+				System.out.println(rs.getString(1));
+				System.out.println(rs.getString(2));
+				System.out.println(rs.getString(3));
+			}
+		}finally{
+			if(rs != null){
+				try{
+					rs.close();
+				}catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			if(command != null){
+				try{
+					command.close();
+				}catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			
+			if(conn != null){
+				conn.close();
+			}
 		}
 		
 		System.out.println("Connected To Excel");
@@ -70,10 +88,8 @@ public class SyncMsAccessTests {
 		builderA.setProperty("hibernate.connection.url", database);
 		builderA.setProperty("hibernate.connection.username","");
 		builderA.setProperty("hibernate.connection.password","");
-//		builderA.setProperty("hibernate.show_sql", "true");
-//		builderA.setProperty("hibernate.format_sql","true");
-//		builderA.setProperty("hbm2ddl.auto", "create");
-
+		builderA.setProperty("hibernate.connection.pool_size", "1");	
+		
 		builderA.addMapping(new File(this.getClass().getResource("User.hbm.xml").getFile()));
 		builderA.addMapping(new File(this.getClass().getResource("User_sync.hbm.xml").getFile()));
 
@@ -90,6 +106,8 @@ public class SyncMsAccessTests {
 		SplitAdapter splitAdapter = new SplitAdapter(syncRepository, contentAdapter, NullIdentityProvider.INSTANCE);
 		List<Item> items = splitAdapter.getAll();
 		Assert.assertFalse(items.isEmpty());
+		
+		splitAdapter.endSync();
 		
 	}
 	
@@ -105,6 +123,7 @@ public class SyncMsAccessTests {
 		builderA.setProperty("hibernate.connection.url", database);
 		builderA.setProperty("hibernate.connection.username","");
 		builderA.setProperty("hibernate.connection.password","");
+		builderA.setProperty("hibernate.connection.pool_size", "1");	
 		builderA.addMapping(new File(this.getClass().getResource("User.hbm.xml").getFile()));
 		builderA.addMapping(new File(this.getClass().getResource("User_sync.hbm.xml").getFile()));
 
@@ -121,7 +140,7 @@ public class SyncMsAccessTests {
 		SplitAdapter splitAdapter = new SplitAdapter(syncRepository, contentAdapter, NullIdentityProvider.INSTANCE);
 		List<Item> items = splitAdapter.getAll();
 		Assert.assertFalse(items.isEmpty());
-		
+		splitAdapter.endSync();
 	}
 	
 	@Test
@@ -142,6 +161,7 @@ public class SyncMsAccessTests {
 		builderA.setProperty("hibernate.connection.url",databaseA);
 		builderA.setProperty("hibernate.connection.username","");
 		builderA.setProperty("hibernate.connection.password","");
+		builderA.setProperty("hibernate.connection.pool_size", "1");	
 		builderA.addMapping(new File(this.getClass().getResource("User.hbm.xml").getFile()));
 		builderA.addMapping(new File(this.getClass().getResource("User_sync.hbm.xml").getFile()));
 
@@ -158,6 +178,7 @@ public class SyncMsAccessTests {
 		builderB.setProperty("hibernate.connection.url",databaseB);
 		builderB.setProperty("hibernate.connection.username","");
 		builderB.setProperty("hibernate.connection.password","");
+		builderB.setProperty("hibernate.connection.pool_size", "1");	
 		builderB.addMapping(new File(this.getClass().getResource("User.hbm.xml").getFile()));
 		builderB.addMapping(new File(this.getClass().getResource("User_sync.hbm.xml").getFile()));
 		
@@ -167,18 +188,7 @@ public class SyncMsAccessTests {
 		
 		SyncEngine syncEngine = new SyncEngine(splitAdapterA, splitAdapterB);
 		
-		List<Item> conflicts = syncEngine.synchronize();
-		
-		Assert.assertNotNull(conflicts);
-		Assert.assertEquals(0, conflicts.size());
-
-		List<Item> itemsA = splitAdapterA.getAll();
-		Assert.assertFalse(itemsA.isEmpty());
-		
-		List<Item> itemsB = splitAdapterB.getAll();
-		Assert.assertFalse(itemsB.isEmpty());
-
-		Assert.assertEquals(itemsA.size(), itemsB.size());
+		TestHelper.assertSync(syncEngine);
 	}
 
 

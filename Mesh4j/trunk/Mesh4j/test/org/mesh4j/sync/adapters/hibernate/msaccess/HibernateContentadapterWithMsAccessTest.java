@@ -48,7 +48,7 @@ public class HibernateContentadapterWithMsAccessTest {
 
 	}
 	
-	@Test
+	//@Test
 	public void shouldConnectToAccess() throws Exception{
 		JdbcOdbcDriver driver = (JdbcOdbcDriver)Class.forName("sun.jdbc.odbc.JdbcOdbcDriver").newInstance();
 		Assert.assertNotNull(driver);
@@ -75,6 +75,8 @@ public class HibernateContentadapterWithMsAccessTest {
 		HibernateContentAdapter adapter = createAdapter();
 	
 		List<IContent> items = adapter.getAll();
+		adapter.endSync();
+		
 		for (IContent entityContent : items) {
 			Assert.assertNotNull(entityContent);
 			Assert.assertNotNull(entityContent.getPayload());
@@ -85,6 +87,8 @@ public class HibernateContentadapterWithMsAccessTest {
 	public void shouldHibernateGet(){
 		HibernateContentAdapter adapter = createAdapter();
 		IdentifiableContent entity = adapter.get("1");
+		adapter.endSync();
+		
 		Assert.assertNotNull(entity);
 		Assert.assertEquals("jmt", entity.getPayload().element("name").getText());
 		Assert.assertEquals("123", entity.getPayload().element("pass").getText());
@@ -100,7 +104,8 @@ public class HibernateContentadapterWithMsAccessTest {
 		
 		adapter.save(entity);
 		IdentifiableContent entityAdded = adapter.get(id);
-
+		adapter.endSync();
+		
 		Assert.assertNotNull(entityAdded);
 		Assert.assertEquals(id, entityAdded.getPayload().element("id").getText());
 		Assert.assertEquals(id, entityAdded.getPayload().element("name").getText());
@@ -116,7 +121,7 @@ public class HibernateContentadapterWithMsAccessTest {
 		
 		adapter.save(entity);
 		IdentifiableContent entityAdded = adapter.get(id);
-
+		
 		Assert.assertNotNull(entityAdded);
 		
 		payload = TestHelper.makeElement("<user><id>"+id+"</id><name>5555</name><pass>5555</pass></user>");
@@ -127,6 +132,7 @@ public class HibernateContentadapterWithMsAccessTest {
 		Assert.assertNotNull(entityUpdated);
 		Assert.assertEquals("5555", entityUpdated.getPayload().element("name").getText());
 		Assert.assertEquals("5555", entityUpdated.getPayload().element("pass").getText());
+		adapter.endSync();
 	}
 	
 	@Test
@@ -144,6 +150,7 @@ public class HibernateContentadapterWithMsAccessTest {
 		adapter.delete(entityAdded);
 		IdentifiableContent entityDeleted = adapter.get(id);
 		Assert.assertNull(entityDeleted);
+		adapter.endSync();
 
 	}
 	
@@ -157,6 +164,9 @@ public class HibernateContentadapterWithMsAccessTest {
 		builder.setProperty("hibernate.connection.url", dbURL);
 		builder.setProperty("hibernate.connection.username","");
 		builder.setProperty("hibernate.connection.password","");
+		builder.setProperty("hibernate.show_sql", "true");
+		builder.setProperty("hibernate.format_sql", "true");
+		builder.setProperty("hibernate.connection.pool_size", "1");	
 		builder.addMapping(new File(this.getClass().getResource("User.hbm.xml").getFile()));
 
 		HibernateContentAdapter adapter = new HibernateContentAdapter(builder, "user");

@@ -1,9 +1,7 @@
 package org.mesh4j.sync.adapters.hibernate.msaccess;
 
 import java.io.File;
-import java.util.List;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.adapters.feed.Feed;
@@ -14,7 +12,6 @@ import org.mesh4j.sync.adapters.hibernate.HibernateSessionFactoryBuilder;
 import org.mesh4j.sync.adapters.hibernate.HibernateSyncRepository;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.id.generator.IdGenerator;
-import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.parsers.SyncInfoParser;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
@@ -45,6 +42,9 @@ public class SyncMsAccessRDFTests {
 		builderA.setProperty("hibernate.connection.url",databaseA);
 		builderA.setProperty("hibernate.connection.username","");
 		builderA.setProperty("hibernate.connection.password","");
+		builderA.setProperty("hibernate.show_sql", "true");
+		builderA.setProperty("hibernate.format_sql", "true");
+		builderA.setProperty("hibernate.connection.pool_size", "1");	
 		builderA.addMapping(new File(this.getClass().getResource("User.hbm.xml").getFile()));
 		builderA.addMapping(new File(this.getClass().getResource("User_sync.hbm.xml").getFile()));
 		
@@ -68,6 +68,9 @@ public class SyncMsAccessRDFTests {
 		builderB.setProperty("hibernate.connection.url",databaseB);
 		builderB.setProperty("hibernate.connection.username","");
 		builderB.setProperty("hibernate.connection.password","");
+		builderB.setProperty("hibernate.show_sql", "true");
+		builderB.setProperty("hibernate.format_sql", "true");
+		builderB.setProperty("hibernate.connection.pool_size", "1");	
 		builderB.addMapping(new File(this.getClass().getResource("User.hbm.xml").getFile()));
 		builderB.addMapping(new File(this.getClass().getResource("User_sync.hbm.xml").getFile()));
 
@@ -84,18 +87,7 @@ public class SyncMsAccessRDFTests {
 		
 		SyncEngine syncEngine = new SyncEngine(splitAdapterA, splitAdapterB);
 		
-		List<Item> conflicts = syncEngine.synchronize();
-		
-		Assert.assertNotNull(conflicts);
-		Assert.assertEquals(0, conflicts.size());
-
-		List<Item> itemsA = splitAdapterA.getAll();
-		Assert.assertFalse(itemsA.isEmpty());
-		
-		List<Item> itemsB = splitAdapterB.getAll();
-		Assert.assertFalse(itemsB.isEmpty());
-
-		Assert.assertEquals(itemsA.size(), itemsB.size());
+		TestHelper.assertSync(syncEngine);
 	}
 	
 	@Test
@@ -112,6 +104,9 @@ public class SyncMsAccessRDFTests {
 		builderA.setProperty("hibernate.connection.url",databaseA);
 		builderA.setProperty("hibernate.connection.username","");
 		builderA.setProperty("hibernate.connection.password","");
+		builderA.setProperty("hibernate.show_sql", "true");
+		builderA.setProperty("hibernate.format_sql", "true");
+		builderA.setProperty("hibernate.connection.pool_size", "1");	
 		builderA.addMapping(new File(this.getClass().getResource("User.hbm.xml").getFile()));
 		builderA.addMapping(new File(this.getClass().getResource("User_sync.hbm.xml").getFile()));
 		
@@ -136,18 +131,7 @@ public class SyncMsAccessRDFTests {
 		// Sync		
 		SyncEngine syncEngine = new SyncEngine(splitAdapterA, feedAdapter);
 		
-		List<Item> conflicts = syncEngine.synchronize();
-		
-		Assert.assertNotNull(conflicts);
-		Assert.assertEquals(0, conflicts.size());
-
-		List<Item> itemsA = splitAdapterA.getAll();
-		Assert.assertFalse(itemsA.isEmpty());
-		
-		List<Item> itemsB = feedAdapter.getAll();
-		Assert.assertFalse(itemsB.isEmpty());
-
-		Assert.assertEquals(itemsA.size(), itemsB.size());
+		TestHelper.assertSync(syncEngine);
 	}
 
 	private String getMsAccessFileNameToTest(String name) {

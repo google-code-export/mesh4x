@@ -3,7 +3,6 @@ package org.mesh4j.sync.utils;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.Driver;
@@ -38,10 +37,11 @@ public class SqlDBUtils {
 		try{
 			Class.forName(driverClass.getName());
 			Connection con = DriverManager.getConnection(urlConnection, user, password);
+			ResultSet rs = null;
 			try {
 				DatabaseMetaData dbm = con.getMetaData();
 				String[] types = { "TABLE" };
-				ResultSet rs = dbm.getTables(null, null, "%", types);
+				rs = dbm.getTables(null, null, "%", types);
 				while (rs.next()) {
 					String table = rs.getString("TABLE_NAME");
 					if (table != null && table.trim().length() > 0){
@@ -49,10 +49,17 @@ public class SqlDBUtils {
 					}
 					LOGGER.info("Table: " + table);
 				}
-			}catch(SQLException e) {
+			}catch(Throwable e) {
 				LOGGER.error(e.getMessage(), e);
 				LOGGER.info("No any table in the database");
 			}finally{
+				if(rs != null){
+					try{
+						rs.close();
+					} catch(SQLException sqlE){
+						LOGGER.error(sqlE.getMessage(), sqlE);
+					}
+				}
 				con.close();
 			}
 		}catch(Exception e) {
@@ -86,9 +93,10 @@ public class SqlDBUtils {
 		try{
 			Class.forName(driverClass.getName());
 			Connection con = DriverManager.getConnection(urlConnection, user, password);
+			ResultSet rs = null;
 			try {
 				DatabaseMetaData dbm = con.getMetaData();
-				ResultSet rs = dbm.getSchemas();
+				rs = dbm.getSchemas();
 				while (rs.next()) {
 					String dbSchemaName = rs.getString("TABLE_SCHEM");
 					//String dbCatalogName = rs.getString("TABLE_CATALOG");
@@ -97,10 +105,17 @@ public class SqlDBUtils {
 					}
 					LOGGER.info("Schema: " + dbSchemaName);
 				}
-			}catch(SQLException e) {
+			}catch(Throwable e) {
 				LOGGER.error(e.getMessage(), e);
 				LOGGER.info("No any table in the database");
 			}finally{
+				if(rs != null){
+					try{
+						rs.close();
+					} catch(SQLException sqlE){
+						LOGGER.error(sqlE.getMessage(), sqlE);
+					}
+				}
 				con.close();
 			}
 		}catch(Exception e) {
@@ -161,17 +176,19 @@ public class SqlDBUtils {
 
 				stmt.executeBatch();
 
-			} catch (IOException e) {
-				LOGGER.error(e.getMessage(), e);
-			} catch (SQLException e) {
+			} catch (Throwable e) {
 				LOGGER.error(e.getMessage(), e);
 			} finally {
 				if(stmt != null){
-					stmt.close();
+					try{
+						stmt.close();
+					} catch(SQLException sqlE){
+						LOGGER.error(sqlE.getMessage(), sqlE);
+					}
 				}
 				con.close();
 			}
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
 		}
 	}

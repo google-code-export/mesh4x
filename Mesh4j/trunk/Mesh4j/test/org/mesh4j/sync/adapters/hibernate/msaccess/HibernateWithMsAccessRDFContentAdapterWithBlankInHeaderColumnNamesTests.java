@@ -42,6 +42,8 @@ public class HibernateWithMsAccessRDFContentAdapterWithBlankInHeaderColumnNamesT
 		assertItem("1", "1", "bia", items.get(0), rdfSchema, 1);
 		assertItem("2", "2", "jmt", items.get(1), rdfSchema, 1);
 		FileUtils.delete(fileName);
+		
+		adapter.endSync();
 	}
 
 	@Test
@@ -58,6 +60,7 @@ public class HibernateWithMsAccessRDFContentAdapterWithBlankInHeaderColumnNamesT
 		
 		assertItem("1", "1", "bia", item, rdfSchema, 1);
 		FileUtils.delete(fileName);
+		adapter.endSync();
 	}
 	
 	@Test
@@ -78,6 +81,7 @@ public class HibernateWithMsAccessRDFContentAdapterWithBlankInHeaderColumnNamesT
 		assertItem("2", "2", "jmt", items.get(1), rdfSchema, 1);
 		
 		
+		
 		HashMap<String, Object> properties = new HashMap<String, Object>();
 		properties.put("My_Code", "3");
 		properties.put("my_Comment", "3");
@@ -96,6 +100,7 @@ public class HibernateWithMsAccessRDFContentAdapterWithBlankInHeaderColumnNamesT
 		assertItem("3", "3", "sol", items.get(2), rdfSchema, 1);
 		
 		FileUtils.delete(fileName);
+		adapter.endSync();
 	}
 	
 	@Test
@@ -132,6 +137,7 @@ public class HibernateWithMsAccessRDFContentAdapterWithBlankInHeaderColumnNamesT
 		assertItem("2", "2", "sol", items.get(1), rdfSchema, 2);
 		
 		FileUtils.delete(fileName);
+		adapter.endSync();
 	}
 	
 	@Test
@@ -171,6 +177,7 @@ public class HibernateWithMsAccessRDFContentAdapterWithBlankInHeaderColumnNamesT
 		Assert.assertTrue(items.get(1).isDeleted());
 		
 		FileUtils.delete(fileName);
+		adapter.endSync();
 	}
 	
 	@Test

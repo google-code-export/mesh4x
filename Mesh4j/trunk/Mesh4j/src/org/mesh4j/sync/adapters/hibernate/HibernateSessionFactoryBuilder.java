@@ -67,9 +67,12 @@ public class HibernateSessionFactoryBuilder implements IHibernateSessionFactoryB
 		}
 		
 		if(!properties.isEmpty()){
+			if(this.useSunDriverForMsAccess()){
+				this.setProperty("hibernate.connection.provider_class", "org.mesh4j.sync.adapters.hibernate.msaccess.MsAccessDriverManagerConnectionProvider");
+			}
 			hibernateConfiguration.setProperties(properties);
 		}
-		
+				
 		for (File mapping : this.mappings) {
 			hibernateConfiguration.addFile(mapping);	
 		}
@@ -83,14 +86,13 @@ public class HibernateSessionFactoryBuilder implements IHibernateSessionFactoryB
 		this.propertiesFile = file;
 	}
 
-	public String getIdentifierPropertyName(String entityName) {
-		ClassMetadata classMetadata = this.getClassMetadata(entityName);
+	public String getIdentifierPropertyName(SessionFactory sessionFactory, String entityName) {
+		ClassMetadata classMetadata = this.getClassMetadata(sessionFactory, entityName);
 		return classMetadata.getIdentifierPropertyName();	
 	}
 
 	@SuppressWarnings("unchecked")
-	private ClassMetadata getClassMetadata(String entityName){
-		SessionFactory sessionFactory = buildSessionFactory();
+	private ClassMetadata getClassMetadata(SessionFactory sessionFactory, String entityName){
 		Map<String, ClassMetadata> map = sessionFactory.getAllClassMetadata();
 		for (Iterator<ClassMetadata> iterator = map.values().iterator(); iterator.hasNext();) {
 			ClassMetadata classMetadata = iterator.next(); 
@@ -102,7 +104,7 @@ public class HibernateSessionFactoryBuilder implements IHibernateSessionFactoryB
 	}
 
 	@Override
-	public IHibernateToXMLMapping buildMeshMapping(String entityName, String idNode) {
+	public IHibernateToXMLMapping buildMeshMapping(SessionFactory sessionFactory, String entityName, String idNode) {
 		IRDFSchema rdfSchema = this.rdfSchemas.get(entityName);
 		if(rdfSchema != null){
 			if(this.isMsAccess()){
@@ -117,14 +119,18 @@ public class HibernateSessionFactoryBuilder implements IHibernateSessionFactoryB
 
 	@Override
 	public boolean isMsAccess() {
+		return useSunDriverForMsAccess(); 
+// TODO(JMT) XHTT driver, add this line  ==> || HxttAccessDialect.class.getName().equals(dialect);
+	}
+	
+	private boolean useSunDriverForMsAccess() {
 		String dialect = (String)this.properties.get("hibernate.dialect");
 		return  dialect != null && MsAccessDialect.class.getName().equals(dialect); 
-// TODO(JMT) XHTT driver, add this line  ==> || HxttAccessDialect.class.getName().equals(dialect);
 	}
 
 	@Override
-	public IHibernateToXMLMapping buildMeshMapping(String entityName) {
-		return buildMeshMapping(entityName, this.getIdentifierPropertyName(entityName));
+	public IHibernateToXMLMapping buildMeshMapping(SessionFactory sessionFactory, String entityName) {
+		return buildMeshMapping(sessionFactory, entityName, this.getIdentifierPropertyName(sessionFactory, entityName));
 	}
 	
 	public void addRDFSchema(String tableName, IRDFSchema rdfSchema){

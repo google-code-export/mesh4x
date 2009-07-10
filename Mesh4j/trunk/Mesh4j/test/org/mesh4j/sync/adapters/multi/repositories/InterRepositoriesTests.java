@@ -1,20 +1,15 @@
 package org.mesh4j.sync.adapters.multi.repositories;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.util.Date;
-import java.util.List;
 
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
-import org.dom4j.io.XMLWriter;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mesh4j.sync.SyncEngine;
-import org.mesh4j.sync.adapters.feed.ContentWriter;
 import org.mesh4j.sync.adapters.feed.Feed;
 import org.mesh4j.sync.adapters.feed.FeedAdapter;
-import org.mesh4j.sync.adapters.feed.FeedWriter;
 import org.mesh4j.sync.adapters.feed.XMLContent;
 import org.mesh4j.sync.adapters.feed.atom.AtomSyndicationFormat;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
@@ -53,16 +48,8 @@ public class InterRepositoriesTests {
 		
 		HibernateAdapter hibernateRepo = new HibernateAdapter(builder, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
-		List<Item> allItems = hibernateRepo.getAll();
-		
-		SyncEngine engine = new SyncEngine(feedRepo, hibernateRepo);
-		List<Item> conflicts = engine.synchronize();
-		
-		Assert.assertNotNull(conflicts);
-		Assert.assertEquals(0, conflicts.size());
-		
-		Assert.assertTrue(hibernateRepo.getAll().size() == allItems.size() + 2);
-		Assert.assertTrue(feed.getItems().size() == allItems.size() + 2);
+		SyncEngine syncEngine = new SyncEngine(feedRepo, hibernateRepo);
+		TestHelper.assertSync(syncEngine);
 		
 		
 	}
@@ -80,22 +67,8 @@ public class InterRepositoriesTests {
 		builder.setPropertiesFile(new File(InterRepositoriesTests.class.getResource("xx_hibernate.properties").getFile()));
 		HibernateAdapter hibernateRepo = new HibernateAdapter(builder, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE);
 		
-		List<Item> allItems = hibernateRepo.getAll();
-		
-		SyncEngine engine = new SyncEngine(feedRepo, hibernateRepo);
-		List<Item> conflicts = engine.synchronize();
-		
-		Assert.assertNotNull(conflicts);
-		Assert.assertEquals(0, conflicts.size());
-		
-		Feed feed = feedRepo.getFeed();
-		Assert.assertTrue(feed.getItems().size() == allItems.size());
-		
-		Assert.assertTrue(hibernateRepo.getAll().size() == allItems.size());
-		
-		XMLWriter xmlWriter = new XMLWriter(new FileWriter(TestHelper.fileName("atomUserFeed1.xml")));
-		FeedWriter feedWriter = new FeedWriter(AtomSyndicationFormat.INSTANCE, NullIdentityProvider.INSTANCE, ContentWriter.INSTANCE);
-		feedWriter.write(xmlWriter, feed);
+		SyncEngine syncEngine = new SyncEngine(feedRepo, hibernateRepo);
+		TestHelper.assertSync(syncEngine);
 	}
 	
 	@Test
@@ -114,16 +87,9 @@ public class InterRepositoriesTests {
 		Assert.assertEquals(0, hibernateRepo.getAll().size());		
 		Assert.assertEquals(1, feedRepo.getAll().size());
 		
-		SyncEngine engine = new SyncEngine(feedRepo, hibernateRepo);
-		List<Item> conflicts = engine.synchronize();
-		
-		Assert.assertNotNull(conflicts);
-		Assert.assertEquals(0, conflicts.size());
-		
-		Assert.assertTrue(hibernateRepo.getAll().size() == 1);
-		Assert.assertTrue(feedRepo.getFeed().getItems().size() == 1);
-		
-		
+		SyncEngine syncEngine = new SyncEngine(feedRepo, hibernateRepo);
+		TestHelper.assertSync(syncEngine);
+			
 	}
 	
 	@Test
@@ -140,14 +106,8 @@ public class InterRepositoriesTests {
 		
 		hibernateRepo.deleteAll();
 		
-		SyncEngine engine = new SyncEngine(feedRepo, hibernateRepo);
-		List<Item> conflicts = engine.synchronize();
-		
-		Assert.assertNotNull(conflicts);
-		Assert.assertEquals(0, conflicts.size());
-		
-		Assert.assertTrue(hibernateRepo.getAll().size() == 1);
-		Assert.assertTrue(feedRepo.getFeed().getItems().size() == 1);
+		SyncEngine syncEngine = new SyncEngine(feedRepo, hibernateRepo);
+		TestHelper.assertSync(syncEngine);
 		
 	}
 
