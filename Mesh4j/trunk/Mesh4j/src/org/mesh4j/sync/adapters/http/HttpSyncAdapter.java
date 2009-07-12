@@ -552,4 +552,8 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 		}
 		return schema;
 	}
+
+	public String getURL() {
+		return this.url.toExternalForm();
+	}
 }

@@ -227,8 +227,12 @@ public class TestHelper {
 	}
 	
 	public static void assertSync(SyncEngine syncEngine) {
-		List<Item> conflicts = syncEngine.synchronize();
-	
+		List<Item> conflicts = syncEngine.synchronize();	
+		assertSyncResult(syncEngine, conflicts);
+		
+	}
+
+	public static void assertSyncResult(SyncEngine syncEngine, List<Item> conflicts) {
 		Assert.assertNotNull(conflicts);
 		Assert.assertTrue(conflicts.isEmpty());
 		
@@ -257,7 +261,6 @@ public class TestHelper {
 		if(target instanceof ISyncAware){
 			((ISyncAware) target).endSync();
 		}
-		
 	}
 	
 	public static void assertItem(Item sourceItem, ISyncAdapter... adapters) {

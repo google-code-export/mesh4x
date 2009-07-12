@@ -122,7 +122,7 @@ public class MsAccessRDFSchemaGenerator {
 		}
 	}
 
-	private static String getEntityName(String tableName) {
+	public static String getEntityName(String tableName) {
 		return tableName.trim().replaceAll(" ", "_");
 	}
 	
