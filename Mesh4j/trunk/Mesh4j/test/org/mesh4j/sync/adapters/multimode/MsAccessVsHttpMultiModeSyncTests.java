@@ -55,9 +55,8 @@ public class MsAccessVsHttpMultiModeSyncTests {
 
 		}
 
-	
 		// sync
-		syncProcess.synchronize(); 
+		syncProcess.synchronize(null); 
 				
 		// assert sync result
 		List<SyncTask> syncTasks = syncProcess.getSyncTasks();
