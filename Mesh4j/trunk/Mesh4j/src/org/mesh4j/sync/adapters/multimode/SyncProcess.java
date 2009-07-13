@@ -115,6 +115,7 @@ public class SyncProcess {
 				}catch (Throwable e) {
 					LOGGER.error(e.getMessage(), e);
 					syncProcess.notifyErrorCreatingHttpAdapter(tableName);
+					target.endSync();
 				}
 				
 				if(source != null){
@@ -173,6 +174,7 @@ public class SyncProcess {
 				}catch (Throwable e) {
 					LOGGER.error(e.getMessage(), e);
 					syncProcess.notifyErrorCreatingHttpAdapter(tableName);
+					target.endSync();
 				}
 				
 				if(source != null){
