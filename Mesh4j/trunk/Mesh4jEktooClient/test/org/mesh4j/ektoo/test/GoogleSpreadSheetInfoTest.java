@@ -13,7 +13,7 @@ public class GoogleSpreadSheetInfoTest {
 				"",
 				"gspreadsheet.test@gmail.com",
 				"java123456",
-				"id",
+				new String[] {"id"},
 				"user_source",
 				"user"
 				);
@@ -25,7 +25,7 @@ public class GoogleSpreadSheetInfoTest {
 				"peo4fu7AitTo8e3v0D8FCew",
 				"",
 				"java123456",
-				"id",
+				new String[] {"id"},
 				"user_source",
 				"user"
 				);
@@ -37,7 +37,7 @@ public class GoogleSpreadSheetInfoTest {
 				"peo4fu7AitTo8e3v0D8FCew",
 				"gspreadsheet.test@gmail.com",
 				"",
-				"id",
+				new String[] {"id"},
 				"user_source",
 				"user"
 				);
@@ -49,7 +49,7 @@ public class GoogleSpreadSheetInfoTest {
 				"peo4fu7AitTo8e3v0D8FCew",
 				"gspreadsheet.test@gmail.com",
 				"java123456",
-				"",
+				new String[]{},
 				"user_source",
 				"user"
 				);
@@ -61,7 +61,7 @@ public class GoogleSpreadSheetInfoTest {
 				"peo4fu7AitTo8e3v0D8FCew",
 				"gspreadsheet.test@gmail.com",
 				"java123456",
-				"id",
+				new String[] {"id"},
 				"",
 				"user"
 				);
@@ -73,7 +73,7 @@ public class GoogleSpreadSheetInfoTest {
 				"peo4fu7AitTo8e3v0D8FCew",
 				"gspreadsheet.test@gmail.com",
 				"java123456",
-				"id",
+				new String[] {"id"},
 				"user_source",
 				""
 				);

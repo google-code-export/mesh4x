@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -55,7 +55,7 @@ public class InterRepositoryRDFSyncTest {
 				"testspreadsheet",
 				"gspreadsheet.test@gmail.com",
 				"java123456",
-				"id",
+				new String[] {"id"},
 				"user_source",
 				"user"
 				);
@@ -64,12 +64,12 @@ public class InterRepositoryRDFSyncTest {
 		String rdfUrl = new PropertiesProvider().getMeshSyncServerURL();
 		IGoogleSpreadSheet gss = new GoogleSpreadsheet(spreadSheetInfo.getGoogleSpreadSheetName(), spreadSheetInfo.getUserName(), spreadSheetInfo.getPassWord());
 		
-		ArrayList<String> pks = new ArrayList<String>();
-		pks.add(spreadSheetInfo.getIdColumnName());
+//		ArrayList<String> pks = new ArrayList<String>();
+//		pks.add(spreadSheetInfo.getIdColumnName());
 		IRDFSchema rdfSchema = GoogleSpreadsheetToRDFMapping.extractRDFSchema(
 			gss, 
 			spreadSheetInfo.getSheetName(), 
-			pks,
+			Arrays.asList(spreadSheetInfo.getIdColumnNames()),
 			/*null,*/
 			rdfUrl);
 		
@@ -139,7 +139,7 @@ public class InterRepositoryRDFSyncTest {
 				"spreadsheettest2",
 				"gspreadsheet.test@gmail.com",
 				"java123456",
-				mapping.getSchema().getIdentifiablePropertyNames().get(0),
+				(String [])mapping.getSchema().getIdentifiablePropertyNames().toArray(),
 				mapping.getType(),
 				mapping.getType()
 				);
@@ -168,7 +168,7 @@ public class InterRepositoryRDFSyncTest {
 				"new spreadsheet",
 				"gspreadsheet.test@gmail.com",
 				"java123456",
-				mapping.getSchema().getIdentifiablePropertyNames().get(0),
+				(String [])mapping.getSchema().getIdentifiablePropertyNames().toArray(),
 				mapping.getType(),
 				mapping.getType()
 				);

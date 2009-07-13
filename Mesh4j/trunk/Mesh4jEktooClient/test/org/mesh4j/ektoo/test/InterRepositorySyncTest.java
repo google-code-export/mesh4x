@@ -179,7 +179,7 @@ public class InterRepositorySyncTest {
 				"testspreadsheet",
 				"gspreadsheet.test@gmail.com",
 				"java123456",
-				"id",
+				new String[] {"id"},
 				"user_source",
 				"user"
 				);
@@ -204,7 +204,7 @@ public class InterRepositorySyncTest {
 				"testspreadsheet",
 				"gspreadsheet.test@gmail.com",
 				"java123456",
-				"id",
+				new String[] {"id"},
 				"user_source",
 				"user"
 				);
@@ -213,7 +213,7 @@ public class InterRepositorySyncTest {
 				"testspreadsheet",
 				"gspreadsheet.test@gmail.com",
 				"java123456",
-				"id",
+				new String[] {"id"},
 				"user_target",
 				"user"
 				);

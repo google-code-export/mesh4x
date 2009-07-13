@@ -55,7 +55,7 @@ public class SyncAdapterBuilderTest {
 				"pLUqch-enpf1-GcqnD6qjSA",
 				"gspreadsheet.test@gmail.com",
 				"java123456",
-				"id",
+				new String[] {"id"},
 				"user_source",
 				"user"
 				);
@@ -71,7 +71,7 @@ public class SyncAdapterBuilderTest {
 				"SyncAdapterBuilderTest",
 				"gspreadsheet.test@gmail.com",
 				"java123456",
-				"id",
+				new String[] {"id"},
 				"user",
 				"user"
 				);
@@ -88,7 +88,7 @@ public class SyncAdapterBuilderTest {
 					"SyncAdapterBuilderTest",
 					"gspreadsheet.test@gmail.com",
 					"java123456",
-					"id",
+					new String[] {"id"},
 					"user",
 					"user"
 					);
@@ -140,7 +140,7 @@ public class SyncAdapterBuilderTest {
 					"spreadsheettest2",
 					"gspreadsheet.test@gmail.com",
 					"java123456",
-					"id",
+					new String[] {"id"},
 					"user",
 					"user"
 					);
@@ -174,7 +174,7 @@ public class SyncAdapterBuilderTest {
 				"SyncAdapterBuilderTest",
 				"gspreadsheet.test@gmail.com",
 				"java123456",
-				"id",
+				new String[] {"id"},
 				"user",
 				"user"
 				);
@@ -233,7 +233,7 @@ public class SyncAdapterBuilderTest {
 				"spreadsheettest2",
 				"gspreadsheet.test@gmail.com",
 				"java123456",
-				"id",
+				new String[] {"id"},
 				"user",
 				"user"
 				);
@@ -290,7 +290,7 @@ public class SyncAdapterBuilderTest {
 				"spreadsheettest2",
 				"gspreadsheet.test@gmail.com",
 				"java123456",
-				"id",
+				new String[] {"id"},
 				"user",
 				"user"
 				);
@@ -345,7 +345,7 @@ public class SyncAdapterBuilderTest {
 				"no spreadsheet",
 				"gspreadsheet.test@gmail.com",
 				"java123456",
-				mapping.getSchema().getIdentifiablePropertyNames().get(0),
+				(String [])mapping.getSchema().getIdentifiablePropertyNames().toArray(),
 				mapping.getType(),
 				mapping.getType()
 				);
