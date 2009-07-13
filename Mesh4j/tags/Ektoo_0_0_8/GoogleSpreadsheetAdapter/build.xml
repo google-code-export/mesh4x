@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     May 28, 2009 10:33:10 AM                                                        
+
+     project,Mesh4x Googlespreadsheet adapter    
+     description,Mesh4x Googlespreadsheet adapter
+                   
+     raju                                                                
+     ====================================================================== -->
+<project name="GoogleSpreadsheetAdapter" default="clean">
+    <description>Googlespreadhseet adapter jar creation</description>
+	<property name="src.dir" value = "src"/> 
+	<property file="build.properties"/>
+	
+    <!-- ================================= 
+          target: clean              
+         ================================= -->
+    <target name="clean"  description="removing old files">
+    	<echo message="Removing removing old files"/>
+    	<delete dir="${dist.dir}"/>
+    	<mkdir dir="${dist.dir}"/>
+    </target>
+	
+	<!-- ================================= 
+          TODO: compile the google spreadsheet adapter with the
+          help of mesh4x core and other library (raju)
+         ================================= -->
+    <target name="compile" depends="clean" description="comile">
+    	<echo message="NO implementation"/>
+    </target>
+
+	<!-- ================================= 
+          target: name              
+         ================================= -->
+    <target name="jar" depends="clean" description="Jar">
+    	<echo message="creating jar of mesh4x google spreadsheet adapter"/>
+		 <jar destfile="${dist.dir}/${jarname}-${version}.jar" basedir="${build.dir}" includes="**/*.*">
+		 </jar>
+    </target>
+
+    
+
+</project>

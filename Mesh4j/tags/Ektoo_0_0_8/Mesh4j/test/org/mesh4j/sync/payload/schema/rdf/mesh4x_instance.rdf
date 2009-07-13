@@ -1,0 +1,19 @@
+<!DOCTYPE rdf:RDF [<!ENTITY xsd "http://www.w3.org/2001/XMLSchema#">]>
+
+<rdf:RDF
+  xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'
+  xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#"
+  xmlns:oswego="http://mesh4x/oswego#"  
+ >
+	<oswego:Patient rdf:about="urn:uuid:9274cc11-7ba4-4594-abaf-3620fbee211a"> 
+		<oswego:code rdf:datatype="&xsd;string">41</oswego:code>
+		<oswego:name rdf:datatype="&xsd;string">juan</oswego:name>
+		<oswego:sex rdf:datatype="&xsd;string">MALE</oswego:sex>
+		<oswego:ill rdf:datatype="&xsd;boolean">1</oswego:ill>
+		<oswego:dateOnset rdf:datatype="&xsd;date">2009-03-02T10:00:00</oswego:dateOnset>
+		<oswego:address rdf:datatype="&xsd;string">1103 206th Av NE Sammamish WA 98074, USA</oswego:address>
+		<geo:lat>26.58</geo:lat>
+	  	<geo:long>-97.83</geo:long>
+	</oswego:Patient> 
+  
+</rdf:RDF>

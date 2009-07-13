@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<rss xmlns:sx="http://feedsync.org/2007/feedsync" version="2.0">
+  <channel>
+    <session sessionId="example3" sessionVersion="0" sourceId="123"  lastIn="0" lastOut="0"  endpointId="sms:1" lastSyncDate="2008-06-30T18:31:23Z" full="true" open="false" sendChanges="true" receiveChanges="true"  addedItems="0" updatedItems="0" deletedItems="0"  endpointAddedItems="0" endpointUpdatedItems="0" endpointDeletedItems="0" endpointSourceType="undefined" broken="false" /> 
+    <item>
+      <author>
+        <name>jmt</name>
+      </author>
+      <sx:sync id="38db832f-59bd-4a13-98e9-cf7482c24eec" updates="1" deleted="true" noconflicts="false">
+        <sx:history sequence="1" when="2008-06-30T18:31:23Z" by="jmt"/>
+      </sx:sync>
+    </item>
+  </channel>
+</rss>
