@@ -1,9 +1,10 @@
 package org.mesh4j.sync.adapters.googlespreadsheet;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.mesh4j.sync.adapters.googlespreadsheet.mapping.GoogleSpreadsheetToRDFMapping;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
+import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.validations.Guard;
@@ -12,9 +13,8 @@ import org.mesh4j.sync.validations.MeshException;
 /**
  * @author sharif
  * @version 1.0, 12/5/2009
- *
  */
-public class GoogleSpreadSheetRDFSyncAdapterFactory extends GoogleSpreadSheetSyncAdapterFactory{
+public class GoogleSpreadSheetRDFSyncAdapterFactory {
 	
 	// MODEL VARIABLES
 	private String rdfBaseURL;
@@ -32,18 +32,21 @@ public class GoogleSpreadSheetRDFSyncAdapterFactory extends GoogleSpreadSheetSyn
 		this.rdfBaseURL = rdfBaseURL;
 	}
 	
-	@Override
-	protected GoogleSpreadSheetContentAdapter createContentAdapter(IGoogleSpreadSheet spreadSheet, String idColumnName, String lastUpdateColumnName, String sheetName, String type) {
+	
+	protected GoogleSpreadSheetContentAdapter createContentAdapter(IGoogleSpreadSheet spreadSheet, String[] idColumnNames, String lastUpdateColumnName, String sheetName, String type) {
 		Guard.argumentNotNull(spreadSheet, "spreadSheet");
-		Guard.argumentNotNullOrEmptyString(idColumnName, "idColumnName");
+//		Guard.argumentNotNullOrEmptyString(idColumnName, "idColumnName");
+		if(idColumnNames.length == 0){
+			Guard.throwsArgumentException("idColumnNames");
+		}
 		Guard.argumentNotNullOrEmptyString(sheetName, "sheetName");
 		Guard.argumentNotNullOrEmptyString(type, "type");
 		
 		IRDFSchema rdfSchema;
 		try {
-			ArrayList<String> pks = new ArrayList<String>();
-			pks.add(idColumnName);
-			rdfSchema = GoogleSpreadsheetToRDFMapping.extractRDFSchema(spreadSheet, sheetName, pks, this.rdfBaseURL);
+//			ArrayList<String> pks = new ArrayList<String>();
+//			pks.add(idColumnName);
+			rdfSchema = GoogleSpreadsheetToRDFMapping.extractRDFSchema(spreadSheet, sheetName, Arrays.asList(idColumnNames), this.rdfBaseURL);
 		} catch (Exception e) {
 			throw new MeshException(e);
 		}
@@ -54,12 +57,15 @@ public class GoogleSpreadSheetRDFSyncAdapterFactory extends GoogleSpreadSheetSyn
 	}
 
 	public SplitAdapter createSyncAdapter(String username, String password,
-			String spreadsheetName, String cotentSheetName, String idColumnName, String lastUpdateColumnName,
+			String spreadsheetName, String cotentSheetName, String[] idColumnNames, String lastUpdateColumnName,
 			IIdentityProvider identityProvider, IRDFSchema rdfSchema, String sourceAlias) {		
 		Guard.argumentNotNullOrEmptyString(username, "username");
 		Guard.argumentNotNullOrEmptyString(password, "password");
 		Guard.argumentNotNullOrEmptyString(spreadsheetName, "spreadsheetName");	
-		Guard.argumentNotNullOrEmptyString(idColumnName, "idColumnName");
+//		Guard.argumentNotNullOrEmptyString(idColumnName, "idColumnName");
+		if(idColumnNames.length == 0){
+			Guard.throwsArgumentException("idColumnNames");
+		}
 		Guard.argumentNotNullOrEmptyString(cotentSheetName, "cotentSheetName");
 		Guard.argumentNotNull(identityProvider, "identityProvider");
 		Guard.argumentNotNull(rdfSchema, "rdfSchema");
@@ -94,9 +100,12 @@ public class GoogleSpreadSheetRDFSyncAdapterFactory extends GoogleSpreadSheetSyn
 				//TODO:need to review whether keep it or let it handle by the Guard in adapter constructor
 				if(spreadSheet.getGSSpreadsheet() == null ) return null;
 				
-				GoogleSpreadSheetSyncRepository syncRepo = createSyncRepository(
-						spreadSheet, cotentSheetName+DEFAULT_SYNCSHEET_POSTFIX, identityProvider);
-							
+//				GoogleSpreadSheetSyncRepository syncRepo = createSyncRepository(
+//						spreadSheet, cotentSheetName + GoogleSpreadSheetSyncAdapterFactory.DEFAULT_SYNCSHEET_POSTFIX, identityProvider);
+				GoogleSpreadSheetSyncRepository syncRepo = new GoogleSpreadSheetSyncRepository(
+					spreadSheet, identityProvider, IdGenerator.INSTANCE,
+					cotentSheetName + GoogleSpreadSheetSyncAdapterFactory.DEFAULT_SYNCSHEET_POSTFIX);
+				
 				GoogleSpreadSheetContentAdapter contentAdapter = new GoogleSpreadSheetContentAdapter(spreadSheet, mappings);
 				
 				return new SplitAdapter(syncRepo, contentAdapter, identityProvider);
@@ -104,7 +113,7 @@ public class GoogleSpreadSheetRDFSyncAdapterFactory extends GoogleSpreadSheetSyn
 			case GoogleSpreadsheetUtils.SPREADSHEET_STATUS_CONTENTSHEET_YES_SYNCSHEET_NO:
 			case GoogleSpreadsheetUtils.SPREADSHEET_STATUS_CONTENTSHEET_YES_SYNCSHEET_YES:{
 				//spreadsheet already exists with a valid content worksheet
-				SplitAdapter splitAdapter = super.createSyncAdapter(username, password, spreadsheetName, cotentSheetName, idColumnName,  
+				SplitAdapter splitAdapter = createSyncAdapter(username, password, spreadsheetName, cotentSheetName, idColumnNames,  
 						lastUpdateColumnName, identityProvider, sourceAlias);
 					
 				//createSyncAdapter(excelFileName, sheetName, idColumnName, identityProvider);
@@ -132,10 +141,13 @@ public class GoogleSpreadSheetRDFSyncAdapterFactory extends GoogleSpreadSheetSyn
 	 * @return
 	 */
 	public SplitAdapter createSyncAdapter(IGoogleSpreadSheet spreadSheet, String cotentSheetName, 
-			String idColumnName, String lastUpdateColumnName, IIdentityProvider 
+			String[] idColumnNames, String lastUpdateColumnName, IIdentityProvider 
 			identityProvider, IRDFSchema sourceSchema, String sourceAlias) {
 		Guard.argumentNotNull(spreadSheet, "spreadSheet");
-		Guard.argumentNotNullOrEmptyString(idColumnName, "idColumnName");
+//		Guard.argumentNotNullOrEmptyString(idColumnName, "idColumnName");
+		if(idColumnNames.length == 0){
+			Guard.throwsArgumentException("idColumnNames");
+		}
 		Guard.argumentNotNullOrEmptyString(cotentSheetName, "cotentSheetName");
 		Guard.argumentNotNull(identityProvider, "identityProvider");
 		Guard.argumentNotNull(sourceSchema, "rdfSchema");
@@ -151,9 +163,12 @@ public class GoogleSpreadSheetRDFSyncAdapterFactory extends GoogleSpreadSheetSyn
 
 				GoogleSpreadsheetToRDFMapping mappings = new GoogleSpreadsheetToRDFMapping(sourceSchema);
 				
-				GoogleSpreadSheetSyncRepository syncRepo = createSyncRepository(
-						spreadSheet, cotentSheetName+DEFAULT_SYNCSHEET_POSTFIX, identityProvider);
-							
+//				GoogleSpreadSheetSyncRepository syncRepo = createSyncRepository(
+//						spreadSheet, cotentSheetName+GoogleSpreadSheetSyncAdapterFactory.DEFAULT_SYNCSHEET_POSTFIX, identityProvider);
+				GoogleSpreadSheetSyncRepository syncRepo = new GoogleSpreadSheetSyncRepository(
+						spreadSheet, identityProvider, IdGenerator.INSTANCE,
+						cotentSheetName + GoogleSpreadSheetSyncAdapterFactory.DEFAULT_SYNCSHEET_POSTFIX);
+				
 				GoogleSpreadSheetContentAdapter contentAdapter = new GoogleSpreadSheetContentAdapter(spreadSheet, mappings);
 				
 				return new SplitAdapter(syncRepo, contentAdapter, identityProvider);
@@ -161,7 +176,7 @@ public class GoogleSpreadSheetRDFSyncAdapterFactory extends GoogleSpreadSheetSyn
 			case GoogleSpreadsheetUtils.SPREADSHEET_STATUS_CONTENTSHEET_YES_SYNCSHEET_NO:
 			case GoogleSpreadsheetUtils.SPREADSHEET_STATUS_CONTENTSHEET_YES_SYNCSHEET_YES:{
 				//spreadsheet already exists with a valid content worksheet
-				SplitAdapter splitAdapter = super.createSyncAdapter(spreadSheet, cotentSheetName, idColumnName,  
+				SplitAdapter splitAdapter = createSyncAdapter(spreadSheet, cotentSheetName, idColumnNames,  
 						lastUpdateColumnName, identityProvider, sourceAlias);
 					
 				//createSyncAdapter(excelFileName, sheetName, idColumnName, identityProvider);
@@ -175,4 +190,63 @@ public class GoogleSpreadSheetRDFSyncAdapterFactory extends GoogleSpreadSheetSyn
 		}
 		return null;	
 	}	
+	
+	public SplitAdapter createSyncAdapter(String username, String password,
+			String spreadsheetName, String contentSheetName,
+			String[] idColumnNames, String lastUpdateColumnName,
+			IIdentityProvider identityProvider, String sourceAlias) {
+
+		IGoogleSpreadSheet spreadSheet = new GoogleSpreadsheet(
+				spreadsheetName, username, password);
+		
+		//TODO:need to review whether keep it or let it handle by the Guard in adapter constructor
+		if(spreadSheet.getGSSpreadsheet() == null ) return null;
+
+//		GoogleSpreadSheetSyncRepository syncRepo = createSyncRepository(
+//				spreadSheet, contentSheetName + GoogleSpreadSheetSyncAdapterFactory.DEFAULT_SYNCSHEET_POSTFIX,
+//				identityProvider);
+		GoogleSpreadSheetSyncRepository syncRepo = new GoogleSpreadSheetSyncRepository(
+				spreadSheet, identityProvider, IdGenerator.INSTANCE,
+				contentSheetName + GoogleSpreadSheetSyncAdapterFactory.DEFAULT_SYNCSHEET_POSTFIX);
+
+		GoogleSpreadSheetContentAdapter contentAdapter = createContentAdapter(
+				spreadSheet, idColumnNames, lastUpdateColumnName,
+				contentSheetName, sourceAlias);
+
+		return new SplitAdapter(syncRepo, contentAdapter, identityProvider);
+	}
+
+	/**
+	 * this method should be used when spreadSheet is already loaded previously
+	 * 
+	 * @param spreadSheet
+	 * @param contentSheetName
+	 * @param idColumnName
+	 * @param lastUpdateColumnName
+	 * @param identityProvider
+	 * @param sourceAlias
+	 * @return
+	 */
+	public SplitAdapter createSyncAdapter(IGoogleSpreadSheet spreadSheet,
+			String contentSheetName, String[] idColumnNames,
+			String lastUpdateColumnName, IIdentityProvider identityProvider,
+			String sourceAlias) {
+		
+		Guard.argumentNotNull(spreadSheet,"spreadSheet");
+		Guard.argumentNotNull(spreadSheet.getGSSpreadsheet(),"gsSpreadsheet");
+
+//		GoogleSpreadSheetSyncRepository syncRepo = createSyncRepository(
+//				spreadSheet, contentSheetName + GoogleSpreadSheetSyncAdapterFactory.DEFAULT_SYNCSHEET_POSTFIX,
+//				identityProvider);
+		GoogleSpreadSheetSyncRepository syncRepo = new GoogleSpreadSheetSyncRepository(
+				spreadSheet, identityProvider, IdGenerator.INSTANCE,
+				contentSheetName + GoogleSpreadSheetSyncAdapterFactory.DEFAULT_SYNCSHEET_POSTFIX);
+
+		GoogleSpreadSheetContentAdapter contentAdapter = createContentAdapter(
+				spreadSheet, idColumnNames, lastUpdateColumnName,
+				contentSheetName, sourceAlias);
+
+		return new SplitAdapter(syncRepo, contentAdapter, identityProvider);	
+	}	
+	
 }
