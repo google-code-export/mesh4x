@@ -1,8 +1,11 @@
 package org.mesh4j.sync.adapters.multimode;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.model.Item;
@@ -10,10 +13,12 @@ import org.mesh4j.sync.validations.Guard;
 
 public class SyncTask {
 
+	private final static Log LOGGER = LogFactory.getLog(SyncTask.class);
+	
 	// MODEL VARIABLES
 	private String dataSource;
 	private SyncEngine syncEngine;
-	private SyncTaskStatus status = SyncTaskStatus.ReadyToSync;
+	private SyncStatus status = SyncStatus.ReadyToSync;
 	private List<Item> conflicts = new ArrayList<Item>(); 
 	private Throwable error;
 	
@@ -34,7 +39,7 @@ public class SyncTask {
 		return this.syncEngine.getTarget();
 	}
 
-	public SyncTaskStatus getStatus() {
+	public SyncStatus getStatus() {
 		return this.status;
 	}
 
@@ -46,21 +51,32 @@ public class SyncTask {
 		return this.conflicts;
 	}
 
-	protected void synchronize(){
-		this.status = SyncTaskStatus.Synchronizing;
+	protected void synchronize(Date sinceDate, ISyncProcessListener... syncProcessListeners){
+		this.status = SyncStatus.Synchronizing;
+		this.notifyStatus(syncProcessListeners);
 		try{
-			this.conflicts = this.syncEngine.synchronize();
+			this.conflicts = this.syncEngine.synchronize(sinceDate);
 			if(this.conflicts.isEmpty()){
-				this.status = SyncTaskStatus.Successfully;
+				this.status = SyncStatus.Successfully;
 			} else {
-				this.status = SyncTaskStatus.Fail;
+				this.status = SyncStatus.Fail;
 			}
 		} catch(Throwable e){
-			this.status = SyncTaskStatus.Error;
+			this.status = SyncStatus.Error;
 			this.error = e;
+			LOGGER.error(e.getMessage(), e);
 		}
+		this.notifyStatus(syncProcessListeners);
 	}
 	
+	protected void notifyStatus(ISyncProcessListener[] syncProcessListeners) {
+		if(syncProcessListeners != null){
+			for (ISyncProcessListener syncProcessListener : syncProcessListeners) {
+				syncProcessListener.syncProcessChangeStatusNotification(this);
+			}
+		}
+	}
+
 	public Throwable getError(){
 		return this.error;
 	}
@@ -84,4 +100,5 @@ public class SyncTask {
 	public boolean isReadyToSync() {
 		return this.status.isReadyToSync();
 	}
+	
 }

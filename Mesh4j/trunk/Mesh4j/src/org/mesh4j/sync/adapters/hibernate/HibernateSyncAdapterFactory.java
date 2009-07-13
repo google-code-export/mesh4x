@@ -346,7 +346,7 @@ public class HibernateSyncAdapterFactory implements ISyncAdapterFactory{
 		builder.setProperty("hibernate.connection.driver_class", driverClass.getName());
 		builder.setProperty("hibernate.connection.url", connectionURL);
 		builder.setProperty("hibernate.connection.username", user);
-		builder.setProperty("hibernate.connection.password", password);
+		builder.setProperty("hibernate.connection.password", (password == null ? "" : password));
 		builder.setProperty("hibernate.show_sql", "true");
 		builder.setProperty("hibernate.format_sql", "true");
 

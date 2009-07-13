@@ -1,6 +1,6 @@
 package org.mesh4j.sync.adapters.multimode;
 
-public enum SyncTaskStatus {
+public enum SyncStatus {
 	ReadyToSync, Synchronizing, Successfully, Fail, Error;
 
 	public boolean isFailed() {
