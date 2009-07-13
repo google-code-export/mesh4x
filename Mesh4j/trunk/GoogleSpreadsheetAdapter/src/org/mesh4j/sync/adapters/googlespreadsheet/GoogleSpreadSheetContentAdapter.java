@@ -155,4 +155,8 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter, ISyncAw
 			return entityContent.getId();
 		}
 	}
+
+	public GSWorksheet<GSRow<GSCell>> getWorkSheet() {
+		return workSheet;
+	}
 }
