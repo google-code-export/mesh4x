@@ -493,6 +493,7 @@ public class EktooFrame extends JFrame implements IErrorListener,
 						boolean previousMode = multiModeSync;
 						multiModeSync = false;
 						if(previousMode != multiModeSync){
+							updateUiForSingleModeSync();
 							updateSourceAdapterList();	
 						}
 			   		} 
@@ -514,7 +515,6 @@ public class EktooFrame extends JFrame implements IErrorListener,
 						 boolean previousMode = multiModeSync;
 						 multiModeSync = true;
 						if(previousMode != multiModeSync){
-							updateUiForMultiModeSync();
 				        	updateSourceAdapterList();
 				        }
 			   		} 
@@ -524,17 +524,17 @@ public class EktooFrame extends JFrame implements IErrorListener,
 	    return multiModeRadio;
 	}
   
-	private void updateUiForMultiModeSync(){
+	private void updateUiForSingleModeSync(){
     	if(getSourceItem() != null){
         	if(getSourceItem().getCurrentView() instanceof MySQLUI){
         		MySQLUI mui = (MySQLUI) getSourceItem().getCurrentView();
         		int i[] = mui.getTableList().getSelectedIndices();
-        		mui.getTableList().setSelectedIndex(i.length == 0 ? 0 : i[0]);
+        		mui.getTableList().setSelectedIndex(i.length == 0 ? -1 : i[0]);
         		mui.repaint();
         	} else if(getSourceItem().getCurrentView() instanceof MsAccessUI){
         		MsAccessUI mui = (MsAccessUI) getSourceItem().getCurrentView();
         		int i[] = mui.getTableList().getSelectedIndices();
-        		mui.getTableList().setSelectedIndex(i.length == 0 ? 0 : i[0]);
+        		mui.getTableList().setSelectedIndex(i.length == 0 ? -1 : i[0]);
         		mui.repaint();
         	}
     	}
@@ -542,12 +542,12 @@ public class EktooFrame extends JFrame implements IErrorListener,
         	if(getTargetItem().getCurrentView() instanceof MySQLUI){
         		MySQLUI mui = (MySQLUI) getTargetItem().getCurrentView();
         		int i[] = mui.getTableList().getSelectedIndices();
-        		mui.getTableList().setSelectedIndex(i.length == 0 ? 0 : i[0]);
+        		mui.getTableList().setSelectedIndex(i.length == 0 ? -1 : i[0]);
         		mui.repaint();
         	} else if(getTargetItem().getCurrentView() instanceof MsAccessUI){
         		MsAccessUI mui = (MsAccessUI) getTargetItem().getCurrentView();
         		int i[] = mui.getTableList().getSelectedIndices();
-        		mui.getTableList().setSelectedIndex(i.length == 0 ? 0 : i[0]);
+        		mui.getTableList().setSelectedIndex(i.length == 0 ? -1 : i[0]);
         		mui.repaint();
         	}			        		
     	}
