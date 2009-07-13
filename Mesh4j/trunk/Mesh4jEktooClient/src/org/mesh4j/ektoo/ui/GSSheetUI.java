@@ -499,8 +499,8 @@ public class GSSheetUI extends AbstractUI {
 							
 							int columnIndex = listColumn.getSelectedIndex();
 							if (columnIndex != -1) {
-								getController().changeUniqueColumnName(
-										(String) listColumn.getSelectedItem());
+								getController().changeUniqueColumnNames(new String[]{
+										(String) listColumn.getSelectedItem()});
 								
 							}	
 						}
