@@ -80,7 +80,7 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 	 */
 	@Override
 	public ISyncAdapter createPlainXMLBasedGoogleSpreadSheetAdapter(GoogleSpreadSheetInfo spreadSheetInfo) {
-		String idColumName = spreadSheetInfo.getIdColumnName();
+		String idColumName = spreadSheetInfo.getIdColumnNames()[0];
 		String userName = spreadSheetInfo.getUserName();
 		String passWord = spreadSheetInfo.getPassWord();
 		String spreadsheetName = spreadSheetInfo.getGoogleSpreadSheetName();
@@ -101,7 +101,7 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 	@Override
 	public ISyncAdapter createPlainXMLBasedGoogleSpreadSheetAdapter(GoogleSpreadSheetInfo spreadSheetInfo,
 			IGoogleSpreadSheet gss) {
-		String idColumName = spreadSheetInfo.getIdColumnName();
+		String idColumName = spreadSheetInfo.getIdColumnNames()[0];
 		String type = spreadSheetInfo.getType();
 		String sheetName = spreadSheetInfo.getSheetName();
 		
@@ -118,7 +118,7 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 	 */
 	@Override
 	public SplitAdapter createRdfBasedGoogleSpreadSheetAdapter(GoogleSpreadSheetInfo spreadSheetInfo, IRDFSchema sourceSchema) {
-		String idColumnName = spreadSheetInfo.getIdColumnName();
+		String[] idColumnNames = spreadSheetInfo.getIdColumnNames();
 		String username = spreadSheetInfo.getUserName();
 		String password = spreadSheetInfo.getPassWord();
 		String spreadsheetName = spreadSheetInfo.getGoogleSpreadSheetName();
@@ -131,18 +131,18 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 		if(sourceSchema == null){
 			return googleSpreadSheetRDFSyncAdapterFactory
 			.createSyncAdapter(username, password, spreadsheetName,
-					cotentSheetName, idColumnName, lastUpdateColumnName, identityProvider, sourceAlias);
+					cotentSheetName, idColumnNames, lastUpdateColumnName, identityProvider, sourceAlias);
 		}else{
 			return this.googleSpreadSheetRDFSyncAdapterFactory.createSyncAdapter(
 				username, password, spreadsheetName, cotentSheetName,
-				idColumnName, lastUpdateColumnName, identityProvider, sourceSchema, sourceAlias);
+				idColumnNames, lastUpdateColumnName, identityProvider, sourceSchema, sourceAlias);
 		}
 	}	
 
 	@Override
 	public SplitAdapter createRdfBasedGoogleSpreadSheetAdapter(GoogleSpreadSheetInfo spreadSheetInfo,
 			IGoogleSpreadSheet gss, IRDFSchema sourceSchema) {
-		String idColumnName = spreadSheetInfo.getIdColumnName();
+		String[] idColumnNames = spreadSheetInfo.getIdColumnNames();
 		String sourceAlias = spreadSheetInfo.getType();
 		String cotentSheetName = spreadSheetInfo.getSheetName();
 		String lastUpdateColumnName = null;
@@ -151,10 +151,10 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 		
 		if(sourceSchema == null){
 			return googleSpreadSheetRDFSyncAdapterFactory.createSyncAdapter(gss,
-					cotentSheetName, idColumnName, lastUpdateColumnName, identityProvider, sourceAlias);
+					cotentSheetName, idColumnNames, lastUpdateColumnName, identityProvider, sourceAlias);
 		}else{
 			return this.googleSpreadSheetRDFSyncAdapterFactory.createSyncAdapter(gss, cotentSheetName,
-				idColumnName, lastUpdateColumnName, identityProvider, sourceSchema, sourceAlias);
+				idColumnNames, lastUpdateColumnName, identityProvider, sourceSchema, sourceAlias);
 		}
 	}	
 	
