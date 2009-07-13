@@ -19,7 +19,7 @@ public class GSSheetModel extends AbstractModel
 	private GoogleSpreadsheet gSpreadsheet;
 
 	// TODO (NBL) Think how we can eliminate these items from gui
-	private String uniqueColumnName = null;
+	private String[] uniqueColumnNames = null;
 
 
 	// BUSINESS METHODS
@@ -67,13 +67,13 @@ public class GSSheetModel extends AbstractModel
 		return worksheetName;
 	}
 
-	public void setUniqueColumnName(String uniqueColumnName) {
-		firePropertyChange(GSSheetUIController.UNIQUE_COLUMN_NAME_PROPERTY, this.uniqueColumnName,
-				this.uniqueColumnName = uniqueColumnName);
+	public void setUniqueColumnNames(String[] uniqueColumnNames) {
+		firePropertyChange(GSSheetUIController.UNIQUE_COLUMN_NAME_PROPERTY, this.uniqueColumnNames,
+				this.uniqueColumnNames = uniqueColumnNames);
 	}
 
-	public String getUniqueColumnName() {
-		return uniqueColumnName;
+	public String[] getUniqueColumnNames() {
+		return uniqueColumnNames;
 	}
 
 	public GoogleSpreadsheet getGSpreadsheet() {
