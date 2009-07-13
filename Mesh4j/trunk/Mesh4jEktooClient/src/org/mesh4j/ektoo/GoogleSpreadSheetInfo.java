@@ -5,7 +5,8 @@ import org.mesh4j.sync.validations.Guard;
 public class GoogleSpreadSheetInfo {
 
 	// MODEL VARIABLES
-	private String idColumnName = "";
+//	private String idColumnName = "";
+	private String[] idColumnNames = {""};
 	private String userName = "";
 	private String passWord = "";
 	//private String googleSpreadSheetId = "";
@@ -17,18 +18,21 @@ public class GoogleSpreadSheetInfo {
 	// BUSINESS METHODS
 
 	public GoogleSpreadSheetInfo(String googleSpreadSheetName, String userName,
-			String passWord, String idColumnName,String sheetName, String type) {
+			String passWord, String[] idColumnNames, String sheetName, String type) {
 
 		Guard.argumentNotNullOrEmptyString(googleSpreadSheetName,"googleSpreadSheetName");
 		Guard.argumentNotNullOrEmptyString(userName, "userName");
 		Guard.argumentNotNullOrEmptyString(passWord, "passWord");		
-		Guard.argumentNotNullOrEmptyString(idColumnName, "idColumnName");
+		//Guard.argumentNotNullOrEmptyString(idColumnName, "idColumnName");
+		if(idColumnNames.length == 0){
+			Guard.throwsArgumentException("idColumnNames");
+		}
 		Guard.argumentNotNullOrEmptyString(sheetName, "sheetName");
 		Guard.argumentNotNullOrEmptyString(type, "type");
 
 		//this.googleSpreadSheetId = googleSpreadSheetId;
 		this.googleSpreadSheetName = googleSpreadSheetName;
-		this.idColumnName = idColumnName;
+		this.idColumnNames = idColumnNames;
 		this.passWord = passWord;
 		this.sheetName = sheetName;
 		this.type = type;
@@ -43,8 +47,8 @@ public class GoogleSpreadSheetInfo {
 		return sheetName;
 	}
 
-	public String getIdColumnName() {
-		return idColumnName;
+	public String[] getIdColumnNames() {
+		return idColumnNames;
 	}
 
 	public String getUserName() {
