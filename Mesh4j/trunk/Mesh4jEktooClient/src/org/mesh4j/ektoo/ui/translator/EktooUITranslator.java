@@ -571,4 +571,8 @@ public class EktooUITranslator {
 		return EktooMessageTranslator.translate("EKTOO_ERROR_INVALID_DATA_SET");
 	}
 
+	public static String getSyncProcessTitle() {
+		return EktooMessageTranslator.translate("EKTOO_SYNC_PROCESS_TITLE");
+	}
+
 }

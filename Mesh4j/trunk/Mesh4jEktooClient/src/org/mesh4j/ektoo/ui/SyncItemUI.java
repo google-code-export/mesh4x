@@ -496,5 +496,14 @@ public class SyncItemUI extends JPanel implements IUIController {
 	public String getUiType() {
 		return uiType;
 	}
+
+	public boolean isCloudUI() {
+		String type = (String) getDataSourceType().getSelectedItem();
+		return type.equals(CLOUD_PANEL);
+	}
 	
+	public boolean isMsAccessUI() {
+		String type = (String) getDataSourceType().getSelectedItem();
+		return type.equals(MS_ACCESS_PANEL);
+	}
 }

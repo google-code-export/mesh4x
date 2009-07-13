@@ -7,7 +7,9 @@ import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.adapters.googlespreadsheet.IGoogleSpreadSheet;
 import org.mesh4j.sync.adapters.http.HttpSyncAdapter;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
+import org.mesh4j.sync.id.generator.IIdGenerator;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
+import org.mesh4j.sync.security.IIdentityProvider;
 /**
  * The builder interface for creating adapter with the
  * minimum requirements
@@ -175,5 +177,13 @@ public interface ISyncAdapterBuilder {
 	public ISyncAdapter createMsExcelAdapterForMultiSheets(String contentFileName, List<IRDFSchema> sheets);
 
 	public ISyncAdapter createZipFeedAdapter(String zipFileName);
+
+	IIdentityProvider getIdentityProvider();
+
+	IIdGenerator getIdGenerator();
+
+	String getBaseDirectory();
+
+	String getBaseRDFUrl();
 
 }

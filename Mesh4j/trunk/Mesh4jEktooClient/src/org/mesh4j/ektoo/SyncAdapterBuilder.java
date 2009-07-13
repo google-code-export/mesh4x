@@ -335,18 +335,22 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 		return file;
 	}
 
-	private IIdentityProvider getIdentityProvider() {
+	@Override
+	public IIdentityProvider getIdentityProvider() {
 		return this.propertiesProvider.getIdentityProvider();
 	}
 
-	private IIdGenerator getIdGenerator() {
+	@Override
+	public IIdGenerator getIdGenerator() {
 		return IdGenerator.INSTANCE;
 	}
 
-	private String getBaseDirectory() {
+	@Override
+	public String getBaseDirectory() {
 		return this.propertiesProvider.getBaseDirectory();
 	}
 
+	@Override
 	public String getBaseRDFUrl() {
 		return this.propertiesProvider.getMeshSyncServerURL();
 	}	

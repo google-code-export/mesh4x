@@ -45,8 +45,8 @@ import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 
 import com.toedter.calendar.JDateChooser;
 
-public class EktooFrame extends JFrame implements IErrorListener,
-		ISynchronizeTaskListener {
+public class EktooFrame extends JFrame implements IErrorListener, ISynchronizeTaskListener {
+	
 	//CONSTANTS
 	private static final long serialVersionUID = -8703829301086394863L;
 	
@@ -57,6 +57,8 @@ public class EktooFrame extends JFrame implements IErrorListener,
 	public static String DATE_FILTER_SYNC_CUSTOM_DATE = "Sync for a Date";
 	
 	// MODEL VARIABLES
+	public SyncProcessUI syncProcessUI;
+	
 	private Date syncSince = null;
 	
 	private SyncItemUI sourceItem = null;
@@ -111,6 +113,7 @@ public class EktooFrame extends JFrame implements IErrorListener,
 		this.setTitle(EktooUITranslator.getTitle());
 		this.filterCombobox();
 		this.setResizable(false);
+		this.syncProcessUI = new SyncProcessUI();
 	}
 
 	public Date getSyncSince() {
@@ -416,9 +419,9 @@ public class EktooFrame extends JFrame implements IErrorListener,
 					
 					if(getSourceItem().verify() && getTargetItem().verify()){
 						setStatusbarText("", Statusbar.NORMAL_STATUS);
-						SwingWorker<String, Void> task = new SynchronizeTask(
-								EktooFrame.this, EktooFrame.this);
-						task.execute();	
+						
+						SwingWorker<String, Void> task = new SynchronizeTask(EktooFrame.this, EktooFrame.this);
+						task.execute();
 					}
 				}
 			});
@@ -861,5 +864,10 @@ public class EktooFrame extends JFrame implements IErrorListener,
 		dialog.add(component);
 		dialog.setSize(getWidth() , getHeight()/2);
 		dialog.setVisible(true);
+	}
+	
+	protected void close() {
+		this.syncProcessUI.setVisible(false);
+		this.syncProcessUI.dispose();
 	}
 }

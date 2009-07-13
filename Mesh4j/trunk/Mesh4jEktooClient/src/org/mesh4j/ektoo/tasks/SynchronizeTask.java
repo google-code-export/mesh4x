@@ -27,8 +27,7 @@ public class SynchronizeTask extends SwingWorker<String, Void> {
 	private ISynchronizeTaskListener synchronizeTaskListener = null;
 
 	// BUSINESS METHODS
-	public SynchronizeTask(EktooFrame ui,
-			ISynchronizeTaskListener synchronizeTaskListener) {
+	public SynchronizeTask(EktooFrame ui, ISynchronizeTaskListener synchronizeTaskListener) {
 		super();
 		this.ui = ui;
 		this.synchronizeTaskListener = synchronizeTaskListener;
@@ -45,7 +44,7 @@ public class SynchronizeTask extends SwingWorker<String, Void> {
 		try {
 			SyncItemUI sourceItem = ui.getSourceItem();
 			SyncItemUI targetItem = ui.getTargetItem();
-			result = ui.getController().sync(sourceItem, targetItem, ui.getSyncSince());
+			result = ui.getController().sync(ui, sourceItem, targetItem, ui.getSyncSince());
 
 			return result;
 		} catch (Throwable t) {
