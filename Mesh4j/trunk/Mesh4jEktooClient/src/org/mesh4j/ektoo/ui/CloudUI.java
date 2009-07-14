@@ -282,6 +282,11 @@ public class CloudUI extends AbstractUI {
 			uiFieldListForValidation = null;
 		}
 		boolean valid = (new CloudUIValidator(CloudUI.this, controller.getModel(), uiFieldListForValidation)).verify();
+		if(valid){
+			getController().changeSyncServerUri(txtServerURL.getText());
+			getController().changeMeshName(txtMesh.getText());
+			getController().changeDatasetName(txtDataset.getText());
+		}
 		return valid;
 	}
 

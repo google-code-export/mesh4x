@@ -155,8 +155,7 @@ public class KmlUI extends AbstractUI {
 
     @Override
 	public boolean verify() {
-		boolean valid = (new KmlUIValidator(this,
-				controller.getModel(), null)).verify();
+		boolean valid = (new KmlUIValidator(this, controller.getModel(), null)).verify();
 		return valid;
 	}
 	

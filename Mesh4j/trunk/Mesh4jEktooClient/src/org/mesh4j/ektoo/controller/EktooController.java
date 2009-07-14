@@ -51,6 +51,7 @@ public class EktooController {
 			}
 			
 			CloudModel cloudModel = (CloudModel)target.getCurrentController().getModel();
+			String meshGroup = cloudModel.getMeshName();
 			
 			if(source.isMsAccessUI()){
 				MsAccessModel msAccessModel = (MsAccessModel)source.getCurrentController().getModel();
@@ -59,7 +60,7 @@ public class EktooController {
 					msAccessModel.getDatabaseName(), 
 					new TreeSet<String>(Arrays.asList(msAccessModel.getTableNames())), 
 					cloudModel.getBaseUri(), 
-					cloudModel.getMeshName(), 
+					meshGroup, 
 					adapterBuilder.getIdentityProvider(), 
 					adapterBuilder.getBaseDirectory());
 			} else {
@@ -73,7 +74,7 @@ public class EktooController {
 					mySqlModel.getDatabaseName(),
 					new TreeSet<String>(Arrays.asList(mySqlModel.getTableNames())), 
 					cloudModel.getBaseUri(), 
-					cloudModel.getMeshName(), 
+					meshGroup, 
 					adapterBuilder.getIdentityProvider(), 
 					adapterBuilder.getBaseDirectory());
 			}

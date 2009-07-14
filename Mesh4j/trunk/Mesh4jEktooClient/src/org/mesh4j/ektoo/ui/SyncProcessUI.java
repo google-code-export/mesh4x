@@ -1,5 +1,6 @@
 package org.mesh4j.ektoo.ui;
 
+import java.awt.Dimension;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -7,7 +8,7 @@ import java.util.Set;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 
 import org.mesh4j.ektoo.ui.image.ImageManager;
@@ -17,12 +18,6 @@ import org.mesh4j.sync.adapters.multimode.SyncProcess;
 import org.mesh4j.sync.adapters.multimode.SyncStatus;
 import org.mesh4j.sync.adapters.multimode.SyncTask;
 import org.mesh4j.sync.security.IIdentityProvider;
-
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
 
 public class SyncProcessUI extends JFrame implements ISyncProcessListener{
 
@@ -91,32 +86,23 @@ public class SyncProcessUI extends JFrame implements ISyncProcessListener{
 
 	public SyncProcessUI() {
 		super();
+		setMinimumSize(new Dimension(300, 500));
+		setSize(new Dimension(300, 500));
 		this.setIconImage(ImageManager.getLogoSmall());
 		this.setTitle(EktooUITranslator.getSyncProcessTitle());
-		setResizable(false);
+		setResizable(true);
 		
-		setBounds(100, 100, 404, 477);
-		getContentPane().setLayout(new FormLayout(
-			new ColumnSpec[] {
-				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("191dlu"),
-				FormFactory.RELATED_GAP_COLSPEC},
-			new RowSpec[] {
-				RowSpec.decode("273dlu"),
-				FormFactory.RELATED_GAP_ROWSPEC}));
+		setBounds(100, 100, 561, 477);
 
-		final JPanel panel = new JPanel();
-		//panel.setBorder(new BevelBorder(BevelBorder.LOWERED));
-		panel.setLayout(new FormLayout(
-			"191dlu",
-			"265dlu"));
-		getContentPane().add(panel, new CellConstraints(2, 1, CellConstraints.FILL, CellConstraints.TOP));
-		
 		labelStatus = new JLabel();
+		labelStatus.setVerticalTextPosition(SwingConstants.TOP);
+		labelStatus.setVerticalAlignment(SwingConstants.TOP);
 		labelStatus.setHorizontalAlignment(SwingConstants.LEFT);
 		labelStatus.setAutoscrolls(true);
-		panel.add(labelStatus, new CellConstraints(1, 1, CellConstraints.LEFT, CellConstraints.TOP));
-
+		
+		final JScrollPane scrollPane = new JScrollPane(labelStatus);
+		getContentPane().add(scrollPane);
+		
 	}
 
 	// TODO (RAJU) add resource bundles
@@ -138,7 +124,7 @@ public class SyncProcessUI extends JFrame implements ISyncProcessListener{
 
 	@Override
 	public void notifyCreatingCloudSyncAdapter(String dataSource, String url) {
-		this.dataSources.put(dataSource, "<font color=blue>creating Http sync adapter</font>");
+		this.dataSources.put(dataSource, "<font color=blue>creating Http sync adapter</font><br>&nbsp;&nbsp;<font color=blue size=-2>Url: "+ url + "</font>");
 		this.showDataSources();
 	}
 
@@ -161,8 +147,8 @@ public class SyncProcessUI extends JFrame implements ISyncProcessListener{
 	}
 
 	@Override
-	public void notifyErrorCreatingHttpAdapter(String dataSource) {
-		this.dataSources.put(dataSource, "<font color=red>error creating Http sync adapter</font>");
+	public void notifyErrorCreatingHttpAdapter(String dataSource, String url) {
+		this.dataSources.put(dataSource, "<font color=red>error creating Http sync adapter</font><br>&nbsp;&nbsp;<font color=red size=-2>Url: "+ url +"</font>");
 		this.showDataSources();
 		
 	}
