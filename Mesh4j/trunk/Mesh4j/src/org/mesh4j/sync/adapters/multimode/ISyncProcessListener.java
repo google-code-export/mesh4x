@@ -14,7 +14,7 @@ public interface ISyncProcessListener {
 
 	void notifyErrorReadingMsAccessTables();
 
-	void notifyErrorCreatingHttpAdapter(String dataSource);
+	void notifyErrorCreatingHttpAdapter(String dataSource, String url);
 
 	void notifyErrorCreatingMsAccessAdapter(String dataSource);
 

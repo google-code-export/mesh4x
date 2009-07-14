@@ -107,14 +107,15 @@ public class SyncProcess {
 				String dataSet = hibernateContentAdapter.getType();
 				ISchema schema = hibernateContentAdapter.getSchema();
 	
-				syncProcess.notifyCreatingCloudSyncAdapter(tableName, serverURL, meshGroup, dataSet);
+				String url = serverURL+"/"+meshGroup+"/"+dataSet;
+				syncProcess.notifyCreatingCloudSyncAdapter(tableName, url);
 				
 				HttpSyncAdapter source =null;
 				try{
 					source = HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverURL, meshGroup, dataSet, identityProvider, schema);
 				}catch (Throwable e) {
 					LOGGER.error(e.getMessage(), e);
-					syncProcess.notifyErrorCreatingHttpAdapter(tableName);
+					syncProcess.notifyErrorCreatingHttpAdapter(tableName, url);
 					target.endSync();
 				}
 				
@@ -166,14 +167,15 @@ public class SyncProcess {
 				String dataSet = hibernateContentAdapter.getType();
 				ISchema schema = hibernateContentAdapter.getSchema();
 	
-				syncProcess.notifyCreatingCloudSyncAdapter(tableName, serverURL, meshGroup, dataSet);
-				
+				String url = serverURL+"/"+meshGroup+"/"+dataSet;
+				syncProcess.notifyCreatingCloudSyncAdapter(tableName, url);
+
 				HttpSyncAdapter source =null;
 				try{
 					source = HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverURL, meshGroup, dataSet, identityProvider, schema);
 				}catch (Throwable e) {
 					LOGGER.error(e.getMessage(), e);
-					syncProcess.notifyErrorCreatingHttpAdapter(tableName);
+					syncProcess.notifyErrorCreatingHttpAdapter(tableName, url);
 					target.endSync();
 				}
 				
@@ -189,11 +191,11 @@ public class SyncProcess {
 		return syncProcess;
 	}
 
-	private void notifyErrorCreatingHttpAdapter(String tableName) {
+	private void notifyErrorCreatingHttpAdapter(String tableName, String url) {
 		this.status = SyncStatus.Error;
 		if(this.syncProcessListeners != null){
 			for (ISyncProcessListener syncProcessListener : this.syncProcessListeners) {
-				syncProcessListener.notifyErrorCreatingHttpAdapter(tableName);
+				syncProcessListener.notifyErrorCreatingHttpAdapter(tableName, url);
 			}
 		}
 	}
@@ -225,10 +227,10 @@ public class SyncProcess {
 		}
 	}
 
-	private void notifyCreatingCloudSyncAdapter(String tableName, String serverURL, String meshGroup, String dataSet) {
+	private void notifyCreatingCloudSyncAdapter(String tableName, String url) {
 		if(this.syncProcessListeners != null){
 			for (ISyncProcessListener syncProcessListener : this.syncProcessListeners) {
-				syncProcessListener.notifyCreatingCloudSyncAdapter(tableName, serverURL+"/"+meshGroup+"/"+dataSet);
+				syncProcessListener.notifyCreatingCloudSyncAdapter(tableName, url);
 			}
 		}		
 	}
