@@ -11,6 +11,7 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.mesh4j.sync.ISyncAware;
 import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.model.Item;
 
@@ -43,6 +44,13 @@ public class TestHelper {
 	
 		Assert.assertNotNull(conflicts);
 		Assert.assertTrue(conflicts.isEmpty());
+		
+		if(syncEngine.getSource() instanceof ISyncAware){
+			((ISyncAware) syncEngine.getSource()).beginSync();
+		}
+		if( syncEngine.getTarget() instanceof ISyncAware){
+			((ISyncAware)  syncEngine.getTarget()).beginSync();
+		}
 		
 		List<Item> sourceItems = syncEngine.getSource().getAll();
 		List<Item> targetItems = syncEngine.getTarget().getAll();
