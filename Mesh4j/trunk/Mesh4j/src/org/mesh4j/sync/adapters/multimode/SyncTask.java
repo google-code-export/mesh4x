@@ -21,6 +21,7 @@ public class SyncTask {
 	private SyncStatus status = SyncStatus.ReadyToSync;
 	private List<Item> conflicts = new ArrayList<Item>(); 
 	private Throwable error;
+	private SyncTaskSummary syncSummary;
 	
 	// BUSINESS METHODS
 	protected SyncTask(String dataSource, SyncEngine syncEngine){
@@ -51,10 +52,11 @@ public class SyncTask {
 		return this.conflicts;
 	}
 
-	protected void synchronize(Date sinceDate, ISyncProcessListener... syncProcessListeners){
+	protected void synchronize(Date sinceDate, List<ISyncProcessListener> syncProcessListeners){
 		this.status = SyncStatus.Synchronizing;
-		this.notifyStatus(syncProcessListeners);
+		this.syncSummary = new SyncTaskSummary(this, syncProcessListeners);
 		try{
+			this.syncEngine.registerSyncTraceObserver(this.syncSummary);
 			this.conflicts = this.syncEngine.synchronize(sinceDate);
 			if(this.conflicts.isEmpty()){
 				this.status = SyncStatus.Successfully;
@@ -65,11 +67,13 @@ public class SyncTask {
 			this.status = SyncStatus.Error;
 			this.error = e;
 			LOGGER.error(e.getMessage(), e);
+		}finally{
+			this.syncEngine.removeSyncTraceObserver(this.syncSummary);
 		}
 		this.notifyStatus(syncProcessListeners);
 	}
 	
-	protected void notifyStatus(ISyncProcessListener[] syncProcessListeners) {
+	protected void notifyStatus(List<ISyncProcessListener> syncProcessListeners) {
 		if(syncProcessListeners != null){
 			for (ISyncProcessListener syncProcessListener : syncProcessListeners) {
 				syncProcessListener.syncProcessChangeStatusNotification(this);
@@ -99,6 +103,10 @@ public class SyncTask {
 
 	public boolean isReadyToSync() {
 		return this.status.isReadyToSync();
+	}
+
+	public SyncTaskSummary getSummary() {
+		return this.syncSummary;
 	}
 	
 }

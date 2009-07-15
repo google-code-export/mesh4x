@@ -1,6 +1,7 @@
 package org.mesh4j.sync.adapters.multimode;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -23,7 +24,7 @@ public class SyncProcess {
 	private final static Log LOGGER = LogFactory.getLog(SyncTask.class);
 
 	// MODEL VARIABLES
-	private ISyncProcessListener[] syncProcessListeners;
+	private List<ISyncProcessListener> syncProcessListeners = new ArrayList<ISyncProcessListener>();
 	private List<SyncTask> syncTasks = new ArrayList<SyncTask>();
 	private SyncStatus status = SyncStatus.ReadyToSync;
 	
@@ -69,7 +70,9 @@ public class SyncProcess {
 	// Factory methods
 	public static SyncProcess makeSyncProcessForSyncMsAccessVsHttp(String fileName, String serverURL, String meshGroup, IIdentityProvider identityProvider, String baseDirectory, ISyncProcessListener... syncProcessListeners) {
 		SyncProcess syncProcess = new SyncProcess();
-		syncProcess.syncProcessListeners = syncProcessListeners;
+		if(syncProcessListeners != null){
+			syncProcess.syncProcessListeners.addAll(Arrays.asList(syncProcessListeners));
+		}
 
 		Set<String> tables = null;
 		try{
@@ -84,7 +87,10 @@ public class SyncProcess {
 	
 	public static SyncProcess makeSyncProcessForSyncMsAccessVsHttp(String fileName, Set<String> tables, String serverURL, String meshGroup, IIdentityProvider identityProvider, String baseDirectory, ISyncProcessListener... syncProcessListeners) {
 		SyncProcess syncProcess = new SyncProcess();
-		syncProcess.syncProcessListeners = syncProcessListeners;
+		if(syncProcessListeners != null){
+			syncProcess.syncProcessListeners.addAll(Arrays.asList(syncProcessListeners));
+		}
+		
 		return makeSyncProcessForSyncMsAccessVsHttp(syncProcess, fileName, tables, serverURL, meshGroup, identityProvider, baseDirectory, syncProcessListeners);
 	}
 	
@@ -94,32 +100,32 @@ public class SyncProcess {
 		for (String tableName : tables) {
 			syncProcess.notifyCreatingMsAccessSyncAdapter(tableName);
 			
-			SplitAdapter target = null;
+			SplitAdapter source = null;
 			try{
-				target = MsAccessHibernateSyncAdapterFactory.createHibernateAdapter(fileName, tableName, serverURL, baseDirectory, identityProvider);
+				source = MsAccessHibernateSyncAdapterFactory.createHibernateAdapter(fileName, tableName, serverURL, baseDirectory, identityProvider);
 			}catch (Throwable e) {
 				LOGGER.error(e.getMessage(), e);
 				syncProcess.notifyErrorCreatingMsAccessAdapter(tableName);
 			}
 			
-			if(target != null){
-				HibernateContentAdapter hibernateContentAdapter = (HibernateContentAdapter)target.getContentAdapter();
+			if(source != null){
+				HibernateContentAdapter hibernateContentAdapter = (HibernateContentAdapter)source.getContentAdapter();
 				String dataSet = hibernateContentAdapter.getType();
 				ISchema schema = hibernateContentAdapter.getSchema();
 	
 				String url = serverURL+"/"+meshGroup+"/"+dataSet;
 				syncProcess.notifyCreatingCloudSyncAdapter(tableName, url);
 				
-				HttpSyncAdapter source =null;
+				HttpSyncAdapter target =null;
 				try{
-					source = HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverURL, meshGroup, dataSet, identityProvider, schema);
+					target = HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverURL, meshGroup, dataSet, identityProvider, schema);
 				}catch (Throwable e) {
 					LOGGER.error(e.getMessage(), e);
 					syncProcess.notifyErrorCreatingHttpAdapter(tableName, url);
-					target.endSync();
+					source.endSync();
 				}
 				
-				if(source != null){
+				if(target != null){
 					SyncEngine syncEngine = new SyncEngine(source, target);
 					SyncTask task = new SyncTask(tableName, syncEngine);
 					syncProcess.syncTasks.add(task);
@@ -133,7 +139,9 @@ public class SyncProcess {
 	
 	public static SyncProcess makeSyncProcessForSyncMySqlVsHttp(String user, String password, String hostName, int portNo, String databaseName, Set<String> tables, String serverURL, String meshGroup, IIdentityProvider identityProvider, String baseDirectory, ISyncProcessListener... syncProcessListeners) {
 		SyncProcess syncProcess = new SyncProcess();
-		syncProcess.syncProcessListeners = syncProcessListeners;
+		if(syncProcessListeners != null){
+			syncProcess.syncProcessListeners.addAll(Arrays.asList(syncProcessListeners));
+		}
 		return makeSyncProcessForSyncMySqlVsHttp(syncProcess, user, password, hostName, portNo, databaseName, tables, serverURL, meshGroup, identityProvider, baseDirectory, syncProcessListeners);
 	}
 	
@@ -143,10 +151,10 @@ public class SyncProcess {
 		for (String tableName : tables) {
 			syncProcess.notifyCreatingMySqlSyncAdapter(tableName);
 			
-			SplitAdapter target = null;
+			SplitAdapter source = null;
 			try{
 				String connectionURL = "jdbc:mysql://" + hostName + ":" + portNo + "/" + databaseName;
-				target = HibernateSyncAdapterFactory.createHibernateAdapter(
+				source = HibernateSyncAdapterFactory.createHibernateAdapter(
 					connectionURL, 
 					user, 
 					password, 
@@ -162,24 +170,24 @@ public class SyncProcess {
 				syncProcess.notifyErrorCreatingMySqlAdapter(tableName);
 			}
 			
-			if(target != null){
-				HibernateContentAdapter hibernateContentAdapter = (HibernateContentAdapter)target.getContentAdapter();
+			if(source != null){
+				HibernateContentAdapter hibernateContentAdapter = (HibernateContentAdapter)source.getContentAdapter();
 				String dataSet = hibernateContentAdapter.getType();
 				ISchema schema = hibernateContentAdapter.getSchema();
 	
 				String url = serverURL+"/"+meshGroup+"/"+dataSet;
 				syncProcess.notifyCreatingCloudSyncAdapter(tableName, url);
 
-				HttpSyncAdapter source =null;
+				HttpSyncAdapter target =null;
 				try{
-					source = HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverURL, meshGroup, dataSet, identityProvider, schema);
+					target = HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverURL, meshGroup, dataSet, identityProvider, schema);
 				}catch (Throwable e) {
 					LOGGER.error(e.getMessage(), e);
 					syncProcess.notifyErrorCreatingHttpAdapter(tableName, url);
-					target.endSync();
+					source.endSync();
 				}
 				
-				if(source != null){
+				if(target != null){
 					SyncEngine syncEngine = new SyncEngine(source, target);
 					SyncTask task = new SyncTask(tableName, syncEngine);
 					syncProcess.syncTasks.add(task);
@@ -261,5 +269,18 @@ public class SyncProcess {
 
 	public SyncStatus getStatus() {
 		return this.status;
+	}
+
+	public void unregisterListener(ISyncProcessListener syncListener) {
+		this.syncProcessListeners.remove(syncListener);
+	}
+
+	public SyncTask getSyncTask(SyncEngine syncEngine) {
+		for (SyncTask syncTask : this.syncTasks) {
+			if(syncTask.getSyncEngine().equals(syncEngine)){
+				return syncTask;
+			}
+		}
+		return null;
 	}
 }

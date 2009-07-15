@@ -6,4 +6,5 @@ import org.mesh4j.sync.model.Item;
 public interface IObserverItem{
 
 	public void notifyItemNovelty(Item item);
+
 }

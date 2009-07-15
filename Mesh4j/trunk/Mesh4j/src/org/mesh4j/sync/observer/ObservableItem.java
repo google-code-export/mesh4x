@@ -4,7 +4,6 @@ import java.util.Vector;
 
 import org.mesh4j.sync.model.Item;
 
-
 public class ObservableItem {
 	
 	private Vector<IObserverItem> observers = new Vector<IObserverItem>();

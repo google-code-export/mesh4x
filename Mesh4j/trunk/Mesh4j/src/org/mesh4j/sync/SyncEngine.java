@@ -8,7 +8,9 @@ import org.mesh4j.sync.merge.MergeBehavior;
 import org.mesh4j.sync.merge.MergeResult;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.observer.IObserverItem;
+import org.mesh4j.sync.observer.IObserverSyncProcess;
 import org.mesh4j.sync.observer.ObservableItem;
+import org.mesh4j.sync.observer.ObservableSyncProcess;
 import org.mesh4j.sync.validations.Guard;
 
 
@@ -22,6 +24,7 @@ public class SyncEngine {
 	// MODEL VARIABLES
 	private ObservableItem itemReceived = new ObservableItem();
 	private ObservableItem itemSent = new ObservableItem();
+	private ObservableSyncProcess syncTrace = new ObservableSyncProcess();
 
 	private ISyncAdapter source;
 	private ISyncAdapter target;
@@ -104,12 +107,15 @@ public class SyncEngine {
 
 		this.beginSync();
 		List<Item> result = null;
+		
+		this.syncTrace.notifyGetAll(this, source, since);
 		//collect all the eligible source items for sync operation
 		List<Item> sourceItems = (since == null) ? source.getAll() : source.getAllSince(since);
 		//prepare list of outgoing items and notify the related observer if any
 		List<Item> outgoingItems = this.enumerateItemsProgress(sourceItems, this.itemSent);
-
+				
 		if (target instanceof ISupportMerge) {
+			this.syncTrace.notifyMerge(this, target, outgoingItems);
 			ISupportMerge targetMerge = (ISupportMerge) target;
 			targetMerge.merge(outgoingItems);
 		} else {
@@ -122,15 +128,17 @@ public class SyncEngine {
 			this.importItems(outgoingToMerge, target);
 		}
 
+		this.syncTrace.notifyGetAll(this, target, since);
 		//collect all the eligible target items for sync operation
 		List<Item> targetItmes = (since == null) ? target.getAll() : target.getAllSince(since);
 		//prepare list of incoming items and notify the related observer if any
 		List<Item> incomingItems = this.enumerateItemsProgress(targetItmes, this.itemReceived);
-
+				
 		if (source instanceof ISupportMerge) {
+			this.syncTrace.notifyMerge(this, source, incomingItems);
 			// If repository supports its own SSE merge behavior, don't apply it locally.
 			ISupportMerge sourceMerge = (ISupportMerge) source;
-			result = sourceMerge.merge(incomingItems);				
+			result = sourceMerge.merge(incomingItems);
 		} else {
 			//prepare merge result for the incoming items (w.r.t source repository) that includes new/updated/conflicted items
 			List<MergeResult> incomingToMerge = this.mergeItems(incomingItems, source);
@@ -141,16 +149,15 @@ public class SyncEngine {
 			//update the source repository with incomingToMerge result
 			result = this.importItems(incomingToMerge, source);
 		}
-		this.endSync();	
-			
+		
+		this.endSync(result);				
 		return result;
 	}
 
-	private List<MergeResult> mergeItems(List<Item> items,
-			ISyncAdapter repository) {
-
+	private List<MergeResult> mergeItems(List<Item> items, ISyncAdapter repository) {
 		ArrayList<MergeResult> mergeResult = new ArrayList<MergeResult>();
 		for (Item incoming : items) {
+			this.syncTrace.notifyGetAndMergeItem(this, repository, incoming, items);
 			Item original = repository.get(incoming.getSyncId());
 			MergeResult result = MergeBehavior.merge(original, incoming);
 
@@ -161,8 +168,7 @@ public class SyncEngine {
 		return mergeResult;
 	}
 
-	private List<Item> importItems(List<MergeResult> items,
-			ISyncAdapter repository) {
+	private List<Item> importItems(List<MergeResult> items, ISyncAdapter repository) {
 		// Straight import of data in merged results.
 		// Conflicting items are saved and also
 		// are returned for conflict resolution by the user or
@@ -185,9 +191,11 @@ public class SyncEngine {
 					|| result.getOperation().isRemoved()) {
 				throw new UnsupportedOperationException();
 			} else if (result.getOperation().isAdded()) {
+				this.syncTrace.notifyAddItem(this, repository, result, items);
 				repository.add(result.getProposed());
 			} else if (result.getOperation().isUpdated()
 					|| result.getOperation().isConflict()) {
+				this.syncTrace.notifyUpdateItem(this, repository, result, items);
 				repository.update(result.getProposed());
 			}
 		}
@@ -229,7 +237,21 @@ public class SyncEngine {
 		}
 	}
 	
+	public void registerSyncTraceObserver(IObserverSyncProcess ... observers) {
+		for (IObserverSyncProcess observer : observers) {
+			this.syncTrace.addObserver(observer);
+		}
+	}
+
+	public void removeSyncTraceObserver(IObserverSyncProcess ... observers) {
+		for (IObserverSyncProcess observer : observers) {
+			this.syncTrace.removeObserver(observer);
+		}
+	}
+	
 	private void beginSync(){
+		this.syncTrace.notifyBeginSync(this);
+		
 		if(this.source instanceof ISyncAware){
 			((ISyncAware)this.source).beginSync();
 		}
@@ -239,7 +261,9 @@ public class SyncEngine {
 		}
 	}
 
-	private void endSync(){
+	private void endSync(List<Item> conflicts){
+		this.syncTrace.notifyEndSync(this, conflicts);
+		
 		if(this.source instanceof ISyncAware){
 			((ISyncAware)this.source).endSync();
 		}
@@ -255,5 +279,9 @@ public class SyncEngine {
 
 	public ISyncAdapter getTarget(){
 		return this.target;
+	}
+
+	public boolean isSource(ISyncAdapter adapter) {
+		return this.source == adapter;
 	}
 }
