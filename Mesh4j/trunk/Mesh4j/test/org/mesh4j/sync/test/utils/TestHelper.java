@@ -18,6 +18,7 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.mesh4j.sync.ISupportMerge;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.ISyncAware;
 import org.mesh4j.sync.SyncEngine;
@@ -250,9 +251,14 @@ public class TestHelper {
 		List<Item> targetItems = target.getAll();
 		Assert.assertEquals(sourceItems.size(), targetItems.size());
 		
-		ISyncAdapter targetAdapter = syncEngine.getTarget();
-		for (Item sourceItem : sourceItems) {
-			assertItem(sourceItem, targetAdapter);
+		if(target instanceof ISupportMerge){
+			for (Item targetItem : targetItems) {
+				assertItem(targetItem, source);
+			}
+		} else {
+			for (Item sourceItem : sourceItems) {
+				assertItem(sourceItem, target);
+			}
 		}
 
 		if(source instanceof ISyncAware){
