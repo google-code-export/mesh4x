@@ -92,16 +92,9 @@ public class GoogleSpreadSheetRDFSyncAdapterFactory {
 					}catch (Exception e) {
 						throw new MeshException(e);
 					}
-				}
+				}else
+					spreadSheet = new GoogleSpreadsheet(spreadsheetName, username, password);
 				
-				//load the new spreadsheet
-				//IGoogleSpreadSheet spreadSheet = new GoogleSpreadsheet(spreadsheetName,	username, password);
-				
-				//TODO:need to review whether keep it or let it handle by the Guard in adapter constructor
-				if(spreadSheet.getGSSpreadsheet() == null ) return null;
-				
-//				GoogleSpreadSheetSyncRepository syncRepo = createSyncRepository(
-//						spreadSheet, cotentSheetName + GoogleSpreadSheetSyncAdapterFactory.DEFAULT_SYNCSHEET_POSTFIX, identityProvider);
 				GoogleSpreadSheetSyncRepository syncRepo = new GoogleSpreadSheetSyncRepository(
 					spreadSheet, identityProvider, IdGenerator.INSTANCE,
 					cotentSheetName + GoogleSpreadSheetSyncAdapterFactory.DEFAULT_SYNCSHEET_POSTFIX);

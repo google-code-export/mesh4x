@@ -159,4 +159,9 @@ public class GoogleSpreadSheetContentAdapter implements IContentAdapter, ISyncAw
 	public GSWorksheet<GSRow<GSCell>> getWorkSheet() {
 		return workSheet;
 	}
+
+	public IGoogleSpreadSheet getSpreadSheet() {
+		return spreadSheet;
+	}
+	
 }

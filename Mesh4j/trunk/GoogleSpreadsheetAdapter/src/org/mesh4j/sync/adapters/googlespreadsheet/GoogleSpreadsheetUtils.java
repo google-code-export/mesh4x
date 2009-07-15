@@ -1054,4 +1054,25 @@ public class GoogleSpreadsheetUtils {
 		return FeedURLFactory.getDefault();
 	}
 
+	public static void deleteSpreadsheetDoc(String spreadsheetFilename,
+			DocsService docService) {
+
+		try {
+			URL feedUri = new URL(
+					"http://docs.google.com/feeds/documents/private/full/-/spreadsheet");
+
+			DocumentListFeed feed = docService.getFeed(feedUri,
+					DocumentListFeed.class);
+
+			for (DocumentListEntry entry : feed.getEntries()) {
+				if (entry.getTitle().getPlainText().equals(spreadsheetFilename)) {
+					entry.delete();
+					break;
+				}
+			}
+		} catch (Exception e) {
+			throw new MeshException(e);
+		}
+	}
+
 }
