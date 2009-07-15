@@ -456,7 +456,7 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 					format, 
 					description, 
 					schema == null ? "" : schema.asXML(), 
-					mappings == null ? "" : mappings.asXML(),
+					mappings == null ? "" : mappings.asXMLText(),
 					by);
 			doPOST(baseURL, content, "application/x-www-form-urlencoded");
 		} catch (Exception e) {

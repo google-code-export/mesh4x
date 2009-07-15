@@ -11,5 +11,7 @@ public interface IMapping {
 	String getMapping(String mappingName);
 
 	String asXML();
+	
+	public String asXMLText();
 
 }

@@ -84,6 +84,7 @@ public class XFormRDFSchemaInstanceContentReadWriterTests {
 	private IMapping makeMapping() {
 		IMapping mapping = new IMapping(){
 			@Override public String asXML() {return null;}
+			@Override public String asXMLText() {return null;}
 			@Override public String getMapping(String mappingName) {return null;}
 			@Override public String getValue(Element element, String mappingName) {
 				if(ISyndicationFormat.MAPPING_NAME_ITEM_TITLE.equals(mappingName)){
@@ -101,6 +102,7 @@ public class XFormRDFSchemaInstanceContentReadWriterTests {
 	private IMapping makeNullMapping() {
 		IMapping mapping = new IMapping(){
 			@Override public String asXML() {return null;}
+			@Override public String asXMLText() {return null;}
 			@Override public String getMapping(String mappingName) {return null;}
 			@Override public String getValue(Element element, String mappingName) {return null;}			
 		};

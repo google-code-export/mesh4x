@@ -28,7 +28,12 @@ public class KMLExporter {
 		StringBuffer sb = new StringBuffer();
 		sb.append(MessageFormat.format("<?xml version=\"1.0\" encoding=\"UTF-8\"?><kml xmlns=\"http://earth.google.com/kml/2.2\"><Document><name>{0}</name><open>1</open>", documentName));
 		for (Item item : items) {
-			Element element = schema.asInstancePlainXML(item.getContent().getPayload(), ISchema.EMPTY_FORMATS);
+			Element element = null;
+			if(schema == null){
+				element = item.getContent().getPayload().createCopy();
+			} else {
+				element = schema.asInstancePlainXML(item.getContent().getPayload(), ISchema.EMPTY_FORMATS);
+			}
 			String xml = makePlacemark(element, mapping);
 			sb.append(xml);
 		}
