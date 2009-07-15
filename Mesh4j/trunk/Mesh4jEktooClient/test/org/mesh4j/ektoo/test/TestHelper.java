@@ -11,6 +11,7 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.mesh4j.sync.ISupportMerge;
 import org.mesh4j.sync.ISyncAware;
 import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.model.Item;
@@ -56,15 +57,29 @@ public class TestHelper {
 		List<Item> targetItems = syncEngine.getTarget().getAll();
 		Assert.assertEquals(sourceItems.size(), targetItems.size());
 		
-		for (Item sourceItem : sourceItems) {
-			Item targetItem = syncEngine.getTarget().get(sourceItem.getSyncId());
-			boolean isOk = sourceItem.equals(targetItem);
-			if(!isOk){
-				System.out.println("Source: "+ sourceItem.getContent().getPayload().asXML());
-				System.out.println("Target: "+ targetItem.getContent().getPayload().asXML());
-				Assert.assertEquals(sourceItem.getContent().getPayload().asXML(), targetItem.getContent().getPayload().asXML());	
+		if(syncEngine.getTarget() instanceof ISupportMerge){
+		
+			for (Item targetItem : targetItems) {
+				Item sourceItem = syncEngine.getSource().get(targetItem.getSyncId());
+				boolean isOk = targetItem.equals(sourceItem);
+				if(!isOk){
+					System.out.println("Source: "+ sourceItem.getContent().getPayload().asXML());
+					System.out.println("Target: "+ targetItem.getContent().getPayload().asXML());
+					Assert.assertEquals(sourceItem.getContent().getPayload().asXML(), targetItem.getContent().getPayload().asXML());	
+				}
+				Assert.assertTrue(isOk);
 			}
-			Assert.assertTrue(isOk);
+		} else {
+			for (Item sourceItem : sourceItems) {
+				Item targetItem = syncEngine.getTarget().get(sourceItem.getSyncId());
+				boolean isOk = sourceItem.equals(targetItem);
+				if(!isOk){
+					System.out.println("Source: "+ sourceItem.getContent().getPayload().asXML());
+					System.out.println("Target: "+ targetItem.getContent().getPayload().asXML());
+					Assert.assertEquals(sourceItem.getContent().getPayload().asXML(), targetItem.getContent().getPayload().asXML());	
+				}
+				Assert.assertTrue(isOk);
+			}
 		}
 	}
 

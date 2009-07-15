@@ -17,6 +17,8 @@ import org.mesh4j.sync.adapters.multimode.ISyncProcessListener;
 import org.mesh4j.sync.adapters.multimode.SyncProcess;
 import org.mesh4j.sync.adapters.multimode.SyncStatus;
 import org.mesh4j.sync.adapters.multimode.SyncTask;
+import org.mesh4j.sync.adapters.multimode.SyncTaskSummary;
+import org.mesh4j.sync.adapters.multimode.SyncTaskSummaryStatus;
 import org.mesh4j.sync.security.IIdentityProvider;
 
 public class SyncProcessUI extends JFrame implements ISyncProcessListener{
@@ -31,57 +33,36 @@ public class SyncProcessUI extends JFrame implements ISyncProcessListener{
 	// BUSINESS METHODS
 	
 	public void synchronizeMsAccessVsCloud(final Date sinceDate, final String fileName, final String serverURL, final String meshGroup, final IIdentityProvider identityProvider, final String baseDirectory) {
-//		SwingWorker<Void, Void> task = new SwingWorker<Void, Void>(){
-//
-//			@Override
-//			protected Void doInBackground() throws Exception {
-				dataSources = new HashMap<String, String>();
-				SyncProcess syncProcess = SyncProcess.makeSyncProcessForSyncMsAccessVsHttp(fileName, serverURL, meshGroup, identityProvider, baseDirectory, SyncProcessUI.this);
-				if(syncProcess.getStatus().isReadyToSync()){
-					syncProcess.synchronize(sinceDate);
-				}
-				status = syncProcess.getStatus();
-//				return null;
-//			}
-//		};
-//		
-//		task.execute();
+		dataSources = new HashMap<String, String>();
+		SyncProcess syncProcess = SyncProcess.makeSyncProcessForSyncMsAccessVsHttp(fileName, serverURL, meshGroup, identityProvider, baseDirectory, this);
+		if(syncProcess.getStatus().isReadyToSync()){
+			syncProcess.synchronize(sinceDate);
+		}
+		status = syncProcess.getStatus();
+		syncProcess.unregisterListener(this);
+		syncProcess = null;
 	}
 	
 	public void synchronizeMsAccessVsCloud(final Date sinceDate, final String fileName, final Set<String> tableNames, final String serverURL, final String meshGroup, final IIdentityProvider identityProvider, final String baseDirectory) {
-//		SwingWorker<Void, Void> task = new SwingWorker<Void, Void>(){
-//
-//			@Override
-//			protected Void doInBackground() throws Exception {
-				dataSources = new HashMap<String, String>();
-				SyncProcess syncProcess = SyncProcess.makeSyncProcessForSyncMsAccessVsHttp(fileName, tableNames, serverURL, meshGroup, identityProvider, baseDirectory, SyncProcessUI.this);
-				if(syncProcess.getStatus().isReadyToSync()){
-					syncProcess.synchronize(sinceDate);
-				}
-				status = syncProcess.getStatus();
-//				return null;
-//			}
-//		};
-//		
-//		task.execute();
+		dataSources = new HashMap<String, String>();
+		SyncProcess syncProcess = SyncProcess.makeSyncProcessForSyncMsAccessVsHttp(fileName, tableNames, serverURL, meshGroup, identityProvider, baseDirectory, SyncProcessUI.this);
+		if(syncProcess.getStatus().isReadyToSync()){
+			syncProcess.synchronize(sinceDate);
+		}
+		status = syncProcess.getStatus();
+		syncProcess.unregisterListener(this);
+		syncProcess = null;
 	}
 	
 	public void synchronizeMySqlVsCloud(final Date sinceDate, final String user, final String password, final String hostName, final int portNo, final String databaseName, final Set<String> tables, final String serverURL, final String meshGroup, final IIdentityProvider identityProvider, final String baseDirectory) {
-//		SwingWorker<Void, Void> task = new SwingWorker<Void, Void>(){
-//
-//			@Override
-//			protected Void doInBackground() throws Exception {
-				dataSources = new HashMap<String, String>();
-				SyncProcess syncProcess = SyncProcess.makeSyncProcessForSyncMySqlVsHttp(user, password, hostName, portNo, databaseName, tables, serverURL, meshGroup, identityProvider, baseDirectory, SyncProcessUI.this);
-				if(syncProcess.getStatus().isReadyToSync()){
-					syncProcess.synchronize(sinceDate);
-				}
-				status = syncProcess.getStatus();
-//				return null;
-//			}
-//		};
-//		
-//		task.execute();
+		dataSources = new HashMap<String, String>();
+		SyncProcess syncProcess = SyncProcess.makeSyncProcessForSyncMySqlVsHttp(user, password, hostName, portNo, databaseName, tables, serverURL, meshGroup, identityProvider, baseDirectory, this);
+		if(syncProcess.getStatus().isReadyToSync()){
+			syncProcess.synchronize(sinceDate);
+		}
+		status = syncProcess.getStatus();
+		syncProcess.unregisterListener(this);
+		syncProcess = null;
 	}
 
 	public SyncProcessUI() {
@@ -108,18 +89,99 @@ public class SyncProcessUI extends JFrame implements ISyncProcessListener{
 	// TODO (RAJU) add resource bundles
 	@Override
 	public void syncProcessChangeStatusNotification(SyncTask syncTask) {
+		SyncTaskSummary summary = syncTask.getSummary();
+		String summaryHtml = makeSummaryHtml(summary);
+		
 		if(syncTask.isReadyToSync()){
-			this.dataSources.put(syncTask.getDataSource(), "<font color=gray>ready to sync</font>");
+			this.dataSources.put(syncTask.getDataSource(), "<font color=gray>ready to sync </font>");
 		}else if(syncTask.isSuccessfully()){
-			this.dataSources.put(syncTask.getDataSource(), "<font color=green>successfully</font>");
+			this.dataSources.put(syncTask.getDataSource(), "<font color=green>successfully </font>"+summaryHtml);
 		}else if(syncTask.isFailed()){
-			this.dataSources.put(syncTask.getDataSource(), "<font color=yellow>failed (has conflicts)</font>");
+			this.dataSources.put(syncTask.getDataSource(), "<font color=yellow>failed </font>"+summaryHtml);
 		}else if(syncTask.isError()){
-			this.dataSources.put(syncTask.getDataSource(), "<font color=red>unexpected error</font>");
+			this.dataSources.put(syncTask.getDataSource(), "<font color=red>unexpected error </font>"+summaryHtml);
 		} else{
-			this.dataSources.put(syncTask.getDataSource(), "<font color=blue>synchronizing</font>");
+			this.dataSources.put(syncTask.getDataSource(), "<font color=blue>synchronizing </font>"+summaryHtml);
 		}
 		this.showDataSources();
+	}
+
+	private String makeSummaryHtml(SyncTaskSummary summary) {
+		if(summary == null || SyncTaskSummaryStatus.Ready == summary.status){
+			return "";
+		}else {
+			StringBuffer sbHeader = new StringBuffer();
+			StringBuffer sbDetails = new StringBuffer();
+			
+			sbHeader.append("<font size=-3 color=gray>");
+			sbDetails.append("<font size=-3 color=gray>");
+		
+			if(SyncTaskSummaryStatus.Add == summary.status){
+				sbHeader.append(" ("+ summary.currentIndex +" of "+ summary.currentTotal+")");
+				sbHeader.append(" add "+(summary.source ? "source" : "target")+" item id: " + summary.currentSyncId);
+				sbDetails.append(makeSummaryTotal(summary));
+			}else if(SyncTaskSummaryStatus.BeginSync == summary.status){
+				sbHeader.append(" initializing adapters");
+			}else if(SyncTaskSummaryStatus.EndSync == summary.status){
+				if(summary.totalConflicts > 0){
+					sbHeader.append(" conflicts: " + summary.totalConflicts);
+				}
+				sbDetails.append(makeSummaryTotal(summary));
+			}else if(SyncTaskSummaryStatus.GetAll == summary.status){
+				sbHeader.append(" get all " + (summary.source ? "source" : "target") + " items");
+				sbDetails.append(makeSummaryTotal(summary));
+			}else if(SyncTaskSummaryStatus.GetAndMergeItem == summary.status){
+				sbHeader.append(" ("+ summary.currentIndex +" of "+ summary.currentTotal+")");
+				sbHeader.append(" get "+ (summary.source ? "source" : "target") +" item id: " + summary.currentSyncId);
+				sbDetails.append(makeSummaryTotal(summary));
+			}else if(SyncTaskSummaryStatus.Merge == summary.status){
+				sbHeader.append(" "+(summary.source ? "source" : "target")+" merge items: "+ (summary.source ? summary.sourceTotalMerge : summary.targetTotalMerge));
+				sbDetails.append(makeSummaryTotal(summary));
+			}else if(SyncTaskSummaryStatus.Update == summary.status){
+				sbHeader.append(" ("+ summary.currentIndex +" of "+ summary.currentTotal+")");
+				sbHeader.append(" update "+(summary.source ? "source" : "target")+ " item id: "+ summary.currentSyncId);
+				sbDetails.append(makeSummaryTotal(summary));
+			}
+			sbHeader.append("</font>");
+			sbDetails.append("</font>");
+			sbHeader.append(sbDetails.toString());
+			return sbHeader.toString();
+		}
+	}
+
+	private String makeSummaryTotal(SyncTaskSummary summary) {
+		StringBuffer sb = new StringBuffer();
+		sb.append("<br>&nbsp;&nbsp;");
+		if(summary.sourceSupportMerge){
+			sb.append(" source merged items: ");
+			sb.append(summary.sourceTotalMerge);
+		} else {
+			sb.append(" source added: ");
+			sb.append(summary.sourceAdded);
+			sb.append(" deleted: ");
+			sb.append(summary.sourceDeleted);
+			sb.append(" updated: ");
+			sb.append(summary.sourceUpdated);
+			sb.append(" conflicts: ");
+			sb.append(summary.sourceConflicts);
+		}
+		
+		sb.append("<br>&nbsp;&nbsp;");
+		if(summary.targetSupportMerge){
+			sb.append(" target merged items: ");
+			sb.append(summary.targetTotalMerge);
+		} else {
+			sb.append(" target added: ");
+			sb.append(summary.targetAdded);
+			sb.append(" deleted: ");
+			sb.append(summary.targetDeleted);
+			sb.append(" updated: ");
+			sb.append(summary.targetUpdated);
+			sb.append(" conflicts: ");
+			sb.append(summary.targetConflicts);
+		}
+		
+		return sb.toString();
 	}
 
 	@Override
@@ -144,6 +206,7 @@ public class SyncProcessUI extends JFrame implements ISyncProcessListener{
 
 	@Override
 	public void notifyErrorReadingMsAccessTables() {
+		// tODO
 	}
 
 	@Override
