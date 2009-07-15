@@ -8,7 +8,7 @@
       <wiki:toc max_depth="2"/>
      </td>
      <td valign="top" align="center" width=60%>
-[http://mesh4x.googlecode.com/svn/wiki/files/ektoo_1.gif]
+[http://mesh4x.googlecode.com/svn/wiki/files/ektoo_1.2.jpg]
 <br/>
 *Get Ektoo Client Now* [http://downloads.instedd.org/mesh4x/ektoo_0_0_9.zip http://mesh4x.googlecode.com/svn/wiki/files/download_2.png]
      
@@ -150,7 +150,7 @@ The process consists of:
  # Select unique column from "<b>Unique Column</b>" drop down list.
 
      </td>
-     <td>[http://mesh4x.googlecode.com/svn/wiki/files/ektoo_5.gif]</td>
+     <td>[http://mesh4x.googlecode.com/svn/wiki/files/excel.jpg]</td>
   </tr>
 
   <tr>
@@ -169,7 +169,7 @@ The process consists of:
  # Select unique column from "<b>Unique Column</b>" drop down list.
 
      </td>
-     <td>[http://mesh4x.googlecode.com/svn/wiki/files/ektoo_4.gif]</td>
+     <td>[http://mesh4x.googlecode.com/svn/wiki/files/google-spreadsheet.jpg]</td>
   </tr>
 
 
@@ -183,7 +183,7 @@ The process consists of:
  # Select table from "<b>Table</b>" drop down list.
 
      </td>
-     <td>[http://mesh4x.googlecode.com/svn/wiki/files/ektoo_3.gif]</td>
+     <td>[http://mesh4x.googlecode.com/svn/wiki/files/access.jpg]</td>
   </tr>
 
   <tr>
@@ -199,7 +199,7 @@ The process consists of:
    * After successful connection, available tables will be displayed in "<b>Table</b>" drop down list 
  # Select table from "<b>Table</b>" drop down list.
      </td>
-     <td>[http://mesh4x.googlecode.com/svn/wiki/files/ektoo_6.gif]</td>
+     <td>[http://mesh4x.googlecode.com/svn/wiki/files/mysql.jpg]</td>
   </tr>
 
   <tr>
@@ -211,7 +211,7 @@ The process consists of:
  # Enter the URI of sync server in "<b>Sync Server Uri</b>" text box.
  
      </td>
-     <td>[http://mesh4x.googlecode.com/svn/wiki/files/ektoo_2.gif]</td>
+     <td>[http://mesh4x.googlecode.com/svn/wiki/files/cloud.jpg]</td>
   </tr>
 
   <tr>
