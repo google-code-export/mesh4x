@@ -134,8 +134,11 @@ public class EktooFrame extends JFrame implements IErrorListener, ISynchronizeTa
 			schemaComparisonLink.setToolTipText(EktooUITranslator.getSchemaComarisonLinkTooltipText());
 			schemaComparisonLink.addMouseListener(new MouseAdapter(){
 				 public void mouseClicked(MouseEvent e) {
-					 SchemaComparisonViewTask task = new SchemaComparisonViewTask(EktooFrame.this,EktooFrame.this);
-					 task.execute();
+					 if(getSourceItem().verify() && getTargetItem().verify()){
+							setStatusbarText("", Statusbar.NORMAL_STATUS);
+							SchemaComparisonViewTask task = new SchemaComparisonViewTask(EktooFrame.this,EktooFrame.this);
+							task.execute();
+					 }
 				 }
 			});
 		}
@@ -368,7 +371,12 @@ public class EktooFrame extends JFrame implements IErrorListener, ISynchronizeTa
 				targetItem.equals(SyncItemUI.ZIP_FILE_PANEL)
 				){
 			getSchemaComarisonLink().setVisible(false);
-		} else {
+		} else if(this.multiModeSync && 
+				(targetItem.equals(SyncItemUI.CLOUD_PANEL) ||
+				sourceItem.equals(SyncItemUI.CLOUD_PANEL))){
+			getSchemaComarisonLink().setVisible(false);
+		}
+		else {
 			getSchemaComarisonLink().setVisible(true);
 		}
 	}

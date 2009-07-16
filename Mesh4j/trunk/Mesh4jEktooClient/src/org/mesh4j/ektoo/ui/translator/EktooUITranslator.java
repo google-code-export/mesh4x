@@ -574,5 +574,48 @@ public class EktooUITranslator {
 	public static String getSyncProcessTitle() {
 		return EktooMessageTranslator.translate("EKTOO_SYNC_PROCESS_TITLE");
 	}
-
+	
+	public static String getMsgAdapterCreatingMysql(){
+		return EktooMessageTranslator.translate("EKTOO_ADAPTER_CREATING_MYSQL");
+	}
+	public static String getMsgAdapterCreatingHttp(){
+		return EktooMessageTranslator.translate("EKTOO_ADAPTER_CREATING_HTTP");
+	}
+	public static String getMsgAdapterCreatingMsAccess(){
+		return EktooMessageTranslator.translate("EKTOO_ADAPTER_CREATING_MSACCESS");
+	}
+	
+	public static String getErrorMsgAdapterCreatingMsAccess(){
+		return EktooMessageTranslator.translate("EKTOO_ADAPTER_CREATING_ERROR_MSACCESS");
+	}
+	
+	public static String getErrorMsgAdapterCreatingHttp(){
+		return EktooMessageTranslator.translate("EKTOO_ADAPTER_CREATING_HTTP");
+	}
+	
+	public static String getErrorMsgAdapterCreatingMysql(){
+		return EktooMessageTranslator.translate("EKTOO_ADAPTER_CREATING_ERROR_MYSQL");
+	}
+	
+	public static String getMsgSyncStatusReady(){
+		return EktooMessageTranslator.translate("EKTOO_SYNC_STATUS_READY");
+	}
+	
+	public static String getMsgSyncStatusSuccessfuly(){
+		return EktooMessageTranslator.translate("EKTOO_SYNC_STATUS_SUCCESSFULLY");
+	}
+	
+	public static String getMsgSyncStatusFailed(){
+		return EktooMessageTranslator.translate("EKTOO_SYNC_STATUS_FALILD");
+	}
+	
+	public static String getMsgSyncStatusError(){
+		return EktooMessageTranslator.translate("EKTOO_SYNC_STATUS_ERROR");
+	}
+	
+	public static String getMsgSyncStatusSynchronizing(){
+		return EktooMessageTranslator.translate("EKTOO_SYNC_STATUS_SYNCHRONIZING");
+	}
+	
+	
 }
