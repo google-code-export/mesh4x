@@ -42,15 +42,15 @@ public class MsAccessVsHttpMultiModeSyncTests {
 			Assert.assertNotNull(syncTask);
 			Assert.assertTrue(syncTask.isReadyToSync());
 
-			HttpSyncAdapter source = (HttpSyncAdapter) syncTask.getSource();
-			Assert.assertEquals(serverURL+"/"+meshGroup+"/"+rdfClassName, source.getURL());
+			HttpSyncAdapter target = (HttpSyncAdapter) syncTask.getTarget();
+			Assert.assertEquals(serverURL+"/"+meshGroup+"/"+rdfClassName, target.getURL());
 			
-			SplitAdapter target = (SplitAdapter) syncTask.getTarget();
+			SplitAdapter source = (SplitAdapter) syncTask.getSource();
 			
-			Assert.assertNotNull(target);
-			Assert.assertEquals(rdfClassName, target.getContentAdapter().getType());
-			Assert.assertTrue(target.getContentAdapter() instanceof HibernateContentAdapter);
-			Assert.assertTrue(((HibernateContentAdapter)target.getContentAdapter()).getMapping() instanceof HibernateMsAccessToRDFMapping);
+			Assert.assertNotNull(source);
+			Assert.assertEquals(rdfClassName, source.getContentAdapter().getType());
+			Assert.assertTrue(source.getContentAdapter() instanceof HibernateContentAdapter);
+			Assert.assertTrue(((HibernateContentAdapter)source.getContentAdapter()).getMapping() instanceof HibernateMsAccessToRDFMapping);
 
 
 		}
