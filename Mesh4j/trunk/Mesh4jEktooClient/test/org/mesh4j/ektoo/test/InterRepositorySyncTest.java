@@ -3,16 +3,13 @@ package org.mesh4j.ektoo.test;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import junit.framework.Assert;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.RichTextString;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.dom4j.Element;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mesh4j.ektoo.GoogleSpreadSheetInfo;
 import org.mesh4j.ektoo.ISyncAdapterBuilder;
@@ -24,63 +21,57 @@ import org.mesh4j.sync.adapters.feed.XMLContent;
 import org.mesh4j.sync.adapters.feed.atom.AtomSyndicationFormat;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadSheetContentAdapter;
-import org.mesh4j.sync.adapters.msexcel.MsExcelUtils;
+import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadsheetUtils;
+import org.mesh4j.sync.adapters.googlespreadsheet.IGoogleSpreadSheet;
+import org.mesh4j.sync.adapters.googlespreadsheet.model.GSRow;
+import org.mesh4j.sync.adapters.googlespreadsheet.model.GSWorksheet;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.Sync;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
+import org.mesh4j.sync.utils.FileUtils;
 import org.mesh4j.sync.validations.MeshException;
 
-
-
+import com.google.gdata.client.docs.DocsService;
+import com.google.gdata.client.spreadsheet.FeedURLFactory;
+import com.google.gdata.client.spreadsheet.SpreadsheetService;
 
 public class InterRepositorySyncTest {
 	
-//	@Test
-//	public void ShouldSyncExcelToMySqlWithoutRDFAssumeSameSchema(){
-//		String user = "root";
-//		String password = "test1234";
-//		String tableName = "user";
-//		
-//		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
-//		ISyncAdapter sourceAsExcel = builder.createMsExcelAdapter(TestHelper.baseDirectoryForTest() + "contentFile.xls", "user", "id");
-//		
-//		ISyncAdapter targetAsMySql =  builder.createMySQLAdapter(user, password,"localhost" ,3306,"mesh4xdb",tableName);
-//		
-//		SyncEngine engine = new SyncEngine(sourceAsExcel,targetAsMySql);
-//		List<Item> listOfConflicts = engine.synchronize();
-//		Assert.assertEquals(0, listOfConflicts.size());
-//	}
+	private static SpreadsheetService service;
+	private static DocsService docService;
+	private static FeedURLFactory factory;
 	
-
-//	@Test
-//	public void ShouldSyncGoogleSpreadSheetToMySQLWithoutRDFAssumeSameSchema(){
-//		String user = "root";
-//		String password = "test1234";
-//		String tableName = "user_info";
-//	
-//		GoogleSpreadSheetInfo spreadSheetInfo = new GoogleSpreadSheetInfo(
-//				"peo4fu7AitTqkOhMSrecFRA",
-//				"gspreadsheet.test@gmail.com",
-//				"java123456",
-//				"id",
-//				1,
-//				6,
-//				"user_source",
-//				"user"
-//				);
-//		
-//		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
-//		ISyncAdapter targetAsMySql =  builder.createMySQLAdapter(user, password,"localhost" ,3306,"mesh4xdb",tableName);
-//		ISyncAdapter sourceAsGoogleSpreadSheet = builder.createGoogleSpreadSheetAdapter(spreadSheetInfo);
-//		
-//		SyncEngine engine = new SyncEngine(sourceAsGoogleSpreadSheet,targetAsMySql);
-//		List<Item> listOfConflicts = engine.synchronize();
-//		Assert.assertEquals(0, listOfConflicts.size());
-//	}
+	private static String gssTestWorksheetName = "mesh_example";
+	private static String gssTestSpreadsheetFileName1 = "InterRepositorySyncTest1";
+	private static String gssTestSpreadsheetFileName2 = "InterRepositorySyncTest2";
+	private static String gssTestUsername = "gspreadsheet.test@gmail.com";
+	private static String gssTestPassword = "java123456";
 	
+	private static String mysqlTestDBName = "mesh4x_ektoo_db";
+	private static String mysqlTestTableName = gssTestWorksheetName;
+	private static String mysqlTestUsername = "root";
+	private static String mysqlTestPassword = "admin";
 	
+	private static String excelTestWorksheetName = gssTestWorksheetName;
+	private static String accessTestTableName = gssTestWorksheetName;
+	
+	private static String idColumn = "uid";
+	
+	@BeforeClass
+	public static void setUp() throws Exception {
+		service = GoogleSpreadsheetUtils.getSpreadsheetService(gssTestUsername, gssTestPassword);
+		docService = GoogleSpreadsheetUtils.getDocService(gssTestUsername, gssTestPassword);
+		factory = FeedURLFactory.getDefault();		
+	}
+	
+	@AfterClass
+	public static void tearDown() throws Exception {
+		FileUtils.cleanupDirectory(TestHelper.baseDirectoryForTest());
+		GoogleSpreadsheetUtils.deleteSpreadsheetDoc(gssTestSpreadsheetFileName1, docService);
+		GoogleSpreadsheetUtils.deleteSpreadsheetDoc(gssTestSpreadsheetFileName2, docService);
+	}
 	
 	@Test
 	public void ShouldSyncFolderToFolder(){
@@ -91,7 +82,6 @@ public class InterRepositorySyncTest {
 		List<Item> conflicts = syncEngine.synchronize();
 		Assert.assertEquals(0, conflicts.size());
 	}
-	
 	
 	@Test
 	public void ShouldSyncRssToRssWithoutRDFAssumeSameSchema(){
@@ -167,30 +157,47 @@ public class InterRepositorySyncTest {
 		List<Item> listOfConflicts = syncEngine.synchronize();
 			
 		Assert.assertEquals(0, listOfConflicts.size());
-		
 	}
 	
 	@Test
 	public void ShouldSyncGoogleSpreadSheetToExcelWithoutRDFAssumeSameSchema() throws Exception{
+		//prepare/update the spreadsheet for this specific test
+		IGoogleSpreadSheet gss = TestHelper.getTestGoogleSpreadsheet(factory, service,
+				docService, gssTestSpreadsheetFileName1,
+				gssTestWorksheetName, idColumn);
+		GSWorksheet<GSRow> workSheet = gss.getGSWorksheet(gssTestWorksheetName);
+		
+		if(workSheet.getChildElements().size() > 1){
+			for(Map.Entry<String, GSRow> rowEntry: workSheet.getChildElements().entrySet()){
+				if(rowEntry.getValue().getElementListIndex() > 1)
+					workSheet.deleteChildElement(rowEntry.getKey());
+			}
+		}
+		
+		try {
+			TestHelper.addTestGssRow(workSheet, "P1", "Sharif", "mesh4x");
+		} catch (Exception e) {
+			throw new MeshException(e);
+		} 
+		
+		GoogleSpreadsheetUtils.flush(service, gss.getGSSpreadsheet());	
+		//test setup done
 		
 		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
 		
 		GoogleSpreadSheetInfo spreadSheetInfo = new GoogleSpreadSheetInfo(
-				"testspreadsheet",
-				"gspreadsheet.test@gmail.com",
-				"java123456",
-				new String[] {"id"},
-				"user_source",
-				"user"
-				);
+				gssTestSpreadsheetFileName1, gssTestUsername, gssTestPassword,
+				new String[] { idColumn }, gssTestWorksheetName, gssTestWorksheetName);
 		
-		ISyncAdapter sourceAsGoogleSpreadSheet = builder.createRdfBasedGoogleSpreadSheetAdapter(spreadSheetInfo, null);
+		ISyncAdapter sourceAsGoogleSpreadsheet = builder.createRdfBasedGoogleSpreadSheetAdapter(spreadSheetInfo, null);
 		
-		IRDFSchema rdfSchema = (IRDFSchema) ((GoogleSpreadSheetContentAdapter)((SplitAdapter)sourceAsGoogleSpreadSheet).getContentAdapter()).getSchema();
+		IRDFSchema rdfSchema = (IRDFSchema) ((GoogleSpreadSheetContentAdapter)((SplitAdapter)sourceAsGoogleSpreadsheet).getContentAdapter()).getSchema();
 		
-		ISyncAdapter targetAsExcel = builder.createMsExcelAdapter(createMsExcelFileForTest("content1.xls", "user_source", "id", true), rdfSchema);
+		File targetContentFile = new File(TestHelper.baseDirectoryForTest() + "target_"+IdGenerator.INSTANCE.newID()+".xls");
 		
-		SyncEngine engine = new SyncEngine(sourceAsGoogleSpreadSheet, targetAsExcel);
+		ISyncAdapter targetAsExcel = builder.createMsExcelAdapter(TestHelper.createMsExcelFileForTest(targetContentFile, excelTestWorksheetName, idColumn, true), rdfSchema);
+
+		SyncEngine engine = new SyncEngine(sourceAsGoogleSpreadsheet, targetAsExcel);
 		List<Item> listOfConflicts = engine.synchronize();
 		Assert.assertEquals(0, listOfConflicts.size());
 	}
@@ -199,28 +206,63 @@ public class InterRepositorySyncTest {
 	public void ShouldSyncGoogleSpreadSheetToGoogleSpreadSheet() throws Exception{
 		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
 		
-		//make sure this shit contains at least one data row
-		GoogleSpreadSheetInfo spreadSheetInfoSource = new GoogleSpreadSheetInfo(
-				"testspreadsheet",
-				"gspreadsheet.test@gmail.com",
-				"java123456",
-				new String[] {"id"},
-				"user_source",
-				"user"
-				);
+		//prepare/update the spreadsheet for this specific test
+		IGoogleSpreadSheet gssSource = TestHelper.getTestGoogleSpreadsheet(factory, service,
+				docService, gssTestSpreadsheetFileName1,
+				gssTestWorksheetName, idColumn);
+		GSWorksheet<GSRow> workSheetSource = gssSource.getGSWorksheet(gssTestWorksheetName);
 		
-		GoogleSpreadSheetInfo spreadSheetInfoTarget = new GoogleSpreadSheetInfo(
-				"testspreadsheet",
-				"gspreadsheet.test@gmail.com",
-				"java123456",
-				new String[] {"id"},
-				"user_target",
-				"user"
-				);
+		if(workSheetSource.getChildElements().size() > 1){
+			for(Map.Entry<String, GSRow> rowEntry: workSheetSource.getChildElements().entrySet()){
+				if(rowEntry.getValue().getElementListIndex() > 1)
+					workSheetSource.deleteChildElement(rowEntry.getKey());
+			}
+		}
+		
+		try {
+			TestHelper.addTestGssRow(workSheetSource, "P1", "Sharif", "mesh4x");
+		} catch (Exception e) {
+			throw new MeshException(e);
+		} 
+		
+		GoogleSpreadsheetUtils.flush(service, gssSource.getGSSpreadsheet());	
+		//test setup done
+		
+		GoogleSpreadSheetInfo spreadSheetInfoSource = new GoogleSpreadSheetInfo(
+				gssTestSpreadsheetFileName1, gssTestUsername, gssTestPassword,
+				new String[] { idColumn }, gssTestWorksheetName, gssTestWorksheetName);
 		
 		ISyncAdapter sourceAsGoogleSpreadSheet = builder.createRdfBasedGoogleSpreadSheetAdapter(spreadSheetInfoSource, null);
+		
 		IRDFSchema rdfSchemaSource = (IRDFSchema) ((GoogleSpreadSheetContentAdapter)((SplitAdapter)sourceAsGoogleSpreadSheet).getContentAdapter()).getSchema();
-			
+		
+		//prepare/update the spreadsheet for this specific test
+		IGoogleSpreadSheet gssTarget = TestHelper.getTestGoogleSpreadsheet(factory, service,
+				docService, gssTestSpreadsheetFileName2,
+				gssTestWorksheetName, idColumn);
+		GSWorksheet<GSRow> workSheetTarget = gssTarget.getGSWorksheet(gssTestWorksheetName);
+		
+		if(workSheetTarget.getChildElements().size() > 1){
+			for(Map.Entry<String, GSRow> rowEntry: workSheetTarget.getChildElements().entrySet()){
+				if(rowEntry.getValue().getElementListIndex() > 1)
+					workSheetTarget.deleteChildElement(rowEntry.getKey());
+			}
+		}
+		
+		try {
+			TestHelper.addTestGssRow(workSheetTarget, "P2", "Raju", "geochat");
+		} catch (Exception e) {
+			throw new MeshException(e);
+		} 
+		
+		GoogleSpreadsheetUtils.flush(service, gssTarget.getGSSpreadsheet());	
+		//test setup done
+		
+		GoogleSpreadSheetInfo spreadSheetInfoTarget = new GoogleSpreadSheetInfo(
+				gssTestSpreadsheetFileName2, gssTestUsername, gssTestPassword,
+				new String[] { idColumn }, gssTestWorksheetName, gssTestWorksheetName);
+		
+		
 		ISyncAdapter targetAsGoogleSpreadSheet = builder.createRdfBasedGoogleSpreadSheetAdapter(spreadSheetInfoTarget, rdfSchemaSource);
 		
 		SyncEngine engine = new SyncEngine(sourceAsGoogleSpreadSheet,targetAsGoogleSpreadSheet);
@@ -233,23 +275,33 @@ public class InterRepositorySyncTest {
 	public void ShouldSyncExcelToExcelWithoutRDFAssumeSameSchema(){
 		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
 		
-		ISyncAdapter sourceAsExcel = builder.createMsExcelAdapter(
-				createMsExcelFileForTest("sourceContentFile.xls", "user", "id", true), "user", new String[]{"id"},false);
+		File sourceContentFile = new File(TestHelper.baseDirectoryForTest() + "sourec_"+IdGenerator.INSTANCE.newID()+".xls");
+		ISyncAdapter sourceAsExcel = builder.createMsExcelAdapter(TestHelper.createMsExcelFileForTest(sourceContentFile, 
+				excelTestWorksheetName, idColumn, true), excelTestWorksheetName, new String[] {idColumn}, false);
 		
-		ISyncAdapter targetAsExcel = builder.createMsExcelAdapter(
-				createMsExcelFileForTest("targetContentFile.xls", "user", "id", false), "user", new String[]{"id"},false);
-		
+		File targetContentFile = new File(TestHelper.baseDirectoryForTest() + "target_"+IdGenerator.INSTANCE.newID()+".xls");
+		ISyncAdapter targetAsExcel = builder.createMsExcelAdapter(TestHelper.createMsExcelFileForTest(targetContentFile, 
+				excelTestWorksheetName, idColumn, false), excelTestWorksheetName, new String[] {idColumn}, false);
+
 		SyncEngine engine = new SyncEngine(sourceAsExcel,targetAsExcel);
 		List<Item> listOfConflicts = engine.synchronize();
 		Assert.assertEquals(0, listOfConflicts.size());
 	}
 	
 	@Test
-	public void ShouldSyncAccessToAccessWithoutRDFAssumeSameSchema(){
+	public void ShouldSyncAccessToAccessWithoutRDFAssumeSameSchema() throws IOException{
 		
 		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
-		ISyncAdapter sourceAsAccess = builder.createMsAccessAdapter(TestHelper.baseDirectoryForTest() +"aktoo_source.mdb" , "aktoo");
-		ISyncAdapter targetAsAccess = builder.createMsAccessAdapter(TestHelper.baseDirectoryForTest() +"aktoo_target.mdb" , "aktoo");
+		
+		String sourceFileName = this.getClass().getResource("aktoo.mdb").getFile();
+		File sourceContentFile = new File(TestHelper.baseDirectoryForTest() + "source_"+IdGenerator.INSTANCE.newID()+".mdb");
+		FileUtils.copyFile(sourceFileName, sourceContentFile.getAbsolutePath());
+		ISyncAdapter sourceAsAccess = builder.createMsAccessAdapter(sourceContentFile.getAbsolutePath() , accessTestTableName);
+		
+		String targetFileName = this.getClass().getResource("aktoo.mdb").getFile();
+		File targetContentFile = new File(TestHelper.baseDirectoryForTest() + "target_"+IdGenerator.INSTANCE.newID()+".mdb");
+		FileUtils.copyFile(targetFileName, targetContentFile.getAbsolutePath());
+		ISyncAdapter targetAsAccess = builder.createMsAccessAdapter(targetContentFile.getAbsolutePath() , accessTestTableName);
 		
 		SyncEngine engine = new SyncEngine(sourceAsAccess,targetAsAccess);
 		List<Item> listOfConflicts = engine.synchronize();
@@ -258,19 +310,21 @@ public class InterRepositorySyncTest {
 	
 	@Test
 	public void ShouldSyncMysqlToMysqlWithoutRDFAssumeSameSchema(){
-		String user = "root";
-		String password = "test1234";
-		String tableName = "user";
 		
 		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
+		FileUtils.cleanupDirectory(builder.getBaseDirectory());
 		
-		ISyncAdapter sourceAsMySql =  builder.createMySQLAdapter(user, password,"localhost" ,3306,"mesh4xdb",tableName);
+		// prepare/update the mysql for this specific test
+		TestHelper.createMysqlTableForTest(mysqlTestDBName+"_source", mysqlTestUsername,
+				mysqlTestPassword, mysqlTestTableName, idColumn, true);
+		
+		SplitAdapter sourceAsMySql =  builder.createMySQLAdapter(mysqlTestUsername, mysqlTestPassword, "localhost" ,3306, mysqlTestDBName+"_source", mysqlTestTableName);
+		
+		// prepare/update the mysql for this specific test
+		TestHelper.createMysqlTableForTest(mysqlTestDBName+"_target", mysqlTestUsername,
+				mysqlTestPassword, mysqlTestTableName, idColumn, false);
 
-		user = "root";
-		password = "test1234";
-		tableName = "user";
-
-		ISyncAdapter targetAsMySql =  builder.createMySQLAdapter(user, password,"localhost" ,3306,"mesh4xdbtarget",tableName);
+		SplitAdapter targetAsMySql =  builder.createMySQLAdapter(mysqlTestUsername, mysqlTestPassword, "localhost" ,3306, mysqlTestDBName+"_target", mysqlTestTableName);
 		
 		SyncEngine engine = new SyncEngine(sourceAsMySql,targetAsMySql);
 		List<Item> listOfConflicts = engine.synchronize();
@@ -280,20 +334,19 @@ public class InterRepositorySyncTest {
 	@Test
 	public void ShouldSyncMySQLToCloud(){	
 			
-		String user = "root";
-		String password = "test1234";
-		String tableName = "user";
-
 		String meshName = "Mysql";
 		String feedName = "user";
 		String url = "http://localhost:8080/mesh4x/feeds";
-		
-		ISyncAdapterBuilder builder = new SyncAdapterBuilder(
-				new PropertiesProvider());
-		
-		ISyncAdapter sourceAsMySql = builder.createMySQLAdapter(user, password,
-				"localhost", 3306, "mesh4xdb", tableName);
 
+		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
+		FileUtils.cleanupDirectory(builder.getBaseDirectory());
+		
+		// prepare/update the mysql for this specific test
+		TestHelper.createMysqlTableForTest(mysqlTestDBName, mysqlTestUsername,
+				mysqlTestPassword, mysqlTestTableName, idColumn, true);
+
+		SplitAdapter sourceAsMySql =  builder.createMySQLAdapter(mysqlTestUsername, mysqlTestPassword, "localhost" ,3306, mysqlTestDBName, mysqlTestTableName);
+		
 		SplitAdapter sourceAdapter = (SplitAdapter) sourceAsMySql;
 
 		ISyncAdapter targetAdapter = builder.createHttpSyncAdapter(url, meshName, feedName, null);
@@ -305,67 +358,4 @@ public class InterRepositorySyncTest {
 		Assert.assertEquals(sourceAdapter.getAll().size(), targetAdapter
 				.getAll().size());
 	}
-	
-		
-	private String createMsExcelFileForTest(String filename, String sheetName, String idColumn, boolean addSampleRow){
-//		String filename = "contentFile.xls";
-//		String sheetName = "user_source";
-//		String idColumn = "id";
-
-		File file;
-		try {
-			file = TestHelper.makeFileAndDeleteIfExists(filename);
-		} catch (IOException e) {
-			throw new MeshException(e);
-		}
-		
-		Workbook workbook = new HSSFWorkbook();
-		Sheet sheet = workbook.createSheet(sheetName);
-		sheet.createRow(0);
-		Row row = sheet.getRow(0);
-		Cell cell;
-
-		cell = row.createCell(0, Cell.CELL_TYPE_STRING);
-		cell.setCellValue(getRichTextString(workbook,idColumn));
-		
-		cell = row.createCell(1, Cell.CELL_TYPE_STRING);
-		cell.setCellValue(getRichTextString(workbook,"name"));
-
-		cell = row.createCell(2, Cell.CELL_TYPE_STRING);
-		cell.setCellValue(getRichTextString(workbook,"age"));
-
-		cell = row.createCell(3, Cell.CELL_TYPE_STRING);
-		cell.setCellValue(getRichTextString(workbook,"city"));
-
-		cell = row.createCell(4, Cell.CELL_TYPE_STRING);
-		cell.setCellValue(getRichTextString(workbook,"country"));
-
-		if(addSampleRow){
-			row = sheet.createRow(1);	
-
-			cell = row.createCell(0, Cell.CELL_TYPE_STRING);
-			cell.setCellValue(getRichTextString(workbook,"gsl-123"));
-
-			cell = row.createCell(1, Cell.CELL_TYPE_STRING);
-			cell.setCellValue(getRichTextString(workbook,"sharif"));
-
-			cell = row.createCell(2, Cell.CELL_TYPE_NUMERIC);
-			cell.setCellValue(29);
-
-			cell = row.createCell(3, Cell.CELL_TYPE_STRING);
-			cell.setCellValue(getRichTextString(workbook,"dhaka"));
-
-			cell = row.createCell(4, Cell.CELL_TYPE_STRING);
-			cell.setCellValue(getRichTextString(workbook,"bangladesh"));
-		}
-		
-		MsExcelUtils.flush(workbook, file.getAbsolutePath());
-
-		return file.getAbsolutePath();
-	}
-	
-	public static RichTextString getRichTextString(Workbook workbook,String value){
-		return workbook.getCreationHelper().createRichTextString(value);
-	}
-	
 }
