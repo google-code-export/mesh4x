@@ -1,0 +1,7 @@
+#An area to share frequently asked questions
+
+= General =
+= Adapters = 
+= Cloud Server =
+= Security = 
+= SMS Sync = 
