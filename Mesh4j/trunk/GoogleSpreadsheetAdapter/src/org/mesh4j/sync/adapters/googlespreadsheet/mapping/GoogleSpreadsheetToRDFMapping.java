@@ -18,7 +18,6 @@ import org.mesh4j.sync.payload.schema.rdf.AbstractRDFIdentifiableMapping;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.payload.schema.rdf.RDFInstance;
 import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
-import org.mesh4j.sync.utils.XMLHelper;
 import org.mesh4j.sync.validations.MeshException;
 
 import com.google.gdata.client.docs.DocsService;
@@ -192,7 +191,7 @@ public class GoogleSpreadsheetToRDFMapping extends AbstractRDFIdentifiableMappin
 	@Override
 	public Element convertRowToXML(GSRow<GSCell> row) {
 		RDFInstance rdfInstance = this.converRowToRDF(row);
-		return XMLHelper.parseElement(rdfInstance.asXML());		
+		return rdfInstance.asElementXML();
 	}
 	
 	@Override

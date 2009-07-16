@@ -1,5 +1,6 @@
 package org.mesh4j.sync.payload.schema.rdf;
 
+import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -11,7 +12,10 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.dom4j.io.OutputFormat;
+import org.dom4j.io.XMLWriter;
 import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.payload.schema.ISchemaTypeFormat;
 import org.mesh4j.sync.utils.XMLHelper;
@@ -232,72 +236,74 @@ public class RDFInstance {
 	}
 	
 	public String asPlainXML(Map<String, ISchemaTypeFormat> typeFormats, CompositeProperty[] compositeProperties) {
-
-		StringBuffer sb = new StringBuffer();
-
-		sb.append("<");
-		sb.append(this.schema.getOntologyClassName());
-		sb.append(">");
-		
-		String fieldName;
-		Object fieldValue;
-		
-		
-		HashMap<String, Object> properties = new HashMap<String, Object>();
-		
-		StmtIterator it = this.domainObject.listProperties();
-		Statement statement;
-		while(it.hasNext()){
-			statement = it.nextStatement();
+		try{
+						
+			String fieldName;
+			Object fieldValue;
 			
-			//Resource subject = statement.getSubject();
-			Property predicate = statement.getPredicate();
-			RDFNode object = statement.getObject();
+			HashMap<String, Object> properties = new HashMap<String, Object>();
 			
-			 if(!RDF.type.getURI().equals(predicate.getURI())){
-	            fieldName = predicate.getLocalName();
-	            Literal literal = (Literal) object;
-	            fieldValue = literal.getValue();
-	            
-	            ISchemaTypeFormat format = typeFormats.get(fieldName);
-	            if(format == null){
-	            	format = typeFormats.get(literal.getDatatypeURI());
-	            }
-	            
-	            if(format != null){
-	            	try{
-		            	if(fieldValue instanceof XSDDateTime){
-		            		fieldValue = format.format(((XSDDateTime)fieldValue).asCalendar().getTime());
-		            	} else {
-		            		fieldValue = format.format(fieldValue);
-		            	}
-	            	} catch (Exception e) {
-						throw new MeshException(e);
-					}
-	            }
-	            
-	            CompositeProperty compositeProperty = getCompositeProperty(compositeProperties, fieldName);
-	            if(compositeProperty == null){
-	            	properties.put(fieldName, fieldValue);
-	            } else {	            	
-	            	compositeProperty.setPropertyValue(fieldName, fieldValue);
-	            	properties.put(compositeProperty.getCompositeName(), compositeProperty);
-	            }
-			 }
+			StmtIterator it = this.domainObject.listProperties();
+			Statement statement;
+			while(it.hasNext()){
+				statement = it.nextStatement();
+				
+				//Resource subject = statement.getSubject();
+				Property predicate = statement.getPredicate();
+				RDFNode object = statement.getObject();
+				
+				 if(!RDF.type.getURI().equals(predicate.getURI())){
+		            fieldName = predicate.getLocalName();
+		            Literal literal = (Literal) object;
+		            fieldValue = literal.getValue();
+		            
+		            ISchemaTypeFormat format = typeFormats.get(fieldName);
+		            if(format == null){
+		            	format = typeFormats.get(literal.getDatatypeURI());
+		            }
+		            
+		            if(format != null){
+		            	try{
+			            	if(fieldValue instanceof XSDDateTime){
+			            		fieldValue = format.format(((XSDDateTime)fieldValue).asCalendar().getTime());
+			            	} else {
+			            		fieldValue = format.format(fieldValue);
+			            	}
+		            	} catch (Exception e) {
+							throw new MeshException(e);
+						}
+		            }
+		            
+		            CompositeProperty compositeProperty = getCompositeProperty(compositeProperties, fieldName);
+		            if(compositeProperty == null){
+		            	properties.put(fieldName, fieldValue);
+		            } else {	            	
+		            	compositeProperty.setPropertyValue(fieldName, fieldValue);
+		            	properties.put(compositeProperty.getCompositeName(), compositeProperty);
+		            }
+				 }
+			}
+			
+			// write xml
+			Element element = DocumentHelper.createElement(this.schema.getOntologyClassName());
+			
+			StringWriter sw = new StringWriter();
+			XMLWriter xmlWriter = new XMLWriter(sw, OutputFormat.createCompactFormat());
+			xmlWriter.writeOpen(element);
+			
+			for (String propName : properties.keySet()) {
+				fieldValue = properties.get(propName);
+				writePlainXMLProperty(xmlWriter, propName, fieldValue);
+			}
+			xmlWriter.writeClose(element);
+			xmlWriter.flush();
+			xmlWriter.close();
+			
+			Element elementPlainXml = XMLHelper.parseElement(sw.toString());
+			return XMLHelper.canonicalizeXML(elementPlainXml);
+		}catch (Exception e) {
+			throw new MeshException(e);
 		}
-		
-		for (String propName : properties.keySet()) {
-			fieldValue = properties.get(propName);
-			writePlainXMLProperty(sb, propName, fieldValue);
-		}
-		
-		sb.append("</");
-		sb.append(this.schema.getOntologyClassName());
-		sb.append(">");
-
-		
-		Element element = XMLHelper.parseElement(sb.toString());
-		return XMLHelper.canonicalizeXML(element);
 	}
 	
 	private CompositeProperty getCompositeProperty(CompositeProperty[] compositeProperties, String fieldName) {
@@ -313,26 +319,23 @@ public class RDFInstance {
 		return null;
 	}
 
-	private void writePlainXMLProperty(StringBuffer sb, String fieldName, Object fieldValue){
-		 sb.append("<");
-		 sb.append(fieldName);
-		 sb.append(">");
+	private void writePlainXMLProperty(XMLWriter xmlWriter, String fieldName, Object fieldValue) throws IOException{
+		Element element = DocumentHelper.createElement(fieldName); 
+		xmlWriter.writeOpen(element);
 		 
-		 if(fieldValue instanceof CompositeProperty){
+		if(fieldValue instanceof CompositeProperty){
 			 CompositeProperty compositeProperty = (CompositeProperty) fieldValue;
 			 if(compositeProperty.isCompleted()){
 				 for (String propName : compositeProperty.getPropertyNames()){
 					 Object propValue = compositeProperty.getPropertyValue(propName);
-					 writePlainXMLProperty(sb, propName, propValue);
+					 writePlainXMLProperty(xmlWriter, propName, propValue);
 				 }
 			 }
 		 } else {
-			 sb.append(fieldValue);
+			 xmlWriter.write(fieldValue.toString());
 		 }		 
 		 
-		 sb.append("</");
-		 sb.append(fieldName);
-		 sb.append(">");
+		 xmlWriter.writeClose(element);
 	}
 
 	public int getPropertyCount() {

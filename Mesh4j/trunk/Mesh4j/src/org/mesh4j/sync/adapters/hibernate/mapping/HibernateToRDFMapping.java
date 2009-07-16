@@ -40,8 +40,7 @@ public class HibernateToRDFMapping extends AbstractRDFIdentifiableMapping implem
 		} else {
 			instance = this.rdfSchema.createNewInstanceFromPlainXML(meshId, element.asXML(), FORMATS); 
 		}
-		String rdfXml = instance.asXML();
-		return XMLHelper.parseElement(rdfXml);
+		return instance.asElementXML();
 	}
 
 	@Override

@@ -18,7 +18,6 @@ import org.mesh4j.sync.payload.schema.rdf.AbstractRDFIdentifiableMapping;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.payload.schema.rdf.RDFInstance;
 import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
-import org.mesh4j.sync.utils.XMLHelper;
 import org.mesh4j.sync.validations.Guard;
 
 public class MsExcelToRDFMapping extends AbstractRDFIdentifiableMapping implements IMsExcelToXMLMapping{
@@ -219,7 +218,7 @@ public class MsExcelToRDFMapping extends AbstractRDFIdentifiableMapping implemen
 	public Element convertRowToXML(Workbook wb, Sheet sheet, Row row){
 		Row headerRow = sheet.getRow(sheet.getFirstRowNum());
 		RDFInstance rdfInstance = this.converRowToRDF(sheet, headerRow, row);
-		return XMLHelper.parseElement(rdfInstance.asXML());
+		return rdfInstance.asElementXML();
 	}
 	
 	@Override

@@ -189,6 +189,31 @@ public class RDFInstanceTest {
         Assert.assertEquals(PLAIN_XML, instance.asPlainXML());
 	}
 	
+	
+	@Test
+	public void shouldAsPlainXMLEscapeSpecialXmlCharacters() {
+		RDFSchema rdfSchema = new RDFSchema("example", "http://mesh4x/example#", "example");
+		rdfSchema.addStringProperty("string", "string", IRDFSchema.DEFAULT_LANGUAGE);
+    	
+        RDFInstance rdfInstance = new RDFInstance(rdfSchema, "uri:urn:1");
+        rdfInstance.setProperty("string", "hola & chau");
+        
+        System.out.println(rdfInstance.asXML());
+        Assert.assertEquals("<example><string>hola &amp; chau</string></example>", rdfInstance.asPlainXML());
+    }
+	
+	@Test
+	public void shouldAsXMLEscapeSpecialXmlCharacters() {
+		RDFSchema rdfSchema = new RDFSchema("example", "http://mesh4x/example#", "example");
+		rdfSchema.addStringProperty("string", "string", IRDFSchema.DEFAULT_LANGUAGE);
+    	
+        RDFInstance rdfInstance = new RDFInstance(rdfSchema, "uri:urn:1");
+        rdfInstance.setProperty("string", "hola & chau");
+        
+        Assert.assertEquals("<rdf:RDF xmlns:example=\"http://mesh4x/example#\" xmlns:owl=\"http://www.w3.org/2002/07/owl#\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema#\"><example:example rdf:about=\"uri:urn:1\"><example:string rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">hola &amp; chau</example:string></example:example></rdf:RDF>", rdfInstance.asXML());
+    }
+	
+		
 	@Test
 	public void shouldAsPlainXMLWithTypeFormats() {
 		RDFInstance instance = RDF_INSTANCE;

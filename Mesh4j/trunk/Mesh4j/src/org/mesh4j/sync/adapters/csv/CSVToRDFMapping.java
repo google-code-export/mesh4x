@@ -11,7 +11,6 @@ import org.mesh4j.sync.payload.schema.rdf.AbstractRDFIdentifiableMapping;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.payload.schema.rdf.RDFInstance;
 import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
-import org.mesh4j.sync.utils.XMLHelper;
 
 public class CSVToRDFMapping extends AbstractRDFIdentifiableMapping implements ICSVToXMLMapping {
 	
@@ -29,7 +28,7 @@ public class CSVToRDFMapping extends AbstractRDFIdentifiableMapping implements I
 	@Override
 	public Element convertRowToXML(CSVFile csvFile, CSVRow row) {
 		RDFInstance rdfInstance = this.converRowToRDF(csvFile, row);
-		return XMLHelper.parseElement(rdfInstance.asXML());
+		return rdfInstance.asElementXML();
 	}
 	
 	public RDFInstance converRowToRDF(CSVFile csvFile, CSVRow row) {

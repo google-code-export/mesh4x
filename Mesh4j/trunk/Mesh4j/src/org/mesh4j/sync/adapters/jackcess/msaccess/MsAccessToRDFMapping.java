@@ -11,7 +11,6 @@ import org.dom4j.Element;
 import org.mesh4j.sync.payload.schema.rdf.AbstractRDFIdentifiableMapping;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.payload.schema.rdf.RDFInstance;
-import org.mesh4j.sync.utils.XMLHelper;
 import org.mesh4j.sync.validations.MeshException;
 
 import com.healthmarketscience.jackcess.Cursor;
@@ -61,7 +60,7 @@ public class MsAccessToRDFMapping extends AbstractRDFIdentifiableMapping impleme
 		String id = makeId(Arrays.asList(idValues));	
 				
 		RDFInstance rdfInstance = this.rdfSchema.createNewInstanceFromProperties(id, properties);
-		return XMLHelper.parseElement(rdfInstance.asXML());
+		return rdfInstance.asElementXML();
 	}
 
 	@Override
