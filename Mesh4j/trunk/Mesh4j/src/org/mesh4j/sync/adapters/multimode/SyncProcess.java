@@ -67,7 +67,7 @@ public class SyncProcess {
 		return Collections.unmodifiableList(this.syncTasks);
 	}
 	
-	// Factory methods
+	// TODO (JMT) Refactoring: Create a Factory class from Factory methods
 	public static SyncProcess makeSyncProcessForSyncMsAccessVsHttp(String fileName, String serverURL, String meshGroup, IIdentityProvider identityProvider, String baseDirectory, ISyncProcessListener... syncProcessListeners) {
 		SyncProcess syncProcess = new SyncProcess();
 		if(syncProcessListeners != null){
