@@ -30,9 +30,9 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.shared.JenaException;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 import com.hp.hpl.jena.vocabulary.XSD;
-
-//TODO (JMT) RDF: FeedWriter: write content as item element (use mesh4x namespace) 
-//TODO (JMT) RDF: FeedReader: read content from item elements (use mesh4x namespace)
+// 
+//TODO (JMT) RDF: (Issue 122) FeedWriter: write content as item element (use mesh4x namespace)  
+//TODO (JMT) RDF: (Issue 122) FeedReader: read content from item elements (use mesh4x namespace)
 public class RDFSchema implements IRDFSchema{
 
 	// CONSTANTs
