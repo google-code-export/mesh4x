@@ -69,9 +69,9 @@ import org.mesh4j.sync.model.Sync;
 import org.mesh4j.sync.payload.mappings.IMapping;
 import org.mesh4j.sync.payload.mappings.Mapping;
 import org.mesh4j.sync.payload.schema.ISchema;
-import org.mesh4j.sync.payload.schema.SchemaInstanceContentReadWriter;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
+import org.mesh4j.sync.payload.schema.rdf.RDFSchemaInstanceContentReadWriter;
 import org.mesh4j.sync.properties.PropertiesProvider;
 import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.ui.SyncSessionsFrame.CloudSyncSessionWrapper;
@@ -94,9 +94,9 @@ public class SyncEngineUtil {
 		try{
 			// create HTTPSyncAdapter
 			MSAccessDataSourceMapping dataSourceMapping = sourceIdMapper.getDataSource(sourceAlias);
-			ISchema schema = getSchema(dataSourceMapping, propertiesProvider);
+			RDFSchema schema = getSchema(dataSourceMapping, propertiesProvider);
 			IMapping mappings = getMappings(sourceAlias, propertiesProvider);
-			SchemaInstanceContentReadWriter contentReadWriter = new SchemaInstanceContentReadWriter(schema, mappings, true);
+			RDFSchemaInstanceContentReadWriter contentReadWriter = new RDFSchemaInstanceContentReadWriter(schema, mappings, true);
 			ISyncAdapter httpAdapter = new HttpSyncAdapter(url, RssSyndicationFormat.INSTANCE, identityProvider, 
 					IdGenerator.INSTANCE, contentReadWriter, contentReadWriter);
 			
@@ -399,14 +399,15 @@ public class SyncEngineUtil {
 		return propertiesProvider.getBaseDirectory() + "/" + dataSource + "_schema.xml";
 	}
 	
-	public static IRDFSchema getSchema(MSAccessDataSourceMapping dataSource, PropertiesProvider propertiesProvider) throws Exception{
+	public static RDFSchema getSchema(MSAccessDataSourceMapping dataSource, PropertiesProvider propertiesProvider) throws Exception{
 		String fileName = getSchemaFileName(dataSource.getAlias(), propertiesProvider);
 		return RDFSchema.readSchema(fileName);
 	}
 
 	public static void downloadSchema(String url, String dataSource, PropertiesProvider propertiesProvider) throws Exception {
-		String xmlSchema = HttpSyncAdapter.getSchema(url);
-
+		ISchema schema = HttpSyncAdapter.getSchema(url);
+		String xmlSchema = schema.asXML();
+		
 		String fileName = getSchemaFileName(dataSource, propertiesProvider);
 		FileUtils.write(fileName, xmlSchema.getBytes());
 	}
