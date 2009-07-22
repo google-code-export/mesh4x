@@ -10,21 +10,21 @@ public class CSVRowTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldGenerateExceptionIfHeaderIsNull(){
-		CSVRow row = new CSVRow(null);
+		new CSVRow(null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldGenerateExceptionIfHeaderIsEmpty(){
 		String header = "";
 		CSVHeader cHeader = new CSVHeader(header);
-		CSVRow row = new CSVRow(cHeader);
+		new CSVRow(cHeader);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldGenerateExceptionIfCSVCellValueIsNullOrEmpty(){
 		String header = "id,name,age";
 		CSVHeader cHeader = new CSVHeader(header);
-		CSVRow row = new CSVRow(cHeader,null);
+		new CSVRow(cHeader,null);
 	}
 	
 	@Test

@@ -11,13 +11,13 @@ public class CSVHeaderTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldGenerateExceptionIfHeaderIsNull(){
-		CSVHeader cHeader = new CSVHeader(null);
+		new CSVHeader(null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void ShouldGenerateExceptionIfHeaderIsEmpty(){
 		String header = "";
-		CSVHeader cHeader = new CSVHeader(header);
+		new CSVHeader(header);
 	}
 	
 	@Test
