@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
 import org.dom4j.Namespace;
 import org.dom4j.QName;
 import org.mesh4j.sync.payload.schema.ISchema;
@@ -31,9 +32,10 @@ public interface IRDFSchema extends ISchema {
 
 	public RDFInstance createNewInstance(String id);
 
-	public RDFInstance createNewInstanceFromRDFXML(String rdfXml);
-	public RDFInstance createNewInstanceFromPlainXML(String id, String plainXML, Map<String, ISchemaTypeFormat> formatters) throws ParseException;
-	public RDFInstance createNewInstanceFromPlainXML(String id, String plainXML, Map<String, ISchemaTypeFormat> formatters, String[] splitElements) throws ParseException;
+	public RDFInstance createNewInstanceFromRDFXML(Element rdfXml);	
+	public RDFInstance createNewInstanceFromPlainXML(String id, Element plainXML, Map<String, ISchemaTypeFormat> formatters) throws ParseException;
+	public RDFInstance createNewInstanceFromPlainXML(String id, Element plainXML, Map<String, ISchemaTypeFormat> formatters, String[] splitElements) throws ParseException;
+
 	public RDFInstance createNewInstanceFromProperties(String id, Map<String, Object> propertyValues);
 
 	public Object cannonicaliseValue(String propertyName, Object value);

@@ -191,7 +191,7 @@ public class MsExcelRDFSyncTest {
 		Assert.assertNotNull(content);
 		
 		Element payload = content.getPayload();		
-		RDFInstance instance = schema.createNewInstanceFromRDFXML(payload.asXML());
+		RDFInstance instance = schema.createNewInstanceFromRDFXML(payload);
 		
 		Assert.assertEquals(name, instance.getPropertyValue("Name"));
 		Assert.assertEquals(code, instance.getPropertyValue("Code"));

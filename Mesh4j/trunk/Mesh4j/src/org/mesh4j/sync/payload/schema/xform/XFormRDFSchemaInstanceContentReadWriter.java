@@ -7,13 +7,12 @@ import java.util.Map;
 import org.dom4j.Element;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.payload.mappings.IMapping;
-import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.payload.schema.ISchemaTypeFormat;
-import org.mesh4j.sync.payload.schema.SchemaInstanceContentReadWriter;
 import org.mesh4j.sync.payload.schema.SchemaTypeFormat;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
+import org.mesh4j.sync.payload.schema.rdf.RDFSchemaInstanceContentReadWriter;
 
-public class XFormRDFSchemaInstanceContentReadWriter extends SchemaInstanceContentReadWriter{
+public class XFormRDFSchemaInstanceContentReadWriter extends RDFSchemaInstanceContentReadWriter{
 
 	private static Map<String, ISchemaTypeFormat> TYPE_FORMATS = new HashMap<String, ISchemaTypeFormat>();
 	
@@ -22,20 +21,28 @@ public class XFormRDFSchemaInstanceContentReadWriter extends SchemaInstanceConte
 		TYPE_FORMATS.put(IRDFSchema.XLS_BOOLEAN, XFormBooleanFormat.INSTANCE);
 	}
 	
-	public XFormRDFSchemaInstanceContentReadWriter(ISchema schema, IMapping mapping, boolean mustWriteSync) {
+	public XFormRDFSchemaInstanceContentReadWriter(IRDFSchema schema, IMapping mapping, boolean mustWriteSync) {
 		super(schema, mapping, mustWriteSync);
 	}
 	
-	protected Element asInstanceXML(Item item) {
+	@Override
+	protected Element getInstanceAsXML(Item item) {
 		return this.getSchema().asInstancePlainXML(item.getContent().getPayload(), TYPE_FORMATS);
 	}
-	
-	protected Element asInstanceXMLForMappingResolution(Element payloadToWrite, Item item) {
-		return payloadToWrite;
-	}
-	
-	protected Element getInstanceFromXML(String id, Element contentElement) {
-		return this.getSchema().getInstanceFromPlainXML(id, contentElement, TYPE_FORMATS);
+		
+	@Override
+	protected Element readInstanceFromXML(String id, Element contentElement) {
+		String idRDF = getIdFromPayload(this.getRDFSchema(), contentElement, id);
+		return this.getSchema().getInstanceFromPlainXML(idRDF, contentElement, TYPE_FORMATS);
 	}
 
+	@Override
+	public boolean encapsulateContentInCDATA() {
+		return true;
+	}
+	
+	@Override
+	public void addNameSpace(Element nsElement){
+		// nothing to do
+	}
 }

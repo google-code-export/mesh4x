@@ -5,8 +5,10 @@ import org.mesh4j.sync.model.Item;
 
 public interface IContentWriter {
 
-	void writeContent(ISyndicationFormat syndicationFormat, Element itemElement, Item item);
+	void writeContent(ISyndicationFormat syndicationFormat, Element nsElement, Element itemElement, Item item);
 
 	boolean mustWriteSync(Item item);
+
+	boolean encapsulateContentInCDATA();
 
 }

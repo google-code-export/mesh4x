@@ -18,6 +18,7 @@ import org.mesh4j.sync.payload.mappings.IMapping;
 import org.mesh4j.sync.payload.mappings.Mapping;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
+import org.mesh4j.sync.payload.schema.rdf.RDFSchemaInstanceContentReadWriter;
 import org.mesh4j.sync.utils.XMLHelper;
 
 public class SchemaInstanceContentReadWriterTests {
@@ -73,11 +74,11 @@ public class SchemaInstanceContentReadWriterTests {
 		Item item = new Item(new NullContent("2"), new Sync("2").delete("jmt", new Date()));
 		
 		Element itemElementRss = DocumentHelper.createElement("payload");
-		schemaRW.writeContent(RssSyndicationFormat.INSTANCE, itemElementRss, item);
+		schemaRW.writeContent(RssSyndicationFormat.INSTANCE, itemElementRss, itemElementRss, item);
 		Assert.assertEquals("<payload><title>Element was DELETED, content id = 2, sync Id = 2</title><description>---DELETED---</description></payload>", itemElementRss.asXML());
 		
 		Element itemElementAtom = DocumentHelper.createElement("payload");
-		schemaRW.writeContent(AtomSyndicationFormat.INSTANCE, itemElementAtom, item);
+		schemaRW.writeContent(AtomSyndicationFormat.INSTANCE, itemElementAtom, itemElementAtom, item);
 		Assert.assertEquals("<payload><title xmlns=\"http://www.w3.org/2005/Atom\">Element was DELETED, content id = 2, sync Id = 2</title><summary xmlns=\"http://www.w3.org/2005/Atom\">---DELETED---</summary></payload>", itemElementAtom.asXML());
 	}	
 	
@@ -114,7 +115,7 @@ public class SchemaInstanceContentReadWriterTests {
 	@Test
 	public void shouldWriteItemUsingMappings(){
 		
-		SchemaInstanceContentReadWriter schemaRW = new SchemaInstanceContentReadWriter(RDF_SCHEMA, makeMapping(), false);
+		RDFSchemaInstanceContentReadWriter schemaRW = new RDFSchemaInstanceContentReadWriter(RDF_SCHEMA, makeMapping(), false);
 		
 		IContent content = new IContent(){
 			@Override public String getId() {return "1";}
@@ -137,18 +138,18 @@ public class SchemaInstanceContentReadWriterTests {
 		
 		Element itemElementRss = DocumentHelper.createElement("payload");
 		
-		schemaRW.writeContent(RssSyndicationFormat.INSTANCE, itemElementRss, item);
-		Assert.assertEquals("<payload><title>mapTitle</title><description>mapDesc</description><content:encoded xmlns:content=\"http://purl.org/rss/1.0/modules/content/\"><![CDATA[<rdf:RDF xmlns:User=\"http://localhost:8080/mesh4x/User#\" xmlns:owl=\"http://www.w3.org/2002/07/owl#\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema#\"><User:User rdf:about=\"uri:urn:1\"><User:id rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">1</User:id><User:name rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">juan</User:name><User:pass rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">123</User:pass></User:User></rdf:RDF>]]></content:encoded></payload>", itemElementRss.asXML());
+		schemaRW.writeContent(RssSyndicationFormat.INSTANCE, itemElementRss, itemElementRss, item);
+		Assert.assertEquals("<payload xmlns:User=\"http://localhost:8080/mesh4x/User#\"><title>mapTitle</title><description>mapDesc</description><User:id>1</User:id><User:name>juan</User:name><User:pass>123</User:pass></payload>", itemElementRss.asXML());
 		
 		Element itemElementAtom = DocumentHelper.createElement("payload");
-		schemaRW.writeContent(AtomSyndicationFormat.INSTANCE, itemElementAtom, item);
-		Assert.assertEquals("<payload><title xmlns=\"http://www.w3.org/2005/Atom\">mapTitle</title><summary xmlns=\"http://www.w3.org/2005/Atom\">mapDesc</summary><content type=\"text\"><![CDATA[<rdf:RDF xmlns:User=\"http://localhost:8080/mesh4x/User#\" xmlns:owl=\"http://www.w3.org/2002/07/owl#\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema#\"><User:User rdf:about=\"uri:urn:1\"><User:id rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">1</User:id><User:name rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">juan</User:name><User:pass rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">123</User:pass></User:User></rdf:RDF>]]></content></payload>", itemElementAtom.asXML());
+		schemaRW.writeContent(AtomSyndicationFormat.INSTANCE, itemElementAtom, itemElementAtom, item);
+		Assert.assertEquals("<payload xmlns:User=\"http://localhost:8080/mesh4x/User#\"><title xmlns=\"http://www.w3.org/2005/Atom\">mapTitle</title><summary xmlns=\"http://www.w3.org/2005/Atom\">mapDesc</summary><User:id>1</User:id><User:name>juan</User:name><User:pass>123</User:pass></payload>", itemElementAtom.asXML());
 	}		
 	
 	@Test
 	public void shouldWriteItemWhenMappingDoesNotExists(){
 	
-		SchemaInstanceContentReadWriter schemaRW = new SchemaInstanceContentReadWriter(RDF_SCHEMA, makeNullMapping(), false);
+		RDFSchemaInstanceContentReadWriter schemaRW = new RDFSchemaInstanceContentReadWriter(RDF_SCHEMA, makeNullMapping(), false);
 		
 		IContent content = new IContent(){
 			@Override public String getId() {return "1";}
@@ -171,12 +172,12 @@ public class SchemaInstanceContentReadWriterTests {
 		
 		Element itemElementRss = DocumentHelper.createElement("payload");
 		
-		schemaRW.writeContent(RssSyndicationFormat.INSTANCE, itemElementRss, item);
-		Assert.assertEquals("<payload><title>2</title><description>Id: 1 Version: 0</description><content:encoded xmlns:content=\"http://purl.org/rss/1.0/modules/content/\"><![CDATA[<rdf:RDF xmlns:User=\"http://localhost:8080/mesh4x/User#\" xmlns:owl=\"http://www.w3.org/2002/07/owl#\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema#\"><User:User rdf:about=\"uri:urn:1\"><User:id rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">1</User:id><User:name rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">juan</User:name><User:pass rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">123</User:pass></User:User></rdf:RDF>]]></content:encoded></payload>", itemElementRss.asXML());
+		schemaRW.writeContent(RssSyndicationFormat.INSTANCE, itemElementRss, itemElementRss, item);
+		Assert.assertEquals("<payload xmlns:User=\"http://localhost:8080/mesh4x/User#\"><title>2</title><description>Id: 1 Version: 0</description><User:id>1</User:id><User:name>juan</User:name><User:pass>123</User:pass></payload>", itemElementRss.asXML());
 		
 		Element itemElementAtom = DocumentHelper.createElement("payload");
-		schemaRW.writeContent(AtomSyndicationFormat.INSTANCE, itemElementAtom, item);
-		Assert.assertEquals("<payload><title xmlns=\"http://www.w3.org/2005/Atom\">2</title><summary xmlns=\"http://www.w3.org/2005/Atom\">Id: 1 Version: 0</summary><content type=\"text\"><![CDATA[<rdf:RDF xmlns:User=\"http://localhost:8080/mesh4x/User#\" xmlns:owl=\"http://www.w3.org/2002/07/owl#\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema#\"><User:User rdf:about=\"uri:urn:1\"><User:id rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">1</User:id><User:name rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">juan</User:name><User:pass rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">123</User:pass></User:User></rdf:RDF>]]></content></payload>", itemElementAtom.asXML());
+		schemaRW.writeContent(AtomSyndicationFormat.INSTANCE, itemElementAtom, itemElementAtom, item);
+		Assert.assertEquals("<payload xmlns:User=\"http://localhost:8080/mesh4x/User#\"><title xmlns=\"http://www.w3.org/2005/Atom\">2</title><summary xmlns=\"http://www.w3.org/2005/Atom\">Id: 1 Version: 0</summary><User:id>1</User:id><User:name>juan</User:name><User:pass>123</User:pass></payload>", itemElementAtom.asXML());
 	}
 	
 	@Test

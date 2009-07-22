@@ -30,7 +30,7 @@ public class ContentWriter implements IContentWriter {
 	}
 
 	@Override
-	public void writeContent(ISyndicationFormat syndicationFormat, Element itemElement, Item item) {
+	public void writeContent(ISyndicationFormat syndicationFormat, Element nsElement, Element itemElement, Item item) {
 		
 		if(syndicationFormat == null || itemElement == null || item == null){
 			return;
@@ -57,7 +57,7 @@ public class ContentWriter implements IContentWriter {
 			}else {
 				syndicationFormat.addFeedItemTitleElement(itemElement, title == null || title.length() == 0 ? defaultTitle : title);
 				syndicationFormat.addFeedItemDescriptionElement(itemElement, desc == null || desc.length() == 0 ? defaultDescription : desc);
-				syndicationFormat.addFeedItemPayloadElement(itemElement, item.getContent().getPayload().createCopy());
+				syndicationFormat.addFeedItemPayloadElement(itemElement, item.getContent().getPayload().createCopy(), true);
 			}
 		}
 	}
@@ -119,13 +119,18 @@ public class ContentWriter implements IContentWriter {
 			List<Element> payloadElements = xmlContent.getPayload().elements();
 			
 			if(payloadElements.size() > 1){
-				syndicationFormat.addFeedItemPayloadElement(itemElement, xmlContent.getPayload().createCopy());
+				syndicationFormat.addFeedItemPayloadElement(itemElement, xmlContent.getPayload().createCopy(), encapsulateContentInCDATA());
 			} else if(payloadElements.size() == 1){
-				syndicationFormat.addFeedItemPayloadElement(itemElement, payloadElements.get(0).createCopy());
+				syndicationFormat.addFeedItemPayloadElement(itemElement, payloadElements.get(0).createCopy(), encapsulateContentInCDATA());
 			}
 		} else {
-			syndicationFormat.addFeedItemPayloadElement(itemElement, xmlContent.getPayload().createCopy());
+			syndicationFormat.addFeedItemPayloadElement(itemElement, xmlContent.getPayload().createCopy(), encapsulateContentInCDATA());
 		}
 		
+	}
+
+	@Override
+	public boolean encapsulateContentInCDATA() {
+		return true;
 	}
 }

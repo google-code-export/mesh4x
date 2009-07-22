@@ -6,8 +6,10 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -141,9 +143,36 @@ public class XMLHelper {
 		}
 	}
 
+	final static Comparator<Element> ELEMENT_COMPARATOR = new Comparator<Element>(){
+		@Override
+		public int compare(Element e0, Element e1) {
+			return e0.getName().compareTo(e1.getName());
+		}
+		
+	};
+	@SuppressWarnings("unchecked")
+	private static Element sortElements(Element element) {
+		Element copyElement = element.createCopy();
+		TreeSet<Element> sortedElements = new TreeSet<Element>(ELEMENT_COMPARATOR);
+		
+		List<Element> elements = copyElement.elements();
+		
+		for (Element e : elements) {
+			sortedElements.add(sortElements(e)); 
+			copyElement.remove(e);
+		}
+		
+		for (Element e : sortedElements) {
+			copyElement.add(e);
+		}
+		return copyElement;
+	}
+	
 	public static String canonicalizeXML(Element element) {
 		try {
-			String xml = formatXML(element, OutputFormat.createCompactFormat());
+			Element sortedElement = sortElements(element);
+			
+			String xml = formatXML(sortedElement, OutputFormat.createCompactFormat());
 			xml = xml.trim();
 			xml = canonicalizeXML(xml);
 			return xml.trim();
@@ -151,6 +180,7 @@ public class XMLHelper {
 			throw new MeshException(e);
 		}
 	}
+
 
 	public static String canonicalizeXML(Document document) {
 		try {

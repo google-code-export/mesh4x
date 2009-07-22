@@ -36,7 +36,7 @@ public class HibernateContentAdapterRDFTests extends HibernateContentAdapterTest
 		rdfInstance.setProperty("pass", pass);
 		rdfInstance.setProperty("id", id);
 		
-		String rdfXml = rdfInstance.asXML();
+		String rdfXml = rdfInstance.asRDFXML();
 		Element payload = XMLHelper.parseElement(rdfXml);
 		IContent user = new IdentifiableContent(payload, adapter.getMapping(), id);
 		return user;

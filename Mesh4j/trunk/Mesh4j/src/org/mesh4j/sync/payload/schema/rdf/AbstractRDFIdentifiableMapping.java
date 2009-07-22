@@ -29,7 +29,7 @@ public abstract class AbstractRDFIdentifiableMapping implements IIdentifiableMap
 	@Override
 	public String getId(Element payload) {
 		Element typeElement = getTypeElement(payload);
-		RDFInstance instance = this.rdfSchema.createNewInstanceFromRDFXML(typeElement.asXML());
+		RDFInstance instance = this.rdfSchema.createNewInstanceFromRDFXML(typeElement);
 		return instance.getId();
 	}
 

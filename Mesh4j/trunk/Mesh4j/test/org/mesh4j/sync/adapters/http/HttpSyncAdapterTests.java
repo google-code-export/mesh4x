@@ -172,7 +172,7 @@ public class HttpSyncAdapterTests {
 	@Test
 	public void shouldObtainsSchema(){
 		String path = "http://localhost:8080/mesh4x/feeds/myMesh/myFeed";
-		String schema = HttpSyncAdapter.getSchema(path);
+		ISchema schema = HttpSyncAdapter.getSchema(path);
 		Assert.assertNotNull(schema);
 	}
 

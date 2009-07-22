@@ -298,7 +298,7 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 		throw new UnsupportedOperationException();
 	}
 
-	public static String getSchema(String url) {
+	public static ISchema getSchema(String url) {
 		try{
 			URL baseURL = new URL(url);		
 			return getSchema(baseURL);
@@ -307,8 +307,8 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 		}
 	}
 	
-	private static String getSchema(URL url) {
-		String result = null;
+	protected static ISchema getSchema(URL url) {
+		String schemaXML = null;
 		HttpURLConnection conn = null;
 	    try{
 
@@ -317,7 +317,7 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 	    	URL urlSchema = new URL(urlSchemaString);
 			conn = (HttpURLConnection) urlSchema.openConnection();
 			
-			result = readData(conn);
+			schemaXML = readData(conn);
 	    } catch(Exception e){
 			if(conn != null){
 				try {
@@ -334,8 +334,22 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 				Logger.error(e.getMessage(), e);
 				throw new MeshException(e);
 			}
-	    }		
-		return result;
+	    }	
+	    
+	    ISchema schema = null;
+	    if(schemaXML != null && schemaXML.length() != 0){
+			if(schemaXML.trim().equals("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>")){
+				return null;
+			}
+			
+			if(schemaXML.startsWith("<?xml version=\"1.0\" encoding=\"UTF-8\" ?><rdf") || schemaXML.startsWith("<rdf")){
+				StringReader xmlReader = new StringReader(schemaXML);
+				schema =  new RDFSchema(xmlReader);
+			} else {
+				schema = new Schema(XMLHelper.parseElement(schemaXML));
+			}
+		}
+		return schema;
 	}
 
 	public static String getMappings(String url) {
@@ -536,21 +550,7 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 	}
 
 	public ISchema getSchema() {
-		ISchema schema= null;
-		String schemaXML = getSchema(this.url);
-		if(schemaXML != null && schemaXML.length() != 0){
-			if(schemaXML.trim().equals("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>")){
-				return null;
-			}
-			
-			if(schemaXML.startsWith("<?xml version=\"1.0\" encoding=\"UTF-8\" ?><rdf") || schemaXML.startsWith("<rdf")){
-				StringReader xmlReader = new StringReader(schemaXML);
-				schema =  new RDFSchema(xmlReader);
-			} else {
-				schema = new Schema(XMLHelper.parseElement(schemaXML));
-			}
-		}
-		return schema;
+		return getSchema(this.url);		
 	}
 
 	public String getURL() {

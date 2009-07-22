@@ -36,35 +36,33 @@ public class HibernateToRDFMapping extends AbstractRDFIdentifiableMapping implem
 	public Element convertRowToXML(String meshId, Element element) throws Exception {
 		RDFInstance instance = null;
 		if(this.rdfSchema.hasCompositeId()){
-			instance = this.rdfSchema.createNewInstanceFromPlainXML(meshId, element.asXML(), FORMATS, new String[]{"id"}); 
+			instance = this.rdfSchema.createNewInstanceFromPlainXML(meshId, element, FORMATS, new String[]{"id"}); 
 		} else {
-			instance = this.rdfSchema.createNewInstanceFromPlainXML(meshId, element.asXML(), FORMATS); 
+			instance = this.rdfSchema.createNewInstanceFromPlainXML(meshId, element, FORMATS); 
 		}
-		return instance.asElementXML();
+		return instance.asElementRDFXML();
 	}
 
 	@Override
 	public Element convertXMLToRow(Element element) throws Exception {
-		String rdfXml;
+		Element rdfXml;
 		if(ISyndicationFormat.ELEMENT_PAYLOAD.equals(element.getName())){
 			Element rdfElement = element.element(IRDFSchema.ELEMENT_RDF);
 			if(rdfElement == null){
 				Guard.throwsArgumentException("payload");
 			}
-			rdfXml = rdfElement.asXML();
+			rdfXml = rdfElement;
 		} else {
-			rdfXml = element.asXML();
+			rdfXml = element;
 		}
 		RDFInstance instance = this.rdfSchema.createNewInstanceFromRDFXML(rdfXml);
 		
-		String xml = null;
 		if(this.rdfSchema.hasCompositeId()){
 			CompositeProperty compositeId = new CompositeProperty("id", this.rdfSchema.getIdentifiablePropertyNames());			
-			xml = instance.asPlainXML(FORMATS, new CompositeProperty[]{compositeId});
+			return instance.asElementPlainXml(FORMATS, new CompositeProperty[]{compositeId});
 		} else {
-			xml = instance.asPlainXML(FORMATS);
+			return instance.asElementPlainXml(FORMATS, null);
 		}
-		return XMLHelper.parseElement(xml);
 	}
 
 	@Override

@@ -14,7 +14,7 @@ public class HistoryChangeContentWriter implements IContentWriter {
 	}
 
 	@Override
-	public void writeContent(ISyndicationFormat syndicationFormat, Element itemElement, Item item) {
+	public void writeContent(ISyndicationFormat syndicationFormat, Element nsElements, Element itemElement, Item item) {
 		HistoryChange historyChange = FeedHistoryRepository.makeHistoryChange(item.getContent().getPayload());
 		
 		StringBuffer sb = new StringBuffer();
@@ -29,8 +29,13 @@ public class HistoryChangeContentWriter implements IContentWriter {
 				
 		syndicationFormat.addFeedItemTitleElement(itemElement, sb.toString());
 		syndicationFormat.addFeedItemDescriptionElement(itemElement, "history change");
-		syndicationFormat.addFeedItemPayloadElement(itemElement, item.getContent().getPayload().createCopy());
+		syndicationFormat.addFeedItemPayloadElement(itemElement, item.getContent().getPayload().createCopy(), encapsulateContentInCDATA());
 		//syndicationFormat.addFeedItemPayloadElement(itemElement, XMLHelper.parseElement(historyChange.getPayload()));
+	}
+
+	@Override
+	public boolean encapsulateContentInCDATA() {
+		return true;
 	}
 
 }

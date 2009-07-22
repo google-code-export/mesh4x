@@ -36,6 +36,7 @@ import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
 import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.test.utils.TestHelper;
 import org.mesh4j.sync.utils.FileUtils;
+import org.mesh4j.sync.utils.XMLHelper;
 import org.mesh4j.sync.validations.MeshException;
 
 import sun.jdbc.odbc.JdbcOdbcDriver;
@@ -350,7 +351,7 @@ public class HibernateWithMsAccessContentAdapterReplicationIDTests {
 		properties.put("name", "jmt");
 		RDFInstance instance = rdfSchema.createNewInstanceFromProperties(id, properties);
 		
-		Assert.assertEquals(instance.asXML(), items.get(0).getContent().getPayload().asXML());
+		Assert.assertEquals(instance.asRDFXML(), XMLHelper.canonicalizeXML(items.get(0).getContent().getPayload()));
 		
 	}
 
@@ -379,7 +380,7 @@ public class HibernateWithMsAccessContentAdapterReplicationIDTests {
 		properties.put("name", "sol");
 		RDFInstance instance = rdfSchema.createNewInstanceFromProperties(id, properties);
 		
-		IdentifiableContent identifiableContent = new IdentifiableContent(instance.asElementXML(), mapping, id);
+		IdentifiableContent identifiableContent = new IdentifiableContent(instance.asElementRDFXML(), mapping, id);
 		Item item = new Item(identifiableContent, new Sync(IdGenerator.INSTANCE.newID(), "jmt", new Date(), false));
 		adapter.add(item);	
 		
@@ -410,7 +411,7 @@ public class HibernateWithMsAccessContentAdapterReplicationIDTests {
 		properties.put("name", "sol");
 		RDFInstance instance = rdfSchema.createNewInstanceFromProperties(id, properties);
 		
-		IdentifiableContent identifiableContent = new IdentifiableContent(instance.asElementXML(), mapping, id);
+		IdentifiableContent identifiableContent = new IdentifiableContent(instance.asElementRDFXML(), mapping, id);
 		Item item = new Item(identifiableContent, new Sync(IdGenerator.INSTANCE.newID(), "jmt", new Date(), false));
 		adapter.add(item);	
 		
@@ -425,7 +426,7 @@ public class HibernateWithMsAccessContentAdapterReplicationIDTests {
 		properties.put("name", "name"+IdGenerator.INSTANCE.newID());
 		instance = rdfSchema.createNewInstanceFromProperties(id, properties);
 		
-		identifiableContent = new IdentifiableContent(instance.asElementXML(), mapping, id);
+		identifiableContent = new IdentifiableContent(instance.asElementRDFXML(), mapping, id);
 		Item itemToUpdate = new Item(identifiableContent, item.getSync().clone().update("jmt", new Date(), false));
 		adapter.update(itemToUpdate);	
 		
@@ -456,7 +457,7 @@ public class HibernateWithMsAccessContentAdapterReplicationIDTests {
 		properties.put("name", "sol");
 		RDFInstance instance = rdfSchema.createNewInstanceFromProperties(id, properties);
 		
-		IdentifiableContent identifiableContent = new IdentifiableContent(instance.asElementXML(), mapping, id);
+		IdentifiableContent identifiableContent = new IdentifiableContent(instance.asElementRDFXML(), mapping, id);
 		Item item = new Item(identifiableContent, new Sync(IdGenerator.INSTANCE.newID(), "jmt", new Date(), false));
 		adapter.add(item);	
 		
@@ -473,7 +474,7 @@ public class HibernateWithMsAccessContentAdapterReplicationIDTests {
 		properties.put("name", "sol");
 		instance = rdfSchema.createNewInstanceFromProperties(id, properties);
 		
-		identifiableContent = new IdentifiableContent(instance.asElementXML(), mapping, id);
+		identifiableContent = new IdentifiableContent(instance.asElementRDFXML(), mapping, id);
 		item = new Item(identifiableContent, new Sync(IdGenerator.INSTANCE.newID(), "jmt", new Date(), false));
 		adapter.add(item);	
 		

@@ -32,42 +32,41 @@ public class SchemaInstanceContentReadWriter implements IContentWriter, IContent
 	}
 
 	@Override
-	public void writeContent(ISyndicationFormat syndicationFormat, Element itemElement, Item item){
+	public void writeContent(ISyndicationFormat syndicationFormat, Element nsElement, Element itemElement, Item item){
 
 		if(item.isDeleted()){
 			String title = "Element was DELETED, content id = " + item.getContent().getId() + ", sync Id = "+ item.getSyncId();
 			syndicationFormat.addFeedItemTitleElement(itemElement, title);
 			syndicationFormat.addFeedItemDescriptionElement(itemElement, "---DELETED---");
 		}else{
-			Element payload = asInstanceXML(item);
-			
-			Element plainXML = asInstanceXMLForMappingResolution(payload, item);
-						
+			addNameSpace(nsElement);
+					
+			Element plainXML = getInstanceAsXML(item);
 			String title = this.mapping.getValue(plainXML, ISyndicationFormat.MAPPING_NAME_ITEM_TITLE);
 			String desc = this.mapping.getValue(plainXML, ISyndicationFormat.MAPPING_NAME_ITEM_DESCRIPTION);
-			
+					
 			syndicationFormat.addFeedItemTitleElement(itemElement, title == null || title.length() == 0 ? item.getSyncId() : title);
 			syndicationFormat.addFeedItemDescriptionElement(itemElement, desc == null || desc.length() == 0 ? "Id: " + item.getContent().getId() + " Version: " + item.getContent().getVersion() : desc);
-			syndicationFormat.addFeedItemPayloadElement(itemElement, payload);
+			syndicationFormat.addFeedItemPayloadElement(itemElement, plainXML, encapsulateContentInCDATA());
 		}
 	}
 
-	protected Element asInstanceXML(Item item) {
-		return this.schema.getInstanceFromXML(item.getContent().getPayload());
+	protected void addNameSpace(Element nsElement){
+		// nothing to do
 	}
 	
-	protected Element asInstanceXMLForMappingResolution(Element payloadToWrite, Item item) {
-		return this.schema.asInstancePlainXML(item.getContent().getPayload(), ISchema.EMPTY_FORMATS);
+	protected Element getInstanceAsXML(Item item) {
+		return this.schema.asInstanceXML(item.getContent().getPayload(), ISchema.EMPTY_FORMATS);
 	}
 
 	@Override
 	public void readContent(String id, Element payload, Element contentElement) {
 		// TODO (JMT) RDF: add aditional xml elements to payloads (see ContentReader>>readContent)
-		Element content = getInstanceFromXML(id, contentElement);
+		Element content = readInstanceFromXML(id, contentElement);
 		payload.add(content);
 	}
 
-	protected Element getInstanceFromXML(String id, Element contentElement) {
+	protected Element readInstanceFromXML(String id, Element contentElement) {
 		return this.schema.getInstanceFromXML(contentElement);
 	}
 	
@@ -77,6 +76,11 @@ public class SchemaInstanceContentReadWriter implements IContentWriter, IContent
 
 	public IMapping getMapping() {
 		return this.mapping;
+	}
+
+	@Override
+	public boolean encapsulateContentInCDATA() {
+		return true;
 	}
 
 }

@@ -89,6 +89,7 @@ public class EpiinfoDemoTest {
 		HttpSyncAdapter httpAdapter = HttpSyncAdapterFactory.createSyncAdapter(url, new LoggedInIdentityProvider());
 		
 		SyncEngine syncEngine = new SyncEngine(httpAdapter, adapter);
+		
 		TestHelper.assertSync(syncEngine);
 		
 	}

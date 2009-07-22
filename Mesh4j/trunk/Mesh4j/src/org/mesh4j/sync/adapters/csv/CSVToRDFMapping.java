@@ -21,14 +21,14 @@ public class CSVToRDFMapping extends AbstractRDFIdentifiableMapping implements I
 	
 	@Override
 	public void appliesXMLToRow(CSVFile csvFile, CSVRow row, Element rdfElement) {
-		RDFInstance rdfInstance = this.rdfSchema.createNewInstanceFromRDFXML(rdfElement.asXML());
+		RDFInstance rdfInstance = this.rdfSchema.createNewInstanceFromRDFXML(rdfElement);
 		this.appliesRDFToRow(row, rdfInstance);
 	}
 
 	@Override
 	public Element convertRowToXML(CSVFile csvFile, CSVRow row) {
 		RDFInstance rdfInstance = this.converRowToRDF(csvFile, row);
-		return rdfInstance.asElementXML();
+		return rdfInstance.asElementRDFXML();
 	}
 	
 	public RDFInstance converRowToRDF(CSVFile csvFile, CSVRow row) {
@@ -65,7 +65,7 @@ public class CSVToRDFMapping extends AbstractRDFIdentifiableMapping implements I
 		
 		int size = this.rdfSchema.getPropertyCount();
 		for (int i = 0; i < size; i++) {
-			propertyName = this.rdfSchema.getPropertyName(size - i -1);
+			propertyName = this.rdfSchema.getPropertyName(size -1 - i);
 			propertyLabel = this.rdfSchema.getPropertyLabel(propertyName);
 			sb.append(propertyLabel);
 			if(i <= size -2){

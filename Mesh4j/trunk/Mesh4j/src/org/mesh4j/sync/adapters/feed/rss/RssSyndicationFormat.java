@@ -68,10 +68,12 @@ public class RssSyndicationFormat implements ISyndicationFormat {
 
 
 	@Override
-	public Element addRootElement(Document document) {
+	public Element addRootElement(Document document, boolean encapsulateContentInCData) {
 		Element rootElement = document.addElement(RSS_ELEMENT_ROOT);
 		rootElement.add(new Namespace(SX_PREFIX, NAMESPACE));
-		rootElement.add(new Namespace(CONTENT_NS_PREFIX, CONTENT_NS));
+		if(encapsulateContentInCData){
+			rootElement.add(new Namespace(CONTENT_NS_PREFIX, CONTENT_NS));
+		}
 		rootElement.addAttribute("version", "2.0");
 		Element channel = rootElement.addElement(RSS_ELEMENT_CHANNEL);
 		return channel;
@@ -173,14 +175,22 @@ public class RssSyndicationFormat implements ISyndicationFormat {
 		return "application/rss+xml";
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public void addFeedItemPayloadElement(Element itemElement, Element payload) {
-		String xml = XMLHelper.canonicalizeXML(payload);
-		Element contentElement = itemElement.element(QNAME_CONTENT_ENCODED);
-		if(contentElement == null){
-			contentElement = itemElement.addElement(QNAME_CONTENT_ENCODED);
+	public void addFeedItemPayloadElement(Element itemElement, Element payload, boolean encapsulateContentInCData) {
+		if(encapsulateContentInCData){
+			String xml = XMLHelper.canonicalizeXML(payload);
+			Element contentElement = itemElement.element(QNAME_CONTENT_ENCODED);
+			if(contentElement == null){
+				contentElement = itemElement.addElement(QNAME_CONTENT_ENCODED);
+			}
+			contentElement.add(DocumentHelper.createCDATA(xml));
+		} else {
+			List<Element> elements = payload.elements();
+			for (Element element : elements) {
+				itemElement.add(element.createCopy());
+			}
 		}
-		contentElement.add(DocumentHelper.createCDATA(xml));
 	}
 
 	@Override

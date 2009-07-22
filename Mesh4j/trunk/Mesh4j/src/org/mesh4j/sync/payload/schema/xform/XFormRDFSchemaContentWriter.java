@@ -29,7 +29,7 @@ public class XFormRDFSchemaContentWriter implements IContentWriter{
 	}
 
 	@Override
-	public void writeContent(ISyndicationFormat syndicationFormat, Element itemElement, Item item){
+	public void writeContent(ISyndicationFormat syndicationFormat, Element nsElement, Element itemElement, Item item){
 
 		if(item.isDeleted()){
 			String title = "Element was DELETED, content id = " + item.getContent().getId() + ", sync Id = "+ item.getSyncId();
@@ -42,7 +42,7 @@ public class XFormRDFSchemaContentWriter implements IContentWriter{
 			
 			syndicationFormat.addFeedItemTitleElement(itemElement, "Content id = " + item.getContent().getId());
 			syndicationFormat.addFeedItemDescriptionElement(itemElement, "Sync Id: " + item.getSyncId() + " Version: " + item.getContent().getVersion());
-			syndicationFormat.addFeedItemPayloadElement(itemElement, payload);
+			syndicationFormat.addFeedItemPayloadElement(itemElement, payload, encapsulateContentInCDATA());
 		}
 	}
 
@@ -76,6 +76,11 @@ public class XFormRDFSchemaContentWriter implements IContentWriter{
 		StringReader reader =  new StringReader(rdfXml);
 		RDFSchema rdfSchema = new RDFSchema(reader);
 		return rdfSchema;
+	}
+
+	@Override
+	public boolean encapsulateContentInCDATA() {
+		return true;
 	}
 
 

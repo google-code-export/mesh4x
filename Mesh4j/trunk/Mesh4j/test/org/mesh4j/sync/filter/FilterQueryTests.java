@@ -103,7 +103,7 @@ public class FilterQueryTests {
         rdfInstance.setProperty("decimal", BigDecimal.TEN);
         
 		String id = IdGenerator.INSTANCE.newID();
-		XMLContent content = new XMLContent(id, "title", "des", "link", XMLHelper.parseElement(rdfInstance.asXML()));
+		XMLContent content = new XMLContent(id, "title", "des", "link", XMLHelper.parseElement(rdfInstance.asRDFXML()));
 		Sync sync = new Sync(id, "jmt", new Date(), false);
 		Item item = new Item(content, sync);
 		

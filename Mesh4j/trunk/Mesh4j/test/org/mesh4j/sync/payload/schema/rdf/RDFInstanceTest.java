@@ -10,6 +10,7 @@ import java.util.TimeZone;
 
 import junit.framework.Assert;
 
+import org.dom4j.Element;
 import org.junit.Test;
 import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.payload.schema.ISchemaTypeFormat;
@@ -25,7 +26,9 @@ public class RDFInstanceTest {
 	private static RDFSchema RDF_SCHEMA;
 	private static RDFInstance RDF_INSTANCE;
 	private static String RDF_XML;
+	private static Element RDF_XML_ELEMENT;
 	private static String PLAIN_XML;
+	private static Element PLAIN_XML_ELEMENT;
 	{
 		RDF_SCHEMA = new RDFSchema("example", "http://mesh4x/example#", "example");
 		RDF_SCHEMA.addStringProperty("string", "string", IRDFSchema.DEFAULT_LANGUAGE);
@@ -45,8 +48,10 @@ public class RDFInstanceTest {
         RDF_INSTANCE.setProperty("long", Long.MAX_VALUE);
         RDF_INSTANCE.setProperty("decimal", BigDecimal.TEN);
         
-        RDF_XML = "<rdf:RDF xmlns:example=\"http://mesh4x/example#\" xmlns:owl=\"http://www.w3.org/2002/07/owl#\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema#\"><example:example rdf:about=\"uri:urn:1\"><example:decimal rdf:datatype=\"http://www.w3.org/2001/XMLSchema#decimal\">10</example:decimal><example:long rdf:datatype=\"http://www.w3.org/2001/XMLSchema#long\">9223372036854775807</example:long><example:double rdf:datatype=\"http://www.w3.org/2001/XMLSchema#double\">1.7976931348623157E308</example:double><example:datetime rdf:datatype=\"http://www.w3.org/2001/XMLSchema#dateTime\">2009-06-01T05:31:01.001Z</example:datetime><example:boolean rdf:datatype=\"http://www.w3.org/2001/XMLSchema#boolean\">true</example:boolean><example:integer rdf:datatype=\"http://www.w3.org/2001/XMLSchema#int\">2147483647</example:integer><example:string rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">abc</example:string></example:example></rdf:RDF>";
+        RDF_XML = "<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:example=\"http://mesh4x/example#\" xmlns:owl=\"http://www.w3.org/2002/07/owl#\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema#\"><example:example rdf:about=\"uri:urn:1\"><example:decimal rdf:datatype=\"http://www.w3.org/2001/XMLSchema#decimal\">10</example:decimal><example:long rdf:datatype=\"http://www.w3.org/2001/XMLSchema#long\">9223372036854775807</example:long><example:double rdf:datatype=\"http://www.w3.org/2001/XMLSchema#double\">1.7976931348623157E308</example:double><example:datetime rdf:datatype=\"http://www.w3.org/2001/XMLSchema#dateTime\">2009-06-01T05:31:01.001Z</example:datetime><example:boolean rdf:datatype=\"http://www.w3.org/2001/XMLSchema#boolean\">true</example:boolean><example:integer rdf:datatype=\"http://www.w3.org/2001/XMLSchema#int\">2147483647</example:integer><example:string rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">abc</example:string></example:example></rdf:RDF>";
+        RDF_XML_ELEMENT = XMLHelper.parseElement(RDF_XML);
         PLAIN_XML = "<example><integer>2147483647</integer><string>abc</string><boolean>true</boolean><datetime>2009-05-01T05:31:01.001Z</datetime><double>1.7976931348623157E308</double><long>9223372036854775807</long><decimal>10</decimal></example>";
+        PLAIN_XML_ELEMENT = XMLHelper.parseElement(PLAIN_XML);
       }
 	
 	@Test(expected=IllegalArgumentException.class)
@@ -103,69 +108,93 @@ public class RDFInstanceTest {
 	
 	@Test
 	public void shouldBuildInstanceFromRDFXml(){
-		String rdfXml = "<rdf:RDF xmlns:example=\"http://mesh4x/example#\" xmlns:owl=\"http://www.w3.org/2002/07/owl#\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema#\"><example:example rdf:about=\"uri:urn:1\"><example:string rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">abc</example:string><example:integer rdf:datatype=\"http://www.w3.org/2001/XMLSchema#int\">2147483647</example:integer><example:boolean rdf:datatype=\"http://www.w3.org/2001/XMLSchema#boolean\">true</example:boolean><example:datetime rdf:datatype=\"http://www.w3.org/2001/XMLSchema#dateTime\">2009-06-01T05:31:01.001Z</example:datetime><example:double rdf:datatype=\"http://www.w3.org/2001/XMLSchema#double\">1.7976931348623157E308</example:double><example:long rdf:datatype=\"http://www.w3.org/2001/XMLSchema#long\">9223372036854775807</example:long><example:decimal rdf:datatype=\"http://www.w3.org/2001/XMLSchema#decimal\">10</example:decimal></example:example></rdf:RDF>";
-		Assert.assertEquals(rdfXml, RDFInstance.buildFromRDFXml(RDF_SCHEMA, RDF_XML).asXML());
+		String rdfXml = "<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:example=\"http://mesh4x/example#\" xmlns:owl=\"http://www.w3.org/2002/07/owl#\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema#\"><example:example rdf:about=\"uri:urn:1\"><example:string rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">abc</example:string><example:integer rdf:datatype=\"http://www.w3.org/2001/XMLSchema#int\">2147483647</example:integer><example:boolean rdf:datatype=\"http://www.w3.org/2001/XMLSchema#boolean\">true</example:boolean><example:datetime rdf:datatype=\"http://www.w3.org/2001/XMLSchema#dateTime\">2009-06-01T05:31:01.001Z</example:datetime><example:double rdf:datatype=\"http://www.w3.org/2001/XMLSchema#double\">1.7976931348623157E308</example:double><example:long rdf:datatype=\"http://www.w3.org/2001/XMLSchema#long\">9223372036854775807</example:long><example:decimal rdf:datatype=\"http://www.w3.org/2001/XMLSchema#decimal\">10</example:decimal></example:example></rdf:RDF>";
+		rdfXml = XMLHelper.canonicalizeXML(XMLHelper.parseElement(rdfXml));
+		Assert.assertEquals(rdfXml, RDFInstance.buildFromRDFXml(RDF_SCHEMA, RDF_XML).asRDFXML());
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldBuildInstanceFromPlainXmlFailsIsSchemaIsNull(){
-		RDFInstance.buildFromPlainXML(null, "uri:urn:1", PLAIN_XML, ISchema.EMPTY_FORMATS);
+		RDFInstance.buildFromPlainXML(null, "uri:urn:1", PLAIN_XML_ELEMENT, ISchema.EMPTY_FORMATS, null);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldBuildInstanceFromPlainXmlFailsIfIdIsNull(){
-		RDFInstance.buildFromPlainXML(RDF_SCHEMA, null, PLAIN_XML, ISchema.EMPTY_FORMATS);
+		RDFInstance.buildFromPlainXML(RDF_SCHEMA, null, PLAIN_XML_ELEMENT, ISchema.EMPTY_FORMATS, null);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldBuildInstanceFromPlainXmlFailsIfIdIsEmpty(){
-		RDFInstance.buildFromPlainXML(RDF_SCHEMA, "", PLAIN_XML, ISchema.EMPTY_FORMATS);
+		RDFInstance.buildFromPlainXML(RDF_SCHEMA, "", PLAIN_XML_ELEMENT, ISchema.EMPTY_FORMATS, null);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldBuildInstanceFromPlainXmlFailsIfXMLIsNull(){
-		RDFInstance.buildFromPlainXML(RDF_SCHEMA, "uri:urn:1", null, ISchema.EMPTY_FORMATS);
+		RDFInstance.buildFromPlainXML(RDF_SCHEMA, "uri:urn:1", null, ISchema.EMPTY_FORMATS, null);
 	}
 	
-	@Test(expected=IllegalArgumentException.class)
-	public void shouldBuildInstanceFromPlainXmlFailsIfXMLIsEmpty(){
-		RDFInstance.buildFromPlainXML(RDF_SCHEMA, "uri:urn:1", "", ISchema.EMPTY_FORMATS);
-	}
+//	@Test(expected=IllegalArgumentException.class)
+//	public void shouldBuildInstanceFromPlainXmlFailsIfXMLIsEmpty(){
+//		RDFInstance.buildFromPlainXML(RDF_SCHEMA, "uri:urn:1", "", ISchema.EMPTY_FORMATS);
+//	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldBuildInstanceFromPlainXmlFailsIfFormatsIsNull(){
-		RDFInstance.buildFromPlainXML(RDF_SCHEMA, "uri:urn:1", PLAIN_XML, null);
+		RDFInstance.buildFromPlainXML(RDF_SCHEMA, "uri:urn:1", PLAIN_XML_ELEMENT, null, null);
 	}
 	
 	@Test
 	public void shouldBuildInstanceFromPlainXml(){
-		String rdfXml = "<rdf:RDF xmlns:example=\"http://mesh4x/example#\" xmlns:owl=\"http://www.w3.org/2002/07/owl#\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema#\"><example:example rdf:about=\"uri:urn:1\"><example:string rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">abc</example:string><example:integer rdf:datatype=\"http://www.w3.org/2001/XMLSchema#int\">2147483647</example:integer><example:boolean rdf:datatype=\"http://www.w3.org/2001/XMLSchema#boolean\">true</example:boolean><example:datetime rdf:datatype=\"http://www.w3.org/2001/XMLSchema#dateTime\">2009-05-01T05:31:01.001Z</example:datetime><example:double rdf:datatype=\"http://www.w3.org/2001/XMLSchema#double\">1.7976931348623157E308</example:double><example:long rdf:datatype=\"http://www.w3.org/2001/XMLSchema#long\">9223372036854775807</example:long><example:decimal rdf:datatype=\"http://www.w3.org/2001/XMLSchema#decimal\">10</example:decimal></example:example></rdf:RDF>";
-		Assert.assertEquals(rdfXml, RDFInstance.buildFromPlainXML(RDF_SCHEMA, "1", PLAIN_XML, ISchema.EMPTY_FORMATS).asXML());
+		String rdfXml = "<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:example=\"http://mesh4x/example#\" xmlns:owl=\"http://www.w3.org/2002/07/owl#\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema#\"><example:example rdf:about=\"uri:urn:1\"><example:string rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">abc</example:string><example:integer rdf:datatype=\"http://www.w3.org/2001/XMLSchema#int\">2147483647</example:integer><example:boolean rdf:datatype=\"http://www.w3.org/2001/XMLSchema#boolean\">true</example:boolean><example:datetime rdf:datatype=\"http://www.w3.org/2001/XMLSchema#dateTime\">2009-05-01T05:31:01.001Z</example:datetime><example:double rdf:datatype=\"http://www.w3.org/2001/XMLSchema#double\">1.7976931348623157E308</example:double><example:long rdf:datatype=\"http://www.w3.org/2001/XMLSchema#long\">9223372036854775807</example:long><example:decimal rdf:datatype=\"http://www.w3.org/2001/XMLSchema#decimal\">10</example:decimal></example:example></rdf:RDF>";
+		rdfXml = XMLHelper.canonicalizeXML(XMLHelper.parseElement(rdfXml));
+		Assert.assertEquals(rdfXml, RDFInstance.buildFromPlainXML(RDF_SCHEMA, "1", PLAIN_XML_ELEMENT, ISchema.EMPTY_FORMATS, null).asRDFXML());
 	}
 
 	@Test
 	public void shouldBuildInstanceFromPlainXmlWithTypeFormats(){
 		
-		String plainXml = "<example><integer>2147483647</integer><string>abc</string><boolean>true</boolean><datetime>2009-05-01</datetime><double>1.7976931348623157E308</double><long>9223372036854775807</long><decimal>10</decimal></example>";
+		String xml = "<example><integer>2147483647</integer><string>abc</string><boolean>true</boolean><datetime>2009-05-01</datetime><double>1.7976931348623157E308</double><long>9223372036854775807</long><decimal>10</decimal></example>";
+		Element plainXml = XMLHelper.parseElement(xml);
 		
 		HashMap<String, ISchemaTypeFormat> formats = new HashMap<String, ISchemaTypeFormat>();
 		formats.put(IRDFSchema.XLS_DATETIME, new SchemaTypeFormat(new SimpleDateFormat("yyyy-MM-dd")));
 		formats.put(IRDFSchema.XLS_BOOLEAN, XFormBooleanFormat.INSTANCE);
 		
-		Assert.assertEquals("<example><integer>2147483647</integer><string>abc</string><boolean>true</boolean><long>9223372036854775807</long><double>1.7976931348623157E308</double><datetime>2009-05-01</datetime><decimal>10</decimal></example>", RDFInstance.buildFromPlainXML(RDF_SCHEMA, "1", plainXml, formats).asPlainXML(formats));
+		Assert.assertEquals(
+				"<example>" +
+				"<boolean>true</boolean>" +
+				"<datetime>2009-05-01</datetime>" +
+				"<decimal>10</decimal>" +
+				"<double>1.7976931348623157E308</double>" +
+				"<integer>2147483647</integer>" +
+				"<long>9223372036854775807</long>" +
+				"<string>abc</string>" +
+				"</example>", 
+				RDFInstance.buildFromPlainXML(RDF_SCHEMA, "1", plainXml, formats, null).asPlainXML(formats));
 
 	}
 	
 	@Test
 	public void shouldBuildInstanceFromPlainXmlWithPropertyNameTypeFormats(){
-		
-		String plainXml = "<example><integer>2147483647</integer><string>abc</string><boolean>true</boolean><datetime>2009-05-01</datetime><double>1.7976931348623157E308</double><long>9223372036854775807</long><decimal>10</decimal></example>";
+		 
+		String xml = "<example><integer>2147483647</integer><string>abc</string><boolean>true</boolean><datetime>2009-05-01</datetime><double>1.7976931348623157E308</double><long>9223372036854775807</long><decimal>10</decimal></example>";
+		Element plainXml = XMLHelper.parseElement(xml);
 		
 		HashMap<String, ISchemaTypeFormat> formats = new HashMap<String, ISchemaTypeFormat>();
 		formats.put("datetime", new SchemaTypeFormat(new SimpleDateFormat("yyyy-MM-dd")));
 		formats.put("boolean", XFormBooleanFormat.INSTANCE);
 		
-		Assert.assertEquals("<example><integer>2147483647</integer><string>abc</string><boolean>true</boolean><long>9223372036854775807</long><double>1.7976931348623157E308</double><datetime>2009-05-01</datetime><decimal>10</decimal></example>", RDFInstance.buildFromPlainXML(RDF_SCHEMA, "1", plainXml, formats).asPlainXML(formats));
+		Assert.assertEquals(
+			"<example>" +
+			"<boolean>true</boolean>" +
+			"<datetime>2009-05-01</datetime>" +
+			"<decimal>10</decimal>" +
+			"<double>1.7976931348623157E308</double>" +
+			"<integer>2147483647</integer>" +
+			"<long>9223372036854775807</long>" +
+			"<string>abc</string>" +
+			"</example>", 
+			RDFInstance.buildFromPlainXML(RDF_SCHEMA, "1", plainXml, formats, null).asPlainXML(formats));
 	}
 	
 	@Test
@@ -179,14 +208,14 @@ public class RDFInstanceTest {
 		instance.setProperty("long", Long.MAX_VALUE);
         instance.setProperty("decimal", BigDecimal.TEN);
         
-        Assert.assertEquals(RDF_XML, instance.asXML());
+        Assert.assertEquals(XMLHelper.canonicalizeXML(RDF_XML_ELEMENT), instance.asRDFXML());
 	}
 
 	@Test
 	public void shouldAsPlainXML() {
 		RDFInstance instance = RDF_INSTANCE;
         
-        Assert.assertEquals(PLAIN_XML, instance.asPlainXML());
+        Assert.assertEquals(XMLHelper.canonicalizeXML(PLAIN_XML_ELEMENT), instance.asPlainXML());
 	}
 	
 	
@@ -198,7 +227,7 @@ public class RDFInstanceTest {
         RDFInstance rdfInstance = new RDFInstance(rdfSchema, "uri:urn:1");
         rdfInstance.setProperty("string", "hola & chau");
         
-        System.out.println(rdfInstance.asXML());
+        System.out.println(rdfInstance.asRDFXML());
         Assert.assertEquals("<example><string>hola &amp; chau</string></example>", rdfInstance.asPlainXML());
     }
 	
@@ -209,8 +238,11 @@ public class RDFInstanceTest {
     	
         RDFInstance rdfInstance = new RDFInstance(rdfSchema, "uri:urn:1");
         rdfInstance.setProperty("string", "hola & chau");
-        
-        Assert.assertEquals("<rdf:RDF xmlns:example=\"http://mesh4x/example#\" xmlns:owl=\"http://www.w3.org/2002/07/owl#\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema#\"><example:example rdf:about=\"uri:urn:1\"><example:string rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">hola &amp; chau</example:string></example:example></rdf:RDF>", rdfInstance.asXML());
+		Element element = XMLHelper.parseElement("<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:example=\"http://mesh4x/example#\" xmlns:owl=\"http://www.w3.org/2002/07/owl#\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema#\"><example:example rdf:about=\"uri:urn:1\"><example:string rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">hola &amp; chau</example:string></example:example></rdf:RDF>");		
+	
+        Assert.assertEquals(
+        	XMLHelper.canonicalizeXML(element), 
+       		rdfInstance.asRDFXML());
     }
 	
 		
@@ -219,12 +251,13 @@ public class RDFInstanceTest {
 		RDFInstance instance = RDF_INSTANCE;
         
 		String plainXML = "<example><integer>2147483647</integer><string>abc</string><boolean>true</boolean><datetime>2009-05-01</datetime><double>1.7976931348623157E308</double><long>9223372036854775807</long><decimal>10</decimal></example>";
+		Element expectedXml = XMLHelper.parseElement(plainXML);
 		
 		HashMap<String, ISchemaTypeFormat> formats = new HashMap<String, ISchemaTypeFormat>();
 		formats.put(IRDFSchema.XLS_DATETIME, new SchemaTypeFormat(new SimpleDateFormat("yyyy-MM-dd")));
 		formats.put(IRDFSchema.XLS_BOOLEAN, XFormBooleanFormat.INSTANCE);
 			
-        Assert.assertEquals(plainXML, instance.asPlainXML(formats));
+        Assert.assertEquals(XMLHelper.canonicalizeXML(expectedXml), instance.asPlainXML(formats));
 	}
 	
 	@Test
@@ -232,6 +265,7 @@ public class RDFInstanceTest {
 		RDFInstance instance = RDF_INSTANCE;
         
 		String plainXML = "<example><composite2><datetime>2009-05-01</datetime><double>1.7976931348623157E308</double></composite2><long>9223372036854775807</long><composite1><integer>2147483647</integer><string>abc</string><boolean>true</boolean></composite1><decimal>10</decimal></example>";
+		Element expectedXML = XMLHelper.parseElement(plainXML);
 		
 		HashMap<String, ISchemaTypeFormat> formats = new HashMap<String, ISchemaTypeFormat>();
 		formats.put(IRDFSchema.XLS_DATETIME, new SchemaTypeFormat(new SimpleDateFormat("yyyy-MM-dd")));
@@ -241,7 +275,7 @@ public class RDFInstanceTest {
 		CompositeProperty compositeProperty2 = new CompositeProperty("composite2", Arrays.asList(new String[]{"datetime", "double"}));
 		
 		CompositeProperty[] compositeProperties = new CompositeProperty[]{compositeProperty1, compositeProperty2};
-        Assert.assertEquals(plainXML, instance.asPlainXML(formats, compositeProperties));
+        Assert.assertEquals(XMLHelper.canonicalizeXML(expectedXML), instance.asPlainXML(formats, compositeProperties));
 	}
 	
 	@Test
@@ -249,13 +283,14 @@ public class RDFInstanceTest {
 		RDFInstance instance = RDF_INSTANCE;
         
 		String plainXML = "<example><integer>2147483647</integer><string>abc</string><boolean>true</boolean><datetime>2009-05-01</datetime><double>1.7976931348623157E308</double><long>9223372036854775807</long><decimal>10</decimal></example>";
+		Element expectedXml = XMLHelper.parseElement(plainXML);
 		
 		HashMap<String, ISchemaTypeFormat> formats = new HashMap<String, ISchemaTypeFormat>();
 		formats.put("datetime", new SchemaTypeFormat(new SimpleDateFormat("yyyy-MM-dd")));
 		formats.put("boolean", XFormBooleanFormat.INSTANCE);
 		
 		
-        Assert.assertEquals(plainXML, instance.asPlainXML(formats));
+        Assert.assertEquals(XMLHelper.canonicalizeXML(expectedXml), instance.asPlainXML(formats));
 	}
 	
 	@Test
@@ -263,6 +298,7 @@ public class RDFInstanceTest {
 		RDFInstance instance = RDF_INSTANCE;
         
 		String plainXML = "<example><composite2><datetime>2009-05-01</datetime><double>1.7976931348623157E308</double></composite2><long>9223372036854775807</long><composite1><integer>2147483647</integer><string>abc</string><boolean>true</boolean></composite1><decimal>10</decimal></example>";
+		Element expectedXml = XMLHelper.parseElement(plainXML);
 		
 		HashMap<String, ISchemaTypeFormat> formats = new HashMap<String, ISchemaTypeFormat>();
 		formats.put("datetime", new SchemaTypeFormat(new SimpleDateFormat("yyyy-MM-dd")));
@@ -272,7 +308,7 @@ public class RDFInstanceTest {
 		CompositeProperty compositeProperty2 = new CompositeProperty("composite2", Arrays.asList(new String[]{"datetime", "double"}));
 		
 		CompositeProperty[] compositeProperties = new CompositeProperty[]{compositeProperty1, compositeProperty2};
-        Assert.assertEquals(plainXML, instance.asPlainXML(formats, compositeProperties));
+        Assert.assertEquals(XMLHelper.canonicalizeXML(expectedXml), instance.asPlainXML(formats, compositeProperties));
 	}
 	
 	@Test
@@ -382,9 +418,9 @@ public class RDFInstanceTest {
         RDFInstance instance = RDFInstance.buildFromProperties(RDF_SCHEMA, "1", propertyValues);
         
         String rdfXml = "<rdf:RDF xmlns:example=\"http://mesh4x/example#\" xmlns:owl=\"http://www.w3.org/2002/07/owl#\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema#\"><example:example rdf:about=\"uri:urn:1\"><example:string rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">abc</example:string><example:integer rdf:datatype=\"http://www.w3.org/2001/XMLSchema#int\">2147483647</example:integer><example:boolean rdf:datatype=\"http://www.w3.org/2001/XMLSchema#boolean\">true</example:boolean><example:datetime rdf:datatype=\"http://www.w3.org/2001/XMLSchema#dateTime\">2009-05-01T05:31:01.001Z</example:datetime><example:double rdf:datatype=\"http://www.w3.org/2001/XMLSchema#double\">1.7976931348623157E308</example:double><example:long rdf:datatype=\"http://www.w3.org/2001/XMLSchema#long\">9223372036854775807</example:long><example:decimal rdf:datatype=\"http://www.w3.org/2001/XMLSchema#decimal\">10</example:decimal></example:example></rdf:RDF>";
-        
+        Element expectedRDFXml = XMLHelper.parseElement(rdfXml);
         Assert.assertNotNull(instance);
-        Assert.assertEquals(XMLHelper.canonicalizeXML(rdfXml), XMLHelper.canonicalizeXML(XMLHelper.parseElement(instance.asXML())));
+        Assert.assertEquals(XMLHelper.canonicalizeXML(expectedRDFXml), XMLHelper.canonicalizeXML(XMLHelper.parseElement(instance.asRDFXML())));
 	}
 	
 	@Test

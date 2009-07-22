@@ -118,7 +118,7 @@ public class CSVRDFContentAdapterWithBlankInHeaderColumnNamesTests {
 		properties.put("Country_and_Nationality", "Argento");
 		RDFInstance instance = rdfSchema.createNewInstanceFromProperties(id, properties);
 		
-		IdentifiableContent identifiableContent = new IdentifiableContent(instance.asElementXML(), mapping, id);
+		IdentifiableContent identifiableContent = new IdentifiableContent(instance.asElementRDFXML(), mapping, id);
 		Item item = new Item(identifiableContent, new Sync(IdGenerator.INSTANCE.newID(), "jmt", new Date(), false));
 		adapter.add(item);	
 		
@@ -157,7 +157,7 @@ public class CSVRDFContentAdapterWithBlankInHeaderColumnNamesTests {
 		properties.put("Country_and_Nationality", "Argento");
 		RDFInstance instance = rdfSchema.createNewInstanceFromProperties(id, properties);
 		
-		IdentifiableContent identifiableContent = new IdentifiableContent(instance.asElementXML(), mapping, id);
+		IdentifiableContent identifiableContent = new IdentifiableContent(instance.asElementRDFXML(), mapping, id);
 		Item item = new Item(identifiableContent, items.get(0).getSync().clone().update("jmt", new Date(), false));
 		adapter.update(item);	
 		
@@ -195,7 +195,7 @@ public class CSVRDFContentAdapterWithBlankInHeaderColumnNamesTests {
 		properties.put("Country_and_Nationality", "Argento");
 		RDFInstance instance = rdfSchema.createNewInstanceFromProperties(id, properties);
 		
-		IdentifiableContent identifiableContent = new IdentifiableContent(instance.asElementXML(), mapping, id);
+		IdentifiableContent identifiableContent = new IdentifiableContent(instance.asElementRDFXML(), mapping, id);
 		Item item = new Item(identifiableContent, new Sync(IdGenerator.INSTANCE.newID(), "jmt", new Date(), false));
 		adapter.add(item);	
 		

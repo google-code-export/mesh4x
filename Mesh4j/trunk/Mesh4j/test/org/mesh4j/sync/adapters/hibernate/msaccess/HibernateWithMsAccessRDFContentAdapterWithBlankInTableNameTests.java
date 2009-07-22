@@ -90,7 +90,7 @@ public class HibernateWithMsAccessRDFContentAdapterWithBlankInTableNameTests {
 		properties.put("my_name", "sol");
 		RDFInstance instance = rdfSchema.createNewInstanceFromProperties("3", properties);
 		
-		IdentifiableContent identifiableContent = new IdentifiableContent(instance.asElementXML(), mapping, "3");
+		IdentifiableContent identifiableContent = new IdentifiableContent(instance.asElementRDFXML(), mapping, "3");
 		Item item = new Item(identifiableContent, new Sync(IdGenerator.INSTANCE.newID(), "jmt", new Date(), false));
 		adapter.add(item);	
 		
@@ -130,7 +130,7 @@ public class HibernateWithMsAccessRDFContentAdapterWithBlankInTableNameTests {
 		properties.put("my_name", "sol");
 		RDFInstance instance = rdfSchema.createNewInstanceFromProperties("2", properties);
 		
-		IdentifiableContent identifiableContent = new IdentifiableContent(instance.asElementXML(), mapping, "2");
+		IdentifiableContent identifiableContent = new IdentifiableContent(instance.asElementRDFXML(), mapping, "2");
 		Item item = new Item(identifiableContent, items.get(1).getSync().clone().update("jmt", new Date(), false));
 		adapter.update(item);	
 		

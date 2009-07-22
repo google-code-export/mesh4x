@@ -51,7 +51,7 @@ public class KMLContentTests {
 		KMLContent content = new KMLContent(payload, "1");
 		Sync sync = new Sync("1");
 		Item item = new Item(content, sync);
-		ContentWriter.INSTANCE.writeContent(AtomSyndicationFormat.INSTANCE, feedPayload, item);
+		ContentWriter.INSTANCE.writeContent(AtomSyndicationFormat.INSTANCE, feedPayload, feedPayload, item);
 		
 		Assert.assertNotNull(AtomSyndicationFormat.INSTANCE.getFeedItemTitleElement(feedPayload));
 		Assert.assertNotNull(AtomSyndicationFormat.INSTANCE.getFeedItemTitleElement(feedPayload).getText());

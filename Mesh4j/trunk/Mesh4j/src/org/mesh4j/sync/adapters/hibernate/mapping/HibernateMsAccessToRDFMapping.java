@@ -45,24 +45,24 @@ public class HibernateMsAccessToRDFMapping extends AbstractRDFIdentifiableMappin
 		RDFInstance instance = null;
 				
 		if(this.rdfSchema.hasCompositeId()){
-			instance = this.rdfSchema.createNewInstanceFromPlainXML(meshId, element.asXML(), this.formats, new String[]{"id"}); 
+			instance = this.rdfSchema.createNewInstanceFromPlainXML(meshId, element, this.formats, new String[]{"id"}); 
 		} else {
-			instance = this.rdfSchema.createNewInstanceFromPlainXML(meshId, element.asXML(), this.formats); 
+			instance = this.rdfSchema.createNewInstanceFromPlainXML(meshId, element, this.formats); 
 		}
-		return instance.asElementXML();
+		return instance.asElementRDFXML();
 	}
 
 	@Override
 	public Element convertXMLToRow(Element element) throws Exception {
-		String rdfXml;
+		Element rdfXml;
 		if(ISyndicationFormat.ELEMENT_PAYLOAD.equals(element.getName())){
 			Element rdfElement = element.element(IRDFSchema.ELEMENT_RDF);
 			if(rdfElement == null){
 				Guard.throwsArgumentException("payload");
 			}
-			rdfXml = rdfElement.asXML();
+			rdfXml = rdfElement;
 		} else {
-			rdfXml = element.asXML();
+			rdfXml = element;
 		}
 		RDFInstance instance = this.rdfSchema.createNewInstanceFromRDFXML(rdfXml);
 		

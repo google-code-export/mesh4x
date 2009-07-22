@@ -270,7 +270,15 @@ public class RDFSchemaTests {
 		schema.addDecimalProperty("decimal", "decimal", IRDFSchema.DEFAULT_LANGUAGE);  
         
 		Element plainElement = schema.asInstancePlainXML(element, ISchema.EMPTY_FORMATS);
-		Assert.assertEquals("<example><integer>2147483647</integer><string>abc</string><boolean>true</boolean><datetime>2009-06-01T05:31:01.001Z</datetime><double>1.7976931348623157E308</double><long>9223372036854775807</long><decimal>10</decimal></example>", plainElement.asXML());
+		Assert.assertEquals("<example>" +
+				"<boolean>true</boolean>" +
+				"<datetime>2009-06-01T05:31:01.001Z</datetime>" +
+				"<decimal>10</decimal>" +
+				"<double>1.7976931348623157E308</double>" +
+				"<integer>2147483647</integer>" +
+				"<long>9223372036854775807</long>" +
+				"<string>abc</string>" +				
+				"</example>", plainElement.asXML());
 	}
 	
 	@Test
@@ -301,7 +309,17 @@ public class RDFSchemaTests {
 		schema.addDecimalProperty("decimal", "decimal", IRDFSchema.DEFAULT_LANGUAGE);  
 	        
 		Element plainElement = schema.asInstancePlainXML(element, ISchema.EMPTY_FORMATS);
-		Assert.assertEquals("<example><integer>2147483647</integer><string>abc</string><boolean>true</boolean><datetime>2009-06-01T05:31:01.001Z</datetime><double>1.7976931348623157E308</double><long>9223372036854775807</long><decimal>10</decimal></example>", plainElement.asXML());
+		Assert.assertEquals(
+			"<example>" +
+			"<boolean>true</boolean>" +
+			"<datetime>2009-06-01T05:31:01.001Z</datetime>" +
+			"<decimal>10</decimal>" +
+			"<double>1.7976931348623157E308</double>" +
+			"<integer>2147483647</integer>" +
+			"<long>9223372036854775807</long>" +
+			"<string>abc</string>" +
+			"</example>", 
+			plainElement.asXML());
 
 	}
 	
@@ -332,8 +350,9 @@ public class RDFSchemaTests {
 		"<example:decimal rdf:datatype=\"http://www.w3.org/2001/XMLSchema#decimal\">10.8</example:decimal>"+
 		"</example:example>"+
 		"</rdf:RDF>";
+		Element rdfExpected = XMLHelper.parseElement(rdfXml);
 		
-		Assert.assertEquals(XMLHelper.canonicalizeXML(rdfXml), XMLHelper.canonicalizeXML(rdfElement));
+		Assert.assertEquals(XMLHelper.canonicalizeXML(rdfExpected), XMLHelper.canonicalizeXML(rdfElement));
 	}
 	
 	@Test
@@ -356,7 +375,7 @@ public class RDFSchemaTests {
 		propertyValues.put("integer", 2147483647);
 		propertyValues.put("string", "abc");
 		
-		Element rdfElement = XMLHelper.parseElement(schema.createNewInstanceFromProperties("1", propertyValues).asXML());
+		Element rdfElement = XMLHelper.parseElement(schema.createNewInstanceFromProperties("1", propertyValues).asRDFXML());
 		
 		String rdfXml = "<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:example=\"http://mesh4x/example#\" xmlns:owl=\"http://www.w3.org/2002/07/owl#\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema#\">"+
 		"<example:example rdf:about=\"uri:urn:1\">"+
@@ -369,8 +388,9 @@ public class RDFSchemaTests {
 		"<example:decimal rdf:datatype=\"http://www.w3.org/2001/XMLSchema#decimal\">10</example:decimal>"+
 		"</example:example>"+
 		"</rdf:RDF>";
+		Element rdfExpected = XMLHelper.parseElement(rdfXml);
 		
-		Assert.assertEquals(XMLHelper.canonicalizeXML(rdfXml), XMLHelper.canonicalizeXML(rdfElement));
+		Assert.assertEquals(XMLHelper.canonicalizeXML(rdfExpected), XMLHelper.canonicalizeXML(rdfElement));
 	}
 	
 	@Test
@@ -448,7 +468,8 @@ public class RDFSchemaTests {
 			@Override public Map<String, String> getPropertiesAsLexicalFormMap(Element element) {return null;}
 			@Override public Map<String, Object> getPropertiesAsMap(Element element) {return null;}
 			@Override public boolean isCompatible(ISchema schema) {return false;}
-			@Override public String getName() {return null;}			
+			@Override public String getName() {return null;}
+			@Override public Element asInstanceXML(Element element, HashMap<String, ISchemaTypeFormat> typeFormats) {return null;}			
 		};
 		
 		RDFSchema schema = new RDFSchema("example", "http://mesh4x/example#", "example");

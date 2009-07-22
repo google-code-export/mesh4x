@@ -37,7 +37,7 @@ public interface ISyndicationFormat {
 	Date parseDate(String dateAsString);
 	String formatDate(Date date);
 
-	Element addRootElement(Document document);
+	Element addRootElement(Document document, boolean encapsulateContentInCData);
 
 	Element addFeedItemElement(Element root, Item item);
 
@@ -55,7 +55,7 @@ public interface ISyndicationFormat {
 	void addAuthorElement(Element itemElement, String author);
 
 	Element getFeedItemPayloadElement(Element itemElement);
-	void addFeedItemPayloadElement(Element itemElement, Element payload);
+	void addFeedItemPayloadElement(Element itemElement, Element payload, boolean encapsulateContentInCData);
 
 	String getFeedTitle(Element element);
 	String getFeedDescription(Element element);
@@ -111,5 +111,6 @@ public interface ISyndicationFormat {
 	
 	// internal
 	public static final String ELEMENT_PAYLOAD = "payload";
+
 
 }

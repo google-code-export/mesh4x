@@ -59,7 +59,7 @@ public class AtomSyndicationFormat implements ISyndicationFormat {
 	}
 
 	@Override
-	public Element addRootElement(Document document) {
+	public Element addRootElement(Document document, boolean encapsulateContentInCData) {
 		Element rootElement = document.addElement(ATOM_ELEMENT_FEED);
 		rootElement.add(ATOM_NAMESPACE);
 		rootElement.add(new Namespace(SX_PREFIX, NAMESPACE));
@@ -197,17 +197,24 @@ public class AtomSyndicationFormat implements ISyndicationFormat {
   //</div>
 //</content>
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public void addFeedItemPayloadElement(Element itemElement, Element payload) {
-		
-		Element contentElement = itemElement.element(ATOM_ELEMENT_CONTENT);
-		if(contentElement == null){
-			contentElement = itemElement.addElement(ATOM_ELEMENT_CONTENT);
-			contentElement.addAttribute("type", "text");
+	public void addFeedItemPayloadElement(Element itemElement, Element payload, boolean encapsulateContentInCData) {
+		if(encapsulateContentInCData){
+			Element contentElement = itemElement.element(ATOM_ELEMENT_CONTENT);
+			if(contentElement == null){
+				contentElement = itemElement.addElement(ATOM_ELEMENT_CONTENT);
+				contentElement.addAttribute("type", "text");
+			}
+	
+			String xml = XMLHelper.canonicalizeXML(payload);
+			contentElement.add(DocumentHelper.createCDATA(xml));
+		} else {
+			List<Element> elements = payload.elements();
+			for (Element element : elements) {
+				itemElement.add(element.createCopy());
+			}
 		}
-
-		String xml = XMLHelper.canonicalizeXML(payload);
-		contentElement.add(DocumentHelper.createCDATA(xml));
 	}
 
 	@Override

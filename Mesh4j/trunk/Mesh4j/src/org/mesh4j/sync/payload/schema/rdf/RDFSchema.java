@@ -30,9 +30,7 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.shared.JenaException;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 import com.hp.hpl.jena.vocabulary.XSD;
-// 
-//TODO (JMT) RDF: (Issue 122) FeedWriter: write content as item element (use mesh4x namespace)  
-//TODO (JMT) RDF: (Issue 122) FeedReader: read content from item elements (use mesh4x namespace)
+
 public class RDFSchema implements IRDFSchema{
 
 	// CONSTANTs
@@ -335,15 +333,25 @@ public class RDFSchema implements IRDFSchema{
 	}
 
 	@Override
+	public Element asInstanceXML(Element element, HashMap<String, ISchemaTypeFormat> typeFormats) {
+		Element rdfElement = getRDFElement(element);
+		if(rdfElement == null){
+			return null;
+		}
+		
+		RDFInstance rdfInstance = this.createNewInstanceFromRDFXML(rdfElement);
+		return rdfInstance.asElementXml(typeFormats, null);
+	}
+	
+	@Override
 	public Element asInstancePlainXML(Element element, Map<String, ISchemaTypeFormat> typeFormats){
 		Element rdfElement = getRDFElement(element);
 		if(rdfElement == null){
 			return null;
 		}
 		
-		RDFInstance rdfInstance = this.createNewInstanceFromRDFXML(rdfElement.asXML());
-		String xml = rdfInstance.asPlainXML(typeFormats);
-		return XMLHelper.parseElement(xml);
+		RDFInstance rdfInstance = this.createNewInstanceFromRDFXML(rdfElement);
+		return rdfInstance.asElementPlainXml(typeFormats, null);
 	}
 
 	private Element getRDFElement(Element element) {
@@ -358,9 +366,8 @@ public class RDFSchema implements IRDFSchema{
 
 	@Override
 	public Element getInstanceFromPlainXML(String id, Element element, Map<String, ISchemaTypeFormat> typeFormats){
-		RDFInstance rdfInstance = this.createNewInstanceFromPlainXML(id, element.asXML(), typeFormats);
-		String xml = rdfInstance.asXML();
-		return XMLHelper.parseElement(xml);
+		RDFInstance rdfInstance = RDFInstance.buildFromPlainXML(this, id, element, typeFormats, null);
+		return rdfInstance.asElementRDFXML();
 	}
 
 	@Override
@@ -381,20 +388,38 @@ public class RDFSchema implements IRDFSchema{
 		RDFInstance instance = new RDFInstance(this, id);
 		return instance;
 	}
+
+	public RDFInstance createNewInstanceFromRDFXML(String rdfXml) {
+		Guard.argumentNotNullOrEmptyString(rdfXml, "rdfXml");
+		Element element = XMLHelper.parseElement(rdfXml);
+		return createNewInstanceFromRDFXML(element);
+	}
 	
 	@Override
-	public RDFInstance createNewInstanceFromRDFXML(String rdfXml) {
-		RDFInstance instance = RDFInstance.buildFromRDFXml(this, rdfXml);
+	public RDFInstance createNewInstanceFromRDFXML(Element rdfXml) {
+		RDFInstance instance = RDFInstance.buildFromRDFXml(this, rdfXml.asXML());
 		return instance;
 	}
 
-	@Override
 	public RDFInstance createNewInstanceFromPlainXML(String id, String plainXML, Map<String, ISchemaTypeFormat> formatters){
-		return RDFInstance.buildFromPlainXML(this, id, plainXML, formatters);
+		Guard.argumentNotNullOrEmptyString(plainXML, "plainXML");
+		Element element = XMLHelper.parseElement(plainXML);
+		return createNewInstanceFromPlainXML(id, element, formatters);
 	}
 	
 	@Override
+	public RDFInstance createNewInstanceFromPlainXML(String id, Element plainXML, Map<String, ISchemaTypeFormat> formatters){
+		return RDFInstance.buildFromPlainXML(this, id, plainXML, formatters, null);
+	}
+	
 	public RDFInstance createNewInstanceFromPlainXML(String id, String plainXML, Map<String, ISchemaTypeFormat> formatters, String[] splitElements){
+		Guard.argumentNotNullOrEmptyString(plainXML, "plainXML");
+		Element element = XMLHelper.parseElement(plainXML);
+		return createNewInstanceFromPlainXML(id, element, formatters, splitElements);
+	}
+	
+	@Override
+	public RDFInstance createNewInstanceFromPlainXML(String id, Element plainXML, Map<String, ISchemaTypeFormat> formatters, String[] splitElements){
 		return RDFInstance.buildFromPlainXML(this, id, plainXML, formatters, splitElements);
 	}
 	
@@ -497,7 +522,7 @@ public class RDFSchema implements IRDFSchema{
 	@Override
 	public Map<String, String> getPropertiesAsLexicalFormMap(Element element) {
 		HashMap<String, String> result = new HashMap<String, String>();
-		RDFInstance instance = createNewInstanceFromRDFXML(element.asXML());
+		RDFInstance instance = createNewInstanceFromRDFXML(element);
 		if(instance != null){
 			int size = this.getPropertyCount();
 			for (int i = 0; i < size; i++) {
@@ -514,12 +539,11 @@ public class RDFSchema implements IRDFSchema{
 		}
 		return result;
 	}
-	
-	
+		
 	@Override
 	public Map<String, Object> getPropertiesAsMap(Element element) {
 		HashMap<String, Object> result = new HashMap<String, Object>();
-		RDFInstance instance = createNewInstanceFromRDFXML(element.asXML());
+		RDFInstance instance = createNewInstanceFromRDFXML(element);
 		if(instance != null){
 			int size = this.getPropertyCount();
 			for (int i = 0; i < size; i++) {
@@ -653,9 +677,10 @@ public class RDFSchema implements IRDFSchema{
 		}
 		return null;
 	}
-	
+
 	protected List<DatatypeProperty> getDomainProperties() {
-		ArrayList<DatatypeProperty> domainProperties = new ArrayList<DatatypeProperty>();
+		
+		List<DatatypeProperty> domainProperties = new ArrayList<DatatypeProperty>();
 		ExtendedIterator it = this.schema.listDatatypeProperties();
 		while(it.hasNext()){
 			DatatypeProperty datatypeProperty = (DatatypeProperty)it.next();
@@ -700,4 +725,5 @@ public class RDFSchema implements IRDFSchema{
 //		}		
 //		return sb.toString();
 	}
+
 }

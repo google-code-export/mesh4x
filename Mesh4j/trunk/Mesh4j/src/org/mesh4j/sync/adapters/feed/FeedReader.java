@@ -163,9 +163,7 @@ public class FeedReader {
 			}
 			
 			Element contentElement = this.syndicationFormat.getFeedItemPayloadElement(itemElement);
-			if(contentElement != null){
-				this.contentReader.readContent(sync.getId(), payload, contentElement);
-			}
+			this.contentReader.readContent(sync.getId(), payload, contentElement);
 			
 			if(payload.elements().size() == 1){
 				payload = (Element)payload.elements().get(0);

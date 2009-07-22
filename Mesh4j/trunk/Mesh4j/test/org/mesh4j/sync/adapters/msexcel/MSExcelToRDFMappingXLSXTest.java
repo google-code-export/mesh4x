@@ -84,7 +84,7 @@ public class MSExcelToRDFMappingXLSXTest {
 		RDFInstance rdfInstance = mapper.converRowToRDF(sheet, headerRow, row);
 		Assert.assertNotNull(rdfInstance);
 		
-		System.out.println(rdfInstance.asXML());
+		System.out.println(rdfInstance.asRDFXML());
 		
 		Assert.assertEquals(6, rdfInstance.getPropertyCount());
 		Assert.assertEquals(MsExcelUtils.getCellValue(row.getCell(0)), rdfInstance.getPropertyValue(COLUMN_NAME));

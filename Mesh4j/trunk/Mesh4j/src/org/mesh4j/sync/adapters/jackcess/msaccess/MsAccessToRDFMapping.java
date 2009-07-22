@@ -60,7 +60,7 @@ public class MsAccessToRDFMapping extends AbstractRDFIdentifiableMapping impleme
 		String id = makeId(Arrays.asList(idValues));	
 				
 		RDFInstance rdfInstance = this.rdfSchema.createNewInstanceFromProperties(id, properties);
-		return rdfInstance.asElementXML();
+		return rdfInstance.asElementRDFXML();
 	}
 
 	@Override

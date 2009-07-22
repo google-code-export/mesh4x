@@ -120,7 +120,7 @@ public class CsvMultyKeyTests {
 		properties.put("name", "sol");
 		RDFInstance instance = rdfSchema.createNewInstanceFromProperties("1,3", properties);
 		
-		IdentifiableContent identifiableContent = new IdentifiableContent(instance.asElementXML(), mapping, "1,3");
+		IdentifiableContent identifiableContent = new IdentifiableContent(instance.asElementRDFXML(), mapping, "1,3");
 		Item item = new Item(identifiableContent, new Sync(IdGenerator.INSTANCE.newID(), "jmt", new Date(), false));
 		adapter.add(item);	
 		
@@ -159,7 +159,7 @@ public class CsvMultyKeyTests {
 		properties.put("name", "sol");
 		RDFInstance instance = rdfSchema.createNewInstanceFromProperties("1,2", properties);
 		
-		IdentifiableContent identifiableContent = new IdentifiableContent(instance.asElementXML(), mapping, "1,2");
+		IdentifiableContent identifiableContent = new IdentifiableContent(instance.asElementRDFXML(), mapping, "1,2");
 		Item item = new Item(identifiableContent, items.get(0).getSync().clone().update("jmt", new Date(), false));
 		adapter.update(item);	
 		

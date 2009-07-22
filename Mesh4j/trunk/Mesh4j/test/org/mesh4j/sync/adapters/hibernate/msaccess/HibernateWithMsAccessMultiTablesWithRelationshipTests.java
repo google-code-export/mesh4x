@@ -82,7 +82,7 @@ public class HibernateWithMsAccessMultiTablesWithRelationshipTests {
 		properties.put("name", id1);
 		RDFInstance instance = rdfSchema1.createNewInstanceFromProperties(id1, properties);
 		
-		IdentifiableContent identifiableContent = new IdentifiableContent(instance.asElementXML(), mapping1, id1);
+		IdentifiableContent identifiableContent = new IdentifiableContent(instance.asElementRDFXML(), mapping1, id1);
 		Item item = new Item(identifiableContent, new Sync(IdGenerator.INSTANCE.newID(), "jmt", new Date(), false));
 		source.add(item);	
 
@@ -99,7 +99,7 @@ public class HibernateWithMsAccessMultiTablesWithRelationshipTests {
 		properties.put("mytable1", id1);
 		instance = rdfSchema2.createNewInstanceFromProperties(id2, properties);
 		
-		identifiableContent = new IdentifiableContent(instance.asElementXML(), mapping2, id2);
+		identifiableContent = new IdentifiableContent(instance.asElementRDFXML(), mapping2, id2);
 		item = new Item(identifiableContent, new Sync(IdGenerator.INSTANCE.newID(), "jmt", new Date(), false));
 		source.add(item);	
 		

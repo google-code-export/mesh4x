@@ -121,7 +121,7 @@ public class CSVSyncAdapterTests {
 		properties.put("name", "sol");
 		RDFInstance instance = rdfSchema.createNewInstanceFromProperties("3", properties);
 		
-		IdentifiableContent identifiableContent = new IdentifiableContent(instance.asElementXML(), mapping, "3");
+		IdentifiableContent identifiableContent = new IdentifiableContent(instance.asElementRDFXML(), mapping, "3");
 		Item item = new Item(identifiableContent, new Sync(IdGenerator.INSTANCE.newID(), "jmt", new Date(), false));
 		adapter.add(item);	
 		
@@ -163,7 +163,7 @@ public class CSVSyncAdapterTests {
 		properties.put("name", "sol");
 		RDFInstance instance = rdfSchema.createNewInstanceFromProperties("2", properties);
 		
-		IdentifiableContent identifiableContent = new IdentifiableContent(instance.asElementXML(), mapping, "2");
+		IdentifiableContent identifiableContent = new IdentifiableContent(instance.asElementRDFXML(), mapping, "2");
 		Item item = new Item(identifiableContent, items.get(0).getSync().clone().update("jmt", new Date(), false));
 		adapter.update(item);	
 		adapter.endSync();

@@ -72,11 +72,11 @@ public class XFormRDFSchemaInstanceContentReadWriterTests {
 		Item item = new Item(new NullContent("2"), new Sync("2").delete("jmt", new Date()));
 		
 		Element itemElementRss = DocumentHelper.createElement("payload");
-		schemaRW.writeContent(RssSyndicationFormat.INSTANCE, itemElementRss, item);
+		schemaRW.writeContent(RssSyndicationFormat.INSTANCE, itemElementRss, itemElementRss, item);
 		Assert.assertEquals("<payload><title>Element was DELETED, content id = 2, sync Id = 2</title><description>---DELETED---</description></payload>", itemElementRss.asXML());
 		
 		Element itemElementAtom = DocumentHelper.createElement("payload");
-		schemaRW.writeContent(AtomSyndicationFormat.INSTANCE, itemElementAtom, item);
+		schemaRW.writeContent(AtomSyndicationFormat.INSTANCE, itemElementAtom, itemElementAtom, item);
 		Assert.assertEquals("<payload><title xmlns=\"http://www.w3.org/2005/Atom\">Element was DELETED, content id = 2, sync Id = 2</title><summary xmlns=\"http://www.w3.org/2005/Atom\">---DELETED---</summary></payload>", itemElementAtom.asXML());
 	}	
 	
@@ -136,11 +136,11 @@ public class XFormRDFSchemaInstanceContentReadWriterTests {
 		
 		Element itemElementRss = DocumentHelper.createElement("payload");
 		
-		schemaRW.writeContent(RssSyndicationFormat.INSTANCE, itemElementRss, item);
+		schemaRW.writeContent(RssSyndicationFormat.INSTANCE, itemElementRss, itemElementRss, item);
 		Assert.assertEquals("<payload><title>mapTitle</title><description>mapDesc</description><content:encoded xmlns:content=\"http://purl.org/rss/1.0/modules/content/\"><![CDATA[<User><id>1</id><name>juan</name><pass>123</pass></User>]]></content:encoded></payload>", itemElementRss.asXML());
 		
 		Element itemElementAtom = DocumentHelper.createElement("payload");
-		schemaRW.writeContent(AtomSyndicationFormat.INSTANCE, itemElementAtom, item);
+		schemaRW.writeContent(AtomSyndicationFormat.INSTANCE, itemElementAtom, itemElementAtom, item);
 		Assert.assertEquals("<payload><title xmlns=\"http://www.w3.org/2005/Atom\">mapTitle</title><summary xmlns=\"http://www.w3.org/2005/Atom\">mapDesc</summary><content type=\"text\"><![CDATA[<User><id>1</id><name>juan</name><pass>123</pass></User>]]></content></payload>", itemElementAtom.asXML());
 	}		
 	
@@ -170,11 +170,11 @@ public class XFormRDFSchemaInstanceContentReadWriterTests {
 		
 		Element itemElementRss = DocumentHelper.createElement("payload");
 		
-		schemaRW.writeContent(RssSyndicationFormat.INSTANCE, itemElementRss, item);
+		schemaRW.writeContent(RssSyndicationFormat.INSTANCE, itemElementRss, itemElementRss, item);
 		Assert.assertEquals("<payload><title>2</title><description>Id: 1 Version: 0</description><content:encoded xmlns:content=\"http://purl.org/rss/1.0/modules/content/\"><![CDATA[<User><id>1</id><name>juan</name><pass>123</pass></User>]]></content:encoded></payload>", itemElementRss.asXML());
 		
 		Element itemElementAtom = DocumentHelper.createElement("payload");
-		schemaRW.writeContent(AtomSyndicationFormat.INSTANCE, itemElementAtom, item);
+		schemaRW.writeContent(AtomSyndicationFormat.INSTANCE, itemElementAtom, itemElementAtom, item);
 		Assert.assertEquals("<payload><title xmlns=\"http://www.w3.org/2005/Atom\">2</title><summary xmlns=\"http://www.w3.org/2005/Atom\">Id: 1 Version: 0</summary><content type=\"text\"><![CDATA[<User><id>1</id><name>juan</name><pass>123</pass></User>]]></content></payload>", itemElementAtom.asXML());
 	}
 	
@@ -210,7 +210,7 @@ public class XFormRDFSchemaInstanceContentReadWriterTests {
 		schemaRW.readContent("1", elementPayload, element);
 		
 		Assert.assertEquals(xml, element.asXML());
-		Assert.assertEquals("<payload><foo>bar</foo><rdf:RDF xmlns:User=\"http://localhost:8080/mesh4x/User#\" xmlns:owl=\"http://www.w3.org/2002/07/owl#\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema#\"><User:User rdf:about=\"uri:urn:1\"><User:id rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">1</User:id><User:name rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">juan</User:name><User:pass rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">123</User:pass></User:User></rdf:RDF></payload>", XMLHelper.canonicalizeXML(elementPayload));
+		Assert.assertEquals("<payload><foo>bar</foo><rdf:RDF xmlns:User=\"http://localhost:8080/mesh4x/User#\" xmlns:owl=\"http://www.w3.org/2002/07/owl#\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema#\"><User:User rdf:about=\"uri:urn:1\"><User:id rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">1</User:id><User:name rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">juan</User:name><User:pass rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">123</User:pass></User:User></rdf:RDF></payload>", XMLHelper.canonicalizeXML(elementPayload.asXML()));
 	}
 
 	@Test

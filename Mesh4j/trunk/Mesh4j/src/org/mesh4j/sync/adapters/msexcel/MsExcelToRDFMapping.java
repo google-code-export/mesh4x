@@ -218,12 +218,12 @@ public class MsExcelToRDFMapping extends AbstractRDFIdentifiableMapping implemen
 	public Element convertRowToXML(Workbook wb, Sheet sheet, Row row){
 		Row headerRow = sheet.getRow(sheet.getFirstRowNum());
 		RDFInstance rdfInstance = this.converRowToRDF(sheet, headerRow, row);
-		return rdfInstance.asElementXML();
+		return rdfInstance.asElementRDFXML();
 	}
 	
 	@Override
 	public void appliesXMLToRow(Workbook wb, Sheet sheet, Row row, Element rdfElement){
-		RDFInstance rdfInstance = this.rdfSchema.createNewInstanceFromRDFXML(rdfElement.asXML());
+		RDFInstance rdfInstance = this.rdfSchema.createNewInstanceFromRDFXML(rdfElement);
 		this.appliesRDFToRow(wb, sheet, row, rdfInstance);
 	}
 

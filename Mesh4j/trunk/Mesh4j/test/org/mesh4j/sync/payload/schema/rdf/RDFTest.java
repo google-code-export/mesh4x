@@ -169,7 +169,7 @@ public class RDFTest {
         rdfInstance.setProperty("age", 31);
         rdfInstance.setProperty("ill", true);
         rdfInstance.setProperty("dateOnset", new Date());
-        System.out.println(rdfInstance.asXML());
+        System.out.println(rdfInstance.asRDFXML());
 	}
 	
 	@Test
@@ -214,7 +214,7 @@ public class RDFTest {
 					"</rdf:RDF>";
         
         RDFInstance rdfInstance = rdfSchema.createNewInstanceFromRDFXML(xml);
-        System.out.println(rdfInstance.asXML());
+        System.out.println(rdfInstance.asRDFXML());
 	}
 	
 	@Test
@@ -229,7 +229,7 @@ public class RDFTest {
         String xml = "<Patient><dateOnset>2009-03-17T19:06:06.264Z</dateOnset><ill>true</ill><age>31</age><name>juan</name><code>P55</code><id>cc11-7ba4-4594-abaf-3620fbee211a</id></Patient>";
         
         RDFInstance rdfInstance = rdfSchema.createNewInstanceFromPlainXML("cc11-7ba4-4594-abaf-3620fbee211a", xml, ISchema.EMPTY_FORMATS);
-        System.out.println(rdfInstance.asXML());
+        System.out.println(rdfInstance.asRDFXML());
         
 	}
 	
@@ -246,7 +246,7 @@ public class RDFTest {
         rdfSchema.addDateTimeProperty("dateOnset", "DateOnset", "en");
 
         RDFInstance rdfInstance = rdfSchema.createNewInstance("uri:urn:9274cc11-7ba4-4594-abaf-3620fbee211a");
-        String rdfXml = rdfInstance.asXML();
+        String rdfXml = rdfInstance.asRDFXML();
 
         RDFSchema rdfSchema2 = new RDFSchema("Oswego", "http://mesh4x/Oswego#", "Patient");
         rdfSchema2.addStringProperty("code", "Code", "en");
@@ -256,7 +256,7 @@ public class RDFTest {
         rdfSchema2.addDateTimeProperty("dateOnset", "DateOnset", "en");
 
         RDFInstance rdfInstance2 = rdfSchema2.createNewInstance("uri:urn:9274cc11-7ba4-4594-abaf-3620fbee211a");
-        String rdfXml2 = rdfInstance2.asXML();
+        String rdfXml2 = rdfInstance2.asRDFXML();
         
         Assert.assertEquals(rdfXml, rdfXml2);
 	
@@ -267,14 +267,14 @@ public class RDFTest {
         rdfInstance.setProperty("age", 30);
         rdfInstance.setProperty("ill", true);
         rdfInstance.setProperty("dateOnset", date);
-        rdfXml = rdfInstance.asXML();
+        rdfXml = rdfInstance.asRDFXML();
 
         rdfInstance2.setProperty("code", "Code");
         rdfInstance2.setProperty("name", "Name");
         rdfInstance2.setProperty("age", 30);
         rdfInstance2.setProperty("ill", true);
         rdfInstance2.setProperty("dateOnset", date);
-        rdfXml2 = rdfInstance2.asXML();
+        rdfXml2 = rdfInstance2.asRDFXML();
         
         Assert.assertEquals(rdfXml, rdfXml2);
         
@@ -291,7 +291,7 @@ public class RDFTest {
         rdfInstance3.setProperty("age", 30);
         rdfInstance3.setProperty("ill", true);
         rdfInstance3.setProperty("dateOnset", date);
-        String rdfXml3 = rdfInstance.asXML();
+        String rdfXml3 = rdfInstance.asRDFXML();
 
         RDFSchema rdfSchema4 = new RDFSchema("Oswego", "http://mesh4x/Oswego#", "Patient");
         rdfSchema4.addStringProperty("code", "Code", "en");
@@ -307,7 +307,7 @@ public class RDFTest {
         rdfInstance4.setProperty("age", 30);        
         rdfInstance4.setProperty("name", "Name");
 
-        String rdfXml4 = rdfInstance2.asXML();
+        String rdfXml4 = rdfInstance2.asRDFXML();
         
         Assert.assertEquals(rdfXml3, rdfXml4);
         
@@ -332,6 +332,6 @@ public class RDFTest {
 		
 		String plainXML = XMLHelper.canonicalizeXML("<user><id>"+id+"</id><name>"+name+"</name><pass>"+pass+"</pass></user>");
 		RDFInstance rdfInstance2 = schema1.createNewInstanceFromPlainXML(id, plainXML, ISchema.EMPTY_FORMATS);
-		Assert.assertEquals(rdfInstance1.asXML(), rdfInstance2.asXML());
+		Assert.assertEquals(rdfInstance1.asRDFXML(), rdfInstance2.asRDFXML());
 	}
 }

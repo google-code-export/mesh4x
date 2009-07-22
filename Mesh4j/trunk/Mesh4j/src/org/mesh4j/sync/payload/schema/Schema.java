@@ -28,6 +28,11 @@ public class Schema implements ISchema {
 	public Element asInstancePlainXML(Element element, Map<String, ISchemaTypeFormat> typeFormats) {
 		return element;
 	}
+	
+	@Override
+	public Element asInstanceXML(Element element, HashMap<String, ISchemaTypeFormat> typeFormats) {
+		return element;
+	}
 
 	@Override
 	public Element getInstanceFromPlainXML(String id, Element element, Map<String, ISchemaTypeFormat> typeFormats) {
@@ -79,4 +84,5 @@ public class Schema implements ISchema {
 	public String getName() {
 		return this.schema.getName();
 	}
+
 }

@@ -31,21 +31,22 @@ public class ContentWriterTests {
 		
 		Element itemElement = DocumentHelper.createElement("payload");
 		String xml = itemElement.asXML();
-		ContentWriter.INSTANCE.writeContent(null, itemElement, item);
+		ContentWriter.INSTANCE.writeContent(null, itemElement, itemElement, item);
 		Assert.assertEquals(xml, itemElement.asXML());
 	}
 	
 	@Test
 	public void shouldDefaultInstanceNotFailsIfElementIsNull(){
 		Item item = new Item(new NullContent("2"), new Sync("2").delete("jmt", new Date()));
-		ContentWriter.INSTANCE.writeContent(RssSyndicationFormat.INSTANCE, null, item);
+		Element itemElement = DocumentHelper.createElement("payload");
+		ContentWriter.INSTANCE.writeContent(RssSyndicationFormat.INSTANCE, itemElement, null, item);
 	}
 	
 	@Test
 	public void shouldDefaultInstanceNotFailsIfItemIsNull(){
 		Element itemElement = DocumentHelper.createElement("payload");
 		String xml = itemElement.asXML();
-		ContentWriter.INSTANCE.writeContent(RssSyndicationFormat.INSTANCE, itemElement, null);
+		ContentWriter.INSTANCE.writeContent(RssSyndicationFormat.INSTANCE, itemElement, itemElement, null);
 		Assert.assertEquals(xml, itemElement.asXML());
 	}	
 		
@@ -55,11 +56,11 @@ public class ContentWriterTests {
 		Item item = new Item(new NullContent("2"), new Sync("2").delete("jmt", new Date()));
 		
 		Element itemElementRss = DocumentHelper.createElement("payload");
-		ContentWriter.INSTANCE.writeContent(RssSyndicationFormat.INSTANCE, itemElementRss, item);
+		ContentWriter.INSTANCE.writeContent(RssSyndicationFormat.INSTANCE, itemElementRss, itemElementRss, item);
 		Assert.assertEquals("<payload><title>Element was DELETED, content id = 2, sync Id = 2</title><description>---DELETED---</description></payload>", itemElementRss.asXML());
 		
 		Element itemElementAtom = DocumentHelper.createElement("payload");
-		ContentWriter.INSTANCE.writeContent(AtomSyndicationFormat.INSTANCE, itemElementAtom, item);
+		ContentWriter.INSTANCE.writeContent(AtomSyndicationFormat.INSTANCE, itemElementAtom, itemElementAtom, item);
 		Assert.assertEquals("<payload><title xmlns=\"http://www.w3.org/2005/Atom\">Element was DELETED, content id = 2, sync Id = 2</title><summary xmlns=\"http://www.w3.org/2005/Atom\">---DELETED---</summary></payload>", itemElementAtom.asXML());
 	}	
 	
@@ -76,11 +77,11 @@ public class ContentWriterTests {
 		Item item = new Item(content, new Sync("2", "jmt", new Date(), false));
 		
 		Element itemElementRss = DocumentHelper.createElement("payload");
-		ContentWriter.INSTANCE.writeContent(RssSyndicationFormat.INSTANCE, itemElementRss, item);
+		ContentWriter.INSTANCE.writeContent(RssSyndicationFormat.INSTANCE, itemElementRss, itemElementRss, item);
 		Assert.assertEquals("<payload><title>2</title><description>Id: 1 Version: 0</description><content:encoded xmlns:content=\"http://purl.org/rss/1.0/modules/content/\"><![CDATA[<foo></foo>]]></content:encoded></payload>", itemElementRss.asXML());
 		
 		Element itemElementAtom = DocumentHelper.createElement("payload");
-		ContentWriter.INSTANCE.writeContent(AtomSyndicationFormat.INSTANCE, itemElementAtom, item);
+		ContentWriter.INSTANCE.writeContent(AtomSyndicationFormat.INSTANCE, itemElementAtom, itemElementAtom, item);
 		Assert.assertEquals("<payload><title xmlns=\"http://www.w3.org/2005/Atom\">2</title><summary xmlns=\"http://www.w3.org/2005/Atom\">Id: 1 Version: 0</summary><content type=\"text\"><![CDATA[<foo></foo>]]></content></payload>", itemElementAtom.asXML());
 	}	
 	
@@ -91,11 +92,11 @@ public class ContentWriterTests {
 		Item item = new Item(content, new Sync("2", "jmt", new Date(), false));
 		
 		Element itemElementRss = DocumentHelper.createElement("payload");
-		ContentWriter.INSTANCE.writeContent(RssSyndicationFormat.INSTANCE, itemElementRss, item);
+		ContentWriter.INSTANCE.writeContent(RssSyndicationFormat.INSTANCE, itemElementRss, itemElementRss, item);
 		Assert.assertEquals("<payload><title>myTitle</title><description>myDescription</description><link>http://localhost:8080/mesh4x</link><content:encoded xmlns:content=\"http://purl.org/rss/1.0/modules/content/\"><![CDATA[<foo></foo>]]></content:encoded></payload>", itemElementRss.asXML());
 		
 		Element itemElementAtom = DocumentHelper.createElement("payload");
-		ContentWriter.INSTANCE.writeContent(AtomSyndicationFormat.INSTANCE, itemElementAtom, item);
+		ContentWriter.INSTANCE.writeContent(AtomSyndicationFormat.INSTANCE, itemElementAtom, itemElementAtom, item);
 		Assert.assertEquals("<payload><title xmlns=\"http://www.w3.org/2005/Atom\">myTitle</title><summary xmlns=\"http://www.w3.org/2005/Atom\">myDescription</summary><link xmlns=\"http://www.w3.org/2005/Atom\" href=\"http://localhost:8080/mesh4x\"/><content type=\"text\"><![CDATA[<foo></foo>]]></content></payload>", itemElementAtom.asXML());
 	}	
 	
@@ -106,11 +107,11 @@ public class ContentWriterTests {
 		Item item = new Item(content, new Sync("2", "jmt", new Date(), false));
 		
 		Element itemElementRss = DocumentHelper.createElement("payload");
-		ContentWriter.INSTANCE.writeContent(RssSyndicationFormat.INSTANCE, itemElementRss, item);
+		ContentWriter.INSTANCE.writeContent(RssSyndicationFormat.INSTANCE, itemElementRss, itemElementRss, item);
 		Assert.assertEquals("<payload><title>2</title><description>myDescription</description><link>http://localhost:8080/mesh4x</link><content:encoded xmlns:content=\"http://purl.org/rss/1.0/modules/content/\"><![CDATA[<foo></foo>]]></content:encoded></payload>", itemElementRss.asXML());
 		
 		Element itemElementAtom = DocumentHelper.createElement("payload");
-		ContentWriter.INSTANCE.writeContent(AtomSyndicationFormat.INSTANCE, itemElementAtom, item);
+		ContentWriter.INSTANCE.writeContent(AtomSyndicationFormat.INSTANCE, itemElementAtom, itemElementAtom, item);
 		Assert.assertEquals("<payload><title xmlns=\"http://www.w3.org/2005/Atom\">2</title><summary xmlns=\"http://www.w3.org/2005/Atom\">myDescription</summary><link xmlns=\"http://www.w3.org/2005/Atom\" href=\"http://localhost:8080/mesh4x\"/><content type=\"text\"><![CDATA[<foo></foo>]]></content></payload>", itemElementAtom.asXML());
 	}	
 	
@@ -121,11 +122,11 @@ public class ContentWriterTests {
 		Item item = new Item(content, new Sync("2", "jmt", new Date(), false));
 		
 		Element itemElementRss = DocumentHelper.createElement("payload");
-		ContentWriter.INSTANCE.writeContent(RssSyndicationFormat.INSTANCE, itemElementRss, item);
+		ContentWriter.INSTANCE.writeContent(RssSyndicationFormat.INSTANCE, itemElementRss, itemElementRss, item);
 		Assert.assertEquals("<payload><title>2</title><description>myDescription</description><link>http://localhost:8080/mesh4x</link><content:encoded xmlns:content=\"http://purl.org/rss/1.0/modules/content/\"><![CDATA[<foo></foo>]]></content:encoded></payload>", itemElementRss.asXML());
 		
 		Element itemElementAtom = DocumentHelper.createElement("payload");
-		ContentWriter.INSTANCE.writeContent(AtomSyndicationFormat.INSTANCE, itemElementAtom, item);
+		ContentWriter.INSTANCE.writeContent(AtomSyndicationFormat.INSTANCE, itemElementAtom, itemElementAtom, item);
 		Assert.assertEquals("<payload><title xmlns=\"http://www.w3.org/2005/Atom\">2</title><summary xmlns=\"http://www.w3.org/2005/Atom\">myDescription</summary><link xmlns=\"http://www.w3.org/2005/Atom\" href=\"http://localhost:8080/mesh4x\"/><content type=\"text\"><![CDATA[<foo></foo>]]></content></payload>", itemElementAtom.asXML());
 	}	
 	
@@ -136,11 +137,11 @@ public class ContentWriterTests {
 		Item item = new Item(content, new Sync("2", "jmt", new Date(), false));
 		
 		Element itemElementRss = DocumentHelper.createElement("payload");
-		ContentWriter.INSTANCE.writeContent(RssSyndicationFormat.INSTANCE, itemElementRss, item);
+		ContentWriter.INSTANCE.writeContent(RssSyndicationFormat.INSTANCE, itemElementRss, itemElementRss, item);
 		Assert.assertEquals("<payload><title>myTtile</title><description>Id: 1 Version: -938014305</description><link>http://localhost:8080/mesh4x</link><content:encoded xmlns:content=\"http://purl.org/rss/1.0/modules/content/\"><![CDATA[<foo></foo>]]></content:encoded></payload>", itemElementRss.asXML());
 		
 		Element itemElementAtom = DocumentHelper.createElement("payload");
-		ContentWriter.INSTANCE.writeContent(AtomSyndicationFormat.INSTANCE, itemElementAtom, item);
+		ContentWriter.INSTANCE.writeContent(AtomSyndicationFormat.INSTANCE, itemElementAtom, itemElementAtom, item);
 		Assert.assertEquals("<payload><title xmlns=\"http://www.w3.org/2005/Atom\">myTtile</title><summary xmlns=\"http://www.w3.org/2005/Atom\">Id: 1 Version: -938014305</summary><link xmlns=\"http://www.w3.org/2005/Atom\" href=\"http://localhost:8080/mesh4x\"/><content type=\"text\"><![CDATA[<foo></foo>]]></content></payload>", itemElementAtom.asXML());
 	}	
 	
@@ -151,11 +152,11 @@ public class ContentWriterTests {
 		Item item = new Item(content, new Sync("2", "jmt", new Date(), false));
 		
 		Element itemElementRss = DocumentHelper.createElement("payload");
-		ContentWriter.INSTANCE.writeContent(RssSyndicationFormat.INSTANCE, itemElementRss, item);
+		ContentWriter.INSTANCE.writeContent(RssSyndicationFormat.INSTANCE, itemElementRss, itemElementRss, item);
 		Assert.assertEquals("<payload><title>myTtile</title><description>Id: 1 Version: -938014305</description><link>http://localhost:8080/mesh4x</link><content:encoded xmlns:content=\"http://purl.org/rss/1.0/modules/content/\"><![CDATA[<foo></foo>]]></content:encoded></payload>", itemElementRss.asXML());
 		
 		Element itemElementAtom = DocumentHelper.createElement("payload");
-		ContentWriter.INSTANCE.writeContent(AtomSyndicationFormat.INSTANCE, itemElementAtom, item);
+		ContentWriter.INSTANCE.writeContent(AtomSyndicationFormat.INSTANCE, itemElementAtom, itemElementAtom, item);
 		Assert.assertEquals("<payload><title xmlns=\"http://www.w3.org/2005/Atom\">myTtile</title><summary xmlns=\"http://www.w3.org/2005/Atom\">Id: 1 Version: -938014305</summary><link xmlns=\"http://www.w3.org/2005/Atom\" href=\"http://localhost:8080/mesh4x\"/><content type=\"text\"><![CDATA[<foo></foo>]]></content></payload>", itemElementAtom.asXML());
 	}
 	
@@ -166,11 +167,11 @@ public class ContentWriterTests {
 		Item item = new Item(content, new Sync("2", "jmt", new Date(), false));
 		
 		Element itemElementRss = DocumentHelper.createElement("payload");
-		ContentWriter.INSTANCE.writeContent(RssSyndicationFormat.INSTANCE, itemElementRss, item);
+		ContentWriter.INSTANCE.writeContent(RssSyndicationFormat.INSTANCE, itemElementRss, itemElementRss, item);
 		Assert.assertEquals("<payload><title>myTtile</title><description>MyDescription</description><content:encoded xmlns:content=\"http://purl.org/rss/1.0/modules/content/\"><![CDATA[<foo></foo>]]></content:encoded></payload>", itemElementRss.asXML());
 		
 		Element itemElementAtom = DocumentHelper.createElement("payload");
-		ContentWriter.INSTANCE.writeContent(AtomSyndicationFormat.INSTANCE, itemElementAtom, item);
+		ContentWriter.INSTANCE.writeContent(AtomSyndicationFormat.INSTANCE, itemElementAtom, itemElementAtom, item);
 		Assert.assertEquals("<payload><title xmlns=\"http://www.w3.org/2005/Atom\">myTtile</title><summary xmlns=\"http://www.w3.org/2005/Atom\">MyDescription</summary><content type=\"text\"><![CDATA[<foo></foo>]]></content></payload>", itemElementAtom.asXML());
 	}	
 	
@@ -181,11 +182,11 @@ public class ContentWriterTests {
 		Item item = new Item(content, new Sync("2", "jmt", new Date(), false));
 		
 		Element itemElementRss = DocumentHelper.createElement("payload");
-		ContentWriter.INSTANCE.writeContent(RssSyndicationFormat.INSTANCE, itemElementRss, item);
+		ContentWriter.INSTANCE.writeContent(RssSyndicationFormat.INSTANCE, itemElementRss, itemElementRss, item);
 		Assert.assertEquals("<payload><title>myTtile</title><description>MyDescription</description><content:encoded xmlns:content=\"http://purl.org/rss/1.0/modules/content/\"><![CDATA[<foo></foo>]]></content:encoded></payload>", itemElementRss.asXML());
 		
 		Element itemElementAtom = DocumentHelper.createElement("payload");
-		ContentWriter.INSTANCE.writeContent(AtomSyndicationFormat.INSTANCE, itemElementAtom, item);
+		ContentWriter.INSTANCE.writeContent(AtomSyndicationFormat.INSTANCE, itemElementAtom, itemElementAtom, item);
 		Assert.assertEquals("<payload><title xmlns=\"http://www.w3.org/2005/Atom\">myTtile</title><summary xmlns=\"http://www.w3.org/2005/Atom\">MyDescription</summary><content type=\"text\"><![CDATA[<foo></foo>]]></content></payload>", itemElementAtom.asXML());
 	}
 	
@@ -199,11 +200,11 @@ public class ContentWriterTests {
 		Item item = new Item(content, new Sync("2", "jmt", new Date(), false));
 		
 		Element itemElementRss = DocumentHelper.createElement("payload");
-		ContentWriter.INSTANCE.writeContent(RssSyndicationFormat.INSTANCE, itemElementRss, item);
+		ContentWriter.INSTANCE.writeContent(RssSyndicationFormat.INSTANCE, itemElementRss, itemElementRss, item);
 		Assert.assertEquals("<payload><title>myTtile</title><description>MyDescription</description><link>http://localhost:8080/mesh4x</link><content:encoded xmlns:content=\"http://purl.org/rss/1.0/modules/content/\"><![CDATA[<foo></foo>]]></content:encoded></payload>", itemElementRss.asXML());
 		
 		Element itemElementAtom = DocumentHelper.createElement("payload");
-		ContentWriter.INSTANCE.writeContent(AtomSyndicationFormat.INSTANCE, itemElementAtom, item);
+		ContentWriter.INSTANCE.writeContent(AtomSyndicationFormat.INSTANCE, itemElementAtom, itemElementAtom, item);
 		Assert.assertEquals("<payload><title xmlns=\"http://www.w3.org/2005/Atom\">myTtile</title><summary xmlns=\"http://www.w3.org/2005/Atom\">MyDescription</summary><link xmlns=\"http://www.w3.org/2005/Atom\" href=\"http://localhost:8080/mesh4x\"/><content type=\"text\"><![CDATA[<foo></foo>]]></content></payload>", itemElementAtom.asXML());
 	}
 	
@@ -218,12 +219,12 @@ public class ContentWriterTests {
 		Item item = new Item(content, new Sync("2", "jmt", new Date(), false));
 		
 		Element itemElementRss = DocumentHelper.createElement("payload");
-		ContentWriter.INSTANCE.writeContent(RssSyndicationFormat.INSTANCE, itemElementRss, item);
-		Assert.assertEquals("<payload><title>myTtile</title><description>MyDescription</description><link>http://localhost:8080/mesh4x</link><content:encoded xmlns:content=\"http://purl.org/rss/1.0/modules/content/\"><![CDATA[<payload><foo></foo><bar></bar></payload>]]></content:encoded></payload>", itemElementRss.asXML());
+		ContentWriter.INSTANCE.writeContent(RssSyndicationFormat.INSTANCE, itemElementRss, itemElementRss, item);
+		Assert.assertEquals("<payload><title>myTtile</title><description>MyDescription</description><link>http://localhost:8080/mesh4x</link><content:encoded xmlns:content=\"http://purl.org/rss/1.0/modules/content/\"><![CDATA[<payload><bar></bar><foo></foo></payload>]]></content:encoded></payload>", itemElementRss.asXML());
 		
 		Element itemElementAtom = DocumentHelper.createElement("payload");
-		ContentWriter.INSTANCE.writeContent(AtomSyndicationFormat.INSTANCE, itemElementAtom, item);
-		Assert.assertEquals("<payload><title xmlns=\"http://www.w3.org/2005/Atom\">myTtile</title><summary xmlns=\"http://www.w3.org/2005/Atom\">MyDescription</summary><link xmlns=\"http://www.w3.org/2005/Atom\" href=\"http://localhost:8080/mesh4x\"/><content type=\"text\"><![CDATA[<payload><foo></foo><bar></bar></payload>]]></content></payload>", itemElementAtom.asXML());
+		ContentWriter.INSTANCE.writeContent(AtomSyndicationFormat.INSTANCE, itemElementAtom, itemElementAtom, item);
+		Assert.assertEquals("<payload><title xmlns=\"http://www.w3.org/2005/Atom\">myTtile</title><summary xmlns=\"http://www.w3.org/2005/Atom\">MyDescription</summary><link xmlns=\"http://www.w3.org/2005/Atom\" href=\"http://localhost:8080/mesh4x\"/><content type=\"text\"><![CDATA[<payload><bar></bar><foo></foo></payload>]]></content></payload>", itemElementAtom.asXML());
 	}
 	
 	
@@ -273,11 +274,11 @@ public class ContentWriterTests {
 		
 		ContentWriter writer = new ContentWriter( makeMapping());
 		
-		writer.writeContent(RssSyndicationFormat.INSTANCE, itemElementRss, item);
+		writer.writeContent(RssSyndicationFormat.INSTANCE, itemElementRss, itemElementRss, item);
 		Assert.assertEquals("<payload><title>mapTitle</title><description>mapDesc</description><content:encoded xmlns:content=\"http://purl.org/rss/1.0/modules/content/\"><![CDATA[<foo></foo>]]></content:encoded></payload>", itemElementRss.asXML());
 		
 		Element itemElementAtom = DocumentHelper.createElement("payload");
-		writer.writeContent(AtomSyndicationFormat.INSTANCE, itemElementAtom, item);
+		writer.writeContent(AtomSyndicationFormat.INSTANCE, itemElementAtom, itemElementAtom, item);
 		Assert.assertEquals("<payload><title xmlns=\"http://www.w3.org/2005/Atom\">mapTitle</title><summary xmlns=\"http://www.w3.org/2005/Atom\">mapDesc</summary><content type=\"text\"><![CDATA[<foo></foo>]]></content></payload>", itemElementAtom.asXML());
 	}
 
@@ -290,11 +291,11 @@ public class ContentWriterTests {
 		ContentWriter writer = new ContentWriter( makeMapping());
 		
 		Element itemElementRss = DocumentHelper.createElement("payload");
-		writer.writeContent(RssSyndicationFormat.INSTANCE, itemElementRss, item);
+		writer.writeContent(RssSyndicationFormat.INSTANCE, itemElementRss, itemElementRss, item);
 		Assert.assertEquals("<payload><title>mapTitle</title><description>mapDesc</description><link>http://localhost:8080/mesh4x</link><content:encoded xmlns:content=\"http://purl.org/rss/1.0/modules/content/\"><![CDATA[<foo></foo>]]></content:encoded></payload>", itemElementRss.asXML());
 		
 		Element itemElementAtom = DocumentHelper.createElement("payload");
-		writer.writeContent(AtomSyndicationFormat.INSTANCE, itemElementAtom, item);
+		writer.writeContent(AtomSyndicationFormat.INSTANCE, itemElementAtom, itemElementAtom, item);
 		Assert.assertEquals("<payload><title xmlns=\"http://www.w3.org/2005/Atom\">mapTitle</title><summary xmlns=\"http://www.w3.org/2005/Atom\">mapDesc</summary><link xmlns=\"http://www.w3.org/2005/Atom\" href=\"http://localhost:8080/mesh4x\"/><content type=\"text\"><![CDATA[<foo></foo>]]></content></payload>", itemElementAtom.asXML());
 	}	
 		
@@ -315,11 +316,11 @@ public class ContentWriterTests {
 		
 		ContentWriter writer = new ContentWriter( makeNullMapping());
 		
-		writer.writeContent(RssSyndicationFormat.INSTANCE, itemElementRss, item);
+		writer.writeContent(RssSyndicationFormat.INSTANCE, itemElementRss, itemElementRss, item);
 		Assert.assertEquals("<payload><title>2</title><description>Id: 1 Version: 0</description><content:encoded xmlns:content=\"http://purl.org/rss/1.0/modules/content/\"><![CDATA[<foo></foo>]]></content:encoded></payload>", itemElementRss.asXML());
 		
 		Element itemElementAtom = DocumentHelper.createElement("payload");
-		writer.writeContent(AtomSyndicationFormat.INSTANCE, itemElementAtom, item);
+		writer.writeContent(AtomSyndicationFormat.INSTANCE, itemElementAtom, itemElementAtom, item);
 		Assert.assertEquals("<payload><title xmlns=\"http://www.w3.org/2005/Atom\">2</title><summary xmlns=\"http://www.w3.org/2005/Atom\">Id: 1 Version: 0</summary><content type=\"text\"><![CDATA[<foo></foo>]]></content></payload>", itemElementAtom.asXML());
 	}
 
@@ -332,11 +333,11 @@ public class ContentWriterTests {
 		ContentWriter writer = new ContentWriter( makeNullMapping());
 		
 		Element itemElementRss = DocumentHelper.createElement("payload");
-		writer.writeContent(RssSyndicationFormat.INSTANCE, itemElementRss, item);
+		writer.writeContent(RssSyndicationFormat.INSTANCE, itemElementRss, itemElementRss, item);
 		Assert.assertEquals("<payload><title>myTitle</title><description>myDescription</description><link>http://localhost:8080/mesh4x</link><content:encoded xmlns:content=\"http://purl.org/rss/1.0/modules/content/\"><![CDATA[<foo></foo>]]></content:encoded></payload>", itemElementRss.asXML());
 		
 		Element itemElementAtom = DocumentHelper.createElement("payload");
-		writer.writeContent(AtomSyndicationFormat.INSTANCE, itemElementAtom, item);
+		writer.writeContent(AtomSyndicationFormat.INSTANCE, itemElementAtom, itemElementAtom, item);
 		Assert.assertEquals("<payload><title xmlns=\"http://www.w3.org/2005/Atom\">myTitle</title><summary xmlns=\"http://www.w3.org/2005/Atom\">myDescription</summary><link xmlns=\"http://www.w3.org/2005/Atom\" href=\"http://localhost:8080/mesh4x\"/><content type=\"text\"><![CDATA[<foo></foo>]]></content></payload>", itemElementAtom.asXML());
 	}
 }

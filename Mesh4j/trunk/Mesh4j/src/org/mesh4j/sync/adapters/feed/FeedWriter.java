@@ -63,7 +63,7 @@ public class FeedWriter {
 		}
 		
 		for (Item item : feed.getItems()) {
-			write(root, item);
+			write(document.getRootElement(), root, item);
 		}
 	}
 
@@ -76,13 +76,13 @@ public class FeedWriter {
 	}
 
 	protected Element addRootElement(Document document) {
-		return this.syndicationFormat.addRootElement(document);
+		return this.syndicationFormat.addRootElement(document, this.contentWriter.encapsulateContentInCDATA());
 	}
 
-	public void write(Element root, Item item) {
+	public void write(Element nsElement, Element root, Item item) {
 		Element itemElement = this.addFeedItemElement(root, item);
 		
-		this.contentWriter.writeContent(this.syndicationFormat, itemElement, item);
+		this.contentWriter.writeContent(this.syndicationFormat, nsElement, itemElement, item);
 		
 		String by = this.getAuthenticatedUser();
 		History lastUpdate = item.getLastUpdate();
@@ -93,7 +93,7 @@ public class FeedWriter {
 		this.syndicationFormat.addAuthorElement(itemElement, by);
 		
 		if(item.getSync() != null && this.contentWriter.mustWriteSync(item)){
-			writeSync(itemElement, item.getSync());
+			writeSync(nsElement, itemElement, item.getSync());
 		}
 	}	
 	
@@ -105,7 +105,11 @@ public class FeedWriter {
 		return this.syndicationFormat.formatDate(date);
 	}
 
-	public void writeSync(Element rootElement, Sync sync) {		
+	public void writeSync(Element rootElement, Sync sync) {
+		writeSync(rootElement, rootElement, sync);
+	}
+	public void writeSync(Element nsElement, Element rootElement, Sync sync) {
+		
 		// <sx:sync>
 		Element syncElement = rootElement.addElement(SX_QNAME_SYNC);
 		syncElement.addAttribute(SX_ATTRIBUTE_SYNC_ID, sync.getId());
@@ -124,7 +128,7 @@ public class FeedWriter {
 		if (sync.getConflicts().size() > 0) {
 			Element conflictsElement = syncElement.addElement(SX_QNAME_CONFLICTS);
 			for (Item item : sync.getConflicts()) {
-				write(conflictsElement, item);
+				write(nsElement, conflictsElement, item);
 			}
 		}
 	}
@@ -167,7 +171,7 @@ public class FeedWriter {
 	
 	public String writeAsXml(Item item) throws Exception {
 		Element root = DocumentHelper.createElement("items");
-		this.write(root, item);
+		this.write(root, root, item);
 		String xml = ((Element)root.elements().get(0)).asXML();
 		return xml;
 	}

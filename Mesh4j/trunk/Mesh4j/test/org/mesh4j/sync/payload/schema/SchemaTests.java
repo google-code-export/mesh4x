@@ -1,5 +1,6 @@
 package org.mesh4j.sync.payload.schema;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import junit.framework.Assert;
@@ -61,7 +62,8 @@ public class SchemaTests {
 			@Override public Map<String, String> getPropertiesAsLexicalFormMap(Element element) {return null;}
 			@Override public Map<String, Object> getPropertiesAsMap(Element element) {return null;}
 			@Override public boolean isCompatible(ISchema schema) {return false;}
-			@Override public String getName() {return null;}			
+			@Override public String getName() {return null;}
+			@Override public Element asInstanceXML(Element element, HashMap<String, ISchemaTypeFormat> typeFormats) {return null;}			
 		};
 		
 		Schema schema = new Schema(XMLHelper.parseElement("<name>Name of patient: {patient/name} {patient/lastName}.</name>"));

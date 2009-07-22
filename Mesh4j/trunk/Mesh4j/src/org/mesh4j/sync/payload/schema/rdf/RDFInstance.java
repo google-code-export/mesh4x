@@ -14,6 +14,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.dom4j.Namespace;
+import org.dom4j.QName;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.mesh4j.sync.payload.schema.ISchema;
@@ -21,6 +23,7 @@ import org.mesh4j.sync.payload.schema.ISchemaTypeFormat;
 import org.mesh4j.sync.utils.XMLHelper;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
+import org.xml.sax.Attributes;
 
 import com.hp.hpl.jena.datatypes.RDFDatatype;
 import com.hp.hpl.jena.datatypes.TypeMapper;
@@ -87,18 +90,12 @@ public class RDFInstance {
 		}
 		return instance;
 	}
-	
-	protected static RDFInstance buildFromPlainXML(RDFSchema rdfSchema, String id, String plainXML, Map<String, ISchemaTypeFormat> typeFormats){
-		return buildFromPlainXML(rdfSchema, id, plainXML, typeFormats, null);
-	}
-	
-	protected static RDFInstance buildFromPlainXML(RDFSchema rdfSchema, String id, String plainXML, Map<String, ISchemaTypeFormat> typeFormats, String[] splitElements){
+		
+	protected static RDFInstance buildFromPlainXML(RDFSchema rdfSchema, String id, Element element, Map<String, ISchemaTypeFormat> typeFormats, String[] splitElements){
 		Guard.argumentNotNull(rdfSchema, "rdfSchema");
 		Guard.argumentNotNullOrEmptyString(id, "id");
-		Guard.argumentNotNullOrEmptyString(plainXML, "plainXML");
+		Guard.argumentNotNull(element, "element");
 		Guard.argumentNotNull(typeFormats, "typeFormats");
-		
-		Element element = XMLHelper.parseElement(plainXML);
 		
 		RDFInstance instance = new RDFInstance(rdfSchema, "uri:urn:"+id);
 		
@@ -209,12 +206,7 @@ public class RDFInstance {
 			
 	}
 
-	public String asXML() {
-		Element element = this.asElementXML();
-		return XMLHelper.canonicalizeXML(element);
-	}
-	
-	public Element asElementXML() {
+	public String asRDFXML() {
 		this.model.remove(this.schema.getRDFModel());
 		
 		StringWriter sw = new StringWriter();
@@ -224,8 +216,30 @@ public class RDFInstance {
 		
 		String xml = sw.toString();
 		Element element = XMLHelper.parseElement(xml);
-		return XMLHelper.parseElement(XMLHelper.canonicalizeXML(element));
+		
+		return XMLHelper.canonicalizeXML(element);
 	}
+	
+	public Element asElementRDFXML() {
+		return XMLHelper.parseElement(asRDFXML());
+	}
+	
+	public String asXML() {
+		return asXML(ISchema.EMPTY_FORMATS, null);
+	}
+	
+	public String asXML(Map<String, ISchemaTypeFormat> typeFormats) {
+		return asXML(typeFormats, null);
+	}
+	
+	public String asXML(Map<String, ISchemaTypeFormat> typeFormats, CompositeProperty[] compositeProperties) {
+		Element element = asElementXml(typeFormats, compositeProperties);	
+		return element.asXML();		
+	}
+	
+	public Element asElementXml(Map<String, ISchemaTypeFormat> typeFormats, CompositeProperty[] compositeProperties) {
+		return asElement(typeFormats, compositeProperties, true);
+	}	
 
 	public String asPlainXML() {
 		return asPlainXML(ISchema.EMPTY_FORMATS, null);
@@ -236,8 +250,17 @@ public class RDFInstance {
 	}
 	
 	public String asPlainXML(Map<String, ISchemaTypeFormat> typeFormats, CompositeProperty[] compositeProperties) {
+		Element element = asElementPlainXml(typeFormats, compositeProperties);
+		return element.asXML();
+	}
+	
+	public Element asElementPlainXml(Map<String, ISchemaTypeFormat> typeFormats, CompositeProperty[] compositeProperties) {
+		return asElement(typeFormats, compositeProperties, false);
+	}
+	
+	private Element asElement(Map<String, ISchemaTypeFormat> typeFormats, CompositeProperty[] compositeProperties, boolean useNamespace) {
 		try{
-						
+							
 			String fieldName;
 			Object fieldValue;
 			
@@ -285,22 +308,70 @@ public class RDFInstance {
 			}
 			
 			// write xml
-			Element element = DocumentHelper.createElement(this.schema.getOntologyClassName());
-			
+					
 			StringWriter sw = new StringWriter();
 			XMLWriter xmlWriter = new XMLWriter(sw, OutputFormat.createCompactFormat());
-			xmlWriter.writeOpen(element);
+			xmlWriter.write(DocumentHelper.createDocument());
 			
+			final Namespace nameSpace = DocumentHelper.createNamespace(this.schema.getOntologyNameSpace(), this.schema.getOntologyBaseUri());
+			Element element = null;
+			if(useNamespace){
+				Attributes attr = new Attributes(){
+					@Override public int getIndex(String name) {return 0;}
+					@Override public int getIndex(String uri, String localName) {return 0;}
+					@Override public int getLength() {return 1;}
+					@Override public String getLocalName(int index) {return null;}
+					@Override public String getQName(int index) {return "xmlns:"+nameSpace.getPrefix();}
+					@Override public String getType(int index) {return null;}
+					@Override public String getType(String name) {return null;}
+					@Override public String getType(String uri, String localName) {return null;}
+					@Override public String getURI(int index) {return null;}
+					@Override public String getValue(int index) {return nameSpace.getURI();}
+					@Override public String getValue(String name) {return null;}
+					@Override public String getValue(String uri, String localName) {return null;}				
+				};
+				
+				xmlWriter.startElement("", "", "root", attr);
+			
+				QName elementQName = DocumentHelper.createQName(this.schema.getOntologyClassName(), nameSpace);
+				element = DocumentHelper.createElement(elementQName);
+			}else{
+				Attributes attrEmpty = new Attributes(){
+					@Override public int getIndex(String name) {return 0;}
+					@Override public int getIndex(String uri, String localName) {return 0;}
+					@Override public int getLength() {return 0;}
+					@Override public String getLocalName(int index) {return null;}
+					@Override public String getQName(int index) {return null;}
+					@Override public String getType(int index) {return null;}
+					@Override public String getType(String name) {return null;}
+					@Override public String getType(String uri, String localName) {return null;}
+					@Override public String getURI(int index) {return null;}
+					@Override public String getValue(int index) {return null;}
+					@Override public String getValue(String name) {return null;}
+					@Override public String getValue(String uri, String localName) {return null;}				
+				};
+				
+				xmlWriter.startElement("", "", "root", attrEmpty);
+				element = DocumentHelper.createElement(this.schema.getOntologyClassName());
+			}
+			
+			xmlWriter.writeOpen(element);
+
 			for (String propName : properties.keySet()) {
 				fieldValue = properties.get(propName);
-				writePlainXMLProperty(xmlWriter, propName, fieldValue);
+				writePlainXMLProperty(xmlWriter, nameSpace, propName, fieldValue, useNamespace);
 			}
+			
 			xmlWriter.writeClose(element);
+			xmlWriter.endElement("", "", "root");
 			xmlWriter.flush();
 			xmlWriter.close();
 			
-			Element elementPlainXml = XMLHelper.parseElement(sw.toString());
-			return XMLHelper.canonicalizeXML(elementPlainXml);
+			String xml = sw.toString();
+			
+			Element elementPlainXml = (Element)DocumentHelper.parseText(xml).getRootElement().elements().get(0);
+			String canonicalizeXml = XMLHelper.canonicalizeXML(elementPlainXml);
+			return XMLHelper.parseElement(canonicalizeXml);
 		}catch (Exception e) {
 			throw new MeshException(e);
 		}
@@ -319,8 +390,15 @@ public class RDFInstance {
 		return null;
 	}
 
-	private void writePlainXMLProperty(XMLWriter xmlWriter, String fieldName, Object fieldValue) throws IOException{
-		Element element = DocumentHelper.createElement(fieldName); 
+	private void writePlainXMLProperty(XMLWriter xmlWriter, Namespace nameSpace, String fieldName, Object fieldValue, boolean useNamespace) throws IOException{
+		
+		Element element = null;
+		if(useNamespace){
+			element = DocumentHelper.createElement(DocumentHelper.createQName(fieldName, nameSpace));
+		} else {
+			element = DocumentHelper.createElement(fieldName);
+		}
+		
 		xmlWriter.writeOpen(element);
 		 
 		if(fieldValue instanceof CompositeProperty){
@@ -328,7 +406,7 @@ public class RDFInstance {
 			 if(compositeProperty.isCompleted()){
 				 for (String propName : compositeProperty.getPropertyNames()){
 					 Object propValue = compositeProperty.getPropertyValue(propName);
-					 writePlainXMLProperty(xmlWriter, propName, propValue);
+					 writePlainXMLProperty(xmlWriter, nameSpace, propName, propValue, useNamespace);
 				 }
 			 }
 		 } else {
@@ -378,9 +456,9 @@ public class RDFInstance {
 		return this.schema.getPropertyType(propertyName);
 	}
 
-	
 	protected List<DatatypeProperty> getDomainProperties() {
-		ArrayList<DatatypeProperty> domainProperties = new ArrayList<DatatypeProperty>();
+		
+		List<DatatypeProperty> domainProperties = new ArrayList<DatatypeProperty>();
 		ExtendedIterator it = this.model.listDatatypeProperties();
 		while(it.hasNext()){
 			DatatypeProperty datatypeProperty = (DatatypeProperty)it.next();

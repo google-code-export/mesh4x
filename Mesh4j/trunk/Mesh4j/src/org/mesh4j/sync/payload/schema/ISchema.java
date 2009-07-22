@@ -14,13 +14,17 @@ public interface ISchema {
 
 	public Element getInstanceFromXML(Element element);
 	public Element getInstanceFromPlainXML(String id, Element element, Map<String, ISchemaTypeFormat> typeFormats);
+	
 	public Element asInstancePlainXML(Element element, Map<String, ISchemaTypeFormat> typeFormats);
-
+	public Element asInstanceXML(Element element, HashMap<String, ISchemaTypeFormat> typeFormats);
+	
 	public Map<String, String> getPropertiesAsLexicalFormMap(Element element);
 	public Map<String, Object> getPropertiesAsMap(Element element);
 	
 	public boolean isCompatible(ISchema schema);
 	
 	public String getName();
+
+	
 
 }

@@ -65,7 +65,7 @@ public class MsAccessHibernateMultiKeyTests {
 		properties.put("name", "sol");
 		RDFInstance instance = rdfSchema.createNewInstanceFromProperties("1,"+id2, properties);
 		
-		IdentifiableContent identifiableContent = new IdentifiableContent(instance.asElementXML(), mapping, "1,"+id2);
+		IdentifiableContent identifiableContent = new IdentifiableContent(instance.asElementRDFXML(), mapping, "1,"+id2);
 		Item item = new Item(identifiableContent, new Sync(IdGenerator.INSTANCE.newID(), "jmt", new Date(), false));
 		adapter.add(item);	
 		
@@ -95,7 +95,7 @@ public class MsAccessHibernateMultiKeyTests {
 		properties.put("name", "sol");
 		RDFInstance instance = rdfSchema.createNewInstanceFromProperties("1,"+id2, properties);
 		
-		IdentifiableContent identifiableContent = new IdentifiableContent(instance.asElementXML(), mapping, "1,"+id2);
+		IdentifiableContent identifiableContent = new IdentifiableContent(instance.asElementRDFXML(), mapping, "1,"+id2);
 		Item item = new Item(identifiableContent, new Sync(IdGenerator.INSTANCE.newID(), "jmt", new Date(), false));
 		adapter.add(item);	
 		
@@ -111,7 +111,7 @@ public class MsAccessHibernateMultiKeyTests {
 		properties.put("name", "name"+IdGenerator.INSTANCE.newID());
 		instance = rdfSchema.createNewInstanceFromProperties("1,"+id2, properties);
 		
-		identifiableContent = new IdentifiableContent(instance.asElementXML(), mapping, "1,"+id2);
+		identifiableContent = new IdentifiableContent(instance.asElementRDFXML(), mapping, "1,"+id2);
 		Item itemToUpdate = new Item(identifiableContent, item.getSync().clone().update("jmt", new Date(), false));
 		adapter.update(itemToUpdate);	
 		
@@ -141,7 +141,7 @@ public class MsAccessHibernateMultiKeyTests {
 		properties.put("name", "sol");
 		RDFInstance instance = rdfSchema.createNewInstanceFromProperties("1,"+id2, properties);
 		
-		IdentifiableContent identifiableContent = new IdentifiableContent(instance.asElementXML(), mapping, "1,"+id2);
+		IdentifiableContent identifiableContent = new IdentifiableContent(instance.asElementRDFXML(), mapping, "1,"+id2);
 		Item item = new Item(identifiableContent, new Sync(IdGenerator.INSTANCE.newID(), "jmt", new Date(), false));
 		adapter.add(item);	
 		
@@ -159,7 +159,7 @@ public class MsAccessHibernateMultiKeyTests {
 		properties.put("name", "sol");
 		instance = rdfSchema.createNewInstanceFromProperties("1,"+id2, properties);
 		
-		identifiableContent = new IdentifiableContent(instance.asElementXML(), mapping, "1,"+id2);
+		identifiableContent = new IdentifiableContent(instance.asElementRDFXML(), mapping, "1,"+id2);
 		item = new Item(identifiableContent, new Sync(IdGenerator.INSTANCE.newID(), "jmt", new Date(), false));
 		adapter.add(item);	
 		
