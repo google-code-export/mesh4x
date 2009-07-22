@@ -37,7 +37,9 @@ import org.mesh4j.sync.payload.mappings.Mapping;
 import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.payload.schema.Schema;
 import org.mesh4j.sync.payload.schema.SchemaInstanceContentReadWriter;
+import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
+import org.mesh4j.sync.payload.schema.rdf.RDFSchemaInstanceContentReadWriter;
 import org.mesh4j.sync.payload.schema.xform.XFormRDFSchemaContentWriter;
 import org.mesh4j.sync.payload.schema.xform.XFormRDFSchemaInstanceContentReadWriter;
 import org.mesh4j.sync.security.IIdentityProvider;
@@ -237,9 +239,13 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 			}
 		} else {
 			if(contentFormat != null && contentFormat.isXForm()){
-				feedItemWriter = new XFormRDFSchemaInstanceContentReadWriter(meshSchema, mapping, !contentFormat.isPlainXML());
+				feedItemWriter = new XFormRDFSchemaInstanceContentReadWriter((IRDFSchema)meshSchema, mapping, !contentFormat.isPlainXML());
 			} else {
-				feedItemWriter = new SchemaInstanceContentReadWriter(meshSchema, mapping, contentFormat == null ? true : !contentFormat.isPlainXML());
+				if(meshSchema instanceof IRDFSchema){
+					feedItemWriter = new RDFSchemaInstanceContentReadWriter((IRDFSchema)meshSchema, mapping, contentFormat == null ? true : !contentFormat.isPlainXML());
+				} else {
+					feedItemWriter = new SchemaInstanceContentReadWriter(meshSchema, mapping, contentFormat == null ? true : !contentFormat.isPlainXML());
+				}
 			}
 		}
 		return feedItemWriter;
@@ -251,9 +257,13 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 			feedItemReader = ContentReader.INSTANCE;
 		} else {
 			if(contentFormat != null && contentFormat.isXForm()){
-				feedItemReader = new XFormRDFSchemaInstanceContentReadWriter(meshSchema, mapping, !contentFormat.isPlainXML());
+				feedItemReader = new XFormRDFSchemaInstanceContentReadWriter((IRDFSchema)meshSchema, mapping, !contentFormat.isPlainXML());
 			} else {
-				feedItemReader = new SchemaInstanceContentReadWriter(meshSchema, mapping, contentFormat == null ? true : !contentFormat.isPlainXML());
+				if(meshSchema instanceof IRDFSchema){
+					feedItemReader = new RDFSchemaInstanceContentReadWriter((IRDFSchema)meshSchema, mapping, contentFormat == null ? true : !contentFormat.isPlainXML());
+				} else {
+					feedItemReader = new SchemaInstanceContentReadWriter(meshSchema, mapping, contentFormat == null ? true : !contentFormat.isPlainXML());
+				}
 			}
 		}
 		return feedItemReader;
