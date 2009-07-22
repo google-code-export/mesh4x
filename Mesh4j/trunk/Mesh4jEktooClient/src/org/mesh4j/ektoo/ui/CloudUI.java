@@ -6,8 +6,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +15,8 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -42,10 +42,8 @@ public class CloudUI extends AbstractUI {
 
 	private JLabel labelDataset = null;
 	private JTextField txtDataset = null;
-
 	private CloudUIController controller = null;
 	
-//	private JButton btnView = null;
 
 	// BUSINESS METHODS
 	public CloudUI(String baseURL, CloudUIController controller) {
@@ -94,45 +92,34 @@ public class CloudUI extends AbstractUI {
 		if (this.txtServerURL == null) {
 			this.txtServerURL = new JTextField();
 			this.txtServerURL.setBounds(new Rectangle(101, 5, 183, 20));
-//			this.txtServerURL.setBounds(new Rectangle(101, 59, 183, 20));
 			this.txtServerURL.setToolTipText(EktooUITranslator.getTooltipCloudSyncServerURI());
-			this.txtServerURL.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent evt) {
-					try {
-						getController().changeSyncServerUri(txtServerURL.getText());
-						setResultURL();
-					} catch (Exception e) {
-						LOGGER.error(e.getMessage(), e);
-						// TODO Handle exception
-					}
+			txtServerURL.getDocument().addDocumentListener(new DocumentListener(){
+				@Override
+				public void changedUpdate(DocumentEvent e) {
 				}
-			});
-			this.txtServerURL.addFocusListener(new FocusAdapter() {
-				public void focusLost(FocusEvent evt) {
-					try {
-						getController().changeSyncServerUri(txtServerURL.getText());
-						setResultURL();
-					} catch (Exception e) {
-						LOGGER.error(e.getMessage(), e);
-						// TODO Handle exception
-					}
+				@Override
+				public void insertUpdate(DocumentEvent e) {
+					getController().changeSyncServerUri(txtServerURL.getText());
+					setResultURL();
 				}
-			});		
+				@Override
+				public void removeUpdate(DocumentEvent e) {
+					getController().changeSyncServerUri(txtServerURL.getText());
+					setResultURL();
+				}
+			}
+			);
+			
 		}
-		return this.txtServerURL;
+		return txtServerURL;
 	}
 	private JLabel getServerURLLabel() {
-		
 		if (this.labelServerURL == null) {
 			this.labelServerURL = new JLabel();
 			this.labelServerURL.setText( EktooUITranslator.getSyncURILabel());
-			
 			labelServerURL.setSize(new Dimension(85, 16));
 			labelServerURL.setPreferredSize(new Dimension(85, 16));
 			labelServerURL.setLocation(new Point(8, 9));
-//			this.labelServerURL.setSize(new Dimension(85, 16));
-//			this.labelServerURL.setPreferredSize(new Dimension(85, 16));
-//			this.labelServerURL.setLocation(new Point(8, 59));
 		}
 		return this.labelServerURL;
 	}
@@ -141,14 +128,9 @@ public class CloudUI extends AbstractUI {
 		if (labelMesh == null) {
 			labelMesh = new JLabel();
 			labelMesh.setText( EktooUITranslator.getMeshNameFieldLabel());
-			
 			labelMesh.setSize(new Dimension(85, 16));
 			labelMesh.setPreferredSize(new Dimension(85, 16));
 			labelMesh.setLocation(new Point(8, 34));
-		
-//			labelMesh.setSize(new Dimension(85, 16));
-//			labelMesh.setPreferredSize(new Dimension(85, 16));
-//			labelMesh.setLocation(new Point(8, 9));
 		}
 		return labelMesh;
 	}
@@ -157,30 +139,23 @@ public class CloudUI extends AbstractUI {
 		if (txtMesh == null) {
 			txtMesh = new JTextField();
 			txtMesh.setBounds(new Rectangle(101, 30, 183, 20));
-//			txtMesh.setBounds(new Rectangle(101, 5, 183, 20));
 			txtMesh.setToolTipText(EktooUITranslator.getTooltipCloudMeshname());
-			txtMesh.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent evt) {
-					try {
-						getController().changeMeshName(txtMesh.getText());
-						setResultURL();
-					} catch (Exception e) {
-						LOGGER.error(e.getMessage(), e);
-						// TODO Handle exception
-					}
+			txtMesh.getDocument().addDocumentListener(new DocumentListener(){
+				@Override
+				public void changedUpdate(DocumentEvent e) {
 				}
-			});
-			txtMesh.addFocusListener(new FocusAdapter() {
-				public void focusLost(FocusEvent evt) {
-					try {
-						getController().changeMeshName(txtMesh.getText());
-						setResultURL();
-					} catch (Exception e) {
-						LOGGER.error(e.getMessage(), e);
-						// TODO Handle exception
-					}
+				@Override
+				public void insertUpdate(DocumentEvent e) {
+					getController().changeMeshName(txtMesh.getText());
+					setResultURL();
 				}
-			});
+				@Override
+				public void removeUpdate(DocumentEvent e) {
+					getController().changeMeshName(txtMesh.getText());
+					setResultURL();
+				}
+			}
+			);
 		}
 		return txtMesh;
 	}
@@ -189,13 +164,9 @@ public class CloudUI extends AbstractUI {
 		if (labelDataset == null) {
 			labelDataset = new JLabel();
 			labelDataset.setText( EktooUITranslator.getMeshDataSetFieldLabel() );
-
 			labelDataset.setSize(new Dimension(85, 16));
 			labelDataset.setPreferredSize(new Dimension(85, 16));
 			labelDataset.setLocation(new Point(8, 59));			
-//			labelDataset.setSize(new Dimension(85, 16));
-//			labelDataset.setPreferredSize(new Dimension(85, 16));
-//			labelDataset.setLocation(new Point(8, 34));
 		}
 		return labelDataset;
 	}
@@ -204,30 +175,23 @@ public class CloudUI extends AbstractUI {
 		if (txtDataset == null) {
 			txtDataset = new JTextField();
 			txtDataset.setBounds(new Rectangle(101, 59, 183, 20));
-//			txtDataset.setBounds(new Rectangle(101, 30, 183, 20));
 			txtDataset.setToolTipText(EktooUITranslator.getTooltipCloudDatasetname());
-			txtDataset.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent evt) {
-					try {
-						getController().changeDatasetName(txtDataset.getText());
-						setResultURL();
-					} catch (Exception e) {
-						LOGGER.error(e.getMessage(), e);
-						// TODO Handle exception
-					}
+			txtDataset.getDocument().addDocumentListener(new DocumentListener(){
+				@Override
+				public void changedUpdate(DocumentEvent e) {
 				}
-			});
-			txtDataset.addFocusListener(new FocusAdapter() {
-				public void focusLost(FocusEvent evt) {
-					try {
-						getController().changeDatasetName(txtDataset.getText());
-						setResultURL();
-					} catch (Exception e) {
-						LOGGER.error(e.getMessage(), e);
-						// TODO Handle exception
-					}
+				@Override
+				public void insertUpdate(DocumentEvent e) {
+					getController().changeDatasetName(txtDataset.getText());
+					setResultURL();
 				}
-			});
+				@Override
+				public void removeUpdate(DocumentEvent e) {
+					getController().changeDatasetName(txtDataset.getText());
+					setResultURL();
+				}
+			}
+			);
 		}
 		return txtDataset;
 	}
@@ -256,16 +220,13 @@ public class CloudUI extends AbstractUI {
 	}
 
   @Override
-  public void modelPropertyChange(final PropertyChangeEvent evt)
-  {
-    if ( evt.getPropertyName().equals( CloudUIController.MESH_NAME_PROPERTY))
-    {
+  public void modelPropertyChange(final PropertyChangeEvent evt){
+    if ( evt.getPropertyName().equals( CloudUIController.MESH_NAME_PROPERTY)){
       String newStringValue = evt.getNewValue().toString();
       if (! getMeshText().getText().equals(newStringValue))
         getMeshText().setText(newStringValue);
     }
-    else if ( evt.getPropertyName().equals( CloudUIController.DATASET_NAME_PROPERTY))
-    {
+    else if ( evt.getPropertyName().equals( CloudUIController.DATASET_NAME_PROPERTY)){
       String newStringValue = evt.getNewValue().toString();
       if (! getDataSetText().getText().equals(newStringValue))
         getDataSetText().setText(newStringValue);
@@ -282,11 +243,11 @@ public class CloudUI extends AbstractUI {
 			uiFieldListForValidation = null;
 		}
 		boolean valid = (new CloudUIValidator(CloudUI.this, controller.getModel(), uiFieldListForValidation)).verify();
-		if(valid){
-			getController().changeSyncServerUri(txtServerURL.getText());
-			getController().changeMeshName(txtMesh.getText());
-			getController().changeDatasetName(txtDataset.getText());
-		}
+//		if(valid){
+//			getController().changeSyncServerUri(txtServerURL.getText());
+//			getController().changeMeshName(txtMesh.getText());
+//			getController().changeDatasetName(txtDataset.getText());
+//		}
 		return valid;
 	}
 
