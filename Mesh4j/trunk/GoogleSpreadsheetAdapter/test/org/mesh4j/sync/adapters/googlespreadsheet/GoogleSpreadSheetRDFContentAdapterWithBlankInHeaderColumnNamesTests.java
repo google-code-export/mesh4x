@@ -188,7 +188,7 @@ public class GoogleSpreadSheetRDFContentAdapterWithBlankInHeaderColumnNamesTests
 		properties.put("Pass", "geochat");
 		RDFInstance instance = rdfSchema.createNewInstanceFromProperties(id, properties);
 		
-		IdentifiableContent identifiableContent = new IdentifiableContent(instance.asElementXML(), mapping, id);
+		IdentifiableContent identifiableContent = new IdentifiableContent(instance.asElementRDFXML(), mapping, id);
 		Item item = new Item(identifiableContent, new Sync(IdGenerator.INSTANCE.newID(), "sharif", new Date(), false));
 		adapter.add(item);	
 		
@@ -249,7 +249,7 @@ public class GoogleSpreadSheetRDFContentAdapterWithBlankInHeaderColumnNamesTests
 		properties.put("Pass", "geochat");
 		RDFInstance instance = rdfSchema.createNewInstanceFromProperties(id, properties);
 		
-		IdentifiableContent identifiableContent = new IdentifiableContent(instance.asElementXML(), mapping, id);
+		IdentifiableContent identifiableContent = new IdentifiableContent(instance.asElementRDFXML(), mapping, id);
 		Item item = new Item(identifiableContent, items.get(0).getSync().clone().update("sharif", new Date(), false));
 		adapter.update(item);	
 		
@@ -300,7 +300,7 @@ public class GoogleSpreadSheetRDFContentAdapterWithBlankInHeaderColumnNamesTests
 		properties.put("Pass", "geochat");
 		RDFInstance instance = rdfSchema.createNewInstanceFromProperties(id, properties);
 		
-		IdentifiableContent identifiableContent = new IdentifiableContent(instance.asElementXML(), mapping, id);
+		IdentifiableContent identifiableContent = new IdentifiableContent(instance.asElementRDFXML(), mapping, id);
 		Item item = new Item(identifiableContent, new Sync(IdGenerator.INSTANCE.newID(), "sharif", new Date(), false));
 		adapter.add(item);	
 		

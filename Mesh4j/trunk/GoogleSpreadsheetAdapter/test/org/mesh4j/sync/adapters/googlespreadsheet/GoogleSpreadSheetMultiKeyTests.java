@@ -195,7 +195,7 @@ public class GoogleSpreadSheetMultiKeyTests {
 		properties.put("Pass", "ektoo");
 		RDFInstance instance = rdfSchema.createNewInstanceFromProperties("P1,K3", properties);
 		
-		IdentifiableContent identifiableContent = new IdentifiableContent(instance.asElementXML(), mapping, "P1,K3");
+		IdentifiableContent identifiableContent = new IdentifiableContent(instance.asElementRDFXML(), mapping, "P1,K3");
 		Item item = new Item(identifiableContent, new Sync(IdGenerator.INSTANCE.newID(), "Sharif", new Date(), false));
 		adapter.add(item);	
 		
@@ -259,7 +259,7 @@ public class GoogleSpreadSheetMultiKeyTests {
 		properties.put("Pass", "ektoo");
 		RDFInstance instance = rdfSchema.createNewInstanceFromProperties("P1,K2", properties);
 		
-		IdentifiableContent identifiableContent = new IdentifiableContent(instance.asElementXML(), mapping, "P1,K2");
+		IdentifiableContent identifiableContent = new IdentifiableContent(instance.asElementRDFXML(), mapping, "P1,K2");
 		Item item = new Item(identifiableContent, items.get(1).getSync().clone().update("Sharif", new Date(), false));
 		adapter.update(item);	
 		

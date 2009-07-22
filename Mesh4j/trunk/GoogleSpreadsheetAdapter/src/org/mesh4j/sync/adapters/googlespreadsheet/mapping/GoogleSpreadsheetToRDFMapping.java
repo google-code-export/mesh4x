@@ -30,7 +30,6 @@ import com.google.gdata.client.spreadsheet.SpreadsheetService;
  */
 public class GoogleSpreadsheetToRDFMapping extends AbstractRDFIdentifiableMapping implements IGoogleSpreadsheetToXMLMapping{
 
-	// BUSINESS METHODs
 	public GoogleSpreadsheetToRDFMapping(IRDFSchema rdfSchema) {		
 		super(rdfSchema);
 	}
@@ -191,12 +190,12 @@ public class GoogleSpreadsheetToRDFMapping extends AbstractRDFIdentifiableMappin
 	@Override
 	public Element convertRowToXML(GSRow<GSCell> row) {
 		RDFInstance rdfInstance = this.converRowToRDF(row);
-		return rdfInstance.asElementXML();
+		return rdfInstance.asElementRDFXML();
 	}
 	
 	@Override
 	public void applyXMLElementToRow(GSWorksheet<GSRow<GSCell>> workSheet, GSRow<GSCell> row, Element rdfElement) {		
-		RDFInstance rdfInstance = this.rdfSchema.createNewInstanceFromRDFXML(rdfElement.asXML());
+		RDFInstance rdfInstance = this.rdfSchema.createNewInstanceFromRDFXML(rdfElement);
 		this.appliesRDFToRow(workSheet, row, rdfInstance);		
 	}
 
