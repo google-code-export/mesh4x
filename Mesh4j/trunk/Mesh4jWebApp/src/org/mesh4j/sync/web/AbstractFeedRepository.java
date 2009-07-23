@@ -111,7 +111,7 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 		Feed feed = new Feed(title, title, link);
 		feed.addItems(items);
 		
-		String xml = writeFeedAsXml(feed, syndicationFormat, contentFormat, schema, mapping, NullIdentityProvider.INSTANCE);
+		String xml = writeFeedAsXml(sourceID, feed, syndicationFormat, contentFormat, schema, mapping, NullIdentityProvider.INSTANCE);
 		return xml;
 	}
 	
@@ -228,14 +228,51 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 			throw new MeshException(e);
 		}
 	}
-
+	
 	private IContentWriter getContentWriter(Format contentFormat, ISchema meshSchema, IMapping mapping) {
 		IContentWriter feedItemWriter;
 		if(meshSchema == null){
+			if(mapping == null){
+				feedItemWriter = ContentWriter.INSTANCE;
+			}else{
+				feedItemWriter = new ContentWriter(mapping);
+			}	
+		} else {
 			if(contentFormat != null && contentFormat.isXForm()){
+				feedItemWriter = new XFormRDFSchemaInstanceContentReadWriter((IRDFSchema)meshSchema, mapping, !contentFormat.isPlainXML());
+			} else {
+				if(meshSchema instanceof IRDFSchema){
+					feedItemWriter = new RDFSchemaInstanceContentReadWriter((IRDFSchema)meshSchema, mapping, contentFormat == null ? true : !contentFormat.isPlainXML());
+				} else {
+					feedItemWriter = new SchemaInstanceContentReadWriter(meshSchema, mapping, contentFormat == null ? true : !contentFormat.isPlainXML());
+				}
+			}
+		}
+		return feedItemWriter;
+	}
+
+	
+	private String writeFeedAsXml(String sourceID, Feed feed, ISyndicationFormat syndicationFormat, Format contentFormat, ISchema meshSchema, IMapping mapping, IIdentityProvider identityProvider){
+		IContentWriter feedItemWriter = getContentWriter(sourceID, contentFormat, meshSchema, mapping);
+		
+		FeedWriter writer = new FeedWriter(syndicationFormat, identityProvider, feedItemWriter);
+		try {
+			return writer.writeAsXml(feed);
+		} catch (Exception e) {
+			throw new MeshException(e);
+		}
+	}
+	private IContentWriter getContentWriter(String sourceID, Format contentFormat, ISchema meshSchema, IMapping mapping) {
+		IContentWriter feedItemWriter;
+		if(meshSchema == null){
+			if(contentFormat != null && contentFormat.isXForm() && isMeshGroup(sourceID)){
 				feedItemWriter = new XFormRDFSchemaContentWriter(contentFormat.isPlainXML());
 			} else {
-				feedItemWriter = ContentWriter.INSTANCE;
+				if(mapping == null){
+					feedItemWriter = ContentWriter.INSTANCE;
+				}else{
+					feedItemWriter = new ContentWriter(mapping);
+				}
 			}
 		} else {
 			if(contentFormat != null && contentFormat.isXForm()){

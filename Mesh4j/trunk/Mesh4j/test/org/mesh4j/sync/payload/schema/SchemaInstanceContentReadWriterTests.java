@@ -139,11 +139,11 @@ public class SchemaInstanceContentReadWriterTests {
 		Element itemElementRss = DocumentHelper.createElement("payload");
 		
 		schemaRW.writeContent(RssSyndicationFormat.INSTANCE, itemElementRss, itemElementRss, item);
-		Assert.assertEquals("<payload xmlns:User=\"http://localhost:8080/mesh4x/User#\"><title>mapTitle</title><description>mapDesc</description><User:id>1</User:id><User:name>juan</User:name><User:pass>123</User:pass></payload>", itemElementRss.asXML());
+		Assert.assertEquals("<payload xmlns:User=\"http://localhost:8080/mesh4x\"><title>mapTitle</title><description>mapDesc</description><User:id>1</User:id><User:name>juan</User:name><User:pass>123</User:pass></payload>", itemElementRss.asXML());
 		
 		Element itemElementAtom = DocumentHelper.createElement("payload");
 		schemaRW.writeContent(AtomSyndicationFormat.INSTANCE, itemElementAtom, itemElementAtom, item);
-		Assert.assertEquals("<payload xmlns:User=\"http://localhost:8080/mesh4x/User#\"><title xmlns=\"http://www.w3.org/2005/Atom\">mapTitle</title><summary xmlns=\"http://www.w3.org/2005/Atom\">mapDesc</summary><User:id>1</User:id><User:name>juan</User:name><User:pass>123</User:pass></payload>", itemElementAtom.asXML());
+		Assert.assertEquals("<payload xmlns:User=\"http://localhost:8080/mesh4x\"><title xmlns=\"http://www.w3.org/2005/Atom\">mapTitle</title><summary xmlns=\"http://www.w3.org/2005/Atom\">mapDesc</summary><User:id>1</User:id><User:name>juan</User:name><User:pass>123</User:pass></payload>", itemElementAtom.asXML());
 	}		
 	
 	@Test
@@ -173,11 +173,11 @@ public class SchemaInstanceContentReadWriterTests {
 		Element itemElementRss = DocumentHelper.createElement("payload");
 		
 		schemaRW.writeContent(RssSyndicationFormat.INSTANCE, itemElementRss, itemElementRss, item);
-		Assert.assertEquals("<payload xmlns:User=\"http://localhost:8080/mesh4x/User#\"><title>2</title><description>Id: 1 Version: 0</description><User:id>1</User:id><User:name>juan</User:name><User:pass>123</User:pass></payload>", itemElementRss.asXML());
+		Assert.assertEquals("<payload xmlns:User=\"http://localhost:8080/mesh4x\"><title>2</title><description>Id: 1 Version: 0</description><User:id>1</User:id><User:name>juan</User:name><User:pass>123</User:pass></payload>", itemElementRss.asXML());
 		
 		Element itemElementAtom = DocumentHelper.createElement("payload");
 		schemaRW.writeContent(AtomSyndicationFormat.INSTANCE, itemElementAtom, itemElementAtom, item);
-		Assert.assertEquals("<payload xmlns:User=\"http://localhost:8080/mesh4x/User#\"><title xmlns=\"http://www.w3.org/2005/Atom\">2</title><summary xmlns=\"http://www.w3.org/2005/Atom\">Id: 1 Version: 0</summary><User:id>1</User:id><User:name>juan</User:name><User:pass>123</User:pass></payload>", itemElementAtom.asXML());
+		Assert.assertEquals("<payload xmlns:User=\"http://localhost:8080/mesh4x\"><title xmlns=\"http://www.w3.org/2005/Atom\">2</title><summary xmlns=\"http://www.w3.org/2005/Atom\">Id: 1 Version: 0</summary><User:id>1</User:id><User:name>juan</User:name><User:pass>123</User:pass></payload>", itemElementAtom.asXML());
 	}
 	
 	@Test

@@ -74,7 +74,7 @@ public class ContentWriter implements IContentWriter {
 	private void addXMLContentToFeedPayload(ISyndicationFormat syndicationFormat, Element itemElement, XMLContent xmlContent, String defaultTitle, String title, String defaultDescription, String description){
 		
 		// set title
-		if(title == null){
+		if(title == null || title.length() == 0){
 			String myTitle = null;
 			if(xmlContent.getTitle() == null || xmlContent.getTitle().length() == 0){
 				if(defaultTitle != null){
@@ -92,7 +92,7 @@ public class ContentWriter implements IContentWriter {
 		}
 
 		// set description
-		if(description == null){
+		if(description == null || description.length() == 0){
 			String myDesc = null;
 			if(xmlContent.getDescription() == null || xmlContent.getDescription().length() == 0){
 				if(defaultDescription != null){

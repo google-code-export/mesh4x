@@ -21,7 +21,7 @@ public class RDFSchemaInstanceContentReadWriter extends SchemaInstanceContentRea
 	public RDFSchemaInstanceContentReadWriter(IRDFSchema schema, IMapping mapping, boolean mustWriteSync) {
 		super(schema, mapping, mustWriteSync);
 		
-		this.namespace = DocumentHelper.createNamespace(schema.getOntologyNameSpace(), schema.getOntologyBaseUri());
+		this.namespace = DocumentHelper.createNamespace(schema.getOntologyNameSpace(), schema.getOntologyBaseRDFUrl());
 		this.rdfQName = DocumentHelper.createQName(schema.getOntologyClassName(), this.namespace);
 	}
 
@@ -29,7 +29,7 @@ public class RDFSchemaInstanceContentReadWriter extends SchemaInstanceContentRea
 	public void addNameSpace(Element nsElement){
 		IRDFSchema rdfSchema = getRDFSchema();				
 		if(nsElement.getNamespaceForPrefix(rdfSchema.getOntologyNameSpace()) == null){
-			nsElement.addNamespace(rdfSchema.getOntologyNameSpace(), rdfSchema.getOntologyBaseUri());
+			nsElement.addNamespace(rdfSchema.getOntologyNameSpace(), rdfSchema.getOntologyBaseRDFUrl());
 		}
 	}
 
@@ -50,7 +50,7 @@ public class RDFSchemaInstanceContentReadWriter extends SchemaInstanceContentRea
 			List<Element> elements = payload.elements();
 			
 			for (Element element : elements) {
-				if(rdfSchema.getOntologyNameSpace().equals(element.getNamespacePrefix()) && rdfSchema.getOntologyBaseUri().equals(element.getNamespaceURI())){
+				if(rdfSchema.getOntologyNameSpace().equals(element.getNamespacePrefix()) && rdfSchema.getOntologyBaseRDFUrl().equals(element.getNamespaceURI())){
 					rdfElement.add(element.createCopy());
 					payload.remove(element);
 				}

@@ -181,13 +181,13 @@ public class RDFInstance {
 		
         this.model = ModelFactory.createOntologyModel();
 		model.add(schema.getRDFModel());
-		model.setNsPrefix(schema.getOntologyNameSpace(), schema.getOntologyBaseUri());
+		model.setNsPrefix(schema.getOntologyNameSpace(), schema.getOntologyBaseClassUri());
 		model.removeNsPrefix("rdfs");
 	}
 
 	public void setProperty(String propertyName, Object value) {
 	
-		String propertyUri = this.schema.getOntologyBaseUri()+ propertyName;
+		String propertyUri = this.schema.getOntologyBaseClassUri()+ propertyName;
 		Property domainObjectProperty = this.model.getProperty(propertyUri);
 		if(this.domainObject.hasProperty(domainObjectProperty)){
 			RDFNode oldValue = this.domainObject.getPropertyValue(domainObjectProperty);
@@ -313,7 +313,7 @@ public class RDFInstance {
 			XMLWriter xmlWriter = new XMLWriter(sw, OutputFormat.createCompactFormat());
 			xmlWriter.write(DocumentHelper.createDocument());
 			
-			final Namespace nameSpace = DocumentHelper.createNamespace(this.schema.getOntologyNameSpace(), this.schema.getOntologyBaseUri());
+			final Namespace nameSpace = DocumentHelper.createNamespace(this.schema.getOntologyNameSpace(), this.schema.getOntologyBaseRDFUrl());
 			Element element = null;
 			if(useNamespace){
 				Attributes attr = new Attributes(){
@@ -421,7 +421,7 @@ public class RDFInstance {
 	}
 
 	public Object getPropertyValue(String propertyName) {
-		String propertyUri = this.schema.getOntologyBaseUri()+ propertyName;
+		String propertyUri = this.schema.getOntologyBaseClassUri()+ propertyName;
 		Property domainObjectProperty = this.model.getProperty(propertyUri);
 		Literal literal = (Literal)this.domainObject.getPropertyValue(domainObjectProperty);
 		if(literal == null){
@@ -437,7 +437,7 @@ public class RDFInstance {
 	}
 	
 	public String getPropertyValueAsLexicalForm(String propertyName) {
-		String propertyUri = this.schema.getOntologyBaseUri()+ propertyName;
+		String propertyUri = this.schema.getOntologyBaseClassUri()+ propertyName;
 		Property domainObjectProperty = this.model.getProperty(propertyUri);
 		Literal literal = (Literal)this.domainObject.getPropertyValue(domainObjectProperty);
 		if(literal == null){

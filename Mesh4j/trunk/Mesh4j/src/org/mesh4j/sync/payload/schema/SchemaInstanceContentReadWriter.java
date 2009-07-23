@@ -40,14 +40,16 @@ public class SchemaInstanceContentReadWriter implements IContentWriter, IContent
 			syndicationFormat.addFeedItemDescriptionElement(itemElement, "---DELETED---");
 		}else{
 			addNameSpace(nsElement);
-					
-			Element plainXML = getInstanceAsXML(item);
+			
+			Element payloadXML = getInstanceAsXML(item);
+			Element plainXML = this.schema.asInstancePlainXML(item.getContent().getPayload(), ISchema.EMPTY_FORMATS);  // TODO (JMT) extends IMapping to support ISchema and not generate xml 2 times
+			
 			String title = this.mapping.getValue(plainXML, ISyndicationFormat.MAPPING_NAME_ITEM_TITLE);
 			String desc = this.mapping.getValue(plainXML, ISyndicationFormat.MAPPING_NAME_ITEM_DESCRIPTION);
 					
 			syndicationFormat.addFeedItemTitleElement(itemElement, title == null || title.length() == 0 ? item.getSyncId() : title);
 			syndicationFormat.addFeedItemDescriptionElement(itemElement, desc == null || desc.length() == 0 ? "Id: " + item.getContent().getId() + " Version: " + item.getContent().getVersion() : desc);
-			syndicationFormat.addFeedItemPayloadElement(itemElement, plainXML, encapsulateContentInCDATA());
+			syndicationFormat.addFeedItemPayloadElement(itemElement, payloadXML, encapsulateContentInCDATA());
 		}
 	}
 

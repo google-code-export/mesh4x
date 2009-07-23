@@ -40,7 +40,7 @@ public class RDFSchema implements IRDFSchema{
 	private final static String MESH_METADATA_GUID_PROPERTY_NAME = "guidProperties";
 	
 	// MODEL VARIABLES
-	private String ontologyBaseUri;
+	private String ontologyBaseClassUri;
 	private String ontologyNameSpace;
 	private String ontologyClassName;
 	
@@ -85,33 +85,33 @@ public class RDFSchema implements IRDFSchema{
 		}		
 
 		String[] uri = this.domainClass.getURI().split("#");
-		this.ontologyBaseUri = uri[0]+"#";
+		this.ontologyBaseClassUri = uri[0]+"#";
 		this.ontologyClassName = this.domainClass.getLocalName();
 		this.ontologyNameSpace = uri[1];
-		this.schema.setNsPrefix(this.ontologyNameSpace, this.ontologyBaseUri);
+		this.schema.setNsPrefix(this.ontologyNameSpace, this.ontologyBaseClassUri);
 		
 		if(this.meshMetadataClass == null){
-			String meshNameUri = this.ontologyBaseUri + MESH_METADATA_CLASS_NAME;
+			String meshNameUri = this.ontologyBaseClassUri + MESH_METADATA_CLASS_NAME;
 			this.meshMetadataClass = schema.createClass(meshNameUri);
 		}
 	}
 	
-	public RDFSchema(String ontologyNameSpace, String ontologyBaseUri, String ontologyClassName){
+	public RDFSchema(String ontologyNameSpace, String ontologyBaseClassUri, String ontologyClassName){
 		Guard.argumentNotNullOrEmptyString(ontologyNameSpace, "ontologyNameSpace");
-		Guard.argumentNotNullOrEmptyString(ontologyBaseUri, "ontologyBaseUri");
+		Guard.argumentNotNullOrEmptyString(ontologyBaseClassUri, "ontologyBaseClassUri");
 		Guard.argumentNotNullOrEmptyString(ontologyClassName, "ontologyClassName");
 		
-		this.ontologyBaseUri = ontologyBaseUri;
+		this.ontologyBaseClassUri = ontologyBaseClassUri;
 		this.ontologyClassName = ontologyClassName;
 		this.ontologyNameSpace = ontologyNameSpace;
 
 		this.schema = ModelFactory.createOntologyModel();
-		this.schema.setNsPrefix(this.ontologyNameSpace, this.ontologyBaseUri);
+		this.schema.setNsPrefix(this.ontologyNameSpace, this.ontologyBaseClassUri);
 	
-		String classNameUri = this.ontologyBaseUri + this.ontologyClassName;
+		String classNameUri = this.ontologyBaseClassUri + this.ontologyClassName;
 		this.domainClass = schema.createClass(classNameUri);
 		
-		String meshNameUri = this.ontologyBaseUri + MESH_METADATA_CLASS_NAME;
+		String meshNameUri = this.ontologyBaseClassUri + MESH_METADATA_CLASS_NAME;
 		this.meshMetadataClass = schema.createClass(meshNameUri);
 	}
 		
@@ -151,7 +151,7 @@ public class RDFSchema implements IRDFSchema{
 		validateProperty(propertyName, label, lang);
 		
 		// add property
-		String propertyUri = this.ontologyBaseUri + propertyName;
+		String propertyUri = this.ontologyBaseClassUri + propertyName;
 		DatatypeProperty domainProperty = this.schema.createDatatypeProperty(propertyUri);
 		
 		domainProperty.addDomain(domainClass);
@@ -182,8 +182,8 @@ public class RDFSchema implements IRDFSchema{
 		return XMLHelper.canonicalizeXML(xml);
 	}
 
-	public String getOntologyBaseUri() {
-		return ontologyBaseUri;
+	public String getOntologyBaseClassUri() {
+		return ontologyBaseClassUri;
 	}
 
 	public String getOntologyNameSpace() {
@@ -212,7 +212,7 @@ public class RDFSchema implements IRDFSchema{
 	}
 
 	public String getPropertyType(String propertyName) {
-		String propertyUri = this.ontologyBaseUri + propertyName;
+		String propertyUri = this.ontologyBaseClassUri + propertyName;
 		DatatypeProperty datatypeProperty = this.schema.getDatatypeProperty(propertyUri);
 		if(datatypeProperty ==  null){
 			return null;
@@ -227,7 +227,7 @@ public class RDFSchema implements IRDFSchema{
 	}
 	
 	public String getPropertyLabel(String propertyName, String lang) {
-		String propertyUri = this.ontologyBaseUri + propertyName;
+		String propertyUri = this.ontologyBaseClassUri + propertyName;
 		DatatypeProperty datatypeProperty = this.schema.getDatatypeProperty(propertyUri);
 		if(datatypeProperty ==  null){
 			return null;
@@ -237,7 +237,7 @@ public class RDFSchema implements IRDFSchema{
 	}
 	
 	public Object cannonicaliseValue(String propertyName, Object value) {
-		String propertyUri = this.ontologyBaseUri + propertyName;
+		String propertyUri = this.ontologyBaseClassUri + propertyName;
 		DatatypeProperty datatypeProperty = this.schema.getDatatypeProperty(propertyUri);
 		if(datatypeProperty ==  null){
 			return null;
@@ -450,7 +450,7 @@ public class RDFSchema implements IRDFSchema{
 			return false;
 		}
 		
-		if(!this.getOntologyBaseUri().equals(rdfSchema.getOntologyBaseUri())){
+		if(!this.getOntologyBaseClassUri().equals(rdfSchema.getOntologyBaseClassUri())){
 			return false;
 		}
 
@@ -697,8 +697,8 @@ public class RDFSchema implements IRDFSchema{
 	}
 
 	@Override
-	public String getBaseRDFURL() {
-		return this.ontologyBaseUri.substring(0, this.ontologyBaseUri.length() - (this.ontologyClassName.length() +2));
+	public String getOntologyBaseRDFUrl() {
+		return this.ontologyBaseClassUri.substring(0, this.ontologyBaseClassUri.length() - (this.ontologyClassName.length() +2));
 		// + 2 because add 1 for / and 1 for #
 	}
 

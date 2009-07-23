@@ -66,7 +66,7 @@ public class RDFSchemaTests {
 		Assert.assertEquals("RecStatus", schema.getPropertyLabel("RecStatus", IRDFSchema.DEFAULT_LANGUAGE));
 
 		Assert.assertEquals("Oswego", schema.getOntologyNameSpace());
-		Assert.assertEquals("http://localhost:8080/mesh4x/feeds/Epiinfo/Oswego#", schema.getOntologyBaseUri());
+		Assert.assertEquals("http://localhost:8080/mesh4x/feeds/Epiinfo/Oswego#", schema.getOntologyBaseClassUri());
 		Assert.assertEquals("Oswego", schema.getOntologyClassName());
 	}
 		
@@ -117,14 +117,14 @@ public class RDFSchemaTests {
 		Assert.assertNotNull(schema);
 		Assert.assertEquals(0, schema.getPropertyCount());
 		Assert.assertEquals("Oswego", schema.getOntologyNameSpace());
-		Assert.assertEquals("http://localhost:8080/mesh4x/feeds/Epiinfo/Oswego#", schema.getOntologyBaseUri());
+		Assert.assertEquals("http://localhost:8080/mesh4x/feeds/Epiinfo/Oswego#", schema.getOntologyBaseClassUri());
 		Assert.assertEquals("Oswego", schema.getOntologyClassName());
 	}
 
 	@Test
 	public void shouldGetBaseRDFURL(){
 		RDFSchema schema = new RDFSchema("Oswego", "http://localhost:8080/mesh4x/feeds/Epiinfo/Oswego#", "Oswego");
-		Assert.assertEquals("http://localhost:8080/mesh4x/feeds/Epiinfo", schema.getBaseRDFURL());
+		Assert.assertEquals("http://localhost:8080/mesh4x/feeds/Epiinfo", schema.getOntologyBaseRDFUrl());
 	}
 	
 	@Test

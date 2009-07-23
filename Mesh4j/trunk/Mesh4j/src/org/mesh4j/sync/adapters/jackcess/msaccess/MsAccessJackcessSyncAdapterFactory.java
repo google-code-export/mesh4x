@@ -36,7 +36,7 @@ public class MsAccessJackcessSyncAdapterFactory {
 			}
 		}
 		
-		SplitAdapter splitAdapter = createSyncAdapter(msAccess, rdfSchema.getOntologyClassName(), identityProvider, rdfSchema.getOntologyBaseUri());
+		SplitAdapter splitAdapter = createSyncAdapter(msAccess, rdfSchema.getOntologyClassName(), identityProvider, rdfSchema.getOntologyBaseRDFUrl());
 		IRDFSchema rdfSchemaAutoGenetated = (IRDFSchema)((MsAccessContentAdapter)splitAdapter.getContentAdapter()).getSchema();
 		if(!rdfSchema.isCompatible(rdfSchemaAutoGenetated)){
 			Guard.throwsException("INVALID_RDF_SCHEMA");

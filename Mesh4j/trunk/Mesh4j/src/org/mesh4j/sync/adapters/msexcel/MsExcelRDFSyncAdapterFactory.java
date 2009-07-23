@@ -66,7 +66,7 @@ public class MsExcelRDFSyncAdapterFactory{
 			return new SplitAdapter(syncRepo, contentAdapter, identityProvider);
 		} else {
 			MsExcelSyncRepository syncRepo =  new MsExcelSyncRepository(excel, sheetName+"_sync", identityProvider, IdGenerator.INSTANCE);
-			MsExcelContentAdapter contentAdapter = createContentAdapter(sheetName, rdfSchema.getIdentifiablePropertyNames().toArray(new String[0]), rdfSchema.getVersionPropertyName(), excel, rdfSchema.getBaseRDFURL());
+			MsExcelContentAdapter contentAdapter = createContentAdapter(sheetName, rdfSchema.getIdentifiablePropertyNames().toArray(new String[0]), rdfSchema.getVersionPropertyName(), excel, rdfSchema.getOntologyBaseRDFUrl());
 			SplitAdapter splitAdapter = new SplitAdapter(syncRepo, contentAdapter, identityProvider);
 			
 			if(rdfSchema != null){

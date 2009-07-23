@@ -21,6 +21,42 @@ import org.mesh4j.sync.utils.XMLHelper;
 
 public class EpiinfoDemoTest {
 
+	@Test
+	public void shouldConfigureServerJavaRosa() throws IOException{
+		String serverUrl = "http://localhost:8080/mesh4x/feeds";
+		//String serverUrl = "http://sync.staging.instedd.org:8080/mesh4x/feeds";
+		
+		String mdbFileName = TestHelper.makeFileAndDeleteIfExists("epiinfo.mdb").getCanonicalPath(); 
+		
+		String sourceFileName = this.getClass().getResource("epiinfo.mdb").getFile();
+		FileUtils.copyFile(sourceFileName, mdbFileName);
+		SplitAdapter adapter = MsAccessHibernateSyncAdapterFactory.createHibernateAdapter(mdbFileName, "Oswego", serverUrl, TestHelper.baseDirectoryForTest(), new LoggedInIdentityProvider());
+		ISchema schema = ((HibernateContentAdapter)adapter.getContentAdapter()).getSchema();
+		
+		String xml = "<mappings>"+
+			"<item.title>patient name: {Oswego/Name}</item.title>"+
+			"<item.description>adress: {Oswego/Address}</item.description>"+
+			"<geo.location>{geoLocation(Oswego/Address)}</geo.location>"+
+			"<geo.longitude>{geoLongitude(Oswego/Address)}</geo.longitude>"+
+			"<geo.latitude>{geoLatitude(Oswego/Address)}</geo.latitude>"+
+			"<patient.ill>{Oswego/ILL}</patient.ill>"+
+			"<patient.updateTimestamp>{Oswego/DateOnset}</patient.updateTimestamp>"+ 
+			"</mappings>";
+		Element element = XMLHelper.parseElement(xml);
+		IMapping mappings = new Mapping(element);
+		
+		HttpSyncAdapter.uploadMeshDefinition(serverUrl, "Epiinfo", RssSyndicationFormat.NAME, "my mesh", null, null, LoggedInIdentityProvider.getUserName());
+		
+		HttpSyncAdapter.uploadMeshDefinition(serverUrl, "Epiinfo/Oswego", RssSyndicationFormat.NAME, "my mesh", schema, mappings, LoggedInIdentityProvider.getUserName());
+		
+		String url = serverUrl + "/Epiinfo/Oswego";
+		HttpSyncAdapter httpAdapter = HttpSyncAdapterFactory.createSyncAdapter(url, new LoggedInIdentityProvider());
+		
+		SyncEngine syncEngine = new SyncEngine(httpAdapter, adapter);
+		
+		TestHelper.assertSync(syncEngine);
+		
+	}
 	
 	@Test
 	public void shouldConfigureServerWithoutSchema() throws IOException{

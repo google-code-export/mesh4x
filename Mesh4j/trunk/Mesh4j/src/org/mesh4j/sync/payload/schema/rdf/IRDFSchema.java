@@ -47,8 +47,9 @@ public interface IRDFSchema extends ISchema {
 	public String getPropertyLabel(String propertyName);
 	public String getPropertyLabel(String propertyName, String lang);
 	
-	public String getOntologyBaseUri();
+	public String getOntologyBaseRDFUrl();
 	public String getOntologyNameSpace();
+	public String getOntologyBaseClassUri();
 	public String getOntologyClassName();
 
 
@@ -58,9 +59,5 @@ public interface IRDFSchema extends ISchema {
 	String getVersionPropertyName();
 
 	public boolean isGUID(String propertyName);
-
-	public String getBaseRDFURL();
-
-
 
 }
