@@ -693,4 +693,8 @@ public class MeshCompactUITranslator {
 		return MessageTranslator.translate("MESH_COMPACT_ADMIN_WINDOW_MESSAGE_UPLOAD_MESH_OK"); 
 	}
 
+	public static void initializeResourceBundle() {
+		MessageTranslator.setResourceBundle("epiinfo_resources");
+	}
+
 }

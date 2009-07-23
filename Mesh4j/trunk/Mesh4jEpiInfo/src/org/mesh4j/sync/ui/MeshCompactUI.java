@@ -109,6 +109,8 @@ public class MeshCompactUI implements ISyncSessionViewOwner, IErrorListener{
 	}
 
 	public MeshCompactUI() throws Exception {
+		MeshCompactUITranslator.initializeResourceBundle();
+		
 		this.propertiesProvider = new PropertiesProvider();
 		this.sourceIdMapper = new SourceIdMapper(propertiesProvider.getBaseDirectory()+"/myDataSources.properties");
 		
