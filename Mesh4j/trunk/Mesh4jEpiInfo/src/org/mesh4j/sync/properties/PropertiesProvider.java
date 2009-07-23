@@ -249,20 +249,21 @@ public class PropertiesProvider {
 		return getBoolean("emulate.sync");
 	}
 
+	private String getEmulationBaseDirectory() {
+		return this.properties.getProperty("emulate.base.directory", getCurrentDirectory());
+	}
+	
 	public String getEmulationInFolder() {
-		return getCurrentDirectory()+"\\in";
-		//return getBaseDirectory()+"\\in";
+		return getEmulationBaseDirectory()+"\\in";
 	}
 
 	public String getEmulationOutRootFolder() {
-		File file = new File(getCurrentDirectory());
-		//File file = new File(getBaseDirectory());
+		File file = new File(getEmulationBaseDirectory());
 		return file.getParent();
 	}
 
 	public String getEmulationEndpointId() {
-		File file = new File(getCurrentDirectory());
-		//File file = new File(getBaseDirectory());
+		File file = new File(getEmulationBaseDirectory());
 		return file.getName();
 	}
 
