@@ -25,12 +25,13 @@ import org.mesh4j.sync.adapters.feed.Feed;
 import org.mesh4j.sync.adapters.feed.FeedAdapter;
 import org.mesh4j.sync.adapters.feed.XMLContent;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
+import org.mesh4j.sync.adapters.hibernate.HibernateContentAdapter;
 import org.mesh4j.sync.adapters.hibernate.msaccess.MsAccessHibernateSyncAdapterFactory;
 import org.mesh4j.sync.adapters.http.HttpSyncAdapter;
-import org.mesh4j.sync.adapters.kml.timespan.decorator.IKMLGeneratorFactory;
+import org.mesh4j.sync.adapters.kml.timespan.decorator.IKMLGenerator;
 import org.mesh4j.sync.adapters.kml.timespan.decorator.KMLTimeSpanDecoratorSyncAdapter;
-import org.mesh4j.sync.adapters.kml.timespan.decorator.KMLTimeSpanDecoratorSyncAdapterFactory;
 import org.mesh4j.sync.adapters.msaccess.MsAccessRDFSchemaGenerator;
+import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.filter.CompoundFilter;
 import org.mesh4j.sync.filter.NonDeletedFilter;
 import org.mesh4j.sync.id.generator.IdGenerator;
@@ -68,9 +69,7 @@ import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.Sync;
 import org.mesh4j.sync.payload.mappings.IMapping;
 import org.mesh4j.sync.payload.mappings.Mapping;
-import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
-import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
 import org.mesh4j.sync.payload.schema.rdf.RDFSchemaInstanceContentReadWriter;
 import org.mesh4j.sync.properties.PropertiesProvider;
 import org.mesh4j.sync.security.IIdentityProvider;
@@ -92,21 +91,25 @@ public class SyncEngineUtil {
 		String baseDirectory = propertiesProvider.getBaseDirectory();
 		Date start = new Date();
 		try{
-			// create HTTPSyncAdapter
-			MSAccessDataSourceMapping dataSourceMapping = sourceIdMapper.getDataSource(sourceAlias);
-			RDFSchema schema = getSchema(dataSourceMapping, propertiesProvider);
-			IMapping mappings = getMappings(sourceAlias, propertiesProvider);
-			RDFSchemaInstanceContentReadWriter contentReadWriter = new RDFSchemaInstanceContentReadWriter(schema, mappings, true);
-			ISyncAdapter httpAdapter = new HttpSyncAdapter(url, RssSyndicationFormat.INSTANCE, identityProvider, 
-					IdGenerator.INSTANCE, contentReadWriter, contentReadWriter);
-			
 			// create MSAccessAdapter
-			String sourceDefinition = sourceIdMapper.getSourceDefinition(sourceAlias);
-			ISyncAdapterFactory syncFactory = makeSyncAdapterFactory(baseDirectory, propertiesProvider.getMeshSyncServerURL()+"/"+propertiesProvider.getMeshID());
-			ISyncAdapter syncAdapter = syncFactory.createSyncAdapter(sourceAlias, sourceDefinition, identityProvider);
-	
+			MSAccessDataSourceMapping dataSourceMapping = sourceIdMapper.getDataSource(sourceAlias);
+			String rdfURL = propertiesProvider.getMeshSyncServerURL()+"/"+propertiesProvider.getMeshID();
+			SplitAdapter msAccessAdapter = MsAccessHibernateSyncAdapterFactory.createHibernateAdapter(
+					dataSourceMapping.getFileName(), 
+					dataSourceMapping.getTableName(), 
+					rdfURL, 
+					baseDirectory, 
+					identityProvider);
+			
+			IMapping mappings = getMappings(sourceAlias, propertiesProvider);
+			IRDFSchema schema = (IRDFSchema)((HibernateContentAdapter)msAccessAdapter.getContentAdapter()).getSchema();
+				
+			// create HTTPSyncAdapter			
+			RDFSchemaInstanceContentReadWriter contentReadWriter = new RDFSchemaInstanceContentReadWriter(schema, mappings, true);
+			ISyncAdapter httpAdapter = new HttpSyncAdapter(url, RssSyndicationFormat.INSTANCE, identityProvider, IdGenerator.INSTANCE, contentReadWriter, contentReadWriter);
+			
 			// sync
-			SyncEngine syncEngine = new SyncEngine(syncAdapter, httpAdapter);
+			SyncEngine syncEngine = new SyncEngine(msAccessAdapter, httpAdapter);
 			List<Item> conflicts = syncEngine.synchronize(NullPreviewHandler.INSTANCE, syncMode.getBehavior());
 			
 			traceCloudSynchronization(url, syncMode, start, new Date(), conflicts, false, sourceAlias, identityProvider, baseDirectory);
@@ -263,16 +266,22 @@ public class SyncEngineUtil {
 	@SuppressWarnings("unchecked")
 	public static File generateKML(SourceIdMapper sourceIdMapper, MSAccessDataSourceMapping dataSource, PropertiesProvider propertiesProvider) throws Exception{
 		
-		String sourceDefinition = sourceIdMapper.getSourceDefinition(dataSource.getAlias());
-		ISyncAdapterFactory syncFactory = makeSyncAdapterFactory(propertiesProvider.getBaseDirectory(), null);
+		//String rdfURL = propertiesProvider.getMeshSyncServerURL()+"/"+propertiesProvider.getMeshID();
+		String rdfURL = null; // no use rdf, use plain xml
+		SplitAdapter msAccessAdapter = MsAccessHibernateSyncAdapterFactory.createHibernateAdapter(
+				dataSource.getFileName(), 
+				dataSource.getTableName(), 
+				rdfURL, 
+				propertiesProvider.getBaseDirectory(), 
+				propertiesProvider.getIdentityProvider());
 
-		ISchema schema = getSchema(dataSource, propertiesProvider);
 		IMapping mapping = getMappings(dataSource.getAlias(), propertiesProvider);
 		
-		IKMLGeneratorFactory kmlGeneratorFactory = new KmlGeneratorFactory(propertiesProvider.getDefaultKMLTemplateFileName(), schema, mapping);
-		KMLTimeSpanDecoratorSyncAdapterFactory kmlDecSyncFactory = new KMLTimeSpanDecoratorSyncAdapterFactory(propertiesProvider.getBaseDirectory(), syncFactory, kmlGeneratorFactory);
+		IKMLGenerator kmlGenerator = new KmlGenerator(propertiesProvider.getDefaultKMLTemplateFileName(), mapping);
 		
-		KMLTimeSpanDecoratorSyncAdapter syncAdapter = kmlDecSyncFactory.createSyncAdapter(dataSource.getAlias(), sourceDefinition, propertiesProvider.getIdentityProvider());
+		String kmlFileName = propertiesProvider.getBaseDirectory() + "/" + dataSource.getAlias() + ".kml";
+				
+		KMLTimeSpanDecoratorSyncAdapter syncAdapter = new KMLTimeSpanDecoratorSyncAdapter(kmlGenerator, dataSource.getAlias(), kmlFileName, msAccessAdapter);
 		syncAdapter.beginSync();
 		
 		CompoundFilter filter = new CompoundFilter(NonDeletedFilter.INSTANCE);
@@ -374,43 +383,40 @@ public class SyncEngineUtil {
 
 	public static void uploadMeshDefinition(MSAccessDataSourceMapping dataSource, String description, PropertiesProvider propertiesProvider) throws Exception {
 		
-		String meshSourceId = propertiesProvider.getMeshID();
+		String meshGroup = propertiesProvider.getMeshID();
+		String meshDataSetId = propertiesProvider.getMeshID()+"/"+dataSource.getAlias();
 		
 		// schema
 		IRDFSchema rdfSchema = MsAccessRDFSchemaGenerator.extractRDFSchema(
 			dataSource.getFileName(), 
 			dataSource.getTableName(), 
-//			dataSource.getAlias(),
-			propertiesProvider.getMeshSyncServerURL()+"/"+meshSourceId);
-		
-		String fileName = getSchemaFileName(dataSource.getAlias(), propertiesProvider);
-		FileUtils.write(fileName, rdfSchema.asXML().getBytes());
+			propertiesProvider.getMeshSyncServerURL()+"/"+meshGroup);
 		
 		// mappings
 		IMapping mapping = getMappings(dataSource.getAlias(), propertiesProvider);
 		
 		// upload
 		String by = propertiesProvider.getIdentityProvider().getAuthenticatedUser();
-		HttpSyncAdapter.uploadMeshDefinition(propertiesProvider.getMeshSyncServerURL(), propertiesProvider.getMeshID(), RssSyndicationFormat.INSTANCE.getName(), propertiesProvider.getMeshID(), null, null, by);
-		HttpSyncAdapter.uploadMeshDefinition(propertiesProvider.getMeshSyncServerURL(), meshSourceId, RssSyndicationFormat.INSTANCE.getName(), description, rdfSchema, mapping, by);
+		HttpSyncAdapter.uploadMeshDefinition(propertiesProvider.getMeshSyncServerURL(), meshGroup, RssSyndicationFormat.INSTANCE.getName(), propertiesProvider.getMeshID(), null, null, by);
+		HttpSyncAdapter.uploadMeshDefinition(propertiesProvider.getMeshSyncServerURL(), meshDataSetId, RssSyndicationFormat.INSTANCE.getName(), description, rdfSchema, mapping, by);
 	}
 
-	private static String getSchemaFileName(String dataSource, PropertiesProvider propertiesProvider) {
-		return propertiesProvider.getBaseDirectory() + "/" + dataSource + "_schema.xml";
-	}
+//	private static String getSchemaFileName(String dataSource, PropertiesProvider propertiesProvider) {
+//		return propertiesProvider.getBaseDirectory() + "/" + dataSource + "_schema.xml";
+//	}
 	
-	public static RDFSchema getSchema(MSAccessDataSourceMapping dataSource, PropertiesProvider propertiesProvider) throws Exception{
-		String fileName = getSchemaFileName(dataSource.getAlias(), propertiesProvider);
-		return RDFSchema.readSchema(fileName);
-	}
+//	public static RDFSchema getSchema(MSAccessDataSourceMapping dataSource, PropertiesProvider propertiesProvider) throws Exception{
+//		String fileName = getSchemaFileName(dataSource.getAlias(), propertiesProvider);
+//		return RDFSchema.readSchema(fileName);
+//	}
 
-	public static void downloadSchema(String url, String dataSource, PropertiesProvider propertiesProvider) throws Exception {
-		ISchema schema = HttpSyncAdapter.getSchema(url);
-		String xmlSchema = schema.asXML();
-		
-		String fileName = getSchemaFileName(dataSource, propertiesProvider);
-		FileUtils.write(fileName, xmlSchema.getBytes());
-	}
+//	public static void downloadSchema(String url, String dataSource, PropertiesProvider propertiesProvider) throws Exception {
+//		ISchema schema = HttpSyncAdapter.getSchema(url);
+//		String xmlSchema = schema.asXML();
+//		
+//		String fileName = getSchemaFileName(dataSource, propertiesProvider);
+//		FileUtils.write(fileName, xmlSchema.getBytes());
+//	}
 	
 	public static Mapping getMappings(String dataSource, PropertiesProvider propertiesProvider) throws Exception{
 		String mappingsFileName = getMappingsFileName(dataSource, propertiesProvider);

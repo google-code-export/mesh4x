@@ -20,7 +20,6 @@ import org.mesh4j.sync.adapters.kml.timespan.decorator.IKMLGenerator;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.payload.mappings.IMapping;
 import org.mesh4j.sync.payload.mappings.Mapping;
-import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
@@ -33,18 +32,15 @@ public class KmlGenerator implements IKMLGenerator{
 	final static SimpleDateFormat DATEONSET_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	// MODEL VARIABLE
-	private ISchema schema;
 	private IMapping mappingResolver;
 	private String templateFileName;
 	
 	// BUSINESS METHODS
 
-	public KmlGenerator(String templateFileName, ISchema schema, IMapping mappingResolver){
-		Guard.argumentNotNull(schema, "schema");
+	public KmlGenerator(String templateFileName, IMapping mappingResolver){
 		Guard.argumentNotNull(mappingResolver, "mappingResolver");
 		Guard.argumentNotNullOrEmptyString(templateFileName, "templateFileName");
 		
-		this.schema = schema;
 		this.mappingResolver = mappingResolver;
 		this.templateFileName = templateFileName;
 	}
@@ -79,6 +75,7 @@ public class KmlGenerator implements IKMLGenerator{
 			if(!item.isDeleted()){
 				
 				Element payload = item.getContent().getPayload();
+				//Element payload = this.schema.asInstancePlainXML(item.getContent().getPayload(), ISchema.EMPTY_FORMATS);
 				
 				String location = mappingResolver.getValue(payload, GeoCoderLocationPropertyResolver.MAPPING_NAME);
 				
@@ -194,7 +191,4 @@ public class KmlGenerator implements IKMLGenerator{
 		return mappingResolver.getAttribute(ATTR_PATIENT_UPDATE_TIMESTAMP);
 	}
 	
-	public ISchema getSchema(){
-		return this.schema;
-	}
 }

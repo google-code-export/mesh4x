@@ -23,7 +23,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/smslib-3.3.0.jar"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/Mesh4j"/>
 	<classpathentry kind="lib" path="etc"/>
-	<classpathentry kind="lib" path="/Mesh4jEktooClient/images"/>
 	<classpathentry kind="lib" path="lib/jackcess-1.1.19.jar"/>
+	<classpathentry kind="lib" path="images"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

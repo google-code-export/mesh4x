@@ -981,8 +981,7 @@ public class MeshUI {
 				}
 
 				try {
-					SyncEngineUtil.downloadSchema(url, tableName,
-							propertiesProvider);
+					//SyncEngineUtil.downloadSchema(url, tableName, propertiesProvider);
 					consoleNotification.setEndSyncImageStatus();
 				} catch (Throwable t) {
 					consoleNotification.setErrorImageStatus();

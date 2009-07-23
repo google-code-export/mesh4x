@@ -52,7 +52,7 @@ public class DownloadSchemaAndMappingsTask extends SwingWorker<Void, Void> {
 		
 		try{
 			SyncEngineUtil.downloadMappings(url, dataSource.getAlias(), propertiesProvider);
-			SyncEngineUtil.downloadSchema(url, dataSource.getAlias(), propertiesProvider);
+			//SyncEngineUtil.downloadSchema(url, dataSource.getAlias(), propertiesProvider);
 			downloadListener.setOk(MeshCompactUITranslator.getMapsWindowMessageDownloadMappingsEnd());
 		} catch(Throwable e){
 			LogFrame.Logger.error(e.getMessage(), e);
