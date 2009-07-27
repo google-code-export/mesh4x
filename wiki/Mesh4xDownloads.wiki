@@ -8,116 +8,110 @@ Tools and products build with Mesh4x.
   * Download [http://downloads.instedd.org/mesh4x/mesh4j_2_0_0.jar Jar] [http://downloads.instedd.org/mesh4x/mesh4j_2_0_0.jar http://mesh4x.googlecode.com/svn/wiki/files/download.png]
   * Download [http://downloads.instedd.org/mesh4x/mesh4j_2_0_0.zip Jar with Dependencies] [http://downloads.instedd.org/mesh4x/mesh4j_2_0_0.zip http://mesh4x.googlecode.com/svn/wiki/files/download.png]
 
-
   Uploaded: 2009-07-27 14:22 PM
 
   SVN Tag: [http://code.google.com/p/mesh4x/source/browse#svn/Mesh4j/tags/Mesh4x_2_0_0 Mesh4x_2_0_0]
- 
- 
- 
- 
+
+
 == APPLICATIONS == 
 
-=== Ektoo Client ===
+ ===1. Ektoo Client ===
 
-Ektoo client is a tool to synchronize all data sources supported by mesh4x.
+   Ektoo client is a tool to synchronize all data sources supported by mesh4x. View Ektoo client users guide [http://code.google.com/p/mesh4x/wiki/HowToUseEktooClient HowToUseEktooClient]
 
-  * Download Ektoo client [http://downloads.instedd.org/mesh4x/ektoo_2_0_0.zip http://mesh4x.googlecode.com/svn/wiki/files/download.png]
-  Uploaded: 2009-07-27 14:22 PM
+   Download Ektoo client [http://downloads.instedd.org/mesh4x/ektoo_2_0_0.zip http://mesh4x.googlecode.com/svn/wiki/files/download.png]
 
-  SVN Tag: [http://code.google.com/p/mesh4x/source/browse#svn/Mesh4j/tags/Mesh4x_2_0_0 Mesh4x_2_0_0]
+   Uploaded: 2009-07-27 14:22 PM
 
-  * View Ektoo client users guide [http://code.google.com/p/mesh4x/wiki/HowToUseEktooClient HowToUseEktooClient]
+   SVN Tag: [http://code.google.com/p/mesh4x/source/browse#svn/Mesh4j/tags/Mesh4x_2_0_0 Mesh4x_2_0_0]
+
+ 
+ ===2. Mobile Client ===
+
+   JavaRosa mobile client with Mesh4x J2ME version
+
+   Download [http://downloads.instedd.org/mesh4x/mesh4xForm_2_0_0.zip mobile client] [http://downloads.instedd.org/mesh4x/mesh4xForm_2_0_0.zip http://mesh4x.googlecode.com/svn/wiki/files/download.png]
+
+   Uploaded: 2009-07-27 14:22 PM
+
+   SVN Tag: [http://code.google.com/p/mesh4x/source/browse#svn/Mesh4j/tags/Mesh4x_2_0_0 Mesh4x_2_0_0]
+ 
+ ===3. Epiinfo Client ===
+
+   Tool to synchronize MSAccess files via SMS and synchronize MSAccess files with the cloud.
+
+   Donwload [http://downloads.instedd.org/mesh4x/epiinfo_2_0_0.zip Epiinfo client] [http://downloads.instedd.org/mesh4x/epiinfo_2_0_0.zip http://mesh4x.googlecode.com/svn/wiki/files/download.png]
+
+   Uploaded: 2009-07-27 14:22 PM
+
+   SVN Tag: [http://code.google.com/p/mesh4x/source/browse#svn/Mesh4j/tags/Mesh4x_2_0_0 Mesh4x_2_0_0]
  
  
  
-=== Mobile Client ===
+ ===4. Mesh4x FeedSync server (RESTFull) ===
 
-JavaRosa mobile client with Mesh4x J2ME version
+   FeedSync server. Supports different types of feed repositories (S3, file).
+   For more information see [FeedSyncRESTfulServer Mesh4x FeedSync RESTfull Server]
 
-  * Download [http://downloads.instedd.org/mesh4x/mesh4xForm_2_0_0.zip mobile client] [http://downloads.instedd.org/mesh4x/mesh4xForm_2_0_0.zip http://mesh4x.googlecode.com/svn/wiki/files/download.png]
 
-  Uploaded: 2009-07-27 14:22 PM
+   Download [http://downloads.instedd.org/mesh4x/mesh4x_war_2_0_0.zip FeedSync server (war)] [http://downloads.instedd.org/mesh4x/mesh4x_2_0_0.zip http://mesh4x.googlecode.com/svn/wiki/files/download.png]
 
-  SVN Tag: [http://code.google.com/p/mesh4x/source/browse#svn/Mesh4j/tags/Mesh4x_2_0_0 Mesh4x_2_0_0]
+   Uploaded: 2009-07-27 14:22 PM
+
+   SVN Tag: [http://code.google.com/p/mesh4x/source/browse#svn/Mesh4j/tags/Mesh4x_2_0_0 Mesh4x_2_0_0]
  
  
  
-=== Epiinfo Client ===
+ ===5. Kml Exhange ===
 
-Tool to synchronize MSAccess files via SMS and synchronize MSAccess files with the cloud.
+   Tool to synchronize two kml files and synchronize kml files with the cloud.
 
-  * Donwload [http://downloads.instedd.org/mesh4x/epiinfo_2_0_0.zip Epiinfo client] [http://downloads.instedd.org/mesh4x/epiinfo_2_0_0.zip http://mesh4x.googlecode.com/svn/wiki/files/download.png]
+   Download [http://downloads.instedd.org/mesh4x/kmlExchange_0_0_1.7z KmlExchange] [http://downloads.instedd.org/mesh4x/kmlExchange_0_0_1.7z http://mesh4x.googlecode.com/svn/wiki/files/download.png]
 
-  Uploaded: 2009-07-27 14:22 PM
-
-  SVN Tag: [http://code.google.com/p/mesh4x/source/browse#svn/Mesh4j/tags/Mesh4x_2_0_0 Mesh4x_2_0_0]
- 
- 
- 
-=== Mesh4x FeedSync server (RESTFull) ===
-
-FeedSync server. Supports different types of feed repositories (S3, file).
-For more information see [FeedSyncRESTfulServer Mesh4x FeedSync RESTfull Server]
-
-
-  * Download [http://downloads.instedd.org/mesh4x/mesh4x_war_2_0_0.zip FeedSync server (war)] [http://downloads.instedd.org/mesh4x/mesh4x_2_0_0.zip http://mesh4x.googlecode.com/svn/wiki/files/download.png]
-
-  Uploaded: 2009-07-27 14:22 PM
-
-  SVN Tag: [http://code.google.com/p/mesh4x/source/browse#svn/Mesh4j/tags/Mesh4x_2_0_0 Mesh4x_2_0_0]
- 
- 
- 
-=== Kml Exhange ===
-
-Tool to synchronize two kml files and synchronize kml files with the cloud.
-
-  * Download [http://downloads.instedd.org/mesh4x/kmlExchange_0_0_1.7z KmlExchange] [http://downloads.instedd.org/mesh4x/kmlExchange_0_0_1.7z http://mesh4x.googlecode.com/svn/wiki/files/download.png]
-
-  Uploaded: 2009-02-05
+   Uploaded: 2009-02-05
  
  
  
 == TOOLS ==
 
-=== Phone Manager ===
+ ===1. Phone Manager ===
 
-Tool to determine if a cell phone is compatible with mesh4x sms lib.
+   Tool to determine if a cell phone is compatible with mesh4x sms lib.
 
-  * Download [http://downloads.instedd.org/mesh4x/phone_manager_0.0.0.7z Phone Manager] [http://downloads.instedd.org/mesh4x/phone_manager_0.0.0.7z http://mesh4x.googlecode.com/svn/wiki/files/download.png]
+   Download [http://downloads.instedd.org/mesh4x/phone_manager_0.0.0.7z Phone Manager] [http://downloads.instedd.org/mesh4x/phone_manager_0.0.0.7z http://mesh4x.googlecode.com/svn/wiki/files/download.png]
 
-  Uploaded: 2009-02-05
+   Uploaded: 2009-02-05
  
  
  
-=== SMS Exchange ===
+ ===2. SMS Exchange ===
 
-Tool to send and receive SMS from a cell phone plugged in to the PC based on file sharing.
+   Tool to send and receive SMS from a cell phone plugged in to the PC based on file sharing.
 
-  * Download [http://downloads.instedd.org/mesh4x/smsExchanger-0.0.2.zip SMS Exchanger] [http://downloads.instedd.org/mesh4x/smsExchanger-0.0.2.zip http://mesh4x.googlecode.com/svn/wiki/files/download.png]
+   Download [http://downloads.instedd.org/mesh4x/smsExchanger-0.0.2.zip SMS Exchanger] [http://downloads.instedd.org/mesh4x/smsExchanger-0.0.2.zip http://mesh4x.googlecode.com/svn/wiki/files/download.png]
 
-  Uploaded: 2009-02-05
+   Uploaded: 2009-02-05
  
  
  
  
 == DEV ENVIRONMENTS ==
 
-=== Mesh4J J2ME Environment with crud demo ===
+ ===1. Mesh4J J2ME Environment with crud demo ===
 
-Mesh4j2me is a developer J2ME environment with a crud demo. 
-  * Download [http://downloads.instedd.org/mesh4x/instedd_demo.7z Mesh4j2me] 
+   Developer J2ME environment with a crud demo. 
+   
+   Download [http://downloads.instedd.org/mesh4x/instedd_demo.7z environment] 
 
-  Uploaded: 2009-02-05
+   Uploaded: 2009-02-05
  
  
  
  
-=== Mesh4J Environment ===
+ ===2. Mesh4J Environment ===
 
-[http://downloads.instedd.org/mesh4x/mesh4x_env_0_0_1.7z Mesh4J] is a Developer J2SE environment for development Mesh4x tools.
+   Developer J2SE environment for development Mesh4x tools.
 
-  * Download [http://downloads.instedd.org/mesh4x/mesh4x_env_0_0_1.7z Mesh4j] 
+   Download [http://downloads.instedd.org/mesh4x/mesh4x_env_0_0_1.7z environment] 
 
-  Uploaded: 2009-02-05
+   Uploaded: 2009-02-05
