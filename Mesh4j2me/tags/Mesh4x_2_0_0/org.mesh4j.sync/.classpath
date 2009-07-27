@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="test"/>
+	<classpathentry kind="lib" path="/mesh4J2me/J2ME-Polish/import/cldc-1.1-java5.0.jar"/>
+	<classpathentry kind="lib" path="/mesh4J2me/J2ME-Polish/import/fileconnection.jar"/>
+	<classpathentry kind="lib" path="/mesh4J2me/J2ME-Polish/import/mmapi.jar"/>
+	<classpathentry kind="lib" path="/mesh4J2me/J2ME-Polish/import/wmapi.jar"/>
+	<classpathentry kind="lib" path="lib/j2meunit-javarosa.jar"/>
+	<classpathentry kind="lib" path="lib/kxml2-2.3.0.jar"/>
+	<classpathentry kind="lib" path="lib/minixpath.jar"/>
+	<classpathentry kind="lib" path="/mesh4J2me/J2ME-Polish/import/enough-j2mepolish-client-java5.jar"/>
+	<classpathentry kind="lib" path="/mesh4J2me/J2ME-Polish/import/midp-2.0.jar"/>
+	<classpathentry kind="con" path="J2MELIB"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
