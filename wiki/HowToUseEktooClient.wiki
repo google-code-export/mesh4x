@@ -10,7 +10,7 @@
      <td valign="top" align="center" width=60%>
 [http://mesh4x.googlecode.com/svn/wiki/files/ektoo_1.2.jpg]
 <br/>
-*Get Ektoo Client Now* [http://downloads.instedd.org/mesh4x/ektoo_0_0_10.zip http://mesh4x.googlecode.com/svn/wiki/files/download_2.png]
+*Get Ektoo Client Now* [http://downloads.instedd.org/mesh4x/ektoo_2_0_0.zip http://mesh4x.googlecode.com/svn/wiki/files/download_2.png]
      
 </td>
   </tr>
@@ -71,7 +71,7 @@ You will need:
   <tr>
      <td valign=top>
 =Download and Installation=
-  # Download the latest version Ektoo client release ([http://downloads.instedd.org/mesh4x/ektoo_0_0_10.zip Ektoo Client]).
+  # Download the latest version Ektoo client release ([http://downloads.instedd.org/mesh4x/ektoo_2_0_0.zip Ektoo Client]).
   # Extract the zip distribution to a suitable location. The distribution contains 4 folders and a .jar file as the following:
    * data : Contains sample/default data files 
    * database : Contains sample db schema
