@@ -94,8 +94,9 @@ public class MeshCompactUI implements ISyncSessionViewOwner, IErrorListener {
 	// BUSINESS METHODS
 
 	public static void main(String args[]) {
-		if (args.length > 0)
+		if (args.length > 0){
 			PropertiesProvider.MESH4J_PROPERTIES = args[0];
+		}
 
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
