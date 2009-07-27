@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     May 28, 2009 10:33:10 AM                                                        
+
+     project,Mesh4x Googlespreadsheet adapter    
+     description,Mesh4x Googlespreadsheet adapter
+                   
+     raju                                                                
+     ====================================================================== -->
+<project name="GoogleSpreadsheetAdapter" default="jar">
+    <description>Googlespreadhseet adapter jar creation</description>
+	<property name="src.dir" value = "src"/> 
+	<property file="build.properties"/>
+	
+	
+	<path id="master-classpath">
+	        <fileset dir="${lib.dir}">
+	            <include name="*.jar"/>
+	        </fileset>
+	        <pathelement path="${build.dir}"/>
+	 </path>
+	
+    <!-- ================================= 
+          target: clean              
+         ================================= -->
+    <target name="clean"  description="removing old files">
+    	<echo message="Removing old files"/>
+    	<delete dir="${dist.dir}"/>
+    	<delete dir="${build.dir}"/>
+    	<mkdir dir="${dist.dir}"/>
+    	<mkdir dir="${build.dir}"/>
+    </target>
+	
+	<!-- ================================= 
+         Compile the google spreadsheet adapter with the
+          help of mesh4x core build.xml file
+         ================================= -->
+    <target name="compile" depends="clean,compilecore" description="comile">
+    	<mkdir dir="${build.dir}"/>
+    	 <javac destdir="${build.dir}" target="1.6" debug="true"
+    	        deprecation="false" optimize="false" failonerror="true">
+    	        <src path="${src.dir}"/>
+    	        <classpath refid="master-classpath"/>
+    	   </javac>
+    </target>
+
+	<!-- ================================= 
+	     Compile the mesh4x core by calling
+	     core ant  build.xml file 
+	     ================================= -->
+	<target name="compilecore">
+		<ant antfile="${mesh4x.core}/build.xml"  target="ant-jar" inheritall="false"/>
+			<copy todir="${lib.dir}" preservelastmodified="true">
+			           <fileset dir="${mesh4x.core}/dist">
+			               <include name="*.jar"/>
+			           </fileset>
+			  </copy>
+		</target>
+	
+	<!-- ================================= 
+          Create jar of google spreadsheet adapter              
+         ================================= -->
+    <target name="jar" depends="compile" description="Jar">
+    	<echo message="creating jar of mesh4x google spreadsheet adapter"/>
+		 <jar destfile="${dist.dir}/${jarname}-${version}.jar" basedir="${build.dir}" includes="**/*.*">
+		 </jar>
+    </target>
+
+	
+	
+
+</project>

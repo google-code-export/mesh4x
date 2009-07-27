@@ -1,0 +1,87 @@
+<project name="Mesh4j">
+    <description>Mesh4j</description>
+	<property name="src.dir" value = "src"/>
+	<property file="build.properties"/>
+	
+	<target name="clean-dist">
+		<echo message="Removing old files from ${dist.dir}"/>
+		<delete dir="${dist.dir}"/>
+		<mkdir dir="${dist.dir}"/>
+	</target>
+	
+	<target name="default-jar" depends="clean-dist">
+		<echo message="Creating jar from ${default.build.dir} directory" />
+		<jar destfile="${dist.dir}/${jarname}-${version}.jar">
+			<fileset dir="${default.build.dir}"/>
+			<fileset dir="etc/toExport"/>
+		</jar>
+	</target>
+	
+	<target name="dist" depends="default-jar">
+		<zip destfile="${dist.dir}/${jarname}-${version}.zip">
+			<zipfileset prefix="${jarname}-${version}" dir="dist" includes="${jarname}-${version}.jar"/>
+			<zipfileset prefix="${jarname}-${version}" dir="." includes="etc/**/*"/>
+			<zipfileset prefix="${jarname}-${version}" dir="." includes="lib/**/*"/>
+			<zipfileset prefix="${jarname}-${version}" dir="." includes="src/**/*"/>
+			<zipfileset prefix="${jarname}-${version}" dir="." includes="test/**/*"/>
+		</zip>
+	</target>
+	
+	
+	
+	 <!-- ================================= 
+         Include or exclude any  
+         required library in build path. 
+      ================================= -->
+	<path id="master-classpath">
+	      <fileset dir="${lib.dir}">
+	        <include name="antlr/*.jar"/>
+	      	<include name="asm/*.jar"/>
+	      	<include name="c3p0/*.jar"/>
+	      	<include name="dom4j/*.jar"/>
+	      	<include name="ehcache/*.jar"/>
+      		<include name="hibernate/*.jar"/>
+      		<include name="j2ee/*.jar"/>
+      		<include name="jackcess/*.jar"/>
+	      	<include name="jaf/*.jar"/>
+      		<include name="jakarta-commons/*.jar"/>
+	      	<include name="jakarta-poi/*.jar"/>
+	      	<exclude name="jakarta-poi/poi-3.2-FINAL-20081019.jar"/>
+  			<include name="javamail/*.jar"/>
+  			<include name="javassist/*.jar"/>
+      		<include name="jaxen/*.jar"/>
+	      	<include name="jenna/*.jar"/>
+  			<include name="log4j/*.jar"/>
+      		<include name="mySql/*.jar"/>
+	      	<include name="ognl/*.jar"/>
+  			<include name="smsLib/*.jar"/>
+           </fileset>
+	   <pathelement path="${build.dir}"/>
+	</path>
+	
+	
+	<!-- ================================= 
+          Ant compile with the help of 
+          provide build path. 
+	      ================================= -->
+	<target name="ant-compile"  description="compile">
+		<echo message="Removing old files from ${ant.build.dir} directory"/>
+		<delete dir="${ant.build.dir}"/>
+		<mkdir dir="${ant.build.dir}"/>
+		<echo message="Compaile mesh4j.... " />
+	    	 <javac destdir="${ant.build.dir}" target="1.6" debug="true"
+	    	        deprecation="false" optimize="false" failonerror="true">
+	    	        <src path="${src.dir}"/>
+	    	        <classpath refid="master-classpath"/>
+	    	   </javac>
+	 </target>
+	
+	<target name="ant-jar" depends="clean-dist,ant-compile">
+				<echo message="Creating jar from ${ant.build.dir} directory" />
+				<jar destfile="${dist.dir}/${jarname}-${version}.jar">
+					<fileset dir="${ant.build.dir}"/>
+					<fileset dir="etc/toExport"/>
+				</jar>
+	</target>
+	
+</project>
