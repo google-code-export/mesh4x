@@ -25,6 +25,7 @@ import org.mesh4j.ektoo.controller.CloudUIController;
 import org.mesh4j.ektoo.tasks.IErrorListener;
 import org.mesh4j.ektoo.tasks.OpenURLTask;
 import org.mesh4j.ektoo.tasks.SchemaViewTask;
+import org.mesh4j.ektoo.ui.component.DocumentModelAdapter;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.ektoo.ui.validator.CloudUIValidator;
 
@@ -93,10 +94,7 @@ public class CloudUI extends AbstractUI {
 			this.txtServerURL = new JTextField();
 			this.txtServerURL.setBounds(new Rectangle(101, 5, 183, 20));
 			this.txtServerURL.setToolTipText(EktooUITranslator.getTooltipCloudSyncServerURI());
-			txtServerURL.getDocument().addDocumentListener(new DocumentListener(){
-				@Override
-				public void changedUpdate(DocumentEvent e) {
-				}
+			txtServerURL.getDocument().addDocumentListener(new DocumentModelAdapter(){
 				@Override
 				public void insertUpdate(DocumentEvent e) {
 					getController().changeSyncServerUri(txtServerURL.getText());
@@ -140,10 +138,7 @@ public class CloudUI extends AbstractUI {
 			txtMesh = new JTextField();
 			txtMesh.setBounds(new Rectangle(101, 30, 183, 20));
 			txtMesh.setToolTipText(EktooUITranslator.getTooltipCloudMeshname());
-			txtMesh.getDocument().addDocumentListener(new DocumentListener(){
-				@Override
-				public void changedUpdate(DocumentEvent e) {
-				}
+			txtMesh.getDocument().addDocumentListener(new DocumentModelAdapter(){
 				@Override
 				public void insertUpdate(DocumentEvent e) {
 					getController().changeMeshName(txtMesh.getText());
@@ -176,10 +171,7 @@ public class CloudUI extends AbstractUI {
 			txtDataset = new JTextField();
 			txtDataset.setBounds(new Rectangle(101, 59, 183, 20));
 			txtDataset.setToolTipText(EktooUITranslator.getTooltipCloudDatasetname());
-			txtDataset.getDocument().addDocumentListener(new DocumentListener(){
-				@Override
-				public void changedUpdate(DocumentEvent e) {
-				}
+			txtDataset.getDocument().addDocumentListener(new DocumentModelAdapter(){
 				@Override
 				public void insertUpdate(DocumentEvent e) {
 					getController().changeDatasetName(txtDataset.getText());

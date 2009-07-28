@@ -77,7 +77,7 @@ public class CloudUIController extends AbstractUIController
 		if (meshName == null || meshName.trim().length() == 0){
 			return null;
 		}
-
+	
 		String baseSyncURI = model.getBaseUri();
 		if (baseSyncURI == null || baseSyncURI.trim().length() == 0){
 			return null;

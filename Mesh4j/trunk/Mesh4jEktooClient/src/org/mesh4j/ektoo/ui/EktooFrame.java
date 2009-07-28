@@ -41,6 +41,11 @@ import org.mesh4j.ektoo.ui.component.RoundBorder;
 import org.mesh4j.ektoo.ui.component.messagedialog.MessageDialog;
 import org.mesh4j.ektoo.ui.component.statusbar.Statusbar;
 import org.mesh4j.ektoo.ui.image.ImageManager;
+import org.mesh4j.ektoo.ui.settings.SettingsController;
+import org.mesh4j.ektoo.ui.settings.encryption.EncryptionException;
+import org.mesh4j.ektoo.ui.settings.encryption.EncryptionUtil;
+import org.mesh4j.ektoo.ui.settings.prop.IPropertyManager;
+import org.mesh4j.ektoo.ui.settings.prop.PropertyManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 
 import com.toedter.calendar.JDateChooser;
@@ -95,6 +100,7 @@ public class EktooFrame extends JFrame implements IErrorListener, ISynchronizeTa
 
 	private Statusbar statusBar = null;
 	private EktooController controller;
+	private PopupDialog popupviewWindow = null;
 
 	// BUSINESS METHODS
 	public EktooFrame(EktooController controller) {
@@ -147,7 +153,7 @@ public class EktooFrame extends JFrame implements IErrorListener, ISynchronizeTa
 	
 	private JPanel getHeaderPanel(){
 		if(headerPanel == null){
-			headerPanel = new JPanel(new BorderLayout(10,10));	
+			headerPanel = new JPanel(new BorderLayout(15,10));	
 			headerPanel.setBackground(Color.WHITE);
 			
 			JPanel linkPanel = new JPanel();
@@ -155,20 +161,27 @@ public class EktooFrame extends JFrame implements IErrorListener, ISynchronizeTa
 			linkPanel.setOpaque(false);
 			
 			HyperLink helpLink = new HyperLink(EktooUITranslator.getHelpText());
-			HyperLink aboutLink = new HyperLink(EktooUITranslator.getAboutText());
-			
 			helpLink.addMouseListener(new MouseAdapter(){
 				 public void mouseClicked(MouseEvent e) {
 					 gotToMesh4xHelpSite();
 				 }
 			});
 			
+			HyperLink aboutLink = new HyperLink(EktooUITranslator.getAboutText());
 			aboutLink.addMouseListener(new MouseAdapter(){
 				 public void mouseClicked(MouseEvent e) {
 					 goToMesh4xEktooHelpSite();
 				 }
 			});
 			
+			HyperLink settingsLink = new HyperLink(EktooUITranslator.getSettingsText());
+			settingsLink.addMouseListener(new MouseAdapter(){
+				 public void mouseClicked(MouseEvent e) {
+					 launchSettingsUI();
+				 }
+			});
+			
+			linkPanel.add(settingsLink);
 			linkPanel.add(helpLink);
 			linkPanel.add(aboutLink);
 		}
@@ -187,6 +200,24 @@ public class EktooFrame extends JFrame implements IErrorListener, ISynchronizeTa
 	private void goToMesh4xEktooHelpSite(){
 		OpenURLTask openURLTask = new OpenURLTask(this,this,new PropertiesProvider().getMesh4xEktooURL());
 		openURLTask.execute();
+	}
+	
+	private void launchSettingsUI(){
+		//TODO (raju) will be used as UI thread, implement later
+		//transfer to another class, later,just partial commit
+		IPropertyManager propertyManager  = new PropertyManager(PropertiesProvider.getSettingsPropertyLocation());
+		EncryptionUtil encryptionUtil = null;
+		try {
+			encryptionUtil = new EncryptionUtil("com.mesh4x.ektooclient",EncryptionUtil.ALGORITHM.DES);
+		} catch (EncryptionException e) {
+			e.printStackTrace();
+		}
+		propertyManager.setEncryptionUtil(encryptionUtil);
+		
+		SettingsController controller = new SettingsController(propertyManager);
+		
+		SettingsContainer container = new SettingsContainer(controller,this);
+		this.showViewInPopup("Ektoo settings", container,500,300);
 	}
 	
 	private JPanel getJPanel() {
@@ -867,11 +898,23 @@ public class EktooFrame extends JFrame implements IErrorListener, ISynchronizeTa
 	}
 	
 	public void showViewInPopup(String title,JComponent component){
-		PopupDialog dialog = new PopupDialog(this,title);
-		dialog.setLayout(new BorderLayout());
-		dialog.add(component);
-		dialog.setSize(getWidth() , getHeight()/2);
-		dialog.setVisible(true);
+		popupviewWindow = new PopupDialog(this,title);
+		popupviewWindow.setLayout(new BorderLayout());
+		popupviewWindow.add(component);
+		popupviewWindow.setSize(getWidth() , getHeight()/2);
+		popupviewWindow.setVisible(true);
+	}
+	
+	public void showViewInPopup(String title,JComponent component,int width,int height){
+		popupviewWindow = new PopupDialog(this,title);
+		popupviewWindow.setLayout(new BorderLayout());
+		popupviewWindow.add(component);
+		popupviewWindow.setSize(width , height);
+		popupviewWindow.setVisible(true);
+	}
+	
+	public void closePopupViewWindow(){
+		popupviewWindow.dispose();
 	}
 	
 	protected void close() {

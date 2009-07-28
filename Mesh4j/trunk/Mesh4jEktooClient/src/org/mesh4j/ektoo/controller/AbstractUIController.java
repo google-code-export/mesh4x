@@ -26,6 +26,9 @@ public abstract class AbstractUIController implements PropertyChangeListener, IU
 		this.acceptsCreateDataset = acceptsCreateDataset;
 	}
 
+	public AbstractUIController() {
+	}
+	
 	public void addModel(AbstractModel model) 
 	{
 		registeredModels.add(model);
@@ -90,17 +93,29 @@ public abstract class AbstractUIController implements PropertyChangeListener, IU
 
 	protected void setModelProperty(String propertyName, Object newValue) {
 		for (AbstractModel model : registeredModels) {
-			try {
-				Method method = model.getClass().getMethod(
-						"set" + propertyName,
-						new Class[] { newValue.getClass() });
-				method.invoke(model, newValue);
-			} catch (Exception e) {
-				LOGGER.error(e.getMessage(), e);
+			String methodName = "set" + propertyName;
+			if(isMethodExist(model, methodName)){
+				Method method;
+				try {
+					method = model.getClass().getMethod(
+							methodName,new Class[] { newValue.getClass() });
+					method.invoke(model, newValue);
+				} catch (Exception e) {
+					LOGGER.error(e.getMessage(), e);
+				} 
 			}
 		}
 	}
 
+	private boolean isMethodExist(Object obj,String name){
+		for(Method method :obj.getClass().getDeclaredMethods()){
+			if(name.equals(method.getName())){
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	protected void setModelProperty(String propertyName, int newValue) {
 		for (AbstractModel model : registeredModels) {
 			try {

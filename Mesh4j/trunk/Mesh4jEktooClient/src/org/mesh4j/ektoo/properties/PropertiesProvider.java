@@ -13,6 +13,7 @@ import org.mesh4j.sync.validations.MeshException;
 public class PropertiesProvider {
 
 	private static final String MESH4J_PROPERTIES = "mesh4j.properties";
+	private static final String MESH4J_PROPERTIES_SETTINGS = "mesh4j_settings.properties";
 
 	// MODEL VARIABLES
 	private String resourceName;
@@ -44,6 +45,12 @@ public class PropertiesProvider {
 		}
 	}
 
+	public static String getSettingsPropertyLocation(){
+		String settingsPropAbsoluteLocation = "";
+		settingsPropAbsoluteLocation = getCurrentDirectory() + "\\properties\\"
+		+ MESH4J_PROPERTIES_SETTINGS;
+		return settingsPropAbsoluteLocation;
+	}
 	public String getMsAccessFile() {
 		String defaultValue = this.properties.getProperty("default.mdb.file",
 				"");
