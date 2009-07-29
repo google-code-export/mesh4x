@@ -53,7 +53,7 @@ http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_javarosa_7.png
 
 ==3. Deploy and configure JavaROSA on your phone==
 
-  I. Download JavaROSA with Mesh4x client, see the package here http://code.google.com/p/mesh4x/wiki/Mesh4xDownloads
+  I. Download JavaROSA with Mesh4x client, see the package here Mesh4xDownloads
 
   II. Copy it to your phone application directory
  
