@@ -12,7 +12,7 @@ public class MappingTests {
 	@Test
 	public void shouldCreateEmptyMappingWhenMappingElementIsNull(){
 		Mapping mapping = new Mapping(null);
-		Assert.assertEquals("<mappings/>", mapping.asXML());
+		Assert.assertEquals("<mappings></mappings>", mapping.asXML());
 	}
 	
 	@Test

@@ -123,6 +123,7 @@ public class Mapping implements IMapping {
 		return template;
 	}
 	
+	@Override
 	public String getAttribute(String mappingName) {
 		String mapping = getMapping(mappingName);
 		return StringUtils.substringBetween(mapping, "{", "}");
@@ -130,7 +131,7 @@ public class Mapping implements IMapping {
 
 	@Override
 	public String asXML() {
-		return this.mappings.asXML();
+		return XMLHelper.canonicalizeXML(this.mappings);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -143,6 +144,14 @@ public class Mapping implements IMapping {
 			sbMappings.append("\n");
 		}
 		return sbMappings.toString();
+	}
+
+	public static String makeMapping(String mappingName) {
+		return "{" + mappingName + "}";
+	}
+	
+	public static String makeAttribute(String alias, String attributeName) {
+		return alias + "/" + attributeName;
 	}
 	
 }

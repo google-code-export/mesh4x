@@ -96,7 +96,8 @@ public class SchemaInstanceContentReadWriterTests {
 					return "mapDesc";
 				}
 				return null;
-			}			
+			}
+			@Override public String getAttribute(String mappingName) {return null;}
 		};
 		return mapping;
 	}	
@@ -106,7 +107,8 @@ public class SchemaInstanceContentReadWriterTests {
 			@Override public String asXML() {return null;}
 			@Override public String asXMLText() {return null;}
 			@Override public String getMapping(String mappingName) {return null;}
-			@Override public String getValue(Element element, String mappingName) {return null;}			
+			@Override public String getValue(Element element, String mappingName) {return null;}
+			@Override public String getAttribute(String mappingName) {return null;}
 		};
 		return mapping;
 	}	

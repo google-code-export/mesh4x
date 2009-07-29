@@ -135,7 +135,7 @@ public class FilterQueryInAdapterTests {
 		items.add(item3);
 		items.add(item4);
 				
-		HttpSyncAdapter adapter = HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverUrl, meshGroup, dataSetId, NullIdentityProvider.INSTANCE, rdfSchema);
+		HttpSyncAdapter adapter = HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverUrl, meshGroup, dataSetId, NullIdentityProvider.INSTANCE, rdfSchema, null);
 		Assert.assertNotNull(adapter);
 		
 		List<Item> conflicts = adapter.merge(items);
@@ -205,7 +205,7 @@ public class FilterQueryInAdapterTests {
 		items.add(item3);
 		items.add(item4);
 				
-		HttpSyncAdapter adapter = HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverUrl, meshGroup, dataSetId, NullIdentityProvider.INSTANCE, rdfSchema);
+		HttpSyncAdapter adapter = HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverUrl, meshGroup, dataSetId, NullIdentityProvider.INSTANCE, rdfSchema, null);
 		Assert.assertNotNull(adapter);
 		
 		List<Item> conflicts = adapter.merge(items);

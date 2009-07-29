@@ -179,7 +179,7 @@ public class HttpSyncAdapterTests {
 	@Test
 	public void shouldObtainsMappings(){
 		String path = "http://localhost:8080/mesh4x/feeds/myMesh/myFeed";
-		String mappings = HttpSyncAdapter.getMappings(path);
+		IMapping mappings = HttpSyncAdapter.getMappings(path);
 		Assert.assertNotNull(mappings);
 	}
 	
@@ -226,7 +226,7 @@ public class HttpSyncAdapterTests {
 		rdfSchema.addLongProperty("long", "long", IRDFSchema.DEFAULT_LANGUAGE);
 		rdfSchema.addDecimalProperty("decimal", "decimal", IRDFSchema.DEFAULT_LANGUAGE);  
 		
-		HttpSyncAdapter adapter = HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverUrl, meshGroup, dataSetId, identityProvider, rdfSchema);
+		HttpSyncAdapter adapter = HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverUrl, meshGroup, dataSetId, identityProvider, rdfSchema, null);
 		Assert.assertNotNull(adapter);
 		
 		ISchema schema = adapter.getSchema();
@@ -242,7 +242,7 @@ public class HttpSyncAdapterTests {
 		IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
 		String url = serverUrl+"/"+meshGroup+"/"+dataSetId;
 		
-		HttpSyncAdapter adapter = HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverUrl, meshGroup, dataSetId, identityProvider, null);
+		HttpSyncAdapter adapter = HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverUrl, meshGroup, dataSetId, identityProvider, null, null);
 		Assert.assertNotNull(adapter);
 		
 		RDFSchema rdfSchema = new RDFSchema(dataSetId, url+"#", dataSetId);
@@ -254,7 +254,7 @@ public class HttpSyncAdapterTests {
 		rdfSchema.addLongProperty("long", "long", IRDFSchema.DEFAULT_LANGUAGE);
 		rdfSchema.addDecimalProperty("decimal", "decimal", IRDFSchema.DEFAULT_LANGUAGE);  
 		
-		adapter = HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverUrl, meshGroup, dataSetId, identityProvider, rdfSchema);
+		adapter = HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverUrl, meshGroup, dataSetId, identityProvider, rdfSchema, null);
 		Assert.assertNotNull(adapter);
 		
 		ISchema schema = adapter.getSchema();
@@ -279,7 +279,7 @@ public class HttpSyncAdapterTests {
 		rdfSchema.addLongProperty("long", "long", IRDFSchema.DEFAULT_LANGUAGE);
 		rdfSchema.addDecimalProperty("decimal", "decimal", IRDFSchema.DEFAULT_LANGUAGE);  
 		
-		HttpSyncAdapter adapter = HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverUrl, meshGroup, dataSetId, identityProvider, rdfSchema);
+		HttpSyncAdapter adapter = HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverUrl, meshGroup, dataSetId, identityProvider, rdfSchema, null);
 		Assert.assertNotNull(adapter);
 		
 		ISchema schema = adapter.getSchema();
@@ -288,7 +288,7 @@ public class HttpSyncAdapterTests {
 		
 		RDFSchema rdfSchema2 = new RDFSchema(dataSetId, url+"#", dataSetId);
 		
-		HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverUrl, meshGroup, dataSetId, identityProvider, rdfSchema2);
+		HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverUrl, meshGroup, dataSetId, identityProvider, rdfSchema2, null);
 
 	}
 	
@@ -299,7 +299,7 @@ public class HttpSyncAdapterTests {
 		String dataSetId = "dataSetId" + IdGenerator.INSTANCE.newID().substring(0, 5);
 		IIdentityProvider identityProvider = NullIdentityProvider.INSTANCE;
 				
-		HttpSyncAdapter adapter = HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverUrl, meshGroup, dataSetId, identityProvider, null);
+		HttpSyncAdapter adapter = HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverUrl, meshGroup, dataSetId, identityProvider, null, null);
 		Assert.assertNotNull(adapter);
 		
 		ISchema schema = adapter.getSchema();
@@ -316,8 +316,8 @@ public class HttpSyncAdapterTests {
 		
 		Element schemaElement = XMLHelper.parseElement("<mySchema><id>is an string</id></mySchema>");
 		Schema basicSchema = new Schema(schemaElement);
-		
-		HttpSyncAdapter adapter = HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverUrl, meshGroup, dataSetId, identityProvider, basicSchema);
+
+		HttpSyncAdapter adapter = HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverUrl, meshGroup, dataSetId, identityProvider, basicSchema, null);
 		Assert.assertNotNull(adapter);
 		
 		ISchema schema = adapter.getSchema();
@@ -352,7 +352,7 @@ public class HttpSyncAdapterTests {
 		rdfSchema.setVersionPropertyName("datetime");
 		
 		
-		HttpSyncAdapter adapter = HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverUrl, meshGroup, dataSetId, identityProvider, rdfSchema);
+		HttpSyncAdapter adapter = HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverUrl, meshGroup, dataSetId, identityProvider, rdfSchema, null);
 		Assert.assertNotNull(adapter);
 		
 		ISchema schema = adapter.getSchema();

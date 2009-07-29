@@ -118,7 +118,7 @@ public class SyncProcess {
 				
 				HttpSyncAdapter target =null;
 				try{
-					target = HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverURL, meshGroup, dataSet, identityProvider, schema);
+					target = HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverURL, meshGroup, dataSet, identityProvider, schema, null);
 				}catch (Throwable e) {
 					LOGGER.error(e.getMessage(), e);
 					syncProcess.notifyErrorCreatingHttpAdapter(tableName, url);
@@ -180,7 +180,7 @@ public class SyncProcess {
 
 				HttpSyncAdapter target =null;
 				try{
-					target = HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverURL, meshGroup, dataSet, identityProvider, schema);
+					target = HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverURL, meshGroup, dataSet, identityProvider, schema, null);
 				}catch (Throwable e) {
 					LOGGER.error(e.getMessage(), e);
 					syncProcess.notifyErrorCreatingHttpAdapter(tableName, url);

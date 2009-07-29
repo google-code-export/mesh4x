@@ -10,13 +10,13 @@ import org.mesh4j.sync.adapters.feed.ContentReader;
 import org.mesh4j.sync.adapters.feed.ContentWriter;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.id.generator.IdGenerator;
+import org.mesh4j.sync.payload.mappings.IMapping;
 import org.mesh4j.sync.payload.mappings.Mapping;
 import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.payload.schema.SchemaInstanceContentReadWriter;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.payload.schema.rdf.RDFSchemaInstanceContentReadWriter;
 import org.mesh4j.sync.security.IIdentityProvider;
-import org.mesh4j.sync.utils.XMLHelper;
 import org.mesh4j.sync.validations.Guard;
 
 public class HttpSyncAdapterFactory implements ISyncAdapterFactory {
@@ -37,24 +37,18 @@ public class HttpSyncAdapterFactory implements ISyncAdapterFactory {
 	
 	public static HttpSyncAdapter createSyncAdapter(String url, IIdentityProvider identityProvider){
 		ISchema schema = HttpSyncAdapter.getSchema(url);
-		return createSyncAdapter(url, identityProvider, schema);
+		return createSyncAdapter(url, identityProvider, schema, null);
 	}
 
-	private static HttpSyncAdapter createSyncAdapter(String url, IIdentityProvider identityProvider, ISchema schema) {
+	private static HttpSyncAdapter createSyncAdapter(String url, IIdentityProvider identityProvider, ISchema schema, IMapping mapping) {
 		if(schema == null){
 			return new HttpSyncAdapter(url, RssSyndicationFormat.INSTANCE, identityProvider, IdGenerator.INSTANCE, ContentWriter.INSTANCE, ContentReader.INSTANCE);
 		} else {
-			String xmlMappings = HttpSyncAdapter.getMappings(url);
-			Mapping mapping = null;
-			if(xmlMappings != null){
-				mapping = new Mapping(XMLHelper.parseElement(xmlMappings));
-			}
-			
 			if(schema instanceof IRDFSchema){
-				RDFSchemaInstanceContentReadWriter readWriter = new RDFSchemaInstanceContentReadWriter((IRDFSchema)schema, mapping, true);
+				RDFSchemaInstanceContentReadWriter readWriter = new RDFSchemaInstanceContentReadWriter((IRDFSchema)schema, (mapping == null ? new Mapping(null) : mapping), true);
 				return new HttpSyncAdapter(url, RssSyndicationFormat.INSTANCE, identityProvider, IdGenerator.INSTANCE, readWriter, readWriter);
 			} else {
-				SchemaInstanceContentReadWriter readWriter = new SchemaInstanceContentReadWriter(schema, mapping, true);
+				SchemaInstanceContentReadWriter readWriter = new SchemaInstanceContentReadWriter(schema, (mapping == null ? new Mapping(null) : mapping), true);
 				return new HttpSyncAdapter(url, RssSyndicationFormat.INSTANCE, identityProvider, IdGenerator.INSTANCE, readWriter, readWriter);	
 			}
 			
@@ -102,7 +96,7 @@ public class HttpSyncAdapterFactory implements ISyncAdapterFactory {
 		}
 	}
 
-	public static HttpSyncAdapter createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(String serverUrl, String meshGroup, String dataSetId, IIdentityProvider identityProvider, ISchema schema) {
+	public static HttpSyncAdapter createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(String serverUrl, String meshGroup, String dataSetId, IIdentityProvider identityProvider, ISchema schema, IMapping mapping) {
 		String url = serverUrl + "/" + meshGroup + "/" + dataSetId;
 		
 		//TODO: need to come up with better strategy for automatic creation of mesh/feed
@@ -124,14 +118,28 @@ public class HttpSyncAdapterFactory implements ISyncAdapterFactory {
 					RssSyndicationFormat.NAME, 
 					"", 
 					schema,
-					null, 
+					mapping, 
 					identityProvider.getAuthenticatedUser());
-			return createSyncAdapter(url, identityProvider);
+			return createSyncAdapter(url, identityProvider, schema, mapping);
 		} else {
 			if(!cloudSchema.isCompatible(schema)){
 				Guard.throwsException("INCOMPATIBLE_SCHEMA");
 			}
-			return createSyncAdapter(url, identityProvider, cloudSchema);
+			
+			if(mapping != null){
+				IMapping cloudMappings = HttpSyncAdapter.getMappings(url);
+				if(cloudMappings == null || (cloudMappings != null && !cloudMappings.asXML().equals(mapping.asXML()))){
+					HttpSyncAdapter.uploadMeshDefinition(
+						serverUrl, 
+						meshGroup + "/" + dataSetId,
+						RssSyndicationFormat.NAME, 
+						"", 
+						schema,
+						mapping, 
+						identityProvider.getAuthenticatedUser());
+				}
+			}
+			return createSyncAdapter(url, identityProvider, cloudSchema, mapping);
 		}
 	}
 	
@@ -164,7 +172,7 @@ public class HttpSyncAdapterFactory implements ISyncAdapterFactory {
 				
 		// create http sync adapter
 		String url = HttpSyncAdapter.makeMeshGroupURLToSync(serverUrl + "/" + meshGroup);
-		return createSyncAdapter(url, identityProvider, null);
+		return createSyncAdapter(url, identityProvider, null, null);
 	}
 
 }

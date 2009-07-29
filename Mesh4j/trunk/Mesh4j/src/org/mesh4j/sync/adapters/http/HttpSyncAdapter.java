@@ -35,6 +35,8 @@ import org.mesh4j.sync.filter.SinceLastUpdateFilter;
 import org.mesh4j.sync.id.generator.IIdGenerator;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.payload.mappings.IMapping;
+import org.mesh4j.sync.payload.mappings.IPropertyResolver;
+import org.mesh4j.sync.payload.mappings.Mapping;
 import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.payload.schema.Schema;
 import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
@@ -352,17 +354,25 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 		return schema;
 	}
 
-	public static String getMappings(String url) {
-		String result = null;
+	public static Mapping getMappings(String url, IPropertyResolver... propertyResolvers) {
+		try{
+			URL baseURL = new URL(url);
+			return getMappings(baseURL, propertyResolvers);
+		} catch(Exception e){
+			throw new MeshException(e);
+		}
+	}
+	
+	public static Mapping getMappings(URL baseURL, IPropertyResolver... propertyResolvers) {
+		String xmlMappings = null;
 		HttpURLConnection conn = null;
 	    try{
-	    	URL baseURL = new URL(url);
 	    	String urlMappingsString = baseURL.getProtocol() + "://"+ baseURL.getHost() +":"+ baseURL.getPort()+ baseURL.getPath()+ "/" + "mappings";
 	    	
 	    	URL urlMappings = new URL(urlMappingsString);
 			conn = (HttpURLConnection) urlMappings.openConnection();
 			
-			result = readData(conn);
+			xmlMappings = readData(conn);
 	    } catch(Exception e){
 			if(conn != null){
 				try {
@@ -379,8 +389,12 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 				Logger.error(e.getMessage(), e);
 				throw new MeshException(e);
 			}
-	    }		
-		return result;
+	    }	
+		Mapping mapping = null;
+		if(xmlMappings != null){
+			mapping = new Mapping(XMLHelper.parseElement(xmlMappings), propertyResolvers);
+		}
+		return mapping;
 	}
 
 	public static String makeMeshGroupURLToSync(String url) {
@@ -551,6 +565,10 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 
 	public ISchema getSchema() {
 		return getSchema(this.url);		
+	}
+	
+	public IMapping getMappings(IPropertyResolver... propertyResolvers) {
+		return getMappings(this.url, propertyResolvers);
 	}
 
 	public String getURL() {
