@@ -9,7 +9,7 @@ To quickly get up and running with mobile data collection you will need:
 
 The steps are:
 
-1. Define your survey form by designing your data source table (eg an Excel spreadsheet or Access Database). E.g. with Access :
+==1. Define your survey form by designing your data source table (eg an Excel spreadsheet or Access Database). E.g. with Access :==
   I. Define a table, primary key is required.
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_javarosa_1.png
@@ -19,7 +19,7 @@ http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_javarosa_1.png
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_javarosa_2.png
 
   
-2. Synchronize your database with the cloud server
+==2. Synchronize your database with the cloud server==
 
   I. Download and run the Ektoo clien,  see the package here Mesh4xDownloads
 
@@ -50,7 +50,7 @@ http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_javarosa_7.png
 	
 	http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_javarosa_8.png
 
-3. Deploy and configure JavaROSA on your phone
+==3. Deploy and configure JavaROSA on your phone==
 
   I. Download JavaROSA with Mesh4x client, see the package here http://code.google.com/p/mesh4x/wiki/Mesh4xDownloads
 
@@ -64,21 +64,21 @@ http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_javarosa_7.png
   
   http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_javarosa_10.png
 
-4. Download form definition
+==4. Download form definition==
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_javarosa_11.png
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_javarosa_12.png
 
-5. Sync data with the cloud
+==5. Sync data with the cloud==
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_javarosa_13.png
 
-6. View imported data 
+==6. View imported data ==
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_javarosa_14.png
 
-7. Update data on the form
+==7. Update data on the form==
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_javarosa_15.png
 
@@ -88,7 +88,7 @@ http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_javarosa_16.png
    
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_javarosa_17.png
 
-8. Add some new data on the form
+==8. Add some new data on the form==
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_javarosa_16_1.png
 
@@ -96,19 +96,19 @@ http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_javarosa_16_1.png
    
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_javarosa_17.png
 
-9. Synchronize the from the phone
+==9. Synchronize the from the phone==
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_javarosa_18.png
 
-10. All the information that was recently collected on the phone should now be on the mesh.
+==10. All the information that was recently collected on the phone should now be on the mesh.==
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_javarosa_19.png
 
-11. Go back to the desktop client and synchronize again
+==11. Go back to the desktop client and synchronize again==
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_javarosa_20.png
 
-12. All the information on the server will be in your database
+==12. All the information on the server will be in your database==
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_javarosa_21.png
 
