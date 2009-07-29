@@ -35,8 +35,6 @@ public abstract class AbstractUI extends JPanel implements IValidationStatus {
 	public abstract void modelPropertyChange(PropertyChangeEvent evt);
 	public abstract boolean verify();
 	
-	
-
 	protected JTextField getMessagesText() {
 		if (txtMessages == null) {
 			txtMessages = new JTextField();

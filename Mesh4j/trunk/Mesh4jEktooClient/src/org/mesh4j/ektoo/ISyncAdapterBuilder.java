@@ -8,6 +8,8 @@ import org.mesh4j.sync.adapters.googlespreadsheet.IGoogleSpreadSheet;
 import org.mesh4j.sync.adapters.http.HttpSyncAdapter;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.id.generator.IIdGenerator;
+import org.mesh4j.sync.payload.mappings.IMapping;
+import org.mesh4j.sync.payload.mappings.IPropertyResolver;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.security.IIdentityProvider;
 /**
@@ -97,7 +99,7 @@ public interface ISyncAdapterBuilder {
 	 * @param dataSetId
 	 * @return
 	 */
-	public ISyncAdapter createHttpSyncAdapter(String serverUrl, String meshGroup, String dataSetId, IRDFSchema rdfSchema);
+	public ISyncAdapter createHttpSyncAdapter(String serverUrl, String meshGroup, String dataSetId, IRDFSchema rdfSchema, IMapping mapping);
 
 	/**
 	 * Create {@link HttpSyncAdapter} for multi dataset 
@@ -185,5 +187,7 @@ public interface ISyncAdapterBuilder {
 	String getBaseDirectory();
 
 	String getBaseRDFUrl();
+
+	public IPropertyResolver[] getMappingPropertyResolvers();
 
 }

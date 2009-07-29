@@ -616,6 +616,38 @@ public class EktooUITranslator {
 	public static String getMsgSyncStatusSynchronizing(){
 		return EktooMessageTranslator.translate("EKTOO_SYNC_STATUS_SYNCHRONIZING");
 	}
+
+	public static String getMapConfigurationWindowTitle() {
+		return EktooMessageTranslator.translate("EKTOO_MAP_CFG_WINDOW_TITLE");
+	}
+
+	public static String getMapConfigurationWindowLabelTitle() {
+		return EktooMessageTranslator.translate("EKTOO_MAP_CFG_LABEL_TITLE");
+	}
+
+	public static String getMapConfigurationWindowLabelDescription() {
+		return EktooMessageTranslator.translate("EKTOO_MAP_CFG_LABEL_DESCRIPTION");
+	}
+
+	public static String getMapConfigurationWindowLabelAddress() {
+		return EktooMessageTranslator.translate("EKTOO_MAP_CFG_LABEL_ADDRESS");
+	}
+
+	public static String getMapConfigurationWindowLabelAdd() {
+		return EktooMessageTranslator.translate("EKTOO_MAP_CFG_LABEL_ADD");
+	}
+
+	public static String getMapConfigurationWindowLabelSave() {
+		return EktooMessageTranslator.translate("EKTOO_MAP_CFG_LABEL_SAVE");
+	}
+
+	public static String getTooltipMappingView() {
+		return EktooMessageTranslator.translate("EKTOO_MAP_CFG_TOOLTIP_VIEW_MAPPINGS");
+	}
+
+	public static String getEktooSettingsWindowsTitle() {
+		return EktooMessageTranslator.translate("EKTOO_SETTINGS_WINDOWS_TITLE");
+	}
 	
 	
 }

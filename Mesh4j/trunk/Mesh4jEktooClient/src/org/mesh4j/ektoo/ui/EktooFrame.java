@@ -177,7 +177,7 @@ public class EktooFrame extends JFrame implements IErrorListener, ISynchronizeTa
 			HyperLink settingsLink = new HyperLink(EktooUITranslator.getSettingsText());
 			settingsLink.addMouseListener(new MouseAdapter(){
 				 public void mouseClicked(MouseEvent e) {
-					 launchSettingsUI();
+					 //launchSettingsUI();
 				 }
 			});
 			
@@ -202,7 +202,7 @@ public class EktooFrame extends JFrame implements IErrorListener, ISynchronizeTa
 		openURLTask.execute();
 	}
 	
-	private void launchSettingsUI(){
+	protected void launchSettingsUI(){
 		//TODO (raju) will be used as UI thread, implement later
 		//transfer to another class, later,just partial commit
 		IPropertyManager propertyManager  = new PropertyManager(PropertiesProvider.getSettingsPropertyLocation());
@@ -217,7 +217,7 @@ public class EktooFrame extends JFrame implements IErrorListener, ISynchronizeTa
 		SettingsController controller = new SettingsController(propertyManager);
 		
 		SettingsContainer container = new SettingsContainer(controller,this);
-		this.showViewInPopup("Ektoo settings", container,500,300);
+		this.showViewInPopup(EktooUITranslator.getEktooSettingsWindowsTitle(), container, 500, 300, false);
 	}
 	
 	private JPanel getJPanel() {
@@ -402,7 +402,7 @@ public class EktooFrame extends JFrame implements IErrorListener, ISynchronizeTa
 				targetItem.equals(SyncItemUI.ZIP_FILE_PANEL)
 				){
 			getSchemaComarisonLink().setVisible(false);
-		} else if(this.multiModeSync && 
+		} else if(EktooFrame.multiModeSync && 
 				(targetItem.equals(SyncItemUI.CLOUD_PANEL) ||
 				sourceItem.equals(SyncItemUI.CLOUD_PANEL))){
 			getSchemaComarisonLink().setVisible(false);
@@ -897,19 +897,22 @@ public class EktooFrame extends JFrame implements IErrorListener, ISynchronizeTa
 		setStatusbarText(success, Statusbar.SUCCESS_STATUS);
 	}
 	
-	public void showViewInPopup(String title,JComponent component){
+	public void showViewInPopup(String title, JComponent component){
 		popupviewWindow = new PopupDialog(this,title);
 		popupviewWindow.setLayout(new BorderLayout());
 		popupviewWindow.add(component);
 		popupviewWindow.setSize(getWidth() , getHeight()/2);
+		popupviewWindow.pack();
 		popupviewWindow.setVisible(true);
 	}
 	
-	public void showViewInPopup(String title,JComponent component,int width,int height){
+	public void showViewInPopup(String title, JComponent component, int width, int height, boolean resizable){
 		popupviewWindow = new PopupDialog(this,title);
 		popupviewWindow.setLayout(new BorderLayout());
 		popupviewWindow.add(component);
 		popupviewWindow.setSize(width , height);
+		popupviewWindow.pack();
+		popupviewWindow.setResizable(resizable);
 		popupviewWindow.setVisible(true);
 	}
 	

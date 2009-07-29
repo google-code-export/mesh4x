@@ -239,4 +239,8 @@ public class PropertiesProvider {
 		}
 	}
 
+
+	public String getGeoCoderKey() {
+		return getString("google.geo.coder.key");
+	}
 }

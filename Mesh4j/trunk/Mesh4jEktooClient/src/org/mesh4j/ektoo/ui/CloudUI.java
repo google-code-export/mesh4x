@@ -15,36 +15,35 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.Event;
 import org.mesh4j.ektoo.controller.CloudUIController;
 import org.mesh4j.ektoo.tasks.IErrorListener;
+import org.mesh4j.ektoo.tasks.MappingsViewTask;
 import org.mesh4j.ektoo.tasks.OpenURLTask;
 import org.mesh4j.ektoo.tasks.SchemaViewTask;
 import org.mesh4j.ektoo.ui.component.DocumentModelAdapter;
+import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.ektoo.ui.validator.CloudUIValidator;
 
 public class CloudUI extends AbstractUI {
-	
+
 	private static final long serialVersionUID = 101977159720664976L;
-	private static final Log LOGGER = LogFactory.getLog(CloudUI.class);
-	
+
 	// MODEL VARIABLES
 	private JLabel labelServerURL = null;
 	private JTextField txtServerURL = null;
-	
+
 	private JLabel labelMesh = null;
 	private JTextField txtMesh = null;
 
 	private JLabel labelDataset = null;
 	private JTextField txtDataset = null;
 	private CloudUIController controller = null;
-	
+	private JButton mappingsButton = null;
 
 	// BUSINESS METHODS
 	public CloudUI(String baseURL, CloudUIController controller) {
@@ -62,33 +61,64 @@ public class CloudUI extends AbstractUI {
 
 		this.add(getServerURLLabel(), null);
 		this.add(getServerURLText(), null);
-		
+
 		this.add(getMeshLabel(), null);
 		this.add(getMeshText(), null);
 
 		this.add(getDataSetLabel(), null);
 		this.add(getDataSetText(), null);
-		
+
 		this.add(getMessagesText(), null);
 		this.add(getBtnView(), null);
 		this.add(getSchemaViewButton(), null);
+		this.add(getMappingsButton());
 	}
 
-	private JButton getSchemaViewButton(){
-		getSchemaButton().addActionListener(new ActionListener(){
+	public JButton getMappingsButton() {
+		if (mappingsButton == null) {
+			mappingsButton = new JButton();
+			mappingsButton.setIcon(ImageManager.getMappingsIcon());
+			mappingsButton.setContentAreaFilled(false);
+			mappingsButton.setBorderPainted(false);
+			mappingsButton.setBorder(new EmptyBorder(0, 0, 0, 0));
+			mappingsButton.setBackground(Color.WHITE);
+			mappingsButton.setBounds(new Rectangle(330, 30, 30, 20));
+			mappingsButton.setToolTipText(EktooUITranslator
+					.getTooltipMappingView());
+			mappingsButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					if (CloudUI.this.verify()) {
+						EktooFrame ektooFrame = ((EktooFrame) CloudUI.this
+								.getRootFrame());
+						MappingsViewTask task = new MappingsViewTask(
+								ektooFrame, CloudUI.this.controller);
+						task.execute();
+					}
+				}
+			});
+		}
+		return mappingsButton;
+	}
+
+	private JButton getSchemaViewButton() {
+		getSchemaButton().addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(CloudUI.this.verify()){
-					CloudUI.this.controller.setCurrentEvent(Event.schema_view_event);
-					EktooFrame ektooFrame = ((EktooFrame)CloudUI.this.getRootFrame());
-					SchemaViewTask task = new SchemaViewTask(ektooFrame,CloudUI.this.controller,ektooFrame);
-					task.execute();	
+				if (CloudUI.this.verify()) {
+					CloudUI.this.controller
+							.setCurrentEvent(Event.schema_view_event);
+					EktooFrame ektooFrame = ((EktooFrame) CloudUI.this
+							.getRootFrame());
+					SchemaViewTask task = new SchemaViewTask(ektooFrame,
+							CloudUI.this.controller, ektooFrame);
+					task.execute();
 				}
 			}
 		});
 		return getSchemaButton();
 	}
-	
+
 	public JTextField getServerURLText(){
 		if (this.txtServerURL == null) {
 			this.txtServerURL = new JTextField();
@@ -111,21 +141,22 @@ public class CloudUI extends AbstractUI {
 		}
 		return txtServerURL;
 	}
+
 	private JLabel getServerURLLabel() {
 		if (this.labelServerURL == null) {
 			this.labelServerURL = new JLabel();
-			this.labelServerURL.setText( EktooUITranslator.getSyncURILabel());
+			this.labelServerURL.setText(EktooUITranslator.getSyncURILabel());
 			labelServerURL.setSize(new Dimension(85, 16));
 			labelServerURL.setPreferredSize(new Dimension(85, 16));
 			labelServerURL.setLocation(new Point(8, 9));
 		}
 		return this.labelServerURL;
 	}
-	
+
 	private JLabel getMeshLabel() {
 		if (labelMesh == null) {
 			labelMesh = new JLabel();
-			labelMesh.setText( EktooUITranslator.getMeshNameFieldLabel());
+			labelMesh.setText(EktooUITranslator.getMeshNameFieldLabel());
 			labelMesh.setSize(new Dimension(85, 16));
 			labelMesh.setPreferredSize(new Dimension(85, 16));
 			labelMesh.setLocation(new Point(8, 34));
@@ -158,10 +189,10 @@ public class CloudUI extends AbstractUI {
 	protected JLabel getDataSetLabel() {
 		if (labelDataset == null) {
 			labelDataset = new JLabel();
-			labelDataset.setText( EktooUITranslator.getMeshDataSetFieldLabel() );
+			labelDataset.setText(EktooUITranslator.getMeshDataSetFieldLabel());
 			labelDataset.setSize(new Dimension(85, 16));
 			labelDataset.setPreferredSize(new Dimension(85, 16));
-			labelDataset.setLocation(new Point(8, 59));			
+			labelDataset.setLocation(new Point(8, 59));
 		}
 		return labelDataset;
 	}
@@ -187,63 +218,68 @@ public class CloudUI extends AbstractUI {
 		}
 		return txtDataset;
 	}
-	
+
 	private JButton getBtnView() {
-			getViewButton().addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					List<JComponent> uiFieldListForValidation = new ArrayList<JComponent>();
-					uiFieldListForValidation.add(getMeshText());
-					uiFieldListForValidation.add(getDataSetText());
-					uiFieldListForValidation.add(getServerURLText());
-					boolean valid = (new CloudUIValidator(CloudUI.this, controller.getModel(), uiFieldListForValidation, false)).verify();
-					if(valid){
-						JFrame frame = CloudUI.this.getRootFrame();
-						String url = getController().getUri();
-						OpenURLTask task = new OpenURLTask(frame, (IErrorListener)frame, url);
-						task.execute();
-					}
+		getViewButton().addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				List<JComponent> uiFieldListForValidation = new ArrayList<JComponent>();
+				uiFieldListForValidation.add(getMeshText());
+				uiFieldListForValidation.add(getDataSetText());
+				uiFieldListForValidation.add(getServerURLText());
+				boolean valid = (new CloudUIValidator(CloudUI.this, controller
+						.getModel(), uiFieldListForValidation, false)).verify();
+				if (valid) {
+					JFrame frame = CloudUI.this.getRootFrame();
+					String url = getController().getUri();
+					OpenURLTask task = new OpenURLTask(frame,
+							(IErrorListener) frame, url);
+					task.execute();
 				}
-			});
+			}
+		});
 		return getViewButton();
 	}
-	
+
 	public CloudUIController getController() {
 		return controller;
 	}
 
-  @Override
-  public void modelPropertyChange(final PropertyChangeEvent evt){
-    if ( evt.getPropertyName().equals( CloudUIController.MESH_NAME_PROPERTY)){
-      String newStringValue = evt.getNewValue().toString();
-      if (! getMeshText().getText().equals(newStringValue))
-        getMeshText().setText(newStringValue);
-    }
-    else if ( evt.getPropertyName().equals( CloudUIController.DATASET_NAME_PROPERTY)){
-      String newStringValue = evt.getNewValue().toString();
-      if (! getDataSetText().getText().equals(newStringValue))
-        getDataSetText().setText(newStringValue);
-    }    
-  }
+	@Override
+	public void modelPropertyChange(final PropertyChangeEvent evt){
+		if ( evt.getPropertyName().equals( CloudUIController.MESH_NAME_PROPERTY)){
+			String newStringValue = evt.getNewValue().toString();
+			if (! getMeshText().getText().equals(newStringValue)){
+				getMeshText().setText(newStringValue);
+				this.controller.setEmptyMappings();
+			}
+		} else if ( evt.getPropertyName().equals( CloudUIController.DATASET_NAME_PROPERTY)){
+			String newStringValue = evt.getNewValue().toString();
+			if (! getDataSetText().getText().equals(newStringValue))
+				getDataSetText().setText(newStringValue);
+				this.controller.setEmptyMappings();
+			}    
+	}
 
 	@Override
 	public boolean verify() {
 		List<JComponent> uiFieldListForValidation = new ArrayList<JComponent>();
-		if(EktooFrame.multiModeSync){
+		if (EktooFrame.multiModeSync) {
 			uiFieldListForValidation.add(getServerURLText());
 			uiFieldListForValidation.add(getMeshText());
-		}else{
+		} else {
 			uiFieldListForValidation = null;
 		}
-		boolean valid = (new CloudUIValidator(CloudUI.this, controller.getModel(), uiFieldListForValidation)).verify();
-//		if(valid){
-//			getController().changeSyncServerUri(txtServerURL.getText());
-//			getController().changeMeshName(txtMesh.getText());
-//			getController().changeDatasetName(txtDataset.getText());
-//		}
+		boolean valid = (new CloudUIValidator(CloudUI.this, controller
+				.getModel(), uiFieldListForValidation)).verify();
+		// if(valid){
+		// getController().changeSyncServerUri(txtServerURL.getText());
+		// getController().changeMeshName(txtMesh.getText());
+		// getController().changeDatasetName(txtDataset.getText());
+		// }
 		return valid;
 	}
 
-	private void setResultURL(){
+	private void setResultURL() {
 		this.setMessageText(this.getController().getUri());
 	}
 

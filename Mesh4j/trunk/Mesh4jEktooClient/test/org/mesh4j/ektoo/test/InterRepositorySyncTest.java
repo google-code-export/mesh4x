@@ -349,7 +349,7 @@ public class InterRepositorySyncTest {
 		
 		SplitAdapter sourceAdapter = (SplitAdapter) sourceAsMySql;
 
-		ISyncAdapter targetAdapter = builder.createHttpSyncAdapter(url, meshName, feedName, null);
+		ISyncAdapter targetAdapter = builder.createHttpSyncAdapter(url, meshName, feedName, null, null);
 
 		SyncEngine engine = new SyncEngine(sourceAdapter, targetAdapter);
 

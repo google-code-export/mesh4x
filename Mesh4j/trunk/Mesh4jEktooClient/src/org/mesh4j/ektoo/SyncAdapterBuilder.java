@@ -9,6 +9,10 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.mesh4j.ektoo.properties.PropertiesProvider;
+import org.mesh4j.geo.coder.GeoCoderLatitudePropertyResolver;
+import org.mesh4j.geo.coder.GeoCoderLocationPropertyResolver;
+import org.mesh4j.geo.coder.GeoCoderLongitudePropertyResolver;
+import org.mesh4j.geo.coder.GoogleGeoCoder;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.InMemorySyncAdapter;
 import org.mesh4j.sync.adapters.feed.Feed;
@@ -34,6 +38,8 @@ import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.NullContent;
 import org.mesh4j.sync.model.Sync;
+import org.mesh4j.sync.payload.mappings.IMapping;
+import org.mesh4j.sync.payload.mappings.IPropertyResolver;
 import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.security.IIdentityProvider;
@@ -48,6 +54,7 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 	private MsExcelSyncAdapterFactory excelSyncFactory; 
 	private GoogleSpreadSheetSyncAdapterFactory googleSpreadSheetSyncAdapterFactory;
 	private GoogleSpreadSheetRDFSyncAdapterFactory googleSpreadSheetRDFSyncAdapterFactory;
+	private IPropertyResolver[] propertyResolvers;
 	
 	// BUSINESS METHODS
 
@@ -57,6 +64,13 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 		this.excelSyncFactory = new MsExcelSyncAdapterFactory();
 		this.googleSpreadSheetSyncAdapterFactory = new GoogleSpreadSheetSyncAdapterFactory();
 		this.googleSpreadSheetRDFSyncAdapterFactory = new GoogleSpreadSheetRDFSyncAdapterFactory(this.getBaseRDFUrl());
+		
+		GoogleGeoCoder geoCoder = new GoogleGeoCoder(this.propertiesProvider.getGeoCoderKey());
+		GeoCoderLatitudePropertyResolver propertyResolverLat = new GeoCoderLatitudePropertyResolver(geoCoder);
+		GeoCoderLongitudePropertyResolver propertyResolverLon = new GeoCoderLongitudePropertyResolver(geoCoder);
+		GeoCoderLocationPropertyResolver propertyResolverLoc = new GeoCoderLocationPropertyResolver(geoCoder);
+		propertyResolvers = new IPropertyResolver[]{propertyResolverLoc, propertyResolverLat, propertyResolverLon};
+		
 	}
 
 	@Override
@@ -165,8 +179,8 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 	}
 	
 	@Override
-	public ISyncAdapter createHttpSyncAdapter(String serverUrl, String meshGroup, String dataSetId, IRDFSchema rdfSchema) {
-		return HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverUrl, meshGroup, dataSetId, getIdentityProvider(), rdfSchema);
+	public ISyncAdapter createHttpSyncAdapter(String serverUrl, String meshGroup, String dataSetId, IRDFSchema rdfSchema, IMapping mapping) {
+		return HttpSyncAdapterFactory.createSyncAdapterAndCreateOrUpdateMeshGroupAndDataSetOnCloudIfAbsent(serverUrl, meshGroup, dataSetId, getIdentityProvider(), rdfSchema, mapping);
 	}	
 	
 	@Override
@@ -353,5 +367,10 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 	@Override
 	public String getBaseRDFUrl() {
 		return this.propertiesProvider.getMeshSyncServerURL();
+	}
+
+	@Override
+	public IPropertyResolver[] getMappingPropertyResolvers() {
+		return this.propertyResolvers;
 	}	
 }
