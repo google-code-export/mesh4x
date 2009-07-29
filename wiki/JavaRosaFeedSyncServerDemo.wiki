@@ -1,39 +1,61 @@
 #labels Phase-Implementation
-=JavaRosa and FeedSync Server Demo=
-This demo depicts how a mobile application can to sync data with an opaque FeedSync server.
+=How to use Mesh4x to simplify mobile data collection with JavaROSA=
 
-==Environment Configuration==
-For this demo 2 Eclipse instances are required.
+At a glance:
 
- * Feed sync server workspace:
-  # Configure one eclipse with Mesh4x importing projects from SVN: 
-   * http://mesh4x.googlecode.com/svn/Mesh4j/trunk
-   * http://mesh4x.googlecode.com/svn/Mesh4j/spikes/Mesh4jWebApp
-  # Create a tomcat server
-  # Add MeshjWebApp to the tomcat server
-  # Start the server
-  # check that the following urls are working:
-     * http://localhost:8080/mesh4x/
-     * http://localhost:8080/mesh4x/feeds
-     * http://localhost:8080/mesh4x/feeds/XForms
-     * http://localhost:8080/mesh4x/feeds/XFormDemo1
-     * http://localhost:8080/mesh4x/feeds/XFormDemo2va
+To quickly get up and running with mobile data collection you will need:
+• A mobile phone that support JavaROSA (you can see the list here http://code.javarosa.org/wiki/Devices)
+• A SIM card with connectivity plan (we have plans to just require SMS in a future but for the moment this is needed)
+• A choice of database to collect the information into MS Access, MS Excel, MySQL or Google Spreasheets for example
 
- * Java Rosa workspace:
-  # Configure one Eclipse instance with [http://code.javarosa.org/wiki JavaRosa] environment
-  # Import projects from SVN: http://code.dimagi.com/svn/JavaRosa/branches/dev-instedd/
-  # Change the url of the feed sync server
-    * Open class org.javarosa.demo.shell.JavaRosaDemoShell
-    * Search method loadProperties()
-    * Change the server in both url, change "vcc-pc" for you machine name (localhost does not work with SUN's emulator):
-       * initProperty(Mesh4jPropertyRules.HTTP_SYNC_BASE_URL, "http://vcc-pc:8080/mesh4x/feeds/", true);
-       * initProperty(Mesh4jPropertyRules.HTTP_DISCOVERY_XFORMS_URL, "http://vcc-pc:8080/mesh4x/feeds/XForms", true);
-  # Start the JavaRosa midlet demo running with ANT the file build.xml of the project org.javarosa.demo
+The steps are:
 
-==Demo Step by Step==
- # Set focus on the mobile phone emulator.
- # Open the JavaRosa menu and choose the option 'Sync - Import Def - HTTP', this imports all available forms from the FeedSync server. New forms are automatically available in the form list.
- # Select the XFormDemo2 element form the forms list.
- # Open the JavaRosa menu and choose the option 'Sync Data - HTTP', this imports all data from the FeedSync server.
+1. Define your survey form by designing your data source table (eg an Excel spreadsheet or Access Database)
+   E.g. with Access :
+     i.  Define a table, primary key is required.
+     ii. Add data and save the file
 
-For more details you may want to read the following blog entry [http://jtondato.clariusconsulting.net/2008/10/javarosa-midp-demo.html JavaRosa MIDP Demo] 
+     iii. Synchronize your database with the cloud server
+	a. Download and run the Ektoo clien,  see the package here http://code.google.com/p/mesh4x/wiki/Mesh4xDownloads
+	b. Point to your source on the left side and to the ‘cloud’ on the right hand side
+	c. Press synchronize
+	d. Check the cloud
+	http://sync.staging.instedd.org:8080/mesh4x/feeds/MyExample/MyTable
+
+	View source example:
+ 
+
+	JavaRosa Mesh4x client read an atom10 feed with content as xform.
+
+	http://sync.staging.instedd.org:8080/mesh4x/feeds/MyExample/MyTable?format=atom10&content=xform
+
+ 
+	View source example:
+
+2. Deploy and configure JavaROSA on your phone
+  I.   Download JavaROSA with Mesh4x client, see the package here http://code.google.com/p/mesh4x/wiki/Mesh4xDownloads
+  II.  Copy it to your phone application directory
+  III. Open client
+  IV.  Configure the Mesh4x server, Mesh name as follows
+
+3. Download form definition
+
+4. Sync data with the cloud
+
+5. View imported data 
+
+6. Update data on the form
+
+   Select ‘save and send later’
+
+7. Add some new data on the form
+
+   Select ‘save and send later’
+
+8. Synchronize the from the phone
+
+9. All the information that was recently collected on the phone should now be on the mesh.
+
+10. Go back to the desktop client and synchronize again
+
+11. All the information on the server will be in your database
