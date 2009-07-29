@@ -21,7 +21,7 @@ http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_javarosa_2.png
   
 2. Synchronize your database with the cloud server
 
-  I. Download and run the Ektoo clien,  see the package here http://code.google.com/p/mesh4x/wiki/Mesh4xDownloads
+  I. Download and run the Ektoo clien,  see the package here Mesh4xDownloads
 
   II. Point to your source on the left side and to the ?cloud? on the right hand side
 
@@ -36,7 +36,7 @@ http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_javarosa_4.png
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_javarosa_5.png
 	
-View source example:
+ View source example:
  
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_javarosa_6.png
 
@@ -46,7 +46,7 @@ JavaRosa Mesh4x client read an atom10 feed with content as xform.
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_javarosa_7.png
  
-View source example:
+ View source example:
 	
 	http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_javarosa_8.png
 
@@ -84,7 +84,7 @@ http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_javarosa_15.png
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_javarosa_16.png
 
-Select "save and send later"
+ Select "save and send later"
    
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_javarosa_17.png
 
@@ -92,7 +92,7 @@ http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_javarosa_17.png
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_javarosa_16_1.png
 
-Select "save and send later"
+ Select "save and send later"
    
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_javarosa_17.png
 
