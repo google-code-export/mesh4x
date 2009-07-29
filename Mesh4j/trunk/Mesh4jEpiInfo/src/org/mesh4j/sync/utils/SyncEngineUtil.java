@@ -441,7 +441,11 @@ public class SyncEngineUtil {
 	}
 	
 	public static void downloadMappings(String url, String dataSource, PropertiesProvider propertiesProvider) throws Exception {
-		String xmlMappings = HttpSyncAdapter.getMappings(url);
+		IMapping mapping = HttpSyncAdapter.getMappings(url);
+		String xmlMappings = "<mappings/>";
+		if(mapping != null){
+			xmlMappings = mapping.asXML(); 
+		}
 		
 		String fileName = getMappingsFileName(dataSource, propertiesProvider);
 		FileUtils.write(fileName, xmlMappings.getBytes());

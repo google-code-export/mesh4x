@@ -175,13 +175,13 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 		
 		Element parentPayload = DocumentHelper.createElement(ISyndicationFormat.ELEMENT_PAYLOAD);
 		
-		if(schema != null && schema.trim().length() >0){
-			Element schemaElement = parentPayload.addElement(ISchema.ELEMENT_SCHEMA);	
+		Element schemaElement = parentPayload.addElement(ISchema.ELEMENT_SCHEMA);		
+		if(schema != null && schema.trim().length() >0){				
 			schemaElement.setText(schema);	// TODO (JMT) validate schema
 		}
 		
-		if(mappings != null && mappings.trim().length() >0){
-			Element mappingsElement = parentPayload.addElement(IMapping.ELEMENT_MAPPING);	
+		Element mappingsElement = parentPayload.addElement(IMapping.ELEMENT_MAPPING);
+		if(mappings != null && mappings.trim().length() >0){				
 			mappingsElement.setText(mappings);  // TODO (JMT) validate mappings
 		}
 		
@@ -331,6 +331,9 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 				return null;
 			} else {
 				String schemaXML = schema.getText();
+				if(schemaXML == null || schemaXML.isEmpty()){
+					return null;
+				}
 				Element schemaElement = XMLHelper.parseElement(schemaXML);
 				if(RDFSchema.isRDF(schemaElement)){
 					StringReader xmlReader = new StringReader(schemaXML);
