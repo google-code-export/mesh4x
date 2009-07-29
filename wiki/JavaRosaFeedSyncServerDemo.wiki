@@ -1,61 +1,83 @@
-#labels Phase-Implementation
 =How to use Mesh4x to simplify mobile data collection with JavaROSA=
 
 At a glance:
 
 To quickly get up and running with mobile data collection you will need:
-• A mobile phone that support JavaROSA (you can see the list here http://code.javarosa.org/wiki/Devices)
-• A SIM card with connectivity plan (we have plans to just require SMS in a future but for the moment this is needed)
-• A choice of database to collect the information into MS Access, MS Excel, MySQL or Google Spreasheets for example
+ * A mobile phone that support JavaROSA (you can see the list here http://code.javarosa.org/wiki/Devices)
+ * A SIM card with connectivity plan (we have plans to just require SMS in a future but for the moment this is needed)
+ * A choice of database to collect the information into MS Access, MS Excel, MySQL or Google Spreasheets for example
 
 The steps are:
 
-1. Define your survey form by designing your data source table (eg an Excel spreadsheet or Access Database)
-   E.g. with Access :
-     i.  Define a table, primary key is required.
-     ii. Add data and save the file
+1. Define your survey form by designing your data source table (eg an Excel spreadsheet or Access Database). E.g. with Access :
+  I. Define a table, primary key is required.
 
-     iii. Synchronize your database with the cloud server
-	a. Download and run the Ektoo clien,  see the package here http://code.google.com/p/mesh4x/wiki/Mesh4xDownloads
-	b. Point to your source on the left side and to the ‘cloud’ on the right hand side
-	c. Press synchronize
-	d. Check the cloud
+http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_javarosa_1.png
+
+  II. Add data and save the file
+
+http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_javarosa_2.png
+  
+2. Synchronize your database with the cloud server
+  I. Download and run the Ektoo clien,  see the package here http://code.google.com/p/mesh4x/wiki/Mesh4xDownloads
+
+http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_javarosa_3.png
+  
+  II. Point to your source on the left side and to the ?cloud? on the right hand side
+
+http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_javarosa_4.png
+  
+  III. Press synchronize
+
+http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_javarosa_5.png
+  
+  IV. Check the cloud
 	http://sync.staging.instedd.org:8080/mesh4x/feeds/MyExample/MyTable
 
+http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_javarosa_6.png
+	
 	View source example:
  
+http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_javarosa_7.png
 
 	JavaRosa Mesh4x client read an atom10 feed with content as xform.
 
 	http://sync.staging.instedd.org:8080/mesh4x/feeds/MyExample/MyTable?format=atom10&content=xform
 
+	http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_javarosa_8.png
  
 	View source example:
+	
+	http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_javarosa_9.png
 
-2. Deploy and configure JavaROSA on your phone
-  I.   Download JavaROSA with Mesh4x client, see the package here http://code.google.com/p/mesh4x/wiki/Mesh4xDownloads
-  II.  Copy it to your phone application directory
+3. Deploy and configure JavaROSA on your phone
+  I. Download JavaROSA with Mesh4x client, see the package here http://code.google.com/p/mesh4x/wiki/Mesh4xDownloads
+
+  II. Copy it to your phone application directory
+ 
   III. Open client
-  IV.  Configure the Mesh4x server, Mesh name as follows
+  
+  IV. Configure the Mesh4x server, Mesh name as follows
 
-3. Download form definition
+4. Download form definition
 
-4. Sync data with the cloud
+5. Sync data with the cloud
 
-5. View imported data 
+6. View imported data 
 
-6. Update data on the form
+7. Update data on the form
 
-   Select ‘save and send later’
+   Select ?save and send later?
 
-7. Add some new data on the form
+8. Add some new data on the form
 
-   Select ‘save and send later’
+   Select ?save and send later?
 
-8. Synchronize the from the phone
+9. Synchronize the from the phone
 
-9. All the information that was recently collected on the phone should now be on the mesh.
+10. All the information that was recently collected on the phone should now be on the mesh.
 
-10. Go back to the desktop client and synchronize again
+11. Go back to the desktop client and synchronize again
 
-11. All the information on the server will be in your database
+12. All the information on the server will be in your database
+
