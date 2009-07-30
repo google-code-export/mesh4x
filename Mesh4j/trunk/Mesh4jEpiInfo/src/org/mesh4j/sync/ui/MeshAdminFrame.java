@@ -410,8 +410,8 @@ public class MeshAdminFrame extends JFrame implements IErrorListener {
 			String updateTimestamp = makeMapping(makeAttribute((String) comboBoxUpdateTimestamp.getSelectedItem()));
 			try{
 				String location = makeMapping(GeoCoderLocationPropertyResolver.makeMapping(address));
-				String latitude = makeMapping(GeoCoderLatitudePropertyResolver.makeMapping(address)); 
-				String longitude = makeMapping(GeoCoderLongitudePropertyResolver.makeMapping(address));
+				String latitude = makeMapping(GeoCoderLatitudePropertyResolver.makeMapping(address, true)); 
+				String longitude = makeMapping(GeoCoderLongitudePropertyResolver.makeMapping(address, true));
 				SyncEngineUtil.saveMappings(
 					dataSource.getAlias(), 
 					propertiesProvider, 

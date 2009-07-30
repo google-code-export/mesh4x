@@ -180,7 +180,7 @@ public class KmlGenerator implements IKMLGenerator{
 	
 	public static String getAddressMapping(Mapping mappingResolver) {
 		String geoLocMapping = mappingResolver.getAttribute(GeoCoderLocationPropertyResolver.MAPPING_NAME);
-		return GeoCoderLocationPropertyResolver.getMapping(geoLocMapping);
+		return GeoCoderLocationPropertyResolver.getPropertyName(geoLocMapping);
 	}
 	
 	public static String getIllMapping(Mapping mappingResolver) {
