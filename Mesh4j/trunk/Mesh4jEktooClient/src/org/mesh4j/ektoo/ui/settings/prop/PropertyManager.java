@@ -61,6 +61,7 @@ public class PropertyManager  implements IPropertyManager {
 		}		
 	}
 
+	@SuppressWarnings("unchecked")
 	public  void save() {
 		// TODO Auto-generated method stub
 		// store properties if old and new has diff

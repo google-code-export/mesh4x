@@ -171,6 +171,6 @@ public class ImageManager {
 	}
 
 	public static Icon getMappingsIcon() {
-		return SwingResourceManager.getIcon(EktooFrame.class, "/schema.JPG");
+		return SwingResourceManager.getIcon(EktooFrame.class, "/mappings.png");
 	}
 }

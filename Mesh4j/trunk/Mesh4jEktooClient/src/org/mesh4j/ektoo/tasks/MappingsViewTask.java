@@ -54,6 +54,7 @@ public class MappingsViewTask extends SwingWorker<String, Void>{
 		}
 		return null;
 	}
+	
 	@Override
 	public void done(){
 		ui.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));

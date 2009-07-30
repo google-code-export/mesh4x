@@ -82,7 +82,7 @@ public class CloudUI extends AbstractUI {
 			mappingsButton.setBorderPainted(false);
 			mappingsButton.setBorder(new EmptyBorder(0, 0, 0, 0));
 			mappingsButton.setBackground(Color.WHITE);
-			mappingsButton.setBounds(new Rectangle(330, 30, 30, 20));
+			mappingsButton.setBounds(new Rectangle(330, 30, 25, 25));
 			mappingsButton.setToolTipText(EktooUITranslator
 					.getTooltipMappingView());
 			mappingsButton.addActionListener(new ActionListener() {

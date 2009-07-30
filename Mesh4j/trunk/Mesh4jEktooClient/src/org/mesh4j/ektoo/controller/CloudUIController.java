@@ -118,16 +118,42 @@ public class CloudUIController extends AbstractUIController{
 		}
 	}
 
+	public void setMappings(String alias, String title, String description) {
+		String xml = MessageFormat.format(
+			"<mappings><item.title>{0}</item.title><item.description>{1}</item.description></mappings>", 
+			title, 
+			description);
+		Element element = XMLHelper.parseElement(xml);
+		CloudModel model = (CloudModel)this.getModel();
+		model.setMappings(new Mapping(element, this.adapterBuilder.getMappingPropertyResolvers()));
+	}
+	
 	public void setMappings(String alias, String title, String description, String address) {
 		String addressAttribute = Mapping.makeAttribute(alias, address);
 		String location = Mapping.makeMapping(GeoCoderLocationPropertyResolver.makeMapping(addressAttribute));
-		String latitude = Mapping.makeMapping(GeoCoderLatitudePropertyResolver.makeMapping(addressAttribute)); 
-		String longitude = Mapping.makeMapping(GeoCoderLongitudePropertyResolver.makeMapping(addressAttribute));
+		String latitude = Mapping.makeMapping(GeoCoderLatitudePropertyResolver.makeMapping(addressAttribute, true)); 
+		String longitude = Mapping.makeMapping(GeoCoderLongitudePropertyResolver.makeMapping(addressAttribute, true));
 		String xml = MessageFormat.format(
 			"<mappings><item.title>{0}</item.title><item.description>{1}</item.description><geo.location>{2}</geo.location><geo.longitude>{3}</geo.longitude><geo.latitude>{4}</geo.latitude></mappings>", 
 			title, 
 			description, 
 			location,
+			longitude,
+			latitude);
+		Element element = XMLHelper.parseElement(xml);
+		CloudModel model = (CloudModel)this.getModel();
+		model.setMappings(new Mapping(element, this.adapterBuilder.getMappingPropertyResolvers()));
+	}
+	
+	public void setMappings(String alias, String title, String description, String lat, String lon) {
+		String attrLat = Mapping.makeAttribute(alias, lat);
+		String attrLon = Mapping.makeAttribute(alias, lon);
+		String latitude = Mapping.makeMapping(GeoCoderLatitudePropertyResolver.makeMapping(attrLat, false)); 
+		String longitude = Mapping.makeMapping(GeoCoderLongitudePropertyResolver.makeMapping(attrLon, false));
+		String xml = MessageFormat.format(
+			"<mappings><item.title>{0}</item.title><item.description>{1}</item.description><geo.longitude>{2}</geo.longitude><geo.latitude>{3}</geo.latitude></mappings>", 
+			title, 
+			description, 
 			longitude,
 			latitude);
 		Element element = XMLHelper.parseElement(xml);
