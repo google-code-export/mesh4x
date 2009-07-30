@@ -23,13 +23,13 @@ public class GeoCoderLocationPropertyResolver implements IPropertyResolver {
 	}
 	
 	@Override
-	public boolean accepts(String variableTemplate) {
-		return variableTemplate.startsWith("geoLocation(") && variableTemplate.endsWith(")");
+	public boolean accepts(String mappingName, String variableTemplate) {
+		return variableTemplate.startsWith("geoLocation(") && variableTemplate.endsWith(")") && MAPPING_NAME.equals(mappingName);
 	}
 
 	@Override
 	public String getPropertyValue(Element element, String variableTemplate) {
-		String variable = variableTemplate.substring(12, variableTemplate.length() -1);
+		String variable = getPropertyName(variableTemplate);
 		Element resultElement = XMLHelper.selectSingleNode(variable, element, new HashMap<String, String>());
 		if(resultElement == null){
 			return "";
@@ -42,7 +42,7 @@ public class GeoCoderLocationPropertyResolver implements IPropertyResolver {
 		return "";
 	}
 
-	public static String getMapping(String mapping) {
+	public static String getPropertyName(String mapping) {
 		return StringUtils.substringBetween(mapping, "geoLocation(", ")");
 	}
 

@@ -7,6 +7,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.mesh4j.geo.coder.GeoCoderLatitudePropertyResolver;
+import org.mesh4j.geo.coder.GeoCoderLocationPropertyResolver;
 import org.mesh4j.geo.coder.GeoCoderLongitudePropertyResolver;
 import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.model.Item;
@@ -43,13 +44,22 @@ public class KMLExporter {
 	
 	public static String makePlacemark(Element element, IMapping mapping) {
 		try{
-			String longitude= mapping.getValue(element, GeoCoderLongitudePropertyResolver.MAPPING_NAME);
-			String latitude= mapping.getValue(element, GeoCoderLatitudePropertyResolver.MAPPING_NAME);
-
-			if(longitude != null && longitude.trim().length() > 0 && latitude != null && latitude.trim().length() > 0){
-				String name = mapping.getValue(element, ISyndicationFormat.MAPPING_NAME_ITEM_TITLE);
-				String description = mapping.getValue(element, ISyndicationFormat.MAPPING_NAME_ITEM_DESCRIPTION);
-				return MessageFormat.format("<Placemark><name>{0}</name><description><![CDATA[{1}]]></description><Point><coordinates>{2},{3}</coordinates></Point></Placemark>", name, description, longitude, latitude);
+			if(mapping.hasMapping(GeoCoderLocationPropertyResolver.MAPPING_NAME)){
+				String location = mapping.getValue(element, GeoCoderLocationPropertyResolver.MAPPING_NAME);
+				if(location != null && location.trim().length() > 0){
+					String name = mapping.getValue(element, ISyndicationFormat.MAPPING_NAME_ITEM_TITLE);
+					String description = mapping.getValue(element, ISyndicationFormat.MAPPING_NAME_ITEM_DESCRIPTION);
+					return MessageFormat.format("<Placemark><name>{0}</name><description><![CDATA[{1}]]></description><Point><coordinates>{2}</coordinates></Point></Placemark>", name, description, location);
+				}
+			} else if (mapping.hasMapping(GeoCoderLatitudePropertyResolver.MAPPING_NAME) && mapping.hasMapping(GeoCoderLongitudePropertyResolver.MAPPING_NAME)){
+				String longitude = mapping.getValue(element, GeoCoderLongitudePropertyResolver.MAPPING_NAME);
+				String latitude = mapping.getValue(element, GeoCoderLatitudePropertyResolver.MAPPING_NAME);
+				
+				if(longitude != null && longitude.trim().length() > 0 && latitude != null && latitude.trim().length() > 0){
+					String name = mapping.getValue(element, ISyndicationFormat.MAPPING_NAME_ITEM_TITLE);
+					String description = mapping.getValue(element, ISyndicationFormat.MAPPING_NAME_ITEM_DESCRIPTION);
+					return MessageFormat.format("<Placemark><name>{0}</name><description><![CDATA[{1}]]></description><Point><coordinates>{2},{3}</coordinates></Point></Placemark>", name, description, longitude, latitude);
+				}
 			}
 		} catch (MeshException e) {
 			LOGGER.error(e.getMessage(), e);

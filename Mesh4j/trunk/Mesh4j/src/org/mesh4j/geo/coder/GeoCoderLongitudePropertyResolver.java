@@ -2,6 +2,7 @@ package org.mesh4j.geo.coder;
 
 import java.util.HashMap;
 
+import org.apache.commons.lang.StringUtils;
 import org.dom4j.Element;
 import org.mesh4j.sync.payload.mappings.IPropertyResolver;
 import org.mesh4j.sync.utils.XMLHelper;
@@ -22,27 +23,48 @@ public class GeoCoderLongitudePropertyResolver implements IPropertyResolver {
 	}
 	
 	@Override
-	public boolean accepts(String variableTemplate) {
-		return variableTemplate.startsWith("geoLongitude(") && variableTemplate.endsWith(")");
+	public boolean accepts(String mappingName, String variableTemplate) {
+		//return variableTemplate.startsWith("geoLongitude(") && variableTemplate.endsWith(")");
+		return MAPPING_NAME.equals(mappingName);
 	}
 
 	@Override
 	public String getPropertyValue(Element element, String variableTemplate) {
-		String variable = variableTemplate.substring(13, variableTemplate.length() -1);
+		String variable = getPropertyName(variableTemplate);
 		Element resultElement = XMLHelper.selectSingleNode(variable, element, new HashMap<String, String>());
 		if(resultElement == null){
 			return "";
 		}
 		
-		GeoLocation geoLocation = this.geoCoder.getLocation(resultElement.getText());
-		if(geoLocation != null){
-			return String.valueOf(geoLocation.getLongitude());
+		if(isAddress(variableTemplate)){
+			GeoLocation geoLocation = this.geoCoder.getLocation(resultElement.getText());
+			if(geoLocation != null){
+				return String.valueOf(geoLocation.getLongitude());
+			}
+			return "";
+		} else {
+			return resultElement.getText();
 		}
-		return "";
 	}
 
-	public static String makeMapping(String address) {
-		return "geoLongitude(" + address + ")";
+	public static String getPropertyName(String mapping) {
+		if(isAddress(mapping)){
+			return StringUtils.substringBetween(mapping, "geoLongitude(", ")");
+		} else {
+			return mapping;
+		}
+	}
+
+	private static boolean isAddress(String mapping) {
+		return mapping.startsWith("geoLongitude(") && mapping.endsWith(")");
+	}
+		
+	public static String makeMapping(String propertyName, boolean isAddress) {
+		if(isAddress){
+			return "geoLongitude(" + propertyName + ")";
+		} else {
+			return propertyName;
+		}
 	}
 
 }

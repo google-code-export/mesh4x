@@ -55,7 +55,7 @@ public class Mapping implements IMapping {
 			template = propElement.getText();
 			ArrayList<String> variables = getVariables(template);
 			for (String variable : variables) {
-				String value = getElementValue(payload, variable);
+				String value = getElementValue(payload, propertyName, variable);
 
 				String fullVariable = "{"+ variable + "}";
 				template = StringUtils.replace(template, fullVariable, value);
@@ -64,9 +64,9 @@ public class Mapping implements IMapping {
 		return template;
 	}
 
-	private String getElementValue(Element element, String variable) {
+	private String getElementValue(Element element, String mappingName, String variable) {
 		
-		IPropertyResolver propertyResolver = getPropertyResolver(variable);
+		IPropertyResolver propertyResolver = getPropertyResolver(mappingName, variable);
 		if(propertyResolver != null){
 			return propertyResolver.getPropertyValue(element, variable);
 		} else {
@@ -88,9 +88,9 @@ public class Mapping implements IMapping {
 //		return resultElement.getText();
 	}
 
-	private IPropertyResolver getPropertyResolver(String variable) {
+	private IPropertyResolver getPropertyResolver(String mappingName, String variable) {
 		for (IPropertyResolver propertyResolver : this.propertyResolvers) {
-			if(propertyResolver.accepts(variable)){
+			if(propertyResolver.accepts(mappingName, variable)){
 				return propertyResolver;
 			}
 		}
@@ -152,6 +152,15 @@ public class Mapping implements IMapping {
 	
 	public static String makeAttribute(String alias, String attributeName) {
 		return alias + "/" + attributeName;
+	}
+
+	@Override
+	public boolean hasMapping(String mappingName) {
+		Element propElement = XMLHelper.selectSingleNode(mappingName, this.mappings, new HashMap<String, String>());
+		if(propElement == null && !mappingName.startsWith("//")){
+			propElement = XMLHelper.selectSingleNode("//"+mappingName, this.mappings, new HashMap<String, String>());
+		}
+		return propElement != null;
 	}
 	
 }

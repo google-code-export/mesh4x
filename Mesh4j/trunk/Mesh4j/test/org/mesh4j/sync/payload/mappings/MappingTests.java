@@ -37,12 +37,12 @@ public class MappingTests {
 	@Test
 	public void shouldGetValueFromPropertyResolver() throws DocumentException{
 		IPropertyResolver prop1 = new IPropertyResolver(){
-			@Override public boolean accepts(String variableTemplate) {return variableTemplate.startsWith("prop1(");}
+			@Override public boolean accepts(String mappingName, String variableTemplate) {return variableTemplate.startsWith("prop1(");}
 			@Override public String getPropertyValue(Element element, String variableTemplate) {return "P1";}
 		};
 		
 		IPropertyResolver prop2 = new IPropertyResolver(){
-			@Override public boolean accepts(String variableTemplate) {return variableTemplate.startsWith("prop2(");}
+			@Override public boolean accepts(String mappingName, String variableTemplate) {return variableTemplate.startsWith("prop2(");}
 			@Override public String getPropertyValue(Element element, String variableTemplate) {return "P2";}
 		};
 

@@ -4,7 +4,7 @@ import org.dom4j.Element;
 
 public interface IPropertyResolver {
 
-	boolean accepts(String variableTemplate);
+	boolean accepts(String mappingName, String variableTemplate);
 
 	String getPropertyValue(Element element, String variableTemplate);
 

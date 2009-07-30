@@ -98,6 +98,7 @@ public class SchemaInstanceContentReadWriterTests {
 				return null;
 			}
 			@Override public String getAttribute(String mappingName) {return null;}
+			@Override public boolean hasMapping(String mappingName) {return false;}
 		};
 		return mapping;
 	}	
@@ -109,6 +110,7 @@ public class SchemaInstanceContentReadWriterTests {
 			@Override public String getMapping(String mappingName) {return null;}
 			@Override public String getValue(Element element, String mappingName) {return null;}
 			@Override public String getAttribute(String mappingName) {return null;}
+			@Override public boolean hasMapping(String mappingName) {return false;}
 		};
 		return mapping;
 	}	

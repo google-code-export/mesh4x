@@ -16,4 +16,6 @@ public interface IMapping {
 
 	String getAttribute(String mappingName);
 
+	boolean hasMapping(String mappingName);
+
 }
