@@ -3,6 +3,8 @@ package org.mesh4j.ektoo.model;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
+import org.mesh4j.sync.payload.mappings.Mapping;
+
 /**
  * @author Bhuiyan Mohammad Iklash
  * 
@@ -12,6 +14,7 @@ public abstract class AbstractModel
 
 	// MODEL VARIABLES
 	protected PropertyChangeSupport propertyChangeSupport;
+	private Mapping mappings = null;
 
 	// BUSINESS METHODS
 	public AbstractModel() {
@@ -36,5 +39,13 @@ public abstract class AbstractModel
 			int newValue) {
 		propertyChangeSupport.firePropertyChange(propertyName, oldValue,
 				newValue);
+	}
+	
+	public void setMappings(Mapping mappings) {
+		this.mappings = mappings;		
+	}
+
+	public Mapping getMappings() {
+		return this.mappings;		
 	}
 }

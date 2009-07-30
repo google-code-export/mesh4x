@@ -4,6 +4,7 @@ public enum Event {
 
 	schema_view_event,
 	schema_comparison_event,
-	sync_event
+	sync_event, 
+	mappings_view_event
 	
 }

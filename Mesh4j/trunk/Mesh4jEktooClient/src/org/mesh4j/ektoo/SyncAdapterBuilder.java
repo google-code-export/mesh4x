@@ -372,5 +372,10 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 	@Override
 	public IPropertyResolver[] getMappingPropertyResolvers() {
 		return this.propertyResolvers;
+	}
+
+	@Override
+	public PropertiesProvider getPropertiesProvider() {
+		return this.propertiesProvider;
 	}	
 }

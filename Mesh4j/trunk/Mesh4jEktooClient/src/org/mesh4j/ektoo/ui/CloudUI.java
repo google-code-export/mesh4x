@@ -91,8 +91,7 @@ public class CloudUI extends AbstractUI {
 					if (CloudUI.this.verify()) {
 						EktooFrame ektooFrame = ((EktooFrame) CloudUI.this
 								.getRootFrame());
-						MappingsViewTask task = new MappingsViewTask(
-								ektooFrame, CloudUI.this.controller);
+						MappingsViewTask task = new MappingsViewTask(ektooFrame, CloudUI.this.controller, true);
 						task.execute();
 					}
 				}

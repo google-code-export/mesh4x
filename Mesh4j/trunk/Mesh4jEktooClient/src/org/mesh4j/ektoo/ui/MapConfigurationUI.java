@@ -20,7 +20,7 @@ import javax.swing.border.EtchedBorder;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.mesh4j.ektoo.controller.CloudUIController;
+import org.mesh4j.ektoo.controller.AbstractUIController;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.geo.coder.GeoCoderLatitudePropertyResolver;
 import org.mesh4j.geo.coder.GeoCoderLocationPropertyResolver;
@@ -54,12 +54,12 @@ public class MapConfigurationUI extends JPanel {
 	private String aliasName;
 	private Set<String> fieldValues;
 	private Mapping mappingResolver;
-	private CloudUIController controller;
+	private AbstractUIController controller;
 	private EktooFrame ownerUI;
 	
 	// BUSINESS METHODS
 
-	public MapConfigurationUI(EktooFrame ui, CloudUIController uicontroller, String aliasNameParam, Set<String> fieldValues, Mapping mappingResolver) {
+	public MapConfigurationUI(EktooFrame ui, AbstractUIController uicontroller, String aliasNameParam, Set<String> fieldValues, Mapping mappingResolver) {
 		super();
 		this.ownerUI = ui;
 		this.controller = uicontroller;

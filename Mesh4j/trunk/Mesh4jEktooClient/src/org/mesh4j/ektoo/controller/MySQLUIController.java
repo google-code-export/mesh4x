@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.mesh4j.ektoo.ISyncAdapterBuilder;
-import org.mesh4j.ektoo.SyncAdapterBuilder;
 import org.mesh4j.ektoo.model.MySQLAdapterModel;
 import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.ektoo.ui.EktooFrame;
@@ -28,17 +26,9 @@ public class MySQLUIController extends AbstractUIController
 	public static final String DATABASE_NAME_PROPERTY = "DatabaseName";
 	public static final String TABLE_NAME_PROPERTY = "TableNames";
 
-	// MODEL VARIABLES
-	private ISyncAdapterBuilder adapterBuilder;
-	private PropertiesProvider propertiesProvider;
-
 	// BUSINESS METHODS
 	public MySQLUIController(PropertiesProvider propertiesProvider, boolean acceptsCreateDataset) {
-		super(acceptsCreateDataset);
-		
-		Guard.argumentNotNull(propertiesProvider, "propertiesProvider");
-		this.adapterBuilder = new SyncAdapterBuilder(propertiesProvider);
-		this.propertiesProvider = propertiesProvider;
+		super(propertiesProvider, acceptsCreateDataset);
 	}
 
 	public void changeUserName(String userName) {
@@ -101,10 +91,10 @@ public class MySQLUIController extends AbstractUIController
 		}		
 		
 		if (EktooFrame.multiModeSync)
-			return adapterBuilder.createMySQLAdapterForMultiTables(userName,
+			return getAdapterBuilder().createMySQLAdapterForMultiTables(userName,
 					userPassword, hostName, portNo, databaseName, tableNames);
 		else
-			return adapterBuilder.createMySQLAdapter(userName, userPassword,
+			return getAdapterBuilder().createMySQLAdapter(userName, userPassword,
 					hostName, portNo, databaseName, tableNames[0]);
 	}
 
@@ -187,27 +177,27 @@ public class MySQLUIController extends AbstractUIController
 
 	// PROPERTIES
 	public String getDefaultMySQLHost() {
-		return this.propertiesProvider.getDefaultMySQLHost();
+		return getPropertiesProvider().getDefaultMySQLHost();
 	}
 
 	public String getDefaultMySQLPort() {
-		return this.propertiesProvider.getDefaultMySQLPort();
+		return getPropertiesProvider().getDefaultMySQLPort();
 	}
 
 	public String getDefaultMySQLSchema() {
-		return this.propertiesProvider.getDefaultMySQLSchema();
+		return getPropertiesProvider().getDefaultMySQLSchema();
 	}
 
 	public String getDefaultMySQLUser() {
-		return this.propertiesProvider.getDefaultMySQLUser();
+		return getPropertiesProvider().getDefaultMySQLUser();
 	}
 
 	public String getDefaultMySQLPassword() {
-		return this.propertiesProvider.getDefaultMySQLPassword();
+		return getPropertiesProvider().getDefaultMySQLPassword();
 	}
 
 	public String getDefaultMySQLTable() {
-		return this.propertiesProvider.getDefaultMySQLTable();
+		return getPropertiesProvider().getDefaultMySQLTable();
 	}
 
 	public String generateFeed() {
@@ -246,6 +236,6 @@ public class MySQLUIController extends AbstractUIController
 			userPassword = "";
 		}
 		
-		return this.adapterBuilder.generateMySqlFeed(userName, userPassword, hostName, portNo, databaseName, tableNames[0]);
+		return getAdapterBuilder().generateMySqlFeed(userName, userPassword, hostName, portNo, databaseName, tableNames[0]);
 	}
 }

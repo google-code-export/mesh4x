@@ -1,7 +1,6 @@
 package org.mesh4j.ektoo.model;
 
 import org.mesh4j.ektoo.controller.CloudUIController;
-import org.mesh4j.sync.payload.mappings.Mapping;
 import org.mesh4j.sync.validations.Guard;
 
 /**
@@ -14,7 +13,6 @@ public class CloudModel extends AbstractModel {
 	private String baseUri;
 	private String meshName = null;
 	private String datasetName = null;
-	private Mapping mappings = null;
 
 	// BUSINESS METHODS
 	public CloudModel(String baseUri) {
@@ -65,11 +63,4 @@ public class CloudModel extends AbstractModel {
 		return "Cloud | " + getUri();
 	}
 
-	public void setMappings(Mapping mappings) {
-		this.mappings = mappings;		
-	}
-
-	public Mapping getMappings() {
-		return this.mappings;		
-	}
 }
