@@ -1,11 +1,11 @@
 package org.mesh4j.ektoo.ui;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
-
-import java.awt.Color;
-
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.util.Hashtable;
 
@@ -15,6 +15,10 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import org.mesh4j.ektoo.Event;
+import org.mesh4j.ektoo.controller.AbstractUIController;
+import org.mesh4j.ektoo.tasks.MappingsViewTask;
+import org.mesh4j.ektoo.tasks.SchemaViewTask;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.ektoo.validator.IValidationStatus;
@@ -29,8 +33,14 @@ public abstract class AbstractUI extends JPanel implements IValidationStatus {
 	private JTextField txtMessages = null;
 	private JButton schemaViewButton = null;
 	private JButton viewButtion = null;
+	private JButton mappingsButton = null;
+	protected AbstractUIController controller = null;
 	
 	// BUSINESS METHODS
+	public AbstractUI(AbstractUIController controller){		
+		this.controller = controller;
+		this.controller.addView(this);
+	}
 	
 	public abstract void modelPropertyChange(PropertyChangeEvent evt);
 	public abstract boolean verify();
@@ -44,7 +54,7 @@ public abstract class AbstractUI extends JPanel implements IValidationStatus {
 		return txtMessages;
 	}
 	
-	public JButton getSchemaButton(){
+	public JButton getSchemaViewButton(){
 		if(schemaViewButton == null){
 			schemaViewButton = new JButton();
 			schemaViewButton.setIcon(ImageManager.getSchemaViewIcon());
@@ -54,6 +64,17 @@ public abstract class AbstractUI extends JPanel implements IValidationStatus {
 			schemaViewButton.setBackground(Color.WHITE);
 			schemaViewButton.setBounds(new Rectangle(330, 8, 30, 20));
 			schemaViewButton.setToolTipText(EktooUITranslator.getTooltipSchemaView());
+			schemaViewButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					if (verify()) {
+						controller.setCurrentEvent(Event.schema_view_event);
+						EktooFrame ektooFrame = ((EktooFrame)getRootFrame());
+						SchemaViewTask task = new SchemaViewTask(ektooFrame, controller, ektooFrame);
+						task.execute();
+					}
+				}
+			});
 		}
 		return schemaViewButton;
 	}
@@ -135,5 +156,30 @@ public abstract class AbstractUI extends JPanel implements IValidationStatus {
 	
 	protected AbstractUI getMe(){
 		return this;
+	}
+	
+	public JButton getMappingsButton() {
+		if (mappingsButton == null) {
+			mappingsButton = new JButton();
+			mappingsButton.setIcon(ImageManager.getMappingsIcon());
+			mappingsButton.setContentAreaFilled(false);
+			mappingsButton.setBorderPainted(false);
+			mappingsButton.setBorder(new EmptyBorder(0, 0, 0, 0));
+			mappingsButton.setBackground(Color.WHITE);
+			mappingsButton.setBounds(new Rectangle(330, 30, 25, 25));
+			mappingsButton.setToolTipText(EktooUITranslator
+					.getTooltipMappingView());
+			mappingsButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					if (verify()) {
+						EktooFrame ektooFrame = ((EktooFrame)getRootFrame());
+						MappingsViewTask task = new MappingsViewTask(ektooFrame, controller, true);
+						task.execute();
+					}
+				}
+			});
+		}
+		return mappingsButton;
 	}
 }

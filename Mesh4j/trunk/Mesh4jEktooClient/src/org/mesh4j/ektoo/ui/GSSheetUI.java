@@ -30,7 +30,6 @@ import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.controller.GSSheetUIController;
 import org.mesh4j.ektoo.tasks.IErrorListener;
 import org.mesh4j.ektoo.tasks.OpenURLTask;
-import org.mesh4j.ektoo.tasks.SchemaViewTask;
 import org.mesh4j.ektoo.ui.component.messagedialog.MessageDialog;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
@@ -69,9 +68,6 @@ public class GSSheetUI extends AbstractUI {
 	private JComboBox listColumn = null;
 
 	private JButton btnConnect = null;
-	private GSSheetUIController controller = null;
-
-//	private JButton btnView = null;
 	
 	private String googleURL = "";
 	
@@ -79,10 +75,8 @@ public class GSSheetUI extends AbstractUI {
 
 	// BUSINESS METHODS
 	public GSSheetUI(GSSheetUIController controller, String googleURL) {
-		super();
+		super(controller);
 		this.googleURL = googleURL;
-		this.controller = controller;
-		this.controller.addView(this);
 		initialize();
 		this.setMessageText(googleURL);
 	}
@@ -108,24 +102,11 @@ public class GSSheetUI extends AbstractUI {
 		this.add(getMessagesText(), null);
 		this.add(getBtnView(), null);
 		this.add(getSchemaViewButton(), null);
+		this.add(getMappingsButton());
 	}
 
 	public int getNewSpreadsheetNameIndex() {
 		return newSpreadsheetNameIndex;
-	}
-	
-	private JButton getSchemaViewButton(){
-		getSchemaButton().addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if(GSSheetUI.this.verify()){
-					EktooFrame ektooFrame = ((EktooFrame)GSSheetUI.this.getRootFrame());
-					SchemaViewTask task = new SchemaViewTask(ektooFrame,GSSheetUI.this.controller,ektooFrame);
-					task.execute();	
-				}
-			}
-		});
-		return getSchemaButton();
 	}
 	
 	private JLabel getUserLabel() {
@@ -642,12 +623,8 @@ public class GSSheetUI extends AbstractUI {
 		return (int) getColumnList().getItemCount() + 1;
 	}
 
-	public void setController(GSSheetUIController controller) {
-		this.controller = controller;
-	}
-
 	public GSSheetUIController getController() {
-		return controller;
+		return (GSSheetUIController)controller;
 	}
 
 	public void setUserLabel(String googleUserLabel) {

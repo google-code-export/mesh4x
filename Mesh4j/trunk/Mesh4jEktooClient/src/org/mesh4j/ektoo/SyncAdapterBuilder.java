@@ -305,7 +305,7 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 		
 		String fileName = (userName+"_"+databaseName+"_"+tableName+"_"+IdGenerator.INSTANCE.newID()+".xml").replace(" ", "");
 		
-		String fullFileName = FileUtils.getFileName(this.propertiesProvider.getBaseDirectory() + File.separator + "temp", fileName);
+		String fullFileName = makeTempFileName(fileName);
 		
 		ISyncAdapter adapter;
 		
@@ -323,6 +323,11 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 		
 		feedAdapter.flush();
 		return fullFileName;
+	}
+	
+	@Override 
+	public String makeTempFileName(String fileName){
+		return FileUtils.getFileName(this.propertiesProvider.getBaseDirectory() + File.separator + "temp", fileName);
 	}
 	
 	// ACCESSORS

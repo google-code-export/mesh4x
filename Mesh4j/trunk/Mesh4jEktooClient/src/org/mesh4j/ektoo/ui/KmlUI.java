@@ -35,16 +35,11 @@ public class KmlUI extends AbstractUI {
 	private JLabel labelFileName = null;
 	private JTextField txtFileName = null;
 	private JButton btnFile = null;
-//	private JButton btnView = null;
-	
-	private KmlUIController controller;
 	private JFileChooser fileChooser = null;
 	
 	// BUSINESS METHODS
 	public KmlUI(String fileName, KmlUIController controller) {
-		super();
-		this.controller = controller;
-		this.controller.addView(this);
+		super(controller);
 		this.initialize();
 		this.txtFileName.setText(fileName);
 		this.txtFileName.setToolTipText(fileName);
@@ -129,7 +124,7 @@ public class KmlUI extends AbstractUI {
 	}
 	
 	public KmlUIController getController() {
-		return controller;
+		return (KmlUIController)controller;
 	}
 	
 	public JFileChooser getFileChooser() {

@@ -168,36 +168,26 @@ public abstract class AbstractUIController implements PropertyChangeListener, IU
 		return getAdapterBuilder().getPropertiesProvider();
 	}
 	
-	public Mapping getMappings(){
+	public Mapping getMapping(){
 		AbstractModel model = this.getModel();
 		if(model != null){
-			return model.getMappings();
+			return model.getMapping();
 		} else {
 			return null;
 		}
 	}
 	
-	public void setEmptyMappings() {
-		AbstractModel model = this.getModel();
-		if(model != null){
-			model.setMappings(null);
-		}
-	}
-	
-	public void setMappings(String alias, String title, String description) {
+	public Mapping makeMapping(String alias, String title, String description) {
 		String xml = MessageFormat.format(
 			"<mappings><item.title>{0}</item.title><item.description>{1}</item.description></mappings>", 
 			title, 
 			description);
 		Element element = XMLHelper.parseElement(xml);
-
-		AbstractModel model = this.getModel();
-		if(model != null){
-			model.setMappings(new Mapping(element, this.adapterBuilder.getMappingPropertyResolvers()));
-		}
+		Mapping mapping = new Mapping(element, this.adapterBuilder.getMappingPropertyResolvers());
+		return mapping;
 	}
 	
-	public void setMappings(String alias, String title, String description, String address) {
+	public Mapping makeMapping(String alias, String title, String description, String address) {
 		String addressAttribute = Mapping.makeAttribute(alias, address);
 		String location = Mapping.makeMapping(GeoCoderLocationPropertyResolver.makeMapping(addressAttribute));
 		String latitude = Mapping.makeMapping(GeoCoderLatitudePropertyResolver.makeMapping(addressAttribute, true)); 
@@ -212,13 +202,10 @@ public abstract class AbstractUIController implements PropertyChangeListener, IU
 		
 		Element element = XMLHelper.parseElement(xml);
 
-		AbstractModel model = this.getModel();
-		if(model != null){
-			model.setMappings(new Mapping(element, this.adapterBuilder.getMappingPropertyResolvers()));
-		}
+		return new Mapping(element, this.adapterBuilder.getMappingPropertyResolvers());
 	}
 	
-	public void setMappings(String alias, String title, String description, String lat, String lon) {
+	public Mapping makeMapping(String alias, String title, String description, String lat, String lon) {
 		String attrLat = Mapping.makeAttribute(alias, lat);
 		String attrLon = Mapping.makeAttribute(alias, lon);
 		String latitude = Mapping.makeMapping(GeoCoderLatitudePropertyResolver.makeMapping(attrLat, false)); 
@@ -231,9 +218,14 @@ public abstract class AbstractUIController implements PropertyChangeListener, IU
 			latitude);
 		Element element = XMLHelper.parseElement(xml);
 		
+		return new Mapping(element, this.adapterBuilder.getMappingPropertyResolvers());
+	}
+	
+	public void setMapping(Mapping mapping){
 		AbstractModel model = this.getModel();
 		if(model != null){
-			model.setMappings(new Mapping(element, this.adapterBuilder.getMappingPropertyResolvers()));
+			model.setMapping(mapping);
 		}
+
 	}
 }

@@ -920,6 +920,10 @@ public class EktooFrame extends JFrame implements IErrorListener, ISynchronizeTa
 		popupviewWindow.dispose();
 	}
 	
+	public PopupDialog getPopupViewWindow(){
+		return popupviewWindow;
+	}
+	
 	protected void close() {
 		this.syncProcessUI.setVisible(false);
 		this.syncProcessUI.dispose();

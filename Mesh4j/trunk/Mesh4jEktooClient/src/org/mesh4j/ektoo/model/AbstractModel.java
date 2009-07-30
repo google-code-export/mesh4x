@@ -5,16 +5,11 @@ import java.beans.PropertyChangeSupport;
 
 import org.mesh4j.sync.payload.mappings.Mapping;
 
-/**
- * @author Bhuiyan Mohammad Iklash
- * 
- */
-public abstract class AbstractModel 
-{
-
+public abstract class AbstractModel{
+	
 	// MODEL VARIABLES
 	protected PropertyChangeSupport propertyChangeSupport;
-	private Mapping mappings = null;
+	private Mapping mapping = null;
 
 	// BUSINESS METHODS
 	public AbstractModel() {
@@ -29,23 +24,30 @@ public abstract class AbstractModel
 		propertyChangeSupport.removePropertyChangeListener(listner);
 	}
 
-	protected void firePropertyChange(String propertyName, Object oldValue,
-			Object newValue) {
-		propertyChangeSupport.firePropertyChange(propertyName, oldValue,
-				newValue);
+	protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
+		boolean areDifferent = (oldValue == null && newValue != null) || (oldValue != null && newValue == null) || (oldValue != null && newValue != null && !oldValue.equals(newValue));
+		if(areDifferent){
+			this.fireEmptyMappingForPropertyChange(propertyName);
+		}
+		propertyChangeSupport.firePropertyChange(propertyName, oldValue, newValue);
 	}
 
-	protected void firePropertyChange(String propertyName, int oldValue,
-			int newValue) {
-		propertyChangeSupport.firePropertyChange(propertyName, oldValue,
-				newValue);
+	protected void fireEmptyMappingForPropertyChange(String propertyName) {
+		this.mapping = null;
+	}
+
+	protected void firePropertyChange(String propertyName, int oldValue, int newValue) {
+		if(oldValue != newValue){
+			this.fireEmptyMappingForPropertyChange(propertyName);
+		}
+		propertyChangeSupport.firePropertyChange(propertyName, oldValue, newValue);
 	}
 	
-	public void setMappings(Mapping mappings) {
-		this.mappings = mappings;		
+	public void setMapping(Mapping mapping) {
+		this.mapping = mapping;		
 	}
 
-	public Mapping getMappings() {
-		return this.mappings;		
+	public Mapping getMapping() {
+		return this.mapping;		
 	}
 }

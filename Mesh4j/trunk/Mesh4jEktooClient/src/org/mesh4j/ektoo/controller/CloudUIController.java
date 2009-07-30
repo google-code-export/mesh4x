@@ -87,7 +87,7 @@ public class CloudUIController extends AbstractUIController{
 			if(currentEvent != null && (currentEvent.equals(Event.mappings_view_event) || currentEvent.equals(Event.schema_view_event))){
 				return getAdapterBuilder().createHttpSyncAdapter(baseSyncURI, meshName, datasetName);
 			} else {
-				IMapping mapping = getMappings();
+				IMapping mapping = getMapping();
 				return getAdapterBuilder().createHttpSyncAdapter(baseSyncURI, meshName, datasetName, rdfSchema, mapping);	
 			}
 				
@@ -103,15 +103,16 @@ public class CloudUIController extends AbstractUIController{
 		}
 	}
 
-	public Mapping getMappings() {
+	@Override
+	public Mapping getMapping() {
 		CloudModel model = (CloudModel) this.getModel();
 		if(model == null){
 			return HttpSyncAdapter.getMappings(this.getUri(), getAdapterBuilder().getMappingPropertyResolvers());			
 		} else {
-			Mapping mapping = model.getMappings();
+			Mapping mapping = model.getMapping();
 			if(mapping == null){
 				mapping = HttpSyncAdapter.getMappings(this.getUri(), getAdapterBuilder().getMappingPropertyResolvers());
-				model.setMappings(mapping);
+				model.setMapping(mapping);
 			}
 			return mapping;
 		}

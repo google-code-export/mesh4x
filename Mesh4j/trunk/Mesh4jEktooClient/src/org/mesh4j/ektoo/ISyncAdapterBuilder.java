@@ -193,4 +193,6 @@ public interface ISyncAdapterBuilder {
 
 	public PropertiesProvider getPropertiesProvider();
 
+	String makeTempFileName(String fileName);
+
 }

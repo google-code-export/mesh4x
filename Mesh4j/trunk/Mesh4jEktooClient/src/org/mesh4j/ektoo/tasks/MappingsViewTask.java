@@ -2,7 +2,6 @@ package org.mesh4j.ektoo.tasks;
 
 import java.awt.Cursor;
 import java.util.List;
-import java.util.TreeSet;
 
 import javax.swing.SwingWorker;
 
@@ -15,6 +14,7 @@ import org.mesh4j.ektoo.ui.MapConfigurationUI;
 import org.mesh4j.ektoo.ui.component.messagedialog.MessageDialog;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.sync.ISyncAdapter;
+import org.mesh4j.sync.adapters.http.HttpSyncAdapter;
 import org.mesh4j.sync.payload.mappings.Mapping;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 
@@ -40,20 +40,30 @@ public class MappingsViewTask extends SwingWorker<String, Void>{
 			
 			controller.setCurrentEvent(Event.mappings_view_event);
 			
-			ISyncAdapter adapter = controller.createAdapter();
+			String comments = "";
+			ISyncAdapter syncAdapter = controller.createAdapter();
+			if(syncAdapter instanceof HttpSyncAdapter){
+				String url = HttpSyncAdapter.makeKmlURL((((HttpSyncAdapter)syncAdapter).getURL()));
+				comments = EktooUITranslator.getMessageURLFroMapAvailable(url);
+			}
+			
+			ISyncAdapter adapter = syncAdapter;
+			
 			schemas = controller.fetchSchema(adapter);
-			mapping = controller.getMappings();
+			mapping = controller.getMapping();
 			
 			if(schemas == null){
 				if(useSourceRDF){
 					AbstractUIController sourceController = ui.getSourceItem().getCurrentController();
 					if(sourceController != controller){
 						sourceController.setCurrentEvent(Event.mappings_view_event);
+						
+						syncAdapter = null;
 						adapter = sourceController.createAdapter();
 						schemas = sourceController.fetchSchema(adapter);
 						
 						if(mapping == null){
-							mapping = sourceController.getMappings();
+							mapping = sourceController.getMapping();
 						}
 					}
 				}
@@ -62,24 +72,13 @@ public class MappingsViewTask extends SwingWorker<String, Void>{
 			
 			if(schemas != null){
 				IRDFSchema rdfSchema = schemas.get(0);
-				showMappings(rdfSchema, mapping);
+				showSchemaInPopup(new MapConfigurationUI(this.ui, this.controller, rdfSchema, mapping, syncAdapter, comments));
 			}
 		} catch(Throwable t){
 			LOGGER.error(t.getMessage(), t);
 			MessageDialog.showErrorMessage(ui, t.getLocalizedMessage());
 		}
 		return null;
-	}
-
-	private void showMappings(IRDFSchema rdfSchema, Mapping mapping) {
-		TreeSet<String> propertyNames = new TreeSet<String>();
-		
-		int size = rdfSchema.getPropertyCount();
-		for (int i = 0; i < size; i++) {
-			propertyNames.add(rdfSchema.getPropertyName(i));
-		}
-		
-		showSchemaInPopup(new MapConfigurationUI(this.ui, this.controller, rdfSchema.getOntologyClassName(), propertyNames, mapping));
 	}
 	
 	@Override

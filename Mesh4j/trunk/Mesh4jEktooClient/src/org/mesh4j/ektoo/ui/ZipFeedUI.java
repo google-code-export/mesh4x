@@ -39,16 +39,11 @@ public class ZipFeedUI extends AbstractUI  implements IValidationStatus {
 	private JTextField txtFileName = null;
 	
 	private JButton btnFile = null;
-//	private JButton btnView = null;
-
-	private ZipFeedUIController controller;
 	private JFileChooser fileChooser = null;
 
 	// BUSINESS METHODS
 	public ZipFeedUI(String fileName, ZipFeedUIController controller) {
-		super();
-		this.controller = controller;
-		this.controller.addView(this);
+		super(controller);
 		this.initialize();
 		this.txtFileName.setText(fileName);
 		this.txtFileName.setToolTipText(fileName);
@@ -134,7 +129,7 @@ public class ZipFeedUI extends AbstractUI  implements IValidationStatus {
 	}
 
 	public ZipFeedUIController getController() {
-		return controller;
+		return (ZipFeedUIController)controller;
 	}
 
 	public void setFileChooser(JFileChooser fileChooser) {

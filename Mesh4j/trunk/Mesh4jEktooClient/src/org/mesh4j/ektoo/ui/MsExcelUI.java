@@ -27,7 +27,6 @@ import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.controller.MsExcelUIController;
 import org.mesh4j.ektoo.tasks.IErrorListener;
 import org.mesh4j.ektoo.tasks.OpenFileTask;
-import org.mesh4j.ektoo.tasks.SchemaViewTask;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.ektoo.ui.validator.MsExcelUIValidator;
 import org.mesh4j.ektoo.validator.IValidationStatus;
@@ -55,17 +54,13 @@ public class MsExcelUI extends AbstractUI implements IValidationStatus {
 	private JComboBox listColumn = null;
 
 	private JButton btnFile = null;
-//	private JButton btnView = null;
-	private MsExcelUIController controller;
+
 
 	// BUSINESS METHODS
 	public MsExcelUI(String fileName, MsExcelUIController controller) {
-		super();
+		super(controller);
 		initialize();
 		
-		this.controller = controller;
-		this.controller.addView(this);
-
 		this.getFileChooser().setAcceptAllFileFilterUsed(false);
 		this.getFileChooser().setFileFilter(
 				new FileNameExtensionFilter(EktooUITranslator
@@ -92,22 +87,8 @@ public class MsExcelUI extends AbstractUI implements IValidationStatus {
 		this.add(getColumnList(), null);
 		this.add(getMessagesText(), null);
 		this.add(getSchemaViewButton(), null);
+		this.add(getMappingsButton());
 		
-	}
-	
-	
-	private JButton getSchemaViewButton(){
-		getSchemaButton().addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if(MsExcelUI.this.verify()){
-					EktooFrame ektooFrame = ((EktooFrame)MsExcelUI.this.getRootFrame());
-					SchemaViewTask task = new SchemaViewTask(ektooFrame,MsExcelUI.this.controller,ektooFrame);
-					task.execute();	
-				}
-			}
-		});
-		return getSchemaButton();
 	}
 	
 	
@@ -124,8 +105,8 @@ public class MsExcelUI extends AbstractUI implements IValidationStatus {
 		}
 
 		if(sheetNames.isEmpty()){
-			this.controller.changeWorksheetName("");
-			this.controller.changeUniqueColumnName("");
+			this.getController().changeWorksheetName("");
+			this.getController().changeUniqueColumnName("");
 			
 			if(this.getController().acceptsCreateDataset()){
 				File file = new File(fileName);
@@ -140,7 +121,7 @@ public class MsExcelUI extends AbstractUI implements IValidationStatus {
 		} else {
 			this.setMessageText(EktooUITranslator.getMessageUpdateFile());
 		}
-		this.controller.changeWorkbookName(fileName);
+		this.getController().changeWorkbookName(fileName);
 	}
 
 	public void setList(String fileName, String sheetName) {
@@ -152,12 +133,12 @@ public class MsExcelUI extends AbstractUI implements IValidationStatus {
 			columnList.addItem(columnName);
 		}
 		
-		this.controller.changeWorksheetName(sheetName);
+		this.getController().changeWorksheetName(sheetName);
 	}
 
 	public void setList(String fileName, String sheetName, String columnName) {
 		try {
-			this.controller.changeUniqueColumnName(columnName);
+			this.getController().changeUniqueColumnName(columnName);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 		}
@@ -168,7 +149,7 @@ public class MsExcelUI extends AbstractUI implements IValidationStatus {
 	}
 
 	public MsExcelUIController getController() {
-		return controller;
+		return (MsExcelUIController)controller;
 	}
 
 	@Override

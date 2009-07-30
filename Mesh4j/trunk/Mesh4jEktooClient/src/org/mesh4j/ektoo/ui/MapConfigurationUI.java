@@ -5,7 +5,7 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Set;
+import java.util.TreeSet;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
@@ -21,12 +21,15 @@ import javax.swing.border.EtchedBorder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.controller.AbstractUIController;
+import org.mesh4j.ektoo.tasks.OpenMapTask;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.geo.coder.GeoCoderLatitudePropertyResolver;
 import org.mesh4j.geo.coder.GeoCoderLocationPropertyResolver;
 import org.mesh4j.geo.coder.GeoCoderLongitudePropertyResolver;
+import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.payload.mappings.Mapping;
+import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -34,7 +37,7 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
-public class MapConfigurationUI extends JPanel {
+public class MapConfigurationUI extends JPanel implements IMapTaskListener{
 
 	private static final long serialVersionUID = 2231285677459604543L;
 	public final static Log Logger = LogFactory.getLog(MapConfigurationUI.class);
@@ -50,36 +53,32 @@ public class MapConfigurationUI extends JPanel {
 	private JRadioButton noAddressRadioButton; 
 	private JRadioButton addressRadioButton; 
 	private JRadioButton latLonRadioButton; 
+	private JButton buttonView;
+	private JTextArea labelStatus;
 	
-	private String aliasName;
-	private Set<String> fieldValues;
-	private Mapping mappingResolver;
-	private AbstractUIController controller;
 	private EktooFrame ownerUI;
+	private AbstractUIController controller;
+	private ISyncAdapter adapter;
+	private IRDFSchema rdfSchema;
 	
 	// BUSINESS METHODS
 
-	public MapConfigurationUI(EktooFrame ui, AbstractUIController uicontroller, String aliasNameParam, Set<String> fieldValues, Mapping mappingResolver) {
+	public MapConfigurationUI(EktooFrame ui, AbstractUIController uicontroller, IRDFSchema schema, Mapping mapping, ISyncAdapter syncAdapter, String comments) {
 		super();
+		this.adapter = syncAdapter;
 		this.ownerUI = ui;
 		this.controller = uicontroller;
-		this.aliasName = aliasNameParam;
-		this.fieldValues = fieldValues;
-		if(mappingResolver == null){
-			this.mappingResolver = new Mapping(null);
-		} else {
-			this.mappingResolver = mappingResolver;
-		}
+		this.rdfSchema = schema;
 		
 		setBackground(Color.WHITE);
-		setBounds(100, 100, 519, 400);
+		setBounds(100, 100, 519, 434);
 		setLayout(new FormLayout(
 			new ColumnSpec[] {
 				ColumnSpec.decode("256dlu")},
 			new RowSpec[] {
 				FormFactory.RELATED_GAP_ROWSPEC,
 				RowSpec.decode("211dlu"),
-				RowSpec.decode("33dlu")}));
+				RowSpec.decode("48dlu")}));
 
 		final JPanel panelEditMappings = new JPanel();
 		panelEditMappings.setBackground(Color.WHITE);
@@ -91,7 +90,7 @@ public class MapConfigurationUI extends JPanel {
 				FormFactory.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("81dlu"),
 				ColumnSpec.decode("6dlu"),
-				ColumnSpec.decode("81dlu"),
+				ColumnSpec.decode("84dlu"),
 				FormFactory.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("19dlu")},
 			new RowSpec[] {
@@ -123,6 +122,8 @@ public class MapConfigurationUI extends JPanel {
 		panelEditMappings.add(labelDescription, new CellConstraints(3, 4, CellConstraints.LEFT, CellConstraints.TOP));
 
 		textAreaTitle = new JTextArea();
+		textAreaTitle.setWrapStyleWord(true);
+		textAreaTitle.setLineWrap(true);
 		textAreaTitle.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
 		textAreaTitle.setText("");
 		panelEditMappings.add(textAreaTitle, new CellConstraints(5, 2, CellConstraints.FILL, CellConstraints.FILL));
@@ -133,6 +134,8 @@ public class MapConfigurationUI extends JPanel {
 		panelEditMappings.add(comboBoxGeoAddress, new CellConstraints(5, 11));
 
 		textAreaDescription = new JTextArea();
+		textAreaDescription.setLineWrap(true);
+		textAreaDescription.setWrapStyleWord(true);
 		textAreaDescription.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
 		panelEditMappings.add(textAreaDescription, new CellConstraints(5, 4, CellConstraints.FILL, CellConstraints.FILL));
 
@@ -155,7 +158,7 @@ public class MapConfigurationUI extends JPanel {
 					textAreaTitle.setText(textAreaTitle.getText() + 
 						Mapping.makeMapping(
 							Mapping.makeAttribute(
-								aliasName, 
+								rdfSchema.getOntologyClassName(), 
 								attributeName)));
 				}
 			}
@@ -181,7 +184,7 @@ public class MapConfigurationUI extends JPanel {
 					textAreaDescription.setText(textAreaDescription.getText() + 
 						Mapping.makeMapping(
 							Mapping.makeAttribute(
-								aliasName,
+								rdfSchema.getOntologyClassName(),
 								attributeName)));
 				}
 			}
@@ -236,8 +239,17 @@ public class MapConfigurationUI extends JPanel {
 		panelButtons.setFont(new Font("", Font.PLAIN, 16));
 		panelButtons.setBackground(Color.WHITE);
 		panelButtons.setLayout(new FormLayout(
-			"237dlu, 17dlu",
-			"19dlu"));
+			new ColumnSpec[] {
+				FormFactory.RELATED_GAP_COLSPEC,
+				ColumnSpec.decode("188dlu"),
+				ColumnSpec.decode("38dlu"),
+				ColumnSpec.decode("6dlu"),
+				ColumnSpec.decode("17dlu")},
+			new RowSpec[] {
+				RowSpec.decode("18dlu"),
+				FormFactory.RELATED_GAP_ROWSPEC,
+				RowSpec.decode("18dlu"),
+				FormFactory.RELATED_GAP_ROWSPEC}));
 		add(panelButtons, new CellConstraints(1, 3));
 
 		final JButton buttonSave = new JButton();
@@ -249,34 +261,47 @@ public class MapConfigurationUI extends JPanel {
 		buttonSave.setFont(new Font("Calibri", Font.BOLD, 16));
 		buttonSave.addActionListener(new ActionListener(){
 			@Override public void actionPerformed(ActionEvent e) {
-				
-				if(noAddressRadioButton.isSelected()){
-					controller.setMappings(
-							aliasName, 
-							textAreaTitle.getText(),
-							textAreaDescription.getText());
-				} else if(addressRadioButton.isSelected()){
-					controller.setMappings(
-							aliasName, 
-							textAreaTitle.getText(),
-							textAreaDescription.getText(),
-							(String)comboBoxGeoAddress.getSelectedItem());
-				} else if(latLonRadioButton.isSelected()){
-					controller.setMappings(
-							aliasName, 
-							textAreaTitle.getText(),
-							textAreaDescription.getText(),
-							(String)comboBoxGeoAddressLat.getSelectedItem(),
-							(String)comboBoxGeoAddressLon.getSelectedItem());
-				}
-								
+				Mapping mapping = makeMapping();
+				controller.setMapping(mapping);								
 				ownerUI.closePopupViewWindow();				
 			}			
 		});
-		panelButtons.add(buttonSave, new CellConstraints(2, 1, CellConstraints.FILL, CellConstraints.FILL));
+		panelButtons.add(buttonSave, new CellConstraints(5, 1, CellConstraints.FILL, CellConstraints.FILL));
+
+		ActionListener viewKmlActionListener = new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				OpenMapTask task = new OpenMapTask(ownerUI.getPopupViewWindow(), MapConfigurationUI.this, controller, adapter, rdfSchema, makeMapping());	
+				task.execute();
+			}	
+		};
+		
+		buttonView = new JButton();
+		buttonView.setText(EktooUITranslator.getMapConfigurationWindowLabelView());
+		buttonView.setContentAreaFilled(false);
+		buttonView.setBorder(new EmptyBorder(0, 0, 0, 0));
+		buttonView.setBorderPainted(false);
+		buttonView.setOpaque(false);
+		buttonView.setFont(new Font("Calibri", Font.BOLD, 16));
+		buttonView.addActionListener(viewKmlActionListener);
+		panelButtons.add(buttonView, new CellConstraints(3, 1, CellConstraints.FILL, CellConstraints.FILL));
+
+		final JTextArea labelComments = new JTextArea();
+		labelComments.setLineWrap(true);
+		labelComments.setWrapStyleWord(true);
+		labelComments.setFont(new Font("Calibri", Font.PLAIN, 10));
+		labelComments.setText(comments);	
+		panelButtons.add(labelComments, new CellConstraints(2, 3, CellConstraints.FILL, CellConstraints.BOTTOM));
+
+		labelStatus = new JTextArea();
+		labelStatus.setForeground(Color.GREEN);
+		labelStatus.setLineWrap(true);
+		labelStatus.setText("");
+		labelStatus.setWrapStyleWord(true);
+		labelStatus.setFont(new Font("Calibri", Font.PLAIN, 10));
+		panelButtons.add(labelStatus, new CellConstraints(2, 1, CellConstraints.FILL, CellConstraints.BOTTOM));
 
 	    ActionListener checkListener = new ActionListener(){
-
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				if(noAddressRadioButton.isSelected()){
@@ -286,17 +311,20 @@ public class MapConfigurationUI extends JPanel {
 					comboBoxGeoAddressLat.setEnabled(false);
 					comboBoxGeoAddressLon.setSelectedItem("");
 					comboBoxGeoAddressLon.setEnabled(false);
+					buttonView.setEnabled(false);
 				} else if(addressRadioButton.isSelected()){
 					comboBoxGeoAddressLat.setSelectedItem("");
 					comboBoxGeoAddressLat.setEnabled(false);
 					comboBoxGeoAddressLon.setSelectedItem("");
 					comboBoxGeoAddressLon.setEnabled(false);
 					
+					buttonView.setEnabled(adapter != null);
 					comboBoxGeoAddress.setEnabled(true);
 				}else if(latLonRadioButton.isSelected()){
 					comboBoxGeoAddress.setSelectedItem("");
 					comboBoxGeoAddress.setEnabled(false);
 
+					buttonView.setEnabled(adapter != null);
 					comboBoxGeoAddressLat.setEnabled(true);
 					comboBoxGeoAddressLon.setEnabled(true);
 				}
@@ -307,28 +335,41 @@ public class MapConfigurationUI extends JPanel {
 	    addressRadioButton.addActionListener(checkListener);
 	    latLonRadioButton.addActionListener(checkListener);
 		
-		this.initializeFromValues();
+		this.initializeFromValues(mapping);
 	}
 
-	public void initializeFromValues(){
+	public void initializeFromValues(Mapping mapping){
 		
-		comboBoxAttributeToTitle.setModel(new DefaultComboBoxModel(this.fieldValues.toArray()));
-		comboBoxAttributeToDescription.setModel(new DefaultComboBoxModel(this.fieldValues.toArray()));
+		TreeSet<String> propertyNames = new TreeSet<String>();		
+		int size = rdfSchema.getPropertyCount();
+		for (int i = 0; i < size; i++) {
+			propertyNames.add(rdfSchema.getPropertyName(i));
+		}
+		
+		comboBoxAttributeToTitle.setModel(new DefaultComboBoxModel(propertyNames.toArray()));
+		comboBoxAttributeToDescription.setModel(new DefaultComboBoxModel(propertyNames.toArray()));
 		
 		ArrayList<String> values = new ArrayList<String>();
 		values.add("");
-		values.addAll(this.fieldValues);
+		values.addAll(propertyNames);
 		
 		comboBoxGeoAddress.setModel(new DefaultComboBoxModel(values.toArray()));
 		comboBoxGeoAddressLat.setModel(new DefaultComboBoxModel(values.toArray()));
 		comboBoxGeoAddressLon.setModel(new DefaultComboBoxModel(values.toArray()));
 		
-		if(mappingResolver == null){
+		if(mapping == null){
 			textAreaTitle.setText("");
 			textAreaDescription.setText("");
+		
+			noAddressRadioButton.setSelected(true);
+			comboBoxGeoAddressLat.setEnabled(false);
+			comboBoxGeoAddressLon.setEnabled(false);
+			comboBoxGeoAddress.setEnabled(false);
+			buttonView.setEnabled(false);
+		
 		} else {
-			String title = mappingResolver.getMapping(ISyndicationFormat.MAPPING_NAME_ITEM_TITLE);
-			String description = mappingResolver.getMapping(ISyndicationFormat.MAPPING_NAME_ITEM_DESCRIPTION);
+			String title = mapping.getMapping(ISyndicationFormat.MAPPING_NAME_ITEM_TITLE);
+			String description = mapping.getMapping(ISyndicationFormat.MAPPING_NAME_ITEM_DESCRIPTION);
 			
 			if(title != null){
 				textAreaTitle.setText(title);
@@ -338,47 +379,103 @@ public class MapConfigurationUI extends JPanel {
 				textAreaDescription.setText(description);
 			}
 			
-			String geoLocMapping = mappingResolver.getAttribute(GeoCoderLocationPropertyResolver.MAPPING_NAME);
+			String geoLocMapping = mapping.getAttribute(GeoCoderLocationPropertyResolver.MAPPING_NAME);
 			if(geoLocMapping != null){
 				addressRadioButton.setSelected(true);
 				
 				String address =  GeoCoderLocationPropertyResolver.getPropertyName(geoLocMapping);
 	
-				if(address != null && address.startsWith(this.aliasName)){
-					address = address.substring(this.aliasName.length() + 1, address.length());
+				if(address != null && address.startsWith(rdfSchema.getOntologyClassName())){
+					address = address.substring(rdfSchema.getOntologyClassName().length() + 1, address.length());
 					comboBoxGeoAddress.setSelectedItem(address);
 				}
 				
 				comboBoxGeoAddressLat.setEnabled(false);
 				comboBoxGeoAddressLon.setEnabled(false);
+				buttonView.setEnabled(adapter != null);
 								
 			} else {
-				String geoLatMapping = mappingResolver.getAttribute(GeoCoderLatitudePropertyResolver.MAPPING_NAME);
-				String geoLonMapping = mappingResolver.getAttribute(GeoCoderLongitudePropertyResolver.MAPPING_NAME);
+				String geoLatMapping = mapping.getAttribute(GeoCoderLatitudePropertyResolver.MAPPING_NAME);
+				String geoLonMapping = mapping.getAttribute(GeoCoderLongitudePropertyResolver.MAPPING_NAME);
 				if(geoLatMapping != null || geoLonMapping != null){
 					latLonRadioButton.setSelected(true);
 					
 					String latAttribute =  GeoCoderLatitudePropertyResolver.getPropertyName(geoLatMapping);		
-					if(latAttribute != null && latAttribute.startsWith(this.aliasName)){
-						latAttribute = latAttribute.substring(this.aliasName.length() + 1, latAttribute.length());
+					if(latAttribute != null && latAttribute.startsWith(rdfSchema.getOntologyClassName())){
+						latAttribute = latAttribute.substring(rdfSchema.getOntologyClassName().length() + 1, latAttribute.length());
 						comboBoxGeoAddressLat.setSelectedItem(latAttribute);
 					}
 					
 					String lonAttribute =  GeoCoderLongitudePropertyResolver.getPropertyName(geoLonMapping);		
-					if(lonAttribute != null && lonAttribute.startsWith(this.aliasName)){
-						lonAttribute = lonAttribute.substring(this.aliasName.length() + 1, lonAttribute.length());
+					if(lonAttribute != null && lonAttribute.startsWith(rdfSchema.getOntologyClassName())){
+						lonAttribute = lonAttribute.substring(rdfSchema.getOntologyClassName().length() + 1, lonAttribute.length());
 						comboBoxGeoAddressLon.setSelectedItem(lonAttribute);
 					}
 							
 					comboBoxGeoAddress.setEnabled(false);
+					buttonView.setEnabled(adapter != null);
 				} else {
 					noAddressRadioButton.setSelected(true);
 					comboBoxGeoAddressLat.setEnabled(false);
 					comboBoxGeoAddressLon.setEnabled(false);
 					comboBoxGeoAddress.setEnabled(false);
+					buttonView.setEnabled(false);
 				}
 			}
 			 
 		} 
 	}
+	
+	private Mapping makeMapping() {
+		String title = textAreaTitle.getText();
+		String desc = textAreaDescription.getText();
+		if(title == null || title.isEmpty() || desc == null || desc.isEmpty()){
+			return null;
+		}
+		
+		if(noAddressRadioButton.isSelected()){
+			return controller.makeMapping(
+					rdfSchema.getOntologyClassName(), 
+					title,
+					desc);
+		} else if(addressRadioButton.isSelected()){
+			String address = (String)comboBoxGeoAddress.getSelectedItem();
+			if(address == null || address.isEmpty()){
+				return null;
+			}
+			return controller.makeMapping(
+					rdfSchema.getOntologyClassName(), 
+					title,
+					desc,
+					address);
+		} else if(latLonRadioButton.isSelected()){
+			String lat = (String)comboBoxGeoAddressLat.getSelectedItem();
+			String lon = (String)comboBoxGeoAddressLon.getSelectedItem();
+			if(lat == null || lat.isEmpty() || lon == null || lon.isEmpty()){
+				return null;
+			}
+			return controller.makeMapping(
+					rdfSchema.getOntologyClassName(), 
+					title,
+					desc,
+					lat,
+					lon);
+		} else {
+			return null;
+		}
+	}
+	
+	// IMapTaskListener
+	
+	@Override
+	public void notifyProgress(String msg){
+		labelStatus.setForeground(Color.black);
+		labelStatus.setText(msg);
+	}
+
+	@Override
+	public void notifyError(String error) {
+		labelStatus.setForeground(Color.red);
+		labelStatus.setText(error);
+	}	
 }
