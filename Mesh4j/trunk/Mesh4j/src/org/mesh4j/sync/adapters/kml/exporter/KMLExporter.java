@@ -9,10 +9,14 @@ import org.dom4j.Element;
 import org.mesh4j.geo.coder.GeoCoderLatitudePropertyResolver;
 import org.mesh4j.geo.coder.GeoCoderLocationPropertyResolver;
 import org.mesh4j.geo.coder.GeoCoderLongitudePropertyResolver;
+import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
+import org.mesh4j.sync.adapters.http.HttpSyncAdapter;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.payload.mappings.IMapping;
+import org.mesh4j.sync.payload.mappings.Mapping;
 import org.mesh4j.sync.payload.schema.ISchema;
+import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.utils.FileUtils;
 import org.mesh4j.sync.validations.MeshException;
 
@@ -36,7 +40,9 @@ public class KMLExporter {
 				element = schema.asInstancePlainXML(item.getContent().getPayload(), ISchema.EMPTY_FORMATS);
 			}
 			String xml = makePlacemark(element, mapping);
-			sb.append(xml);
+			if(xml != null){
+				sb.append(xml);
+			}
 		}
 		sb.append("</Document></kml>");
 		return sb.toString();
@@ -65,6 +71,17 @@ public class KMLExporter {
 			LOGGER.error(e.getMessage(), e);
 		}
 		return null;
+	}
+
+	public static void export(String fileName, ISyncAdapter adapter, IRDFSchema rdfSchema, Mapping mappings) throws Exception {
+		if(adapter instanceof HttpSyncAdapter){
+			String template = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><kml xmlns=\"http://earth.google.com/kml/2.2\"><Document><name>{0}</name><open>1</open><NetworkLink><name>{0}</name><visibility>0</visibility><open>0</open><refreshVisibility>0</refreshVisibility><flyToView>0</flyToView><Link><href>{1}</href></Link></NetworkLink></Document></kml>";
+			String url = HttpSyncAdapter.makeKmlURL((((HttpSyncAdapter)adapter).getURL()));
+			FileUtils.write(fileName, MessageFormat.format(template, rdfSchema.getOntologyClassName(), url).getBytes());
+		} else {
+			export(fileName, rdfSchema.getOntologyClassName(), adapter.getAll(), rdfSchema, mappings);
+		}
+		
 	}
 
 }

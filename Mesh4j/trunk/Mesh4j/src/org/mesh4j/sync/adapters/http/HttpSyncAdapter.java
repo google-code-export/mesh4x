@@ -413,6 +413,10 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 		return addSubdomain(url, "add");
 	}
 	
+	public static String makeKmlURL(String url) {
+		return addQueryParamater(url, "format=kml");
+	}
+	
 	public static String makeGetURL(String url, String conditionExpression) {
 		if(conditionExpression == null || conditionExpression.length() == 0){
 			return url;
@@ -574,4 +578,5 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 	public String getURL() {
 		return this.url.toExternalForm();
 	}
+
 }
