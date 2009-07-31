@@ -64,7 +64,7 @@ http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_12.png
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_13.png
 
-==10. Open the Map window inside the Target section, all fields will be fill with the Map configuration saved previously in the cloud==
+==10. Open the Map window inside the Target section, all fields will be fill with the configuration map saved previously in the cloud==
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_16.png
 
