@@ -5,13 +5,19 @@ Tools and products build with Mesh4x.
 
 == Library ==
 
-  * Download [http://downloads.instedd.org/mesh4x/mesh4j_2_0_0.jar Jar] [http://downloads.instedd.org/mesh4x/mesh4j_2_0_0.jar http://mesh4x.googlecode.com/svn/wiki/files/download.png]
-  * Download [http://downloads.instedd.org/mesh4x/mesh4j_2_0_0.zip Jar with Dependencies] [http://downloads.instedd.org/mesh4x/mesh4j_2_0_0.zip http://mesh4x.googlecode.com/svn/wiki/files/download.png]
+  * Download [http://downloads.instedd.org/mesh4x/mesh4j_2_0_1.jar Jar] [http://downloads.instedd.org/mesh4x/mesh4j_2_0_1.jar http://mesh4x.googlecode.com/svn/wiki/files/download.png]
+  * Download [http://downloads.instedd.org/mesh4x/mesh4j_2_0_1.zip Jar with Dependencies] [http://downloads.instedd.org/mesh4x/mesh4j_2_0_1.zip http://mesh4x.googlecode.com/svn/wiki/files/download.png]
+
+  Uploaded: 2009-07-31 13:10 PM
+
+  SVN Tag: [http://code.google.com/p/mesh4x/source/browse#svn/Mesh4j/tags/Mesh4x_2_0_1 Mesh4x_2_0_1]
+
+Previous release: 
+
+
+  * Download [http://downloads.instedd.org/mesh4x/mesh4j_2_0_0.jar Jar version 2_0_0]
 
   Uploaded: 2009-07-27 14:22 PM
-
-  SVN Tag: [http://code.google.com/p/mesh4x/source/browse#svn/Mesh4j/tags/Mesh4x_2_0_0 Mesh4x_2_0_0]
-
 
 == APPLICATIONS == 
 
@@ -19,12 +25,17 @@ Tools and products build with Mesh4x.
 
    Ektoo client is a tool to synchronize all data sources supported by mesh4x. View Ektoo client users guide [http://code.google.com/p/mesh4x/wiki/HowToUseEktooClient HowToUseEktooClient]
 
+   Download Ektoo client [http://downloads.instedd.org/mesh4x/ektoo_2_0_1.zip http://mesh4x.googlecode.com/svn/wiki/files/download.png]
+
+   Uploaded: 2009-07-31 13:10 PM
+
+   SVN Tag: [http://code.google.com/p/mesh4x/source/browse#svn/Mesh4j/tags/Mesh4x_2_0_1 Mesh4x_2_0_1]
+
+Previous release:
+
    Download Ektoo client [http://downloads.instedd.org/mesh4x/ektoo_2_0_0.zip http://mesh4x.googlecode.com/svn/wiki/files/download.png]
 
    Uploaded: 2009-07-27 14:22 PM
-
-   SVN Tag: [http://code.google.com/p/mesh4x/source/browse#svn/Mesh4j/tags/Mesh4x_2_0_0 Mesh4x_2_0_0]
-
  
  ===2. Mobile Client ===
 
