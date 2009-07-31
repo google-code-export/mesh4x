@@ -4,43 +4,47 @@ How to generate KML files in Ektoo client and SyncServer
 = Introduction =
 The followind step by step procedure depict how we can generate kml files with mesh4x.
 
-==1. Suppose a MsAccess file with the following data:
+== 1. Suppose a MsAccess file with the following data:
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_18.png
 
-==2. Open Ektoo client and complete source and target data sources 
+== 2. Open Ektoo client and complete source and target data sources 
+
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_1.png
 
-==3. Open map window
+== 3. Open map window
+
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_2.png
 
-==4. Complete title, description fields
+== 4. Complete title, description fields. 
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_3.png
 
-Write a text
+Choose a property name from the combo box
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_4.png
 
-Choose a property name from the combo box and add to title field
+Click add button to add this property name to the field
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_5.png
 
-http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_6.png
+Automatically variable name '{MyTable/Name}' was added, mesh4x use this variable to replace the value when generate the kml file
 
-http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_7.png
+http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_6.png
 
 ==5. Complete Map lat/lon
 
 For no map your data choose the following option:
 
-http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_8.png
+http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_7.png
 
 If you have a address property choose the following option, mesh4x translate it to lat/lon coordinates:
 
-http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_9.png
+http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_8.png
 
 If you have lat/lon coordinates choose the following option:
+
+http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_9.png
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_10.png
 
