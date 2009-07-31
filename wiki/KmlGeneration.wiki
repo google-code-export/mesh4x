@@ -3,6 +3,8 @@
 
 = Introduction =
 
+http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_18.png
+
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_1.png
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_2.png
@@ -29,14 +31,12 @@ http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_12.png
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_13.png
 
-http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_14.png
-
-http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_15.png
-
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_16.png
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_17.png
 
-http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_18.png
+http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_14.png
+
+http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_15.png
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_19.png
