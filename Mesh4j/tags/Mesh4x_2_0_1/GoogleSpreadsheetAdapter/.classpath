@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="test"/>
+	<classpathentry kind="lib" path="etc"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="lib/activation.jar"/>
+	<classpathentry kind="lib" path="lib/commons-logging-1.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/dom4j-1.6.1.jar"/>
+	<classpathentry kind="lib" path="lib/gdata-client-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/gdata-client-meta-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/gdata-core-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/gdata-docs-2.0.jar"/>
+	<classpathentry kind="lib" path="lib/gdata-docs-meta-2.0.jar"/>
+	<classpathentry kind="lib" path="lib/gdata-media-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/gdata-spreadsheet-2.0.jar"/>
+	<classpathentry kind="lib" path="lib/gdata-spreadsheet-meta-2.0.jar"/>
+	<classpathentry kind="lib" path="lib/icu4j_3_4.jar"/>
+	<classpathentry kind="lib" path="lib/iri.jar"/>
+	<classpathentry kind="lib" path="lib/jaxen-1.1-beta-7.jar"/>
+	<classpathentry kind="lib" path="lib/jena.jar"/>
+	<classpathentry kind="lib" path="lib/mail.jar"/>
+	<classpathentry kind="lib" path="/Mesh4j/lib/jakarta-poi/ooxml-schemas-1.0.jar"/>
+	<classpathentry kind="lib" path="/Mesh4j/lib/jakarta-poi/poi-3.5-beta5-20090219.jar" sourcepath="E:/Clarius/java/poi-src-3.5-beta5-20090219.zip"/>
+	<classpathentry kind="lib" path="/Mesh4j/lib/jakarta-poi/poi-contrib-3.5-beta5-20090219.jar"/>
+	<classpathentry kind="lib" path="/Mesh4j/lib/jakarta-poi/poi-ooxml-3.5-beta5-20090219.jar" sourcepath="E:/Clarius/java/poi-src-3.5-beta5-20090219.zip"/>
+	<classpathentry kind="lib" path="/Mesh4j/lib/jakarta-poi/poi-scratchpad-3.5-beta5-20090219.jar"/>
+	<classpathentry kind="lib" path="/Mesh4j/lib/jakarta-poi/xmlbeans-2.3.0.jar"/>
+	<classpathentry kind="lib" path="lib/xercesImpl.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Mesh4j"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
