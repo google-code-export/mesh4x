@@ -16,7 +16,7 @@ http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_1.png
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_2.png
 
-==4. Complete the title and the description fields ==
+==4. Complete the title and description fields ==
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_3.png
 
@@ -28,7 +28,7 @@ Click the 'add' button to add this property name to the field
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_5.png
 
-Variable '{MyTable/Name}' was added automatically. When mesh4x generate a kml file for each row it will generate a placemark. In that placemark the title will be replace the variable '{MyTable/Name}' with the row value of the property 'name'.
+Variable '{MyTable/Name}' was added automatically. When mesh4x generate a kml file for each row it generate a placemark. In that placemark the title replace the variable '{MyTable/Name}' with the row value of the property 'name'.
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_6.png
 
