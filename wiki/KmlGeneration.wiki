@@ -24,7 +24,7 @@ Choose a property name from the combo box
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_4.png
 
-Click the 'add' button to add this property name to the field
+Click the button 'add' to add this property name to the field
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_5.png
 
@@ -46,16 +46,16 @@ If the data has a lat/lon coordinates choose the following option:
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_9.png
 
-==6. Click the 'view kml' button to generate the kml file and open Google Earth ==
+==6. Click the button 'view kml' to generate the kml file and open Google Earth ==
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_10.png
 
-==7. Go to Ektoo client and press 'open Map window' button in the Target section==
+==7. Go to Ektoo client and click the button 'open Map window' in the Target section==
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_11.png
 
 ==8. Because of the Meshgroup/Dataset does not exist in the cloud all fields will be fill with the values set previously in the source section==
-Click the button 'save' to accept the map configuration.
+Click the button 'save' to accept the configuration map.
 Button 'view kml' is disabled because the data is new in the cloud 
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_12.png
@@ -64,7 +64,7 @@ http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_12.png
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_13.png
 
-==10. Open the Map window inside the Target section, all fields will be fill with the Map configuration saved prevously in the cloud==
+==10. Open the Map window inside the Target section, all fields will be fill with the Map configuration saved previously in the cloud==
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_16.png
 
