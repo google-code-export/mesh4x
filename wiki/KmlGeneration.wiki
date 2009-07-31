@@ -38,11 +38,11 @@ For no map your data choose the following option:
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_7.png
 
-If you have a address property choose the following option, mesh4x translate it to lat/lon coordinates:
+If data has an address property choose the option 'the data has an address field', mesh4x translate it to a lat/lon coordinates. When the property is setted Button 'View KML' is enabled.
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_8.png
 
-If you have lat/lon coordinates choose the following option:
+If data has a lat/lon coordinates choose the following option:
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_9.png
 
@@ -50,14 +50,20 @@ http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_9.png
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_10.png
 
-==7. 
+==7. Go to Ektoo client and press open Map window in Target sector
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_11.png
 
+==8. How the Meshgroup/Dataset does not exist in SyncServer all fields are filled with the values setted previously in source sector.
+Click 'save' button to store the map configuration
+
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_12.png
+
+==9. Click 'Synchronize' button to create meshGroup/dataset in syncServer and synchronize data to the cloud, store rdf schema and mappings
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_13.png
 
+==10.
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_16.png
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_17.png
