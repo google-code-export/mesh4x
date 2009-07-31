@@ -68,14 +68,17 @@ Previous version:
    FeedSync server. Supports different types of feed repositories (S3, file).
    For more information see [FeedSyncRESTfulServer Mesh4x FeedSync RESTfull Server]
 
+   Download [http://downloads.instedd.org/mesh4x/mesh4x_war_2_0_1.zip FeedSync server (war)] [http://downloads.instedd.org/mesh4x/mesh4x_2_0_1.zip http://mesh4x.googlecode.com/svn/wiki/files/download.png]
 
-   Download [http://downloads.instedd.org/mesh4x/mesh4x_war_2_0_0.zip FeedSync server (war)] [http://downloads.instedd.org/mesh4x/mesh4x_2_0_0.zip http://mesh4x.googlecode.com/svn/wiki/files/download.png]
+   Uploaded: 2009-07-31 13:10 PM
+
+   SVN Tag: [http://code.google.com/p/mesh4x/source/browse#svn/Mesh4j/tags/Mesh4x_2_0_1 Mesh4x_2_0_1]
+ 
+Previous release:
+
+   Download [http://downloads.instedd.org/mesh4x/mesh4x_war_2_0_0.zip FeedSync server (war) version 2_0_0] [http://downloads.instedd.org/mesh4x/mesh4x_2_0_0.zip http://mesh4x.googlecode.com/svn/wiki/files/download.png]
 
    Uploaded: 2009-07-27 14:22 PM
-
-   SVN Tag: [http://code.google.com/p/mesh4x/source/browse#svn/Mesh4j/tags/Mesh4x_2_0_0 Mesh4x_2_0_0]
- 
- 
  
  ===5. Kml Exhange ===
 
