@@ -2,21 +2,21 @@
 How to generate KML files in Ektoo client and SyncServer
 
 = Introduction =
-The followind step by step procedure depict how we can generate kml files with mesh4x.
+The following step by step procedure describe how we can generate kml files with mesh4x.
 
 ==1. Suppose a MsAccess file with the following data: ==
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_18.png
 
-==2. Open Ektoo client and complete source and target data sources ==
+==2. Open Ektoo client and complete the source and target section ==
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_1.png
 
-==3. Open map window ==
+==3. Open the map window ==
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_2.png
 
-==4. Complete title and description fields ==
+==4. Complete the title and the description fields ==
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_3.png
 
@@ -24,21 +24,21 @@ Choose a property name from the combo box
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_4.png
 
-Click add button to add this property name to the field
+Click the 'add' button to add this property name to the field
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_5.png
 
-Automatically variable name '{MyTable/Name}' was added, mesh4x use this variable to replace the value when generate the kml file
+Variable '{MyTable/Name}' was added automatically. When mesh4x generate a kml file for each row it will generate a placemark. In that placemark the title will be replace the variable '{MyTable/Name}' with the row value of the property 'name'.
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_6.png
 
-==5. Complete Map lat/lon ==
+==5. Complete the Map lat/lon ==
 
 For no map your data choose the following option:
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_7.png
 
-If data has an address property choose the option 'the data has an address field', mesh4x translate it to a lat/lon coordinates. When the property is setted Button 'View KML' is enabled.
+If data has an address property choose the option 'the data has an address field', mesh4x will translate it to a lat/lon coordinates. When the property is set the Button 'view kml' will be enable.
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_8.png
 
@@ -46,25 +46,25 @@ If data has a lat/lon coordinates choose the following option:
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_9.png
 
-==6. Click 'View KML' button to generate kml file and open Google Earth ==
+==6. Click the 'view kml' button to generate the kml file and open Google Earth ==
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_10.png
 
-==7. Go to Ektoo client and press open Map window in Target section==
+==7. Go to Ektoo client and press 'open Map window' button in the Target section==
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_11.png
 
-==8. How the Meshgroup/Dataset does not exist in SyncServer all fields are filled with the values setted previously in source section==
-Click 'save' button to accepts the map configuration.
-Button 'view kml' is disabled because teh data is new in the cloud 
+==8. Because of the Meshgroup/Dataset does not exist in the cloud all fields will be fill with the values setted previously in the source section==
+Click 'save' button to accept the map configuration.
+Button 'view kml' is disable because the data is new in the cloud 
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_12.png
 
-==9. Click 'Synchronize' button to create meshGroup/dataset in syncServer and synchronize data to the cloud, this action store rdf schema and mappings in the cloud==
+==9. Click the 'Synchronize' button to create meshGroup/dataset in the cloud and synchronize the data into the cloud, this action will store the rdf schema and mappings too==
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_13.png
 
-==10. Open Map window in the Target section, all fields are filled with the Map configuration saved in the cloud==
+==10. Open the Map window inside the Target section, all fields will be fill with the Map configuration saved prevoously in the cloud==
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_16.png
 
@@ -72,7 +72,7 @@ http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_16.png
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_17.png
 
-==12. Check the data in the cloud, Map configuration title and description is used to complete feed title and description==
+==12. Check the data in the cloud. Map configuration title and description is used to complete the feed title and description==
 
 http://mesh4x.googlecode.com/svn/wiki/files/mesh4x_kml_ektoo_14.png
 
