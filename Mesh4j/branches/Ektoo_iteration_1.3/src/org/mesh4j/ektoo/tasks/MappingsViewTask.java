@@ -2,19 +2,19 @@ package org.mesh4j.ektoo.tasks;
 
 import java.awt.Cursor;
 import java.util.List;
-import java.util.TreeSet;
 
 import javax.swing.SwingWorker;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.mesh4j.ektoo.controller.CloudUIController;
+import org.mesh4j.ektoo.Event;
+import org.mesh4j.ektoo.controller.AbstractUIController;
 import org.mesh4j.ektoo.ui.EktooFrame;
 import org.mesh4j.ektoo.ui.MapConfigurationUI;
-import org.mesh4j.ektoo.ui.SyncItemUI;
 import org.mesh4j.ektoo.ui.component.messagedialog.MessageDialog;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.sync.ISyncAdapter;
+import org.mesh4j.sync.adapters.http.HttpSyncAdapter;
 import org.mesh4j.sync.payload.mappings.Mapping;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 
@@ -22,31 +22,57 @@ public class MappingsViewTask extends SwingWorker<String, Void>{
 
 	private final static Log LOGGER = LogFactory.getLog(MappingsViewTask.class);
 	private EktooFrame ui;
-	private CloudUIController controller;
+	private AbstractUIController controller;
+	private boolean useSourceRDF = false;
 	
-	public MappingsViewTask(EktooFrame ui, CloudUIController controller){
+	public MappingsViewTask(EktooFrame ui, AbstractUIController controller, boolean useSourceRDF){
 		this.ui = ui;
 		this.controller = controller;
+		this.useSourceRDF = useSourceRDF;
 	}
 	
 	@Override
 	protected String doInBackground() throws Exception {
 		ui.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 		try{
-			SyncItemUI itemUI = ui.getSourceItem();
-			ISyncAdapter adapter = itemUI.createAdapter();
-			List<IRDFSchema> schemas = itemUI.fetchSchema(adapter);
-			if(schemas != null){
-				TreeSet<String> propertyNames = new TreeSet<String>();
-				
-				IRDFSchema rdfSchema = schemas.get(0);
-				int size = rdfSchema.getPropertyCount();
-				for (int i = 0; i < size; i++) {
-					propertyNames.add(rdfSchema.getPropertyName(i));
+			List<IRDFSchema> schemas = null;
+			Mapping mapping = null;
+			
+			controller.setCurrentEvent(Event.mappings_view_event);
+			
+			String comments = "";
+			ISyncAdapter syncAdapter = controller.createAdapter();
+			if(syncAdapter instanceof HttpSyncAdapter){
+				String url = HttpSyncAdapter.makeKmlURL((((HttpSyncAdapter)syncAdapter).getURL()));
+				comments = EktooUITranslator.getMessageURLFroMapAvailable(url);
+			}
+			
+			ISyncAdapter adapter = syncAdapter;
+			
+			schemas = controller.fetchSchema(adapter);
+			mapping = controller.getMapping();
+			
+			if(schemas == null){
+				if(useSourceRDF){
+					AbstractUIController sourceController = ui.getSourceItem().getCurrentController();
+					if(sourceController != controller){
+						sourceController.setCurrentEvent(Event.mappings_view_event);
+						
+						syncAdapter = null;
+						adapter = sourceController.createAdapter();
+						schemas = sourceController.fetchSchema(adapter);
+						
+						if(mapping == null){
+							mapping = sourceController.getMapping();
+						}
+					}
 				}
-				
-				Mapping mapping = controller.getMappings();
-				showSchemaInPopup(new MapConfigurationUI(this.ui, this.controller, rdfSchema.getOntologyClassName(), propertyNames, mapping));
+			} 
+			
+			
+			if(schemas != null){
+				IRDFSchema rdfSchema = schemas.get(0);
+				showSchemaInPopup(new MapConfigurationUI(this.ui, this.controller, rdfSchema, mapping, syncAdapter, comments));
 			}
 		} catch(Throwable t){
 			LOGGER.error(t.getMessage(), t);
@@ -54,6 +80,7 @@ public class MappingsViewTask extends SwingWorker<String, Void>{
 		}
 		return null;
 	}
+	
 	@Override
 	public void done(){
 		ui.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));

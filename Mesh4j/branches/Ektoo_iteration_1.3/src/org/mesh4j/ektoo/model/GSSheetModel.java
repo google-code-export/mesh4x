@@ -3,17 +3,11 @@ package org.mesh4j.ektoo.model;
 import org.mesh4j.ektoo.controller.GSSheetUIController;
 import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadsheet;
 
-/**
- * @author Bhuiyan Mohammad Iklash
- * 
- */
-public class GSSheetModel extends AbstractModel 
-{
+public class GSSheetModel extends AbstractModel {
 	
 	// MODEL VARIABLES
 	private String userName = null;
 	private String userPassword = null;
-//	private String spreadsheetKey = null;
 	private String spreadsheetName = null;
 	private String worksheetName = null;
 	private GoogleSpreadsheet gSpreadsheet;
@@ -85,8 +79,14 @@ public class GSSheetModel extends AbstractModel
 				this.gSpreadsheet = spreadsheet);
 	}	
 	
-  public String toString()
-  {
+	@Override
+	protected void fireEmptyMappingForPropertyChange(String propertyName) {
+		if(!GSSheetUIController.UNIQUE_COLUMN_NAME_PROPERTY.equals(propertyName)){
+			super.fireEmptyMappingForPropertyChange(propertyName);
+		}
+	}
+	
+  public String toString(){
     return "Cloud | " + getSpreadsheetName() + " | " + getWorksheetName() ; 
   } 	
 }

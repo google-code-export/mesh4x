@@ -9,6 +9,7 @@ public abstract class AbstractSettingsUI extends AbstractUI{
 	private static final long serialVersionUID = 7143956982836271424L;
 
 	public AbstractSettingsUI(AbstractSettingsController controller){
+		super(controller);
 	}
 	
 

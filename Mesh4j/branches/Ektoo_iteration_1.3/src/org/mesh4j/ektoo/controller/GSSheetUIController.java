@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.mesh4j.ektoo.GoogleSpreadSheetInfo;
-import org.mesh4j.ektoo.SyncAdapterBuilder;
 import org.mesh4j.ektoo.model.GSSheetModel;
 import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.ektoo.ui.EktooFrame;
@@ -15,7 +14,6 @@ import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadsheet;
 import org.mesh4j.sync.adapters.googlespreadsheet.IGoogleSpreadSheet;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
-import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
 public class GSSheetUIController extends AbstractUIController {
@@ -27,15 +25,9 @@ public class GSSheetUIController extends AbstractUIController {
 	public static final String UNIQUE_COLUMN_NAME_PROPERTY = "UniqueColumnNames";
 	public static final String GOOGLE_SPREADSHEET_PROPERTY = "GSpreadsheet";
 
-	// MODEL VARIABLES
-	private SyncAdapterBuilder adapterBuilder;
-
 	// BUSINESS METHODS
 	public GSSheetUIController(PropertiesProvider propertiesProvider, boolean acceptsCreateDataset) {
-		super(acceptsCreateDataset);
-		
-		Guard.argumentNotNull(propertiesProvider, "propertiesProvider");
-		this.adapterBuilder = new SyncAdapterBuilder(propertiesProvider);
+		super(propertiesProvider, acceptsCreateDataset);
 	}
 
 	public void changeUserName(String userName) {
@@ -89,7 +81,7 @@ public class GSSheetUIController extends AbstractUIController {
 				model.getWorksheetName(), model.getWorksheetName());
 		
 //		return adapterBuilder.createRdfBasedGoogleSpreadSheetAdapter(spreadSheetInfo, rdfSchema);
-		return adapterBuilder.createRdfBasedGoogleSpreadSheetAdapter(spreadSheetInfo, model.getGSpreadsheet(), null);
+		return getAdapterBuilder().createRdfBasedGoogleSpreadSheetAdapter(spreadSheetInfo, model.getGSpreadsheet(), null);
 	}
 
 	@Override
@@ -131,6 +123,6 @@ public class GSSheetUIController extends AbstractUIController {
 				model.getSpreadsheetName(), model.getUserName(), 
 				model.getUserPassword(), uniqueColumnNames, worksheetName, worksheetName);
 		
-		return adapterBuilder.createRdfBasedGoogleSpreadSheetAdapter(spreadSheetInfo, rdfSchema);
+		return getAdapterBuilder().createRdfBasedGoogleSpreadSheetAdapter(spreadSheetInfo, rdfSchema);
 	}
 }

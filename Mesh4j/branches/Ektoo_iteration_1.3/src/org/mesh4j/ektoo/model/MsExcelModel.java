@@ -2,10 +2,6 @@ package org.mesh4j.ektoo.model;
 
 import org.mesh4j.ektoo.controller.MsExcelUIController;
 
-/**
- * @author Bhuiyan Mohammad Iklash
- * 
- */
 public class MsExcelModel extends AbstractModel {
 	
 	// MODEL VARIABLES
@@ -40,6 +36,13 @@ public class MsExcelModel extends AbstractModel {
 		firePropertyChange(MsExcelUIController.UNIQUE_COLUMN_NAME_PROPERTY, this.uniqueColumnName, this.uniqueColumnName = uniqueColumnName);
 	}
 
+	@Override
+	protected void fireEmptyMappingForPropertyChange(String propertyName) {
+		if(!MsExcelUIController.UNIQUE_COLUMN_NAME_PROPERTY.equals(propertyName)){
+			super.fireEmptyMappingForPropertyChange(propertyName);
+		}
+	}
+	
 	public String getUniqueColumnName() {
 		return uniqueColumnName;
 	}

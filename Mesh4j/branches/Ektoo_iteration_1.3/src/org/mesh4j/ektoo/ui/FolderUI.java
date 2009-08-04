@@ -35,16 +35,12 @@ public class FolderUI extends AbstractUI {
 	private JLabel labelFileName = null;
 	private JTextField txtFileName = null;
 	private JButton btnFile = null;
-//	private JButton btnView = null;
 
-	private FolderUIController controller;
 	private JFileChooser fileChooser = null;
 
 	// BUSINESS METHODS
 	public FolderUI(String fileName, FolderUIController controller) {
-		super();
-		this.controller = controller;
-		this.controller.addView(this);
+		super(controller);
 		this.initialize();
 		this.txtFileName.setText(fileName);
 		this.txtFileName.setToolTipText(fileName);
@@ -129,7 +125,7 @@ public class FolderUI extends AbstractUI {
 	}
 	
 	public FolderUIController getController() {
-		return controller;
+		return (FolderUIController)controller;
 	}
 
 	public JFileChooser getFileChooser() {

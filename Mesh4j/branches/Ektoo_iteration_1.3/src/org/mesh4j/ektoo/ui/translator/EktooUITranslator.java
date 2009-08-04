@@ -645,9 +645,28 @@ public class EktooUITranslator {
 		return EktooMessageTranslator.translate("EKTOO_MAP_CFG_TOOLTIP_VIEW_MAPPINGS");
 	}
 
+	public static String getMapConfigurationWindowLabelView() {
+		return EktooMessageTranslator.translate("EKTOO_MAP_CFG_LABEL_VIEW");
+	}
+
+	public static String getMessageURLFroMapAvailable(String url) {
+		return EktooMessageTranslator.translate("EKTOO_MAP_CFG_MESSAGE_MAP_URL", url);
+	}
+	
 	public static String getEktooSettingsWindowsTitle() {
 		return EktooMessageTranslator.translate("EKTOO_SETTINGS_WINDOWS_TITLE");
 	}
-	
+
+	public static String getMapConfigurationMessageKMLFileGeneration() {
+		return EktooMessageTranslator.translate("EKTOO_MAP_CFG_MESSAGE_KML_FILE_GENERATION");
+	}
+
+	public static String getMapConfigurationMessageOpenKMLFile() {
+		return EktooMessageTranslator.translate("EKTOO_MAP_CFG_MESSAGE_KML_FILE_OPEN");
+	}
+
+	public static String getMapConfigurationErrorRequiredFields() {
+		return EktooMessageTranslator.translate("EKTOO_MAP_CFG_MESSAGE_KML_REQUIRED_FIELDS");
+	}
 	
 }

@@ -348,11 +348,11 @@ public class SyncItemUI extends JPanel implements IUIController {
 			if(EktooFrame.multiModeSync){				
 				getCloudUI().getDataSetLabel().setVisible(false);
 				getCloudUI().getDataSetText().setVisible(false);
-				getCloudUI().getSchemaButton().setVisible(false);
+				getCloudUI().getSchemaViewButton().setVisible(false);
 			}else{
 				getCloudUI().getDataSetLabel().setVisible(true);
 				getCloudUI().getDataSetText().setVisible(true);
-				getCloudUI().getSchemaButton().setVisible(true);
+				getCloudUI().getSchemaViewButton().setVisible(true);
 			}			
 			cl.show(body, CLOUD_PANEL);
 		} else if (item.equals(MYSQL_PANEL)) {

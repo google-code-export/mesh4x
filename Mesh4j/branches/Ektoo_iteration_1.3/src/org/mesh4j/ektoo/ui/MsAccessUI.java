@@ -30,7 +30,6 @@ import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.controller.MsAccessUIController;
 import org.mesh4j.ektoo.tasks.IErrorListener;
 import org.mesh4j.ektoo.tasks.OpenFileTask;
-import org.mesh4j.ektoo.tasks.SchemaViewTask;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.ektoo.ui.validator.MsAccessUIValidator;
 import org.mesh4j.sync.adapters.hibernate.msaccess.MsAccessHibernateSyncAdapterFactory;
@@ -49,23 +48,15 @@ public class MsAccessUI extends AbstractUI{
 	private JTextField txtFileName = null;
 
 	private JLabel labelTable = null;
-	//private JComboBox listTable = null;
 	private JList listTable = null;
 	private JScrollPane listTableScroller =null;
 	
 	private JButton btnFile = null;
-//	private JButton btnView = null;
-	
-	private MsAccessUIController controller;
 
 	// BUSINESS METHODS
 	public MsAccessUI(String fileName, MsAccessUIController controller) {
-		super();
+		super(controller);
 		initialize();
-		
-		this.controller = controller;
-		this.controller.addView(this);
-
 		this.getFileChooser().setAcceptAllFileFilterUsed(false);
 		this.getFileChooser().setFileFilter(
 				new FileNameExtensionFilter(EktooUITranslator
@@ -89,19 +80,7 @@ public class MsAccessUI extends AbstractUI{
 		this.add(getListTableScroller(), null);
 		this.add(getMessagesText(), null);
 		this.add(getSchemaViewButton(), null);
-	}
-
-
-	private JButton getSchemaViewButton(){
-		getSchemaButton().addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				EktooFrame ektooFrame = ((EktooFrame)MsAccessUI.this.getRootFrame());
-				SchemaViewTask task = new SchemaViewTask(ektooFrame, MsAccessUI.this.controller, ektooFrame);
-				task.execute();
-			}
-		});
-		return getSchemaButton(); 
+		this.add(getMappingsButton());
 	}
 	
 	public void setList(String fileName) {
@@ -119,7 +98,7 @@ public class MsAccessUI extends AbstractUI{
 			} else {
 				((SyncItemUI)this.getParent().getParent()).openErrorPopUp(EktooUITranslator.getErrorImpossibleToOpenFileBecauseFileDoesNotExists());
 			}
-			this.controller.changeDatabaseName(fileName);
+			this.getController().changeDatabaseName(fileName);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 		}
@@ -129,7 +108,7 @@ public class MsAccessUI extends AbstractUI{
 		try {
 			String[] str = new String[getTableList().getSelectedValues().length];
 			Arrays.asList(getTableList().getSelectedValues()).toArray(str);
-			this.controller.changeTableNames(str);
+			this.getController().changeTableNames(str);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 		}
@@ -140,7 +119,7 @@ public class MsAccessUI extends AbstractUI{
 	}
 
 	public MsAccessUIController getController() {
-		return controller;
+		return (MsAccessUIController)controller;
 	}
 
 	@Override

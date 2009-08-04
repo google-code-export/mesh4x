@@ -15,17 +15,12 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 
-import org.mesh4j.ektoo.Event;
 import org.mesh4j.ektoo.controller.CloudUIController;
 import org.mesh4j.ektoo.tasks.IErrorListener;
-import org.mesh4j.ektoo.tasks.MappingsViewTask;
 import org.mesh4j.ektoo.tasks.OpenURLTask;
-import org.mesh4j.ektoo.tasks.SchemaViewTask;
 import org.mesh4j.ektoo.ui.component.DocumentModelAdapter;
-import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.ektoo.ui.validator.CloudUIValidator;
 
@@ -42,14 +37,10 @@ public class CloudUI extends AbstractUI {
 
 	private JLabel labelDataset = null;
 	private JTextField txtDataset = null;
-	private CloudUIController controller = null;
-	private JButton mappingsButton = null;
 
 	// BUSINESS METHODS
 	public CloudUI(String baseURL, CloudUIController controller) {
-		super();
-		this.controller = controller;
-		this.controller.addView(this);
+		super(controller);
 		initialize();
 		this.txtServerURL.setText(baseURL);
 		this.setMessageText(baseURL);
@@ -72,51 +63,6 @@ public class CloudUI extends AbstractUI {
 		this.add(getBtnView(), null);
 		this.add(getSchemaViewButton(), null);
 		this.add(getMappingsButton());
-	}
-
-	public JButton getMappingsButton() {
-		if (mappingsButton == null) {
-			mappingsButton = new JButton();
-			mappingsButton.setIcon(ImageManager.getMappingsIcon());
-			mappingsButton.setContentAreaFilled(false);
-			mappingsButton.setBorderPainted(false);
-			mappingsButton.setBorder(new EmptyBorder(0, 0, 0, 0));
-			mappingsButton.setBackground(Color.WHITE);
-			mappingsButton.setBounds(new Rectangle(330, 30, 30, 20));
-			mappingsButton.setToolTipText(EktooUITranslator
-					.getTooltipMappingView());
-			mappingsButton.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					if (CloudUI.this.verify()) {
-						EktooFrame ektooFrame = ((EktooFrame) CloudUI.this
-								.getRootFrame());
-						MappingsViewTask task = new MappingsViewTask(
-								ektooFrame, CloudUI.this.controller);
-						task.execute();
-					}
-				}
-			});
-		}
-		return mappingsButton;
-	}
-
-	private JButton getSchemaViewButton() {
-		getSchemaButton().addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (CloudUI.this.verify()) {
-					CloudUI.this.controller
-							.setCurrentEvent(Event.schema_view_event);
-					EktooFrame ektooFrame = ((EktooFrame) CloudUI.this
-							.getRootFrame());
-					SchemaViewTask task = new SchemaViewTask(ektooFrame,
-							CloudUI.this.controller, ektooFrame);
-					task.execute();
-				}
-			}
-		});
-		return getSchemaButton();
 	}
 
 	public JTextField getServerURLText(){
@@ -241,7 +187,7 @@ public class CloudUI extends AbstractUI {
 	}
 
 	public CloudUIController getController() {
-		return controller;
+		return (CloudUIController)controller;
 	}
 
 	@Override
@@ -250,14 +196,18 @@ public class CloudUI extends AbstractUI {
 			String newStringValue = evt.getNewValue().toString();
 			if (! getMeshText().getText().equals(newStringValue)){
 				getMeshText().setText(newStringValue);
-				this.controller.setEmptyMappings();
 			}
 		} else if ( evt.getPropertyName().equals( CloudUIController.DATASET_NAME_PROPERTY)){
 			String newStringValue = evt.getNewValue().toString();
-			if (! getDataSetText().getText().equals(newStringValue))
+			if (! getDataSetText().getText().equals(newStringValue)){
 				getDataSetText().setText(newStringValue);
-				this.controller.setEmptyMappings();
-			}    
+			}
+		}  else if ( evt.getPropertyName().equals( CloudUIController.SYNC_SERVER_URI)){
+			String newStringValue = evt.getNewValue().toString();
+			if (! getServerURLText().getText().equals(newStringValue)){
+				getServerURLText().setText(newStringValue);
+			}
+		}     
 	}
 
 	@Override

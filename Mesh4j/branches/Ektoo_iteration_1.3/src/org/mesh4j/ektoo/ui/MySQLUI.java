@@ -33,7 +33,6 @@ import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.controller.MySQLUIController;
 import org.mesh4j.ektoo.tasks.IErrorListener;
 import org.mesh4j.ektoo.tasks.OpenMySqlFeedTask;
-import org.mesh4j.ektoo.tasks.SchemaViewTask;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.ektoo.ui.validator.MySQLConnectionValidator;
@@ -66,16 +65,10 @@ public class MySQLUI extends AbstractUI {
 	private JScrollPane listTableScroller = null;
 	
 	private JButton btnConnect = null;
-
-	private MySQLUIController controller = null;
-
-//	private JButton btnView = null;
 	
 	// BUSINESS METHODS
 	public MySQLUI(MySQLUIController controller) {
-		super();
-		this.controller = controller;
-		this.controller.addView(this);
+		super(controller);
 		initialize();
 	}
 
@@ -107,38 +100,24 @@ public class MySQLUI extends AbstractUI {
 		
 		this.add(getMessagesText(), null);
 		this.add(getSchemaViewButton(), null);
+		this.add(getMappingsButton());
 		setDefaultValues();
 		
 	}
 	
-	private JButton getSchemaViewButton(){
-		getSchemaButton().addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if(MySQLUI.this.verify()){
-					EktooFrame ektooFrame = ((EktooFrame)MySQLUI.this.getRootFrame());
-					SchemaViewTask task = new SchemaViewTask(ektooFrame,MySQLUI.this.controller,ektooFrame);
-					task.execute();	
-				}
-			}
-		});
-		return getSchemaButton();
-	}
-	
-	
 	private void setDefaultValues() {
-		String hostName = controller.getDefaultMySQLHost();
+		String hostName = getController().getDefaultMySQLHost();
 		if (hostName == null) {
 			hostName = "";
 		}
-		controller.changeHostName(hostName);
+		getController().changeHostName(hostName);
 
-		String portNo = controller.getDefaultMySQLPort();
+		String portNo = getController().getDefaultMySQLPort();
 		if (portNo == null) {
 			portNo = "";
 		}
 
-		controller.changePortNo( Integer.parseInt(portNo) );
+		getController().changePortNo( Integer.parseInt(portNo) );
 	}
 
 	private JLabel getUserLabel() {
@@ -465,7 +444,7 @@ public class MySQLUI extends AbstractUI {
 		getViewButton().addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					JFrame frame = MySQLUI.this.getRootFrame();
-					OpenMySqlFeedTask task = new OpenMySqlFeedTask(frame, (IErrorListener)frame, MySQLUI.this.controller);
+					OpenMySqlFeedTask task = new OpenMySqlFeedTask(frame, (IErrorListener)frame, getController());
 					task.execute();
 				}
 			});
@@ -488,7 +467,7 @@ public class MySQLUI extends AbstractUI {
 	}
 
 	public MySQLUIController getController() {
-		return controller;
+		return (MySQLUIController)controller;
 	}
 
 	public String getUser() {

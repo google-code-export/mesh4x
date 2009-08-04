@@ -38,16 +38,12 @@ public class FeedUI extends AbstractUI  implements IValidationStatus {
 	private JTextField txtFileName = null;
 	
 	private JButton btnFile = null;
-//	private JButton btnView = null;
 
-	private FeedUIController controller;
 	private JFileChooser fileChooser = null;
 
 	// BUSINESS METHODS
 	public FeedUI(String fileName, FeedUIController controller) {
-		super();
-		this.controller = controller;
-		this.controller.addView(this);
+		super(controller);
 		this.initialize();
 		this.txtFileName.setText(fileName);
 		this.txtFileName.setToolTipText(fileName);
@@ -133,7 +129,7 @@ public class FeedUI extends AbstractUI  implements IValidationStatus {
 	}
 
 	public FeedUIController getController() {
-		return controller;
+		return (FeedUIController)controller;
 	}
 
 	public void setFileChooser(JFileChooser fileChooser) {

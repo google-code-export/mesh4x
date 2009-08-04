@@ -3,7 +3,6 @@ package org.mesh4j.ektoo.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.mesh4j.ektoo.SyncAdapterBuilder;
 import org.mesh4j.ektoo.model.MsExcelModel;
 import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.ektoo.ui.EktooFrame;
@@ -12,7 +11,6 @@ import org.mesh4j.sync.adapters.composite.CompositeSyncAdapter;
 import org.mesh4j.sync.adapters.msexcel.MsExcelContentAdapter;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
-import org.mesh4j.sync.validations.Guard;
 
 public class MsExcelUIController extends AbstractUIController {
 
@@ -20,15 +18,9 @@ public class MsExcelUIController extends AbstractUIController {
 	public static final String WORKSHEET_NAME_PROPERTY = "WorksheetName";
 	public static final String UNIQUE_COLUMN_NAME_PROPERTY = "UniqueColumnName";
 
-	// MODEL VARIABLES
-	private SyncAdapterBuilder adapterBuilder;
-
 	// BUSINESS METHODS
 	public MsExcelUIController(PropertiesProvider propertiesProvider, boolean acceptsCreateDataset) {
-		super(acceptsCreateDataset);
-		
-		Guard.argumentNotNull(propertiesProvider, "propertiesProvider");
-		this.adapterBuilder = new SyncAdapterBuilder(propertiesProvider);
+		super(propertiesProvider, acceptsCreateDataset);
 	}
 
 	public void changeWorkbookName(String workbookName) {
@@ -69,7 +61,7 @@ public class MsExcelUIController extends AbstractUIController {
 		ArrayList<String> pks = new ArrayList<String>();
 		pks.add(uniqueColumnName);
 
-		return adapterBuilder.createMsExcelAdapter(workbookName, worksheetName, new String[]{uniqueColumnName}, true); 
+		return getAdapterBuilder().createMsExcelAdapter(workbookName, worksheetName, new String[]{uniqueColumnName}, true); 
 	}
 
 	@Override
@@ -83,7 +75,7 @@ public class MsExcelUIController extends AbstractUIController {
 			if (workbookName == null || workbookName.trim().length() == 0) {
 				return null;
 			}
-			return adapterBuilder.createMsExcelAdapterForMultiSheets(workbookName, schemas);		
+			return getAdapterBuilder().createMsExcelAdapterForMultiSheets(workbookName, schemas);		
 		
 		} else {
 					
@@ -102,7 +94,7 @@ public class MsExcelUIController extends AbstractUIController {
 			if (workbookName == null || workbookName.trim().length() == 0) {
 				return null;
 			}
-			return adapterBuilder.createMsExcelAdapter(workbookName, sourceSchema);
+			return getAdapterBuilder().createMsExcelAdapter(workbookName, sourceSchema);
 		}
 		
 	}

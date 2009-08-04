@@ -6,8 +6,6 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.mesh4j.ektoo.ISyncAdapterBuilder;
-import org.mesh4j.ektoo.SyncAdapterBuilder;
 import org.mesh4j.ektoo.model.MsAccessModel;
 import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.ektoo.ui.EktooFrame;
@@ -27,15 +25,9 @@ public class MsAccessUIController extends AbstractUIController
 	public static final String DATABASE_NAME_PROPERTY = "DatabaseName";
 	public static final String TABLE_NAME_PROPERTY = "TableNames";
 
-	// MODEL VARIABLEs
-	private ISyncAdapterBuilder adapterBuilder;
-
 	// BUSINESS METHODS
 	public MsAccessUIController(PropertiesProvider propertiesProvider, boolean acceptsCreateDataset) {
-		super(acceptsCreateDataset);
-		
-		Guard.argumentNotNull(propertiesProvider, "propertiesProvider");
-		this.adapterBuilder = new SyncAdapterBuilder(propertiesProvider);
+		super(propertiesProvider, acceptsCreateDataset);
 	}
 
 	public void changeDatabaseName(String databaseName) {
@@ -70,9 +62,9 @@ public class MsAccessUIController extends AbstractUIController
 		}		
 
 		if (EktooFrame.multiModeSync)
-			return adapterBuilder.createMsAccessMultiTablesAdapter(databaseName, tableNames);
+			return getAdapterBuilder().createMsAccessMultiTablesAdapter(databaseName, tableNames);
 		else
-			return adapterBuilder.createMsAccessAdapter(databaseName, tableNames[0]);		
+			return getAdapterBuilder().createMsAccessAdapter(databaseName, tableNames[0]);		
 	}
 
 	@Override
