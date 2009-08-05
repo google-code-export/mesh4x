@@ -3,8 +3,14 @@ package org.mesh4j.sync.merge;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
+import org.mesh4j.sync.ISupportMerge;
+import org.mesh4j.sync.ISyncAdapter;
+import org.mesh4j.sync.ISyncAware;
 import org.mesh4j.sync.model.History;
+import org.mesh4j.sync.model.IContent;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.Sync;
 import org.mesh4j.sync.validations.Guard;
@@ -386,5 +392,59 @@ public class MergeBehavior {
 		} else {
 			return false;
 		}
+	}
+	
+	public static void resolveConflicts(ISyncAdapter adapter, HashMap<String, Item> currents, List<Item> winners, IConflictResolutionListener conflictResolutionListener){
+		ArrayList<Item> items = new ArrayList<Item>();
+		
+		conflictResolutionListener.notifyStartConflictResolution();
+		
+		if(adapter instanceof ISyncAware){
+			((ISyncAware) adapter).beginSync();
+		}
+		
+		int size = winners.size();
+		for (int i = 0; i < size; i++) {
+			Item winner = winners.get(i);
+			
+			try{
+				conflictResolutionListener.notifyResolvingConflict(winner.getSyncId(), i, size);
+				
+				Item current = currents.get(winner.getSyncId());
+				if(winner.equals(current)){
+					Item resultItem = MergeBehavior.resolveConflicts(winner, winner.getLastUpdate().getBy(), new Date(), winner.isDeleted());
+					items.add(resultItem);
+				} else {
+					Sync sync = current.getSync().clone();
+					IContent content = winner.getContent().clone();
+					
+					Item item = new Item(content, sync);
+					
+					Item resultItem = MergeBehavior.resolveConflicts(item, winner.getLastUpdate().getBy(), new Date(), winner.isDeleted());
+					items.add(resultItem);
+				}
+			}catch (Throwable e) {
+				conflictResolutionListener.notifyConflictResolutionError(winner.getSyncId(), e);
+			}
+		}
+
+		size = items.size();
+		if(adapter instanceof ISupportMerge){
+			conflictResolutionListener.notifyUpdatingConflicts(size);
+			((ISupportMerge) adapter).merge(items);
+		}else{
+			for (int i = 0; i < size; i++) {
+				Item item = items.get(i);
+				conflictResolutionListener.notifyUpdatingConflict(item.getSyncId(), i, size);
+				adapter.update(item);
+			}
+		}
+		
+		if(adapter instanceof ISyncAware){
+			conflictResolutionListener.notifyEndConflictResolution();
+			((ISyncAware) adapter).endSync();
+		}
+		
+		conflictResolutionListener.notifyConflictResolutionDone();
 	}
 }

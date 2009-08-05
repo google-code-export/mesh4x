@@ -14,8 +14,6 @@ import org.mesh4j.ektoo.ui.component.messagedialog.MessageDialog;
 import org.mesh4j.ektoo.ui.conflicts.ConflictsUI;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.sync.ISyncAdapter;
-import org.mesh4j.sync.ISyncAware;
-import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 
 public class OpenResolveConflictsViewTask extends SwingWorker<String, Void>{
@@ -49,17 +47,7 @@ public class OpenResolveConflictsViewTask extends SwingWorker<String, Void>{
 				rdfSchema = schemas.get(0);
 			}
 			
-			if(adapter instanceof ISyncAware){
-				((ISyncAware) adapter).beginSync();
-			}
-			
-			List<Item> conflicts = adapter.getConflicts();			
-			
-			if(adapter instanceof ISyncAware){
-				((ISyncAware) adapter).endSync();
-			}
-			
-			showSchemaInPopup(new ConflictsUI(this.ui, adapter, rdfSchema, conflicts));
+			showSchemaInPopup(new ConflictsUI(this.ui, adapter, rdfSchema));
 			
 		} catch(Throwable t){
 			LOGGER.error(t.getMessage(), t);

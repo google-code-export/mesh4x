@@ -754,4 +754,36 @@ public class EktooUITranslator {
 	public static String getIemEditorLastVersionMessage(int version) {
 		return EktooMessageTranslator.translate("EKTOO_CONFLICTS_MESSAGE_VERSION", version);
 	}
+
+	public static String getConflictsResolutionMessageProcessError(String syncId) {
+		return EktooMessageTranslator.translate("EKTOO_CONFLICTS_MESSAGE_PROCESS_CONFLICT_ERROR", syncId);
+	}
+
+	public static String getConflictsResolutionMessageFailed(int errors) {
+		return EktooMessageTranslator.translate("EKTOO_CONFLICTS_MESSAGE_PROCESS_FAILED", errors);
+	}
+
+	public static String getConflictsResolutionMessageSuccessful() {
+		return EktooMessageTranslator.translate("EKTOO_CONFLICTS_MESSAGE_PROCESS_SUCCESSFUL");
+	}
+
+	public static String getConflictsResolutionMessageProcessEnd() {
+		return EktooMessageTranslator.translate("EKTOO_CONFLICTS_MESSAGE_PROCESS_END");
+	}
+
+	public static String getConflictsResolutionMessageProcessResolving(String syncId, int i, int size) {
+		return EktooMessageTranslator.translate("EKTOO_CONFLICTS_MESSAGE_PROCESS_RESOLVING_CONFLICT", syncId, i, size);
+	}
+
+	public static String getConflictsResolutionMessageProcessStart() {
+		return EktooMessageTranslator.translate("EKTOO_CONFLICTS_MESSAGE_PROCESS_START");
+	}
+
+	public static String getConflictsResolutionMessageProcessUpdating(String syncId, int i, int size) {
+		return EktooMessageTranslator.translate("EKTOO_CONFLICTS_MESSAGE_PROCESS_UPDATING_CONFLICT", syncId, i, size);
+	}
+
+	public static String getConflictsResolutionMessageProcessUpdating(int size) {
+		return EktooMessageTranslator.translate("EKTOO_CONFLICTS_MESSAGE_PROCESS_UPDATING_CONFLICTS");
+	}
 }

@@ -879,7 +879,10 @@ public class EktooFrame extends JFrame implements IErrorListener, ISynchronizeTa
 	@Override
 	public void notifyError(String error) {
 		setStatusbarText(error, Statusbar.ERROR_STATUS);
-
+	}
+	
+	public void notifyStatusMessage(String msg) {
+		setStatusbarText(msg, Statusbar.SUCCESS_STATUS);
 	}
 
 	@Override
@@ -928,4 +931,5 @@ public class EktooFrame extends JFrame implements IErrorListener, ISynchronizeTa
 		this.syncProcessUI.setVisible(false);
 		this.syncProcessUI.dispose();
 	}
+
 }
