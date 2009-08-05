@@ -60,4 +60,6 @@ public interface IRDFSchema extends ISchema {
 
 	public boolean isGUID(String propertyName);
 
+	public boolean isIdentifiablePropertyName(String propertyName);
+
 }

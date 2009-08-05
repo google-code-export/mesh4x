@@ -695,6 +695,11 @@ public class RDFSchema implements IRDFSchema{
 	public boolean isGUID(String propertyName) {
 		return getGUIDPropertyNames().contains(propertyName);
 	}
+	
+	@Override
+	public boolean isIdentifiablePropertyName(String propertyName) {
+		return getIdentifiablePropertyNames().contains(propertyName);
+	}
 
 	@Override
 	public String getOntologyBaseRDFUrl() {
