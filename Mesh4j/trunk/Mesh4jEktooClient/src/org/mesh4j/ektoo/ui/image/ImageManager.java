@@ -173,4 +173,8 @@ public class ImageManager {
 	public static Icon getMappingsIcon() {
 		return SwingResourceManager.getIcon(EktooFrame.class, "/mappings.png");
 	}
+	
+	public static Icon getConflictsIcon() {
+		return SwingResourceManager.getIcon(EktooFrame.class, "/conflicts.png");
+	}
 }

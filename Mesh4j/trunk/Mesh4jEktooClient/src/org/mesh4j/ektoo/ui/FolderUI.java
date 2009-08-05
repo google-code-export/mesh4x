@@ -53,6 +53,7 @@ public class FolderUI extends AbstractUI {
 		this.add(getFileNameText(), null);
 		this.add(getBtnFile(), null);
 		this.add(getBtnView(), null);
+		this.add(getConflictsButton());
 		this.add(getMessagesText(), null);
 	}
 

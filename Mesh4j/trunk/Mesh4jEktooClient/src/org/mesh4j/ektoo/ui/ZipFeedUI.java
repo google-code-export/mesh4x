@@ -57,6 +57,7 @@ public class ZipFeedUI extends AbstractUI  implements IValidationStatus {
 		this.add(getFileNameText(), null);
 		this.add(getBtnFile(), null);
 		this.add(getBtnView(), null);
+		this.add(getConflictsButton());
 		this.add(getMessagesText(), null);
 	}
 	

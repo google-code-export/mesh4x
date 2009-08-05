@@ -17,7 +17,8 @@ import javax.swing.border.EmptyBorder;
 
 import org.mesh4j.ektoo.Event;
 import org.mesh4j.ektoo.controller.AbstractUIController;
-import org.mesh4j.ektoo.tasks.MappingsViewTask;
+import org.mesh4j.ektoo.tasks.OpenMappingsViewTask;
+import org.mesh4j.ektoo.tasks.OpenResolveConflictsViewTask;
 import org.mesh4j.ektoo.tasks.SchemaViewTask;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
@@ -32,8 +33,9 @@ public abstract class AbstractUI extends JPanel implements IValidationStatus {
 	// MODEL VARIABLES
 	private JTextField txtMessages = null;
 	private JButton schemaViewButton = null;
-	private JButton viewButtion = null;
+	private JButton viewButton = null;
 	private JButton mappingsButton = null;
+	private JButton conflictsButton = null;
 	protected AbstractUIController controller = null;
 	
 	// BUSINESS METHODS
@@ -62,7 +64,7 @@ public abstract class AbstractUI extends JPanel implements IValidationStatus {
 			schemaViewButton.setBorderPainted(false);
 			schemaViewButton.setBorder(new EmptyBorder(0, 0, 0, 0));
 			schemaViewButton.setBackground(Color.WHITE);
-			schemaViewButton.setBounds(new Rectangle(330, 8, 30, 20));
+			schemaViewButton.setBounds(new Rectangle(330, 60, 25, 25));
 			schemaViewButton.setToolTipText(EktooUITranslator.getTooltipSchemaView());
 			schemaViewButton.addActionListener(new ActionListener() {
 				@Override
@@ -80,18 +82,18 @@ public abstract class AbstractUI extends JPanel implements IValidationStatus {
 	}
 	
 	protected JButton getViewButton(){
-		if (viewButtion == null) {
-			viewButtion = new JButton();
-			viewButtion.setIcon(ImageManager.getViewIcon());
-			viewButtion.setContentAreaFilled(false);
-			viewButtion.setBorderPainted(false);
-			viewButtion.setBorder(new EmptyBorder(0, 0, 0, 0));
-			viewButtion.setBackground(Color.WHITE);
-			viewButtion.setText("");
-			viewButtion.setToolTipText(EktooUITranslator.getTooltipView());
-			viewButtion.setBounds(new Rectangle(295, 0, 30, 40));
+		if (viewButton == null) {
+			viewButton = new JButton();
+			viewButton.setIcon(ImageManager.getViewIcon());
+			viewButton.setContentAreaFilled(false);
+			viewButton.setBorderPainted(false);
+			viewButton.setBorder(new EmptyBorder(0, 0, 0, 0));
+			viewButton.setBackground(Color.WHITE);
+			viewButton.setText("");
+			viewButton.setToolTipText(EktooUITranslator.getTooltipView());
+			viewButton.setBounds(new Rectangle(295, 0, 30, 40));
 		}
-		return viewButtion;
+		return viewButton;
 	}
 	
 	public void setMessageText(String msg){
@@ -166,7 +168,7 @@ public abstract class AbstractUI extends JPanel implements IValidationStatus {
 			mappingsButton.setBorderPainted(false);
 			mappingsButton.setBorder(new EmptyBorder(0, 0, 0, 0));
 			mappingsButton.setBackground(Color.WHITE);
-			mappingsButton.setBounds(new Rectangle(330, 30, 25, 25));
+			mappingsButton.setBounds(new Rectangle(330, 34, 25, 25));
 			mappingsButton.setToolTipText(EktooUITranslator
 					.getTooltipMappingView());
 			mappingsButton.addActionListener(new ActionListener() {
@@ -174,12 +176,36 @@ public abstract class AbstractUI extends JPanel implements IValidationStatus {
 				public void actionPerformed(ActionEvent e) {
 					if (verify()) {
 						EktooFrame ektooFrame = ((EktooFrame)getRootFrame());
-						MappingsViewTask task = new MappingsViewTask(ektooFrame, controller, true);
+						OpenMappingsViewTask task = new OpenMappingsViewTask(ektooFrame, controller, true);
 						task.execute();
 					}
 				}
 			});
 		}
 		return mappingsButton;
+	}
+	
+	public JButton getConflictsButton() {
+		if (conflictsButton == null) {
+			conflictsButton = new JButton();
+			conflictsButton.setIcon(ImageManager.getConflictsIcon());
+			conflictsButton.setContentAreaFilled(false);
+			conflictsButton.setBorderPainted(false);
+			conflictsButton.setBorder(new EmptyBorder(0, 0, 0, 0));
+			conflictsButton.setBackground(Color.WHITE);
+			conflictsButton.setBounds(new Rectangle(330, 8, 25, 25));
+			conflictsButton.setToolTipText(EktooUITranslator.getTooltipConflictsView());
+			conflictsButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					if (verify()) {
+						EktooFrame ektooFrame = ((EktooFrame)getRootFrame());
+						OpenResolveConflictsViewTask task = new OpenResolveConflictsViewTask(ektooFrame, controller);
+						task.execute();
+					}
+				}
+			});
+		}
+		return conflictsButton;
 	}
 }

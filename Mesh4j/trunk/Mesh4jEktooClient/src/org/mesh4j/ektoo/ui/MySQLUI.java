@@ -97,7 +97,7 @@ public class MySQLUI extends AbstractUI {
 		this.add(getListTableScroller(), null);
 		
 		this.add(getBtnView(), null);
-		
+		this.add(getConflictsButton());
 		this.add(getMessagesText(), null);
 		this.add(getSchemaViewButton(), null);
 		this.add(getMappingsButton());

@@ -61,6 +61,7 @@ public class CloudUI extends AbstractUI {
 
 		this.add(getMessagesText(), null);
 		this.add(getBtnView(), null);
+		this.add(getConflictsButton());
 		this.add(getSchemaViewButton(), null);
 		this.add(getMappingsButton());
 	}

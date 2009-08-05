@@ -88,7 +88,7 @@ public class MsExcelUI extends AbstractUI implements IValidationStatus {
 		this.add(getMessagesText(), null);
 		this.add(getSchemaViewButton(), null);
 		this.add(getMappingsButton());
-		
+		this.add(getConflictsButton());
 	}
 	
 	

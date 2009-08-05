@@ -1,5 +1,6 @@
 package org.mesh4j.ektoo.ui.translator;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.mesh4j.translator.EktooMessageTranslator;
@@ -668,5 +669,89 @@ public class EktooUITranslator {
 	public static String getMapConfigurationErrorRequiredFields() {
 		return EktooMessageTranslator.translate("EKTOO_MAP_CFG_MESSAGE_KML_REQUIRED_FIELDS");
 	}
+
+	public static String getConflictWindowTitle() {
+		return EktooMessageTranslator.translate("EKTOO_CONFLICTS_TITLE");
+	}
 	
+	public static String getConflictItemLabelChooseWinner() {
+		return EktooMessageTranslator.translate("EKTOO_CONFLICTS_LABEL_CHOOSE_WINNER");
+	}
+
+	public static String getConflictItemLabelXML() {
+		return EktooMessageTranslator.translate("EKTOO_CONFLICTS_LABEL_XML");
+	}
+
+	public static String getConflictItemMessageLastVersion(int seq) {
+		return EktooMessageTranslator.translate("EKTOO_CONFLICTS_MESSAGE_LAST_VERSION", seq);
+	}
+	
+	public static String getConflictItemMessageCurrentVersion(int seq) {
+		return EktooMessageTranslator.translate("EKTOO_CONFLICTS_MESSAGE_CURRENT_VERSION", seq);
+	}
+	
+	public static String getConflictItemMessageByOn(String by, Date date) {		
+		if(by == null || date == null){
+			return EktooMessageTranslator.translate("EKTOO_CONFLICTS_MESSAGE_BY_ON", "admin", "dd/mm/yyyy hh:mm:ss");
+		} else {
+			SimpleDateFormat dateFormat = new SimpleDateFormat("dd/mm/yyyy hh:mm:ss");
+			return EktooMessageTranslator.translate("EKTOO_CONFLICTS_MESSAGE_BY_ON", by, dateFormat.format(date));
+		}
+	}
+
+	public static String getConflictItemMessageDeleted() {
+		return EktooMessageTranslator.translate("EKTOO_CONFLICTS_MESSAGE_DELETED");
+	}
+
+	public static String getConflictItemLabelVAL() {
+		return EktooMessageTranslator.translate("EKTOO_CONFLICTS_LABEL_VAL");
+	}
+
+	public static String getConflictItemLabelField() {
+		return EktooMessageTranslator.translate("EKTOO_CONFLICTS_LABEL_FIELD");
+	}
+	
+	public static String getConflictItemLabelValue() {
+		return EktooMessageTranslator.translate("EKTOO_CONFLICTS_LABEL_VALUE");
+	}
+
+	public static String getConflictLabelSave() {
+		return EktooMessageTranslator.translate("EKTOO_CONFLICTS_LABEL_SAVE");
+	}
+
+	public static String getConflictLabelCancel() {
+		return EktooMessageTranslator.translate("EKTOO_CONFLICTS_LABEL_CANCEL");
+	}
+
+	public static String getConflictLabelConflictTable() {
+		return EktooMessageTranslator.translate("EKTOO_CONFLICTS_LABEL_TABLE");
+	}
+
+	public static String getConflictLabelConflictDetails() {
+		return EktooMessageTranslator.translate("EKTOO_CONFLICTS_LABEL_TABLE_DETAILS");
+	}
+	
+	public static String getConflictLabelSyncId() {
+		return EktooMessageTranslator.translate("EKTOO_CONFLICTS_LABEL_ItemID");
+	}
+	
+	public static String getConflictLabelNumberOfConflictVersions() {
+		return EktooMessageTranslator.translate("EKTOO_CONFLICTS_LABEL_NUMBER_CONFLICT_VERSIONS");
+	}
+	
+	public static String getConflictLabelUsers() {
+		return EktooMessageTranslator.translate("EKTOO_CONFLICTS_LABEL_USERS");
+	}
+
+	public static String getTooltipConflictsView() {
+		return EktooMessageTranslator.translate("EKTOO_TOOLTIP_VIEW_CONFLICTS");
+	}
+
+	public static String getIemEditorByMessage() {
+		return EktooMessageTranslator.translate("EKTOO_CONFLICTS_LABEL_EDIT_MANUALLY");
+	}
+
+	public static String getIemEditorLastVersionMessage(int version) {
+		return EktooMessageTranslator.translate("EKTOO_CONFLICTS_MESSAGE_VERSION", version);
+	}
 }

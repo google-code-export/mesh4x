@@ -81,6 +81,7 @@ public class MsAccessUI extends AbstractUI{
 		this.add(getMessagesText(), null);
 		this.add(getSchemaViewButton(), null);
 		this.add(getMappingsButton());
+		this.add(getConflictsButton());
 	}
 	
 	public void setList(String fileName) {

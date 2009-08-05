@@ -101,6 +101,7 @@ public class GSSheetUI extends AbstractUI {
 		this.add(getColumnList(), null);
 		this.add(getMessagesText(), null);
 		this.add(getBtnView(), null);
+		this.add(getConflictsButton());
 		this.add(getSchemaViewButton(), null);
 		this.add(getMappingsButton());
 	}
