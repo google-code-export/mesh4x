@@ -107,7 +107,7 @@ public class HttpSyncAdapterFactory implements ISyncAdapterFactory {
 					serverUrl, 
 					meshGroup,
 					RssSyndicationFormat.NAME, 
-					"", 
+					meshGroup, 
 					null, 
 					null,
 					identityProvider.getAuthenticatedUser());
@@ -116,7 +116,7 @@ public class HttpSyncAdapterFactory implements ISyncAdapterFactory {
 					serverUrl, 
 					meshGroup + "/" + dataSetId,
 					RssSyndicationFormat.NAME, 
-					"", 
+					dataSetId, 
 					schema,
 					mapping, 
 					identityProvider.getAuthenticatedUser());

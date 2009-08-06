@@ -156,6 +156,11 @@ public class DBFeedRepository implements IFeedRepository {
 		return schema;
 	}
 	
+	@Override
+	public String getXForm(String sourceID, String link) throws Exception {
+		return "";
+	}
+	
 	
 	@Override
 	public String readFeedGroup(String sourceID, String link, ISyndicationFormat syndicationFormat, Format contentFormat, IGeoCoder geoCoder, Date sinceDate, String filterQuery) throws Exception {
@@ -461,12 +466,12 @@ public class DBFeedRepository implements IFeedRepository {
 	@Override
 	public void updateFeed(String sourceID,
 			ISyndicationFormat syndicationFormat, String link,
-			String description, String schema, String mappings, String by) {
+			String description, String schema, String mappings, String by, String xform) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public void addNewFeed(String newSourceID, ISyndicationFormat syndicationFormat, String link, String description, String schema, String mappings, String by) {
+	public void addNewFeed(String newSourceID, ISyndicationFormat syndicationFormat, String link, String description, String schema, String mappings, String by, String xform) {
 		throw new UnsupportedOperationException();
 	}
 	

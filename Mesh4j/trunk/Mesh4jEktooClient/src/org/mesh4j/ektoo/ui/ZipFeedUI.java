@@ -56,7 +56,7 @@ public class ZipFeedUI extends AbstractUI  implements IValidationStatus {
 		this.add(getFileNameLabel(), null);
 		this.add(getFileNameText(), null);
 		this.add(getBtnFile(), null);
-		this.add(getBtnView(), null);
+		this.add(getViewButton(), null);
 		this.add(getConflictsButton());
 		this.add(getMessagesText(), null);
 	}
@@ -118,15 +118,11 @@ public class ZipFeedUI extends AbstractUI  implements IValidationStatus {
 		return btnFile;
 	}
 
-	private JButton getBtnView() {
-		getViewButton().addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					JFrame frame = ZipFeedUI.this.getRootFrame();
-					OpenFileTask task = new OpenFileTask(frame, (IErrorListener)frame, txtFileName.getText());
-					task.execute();
-				}
-			});
-		return getViewButton();
+	@Override
+	protected void viewItems(){
+		JFrame frame = ZipFeedUI.this.getRootFrame();
+		OpenFileTask task = new OpenFileTask(frame, (IErrorListener)frame, txtFileName.getText());
+		task.execute();
 	}
 
 	public ZipFeedUIController getController() {

@@ -397,6 +397,11 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 		return mapping;
 	}
 
+	public static String makeSchemaAsXFormURL(String url) {
+		String resultURL = addSubdomain(url, "schema");
+		return addQueryParamater(resultURL, "content=xform");
+	}
+	
 	public static String makeMeshGroupURLToSync(String url) {
 		return addQueryParamater(url, "viewALLGroupMeshItems");
 	}
@@ -480,6 +485,10 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 	}	
 
 	public static void uploadMeshDefinition(String url, String sourceId, String format, String description, ISchema schema, IMapping mappings, String by) {
+		uploadMeshDefinition(url, sourceId, format, description, schema, mappings, by, null);
+	}
+	
+	public static void uploadMeshDefinition(String url, String sourceId, String format, String description, ISchema schema, IMapping mappings, String by, String xformXml) {
 		try{
 			URL baseURL = new URL(url);
 			
@@ -489,7 +498,8 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 					description, 
 					schema == null ? "" : schema.asXML(), 
 					mappings == null ? "" : mappings.asXMLText(),
-					by);
+					by,
+					xformXml == null ? "" : xformXml);
 			doPOST(baseURL, content, "application/x-www-form-urlencoded");
 		} catch (Exception e) {
 			Logger.error(e.getMessage(), e); 
@@ -498,7 +508,7 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 	}
 
 	private static String makeMeshDefinitionContent(String sourceId,
-			String format, String description, String schema, String mappings, String by) throws UnsupportedEncodingException {
+			String format, String description, String schema, String mappings, String by, String xformXml) throws UnsupportedEncodingException {
 		
 		StringBuffer sb = new StringBuffer();
 		
@@ -541,6 +551,12 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 		sb.append(URLEncoder.encode("mappings", "UTF-8"));
 		sb.append("=");
 		sb.append(URLEncoder.encode(mappings, "UTF-8"));
+
+		sb.append("&");
+
+		sb.append(URLEncoder.encode("xform", "UTF-8"));
+		sb.append("=");
+		sb.append(URLEncoder.encode(xformXml, "UTF-8"));
 		
 		sb.append("\r\n");
 		return sb.toString();
@@ -577,6 +593,36 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 
 	public String getURL() {
 		return this.url.toExternalForm();
+	}
+
+	public static String getXForm(String url) {
+		String xmlXForm = null;
+		HttpURLConnection conn = null;
+	    try{
+    	
+	    	URL urlXForm = new URL(makeSchemaAsXFormURL(url));
+			conn = (HttpURLConnection) urlXForm.openConnection();
+			
+			xmlXForm = readData(conn);
+	    } catch(Exception e){
+			if(conn != null){
+				try {
+					int responseCode = conn.getResponseCode();
+					if(responseCode == HttpURLConnection.HTTP_INTERNAL_ERROR){
+						return null;
+					}
+				} catch (IOException e1) {
+					Logger.error(e1.getMessage(), e1);
+					Logger.error(e.getMessage(), e);
+					throw new MeshException(e);
+				}
+			} else {
+				Logger.error(e.getMessage(), e);
+				throw new MeshException(e);
+			}
+	    }	
+
+		return xmlXForm;	
 	}
 
 }

@@ -786,4 +786,52 @@ public class EktooUITranslator {
 	public static String getConflictsResolutionMessageProcessUpdating(int size) {
 		return EktooMessageTranslator.translate("EKTOO_CONFLICTS_MESSAGE_PROCESS_UPDATING_CONFLICTS");
 	}
+
+	public static String getXFormEditorLabelCancel() {
+		return EktooMessageTranslator.translate("EKTOO_XFORM_EDITOR_LABEL_CANCEL");
+	}
+
+	public static String getXFormEditorLabelUpload() {
+		return EktooMessageTranslator.translate("EKTOO_XFORM_EDITOR_LABEL_UPLOAD");
+	}
+
+	public static String getXFormEditorTitle() {
+		return EktooMessageTranslator.translate("EKTOO_XFORM_EDITOR_TITLE");
+	}
+
+	public static String getTooltipXFormView() {
+		return EktooMessageTranslator.translate("EKTOO_XFORM_EDITOR_TOOLTIP");
+	}
+
+	public static String getXFormEditorLabelDownload() {
+		return EktooMessageTranslator.translate("EKTOO_XFORM_EDITOR_LABEL_DOWNLOAD");
+	}
+
+	public static String getXFormEditorLabelGenerate() {
+		return EktooMessageTranslator.translate("EKTOO_XFORM_EDITOR_LABEL_GENERATE");
+	}
+
+	public static String getXFormEditorMessageUploadDone() {
+		return EktooMessageTranslator.translate("EKTOO_XFORM_EDITOR_MESSAGE_UPLOAD_DONE");
+	}
+
+	public static String getXFormEditorMessageUploadFailed() {
+		return EktooMessageTranslator.translate("EKTOO_XFORM_EDITOR_MESSAGE_UPLOAD_FAILED");
+	}
+
+	public static String getXFormEditorMessageDownloadDone() {
+		return EktooMessageTranslator.translate("EKTOO_XFORM_EDITOR_MESSAGE_DOWNLOAD_DONE");
+	}
+
+	public static String getXFormEditorMessageDownloadFailed() {
+		return EktooMessageTranslator.translate("EKTOO_XFORM_EDITOR_MESSAGE_DOWNLOAD_FAILED");
+	}
+
+	public static String getXFormEditorMessageGenerationDone() {
+		return EktooMessageTranslator.translate("EKTOO_XFORM_EDITOR_MESSAGE_GENERATION_DONE");
+	}
+
+	public static String getXFormEditorMessageGenerationFailed() {
+		return EktooMessageTranslator.translate("EKTOO_XFORM_EDITOR_MESSAGE_GENERATION_FAILED");
+	}
 }

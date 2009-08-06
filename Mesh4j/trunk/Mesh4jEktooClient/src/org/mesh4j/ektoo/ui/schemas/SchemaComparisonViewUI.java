@@ -1,4 +1,4 @@
-package org.mesh4j.ektoo.ui;
+package org.mesh4j.ektoo.ui.schemas;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

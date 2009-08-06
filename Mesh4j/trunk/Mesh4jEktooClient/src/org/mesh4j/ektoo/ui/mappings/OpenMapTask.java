@@ -1,4 +1,4 @@
-package org.mesh4j.ektoo.tasks;
+package org.mesh4j.ektoo.ui.mappings;
 
 import java.awt.Cursor;
 import java.awt.Window;
@@ -8,7 +8,7 @@ import javax.swing.SwingWorker;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.controller.AbstractUIController;
-import org.mesh4j.ektoo.ui.IMapTaskListener;
+import org.mesh4j.ektoo.tasks.OpenFileTask;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.kml.exporter.KMLExporter;

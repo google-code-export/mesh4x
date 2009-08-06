@@ -96,7 +96,7 @@ public class MySQLUI extends AbstractUI {
 		this.add(getTableLabel(), null);
 		this.add(getListTableScroller(), null);
 		
-		this.add(getBtnView(), null);
+		this.add(getViewButton(), null);
 		this.add(getConflictsButton());
 		this.add(getMessagesText(), null);
 		this.add(getSchemaViewButton(), null);
@@ -440,15 +440,11 @@ public class MySQLUI extends AbstractUI {
 		return listTableScroller;
 	}
 	
-	private JButton getBtnView() {
-		getViewButton().addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					JFrame frame = MySQLUI.this.getRootFrame();
-					OpenMySqlFeedTask task = new OpenMySqlFeedTask(frame, (IErrorListener)frame, getController());
-					task.execute();
-				}
-			});
-		return getViewButton();
+	@Override
+	protected void viewItems(){
+		JFrame frame = MySQLUI.this.getRootFrame();
+		OpenMySqlFeedTask task = new OpenMySqlFeedTask(frame, (IErrorListener)frame, getController());
+		task.execute();
 	}
 
 	public void setList(String user, String pass, String host, int port, String schema) {

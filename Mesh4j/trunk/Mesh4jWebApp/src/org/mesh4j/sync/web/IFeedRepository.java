@@ -24,9 +24,9 @@ public interface IFeedRepository {
 
 	boolean existsFeed(String sourceID);
 
-	void addNewFeed(String newSourceID, ISyndicationFormat syndicationFormat, String link, String description, String schema, String mappings, String by);
+	void addNewFeed(String newSourceID, ISyndicationFormat syndicationFormat, String link, String description, String schema, String mappings, String by, String xform);
 	
-	void updateFeed(String sourceID, ISyndicationFormat syndicationFormat, String link, String description, String schema, String mappings, String by);
+	void updateFeed(String sourceID, ISyndicationFormat syndicationFormat, String link, String description, String schema, String mappings, String by, String xform);
 
 	void deleteFeed(String sourceID, String link, String by);
 
@@ -37,4 +37,6 @@ public interface IFeedRepository {
 	String getHistory(String sourceID, String link, ISyndicationFormat syndicationFormat, String syncId);
 
 	boolean isMeshGroup(String sourceID);
+	
+	String getXForm(String sourceID, String link) throws Exception;
 }

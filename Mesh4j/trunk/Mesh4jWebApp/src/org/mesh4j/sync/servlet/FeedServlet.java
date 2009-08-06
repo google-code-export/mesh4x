@@ -39,6 +39,7 @@ public class FeedServlet extends HttpServlet {
 	private static final String PARAM_ACTION = "action";
 	private static final String PARAM_BY = "by";
 	private static final String PARAM_VIEW_GROUP_MESH_ITEMS = "viewALLGroupMeshItems";
+	private static final String PARAM_XFORM = "xform";
 	
 	private static final String PARAM_SYNC_ID = "syncId";
 	
@@ -193,19 +194,24 @@ public class FeedServlet extends HttpServlet {
 			if(!this.feedRepository.existsFeed(sourceID)){
 				response.sendError(404, sourceID);
 			} else {
-				String schemaXML;
-				ISchema schema = this.feedRepository.getSchema(sourceID, link);
-				if(schema == null){
-					schemaXML = "";
-				} else {
-					if(contentFormat != null && contentFormat.isXForm()){
-						schemaXML = SchemaToXFormTranslator.translate(schema);
-					} else {
-						schemaXML = schema.asXML();
+				String schemaXML = "";
+				
+				if(contentFormat != null && contentFormat.isXForm()){
+					schemaXML = this.feedRepository.getXForm(sourceID, link);
+				}
+				
+				if(schemaXML.length() == 0){
+					ISchema schema = this.feedRepository.getSchema(sourceID, link);
+					if(schema != null){
+						if(contentFormat != null && contentFormat.isXForm()){
+							schemaXML = SchemaToXFormTranslator.translate(schema);
+						} else {
+							schemaXML = schema.asXML();
+						}
 					}
 				}
 				
-				String responseContent = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"+ schemaXML;			
+				String responseContent = schemaXML.length() == 0 ? "" : "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"+ schemaXML;			
 				responseContent = responseContent.replaceAll("&lt;", "<");	// TODO (JMT) remove ==>  xml.replaceAll("&lt;", "<"); 
 				responseContent = responseContent.replaceAll("&gt;", ">");
 				
@@ -273,7 +279,7 @@ public class FeedServlet extends HttpServlet {
 			} catch (Exception e) {
 				throw new ServletException(e);
 			}
-			String responseContent = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"+ mappingsResolver.asXML();
+			String responseContent = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" + mappingsResolver.asXML();
 			responseContent = responseContent.replaceAll("&lt;", "<");	// TODO (JMT) remove ==>  xml.replaceAll("&lt;", "<"); 
 			responseContent = responseContent.replaceAll("&gt;", ">");
 			
@@ -391,7 +397,13 @@ public class FeedServlet extends HttpServlet {
 			
 			String description = request.getParameter(PARAM_DESCRIPTION);
 			String schema = request.getParameter(RESOURCE_SCHEMA);
+			schema = normalizeXML(schema);
+			
 			String mappings = request.getParameter(RESOURCE_MAPPINGS);
+			mappings = normalizeXML(mappings);
+			
+			String xform = request.getParameter(PARAM_XFORM);
+			xform=normalizeXML(xform);
 			
 			ISyndicationFormat syndicationFormat = Format.getSyndicationFormat(feedFormat);	
 			if(syndicationFormat == null){
@@ -403,13 +415,20 @@ public class FeedServlet extends HttpServlet {
 			String by = getBy(request);
 			
 			if(this.feedRepository.existsFeed(newSourceID)){
-				this.feedRepository.updateFeed(newSourceID, syndicationFormat, link, description, schema, mappings, by);
+				this.feedRepository.updateFeed(newSourceID, syndicationFormat, link, description, schema, mappings, by, xform);
 			} else {
-				this.feedRepository.addNewFeed(newSourceID, syndicationFormat, link, description, schema, mappings, by);
+				this.feedRepository.addNewFeed(newSourceID, syndicationFormat, link, description, schema, mappings, by, xform);
 			}
 			
 			response.sendRedirect(link);
 		}
+	}
+
+	private String normalizeXML(String xml) {
+		if(xml.startsWith("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")){
+			return xml.substring("<?xml version=\"1.0\" encoding=\"UTF-8\"?>".length(), xml.length());
+		}
+		return xml;
 	}
 
 	private String getBy(HttpServletRequest request) {

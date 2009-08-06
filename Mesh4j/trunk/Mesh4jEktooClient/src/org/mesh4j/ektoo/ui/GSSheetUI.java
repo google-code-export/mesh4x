@@ -100,7 +100,7 @@ public class GSSheetUI extends AbstractUI {
 		this.add(getLabelColumn(), null);
 		this.add(getColumnList(), null);
 		this.add(getMessagesText(), null);
-		this.add(getBtnView(), null);
+		this.add(getViewButton(), null);
 		this.add(getConflictsButton());
 		this.add(getSchemaViewButton(), null);
 		this.add(getMappingsButton());
@@ -584,16 +584,11 @@ public class GSSheetUI extends AbstractUI {
 		}
 	}
 
-	
-	private JButton getBtnView() {
-		getViewButton().addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					JFrame frame = GSSheetUI.this.getRootFrame();
-					OpenURLTask task = new OpenURLTask(frame, (IErrorListener) frame, googleURL);
-					task.execute();
-				}
-			});
-		return getViewButton();
+	@Override
+	protected void viewItems(){
+		JFrame frame = GSSheetUI.this.getRootFrame();
+		OpenURLTask task = new OpenURLTask(frame, (IErrorListener) frame, googleURL);
+		task.execute();
 	}
 
 	public String getUser() {

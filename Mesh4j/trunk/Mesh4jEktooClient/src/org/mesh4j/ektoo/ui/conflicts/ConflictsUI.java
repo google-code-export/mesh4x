@@ -29,7 +29,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.mesh4j.ektoo.tasks.IErrorListener;
-import org.mesh4j.ektoo.tasks.ResolveConflictsTask;
 import org.mesh4j.ektoo.ui.EktooFrame;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.sync.ISyncAdapter;

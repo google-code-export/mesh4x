@@ -151,7 +151,7 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 	
 
 	@Override
-	public void addNewFeed(String sourceID, ISyndicationFormat syndicationFormat, String link, String description, String schema, String mappings, String by) {
+	public void addNewFeed(String sourceID, ISyndicationFormat syndicationFormat, String link, String description, String schema, String mappings, String by, String xform) {
 		IIdentityProvider identityProvider = new IdentityProvider(by);
 		ISyncAdapter parentAdapter = this.getParentSyncAdapter(sourceID, identityProvider);
 		
@@ -159,7 +159,7 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 			((ISyncAware)parentAdapter).beginSync();
 		}
 		
-		basicAddNewFeed(parentAdapter, sourceID, syndicationFormat, link, description, schema, mappings, identityProvider);
+		basicAddNewFeed(parentAdapter, sourceID, syndicationFormat, link, description, schema, mappings, identityProvider, xform);
 		
 		if(parentAdapter instanceof ISyncAware){
 			((ISyncAware)parentAdapter).endSync();
@@ -167,7 +167,7 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 
 	}
 	
-	public void basicAddNewFeed(ISyncAdapter parentAdapter, String sourceID, ISyndicationFormat syndicationFormat, String link, String description, String schema, String mappings, IIdentityProvider identityProvider) {
+	public void basicAddNewFeed(ISyncAdapter parentAdapter, String sourceID, ISyndicationFormat syndicationFormat, String link, String description, String schema, String mappings, IIdentityProvider identityProvider, String xform) {
 		String title = getFeedTitle(sourceID);
 		Feed feed = new Feed(title, description, link);
 		
@@ -185,6 +185,11 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 			mappingsElement.setText(mappings);  // TODO (JMT) validate mappings
 		}
 		
+		Element xformElement = parentPayload.addElement(Format.xform.name());
+		if(xform != null && xform.trim().length() >0){				
+			xformElement.setText(xform);  // TODO (JMT) validate xform
+		}
+				
 		String sycnId = IdGenerator.INSTANCE.newID();
 		XMLContent content = new XMLContent(sycnId, title, description, link, parentPayload);
 		Sync sync = new Sync(sycnId, identityProvider.getAuthenticatedUser(), new Date(), false);
@@ -381,6 +386,42 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 			return new Mapping(mappings);
 		}
 	}
+	
+	@Override
+	public String getXForm(String sourceID, String link) throws Exception{
+		if(sourceID == null){
+			return null;
+		}
+		
+		ISyncAdapter syncAdapter = this.getParentSyncAdapter(sourceID, NullIdentityProvider.INSTANCE);
+		List<Item> items = syncAdapter.getAll(new XMLContentLinkFilter(link));
+				
+		if(!items.isEmpty()){
+			Item item = items.get(0);
+			
+			String xml = item.getContent().getPayload().asXML();
+//			xml = xml.replaceAll("&lt;", "<");						// TODO (JMT) remove ==>  xml.replaceAll("&lt;", "<"); 
+//			xml = xml.replaceAll("&gt;", ">");
+			
+			Element xform = DocumentHelper.parseText(xml).getRootElement();
+			if(ISyndicationFormat.ELEMENT_PAYLOAD.equals(xform.getName())){
+				xform = xform.element(Format.xform.name());
+			}
+			
+			if(xform == null || !xform.getName().equals(Format.xform.name())){
+				return null;
+			} else {
+				String xformXml = xform.getText();
+				if(xformXml == null){
+					return "";
+				} else {
+					return xformXml;
+				}
+			}
+		} else {
+			return "";
+		}
+	}
 
 	@Override
 	public void deleteFeed(String sourceID, String link, String by) {
@@ -405,7 +446,7 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 	protected abstract void basicDeleteFeed(String sourceID);
 
 	@Override
-	public void updateFeed(String sourceID, ISyndicationFormat syndicationFormat, String link, String description, String schema, String mappings, String by) {
+	public void updateFeed(String sourceID, ISyndicationFormat syndicationFormat, String link, String description, String schema, String mappings, String by, String xform) {
 		
 		IIdentityProvider identityProvider = new IdentityProvider(by);
 		ISyncAdapter parentAdapter = this.getParentSyncAdapter(sourceID, identityProvider);
@@ -416,9 +457,7 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 		
 		List<Item> items = parentAdapter.getAll(new XMLContentLinkFilter(link));
 		if(items.isEmpty()){
-			
-			basicAddNewFeed(parentAdapter, sourceID, syndicationFormat, link, description, schema, mappings, identityProvider);
-			
+			basicAddNewFeed(parentAdapter, sourceID, syndicationFormat, link, description, schema, mappings, identityProvider, xform);
 		} else{
 			
 			Item item =items.get(0);
@@ -426,6 +465,7 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 			item.getSync().update(by, new Date());
 			
 			Element payload = item.getContent().getPayload();
+			
 			if(schema != null && schema.trim().length() >0){
 				Element schemaElement = payload.element(ISchema.ELEMENT_SCHEMA);
 				if(schemaElement == null){
@@ -440,6 +480,14 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 					mappingsElement = payload.addElement(IMapping.ELEMENT_MAPPING);
 				}
 				mappingsElement.setText(mappings);  // TODO (JMT) validate mappings
+			}
+			
+			if(xform != null && xform.trim().length() >0){
+				Element xformElement = payload.element(Format.xform.name());
+				if(xformElement == null){	
+					xformElement = payload.addElement(Format.xform.name());
+				}
+				xformElement.setText(xform);  // TODO (JMT) validate mappings
 			}
 			
 			((XMLContent)item.getContent()).setDescription(description);

@@ -34,7 +34,7 @@ public class SchemaToXFormTranslator {
 		if(schema instanceof IRDFSchema){
 			return translate((IRDFSchema)schema);
 		} else {
-			return schema.asXML();
+			return "";
 		}
 	}
 	

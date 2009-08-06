@@ -1,4 +1,4 @@
-package org.mesh4j.ektoo.tasks;
+package org.mesh4j.ektoo.ui.mappings;
 
 import java.awt.Cursor;
 import java.util.List;
@@ -10,7 +10,6 @@ import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.Event;
 import org.mesh4j.ektoo.controller.AbstractUIController;
 import org.mesh4j.ektoo.ui.EktooFrame;
-import org.mesh4j.ektoo.ui.MapConfigurationUI;
 import org.mesh4j.ektoo.ui.component.messagedialog.MessageDialog;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.sync.ISyncAdapter;

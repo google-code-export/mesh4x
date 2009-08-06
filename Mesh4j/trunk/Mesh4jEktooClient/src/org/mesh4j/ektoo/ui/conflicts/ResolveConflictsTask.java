@@ -1,4 +1,4 @@
-package org.mesh4j.ektoo.tasks;
+package org.mesh4j.ektoo.ui.conflicts;
 
 import java.awt.Cursor;
 import java.util.HashMap;
@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.swing.SwingWorker;
 
-import org.mesh4j.ektoo.ui.conflicts.ConflictsUI;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.merge.MergeBehavior;
 import org.mesh4j.sync.model.Item;
