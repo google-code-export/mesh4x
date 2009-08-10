@@ -174,14 +174,15 @@ public class EktooFrame extends JFrame implements IErrorListener, ISynchronizeTa
 				 }
 			});
 			
-			HyperLink settingsLink = new HyperLink(EktooUITranslator.getSettingsText());
-			settingsLink.addMouseListener(new MouseAdapter(){
-				 public void mouseClicked(MouseEvent e) {
-					 //launchSettingsUI();
-				 }
-			});
+			//commented by raju,will be opened after done settings feature in branch.
+//			HyperLink settingsLink = new HyperLink(EktooUITranslator.getSettingsText());
+//			settingsLink.addMouseListener(new MouseAdapter(){
+//				 public void mouseClicked(MouseEvent e) {
+//					 //launchSettingsUI();
+//				 }
+//			});
 			
-			linkPanel.add(settingsLink);
+			//linkPanel.add(settingsLink);
 			linkPanel.add(helpLink);
 			linkPanel.add(aboutLink);
 		}
