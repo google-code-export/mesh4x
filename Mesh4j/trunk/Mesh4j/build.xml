@@ -79,6 +79,9 @@
 	<target name="ant-jar" depends="clean-dist,ant-compile">
 				<echo message="Creating jar from ${ant.build.dir} directory" />
 				<jar destfile="${dist.dir}/${jarname}-${version}.jar">
+					<manifest>
+	            		<attribute name="Built-By" value="${built.by}"/>
+				    </manifest>
 					<fileset dir="${ant.build.dir}"/>
 					<fileset dir="etc/toExport"/>
 				</jar>
