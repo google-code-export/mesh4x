@@ -40,6 +40,7 @@ import org.mesh4j.sync.payload.schema.SchemaInstanceContentReadWriter;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
 import org.mesh4j.sync.payload.schema.rdf.RDFSchemaInstanceContentReadWriter;
+import org.mesh4j.sync.payload.schema.xform.HasRDFSchemaORXFormFilter;
 import org.mesh4j.sync.payload.schema.xform.XFormRDFSchemaContentWriter;
 import org.mesh4j.sync.payload.schema.xform.XFormRDFSchemaInstanceContentReadWriter;
 import org.mesh4j.sync.security.IIdentityProvider;
@@ -94,13 +95,18 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 
 		List<Item> items;
 		IFilter<Item> filter = new FilterQuery(filterQuery, schema);
-		if(contentFormat != null && contentFormat.isPlainXML()){
-			CompoundFilter compoundFilter;
-			if(sinceDate == null){
-				compoundFilter = new CompoundFilter(NonDeletedFilter.INSTANCE, filter);
-			}else {
-				SinceLastUpdateFilter sinceFilter = new SinceLastUpdateFilter(sinceDate);
-				compoundFilter = new CompoundFilter(NonDeletedFilter.INSTANCE, sinceFilter, filter);
+		if(contentFormat != null){
+			CompoundFilter compoundFilter = new CompoundFilter(filter);
+			if(contentFormat.isPlainXML()){
+				if(sinceDate == null){
+					compoundFilter.addFilters(NonDeletedFilter.INSTANCE);
+				}else {
+					SinceLastUpdateFilter sinceFilter = new SinceLastUpdateFilter(sinceDate);
+					compoundFilter.addFilters(NonDeletedFilter.INSTANCE, sinceFilter);
+				}
+			}
+			if(contentFormat.isXForm() && isMeshGroup(sourceID)){
+				compoundFilter.addFilters(HasRDFSchemaORXFormFilter.INSTANCE);
 			}
 			items = adapter.getAll(compoundFilter);
 		} else {
@@ -185,7 +191,7 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 			mappingsElement.setText(mappings);  // TODO (JMT) validate mappings
 		}
 		
-		Element xformElement = parentPayload.addElement(Format.xform.name());
+		Element xformElement = parentPayload.addElement(XFormRDFSchemaContentWriter.ELEMENT_XFORM);
 		if(xform != null && xform.trim().length() >0){				
 			xformElement.setText(xform);  // TODO (JMT) validate xform
 		}
@@ -405,10 +411,10 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 			
 			Element xform = DocumentHelper.parseText(xml).getRootElement();
 			if(ISyndicationFormat.ELEMENT_PAYLOAD.equals(xform.getName())){
-				xform = xform.element(Format.xform.name());
+				xform = xform.element(XFormRDFSchemaContentWriter.ELEMENT_XFORM);
 			}
 			
-			if(xform == null || !xform.getName().equals(Format.xform.name())){
+			if(xform == null || !xform.getName().equals(XFormRDFSchemaContentWriter.ELEMENT_XFORM)){
 				return null;
 			} else {
 				String xformXml = xform.getText();
@@ -483,9 +489,9 @@ public abstract class AbstractFeedRepository implements IFeedRepository{
 			}
 			
 			if(xform != null && xform.trim().length() >0){
-				Element xformElement = payload.element(Format.xform.name());
+				Element xformElement = payload.element(XFormRDFSchemaContentWriter.ELEMENT_XFORM);
 				if(xformElement == null){	
-					xformElement = payload.addElement(Format.xform.name());
+					xformElement = payload.addElement(XFormRDFSchemaContentWriter.ELEMENT_XFORM);
 				}
 				xformElement.setText(xform);  // TODO (JMT) validate mappings
 			}

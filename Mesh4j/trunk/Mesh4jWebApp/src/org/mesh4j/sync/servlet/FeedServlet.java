@@ -425,8 +425,11 @@ public class FeedServlet extends HttpServlet {
 	}
 
 	private String normalizeXML(String xml) {
-		if(xml.startsWith("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")){
-			return xml.substring("<?xml version=\"1.0\" encoding=\"UTF-8\"?>".length(), xml.length());
+		if(xml.startsWith("<?xml")){
+			int len = xml.indexOf("<", 2);
+			if(len!=-1){
+				return xml.substring(len, xml.length());
+			}
 		}
 		return xml;
 	}
