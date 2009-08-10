@@ -31,7 +31,9 @@ public class SchemaToXFormTranslator {
 		"</h:html>";
 
 	public static String translate(ISchema schema){
-		if(schema instanceof IRDFSchema){
+		if(schema == null){
+			return "";
+		} else if(schema instanceof IRDFSchema){
 			return translate((IRDFSchema)schema);
 		} else {
 			return "";
@@ -39,6 +41,10 @@ public class SchemaToXFormTranslator {
 	}
 	
 	public static String translate(IRDFSchema schema){
+		
+		if(schema == null){
+			return "";
+		}
 		
 		String model = schema.getOntologyNameSpace();
 		String title = schema.getOntologyNameSpace();

@@ -8,10 +8,11 @@ import org.mesh4j.sync.adapters.feed.IContentWriter;
 import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.payload.schema.ISchema;
-import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
 
 public class XFormRDFSchemaContentWriter implements IContentWriter{
+	
+	public final static String ELEMENT_XFORM = "xform";
 	
 	// MODEL VARIABLES
 	private boolean plainXML;
@@ -37,8 +38,7 @@ public class XFormRDFSchemaContentWriter implements IContentWriter{
 			syndicationFormat.addFeedItemDescriptionElement(itemElement, "---DELETED---");
 		}else{
 			
-			String rdfXml = getRDFXml(item);
-			Element payload = asSchemaXML(rdfXml);
+			Element payload = getXForm(item);
 			
 			syndicationFormat.addFeedItemTitleElement(itemElement, "Content id = " + item.getContent().getId());
 			syndicationFormat.addFeedItemDescriptionElement(itemElement, "Sync Id: " + item.getSyncId() + " Version: " + item.getContent().getVersion());
@@ -46,33 +46,64 @@ public class XFormRDFSchemaContentWriter implements IContentWriter{
 		}
 	}
 
-	private String getRDFXml(Item item) {
+	public static Element getXForm(Item item) {
+		String xformXML = getXFormXML(item);
+		if(xformXML.isEmpty()){
+			xformXML = getXFormXMLFromRDF(item);
+		}
+		Element schemaElement = DocumentHelper.createElement(ISchema.ELEMENT_SCHEMA);
+		if(!xformXML.isEmpty()){
+			schemaElement.setText(xformXML);
+		}
+		return schemaElement;
+	}
+	
+	
+	private static String getXFormXML(Item item) {
+		Element payload = item.getContent().getPayload();
+		if(ISyndicationFormat.ELEMENT_PAYLOAD.equals(payload.getName())){
+			payload = payload.element(ELEMENT_XFORM);
+		}
+		
+		if(ELEMENT_XFORM.equals(payload.getName())){
+			return payload.getText();
+		}
+		return "";		
+	}
+
+	
+
+	protected static String getXFormXMLFromRDF(Item item) {
+		String rdfXML = getRDFXml(item);
+		if(rdfXML.isEmpty()){
+			return rdfXML;
+		} else {
+			RDFSchema rdfSchema = getSchema(rdfXML);
+			return SchemaToXFormTranslator.translate(rdfSchema);
+		}
+	}
+	
+	private static String getRDFXml(Item item) {
 		Element payload = item.getContent().getPayload();
 		if(ISyndicationFormat.ELEMENT_PAYLOAD.equals(payload.getName())){
 			payload = payload.element(ISchema.ELEMENT_SCHEMA);
 		}
 		
-		if(ISchema.ELEMENT_SCHEMA.equals(payload.getName())){
-			return payload.getText();
-		}
-		
-		if(IRDFSchema.QNAME_RDF.getNamespacePrefix().equals(payload.getNamespacePrefix()) && IRDFSchema.QNAME_RDF.getName().equals(payload.getName())){
+		if(RDFSchema.isRDF(payload)){
 			return payload.asXML();
 		}
 		
-		return null;
+		if(ISchema.ELEMENT_SCHEMA.equals(payload.getName())){
+			String rdfXml =  payload.getText();
+			if(RDFSchema.isRDF(rdfXml)){
+				return rdfXml;
+			} 
+		} 
 		
+		return "";		
 	}
 
-	protected Element asSchemaXML(String rdfXml) {
-		RDFSchema rdfSchema = getSchema(rdfXml);
-		String xformXML = SchemaToXFormTranslator.translate(rdfSchema);
-		Element schemaElement = DocumentHelper.createElement(ISchema.ELEMENT_SCHEMA);
-		schemaElement.setText(xformXML);
-		return schemaElement;
-	}
-
-	protected RDFSchema getSchema(String rdfXml) {
+	protected static RDFSchema getSchema(String rdfXml) {
 		StringReader reader =  new StringReader(rdfXml);
 		RDFSchema rdfSchema = new RDFSchema(reader);
 		return rdfSchema;
