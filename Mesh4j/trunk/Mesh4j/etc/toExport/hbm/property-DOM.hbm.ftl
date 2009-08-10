@@ -1,8 +1,9 @@
   <#foreach column in property.columnIterator>
+  <#assign nodeName = exporter.getNodeName(column)>
     <property
         name="${column.quotedName}"
         type="${property.value.typeName}"
-		node="${column.quotedName}"
+		node="${nodeName}"
   </#foreach>
 <#if !property.updateable>
         update="false"

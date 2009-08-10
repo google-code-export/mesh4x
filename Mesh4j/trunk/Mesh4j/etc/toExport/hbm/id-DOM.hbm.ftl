@@ -18,10 +18,11 @@
   </composite-id>   
 <#elseif !c2j.isComponent(property)>
 <#foreach column in property.columnIterator>
+<#assign nodeName = exporter.getNodeName(column)>
 	<id 
         name="${column.quotedName}"
         type="${property.value.typeName}"
-		node="${column.quotedName}"
+		node="${nodeName}"
 </#foreach>
  <#if c2h.isUnsavedValue(property)>
         unsaved-value="${c2h.getUnsavedValue(property)}"
@@ -59,7 +60,8 @@
     >		
     <#foreach keyproperty in property.value.propertyIterator>
 	  <#if !c2h.isManyToOne(keyproperty)>
-	        <key-property name="${keyproperty.name}" node="${keyproperty.name}" type="${keyproperty.value.typeName}">
+	  		<#assign nodeName = exporter.getNodeName(keyproperty)>
+	        <key-property name="${nodeName}" node="${nodeName}" type="${keyproperty.value.typeName}">
 	        <#foreach column in keyproperty.columnIterator>
 	           <#include "pkcolumn.hbm.ftl">
 	        </#foreach>	
