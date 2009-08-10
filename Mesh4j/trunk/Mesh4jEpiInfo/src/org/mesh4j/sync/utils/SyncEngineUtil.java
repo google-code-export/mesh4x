@@ -2,6 +2,7 @@ package org.mesh4j.sync.utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.text.MessageFormat;
 import java.util.Date;
 import java.util.List;
@@ -441,7 +442,7 @@ public class SyncEngineUtil {
 	}
 	
 	public static void downloadMappings(String url, String dataSource, PropertiesProvider propertiesProvider) throws Exception {
-		IMapping mapping = HttpSyncAdapter.getMappings(url);
+		IMapping mapping = HttpSyncAdapter.getMappings(new URL(url));
 		String xmlMappings = "<mappings/>";
 		if(mapping != null){
 			xmlMappings = mapping.asXML(); 
