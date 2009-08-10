@@ -15,6 +15,7 @@
 	<hr>
 	<br>
 	<h1>Welcome to mesh4x!!!</h1>
+	<p>version: 2_0_3 beta test</p>
 	<br>
 	<hr>
 	<br>
