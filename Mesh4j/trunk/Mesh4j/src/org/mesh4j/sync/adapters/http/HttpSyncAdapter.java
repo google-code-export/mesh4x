@@ -300,9 +300,9 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 		throw new UnsupportedOperationException();
 	}
 
-	public static ISchema getSchema(String url) {
+	public static ISchema getSchema(String serverURL, String meshGroup, String dataset) {
 		try{
-			URL baseURL = new URL(url);		
+			URL baseURL = new URL(serverURL + "/" + meshGroup + "/"+ dataset);		
 			return getSchema(baseURL);
 		} catch(Exception e){
 			throw new MeshException(e);
@@ -354,9 +354,9 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 		return schema;
 	}
 
-	public static Mapping getMappings(String url, IPropertyResolver... propertyResolvers) {
+	public static Mapping getMappings(String serverURL, String meshGroup, String dataset, IPropertyResolver... propertyResolvers) {
 		try{
-			URL baseURL = new URL(url);
+			URL baseURL = new URL(serverURL + "/" + meshGroup +"/" + dataset);
 			return getMappings(baseURL, propertyResolvers);
 		} catch(Exception e){
 			throw new MeshException(e);
@@ -397,8 +397,12 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 		return mapping;
 	}
 
-	public static String makeSchemaAsXFormURL(String url) {
-		String resultURL = addSubdomain(url, "schema");
+	public static String makeSchemaAsXFormURL(String url, String meshGroup) {
+		return addQueryParamater(url+"/"+meshGroup, "content=xform");
+	}
+	
+	public static String makeSchemaAsXFormURL(String url, String meshGroup, String dataset) {
+		String resultURL = addSubdomain(url+"/"+meshGroup+"/"+dataset, "schema");
 		return addQueryParamater(resultURL, "content=xform");
 	}
 	
@@ -595,12 +599,12 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 		return this.url.toExternalForm();
 	}
 
-	public static String getXForm(String url) {
+	public static String getXForm(String url, String meshGroup, String dataset) {
 		String xmlXForm = null;
 		HttpURLConnection conn = null;
 	    try{
     	
-	    	URL urlXForm = new URL(makeSchemaAsXFormURL(url));
+	    	URL urlXForm = new URL(makeSchemaAsXFormURL(url, meshGroup, dataset));
 			conn = (HttpURLConnection) urlXForm.openConnection();
 			
 			xmlXForm = readData(conn);

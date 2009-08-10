@@ -18,6 +18,7 @@ import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.payload.schema.rdf.RDFSchemaInstanceContentReadWriter;
 import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.validations.Guard;
+import org.mesh4j.sync.validations.MeshException;
 
 public class HttpSyncAdapterFactory implements ISyncAdapterFactory {
 
@@ -36,7 +37,17 @@ public class HttpSyncAdapterFactory implements ISyncAdapterFactory {
 	}
 	
 	public static HttpSyncAdapter createSyncAdapter(String url, IIdentityProvider identityProvider){
-		ISchema schema = HttpSyncAdapter.getSchema(url);
+		try{
+			ISchema schema = HttpSyncAdapter.getSchema(new URL(url));
+			return createSyncAdapter(url, identityProvider, schema, null);
+		} catch(Exception e){
+			throw new MeshException(e);
+		}
+	}
+	
+	public static HttpSyncAdapter createSyncAdapter(String serverUrl, String meshGroup, String dataSetId, IIdentityProvider identityProvider){
+		ISchema schema = HttpSyncAdapter.getSchema(serverUrl, meshGroup, dataSetId);
+		String url = serverUrl + "/" + meshGroup + "/" + dataSetId;
 		return createSyncAdapter(url, identityProvider, schema, null);
 	}
 
@@ -101,7 +112,7 @@ public class HttpSyncAdapterFactory implements ISyncAdapterFactory {
 		
 		//TODO: need to come up with better strategy for automatic creation of mesh/feed
 		//if not available
-		ISchema cloudSchema = HttpSyncAdapter.getSchema(url);
+		ISchema cloudSchema = HttpSyncAdapter.getSchema(serverUrl, meshGroup, dataSetId);
 		if(cloudSchema == null){
 			HttpSyncAdapter.uploadMeshDefinition(
 					serverUrl, 
@@ -127,7 +138,7 @@ public class HttpSyncAdapterFactory implements ISyncAdapterFactory {
 			}
 			
 			if(mapping != null){
-				IMapping cloudMappings = HttpSyncAdapter.getMappings(url);
+				IMapping cloudMappings = HttpSyncAdapter.getMappings(serverUrl, meshGroup, dataSetId);
 				if(cloudMappings == null || (cloudMappings != null && !cloudMappings.asXML().equals(mapping.asXML()))){
 					HttpSyncAdapter.uploadMeshDefinition(
 						serverUrl, 
@@ -155,9 +166,8 @@ public class HttpSyncAdapterFactory implements ISyncAdapterFactory {
 		// create mesh data sets
 		for (ISchema schema : schemas) {
 			String feedName = schema.getName();
-			
-			String tmpUrl = serverUrl + "/" + meshGroup + "/" + feedName;
-			ISchema cloudSchema = HttpSyncAdapter.getSchema(tmpUrl);
+
+			ISchema cloudSchema = HttpSyncAdapter.getSchema(serverUrl, meshGroup, feedName);
 			
 			if (cloudSchema == null) {
 				HttpSyncAdapter.uploadMeshDefinition(serverUrl, meshGroup + "/"
