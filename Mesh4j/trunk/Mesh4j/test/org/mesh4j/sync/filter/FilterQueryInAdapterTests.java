@@ -220,7 +220,7 @@ public class FilterQueryInAdapterTests {
 		Assert.assertEquals(1, result.size());
 
 		InMemorySyncAdapter inMemoryAdapter = new InMemorySyncAdapter("result", NullIdentityProvider.INSTANCE, result);
-		TestHelper.assertItem(item1, inMemoryAdapter);  // TODO (JMT) content id must be rdf instance id when rdf schema has not identifiable properties
+		TestHelper.assertItem("content id must be rdf instance id when rdf schema has not identifiable properties", item1, inMemoryAdapter);  // TODO (JMT) content id must be rdf instance id when rdf schema has not identifiable properties
 		
 		fq = new FilterQuery("birthDate>1980-01-01T01:00:00Z", rdfSchema);
 		result = adapter.getAll(fq);

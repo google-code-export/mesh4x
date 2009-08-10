@@ -1,5 +1,7 @@
 package org.mesh4j.sync.adapters.http;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -23,10 +25,12 @@ import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.payload.schema.Schema;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
+import org.mesh4j.sync.payload.schema.xform.SchemaToXFormTranslator;
 import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.security.IdentityProvider;
 import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.test.utils.TestHelper;
+import org.mesh4j.sync.utils.FileUtils;
 import org.mesh4j.sync.utils.XMLHelper;
 import org.mesh4j.sync.validations.MeshException;
 
@@ -58,6 +62,213 @@ public class HttpSyncAdapterTests {
 		IMapping mapping1 = new Mapping(elementMappings1);
 
 		HttpSyncAdapter.uploadMeshDefinition(path, "myMesh/myFeed", RssSyndicationFormat.NAME, "my description223", schema1, mapping1, "jmt");
+	}
+	
+	@Test
+	public void shouldUploadMeshAndGetXFormWithRDFSchemaAndXForm() throws IOException{
+		String path = "http://localhost:8080/mesh4x/feeds";
+		String meshGroup = IdGenerator.INSTANCE.newID().substring(0, 5);
+		String dataset = "test";
+		
+		// add mesh
+		HttpSyncAdapter.uploadMeshDefinition(path, meshGroup, RssSyndicationFormat.NAME, "my mesh", null, null, "jmt");
+		
+		// add feed
+		RDFSchema rdfSchema = new RDFSchema("Oswego", "http://mesh4x/Oswego#", "Oswego");
+		rdfSchema.addBooleanProperty("ill", "ill", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addDateTimeProperty("dateOnset", "dateOnSet", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addDecimalProperty("decimal", "decimal", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addDoubleProperty("AgeDouble", "ageDouble", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addIntegerProperty("AgeInt", "ageInt", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addLongProperty("AgeLong", "ageLong", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addStringProperty("name", "name", IRDFSchema.DEFAULT_LANGUAGE);
+		
+		Element elementMappings = XMLHelper.parseElement("<mappings><title>title</title></mappings>");
+		IMapping mapping = new Mapping(elementMappings);
+		
+		String xformXml = new String(FileUtils.read(new File(getClass().getResource("xformcustomized.txt").getFile())));
+
+		HttpSyncAdapter.uploadMeshDefinition(path, meshGroup+"/"+dataset, RssSyndicationFormat.NAME, "my description", rdfSchema, mapping, "jmt", xformXml);
+		
+		String xform = HttpSyncAdapter.getXForm(path,meshGroup,dataset);
+		
+		Element element = XMLHelper.parseElement(xformXml);
+		Element elementLoaded = XMLHelper.parseElement(xform);
+		Assert.assertEquals(XMLHelper.canonicalizeXML(element), XMLHelper.canonicalizeXML(elementLoaded));
+	}
+	
+	@Test
+	public void shouldUploadMeshAndGetXFormWithRDFSchemaAndWithoutXForm() throws IOException{
+		String path = "http://localhost:8080/mesh4x/feeds";
+		String meshGroup = IdGenerator.INSTANCE.newID().substring(0, 5);
+		String dataset = "test";
+		
+		// add mesh
+		HttpSyncAdapter.uploadMeshDefinition(path, meshGroup, RssSyndicationFormat.NAME, "my mesh", null, null, "jmt");
+		
+		// add feed
+		RDFSchema rdfSchema = new RDFSchema("Oswego", "http://mesh4x/Oswego#", "Oswego");
+		rdfSchema.addBooleanProperty("ill", "ill", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addDateTimeProperty("dateOnset", "dateOnSet", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addDecimalProperty("decimal", "decimal", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addDoubleProperty("AgeDouble", "ageDouble", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addIntegerProperty("AgeInt", "ageInt", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addLongProperty("AgeLong", "ageLong", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addStringProperty("name", "name", IRDFSchema.DEFAULT_LANGUAGE);
+		
+		Element elementMappings = XMLHelper.parseElement("<mappings><title>title</title></mappings>");
+		IMapping mapping = new Mapping(elementMappings);
+		
+		HttpSyncAdapter.uploadMeshDefinition(path, meshGroup+"/"+dataset, RssSyndicationFormat.NAME, "my description", rdfSchema, mapping, "jmt", null);
+		
+		String xform = HttpSyncAdapter.getXForm(path,meshGroup,dataset);
+		
+		String xformXml = SchemaToXFormTranslator.translate(rdfSchema);
+		Element element = XMLHelper.parseElement(xformXml);
+		Element elementLoaded = XMLHelper.parseElement(xform);
+		Assert.assertEquals(XMLHelper.canonicalizeXML(element), XMLHelper.canonicalizeXML(elementLoaded));
+	}
+	
+	@Test
+	public void shouldUploadMeshAndGetXFormWithoutRDFSchemaAndWithoutXForm() throws IOException{
+		String path = "http://localhost:8080/mesh4x/feeds";
+		String meshGroup = IdGenerator.INSTANCE.newID().substring(0, 5);
+		String dataset = "test";
+		
+		// add mesh
+		HttpSyncAdapter.uploadMeshDefinition(path, meshGroup, RssSyndicationFormat.NAME, "my mesh", null, null, "jmt");
+		
+		// add feed
+				
+		Element elementMappings = XMLHelper.parseElement("<mappings><title>title</title></mappings>");
+		IMapping mapping = new Mapping(elementMappings);
+		
+		HttpSyncAdapter.uploadMeshDefinition(path, meshGroup+"/"+dataset, RssSyndicationFormat.NAME, "my description", null, mapping, "jmt", null);
+		
+		String xform = HttpSyncAdapter.getXForm(path,meshGroup,dataset);
+		
+		Assert.assertEquals("", xform);
+	}
+	
+	@Test
+	public void shouldUploadMeshAndGetXFormWithoutRDFSchemaAndXForm() throws IOException{
+		String path = "http://localhost:8080/mesh4x/feeds";
+		String meshGroup = IdGenerator.INSTANCE.newID().substring(0, 5);
+		String dataset = "test";
+		
+		// add mesh
+		HttpSyncAdapter.uploadMeshDefinition(path, meshGroup, RssSyndicationFormat.NAME, "my mesh", null, null, "jmt");
+		
+		// add feed
+		
+		Element elementMappings = XMLHelper.parseElement("<mappings><title>title</title></mappings>");
+		IMapping mapping = new Mapping(elementMappings);
+		
+		String xformXml = new String(FileUtils.read(new File(getClass().getResource("xformcustomized.txt").getFile())));
+
+		HttpSyncAdapter.uploadMeshDefinition(path, meshGroup+"/"+dataset, RssSyndicationFormat.NAME, "my description", null, mapping, "jmt", xformXml);
+		
+		String xform = HttpSyncAdapter.getXForm(path,meshGroup,dataset);
+		
+		Element element = XMLHelper.parseElement(xformXml);
+		Element elementLoaded = XMLHelper.parseElement(xform);
+		Assert.assertEquals(XMLHelper.canonicalizeXML(element), XMLHelper.canonicalizeXML(elementLoaded));
+	}
+	
+	@Test
+	public void shouldUploadMeshAndGetXFormWithSchemaAndXForm() throws IOException{
+		String path = "http://localhost:8080/mesh4x/feeds";
+		String meshGroup = IdGenerator.INSTANCE.newID().substring(0, 5);
+		String dataset = "test";
+		
+		// add mesh
+		HttpSyncAdapter.uploadMeshDefinition(path, meshGroup, RssSyndicationFormat.NAME, "my mesh", null, null, "jmt");
+		
+		// add feed
+		Schema schema = new Schema(XMLHelper.parseElement("<foo>bar</foo>"));
+		
+		Element elementMappings = XMLHelper.parseElement("<mappings><title>title</title></mappings>");
+		IMapping mapping = new Mapping(elementMappings);
+		
+		String xformXml = new String(FileUtils.read(new File(getClass().getResource("xformcustomized.txt").getFile())));
+
+		HttpSyncAdapter.uploadMeshDefinition(path, meshGroup+"/"+dataset, RssSyndicationFormat.NAME, "my description", schema, mapping, "jmt", xformXml);
+		
+		String xform = HttpSyncAdapter.getXForm(path,meshGroup,dataset);
+		
+		Element element = XMLHelper.parseElement(xformXml);
+		Element elementLoaded = XMLHelper.parseElement(xform);
+		Assert.assertEquals(XMLHelper.canonicalizeXML(element), XMLHelper.canonicalizeXML(elementLoaded));
+	}
+	
+	@Test
+	public void shouldUploadMeshAndGetXFormWithSchemaAndWithoutXForm() throws IOException{
+		String path = "http://localhost:8080/mesh4x/feeds";
+		String meshGroup = IdGenerator.INSTANCE.newID().substring(0, 5);
+		String dataset = "test";
+		
+		// add mesh
+		HttpSyncAdapter.uploadMeshDefinition(path, meshGroup, RssSyndicationFormat.NAME, "my mesh", null, null, "jmt");
+		
+		// add feed
+		Schema schema = new Schema(XMLHelper.parseElement("<foo>bar</foo>"));
+		
+		Element elementMappings = XMLHelper.parseElement("<mappings><title>title</title></mappings>");
+		IMapping mapping = new Mapping(elementMappings);
+		
+		
+		HttpSyncAdapter.uploadMeshDefinition(path, meshGroup+"/"+dataset, RssSyndicationFormat.NAME, "my description", schema, mapping, "jmt", null);
+		
+		String xform = HttpSyncAdapter.getXForm(path,meshGroup,dataset);
+		
+		Assert.assertEquals("", xform);
+	}
+	
+	@Test
+	public void shouldExecuteGetAllDataSetAsXFormContent() throws IOException{
+		String serverURL = "http://localhost:8080/mesh4x/feeds";
+		String meshGroup = IdGenerator.INSTANCE.newID().substring(0, 5);
+		
+		// add mesh
+		HttpSyncAdapter.uploadMeshDefinition(serverURL, meshGroup, RssSyndicationFormat.NAME, "my mesh", null, null, "jmt");
+		
+		// dataset schema/mappings/xform definition
+		Schema schema = new Schema(XMLHelper.parseElement("<foo>bar</foo>"));
+		
+		RDFSchema rdfSchema = new RDFSchema("Oswego", "http://mesh4x/Oswego#", "Oswego");
+		rdfSchema.addBooleanProperty("ill", "ill", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addDateTimeProperty("dateOnset", "dateOnSet", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addDecimalProperty("decimal", "decimal", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addDoubleProperty("AgeDouble", "ageDouble", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addIntegerProperty("AgeInt", "ageInt", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addLongProperty("AgeLong", "ageLong", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.addStringProperty("name", "name", IRDFSchema.DEFAULT_LANGUAGE);
+		
+		Element elementMappings = XMLHelper.parseElement("<mappings><title>title</title></mappings>");
+		IMapping mapping = new Mapping(elementMappings);
+		
+		String xformXml = new String(FileUtils.read(new File(getClass().getResource("xformcustomized.txt").getFile())));
+		
+		// add dataSets
+		HttpSyncAdapter.uploadMeshDefinition(serverURL, meshGroup+"/rdfxform", RssSyndicationFormat.NAME, "my description", rdfSchema, mapping, "jmt", xformXml);
+		HttpSyncAdapter.uploadMeshDefinition(serverURL, meshGroup+"/rdf", RssSyndicationFormat.NAME, "my description", rdfSchema, mapping, "jmt", null);
+		HttpSyncAdapter.uploadMeshDefinition(serverURL, meshGroup+"/nothing", RssSyndicationFormat.NAME, "my description", null, mapping, "jmt", null);
+		HttpSyncAdapter.uploadMeshDefinition(serverURL, meshGroup+"/xform", RssSyndicationFormat.NAME, "my description", null, mapping, "jmt", xformXml);
+		HttpSyncAdapter.uploadMeshDefinition(serverURL, meshGroup+"/schemaxform", RssSyndicationFormat.NAME, "my description", schema, mapping, "jmt", xformXml);
+		HttpSyncAdapter.uploadMeshDefinition(serverURL, meshGroup+"/schema", RssSyndicationFormat.NAME, "my description", schema, mapping, "jmt", null);
+		
+		// get all
+		String url = HttpSyncAdapter.makeSchemaAsXFormURL(serverURL, meshGroup);
+		
+		HttpSyncAdapter httpAdapter = makeAdapter(url);
+		
+		List<Item> items = httpAdapter.getAll();
+		Assert.assertNotNull(items);
+		Assert.assertEquals(4, items.size());
+		
+		for (Item item : items) {
+			Assert.assertTrue(item.getContent().getPayload().asXML().startsWith("<schema><h:html"));
+		}
 	}
 	
 	@Test
@@ -127,6 +338,11 @@ public class HttpSyncAdapterTests {
 	}
 
 	@Test
+	public void shouldMakeXFormURL() {
+		Assert.assertEquals("http://localhost:8080/mesh4x/feeds/myMesh/myFeed/schema?content=xform", HttpSyncAdapter.makeSchemaAsXFormURL("http://localhost:8080/mesh4x/feeds","myMesh","myFeed"));
+	}
+	
+	@Test
 	public void shouldMakeMeshGroupURLToSync() {
 		Assert.assertEquals("http://localhost:8080/mesh4x/feeds/myMesh/myFeed?viewALLGroupMeshItems", HttpSyncAdapter.makeMeshGroupURLToSync("http://localhost:8080/mesh4x/feeds/myMesh/myFeed"));
 		Assert.assertEquals("http://localhost:8080/mesh4x/feeds/myMesh/myFeed/?viewALLGroupMeshItems", HttpSyncAdapter.makeMeshGroupURLToSync("http://localhost:8080/mesh4x/feeds/myMesh/myFeed/"));
@@ -171,15 +387,13 @@ public class HttpSyncAdapterTests {
 	
 	@Test
 	public void shouldObtainsSchema(){
-		String path = "http://localhost:8080/mesh4x/feeds/myMesh/myFeed";
-		ISchema schema = HttpSyncAdapter.getSchema(path);
+		ISchema schema = HttpSyncAdapter.getSchema("http://localhost:8080/mesh4x/feeds", "myMesh ", "myFeed");
 		Assert.assertNotNull(schema);
 	}
 
 	@Test
 	public void shouldObtainsMappings(){
-		String path = "http://localhost:8080/mesh4x/feeds/myMesh/myFeed";
-		IMapping mappings = HttpSyncAdapter.getMappings(path);
+		IMapping mappings = HttpSyncAdapter.getMappings("http://localhost:8080/mesh4x/feeds", "myMesh ", "myFeed");
 		Assert.assertNotNull(mappings);
 	}
 	

@@ -13,6 +13,7 @@ import java.util.TreeSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
@@ -146,13 +147,33 @@ public class XMLHelper {
 	final static Comparator<Element> ELEMENT_COMPARATOR = new Comparator<Element>(){
 		@Override
 		public int compare(Element e0, Element e1) {
-			return e0.getName().compareTo(e1.getName());
+			return makeKey(e0).compareTo(makeKey(e1));
+		}
+		
+		@SuppressWarnings("unchecked")
+		private String makeKey(Element e){
+			StringBuffer sb = new StringBuffer();
+			sb.append(e.getQualifiedName());
+			
+			List<Attribute> allAttrs = e.attributes();
+			TreeSet<String> attrs = new TreeSet<String>();
+			for (Attribute attr : allAttrs) {
+				attrs.add(attr.getQualifiedName()+"="+attr.getValue());	
+			}
+			
+			if(!attrs.isEmpty()){
+				sb.append(attrs.toString());
+			}
+			
+			String result = sb.toString();
+			return result;
 		}
 		
 	};
 	@SuppressWarnings("unchecked")
 	private static Element sortElements(Element element) {
 		Element copyElement = element.createCopy();
+
 		TreeSet<Element> sortedElements = new TreeSet<Element>(ELEMENT_COMPARATOR);
 		
 		List<Element> elements = copyElement.elements();
