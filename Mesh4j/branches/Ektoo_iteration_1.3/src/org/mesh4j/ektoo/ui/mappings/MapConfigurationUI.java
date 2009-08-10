@@ -1,4 +1,4 @@
-package org.mesh4j.ektoo.ui;
+package org.mesh4j.ektoo.ui.mappings;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -21,7 +21,7 @@ import javax.swing.border.EtchedBorder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.controller.AbstractUIController;
-import org.mesh4j.ektoo.tasks.OpenMapTask;
+import org.mesh4j.ektoo.ui.EktooFrame;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.geo.coder.GeoCoderLatitudePropertyResolver;
 import org.mesh4j.geo.coder.GeoCoderLocationPropertyResolver;

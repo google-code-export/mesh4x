@@ -39,9 +39,12 @@ public class CloudUIValidator extends AbstractValidator {
 			if(serverURL.trim().length() == 0) {
 				setError(ui.getServerURLText(), EktooUITranslator.getErrorEmptyOrNull(CloudUIController.SYNC_SERVER_URI));
 				isValid = false;
-			} else if(serverURL.contains(" ") || !serverURL.trim().endsWith("mesh4x/feeds") || serverURL.indexOf("mesh4x/feeds") != serverURL.lastIndexOf("mesh4x/feeds")){
-				setError(ui.getServerURLText(), EktooUITranslator.getErrorInvalidURL());
-				isValid = false;
+			} else {
+				// TODO REMOVE this validation - server subfix
+				if(isInvalidServer(serverURL, "mesh4x/feeds") && isInvalidServer(serverURL, "mesh4x_test/feeds")){
+					setError(ui.getServerURLText(), EktooUITranslator.getErrorInvalidURL());
+					isValid = false;
+				}
 			}
 		}else{
 			try {
@@ -86,6 +89,10 @@ public class CloudUIValidator extends AbstractValidator {
 		}
 
 		return isValid;
+	}
+
+	private boolean isInvalidServer(String serverURL, String serverSubfix) {
+		return serverURL.contains(" ") || !serverURL.trim().endsWith(serverSubfix) || serverURL.indexOf(serverSubfix) != serverURL.lastIndexOf(serverSubfix);
 	}
 
 }

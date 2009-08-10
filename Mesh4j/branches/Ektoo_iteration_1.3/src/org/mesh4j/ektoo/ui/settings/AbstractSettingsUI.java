@@ -12,5 +12,10 @@ public abstract class AbstractSettingsUI extends AbstractUI{
 		super(controller);
 	}
 	
+	@Override
+	public void viewItems(){
+		// TODO AbstractSettingsUI is an AbstractUI???
+	}
+	
 
 }

@@ -79,7 +79,7 @@ public class MsExcelUI extends AbstractUI implements IValidationStatus {
 		this.add(getLabelFile(), null);
 		this.add(getTxtFile(), null);
 		this.add(getBtnFile(), null);
-		this.add(getBtnView(), null);
+		this.add(getViewButton(), null);
 
 		this.add(getlabelTable(), null);
 		this.add(getTableList(), null);
@@ -88,7 +88,7 @@ public class MsExcelUI extends AbstractUI implements IValidationStatus {
 		this.add(getMessagesText(), null);
 		this.add(getSchemaViewButton(), null);
 		this.add(getMappingsButton());
-		
+		this.add(getConflictsButton());
 	}
 	
 	
@@ -256,17 +256,12 @@ public class MsExcelUI extends AbstractUI implements IValidationStatus {
 		return btnFile;
 	}
 
-	private JButton getBtnView() {
-		getViewButton().addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					JFrame frame = MsExcelUI.this.getRootFrame();
-					IErrorListener errorListener = MsExcelUI.this.getErrorListener();
-					OpenFileTask task = new OpenFileTask(frame, errorListener,
-							txtFileName.getText());
-					task.execute();
-				}
-			});
-		return getViewButton();
+	@Override
+	protected void viewItems(){
+		JFrame frame = MsExcelUI.this.getRootFrame();
+		IErrorListener errorListener = MsExcelUI.this.getErrorListener();
+		OpenFileTask task = new OpenFileTask(frame, errorListener, txtFileName.getText());
+		task.execute();
 	}
 
 	protected IErrorListener getErrorListener() {

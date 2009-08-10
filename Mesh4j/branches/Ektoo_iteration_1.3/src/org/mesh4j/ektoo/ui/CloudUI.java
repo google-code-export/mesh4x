@@ -15,12 +15,15 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 
 import org.mesh4j.ektoo.controller.CloudUIController;
 import org.mesh4j.ektoo.tasks.IErrorListener;
 import org.mesh4j.ektoo.tasks.OpenURLTask;
 import org.mesh4j.ektoo.ui.component.DocumentModelAdapter;
+import org.mesh4j.ektoo.ui.image.ImageManager;
+import org.mesh4j.ektoo.ui.schemas.xform.OpenXFormEditorViewTask;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.ektoo.ui.validator.CloudUIValidator;
 
@@ -37,6 +40,8 @@ public class CloudUI extends AbstractUI {
 
 	private JLabel labelDataset = null;
 	private JTextField txtDataset = null;
+	
+	private JButton xformButton = null;
 
 	// BUSINESS METHODS
 	public CloudUI(String baseURL, CloudUIController controller) {
@@ -60,9 +65,11 @@ public class CloudUI extends AbstractUI {
 		this.add(getDataSetText(), null);
 
 		this.add(getMessagesText(), null);
-		this.add(getBtnView(), null);
+		this.add(getViewButton(), null);
+		this.add(getConflictsButton());
 		this.add(getSchemaViewButton(), null);
 		this.add(getMappingsButton());
+		this.add(getButtonXForm());
 	}
 
 	public JTextField getServerURLText(){
@@ -165,25 +172,49 @@ public class CloudUI extends AbstractUI {
 		return txtDataset;
 	}
 
-	private JButton getBtnView() {
-		getViewButton().addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				List<JComponent> uiFieldListForValidation = new ArrayList<JComponent>();
-				uiFieldListForValidation.add(getMeshText());
-				uiFieldListForValidation.add(getDataSetText());
-				uiFieldListForValidation.add(getServerURLText());
-				boolean valid = (new CloudUIValidator(CloudUI.this, controller
-						.getModel(), uiFieldListForValidation, false)).verify();
-				if (valid) {
-					JFrame frame = CloudUI.this.getRootFrame();
-					String url = getController().getUri();
-					OpenURLTask task = new OpenURLTask(frame,
-							(IErrorListener) frame, url);
-					task.execute();
+	@Override
+	protected void viewItems() {
+		List<JComponent> uiFieldListForValidation = new ArrayList<JComponent>();
+		uiFieldListForValidation.add(getMeshText());
+		uiFieldListForValidation.add(getDataSetText());
+		uiFieldListForValidation.add(getServerURLText());
+		boolean valid = (new CloudUIValidator(CloudUI.this, controller
+				.getModel(), uiFieldListForValidation, false)).verify();
+		if (valid) {
+			JFrame frame = CloudUI.this.getRootFrame();
+			String url = getController().getUri();
+			OpenURLTask task = new OpenURLTask(frame,
+					(IErrorListener) frame, url);
+			task.execute();
+		}
+	}
+	
+	public JButton getButtonXForm() {
+		if (xformButton == null) {
+			xformButton = new JButton();
+			xformButton.setIcon(ImageManager.getXFormIcon());
+			xformButton.setContentAreaFilled(false);
+			xformButton.setBorderPainted(false);
+			xformButton.setBorder(new EmptyBorder(0, 0, 0, 0));
+			xformButton.setBackground(Color.WHITE);
+			xformButton.setBounds(new Rectangle(300, 34, 25, 25));
+			xformButton.setToolTipText(EktooUITranslator.getTooltipXFormView());
+			
+			ActionListener actionListener = new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					if (verify()) {
+						EktooFrame ektooFrame = ((EktooFrame)getRootFrame());
+						OpenXFormEditorViewTask task = new OpenXFormEditorViewTask(ektooFrame, getController());
+						task.execute();
+					}
 				}
-			}
-		});
-		return getViewButton();
+			};
+			
+			xformButton.addActionListener(actionListener);
+			addPopUpMenuItem(EktooUITranslator.getTooltipXFormView(), ImageManager.getXFormIcon(), actionListener);
+		}
+		return xformButton;
 	}
 
 	public CloudUIController getController() {

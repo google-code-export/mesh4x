@@ -74,13 +74,14 @@ public class MsAccessUI extends AbstractUI{
 		this.add(getLabelFile(), null);
 		this.add(getTxtFile(), null);
 		this.add(getBtnFile(), null);
-		this.add(getBtnView(), null);
+		this.add(getViewButton(), null);
 
 		this.add(getlabelTable(), null);
 		this.add(getListTableScroller(), null);
 		this.add(getMessagesText(), null);
 		this.add(getSchemaViewButton(), null);
 		this.add(getMappingsButton());
+		this.add(getConflictsButton());
 	}
 	
 	public void setList(String fileName) {
@@ -227,18 +228,13 @@ public class MsAccessUI extends AbstractUI{
 		return btnFile;
 	}
 
-	private JButton getBtnView() {
-		getViewButton().addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					JFrame frame = MsAccessUI.this.getRootFrame();
-					IErrorListener errorListener = MsAccessUI.this
-							.getErrorListener();
-					OpenFileTask task = new OpenFileTask(frame, errorListener,
-							txtFileName.getText());
-					task.execute();
-				}
-			});
-		return getViewButton();
+
+	@Override
+	protected void viewItems(){
+		JFrame frame = MsAccessUI.this.getRootFrame();
+		IErrorListener errorListener = MsAccessUI.this.getErrorListener();
+		OpenFileTask task = new OpenFileTask(frame, errorListener, txtFileName.getText());
+		task.execute();
 	}
 
 	protected IErrorListener getErrorListener() {

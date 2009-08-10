@@ -52,7 +52,8 @@ public class FolderUI extends AbstractUI {
 		this.add(getFileNameLabel(), null);
 		this.add(getFileNameText(), null);
 		this.add(getBtnFile(), null);
-		this.add(getBtnView(), null);
+		this.add(getViewButton(), null);
+		this.add(getConflictsButton());
 		this.add(getMessagesText(), null);
 	}
 
@@ -113,15 +114,11 @@ public class FolderUI extends AbstractUI {
 		return btnFile;
 	}
 
-	private JButton getBtnView() {
-		getViewButton().addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					JFrame frame = FolderUI.this.getRootFrame();
-					OpenFileTask task = new OpenFileTask(frame, (IErrorListener) frame, txtFileName.getText());
-					task.execute();
-				}
-			});
-		return getViewButton();
+	@Override
+	protected void viewItems() {
+		JFrame frame = FolderUI.this.getRootFrame();
+		OpenFileTask task = new OpenFileTask(frame, (IErrorListener) frame, txtFileName.getText());
+		task.execute();
 	}
 	
 	public FolderUIController getController() {

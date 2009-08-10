@@ -33,7 +33,6 @@ import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.ektoo.tasks.IErrorListener;
 import org.mesh4j.ektoo.tasks.ISynchronizeTaskListener;
 import org.mesh4j.ektoo.tasks.OpenURLTask;
-import org.mesh4j.ektoo.tasks.SchemaComparisonViewTask;
 import org.mesh4j.ektoo.tasks.SynchronizeTask;
 import org.mesh4j.ektoo.ui.component.HyperLink;
 import org.mesh4j.ektoo.ui.component.PopupDialog;
@@ -41,6 +40,7 @@ import org.mesh4j.ektoo.ui.component.RoundBorder;
 import org.mesh4j.ektoo.ui.component.messagedialog.MessageDialog;
 import org.mesh4j.ektoo.ui.component.statusbar.Statusbar;
 import org.mesh4j.ektoo.ui.image.ImageManager;
+import org.mesh4j.ektoo.ui.schemas.SchemaComparisonViewTask;
 import org.mesh4j.ektoo.ui.settings.SettingsController;
 import org.mesh4j.ektoo.ui.settings.encryption.EncryptionException;
 import org.mesh4j.ektoo.ui.settings.encryption.EncryptionUtil;
@@ -879,7 +879,10 @@ public class EktooFrame extends JFrame implements IErrorListener, ISynchronizeTa
 	@Override
 	public void notifyError(String error) {
 		setStatusbarText(error, Statusbar.ERROR_STATUS);
-
+	}
+	
+	public void notifyStatusMessage(String msg) {
+		setStatusbarText(msg, Statusbar.SUCCESS_STATUS);
 	}
 
 	@Override
@@ -928,4 +931,5 @@ public class EktooFrame extends JFrame implements IErrorListener, ISynchronizeTa
 		this.syncProcessUI.setVisible(false);
 		this.syncProcessUI.dispose();
 	}
+
 }

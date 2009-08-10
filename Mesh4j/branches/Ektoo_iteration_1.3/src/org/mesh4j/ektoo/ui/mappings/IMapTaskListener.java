@@ -1,4 +1,4 @@
-package org.mesh4j.ektoo.ui;
+package org.mesh4j.ektoo.ui.mappings;
 
 import org.mesh4j.ektoo.tasks.IErrorListener;
 
