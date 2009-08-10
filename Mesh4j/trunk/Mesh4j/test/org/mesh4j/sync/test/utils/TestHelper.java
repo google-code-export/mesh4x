@@ -270,13 +270,20 @@ public class TestHelper {
 	}
 	
 	public static void assertItem(Item sourceItem, ISyncAdapter... adapters) {
+		assertItem(null,sourceItem, adapters);
+	}
+	public static void assertItem(String msg, Item sourceItem, ISyncAdapter... adapters) {
 		for (ISyncAdapter syncAdapter : adapters) {
 			Item targetItem = syncAdapter.get(sourceItem.getSyncId());
 			boolean isOk = sourceItem.equals(targetItem);
 			if(!isOk){
 				System.out.println("Source: "+ sourceItem.getContent().getPayload().asXML());
 				System.out.println("Target: "+ targetItem.getContent().getPayload().asXML());
-				Assert.assertEquals(XMLHelper.canonicalizeXML(sourceItem.getContent().getPayload()), XMLHelper.canonicalizeXML(targetItem.getContent().getPayload()));	
+				if(msg == null){
+					Assert.assertEquals(XMLHelper.canonicalizeXML(sourceItem.getContent().getPayload()), XMLHelper.canonicalizeXML(targetItem.getContent().getPayload()));
+				}else{
+					Assert.assertEquals(msg, XMLHelper.canonicalizeXML(sourceItem.getContent().getPayload()), XMLHelper.canonicalizeXML(targetItem.getContent().getPayload()));
+				}
 			}
 			Assert.assertTrue(isOk);
 		}
