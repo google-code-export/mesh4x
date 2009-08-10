@@ -174,8 +174,7 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 	
 	@Override
 	public ISyncAdapter createHttpSyncAdapter(String serverUrl,String meshGroup,String dataSetId){
-		String absoluteURL = serverUrl + "/" + meshGroup + "/" + dataSetId;
-		return HttpSyncAdapterFactory.createSyncAdapter(absoluteURL, getIdentityProvider());
+		return HttpSyncAdapterFactory.createSyncAdapter(serverUrl, meshGroup, dataSetId, getIdentityProvider());
 	}
 	
 	@Override
