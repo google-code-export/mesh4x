@@ -62,7 +62,10 @@
          ================================= -->
     <target name="jar" depends="compile" description="Jar">
     	<echo message="creating jar of mesh4x google spreadsheet adapter"/>
-		 <jar destfile="${dist.dir}/${jarname}-${version}.jar" basedir="${build.dir}" includes="**/*.*">
+    	 <jar destfile="${dist.dir}/${jarname}-${version}.jar" basedir="${build.dir}" includes="**/*.*">
+		 	<manifest>
+            	<attribute name="Built-By" value="${built.by}"/>
+		    </manifest>
 		 </jar>
     </target>
 
