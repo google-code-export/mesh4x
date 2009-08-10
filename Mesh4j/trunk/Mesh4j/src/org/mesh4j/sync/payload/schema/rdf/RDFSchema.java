@@ -556,7 +556,13 @@ public class RDFSchema implements IRDFSchema{
 	}
 
 	public static boolean isRDF(Element schemaElement) {
-		return schemaElement != null && schemaElement.getName().trim().toLowerCase().equals("rdf");
+		return schemaElement != null  
+			&& QNAME_RDF.getNamespacePrefix().equals(schemaElement.getNamespacePrefix()) 
+			&& QNAME_RDF.getName().equals(schemaElement.getName());
+	}
+	
+	public static boolean isRDF(String xml) {
+		return xml != null && xml.trim().toLowerCase().startsWith("<rdf");
 	}
 
 	public static RDFSchema readSchema(String fileName) throws Exception {
