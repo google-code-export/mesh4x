@@ -119,7 +119,11 @@ public class XFormEditorUI  extends JPanel {
 		buttonDownload.setFont(new Font("", Font.BOLD, 12));
 		buttonDownload.addActionListener(new ActionListener(){
 			@Override public void actionPerformed(ActionEvent e) {
-				DownloadXFormTask task = new DownloadXFormTask(XFormEditorUI.this, model.getUri());
+				DownloadXFormTask task = new DownloadXFormTask(
+						XFormEditorUI.this, 
+						model.getBaseUri(),
+						model.getMeshName(),
+						model.getDatasetName());
 				task.execute();
 			}			
 		});

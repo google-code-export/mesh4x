@@ -51,7 +51,7 @@ public class OpenXFormEditorViewTask extends SwingWorker<String, Void>{
 			
 			CloudModel model = (CloudModel)controller.getModel();
 			
-			String xformXML = HttpSyncAdapter.getXForm(model.getUri());
+			String xformXML = HttpSyncAdapter.getXForm(model.getBaseUri(), model.getMeshName(), model.getDatasetName());
 			
 			showSchemaInPopup(new XFormEditorUI(this.ui, model, rdfSchema, xformXML));
 			

@@ -15,12 +15,17 @@ public class DownloadXFormTask extends SwingWorker<String, Void>{
 	
 	// MODEL VARIABLES
 	private XFormEditorUI ui;
-	private String url;
+	private String serverURL;
+	private String meshGroup;
+	private String dataSet;
+	
 	
 	// BUSINESS METHODS
-	public DownloadXFormTask(XFormEditorUI ui, String url){
+	public DownloadXFormTask(XFormEditorUI ui, String serverUrl, String meshGroup, String dataSet){
 		this.ui = ui;
-		this.url = url;
+		this.serverURL = serverUrl;
+		this.meshGroup = meshGroup;
+		this.dataSet = dataSet;
 	}
 	
 	@Override
@@ -28,7 +33,7 @@ public class DownloadXFormTask extends SwingWorker<String, Void>{
 		ui.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 		try{			
 			
-			String xformXML = HttpSyncAdapter.getXForm(this.url);
+			String xformXML = HttpSyncAdapter.getXForm(serverURL, meshGroup, dataSet);
 			
 			ui.refresh(xformXML);
 			ui.notifyDownloadDone();
