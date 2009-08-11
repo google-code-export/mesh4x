@@ -14,9 +14,10 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 
+import org.mesh4j.ektoo.ui.AbstractView;
 import org.mesh4j.ektoo.ui.component.DocumentModelAdapter;
 
-public class MySqlSettingsUI extends AbstractSettingsUI{
+public class MySqlSettingsUI extends AbstractView{
 
 	private static final long serialVersionUID = -4780427959572991381L;
 	private JTextField userTextField;
@@ -24,11 +25,10 @@ public class MySqlSettingsUI extends AbstractSettingsUI{
 	private JTextField hostTextField;
 	private JTextField portTextField;
 	private JTextField dataBaseTextField;
-	private SettingsController controller = null;
+	
 	
 	public MySqlSettingsUI(SettingsController controller){
 		super(controller);
-		this.controller = controller;
 		this.setLayout(new GridBagLayout());
 		initComponents();
 	}
@@ -133,12 +133,12 @@ public class MySqlSettingsUI extends AbstractSettingsUI{
 		userTextField.getDocument().addDocumentListener(new DocumentModelAdapter(){
 			@Override
 			public void insertUpdate(DocumentEvent e) {
-				MySqlSettingsUI.this.controller.modifySettings(SettingsController.USER_NAME_MYSQL, 
+				getController().modifySettings(SettingsController.USER_NAME_MYSQL, 
 						userTextField.getText());
 			}
 			@Override
 			public void removeUpdate(DocumentEvent e) {
-				MySqlSettingsUI.this.controller.modifySettings(SettingsController.USER_NAME_MYSQL, 
+				getController().modifySettings(SettingsController.USER_NAME_MYSQL, 
 						userTextField.getText());
 			}
 		});
@@ -157,12 +157,12 @@ public class MySqlSettingsUI extends AbstractSettingsUI{
 		 passwordField.getDocument().addDocumentListener(new DocumentModelAdapter(){
 				@Override
 				public void insertUpdate(DocumentEvent e) {
-					MySqlSettingsUI.this.controller.modifySettings(SettingsController.USER_PASSWORD_MYSQL, 
+					getController().modifySettings(SettingsController.USER_PASSWORD_MYSQL, 
 							new String(passwordField.getPassword()));
 				}
 				@Override
 				public void removeUpdate(DocumentEvent e) {
-					MySqlSettingsUI.this.controller.modifySettings(SettingsController.USER_PASSWORD_MYSQL, 
+					getController().modifySettings(SettingsController.USER_PASSWORD_MYSQL, 
 							new String(passwordField.getPassword()));
 				}
 			});
@@ -203,12 +203,12 @@ public class MySqlSettingsUI extends AbstractSettingsUI{
 		hostTextField.getDocument().addDocumentListener(new DocumentModelAdapter(){
 				@Override
 				public void insertUpdate(DocumentEvent e) {
-					MySqlSettingsUI.this.controller.modifySettings(SettingsController.HOST_NAME_MYSQL, 
+					getController().modifySettings(SettingsController.HOST_NAME_MYSQL, 
 							hostTextField.getText());
 				}
 				@Override
 				public void removeUpdate(DocumentEvent e) {
-					MySqlSettingsUI.this.controller.modifySettings(SettingsController.HOST_NAME_MYSQL, 
+					getController().modifySettings(SettingsController.HOST_NAME_MYSQL, 
 							hostTextField.getText());
 				}
 			});
@@ -216,12 +216,12 @@ public class MySqlSettingsUI extends AbstractSettingsUI{
 		portTextField.getDocument().addDocumentListener(new DocumentModelAdapter(){
 			@Override
 			public void insertUpdate(DocumentEvent e) {
-				MySqlSettingsUI.this.controller.modifySettings(SettingsController.PORT_MYSQL, 
+				getController().modifySettings(SettingsController.PORT_MYSQL, 
 						portTextField.getText());
 			}
 			@Override
 			public void removeUpdate(DocumentEvent e) {
-				MySqlSettingsUI.this.controller.modifySettings(SettingsController.PORT_MYSQL, 
+				getController().modifySettings(SettingsController.PORT_MYSQL, 
 						portTextField.getText());
 			}
 		});
@@ -248,16 +248,20 @@ public class MySqlSettingsUI extends AbstractSettingsUI{
 		 dataBaseTextField.getDocument().addDocumentListener(new DocumentModelAdapter(){
 				@Override
 				public void insertUpdate(DocumentEvent e) {
-					MySqlSettingsUI.this.controller.modifySettings(SettingsController.DATABASE_NAME_MYSQL, 
+					getController().modifySettings(SettingsController.DATABASE_NAME_MYSQL, 
 							dataBaseTextField.getText());
 				}
 				@Override
 				public void removeUpdate(DocumentEvent e) {
-					MySqlSettingsUI.this.controller.modifySettings(SettingsController.DATABASE_NAME_MYSQL, 
+					getController().modifySettings(SettingsController.DATABASE_NAME_MYSQL, 
 							dataBaseTextField.getText());
 				}
 			});
 		return dataBaseTextField;
+	}
+	
+	private SettingsController getController(){
+		return (SettingsController)this.controller;
 	}
 	
 	

@@ -1,11 +1,12 @@
 package org.mesh4j.ektoo.ui.settings;
 
+import org.mesh4j.ektoo.controller.AbstractViewController;
 import org.mesh4j.ektoo.model.AbstractModel;
 import org.mesh4j.ektoo.ui.settings.encryption.EncryptionException;
 import org.mesh4j.ektoo.ui.settings.prop.IPropertyManager;
 
 
-public class SettingsController extends AbstractSettingsController {
+public class SettingsController extends AbstractViewController {
 
 	private IPropertyManager propertyManager;
 	public final static String PATH_SOURCE = "SourcePath";

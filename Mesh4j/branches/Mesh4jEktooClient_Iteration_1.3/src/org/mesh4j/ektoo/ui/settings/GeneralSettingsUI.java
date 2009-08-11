@@ -17,12 +17,12 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 
+import org.mesh4j.ektoo.ui.AbstractView;
 import org.mesh4j.ektoo.ui.component.DocumentModelAdapter;
 
-public class GeneralSettingsUI extends AbstractSettingsUI{
+public class GeneralSettingsUI extends AbstractView{
 
 	private static final long serialVersionUID = -6752780815799361963L;
-	private SettingsController controller = null;
 	private JTextField fileSourcePathTextField;
 	private JTextField fileTargetPathTextField;
 	private JComboBox langComboBox;
@@ -31,7 +31,6 @@ public class GeneralSettingsUI extends AbstractSettingsUI{
 
 	public GeneralSettingsUI(SettingsController controller) {
 		super(controller);
-		this.controller = controller;
 		this.setLayout(new GridBagLayout());
 		init();
 	}
@@ -104,7 +103,7 @@ public class GeneralSettingsUI extends AbstractSettingsUI{
 		testButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				GeneralSettingsUI.this.controller.loadDefaultGeneralSettings();		
+				getController().loadDefaultGeneralSettings();		
 			}
 		});
 		buttonPanel.add(testButton,BorderLayout.EAST);
@@ -144,12 +143,12 @@ public class GeneralSettingsUI extends AbstractSettingsUI{
 		fileSourcePathTextField.getDocument().addDocumentListener(new DocumentModelAdapter(){
 			@Override
 			public void insertUpdate(DocumentEvent e) {
-				GeneralSettingsUI.this.controller.modifySettings(SettingsController.PATH_SOURCE, 
+				getController().modifySettings(SettingsController.PATH_SOURCE, 
 						fileSourcePathTextField.getText());
 			}
 			@Override
 			public void removeUpdate(DocumentEvent e) {
-				GeneralSettingsUI.this.controller.modifySettings(SettingsController.PATH_SOURCE, 
+				getController().modifySettings(SettingsController.PATH_SOURCE, 
 						fileSourcePathTextField.getText());
 			}
 		});
@@ -168,12 +167,12 @@ public class GeneralSettingsUI extends AbstractSettingsUI{
 		fileTargetPathTextField.getDocument().addDocumentListener(new DocumentModelAdapter(){
 			@Override
 			public void insertUpdate(DocumentEvent e) {
-				GeneralSettingsUI.this.controller.modifySettings(SettingsController.PATH_TARGET, 
+				getController().modifySettings(SettingsController.PATH_TARGET, 
 						fileTargetPathTextField.getText());
 			}
 			@Override
 			public void removeUpdate(DocumentEvent e) {
-				GeneralSettingsUI.this.controller.modifySettings(SettingsController.PATH_TARGET, 
+				getController().modifySettings(SettingsController.PATH_TARGET, 
 						fileTargetPathTextField.getText());
 			}
 		});
@@ -189,6 +188,11 @@ public class GeneralSettingsUI extends AbstractSettingsUI{
 		JFileChooser	fileChooser = new JFileChooser();
 		return fileChooser;
 	}
+	
+	private SettingsController getController(){
+		return (SettingsController)this.controller;
+	}
+	
 	@Override
 	public void modelPropertyChange(PropertyChangeEvent evt) {
 		String newValueAsString = evt.getNewValue().toString();

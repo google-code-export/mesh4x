@@ -12,11 +12,13 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-public class GSSSettingsUI extends AbstractSettingsUI{
+import org.mesh4j.ektoo.ui.AbstractView;
+
+public class GSSSettingsUI extends AbstractView{
 
 	private static final long serialVersionUID = 4427824045519587866L;
 
-	public GSSSettingsUI(AbstractSettingsController controller){
+	public GSSSettingsUI(SettingsController controller){
 		super(controller);
 		this.setLayout(new GridBagLayout());
 		init();

@@ -3,6 +3,7 @@ package org.mesh4j.ektoo.ui.settings;
 import org.mesh4j.ektoo.ui.AbstractUI;
 //TODO(raju) AbstractUI will just contain basic method verify and modelPropertyChange
 //other subclass will implements required feature
+@Deprecated
 public abstract class AbstractSettingsUI extends AbstractUI{
 
 	

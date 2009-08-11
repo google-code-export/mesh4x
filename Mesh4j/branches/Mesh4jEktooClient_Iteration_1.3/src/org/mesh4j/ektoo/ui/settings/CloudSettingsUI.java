@@ -14,19 +14,19 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 
+import org.mesh4j.ektoo.ui.AbstractView;
 import org.mesh4j.ektoo.ui.component.DocumentModelAdapter;
 
-public class CloudSettingsUI extends AbstractSettingsUI{
+public class CloudSettingsUI extends AbstractView{
 
 	private static final long serialVersionUID = -8852831618021847782L;
 	private JTextField dataSetTextField;
 	private JTextField meshNameTextField;
 	private JTextField syncRootUriTextField;
-	private SettingsController controller = null;
+	
 	
 	public CloudSettingsUI(SettingsController controller){
 		super(controller);
-		this.controller = controller;
 		this.setLayout(new GridBagLayout());
 		init();
 	}
@@ -98,7 +98,7 @@ public class CloudSettingsUI extends AbstractSettingsUI{
 		testButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				CloudSettingsUI.this.controller.loadDefaultCloudSettings();
+				getController().loadDefaultCloudSettings();
 			}
 		});
 		buttonPanel.add(testButton,BorderLayout.EAST);
@@ -118,12 +118,12 @@ public class CloudSettingsUI extends AbstractSettingsUI{
 		 syncRootUriTextField.getDocument().addDocumentListener(new DocumentModelAdapter(){
 				@Override
 				public void insertUpdate(DocumentEvent e) {
-					CloudSettingsUI.this.controller.modifySettings(SettingsController.CLOUD_ROOT_URI, 
+					getController().modifySettings(SettingsController.CLOUD_ROOT_URI, 
 							syncRootUriTextField.getText());
 				}
 				@Override
 				public void removeUpdate(DocumentEvent e) {
-					CloudSettingsUI.this.controller.modifySettings(SettingsController.CLOUD_ROOT_URI, 
+					getController().modifySettings(SettingsController.CLOUD_ROOT_URI, 
 							syncRootUriTextField.getText());
 				}
 			});
@@ -143,12 +143,12 @@ public class CloudSettingsUI extends AbstractSettingsUI{
 		meshNameTextField.getDocument().addDocumentListener(new DocumentModelAdapter(){
 				@Override
 				public void insertUpdate(DocumentEvent e) {
-					CloudSettingsUI.this.controller.modifySettings(SettingsController.CLOUD_MESH_NAME, 
+					getController().modifySettings(SettingsController.CLOUD_MESH_NAME, 
 							meshNameTextField.getText());
 				}
 				@Override
 				public void removeUpdate(DocumentEvent e) {
-					CloudSettingsUI.this.controller.modifySettings(SettingsController.CLOUD_MESH_NAME, 
+					getController().modifySettings(SettingsController.CLOUD_MESH_NAME, 
 							meshNameTextField.getText());
 				}
 			});
@@ -166,17 +166,21 @@ public class CloudSettingsUI extends AbstractSettingsUI{
 		 dataSetTextField.getDocument().addDocumentListener(new DocumentModelAdapter(){
 				@Override
 				public void insertUpdate(DocumentEvent e) {
-					CloudSettingsUI.this.controller.modifySettings(SettingsController.CLOUD_DATASET_NAME, 
+					getController().modifySettings(SettingsController.CLOUD_DATASET_NAME, 
 							dataSetTextField.getText());
 				}
 				@Override
 				public void removeUpdate(DocumentEvent e) {
-					CloudSettingsUI.this.controller.modifySettings(SettingsController.CLOUD_DATASET_NAME, 
+					getController().modifySettings(SettingsController.CLOUD_DATASET_NAME, 
 							dataSetTextField.getText());
 				}
 			});
 		//userTextField.setPreferredSize(new Dimension(150,20));
 		return dataSetTextField;
+	}
+	
+	private SettingsController getController(){
+		return (SettingsController)this.controller;
 	}
 	
 	@Override

@@ -9,6 +9,7 @@ import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 //implementation of IUIController,subclass of AbstractUIController will implement the IUIController
 //AbstractUIController will be working as the propagation of flow between model and view.
 
+@Deprecated
 public class AbstractSettingsController extends AbstractUIController{
 
 	AbstractSettingsController(){
