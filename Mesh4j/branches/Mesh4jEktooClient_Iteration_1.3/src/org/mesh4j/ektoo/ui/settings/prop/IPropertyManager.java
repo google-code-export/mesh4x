@@ -1,7 +1,7 @@
 package org.mesh4j.ektoo.ui.settings.prop;
 
-import org.mesh4j.ektoo.ui.settings.encryption.EncryptionException;
 import org.mesh4j.ektoo.ui.settings.encryption.IEncryptionUtil;
+import org.mesh4j.sync.validations.MeshException;
 
 
 
@@ -13,9 +13,9 @@ public interface IPropertyManager {
 
 	public void save();
 
-	public void setPropertyAsEncrypted(String property, String plainText)throws EncryptionException;
+	public void setPropertyAsEncrypted(String property, String plainText)throws MeshException;
 
-	public String getPropertyAsDecrepted(String property)throws EncryptionException;
+	public String getPropertyAsDecrepted(String property)throws MeshException;
 
 	public void setProperty(String property, String plainText);
 

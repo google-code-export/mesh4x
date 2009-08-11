@@ -42,7 +42,6 @@ import org.mesh4j.ektoo.ui.component.statusbar.Statusbar;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.schemas.SchemaComparisonViewTask;
 import org.mesh4j.ektoo.ui.settings.SettingsController;
-import org.mesh4j.ektoo.ui.settings.encryption.EncryptionException;
 import org.mesh4j.ektoo.ui.settings.encryption.EncryptionUtil;
 import org.mesh4j.ektoo.ui.settings.prop.IPropertyManager;
 import org.mesh4j.ektoo.ui.settings.prop.PropertyManager;
@@ -175,14 +174,14 @@ public class EktooFrame extends JFrame implements IErrorListener, ISynchronizeTa
 			});
 			
 			//commented by raju,will be opened after done settings feature in branch.
-//			HyperLink settingsLink = new HyperLink(EktooUITranslator.getSettingsText());
-//			settingsLink.addMouseListener(new MouseAdapter(){
-//				 public void mouseClicked(MouseEvent e) {
-//					 //launchSettingsUI();
-//				 }
-//			});
+			HyperLink settingsLink = new HyperLink(EktooUITranslator.getSettingsText());
+			settingsLink.addMouseListener(new MouseAdapter(){
+				 public void mouseClicked(MouseEvent e) {
+					 launchSettingsUI();
+				 }
+			});
 			
-			//linkPanel.add(settingsLink);
+			linkPanel.add(settingsLink);
 			linkPanel.add(helpLink);
 			linkPanel.add(aboutLink);
 		}
@@ -210,7 +209,7 @@ public class EktooFrame extends JFrame implements IErrorListener, ISynchronizeTa
 		EncryptionUtil encryptionUtil = null;
 		try {
 			encryptionUtil = new EncryptionUtil("com.mesh4x.ektooclient",EncryptionUtil.ALGORITHM.DES);
-		} catch (EncryptionException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		propertyManager.setEncryptionUtil(encryptionUtil);

@@ -1,37 +1,18 @@
 package org.mesh4j.ektoo.ui.settings.encryption;
 
 
-import java.io.UnsupportedEncodingException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.mesh4j.sync.validations.MeshException;
 
 
-/**
- * EncryptionUtil do the following
- * 1.encrypt
- * 2.decrypt
- * 
- * Example code:
- *
- * EncryptionUtil encryptionUtil = new EncryptionUtil("com.mesh4x.ektoo.properties",EncryptionUtil.ALGORITHM.DES);
- *		String encryptedString = encryptionUtil.encrypt("root");
- *		String decryptedString = encryptionUtil.decrypt(encryptedString);
- *
- * @author raju
- */
 public class EncryptionUtil implements IEncryptionUtil{
 
 	private static Log logger = LogFactory.getLog(EncryptionUtil.class);
@@ -67,7 +48,7 @@ public class EncryptionUtil implements IEncryptionUtil{
      * @param key as String
 	 * @throws EncryptionException 
 	 */
-	public EncryptionUtil(String key,ALGORITHM algorithm) throws EncryptionException{
+	public EncryptionUtil(String key,ALGORITHM algorithm) throws MeshException{
      	try {
 			this.key = key;
 			logger.info("Encryption util initialized with key ..."+ key);
@@ -83,18 +64,9 @@ public class EncryptionUtil implements IEncryptionUtil{
             //get instance of Cipher
 			cipher = Cipher.getInstance(algorithm.toString());
 		}
-		catch (UnsupportedEncodingException e) {
-	        throw new EncryptionException(e.getMessage(),e);
+		catch (Exception e) {
+	        throw new MeshException(e.getMessage(),e);
     	}
-		catch (InvalidKeyException e){
-			throw new EncryptionException(e.getMessage(),e);
-		} 
-		catch (NoSuchAlgorithmException e){ 
-			throw new EncryptionException(e.getMessage(),e);
-		}
-        catch (NoSuchPaddingException e){
-	    	throw new EncryptionException(e.getMessage(),e);
-		}
 	}
 	/**
 	 * 
@@ -102,7 +74,7 @@ public class EncryptionUtil implements IEncryptionUtil{
 	 * @return encrypted value as String or null if any exception occured
 	 * @throws EncryptionException 
 	 */
-	public String encrypt(String toBeEncryptedString) throws EncryptionException{
+	public String encrypt(String toBeEncryptedString) throws MeshException{
 		try {
 	        //get the secret key according to sepcification of DESKeySpec
 			SecretKey secretKey = keyFactory.generateSecret(keySpec);
@@ -122,20 +94,8 @@ public class EncryptionUtil implements IEncryptionUtil{
              */
 			return converToBase16(encrtpStr);
 		} 
-		catch (InvalidKeySpecException e){ 
-			throw new EncryptionException(e.getMessage(),e);
-		}
-		catch (InvalidKeyException e){
-			throw new EncryptionException(e.getMessage(),e);
-		}
-        catch (UnsupportedEncodingException e) {
-        	throw new EncryptionException(e.getMessage(),e);
-		}
-        catch (IllegalBlockSizeException e){ 
-        	throw new EncryptionException(e.getMessage(),e);
-		} 
-        catch (BadPaddingException e) {
-        	throw new EncryptionException(e.getMessage(),e);
+		catch (Exception e){ 
+			throw new MeshException(e.getMessage(),e);
 		}
 		//return null;
 	}
@@ -146,7 +106,7 @@ public class EncryptionUtil implements IEncryptionUtil{
  	 * @param bytes as bytes array
 	 * @return stringBuffer as String
 	 */
-	private static String bytes2String( byte[] bytes ){
+	private  String bytes2String( byte[] bytes ){
 		StringBuffer stringBuffer = new StringBuffer();
 		for (int i = 0; i < bytes.length; i++){
 			stringBuffer.append( (char) bytes[i] );
@@ -160,10 +120,10 @@ public class EncryptionUtil implements IEncryptionUtil{
 	 * @return decrypted value as String or null if any exception occured
 	 * @throws EncryptionException 
 	 */
-	public String decrypt( String encryptedString ) throws EncryptionException 
+	public String decrypt( String encryptedString ) throws MeshException 
 	{
 		if ( encryptedString == null || encryptedString.trim().length() <= 0 ){
-       		throw new EncryptionException( "encrypted string was null or empty" );
+       		throw new MeshException( "encrypted string was null or empty" );
 	    }
 		try{
 	        //get secret key
@@ -184,7 +144,7 @@ public class EncryptionUtil implements IEncryptionUtil{
 			return bytes2String( ciphertext );
 		}
 		catch (Exception e){
-			throw new EncryptionException(e.getMessage(),e);
+			throw new MeshException(e.getMessage(),e);
 		}
 		//return null;
 	}

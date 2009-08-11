@@ -13,8 +13,8 @@ import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.ui.settings.EktooProperties;
-import org.mesh4j.ektoo.ui.settings.encryption.EncryptionException;
 import org.mesh4j.ektoo.ui.settings.encryption.IEncryptionUtil;
+import org.mesh4j.sync.validations.MeshException;
 
 public class PropertyManager  implements IPropertyManager {
 
@@ -34,12 +34,12 @@ public class PropertyManager  implements IPropertyManager {
 	}
 	
 	
-	public  String getPropertyAsDecrepted(String property) throws EncryptionException {
+	public  String getPropertyAsDecrepted(String property) throws MeshException {
 		String encrypted = oldProperties.getProperty(property);
 	    return encryptionUtil.decrypt(encrypted);
    }
 
-	public   void setPropertyAsEncrypted(String property, String plainText)throws EncryptionException {
+	public   void setPropertyAsEncrypted(String property, String plainText)throws MeshException {
     	  String encrypted = encryptionUtil.encrypt(plainText);
       	  newProperties.setProperty(property, encrypted);
 	}
