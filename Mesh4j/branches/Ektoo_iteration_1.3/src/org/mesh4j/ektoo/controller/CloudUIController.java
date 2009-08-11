@@ -107,15 +107,11 @@ public class CloudUIController extends AbstractUIController{
 	public Mapping getMapping() {
 		CloudModel model = (CloudModel) this.getModel();
 		if(model == null){
-			return null;			
+			return HttpSyncAdapter.getMappings(this.getUri(), getAdapterBuilder().getMappingPropertyResolvers());			
 		} else {
 			Mapping mapping = model.getMapping();
 			if(mapping == null){
-				mapping = HttpSyncAdapter.getMappings(
-					model.getBaseUri(), 
-					model.getMeshName(), 
-					model.getDatasetName(),
-					getAdapterBuilder().getMappingPropertyResolvers());
+				mapping = HttpSyncAdapter.getMappings(this.getUri(), getAdapterBuilder().getMappingPropertyResolvers());
 				model.setMapping(mapping);
 			}
 			return mapping;
