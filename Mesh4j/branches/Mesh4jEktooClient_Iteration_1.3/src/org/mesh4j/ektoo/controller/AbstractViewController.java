@@ -11,6 +11,10 @@ import org.mesh4j.ektoo.model.AbstractModel;
 import org.mesh4j.ektoo.ui.AbstractUI;
 import org.mesh4j.ektoo.ui.AbstractView;
 
+/**
+ * Generic Controller in MVC model,just hold collection of view and corresponding 
+ * model.
+ */
 public class AbstractViewController implements PropertyChangeListener{
 	
 	  	private final static Log LOGGER = LogFactory.getLog(AbstractViewController.class);
