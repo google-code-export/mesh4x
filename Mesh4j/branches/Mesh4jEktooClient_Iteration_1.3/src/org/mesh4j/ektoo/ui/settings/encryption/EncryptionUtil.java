@@ -1,15 +1,18 @@
 package org.mesh4j.ektoo.ui.settings.encryption;
 
 
+import java.security.InvalidKeyException;
 import java.security.spec.KeySpec;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
+import javax.crypto.spec.DESedeKeySpec;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
 
 
@@ -18,27 +21,22 @@ public class EncryptionUtil implements IEncryptionUtil{
 	private static Log logger = LogFactory.getLog(EncryptionUtil.class);
     /** string format is for represent the encrypted character after encode */
 	private static String stringFormat = "UTF8";
-    /**
-     * A  specification of  a cryptographic key.<p>
-     * Its only purpose is to group  all key specifications.<p> 
-     * this interface has no methods it just for specification.<p>
-     * All key specifications has implemented this interface.<p> 
-     * here we have used <code>DESKeySpec</code> 
-     */
 	private KeySpec	keySpec;
-    /**
-     * <code>SecretKeyFactory</code> is a factory for generating<p>
-     * <code>SecretKey</code> with <code>key</code> according algorithm
-     */
-	private SecretKeyFactory	keyFactory;
+	//must be 24 character long
+	private static  String DEFAULT_ENCRYPTION_KEY = ",'=/=+,*&abcd48dra((1845554523))[99]+ 45=?";
+    /** 
+    * SecretKeyFactory is a factory for generating
+    * SecretKey with key according algorithm 
+    */
+    private SecretKeyFactory	keyFactory;
     /**cryptographic cipher for encryption and decryption*/
 	private Cipher	cipher;
-   	public String key;
+   	private String key;
 	public enum ALGORITHM{
 		DES,
-		MD5,
-		DESede
+		DESede,
 	}
+	
 	/**
      * construction part of <code>EncryptionUtil</code>
      * moreover it initializes some necessary settings to prepare
@@ -46,18 +44,29 @@ public class EncryptionUtil implements IEncryptionUtil{
      * decryption.
      * 
      * @param key as String
-	 * @throws EncryptionException 
+	 * @throws MeshException 
 	 */
 	public EncryptionUtil(String key,ALGORITHM algorithm) throws MeshException{
+		
+		Guard.argumentNotNull(algorithm, "algorithm");
+		
+		if(key == null || key.trim().length() <= 0){
+			key = DEFAULT_ENCRYPTION_KEY;
+		} else {
+			if(key.length() < 24){
+				throw new MeshException("Key must be 24 character long");
+			}	
+		}
+		
      	try {
 			this.key = key;
 			logger.info("Encryption util initialized with key ..."+ key);
 			//get the string as bytes
 			byte[] keyByte = key.getBytes(stringFormat);
             //get the instance of specific algorithm key specification.
-			keySpec = new DESKeySpec(keyByte);
+			keySpec = getKeySpec(algorithm,keyByte);
             /*
-             * get the instance of SecretKeyFactory this will help us to geneate
+             * get the instance of SecretKeyFactory this will help us to generate
              * secret key in encrypted format
              */
 			keyFactory = SecretKeyFactory.getInstance(algorithm.toString());
@@ -65,16 +74,31 @@ public class EncryptionUtil implements IEncryptionUtil{
 			cipher = Cipher.getInstance(algorithm.toString());
 		}
 		catch (Exception e) {
+			logger.error(e.getMessage(), e);
 	        throw new MeshException(e.getMessage(),e);
     	}
+	}
+	
+	private KeySpec getKeySpec(ALGORITHM algorithm,byte[] keyBytes) throws InvalidKeyException{
+		if(algorithm == ALGORITHM.DES){
+			return new DESKeySpec(keyBytes);
+		} else if(algorithm == ALGORITHM.DESede){
+			return new DESedeKeySpec(keyBytes);
+		} else {
+			logger.error(algorithm + "not supported");
+			throw new MeshException(algorithm + "not supported");
+		}
 	}
 	/**
 	 * 
      * @param toBeEncryptedString
-	 * @return encrypted value as String or null if any exception occured
-	 * @throws EncryptionException 
+	 * @return encrypted value as String or null if any exception occur
+	 * @throws MeshException 
 	 */
 	public String encrypt(String toBeEncryptedString) throws MeshException{
+		
+		Guard.argumentNotNullOrEmptyString(toBeEncryptedString, "toBeEncryptedString");
+		
 		try {
 	        //get the secret key according to sepcification of DESKeySpec
 			SecretKey secretKey = keyFactory.generateSecret(keySpec);
@@ -94,10 +118,10 @@ public class EncryptionUtil implements IEncryptionUtil{
              */
 			return converToBase16(encrtpStr);
 		} 
-		catch (Exception e){ 
+		catch (Exception e){
+			logger.error(e.getMessage(),e);
 			throw new MeshException(e.getMessage(),e);
 		}
-		//return null;
 	}
 	
 	/**
@@ -117,14 +141,12 @@ public class EncryptionUtil implements IEncryptionUtil{
 	 * Decrypt any String value
      *
      * @param encryptedString
-	 * @return decrypted value as String or null if any exception occured
+	 * @return decrypted value as String or null if any exception occur
 	 * @throws EncryptionException 
 	 */
-	public String decrypt( String encryptedString ) throws MeshException 
-	{
-		if ( encryptedString == null || encryptedString.trim().length() <= 0 ){
-       		throw new MeshException( "encrypted string was null or empty" );
-	    }
+	public String decrypt( String encryptedString ) throws MeshException{ 
+
+		Guard.argumentNotNull(encryptedString, "encryptedString");
 		try{
 	        //get secret key
 			SecretKey key = keyFactory.generateSecret( keySpec );
@@ -132,7 +154,6 @@ public class EncryptionUtil implements IEncryptionUtil{
             //init chiper into decrypt mode
 			cipher.init( Cipher.DECRYPT_MODE, key );
 			EktooDecoder decoder = new EktooDecoder();
-			
             //convert the string into base 10
 			String string = converToBase10(encryptedString);
             //decode the string and get the bytes
@@ -140,17 +161,16 @@ public class EncryptionUtil implements IEncryptionUtil{
             //using cipher create the cryptographic array of bytes
 			byte[] ciphertext = cipher.doFinal( cleartext );
 			//finally convert bytes into string
-			
 			return bytes2String( ciphertext );
 		}
 		catch (Exception e){
+			logger.error(e.getMessage(),e);
 			throw new MeshException(e.getMessage(),e);
 		}
-		//return null;
 	}
 
 	/**
-     * this method convert any string into base16 format
+     * Converts any string into base16 format
      * 
      * @param toBeConvertedString
      * @return encrypted value as base16 format
