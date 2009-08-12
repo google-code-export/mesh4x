@@ -208,7 +208,7 @@ public class EktooFrame extends JFrame implements IErrorListener, ISynchronizeTa
 		IPropertyManager propertyManager  = new PropertyManager(PropertiesProvider.getSettingsPropertyLocation());
 		EncryptionUtil encryptionUtil = null;
 		try {
-			encryptionUtil = new EncryptionUtil("com.mesh4x.ektooclient",EncryptionUtil.ALGORITHM.DES);
+			encryptionUtil = new EncryptionUtil("",EncryptionUtil.ALGORITHM.DES);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
