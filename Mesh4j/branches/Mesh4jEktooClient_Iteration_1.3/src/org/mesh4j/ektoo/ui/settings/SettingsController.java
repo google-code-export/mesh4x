@@ -1,5 +1,7 @@
 package org.mesh4j.ektoo.ui.settings;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.controller.AbstractViewController;
 import org.mesh4j.ektoo.model.AbstractModel;
 import org.mesh4j.ektoo.ui.settings.prop.IPropertyManager;
@@ -7,6 +9,7 @@ import org.mesh4j.ektoo.ui.settings.prop.IPropertyManager;
 
 public class SettingsController extends AbstractViewController {
 
+	private static Log logger = LogFactory.getLog(SettingsController.class);
 	private IPropertyManager propertyManager;
 	public final static String PATH_SOURCE = "SourcePath";
 	public final static String PATH_TARGET = "TargetPath";
@@ -45,10 +48,8 @@ public class SettingsController extends AbstractViewController {
 			modifySettings(PORT_MYSQL,propertyManager.getPropertyAsDecrepted(EktooProperties.PORT_MYSQL));
 			modifySettings(DATABASE_NAME_MYSQL,propertyManager.getPropertyAsDecrepted(EktooProperties.DATABASE_NAME_MYSQL));
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.debug(e);
 		}
-		
-		
 	}
 	
 	
@@ -89,7 +90,7 @@ public class SettingsController extends AbstractViewController {
 					propertyManager.setPropertyAsEncrypted(EktooProperties.PORT_MYSQL, mysqlSettingsModel.getPortNo());
 					propertyManager.setPropertyAsEncrypted(EktooProperties.DATABASE_NAME_MYSQL, mysqlSettingsModel.getDatabaseName());
 				} catch (Exception e) {
-					e.printStackTrace();
+					logger.debug(e);
 				}
 			}  
 		}
