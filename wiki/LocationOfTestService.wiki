@@ -2,5 +2,11 @@
 
 = Introduction =
 
-http://sync.staging.instedd.org:8080/mesh4x
+Stable release:
 
+http://sync.staging.instedd.org/mesh4x
+
+
+Test Beta version:
+
+http://sync.staging.instedd.org/mesh4x_test
