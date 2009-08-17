@@ -111,6 +111,9 @@ public class SettingsContainer extends JPanel{
 		parentSettingsPanel = new JPanel(new CardLayout());
 		
 		GeneralSettingsUI generalSettingsUI = new GeneralSettingsUI(controller);
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setViewportView(generalSettingsUI);
+		
 		controller.addModel(new GeneralSettingsModel());
 		controller.addView(generalSettingsUI);
 		
@@ -123,7 +126,7 @@ public class SettingsContainer extends JPanel{
 		controller.addModel(new MySqlSettingsModel());
 		controller.addView(mysqlSettingsUI);
 		
-		parentSettingsPanel.add(generalSettingsUI,SETTINGS_GENERAL);
+		parentSettingsPanel.add(scrollPane,SETTINGS_GENERAL);
 		parentSettingsPanel.add(gssSettingsUI,SETTINGS_GOOGLE);
 		parentSettingsPanel.add(cloudSettingsUI,SETTINGS_CLOUD);
 		parentSettingsPanel.add(mysqlSettingsUI,SETTINGS_MYSQL);

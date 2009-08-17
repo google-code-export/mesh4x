@@ -217,7 +217,7 @@ public class EktooFrame extends JFrame implements IErrorListener, ISynchronizeTa
 		SettingsController controller = new SettingsController(propertyManager);
 		
 		SettingsContainer container = new SettingsContainer(controller,this);
-		this.showViewInPopup(EktooUITranslator.getEktooSettingsWindowsTitle(), container, 500, 300, false);
+		this.showViewInPopup(EktooUITranslator.getEktooSettingsWindowsTitle(), container, 550, 600, true);
 	}
 	
 	private JPanel getJPanel() {

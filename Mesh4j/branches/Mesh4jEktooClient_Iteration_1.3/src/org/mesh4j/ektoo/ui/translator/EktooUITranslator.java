@@ -142,6 +142,10 @@ public class EktooUITranslator {
 		return EktooMessageTranslator.translate("EKTOO_XML_FILE_CHOOSER_TITLE");
 	}
 
+	public static String getZipFileSelectorTitle() {
+		return EktooMessageTranslator.translate("EKTOO_ZIP_FILE_CHOOSER_TITLE");
+	}
+	
 	public static String getMSAccessFileSelectorTitle() {
 		return EktooMessageTranslator
 				.translate("EKTOO_ACCESS_FILE_CHOOSER_TITLE");

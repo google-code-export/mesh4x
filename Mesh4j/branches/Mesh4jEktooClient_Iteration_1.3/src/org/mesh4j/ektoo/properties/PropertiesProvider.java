@@ -10,6 +10,8 @@ import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.security.LoggedInIdentityProvider;
 import org.mesh4j.sync.validations.MeshException;
 
+import com.hp.hpl.jena.graph.query.Expression.Util;
+
 public class PropertiesProvider {
 
 	private static final String MESH4J_PROPERTIES = "mesh4j.properties";
@@ -182,6 +184,7 @@ public class PropertiesProvider {
 	}
 
 	public String getDefaultKMLFile() {
+		
 		String fileName = getString("default.kml.file.name");
 		try {
 			return new File(fileName).getCanonicalPath();
