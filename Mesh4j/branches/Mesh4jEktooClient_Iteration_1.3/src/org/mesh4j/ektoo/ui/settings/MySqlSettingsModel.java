@@ -9,11 +9,21 @@ public class MySqlSettingsModel extends AbstractModel{
 	private String hostName = "";
 	private String portNo ;
 	private String databaseName = "";
-	
+	private Boolean createAsDefaultProp = false;
 	
 	public MySqlSettingsModel(){
 		
 	}
+	
+	public Boolean isCreateAsDefaultProp() {
+		return createAsDefaultProp;
+	}
+
+	public void setCreateAsDefaultProp(Boolean createAsDefaultProp) {
+		firePropertyChange(SettingsController.CREATE_PROP_AS_DEFAULT, this.createAsDefaultProp, createAsDefaultProp);
+		this.createAsDefaultProp = createAsDefaultProp;
+	}
+	
 	public String getUserName() {
 		return userName;
 	}

@@ -52,6 +52,8 @@ public class SettingsController extends AbstractViewController {
 	public final static String USER_NAME_GOOGLE = "GUserName";
 	public final static String USER_PASSWORD_GOOGLE = "GPassword";
 	
+	public final static String CREATE_PROP_AS_DEFAULT = "CreateAsDefaultProp";
+	
 	
 	
 	public SettingsController(IPropertyManager propertyManager) {
@@ -71,6 +73,7 @@ public class SettingsController extends AbstractViewController {
 			modifySettings(USER_NAME_GOOGLE,propertyManager.getPropertyAsDecrepted(EktooProperties.USER_NAME_GOOGLE));
 			modifySettings(USER_PASSWORD_GOOGLE,propertyManager.getPropertyAsDecrepted(EktooProperties.USER_PASSWORD_GOOGLE));
 		} catch (Exception e) {
+			e.printStackTrace();
 			LOGGER.error(e);
 		}
 	}
@@ -126,62 +129,87 @@ public class SettingsController extends AbstractViewController {
 	}
 	
 	
-	public void modifySettings(String proName,String value){
+	public void modifySettings(String proName,Object value){
 		setModelProperty(proName, value);
 	}
 	
+	
+	public void loadDefaultGoogleSettings(){
+		try{
+			modifySettings(USER_NAME_GOOGLE, propertyManager.getPropertyAsDecrepted(EktooProperties.USER_NAME_GOOGLE_DEFAULT));
+			modifySettings(USER_PASSWORD_GOOGLE, propertyManager.getPropertyAsDecrepted(EktooProperties.USER_PASSWORD_GOOGLE_DEFAULT));
+		} catch (Exception e){
+			LOGGER.error(e);
+		}
+	}
+
+	
 	public void loadDefaultGeneralSettings(){
 		
-		setModelProperty(PATH_SOURCE, EktooProperties.PATH_SOURCE_DIR_DEFAULT);
-		setModelProperty(PATH_TARGET, EktooProperties.PATH_TARGET_DIR_DEFAULT);
+		modifySettings(PATH_SOURCE, propertyManager.getProperty(EktooProperties.PATH_SOURCE_DIR_DEFAULT));
+		modifySettings(PATH_TARGET, propertyManager.getProperty(EktooProperties.PATH_TARGET_DIR_DEFAULT));
 		
-		setModelProperty(LANGUAGE, EktooProperties.LANGUAGE_DEFAULT);
+		modifySettings(LANGUAGE, EktooProperties.LANGUAGE_DEFAULT);
 		
 		String fileName = "";
 		
 		fileName = Util.getFileName(propertyManager, EktooProperties.PATH_SOURCE_EXCEL_DEFAULT);
-		setModelProperty(PATH_SOURCE_EXCEL, fileName);
+		modifySettings(PATH_SOURCE_EXCEL, fileName);
 		
 		fileName = Util.getFileName(propertyManager, EktooProperties.PATH_TARGET_EXCEL_DEFAULT);
-		setModelProperty(PATH_TARGET_EXCEL, fileName);
+		modifySettings(PATH_TARGET_EXCEL, fileName);
 		
 		fileName = Util.getFileName(propertyManager, EktooProperties.PATH_SOURCE_ACCESS_DEFAULT);
-		setModelProperty(PATH_SOURCE_ACCESS, EktooProperties.PATH_SOURCE_ACCESS);
+		modifySettings(PATH_SOURCE_ACCESS, fileName);
 		
 		fileName = Util.getFileName(propertyManager, EktooProperties.PATH_TARGET_ACCESS_DEFAULT);
-		setModelProperty(PATH_TARGET_ACCESS, EktooProperties.PATH_TARGET_ACCESS);
+		modifySettings(PATH_TARGET_ACCESS, fileName);
 		
 		fileName = Util.getFileName(propertyManager, EktooProperties.PATH_SOURCE_KML_DEFAULT);
-		setModelProperty(PATH_SOURCE_KML, fileName);
+		modifySettings(PATH_SOURCE_KML, fileName);
 		
 		fileName = Util.getFileName(propertyManager, EktooProperties.PATH_TARGET_KML_DEFAULT);
-		setModelProperty(PATH_TARGET_KML, fileName);
+		modifySettings(PATH_TARGET_KML, fileName);
 		
 		fileName = Util.getFileName(propertyManager, EktooProperties.PATH_SOURCE_RSS_DEFAULT);
-		setModelProperty(PATH_SOURCE_RSS, fileName);
+		modifySettings(PATH_SOURCE_RSS, fileName);
 		
 		fileName = Util.getFileName(propertyManager, EktooProperties.PATH_TARGET_RSS_DEFAULT);
-		setModelProperty(PATH_TARGET_RSS, fileName);
+		modifySettings(PATH_TARGET_RSS, fileName);
 		
 		fileName = Util.getFileName(propertyManager, EktooProperties.PATH_SOURCE_ATOM_DEFAULT);
-		setModelProperty(PATH_SOURCE_ATOM, fileName);
+		modifySettings(PATH_SOURCE_ATOM, fileName);
 		
 		fileName = Util.getFileName(propertyManager, EktooProperties.PATH_TARGET_ATOM_DEFAULT);
-		setModelProperty(PATH_TARGET_ATOM, fileName);
+		modifySettings(PATH_TARGET_ATOM, fileName);
 		
-		setModelProperty(PATH_SOURCE_FOLDER, EktooProperties.PATH_SOURCE_FOLDER);
-		setModelProperty(PATH_TARGET_FOLDER, EktooProperties.PATH_TARGET_FOLDER);
+		modifySettings(PATH_SOURCE_FOLDER, propertyManager.getProperty(EktooProperties.PATH_SOURCE_FOLDER_DEFAULT));
+		modifySettings(PATH_TARGET_FOLDER, propertyManager.getProperty(EktooProperties.PATH_TARGET_FOLDER_DEFAULT));
 		
 		fileName = Util.getFileName(propertyManager, EktooProperties.PATH_SOURCE_ZIP);
-		setModelProperty(PATH_SOURCE_ZIP, fileName);
+		modifySettings(PATH_SOURCE_ZIP, fileName);
 		
 	}
 	
 	public void loadDefaultCloudSettings(){
-		setModelProperty(CLOUD_ROOT_URI, EktooProperties.CLOUD_ROOT_URI_DEFAULT);
-		setModelProperty(CLOUD_MESH_NAME, EktooProperties.CLOUD_MESH_NAME_DEFAULT);
-		setModelProperty(CLOUD_DATASET_NAME, EktooProperties.CLOUD_DATASET_NAME_DEFAULT);
+		modifySettings(CLOUD_ROOT_URI, propertyManager.getProperty(EktooProperties.CLOUD_ROOT_URI_DEFAULT));
+		modifySettings(CLOUD_MESH_NAME, propertyManager.getProperty(EktooProperties.CLOUD_MESH_NAME_DEFAULT));
+		modifySettings(CLOUD_DATASET_NAME, propertyManager.getProperty(EktooProperties.CLOUD_DATASET_NAME_DEFAULT));
 	}
+	
+	public void loadDefaultMySqlSettings(){
+		try{
+			modifySettings(USER_NAME_MYSQL, propertyManager.getPropertyAsDecrepted(EktooProperties.USER_NAME_MYSQL_DEFAULT));
+			modifySettings(USER_PASSWORD_MYSQL, propertyManager.getPropertyAsDecrepted(EktooProperties.USER_PASSWORD_MYSQL_DEFAULT));
+			modifySettings(HOST_NAME_MYSQL, propertyManager.getPropertyAsDecrepted(EktooProperties.HOST_NAME_MYSQL_DEFAULT));
+			modifySettings(PORT_MYSQL, propertyManager.getPropertyAsDecrepted(EktooProperties.PORT_MYSQL_DEFAULT));
+			modifySettings(DATABASE_NAME_MYSQL, propertyManager.getPropertyAsDecrepted(EktooProperties.DATABASE_NAME_MYSQL_DEFAULT));
+		} catch (Exception exception){
+			LOGGER.error(exception);
+		}
+	}
+	
+	
 	
 	public void save(){
 		for( AbstractModel model : getModels() ){
@@ -201,46 +229,63 @@ public class SettingsController extends AbstractViewController {
 	
 	
 	private void saveGeneralSettings(GeneralSettingsModel  generalSettingsModel){
-		propertyManager.setProperty(EktooProperties.LANGUAGE, generalSettingsModel.getLanguage());
 		
-		propertyManager.setProperty(EktooProperties.PATH_SOURCE_DIR, generalSettingsModel.getPathSource());
-		propertyManager.setProperty(EktooProperties.PATH_TARGET_DIR, generalSettingsModel.getPathTarget());
+		String extension = "";
+		if(generalSettingsModel.isCreateAsDefaultProp()){
+			extension = ".default";
+		} 
+		propertyManager.setProperty(EktooProperties.LANGUAGE + extension, generalSettingsModel.getLanguage());
 		
-		propertyManager.setProperty(EktooProperties.PATH_SOURCE_EXCEL, generalSettingsModel.getPathSourceExcel());
-		propertyManager.setProperty(EktooProperties.PATH_TARGET_EXCEL, generalSettingsModel.getPathTargetExcel());
+		propertyManager.setProperty(EktooProperties.PATH_SOURCE_DIR +  extension, generalSettingsModel.getPathSource());
+		propertyManager.setProperty(EktooProperties.PATH_TARGET_DIR +  extension, generalSettingsModel.getPathTarget());
 		
-		propertyManager.setProperty(EktooProperties.PATH_SOURCE_ACCESS, generalSettingsModel.getPathSourceAccess());
-		propertyManager.setProperty(EktooProperties.PATH_TARGET_ACCESS, generalSettingsModel.getPathTargetAccess());
+		propertyManager.setProperty(EktooProperties.PATH_SOURCE_EXCEL + extension, generalSettingsModel.getPathSourceExcel());
+		propertyManager.setProperty(EktooProperties.PATH_TARGET_EXCEL + extension, generalSettingsModel.getPathTargetExcel());
 		
-		propertyManager.setProperty(EktooProperties.PATH_SOURCE_KML, generalSettingsModel.getPathSourceKml());
-		propertyManager.setProperty(EktooProperties.PATH_SOURCE_KML, generalSettingsModel.getPathTargetKml());
+		propertyManager.setProperty(EktooProperties.PATH_SOURCE_ACCESS + extension, generalSettingsModel.getPathSourceAccess());
+		propertyManager.setProperty(EktooProperties.PATH_TARGET_ACCESS + extension, generalSettingsModel.getPathTargetAccess());
 		
-		propertyManager.setProperty(EktooProperties.PATH_SOURCE_RSS, generalSettingsModel.getPathSourceRss());
-		propertyManager.setProperty(EktooProperties.PATH_TARGET_RSS, generalSettingsModel.getPathTargetRss());
+		propertyManager.setProperty(EktooProperties.PATH_SOURCE_KML + extension, generalSettingsModel.getPathSourceKml());
+		propertyManager.setProperty(EktooProperties.PATH_TARGET_KML + extension, generalSettingsModel.getPathTargetKml());
 		
-		propertyManager.setProperty(EktooProperties.PATH_SOURCE_ATOM, generalSettingsModel.getPathSourceAtom());
-		propertyManager.setProperty(EktooProperties.PATH_TARGET_ATOM, generalSettingsModel.getPathTargetAtom());
+		propertyManager.setProperty(EktooProperties.PATH_SOURCE_RSS + extension, generalSettingsModel.getPathSourceRss());
+		propertyManager.setProperty(EktooProperties.PATH_TARGET_RSS + extension, generalSettingsModel.getPathTargetRss());
 		
-		propertyManager.setProperty(EktooProperties.PATH_SOURCE_FOLDER, generalSettingsModel.getPathSourceFolder());
-		propertyManager.setProperty(EktooProperties.PATH_TARGET_FOLDER, generalSettingsModel.getPathTargetFolder());
+		propertyManager.setProperty(EktooProperties.PATH_SOURCE_ATOM + extension, generalSettingsModel.getPathSourceAtom());
+		propertyManager.setProperty(EktooProperties.PATH_TARGET_ATOM + extension, generalSettingsModel.getPathTargetAtom());
 		
-		propertyManager.setProperty(EktooProperties.PATH_SOURCE_ZIP, generalSettingsModel.getPathSourceZip());
+		propertyManager.setProperty(EktooProperties.PATH_SOURCE_FOLDER + extension, generalSettingsModel.getPathSourceFolder());
+		propertyManager.setProperty(EktooProperties.PATH_TARGET_FOLDER + extension, generalSettingsModel.getPathTargetFolder());
 		
+		propertyManager.setProperty(EktooProperties.PATH_SOURCE_ZIP + extension, generalSettingsModel.getPathSourceZip());
 	}
 	
+	
+	
+	
 	private void saveCloudSettings(CloudSettingsModel  cloudSettingsModel){
-		propertyManager.setProperty(EktooProperties.CLOUD_ROOT_URI, cloudSettingsModel.getSyncServerRootUri());
-		propertyManager.setProperty(EktooProperties.CLOUD_MESH_NAME, cloudSettingsModel.getMeshName());
-		propertyManager.setProperty(EktooProperties.CLOUD_DATASET_NAME, cloudSettingsModel.getDatasetName());
+		String extension = "";
+		if(cloudSettingsModel.isCreateAsDefaultProp()){
+			extension = ".default";
+		}
+		
+		propertyManager.setProperty(EktooProperties.CLOUD_ROOT_URI + extension, cloudSettingsModel.getSyncServerRootUri());
+		propertyManager.setProperty(EktooProperties.CLOUD_MESH_NAME + extension, cloudSettingsModel.getMeshName());
+		propertyManager.setProperty(EktooProperties.CLOUD_DATASET_NAME + extension, cloudSettingsModel.getDatasetName());
 	}
 	
 	private void saveMysqlSettings(MySqlSettingsModel  mysqlSettingsModel){
+		String extension = "";
+		if(mysqlSettingsModel.isCreateAsDefaultProp()){
+			extension = ".default";
+		}
+		
 		try {
-			propertyManager.setPropertyAsEncrypted(EktooProperties.USER_NAME_MYSQL, mysqlSettingsModel.getUserName());
-			propertyManager.setPropertyAsEncrypted(EktooProperties.USER_PASSWORD_MYSQL, mysqlSettingsModel.getUserPassword());
-			propertyManager.setPropertyAsEncrypted(EktooProperties.HOST_NAME_MYSQL, mysqlSettingsModel.getHostName());
-			propertyManager.setPropertyAsEncrypted(EktooProperties.PORT_MYSQL, mysqlSettingsModel.getPortNo());
-			propertyManager.setPropertyAsEncrypted(EktooProperties.DATABASE_NAME_MYSQL, mysqlSettingsModel.getDatabaseName());
+			propertyManager.setPropertyAsEncrypted(EktooProperties.USER_NAME_MYSQL +  extension , mysqlSettingsModel.getUserName());
+			propertyManager.setPropertyAsEncrypted(EktooProperties.USER_PASSWORD_MYSQL + extension, mysqlSettingsModel.getUserPassword());
+			propertyManager.setPropertyAsEncrypted(EktooProperties.HOST_NAME_MYSQL + extension, mysqlSettingsModel.getHostName());
+			propertyManager.setPropertyAsEncrypted(EktooProperties.PORT_MYSQL + extension, mysqlSettingsModel.getPortNo());
+			propertyManager.setPropertyAsEncrypted(EktooProperties.DATABASE_NAME_MYSQL + extension, mysqlSettingsModel.getDatabaseName());
 		} catch (Exception e) {
 			LOGGER.debug(e);
 		}

@@ -28,9 +28,22 @@ public class GeneralSettingsModel extends AbstractModel{
 	
 	private String pathSourceZip = "";
 	
+	private Boolean createAsDefaultProp = false;
+	
 	
 	public GeneralSettingsModel(){
 	}
+	
+	public Boolean isCreateAsDefaultProp() {
+		return createAsDefaultProp;
+	}
+
+	public void setCreateAsDefaultProp(Boolean createAsDefaultProp) {
+		firePropertyChange(SettingsController.CREATE_PROP_AS_DEFAULT, this.createAsDefaultProp, createAsDefaultProp);
+		this.createAsDefaultProp = createAsDefaultProp;
+	}
+
+	
 	
 	public String getLanguage() {
 		return language;

@@ -11,14 +11,15 @@ import java.beans.PropertyChangeEvent;
 import java.io.File;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.apache.commons.logging.Log;
@@ -49,6 +50,7 @@ public class GeneralSettingsUI extends AbstractView{
 	private JTextField pathSourceFolderTextField;
 	private JTextField pathTargetFolderTextField;
 	private JTextField pathSourceZipTextField;
+	private JCheckBox defultCheckBox;
 
 	
 	
@@ -201,9 +203,20 @@ public class GeneralSettingsUI extends AbstractView{
 		c.insets = new Insets(5, 20, 0, 10);
 		this.add(getZipSourceFileBrowser(), c);
 		
-		c.anchor = GridBagConstraints.PAGE_END; //bottom of space
+		
+		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 1;
 		c.gridy = 17;
+		c.weightx = 0.5;
+		c.gridwidth =2;
+		c.insets = new Insets(5, 20, 0, 10);
+		this.add(getDefaultCheckBoxPanel(), c);
+		
+		
+		
+		c.anchor = GridBagConstraints.PAGE_END; //bottom of space
+		c.gridx = 1;
+		c.gridy = 18;
 		c.weighty = 1;
 		c.insets = new Insets(0, 10, 0, 10);
 		this.add( getButtonPanel(), c);
@@ -211,6 +224,18 @@ public class GeneralSettingsUI extends AbstractView{
 	
 	
 	
+	private JCheckBox getDefaultCheckBoxPanel(){
+		defultCheckBox = new JCheckBox("Create this property as default");
+		defultCheckBox.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				getController().modifySettings(SettingsController.CREATE_PROP_AS_DEFAULT, 
+						defultCheckBox.isSelected());
+			}
+		});
+		
+		return defultCheckBox;
+	}
 	
 	private JPanel getButtonPanel(){
 		JPanel buttonPanel = new JPanel(new BorderLayout());
@@ -273,7 +298,7 @@ public class GeneralSettingsUI extends AbstractView{
 		fileBrowserButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				launchFileBrowser(fileBrowserButton,pathSourceTextField,"");
+				launchFileBrowser(JFileChooser.DIRECTORIES_ONLY,fileBrowserButton,pathSourceTextField,"");
 			}
 		});
 		return fileBrowserPanel;
@@ -307,7 +332,7 @@ public class GeneralSettingsUI extends AbstractView{
 		fileBrowserButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				launchFileBrowser(fileBrowserButton,pathTargetTextField,"");
+				launchFileBrowser(JFileChooser.DIRECTORIES_ONLY,fileBrowserButton,pathTargetTextField,"");
 			}
 		});
 		return fileBrowserPanel;
@@ -341,7 +366,7 @@ public class GeneralSettingsUI extends AbstractView{
 		fileBrowserButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				launchFileBrowser(fileBrowserButton,pathTargetExcelTextField,EktooUITranslator.getExcelFileSelectorTitle(),
+				launchFileBrowser(JFileChooser.FILES_ONLY,fileBrowserButton,pathTargetExcelTextField,EktooUITranslator.getExcelFileSelectorTitle(),
 						"xls","XLS","xlsx","XLSX");
 			}
 		});
@@ -376,7 +401,7 @@ public class GeneralSettingsUI extends AbstractView{
 		fileBrowserButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-					launchFileBrowser(fileBrowserButton,pathSourceExcelTextField,EktooUITranslator.getExcelFileSelectorTitle(),
+					launchFileBrowser(JFileChooser.FILES_ONLY,fileBrowserButton,pathSourceExcelTextField,EktooUITranslator.getExcelFileSelectorTitle(),
 						"xls","XLS","xlsx","XLSX");
 			}
 		});
@@ -411,7 +436,7 @@ public class GeneralSettingsUI extends AbstractView{
 		fileBrowserButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				launchFileBrowser(fileBrowserButton,pathSourceAccessTextField,
+				launchFileBrowser(JFileChooser.FILES_ONLY,fileBrowserButton,pathSourceAccessTextField,
 						EktooUITranslator.getMSAccessFileSelectorTitle(),"mdb");
 			}
 		});
@@ -446,7 +471,7 @@ public class GeneralSettingsUI extends AbstractView{
 		fileBrowserButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				launchFileBrowser(fileBrowserButton,pathTargeteAccessTextField,
+				launchFileBrowser(JFileChooser.FILES_ONLY,fileBrowserButton,pathTargeteAccessTextField,
 						EktooUITranslator.getMSAccessFileSelectorTitle(),"mdb");
 			}
 		});
@@ -481,7 +506,7 @@ public class GeneralSettingsUI extends AbstractView{
 		fileBrowserButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				launchFileBrowser(fileBrowserButton,pathSourceKmlTextField,
+				launchFileBrowser(JFileChooser.FILES_ONLY,fileBrowserButton,pathSourceKmlTextField,
 						EktooUITranslator.getKMLFileSelectorTitle(),"kml", "kmz", "KML", "KMZ");
 			}
 		});
@@ -516,7 +541,7 @@ public class GeneralSettingsUI extends AbstractView{
 		fileBrowserButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				launchFileBrowser(fileBrowserButton,pathTargetKmlTextField,
+				launchFileBrowser(JFileChooser.FILES_ONLY,fileBrowserButton,pathTargetKmlTextField,
 						EktooUITranslator.getKMLFileSelectorTitle(),"kml", "kmz", "KML", "KMZ");
 			}
 		});
@@ -551,7 +576,7 @@ public class GeneralSettingsUI extends AbstractView{
 		fileBrowserButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				launchFileBrowser(fileBrowserButton,pathSourceRssTextField,
+				launchFileBrowser(JFileChooser.FILES_ONLY,fileBrowserButton,pathSourceRssTextField,
 						EktooUITranslator.getXMLFileSelectorTitle(),"xml");
 			}
 		});
@@ -586,7 +611,7 @@ public class GeneralSettingsUI extends AbstractView{
 		fileBrowserButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				launchFileBrowser(fileBrowserButton,pathTargetRssTextField,
+				launchFileBrowser(JFileChooser.FILES_ONLY,fileBrowserButton,pathTargetRssTextField,
 						EktooUITranslator.getXMLFileSelectorTitle(),"xml");
 			}
 		});
@@ -621,7 +646,7 @@ public class GeneralSettingsUI extends AbstractView{
 		fileBrowserButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				launchFileBrowser(fileBrowserButton,pathSourceAtomTextField,
+				launchFileBrowser(JFileChooser.FILES_ONLY,fileBrowserButton,pathSourceAtomTextField,
 						EktooUITranslator.getXMLFileSelectorTitle(),"xml");
 			}
 		});
@@ -656,7 +681,7 @@ public class GeneralSettingsUI extends AbstractView{
 		fileBrowserButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				launchFileBrowser(fileBrowserButton,pathTargetAtomTextField,
+				launchFileBrowser(JFileChooser.FILES_ONLY,fileBrowserButton,pathTargetAtomTextField,
 						EktooUITranslator.getXMLFileSelectorTitle(),"xml");
 			}
 		});
@@ -691,7 +716,7 @@ public class GeneralSettingsUI extends AbstractView{
 		fileBrowserButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				launchFileBrowser(fileBrowserButton,pathSourceFolderTextField,"");
+				launchFileBrowser(JFileChooser.DIRECTORIES_ONLY,fileBrowserButton,pathSourceFolderTextField,"Select directory");
 			}
 		});
 		return fileBrowserPanel;
@@ -725,7 +750,7 @@ public class GeneralSettingsUI extends AbstractView{
 		fileBrowserButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				launchFileBrowser(fileBrowserButton,pathTargetFolderTextField,"");
+				launchFileBrowser(JFileChooser.DIRECTORIES_ONLY,fileBrowserButton,pathTargetFolderTextField,"Select directory");
 			}
 		});
 		return fileBrowserPanel;
@@ -759,7 +784,7 @@ public class GeneralSettingsUI extends AbstractView{
 		fileBrowserButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				launchFileBrowser(fileBrowserButton,pathSourceZipTextField,
+				launchFileBrowser(JFileChooser.FILES_ONLY,fileBrowserButton,pathSourceZipTextField,
 						EktooUITranslator.getZipFileSelectorTitle(),"zip");
 			}
 		});
@@ -767,10 +792,19 @@ public class GeneralSettingsUI extends AbstractView{
 	}
 	
 	
-	private void launchFileBrowser(JComponent component,JTextField textField,String desc,String... extensions){
+	private void launchFileBrowser(int mode,JComponent component,JTextField textField,String desc,String... extensions){
 
+		//clean up old file filter
+		for(FileFilter fileFilter : getFileChooser().getChoosableFileFilters()){
+			getFileChooser().removeChoosableFileFilter(fileFilter);	
+		}
+		
+		getFileChooser().setFileSelectionMode(mode);
 		getFileChooser().setAcceptAllFileFilterUsed(false);
-		getFileChooser().setFileFilter(new FileNameExtensionFilter(desc,extensions));
+		if(mode == JFileChooser.FILES_ONLY){
+			getFileChooser().setFileFilter(new FileNameExtensionFilter(desc,extensions));
+		} 
+		
 		getFileChooser().setSelectedFile(new File(textField.getText()));
 		int returnVal = getFileChooser().showOpenDialog(component);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {

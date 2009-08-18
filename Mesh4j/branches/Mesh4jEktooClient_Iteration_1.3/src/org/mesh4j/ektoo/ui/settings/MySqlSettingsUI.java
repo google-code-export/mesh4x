@@ -5,9 +5,12 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
@@ -25,6 +28,7 @@ public class MySqlSettingsUI extends AbstractView{
 	private JTextField hostTextField;
 	private JTextField portTextField;
 	private JTextField dataBaseTextField;
+	private JCheckBox defultCheckBox;
 	
 	
 	public MySqlSettingsUI(SettingsController controller){
@@ -102,14 +106,35 @@ public class MySqlSettingsUI extends AbstractView{
 		this.add(getDataBaseTextBox(), c);
 		
 		
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 2;
+		c.gridy = 5;
+		c.weightx = 0.5;
+		c.insets = new Insets(5, 20, 0, 10);
+		this.add(getDefaultCheckBoxPanel(), c);
+		
 		
 		c.anchor = GridBagConstraints.PAGE_END; //bottom of space
 		c.gridx = 2;
-		c.gridy = 5;
+		c.gridy = 6;
 		c.weighty = 1;
 		c.weightx = 0;
 		c.insets = new Insets(0, 10, 0, 10);
 		this.add( getButtonPanel(), c);
+	}
+	
+	
+	private JCheckBox getDefaultCheckBoxPanel(){
+		defultCheckBox = new JCheckBox("Create this property as default");
+		defultCheckBox.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				getController().modifySettings(SettingsController.CREATE_PROP_AS_DEFAULT, 
+						defultCheckBox.isSelected());
+			}
+		});
+		
+		return defultCheckBox;
 	}
 	
 	

@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -23,6 +24,7 @@ public class CloudSettingsUI extends AbstractView{
 	private JTextField dataSetTextField;
 	private JTextField meshNameTextField;
 	private JTextField syncRootUriTextField;
+	private JCheckBox defultCheckBox;
 	
 	
 	public CloudSettingsUI(SettingsController controller){
@@ -84,17 +86,40 @@ public class CloudSettingsUI extends AbstractView{
 		this.add(getDataSetTextBox(), c);
 		
 		
-		c.anchor = GridBagConstraints.PAGE_END; //bottom of space
+		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 2;
 		c.gridy = 4;
+		c.weightx = 0.5;
+		c.weightx = 0.5;
+		c.insets = new Insets(5, 20, 0, 10);
+		this.add(getDefaultCheckBoxPanel(), c);
+		
+		
+		c.anchor = GridBagConstraints.PAGE_END; //bottom of space
+		c.gridx = 2;
+		c.gridy = 5;
 		c.weighty = 1;
 		c.insets = new Insets(0, 10, 0, 10);
 		this.add( getButtonPanel(), c);
 	}
 	
+	private JCheckBox getDefaultCheckBoxPanel(){
+		defultCheckBox = new JCheckBox("Create this property as default");
+		defultCheckBox.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				getController().modifySettings(SettingsController.CREATE_PROP_AS_DEFAULT, 
+						defultCheckBox.isSelected());
+			}
+		});
+		
+		return defultCheckBox;
+	}
+	
+	
 	private JPanel getButtonPanel(){
 		JPanel buttonPanel = new JPanel(new BorderLayout());
-		JButton testButton = new JButton("default");
+		JButton testButton = new JButton("Load default");
 		testButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
