@@ -83,16 +83,18 @@ public class EncryptionUtilTest {
 	}
 	
 	
-	@Test(expected = IllegalArgumentException.class)
-	public void ShouldGenerateExceptionIfStringToBeEncryptedIsNullOrEmpty(){
+	
+	@Test
+	public void ShouldGetEmptyOrNullIfStringToBeEncryptedIsNullOrEmpty(){
 		String plainText = "";
 		IEncryptionUtil encryptionUtil = new EncryptionUtil("",ALGORITHM.DES);
-		encryptionUtil.encrypt(plainText);
+		Assert.assertEquals(plainText, encryptionUtil.encrypt(plainText));
 	}
 	
-	@Test(expected = IllegalArgumentException.class)
-	public void ShouldGenerateExceptionIfStringToBeDecryptedIsNull(){
+	@Test
+	public void ShouldGetEmptyOrNullIfStringToBeDecryptedIsNullOrEmpty(){
+		String toBeDecrypted = "";
 		IEncryptionUtil encryptionUtil = new EncryptionUtil("",ALGORITHM.DES);
-		System.out.println(encryptionUtil.decrypt(null));
+		Assert.assertEquals(toBeDecrypted, encryptionUtil.decrypt(toBeDecrypted));
 	}
 }

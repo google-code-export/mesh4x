@@ -3,6 +3,8 @@
  */
 package org.mesh4j.ektoo.ui;
 
+import static org.mesh4j.ektoo.ui.settings.prop.AppPropertiesProvider.getPropetyManager;
+
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -22,6 +24,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.mesh4j.ektoo.IUIController;
+import org.mesh4j.ektoo.Util;
 import org.mesh4j.ektoo.controller.AbstractUIController;
 import org.mesh4j.ektoo.controller.CloudUIController;
 import org.mesh4j.ektoo.controller.FeedUIController;
@@ -41,9 +44,9 @@ import org.mesh4j.ektoo.model.MsAccessModel;
 import org.mesh4j.ektoo.model.MsExcelModel;
 import org.mesh4j.ektoo.model.MySQLAdapterModel;
 import org.mesh4j.ektoo.model.ZipFeedModel;
-import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.ektoo.ui.component.RoundBorder;
 import org.mesh4j.ektoo.ui.component.messagedialog.MessageDialog;
+import org.mesh4j.ektoo.ui.settings.AppProperties;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.feed.atom.AtomSyndicationFormat;
@@ -70,7 +73,7 @@ public class SyncItemUI extends JPanel implements IUIController {
 	public static final String UI_AS_TARGET = "target";
 	
 	// MODEL VARIABLES
-	private PropertiesProvider propertiesProvider;
+	
 
 	private JPanel body = null;
 	private JPanel head = null;
@@ -125,8 +128,7 @@ public class SyncItemUI extends JPanel implements IUIController {
 	}
 
 	private void initialize() {
-		this.propertiesProvider = new PropertiesProvider();
-
+	
 		SourceOrTargetType = EktooUITranslator.getDataSourceType();
 		setLayout(new BorderLayout());
 		setBorder(BorderFactory.createTitledBorder( new RoundBorder(Color.LIGHT_GRAY), this.title));
@@ -212,34 +214,37 @@ public class SyncItemUI extends JPanel implements IUIController {
 
 	private MsExcelUI getMsExcelUI() {
 		if (excelUI == null) {
-			excelUIController = new MsExcelUIController(this.propertiesProvider, this.acceptsCreateDataset);
-			excelUIController.addModel(new MsExcelModel(this.propertiesProvider.getMsExcelFile()));
-			excelUI = new MsExcelUI(this.propertiesProvider.getMsExcelFile(), excelUIController);
+			excelUIController = new MsExcelUIController(this.acceptsCreateDataset);
+			String fileName = Util.getFileName(getPropetyManager(), AppProperties.PATH_SOURCE_EXCEL_DEFAULT);
+			excelUIController.addModel(new MsExcelModel(fileName));
+			excelUI = new MsExcelUI(fileName, excelUIController);
 		}
 		return excelUI;
 	}
 
 	private MsAccessUI getMsAccessUI() {
 		if (accessUI == null) {
-			accessUI = new MsAccessUI(this.propertiesProvider.getMsAccessFile(), getMsAccessUIController());
+			String fileName = Util.getFileName(getPropetyManager(), AppProperties.PATH_SOURCE_ACCESS_DEFAULT);
+			accessUI = new MsAccessUI(fileName, getMsAccessUIController());
 		}
 		return accessUI;
 	}
 
 	private MsAccessUIController getMsAccessUIController() {
 		if(accessUIController == null){
-			accessUIController = new MsAccessUIController(this.propertiesProvider, this.acceptsCreateDataset);
-			accessUIController.addModel(new MsAccessModel(this.propertiesProvider.getMsAccessFile()));
+			accessUIController = new MsAccessUIController(this.acceptsCreateDataset);
+			String fileName = Util.getFileName(getPropetyManager(), AppProperties.PATH_SOURCE_ACCESS_DEFAULT);
+			accessUIController.addModel(new MsAccessModel(fileName));
 		}
 		return accessUIController;
 	}
 
 	private GSSheetUI getGSSheetUI() {
 		if (googleUI == null) {
-			googleUIControler = new GSSheetUIController(this.propertiesProvider, this.acceptsCreateDataset);
+			googleUIControler = new GSSheetUIController(this.acceptsCreateDataset);
 			googleUIControler.addModel(new GSSheetModel());
 
-			googleUI = new GSSheetUI(googleUIControler, this.propertiesProvider.getGoogleDocsURL());
+			googleUI = new GSSheetUI(googleUIControler, getPropetyManager().getProperty(AppProperties.URL_GOOGLE_DOCS));
 			googleUI.setUserLabel(EktooUITranslator.getGoogleUserLabel());
 			googleUI.setPasswordLabel(EktooUITranslator.getGooglePasswordLabel());
 			googleUI.setNameLabel(EktooUITranslator.getGoogleSpreadsheetNameLabel());
@@ -252,25 +257,26 @@ public class SyncItemUI extends JPanel implements IUIController {
 
 	private KmlUI getKmlUI() {
 		if (kmlUI == null) {
-			kmlUIControler = new KmlUIController(this.propertiesProvider, this.acceptsCreateDataset);
-			kmlUIControler.addModel(new KmlModel(this.propertiesProvider.getDefaultKMLFile()));
-			kmlUI = new KmlUI(this.propertiesProvider.getDefaultKMLFile(), kmlUIControler);
+			kmlUIControler = new KmlUIController(this.acceptsCreateDataset);
+			String fileName = Util.getFileName(getPropetyManager(), AppProperties.PATH_SOURCE_KML_DEFAULT);
+			kmlUIControler.addModel(new KmlModel(fileName));
+			kmlUI = new KmlUI(fileName, kmlUIControler);
 		}
 		return kmlUI;
 	}
 
 	private CloudUI getCloudUI() {
 		if (cloudUI == null) {
-			cloudUIControler = new CloudUIController(this.propertiesProvider, this.acceptsCreateDataset);
-			cloudUIControler.addModel(new CloudModel(this.propertiesProvider.getMeshSyncServerURL()));
-			cloudUI = new CloudUI(this.propertiesProvider.getMeshSyncServerURL(), cloudUIControler);
+			cloudUIControler = new CloudUIController(this.acceptsCreateDataset);
+			cloudUIControler.addModel(new CloudModel(getPropetyManager().getProperty(AppProperties.CLOUD_ROOT_URI_DEFAULT)));
+			cloudUI = new CloudUI(getPropetyManager().getProperty(AppProperties.CLOUD_ROOT_URI_DEFAULT), cloudUIControler);
 		}
 		return cloudUI;
 	}
 
 	private MySQLUI getMySQLUI() {
 		if (mysqlUI == null) {
-			mysqlUIControler = new MySQLUIController(this.propertiesProvider, this.acceptsCreateDataset);
+			mysqlUIControler = new MySQLUIController(this.acceptsCreateDataset);
 			mysqlUIControler.addModel(new MySQLAdapterModel());
 			mysqlUI = new MySQLUI(mysqlUIControler);
 		}
@@ -279,44 +285,48 @@ public class SyncItemUI extends JPanel implements IUIController {
 
 	private FeedUI getRSSFileUI() {
 		if (rssUI == null) {
-			rssUIControler = new FeedUIController(this.propertiesProvider, this.acceptsCreateDataset);
+			rssUIControler = new FeedUIController(this.acceptsCreateDataset);
+			String fileName = Util.getFileName(getPropetyManager(), AppProperties.PATH_SOURCE_RSS_DEFAULT);
 			rssUIControler.addModel(
 				new FeedModel(
-					this.propertiesProvider.getDefaultRSSFile(),
+					fileName,
 					RssSyndicationFormat.INSTANCE,
-					this.propertiesProvider.getMeshSyncServerURL()));
-			rssUI = new FeedUI(this.propertiesProvider.getDefaultRSSFile(), rssUIControler);
+					getPropetyManager().getProperty(AppProperties.CLOUD_ROOT_URI_DEFAULT)));
+			rssUI = new FeedUI(fileName, rssUIControler);
 		}
 		return rssUI;
 	}
 
 	private ZipFeedUI getZipRSSFileUI() {
 		if (zipRssUI == null) {
-			zipRssUIControler = new ZipFeedUIController(this.propertiesProvider, this.acceptsCreateDataset);
-			zipRssUIControler.addModel(new ZipFeedModel(this.propertiesProvider.getDefaultZipFileName()));
-			zipRssUI = new ZipFeedUI(this.propertiesProvider.getDefaultZipFileName(), zipRssUIControler);
+			zipRssUIControler = new ZipFeedUIController(this.acceptsCreateDataset);
+			String fileName = Util.getFileName(getPropetyManager(), AppProperties.PATH_SOURCE_ZIP_DEFAULT);
+			zipRssUIControler.addModel(new ZipFeedModel(fileName));
+			zipRssUI = new ZipFeedUI(fileName, zipRssUIControler);
 		}
 		return zipRssUI;
 	}
 	
 	private FeedUI getAtomFileUI() {
 		if (atomUI == null) {
-			atomUIControler = new FeedUIController(this.propertiesProvider, this.acceptsCreateDataset);
+			atomUIControler = new FeedUIController(this.acceptsCreateDataset);
+			String fileName = Util.getFileName(getPropetyManager(), AppProperties.PATH_SOURCE_ATOM_DEFAULT);
 			atomUIControler.addModel(
 				new FeedModel(
-						this.propertiesProvider.getDefaultAtomFile(),
+						fileName,
 						AtomSyndicationFormat.INSTANCE,
-						this.propertiesProvider.getMeshSyncServerURL()));
-			atomUI = new FeedUI(this.propertiesProvider.getDefaultAtomFile(), atomUIControler);
+						getPropetyManager().getProperty(AppProperties.CLOUD_ROOT_URI_DEFAULT)));
+			atomUI = new FeedUI(fileName, atomUIControler);
 		}
 		return atomUI;
 	}
 	
 	private FolderUI getFolderUI() {
 		if (folderUI == null) {
-			folderUIController = new FolderUIController(this.propertiesProvider, this.acceptsCreateDataset);
-			folderUIController.addModel(new FolderModel(this.propertiesProvider.getDefaultFolderFile()));
-			folderUI = new FolderUI(this.propertiesProvider.getDefaultFolderFile(), folderUIController);
+			folderUIController = new FolderUIController(this.acceptsCreateDataset);
+			String fileName = Util.getFileName(getPropetyManager(), AppProperties.PATH_SOURCE_FOLDER_DEFAULT);
+			folderUIController.addModel(new FolderModel(fileName));
+			folderUI = new FolderUI(fileName, folderUIController);
 		}
 		return folderUI;
 	}
@@ -506,4 +516,6 @@ public class SyncItemUI extends JPanel implements IUIController {
 		String type = (String) getDataSourceType().getSelectedItem();
 		return type.equals(MS_ACCESS_PANEL);
 	}
+	
+	
 }

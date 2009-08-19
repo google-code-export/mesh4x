@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.mesh4j.ektoo.GoogleSpreadSheetInfo;
 import org.mesh4j.ektoo.model.GSSheetModel;
-import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.ektoo.ui.EktooFrame;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.composite.CompositeSyncAdapter;
@@ -26,8 +25,8 @@ public class GSSheetUIController extends AbstractUIController {
 	public static final String GOOGLE_SPREADSHEET_PROPERTY = "GSpreadsheet";
 
 	// BUSINESS METHODS
-	public GSSheetUIController(PropertiesProvider propertiesProvider, boolean acceptsCreateDataset) {
-		super(propertiesProvider, acceptsCreateDataset);
+	public GSSheetUIController( boolean acceptsCreateDataset) {
+		super( acceptsCreateDataset);
 	}
 
 	public void changeUserName(String userName) {

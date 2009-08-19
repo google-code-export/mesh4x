@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.mesh4j.ektoo.model.MsExcelModel;
-import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.ektoo.ui.EktooFrame;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.composite.CompositeSyncAdapter;
@@ -19,8 +18,8 @@ public class MsExcelUIController extends AbstractUIController {
 	public static final String UNIQUE_COLUMN_NAME_PROPERTY = "UniqueColumnName";
 
 	// BUSINESS METHODS
-	public MsExcelUIController(PropertiesProvider propertiesProvider, boolean acceptsCreateDataset) {
-		super(propertiesProvider, acceptsCreateDataset);
+	public MsExcelUIController( boolean acceptsCreateDataset) {
+		super( acceptsCreateDataset);
 	}
 
 	public void changeWorkbookName(String workbookName) {

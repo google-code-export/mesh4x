@@ -11,7 +11,6 @@ import java.beans.PropertyChangeEvent;
 import java.io.File;
 
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
@@ -24,11 +23,10 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.mesh4j.ektoo.ui.AbstractView;
 import org.mesh4j.ektoo.ui.component.DocumentModelAdapter;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 
-public class GeneralSettingsUI extends AbstractView{
+public class GeneralSettingsUI extends AbstractSettingsUI{
 
 	private static final long serialVersionUID = -6752780815799361963L;
 	private static final Log LOOGER = LogFactory.getLog(GeneralSettingsUI.class);
@@ -50,7 +48,7 @@ public class GeneralSettingsUI extends AbstractView{
 	private JTextField pathSourceFolderTextField;
 	private JTextField pathTargetFolderTextField;
 	private JTextField pathSourceZipTextField;
-	private JCheckBox defultCheckBox;
+	
 
 	
 	
@@ -204,13 +202,13 @@ public class GeneralSettingsUI extends AbstractView{
 		this.add(getZipSourceFileBrowser(), c);
 		
 		
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.gridx = 1;
-		c.gridy = 17;
-		c.weightx = 0.5;
-		c.gridwidth =2;
-		c.insets = new Insets(5, 20, 0, 10);
-		this.add(getDefaultCheckBoxPanel(), c);
+//		c.fill = GridBagConstraints.HORIZONTAL;
+//		c.gridx = 1;
+//		c.gridy = 17;
+//		c.weightx = 0.5;
+//		c.gridwidth =2;
+//		c.insets = new Insets(5, 20, 0, 10);
+//		this.add(getDefaultCheckBoxPanel(), c);
 		
 		
 		
@@ -218,36 +216,27 @@ public class GeneralSettingsUI extends AbstractView{
 		c.gridx = 1;
 		c.gridy = 18;
 		c.weighty = 1;
+		c.weightx = 0;
 		c.insets = new Insets(0, 10, 0, 10);
 		this.add( getButtonPanel(), c);
 	}
 	
 	
 	
-	private JCheckBox getDefaultCheckBoxPanel(){
-		defultCheckBox = new JCheckBox("Create this property as default");
-		defultCheckBox.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				getController().modifySettings(SettingsController.CREATE_PROP_AS_DEFAULT, 
-						defultCheckBox.isSelected());
-			}
-		});
-		
-		return defultCheckBox;
+	
+	
+	private JPanel getDefaultCheckBoxPanel(){
+		JPanel chkBoxPanel = new JPanel(new BorderLayout());
+		JLabel label = new JLabel("");
+		label.setPreferredSize(new Dimension(150,20));
+		chkBoxPanel.add(label,BorderLayout.WEST);
+		chkBoxPanel.add(getDefaultCheckBox(),BorderLayout.CENTER);
+		return chkBoxPanel;
 	}
 	
 	private JPanel getButtonPanel(){
 		JPanel buttonPanel = new JPanel(new BorderLayout());
-		JButton testButton = new JButton("default");
-		testButton.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				getController().loadDefaultGeneralSettings();		
-			}
-		});
-		buttonPanel.add(testButton,BorderLayout.EAST);
-		
+		buttonPanel.add(getDefaultButton(),BorderLayout.EAST);
 		return buttonPanel;
 	}
 	
@@ -895,6 +884,13 @@ public class GeneralSettingsUI extends AbstractView{
 	public boolean verify() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+
+	@Override
+	public void loadDefault() {
+		getController().loadDefaultGeneralSettings();
+		
 	}
 
 }

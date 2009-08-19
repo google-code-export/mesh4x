@@ -1,5 +1,6 @@
 package org.mesh4j.ektoo.ui;
 
+import static org.mesh4j.ektoo.ui.settings.prop.AppPropertiesProvider.getPropetyManager;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -29,7 +30,6 @@ import javax.swing.border.EmptyBorder;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.mesh4j.ektoo.controller.EktooController;
-import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.ektoo.tasks.IErrorListener;
 import org.mesh4j.ektoo.tasks.ISynchronizeTaskListener;
 import org.mesh4j.ektoo.tasks.OpenURLTask;
@@ -41,10 +41,8 @@ import org.mesh4j.ektoo.ui.component.messagedialog.MessageDialog;
 import org.mesh4j.ektoo.ui.component.statusbar.Statusbar;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.schemas.SchemaComparisonViewTask;
-import org.mesh4j.ektoo.ui.settings.SettingsController;
-import org.mesh4j.ektoo.ui.settings.encryption.EncryptionUtil;
-import org.mesh4j.ektoo.ui.settings.prop.IPropertyManager;
-import org.mesh4j.ektoo.ui.settings.prop.PropertyManager;
+import org.mesh4j.ektoo.ui.settings.AppProperties;
+import org.mesh4j.ektoo.ui.settings.SettingsViewTask;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 
 import com.toedter.calendar.JDateChooser;
@@ -191,33 +189,32 @@ public class EktooFrame extends JFrame implements IErrorListener, ISynchronizeTa
 	//TODO(raju)  use PropertiesProvider class as single tone for the application
 	//because its not necessary to load property file every time.
 	private void gotToMesh4xHelpSite(){
-		OpenURLTask openURLTask = new OpenURLTask(this,this,new PropertiesProvider().getMesh4xURL());
+		OpenURLTask openURLTask = new OpenURLTask(this,this,
+				getPropetyManager().getProperty(AppProperties.URL_MESH4X));
 		openURLTask.execute();
 	}
 
 	//TODO(raju)  use PropertiesProvider class as single tone for the application
 	//because its not necessary to load property file every time.
 	private void goToMesh4xEktooHelpSite(){
-		OpenURLTask openURLTask = new OpenURLTask(this,this,new PropertiesProvider().getMesh4xEktooURL());
+		OpenURLTask openURLTask = new OpenURLTask(this,this,
+				getPropetyManager().getProperty(AppProperties.URL_MESH4X_EKTOO));
 		openURLTask.execute();
 	}
 	
 	protected void launchSettingsUI(){
-		//TODO (raju) will be used as UI thread, implement later
-		//transfer to another class, later,just partial commit
-		IPropertyManager propertyManager  = new PropertyManager(PropertiesProvider.getSettingsPropertyLocation());
-		EncryptionUtil encryptionUtil = null;
-		try {
-			encryptionUtil = new EncryptionUtil("",EncryptionUtil.ALGORITHM.DES);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		propertyManager.setEncryptionUtil(encryptionUtil);
 		
-		SettingsController controller = new SettingsController(propertyManager);
+//		IPropertyManager propertyManager  = new PropertyManager(PropertiesProvider.getSettingsPropertyLocation());
+//		EncryptionUtil encryptionUtil = null;
+//		try {
+//			encryptionUtil = new EncryptionUtil("",EncryptionUtil.ALGORITHM.DES);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		propertyManager.setEncryptionUtil(encryptionUtil);
 		
-		SettingsContainer container = new SettingsContainer(controller,this);
-		this.showViewInPopup(EktooUITranslator.getEktooSettingsWindowsTitle(), container, 550, 600, true);
+		SettingsViewTask settingsViewTask = new SettingsViewTask(this);
+		settingsViewTask.execute();
 	}
 	
 	private JPanel getJPanel() {
@@ -900,20 +897,22 @@ public class EktooFrame extends JFrame implements IErrorListener, ISynchronizeTa
 		setStatusbarText(success, Statusbar.SUCCESS_STATUS);
 	}
 	
-	public void showViewInPopup(String title, JComponent component){
+	public void showViewInPopup(String title, JComponent component,boolean isModal){
 		popupviewWindow = new PopupDialog(this,title);
 		popupviewWindow.setLayout(new BorderLayout());
 		popupviewWindow.add(component);
 		popupviewWindow.setSize(getWidth() , getHeight()/2);
+		popupviewWindow.setModal(isModal);
 		popupviewWindow.pack();
 		popupviewWindow.setVisible(true);
 	}
 	
-	public void showViewInPopup(String title, JComponent component, int width, int height, boolean resizable){
+	public void showViewInPopup(String title, JComponent component, int width, int height, boolean resizable,boolean isModal){
 		popupviewWindow = new PopupDialog(this,title);
 		popupviewWindow.setLayout(new BorderLayout());
 		popupviewWindow.add(component);
 		popupviewWindow.setSize(width , height);
+		popupviewWindow.setModal(isModal);
 		popupviewWindow.pack();
 		popupviewWindow.setResizable(resizable);
 		popupviewWindow.setVisible(true);

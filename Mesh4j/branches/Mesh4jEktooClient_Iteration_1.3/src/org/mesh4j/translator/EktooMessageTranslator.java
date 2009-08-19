@@ -10,6 +10,8 @@ public class EktooMessageTranslator {
 	
 	private static final Log LOGGER = LogFactory.getLog(EktooMessageTranslator.class);
 	private static ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("ektoo_resources");
+	
+	
 
 	public static String translate(String key) {
 		String messageText;
@@ -27,6 +29,7 @@ public class EktooMessageTranslator {
 		return messageText;
 	}
 
+	
 	public static String translate(String key, Object... args) {
 		String resourceValue = translate(key);
 		String message = MessageFormat.format(resourceValue, args);

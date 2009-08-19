@@ -4,7 +4,9 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.GridLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -31,6 +33,7 @@ import org.mesh4j.ektoo.ui.settings.SettingsController;
 public class SettingsContainer extends JPanel{
 
 	private static final long serialVersionUID = -2277428339975245711L;
+	
 	private JPanel parentSettingsPanel;
 	private SettingsController controller;
 	private final static String SETTINGS_GENERAL = "General";
@@ -145,7 +148,8 @@ public class SettingsContainer extends JPanel{
 	}
 	
 	private JPanel getButtonPanel(){
-		JPanel headerPanel = new JPanel(new GridLayout(0,2,10,0));
+		JPanel headerPanel = new JPanel(new GridBagLayout());
+		
 		JButton okButton = new JButton("Ok");
 		okButton.addActionListener(new ActionListener(){
 			@Override
@@ -160,11 +164,25 @@ public class SettingsContainer extends JPanel{
 			public void actionPerformed(ActionEvent e) {
 				close();
 			}});
+
 		
-		headerPanel.add(okButton);
-		headerPanel.add(cancelButton);
+		GridBagConstraints c = new GridBagConstraints();
+		c.fill = GridBagConstraints.NONE;
+		c.gridx = 0;
+		c.gridy = 0;
+		c.insets = new Insets(0, 0, 0, 5);
+		headerPanel.add(okButton,c);
+		
+		c.fill = GridBagConstraints.NONE;
+		c.gridx = 1;
+		c.gridy = 0;
+		c.insets = new Insets(0, 0, 0, 5);
+		headerPanel.add(cancelButton,c);
+
 		return headerPanel;
 	}
+	
+	
 	
 	private void close(){
 		ektooFrame.closePopupViewWindow();

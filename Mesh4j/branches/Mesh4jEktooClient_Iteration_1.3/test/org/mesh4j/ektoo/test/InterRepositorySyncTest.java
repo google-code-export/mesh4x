@@ -14,7 +14,6 @@ import org.junit.Test;
 import org.mesh4j.ektoo.GoogleSpreadSheetInfo;
 import org.mesh4j.ektoo.ISyncAdapterBuilder;
 import org.mesh4j.ektoo.SyncAdapterBuilder;
-import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.adapters.feed.XMLContent;
@@ -75,7 +74,7 @@ public class InterRepositorySyncTest {
 	
 	@Test
 	public void ShouldSyncFolderToFolder(){
-		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder();
 		ISyncAdapter sourceFolderAdapter = adapterBuilder.createFolderAdapter(TestHelper.baseDirectoryForTest() + "sourcefolder");
 		ISyncAdapter targetFolderAdapter = adapterBuilder.createFolderAdapter(TestHelper.baseDirectoryForTest() + "targetfolder");
 		SyncEngine syncEngine = new SyncEngine(sourceFolderAdapter,targetFolderAdapter);
@@ -91,7 +90,7 @@ public class InterRepositorySyncTest {
 		XMLContent content = new XMLContent("SyncId123", "SyncId123", "SyncId123", element);
 		Item item = new Item(content, new Sync("SyncId123", "jmt", TestHelper.now(), false));
 		
-		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapterBuilder builder = new SyncAdapterBuilder();
 		 
 		File rssSourceFile = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID() + "_source.xml"));
 		ISyncAdapter sourceRSSAdapter = builder.createFeedAdapter("User", "user Info", link, 
@@ -123,7 +122,7 @@ public class InterRepositorySyncTest {
 		XMLContent content = new XMLContent("SyncId123", "SyncId123", "SyncId123", element);
 		Item item = new Item(content, new Sync("SyncId123", "jmt", TestHelper.now(), false));
 		
-		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapterBuilder builder = new SyncAdapterBuilder();
 		 
 		File rssSourceFile = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID() + "_source.xml"));
 		ISyncAdapter sourceAtomAdapter = builder.createFeedAdapter("User", "user Info", link, 
@@ -149,7 +148,7 @@ public class InterRepositorySyncTest {
 	
 	@Test
 	public void ShouldSyncKmlToKmlWithoutRDFAssumeSameSchema(){
-		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapterBuilder builder = new SyncAdapterBuilder();
 		ISyncAdapter sourceKamlAdapter = builder.createKMLAdapter(TestHelper.fileName("kmlSyncTestsGround.kml"));
 		ISyncAdapter targetKamlAdapter = builder.createKMLAdapter(TestHelper.fileName("kmlSyncTestsPlacemark.kml"));
 		
@@ -183,7 +182,7 @@ public class InterRepositorySyncTest {
 		GoogleSpreadsheetUtils.flush(service, gss.getGSSpreadsheet());	
 		//test setup done
 		
-		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapterBuilder builder = new SyncAdapterBuilder( );
 		
 		GoogleSpreadSheetInfo spreadSheetInfo = new GoogleSpreadSheetInfo(
 				gssTestSpreadsheetFileName1, gssTestUsername, gssTestPassword,
@@ -204,7 +203,7 @@ public class InterRepositorySyncTest {
 	
 	@Test
 	public void ShouldSyncGoogleSpreadSheetToGoogleSpreadSheet() throws Exception{
-		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapterBuilder builder = new SyncAdapterBuilder( );
 		
 		//prepare/update the spreadsheet for this specific test
 		IGoogleSpreadSheet gssSource = TestHelper.getTestGoogleSpreadsheet(factory, service,
@@ -273,7 +272,7 @@ public class InterRepositorySyncTest {
 	
 	@Test
 	public void ShouldSyncExcelToExcelWithoutRDFAssumeSameSchema(){
-		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapterBuilder builder = new SyncAdapterBuilder( );
 		
 		File sourceContentFile = new File(TestHelper.baseDirectoryForTest() + "sourec_"+IdGenerator.INSTANCE.newID()+".xls");
 		ISyncAdapter sourceAsExcel = builder.createMsExcelAdapter(TestHelper.createMsExcelFileForTest(sourceContentFile, 
@@ -291,7 +290,7 @@ public class InterRepositorySyncTest {
 	@Test
 	public void ShouldSyncAccessToAccessWithoutRDFAssumeSameSchema() throws IOException{
 		
-		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapterBuilder builder = new SyncAdapterBuilder( );
 		
 		String sourceFileName = this.getClass().getResource("aktoo.mdb").getFile();
 		File sourceContentFile = new File(TestHelper.baseDirectoryForTest() + "source_"+IdGenerator.INSTANCE.newID()+".mdb");
@@ -311,7 +310,7 @@ public class InterRepositorySyncTest {
 	@Test
 	public void ShouldSyncMysqlToMysqlWithoutRDFAssumeSameSchema(){
 		
-		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapterBuilder builder = new SyncAdapterBuilder( );
 		FileUtils.cleanupDirectory(builder.getBaseDirectory());
 		
 		// prepare/update the mysql for this specific test
@@ -338,7 +337,7 @@ public class InterRepositorySyncTest {
 		String feedName = "user";
 		String url = "http://localhost:8080/mesh4x/feeds";
 
-		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapterBuilder builder = new SyncAdapterBuilder();
 		FileUtils.cleanupDirectory(builder.getBaseDirectory());
 		
 		// prepare/update the mysql for this specific test

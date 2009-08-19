@@ -5,22 +5,17 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 
-import org.mesh4j.ektoo.ui.AbstractView;
 import org.mesh4j.ektoo.ui.component.DocumentModelAdapter;
 
-public class MySqlSettingsUI extends AbstractView{
+public class MySqlSettingsUI extends AbstractSettingsUI{
 
 	private static final long serialVersionUID = -4780427959572991381L;
 	private JTextField userTextField;
@@ -28,7 +23,7 @@ public class MySqlSettingsUI extends AbstractView{
 	private JTextField hostTextField;
 	private JTextField portTextField;
 	private JTextField dataBaseTextField;
-	private JCheckBox defultCheckBox;
+	
 	
 	
 	public MySqlSettingsUI(SettingsController controller){
@@ -111,7 +106,7 @@ public class MySqlSettingsUI extends AbstractView{
 		c.gridy = 5;
 		c.weightx = 0.5;
 		c.insets = new Insets(5, 20, 0, 10);
-		this.add(getDefaultCheckBoxPanel(), c);
+		this.add(getDefaultCheckBox(), c);
 		
 		
 		c.anchor = GridBagConstraints.PAGE_END; //bottom of space
@@ -124,24 +119,12 @@ public class MySqlSettingsUI extends AbstractView{
 	}
 	
 	
-	private JCheckBox getDefaultCheckBoxPanel(){
-		defultCheckBox = new JCheckBox("Create this property as default");
-		defultCheckBox.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				getController().modifySettings(SettingsController.CREATE_PROP_AS_DEFAULT, 
-						defultCheckBox.isSelected());
-			}
-		});
-		
-		return defultCheckBox;
-	}
+	
 	
 	
 	private JPanel getButtonPanel(){
 		JPanel buttonPanel = new JPanel(new BorderLayout());
-		JButton testButton = new JButton("default");
-		buttonPanel.add(testButton,BorderLayout.EAST);
+		buttonPanel.add(getDefaultButton(),BorderLayout.EAST);
 		return buttonPanel;
 	}
 	
@@ -317,6 +300,11 @@ public class MySqlSettingsUI extends AbstractView{
 	public boolean verify() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public void loadDefault() {
+		getController().loadDefaultMySqlSettings();
 	}
 
 }

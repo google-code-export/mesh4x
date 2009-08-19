@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.mesh4j.ektoo.Event;
 import org.mesh4j.ektoo.model.CloudModel;
-import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.ektoo.ui.EktooFrame;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.http.HttpSyncAdapter;
@@ -21,8 +20,8 @@ public class CloudUIController extends AbstractUIController{
 	public static final String SYNC_SERVER_URI = "BaseUri";
 	
 	// BUSINESS METHODS
-	public CloudUIController(PropertiesProvider propertiesProvider, boolean acceptsCreateDataset) {
-		super(propertiesProvider, acceptsCreateDataset);
+	public CloudUIController( boolean acceptsCreateDataset) {
+		super( acceptsCreateDataset);
 	}
 
 	public void changeMeshName(String meshName) {

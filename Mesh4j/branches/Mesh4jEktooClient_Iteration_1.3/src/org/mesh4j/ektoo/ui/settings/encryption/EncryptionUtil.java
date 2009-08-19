@@ -60,7 +60,7 @@ public class EncryptionUtil implements IEncryptionUtil{
 		
      	try {
 			this.key = key;
-			logger.info("Encryption util initialized with key ..."+ key);
+//			logger.info("Encryption util initialized with key ..."+ key);
 			//get the string as bytes
 			byte[] keyByte = key.getBytes(stringFormat);
             //get the instance of specific algorithm key specification.
@@ -92,12 +92,14 @@ public class EncryptionUtil implements IEncryptionUtil{
 	/**
 	 * 
      * @param toBeEncryptedString
-	 * @return encrypted value as String or null if any exception occur
+	 * @return encrypted value as String 
 	 * @throws MeshException 
 	 */
 	public String encrypt(String toBeEncryptedString) throws MeshException{
 		
-		Guard.argumentNotNullOrEmptyString(toBeEncryptedString, "toBeEncryptedString");
+		if(toBeEncryptedString == null || toBeEncryptedString.trim().length() <= 0){
+			return toBeEncryptedString;
+		}
 		
 		try {
 	        //get the secret key according to sepcification of DESKeySpec
@@ -141,12 +143,15 @@ public class EncryptionUtil implements IEncryptionUtil{
 	 * Decrypt any String value
      *
      * @param encryptedString
-	 * @return decrypted value as String or null if any exception occur
+	 * @return decrypted value as String 
 	 * @throws EncryptionException 
 	 */
 	public String decrypt( String encryptedString ) throws MeshException{ 
 
-		Guard.argumentNotNull(encryptedString, "encryptedString");
+		if(encryptedString == null || encryptedString.trim().length() <= 0){
+			return encryptedString;
+		}
+		
 		try{
 	        //get secret key
 			SecretKey key = keyFactory.generateSecret( keySpec );

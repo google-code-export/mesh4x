@@ -10,13 +10,11 @@ import org.mesh4j.ektoo.ISyncAdapterBuilder;
 import org.mesh4j.ektoo.IUIController;
 import org.mesh4j.ektoo.SyncAdapterBuilder;
 import org.mesh4j.ektoo.model.AbstractModel;
-import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.geo.coder.GeoCoderLatitudePropertyResolver;
 import org.mesh4j.geo.coder.GeoCoderLocationPropertyResolver;
 import org.mesh4j.geo.coder.GeoCoderLongitudePropertyResolver;
 import org.mesh4j.sync.payload.mappings.Mapping;
 import org.mesh4j.sync.utils.XMLHelper;
-import org.mesh4j.sync.validations.Guard;
 
 public abstract class AbstractUIController extends AbstractViewController implements  IUIController{
   private final static Log LOGGER = LogFactory.getLog(AbstractUIController.class);
@@ -29,10 +27,10 @@ public abstract class AbstractUIController extends AbstractViewController implem
 	private ISyncAdapterBuilder adapterBuilder;
 	
 	// BUSINESS METHODS
-	public AbstractUIController(PropertiesProvider propertiesProvider, boolean acceptsCreateDataset) {
+	public AbstractUIController(boolean acceptsCreateDataset) {
 
-		Guard.argumentNotNull(propertiesProvider, "propertiesProvider");
-		this.adapterBuilder = new SyncAdapterBuilder(propertiesProvider);
+//		Guard.argumentNotNull(propertiesProvider, "propertiesProvider");
+		this.adapterBuilder = new SyncAdapterBuilder();
 		this.acceptsCreateDataset = acceptsCreateDataset;
 	}
 
@@ -53,9 +51,9 @@ public abstract class AbstractUIController extends AbstractViewController implem
 		return this.adapterBuilder;
 	}
 	
-	public PropertiesProvider getPropertiesProvider() {
-		return getAdapterBuilder().getPropertiesProvider();
-	}
+//	public PropertiesProvider getPropertiesProvider() {
+//		return getAdapterBuilder().getPropertiesProvider();
+//	}
 	
 	public Mapping getMapping(){
 		AbstractModel model = this.getModel();

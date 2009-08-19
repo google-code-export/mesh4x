@@ -15,16 +15,15 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 
-import org.mesh4j.ektoo.ui.AbstractView;
 import org.mesh4j.ektoo.ui.component.DocumentModelAdapter;
 
-public class CloudSettingsUI extends AbstractView{
+public class CloudSettingsUI extends AbstractSettingsUI{
 
 	private static final long serialVersionUID = -8852831618021847782L;
 	private JTextField dataSetTextField;
 	private JTextField meshNameTextField;
 	private JTextField syncRootUriTextField;
-	private JCheckBox defultCheckBox;
+	
 	
 	
 	public CloudSettingsUI(SettingsController controller){
@@ -92,41 +91,24 @@ public class CloudSettingsUI extends AbstractView{
 		c.weightx = 0.5;
 		c.weightx = 0.5;
 		c.insets = new Insets(5, 20, 0, 10);
-		this.add(getDefaultCheckBoxPanel(), c);
+		this.add(getDefaultCheckBox(), c);
 		
 		
 		c.anchor = GridBagConstraints.PAGE_END; //bottom of space
 		c.gridx = 2;
 		c.gridy = 5;
 		c.weighty = 1;
+		c.weightx = 0;
 		c.insets = new Insets(0, 10, 0, 10);
 		this.add( getButtonPanel(), c);
 	}
 	
-	private JCheckBox getDefaultCheckBoxPanel(){
-		defultCheckBox = new JCheckBox("Create this property as default");
-		defultCheckBox.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				getController().modifySettings(SettingsController.CREATE_PROP_AS_DEFAULT, 
-						defultCheckBox.isSelected());
-			}
-		});
-		
-		return defultCheckBox;
-	}
+	
 	
 	
 	private JPanel getButtonPanel(){
 		JPanel buttonPanel = new JPanel(new BorderLayout());
-		JButton testButton = new JButton("Load default");
-		testButton.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				getController().loadDefaultCloudSettings();
-			}
-		});
-		buttonPanel.add(testButton,BorderLayout.EAST);
+		buttonPanel.add(getDefaultButton(),BorderLayout.EAST);
 		return buttonPanel;
 	}
 	
@@ -228,6 +210,12 @@ public class CloudSettingsUI extends AbstractView{
 	public boolean verify() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public void loadDefault() {
+		getController().loadDefaultCloudSettings();
+		
 	}
 
 }

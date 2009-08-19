@@ -5,8 +5,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.mesh4j.ektoo.model.MySQLAdapterModel;
-import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.ektoo.ui.EktooFrame;
+import org.mesh4j.ektoo.ui.settings.AppProperties;
+import org.mesh4j.ektoo.ui.settings.prop.AppPropertiesProvider;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.composite.CompositeSyncAdapter;
 import org.mesh4j.sync.adapters.composite.IIdentifiableSyncAdapter;
@@ -27,8 +28,8 @@ public class MySQLUIController extends AbstractUIController
 	public static final String TABLE_NAME_PROPERTY = "TableNames";
 
 	// BUSINESS METHODS
-	public MySQLUIController(PropertiesProvider propertiesProvider, boolean acceptsCreateDataset) {
-		super(propertiesProvider, acceptsCreateDataset);
+	public MySQLUIController( boolean acceptsCreateDataset) {
+		super( acceptsCreateDataset);
 	}
 
 	public void changeUserName(String userName) {
@@ -177,27 +178,44 @@ public class MySQLUIController extends AbstractUIController
 
 	// PROPERTIES
 	public String getDefaultMySQLHost() {
-		return getPropertiesProvider().getDefaultMySQLHost();
+		return AppPropertiesProvider.getPropetyManager().
+		getPropertyAsDecrepted(AppProperties.HOST_NAME_MYSQL_DEFAULT);
+//		return getPropertiesProvider().getDefaultMySQLHost();
 	}
 
 	public String getDefaultMySQLPort() {
-		return getPropertiesProvider().getDefaultMySQLPort();
+		return AppPropertiesProvider.getPropetyManager().
+		getPropertyAsDecrepted(AppProperties.PORT_MYSQL_DEFAULT);
+//		return getPropertiesProvider().getDefaultMySQLPort();
 	}
 
 	public String getDefaultMySQLSchema() {
-		return getPropertiesProvider().getDefaultMySQLSchema();
+		return AppPropertiesProvider.getPropetyManager().
+		getPropertyAsDecrepted(AppProperties.DATABASE_NAME_MYSQL_DEFAULT);
+		
+//		return getPropertiesProvider().getDefaultMySQLSchema();
 	}
 
 	public String getDefaultMySQLUser() {
-		return getPropertiesProvider().getDefaultMySQLUser();
+		return AppPropertiesProvider.getPropetyManager().
+		getProperty(AppProperties.USER_NAME_MYSQL_DEFAULT);
+		
+//		return getPropertiesProvider().getDefaultMySQLUser();
 	}
 
 	public String getDefaultMySQLPassword() {
-		return getPropertiesProvider().getDefaultMySQLPassword();
+		return AppPropertiesProvider.getPropetyManager().
+		getPropertyAsDecrepted(AppProperties.USER_PASSWORD_MYSQL_DEFAULT);
+		
+//		return getPropertiesProvider().getDefaultMySQLPassword();
 	}
 
 	public String getDefaultMySQLTable() {
-		return getPropertiesProvider().getDefaultMySQLTable();
+		
+		return AppPropertiesProvider.getPropetyManager().
+		getProperty(AppProperties.TABLE_NAME_MYSQL_DEFAULT);
+		
+//		return getPropertiesProvider().getDefaultMySQLTable();
 	}
 
 	public String generateFeed() {

@@ -79,7 +79,7 @@ public class SchemaViewTask extends SwingWorker<String, Void>{
 	}
 	
 	private void showSchemaInPopup(JScrollPane schemaUI){
-		this.ui.showViewInPopup(EktooUITranslator.getTitleOfSchemaViewPopUp(),schemaUI);
+		this.ui.showViewInPopup(EktooUITranslator.getTitleOfSchemaViewPopUp(),schemaUI,true);
 	}
 	
 }

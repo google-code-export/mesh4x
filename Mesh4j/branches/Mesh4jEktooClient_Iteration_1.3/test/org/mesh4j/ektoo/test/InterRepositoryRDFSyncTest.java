@@ -13,7 +13,6 @@ import org.junit.Test;
 import org.mesh4j.ektoo.GoogleSpreadSheetInfo;
 import org.mesh4j.ektoo.ISyncAdapterBuilder;
 import org.mesh4j.ektoo.SyncAdapterBuilder;
-import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.adapters.IIdentifiableMapping;
@@ -99,7 +98,7 @@ public class InterRepositoryRDFSyncTest {
 		GoogleSpreadsheetUtils.flush(service, gss.getGSSpreadsheet());	
 		//test setup done
 		
-		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapterBuilder builder = new SyncAdapterBuilder();
 		
 		GoogleSpreadSheetInfo spreadSheetInfo = new GoogleSpreadSheetInfo(
 				gssTestSpreadsheetFileName, gssTestUsername, gssTestPassword,
@@ -118,7 +117,7 @@ public class InterRepositoryRDFSyncTest {
 	@Test
 	public void ShouldSyncMsExcelToMsExcelByRDFAndMustCreateTargetSchema(){
 
-		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapterBuilder builder = new SyncAdapterBuilder();
 		
 		File sourceContentFile = new File(TestHelper.baseDirectoryForTest() + "source_"+IdGenerator.INSTANCE.newID()+".xls");
 		String contentFilePathAsString = TestHelper.createMsExcelFileForTest(sourceContentFile, excelTestWorksheetName, idColumn, true);
@@ -142,7 +141,7 @@ public class InterRepositoryRDFSyncTest {
 		TestHelper.createMysqlTableForTest(mysqlTestDBName, mysqlTestUsername,
 				mysqlTestPassword, mysqlTestTableName, idColumn, true);
 
-		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapterBuilder builder = new SyncAdapterBuilder( );
 		ISyncAdapter sourceAsMySql =  builder.createMySQLAdapter(mysqlTestUsername, mysqlTestPassword, "localhost" ,3306, mysqlTestDBName, mysqlTestTableName);
 		
 		SplitAdapter splitAdapterSource = (SplitAdapter)sourceAsMySql;
@@ -161,7 +160,7 @@ public class InterRepositoryRDFSyncTest {
 		TestHelper.createMysqlTableForTest(mysqlTestDBName, mysqlTestUsername,
 				mysqlTestPassword, mysqlTestTableName, idColumn, true);
 
-		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapterBuilder builder = new SyncAdapterBuilder();
 		FileUtils.cleanupDirectory(builder.getBaseDirectory());
 		
 		SplitAdapter sourceAsMySql =  builder.createMySQLAdapter(mysqlTestUsername, mysqlTestPassword, "localhost" ,3306, mysqlTestDBName, mysqlTestTableName);
@@ -198,7 +197,7 @@ public class InterRepositoryRDFSyncTest {
 			}
 		}
 		
-		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapterBuilder builder = new SyncAdapterBuilder();
 		FileUtils.cleanupDirectory(builder.getBaseDirectory());
 		
 		SplitAdapter sourceAsMySql =  builder.createMySQLAdapter(mysqlTestUsername, mysqlTestPassword, "localhost" ,3306, mysqlTestDBName, mysqlTestTableName);
@@ -219,7 +218,7 @@ public class InterRepositoryRDFSyncTest {
 
 	@Test
 	public void ShouldSyncMsAccessToExcelByRDF() throws IOException{
-		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapterBuilder builder = new SyncAdapterBuilder();
 		
 		String sourceFileName = this.getClass().getResource("aktoo.mdb").getFile();
 		File sourceContentFile = new File(TestHelper.baseDirectoryForTest() + "source_"+IdGenerator.INSTANCE.newID()+".mdb");

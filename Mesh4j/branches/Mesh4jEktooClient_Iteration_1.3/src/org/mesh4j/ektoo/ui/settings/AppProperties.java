@@ -1,6 +1,6 @@
 package org.mesh4j.ektoo.ui.settings;
 
-public class EktooProperties {
+public class AppProperties {
 
 	public static final String USER_NAME_GOOGLE = "user.google";
 	public static final String USER_PASSWORD_GOOGLE = "user.password.google";
@@ -42,6 +42,20 @@ public class EktooProperties {
 	
 	
 	
+	public final static String GOOGLE_GEO_CODER_KEY = "google.geo.coder.key";
+
+	public final static String LOOK_AND_FEEL_CLASS_NAME_DEFAULT = "default.look.and.feel.className";
+
+	public final static String URL_GOOGLE_DOCS = "google.docs.url";
+	public final static String URL_MESH4X = "url.mesh4x";
+	public final static String URL_MESH4X_EKTOO = "url.mesh4x.ektoo";
+	public final static String BASE_DIRECTORY_DEFAULT = "base.directory.default";
+	public final static String SYNC_IDENTITY_PROVIDER = "sync.identity.provider";
+	
+
+	
+	
+	
 	
 	/****************************Default values***********************************/
 	public static final String USER_NAME_GOOGLE_DEFAULT = "user.google.default";
@@ -52,6 +66,8 @@ public class EktooProperties {
 	public static final String HOST_NAME_MYSQL_DEFAULT = "host.name.mysql.default";
 	public static final String PORT_MYSQL_DEFAULT = "port.name.mysql.default";
 	public static final String DATABASE_NAME_MYSQL_DEFAULT = "database.name.mysql.default";
+	public static final String TABLE_NAME_MYSQL_DEFAULT = "table.name.mysql.default";
+	
 	
 	
 	public static final String CLOUD_ROOT_URI_DEFAULT = "cloud.root.uri.default";
@@ -85,5 +101,12 @@ public class EktooProperties {
 	
 	public final static String PATH_SOURCE_ZIP_DEFAULT = "path.source.zip.default";
 	
+	//******************************* Default properties value value ****************
+	public static final String USER_NAME_MYSQL_DEFAULT_VALUE = "root";
+	public static final String USER_PASSWORD_MYSQL_DEFAULT_VALUE = "";
+	public static final String HOST_NAME_MYSQL_DEFAULT_VALUE = "";
+	public static final String PORT_MYSQL_DEFAULT_VALUE = "";
+	public static final String DATABASE_NAME_MYSQL_DEFAULT_VALUE = "";
+	public static final String TABLE_NAME_MYSQL_DEFAULT_VALUE = "";
 	
 }

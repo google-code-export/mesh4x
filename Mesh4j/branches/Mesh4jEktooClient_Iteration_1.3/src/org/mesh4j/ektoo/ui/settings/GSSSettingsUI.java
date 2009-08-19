@@ -16,10 +16,9 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 
-import org.mesh4j.ektoo.ui.AbstractView;
 import org.mesh4j.ektoo.ui.component.DocumentModelAdapter;
 
-public class GSSSettingsUI extends AbstractView{
+public class GSSSettingsUI extends AbstractSettingsUI{
 
 	private static final long serialVersionUID = 4427824045519587866L;
 	private JCheckBox defultCheckBox;
@@ -66,7 +65,7 @@ public class GSSSettingsUI extends AbstractView{
 		c.gridy = 3;
 		c.weightx = 0.5;
 		c.insets = new Insets(5, 20, 0, 10);
-		this.add(getDefaultCheckBoxPanel(), c);
+		this.add(getDefaultCheckBox(), c);
 		
 		
 		c.anchor = GridBagConstraints.PAGE_END; //bottom of space
@@ -78,23 +77,11 @@ public class GSSSettingsUI extends AbstractView{
 		
 	}
 	
-	private JCheckBox getDefaultCheckBoxPanel(){
-		defultCheckBox = new JCheckBox("Create this property as default");
-		defultCheckBox.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				getController().modifySettings(SettingsController.CREATE_PROP_AS_DEFAULT, 
-						defultCheckBox.isSelected());
-			}
-		});
-		
-		return defultCheckBox;
-	}
+	
 	
 	private JPanel getButtonPanel(){
 		JPanel buttonPanel = new JPanel(new BorderLayout());
-		JButton testButton = new JButton("default");
-		buttonPanel.add(testButton,BorderLayout.EAST);
+		buttonPanel.add(getDefaultButton(),BorderLayout.EAST);
 		return buttonPanel;
 	}
 	
@@ -149,17 +136,22 @@ public class GSSSettingsUI extends AbstractView{
 	private SettingsController getController(){
 		return (SettingsController)this.controller;
 	}
+
 	
 	@Override
 	public void modelPropertyChange(PropertyChangeEvent evt) {
-		
-		
+		// TODO Auto-generated method stub
 	}
 
 	@Override
 	public boolean verify() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+	
+	@Override
+	public void loadDefault() {
+		getController().loadDefaultGoogleSettings();
 	}
 
 }

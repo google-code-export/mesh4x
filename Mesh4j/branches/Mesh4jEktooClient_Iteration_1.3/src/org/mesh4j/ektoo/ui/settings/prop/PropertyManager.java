@@ -12,7 +12,7 @@ import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.mesh4j.ektoo.ui.settings.EktooProperties;
+import org.mesh4j.ektoo.ui.settings.AppProperties;
 import org.mesh4j.ektoo.ui.settings.encryption.IEncryptionUtil;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
@@ -49,7 +49,7 @@ public class PropertyManager  implements IPropertyManager {
 		// load values in the old properties from properties file
 		try {
 			if(!file.exists()){
-				loadDefault();
+				loadDefault();//
 				file.createNewFile();
 				oldProperties.store(new FileOutputStream(file),"Application Properties");
 				return;
@@ -97,18 +97,33 @@ public class PropertyManager  implements IPropertyManager {
 		return oldProperties.getProperty(property);
 	}
 
+	public  String getProperty(String property,String defaultValue) {
+		return oldProperties.getProperty(property,defaultValue);
+	}
+
+	
 	public   void setProperty(String property, String plainText) {
 		newProperties.setProperty(property,plainText);
 	}
 
 	private  void loadDefault(){
-		oldProperties.put(EktooProperties.CLOUD_ROOT_URI,EktooProperties.CLOUD_ROOT_URI_DEFAULT);
-		oldProperties.put(EktooProperties.CLOUD_MESH_NAME,EktooProperties.CLOUD_MESH_NAME_DEFAULT);
-		oldProperties.put(EktooProperties.CLOUD_DATASET_NAME,EktooProperties.CLOUD_DATASET_NAME_DEFAULT);
+		//TODO must populate oldproperties in case of file missing
 		
-		oldProperties.put(EktooProperties.LANGUAGE,EktooProperties.LANGUAGE_DEFAULT);
-		oldProperties.put(EktooProperties.PATH_SOURCE_DIR,EktooProperties.PATH_SOURCE_DIR_DEFAULT);
-		oldProperties.put(EktooProperties.PATH_TARGET_DIR,EktooProperties.PATH_TARGET_DIR_DEFAULT);
+		//set the encrypted value as those are hard to write without UI
+		
+		
+		
+		
+		
+		
+		
+//		oldProperties.put(EktooProperties.CLOUD_ROOT_URI,EktooProperties.CLOUD_ROOT_URI_DEFAULT);
+//		oldProperties.put(EktooProperties.CLOUD_MESH_NAME,EktooProperties.CLOUD_MESH_NAME_DEFAULT);
+//		oldProperties.put(EktooProperties.CLOUD_DATASET_NAME,EktooProperties.CLOUD_DATASET_NAME_DEFAULT);
+//		
+//		oldProperties.put(EktooProperties.LANGUAGE,EktooProperties.LANGUAGE_DEFAULT);
+//		oldProperties.put(EktooProperties.PATH_SOURCE_DIR,EktooProperties.PATH_SOURCE_DIR_DEFAULT);
+//		oldProperties.put(EktooProperties.PATH_TARGET_DIR,EktooProperties.PATH_TARGET_DIR_DEFAULT);
 		
 	}
 

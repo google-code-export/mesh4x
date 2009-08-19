@@ -1,5 +1,6 @@
 package org.mesh4j.ektoo;
 
+import static org.mesh4j.ektoo.ui.settings.prop.AppPropertiesProvider.getPropetyManager;
 import java.awt.EventQueue;
 import java.util.Enumeration;
 
@@ -10,8 +11,8 @@ import javax.swing.plaf.FontUIResource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.controller.EktooController;
-import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.ektoo.ui.EktooFrame;
+import org.mesh4j.ektoo.ui.settings.AppProperties;
 import org.mesh4j.translator.EktooMessageTranslator;
 
 /**
@@ -21,6 +22,7 @@ import org.mesh4j.translator.EktooMessageTranslator;
 public class Ektoo {
 	
 	private final static Log LOGGER = LogFactory.getLog(Ektoo.class);
+	
 	
 	public static void main(String[] args) {
 		initLookAndFeel();
@@ -44,7 +46,8 @@ public class Ektoo {
 
 	public Ektoo() 
 	{
-		EktooController controller = new EktooController(new PropertiesProvider());
+		
+		EktooController controller = new EktooController();
 		JFrame thisClass = new EktooFrame(controller);
 		thisClass.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		thisClass.setVisible(true);
@@ -54,7 +57,7 @@ public class Ektoo {
 	{
 		try 
 		{
-			String lookAndFeel= new PropertiesProvider().getLookAndFeel();
+			String lookAndFeel= getPropetyManager().getProperty(AppProperties.LOOK_AND_FEEL_CLASS_NAME_DEFAULT);
 		  if (lookAndFeel != null && lookAndFeel.trim().length() != 0)
 		    UIManager.setLookAndFeel(lookAndFeel);
 		  else
