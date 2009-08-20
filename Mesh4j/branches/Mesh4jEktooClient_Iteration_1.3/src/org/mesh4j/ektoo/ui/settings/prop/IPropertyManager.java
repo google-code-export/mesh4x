@@ -23,7 +23,7 @@ public interface IPropertyManager {
 
 	public void setPropertyAsEncrypted(String property, String plainText)throws MeshException;
 
-	public String getPropertyAsDecrepted(String property)throws MeshException;
+	public String getPropertyAsDecrypted(String property)throws MeshException;
 
 	/**
 	 * Stores the property in memory , property stored in persistent

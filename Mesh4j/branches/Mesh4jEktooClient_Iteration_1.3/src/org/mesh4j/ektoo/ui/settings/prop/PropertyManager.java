@@ -12,7 +12,6 @@ import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.mesh4j.ektoo.ui.settings.AppProperties;
 import org.mesh4j.ektoo.ui.settings.encryption.IEncryptionUtil;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
@@ -35,7 +34,7 @@ public class PropertyManager  implements IPropertyManager {
 		load();
 	}
 	
-	public  String getPropertyAsDecrepted(String property) throws MeshException {
+	public  String getPropertyAsDecrypted(String property) throws MeshException {
 		String encrypted = oldProperties.getProperty(property);
 	    return encryptionUtil.decrypt(encrypted);
    }
@@ -46,10 +45,9 @@ public class PropertyManager  implements IPropertyManager {
 	}
 
 	private  void load() {
-		// load values in the old properties from properties file
 		try {
 			if(!file.exists()){
-				loadDefault();//
+				loadDefault();
 				file.createNewFile();
 				oldProperties.store(new FileOutputStream(file),"Application Properties");
 				return;
@@ -64,7 +62,6 @@ public class PropertyManager  implements IPropertyManager {
 
 	@SuppressWarnings("unchecked")
 	public  void save() {
-		// TODO Auto-generated method stub
 		// store properties if old and new has diff
 		if (newProperties.isEmpty()) {
 			// do nothing , old properties will remain as it was
@@ -106,30 +103,107 @@ public class PropertyManager  implements IPropertyManager {
 		newProperties.setProperty(property,plainText);
 	}
 
+	//in case of property file missing application will feed property to itself.
 	private  void loadDefault(){
-		//TODO must populate oldproperties in case of file missing
+		oldProperties.put(AppProperties.PATH_SOURCE_ACCESS, 
+				AppProperties.PATH_SOURCE_ACCESS_DEFAULT_VALUE);
+		oldProperties.put(AppProperties.PATH_TARGET_ACCESS, 
+				AppProperties.PATH_TARGET_ACCESS_DEFAULT_VALUE);
 		
-		//set the encrypted value as those are hard to write without UI
+		oldProperties.put(AppProperties.PATH_SOURCE_EXCEL, 
+				AppProperties.PATH_SOURCE_EXCEL_DEFAULT_VALUE);
+		oldProperties.put(AppProperties.PATH_TARGET_EXCEL, 
+				AppProperties.PATH_TARGET_EXCEL_DEFAULT_VALUE);
+		
+		oldProperties.put(AppProperties.PATH_SOURCE_KML, 
+				AppProperties.PATH_TARGET_KML_DEFAULT_VALUE);
+		oldProperties.put(AppProperties.PATH_TARGET_KML, 
+				AppProperties.PATH_TARGET_KML_DEFAULT_VALUE);
+		
+		oldProperties.put(AppProperties.PATH_SOURCE_RSS, 
+				AppProperties.PATH_SOURCE_RSS_DEFAULT_VALUE);
+		oldProperties.put(AppProperties.PATH_TARGET_RSS, 
+				AppProperties.PATH_TARGET_RSS_DEFAULT_VALUE);
+		
+		oldProperties.put(AppProperties.PATH_SOURCE_ATOM, 
+				AppProperties.PATH_SOURCE_ATOM_DEFAULT_VALUE);
+		oldProperties.put(AppProperties.PATH_TARGET_ATOM, 
+				AppProperties.PATH_TARGET_ATOM_DEFAULT_VALUE);
+		
+		oldProperties.put(AppProperties.PATH_SOURCE_FOLDER, 
+				AppProperties.PATH_SOURCE_FOLDER_DEFAULT_VALUE);
+		oldProperties.put(AppProperties.PATH_TARGET_FOLDER, 
+				AppProperties.PATH_TARGET_FOLDER_DEFAULT_VALUE);
+		
+		oldProperties.put(AppProperties.PATH_SOURCE_ZIP, 
+				AppProperties.PATH_SOURCE_ZIP_DEFAULT_VALUE);
+	
+		//cloud default settings
+		oldProperties.put(AppProperties.CLOUD_ROOT_URI, 
+				AppProperties.CLOUD_ROOT_URI_DEFAULT_VALUE);
+		
+		oldProperties.put(AppProperties.CLOUD_MESH_NAME, 
+				AppProperties.CLOUD_MESH_NAME_DEFAULT_VALUE);
+		
+		oldProperties.put(AppProperties.CLOUD_DATASET_NAME, 
+				AppProperties.CLOUD_DATASET_NAME_DEFAULT_VALUE);
+		
+		//mysql default settings
+		oldProperties.put(AppProperties.USER_NAME_MYSQL, 
+				AppProperties.USER_NAME_MYSQL_DEFAULT_VALUE);
+		
+		oldProperties.put(AppProperties.USER_PASSWORD_MYSQL, 
+				AppProperties.USER_PASSWORD_MYSQL_DEFAULT_VALUE);
+		
+		oldProperties.put(AppProperties.HOST_NAME_MYSQL, 
+				AppProperties.HOST_NAME_MYSQL_DEFAULT_VALUE);
+		
+		oldProperties.put(AppProperties.PORT_MYSQL, 
+				AppProperties.PORT_MYSQL_DEFAULT_VALUE);
+		
+		oldProperties.put(AppProperties.DATABASE_NAME_MYSQL, 
+				AppProperties.DATABASE_NAME_MYSQL_DEFAULT_VALUE);
+		
+		oldProperties.put(AppProperties.TABLE_NAME_MYSQL, 
+				AppProperties.TABLE_NAME_MYSQL_DEFAULT_VALUE);
+		
+		oldProperties.put(AppProperties.DATABASE_NAME_MYSQL, 
+				AppProperties.DATABASE_NAME_MYSQL_DEFAULT_VALUE);
+		
+		oldProperties.put(AppProperties.TABLE_NAME_MYSQL, 
+				AppProperties.TABLE_NAME_MYSQL_DEFAULT_VALUE);
+	
+		//google spreadsheet
+		oldProperties.put(AppProperties.USER_NAME_GOOGLE, 
+				AppProperties.USER_NAME_GOOGLE_DEFAULT_VALUE);
+		
+		oldProperties.put(AppProperties.USER_PASSWORD_GOOGLE, 
+				AppProperties.USER_PASSWORD_GOOGLE_DEFAULT_VALUE);
+		//end google spreadsheet	
 		
 		
+		oldProperties.put(AppProperties.GOOGLE_GEO_CODER_KEY, 
+				AppProperties.GOOGLE_GEO_CODER_KEY_VALUE);
 		
+		oldProperties.put(AppProperties.LOOK_AND_FEEL_CLASS_NAME, 
+				AppProperties.LOOK_AND_FEEL_CLASS_NAME_DEFAULT_VALUE);
 		
+		oldProperties.put(AppProperties.URL_GOOGLE_DOCS, 
+				AppProperties.URL_GOOGLE_DOCS_VALUE);
 		
+		oldProperties.put(AppProperties.URL_MESH4X, 
+				AppProperties.URL_MESH4X_VALUE);
 		
+		oldProperties.put(AppProperties.URL_MESH4X_EKTOO, 
+				AppProperties.URL_MESH4X_EKTOO_VALUE);
 		
-//		oldProperties.put(EktooProperties.CLOUD_ROOT_URI,EktooProperties.CLOUD_ROOT_URI_DEFAULT);
-//		oldProperties.put(EktooProperties.CLOUD_MESH_NAME,EktooProperties.CLOUD_MESH_NAME_DEFAULT);
-//		oldProperties.put(EktooProperties.CLOUD_DATASET_NAME,EktooProperties.CLOUD_DATASET_NAME_DEFAULT);
-//		
-//		oldProperties.put(EktooProperties.LANGUAGE,EktooProperties.LANGUAGE_DEFAULT);
-//		oldProperties.put(EktooProperties.PATH_SOURCE_DIR,EktooProperties.PATH_SOURCE_DIR_DEFAULT);
-//		oldProperties.put(EktooProperties.PATH_TARGET_DIR,EktooProperties.PATH_TARGET_DIR_DEFAULT);
+		oldProperties.put(AppProperties.BASE_DIRECTORY, 
+				AppProperties.BASE_DIRECTORY_DEFAULT_VALUE);
 		
+		oldProperties.put(AppProperties.SYNC_IDENTITY_PROVIDER, 
+				AppProperties.SYNC_IDENTITY_PROVIDER_VALUE);
 	}
 
-	/**
-	 * @param encryptionUtil The encryptionUtil to set.
-	 */
 	public void setEncryptionUtil(IEncryptionUtil encryptionUtil) {
 		this.encryptionUtil = encryptionUtil;
 	}

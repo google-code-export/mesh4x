@@ -4,11 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -21,7 +18,7 @@ import org.mesh4j.ektoo.ui.component.DocumentModelAdapter;
 public class GSSSettingsUI extends AbstractSettingsUI{
 
 	private static final long serialVersionUID = 4427824045519587866L;
-	private JCheckBox defultCheckBox;
+	
 	private JTextField userTextField;
 	private JPasswordField passwordField;
 
@@ -140,7 +137,15 @@ public class GSSSettingsUI extends AbstractSettingsUI{
 	
 	@Override
 	public void modelPropertyChange(PropertyChangeEvent evt) {
-		// TODO Auto-generated method stub
+		String newValueAsString = evt.getNewValue().toString();
+		
+		if ( evt.getPropertyName().equals( SettingsController.USER_NAME_GOOGLE )){
+			if(!userTextField.getText().equals(newValueAsString))
+				userTextField.setText(newValueAsString);
+		} else if ( evt.getPropertyName().equals( SettingsController.USER_PASSWORD_GOOGLE)){
+			if(!new String(passwordField.getPassword()).equals(newValueAsString))
+				passwordField.setText(newValueAsString);
+		}
 	}
 
 	@Override

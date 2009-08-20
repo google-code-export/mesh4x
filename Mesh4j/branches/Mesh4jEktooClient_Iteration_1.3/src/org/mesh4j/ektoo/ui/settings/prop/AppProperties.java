@@ -1,7 +1,25 @@
-package org.mesh4j.ektoo.ui.settings;
+package org.mesh4j.ektoo.ui.settings.prop;
+
+/**
+ * All the static property required by application along with their
+ * default value represent here.Naming convention as follows.
+ * <li>
+ * Regular property(domain specific).
+ * EX.CLOUD_ROOT_URI
+ * <li>
+ * Default property(append _DEFAULT as suffix along with regular property)
+ * EX.CLOUD_ROOT_URI_DEFAULT
+ * <li>
+ * Default property value (append _VALUE as suffix along with default prop 
+ * or regular porp) 
+ * EX.CLOUD_ROOT_URI_DEFAULT_VALUE
+ * 
+ * @author raju
+ */
 
 public class AppProperties {
 
+	
 	public static final String USER_NAME_GOOGLE = "user.google";
 	public static final String USER_PASSWORD_GOOGLE = "user.password.google";
 	
@@ -10,6 +28,7 @@ public class AppProperties {
 	public static final String HOST_NAME_MYSQL = "host.name.mysql";
 	public static final String PORT_MYSQL = "port.name.mysql";
 	public static final String DATABASE_NAME_MYSQL = "database.name.mysql";
+	public static final String TABLE_NAME_MYSQL = "table.name.mysql";
 	
 	
 	public static final String CLOUD_ROOT_URI = "cloud.root.uri";
@@ -44,20 +63,17 @@ public class AppProperties {
 	
 	public final static String GOOGLE_GEO_CODER_KEY = "google.geo.coder.key";
 
-	public final static String LOOK_AND_FEEL_CLASS_NAME_DEFAULT = "default.look.and.feel.className";
+	public final static String LOOK_AND_FEEL_CLASS_NAME = "look.and.feel.className";
 
 	public final static String URL_GOOGLE_DOCS = "google.docs.url";
 	public final static String URL_MESH4X = "url.mesh4x";
 	public final static String URL_MESH4X_EKTOO = "url.mesh4x.ektoo";
-	public final static String BASE_DIRECTORY_DEFAULT = "base.directory.default";
+	public final static String BASE_DIRECTORY = "base.directory";
 	public final static String SYNC_IDENTITY_PROVIDER = "sync.identity.provider";
 	
 
 	
-	
-	
-	
-	/****************************Default values***********************************/
+	/****************************Default property***********************************/
 	public static final String USER_NAME_GOOGLE_DEFAULT = "user.google.default";
 	public static final String USER_PASSWORD_GOOGLE_DEFAULT = "user.password.google.default";
 	
@@ -101,12 +117,57 @@ public class AppProperties {
 	
 	public final static String PATH_SOURCE_ZIP_DEFAULT = "path.source.zip.default";
 	
-	//******************************* Default properties value value ****************
+	//******************************* Default properties value  ****************
 	public static final String USER_NAME_MYSQL_DEFAULT_VALUE = "root";
 	public static final String USER_PASSWORD_MYSQL_DEFAULT_VALUE = "";
-	public static final String HOST_NAME_MYSQL_DEFAULT_VALUE = "";
-	public static final String PORT_MYSQL_DEFAULT_VALUE = "";
-	public static final String DATABASE_NAME_MYSQL_DEFAULT_VALUE = "";
-	public static final String TABLE_NAME_MYSQL_DEFAULT_VALUE = "";
+	public static final String HOST_NAME_MYSQL_DEFAULT_VALUE = "localhost";
+	public static final String PORT_MYSQL_DEFAULT_VALUE = "3306";
+	public static final String DATABASE_NAME_MYSQL_DEFAULT_VALUE = "ektoo";
+	public static final String TABLE_NAME_MYSQL_DEFAULT_VALUE = "ektoo";
+	
+	
+	public static final String CLOUD_ROOT_URI_DEFAULT_VALUE = "http://localhost:8080/mesh4x/feeds";
+	public static final String CLOUD_MESH_NAME_DEFAULT_VALUE = "myMesh";
+	public static final String CLOUD_DATASET_NAME_DEFAULT_VALUE = "myFeed";
+	
+	
+	public static final String USER_NAME_GOOGLE_DEFAULT_VALUE = "gspreadsheet.test@gmail.com";
+	public static final String USER_PASSWORD_GOOGLE_DEFAULT_VALUE = "java123456";
+	
+	public static final String PATH_SOURCE_DIR_DEFAULT_VALUE = "..\\..\\.\\mesh4x\\demos\\ektoo\\data\\source";
+	public static final String PATH_TARGET_DIR_DEFAULT_VALUE = "..\\..\\.\\mesh4x\\demos\\ektoo\\data\\target";
+	
+	public final static String PATH_SOURCE_EXCEL_DEFAULT_VALUE = "..\\..\\..\\..\\mesh4x\\demos\\ektoo\\data\\EktooSource.xls";
+	public final static String PATH_TARGET_EXCEL_DEFAULT_VALUE = "..\\..\\..\\..\\mesh4x\\demos\\ektoo\\data\\EktooSource.xls";
+	
+	public final static String PATH_SOURCE_ACCESS_DEFAULT_VALUE = "..\\..\\..\\..\\mesh4x\\demos\\ektoo\\data\\EktooSource.mdb";
+	public final static String PATH_TARGET_ACCESS_DEFAULT_VALUE = "..\\..\\..\\..\\mesh4x\\demos\\ektoo\\data\\EktooSource.mdb";
+	
+	public final static String PATH_SOURCE_KML_DEFAULT_VALUE = "..\\..\\..\\..\\mesh4x\\demos\\ektoo\\data\\Ektoo.kml";
+	public final static String PATH_TARGET_KML_DEFAULT_VALUE = "..\\..\\..\\..\\mesh4x\\demos\\ektoo\\data\\Ektoo.kml";
+	
+	public final static String PATH_SOURCE_RSS_DEFAULT_VALUE = "..\\..\\..\\..\\mesh4x\\demos\\ektoo\\data\\rss.xml";
+	public final static String PATH_TARGET_RSS_DEFAULT_VALUE = "..\\..\\..\\..\\mesh4x\\demos\\ektoo\\data\\rss.xml";
+	
+	public final static String PATH_SOURCE_ATOM_DEFAULT_VALUE = "..\\..\\..\\..\\mesh4x\\demos\\ektoo\\data\\atom.xml";
+	public final static String PATH_TARGET_ATOM_DEFAULT_VALUE = "..\\..\\..\\..\\mesh4x\\demos\\ektoo\\data\\atom.xml";
+	
+	public final static String PATH_SOURCE_FOLDER_DEFAULT_VALUE = "..\\..\\..\\..\\mesh4x\\demos\\ektoo\\data\\ektooFolder";
+	public final static String PATH_TARGET_FOLDER_DEFAULT_VALUE = "..\\..\\..\\..\\mesh4x\\demos\\ektoo\\data\\ektooFolder";
+	
+	public final static String PATH_SOURCE_ZIP_DEFAULT_VALUE = "..\\..\\..\\..\\mesh4x\\demos\\ektoo\\data\\Ektto.zip";
+	
+	
+	
+	public final static String GOOGLE_GEO_CODER_KEY_VALUE = "ABQIAAAAjpkAC9ePGem0lIq5XcMiuhT2yXp_ZAY8_ufC3CFXhHIE1NvwkxTS6gjckBmeABOGXIUiOiZObZESPg";
+
+	public final static String LOOK_AND_FEEL_CLASS_NAME_DEFAULT_VALUE = "javax.swing.plaf.metal.MetalLookAndFeel";
+
+	public final static String URL_GOOGLE_DOCS_VALUE = "http://spreadsheets.google.com/";
+	public final static String URL_MESH4X_VALUE = "http://code.google.com/p/mesh4x/";
+	public final static String URL_MESH4X_EKTOO_VALUE = "http://code.google.com/p/mesh4x/wiki/HowToUseEktooClient";
+	public final static String BASE_DIRECTORY_DEFAULT_VALUE = "..\\..\\..\\..\\mesh4x\\demos\\ektoo";
+	public final static String SYNC_IDENTITY_PROVIDER_VALUE = "org.mesh4j.sync.security.LoggedInIdentityProvider";
+	
 	
 }

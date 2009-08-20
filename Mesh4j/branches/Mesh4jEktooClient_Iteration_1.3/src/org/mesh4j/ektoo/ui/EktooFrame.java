@@ -1,6 +1,7 @@
 package org.mesh4j.ektoo.ui;
 
-import static org.mesh4j.ektoo.ui.settings.prop.AppPropertiesProvider.getPropetyManager;
+import static org.mesh4j.ektoo.Util.getProperty;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -41,8 +42,8 @@ import org.mesh4j.ektoo.ui.component.messagedialog.MessageDialog;
 import org.mesh4j.ektoo.ui.component.statusbar.Statusbar;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.schemas.SchemaComparisonViewTask;
-import org.mesh4j.ektoo.ui.settings.AppProperties;
 import org.mesh4j.ektoo.ui.settings.SettingsViewTask;
+import org.mesh4j.ektoo.ui.settings.prop.AppProperties;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 
 import com.toedter.calendar.JDateChooser;
@@ -190,7 +191,7 @@ public class EktooFrame extends JFrame implements IErrorListener, ISynchronizeTa
 	//because its not necessary to load property file every time.
 	private void gotToMesh4xHelpSite(){
 		OpenURLTask openURLTask = new OpenURLTask(this,this,
-				getPropetyManager().getProperty(AppProperties.URL_MESH4X));
+				getProperty(AppProperties.URL_MESH4X));
 		openURLTask.execute();
 	}
 
@@ -198,7 +199,7 @@ public class EktooFrame extends JFrame implements IErrorListener, ISynchronizeTa
 	//because its not necessary to load property file every time.
 	private void goToMesh4xEktooHelpSite(){
 		OpenURLTask openURLTask = new OpenURLTask(this,this,
-				getPropetyManager().getProperty(AppProperties.URL_MESH4X_EKTOO));
+				getProperty(AppProperties.URL_MESH4X_EKTOO));
 		openURLTask.execute();
 	}
 	

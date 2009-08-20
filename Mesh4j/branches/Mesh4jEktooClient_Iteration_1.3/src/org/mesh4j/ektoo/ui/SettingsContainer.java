@@ -22,6 +22,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import org.mesh4j.ektoo.ui.component.RoundBorder;
 import org.mesh4j.ektoo.ui.settings.CloudSettingsModel;
 import org.mesh4j.ektoo.ui.settings.CloudSettingsUI;
+import org.mesh4j.ektoo.ui.settings.GSSSettingsModel;
 import org.mesh4j.ektoo.ui.settings.GSSSettingsUI;
 import org.mesh4j.ektoo.ui.settings.GeneralSettingsModel;
 import org.mesh4j.ektoo.ui.settings.GeneralSettingsUI;
@@ -121,6 +122,10 @@ public class SettingsContainer extends JPanel{
 		controller.addView(generalSettingsUI);
 		
 		GSSSettingsUI gssSettingsUI = new GSSSettingsUI(controller);
+		controller.addModel(new GSSSettingsModel());
+		controller.addView(gssSettingsUI);
+		
+		
 		CloudSettingsUI cloudSettingsUI = new CloudSettingsUI(controller);
 		controller.addModel(new CloudSettingsModel());
 		controller.addView(cloudSettingsUI);

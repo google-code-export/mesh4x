@@ -10,6 +10,7 @@ import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.Event;
 import org.mesh4j.ektoo.ISyncAdapterBuilder;
 import org.mesh4j.ektoo.SyncAdapterBuilder;
+import org.mesh4j.ektoo.Util;
 import org.mesh4j.ektoo.model.CloudModel;
 import org.mesh4j.ektoo.model.MsAccessModel;
 import org.mesh4j.ektoo.model.MySQLAdapterModel;
@@ -63,12 +64,13 @@ public class EktooController {
 					adapterBuilder.getBaseDirectory());
 			} else {
 				MySQLAdapterModel mySqlModel = (MySQLAdapterModel)source.getCurrentController().getModel();
+				
 				ui.syncProcessUI.synchronizeMySqlVsCloud(
 					since,
 					mySqlModel.getUserName(),
 					mySqlModel.getUserPassword(),
 					mySqlModel.getHostName(),
-					mySqlModel.getPortNo(),	
+					Util.getAsInteger(mySqlModel.getPortNo()),	
 					mySqlModel.getDatabaseName(),
 					new TreeSet<String>(Arrays.asList(mySqlModel.getTableNames())), 
 					cloudModel.getBaseUri(), 

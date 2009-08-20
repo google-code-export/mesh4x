@@ -1,6 +1,7 @@
 package org.mesh4j.ektoo;
 
-import static org.mesh4j.ektoo.ui.settings.prop.AppPropertiesProvider.getPropetyManager;
+
+import static org.mesh4j.ektoo.Util.getProperty;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -10,7 +11,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.mesh4j.ektoo.ui.settings.AppProperties;
+import org.mesh4j.ektoo.ui.settings.prop.AppProperties;
 import org.mesh4j.geo.coder.GeoCoderLatitudePropertyResolver;
 import org.mesh4j.geo.coder.GeoCoderLocationPropertyResolver;
 import org.mesh4j.geo.coder.GeoCoderLongitudePropertyResolver;
@@ -68,7 +69,7 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 		this.googleSpreadSheetSyncAdapterFactory = new GoogleSpreadSheetSyncAdapterFactory();
 		this.googleSpreadSheetRDFSyncAdapterFactory = new GoogleSpreadSheetRDFSyncAdapterFactory(this.getBaseRDFUrl());
 		
-		GoogleGeoCoder geoCoder = new GoogleGeoCoder(getPropetyManager().getProperty(AppProperties.GOOGLE_GEO_CODER_KEY));
+		GoogleGeoCoder geoCoder = new GoogleGeoCoder(getProperty(AppProperties.GOOGLE_GEO_CODER_KEY));
 		GeoCoderLatitudePropertyResolver propertyResolverLat = new GeoCoderLatitudePropertyResolver(geoCoder);
 		GeoCoderLongitudePropertyResolver propertyResolverLon = new GeoCoderLongitudePropertyResolver(geoCoder);
 		GeoCoderLocationPropertyResolver propertyResolverLoc = new GeoCoderLocationPropertyResolver(geoCoder);
@@ -321,7 +322,7 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 		Feed feed = new Feed();
 		feed.addItems(items);
 		
-		FeedAdapter feedAdapter = new FeedAdapter(fullFileName, Util.getIdentityProvider(getPropetyManager()), 
+		FeedAdapter feedAdapter = new FeedAdapter(fullFileName, Util.getIdentityProvider(), 
 				IdGenerator.INSTANCE, RssSyndicationFormat.INSTANCE, feed);
 		
 		feedAdapter.flush();
@@ -330,14 +331,14 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 	
 	@Override 
 	public String makeTempFileName(String fileName){
-		return FileUtils.getFileName(getPropetyManager().getProperty(AppProperties.BASE_DIRECTORY_DEFAULT) + 
+		return FileUtils.getFileName(getProperty(AppProperties.BASE_DIRECTORY) + 
 				File.separator + "temp", fileName);
 	}
 	
 	// ACCESSORS
 	private ISyncAdapter createMySQLTableDiscoveryAdapter(String userName, String password, String hostName, int portNo, String databaseName) {
 		
-		IIdentityProvider identityProvider = Util.getIdentityProvider(getPropetyManager());
+		IIdentityProvider identityProvider = Util.getIdentityProvider();
 		Set<String> tableNames = HibernateSyncAdapterFactory.getMySqlTableNames(hostName, portNo, databaseName, userName, password);
 		
 		List<Item> items = new ArrayList<Item>();
@@ -360,7 +361,7 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 
 	@Override
 	public IIdentityProvider getIdentityProvider() {
-		return Util.getIdentityProvider(getPropetyManager());
+		return Util.getIdentityProvider();
 	}
 
 	@Override
@@ -370,12 +371,12 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 
 	@Override
 	public String getBaseDirectory() {
-		return getPropetyManager().getProperty(AppProperties.BASE_DIRECTORY_DEFAULT);
+		return getProperty(AppProperties.BASE_DIRECTORY);
 	}
 
 	@Override
 	public String getBaseRDFUrl() {
-		return getPropetyManager().getProperty(AppProperties.CLOUD_ROOT_URI);
+		return getProperty(AppProperties.CLOUD_ROOT_URI);
 	}
 
 	@Override

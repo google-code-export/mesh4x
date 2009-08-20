@@ -1,11 +1,13 @@
 package org.mesh4j.ektoo.ui.settings;
 
 import static org.mesh4j.ektoo.ui.settings.prop.AppPropertiesProvider.getPropetyManager;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.Util;
 import org.mesh4j.ektoo.controller.AbstractViewController;
 import org.mesh4j.ektoo.model.AbstractModel;
+import org.mesh4j.ektoo.ui.settings.prop.AppProperties;
 import org.mesh4j.ektoo.ui.settings.prop.IPropertyManager;
 
 
@@ -52,7 +54,7 @@ public class SettingsController extends AbstractViewController {
 	public final static String USER_PASSWORD_GOOGLE = "GPassword";
 	
 	public final static String CREATE_PROP_AS_DEFAULT = "CreateAsDefaultProp";
-	private IPropertyManager propertyManager = getPropetyManager();
+	private static IPropertyManager propertyManager = getPropetyManager();
 	
 	
 	public SettingsController() {
@@ -68,10 +70,9 @@ public class SettingsController extends AbstractViewController {
 	
 	private void loadGoogleSettings(){
 		try {
-			modifySettings(USER_NAME_GOOGLE,propertyManager.getPropertyAsDecrepted(AppProperties.USER_NAME_GOOGLE));
-			modifySettings(USER_PASSWORD_GOOGLE,propertyManager.getPropertyAsDecrepted(AppProperties.USER_PASSWORD_GOOGLE));
+			modifySettings(USER_NAME_GOOGLE,propertyManager.getProperty(AppProperties.USER_NAME_GOOGLE));
+			modifySettings(USER_PASSWORD_GOOGLE,propertyManager.getPropertyAsDecrypted(AppProperties.USER_PASSWORD_GOOGLE));
 		} catch (Exception e) {
-			e.printStackTrace();
 			LOGGER.error(e);
 		}
 	}
@@ -84,11 +85,11 @@ public class SettingsController extends AbstractViewController {
 	
 	private void loadMysqlSettings(){
 		try {
-			modifySettings(USER_NAME_MYSQL,propertyManager.getPropertyAsDecrepted(AppProperties.USER_NAME_MYSQL));
-			modifySettings(USER_PASSWORD_MYSQL,propertyManager.getPropertyAsDecrepted(AppProperties.USER_PASSWORD_MYSQL));
-			modifySettings(HOST_NAME_MYSQL,propertyManager.getPropertyAsDecrepted(AppProperties.HOST_NAME_MYSQL));
-			modifySettings(PORT_MYSQL,propertyManager.getPropertyAsDecrepted(AppProperties.PORT_MYSQL));
-			modifySettings(DATABASE_NAME_MYSQL,propertyManager.getPropertyAsDecrepted(AppProperties.DATABASE_NAME_MYSQL));
+			modifySettings(USER_NAME_MYSQL,propertyManager.getProperty(AppProperties.USER_NAME_MYSQL));
+			modifySettings(USER_PASSWORD_MYSQL,propertyManager.getPropertyAsDecrypted(AppProperties.USER_PASSWORD_MYSQL));
+			modifySettings(HOST_NAME_MYSQL,propertyManager.getProperty(AppProperties.HOST_NAME_MYSQL));
+			modifySettings(PORT_MYSQL,propertyManager.getProperty(AppProperties.PORT_MYSQL));
+			modifySettings(DATABASE_NAME_MYSQL,propertyManager.getProperty(AppProperties.DATABASE_NAME_MYSQL));
 		} catch (Exception e) {
 			LOGGER.error(e);
 		}
@@ -96,8 +97,6 @@ public class SettingsController extends AbstractViewController {
 	
 	private void loadGeneralSettings(){
 		
-		modifySettings(PATH_SOURCE,propertyManager.getProperty(AppProperties.PATH_SOURCE_DIR));
-		modifySettings(PATH_TARGET,propertyManager.getProperty(AppProperties.PATH_TARGET_DIR));
 		
 		modifySettings(LANGUAGE,propertyManager.getProperty(AppProperties.LANGUAGE));
 		
@@ -134,8 +133,8 @@ public class SettingsController extends AbstractViewController {
 	
 	public void loadDefaultGoogleSettings(){
 		try{
-			modifySettings(USER_NAME_GOOGLE, propertyManager.getPropertyAsDecrepted(AppProperties.USER_NAME_GOOGLE_DEFAULT));
-			modifySettings(USER_PASSWORD_GOOGLE, propertyManager.getPropertyAsDecrepted(AppProperties.USER_PASSWORD_GOOGLE_DEFAULT));
+			modifySettings(USER_NAME_GOOGLE, propertyManager.getProperty(AppProperties.USER_NAME_GOOGLE_DEFAULT));
+			modifySettings(USER_PASSWORD_GOOGLE, propertyManager.getPropertyAsDecrypted(AppProperties.USER_PASSWORD_GOOGLE_DEFAULT));
 		} catch (Exception e){
 			LOGGER.error(e);
 		}
@@ -144,47 +143,44 @@ public class SettingsController extends AbstractViewController {
 	
 	public void loadDefaultGeneralSettings(){
 		
-		modifySettings(PATH_SOURCE, propertyManager.getProperty(AppProperties.PATH_SOURCE_DIR_DEFAULT));
-		modifySettings(PATH_TARGET, propertyManager.getProperty(AppProperties.PATH_TARGET_DIR_DEFAULT));
-		
 		modifySettings(LANGUAGE, AppProperties.LANGUAGE_DEFAULT);
 		
 		String fileName = "";
 		
-		fileName = Util.getFileName(propertyManager, AppProperties.PATH_SOURCE_EXCEL_DEFAULT);
+		fileName = Util.getFileName(AppProperties.PATH_SOURCE_EXCEL_DEFAULT);
 		modifySettings(PATH_SOURCE_EXCEL, fileName);
 		
-		fileName = Util.getFileName(propertyManager, AppProperties.PATH_TARGET_EXCEL_DEFAULT);
+		fileName = Util.getFileName( AppProperties.PATH_TARGET_EXCEL_DEFAULT);
 		modifySettings(PATH_TARGET_EXCEL, fileName);
 		
-		fileName = Util.getFileName(propertyManager, AppProperties.PATH_SOURCE_ACCESS_DEFAULT);
+		fileName = Util.getFileName( AppProperties.PATH_SOURCE_ACCESS_DEFAULT);
 		modifySettings(PATH_SOURCE_ACCESS, fileName);
 		
-		fileName = Util.getFileName(propertyManager, AppProperties.PATH_TARGET_ACCESS_DEFAULT);
+		fileName = Util.getFileName( AppProperties.PATH_TARGET_ACCESS_DEFAULT);
 		modifySettings(PATH_TARGET_ACCESS, fileName);
 		
-		fileName = Util.getFileName(propertyManager, AppProperties.PATH_SOURCE_KML_DEFAULT);
+		fileName = Util.getFileName( AppProperties.PATH_SOURCE_KML_DEFAULT);
 		modifySettings(PATH_SOURCE_KML, fileName);
 		
-		fileName = Util.getFileName(propertyManager, AppProperties.PATH_TARGET_KML_DEFAULT);
+		fileName = Util.getFileName( AppProperties.PATH_TARGET_KML_DEFAULT);
 		modifySettings(PATH_TARGET_KML, fileName);
 		
-		fileName = Util.getFileName(propertyManager, AppProperties.PATH_SOURCE_RSS_DEFAULT);
+		fileName = Util.getFileName( AppProperties.PATH_SOURCE_RSS_DEFAULT);
 		modifySettings(PATH_SOURCE_RSS, fileName);
 		
-		fileName = Util.getFileName(propertyManager, AppProperties.PATH_TARGET_RSS_DEFAULT);
+		fileName = Util.getFileName( AppProperties.PATH_TARGET_RSS_DEFAULT);
 		modifySettings(PATH_TARGET_RSS, fileName);
 		
-		fileName = Util.getFileName(propertyManager, AppProperties.PATH_SOURCE_ATOM_DEFAULT);
+		fileName = Util.getFileName( AppProperties.PATH_SOURCE_ATOM_DEFAULT);
 		modifySettings(PATH_SOURCE_ATOM, fileName);
 		
-		fileName = Util.getFileName(propertyManager, AppProperties.PATH_TARGET_ATOM_DEFAULT);
+		fileName = Util.getFileName( AppProperties.PATH_TARGET_ATOM_DEFAULT);
 		modifySettings(PATH_TARGET_ATOM, fileName);
 		
 		modifySettings(PATH_SOURCE_FOLDER, propertyManager.getProperty(AppProperties.PATH_SOURCE_FOLDER_DEFAULT));
 		modifySettings(PATH_TARGET_FOLDER, propertyManager.getProperty(AppProperties.PATH_TARGET_FOLDER_DEFAULT));
 		
-		fileName = Util.getFileName(propertyManager, AppProperties.PATH_SOURCE_ZIP);
+		fileName = Util.getFileName( AppProperties.PATH_SOURCE_ZIP);
 		modifySettings(PATH_SOURCE_ZIP, fileName);
 		
 	}
@@ -198,11 +194,11 @@ public class SettingsController extends AbstractViewController {
 	public void loadDefaultMySqlSettings(){
 		
 		try{
-			modifySettings(USER_NAME_MYSQL, propertyManager.getPropertyAsDecrepted(AppProperties.USER_NAME_MYSQL_DEFAULT));
-			modifySettings(USER_PASSWORD_MYSQL, propertyManager.getPropertyAsDecrepted(AppProperties.USER_PASSWORD_MYSQL_DEFAULT));
-			modifySettings(HOST_NAME_MYSQL, propertyManager.getPropertyAsDecrepted(AppProperties.HOST_NAME_MYSQL_DEFAULT));
-			modifySettings(PORT_MYSQL, propertyManager.getPropertyAsDecrepted(AppProperties.PORT_MYSQL_DEFAULT));
-			modifySettings(DATABASE_NAME_MYSQL, propertyManager.getPropertyAsDecrepted(AppProperties.DATABASE_NAME_MYSQL_DEFAULT));
+			modifySettings(USER_NAME_MYSQL, propertyManager.getProperty(AppProperties.USER_NAME_MYSQL_DEFAULT));
+			modifySettings(USER_PASSWORD_MYSQL, propertyManager.getPropertyAsDecrypted(AppProperties.USER_PASSWORD_MYSQL_DEFAULT));
+			modifySettings(HOST_NAME_MYSQL, propertyManager.getProperty(AppProperties.HOST_NAME_MYSQL_DEFAULT));
+			modifySettings(PORT_MYSQL, propertyManager.getProperty(AppProperties.PORT_MYSQL_DEFAULT));
+			modifySettings(DATABASE_NAME_MYSQL, propertyManager.getProperty(AppProperties.DATABASE_NAME_MYSQL_DEFAULT));
 		} catch (Exception exception){
 			LOGGER.error(exception);
 		}
@@ -221,11 +217,22 @@ public class SettingsController extends AbstractViewController {
 			} else if ( model instanceof MySqlSettingsModel ){
 					MySqlSettingsModel  mysqlSettingsModel = (MySqlSettingsModel)model;
 					saveMysqlSettings(mysqlSettingsModel);
-			}  
+			}  else if ( model instanceof GSSSettingsModel ){
+				GSSSettingsModel  gssSettingsModel = (GSSSettingsModel)model;
+				saveGSSSettings(gssSettingsModel);
+		}  
 		}
 		propertyManager.save();
 	}
 	
+	private void saveGSSSettings(GSSSettingsModel  gssSettingsModel){
+		String extension = "";
+		if(gssSettingsModel.isCreateAsDefaultProp()){
+			extension = ".default";
+		}
+		propertyManager.setProperty(AppProperties.USER_NAME_GOOGLE + extension, gssSettingsModel.getGUserName());
+		propertyManager.setPropertyAsEncrypted(AppProperties.USER_PASSWORD_GOOGLE + extension, gssSettingsModel.getGPassword());
+	}
 	
 	private void saveGeneralSettings(GeneralSettingsModel  generalSettingsModel){
 		
@@ -235,8 +242,6 @@ public class SettingsController extends AbstractViewController {
 		} 
 		propertyManager.setProperty(AppProperties.LANGUAGE + extension, generalSettingsModel.getLanguage());
 		
-		propertyManager.setProperty(AppProperties.PATH_SOURCE_DIR +  extension, generalSettingsModel.getPathSource());
-		propertyManager.setProperty(AppProperties.PATH_TARGET_DIR +  extension, generalSettingsModel.getPathTarget());
 		
 		propertyManager.setProperty(AppProperties.PATH_SOURCE_EXCEL + extension, generalSettingsModel.getPathSourceExcel());
 		propertyManager.setProperty(AppProperties.PATH_TARGET_EXCEL + extension, generalSettingsModel.getPathTargetExcel());
@@ -280,11 +285,11 @@ public class SettingsController extends AbstractViewController {
 		}
 		
 		try {
-			propertyManager.setPropertyAsEncrypted(AppProperties.USER_NAME_MYSQL +  extension , mysqlSettingsModel.getUserName());
+			propertyManager.setProperty(AppProperties.USER_NAME_MYSQL +  extension , mysqlSettingsModel.getUserName());
 			propertyManager.setPropertyAsEncrypted(AppProperties.USER_PASSWORD_MYSQL + extension, mysqlSettingsModel.getUserPassword());
-			propertyManager.setPropertyAsEncrypted(AppProperties.HOST_NAME_MYSQL + extension, mysqlSettingsModel.getHostName());
-			propertyManager.setPropertyAsEncrypted(AppProperties.PORT_MYSQL + extension, mysqlSettingsModel.getPortNo());
-			propertyManager.setPropertyAsEncrypted(AppProperties.DATABASE_NAME_MYSQL + extension, mysqlSettingsModel.getDatabaseName());
+			propertyManager.setProperty(AppProperties.HOST_NAME_MYSQL + extension, mysqlSettingsModel.getHostName());
+			propertyManager.setProperty(AppProperties.PORT_MYSQL + extension, mysqlSettingsModel.getPortNo());
+			propertyManager.setProperty(AppProperties.DATABASE_NAME_MYSQL + extension, mysqlSettingsModel.getDatabaseName());
 		} catch (Exception e) {
 			LOGGER.debug(e);
 		}

@@ -281,7 +281,7 @@ public class MySqlSettingsUI extends AbstractSettingsUI{
 				userTextField.setText(newValueAsString);
 		} else if ( evt.getPropertyName().equals( SettingsController.USER_PASSWORD_MYSQL)){
 			if(!new String(passwordField.getPassword()).equals(newValueAsString))
-				passwordField.setText("test");
+				passwordField.setText(newValueAsString);
 		} else if ( evt.getPropertyName().equals( SettingsController.HOST_NAME_MYSQL)){
 			if(!hostTextField.getText().equals(newValueAsString))
 				hostTextField.setText(newValueAsString);

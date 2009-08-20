@@ -12,7 +12,7 @@ public class MySQLAdapterModel extends AbstractModel
 	private String userName = null;
 	private String userPassword = null;
 	private String hostName = null;
-	private int portNo = -1;
+	private String portNo = "";
 	private String databaseName = null;
 	private String[] tableNames = null;
 
@@ -45,11 +45,11 @@ public class MySQLAdapterModel extends AbstractModel
 		return hostName;
 	}
 
-	public void setPortNo(int portNo) {
+	public void setPortNo(String portNo) {
 		firePropertyChange(MySQLUIController.PORT_NO_PROPERTY, this.portNo, this.portNo = portNo);
 	}
 
-	public int getPortNo() {
+	public String getPortNo() {
 		return portNo;
 	}
 

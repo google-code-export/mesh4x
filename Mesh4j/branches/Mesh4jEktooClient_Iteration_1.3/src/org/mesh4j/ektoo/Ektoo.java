@@ -12,7 +12,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.controller.EktooController;
 import org.mesh4j.ektoo.ui.EktooFrame;
-import org.mesh4j.ektoo.ui.settings.AppProperties;
+import org.mesh4j.ektoo.ui.settings.prop.AppProperties;
 import org.mesh4j.translator.EktooMessageTranslator;
 
 /**
@@ -57,7 +57,7 @@ public class Ektoo {
 	{
 		try 
 		{
-			String lookAndFeel= getPropetyManager().getProperty(AppProperties.LOOK_AND_FEEL_CLASS_NAME_DEFAULT);
+			String lookAndFeel= getPropetyManager().getProperty(AppProperties.LOOK_AND_FEEL_CLASS_NAME);
 		  if (lookAndFeel != null && lookAndFeel.trim().length() != 0)
 		    UIManager.setLookAndFeel(lookAndFeel);
 		  else

@@ -1,5 +1,8 @@
 package org.mesh4j.ektoo.ui;
 
+import static org.mesh4j.ektoo.Util.getProperty;
+import static org.mesh4j.ektoo.Util.getPropertyAsDecrypted;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -32,6 +35,7 @@ import org.mesh4j.ektoo.tasks.IErrorListener;
 import org.mesh4j.ektoo.tasks.OpenURLTask;
 import org.mesh4j.ektoo.ui.component.messagedialog.MessageDialog;
 import org.mesh4j.ektoo.ui.image.ImageManager;
+import org.mesh4j.ektoo.ui.settings.prop.AppProperties;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.ektoo.ui.validator.GssUIValidator;
 import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadsheet;
@@ -79,8 +83,13 @@ public class GSSheetUI extends AbstractUI {
 		this.googleURL = googleURL;
 		initialize();
 		this.setMessageText(googleURL);
+		loadValues();
 	}
 
+	private void loadValues(){
+		txtUser.setText(getProperty(AppProperties.USER_NAME_GOOGLE));
+		txtPass.setText(getPropertyAsDecrypted(AppProperties.USER_PASSWORD_GOOGLE));
+	}
 	private void initialize() {
 		this.setLayout(null);
 		this.setBackground(Color.WHITE);

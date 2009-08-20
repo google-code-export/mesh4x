@@ -33,8 +33,8 @@ public class GeneralSettingsUI extends AbstractSettingsUI{
 	
 	private JComboBox langComboBox;
 	private JFileChooser fileChooser = null;
-	private JTextField pathSourceTextField;
-	private JTextField pathTargetTextField;
+//	private JTextField pathSourceTextField;
+//	private JTextField pathTargetTextField;
 	private JTextField pathTargetExcelTextField;
 	private JTextField pathSourceAccessTextField;
 	private JTextField pathSourceExcelTextField;
@@ -70,22 +70,6 @@ public class GeneralSettingsUI extends AbstractSettingsUI{
 		c.gridwidth =2;
 		c.insets = new Insets(50, 20, 0, 10);
 		this.add(getLanguageComboBox(), c);
-		
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.gridx = 1;
-		c.gridy = 2;
-		c.weightx = 0.5;
-		c.gridwidth =2;
-		c.insets = new Insets(5, 20, 0, 10);
-		this.add(getSourceFileBrowser(), c);
-		
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.gridx = 1;
-		c.gridy = 3;
-		c.weightx = 0.5;
-		c.gridwidth =2;
-		c.insets = new Insets(5, 20, 0, 10);
-		this.add(getTargetFileBrowser(), c);
 		
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 1;
@@ -259,74 +243,6 @@ public class GeneralSettingsUI extends AbstractSettingsUI{
 	
 	
 	
-	private JPanel getSourceFileBrowser(){
-		JPanel fileBrowserPanel = new JPanel(new BorderLayout());
-		pathSourceTextField = new JTextField();
-		pathSourceTextField.getDocument().addDocumentListener(new DocumentModelAdapter(){
-			@Override
-			public void insertUpdate(DocumentEvent e) {
-				getController().modifySettings(SettingsController.PATH_SOURCE, 
-						pathSourceTextField.getText());
-			}
-			@Override
-			public void removeUpdate(DocumentEvent e) {
-				getController().modifySettings(SettingsController.PATH_SOURCE, 
-						pathSourceTextField.getText());
-			}
-		});
-		final JButton fileBrowserButton = new JButton();
-		
-		
-		JLabel label = new JLabel("Target Source File:");
-		label.setPreferredSize(new Dimension(150,20));
-		fileBrowserPanel.add(label,BorderLayout.WEST);
-		
-		fileBrowserPanel.add(pathSourceTextField,BorderLayout.CENTER);
-		fileBrowserPanel.add(fileBrowserButton,BorderLayout.EAST);
-		
-		fileBrowserButton.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				launchFileBrowser(JFileChooser.DIRECTORIES_ONLY,fileBrowserButton,pathSourceTextField,"");
-			}
-		});
-		return fileBrowserPanel;
-	}
-			
-	private JPanel getTargetFileBrowser(){
-		JPanel fileBrowserPanel = new JPanel(new BorderLayout());
-		pathTargetTextField = new JTextField();
-		pathTargetTextField.getDocument().addDocumentListener(new DocumentModelAdapter(){
-			@Override
-			public void insertUpdate(DocumentEvent e) {
-				getController().modifySettings(SettingsController.PATH_TARGET, 
-						pathTargetTextField.getText());
-			}
-			@Override
-			public void removeUpdate(DocumentEvent e) {
-				getController().modifySettings(SettingsController.PATH_TARGET, 
-						pathTargetTextField.getText());
-			}
-		});
-		final JButton fileBrowserButton = new JButton();
-		
-		
-		JLabel label = new JLabel("Default target location");
-		label.setPreferredSize(new Dimension(150,20));
-		fileBrowserPanel.add(label,BorderLayout.WEST);
-		
-		fileBrowserPanel.add(pathTargetTextField,BorderLayout.CENTER);
-		fileBrowserPanel.add(fileBrowserButton,BorderLayout.EAST);
-		
-		fileBrowserButton.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				launchFileBrowser(JFileChooser.DIRECTORIES_ONLY,fileBrowserButton,pathTargetTextField,"");
-			}
-		});
-		return fileBrowserPanel;
-	}
-		
 	private JPanel getMsExcelTargetFileBrowser(){
 		JPanel fileBrowserPanel = new JPanel(new BorderLayout());
 		pathTargetExcelTextField = new JTextField();
@@ -827,13 +743,8 @@ public class GeneralSettingsUI extends AbstractSettingsUI{
 	@Override
 	public void modelPropertyChange(PropertyChangeEvent evt) {
 		String newValueAsString = evt.getNewValue().toString();
-		if ( evt.getPropertyName().equals( SettingsController.PATH_SOURCE)){
-			if(!pathSourceTextField.getText().equals(newValueAsString))
-				pathSourceTextField.setText(newValueAsString);
-		} else if ( evt.getPropertyName().equals( SettingsController.PATH_TARGET) ){
-			if(!pathTargetTextField.getText().equals(newValueAsString))
-				pathTargetTextField.setText(newValueAsString);
-		} else if ( evt.getPropertyName().equals( SettingsController.PATH_SOURCE_EXCEL )){
+		
+		if ( evt.getPropertyName().equals( SettingsController.PATH_SOURCE_EXCEL )){
 			if(!pathSourceExcelTextField.getText().equals(newValueAsString))
 				pathSourceExcelTextField.setText(newValueAsString);
 		} else if ( evt.getPropertyName().equals( SettingsController.PATH_TARGET_EXCEL )){
