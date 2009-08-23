@@ -1,18 +1,16 @@
 package org.mesh4j.ektoo.controller;
 
-import static org.mesh4j.ektoo.Util.getProperty;
-import static org.mesh4j.ektoo.Util.getPropertyAsDecrypted;
+import static org.mesh4j.ektoo.ui.settings.prop.AppPropertiesProvider.getProperty;
+import static org.mesh4j.ektoo.ui.settings.prop.AppPropertiesProvider.getPropertyAsDecrypted;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.mesh4j.ektoo.Util;
 import org.mesh4j.ektoo.model.MySQLAdapterModel;
 import org.mesh4j.ektoo.ui.EktooFrame;
 import org.mesh4j.ektoo.ui.settings.prop.AppProperties;
-import org.mesh4j.ektoo.ui.settings.prop.AppPropertiesProvider;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.composite.CompositeSyncAdapter;
 import org.mesh4j.sync.adapters.composite.IIdentifiableSyncAdapter;

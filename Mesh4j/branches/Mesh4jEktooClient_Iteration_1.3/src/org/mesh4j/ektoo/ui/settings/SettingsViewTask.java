@@ -7,7 +7,6 @@ import javax.swing.SwingWorker;
 
 import org.mesh4j.ektoo.ui.EktooFrame;
 import org.mesh4j.ektoo.ui.SettingsContainer;
-import org.mesh4j.ektoo.ui.settings.prop.IPropertyManager;
 
 public class SettingsViewTask extends SwingWorker<String, Void>{
 
@@ -16,6 +15,7 @@ public class SettingsViewTask extends SwingWorker<String, Void>{
 	
 	public SettingsViewTask(EktooFrame parent){
 		this.parent = parent;
+//		parent.getTargetItem().getCurrentController().
 	}
 	
 	@Override
@@ -26,7 +26,7 @@ public class SettingsViewTask extends SwingWorker<String, Void>{
 			SettingsContainer container = new SettingsContainer(controller,parent);
 			showSettingsInPopUP(container);
 		} catch (Exception ec){
-			
+			//TODO exception handling
 		}
 		return null;
 	}

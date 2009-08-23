@@ -28,11 +28,21 @@ public class PropertyManager  implements IPropertyManager {
 	private  File file;
 	
 
+	@Deprecated
 	public PropertyManager(String properyFile){
 		Guard.argumentNotNullOrEmptyString(properyFile, "properyFile");
 		file = new File(properyFile);
 		load();
 	}
+	
+	public PropertyManager(String properyFile,IEncryptionUtil encryptionUtil){
+		Guard.argumentNotNullOrEmptyString(properyFile, "properyFile");
+		Guard.argumentNotNull(encryptionUtil, "encryptionUtil");
+		file = new File(properyFile);
+		this.encryptionUtil = encryptionUtil;
+		load();
+	}
+	
 	
 	public  String getPropertyAsDecrypted(String property) throws MeshException {
 		String encrypted = oldProperties.getProperty(property);
@@ -104,81 +114,97 @@ public class PropertyManager  implements IPropertyManager {
 	}
 
 	//in case of property file missing application will feed property to itself.
-	private  void loadDefault(){
-		oldProperties.put(AppProperties.PATH_SOURCE_ACCESS, 
+	
+	private void loadDefault(){
+		loadProperty(".default");
+		loadProperty("");
+	}
+	
+	private  void loadProperty(String extension){
+		
+		oldProperties.put(AppProperties.LANGUAGE + extension, 
+				AppProperties.LANGUAGE_DEFAULT_VALUE);
+		
+		oldProperties.put(AppProperties.PATH_SOURCE_ACCESS + extension, 
 				AppProperties.PATH_SOURCE_ACCESS_DEFAULT_VALUE);
-		oldProperties.put(AppProperties.PATH_TARGET_ACCESS, 
+		oldProperties.put(AppProperties.PATH_TARGET_ACCESS + extension, 
 				AppProperties.PATH_TARGET_ACCESS_DEFAULT_VALUE);
 		
-		oldProperties.put(AppProperties.PATH_SOURCE_EXCEL, 
+		oldProperties.put(AppProperties.PATH_SOURCE_EXCEL + extension, 
 				AppProperties.PATH_SOURCE_EXCEL_DEFAULT_VALUE);
-		oldProperties.put(AppProperties.PATH_TARGET_EXCEL, 
+		oldProperties.put(AppProperties.PATH_TARGET_EXCEL + extension, 
 				AppProperties.PATH_TARGET_EXCEL_DEFAULT_VALUE);
 		
-		oldProperties.put(AppProperties.PATH_SOURCE_KML, 
+		oldProperties.put(AppProperties.PATH_SOURCE_KML + extension, 
 				AppProperties.PATH_TARGET_KML_DEFAULT_VALUE);
-		oldProperties.put(AppProperties.PATH_TARGET_KML, 
+		oldProperties.put(AppProperties.PATH_TARGET_KML + extension, 
 				AppProperties.PATH_TARGET_KML_DEFAULT_VALUE);
 		
-		oldProperties.put(AppProperties.PATH_SOURCE_RSS, 
+		oldProperties.put(AppProperties.PATH_SOURCE_RSS + extension, 
 				AppProperties.PATH_SOURCE_RSS_DEFAULT_VALUE);
-		oldProperties.put(AppProperties.PATH_TARGET_RSS, 
+		oldProperties.put(AppProperties.PATH_TARGET_RSS + extension, 
 				AppProperties.PATH_TARGET_RSS_DEFAULT_VALUE);
 		
-		oldProperties.put(AppProperties.PATH_SOURCE_ATOM, 
+		oldProperties.put(AppProperties.PATH_SOURCE_ATOM + extension, 
 				AppProperties.PATH_SOURCE_ATOM_DEFAULT_VALUE);
-		oldProperties.put(AppProperties.PATH_TARGET_ATOM, 
+		oldProperties.put(AppProperties.PATH_TARGET_ATOM + extension, 
 				AppProperties.PATH_TARGET_ATOM_DEFAULT_VALUE);
 		
-		oldProperties.put(AppProperties.PATH_SOURCE_FOLDER, 
+		oldProperties.put(AppProperties.PATH_SOURCE_FOLDER + extension, 
 				AppProperties.PATH_SOURCE_FOLDER_DEFAULT_VALUE);
-		oldProperties.put(AppProperties.PATH_TARGET_FOLDER, 
+		oldProperties.put(AppProperties.PATH_TARGET_FOLDER + extension, 
 				AppProperties.PATH_TARGET_FOLDER_DEFAULT_VALUE);
 		
-		oldProperties.put(AppProperties.PATH_SOURCE_ZIP, 
+		oldProperties.put(AppProperties.PATH_SOURCE_ZIP + extension, 
 				AppProperties.PATH_SOURCE_ZIP_DEFAULT_VALUE);
 	
 		//cloud default settings
-		oldProperties.put(AppProperties.CLOUD_ROOT_URI, 
+		oldProperties.put(AppProperties.CLOUD_ROOT_URI + extension, 
 				AppProperties.CLOUD_ROOT_URI_DEFAULT_VALUE);
 		
-		oldProperties.put(AppProperties.CLOUD_MESH_NAME, 
+		oldProperties.put(AppProperties.CLOUD_MESH_NAME + extension, 
 				AppProperties.CLOUD_MESH_NAME_DEFAULT_VALUE);
 		
-		oldProperties.put(AppProperties.CLOUD_DATASET_NAME, 
+		oldProperties.put(AppProperties.CLOUD_DATASET_NAME + extension, 
 				AppProperties.CLOUD_DATASET_NAME_DEFAULT_VALUE);
 		
 		//mysql default settings
-		oldProperties.put(AppProperties.USER_NAME_MYSQL, 
+		oldProperties.put(AppProperties.USER_NAME_MYSQL + extension, 
 				AppProperties.USER_NAME_MYSQL_DEFAULT_VALUE);
 		
-		oldProperties.put(AppProperties.USER_PASSWORD_MYSQL, 
+		oldProperties.put(AppProperties.USER_PASSWORD_MYSQL + extension, 
 				AppProperties.USER_PASSWORD_MYSQL_DEFAULT_VALUE);
 		
-		oldProperties.put(AppProperties.HOST_NAME_MYSQL, 
+		oldProperties.put(AppProperties.HOST_NAME_MYSQL + extension, 
 				AppProperties.HOST_NAME_MYSQL_DEFAULT_VALUE);
 		
-		oldProperties.put(AppProperties.PORT_MYSQL, 
+		oldProperties.put(AppProperties.PORT_MYSQL + extension, 
 				AppProperties.PORT_MYSQL_DEFAULT_VALUE);
 		
-		oldProperties.put(AppProperties.DATABASE_NAME_MYSQL, 
+		oldProperties.put(AppProperties.DATABASE_NAME_MYSQL + extension, 
 				AppProperties.DATABASE_NAME_MYSQL_DEFAULT_VALUE);
 		
-		oldProperties.put(AppProperties.TABLE_NAME_MYSQL, 
+		oldProperties.put(AppProperties.TABLE_NAME_MYSQL + extension, 
 				AppProperties.TABLE_NAME_MYSQL_DEFAULT_VALUE);
 		
-		oldProperties.put(AppProperties.DATABASE_NAME_MYSQL, 
+		oldProperties.put(AppProperties.DATABASE_NAME_MYSQL + extension, 
 				AppProperties.DATABASE_NAME_MYSQL_DEFAULT_VALUE);
 		
-		oldProperties.put(AppProperties.TABLE_NAME_MYSQL, 
+		oldProperties.put(AppProperties.TABLE_NAME_MYSQL + extension, 
 				AppProperties.TABLE_NAME_MYSQL_DEFAULT_VALUE);
 	
 		//google spreadsheet
-		oldProperties.put(AppProperties.USER_NAME_GOOGLE, 
+		oldProperties.put(AppProperties.USER_NAME_GOOGLE + extension, 
 				AppProperties.USER_NAME_GOOGLE_DEFAULT_VALUE);
 		
-		oldProperties.put(AppProperties.USER_PASSWORD_GOOGLE, 
-				AppProperties.USER_PASSWORD_GOOGLE_DEFAULT_VALUE);
+		String passAsEncrypted = this.encryptionUtil.encrypt(AppProperties.USER_PASSWORD_GOOGLE_DEFAULT_VALUE);
+		oldProperties.put(AppProperties.USER_PASSWORD_GOOGLE + extension , 
+				passAsEncrypted);
+		
+		
+//		oldProperties.put(AppProperties.USER_PASSWORD_GOOGLE_ENCRYPTED, 
+//				AppProperties.USER_PASSWORD_GOOGLE_DEFAULT_VALUE);
+		
 		//end google spreadsheet	
 		
 		
@@ -204,8 +230,8 @@ public class PropertyManager  implements IPropertyManager {
 				AppProperties.SYNC_IDENTITY_PROVIDER_VALUE);
 	}
 
-	public void setEncryptionUtil(IEncryptionUtil encryptionUtil) {
-		this.encryptionUtil = encryptionUtil;
-	}
+//	public void setEncryptionUtil(IEncryptionUtil encryptionUtil) {
+//		this.encryptionUtil = encryptionUtil;
+//	}
 
 }

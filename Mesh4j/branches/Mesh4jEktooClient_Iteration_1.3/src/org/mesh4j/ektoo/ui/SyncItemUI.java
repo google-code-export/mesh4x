@@ -1,7 +1,8 @@
 package org.mesh4j.ektoo.ui;
 
-import static org.mesh4j.ektoo.Util.getFileName;
-import static org.mesh4j.ektoo.Util.getProperty;
+import static org.mesh4j.ektoo.ui.settings.prop.AppPropertiesProvider.getProperty;
+import static org.mesh4j.ektoo.ui.settings.prop.AppPropertiesProvider.getFilePath;
+
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -212,7 +213,7 @@ public class SyncItemUI extends JPanel implements IUIController {
 	private MsExcelUI getMsExcelUI() {
 		if (excelUI == null) {
 			excelUIController = new MsExcelUIController(this.acceptsCreateDataset);
-			String fileName = getFileName(AppProperties.PATH_SOURCE_EXCEL);
+			String fileName = getFilePath(AppProperties.PATH_SOURCE_EXCEL);
 			excelUIController.addModel(new MsExcelModel(fileName));
 			excelUI = new MsExcelUI(fileName, excelUIController);
 		}
@@ -221,7 +222,7 @@ public class SyncItemUI extends JPanel implements IUIController {
 
 	private MsAccessUI getMsAccessUI() {
 		if (accessUI == null) {
-			String fileName = getFileName(AppProperties.PATH_SOURCE_ACCESS);
+			String fileName = getFilePath(AppProperties.PATH_SOURCE_ACCESS);
 			accessUI = new MsAccessUI(fileName, getMsAccessUIController());
 		}
 		return accessUI;
@@ -230,7 +231,7 @@ public class SyncItemUI extends JPanel implements IUIController {
 	private MsAccessUIController getMsAccessUIController() {
 		if(accessUIController == null){
 			accessUIController = new MsAccessUIController(this.acceptsCreateDataset);
-			String fileName = getFileName(AppProperties.PATH_SOURCE_ACCESS);
+			String fileName = getFilePath(AppProperties.PATH_SOURCE_ACCESS);
 			accessUIController.addModel(new MsAccessModel(fileName));
 		}
 		return accessUIController;
@@ -255,7 +256,7 @@ public class SyncItemUI extends JPanel implements IUIController {
 	private KmlUI getKmlUI() {
 		if (kmlUI == null) {
 			kmlUIControler = new KmlUIController(this.acceptsCreateDataset);
-			String fileName = getFileName(AppProperties.PATH_SOURCE_KML);
+			String fileName = getFilePath(AppProperties.PATH_SOURCE_KML);
 			kmlUIControler.addModel(new KmlModel(fileName));
 			kmlUI = new KmlUI(fileName, kmlUIControler);
 		}
@@ -283,7 +284,7 @@ public class SyncItemUI extends JPanel implements IUIController {
 	private FeedUI getRSSFileUI() {
 		if (rssUI == null) {
 			rssUIControler = new FeedUIController(this.acceptsCreateDataset);
-			String fileName = getFileName(AppProperties.PATH_SOURCE_RSS);
+			String fileName = getFilePath(AppProperties.PATH_SOURCE_RSS);
 			rssUIControler.addModel(
 				new FeedModel(
 					fileName,
@@ -297,7 +298,7 @@ public class SyncItemUI extends JPanel implements IUIController {
 	private ZipFeedUI getZipRSSFileUI() {
 		if (zipRssUI == null) {
 			zipRssUIControler = new ZipFeedUIController(this.acceptsCreateDataset);
-			String fileName = getFileName(AppProperties.PATH_SOURCE_ZIP);
+			String fileName = getFilePath(AppProperties.PATH_SOURCE_ZIP);
 			zipRssUIControler.addModel(new ZipFeedModel(fileName));
 			zipRssUI = new ZipFeedUI(fileName, zipRssUIControler);
 		}
@@ -307,7 +308,7 @@ public class SyncItemUI extends JPanel implements IUIController {
 	private FeedUI getAtomFileUI() {
 		if (atomUI == null) {
 			atomUIControler = new FeedUIController(this.acceptsCreateDataset);
-			String fileName = getFileName(AppProperties.PATH_SOURCE_ATOM);
+			String fileName = getFilePath(AppProperties.PATH_SOURCE_ATOM);
 			atomUIControler.addModel(
 				new FeedModel(
 						fileName,
@@ -321,7 +322,7 @@ public class SyncItemUI extends JPanel implements IUIController {
 	private FolderUI getFolderUI() {
 		if (folderUI == null) {
 			folderUIController = new FolderUIController(this.acceptsCreateDataset);
-			String fileName = getFileName(AppProperties.PATH_SOURCE_FOLDER);
+			String fileName = getFilePath(AppProperties.PATH_SOURCE_FOLDER);
 			folderUIController.addModel(new FolderModel(fileName));
 			folderUI = new FolderUI(fileName, folderUIController);
 		}

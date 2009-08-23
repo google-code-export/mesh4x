@@ -118,6 +118,12 @@ public class AppProperties {
 	public final static String PATH_SOURCE_ZIP_DEFAULT = "path.source.zip.default";
 	
 	//******************************* Default properties value  ****************
+	
+	public static final String LANGUAGE_DEFAULT_VALUE = "English";
+	public static final String LANGUAGE_ENGLISH = "English";
+	public static final String LANGUAGE_SYSTEM_DEFAULT = "System default";
+	
+	
 	public static final String USER_NAME_MYSQL_DEFAULT_VALUE = "root";
 	public static final String USER_PASSWORD_MYSQL_DEFAULT_VALUE = "";
 	public static final String HOST_NAME_MYSQL_DEFAULT_VALUE = "localhost";
@@ -133,6 +139,8 @@ public class AppProperties {
 	
 	public static final String USER_NAME_GOOGLE_DEFAULT_VALUE = "gspreadsheet.test@gmail.com";
 	public static final String USER_PASSWORD_GOOGLE_DEFAULT_VALUE = "java123456";
+	
+	
 	
 	public static final String PATH_SOURCE_DIR_DEFAULT_VALUE = "..\\..\\.\\mesh4x\\demos\\ektoo\\data\\source";
 	public static final String PATH_TARGET_DIR_DEFAULT_VALUE = "..\\..\\.\\mesh4x\\demos\\ektoo\\data\\target";

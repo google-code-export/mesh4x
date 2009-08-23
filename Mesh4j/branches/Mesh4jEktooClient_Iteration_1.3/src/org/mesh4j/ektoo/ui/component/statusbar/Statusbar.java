@@ -1,6 +1,6 @@
 package org.mesh4j.ektoo.ui.component.statusbar;
 
-import static org.mesh4j.ektoo.Util.getProperty;
+import static org.mesh4j.ektoo.ui.settings.prop.AppPropertiesProvider.getProperty;
 
 import java.awt.Color;
 import java.awt.Dimension;

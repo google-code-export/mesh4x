@@ -1,7 +1,7 @@
 package org.mesh4j.ektoo.ui;
 
-import static org.mesh4j.ektoo.Util.getProperty;
-import static org.mesh4j.ektoo.Util.getPropertyAsDecrypted;
+import static org.mesh4j.ektoo.ui.settings.prop.AppPropertiesProvider.getProperty;
+import static org.mesh4j.ektoo.ui.settings.prop.AppPropertiesProvider.getPropertyAsDecrypted;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -88,7 +88,12 @@ public class GSSheetUI extends AbstractUI {
 
 	private void loadValues(){
 		txtUser.setText(getProperty(AppProperties.USER_NAME_GOOGLE));
-		txtPass.setText(getPropertyAsDecrypted(AppProperties.USER_PASSWORD_GOOGLE));
+		if(getProperty(AppProperties.USER_PASSWORD_GOOGLE) == null ||
+				getProperty(AppProperties.USER_PASSWORD_GOOGLE).trim().equals("")){
+			txtPass.setText("");
+		} else {
+			txtPass.setText(getPropertyAsDecrypted(AppProperties.USER_PASSWORD_GOOGLE));
+		}
 	}
 	private void initialize() {
 		this.setLayout(null);

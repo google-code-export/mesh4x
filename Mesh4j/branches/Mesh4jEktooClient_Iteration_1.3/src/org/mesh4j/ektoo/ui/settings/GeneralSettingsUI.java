@@ -7,6 +7,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
 
@@ -24,6 +26,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.ui.component.DocumentModelAdapter;
+import org.mesh4j.ektoo.ui.settings.prop.AppProperties;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 
 public class GeneralSettingsUI extends AbstractSettingsUI{
@@ -231,13 +234,22 @@ public class GeneralSettingsUI extends AbstractSettingsUI{
 		
 		
 		langComboBox = new JComboBox();
-		langComboBox.addItem("English");
-		langComboBox.addItem("System default");
+		langComboBox.addItem(AppProperties.LANGUAGE_ENGLISH);
+		langComboBox.addItem(AppProperties.LANGUAGE_SYSTEM_DEFAULT);
 		
 		JLabel label = new JLabel("Language");
 		label.setPreferredSize(new Dimension(150,20));
 		panel.add(label,BorderLayout.WEST);
 		panel.add(langComboBox,BorderLayout.CENTER);
+		
+		langComboBox.addItemListener(new ItemListener(){
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if(e.getStateChange() == ItemEvent.SELECTED){
+					getController().modifySettings(SettingsController.LANGUAGE, e.getItem());
+				}
+			}
+		});
 		return panel;
 	}
 	
@@ -740,11 +752,35 @@ public class GeneralSettingsUI extends AbstractSettingsUI{
 		return (SettingsController)this.controller;
 	}
 	
+	private void selectOrAddValueInCombo(String value){
+		if(isValueContainAtCombo(value)){
+			langComboBox.setSelectedItem(value);
+		} else {
+			langComboBox.addItem(value);
+			langComboBox.setSelectedItem(value);
+		}
+	}
+	
+	private boolean isValueContainAtCombo(String value){
+		int size = langComboBox.getItemCount();
+		for(int index =0 ; index<size; index++){
+			if(langComboBox.getItemAt(index).equals(value)){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	
 	@Override
 	public void modelPropertyChange(PropertyChangeEvent evt) {
 		String newValueAsString = evt.getNewValue().toString();
 		
-		if ( evt.getPropertyName().equals( SettingsController.PATH_SOURCE_EXCEL )){
+		if ( evt.getPropertyName().equals( SettingsController.LANGUAGE )){
+			if(!langComboBox.getSelectedItem().equals(newValueAsString)){
+				selectOrAddValueInCombo(newValueAsString);
+			}
+		} else if ( evt.getPropertyName().equals( SettingsController.PATH_SOURCE_EXCEL )){
 			if(!pathSourceExcelTextField.getText().equals(newValueAsString))
 				pathSourceExcelTextField.setText(newValueAsString);
 		} else if ( evt.getPropertyName().equals( SettingsController.PATH_TARGET_EXCEL )){

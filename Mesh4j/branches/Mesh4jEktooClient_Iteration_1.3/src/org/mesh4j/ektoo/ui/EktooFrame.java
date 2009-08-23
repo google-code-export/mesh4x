@@ -1,6 +1,6 @@
 package org.mesh4j.ektoo.ui;
 
-import static org.mesh4j.ektoo.Util.getProperty;
+import static org.mesh4j.ektoo.ui.settings.prop.AppPropertiesProvider.getProperty;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -187,16 +187,14 @@ public class EktooFrame extends JFrame implements IErrorListener, ISynchronizeTa
 		return headerPanel;
 	}
 	
-	//TODO(raju)  use PropertiesProvider class as single tone for the application
-	//because its not necessary to load property file every time.
+	
 	private void gotToMesh4xHelpSite(){
 		OpenURLTask openURLTask = new OpenURLTask(this,this,
 				getProperty(AppProperties.URL_MESH4X));
 		openURLTask.execute();
 	}
 
-	//TODO(raju)  use PropertiesProvider class as single tone for the application
-	//because its not necessary to load property file every time.
+	
 	private void goToMesh4xEktooHelpSite(){
 		OpenURLTask openURLTask = new OpenURLTask(this,this,
 				getProperty(AppProperties.URL_MESH4X_EKTOO));

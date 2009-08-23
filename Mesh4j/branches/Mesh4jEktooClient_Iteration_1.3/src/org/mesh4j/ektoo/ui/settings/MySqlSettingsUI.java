@@ -101,12 +101,12 @@ public class MySqlSettingsUI extends AbstractSettingsUI{
 		this.add(getDataBaseTextBox(), c);
 		
 		
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.gridx = 2;
-		c.gridy = 5;
-		c.weightx = 0.5;
-		c.insets = new Insets(5, 20, 0, 10);
-		this.add(getDefaultCheckBox(), c);
+//		c.fill = GridBagConstraints.HORIZONTAL;
+//		c.gridx = 2;
+//		c.gridy = 5;
+//		c.weightx = 0.5;
+//		c.insets = new Insets(5, 20, 0, 10);
+//		this.add(getDefaultCheckBox(), c);
 		
 		
 		c.anchor = GridBagConstraints.PAGE_END; //bottom of space

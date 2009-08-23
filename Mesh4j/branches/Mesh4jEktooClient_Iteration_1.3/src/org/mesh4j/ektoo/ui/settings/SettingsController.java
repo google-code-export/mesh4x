@@ -1,10 +1,15 @@
 package org.mesh4j.ektoo.ui.settings;
 
+
+import static org.mesh4j.ektoo.ui.settings.prop.AppPropertiesProvider.getFilePath;
+import static org.mesh4j.ektoo.ui.settings.prop.AppPropertiesProvider.getProperty;
 import static org.mesh4j.ektoo.ui.settings.prop.AppPropertiesProvider.getPropetyManager;
+
+import java.io.File;
+import java.io.IOException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.mesh4j.ektoo.Util;
 import org.mesh4j.ektoo.controller.AbstractViewController;
 import org.mesh4j.ektoo.model.AbstractModel;
 import org.mesh4j.ektoo.ui.settings.prop.AppProperties;
@@ -71,7 +76,14 @@ public class SettingsController extends AbstractViewController {
 	private void loadGoogleSettings(){
 		try {
 			modifySettings(USER_NAME_GOOGLE,propertyManager.getProperty(AppProperties.USER_NAME_GOOGLE));
-			modifySettings(USER_PASSWORD_GOOGLE,propertyManager.getPropertyAsDecrypted(AppProperties.USER_PASSWORD_GOOGLE));
+
+			if(getProperty(AppProperties.USER_PASSWORD_GOOGLE) == null ||
+					getProperty(AppProperties.USER_PASSWORD_GOOGLE).trim().equals("")){
+				modifySettings(USER_PASSWORD_GOOGLE,"");
+			} else {
+				modifySettings(USER_PASSWORD_GOOGLE,propertyManager.getPropertyAsDecrypted(AppProperties.USER_PASSWORD_GOOGLE));
+			}
+			
 		} catch (Exception e) {
 			LOGGER.error(e);
 		}
@@ -95,31 +107,57 @@ public class SettingsController extends AbstractViewController {
 		}
 	}
 	
+	
+	public static String getAbsoluteFilePath(String propName){
+		String relativeFilePath = propertyManager.getProperty(propName);
+		try {
+			return new File(relativeFilePath).getCanonicalPath();
+		} catch (IOException e) {
+			return "";
+		}
+	}
+	
 	private void loadGeneralSettings(){
 		
 		
 		modifySettings(LANGUAGE,propertyManager.getProperty(AppProperties.LANGUAGE));
 		
-		modifySettings(PATH_SOURCE_EXCEL, propertyManager.getProperty(AppProperties.PATH_SOURCE_EXCEL));
-		modifySettings(PATH_TARGET_EXCEL, propertyManager.getProperty(AppProperties.PATH_TARGET_EXCEL));
+		String fileName = "";
 		
-		modifySettings(PATH_SOURCE_ACCESS, propertyManager.getProperty(AppProperties.PATH_SOURCE_ACCESS));
-		modifySettings(PATH_TARGET_ACCESS, propertyManager.getProperty(AppProperties.PATH_TARGET_ACCESS));
+		fileName = getAbsoluteFilePath(AppProperties.PATH_SOURCE_EXCEL);
+		modifySettings(PATH_SOURCE_EXCEL, fileName);
+		fileName = getAbsoluteFilePath(AppProperties.PATH_TARGET_EXCEL);
+		modifySettings(PATH_TARGET_EXCEL, fileName);
 		
-		modifySettings(PATH_SOURCE_KML, propertyManager.getProperty(AppProperties.PATH_SOURCE_KML));
-		modifySettings(PATH_TARGET_KML, propertyManager.getProperty(AppProperties.PATH_TARGET_KML));
+		fileName = getAbsoluteFilePath(AppProperties.PATH_SOURCE_ACCESS);
+		modifySettings(PATH_SOURCE_ACCESS, fileName);
+		fileName = getAbsoluteFilePath(AppProperties.PATH_TARGET_ACCESS);
+		modifySettings(PATH_TARGET_ACCESS, fileName);
 		
-		modifySettings(PATH_SOURCE_RSS, propertyManager.getProperty(AppProperties.PATH_SOURCE_RSS));
-		modifySettings(PATH_TARGET_RSS, propertyManager.getProperty(AppProperties.PATH_TARGET_RSS));
+		fileName = getAbsoluteFilePath(AppProperties.PATH_SOURCE_KML);
+		modifySettings(PATH_SOURCE_KML, fileName);
+		fileName = getAbsoluteFilePath(AppProperties.PATH_TARGET_KML);
+		modifySettings(PATH_TARGET_KML, fileName);
 		
-		modifySettings(PATH_SOURCE_ATOM, propertyManager.getProperty(AppProperties.PATH_SOURCE_ATOM));
-		modifySettings(PATH_TARGET_ATOM, propertyManager.getProperty(AppProperties.PATH_TARGET_ATOM));
+		fileName = getAbsoluteFilePath(AppProperties.PATH_SOURCE_RSS);
+		modifySettings(PATH_SOURCE_RSS, fileName);
+		fileName = getAbsoluteFilePath(AppProperties.PATH_TARGET_RSS);
+		modifySettings(PATH_TARGET_RSS, fileName);
 		
-		modifySettings(PATH_SOURCE_FOLDER, propertyManager.getProperty(AppProperties.PATH_SOURCE_FOLDER));
-		modifySettings(PATH_TARGET_FOLDER, propertyManager.getProperty(AppProperties.PATH_TARGET_FOLDER));
+		fileName = getAbsoluteFilePath(AppProperties.PATH_SOURCE_ATOM);
+		modifySettings(PATH_SOURCE_ATOM, fileName);
+		fileName = getAbsoluteFilePath(AppProperties.PATH_TARGET_ATOM);
+		modifySettings(PATH_TARGET_ATOM, fileName);
 		
-		modifySettings(PATH_SOURCE_ZIP, propertyManager.getProperty(AppProperties.PATH_SOURCE_ZIP));
+		fileName = getAbsoluteFilePath(AppProperties.PATH_SOURCE_FOLDER);
+		modifySettings(PATH_SOURCE_FOLDER, fileName);
+		fileName = getAbsoluteFilePath(AppProperties.PATH_TARGET_FOLDER);
+		modifySettings(PATH_TARGET_FOLDER, fileName);
 		
+		fileName = getAbsoluteFilePath(AppProperties.PATH_SOURCE_ZIP);
+		modifySettings(PATH_SOURCE_ZIP, fileName);
+		
+	
 		modifySettings(CLOUD_ROOT_URI,propertyManager.getProperty(AppProperties.CLOUD_ROOT_URI));
 		modifySettings(CLOUD_MESH_NAME,propertyManager.getProperty(AppProperties.CLOUD_MESH_NAME));
 		modifySettings(CLOUD_DATASET_NAME,propertyManager.getProperty(AppProperties.CLOUD_DATASET_NAME));
@@ -143,44 +181,47 @@ public class SettingsController extends AbstractViewController {
 	
 	public void loadDefaultGeneralSettings(){
 		
-		modifySettings(LANGUAGE, AppProperties.LANGUAGE_DEFAULT);
+		modifySettings(LANGUAGE, propertyManager.getProperty(AppProperties.LANGUAGE_DEFAULT));
 		
 		String fileName = "";
 		
-		fileName = Util.getFileName(AppProperties.PATH_SOURCE_EXCEL_DEFAULT);
+		fileName = getFilePath(AppProperties.PATH_SOURCE_EXCEL_DEFAULT);
 		modifySettings(PATH_SOURCE_EXCEL, fileName);
 		
-		fileName = Util.getFileName( AppProperties.PATH_TARGET_EXCEL_DEFAULT);
+		fileName = getFilePath( AppProperties.PATH_TARGET_EXCEL_DEFAULT);
 		modifySettings(PATH_TARGET_EXCEL, fileName);
 		
-		fileName = Util.getFileName( AppProperties.PATH_SOURCE_ACCESS_DEFAULT);
+		fileName = getFilePath( AppProperties.PATH_SOURCE_ACCESS_DEFAULT);
 		modifySettings(PATH_SOURCE_ACCESS, fileName);
 		
-		fileName = Util.getFileName( AppProperties.PATH_TARGET_ACCESS_DEFAULT);
+		fileName = getFilePath( AppProperties.PATH_TARGET_ACCESS_DEFAULT);
 		modifySettings(PATH_TARGET_ACCESS, fileName);
 		
-		fileName = Util.getFileName( AppProperties.PATH_SOURCE_KML_DEFAULT);
+		fileName = getFilePath( AppProperties.PATH_SOURCE_KML_DEFAULT);
 		modifySettings(PATH_SOURCE_KML, fileName);
 		
-		fileName = Util.getFileName( AppProperties.PATH_TARGET_KML_DEFAULT);
+		fileName = getFilePath( AppProperties.PATH_TARGET_KML_DEFAULT);
 		modifySettings(PATH_TARGET_KML, fileName);
 		
-		fileName = Util.getFileName( AppProperties.PATH_SOURCE_RSS_DEFAULT);
+		fileName = getFilePath( AppProperties.PATH_SOURCE_RSS_DEFAULT);
 		modifySettings(PATH_SOURCE_RSS, fileName);
 		
-		fileName = Util.getFileName( AppProperties.PATH_TARGET_RSS_DEFAULT);
+		fileName = getFilePath( AppProperties.PATH_TARGET_RSS_DEFAULT);
 		modifySettings(PATH_TARGET_RSS, fileName);
 		
-		fileName = Util.getFileName( AppProperties.PATH_SOURCE_ATOM_DEFAULT);
+		fileName = getFilePath( AppProperties.PATH_SOURCE_ATOM_DEFAULT);
 		modifySettings(PATH_SOURCE_ATOM, fileName);
 		
-		fileName = Util.getFileName( AppProperties.PATH_TARGET_ATOM_DEFAULT);
+		fileName = getFilePath( AppProperties.PATH_TARGET_ATOM_DEFAULT);
 		modifySettings(PATH_TARGET_ATOM, fileName);
 		
-		modifySettings(PATH_SOURCE_FOLDER, propertyManager.getProperty(AppProperties.PATH_SOURCE_FOLDER_DEFAULT));
-		modifySettings(PATH_TARGET_FOLDER, propertyManager.getProperty(AppProperties.PATH_TARGET_FOLDER_DEFAULT));
+		fileName = getFilePath( AppProperties.PATH_SOURCE_FOLDER_DEFAULT);
+		modifySettings(PATH_SOURCE_FOLDER, fileName);
 		
-		fileName = Util.getFileName( AppProperties.PATH_SOURCE_ZIP);
+		fileName = getFilePath( AppProperties.PATH_TARGET_FOLDER_DEFAULT);
+		modifySettings(PATH_TARGET_FOLDER, fileName);
+		
+		fileName = getFilePath( AppProperties.PATH_SOURCE_ZIP);
 		modifySettings(PATH_SOURCE_ZIP, fileName);
 		
 	}
@@ -195,7 +236,7 @@ public class SettingsController extends AbstractViewController {
 		
 		try{
 			modifySettings(USER_NAME_MYSQL, propertyManager.getProperty(AppProperties.USER_NAME_MYSQL_DEFAULT));
-			modifySettings(USER_PASSWORD_MYSQL, propertyManager.getPropertyAsDecrypted(AppProperties.USER_PASSWORD_MYSQL_DEFAULT));
+			modifySettings(USER_PASSWORD_MYSQL, propertyManager.getProperty(AppProperties.USER_PASSWORD_MYSQL_DEFAULT));
 			modifySettings(HOST_NAME_MYSQL, propertyManager.getProperty(AppProperties.HOST_NAME_MYSQL_DEFAULT));
 			modifySettings(PORT_MYSQL, propertyManager.getProperty(AppProperties.PORT_MYSQL_DEFAULT));
 			modifySettings(DATABASE_NAME_MYSQL, propertyManager.getProperty(AppProperties.DATABASE_NAME_MYSQL_DEFAULT));

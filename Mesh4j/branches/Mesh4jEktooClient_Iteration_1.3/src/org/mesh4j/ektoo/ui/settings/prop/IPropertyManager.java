@@ -1,12 +1,11 @@
 package org.mesh4j.ektoo.ui.settings.prop;
 
-import org.mesh4j.ektoo.ui.settings.encryption.IEncryptionUtil;
 import org.mesh4j.sync.validations.MeshException;
 
 
 /**
  * getProperty method always return property from persistent store.
- * You cant expect a property by getProperty unless you call the
+ * You can't expect a property by getProperty unless you call the
  * save method  after setting the property by setProperty method.
  * @author raju
  */
@@ -41,6 +40,6 @@ public interface IPropertyManager {
 	
 	public String getProperty(String property,String defaultValue);
 	
-	public void setEncryptionUtil(IEncryptionUtil encryptionUtil); 
+//	public void setEncryptionUtil(IEncryptionUtil encryptionUtil); 
 	
 }

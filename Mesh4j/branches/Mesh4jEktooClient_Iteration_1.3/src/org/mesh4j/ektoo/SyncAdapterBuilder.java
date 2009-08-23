@@ -1,7 +1,8 @@
 package org.mesh4j.ektoo;
 
 
-import static org.mesh4j.ektoo.Util.getProperty;
+import static org.mesh4j.ektoo.ui.settings.prop.AppPropertiesProvider.getProperty;
+import static org.mesh4j.ektoo.ui.settings.prop.AppPropertiesProvider.getIdentityProvider;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -322,7 +323,7 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 		Feed feed = new Feed();
 		feed.addItems(items);
 		
-		FeedAdapter feedAdapter = new FeedAdapter(fullFileName, Util.getIdentityProvider(), 
+		FeedAdapter feedAdapter = new FeedAdapter(fullFileName, getIdentityProvider(), 
 				IdGenerator.INSTANCE, RssSyndicationFormat.INSTANCE, feed);
 		
 		feedAdapter.flush();
@@ -338,7 +339,7 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 	// ACCESSORS
 	private ISyncAdapter createMySQLTableDiscoveryAdapter(String userName, String password, String hostName, int portNo, String databaseName) {
 		
-		IIdentityProvider identityProvider = Util.getIdentityProvider();
+		IIdentityProvider identityProvider = getIdentityProvider();
 		Set<String> tableNames = HibernateSyncAdapterFactory.getMySqlTableNames(hostName, portNo, databaseName, userName, password);
 		
 		List<Item> items = new ArrayList<Item>();
@@ -361,7 +362,7 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 
 	@Override
 	public IIdentityProvider getIdentityProvider() {
-		return Util.getIdentityProvider();
+		return getIdentityProvider();
 	}
 
 	@Override

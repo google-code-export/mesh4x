@@ -6,7 +6,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.beans.PropertyChangeEvent;
 
-import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
@@ -57,12 +56,12 @@ public class GSSSettingsUI extends AbstractSettingsUI{
 		this.add(getUserPasswordTextBox(), c);
 		
 		
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.gridx = 2;
-		c.gridy = 3;
-		c.weightx = 0.5;
-		c.insets = new Insets(5, 20, 0, 10);
-		this.add(getDefaultCheckBox(), c);
+//		c.fill = GridBagConstraints.HORIZONTAL;
+//		c.gridx = 2;
+//		c.gridy = 3;
+//		c.weightx = 0.5;
+//		c.insets = new Insets(5, 20, 0, 10);
+//		this.add(getDefaultCheckBox(), c);
 		
 		
 		c.anchor = GridBagConstraints.PAGE_END; //bottom of space

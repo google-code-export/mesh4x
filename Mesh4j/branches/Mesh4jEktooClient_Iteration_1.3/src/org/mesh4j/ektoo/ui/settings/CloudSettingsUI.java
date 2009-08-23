@@ -4,12 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -85,13 +81,13 @@ public class CloudSettingsUI extends AbstractSettingsUI{
 		this.add(getDataSetTextBox(), c);
 		
 		
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.gridx = 2;
-		c.gridy = 4;
-		c.weightx = 0.5;
-		c.weightx = 0.5;
-		c.insets = new Insets(5, 20, 0, 10);
-		this.add(getDefaultCheckBox(), c);
+//		c.fill = GridBagConstraints.HORIZONTAL;
+//		c.gridx = 2;
+//		c.gridy = 4;
+//		c.weightx = 0.5;
+//		c.weightx = 0.5;
+//		c.insets = new Insets(5, 20, 0, 10);
+//		this.add(getDefaultCheckBox(), c);
 		
 		
 		c.anchor = GridBagConstraints.PAGE_END; //bottom of space
