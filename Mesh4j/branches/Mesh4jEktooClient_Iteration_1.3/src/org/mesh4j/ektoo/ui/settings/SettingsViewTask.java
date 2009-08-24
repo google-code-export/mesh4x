@@ -15,14 +15,14 @@ public class SettingsViewTask extends SwingWorker<String, Void>{
 	
 	public SettingsViewTask(EktooFrame parent){
 		this.parent = parent;
-//		parent.getTargetItem().getCurrentController().
+//		parent.getTargetItem().getCurrentController().get
 	}
 	
 	@Override
 	protected String doInBackground() throws Exception {
 		parent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 		try{
-			SettingsController controller = new SettingsController();
+			SettingsController controller = new SettingsController(parent);
 			SettingsContainer container = new SettingsContainer(controller,parent);
 			showSettingsInPopUP(container);
 		} catch (Exception ec){
@@ -37,6 +37,6 @@ public class SettingsViewTask extends SwingWorker<String, Void>{
 	}
 	
 	private void showSettingsInPopUP(JComponent component){
-		parent.showViewInPopup("Settings",component,400,500,true,true);
+		parent.showViewInPopup("Settings",component,400,500,true,false);
 	}
 }

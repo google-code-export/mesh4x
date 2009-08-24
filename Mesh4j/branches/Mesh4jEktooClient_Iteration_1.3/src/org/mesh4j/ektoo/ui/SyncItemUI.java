@@ -13,7 +13,10 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import javax.swing.BorderFactory;
@@ -442,6 +445,21 @@ public class SyncItemUI extends JPanel implements IUIController {
 		}
 
 		return currrentController;
+	}
+	
+	public Set<AbstractUIController> getAllController(){
+		Set<AbstractUIController> listOfAll = new LinkedHashSet<AbstractUIController>();
+		listOfAll.add(kmlUI.getController());
+		listOfAll.add(excelUI.getController());
+		listOfAll.add(accessUI.getController());
+		listOfAll.add(googleUI.getController());
+		listOfAll.add(cloudUI.getController());
+		listOfAll.add(mysqlUI.getController());
+		listOfAll.add(rssUI.getController());
+		listOfAll.add(atomUI.getController());
+		listOfAll.add(folderUI.getController());
+		listOfAll.add(zipRssUI.getController());
+		return listOfAll;
 	}
 	
 	public AbstractUI getCurrentView(){

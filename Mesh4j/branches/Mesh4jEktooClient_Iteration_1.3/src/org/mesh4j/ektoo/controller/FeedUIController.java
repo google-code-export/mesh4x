@@ -43,5 +43,5 @@ public class FeedUIController extends AbstractUIController
 	public ISyncAdapter createAdapter(List<IRDFSchema> schemas) {
 		return createAdapter();
 	}
-
+	
 }

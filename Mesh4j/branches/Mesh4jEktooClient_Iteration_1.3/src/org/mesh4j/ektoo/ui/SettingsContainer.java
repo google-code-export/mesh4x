@@ -1,7 +1,5 @@
 package org.mesh4j.ektoo.ui;
 
-import static org.mesh4j.ektoo.ui.settings.prop.AppPropertiesProvider.getProperty;
-
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -21,7 +19,6 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import org.mesh4j.ektoo.model.CloudModel;
 import org.mesh4j.ektoo.ui.component.RoundBorder;
 import org.mesh4j.ektoo.ui.settings.CloudSettingsModel;
 import org.mesh4j.ektoo.ui.settings.CloudSettingsUI;
@@ -32,7 +29,6 @@ import org.mesh4j.ektoo.ui.settings.GeneralSettingsUI;
 import org.mesh4j.ektoo.ui.settings.MySqlSettingsModel;
 import org.mesh4j.ektoo.ui.settings.MySqlSettingsUI;
 import org.mesh4j.ektoo.ui.settings.SettingsController;
-import org.mesh4j.ektoo.ui.settings.prop.AppProperties;
 
 
 public class SettingsContainer extends JPanel{

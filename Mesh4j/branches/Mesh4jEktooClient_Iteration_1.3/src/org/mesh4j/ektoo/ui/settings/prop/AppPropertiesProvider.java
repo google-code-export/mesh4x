@@ -86,7 +86,7 @@ public class AppPropertiesProvider {
 		return getPropetyManager().getPropertyAsDecrypted(propName);
 	}
 	
-	public static IIdentityProvider getIdentityProvider() {
+	public static IIdentityProvider getSyncIdentityProvider() {
 		try {
 			String identityProviderClassName = getPropetyManager().getProperty(
 					AppProperties.SYNC_IDENTITY_PROVIDER, LoggedInIdentityProvider.class

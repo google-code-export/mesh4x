@@ -96,6 +96,7 @@ public class MsAccessUI extends AbstractUI{
 //				for (String tableName : tableNames) {
 //					tableList.addItem(tableName);
 //				}
+				
 			} else {
 				((SyncItemUI)this.getParent().getParent()).openErrorPopUp(EktooUITranslator.getErrorImpossibleToOpenFileBecauseFileDoesNotExists());
 			}
@@ -123,13 +124,16 @@ public class MsAccessUI extends AbstractUI{
 		return (MsAccessUIController)controller;
 	}
 
+	
 	@Override
 	public void modelPropertyChange(final PropertyChangeEvent evt) {
 		if (evt.getPropertyName().equals(
 				MsAccessUIController.DATABASE_NAME_PROPERTY)) {
 			String newStringValue = evt.getNewValue().toString();
-			if (!getTxtFile().getText().equals(newStringValue))
+			if (!getTxtFile().getText().equals(newStringValue)){
 				getTxtFile().setText(newStringValue);
+				setList(newStringValue);
+			}
 		} else if (evt.getPropertyName().equals(
 				MsAccessUIController.TABLE_NAME_PROPERTY)) {
 			String newStringValue = evt.getNewValue().toString();

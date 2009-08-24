@@ -15,7 +15,7 @@ import org.mesh4j.ektoo.ui.AbstractView;
  * Generic Controller in MVC model,just hold collection of view and corresponding 
  * model.
  */
-public class AbstractViewController implements PropertyChangeListener{
+public  class AbstractViewController implements PropertyChangeListener{
 	
 	  	private final static Log LOGGER = LogFactory.getLog(AbstractViewController.class);
 		
@@ -23,11 +23,14 @@ public class AbstractViewController implements PropertyChangeListener{
 		private ArrayList<AbstractView> registeredViews = new ArrayList<AbstractView>();
 		private ArrayList<AbstractModel> registeredModels = new ArrayList<AbstractModel>();
 		
+		
 
 		public void addModel(AbstractModel model){ 
 			registeredModels.add(model);
 			model.addPropertyChangeListner(this);
 		}
+		
+	
 		
 		public String toString(){
 	 	  AbstractModel model = getModel();
@@ -37,7 +40,18 @@ public class AbstractViewController implements PropertyChangeListener{
 		public ArrayList<AbstractModel> getModels(){ 
 			return this.registeredModels;
 		}
-
+		
+		
+		public  <T extends AbstractModel> T getModel(Class<T> clazz){
+			for(AbstractModel model:this.registeredModels){
+				if(model.getClass() == clazz){
+					return (T) model;
+				}
+			}
+		return null;
+		}
+	
+		
 		public AbstractModel getModel(){ 
 			if (this.registeredModels.isEmpty())
 				return null;
@@ -61,7 +75,7 @@ public class AbstractViewController implements PropertyChangeListener{
 			registeredViews.add(view);
 		}
 
-		protected AbstractView getView(){
+		public AbstractView getView(){
 			if(!this.registeredViews.isEmpty()){
 				return this.registeredViews.get(0);
 			}

@@ -2,7 +2,7 @@ package org.mesh4j.ektoo;
 
 
 import static org.mesh4j.ektoo.ui.settings.prop.AppPropertiesProvider.getProperty;
-import static org.mesh4j.ektoo.ui.settings.prop.AppPropertiesProvider.getIdentityProvider;
+import static org.mesh4j.ektoo.ui.settings.prop.AppPropertiesProvider.getSyncIdentityProvider;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -362,7 +362,7 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 
 	@Override
 	public IIdentityProvider getIdentityProvider() {
-		return getIdentityProvider();
+		return getSyncIdentityProvider();
 	}
 
 	@Override

@@ -7,13 +7,29 @@ import static org.mesh4j.ektoo.ui.settings.prop.AppPropertiesProvider.getPropety
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.mesh4j.ektoo.controller.AbstractUIController;
 import org.mesh4j.ektoo.controller.AbstractViewController;
+import org.mesh4j.ektoo.controller.CloudUIController;
+import org.mesh4j.ektoo.controller.FeedUIController;
+import org.mesh4j.ektoo.controller.FolderUIController;
+import org.mesh4j.ektoo.controller.GSSheetUIController;
+import org.mesh4j.ektoo.controller.KmlUIController;
+import org.mesh4j.ektoo.controller.MsAccessUIController;
+import org.mesh4j.ektoo.controller.MsExcelUIController;
+import org.mesh4j.ektoo.controller.MySQLUIController;
+import org.mesh4j.ektoo.controller.ZipFeedUIController;
 import org.mesh4j.ektoo.model.AbstractModel;
+import org.mesh4j.ektoo.model.FeedModel;
+import org.mesh4j.ektoo.ui.EktooFrame;
 import org.mesh4j.ektoo.ui.settings.prop.AppProperties;
 import org.mesh4j.ektoo.ui.settings.prop.IPropertyManager;
+import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
+import org.mesh4j.sync.adapters.feed.atom.AtomSyndicationFormat;
+import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 
 
 public class SettingsController extends AbstractViewController {
@@ -60,12 +76,16 @@ public class SettingsController extends AbstractViewController {
 	
 	public final static String CREATE_PROP_AS_DEFAULT = "CreateAsDefaultProp";
 	private static IPropertyManager propertyManager = getPropetyManager();
+	private EktooFrame parent = null;
 	
-	
-	public SettingsController() {
+	public SettingsController(EktooFrame parent) {
 		super();
+		this.parent = parent;
 	}
 
+	/**
+	 * load all the settings from property manager
+	 */
 	public void loadSettings(){
 		loadGeneralSettings();
 		loadMysqlSettings();
@@ -264,7 +284,11 @@ public class SettingsController extends AbstractViewController {
 		}  
 		}
 		propertyManager.save();
+		
+		SettingsNotificationTask task = new SettingsNotificationTask(this.parent,this);
+		task.execute();
 	}
+	
 	
 	private void saveGSSSettings(GSSSettingsModel  gssSettingsModel){
 		String extension = "";

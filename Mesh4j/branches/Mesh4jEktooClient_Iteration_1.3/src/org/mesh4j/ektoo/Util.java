@@ -1,9 +1,12 @@
 package org.mesh4j.ektoo;
+import java.io.IOException;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.mesh4j.sync.adapters.hibernate.msaccess.MsAccessHibernateSyncAdapterFactory;
 
 public class Util {
 	private final  static Log LOOGER = LogFactory.getLog(Util.class);   
@@ -28,7 +31,14 @@ public class Util {
 		return new Integer(null);
 	}
 	
-	
+	public static Set<String> getMsAccessTableNames(String mdbFileAbsolutePath){
+		try {
+			return MsAccessHibernateSyncAdapterFactory.getTableNames(mdbFileAbsolutePath);
+		} catch (IOException e) {
+			LOOGER.error(e);
+		}
+		return null;
+	}
 	
 	
 
