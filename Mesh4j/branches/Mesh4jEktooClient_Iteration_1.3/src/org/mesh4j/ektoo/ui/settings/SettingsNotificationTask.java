@@ -5,6 +5,8 @@ import java.util.Set;
 
 import javax.swing.SwingWorker;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.controller.AbstractUIController;
 import org.mesh4j.ektoo.controller.CloudUIController;
 import org.mesh4j.ektoo.controller.FeedUIController;
@@ -17,35 +19,45 @@ import org.mesh4j.ektoo.controller.MySQLUIController;
 import org.mesh4j.ektoo.controller.ZipFeedUIController;
 import org.mesh4j.ektoo.model.FeedModel;
 import org.mesh4j.ektoo.ui.EktooFrame;
+import org.mesh4j.ektoo.ui.component.messagedialog.MessageDialog;
+import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.adapters.feed.atom.AtomSyndicationFormat;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 
 public class SettingsNotificationTask extends SwingWorker<Void, Void>{
 
-	private SettingsController settingsController = null;
-	private EktooFrame parent = null;
+	private final static Log LOGGER = LogFactory.getLog(SettingsNotificationTask.class);
 	
-	public SettingsNotificationTask(EktooFrame parent,SettingsController settingsController){
+	private SettingsController settingsController = null;
+	private EktooFrame ui = null;
+	
+	public SettingsNotificationTask(EktooFrame ui,SettingsController settingsController){
 		this.settingsController = settingsController;
-		this.parent = parent;
+		this.ui = ui;
 	}
 	
 	@Override
 	protected Void doInBackground() throws Exception {
-		parent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-		
-		Set<AbstractUIController> sourceControllers = this.parent.getSourceItem().getAllController();
-		Set<AbstractUIController> targetControllers = this.parent.getTargetItem().getAllController();
+		ui.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
+		try{
+		Set<AbstractUIController> sourceControllers = this.ui.getSourceItem().getAllController();
+		Set<AbstractUIController> targetControllers = this.ui.getTargetItem().getAllController();
 		
 		notifyUIControllers(sourceControllers, true);
 		notifyUIControllers(targetControllers, false);
-		return null;
+	} catch (Exception ex){
+		LOGGER.error(ex);
+		MessageDialog.showErrorMessage(ui, 
+				EktooUITranslator.getErrorSettingsLoading());
+	}
+	return null;
 	}
 
 	@Override
 	public void done(){
-		parent.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		ui.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 	}
 	
 	
