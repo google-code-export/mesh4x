@@ -1,5 +1,5 @@
 package org.mesh4j.ektoo.ui;
-
+import static org.mesh4j.translator.MessageProvider.translate;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -29,6 +29,8 @@ import org.mesh4j.ektoo.ui.settings.GeneralSettingsUI;
 import org.mesh4j.ektoo.ui.settings.MySqlSettingsModel;
 import org.mesh4j.ektoo.ui.settings.MySqlSettingsUI;
 import org.mesh4j.ektoo.ui.settings.SettingsController;
+import org.mesh4j.translator.MessageNames;
+
 
 
 public class SettingsContainer extends JPanel{
@@ -40,7 +42,7 @@ public class SettingsContainer extends JPanel{
 	private final static String SETTINGS_GENERAL = "General";
 	private final static String SETTINGS_CLOUD = "Cloud";
 	private final static String SETTINGS_MYSQL = "Mysql";
-	private final static String SETTINGS_GOOGLE = "Google spreadsheet";
+	private final static String SETTINGS_GOOGLE = "Google Spreadsheet";
 	private EktooFrame ektooFrame = null;
 	
 	public SettingsContainer(SettingsController controller,EktooFrame ektooFrame){
@@ -52,7 +54,7 @@ public class SettingsContainer extends JPanel{
 	}
 
 	private void initComponents(){
-		this.add(createHeaderPane(),BorderLayout.NORTH);
+//		this.add(createHeaderPane(),BorderLayout.NORTH);
 		this.add(createTreeMenuPane(),BorderLayout.WEST);
 		this.add(createSettingsComponentPane(),BorderLayout.CENTER);
 		this.add(createFooterPane(),BorderLayout.SOUTH);
@@ -76,21 +78,17 @@ public class SettingsContainer extends JPanel{
 	}
 	
 	private JTree createSettingsTree(){
+		
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode("Settings");
+		
 		DefaultMutableTreeNode generalNode = new DefaultMutableTreeNode(SETTINGS_GENERAL);
-	    root.add(generalNode);
-	    
-	    DefaultMutableTreeNode dataSourceNode = new DefaultMutableTreeNode("Data source");
-	    root.add(dataSourceNode);
-	    
+		root.add(generalNode);
 	    DefaultMutableTreeNode cloudNode = new DefaultMutableTreeNode(SETTINGS_CLOUD);
-	    dataSourceNode.add(cloudNode);
-	    
-	    
+	    root.add(cloudNode);
 	    DefaultMutableTreeNode gssNode = new DefaultMutableTreeNode(SETTINGS_GOOGLE);
-	    dataSourceNode.add(gssNode);
+	    root.add(gssNode);
 	    DefaultMutableTreeNode mysqlNode = new DefaultMutableTreeNode(SETTINGS_MYSQL);
-	    dataSourceNode.add(mysqlNode);
+	    root.add(mysqlNode);
     
         final JTree settingsTree = new JTree(root);
     	settingsTree.addTreeSelectionListener(new TreeSelectionListener(){
@@ -121,11 +119,9 @@ public class SettingsContainer extends JPanel{
 		controller.addModel(new GeneralSettingsModel());
 		controller.addView(generalSettingsUI);
 		
-		
 		GSSSettingsUI gssSettingsUI = new GSSSettingsUI(controller);
 		controller.addModel(new GSSSettingsModel());
 		controller.addView(gssSettingsUI);
-		
 		
 		CloudSettingsUI cloudSettingsUI = new CloudSettingsUI(controller);
 		controller.addModel(new CloudSettingsModel());
@@ -143,9 +139,6 @@ public class SettingsContainer extends JPanel{
 		return parentSettingsPanel;
 	}
 	
-	
-	
-	
 	private JPanel createFooterPane(){
 		JPanel headerPanel = new JPanel(new BorderLayout(10,5));
 		headerPanel.setBorder(BorderFactory.createTitledBorder( new RoundBorder(Color.LIGHT_GRAY)));
@@ -156,7 +149,7 @@ public class SettingsContainer extends JPanel{
 	private JPanel getButtonPanel(){
 		JPanel headerPanel = new JPanel(new GridBagLayout());
 		
-		JButton okButton = new JButton("Ok");
+		JButton okButton = new JButton(translate(MessageNames.LABEL_BUTTON_OK));
 		okButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -164,14 +157,13 @@ public class SettingsContainer extends JPanel{
 				close();
 		}});
 		
-		JButton cancelButton = new JButton("Cancel");
+		JButton cancelButton = new JButton(translate(MessageNames.LABEL_BUTTON_CANCEL));
 		cancelButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				close();
 			}});
 
-		
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.NONE;
 		c.gridx = 0;

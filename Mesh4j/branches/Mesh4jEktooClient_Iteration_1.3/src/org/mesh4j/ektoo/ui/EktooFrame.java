@@ -67,22 +67,8 @@ public class EktooFrame extends JFrame implements IErrorListener, ISynchronizeTa
 	private SyncItemUI sourceItem = null;
 	private SyncItemUI targetItem = null;
 
-	//TODO (raju) need not as instance variable,need to refactor
-	private JPanel panel = null;
-	//private JButton btnSync = null;
 	private JLabel btnSync = null;
-
-	//TODO (raju) need not as instance variable,need to refactor
-	private JPanel panelImage = null;
-	//TODO (raju) need not as instance variable,need to refactor
-	private JPanel headerPanel = null;
-
 	public static boolean multiModeSync = false;
-	
-	//TODO (raju) need not as instance variable,need to refactor
-	private JPanel panelSyncMode = null;
-	private JPanel panelDateFilter = null;
-	private JPanel panelSyncConfig = null;
 	
 	private JRadioButton singleModeRadio;
 	private JRadioButton multiModeRadio;
@@ -150,8 +136,8 @@ public class EktooFrame extends JFrame implements IErrorListener, ISynchronizeTa
 	}
 	
 	private JPanel getHeaderPanel(){
-		if(headerPanel == null){
-			headerPanel = new JPanel(new BorderLayout(15,10));	
+//		if(headerPanel == null){
+			JPanel headerPanel = new JPanel(new BorderLayout(15,10));	
 			headerPanel.setBackground(Color.WHITE);
 			
 			JPanel linkPanel = new JPanel();
@@ -183,7 +169,7 @@ public class EktooFrame extends JFrame implements IErrorListener, ISynchronizeTa
 			linkPanel.add(settingsLink);
 			linkPanel.add(helpLink);
 			linkPanel.add(aboutLink);
-		}
+		
 		return headerPanel;
 	}
 	
@@ -202,23 +188,13 @@ public class EktooFrame extends JFrame implements IErrorListener, ISynchronizeTa
 	}
 	
 	protected void launchSettingsUI(){
-		
-//		IPropertyManager propertyManager  = new PropertyManager(PropertiesProvider.getSettingsPropertyLocation());
-//		EncryptionUtil encryptionUtil = null;
-//		try {
-//			encryptionUtil = new EncryptionUtil("",EncryptionUtil.ALGORITHM.DES);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//		propertyManager.setEncryptionUtil(encryptionUtil);
-		
 		SettingsViewTask settingsViewTask = new SettingsViewTask(this);
 		settingsViewTask.execute();
 	}
 	
 	private JPanel getJPanel() {
-		if (panel == null) {
-			panel = new JPanel();
+		
+			JPanel panel = new JPanel();
 			panel.setBackground(Color.WHITE);
 			GridBagLayout gridBagLayout = new GridBagLayout();
 
@@ -273,14 +249,14 @@ public class EktooFrame extends JFrame implements IErrorListener, ISynchronizeTa
 			c.gridy = 6;
 			c.gridwidth = 2;
 			panel.add(getStatusBar(), c);
-		}
+		
 		return panel;
 	}
 	
 	
 	private JPanel getImagePanel() {
-		if (panelImage == null) {
-			panelImage = new JPanel();
+//		if (panelImage == null) {
+			JPanel panelImage = new JPanel();
 			panelImage.setOpaque(false);
 			panelImage.setLayout(new GridBagLayout());
 
@@ -301,7 +277,6 @@ public class EktooFrame extends JFrame implements IErrorListener, ISynchronizeTa
 			c.fill = GridBagConstraints.CENTER;
 			c.gridx = 2;
 			panelImage.add(getTargetImageLabel(), c);
-		}
 
 		return panelImage;
 	}
@@ -466,56 +441,54 @@ public class EktooFrame extends JFrame implements IErrorListener, ISynchronizeTa
 	}
 	
 	JPanel getSyncConfigPanel(){
-		if (panelSyncConfig == null) {
-			panelSyncConfig = new JPanel();
-			panelSyncConfig.setOpaque(false);
+//		if (panelSyncConfig == null) {
+		JPanel panelSyncConfig = new JPanel();
+		panelSyncConfig.setOpaque(false);
+		
+		GridLayout gl = new GridLayout(1,2);
+		gl.setHgap(10);
+		panelSyncConfig.setLayout(gl);			
+		
+		panelSyncConfig.add(getSyncModePanel());
+		panelSyncConfig.add(getDateFilterPanel());
 			
-			GridLayout gl = new GridLayout(1,2);
-			gl.setHgap(10);
-			panelSyncConfig.setLayout(gl);			
-			
-			panelSyncConfig.add(getSyncModePanel());
-			panelSyncConfig.add(getDateFilterPanel());
-			
-		}
 		return panelSyncConfig;			
 	}
 	
 	JPanel getSyncModePanel(){
-		if (panelSyncMode == null) {
-			panelSyncMode = new JPanel();
-			panelSyncMode.setOpaque(false);
-			panelSyncMode.setBorder(BorderFactory.createTitledBorder( new RoundBorder(Color.LIGHT_GRAY), 
-					EktooUITranslator.getSyncModeText())); 
-			panelSyncMode.setLayout(new GridLayout(1,2));			
-			
-			panelSyncMode.add(getSingleModeRadio());
-			panelSyncMode.add(getMultiModeRadio());
-			
-			getSingleModeRadio().setSelected(true);
-			
-			ButtonGroup group = new ButtonGroup();
-			group.add(getSingleModeRadio());
-			group.add(getMultiModeRadio());
-		}
+		JPanel panelSyncMode = new JPanel();
+		panelSyncMode.setOpaque(false);
+		panelSyncMode.setBorder(BorderFactory.createTitledBorder( new RoundBorder(Color.LIGHT_GRAY), 
+				EktooUITranslator.getSyncModeText())); 
+		panelSyncMode.setLayout(new GridLayout(1,2));			
+		
+		panelSyncMode.add(getSingleModeRadio());
+		panelSyncMode.add(getMultiModeRadio());
+		
+		getSingleModeRadio().setSelected(true);
+		
+		ButtonGroup group = new ButtonGroup();
+		group.add(getSingleModeRadio());
+		group.add(getMultiModeRadio());
+	
 		return panelSyncMode;		
 	}
 
 	JPanel getDateFilterPanel(){
-		if (panelDateFilter == null) {
-			panelDateFilter = new JPanel();
-			panelDateFilter.setOpaque(false);
-			panelDateFilter.setBorder(BorderFactory.createTitledBorder( new RoundBorder(Color.LIGHT_GRAY),
-					EktooUITranslator.getSyncFilterTypeText()));
-			GridLayout gl = new GridLayout(1,2);
-			gl.setHgap(2);
-			panelDateFilter.setLayout(gl);			
-			panelDateFilter.add(getDateFilter());
-			
-			dateInputPanel = new JDateChooser("yyyy/MM/dd", "####/##/##", '_');
-			dateInputPanel.setEnabled(false);
-			panelDateFilter.add(dateInputPanel);
-		}
+		
+		JPanel panelDateFilter = new JPanel();
+		panelDateFilter.setOpaque(false);
+		panelDateFilter.setBorder(BorderFactory.createTitledBorder( new RoundBorder(Color.LIGHT_GRAY),
+				EktooUITranslator.getSyncFilterTypeText()));
+		GridLayout gl = new GridLayout(1,2);
+		gl.setHgap(2);
+		panelDateFilter.setLayout(gl);			
+		panelDateFilter.add(getDateFilter());
+		
+		dateInputPanel = new JDateChooser("yyyy/MM/dd", "####/##/##", '_');
+		dateInputPanel.setEnabled(false);
+		panelDateFilter.add(dateInputPanel);
+	
 		return panelDateFilter;		
 	}
 	
@@ -916,6 +889,7 @@ public class EktooFrame extends JFrame implements IErrorListener, ISynchronizeTa
 		popupviewWindow.setResizable(resizable);
 		popupviewWindow.setVisible(true);
 	}
+	
 	
 	public void closePopupViewWindow(){
 		popupviewWindow.dispose();

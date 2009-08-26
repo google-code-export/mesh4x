@@ -24,6 +24,7 @@ import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadsheetUtils;
 import org.mesh4j.sync.adapters.googlespreadsheet.IGoogleSpreadSheet;
 import org.mesh4j.sync.adapters.googlespreadsheet.model.GSRow;
 import org.mesh4j.sync.adapters.googlespreadsheet.model.GSWorksheet;
+import org.mesh4j.sync.adapters.msexcel.MsExcelContentAdapter;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.Item;
@@ -357,4 +358,21 @@ public class InterRepositorySyncTest {
 		Assert.assertEquals(sourceAdapter.getAll().size(), targetAdapter
 				.getAll().size());
 	}
+	
+	@Test
+	public void ShouldSyncExcelToExcelAndHandleSpecialCharacter(){
+		ISyncAdapterBuilder builder = new SyncAdapterBuilder( );
+		
+		File sourceContentFile = new File("c:/Book1.xlsx");
+		ISyncAdapter sourceAsExcel = builder.createMsExcelAdapter(sourceContentFile.getAbsolutePath(),"patient",new String[] {"id"},false);
+		
+		File targetContentFile = new File("c:/Book2.xlsx");
+		ISyncAdapter targetAsExcel = builder.createMsExcelAdapter(targetContentFile.getAbsolutePath(),"patient",new String[] {"id"},false);
+
+		SyncEngine engine = new SyncEngine(sourceAsExcel,targetAsExcel);
+		List<Item> listOfConflicts = engine.synchronize();
+		Assert.assertEquals(0, listOfConflicts.size());
+	}
+	
+	
 }

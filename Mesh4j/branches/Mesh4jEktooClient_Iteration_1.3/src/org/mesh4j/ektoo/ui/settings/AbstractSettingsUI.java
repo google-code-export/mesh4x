@@ -1,5 +1,5 @@
 package org.mesh4j.ektoo.ui.settings;
-
+import static org.mesh4j.translator.MessageProvider.translate;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -8,6 +8,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 
 import org.mesh4j.ektoo.ui.AbstractView;
+import org.mesh4j.translator.MessageNames;
 
 public abstract class AbstractSettingsUI extends AbstractView{
 
@@ -27,8 +28,6 @@ public abstract class AbstractSettingsUI extends AbstractView{
 
 	
 	 
-	
-
 
 	protected JCheckBox getDefaultCheckBox(){
 		if(defultCheckBox == null){
@@ -47,7 +46,7 @@ public abstract class AbstractSettingsUI extends AbstractView{
 	
 	protected JButton getDefaultButton(){
 		if(defaultButton == null){
-		defaultButton = new JButton("Restore Defaults");
+		defaultButton = new JButton(translate(MessageNames.LABEL_BUTTON_RESTORE_DEFAULTS));
 		defaultButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -57,6 +56,7 @@ public abstract class AbstractSettingsUI extends AbstractView{
 		}
 		return defaultButton;
 	}
+	
 	
 	
 	private SettingsController getController(){

@@ -1,6 +1,7 @@
 package org.mesh4j.ektoo;
 
-import static org.mesh4j.ektoo.ui.settings.prop.AppPropertiesProvider.getPropetyManager;
+import static org.mesh4j.ektoo.ui.settings.prop.AppPropertiesProvider.getProperty;
+
 import java.awt.EventQueue;
 import java.util.Enumeration;
 
@@ -14,17 +15,21 @@ import org.mesh4j.ektoo.controller.EktooController;
 import org.mesh4j.ektoo.ui.EktooFrame;
 import org.mesh4j.ektoo.ui.settings.prop.AppProperties;
 import org.mesh4j.translator.EktooMessageTranslator;
+import org.mesh4j.translator.MessageProvider;
 
 /**
  * @author Bhuiyan Mohammad Iklash
- * 
  */
 public class Ektoo {
 	
 	private final static Log LOGGER = LogFactory.getLog(Ektoo.class);
-	
+	private static EktooFrame parentUI= null; 
 	
 	public static void main(String[] args) {
+		
+		MessageProvider.init(MessageProvider.LANGUAGE_ENGLISH, 
+				MessageProvider.LANGUAGE_ENGLISH);
+		
 		initLookAndFeel();
 		setUIFont(new FontUIResource(EktooMessageTranslator
 				.translate("EKTOO_DEFAULT_UNICODE_FONT_NAME"), Integer
@@ -36,7 +41,7 @@ public class Ektoo {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					new Ektoo();
+					new Ektoo().initUI();
 				} catch (Exception e) {
 					LOGGER.error(e.getMessage(), e);
 				}
@@ -44,20 +49,26 @@ public class Ektoo {
 		});
 	}
 
-	public Ektoo() 
-	{
-		
+	private Ektoo(){ 
+	}
+	
+	private void initUI(){
 		EktooController controller = new EktooController();
-		JFrame thisClass = new EktooFrame(controller);
-		thisClass.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		thisClass.setVisible(true);
+		parentUI = new EktooFrame(controller);
+		parentUI.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		parentUI.setVisible(true);
+	}
+	
+	//TODO (raju)improve
+	public static EktooFrame getParentContainer(){
+		return parentUI;
 	}
 	
 	private static void initLookAndFeel() 
 	{
 		try 
 		{
-			String lookAndFeel= getPropetyManager().getProperty(AppProperties.LOOK_AND_FEEL_CLASS_NAME);
+			String lookAndFeel= getProperty(AppProperties.LOOK_AND_FEEL_CLASS_NAME);
 		  if (lookAndFeel != null && lookAndFeel.trim().length() != 0)
 		    UIManager.setLookAndFeel(lookAndFeel);
 		  else

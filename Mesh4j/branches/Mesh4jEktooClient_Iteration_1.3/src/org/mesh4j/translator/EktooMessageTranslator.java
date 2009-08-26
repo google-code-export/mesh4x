@@ -6,14 +6,21 @@ import java.util.ResourceBundle;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+/**
+ * @deprecated  As of release 1.3, replaced by 
+ * {@link #org.mesh4j.translator.MessageProvider}
+ */
+
+@Deprecated
 public class EktooMessageTranslator {
 	
 	private static final Log LOGGER = LogFactory.getLog(EktooMessageTranslator.class);
 	private static ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("ektoo_resources");
 	
 	
-
+	
 	public static String translate(String key) {
+		
 		String messageText;
 		try {
 			messageText = RESOURCE_BUNDLE.getString(key);

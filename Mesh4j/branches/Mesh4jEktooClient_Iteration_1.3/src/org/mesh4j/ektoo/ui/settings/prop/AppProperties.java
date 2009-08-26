@@ -20,6 +20,8 @@ package org.mesh4j.ektoo.ui.settings.prop;
 public class AppProperties {
 
 	
+	private AppProperties(){}
+	
 	public static final String USER_NAME_GOOGLE = "user.google";
 	public static final String USER_PASSWORD_GOOGLE = "user.password.google";
 	

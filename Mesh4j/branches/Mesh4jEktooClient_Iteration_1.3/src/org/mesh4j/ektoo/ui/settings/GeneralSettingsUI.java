@@ -1,9 +1,12 @@
 package org.mesh4j.ektoo.ui.settings;
+import static org.mesh4j.translator.MessageProvider.translate;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,7 +21,9 @@ import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -27,7 +32,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.ui.component.DocumentModelAdapter;
 import org.mesh4j.ektoo.ui.settings.prop.AppProperties;
-import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
+import org.mesh4j.translator.MessageNames;
 
 public class GeneralSettingsUI extends AbstractSettingsUI{
 
@@ -53,8 +58,6 @@ public class GeneralSettingsUI extends AbstractSettingsUI{
 	private JTextField pathSourceZipTextField;
 	
 
-	
-	
 
 	public GeneralSettingsUI(SettingsController controller) {
 		super(controller);
@@ -63,15 +66,44 @@ public class GeneralSettingsUI extends AbstractSettingsUI{
 	}
 	
 	
+	 private JComponent getSeperator(){ 
+		 JPanel spePanel = new JPanel(new GridLayout(1,1,0,0));
+		 spePanel.setOpaque(false);
+		 JSeparator separator = new JSeparator(SwingConstants.HORIZONTAL);
+		 spePanel.add(separator);
+	    return spePanel;
+	  }
+	
+	private JPanel getHeaderPane(){
+		JPanel headerPane = new JPanel(new BorderLayout());
+		JPanel titlePane = new JPanel();
+		JLabel titleLabel = new JLabel(translate(MessageNames.TITLE_SETTINGS_GENERAL));
+		titleLabel.setFont(new Font(Font.SANS_SERIF,Font.BOLD,15));
+		titlePane.add(titleLabel);
+		headerPane.add(titlePane,BorderLayout.CENTER);
+		headerPane.add(getSeperator(),BorderLayout.SOUTH);
+		headerPane.setPreferredSize(new Dimension(100,40));
+		return headerPane;
+	}
+	
+	
 	private void init(){
 		GridBagConstraints c = new GridBagConstraints();
 		
-	
+		
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 0;
+		c.gridwidth =3;
+		c.insets = new Insets(0, 0, 0, 0);
+		this.add(getHeaderPane(), c);
+		
+		
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 1;
 		c.gridy = 1;
 		c.gridwidth =2;
-		c.insets = new Insets(50, 20, 0, 10);
+		c.insets = new Insets(15, 20, 0, 10);
 		this.add(getLanguageComboBox(), c);
 		
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -237,7 +269,7 @@ public class GeneralSettingsUI extends AbstractSettingsUI{
 		langComboBox.addItem(AppProperties.LANGUAGE_ENGLISH);
 		langComboBox.addItem(AppProperties.LANGUAGE_SYSTEM_DEFAULT);
 		
-		JLabel label = new JLabel("Language");
+		JLabel label = new JLabel(translate(MessageNames.LABEL_LANGUAGE));
 		label.setPreferredSize(new Dimension(150,20));
 		panel.add(label,BorderLayout.WEST);
 		panel.add(langComboBox,BorderLayout.CENTER);
@@ -272,8 +304,7 @@ public class GeneralSettingsUI extends AbstractSettingsUI{
 		});
 		final JButton fileBrowserButton = new JButton();
 		
-		
-		JLabel label = new JLabel("Excel Source File");
+		JLabel label = new JLabel(translate(MessageNames.LABEL_EXCEL_TARGET));
 		label.setPreferredSize(new Dimension(150,20));
 		fileBrowserPanel.add(label,BorderLayout.WEST);
 		
@@ -283,7 +314,9 @@ public class GeneralSettingsUI extends AbstractSettingsUI{
 		fileBrowserButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				launchFileBrowser(JFileChooser.FILES_ONLY,fileBrowserButton,pathTargetExcelTextField,EktooUITranslator.getExcelFileSelectorTitle(),
+				launchFileBrowser(JFileChooser.FILES_ONLY,fileBrowserButton,
+						pathTargetExcelTextField,
+						translate(MessageNames.DESC_EXCEL_FILE_CHOOSER),
 						"xls","XLS","xlsx","XLSX");
 			}
 		});
@@ -307,8 +340,7 @@ public class GeneralSettingsUI extends AbstractSettingsUI{
 		});
 		final JButton fileBrowserButton = new JButton();
 		
-		
-		JLabel label = new JLabel("Excel Target File");
+		JLabel label = new JLabel(translate(MessageNames.LABEL_EXCEL_SOURCE));
 		label.setPreferredSize(new Dimension(150,20));
 		fileBrowserPanel.add(label,BorderLayout.WEST);
 		
@@ -318,8 +350,11 @@ public class GeneralSettingsUI extends AbstractSettingsUI{
 		fileBrowserButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-					launchFileBrowser(JFileChooser.FILES_ONLY,fileBrowserButton,pathSourceExcelTextField,EktooUITranslator.getExcelFileSelectorTitle(),
-						"xls","XLS","xlsx","XLSX");
+					launchFileBrowser(JFileChooser.FILES_ONLY,
+							fileBrowserButton,
+							pathSourceExcelTextField,
+							translate(MessageNames.DESC_EXCEL_FILE_CHOOSER),
+							"xls","XLS","xlsx","XLSX");
 			}
 		});
 		return fileBrowserPanel;
@@ -343,7 +378,7 @@ public class GeneralSettingsUI extends AbstractSettingsUI{
 		final JButton fileBrowserButton = new JButton();
 		
 		
-		JLabel label = new JLabel("Access source file");
+		JLabel label = new JLabel(translate(MessageNames.LABEL_ACCESS_SOURCE));
 		label.setPreferredSize(new Dimension(150,20));
 		fileBrowserPanel.add(label,BorderLayout.WEST);
 		
@@ -353,8 +388,11 @@ public class GeneralSettingsUI extends AbstractSettingsUI{
 		fileBrowserButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				launchFileBrowser(JFileChooser.FILES_ONLY,fileBrowserButton,pathSourceAccessTextField,
-						EktooUITranslator.getMSAccessFileSelectorTitle(),"mdb");
+				launchFileBrowser(JFileChooser.FILES_ONLY,
+						fileBrowserButton,
+						pathSourceAccessTextField,
+						translate(MessageNames.DESC_ACCESS_FILE_CHOOSER),
+						"mdb");
 			}
 		});
 		return fileBrowserPanel;
@@ -378,7 +416,7 @@ public class GeneralSettingsUI extends AbstractSettingsUI{
 		final JButton fileBrowserButton = new JButton();
 		
 		
-		JLabel label = new JLabel("Access target file");
+		JLabel label = new JLabel(translate(MessageNames.LABEL_ACCESS_TARGET));
 		label.setPreferredSize(new Dimension(150,20));
 		fileBrowserPanel.add(label,BorderLayout.WEST);
 		
@@ -388,8 +426,11 @@ public class GeneralSettingsUI extends AbstractSettingsUI{
 		fileBrowserButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				launchFileBrowser(JFileChooser.FILES_ONLY,fileBrowserButton,pathTargeteAccessTextField,
-						EktooUITranslator.getMSAccessFileSelectorTitle(),"mdb");
+				launchFileBrowser(JFileChooser.FILES_ONLY,
+						fileBrowserButton,
+						pathTargeteAccessTextField,
+						translate(MessageNames.DESC_ACCESS_FILE_CHOOSER),
+						"mdb");
 			}
 		});
 		return fileBrowserPanel;
@@ -413,7 +454,7 @@ public class GeneralSettingsUI extends AbstractSettingsUI{
 		final JButton fileBrowserButton = new JButton();
 		
 		
-		JLabel label = new JLabel("Kml source file");
+		JLabel label = new JLabel(translate(MessageNames.LABEL_KML_SOURCE));
 		label.setPreferredSize(new Dimension(150,20));
 		fileBrowserPanel.add(label,BorderLayout.WEST);
 		
@@ -423,8 +464,11 @@ public class GeneralSettingsUI extends AbstractSettingsUI{
 		fileBrowserButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				launchFileBrowser(JFileChooser.FILES_ONLY,fileBrowserButton,pathSourceKmlTextField,
-						EktooUITranslator.getKMLFileSelectorTitle(),"kml", "kmz", "KML", "KMZ");
+				launchFileBrowser(JFileChooser.FILES_ONLY,
+						fileBrowserButton,
+						pathSourceKmlTextField,
+						translate(MessageNames.DESC_KML_FILE_CHOOSER),
+						"kml", "kmz", "KML", "KMZ");
 			}
 		});
 		return fileBrowserPanel;
@@ -448,7 +492,7 @@ public class GeneralSettingsUI extends AbstractSettingsUI{
 		final JButton fileBrowserButton = new JButton();
 		
 		
-		JLabel label = new JLabel("Kml target file");
+		JLabel label = new JLabel(translate(MessageNames.LABEL_KML_TARGET));
 		label.setPreferredSize(new Dimension(150,20));
 		fileBrowserPanel.add(label,BorderLayout.WEST);
 		
@@ -458,8 +502,11 @@ public class GeneralSettingsUI extends AbstractSettingsUI{
 		fileBrowserButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				launchFileBrowser(JFileChooser.FILES_ONLY,fileBrowserButton,pathTargetKmlTextField,
-						EktooUITranslator.getKMLFileSelectorTitle(),"kml", "kmz", "KML", "KMZ");
+				launchFileBrowser(JFileChooser.FILES_ONLY,
+						fileBrowserButton,
+						pathTargetKmlTextField,
+						translate(MessageNames.DESC_KML_FILE_CHOOSER),
+						"kml", "kmz", "KML", "KMZ");
 			}
 		});
 		return fileBrowserPanel;
@@ -483,7 +530,7 @@ public class GeneralSettingsUI extends AbstractSettingsUI{
 		final JButton fileBrowserButton = new JButton();
 		
 		
-		JLabel label = new JLabel("Rss source file");
+		JLabel label = new JLabel(translate(MessageNames.LABEL_RSS_SOURCE));
 		label.setPreferredSize(new Dimension(150,20));
 		fileBrowserPanel.add(label,BorderLayout.WEST);
 		
@@ -493,8 +540,11 @@ public class GeneralSettingsUI extends AbstractSettingsUI{
 		fileBrowserButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				launchFileBrowser(JFileChooser.FILES_ONLY,fileBrowserButton,pathSourceRssTextField,
-						EktooUITranslator.getXMLFileSelectorTitle(),"xml");
+				launchFileBrowser(JFileChooser.FILES_ONLY,
+						fileBrowserButton,
+						pathSourceRssTextField,
+						translate(MessageNames.DESC_RSS_FILE_CHOOSER),
+						"xml");
 			}
 		});
 		return fileBrowserPanel;
@@ -518,7 +568,7 @@ public class GeneralSettingsUI extends AbstractSettingsUI{
 		final JButton fileBrowserButton = new JButton();
 		
 		
-		JLabel label = new JLabel("Rss target file");
+		JLabel label = new JLabel(translate(MessageNames.LABEL_RSS_TARGET));
 		label.setPreferredSize(new Dimension(150,20));
 		fileBrowserPanel.add(label,BorderLayout.WEST);
 		
@@ -528,8 +578,11 @@ public class GeneralSettingsUI extends AbstractSettingsUI{
 		fileBrowserButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				launchFileBrowser(JFileChooser.FILES_ONLY,fileBrowserButton,pathTargetRssTextField,
-						EktooUITranslator.getXMLFileSelectorTitle(),"xml");
+				launchFileBrowser(JFileChooser.FILES_ONLY,
+						fileBrowserButton,
+						pathTargetRssTextField,
+						translate(MessageNames.DESC_RSS_FILE_CHOOSER),
+						"xml");
 			}
 		});
 		return fileBrowserPanel;
@@ -553,7 +606,7 @@ public class GeneralSettingsUI extends AbstractSettingsUI{
 		final JButton fileBrowserButton = new JButton();
 		
 		
-		JLabel label = new JLabel("Atom source file");
+		JLabel label = new JLabel(translate(MessageNames.LABEL_ATOM_SOURCE));
 		label.setPreferredSize(new Dimension(150,20));
 		fileBrowserPanel.add(label,BorderLayout.WEST);
 		
@@ -563,8 +616,11 @@ public class GeneralSettingsUI extends AbstractSettingsUI{
 		fileBrowserButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				launchFileBrowser(JFileChooser.FILES_ONLY,fileBrowserButton,pathSourceAtomTextField,
-						EktooUITranslator.getXMLFileSelectorTitle(),"xml");
+				launchFileBrowser(JFileChooser.FILES_ONLY,
+						fileBrowserButton,
+						pathSourceAtomTextField,
+						translate(MessageNames.DESC_ATOM_FILE_CHOOSER),
+						"xml");
 			}
 		});
 		return fileBrowserPanel;
@@ -588,7 +644,7 @@ public class GeneralSettingsUI extends AbstractSettingsUI{
 		final JButton fileBrowserButton = new JButton();
 		
 		
-		JLabel label = new JLabel("Atom target file");
+		JLabel label = new JLabel(translate(MessageNames.LABEL_ATOM_TARGET));
 		label.setPreferredSize(new Dimension(150,20));
 		fileBrowserPanel.add(label,BorderLayout.WEST);
 		
@@ -598,8 +654,11 @@ public class GeneralSettingsUI extends AbstractSettingsUI{
 		fileBrowserButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				launchFileBrowser(JFileChooser.FILES_ONLY,fileBrowserButton,pathTargetAtomTextField,
-						EktooUITranslator.getXMLFileSelectorTitle(),"xml");
+				launchFileBrowser(JFileChooser.FILES_ONLY,
+						fileBrowserButton,
+						pathTargetAtomTextField,
+						translate(MessageNames.DESC_ATOM_FILE_CHOOSER),
+						"xml");
 			}
 		});
 		return fileBrowserPanel;
@@ -623,7 +682,7 @@ public class GeneralSettingsUI extends AbstractSettingsUI{
 		final JButton fileBrowserButton = new JButton();
 		
 		
-		JLabel label = new JLabel("Folder source file");
+		JLabel label = new JLabel(translate(MessageNames.LABEL_FOLDER_SOURCE));
 		label.setPreferredSize(new Dimension(150,20));
 		fileBrowserPanel.add(label,BorderLayout.WEST);
 		
@@ -633,7 +692,10 @@ public class GeneralSettingsUI extends AbstractSettingsUI{
 		fileBrowserButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				launchFileBrowser(JFileChooser.DIRECTORIES_ONLY,fileBrowserButton,pathSourceFolderTextField,"Select directory");
+				launchFileBrowser(JFileChooser.DIRECTORIES_ONLY,
+						fileBrowserButton,
+						pathSourceFolderTextField,
+						translate(MessageNames.DESC_FOLDER_FILE_CHOOSER));
 			}
 		});
 		return fileBrowserPanel;
@@ -657,7 +719,7 @@ public class GeneralSettingsUI extends AbstractSettingsUI{
 		final JButton fileBrowserButton = new JButton();
 		
 		
-		JLabel label = new JLabel("Folder target file");
+		JLabel label = new JLabel(translate(MessageNames.LABEL_FOLDER_TARGET));
 		label.setPreferredSize(new Dimension(150,20));
 		fileBrowserPanel.add(label,BorderLayout.WEST);
 		
@@ -667,7 +729,11 @@ public class GeneralSettingsUI extends AbstractSettingsUI{
 		fileBrowserButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				launchFileBrowser(JFileChooser.DIRECTORIES_ONLY,fileBrowserButton,pathTargetFolderTextField,"Select directory");
+				launchFileBrowser(JFileChooser.DIRECTORIES_ONLY,
+						fileBrowserButton,
+						pathTargetFolderTextField,
+						translate(MessageNames.DESC_FOLDER_FILE_CHOOSER)
+						);
 			}
 		});
 		return fileBrowserPanel;
@@ -690,8 +756,7 @@ public class GeneralSettingsUI extends AbstractSettingsUI{
 		});
 		final JButton fileBrowserButton = new JButton();
 		
-		
-		JLabel label = new JLabel("Zip source file");
+		JLabel label = new JLabel(translate(MessageNames.LABEL_ZIP_SOURCE));
 		label.setPreferredSize(new Dimension(150,20));
 		fileBrowserPanel.add(label,BorderLayout.WEST);
 		
@@ -701,8 +766,11 @@ public class GeneralSettingsUI extends AbstractSettingsUI{
 		fileBrowserButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				launchFileBrowser(JFileChooser.FILES_ONLY,fileBrowserButton,pathSourceZipTextField,
-						EktooUITranslator.getZipFileSelectorTitle(),"zip");
+				launchFileBrowser(JFileChooser.FILES_ONLY,
+						fileBrowserButton,
+						pathSourceZipTextField,
+						translate(MessageNames.DESC_ZIP_FILE_CHOOSER),
+						"zip");
 			}
 		});
 		return fileBrowserPanel;
@@ -735,9 +803,7 @@ public class GeneralSettingsUI extends AbstractSettingsUI{
 				}
 			}
 		}
-	
 	}
-	
 	
 	
 	

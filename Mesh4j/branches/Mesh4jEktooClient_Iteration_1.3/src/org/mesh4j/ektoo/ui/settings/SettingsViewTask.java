@@ -11,6 +11,7 @@ import org.mesh4j.ektoo.ui.EktooFrame;
 import org.mesh4j.ektoo.ui.SettingsContainer;
 import org.mesh4j.ektoo.ui.component.messagedialog.MessageDialog;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
+import org.mesh4j.translator.MessageProvider;
 
 public class SettingsViewTask extends SwingWorker<String, Void>{
 
@@ -43,7 +44,7 @@ public class SettingsViewTask extends SwingWorker<String, Void>{
 	}
 	
 	private void showSettingsInPopUP(JComponent component){
-		ui.showViewInPopup(EktooUITranslator.getTitleSettings(),
+		ui.showViewInPopup(MessageProvider.translate("TITLTE_SETTINGS"),
 				component,400,500,false,true);
 	}
 }

@@ -63,7 +63,6 @@ public class SettingsNotificationTask extends SwingWorker<Void, Void>{
 	
 	private void notifyUIControllers(Set<AbstractUIController> listOfAll,boolean isSource ){
 		for(AbstractUIController controller : listOfAll){
-			System.out.println(controller.getClass());
 			updateInController(controller,isSource);
 		}
 	}
