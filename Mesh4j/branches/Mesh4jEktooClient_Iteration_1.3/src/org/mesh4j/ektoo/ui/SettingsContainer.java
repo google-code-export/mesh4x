@@ -54,19 +54,11 @@ public class SettingsContainer extends JPanel{
 	}
 
 	private void initComponents(){
-//		this.add(createHeaderPane(),BorderLayout.NORTH);
 		this.add(createTreeMenuPane(),BorderLayout.WEST);
 		this.add(createSettingsComponentPane(),BorderLayout.CENTER);
 		this.add(createFooterPane(),BorderLayout.SOUTH);
 	}
 	
-	
-	private JPanel createHeaderPane(){
-		JPanel headerPanel = new JPanel();
-		headerPanel.setPreferredSize(new Dimension(400,30));
-		headerPanel.setBorder(BorderFactory.createTitledBorder( new RoundBorder(Color.LIGHT_GRAY)));
-		return headerPanel;
-	}
 	
 	private JPanel createTreeMenuPane(){
 		JPanel treeItemPanel = new JPanel(new BorderLayout());

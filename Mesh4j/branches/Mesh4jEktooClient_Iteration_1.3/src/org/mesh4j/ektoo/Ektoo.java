@@ -27,9 +27,7 @@ public class Ektoo {
 	
 	public static void main(String[] args) {
 		
-		MessageProvider.init(MessageProvider.LANGUAGE_ENGLISH, 
-				MessageProvider.LANGUAGE_ENGLISH);
-		
+		initInternationalization();
 		initLookAndFeel();
 		setUIFont(new FontUIResource(EktooMessageTranslator
 				.translate("EKTOO_DEFAULT_UNICODE_FONT_NAME"), Integer
@@ -58,30 +56,34 @@ public class Ektoo {
 		parentUI.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		parentUI.setVisible(true);
 	}
+
+	//TODO(raju) improve , load from property and according to that
+	//provide locale information
+	private static void initInternationalization(){
+		//init or load the property service
+		MessageProvider.init(MessageProvider.LANGUAGE_ENGLISH, 
+				MessageProvider.LANGUAGE_ENGLISH);
+	}
 	
 	//TODO (raju)improve
 	public static EktooFrame getParentContainer(){
 		return parentUI;
 	}
 	
-	private static void initLookAndFeel() 
-	{
-		try 
-		{
+	private static void initLookAndFeel(){ 
+		try{ 
 			String lookAndFeel= getProperty(AppProperties.LOOK_AND_FEEL_CLASS_NAME);
 		  if (lookAndFeel != null && lookAndFeel.trim().length() != 0)
 		    UIManager.setLookAndFeel(lookAndFeel);
 		  else
 		    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		}
-		catch (Exception e) 
-		{
+		catch (Exception e){ 
 			LOGGER.error(e.getMessage(), e);
 		} 
 	}
 
-	public static void setUIFont(javax.swing.plaf.FontUIResource f) 
-	{
+	public static void setUIFont(javax.swing.plaf.FontUIResource f){ 
 		Enumeration<Object> keys = UIManager.getDefaults().keys();
 		while (keys.hasMoreElements()) {
 			Object key = keys.nextElement();
