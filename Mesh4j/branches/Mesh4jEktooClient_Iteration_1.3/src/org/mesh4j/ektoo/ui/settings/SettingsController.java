@@ -12,11 +12,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.controller.AbstractViewController;
 import org.mesh4j.ektoo.model.AbstractModel;
-import org.mesh4j.ektoo.ui.EktooFrame;
 import org.mesh4j.ektoo.ui.settings.prop.AppProperties;
 import org.mesh4j.ektoo.ui.settings.prop.IPropertyManager;
 
-
+/**
+ * This class loads and save  default settings from 
+ * {@link IPropertyManager}.
+ */
 public class SettingsController extends AbstractViewController {
 
 	private static final  Log LOGGER = LogFactory.getLog(SettingsController.class);
@@ -121,44 +123,54 @@ public class SettingsController extends AbstractViewController {
 		}
 	}
 	
+	/**
+	 * Behaviour of this method is load file path which is saved by 
+	 * user from settings <br>
+	 * For example it loads source excel file,target excel file and so on.
+	 * 
+	 * Concern here is if user provided source excel file is not exist, <br>
+	 * the should we load the app default one?
+	 * 
+	 * If not then we should  call {@link #getAbsoluteFilePath(String)} 
+	 * instead of {@link #getAbsoluteFilePath(String)}.
+	 */
 	private void loadGeneralSettings(){
-		
 		
 		modifySettings(LANGUAGE,propertyManager.getProperty(AppProperties.LANGUAGE));
 		
 		String fileName = "";
 		
-		fileName = getAbsoluteFilePath(AppProperties.PATH_SOURCE_EXCEL);
+		fileName = getFilePath(AppProperties.PATH_SOURCE_EXCEL);
 		modifySettings(PATH_SOURCE_EXCEL, fileName);
-		fileName = getAbsoluteFilePath(AppProperties.PATH_TARGET_EXCEL);
+		fileName = getFilePath(AppProperties.PATH_TARGET_EXCEL);
 		modifySettings(PATH_TARGET_EXCEL, fileName);
 		
-		fileName = getAbsoluteFilePath(AppProperties.PATH_SOURCE_ACCESS);
+		fileName = getFilePath(AppProperties.PATH_SOURCE_ACCESS);
 		modifySettings(PATH_SOURCE_ACCESS, fileName);
-		fileName = getAbsoluteFilePath(AppProperties.PATH_TARGET_ACCESS);
+		fileName = getFilePath(AppProperties.PATH_TARGET_ACCESS);
 		modifySettings(PATH_TARGET_ACCESS, fileName);
 		
-		fileName = getAbsoluteFilePath(AppProperties.PATH_SOURCE_KML);
+		fileName = getFilePath(AppProperties.PATH_SOURCE_KML);
 		modifySettings(PATH_SOURCE_KML, fileName);
-		fileName = getAbsoluteFilePath(AppProperties.PATH_TARGET_KML);
+		fileName = getFilePath(AppProperties.PATH_TARGET_KML);
 		modifySettings(PATH_TARGET_KML, fileName);
 		
-		fileName = getAbsoluteFilePath(AppProperties.PATH_SOURCE_RSS);
+		fileName = getFilePath(AppProperties.PATH_SOURCE_RSS);
 		modifySettings(PATH_SOURCE_RSS, fileName);
-		fileName = getAbsoluteFilePath(AppProperties.PATH_TARGET_RSS);
+		fileName = getFilePath(AppProperties.PATH_TARGET_RSS);
 		modifySettings(PATH_TARGET_RSS, fileName);
 		
-		fileName = getAbsoluteFilePath(AppProperties.PATH_SOURCE_ATOM);
+		fileName = getFilePath(AppProperties.PATH_SOURCE_ATOM);
 		modifySettings(PATH_SOURCE_ATOM, fileName);
-		fileName = getAbsoluteFilePath(AppProperties.PATH_TARGET_ATOM);
+		fileName = getFilePath(AppProperties.PATH_TARGET_ATOM);
 		modifySettings(PATH_TARGET_ATOM, fileName);
 		
-		fileName = getAbsoluteFilePath(AppProperties.PATH_SOURCE_FOLDER);
+		fileName = getFilePath(AppProperties.PATH_SOURCE_FOLDER);
 		modifySettings(PATH_SOURCE_FOLDER, fileName);
-		fileName = getAbsoluteFilePath(AppProperties.PATH_TARGET_FOLDER);
+		fileName = getFilePath(AppProperties.PATH_TARGET_FOLDER);
 		modifySettings(PATH_TARGET_FOLDER, fileName);
 		
-		fileName = getAbsoluteFilePath(AppProperties.PATH_SOURCE_ZIP);
+		fileName = getFilePath(AppProperties.PATH_SOURCE_ZIP);
 		modifySettings(PATH_SOURCE_ZIP, fileName);
 		
 	

@@ -48,7 +48,7 @@ public class AppProperties {
 	public final static String PATH_TARGET_ACCESS = "path.target.access";
 	
 	public final static String PATH_SOURCE_KML = "path.source.kml";
-	public final static String PATH_TARGET_KML = "path.source.kml";
+	public final static String PATH_TARGET_KML = "path.target.kml";
 	
 	public final static String PATH_SOURCE_RSS = "path.source.rss";
 	public final static String PATH_TARGET_RSS = "path.target.rss";

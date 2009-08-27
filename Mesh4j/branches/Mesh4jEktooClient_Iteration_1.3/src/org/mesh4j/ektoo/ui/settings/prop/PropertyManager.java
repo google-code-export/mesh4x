@@ -83,6 +83,10 @@ public class PropertyManager  implements IPropertyManager {
 		while (newKeys.hasMoreElements()) {
 			String key = (String) newKeys.nextElement();
 			String keyValue = newProperties.getProperty(key);
+			if(key.equals(AppProperties.PATH_SOURCE_KML)){
+				System.out.println("value:" + keyValue);
+			}
+			
 			if (!oldProperties.containsKey(key)) {
 				oldProperties.put(key, keyValue);
 			} else {

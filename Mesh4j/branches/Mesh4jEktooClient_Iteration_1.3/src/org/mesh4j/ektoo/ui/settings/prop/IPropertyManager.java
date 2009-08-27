@@ -4,8 +4,8 @@ import org.mesh4j.sync.validations.MeshException;
 
 
 /**
- * getProperty method always return property from persistent store.
- * You can't expect a property by getProperty unless you call the
+ * getProperty method always return property from persistent store.<br>
+ * You can't expect a property by getProperty unless you call the<br>
  * save method  after setting the property by setProperty method.
  * @author raju
  */

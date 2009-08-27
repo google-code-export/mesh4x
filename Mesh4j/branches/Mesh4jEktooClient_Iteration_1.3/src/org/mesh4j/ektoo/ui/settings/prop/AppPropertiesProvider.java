@@ -10,9 +10,6 @@ import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.security.LoggedInIdentityProvider;
 import org.mesh4j.sync.validations.MeshException;
 
-/**
- * Singletone class make sure only one instance of IPropertyManager 
- */
 public class AppPropertiesProvider {
 	
 	/**
@@ -20,7 +17,7 @@ public class AppPropertiesProvider {
 	 * load property from property file.
 	 */
 	private static IPropertyManager propertyManager = null;
-	private static final String MESH4J_PROPERTIES = "mesh4j_settings.properties";
+	private static final String MESH4J_PROPERTIES = "mesh4j.properties";
 	
 	private AppPropertiesProvider(){}
 
