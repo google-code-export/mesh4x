@@ -61,11 +61,10 @@ public class SettingsController extends AbstractViewController {
 	
 	public final static String CREATE_PROP_AS_DEFAULT = "CreateAsDefaultProp";
 	private static IPropertyManager propertyManager = getPropetyManager();
-	private EktooFrame parent = null;
 	
-	public SettingsController(EktooFrame parent) {
+	
+	public SettingsController() {
 		super();
-		this.parent = parent;
 	}
 
 	/**
@@ -269,9 +268,6 @@ public class SettingsController extends AbstractViewController {
 		}  
 		}
 		propertyManager.save();
-		
-		SettingsNotificationTask task = new SettingsNotificationTask(this.parent,this);
-		task.execute();
 	}
 	
 	

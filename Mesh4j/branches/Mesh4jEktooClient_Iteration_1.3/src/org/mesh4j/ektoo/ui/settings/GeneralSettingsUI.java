@@ -1,4 +1,5 @@
 package org.mesh4j.ektoo.ui.settings;
+import static org.mesh4j.ektoo.ui.settings.prop.AppPropertiesProvider.getProperty;
 import static org.mesh4j.translator.MessageProvider.translate;
 
 import java.awt.BorderLayout;
@@ -31,6 +32,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.ui.component.DocumentModelAdapter;
+import org.mesh4j.ektoo.ui.component.messagedialog.MessageDialog;
 import org.mesh4j.ektoo.ui.settings.prop.AppProperties;
 import org.mesh4j.translator.MessageNames;
 
@@ -60,31 +62,11 @@ public class GeneralSettingsUI extends AbstractSettingsUI{
 
 
 	public GeneralSettingsUI(SettingsController controller) {
-		super(controller);
+		super(controller,translate(MessageNames.TITLE_SETTINGS_GENERAL));
 		this.setLayout(new GridBagLayout());
 		init();
 	}
 	
-	
-	 private JComponent getSeperator(){ 
-		 JPanel spePanel = new JPanel(new GridLayout(1,1,0,0));
-		 spePanel.setOpaque(false);
-		 JSeparator separator = new JSeparator(SwingConstants.HORIZONTAL);
-		 spePanel.add(separator);
-	    return spePanel;
-	  }
-	
-	private JPanel getHeaderPane(){
-		JPanel headerPane = new JPanel(new BorderLayout());
-		JPanel titlePane = new JPanel();
-		JLabel titleLabel = new JLabel(translate(MessageNames.TITLE_SETTINGS_GENERAL));
-		titleLabel.setFont(new Font(Font.SANS_SERIF,Font.BOLD,15));
-		titlePane.add(titleLabel);
-		headerPane.add(titlePane,BorderLayout.CENTER);
-		headerPane.add(getSeperator(),BorderLayout.SOUTH);
-		headerPane.setPreferredSize(new Dimension(100,40));
-		return headerPane;
-	}
 	
 	
 	private void init(){
@@ -279,6 +261,7 @@ public class GeneralSettingsUI extends AbstractSettingsUI{
 			public void itemStateChanged(ItemEvent e) {
 				if(e.getStateChange() == ItemEvent.SELECTED){
 					getController().modifySettings(SettingsController.LANGUAGE, e.getItem());
+					notifyInfoToUser();
 				}
 			}
 		});
@@ -819,7 +802,7 @@ public class GeneralSettingsUI extends AbstractSettingsUI{
 	}
 	
 	private void selectOrAddValueInCombo(String value){
-		if(isValueContainAtCombo(value)){
+		if(isValueContainsAtCombo(value)){
 			langComboBox.setSelectedItem(value);
 		} else {
 			langComboBox.addItem(value);
@@ -827,7 +810,7 @@ public class GeneralSettingsUI extends AbstractSettingsUI{
 		}
 	}
 	
-	private boolean isValueContainAtCombo(String value){
+	private boolean isValueContainsAtCombo(String value){
 		int size = langComboBox.getItemCount();
 		for(int index =0 ; index<size; index++){
 			if(langComboBox.getItemAt(index).equals(value)){
@@ -836,7 +819,13 @@ public class GeneralSettingsUI extends AbstractSettingsUI{
 		}
 		return false;
 	}
-
+	private void notifyInfoToUser(){
+		if(!getProperty(AppProperties.LANGUAGE).
+				equals(langComboBox.getSelectedItem())){
+			MessageDialog.showWarningMessage(null, "New language will be effected after " +
+			"application  is restarted");	
+		}
+	}
 	
 	@Override
 	public void modelPropertyChange(PropertyChangeEvent evt) {

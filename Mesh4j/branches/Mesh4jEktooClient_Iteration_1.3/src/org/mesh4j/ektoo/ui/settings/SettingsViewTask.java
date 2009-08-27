@@ -13,6 +13,7 @@ import org.mesh4j.ektoo.ui.EktooFrame;
 import org.mesh4j.ektoo.ui.SettingsContainer;
 import org.mesh4j.ektoo.ui.component.messagedialog.MessageDialog;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
+import org.mesh4j.translator.MessageNames;
 import org.mesh4j.translator.MessageProvider;
 
 public class SettingsViewTask extends SwingWorker<String, Void>{
@@ -29,7 +30,7 @@ public class SettingsViewTask extends SwingWorker<String, Void>{
 	protected String doInBackground() throws Exception {
 		ui.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 		try{
-			SettingsController controller = new SettingsController(ui);
+			SettingsController controller = new SettingsController();
 			SettingsContainer container = new SettingsContainer(controller,ui);
 			showSettingsInPopUP(container);
 		} catch (Exception ec){
@@ -46,7 +47,7 @@ public class SettingsViewTask extends SwingWorker<String, Void>{
 	}
 	
 	private void showSettingsInPopUP(JComponent component){
-		ui.showViewInPopup(MessageProvider.translate("TITLTE_SETTINGS"),
+		ui.showViewInPopup(MessageProvider.translate(MessageNames.TITLTE_SETTINGS_WINDOW),
 				component,400,500,false,true);
 	}
 }

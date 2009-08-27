@@ -4,6 +4,7 @@ import static org.mesh4j.ektoo.ui.settings.prop.AppPropertiesProvider.getPropert
 
 import java.awt.EventQueue;
 import java.util.Enumeration;
+import java.util.Locale;
 
 import javax.swing.JFrame;
 import javax.swing.UIManager;
@@ -13,6 +14,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.controller.EktooController;
 import org.mesh4j.ektoo.ui.EktooFrame;
+import org.mesh4j.ektoo.ui.component.messagedialog.MessageDialog;
 import org.mesh4j.ektoo.ui.settings.prop.AppProperties;
 import org.mesh4j.translator.EktooMessageTranslator;
 import org.mesh4j.translator.MessageProvider;
@@ -57,12 +59,22 @@ public class Ektoo {
 		parentUI.setVisible(true);
 	}
 
-	//TODO(raju) improve , load from property and according to that
-	//provide locale information
+	
 	private static void initInternationalization(){
-		//init or load the property service
-		MessageProvider.init(MessageProvider.LANGUAGE_ENGLISH, 
-				MessageProvider.LANGUAGE_ENGLISH);
+
+		String languageName = getProperty(AppProperties.LANGUAGE);
+		if(languageName.equals(AppProperties.LANGUAGE_ENGLISH)){
+			MessageProvider.init(MessageProvider.LANGUAGE_ENGLISH, 
+					MessageProvider.COUNTRY_US);
+		} else if (languageName.equals(AppProperties.LANGUAGE_SYSTEM_DEFAULT)){
+			MessageProvider.init(Locale.getDefault());
+		} else {
+			//TODO improve , or we can load the os default locale
+			//system not supported this type of locale
+			MessageDialog.showErrorMessage(null, "Locale specific resource file" +
+					" is not available \n application will exit");
+			System.exit(0);
+		}
 	}
 	
 	//TODO (raju)improve

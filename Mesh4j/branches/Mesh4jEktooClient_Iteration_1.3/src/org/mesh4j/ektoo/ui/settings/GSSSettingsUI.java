@@ -29,29 +29,9 @@ public class GSSSettingsUI extends AbstractSettingsUI{
 	private JPasswordField passwordField;
 
 	public GSSSettingsUI(SettingsController controller){
-		super(controller);
+		super(controller,translate(MessageNames.TITLE_SETTINGS_GOOGLE));
 		this.setLayout(new GridBagLayout());
 		init();
-	}
-	
-	 private JComponent getSeperator(){ 
-		 JPanel spePanel = new JPanel(new GridLayout(1,1,0,0));
-		 spePanel.setOpaque(false);
-		 JSeparator separator = new JSeparator(SwingConstants.HORIZONTAL);
-		 spePanel.add(separator);
-	    return spePanel;
-	  }
-	
-	private JPanel getHeaderPane(){
-		JPanel headerPane = new JPanel(new BorderLayout());
-		JPanel titlePane = new JPanel();
-		JLabel titleLabel = new JLabel(translate(MessageNames.TITLE_SETTINGS_GOOGLE));
-		titleLabel.setFont(new Font(Font.SANS_SERIF,Font.BOLD,15));
-		titlePane.add(titleLabel);
-		headerPane.add(titlePane,BorderLayout.CENTER);
-		headerPane.add(getSeperator(),BorderLayout.SOUTH);
-		headerPane.setPreferredSize(new Dimension(100,40));
-		return headerPane;
 	}
 	
 	

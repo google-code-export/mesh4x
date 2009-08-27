@@ -5,7 +5,7 @@ public class MessageNames {
 	private MessageNames(){}
 	
 	/*settings message*/
-	public final static String TITLE_SETTINGS = "TITLE_SETTINGS";
+	public final static String TITLTE_SETTINGS_WINDOW = "TITLTE_SETTINGS_WINDOW";
 	public final static String TITLE_SETTINGS_GENERAL = "TITLE_SETTINGS_GENERAL";
 	public final static String TITLE_SETTINGS_CLOUD = "TITLE_SETTINGS_CLOUD";
 	public final static String TITLE_SETTINGS_MYSQL = "TITLE_SETTINGS_MYSQL";
@@ -34,9 +34,11 @@ public class MessageNames {
 	
 	
 	
+	
 	public final static String LABEL_BUTTON_CANCEL = "LABEL_BUTTON_CANCEL";
 	public final static String LABEL_BUTTON_OK = "LABEL_BUTTON_OK";
 	public final static String LABEL_BUTTON_RESTORE_DEFAULTS = "LABEL_BUTTON_RESTORE_DEFAULTS";
+	public final static String LABEL_CHECKBOX_APPLY_CHANGES = "LABEL_CHECKBOX_APPLY_CHANGES";
 	
 	
 	public final static String LABEL_LANGUAGE = "LABEL_LANGUAGE";

@@ -6,15 +6,20 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTree;
+import javax.swing.SwingConstants;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -29,6 +34,7 @@ import org.mesh4j.ektoo.ui.settings.GeneralSettingsUI;
 import org.mesh4j.ektoo.ui.settings.MySqlSettingsModel;
 import org.mesh4j.ektoo.ui.settings.MySqlSettingsUI;
 import org.mesh4j.ektoo.ui.settings.SettingsController;
+import org.mesh4j.ektoo.ui.settings.SettingsNotificationTask;
 import org.mesh4j.translator.MessageNames;
 
 
@@ -44,6 +50,8 @@ public class SettingsContainer extends JPanel{
 	private final static String SETTINGS_MYSQL = "Mysql";
 	private final static String SETTINGS_GOOGLE = "Google Spreadsheet";
 	private EktooFrame ektooFrame = null;
+
+	private JCheckBox updateUICheckBox;
 	
 	public SettingsContainer(SettingsController controller,EktooFrame ektooFrame){
 		this.controller = controller;
@@ -141,12 +149,13 @@ public class SettingsContainer extends JPanel{
 	private JPanel getButtonPanel(){
 		JPanel headerPanel = new JPanel(new GridBagLayout());
 		
+		updateUICheckBox = new JCheckBox(translate(MessageNames.LABEL_CHECKBOX_APPLY_CHANGES));
+		
 		JButton okButton = new JButton(translate(MessageNames.LABEL_BUTTON_OK));
 		okButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				SettingsContainer.this.controller.save();
-				close();
+				processUpdateSettings();
 		}});
 		
 		JButton cancelButton = new JButton(translate(MessageNames.LABEL_BUTTON_CANCEL));
@@ -157,14 +166,29 @@ public class SettingsContainer extends JPanel{
 			}});
 
 		GridBagConstraints c = new GridBagConstraints();
+		
 		c.fill = GridBagConstraints.NONE;
 		c.gridx = 0;
+		c.gridy = 0;
+		c.insets = new Insets(0, 0, 0, 5);
+		headerPanel.add(updateUICheckBox,c);
+		
+		
+		c.fill = GridBagConstraints.VERTICAL;
+		c.gridx = 1;
+		c.gridy = 0;
+		c.insets = new Insets(0, 10, 0, 10);
+		headerPanel.add(getSeperator(SwingConstants.VERTICAL),c);
+		
+		
+		c.fill = GridBagConstraints.NONE;
+		c.gridx = 2;
 		c.gridy = 0;
 		c.insets = new Insets(0, 0, 0, 5);
 		headerPanel.add(okButton,c);
 		
 		c.fill = GridBagConstraints.NONE;
-		c.gridx = 1;
+		c.gridx = 3;
 		c.gridy = 0;
 		c.insets = new Insets(0, 0, 0, 5);
 		headerPanel.add(cancelButton,c);
@@ -173,6 +197,30 @@ public class SettingsContainer extends JPanel{
 	}
 	
 	
+	private JComponent getSeperator(int orientation){ 
+		 JSeparator separator = null;
+		 JPanel spePanel = new JPanel(new GridLayout(1,2,0,0));
+		 spePanel.setOpaque(false);
+
+		 separator = new JSeparator(orientation);
+		 spePanel.add(separator);
+		 
+		 separator = new JSeparator(orientation);
+		 spePanel.add(separator);
+	    return spePanel;
+	  }
+	
+	
+	private void processUpdateSettings(){
+		//TODO (raju) this also must goes to as thread task
+		this.controller.save();
+		if(updateUICheckBox.isSelected()){
+			SettingsNotificationTask task = new SettingsNotificationTask(
+					this.ektooFrame,this.controller);
+			task.execute();
+		}
+		close();
+	}
 	
 	private void close(){
 		ektooFrame.closePopupViewWindow();

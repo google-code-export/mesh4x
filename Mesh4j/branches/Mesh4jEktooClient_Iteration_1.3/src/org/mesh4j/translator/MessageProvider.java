@@ -9,39 +9,55 @@ import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.ui.component.messagedialog.MessageDialog;
 
 /**
+ * Provides locale specific text according to java Internationalization rule.
+ * Application must have resource file named <code>RESOURCE_BASE_NAME</code> <li>
+ * corresponding locale specific data must be suffixed with <code>RESOURCE_BASE_NAME</code><br>
+ * For example 
+ * if <code>RESOURCE_BASE_NAME</code> = ektoo_resources <br> 
+ * then for English it will be ektoo_resources_en_US
  * 
- * There must be a file named following RESOURCE_BASE_NAME.
+ * NOTE: if the specific resource  is not found it will load
+ * default resource as followed bye <code>RESOURCE_BASE_NAME<code>
+ * 
+ * In absence of default resource bundle application will  shutdown by calling
+ * System.exit(0);
  * 
  */
 public class MessageProvider {
 	
 	private static final Log LOGGER = LogFactory.getLog(MessageProvider.class);
-	private static ResourceBundle RESOURCE_BUNDLE = null;
+	private static ResourceBundle resourceBundle = null;
 	private static final String RESOURCE_BASE_NAME = "ektoo_resources";
 	
 	public final  static String LANGUAGE_ENGLISH = "en";
 	public final  static String LANGUAGE_SPANISH = "es";
+	public final  static String LANGUAGE_BANGLA = "bn";
+	
 	
 	public final static String COUNTRY_US = "US";
-	public final  static String COUNTRY_SPAIN = "ES";
+	public final  static String COUNTRY_ARGENTINA = "AR";
+	public final  static String COUNTRY_BANGLADESH = "BD";
+	
 	
 	private MessageProvider(){
 	}
 	
 	
 	/**
-	 * there must be default file named <code>RESOURCE_BUNDLE<code>
-	 * other local specific file must follow the java internationalization
-	 * rule which is bundlename + _ +language + _ + country
-	 * for example if the base bundle name is MessageBundle then for
-	 * English Locale file name will be MessageBundle_en_US.properties.
+	 * Initialize locale.must be followed by java Internationalization rule
+	 * @param language , the language name, For example, en for English
+	 * @param country , the country name,For example US for United states
 	 */
 	public static  void init(String language,String country){
-		
 		Locale currentLocale = new Locale(language,country);
+		init(currentLocale);
+	}
+	
+	public static void init(Locale currentLocale){
 		try{
-			RESOURCE_BUNDLE = ResourceBundle.getBundle(RESOURCE_BASE_NAME,currentLocale);
+			resourceBundle = ResourceBundle.getBundle(RESOURCE_BASE_NAME,currentLocale);
 		} catch (MissingResourceException e){
+			e.printStackTrace();
 			LOGGER.error(e.getMessage(), e);
 			MessageDialog.showErrorMessage(null, "Locale specific resource file is not available " +
 					"\n application will exit");
@@ -49,10 +65,12 @@ public class MessageProvider {
 		}
 	}
 	
+	
+	
 	public static String translate(String key) {
 		String messageText;
 		try {
-			messageText = RESOURCE_BUNDLE.getString(key);
+			messageText = resourceBundle.getString(key);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 
