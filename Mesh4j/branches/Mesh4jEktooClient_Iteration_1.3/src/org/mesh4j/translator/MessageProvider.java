@@ -10,17 +10,20 @@ import org.mesh4j.ektoo.ui.component.messagedialog.MessageDialog;
 
 /**
  * Provides locale specific text according to java Internationalization rule.
- * Application must have resource file named <code>RESOURCE_BASE_NAME</code> <li>
+ * Application must have resource file which is located at <code>RESOURCE_BASE_NAME</code> <li>
  * corresponding locale specific data must be suffixed with <code>RESOURCE_BASE_NAME</code><br>
  * For example 
  * if <code>RESOURCE_BASE_NAME</code> = ektoo_resources <br> 
  * then for English it will be ektoo_resources_en_US
  * 
- * NOTE: if the specific resource  is not found it will load
- * default resource as followed bye <code>RESOURCE_BASE_NAME<code>
- * 
- * In absence of default resource bundle application will  shutdown by calling
+ * NOTE: if the specific resource file  is not found it will load<br>
+ * default resource as followed bye <code>RESOURCE_BASE_NAME<code> 
+ * but in such case in absence of default resource bundle application <br>
+ * will  shutdown by calling
  * System.exit(0);
+ * 
+ * If any specific property(key) is not found in the resource file then that 
+ * property is loaded from the default resource file. 
  * 
  */
 public class MessageProvider {

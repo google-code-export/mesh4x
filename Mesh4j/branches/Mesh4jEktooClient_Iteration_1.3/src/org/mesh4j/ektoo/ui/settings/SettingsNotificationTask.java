@@ -124,6 +124,7 @@ public class SettingsNotificationTask extends SwingWorker<Void, Void>{
 	
 	private void updateMysql(MySQLUIController controller){
 		
+		
 		MySqlSettingsModel settingsModel = settingsController.getModel(MySqlSettingsModel.class);
 		controller.changeUserName(settingsModel.getUserName());
 		controller.changeUserPassword(settingsModel.getUserPassword());

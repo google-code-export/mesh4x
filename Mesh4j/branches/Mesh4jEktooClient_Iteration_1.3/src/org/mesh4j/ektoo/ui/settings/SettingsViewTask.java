@@ -3,12 +3,10 @@ package org.mesh4j.ektoo.ui.settings;
 import java.awt.Cursor;
 
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.SwingWorker;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.mesh4j.ektoo.Ektoo;
 import org.mesh4j.ektoo.ui.EktooFrame;
 import org.mesh4j.ektoo.ui.SettingsContainer;
 import org.mesh4j.ektoo.ui.component.messagedialog.MessageDialog;
