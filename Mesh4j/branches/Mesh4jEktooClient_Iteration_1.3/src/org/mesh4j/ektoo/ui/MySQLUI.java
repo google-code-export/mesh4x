@@ -408,6 +408,16 @@ public class MySQLUI extends AbstractUI {
 	public void setList(String user, String pass, String host, int port, String schema) {
 		JList tableList = getTableList();
 		tableList.removeAll();
+		//this implementation is bug
+		//there must be get some exception from the core layer in case
+		//of database is not available or failed to get connection.
+		//we need to change the calling mechanism or must need to 
+		//throw exception from  getTableNames at org.mesh4j.sync.utils.SqlDBUtils
+		//for any kind of database connectivity SqlDBUtils must throw runtime exception
+		
+		//for temporary solution, need to update the code after changing SqlDBUtils
+		//commented by raju
+		
 		Set<String> tableNames = HibernateSyncAdapterFactory.getMySqlTableNames(host, port, schema, user, pass);
 		tableList.setListData(tableNames.toArray());
 	}
