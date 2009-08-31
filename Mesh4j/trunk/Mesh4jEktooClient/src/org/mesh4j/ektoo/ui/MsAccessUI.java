@@ -18,6 +18,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
@@ -30,6 +31,7 @@ import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.controller.MsAccessUIController;
 import org.mesh4j.ektoo.tasks.IErrorListener;
 import org.mesh4j.ektoo.tasks.OpenFileTask;
+import org.mesh4j.ektoo.ui.component.messagedialog.MessageDialog;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.ektoo.ui.validator.MsAccessUIValidator;
 import org.mesh4j.sync.adapters.hibernate.msaccess.MsAccessHibernateSyncAdapterFactory;
@@ -90,13 +92,16 @@ public class MsAccessUI extends AbstractUI{
 		
 		try {
 			File file = new File(fileName);
-			if(file.exists()){
+			if(file != null && file.exists()){
 				Set<String> tableNames = MsAccessHibernateSyncAdapterFactory.getTableNames(fileName);
 				tableList.setListData(tableNames.toArray());
-//				for (String tableName : tableNames) {
-//					tableList.addItem(tableName);
-//				}
 			} else {
+//				MessageDialog.showErrorMessage(JOptionPane.getRootFrame(), "", 
+//						EktooUITranslator.getErrorImpossibleToOpenFileBecauseFileDoesNotExists());
+				
+				//TODO this line produce bug.test it if the file is not exist when app
+				//is going to launch.calling getParent() will produce null as because
+				//MsAccessUI class created in sequence of creation of SyncItemUI class
 				((SyncItemUI)this.getParent().getParent()).openErrorPopUp(EktooUITranslator.getErrorImpossibleToOpenFileBecauseFileDoesNotExists());
 			}
 			this.getController().changeDatabaseName(fileName);
@@ -123,13 +128,16 @@ public class MsAccessUI extends AbstractUI{
 		return (MsAccessUIController)controller;
 	}
 
+	
 	@Override
 	public void modelPropertyChange(final PropertyChangeEvent evt) {
 		if (evt.getPropertyName().equals(
 				MsAccessUIController.DATABASE_NAME_PROPERTY)) {
 			String newStringValue = evt.getNewValue().toString();
-			if (!getTxtFile().getText().equals(newStringValue))
+			if (!getTxtFile().getText().equals(newStringValue)){
 				getTxtFile().setText(newStringValue);
+				setList(newStringValue);
+			}
 		} else if (evt.getPropertyName().equals(
 				MsAccessUIController.TABLE_NAME_PROPERTY)) {
 			String newStringValue = evt.getNewValue().toString();

@@ -89,7 +89,7 @@ public class OpenMappingsViewTask extends SwingWorker<String, Void>{
 	}
 	
 	private void showSchemaInPopup(MapConfigurationUI ui){
-		this.ui.showViewInPopup(EktooUITranslator.getMapConfigurationWindowTitle(), ui, ui.getWidth(), ui.getHeight(), false);
+		this.ui.showViewInPopup(EktooUITranslator.getMapConfigurationWindowTitle(), ui, ui.getWidth(), ui.getHeight(), false,false);
 	}
 	
 }

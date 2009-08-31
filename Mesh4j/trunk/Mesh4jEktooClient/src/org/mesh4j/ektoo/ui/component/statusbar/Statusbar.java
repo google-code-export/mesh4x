@@ -1,5 +1,7 @@
 package org.mesh4j.ektoo.ui.component.statusbar;
 
+import static org.mesh4j.ektoo.ui.settings.prop.AppPropertiesProvider.getProperty;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -16,11 +18,11 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 
-import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.ektoo.tasks.IErrorListener;
 import org.mesh4j.ektoo.tasks.OpenURLTask;
 import org.mesh4j.ektoo.ui.component.RoundBorder;
 import org.mesh4j.ektoo.ui.image.ImageManager;
+import org.mesh4j.ektoo.ui.settings.prop.AppProperties;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 
 public class Statusbar extends JPanel implements IStatus
@@ -120,8 +122,7 @@ public class Statusbar extends JPanel implements IStatus
       poweredByLabel.addMouseListener(new MouseAdapter() {
         public void mouseClicked(MouseEvent e) {
           OpenURLTask task = new OpenURLTask(parent,
-              (IErrorListener)parent, new PropertiesProvider()
-                  .getMesh4xURL());
+              (IErrorListener)parent, getProperty(AppProperties.URL_MESH4X));
           task.execute();
         }
       });

@@ -1,12 +1,16 @@
 package org.mesh4j.ektoo.controller;
 
+import static org.mesh4j.ektoo.ui.settings.prop.AppPropertiesProvider.getProperty;
+import static org.mesh4j.ektoo.ui.settings.prop.AppPropertiesProvider.getPropertyAsDecrypted;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.mesh4j.ektoo.Util;
 import org.mesh4j.ektoo.model.MySQLAdapterModel;
-import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.ektoo.ui.EktooFrame;
+import org.mesh4j.ektoo.ui.settings.prop.AppProperties;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.composite.CompositeSyncAdapter;
 import org.mesh4j.sync.adapters.composite.IIdentifiableSyncAdapter;
@@ -27,8 +31,8 @@ public class MySQLUIController extends AbstractUIController
 	public static final String TABLE_NAME_PROPERTY = "TableNames";
 
 	// BUSINESS METHODS
-	public MySQLUIController(PropertiesProvider propertiesProvider, boolean acceptsCreateDataset) {
-		super(propertiesProvider, acceptsCreateDataset);
+	public MySQLUIController( boolean acceptsCreateDataset) {
+		super( acceptsCreateDataset);
 	}
 
 	public void changeUserName(String userName) {
@@ -43,7 +47,7 @@ public class MySQLUIController extends AbstractUIController
 		setModelProperty(HOST_NAME_PROPERTY, hostName);
 	}
 
-	public void changePortNo(int portNo) {
+	public void changePortNo(String portNo) {
 		setModelProperty(PORT_NO_PROPERTY, portNo);
 	}
 
@@ -55,6 +59,8 @@ public class MySQLUIController extends AbstractUIController
 		setModelProperty(TABLE_NAME_PROPERTY, tableNames);
 	}
 
+	
+	
 	@Override
 	public ISyncAdapter createAdapter() 
 	{
@@ -75,10 +81,28 @@ public class MySQLUIController extends AbstractUIController
 			return null;
 		}
 
-		int portNo = model.getPortNo();
-		if (portNo < 0){
+		if(!Util.isInteger(model.getPortNo())){
 			return null;
 		}
+		int portNumber = Integer.parseInt(model.getPortNo());
+		
+//		String portAsString = model.getPortNo();
+//		
+//		if(portAsString == null || portAsString.trim().equals("")){
+//			return null;
+//		} else {
+//			Pattern pattern = Pattern.compile("^\\d*$");
+//			Matcher matcher = pattern.matcher(portAsString);
+//			if(!matcher.matches()){
+//				return null;
+//			}
+//		}
+		
+		
+		
+//		if (portNo < 0){
+//			return null;
+//		}
 
 		String databaseName = model.getDatabaseName();
 		if (databaseName == null){
@@ -92,10 +116,10 @@ public class MySQLUIController extends AbstractUIController
 		
 		if (EktooFrame.multiModeSync)
 			return getAdapterBuilder().createMySQLAdapterForMultiTables(userName,
-					userPassword, hostName, portNo, databaseName, tableNames);
+					userPassword, hostName, portNumber, databaseName, tableNames);
 		else
 			return getAdapterBuilder().createMySQLAdapter(userName, userPassword,
-					hostName, portNo, databaseName, tableNames[0]);
+					hostName, portNumber, databaseName, tableNames[0]);
 	}
 
 	@Override
@@ -177,27 +201,27 @@ public class MySQLUIController extends AbstractUIController
 
 	// PROPERTIES
 	public String getDefaultMySQLHost() {
-		return getPropertiesProvider().getDefaultMySQLHost();
+		return getProperty(AppProperties.HOST_NAME_MYSQL_DEFAULT);
 	}
 
 	public String getDefaultMySQLPort() {
-		return getPropertiesProvider().getDefaultMySQLPort();
+		return getProperty(AppProperties.PORT_MYSQL_DEFAULT);
 	}
 
 	public String getDefaultMySQLSchema() {
-		return getPropertiesProvider().getDefaultMySQLSchema();
+		return getProperty(AppProperties.DATABASE_NAME_MYSQL_DEFAULT);
 	}
 
 	public String getDefaultMySQLUser() {
-		return getPropertiesProvider().getDefaultMySQLUser();
+		return getProperty(AppProperties.USER_NAME_MYSQL_DEFAULT);
 	}
 
 	public String getDefaultMySQLPassword() {
-		return getPropertiesProvider().getDefaultMySQLPassword();
+		return getPropertyAsDecrypted(AppProperties.USER_PASSWORD_MYSQL_DEFAULT);
 	}
 
 	public String getDefaultMySQLTable() {
-		return getPropertiesProvider().getDefaultMySQLTable();
+		return getProperty(AppProperties.TABLE_NAME_MYSQL_DEFAULT);
 	}
 
 	public String generateFeed() {
@@ -216,10 +240,15 @@ public class MySQLUIController extends AbstractUIController
 			return null;
 		}
 
-		int portNo = model.getPortNo();
-		if (portNo < 0){
+		if(!Util.isInteger(model.getPortNo())){
 			return null;
 		}
+		int portNumber = Integer.parseInt(model.getPortNo());
+		
+//		int portNo = model.getPortNo();
+//		if (portNo < 0){
+//			return null;
+//		}
 
 		String databaseName = model.getDatabaseName();
 		if (databaseName == null){
@@ -236,6 +265,6 @@ public class MySQLUIController extends AbstractUIController
 			userPassword = "";
 		}
 		
-		return getAdapterBuilder().generateMySqlFeed(userName, userPassword, hostName, portNo, databaseName, tableNames[0]);
+		return getAdapterBuilder().generateMySqlFeed(userName, userPassword, hostName, portNumber, databaseName, tableNames[0]);
 	}
 }

@@ -1,5 +1,7 @@
 package org.mesh4j.ektoo.ui;
 
+import static org.mesh4j.ektoo.ui.settings.prop.AppPropertiesProvider.getProperty;
+import static org.mesh4j.ektoo.ui.settings.prop.AppPropertiesProvider.getPropertyAsDecrypted;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -7,8 +9,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,6 +25,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingWorker;
+import javax.swing.event.DocumentEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -33,7 +34,9 @@ import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.controller.MySQLUIController;
 import org.mesh4j.ektoo.tasks.IErrorListener;
 import org.mesh4j.ektoo.tasks.OpenMySqlFeedTask;
+import org.mesh4j.ektoo.ui.component.DocumentModelAdapter;
 import org.mesh4j.ektoo.ui.image.ImageManager;
+import org.mesh4j.ektoo.ui.settings.prop.AppProperties;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.ektoo.ui.validator.MySQLConnectionValidator;
 import org.mesh4j.sync.adapters.hibernate.HibernateSyncAdapterFactory;
@@ -70,8 +73,17 @@ public class MySQLUI extends AbstractUI {
 	public MySQLUI(MySQLUIController controller) {
 		super(controller);
 		initialize();
+		loadValues();
 	}
 
+	private void loadValues(){
+		txtUser.setText(getProperty(AppProperties.USER_NAME_MYSQL));
+		txtPass.setText(getPropertyAsDecrypted((AppProperties.USER_PASSWORD_MYSQL)));
+		txtHost.setText(getProperty(AppProperties.HOST_NAME_MYSQL));
+		txtPort.setText(getProperty(AppProperties.PORT_MYSQL));
+		txtDatabase.setText(getProperty(AppProperties.DATABASE_NAME_MYSQL));
+	}
+	
 	private void initialize() {
 		this.setLayout(null);
 		this.setBackground(Color.WHITE);
@@ -117,7 +129,7 @@ public class MySQLUI extends AbstractUI {
 			portNo = "";
 		}
 
-		getController().changePortNo( Integer.parseInt(portNo) );
+		getController().changePortNo( portNo );
 	}
 
 	private JLabel getUserLabel() {
@@ -136,24 +148,14 @@ public class MySQLUI extends AbstractUI {
 			txtUser = new JTextField();
 			txtUser.setBounds(new Rectangle(101, 5, 183, 20));
 			txtUser.setToolTipText( EktooUITranslator.getMySQLUserNameFieldTooltip());
-			txtUser.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent evt) {
-					try {
-						getController().changeUserName(txtUser.getText());
-					} catch (Exception e) {
-						// TODO Handle exception
-						LOGGER.error(e.getMessage(), e);
-					}
+			txtUser.getDocument().addDocumentListener(new DocumentModelAdapter(){
+				@Override
+				public void insertUpdate(DocumentEvent e) {
+					getController().changeUserName(txtUser.getText());
 				}
-			});
-			txtUser.addFocusListener(new FocusAdapter() {
-				public void focusLost(FocusEvent evt) {
-					try {
-						getController().changeUserName(txtUser.getText());
-					} catch (Exception e) {
-						// TODO Handle exception
-						LOGGER.error(e.getMessage(), e);
-					}
+				@Override
+				public void removeUpdate(DocumentEvent e) {
+					getController().changeUserName(txtUser.getText());
 				}
 			});
 		}
@@ -176,26 +178,17 @@ public class MySQLUI extends AbstractUI {
 			txtPass = new JPasswordField();
 			txtPass.setBounds(new Rectangle(101, 30, 183, 20));
 			txtPass.setToolTipText(EktooUITranslator.getMySQLUserPasswordFieldTooltip());
-			txtPass.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent evt) {
-					try {
-						getController().changeUserPassword(
-								new String(txtPass.getPassword()));
-					} catch (Exception e) {
-						// TODO Handle exception
-						LOGGER.error(e.getMessage(), e);
-					}
+			
+			txtPass.getDocument().addDocumentListener(new DocumentModelAdapter(){
+				@Override
+				public void insertUpdate(DocumentEvent e) {
+					getController().changeUserPassword(
+							new String(txtPass.getPassword()));
 				}
-			});
-			txtPass.addFocusListener(new FocusAdapter() {
-				public void focusLost(FocusEvent evt) {
-					try {
-						getController().changeUserPassword(
-								new String(txtPass.getPassword()));
-					} catch (Exception e) {
-						// TODO Handle exception
-						LOGGER.error(e.getMessage(), e);
-					}
+				@Override
+				public void removeUpdate(DocumentEvent e) {
+					getController().changeUserPassword(
+							new String(txtPass.getPassword()));
 				}
 			});
 		}
@@ -218,25 +211,15 @@ public class MySQLUI extends AbstractUI {
 			txtHost = new JTextField();
 			txtHost.setBounds(new Rectangle(101, 55, 125, 20));
 			txtHost.setToolTipText(EktooUITranslator.getMySQLHostFieldTooltip());
-			txtHost.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent ae) {
-					try {
-						getController().changeHostName(txtHost.getText());
-					} catch (Exception e) {
-						// TODO Handle exception
-						LOGGER.error(e.getMessage(), e);
-					}
+			
+			txtHost.getDocument().addDocumentListener(new DocumentModelAdapter(){
+				@Override
+				public void insertUpdate(DocumentEvent e) {
+					getController().changeHostName(txtHost.getText());
 				}
-			});
-
-			txtHost.addFocusListener(new FocusAdapter() {
-				public void focusLost(FocusEvent evt) {
-					try {
-						getController().changeHostName(txtHost.getText());
-					} catch (Exception e) {
-						// TODO Handle exception
-						LOGGER.error(e.getMessage(), e);
-					}
+				@Override
+				public void removeUpdate(DocumentEvent e) {
+					getController().changeHostName(txtHost.getText());
 				}
 			});
 		}
@@ -254,36 +237,22 @@ public class MySQLUI extends AbstractUI {
 		return labelPort;
 	}
 
+	
+	
 	public JTextField getPortText() {
 		if (txtPort == null) {
 			txtPort = new JTextField();
 			txtPort.setBounds(new Rectangle(234, 55, 50, 20));
 			txtPort.setToolTipText(EktooUITranslator.getMySQLPortFieldTooltip());
-			txtPort.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent ae) {
-					try {
-						//TODO (raju) please avoid the exception or let the user
-						//know the message
-						getController().changePortNo(
-								Integer.parseInt(txtPort.getText()));
-					} catch (Exception e) {
-						// TODO Handle exception
-						LOGGER.error(e.getMessage(), e);
-					}
+			
+			txtPort.getDocument().addDocumentListener(new DocumentModelAdapter(){
+				@Override
+				public void insertUpdate(DocumentEvent e) {
+					getController().changePortNo(txtPort.getText());
 				}
-			});
-
-			txtPort.addFocusListener(new FocusAdapter() {
-				public void focusLost(FocusEvent evt) {
-					try {
-						//TODO (raju) please avoid the exception or let the user
-						//know the message
-						getController().changePortNo(
-								Integer.parseInt(txtPort.getText()));
-					} catch (Exception e) {
-						// TODO Handle exception
-						LOGGER.error(e.getMessage(), e);
-					}
+				@Override
+				public void removeUpdate(DocumentEvent e) {
+					getController().changePortNo(txtPort.getText());
 				}
 			});
 		}
@@ -306,27 +275,16 @@ public class MySQLUI extends AbstractUI {
 			txtDatabase = new JTextField();
 			txtDatabase.setBounds(new Rectangle(101, 80, 155, 20));
 			txtDatabase.setToolTipText(EktooUITranslator.getMySQLDatabaseFieldTooltip());
-			txtDatabase.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent ae) {
-					try {
-						getController().changeDatabaseName(
-								txtDatabase.getText());
-					} catch (Exception e) {
-						// TODO Handle exception
-						LOGGER.error(e.getMessage(), e);
-					}
+			txtDatabase.getDocument().addDocumentListener(new DocumentModelAdapter(){
+				@Override
+				public void insertUpdate(DocumentEvent e) {
+					getController().changeDatabaseName(
+							txtDatabase.getText());
 				}
-			});
-
-			txtDatabase.addFocusListener(new FocusAdapter() {
-				public void focusLost(FocusEvent evt) {
-					try {
-						getController().changeDatabaseName(
-								txtDatabase.getText());
-					} catch (Exception e) {
-						// TODO Handle exception
-						LOGGER.error(e.getMessage(), e);
-					}
+				@Override
+				public void removeUpdate(DocumentEvent e) {
+					getController().changeDatabaseName(
+							txtDatabase.getText());
 				}
 			});
 		}
@@ -450,6 +408,16 @@ public class MySQLUI extends AbstractUI {
 	public void setList(String user, String pass, String host, int port, String schema) {
 		JList tableList = getTableList();
 		tableList.removeAll();
+		//this implementation is bug
+		//there must be get some exception from the core layer in case
+		//of database is not available or failed to get connection.
+		//we need to change the calling mechanism or must need to 
+		//throw exception from  getTableNames at org.mesh4j.sync.utils.SqlDBUtils
+		//for any kind of database connectivity SqlDBUtils must throw runtime exception
+		
+		//for temporary solution, need to update the code after changing SqlDBUtils
+		//commented by raju
+		
 		Set<String> tableNames = HibernateSyncAdapterFactory.getMySqlTableNames(host, port, schema, user, pass);
 		tableList.setListData(tableNames.toArray());
 	}

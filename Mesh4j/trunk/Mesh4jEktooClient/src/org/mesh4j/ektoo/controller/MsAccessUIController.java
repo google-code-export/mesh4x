@@ -7,7 +7,6 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.model.MsAccessModel;
-import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.ektoo.ui.EktooFrame;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.composite.CompositeSyncAdapter;
@@ -26,8 +25,8 @@ public class MsAccessUIController extends AbstractUIController
 	public static final String TABLE_NAME_PROPERTY = "TableNames";
 
 	// BUSINESS METHODS
-	public MsAccessUIController(PropertiesProvider propertiesProvider, boolean acceptsCreateDataset) {
-		super(propertiesProvider, acceptsCreateDataset);
+	public MsAccessUIController( boolean acceptsCreateDataset) {
+		super( acceptsCreateDataset);
 	}
 
 	public void changeDatabaseName(String databaseName) {

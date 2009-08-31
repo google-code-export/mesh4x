@@ -3,7 +3,6 @@ package org.mesh4j.ektoo.controller;
 import java.util.List;
 
 import org.mesh4j.ektoo.model.KmlModel;
-import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 
@@ -16,8 +15,8 @@ public class KmlUIController extends AbstractUIController
 	public static final String FILE_NAME_PROPERTY = "FileName";
 	
 	// BUSINESS METHODS
-	public KmlUIController(PropertiesProvider propertiesProvider, boolean acceptsCreateDataset) {
-		super(propertiesProvider, acceptsCreateDataset);
+	public KmlUIController( boolean acceptsCreateDataset) {
+		super( acceptsCreateDataset);
 	}
 	
 	public void changeFileName(String fileName) {

@@ -7,10 +7,21 @@ public class CloudSettingsModel extends AbstractModel{
 	private String syncServerRootUri = "";
 	private String meshName = "";
 	private String datasetName = "";
+	private Boolean createAsDefaultProp = false;
 	
 	public CloudSettingsModel(){
 	}
+	
 
+	public Boolean isCreateAsDefaultProp() {
+		return createAsDefaultProp;
+	}
+
+	public void setCreateAsDefaultProp(Boolean createAsDefaultProp) {
+		firePropertyChange(SettingsController.CREATE_PROP_AS_DEFAULT, this.createAsDefaultProp, createAsDefaultProp);
+		this.createAsDefaultProp = createAsDefaultProp;
+	}
+	
 	public String getSyncServerRootUri() {
 		return syncServerRootUri;
 	}

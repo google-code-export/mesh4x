@@ -1,5 +1,7 @@
 package org.mesh4j.ektoo.ui;
 
+import static org.mesh4j.ektoo.ui.settings.prop.AppPropertiesProvider.getProperty;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -29,7 +31,6 @@ import javax.swing.border.EmptyBorder;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.mesh4j.ektoo.controller.EktooController;
-import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.ektoo.tasks.IErrorListener;
 import org.mesh4j.ektoo.tasks.ISynchronizeTaskListener;
 import org.mesh4j.ektoo.tasks.OpenURLTask;
@@ -41,11 +42,8 @@ import org.mesh4j.ektoo.ui.component.messagedialog.MessageDialog;
 import org.mesh4j.ektoo.ui.component.statusbar.Statusbar;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.schemas.SchemaComparisonViewTask;
-import org.mesh4j.ektoo.ui.settings.SettingsController;
-import org.mesh4j.ektoo.ui.settings.encryption.EncryptionException;
-import org.mesh4j.ektoo.ui.settings.encryption.EncryptionUtil;
-import org.mesh4j.ektoo.ui.settings.prop.IPropertyManager;
-import org.mesh4j.ektoo.ui.settings.prop.PropertyManager;
+import org.mesh4j.ektoo.ui.settings.SettingsViewTask;
+import org.mesh4j.ektoo.ui.settings.prop.AppProperties;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 
 import com.toedter.calendar.JDateChooser;
@@ -69,22 +67,8 @@ public class EktooFrame extends JFrame implements IErrorListener, ISynchronizeTa
 	private SyncItemUI sourceItem = null;
 	private SyncItemUI targetItem = null;
 
-	//TODO (raju) need not as instance variable,need to refactor
-	private JPanel panel = null;
-	//private JButton btnSync = null;
 	private JLabel btnSync = null;
-
-	//TODO (raju) need not as instance variable,need to refactor
-	private JPanel panelImage = null;
-	//TODO (raju) need not as instance variable,need to refactor
-	private JPanel headerPanel = null;
-
 	public static boolean multiModeSync = false;
-	
-	//TODO (raju) need not as instance variable,need to refactor
-	private JPanel panelSyncMode = null;
-	private JPanel panelDateFilter = null;
-	private JPanel panelSyncConfig = null;
 	
 	private JRadioButton singleModeRadio;
 	private JRadioButton multiModeRadio;
@@ -152,8 +136,8 @@ public class EktooFrame extends JFrame implements IErrorListener, ISynchronizeTa
 	}
 	
 	private JPanel getHeaderPanel(){
-		if(headerPanel == null){
-			headerPanel = new JPanel(new BorderLayout(15,10));	
+//		if(headerPanel == null){
+			JPanel headerPanel = new JPanel(new BorderLayout(15,10));	
 			headerPanel.setBackground(Color.WHITE);
 			
 			JPanel linkPanel = new JPanel();
@@ -175,55 +159,42 @@ public class EktooFrame extends JFrame implements IErrorListener, ISynchronizeTa
 			});
 			
 			//commented by raju,will be opened after done settings feature in branch.
-//			HyperLink settingsLink = new HyperLink(EktooUITranslator.getSettingsText());
-//			settingsLink.addMouseListener(new MouseAdapter(){
-//				 public void mouseClicked(MouseEvent e) {
-//					 //launchSettingsUI();
-//				 }
-//			});
+			HyperLink settingsLink = new HyperLink(EktooUITranslator.getSettingsText());
+			settingsLink.addMouseListener(new MouseAdapter(){
+				 public void mouseClicked(MouseEvent e) {
+					 launchSettingsUI();
+				 }
+			});
 			
-			//linkPanel.add(settingsLink);
+			linkPanel.add(settingsLink);
 			linkPanel.add(helpLink);
 			linkPanel.add(aboutLink);
-		}
+		
 		return headerPanel;
 	}
 	
-	//TODO(raju)  use PropertiesProvider class as single tone for the application
-	//because its not necessary to load property file every time.
+	
 	private void gotToMesh4xHelpSite(){
-		OpenURLTask openURLTask = new OpenURLTask(this,this,new PropertiesProvider().getMesh4xURL());
+		OpenURLTask openURLTask = new OpenURLTask(this,this,
+				getProperty(AppProperties.URL_MESH4X));
 		openURLTask.execute();
 	}
 
-	//TODO(raju)  use PropertiesProvider class as single tone for the application
-	//because its not necessary to load property file every time.
+	
 	private void goToMesh4xEktooHelpSite(){
-		OpenURLTask openURLTask = new OpenURLTask(this,this,new PropertiesProvider().getMesh4xEktooURL());
+		OpenURLTask openURLTask = new OpenURLTask(this,this,
+				getProperty(AppProperties.URL_MESH4X_EKTOO));
 		openURLTask.execute();
 	}
 	
 	protected void launchSettingsUI(){
-		//TODO (raju) will be used as UI thread, implement later
-		//transfer to another class, later,just partial commit
-		IPropertyManager propertyManager  = new PropertyManager(PropertiesProvider.getSettingsPropertyLocation());
-		EncryptionUtil encryptionUtil = null;
-		try {
-			encryptionUtil = new EncryptionUtil("com.mesh4x.ektooclient",EncryptionUtil.ALGORITHM.DES);
-		} catch (EncryptionException e) {
-			e.printStackTrace();
-		}
-		propertyManager.setEncryptionUtil(encryptionUtil);
-		
-		SettingsController controller = new SettingsController(propertyManager);
-		
-		SettingsContainer container = new SettingsContainer(controller,this);
-		this.showViewInPopup(EktooUITranslator.getEktooSettingsWindowsTitle(), container, 500, 300, false);
+		SettingsViewTask settingsViewTask = new SettingsViewTask(this);
+		settingsViewTask.execute();
 	}
 	
 	private JPanel getJPanel() {
-		if (panel == null) {
-			panel = new JPanel();
+		
+			JPanel panel = new JPanel();
 			panel.setBackground(Color.WHITE);
 			GridBagLayout gridBagLayout = new GridBagLayout();
 
@@ -278,14 +249,14 @@ public class EktooFrame extends JFrame implements IErrorListener, ISynchronizeTa
 			c.gridy = 6;
 			c.gridwidth = 2;
 			panel.add(getStatusBar(), c);
-		}
+		
 		return panel;
 	}
 	
 	
 	private JPanel getImagePanel() {
-		if (panelImage == null) {
-			panelImage = new JPanel();
+//		if (panelImage == null) {
+			JPanel panelImage = new JPanel();
 			panelImage.setOpaque(false);
 			panelImage.setLayout(new GridBagLayout());
 
@@ -306,7 +277,6 @@ public class EktooFrame extends JFrame implements IErrorListener, ISynchronizeTa
 			c.fill = GridBagConstraints.CENTER;
 			c.gridx = 2;
 			panelImage.add(getTargetImageLabel(), c);
-		}
 
 		return panelImage;
 	}
@@ -471,56 +441,54 @@ public class EktooFrame extends JFrame implements IErrorListener, ISynchronizeTa
 	}
 	
 	JPanel getSyncConfigPanel(){
-		if (panelSyncConfig == null) {
-			panelSyncConfig = new JPanel();
-			panelSyncConfig.setOpaque(false);
+//		if (panelSyncConfig == null) {
+		JPanel panelSyncConfig = new JPanel();
+		panelSyncConfig.setOpaque(false);
+		
+		GridLayout gl = new GridLayout(1,2);
+		gl.setHgap(10);
+		panelSyncConfig.setLayout(gl);			
+		
+		panelSyncConfig.add(getSyncModePanel());
+		panelSyncConfig.add(getDateFilterPanel());
 			
-			GridLayout gl = new GridLayout(1,2);
-			gl.setHgap(10);
-			panelSyncConfig.setLayout(gl);			
-			
-			panelSyncConfig.add(getSyncModePanel());
-			panelSyncConfig.add(getDateFilterPanel());
-			
-		}
 		return panelSyncConfig;			
 	}
 	
 	JPanel getSyncModePanel(){
-		if (panelSyncMode == null) {
-			panelSyncMode = new JPanel();
-			panelSyncMode.setOpaque(false);
-			panelSyncMode.setBorder(BorderFactory.createTitledBorder( new RoundBorder(Color.LIGHT_GRAY), 
-					EktooUITranslator.getSyncModeText())); 
-			panelSyncMode.setLayout(new GridLayout(1,2));			
-			
-			panelSyncMode.add(getSingleModeRadio());
-			panelSyncMode.add(getMultiModeRadio());
-			
-			getSingleModeRadio().setSelected(true);
-			
-			ButtonGroup group = new ButtonGroup();
-			group.add(getSingleModeRadio());
-			group.add(getMultiModeRadio());
-		}
+		JPanel panelSyncMode = new JPanel();
+		panelSyncMode.setOpaque(false);
+		panelSyncMode.setBorder(BorderFactory.createTitledBorder( new RoundBorder(Color.LIGHT_GRAY), 
+				EktooUITranslator.getSyncModeText())); 
+		panelSyncMode.setLayout(new GridLayout(1,2));			
+		
+		panelSyncMode.add(getSingleModeRadio());
+		panelSyncMode.add(getMultiModeRadio());
+		
+		getSingleModeRadio().setSelected(true);
+		
+		ButtonGroup group = new ButtonGroup();
+		group.add(getSingleModeRadio());
+		group.add(getMultiModeRadio());
+	
 		return panelSyncMode;		
 	}
 
 	JPanel getDateFilterPanel(){
-		if (panelDateFilter == null) {
-			panelDateFilter = new JPanel();
-			panelDateFilter.setOpaque(false);
-			panelDateFilter.setBorder(BorderFactory.createTitledBorder( new RoundBorder(Color.LIGHT_GRAY),
-					EktooUITranslator.getSyncFilterTypeText()));
-			GridLayout gl = new GridLayout(1,2);
-			gl.setHgap(2);
-			panelDateFilter.setLayout(gl);			
-			panelDateFilter.add(getDateFilter());
-			
-			dateInputPanel = new JDateChooser("yyyy/MM/dd", "####/##/##", '_');
-			dateInputPanel.setEnabled(false);
-			panelDateFilter.add(dateInputPanel);
-		}
+		
+		JPanel panelDateFilter = new JPanel();
+		panelDateFilter.setOpaque(false);
+		panelDateFilter.setBorder(BorderFactory.createTitledBorder( new RoundBorder(Color.LIGHT_GRAY),
+				EktooUITranslator.getSyncFilterTypeText()));
+		GridLayout gl = new GridLayout(1,2);
+		gl.setHgap(2);
+		panelDateFilter.setLayout(gl);			
+		panelDateFilter.add(getDateFilter());
+		
+		dateInputPanel = new JDateChooser("yyyy/MM/dd", "####/##/##", '_');
+		dateInputPanel.setEnabled(false);
+		panelDateFilter.add(dateInputPanel);
+	
 		return panelDateFilter;		
 	}
 	
@@ -901,24 +869,27 @@ public class EktooFrame extends JFrame implements IErrorListener, ISynchronizeTa
 		setStatusbarText(success, Statusbar.SUCCESS_STATUS);
 	}
 	
-	public void showViewInPopup(String title, JComponent component){
+	public void showViewInPopup(String title, JComponent component,boolean isModal){
 		popupviewWindow = new PopupDialog(this,title);
 		popupviewWindow.setLayout(new BorderLayout());
 		popupviewWindow.add(component);
 		popupviewWindow.setSize(getWidth() , getHeight()/2);
+		popupviewWindow.setModal(isModal);
 		popupviewWindow.pack();
 		popupviewWindow.setVisible(true);
 	}
 	
-	public void showViewInPopup(String title, JComponent component, int width, int height, boolean resizable){
+	public void showViewInPopup(String title, JComponent component, int width, int height, boolean resizable,boolean isModal){
 		popupviewWindow = new PopupDialog(this,title);
 		popupviewWindow.setLayout(new BorderLayout());
 		popupviewWindow.add(component);
 		popupviewWindow.setSize(width , height);
+		popupviewWindow.setModal(isModal);
 		popupviewWindow.pack();
 		popupviewWindow.setResizable(resizable);
 		popupviewWindow.setVisible(true);
 	}
+	
 	
 	public void closePopupViewWindow(){
 		popupviewWindow.dispose();

@@ -15,7 +15,6 @@ import org.junit.Test;
 import org.mesh4j.ektoo.GoogleSpreadSheetInfo;
 import org.mesh4j.ektoo.ISyncAdapterBuilder;
 import org.mesh4j.ektoo.SyncAdapterBuilder;
-import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.IIdentifiableMapping;
 import org.mesh4j.sync.adapters.IdentifiableContent;
@@ -78,7 +77,7 @@ public class SyncAdapterBuilderTest {
 	
 	@Test
 	public void ShouldCreateFolderSyncAdapter() throws IOException{
-		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder( );
 		ISyncAdapter folderAdapter = adapterBuilder.createFolderAdapter(TestHelper.baseDirectoryForTest() + "sourcefolder");
 		Assert.assertNotNull(folderAdapter);
 		Assert.assertNotNull(folderAdapter.getAll());
@@ -90,7 +89,7 @@ public class SyncAdapterBuilderTest {
 				"ajaira spreadsheet", gssTestUsername, gssTestPassword,
 				new String[] {idColumn}, gssTestWorksheetName, gssTestWorksheetName );
 	
-		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder();
 		ISyncAdapter syncAdapterA = adapterBuilder.createPlainXMLBasedGoogleSpreadSheetAdapter(spreadSheetInfo);
 		Assert.assertNull(syncAdapterA);
 	}
@@ -123,7 +122,7 @@ public class SyncAdapterBuilderTest {
 				gssTestSpreadsheetFileName, gssTestUsername, gssTestPassword,
 				new String[] { idColumn }, gssTestWorksheetName, gssTestWorksheetName);
 		
-		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder( );
 		ISyncAdapter syncAdapter = adapterBuilder.createPlainXMLBasedGoogleSpreadSheetAdapter(spreadSheetInfo);
 		Assert.assertNotNull(syncAdapter);
 	}
@@ -165,7 +164,7 @@ public class SyncAdapterBuilderTest {
 				gssTestSpreadsheetFileName, gssTestUsername, gssTestPassword,
 				new String[] { idColumn }, gssTestWorksheetName, gssTestWorksheetName);
 		
-		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder( );
 		ISyncAdapter syncAdapter = adapterBuilder.createRdfBasedGoogleSpreadSheetAdapter(spreadSheetInfo, null);		
 		
 		Assert.assertNotNull(syncAdapter);
@@ -197,7 +196,7 @@ public class SyncAdapterBuilderTest {
 				new String[] { idColumn }, gssTestWorksheetName, gssTestWorksheetName);
 		
 		//create the adapter now
-		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder( );
 		ISyncAdapter syncAdapter = adapterBuilder.createRdfBasedGoogleSpreadSheetAdapter(spreadSheetInfo, null);		
 		Assert.assertNull(syncAdapter);
 	}	
@@ -230,7 +229,7 @@ public class SyncAdapterBuilderTest {
 				gssTestSpreadsheetFileName, gssTestUsername, gssTestPassword,
 				new String[] { idColumn }, gssTestWorksheetName, gssTestWorksheetName);
 		
-		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder();
 		
 		RDFSchema sourceSchema = new RDFSchema("user",
 				"http://localhost:8080/mesh4x/feeds/user#", "user");
@@ -277,7 +276,7 @@ public class SyncAdapterBuilderTest {
 				gssTestSpreadsheetFileName, gssTestUsername, gssTestPassword,
 				new String[] { idColumn }, gssTestWorksheetName, gssTestWorksheetName);
 		
-		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder( );
 		
 		RDFSchema sourceSchema = new RDFSchema("user",
 				"http://localhost:8080/mesh4x/feeds/user#", "user");
@@ -324,7 +323,7 @@ public class SyncAdapterBuilderTest {
 				gssTestSpreadsheetFileName, gssTestUsername, gssTestPassword,
 				new String[] { idColumn }, gssTestWorksheetName, gssTestWorksheetName);		
 		
-		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder();
 		
 		RDFSchema sourceSchema = new RDFSchema("user", "http://localhost:8080/mesh4x/feeds/user#", "user");
 		sourceSchema.addStringProperty("id", "id", IRDFSchema.DEFAULT_LANGUAGE);
@@ -360,7 +359,7 @@ public class SyncAdapterBuilderTest {
 				mapping.getType()
 				);
 			
-		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder();
 		SplitAdapter syncAdapter = adapterBuilder.createRdfBasedGoogleSpreadSheetAdapter(spreadSheetInfo, mapping.getSchema());
 		Assert.assertNotNull(syncAdapter);
 		syncAdapter.beginSync();
@@ -378,7 +377,7 @@ public class SyncAdapterBuilderTest {
 	
 	@Test
 	public void shouldCreateMsAccessAdapter() throws Exception{
-	    ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
+	    ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder( );
 	    String sourceFileName = this.getClass().getResource("aktoo.mdb").getFile();
 	    ISyncAdapter syncAdapter = adapterBuilder.createMsAccessAdapter(sourceFileName, "mesh_example");
 	    Assert.assertNotNull(syncAdapter);
@@ -386,7 +385,7 @@ public class SyncAdapterBuilderTest {
 	
 	@Test
 	public void shouldCreateExcelAdapter() throws DocumentException{
-		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder();
 		File sourceContentFile = new File(TestHelper.baseDirectoryForTest() + "source_"+IdGenerator.INSTANCE.newID()+".xls");
 		String contentFilePathAsString = TestHelper.createMsExcelFileForTest(sourceContentFile, excelTestWorksheetName, idColumn, true);
 		SplitAdapter excelAdapter = adapterBuilder.createMsExcelAdapter(contentFilePathAsString, excelTestWorksheetName, new String[]{idColumn}, false);
@@ -398,7 +397,7 @@ public class SyncAdapterBuilderTest {
 		// prepare/update the mysql for this specific test
 		TestHelper.createMysqlTableForTest(mysqlTestDBName, mysqlTestUsername,
 				mysqlTestPassword, mysqlTestTableName, idColumn, true);
-		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapterBuilder builder = new SyncAdapterBuilder( );
 		ISyncAdapter mysqlAdapter =  builder.createMySQLAdapter(mysqlTestUsername, mysqlTestPassword,"localhost" ,3306, mysqlTestDBName, mysqlTestTableName);
 		Assert.assertNotNull(mysqlAdapter);
 	}
@@ -407,7 +406,7 @@ public class SyncAdapterBuilderTest {
 	public void ShouldCreateFeedAdapter() {
 		File file = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID()+ ".xml"));
 		String link = "http://localhost:8080/mesh4x/feeds";	
-		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapterBuilder builder = new SyncAdapterBuilder( );
 		ISyncAdapter feedAdapter = builder.createFeedAdapter("myFeed", "my data feed", link, file.getAbsolutePath(), RssSyndicationFormat.INSTANCE);
 		Assert.assertNotNull(feedAdapter);
 		Assert.assertEquals(0, feedAdapter.getAll().size());
@@ -415,7 +414,7 @@ public class SyncAdapterBuilderTest {
 	
 	@Test
 	public void ShouldCreateKMLAdapter(){
-		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapterBuilder builder = new SyncAdapterBuilder( );
 		ISyncAdapter kmlAdapter = builder.createKMLAdapter(TestHelper.baseDirectoryForTest() + "kmlDummyForSync.kml");
 		Assert.assertNotNull(kmlAdapter);
 	}
@@ -423,27 +422,27 @@ public class SyncAdapterBuilderTest {
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldGenarateExceptionIfSheetNameEmptyOrNull()	{
 		String contentFile = TestHelper.fileName("contentFile.xls");
-		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder( );
 		adapterBuilder.createMsExcelAdapter(contentFile, "", new String[]{"id"}, true);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldGenarateExceptionIfIdEmptyOrNull(){
 		String contentFile = TestHelper.fileName("contentFile.xls");
-		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder( );
 		adapterBuilder.createMsExcelAdapter(contentFile, "user", new String[]{"id"}, true);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldReturnExceptionIfContenFileIsNullOrEmpty(){
-		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder();
 		adapterBuilder.createMsExcelAdapter(null, "user", new String[]{"id"}, true);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldReturnExceptionIfRDFIsNullOrEmpty(){
 		String contentFile = TestHelper.fileName("contentFile.xls");
-		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder( );
 		adapterBuilder.createMsExcelAdapter(contentFile, null);
 	}
 	

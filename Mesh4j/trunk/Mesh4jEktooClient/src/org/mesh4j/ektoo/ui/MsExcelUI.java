@@ -158,6 +158,7 @@ public class MsExcelUI extends AbstractUI implements IValidationStatus {
 			String newStringValue = evt.getNewValue().toString();
 			if (!getTxtFile().getText().equals(newStringValue)){
 				getTxtFile().setText(newStringValue);
+				setList(newStringValue);
 			}
 		} else if (evt.getPropertyName().equals(MsExcelUIController.WORKSHEET_NAME_PROPERTY)) {
 			String newStringValue = evt.getNewValue().toString();

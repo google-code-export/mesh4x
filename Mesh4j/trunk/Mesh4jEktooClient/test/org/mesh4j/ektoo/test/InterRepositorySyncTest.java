@@ -14,7 +14,6 @@ import org.junit.Test;
 import org.mesh4j.ektoo.GoogleSpreadSheetInfo;
 import org.mesh4j.ektoo.ISyncAdapterBuilder;
 import org.mesh4j.ektoo.SyncAdapterBuilder;
-import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.adapters.feed.XMLContent;
@@ -25,6 +24,7 @@ import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadsheetUtils;
 import org.mesh4j.sync.adapters.googlespreadsheet.IGoogleSpreadSheet;
 import org.mesh4j.sync.adapters.googlespreadsheet.model.GSRow;
 import org.mesh4j.sync.adapters.googlespreadsheet.model.GSWorksheet;
+import org.mesh4j.sync.adapters.msexcel.MsExcelContentAdapter;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.Item;
@@ -75,7 +75,7 @@ public class InterRepositorySyncTest {
 	
 	@Test
 	public void ShouldSyncFolderToFolder(){
-		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapterBuilder adapterBuilder = new SyncAdapterBuilder();
 		ISyncAdapter sourceFolderAdapter = adapterBuilder.createFolderAdapter(TestHelper.baseDirectoryForTest() + "sourcefolder");
 		ISyncAdapter targetFolderAdapter = adapterBuilder.createFolderAdapter(TestHelper.baseDirectoryForTest() + "targetfolder");
 		SyncEngine syncEngine = new SyncEngine(sourceFolderAdapter,targetFolderAdapter);
@@ -91,7 +91,7 @@ public class InterRepositorySyncTest {
 		XMLContent content = new XMLContent("SyncId123", "SyncId123", "SyncId123", element);
 		Item item = new Item(content, new Sync("SyncId123", "jmt", TestHelper.now(), false));
 		
-		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapterBuilder builder = new SyncAdapterBuilder();
 		 
 		File rssSourceFile = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID() + "_source.xml"));
 		ISyncAdapter sourceRSSAdapter = builder.createFeedAdapter("User", "user Info", link, 
@@ -123,7 +123,7 @@ public class InterRepositorySyncTest {
 		XMLContent content = new XMLContent("SyncId123", "SyncId123", "SyncId123", element);
 		Item item = new Item(content, new Sync("SyncId123", "jmt", TestHelper.now(), false));
 		
-		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapterBuilder builder = new SyncAdapterBuilder();
 		 
 		File rssSourceFile = new File(TestHelper.fileName(IdGenerator.INSTANCE.newID() + "_source.xml"));
 		ISyncAdapter sourceAtomAdapter = builder.createFeedAdapter("User", "user Info", link, 
@@ -149,7 +149,7 @@ public class InterRepositorySyncTest {
 	
 	@Test
 	public void ShouldSyncKmlToKmlWithoutRDFAssumeSameSchema(){
-		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapterBuilder builder = new SyncAdapterBuilder();
 		ISyncAdapter sourceKamlAdapter = builder.createKMLAdapter(TestHelper.fileName("kmlSyncTestsGround.kml"));
 		ISyncAdapter targetKamlAdapter = builder.createKMLAdapter(TestHelper.fileName("kmlSyncTestsPlacemark.kml"));
 		
@@ -183,7 +183,7 @@ public class InterRepositorySyncTest {
 		GoogleSpreadsheetUtils.flush(service, gss.getGSSpreadsheet());	
 		//test setup done
 		
-		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapterBuilder builder = new SyncAdapterBuilder( );
 		
 		GoogleSpreadSheetInfo spreadSheetInfo = new GoogleSpreadSheetInfo(
 				gssTestSpreadsheetFileName1, gssTestUsername, gssTestPassword,
@@ -204,7 +204,7 @@ public class InterRepositorySyncTest {
 	
 	@Test
 	public void ShouldSyncGoogleSpreadSheetToGoogleSpreadSheet() throws Exception{
-		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapterBuilder builder = new SyncAdapterBuilder( );
 		
 		//prepare/update the spreadsheet for this specific test
 		IGoogleSpreadSheet gssSource = TestHelper.getTestGoogleSpreadsheet(factory, service,
@@ -273,7 +273,7 @@ public class InterRepositorySyncTest {
 	
 	@Test
 	public void ShouldSyncExcelToExcelWithoutRDFAssumeSameSchema(){
-		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapterBuilder builder = new SyncAdapterBuilder( );
 		
 		File sourceContentFile = new File(TestHelper.baseDirectoryForTest() + "sourec_"+IdGenerator.INSTANCE.newID()+".xls");
 		ISyncAdapter sourceAsExcel = builder.createMsExcelAdapter(TestHelper.createMsExcelFileForTest(sourceContentFile, 
@@ -291,7 +291,7 @@ public class InterRepositorySyncTest {
 	@Test
 	public void ShouldSyncAccessToAccessWithoutRDFAssumeSameSchema() throws IOException{
 		
-		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapterBuilder builder = new SyncAdapterBuilder( );
 		
 		String sourceFileName = this.getClass().getResource("aktoo.mdb").getFile();
 		File sourceContentFile = new File(TestHelper.baseDirectoryForTest() + "source_"+IdGenerator.INSTANCE.newID()+".mdb");
@@ -311,7 +311,7 @@ public class InterRepositorySyncTest {
 	@Test
 	public void ShouldSyncMysqlToMysqlWithoutRDFAssumeSameSchema(){
 		
-		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapterBuilder builder = new SyncAdapterBuilder( );
 		FileUtils.cleanupDirectory(builder.getBaseDirectory());
 		
 		// prepare/update the mysql for this specific test
@@ -338,7 +338,7 @@ public class InterRepositorySyncTest {
 		String feedName = "user";
 		String url = "http://localhost:8080/mesh4x/feeds";
 
-		ISyncAdapterBuilder builder = new SyncAdapterBuilder(new PropertiesProvider());
+		ISyncAdapterBuilder builder = new SyncAdapterBuilder();
 		FileUtils.cleanupDirectory(builder.getBaseDirectory());
 		
 		// prepare/update the mysql for this specific test
@@ -358,4 +358,21 @@ public class InterRepositorySyncTest {
 		Assert.assertEquals(sourceAdapter.getAll().size(), targetAdapter
 				.getAll().size());
 	}
+	
+	@Test
+	public void ShouldSyncExcelToExcelAndHandleSpecialCharacter(){
+		ISyncAdapterBuilder builder = new SyncAdapterBuilder( );
+		
+		File sourceContentFile = new File("c:/Book1.xlsx");
+		ISyncAdapter sourceAsExcel = builder.createMsExcelAdapter(sourceContentFile.getAbsolutePath(),"patient",new String[] {"id"},false);
+		
+		File targetContentFile = new File("c:/Book2.xlsx");
+		ISyncAdapter targetAsExcel = builder.createMsExcelAdapter(targetContentFile.getAbsolutePath(),"patient",new String[] {"id"},false);
+
+		SyncEngine engine = new SyncEngine(sourceAsExcel,targetAsExcel);
+		List<Item> listOfConflicts = engine.synchronize();
+		Assert.assertEquals(0, listOfConflicts.size());
+	}
+	
+	
 }

@@ -1,5 +1,9 @@
 package org.mesh4j.ektoo;
 
+
+import static org.mesh4j.ektoo.ui.settings.prop.AppPropertiesProvider.getProperty;
+import static org.mesh4j.ektoo.ui.settings.prop.AppPropertiesProvider.getSyncIdentityProvider;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,7 +12,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.mesh4j.ektoo.properties.PropertiesProvider;
+import org.mesh4j.ektoo.ui.settings.prop.AppProperties;
 import org.mesh4j.geo.coder.GeoCoderLatitudePropertyResolver;
 import org.mesh4j.geo.coder.GeoCoderLocationPropertyResolver;
 import org.mesh4j.geo.coder.GeoCoderLongitudePropertyResolver;
@@ -50,22 +54,23 @@ import org.mesh4j.sync.validations.Guard;
 public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 
 	// MODEL VARIABLEs
-	private PropertiesProvider propertiesProvider;
+//	private PropertiesProvider propertiesProvider;
 	private MsExcelSyncAdapterFactory excelSyncFactory; 
 	private GoogleSpreadSheetSyncAdapterFactory googleSpreadSheetSyncAdapterFactory;
 	private GoogleSpreadSheetRDFSyncAdapterFactory googleSpreadSheetRDFSyncAdapterFactory;
 	private IPropertyResolver[] propertyResolvers;
 	
+	
 	// BUSINESS METHODS
 
-	public SyncAdapterBuilder(PropertiesProvider propertiesProvider) {
-		Guard.argumentNotNull(propertiesProvider, "propertiesProvider");
-		this.propertiesProvider = propertiesProvider;
+	public SyncAdapterBuilder() {
+		//Guard.argumentNotNull(propertiesProvider, "propertiesProvider");
+		//this.propertiesProvider = propertiesProvider;
 		this.excelSyncFactory = new MsExcelSyncAdapterFactory();
 		this.googleSpreadSheetSyncAdapterFactory = new GoogleSpreadSheetSyncAdapterFactory();
 		this.googleSpreadSheetRDFSyncAdapterFactory = new GoogleSpreadSheetRDFSyncAdapterFactory(this.getBaseRDFUrl());
 		
-		GoogleGeoCoder geoCoder = new GoogleGeoCoder(this.propertiesProvider.getGeoCoderKey());
+		GoogleGeoCoder geoCoder = new GoogleGeoCoder(getProperty(AppProperties.GOOGLE_GEO_CODER_KEY));
 		GeoCoderLatitudePropertyResolver propertyResolverLat = new GeoCoderLatitudePropertyResolver(geoCoder);
 		GeoCoderLongitudePropertyResolver propertyResolverLon = new GeoCoderLongitudePropertyResolver(geoCoder);
 		GeoCoderLocationPropertyResolver propertyResolverLoc = new GeoCoderLocationPropertyResolver(geoCoder);
@@ -318,7 +323,8 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 		Feed feed = new Feed();
 		feed.addItems(items);
 		
-		FeedAdapter feedAdapter = new FeedAdapter(fullFileName, this.propertiesProvider.getIdentityProvider(), IdGenerator.INSTANCE, RssSyndicationFormat.INSTANCE, feed);
+		FeedAdapter feedAdapter = new FeedAdapter(fullFileName, getIdentityProvider(), 
+				IdGenerator.INSTANCE, RssSyndicationFormat.INSTANCE, feed);
 		
 		feedAdapter.flush();
 		return fullFileName;
@@ -326,13 +332,14 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 	
 	@Override 
 	public String makeTempFileName(String fileName){
-		return FileUtils.getFileName(this.propertiesProvider.getBaseDirectory() + File.separator + "temp", fileName);
+		return FileUtils.getFileName(getProperty(AppProperties.BASE_DIRECTORY) + 
+				File.separator + "temp", fileName);
 	}
 	
 	// ACCESSORS
 	private ISyncAdapter createMySQLTableDiscoveryAdapter(String userName, String password, String hostName, int portNo, String databaseName) {
 		
-		IIdentityProvider identityProvider = this.propertiesProvider.getIdentityProvider();
+		IIdentityProvider identityProvider = getIdentityProvider();
 		Set<String> tableNames = HibernateSyncAdapterFactory.getMySqlTableNames(hostName, portNo, databaseName, userName, password);
 		
 		List<Item> items = new ArrayList<Item>();
@@ -355,7 +362,7 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 
 	@Override
 	public IIdentityProvider getIdentityProvider() {
-		return this.propertiesProvider.getIdentityProvider();
+		return getSyncIdentityProvider();
 	}
 
 	@Override
@@ -365,12 +372,12 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 
 	@Override
 	public String getBaseDirectory() {
-		return this.propertiesProvider.getBaseDirectory();
+		return getProperty(AppProperties.BASE_DIRECTORY);
 	}
 
 	@Override
 	public String getBaseRDFUrl() {
-		return this.propertiesProvider.getMeshSyncServerURL();
+		return getProperty(AppProperties.CLOUD_ROOT_URI);
 	}
 
 	@Override
@@ -378,8 +385,5 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 		return this.propertyResolvers;
 	}
 
-	@Override
-	public PropertiesProvider getPropertiesProvider() {
-		return this.propertiesProvider;
-	}	
+		
 }

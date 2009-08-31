@@ -61,7 +61,7 @@ public class OpenResolveConflictsViewTask extends SwingWorker<String, Void>{
 	}
 	
 	private void showSchemaInPopup(ConflictsUI ui){
-		this.ui.showViewInPopup(EktooUITranslator.getConflictWindowTitle(), ui, ui.getWidth(), ui.getHeight(), false);
+		this.ui.showViewInPopup(EktooUITranslator.getConflictWindowTitle(), ui, ui.getWidth(), ui.getHeight(), false,true);
 	}
 	
 }

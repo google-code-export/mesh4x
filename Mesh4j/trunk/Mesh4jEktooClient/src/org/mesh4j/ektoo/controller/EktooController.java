@@ -10,17 +10,16 @@ import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.Event;
 import org.mesh4j.ektoo.ISyncAdapterBuilder;
 import org.mesh4j.ektoo.SyncAdapterBuilder;
+import org.mesh4j.ektoo.Util;
 import org.mesh4j.ektoo.model.CloudModel;
 import org.mesh4j.ektoo.model.MsAccessModel;
 import org.mesh4j.ektoo.model.MySQLAdapterModel;
-import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.ektoo.ui.EktooFrame;
 import org.mesh4j.ektoo.ui.SyncItemUI;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
-import org.mesh4j.sync.validations.Guard;
 
 public class EktooController {
 	
@@ -35,9 +34,9 @@ public class EktooController {
 	ISyncAdapterBuilder adapterBuilder;
 
 	// BUISINESS METHODS
-	public EktooController(PropertiesProvider propertiesProvider) {
-		Guard.argumentNotNull(propertiesProvider, "propertiesProvider");
-		this.adapterBuilder = new SyncAdapterBuilder(propertiesProvider);
+	public EktooController() {
+//		Guard.argumentNotNull(propertiesProvider, "propertiesProvider");
+		this.adapterBuilder = new SyncAdapterBuilder();
 	}
 
 	public String sync(EktooFrame ui, SyncItemUI source, SyncItemUI target, Date since) {
@@ -65,12 +64,13 @@ public class EktooController {
 					adapterBuilder.getBaseDirectory());
 			} else {
 				MySQLAdapterModel mySqlModel = (MySQLAdapterModel)source.getCurrentController().getModel();
+				
 				ui.syncProcessUI.synchronizeMySqlVsCloud(
 					since,
 					mySqlModel.getUserName(),
 					mySqlModel.getUserPassword(),
 					mySqlModel.getHostName(),
-					mySqlModel.getPortNo(),	
+					Util.getAsInteger(mySqlModel.getPortNo()),	
 					mySqlModel.getDatabaseName(),
 					new TreeSet<String>(Arrays.asList(mySqlModel.getTableNames())), 
 					cloudModel.getBaseUri(), 

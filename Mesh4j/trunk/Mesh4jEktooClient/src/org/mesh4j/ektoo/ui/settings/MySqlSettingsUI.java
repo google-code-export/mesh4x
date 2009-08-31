@@ -1,20 +1,25 @@
 package org.mesh4j.ektoo.ui.settings;
-
+import static org.mesh4j.translator.MessageProvider.translate;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.beans.PropertyChangeEvent;
 
-import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.event.DocumentEvent;
 
 import org.mesh4j.ektoo.ui.component.DocumentModelAdapter;
+import org.mesh4j.translator.MessageNames;
 
 public class MySqlSettingsUI extends AbstractSettingsUI{
 
@@ -24,22 +29,34 @@ public class MySqlSettingsUI extends AbstractSettingsUI{
 	private JTextField hostTextField;
 	private JTextField portTextField;
 	private JTextField dataBaseTextField;
-	private SettingsController controller = null;
+	
+	
 	
 	public MySqlSettingsUI(SettingsController controller){
-		super(controller);
-		this.controller = controller;
+		super(controller,translate(MessageNames.TITLE_SETTINGS_MYSQL));
 		this.setLayout(new GridBagLayout());
 		initComponents();
 	}
 	
+	 
 	private void initComponents(){
+		
 		GridBagConstraints c = new GridBagConstraints();
 		
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 0;
+		c.insets = new Insets(0, 0, 0, 0);
+		c.gridwidth = 3;
+		this.add(getHeaderPane(),c);
+		
+		
+		c.gridwidth = 1;
+		c.weightx = 0;
 		c.fill = GridBagConstraints.NONE;
 		c.gridx = 1;
 		c.gridy = 1;
-		c.insets = new Insets(50, 10, 0, 0);
+		c.insets = new Insets(15, 10, 0, 0);
 		c.anchor = GridBagConstraints.WEST;
 		this.add(getUserNameLabel(),c);
 		
@@ -47,7 +64,7 @@ public class MySqlSettingsUI extends AbstractSettingsUI{
 		c.gridx = 2;
 		c.gridy = 1;
 		c.weightx = 0.5;
-		c.insets = new Insets(50, 20, 0, 10);
+		c.insets = new Insets(15, 20, 0, 10);
 		this.add(getUserTextBox(), c);
 		
 		c.fill = GridBagConstraints.NONE;
@@ -102,10 +119,17 @@ public class MySqlSettingsUI extends AbstractSettingsUI{
 		this.add(getDataBaseTextBox(), c);
 		
 		
+//		c.fill = GridBagConstraints.HORIZONTAL;
+//		c.gridx = 2;
+//		c.gridy = 5;
+//		c.weightx = 0.5;
+//		c.insets = new Insets(5, 20, 0, 10);
+//		this.add(getDefaultCheckBox(), c);
+		
 		
 		c.anchor = GridBagConstraints.PAGE_END; //bottom of space
 		c.gridx = 2;
-		c.gridy = 5;
+		c.gridy = 6;
 		c.weighty = 1;
 		c.weightx = 0;
 		c.insets = new Insets(0, 10, 0, 10);
@@ -113,15 +137,17 @@ public class MySqlSettingsUI extends AbstractSettingsUI{
 	}
 	
 	
+	
+	
+	
 	private JPanel getButtonPanel(){
 		JPanel buttonPanel = new JPanel(new BorderLayout());
-		JButton testButton = new JButton("default");
-		buttonPanel.add(testButton,BorderLayout.EAST);
+		buttonPanel.add(getDefaultButton(),BorderLayout.EAST);
 		return buttonPanel;
 	}
 	
 	private JLabel getUserNameLabel(){
-		JLabel langLabel = new JLabel("User name");
+		JLabel langLabel = new JLabel(translate(MessageNames.LABEL_USER_NAME));
 		//langLabel.setPreferredSize(new Dimension(150,20));
 		return langLabel;
 	}
@@ -133,12 +159,12 @@ public class MySqlSettingsUI extends AbstractSettingsUI{
 		userTextField.getDocument().addDocumentListener(new DocumentModelAdapter(){
 			@Override
 			public void insertUpdate(DocumentEvent e) {
-				MySqlSettingsUI.this.controller.modifySettings(SettingsController.USER_NAME_MYSQL, 
+				getController().modifySettings(SettingsController.USER_NAME_MYSQL, 
 						userTextField.getText());
 			}
 			@Override
 			public void removeUpdate(DocumentEvent e) {
-				MySqlSettingsUI.this.controller.modifySettings(SettingsController.USER_NAME_MYSQL, 
+				getController().modifySettings(SettingsController.USER_NAME_MYSQL, 
 						userTextField.getText());
 			}
 		});
@@ -147,7 +173,7 @@ public class MySqlSettingsUI extends AbstractSettingsUI{
 	
 	
 	private JLabel getPasswordLabel(){
-		JLabel langLabel = new JLabel("Password");
+		JLabel langLabel = new JLabel(translate(MessageNames.LABEL_USER_PASSWORD));
 		//langLabel.setPreferredSize(new Dimension(150,20));
 		return langLabel;
 	}
@@ -157,12 +183,12 @@ public class MySqlSettingsUI extends AbstractSettingsUI{
 		 passwordField.getDocument().addDocumentListener(new DocumentModelAdapter(){
 				@Override
 				public void insertUpdate(DocumentEvent e) {
-					MySqlSettingsUI.this.controller.modifySettings(SettingsController.USER_PASSWORD_MYSQL, 
+					getController().modifySettings(SettingsController.USER_PASSWORD_MYSQL, 
 							new String(passwordField.getPassword()));
 				}
 				@Override
 				public void removeUpdate(DocumentEvent e) {
-					MySqlSettingsUI.this.controller.modifySettings(SettingsController.USER_PASSWORD_MYSQL, 
+					getController().modifySettings(SettingsController.USER_PASSWORD_MYSQL, 
 							new String(passwordField.getPassword()));
 				}
 			});
@@ -203,12 +229,12 @@ public class MySqlSettingsUI extends AbstractSettingsUI{
 		hostTextField.getDocument().addDocumentListener(new DocumentModelAdapter(){
 				@Override
 				public void insertUpdate(DocumentEvent e) {
-					MySqlSettingsUI.this.controller.modifySettings(SettingsController.HOST_NAME_MYSQL, 
+					getController().modifySettings(SettingsController.HOST_NAME_MYSQL, 
 							hostTextField.getText());
 				}
 				@Override
 				public void removeUpdate(DocumentEvent e) {
-					MySqlSettingsUI.this.controller.modifySettings(SettingsController.HOST_NAME_MYSQL, 
+					getController().modifySettings(SettingsController.HOST_NAME_MYSQL, 
 							hostTextField.getText());
 				}
 			});
@@ -216,12 +242,12 @@ public class MySqlSettingsUI extends AbstractSettingsUI{
 		portTextField.getDocument().addDocumentListener(new DocumentModelAdapter(){
 			@Override
 			public void insertUpdate(DocumentEvent e) {
-				MySqlSettingsUI.this.controller.modifySettings(SettingsController.PORT_MYSQL, 
+				getController().modifySettings(SettingsController.PORT_MYSQL, 
 						portTextField.getText());
 			}
 			@Override
 			public void removeUpdate(DocumentEvent e) {
-				MySqlSettingsUI.this.controller.modifySettings(SettingsController.PORT_MYSQL, 
+				getController().modifySettings(SettingsController.PORT_MYSQL, 
 						portTextField.getText());
 			}
 		});
@@ -231,7 +257,10 @@ public class MySqlSettingsUI extends AbstractSettingsUI{
 	}
 	
 	private JLabel getHostPortLabel(){
-		JLabel langLabel = new JLabel("Host : Port");
+		JLabel langLabel = new JLabel(
+				translate(MessageNames.LABEL_MYSQL_HOST) + " : " +
+				translate(MessageNames.LABEL_MYSQL_PORT)
+				);
 		return langLabel;
 	}
 	
@@ -239,7 +268,7 @@ public class MySqlSettingsUI extends AbstractSettingsUI{
 	
 	
 	private JLabel getDataBaseNameLabel(){
-		JLabel langLabel = new JLabel("Database name");
+		JLabel langLabel = new JLabel(translate(MessageNames.LABEL_MYSQL_DATABASENAME));
 		//langLabel.setPreferredSize(new Dimension(150,20));
 		return langLabel;
 	}
@@ -248,16 +277,20 @@ public class MySqlSettingsUI extends AbstractSettingsUI{
 		 dataBaseTextField.getDocument().addDocumentListener(new DocumentModelAdapter(){
 				@Override
 				public void insertUpdate(DocumentEvent e) {
-					MySqlSettingsUI.this.controller.modifySettings(SettingsController.DATABASE_NAME_MYSQL, 
+					getController().modifySettings(SettingsController.DATABASE_NAME_MYSQL, 
 							dataBaseTextField.getText());
 				}
 				@Override
 				public void removeUpdate(DocumentEvent e) {
-					MySqlSettingsUI.this.controller.modifySettings(SettingsController.DATABASE_NAME_MYSQL, 
+					getController().modifySettings(SettingsController.DATABASE_NAME_MYSQL, 
 							dataBaseTextField.getText());
 				}
 			});
 		return dataBaseTextField;
+	}
+	
+	private SettingsController getController(){
+		return (SettingsController)this.controller;
 	}
 	
 	
@@ -269,7 +302,7 @@ public class MySqlSettingsUI extends AbstractSettingsUI{
 				userTextField.setText(newValueAsString);
 		} else if ( evt.getPropertyName().equals( SettingsController.USER_PASSWORD_MYSQL)){
 			if(!new String(passwordField.getPassword()).equals(newValueAsString))
-				passwordField.setText("test");
+				passwordField.setText(newValueAsString);
 		} else if ( evt.getPropertyName().equals( SettingsController.HOST_NAME_MYSQL)){
 			if(!hostTextField.getText().equals(newValueAsString))
 				hostTextField.setText(newValueAsString);
@@ -288,6 +321,11 @@ public class MySqlSettingsUI extends AbstractSettingsUI{
 	public boolean verify() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public void loadDefault() {
+		getController().loadDefaultMySqlSettings();
 	}
 
 }

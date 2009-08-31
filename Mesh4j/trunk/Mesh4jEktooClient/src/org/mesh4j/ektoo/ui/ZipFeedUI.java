@@ -138,7 +138,7 @@ public class ZipFeedUI extends AbstractUI  implements IValidationStatus {
 			fileChooser = new JFileChooser();
 			fileChooser.setAcceptAllFileFilterUsed(false);
 			fileChooser.setFileFilter(new FileNameExtensionFilter(
-					EktooUITranslator.getXMLFileSelectorTitle(), "zip", "Zip"));
+					EktooUITranslator.getZipFileSelectorTitle(), "zip", "Zip"));
 			fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		}
 		return fileChooser;

@@ -2,6 +2,7 @@ package org.mesh4j.ektoo.ui.schemas;
 
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.util.List;
 
@@ -74,12 +75,12 @@ public class SchemaViewTask extends SwingWorker<String, Void>{
 		}
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setViewportView(schemaPanel);
-		
+		scrollPane.setPreferredSize(new Dimension(500,300));
 		return scrollPane;
 	}
 	
 	private void showSchemaInPopup(JScrollPane schemaUI){
-		this.ui.showViewInPopup(EktooUITranslator.getTitleOfSchemaViewPopUp(),schemaUI);
+		this.ui.showViewInPopup(EktooUITranslator.getTitleOfSchemaViewPopUp(),schemaUI,false);
 	}
 	
 }

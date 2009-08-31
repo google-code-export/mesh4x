@@ -72,6 +72,15 @@ public class EktooUITranslator {
 		return EktooMessageTranslator.translate("EKTOO_SCHEMA_VIEW_ERROR_ADAPTER_CREATION_MESSAGE");
 	}
 	
+	public static String getTitleSettings(){
+		return EktooMessageTranslator.translate("TITLTE_SETTINGS");
+	}
+	
+	public static String getErrorSettingsLoading(){
+		return EktooMessageTranslator.translate("ERROR_SETTINGS_LOADING");
+	}
+	
+	
 	public static String getMessageSchemaComparisonViewErrorInSourceAdapterCreation(){
 		return EktooMessageTranslator.translate("EKTOO_SCHEMA_VIEW_COMPARISON_ERROR_SOURCE_ADAPTER_CREATION_MESSAGE");
 	}
@@ -142,6 +151,10 @@ public class EktooUITranslator {
 		return EktooMessageTranslator.translate("EKTOO_XML_FILE_CHOOSER_TITLE");
 	}
 
+	public static String getZipFileSelectorTitle() {
+		return EktooMessageTranslator.translate("EKTOO_ZIP_FILE_CHOOSER_TITLE");
+	}
+	
 	public static String getMSAccessFileSelectorTitle() {
 		return EktooMessageTranslator
 				.translate("EKTOO_ACCESS_FILE_CHOOSER_TITLE");

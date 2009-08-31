@@ -3,7 +3,6 @@ package org.mesh4j.ektoo.controller;
 import java.util.List;
 
 import org.mesh4j.ektoo.model.FolderModel;
-import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 
@@ -12,8 +11,8 @@ public class FolderUIController extends AbstractUIController
 	public static final String FOLDER_NAME_PROPERTY = "FolderName";
 	
 	// BUSINESS METHODS
-	public FolderUIController(PropertiesProvider propertiesProvider, boolean acceptsCreateDataset) {
-		super(propertiesProvider, acceptsCreateDataset);
+	public FolderUIController( boolean acceptsCreateDataset) {
+		super( acceptsCreateDataset);
 	}
 	
 	public void changeFileName(String fileName) {

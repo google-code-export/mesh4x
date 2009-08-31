@@ -16,7 +16,6 @@ import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
@@ -30,7 +29,7 @@ import org.mesh4j.ektoo.ui.schemas.SchemaViewTask;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.ektoo.validator.IValidationStatus;
 
-public abstract class AbstractUI extends JPanel implements IValidationStatus {
+public abstract class AbstractUI extends AbstractView implements IValidationStatus {
 	
 	private static final long serialVersionUID = 7515686485315720840L;
 	public static final String DROPDOWN_CREATE_NEW_ITEM = "Create New";
@@ -42,14 +41,22 @@ public abstract class AbstractUI extends JPanel implements IValidationStatus {
 	private JButton viewButton = null;
 	private JButton mappingsButton = null;
 	private JButton conflictsButton = null;
-	protected AbstractUIController controller = null;
+//	protected AbstractUIController controller = null;
 	private JPopupMenu popup;
 	
 	// BUSINESS METHODS
-	public AbstractUI(AbstractUIController controller){		
-		this.controller = controller;
-		this.controller.addView(this);
+//	public AbstractUI(AbstractUIController controller){		
+//		this.controller = controller;
+//		this.controller.addView(this);
+//	}
+
+	
+	public AbstractUI(AbstractUIController controller){
+		super(controller);
+		//this.controller = controller;
+		//this.controller.addView(this);
 	}
+
 	
 	public abstract void modelPropertyChange(PropertyChangeEvent evt);
 	public abstract boolean verify();
@@ -78,9 +85,9 @@ public abstract class AbstractUI extends JPanel implements IValidationStatus {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					if (verify()) {
-						controller.setCurrentEvent(Event.schema_view_event);
+						getController().setCurrentEvent(Event.schema_view_event);
 						EktooFrame ektooFrame = ((EktooFrame)getRootFrame());
-						SchemaViewTask task = new SchemaViewTask(ektooFrame, controller, ektooFrame);
+						SchemaViewTask task = new SchemaViewTask(ektooFrame, getController(), ektooFrame);
 						task.execute();
 					}
 				}
@@ -200,7 +207,7 @@ public abstract class AbstractUI extends JPanel implements IValidationStatus {
 				public void actionPerformed(ActionEvent e) {
 					if (verify()) {
 						EktooFrame ektooFrame = ((EktooFrame)getRootFrame());
-						OpenMappingsViewTask task = new OpenMappingsViewTask(ektooFrame, controller, true);
+						OpenMappingsViewTask task = new OpenMappingsViewTask(ektooFrame, getController(), true);
 						task.execute();
 					}
 				}
@@ -228,7 +235,7 @@ public abstract class AbstractUI extends JPanel implements IValidationStatus {
 				public void actionPerformed(ActionEvent e) {
 					if (verify()) {
 						EktooFrame ektooFrame = ((EktooFrame)getRootFrame());
-						OpenResolveConflictsViewTask task = new OpenResolveConflictsViewTask(ektooFrame, controller);
+						OpenResolveConflictsViewTask task = new OpenResolveConflictsViewTask(ektooFrame, getController());
 						task.execute();
 					}
 				}
@@ -259,6 +266,10 @@ public abstract class AbstractUI extends JPanel implements IValidationStatus {
 		menu.add(menuItem);
 	}
     
+	private AbstractUIController getController(){
+		return (AbstractUIController)this.controller;
+	}
+	
 
 	class PopupListener extends MouseAdapter {
         JPopupMenu popup;

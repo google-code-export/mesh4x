@@ -1,5 +1,7 @@
 package org.mesh4j.ektoo.ui;
 
+import static org.mesh4j.ektoo.ui.settings.prop.AppPropertiesProvider.getProperty;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -24,6 +26,7 @@ import org.mesh4j.ektoo.tasks.OpenURLTask;
 import org.mesh4j.ektoo.ui.component.DocumentModelAdapter;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.schemas.xform.OpenXFormEditorViewTask;
+import org.mesh4j.ektoo.ui.settings.prop.AppProperties;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.ektoo.ui.validator.CloudUIValidator;
 
@@ -47,8 +50,10 @@ public class CloudUI extends AbstractUI {
 	public CloudUI(String baseURL, CloudUIController controller) {
 		super(controller);
 		initialize();
-		this.txtServerURL.setText(baseURL);
-		this.setMessageText(baseURL);
+		this.txtServerURL.setText(getProperty(AppProperties.CLOUD_ROOT_URI));
+		this.txtMesh.setText(getProperty(AppProperties.CLOUD_MESH_NAME));
+		this.txtDataset.setText(getProperty(AppProperties.CLOUD_DATASET_NAME));
+		this.setMessageText(getProperty(AppProperties.CLOUD_ROOT_URI));
 	}
 
 	private void initialize() {

@@ -2,7 +2,6 @@ package org.mesh4j.ektoo;
 
 import java.util.List;
 
-import org.mesh4j.ektoo.properties.PropertiesProvider;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.adapters.googlespreadsheet.IGoogleSpreadSheet;
@@ -191,7 +190,7 @@ public interface ISyncAdapterBuilder {
 
 	public IPropertyResolver[] getMappingPropertyResolvers();
 
-	public PropertiesProvider getPropertiesProvider();
+//	public PropertiesProvider getPropertiesProvider();
 
 	String makeTempFileName(String fileName);
 

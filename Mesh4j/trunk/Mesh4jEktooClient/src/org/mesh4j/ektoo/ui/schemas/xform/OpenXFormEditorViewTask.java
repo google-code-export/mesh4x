@@ -68,7 +68,7 @@ public class OpenXFormEditorViewTask extends SwingWorker<String, Void>{
 	}
 	
 	private void showSchemaInPopup(XFormEditorUI ui){
-		this.ui.showViewInPopup(EktooUITranslator.getXFormEditorTitle(), ui, ui.getWidth(), ui.getHeight(), false);
+		this.ui.showViewInPopup(EktooUITranslator.getXFormEditorTitle(), ui, ui.getWidth(), ui.getHeight(), false,false);
 	}
 	
 }
