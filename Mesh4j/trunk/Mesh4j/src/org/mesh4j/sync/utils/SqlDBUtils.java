@@ -18,12 +18,14 @@ import java.util.TreeSet;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mesh4j.sync.validations.Guard;
+import org.mesh4j.sync.validations.MeshException;
 
 public class SqlDBUtils {
 
 	private final static Log LOGGER = LogFactory.getLog(SqlDBUtils.class);
 
-	public static <T extends java.sql.Driver> Set<String> getTableNames(Class<T> driverClass, String urlConnection, String user, String password) {
+	public static <T extends java.sql.Driver> Set<String> getTableNames(Class<T> driverClass, 
+									String urlConnection, String user, String password) {
 		
 		Guard.argumentNotNull(driverClass, "driverClass");
 		Guard.argumentNotNullOrEmptyString(urlConnection, "urlConnection");
@@ -33,7 +35,7 @@ public class SqlDBUtils {
 		TreeSet<String> tables = new TreeSet<String>();
 
 		LOGGER.info("Listing all table name in Database!");
-		
+		 
 		try{
 			Class.forName(driverClass.getName());
 			Connection con = DriverManager.getConnection(urlConnection, user, password);
@@ -51,34 +53,38 @@ public class SqlDBUtils {
 				}
 			}catch(Throwable e) {
 				LOGGER.error(e.getMessage(), e);
-				LOGGER.info("No any table in the database");
+				LOGGER.info("Database has no tables");
+				throw new MeshException(e);
 			}finally{
 				if(rs != null){
 					try{
 						rs.close();
 					} catch(SQLException sqlE){
 						LOGGER.error(sqlE.getMessage(), sqlE);
+						throw new MeshException(sqlE);
 					}
 				}
 				con.close();
 			}
 		}catch(Exception e) {
 			LOGGER.error(e.getMessage(), e);
+			throw new MeshException(e);
 		}
 		return tables;
 	}
 
-	public static String getMySqlUrlConnection(String host, int port, String schema) {
+	public static String getMySqlConnectionUrl(String host, int port, String schema) {
 		Guard.argumentNotNullOrEmptyString(host, "host");
 		Guard.argumentNotNullOrEmptyString(schema, "schema");		
 		return "jdbc:mysql://" + host + ":" + port + "/"+schema;
 	}
 	
-	public static String getMySqlUrlConnection(String schema) {
+	public static String getMySqlConnectionUrl(String schema) {
 		Guard.argumentNotNullOrEmptyString(schema, "schema");		
 		return "jdbc:mysql:///"+schema;
 	}
 
+		
 	public static List<String> getDBNames(Class<Driver> driverClass, String urlConnection, String user, String password) {
 		
 		Guard.argumentNotNull(driverClass, "driverClass");
@@ -192,6 +198,8 @@ public class SqlDBUtils {
 			LOGGER.error(e.getMessage(), e);
 		}
 	}
+	
+	
 	
 	private static void createDBIfNotExist(Statement stmt, String dbName, String username, String password) throws SQLException {
 		String createDatabase =	"CREATE DATABASE "+dbName+"; ";

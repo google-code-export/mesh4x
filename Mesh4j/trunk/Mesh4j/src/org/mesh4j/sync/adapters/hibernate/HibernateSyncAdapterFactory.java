@@ -357,7 +357,7 @@ public class HibernateSyncAdapterFactory implements ISyncAdapterFactory{
 	}
 
 	public static Set<String> getMySqlTableNames(String host, int port, String schema, String user, String password) {
-		String url = SqlDBUtils.getMySqlUrlConnection(host, port, schema);
+		String url = SqlDBUtils.getMySqlConnectionUrl(host, port, schema);
 		Set<String> tableNames = SqlDBUtils.getTableNames(Driver.class, url, user, password);
 		TreeSet<String> result = new TreeSet<String>();
 		
