@@ -42,7 +42,8 @@ public class CloudModel extends AbstractModel {
 	}
 
 	public void setBaseUri(String baseUri) {
-		this.baseUri = baseUri;
+		firePropertyChange(CloudUIController.SYNC_SERVER_URI,
+				this.baseUri, this.baseUri = baseUri);
 	}
 
 	public String getUri() {

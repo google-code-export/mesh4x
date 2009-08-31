@@ -28,6 +28,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.mesh4j.ektoo.controller.AbstractUIController;
 import org.mesh4j.ektoo.controller.MsAccessUIController;
 import org.mesh4j.ektoo.tasks.IErrorListener;
 import org.mesh4j.ektoo.tasks.OpenFileTask;
@@ -96,13 +97,20 @@ public class MsAccessUI extends AbstractUI{
 				Set<String> tableNames = MsAccessHibernateSyncAdapterFactory.getTableNames(fileName);
 				tableList.setListData(tableNames.toArray());
 			} else {
-//				MessageDialog.showErrorMessage(JOptionPane.getRootFrame(), "", 
-//						EktooUITranslator.getErrorImpossibleToOpenFileBecauseFileDoesNotExists());
+				String tilteMsg = "";
+				boolean isAcceptsCreateDataset = ((AbstractUIController)this.controller).acceptsCreateDataset();
+				if(isAcceptsCreateDataset){//it is target
+					tilteMsg = SyncItemUI.UI_AS_TARGET;
+				} else {
+					tilteMsg = SyncItemUI.UI_AS_SOURCE;
+				}
+				MessageDialog.showErrorMessage(JOptionPane.getRootFrame(), tilteMsg, 
+						EktooUITranslator.getErrorImpossibleToOpenFileBecauseFileDoesNotExists());
 				
-				//TODO this line produce bug.test it if the file is not exist when app
-				//is going to launch.calling getParent() will produce null as because
+				//This line produce bug.test it if the file is not exist and when app
+				//is going to launch.calling this.getParent() will produce null as because
 				//MsAccessUI class created in sequence of creation of SyncItemUI class
-				((SyncItemUI)this.getParent().getParent()).openErrorPopUp(EktooUITranslator.getErrorImpossibleToOpenFileBecauseFileDoesNotExists());
+//				((SyncItemUI)this.getParent().getParent()).openErrorPopUp(EktooUITranslator.getErrorImpossibleToOpenFileBecauseFileDoesNotExists());
 			}
 			this.getController().changeDatabaseName(fileName);
 		} catch (Exception e) {

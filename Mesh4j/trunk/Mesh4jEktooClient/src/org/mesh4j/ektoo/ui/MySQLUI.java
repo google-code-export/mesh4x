@@ -2,6 +2,7 @@ package org.mesh4j.ektoo.ui;
 
 import static org.mesh4j.ektoo.ui.settings.prop.AppPropertiesProvider.getProperty;
 import static org.mesh4j.ektoo.ui.settings.prop.AppPropertiesProvider.getPropertyAsDecrypted;
+import static org.mesh4j.translator.MessageProvider.translate;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -20,6 +21,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -35,11 +37,14 @@ import org.mesh4j.ektoo.controller.MySQLUIController;
 import org.mesh4j.ektoo.tasks.IErrorListener;
 import org.mesh4j.ektoo.tasks.OpenMySqlFeedTask;
 import org.mesh4j.ektoo.ui.component.DocumentModelAdapter;
+import org.mesh4j.ektoo.ui.component.messagedialog.MessageDialog;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.settings.prop.AppProperties;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.ektoo.ui.validator.MySQLConnectionValidator;
 import org.mesh4j.sync.adapters.hibernate.HibernateSyncAdapterFactory;
+import org.mesh4j.sync.validations.MeshException;
+import org.mesh4j.translator.MessageNames;
 
 
 public class MySQLUI extends AbstractUI {
@@ -408,17 +413,21 @@ public class MySQLUI extends AbstractUI {
 	public void setList(String user, String pass, String host, int port, String schema) {
 		JList tableList = getTableList();
 		tableList.removeAll();
-		//this implementation is bug
-		//there must be get some exception from the core layer in case
-		//of database is not available or failed to get connection.
-		//we need to change the calling mechanism or must need to 
-		//throw exception from  getTableNames at org.mesh4j.sync.utils.SqlDBUtils
-		//for any kind of database connectivity SqlDBUtils must throw runtime exception
+		Set<String> tableNames = null;
+		boolean databaseFound = true;
+		try{
+			tableNames = HibernateSyncAdapterFactory.getMySqlTableNames(host, port, schema, user, pass);	
+		} catch (MeshException ec){
+			//TODO improve , suppress the class name from the message.
+			databaseFound = false;
+			MessageDialog.showErrorMessage(JOptionPane.getRootFrame(), ec.getMessage());
+		}
 		
-		//for temporary solution, need to update the code after changing SqlDBUtils
-		//commented by raju
-		
-		Set<String> tableNames = HibernateSyncAdapterFactory.getMySqlTableNames(host, port, schema, user, pass);
+		if(databaseFound && 
+				(tableNames == null || tableNames.size() == 0 )){
+			MessageDialog.showWarningMessage(JOptionPane.getRootFrame(), translate(MessageNames.ERROR_MYSQL_NO_TABLES_FOUND) 
+					+ " "+ schema);
+		}
 		tableList.setListData(tableNames.toArray());
 	}
 

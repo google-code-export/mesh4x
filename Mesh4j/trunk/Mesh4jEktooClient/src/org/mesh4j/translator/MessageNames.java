@@ -22,6 +22,8 @@ public class MessageNames {
 	
 	
 	public final static String ERROR_SETTINGS_LOADING = "ERROR_SETTINGS_LOADING";
+	public final static String ERROR_MYSQL_NO_TABLES_FOUND = "ERROR_MYSQL_NO_TABLES_FOUND";
+	
 	
 	public final static String LABEL_USER_NAME = "LABEL_USER_NAME";
 	public final static String LABEL_USER_PASSWORD = "LABEL_USER_PASSWORD";

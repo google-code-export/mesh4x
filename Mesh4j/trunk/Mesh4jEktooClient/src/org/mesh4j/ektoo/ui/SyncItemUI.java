@@ -216,7 +216,7 @@ public class SyncItemUI extends JPanel implements IUIController {
 	private MsExcelUI getMsExcelUI() {
 		if (excelUI == null) {
 			excelUIController = new MsExcelUIController(this.acceptsCreateDataset);
-			String fileName = getFilePath(AppProperties.PATH_SOURCE_EXCEL);
+			String fileName = getFileName(MS_EXCEL_PANEL);
 			excelUIController.addModel(new MsExcelModel(fileName));
 			excelUI = new MsExcelUI(fileName, excelUIController);
 		}
@@ -225,7 +225,7 @@ public class SyncItemUI extends JPanel implements IUIController {
 
 	private MsAccessUI getMsAccessUI() {
 		if (accessUI == null) {
-			String fileName = getFilePath(AppProperties.PATH_SOURCE_ACCESS);
+			String fileName = getFileName(MS_ACCESS_PANEL);
 			accessUI = new MsAccessUI(fileName, getMsAccessUIController());
 		}
 		return accessUI;
@@ -234,7 +234,7 @@ public class SyncItemUI extends JPanel implements IUIController {
 	private MsAccessUIController getMsAccessUIController() {
 		if(accessUIController == null){
 			accessUIController = new MsAccessUIController(this.acceptsCreateDataset);
-			String fileName = getFilePath(AppProperties.PATH_SOURCE_ACCESS);
+			String fileName = getFileName(MS_ACCESS_PANEL);
 			accessUIController.addModel(new MsAccessModel(fileName));
 		}
 		return accessUIController;
@@ -259,7 +259,7 @@ public class SyncItemUI extends JPanel implements IUIController {
 	private KmlUI getKmlUI() {
 		if (kmlUI == null) {
 			kmlUIControler = new KmlUIController(this.acceptsCreateDataset);
-			String fileName = getFilePath(AppProperties.PATH_SOURCE_KML);
+			String fileName = getFileName(KML_PANEL);
 			kmlUIControler.addModel(new KmlModel(fileName));
 			kmlUI = new KmlUI(fileName, kmlUIControler);
 		}
@@ -287,7 +287,7 @@ public class SyncItemUI extends JPanel implements IUIController {
 	private FeedUI getRSSFileUI() {
 		if (rssUI == null) {
 			rssUIControler = new FeedUIController(this.acceptsCreateDataset);
-			String fileName = getFilePath(AppProperties.PATH_SOURCE_RSS);
+			String fileName = getFileName(RSS_FILE_PANEL);
 			rssUIControler.addModel(
 				new FeedModel(
 					fileName,
@@ -311,7 +311,7 @@ public class SyncItemUI extends JPanel implements IUIController {
 	private FeedUI getAtomFileUI() {
 		if (atomUI == null) {
 			atomUIControler = new FeedUIController(this.acceptsCreateDataset);
-			String fileName = getFilePath(AppProperties.PATH_SOURCE_ATOM);
+			String fileName = getFileName(ATOM_FILE_PANEL);
 			atomUIControler.addModel(
 				new FeedModel(
 						fileName,
@@ -325,13 +325,59 @@ public class SyncItemUI extends JPanel implements IUIController {
 	private FolderUI getFolderUI() {
 		if (folderUI == null) {
 			folderUIController = new FolderUIController(this.acceptsCreateDataset);
-			String fileName = getFilePath(AppProperties.PATH_SOURCE_FOLDER);
+			String fileName = getFileName(FOLDER_PANEL);
 			folderUIController.addModel(new FolderModel(fileName));
 			folderUI = new FolderUI(fileName, folderUIController);
 		}
 		return folderUI;
 	}
 
+	
+	private String getFileName(String dbSrcName){
+		 
+		 String fileName = "";
+			if(this.acceptsCreateDataset){
+				if(dbSrcName.equals(MS_EXCEL_PANEL)){
+					fileName = getFilePath(AppProperties.PATH_TARGET_EXCEL);
+					
+				} else if(dbSrcName.equals(MS_ACCESS_PANEL)){
+					fileName = getFilePath(AppProperties.PATH_TARGET_ACCESS);
+					
+				} else if(dbSrcName.equals(RSS_FILE_PANEL)){
+					fileName = getFilePath(AppProperties.PATH_TARGET_RSS);
+					
+				} else if(dbSrcName.equals(ATOM_FILE_PANEL)){
+					fileName = getFilePath(AppProperties.PATH_TARGET_ATOM);
+					
+				} else if(dbSrcName.equals(KML_PANEL)){
+					fileName = getFilePath(AppProperties.PATH_TARGET_KML);
+					
+				} else if(dbSrcName.equals(FOLDER_PANEL)){
+					fileName = getFilePath(AppProperties.PATH_TARGET_FOLDER);
+				} 
+			} else {
+				if(dbSrcName.equals(MS_EXCEL_PANEL)){
+					fileName = getFilePath(AppProperties.PATH_SOURCE_EXCEL);
+					
+				} else if(dbSrcName.equals(MS_ACCESS_PANEL)){
+					fileName = getFilePath(AppProperties.PATH_SOURCE_ACCESS);
+					
+				} else if(dbSrcName.equals(RSS_FILE_PANEL)){
+					fileName = getFilePath(AppProperties.PATH_SOURCE_RSS);
+					
+				} else if(dbSrcName.equals(ATOM_FILE_PANEL)){
+					fileName = getFilePath(AppProperties.PATH_SOURCE_ATOM);
+					
+				} else if(dbSrcName.equals(KML_PANEL)){
+					fileName = getFilePath(AppProperties.PATH_SOURCE_KML);
+					
+				} else if(dbSrcName.equals(FOLDER_PANEL)){
+					fileName = getFilePath(AppProperties.PATH_SOURCE_FOLDER);
+				} 
+			}
+			return fileName;
+	 }
+	
 	
 	private void updateLayout(String item) {
 		CardLayout cl = (CardLayout) (body.getLayout());
