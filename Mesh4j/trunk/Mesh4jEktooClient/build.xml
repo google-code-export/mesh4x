@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     July 15, 2009                                                         
+     project,Mesh4x Googlespreadsheet adapter    
+     description,Mesh4x Googlespreadsheet adapter
+     raju                                                                
+     ====================================================================== -->
+<project name="Mesh4jEktoo" >
+	 <description>Ekto client ui application</description>
+		<property name="src.dir" value = "src"/> 
+		<property name="image.dir" value = "images"/>
+		<property name="etc.dir" value = "etc"/>
+		<property file="build.properties"/>
+		
+	
+	<path id="master-classpath">
+		        <fileset dir="${lib.dir}">
+		            <include name="*.jar"/>
+		        </fileset>
+		        <pathelement path="${build.dir}"/>
+		 </path>
+	
+	 <!-- ================================= 
+	          target: clean              
+	         ================================= -->
+	    <target name="clean"  description="removing old files">
+	    	<echo message="Removing old files"/>
+	    	<delete dir="${dist.dir}"/>
+	    	<delete dir="${build.dir}"/>
+	    	<mkdir dir="${dist.dir}"/>
+	    	<mkdir dir="${build.dir}"/>
+	    </target>
+	
+	
+	<!-- ================================= 
+	         Compile the Ektoo client
+	          help of required build.xml
+	     ================================= -->
+	    <target name="compile" depends="clean,compilecore,compile-adapter-googlespreadsheet" 
+	    	description="comile">
+	    	<mkdir dir="${build.dir}"/>
+	    	 <javac destdir="${build.dir}" target="1.6" debug="true"
+	    	        deprecation="false" optimize="false" failonerror="true">
+	    	        <src path="${src.dir}"/>
+	    	        <classpath refid="master-classpath"/>
+	    	   </javac>
+	    </target>
+	
+	 
+	
+	
+	<!-- ================================= 
+		     Compile the mesh4x core by calling
+		     core ant  build.xml file 
+		     ================================= -->
+		<target name="compilecore">
+			<ant antfile="${mesh4x.core}/build.xml"  target="ant-jar" inheritall="false"/>
+				<copy todir="${lib.dir}" preservelastmodified="true">
+				           <fileset dir="${mesh4x.core}/dist">
+				               <include name="*.jar"/>
+				           </fileset>
+				  </copy>
+		</target>
+	
+	<!-- ================================= 
+		     Compile the google spreadsheet adapter  by calling
+		      google spreadsheet adapter's ant  build.xml file 
+		     ================================= -->
+		<target name="compile-adapter-googlespreadsheet">
+			<ant antfile="${mesh4x.adapter.googlespreadsheet}/build.xml"  target="jar" inheritall="false"/>
+				<copy todir="${lib.dir}" preservelastmodified="true">
+				           <fileset dir="${mesh4x.adapter.googlespreadsheet}/dist">
+				               <include name="*.jar"/>
+				           </fileset>
+				  </copy>
+			</target>
+	
+	
+	<!-- TODO harcode file needs to be removed -->
+	<target name="jar"  depends = "compile" description="Creating executable jar file"> 
+		 <jar destfile="${dist.dir}/${jarname}-${version}.jar" basedir="${build.dir}" includes="**/*.*">
+			 	<manifest>
+			 		  <attribute name="Built-By" value="${built.by}"/>
+				      <attribute name="Main-Class" value="org.mesh4j.ektoo.Ektoo"/>
+	   	              <attribute name="Class-Path" value="${manifest.classpath}"/>
+			    </manifest>
+		 	<fileset dir="${mesh4x.core}/etc/toExport">
+		 		<include name="*.*"/>
+		 		</fileset>
+		 	<fileset dir="${mesh4x.adapter.googlespreadsheet}/etc">
+		 		<include name="*.*"/>
+		 	</fileset>
+		 	<fileset dir="${mesh4x.core}/etc/toExport">
+		 		<include name="*.*"/>
+		 	</fileset>
+		 	<fileset dir="${mesh4x.core}/etc/localProperties">
+		 		<include name="*.*"/>
+		 	</fileset>
+		 	<fileset dir="${image.dir}">
+		 		<include name="*.*"/>
+		 	</fileset>
+		 	
+		 	<fileset dir="${etc.dir}">
+		 		<include name="*.*"/>
+		 	</fileset>
+		 </jar>
+     </target>
+	
+	
+	
+	
+	<!-- need to modify-->
+	<target name="zip-bundle" depends="jar">
+			<zip destfile="${dist.dir}/${jarname}-${version}.zip">
+				<zipfileset prefix="${jarname}-${version}" dir="dist" includes="${jarname}-${version}.jar"/>
+				<zipfileset prefix="${jarname}-${version}" dir="." includes="logs"/>
+				<zipfileset prefix="${jarname}-${version}" dir="." includes="properties/**/*"/>
+				<zipfileset prefix="${jarname}-${version}" dir="${mesh4x.core}" includes="lib"> 
+				
+					 <include name="antlr/*.jar"/>
+							      	<include name="asm/*.jar"/>
+							      	<include name="c3p0/*.jar"/>
+							      	<include name="dom4j/*.jar"/>
+							      	<include name="ehcache/*.jar"/>
+						      		<include name="hibernate/*.jar"/>
+						      		<include name="j2ee/*.jar"/>
+						      		<include name="jackcess/*.jar"/>
+							      	<include name="jaf/*.jar"/>
+						      		<include name="jakarta-commons/*.jar"/>
+							      	<include name="jakarta-poi/*.jar"/>
+							      	<exclude name="jakarta-poi/poi-3.2-FINAL-20081019.jar"/>
+						  			<include name="javamail/*.jar"/>
+						  			<include name="javassist/*.jar"/>
+						      		<include name="jaxen/*.jar"/>
+							      	<include name="jenna/*.jar"/>
+						  			<include name="log4j/*.jar"/>
+						      		<include name="mySql/*.jar"/>
+							      	<include name="ognl/*.jar"/>
+						  			<include name="smsLib/*.jar"/>	
+				</zipfileset>
+				
+				<zipfileset prefix="${jarname}-${version}" dir="${mesh4x.demo.data}" includes="data/**/*"/>
+			</zip>
+		</target>
+	
+	
+	<path id="build.classpath">
+	  <fileset dir="${lib.dir}">
+	        <include name="*.jar"/>
+	  		<include name="mesh4j-2.0.1.jar"/>
+	        <include name="mesh4j-googlespreadsheetadapter-2.0.0.jar"/>
+			<exclude name="poi-3.2-FINAL-20081019.jar"/>
+	  </fileset>
+	
+	 <fileset dir="${mesh4x.core}/lib">
+		        <include name="antlr/*.jar"/>
+		      	<include name="asm/*.jar"/>
+		      	<include name="c3p0/*.jar"/>
+		      	<include name="dom4j/*.jar"/>
+		      	<include name="ehcache/*.jar"/>
+	      		<include name="hibernate/*.jar"/>
+	      		<include name="j2ee/*.jar"/>
+	      		<include name="jackcess/*.jar"/>
+		      	<include name="jaf/*.jar"/>
+	      		<include name="jakarta-commons/*.jar"/>
+		      	<include name="jakarta-poi/*.jar"/>
+		      	<exclude name="jakarta-poi/poi-3.2-FINAL-20081019.jar"/>
+	  			<include name="javamail/*.jar"/>
+	  			<include name="javassist/*.jar"/>
+	      		<include name="jaxen/*.jar"/>
+		      	<include name="jenna/*.jar"/>
+	  			<include name="log4j/*.jar"/>
+	      		<include name="mySql/*.jar"/>
+		      	<include name="ognl/*.jar"/>
+	  			<include name="smsLib/*.jar"/>
+	 </fileset>
+	</path>
+	
+	<pathconvert property="manifest.classpath" pathsep=" ">
+	  <path refid="build.classpath"/>
+	  <mapper>
+	    <chainedmapper>
+	       <flattenmapper/>
+	       <globmapper from="*.jar" to="lib/*.jar"/>
+	    </chainedmapper>
+	  </mapper>
+	</pathconvert>
+
+
+	
+	
+	
+	
+</project>
