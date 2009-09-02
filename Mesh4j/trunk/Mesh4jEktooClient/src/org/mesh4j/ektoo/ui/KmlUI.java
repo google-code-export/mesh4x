@@ -20,6 +20,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.mesh4j.ektoo.controller.GSSheetUIController;
 import org.mesh4j.ektoo.controller.KmlUIController;
 import org.mesh4j.ektoo.tasks.IErrorListener;
 import org.mesh4j.ektoo.tasks.OpenFileTask;
@@ -121,7 +122,7 @@ public class KmlUI extends AbstractUI {
 	}
 	
 	public KmlUIController getController() {
-		return (KmlUIController)controller;
+		return super.getController(KmlUIController.class);
 	}
 	
 	public JFileChooser getFileChooser() {

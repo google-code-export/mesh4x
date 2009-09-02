@@ -29,6 +29,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mesh4j.ektoo.controller.AbstractUIController;
+import org.mesh4j.ektoo.controller.KmlUIController;
 import org.mesh4j.ektoo.controller.MsAccessUIController;
 import org.mesh4j.ektoo.tasks.IErrorListener;
 import org.mesh4j.ektoo.tasks.OpenFileTask;
@@ -133,7 +134,7 @@ public class MsAccessUI extends AbstractUI{
 	}
 
 	public MsAccessUIController getController() {
-		return (MsAccessUIController)controller;
+		return super.getController(MsAccessUIController.class);
 	}
 
 	

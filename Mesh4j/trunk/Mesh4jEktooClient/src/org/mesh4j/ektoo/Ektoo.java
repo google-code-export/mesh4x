@@ -28,7 +28,7 @@ public class Ektoo {
 	private static EktooFrame parentUI= null; 
 	
 	public static void main(String[] args) {
-		
+		LOGGER.error("Test error");
 		initInternationalization();
 		initLookAndFeel();
 		setUIFont(new FontUIResource(EktooMessageTranslator

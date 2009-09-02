@@ -26,6 +26,7 @@ import org.mesh4j.ektoo.tasks.OpenURLTask;
 import org.mesh4j.ektoo.ui.component.DocumentModelAdapter;
 import org.mesh4j.ektoo.ui.image.ImageManager;
 import org.mesh4j.ektoo.ui.schemas.xform.OpenXFormEditorViewTask;
+import org.mesh4j.ektoo.ui.settings.SettingsController;
 import org.mesh4j.ektoo.ui.settings.prop.AppProperties;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.ektoo.ui.validator.CloudUIValidator;
@@ -223,7 +224,7 @@ public class CloudUI extends AbstractUI {
 	}
 
 	public CloudUIController getController() {
-		return (CloudUIController)controller;
+		return super.getController(CloudUIController.class);
 	}
 
 	@Override

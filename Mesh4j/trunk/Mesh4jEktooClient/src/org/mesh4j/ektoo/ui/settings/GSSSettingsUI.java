@@ -150,7 +150,7 @@ public class GSSSettingsUI extends AbstractSettingsUI{
 	}
 	
 	private SettingsController getController(){
-		return (SettingsController)this.controller;
+		return super.getController(SettingsController.class);
 	}
 
 	

@@ -290,7 +290,7 @@ public class MySqlSettingsUI extends AbstractSettingsUI{
 	}
 	
 	private SettingsController getController(){
-		return (SettingsController)this.controller;
+		return super.getController(SettingsController.class);
 	}
 	
 	
@@ -317,6 +317,7 @@ public class MySqlSettingsUI extends AbstractSettingsUI{
 		
 	}
 
+	
 	@Override
 	public boolean verify() {
 		// TODO Auto-generated method stub

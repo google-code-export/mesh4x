@@ -20,6 +20,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.mesh4j.ektoo.controller.CloudUIController;
 import org.mesh4j.ektoo.controller.FeedUIController;
 import org.mesh4j.ektoo.tasks.IErrorListener;
 import org.mesh4j.ektoo.tasks.OpenFileTask;
@@ -126,7 +127,7 @@ public class FeedUI extends AbstractUI  implements IValidationStatus {
 	}
 
 	public FeedUIController getController() {
-		return (FeedUIController)controller;
+		return super.getController(FeedUIController.class);
 	}
 
 	public void setFileChooser(JFileChooser fileChooser) {

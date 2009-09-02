@@ -10,7 +10,7 @@ import org.mesh4j.sync.adapters.hibernate.msaccess.MsAccessHibernateSyncAdapterF
 
 public class Util {
 	private final  static Log LOOGER = LogFactory.getLog(Util.class);   
-
+	
 	
 	public static boolean isInteger(String integerAsString){
 		Pattern pattern = Pattern.compile("^\\d*$");

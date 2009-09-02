@@ -235,7 +235,8 @@ public abstract class AbstractUI extends AbstractView implements IValidationStat
 				public void actionPerformed(ActionEvent e) {
 					if (verify()) {
 						EktooFrame ektooFrame = ((EktooFrame)getRootFrame());
-						OpenResolveConflictsViewTask task = new OpenResolveConflictsViewTask(ektooFrame, getController());
+						OpenResolveConflictsViewTask task = new OpenResolveConflictsViewTask(ektooFrame, 
+								getController());
 						task.execute();
 					}
 				}
@@ -267,7 +268,7 @@ public abstract class AbstractUI extends AbstractView implements IValidationStat
 	}
     
 	private AbstractUIController getController(){
-		return (AbstractUIController)this.controller;
+		return super.getController(AbstractUIController.class);
 	}
 	
 

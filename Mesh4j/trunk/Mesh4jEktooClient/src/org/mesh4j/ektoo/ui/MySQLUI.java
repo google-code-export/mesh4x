@@ -33,6 +33,7 @@ import javax.swing.event.ListSelectionListener;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.mesh4j.ektoo.controller.MsExcelUIController;
 import org.mesh4j.ektoo.controller.MySQLUIController;
 import org.mesh4j.ektoo.tasks.IErrorListener;
 import org.mesh4j.ektoo.tasks.OpenMySqlFeedTask;
@@ -440,7 +441,7 @@ public class MySQLUI extends AbstractUI {
 	}
 
 	public MySQLUIController getController() {
-		return (MySQLUIController)controller;
+		return super.getController(MySQLUIController.class);
 	}
 
 	public String getUser() {

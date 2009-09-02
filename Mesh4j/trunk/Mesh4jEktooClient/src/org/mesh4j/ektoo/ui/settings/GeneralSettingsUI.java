@@ -798,7 +798,7 @@ public class GeneralSettingsUI extends AbstractSettingsUI{
 	}
 	
 	private SettingsController getController(){
-		return (SettingsController)this.controller;
+		return super.getController(SettingsController.class);
 	}
 	
 	private void selectOrAddValueInCombo(String value){

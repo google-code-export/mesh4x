@@ -36,6 +36,7 @@ public abstract class AbstractSettingsUI extends AbstractView{
 
 	
 	public abstract void modelPropertyChange(PropertyChangeEvent evt);
+	
 	public abstract boolean verify();
 	public abstract void loadDefault();
 
@@ -48,7 +49,8 @@ public abstract class AbstractSettingsUI extends AbstractView{
 			defultCheckBox.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				getController().modifySettings(SettingsController.CREATE_PROP_AS_DEFAULT, 
+				getController(SettingsController.class).
+				modifySettings(SettingsController.CREATE_PROP_AS_DEFAULT, 
 						defultCheckBox.isSelected());
 			}
 		});
@@ -94,7 +96,4 @@ public abstract class AbstractSettingsUI extends AbstractView{
 	}
 	
 	
-	private SettingsController getController(){
-		return (SettingsController)this.controller;
-	}
 }

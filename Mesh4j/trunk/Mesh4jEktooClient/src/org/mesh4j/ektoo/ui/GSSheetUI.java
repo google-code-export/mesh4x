@@ -30,6 +30,7 @@ import javax.swing.SwingWorker;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.mesh4j.ektoo.controller.FolderUIController;
 import org.mesh4j.ektoo.controller.GSSheetUIController;
 import org.mesh4j.ektoo.tasks.IErrorListener;
 import org.mesh4j.ektoo.tasks.OpenURLTask;
@@ -634,7 +635,7 @@ public class GSSheetUI extends AbstractUI {
 	}
 
 	public GSSheetUIController getController() {
-		return (GSSheetUIController)controller;
+		return super.getController(GSSheetUIController.class);
 	}
 
 	public void setUserLabel(String googleUserLabel) {

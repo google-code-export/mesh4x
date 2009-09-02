@@ -19,8 +19,32 @@ public abstract class AbstractView extends JPanel {
 		this.controller = controller;
 		this.controller.addView(this);
 	}
+	/**
+	 * Every UI notified when any particular model property
+	 * changes in its corresponding model component.
+	 * @param evt, the property change event 
+	 */
 	public abstract void modelPropertyChange(PropertyChangeEvent evt);
+	
+	/**
+	 * @return true or false , indicate if the UI component field has been 
+	 * verified or not.
+	 */
 	public abstract boolean verify();
 	 
+	/**
+	 * As every view attached with a particular controller
+	 * subclass of AbstractView should  provide known <br>
+	 * controller class name to get the particular controller 
+	 * @param <T>, the class name which must extend from 
+	 * 						<code>AbstractViewController </code> 
+	 * @param clazz
+	 * @return T which provided as the class name as parameter
+	 */
+	public <T extends AbstractViewController> T getController(Class<T> clazz){
+		return  (T)controller;
+	}
+	
+	
 	
 }

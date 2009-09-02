@@ -24,6 +24,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.mesh4j.ektoo.controller.MsAccessUIController;
 import org.mesh4j.ektoo.controller.MsExcelUIController;
 import org.mesh4j.ektoo.tasks.IErrorListener;
 import org.mesh4j.ektoo.tasks.OpenFileTask;
@@ -149,7 +150,7 @@ public class MsExcelUI extends AbstractUI implements IValidationStatus {
 	}
 
 	public MsExcelUIController getController() {
-		return (MsExcelUIController)controller;
+		return super.getController(MsExcelUIController.class);
 	}
 
 	@Override

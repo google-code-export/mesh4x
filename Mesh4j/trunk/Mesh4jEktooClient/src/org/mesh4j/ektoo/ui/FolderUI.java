@@ -19,6 +19,7 @@ import javax.swing.JTextField;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.mesh4j.ektoo.controller.FeedUIController;
 import org.mesh4j.ektoo.controller.FolderUIController;
 import org.mesh4j.ektoo.tasks.IErrorListener;
 import org.mesh4j.ektoo.tasks.OpenFileTask;
@@ -122,7 +123,7 @@ public class FolderUI extends AbstractUI {
 	}
 	
 	public FolderUIController getController() {
-		return (FolderUIController)controller;
+		return super.getController(FolderUIController.class);
 	}
 
 	public JFileChooser getFileChooser() {

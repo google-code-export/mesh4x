@@ -126,7 +126,7 @@ public class ZipFeedUI extends AbstractUI  implements IValidationStatus {
 	}
 
 	public ZipFeedUIController getController() {
-		return (ZipFeedUIController)controller;
+		return super.getController(ZipFeedUIController.class);
 	}
 
 	public void setFileChooser(JFileChooser fileChooser) {
