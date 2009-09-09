@@ -102,7 +102,13 @@ public class MsAccessHibernateMappingGenerator {
 				if(!idNames.contains(propertyName) && !column.isAutoNumber() ){	
 					if(column.getType().name().equals("GUID")){
 						MappingGenerator.writeProperty(writer, propertyName, msAccessColumnName, Hibernate.BINARY.getName());
-					} else {
+					} 
+					//Issue#127:Sharif:08/09/09
+					else if(column.getType().name().equals("MEMO")){
+						MappingGenerator.writeProperty(writer, propertyName, msAccessColumnName, Hibernate.TEXT.getName(), "65535"); //column.getType().getMaxSize()
+					}
+					//Issue#127
+					else {
 						MappingGenerator.writeProperty(writer, propertyName, msAccessColumnName, getHibernateType(column));
 					}
 				}
