@@ -18,6 +18,9 @@ import org.mesh4j.sync.payload.schema.rdf.RDFInstance;
 import org.mesh4j.sync.utils.XMLHelper;
 import org.mesh4j.sync.validations.Guard;
 
+import com.hp.hpl.jena.datatypes.RDFDatatype;
+import com.hp.hpl.jena.datatypes.TypeMapper;
+
 public class HibernateMsAccessToRDFMapping extends AbstractRDFIdentifiableMapping implements IHibernateToXMLMapping {
 	
 	private static final String DATE_FORMAT = "yyyy-mm-dd hh:mm:ss";
@@ -143,7 +146,16 @@ public class HibernateMsAccessToRDFMapping extends AbstractRDFIdentifiableMappin
 			if(this.rdfSchema.isGUID(this.rdfSchema.getIdentifiablePropertyNames().get(0))){
 				return UUIDStringToHexStringSchemaTypeFormat.INSTANCE.getBytes(meshId);
 			}else{
-				return meshId;
+				//Issue#125:Sharif:08/09/09
+				String idPropertyType = this.rdfSchema.getPropertyType(this.rdfSchema.getIdentifiablePropertyNames().get(0));
+				RDFDatatype dataType = TypeMapper.getInstance().getTypeByName(idPropertyType);
+				
+				if (IRDFSchema.XLS_LONG.equals(idPropertyType) || IRDFSchema.XLS_INTEGER.equals(idPropertyType)) {
+					return (Serializable) dataType.parse(meshId);
+				} else {
+					return meshId;
+				}
+				//Issue#125
 			}
 		}
 	}
