@@ -105,6 +105,12 @@ public class MappingGenerator {
 		writer.write("\t\t");
 		writer.write(MessageFormat.format("<property name=\"{0}\" column=\"{1}\" node=\"{0}\" type=\"{2}\"/>", name, column, type));
 	}
+
+	public static void writeProperty(Writer writer, String name, String column, String type, String length) throws IOException {
+		writer.write("\n");
+		writer.write("\t\t");
+		writer.write(MessageFormat.format("<property name=\"{0}\" column=\"{1}\" node=\"{0}\" type=\"{2}\" length=\"{3}\"/>", name, column, type, length));
+	}
 	
 	public static void writerFooter(Writer writer) throws IOException {
 		writer.write("\n");
