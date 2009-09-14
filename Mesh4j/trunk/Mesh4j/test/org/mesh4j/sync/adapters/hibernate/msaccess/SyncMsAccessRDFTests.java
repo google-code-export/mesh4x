@@ -3,6 +3,7 @@ package org.mesh4j.sync.adapters.hibernate.msaccess;
 import java.io.File;
 
 import org.junit.Test;
+import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.adapters.feed.Feed;
 import org.mesh4j.sync.adapters.feed.FeedAdapter;
@@ -10,9 +11,12 @@ import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.adapters.hibernate.HibernateContentAdapter;
 import org.mesh4j.sync.adapters.hibernate.HibernateSessionFactoryBuilder;
 import org.mesh4j.sync.adapters.hibernate.HibernateSyncRepository;
+import org.mesh4j.sync.adapters.msexcel.MsExcel;
+import org.mesh4j.sync.adapters.msexcel.MsExcelRDFSyncAdapterFactory;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.parsers.SyncInfoParser;
+import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
 import org.mesh4j.sync.security.NullIdentityProvider;
@@ -134,6 +138,55 @@ public class SyncMsAccessRDFTests {
 		TestHelper.assertSync(syncEngine);
 	}
 
+	
+	@Test
+	public void shouldSyncMSAccessWithNumericTypeIdField() throws Exception{
+		String sourceName = TestHelper.fileName("msAccess_"+IdGenerator.INSTANCE.newID()+".mdb");
+		String mdbFileName = getMsAccessFileNameToTest(sourceName);
+		SplitAdapter sourceAsMsAccess = MsAccessHibernateSyncAdapterFactory.createHibernateAdapter(
+				mdbFileName, 
+				"user2", 
+				"http://localhost:8080/mesh4x/feeds", 
+				TestHelper.baseDirectoryForTest(), 
+				NullIdentityProvider.INSTANCE);
+		
+		SplitAdapter splitAdapterSource = (SplitAdapter)sourceAsMsAccess;
+		ISchema sourceSchema = ((HibernateContentAdapter)splitAdapterSource.getContentAdapter()).getMapping().getSchema();
+		
+		File targetContentFile = new File(TestHelper.baseDirectoryForTest() + "target_"+IdGenerator.INSTANCE.newID()+".xls");
+		
+		ISyncAdapter targetAsExcel = MsExcelRDFSyncAdapterFactory.createSyncAdapter(new MsExcel(targetContentFile.getAbsolutePath()),NullIdentityProvider.INSTANCE, (IRDFSchema)sourceSchema);
+
+		SyncEngine syncEngine = new SyncEngine(splitAdapterSource, targetAsExcel);
+		TestHelper.assertSync(syncEngine);
+		
+		FileUtils.cleanupDirectory(TestHelper.baseDirectoryForTest());
+	}
+	
+	@Test
+	public void shouldSyncMSAccessWithMEMOTypeField() throws Exception{
+		String sourceName = TestHelper.fileName("msAccess_"+IdGenerator.INSTANCE.newID()+".mdb");
+		String mdbFileName = getMsAccessFileNameToTest(sourceName);
+		SplitAdapter sourceAsMsAccess = MsAccessHibernateSyncAdapterFactory.createHibernateAdapter(
+				mdbFileName, 
+				"user3", 
+				"http://localhost:8080/mesh4x/feeds", 
+				TestHelper.baseDirectoryForTest(), 
+				NullIdentityProvider.INSTANCE);
+		
+		SplitAdapter splitAdapterSource = (SplitAdapter)sourceAsMsAccess;
+		ISchema sourceSchema = ((HibernateContentAdapter)splitAdapterSource.getContentAdapter()).getMapping().getSchema();
+		
+		File targetContentFile = new File(TestHelper.baseDirectoryForTest() + "target_"+IdGenerator.INSTANCE.newID()+".xls");
+		
+		ISyncAdapter targetAsExcel = MsExcelRDFSyncAdapterFactory.createSyncAdapter(new MsExcel(targetContentFile.getAbsolutePath()),NullIdentityProvider.INSTANCE, (IRDFSchema)sourceSchema);
+
+		SyncEngine syncEngine = new SyncEngine(splitAdapterSource, targetAsExcel);
+		TestHelper.assertSync(syncEngine);
+		
+		FileUtils.cleanupDirectory(TestHelper.baseDirectoryForTest());
+	}	
+	
 	private String getMsAccessFileNameToTest(String name) {
 		try{
 			String localFileName = this.getClass().getResource("DevDB2003.mdb").getFile();
