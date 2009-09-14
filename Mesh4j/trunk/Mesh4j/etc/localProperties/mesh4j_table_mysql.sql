@@ -44,6 +44,16 @@ CREATE TABLE user (
 
 insert into user (uid, name, pass) values (1, "jmt", "123");
 
+DROP TABLE IF EXISTS user2;
+DROP TABLE IF EXISTS user2_sync;
+
+CREATE TABLE user2 (
+  id INTEGER PRIMARY KEY not null,
+  uname varchar(100) not null,
+  passw varchar(100) not null);
+
+insert into user2 (id, uname, passw) values (1, "msu", "gsl");
+
 DROP TABLE IF EXISTS person;
 DROP TABLE IF EXISTS person_sync;
 
