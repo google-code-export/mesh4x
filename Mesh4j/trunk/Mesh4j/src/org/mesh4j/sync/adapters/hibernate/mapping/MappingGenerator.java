@@ -6,51 +6,84 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.text.MessageFormat;
+import java.util.List;
+
+import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 
 public class MappingGenerator {
 	
-//	public static void createMapping(IRDFSchema rdfSchema, String idColumnName, String mappingFileName) throws Exception{
-//
-//		StringWriter writer = new StringWriter();
-//		
-//		MappingGenerator.writeHeader(writer);
-//		MappingGenerator.writerClass(writer, rdfSchema.getOntologyNameSpace(), rdfSchema.getOntologyNameSpace());
-//			
-//		String propertyType = rdfSchema.getPropertyType(idColumnName);
-//		MappingGenerator.writeID(writer, idColumnName, idColumnName, getHibernateTypeFromXSD(propertyType));
-//			
-//		int size = rdfSchema.getPropertyCount();
-//		String propertyName;
-//		for (int i = 0; i < size; i++) {
-//			propertyName = rdfSchema.getPropertyName(i);
-//			propertyType = rdfSchema.getPropertyType(propertyName);
-//			MappingGenerator.writeProperty(writer, propertyName, propertyName, getHibernateTypeFromXSD(propertyType));
-//		}
-//		MappingGenerator.writerFooter(writer);
-//		
-//		File mappingFile = new File(mappingFileName);
-//		FileWriter fileWriter = new FileWriter(mappingFile);
-//		try{
-//			writer.flush();
-//			fileWriter.write(writer.toString());
-//		}finally{
-//			fileWriter.close();
-//		}
-//	}
-//	
-//	private static String getHibernateTypeFromXSD(String propertyType) {
-//		if(IRDFSchema.XLS_STRING.equals(propertyType)){
-//			return "string";
-//		}else if(IRDFSchema.XLS_BOOLEAN.equals(propertyType)){
-//			return "byte";
-//		} else if(IRDFSchema.XLS_INTEGER.equals(propertyType)){
-//			return "integer";
-//		} else if(IRDFSchema.XLS_DATETIME.equals(propertyType)){
-//			return "timestamp";
-//		} else {
-//			return null;
-//		}
-//	}
+	public static void createMapping(IRDFSchema rdfSchema, String mappingFileName) throws Exception{
+
+		FileWriter writer = new FileWriter(mappingFileName);
+		
+		MappingGenerator.writeHeader(writer);
+		MappingGenerator.writerClass(writer, rdfSchema.getOntologyNameSpace(), rdfSchema.getOntologyNameSpace());
+		
+		List<String> ids = rdfSchema.getIdentifiablePropertyNames();
+		
+		if(ids.size() == 1){
+			String idColumnName = ids.get(0);
+			String propertyType = rdfSchema.getPropertyType(idColumnName);
+			MappingGenerator.writeID(writer, idColumnName, idColumnName, getHibernateTypeFromXSD(propertyType));
+		} else if (ids.size() > 1){
+			writer.write("\n");
+			writer.write("\t\t");
+			writer.write("<composite-id name=\"id\">");	
+			
+			for (String id : ids) {
+				String propertyType = rdfSchema.getPropertyType(id);
+				String idType = getHibernateTypeFromXSD(propertyType);
+				writer.write("\n");
+				writer.write("\t\t\t");
+				writer.write(MessageFormat.format("<key-property name=\"{0}\" node=\"{0}\" type=\"{1}\">", id, idType));
+				writer.write("\n");
+				writer.write("\t\t\t\t");
+				writer.write(MessageFormat.format("<column name=\"{0}\"/>", id));
+				writer.write("\n");
+				writer.write("\t\t\t");
+				writer.write("</key-property>");
+			}
+			writer.write("\n");
+			writer.write("\t\t");
+			writer.write("</composite-id>");	
+		}
+		
+		int size = rdfSchema.getPropertyCount();
+		String propertyName, propertyType;
+		
+		for (int i = 0; i < size; i++) {
+			propertyName = rdfSchema.getPropertyName(i);
+			if (!ids.contains(propertyName)) {
+				propertyType = rdfSchema.getPropertyType(propertyName);
+				MappingGenerator.writeProperty(writer, propertyName, propertyName, getHibernateTypeFromXSD(propertyType));
+			}
+		}
+		MappingGenerator.writerFooter(writer);
+		
+		try{
+			writer.flush();
+		}finally{
+			writer.close();
+		}
+	}
+	
+	private static String getHibernateTypeFromXSD(String propertyType) {
+		if(IRDFSchema.XLS_STRING.equals(propertyType)){
+			return "string";
+		}else if(IRDFSchema.XLS_BOOLEAN.equals(propertyType)){
+			return "byte";
+		} else if(IRDFSchema.XLS_INTEGER.equals(propertyType)){
+			return "integer";
+		}  else if(IRDFSchema.XLS_LONG.equals(propertyType)){
+			return "long";
+		}  else if(IRDFSchema.XLS_DOUBLE.equals(propertyType)){
+			return "double";
+		} else if(IRDFSchema.XLS_DATETIME.equals(propertyType)){
+			return "timestamp";
+		} else {
+			return null;
+		}
+	}
 	
 	public static void createSyncInfoMapping(String mappingFileName, String tableName) throws IOException{
 

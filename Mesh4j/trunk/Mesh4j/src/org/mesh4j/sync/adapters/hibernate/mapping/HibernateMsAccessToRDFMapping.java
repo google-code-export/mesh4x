@@ -146,16 +146,9 @@ public class HibernateMsAccessToRDFMapping extends AbstractRDFIdentifiableMappin
 			if(this.rdfSchema.isGUID(this.rdfSchema.getIdentifiablePropertyNames().get(0))){
 				return UUIDStringToHexStringSchemaTypeFormat.INSTANCE.getBytes(meshId);
 			}else{
-				//Issue#125:Sharif:08/09/09
-				String idPropertyType = this.rdfSchema.getPropertyType(this.rdfSchema.getIdentifiablePropertyNames().get(0));
-				RDFDatatype dataType = TypeMapper.getInstance().getTypeByName(idPropertyType);
-				
-				if (IRDFSchema.XLS_LONG.equals(idPropertyType) || IRDFSchema.XLS_INTEGER.equals(idPropertyType)) {
-					return (Serializable) dataType.parse(meshId);
-				} else {
-					return meshId;
-				}
-				//Issue#125
+				// We need to take the value with exactly the same datatype as described in the XSD
+				String idPropertyName = this.rdfSchema.getIdentifiablePropertyNames().get(0);
+				return (Serializable)this.rdfSchema.cannonicaliseValue(idPropertyName, meshId);
 			}
 		}
 	}

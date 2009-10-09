@@ -150,12 +150,16 @@ public class HibernateContentAdapter implements IIdentifiableContentAdapter, ISy
 	public List<IContent> getAll(Date since) {
 		String hqlQuery ="FROM " + this.getType();
 		Session session = this.sessionFactory.openSession();
-		Session dom4jSession = session.getSession(EntityMode.DOM4J);		
+		Session dom4jSession = session.getSession(EntityMode.DOM4J);
 		List<Element> entities = null;
 		
+		Transaction transaction = null;
 		try{
+			transaction = session.beginTransaction(); // with DerbyDB the lack of transaction in this procedure was leading to an open transaction
 			entities = dom4jSession.createQuery(hqlQuery).list();
 		}finally{
+			if (transaction != null)
+				transaction.commit();
 			session.close();
 		}
 		

@@ -1,7 +1,6 @@
 package org.mesh4j.sync.adapters.hibernate.mapping;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,9 +17,6 @@ import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.payload.schema.rdf.RDFInstance;
 import org.mesh4j.sync.utils.XMLHelper;
 import org.mesh4j.sync.validations.Guard;
-
-import com.hp.hpl.jena.datatypes.RDFDatatype;
-import com.hp.hpl.jena.datatypes.TypeMapper;
 
 public class HibernateToRDFMapping extends AbstractRDFIdentifiableMapping implements IHibernateToXMLMapping {
 	
@@ -121,16 +117,9 @@ public class HibernateToRDFMapping extends AbstractRDFIdentifiableMapping implem
 			return (DefaultElement)XMLHelper.parseElement(sb.toString());
 			
 		} else {
-			//Issue#125:Sharif:08/09/09
-			String idPropertyType = this.rdfSchema.getPropertyType(this.rdfSchema.getIdentifiablePropertyNames().get(0));
-			RDFDatatype dataType = TypeMapper.getInstance().getTypeByName(idPropertyType);
-			
-			if (IRDFSchema.XLS_LONG.equals(idPropertyType) || IRDFSchema.XLS_INTEGER.equals(idPropertyType)) {
-				return (Serializable) dataType.parse(meshId);
-			} else {
-				return meshId;
-			}	
-			//Issue#125
+			// We need to take the value with exactly the same datatype as described in the XSD
+			String idPropertyName = this.rdfSchema.getIdentifiablePropertyNames().get(0);
+			return (Serializable)this.rdfSchema.cannonicaliseValue(idPropertyName, meshId);
 		}
 	}
 }

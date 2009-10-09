@@ -291,12 +291,14 @@ public class RDFSchema implements IRDFSchema{
 					return value;
 				} else {
 					if(value instanceof Number){
-						return new Long(value.toString());
+						Number valuesAsNumber = (Number)value;
+						return new Long(valuesAsNumber.longValue());
 					} else if(value instanceof String){
 						String valueAsString = (String) value;
-						if(dataType.isValid(valueAsString)){
-							return dataType.parse((String)value);
+						try { // We can't rely on dataType.parse, because it can return either an Integer or a Long 
+							return Long.valueOf(valueAsString);
 						}
+						catch (NumberFormatException e) {}
 					}
 				}
 			} else if(IRDFSchema.XLS_INTEGER.equals(range.getURI())){
@@ -304,12 +306,14 @@ public class RDFSchema implements IRDFSchema{
 					return value;
 				} else {
 					if(value instanceof Number){
-						return new Integer(value.toString());
+						Number valuesAsNumber = (Number)value;
+						return new Integer(valuesAsNumber.intValue());
 					} else if(value instanceof String){
 						String valueAsString = (String) value;
-						if(dataType.isValid(valueAsString)){
-							return dataType.parse((String)value);
+						try { // We can't rely on dataType.parse, because it can return either an Integer or a Long 
+							return Integer.valueOf(valueAsString);
 						}
+						catch (NumberFormatException e) {}
 					}
 				}
 			}else {

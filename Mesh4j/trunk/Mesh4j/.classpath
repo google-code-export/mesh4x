@@ -14,6 +14,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/ehcache/ehcache-1.2.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/j2ee/jta.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jaxen/jaxen-1.1-beta-7.jar" sourcepath="D:/Marcelo/java_src/dom4j-1.6.1/src"/>
+	<classpathentry exported="true" kind="lib" path="lib/derby/derby.jar"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry exported="true" kind="lib" path="lib/jakarta-commons/commons-lang.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jaf/activation.jar"/>

@@ -122,9 +122,14 @@ public class HibernateSyncRepository implements ISyncRepository, ISyncAware{
 
 		List<Element> syncElements = null;
 		
+		Transaction tx = null;
 		try{
+			tx = session.beginTransaction(); // with DerbyDB the lack of transaction in this procedure was leading to an open transaction
+			
 			syncElements = dom4jSession.createQuery(syncQuery).list();
 		} finally{
+			if (tx != null)
+				tx.commit();
 			session.close();
 		}
 		return syncElements;
