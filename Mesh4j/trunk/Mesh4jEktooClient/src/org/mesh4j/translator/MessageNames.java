@@ -19,6 +19,7 @@ public class MessageNames {
 	public final static String DESC_ATOM_FILE_CHOOSER = "DESC_ATOM_FILE_CHOOSER";
 	public final static String DESC_FOLDER_FILE_CHOOSER = "DESC_FOLDER_FILE_CHOOSER";
 	public final static String DESC_ZIP_FILE_CHOOSER = "DESC_ZIP_FILE_CHOOSER";
+	public final static String DESC_XFORM_FILE_CHOOSER = "DESC_XFORM_FILE_CHOOSER";
 	
 	
 	public final static String ERROR_SETTINGS_LOADING = "ERROR_SETTINGS_LOADING";
@@ -74,6 +75,9 @@ public class MessageNames {
 	public final static String LABEL_MYSQL_HOST = "LABEL_MYSQL_HOST";
 	public final static String LABEL_MYSQL_PORT = "LABEL_MYSQL_PORT";
 	public final static String LABEL_MYSQL_DATABASENAME = "LABEL_MYSQL_DATABASENAME";
+	
+	public final static String LABEL_BROWSE_XFORM = "LABEL_BROWSE_XFORM";
+	public final static String TOOLTIP_BROWSE_XOFORM = "TOOLTIP_BROWSE_XOFORM";
 	
 	 
 	
