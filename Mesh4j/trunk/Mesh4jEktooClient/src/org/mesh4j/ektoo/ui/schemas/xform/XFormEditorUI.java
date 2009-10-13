@@ -1,17 +1,25 @@
 package org.mesh4j.ektoo.ui.schemas.xform;
 
+import static org.mesh4j.translator.MessageProvider.translate;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -22,6 +30,7 @@ import org.mesh4j.ektoo.ui.EktooFrame;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.utils.XMLHelper;
+import org.mesh4j.translator.MessageNames;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -41,6 +50,7 @@ public class XFormEditorUI  extends JPanel {
 	
 	private JLabel labelStatus;
 	private JTextArea textArea;
+	private JFileChooser fileChooser = null;
 	
 	// BUSINESS METHODS
 	public XFormEditorUI(EktooFrame ui, CloudModel cloudModel, IRDFSchema schema, String xFormXML) {
@@ -54,7 +64,7 @@ public class XFormEditorUI  extends JPanel {
 		setLayout(new FormLayout(
 			new ColumnSpec[] {
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("291dlu"),
+				ColumnSpec.decode("330dlu"),
 				FormFactory.RELATED_GAP_COLSPEC},
 			new RowSpec[] {
 				FormFactory.RELATED_GAP_ROWSPEC,
@@ -79,7 +89,10 @@ public class XFormEditorUI  extends JPanel {
 				FormFactory.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("37dlu"),
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("39dlu")},
+				ColumnSpec.decode("39dlu"),
+				FormFactory.RELATED_GAP_COLSPEC,
+				ColumnSpec.decode("39dlu")
+				},
 			new RowSpec[] {
 				FormFactory.RELATED_GAP_ROWSPEC,
 				RowSpec.decode("13dlu")}));
@@ -145,6 +158,26 @@ public class XFormEditorUI  extends JPanel {
 		});
 		panelButtons.add(buttonRegenerate, new CellConstraints(9, 2, CellConstraints.FILL, CellConstraints.FILL));
 
+		
+		final JButton buttonBrowse = new JButton();
+		buttonBrowse.setText(translate(MessageNames.LABEL_BROWSE_XFORM));
+		buttonBrowse.setToolTipText(translate(MessageNames.TOOLTIP_BROWSE_XOFORM));
+		buttonBrowse.setContentAreaFilled(false);
+		buttonBrowse.setBorder(new EmptyBorder(0, 0, 0, 0));
+		buttonBrowse.setBorderPainted(false);
+		buttonBrowse.setOpaque(false);
+		buttonBrowse.setFont(new Font("", Font.BOLD, 12));
+		buttonBrowse.addActionListener(new ActionListener(){
+			@Override public void actionPerformed(ActionEvent e) {
+				launchFileBrowser(JFileChooser.FILES_ONLY, 
+						buttonBrowse, 
+						translate(MessageNames.DESC_XFORM_FILE_CHOOSER), 
+						"xml");
+			}			
+		});
+		panelButtons.add(buttonBrowse, new CellConstraints(11, 2, CellConstraints.FILL, CellConstraints.FILL));
+		
+		
 		labelStatus = new JLabel();
 		labelStatus.setText("");
 		panelButtons.add(labelStatus, new CellConstraints(1, 2, CellConstraints.FILL, CellConstraints.CENTER));
@@ -160,6 +193,57 @@ public class XFormEditorUI  extends JPanel {
 		return this.ownerUI.getEktooFrame();
 	}
 
+	
+	private void launchFileBrowser(int mode,JComponent component,
+									String desc,
+									String... extensions){
+
+		//clean up old file filter
+		for(FileFilter fileFilter : getFileChooser().getChoosableFileFilters()){
+			getFileChooser().removeChoosableFileFilter(fileFilter);	
+		}
+		
+		getFileChooser().setFileSelectionMode(mode);
+		getFileChooser().setAcceptAllFileFilterUsed(false);
+		if(mode == JFileChooser.FILES_ONLY){
+			getFileChooser().setFileFilter(new FileNameExtensionFilter(desc,extensions));
+		} 
+		
+		int returnVal = getFileChooser().showOpenDialog(component);
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			File selectedFile = getFileChooser().getSelectedFile();
+			if (selectedFile != null) {
+				try {
+					String xformText = getFileContentAsString(selectedFile);
+					textArea.setText(XMLHelper.formatXML(DocumentHelper.parseText(xformText), OutputFormat.createPrettyPrint()));
+				} catch (Exception ex) {
+					LOGGER.error(ex);
+				}
+			}
+		}
+	}
+	
+	private String getFileContentAsString(File file){
+		String contents = "";
+		try {
+			Scanner scanner = new Scanner(file);
+			scanner.useDelimiter("\\Z");
+		    contents = scanner.next();
+		    scanner.close();
+		} catch (FileNotFoundException e) {
+			LOGGER.error(e);
+		}
+		return contents;
+	}
+	
+	private JFileChooser getFileChooser() {
+		if(fileChooser == null){
+			fileChooser = new JFileChooser();
+		}
+		return fileChooser;
+	}
+
+	
 	public void refresh(String xFormXML) {
 		try{
 			textArea.setText(XMLHelper.formatXML(DocumentHelper.parseText(xFormXML), OutputFormat.createPrettyPrint()));
