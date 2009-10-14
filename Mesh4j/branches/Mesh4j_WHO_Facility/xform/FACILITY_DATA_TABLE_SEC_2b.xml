@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<h:html xmlns:h="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:jr="http://openrosa.org/javarosa">  
+  <h:head> 
+    <h:title>FACILITY_DATA_TABLE_SEC_2b</h:title>  
+    <model> 
+      <instance> 
+        <FACILITY_DATA_TABLE_SEC_2b> 
+     
+           <sec2b_facility_id/>
+           <gpe_xray_machine/>
+           <gpe_bp_machine/>
+           <gpe_stethoscope/>
+           <gpe_micronebulizer/>
+           <gpe_ophtalmoscope/>
+           <gpe_otoscope/>
+           <gpe_ctscan_mri/>
+           <gpe_adult_ws/>
+           <gpe_child_ws/>
+           <gpe_thermometer/>
+           <gpe_ets/>
+           <gpe_ot/>
+           <gpe_anst_machine/>
+           <gpe_oxygen_supply/>
+           <gpe_infusion_kits/>
+           <gpe_refrigerator/>
+           <sec2b_control_field/>
+           
+        </FACILITY_DATA_TABLE_SEC_2b> 
+      </instance>
+      <bind id="psec2b_facility_id" nodeset="/FACILITY_DATA_TABLE_SEC_2b/sec2b_facility_id" type="xsd:string"/>
+    </model> 
+  </h:head>  
+  <h:body> 
+   
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_2b/gpe_xray_machine"> 
+      <label>X-ray machine?</label>  
+      <item>
+        <label>AVAILABLE AND FUNCTIONL NOW</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE NOT FUNCTIONL NOW</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE TODAY</label>
+        <value>3</value>
+      </item>
+       
+       <item>
+        <label>NEVER AVAILABLE </label>
+        <value>4</value>
+      </item>
+    </select1>  
+    
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_2b/gpe_bp_machine"> 
+      <label>Blood pressure machine/cuff?</label>  
+      <item>
+        <label>AVAILABLE AND FUNCTIONL NOW</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE NOT FUNCTIONL NOW</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE TODAY</label>
+        <value>3</value>
+      </item>
+       
+       <item>
+        <label>NEVER AVAILABLE </label>
+        <value>4</value>
+      </item>
+    </select1>
+    
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_2b/gpe_stethoscope"> 
+      <label>Stethoscope(s)?</label>  
+      <item>
+        <label>AVAILABLE AND FUNCTIONL NOW</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE NOT FUNCTIONL NOW</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE TODAY</label>
+        <value>3</value>
+      </item>
+       
+       <item>
+        <label>NEVER AVAILABLE </label>
+        <value>4</value>
+      </item>
+    </select1>
+    
+    
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_2b/gpe_micronebulizer"> 
+      <label>Micronebulizer?</label>  
+      <item>
+        <label>AVAILABLE AND FUNCTIONL NOW</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE NOT FUNCTIONL NOW</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE TODAY</label>
+        <value>3</value>
+      </item>
+       
+       <item>
+        <label>NEVER AVAILABLE </label>
+        <value>4</value>
+      </item>
+    </select1>
+    
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_2b/gpe_ophtalmoscope"> 
+      <label>Ophtalmoscope?</label>  
+      <item>
+        <label>AVAILABLE AND FUNCTIONL NOW</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE NOT FUNCTIONL NOW</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE TODAY</label>
+        <value>3</value>
+      </item>
+       
+       <item>
+        <label>NEVER AVAILABLE </label>
+        <value>4</value>
+      </item>
+    </select1>
+    
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_2b/gpe_otoscope"> 
+      <label>Otoscope?</label>  
+      <item>
+        <label>AVAILABLE AND FUNCTIONL NOW</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE NOT FUNCTIONL NOW</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE TODAY</label>
+        <value>3</value>
+      </item>
+       
+       <item>
+        <label>NEVER AVAILABLE </label>
+        <value>4</value>
+      </item>
+    </select1>
+    
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_2b/gpe_ctscan_mri"> 
+      <label>CTSCAN OR MRI</label>  
+      <item>
+        <label>AVAILABLE AND FUNCTIONL NOW</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE NOT FUNCTIONL NOW</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE TODAY</label>
+        <value>3</value>
+      </item>
+       
+       <item>
+        <label>NEVER AVAILABLE </label>
+        <value>4</value>
+      </item>
+    </select1>
+    
+     <select1 ref="/FACILITY_DATA_TABLE_SEC_2b/gpe_adult_ws"> 
+      <label>Adult weighing scale?</label>  
+      <item>
+        <label>AVAILABLE AND FUNCTIONL NOW</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE NOT FUNCTIONL NOW</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE TODAY</label>
+        <value>3</value>
+      </item>
+       
+       <item>
+        <label>NEVER AVAILABLE </label>
+        <value>4</value>
+      </item>
+    </select1>
+    
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_2b/gpe_child_ws"> 
+      <label>Weighing equipment for under-five-year-olds?</label>  
+      <item>
+        <label>AVAILABLE AND FUNCTIONL NOW</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE NOT FUNCTIONL NOW</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE TODAY</label>
+        <value>3</value>
+      </item>
+       
+       <item>
+        <label>NEVER AVAILABLE </label>
+        <value>4</value>
+      </item>
+    </select1>
+    
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_2b/gpe_thermometer"> 
+      <label>Thermometer for oral or rectal temperature?</label>  
+      <item>
+        <label>AVAILABLE AND FUNCTIONL NOW</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE NOT FUNCTIONL NOW</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE TODAY</label>
+        <value>3</value>
+      </item>
+       
+       <item>
+        <label>NEVER AVAILABLE </label>
+        <value>4</value>
+      </item>
+    </select1>
+    
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_2b/gpe_ets"> 
+      <label>Ambulance or other emergency transportation services?</label>  
+      <item>
+        <label>AVAILABLE AND FUNCTIONL NOW</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE NOT FUNCTIONL NOW</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE TODAY</label>
+        <value>3</value>
+      </item>
+       
+       <item>
+        <label>NEVER AVAILABLE </label>
+        <value>4</value>
+      </item>
+    </select1>
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_2b/gpe_ot"> 
+      <label>Operating theatre with basic equipment?</label>  
+      <item>
+        <label>AVAILABLE AND FUNCTIONL NOW</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE NOT FUNCTIONL NOW</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE TODAY</label>
+        <value>3</value>
+      </item>
+       
+       <item>
+        <label>NEVER AVAILABLE </label>
+        <value>4</value>
+      </item>
+    </select1>
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_2b/gpe_anst_machine"> 
+      <label>Anaesthetic machine?</label>  
+      <item>
+        <label>AVAILABLE AND FUNCTIONL NOW</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE NOT FUNCTIONL NOW</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE TODAY</label>
+        <value>3</value>
+      </item>
+       
+       <item>
+        <label>NEVER AVAILABLE </label>
+        <value>4</value>
+      </item>
+    </select1>
+    
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_2b/gpe_oxygen_supply"> 
+      <label>Oxygen system/cylinders?</label>  
+      <item>
+        <label>AVAILABLE AND FUNCTIONL NOW</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE NOT FUNCTIONL NOW</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE TODAY</label>
+        <value>3</value>
+      </item>
+       
+       <item>
+        <label>NEVER AVAILABLE </label>
+        <value>4</value>
+      </item>
+    </select1>
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_2b/gpe_infusion_kits"> 
+      <label>Infusion kits for intravenous solution?</label>  
+      <item>
+        <label>AVAILABLE AND FUNCTIONL NOW</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE NOT FUNCTIONL NOW</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE TODAY</label>
+        <value>3</value>
+      </item>
+       
+       <item>
+        <label>NEVER AVAILABLE </label>
+        <value>4</value>
+      </item>
+    </select1>
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_2b/gpe_refrigerator"> 
+      <label>Refrigerator?</label>  
+      <item>
+        <label>AVAILABLE AND FUNCTIONL NOW</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE NOT FUNCTIONL NOW</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE TODAY</label>
+        <value>3</value>
+      </item>
+       
+       <item>
+        <label>NEVER AVAILABLE </label>
+        <value>4</value>
+      </item>
+    </select1>
+    
+    
+    
+  </h:body> 
+</h:html>

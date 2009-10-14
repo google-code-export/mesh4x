@@ -1,0 +1,501 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<h:html xmlns:h="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:jr="http://openrosa.org/javarosa">  
+  <h:head> 
+    <h:title>FACILITY_IDENTIFICATION_PROFILE</h:title>  
+    <model> 
+      <instance> 
+        <FACILITY_IDENTIFICATION_PROFILE> 
+          
+          <facility_profile_id/>
+          
+          <facility_name/>
+          
+          <facility_code/>
+          
+          <facility_type_id/>
+          
+          <facility_type_other/>
+          
+          <facility_managing_authority_id/>
+          
+          <facility_managing_authority_other/>
+          
+          <impl_org_name/>
+          
+          <facility_address_location/>
+          
+          <facility_address_district_name/>
+          
+          <facility_address_district_code/>
+          
+          <facility_address_province_name/>
+          
+          <facility_address_province_code/>
+          
+          <facility_address_country/>
+          
+          <interview_taken_date/>
+          
+          <interviewer_name/>
+          
+          <interviewer_code/>
+          
+          <interview_checked_by/>
+          
+          <interview_checked_date/>
+          
+          <visit_Info_1_date/>
+          
+          <visit_Info_1_team_leader/>
+          
+          <visit_Info_1_result_code/>
+          
+          <visit_Info_1_result_code_other/>
+          
+          <visit_info_2_date/>
+          
+          <visit_info_2_team_leader/>
+          
+          <visit_info_2_result_code/>
+          
+          <visit_info_2_result_code_other/>
+          
+          <visit_info_3_date/>
+          
+          <visit_info_3_team_leader/>
+          
+          <visit_info_3_result_code/>
+          
+          <visit_info_3_result_code_other/>
+          
+          
+          <gps_altitude/>
+          
+          <gps_waypoint_name/>
+          
+          
+          <gps_latitude_a/>
+          
+          <gps_atitude_b/>
+          
+          <gps_latitude_c/>
+          
+          <gps_longitude_a/>
+          
+          <gps_longitude_b/>
+          
+          <gps_longitude_c/>
+          
+        </FACILITY_IDENTIFICATION_PROFILE> 
+      </instance>  
+      
+      <bind id="pfacility_profile_id" nodeset="/FACILITY_IDENTIFICATION_PROFILE/facility_profile_id" type="xsd:string"/>
+      <bind id="pfacility_name" nodeset="/FACILITY_IDENTIFICATION_PROFILE/facility_name" type="xsd:string"/>
+      <bind id="pfacility_code" nodeset="/FACILITY_IDENTIFICATION_PROFILE/facility_code" type="xsd:string"/>
+      <bind id="pimpl_org_name" nodeset="/FACILITY_IDENTIFICATION_PROFILE/impl_org_name" type="xsd:string"/>
+      <bind id="pfacility_address_location" nodeset="/FACILITY_IDENTIFICATION_PROFILE/facility_address_location" type="xsd:string"/>
+      <bind id="pfacility_address_district_name" nodeset="/FACILITY_IDENTIFICATION_PROFILE/facility_address_district_name" type="xsd:string"/>
+      <bind id="pfacility_address_district_code" nodeset="/FACILITY_IDENTIFICATION_PROFILE/facility_address_district_code" type="xsd:string"/>
+      <bind id="pfacility_address_province_name" nodeset="/FACILITY_IDENTIFICATION_PROFILE/facility_address_province_name" type="xsd:string"/>
+      <bind id="pfacility_address_province_code" nodeset="/FACILITY_IDENTIFICATION_PROFILE/facility_address_province_code" type="xsd:string"/>
+      <bind id="pfacility_type_other" nodeset="/FACILITY_IDENTIFICATION_PROFILE/facility_type_other" type="xsd:string"/>
+      <bind id="pfacility_managing_authority_other" nodeset="/FACILITY_IDENTIFICATION_PROFILE/facility_managing_authority_other" type="xsd:string"/>
+      
+      
+      <bind id="pinterview_taken_date" nodeset="/FACILITY_IDENTIFICATION_PROFILE/interview_taken_date" type="xsd:date" jr:preload="date" jr:preloadParams="today"/>
+      <bind id="pinterview_checked_date" nodeset="/FACILITY_IDENTIFICATION_PROFILE/interview_checked_date" type="xsd:date" jr:preload="date" jr:preloadParams="today"/>
+      <bind id="pinterviewer_name" nodeset="/FACILITY_IDENTIFICATION_PROFILE/interviewer_name" type="xsd:string"/>
+      <bind id="pinterview_checked_by" nodeset="/FACILITY_IDENTIFICATION_PROFILE/interview_checked_by" type="xsd:string"/>
+      <bind id="pinterviewer_code" nodeset="/FACILITY_IDENTIFICATION_PROFILE/interviewer_code" type="xsd:string"/>
+      
+      
+      <bind id="pvisit_Info_1_date" nodeset="/FACILITY_IDENTIFICATION_PROFILE/visit_Info_1_date" type="xsd:date" jr:preload="date" jr:preloadParams="today"/>
+      <bind id="pvisit_Info_1_team_leader" nodeset="/FACILITY_IDENTIFICATION_PROFILE/visit_Info_1_team_leader" type="xsd:string"/>
+      <bind id="pvisit_Info_1_result_code_other" nodeset="/FACILITY_IDENTIFICATION_PROFILE/visit_Info_1_result_code_other" type="xsd:string"/>
+      
+      
+      <bind id="pvisit_info_2_date" nodeset="/FACILITY_IDENTIFICATION_PROFILE/visit_info_2_date" type="xsd:date" jr:preload="date" jr:preloadParams="today"/>
+      <bind id="pvisit_info_2_team_leader" nodeset="/FACILITY_IDENTIFICATION_PROFILE/visit_info_2_team_leader" type="xsd:string"/>
+      <bind id="pvisit_info_2_result_code_other" nodeset="/FACILITY_IDENTIFICATION_PROFILE/visit_info_2_result_code_other" type="xsd:string"/>
+      
+      
+      <bind id="pvisit_info_3_date" nodeset="/FACILITY_IDENTIFICATION_PROFILE/visit_info_3_date" type="xsd:date" jr:preload="date" jr:preloadParams="today"/>
+      <bind id="pvisit_info_3_team_leader" nodeset="/FACILITY_IDENTIFICATION_PROFILE/visit_info_3_team_leader" type="xsd:string"/>
+      <bind id="pvisit_info_3_result_code_other" nodeset="/FACILITY_IDENTIFICATION_PROFILE/visit_info_3_result_code_other" type="xsd:string"/>
+      
+      
+      <bind id="pgps_waypoint_name" nodeset="/FACILITY_IDENTIFICATION_PROFILE/gps_waypoint_name" type="xsd:string"/>
+      <bind id="pgps_altitude" nodeset="/FACILITY_IDENTIFICATION_PROFILE/gps_altitude" type="xsd:string"/>
+      
+      <bind id="pgps_latitude_a" nodeset="/FACILITY_IDENTIFICATION_PROFILE/gps_latitude_a" type="xsd:string"/>
+      <bind id="pgps_atitude_b" nodeset="/FACILITY_IDENTIFICATION_PROFILE/gps_atitude_b" type="xsd:string"/>
+      <bind id="pgps_latitude_c" nodeset="/FACILITY_IDENTIFICATION_PROFILE/gps_latitude_c" type="xsd:string"/>
+      
+      
+      <bind id="pgps_longitude_a" nodeset="/FACILITY_IDENTIFICATION_PROFILE/gps_longitude_a" type="xsd:string"/>
+      <bind id="pgps_longitude_b" nodeset="/FACILITY_IDENTIFICATION_PROFILE/gps_longitude_b" type="xsd:string"/>
+      <bind id="pgps_longitude_c" nodeset="/FACILITY_IDENTIFICATION_PROFILE/gps_longitude_c" type="xsd:string"/>
+       
+    </model> 
+  </h:head>  
+  <h:body> 
+  	
+  	<input bind="pfacility_name">
+      <label>Facility Name:</label>
+    </input>  
+  
+  	<input bind="pfacility_code">
+      <label>Facility Code:</label>
+    </input>  
+    
+    
+    <select1 ref="/FACILITY_IDENTIFICATION_PROFILE/facility_type_id"> 
+      <label>TYPE OF FACILITY (COUNTRY SPECIFIC)</label>  
+      <item>
+        <label>THIRD LEVEL (TERTIARY) HOSPITAL</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>SECOND LEVEL REFERRAL HOSPITAL</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>FIRST LEVEL HOSPITAL</label>
+        <value>3</value>
+      </item>
+       
+       <item>
+        <label>URBAN HEALTH CENTER</label>
+        <value>4</value>
+      </item>
+      
+      <item>
+        <label>RURAL HEALTH CENTER</label>
+        <value>5</value>
+      </item>
+      
+      <item>
+        <label>CLINIC</label>
+        <value>6</value>
+      </item>
+      
+      
+      <item>
+        <label>HEALTH POST</label>
+        <value>7</value>
+      </item>
+      
+      <item>
+        <label>DISPENSARY</label>
+        <value>8</value>
+      </item>
+      
+      <item>
+        <label>SECOND (HIGHER) LEVEL PHARMACY</label>
+        <value>9</value>
+      </item>
+      
+      <item>
+        <label>FIRST (LOWER) LEVEL PHARMACY</label>
+        <value>10</value>
+      </item>
+      
+      <item>
+        <label>DRUG STORE</label>
+        <value>11</value>
+      </item>
+      
+      <item>
+        <label>LABORATORY</label>
+        <value>12</value>
+      </item>
+      
+      <item>
+        <label>OTHER</label>
+        <value>96</value>
+      </item>
+      
+    </select1>  
+    
+    <input bind="pfacility_type_other">
+      <label>PLEASE SPECIFY OTHER</label>
+    </input>  
+    
+    
+    <select1 ref="/FACILITY_IDENTIFICATION_PROFILE/facility_managing_authority_id"> 
+      <label>MANAGING AUTHORITY(COUNTRY SPECIFIC)</label>  
+      <item>
+        <label>GOVERNMENT FACILITY-PUBLIC</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>GOVERNMENT FACILITY-NOT PUBLIC (MILITARY, ETC.)</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NGO (FAITH-BASED)</label>
+        <value>3</value>
+      </item>
+       
+       <item>
+        <label>NGO (OTHER)</label>
+        <value>4</value>
+      </item>
+      
+       <item>
+        <label>COMMUNITY</label>
+        <value>5</value>
+      </item>
+      
+       <item>
+        <label>PRIVATE (FOR PROFIT)</label>
+        <value>6</value>
+      </item>
+      
+       <item>
+        <label>PARASTATAL</label>
+        <value>7</value>
+      </item>
+      
+       <item>
+        <label>OTHER</label>
+        <value>96</value>
+      </item>
+      
+    </select1>  
+    
+    <input bind="pfacility_managing_authority_other">
+      <label>PLEASE SPECIFY OTHER</label>
+    </input> 
+    
+    <input bind="pimpl_org_name">
+      <label>Implementing Org:</label>
+    </input>
+    
+    
+    <input bind="pfacility_address_location">
+      <label>Location:</label>
+    </input>  
+    
+    
+    
+    <input bind="pfacility_address_district_name">
+      <label>District:</label>
+    </input>  
+    
+    <input bind="pfacility_address_district_code">
+      <label>District Number:</label>
+    </input>  
+    
+    <input bind="pfacility_address_province_name">
+      <label>Province:</label>
+    </input>  
+    
+    <input bind="pfacility_address_province_code">
+      <label>Province Number:</label>
+    </input>
+    
+    
+    <select1 ref="/FACILITY_IDENTIFICATION_PROFILE/facility_address_country"> 
+      <label>Country</label>
+       <item>
+        <label>Bangladesh</label>
+        <value>BD</value>
+      </item>  
+        
+      <item>
+        <label>Afghanistan</label>
+        <value>AF</value>
+      </item>  
+       <item>
+        <label>Barbados</label>
+        <value>BB</value>
+      </item>
+    </select1>  
+    
+    
+    <input bind="pinterview_taken_date">
+      <label>Interview Date:</label>
+    </input>  
+    
+    
+     <input bind="pinterviewer_name">
+      <label>Interviewer Name:</label>
+    </input>  
+    
+    <input bind="pinterviewer_code">
+      <label>Interviewer Code:</label>
+    </input>  
+    
+     <input bind="pinterview_checked_date">
+      <label>Interview Checked On:</label>
+    </input>  
+    
+    <input bind="pinterview_checked_by">
+      <label>Interview Checked by Monitor/Supervisor:</label>
+    </input>  
+    
+  
+  
+  	<input bind="pvisit_Info_1_date">
+      <label>Visit 1 Date</label>
+    </input>  
+    
+  	<input bind="pvisit_Info_1_team_leader">
+      <label>Visit 1 Team leader:</label>
+    </input>
+    
+    
+     <select1 ref="/FACILITY_IDENTIFICATION_PROFILE/visit_Info_1_result_code"> 
+      <label>Visit 1 Result Code:</label>  
+      <item>
+        <label>COMPLETED</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>OTHER</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>PARTIALLY COMPLETED</label>
+        <value>3</value>
+      </item>
+       
+       <item>
+        <label>REFUSED</label>
+        <value>4</value>
+      </item>
+      
+      <item>
+        <label>RESPONDENT NOT AVAILABLE</label>
+        <value>5</value>
+      </item>
+      
+    </select1>
+    
+    <input bind="pvisit_Info_1_result_code_other">
+      <label>Visit 1 Result (other):</label>
+    </input>  
+    
+    
+    
+    <input bind="pvisit_info_2_date">
+      <label>Visit 2 Date</label>
+    </input>  
+    
+  	<input bind="pvisit_info_2_team_leader">
+      <label>Visit 2 Team leader:</label>
+    </input>
+    
+    
+     <select1 ref="/FACILITY_IDENTIFICATION_PROFILE/visit_info_2_result_code"> 
+      <label>Visit 2 Result Code:</label>  
+      <item>
+        <label>COMPLETED</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>OTHER</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>PARTIALLY COMPLETED</label>
+        <value>3</value>
+      </item>
+       
+       <item>
+        <label>REFUSED</label>
+        <value>4</value>
+      </item>
+      
+      <item>
+        <label>RESPONDENT NOT AVAILABLE</label>
+        <value>5</value>
+      </item>
+      
+    </select1>
+    
+    <input bind="pvisit_info_2_result_code_other">
+      <label>Visit 2 Result (other):</label>
+    </input>  
+    
+           
+           
+    <input bind="pvisit_info_3_date">
+      <label>Visit 3 Date</label>
+    </input>  
+    
+  	<input bind="pvisit_info_3_team_leader">
+      <label>Visit 3 Team leader:</label>
+    </input>
+    
+    
+     <select1 ref="/FACILITY_IDENTIFICATION_PROFILE/visit_info_3_result_code"> 
+      <label>Visit 3 Result Code:</label>  
+      <item>
+        <label>COMPLETED</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>OTHER</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>PARTIALLY COMPLETED</label>
+        <value>3</value>
+      </item>
+       
+       <item>
+        <label>REFUSED</label>
+        <value>4</value>
+      </item>
+      
+      <item>
+        <label>RESPONDENT NOT AVAILABLE</label>
+        <value>5</value>
+      </item>
+      
+    </select1>
+    
+    <input bind="pvisit_info_3_result_code_other">
+      <label>Visit 3 Result (other):</label>
+    </input>       
+    
+    
+    <input bind="pgps_waypoint_name">
+      <label>Waypoint Name:</label>
+    </input>  
+    
+    <input bind="pgps_altitude">
+      <label>Altitude:</label>
+    </input>
+    
+    <input bind="pgps_latitude_a">
+      <label>Latitude (N/S):</label>
+    </input>  
+    
+    
+    <input bind="pgps_atitude_b">
+      <label>Latitude (Degrees/Decim):</label>
+    </input> 
+    
+     <input bind="pgps_latitude_c">
+      <label>Latitude (Degrees/Decim):</label>
+    </input>  
+    
+    <input bind="pgps_longitude_a">
+      <label>Longitude (E/W):</label>
+    </input>  
+    
+      <input bind="pgps_longitude_b">
+      <label>Longitude (Degrees/Decim):</label>
+    </input>  
+    
+    <input bind="pgps_longitude_c">
+      <label>Longitude (Degrees/Decim):</label>
+    </input>  
+    
+     
+  </h:body> 
+</h:html>
