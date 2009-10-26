@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<h:html xmlns:h="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:jr="http://openrosa.org/javarosa">  
+  <h:head> 
+    <h:title>FACILITY_DATA_TABLE_SEC_1</h:title>  
+    <model> 
+      <instance> 
+        <FACILITY_DATA_TABLE_SEC_1>
+        
+        <facility_id/>
+        <q101_interviewstart_time/>  
+          <q102_is_landphone_available/>
+          <q103_is_cellphone_available/>
+          <q104_is_sw_radio_available/>  
+          <q105_is_phone_or_radio_available_around/>
+          <q106_is_compter_available/> 
+          <q107_is_email_or_internet_available/> 
+          <q108_is_connected_to_central_elec_grid/>
+          <q109_is_other_power_supply_available/>
+          <q109_is_other_power_supply_available_other/>
+          <q110_is_generator_functinal/>  
+          <q111_was_elec_continuously_available/>
+          <q112_src_of_water_for_hw_other/>  
+          <q113_is_src_of_water_for_hw_available_nearby/>
+          <q114_is_standalone_lab/>  
+          <q115_is_standalone_pharmacy/> 
+          <q116_does_provide_impatient_care/>
+          <q117_is_beds_avaliable/>   
+          <q117_beds_count/> 
+          <q118_past_admission_count/> 
+          <q119_is_beds_avaliable_for_oo/>  
+          <q119_beds_count_for_oo/>
+          <q120_is_beds_avaliable_for_db/>   
+          <q120_beds_count_for_db/>    
+          <q121_deivery_count/>
+          <q122_is_beds_avaliable_for_maternity/> 
+          <q122_beds_count_for_maternity/>
+          <q123_is_waiting_area_available_for_ip/>
+          <sec1_control_field/>
+          <q112_src_of_water_for_hw/>
+            
+        </FACILITY_DATA_TABLE_SEC_1> 
+      </instance>  
+      <bind id="pq121_deivery_count" nodeset="/FACILITY_DATA_TABLE_SEC_1/q121_deivery_count" type="xsd:long"/>  
+      <bind id="pq112_src_of_water_for_hw_other" nodeset="/FACILITY_DATA_TABLE_SEC_1/q112_src_of_water_for_hw_other" type="xsd:string"/>  
+      <bind id="pq109_is_other_power_supply_available" nodeset="/FACILITY_DATA_TABLE_SEC_1/q109_is_other_power_supply_available" type="xsd:string"/>  
+      <bind id="pfacility_id" nodeset="/FACILITY_DATA_TABLE_SEC_1/facility_id" type="xsd:string"/>  
+      <bind id="pq120_beds_count_for_db" nodeset="/FACILITY_DATA_TABLE_SEC_1/q120_beds_count_for_db" type="xsd:long"/>  
+      <bind id="pq109_is_other_power_supply_available_other" nodeset="/FACILITY_DATA_TABLE_SEC_1/q109_is_other_power_supply_available_other" type="xsd:string"/>  
+      <bind id="pq117_beds_count" nodeset="/FACILITY_DATA_TABLE_SEC_1/q117_beds_count" type="xsd:long"/>  
+      <bind id="pq119_beds_count_for_oo" nodeset="/FACILITY_DATA_TABLE_SEC_1/q119_beds_count_for_oo" type="xsd:long"/>  
+      <bind id="pq105_is_phone_or_radio_available_around" nodeset="/FACILITY_DATA_TABLE_SEC_1/q105_is_phone_or_radio_available_around" type="xsd:string"/>  
+      <bind id="pq106_is_compter_available" nodeset="/FACILITY_DATA_TABLE_SEC_1/q106_is_compter_available" type="xsd:string"/>  
+      <bind id="pq110_is_generator_functinal" nodeset="/FACILITY_DATA_TABLE_SEC_1/q110_is_generator_functinal" type="xsd:string"/>  
+      <bind id="pq118_past_admission_count" nodeset="/FACILITY_DATA_TABLE_SEC_1/q118_past_admission_count" type="xsd:long"/>  
+      <bind id="pq112_src_of_water_for_hw" nodeset="/FACILITY_DATA_TABLE_SEC_1/q112_src_of_water_for_hw" type="xsd:string"/>  
+      <bind id="pq101_interviewstart_time" nodeset="/FACILITY_DATA_TABLE_SEC_1/q101_interviewstart_time" type="xsd:date" jr:preload="date" jr:preloadParams="today"/>  
+      <bind id="pq122_beds_count_for_maternity" nodeset="/FACILITY_DATA_TABLE_SEC_1/q122_beds_count_for_maternity" type="xsd:long"/> 
+    </model> 
+  </h:head>  
+  <h:body> 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_1/q102_is_landphone_available"> 
+      <label>q102_is_landphone_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <input bind="pq121_deivery_count">
+      <label>q121_deivery_count:</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_1/q120_is_beds_avaliable_for_db"> 
+      <label>q120_is_beds_avaliable_for_db?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_1/q104_is_sw_radio_available"> 
+      <label>q104_is_sw_radio_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_1/q113_is_src_of_water_for_hw_available_nearby"> 
+      <label>q113_is_src_of_water_for_hw_available_nearby?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <input bind="pq112_src_of_water_for_hw_other">
+      <label>q112_src_of_water_for_hw_other:</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_1/q108_is_connected_to_central_elec_grid"> 
+      <label>q108_is_connected_to_central_elec_grid?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <input bind="pq109_is_other_power_supply_available">
+      <label>q109_is_other_power_supply_available:</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_1/q122_is_beds_avaliable_for_maternity"> 
+      <label>q122_is_beds_avaliable_for_maternity?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <input bind="pfacility_id">
+      <label>facility_id:</label>
+    </input>  
+    <input bind="pq120_beds_count_for_db">
+      <label>q120_beds_count_for_db:</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_1/q103_is_cellphone_available"> 
+      <label>q103_is_cellphone_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <input bind="pq109_is_other_power_supply_available_other">
+      <label>q109_is_other_power_supply_available_other:</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_1/sec1_control_field"> 
+      <label>sec1_control_field?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <input bind="pq117_beds_count">
+      <label>q117_beds_count:</label>
+    </input>  
+    <input bind="pq119_beds_count_for_oo">
+      <label>q119_beds_count_for_oo:</label>
+    </input>  
+    <input bind="pq105_is_phone_or_radio_available_around">
+      <label>q105_is_phone_or_radio_available_around:</label>
+    </input>  
+    <input bind="pq106_is_compter_available">
+      <label>q106_is_compter_available:</label>
+    </input>  
+    <input bind="pq110_is_generator_functinal">
+      <label>q110_is_generator_functinal:</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_1/q107_is_email_or_internet_available"> 
+      <label>q107_is_email_or_internet_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <input bind="pq118_past_admission_count">
+      <label>q118_past_admission_count:</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_1/q115_is_standalone_pharmacy"> 
+      <label>q115_is_standalone_pharmacy?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_1/q119_is_beds_avaliable_for_oo"> 
+      <label>q119_is_beds_avaliable_for_oo?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <input bind="pq112_src_of_water_for_hw">
+      <label>q112_src_of_water_for_hw:</label>
+    </input>  
+    <input bind="pq101_interviewstart_time">
+      <label>q101_interviewstart_time:</label>
+    </input>  
+    <input bind="pq122_beds_count_for_maternity">
+      <label>q122_beds_count_for_maternity:</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_1/q114_is_standalone_lab"> 
+      <label>q114_is_standalone_lab?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_1/q117_is_beds_avaliable"> 
+      <label>q117_is_beds_avaliable?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_1/q111_was_elec_continuously_available"> 
+      <label>q111_was_elec_continuously_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_1/q116_does_provide_impatient_care"> 
+      <label>q116_does_provide_impatient_care?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_1/q123_is_waiting_area_available_for_ip"> 
+      <label>q123_is_waiting_area_available_for_ip?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1> 
+  </h:body> 
+</h:html>
