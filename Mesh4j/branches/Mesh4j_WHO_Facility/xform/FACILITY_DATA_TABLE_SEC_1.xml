@@ -12,49 +12,79 @@
           <q102_is_landphone_available/>
           <q103_is_cellphone_available/>
           <q104_is_sw_radio_available/>  
+          
           <q105_is_phone_or_radio_available_around/>
+          
           <q106_is_compter_available/> 
+          
           <q107_is_email_or_internet_available/> 
+          
           <q108_is_connected_to_central_elec_grid/>
+          
           <q109_is_other_power_supply_available/>
+          
           <q109_is_other_power_supply_available_other/>
+          
           <q110_is_generator_functinal/>  
+          
           <q111_was_elec_continuously_available/>
-          <q112_src_of_water_for_hw_other/>  
+          
+          <q112_src_of_water_for_hw/>
+          
+          <q112_src_of_water_for_hw_other/>
+            
           <q113_is_src_of_water_for_hw_available_nearby/>
+          
           <q114_is_standalone_lab/>  
+          
           <q115_is_standalone_pharmacy/> 
+          
           <q116_does_provide_impatient_care/>
-          <q117_is_beds_avaliable/>   
+          
+          <q117_is_beds_avaliable/>
+             
           <q117_beds_count/> 
+          
           <q118_past_admission_count/> 
-          <q119_is_beds_avaliable_for_oo/>  
+          
+          <q119_is_beds_avaliable_for_oo/> 
+           
           <q119_beds_count_for_oo/>
+          
           <q120_is_beds_avaliable_for_db/>   
-          <q120_beds_count_for_db/>    
+          
+          <q120_beds_count_for_db/>   
+           
           <q121_deivery_count/>
+          
           <q122_is_beds_avaliable_for_maternity/> 
+          
           <q122_beds_count_for_maternity/>
+          
           <q123_is_waiting_area_available_for_ip/>
           <sec1_control_field/>
-          <q112_src_of_water_for_hw/>
+          
             
         </FACILITY_DATA_TABLE_SEC_1> 
       </instance>  
+      
+      <bind id="pq101_interviewstart_time" nodeset="/FACILITY_DATA_TABLE_SEC_1/q101_interviewstart_time" type="xsd:date" jr:preload="date" jr:preloadParams="today"/>
+      
+      
       <bind id="pq121_deivery_count" nodeset="/FACILITY_DATA_TABLE_SEC_1/q121_deivery_count" type="xsd:long"/>  
       <bind id="pq112_src_of_water_for_hw_other" nodeset="/FACILITY_DATA_TABLE_SEC_1/q112_src_of_water_for_hw_other" type="xsd:string"/>  
-      <bind id="pq109_is_other_power_supply_available" nodeset="/FACILITY_DATA_TABLE_SEC_1/q109_is_other_power_supply_available" type="xsd:string"/>  
+        
       <bind id="pfacility_id" nodeset="/FACILITY_DATA_TABLE_SEC_1/facility_id" type="xsd:string"/>  
       <bind id="pq120_beds_count_for_db" nodeset="/FACILITY_DATA_TABLE_SEC_1/q120_beds_count_for_db" type="xsd:long"/>  
       <bind id="pq109_is_other_power_supply_available_other" nodeset="/FACILITY_DATA_TABLE_SEC_1/q109_is_other_power_supply_available_other" type="xsd:string"/>  
       <bind id="pq117_beds_count" nodeset="/FACILITY_DATA_TABLE_SEC_1/q117_beds_count" type="xsd:long"/>  
       <bind id="pq119_beds_count_for_oo" nodeset="/FACILITY_DATA_TABLE_SEC_1/q119_beds_count_for_oo" type="xsd:long"/>  
-      <bind id="pq105_is_phone_or_radio_available_around" nodeset="/FACILITY_DATA_TABLE_SEC_1/q105_is_phone_or_radio_available_around" type="xsd:string"/>  
-      <bind id="pq106_is_compter_available" nodeset="/FACILITY_DATA_TABLE_SEC_1/q106_is_compter_available" type="xsd:string"/>  
-      <bind id="pq110_is_generator_functinal" nodeset="/FACILITY_DATA_TABLE_SEC_1/q110_is_generator_functinal" type="xsd:string"/>  
+        
+        
+        
       <bind id="pq118_past_admission_count" nodeset="/FACILITY_DATA_TABLE_SEC_1/q118_past_admission_count" type="xsd:long"/>  
-      <bind id="pq112_src_of_water_for_hw" nodeset="/FACILITY_DATA_TABLE_SEC_1/q112_src_of_water_for_hw" type="xsd:string"/>  
-      <bind id="pq101_interviewstart_time" nodeset="/FACILITY_DATA_TABLE_SEC_1/q101_interviewstart_time" type="xsd:date" jr:preload="date" jr:preloadParams="today"/>  
+        
+        
       <bind id="pq122_beds_count_for_maternity" nodeset="/FACILITY_DATA_TABLE_SEC_1/q122_beds_count_for_maternity" type="xsd:long"/> 
     </model> 
   </h:head>  
