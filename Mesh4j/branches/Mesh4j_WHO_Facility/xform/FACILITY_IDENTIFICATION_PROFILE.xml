@@ -299,19 +299,10 @@
     
     <select1 ref="/FACILITY_IDENTIFICATION_PROFILE/facility_address_country"> 
       <label>Country</label>
-       <item>
-        <label>Bangladesh</label>
-        <value>BD</value>
-      </item>  
-        
       <item>
         <label>Afghanistan</label>
         <value>AF</value>
       </item>  
-       <item>
-        <label>Barbados</label>
-        <value>BB</value>
-      </item>
     </select1>  
     
     
