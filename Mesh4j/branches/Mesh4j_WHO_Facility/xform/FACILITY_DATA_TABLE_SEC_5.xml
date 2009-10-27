@@ -1,0 +1,474 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<h:html xmlns:h="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:jr="http://openrosa.org/javarosa">  
+  <h:head> 
+    <h:title>FACILITY_DATA_TABLE_SEC_5</h:title>  
+    <model> 
+      <instance> 
+        <FACILITY_DATA_TABLE_SEC_5> 
+          <q501q_mgmt_drug_and_supply_count/>  
+          <q503_training_super/>  
+          <q502i_management_mdr_tb_guideline/>  
+          <q501l_hiv_couns_only_count/>  
+          <q501e_family_planning_count/>  
+          <q502j_hiv_trt_and_care_guideline/>  
+          <q501g_diag_and_trt_malaria_count/>  
+          <q501s_pep_count/>  
+          <q501m_hiv_testing_count/>  
+          <q501c_delivery_care_count/>  
+          <q502s_pep_guideline/>  
+          <q501j_hiv_trt_and_care_count/>  
+          <q502e_family_planning_guideline/>  
+          <facility_id/>  
+          <q501h_diag_and_trt_tb_count/>  
+          <q502a_imci_guideline/>  
+          <q502m_hiv_testing_guideline/>  
+          <q502r_hmis_training_guideline/>  
+          <q501i_management_mdr_tb_count/>  
+          <q502g_diag_and_trt_malaria_guideline/>  
+          <q501b_arsh_count/>  
+          <q502c_delivery_care_guideline/>  
+          <q502h_diag_and_trt_tb_guideline/>  
+          <sec5_control_field/>  
+          <q501o_infection_control_count/>  
+          <q502l_hiv_couns_only_guideline/>  
+          <q502d_imai_guideline/>  
+          <q501f_diag_and_trt_sty_count/>  
+          <q502q_mgmt_drug_and_supply_guideline/>  
+          <q502o_infection_control_guideline/>  
+          <q501d_imai_count/>  
+          <q501r_hmis_training_count/>  
+          <q501k_hiv_couns_and_test_count/>  
+          <q502k_hiv_couns_and_test_guideline/>  
+          <q502b_arsh_guideline/>  
+          <q502f_diag_and_trt_sty_guideline/>  
+          <q501n_hiv_pmtct_prev_count/>  
+          <q501p_mgmt_tb_and_hiv_count/>  
+          <q501a_imci_count/>  
+          <q502n_hiv_pmtct_prev_guideline/>  
+          <q502p_mgmt_tb_and_hiv_guideline/> 
+        </FACILITY_DATA_TABLE_SEC_5> 
+      </instance>  
+      <bind id="pq501q_mgmt_drug_and_supply_count" nodeset="/FACILITY_DATA_TABLE_SEC_5/q501q_mgmt_drug_and_supply_count" type="xsd:long"/>  
+      <!--<bind id="pq502i_management_mdr_tb_guideline" nodeset="/FACILITY_DATA_TABLE_SEC_5/q502i_management_mdr_tb_guideline" type="xsd:long"/>-->  
+      <bind id="pq501l_hiv_couns_only_count" nodeset="/FACILITY_DATA_TABLE_SEC_5/q501l_hiv_couns_only_count" type="xsd:long"/>  
+      <bind id="pq501e_family_planning_count" nodeset="/FACILITY_DATA_TABLE_SEC_5/q501e_family_planning_count" type="xsd:long"/>  
+      <!--<bind id="pq502j_hiv_trt_and_care_guideline" nodeset="/FACILITY_DATA_TABLE_SEC_5/q502j_hiv_trt_and_care_guideline" type="xsd:long"/>-->  
+      <bind id="pq501g_diag_and_trt_malaria_count" nodeset="/FACILITY_DATA_TABLE_SEC_5/q501g_diag_and_trt_malaria_count" type="xsd:long"/>  
+      <bind id="pq501s_pep_count" nodeset="/FACILITY_DATA_TABLE_SEC_5/q501s_pep_count" type="xsd:long"/>  
+      <bind id="pq501m_hiv_testing_count" nodeset="/FACILITY_DATA_TABLE_SEC_5/q501m_hiv_testing_count" type="xsd:long"/>  
+      <bind id="pq501c_delivery_care_count" nodeset="/FACILITY_DATA_TABLE_SEC_5/q501c_delivery_care_count" type="xsd:long"/>  
+      <!--<bind id="pq502s_pep_guideline" nodeset="/FACILITY_DATA_TABLE_SEC_5/q502s_pep_guideline" type="xsd:long"/>-->  
+      <bind id="pq501j_hiv_trt_and_care_count" nodeset="/FACILITY_DATA_TABLE_SEC_5/q501j_hiv_trt_and_care_count" type="xsd:long"/>  
+      <!--<bind id="pq502e_family_planning_guideline" nodeset="/FACILITY_DATA_TABLE_SEC_5/q502e_family_planning_guideline" type="xsd:long"/>-->  
+      <bind id="pfacility_id" nodeset="/FACILITY_DATA_TABLE_SEC_5/facility_id" type="xsd:string"/>  
+      <bind id="pq501h_diag_and_trt_tb_count" nodeset="/FACILITY_DATA_TABLE_SEC_5/q501h_diag_and_trt_tb_count" type="xsd:long"/>  
+      <!--<bind id="pq502a_imci_guideline" nodeset="/FACILITY_DATA_TABLE_SEC_5/q502a_imci_guideline" type="xsd:long"/>-->  
+      <!--<bind id="pq502m_hiv_testing_guideline" nodeset="/FACILITY_DATA_TABLE_SEC_5/q502m_hiv_testing_guideline" type="xsd:long"/>-->  
+      <!--<bind id="pq502r_hmis_training_guideline" nodeset="/FACILITY_DATA_TABLE_SEC_5/q502r_hmis_training_guideline" type="xsd:long"/>-->  
+      <bind id="pq501i_management_mdr_tb_count" nodeset="/FACILITY_DATA_TABLE_SEC_5/q501i_management_mdr_tb_count" type="xsd:long"/>  
+      <!--<bind id="pq502g_diag_and_trt_malaria_guideline" nodeset="/FACILITY_DATA_TABLE_SEC_5/q502g_diag_and_trt_malaria_guideline" type="xsd:long"/>-->  
+      <bind id="pq501b_arsh_count" nodeset="/FACILITY_DATA_TABLE_SEC_5/q501b_arsh_count" type="xsd:long"/>  
+      <!--<bind id="pq502c_delivery_care_guideline" nodeset="/FACILITY_DATA_TABLE_SEC_5/q502c_delivery_care_guideline" type="xsd:long"/>-->  
+      <!--<bind id="pq502h_diag_and_trt_tb_guideline" nodeset="/FACILITY_DATA_TABLE_SEC_5/q502h_diag_and_trt_tb_guideline" type="xsd:long"/>-->  
+      <bind id="pq501o_infection_control_count" nodeset="/FACILITY_DATA_TABLE_SEC_5/q501o_infection_control_count" type="xsd:long"/>  
+      <!--<bind id="pq502l_hiv_couns_only_guideline" nodeset="/FACILITY_DATA_TABLE_SEC_5/q502l_hiv_couns_only_guideline" type="xsd:long"/>-->  
+      <!--<bind id="pq502d_imai_guideline" nodeset="/FACILITY_DATA_TABLE_SEC_5/q502d_imai_guideline" type="xsd:long"/>-->  
+      <bind id="pq501f_diag_and_trt_sty_count" nodeset="/FACILITY_DATA_TABLE_SEC_5/q501f_diag_and_trt_sty_count" type="xsd:long"/>  
+      <!--<bind id="pq502q_mgmt_drug_and_supply_guideline" nodeset="/FACILITY_DATA_TABLE_SEC_5/q502q_mgmt_drug_and_supply_guideline" type="xsd:long"/>-->  
+      <!--<bind id="pq502o_infection_control_guideline" nodeset="/FACILITY_DATA_TABLE_SEC_5/q502o_infection_control_guideline" type="xsd:long"/>-->  
+      <bind id="pq501d_imai_count" nodeset="/FACILITY_DATA_TABLE_SEC_5/q501d_imai_count" type="xsd:long"/>  
+      <bind id="pq501r_hmis_training_count" nodeset="/FACILITY_DATA_TABLE_SEC_5/q501r_hmis_training_count" type="xsd:long"/>  
+      <bind id="pq501k_hiv_couns_and_test_count" nodeset="/FACILITY_DATA_TABLE_SEC_5/q501k_hiv_couns_and_test_count" type="xsd:long"/>  
+      <!--<bind id="pq502k_hiv_couns_and_test_guideline" nodeset="/FACILITY_DATA_TABLE_SEC_5/q502k_hiv_couns_and_test_guideline" type="xsd:long"/>-->  
+      <!--<bind id="pq502b_arsh_guideline" nodeset="/FACILITY_DATA_TABLE_SEC_5/q502b_arsh_guideline" type="xsd:long"/>-->  
+      <!--<bind id="pq502f_diag_and_trt_sty_guideline" nodeset="/FACILITY_DATA_TABLE_SEC_5/q502f_diag_and_trt_sty_guideline" type="xsd:long"/>-->  
+      <bind id="pq501n_hiv_pmtct_prev_count" nodeset="/FACILITY_DATA_TABLE_SEC_5/q501n_hiv_pmtct_prev_count" type="xsd:long"/>  
+      <bind id="pq501p_mgmt_tb_and_hiv_count" nodeset="/FACILITY_DATA_TABLE_SEC_5/q501p_mgmt_tb_and_hiv_count" type="xsd:long"/>  
+      <bind id="pq501a_imci_count" nodeset="/FACILITY_DATA_TABLE_SEC_5/q501a_imci_count" type="xsd:long"/>  
+      <!--<bind id="pq502n_hiv_pmtct_prev_guideline" nodeset="/FACILITY_DATA_TABLE_SEC_5/q502n_hiv_pmtct_prev_guideline" type="xsd:long"/>-->  
+      <!--<bind id="pq502p_mgmt_tb_and_hiv_guideline" nodeset="/FACILITY_DATA_TABLE_SEC_5/q502p_mgmt_tb_and_hiv_guideline" type="xsd:long"/>--> 
+    </model> 
+  </h:head>  
+  <h:body> 
+    
+    <label>501. How many staff in this facility have received training on the delivery of specific interventions?</label>
+    
+    <input bind="pq501a_imci_count">
+      <label>01. Integrated management of childhood illness (IMCI)? </label>
+     <alert xml:lang="en">Please input data in following format:
+            (for Don't Know: -1, None: 0, &gt;0 to &lt;95:1-94, &gt;94:95+)</alert>
+    </input> 
+        
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_5/q502a_imci_guideline"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>OBSERVED</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>REPORTED AVAILABLE NOT SEEN</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+
+    <input bind="pq501b_arsh_count">
+      <label>02. Adolescent sexual and reproductive health (ASRH)?</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_5/q502b_arsh_guideline"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>OBSERVED</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>REPORTED AVAILABLE NOT SEEN</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+    
+    <input bind="pq501c_delivery_care_count">
+      <label>03. Delivery care (safe motherhood/life saving skills)?</label>
+    </input> 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_5/q502c_delivery_care_guideline"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>OBSERVED</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>REPORTED AVAILABLE NOT SEEN</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+     
+    <input bind="pq501d_imai_count">
+      <label>04. Integrated management of adult illness (IMAI)?</label>
+    </input>
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_5/q502d_imai_guideline"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>OBSERVED</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>REPORTED AVAILABLE NOT SEEN</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+ 
+    <input bind="pq501e_family_planning_count">
+      <label>05. Family planning?</label>
+    </input> 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_5/q502e_family_planning_guideline"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>OBSERVED</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>REPORTED AVAILABLE NOT SEEN</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+     
+    <input bind="pq501f_diag_and_trt_sty_count">
+      <label>06. Diagnosis and treatment (management) of STIs?</label>
+    </input> 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_5/q502f_diag_and_trt_sty_guideline"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>OBSERVED</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>REPORTED AVAILABLE NOT SEEN</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+ 
+    <input bind="pq501g_diag_and_trt_malaria_count">
+      <label>07. Diagnosis and treatment (management) of malaria?</label>
+    </input>
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_5/q502g_diag_and_trt_malaria_guideline"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>OBSERVED</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>REPORTED AVAILABLE NOT SEEN</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+     
+    <input bind="pq501h_diag_and_trt_tb_count">
+      <label>08. Diagnosis and treatment (management) of tuberculosis?</label>
+    </input>
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_5/q502h_diag_and_trt_tb_guideline"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>OBSERVED</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>REPORTED AVAILABLE NOT SEEN</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+         
+    <input bind="pq501i_management_mdr_tb_count">
+      <label>09. Management of MDR-TB?</label>
+    </input>   
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_5/q502i_management_mdr_tb_guideline"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>OBSERVED</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>REPORTED AVAILABLE NOT SEEN</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+   
+    <input bind="pq501j_hiv_trt_and_care_count">
+      <label>10. HIV/AIDS opportunistic infection treatment and care?</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_5/q502j_hiv_trt_and_care_guideline"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>OBSERVED</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>REPORTED AVAILABLE NOT SEEN</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+ 
+    <input bind="pq501k_hiv_couns_and_test_count">
+      <label>11. HIV/AIDS counselling and testing?</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_5/q502k_hiv_couns_and_test_guideline"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>OBSERVED</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>REPORTED AVAILABLE NOT SEEN</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+             
+    <input bind="pq501l_hiv_couns_only_count">
+      <label>12. HIV/AIDS counselling only?</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_5/q502l_hiv_couns_only_guideline"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>OBSERVED</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>REPORTED AVAILABLE NOT SEEN</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+ 
+    <input bind="pq501m_hiv_testing_count">
+      <label>13. HIV testing including HIV rapid testing?</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_5/q502m_hiv_testing_guideline"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>OBSERVED</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>REPORTED AVAILABLE NOT SEEN</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+    
+    <input bind="pq501n_hiv_pmtct_prev_count">
+      <label>14. Prevention of mother to child transmission (PMTCT) of HIV?</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_5/q502n_hiv_pmtct_prev_guideline"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>OBSERVED</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>REPORTED AVAILABLE NOT SEEN</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+     
+    <input bind="pq501o_infection_control_count">
+      <label>15. Infection control/standard precautions for handling blood and other bodily fluids?</label>
+    </input> 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_5/q502o_infection_control_guideline"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>OBSERVED</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>REPORTED AVAILABLE NOT SEEN</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+           
+    <input bind="pq501p_mgmt_tb_and_hiv_count">
+      <label>16. Management of TB/HIV co-infection?</label>
+    </input>   
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_5/q502p_mgmt_tb_and_hiv_guideline"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>OBSERVED</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>REPORTED AVAILABLE NOT SEEN</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+     
+    <input bind="pq501q_mgmt_drug_and_supply_count">
+      <label>17. Drug and supplies management?</label>
+    </input> 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_5/q502q_mgmt_drug_and_supply_guideline"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>OBSERVED</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>REPORTED AVAILABLE NOT SEEN</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+          
+    <input bind="pq501r_hmis_training_count">
+      <label>18. Health management information system (HMIS) training?</label>
+    </input>     
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_5/q502r_hmis_training_guideline"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>OBSERVED</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>REPORTED AVAILABLE NOT SEEN</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+        
+    <input bind="pq501s_pep_count">
+      <label>19. Post-Exposure Profilaxis (PEP)?</label>
+    </input>
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_5/q502s_pep_guideline"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>OBSERVED</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>REPORTED AVAILABLE NOT SEEN</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+ 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_5/q503_training_super"> 
+      <label>503. Does this facility have staff whose job is to ensure proper in-service training for all the staff in their areas of expertise?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+                
+  </h:body> 
+</h:html>
