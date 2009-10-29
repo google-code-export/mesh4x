@@ -8,7 +8,7 @@
         <FACILITY_DATA_TABLE_SEC_1>
         
         <facility_id/>
-        <q101_interviewstart_time/>  
+          <q101_interviewstart_time/>  
           <q102_is_landphone_available/>
           <q103_is_cellphone_available/>
           <q104_is_sw_radio_available/>  
@@ -69,23 +69,16 @@
       </instance>  
       
       <bind id="pq101_interviewstart_time" nodeset="/FACILITY_DATA_TABLE_SEC_1/q101_interviewstart_time" type="xsd:date" jr:preload="date" jr:preloadParams="today"/>
-      
-      
       <bind id="pq121_deivery_count" nodeset="/FACILITY_DATA_TABLE_SEC_1/q121_deivery_count" type="xsd:long"/>  
       <bind id="pq112_src_of_water_for_hw_other" nodeset="/FACILITY_DATA_TABLE_SEC_1/q112_src_of_water_for_hw_other" type="xsd:string"/>  
-        
       <bind id="pfacility_id" nodeset="/FACILITY_DATA_TABLE_SEC_1/facility_id" type="xsd:string"/>  
       <bind id="pq120_beds_count_for_db" nodeset="/FACILITY_DATA_TABLE_SEC_1/q120_beds_count_for_db" type="xsd:long"/>  
       <bind id="pq109_is_other_power_supply_available_other" nodeset="/FACILITY_DATA_TABLE_SEC_1/q109_is_other_power_supply_available_other" type="xsd:string"/>  
       <bind id="pq117_beds_count" nodeset="/FACILITY_DATA_TABLE_SEC_1/q117_beds_count" type="xsd:long"/>  
       <bind id="pq119_beds_count_for_oo" nodeset="/FACILITY_DATA_TABLE_SEC_1/q119_beds_count_for_oo" type="xsd:long"/>  
-        
-        
-        
       <bind id="pq118_past_admission_count" nodeset="/FACILITY_DATA_TABLE_SEC_1/q118_past_admission_count" type="xsd:long"/>  
-        
-        
-      <bind id="pq122_beds_count_for_maternity" nodeset="/FACILITY_DATA_TABLE_SEC_1/q122_beds_count_for_maternity" type="xsd:long"/> 
+      <bind id="pq122_beds_count_for_maternity" nodeset="/FACILITY_DATA_TABLE_SEC_1/q122_beds_count_for_maternity" type="xsd:long"/>
+       
     </model> 
   </h:head>  
   <h:body> 
@@ -148,6 +141,8 @@
     </input>  
     
     
+     
+    
      <select1 ref="/FACILITY_DATA_TABLE_SEC_1/pq106_is_compter_available"> 
       <label>106. Does the facility have a computer? </label>  
       <item>
@@ -165,183 +160,295 @@
     </select1>
     
     
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_1/q107_is_email_or_internet_available"> 
+      <label>Is there access to email/internet within the facility?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>
+    
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_1/q108_is_connected_to_central_elec_grid"> 
+      <label>Is this facility connected to the central supply (national or local) electricity grid?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>
+    
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_1/pq109_is_other_power_supply_available"> 
+      <label>Does the facility have other sources of electricity like generator or solar supply?</label>  
+      <item>
+        <label>GENERATOR</label>
+        <value>GENERATOR</value>
+      </item>  
+      <item>
+        <label>SOLAR SUPPLY</label>
+        <value>SOLAR SUPPLY</value>
+      </item>
+      <item>
+        <label>OTHER</label>
+        <value>OTHER</value>
+      </item> 
+    </select1>
+    
+     <input bind="pq109_is_other_power_supply_available_other">
+      <label>Specify if other:</label>
+    </input>  
+    
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_1/pq110_is_generator_functinal"> 
+      <label>Is the generator functional?</label>  
+      <item>
+        <label>YES, FUNCTIONAL WITH FUEL</label>
+        <value>GENERATOR</value>
+      </item>  
+      <item>
+        <label>YES, FUNCTIONAL, NO FUEL</label>
+        <value>SOLAR SUPPLY</value>
+      </item>
+      
+      <item>
+        <label>NOT FUNCTIONAL</label>
+        <value>OTHER</value>
+      </item>
+      
+      <item>
+        <label>DON'T KNOW</label>
+        <value>OTHER</value>
+      </item>
+       
+    </select1>
+    
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_1/q111_was_elec_continuously_available"> 
+      <label>During the past week was electric power continuously available in this facility at the times the facility was open for services?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>
+    
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_1/q112_src_of_water_for_hw"> 
+        <label>Commonly used source of water for hand washing for the facility at this time?</label>  
+      <item>
+        <label>PIPED INTO FACILITY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>PIPED ONTO FACILITY GROUNDS</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>PUBLIC TAP/STANDPIPE</label>
+        <value>3</value>
+      </item>
+      <item>
+        <label>TUBEWELL/BOREHOLE</label>
+        <value>4</value>
+      </item>
+       <item>
+        <label>PROTECTED DUG WELL</label>
+        <value>5</value>
+      </item>
+      <item>
+        <label>UNPROTECTED DUG WELL</label>
+        <value>6</value>
+      </item>
+      <item>
+        <label>PROTECTED SPRING</label>
+        <value>7</value>
+      </item>
+      <item>
+        <label>UNPROTECTED SPRING</label>
+        <value>8</value>
+      </item>
+      <item>
+        <label>RAINWATER</label>
+        <value>9</value>
+      </item>
+      <item>
+        <label>BOTTLED WATER</label>
+        <value>10</value>
+      </item>
+      <item>
+        <label>CART W/SMALL TANK/DRUM</label>
+        <value>11</value>
+      </item>
+      <item>
+        <label>TANKER TRUCK</label>
+        <value>12</value>
+      </item>
+      <item>
+        <label>SURFACE WATER (RIVER, DAM, POND)</label>
+        <value>13</value>
+      </item>
+      <item>
+        <label>OTHER(SPECIFY)</label>
+        <value>14</value>
+      </item>
+      <item>
+        <label>DON'T KNOW</label>
+        <value>15</value>
+      </item>
+      <item>
+        <label>NO WATER SOURCE</label>
+        <value>16</value>
+      </item>
+    </select1>
+    
+    
+     
+     <input bind="pq112_src_of_water_for_hw_other">
+      <label>Specify if other:</label>
+    </input>  
+    
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_1/q113_is_src_of_water_for_hw_available_nearby"> 
+      <label> Is a water outlet from this source available within 500 meters of the facility?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>
+    
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_1/q114_is_standalone_lab"> 
+      <label>Is the facility a stand-alone laboratory?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>
+    
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_1/q115_is_standalone_pharmacy"> 
+      <label>Is the facility a stand-alone pharmacy or drugstore?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>
+    
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_1/q116_does_provide_impatient_care"> 
+      <label>Does this facility routinely provide inpatient care?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>
+    
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_1/q117_is_beds_avaliable"> 
+      <label>Does this facility have beds for routine care?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>
+    
+    <input bind="pq117_beds_count">
+      <label>How many beds?</label>
+    </input>  
+    
+    <input bind="pq118_past_admission_count">
+      <label>How many in-patients(In last calendar month) were admitted to this facility?</label>
+    </input>  
+    
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_1/q119_is_beds_avaliable_for_oo"> 
+      <label>Does this facility have beds for overnight observation?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>
+    
+    <input bind="pq119_beds_count_for_oo">
+      <label>How many beds?</label>
+    </input>  
+    
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_1/q120_is_beds_avaliable_for_db"> 
+      <label>Does this facility have beds just to deliver babies?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>
+    
+    <input bind="pq120_beds_count_for_db">
+      <label>How many delivery beds?</label>
+    </input>  
     
     
     <input bind="pq121_deivery_count">
-      <label>q121_deivery_count:</label>
-    </input>  
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_1/q120_is_beds_avaliable_for_db"> 
-      <label>q120_is_beds_avaliable_for_db?</label>  
-      <item>
-        <label>Yes</label>
-        <value>true</value>
-      </item>  
-      <item>
-        <label>No</label>
-        <value>false</value>
-      </item> 
-    </select1>  
-     
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_1/q113_is_src_of_water_for_hw_available_nearby"> 
-      <label>q113_is_src_of_water_for_hw_available_nearby?</label>  
-      <item>
-        <label>Yes</label>
-        <value>true</value>
-      </item>  
-      <item>
-        <label>No</label>
-        <value>false</value>
-      </item> 
-    </select1>  
-    <input bind="pq112_src_of_water_for_hw_other">
-      <label>q112_src_of_water_for_hw_other:</label>
-    </input>  
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_1/q108_is_connected_to_central_elec_grid"> 
-      <label>q108_is_connected_to_central_elec_grid?</label>  
-      <item>
-        <label>Yes</label>
-        <value>true</value>
-      </item>  
-      <item>
-        <label>No</label>
-        <value>false</value>
-      </item> 
-    </select1>  
-    <input bind="pq109_is_other_power_supply_available">
-      <label>q109_is_other_power_supply_available:</label>
-    </input>  
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_1/q122_is_beds_avaliable_for_maternity"> 
-      <label>q122_is_beds_avaliable_for_maternity?</label>  
-      <item>
-        <label>Yes</label>
-        <value>true</value>
-      </item>  
-      <item>
-        <label>No</label>
-        <value>false</value>
-      </item> 
-    </select1>  
-    <input bind="pfacility_id">
-      <label>facility_id:</label>
-    </input>  
-    <input bind="pq120_beds_count_for_db">
-      <label>q120_beds_count_for_db:</label>
-    </input>  
-   
-    <input bind="pq109_is_other_power_supply_available_other">
-      <label>q109_is_other_power_supply_available_other:</label>
-    </input>  
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_1/sec1_control_field"> 
-      <label>sec1_control_field?</label>  
-      <item>
-        <label>Yes</label>
-        <value>true</value>
-      </item>  
-      <item>
-        <label>No</label>
-        <value>false</value>
-      </item> 
-    </select1>  
-    <input bind="pq117_beds_count">
-      <label>q117_beds_count:</label>
-    </input>  
-    <input bind="pq119_beds_count_for_oo">
-      <label>q119_beds_count_for_oo:</label>
-    </input>  
-    
-    
-    <input bind="pq110_is_generator_functinal">
-      <label>q110_is_generator_functinal:</label>
-    </input>  
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_1/q107_is_email_or_internet_available"> 
-      <label>q107_is_email_or_internet_available?</label>  
-      <item>
-        <label>Yes</label>
-        <value>true</value>
-      </item>  
-      <item>
-        <label>No</label>
-        <value>false</value>
-      </item> 
-    </select1>  
-    <input bind="pq118_past_admission_count">
-      <label>q118_past_admission_count:</label>
-    </input>  
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_1/q115_is_standalone_pharmacy"> 
-      <label>q115_is_standalone_pharmacy?</label>  
-      <item>
-        <label>Yes</label>
-        <value>true</value>
-      </item>  
-      <item>
-        <label>No</label>
-        <value>false</value>
-      </item> 
-    </select1>  
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_1/q119_is_beds_avaliable_for_oo"> 
-      <label>q119_is_beds_avaliable_for_oo?</label>  
-      <item>
-        <label>Yes</label>
-        <value>true</value>
-      </item>  
-      <item>
-        <label>No</label>
-        <value>false</value>
-      </item> 
-    </select1>  
-    <input bind="pq112_src_of_water_for_hw">
-      <label>q112_src_of_water_for_hw:</label>
+      <label>During (the last completed calendar month) how many deliveries took place in this facility?</label>
     </input>  
       
+     
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_1/q122_is_beds_avaliable_for_maternity"> 
+      <label> Does this facility have maternity beds, i.e., beds to rest after delivery?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    
     <input bind="pq122_beds_count_for_maternity">
-      <label>q122_beds_count_for_maternity:</label>
+      <label>How many delivery beds?</label>
     </input>  
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_1/q114_is_standalone_lab"> 
-      <label>q114_is_standalone_lab?</label>  
-      <item>
-        <label>Yes</label>
-        <value>true</value>
-      </item>  
-      <item>
-        <label>No</label>
-        <value>false</value>
-      </item> 
-    </select1>  
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_1/q117_is_beds_avaliable"> 
-      <label>q117_is_beds_avaliable?</label>  
-      <item>
-        <label>Yes</label>
-        <value>true</value>
-      </item>  
-      <item>
-        <label>No</label>
-        <value>false</value>
-      </item> 
-    </select1>  
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_1/q111_was_elec_continuously_available"> 
-      <label>q111_was_elec_continuously_available?</label>  
-      <item>
-        <label>Yes</label>
-        <value>true</value>
-      </item>  
-      <item>
-        <label>No</label>
-        <value>false</value>
-      </item> 
-    </select1>  
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_1/q116_does_provide_impatient_care"> 
-      <label>q116_does_provide_impatient_care?</label>  
-      <item>
-        <label>Yes</label>
-        <value>true</value>
-      </item>  
-      <item>
-        <label>No</label>
-        <value>false</value>
-      </item> 
-    </select1>  
+    
     <select1 ref="/FACILITY_DATA_TABLE_SEC_1/q123_is_waiting_area_available_for_ip"> 
-      <label>q123_is_waiting_area_available_for_ip?</label>  
+      <label>Does this facility have a separate waiting area for infectious patients?</label>  
       <item>
         <label>Yes</label>
         <value>true</value>
@@ -350,6 +457,8 @@
         <label>No</label>
         <value>false</value>
       </item> 
-    </select1> 
+    </select1>
+    
+     
   </h:body> 
 </h:html>
