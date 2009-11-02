@@ -1,0 +1,1560 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<h:html xmlns:h="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:jr="http://openrosa.org/javarosa">  
+  <h:head> 
+    <h:title>FACILITY_DATA_TABLE_SEC_6</h:title>  
+    <model> 
+      <instance> 
+        <FACILITY_DATA_TABLE_SEC_6> 
+          <q605_10_other_tb_medicine/>  
+          <q601_10_co_trimoxazole_tables/>  
+          <q601_09_co_trimoxazole_suspension/>  
+          <q601_12_amoxicillin/>  
+          <q606_06a_i_r_was_available/>  
+          <q606_06b_i_r_was_available/>  
+          <q605_09_i_r_p_e/>  
+          <q602_27_condoms_was_available/>  
+          <q606_01a_ethambutol_was_available/>  
+          <q606_10_other_tb_medicine_was_available/>  
+          <q605_02a_isoniazid/>  
+          <q606_05_streptomycin_was_available/>  
+          <q602_26_injectable_contraceptive_was_available/>  
+          <q601_21_vitamin_A/>  
+          <q602_18_albendazole_was_available/>  
+          <q603_05_other_am_drug_specify/>  
+          <q601_19b_mebendazole/>  
+          <q601_17_omeprazole/>  
+          <q601_04_captopril/>  
+          <q602_15_diclofenac_was_available/>  
+          <q601_16_paracetamol/>  
+          <q601_11_co_trimoxazole_tables/>  
+          <q603_01_coartem/>  
+          <q601_27_condoms/>  
+          <q605_10_other_tb_medicine_specify/>  
+          <q605_03_pyrazinamide/>  
+          <q601_08_ciprofloxacin/>  
+          <q605_06c_i_r/>  
+          <q604_04_quinine_was_available/>  
+          <q604_02_artemisinin_was_available/>  
+          <q602_08_ciprofloxacin_was_available/>  
+          <q602_17_omeprazole_was_available/>  
+          <q602_11_co_trimoxazole_tables_was_available/>  
+          <q601_13_ceftriaxone/>  
+          <q606_04b_rifampin_was_available/>  
+          <q602_19b_mebendazole_was_available/>  
+          <q603_02_artemisinin/>  
+          <q605_07_i_e/>  
+          <q601_22_oxytocin/>  
+          <q603_04_quinine/>  
+          <q602_25_oral_contraceptive_was_available/>  
+          <q606_08a_i_r_p_was_available/>  
+          <q603_03_fansidar/>  
+          <q601_20_metrodinazole/>  
+          <q605_01b_ethambutol/>  
+          <q601_18_albendazole/>  
+          <q602_02_glibenclamide_was_available/>  
+          <q602_10_co_trimoxazole_tables_was_available/>  
+          <q604_05_other_am_drug_was_available/>  
+          <q601_23_magnesium_sulphate/>  
+          <q601_19a_mebendazole/>  
+          <q606_02b_isoniazid_was_available/>  
+          <q602_24_ors_was_available/>  
+          <q601_06_simvastatin/>  
+          <q606_09_i_r_p_e_was_available/>  
+          <q601_07_amitriptyline/>  
+          <q601_14_fluconazole/>  
+          <q606_03_pyrazinamide_was_available/>  
+          <q605_05_streptomycin/>  
+          <q602_09_co_trimoxazole_suspension_was_available/>  
+          <q602_04_captopril_was_available/>  
+          <q605_02b_isoniazid/>  
+          <q602_06_simvastatin_was_available/>  
+          <q602_03_atenolol_was_available/>  
+          <q601_02_glibenclamide/>  
+          <q602_13_ceftriaxone_was_available/>  
+          <facility_id/>  
+          <q604_01_coartem_was_available/>  
+          <q602_20_metrodinazole_was_available/>  
+          <q601_25_oral_contraceptive/>  
+          <q602_19a_mebendazole_was_available/>  
+          <q602_12_amoxicillin_was_available/>  
+          <sec6_cntrol_field/>  
+          <q604_03_fansidar_was_available/>  
+          <q601_26_injectable_contraceptive/>  
+          <q605_08a_i_r_p/>  
+          <q605_04a_rifampin/>  
+          <q605_06a_i_r/>  
+          <q603_05_other_am_drug/>  
+          <q606_06c_i_r_was_available/>  
+          <q605_01a_ethambutol/>  
+          <q601_15_diclofenac/>  
+          <q602_21_vitamin_A_was_available/>  
+          <q602_05_enalapril_was_available/>  
+          <q606_08b_i_r_p_was_available/>  
+          <q605_06b_i_r/>  
+          <q606_02a_isoniazid_was_available/>  
+          <q602_22_oxytocin_was_available/>  
+          <q606_01b_ethambutol_was_available/>  
+          <q601_05_enalapril/>  
+          <q606_07_i_e_was_available/>  
+          <q602_01_salbutamol_was_available/>  
+          <q601_01_salbutamol/>  
+          <q605_04b_rifampin/>  
+          <q601_24_ors/>  
+          <q602_23_magnesium_sulphate_was_available/>  
+          <q605_08b_i_r_p/>  
+          <q601_03_atenolol/>  
+          <q602_07_amitriptyline_was_available/>  
+          <q602_16_paracetamol_was_available/>  
+          <q606_04a_rifampin_was_available/>  
+          <q602_14_fluconazole_was_available/> 
+        </FACILITY_DATA_TABLE_SEC_6> 
+      </instance>  
+      <!--
+      <bind id="pq605_10_other_tb_medicine" nodeset="/FACILITY_DATA_TABLE_SEC_6/q605_10_other_tb_medicine" type="xsd:long"/>  
+      <bind id="pq601_10_co_trimoxazole_tables" nodeset="/FACILITY_DATA_TABLE_SEC_6/q601_10_co_trimoxazole_tables" type="xsd:long"/>  
+      <bind id="pq601_09_co_trimoxazole_suspension" nodeset="/FACILITY_DATA_TABLE_SEC_6/q601_09_co_trimoxazole_suspension" type="xsd:long"/>  
+      <bind id="pq601_12_amoxicillin" nodeset="/FACILITY_DATA_TABLE_SEC_6/q601_12_amoxicillin" type="xsd:long"/>  
+      <bind id="pq605_09_i_r_p_e" nodeset="/FACILITY_DATA_TABLE_SEC_6/q605_09_i_r_p_e" type="xsd:long"/>  
+      <bind id="pq605_02a_isoniazid" nodeset="/FACILITY_DATA_TABLE_SEC_6/q605_02a_isoniazid" type="xsd:long"/>  
+      <bind id="pq601_21_vitamin_A" nodeset="/FACILITY_DATA_TABLE_SEC_6/q601_21_vitamin_A" type="xsd:long"/>  
+      -->
+      
+      <bind id="pq603_05_other_am_drug_specify" nodeset="/FACILITY_DATA_TABLE_SEC_6/q603_05_other_am_drug_specify" type="xsd:string"/>  
+      
+      <!--
+      <bind id="pq601_19b_mebendazole" nodeset="/FACILITY_DATA_TABLE_SEC_6/q601_19b_mebendazole" type="xsd:long"/>  
+      <bind id="pq601_17_omeprazole" nodeset="/FACILITY_DATA_TABLE_SEC_6/q601_17_omeprazole" type="xsd:long"/>  
+      <bind id="pq601_04_captopril" nodeset="/FACILITY_DATA_TABLE_SEC_6/q601_04_captopril" type="xsd:long"/>  
+      <bind id="pq601_16_paracetamol" nodeset="/FACILITY_DATA_TABLE_SEC_6/q601_16_paracetamol" type="xsd:long"/>  
+      <bind id="pq601_11_co_trimoxazole_tables" nodeset="/FACILITY_DATA_TABLE_SEC_6/q601_11_co_trimoxazole_tables" type="xsd:long"/>  
+      <bind id="pq603_01_coartem" nodeset="/FACILITY_DATA_TABLE_SEC_6/q603_01_coartem" type="xsd:long"/>  
+      <bind id="pq601_27_condoms" nodeset="/FACILITY_DATA_TABLE_SEC_6/q601_27_condoms" type="xsd:long"/> 
+      -->
+      
+      <bind id="pq605_10_other_tb_medicine_specify" nodeset="/FACILITY_DATA_TABLE_SEC_6/q605_10_other_tb_medicine_specify" type="xsd:string"/>  
+      
+      <!--
+      <bind id="pq605_03_pyrazinamide" nodeset="/FACILITY_DATA_TABLE_SEC_6/q605_03_pyrazinamide" type="xsd:long"/>  
+      <bind id="pq601_08_ciprofloxacin" nodeset="/FACILITY_DATA_TABLE_SEC_6/q601_08_ciprofloxacin" type="xsd:long"/>  
+      <bind id="pq605_06c_i_r" nodeset="/FACILITY_DATA_TABLE_SEC_6/q605_06c_i_r" type="xsd:long"/>  
+      <bind id="pq601_13_ceftriaxone" nodeset="/FACILITY_DATA_TABLE_SEC_6/q601_13_ceftriaxone" type="xsd:long"/>  
+      <bind id="pq603_02_artemisinin" nodeset="/FACILITY_DATA_TABLE_SEC_6/q603_02_artemisinin" type="xsd:long"/>  
+      <bind id="pq605_07_i_e" nodeset="/FACILITY_DATA_TABLE_SEC_6/q605_07_i_e" type="xsd:long"/>  
+      <bind id="pq601_22_oxytocin" nodeset="/FACILITY_DATA_TABLE_SEC_6/q601_22_oxytocin" type="xsd:long"/>  
+      <bind id="pq603_04_quinine" nodeset="/FACILITY_DATA_TABLE_SEC_6/q603_04_quinine" type="xsd:long"/>  
+      <bind id="pq603_03_fansidar" nodeset="/FACILITY_DATA_TABLE_SEC_6/q603_03_fansidar" type="xsd:long"/>  
+      <bind id="pq601_20_metrodinazole" nodeset="/FACILITY_DATA_TABLE_SEC_6/q601_20_metrodinazole" type="xsd:long"/>  
+      <bind id="pq605_01b_ethambutol" nodeset="/FACILITY_DATA_TABLE_SEC_6/q605_01b_ethambutol" type="xsd:long"/>  
+      <bind id="pq601_18_albendazole" nodeset="/FACILITY_DATA_TABLE_SEC_6/q601_18_albendazole" type="xsd:long"/>  
+      <bind id="pq601_23_magnesium_sulphate" nodeset="/FACILITY_DATA_TABLE_SEC_6/q601_23_magnesium_sulphate" type="xsd:long"/>  
+      <bind id="pq601_19a_mebendazole" nodeset="/FACILITY_DATA_TABLE_SEC_6/q601_19a_mebendazole" type="xsd:long"/>  
+      <bind id="pq601_06_simvastatin" nodeset="/FACILITY_DATA_TABLE_SEC_6/q601_06_simvastatin" type="xsd:long"/>  
+      <bind id="pq601_07_amitriptyline" nodeset="/FACILITY_DATA_TABLE_SEC_6/q601_07_amitriptyline" type="xsd:long"/>  
+      <bind id="pq601_14_fluconazole" nodeset="/FACILITY_DATA_TABLE_SEC_6/q601_14_fluconazole" type="xsd:long"/>  
+      <bind id="pq605_05_streptomycin" nodeset="/FACILITY_DATA_TABLE_SEC_6/q605_05_streptomycin" type="xsd:long"/>  
+      <bind id="pq605_02b_isoniazid" nodeset="/FACILITY_DATA_TABLE_SEC_6/q605_02b_isoniazid" type="xsd:long"/>  
+      <bind id="pq601_02_glibenclamide" nodeset="/FACILITY_DATA_TABLE_SEC_6/q601_02_glibenclamide" type="xsd:long"/>  
+      -->
+      
+      <bind id="pfacility_id" nodeset="/FACILITY_DATA_TABLE_SEC_6/facility_id" type="xsd:string"/>  
+      
+      <!--
+      <bind id="pq601_25_oral_contraceptive" nodeset="/FACILITY_DATA_TABLE_SEC_6/q601_25_oral_contraceptive" type="xsd:long"/>  
+      <bind id="pq601_26_injectable_contraceptive" nodeset="/FACILITY_DATA_TABLE_SEC_6/q601_26_injectable_contraceptive" type="xsd:long"/>  
+      <bind id="pq605_08a_i_r_p" nodeset="/FACILITY_DATA_TABLE_SEC_6/q605_08a_i_r_p" type="xsd:long"/>  
+      <bind id="pq605_04a_rifampin" nodeset="/FACILITY_DATA_TABLE_SEC_6/q605_04a_rifampin" type="xsd:long"/>  
+      <bind id="pq605_06a_i_r" nodeset="/FACILITY_DATA_TABLE_SEC_6/q605_06a_i_r" type="xsd:long"/>  
+      <bind id="pq603_05_other_am_drug" nodeset="/FACILITY_DATA_TABLE_SEC_6/q603_05_other_am_drug" type="xsd:long"/>  
+      <bind id="pq605_01a_ethambutol" nodeset="/FACILITY_DATA_TABLE_SEC_6/q605_01a_ethambutol" type="xsd:long"/>  
+      <bind id="pq601_15_diclofenac" nodeset="/FACILITY_DATA_TABLE_SEC_6/q601_15_diclofenac" type="xsd:long"/>  
+      <bind id="pq605_06b_i_r" nodeset="/FACILITY_DATA_TABLE_SEC_6/q605_06b_i_r" type="xsd:long"/>  
+      <bind id="pq601_05_enalapril" nodeset="/FACILITY_DATA_TABLE_SEC_6/q601_05_enalapril" type="xsd:long"/>  
+      <bind id="pq601_01_salbutamol" nodeset="/FACILITY_DATA_TABLE_SEC_6/q601_01_salbutamol" type="xsd:long"/>  
+      <bind id="pq605_04b_rifampin" nodeset="/FACILITY_DATA_TABLE_SEC_6/q605_04b_rifampin" type="xsd:long"/>  
+      <bind id="pq601_24_ors" nodeset="/FACILITY_DATA_TABLE_SEC_6/q601_24_ors" type="xsd:long"/>  
+      <bind id="pq605_08b_i_r_p" nodeset="/FACILITY_DATA_TABLE_SEC_6/q605_08b_i_r_p" type="xsd:long"/>  
+      <bind id="pq601_03_atenolol" nodeset="/FACILITY_DATA_TABLE_SEC_6/q601_03_atenolol" type="xsd:long"/> 
+	  -->
+	  
+    </model> 
+  </h:head>  
+  <h:body> 
+  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q601_01_salbutamol"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>AVAILABLE TODAY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE BUT EXPIRED</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q602_01_salbutamol_was_available"> 
+      <label>q602_01_salbutamol_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+  
+   
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q601_02_glibenclamide"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>AVAILABLE TODAY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE BUT EXPIRED</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q602_02_glibenclamide_was_available"> 
+      <label>q602_02_glibenclamide_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1> 
+    
+
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q601_03_atenolol"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>AVAILABLE TODAY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE BUT EXPIRED</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q602_03_atenolol_was_available"> 
+      <label>q602_03_atenolol_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>    
+
+
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q601_04_captopril"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>AVAILABLE TODAY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE BUT EXPIRED</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q602_04_captopril_was_available"> 
+      <label>q602_04_captopril_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1> 
+    
+     
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q601_05_enalapril"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>AVAILABLE TODAY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE BUT EXPIRED</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q602_05_enalapril_was_available"> 
+      <label>q602_05_enalapril_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+ 
+     
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q601_06_simvastatine"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>AVAILABLE TODAY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE BUT EXPIRED</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q602_06_simvastatin_was_available"> 
+      <label>q602_06_simvastatin_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>
+ 
+
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q601_07_amitriptyline"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>AVAILABLE TODAY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE BUT EXPIRED</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q602_07_amitriptyline_was_available"> 
+      <label>q602_07_amitriptyline_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>
+
+  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q601_08_ciprofloxacin"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>AVAILABLE TODAY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE BUT EXPIRED</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q602_08_ciprofloxacin_was_available"> 
+      <label>q602_08_ciprofloxacin_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+
+  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q601_09_co_trimoxazole_suspension"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>AVAILABLE TODAY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE BUT EXPIRED</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q602_09_co_trimoxazole_suspension_was_available"> 
+      <label>q602_09_co_trimoxazole_suspension_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1> 
+
+ 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q601_10_co_trimoxazole_tables"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>AVAILABLE TODAY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE BUT EXPIRED</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q602_10_co_trimoxazole_tables_was_available"> 
+      <label>q602_10_co_trimoxazole_tables_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+
+ 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q601_11_co_trimoxazole_tables"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>AVAILABLE TODAY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE BUT EXPIRED</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q602_11_co_trimoxazole_tables_was_available"> 
+      <label>q602_11_co_trimoxazole_tables_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>   
+   
+     
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q601_12_amoxicillin"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>AVAILABLE TODAY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE BUT EXPIRED</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q602_12_amoxicillin_was_available"> 
+      <label>q602_12_amoxicillin_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>    
+ 
+  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q601_13_ceftriaxone"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>AVAILABLE TODAY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE BUT EXPIRED</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+   <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q602_13_ceftriaxone_was_available"> 
+      <label>q602_13_ceftriaxone_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1> 
+ 
+       
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q601_14_fluconazole"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>AVAILABLE TODAY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE BUT EXPIRED</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q602_14_fluconazole_was_available"> 
+      <label>q602_14_fluconazole_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>     
+
+
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q601_15_diclofenac"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>AVAILABLE TODAY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE BUT EXPIRED</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q602_15_diclofenac_was_available"> 
+      <label>q602_15_diclofenac_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1> 
+ 
+  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q601_16_paracetamol"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>AVAILABLE TODAY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE BUT EXPIRED</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q602_16_paracetamol_was_available"> 
+      <label>q602_16_paracetamol_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>      
+
+ 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q601_17_omeprazole"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>AVAILABLE TODAY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE BUT EXPIRED</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q602_17_omeprazole_was_available"> 
+      <label>q602_17_omeprazole_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>
+
+       
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q601_18_albendazole"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>AVAILABLE TODAY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE BUT EXPIRED</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q602_18_albendazole_was_available"> 
+      <label>q602_18_albendazole_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1> 
+
+     
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q601_19a_mebendazole"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>AVAILABLE TODAY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE BUT EXPIRED</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q602_19a_mebendazole_was_available"> 
+      <label>q602_19a_mebendazole_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>    
+
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q601_19b_mebendazole"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>AVAILABLE TODAY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE BUT EXPIRED</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q602_19b_mebendazole_was_available"> 
+      <label>q602_19b_mebendazole_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>    
+
+
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q601_20_metrodinazole"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>AVAILABLE TODAY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE BUT EXPIRED</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q602_20_metrodinazole_was_available"> 
+      <label>q602_20_metrodinazole_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>
+ 
+
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q601_21_vitamin_A"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>AVAILABLE TODAY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE BUT EXPIRED</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q602_21_vitamin_A_was_available"> 
+      <label>q602_21_vitamin_A_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+
+     
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q601_22_oxytocin"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>AVAILABLE TODAY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE BUT EXPIRED</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q602_22_oxytocin_was_available"> 
+      <label>q602_22_oxytocin_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1> 
+
+  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q601_23_magnesium_sulphate"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>AVAILABLE TODAY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE BUT EXPIRED</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q602_23_magnesium_sulphate_was_available"> 
+      <label>q602_23_magnesium_sulphate_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>
+    
+      
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q601_24_ors"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>AVAILABLE TODAY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE BUT EXPIRED</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q602_24_ors_was_available"> 
+      <label>q602_24_ors_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>     
+  
+
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q601_25_oral_contraceptive"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>AVAILABLE TODAY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE BUT EXPIRED</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q602_25_oral_contraceptive_was_available"> 
+      <label>q602_25_oral_contraceptive_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>     
+    
+     
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q601_26_injectable_contraceptive"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>AVAILABLE TODAY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE BUT EXPIRED</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q602_26_injectable_contraceptive_was_available"> 
+      <label>q602_26_injectable_contraceptive_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1> 
+
+
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q601_27_condoms"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>AVAILABLE TODAY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE BUT EXPIRED</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q602_27_condoms_was_available"> 
+      <label>q602_27_condoms_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1> 
+                                   
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q603_01_coartem"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>AVAILABLE TODAY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE BUT EXPIRED</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q604_01_coartem_was_available"> 
+      <label>q604_01_coartem_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+ 
+ 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q603_02_artemisini"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>AVAILABLE TODAY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE BUT EXPIRED</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q604_02_artemisinin_was_available"> 
+      <label>q604_02_artemisinin_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>   
+ 
+      
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q603_03_fansidar"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>AVAILABLE TODAY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE BUT EXPIRED</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q604_03_fansidar_was_available"> 
+      <label>q604_03_fansidar_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1> 
+
+ 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q603_04_quinine"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>AVAILABLE TODAY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE BUT EXPIRED</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q604_04_quinine_was_available"> 
+      <label>q604_04_quinine_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>    
+
+ 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q603_05_other_am_drug"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>AVAILABLE TODAY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE BUT EXPIRED</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+    <input bind="pq603_05_other_am_drug_specify">
+      <label>q603_05_other_am_drug_specify:</label>
+    </input>
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q604_05_other_am_drug_was_available"> 
+      <label>q604_05_other_am_drug_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1> 
+    
+
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q605_01a_ethambutol"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>AVAILABLE TODAY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE BUT EXPIRED</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q606_01a_ethambutol_was_available"> 
+      <label>q606_01a_ethambutol_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>    
+ 
+  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q605_01b_ethambutol"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>AVAILABLE TODAY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE BUT EXPIRED</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q606_01b_ethambutol_was_available"> 
+      <label>q606_01b_ethambutol_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1> 
+ 
+      
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q605_02a_isoniazid"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>AVAILABLE TODAY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE BUT EXPIRED</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q606_02a_isoniazid_was_available"> 
+      <label>q606_02a_isoniazid_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1> 
+
+  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q605_02b_isoniazid"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>AVAILABLE TODAY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE BUT EXPIRED</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q606_02b_isoniazid_was_available"> 
+      <label>q606_02b_isoniazid_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+
+ 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q605_03_pyrazinamide"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>AVAILABLE TODAY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE BUT EXPIRED</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q606_03_pyrazinamide_was_available"> 
+      <label>q606_03_pyrazinamide_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+
+ 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q605_04a_rifampin"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>AVAILABLE TODAY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE BUT EXPIRED</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q606_04a_rifampin_was_available"> 
+      <label>q606_04a_rifampin_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>    
+
+     
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q605_04b_rifampin"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>AVAILABLE TODAY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE BUT EXPIRED</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q606_04b_rifampin_was_available"> 
+      <label>q606_04b_rifampin_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1> 
+ 
+
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q605_05_streptomycin"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>AVAILABLE TODAY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE BUT EXPIRED</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q606_05_streptomycin_was_available"> 
+      <label>q606_05_streptomycin_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>
+            
+       
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q605_06a_i_r"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>AVAILABLE TODAY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE BUT EXPIRED</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q606_06a_i_r_was_available"> 
+      <label>q606_06a_i_r_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>    
+    
+
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q605_06b_i_r"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>AVAILABLE TODAY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE BUT EXPIRED</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q606_06b_i_r_was_available"> 
+      <label>q606_06b_i_r_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1> 
+    
+
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q605_06c_i_r"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>AVAILABLE TODAY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE BUT EXPIRED</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q606_06c_i_r_was_available"> 
+      <label>q606_06c_i_r_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>     
+
+
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q605_07_i_"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>AVAILABLE TODAY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE BUT EXPIRED</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q606_07_i_e_was_available"> 
+      <label>q606_07_i_e_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>
+
+
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q605_08a_i_r_p"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>AVAILABLE TODAY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE BUT EXPIRED</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q606_08a_i_r_p_was_available"> 
+      <label>q606_08a_i_r_p_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>    
+        
+
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q605_08b_i_r_p"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>AVAILABLE TODAY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE BUT EXPIRED</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q606_08b_i_r_p_was_available"> 
+      <label>q606_08b_i_r_p_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q605_09_i_r_p_e"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>AVAILABLE TODAY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE BUT EXPIRED</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q606_09_i_r_p_e_was_available"> 
+      <label>q606_09_i_r_p_e_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1> 
+    
+    <input bind="pq605_10_other_tb_medicine_specify">
+      <label>q605_10_other_tb_medicine_specify:</label>
+    </input>      
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q605_10_other_tb_medicine"> 
+      <label>Are guidelines available?</label>  
+      <item>
+        <label>AVAILABLE TODAY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>AVAILABLE BUT EXPIRED</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>NOT AVAILABLE</label>
+        <value>3</value>
+      </item>
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q606_10_other_tb_medicine_was_available"> 
+      <label>q606_10_other_tb_medicine_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>
+    
+  </h:body> 
+</h:html>
