@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<h:html xmlns:h="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:jr="http://openrosa.org/javarosa">  
+  <h:head> 
+    <h:title>FACILITY_DATA_TABLE_SEC_7</h:title>  
+    <model> 
+      <instance> 
+        <FACILITY_DATA_TABLE_SEC_7> 
+          <q709a_month_cycle/>  
+          <q708c_mslaria_blood_slide/>  
+          <q706h_bc_analyzer/>  
+          <q702d_hiv_test_wester_bolt_isworking/>  
+          <q706j_dipstick_for_ug/>  
+          <q705d_mdr_test/>  
+          <q702a_hiv_test_rapid_isworking/>  
+          <q706c_colorimeter/>  
+          <q701f_hiv_test_pcr/>  
+          <q705a_tb_sputum/>  
+          <q707n_india_ink_for_cns_is_working/>  
+          <q706b_hemoglobinometer/>  
+          <q702c_hiv_test_dynabeada_isworking/>  
+          <q702b_hiv_test_elisa_isworking/>  
+          <q707m_serology_for_HC_is_working/>  
+          <q706g_syphilis/>  
+          <q706l_serology_for_HB/>  
+          <q705b_culture_test/>  
+          <q701c_hiv_test_dynabeada/>  
+          <q706d_capillary_tubes/>  
+          <facility_id/>  
+          <q708b_hb_test/>  
+          <q702e_hiv_test_pcr_isworking/>  
+          <q703b_slides/>  
+          <q708e_blood_glucose/>  
+          <q706i_dipstick_for_up/>  
+          <q703e_rapid_test/>  
+          <q703d_field_stain/>  
+          <q707a_coulter_analyzer_is_working/>  
+          <q709_is_qa_testing_carryout/>  
+          <q706m_serology_for_HC/>  
+          <q703c_giemsa_stain/>  
+          <q708d_tb_sputum/>  
+          <q706e_centrifuge/>  
+          <q708f_syphilis_test/>  
+          <q707b_hemoglobinometer_is_working/>  
+          <q706k_pregnancy_test/>  
+          <q701d_hiv_test_wester_bolt/>  
+          <q704_microscope_isworking/>  
+          <q703a_microscope/>  
+          <q707c_colorimeter_is_working/>  
+          <q707h_bc_analyzer_is_working/>  
+          <q701b_hiv_test_elisa/>  
+          <q706f_litmus_paper/>  
+          <q707l_serology_for_HB_is_working/>  
+          <q706n_india_ink_for_cns/>  
+          <q707e_centrifuge_is_working/>  
+          <q701e_hiv_test_cytoflowmeter/>  
+          <q701a_hiv_test_rapid/>  
+          <q706a_coulter_analyzer/>  
+          <q708a_hiv_test/>  
+          <sec7_control_field/>  
+          <q705c_dst_test/> 
+        </FACILITY_DATA_TABLE_SEC_7> 
+      </instance>  
+      <bind id="pq709a_month_cycle" nodeset="/FACILITY_DATA_TABLE_SEC_7/q709a_month_cycle" type="xsd:long"/>  
+      <bind id="pq708c_mslaria_blood_slide" nodeset="/FACILITY_DATA_TABLE_SEC_7/q708c_mslaria_blood_slide" type="xsd:long"/>  
+      <bind id="pq706h_bc_analyzer" nodeset="/FACILITY_DATA_TABLE_SEC_7/q706h_bc_analyzer" type="xsd:long"/>  
+      <bind id="pq706j_dipstick_for_ug" nodeset="/FACILITY_DATA_TABLE_SEC_7/q706j_dipstick_for_ug" type="xsd:long"/>  
+      <bind id="pq705d_mdr_test" nodeset="/FACILITY_DATA_TABLE_SEC_7/q705d_mdr_test" type="xsd:long"/>  
+      <bind id="pq706c_colorimeter" nodeset="/FACILITY_DATA_TABLE_SEC_7/q706c_colorimeter" type="xsd:long"/>  
+      <bind id="pq701f_hiv_test_pcr" nodeset="/FACILITY_DATA_TABLE_SEC_7/q701f_hiv_test_pcr" type="xsd:long"/>  
+      <bind id="pq705a_tb_sputum" nodeset="/FACILITY_DATA_TABLE_SEC_7/q705a_tb_sputum" type="xsd:long"/>  
+      <bind id="pq706b_hemoglobinometer" nodeset="/FACILITY_DATA_TABLE_SEC_7/q706b_hemoglobinometer" type="xsd:long"/>  
+      <bind id="pq706g_syphilis" nodeset="/FACILITY_DATA_TABLE_SEC_7/q706g_syphilis" type="xsd:long"/>  
+      <bind id="pq706l_serology_for_HB" nodeset="/FACILITY_DATA_TABLE_SEC_7/q706l_serology_for_HB" type="xsd:long"/>  
+      <bind id="pq705b_culture_test" nodeset="/FACILITY_DATA_TABLE_SEC_7/q705b_culture_test" type="xsd:long"/>  
+      <bind id="pq701c_hiv_test_dynabeada" nodeset="/FACILITY_DATA_TABLE_SEC_7/q701c_hiv_test_dynabeada" type="xsd:long"/>  
+      <bind id="pq706d_capillary_tubes" nodeset="/FACILITY_DATA_TABLE_SEC_7/q706d_capillary_tubes" type="xsd:long"/>  
+      <bind id="pfacility_id" nodeset="/FACILITY_DATA_TABLE_SEC_7/facility_id" type="xsd:string"/>  
+      <bind id="pq708b_hb_test" nodeset="/FACILITY_DATA_TABLE_SEC_7/q708b_hb_test" type="xsd:long"/>  
+      <bind id="pq703b_slides" nodeset="/FACILITY_DATA_TABLE_SEC_7/q703b_slides" type="xsd:long"/>  
+      <bind id="pq708e_blood_glucose" nodeset="/FACILITY_DATA_TABLE_SEC_7/q708e_blood_glucose" type="xsd:long"/>  
+      <bind id="pq706i_dipstick_for_up" nodeset="/FACILITY_DATA_TABLE_SEC_7/q706i_dipstick_for_up" type="xsd:long"/>  
+      <bind id="pq703e_rapid_test" nodeset="/FACILITY_DATA_TABLE_SEC_7/q703e_rapid_test" type="xsd:long"/>  
+      <bind id="pq703d_field_stain" nodeset="/FACILITY_DATA_TABLE_SEC_7/q703d_field_stain" type="xsd:long"/>  
+      <bind id="pq706m_serology_for_HC" nodeset="/FACILITY_DATA_TABLE_SEC_7/q706m_serology_for_HC" type="xsd:long"/>  
+      <bind id="pq703c_giemsa_stain" nodeset="/FACILITY_DATA_TABLE_SEC_7/q703c_giemsa_stain" type="xsd:long"/>  
+      <bind id="pq708d_tb_sputum" nodeset="/FACILITY_DATA_TABLE_SEC_7/q708d_tb_sputum" type="xsd:long"/>  
+      <bind id="pq706e_centrifuge" nodeset="/FACILITY_DATA_TABLE_SEC_7/q706e_centrifuge" type="xsd:long"/>  
+      <bind id="pq708f_syphilis_test" nodeset="/FACILITY_DATA_TABLE_SEC_7/q708f_syphilis_test" type="xsd:long"/>  
+      <bind id="pq706k_pregnancy_test" nodeset="/FACILITY_DATA_TABLE_SEC_7/q706k_pregnancy_test" type="xsd:long"/>  
+      <bind id="pq701d_hiv_test_wester_bolt" nodeset="/FACILITY_DATA_TABLE_SEC_7/q701d_hiv_test_wester_bolt" type="xsd:long"/>  
+      <bind id="pq703a_microscope" nodeset="/FACILITY_DATA_TABLE_SEC_7/q703a_microscope" type="xsd:long"/>  
+      <bind id="pq701b_hiv_test_elisa" nodeset="/FACILITY_DATA_TABLE_SEC_7/q701b_hiv_test_elisa" type="xsd:long"/>  
+      <bind id="pq706f_litmus_paper" nodeset="/FACILITY_DATA_TABLE_SEC_7/q706f_litmus_paper" type="xsd:long"/>  
+      <bind id="pq706n_india_ink_for_cns" nodeset="/FACILITY_DATA_TABLE_SEC_7/q706n_india_ink_for_cns" type="xsd:long"/>  
+      <bind id="pq701e_hiv_test_cytoflowmeter" nodeset="/FACILITY_DATA_TABLE_SEC_7/q701e_hiv_test_cytoflowmeter" type="xsd:string"/>  
+      <bind id="pq701a_hiv_test_rapid" nodeset="/FACILITY_DATA_TABLE_SEC_7/q701a_hiv_test_rapid" type="xsd:long"/>  
+      <bind id="pq706a_coulter_analyzer" nodeset="/FACILITY_DATA_TABLE_SEC_7/q706a_coulter_analyzer" type="xsd:long"/>  
+      <bind id="pq708a_hiv_test" nodeset="/FACILITY_DATA_TABLE_SEC_7/q708a_hiv_test" type="xsd:long"/>  
+      <bind id="pq705c_dst_test" nodeset="/FACILITY_DATA_TABLE_SEC_7/q705c_dst_test" type="xsd:long"/> 
+    </model> 
+  </h:head>  
+  <h:body> 
+    <input bind="pq709a_month_cycle">
+      <label>q709a_month_cycle:</label>
+    </input>  
+    <input bind="pq708c_mslaria_blood_slide">
+      <label>q708c_mslaria_blood_slide:</label>
+    </input>  
+    <input bind="pq706h_bc_analyzer">
+      <label>q706h_bc_analyzer:</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/q702d_hiv_test_wester_bolt_isworking"> 
+      <label>q702d_hiv_test_wester_bolt_isworking?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <input bind="pq706j_dipstick_for_ug">
+      <label>q706j_dipstick_for_ug:</label>
+    </input>  
+    <input bind="pq705d_mdr_test">
+      <label>q705d_mdr_test:</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/q702a_hiv_test_rapid_isworking"> 
+      <label>q702a_hiv_test_rapid_isworking?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <input bind="pq706c_colorimeter">
+      <label>q706c_colorimeter:</label>
+    </input>  
+    <input bind="pq701f_hiv_test_pcr">
+      <label>q701f_hiv_test_pcr:</label>
+    </input>  
+    <input bind="pq705a_tb_sputum">
+      <label>q705a_tb_sputum:</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/q707n_india_ink_for_cns_is_working"> 
+      <label>q707n_india_ink_for_cns_is_working?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <input bind="pq706b_hemoglobinometer">
+      <label>q706b_hemoglobinometer:</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/q702c_hiv_test_dynabeada_isworking"> 
+      <label>q702c_hiv_test_dynabeada_isworking?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/q702b_hiv_test_elisa_isworking"> 
+      <label>q702b_hiv_test_elisa_isworking?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/q707m_serology_for_HC_is_working"> 
+      <label>q707m_serology_for_HC_is_working?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <input bind="pq706g_syphilis">
+      <label>q706g_syphilis:</label>
+    </input>  
+    <input bind="pq706l_serology_for_HB">
+      <label>q706l_serology_for_HB:</label>
+    </input>  
+    <input bind="pq705b_culture_test">
+      <label>q705b_culture_test:</label>
+    </input>  
+    <input bind="pq701c_hiv_test_dynabeada">
+      <label>q701c_hiv_test_dynabeada:</label>
+    </input>  
+    <input bind="pq706d_capillary_tubes">
+      <label>q706d_capillary_tubes:</label>
+    </input>  
+    <input bind="pfacility_id">
+      <label>facility_id:</label>
+    </input>  
+    <input bind="pq708b_hb_test">
+      <label>q708b_hb_test:</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/q702e_hiv_test_pcr_isworking"> 
+      <label>q702e_hiv_test_pcr_isworking?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <input bind="pq703b_slides">
+      <label>q703b_slides:</label>
+    </input>  
+    <input bind="pq708e_blood_glucose">
+      <label>q708e_blood_glucose:</label>
+    </input>  
+    <input bind="pq706i_dipstick_for_up">
+      <label>q706i_dipstick_for_up:</label>
+    </input>  
+    <input bind="pq703e_rapid_test">
+      <label>q703e_rapid_test:</label>
+    </input>  
+    <input bind="pq703d_field_stain">
+      <label>q703d_field_stain:</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/q707a_coulter_analyzer_is_working"> 
+      <label>q707a_coulter_analyzer_is_working?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/q709_is_qa_testing_carryout"> 
+      <label>q709_is_qa_testing_carryout?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <input bind="pq706m_serology_for_HC">
+      <label>q706m_serology_for_HC:</label>
+    </input>  
+    <input bind="pq703c_giemsa_stain">
+      <label>q703c_giemsa_stain:</label>
+    </input>  
+    <input bind="pq708d_tb_sputum">
+      <label>q708d_tb_sputum:</label>
+    </input>  
+    <input bind="pq706e_centrifuge">
+      <label>q706e_centrifuge:</label>
+    </input>  
+    <input bind="pq708f_syphilis_test">
+      <label>q708f_syphilis_test:</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/q707b_hemoglobinometer_is_working"> 
+      <label>q707b_hemoglobinometer_is_working?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <input bind="pq706k_pregnancy_test">
+      <label>q706k_pregnancy_test:</label>
+    </input>  
+    <input bind="pq701d_hiv_test_wester_bolt">
+      <label>q701d_hiv_test_wester_bolt:</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/q704_microscope_isworking"> 
+      <label>q704_microscope_isworking?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <input bind="pq703a_microscope">
+      <label>q703a_microscope:</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/q707c_colorimeter_is_working"> 
+      <label>q707c_colorimeter_is_working?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/q707h_bc_analyzer_is_working"> 
+      <label>q707h_bc_analyzer_is_working?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <input bind="pq701b_hiv_test_elisa">
+      <label>q701b_hiv_test_elisa:</label>
+    </input>  
+    <input bind="pq706f_litmus_paper">
+      <label>q706f_litmus_paper:</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/q707l_serology_for_HB_is_working"> 
+      <label>q707l_serology_for_HB_is_working?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <input bind="pq706n_india_ink_for_cns">
+      <label>q706n_india_ink_for_cns:</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/q707e_centrifuge_is_working"> 
+      <label>q707e_centrifuge_is_working?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <input bind="pq701e_hiv_test_cytoflowmeter">
+      <label>q701e_hiv_test_cytoflowmeter:</label>
+    </input>  
+    <input bind="pq701a_hiv_test_rapid">
+      <label>q701a_hiv_test_rapid:</label>
+    </input>  
+    <input bind="pq706a_coulter_analyzer">
+      <label>q706a_coulter_analyzer:</label>
+    </input>  
+    <input bind="pq708a_hiv_test">
+      <label>q708a_hiv_test:</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/sec7_control_field"> 
+      <label>sec7_control_field?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <input bind="pq705c_dst_test">
+      <label>q705c_dst_test:</label>
+    </input> 
+  </h:body> 
+</h:html>

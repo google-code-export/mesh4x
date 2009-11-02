@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<h:html xmlns:h="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:jr="http://openrosa.org/javarosa">  
+  <h:head> 
+    <h:title>FACILITY_DATA_TABLE_SEC_3</h:title>  
+    <model> 
+      <instance> 
+        <FACILITY_DATA_TABLE_SEC_3> 
+          <facility_id/>  
+          <q303_are_equipment_disinf/>  
+          <q306c_dispose_infectious_waste_dwb/>  
+          <q306b_dispose_infectious_waste_ob/>  
+          <q308_is_soap_or_cleanser_available/>  
+          <q305_does_dispose_sharp_waste/>  
+          <sec3_control_field/>  
+          <q306d_dispose_infectious_waste_ro_other/>  
+          <q304_is_timer_available_for_sp/>  
+          <q306_does_dispose_infectious_waste/>  
+          <q305c_dispose_sharp_waste_dwb/>  
+          <q306a_dispose_infectiousp_waste_bi/>  
+          <q305b_dispose_sharp_waste_ob/>  
+          <q303_equipment_disinf_methods_C/>  
+          <q302_sterilizing_methods_B/>  
+          <q302_are_needles_reused/>  
+          <q303_equipment_disinf_methods_other/>  
+          <q302_sterilizing_methods_F/>  
+          <q303_equipment_disinf_methods_E/>  
+          <q306d_dispose_infectious_waste_ro/>  
+          <q303_equipment_disinf_methods_A/>  
+          <q305d_dispose_sharp_waste_ro_other/>  
+          <q303_equipment_disinf_methods_F/>  
+          <q302_sterilizing_methods_D/>  
+          <q302_sterilizing_methods_C/>  
+          <q301_type_of_needle_other/>  
+          <q303_equipment_disinf_methods_B/>  
+          <q303_equipment_disinf_methods_D/>  
+          <q302_sterilizing_methods_other/>  
+          <q302_sterilizing_methods_A/>  
+          <q307_is_disinfectant_available/>  
+          <q301_type_of_needle/>  
+          <q305a_dispose_sharp_waste_bi/>  
+          <q302_sterilizing_methods_E/>  
+          <q305d_dispose_sharp_waste_ro/> 
+        </FACILITY_DATA_TABLE_SEC_3> 
+      </instance>  
+      <bind id="pfacility_id" nodeset="/FACILITY_DATA_TABLE_SEC_3/facility_id" type="xsd:string"/>  
+      <bind id="pq303_are_equipment_disinf" nodeset="/FACILITY_DATA_TABLE_SEC_3/q303_are_equipment_disinf" type="xsd:string"/>  
+      <bind id="pq306c_dispose_infectious_waste_dwb" nodeset="/FACILITY_DATA_TABLE_SEC_3/q306c_dispose_infectious_waste_dwb" type="xsd:string"/>  
+      <bind id="pq306b_dispose_infectious_waste_ob" nodeset="/FACILITY_DATA_TABLE_SEC_3/q306b_dispose_infectious_waste_ob" type="xsd:string"/>  
+      <bind id="pq308_is_soap_or_cleanser_available" nodeset="/FACILITY_DATA_TABLE_SEC_3/q308_is_soap_or_cleanser_available" type="xsd:string"/>  
+      <bind id="pq305_does_dispose_sharp_waste" nodeset="/FACILITY_DATA_TABLE_SEC_3/q305_does_dispose_sharp_waste" type="xsd:string"/>  
+      <bind id="pq306d_dispose_infectious_waste_ro_other" nodeset="/FACILITY_DATA_TABLE_SEC_3/q306d_dispose_infectious_waste_ro_other" type="xsd:string"/>  
+      <bind id="pq304_is_timer_available_for_sp" nodeset="/FACILITY_DATA_TABLE_SEC_3/q304_is_timer_available_for_sp" type="xsd:string"/>  
+      <bind id="pq306_does_dispose_infectious_waste" nodeset="/FACILITY_DATA_TABLE_SEC_3/q306_does_dispose_infectious_waste" type="xsd:string"/>  
+      <bind id="pq305c_dispose_sharp_waste_dwb" nodeset="/FACILITY_DATA_TABLE_SEC_3/q305c_dispose_sharp_waste_dwb" type="xsd:string"/>  
+      <bind id="pq306a_dispose_infectiousp_waste_bi" nodeset="/FACILITY_DATA_TABLE_SEC_3/q306a_dispose_infectiousp_waste_bi" type="xsd:string"/>  
+      <bind id="pq305b_dispose_sharp_waste_ob" nodeset="/FACILITY_DATA_TABLE_SEC_3/q305b_dispose_sharp_waste_ob" type="xsd:string"/>  
+      <bind id="pq302_are_needles_reused" nodeset="/FACILITY_DATA_TABLE_SEC_3/q302_are_needles_reused" type="xsd:string"/>  
+      <bind id="pq303_equipment_disinf_methods_other" nodeset="/FACILITY_DATA_TABLE_SEC_3/q303_equipment_disinf_methods_other" type="xsd:string"/>  
+      <bind id="pq306d_dispose_infectious_waste_ro" nodeset="/FACILITY_DATA_TABLE_SEC_3/q306d_dispose_infectious_waste_ro" type="xsd:string"/>  
+      <bind id="pq305d_dispose_sharp_waste_ro_other" nodeset="/FACILITY_DATA_TABLE_SEC_3/q305d_dispose_sharp_waste_ro_other" type="xsd:string"/>  
+      <bind id="pq301_type_of_needle_other" nodeset="/FACILITY_DATA_TABLE_SEC_3/q301_type_of_needle_other" type="xsd:string"/>  
+      <bind id="pq302_sterilizing_methods_other" nodeset="/FACILITY_DATA_TABLE_SEC_3/q302_sterilizing_methods_other" type="xsd:string"/>  
+      <bind id="pq307_is_disinfectant_available" nodeset="/FACILITY_DATA_TABLE_SEC_3/q307_is_disinfectant_available" type="xsd:string"/>  
+      <bind id="pq301_type_of_needle" nodeset="/FACILITY_DATA_TABLE_SEC_3/q301_type_of_needle" type="xsd:string"/>  
+      <bind id="pq305a_dispose_sharp_waste_bi" nodeset="/FACILITY_DATA_TABLE_SEC_3/q305a_dispose_sharp_waste_bi" type="xsd:string"/>  
+      <bind id="pq305d_dispose_sharp_waste_ro" nodeset="/FACILITY_DATA_TABLE_SEC_3/q305d_dispose_sharp_waste_ro" type="xsd:string"/> 
+    </model> 
+  </h:head>  
+  <h:body> 
+    <input bind="pfacility_id">
+      <label>facility_id:</label>
+    </input>  
+    <input bind="pq303_are_equipment_disinf">
+      <label>q303_are_equipment_disinf:</label>
+    </input>  
+    <input bind="pq306c_dispose_infectious_waste_dwb">
+      <label>q306c_dispose_infectious_waste_dwb:</label>
+    </input>  
+    <input bind="pq306b_dispose_infectious_waste_ob">
+      <label>q306b_dispose_infectious_waste_ob:</label>
+    </input>  
+    <input bind="pq308_is_soap_or_cleanser_available">
+      <label>q308_is_soap_or_cleanser_available:</label>
+    </input>  
+    <input bind="pq305_does_dispose_sharp_waste">
+      <label>q305_does_dispose_sharp_waste:</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_3/sec3_control_field"> 
+      <label>sec3_control_field?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <input bind="pq306d_dispose_infectious_waste_ro_other">
+      <label>q306d_dispose_infectious_waste_ro_other:</label>
+    </input>  
+    <input bind="pq304_is_timer_available_for_sp">
+      <label>q304_is_timer_available_for_sp:</label>
+    </input>  
+    <input bind="pq306_does_dispose_infectious_waste">
+      <label>q306_does_dispose_infectious_waste:</label>
+    </input>  
+    <input bind="pq305c_dispose_sharp_waste_dwb">
+      <label>q305c_dispose_sharp_waste_dwb:</label>
+    </input>  
+    <input bind="pq306a_dispose_infectiousp_waste_bi">
+      <label>q306a_dispose_infectiousp_waste_bi:</label>
+    </input>  
+    <input bind="pq305b_dispose_sharp_waste_ob">
+      <label>q305b_dispose_sharp_waste_ob:</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_3/q303_equipment_disinf_methods_C"> 
+      <label>q303_equipment_disinf_methods_C?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_3/q302_sterilizing_methods_B"> 
+      <label>q302_sterilizing_methods_B?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <input bind="pq302_are_needles_reused">
+      <label>q302_are_needles_reused:</label>
+    </input>  
+    <input bind="pq303_equipment_disinf_methods_other">
+      <label>q303_equipment_disinf_methods_other:</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_3/q302_sterilizing_methods_F"> 
+      <label>q302_sterilizing_methods_F?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_3/q303_equipment_disinf_methods_E"> 
+      <label>q303_equipment_disinf_methods_E?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <input bind="pq306d_dispose_infectious_waste_ro">
+      <label>q306d_dispose_infectious_waste_ro:</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_3/q303_equipment_disinf_methods_A"> 
+      <label>q303_equipment_disinf_methods_A?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <input bind="pq305d_dispose_sharp_waste_ro_other">
+      <label>q305d_dispose_sharp_waste_ro_other:</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_3/q303_equipment_disinf_methods_F"> 
+      <label>q303_equipment_disinf_methods_F?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_3/q302_sterilizing_methods_D"> 
+      <label>q302_sterilizing_methods_D?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_3/q302_sterilizing_methods_C"> 
+      <label>q302_sterilizing_methods_C?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <input bind="pq301_type_of_needle_other">
+      <label>q301_type_of_needle_other:</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_3/q303_equipment_disinf_methods_B"> 
+      <label>q303_equipment_disinf_methods_B?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_3/q303_equipment_disinf_methods_D"> 
+      <label>q303_equipment_disinf_methods_D?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <input bind="pq302_sterilizing_methods_other">
+      <label>q302_sterilizing_methods_other:</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_3/q302_sterilizing_methods_A"> 
+      <label>q302_sterilizing_methods_A?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <input bind="pq307_is_disinfectant_available">
+      <label>q307_is_disinfectant_available:</label>
+    </input>  
+    <input bind="pq301_type_of_needle">
+      <label>q301_type_of_needle:</label>
+    </input>  
+    <input bind="pq305a_dispose_sharp_waste_bi">
+      <label>q305a_dispose_sharp_waste_bi:</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_3/q302_sterilizing_methods_E"> 
+      <label>q302_sterilizing_methods_E?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <input bind="pq305d_dispose_sharp_waste_ro">
+      <label>q305d_dispose_sharp_waste_ro:</label>
+    </input> 
+  </h:body> 
+</h:html>

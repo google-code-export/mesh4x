@@ -1,0 +1,571 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<h:html xmlns:h="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:jr="http://openrosa.org/javarosa">  
+  <h:head> 
+    <h:title>FACILITY_DATA_TABLE_SEC_6b</h:title>  
+    <model> 
+      <instance> 
+        <FACILITY_DATA_TABLE_SEC_6b> 
+          <q609_01_zidovudine_was_available/>  
+          <q614_expire_time_checker/>  
+          <q608_11_stavudine_30_l_n/>  
+          <q611a_supply_frquency_from_moh/>  
+          <q609_20f_saquinavir_was_available/>  
+          <q608_20e_ritonavir/>  
+          <q608_14_zidovudine_l_n/>  
+          <q608_12_zidovudine_l/>  
+          <q608_18_tenofovir_l_e/>  
+          <q609_12_zidovudine_l_was_available/>  
+          <q608_20c_lopinavir/>  
+          <q609_11_stavudine_30_l_n_was_available/>  
+          <q608_20g_arv_specify_other/>  
+          <q608_10_stavudine_30_l/>  
+          <q608_20d_nelfinavir/>  
+          <q609_16_tenofovir_e_was_available/>  
+          <q609_20c_lopinavir_was_available/>  
+          <q608_05_efavirenz_600/>  
+          <q608_08_stavudine_40/>  
+          <q609_20g_arv_other_was_available/>  
+          <facility_id/>  
+          <q608_07_nevirapine/>  
+          <q609_15_tenofovir_df_was_available/>  
+          <q609_19_tenofovir_e_e_was_available/>  
+          <q610_supply_from_moh/>  
+          <q609_07_nevirapine_was_available/>  
+          <q608_02_abacavir/>  
+          <q608_04_efavirenz_200/>  
+          <q609_09_stavudine_30_was_available/>  
+          <q609_04_efavirenz_200_was_available/>  
+          <q608_20f_saquinavir/>  
+          <q609_03a_ddi_buffered_was_available/>  
+          <q608_09_stavudine_30/>  
+          <q612_buy_commertial/>  
+          <q608_19_tenofovir_e_e/>  
+          <q608_16_tenofovir_e/>  
+          <q609_20_protease_inhibitors_was_available/>  
+          <q609_05_efavirenz_600_was_available/>  
+          <q609_20d_nelfinavir_was_available/>  
+          <q608_13_zidovudine_l_a/>  
+          <q608_20_protease_inhibitors/>  
+          <q608_15_tenofovir_df/>  
+          <sec6b_cntrol_field/>  
+          <q609_03b_ddi_coatted_was_available/>  
+          <q609_20b_indinavir_was_available/>  
+          <q613_wait_resupply/>  
+          <q609_18_tenofovir_l_e_was_available/>  
+          <q609_14_zidovudine_l_n_was_available/>  
+          <q608_01_zidovudine/>  
+          <q609_02_abacavir_was_available/>  
+          <q608_20g_arv_other/>  
+          <q609_10_stavudine_30_l_was_available/>  
+          <q609_08_stavudine_40_was_available/>  
+          <q609_13_zidovudine_l_a_was_available/>  
+          <q611b_supply_frquency_from_moh_period/>  
+          <q608_17_tenofovir_l/>  
+          <q609_20e_ritonavir_was_available/>  
+          <q608_20b_indinavir/>  
+          <q608_03b_ddi_coatted/>  
+          <q609_06_lamivudine_was_available/>  
+          <q608_06_lamivudine/>  
+          <q608_03a_ddi_buffered/>  
+          <q608_20a_atazanavir/>  
+          <q609_17_tenofovir_l_was_available/>  
+          <q609_20a_atazanavir_was_available/> 
+        </FACILITY_DATA_TABLE_SEC_6b> 
+      </instance>  
+      <bind id="pq608_11_stavudine_30_l_n" nodeset="/FACILITY_DATA_TABLE_SEC_6b/q608_11_stavudine_30_l_n" type="xsd:long"/>  
+      <bind id="pq611a_supply_frquency_from_moh" nodeset="/FACILITY_DATA_TABLE_SEC_6b/q611a_supply_frquency_from_moh" type="xsd:long"/>  
+      <bind id="pq608_20e_ritonavir" nodeset="/FACILITY_DATA_TABLE_SEC_6b/q608_20e_ritonavir" type="xsd:long"/>  
+      <bind id="pq608_14_zidovudine_l_n" nodeset="/FACILITY_DATA_TABLE_SEC_6b/q608_14_zidovudine_l_n" type="xsd:long"/>  
+      <bind id="pq608_12_zidovudine_l" nodeset="/FACILITY_DATA_TABLE_SEC_6b/q608_12_zidovudine_l" type="xsd:long"/>  
+      <bind id="pq608_18_tenofovir_l_e" nodeset="/FACILITY_DATA_TABLE_SEC_6b/q608_18_tenofovir_l_e" type="xsd:long"/>  
+      <bind id="pq608_20c_lopinavir" nodeset="/FACILITY_DATA_TABLE_SEC_6b/q608_20c_lopinavir" type="xsd:long"/>  
+      <bind id="pq608_20g_arv_specify_other" nodeset="/FACILITY_DATA_TABLE_SEC_6b/q608_20g_arv_specify_other" type="xsd:string"/>  
+      <bind id="pq608_10_stavudine_30_l" nodeset="/FACILITY_DATA_TABLE_SEC_6b/q608_10_stavudine_30_l" type="xsd:long"/>  
+      <bind id="pq608_20d_nelfinavir" nodeset="/FACILITY_DATA_TABLE_SEC_6b/q608_20d_nelfinavir" type="xsd:long"/>  
+      <bind id="pq608_05_efavirenz_600" nodeset="/FACILITY_DATA_TABLE_SEC_6b/q608_05_efavirenz_600" type="xsd:long"/>  
+      <bind id="pq608_08_stavudine_40" nodeset="/FACILITY_DATA_TABLE_SEC_6b/q608_08_stavudine_40" type="xsd:long"/>  
+      <bind id="pfacility_id" nodeset="/FACILITY_DATA_TABLE_SEC_6b/facility_id" type="xsd:string"/>  
+      <bind id="pq608_07_nevirapine" nodeset="/FACILITY_DATA_TABLE_SEC_6b/q608_07_nevirapine" type="xsd:long"/>  
+      <bind id="pq608_02_abacavir" nodeset="/FACILITY_DATA_TABLE_SEC_6b/q608_02_abacavir" type="xsd:long"/>  
+      <bind id="pq608_04_efavirenz_200" nodeset="/FACILITY_DATA_TABLE_SEC_6b/q608_04_efavirenz_200" type="xsd:long"/>  
+      <bind id="pq608_20f_saquinavir" nodeset="/FACILITY_DATA_TABLE_SEC_6b/q608_20f_saquinavir" type="xsd:long"/>  
+      <bind id="pq608_09_stavudine_30" nodeset="/FACILITY_DATA_TABLE_SEC_6b/q608_09_stavudine_30" type="xsd:long"/>  
+      <bind id="pq608_19_tenofovir_e_e" nodeset="/FACILITY_DATA_TABLE_SEC_6b/q608_19_tenofovir_e_e" type="xsd:long"/>  
+      <bind id="pq608_16_tenofovir_e" nodeset="/FACILITY_DATA_TABLE_SEC_6b/q608_16_tenofovir_e" type="xsd:long"/>  
+      <bind id="pq608_13_zidovudine_l_a" nodeset="/FACILITY_DATA_TABLE_SEC_6b/q608_13_zidovudine_l_a" type="xsd:long"/>  
+      <bind id="pq608_20_protease_inhibitors" nodeset="/FACILITY_DATA_TABLE_SEC_6b/q608_20_protease_inhibitors" type="xsd:long"/>  
+      <bind id="pq608_15_tenofovir_df" nodeset="/FACILITY_DATA_TABLE_SEC_6b/q608_15_tenofovir_df" type="xsd:long"/>  
+      <bind id="pq608_01_zidovudine" nodeset="/FACILITY_DATA_TABLE_SEC_6b/q608_01_zidovudine" type="xsd:long"/>  
+      <bind id="pq608_20g_arv_other" nodeset="/FACILITY_DATA_TABLE_SEC_6b/q608_20g_arv_other" type="xsd:long"/>  
+      <bind id="pq611b_supply_frquency_from_moh_period" nodeset="/FACILITY_DATA_TABLE_SEC_6b/q611b_supply_frquency_from_moh_period" type="xsd:long"/>  
+      <bind id="pq608_17_tenofovir_l" nodeset="/FACILITY_DATA_TABLE_SEC_6b/q608_17_tenofovir_l" type="xsd:long"/>  
+      <bind id="pq608_20b_indinavir" nodeset="/FACILITY_DATA_TABLE_SEC_6b/q608_20b_indinavir" type="xsd:long"/>  
+      <bind id="pq608_03b_ddi_coatted" nodeset="/FACILITY_DATA_TABLE_SEC_6b/q608_03b_ddi_coatted" type="xsd:long"/>  
+      <bind id="pq608_06_lamivudine" nodeset="/FACILITY_DATA_TABLE_SEC_6b/q608_06_lamivudine" type="xsd:long"/>  
+      <bind id="pq608_03a_ddi_buffered" nodeset="/FACILITY_DATA_TABLE_SEC_6b/q608_03a_ddi_buffered" type="xsd:long"/>  
+      <bind id="pq608_20a_atazanavir" nodeset="/FACILITY_DATA_TABLE_SEC_6b/q608_20a_atazanavir" type="xsd:long"/> 
+    </model> 
+  </h:head>  
+  <h:body> 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6b/q609_01_zidovudine_was_available"> 
+      <label>q609_01_zidovudine_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6b/q614_expire_time_checker"> 
+      <label>q614_expire_time_checker?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <input bind="pq608_11_stavudine_30_l_n">
+      <label>q608_11_stavudine_30_l_n:</label>
+    </input>  
+    <input bind="pq611a_supply_frquency_from_moh">
+      <label>q611a_supply_frquency_from_moh:</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6b/q609_20f_saquinavir_was_available"> 
+      <label>q609_20f_saquinavir_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <input bind="pq608_20e_ritonavir">
+      <label>q608_20e_ritonavir:</label>
+    </input>  
+    <input bind="pq608_14_zidovudine_l_n">
+      <label>q608_14_zidovudine_l_n:</label>
+    </input>  
+    <input bind="pq608_12_zidovudine_l">
+      <label>q608_12_zidovudine_l:</label>
+    </input>  
+    <input bind="pq608_18_tenofovir_l_e">
+      <label>q608_18_tenofovir_l_e:</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6b/q609_12_zidovudine_l_was_available"> 
+      <label>q609_12_zidovudine_l_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <input bind="pq608_20c_lopinavir">
+      <label>q608_20c_lopinavir:</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6b/q609_11_stavudine_30_l_n_was_available"> 
+      <label>q609_11_stavudine_30_l_n_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <input bind="pq608_20g_arv_specify_other">
+      <label>q608_20g_arv_specify_other:</label>
+    </input>  
+    <input bind="pq608_10_stavudine_30_l">
+      <label>q608_10_stavudine_30_l:</label>
+    </input>  
+    <input bind="pq608_20d_nelfinavir">
+      <label>q608_20d_nelfinavir:</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6b/q609_16_tenofovir_e_was_available"> 
+      <label>q609_16_tenofovir_e_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6b/q609_20c_lopinavir_was_available"> 
+      <label>q609_20c_lopinavir_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <input bind="pq608_05_efavirenz_600">
+      <label>q608_05_efavirenz_600:</label>
+    </input>  
+    <input bind="pq608_08_stavudine_40">
+      <label>q608_08_stavudine_40:</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6b/q609_20g_arv_other_was_available"> 
+      <label>q609_20g_arv_other_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <input bind="pfacility_id">
+      <label>facility_id:</label>
+    </input>  
+    <input bind="pq608_07_nevirapine">
+      <label>q608_07_nevirapine:</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6b/q609_15_tenofovir_df_was_available"> 
+      <label>q609_15_tenofovir_df_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6b/q609_19_tenofovir_e_e_was_available"> 
+      <label>q609_19_tenofovir_e_e_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6b/q610_supply_from_moh"> 
+      <label>q610_supply_from_moh?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6b/q609_07_nevirapine_was_available"> 
+      <label>q609_07_nevirapine_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <input bind="pq608_02_abacavir">
+      <label>q608_02_abacavir:</label>
+    </input>  
+    <input bind="pq608_04_efavirenz_200">
+      <label>q608_04_efavirenz_200:</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6b/q609_09_stavudine_30_was_available"> 
+      <label>q609_09_stavudine_30_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6b/q609_04_efavirenz_200_was_available"> 
+      <label>q609_04_efavirenz_200_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <input bind="pq608_20f_saquinavir">
+      <label>q608_20f_saquinavir:</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6b/q609_03a_ddi_buffered_was_available"> 
+      <label>q609_03a_ddi_buffered_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <input bind="pq608_09_stavudine_30">
+      <label>q608_09_stavudine_30:</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6b/q612_buy_commertial"> 
+      <label>q612_buy_commertial?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <input bind="pq608_19_tenofovir_e_e">
+      <label>q608_19_tenofovir_e_e:</label>
+    </input>  
+    <input bind="pq608_16_tenofovir_e">
+      <label>q608_16_tenofovir_e:</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6b/q609_20_protease_inhibitors_was_available"> 
+      <label>q609_20_protease_inhibitors_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6b/q609_05_efavirenz_600_was_available"> 
+      <label>q609_05_efavirenz_600_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6b/q609_20d_nelfinavir_was_available"> 
+      <label>q609_20d_nelfinavir_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <input bind="pq608_13_zidovudine_l_a">
+      <label>q608_13_zidovudine_l_a:</label>
+    </input>  
+    <input bind="pq608_20_protease_inhibitors">
+      <label>q608_20_protease_inhibitors:</label>
+    </input>  
+    <input bind="pq608_15_tenofovir_df">
+      <label>q608_15_tenofovir_df:</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6b/sec6b_cntrol_field"> 
+      <label>sec6b_cntrol_field?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6b/q609_03b_ddi_coatted_was_available"> 
+      <label>q609_03b_ddi_coatted_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6b/q609_20b_indinavir_was_available"> 
+      <label>q609_20b_indinavir_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6b/q613_wait_resupply"> 
+      <label>q613_wait_resupply?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6b/q609_18_tenofovir_l_e_was_available"> 
+      <label>q609_18_tenofovir_l_e_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6b/q609_14_zidovudine_l_n_was_available"> 
+      <label>q609_14_zidovudine_l_n_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <input bind="pq608_01_zidovudine">
+      <label>q608_01_zidovudine:</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6b/q609_02_abacavir_was_available"> 
+      <label>q609_02_abacavir_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <input bind="pq608_20g_arv_other">
+      <label>q608_20g_arv_other:</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6b/q609_10_stavudine_30_l_was_available"> 
+      <label>q609_10_stavudine_30_l_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6b/q609_08_stavudine_40_was_available"> 
+      <label>q609_08_stavudine_40_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6b/q609_13_zidovudine_l_a_was_available"> 
+      <label>q609_13_zidovudine_l_a_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <input bind="pq611b_supply_frquency_from_moh_period">
+      <label>q611b_supply_frquency_from_moh_period:</label>
+    </input>  
+    <input bind="pq608_17_tenofovir_l">
+      <label>q608_17_tenofovir_l:</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6b/q609_20e_ritonavir_was_available"> 
+      <label>q609_20e_ritonavir_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <input bind="pq608_20b_indinavir">
+      <label>q608_20b_indinavir:</label>
+    </input>  
+    <input bind="pq608_03b_ddi_coatted">
+      <label>q608_03b_ddi_coatted:</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6b/q609_06_lamivudine_was_available"> 
+      <label>q609_06_lamivudine_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <input bind="pq608_06_lamivudine">
+      <label>q608_06_lamivudine:</label>
+    </input>  
+    <input bind="pq608_03a_ddi_buffered">
+      <label>q608_03a_ddi_buffered:</label>
+    </input>  
+    <input bind="pq608_20a_atazanavir">
+      <label>q608_20a_atazanavir:</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6b/q609_17_tenofovir_l_was_available"> 
+      <label>q609_17_tenofovir_l_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_6b/q609_20a_atazanavir_was_available"> 
+      <label>q609_20a_atazanavir_was_available?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1> 
+  </h:body> 
+</h:html>

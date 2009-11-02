@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<h:html xmlns:h="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:jr="http://openrosa.org/javarosa">  
+  <h:head> 
+    <h:title>FACILITY_DATA_TABLE_SEC_4</h:title>  
+    <model> 
+      <instance> 
+        <FACILITY_DATA_TABLE_SEC_4> 
+          <q401_PEP_personnel_count/>  
+          <q401_doctor_count_part_time/>  
+          <q401_lab_assistant_count/>  
+          <q401_midwive_count/>  
+          <q401_asst_nurse_count_available_today/>  
+          <q401_HMIS_personnel_count/>  
+          <q401_social_worker_count/>  
+          <q401_pharmacist_count/>  
+          <q401_pharmacy_assistant_count/>  
+          <sec4_control_field/>  
+          <q401_certified_hiv_counsellor_count/>  
+          <q401_trained_dispenser_count/>  
+          <q401_lab_technician_count/>  
+          <q401_reg_nurse_count_full_time/>  
+          <q401_doctor_count_full_time/>  
+          <facility_id/>  
+          <q401_med_officer_count_available_today/>  
+          <q401_doctor_count_available_today/>  
+          <q401_med_officer_count_full_time/>  
+          <q401_other_counsellor_count/>  
+          <q401_health_worker_count/>  
+          <q401_asst_nurse_count_full_time/>  
+          <q401_nutritionist_count/>  
+          <q401_reg_nurse_count_available_today/>  
+          <q401_trained_hiv_counsellor_count/> 
+        </FACILITY_DATA_TABLE_SEC_4> 
+      </instance>  
+      <bind id="pq401_PEP_personnel_count" nodeset="/FACILITY_DATA_TABLE_SEC_4/q401_PEP_personnel_count" type="xsd:long"/>  
+      <bind id="pq401_doctor_count_part_time" nodeset="/FACILITY_DATA_TABLE_SEC_4/q401_doctor_count_part_time" type="xsd:long"/>  
+      <bind id="pq401_lab_assistant_count" nodeset="/FACILITY_DATA_TABLE_SEC_4/q401_lab_assistant_count" type="xsd:long"/>  
+      <bind id="pq401_midwive_count" nodeset="/FACILITY_DATA_TABLE_SEC_4/q401_midwive_count" type="xsd:long"/>  
+      <bind id="pq401_asst_nurse_count_available_today" nodeset="/FACILITY_DATA_TABLE_SEC_4/q401_asst_nurse_count_available_today" type="xsd:long"/>  
+      <bind id="pq401_HMIS_personnel_count" nodeset="/FACILITY_DATA_TABLE_SEC_4/q401_HMIS_personnel_count" type="xsd:long"/>  
+      <bind id="pq401_social_worker_count" nodeset="/FACILITY_DATA_TABLE_SEC_4/q401_social_worker_count" type="xsd:long"/>  
+      <bind id="pq401_pharmacist_count" nodeset="/FACILITY_DATA_TABLE_SEC_4/q401_pharmacist_count" type="xsd:long"/>  
+      <bind id="pq401_pharmacy_assistant_count" nodeset="/FACILITY_DATA_TABLE_SEC_4/q401_pharmacy_assistant_count" type="xsd:long"/>  
+      <bind id="pq401_certified_hiv_counsellor_count" nodeset="/FACILITY_DATA_TABLE_SEC_4/q401_certified_hiv_counsellor_count" type="xsd:long"/>  
+      <bind id="pq401_trained_dispenser_count" nodeset="/FACILITY_DATA_TABLE_SEC_4/q401_trained_dispenser_count" type="xsd:long"/>  
+      <bind id="pq401_lab_technician_count" nodeset="/FACILITY_DATA_TABLE_SEC_4/q401_lab_technician_count" type="xsd:long"/>  
+      <bind id="pq401_reg_nurse_count_full_time" nodeset="/FACILITY_DATA_TABLE_SEC_4/q401_reg_nurse_count_full_time" type="xsd:long"/>  
+      <bind id="pq401_doctor_count_full_time" nodeset="/FACILITY_DATA_TABLE_SEC_4/q401_doctor_count_full_time" type="xsd:long"/>  
+      <bind id="pfacility_id" nodeset="/FACILITY_DATA_TABLE_SEC_4/facility_id" type="xsd:string"/>  
+      <bind id="pq401_med_officer_count_available_today" nodeset="/FACILITY_DATA_TABLE_SEC_4/q401_med_officer_count_available_today" type="xsd:long"/>  
+      <bind id="pq401_doctor_count_available_today" nodeset="/FACILITY_DATA_TABLE_SEC_4/q401_doctor_count_available_today" type="xsd:long"/>  
+      <bind id="pq401_med_officer_count_full_time" nodeset="/FACILITY_DATA_TABLE_SEC_4/q401_med_officer_count_full_time" type="xsd:long"/>  
+      <bind id="pq401_other_counsellor_count" nodeset="/FACILITY_DATA_TABLE_SEC_4/q401_other_counsellor_count" type="xsd:long"/>  
+      <bind id="pq401_health_worker_count" nodeset="/FACILITY_DATA_TABLE_SEC_4/q401_health_worker_count" type="xsd:long"/>  
+      <bind id="pq401_asst_nurse_count_full_time" nodeset="/FACILITY_DATA_TABLE_SEC_4/q401_asst_nurse_count_full_time" type="xsd:long"/>  
+      <bind id="pq401_nutritionist_count" nodeset="/FACILITY_DATA_TABLE_SEC_4/q401_nutritionist_count" type="xsd:long"/>  
+      <bind id="pq401_reg_nurse_count_available_today" nodeset="/FACILITY_DATA_TABLE_SEC_4/q401_reg_nurse_count_available_today" type="xsd:long"/>  
+      <bind id="pq401_trained_hiv_counsellor_count" nodeset="/FACILITY_DATA_TABLE_SEC_4/q401_trained_hiv_counsellor_count" type="xsd:long"/> 
+    </model> 
+  </h:head>  
+  <h:body> 
+    <input bind="pq401_PEP_personnel_count">
+      <label>q401_PEP_personnel_count:</label>
+    </input>  
+    <input bind="pq401_doctor_count_part_time">
+      <label>q401_doctor_count_part_time:</label>
+    </input>  
+    <input bind="pq401_lab_assistant_count">
+      <label>q401_lab_assistant_count:</label>
+    </input>  
+    <input bind="pq401_midwive_count">
+      <label>q401_midwive_count:</label>
+    </input>  
+    <input bind="pq401_asst_nurse_count_available_today">
+      <label>q401_asst_nurse_count_available_today:</label>
+    </input>  
+    <input bind="pq401_HMIS_personnel_count">
+      <label>q401_HMIS_personnel_count:</label>
+    </input>  
+    <input bind="pq401_social_worker_count">
+      <label>q401_social_worker_count:</label>
+    </input>  
+    <input bind="pq401_pharmacist_count">
+      <label>q401_pharmacist_count:</label>
+    </input>  
+    <input bind="pq401_pharmacy_assistant_count">
+      <label>q401_pharmacy_assistant_count:</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_4/sec4_control_field"> 
+      <label>sec4_control_field?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>  
+    <input bind="pq401_certified_hiv_counsellor_count">
+      <label>q401_certified_hiv_counsellor_count:</label>
+    </input>  
+    <input bind="pq401_trained_dispenser_count">
+      <label>q401_trained_dispenser_count:</label>
+    </input>  
+    <input bind="pq401_lab_technician_count">
+      <label>q401_lab_technician_count:</label>
+    </input>  
+    <input bind="pq401_reg_nurse_count_full_time">
+      <label>q401_reg_nurse_count_full_time:</label>
+    </input>  
+    <input bind="pq401_doctor_count_full_time">
+      <label>q401_doctor_count_full_time:</label>
+    </input>  
+    <input bind="pfacility_id">
+      <label>facility_id:</label>
+    </input>  
+    <input bind="pq401_med_officer_count_available_today">
+      <label>q401_med_officer_count_available_today:</label>
+    </input>  
+    <input bind="pq401_doctor_count_available_today">
+      <label>q401_doctor_count_available_today:</label>
+    </input>  
+    <input bind="pq401_med_officer_count_full_time">
+      <label>q401_med_officer_count_full_time:</label>
+    </input>  
+    <input bind="pq401_other_counsellor_count">
+      <label>q401_other_counsellor_count:</label>
+    </input>  
+    <input bind="pq401_health_worker_count">
+      <label>q401_health_worker_count:</label>
+    </input>  
+    <input bind="pq401_asst_nurse_count_full_time">
+      <label>q401_asst_nurse_count_full_time:</label>
+    </input>  
+    <input bind="pq401_nutritionist_count">
+      <label>q401_nutritionist_count:</label>
+    </input>  
+    <input bind="pq401_reg_nurse_count_available_today">
+      <label>q401_reg_nurse_count_available_today:</label>
+    </input>  
+    <input bind="pq401_trained_hiv_counsellor_count">
+      <label>q401_trained_hiv_counsellor_count:</label>
+    </input> 
+  </h:body> 
+</h:html>

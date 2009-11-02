@@ -1,0 +1,62 @@
+ml<?xml version="1.0" encoding="UTF-8"?>
+
+<h:html xmlns:h="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:jr="http://openrosa.org/javarosa">  
+  <h:head> 
+    <h:title>FACILITY_DATA_TABLE_SEC_8</h:title>  
+    <model> 
+      <instance> 
+        <FACILITY_DATA_TABLE_SEC_8> 
+          <q801_comments_other/>  
+          <q801_interview_end_time/>  
+          <q801_supervisor_name/>  
+          <facility_id/>  
+          <q801_supervisor_observation/>  
+          <q801_signature_date/>  
+          <q801_comments_on_question/>  
+          <sec8_control_field/> 
+        </FACILITY_DATA_TABLE_SEC_8> 
+      </instance>  
+      <bind id="pq801_comments_other" nodeset="/FACILITY_DATA_TABLE_SEC_8/q801_comments_other" type="xsd:string"/>  
+      <bind id="pq801_interview_end_time" nodeset="/FACILITY_DATA_TABLE_SEC_8/q801_interview_end_time" type="xsd:date" jr:preload="date" jr:preloadParams="today"/>  
+      <bind id="pq801_supervisor_name" nodeset="/FACILITY_DATA_TABLE_SEC_8/q801_supervisor_name" type="xsd:string"/>  
+      <bind id="pfacility_id" nodeset="/FACILITY_DATA_TABLE_SEC_8/facility_id" type="xsd:string"/>  
+      <bind id="pq801_supervisor_observation" nodeset="/FACILITY_DATA_TABLE_SEC_8/q801_supervisor_observation" type="xsd:string"/>  
+      <bind id="pq801_signature_date" nodeset="/FACILITY_DATA_TABLE_SEC_8/q801_signature_date" type="xsd:date" jr:preload="date" jr:preloadParams="today"/>  
+      <bind id="pq801_comments_on_question" nodeset="/FACILITY_DATA_TABLE_SEC_8/q801_comments_on_question" type="xsd:string"/> 
+    </model> 
+  </h:head>  
+  <h:body> 
+    <input bind="pq801_comments_other">
+      <label>q801_comments_other:</label>
+    </input>  
+    <input bind="pq801_interview_end_time">
+      <label>q801_interview_end_time:</label>
+    </input>  
+    <input bind="pq801_supervisor_name">
+      <label>q801_supervisor_name:</label>
+    </input>  
+    <input bind="pfacility_id">
+      <label>facility_id:</label>
+    </input>  
+    <input bind="pq801_supervisor_observation">
+      <label>q801_supervisor_observation:</label>
+    </input>  
+    <input bind="pq801_signature_date">
+      <label>q801_signature_date:</label>
+    </input>  
+    <input bind="pq801_comments_on_question">
+      <label>q801_comments_on_question:</label>
+    </input>  
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_8/sec8_control_field"> 
+      <label>sec8_control_field?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1> 
+  </h:body> 
+</h:html>
