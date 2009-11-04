@@ -300,8 +300,8 @@
     <select1 ref="/FACILITY_IDENTIFICATION_PROFILE/facility_address_country"> 
       <label>Country</label>
       <item>
-        <label>Afghanistan</label>
-        <value>AF</value>
+        <label>Barbados</label>
+        <value>BB</value>
       </item>  
     </select1>  
     
