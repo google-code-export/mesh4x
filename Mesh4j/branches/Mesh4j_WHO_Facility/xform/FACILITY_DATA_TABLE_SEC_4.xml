@@ -5,32 +5,34 @@
     <h:title>FACILITY_DATA_TABLE_SEC_4</h:title>  
     <model> 
       <instance> 
-        <FACILITY_DATA_TABLE_SEC_4> 
-          <q401_PEP_personnel_count/>  
-          <q401_doctor_count_part_time/>  
-          <q401_lab_assistant_count/>  
-          <q401_midwive_count/>  
-          <q401_asst_nurse_count_available_today/>  
-          <q401_HMIS_personnel_count/>  
-          <q401_social_worker_count/>  
-          <q401_pharmacist_count/>  
-          <q401_pharmacy_assistant_count/>  
-          <sec4_control_field/>  
-          <q401_certified_hiv_counsellor_count/>  
-          <q401_trained_dispenser_count/>  
-          <q401_lab_technician_count/>  
-          <q401_reg_nurse_count_full_time/>  
-          <q401_doctor_count_full_time/>  
-          <facility_id/>  
-          <q401_med_officer_count_available_today/>  
-          <q401_doctor_count_available_today/>  
-          <q401_med_officer_count_full_time/>  
-          <q401_other_counsellor_count/>  
-          <q401_health_worker_count/>  
-          <q401_asst_nurse_count_full_time/>  
-          <q401_nutritionist_count/>  
+        <FACILITY_DATA_TABLE_SEC_4>
+        
+          <facility_id/>
+          <q401_doctor_count_full_time/>
+          <q401_doctor_count_available_today/>
+          <q401_doctor_count_part_time/>
+          <q401_med_officer_count_full_time/>
+          <q401_med_officer_count_available_today/>
+          <q401_reg_nurse_count_full_time/> 
           <q401_reg_nurse_count_available_today/>  
-          <q401_trained_hiv_counsellor_count/> 
+          <q401_asst_nurse_count_full_time/>
+          <q401_asst_nurse_count_available_today/>  
+          <q401_midwive_count/>
+          <q401_lab_technician_count/>
+          <q401_lab_assistant_count/>
+          <q401_pharmacist_count/>
+          <q401_pharmacy_assistant_count/>  
+          <q401_health_worker_count/>
+          <q401_social_worker_count/>
+          <q401_certified_hiv_counsellor_count/>  
+          <q401_trained_hiv_counsellor_count/>
+          <q401_other_counsellor_count/>  
+          <q401_nutritionist_count/>
+          <q401_HMIS_personnel_count/>
+          <q401_trained_dispenser_count/>               
+          <q401_PEP_personnel_count/>         
+          <sec4_control_field/>
+          
         </FACILITY_DATA_TABLE_SEC_4> 
       </instance>  
       <bind id="pq401_PEP_personnel_count" nodeset="/FACILITY_DATA_TABLE_SEC_4/q401_PEP_personnel_count" type="xsd:long"/>  
@@ -60,6 +62,13 @@
     </model> 
   </h:head>  
   <h:body> 
+  
+  
+  	<input bind="pq401_doctor_count_full_time">
+      <label>Medical doctors/physicians:</label>
+    </input>  
+  
+  
     <input bind="pq401_PEP_personnel_count">
       <label>q401_PEP_personnel_count:</label>
     </input>  
@@ -110,12 +119,8 @@
     <input bind="pq401_reg_nurse_count_full_time">
       <label>q401_reg_nurse_count_full_time:</label>
     </input>  
-    <input bind="pq401_doctor_count_full_time">
-      <label>q401_doctor_count_full_time:</label>
-    </input>  
-    <input bind="pfacility_id">
-      <label>facility_id:</label>
-    </input>  
+    
+    
     <input bind="pq401_med_officer_count_available_today">
       <label>q401_med_officer_count_available_today:</label>
     </input>  
