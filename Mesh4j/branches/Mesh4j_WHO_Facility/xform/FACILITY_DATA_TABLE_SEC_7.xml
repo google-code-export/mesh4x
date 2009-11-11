@@ -68,7 +68,7 @@
 
  <label>701. Are the equipments for conducting tests for HIV available?(Q. 1-6)</label>
 
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q701a_hiv_test_rapid"> 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/q701a_hiv_test_rapid"> 
       <label>01. Rapid test for HIV?</label>  
       <item>
         <label>AVAILABLE OBSERVED</label>
@@ -95,7 +95,7 @@
       </item> 
     </select1> 
 
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q701b_hiv_test_elisa"> 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/q701b_hiv_test_elisa"> 
       <label>02. ELISA reader/scanner with test items?</label>  
       <item>
         <label>AVAILABLE OBSERVED</label>
@@ -122,7 +122,7 @@
       </item> 
     </select1>
 
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q701c_hiv_test_dynabeada"> 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/q701c_hiv_test_dynabeada"> 
       <label>03. Dynabeads with vortex mixer?</label>  
       <item>
         <label>AVAILABLE OBSERVED</label>
@@ -149,7 +149,7 @@
       </item> 
     </select1>  
 
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q701d_hiv_test_wester_bolt"> 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/q701d_hiv_test_wester_bolt"> 
       <label>04. Western blot for HIV?</label>  
       <item>
         <label>AVAILABLE OBSERVED</label>
@@ -176,7 +176,7 @@
       </item> 
     </select1> 
 
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q701e_hiv_test_cytoflowmeter"> 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/q701e_hiv_test_cytoflowmeter"> 
       <label>05. Cytoflowmeter or CD4 count machine?</label>  
       <item>
         <label>AVAILABLE OBSERVED</label>
@@ -193,7 +193,7 @@
     </select1>
  
     
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q701f_hiv_test_pcr"> 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/q701f_hiv_test_pcr"> 
       <label>06. PCR for viral load?</label>  
       <item>
         <label>AVAILABLE OBSERVED</label>
@@ -222,7 +222,7 @@
 
     <label>703. Are the equipments for conducting tests for malaria available?(Q. 1-5)</label>
 
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q703a_microscope"> 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/q703a_microscope"> 
       <label>01. Microscope?</label>  
       <item>
         <label>AVAILABLE OBSERVED</label>
@@ -250,7 +250,7 @@
     </select1> 
 
   
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q703b_slides"> 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/q703b_slides"> 
       <label>02. Slides with covers?</label>  
       <item>
         <label>AVAILABLE OBSERVED</label>
@@ -267,7 +267,7 @@
     </select1> 
 
  
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q703c_giemsa_stain"> 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/q703c_giemsa_stain"> 
       <label>03. GIEMSA stain?</label>  
       <item>
         <label>AVAILABLE OBSERVED</label>
@@ -284,7 +284,7 @@
     </select1> 
 
  
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q703d_field_stain"> 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/q703d_field_stain"> 
       <label>04. FIELD stain?</label>  
       <item>
         <label>AVAILABLE OBSERVED</label>
@@ -301,7 +301,7 @@
     </select1> 
 
  
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q703e_rapid_test"> 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/q703e_rapid_test"> 
       <label>05. Rapid tests for malaria (test strips,  ICT, PARACHECK)?</label>  
       <item>
         <label>AVAILABLE OBSERVED</label>
@@ -320,7 +320,7 @@
 <label>705. Are the equipments for conducting tests for tuberculosis available?(Q. 1-4)</label>
 
  
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q705a_tb_sputum"> 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/q705a_tb_sputum"> 
       <label>01. TB sputum test (AFB or ZIEHL NIELSEN text with stain)?</label>  
       <item>
         <label>AVAILABLE OBSERVED</label>
@@ -337,7 +337,7 @@
     </select1> 
 
 
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q705b_culture_test"> 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/q705b_culture_test"> 
       <label>02. Culture test for M. tuberculosis?</label>  
       <item>
         <label>AVAILABLE OBSERVED</label>
@@ -354,7 +354,7 @@
     </select1> 
 	
 
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q705c_dst_test"> 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/q705c_dst_test"> 
       <label>03. Drug susceptibility testing (DST) for M. tuberculosis using culture?</label>  
       <item>
         <label>AVAILABLE OBSERVED</label>
@@ -370,7 +370,7 @@
       </item>
     </select1>
 
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q705d_mdr_test"> 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/q705d_mdr_test"> 
       <label>03. Drug susceptibility testing (DST) for M. tuberculosis using culture?</label>  
       <item>
         <label>AVAILABLE OBSERVED</label>
@@ -390,7 +390,7 @@
   <label>706. Are the following equipments for conducting tests for other lab tests available?(Q. 1-14)</label>
 
 
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q706a_coulter_analyzer"> 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/q706a_coulter_analyzer"> 
       <label>01. Coulter/ haemolytic analyzer (Total lymphocyte count, full blood count, platelets)?</label>  
       <item>
         <label>AVAILABLE OBSERVED</label>
@@ -418,7 +418,7 @@
     </select1>  
 
 
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q706b_hemoglobinometer"> 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/q706b_hemoglobinometer"> 
       <label>02. Hemoglobinometer / hemocue?</label>  
       <item>
         <label>AVAILABLE OBSERVED</label>
@@ -446,7 +446,7 @@
     </select1>
  
        
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q706c_colorimeter"> 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/q706c_colorimeter"> 
       <label>03. Colorimeter or spectroscope with Drabkin's solution?</label>  
       <item>
         <label>AVAILABLE OBSERVED</label>
@@ -474,7 +474,7 @@
     </select1>  
 
  
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q706d_capillary_tubes"> 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/q706d_capillary_tubes"> 
       <label>04. Capillary tubes for hematocrit?</label>  
       <item>
         <label>AVAILABLE OBSERVED</label>
@@ -491,7 +491,7 @@
     </select1> 
 
   
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q706e_centrifuge"> 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/q706e_centrifuge"> 
       <label>05. Centrifuge for hematocrit?</label>  
       <item>
         <label>AVAILABLE OBSERVED</label>
@@ -519,7 +519,7 @@
     </select1>  
 
  
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q706f_litmus_paper"> 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/q706f_litmus_paper"> 
       <label>06. Litmus paper for Hb test?</label>  
       <item>
         <label>AVAILABLE OBSERVED</label>
@@ -536,7 +536,7 @@
     </select1> 
 
   
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q706g_syphilis"> 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/q706g_syphilis"> 
       <label>07. Syphilis: VDRL or RPR test?</label>  
       <item>
         <label>AVAILABLE OBSERVED</label>
@@ -553,7 +553,7 @@
     </select1> 
 
      
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q706h_bc_analyzer"> 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/q706h_bc_analyzer"> 
       <label>08. Blood chemistry analyzer (Liver function test, glucose, creatinine)?</label>  
       <item>
         <label>AVAILABLE OBSERVED</label>
@@ -581,7 +581,7 @@
     </select1>  
  
    
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q706i_dipstick_for_up"> 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/q706i_dipstick_for_up"> 
       <label>09. Dipstick for urine protein?</label>  
       <item>
         <label>AVAILABLE OBSERVED</label>
@@ -598,7 +598,7 @@
     </select1> 
 
  
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q706j_dipstick_for_ug"> 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/q706j_dipstick_for_ug"> 
       <label>10. Dipstick for urine glucose?</label>  
       <item>
         <label>AVAILABLE OBSERVED</label>
@@ -615,7 +615,7 @@
     </select1> 
 
 
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q706k_pregnancy_test"> 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/q706k_pregnancy_test"> 
       <label>11. Pregnancy test?</label>  
       <item>
         <label>AVAILABLE OBSERVED</label>
@@ -632,7 +632,7 @@
     </select1> 
 
   
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q706l_serology_for_HB"> 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/q706l_serology_for_HB"> 
       <label>12. Serology for Hepatitis B?</label>  
       <item>
         <label>AVAILABLE OBSERVED</label>
@@ -660,7 +660,7 @@
     </select1> 
  
  
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q706m_serology_for_HC"> 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/q706m_serology_for_HC"> 
       <label>13. Serology for Hepatitis C?</label>  
       <item>
         <label>AVAILABLE OBSERVED</label>
@@ -688,7 +688,7 @@
     </select1>
     
  
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q706n_india_ink_for_cns"> 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/q706n_india_ink_for_cns"> 
       <label>14. India Ink Test for CNS (Cryptococcosis)?</label>  
       <item>
         <label>AVAILABLE OBSERVED</label>
@@ -718,7 +718,7 @@
 
   <label>708. Do the following laboratory tests can be carried out in this facility?(Q. 1-6)</label>
 
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q708a_hiv_test"> 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/q708a_hiv_test"> 
       <label>01. HIV test?</label>  
       <item>
         <label>AVAILABLE ON-SITE, RESULTS TODAY</label>
@@ -738,7 +738,7 @@
       </item>
 	</select1> 
 
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q708b_hb_test"> 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/q708b_hb_test"> 
       <label>02. Hb?</label>  
       <item>
         <label>AVAILABLE ON-SITE, RESULTS TODAY</label>
@@ -758,7 +758,7 @@
       </item>
 	</select1> 
 
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q708c_mslaria_blood_slide"> 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/q708c_mslaria_blood_slide"> 
       <label>03. Malaria blood slide?</label>  
       <item>
         <label>AVAILABLE ON-SITE, RESULTS TODAY</label>
@@ -778,7 +778,7 @@
       </item>
 	</select1> 
  
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q708d_tb_sputum"> 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/q708d_tb_sputum"> 
       <label>04. TB sputum?</label>  
       <item>
         <label>AVAILABLE ON-SITE, RESULTS TODAY</label>
@@ -798,7 +798,7 @@
       </item>
 	</select1> 
 
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q708e_blood_glucose"> 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/q708e_blood_glucose"> 
       <label>05. Blood glucose?</label>  
       <item>
         <label>AVAILABLE ON-SITE, RESULTS TODAY</label>
@@ -819,7 +819,7 @@
 	</select1> 
    
   
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_6/q708f_syphilis_test"> 
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_7/q708f_syphilis_test"> 
       <label>06. Syphilis test?</label>  
       <item>
         <label>AVAILABLE ON-SITE, RESULTS TODAY</label>
