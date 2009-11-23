@@ -176,6 +176,68 @@
     </select1>
     
     
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/does_offer_vasectomy"> 
+      <label>Vasectomy?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/does_offer_tubal_ligation"> 
+      <label>Tubal ligation?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>
+    
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/does_offer_male_circumcision"> 
+      <label>Male circumcision?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/does_offer_family_planning"> 
+      <label>Family planning?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>
+    
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/does_offer_ctc_prophylaxis"> 
+      <label>CTC prophylaxis?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>
+    
     <select1 ref="/FACILITY_DATA_TABLE_SEC_2/tb_service_culture_diag"> 
       <label>tb_service_culture_diag?</label>  
       <item>
@@ -209,29 +271,9 @@
         <value>false</value>
       </item> 
     </select1>  
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/does_offer_vasectomy"> 
-      <label>does_offer_vasectomy?</label>  
-      <item>
-        <label>Yes</label>
-        <value>true</value>
-      </item>  
-      <item>
-        <label>No</label>
-        <value>false</value>
-      </item> 
-    </select1>  
       
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/does_offer_tubal_ligation"> 
-      <label>does_offer_tubal_ligation?</label>  
-      <item>
-        <label>Yes</label>
-        <value>true</value>
-      </item>  
-      <item>
-        <label>No</label>
-        <value>false</value>
-      </item> 
-    </select1>  
+      
+      
     <select1 ref="/FACILITY_DATA_TABLE_SEC_2/hiv_service_pmtc_arv_charge_fee"> 
       <label>hiv_service_pmtc_arv_charge_fee?</label>  
       <item>
@@ -534,28 +576,8 @@
         <value>false</value>
       </item> 
     </select1>  
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/does_offer_ctc_prophylaxis"> 
-      <label>does_offer_ctc_prophylaxis?</label>  
-      <item>
-        <label>Yes</label>
-        <value>true</value>
-      </item>  
-      <item>
-        <label>No</label>
-        <value>false</value>
-      </item> 
-    </select1>  
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/does_offer_family_planning"> 
-      <label>does_offer_family_planning?</label>  
-      <item>
-        <label>Yes</label>
-        <value>true</value>
-      </item>  
-      <item>
-        <label>No</label>
-        <value>false</value>
-      </item> 
-    </select1>  
+      
+      
     <input bind="pfees_charging_factor_4">
       <label>fees_charging_factor_4:</label>
     </input>  
@@ -808,17 +830,7 @@
         <value>false</value>
       </item> 
     </select1>  
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/does_offer_male_circumcision"> 
-      <label>does_offer_male_circumcision?</label>  
-      <item>
-        <label>Yes</label>
-        <value>true</value>
-      </item>  
-      <item>
-        <label>No</label>
-        <value>false</value>
-      </item> 
-    </select1>  
+      
     <select1 ref="/FACILITY_DATA_TABLE_SEC_2/does_offer_sti_treatment"> 
       <label>does_offer_sti_treatment?</label>  
       <item>
