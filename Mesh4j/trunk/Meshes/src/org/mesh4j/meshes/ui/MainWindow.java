@@ -11,6 +11,8 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTree;
 
+import org.mesh4j.meshes.ui.resource.ResourceManager;
+
 public class MainWindow extends JFrame {
 	
 	private static final long serialVersionUID = -1240237676349762846L;
@@ -23,8 +25,13 @@ public class MainWindow extends JFrame {
 	private void initialize() {
 		this.setSize(new Dimension(800, 560));
 		this.getContentPane().setLayout(new BorderLayout());
+		
+		this.setIconImage(ResourceManager.getLogo());
+		
+		// Tree for Meshes
 		this.add(new JTree(),BorderLayout.WEST);
 		
+		// Central pane with tabs
 		JTabbedPane tabbedPane = new JTabbedPane();
 		
 		JComponent syncNowTab = makeTextPanel("Panel #1");

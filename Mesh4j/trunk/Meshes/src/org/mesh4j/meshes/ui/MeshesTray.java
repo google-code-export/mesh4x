@@ -5,31 +5,37 @@ import java.awt.Image;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
 import java.awt.SystemTray;
-import java.awt.Toolkit;
 import java.awt.TrayIcon;
 
 import javax.swing.Action;
 
 import org.mesh4j.meshes.action.ExitAction;
+import org.mesh4j.meshes.ui.resource.ResourceManager;
 
 public class MeshesTray {
 	
 	private final TrayIcon trayIcon;
 	private final SystemTray systemTray;
 	
-	public MeshesTray(Action action) throws AWTException {
+	public MeshesTray(Action showMainWindowAction) throws AWTException {
 		systemTray = SystemTray.getSystemTray();
 		
 		PopupMenu popup = new PopupMenu();
 		
-		MenuItem defaultItem = new MenuItem("Exit");
-		defaultItem.addActionListener(new ExitAction());
-		popup.add(defaultItem);
+		MenuItem showMainWindowItem = new MenuItem("Open");
+		showMainWindowItem.addActionListener(showMainWindowAction);
+		popup.add(showMainWindowItem);
 		
-		Image image = Toolkit.getDefaultToolkit().getImage("images/instedd_small.png");
+		popup.addSeparator();
+		
+		MenuItem exitItem = new MenuItem("Exit");
+		exitItem.addActionListener(new ExitAction());
+		popup.add(exitItem);
+		
+		Image image = ResourceManager.getLogo();
+		
 		trayIcon = new TrayIcon(image, "Meshes", popup);
-		
-		trayIcon.addActionListener(action);
+		trayIcon.addActionListener(showMainWindowAction);
 		trayIcon.setImageAutoSize(true);
 		
 		systemTray.add(trayIcon);
