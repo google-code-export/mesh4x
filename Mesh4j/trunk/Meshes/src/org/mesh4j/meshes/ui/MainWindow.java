@@ -9,8 +9,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import javax.swing.JTree;
 
+import org.mesh4j.meshes.ui.component.MeshesTree;
 import org.mesh4j.meshes.ui.resource.ResourceManager;
 
 public class MainWindow extends JFrame {
@@ -29,7 +29,7 @@ public class MainWindow extends JFrame {
 		this.setIconImage(ResourceManager.getLogo());
 		
 		// Tree for Meshes
-		this.add(new JTree(),BorderLayout.WEST);
+		this.add(new MeshesTree(),BorderLayout.WEST);
 		
 		// Central pane with tabs
 		JTabbedPane tabbedPane = new JTabbedPane();
