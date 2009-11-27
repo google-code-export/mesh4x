@@ -2,14 +2,18 @@ package org.mesh4j.meshes;
 
 import java.awt.EventQueue;
 
-import javax.swing.Action;
 import javax.swing.UIManager;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.mesh4j.meshes.action.ToggleFrameAction;
-import org.mesh4j.meshes.ui.MainWindow;
-import org.mesh4j.meshes.ui.MeshesTray;
+import org.mesh4j.meshes.controller.CreateMeshWizardController;
+import org.mesh4j.meshes.model.Mesh;
+import org.mesh4j.meshes.ui.wizard.CreateMeshWizardView;
+import org.mesh4j.meshes.ui.wizard.StepFourDescriptor;
+import org.mesh4j.meshes.ui.wizard.StepOneDescriptor;
+import org.mesh4j.meshes.ui.wizard.StepThreeDescriptor;
+import org.mesh4j.meshes.ui.wizard.StepTwoDescriptor;
+import org.mesh4j.meshes.ui.wizard.WizardPanelDescriptor;
 
 public class Meshes {
 	
@@ -24,11 +28,26 @@ public class Meshes {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					MainWindow mainWindow = new MainWindow();
-					Action toggleMainWindow = new ToggleFrameAction(mainWindow);
-					new MeshesTray(toggleMainWindow);
+					//MainWindow mainWindow = new MainWindow();
+					//Action toggleMainWindow = new ToggleFrameAction(mainWindow);
+					//new MeshesTray(toggleMainWindow);
+					
+					CreateMeshWizardView wizard = new CreateMeshWizardView(new CreateMeshWizardController(new Mesh()));
+					
+					WizardPanelDescriptor desc1 = new StepOneDescriptor();
+					WizardPanelDescriptor desc2 = new StepTwoDescriptor();
+					WizardPanelDescriptor desc3 = new StepThreeDescriptor();
+					WizardPanelDescriptor desc4 = new StepFourDescriptor();
+					wizard.registerWizardPanel(desc1);
+					wizard.registerWizardPanel(desc2);
+					wizard.registerWizardPanel(desc3);
+					wizard.registerWizardPanel(desc4);
+					
+					wizard.setCurrentPanel(desc1.getId());
+					
+					wizard.setVisible(true);
 				} catch (Exception e) {
-					e.printStackTrace();
+					LOGGER.error(e.getMessage(), e);
 				}
 			}
 		});
