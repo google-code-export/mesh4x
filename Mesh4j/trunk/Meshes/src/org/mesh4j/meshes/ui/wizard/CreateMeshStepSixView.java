@@ -11,7 +11,7 @@ import javax.swing.JToggleButton;
 
 import net.miginfocom.swing.MigLayout;
 
-public class CreateMeshStepFourView extends JPanel {
+public class CreateMeshStepSixView extends JPanel {
 
 	private static final long serialVersionUID = -5773369351266179486L;
 	
@@ -21,7 +21,7 @@ public class CreateMeshStepFourView extends JPanel {
 	
 	private ButtonGroup buttonGroup;
 	
-	public CreateMeshStepFourView(WizardPanelDescriptor descriptor) {
+	public CreateMeshStepSixView(WizardPanelDescriptor descriptor) {
 		super();
 		this.descriptor = descriptor;
 		this.buttons = new ArrayList<AbstractButton>();

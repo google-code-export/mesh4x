@@ -11,5 +11,20 @@ public class ResourceManager {
 		Image image = Toolkit.getDefaultToolkit().getImage("images/instedd_small.png");
 		return image;
 	}
+	
+	public static Image getTableImage() {
+		Image image = Toolkit.getDefaultToolkit().getImage("images/gs_plain.png");
+		return image;
+	}
+	
+	public static Image getMapImage() {
+		Image image = Toolkit.getDefaultToolkit().getImage("images/kml_plain.png");
+		return image;
+	}
+	
+	public static Image getFolderImage() {
+		Image image = Toolkit.getDefaultToolkit().getImage("images/zip_plain.png");
+		return image;
+	}
 
 }

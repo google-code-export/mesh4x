@@ -1,11 +1,14 @@
 package org.mesh4j.meshes.ui.wizard;
 
 import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 
 import net.miginfocom.swing.MigLayout;
+
+import org.mesh4j.meshes.ui.resource.ResourceManager;
 
 public class CreateMeshStepThreeView extends JPanel {
 
@@ -42,7 +45,8 @@ public class CreateMeshStepThreeView extends JPanel {
 		
 		tableButton = new JToggleButton();
 		tableButton.setText("A table of data");
-		// TODO add icon to button
+		ImageIcon tableIcon = new ImageIcon(ResourceManager.getTableImage());
+		tableButton.setIcon(tableIcon);
 		JLabel tableLabel = new JLabel();
 		tableLabel.setText("You can add Access Databases, EpiInfo surveys, Excel Spreadsheets, JavaROSA Forms, or Google Spreadsheets to your mesh");
 		add(tableButton, "gapright 10");
@@ -50,7 +54,8 @@ public class CreateMeshStepThreeView extends JPanel {
 		
 		mapButton = new JToggleButton();
 		mapButton.setText("A map");
-		// TODO add icon to button
+		ImageIcon mapIcon = new ImageIcon(ResourceManager.getMapImage());
+		mapButton.setIcon(mapIcon);
 		JLabel mapLabel = new JLabel();
 		mapLabel.setText("Share maps including pushpins, polygons, lines, icons and other information");
 		add(mapButton, "gapright 10");
@@ -58,7 +63,8 @@ public class CreateMeshStepThreeView extends JPanel {
 		
 		filesButton = new JToggleButton();
 		filesButton.setText("Files");
-		// TODO add icon to button
+		ImageIcon filesIcon = new ImageIcon(ResourceManager.getFolderImage());
+		filesButton.setIcon(filesIcon);
 		JLabel filesLabel = new JLabel();
 		filesLabel.setText("Share a set of files");
 		add(filesButton, "gapright 10");
