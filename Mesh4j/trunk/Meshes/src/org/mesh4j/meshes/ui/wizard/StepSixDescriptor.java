@@ -3,19 +3,19 @@ package org.mesh4j.meshes.ui.wizard;
 import javax.swing.JPanel;
 
 
-public class StepFiveDescriptor extends WizardPanelDescriptor {
+public class StepSixDescriptor extends WizardPanelDescriptor {
 	
-	public static final String ID = "STEP_FIVE";
+	public static final String ID = "STEP_SIX";
 	
 	private JPanel panel;
 	
-	public StepFiveDescriptor() {
-		this.panel = new CreateMeshStepFiveView(this);
+	public StepSixDescriptor() {
+		this.panel = new CreateMeshStepSixView(this);
 	}
 
 	@Override
 	public String getBackPanelDescriptor() {
-		return StepFourDescriptor.ID;
+		return StepFiveDescriptor.ID;
 	}
 
 	@Override
@@ -25,7 +25,7 @@ public class StepFiveDescriptor extends WizardPanelDescriptor {
 
 	@Override
 	public String getNextPanelDescriptor() {
-		return StepSixDescriptor.ID;
+		return StepSevenDescriptor.ID;
 	}
 
 	@Override

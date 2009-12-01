@@ -1,5 +1,8 @@
 package org.mesh4j.meshes.ui.wizard;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -52,6 +55,13 @@ public class CreateMeshStepThreeView extends JPanel {
 		add(tableButton, "gapright 10");
 		add(tableLabel, "growx, wrap");
 		
+		tableButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				tableButtonActionPerformed(e);
+			}
+		});
+		
 		mapButton = new JToggleButton();
 		mapButton.setText("A map");
 		ImageIcon mapIcon = new ImageIcon(ResourceManager.getMapImage());
@@ -60,6 +70,13 @@ public class CreateMeshStepThreeView extends JPanel {
 		mapLabel.setText("Share maps including pushpins, polygons, lines, icons and other information");
 		add(mapButton, "gapright 10");
 		add(mapLabel, "growx, wrap");
+		
+		mapButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				mapButtonActionPerformed(e);
+			}
+		});
 		
 		filesButton = new JToggleButton();
 		filesButton.setText("Files");
@@ -70,10 +87,32 @@ public class CreateMeshStepThreeView extends JPanel {
 		add(filesButton, "gapright 10");
 		add(filesLabel, "growx, wrap");
 		
+		filesButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				filesButtonActionPerformed(e);
+			}
+		});
+		
 		buttonGroup = new ButtonGroup();
 		buttonGroup.add(tableButton);
 		buttonGroup.add(mapButton);
 		buttonGroup.add(filesButton);
+	}
+	
+
+	private void tableButtonActionPerformed(ActionEvent e) {
+		descriptor.getController().setTableDataSetType();
+	}
+	
+
+	private void mapButtonActionPerformed(ActionEvent e) {
+		descriptor.getController().setMapDataSetType();
+	}
+	
+
+	private void filesButtonActionPerformed(ActionEvent e) {
+		descriptor.getController().setFilesDataSetType();
 	}
 
 }

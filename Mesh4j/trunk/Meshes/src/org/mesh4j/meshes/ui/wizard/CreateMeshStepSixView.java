@@ -1,13 +1,10 @@
 package org.mesh4j.meshes.ui.wizard;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JToggleButton;
+import javax.swing.JRadioButton;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -17,14 +14,13 @@ public class CreateMeshStepSixView extends JPanel {
 	
 	private WizardPanelDescriptor descriptor;
 	
-	private List<AbstractButton> buttons;
-	
+	private JRadioButton syncRadioButton;
+	private JRadioButton noSyncRadioButton;
 	private ButtonGroup buttonGroup;
 	
 	public CreateMeshStepSixView(WizardPanelDescriptor descriptor) {
 		super();
 		this.descriptor = descriptor;
-		this.buttons = new ArrayList<AbstractButton>();
 		initComponents();
 	}
 
@@ -32,50 +28,30 @@ public class CreateMeshStepSixView extends JPanel {
 		setLayout(new MigLayout("insets 10"));
 		setSize(550, 350);
 		
-		JLabel titleLabel = new JLabel("Add Table Data");
-		add(titleLabel, "span 2, wrap 40");
+		JLabel titleLabel = new JLabel("Keep your data connected");
+		add(titleLabel, "span, wrap 20");
 		
-		JLabel dataSourceQuestion = new JLabel();
-		dataSourceQuestion.setText("What data source would you like to add?");
-		add(dataSourceQuestion, "span 2, wrap 10");
+		syncRadioButton = new JRadioButton();
+		syncRadioButton.setText("Keep data synchronized");
+		add(syncRadioButton, "gapleft 30, wrap 5");
+		
+		JLabel syncSubTitle = new JLabel();
+		syncSubTitle.setText("Remember to leave your files in the same folder it is now so we can find it later");
+		add(syncSubTitle, "gapleft 50, wrap 10");
+		
+		JComboBox scheduleComboBox = new JComboBox();
+		add(scheduleComboBox, "gapleft 60, wrap 10");
+		
+		JComboBox j = new JComboBox();
+		add(j, "gapleft 60, wrap 10");
+		
+		noSyncRadioButton = new JRadioButton();
+		noSyncRadioButton.setText("Import the data and schema now but don't keed this database connected to the mesh");
+		add(noSyncRadioButton, "gapleft 30");
 		
 		buttonGroup = new ButtonGroup();
-		
-		createButtons();
-	}
-	
-	private void createButtons() {
-		JToggleButton msAccessButton = new JToggleButton();
-		msAccessButton.setText("Microsoft Access Table");
-		buttons.add(msAccessButton);
-		buttonGroup.add(msAccessButton);
-		add(msAccessButton);
-		
-		JToggleButton excelSpreadsheetButton = new JToggleButton();
-		excelSpreadsheetButton.setText("Excel Spreadsheet");
-		buttons.add(excelSpreadsheetButton);
-		buttonGroup.add(excelSpreadsheetButton);
-		add(excelSpreadsheetButton, "wrap");
-		
-		JToggleButton googleSpreadsheetButton = new JToggleButton();
-		googleSpreadsheetButton.setText("Google Spreadsheet");
-		buttons.add(googleSpreadsheetButton);
-		buttonGroup.add(googleSpreadsheetButton);
-		add(googleSpreadsheetButton);
-		
-		JToggleButton epiInfoButton = new JToggleButton();
-		epiInfoButton.setText("CDC EpiInfo");
-		buttons.add(epiInfoButton);
-		buttonGroup.add(epiInfoButton);
-		add(epiInfoButton, "wrap");
-	}
-	
-	private void clearButtons() {
-		for (AbstractButton button : buttons) {
-			remove(button);
-			buttonGroup.remove(button);
-		}
-		buttons.clear();
+		buttonGroup.add(syncRadioButton);
+		buttonGroup.add(noSyncRadioButton);
 	}
 
 }

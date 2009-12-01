@@ -1,10 +1,11 @@
 package org.mesh4j.meshes.ui.wizard;
 
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
-import javax.swing.JTextField;
-
 
 import net.miginfocom.swing.MigLayout;
 
@@ -38,6 +39,12 @@ public class CreateMeshStepTwoView extends JPanel {
 		
 		JLabel passwordLabel = new JLabel("Password");
 		passwordField = new JPasswordField();
+		passwordField.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusLost(FocusEvent evt) {
+				passwordFieldFocusLost(evt);
+			}
+		});
 		add(passwordLabel, "gapright 20");
 		add(passwordField, "growx, wrap");
 		
@@ -46,5 +53,13 @@ public class CreateMeshStepTwoView extends JPanel {
 		add(confirmPasswordLabel, "gapright 20");
 		add(confirmPasswordField, "growx");
 	}
-	
+
+	private void passwordFieldFocusLost(FocusEvent evt) {
+		char[] passwordArray = passwordField.getPassword();
+		String password = "";
+		for (int i = 0; i < passwordArray.length; i++) {
+			password += passwordArray[i];
+		}
+		descriptor.getController().changeMeshPassword(password);	
+	}
 }

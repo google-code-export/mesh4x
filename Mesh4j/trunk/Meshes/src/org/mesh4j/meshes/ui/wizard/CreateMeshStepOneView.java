@@ -1,7 +1,5 @@
 package org.mesh4j.meshes.ui.wizard;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 
@@ -55,12 +53,6 @@ public class CreateMeshStepOneView extends JPanel {
 		add(descLabel, "gapright 20");
 		add(descScrollPane, "growx");
 		
-		nameTextField.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				nameTextFieldActionPerformed(evt);
-			}
-		});
 		nameTextField.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusLost(FocusEvent evt) {
@@ -74,11 +66,6 @@ public class CreateMeshStepOneView extends JPanel {
 				descTextAreaFocusLost(evt);
 			}
 		});
-	}
-	
-	private void nameTextFieldActionPerformed(ActionEvent evt) {
-		String name = nameTextField.getText();
-		descriptor.getController().changeMeshName(name);
 	}
 	
 	private void nameTextFieldFocusLost(FocusEvent evt) {
