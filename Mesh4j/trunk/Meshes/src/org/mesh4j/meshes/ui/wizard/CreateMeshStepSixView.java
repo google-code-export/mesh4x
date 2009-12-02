@@ -1,5 +1,8 @@
 package org.mesh4j.meshes.ui.wizard;
 
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
@@ -46,8 +49,22 @@ public class CreateMeshStepSixView extends JPanel {
 		JComboBox scheduleComboBox = new JComboBox(new DefaultComboBoxModel(SchedulingOption.values()));
 		add(scheduleComboBox, "gapleft 60, wrap 10");
 		
+		scheduleComboBox.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				scheduleComboBoxItemStateChanged(e);
+			}
+		});
+		
 		JComboBox syncModeComboBox = new JComboBox(new DefaultComboBoxModel(SyncMode.values()));
 		add(syncModeComboBox, "gapleft 60, wrap 10");
+		
+		syncModeComboBox.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				syncModeComboBoxItemStateChanged(e);
+			}
+		});
 		
 		noSyncRadioButton = new JRadioButton();
 		noSyncRadioButton.setText("Import the data and schema now but don't keed this database connected to the mesh");
@@ -56,6 +73,16 @@ public class CreateMeshStepSixView extends JPanel {
 		buttonGroup = new ButtonGroup();
 		buttonGroup.add(syncRadioButton);
 		buttonGroup.add(noSyncRadioButton);
+	}
+	
+	private void scheduleComboBoxItemStateChanged(ItemEvent e) {
+		SchedulingOption schedulingOption = (SchedulingOption) e.getItem();
+		descriptor.getController().changeSchedulingOption(schedulingOption);
+	}
+	
+	private void syncModeComboBoxItemStateChanged(ItemEvent e) {
+		SyncMode syncMode = (SyncMode) e.getItem();
+		descriptor.getController().changeSyncMode(syncMode);
 	}
 
 }
