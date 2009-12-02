@@ -1,12 +1,16 @@
 package org.mesh4j.meshes.ui.wizard;
 
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
 import net.miginfocom.swing.MigLayout;
+
+import org.mesh4j.meshes.model.SchedulingOption;
+import org.mesh4j.meshes.model.SyncMode;
 
 public class CreateMeshStepSixView extends JPanel {
 
@@ -39,11 +43,11 @@ public class CreateMeshStepSixView extends JPanel {
 		syncSubTitle.setText("Remember to leave your files in the same folder it is now so we can find it later");
 		add(syncSubTitle, "gapleft 50, wrap 10");
 		
-		JComboBox scheduleComboBox = new JComboBox();
+		JComboBox scheduleComboBox = new JComboBox(new DefaultComboBoxModel(SchedulingOption.values()));
 		add(scheduleComboBox, "gapleft 60, wrap 10");
 		
-		JComboBox j = new JComboBox();
-		add(j, "gapleft 60, wrap 10");
+		JComboBox syncModeComboBox = new JComboBox(new DefaultComboBoxModel(SyncMode.values()));
+		add(syncModeComboBox, "gapleft 60, wrap 10");
 		
 		noSyncRadioButton = new JRadioButton();
 		noSyncRadioButton.setText("Import the data and schema now but don't keed this database connected to the mesh");
