@@ -2,27 +2,24 @@ package org.mesh4j.meshes.ui.wizard;
 
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.beans.PropertyChangeEvent;
 
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import net.miginfocom.swing.MigLayout;
 
-public class CreateMeshStepSevenView extends JPanel {
+public class CreateMeshStepSevenView extends BaseWizardPanel {
 
 	private static final long serialVersionUID = -5773369351266179486L;
-	
-	private WizardPanelDescriptor descriptor;
 	
 	private JTextField nameTextField;
 	private JTextArea descTextArea;
 	
-	public CreateMeshStepSevenView(WizardPanelDescriptor descriptor) {
+	public CreateMeshStepSevenView() {
 		super();
-		this.descriptor = descriptor;
 		initComponents();
 	}
 
@@ -64,11 +61,15 @@ public class CreateMeshStepSevenView extends JPanel {
 	}
 	
 	private void nameTextFieldFocusLost(FocusEvent e) {
-		descriptor.getController().changeDataSetName(nameTextField.getText());
+		getController().changeDataSetName(nameTextField.getText());
 	}
 	
 	private void descTextAreaFocusLost(FocusEvent e) {
-		descriptor.getController().changeDataSetDescription(descTextArea.getText());
+		getController().changeDataSetDescription(descTextArea.getText());
+	}
+
+	@Override
+	public void modelPropertyChange(PropertyChangeEvent evt) {
 	}
 
 }

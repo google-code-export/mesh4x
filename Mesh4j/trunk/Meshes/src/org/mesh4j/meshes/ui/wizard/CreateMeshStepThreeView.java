@@ -2,31 +2,28 @@ package org.mesh4j.meshes.ui.wizard;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
 
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 
 import net.miginfocom.swing.MigLayout;
 
 import org.mesh4j.meshes.ui.resource.ResourceManager;
 
-public class CreateMeshStepThreeView extends JPanel {
+public class CreateMeshStepThreeView extends BaseWizardPanel {
 
 	private static final long serialVersionUID = -5773369351266179486L;
-	
-	private WizardPanelDescriptor descriptor;
 	
 	private JToggleButton tableButton;
 	private JToggleButton mapButton;
 	private JToggleButton filesButton;
 	private ButtonGroup buttonGroup;
 	
-	public CreateMeshStepThreeView(WizardPanelDescriptor descriptor) {
+	public CreateMeshStepThreeView() {
 		super();
-		this.descriptor = descriptor;
 		initComponents();
 	}
 
@@ -102,17 +99,21 @@ public class CreateMeshStepThreeView extends JPanel {
 	
 
 	private void tableButtonActionPerformed(ActionEvent e) {
-		descriptor.getController().setTableDataSetType();
+		getController().setTableDataSetType();
 	}
 	
 
 	private void mapButtonActionPerformed(ActionEvent e) {
-		descriptor.getController().setMapDataSetType();
+		getController().setMapDataSetType();
 	}
 	
 
 	private void filesButtonActionPerformed(ActionEvent e) {
-		descriptor.getController().setFilesDataSetType();
+		getController().setFilesDataSetType();
+	}
+
+	@Override
+	public void modelPropertyChange(PropertyChangeEvent evt) {
 	}
 
 }

@@ -94,12 +94,17 @@ public class CreateMeshWizardView extends AbstractView {
 
 	@Override
 	public void modelPropertyChange(PropertyChangeEvent evt) {
+		for (WizardPanelDescriptor descriptor : registeredDescriptors.values()) {
+			descriptor.getPanel().modelPropertyChange(evt);
+		}
 	}
 	
 	public void registerWizardPanel(WizardPanelDescriptor descriptor) {
 		registeredDescriptors.put(descriptor.getId(), descriptor);
 		cardPanel.add(descriptor.getPanel(), descriptor.getId());
-		descriptor.setController(controller);
+		BaseWizardPanel panel = descriptor.getPanel();
+		panel.setController(controller);
+		panel.setParentView(this);
 	}
 	
 	public void setCurrentPanel(String id) {

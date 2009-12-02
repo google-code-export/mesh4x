@@ -2,12 +2,12 @@ package org.mesh4j.meshes.ui.wizard;
 
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.beans.PropertyChangeEvent;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
 import net.miginfocom.swing.MigLayout;
@@ -15,19 +15,16 @@ import net.miginfocom.swing.MigLayout;
 import org.mesh4j.meshes.model.SchedulingOption;
 import org.mesh4j.meshes.model.SyncMode;
 
-public class CreateMeshStepSixView extends JPanel {
+public class CreateMeshStepSixView extends BaseWizardPanel {
 
 	private static final long serialVersionUID = -5773369351266179486L;
-	
-	private WizardPanelDescriptor descriptor;
 	
 	private JRadioButton syncRadioButton;
 	private JRadioButton noSyncRadioButton;
 	private ButtonGroup buttonGroup;
 	
-	public CreateMeshStepSixView(WizardPanelDescriptor descriptor) {
+	public CreateMeshStepSixView() {
 		super();
-		this.descriptor = descriptor;
 		initComponents();
 	}
 
@@ -77,12 +74,16 @@ public class CreateMeshStepSixView extends JPanel {
 	
 	private void scheduleComboBoxItemStateChanged(ItemEvent e) {
 		SchedulingOption schedulingOption = (SchedulingOption) e.getItem();
-		descriptor.getController().changeSchedulingOption(schedulingOption);
+		getController().changeSchedulingOption(schedulingOption);
 	}
 	
 	private void syncModeComboBoxItemStateChanged(ItemEvent e) {
 		SyncMode syncMode = (SyncMode) e.getItem();
-		descriptor.getController().changeSyncMode(syncMode);
+		getController().changeSyncMode(syncMode);
+	}
+
+	@Override
+	public void modelPropertyChange(PropertyChangeEvent evt) {
 	}
 
 }

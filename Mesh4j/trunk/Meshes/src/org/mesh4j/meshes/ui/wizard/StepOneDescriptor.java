@@ -1,16 +1,15 @@
 package org.mesh4j.meshes.ui.wizard;
 
-import javax.swing.JPanel;
 
 
 public class StepOneDescriptor extends WizardPanelDescriptor {
 	
 	public static final String ID = "STEP_ONE";
 	
-	private JPanel panel;
+	private BaseWizardPanel panel;
 	
 	public StepOneDescriptor() {
-		this.panel = new CreateMeshStepOneView(this);
+		this.panel = new CreateMeshStepOneView();
 	}
 
 	@Override
@@ -29,13 +28,8 @@ public class StepOneDescriptor extends WizardPanelDescriptor {
 	}
 
 	@Override
-	public JPanel getPanel() {
+	public BaseWizardPanel getPanel() {
 		return panel;
-	}
-
-	@Override
-	public boolean isFinish() {
-		return false;
 	}
 
 }

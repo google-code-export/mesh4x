@@ -1,29 +1,25 @@
 package org.mesh4j.meshes.ui.wizard;
 
+import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 
 import net.miginfocom.swing.MigLayout;
 
-public class CreateMeshStepFourView extends JPanel {
+public class CreateMeshStepFourView extends BaseWizardPanel {
 
 	private static final long serialVersionUID = -5773369351266179486L;
 	
-	private WizardPanelDescriptor descriptor;
-	
 	private List<AbstractButton> buttons;
-	
 	private ButtonGroup buttonGroup;
 	
-	public CreateMeshStepFourView(WizardPanelDescriptor descriptor) {
+	public CreateMeshStepFourView() {
 		super();
-		this.descriptor = descriptor;
 		this.buttons = new ArrayList<AbstractButton>();
 		initComponents();
 	}
@@ -76,6 +72,10 @@ public class CreateMeshStepFourView extends JPanel {
 			buttonGroup.remove(button);
 		}
 		buttons.clear();
+	}
+
+	@Override
+	public void modelPropertyChange(PropertyChangeEvent evt) {
 	}
 
 }

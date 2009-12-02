@@ -2,6 +2,7 @@ package org.mesh4j.meshes.ui.wizard;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Set;
@@ -10,7 +11,6 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
@@ -24,20 +24,17 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mesh4j.sync.adapters.hibernate.msaccess.MsAccessHibernateSyncAdapterFactory;
 
-public class CreateMeshStepFiveView extends JPanel {
+public class CreateMeshStepFiveView extends BaseWizardPanel {
 
 	private static final long serialVersionUID = -5773369351266179486L;
 	private static final Log LOGGER = LogFactory.getLog(CreateMeshStepFiveView.class);
-	
-	private WizardPanelDescriptor descriptor;
 	
 	private JFileChooser fileChooser;
 	private JTextField fileTextField;
 	private JList tableList;
 	
-	public CreateMeshStepFiveView(WizardPanelDescriptor descriptor) {
+	public CreateMeshStepFiveView() {
 		super();
-		this.descriptor = descriptor;
 		initComponents();
 	}
 
@@ -120,6 +117,10 @@ public class CreateMeshStepFiveView extends JPanel {
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 		}
+	}
+
+	@Override
+	public void modelPropertyChange(PropertyChangeEvent evt) {
 	}
 	
 }

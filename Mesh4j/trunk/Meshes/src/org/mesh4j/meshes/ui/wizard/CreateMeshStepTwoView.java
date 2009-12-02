@@ -2,25 +2,22 @@ package org.mesh4j.meshes.ui.wizard;
 
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.beans.PropertyChangeEvent;
 
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 
 import net.miginfocom.swing.MigLayout;
 
-public class CreateMeshStepTwoView extends JPanel {
+public class CreateMeshStepTwoView extends BaseWizardPanel {
 
 	private static final long serialVersionUID = -5220841948982059704L;
-	
-	private WizardPanelDescriptor descriptor;
 	
 	private JPasswordField passwordField;
 	private JPasswordField confirmPasswordField;
 	
-	public CreateMeshStepTwoView(WizardPanelDescriptor descriptor) {
+	public CreateMeshStepTwoView() {
 		super();
-		this.descriptor = descriptor;
 		initComponents();
 	}
 
@@ -60,6 +57,10 @@ public class CreateMeshStepTwoView extends JPanel {
 		for (int i = 0; i < passwordArray.length; i++) {
 			password += passwordArray[i];
 		}
-		descriptor.getController().changeMeshPassword(password);	
+		getController().changeMeshPassword(password);	
+	}
+
+	@Override
+	public void modelPropertyChange(PropertyChangeEvent evt) {
 	}
 }
