@@ -22,6 +22,8 @@ public class CreateMeshStepSixView extends BaseWizardPanel {
 	private JRadioButton syncRadioButton;
 	private JRadioButton noSyncRadioButton;
 	private ButtonGroup buttonGroup;
+	private JComboBox syncModeComboBox;
+	private JComboBox scheduleComboBox;
 	
 	public CreateMeshStepSixView() {
 		super();
@@ -39,11 +41,18 @@ public class CreateMeshStepSixView extends BaseWizardPanel {
 		syncRadioButton.setText("Keep data synchronized");
 		add(syncRadioButton, "gapleft 30, wrap 5");
 		
+		syncRadioButton.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				syncRadioButtonItemStateChanged(e);
+			}
+		});
+		
 		JLabel syncSubTitle = new JLabel();
 		syncSubTitle.setText("Remember to leave your files in the same folder it is now so we can find it later");
 		add(syncSubTitle, "gapleft 50, wrap 10");
 		
-		JComboBox scheduleComboBox = new JComboBox(new DefaultComboBoxModel(SchedulingOption.values()));
+		scheduleComboBox = new JComboBox(new DefaultComboBoxModel(SchedulingOption.values()));
 		add(scheduleComboBox, "gapleft 60, wrap 10");
 		
 		scheduleComboBox.addItemListener(new ItemListener() {
@@ -53,7 +62,7 @@ public class CreateMeshStepSixView extends BaseWizardPanel {
 			}
 		});
 		
-		JComboBox syncModeComboBox = new JComboBox(new DefaultComboBoxModel(SyncMode.values()));
+		syncModeComboBox = new JComboBox(new DefaultComboBoxModel(SyncMode.values()));
 		add(syncModeComboBox, "gapleft 60, wrap 10");
 		
 		syncModeComboBox.addItemListener(new ItemListener() {
@@ -66,6 +75,13 @@ public class CreateMeshStepSixView extends BaseWizardPanel {
 		noSyncRadioButton = new JRadioButton();
 		noSyncRadioButton.setText("Import the data and schema now but don't keed this database connected to the mesh");
 		add(noSyncRadioButton, "gapleft 30");
+		
+		noSyncRadioButton.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				noSyncRadioButtonItemStateChanged(e);
+			}
+		});
 		
 		buttonGroup = new ButtonGroup();
 		buttonGroup.add(syncRadioButton);
@@ -80,6 +96,16 @@ public class CreateMeshStepSixView extends BaseWizardPanel {
 	private void syncModeComboBoxItemStateChanged(ItemEvent e) {
 		SyncMode syncMode = (SyncMode) e.getItem();
 		getController().changeSyncMode(syncMode);
+	}
+	
+	private void syncRadioButtonItemStateChanged(ItemEvent e) {
+		scheduleComboBox.setEnabled(true);
+		syncModeComboBox.setEnabled(true);
+	}
+	
+	private void noSyncRadioButtonItemStateChanged(ItemEvent e) {
+		scheduleComboBox.setEnabled(false);
+		syncModeComboBox.setEnabled(false);
 	}
 
 	@Override

@@ -48,7 +48,7 @@ public class CreateMeshStepThreeView extends BaseWizardPanel {
 		ImageIcon tableIcon = new ImageIcon(ResourceManager.getTableImage());
 		tableButton.setIcon(tableIcon);
 		JLabel tableLabel = new JLabel();
-		tableLabel.setText("You can add Access Databases, EpiInfo surveys, Excel Spreadsheets, JavaROSA Forms, or Google Spreadsheets to your mesh");
+		tableLabel.setText("<html>You can add Access Databases, EpiInfo surveys, Excel Spreadsheets, JavaROSA Forms, or Google Spreadsheets to your mesh</html>");
 		add(tableButton, "gapright 10");
 		add(tableLabel, "growx, wrap");
 		
@@ -64,7 +64,7 @@ public class CreateMeshStepThreeView extends BaseWizardPanel {
 		ImageIcon mapIcon = new ImageIcon(ResourceManager.getMapImage());
 		mapButton.setIcon(mapIcon);
 		JLabel mapLabel = new JLabel();
-		mapLabel.setText("Share maps including pushpins, polygons, lines, icons and other information");
+		mapLabel.setText("<html>Share maps including pushpins, polygons, lines, icons and other information</html>");
 		add(mapButton, "gapright 10");
 		add(mapLabel, "growx, wrap");
 		
@@ -80,7 +80,7 @@ public class CreateMeshStepThreeView extends BaseWizardPanel {
 		ImageIcon filesIcon = new ImageIcon(ResourceManager.getFolderImage());
 		filesButton.setIcon(filesIcon);
 		JLabel filesLabel = new JLabel();
-		filesLabel.setText("Share a set of files");
+		filesLabel.setText("<html>Share a set of files</html>");
 		add(filesButton, "gapright 10");
 		add(filesLabel, "growx, wrap");
 		
