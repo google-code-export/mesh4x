@@ -22,19 +22,24 @@ import net.miginfocom.swing.MigLayout;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.mesh4j.meshes.controller.CreateMeshWizardController;
 import org.mesh4j.sync.adapters.hibernate.msaccess.MsAccessHibernateSyncAdapterFactory;
 
 public class CreateMeshStepFiveView extends BaseWizardPanel {
 
 	private static final long serialVersionUID = -5773369351266179486L;
 	private static final Log LOGGER = LogFactory.getLog(CreateMeshStepFiveView.class);
+	private static String ID = "STEP_FIVE";
+	
+	private CreateMeshWizardController controller;
 	
 	private JFileChooser fileChooser;
 	private JTextField fileTextField;
 	private JList tableList;
 	
-	public CreateMeshStepFiveView() {
+	public CreateMeshStepFiveView(CreateMeshWizardController controller) {
 		super();
+		this.controller = controller;
 		initComponents();
 	}
 
@@ -121,6 +126,11 @@ public class CreateMeshStepFiveView extends BaseWizardPanel {
 
 	@Override
 	public void modelPropertyChange(PropertyChangeEvent evt) {
+	}
+
+	@Override
+	public String getId() {
+		return ID;
 	}
 	
 }

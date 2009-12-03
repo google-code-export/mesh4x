@@ -11,15 +11,21 @@ import javax.swing.JToggleButton;
 
 import net.miginfocom.swing.MigLayout;
 
+import org.mesh4j.meshes.controller.CreateMeshWizardController;
+
 public class CreateMeshStepFourView extends BaseWizardPanel {
 
 	private static final long serialVersionUID = -5773369351266179486L;
+	private static String ID = "STEP_FOUR";
+	
+	private CreateMeshWizardController controller;
 	
 	private List<AbstractButton> buttons;
 	private ButtonGroup buttonGroup;
 	
-	public CreateMeshStepFourView() {
+	public CreateMeshStepFourView(CreateMeshWizardController controller) {
 		super();
+		this.controller = controller;
 		this.buttons = new ArrayList<AbstractButton>();
 		initComponents();
 	}
@@ -76,6 +82,11 @@ public class CreateMeshStepFourView extends BaseWizardPanel {
 
 	@Override
 	public void modelPropertyChange(PropertyChangeEvent evt) {
+	}
+
+	@Override
+	public String getId() {
+		return ID;
 	}
 
 }

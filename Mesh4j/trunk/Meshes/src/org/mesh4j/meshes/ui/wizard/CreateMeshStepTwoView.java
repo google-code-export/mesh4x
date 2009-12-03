@@ -9,15 +9,21 @@ import javax.swing.JPasswordField;
 
 import net.miginfocom.swing.MigLayout;
 
+import org.mesh4j.meshes.controller.CreateMeshWizardController;
+
 public class CreateMeshStepTwoView extends BaseWizardPanel {
 
 	private static final long serialVersionUID = -5220841948982059704L;
+	private static String ID = "STEP_TWO";
+	
+	private CreateMeshWizardController controller;
 	
 	private JPasswordField passwordField;
 	private JPasswordField confirmPasswordField;
 	
-	public CreateMeshStepTwoView() {
+	public CreateMeshStepTwoView(CreateMeshWizardController controller) {
 		super();
+		this.controller = controller;
 		initComponents();
 	}
 
@@ -57,10 +63,15 @@ public class CreateMeshStepTwoView extends BaseWizardPanel {
 		for (int i = 0; i < passwordArray.length; i++) {
 			password += passwordArray[i];
 		}
-		getController().changeMeshPassword(password);	
+		controller.changeMeshPassword(password);	
 	}
 
 	@Override
 	public void modelPropertyChange(PropertyChangeEvent evt) {
+	}
+
+	@Override
+	public String getId() {
+		return ID;
 	}
 }

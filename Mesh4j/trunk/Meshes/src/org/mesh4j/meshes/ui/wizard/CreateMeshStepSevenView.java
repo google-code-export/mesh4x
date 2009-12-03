@@ -11,15 +11,21 @@ import javax.swing.JTextField;
 
 import net.miginfocom.swing.MigLayout;
 
+import org.mesh4j.meshes.controller.CreateMeshWizardController;
+
 public class CreateMeshStepSevenView extends BaseWizardPanel {
 
 	private static final long serialVersionUID = -5773369351266179486L;
+	private static String ID = "STEP_SEVEN";
+	
+	private CreateMeshWizardController controller;
 	
 	private JTextField nameTextField;
 	private JTextArea descTextArea;
 	
-	public CreateMeshStepSevenView() {
+	public CreateMeshStepSevenView(CreateMeshWizardController controller) {
 		super();
+		this.controller = controller;
 		initComponents();
 	}
 
@@ -61,15 +67,20 @@ public class CreateMeshStepSevenView extends BaseWizardPanel {
 	}
 	
 	private void nameTextFieldFocusLost(FocusEvent e) {
-		getController().changeDataSetName(nameTextField.getText());
+		controller.changeDataSetName(nameTextField.getText());
 	}
 	
 	private void descTextAreaFocusLost(FocusEvent e) {
-		getController().changeDataSetDescription(descTextArea.getText());
+		controller.changeDataSetDescription(descTextArea.getText());
 	}
 
 	@Override
 	public void modelPropertyChange(PropertyChangeEvent evt) {
+	}
+
+	@Override
+	public String getId() {
+		return ID;
 	}
 
 }

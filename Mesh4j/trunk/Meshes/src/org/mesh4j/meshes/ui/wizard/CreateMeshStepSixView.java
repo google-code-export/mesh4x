@@ -12,12 +12,16 @@ import javax.swing.JRadioButton;
 
 import net.miginfocom.swing.MigLayout;
 
+import org.mesh4j.meshes.controller.CreateMeshWizardController;
 import org.mesh4j.meshes.model.SchedulingOption;
 import org.mesh4j.meshes.model.SyncMode;
 
 public class CreateMeshStepSixView extends BaseWizardPanel {
 
 	private static final long serialVersionUID = -5773369351266179486L;
+	private static String ID = "STEP_SIX";
+	
+	private CreateMeshWizardController controller;
 	
 	private JRadioButton syncRadioButton;
 	private JRadioButton noSyncRadioButton;
@@ -25,8 +29,9 @@ public class CreateMeshStepSixView extends BaseWizardPanel {
 	private JComboBox syncModeComboBox;
 	private JComboBox scheduleComboBox;
 	
-	public CreateMeshStepSixView() {
+	public CreateMeshStepSixView(CreateMeshWizardController controller) {
 		super();
+		this.controller = controller;
 		initComponents();
 	}
 
@@ -90,12 +95,12 @@ public class CreateMeshStepSixView extends BaseWizardPanel {
 	
 	private void scheduleComboBoxItemStateChanged(ItemEvent e) {
 		SchedulingOption schedulingOption = (SchedulingOption) e.getItem();
-		getController().changeSchedulingOption(schedulingOption);
+		controller.changeSchedulingOption(schedulingOption);
 	}
 	
 	private void syncModeComboBoxItemStateChanged(ItemEvent e) {
 		SyncMode syncMode = (SyncMode) e.getItem();
-		getController().changeSyncMode(syncMode);
+		controller.changeSyncMode(syncMode);
 	}
 	
 	private void syncRadioButtonItemStateChanged(ItemEvent e) {
@@ -110,6 +115,11 @@ public class CreateMeshStepSixView extends BaseWizardPanel {
 
 	@Override
 	public void modelPropertyChange(PropertyChangeEvent evt) {
+	}
+
+	@Override
+	public String getId() {
+		return ID;
 	}
 
 }

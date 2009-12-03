@@ -11,19 +11,24 @@ import javax.swing.JToggleButton;
 
 import net.miginfocom.swing.MigLayout;
 
+import org.mesh4j.meshes.controller.CreateMeshWizardController;
 import org.mesh4j.meshes.ui.resource.ResourceManager;
 
 public class CreateMeshStepThreeView extends BaseWizardPanel {
 
 	private static final long serialVersionUID = -5773369351266179486L;
+	private static String ID = "STEP_THREE";
+	
+	private CreateMeshWizardController controller;
 	
 	private JToggleButton tableButton;
 	private JToggleButton mapButton;
 	private JToggleButton filesButton;
 	private ButtonGroup buttonGroup;
 	
-	public CreateMeshStepThreeView() {
+	public CreateMeshStepThreeView(CreateMeshWizardController controller) {
 		super();
+		this.controller = controller;
 		initComponents();
 	}
 
@@ -99,21 +104,26 @@ public class CreateMeshStepThreeView extends BaseWizardPanel {
 	
 
 	private void tableButtonActionPerformed(ActionEvent e) {
-		getController().setTableDataSetType();
+		controller.setTableDataSetType();
 	}
 	
 
 	private void mapButtonActionPerformed(ActionEvent e) {
-		getController().setMapDataSetType();
+		controller.setMapDataSetType();
 	}
 	
 
 	private void filesButtonActionPerformed(ActionEvent e) {
-		getController().setFilesDataSetType();
+		controller.setFilesDataSetType();
 	}
 
 	@Override
 	public void modelPropertyChange(PropertyChangeEvent evt) {
+	}
+
+	@Override
+	public String getId() {
+		return ID;
 	}
 
 }
