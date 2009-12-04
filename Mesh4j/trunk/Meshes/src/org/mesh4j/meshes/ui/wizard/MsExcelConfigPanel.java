@@ -54,7 +54,7 @@ public class MsExcelConfigPanel extends JPanel {
 		fileTextField = new JTextField();
 		fileTextField.setEditable(false);
 		add(fileLabel, "gapright 5");
-		add(fileTextField, "growx, push");
+		add(fileTextField, "growx, pushx");
 		
 		fileChooser = new JFileChooser();
 		fileChooser.setAcceptAllFileFilterUsed(false);
