@@ -3,8 +3,10 @@ package org.mesh4j.meshes.controller;
 import org.mesh4j.meshes.model.DataSet;
 import org.mesh4j.meshes.model.DataSetType;
 import org.mesh4j.meshes.model.DataSource;
+import org.mesh4j.meshes.model.GSSheetDataSource;
 import org.mesh4j.meshes.model.Mesh;
 import org.mesh4j.meshes.model.MsAccessDataSource;
+import org.mesh4j.meshes.model.MsExcelDataSource;
 import org.mesh4j.meshes.model.Schedule;
 import org.mesh4j.meshes.model.SchedulingOption;
 import org.mesh4j.meshes.model.SyncMode;
@@ -117,12 +119,49 @@ public class CreateMeshWizardController extends WizardController {
 	public void setMsAccessDataSource() {
 		clearDataSource();
 		dataSource = new MsAccessDataSource();
+		stepFive.setCurrentConfig(CreateMeshStepFiveView.MS_ACCESS_PANEL);
+	}
+	
+	public void setMsExcelDataSource() {
+		clearDataSource();
+		dataSource = new MsExcelDataSource();
+		stepFive.setCurrentConfig(CreateMeshStepFiveView.MS_EXCEL_PANEL);
+	}
+	
+	public void setGSSheetDataSource() {
+		clearDataSource();
+		dataSource = new GSSheetDataSource();
 	}
 	
 	private void clearDataSource() {
 		if (dataSource != null) {
 			removeModel(dataSource);
 		}
+	}
+	
+	public void changeMsExcelFileName(String fileName) {
+		MsExcelDataSource excelDS = (MsExcelDataSource) dataSource;
+		excelDS.setFileName(fileName);
+	}
+	
+	public void changeMsExcelWorksheetName(String worksheetName) {
+		MsExcelDataSource excelDS = (MsExcelDataSource) dataSource;
+		excelDS.setWorksheetName(worksheetName);
+	}
+	
+	public void changeMsExcelUniqueColumnName(String uniqueColumnName) {
+		MsExcelDataSource excelDS = (MsExcelDataSource) dataSource;
+		excelDS.setUniqueColumnName(uniqueColumnName);
+	}
+	
+	public void changeMsAccessFileName(String fileName) {
+		MsAccessDataSource accessDS = (MsAccessDataSource) dataSource;
+		accessDS.setFileName(fileName);
+	}
+	
+	public void changeMsAccessTableName(String tableName) {
+		MsAccessDataSource accessDS = (MsAccessDataSource) dataSource;
+		accessDS.setTableName(tableName);
 	}
 
 	@Override
