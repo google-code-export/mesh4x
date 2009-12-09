@@ -131,6 +131,7 @@ public class CreateMeshWizardController extends WizardController {
 	public void setGSSheetDataSource() {
 		clearDataSource();
 		dataSource = new GSSheetDataSource();
+		stepFive.setCurrentConfig(CreateMeshStepFiveView.GOOGLE_SPREADSHEET_PANEL);
 	}
 	
 	private void clearDataSource() {
@@ -162,6 +163,31 @@ public class CreateMeshWizardController extends WizardController {
 	public void changeMsAccessTableName(String tableName) {
 		MsAccessDataSource accessDS = (MsAccessDataSource) dataSource;
 		accessDS.setTableName(tableName);
+	}
+	
+	public void changeGSSheetUserName(String userName) {
+		GSSheetDataSource gssheetDS = (GSSheetDataSource) dataSource;
+		gssheetDS.setUserName(userName);
+	}
+	
+	public void changeGSSheetPassword(String password) {
+		GSSheetDataSource gssheetDS = (GSSheetDataSource) dataSource;
+		gssheetDS.setPassword(password);
+	}
+	
+	public void changeGSSheetSpreadsheetName(String spreadsheetName) {
+		GSSheetDataSource gssheetDS = (GSSheetDataSource) dataSource;
+		gssheetDS.setSpreadsheetName(spreadsheetName);
+	}
+	
+	public void changeGSSheetWorksheetName(String worksheetName) {
+		GSSheetDataSource gssheetDS = (GSSheetDataSource) dataSource;
+		gssheetDS.setWorksheetName(worksheetName);
+	}
+	
+	public void changeGSSheetUniqueColumnName(String uniqueColumnName) {
+		GSSheetDataSource gssheetDS = (GSSheetDataSource) dataSource;
+		gssheetDS.setPassword(uniqueColumnName);
 	}
 
 	@Override

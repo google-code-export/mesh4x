@@ -43,7 +43,7 @@ public class CreateMeshStepSevenView extends BaseWizardPanel {
 		JLabel nameLabel = new JLabel("Name");
 		nameTextField = new JTextField();
 		add(nameLabel, "gapright 10");
-		add(nameTextField, "growx, wrap 10");
+		add(nameTextField, "pushx, growx, wrap 10");
 		
 		nameTextField.addFocusListener(new FocusAdapter() {
 			@Override
@@ -54,9 +54,11 @@ public class CreateMeshStepSevenView extends BaseWizardPanel {
 		
 		JLabel descLabel = new JLabel("Description");
 		descTextArea = new JTextArea();
+		descTextArea.setColumns(20);
+		descTextArea.setRows(5);
 		JScrollPane descScrollPane = new JScrollPane(descTextArea);
 		add(descLabel, "gapright 10");
-		add(descScrollPane, "growx");
+		add(descScrollPane, "pushx, growx");
 		
 		descTextArea.addFocusListener(new FocusAdapter() {
 			@Override
