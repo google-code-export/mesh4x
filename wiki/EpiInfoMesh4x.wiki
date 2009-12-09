@@ -5,14 +5,14 @@ With support of the US CDC, InSTEDD developed a set of clients and refined the t
 
 = More Info =
 
-http://taha.instedd.org/2008/12/epi-info-and-mesh4x-prototype.html
-http://taha.instedd.org/2009/05/us-cdc-recommends-mesh4x-to-synchronize.html
-http://cdc.confex.com/cdc/phin2009/webprogram/Paper20876.html
-http://www.panafrican-med-journal.com/content/feature/2/6/
-http://epiinfo.codeplex.com/
+  * http://taha.instedd.org/2008/12/epi-info-and-mesh4x-prototype.html
+  * http://taha.instedd.org/2009/05/us-cdc-recommends-mesh4x-to-synchronize.html
+  * http://cdc.confex.com/cdc/phin2009/webprogram/Paper20876.html
+  * http://www.panafrican-med-journal.com/content/feature/2/6/
+  * http://epiinfo.codeplex.com/
 
 = Demo Materials =
-http://www.slideshare.net/kasshout/epi-info-mesh4x-prototype-presentation
-http://www.slideshare.net/kasshout/oswego-in-the-cloud-scenario-script
+  * http://www.slideshare.net/kasshout/epi-info-mesh4x-prototype-presentation
+  * http://www.slideshare.net/kasshout/oswego-in-the-cloud-scenario-script
 
 Demo Version: 
