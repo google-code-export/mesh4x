@@ -15,4 +15,5 @@ With support of the US CDC, InSTEDD developed a set of clients and refined the t
   * http://www.slideshare.net/kasshout/epi-info-mesh4x-prototype-presentation
   * http://www.slideshare.net/kasshout/oswego-in-the-cloud-scenario-script
 
-Demo Version: 
+= Demo Version = 
+[http://mesh4x.googlecode.com/svn/Mesh4j/trunk/Downloads/TahaDemoVersion/mesh4x.zip Download]
