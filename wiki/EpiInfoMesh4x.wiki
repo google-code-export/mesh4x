@@ -1,5 +1,5 @@
 = Summary =
-The non-profit organization known as InSTEDD (Innovative Support to Emergencies, Diseases, and Disasters) has been facilitating the development of a set of open source tools to enable data sharing.  Partnering with US Centers for Disease Control and Prevention (CDC), InSTEDD demonstrated the ability to rapidly, safely, and securely exchange Epi Info™ data in a virtual — or cloud — computing environment (over Internet infrastructure (e.g., Government cloud, Amazon’s EC2/S3, Google cloud/App Engine)). A cloud environment is one in which servers and resources are remotely maintained and their use is 'virtually' available to users, drastically reducing or eliminating the need for capital investment and additional IT support. With support from US CDC, InSTEDD developed a set of clients and refined the technology to show how sharing information can help improve outcomes during disease outbreaks.
+The non-profit organization known as InSTEDD (Innovative Support to Emergencies, Diseases, and Disasters) has been facilitating the development of a set of open source tools to enable data sharing.  Partnering with US Centers for Disease Control and Prevention (CDC), InSTEDD demonstrated the ability to rapidly, safely, and securely exchange Epi Info™ data in a virtual — or cloud — computing environment (over Internet infrastructure (e.g., Government cloud, Amazon’s EC2/S3, Google cloud/App Engine)). A cloud environment is one in which servers and resources are remotely maintained and their use is 'virtually' available to users, drastically reducing or eliminating the need for capital investment and additional IT support. With support from US CDC, InSTEDD developed a set of clients and refined the technology to demonstrate how sharing information can help improve outcomes during disease outbreak investigation.
 
 = More Info =
 
@@ -13,5 +13,5 @@ The non-profit organization known as InSTEDD (Innovative Support to Emergencies,
   * http://www.slideshare.net/kasshout/epi-info-mesh4x-prototype-presentation
   * http://www.slideshare.net/kasshout/oswego-in-the-cloud-scenario-script
 
-= Demo Version = 
+= Demo Software = 
 [http://mesh4x.googlecode.com/svn/Mesh4j/trunk/Downloads/TahaDemoVersion/mesh4x.zip Download (36.6MB)]
