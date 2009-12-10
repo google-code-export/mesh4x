@@ -1,7 +1,7 @@
 #summary Mesh4x has been used to share data between and out of EpiInfo instances
 
 = Introduction =
-With support of the US CDC, InSTEDD developed a set of clients and refined the technology to show how sharing information can help improve outcomes during disease outbreaks.
+With support of US Centers for Disease Control and Prevention (CDC), InSTEDD developed a set of clients and refined the technology to show how sharing information can help improve outcomes during disease outbreaks.
 
 = More Info =
 
