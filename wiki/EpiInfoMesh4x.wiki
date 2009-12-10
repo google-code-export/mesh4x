@@ -1,12 +1,12 @@
-#summary Mesh4x has been used to share data between and out of EpiInfo instances
+#summary The non-profit organization known as InSTEDD (Innovative Support to Emergencies, Diseases, and Disasters) has been facilitating the development of a set of open source tools to enable data sharing.  Partnering with US Centers for Disease Control and Prevention (CDC), InSTEDD demonstrated the ability to rapidly, safely, and securely exchange Epi Info™ data in a virtual — or cloud — computing environment (over Internet infrastructure [e.g., Government cloud, Amazon’s EC2/S3, Google cloud/App Engine]). A cloud environment is one in which servers and resources are remotely maintained and their use is 'virtually' available to users, drastically reducing or eliminating the need for capital investment and additional IT support.
 
 = Introduction =
 With support of US Centers for Disease Control and Prevention (CDC), InSTEDD developed a set of clients and refined the technology to show how sharing information can help improve outcomes during disease outbreaks.
 
 = More Info =
 
-  * http://taha.instedd.org/2008/12/epi-info-and-mesh4x-prototype.html
-  * http://taha.instedd.org/2009/05/us-cdc-recommends-mesh4x-to-synchronize.html
+  * http://kasshout.blogspot.com/2008/12/epi-info-and-mesh4x-prototype.html
+  * http://kasshout.blogspot.com/2009/05/us-cdc-recommends-mesh4x-to-synchronize.html
   * http://cdc.confex.com/cdc/phin2009/webprogram/Paper20876.html
   * http://www.panafrican-med-journal.com/content/feature/2/6/
   * http://epiinfo.codeplex.com/
