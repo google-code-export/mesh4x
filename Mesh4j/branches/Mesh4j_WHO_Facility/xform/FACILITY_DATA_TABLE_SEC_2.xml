@@ -92,9 +92,7 @@
       <bind id="pfees_charging_factor_3" nodeset="/FACILITY_DATA_TABLE_SEC_2/fees_charging_factor_3" type="xsd:string"/>  
       <bind id="pfees_charging_factor_1" nodeset="/FACILITY_DATA_TABLE_SEC_2/fees_charging_factor_1" type="xsd:string"/>  
       <bind id="pfees_charging_factor_other" nodeset="/FACILITY_DATA_TABLE_SEC_2/fees_charging_factor_other" type="xsd:string"/>  
-      <bind id="pfees_charging_list" nodeset="/FACILITY_DATA_TABLE_SEC_2/fees_charging_list" type="xsd:string"/>  
       <bind id="pfees_charging_factor_4" nodeset="/FACILITY_DATA_TABLE_SEC_2/fees_charging_factor_4" type="xsd:string"/>  
-      <bind id="pfees_charging_type" nodeset="/FACILITY_DATA_TABLE_SEC_2/fees_charging_type" type="xsd:string"/>  
       <bind id="pfees_charging_factor_2" nodeset="/FACILITY_DATA_TABLE_SEC_2/fees_charging_factor_2" type="xsd:string"/>  
     </model> 
   </h:head>  
@@ -238,8 +236,9 @@
       </item> 
     </select1>
     
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/tb_service_culture_diag"> 
-      <label>tb_service_culture_diag?</label>  
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/tb_services_available"> 
+      <label>205.Does facility offer TB services including counselling and clinical services?</label>  
       <item>
         <label>Yes</label>
         <value>true</value>
@@ -248,9 +247,10 @@
         <label>No</label>
         <value>false</value>
       </item> 
-    </select1>  
+    </select1>
+    
     <select1 ref="/FACILITY_DATA_TABLE_SEC_2/does_offer_antenatal_services"> 
-      <label>does_offer_antenatal_services?</label>  
+      <label>Antenatal services?</label>  
       <item>
         <label>Yes</label>
         <value>true</value>
@@ -259,9 +259,35 @@
         <label>No</label>
         <value>false</value>
       </item> 
-    </select1>  
+    </select1>
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/does_offer_services_at_facility"> 
+      <label>Delivery services at the facility?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/does_offer_pa_antibiotics"> 
+      <label>Parenteral administration of antibiotics?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>
+    
+    
     <select1 ref="/FACILITY_DATA_TABLE_SEC_2/does_offer_pa_oxytoxic_drugs"> 
-      <label>does_offer_pa_oxytoxic_drugs?</label>  
+      <label>Parenteral administration of oxytoxic drugs?</label>  
       <item>
         <label>Yes</label>
         <value>true</value>
@@ -270,7 +296,272 @@
         <label>No</label>
         <value>false</value>
       </item> 
+    </select1>
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/does_offer_pa_anti_convulsants"> 
+      <label>Parenteral administration of anti-convulsants to women with (pre)clampsia?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/does_offer_mr_placenta"> 
+      <label>Manual removal of placenta?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/does_offer_mv_aspiration"> 
+      <label>Removal of retained products after delivery, i.e., manual vacuum aspiration?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/does_offer_home_sevice"> 
+      <label>Delivery services at home?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/does_offer_postpartum_services"> 
+      <label>Postpartum services?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>
+    
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/does_offer_sti_diagnosis"> 
+      <label>Diagnosis of Sexually Transmitted Infections (STIs)?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/does_offer_sti_treatment"> 
+      <label>Treatment of Sexually Transmitted Infections (STIs)? </label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>
+    
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/does_offer_cc_prevention"> 
+      <label>Cervical cancer prevention (Papanicolau test)?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/does_offer_hb_care"> 
+      <label>Home-based care?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>
+    
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/does_offer_palliative_care"> 
+      <label>Palliative care?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/does_offer_malaria_diagnosis"> 
+      <label>Diagnosis of malaria?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>
+    
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/does_offer_malaria_treatment"> 
+      <label>Treatment of malaria?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/bt_services_available"> 
+      <label>Does this facility provide blood transfusion?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>
+    
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/hiv_prev_act"> 
+      <label>Does this facility have a working relationship with any NGO or CBO for HIV prevention activities?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/surgical_services_available"> 
+      <label>Does this facility offer any surgical services including counselling and clinical services?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>
+    
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/surgical_service_caesarian"> 
+      <label>Caesarian section?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/surgical_service_intestinal"> 
+      <label>Intestinal surgery for acute abdomen? </label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>
+    
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/surgical_service_trauma"> 
+      <label>Trauma surgery, i.e., for complicated fractures? </label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/surgical_service_cardiac"> 
+      <label>Cardiac surgery?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>
+    
+    
+    
+     <select1 ref="/FACILITY_DATA_TABLE_SEC_2/fees_charging_list"> 
+      <label>Can I get a copy of the list of fees charged by the facility, if any?</label>  
+      <item>
+        <label>YES, LIST PROVIDED</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>NO, LIST NOT PROVIDED</label>
+        <value>2</value>
+      </item> 
+    </select1>
+    
+    
+    
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/fees_charging_type"> 
+      <label>Are the fees applied uniformly to all patients or are they applied differentially depending on the type of patient?</label>  
+      <item>
+        <label>FEES APPLIED UNIFORMLY</label>
+        <value>1</value>
+      </item>  
+      <item>
+        <label>FEES APPLIED DIFFERENTIALLY</label>
+        <value>2</value>
+      </item> 
     </select1>  
+      
+      
       
       
       
@@ -285,17 +576,7 @@
         <value>false</value>
       </item> 
     </select1>  
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/does_offer_cc_prevention"> 
-      <label>does_offer_cc_prevention?</label>  
-      <item>
-        <label>Yes</label>
-        <value>true</value>
-      </item>  
-      <item>
-        <label>No</label>
-        <value>false</value>
-      </item> 
-    </select1>  
+      
     <input bind="psec2_facility_id">
       <label>sec2_facility_id:</label>
     </input>  
@@ -303,28 +584,8 @@
     <input bind="pfees_charging_factor_3">
       <label>fees_charging_factor_3:</label>
     </input>  
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/does_offer_malaria_diagnosis"> 
-      <label>does_offer_malaria_diagnosis?</label>  
-      <item>
-        <label>Yes</label>
-        <value>true</value>
-      </item>  
-      <item>
-        <label>No</label>
-        <value>false</value>
-      </item> 
-    </select1>  
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/does_offer_postpartum_services"> 
-      <label>does_offer_postpartum_services?</label>  
-      <item>
-        <label>Yes</label>
-        <value>true</value>
-      </item>  
-      <item>
-        <label>No</label>
-        <value>false</value>
-      </item> 
-    </select1>  
+      
+      
     <select1 ref="/FACILITY_DATA_TABLE_SEC_2/tb_service_ssm_diag_charge_fee"> 
       <label>tb_service_ssm_diag_charge_fee?</label>  
       <item>
@@ -336,28 +597,8 @@
         <value>false</value>
       </item> 
     </select1>  
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/does_offer_pa_antibiotics"> 
-      <label>does_offer_pa_antibiotics?</label>  
-      <item>
-        <label>Yes</label>
-        <value>true</value>
-      </item>  
-      <item>
-        <label>No</label>
-        <value>false</value>
-      </item> 
-    </select1>  
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/bt_services_available"> 
-      <label>bt_services_available?</label>  
-      <item>
-        <label>Yes</label>
-        <value>true</value>
-      </item>  
-      <item>
-        <label>No</label>
-        <value>false</value>
-      </item> 
-    </select1>  
+      
+      
     <select1 ref="/FACILITY_DATA_TABLE_SEC_2/dot_service_sc_charge_fee"> 
       <label>dot_service_sc_charge_fee?</label>  
       <item>
@@ -380,17 +621,7 @@
         <value>false</value>
       </item> 
     </select1>  
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/surgical_services_available"> 
-      <label>surgical_services_available?</label>  
-      <item>
-        <label>Yes</label>
-        <value>true</value>
-      </item>  
-      <item>
-        <label>No</label>
-        <value>false</value>
-      </item> 
-    </select1>  
+      
     <select1 ref="/FACILITY_DATA_TABLE_SEC_2/hiv_service_po"> 
       <label>hiv_service_po?</label>  
       <item>
@@ -419,31 +650,9 @@
         <value>false</value>
       </item> 
     </select1>  
-    <input bind="pfees_charging_list">
-      <label>fees_charging_list:</label>
-    </input>  
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/does_offer_malaria_treatment"> 
-      <label>does_offer_malaria_treatment?</label>  
-      <item>
-        <label>Yes</label>
-        <value>true</value>
-      </item>  
-      <item>
-        <label>No</label>
-        <value>false</value>
-      </item> 
-    </select1>  
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/does_offer_palliative_care"> 
-      <label>does_offer_palliative_care?</label>  
-      <item>
-        <label>Yes</label>
-        <value>true</value>
-      </item>  
-      <item>
-        <label>No</label>
-        <value>false</value>
-      </item> 
-    </select1>  
+      
+      
+      
     <select1 ref="/FACILITY_DATA_TABLE_SEC_2/hiv_services_available"> 
       <label>hiv_services_available?</label>  
       <item>
@@ -455,17 +664,7 @@
         <value>false</value>
       </item> 
     </select1>  
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/does_offer_mv_aspiration"> 
-      <label>does_offer_mv_aspiration?</label>  
-      <item>
-        <label>Yes</label>
-        <value>true</value>
-      </item>  
-      <item>
-        <label>No</label>
-        <value>false</value>
-      </item> 
-    </select1>  
+      
     <select1 ref="/FACILITY_DATA_TABLE_SEC_2/hiv_service_testing_charge_fee"> 
       <label>hiv_service_testing_charge_fee?</label>  
       <item>
@@ -488,17 +687,7 @@
         <value>false</value>
       </item> 
     </select1>  
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/tb_services_available"> 
-      <label>tb_services_available?</label>  
-      <item>
-        <label>Yes</label>
-        <value>true</value>
-      </item>  
-      <item>
-        <label>No</label>
-        <value>false</value>
-      </item> 
-    </select1>  
+      
     <select1 ref="/FACILITY_DATA_TABLE_SEC_2/hiv_service_pw_councelling_charge_fee"> 
       <label>hiv_service_pw_councelling_charge_fee?</label>  
       <item>
@@ -510,17 +699,7 @@
         <value>false</value>
       </item> 
     </select1>  
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/hiv_prev_act"> 
-      <label>hiv_prev_act?</label>  
-      <item>
-        <label>Yes</label>
-        <value>true</value>
-      </item>  
-      <item>
-        <label>No</label>
-        <value>false</value>
-      </item> 
-    </select1>  
+      
     <select1 ref="/FACILITY_DATA_TABLE_SEC_2/dot_service_sc"> 
       <label>dot_service_sc?</label>  
       <item>
@@ -581,17 +760,7 @@
     <input bind="pfees_charging_factor_4">
       <label>fees_charging_factor_4:</label>
     </input>  
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/surgical_service_trauma"> 
-      <label>surgical_service_trauma?</label>  
-      <item>
-        <label>Yes</label>
-        <value>true</value>
-      </item>  
-      <item>
-        <label>No</label>
-        <value>false</value>
-      </item> 
-    </select1>  
+      
     <select1 ref="/FACILITY_DATA_TABLE_SEC_2/hiv_service_pep_charge_fee"> 
       <label>hiv_service_pep_charge_fee?</label>  
       <item>
@@ -603,17 +772,7 @@
         <value>false</value>
       </item> 
     </select1>  
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/does_offer_hb_care"> 
-      <label>does_offer_hb_care?</label>  
-      <item>
-        <label>Yes</label>
-        <value>true</value>
-      </item>  
-      <item>
-        <label>No</label>
-        <value>false</value>
-      </item> 
-    </select1>  
+      
     <select1 ref="/FACILITY_DATA_TABLE_SEC_2/hiv_service_pw_testing_charge_fee"> 
       <label>hiv_service_pw_testing_charge_fee?</label>  
       <item>
@@ -681,20 +840,8 @@
         <value>false</value>
       </item> 
     </select1>  
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/surgical_service_caesarian"> 
-      <label>surgical_service_caesarian?</label>  
-      <item>
-        <label>Yes</label>
-        <value>true</value>
-      </item>  
-      <item>
-        <label>No</label>
-        <value>false</value>
-      </item> 
-    </select1>  
-    <input bind="pfees_charging_type">
-      <label>fees_charging_type:</label>
-    </input>  
+      
+    
     <select1 ref="/FACILITY_DATA_TABLE_SEC_2/tb_service_ssm_diag"> 
       <label>tb_service_ssm_diag?</label>  
       <item>
@@ -731,17 +878,7 @@
         <value>false</value>
       </item> 
     </select1>  
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/does_offer_home_sevice"> 
-      <label>does_offer_home_sevice?</label>  
-      <item>
-        <label>Yes</label>
-        <value>true</value>
-      </item>  
-      <item>
-        <label>No</label>
-        <value>false</value>
-      </item> 
-    </select1>  
+      
     <select1 ref="/FACILITY_DATA_TABLE_SEC_2/mdr_tb_service_culure_rt_diag_charge_fee"> 
       <label>mdr_tb_service_culure_rt_diag_charge_fee?</label>  
       <item>
@@ -808,17 +945,7 @@
         <value>false</value>
       </item> 
     </select1>  
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/does_offer_mr_placenta"> 
-      <label>does_offer_mr_placenta?</label>  
-      <item>
-        <label>Yes</label>
-        <value>true</value>
-      </item>  
-      <item>
-        <label>No</label>
-        <value>false</value>
-      </item> 
-    </select1>  
+      
     <select1 ref="/FACILITY_DATA_TABLE_SEC_2/dot_service_os"> 
       <label>dot_service_os?</label>  
       <item>
@@ -831,17 +958,7 @@
       </item> 
     </select1>  
       
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/does_offer_sti_treatment"> 
-      <label>does_offer_sti_treatment?</label>  
-      <item>
-        <label>Yes</label>
-        <value>true</value>
-      </item>  
-      <item>
-        <label>No</label>
-        <value>false</value>
-      </item> 
-    </select1>  
+      
     <select1 ref="/FACILITY_DATA_TABLE_SEC_2/tb_service_treatment_charge_fee"> 
       <label>tb_service_treatment_charge_fee?</label>  
       <item>
@@ -853,28 +970,8 @@
         <value>false</value>
       </item> 
     </select1>  
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/surgical_service_cardiac"> 
-      <label>surgical_service_cardiac?</label>  
-      <item>
-        <label>Yes</label>
-        <value>true</value>
-      </item>  
-      <item>
-        <label>No</label>
-        <value>false</value>
-      </item> 
-    </select1>  
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/does_offer_services_at_facility"> 
-      <label>does_offer_services_at_facility?</label>  
-      <item>
-        <label>Yes</label>
-        <value>true</value>
-      </item>  
-      <item>
-        <label>No</label>
-        <value>false</value>
-      </item> 
-    </select1>  
+      
+      
       
     <select1 ref="/FACILITY_DATA_TABLE_SEC_2/hiv_service_pep"> 
       <label>hiv_service_pep?</label>  
@@ -887,28 +984,8 @@
         <value>false</value>
       </item> 
     </select1>  
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/does_offer_pa_anti_convulsants"> 
-      <label>does_offer_pa_anti_convulsants?</label>  
-      <item>
-        <label>Yes</label>
-        <value>true</value>
-      </item>  
-      <item>
-        <label>No</label>
-        <value>false</value>
-      </item> 
-    </select1>  
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/does_offer_sti_diagnosis"> 
-      <label>does_offer_sti_diagnosis?</label>  
-      <item>
-        <label>Yes</label>
-        <value>true</value>
-      </item>  
-      <item>
-        <label>No</label>
-        <value>false</value>
-      </item> 
-    </select1>  
+      
+      
     
     <select1 ref="/FACILITY_DATA_TABLE_SEC_2/tb_service_xray_diag"> 
       <label>tb_service_xray_diag?</label>  
@@ -921,16 +998,6 @@
         <value>false</value>
       </item> 
     </select1>  
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/surgical_service_intestinal"> 
-      <label>surgical_service_intestinal?</label>  
-      <item>
-        <label>Yes</label>
-        <value>true</value>
-      </item>  
-      <item>
-        <label>No</label>
-        <value>false</value>
-      </item> 
-    </select1> 
+     
   </h:body> 
 </h:html>
