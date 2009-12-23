@@ -95,7 +95,7 @@ public class GSSpreadsheet<C> extends GSBaseElement<C>{
 		// TODO: need to review what should be the default row count of the
 		// sheet
 		worksheet.setRowCount(100);
-		worksheet.setColCount(10);
+		worksheet.setColCount(20);
 
 		GSWorksheet<GSRow<GSCell>> gsWorksheet = new GSWorksheet<GSRow<GSCell>>(
 				worksheet, this.getChildElements().size() + 1, this);
