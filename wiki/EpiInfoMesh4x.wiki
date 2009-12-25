@@ -5,15 +5,16 @@ InSTEDD’s Mesh4x (http://code.google.com/p/mesh4x) allows for data synchroniza
 
 = More Info =
 
-  * http://kasshout.blogspot.com/2008/12/epi-info-and-mesh4x-prototype.html
-  * http://kasshout.blogspot.com/2009/05/us-cdc-recommends-mesh4x-to-synchronize.html
-  * http://cdc.confex.com/cdc/phin2009/webprogram/Paper20876.html
-  * http://www.panafrican-med-journal.com/content/feature/2/6/
-  * http://epiinfo.codeplex.com/
+  * Epi Info™-Mesh4x Prototype: http://kasshout.blogspot.com/2008/12/epi-info-and-mesh4x-prototype.html
+  * Epi Info™-Mesh4x Prototype: http://kasshout.blogspot.com/2009/05/us-cdc-recommends-mesh4x-to-synchronize.html
+  * Epi Info™-Mesh4x Presentation at the 2009 US CDC/PHIN Conference: http://cdc.confex.com/cdc/phin2009/webprogram/Paper20876.html
+  * Epi Info™ Paper with mention of Mesh4x: http://www.panafrican-med-journal.com/content/feature/2/6/
+  * Epi Info™ Open Source Software: http://epiinfo.codeplex.com/
+  * InSTEDD Mesh4x Platform: http://www.slideshare.net/kasshout/instedd-mesh4x-platform
 
 = Demo Materials =
-  * http://www.slideshare.net/kasshout/epi-info-mesh4x-prototype-presentation
-  * http://www.slideshare.net/kasshout/oswego-in-the-cloud-scenario-script
+  * Epi Info™-Mesh4x Prototype - Full Demonstration: http://www.slideshare.net/kasshout/epi-info-mesh4x-prototype-presentation
+  * Epi Info™-Mesh4x Prototype - Theatre-Style Scenario Script: http://www.slideshare.net/kasshout/oswego-in-the-cloud-scenario-script
 
 = Demo Software = 
-[http://mesh4x.googlecode.com/svn/Mesh4j/trunk/Downloads/TahaDemoVersion/mesh4x.zip Download (36.6MB)]
+  * Working Demo Software: http://mesh4x.googlecode.com/svn/Mesh4j/trunk/Downloads/TahaDemoVersion/mesh4x.zip [Download (36.6MB)]
