@@ -6,11 +6,12 @@ InSTEDD’s Mesh4x (http://code.google.com/p/mesh4x) allows for data synchroniza
 = More Info =
 
   * Epi Info™-Mesh4x Prototype: http://kasshout.blogspot.com/2008/12/epi-info-and-mesh4x-prototype.html
-  * Epi Info™-Mesh4x Prototype: http://kasshout.blogspot.com/2009/05/us-cdc-recommends-mesh4x-to-synchronize.html
+  * Oswego in the Cloud: Demonstration with US CDC to Synchronize Epi Info™ Data Using Mesh4x: http://kasshout.blogspot.com/2009/05/us-cdc-recommends-mesh4x-to-synchronize.html
   * Epi Info™-Mesh4x Presentation at the 2009 US CDC/PHIN Conference: http://cdc.confex.com/cdc/phin2009/webprogram/Paper20876.html
   * Epi Info™ Paper with mention of Mesh4x: http://www.panafrican-med-journal.com/content/feature/2/6/
   * Epi Info™ Open Source Software: http://epiinfo.codeplex.com/
   * InSTEDD Mesh4x Platform: http://www.slideshare.net/kasshout/instedd-mesh4x-platform
+  * Data Synchronization of Epi Info™ Using a Mesh4X Adapter: Presentation at the AMIA 2009 Annual Symposium--Demonstrations: Management of Populations: http://www.slideshare.net/kasshout/epi-info-mesh4x
 
 = Demo Materials =
   * Epi Info™-Mesh4x Prototype - Full Demonstration: http://www.slideshare.net/kasshout/epi-info-mesh4x-prototype-presentation
