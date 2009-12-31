@@ -63,7 +63,7 @@
           
           <q123_is_waiting_area_available_for_ip/>
           <sec1_control_field/>
-          
+          <is_respondant_agrees/>
             
         </FACILITY_DATA_TABLE_SEC_1> 
       </instance>  
@@ -83,7 +83,19 @@
   </h:head>  
   <h:body> 
   
-  <input bind="pq101_interviewstart_time">
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_1/is_respondant_agrees"> 
+      <label>Does Respondent Agree to be Interviewed?</label>  
+      <item>
+        <label>Yes</label>
+        <value>true</value>
+      </item>  
+      <item>
+        <label>No</label>
+        <value>false</value>
+      </item> 
+    </select1>
+    
+    <input bind="pq101_interviewstart_time">
       <label>101.Interview Start time:</label>
     </input>
   
