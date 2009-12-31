@@ -94,6 +94,9 @@
       <bind id="pfacility_name" nodeset="/FACILITY_IDENTIFICATION_PROFILE/facility_name" type="xsd:string"/>
       <bind id="pfacility_code" nodeset="/FACILITY_IDENTIFICATION_PROFILE/facility_code" type="xsd:string"/>
       <bind id="pimpl_org_name" nodeset="/FACILITY_IDENTIFICATION_PROFILE/impl_org_name" type="xsd:string"/>
+      
+      <bind id="pfacility_address_country" nodeset="/FACILITY_IDENTIFICATION_PROFILE/facility_address_country" type="xsd:string"/>
+      
       <bind id="pfacility_address_location" nodeset="/FACILITY_IDENTIFICATION_PROFILE/facility_address_location" type="xsd:string"/>
       <bind id="pfacility_address_district_name" nodeset="/FACILITY_IDENTIFICATION_PROFILE/facility_address_district_name" type="xsd:string"/>
       <bind id="pfacility_address_district_code" nodeset="/FACILITY_IDENTIFICATION_PROFILE/facility_address_district_code" type="xsd:string"/>
@@ -297,13 +300,11 @@
     </input>
     
     
-    <select1 ref="/FACILITY_IDENTIFICATION_PROFILE/facility_address_country"> 
-      <label>Country</label>
-      <item>
-        <label>Barbados</label>
-        <value>BB</value>
-      </item>  
-    </select1>  
+    <input bind="pfacility_address_country">
+      <label>Country code:</label>
+    </input>
+    
+      
     
     
     <input bind="pinterview_taken_date">
