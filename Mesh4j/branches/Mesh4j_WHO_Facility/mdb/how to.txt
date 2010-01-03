@@ -1,0 +1,2 @@
+1. Unzip and rename the extension to .mdb from .bin
+2. Run/Double click the .mdb file and allow security warning for VBA Macro  
