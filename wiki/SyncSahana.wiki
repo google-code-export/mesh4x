@@ -11,7 +11,7 @@ Steps to sync sahana tables(Shelter Info) in 2 different Sahana installations (n
 = Method 1: mysql-to-mysql =
 
 Prerequisites:
-Install JDK (Version 1.5 or later)
+Install JDK (Version 1.5 or later) <br>
  
 Mesh4x *EktooClient* ([http://code.google.com/p/mesh4x/wiki/HowToUseEktooClient  Ektoo Client]).
 
