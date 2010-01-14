@@ -1,6 +1,10 @@
-#summary One-sentence summary of this page.
+#summary Sync Sahana through Mesh4x.
 
 = Introduction =
+Sahana is a web based Disaster Management application which is Free and Open source. 
+NGO’s , Government’s, humanitarian organization, can use sahana to track missing people during crisis situation. You can store/search information of volunteer, shelter and missing people. Three’s lot more about sahana  at http://www.sahana.lk/. This document describes how two instance of sahana  mysql tables can be synchronized through mesh4x.It also describes cloud synchronization between sahana tables and Mesh4x Cloud server(FeedSync Server).
+
+
 Steps to sync sahana tables(Shelter Info) in 2 different Sahana installations (named as Local and Remote) using Mesh4x technologies.
 
 
