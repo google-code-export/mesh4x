@@ -15,7 +15,7 @@ Steps to sync sahana tables(Shelter Info) in 2 different Sahana installations (n
   * Install Mesh4x *EktooClient* ([http://code.google.com/p/mesh4x/wiki/HowToUseEktooClient  Ektoo Client]).
 
 
-*Steps* 
+*Steps*: 
 
   * 1. Allow remote mysql database access of Sahana instance from the machine where Ektoo Client will be executed.
 
