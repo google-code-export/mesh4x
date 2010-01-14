@@ -18,30 +18,44 @@ Mesh4x Ektoo Client (It’s an executable jar file)
 
   * 4. Go to [Sahana Main (local)]/Shelter Registry>View all shelters. This will show 3 Records (named as GSL, GKL, GKS).
 
+
 http://mesh4x.googlecode.com/svn/wiki/files/sync_sahana_1.png
+
 
   * 5. Log in as 'admin' in remote Sahana instance.
 
-  * 6. Go to [Sahana Main (remote)]/Shelter Registry>View all shelters. This will show "No Records found" [Slide 2]
+  * 6. Go to [Sahana Main (remote)]/Shelter Registry>View all shelters. This will show "No Records found".
 
-  * 7. Start Ektoo Client and configure source and target window for sync mysql tables (do select the tables mentioned earlier) and then press the sync button. Make sure you see the message "Synchronized Successfully" at the bottom left corner of the Ektoo client [Slide 3].
+http://mesh4x.googlecode.com/svn/wiki/files/sync_sahana_2.png
 
-  * 8. Go to [Sahana Main (remote)]/Shelter Registry>View all shelters. This will show the 3 records added earlier in local Sahana instance [Slide 4]
+  * 7. Start Ektoo Client and configure source and target window for sync mysql tables (do select the tables mentioned earlier) and then press the sync button. Make sure you see the message "Synchronized Successfully" at the bottom left corner of the Ektoo client.
+
+http://mesh4x.googlecode.com/svn/wiki/files/sync_sahana_3.png
+
+  * 8. Go to [Sahana Main (remote)]/Shelter Registry>View all shelters. This will show the 3 records added earlier in local Sahana instance.
+
+http://mesh4x.googlecode.com/svn/wiki/files/sync_sahana_4.png
 
   * 9. Add 1 Shelter Info (named as GDL) in remote Sahana instance using [Sahana Main (remote)]/Shelter Registry>Add shelter. 
 
-  * 10. Go to [Sahana Main (remote)]/Shelter Registry>View all shelters. This will show the 4 records (named as GSL, GKL, GKS and GDL) [Slide 5].
+  * 10. Go to [Sahana Main (remote)]/Shelter Registry>View all shelters. This will show the 4 records (named as GSL, GKL, GKS and GDL). 
 
-  * 10. Start and configure Ektoo Client as like earlier and sync those tables again. For this test it’s already configured so just press the sync button. Make sure you see the message "Synchronized Successfully" at the bottom left corner of the Ektoo client [Slide 6].
+http://mesh4x.googlecode.com/svn/wiki/files/sync_sahana_5.png
 
-  * 11. Go to [Sahana Main (local)]/Shelter Registry>View all shelters. This will now show 4 Records (named as GSL, GKL, GKS and GDL) among which the 4th one (named as GDL) being added in remote Sahana instance [Slide 7].
+  * 10. Start and configure Ektoo Client as like earlier and sync those tables again. For this test it’s already configured so just press the sync button. Make sure you see the message "Synchronized Successfully" at the bottom left corner of the Ektoo client.
 
+http://mesh4x.googlecode.com/svn/wiki/files/sync_sahana_6.png
 
+  * 11. Go to [Sahana Main (local)]/Shelter Registry>View all shelters. This will now show 4 Records (named as GSL, GKL, GKS and GDL) among which the 4th one (named as GDL) being added in remote Sahana instance .
+
+http://mesh4x.googlecode.com/svn/wiki/files/sync_sahana_7.png
 
 = Method 2: mysql-cloud-mysql =
 
 
 The same sync operation can be done via Mesh4x FeedSync Server [Slide 8].
+
+http://mesh4x.googlecode.com/svn/wiki/files/sync_sahana_8.png
 
 Prerequisites:
   * Install JDK (Version 1.5 or later) 
@@ -52,17 +66,18 @@ Following are the high level steps to accomplish that:
 
   * 1.	Login to local Sahana instance add Shelter info.
 
-  * 2.	Sync mysql tables related to Shelter Registry in local Sahana instance to FeedSync Server using Ektoo client [Slide 9]
+  * 2.	Sync mysql tables related to Shelter Registry in local Sahana instance to FeedSync Server using Ektoo client.
 
-  * 3.	Check the feed named ‘sahana’ in FeedSync server [Slide 10]. 
+http://mesh4x.googlecode.com/svn/wiki/files/sync_sahana_9.png
 
-  * 4.	Sync mysql tables related to Shelter Registry in remote Sahana instance to FeedSync Server using Ektoo client [Slide 11].
+  * 3.	Check the feed named ‘sahana’ in FeedSync server . 
+
+http://mesh4x.googlecode.com/svn/wiki/files/sync_sahana_10.png
+
+  * 4.	Sync mysql tables related to Shelter Registry in remote Sahana instance to FeedSync Server using Ektoo client .
+
+http://mesh4x.googlecode.com/svn/wiki/files/sync_sahana_11.png
 
   * 5.	Login to remote Sahana instance and view all Shelters. The newly added Shelters in local Sahana instance will now be available in remote Sahana instance.
 
 
-
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
