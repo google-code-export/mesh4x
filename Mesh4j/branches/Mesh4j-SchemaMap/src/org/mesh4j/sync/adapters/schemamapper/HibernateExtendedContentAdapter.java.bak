@@ -1,0 +1,38 @@
+package org.mesh4j.sync.adapters.schemamapper;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.mesh4j.sync.adapters.hibernate.HibernateContentAdapter;
+import org.mesh4j.sync.adapters.hibernate.IHibernateSessionFactoryBuilder;
+
+import com.hp.hpl.jena.rdf.model.Resource;
+
+
+public class HibernateExtendedContentAdapter extends HibernateContentAdapter implements ISupportSchemaMapping {
+
+	// MODEL VARIABLES
+	
+	public HibernateExtendedContentAdapter(
+			IHibernateSessionFactoryBuilder sessionFactoryBuilder,
+			String entityName, Map<String, Resource> syncSchema, Map<String, String> schemaConversionMap) {
+		super(sessionFactoryBuilder, entityName, syncSchema, schemaConversionMap);
+	}
+
+	// BUSINESS METHODS
+
+	public void initializeSessionFactory(IHibernateSessionFactoryBuilder sessionFactoryBuilder, String entityName,
+			Map<String, Resource> syncSchema, Map<String, String> schemaConversionMap) {
+		this.sessionFactoryBuilder = sessionFactoryBuilder;
+		this.entityName = entityName;
+		
+		if(this.sessionFactory != null){
+			this.sessionFactory.close();
+		}
+		
+		this.sessionFactory = sessionFactoryBuilder.buildSessionFactory();
+		this.mapping = sessionFactoryBuilder.buildMeshMapping(this.sessionFactory, entityName/*, syncSchema, schemaConversionMap*/);
+	}	
+	
+	
+}
