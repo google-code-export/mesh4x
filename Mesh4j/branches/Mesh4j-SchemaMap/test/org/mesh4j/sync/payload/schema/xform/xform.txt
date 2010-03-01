@@ -1,0 +1,42 @@
+<h:html xmlns:h="http://www.w3.org/1999/xhtml"
+xmlns="http://www.w3.org/2002/xforms"
+xmlns:ev="http://www.w3.org/2001/xml-events"
+xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+xmlns:jr="http://openrosa.org/javarosa">
+<h:head>
+	<h:title>Oswego</h:title>
+	<model>
+		<instance>
+			<Oswego>
+<name/>
+<AgeLong/>
+<AgeInt/>
+<AgeDouble/>
+<decimal/>
+<dateOnset/>
+<ill/>
+
+			</Oswego>
+		</instance>
+							<bind id="pname" nodeset="/Oswego/name" type="xsd:string"/>
+				<bind id="pAgeLong" nodeset="/Oswego/AgeLong" type="xsd:long"/>
+				<bind id="pAgeInt" nodeset="/Oswego/AgeInt" type="xsd:int"/>
+				<bind id="pAgeDouble" nodeset="/Oswego/AgeDouble" type="xsd:double"/>
+				<bind id="pdecimal" nodeset="/Oswego/decimal" type="xsd:decimal"/>
+				<bind id="pdateOnset" nodeset="/Oswego/dateOnset" type="xsd:date" jr:preload="date" jr:preloadParams="today" />
+
+	</model>
+</h:head>
+<h:body>
+					<input bind="pname"><label>name:</label></input>
+				<input bind="pAgeLong"><label>ageLong:</label></input>
+				<input bind="pAgeInt"><label>ageInt:</label></input>
+				<input bind="pAgeDouble"><label>ageDouble:</label></input>
+				<input bind="pdecimal"><label>decimal:</label></input>
+				<input bind="pdateOnset"><label>dateOnSet:</label></input>
+				<select1 ref="/Oswego/ill">
+				<label>ill?</label>
+				<item><label>Yes</label><value>true</value></item>				<item><label>No</label><value>false</value></item>				</select1>
+
+</h:body>
+</h:html>

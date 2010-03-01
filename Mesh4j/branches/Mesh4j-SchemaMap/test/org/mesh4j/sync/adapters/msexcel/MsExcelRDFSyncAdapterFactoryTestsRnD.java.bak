@@ -1,0 +1,187 @@
+package org.mesh4j.sync.adapters.msexcel;
+
+import java.util.List;
+
+import junit.framework.Assert;
+
+import org.junit.Test;
+import org.mesh4j.sync.ISyncAdapter;
+import org.mesh4j.sync.SyncEngine;
+import org.mesh4j.sync.adapters.split.SplitAdapter;
+import org.mesh4j.sync.id.generator.IdGenerator;
+import org.mesh4j.sync.model.Item;
+import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
+import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
+import org.mesh4j.sync.security.NullIdentityProvider;
+import org.mesh4j.sync.test.utils.TestHelper;
+import org.mesh4j.sync.utils.FileUtils;
+import org.mesh4j.sync.validations.MeshException;
+
+public class MsExcelRDFSyncAdapterFactoryTestsRnD {
+	
+	public static final int headerRowIndex = 4;
+
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldCreateFailsIfRDFUrlIsNull(){
+		MsExcelRDFSyncAdapterFactory.createSyncAdapterWithDynamicHeaderRowIndex(new MsExcel("excelFileName.xls"), "sheetName", new String[0], null, NullIdentityProvider.INSTANCE, null, headerRowIndex);
+	}
+
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldCreateFailsIfRDFUrlIsEmpty(){
+		MsExcelRDFSyncAdapterFactory.createSyncAdapterWithDynamicHeaderRowIndex(new MsExcel("excelFileName.xls"), "sheetName", new String[0], null, NullIdentityProvider.INSTANCE, "", headerRowIndex);
+	}
+
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldCreateAdapterFailsIfFileNameIsNull(){
+		String fileName = null;
+		MsExcelRDFSyncAdapterFactory.createSyncAdapterWithDynamicHeaderRowIndex(new MsExcel(fileName), "sheetName", new String[0], null, NullIdentityProvider.INSTANCE, "http://localhost:8080/mesh4x/myExample", headerRowIndex);
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldCreateAdapterFailsIfMsExcelIsNull(){
+		IMsExcel excel = null;
+		MsExcelRDFSyncAdapterFactory.createSyncAdapterWithDynamicHeaderRowIndex(excel, "sheetName", new String[0], null,  NullIdentityProvider.INSTANCE, "http://localhost:8080/mesh4x/myExample", headerRowIndex);
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldCreateAdapterFailsIfFileNameIsEmpty(){
+
+		MsExcelRDFSyncAdapterFactory.createSyncAdapterWithDynamicHeaderRowIndex(new MsExcel(""), "sheetName", new String[0], null, NullIdentityProvider.INSTANCE, "http://localhost:8080/mesh4x/myExample", headerRowIndex);
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldCreateAdapterFailsIfSheetNameIsNull(){
+
+		MsExcelRDFSyncAdapterFactory.createSyncAdapterWithDynamicHeaderRowIndex(new MsExcel("excelFileName.xls"), null, new String[]{"idColumnName"}, null, NullIdentityProvider.INSTANCE, "http://localhost:8080/mesh4x/myExample", headerRowIndex);
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldCreateAdapterFailsIfSheetNameIsEmpty(){
+
+		MsExcelRDFSyncAdapterFactory.createSyncAdapterWithDynamicHeaderRowIndex(new MsExcel("excelFileName.xls"), "", new String[]{"idColumnName"}, null, NullIdentityProvider.INSTANCE, "http://localhost:8080/mesh4x/myExample", headerRowIndex);
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldCreateAdapterFailsIfIdColumnIsNull(){
+
+		MsExcelRDFSyncAdapterFactory.createSyncAdapterWithDynamicHeaderRowIndex(new MsExcel("excelFileName.xls"), "sheetName", null, null, NullIdentityProvider.INSTANCE, "http://localhost:8080/mesh4x/myExample", headerRowIndex);
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldCreateAdapterFailsIfIdColumnIsEmpty(){
+
+		MsExcelRDFSyncAdapterFactory.createSyncAdapterWithDynamicHeaderRowIndex(new MsExcel("excelFileName.xls"), "sheetName", new String[0], null, NullIdentityProvider.INSTANCE, "http://localhost:8080/mesh4x/myExample", headerRowIndex);
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldCreateAdapterFailsIfIdentityProviderIsNull(){
+		MsExcelRDFSyncAdapterFactory.createSyncAdapterWithDynamicHeaderRowIndex(new MsExcel("excelFileName.xls"), "sheetName", new String[0], null, null, "http://localhost:8080/mesh4x/myExample", headerRowIndex);
+	}
+	
+	@Test
+	public void shouldCreateAdapter(){
+		String fileName = getFileNameToTest();
+		
+		ISyncAdapter adapter = MsExcelRDFSyncAdapterFactory.createSyncAdapterWithDynamicHeaderRowIndex(new MsExcel(fileName), "Oswego", new String[]{"Code"}, null, NullIdentityProvider.INSTANCE, "http://localhost:8080/mesh4x/myExample", headerRowIndex);
+		
+		Assert.assertNotNull(adapter);
+		Assert.assertTrue(adapter.getAll().size() > 0);
+		
+	}
+
+	// FROM RDF
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldCreateAdapterFromRDFFailsIfFileNameIsNull(){
+		RDFSchema rdfSchema = new RDFSchema("Oswego", "http://localhost:8080/mesh4x/myExample/Oswego#", "Oswego");
+		String fileName = null;
+		MsExcelRDFSyncAdapterFactory.createSyncAdapterWithDynamicHeaderRowIndex(new MsExcel(fileName), NullIdentityProvider.INSTANCE, rdfSchema, headerRowIndex);
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldCreateAdapterFromRDFFailsIfFileNameIsEmpty(){
+		RDFSchema rdfSchema = new RDFSchema("Oswego", "http://localhost:8080/mesh4x/myExample/Oswego#", "Oswego");
+		MsExcelRDFSyncAdapterFactory.createSyncAdapterWithDynamicHeaderRowIndex(new MsExcel(""), NullIdentityProvider.INSTANCE, rdfSchema, headerRowIndex);
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldCreateAdapterFromRDFFailsIfIdColumnIsNull(){
+		RDFSchema rdfSchema = new RDFSchema("Oswego", "http://localhost:8080/mesh4x/myExample/Oswego#", "Oswego");
+		MsExcelRDFSyncAdapterFactory.createSyncAdapterWithDynamicHeaderRowIndex(new MsExcel("excelFileName.xls"), NullIdentityProvider.INSTANCE, rdfSchema, headerRowIndex);
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldCreateAdapterFromRDFFailsIfIdColumnIsEmpty(){
+		RDFSchema rdfSchema = new RDFSchema("Oswego", "http://localhost:8080/mesh4x/myExample/Oswego#", "Oswego");
+		rdfSchema.setIdentifiablePropertyName("");
+		MsExcelRDFSyncAdapterFactory.createSyncAdapterWithDynamicHeaderRowIndex(new MsExcel("excelFileName.xls"), NullIdentityProvider.INSTANCE, rdfSchema, headerRowIndex);
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldCreateAdapterFromRDFFailsIfIdentityProviderIsNull(){
+		RDFSchema rdfSchema = new RDFSchema("Oswego", "http://localhost:8080/mesh4x/myExample/Oswego#", "Oswego");
+		MsExcelRDFSyncAdapterFactory.createSyncAdapterWithDynamicHeaderRowIndex(new MsExcel("excelFileName.xls"), null, rdfSchema, headerRowIndex);
+	}
+
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldCreateAdapterFromRDFFailsIfRDFSchemaIsNull(){
+		MsExcelRDFSyncAdapterFactory.createSyncAdapterWithDynamicHeaderRowIndex(new MsExcel("excelFileName.xls"), NullIdentityProvider.INSTANCE, null, headerRowIndex);
+	}
+	
+	@Test
+	public void shouldCreateAdapterFromRDFFileExistsEqualRDFSchema(){
+		String fileName = getFileNameToTest();
+		RDFSchema rdfSchema = MsExcelToRDFMapping.extractRDFSchemaWithDynamicHeaderRowIndex(new MsExcel(fileName), "Oswego", new String[]{"Code"}, null, "http://localhost:8080/mesh4x/myExample", headerRowIndex);
+
+		ISyncAdapter adapter = MsExcelRDFSyncAdapterFactory.createSyncAdapterWithDynamicHeaderRowIndex(new MsExcel(fileName), NullIdentityProvider.INSTANCE, rdfSchema, headerRowIndex);
+		
+		Assert.assertNotNull(adapter);
+		Assert.assertTrue(adapter.getAll().size() > 0);		
+	}
+	
+	@Test(expected=MeshException.class)
+	public void shouldCreateAdapterFromRDFFileFailsWhenFileExistsNotEqualRDFSchema(){
+		RDFSchema rdfSchema = new RDFSchema("Oswego", "http://localhost:8080/mesh4x/myExample/Oswego#", "Oswego");
+		rdfSchema.addStringProperty("Code", "code", IRDFSchema.DEFAULT_LANGUAGE);
+		rdfSchema.setIdentifiablePropertyName("Code");
+		
+		String fileName = getFileNameToTest();
+		ISyncAdapter adapter = MsExcelRDFSyncAdapterFactory.createSyncAdapterWithDynamicHeaderRowIndex(new MsExcel(fileName), NullIdentityProvider.INSTANCE, rdfSchema, headerRowIndex);
+		
+		Assert.assertNotNull(adapter);
+		Assert.assertTrue(adapter.getAll().size() > 0);		
+	}
+
+	@Test
+	public void shouldCreateAdapterFromRDFCreateFile(){
+		String ontologyBaseUri = "http://localhost:8080/mesh4x/myExample";
+		
+		String fileName = getFileNameToTest();
+		SplitAdapter adapterSource = MsExcelRDFSyncAdapterFactory.createSyncAdapterWithDynamicHeaderRowIndex(new MsExcel(fileName), "Oswego", new String[]{"Code"}, null, NullIdentityProvider.INSTANCE, ontologyBaseUri, headerRowIndex);
+		IRDFSchema rdfSchema = (IRDFSchema)((MsExcelContentAdapter)adapterSource.getContentAdapter()).getSchema();
+		
+		String newFileName = TestHelper.fileName("MsExcel_RDF_"+IdGenerator.INSTANCE.newID()+".xls");
+		ISyncAdapter adapterTarget = MsExcelRDFSyncAdapterFactory.createSyncAdapterWithDynamicHeaderRowIndex(new MsExcel(newFileName), NullIdentityProvider.INSTANCE, rdfSchema, headerRowIndex);
+		
+		Assert.assertNotNull(adapterTarget);
+		Assert.assertEquals(0, adapterTarget.getAll().size());
+		Assert.assertTrue(adapterSource.getAll().size() > 0);
+		
+		SyncEngine syncEngine = new SyncEngine(adapterTarget, adapterSource);
+		List<Item> conflicts = syncEngine.synchronize();
+	
+		Assert.assertNotNull(conflicts);
+		Assert.assertTrue(conflicts.isEmpty());
+		Assert.assertEquals(adapterSource.getAll().size(), adapterTarget.getAll().size());
+	}
+	
+	private String getFileNameToTest() {
+		try{
+			String originalFileName = this.getClass().getResource("epiinfoWithBlankRowBeforeHeader.xls").getFile();
+			String fileName = TestHelper.fileName("MsExcel_"+IdGenerator.INSTANCE.newID()+".xls");
+			FileUtils.copyFile(originalFileName, fileName);
+			return fileName;
+		}catch(Exception e){
+			throw new MeshException(e);
+		}
+	}
+}

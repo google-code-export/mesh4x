@@ -1,0 +1,14 @@
+<?xml version="1.0"?><!DOCTYPE hibernate-mapping PUBLIC
+ "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>  
+<class entity-name="user2" node="user2" table="user2">
+<id name="id" type="string" column="id">   
+<generator class="assigned"/>
+</id>   
+<property name="name" column="name"  node="name" type="string"/>
+<property name="pass" column="pass"  node="pass" type="string"/>
+<property name="phone" column="phone"  node="phone" type="long"/>
+<property name="balance" column="balance"  node="balance" type="double"/>
+
+</class></hibernate-mapping>
