@@ -1,5 +1,5 @@
 #summary How to sync repository with different schema.
-#labels HowTo
+#labels HowTo,Featured
 
 = Introduction =
 
