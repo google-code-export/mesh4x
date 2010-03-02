@@ -21,13 +21,16 @@ Adapter Factory methods for creating adapter instance to work with different sch
 
 Mysql:
 {{{
-org.mesh4j.sync.adapters.hibernate.HibernateSyncAdapterFactory.createHibernateAdapter(String connectionURL, String user, String password, Class<T> driverClass, Class<F> dialectClass, String tableName, String rdfBaseURL, String baseDirectory, IIdentityProvider identityProvider, File propertiesFile, Map<String, Resource> syncSchema, Map<String, String> schemaConversionMap);
+org.mesh4j.sync.adapters.hibernate.HibernateSyncAdapterFactory.createHibernateAdapter(String connectionURL, String user, 
+String password, Class<T> driverClass, Class<F> dialectClass, String tableName, String rdfBaseURL, String baseDirectory, 
+IIdentityProvider identityProvider, File propertiesFile, Map<String, Resource> syncSchema, Map<String, String> schemaConversionMap);
 }}}
 
 
 MsAccess:
 {{{
-org.mesh4j.sync.adapters.hibernate.msaccess.MsAccessHibernateSyncAdapterFactory.createSyncAdapterFromFile(String sourceAlias, String mdbFileName, String tableName, IIdentityProvider identityProvider, Map<String, Resource> syncSchema, Map<String, String> schemaConversionMap);
+org.mesh4j.sync.adapters.hibernate.msaccess.MsAccessHibernateSyncAdapterFactory.createSyncAdapterFromFile(String sourceAlias, String 
+mdbFileName, String tableName, IIdentityProvider identityProvider, Map<String, Resource> syncSchema, Map<String, String> schemaConversionMap);
 }}}
 
 
