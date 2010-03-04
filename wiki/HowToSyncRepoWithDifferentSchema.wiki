@@ -91,4 +91,4 @@ SyncEngine syncEngine = new SyncEngine(adapterMysql , adapterMsaccess);
 
 
 Updated code with this feature is available here at:
-https://mesh4x.googlecode.com/svn/Mesh4j/branches/Mesh4j-SchemaMap
+http://mesh4x.googlecode.com/svn/Mesh4j/branches/Mesh4j-SchemaMap
