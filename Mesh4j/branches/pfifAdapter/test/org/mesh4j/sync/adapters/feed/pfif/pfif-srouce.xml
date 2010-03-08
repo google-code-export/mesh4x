@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"
+      xmlns:pfif="http://zesty.ca/pfif/1.2">
+  <id>http://haiticrisis.appspot.com/feeds/person</id>
+  <title>haiticrisis.appspot.com</title>
+  <updated>2010-02-08T09:18:18Z</updated>
+  <link rel="self">http://haiticrisis.appspot.com/feeds/person</link>
+  <entry>
+    <pfif:person>
+      <pfif:person_record_id>google.com/person.140009</pfif:person_record_id>
+      <pfif:entry_date>2010-02-08T09:18:18Z</pfif:entry_date>
+      <pfif:author_name>rafiq</pfif:author_name>
+      <pfif:source_name>google.com</pfif:source_name>
+      <pfif:source_date>2010-02-08T09:18:18Z</pfif:source_date>
+      <pfif:source_url>http://haiticrisis.appspot.com/view?id=google.com%2Fperson.140003</pfif:source_url>
+      <pfif:first_name>merline</pfif:first_name>
+      <pfif:last_name>valbrun</pfif:last_name>
+      <pfif:note>
+        <pfif:note_record_id>google.com/note.1410025</pfif:note_record_id>
+        <pfif:person_record_id>google.com/person.140003</pfif:person_record_id>
+        <pfif:entry_date>2010-02-08T09:21:31Z</pfif:entry_date>
+        <pfif:author_name>pollas</pfif:author_name>
+        <pfif:source_date>2010-02-08T09:21:31Z</pfif:source_date>
+        <pfif:status>information_sought</pfif:status>
+        <pfif:text>need to know if she steel a life</pfif:text>
+      </pfif:note>
+      <pfif:note>
+        <pfif:note_record_id>google.com/note.85019</pfif:note_record_id>
+        <pfif:person_record_id>google.com/person.140003</pfif:person_record_id>
+        <pfif:entry_date>2010-02-08T09:24:05Z</pfif:entry_date>
+        <pfif:author_name>pollas</pfif:author_name>
+        <pfif:source_date>2010-02-08T09:24:05Z</pfif:source_date>
+        <pfif:text>si tu es encore vivant je remercirai énormément Dieu de m'avoir accordé ce faveur. Je ne peux t'oublier.</pfif:text>
+      </pfif:note>
+    </pfif:person>
+    <id>pfif:google.com/person.140003</id>
+    <title>merline valbrun</title>
+    <author>
+      <name>pollas</name>
+    </author>
+    <updated>2010-02-08T09:18:18Z</updated>
+    <source>
+      <title>haiticrisis.appspot.com</title>
+    </source>
+    <content>merline valbrun</content>
+  </entry>
+</feed>
