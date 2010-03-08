@@ -339,6 +339,12 @@ public class AtomSyndicationFormat implements ISyndicationFormat {
 	}
 	
 	public String getFeedLink(Element element){
+		//some atom file from google appsoft has different
+		//feedlink attribute which is like  <link rel="self">http://haiticrisis.appspot.com/feeds/person</link>
+		Attribute linkAttribute = element.attribute("rel");
+		if(linkAttribute != null){
+			return element.getText();
+		}
 		return element.attributeValue("href");
 	}
 	
