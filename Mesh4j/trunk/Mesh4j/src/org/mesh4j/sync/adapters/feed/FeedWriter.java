@@ -20,6 +20,7 @@ import java.util.List;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.dom4j.Namespace;
 import org.dom4j.io.XMLWriter;
 import org.mesh4j.sync.model.History;
 import org.mesh4j.sync.model.Item;
@@ -49,13 +50,13 @@ public class FeedWriter {
 	
 	public void write(XMLWriter writer, Feed feed) throws Exception{
         Document document = DocumentHelper.createDocument();
-        write(document, feed);        
+        write(document, feed);
         write(writer, document);
 	}
 
 	public void write(Document document, Feed feed) throws Exception {
 		Element root = this.addRootElement(document);
-		
+		addAdditionalNS(root);
 		this.syndicationFormat.addFeedInformation(root, feed.getTitle(), feed.getDescription(), feed.getLink(), feed.getLastUpdate());
 		
 		if(feed.getPayload() != null){
@@ -67,6 +68,15 @@ public class FeedWriter {
 		}
 	}
 
+	private void addAdditionalNS(Element root){
+		if(this.contentWriter instanceof  INamespace){
+			INamespace iNamespace = (INamespace)this.contentWriter;
+			for(Namespace namespace : iNamespace.getNamespaceList()){
+				root.add(namespace);
+			}
+		}
+	}
+	
 	@SuppressWarnings("unchecked")
 	public void writePayload(Element root, Element payload) {
 		List<Element> payloadElements = payload.elements(); 
