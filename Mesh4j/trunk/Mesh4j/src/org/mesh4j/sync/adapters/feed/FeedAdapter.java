@@ -1,7 +1,10 @@
 package org.mesh4j.sync.adapters.feed;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -74,6 +77,73 @@ public class FeedAdapter extends AbstractSyncAdapter implements ISyncAware{
 			}
 		}
 	}
+	
+	
+	/**
+	 * added for generic purpose,any rss/atom data srouce wish to behave as feed
+	 * can extend FeedAdapter and provide implementation of IContentReader
+	 * and IContentWriter
+	 * 
+	 * @param fileName,the file name of the rss/atom feed source
+	 * @param identityProvider
+	 * @param idGenerator
+	 * @param syndicationFormat
+	 * @param defaultFeed
+	 * @param contentReader,it reads specific rss/atom data source according to custom schema. 
+	 * @param contentWriter,it writes specific rss/atom data according to custom schema. 
+	 */
+	public FeedAdapter(String fileName, IIdentityProvider identityProvider, 
+			IIdGenerator idGenerator, ISyndicationFormat syndicationFormat, 
+			Feed defaultFeed,IContentReader contentReader,IContentWriter contentWriter){
+		
+		Guard.argumentNotNull(fileName, "fileName");
+		Guard.argumentNotNull(identityProvider, "identityProvider");
+		Guard.argumentNotNull(idGenerator, "idGenerator");
+		Guard.argumentNotNull(syndicationFormat, "syndicationFormat");
+		Guard.argumentNotNull(contentReader, "contentReader");
+		Guard.argumentNotNull(contentWriter, "contentWriter");
+
+		this.identityProvider = identityProvider;
+		this.feedReader = new FeedReader(syndicationFormat, identityProvider, idGenerator, contentReader);
+		this.feedWriter = new FeedWriter(syndicationFormat, identityProvider, contentWriter);
+		
+		this.feedFile = new File(fileName);
+		if(!this.feedFile.exists()){
+			this.feed = defaultFeed;
+			try{
+				if(!this.feedFile.getParentFile().exists()){
+					this.feedFile.getParentFile().mkdirs();
+				}
+				this.feedFile.createNewFile();
+				this.flush();
+			} catch (Exception e) {
+				throw new MeshException(e);
+			}
+		} else {
+			if(this.feedFile.length() == 0){
+				this.feed = defaultFeed;
+			} else {
+				
+				InputStreamReader inputStreamReader = null;
+				try {
+					inputStreamReader = new InputStreamReader(new FileInputStream(this.feedFile));
+				} catch (FileNotFoundException e) {
+					throw new MeshException(e);
+				}
+				
+				SAXReader reader = new SAXReader();
+				Document document;
+				try {
+					document = reader.read(inputStreamReader);
+					this.feed = this.feedReader.read(document);
+				} catch (Exception e) {
+					e.printStackTrace();
+					throw new MeshException(e);
+				}
+			}
+		}
+	}
+	
 	
 	public FeedAdapter(String fileName, IIdentityProvider identityProvider, IIdGenerator idGenerator){
 		Guard.argumentNotNull(fileName, "fileName");
