@@ -20,48 +20,48 @@ public class PFIFSchema implements IPFIFSchema{
 	public static final String PFIF_PREFIX = "pfif";
 	public static final Namespace PFIF_NS_1_2 = DocumentHelper.createNamespace(PFIF_PREFIX, PFIF_ULR);
 
-	
+	public static final Namespace NS = PFIF_NS_1_2;
 	public static final String PFIF_ENTITY_PERSON_ID_NAME = "person_record_id";
 	public static final String PFIF_ENTITY_NOTE_ID_NAME = "note_record_id";
 	
-	public static final QName QNAME_PERSON = DocumentHelper.createQName("person", DocumentHelper.createNamespace(PFIF_PREFIX, PFIF_ULR));
-	public static final QName QNAME_NOTE = DocumentHelper.createQName("note", DocumentHelper.createNamespace(PFIF_PREFIX, PFIF_ULR));
+	public static final QName QNAME_PERSON = DocumentHelper.createQName("person", NS);
+	public static final QName QNAME_NOTE = DocumentHelper.createQName("note", NS);
 	
-	public static final QName QNAME_PERSON_RECORD_ID = DocumentHelper.createQName("person_record_id", DocumentHelper.createNamespace(PFIF_PREFIX, PFIF_ULR));
-	public static final QName QNAME_ENTRY_DATE = DocumentHelper.createQName("entry_date", DocumentHelper.createNamespace(PFIF_PREFIX, PFIF_ULR));
-	public static final QName QNAME_AUTHOR_NAME = DocumentHelper.createQName("author_name", DocumentHelper.createNamespace(PFIF_PREFIX, PFIF_ULR));
-	public static final QName QNAME_AUTHOR_EMAIL = DocumentHelper.createQName("author_email", DocumentHelper.createNamespace(PFIF_PREFIX, PFIF_ULR));
-	public static final QName QNAME_AUTHOR_PHONE = DocumentHelper.createQName("author_phone", DocumentHelper.createNamespace(PFIF_PREFIX, PFIF_ULR));
-	public static final QName QNAME_SOURCE_NAME = DocumentHelper.createQName("source_name", DocumentHelper.createNamespace(PFIF_PREFIX, PFIF_ULR));
-	public static final QName QNAME_SOURCE_DATE = DocumentHelper.createQName("source_date", DocumentHelper.createNamespace(PFIF_PREFIX, PFIF_ULR));
-	public static final QName QNAME_SOURCE_URL = DocumentHelper.createQName("source_url", DocumentHelper.createNamespace(PFIF_PREFIX, PFIF_ULR));
-	public static final QName QNAME_FIRST_NAME = DocumentHelper.createQName("first_name", DocumentHelper.createNamespace(PFIF_PREFIX, PFIF_ULR));
-	
-	
-	public static final QName QNAME_LAST_NAME = DocumentHelper.createQName("last_name", DocumentHelper.createNamespace(PFIF_PREFIX, PFIF_ULR));
-	public static final QName QNAME_HOME_CITY = DocumentHelper.createQName("home_city", DocumentHelper.createNamespace(PFIF_PREFIX, PFIF_ULR));
-	public static final QName QNAME_HOME_STATE = DocumentHelper.createQName("home_state", DocumentHelper.createNamespace(PFIF_PREFIX, PFIF_ULR));
-	public static final QName QNAME_HOME_NEIGHBORHOOD = DocumentHelper.createQName("home_neighborhood", DocumentHelper.createNamespace(PFIF_PREFIX, PFIF_ULR));
-	public static final QName QNAME_HOME_STREET = DocumentHelper.createQName("home_street", DocumentHelper.createNamespace(PFIF_PREFIX, PFIF_ULR));
-	public static final QName QNAME_HOME_ZIP = DocumentHelper.createQName("home_zip", DocumentHelper.createNamespace(PFIF_PREFIX, PFIF_ULR));
-	public static final QName QNAME_PHOTO_URL = DocumentHelper.createQName("photo_url", DocumentHelper.createNamespace(PFIF_PREFIX, PFIF_ULR));
-	public static final QName QNAME_OTHER = DocumentHelper.createQName("other", DocumentHelper.createNamespace(PFIF_PREFIX, PFIF_ULR));
-	
-	public static final QName QNAME_NOTE_RECORD_ID = DocumentHelper.createQName("note_record_id", DocumentHelper.createNamespace(PFIF_PREFIX, PFIF_ULR));
-	public static final QName QNAME_FOUND = DocumentHelper.createQName("found", DocumentHelper.createNamespace(PFIF_PREFIX, PFIF_ULR));
-	public static final QName QNAME_EMAIL_OF_FOUND_PERSON = DocumentHelper.createQName("email_of_found_person", DocumentHelper.createNamespace(PFIF_PREFIX, PFIF_ULR));
-	public static final QName QNAME_PHONE_OF_FOUND_PERSON = DocumentHelper.createQName("phone_of_found_person", DocumentHelper.createNamespace(PFIF_PREFIX, PFIF_ULR));
-	public static final QName QNAME_LAST_KNOWN_LOCATION = DocumentHelper.createQName("last_known_location", DocumentHelper.createNamespace(PFIF_PREFIX, PFIF_ULR));
-	
-	public static final QName QNAME_TEXT = DocumentHelper.createQName("text", DocumentHelper.createNamespace(PFIF_PREFIX, PFIF_ULR));
+	public static final QName QNAME_PERSON_RECORD_ID = DocumentHelper.createQName("person_record_id", NS);
+	public static final QName QNAME_ENTRY_DATE = DocumentHelper.createQName("entry_date", NS);
+	public static final QName QNAME_AUTHOR_NAME = DocumentHelper.createQName("author_name", NS);
+	public static final QName QNAME_AUTHOR_EMAIL = DocumentHelper.createQName("author_email", NS);
+	public static final QName QNAME_AUTHOR_PHONE = DocumentHelper.createQName("author_phone", NS);
+	public static final QName QNAME_SOURCE_NAME = DocumentHelper.createQName("source_name", NS);
+	public static final QName QNAME_SOURCE_DATE = DocumentHelper.createQName("source_date", NS);
+	public static final QName QNAME_SOURCE_URL = DocumentHelper.createQName("source_url", NS);
+	public static final QName QNAME_FIRST_NAME = DocumentHelper.createQName("first_name", NS);
 	
 	
-	public static final QName QNAME_SEX = DocumentHelper.createQName("sex", DocumentHelper.createNamespace(PFIF_PREFIX, PFIF_ULR));
-	public static final QName QNAME_AGE = DocumentHelper.createQName("age", DocumentHelper.createNamespace(PFIF_PREFIX, PFIF_ULR));
-	public static final QName QNAME_HOME_POSTAL_CODE = DocumentHelper.createQName("home_postal_code", DocumentHelper.createNamespace(PFIF_PREFIX, PFIF_ULR));
-	public static final QName QNAME_HOME_COUNTRY = DocumentHelper.createQName("home_country", DocumentHelper.createNamespace(PFIF_PREFIX, PFIF_ULR));
-	public static final QName QNAME_LINKED_PERSON_RECORD_ID = DocumentHelper.createQName("home_country", DocumentHelper.createNamespace(PFIF_PREFIX, PFIF_ULR));
-	public static final QName QNAME_STATUS = DocumentHelper.createQName("status", DocumentHelper.createNamespace(PFIF_PREFIX, PFIF_ULR));
+	public static final QName QNAME_LAST_NAME = DocumentHelper.createQName("last_name", NS);
+	public static final QName QNAME_HOME_CITY = DocumentHelper.createQName("home_city", NS);
+	public static final QName QNAME_HOME_STATE = DocumentHelper.createQName("home_state", NS);
+	public static final QName QNAME_HOME_NEIGHBORHOOD = DocumentHelper.createQName("home_neighborhood", NS);
+	public static final QName QNAME_HOME_STREET = DocumentHelper.createQName("home_street", NS);
+	public static final QName QNAME_HOME_ZIP = DocumentHelper.createQName("home_zip", NS);
+	public static final QName QNAME_PHOTO_URL = DocumentHelper.createQName("photo_url", NS);
+	public static final QName QNAME_OTHER = DocumentHelper.createQName("other", NS);
+	
+	public static final QName QNAME_NOTE_RECORD_ID = DocumentHelper.createQName("note_record_id", NS);
+	public static final QName QNAME_FOUND = DocumentHelper.createQName("found", NS);
+	public static final QName QNAME_EMAIL_OF_FOUND_PERSON = DocumentHelper.createQName("email_of_found_person", NS);
+	public static final QName QNAME_PHONE_OF_FOUND_PERSON = DocumentHelper.createQName("phone_of_found_person", NS);
+	public static final QName QNAME_LAST_KNOWN_LOCATION = DocumentHelper.createQName("last_known_location", NS);
+	
+	public static final QName QNAME_TEXT = DocumentHelper.createQName("text", NS);
+	
+	
+	public static final QName QNAME_SEX = DocumentHelper.createQName("sex", NS);
+	public static final QName QNAME_AGE = DocumentHelper.createQName("age", NS);
+	public static final QName QNAME_HOME_POSTAL_CODE = DocumentHelper.createQName("home_postal_code", NS);
+	public static final QName QNAME_HOME_COUNTRY = DocumentHelper.createQName("home_country", NS);
+	public static final QName QNAME_LINKED_PERSON_RECORD_ID = DocumentHelper.createQName("home_country", NS);
+	public static final QName QNAME_STATUS = DocumentHelper.createQName("status", NS);
 	
 	
 	public PFIFSchema(){}
