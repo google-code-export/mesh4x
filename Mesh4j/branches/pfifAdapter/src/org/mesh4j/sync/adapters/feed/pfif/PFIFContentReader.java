@@ -7,7 +7,6 @@ import org.mesh4j.sync.adapters.feed.IContentReader;
 import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.adapters.feed.pfif.mapping.IPfifToPlainXmlMapping;
 import org.mesh4j.sync.adapters.feed.pfif.schema.PFIFSchema;
-import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
 import org.mesh4j.sync.validations.MeshException;
 
 public class PFIFContentReader implements IContentReader{

@@ -36,21 +36,11 @@ public class PFIFUtil {
 	
 	public static String getFeedName(File feedFile,ISyndicationFormat syndicationFormat){
 
-		FeedReader reader = new FeedReader(syndicationFormat, NullIdentityProvider.INSTANCE, IdGenerator.INSTANCE, ContentReader.INSTANCE);
-
-		InputStreamReader inputStreamReader = null;
-		try {
-			inputStreamReader = new InputStreamReader(new FileInputStream(feedFile));
-		} catch (FileNotFoundException e) {
-			throw new MeshException(e);
+		Feed feed = getFeedFromFile(feedFile,syndicationFormat);
+		if(feed == null || 
+				feed.getItems() == null){
+			throw new MeshException("Entity not found,Invalid feed");
 		}
-		Feed feed = null;
-		try {
-			feed = reader.read(inputStreamReader);
-		} catch (Exception e) {
-			throw new MeshException(e);
-		}
-		
 		List<Item> noteList = new LinkedList<Item>();
 		List<Item> personList = new LinkedList<Item>();
 		
@@ -74,7 +64,8 @@ public class PFIFUtil {
 			} else if(element.getName().equals(PFIFSchema.QNAME_NOTE.getName())){
 				noteList.add(readItem(item,element));
 			} else {
-				//dont know
+				//not supported
+				throw new MeshException("unsupported entity found");
 			}
 			}
 		}
@@ -139,21 +130,7 @@ public class PFIFUtil {
 			return feeFileNames;
 		}
 		
-		FeedReader reader = new FeedReader(syndicationFormat, NullIdentityProvider.INSTANCE, 
-				IdGenerator.INSTANCE, ContentReader.INSTANCE);
-		InputStreamReader inputStreamReader = null;
-		try {
-			inputStreamReader = new InputStreamReader(new FileInputStream(file));
-		} catch (FileNotFoundException e) {
-			throw new MeshException(e);
-		}
-		
-		Feed feed = null;
-		try {
-			feed = reader.read(inputStreamReader);
-		} catch (Exception e) {
-			throw new MeshException(e);
-		}
+		Feed feed = getFeedFromFile(file, syndicationFormat);
 		
 		Feed personFeed = new Feed(feed.getTitle(),feed.getDescription(),feed.getLink());
 		Feed noteFeed = new Feed(feed.getTitle(),feed.getDescription(),feed.getLink());
@@ -265,6 +242,7 @@ public class PFIFUtil {
 	
 	
 	
+	@SuppressWarnings("unchecked")
 	private static List<Item> getNoteItems(Item item ,Element personPayload){
 	
 		List<Item> list = new LinkedList<Item>();
