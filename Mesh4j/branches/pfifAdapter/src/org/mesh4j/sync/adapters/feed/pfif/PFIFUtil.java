@@ -22,7 +22,7 @@ import org.mesh4j.sync.adapters.feed.FeedReader;
 import org.mesh4j.sync.adapters.feed.FeedWriter;
 import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.adapters.feed.XMLContent;
-import org.mesh4j.sync.adapters.feed.pfif.mapping.PFIFModel;
+import org.mesh4j.sync.adapters.feed.pfif.model.PFIFModel;
 import org.mesh4j.sync.adapters.feed.pfif.schema.PFIFSchema;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.Item;

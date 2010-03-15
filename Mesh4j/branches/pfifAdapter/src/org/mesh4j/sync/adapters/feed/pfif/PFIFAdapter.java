@@ -1,5 +1,6 @@
 package org.mesh4j.sync.adapters.feed.pfif;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Date;
@@ -17,8 +18,8 @@ import org.mesh4j.sync.adapters.feed.IContentReader;
 import org.mesh4j.sync.adapters.feed.IContentWriter;
 import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.adapters.feed.XMLContent;
-import org.mesh4j.sync.adapters.feed.pfif.mapping.IPFIFToRDFMapping;
-import org.mesh4j.sync.adapters.feed.pfif.mapping.PFIFModel;
+import org.mesh4j.sync.adapters.feed.pfif.mapping.IPfifToPlainXmlMapping;
+import org.mesh4j.sync.adapters.feed.pfif.model.PFIFModel;
 import org.mesh4j.sync.filter.SinceLastUpdateFilter;
 import org.mesh4j.sync.id.generator.IIdGenerator;
 import org.mesh4j.sync.model.IContent;
@@ -35,15 +36,14 @@ import org.mesh4j.sync.validations.MeshException;
 
 public class PFIFAdapter extends FeedAdapter implements ISyncAware{
 
-	
 	private IIdentityProvider identityProvider;
 	private boolean dirty = false;
-	private IPFIFToRDFMapping mapping;
+	private IPfifToPlainXmlMapping mapping;
 
 	public PFIFAdapter(IIdentityProvider identityProvider,
 			IIdGenerator idGenerator, ISyndicationFormat syndicationFormat,
 			Feed defaultFeed, IContentReader contentReader,
-			IContentWriter contentWriter,IPFIFToRDFMapping mapping) {
+			IContentWriter contentWriter,IPfifToPlainXmlMapping mapping) {
 		
 		super(mapping.getSourceFile(),identityProvider,idGenerator,
 				syndicationFormat,defaultFeed,contentReader,contentWriter);
@@ -78,7 +78,26 @@ public class PFIFAdapter extends FeedAdapter implements ISyncAware{
 		this.setDirty();
 	}
 
+	
 	private Item getItem(Item item){
+		if(this.getFeed().getItems().size() == 0){
+			return null;
+		}
+		IContent content = item.getContent();
+		String id  = getId(content);
+		for(int i = 0;i<this.getFeed().getItems().size(); i ++){
+			Item itemFromFeed = this.getFeed().getItems().get(i);
+			String idLoaded  = getId(itemFromFeed.getContent());
+			if(idLoaded.equals(id)){
+				return itemFromFeed;
+			} 
+		}
+		return null;
+	}
+	
+	
+	@Deprecated
+	private Item getItemByRDF(Item item){
 		if(this.getFeed().getItems().size() == 0){
 			return null;
 		}
@@ -243,7 +262,6 @@ public class PFIFAdapter extends FeedAdapter implements ISyncAware{
 	@Override
 	public void beginSync() {
 		// TODO Auto-generated method stub
-		
 	}
 
 
@@ -252,39 +270,58 @@ public class PFIFAdapter extends FeedAdapter implements ISyncAware{
 		if(this.dirty){
 			this.flush();
 			this.dirty = false;
-		}		
-		
+		}	
+		//do clean up operation if necessary.
+		cleanUp();
+	}
+	
+	private void cleanUp(){
+		if(this.mapping != null && this.mapping.getPfifModels() != null ){
+			File feedSourceFile = new File(getFeedSourceFile());
+			for(PFIFModel model :this.mapping.getPfifModels()){
+				if(!isEqual(model.getFile(),feedSourceFile)){
+					model.getFile().delete();
+				}
+			}
+		}
 	}
 	
 	
-	public void flush() {
+	private boolean isEqual(File source,File target){
+		if(!source.exists() || !target.exists() ){
+			Guard.throwsException("INVALID_FILE");
+		}
+		return source.getName().equals(target.getName()) && 
+				source.getParent().equals(target.getParent());
+	}
+	
+	private String getFeedSourceFile(){
 		String sourceFile = "";
 		if(this.mapping == null){
 			sourceFile = this.getFile().getAbsolutePath();
 		} else {
 			sourceFile = this.mapping.getPfifFeedSourceFile();
+		}
+		return sourceFile;
+	}
+	
+	public void flush() {
+		//adding items which where not participated in sync session.
+		if(this.mapping != null){
 			List<Item> nonParticipantItems = this.mapping.getNonParticipantItems();
 			if(nonParticipantItems != null){
 				this.getFeed().addItems(nonParticipantItems);	
 			}
-		}
+		} 
 		
 		try {
-			XMLWriter writer = new XMLWriter(new FileWriter(sourceFile), OutputFormat.createPrettyPrint());
+			XMLWriter writer = new XMLWriter(new FileWriter(getFeedSourceFile()), OutputFormat.createPrettyPrint());
 			this.getFeedWriter().write(writer, this.getFeed());
 		}  catch (Exception e) {
 			throw new MeshException(e);
 		} 
-		
-		//removing old temp file 
-		if(this.mapping != null && this.mapping.getPfifModels() != null ){
-			for(PFIFModel model :this.mapping.getPfifModels()){
-				if(!model.getFile().getAbsolutePath().equals(sourceFile)){
-					model.getFile().delete();
-				}
-			}
-		}
 	 }
+	
 	public void setDirty(){
 		this.dirty = true;
 	}

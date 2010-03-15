@@ -1,4 +1,4 @@
-package org.mesh4j.sync.adapters.feed.pfif.mapping;
+package org.mesh4j.sync.adapters.feed.pfif.model;
 
 import java.io.File;
 

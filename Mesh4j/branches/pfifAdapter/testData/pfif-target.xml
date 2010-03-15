@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:sx="http://feedsync.org/2007/feedsync" xmlns:pfif="http://zesty.ca/pfif/1.2">
+  <id>http://haiticrisis.appspot.com/feeds/person</id>
+  <title>haiticrisis.appspot.com</title>
+  <link href="http://haiticrisis.appspot.com/feeds/person"/>
+  <updated>2010-03-08T07:53:39Z</updated>
+  <entry>
+    <id>urn:uuid:a32ec3e1-26ba-4ac8-9461-aefae7699697</id>
+    <updated>2010-03-08T07:51:21Z</updated>
+    <title>merline valbrun</title>
+    <summary>Id: a32ec3e1-26ba-4ac8-9461-aefae7699697 Version: 1954086760</summary>
+    <pfif:person>
+      <pfif:first_name>merline fakibaz pura</pfif:first_name>
+      <pfif:person_record_id>google.com/person.140009</pfif:person_record_id>
+      <pfif:source_url>http://haiticrisis.appspot.com/view?id=google.com%2Fperson.140003</pfif:source_url>
+      <pfif:source_date>2010-02-08T09:18:18Z</pfif:source_date>
+      <pfif:last_name>valbrun</pfif:last_name>
+      <pfif:entry_date>2010-02-08T09:18:18Z</pfif:entry_date>
+      <pfif:source_name>google.com</pfif:source_name>
+      <pfif:author_name>rafiq</pfif:author_name>
+    </pfif:person>
+    <author>
+      <name>admin</name>
+    </author>
+    <sx:sync id="a32ec3e1-26ba-4ac8-9461-aefae7699697" updates="2" deleted="false" noconflicts="false">
+      <sx:history sequence="2" when="2010-03-08T07:51:21Z" by="admin"/>
+      <sx:history sequence="1" when="2010-03-07T12:07:47Z" by="admin"/>
+    </sx:sync>
+  </entry>
+  <entry>
+    <id>urn:uuid:834456f8-3f37-4df7-b5a5-6498c412f891</id>
+    <updated>2010-03-08T07:53:39Z</updated>
+    <title>merline valbrun</title>
+    <summary>Id: 834456f8-3f37-4df7-b5a5-6498c412f891 Version: 1639767274</summary>
+    <pfif:person>
+      <pfif:first_name>merline some time</pfif:first_name>
+      <pfif:person_record_id>google.com/person.140003</pfif:person_record_id>
+      <pfif:source_url>http://haiticrisis.appspot.com/view?id=google.com%2Fperson.140003</pfif:source_url>
+      <pfif:source_date>2010-02-08T09:18:18Z</pfif:source_date>
+      <pfif:last_name>valbrun</pfif:last_name>
+      <pfif:entry_date>2010-02-08T09:18:18Z</pfif:entry_date>
+      <pfif:source_name>google.com</pfif:source_name>
+      <pfif:author_name>pollas mia</pfif:author_name>
+    </pfif:person>
+    <author>
+      <name>admin</name>
+    </author>
+    <sx:sync id="834456f8-3f37-4df7-b5a5-6498c412f891" updates="3" deleted="false" noconflicts="false">
+      <sx:history sequence="3" when="2010-03-08T07:53:39Z" by="admin"/>
+      <sx:history sequence="2" when="2010-03-07T12:40:16Z" by="admin"/>
+      <sx:history sequence="1" when="2010-03-07T12:05:28Z" by="admin"/>
+    </sx:sync>
+  </entry>
+  <entry>
+    <id>urn:uuid:0f5dd572-bae4-4180-ba3a-0b00bf4a86a5</id>
+    <updated>2010-03-07T12:05:28Z</updated>
+    <title>merline valbrun</title>
+    <summary>834456f8-3f37-4df7-b5a5-6498c412f891</summary>
+    <pfif:note> 
+      <pfif:note_record_id>google.com/note.141003</pfif:note_record_id>  
+      <pfif:person_record_id>google.com/person.140003</pfif:person_record_id>  
+      <pfif:entry_date>2010-02-08T09:21:31Z</pfif:entry_date>  
+      <pfif:author_name>pollas</pfif:author_name>  
+      <pfif:source_date>2010-02-08T09:21:31Z</pfif:source_date>  
+      <pfif:status>information_sought</pfif:status>  
+      <pfif:text>need to know if she steel a life</pfif:text> 
+    </pfif:note>
+    <author>
+      <name>admin</name>
+    </author>
+    <sx:sync id="0f5dd572-bae4-4180-ba3a-0b00bf4a86a5" updates="1" deleted="false" noconflicts="false">
+      <sx:history sequence="1" when="2010-03-07T12:05:28Z" by="admin"/>
+    </sx:sync>
+  </entry>
+  <entry>
+    <id>urn:uuid:c7a37a2a-8269-4ac0-8281-009ee04c8d1b</id>
+    <updated>2010-03-07T12:05:28Z</updated>
+    <title>merline valbrun</title>
+    <summary>834456f8-3f37-4df7-b5a5-6498c412f891</summary>
+    <pfif:note> 
+      <pfif:note_record_id>google.com/note.85014</pfif:note_record_id>  
+      <pfif:person_record_id>google.com/person.140003</pfif:person_record_id>  
+      <pfif:entry_date>2010-02-08T09:24:05Z</pfif:entry_date>  
+      <pfif:author_name>pollas</pfif:author_name>  
+      <pfif:source_date>2010-02-08T09:24:05Z</pfif:source_date>  
+      <pfif:text>si tu es encore vivant je remercirai énormément Dieu de m'avoir accordé ce faveur. Je ne peux t'oublier.</pfif:text> 
+    </pfif:note>
+    <author>
+      <name>admin</name>
+    </author>
+    <sx:sync id="c7a37a2a-8269-4ac0-8281-009ee04c8d1b" updates="1" deleted="false" noconflicts="false">
+      <sx:history sequence="1" when="2010-03-07T12:05:28Z" by="admin"/>
+    </sx:sync>
+  </entry>
+</feed>

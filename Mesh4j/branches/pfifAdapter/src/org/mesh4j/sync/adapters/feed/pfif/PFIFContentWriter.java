@@ -10,7 +10,7 @@ import org.mesh4j.sync.adapters.feed.IContentWriter;
 import org.mesh4j.sync.adapters.feed.INamespace;
 import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.adapters.feed.XMLContent;
-import org.mesh4j.sync.adapters.feed.pfif.mapping.IPFIFToRDFMapping;
+import org.mesh4j.sync.adapters.feed.pfif.mapping.IPfifToPlainXmlMapping;
 import org.mesh4j.sync.adapters.feed.pfif.schema.PFIFSchema;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.payload.mappings.IMapping;
@@ -22,10 +22,10 @@ public class PFIFContentWriter implements IContentWriter,INamespace {
 	private IMapping mapping;
 	private boolean mustWriteSync;
 	private boolean encapsulateContentInCDATA;
-	private IPFIFToRDFMapping pfifMapper ;
+	private IPfifToPlainXmlMapping pfifMapper ;
 	
 	
-	public PFIFContentWriter(IMapping mapping,IPFIFToRDFMapping pfifMapper,
+	public PFIFContentWriter(IMapping mapping,IPfifToPlainXmlMapping pfifMapper,
 			boolean mustWriteSync,
 			boolean encapsulateContentInCDATA){
 		this.mapping = mapping;
@@ -85,7 +85,7 @@ public class PFIFContentWriter implements IContentWriter,INamespace {
 				syndicationFormat.addFeedItemTitleElement(itemElement, title == null || title.length() == 0 ? defaultTitle : title);
 				syndicationFormat.addFeedItemDescriptionElement(itemElement, desc == null || desc.length() == 0 ? defaultDescription : desc);
 				
-				Element pfifElement = pfifMapper.convertRdfToPfifElement(item.getContent().getPayload().createCopy());
+				Element pfifElement = pfifMapper.convertXMLToPfif(item.getContent().getPayload().createCopy());
 				Element rootPayloadElement = null;
 				if(!ISyndicationFormat.ELEMENT_PAYLOAD.equals(pfifElement.getName())){
 					rootPayloadElement = DocumentHelper.createElement("payload");
@@ -143,7 +143,7 @@ public class PFIFContentWriter implements IContentWriter,INamespace {
 		
 		Element pfifElement = null;
 		if(RDFSchema.isRDF(xmlContent.getPayload())){
-			pfifElement = pfifMapper.convertRdfToPfifElement(xmlContent.getPayload());
+			pfifElement = pfifMapper.convertXMLToPfif(xmlContent.getPayload());
 		} else {
 			pfifElement = xmlContent.getPayload();
 		}

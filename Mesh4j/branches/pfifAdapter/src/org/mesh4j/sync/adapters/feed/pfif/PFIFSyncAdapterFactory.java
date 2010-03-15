@@ -7,8 +7,9 @@ import org.mesh4j.sync.adapters.ISyncAdapterFactory;
 import org.mesh4j.sync.adapters.feed.Feed;
 import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.adapters.feed.atom.AtomSyndicationFormat;
-import org.mesh4j.sync.adapters.feed.pfif.mapping.IPFIFToRDFMapping;
-import org.mesh4j.sync.adapters.feed.pfif.mapping.PFIFToRDFMapping;
+import org.mesh4j.sync.adapters.feed.pfif.mapping.IPfifToPlainXmlMapping;
+import org.mesh4j.sync.adapters.feed.pfif.mapping.PfifToPlainXmlMapping;
+import org.mesh4j.sync.adapters.feed.pfif.mapping.PfifToRdfMapping;
 import org.mesh4j.sync.adapters.feed.pfif.schema.PFIFSchema;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.id.generator.IdGenerator;
@@ -19,27 +20,58 @@ import org.mesh4j.sync.validations.Guard;
 
 public class PFIFSyncAdapterFactory implements ISyncAdapterFactory{
 
-	public final static String SOURCE_TYPE = RssSyndicationFormat.INSTANCE.getName();
+	public final static String SOURCE_TYPE_ATOM = AtomSyndicationFormat.INSTANCE.getName();
+	public final static String SOURCE_TYPE_RSS = RssSyndicationFormat.INSTANCE.getName();
 	
 	
 	@Override
 	public boolean acceptsSource(String sourceId, String sourceDefinition) {
-		// TODO Auto-generated method stub
-		return false;
+		return sourceDefinition != null && 
+		(sourceDefinition.startsWith(SOURCE_TYPE_ATOM) ||
+				sourceDefinition.startsWith(SOURCE_TYPE_RSS))&&
+		sourceDefinition.toUpperCase().endsWith(".XML");
 	}
 
 	@Override
 	public ISyncAdapter createSyncAdapter(String sourceAlias,
 			String sourceDefinition, IIdentityProvider identityProvider)
 			throws Exception {
-		// TODO Auto-generated method stub
-		//TODO (raju)
+		String[] elements = sourceDefinition.substring(sourceDefinition.indexOf(":"), 
+				sourceDefinition.length()).split("@");
+		String pfifFileName = elements[0];
+		String entityName = elements[1];
+		String rdfUrl = elements[2];
+		ISyndicationFormat syndicationFormat = getSyndicationFormat(elements[3]);
+		
+		return createSyncAdapter(pfifFileName, entityName, rdfUrl, "", identityProvider, syndicationFormat);
+	}
+	
+	private static ISyndicationFormat getSyndicationFormat(String name){
+		if(name.equals(SOURCE_TYPE_ATOM)){
+			return AtomSyndicationFormat.INSTANCE;
+		} else if(name.equals(SOURCE_TYPE_RSS)){
+			return RssSyndicationFormat.INSTANCE;
+		}
 		return null;
 	}
+	
+	public static String createAtomSourceDefinition(String pfifFile, String entityName, String idColumn,String rdfUrl){
+		File file = new File(pfifFile);
+		String sourceDefinition = SOURCE_TYPE_ATOM + ":" + file.getName() + "@" + entityName + "@" + rdfUrl;
+		return sourceDefinition;
+	}
+	
+	public static String createRssSourceDefinition(String pfifFile, String entityName, String idColumn,String rdfUrl){
+		File file = new File(pfifFile);
+		String sourceDefinition = SOURCE_TYPE_RSS + ":" + file.getName() + "@" + entityName +"@" + rdfUrl;
+		return sourceDefinition;
+	}
+	
+	
 	public static ISyncAdapter createSyncAdapter(String pfifFile, IIdentityProvider identityProvider, 
 			ISyndicationFormat syndicationFormat,IRDFSchema rdfSchema){
 		
-		IPFIFToRDFMapping mappingSource = new PFIFToRDFMapping(pfifFile,syndicationFormat,rdfSchema, new PFIFSchema());
+		IPfifToPlainXmlMapping mappingSource = new PfifToRdfMapping(pfifFile,syndicationFormat,rdfSchema, new PFIFSchema());
 		Feed feedSource = new Feed("PFIF " +  rdfSchema.getOntologyClassName() +" data", 
 				"mesh4x sync", rdfSchema.getOntologyBaseClassUri());
 		
@@ -52,16 +84,27 @@ public class PFIFSyncAdapterFactory implements ISyncAdapterFactory{
 		
 		return adapter;
 	}
+	
 	@Override
 	public String getSourceType() {
-		return SOURCE_TYPE;
+		return SOURCE_TYPE_ATOM;
 	}
 	
 	
 	
 	
-	
-	public static PFIFAdapter createPfIfSyncAdapter(String fileName, String entityName ,String rdfUrl,
+	/**
+	 * this method assumes provided file is exist as because it extract
+	 * schema from the provided source file.
+	 * @param fileName
+	 * @param entityName
+	 * @param rdfUrl
+	 * @param lastUpdateColumn
+	 * @param identityProvider
+	 * @param syndicationFormat
+	 * @return
+	 */
+	public static PFIFAdapter createSyncAdapter(String fileName, String entityName ,String rdfUrl,
 			String lastUpdateColumn,IIdentityProvider identityProvider,
 			ISyndicationFormat syndicationFormat) {
 		
@@ -78,12 +121,12 @@ public class PFIFSyncAdapterFactory implements ISyncAdapterFactory{
 			id = PFIFSchema.PFIF_ENTITY_NOTE_ID_NAME;
 		}
 		
-		IRDFSchema schemaSource = PFIFToRDFMapping.extractRDFSchema(fileName, 
+		IRDFSchema schemaSource = PfifToRdfMapping.extractRDFSchema(fileName, 
 				syndicationFormat, 
 				entityName, new String[]{id}, 
 				lastUpdateColumn, rdfUrl, new PFIFSchema());
 		
-		IPFIFToRDFMapping mappingSource = new PFIFToRDFMapping(fileName,syndicationFormat,schemaSource, new PFIFSchema());
+		IPfifToPlainXmlMapping mappingSource = new PfifToRdfMapping(fileName,syndicationFormat,schemaSource, new PFIFSchema());
 		Feed feedSource = new Feed("PFIF "+ entityName + " data", "mesh4x sync", rdfUrl);
 
 		PFIFContentReader contentReaderSource = new PFIFContentReader(mappingSource);
