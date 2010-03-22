@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
-import org.mesh4j.sync.adapters.feed.pfif.PFIFUtil;
+import org.mesh4j.sync.adapters.feed.pfif.PfifUtil;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.validations.Guard;
 import org.mesh4j.sync.validations.MeshException;
@@ -13,7 +13,7 @@ import org.mesh4j.sync.validations.MeshException;
 public class Pfif  implements IPfif{
 
 	private ISyndicationFormat syndicationFormat = null;
-	private List<PFIFModel> models = null;
+	private List<PfifModel> models = null;
 	private String pifiFeedSourceFile;
 	private String entityName  ;
 	
@@ -32,13 +32,13 @@ public class Pfif  implements IPfif{
 			return ;
 		}
 		try {
-			models = PFIFUtil.getOrCreatePersonAndNoteFileIfNecessary(sourceFile, syndicationFormat);
+			models = PfifUtil.getOrCreatePersonAndNoteFileIfNecessary(sourceFile, syndicationFormat);
 		} catch (IOException e) {
 			throw new MeshException(e);
 		}
 	}
 	
-	public List<PFIFModel> getPfifModels(){
+	public List<PfifModel> getPfifModels(){
 		return models;
 	}
 	
@@ -50,7 +50,7 @@ public class Pfif  implements IPfif{
 		if(models == null || models.isEmpty()){
 			return this.pifiFeedSourceFile;
 		}
-		for(PFIFModel model : models){
+		for(PfifModel model : models){
 			if(model.getEntityName().equals(entityName)){
 				return  model.getFile().getAbsolutePath();
 			}
@@ -60,7 +60,7 @@ public class Pfif  implements IPfif{
 	
 	public List<Item> getNonParticipantItems(){
 		if(models != null && !models.isEmpty()){
-			for(PFIFModel model :this.models){
+			for(PfifModel model :this.models){
 				if(!model.getEntityName().equals(entityName)){
 					return model.getFeed().getItems();
 				}

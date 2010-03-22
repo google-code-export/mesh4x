@@ -15,11 +15,11 @@ import org.dom4j.Element;
 import org.dom4j.QName;
 import org.mesh4j.sync.adapters.feed.Feed;
 import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
-import org.mesh4j.sync.adapters.feed.pfif.PFIFUtil;
-import org.mesh4j.sync.adapters.feed.pfif.model.PFIFModel;
+import org.mesh4j.sync.adapters.feed.pfif.PfifUtil;
+import org.mesh4j.sync.adapters.feed.pfif.model.PfifModel;
 import org.mesh4j.sync.adapters.feed.pfif.schema.FIELD_TYPE;
-import org.mesh4j.sync.adapters.feed.pfif.schema.IPFIFSchema;
-import org.mesh4j.sync.adapters.feed.pfif.schema.PFIFSchema;
+import org.mesh4j.sync.adapters.feed.pfif.schema.IPfifSchema;
+import org.mesh4j.sync.adapters.feed.pfif.schema.PfifSchema;
 import org.mesh4j.sync.adapters.feed.pfif.schema.PFIF_ENTITY;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.payload.schema.rdf.AbstractRDFIdentifiableMapping;
@@ -32,77 +32,24 @@ import org.mesh4j.sync.validations.MeshException;
 
 public class PfifToRdfMapping extends AbstractRDFIdentifiableMapping implements IPfifToPlainXmlMapping{
 
-	private List<PFIFModel> models = null;
-	private IPFIFSchema pfifSchema;
-	private String pifiFeedSourceFile;
+	private IPfifSchema pfifSchema;
 	private static final String  UTC_DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 	
-	private PfifToRdfMapping(IRDFSchema rdfSchema,IPFIFSchema pfifSchema) {
-		super(rdfSchema);
-		this.pfifSchema = pfifSchema;
-	}
 	
-	//TODO (raju) add syndicationformat into IPFIFSchema,because IPFIFSchema should know what feed(rss/atom)
+	//TODO (raju) add syndicationformat into IPfifSchema,because IPfifSchema should know what feed(rss/atom)
 	//it represents
 	public PfifToRdfMapping(String pfifFile,ISyndicationFormat syndicationFormat,
-			IRDFSchema rdfSchema,IPFIFSchema pfifSchema) {
+			IRDFSchema rdfSchema,IPfifSchema pfifSchema) {
 		super(rdfSchema);
 	
 		Guard.argumentNotNullOrEmptyString(pfifFile, "pfifFile");
-		
 		this.pfifSchema = pfifSchema;
-		this.pifiFeedSourceFile = pfifFile;
-		
-		File pfifsFile = new File(pfifFile);
-		if(!pfifsFile.exists() || 
-				pfifsFile.length() == 0){
-			return ;
-		}
-		try {
-			models = PFIFUtil.getOrCreatePersonAndNoteFileIfNecessary(pfifFile, syndicationFormat);
-		} catch (IOException e) {
-			throw new MeshException(e);
-		}
-	}
-	
-	public List<PFIFModel> getPfifModels(){
-		return models;
-	}
-	
-	public String getPfifFeedSourceFile(){
-		return pifiFeedSourceFile;
-	}
-	public String getSourceFile(){
-		String entityName = this.getSchema().getOntologyClassName();
-		if(models == null || models.isEmpty()){
-			return this.pifiFeedSourceFile;
-		}
-		for(PFIFModel model : models){
-			if(model.getEntityName().equals(entityName)){
-				return  model.getFile().getAbsolutePath();
-			}
-		}
-		return null;
-	}
-	
-	public List<Item> getNonParticipantItems(){
-		String entityName = this.getSchema().getOntologyClassName();
-		if(models != null && !models.isEmpty()){
-			for(PFIFModel model :this.models){
-				if(!model.getEntityName().equals(entityName)){
-					return model.getFeed().getItems();
-				}
-			}	
-		}
-		return null;
 	}
 	
 	
 	public static RDFSchema  extractRDFSchema(String fileName,ISyndicationFormat syndicationFormat,String entityName,
 							String[] identifiablePropertyNames,String lastUpdateColumnName, 
-							String rdfURL,IPFIFSchema pfifSchema) {
-		
-		
+							String rdfURL,IPfifSchema pfifSchema) {
 		
 		Guard.argumentNotNullOrEmptyString(fileName, "fileName");
 		Guard.argumentNotNull(syndicationFormat, "syndicationFormat");
@@ -111,16 +58,16 @@ public class PfifToRdfMapping extends AbstractRDFIdentifiableMapping implements 
 		Guard.argumentNotNullOrEmptyString(rdfURL, "rdfURL");
 		Guard.argumentNotNull(pfifSchema, "pfifSchema");
 		
-		List<PFIFModel> models = null;
+		List<PfifModel> models = null;
 		try {
-			models = PFIFUtil.getOrCreatePersonAndNoteFileIfNecessary(fileName, syndicationFormat);
+			models = PfifUtil.getOrCreatePersonAndNoteFileIfNecessary(fileName, syndicationFormat);
 		} catch (IOException e) {
 			throw new MeshException(e);
 		}
 		
 		Feed feed = null;;
 		
-		for(PFIFModel model : models){
+		for(PfifModel model : models){
 			if(model.getEntityName().equals(entityName)){
 				feed = model.getFeed();
 				break;
@@ -153,9 +100,7 @@ public class PfifToRdfMapping extends AbstractRDFIdentifiableMapping implements 
 	}
 
 	
-	
-	
-	private static RDFSchema getSchema(Element element,String entityName,String rdfURL,IPFIFSchema pfifSchema){
+	private static RDFSchema getSchema(Element element,String entityName,String rdfURL,IPfifSchema pfifSchema){
 		if(entityName.equals("person") && 
 				isPersonElement(element)){
 			
@@ -169,14 +114,14 @@ public class PfifToRdfMapping extends AbstractRDFIdentifiableMapping implements 
 	
 
 	private static boolean isPersonElement(Element element){
-		return element.getName().equals(PFIFSchema.QNAME_PERSON.getName());
+		return element.getName().equals(PfifSchema.QNAME_PERSON.getName());
 	}
 	
 	private static boolean isNoteElement(Element element){
-		return element.getName().equals(PFIFSchema.QNAME_NOTE.getName());
+		return element.getName().equals(PfifSchema.QNAME_NOTE.getName());
 	}
 	
-	private static RDFSchema extractRDF(Element element,String entityName,String entityId,String rdfURL,IPFIFSchema pfifSchema){
+	private static RDFSchema extractRDF(Element element,String entityName,String entityId,String rdfURL,IPfifSchema pfifSchema){
 		
 		String propertyName = "";
 		RDFSchema rdfSchema = new RDFSchema(entityName, rdfURL +"/"+entityName+"#", entityName);
@@ -258,9 +203,9 @@ public class PfifToRdfMapping extends AbstractRDFIdentifiableMapping implements 
 		
 		Element element = null;
 		if(this.rdfSchema.getOntologyClassName().equals("person")){
-			element = DocumentHelper.createElement(PFIFSchema.QNAME_PERSON);
+			element = DocumentHelper.createElement(PfifSchema.QNAME_PERSON);
 		} else  if(this.rdfSchema.getOntologyClassName().equals("note")){
-			element = DocumentHelper.createElement(PFIFSchema.QNAME_NOTE);
+			element = DocumentHelper.createElement(PfifSchema.QNAME_NOTE);
 		}
 		
 		RDFInstance rdfInstance = rdfSchema.createNewInstanceFromRDFXML(rdfPayload);
@@ -284,7 +229,7 @@ public class PfifToRdfMapping extends AbstractRDFIdentifiableMapping implements 
 	
 	 private Element createElementByName(String name,Object value){
 			
-			QName qName = DocumentHelper.createQName(name, DocumentHelper.createNamespace("pfif", PFIFSchema.PFIF_ULR));
+			QName qName = DocumentHelper.createQName(name, DocumentHelper.createNamespace("pfif", PfifSchema.PFIF_ULR));
 			Element field = null;
 			
 			if(pfifSchema.getAllFiled().contains(qName)){

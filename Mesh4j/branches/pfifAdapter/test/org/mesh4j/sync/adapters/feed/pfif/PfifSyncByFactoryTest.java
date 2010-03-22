@@ -1,0 +1,98 @@
+package org.mesh4j.sync.adapters.feed.pfif;
+
+import java.util.List;
+
+import junit.framework.Assert;
+
+import org.junit.Test;
+import org.mesh4j.sync.ISyncAdapter;
+import org.mesh4j.sync.SyncEngine;
+import org.mesh4j.sync.adapters.feed.atom.AtomSyndicationFormat;
+import org.mesh4j.sync.adapters.feed.pfif.schema.PfifSchema;
+import org.mesh4j.sync.id.generator.IdGenerator;
+import org.mesh4j.sync.model.Item;
+import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
+import org.mesh4j.sync.security.NullIdentityProvider;
+
+public class PfifSyncByFactoryTest {
+
+	@Test
+	public void shouldSyncTwoPfifBySyncAdatperFactory() throws Exception{
+		
+		String entityName = "person";
+		String sourceFile = getTestDir() + "pfif-srouce.xml";
+		String targetFile = getTestDir() + "pfif-target.xml";
+		
+		PfifSyncAdapterFactory sourcAdapter = new PfifSyncAdapterFactory();
+		String sourceDefinition = sourcAdapter.createAtomSourceDefinition(sourceFile, entityName, 
+				PfifSchema.PFIF_ENTITY_PERSON_ID_NAME);
+		
+		ISyncAdapter sourceAdapter = sourcAdapter.createSyncAdapter("person", sourceDefinition, NullIdentityProvider.INSTANCE);
+		
+		String targetDefinition = sourcAdapter.createAtomSourceDefinition(targetFile, entityName, 
+				PfifSchema.PFIF_ENTITY_PERSON_ID_NAME);
+		
+		ISyncAdapter targetAdapter = sourcAdapter.createSyncAdapter("person", targetDefinition, NullIdentityProvider.INSTANCE);
+		
+		SyncEngine engine = new SyncEngine(sourceAdapter,targetAdapter);
+		List<Item> conflicts = engine.synchronize();
+		Assert.assertEquals(0, conflicts.size());
+		
+	}
+	
+	@Test
+	public void shouldSyncTwoPfifByRdfSyncAdatperFactory() throws Exception{
+		
+		String entityName = "person";
+		String sourceFile = getTestDir() + "pfif-srouce.xml";
+		String targetFile = getTestDir() + "pfif-target.xml";
+		String rdfUrl = "http://localhost:8080/mesh4x/feed";
+		
+		
+		ISyncAdapter sourceAdapter = PfifRdfSyncAdapterFactory.createSyncAdapter(sourceFile, entityName, rdfUrl, 
+				null, NullIdentityProvider.INSTANCE, AtomSyndicationFormat.INSTANCE);
+		
+		IRDFSchema schema = (IRDFSchema)((PfifAdapter)sourceAdapter).getSchema();
+		
+		ISyncAdapter targetAdapter = PfifRdfSyncAdapterFactory.createSyncAdapter(targetFile,NullIdentityProvider.INSTANCE, 
+				AtomSyndicationFormat.INSTANCE,
+				schema);
+		
+		SyncEngine engine = new SyncEngine(sourceAdapter,targetAdapter);
+		List<Item> conflicts = engine.synchronize();
+		Assert.assertEquals(0, conflicts.size());
+		
+	}
+	
+	
+	@Test
+	public void shouldSyncTwoPfiByRdfSyncAdapterFacytoryfAndCreateTarget(){
+		String rdfUrl = "http://localhost:8080/mesh4x/feeds";
+		String sourceFile = getTestDir() + "pfif-srouce.xml";
+		String targetFile = getTestDir() + IdGenerator.INSTANCE.newID() + ".xml";
+		String entityName = "person";
+		
+		ISyncAdapter sourceAdapter = PfifRdfSyncAdapterFactory.createSyncAdapter(sourceFile, entityName, rdfUrl, 
+				null, NullIdentityProvider.INSTANCE, AtomSyndicationFormat.INSTANCE);
+		
+		IRDFSchema rdfSchema = (IRDFSchema)((PfifAdapter)sourceAdapter).getSchema();
+		
+		ISyncAdapter targetAdapter = PfifRdfSyncAdapterFactory.createSyncAdapter(targetFile,NullIdentityProvider.INSTANCE, 
+				AtomSyndicationFormat.INSTANCE,
+				rdfSchema);
+		
+		SyncEngine engine = new SyncEngine(sourceAdapter,targetAdapter);
+		List<Item> conflicts = engine.synchronize();
+		Assert.assertEquals(0, conflicts.size());
+		
+	}
+	
+	
+	
+	public static String getTestDir(){
+		return "testData/";
+	}
+	
+	 	
+	
+}

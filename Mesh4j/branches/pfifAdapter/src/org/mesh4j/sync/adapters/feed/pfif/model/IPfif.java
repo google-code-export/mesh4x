@@ -11,5 +11,5 @@ public interface IPfif {
 	public String getSourceFile();
 	public List<Item> getNonParticipantItems();
 	public ISyndicationFormat getSyndicationFormat();
-	public List<PFIFModel> getPfifModels();
+	public List<PfifModel> getPfifModels();
 }
