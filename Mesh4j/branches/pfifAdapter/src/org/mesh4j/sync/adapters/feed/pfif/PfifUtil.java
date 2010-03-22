@@ -173,15 +173,27 @@ public class PfifUtil {
 		}
 		
 		File personFeedFile = null;
-		
+		String path = "";
 		if(!personFeed.getItems().isEmpty()){
-			personFeedFile = new File(file.getParent() + getFileName(file) + "_person-pfif.xml");
+			String parent = file.getParent();
+			if(!parent.endsWith(File.separator)){
+				path = parent + File.separator;
+			} else {
+				path = parent;
+			}
+			personFeedFile = new File(path + getFileName(file) + "_person-pfif.xml");
 			writeFeedInFile(personFeed,personFeedFile,syndicationFormat);
 		}
 		
 		File noteFeedFile = null;
 		if(!noteFeed.getItems().isEmpty()){
-			noteFeedFile = new File(file.getParent() +getFileName(file)  + "_note-pfif.xml");
+			String parent = file.getParent();
+			if(!parent.endsWith(File.separator)){
+				path = parent + File.separator;
+			}else {
+				path = parent;
+			}
+			noteFeedFile = new File(path +getFileName(file)  + "_note-pfif.xml");
 			writeFeedInFile(noteFeed,noteFeedFile,syndicationFormat);
 		}
 		
