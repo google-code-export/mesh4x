@@ -7,6 +7,7 @@ import org.mesh4j.sync.model.Item;
 
 public interface IPfif {
 
+	public String getEntityName();
 	public String getPfifFeedSourceFile();
 	public String getSourceFile();
 	public List<Item> getNonParticipantItems();

@@ -8,7 +8,6 @@ import junit.framework.Assert;
 import org.junit.Test;
 import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.adapters.feed.Feed;
-import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.adapters.feed.atom.AtomSyndicationFormat;
 import org.mesh4j.sync.adapters.feed.pfif.mapping.IPfifToPlainXmlMapping;
 import org.mesh4j.sync.adapters.feed.pfif.mapping.PfifToPlainXmlMapping;

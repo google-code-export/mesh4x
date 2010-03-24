@@ -3,6 +3,7 @@ package org.mesh4j.sync.adapters.feed.pfif.model;
 import java.io.File;
 
 import org.mesh4j.sync.adapters.feed.Feed;
+import org.mesh4j.sync.adapters.feed.pfif.schema.PFIF_ENTITY;
 
 public class PfifModel {
 	private String entityName;
@@ -10,9 +11,9 @@ public class PfifModel {
 	private File file;
 	
 	
-	public PfifModel(String entityName, Feed feed, File file) {
+	public PfifModel(PFIF_ENTITY entity, Feed feed, File file) {
 		super();
-		this.entityName = entityName;
+		this.entityName = entity.toString();
 		this.feed = feed;
 		this.file = file;
 	}

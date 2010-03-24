@@ -4,26 +4,28 @@
   <id>http://haiticrisis.appspot.com/feeds/person</id>
   <title>haiticrisis.appspot.com</title>
   <link href="http://haiticrisis.appspot.com/feeds/person"/>
-  <updated>2010-03-19T12:12:11Z</updated>
+  <updated>2010-03-20T05:46:46Z</updated>
   <entry>
     <id>urn:uuid:b75406eb-2da7-42b7-ac4d-a1d496767362</id>
-    <updated>2010-03-19T12:12:11Z</updated>
+    <updated>2010-03-20T05:46:46Z</updated>
     <title>merline valbrun</title>
-    <summary>Id: b75406eb-2da7-42b7-ac4d-a1d496767362 Version: 927168192</summary>
-    <pfif:person> 
-      <pfif:person_record_id>google.com/person.140003</pfif:person_record_id>  
-      <pfif:first_name>merline</pfif:first_name>  
-      <pfif:source_url>http://haiticrisis.appspot.com/view?id=google.com%2Fperson.140003</pfif:source_url>  
-      <pfif:source_date>2010-02-08T09:18:18Z</pfif:source_date>  
-      <pfif:last_name>valbrun</pfif:last_name>  
-      <pfif:source_name>google.com</pfif:source_name>  
-      <pfif:entry_date>2010-02-08T09:18:18Z</pfif:entry_date>  
-      <pfif:author_name>pollas</pfif:author_name> 
+    <summary>Id: b75406eb-2da7-42b7-ac4d-a1d496767362 Version: -2169428</summary>
+    <pfif:person>
+      <pfif:person_record_id>google.com/person.140003</pfif:person_record_id>
+      <pfif:first_name>merline</pfif:first_name>
+      <pfif:source_url>http://haiticrisis.appspot.com/view?id=google.com%2Fperson.140003</pfif:source_url>
+      <pfif:source_date>2010-02-08T09:18:18Z</pfif:source_date>
+      <pfif:last_name>valbrun</pfif:last_name>
+      <pfif:source_name>google.com</pfif:source_name>
+      <pfif:entry_date>2010-02-08T09:18:18Z</pfif:entry_date>
+      <pfif:author_name>pollas</pfif:author_name>
     </pfif:person>
     <author>
       <name>admin</name>
     </author>
-    <sx:sync id="b75406eb-2da7-42b7-ac4d-a1d496767362" updates="4" deleted="false" noconflicts="false">
+    <sx:sync id="b75406eb-2da7-42b7-ac4d-a1d496767362" updates="6" deleted="false" noconflicts="false">
+      <sx:history sequence="6" when="2010-03-20T05:46:46Z" by="admin"/>
+      <sx:history sequence="5" when="2010-03-20T05:46:39Z" by="admin"/>
       <sx:history sequence="4" when="2010-03-19T12:12:11Z" by="admin"/>
       <sx:history sequence="3" when="2010-03-19T11:57:26Z" by="admin"/>
       <sx:history sequence="2" when="2010-03-19T11:53:34Z" by="admin"/>
@@ -32,23 +34,25 @@
   </entry>
   <entry>
     <id>urn:uuid:9c55c3e5-492f-4f35-bbe7-4b3324214d59</id>
-    <updated>2010-03-19T12:12:11Z</updated>
+    <updated>2010-03-20T05:46:46Z</updated>
     <title>merline valbrun</title>
-    <summary>Id: 9c55c3e5-492f-4f35-bbe7-4b3324214d59 Version: 1127849477</summary>
-    <pfif:person> 
-      <pfif:person_record_id>google.com/person.140009</pfif:person_record_id>  
-      <pfif:first_name>merline is ok but she is tired</pfif:first_name>  
-      <pfif:source_url>http://haiticrisis.appspot.com/view?id=google.com%2Fperson.140003</pfif:source_url>  
-      <pfif:source_date>2010-02-08T09:18:18Z</pfif:source_date>  
-      <pfif:last_name>valbrun</pfif:last_name>  
-      <pfif:source_name>google.com</pfif:source_name>  
-      <pfif:entry_date>2010-02-08T09:18:18Z</pfif:entry_date>  
-      <pfif:author_name>rafiq</pfif:author_name> 
+    <summary>Id: 9c55c3e5-492f-4f35-bbe7-4b3324214d59 Version: 215442361</summary>
+    <pfif:person>
+      <pfif:person_record_id>google.com/person.140009</pfif:person_record_id>
+      <pfif:first_name>merline is ok but she is tired</pfif:first_name>
+      <pfif:source_url>http://haiticrisis.appspot.com/view?id=google.com%2Fperson.140003</pfif:source_url>
+      <pfif:source_date>2010-02-08T09:18:18Z</pfif:source_date>
+      <pfif:last_name>valbrun</pfif:last_name>
+      <pfif:source_name>google.com</pfif:source_name>
+      <pfif:entry_date>2010-02-08T09:18:18Z</pfif:entry_date>
+      <pfif:author_name>rafiq</pfif:author_name>
     </pfif:person>
     <author>
       <name>admin</name>
     </author>
-    <sx:sync id="9c55c3e5-492f-4f35-bbe7-4b3324214d59" updates="6" deleted="false" noconflicts="false">
+    <sx:sync id="9c55c3e5-492f-4f35-bbe7-4b3324214d59" updates="8" deleted="false" noconflicts="false">
+      <sx:history sequence="8" when="2010-03-20T05:46:46Z" by="admin"/>
+      <sx:history sequence="7" when="2010-03-20T05:46:39Z" by="admin"/>
       <sx:history sequence="6" when="2010-03-19T12:12:11Z" by="admin"/>
       <sx:history sequence="5" when="2010-03-19T11:57:26Z" by="admin"/>
       <sx:history sequence="4" when="2010-03-19T11:53:59Z" by="admin"/>

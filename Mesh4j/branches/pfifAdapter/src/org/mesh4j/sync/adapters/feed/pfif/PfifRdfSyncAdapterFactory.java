@@ -85,4 +85,6 @@ public class PfifRdfSyncAdapterFactory {
 		return pfifAdapter;
 	}
 	
+	
+	
 }

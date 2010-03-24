@@ -1,5 +1,6 @@
 package org.mesh4j.sync.adapters.feed.pfif;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -7,7 +8,10 @@ import junit.framework.Assert;
 import org.junit.Test;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.SyncEngine;
+import org.mesh4j.sync.adapters.InMemorySyncAdapter;
 import org.mesh4j.sync.adapters.feed.atom.AtomSyndicationFormat;
+import org.mesh4j.sync.adapters.feed.pfif.model.IPfif;
+import org.mesh4j.sync.adapters.feed.pfif.model.Pfif;
 import org.mesh4j.sync.adapters.feed.pfif.schema.PfifSchema;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.Item;
@@ -87,6 +91,34 @@ public class PfifSyncByFactoryTest {
 		
 	}
 	
+	
+	@Test
+	public void shouldSyncMultiFileMode(){
+		
+		String source1 = "c://pfif-srouce1.xml";
+		String source2 = "c://pfif-srouce2.xml";
+		
+		IPfif pfif = new Pfif(source1,"person",AtomSyndicationFormat.INSTANCE);
+		List<IPfif> listSource = new LinkedList<IPfif>();
+		listSource.add(pfif);
+		pfif = new Pfif(source2,"person",AtomSyndicationFormat.INSTANCE);
+		listSource.add(pfif);
+		
+		InMemorySyncAdapter adapterOpaqueSource = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
+		ISyncAdapter adapterSource = PfifSyncAdapterFactory.createSyncAdapterForMultiFiles(listSource, NullIdentityProvider.INSTANCE, adapterOpaqueSource);
+		
+		
+		String target1 = "c://pfif-target1.xml";
+		String target2 = "c://pfif-target2.xml";
+		List<IPfif> listTarget = new LinkedList<IPfif>();
+		pfif = new Pfif(target1,"person",AtomSyndicationFormat.INSTANCE);
+		listTarget.add(pfif);
+		pfif = new Pfif(target2,"person",AtomSyndicationFormat.INSTANCE);
+		listTarget.add(pfif);
+		
+		InMemorySyncAdapter adapterOpaqueTarget = new InMemorySyncAdapter("opaque", NullIdentityProvider.INSTANCE);
+		ISyncAdapter adapterTarget = PfifSyncAdapterFactory.createSyncAdapterForMultiFiles(listTarget, NullIdentityProvider.INSTANCE, adapterOpaqueTarget);
+	}
 	
 	
 	public static String getTestDir(){

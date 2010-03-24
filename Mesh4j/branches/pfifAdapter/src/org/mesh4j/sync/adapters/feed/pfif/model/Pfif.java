@@ -21,6 +21,7 @@ public class Pfif  implements IPfif{
 		
 		Guard.argumentNotNullOrEmptyString(sourceFile, "sourceFile");
 		Guard.argumentNotNull(syndicationFormat, "syndicationFormat");
+		Guard.argumentNotNullOrEmptyString(entityName, "entityName");
 		
 		this.entityName = entityName;
 		this.syndicationFormat = syndicationFormat;
@@ -72,6 +73,11 @@ public class Pfif  implements IPfif{
 	@Override
 	public ISyndicationFormat getSyndicationFormat() {
 		return this.syndicationFormat;
+	}
+
+	@Override
+	public String getEntityName() {
+		return this.entityName;
 	}
 	
 }
