@@ -4,12 +4,15 @@ import java.util.List;
 
 import org.mesh4j.ektoo.model.FeedModel;
 import org.mesh4j.sync.ISyncAdapter;
+import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
+import org.mesh4j.sync.adapters.feed.atom.AtomSyndicationFormat;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 
 
 public class FeedUIController extends AbstractUIController
 {
 	public static final String FILE_NAME_PROPERTY = "FileName";
+	
 	
 	// BUSINESS METHODS
 	public FeedUIController( boolean acceptsCreateDataset) {
@@ -19,6 +22,8 @@ public class FeedUIController extends AbstractUIController
 	public void changeFileName(String fileName) {
 		setModelProperty(FILE_NAME_PROPERTY, fileName);
 	}
+	
+	
 
 	@Override
 	public ISyncAdapter createAdapter() {

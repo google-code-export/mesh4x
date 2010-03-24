@@ -103,6 +103,7 @@ public abstract class AbstractViewController implements PropertyChangeListener{
 								methodName,new Class[] { newValue.getClass() });
 						method.invoke(model, newValue);
 					} catch (Exception e) {
+						e.printStackTrace();
 						LOGGER.error(e.getMessage(), e);
 					} 
 				}
@@ -110,6 +111,7 @@ public abstract class AbstractViewController implements PropertyChangeListener{
 		}
 
 		private boolean isMethodExist(Object obj,String name){
+			
 			for(Method method :obj.getClass().getDeclaredMethods()){
 				if(name.equals(method.getName())){
 					return true;

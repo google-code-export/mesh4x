@@ -137,6 +137,10 @@ public interface ISyncAdapterBuilder {
 	public ISyncAdapter createFeedAdapter(String title, String description,
 			String link, String fileName, ISyndicationFormat syndicationFormat);
 
+	
+	
+	public  ISyncAdapter createPfifSyncAdapter(String fileName, String entityName ,
+			ISyndicationFormat syndicationFormat); 
 
 	public SplitAdapter createRdfBasedGoogleSpreadSheetAdapter(
 			GoogleSpreadSheetInfo spreadSheetInfo, IRDFSchema sourceSchema);
@@ -193,5 +197,8 @@ public interface ISyncAdapterBuilder {
 //	public PropertiesProvider getPropertiesProvider();
 
 	String makeTempFileName(String fileName);
+	
+	ISyncAdapter createPfifSyncAdapter(String pfifFile,
+			ISyndicationFormat syndicationFormat, IRDFSchema schema);
 
 }

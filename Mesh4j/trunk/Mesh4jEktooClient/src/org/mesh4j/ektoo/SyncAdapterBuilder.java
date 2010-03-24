@@ -24,6 +24,8 @@ import org.mesh4j.sync.adapters.feed.FeedAdapter;
 import org.mesh4j.sync.adapters.feed.FeedSyncAdapterFactory;
 import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.adapters.feed.XMLContent;
+import org.mesh4j.sync.adapters.feed.pfif.PfifRdfSyncAdapterFactory;
+import org.mesh4j.sync.adapters.feed.pfif.PfifSyncAdapterFactory;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.adapters.folder.FolderSyncAdapterFactory;
 import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadSheetRDFSyncAdapterFactory;
@@ -385,5 +387,15 @@ public class SyncAdapterBuilder implements ISyncAdapterBuilder {
 		return this.propertyResolvers;
 	}
 
-		
+	@Override
+	public ISyncAdapter createPfifSyncAdapter(String fileName,
+			String entityName, ISyndicationFormat syndicationFormat) {
+		return PfifRdfSyncAdapterFactory.createSyncAdapter(fileName, entityName,getBaseRDFUrl(),null, 
+				getIdentityProvider(), syndicationFormat);
+	}
+
+	@Override
+	public ISyncAdapter createPfifSyncAdapter(String pfifFile,ISyndicationFormat syndicationFormat,IRDFSchema schema){
+		return PfifRdfSyncAdapterFactory.createSyncAdapter(pfifFile, getIdentityProvider(), syndicationFormat, schema);
+	}
 }

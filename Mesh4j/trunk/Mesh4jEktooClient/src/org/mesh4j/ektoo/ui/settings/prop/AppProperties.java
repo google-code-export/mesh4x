@@ -59,6 +59,9 @@ public class AppProperties {
 	public final static String PATH_SOURCE_FOLDER = "path.source.folder";
 	public final static String PATH_TARGET_FOLDER = "path.target.folder";
 	
+	public final static String PATH_TARGET_PFIF = "path.target.pfif";
+	public final static String PATH_SOURCE_PFIF = "path.source.pfif";
+	
 	public final static String PATH_SOURCE_ZIP = "path.source.zip";
 	
 	

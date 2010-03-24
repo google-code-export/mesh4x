@@ -768,7 +768,8 @@ public class EktooFrame extends JFrame implements IErrorListener, ISynchronizeTa
 
 			if (item.equals(SyncItemUI.MS_EXCEL_PANEL)
 					|| item.equals(SyncItemUI.RSS_FILE_PANEL)
-					|| item.equals(SyncItemUI.ATOM_FILE_PANEL)) {
+					|| item.equals(SyncItemUI.ATOM_FILE_PANEL) 
+					|| item.equals(SyncItemUI.PFIF_PANEL)) {
 				getTargetItem().getListType().removeAllItems();
 				getTargetItem().getListType().addItem(SyncItemUI.MS_EXCEL_PANEL);
 				getTargetItem().getListType().addItem(SyncItemUI.MS_ACCESS_PANEL);
@@ -778,6 +779,7 @@ public class EktooFrame extends JFrame implements IErrorListener, ISynchronizeTa
 				getTargetItem().getListType().addItem(SyncItemUI.RSS_FILE_PANEL);
 				getTargetItem().getListType().addItem(SyncItemUI.ATOM_FILE_PANEL);
 				getTargetItem().getListType().addItem(SyncItemUI.ZIP_FILE_PANEL);
+				getTargetItem().getListType().addItem(SyncItemUI.PFIF_PANEL);
 			} else if (item.equals(SyncItemUI.MS_ACCESS_PANEL)) {
 				getTargetItem().getListType().removeAllItems();
 				getTargetItem().getListType().addItem(SyncItemUI.MS_ACCESS_PANEL);

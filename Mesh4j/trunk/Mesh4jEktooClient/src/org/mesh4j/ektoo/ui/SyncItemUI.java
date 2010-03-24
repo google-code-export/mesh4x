@@ -1,8 +1,7 @@
 package org.mesh4j.ektoo.ui;
 
-import static org.mesh4j.ektoo.ui.settings.prop.AppPropertiesProvider.getProperty;
 import static org.mesh4j.ektoo.ui.settings.prop.AppPropertiesProvider.getFilePath;
-
+import static org.mesh4j.ektoo.ui.settings.prop.AppPropertiesProvider.getProperty;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -11,10 +10,10 @@ import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.File;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -35,6 +34,7 @@ import org.mesh4j.ektoo.controller.KmlUIController;
 import org.mesh4j.ektoo.controller.MsAccessUIController;
 import org.mesh4j.ektoo.controller.MsExcelUIController;
 import org.mesh4j.ektoo.controller.MySQLUIController;
+import org.mesh4j.ektoo.controller.PFIFUIController;
 import org.mesh4j.ektoo.controller.ZipFeedUIController;
 import org.mesh4j.ektoo.model.CloudModel;
 import org.mesh4j.ektoo.model.FeedModel;
@@ -44,13 +44,16 @@ import org.mesh4j.ektoo.model.KmlModel;
 import org.mesh4j.ektoo.model.MsAccessModel;
 import org.mesh4j.ektoo.model.MsExcelModel;
 import org.mesh4j.ektoo.model.MySQLAdapterModel;
+import org.mesh4j.ektoo.model.PFIFModel;
 import org.mesh4j.ektoo.model.ZipFeedModel;
 import org.mesh4j.ektoo.ui.component.RoundBorder;
 import org.mesh4j.ektoo.ui.component.messagedialog.MessageDialog;
 import org.mesh4j.ektoo.ui.settings.prop.AppProperties;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
 import org.mesh4j.sync.ISyncAdapter;
+import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
 import org.mesh4j.sync.adapters.feed.atom.AtomSyndicationFormat;
+import org.mesh4j.sync.adapters.feed.pfif.PfifUtil;
 import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 
@@ -69,6 +72,7 @@ public class SyncItemUI extends JPanel implements IUIController {
 	public final static String RSS_FILE_PANEL = "Rss 2.0";
 	public final static String ATOM_FILE_PANEL = "Atom 1.0";
 	public final static String FOLDER_PANEL = "Folder";
+	public final static String PFIF_PANEL = "Pfif 1.2";
 
 	public static final String UI_AS_SOURCE = "source";
 	public static final String UI_AS_TARGET = "target";
@@ -106,6 +110,10 @@ public class SyncItemUI extends JPanel implements IUIController {
 
 	private FeedUI atomUI = null;
 	private FeedUIController atomUIControler = null;
+	
+	
+	private PfifFeedUI pfifUI = null;
+	private PFIFUIController pfifUIControler = null;
 
 	private FolderUI folderUI = null;
 	private FolderUIController folderUIController = null;
@@ -170,6 +178,7 @@ public class SyncItemUI extends JPanel implements IUIController {
 			body.add(getZipRSSFileUI(), ZIP_FILE_PANEL);
 			body.add(getAtomFileUI(), ATOM_FILE_PANEL);
 			body.add(getFolderUI(), FOLDER_PANEL);
+			body.add(getPfifUI(), PFIF_PANEL);
 		}
 		return body;
 	}
@@ -332,6 +341,28 @@ public class SyncItemUI extends JPanel implements IUIController {
 		return folderUI;
 	}
 
+	private PfifFeedUI getPfifUI(){
+		if (pfifUI == null) {
+			pfifUIControler = new PFIFUIController(this.acceptsCreateDataset);
+			String fileName = getFileName(PFIF_PANEL);
+			ISyndicationFormat syndicationFormat = null;
+			File file = new File(fileName);
+			if(file.exists()){
+				syndicationFormat = PfifUtil.getPfifSyndicationFormat(file);
+			} else {
+				syndicationFormat = RssSyndicationFormat.INSTANCE;
+			}
+			
+			pfifUIControler.addModel(
+				new PFIFModel(
+						fileName,
+						syndicationFormat,
+						getProperty(AppProperties.CLOUD_ROOT_URI)));
+			pfifUI = new PfifFeedUI(fileName, pfifUIControler);
+		}
+		return pfifUI;
+	}
+	
 	
 	private String getFileName(String dbSrcName){
 		 
@@ -354,6 +385,9 @@ public class SyncItemUI extends JPanel implements IUIController {
 					
 				} else if(dbSrcName.equals(FOLDER_PANEL)){
 					fileName = getFilePath(AppProperties.PATH_TARGET_FOLDER);
+					
+				} else if(dbSrcName.equals(PFIF_PANEL)){
+					fileName = getFilePath(AppProperties.PATH_TARGET_PFIF);
 				} 
 			} else {
 				if(dbSrcName.equals(MS_EXCEL_PANEL)){
@@ -373,6 +407,9 @@ public class SyncItemUI extends JPanel implements IUIController {
 					
 				} else if(dbSrcName.equals(FOLDER_PANEL)){
 					fileName = getFilePath(AppProperties.PATH_SOURCE_FOLDER);
+					
+				} else if(dbSrcName.equals(PFIF_PANEL)){
+					fileName = getFilePath(AppProperties.PATH_SOURCE_PFIF);
 				} 
 			}
 			return fileName;
@@ -422,7 +459,9 @@ public class SyncItemUI extends JPanel implements IUIController {
 			cl.show(body, FOLDER_PANEL);	
 		} else if (item.equals(ZIP_FILE_PANEL)) {
 			cl.show(body, ZIP_FILE_PANEL);
-		} else {
+		} else if (item.equals(PFIF_PANEL)) {
+			cl.show(body, PFIF_PANEL);
+		}else {
 			cl.show(body, DYMMY_PANEL);
 		}
 	}
@@ -486,8 +525,10 @@ public class SyncItemUI extends JPanel implements IUIController {
 			currrentController = atomUI.getController();
 		} else if (item.equals(FOLDER_PANEL)) {
 			currrentController = folderUI.getController();
-		}else if (item.equals(ZIP_FILE_PANEL)) {
+		} else if (item.equals(ZIP_FILE_PANEL)) {
 			currrentController = zipRssUI.getController();
+		} else if (item.equals(PFIF_PANEL)) {
+			currrentController = pfifUI.getController();
 		}
 
 		return currrentController;
@@ -529,8 +570,10 @@ public class SyncItemUI extends JPanel implements IUIController {
 			currentUI = atomUI;
 		} else if (type.equals(FOLDER_PANEL)) {
 			currentUI = folderUI;
-		}else if (type.equals(ZIP_FILE_PANEL)) {
+		} else if (type.equals(ZIP_FILE_PANEL)) {
 			currentUI = zipRssUI;
+		} else if (type.equals(PFIF_PANEL)) {
+			currentUI = pfifUI;
 		}
 		return currentUI;
 	}

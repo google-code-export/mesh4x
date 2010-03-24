@@ -12,6 +12,7 @@ public class FeedModel extends AbstractModel {
 	private String fileName = null;
 	private ISyndicationFormat syndicationFormat = RssSyndicationFormat.INSTANCE;
 	private String baseUrl = null;
+	
 
 	// BUSINESS METHODS
 	public FeedModel(String fileName, ISyndicationFormat syndicationFormat, String baseURL) {
@@ -21,9 +22,14 @@ public class FeedModel extends AbstractModel {
 		this.baseUrl = baseURL;
 	}
 	
+	
 	public void setFileName(String fileName) {
 		firePropertyChange(FeedUIController.FILE_NAME_PROPERTY, this.fileName, this.fileName = fileName);
 	}
+	
+	 
+	
+
 
 	public String getFileName() {
 		return this.fileName;
@@ -33,6 +39,8 @@ public class FeedModel extends AbstractModel {
 	 {
 	    return "FEED | " + getFileName();
 	 }
+
+	
 
 	public String getFeedTile() {
 		return getFeedName();

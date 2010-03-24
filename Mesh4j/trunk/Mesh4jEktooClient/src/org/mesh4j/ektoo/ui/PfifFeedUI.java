@@ -10,28 +10,40 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.mesh4j.ektoo.controller.FeedUIController;
+import org.mesh4j.ektoo.controller.PFIFUIController;
 import org.mesh4j.ektoo.tasks.IErrorListener;
 import org.mesh4j.ektoo.tasks.OpenFileTask;
 import org.mesh4j.ektoo.ui.translator.EktooUITranslator;
-import org.mesh4j.ektoo.ui.validator.FeedUIValidator;
 import org.mesh4j.ektoo.validator.IValidationStatus;
+import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
+import org.mesh4j.sync.adapters.feed.atom.AtomSyndicationFormat;
+import org.mesh4j.sync.adapters.feed.pfif.PfifUtil;
+import org.mesh4j.sync.adapters.feed.pfif.schema.PFIF_ENTITY;
+import org.mesh4j.sync.adapters.feed.rss.RssSyndicationFormat;
 
-public class FeedUI extends AbstractUI  implements IValidationStatus {
+public class PfifFeedUI extends AbstractUI  implements IValidationStatus {
 
 	private static final long serialVersionUID = 2457237653577593698L;
 
-	private static final Log LOGGER = LogFactory.getLog(FeedUI.class);
+	private static final Log LOGGER = LogFactory.getLog(PfifFeedUI.class);
 
 	// MODEL VARIABLES
 	private JLabel labelFileName = null;
@@ -40,15 +52,20 @@ public class FeedUI extends AbstractUI  implements IValidationStatus {
 	private JButton btnFile = null;
 
 	private JFileChooser fileChooser = null;
+	private JScrollPane listTableScroller =null;
+	private JList listTable = null;
 
 	// BUSINESS METHODS
-	public FeedUI(String fileName, FeedUIController controller) {
+	public PfifFeedUI(String fileName, PFIFUIController controller) {
 		super(controller);
 		this.initialize();
 		this.txtFileName.setText(fileName);
 		this.txtFileName.setToolTipText(fileName);
 		this.setMessageText("");
+		setList(fileName);
 	}
+
+	
 
 	private void initialize() {
 		this.setLayout(null);
@@ -59,7 +76,55 @@ public class FeedUI extends AbstractUI  implements IValidationStatus {
 		this.add(getViewButton(), null);
 		this.add(getConflictsButton());
 		this.add(getMessagesText(), null);
+		this.add(getMappingsButton());
+		this.add(getSchemaViewButton(), null);
+		this.add(getListTableScroller(), null);
 	}
+	
+	
+	private void setList(String fileName) {
+		File feedFile = new File(fileName);
+		JList tableList = getTableList();
+		tableList.removeAll();
+		
+		if(!feedFile.exists() || feedFile.length() <= 0){
+			return ;
+		}
+		ISyndicationFormat syndicationFormat = PfifUtil.getPfifSyndicationFormat(feedFile);
+		getController().changeSyndicationFormat(syndicationFormat);
+		Set<String> entityNames = PfifUtil.getFeedNames(feedFile, syndicationFormat);
+		tableList.setListData(entityNames.toArray());
+	}
+	
+	private JScrollPane getListTableScroller(){		
+		if(listTableScroller == null){
+			listTableScroller = new JScrollPane(getTableList());
+			listTableScroller.setBounds(new Rectangle(99, 36, 183, 60));
+			listTableScroller.setPreferredSize(new Dimension(183, 60));
+		}
+		return listTableScroller;
+	}
+	
+	public JList getTableList() {
+		if (listTable == null) {
+			listTable = new JList();
+			listTable.setToolTipText(EktooUITranslator.getTooltipSelectSingleTable());
+
+			listTable.addListSelectionListener(new ListSelectionListener() {
+						@Override
+						public void valueChanged(ListSelectionEvent listselectionevent) {
+							String[] str = new String[listTable.getSelectedValues().length];
+							Arrays.asList(listTable.getSelectedValues()).toArray(str);
+							getController().changeEntityNames(str);
+						}
+					});
+		}
+
+		listTable.setSelectionMode(EktooFrame.multiModeSync ? 
+				ListSelectionModel.MULTIPLE_INTERVAL_SELECTION : ListSelectionModel.SINGLE_SELECTION);
+
+		return listTable;
+	}	
 	
 	private JLabel getFileNameLabel() {
 		if (labelFileName == null) {
@@ -106,6 +171,7 @@ public class FeedUI extends AbstractUI  implements IValidationStatus {
 							try{
 								txtFileName.setText(selectedFile.getCanonicalPath());
 								fileNameChanged(txtFileName.getText());
+								setList(txtFileName.getText());
 							}catch (Exception ex) {
 								LOGGER.debug(ex.getMessage(), ex);
 							}	
@@ -120,13 +186,13 @@ public class FeedUI extends AbstractUI  implements IValidationStatus {
 
 	@Override
 	protected void viewItems() {
-		JFrame frame = FeedUI.this.getRootFrame();
+		JFrame frame = PfifFeedUI.this.getRootFrame();
 		OpenFileTask task = new OpenFileTask(frame, (IErrorListener)frame, txtFileName.getText());
 		task.execute();
 	}
 
-	public FeedUIController getController() {
-		return super.getController(FeedUIController.class);
+	public PFIFUIController getController() {
+		return super.getController(PFIFUIController.class);
 	}
 
 	public void setFileChooser(JFileChooser fileChooser) {
@@ -146,17 +212,25 @@ public class FeedUI extends AbstractUI  implements IValidationStatus {
 
 	@Override
 	public void modelPropertyChange(final PropertyChangeEvent evt) {
-		if (evt.getPropertyName().equals(FeedUIController.FILE_NAME_PROPERTY)) {
+		if (evt.getPropertyName().equals(PFIFUIController.FILE_NAME_PROPERTY)) {
 			String newStringValue = evt.getNewValue().toString();
-			if (!getFileNameText().getText().equals(newStringValue))
+			
+//			if (!getFileNameText().getText().equals(newStringValue)){
 				getFileNameText().setText(newStringValue);
+				setList(newStringValue);
+//			}
+				
+		} else if (evt.getPropertyName().equals(PFIFUIController.ENTITY_NAMES)) {
+			String newStringValue = evt.getNewValue().toString();
+			if (!getTableList().getSelectedValue().toString().equals(newStringValue))
+				getTableList().setSelectedValue(newStringValue, true);
 		}
 	}
 
 	@Override
 	public boolean verify() {
-		boolean valid = (new FeedUIValidator(this, controller.getModel(), null)).verify();
-		return valid;
+		//boolean valid = (new FeedUIValidator(this, controller.getModel(), null)).verify();
+		return true;
 	}
 	
 	protected void fileNameChanged(String fileName) {

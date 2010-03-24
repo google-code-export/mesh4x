@@ -64,7 +64,7 @@ public class AppPropertiesProvider {
 		
 		try {
 			return new File(fileName).getCanonicalPath();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			return "";
 		}
 	}
