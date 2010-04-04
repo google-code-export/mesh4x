@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<h:html xmlns:h="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:jr="http://openrosa.org/javarosa">  
+<h:html xmlns:h="http://www.w3.org/1999/xhtml" 
+		xmlns="http://www.w3.org/2002/xforms" 
+		xmlns:ev="http://www.w3.org/2001/xml-events" 
+		xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+		xmlns:jr="http://openrosa.org/javarosa">  
   <h:head> 
     <h:title>FACILITY_DATA_TABLE_SEC_1</h:title>  
     <model> 
@@ -84,7 +88,7 @@
   <h:body> 
   
     <select1 ref="/FACILITY_DATA_TABLE_SEC_1/is_respondant_agrees"> 
-      <label>Does Respondent Agree to be Interviewed?</label>  
+      <label>Does Respondent Agrees to be Interviewed?</label>  
       <item>
         <label>Yes</label>
         <value>true</value>
@@ -156,7 +160,7 @@
      
     
      <select1 ref="/FACILITY_DATA_TABLE_SEC_1/pq106_is_compter_available"> 
-      <label>106. Does the facility have a computer? </label>  
+      <label>106.Does the facility have a computer? </label>  
       <item>
         <label>YES,FUNCTIONING</label>
         <value>YES,FUNCTIONING</value>
