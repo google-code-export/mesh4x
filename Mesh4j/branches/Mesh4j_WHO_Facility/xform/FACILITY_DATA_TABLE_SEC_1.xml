@@ -140,7 +140,7 @@
       </item> 
     </select1>
     
-    <input bind="pq105_is_phone_or_radio_available_around">
+    <select1 ref="/FACILITY_DATA_TABLE_SEC_1/pq105_is_phone_or_radio_available_around">
       <label>105.Is there a phone or shortwave radio within less than 15 minutes walking distance from the facility that staff can use in an emergency?</label>
        <item>
         <label>YES,AT ALL TIMES</label>
@@ -154,7 +154,7 @@
         <label>NO</label>
         <value>NO</value>
       </item>
-    </input>  
+    </select1>
     
     
      
