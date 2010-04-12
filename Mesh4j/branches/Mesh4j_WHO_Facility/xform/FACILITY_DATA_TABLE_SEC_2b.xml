@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<h:html xmlns:h="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:jr="http://openrosa.org/javarosa">  
+<h:html xmlns:h="http://www.w3.org/1999/xhtml" 
+	xmlns="http://www.w3.org/2002/xforms" 
+	xmlns:ev="http://www.w3.org/2001/xml-events" 
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+	xmlns:jr="http://openrosa.org/javarosa">
+	  
   <h:head> 
     <h:title>FACILITY_DATA_TABLE_SEC_2b</h:title>  
     <model> 
       <instance> 
         <FACILITY_DATA_TABLE_SEC_2b> 
-     
            <sec2b_facility_id/>
            <gpe_xray_machine/>
            <gpe_bp_machine/>
@@ -25,7 +29,6 @@
            <gpe_infusion_kits/>
            <gpe_refrigerator/>
            <sec2b_control_field/>
-           
         </FACILITY_DATA_TABLE_SEC_2b> 
       </instance>
       <bind id="psec2b_facility_id" nodeset="/FACILITY_DATA_TABLE_SEC_2b/sec2b_facility_id" type="xsd:string"/>
@@ -47,7 +50,6 @@
         <label>NOT AVAILABLE TODAY</label>
         <value>3</value>
       </item>
-       
        <item>
         <label>NEVER AVAILABLE </label>
         <value>4</value>
@@ -69,8 +71,7 @@
         <label>NOT AVAILABLE TODAY</label>
         <value>3</value>
       </item>
-       
-       <item>
+      <item>
         <label>NEVER AVAILABLE </label>
         <value>4</value>
       </item>
@@ -91,7 +92,6 @@
         <label>NOT AVAILABLE TODAY</label>
         <value>3</value>
       </item>
-       
        <item>
         <label>NEVER AVAILABLE </label>
         <value>4</value>
@@ -114,7 +114,6 @@
         <label>NOT AVAILABLE TODAY</label>
         <value>3</value>
       </item>
-       
        <item>
         <label>NEVER AVAILABLE </label>
         <value>4</value>
@@ -136,8 +135,7 @@
         <label>NOT AVAILABLE TODAY</label>
         <value>3</value>
       </item>
-       
-       <item>
+      <item>
         <label>NEVER AVAILABLE </label>
         <value>4</value>
       </item>
@@ -158,8 +156,7 @@
         <label>NOT AVAILABLE TODAY</label>
         <value>3</value>
       </item>
-       
-       <item>
+      <item>
         <label>NEVER AVAILABLE </label>
         <value>4</value>
       </item>
@@ -180,8 +177,7 @@
         <label>NOT AVAILABLE TODAY</label>
         <value>3</value>
       </item>
-       
-       <item>
+      <item>
         <label>NEVER AVAILABLE </label>
         <value>4</value>
       </item>
@@ -201,8 +197,7 @@
         <label>NOT AVAILABLE TODAY</label>
         <value>3</value>
       </item>
-       
-       <item>
+      <item>
         <label>NEVER AVAILABLE </label>
         <value>4</value>
       </item>
@@ -223,8 +218,7 @@
         <label>NOT AVAILABLE TODAY</label>
         <value>3</value>
       </item>
-       
-       <item>
+      <item>
         <label>NEVER AVAILABLE </label>
         <value>4</value>
       </item>
@@ -245,8 +239,7 @@
         <label>NOT AVAILABLE TODAY</label>
         <value>3</value>
       </item>
-       
-       <item>
+      <item>
         <label>NEVER AVAILABLE </label>
         <value>4</value>
       </item>
@@ -267,8 +260,7 @@
         <label>NOT AVAILABLE TODAY</label>
         <value>3</value>
       </item>
-       
-       <item>
+      <item>
         <label>NEVER AVAILABLE </label>
         <value>4</value>
       </item>
@@ -288,8 +280,7 @@
         <label>NOT AVAILABLE TODAY</label>
         <value>3</value>
       </item>
-       
-       <item>
+      <item>
         <label>NEVER AVAILABLE </label>
         <value>4</value>
       </item>
@@ -309,8 +300,7 @@
         <label>NOT AVAILABLE TODAY</label>
         <value>3</value>
       </item>
-       
-       <item>
+      <item>
         <label>NEVER AVAILABLE </label>
         <value>4</value>
       </item>
@@ -331,8 +321,7 @@
         <label>NOT AVAILABLE TODAY</label>
         <value>3</value>
       </item>
-       
-       <item>
+      <item>
         <label>NEVER AVAILABLE </label>
         <value>4</value>
       </item>
@@ -352,8 +341,7 @@
         <label>NOT AVAILABLE TODAY</label>
         <value>3</value>
       </item>
-       
-       <item>
+      <item>
         <label>NEVER AVAILABLE </label>
         <value>4</value>
       </item>
@@ -373,14 +361,10 @@
         <label>NOT AVAILABLE TODAY</label>
         <value>3</value>
       </item>
-       
-       <item>
+      <item>
         <label>NEVER AVAILABLE </label>
         <value>4</value>
       </item>
     </select1>
-    
-    
-    
   </h:body> 
 </h:html>
