@@ -21,9 +21,7 @@ public class CreateMeshStepThreeView extends BaseWizardPanel {
 	
 	private CreateMeshWizardController controller;
 	
-	private JToggleButton tableButton;
-	private JToggleButton mapButton;
-	private JToggleButton filesButton;
+	private JToggleButton epiInfoButton;
 	private ButtonGroup buttonGroup;
 	
 	public CreateMeshStepThreeView(CreateMeshWizardController controller) {
@@ -36,85 +34,42 @@ public class CreateMeshStepThreeView extends BaseWizardPanel {
 		setLayout(new MigLayout("insets 10"));
 		setSize(550, 350);
 		
-		JLabel titleLabel = new JLabel("Create a new data source");
-		add(titleLabel, "span 2, wrap 20");
+		JLabel titleLabel = new JLabel("<html><h2>Create a new data source</h2></html>");
+		add(titleLabel, "span");
 		
 		JLabel subTitleLabel = new JLabel();
-		subTitleLabel.setText("<html>When you add a data surce to your mesh, you can see it mobile devices, " +
-							  "maps, or applications. You can even allow other applications to update the data</html>");
-		add(subTitleLabel, "span 2, wrap 20");
+		subTitleLabel.setText("<html><h4>When you add a data surce to your mesh, you can see it mobile devices, " +
+							  "maps, or applications. You can even allow other applications to update the data</h4></html>");
+		add(subTitleLabel, "span, wrap 10");
 		
 		JLabel dataSourceQuestion = new JLabel();
-		dataSourceQuestion.setText("What data source would you like to add?");
-		add(dataSourceQuestion, "span 2, wrap 5");
+		dataSourceQuestion.setText("<html><h4>What data source would you like to add?</h4></html>");
+		add(dataSourceQuestion, "span, wrap 5");
 		
-		tableButton = new JToggleButton();
-		tableButton.setText("A table of data");
+		epiInfoButton = new JToggleButton();
+		epiInfoButton.setText("Epi Info Data");
 		ImageIcon tableIcon = new ImageIcon(ResourceManager.getTableImage());
-		tableButton.setIcon(tableIcon);
+		epiInfoButton.setIcon(tableIcon);
 		JLabel tableLabel = new JLabel();
-		tableLabel.setText("<html>You can add Access Databases, EpiInfo surveys, Excel Spreadsheets, JavaROSA Forms, or Google Spreadsheets to your mesh</html>");
-		add(tableButton, "gapright 10");
+		tableLabel.setText("<html></html>");
+		add(epiInfoButton, "gapright 10");
 		add(tableLabel, "growx, wrap");
 		
-		tableButton.addActionListener(new ActionListener() {
+		epiInfoButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				tableButtonActionPerformed(e);
-			}
-		});
-		
-		mapButton = new JToggleButton();
-		mapButton.setText("A map");
-		ImageIcon mapIcon = new ImageIcon(ResourceManager.getMapImage());
-		mapButton.setIcon(mapIcon);
-		JLabel mapLabel = new JLabel();
-		mapLabel.setText("<html>Share maps including pushpins, polygons, lines, icons and other information</html>");
-		add(mapButton, "gapright 10");
-		add(mapLabel, "growx, wrap");
-		
-		mapButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				mapButtonActionPerformed(e);
-			}
-		});
-		
-		filesButton = new JToggleButton();
-		filesButton.setText("Files");
-		ImageIcon filesIcon = new ImageIcon(ResourceManager.getFolderImage());
-		filesButton.setIcon(filesIcon);
-		JLabel filesLabel = new JLabel();
-		filesLabel.setText("<html>Share a set of files</html>");
-		add(filesButton, "gapright 10");
-		add(filesLabel, "growx, wrap");
-		
-		filesButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				filesButtonActionPerformed(e);
+				epiInfoButtonActionPerformed(e);
 			}
 		});
 		
 		buttonGroup = new ButtonGroup();
-		buttonGroup.add(tableButton);
-		buttonGroup.add(mapButton);
-		buttonGroup.add(filesButton);
+		buttonGroup.add(epiInfoButton);
 	}
 	
 
-	private void tableButtonActionPerformed(ActionEvent e) {
-		controller.setTableDataSetType();
-	}
-	
-
-	private void mapButtonActionPerformed(ActionEvent e) {
-		controller.setMapDataSetType();
-	}
-	
-
-	private void filesButtonActionPerformed(ActionEvent e) {
-		controller.setFilesDataSetType();
+	private void epiInfoButtonActionPerformed(ActionEvent e) {
+		// TODO fire a property change
+		//controller.setTableDataSetType();
 	}
 
 	@Override
@@ -124,6 +79,12 @@ public class CreateMeshStepThreeView extends BaseWizardPanel {
 	@Override
 	public String getId() {
 		return ID;
+	}
+	
+	@Override
+	public boolean valid() {
+		return true;
+		//return epiInfoButton.isSelected();
 	}
 
 }

@@ -1,17 +1,22 @@
 package org.mesh4j.meshes.ui.wizard;
 
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
+import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
+import java.io.File;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import net.miginfocom.swing.MigLayout;
 
 import org.mesh4j.meshes.controller.CreateMeshWizardController;
+import org.mesh4j.meshes.ui.resource.ResourceManager;
 
 public class CreateMeshStepSevenView extends BaseWizardPanel {
 
@@ -20,8 +25,7 @@ public class CreateMeshStepSevenView extends BaseWizardPanel {
 	
 	private CreateMeshWizardController controller;
 	
-	private JTextField nameTextField;
-	private JTextArea descTextArea;
+	private JFileChooser fileChooser;
 	
 	public CreateMeshStepSevenView(CreateMeshWizardController controller) {
 		super();
@@ -33,49 +37,52 @@ public class CreateMeshStepSevenView extends BaseWizardPanel {
 		setLayout(new MigLayout("insets 10"));
 		setSize(550, 350);
 		
-		JLabel titleLabel = new JLabel("Name your data");
-		add(titleLabel, "span, wrap 10");
+		JLabel titleLabel = new JLabel("<html><h2>Congratulations! Your mesh is ready to sync</h2></html>");
+		add(titleLabel, "span");
 		
 		JLabel subTitleLabel = new JLabel();
-		subTitleLabel.setText("Give a name to the name of the data in the mesh");
-		add(subTitleLabel, "span, wrap 20");
+		subTitleLabel.setText("<html><h4>Your data will be synchronized every day. You can trigger the synchonization yourself by double " +
+							  "clicking the Meshes icon in your traybar:</h4></html>");
+		add(subTitleLabel, "span");
 		
-		JLabel nameLabel = new JLabel("Name");
-		nameTextField = new JTextField();
-		add(nameLabel, "gapright 10");
-		add(nameTextField, "pushx, growx, wrap 10");
+		Icon trayIcon = new ImageIcon(ResourceManager.getLogo().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
+		JLabel trayIconLabel = new JLabel(trayIcon);
+		add(trayIconLabel, "span, align center");
 		
-		nameTextField.addFocusListener(new FocusAdapter() {
+		JLabel saveLabel = new JLabel();
+		saveLabel.setText("<html><h4>Save the configuration file of your mesh by clicking the button below and distribute to your colleagues " +
+							  "to have them sync to your mesh:</h4></html>");
+		add(saveLabel, "span");
+		
+		JButton saveButton = new JButton();
+		saveButton.setText("<html><h4>Save configuration file ...</h4></html>");
+		add(saveButton, "span");
+		
+		saveButton.addActionListener(new ActionListener() {
 			@Override
-			public void focusLost(FocusEvent e) {
-				nameTextFieldFocusLost(e);
+			public void actionPerformed(ActionEvent e) {
+				saveButtonActionPerformed(e);
 			}
 		});
 		
-		JLabel descLabel = new JLabel("Description");
-		descTextArea = new JTextArea();
-		descTextArea.setColumns(20);
-		descTextArea.setRows(5);
-		JScrollPane descScrollPane = new JScrollPane(descTextArea);
-		add(descLabel, "gapright 10");
-		add(descScrollPane, "pushx, growx");
-		
-		descTextArea.addFocusListener(new FocusAdapter() {
-			@Override
-			public void focusLost(FocusEvent e) {
-				descTextAreaFocusLost(e);
+		fileChooser = new JFileChooser();
+		fileChooser.setDialogType(JFileChooser.SAVE_DIALOG);
+		FileNameExtensionFilter filter = new FileNameExtensionFilter("Mesh Configuration File", "mesh");
+		fileChooser.setFileFilter(filter);
+		File file = new File("configuration.mesh");
+		fileChooser.setSelectedFile(file);
+	}
+	
+	private void saveButtonActionPerformed(ActionEvent e) {
+		int returnVal = fileChooser.showOpenDialog(this);
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			File selectedFile = fileChooser.getSelectedFile();
+			if (selectedFile != null) {
+				controller.saveConfiguration(selectedFile);
 			}
-		});
+		}
 	}
-	
-	private void nameTextFieldFocusLost(FocusEvent e) {
-		controller.changeDataSetName(nameTextField.getText());
-	}
-	
-	private void descTextAreaFocusLost(FocusEvent e) {
-		controller.changeDataSetDescription(descTextArea.getText());
-	}
-
+		
 	@Override
 	public void modelPropertyChange(PropertyChangeEvent evt) {
 	}
@@ -83,6 +90,11 @@ public class CreateMeshStepSevenView extends BaseWizardPanel {
 	@Override
 	public String getId() {
 		return ID;
+	}
+
+	@Override
+	public boolean valid() {
+		return true;
 	}
 
 }

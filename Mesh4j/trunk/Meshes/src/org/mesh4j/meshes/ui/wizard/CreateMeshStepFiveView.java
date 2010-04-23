@@ -2,6 +2,8 @@ package org.mesh4j.meshes.ui.wizard;
 
 import java.awt.CardLayout;
 import java.beans.PropertyChangeEvent;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.mesh4j.meshes.controller.CreateMeshWizardController;
 
@@ -10,20 +12,18 @@ public class CreateMeshStepFiveView extends BaseWizardPanel {
 	private static final long serialVersionUID = -5773369351266179486L;
 	private static String ID = "STEP_FIVE";
 	
-	public static String MS_ACCESS_PANEL = "ms_access_panel";
-	public static String MS_EXCEL_PANEL = "ms_excel_panel";
-	public static String GOOGLE_SPREADSHEET_PANEL = "google_spreadsheet_panel";
+	public static String EPIINFO_PANEL = "epiinfo_panel";
 	
 	private CreateMeshWizardController controller;
 	
 	private CardLayout cardLayout;
-	private MsAccessConfigPanel msAccessConfigPanel;
-	private MsExcelConfigPanel msExcelConfigPanel;
-	private GSSheetConfigPanel gsSheetConfigPanel;
+	private Map<String, ConfigPanel> configPanels;
+	private ConfigPanel currentConfigPanel;
 	
 	public CreateMeshStepFiveView(CreateMeshWizardController controller) {
 		super();
 		this.controller = controller;
+		this.configPanels = new HashMap<String, ConfigPanel>();
 		initComponents();
 	}
 
@@ -31,26 +31,31 @@ public class CreateMeshStepFiveView extends BaseWizardPanel {
 		cardLayout = new CardLayout();
 		setLayout(cardLayout);
 		
-		msAccessConfigPanel = new MsAccessConfigPanel(controller);
-		msExcelConfigPanel = new MsExcelConfigPanel(controller);
-		gsSheetConfigPanel = new GSSheetConfigPanel(controller);
+		ConfigPanel epiInfoConfigPanel = new EpiInfoConfigPanel(controller);
+		configPanels.put(EPIINFO_PANEL, epiInfoConfigPanel);
+		add(EPIINFO_PANEL, epiInfoConfigPanel);
 		
-		add(MS_ACCESS_PANEL, msAccessConfigPanel);
-		add(MS_EXCEL_PANEL, msExcelConfigPanel);
-		add(GOOGLE_SPREADSHEET_PANEL, gsSheetConfigPanel);
+		setCurrentConfig(EPIINFO_PANEL);
 	}
 	
 	public void setCurrentConfig(String id) {
 		cardLayout.show(this, id);
+		currentConfigPanel = configPanels.get(id);
 	}
 
 	@Override
 	public void modelPropertyChange(PropertyChangeEvent evt) {
+		// TODO propagate event to currentConfigPanel
 	}
 
 	@Override
 	public String getId() {
 		return ID;
+	}
+	
+	@Override
+	public boolean valid() {
+		return currentConfigPanel.valid();
 	}
 	
 }

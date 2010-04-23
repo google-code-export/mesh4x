@@ -9,8 +9,7 @@ import org.mesh4j.meshes.ui.wizard.WizardView;
 
 public abstract class WizardController extends AbstractController {
 	
-	private WizardView wizardView;
-	
+	protected WizardView wizardView;
 	protected List<BaseWizardPanel> wizardPanels;
 	
 	public WizardController(WizardView wizardView) {
@@ -42,5 +41,7 @@ public abstract class WizardController extends AbstractController {
 	public abstract void backButtonPressed();
 	
 	public abstract void nextButtonPressed();
+	
+	public abstract void finish();
 
 }

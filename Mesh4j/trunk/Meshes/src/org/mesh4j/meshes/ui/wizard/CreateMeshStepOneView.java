@@ -2,6 +2,8 @@ package org.mesh4j.meshes.ui.wizard;
 
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 
 import javax.swing.JLabel;
@@ -33,14 +35,14 @@ public class CreateMeshStepOneView extends BaseWizardPanel {
 		setLayout(new MigLayout("insets 10"));
 		setSize(550, 350);
 		
-		JLabel titleLabel = new JLabel("Create a new Mesh!");
-		add(titleLabel, "span 2, wrap 20");
+		JLabel titleLabel = new JLabel("<html><h2>Create a new Mesh!</h2></html>");
+		add(titleLabel, "span");
 		
 		JLabel subTitleLabel = new JLabel();
-		subTitleLabel.setText("<html>Create a mesh! A mesh is a special database that brings together information on multiple " +
+		subTitleLabel.setText("<html><h4>Create a mesh! A mesh is a special database that brings together information on multiple " +
 					      "computers, devices and applications, even if they occasionally connect to the internet. To " +
-					      "start creating a mesh, give it a name and a description</html>");
-		add(subTitleLabel, "span 2, wrap 20");
+					      "start creating a mesh, give it a name and a description</h4></html>");
+		add(subTitleLabel, "span, wrap 10");
 		
 		JLabel nameLabel = new JLabel("Name");
 		nameTextField = new JTextField();
@@ -56,10 +58,10 @@ public class CreateMeshStepOneView extends BaseWizardPanel {
 		add(descLabel, "gapright 20");
 		add(descScrollPane, "growx");
 		
-		nameTextField.addFocusListener(new FocusAdapter() {
+		nameTextField.addKeyListener(new KeyAdapter() {
 			@Override
-			public void focusLost(FocusEvent evt) {
-				nameTextFieldFocusLost(evt);
+			public void keyReleased(KeyEvent e) {
+				nameTextFieldKeyReleased(e);
 			}
 		});
 		
@@ -71,7 +73,7 @@ public class CreateMeshStepOneView extends BaseWizardPanel {
 		});
 	}
 	
-	private void nameTextFieldFocusLost(FocusEvent evt) {
+	private void nameTextFieldKeyReleased(KeyEvent evt) {
 		String name = nameTextField.getText();
 		controller.changeMeshName(name);
 	}
@@ -88,5 +90,10 @@ public class CreateMeshStepOneView extends BaseWizardPanel {
 	@Override
 	public String getId() {
 		return ID;
+	}
+	
+	@Override
+	public boolean valid() {
+		return nameTextField.getText().length() >= 5;
 	}
 }

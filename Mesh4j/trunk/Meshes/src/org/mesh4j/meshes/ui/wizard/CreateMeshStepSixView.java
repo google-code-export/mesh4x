@@ -5,6 +5,7 @@ import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 
 import javax.swing.ButtonGroup;
+import javax.swing.ButtonModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -23,10 +24,10 @@ public class CreateMeshStepSixView extends BaseWizardPanel {
 	
 	private CreateMeshWizardController controller;
 	
-	private JRadioButton syncRadioButton;
-	private JRadioButton noSyncRadioButton;
+	private JRadioButton twoWaySyncButton;
+	private JRadioButton sendSyncButton;
+	private JRadioButton receiveSyncButton;
 	private ButtonGroup buttonGroup;
-	private JComboBox syncModeComboBox;
 	private JComboBox scheduleComboBox;
 	
 	public CreateMeshStepSixView(CreateMeshWizardController controller) {
@@ -39,26 +40,14 @@ public class CreateMeshStepSixView extends BaseWizardPanel {
 		setLayout(new MigLayout("insets 10"));
 		setSize(550, 350);
 		
-		JLabel titleLabel = new JLabel("Keep your data connected");
-		add(titleLabel, "span, wrap 20");
+		JLabel titleLabel = new JLabel("<html><h2>Keep your data connected</h2></html>");
+		add(titleLabel, "span");
 		
-		syncRadioButton = new JRadioButton();
-		syncRadioButton.setText("Keep data synchronized");
-		add(syncRadioButton, "gapleft 30, wrap 5");
-		
-		syncRadioButton.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				syncRadioButtonItemStateChanged(e);
-			}
-		});
-		
-		JLabel syncSubTitle = new JLabel();
-		syncSubTitle.setText("Remember to leave your files in the same folder it is now so we can find it later");
-		add(syncSubTitle, "gapleft 50, wrap 10");
+		JLabel scheduleLabel = new JLabel("<html><h4>Keep your data synchronized:</h4><html>");
+		add(scheduleLabel, "gapleft 30, wrap 10");
 		
 		scheduleComboBox = new JComboBox(new DefaultComboBoxModel(SchedulingOption.values()));
-		add(scheduleComboBox, "gapleft 60, wrap 10");
+		add(scheduleComboBox, "gapleft 30, wrap 40");
 		
 		scheduleComboBox.addItemListener(new ItemListener() {
 			@Override
@@ -67,30 +56,43 @@ public class CreateMeshStepSixView extends BaseWizardPanel {
 			}
 		});
 		
-		syncModeComboBox = new JComboBox(new DefaultComboBoxModel(SyncMode.values()));
-		add(syncModeComboBox, "gapleft 60, wrap 10");
+		twoWaySyncButton = new JRadioButton();
+		twoWaySyncButton.setText("Send and receive changes to data");
+		add(twoWaySyncButton, "gapleft 30, wrap 5");
 		
-		syncModeComboBox.addItemListener(new ItemListener() {
+		twoWaySyncButton.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
-				syncModeComboBoxItemStateChanged(e);
+				twoWaySyncButtonItemStateChanged(e);
 			}
 		});
 		
-		noSyncRadioButton = new JRadioButton();
-		noSyncRadioButton.setText("Import the data and schema now but don't keed this database connected to the mesh");
-		add(noSyncRadioButton, "gapleft 30");
+		sendSyncButton = new JRadioButton();
+		sendSyncButton.setText("Only send my changes");
+		add(sendSyncButton, "gapleft 30, wrap 5");
 		
-		noSyncRadioButton.addItemListener(new ItemListener() {
+		sendSyncButton.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
-				noSyncRadioButtonItemStateChanged(e);
+				sendSyncButtonItemStateChanged(e);
+			}
+		});
+		
+		receiveSyncButton = new JRadioButton();
+		receiveSyncButton.setText("Only get other's changes");
+		add(receiveSyncButton, "gapleft 30, wrap 5");
+		
+		receiveSyncButton.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				receiveSyncButtonItemStateChanged(e);
 			}
 		});
 		
 		buttonGroup = new ButtonGroup();
-		buttonGroup.add(syncRadioButton);
-		buttonGroup.add(noSyncRadioButton);
+		buttonGroup.add(twoWaySyncButton);
+		buttonGroup.add(sendSyncButton);
+		buttonGroup.add(receiveSyncButton);
 	}
 	
 	private void scheduleComboBoxItemStateChanged(ItemEvent e) {
@@ -98,19 +100,16 @@ public class CreateMeshStepSixView extends BaseWizardPanel {
 		controller.changeSchedulingOption(schedulingOption);
 	}
 	
-	private void syncModeComboBoxItemStateChanged(ItemEvent e) {
-		SyncMode syncMode = (SyncMode) e.getItem();
-		controller.changeSyncMode(syncMode);
+	private void twoWaySyncButtonItemStateChanged(ItemEvent e) {
+		controller.changeSyncMode(SyncMode.SEND_AND_RECEIVE);
 	}
 	
-	private void syncRadioButtonItemStateChanged(ItemEvent e) {
-		scheduleComboBox.setEnabled(true);
-		syncModeComboBox.setEnabled(true);
+	private void sendSyncButtonItemStateChanged(ItemEvent e) {
+		controller.changeSyncMode(SyncMode.SEND);
 	}
 	
-	private void noSyncRadioButtonItemStateChanged(ItemEvent e) {
-		scheduleComboBox.setEnabled(false);
-		syncModeComboBox.setEnabled(false);
+	private void receiveSyncButtonItemStateChanged(ItemEvent e) {
+		controller.changeSyncMode(SyncMode.RECEIVE);
 	}
 
 	@Override
@@ -120,6 +119,12 @@ public class CreateMeshStepSixView extends BaseWizardPanel {
 	@Override
 	public String getId() {
 		return ID;
+	}
+	
+	@Override
+	public boolean valid() {
+		ButtonModel model = buttonGroup.getSelection();
+		return model != null && model.isSelected();
 	}
 
 }

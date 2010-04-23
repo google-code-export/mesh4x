@@ -108,7 +108,7 @@ public class MsExcelConfigPanel extends JPanel {
 					String fileName = selectedFile.getCanonicalPath();
 					fileTextField.setText(fileName);
 					fillWorksheetComboBox(fileName);
-					controller.changeMsExcelFileName(fileName);
+					//controller.changeMsExcelFileName(fileName);
 				} catch (Exception e) {
 					LOGGER.error(e.getMessage(), e);
 				}
@@ -120,12 +120,12 @@ public class MsExcelConfigPanel extends JPanel {
 	private void worksheetComboBoxItemStateChanged(ItemEvent e) {
 		String worksheet = (String) e.getItem();
 		fillUniqueColumnComboBox(worksheet);
-		controller.changeMsExcelWorksheetName(worksheet);
+		//controller.changeMsExcelWorksheetName(worksheet);
 	}
 	
 	private void uniqueColumnComboBoxItemStateChanged(ItemEvent e) {
 		String uniqueColumnName = (String) e.getItem();
-		controller.changeMsExcelUniqueColumnName(uniqueColumnName);
+		//controller.changeMsExcelUniqueColumnName(uniqueColumnName);
 	}
 	
 	private void fillWorksheetComboBox(String fileName) {

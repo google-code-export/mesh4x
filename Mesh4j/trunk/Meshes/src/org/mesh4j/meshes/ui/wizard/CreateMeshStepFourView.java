@@ -31,8 +31,8 @@ public class CreateMeshStepFourView extends BaseWizardPanel {
 		setLayout(new MigLayout("insets 10"));
 		setSize(550, 350);
 		
-		JLabel titleLabel = new JLabel("Add Table Data");
-		add(titleLabel, "span 2, wrap 40");
+		JLabel titleLabel = new JLabel("<html><h2>Add Table Data</h2></html>");
+		add(titleLabel, "span, wrap 10");
 		
 		JLabel dataSourceQuestion = new JLabel();
 		dataSourceQuestion.setText("What data source would you like to add?");
@@ -82,20 +82,25 @@ public class CreateMeshStepFourView extends BaseWizardPanel {
 	}
 	
 	private void msAccessButtonActionPerformed(ActionEvent e) {
-		controller.setMsAccessDataSource();
+		//controller.setMsAccessDataSource();
 	}
 	
 	private void msExcelButtonActionPerformed(ActionEvent e) {
-		controller.setMsExcelDataSource();
+		//controller.setMsExcelDataSource();
 	}
 
 	private void googleSpreadsheetButtonActionPerformed(ActionEvent e) {
-		controller.setGSSheetDataSource();
+		//controller.setGSSheetDataSource();
 	}
 
 	@Override
 	public String getId() {
 		return ID;
+	}
+	
+	@Override
+	public boolean valid() {
+		return buttonGroup.getSelection().isSelected();
 	}
 
 }

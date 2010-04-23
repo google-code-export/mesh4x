@@ -134,12 +134,12 @@ public class GSSheetConfigPanel extends JPanel {
 	
 	private void userTextFieldFocusLost(FocusEvent e) {
 		String userName = userTextField.getText();
-		controller.changeGSSheetUserName(userName);
+		//controller.changeGSSheetUserName(userName);
 	}
 	
 	private void passwordTextFieldFocusLost(FocusEvent e) {
 		String password = passwordTextField.getText();
-		controller.changeGSSheetPassword(password);
+		//controller.changeGSSheetPassword(password);
 	}
 	
 	private void fetchButtonActionPerformed(ActionEvent e) {
@@ -181,7 +181,7 @@ public class GSSheetConfigPanel extends JPanel {
 			}
 		};
 		
-		controller.changeGSSheetSpreadsheetName(spreadsheetName);
+		//controller.changeGSSheetSpreadsheetName(spreadsheetName);
 		
 		worker.execute();
 	}
@@ -205,14 +205,14 @@ public class GSSheetConfigPanel extends JPanel {
 			}
 		};
 		
-		controller.changeGSSheetWorksheetName(worksheetName);
+		//controller.changeGSSheetWorksheetName(worksheetName);
 		
 		worker.execute();
 	}
 	
 	private void uniqueColumnComboBoxItemStateChanged(ItemEvent e) {
 		String uniqueColumnName = (String)e.getItem();
-		controller.changeGSSheetUniqueColumnName(uniqueColumnName);
+		//controller.changeGSSheetUniqueColumnName(uniqueColumnName);
 	}
 	
 	private void fillSpreadsheetComboBox() {

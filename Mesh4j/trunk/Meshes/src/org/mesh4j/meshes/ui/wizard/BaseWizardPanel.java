@@ -10,5 +10,7 @@ public abstract class BaseWizardPanel extends JPanel {
 	public abstract void modelPropertyChange(PropertyChangeEvent evt);
 	
 	public abstract String getId();
+	
+	public abstract boolean valid();
 
 }

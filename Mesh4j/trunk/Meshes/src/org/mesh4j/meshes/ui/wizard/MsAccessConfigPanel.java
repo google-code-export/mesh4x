@@ -98,7 +98,7 @@ public class MsAccessConfigPanel extends JPanel {
 					String fileName = selectedFile.getCanonicalPath();
 					fileTextField.setText(fileName);
 					fillTableList(fileName);
-					controller.changeMsAccessFileName(fileName);
+					//controller.changeMsAccessFileName(fileName);
 				} catch (Exception e) {
 					LOGGER.error(e.getMessage(), e);
 				}
@@ -108,7 +108,7 @@ public class MsAccessConfigPanel extends JPanel {
 	
 	private void tableListValueChanged(ListSelectionEvent evt) {
 		String tableName = (String) tableList.getSelectedValue();
-		controller.changeMsAccessTableName(tableName);
+		//controller.changeMsAccessTableName(tableName);
 	}
 	
 	private void fillTableList(String fileName) {

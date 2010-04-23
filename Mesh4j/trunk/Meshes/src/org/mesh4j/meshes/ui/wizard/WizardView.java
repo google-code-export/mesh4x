@@ -28,6 +28,7 @@ public class WizardView extends AbstractView {
 	private JButton backButton;
 	private JButton nextButton;
 	private JButton cancelButton;
+	private JButton finishButton;
 	
 	public WizardView() {
 		super();
@@ -49,6 +50,7 @@ public class WizardView extends AbstractView {
 	    backButton = new JButton("Back");
 	    nextButton = new JButton("Next");
 	    cancelButton = new JButton("Cancel");
+	    finishButton = new JButton("Finish");
 
 	    backButton.addActionListener(new ActionListener() {
 			@Override
@@ -70,6 +72,13 @@ public class WizardView extends AbstractView {
 				cancelButtonActionPerformed(evt);
 			}
 		});
+	    
+	    finishButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				finishButtonActionPerformed(e);
+			}
+		});
 
 	    buttonPanel.setLayout(new BorderLayout());
 	    buttonPanel.add(new JSeparator(), BorderLayout.NORTH);
@@ -80,7 +89,10 @@ public class WizardView extends AbstractView {
 	    buttonBox.add(nextButton);
 	    buttonBox.add(Box.createHorizontalStrut(30));
 	    buttonBox.add(cancelButton);
+	    buttonBox.add(finishButton);
+	    
 	    buttonPanel.add(buttonBox, BorderLayout.EAST);
+	    
 	    add(buttonPanel, BorderLayout.SOUTH);
 	    add(cardPanel, BorderLayout.CENTER);
 	}
@@ -109,8 +121,12 @@ public class WizardView extends AbstractView {
 	    nextButton.setEnabled(b);
 	}
 	
-	public void setCancelButtonEnabled(boolean b) {
-	    cancelButton.setEnabled(b);
+	public void setCancelVisible(boolean b) {
+	    cancelButton.setVisible(b);
+	}
+	
+	public void setFinishVisible(boolean b) {
+	    finishButton.setVisible(b);
 	}
 	
 	private void backButtonActionPerformed(ActionEvent evt) {
@@ -122,6 +138,12 @@ public class WizardView extends AbstractView {
 	}
 	
 	private void cancelButtonActionPerformed(ActionEvent evt) {
+		setVisible(false);
+		dispose();
+	}
+	
+	private void finishButtonActionPerformed(ActionEvent evt) {
+		controller.finish();
 		setVisible(false);
 		dispose();
 	}

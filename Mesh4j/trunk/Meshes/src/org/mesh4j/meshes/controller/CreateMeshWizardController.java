@@ -1,13 +1,9 @@
 package org.mesh4j.meshes.controller;
 
-import org.mesh4j.meshes.model.DataSet;
-import org.mesh4j.meshes.model.DataSetType;
-import org.mesh4j.meshes.model.DataSource;
-import org.mesh4j.meshes.model.GSSheetDataSource;
-import org.mesh4j.meshes.model.Mesh;
-import org.mesh4j.meshes.model.MsAccessDataSource;
-import org.mesh4j.meshes.model.MsExcelDataSource;
-import org.mesh4j.meshes.model.Schedule;
+import java.beans.PropertyChangeEvent;
+import java.io.File;
+
+import org.mesh4j.meshes.model.CreateMeshModel;
 import org.mesh4j.meshes.model.SchedulingOption;
 import org.mesh4j.meshes.model.SyncMode;
 import org.mesh4j.meshes.ui.wizard.BaseWizardPanel;
@@ -23,10 +19,7 @@ import org.mesh4j.meshes.ui.wizard.WizardView;
 public class CreateMeshWizardController extends WizardController {
 	
 	// MODEL
-	private Mesh mesh;
-	private DataSet dataSet;
-	private DataSource dataSource;
-	private Schedule schedule;
+	private CreateMeshModel model;
 	
 	// VIEWS
 	private CreateMeshStepOneView stepOne;
@@ -41,14 +34,9 @@ public class CreateMeshWizardController extends WizardController {
 	public CreateMeshWizardController(WizardView wizardView) {
 		super(wizardView);
 		
-		// Create models
-		this.mesh = new Mesh();
-		this.dataSet = new DataSet();
-		this.schedule = new Schedule();
-		
-		addModel(mesh);
-		addModel(dataSet);
-		addModel(schedule);
+		// Create model
+		this.model = new CreateMeshModel();
+		addModel(this.model);
 		
 		// Create views
 		stepOne = new CreateMeshStepOneView(this);
@@ -58,151 +46,89 @@ public class CreateMeshWizardController extends WizardController {
 		stepFive = new CreateMeshStepFiveView(this);
 		stepSix = new CreateMeshStepSixView(this);
 		stepSeven = new CreateMeshStepSevenView(this);
-		
+
 		current = 0;
 		
 		registerWizardPanel(stepOne);
 		registerWizardPanel(stepTwo);
 		registerWizardPanel(stepThree);
-		registerWizardPanel(stepFour);
 		registerWizardPanel(stepFive);
 		registerWizardPanel(stepSix);
 		registerWizardPanel(stepSeven);
 		
 		setCurrentPanel(stepOne);
+		
+		setButtonsState();
 	}
 	
 	public void changeMeshName(String name) {
-		mesh.setName(name);
+		model.setName(name);
 	}
 	
 	public void changeMeshDescription(String description) {
-		mesh.setDescription(description);
+		model.setDescription(description);
 	}
 	
 	public void changeMeshPassword(String password) {
-		mesh.setPassword(password);
-	}
-
-	public void setTableDataSetType() {
-		changeDataSetType(DataSetType.TABLE);
+		model.setPassword(password);
 	}
 	
-	public void setMapDataSetType() {
-		changeDataSetType(DataSetType.MAP);
-	}
-	
-	public void setFilesDataSetType() {
-		changeDataSetType(DataSetType.FILES);
-	}
-	
-	public void changeDataSetName(String name) {
-		dataSet.setName(name);
-	}
-	
-	public void changeDataSetDescription(String description) {
-		dataSet.setDescription(description);
-	}
-	
-	private void changeDataSetType(DataSetType type) {
-		dataSet.setType(type);
+	public void changeMeshPasswordConfirmation(String passwordConfirmation) {
+		model.setPasswordConfirmation(passwordConfirmation);
 	}
 	
 	public void changeSchedulingOption(SchedulingOption schedulingOption) {
-		schedule.setSchedulingOption(schedulingOption);
+		model.setScheduling(schedulingOption);
 	}
 	
 	public void changeSyncMode(SyncMode syncMode) {
-		schedule.setSyncMode(syncMode);
+		model.setSyncMode(syncMode);
 	}
 	
-	public void setMsAccessDataSource() {
-		clearDataSource();
-		dataSource = new MsAccessDataSource();
-		stepFive.setCurrentConfig(CreateMeshStepFiveView.MS_ACCESS_PANEL);
+	public void changeEpiInfoLocation(String epiInfoLocation) {
+		model.setEpiInfoLocation(epiInfoLocation);
 	}
 	
-	public void setMsExcelDataSource() {
-		clearDataSource();
-		dataSource = new MsExcelDataSource();
-		stepFive.setCurrentConfig(CreateMeshStepFiveView.MS_EXCEL_PANEL);
+	public void saveConfiguration(File file) {
+		// TODO serialize mesh configuration to file
 	}
 	
-	public void setGSSheetDataSource() {
-		clearDataSource();
-		dataSource = new GSSheetDataSource();
-		stepFive.setCurrentConfig(CreateMeshStepFiveView.GOOGLE_SPREADSHEET_PANEL);
+	public void finish() {
+		// TODO 
 	}
 	
-	private void clearDataSource() {
-		if (dataSource != null) {
-			removeModel(dataSource);
-		}
-	}
-	
-	public void changeMsExcelFileName(String fileName) {
-		MsExcelDataSource excelDS = (MsExcelDataSource) dataSource;
-		excelDS.setFileName(fileName);
-	}
-	
-	public void changeMsExcelWorksheetName(String worksheetName) {
-		MsExcelDataSource excelDS = (MsExcelDataSource) dataSource;
-		excelDS.setWorksheetName(worksheetName);
-	}
-	
-	public void changeMsExcelUniqueColumnName(String uniqueColumnName) {
-		MsExcelDataSource excelDS = (MsExcelDataSource) dataSource;
-		excelDS.setUniqueColumnName(uniqueColumnName);
-	}
-	
-	public void changeMsAccessFileName(String fileName) {
-		MsAccessDataSource accessDS = (MsAccessDataSource) dataSource;
-		accessDS.setFileName(fileName);
-	}
-	
-	public void changeMsAccessTableName(String tableName) {
-		MsAccessDataSource accessDS = (MsAccessDataSource) dataSource;
-		accessDS.setTableName(tableName);
-	}
-	
-	public void changeGSSheetUserName(String userName) {
-		GSSheetDataSource gssheetDS = (GSSheetDataSource) dataSource;
-		gssheetDS.setUserName(userName);
-	}
-	
-	public void changeGSSheetPassword(String password) {
-		GSSheetDataSource gssheetDS = (GSSheetDataSource) dataSource;
-		gssheetDS.setPassword(password);
-	}
-	
-	public void changeGSSheetSpreadsheetName(String spreadsheetName) {
-		GSSheetDataSource gssheetDS = (GSSheetDataSource) dataSource;
-		gssheetDS.setSpreadsheetName(spreadsheetName);
-	}
-	
-	public void changeGSSheetWorksheetName(String worksheetName) {
-		GSSheetDataSource gssheetDS = (GSSheetDataSource) dataSource;
-		gssheetDS.setWorksheetName(worksheetName);
-	}
-	
-	public void changeGSSheetUniqueColumnName(String uniqueColumnName) {
-		GSSheetDataSource gssheetDS = (GSSheetDataSource) dataSource;
-		gssheetDS.setPassword(uniqueColumnName);
-	}
-
 	@Override
 	public void backButtonPressed() {
-		if (current > 0) {
-			BaseWizardPanel backPanel = wizardPanels.get(--current);
-			setCurrentPanel(backPanel);
-		}
+		BaseWizardPanel backPanel = wizardPanels.get(--current);
+		setCurrentPanel(backPanel);
+		setButtonsState();
 	}
 
 	@Override
 	public void nextButtonPressed() {
-		if (current < wizardPanels.size() - 1) {
-			BaseWizardPanel nextPanel = wizardPanels.get(++current);
-			setCurrentPanel(nextPanel);
-		}
+		BaseWizardPanel nextPanel = wizardPanels.get(++current);
+		setCurrentPanel(nextPanel);
+		setButtonsState();
+	}
+	
+	private void setButtonsState() {
+		wizardView.setBackButtonEnabled(!isFirst());
+		wizardView.setNextButtonEnabled(!isLast() && wizardPanels.get(current).valid());
+		wizardView.setFinishVisible(isLast());
+		wizardView.setCancelVisible(!isLast());
+	}
+	
+	private boolean isFirst() {
+		return current == 0;
+	}
+	
+	private boolean isLast() {
+		return current == (wizardPanels.size() - 1);
+	}
+	
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		super.propertyChange(evt);
+		wizardView.setNextButtonEnabled(wizardPanels.get(current).valid());
 	}
 }
