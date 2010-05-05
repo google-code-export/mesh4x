@@ -11,14 +11,13 @@ import javax.swing.JTextField;
 
 import net.miginfocom.swing.MigLayout;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.mesh4j.meshes.controller.CreateMeshWizardController;
 
 @SuppressWarnings("serial")
 public class EpiInfoConfigPanel extends ConfigPanel {
 	
-	private static final Log LOGGER = LogFactory.getLog(EpiInfoConfigPanel.class);
+	private static final Logger LOGGER = Logger.getLogger(EpiInfoConfigPanel.class);
 
 	private CreateMeshWizardController controller;
 	

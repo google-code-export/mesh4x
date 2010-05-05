@@ -6,14 +6,13 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.mesh4j.meshes.model.AbstractModel;
 import org.mesh4j.meshes.ui.AbstractView;
 
 public abstract class AbstractController implements PropertyChangeListener {
 	
-	private final static Log LOGGER = LogFactory.getLog(AbstractController.class);
+	private final static Logger LOGGER = Logger.getLogger(AbstractController.class);
 
 	private List<AbstractView> registeredViews;
 	private List<AbstractModel> registeredModels;

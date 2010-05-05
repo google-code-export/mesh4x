@@ -19,15 +19,14 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import net.miginfocom.swing.MigLayout;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.mesh4j.meshes.controller.CreateMeshWizardController;
 import org.mesh4j.sync.adapters.hibernate.msaccess.MsAccessHibernateSyncAdapterFactory;
 
 public class MsAccessConfigPanel extends JPanel {
 	
 	private static final long serialVersionUID = 7546728738425169284L;
-	private static final Log LOGGER = LogFactory.getLog(MsAccessConfigPanel.class);
+	private static final Logger LOGGER = Logger.getLogger(MsAccessConfigPanel.class);
 
 	private CreateMeshWizardController controller;
 	

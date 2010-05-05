@@ -5,15 +5,14 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.mesh4j.meshes.controller.CreateMeshWizardController;
 import org.mesh4j.meshes.controller.WizardController;
 import org.mesh4j.meshes.ui.wizard.WizardView;
 
 public class Meshes {
 	
-	private final static Log LOGGER = LogFactory.getLog(Meshes.class);
+	private final static Logger LOGGER = Logger.getLogger(Meshes.class);
 	
 	private Meshes() {}
 

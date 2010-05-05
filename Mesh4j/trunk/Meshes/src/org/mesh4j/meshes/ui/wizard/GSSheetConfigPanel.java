@@ -22,6 +22,7 @@ import net.miginfocom.swing.MigLayout;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.mesh4j.meshes.controller.CreateMeshWizardController;
 import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadsheet;
 import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadsheetUtils;
@@ -35,7 +36,7 @@ import com.google.gdata.data.spreadsheet.SpreadsheetEntry;
 public class GSSheetConfigPanel extends JPanel {
 	
 	private static final long serialVersionUID = 7546728738425169284L;
-	private static final Log LOGGER = LogFactory.getLog(GSSheetConfigPanel.class);
+	private static final Logger LOGGER = Logger.getLogger(GSSheetConfigPanel.class);
 
 	private CreateMeshWizardController controller;
 	
