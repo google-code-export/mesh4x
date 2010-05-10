@@ -74,7 +74,7 @@ public class CreateMeshStepSevenView extends BaseWizardPanel {
 	}
 	
 	private void saveButtonActionPerformed(ActionEvent e) {
-		int returnVal = fileChooser.showOpenDialog(this);
+		int returnVal = fileChooser.showSaveDialog(this);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File selectedFile = fileChooser.getSelectedFile();
 			if (selectedFile != null) {
