@@ -1,6 +1,6 @@
 package org.mesh4j.meshes.model;
 
-public class DataSource extends AbstractModel {
+public abstract class DataSource extends AbstractModel {
 	
 	private DataSet dataSet;
 
