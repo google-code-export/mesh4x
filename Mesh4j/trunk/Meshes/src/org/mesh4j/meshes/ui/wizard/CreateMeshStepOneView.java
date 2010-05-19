@@ -71,15 +71,13 @@ public class CreateMeshStepOneView extends BaseWizardPanel {
 				descTextAreaFocusLost(evt);
 			}
 		});
+		
+		WizardUtils.nextWhenEnterPressedOn(controller, nameTextField);
 	}
 	
 	private void nameTextFieldKeyReleased(KeyEvent evt) {
 		String name = nameTextField.getText();
 		controller.changeMeshName(name);
-		
-		if (evt.getKeyChar() == (char)13) {
-			controller.nextButtonPressed();
-		}
 	}
 
 	private void descTextAreaFocusLost(FocusEvent evt) {

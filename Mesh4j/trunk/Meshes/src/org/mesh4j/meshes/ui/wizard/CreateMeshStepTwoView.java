@@ -62,6 +62,8 @@ public class CreateMeshStepTwoView extends BaseWizardPanel {
 		});
 		add(confirmPasswordLabel, "gapright 20");
 		add(confirmPasswordField, "growx");
+		
+		WizardUtils.nextWhenEnterPressedOn(controller, passwordField, confirmPasswordLabel);
 	}
 
 	private void passwordFieldKeyReleased(KeyEvent evt) {

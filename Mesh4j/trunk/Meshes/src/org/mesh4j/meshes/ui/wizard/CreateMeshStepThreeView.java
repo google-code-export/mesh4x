@@ -68,6 +68,7 @@ public class CreateMeshStepThreeView extends BaseWizardPanel {
 	
 
 	private void epiInfoButtonActionPerformed(ActionEvent e) {
+		controller.nextButtonPressed();
 		// TODO fire a property change
 		//controller.setTableDataSetType();
 	}

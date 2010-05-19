@@ -140,6 +140,14 @@ public class WizardView extends AbstractView {
 	    nextButton.setEnabled(b);
 	}
 	
+	public boolean isNextButtonEnabled() {
+		return nextButton.isEnabled();
+	}
+
+	public boolean isBackButtonEnabled() {
+		return backButton.isEnabled();
+	}
+	
 	public void setCancelVisible(boolean b) {
 	    cancelButton.setVisible(b);
 	}

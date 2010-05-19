@@ -116,6 +116,8 @@ public class CreateMeshWizardController extends WizardController {
 	
 	@Override
 	public void backButtonPressed() {
+		if (!wizardView.isBackButtonEnabled()) return;
+		
 		BaseWizardPanel backPanel = wizardPanels.get(--current);
 		setCurrentPanel(backPanel);
 		setButtonsState();
@@ -123,6 +125,8 @@ public class CreateMeshWizardController extends WizardController {
 
 	@Override
 	public void nextButtonPressed() {
+		if (!wizardView.isNextButtonEnabled()) return;
+		
 		BaseWizardPanel nextPanel = wizardPanels.get(++current);
 		setCurrentPanel(nextPanel);
 		setButtonsState();
