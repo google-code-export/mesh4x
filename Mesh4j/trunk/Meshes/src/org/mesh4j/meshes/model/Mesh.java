@@ -1,5 +1,6 @@
 package org.mesh4j.meshes.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -24,7 +25,7 @@ public class Mesh extends AbstractModel {
 	private String password;
 	@XmlElementWrapper(name = "dataSets")
 	@XmlElement(name = "dataSet")
-	private List<DataSet> dataSets;
+	private List<DataSet> dataSets = new ArrayList<DataSet>(3);
 	
 	public String getName() {
 		return this.name;

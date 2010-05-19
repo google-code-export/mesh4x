@@ -2,8 +2,17 @@ package org.mesh4j.meshes.controller;
 
 import java.beans.PropertyChangeEvent;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
+
+import org.mesh4j.meshes.io.ConfigurationManager;
+import org.mesh4j.meshes.io.MeshMarshaller;
 import org.mesh4j.meshes.model.CreateMeshModel;
+import org.mesh4j.meshes.model.Mesh;
 import org.mesh4j.meshes.model.SchedulingOption;
 import org.mesh4j.meshes.model.SyncMode;
 import org.mesh4j.meshes.ui.wizard.BaseWizardPanel;
@@ -89,8 +98,13 @@ public class CreateMeshWizardController extends WizardController {
 		model.setEpiInfoLocation(epiInfoLocation);
 	}
 	
-	public void saveConfiguration(File file) {
-		// TODO serialize mesh configuration to file
+	public void saveConfiguration(File file) throws IOException {
+		FileOutputStream out = new FileOutputStream(file);
+		try {
+			MeshMarshaller.toXml(model.toMesh(), out);
+		} finally {
+			out.close();
+		} 
 	}
 	
 	public void finish() {

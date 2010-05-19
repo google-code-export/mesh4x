@@ -1,5 +1,6 @@
 package org.mesh4j.meshes.model;
 
+
 public class CreateMeshModel extends AbstractModel {
 	
 	public static final String NAME_PROPERTY = "name";
@@ -93,5 +94,32 @@ public class CreateMeshModel extends AbstractModel {
 		this.epiInfoLocation = epiInfoLocation;
 		
 		firePropertyChange(EPIINFOLOCATION_PROPERTY, oldEpiInfoLocation, epiInfoLocation);
+	}
+
+	public Mesh toMesh() {
+		Mesh mesh = new Mesh();
+		
+		// Basic properties
+		mesh.setName(getName());
+		mesh.setDescription(getDescription());
+		mesh.setPassword(getPassword());
+		
+		// DataSet
+		DataSet dataSet = new DataSet();
+		dataSet.setType(DataSetType.TABLE);
+		mesh.getDataSets().add(dataSet);
+		
+		// Schedule
+		Schedule schedule = new Schedule();
+		schedule.setSchedulingOption(scheduling);
+		schedule.setSyncMode(syncMode);
+		dataSet.setSchedule(schedule);
+		
+		// DataSource
+		EpiInfoDataSource dataSource = new EpiInfoDataSource();
+		dataSource.setLocation(epiInfoLocation);
+		dataSet.getDataSources().add(dataSource);
+		
+		return mesh;
 	}
 }

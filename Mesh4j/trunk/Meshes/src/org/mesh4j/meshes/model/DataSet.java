@@ -1,5 +1,6 @@
 package org.mesh4j.meshes.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.JAXBElement;
@@ -29,7 +30,7 @@ public class DataSet extends AbstractModel {
         	@XmlElementRef(type = EpiInfoDataSource.class) 
         })
 	@XmlMixed()
-	private List<DataSource> dataSources;
+	private List<DataSource> dataSources = new ArrayList<DataSource>(3);
 	
 	public void setSchedule(Schedule schedule) {
 		Schedule oldSchedule = this.schedule;
