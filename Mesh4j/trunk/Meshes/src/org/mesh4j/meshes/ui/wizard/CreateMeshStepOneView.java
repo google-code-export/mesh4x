@@ -5,6 +5,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
+import java.util.Arrays;
 
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
@@ -14,6 +15,7 @@ import javax.swing.JTextField;
 import net.miginfocom.swing.MigLayout;
 
 import org.mesh4j.meshes.controller.CreateMeshWizardController;
+import org.mesh4j.meshes.server.MeshServer;
 
 public class CreateMeshStepOneView extends BaseWizardPanel {
 
@@ -24,13 +26,15 @@ public class CreateMeshStepOneView extends BaseWizardPanel {
 	
 	private JTextField nameTextField;
 	private JTextArea descTextArea;
+	private String[] existingMeshNames;
 	
 	public CreateMeshStepOneView(CreateMeshWizardController controller) {
 		super();
 		this.controller = controller;
 		initComponents();
+		initExistingMeshNames();
 	}
-	
+
 	private void initComponents() {
 		setLayout(new MigLayout("insets 10"));
 		setSize(550, 350);
@@ -75,6 +79,21 @@ public class CreateMeshStepOneView extends BaseWizardPanel {
 		WizardUtils.nextWhenEnterPressedOn(controller, nameTextField);
 	}
 	
+	private void initExistingMeshNames() {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				MeshServer server = new MeshServer();
+				String[] names = server.getMeshNames();
+				Arrays.sort(names);
+				existingMeshNames = names;
+				if (nameTextField.getText().length() > 0) {
+					controller.changeMeshName(nameTextField.getText());
+				}
+			}
+		}).start();
+	}
+	
 	private void nameTextFieldKeyReleased(KeyEvent evt) {
 		String name = nameTextField.getText();
 		controller.changeMeshName(name);
@@ -98,6 +117,10 @@ public class CreateMeshStepOneView extends BaseWizardPanel {
 	public String getErrorMessage() {
 		if (nameTextField.getText().length() < 5) {
 			return "The name is too short: it must be at least 5 characters long";
+		} else if (existingMeshNames == null) {
+			return "Getting list of Mesh names on the server, please wait...";
+		} else if (Arrays.binarySearch(existingMeshNames, nameTextField.getText()) >= 0) {
+			return "A Mesh with that name already exists on the server";
 		}
 		return null;
 	}

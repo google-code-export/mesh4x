@@ -9,5 +9,7 @@
 	<classpathentry kind="lib" path="lib/gdata-core-1.0.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Mesh4j"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/GoogleSpreadsheetAdapter"/>
+	<classpathentry kind="lib" path="lib/rome-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/jdom.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
