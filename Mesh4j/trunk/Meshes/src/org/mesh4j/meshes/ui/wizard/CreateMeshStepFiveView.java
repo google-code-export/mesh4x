@@ -54,8 +54,8 @@ public class CreateMeshStepFiveView extends BaseWizardPanel {
 	}
 	
 	@Override
-	public boolean valid() {
-		return currentConfigPanel.valid();
+	public String getErrorMessage() {
+		return currentConfigPanel.getErrorMessage();
 	}
 	
 }

@@ -122,9 +122,12 @@ public class CreateMeshStepSixView extends BaseWizardPanel {
 	}
 	
 	@Override
-	public boolean valid() {
+	public String getErrorMessage() {
 		ButtonModel model = buttonGroup.getSelection();
-		return model != null && model.isSelected();
+		if (model == null || !model.isSelected()) {
+			return "An option from the bottom must be selected";
+		}
+		return null;
 	}
 
 }

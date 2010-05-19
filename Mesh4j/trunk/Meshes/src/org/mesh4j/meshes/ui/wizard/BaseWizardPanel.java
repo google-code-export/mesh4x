@@ -11,6 +11,7 @@ public abstract class BaseWizardPanel extends JPanel {
 	
 	public abstract String getId();
 	
-	public abstract boolean valid();
+	// Return null if there are no error messages
+	public abstract String getErrorMessage();
 
 }

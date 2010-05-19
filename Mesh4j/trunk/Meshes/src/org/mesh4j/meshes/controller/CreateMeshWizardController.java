@@ -130,7 +130,7 @@ public class CreateMeshWizardController extends WizardController {
 	
 	private void setButtonsState() {
 		wizardView.setBackButtonEnabled(!isFirst());
-		wizardView.setNextButtonEnabled(!isLast() && wizardPanels.get(current).valid());
+		wizardView.setNextButtonEnabled(!isLast() && wizardPanels.get(current).getErrorMessage() == null);
 		wizardView.setFinishVisible(isLast());
 		wizardView.setCancelVisible(!isLast());
 	}
@@ -146,6 +146,9 @@ public class CreateMeshWizardController extends WizardController {
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		super.propertyChange(evt);
-		wizardView.setNextButtonEnabled(wizardPanels.get(current).valid());
+		
+		String errorMessage = wizardPanels.get(current).getErrorMessage();
+		wizardView.setNextButtonEnabled(errorMessage == null);
+		wizardView.setErrorMessage(errorMessage);
 	}
 }

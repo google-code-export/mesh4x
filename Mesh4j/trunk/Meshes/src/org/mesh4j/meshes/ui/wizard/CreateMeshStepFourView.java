@@ -99,8 +99,11 @@ public class CreateMeshStepFourView extends BaseWizardPanel {
 	}
 	
 	@Override
-	public boolean valid() {
-		return buttonGroup.getSelection().isSelected();
+	public String getErrorMessage() {
+		if (!buttonGroup.getSelection().isSelected()) {
+			return "An option from the bottom must be selected";
+		}
+		return null;
 	}
 
 }

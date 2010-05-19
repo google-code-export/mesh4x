@@ -84,11 +84,15 @@ public class CreateMeshStepTwoView extends BaseWizardPanel {
 	}
 	
 	@Override
-	public boolean valid() {
+	public String getErrorMessage() {
 		String password = new String(passwordField.getPassword());
 		String confirmPassword = new String(confirmPasswordField.getPassword());
 		
-		return password.length() > 4 && password.equals(confirmPassword);
+		if (password.length() < 5)
+			return "The password is too short: it must be at least 5 characters long";
+		if (!password.equals(confirmPassword))
+			return "The password confirmation does not match the password";
+		return null;
 	}
 	
 }

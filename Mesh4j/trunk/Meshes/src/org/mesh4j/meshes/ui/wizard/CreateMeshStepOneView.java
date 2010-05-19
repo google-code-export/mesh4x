@@ -76,6 +76,10 @@ public class CreateMeshStepOneView extends BaseWizardPanel {
 	private void nameTextFieldKeyReleased(KeyEvent evt) {
 		String name = nameTextField.getText();
 		controller.changeMeshName(name);
+		
+		if (evt.getKeyChar() == (char)13) {
+			controller.nextButtonPressed();
+		}
 	}
 
 	private void descTextAreaFocusLost(FocusEvent evt) {
@@ -93,7 +97,10 @@ public class CreateMeshStepOneView extends BaseWizardPanel {
 	}
 	
 	@Override
-	public boolean valid() {
-		return nameTextField.getText().length() >= 5;
+	public String getErrorMessage() {
+		if (nameTextField.getText().length() < 5) {
+			return "The name is too short: it must be at least 5 characters long";
+		}
+		return null;
 	}
 }

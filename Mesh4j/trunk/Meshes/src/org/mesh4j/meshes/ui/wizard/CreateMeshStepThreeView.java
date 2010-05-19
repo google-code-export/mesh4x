@@ -82,8 +82,8 @@ public class CreateMeshStepThreeView extends BaseWizardPanel {
 	}
 	
 	@Override
-	public boolean valid() {
-		return true;
+	public String getErrorMessage() {
+		return null;
 		//return epiInfoButton.isSelected();
 	}
 

@@ -2,6 +2,7 @@ package org.mesh4j.meshes.ui.wizard;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,6 +11,7 @@ import java.beans.PropertyChangeEvent;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.border.EmptyBorder;
@@ -25,6 +27,7 @@ public class WizardView extends AbstractView {
 	
 	private CardLayout cardLayout;
 	private JPanel cardPanel;
+	private JLabel errorMessageLabel;
 	private JButton backButton;
 	private JButton nextButton;
 	private JButton cancelButton;
@@ -41,6 +44,9 @@ public class WizardView extends AbstractView {
 		setResizable(false);
 		JPanel buttonPanel = new JPanel();
 	    Box buttonBox = new Box(BoxLayout.X_AXIS);
+	    
+	    errorMessageLabel = new JLabel();
+	    errorMessageLabel.setBorder(new EmptyBorder(new Insets(5, 20, 5, 10)));
 
 	    cardPanel = new JPanel();
 	    cardPanel.setBorder(new EmptyBorder(new Insets(5, 10, 5, 10))); 
@@ -94,7 +100,12 @@ public class WizardView extends AbstractView {
 	    buttonPanel.add(buttonBox, BorderLayout.EAST);
 	    
 	    add(buttonPanel, BorderLayout.SOUTH);
-	    add(cardPanel, BorderLayout.CENTER);
+	    
+	    JPanel centerPanel = new JPanel();
+	    centerPanel.setLayout(new BorderLayout());
+	    centerPanel.add(cardPanel, BorderLayout.NORTH);
+	    centerPanel.add(errorMessageLabel, BorderLayout.SOUTH);
+	    add(centerPanel, BorderLayout.CENTER);
 	}
 
 	@Override
@@ -111,6 +122,14 @@ public class WizardView extends AbstractView {
 	
 	public void setCurrentPanel(String id) {
 	    cardLayout.show(cardPanel, id);
+	}
+	
+	public void setErrorMessage(String errorMessage) {
+		if (errorMessage == null) {
+			errorMessageLabel.setText(" ");
+		} else {
+			errorMessageLabel.setText("<html><span style=\"color:red\">" + errorMessage + "</span></html>");
+		}
 	}
 
 	public void setBackButtonEnabled(boolean b) {

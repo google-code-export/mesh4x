@@ -100,8 +100,8 @@ public class CreateMeshStepSevenView extends BaseWizardPanel {
 	}
 
 	@Override
-	public boolean valid() {
-		return true;
+	public String getErrorMessage() {
+		return null;
 	}
 
 }

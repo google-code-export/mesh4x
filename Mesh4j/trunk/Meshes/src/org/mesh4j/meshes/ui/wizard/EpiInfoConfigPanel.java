@@ -77,8 +77,11 @@ public class EpiInfoConfigPanel extends ConfigPanel {
 		}
 	}
 	
-	public boolean valid() {
+	public String getErrorMessage() {
 		File file = new File(fileTextField.getText());
-		return file.exists();
+		if (!file.exists()) {
+			return "The file does not exist";
+		}
+		return null;
 	}
 }
