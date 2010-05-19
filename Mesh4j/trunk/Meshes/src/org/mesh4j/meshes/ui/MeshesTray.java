@@ -6,11 +6,15 @@ import java.awt.MenuItem;
 import java.awt.PopupMenu;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.Action;
 
 import org.mesh4j.meshes.action.ExitAction;
+import org.mesh4j.meshes.controller.CreateMeshWizardController;
 import org.mesh4j.meshes.ui.resource.ResourceManager;
+import org.mesh4j.meshes.ui.wizard.WizardView;
 
 public class MeshesTray {
 	
@@ -25,6 +29,18 @@ public class MeshesTray {
 		MenuItem showMainWindowItem = new MenuItem("Open");
 		showMainWindowItem.addActionListener(showMainWindowAction);
 		popup.add(showMainWindowItem);
+		
+		MenuItem showMeshWizardItem = new MenuItem("Mesh wizard...");
+		showMeshWizardItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				WizardView wizard = new WizardView();
+				new CreateMeshWizardController(wizard);
+				
+				wizard.setVisible(true);
+			}
+		});
+		popup.add(showMeshWizardItem);
 		
 		popup.addSeparator();
 		

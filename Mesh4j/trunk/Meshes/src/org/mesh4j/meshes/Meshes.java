@@ -2,13 +2,13 @@ package org.mesh4j.meshes;
 
 import java.awt.EventQueue;
 
-import javax.swing.JFrame;
+import javax.swing.Action;
 import javax.swing.UIManager;
 
 import org.apache.log4j.Logger;
-import org.mesh4j.meshes.controller.CreateMeshWizardController;
-import org.mesh4j.meshes.controller.WizardController;
-import org.mesh4j.meshes.ui.wizard.WizardView;
+import org.mesh4j.meshes.action.ToggleFrameAction;
+import org.mesh4j.meshes.ui.MainWindow;
+import org.mesh4j.meshes.ui.MeshesTray;
 
 public class Meshes {
 	
@@ -23,15 +23,9 @@ public class Meshes {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-//					MainWindow mainWindow = new MainWindow();
-//					Action toggleMainWindow = new ToggleFrameAction(mainWindow);
-//					new MeshesTray(toggleMainWindow);
-					
-					WizardView wizard = new WizardView();
-					WizardController controller = new CreateMeshWizardController(wizard);
-					
-					wizard.setVisible(true);
-					wizard.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+					MainWindow mainWindow = new MainWindow();
+					Action toggleMainWindow = new ToggleFrameAction(mainWindow);
+					new MeshesTray(toggleMainWindow);
 				} catch (Exception e) {
 					LOGGER.error(e.getMessage(), e);
 				}
