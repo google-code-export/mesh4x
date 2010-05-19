@@ -3,16 +3,13 @@ package org.mesh4j.meshes.controller;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
+import javax.swing.JOptionPane;
 
 import org.mesh4j.meshes.io.ConfigurationManager;
 import org.mesh4j.meshes.io.MeshMarshaller;
 import org.mesh4j.meshes.model.CreateMeshModel;
-import org.mesh4j.meshes.model.Mesh;
 import org.mesh4j.meshes.model.SchedulingOption;
 import org.mesh4j.meshes.model.SyncMode;
 import org.mesh4j.meshes.ui.wizard.BaseWizardPanel;
@@ -108,7 +105,13 @@ public class CreateMeshWizardController extends WizardController {
 	}
 	
 	public void finish() {
-		// TODO 
+		try {
+			ConfigurationManager configManager = new ConfigurationManager();
+			configManager.saveMesh(model.toMesh());
+		} catch (IOException ex) {
+			JOptionPane.showMessageDialog(wizardView, ex.getMessage(), "The mesh configuration file could not be saved", JOptionPane.ERROR_MESSAGE);
+			ex.printStackTrace();
+		}
 	}
 	
 	@Override
