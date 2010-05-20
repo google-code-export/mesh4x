@@ -40,13 +40,12 @@ public class WizardView extends AbstractView {
 	}
 
 	private void initComponents() {
-		setSize(550, 350);
+		setSize(550, 380);
 		setResizable(false);
-		JPanel buttonPanel = new JPanel();
-	    Box buttonBox = new Box(BoxLayout.X_AXIS);
 	    
 	    errorMessageLabel = new JLabel();
 	    errorMessageLabel.setBorder(new EmptyBorder(new Insets(5, 20, 5, 10)));
+	    errorMessageLabel.setMinimumSize(new Dimension(550, 20));
 
 	    cardPanel = new JPanel();
 	    cardPanel.setBorder(new EmptyBorder(new Insets(5, 10, 5, 10))); 
@@ -85,10 +84,8 @@ public class WizardView extends AbstractView {
 				finishButtonActionPerformed(e);
 			}
 		});
-
-	    buttonPanel.setLayout(new BorderLayout());
-	    buttonPanel.add(new JSeparator(), BorderLayout.NORTH);
-
+	    
+	    Box buttonBox = new Box(BoxLayout.X_AXIS);
 	    buttonBox.setBorder(new EmptyBorder(new Insets(5, 10, 5, 10))); 
 	    buttonBox.add(backButton);
 	    buttonBox.add(Box.createHorizontalStrut(10));
@@ -96,7 +93,10 @@ public class WizardView extends AbstractView {
 	    buttonBox.add(Box.createHorizontalStrut(30));
 	    buttonBox.add(cancelButton);
 	    buttonBox.add(finishButton);
-	    
+
+	    JPanel buttonPanel = new JPanel();
+	    buttonPanel.setLayout(new BorderLayout());
+	    buttonPanel.add(new JSeparator(), BorderLayout.NORTH);
 	    buttonPanel.add(buttonBox, BorderLayout.EAST);
 	    
 	    add(buttonPanel, BorderLayout.SOUTH);
