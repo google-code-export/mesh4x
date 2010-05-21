@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.mesh4j.meshes.action.ToggleFrameAction;
 import org.mesh4j.meshes.ui.MainWindow;
 import org.mesh4j.meshes.ui.MeshesTray;
+import org.mesh4j.meshes.ui.ShowMeshWizard;
 
 public class Meshes {
 	
@@ -26,6 +27,7 @@ public class Meshes {
 					MainWindow mainWindow = new MainWindow();
 					Action toggleMainWindow = new ToggleFrameAction(mainWindow);
 					new MeshesTray(toggleMainWindow);
+					new ShowMeshWizard().actionPerformed(null);
 				} catch (Exception e) {
 					LOGGER.error(e.getMessage(), e);
 				}
