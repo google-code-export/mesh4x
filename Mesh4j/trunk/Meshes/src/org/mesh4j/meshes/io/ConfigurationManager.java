@@ -43,7 +43,10 @@ public class ConfigurationManager {
 		return meshes;
 	}
 
-	public void saveMesh(Mesh mesh) throws IOException {
+	/**
+	 * Saves the mesh and returns the file where it was saved.
+	 */
+	public File saveMesh(Mesh mesh) throws IOException {
 		File meshFile = new File(configurationsDirectory, mesh.getName() + ".mesh");
 		FileOutputStream out = new FileOutputStream(meshFile);
 		try {
@@ -51,6 +54,7 @@ public class ConfigurationManager {
 		} finally {
 			out.close();
 		}
+		return meshFile;
 	}
 
 	private void initConfigurationPath() {

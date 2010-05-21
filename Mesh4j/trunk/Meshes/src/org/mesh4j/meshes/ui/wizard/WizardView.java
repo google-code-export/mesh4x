@@ -122,6 +122,7 @@ public class WizardView extends AbstractView {
 	
 	public void setCurrentPanel(String id) {
 	    cardLayout.show(cardPanel, id);
+	    cardPanel.transferFocus();
 	}
 	
 	public void setErrorMessage(String errorMessage) {

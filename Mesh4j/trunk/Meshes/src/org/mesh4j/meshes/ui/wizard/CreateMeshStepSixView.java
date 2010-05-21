@@ -5,7 +5,6 @@ import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 
 import javax.swing.ButtonGroup;
-import javax.swing.ButtonModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -58,6 +57,7 @@ public class CreateMeshStepSixView extends BaseWizardPanel {
 		
 		twoWaySyncButton = new JRadioButton();
 		twoWaySyncButton.setText("Send and receive changes to data");
+		twoWaySyncButton.setSelected(true);
 		add(twoWaySyncButton, "gapleft 30, wrap 5");
 		
 		twoWaySyncButton.addItemListener(new ItemListener() {
@@ -123,10 +123,6 @@ public class CreateMeshStepSixView extends BaseWizardPanel {
 	
 	@Override
 	public String getErrorMessage() {
-		ButtonModel model = buttonGroup.getSelection();
-		if (model == null || !model.isSelected()) {
-			return "An option from the bottom must be selected";
-		}
 		return null;
 	}
 

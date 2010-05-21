@@ -45,6 +45,7 @@ public class EpiInfoConfigPanel extends ConfigPanel {
 		JLabel fileLabel = new JLabel("EpiInfo mdb file:");
 		fileTextField = new JTextField();
 		fileTextField.setEditable(false);
+		fileTextField.setFocusable(false);
 		add(fileLabel, "gapright 5");
 		add(fileTextField, "grow x, push");
 		
