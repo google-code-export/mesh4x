@@ -15,8 +15,8 @@ public class CreateMeshModel extends AbstractModel {
 	private String description;
 	private String password;
 	private String passwordConfirmation;
-	private SchedulingOption scheduling;
-	private SyncMode syncMode;
+	private SchedulingOption scheduling = SchedulingOption.values()[0];
+	private SyncMode syncMode = SyncMode.values()[0];
 	private String epiInfoLocation;
 	
 	public String getName() {
