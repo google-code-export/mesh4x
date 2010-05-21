@@ -2,7 +2,7 @@ package org.mesh4j.meshes.model;
 
 public enum SchedulingOption {
 	
-	MANUALLY("Manually only"),
+	MANUALLY("On request only"),
 	
 	AUTOMATIC("Do one automatic try when connecting"),
 	
