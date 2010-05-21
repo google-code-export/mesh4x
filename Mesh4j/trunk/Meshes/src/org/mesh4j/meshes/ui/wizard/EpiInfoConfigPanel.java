@@ -8,6 +8,7 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+import javax.swing.filechooser.FileFilter;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -34,21 +35,31 @@ public class EpiInfoConfigPanel extends ConfigPanel {
 		setLayout(new MigLayout("insets 10"));
 		//setSize(550, 350);
 		
-		JLabel titleLabel = new JLabel("<html><h2>Confirm the location of your EpiInfo installation</h2></html>");
+		JLabel titleLabel = new JLabel("<html><h2>Confirm the location of your EpiInfo data</h2></html>");
 		add(titleLabel, "span");
 		
 		JLabel fileTitleLabel = new JLabel();
-		fileTitleLabel.setText("<html><h4>Tell us where you have installed EpiInfo:</h4></html>");
+		fileTitleLabel.setText("<html><h4>Tell us where you have your EpiInfo data:</h4></html>");
 		add(fileTitleLabel, "span, wrap 5");
 		
-		JLabel fileLabel = new JLabel("Folder:");
+		JLabel fileLabel = new JLabel("EpiInfo mdb file:");
 		fileTextField = new JTextField();
 		fileTextField.setEditable(false);
 		add(fileLabel, "gapright 5");
 		add(fileTextField, "grow x, push");
 		
 		fileChooser = new JFileChooser();
-		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		fileChooser.setFileFilter(new FileFilter() {
+			@Override
+			public String getDescription() {
+				return "EpiInfo data file (mdb file)";
+			}
+			@Override
+			public boolean accept(File file) {
+				return file.isDirectory() || file.getName().toLowerCase().endsWith(".mdb");
+			}
+		});
+		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		
 		JButton fileChooserButton = new JButton("Browse");
 		fileChooserButton.addActionListener(new ActionListener() {
