@@ -7,6 +7,7 @@ import javax.swing.UIManager;
 
 import org.apache.log4j.Logger;
 import org.mesh4j.meshes.action.ToggleFrameAction;
+import org.mesh4j.meshes.scheduling.ScheduleManager;
 import org.mesh4j.meshes.ui.MainWindow;
 import org.mesh4j.meshes.ui.MeshesTray;
 import org.mesh4j.meshes.ui.ShowMeshWizard;
@@ -33,6 +34,12 @@ public class Meshes {
 				}
 			}
 		});
+		
+		try {
+			ScheduleManager.getInstance().initialize();
+		} catch (Exception e) {
+			LOGGER.fatal("Failed to initialize the task scheduler", e);
+		}
 	}
 	
 	private static void initLookAndFeel() {
