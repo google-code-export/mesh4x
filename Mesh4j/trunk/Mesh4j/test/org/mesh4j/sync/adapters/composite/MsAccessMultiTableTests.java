@@ -34,7 +34,7 @@ public class MsAccessMultiTableTests {
 		
 		String mdbFileName = getMsAccessFileNameToTest();
 		
-		TreeSet<String> tables = new TreeSet<String>();
+		List<String> tables = new ArrayList<String>();
 		tables.add("user");
 		tables.add("Oswego");
 
@@ -58,7 +58,7 @@ public class MsAccessMultiTableTests {
 		
 		String mdbFileName = getMsAccessFileNameToTest();
 
-		TreeSet<String> tables = new TreeSet<String>();
+		List<String> tables = new ArrayList<String>();
 		tables.add("user");
 		tables.add("Oswego");
 

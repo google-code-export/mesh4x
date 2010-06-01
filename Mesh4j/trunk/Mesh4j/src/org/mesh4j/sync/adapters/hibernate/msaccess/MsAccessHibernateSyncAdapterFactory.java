@@ -2,6 +2,7 @@ package org.mesh4j.sync.adapters.hibernate.msaccess;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -68,7 +69,7 @@ public class MsAccessHibernateSyncAdapterFactory implements ISyncAdapterFactory 
 	}
 	
 	private static SplitAdapter createSplitAdapter(String dbURL, String tableName, String user, String password, String contentMappingFileName, String syncMappingFileName, IRDFSchema rdfSchema, IIdentityProvider identityProvider) {
-		String entityName = MsAccessHibernateMappingGenerator.getEntityName(tableName);
+		String entityName = MsAccessHelper.getEntityName(tableName);
 		
 		HibernateSessionFactoryBuilder builder = createHibernateSessionBuilder(dbURL, entityName, user, password, contentMappingFileName, syncMappingFileName, rdfSchema);
 		SyncInfoParser syncInfoParser = new SyncInfoParser(RssSyndicationFormat.INSTANCE, identityProvider, IdGenerator.INSTANCE, MsAccessHibernateMappingGenerator.getSyncTableName(entityName));
@@ -180,16 +181,20 @@ public class MsAccessHibernateSyncAdapterFactory implements ISyncAdapterFactory 
 			throw new MeshException(e);
 		}
 	}
+	
+	public static CompositeSyncAdapter createSyncAdapterForMultiTables(String mdbFileName, List<String> tables, String rdfBaseUri, String baseDirectory, IIdentityProvider identityProvider, ISyncAdapter adapterOpaque){
+		return createSyncAdapterForMultiTables(mdbFileName, tables, null, rdfBaseUri, baseDirectory, identityProvider, adapterOpaque);
+	}
 
-	public static CompositeSyncAdapter createSyncAdapterForMultiTables(String mdbFileName, Set<String> tables, String rdfBaseUri, String baseDirectory, IIdentityProvider identityProvider, ISyncAdapter adapterOpaque){
+	public static CompositeSyncAdapter createSyncAdapterForMultiTables(String mdbFileName, List<String> tables, List<List<String>> columnIdsForEachTable, String rdfBaseUri, String baseDirectory, IIdentityProvider identityProvider, ISyncAdapter adapterOpaque){
 		try{
 			IIdentifiableSyncAdapter[] adapters = new IIdentifiableSyncAdapter[tables.size()];
 			int i = 0;
 			for (String tableName : tables) {
-				SplitAdapter syncAdapter = createHibernateAdapter(mdbFileName, tableName, rdfBaseUri, baseDirectory, identityProvider);
+				SplitAdapter syncAdapter = createHibernateAdapter(mdbFileName, tableName, columnIdsForEachTable == null ? null : columnIdsForEachTable.get(i), rdfBaseUri, baseDirectory, identityProvider);
 				HibernateContentAdapter hibernateContentAdapter = (HibernateContentAdapter)syncAdapter.getContentAdapter();
 				adapters[i] = new IdentifiableSyncAdapter(hibernateContentAdapter.getType(), syncAdapter);
-				i = i +1;
+				i = i + 1;
 			}
 			return new CompositeSyncAdapter("MsAccess composite", adapterOpaque, identityProvider, adapters);
 		} catch (Exception e) {
@@ -207,8 +212,12 @@ public class MsAccessHibernateSyncAdapterFactory implements ISyncAdapterFactory 
 		}
 		return result;
 	}
-
+	
 	public static SplitAdapter createHibernateAdapter(String mdbFileName, String tableName, String rdfBaseUri, String baseDirectory, IIdentityProvider identityProvider) {
+		return createHibernateAdapter(mdbFileName, tableName, null, rdfBaseUri, baseDirectory, identityProvider);
+	}
+
+	public static SplitAdapter createHibernateAdapter(String mdbFileName, String tableName, List<String> columnIds, String rdfBaseUri, String baseDirectory, IIdentityProvider identityProvider) {
 		
 		if(mdbFileName == null || mdbFileName.length() == 0 || tableName == null || tableName.length() == 0){
 			return null;
@@ -218,14 +227,14 @@ public class MsAccessHibernateSyncAdapterFactory implements ISyncAdapterFactory 
 			String contentMappingFileName = MsAccessHibernateMappingGenerator.getContentMappingFileName(tableName, baseDirectory);
 			String syncMappingFileName = MsAccessHibernateMappingGenerator.getSyncMappingFileName(tableName, baseDirectory);
 			
-			MsAccessHibernateMappingGenerator.forceCreateMappings(mdbFileName, tableName, contentMappingFileName, syncMappingFileName);
+			MsAccessHibernateMappingGenerator.forceCreateMappings(mdbFileName, tableName, columnIds, contentMappingFileName, syncMappingFileName);
 			
 			String syncTableName = MsAccessHibernateMappingGenerator.getSyncTableName(tableName);
 			MsAccessHelper.createSyncTableIfAbsent(mdbFileName, syncTableName);
 			
 			IRDFSchema rdfSchema = null;
 			if(rdfBaseUri != null){
-				rdfSchema = MsAccessRDFSchemaGenerator.extractRDFSchema(mdbFileName, tableName, rdfBaseUri);;
+				rdfSchema = MsAccessRDFSchemaGenerator.extractRDFSchema(mdbFileName, tableName, columnIds, rdfBaseUri);;
 			}
 			return createSyncAdapterFromFile(mdbFileName, tableName, contentMappingFileName, syncMappingFileName, rdfSchema, identityProvider);
 		}catch (Exception e) {

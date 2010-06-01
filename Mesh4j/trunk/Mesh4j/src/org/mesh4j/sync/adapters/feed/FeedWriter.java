@@ -48,13 +48,13 @@ public class FeedWriter {
 		this.contentWriter = contentWriter;
 	}
 	
-	public void write(XMLWriter writer, Feed feed) throws Exception{
+	public void write(XMLWriter writer, Feed feed) throws IOException {
         Document document = DocumentHelper.createDocument();
         write(document, feed);
         write(writer, document);
 	}
 
-	public void write(Document document, Feed feed) throws Exception {
+	public void write(Document document, Feed feed) {
 		Element root = this.addRootElement(document);
 		addAdditionalNS(root);
 		this.syndicationFormat.addFeedInformation(root, feed.getTitle(), feed.getDescription(), feed.getLink(), feed.getLastUpdate());
@@ -170,19 +170,5 @@ public class FeedWriter {
 	
 	private String getAuthenticatedUser() {
 		return this.identityProvider.getAuthenticatedUser();
-	}
-
-	public String writeAsXml(Feed feed) throws Exception {
-		Document document = DocumentHelper.createDocument();
-		this.write(document, feed);
-		String xml = document.asXML();
-		return xml;
-	}
-	
-	public String writeAsXml(Item item) throws Exception {
-		Element root = DocumentHelper.createElement("items");
-		this.write(root, root, item);
-		String xml = ((Element)root.elements().get(0)).asXML();
-		return xml;
 	}
 }

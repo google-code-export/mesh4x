@@ -2,6 +2,7 @@ package org.mesh4j.sync.adapters.hibernate;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import org.dom4j.Element;
@@ -151,29 +152,31 @@ public class HibernateContentAdapter implements IIdentifiableContentAdapter, ISy
 		String hqlQuery ="FROM " + this.getType();
 		Session session = this.sessionFactory.openSession();
 		Session dom4jSession = session.getSession(EntityMode.DOM4J);
-		List<Element> entities = null;
 		
 		Transaction transaction = null;
 		try{
 			transaction = session.beginTransaction(); // with DerbyDB the lack of transaction in this procedure was leading to an open transaction
-			entities = dom4jSession.createQuery(hqlQuery).list();
+			Iterator<Element> entities = dom4jSession.createQuery(hqlQuery).iterate();
+			ArrayList<IContent> result = new ArrayList<IContent>();
+			
+			while(entities.hasNext()) {
+				Element entityElement = entities.next();
+				try{
+					String entityID = this.mapping.getMeshId(entityElement);
+					IdentifiableContent entity = new IdentifiableContent(convertRowToXML(entityID, entityElement), this.mapping, entityID);
+					result.add(entity);
+				}catch (Exception e) {
+					manageAndThrowException(e);
+				}
+			}
+			return result;
 		}finally{
 			if (transaction != null)
 				transaction.commit();
 			session.close();
 		}
 		
-		ArrayList<IContent> result = new ArrayList<IContent>();
-		for (Element entityElement : entities) {
-			try{
-				String entityID = this.mapping.getMeshId(entityElement);
-				IdentifiableContent entity = new IdentifiableContent(convertRowToXML(entityID, entityElement), this.mapping, entityID);
-				result.add(entity);
-			}catch (Exception e) {
-				manageAndThrowException(e);
-			}
-		}
-		return result;
+		
 	}
 	
 	public String getType() {

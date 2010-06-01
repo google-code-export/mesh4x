@@ -6,6 +6,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -17,7 +19,9 @@ import sun.jdbc.odbc.JdbcOdbcDriver;
 
 import com.healthmarketscience.jackcess.Column;
 import com.healthmarketscience.jackcess.Database;
+import com.healthmarketscience.jackcess.Index;
 import com.healthmarketscience.jackcess.Table;
+import com.healthmarketscience.jackcess.Index.ColumnDescriptor;
 
 public class MsAccessHelper {
 	
@@ -106,6 +110,24 @@ public class MsAccessHelper {
 			    	}
 			    }
 		}
+	}
+	
+	public static String getEntityName(String tableName) {
+		return tableName.trim().replaceAll(" ", "_");
+	}
+	
+	public static List<Column> getPrimaryKeys(Table table) {
+		for (Index index : table.getIndexes()) {
+			if(index.isPrimaryKey()){				
+				List<ColumnDescriptor> descs = index.getColumns();
+				List<Column> cols = new ArrayList<Column>(descs.size());
+				for(ColumnDescriptor desc : descs) {
+					cols.add(desc.getColumn());
+				}
+				return cols;
+			}
+		}
+		return null;
 	}
 	
 }

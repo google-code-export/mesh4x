@@ -3,7 +3,7 @@ package org.mesh4j.sync.adapters.http;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
@@ -19,9 +19,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
+import org.dom4j.io.XMLWriter;
 import org.mesh4j.sync.IFilter;
+import org.mesh4j.sync.IOutputStreamWriter;
 import org.mesh4j.sync.ISupportMerge;
 import org.mesh4j.sync.ISyncAdapter;
+import org.mesh4j.sync.StringOuputStreamWriter;
 import org.mesh4j.sync.adapters.feed.Feed;
 import org.mesh4j.sync.adapters.feed.FeedReader;
 import org.mesh4j.sync.adapters.feed.FeedWriter;
@@ -81,15 +84,15 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 	}
 
 	@Override
-	public List<Item> merge(List<Item> items) {
+	public List<Item> merge(final List<Item> items) {
 		try {
-			Feed feed = new Feed(items);
-			String xml = feedWriter.writeAsXml(feed);
-			
-			String result = doPOST(this.url, xml, "text/xml");
-			
-			feed = feedReader.read(result);
-			return feed.getItems();
+			String result = doPOST(this.url, new IOutputStreamWriter() {
+				public void write(OutputStream out) throws IOException {
+					XMLWriter xmlWriter = new XMLWriter(out);
+					feedWriter.write(xmlWriter, new Feed(items));
+				}
+			}, "text/xml");
+			return feedReader.read(result).getItems();
 		} catch (Exception e) {
 			Logger.error(e.getMessage(), e); 
 			throw new MeshException(e);
@@ -239,11 +242,15 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 	}
 	
 	public static String doPOST(URL url, String content, String contentType){
-	    HttpURLConnection conn = null;
+	    return doPOST(url, new StringOuputStreamWriter(content), contentType);
+	}
+	
+	public static String doPOST(URL url, IOutputStreamWriter writer, String contentType){
+		HttpURLConnection conn = null;
 	    String result = null;
 	    try{ 
 	    	conn = (HttpURLConnection) url.openConnection();
-			writeData(content, contentType, conn);		    
+			writeData(writer, contentType, conn);		    
 		    result = readData(conn);
 	    } catch(Exception e){
 	    	Logger.error(e.getMessage(), e);
@@ -256,22 +263,13 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 	    return result;
 	}
 
-	private static void writeData(String content, String contentType, HttpURLConnection conn) throws Exception {
+	private static void writeData(IOutputStreamWriter writer, String contentType, HttpURLConnection conn) throws Exception {
 		conn.setDoOutput(true);
 		conn.setUseCaches(false);
 		conn.setRequestMethod("POST");
-		conn.setRequestProperty("Content-Length", Integer.toString(content.length()));
 		conn.setRequestProperty("Content-Type", contentType);
-						
-		OutputStreamWriter out = null;
-		try{
-			out = new OutputStreamWriter(conn.getOutputStream());
-			out.write(content);
-		} finally {
-			if(out != null){
-				out.close();
-			}
-		}
+				
+		writer.write(conn.getOutputStream());
 	}
 	
 	// NOT SUPPORTED 

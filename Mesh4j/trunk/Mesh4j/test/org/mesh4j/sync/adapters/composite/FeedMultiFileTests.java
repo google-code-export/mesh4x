@@ -180,7 +180,7 @@ public class FeedMultiFileTests {
 	@Test
 	public void shouldSyncAllFeedFilesAsZipVsMsAccessWithHibernate() throws Exception{
 		
-		TreeSet<String> tables = new TreeSet<String>();
+		List<String> tables = new ArrayList<String>();
 		tables.add("user");
 		tables.add("Oswego");
 

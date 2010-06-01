@@ -1,8 +1,9 @@
 package org.mesh4j.sync.adapters.hibernate.msaccess;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.TreeSet;
+import java.util.List;
 
 import junit.framework.Assert;
 
@@ -31,7 +32,7 @@ public class HibernateWithMsAccessMultiTablesWithRelationshipTests {
 
 	@Test
 	public void shouldSyncTable1Table2(){
-		TreeSet<String> tables = new TreeSet<String>();
+		List<String> tables = new ArrayList<String>();
 		tables.add("mytable1");
 		tables.add("mytable2");
 		
@@ -40,14 +41,14 @@ public class HibernateWithMsAccessMultiTablesWithRelationshipTests {
 	
 	@Test
 	public void shouldSyncTable2Table1(){
-		TreeSet<String> tables = new TreeSet<String>();
+		List<String> tables = new ArrayList<String>();
 		tables.add("mytable2");
 		tables.add("mytable1");
 		
 		baseTest(tables);
 	}
 	
-	private void baseTest(TreeSet<String> tables){		
+	private void baseTest(List<String> tables){		
 
 		String mdbFileName = getMsAccessFileNameToTest();
 		

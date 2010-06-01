@@ -12,6 +12,7 @@ import org.mesh4j.sync.adapters.hibernate.HibernateContentAdapter;
 import org.mesh4j.sync.adapters.hibernate.mapping.HibernateMsAccessToRDFMapping;
 import org.mesh4j.sync.adapters.hibernate.msaccess.MsAccessHibernateSyncAdapterFactory;
 import org.mesh4j.sync.adapters.http.HttpSyncAdapter;
+import org.mesh4j.sync.adapters.msaccess.MsAccessHelper;
 import org.mesh4j.sync.adapters.msaccess.MsAccessRDFSchemaGenerator;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.id.generator.IdGenerator;
@@ -35,7 +36,7 @@ public class MsAccessVsHttpMultiModeSyncTests {
 		// assert sycn process creation
 		Set<String> tables = MsAccessHibernateSyncAdapterFactory.getTableNames(fileName);
 		for (String tableName : tables) {
-			String rdfClassName = MsAccessRDFSchemaGenerator.getEntityName(tableName);
+			String rdfClassName = MsAccessHelper.getEntityName(tableName);
 			
 			SyncTask syncTask = syncProcess.getSyncTask(rdfClassName);
 			

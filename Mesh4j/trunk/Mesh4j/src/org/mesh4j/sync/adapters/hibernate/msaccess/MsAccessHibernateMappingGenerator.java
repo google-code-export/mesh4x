@@ -11,6 +11,7 @@ import java.util.List;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.mesh4j.sync.adapters.hibernate.mapping.MappingGenerator;
+import org.mesh4j.sync.adapters.msaccess.MsAccessHelper;
 import org.mesh4j.sync.utils.FileUtils;
 import org.mesh4j.sync.validations.Guard;
 
@@ -21,15 +22,19 @@ import com.healthmarketscience.jackcess.Table;
 import com.healthmarketscience.jackcess.Index.ColumnDescriptor;
 
 public class MsAccessHibernateMappingGenerator {
+	
+	public static void createMapping(String mdbFileName, String tableName, String mappingFileName) throws Exception {
+		createMapping(mdbFileName, tableName, null, mappingFileName);
+	}
 
-	public static void createMapping(String mdbFileName, String tableName, String mappingFileName) throws Exception{
+	public static void createMapping(String mdbFileName, String tableName, List<String> idColumns, String mappingFileName) throws Exception{
 
 		StringWriter writer = new StringWriter();
 		
 		File mdbFile = new File(mdbFileName);
 		Database db = Database.open(mdbFile);
 		try{
-			String entityName = getEntityName(tableName);
+			String entityName = MsAccessHelper.getEntityName(tableName);
 			Table table = db.getTable(entityName);
 			if(table == null){
 				table = db.getTable(entityName.trim().replaceAll("_", " "));
@@ -41,15 +46,22 @@ public class MsAccessHibernateMappingGenerator {
 			MappingGenerator.writeHeader(writer);
 			MappingGenerator.writerClass(writer, entityName, getMsAccessTableName(tableName));
 			
-			List<ColumnDescriptor> ids =  getPrimaryKey(table);
-			if(ids == null || ids.isEmpty()){
-				Guard.throwsArgumentException("PKs", tableName);
+			List<Column> ids;
+			if (idColumns == null) {
+				ids = MsAccessHelper.getPrimaryKeys(table);
+				if(ids == null || ids.isEmpty()){
+					Guard.throwsArgumentException("PKs", tableName);
+				}
+			} else {
+				ids = new ArrayList<Column>();
+				for(String idColumn : idColumns) {
+					ids.add(table.getColumn(idColumn));
+				}
 			}
 			
 			ArrayList<String> idNames = new ArrayList<String>();
 			if(ids.size() == 1){
-				ColumnDescriptor columnDescriptor = ids.get(0);
-				Column columnID = columnDescriptor.getColumn();
+				Column columnID = ids.get(0);
 				String propertyName = getNodeName(columnID.getName());
 				String msAccessColumnName = getMsAccessColumnName(columnID.getName());				
 				
@@ -74,8 +86,7 @@ public class MsAccessHibernateMappingGenerator {
 				writer.write("\t\t");
 				writer.write("<composite-id name=\"id\">");	
 				
-				for (ColumnDescriptor columnDescriptor : ids) {
-					Column column = columnDescriptor.getColumn();
+				for (Column column: ids) {
 					String propertyName = getNodeName(column.getName());
 					String msAccessColumnName = getMsAccessColumnName(column.getName());					
 					idNames.add(propertyName);
@@ -126,11 +137,7 @@ public class MsAccessHibernateMappingGenerator {
 		}finally{
 			fileWriter.close();
 		}
-	}
-
-	public static String getEntityName(String tableName) {
-		return tableName.trim().replaceAll(" ", "_");
-	}
+	}	
 	
 	private static String getNodeName(String columnName) {
 		return columnName.trim().replaceAll(" ", "_");
@@ -143,34 +150,27 @@ public class MsAccessHibernateMappingGenerator {
 	}	
 	private static String getHibernateType(Column column) throws HibernateException, SQLException {
 		return MsAccessDialect.INSTANCE.getHibernateTypeName(column.getSQLType());
-	}
-
-	private static List<ColumnDescriptor> getPrimaryKey(Table table) {
-		for (Index index : table.getIndexes()) {
-			if(index.isPrimaryKey()){				
-				return index.getColumns();				
-			}
-		}
-		return null;
-	}
+	}	
 
 	/**
 	 * create mapping file for source and sync repository
 	 * Please see the Issue#104 (http://code.google.com/p/mesh4x/issues/detail?id=104)
-	 * 
-	 * @param mdbFileName
-	 * @param tableName
-	 * @param contentMappingFileName
-	 * @param syncMappingFileName
-	 * @throws Exception
 	 */
 	public static void forceCreateMappings(String mdbFileName, String tableName, String contentMappingFileName, String syncMappingFileName) throws Exception {
-		createMapping(mdbFileName, tableName, contentMappingFileName);
+		forceCreateMappings(mdbFileName, tableName, null, contentMappingFileName, syncMappingFileName);
+	}
+	
+	/**
+	 * create mapping file for source and sync repository
+	 * Please see the Issue#104 (http://code.google.com/p/mesh4x/issues/detail?id=104)
+	 */
+	public static void forceCreateMappings(String mdbFileName, String tableName, List<String> columnIds, String contentMappingFileName, String syncMappingFileName) throws Exception {
+		createMapping(mdbFileName, tableName, columnIds, contentMappingFileName);
 		MappingGenerator.createSyncInfoMapping(syncMappingFileName, getSyncTableName(tableName));
 	}
 
 	public static String getSyncTableName(String baseTableName) {
-		String entityName = getEntityName(baseTableName);
+		String entityName = MsAccessHelper.getEntityName(baseTableName);
 		return entityName+"_sync";
 	}
 
@@ -179,12 +179,12 @@ public class MsAccessHibernateMappingGenerator {
 	}
 
 	public static String getContentMappingFileName(String tableName, String baseDirectory) {
-		String entityName = getEntityName(tableName);
+		String entityName = MsAccessHelper.getEntityName(tableName);
 		return FileUtils.getFileName(baseDirectory , entityName + ".hbm.xml");
 	}
 
 	public static String getSyncMappingFileName(String tableName, String baseDirectory) {
-		String entityName = getEntityName(tableName);
+		String entityName = MsAccessHelper.getEntityName(tableName);
 		return FileUtils.getFileName(baseDirectory , entityName + "_sync.hbm.xml");
 	}
 

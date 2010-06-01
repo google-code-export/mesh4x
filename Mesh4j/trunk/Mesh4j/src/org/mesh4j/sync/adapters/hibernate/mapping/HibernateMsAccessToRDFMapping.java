@@ -18,9 +18,6 @@ import org.mesh4j.sync.payload.schema.rdf.RDFInstance;
 import org.mesh4j.sync.utils.XMLHelper;
 import org.mesh4j.sync.validations.Guard;
 
-import com.hp.hpl.jena.datatypes.RDFDatatype;
-import com.hp.hpl.jena.datatypes.TypeMapper;
-
 public class HibernateMsAccessToRDFMapping extends AbstractRDFIdentifiableMapping implements IHibernateToXMLMapping {
 	
 	private static final String DATE_FORMAT = "yyyy-mm-dd hh:mm:ss";

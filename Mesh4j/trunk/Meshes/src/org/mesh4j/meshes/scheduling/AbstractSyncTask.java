@@ -48,15 +48,13 @@ public abstract class AbstractSyncTask extends Task {
 			List<Item> items = engine.synchronize(getSince());
 			if (items != null && items.size() > 0) {
 				status = SYNCHRONIZATION_CONFLICTED;
+			} else {
+				status = SYNCHRONIZATION_SUCCEED;
 			}
 		} catch (Exception e) {
 			status = SYNCHRONIZATION_FAILED;
 		}
-
-		status = SYNCHRONIZATION_SUCCEED;
-		
 		context.setStatusMessage(status);
-		
 		System.out.println("Sync task ended");
 	}
 	
