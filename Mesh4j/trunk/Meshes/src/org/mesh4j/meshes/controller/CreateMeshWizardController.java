@@ -108,9 +108,7 @@ public class CreateMeshWizardController extends WizardController {
 	public void finish() {
 		try {
 			ConfigurationManager configManager = new ConfigurationManager();
-			File meshFile = configManager.saveMesh(model.toMesh());
-			if (Desktop.isDesktopSupported())
-				Desktop.getDesktop().open(meshFile.getParentFile());
+			configManager.saveMesh(model.toMesh());
 		} catch (IOException ex) {
 			JOptionPane.showMessageDialog(wizardView, ex.getMessage(), "The mesh configuration file could not be saved", JOptionPane.ERROR_MESSAGE);
 			ex.printStackTrace();

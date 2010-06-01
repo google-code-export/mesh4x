@@ -1,5 +1,6 @@
 package org.mesh4j.meshes.ui.wizard;
 
+import java.awt.Desktop;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -82,6 +83,8 @@ public class CreateMeshStepSevenView extends BaseWizardPanel {
 			if (selectedFile != null) {
 				try {
 					controller.saveConfiguration(selectedFile);
+					if (Desktop.isDesktopSupported())
+						Desktop.getDesktop().open(selectedFile.getParentFile());
 				} catch (IOException ex) {
 					JOptionPane.showMessageDialog(this, ex.getMessage(), "The mesh configuration file could not be saved", JOptionPane.ERROR_MESSAGE);
 					ex.printStackTrace();
