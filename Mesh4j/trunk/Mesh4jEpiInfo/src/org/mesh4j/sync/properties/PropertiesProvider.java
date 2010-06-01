@@ -24,7 +24,7 @@ public class PropertiesProvider {
 	// BUSINESS METHODS
 	public PropertiesProvider(){
 		super();
-		this.resourceName = getCurrentDirectory()+"\\properties\\"+MESH4J_PROPERTIES;
+		this.resourceName = getCurrentDirectory() + File.separator + "properties" + File.separator + MESH4J_PROPERTIES;
 		initialize();
 	}
 	
