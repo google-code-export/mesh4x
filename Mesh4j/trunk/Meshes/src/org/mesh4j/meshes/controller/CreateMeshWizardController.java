@@ -10,8 +10,10 @@ import javax.swing.JOptionPane;
 import org.mesh4j.meshes.io.ConfigurationManager;
 import org.mesh4j.meshes.io.MeshMarshaller;
 import org.mesh4j.meshes.model.CreateMeshModel;
+import org.mesh4j.meshes.model.Mesh;
 import org.mesh4j.meshes.model.SchedulingOption;
 import org.mesh4j.meshes.model.SyncMode;
+import org.mesh4j.meshes.server.MeshServer;
 import org.mesh4j.meshes.ui.wizard.BaseWizardPanel;
 import org.mesh4j.meshes.ui.wizard.CreateMeshStepFiveView;
 import org.mesh4j.meshes.ui.wizard.CreateMeshStepFourView;
@@ -106,7 +108,9 @@ public class CreateMeshWizardController extends WizardController {
 	
 	public void finish() {
 		try {
-			ConfigurationManager.getInstance().saveMesh(model.toMesh());
+			Mesh mesh = model.toMesh();
+			MeshServer.getInstance().createMesh(mesh);
+			ConfigurationManager.getInstance().saveMesh(mesh);
 		} catch (IOException ex) {
 			JOptionPane.showMessageDialog(wizardView, ex.getMessage(), "The mesh configuration file could not be saved", JOptionPane.ERROR_MESSAGE);
 			ex.printStackTrace();

@@ -83,8 +83,7 @@ public class CreateMeshStepOneView extends BaseWizardPanel {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				MeshServer server = new MeshServer();
-				String[] names = server.getMeshNames();
+				String[] names = MeshServer.getInstance().getMeshNames();
 				Arrays.sort(names);
 				existingMeshNames = names;
 				if (nameTextField.getText().length() > 0) {
