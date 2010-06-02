@@ -16,6 +16,7 @@ public class DataSet extends AbstractModel {
 	
 	public static final String TYPE_PROPERTY = "dataset_type";
 	public static final String NAME_PROPERTY = "dataset_name";
+	public static final String SERVER_FEED_URL_PROPERTY = "dataset_server_feed_url";
 	public static final String SCHEDULE_PROPERTY = "dataset_schedule";
 	public static final String SCHEDULINGOPTION_PROPERTY = "dataset_schedulingoption";
 	
@@ -23,6 +24,8 @@ public class DataSet extends AbstractModel {
 	private DataSetType type;
 	@XmlElement
 	private String name;
+	@XmlElement
+	private String serverFeedUrl;
 	@XmlElement
 	private Schedule schedule;
 	@XmlElement
@@ -72,6 +75,16 @@ public class DataSet extends AbstractModel {
 	
 	public String getName() {
 		return name;
+	}
+	
+	public void setServerFeedUrl(String serverFeedUrl) {
+		String oldUrl = this.serverFeedUrl;
+		this.serverFeedUrl = serverFeedUrl;
+		firePropertyChange(SERVER_FEED_URL_PROPERTY, oldUrl, serverFeedUrl);
+	}
+	
+	public String getServerFeedUrl() {
+		return serverFeedUrl;
 	}
 
 	public List<DataSource> getDataSources() {

@@ -22,7 +22,7 @@ public class EpiInfoSyncAdapterFactory {
 		return MsAccessHibernateSyncAdapterFactory.createSyncAdapterForMultiTables(mdbFileName, dataTableNames, columnIds, rdfBaseUri, baseDirectory, identityProvider, adapterOpaque);
 	}
 	
-	public static ISyncAdapter createSyncAdapter(String mdbFileName, String tableName, String rdfBaseUri, String baseDirectory, IIdentityProvider identityProvider, ISyncAdapter adapterOpaque) {
+	public static ISyncAdapter createSyncAdapter(String mdbFileName, String tableName, String rdfBaseUri, String baseDirectory, IIdentityProvider identityProvider) {
 		return MsAccessHibernateSyncAdapterFactory.createHibernateAdapter(mdbFileName, tableName, uniqueKey(), rdfBaseUri, baseDirectory, identityProvider);
 	}
 	

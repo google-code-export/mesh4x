@@ -50,7 +50,7 @@ public class MeshesTree extends JTree {
 //	    
 //	    top.add(oswego);
 //	    top.add(mesh2);
-		ConfigurationManager confMgr = new ConfigurationManager();
+		ConfigurationManager confMgr = ConfigurationManager.getInstance();
 		List<Mesh> meshes;
 		try {
 			meshes = confMgr.getAllMeshes();

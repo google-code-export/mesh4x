@@ -1,5 +1,7 @@
 package org.mesh4j.meshes.model;
 
+import org.mesh4j.sync.ISyncAdapter;
+
 public class MsAccessDataSource extends DataSource {
 	
 	public static final String FILE_NAME_PROPERTY = "access_filename";
@@ -26,6 +28,12 @@ public class MsAccessDataSource extends DataSource {
 		String oldTableName = this.tableName;
 		this.tableName = tableName;
 		firePropertyChange(TABLE_NAME_PROPERTY, oldTableName, tableName);
+	}
+	
+	@Override
+	public ISyncAdapter createSyncAdapter(DataSet dataSet, String baseDirectory) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

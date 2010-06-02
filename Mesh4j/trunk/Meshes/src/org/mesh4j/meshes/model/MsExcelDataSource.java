@@ -1,5 +1,7 @@
 package org.mesh4j.meshes.model;
 
+import org.mesh4j.sync.ISyncAdapter;
+
 public class MsExcelDataSource extends DataSource {
 	
 	public static final String FILE_NAME_PROPERTY = "excel_filename";
@@ -38,6 +40,12 @@ public class MsExcelDataSource extends DataSource {
 		String oldUniqueColumnName = this.uniqueColumnName;
 		this.uniqueColumnName = uniqueColumnName;
 		firePropertyChange(UNIQUE_COLUMN_NAME_PROPERTY, oldUniqueColumnName, uniqueColumnName);
+	}
+	
+	@Override
+	public ISyncAdapter createSyncAdapter(DataSet dataSet, String baseDirectory) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

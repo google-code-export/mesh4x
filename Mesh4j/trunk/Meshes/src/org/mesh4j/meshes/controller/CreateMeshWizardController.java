@@ -1,6 +1,5 @@
 package org.mesh4j.meshes.controller;
 
-import java.awt.Desktop;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -107,8 +106,7 @@ public class CreateMeshWizardController extends WizardController {
 	
 	public void finish() {
 		try {
-			ConfigurationManager configManager = new ConfigurationManager();
-			configManager.saveMesh(model.toMesh());
+			ConfigurationManager.getInstance().saveMesh(model.toMesh());
 		} catch (IOException ex) {
 			JOptionPane.showMessageDialog(wizardView, ex.getMessage(), "The mesh configuration file could not be saved", JOptionPane.ERROR_MESSAGE);
 			ex.printStackTrace();

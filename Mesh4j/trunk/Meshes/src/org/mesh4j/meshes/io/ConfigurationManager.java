@@ -14,9 +14,16 @@ public class ConfigurationManager {
 
 	private File settingsDirectory;
 	private File configurationsDirectory;
+	private File runtimeDirectory;
+	
+	private static ConfigurationManager instance = new ConfigurationManager();
 
-	public ConfigurationManager() {
+	private ConfigurationManager() {
 		initConfigurationPath();
+	}
+	
+	public static ConfigurationManager getInstance() {
+		return instance;
 	}
 
 	public List<Mesh> getAllMeshes() throws IOException {
@@ -82,5 +89,14 @@ public class ConfigurationManager {
 
 		configurationsDirectory = new File(settingsDirectory, "conf.d");
 		configurationsDirectory.mkdirs();
+		
+		runtimeDirectory = new File(settingsDirectory, "runtime");
+		runtimeDirectory.mkdirs();
+	}
+
+	public File getRuntimeDirectory(Mesh mesh) {
+		File meshDirectory = new File(runtimeDirectory, mesh.getName());
+		meshDirectory.mkdirs();
+		return meshDirectory;
 	}
 }

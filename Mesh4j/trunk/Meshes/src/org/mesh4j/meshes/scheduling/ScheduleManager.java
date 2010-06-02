@@ -34,8 +34,7 @@ public class ScheduleManager {
 	}
 	
 	public void initialize() throws Exception {
-		ConfigurationManager configMgr = new ConfigurationManager();
-		for (Mesh mesh : configMgr.getAllMeshes()) {
+		for (Mesh mesh : ConfigurationManager.getInstance().getAllMeshes()) {
 			scheduleMesh(mesh);
 		}
 	}
@@ -49,7 +48,7 @@ public class ScheduleManager {
 		// Schedule every data set in the mesh
 		List<String> taskIds = new ArrayList<String>();
 		for (DataSet dataSet : mesh.getDataSets()) {
-			Task task = null; // TODO: Create task for synchronization
+			Task task = new DataSetSyncTask(dataSet, ConfigurationManager.getInstance().getRuntimeDirectory(mesh).getAbsolutePath());
 			Schedule schedule = dataSet.getSchedule();
 			String pattern = getSchedulingPattern(schedule.getSchedulingOption());
 			if (pattern != null) {

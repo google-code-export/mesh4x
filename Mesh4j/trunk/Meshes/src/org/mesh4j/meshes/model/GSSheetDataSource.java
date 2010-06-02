@@ -1,5 +1,7 @@
 package org.mesh4j.meshes.model;
 
+import org.mesh4j.sync.ISyncAdapter;
+
 public class GSSheetDataSource extends DataSource {
 	
 	public static final String USER_NAME_PROPERTY = "gssheet_username";
@@ -62,6 +64,12 @@ public class GSSheetDataSource extends DataSource {
 		String oldUniqueColumnName = this.uniqueColumnName;
 		this.uniqueColumnName = uniqueColumnName;
 		firePropertyChange(UNIQUE_COLUMN_NAME_PROPERTY, oldUniqueColumnName, uniqueColumnName);
+	}
+	
+	@Override
+	public ISyncAdapter createSyncAdapter(DataSet dataSet, String baseDirectory) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
