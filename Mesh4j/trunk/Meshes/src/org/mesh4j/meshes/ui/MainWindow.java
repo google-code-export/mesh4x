@@ -8,6 +8,8 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 
 import org.mesh4j.meshes.ui.component.MeshesTree;
@@ -28,8 +30,13 @@ public class MainWindow extends JFrame {
 		
 		this.setIconImage(ResourceManager.getLogo());
 		
+		// Split panel
+		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+		this.add(splitPane, BorderLayout.CENTER);
+		splitPane.setDividerLocation(200);
+		
 		// Tree for Meshes
-		this.add(new MeshesTree(),BorderLayout.WEST);
+		splitPane.setLeftComponent(new JScrollPane(new MeshesTree()));
 		
 		// Central pane with tabs
 		JTabbedPane tabbedPane = new JTabbedPane();
@@ -52,7 +59,7 @@ public class MainWindow extends JFrame {
 		JComponent smsSettingsTab = makeTextPanel("Panel #6");
 		tabbedPane.addTab("SMS Settings", smsSettingsTab);
 
-		this.add(tabbedPane,BorderLayout.CENTER);
+		splitPane.setRightComponent(tabbedPane);
 
 		this.setTitle("Meshes");
 		this.setResizable(false);

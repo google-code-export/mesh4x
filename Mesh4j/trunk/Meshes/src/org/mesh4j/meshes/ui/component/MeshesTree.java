@@ -7,9 +7,12 @@ import javax.swing.JTree;
 import javax.swing.ToolTipManager;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeSelectionModel;
 
 import org.mesh4j.meshes.io.ConfigurationManager;
+import org.mesh4j.meshes.model.DataSet;
+import org.mesh4j.meshes.model.DataSource;
 import org.mesh4j.meshes.model.Mesh;
 
 public class MeshesTree extends JTree {
@@ -18,6 +21,7 @@ public class MeshesTree extends JTree {
 	
 	public MeshesTree() {
 		setRootVisible(false);
+		setShowsRootHandles(true);
 		setCellRenderer(new MeshesTreeCellRenderer());
 		getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		
@@ -31,25 +35,6 @@ public class MeshesTree extends JTree {
 	}
 	
 	private void createNodes(DefaultMutableTreeNode top) {
-//	    DefaultMutableTreeNode oswego = new DefaultMutableTreeNode("Oswego");
-//	    DefaultMutableTreeNode mesh2 = new DefaultMutableTreeNode("Mesh2");
-//	    
-//	    DefaultMutableTreeNode tomato = new DefaultMutableTreeNode("TomatoOutbreakSurvey");
-//	    
-//	    tomato.add(new DefaultMutableTreeNode("Access"));
-//	    tomato.add(new DefaultMutableTreeNode("Local Excel file"));
-//	    tomato.add(new DefaultMutableTreeNode("Johns Google Spreadsheet"));
-//	    tomato.add(new DefaultMutableTreeNode("Map"));
-//	    
-//	    DefaultMutableTreeNode clinics = new DefaultMutableTreeNode("Clinics and Hospitals in Oswego");
-//	    
-//	    clinics.add(new DefaultMutableTreeNode("Shared KML"));
-//	    
-//	    oswego.add(tomato);
-//	    oswego.add(clinics);
-//	    
-//	    top.add(oswego);
-//	    top.add(mesh2);
 		ConfigurationManager confMgr = ConfigurationManager.getInstance();
 		List<Mesh> meshes;
 		try {
@@ -58,8 +43,34 @@ public class MeshesTree extends JTree {
 			throw new Error(e);
 		}
 		for (Mesh mesh : meshes) {
-			top.add(new DefaultMutableTreeNode(mesh.getName()));
+			top.add(createNodeForMesh(mesh));
 		}
+	}
+
+	private MutableTreeNode createNodeForMesh(Mesh mesh) {
+		DefaultMutableTreeNode node = new DefaultMutableTreeNode(mesh.getName());
+		
+		for (DataSet dataSet : mesh.getDataSets()) {
+			node.add(createNodeForDataSet(dataSet));
+		}
+		
+		return node;
+	}
+
+	private MutableTreeNode createNodeForDataSet(DataSet dataSet) {
+		DefaultMutableTreeNode node = new DefaultMutableTreeNode(dataSet.getName());
+		
+		for (DataSource dataSource : dataSet.getDataSources()) {
+			node.add(createNodeForDataSource(dataSource));
+		}
+		
+		return node;
+	}
+
+	private MutableTreeNode createNodeForDataSource(DataSource dataSource) {
+		DefaultMutableTreeNode node = new DefaultMutableTreeNode(dataSource.toString());
+		return node;
+		
 	}
 
 }
