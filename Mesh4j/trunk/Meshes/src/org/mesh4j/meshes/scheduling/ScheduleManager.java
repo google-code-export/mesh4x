@@ -23,6 +23,7 @@ public class ScheduleManager {
 	private ScheduleManager() {
 		scheduledTasksPerMesh = new HashMap<String, List<String>>();
 		scheduler = new Scheduler();
+		scheduler.start();
 	}
 	
 	public synchronized static ScheduleManager getInstance() {
