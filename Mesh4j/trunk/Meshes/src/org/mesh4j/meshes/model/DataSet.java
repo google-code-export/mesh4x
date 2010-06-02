@@ -3,7 +3,6 @@ package org.mesh4j.meshes.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -16,11 +15,14 @@ import javax.xml.bind.annotation.XmlMixed;
 public class DataSet extends AbstractModel {
 	
 	public static final String TYPE_PROPERTY = "dataset_type";
+	public static final String NAME_PROPERTY = "dataset_name";
 	public static final String SCHEDULE_PROPERTY = "dataset_schedule";
 	public static final String SCHEDULINGOPTION_PROPERTY = "dataset_schedulingoption";
 	
 	@XmlElement
 	private DataSetType type;
+	@XmlElement
+	private String name;
 	@XmlElement
 	private Schedule schedule;
 	@XmlElement
@@ -60,6 +62,16 @@ public class DataSet extends AbstractModel {
 	
 	public DataSetType getType() {
 		return this.type;
+	}
+	
+	public void setName(String name) {
+		String oldName = this.name;
+		this.name = name;
+		firePropertyChange(NAME_PROPERTY, oldName, name);
+	}
+	
+	public String getName() {
+		return name;
 	}
 
 	public List<DataSource> getDataSources() {

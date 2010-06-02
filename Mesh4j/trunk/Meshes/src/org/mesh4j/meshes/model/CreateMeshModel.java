@@ -1,5 +1,9 @@
 package org.mesh4j.meshes.model;
 
+import java.util.List;
+
+import org.mesh4j.sync.adapters.epiinfo.EpiInfoSyncAdapterFactory;
+
 
 public class CreateMeshModel extends AbstractModel {
 	
@@ -104,21 +108,26 @@ public class CreateMeshModel extends AbstractModel {
 		mesh.setDescription(getDescription());
 		mesh.setPassword(getPassword());
 		
-		// DataSet
-		DataSet dataSet = new DataSet();
-		dataSet.setType(DataSetType.TABLE);
-		mesh.getDataSets().add(dataSet);
-		
-		// Schedule
-		Schedule schedule = new Schedule();
-		schedule.setSchedulingOption(scheduling);
-		schedule.setSyncMode(syncMode);
-		dataSet.setSchedule(schedule);
-		
-		// DataSource
-		EpiInfoDataSource dataSource = new EpiInfoDataSource();
-		dataSource.setLocation(epiInfoLocation);
-		dataSet.getDataSources().add(dataSource);
+		List<String> tableNames = EpiInfoSyncAdapterFactory.getTableNames(epiInfoLocation);
+		for(String tableName : tableNames) {
+			// DataSet
+			DataSet dataSet = new DataSet();
+			dataSet.setType(DataSetType.TABLE);
+			dataSet.setName(tableName);
+			mesh.getDataSets().add(dataSet);
+			
+			// Schedule
+			Schedule schedule = new Schedule();
+			schedule.setSchedulingOption(scheduling);
+			schedule.setSyncMode(syncMode);
+			dataSet.setSchedule(schedule);
+			
+			// DataSource
+			EpiInfoDataSource dataSource = new EpiInfoDataSource();
+			dataSource.setFileName(epiInfoLocation);
+			dataSource.setTableName(tableName);
+			dataSet.getDataSources().add(dataSource);
+		}
 		
 		return mesh;
 	}
