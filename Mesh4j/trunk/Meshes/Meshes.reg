@@ -1,0 +1,6 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_CURRENT_USER\Software\Classes\InsTEDD.Meshes\shell\open\command]
+@="javaw -jar \"c:\\Program Files\\InsTEDD\\Meshes\\Meshes.jar\" \"%1\""
+[HKEY_CURRENT_USER\Software\Classes\.mesh]
+@="InsTEDD.Meshes"

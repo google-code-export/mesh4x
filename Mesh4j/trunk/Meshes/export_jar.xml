@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="create_run_jar" name="Create Runnable Jar for Project Meshes with Jar-in-Jar Loader">
+    <!--this file was created by Eclipse Runnable JAR Export Wizard-->
+    <!--ANT 1.7 is required                                        -->
+    <target name="create_run_jar">
+        <jar destfile="C:/Program Files/InsTEDD/Meshes/Meshes.jar">
+            <manifest>
+                <attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
+                <attribute name="Rsrc-Main-Class" value="org.mesh4j.meshes.Meshes"/>
+                <attribute name="Class-Path" value="."/>
+                <attribute name="Rsrc-Class-Path" value="./ cron4j-2.1.1.jar miglayout-3.7.1-swing.jar log4j-1.2.15.jar gdata-spreadsheet-2.0.jar gdata-core-1.0.jar dom4j-1.6.1.jar hibernate3.jar commons-collections-2.1.1.jar commons-logging-1.0.4.jar log4j-1.2.11.jar mysql-connector-java-5.1.6-bin.jar antlr-2.7.6.jar asm.jar ehcache-1.2.3.jar jta.jar jaxen-1.1-beta-7.jar derby.jar junit.jar org.hamcrest.core_1.1.0.v20090501071000.jar commons-lang.jar activation.jar commons-net-1.4.1.jar mail.jar commons-codec-1.3.jar smslib-3.3.0.jar jena.jar xercesImpl.jar iri.jar icu4j_3_4.jar bsh-2.0b1.jar freemarker.jar jtidy-r8-20060801.jar hibernate-tools.jar poi-3.5-beta5-20090219.jar poi-contrib-3.5-beta5-20090219.jar poi-ooxml-3.5-beta5-20090219.jar poi-scratchpad-3.5-beta5-20090219.jar ooxml-schemas-1.0.jar xmlbeans-2.3.0.jar ognl-2.7.2.jar javassist-3.6.ga.jar jackcess-1.1.19.jar c3p0-0.9.1.jar rome-1.0.jar jdom.jar activation.jar commons-logging-1.0.4.jar dom4j-1.6.1.jar gdata-core-1.0.jar gdata-client-meta-1.0.jar gdata-client-1.0.jar gdata-media-1.0.jar gdata-spreadsheet-meta-2.0.jar gdata-spreadsheet-2.0.jar gdata-docs-meta-2.0.jar gdata-docs-2.0.jar icu4j_3_4.jar iri.jar jaxen-1.1-beta-7.jar jena.jar mail.jar xercesImpl.jar"/>
+            </manifest>
+            <zipfileset src="jar-in-jar-loader.zip"/>
+            <fileset dir="C:/Projects/Mesh4j/Meshes/bin"/>
+            <zipfileset dir="C:\Projects\Mesh4j\Meshes\lib" includes="cron4j-2.1.1.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\Meshes\lib" includes="miglayout-3.7.1-swing.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\Meshes\lib" includes="log4j-1.2.15.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\Meshes\lib" includes="gdata-spreadsheet-2.0.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\Meshes\lib" includes="gdata-core-1.0.jar"/>
+            <fileset dir="C:/Projects/Mesh4j/Mesh4j/testbin"/>
+            <fileset dir="C:/Projects/Mesh4j/Mesh4j/bin"/>
+            <zipfileset dir="C:\Projects\Mesh4j\Mesh4j\lib\dom4j" includes="dom4j-1.6.1.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\Mesh4j\lib\hibernate" includes="hibernate3.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\Mesh4j\lib\jakarta-commons" includes="commons-collections-2.1.1.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\Mesh4j\lib\jakarta-commons" includes="commons-logging-1.0.4.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\Mesh4j\lib\log4j" includes="log4j-1.2.11.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\Mesh4j\lib\mySql" includes="mysql-connector-java-5.1.6-bin.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\Mesh4j\lib\antlr" includes="antlr-2.7.6.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\Mesh4j\lib\asm" includes="asm.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\Mesh4j\lib\ehcache" includes="ehcache-1.2.3.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\Mesh4j\lib\j2ee" includes="jta.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\Mesh4j\lib\jaxen" includes="jaxen-1.1-beta-7.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\Mesh4j\lib\derby" includes="derby.jar"/>
+            <zipfileset dir="C:\eclipse\plugins\org.junit4_4.5.0.v20090423" includes="junit.jar"/>
+            <zipfileset dir="C:\eclipse\plugins" includes="org.hamcrest.core_1.1.0.v20090501071000.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\Mesh4j\lib\jakarta-commons" includes="commons-lang.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\Mesh4j\lib\jaf" includes="activation.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\Mesh4j\lib\jakarta-commons" includes="commons-net-1.4.1.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\Mesh4j\lib\javamail" includes="mail.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\Mesh4j\lib\jakarta-commons" includes="commons-codec-1.3.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\Mesh4j\lib\smsLib" includes="smslib-3.3.0.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\Mesh4j\lib\jenna" includes="jena.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\Mesh4j\lib\jenna" includes="xercesImpl.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\Mesh4j\lib\jenna" includes="iri.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\Mesh4j\lib\jenna" includes="icu4j_3_4.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\Mesh4j\lib\hibernate" includes="bsh-2.0b1.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\Mesh4j\lib\hibernate" includes="freemarker.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\Mesh4j\lib\hibernate" includes="jtidy-r8-20060801.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\Mesh4j\lib\hibernate" includes="hibernate-tools.jar"/>
+            <fileset dir="C:/Projects/Mesh4j/Mesh4j/etc/toExport"/>
+            <zipfileset dir="C:\Projects\Mesh4j\Mesh4j\lib\jakarta-poi" includes="poi-3.5-beta5-20090219.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\Mesh4j\lib\jakarta-poi" includes="poi-contrib-3.5-beta5-20090219.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\Mesh4j\lib\jakarta-poi" includes="poi-ooxml-3.5-beta5-20090219.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\Mesh4j\lib\jakarta-poi" includes="poi-scratchpad-3.5-beta5-20090219.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\Mesh4j\lib\jakarta-poi" includes="ooxml-schemas-1.0.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\Mesh4j\lib\jakarta-poi" includes="xmlbeans-2.3.0.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\Mesh4j\lib\ognl" includes="ognl-2.7.2.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\Mesh4j\lib\javassist" includes="javassist-3.6.ga.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\Mesh4j\lib\jackcess" includes="jackcess-1.1.19.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\Mesh4j\lib\c3p0" includes="c3p0-0.9.1.jar"/>
+            <fileset dir="C:/Projects/Mesh4j/Mesh4j/etc/localProperties"/>
+            <zipfileset dir="C:\Projects\Mesh4j\Meshes\lib" includes="rome-1.0.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\Meshes\lib" includes="jdom.jar"/>
+            <fileset dir="C:/Projects/Mesh4j/GoogleSpreadsheetAdapter/bin"/>
+            <fileset dir="C:/Projects/Mesh4j/GoogleSpreadsheetAdapter/etc"/>
+            <zipfileset dir="C:\Projects\Mesh4j\GoogleSpreadsheetAdapter\lib" includes="activation.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\GoogleSpreadsheetAdapter\lib" includes="commons-logging-1.0.4.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\GoogleSpreadsheetAdapter\lib" includes="dom4j-1.6.1.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\GoogleSpreadsheetAdapter\lib" includes="gdata-core-1.0.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\GoogleSpreadsheetAdapter\lib" includes="gdata-client-meta-1.0.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\GoogleSpreadsheetAdapter\lib" includes="gdata-client-1.0.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\GoogleSpreadsheetAdapter\lib" includes="gdata-media-1.0.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\GoogleSpreadsheetAdapter\lib" includes="gdata-spreadsheet-meta-2.0.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\GoogleSpreadsheetAdapter\lib" includes="gdata-spreadsheet-2.0.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\GoogleSpreadsheetAdapter\lib" includes="gdata-docs-meta-2.0.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\GoogleSpreadsheetAdapter\lib" includes="gdata-docs-2.0.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\GoogleSpreadsheetAdapter\lib" includes="icu4j_3_4.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\GoogleSpreadsheetAdapter\lib" includes="iri.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\GoogleSpreadsheetAdapter\lib" includes="jaxen-1.1-beta-7.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\GoogleSpreadsheetAdapter\lib" includes="jena.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\GoogleSpreadsheetAdapter\lib" includes="mail.jar"/>
+            <zipfileset dir="C:\Projects\Mesh4j\GoogleSpreadsheetAdapter\lib" includes="xercesImpl.jar"/>
+        </jar>
+    </target>
+</project>

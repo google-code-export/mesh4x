@@ -26,7 +26,7 @@ public class ConfigurationManager {
 	private ConfigurationManager() {
 		initConfigurationPath();
 	}
-	
+
 	public static ConfigurationManager getInstance() {
 		return instance;
 	}
@@ -86,6 +86,10 @@ public class ConfigurationManager {
 		}
 		
 		return meshFile;
+	}
+	
+	public void importFile(String fileName) {
+		// TODO implement file import
 	}
 
 	private void initConfigurationPath() {
