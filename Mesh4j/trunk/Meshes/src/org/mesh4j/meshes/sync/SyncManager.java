@@ -26,7 +26,7 @@ public class SyncManager {
 		return instance;
 	}
 	
-	public void synchronize(DataSet dataSet, String baseDirectory) {
+	public void synchronize(DataSet dataSet) {
 		if (isSynchronizing(dataSet))
 			return;
 		
@@ -35,6 +35,7 @@ public class SyncManager {
 			dataSet.setState(DataSetState.SYNC);
 			try {
 				for(DataSource dataSource : dataSet.getDataSources()) {
+					String baseDirectory = ConfigurationManager.getInstance().getRuntimeDirectory(dataSet.getMesh()).getAbsolutePath();
 					synchronize(dataSet, dataSource, baseDirectory);
 				}
 				dataSet.setState(DataSetState.NORMAL);
