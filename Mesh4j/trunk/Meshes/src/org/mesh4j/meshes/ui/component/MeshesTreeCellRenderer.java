@@ -6,6 +6,8 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
+import org.mesh4j.meshes.model.DataSet;
+
 public class MeshesTreeCellRenderer extends DefaultTreeCellRenderer {
 	
 	private static final long serialVersionUID = 7286261949126552775L;
@@ -15,14 +17,26 @@ public class MeshesTreeCellRenderer extends DefaultTreeCellRenderer {
 			boolean sel, boolean expanded, boolean leaf, int row,
 			boolean hasFocus) {
 		
+		if (value instanceof DefaultMutableTreeNode) {
+			Object userObject = ((DefaultMutableTreeNode)value).getUserObject();
+			if (userObject instanceof DataSet)
+				value = getDataSetLabel((DataSet) userObject);
+		}
+		
 		super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
-		
-		
-		DefaultMutableTreeNode node = (DefaultMutableTreeNode)value;
-			
-		setToolTipText("This is at level " + node.getLevel());
-		
 		return this;
 	}
 
+	private String getDataSetLabel(DataSet dataSet) {
+		switch (dataSet.getState()) {
+		case FAILED:
+			return dataSet.getName() + " (FAILED)";
+		case NORMAL:
+			return dataSet.getName();
+		case SYNC:
+			return dataSet.getName() + " (SYNCHRONIZING)";
+		}
+		return null;
+	}
+	
 }

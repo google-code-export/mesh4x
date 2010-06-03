@@ -1,10 +1,12 @@
 package org.mesh4j.meshes.ui.component;
 
+import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.List;
 
+import javax.swing.JPopupMenu;
 import javax.swing.JTree;
 import javax.swing.ToolTipManager;
 import javax.swing.event.ListDataEvent;
@@ -12,8 +14,10 @@ import javax.swing.event.ListDataListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import org.mesh4j.meshes.action.SynchronizeNowAction;
 import org.mesh4j.meshes.io.ConfigurationManager;
 import org.mesh4j.meshes.model.DataSet;
 import org.mesh4j.meshes.model.DataSource;
@@ -41,6 +45,29 @@ public class MeshesTree extends JTree {
 		ConfigurationManager.getInstance().addListDataListener(new MeshListListener(root));
 	}
 	
+	@Override
+	protected void processMouseEvent(MouseEvent e) {
+		super.processMouseEvent(e);
+		
+		if (e.isPopupTrigger()) {
+			TreePath path = getPathForLocation(e.getX(), e.getY());
+			if (path == null)
+				return;
+			
+			setSelectionPath(path);
+			
+			Object obj = path.getLastPathComponent();
+			if (obj instanceof DefaultMutableTreeNode) {
+				DefaultMutableTreeNode node = (DefaultMutableTreeNode) obj;
+				if (node.getUserObject() instanceof DataSet) {
+					JPopupMenu menu = new JPopupMenu();
+					menu.add(new SynchronizeNowAction((DataSet) node.getUserObject()));
+					menu.show(this, e.getX(), e.getY());
+				}
+			}
+		}
+	}
+	
 	private void createNodes(DefaultMutableTreeNode top) {
 		ConfigurationManager confMgr = ConfigurationManager.getInstance();
 		List<Mesh> meshes;
@@ -65,7 +92,7 @@ public class MeshesTree extends JTree {
 	}
 
 	private MutableTreeNode createNodeForDataSet(final DataSet dataSet) {
-		final DefaultMutableTreeNode node = new DefaultMutableTreeNode(dataSet.getName());
+		final DefaultMutableTreeNode node = new DefaultMutableTreeNode(dataSet);
 		
 		for (DataSource dataSource : dataSet.getDataSources()) {
 			node.add(createNodeForDataSource(dataSource));
@@ -76,18 +103,7 @@ public class MeshesTree extends JTree {
 			@Override
 			public void propertyChange(PropertyChangeEvent e) {
 				if (e.getPropertyName() == DataSet.STATE_PROPERTY) {
-					switch (dataSet.getState()) {
-					case FAILED:
-						node.setUserObject(dataSet.getName() + " (FAILED)");
-						break;
-					case NORMAL:
-						node.setUserObject(dataSet.getName());
-						break;
-					case SYNC:
-						node.setUserObject(dataSet.getName() + " (SYNCHRONIZING)");
-						break;
-					}
-					((DefaultTreeModel) getModel()).reload(node);
+					((DefaultTreeModel) getModel()).nodeChanged(node);
 				}
 			}
 		});
