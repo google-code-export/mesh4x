@@ -16,4 +16,6 @@ public abstract class DataSource extends AbstractModel {
 
 	public abstract ISyncAdapter createSyncAdapter(DataSet dataSet, String baseDirectory);
 
+	public abstract void accept(MeshVisitor visitor);
+
 }

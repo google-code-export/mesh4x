@@ -71,5 +71,10 @@ public class GSSheetDataSource extends DataSource {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public void accept(MeshVisitor visitor) {
+		visitor.visit(this);
+	}
 
 }

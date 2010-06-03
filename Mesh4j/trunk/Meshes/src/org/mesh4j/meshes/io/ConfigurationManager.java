@@ -1,19 +1,29 @@
 package org.mesh4j.meshes.io;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.swing.JFileChooser;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
+import org.apache.log4j.Logger;
+import org.mesh4j.meshes.filefilters.EpiInfoFileFilter;
+import org.mesh4j.meshes.model.EpiInfoDataSource;
 import org.mesh4j.meshes.model.Mesh;
+import org.mesh4j.meshes.model.MeshVisitor;
 
 public class ConfigurationManager {
+	
+	private final static Logger LOGGER = Logger.getLogger(ConfigurationManager.class);
 
 	private File settingsDirectory;
 	private File configurationsDirectory;
@@ -89,7 +99,49 @@ public class ConfigurationManager {
 	}
 	
 	public void importFile(String fileName) {
-		// TODO implement file import
+		try {
+			BufferedInputStream in = new BufferedInputStream(new FileInputStream(fileName));
+			final Mesh mesh = MeshMarshaller.fromXml(in);
+			final Map<String, String> resolvedFilenames = new HashMap<String, String>();
+			final boolean[] canceled = { false };
+			
+			// Resolve external resources
+			mesh.accept(new MeshVisitor() {
+				@Override
+				public boolean visit(EpiInfoDataSource dataSource) {
+					if (canceled[0]) return false;
+					
+					String fileName = dataSource.getFileName();
+					String resolvedFilename = resolvedFilenames.get(fileName);
+					if (resolvedFilename == null) {
+						JFileChooser fileChooser = new JFileChooser();
+						fileChooser.setDialogTitle("Please choose the location of the MDB file " + new File(fileName).getName());
+						fileChooser.setDialogType(JFileChooser.OPEN_DIALOG);
+						fileChooser.setFileFilter(new EpiInfoFileFilter());
+						fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+						fileChooser.setSelectedFile(new File(fileName));
+						int returnVal = fileChooser.showOpenDialog(null);
+						if (returnVal == JFileChooser.APPROVE_OPTION) {
+							File selectedFile = fileChooser.getSelectedFile();
+							resolvedFilename = selectedFile.getAbsolutePath();
+							resolvedFilenames.put(fileName, resolvedFilename);
+						}
+					}
+					if (resolvedFilename == null) {
+						canceled[0] = true;
+					} else {
+						dataSource.setFileName(resolvedFilename);
+					}
+					return false;
+				}
+			});
+			
+			if (!canceled[0]) {
+				saveMesh(mesh);
+			}
+		} catch (IOException e) {
+			LOGGER.error("Failed to import file " + fileName, e);
+		}
 	}
 
 	private void initConfigurationPath() {

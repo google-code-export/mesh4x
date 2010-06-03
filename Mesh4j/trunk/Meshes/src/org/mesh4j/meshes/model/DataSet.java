@@ -110,4 +110,12 @@ public class DataSet extends AbstractModel {
 		
 		firePropertyChange(STATE_PROPERTY, oldState, state);
 	}
+	
+	public void accept(MeshVisitor visitor) {
+		boolean children = visitor.visit(this);
+		if (!children) return;
+		
+		for(DataSource dataSource : dataSources)
+			dataSource.accept(visitor);
+	}
 }

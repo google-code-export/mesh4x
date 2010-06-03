@@ -13,7 +13,6 @@ import org.mesh4j.meshes.model.CreateMeshModel;
 import org.mesh4j.meshes.model.Mesh;
 import org.mesh4j.meshes.model.SchedulingOption;
 import org.mesh4j.meshes.model.SyncMode;
-import org.mesh4j.meshes.scheduling.ScheduleManager;
 import org.mesh4j.meshes.server.MeshServer;
 import org.mesh4j.meshes.ui.wizard.BaseWizardPanel;
 import org.mesh4j.meshes.ui.wizard.CreateMeshStepFiveView;
@@ -110,11 +109,8 @@ public class CreateMeshWizardController extends WizardController {
 	public void finish() {
 		try {
 			Mesh mesh = model.toMesh();
-			
-			// TODO these three steps should be done at once by some other entity
 			MeshServer.getInstance().createMesh(mesh);
 			ConfigurationManager.getInstance().saveMesh(mesh);
-			ScheduleManager.getInstance().scheduleMesh(mesh);
 		} catch (IOException ex) {
 			JOptionPane.showMessageDialog(wizardView, ex.getMessage(), "The mesh configuration file could not be saved", JOptionPane.ERROR_MESSAGE);
 			ex.printStackTrace();

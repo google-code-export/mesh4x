@@ -10,6 +10,7 @@ import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import org.apache.log4j.Logger;
 import org.mesh4j.meshes.io.ConfigurationManager;
 
 /**
@@ -19,6 +20,8 @@ import org.mesh4j.meshes.io.ConfigurationManager;
  * This is a singleton class.
  */
 public class UniqueApplicationInstance {
+	
+	private final static Logger LOGGER = Logger.getLogger(UniqueApplicationInstance.class);
 	
 	// Command to import a configuration file
 	private final static String IMPORT_COMMAND = "import "; 
@@ -31,7 +34,7 @@ public class UniqueApplicationInstance {
 		try {
 			listen();
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOGGER.error("Failed listening port " + port, e);
 		}
 	}
 	
@@ -60,7 +63,7 @@ public class UniqueApplicationInstance {
 			writer.write(IMPORT_COMMAND + file);
 			writer.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOGGER.error("Failed telling to import the file " + file + " via the port " + port, e);
 		}
 	}
 
@@ -83,12 +86,13 @@ public class UniqueApplicationInstance {
 								}
 							}
 						} catch (IOException e) {
-							e.printStackTrace();
+							LOGGER.error("Failed reading socket port " + port, e);
 						}
 					}
 				}
 			}).start();
 		} catch (BindException e) {
+			// Can happen if the address is already in use
 		}
 	}
 

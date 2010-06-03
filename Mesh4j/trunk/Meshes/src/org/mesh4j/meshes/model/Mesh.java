@@ -67,5 +67,13 @@ public class Mesh extends AbstractModel {
 	public void setDataSets(List<DataSet> dataSets) {
 		this.dataSets = dataSets;
 	}
+	
+	public void accept(MeshVisitor visitor) {
+		boolean children = visitor.visit(this);
+		if (!children) return;
+		
+		for(DataSet dataSet : dataSets)
+			dataSet.accept(visitor);
+	}
 
 }

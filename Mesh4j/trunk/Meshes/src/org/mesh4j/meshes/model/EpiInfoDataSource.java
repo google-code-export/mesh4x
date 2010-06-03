@@ -21,5 +21,10 @@ public class EpiInfoDataSource extends MsAccessDataSource {
 	public String toString() {
 		return getFileName() + ":" + getTableName();
 	}
+	
+	@Override
+	public void accept(MeshVisitor visitor) {
+		visitor.visit(this);
+	}
 
 }

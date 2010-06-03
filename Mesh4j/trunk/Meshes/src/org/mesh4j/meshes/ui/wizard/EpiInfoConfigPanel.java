@@ -8,12 +8,12 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
-import javax.swing.filechooser.FileFilter;
 
 import net.miginfocom.swing.MigLayout;
 
 import org.apache.log4j.Logger;
 import org.mesh4j.meshes.controller.CreateMeshWizardController;
+import org.mesh4j.meshes.filefilters.EpiInfoFileFilter;
 
 @SuppressWarnings("serial")
 public class EpiInfoConfigPanel extends ConfigPanel {
@@ -50,16 +50,7 @@ public class EpiInfoConfigPanel extends ConfigPanel {
 		add(fileTextField, "grow x, push");
 		
 		fileChooser = new JFileChooser();
-		fileChooser.setFileFilter(new FileFilter() {
-			@Override
-			public String getDescription() {
-				return "EpiInfo data file (mdb file)";
-			}
-			@Override
-			public boolean accept(File file) {
-				return file.isDirectory() || file.getName().toLowerCase().endsWith(".mdb");
-			}
-		});
+		fileChooser.setFileFilter(new EpiInfoFileFilter());
 		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		
 		JButton fileChooserButton = new JButton("Browse");

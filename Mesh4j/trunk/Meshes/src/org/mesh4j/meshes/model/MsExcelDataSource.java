@@ -48,4 +48,9 @@ public class MsExcelDataSource extends DataSource {
 		return null;
 	}
 	
+	@Override
+	public void accept(MeshVisitor visitor) {
+		visitor.visit(this);
+	}
+	
 }
