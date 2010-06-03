@@ -1,5 +1,7 @@
 package org.mesh4j.meshes.model;
 
+import javax.xml.bind.annotation.XmlElement;
+
 import org.mesh4j.sync.ISyncAdapter;
 
 public class MsAccessDataSource extends DataSource {
@@ -7,7 +9,9 @@ public class MsAccessDataSource extends DataSource {
 	public static final String FILE_NAME_PROPERTY = "access_filename";
 	public static final String TABLE_NAME_PROPERTY = "access_tablename";
 	
+	@XmlElement
 	private String fileName;
+	@XmlElement
 	private String tableName;
 	
 	public String getFileName() {
