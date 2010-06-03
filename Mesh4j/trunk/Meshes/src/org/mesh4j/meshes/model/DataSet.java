@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlMixed;
+import javax.xml.bind.annotation.XmlTransient;
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class DataSet extends AbstractModel {
@@ -19,6 +20,7 @@ public class DataSet extends AbstractModel {
 	public static final String SERVER_FEED_URL_PROPERTY = "dataset_server_feed_url";
 	public static final String SCHEDULE_PROPERTY = "dataset_schedule";
 	public static final String SCHEDULINGOPTION_PROPERTY = "dataset_schedulingoption";
+	public static final String STATE_PROPERTY = "state";
 	
 	@XmlElement
 	private DataSetType type;
@@ -36,6 +38,9 @@ public class DataSet extends AbstractModel {
         })
 	@XmlMixed()
 	private List<DataSource> dataSources = new ArrayList<DataSource>(3);
+	
+	@XmlTransient
+	private DataSetState state = DataSetState.NORMAL;
 	
 	public void setSchedule(Schedule schedule) {
 		Schedule oldSchedule = this.schedule;
@@ -95,4 +100,14 @@ public class DataSet extends AbstractModel {
 		this.dataSources = dataSources;
 	}
 
+	public DataSetState getState() {
+		return state;
+	}
+	
+	public void setState(DataSetState state) {
+		DataSetState oldState = this.state;
+		this.state = state;
+		
+		firePropertyChange(STATE_PROPERTY, oldState, state);
+	}
 }

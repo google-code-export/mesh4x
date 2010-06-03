@@ -4,6 +4,7 @@ import it.sauronsoftware.cron4j.Task;
 import it.sauronsoftware.cron4j.TaskExecutionContext;
 
 import org.mesh4j.meshes.model.DataSet;
+import org.mesh4j.meshes.model.DataSetState;
 import org.mesh4j.meshes.model.DataSource;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.SyncEngine;
@@ -27,8 +28,15 @@ public class DataSetSyncTask extends Task {
 
 	@Override
 	public void execute(TaskExecutionContext ctx) throws RuntimeException {
-		for(DataSource dataSource : dataSet.getDataSources()) {
-			execute(ctx, dataSource);
+		dataSet.setState(DataSetState.SYNC);
+		try {
+			for(DataSource dataSource : dataSet.getDataSources()) {
+				execute(ctx, dataSource);
+			}
+			dataSet.setState(DataSetState.NORMAL);
+		} catch (RuntimeException e) {
+			dataSet.setState(DataSetState.FAILED);
+			throw e;
 		}
 	}
 

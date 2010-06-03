@@ -1,5 +1,7 @@
 package org.mesh4j.meshes.ui.component;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.List;
 
@@ -62,12 +64,33 @@ public class MeshesTree extends JTree {
 		return node;
 	}
 
-	private MutableTreeNode createNodeForDataSet(DataSet dataSet) {
-		DefaultMutableTreeNode node = new DefaultMutableTreeNode(dataSet.getName());
+	private MutableTreeNode createNodeForDataSet(final DataSet dataSet) {
+		final DefaultMutableTreeNode node = new DefaultMutableTreeNode(dataSet.getName());
 		
 		for (DataSource dataSource : dataSet.getDataSources()) {
 			node.add(createNodeForDataSource(dataSource));
 		}
+		
+		dataSet.addPropertyChangeListener(new PropertyChangeListener() {
+			
+			@Override
+			public void propertyChange(PropertyChangeEvent e) {
+				if (e.getPropertyName() == DataSet.STATE_PROPERTY) {
+					switch (dataSet.getState()) {
+					case FAILED:
+						node.setUserObject(dataSet.getName() + " (FAILED)");
+						break;
+					case NORMAL:
+						node.setUserObject(dataSet.getName());
+						break;
+					case SYNC:
+						node.setUserObject(dataSet.getName() + " (SYNCHRONIZING)");
+						break;
+					}
+					((DefaultTreeModel) getModel()).reload(node);
+				}
+			}
+		});
 		
 		return node;
 	}
