@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
+
 import org.mesh4j.meshes.model.Mesh;
 
 public class ConfigurationManager {
@@ -15,6 +18,8 @@ public class ConfigurationManager {
 	private File settingsDirectory;
 	private File configurationsDirectory;
 	private File runtimeDirectory;
+	private List<Mesh> meshes;
+	private List<ListDataListener> listDataListeners = new ArrayList<ListDataListener>();
 	
 	private static ConfigurationManager instance = new ConfigurationManager();
 
@@ -28,6 +33,9 @@ public class ConfigurationManager {
 
 	public List<Mesh> getAllMeshes() throws IOException {
 
+		if (meshes != null)
+			return meshes;
+		
 		File[] meshFiles = configurationsDirectory.listFiles(new FilenameFilter() {
 			@Override
 			public boolean accept(File dir, String name) {
@@ -35,7 +43,7 @@ public class ConfigurationManager {
 			}
 		});
 
-		List<Mesh> meshes = new ArrayList<Mesh>();
+		meshes = new ArrayList<Mesh>();
 		for (File meshFile : meshFiles) {
 			FileInputStream in = new FileInputStream(meshFile);
 			try {
@@ -61,6 +69,22 @@ public class ConfigurationManager {
 		} finally {
 			out.close();
 		}
+		
+		// Notify the listeners about the change
+		List<Mesh> currentMeshes = getAllMeshes();
+		int meshIndex = currentMeshes.indexOf(mesh);
+		if (meshIndex >= 0) {
+			for (ListDataListener listener : listDataListeners) {
+				listener.contentsChanged(new ListDataEvent(currentMeshes, ListDataEvent.CONTENTS_CHANGED, meshIndex, meshIndex));
+			}
+		} else {
+			currentMeshes.add(mesh);
+			meshIndex = currentMeshes.indexOf(mesh);
+			for (ListDataListener listener : listDataListeners) {
+				listener.intervalAdded(new ListDataEvent(currentMeshes, ListDataEvent.INTERVAL_ADDED, meshIndex, meshIndex));
+			}
+		}
+		
 		return meshFile;
 	}
 
@@ -98,5 +122,13 @@ public class ConfigurationManager {
 		File meshDirectory = new File(runtimeDirectory, mesh.getName());
 		meshDirectory.mkdirs();
 		return meshDirectory;
+	}
+	
+	public void addListDataListener(ListDataListener listener) {
+		listDataListeners.add(listener);
+	}
+	
+	public void removeListDataListener(ListDataListener listener) {
+		listDataListeners.remove(listener);
 	}
 }

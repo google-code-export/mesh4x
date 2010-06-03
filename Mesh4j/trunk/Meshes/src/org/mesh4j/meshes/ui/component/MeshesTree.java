@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.swing.JTree;
 import javax.swing.ToolTipManager;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
@@ -32,6 +34,9 @@ public class MeshesTree extends JTree {
 		setModel(new DefaultTreeModel(root));
 		
 		ToolTipManager.sharedInstance().registerComponent(this);
+		
+		// Subscribe for mesh changes
+		ConfigurationManager.getInstance().addListDataListener(new MeshListListener(root));
 	}
 	
 	private void createNodes(DefaultMutableTreeNode top) {
@@ -73,4 +78,33 @@ public class MeshesTree extends JTree {
 		
 	}
 
+	private final class MeshListListener implements ListDataListener {
+		
+		private final DefaultMutableTreeNode root;
+
+		public MeshListListener(DefaultMutableTreeNode root) {
+			this.root = root;
+		}
+
+		@Override
+		public void intervalRemoved(ListDataEvent e) {
+			// TODO Auto-generated method stub
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public void intervalAdded(ListDataEvent e) {
+			List<Mesh> meshes = (List<Mesh>) e.getSource();
+			for (int i = e.getIndex0(); i <= e.getIndex1(); i++) {
+				Mesh mesh = meshes.get(i);
+				root.add(createNodeForMesh(mesh));
+				((DefaultTreeModel)getModel()).reload();
+			}
+		}
+
+		@Override
+		public void contentsChanged(ListDataEvent e) {
+			// TODO Auto-generated method stub
+		}
+	}	
 }
