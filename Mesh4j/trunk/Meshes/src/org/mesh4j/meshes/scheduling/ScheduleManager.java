@@ -8,6 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
+
 import org.mesh4j.meshes.io.ConfigurationManager;
 import org.mesh4j.meshes.model.DataSet;
 import org.mesh4j.meshes.model.Mesh;
@@ -15,7 +18,7 @@ import org.mesh4j.meshes.model.Schedule;
 import org.mesh4j.meshes.model.SchedulingOption;
 
 public class ScheduleManager {
-
+	
 	private static ScheduleManager instance;
 	private Map<String, List<String>> scheduledTasksPerMesh;
 	private Scheduler scheduler;
@@ -37,6 +40,8 @@ public class ScheduleManager {
 		for (Mesh mesh : ConfigurationManager.getInstance().getAllMeshes()) {
 			scheduleMesh(mesh);
 		}
+		
+		ConfigurationManager.getInstance().addListDataListener(new MeshListListener());
 	}
 	
 	public void scheduleMesh(Mesh mesh) {
@@ -96,5 +101,30 @@ public class ScheduleManager {
 		}
 		
 		return null;
+	}
+	
+	private final class MeshListListener implements ListDataListener {
+		@Override
+		public void intervalRemoved(ListDataEvent e) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public void intervalAdded(ListDataEvent e) {
+			updateMeshes(e);
+		}
+
+		@Override
+		public void contentsChanged(ListDataEvent e) {
+			updateMeshes(e);
+		}
+		
+		@SuppressWarnings("unchecked")
+		private void updateMeshes(ListDataEvent e) {
+			List<Mesh> meshes = (List<Mesh>) e.getSource();
+			for (int i = e.getIndex0(); i <= e.getIndex1(); i++) {
+				scheduleMesh(meshes.get(i));
+			}			
+		}
 	}
 }
