@@ -9,7 +9,6 @@ import org.mesh4j.meshes.io.ConfigurationManager;
 import org.mesh4j.meshes.model.DataSet;
 import org.mesh4j.meshes.model.DataSetState;
 import org.mesh4j.meshes.model.DataSource;
-import org.mesh4j.meshes.model.Mesh;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.adapters.http.HttpSyncAdapterFactory;
@@ -27,16 +26,16 @@ public class SyncManager {
 		return instance;
 	}
 	
-	public void synchronize(Mesh mesh, DataSet dataSet, String baseDirectory) {
-		if (isSynchronizing(mesh, dataSet))
+	public void synchronize(DataSet dataSet, String baseDirectory) {
+		if (isSynchronizing(dataSet))
 			return;
 		
-		currentSyncs.add(getSyncName(mesh, dataSet));
+		currentSyncs.add(getSyncName(dataSet));
 		try {
 			dataSet.setState(DataSetState.SYNC);
 			try {
 				for(DataSource dataSource : dataSet.getDataSources()) {
-					synchronize(mesh, dataSet, dataSource, baseDirectory);
+					synchronize(dataSet, dataSource, baseDirectory);
 				}
 				dataSet.setState(DataSetState.NORMAL);
 			} catch (RuntimeException e) {
@@ -45,20 +44,20 @@ public class SyncManager {
 			}
 			
 			try {
-				ConfigurationManager.getInstance().saveMesh(mesh);
+				ConfigurationManager.getInstance().saveMesh(dataSet.getMesh());
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
 		} finally {
-			currentSyncs.remove(getSyncName(mesh, dataSet));
+			currentSyncs.remove(getSyncName(dataSet));
 		}
 	}
 	
-	public boolean isSynchronizing(Mesh mesh, DataSet dataSet) {
-		return currentSyncs.contains(getSyncName(mesh, dataSet));
+	public boolean isSynchronizing(DataSet dataSet) {
+		return currentSyncs.contains(getSyncName(dataSet));
 	}
 
-	private void synchronize(Mesh mesh, DataSet dataSet, DataSource dataSource, String baseDirectory) {
+	private void synchronize(DataSet dataSet, DataSource dataSource, String baseDirectory) {
 		ISyncAdapter sourceAdapter = dataSource.createSyncAdapter(dataSet, baseDirectory);
 		ISyncAdapter targetAdapter = createTargetAdapter(dataSet);
 		
@@ -79,8 +78,8 @@ public class SyncManager {
 				new LoggedInIdentityProvider());
 	}
 	
-	private String getSyncName(Mesh mesh, DataSet dataSet) {
-		return mesh.getName() + "/" + dataSet.getName();
+	private String getSyncName(DataSet dataSet) {
+		return dataSet.getMesh().getName() + "/" + dataSet.getName();
 	}
 
 }

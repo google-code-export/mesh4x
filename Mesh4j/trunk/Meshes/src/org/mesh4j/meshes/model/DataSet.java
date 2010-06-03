@@ -3,6 +3,7 @@ package org.mesh4j.meshes.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -41,7 +42,9 @@ public class DataSet extends AbstractModel {
 	
 	@XmlTransient
 	private DataSetState state = DataSetState.NORMAL;
-	
+	@XmlTransient
+	private Mesh mesh;
+		
 	public void setSchedule(Schedule schedule) {
 		Schedule oldSchedule = this.schedule;
 		this.schedule = schedule;
@@ -111,11 +114,24 @@ public class DataSet extends AbstractModel {
 		firePropertyChange(STATE_PROPERTY, oldState, state);
 	}
 	
+	public Mesh getMesh() {
+		return mesh;
+	}
+	
+	public void setMesh(Mesh mesh) {
+		this.mesh = mesh;
+	}
+	
 	public void accept(MeshVisitor visitor) {
 		boolean children = visitor.visit(this);
 		if (!children) return;
 		
 		for(DataSource dataSource : dataSources)
 			dataSource.accept(visitor);
+	}
+	
+	public void afterUnmarshal(Unmarshaller u, Object parent) {
+		if (parent instanceof Mesh)
+			mesh = (Mesh) parent;
 	}
 }

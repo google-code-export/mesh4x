@@ -112,6 +112,7 @@ public class CreateMeshModel extends AbstractModel {
 		for(String tableName : tableNames) {
 			// DataSet
 			DataSet dataSet = new DataSet();
+			dataSet.setMesh(mesh);
 			dataSet.setType(DataSetType.TABLE);
 			dataSet.setName(tableName);
 			dataSet.setServerFeedUrl("http://mesh.instedd.org/feeds/" + getName() + "/" + tableName);
