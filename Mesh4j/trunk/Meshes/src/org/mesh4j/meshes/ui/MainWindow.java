@@ -40,61 +40,33 @@ public class MainWindow extends JFrame {
 		// Split panel
 		final JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		this.add(splitPane, BorderLayout.CENTER);
+		final JPanel viewContainer = new JPanel(new BorderLayout());
+		splitPane.setRightComponent(viewContainer);
 		splitPane.setDividerLocation(200);
 		
 		// Tree for Meshes
 		MeshesTree meshesTree = new MeshesTree();
+		splitPane.setLeftComponent(new JScrollPane(meshesTree));
 		meshesTree.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener() {
 			@Override
 			public void valueChanged(TreeSelectionEvent ev) {
 				DefaultMutableTreeNode node = (DefaultMutableTreeNode) ev.getPath().getLastPathComponent();
 				Object userObject = node.getUserObject();
 				
-				if (userObject instanceof Mesh) {
-					splitPane.setRightComponent(new MeshView((Mesh) userObject));
+				viewContainer.removeAll();
+				
+				if (userObject instanceof Mesh) {	
+					viewContainer.add(new MeshView((Mesh) userObject));
 				} else if (userObject instanceof DataSet) {
-					splitPane.setRightComponent(new DataSetView((DataSet) userObject));
-				} else {
-					splitPane.setRightComponent(null);
+					viewContainer.add(new DataSetView((DataSet) userObject));
 				}
+				
+				viewContainer.revalidate();
+				viewContainer.repaint();
 			}
 		});
-		splitPane.setLeftComponent(new JScrollPane(meshesTree));
-		
-		// Central pane with tabs
-		JTabbedPane tabbedPane = new JTabbedPane();
-		
-		JComponent syncNowTab = makeTextPanel("Panel #1");
-		tabbedPane.addTab("Sync now", syncNowTab);
-		
-		JComponent schedulesTab = makeTextPanel("Panel #2");
-		tabbedPane.addTab("Schedules", schedulesTab);
-		
-		JComponent securityTab = makeTextPanel("Panel #3");
-		tabbedPane.addTab("Security", securityTab);
-		
-		JComponent conflictsTab = makeTextPanel("Panel #4");
-		tabbedPane.addTab("Conflicts", conflictsTab);
-		
-		JComponent historyTab = makeTextPanel("Panel #5");
-		tabbedPane.addTab("History", historyTab);
-		
-		JComponent smsSettingsTab = makeTextPanel("Panel #6");
-		tabbedPane.addTab("SMS Settings", smsSettingsTab);
-
-		splitPane.setRightComponent(tabbedPane);
 
 		this.setTitle("Meshes");
 		this.setResizable(false);
-	}
-	
-	protected JComponent makeTextPanel(String text) {
-        JPanel panel = new JPanel(false);
-        JLabel filler = new JLabel(text);
-        filler.setHorizontalAlignment(JLabel.CENTER);
-        panel.setLayout(new GridLayout(1, 1));
-        panel.add(filler);
-        return panel;
-    }
-
+	}	
 }
