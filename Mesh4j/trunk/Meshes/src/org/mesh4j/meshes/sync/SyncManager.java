@@ -75,7 +75,7 @@ public class SyncManager {
 	}
 	
 	private ISyncAdapter createTargetAdapter(DataSet dataSet) {
-		return HttpSyncAdapterFactory.createSyncAdapter(dataSet.getServerFeedUrl(), 
+		return HttpSyncAdapterFactory.createSyncAdapter(dataSet.getAbsoluteServerFeedUrl(), 
 				new LoggedInIdentityProvider());
 	}
 	

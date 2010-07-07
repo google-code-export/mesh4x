@@ -1,5 +1,7 @@
 package org.mesh4j.meshes.model;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +22,6 @@ public class DataSet extends AbstractModel {
 	public static final String NAME_PROPERTY = "dataset_name";
 	public static final String SERVER_FEED_URL_PROPERTY = "dataset_server_feed_url";
 	public static final String SCHEDULE_PROPERTY = "dataset_schedule";
-	public static final String SCHEDULINGOPTION_PROPERTY = "dataset_schedulingoption";
 	public static final String STATE_PROPERTY = "state";
 	
 	@XmlElement
@@ -31,8 +32,6 @@ public class DataSet extends AbstractModel {
 	private String serverFeedUrl;
 	@XmlElement
 	private Schedule schedule;
-	@XmlElement
-	private SchedulingOption schedulingOption;
 	@XmlElementWrapper(name = "dataSources")
 	@XmlElementRefs({
         	@XmlElementRef(type = EpiInfoDataSource.class) 
@@ -54,17 +53,7 @@ public class DataSet extends AbstractModel {
 	public Schedule getSchedule() {
 		return this.schedule;
 	}
-	
-	public void setSchedulingOption(SchedulingOption schedulingOption) {
-		SchedulingOption oldSchedulingOption = this.schedulingOption;
-		this.schedulingOption = schedulingOption;
-		firePropertyChange(SCHEDULINGOPTION_PROPERTY, oldSchedulingOption, schedulingOption);
-	}
-	
-	public SchedulingOption getSchedulingOption() {
-		return this.schedulingOption;
-	}
-	
+		
 	public void setType(DataSetType type) {
 		DataSetType oldType = this.type; 
 		this.type = type;
@@ -133,5 +122,16 @@ public class DataSet extends AbstractModel {
 	public void afterUnmarshal(Unmarshaller u, Object parent) {
 		if (parent instanceof Mesh)
 			mesh = (Mesh) parent;
+	}
+	
+	public String getAbsoluteServerFeedUrl()
+	{
+		URL url;
+		try {
+			url = new URL(new URL(mesh.getServerFeedUrl()), getServerFeedUrl());
+		} catch (MalformedURLException e) {
+			throw new Error(e);
+		}
+		return url.toString();
 	}
 }

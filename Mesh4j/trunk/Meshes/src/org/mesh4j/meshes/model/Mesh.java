@@ -16,6 +16,7 @@ public class Mesh extends AbstractModel {
 	public static final String NAME_PROPERTY = "name";
 	public static final String DESCRIPTION_PROPERTY = "description";
 	public static final String PASSWORD_PROPERTY = "password";
+	public static final String SERVER_FEED_URL_PROPERTY = "dataset_server_feed_url";
 	
 	@XmlElement(name = "name")
 	private String name;
@@ -23,6 +24,8 @@ public class Mesh extends AbstractModel {
 	private String description;
 	@XmlElement(name = "password")
 	private String password;
+	@XmlElement
+	private String serverFeedUrl;
 	@XmlElementWrapper(name = "dataSets")
 	@XmlElement(name = "dataSet")
 	private List<DataSet> dataSets = new ArrayList<DataSet>(3);
@@ -66,6 +69,16 @@ public class Mesh extends AbstractModel {
 
 	public void setDataSets(List<DataSet> dataSets) {
 		this.dataSets = dataSets;
+	}
+	
+	public void setServerFeedUrl(String serverFeedUrl) {
+		String oldUrl = this.serverFeedUrl;
+		this.serverFeedUrl = serverFeedUrl;
+		firePropertyChange(SERVER_FEED_URL_PROPERTY, oldUrl, serverFeedUrl);
+	}
+	
+	public String getServerFeedUrl() {
+		return serverFeedUrl;
 	}
 	
 	public void accept(MeshVisitor visitor) {

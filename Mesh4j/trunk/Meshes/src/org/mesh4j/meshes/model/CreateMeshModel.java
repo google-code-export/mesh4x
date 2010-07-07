@@ -107,6 +107,7 @@ public class CreateMeshModel extends AbstractModel {
 		mesh.setName(getName());
 		mesh.setDescription(getDescription());
 		mesh.setPassword(getPassword());
+		mesh.setServerFeedUrl("http://mesh.instedd.org/feeds/" + getName() + "/");
 		
 		List<String> tableNames = EpiInfoSyncAdapterFactory.getTableNames(epiInfoLocation);
 		for(String tableName : tableNames) {
@@ -115,7 +116,7 @@ public class CreateMeshModel extends AbstractModel {
 			dataSet.setMesh(mesh);
 			dataSet.setType(DataSetType.TABLE);
 			dataSet.setName(tableName);
-			dataSet.setServerFeedUrl("http://mesh.instedd.org/feeds/" + getName() + "/" + tableName);
+			dataSet.setServerFeedUrl(tableName);
 			mesh.getDataSets().add(dataSet);
 			
 			// Schedule
