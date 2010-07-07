@@ -7,6 +7,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
 import org.mesh4j.meshes.model.DataSet;
+import org.mesh4j.meshes.model.Mesh;
 
 public class MeshesTreeCellRenderer extends DefaultTreeCellRenderer {
 	
@@ -21,6 +22,8 @@ public class MeshesTreeCellRenderer extends DefaultTreeCellRenderer {
 			Object userObject = ((DefaultMutableTreeNode)value).getUserObject();
 			if (userObject instanceof DataSet)
 				value = getDataSetLabel((DataSet) userObject);
+			else if (userObject instanceof Mesh)
+				value = ((Mesh)userObject).getName();
 		}
 		
 		super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);

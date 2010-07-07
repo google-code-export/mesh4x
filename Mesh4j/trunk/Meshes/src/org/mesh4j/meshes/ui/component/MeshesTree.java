@@ -82,7 +82,7 @@ public class MeshesTree extends JTree {
 	}
 
 	private MutableTreeNode createNodeForMesh(Mesh mesh) {
-		DefaultMutableTreeNode node = new DefaultMutableTreeNode(mesh.getName());
+		DefaultMutableTreeNode node = new DefaultMutableTreeNode(mesh);
 		
 		for (DataSet dataSet : mesh.getDataSets()) {
 			node.add(createNodeForDataSet(dataSet));
@@ -112,7 +112,7 @@ public class MeshesTree extends JTree {
 	}
 
 	private MutableTreeNode createNodeForDataSource(DataSource dataSource) {
-		DefaultMutableTreeNode node = new DefaultMutableTreeNode(dataSource.toString());
+		DefaultMutableTreeNode node = new DefaultMutableTreeNode(dataSource);
 		return node;
 		
 	}
