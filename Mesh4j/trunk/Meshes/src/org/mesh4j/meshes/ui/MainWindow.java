@@ -2,20 +2,17 @@ package org.mesh4j.meshes.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 
-import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTabbedPane;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.mesh4j.meshes.model.DataSet;
+import org.mesh4j.meshes.model.DataSource;
 import org.mesh4j.meshes.model.Mesh;
 import org.mesh4j.meshes.ui.component.DataSetView;
 import org.mesh4j.meshes.ui.component.MeshView;
@@ -59,6 +56,8 @@ public class MainWindow extends JFrame {
 					viewContainer.add(new MeshView((Mesh) userObject));
 				} else if (userObject instanceof DataSet) {
 					viewContainer.add(new DataSetView((DataSet) userObject));
+				} else if (userObject instanceof DataSource) {
+					// TODO: Implement DataSourceView
 				}
 				
 				viewContainer.revalidate();

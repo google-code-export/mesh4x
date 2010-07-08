@@ -9,6 +9,7 @@ import org.mesh4j.meshes.io.ConfigurationManager;
 import org.mesh4j.meshes.model.DataSet;
 import org.mesh4j.meshes.model.DataSetState;
 import org.mesh4j.meshes.model.DataSource;
+import org.mesh4j.meshes.model.SyncLog;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.adapters.http.HttpSyncAdapterFactory;
@@ -35,8 +36,13 @@ public class SyncManager {
 			dataSet.setState(DataSetState.SYNC);
 			try {
 				for(DataSource dataSource : dataSet.getDataSources()) {
-					String baseDirectory = ConfigurationManager.getInstance().getRuntimeDirectory(dataSet.getMesh()).getAbsolutePath();
-					synchronize(dataSet, dataSource, baseDirectory);
+					String baseDirectory = ConfigurationManager.getInstance().getRuntimeDirectory(dataSource).getAbsolutePath();
+					try {
+						synchronize(dataSet, dataSource, baseDirectory);
+						dataSource.addLog(new SyncLog(true, "Synchronization succeeded"));
+					} catch (RuntimeException e) {
+						dataSource.addLog(new SyncLog(false, e.getMessage()));
+					}
 				}
 				dataSet.setState(DataSetState.NORMAL);
 			} catch (RuntimeException e) {
