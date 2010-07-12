@@ -15,6 +15,7 @@ import org.mesh4j.meshes.model.DataSet;
 import org.mesh4j.meshes.model.DataSource;
 import org.mesh4j.meshes.model.Mesh;
 import org.mesh4j.meshes.ui.component.DataSetView;
+import org.mesh4j.meshes.ui.component.DataSourceView;
 import org.mesh4j.meshes.ui.component.MeshView;
 import org.mesh4j.meshes.ui.component.MeshesTree;
 import org.mesh4j.meshes.ui.resource.ResourceManager;
@@ -57,7 +58,7 @@ public class MainWindow extends JFrame {
 				} else if (userObject instanceof DataSet) {
 					viewContainer.add(new DataSetView((DataSet) userObject));
 				} else if (userObject instanceof DataSource) {
-					// TODO: Implement DataSourceView
+					viewContainer.add(new DataSourceView((DataSource) userObject));
 				}
 				
 				viewContainer.revalidate();

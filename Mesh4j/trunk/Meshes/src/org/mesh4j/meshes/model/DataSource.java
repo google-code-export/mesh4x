@@ -73,5 +73,16 @@ public abstract class DataSource extends AbstractModel {
 		LogMarshaller.save(logItems, logFile);
 	}
 	
+	public SyncLog[] getLogEntries() {
+		File dir = ConfigurationManager.getInstance().getRuntimeDirectory(this);
+		File logFile = new File(dir, "synclog.xml");
+		
+		if (!logFile.exists())
+			return new SyncLog[0];
+		
+		List<SyncLog> logItems = LogMarshaller.load(logFile);
+		return (SyncLog[]) logItems.toArray(new SyncLog[logItems.size()]);
+	}
+	
 	public abstract void accept(MeshVisitor visitor);
 }
