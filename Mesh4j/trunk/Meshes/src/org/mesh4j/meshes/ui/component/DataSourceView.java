@@ -1,5 +1,6 @@
 package org.mesh4j.meshes.ui.component;
 
+import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -8,8 +9,11 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.border.EmptyBorder;
 
 import org.mesh4j.meshes.model.DataSource;
+import org.mesh4j.meshes.model.MsAccessDataSource;
 
 @SuppressWarnings("serial")
 public class DataSourceView extends JComponent {
@@ -23,8 +27,20 @@ public class DataSourceView extends JComponent {
 	}
 	
 	private void addViewComponents() {
+		setLayout(new BorderLayout());
+		JTabbedPane tabbedPane = new JTabbedPane();
+		tabbedPane.setBorder(new EmptyBorder(new Insets(5, 5, 5, 5)));
+		add(tabbedPane);
+		
+		tabbedPane.addTab("History", createHistoryTab());
+		tabbedPane.addTab("Data Source", new MsAccessDataSourceView((MsAccessDataSource) dataSource));
+	}
+
+	private JPanel createHistoryTab() {
+		
+		JPanel panel = new JPanel();
 		GridBagLayout layout = new GridBagLayout();
-		setLayout(layout);
+		panel.setLayout(layout);
 		
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -35,16 +51,18 @@ public class DataSourceView extends JComponent {
 		c.weightx = 1;
 		
 		// Labels
-		add(new JLabel("Synchronization history:"), c);
+		panel.add(new JLabel("Synchronization history:"), c);
 		
 		// Controls
 		syncLogList = new SyncLogList();
 		syncLogList.setLogEntries(dataSource.getLogEntries());
-		add(new JScrollPane(syncLogList), c);
+		panel.add(new JScrollPane(syncLogList), c);
 		
 		// Fillers
 		c.weightx = 0; c.weighty = 10;
-		add(new JPanel(), c);
+		panel.add(new JPanel(), c);
+		
+		return panel;
 	}
 
 }
