@@ -1,8 +1,13 @@
 package org.mesh4j.meshes.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -14,6 +19,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import org.mesh4j.meshes.model.DataSet;
 import org.mesh4j.meshes.model.DataSource;
 import org.mesh4j.meshes.model.Mesh;
+import org.mesh4j.meshes.ui.Editable.EditableListener;
 import org.mesh4j.meshes.ui.component.DataSetView;
 import org.mesh4j.meshes.ui.component.DataSourceView;
 import org.mesh4j.meshes.ui.component.MeshView;
@@ -23,6 +29,9 @@ import org.mesh4j.meshes.ui.resource.ResourceManager;
 public class MainWindow extends JFrame {
 	
 	private static final long serialVersionUID = -1240237676349762846L;
+	private JPanel viewContainer;
+	private JButton applyButton;
+	private JButton revertButton;
 
 	public MainWindow() {
 		super();
@@ -38,9 +47,15 @@ public class MainWindow extends JFrame {
 		// Split panel
 		final JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		this.add(splitPane, BorderLayout.CENTER);
-		final JPanel viewContainer = new JPanel(new BorderLayout());
+		viewContainer = new JPanel(new BorderLayout());
 		splitPane.setRightComponent(viewContainer);
 		splitPane.setDividerLocation(200);
+		
+		editingButtonsContainer = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		editingButtonsContainer.add(applyButton = new JButton("Apply"));
+		editingButtonsContainer.add(revertButton = new JButton("Revert"));
+		viewContainer.add(editingButtonsContainer, BorderLayout.SOUTH);
+		
 		
 		// Tree for Meshes
 		MeshesTree meshesTree = new MeshesTree();
@@ -51,22 +66,70 @@ public class MainWindow extends JFrame {
 				DefaultMutableTreeNode node = (DefaultMutableTreeNode) ev.getPath().getLastPathComponent();
 				Object userObject = node.getUserObject();
 				
-				viewContainer.removeAll();
-				
 				if (userObject instanceof Mesh) {	
-					viewContainer.add(new MeshView((Mesh) userObject));
+					setView(new MeshView((Mesh) userObject));
 				} else if (userObject instanceof DataSet) {
-					viewContainer.add(new DataSetView((DataSet) userObject));
+					setView(new DataSetView((DataSet) userObject));
 				} else if (userObject instanceof DataSource) {
-					viewContainer.add(new DataSourceView((DataSource) userObject));
+					setView(new DataSourceView((DataSource) userObject));
+				} else {
+					setView(null);
 				}
-				
-				viewContainer.revalidate();
-				viewContainer.repaint();
 			}
 		});
 
 		this.setTitle("Meshes");
 		this.setResizable(false);
-	}	
+		
+		applyButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (currentView instanceof Editable) {
+					((Editable) currentView).saveChanges();
+				}
+			}
+		});
+		
+		revertButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (currentView instanceof Editable) {
+					((Editable) currentView).discardChanges();
+				}
+			}
+		});
+	}
+	
+	private Component currentView = null;
+	private JPanel editingButtonsContainer;
+	
+	private void setView(Component view) {
+		if (currentView != null)
+			viewContainer.remove(currentView);
+		currentView = view;
+		
+		if (view != null) {
+			viewContainer.add(view);
+			if (view instanceof Editable) {
+				editingButtonsContainer.setVisible(true);
+				Editable editable = (Editable) view;
+				editable.setEditableListener(new MainWindowEditableListener());
+				applyButton.setEnabled(false);
+				revertButton.setEnabled(false);
+			} else {
+				editingButtonsContainer.setVisible(false);
+			}
+		}
+		
+		viewContainer.revalidate();
+		viewContainer.repaint();
+	}
+	
+	private class MainWindowEditableListener implements EditableListener {
+		@Override
+		public void dirtyChanged(boolean isDirty) {
+			applyButton.setEnabled(isDirty);
+			revertButton.setEnabled(isDirty);
+		}
+	}
 }

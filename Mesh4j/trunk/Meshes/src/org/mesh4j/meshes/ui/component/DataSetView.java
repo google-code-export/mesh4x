@@ -3,27 +3,34 @@ package org.mesh4j.meshes.ui.component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import org.mesh4j.meshes.io.ConfigurationManager;
 import org.mesh4j.meshes.model.DataSet;
 import org.mesh4j.meshes.model.SchedulingOption;
 import org.mesh4j.meshes.model.SyncMode;
+import org.mesh4j.sync.validations.MeshException;
 
 @SuppressWarnings("serial")
-public class DataSetView extends JComponent {
+public class DataSetView extends EditableComponent {
 
 	private final DataSet dataSet;
 	private JTextField nameField;
+	private JComboBox schedulingComboBox;
+	private JComboBox syncModeComboBox;
 
 	public DataSetView(DataSet dataSet) {
 		this.dataSet = dataSet;
 		addViewComponents();
+		loadModel();
 	}
 
 	private void addViewComponents() {
@@ -46,17 +53,20 @@ public class DataSetView extends JComponent {
 		// Controls
 		
 		c.gridx = 1;
-		nameField = new JTextField(dataSet.getName(), 30);
+		nameField = new JTextField(30);
 		nameField.setEnabled(false);
 		add(nameField, c);
 		
 		DefaultComboBoxModel schedulingModel = new DefaultComboBoxModel(SchedulingOption.values());
-		schedulingModel.setSelectedItem(dataSet.getSchedule().getSchedulingOption());
-		add(new JComboBox(schedulingModel), c);
+		add(schedulingComboBox = new JComboBox(schedulingModel), c);
+		schedulingComboBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				notifyEditableListener();
+			}
+		});
 		
 		DefaultComboBoxModel syncModeModel = new DefaultComboBoxModel(SyncMode.values());
-		syncModeModel.setSelectedItem(dataSet.getSchedule().getSyncMode());
-		add(new JComboBox(syncModeModel), c);
+		add(syncModeComboBox = new JComboBox(syncModeModel), c);
 
 		// Fillers
 		c.gridx = 2; c.gridy = 0; c.weightx = 10;
@@ -65,4 +75,29 @@ public class DataSetView extends JComponent {
 		add(new JPanel(), c);
 	}
 	
+	@Override
+	protected void loadModel() {
+		nameField.setText(dataSet.getName());
+		schedulingComboBox.setSelectedItem(dataSet.getSchedule().getSchedulingOption());
+		syncModeComboBox.setSelectedItem(dataSet.getSchedule().getSyncMode());	
+	}
+
+	@Override
+	public boolean isDirty() {
+		return
+			dataSet.getSchedule().getSchedulingOption() != schedulingComboBox.getSelectedItem() ||
+			dataSet.getSchedule().getSyncMode() != syncModeComboBox.getSelectedItem();
+	}
+
+	@Override
+	public void saveChanges() {
+		dataSet.getSchedule().setSchedulingOption((SchedulingOption) schedulingComboBox.getSelectedItem());
+		dataSet.getSchedule().setSyncMode((SyncMode) syncModeComboBox.getSelectedItem());
+		try {
+			ConfigurationManager.getInstance().saveMesh(dataSet.getMesh());
+			notifyEditableListener();
+		} catch (IOException e) {
+			throw new MeshException(e);
+		}
+	}
 }
