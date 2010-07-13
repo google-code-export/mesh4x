@@ -49,6 +49,7 @@ public class MeshView extends JComponent {
 		// Controls
 		
 		c.gridx = 1;
+		c.weightx = 1;
 		nameField = new JTextField(mesh.getName(), 30);
 		nameField.setEnabled(false);
 		add(nameField, c);
@@ -64,8 +65,6 @@ public class MeshView extends JComponent {
 		add(passwordField, c);
 		
 		// Fillers
-		c.gridx = 2; c.gridy = 0; c.weightx = 10;
-		add(new JPanel(), c);
 		c.gridx = 0; c.gridy = 4; c.weightx = 0; c.weighty = 10;
 		add(new JPanel(), c);
 	}
