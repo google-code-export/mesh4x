@@ -1,5 +1,7 @@
 package org.mesh4j.meshes.model;
 
+import java.io.File;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -19,7 +21,7 @@ public class EpiInfoDataSource extends MsAccessDataSource {
 	
 	@Override
 	public String toString() {
-		return getFileName() + ":" + getTableName();
+		return String.format("EpiInfo: %s (%s)", new File(getFileName()).getName(), getTableName());
 	}
 	
 	@Override
