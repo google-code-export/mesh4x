@@ -1,7 +1,6 @@
 package org.mesh4j.meshes.io;
 
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.File;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -12,7 +11,7 @@ import org.mesh4j.meshes.model.Mesh;
 
 public class MeshMarshaller {
 	
-	public static void toXml(Mesh mesh, OutputStream out) {
+	public static void toXml(Mesh mesh, File out) {
 		try {
 			JAXBContext jaxbContext = JAXBContext.newInstance(Mesh.class);
 			Marshaller marshaller = jaxbContext.createMarshaller();
@@ -24,7 +23,7 @@ public class MeshMarshaller {
 		}
 	}
 	
-	public static Mesh fromXml(InputStream in) {
+	public static Mesh fromXml(File in) {
 		try {
 			JAXBContext jaxbContext = JAXBContext.newInstance(Mesh.class);
 			Unmarshaller unMarshaller = jaxbContext.createUnmarshaller();

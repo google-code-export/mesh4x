@@ -1,9 +1,6 @@
 package org.mesh4j.meshes.io;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -56,14 +53,9 @@ public class ConfigurationManager {
 
 		meshes = new ArrayList<Mesh>();
 		for (File meshFile : meshFiles) {
-			FileInputStream in = new FileInputStream(meshFile);
-			try {
-				Mesh mesh = MeshMarshaller.fromXml(in);
-				if (mesh != null)
-					meshes.add(mesh);
-			} finally {
-				in.close();
-			}
+			Mesh mesh = MeshMarshaller.fromXml(meshFile);
+			if (mesh != null)
+				meshes.add(mesh);
 		}
 
 		return meshes;
@@ -74,12 +66,7 @@ public class ConfigurationManager {
 	 */
 	public File saveMesh(Mesh mesh) throws IOException {
 		File meshFile = new File(configurationsDirectory, mesh.getName() + ".mesh");
-		FileOutputStream out = new FileOutputStream(meshFile);
-		try {
-			MeshMarshaller.toXml(mesh, out);
-		} finally {
-			out.close();
-		}
+		MeshMarshaller.toXml(mesh, meshFile);
 		
 		// Notify the listeners about the change
 		List<Mesh> currentMeshes = getAllMeshes();
@@ -101,8 +88,7 @@ public class ConfigurationManager {
 	
 	public void importFile(String fileName) {
 		try {
-			BufferedInputStream in = new BufferedInputStream(new FileInputStream(fileName));
-			final Mesh mesh = MeshMarshaller.fromXml(in);
+			final Mesh mesh = MeshMarshaller.fromXml(new File(fileName));
 			final Map<String, String> resolvedFilenames = new HashMap<String, String>();
 			final boolean[] canceled = { false };
 			

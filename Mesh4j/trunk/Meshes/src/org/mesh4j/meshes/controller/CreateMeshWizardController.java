@@ -2,7 +2,6 @@ package org.mesh4j.meshes.controller;
 
 import java.beans.PropertyChangeEvent;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 import javax.swing.JOptionPane;
@@ -98,12 +97,7 @@ public class CreateMeshWizardController extends WizardController {
 	}
 	
 	public void saveConfiguration(File file) throws IOException {
-		FileOutputStream out = new FileOutputStream(file);
-		try {
-			MeshMarshaller.toXml(model.toMesh(), out);
-		} finally {
-			out.close();
-		} 
+		MeshMarshaller.toXml(model.toMesh(), file); 
 	}
 	
 	public void finish() {
