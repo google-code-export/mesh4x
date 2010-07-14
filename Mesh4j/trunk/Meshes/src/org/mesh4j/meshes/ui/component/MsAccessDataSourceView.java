@@ -3,23 +3,20 @@ package org.mesh4j.meshes.ui.component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.util.List;
 
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import org.mesh4j.meshes.model.MsAccessDataSource;
-import org.mesh4j.sync.adapters.epiinfo.EpiInfoSyncAdapterFactory;
 
 @SuppressWarnings("serial")
 public class MsAccessDataSourceView extends JComponent {
 
 	private final MsAccessDataSource dataSource;
 	private JTextField fileNameField;
-	private JComboBox tableComboBox;
+	private JTextField tableField;
 
 	public MsAccessDataSourceView(MsAccessDataSource dataSource) {
 		this.dataSource = dataSource;
@@ -48,14 +45,12 @@ public class MsAccessDataSourceView extends JComponent {
 		fileNameField.setEnabled(false);
 		add(fileNameField, c);
 		
-		List<String> tableNames = EpiInfoSyncAdapterFactory.getTableNames(dataSource.getFileName());
-		tableComboBox = new JComboBox(tableNames.toArray());
-		tableComboBox.setSelectedItem(dataSource.getTableName());
-		add(tableComboBox, c);
+		tableField = new JTextField(dataSource.getTableName());
+		tableField.setEnabled(false);
+		add(tableField, c);
 		
 		// Fillers
 		c.gridx = 0; c.gridy = 4; c.weightx = 0; c.weighty = 10;
 		add(new JPanel(), c);
 	}
-	
 }
