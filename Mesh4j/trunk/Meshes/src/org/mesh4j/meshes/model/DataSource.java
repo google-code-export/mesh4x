@@ -85,4 +85,14 @@ public abstract class DataSource extends AbstractModel {
 	}
 	
 	public abstract void accept(MeshVisitor visitor);
+
+	public DataSource copy() {
+		try {
+			DataSource copy = getClass().newInstance();
+			copy.id = id;
+			return copy;
+		} catch (Exception e) {
+			throw new Error(e);
+		}
+	}
 }

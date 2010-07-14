@@ -17,6 +17,7 @@ import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import org.mesh4j.meshes.action.ExportDataSourceConfigurationAction;
 import org.mesh4j.meshes.action.SynchronizeNowAction;
 import org.mesh4j.meshes.io.ConfigurationManager;
 import org.mesh4j.meshes.model.DataSet;
@@ -62,6 +63,10 @@ public class MeshesTree extends JTree {
 				if (node.getUserObject() instanceof DataSet) {
 					JPopupMenu menu = new JPopupMenu();
 					menu.add(new SynchronizeNowAction((DataSet) node.getUserObject()));
+					menu.show(this, e.getX(), e.getY());
+				} else if (node.getUserObject() instanceof DataSource) {
+					JPopupMenu menu = new JPopupMenu();
+					menu.add(new ExportDataSourceConfigurationAction((DataSource) node.getUserObject()));
 					menu.show(this, e.getX(), e.getY());
 				}
 			}

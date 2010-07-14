@@ -89,4 +89,12 @@ public class Mesh extends AbstractModel {
 			dataSet.accept(visitor);
 	}
 
+	public Mesh copy() {
+		Mesh copy = new Mesh();
+		copy.name = name;
+		copy.description = description;
+		copy.serverFeedUrl = serverFeedUrl;
+		return copy;
+	}
+
 }

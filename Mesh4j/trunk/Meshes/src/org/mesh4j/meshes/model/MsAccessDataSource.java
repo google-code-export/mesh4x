@@ -44,5 +44,12 @@ public class MsAccessDataSource extends DataSource {
 	public void accept(MeshVisitor visitor) {
 		visitor.visit(this);
 	}
-
+	
+	@Override
+	public DataSource copy() {
+		MsAccessDataSource copy = (MsAccessDataSource) super.copy();
+		copy.fileName = fileName;
+		copy.tableName = tableName;
+		return copy;
+	}
 }

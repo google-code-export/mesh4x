@@ -134,4 +134,15 @@ public class DataSet extends AbstractModel {
 		}
 		return url.toString();
 	}
+
+	public DataSet copy() {
+		DataSet copy = new DataSet();
+		copy.type = type;
+		copy.name = name;
+		copy.serverFeedUrl = serverFeedUrl;
+		copy.schedule = new Schedule();
+		copy.schedule.setSchedulingOption(schedule.getSchedulingOption());
+		copy.schedule.setSyncMode(schedule.getSyncMode());
+		return copy;
+	}
 }
