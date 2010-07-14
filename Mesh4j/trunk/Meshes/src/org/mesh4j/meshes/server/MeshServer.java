@@ -27,7 +27,7 @@ public class MeshServer {
 	private static MeshServer instance = new MeshServer();
 
 	private MeshServer() {
-		this("http://mesh.instedd.org");
+		this("https://mesh.instedd.org");
 	}
 
 	private MeshServer(String baseUrl) {
