@@ -56,13 +56,15 @@ public class DataSourceView extends JComponent {
 		// Controls
 		syncLogList = new SyncLogList();
 		syncLogList.setLogEntries(dataSource.getLogEntries());
+		c.weighty = 1;
+		c.fill = GridBagConstraints.BOTH;
 		panel.add(new JScrollPane(syncLogList), c);
 		
+		
 		// Fillers
-		c.weightx = 0; c.weighty = 10;
+		c.weightx = 0; c.weighty = 1;
 		panel.add(new JPanel(), c);
 		
 		return panel;
 	}
-
 }
