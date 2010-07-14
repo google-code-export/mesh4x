@@ -32,6 +32,8 @@ public class MainWindow extends JFrame {
 	private JPanel viewContainer;
 	private JButton applyButton;
 	private JButton revertButton;
+	private Component currentView = null;
+	private JPanel editingButtonsContainer;
 
 	public MainWindow() {
 		super();
@@ -55,7 +57,7 @@ public class MainWindow extends JFrame {
 		editingButtonsContainer.add(applyButton = new JButton("Apply"));
 		editingButtonsContainer.add(revertButton = new JButton("Revert"));
 		viewContainer.add(editingButtonsContainer, BorderLayout.SOUTH);
-		
+		editingButtonsContainer.setVisible(false);
 		
 		// Tree for Meshes
 		MeshesTree meshesTree = new MeshesTree();
@@ -77,6 +79,7 @@ public class MainWindow extends JFrame {
 				}
 			}
 		});
+		meshesTree.setSelectionRow(0);
 
 		this.setTitle("Meshes");
 		this.setResizable(false);
@@ -89,7 +92,7 @@ public class MainWindow extends JFrame {
 				}
 			}
 		});
-		
+
 		revertButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -99,9 +102,6 @@ public class MainWindow extends JFrame {
 			}
 		});
 	}
-	
-	private Component currentView = null;
-	private JPanel editingButtonsContainer;
 	
 	private void setView(Component view) {
 		if (currentView != null)
