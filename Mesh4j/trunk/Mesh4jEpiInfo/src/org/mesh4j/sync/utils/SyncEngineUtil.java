@@ -111,7 +111,7 @@ public class SyncEngineUtil {
 			
 			// sync
 			SyncEngine syncEngine = new SyncEngine(msAccessAdapter, httpAdapter);
-			List<Item> conflicts = syncEngine.synchronize(NullPreviewHandler.INSTANCE, syncMode.getBehavior());
+			List<Item> conflicts = syncEngine.synchronize();
 			
 			traceCloudSynchronization(url, syncMode, start, new Date(), conflicts, false, sourceAlias, identityProvider, baseDirectory);
 			

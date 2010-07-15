@@ -81,23 +81,28 @@ public class SyncEngineTests extends AbstractSyncEngineTest {
 		MockPreviewImportHandler previewHandler = new MockPreviewImportHandler();
 
 		SyncEngine engine = new SyncEngine(new MockRepository("left"), new MockRepository("right"));
+		engine.setPreviewer(previewHandler);
 		
-		engine.synchronize(previewHandler, PreviewBehavior.Left);
+		engine.setPreviewBehavior(PreviewBehavior.Left);
+		engine.synchronize();
 		Assert.assertTrue(previewHandler.previewWasCalled("left"));
 		Assert.assertFalse(previewHandler.previewWasCalled("right"));
 
 		previewHandler.reset();
-		engine.synchronize(previewHandler, PreviewBehavior.Right);
+		engine.setPreviewBehavior(PreviewBehavior.Right);
+		engine.synchronize();
 		Assert.assertFalse(previewHandler.previewWasCalled("left"));
 		Assert.assertTrue(previewHandler.previewWasCalled("right"));
 
 		previewHandler.reset();
-		engine.synchronize(previewHandler, PreviewBehavior.Both);
+		engine.setPreviewBehavior(PreviewBehavior.Both);
+		engine.synchronize();
 		Assert.assertTrue(previewHandler.previewWasCalled("left"));
 		Assert.assertTrue(previewHandler.previewWasCalled("right"));
 
 		previewHandler.reset();
-		engine.synchronize(previewHandler, PreviewBehavior.None);
+		engine.setPreviewBehavior(PreviewBehavior.None);
+		engine.synchronize();
 		Assert.assertFalse(previewHandler.previewWasCalled("left"));
 		Assert.assertFalse(previewHandler.previewWasCalled("right"));
 

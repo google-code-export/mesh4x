@@ -28,6 +28,9 @@ public class SyncEngine {
 
 	private ISyncAdapter source;
 	private ISyncAdapter target;
+	
+	private IPreviewImportHandler previewer = NullPreviewHandler.INSTANCE;
+	private PreviewBehavior behavior = PreviewBehavior.None;
 
 	// BUSINESS METHODS
 	public SyncEngine(ISyncAdapter source, ISyncAdapter target) {
@@ -40,117 +43,79 @@ public class SyncEngine {
 		this.target = target;
 	}
 
-	// / <summary>
-	// / Performs a full sync between the two repositories, automatically
-	// / incorporating changes in both.
-	// / </summary>
-	// / <remarks>
-	// / Items on the source repository are sent first, and then the
-	// / changes from the target repository are incorporated into the source.
-	// / </remarks>
-	// / <returns>The list of items that had conflicts.</returns>
+	public void setPreviewer(IPreviewImportHandler previewer) {
+		this.previewer = previewer;
+	}
+
+	public IPreviewImportHandler getPreviewer() {
+		return previewer;
+	}
+
+	public void setPreviewBehavior(PreviewBehavior behavior) {
+		this.behavior = behavior;
+	}
+
+	public PreviewBehavior getPreviewBehavior() {
+		return behavior;
+	}
+
+	/**
+	 * Performs a full sync between the two repositories, automatically
+	 * incorporating changes in both.
+	 * 
+	 * Items on the source repository are sent first, and then the
+	 * changes from the target repository are incorporated into the source.
+	 * 
+	 * @return The list of items that had conflicts.
+	 */
 	public List<Item> synchronize() {
-		return synchronize(null, NullPreviewHandler.INSTANCE,
-				PreviewBehavior.None);
+		return synchronize(null);
 	}
 
-	// / <summary>
-	// / Performs a full sync between the two repositories, optionally calling
-	// the
-	// / given <paramref name="previewer"/> callback as specified by the
-	// <paramref name="behavior"/> argument.
-	// / </summary>
-	// / <remarks>
-	// / Items on the source repository are sent first, and then the
-	// / changes from the target repository are incorporated into the source.
-	// / </remarks>
-	// / <returns>The list of items that had conflicts.</returns>
-	public List<Item> synchronize(IPreviewImportHandler previewer,
-			PreviewBehavior behavior) {
-		return synchronize(null, previewer, behavior);
-	}
-
-	// / <summary>
-	// / Performs a partial sync between the two repositories since the
-	// specified date, automatically
-	// / incorporating changes in both.
-	// / </summary>
-	// / <param name="since">Synchronize changes that happened after this
-	// date.</param>
-	// / <remarks>
-	// / Items on the source repository are sent first, and then the
-	// / changes from the target repository are incorporated into the source.
-	// / </remarks>
-	// / <returns>The list of items that had conflicts.</returns>
+	/**
+	 * Performs a partial sync between the two repositories since the 
+	 * specified date.
+	 * 
+	 * @param since Synchronize changes that happened after this date
+	 * @return The list of items that had conflicts.
+	 */
 	public List<Item> synchronize(Date since) {
-		return synchronize(since, NullPreviewHandler.INSTANCE,
-				PreviewBehavior.None);
-	}
-
-	// / <summary>
-	// / Performs a partial sync between the two repositories since the
-	// specified date, optionally calling the
-	// / given <paramref name="previewer"/> callback as specified by the
-	// <paramref name="behavior"/> argument.
-	// / </summary>
-	// / <param name="since">Synchronize changes that happened after this
-	// date.</param>
-	// / <remarks>
-	// / Items on the source repository are sent first, and then the
-	// / changes from the target repository are incorporated into the source.
-	// / </remarks>
-	// / <returns>The list of items that had conflicts.</returns>
-	public List<Item> synchronize(Date since, IPreviewImportHandler previewer,
-			PreviewBehavior behavior) {
-
-		Guard.argumentNotNull(previewer, "previewer");
 
 		this.beginSync();
-		List<Item> result = null;
 		
-		this.syncTrace.notifyGetAll(this, source, since);
-		//collect all the eligible source items for sync operation
-		List<Item> sourceItems = (since == null) ? source.getAll() : source.getAllSince(since);
-		//prepare list of outgoing items and notify the related observer if any
-		List<Item> outgoingItems = this.enumerateItemsProgress(sourceItems, this.itemSent);
-				
-		if (target instanceof ISupportMerge) {
-			this.syncTrace.notifyMerge(this, target, outgoingItems);
-			ISupportMerge targetMerge = (ISupportMerge) target;
-			targetMerge.merge(outgoingItems);
-		} else {
-			//prepare merge result for the outgoing items (w.r.t target repository) that includes new/updated/conflicted items
-			List<MergeResult> outgoingToMerge = this.mergeItems(outgoingItems, target);
-			if (behavior == PreviewBehavior.Right || behavior == PreviewBehavior.Both) {
-				outgoingToMerge = previewer.preview(target, outgoingToMerge);
-			}
-			//update the target repository with outgoingToMerge result
-			this.importItems(outgoingToMerge, target);
-		}
-
-		this.syncTrace.notifyGetAll(this, target, since);
-		//collect all the eligible target items for sync operation
-		List<Item> targetItmes = (since == null) ? target.getAll() : target.getAllSince(since);
-		//prepare list of incoming items and notify the related observer if any
-		List<Item> incomingItems = this.enumerateItemsProgress(targetItmes, this.itemReceived);
-				
-		if (source instanceof ISupportMerge) {
-			this.syncTrace.notifyMerge(this, source, incomingItems);
-			// If repository supports its own SSE merge behavior, don't apply it locally.
-			ISupportMerge sourceMerge = (ISupportMerge) source;
-			result = sourceMerge.merge(incomingItems);
-		} else {
-			//prepare merge result for the incoming items (w.r.t source repository) that includes new/updated/conflicted items
-			List<MergeResult> incomingToMerge = this.mergeItems(incomingItems, source);
-			if (behavior == PreviewBehavior.Left || behavior == PreviewBehavior.Both) {
-				incomingToMerge = previewer.preview(source, incomingToMerge);
-			}
-
-			//update the source repository with incomingToMerge result
-			result = this.importItems(incomingToMerge, source);
-		}
+		// Sync items from source to target
+		sync(source, target, since, this.itemSent, behavior == PreviewBehavior.Right || behavior == PreviewBehavior.Both ? previewer : null);
+		
+		// Sync items from target to source
+		List<Item> result = sync(target, source, since, this.itemReceived, behavior == PreviewBehavior.Left || behavior == PreviewBehavior.Both ? previewer : null);
 		
 		this.endSync(result);				
+		return result;
+	}
+	
+	private List<Item> sync(ISyncAdapter from, ISyncAdapter to, Date since, ObservableItem observable, IPreviewImportHandler previewer) {
+		
+		this.syncTrace.notifyGetAll(this, from, since);
+		//collect all the eligible source items for sync operation
+		List<Item> sourceItems = (since == null) ? from.getAll() : from.getAllSince(since);
+		//prepare list of outgoing items and notify the related observer if any
+		List<Item> outgoingItems = this.enumerateItemsProgress(sourceItems, observable);
+		List<Item> result;
+		
+		if (to instanceof ISupportMerge) {
+			this.syncTrace.notifyMerge(this, to, outgoingItems);
+			ISupportMerge targetMerge = (ISupportMerge) to;
+			
+			result = targetMerge.merge(outgoingItems);
+		} else {
+			//prepare merge result for the outgoing items (w.r.t target repository) that includes new/updated/conflicted items
+			List<MergeResult> outgoingToMerge = this.mergeItems(outgoingItems, to);
+			if (previewer != null) {
+				outgoingToMerge = previewer.preview(to, outgoingToMerge);
+			}
+			//update the target repository with outgoingToMerge result
+			result = this.importItems(outgoingToMerge, to);
+		}
 		return result;
 	}
 

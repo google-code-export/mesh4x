@@ -56,7 +56,7 @@ public class MessageSyncAdapter implements IMessageSyncAdapter, ISyncAware {
 	public List<Item> synchronizeSnapshot(ISyncSession syncSession) {
 		InMemorySyncAdapter inMemoryAdapter = new InMemorySyncAdapter(this.sourceId, this.identityProvider, syncSession.getSnapshot());
 		SyncEngine syncEngineA = new SyncEngine(this.syncAdapter, inMemoryAdapter);
-		List<Item> conflicts = syncEngineA.synchronize(NullPreviewHandler.INSTANCE, PreviewBehavior.Left);
+		List<Item> conflicts = syncEngineA.synchronize();
 		return conflicts;
 	}
 	
