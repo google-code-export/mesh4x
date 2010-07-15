@@ -4,22 +4,25 @@ import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.io.IOException;
 
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.border.EmptyBorder;
 
+import org.mesh4j.meshes.io.ConfigurationManager;
 import org.mesh4j.meshes.model.DataSource;
 import org.mesh4j.meshes.model.MsAccessDataSource;
+import org.mesh4j.sync.validations.MeshException;
 
 @SuppressWarnings("serial")
-public class DataSourceView extends JComponent {
+public class DataSourceView extends EditableComponent {
 
 	private final DataSource dataSource;
 	private SyncLogList syncLogList;
+	private MsAccessDataSourceView dataSourceView;
 
 	public DataSourceView(DataSource dataSource) {
 		this.dataSource = dataSource;
@@ -33,7 +36,14 @@ public class DataSourceView extends JComponent {
 		add(tabbedPane);
 		
 		tabbedPane.addTab("History", createHistoryTab());
-		tabbedPane.addTab("Data Source", new MsAccessDataSourceView((MsAccessDataSource) dataSource));
+		tabbedPane.addTab("Data Source", dataSourceView = new MsAccessDataSourceView((MsAccessDataSource) dataSource));
+		
+		dataSourceView.setEditableListener(new EditableListener() {
+			@Override
+			public void dirtyChanged(boolean isDirty) {
+				notifyEditableListener();
+			}
+		});
 	}
 
 	private JPanel createHistoryTab() {
@@ -66,5 +76,26 @@ public class DataSourceView extends JComponent {
 		panel.add(new JPanel(), c);
 		
 		return panel;
+	}
+
+	@Override
+	protected void loadModel() {
+		dataSourceView.loadModel();
+	}
+
+	@Override
+	public boolean isDirty() {
+		return dataSourceView.isDirty();
+	}
+
+	@Override
+	public void saveChanges() {
+		dataSourceView.saveChanges();
+		try {
+			ConfigurationManager.getInstance().saveMesh(dataSource.getDataSet().getMesh());
+		} catch (IOException e) {
+			throw new MeshException(e);
+		}
+		notifyEditableListener();
 	}
 }

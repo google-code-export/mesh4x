@@ -60,7 +60,7 @@ public class MainWindow extends JFrame {
 		editingButtonsContainer.setVisible(false);
 		
 		// Tree for Meshes
-		MeshesTree meshesTree = new MeshesTree();
+		final MeshesTree meshesTree = new MeshesTree();
 		splitPane.setLeftComponent(new JScrollPane(meshesTree));
 		meshesTree.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener() {
 			@Override
@@ -89,6 +89,7 @@ public class MainWindow extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				if (currentView instanceof Editable) {
 					((Editable) currentView).saveChanges();
+					meshesTree.repaint();
 				}
 			}
 		});
