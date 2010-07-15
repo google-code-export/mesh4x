@@ -67,6 +67,11 @@ public class DataSetView extends EditableComponent {
 		
 		DefaultComboBoxModel syncModeModel = new DefaultComboBoxModel(SyncMode.values());
 		add(syncModeComboBox = new JComboBox(syncModeModel), c);
+		syncModeComboBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				notifyEditableListener();
+			}
+		});
 
 		// Fillers
 		c.gridx = 2; c.gridy = 0; c.weightx = 10;
