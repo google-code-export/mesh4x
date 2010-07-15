@@ -10,7 +10,9 @@ import org.mesh4j.meshes.model.DataSet;
 import org.mesh4j.meshes.model.DataSetState;
 import org.mesh4j.meshes.model.DataSource;
 import org.mesh4j.meshes.model.SyncLog;
+import org.mesh4j.meshes.model.SyncMode;
 import org.mesh4j.sync.ISyncAdapter;
+import org.mesh4j.sync.SyncDirection;
 import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.adapters.http.HttpSyncAdapterFactory;
 import org.mesh4j.sync.security.LoggedInIdentityProvider;
@@ -71,12 +73,9 @@ public class SyncManager {
 		System.out.println("Starting sync task for " + dataSource.toString() + "...");
 		Date syncStart = new Date();
 		SyncEngine engine = new SyncEngine(sourceAdapter, targetAdapter);
-		if (dataSource.getLastSyncDate() != null)
-			engine.synchronize(dataSource.getLastSyncDate());
-		else
-			engine.synchronize();
+		engine.synchronize(dataSource.getLastSyncDate(), getSyncDirection(dataSet.getSchedule().getSyncMode()));
+
 		System.out.println("Sync task ended");
-		
 		dataSource.setLastSyncDate(syncStart);
 	}
 	
@@ -89,4 +88,14 @@ public class SyncManager {
 		return dataSet.getMesh().getName() + "/" + dataSet.getName();
 	}
 
+	private SyncDirection getSyncDirection(SyncMode mode) {
+		switch (mode) {
+		case RECEIVE:
+			return SyncDirection.TargetToSource;
+		case SEND:
+			return SyncDirection.SourceToTarget;
+		default:
+			return SyncDirection.Both;
+		}
+	}
 }
