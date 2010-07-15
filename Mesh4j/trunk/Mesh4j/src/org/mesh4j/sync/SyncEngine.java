@@ -69,9 +69,9 @@ public class SyncEngine {
 	 * @return The list of items that had conflicts.
 	 */
 	public List<Item> synchronize() {
-		return synchronize(null);
+		return synchronize(null, SyncDirection.Both);
 	}
-
+	
 	/**
 	 * Performs a partial sync between the two repositories since the 
 	 * specified date.
@@ -80,14 +80,31 @@ public class SyncEngine {
 	 * @return The list of items that had conflicts.
 	 */
 	public List<Item> synchronize(Date since) {
+		return synchronize(since, SyncDirection.Both);
+	}
 
+	/**
+	 * Performs a partial sync between the two repositories since the 
+	 * specified date.
+	 * 
+	 * @param since Synchronize changes that happened after this date
+	 * @param direction Direction in which the synchronization is performed.
+	 * @return The list of items that had conflicts.
+	 */
+	public List<Item> synchronize(Date since, SyncDirection direction) {
+
+		List<Item> result = null;
 		this.beginSync();
 		
-		// Sync items from source to target
-		sync(source, target, since, this.itemSent, behavior == PreviewBehavior.Right || behavior == PreviewBehavior.Both ? previewer : null);
+		if (direction == SyncDirection.Both || direction == SyncDirection.SourceToTarget) {
+			// Sync items from source to target
+			sync(source, target, since, this.itemSent, behavior == PreviewBehavior.Right || behavior == PreviewBehavior.Both ? previewer : null);
+		}
 		
-		// Sync items from target to source
-		List<Item> result = sync(target, source, since, this.itemReceived, behavior == PreviewBehavior.Left || behavior == PreviewBehavior.Both ? previewer : null);
+		if (direction == SyncDirection.Both || direction == SyncDirection.TargetToSource) {
+			// Sync items from target to source
+			result = sync(target, source, since, this.itemReceived, behavior == PreviewBehavior.Left || behavior == PreviewBehavior.Both ? previewer : null);
+		}
 		
 		this.endSync(result);				
 		return result;
