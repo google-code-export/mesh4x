@@ -4,8 +4,10 @@ import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.Action;
 import javax.swing.JPopupMenu;
 import javax.swing.JTree;
 import javax.swing.ToolTipManager;
@@ -17,6 +19,7 @@ import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import org.mesh4j.meshes.action.DeleteMeshAction;
 import org.mesh4j.meshes.action.ExportDataSourceConfigurationAction;
 import org.mesh4j.meshes.action.SynchronizeNowAction;
 import org.mesh4j.meshes.io.ConfigurationManager;
@@ -60,13 +63,22 @@ public class MeshesTree extends JTree {
 			Object obj = path.getLastPathComponent();
 			if (obj instanceof DefaultMutableTreeNode) {
 				DefaultMutableTreeNode node = (DefaultMutableTreeNode) obj;
-				if (node.getUserObject() instanceof DataSet) {
+				Object nodeObject = node.getUserObject();
+				List<Action> actions = new ArrayList<Action>();
+				
+				if (nodeObject instanceof Mesh) {
+					actions.add(new DeleteMeshAction((Mesh) nodeObject));
+				} else if (nodeObject instanceof DataSet) {					
+					actions.add(new SynchronizeNowAction((DataSet) nodeObject));
+				} else if (nodeObject instanceof DataSource) {
+					actions.add(new ExportDataSourceConfigurationAction((DataSource) nodeObject));					
+				}
+				
+				if (actions.size() > 0) {
 					JPopupMenu menu = new JPopupMenu();
-					menu.add(new SynchronizeNowAction((DataSet) node.getUserObject()));
-					menu.show(this, e.getX(), e.getY());
-				} else if (node.getUserObject() instanceof DataSource) {
-					JPopupMenu menu = new JPopupMenu();
-					menu.add(new ExportDataSourceConfigurationAction((DataSource) node.getUserObject()));
+					for (Action action : actions) {
+						menu.add(action);
+					}
 					menu.show(this, e.getX(), e.getY());
 				}
 			}
@@ -132,7 +144,9 @@ public class MeshesTree extends JTree {
 
 		@Override
 		public void intervalRemoved(ListDataEvent e) {
-			// TODO Auto-generated method stub
+			for (int i = e.getIndex0(); i<= e.getIndex1(); i++)
+				root.remove(i);
+			((DefaultTreeModel)getModel()).reload();
 		}
 
 		@SuppressWarnings("unchecked")

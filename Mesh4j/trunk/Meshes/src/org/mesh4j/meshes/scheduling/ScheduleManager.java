@@ -69,7 +69,11 @@ public class ScheduleManager {
 	}
 	
 	public void unscheduleMesh(Mesh mesh) {
-		List<String> taskIds = scheduledTasksPerMesh.get(mesh.getName());
+		unscheduleMesh(mesh.getName());
+	}
+	
+	public void unscheduleMesh(String meshName) {
+		List<String> taskIds = scheduledTasksPerMesh.get(meshName);
 		if (taskIds == null)
 			return;
 		
@@ -77,7 +81,7 @@ public class ScheduleManager {
 			scheduler.deschedule(taskId);
 		}
 		
-		scheduledTasksPerMesh.remove(mesh.getName());
+		scheduledTasksPerMesh.remove(meshName);
 	}
 	
 	private String getSchedulingPattern(SchedulingOption schedulingOption) {
@@ -104,9 +108,21 @@ public class ScheduleManager {
 	}
 	
 	private final class MeshListListener implements ListDataListener {
+		@SuppressWarnings("unchecked")
 		@Override
 		public void intervalRemoved(ListDataEvent e) {
-			// TODO Auto-generated method stub
+			List<Mesh> currentMeshes = (List<Mesh>) e.getSource();
+			List<String> currentMeshesNames = new ArrayList<String>();
+			
+			for (Mesh mesh : currentMeshes) {
+				currentMeshesNames.add(mesh.getName());
+			}
+			
+			for (String meshName : scheduledTasksPerMesh.keySet()) {
+				if (!currentMeshesNames.contains(meshName)) {
+					unscheduleMesh(meshName);
+				}
+			}
 		}
 
 		@Override

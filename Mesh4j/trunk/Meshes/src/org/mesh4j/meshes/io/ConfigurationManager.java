@@ -176,4 +176,19 @@ public class ConfigurationManager {
 	public void removeListDataListener(ListDataListener listener) {
 		listDataListeners.remove(listener);
 	}
+
+	public void deleteMesh(Mesh mesh) throws IOException {
+		File meshFile = new File(configurationsDirectory, mesh.getName() + ".mesh");
+		meshFile.delete();
+		
+		// Notify the listeners about the change
+		List<Mesh> currentMeshes = getAllMeshes();
+		int meshIndex = currentMeshes.indexOf(mesh);
+		if (meshIndex >= 0) {
+			currentMeshes.remove(meshIndex);
+			for (ListDataListener listener : listDataListeners) {
+				listener.intervalRemoved(new ListDataEvent(currentMeshes, ListDataEvent.INTERVAL_REMOVED, meshIndex, meshIndex));
+			}
+		}
+	}
 }
