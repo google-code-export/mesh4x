@@ -63,7 +63,7 @@ public class EpiInfoConfigPanel extends ConfigPanel {
 			try {
 				String fileName = selectedFile.getCanonicalPath();
 				fileTextField.setText(fileName);
-				controller.changeEpiInfoLocation(fileName);
+				controller.setValue("epiinfo.location", fileName);
 			} catch (Exception e) {
 				LOGGER.error(e.getMessage(), e);
 			}

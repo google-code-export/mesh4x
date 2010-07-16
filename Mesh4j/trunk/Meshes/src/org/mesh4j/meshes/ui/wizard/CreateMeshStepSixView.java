@@ -33,6 +33,9 @@ public class CreateMeshStepSixView extends BaseWizardPanel {
 		super();
 		this.controller = controller;
 		initComponents();
+		
+		controller.setValue("scheduling", SchedulingOption.values()[0]);
+		controller.setValue("syncmode", SyncMode.values()[0]);
 	}
 
 	private void initComponents() {
@@ -97,19 +100,19 @@ public class CreateMeshStepSixView extends BaseWizardPanel {
 	
 	private void scheduleComboBoxItemStateChanged(ItemEvent e) {
 		SchedulingOption schedulingOption = (SchedulingOption) e.getItem();
-		controller.changeSchedulingOption(schedulingOption);
+		controller.setValue("scheduling", schedulingOption);
 	}
 	
 	private void twoWaySyncButtonItemStateChanged(ItemEvent e) {
-		controller.changeSyncMode(SyncMode.SEND_AND_RECEIVE);
+		controller.setValue("syncmode", SyncMode.SEND_AND_RECEIVE);
 	}
 	
 	private void sendSyncButtonItemStateChanged(ItemEvent e) {
-		controller.changeSyncMode(SyncMode.SEND);
+		controller.setValue("syncmode", SyncMode.SEND);
 	}
 	
 	private void receiveSyncButtonItemStateChanged(ItemEvent e) {
-		controller.changeSyncMode(SyncMode.RECEIVE);
+		controller.setValue("syncmode", SyncMode.RECEIVE);
 	}
 
 	@Override

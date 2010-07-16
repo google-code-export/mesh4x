@@ -87,7 +87,7 @@ public class CreateMeshStepOneView extends BaseWizardPanel {
 				Arrays.sort(names);
 				existingMeshNames = names;
 				if (nameTextField.getText().length() > 0) {
-					controller.changeMeshName(nameTextField.getText());
+					controller.setValue("mesh.name", nameTextField.getText());
 				}
 			}
 		}).start();
@@ -95,12 +95,12 @@ public class CreateMeshStepOneView extends BaseWizardPanel {
 	
 	private void nameTextFieldKeyReleased(KeyEvent evt) {
 		String name = nameTextField.getText();
-		controller.changeMeshName(name);
+		controller.setValue("mesh.name", name);
 	}
 
 	private void descTextAreaFocusLost(FocusEvent evt) {
 		String desc = descTextArea.getText();
-		controller.changeMeshDescription(desc);
+		controller.setValue("mesh.description", desc);
 	}
 
 	@Override

@@ -69,12 +69,12 @@ public class CreateMeshStepTwoView extends BaseWizardPanel {
 
 	private void passwordFieldKeyReleased(KeyEvent evt) {
 		String password = new String(passwordField.getPassword());
-		controller.changeMeshPassword(password);	
+		controller.setValue("mesh.password", password);	
 	}
 	
 	private void confirmPasswordFieldKeyReleased(KeyEvent evt) {
 		String confirmPassword = new String(confirmPasswordField.getPassword());
-		controller.changeMeshPasswordConfirmation(confirmPassword);
+		controller.setValue("mesh.password", confirmPassword);
 	}
 
 	@Override
