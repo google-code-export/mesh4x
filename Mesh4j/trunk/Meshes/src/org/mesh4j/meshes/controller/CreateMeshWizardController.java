@@ -91,6 +91,7 @@ public class CreateMeshWizardController extends WizardController {
 			
 			// DataSource
 			EpiInfoDataSource dataSource = new EpiInfoDataSource();
+			dataSource.setDataSet(dataSet);
 			dataSource.setFileName(getStringValue("epiinfo.location"));
 			dataSource.setTableName(tableName);
 			dataSet.getDataSources().add(dataSource);
