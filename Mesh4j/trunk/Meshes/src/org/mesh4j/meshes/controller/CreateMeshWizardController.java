@@ -18,51 +18,33 @@ import org.mesh4j.meshes.model.SchedulingOption;
 import org.mesh4j.meshes.model.SyncMode;
 import org.mesh4j.meshes.server.MeshServer;
 import org.mesh4j.meshes.ui.wizard.BaseWizardPanel;
-import org.mesh4j.meshes.ui.wizard.CreateMeshStepFiveView;
-import org.mesh4j.meshes.ui.wizard.CreateMeshStepFourView;
-import org.mesh4j.meshes.ui.wizard.CreateMeshStepOneView;
-import org.mesh4j.meshes.ui.wizard.CreateMeshStepSevenView;
-import org.mesh4j.meshes.ui.wizard.CreateMeshStepSixView;
-import org.mesh4j.meshes.ui.wizard.CreateMeshStepThreeView;
-import org.mesh4j.meshes.ui.wizard.CreateMeshStepTwoView;
+import org.mesh4j.meshes.ui.wizard.WizardChooseDataSourceTypeStep;
+import org.mesh4j.meshes.ui.wizard.WizardConfigureDataSourceStep;
+import org.mesh4j.meshes.ui.wizard.WizardConfigureSchedulingStep;
+import org.mesh4j.meshes.ui.wizard.WizardConfirmMeshStep;
+import org.mesh4j.meshes.ui.wizard.WizardMeshNameStep;
+import org.mesh4j.meshes.ui.wizard.WizardMeshPasswordStep;
 import org.mesh4j.meshes.ui.wizard.WizardView;
 import org.mesh4j.sync.adapters.epiinfo.EpiInfoSyncAdapterFactory;
 
 public class CreateMeshWizardController extends WizardController {
 		
-	// VIEWS
-	private CreateMeshStepOneView stepOne;
-	private CreateMeshStepTwoView stepTwo;
-	private CreateMeshStepThreeView stepThree;
-	private CreateMeshStepFourView stepFour;
-	private CreateMeshStepFiveView stepFive;
-	private CreateMeshStepSixView stepSix;
-	private CreateMeshStepSevenView stepSeven;
 	private int current;
 	
 	public CreateMeshWizardController(WizardView wizardView) {
 		super(wizardView);
 				
-		// Create views
-		stepOne = new CreateMeshStepOneView(this);
-		stepTwo = new CreateMeshStepTwoView(this);
-		stepThree = new CreateMeshStepThreeView(this);
-		stepFour = new CreateMeshStepFourView(this);
-		stepFive = new CreateMeshStepFiveView(this);
-		stepSix = new CreateMeshStepSixView(this);
-		stepSeven = new CreateMeshStepSevenView(this);
-
 		current = 0;
+		BaseWizardPanel firstStep;
 		
-		registerWizardPanel(stepOne);
-		registerWizardPanel(stepTwo);
-		registerWizardPanel(stepThree);
-		registerWizardPanel(stepFive);
-		registerWizardPanel(stepSix);
-		registerWizardPanel(stepSeven);
+		registerWizardPanel(firstStep = new WizardMeshNameStep(this));
+		registerWizardPanel(new WizardMeshPasswordStep(this));
+		registerWizardPanel(new WizardChooseDataSourceTypeStep(this));
+		registerWizardPanel(new WizardConfigureDataSourceStep(this));
+		registerWizardPanel(new WizardConfigureSchedulingStep(this));
+		registerWizardPanel(new WizardConfirmMeshStep(this));
 		
-		setCurrentPanel(stepOne);
-		
+		setCurrentPanel(firstStep);
 		setButtonsState();
 	}
 							

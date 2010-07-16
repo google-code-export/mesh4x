@@ -7,7 +7,7 @@ import java.util.Map;
 
 import org.mesh4j.meshes.controller.CreateMeshWizardController;
 
-public class CreateMeshStepFiveView extends BaseWizardPanel {
+public class WizardConfigureDataSourceStep extends BaseWizardPanel {
 
 	private static final long serialVersionUID = -5773369351266179486L;
 	private static String ID = "STEP_FIVE";
@@ -20,7 +20,7 @@ public class CreateMeshStepFiveView extends BaseWizardPanel {
 	private Map<String, ConfigPanel> configPanels;
 	private ConfigPanel currentConfigPanel;
 	
-	public CreateMeshStepFiveView(CreateMeshWizardController controller) {
+	public WizardConfigureDataSourceStep(CreateMeshWizardController controller) {
 		super();
 		this.controller = controller;
 		this.configPanels = new HashMap<String, ConfigPanel>();

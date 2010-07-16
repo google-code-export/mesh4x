@@ -14,7 +14,7 @@ import net.miginfocom.swing.MigLayout;
 import org.mesh4j.meshes.controller.CreateMeshWizardController;
 import org.mesh4j.meshes.ui.resource.ResourceManager;
 
-public class CreateMeshStepThreeView extends BaseWizardPanel {
+public class WizardChooseDataSourceTypeStep extends BaseWizardPanel {
 
 	private static final long serialVersionUID = -5773369351266179486L;
 	private static String ID = "STEP_THREE";
@@ -24,7 +24,7 @@ public class CreateMeshStepThreeView extends BaseWizardPanel {
 	private JToggleButton epiInfoButton;
 	private ButtonGroup buttonGroup;
 	
-	public CreateMeshStepThreeView(CreateMeshWizardController controller) {
+	public WizardChooseDataSourceTypeStep(CreateMeshWizardController controller) {
 		super();
 		this.controller = controller;
 		initComponents();

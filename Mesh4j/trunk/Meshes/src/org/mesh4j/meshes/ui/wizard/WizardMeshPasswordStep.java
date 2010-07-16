@@ -11,7 +11,7 @@ import net.miginfocom.swing.MigLayout;
 
 import org.mesh4j.meshes.controller.CreateMeshWizardController;
 
-public class CreateMeshStepTwoView extends BaseWizardPanel {
+public class WizardMeshPasswordStep extends BaseWizardPanel {
 
 	private static final long serialVersionUID = -5220841948982059704L;
 	private static String ID = "STEP_TWO";
@@ -21,7 +21,7 @@ public class CreateMeshStepTwoView extends BaseWizardPanel {
 	private JPasswordField passwordField;
 	private JPasswordField confirmPasswordField;
 	
-	public CreateMeshStepTwoView(CreateMeshWizardController controller) {
+	public WizardMeshPasswordStep(CreateMeshWizardController controller) {
 		super();
 		this.controller = controller;
 		initComponents();

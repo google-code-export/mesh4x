@@ -17,7 +17,7 @@ import net.miginfocom.swing.MigLayout;
 import org.mesh4j.meshes.controller.CreateMeshWizardController;
 import org.mesh4j.meshes.server.MeshServer;
 
-public class CreateMeshStepOneView extends BaseWizardPanel {
+public class WizardMeshNameStep extends BaseWizardPanel {
 
 	private static final long serialVersionUID = 1452642517775783582L;
 	private static String ID = "STEP_ONE";
@@ -28,7 +28,7 @@ public class CreateMeshStepOneView extends BaseWizardPanel {
 	private JTextArea descTextArea;
 	private String[] existingMeshNames;
 	
-	public CreateMeshStepOneView(CreateMeshWizardController controller) {
+	public WizardMeshNameStep(CreateMeshWizardController controller) {
 		super();
 		this.controller = controller;
 		initComponents();

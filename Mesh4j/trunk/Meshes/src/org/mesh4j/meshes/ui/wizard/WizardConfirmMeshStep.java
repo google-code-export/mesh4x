@@ -21,7 +21,7 @@ import net.miginfocom.swing.MigLayout;
 import org.mesh4j.meshes.controller.CreateMeshWizardController;
 import org.mesh4j.meshes.ui.resource.ResourceManager;
 
-public class CreateMeshStepSevenView extends BaseWizardPanel {
+public class WizardConfirmMeshStep extends BaseWizardPanel {
 
 	private static final long serialVersionUID = -5773369351266179486L;
 	private static String ID = "STEP_SEVEN";
@@ -30,7 +30,7 @@ public class CreateMeshStepSevenView extends BaseWizardPanel {
 	
 	private JFileChooser fileChooser;
 	
-	public CreateMeshStepSevenView(CreateMeshWizardController controller) {
+	public WizardConfirmMeshStep(CreateMeshWizardController controller) {
 		super();
 		this.controller = controller;
 		initComponents();

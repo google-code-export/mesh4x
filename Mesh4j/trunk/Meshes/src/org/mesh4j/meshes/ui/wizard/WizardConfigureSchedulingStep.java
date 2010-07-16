@@ -16,7 +16,7 @@ import org.mesh4j.meshes.controller.CreateMeshWizardController;
 import org.mesh4j.meshes.model.SchedulingOption;
 import org.mesh4j.meshes.model.SyncMode;
 
-public class CreateMeshStepSixView extends BaseWizardPanel {
+public class WizardConfigureSchedulingStep extends BaseWizardPanel {
 
 	private static final long serialVersionUID = -5773369351266179486L;
 	private static String ID = "STEP_SIX";
@@ -29,7 +29,7 @@ public class CreateMeshStepSixView extends BaseWizardPanel {
 	private ButtonGroup buttonGroup;
 	private JComboBox scheduleComboBox;
 	
-	public CreateMeshStepSixView(CreateMeshWizardController controller) {
+	public WizardConfigureSchedulingStep(CreateMeshWizardController controller) {
 		super();
 		this.controller = controller;
 		initComponents();

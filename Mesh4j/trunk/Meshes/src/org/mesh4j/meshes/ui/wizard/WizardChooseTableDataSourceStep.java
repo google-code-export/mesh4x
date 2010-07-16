@@ -12,7 +12,7 @@ import net.miginfocom.swing.MigLayout;
 
 import org.mesh4j.meshes.controller.CreateMeshWizardController;
 
-public class CreateMeshStepFourView extends BaseWizardPanel {
+public class WizardChooseTableDataSourceStep extends BaseWizardPanel {
 
 	private static final long serialVersionUID = -5773369351266179486L;
 	private static String ID = "STEP_FOUR";
@@ -21,7 +21,7 @@ public class CreateMeshStepFourView extends BaseWizardPanel {
 	
 	private ButtonGroup buttonGroup;
 	
-	public CreateMeshStepFourView(CreateMeshWizardController controller) {
+	public WizardChooseTableDataSourceStep(CreateMeshWizardController controller) {
 		super();
 		this.controller = controller;
 		initComponents();
