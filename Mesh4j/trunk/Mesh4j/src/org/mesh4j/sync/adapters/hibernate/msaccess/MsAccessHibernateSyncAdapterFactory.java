@@ -2,6 +2,7 @@ package org.mesh4j.sync.adapters.hibernate.msaccess;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -182,11 +183,11 @@ public class MsAccessHibernateSyncAdapterFactory implements ISyncAdapterFactory 
 		}
 	}
 	
-	public static CompositeSyncAdapter createSyncAdapterForMultiTables(String mdbFileName, List<String> tables, String rdfBaseUri, String baseDirectory, IIdentityProvider identityProvider, ISyncAdapter adapterOpaque){
+	public static CompositeSyncAdapter createSyncAdapterForMultiTables(String mdbFileName, Collection<String> tables, String rdfBaseUri, String baseDirectory, IIdentityProvider identityProvider, ISyncAdapter adapterOpaque){
 		return createSyncAdapterForMultiTables(mdbFileName, tables, null, rdfBaseUri, baseDirectory, identityProvider, adapterOpaque);
 	}
 
-	public static CompositeSyncAdapter createSyncAdapterForMultiTables(String mdbFileName, List<String> tables, List<List<String>> columnIdsForEachTable, String rdfBaseUri, String baseDirectory, IIdentityProvider identityProvider, ISyncAdapter adapterOpaque){
+	public static CompositeSyncAdapter createSyncAdapterForMultiTables(String mdbFileName, Collection<String> tables, List<List<String>> columnIdsForEachTable, String rdfBaseUri, String baseDirectory, IIdentityProvider identityProvider, ISyncAdapter adapterOpaque){
 		try{
 			IIdentifiableSyncAdapter[] adapters = new IIdentifiableSyncAdapter[tables.size()];
 			int i = 0;

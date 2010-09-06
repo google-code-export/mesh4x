@@ -67,6 +67,20 @@ public class FeedWriter {
 			write(document.getRootElement(), root, item);
 		}
 	}
+	
+	public String writeAsXml(Feed feed) throws Exception {
+		Document document = DocumentHelper.createDocument();
+		this.write(document, feed);
+		String xml = document.asXML();
+		return xml;
+	}
+	
+	public String writeAsXml(Item item) throws Exception {
+		Element root = DocumentHelper.createElement("items");
+		this.write(root, root, item);
+		String xml = ((Element)root.elements().get(0)).asXML();
+		return xml;
+	}
 
 	private void addAdditionalNS(Element root){
 		if(this.contentWriter instanceof  INamespace){
