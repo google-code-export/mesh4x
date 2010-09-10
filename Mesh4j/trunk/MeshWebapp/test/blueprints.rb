@@ -12,3 +12,13 @@ Account.blueprint do
   password
   password_confirmation { password }
 end
+
+Mesh.blueprint do
+  account
+  name { Sham.username }
+end
+
+Feed.blueprint do
+  mesh
+  name { Sham.username }
+end

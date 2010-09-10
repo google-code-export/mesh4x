@@ -1,4 +1,6 @@
 class Account < ActiveRecord::Base
+  has_many :meshes
+
   attr_accessor :password_confirmation
   
   validates_presence_of :name, :password
