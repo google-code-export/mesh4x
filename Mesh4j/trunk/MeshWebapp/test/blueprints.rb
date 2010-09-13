@@ -5,6 +5,7 @@ Sham.define do
   name { Faker::Name.name }
   username { Faker::Internet.user_name }
   password { Faker::Name.name }
+  guid { Guid.new.to_s }
 end
 
 Account.blueprint do
@@ -21,4 +22,9 @@ end
 Feed.blueprint do
   mesh
   name { Sham.username }
+end
+
+Item.blueprint do
+  feed
+  item_id { Sham.guid }
 end

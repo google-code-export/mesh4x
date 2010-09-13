@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100910153647) do
+ActiveRecord::Schema.define(:version => 20100910174046) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -22,6 +22,16 @@ ActiveRecord::Schema.define(:version => 20100910153647) do
   create_table "feeds", :force => true do |t|
     t.integer  "mesh_id"
     t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "guid"
+  end
+
+  create_table "items", :force => true do |t|
+    t.integer  "feed_id"
+    t.string   "item_id"
+    t.text     "content"
+    t.text     "sync"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

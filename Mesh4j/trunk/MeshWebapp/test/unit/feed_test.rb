@@ -16,4 +16,16 @@ class FeedTest < ActiveSupport::TestCase
     feed = Feed.make_unsaved :mesh => @feed.mesh, :name => @feed.name
     assert_false feed.save
   end
+  
+  test "should have guid" do
+    assert_not_nil @feed.guid
+  end
+  
+  test "should not change guid on save" do
+    old_guid = @feed.guid
+    @feed.name = 'lala'
+    @feed.save!
+    
+    assert_equal old_guid, @feed.guid
+  end
 end
