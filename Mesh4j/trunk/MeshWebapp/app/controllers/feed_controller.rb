@@ -27,7 +27,7 @@ class FeedController < ApplicationController
     adapter = SyncAdapter.new feed
     
     sync_engine = Mesh4j::SyncEngine.new adapter, in_memory_adapter
-    conflicts = sync_engine.synchronize
+    conflicts = sync_engine.synchronize nil, Mesh4j::SyncDirection.TargetToSource
     
     write_feed feed, conflicts, 'conflicts'
   end

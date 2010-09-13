@@ -22,6 +22,7 @@ module Mesh4j
   import 'model.History'
   import 'model.Sync'
   import 'security.NullIdentityProvider'
+  import 'SyncDirection'
   import 'SyncEngine'
   import 'utils.XMLHelper'
   
