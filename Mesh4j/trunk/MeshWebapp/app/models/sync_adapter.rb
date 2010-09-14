@@ -55,14 +55,26 @@ class SyncAdapter
   
   def sync_for(item)
     item_sync = item.sync
-    history = item_sync.getUpdatesHistory().toArray().map{|h| {:when => h.getWhen.getTime, :by => h.by, :sequence => h.sequence}}
+    
+    history = item_sync.getUpdatesHistory().toArray().map do |h| {
+        :when => h.getWhen.getTime, 
+        :by => h.by, 
+        :sequence => h.sequence
+      }
+    end
+    
+    conflicts = item_sync.getConflicts().toArray().map do |i| {
+        :content => i.content.payload.asXML,
+        :sync => sync_for(i)
+      }
+    end
     
     sync = {
       :id => item_sync.getId,
       :deleted => item_sync.isDeleted,
       :no_conflicts => item_sync.isNoConflicts,
       :history => history,
-      :conflicts => []
+      :conflicts => conflicts
     }
   end
 end

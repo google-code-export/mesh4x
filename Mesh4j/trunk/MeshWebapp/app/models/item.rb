@@ -7,19 +7,27 @@ class Item < ActiveRecord::Base
   serialize :sync
   
   def to_mesh4j
-    payload = Mesh4j::XMLHelper.parseElement self.content
-    content = Mesh4j::XMLContent.new self.item_id, self.item_id, self.item_id, payload
-    sync = Mesh4j::Sync.new self.sync[:id]
-    sync.setDeleted self.sync[:deleted]
-    self.sync[:history].each do |history|
+    Item.to_mesh4j(self)
+  end
+  
+  private
+  
+  def self.to_mesh4j(item)
+    sync_id = item[:sync][:id]
+    payload = Mesh4j::XMLHelper.parseElement item[:content]
+    content = Mesh4j::XMLContent.new sync_id, sync_id, sync_id, payload
+    sync = Mesh4j::Sync.new sync_id
+    sync.setDeleted item[:sync][:deleted]
+    item[:sync][:history].each do |history|
       mesh_history = Mesh4j::History.new history[:by], Mesh4j::RjbHelper.newDate(history[:when].to_s), history[:sequence]
       sync.getUpdatesHistory.add mesh_history
     end
     sync.setUpdatesWithLastUpdateSequence
     
+    item[:sync][:conflicts].each do |conflict|
+      sync.getConflicts.add Item.to_mesh4j(conflict)
+    end
+    
     Mesh4j::Item.new content, sync
-  
-  rescue Exception => e
-    p e
   end
 end
