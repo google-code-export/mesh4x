@@ -2,9 +2,10 @@ ActionController::Routing::Routes.draw do |map|
   # The priority is based upon order of creation: first created -> highest priority.
   map.root :controller => :home, :action => :index
   
-  map.sync_get  '/feed/:guid', :conditions => {:method => :get},  :controller => :feed, :action => :index
-  map.sync_post '/feed/:guid', :conditions => {:method => :post}, :controller => :feed, :action => :sync
-  map.schema '/feed/:guid/schema', :controller => :feed, :action => :schema
+  map.sync_get  '/feeds/:guid', :conditions => {:method => :get},  :controller => :feeds, :action => :index
+  map.sync_post '/feeds/:guid', :conditions => {:method => :post}, :controller => :feeds, :action => :sync
+  map.schema '/feeds/:guid/schema', :controller => :feeds, :action => :schema
+  map.create_mesh '/meshes/:name', :conditions => {:method => :post}, :controller => :meshes, :action => :create
 
   # Install the default routes as the lowest priority.
   # Note: These default routes make all actions in every controller accessible via GET requests. You should

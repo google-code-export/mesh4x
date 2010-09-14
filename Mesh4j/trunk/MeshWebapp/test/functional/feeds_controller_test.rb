@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class FeedControllerTest < ActionController::TestCase
+class FeedsControllerTest < ActionController::TestCase
   test "sync" do
     feed = Feed.make
   

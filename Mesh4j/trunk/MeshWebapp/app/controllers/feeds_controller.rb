@@ -1,4 +1,4 @@
-class FeedController < ApplicationController
+class FeedsController < ApplicationController
 
   IdentityProvider = Mesh4j::NullIdentityProvider.INSTANCE
   SyndicationFormat = Mesh4j::RssSyndicationFormat.INSTANCE

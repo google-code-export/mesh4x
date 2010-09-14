@@ -17,5 +17,12 @@ class AccountAuthenticatedController < ApplicationController
     flash[:notice] = msg if msg
     redirect_to :controller => :home, :action => :index
   end
+  
+  def authenticate
+    authenticate_or_request_with_http_basic do |username, password|
+      @account = Account.find_by_name username
+      @account ? @account.authenticate(password) : false
+    end
+  end
 
 end

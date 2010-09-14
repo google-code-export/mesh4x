@@ -2,6 +2,7 @@ ENV["RAILS_ENV"] = "test"
 require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
 require File.expand_path(File.dirname(__FILE__) + "/blueprints")
 require 'test_help'
+require 'base64'
 
 class ActiveSupport::TestCase
   # Transactional fixtures accelerate your tests by wrapping each test method
@@ -42,4 +43,7 @@ class ActiveSupport::TestCase
   fixtures :all
 
   # Add more helper methods to be used by all tests here...
+  def http_auth(user, pass)
+    @request.env['HTTP_AUTHORIZATION'] = 'Basic ' + Base64.encode64(user + ':' + pass)
+  end
 end
