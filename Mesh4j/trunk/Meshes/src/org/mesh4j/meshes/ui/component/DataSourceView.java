@@ -36,14 +36,16 @@ public class DataSourceView extends EditableComponent {
 		add(tabbedPane);
 		
 		tabbedPane.addTab("History", createHistoryTab());
-		tabbedPane.addTab("Data Source", dataSourceView = new MsAccessDataSourceView((MsAccessDataSource) dataSource));
+		if (dataSource instanceof MsAccessDataSource) {
+			tabbedPane.addTab("Data Source", dataSourceView = new MsAccessDataSourceView((MsAccessDataSource) dataSource));
 		
-		dataSourceView.setEditableListener(new EditableListener() {
-			@Override
-			public void dirtyChanged(boolean isDirty) {
-				notifyEditableListener();
-			}
-		});
+			dataSourceView.setEditableListener(new EditableListener() {
+				@Override
+				public void dirtyChanged(boolean isDirty) {
+					notifyEditableListener();
+				}
+			});
+		}
 	}
 
 	private JPanel createHistoryTab() {

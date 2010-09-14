@@ -33,5 +33,9 @@ public abstract class MeshVisitor {
 	public boolean visit(EpiInfoDataSource dataSource) {
 		return true;
 	}
+	
+	public boolean visit(HibernateDataSource dataSource) {
+		return true;
+	}
 
 }

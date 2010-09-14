@@ -34,7 +34,8 @@ public class DataSet extends AbstractModel {
 	private Schedule schedule;
 	@XmlElementWrapper(name = "dataSources")
 	@XmlElementRefs({
-        	@XmlElementRef(type = EpiInfoDataSource.class) 
+        	@XmlElementRef(type = EpiInfoDataSource.class),
+        	@XmlElementRef(type = HibernateDataSource.class)
         })
 	@XmlMixed()
 	private List<DataSource> dataSources = new ArrayList<DataSource>(3);
