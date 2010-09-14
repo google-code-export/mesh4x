@@ -12,6 +12,6 @@ class Feed < ActiveRecord::Base
   private
   
   def generate_guid
-    self.guid = Guid.new.to_s
+    self.guid ||= Guid.new.to_s
   end
 end

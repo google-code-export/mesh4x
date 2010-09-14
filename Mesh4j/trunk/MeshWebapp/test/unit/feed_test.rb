@@ -28,4 +28,8 @@ class FeedTest < ActiveSupport::TestCase
     
     assert_equal old_guid, @feed.guid
   end
+  
+  test "should not change guid on create with guid" do
+    assert_equal 'lala', Feed.make(:guid => 'lala').guid
+  end
 end

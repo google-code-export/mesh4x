@@ -5,10 +5,18 @@ class FeedController < ApplicationController
 
   def index
     guid = params[:guid]
+    last_modified = request.headers['If-Modified-Since']
+    
     feed = Feed.find_by_guid guid
     
+    if last_modified
+      feed_items = Item.all :conditions => ['feed_id = ? AND updated_at > ?', feed.id, DateTime.parse(last_modified)]
+    else
+      feed_items = feed.items
+    end
+    
     items = Rjb::import('java.util.ArrayList').new
-    feed.items.each do |item|
+    feed_items.each do |item|
       items.add item.to_mesh4j
     end
     
@@ -19,11 +27,9 @@ class FeedController < ApplicationController
     guid = params[:guid]
     feed = Feed.find_by_guid guid
   
-    format = Mesh4j::RssSyndicationFormat.INSTANCE
-    identity_provider = Mesh4j::NullIdentityProvider.INSTANCE
     reader = Mesh4j::FeedReader.new SyndicationFormat, IdentityProvider, Mesh4j::IdGenerator.INSTANCE, Mesh4j::ContentReader.INSTANCE
     feed_loaded = reader.read request.raw_post
-    in_memory_adapter = Mesh4j::InMemorySyncAdapter.new guid, identity_provider, feed_loaded.items
+    in_memory_adapter = Mesh4j::InMemorySyncAdapter.new guid, IdentityProvider, feed_loaded.items
     adapter = SyncAdapter.new feed
     
     sync_engine = Mesh4j::SyncEngine.new adapter, in_memory_adapter

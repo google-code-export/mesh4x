@@ -23,6 +23,37 @@ class SyncAdapter
   end
   
   def add(item)
+    Item.create!({
+      :feed => @feed,
+      :item_id => item.getContent.getId,
+      :content => item.content.payload.asXML,
+      :sync => sync_for(item)
+    })
+    
+    nil
+  end
+  
+  def update(item)
+    item_id = item.getContent.getId
+    
+    my_item = Item.find_by_item_id item_id
+    return unless my_item
+    
+    my_item.content = item.content.payload.asXML
+    my_item.sync = sync_for(item)
+    my_item.save!
+    
+    nil
+  end
+  
+  def method_missing(name, *args)
+    puts "\033[31m" + "SyncAdapter doesn't implement #{name}(#{args.join(',')})" + "\033[0m"
+    super
+  end
+  
+  private
+  
+  def sync_for(item)
     item_sync = item.sync
     history = item_sync.getUpdatesHistory().toArray().map{|h| {:when => h.getWhen.getTime, :by => h.by, :sequence => h.sequence}}
     
@@ -32,20 +63,6 @@ class SyncAdapter
       :no_conflicts => item_sync.isNoConflicts,
       :history => history,
       :conflicts => []
-    } 
-  
-    Item.create!({
-      :feed => @feed,
-      :item_id => item.getContent.getId,
-      :content => item.content.payload.asXML,
-      :sync => sync
-    })
-    
-    nil
-  end
-  
-  def method_missing(name, *args)
-    puts "SyncAdapter doesn't implement #{name}(#{args.join(',')})"
-    super
+    }
   end
 end
