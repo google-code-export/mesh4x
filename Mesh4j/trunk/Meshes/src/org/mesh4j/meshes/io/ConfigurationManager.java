@@ -39,7 +39,7 @@ public class ConfigurationManager {
 		return instance;
 	}
 
-	public List<Mesh> getAllMeshes() throws IOException {
+	public synchronized List<Mesh> getAllMeshes() throws IOException {
 
 		if (meshes != null)
 			return meshes;
