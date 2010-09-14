@@ -32,4 +32,18 @@ class FeedsControllerTest < ActionController::TestCase
     get :schema, :guid => '123'
     assert_response :not_found
   end
+  
+  test "create" do
+    @account = Account.make :name => 'a', :password => 'b'
+    http_auth @account.name, 'b'
+    
+    mesh = Mesh.make :account => @account
+    
+    post :create, :mesh_name => mesh.name, :feed_name => 'bar'
+    
+    feeds = Feed.all
+    assert_equal 1, feeds.length
+    assert_equal mesh.id, feeds[0].mesh_id
+    assert_equal 'bar', feeds[0].name
+  end
 end
