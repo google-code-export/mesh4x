@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import org.mesh4j.meshes.io.ConfigurationManager;
 import org.mesh4j.meshes.io.MeshMarshaller;
@@ -18,12 +19,12 @@ import org.mesh4j.meshes.model.SchedulingOption;
 import org.mesh4j.meshes.model.SyncMode;
 import org.mesh4j.meshes.server.MeshServer;
 import org.mesh4j.meshes.ui.wizard.BaseWizardPanel;
+import org.mesh4j.meshes.ui.wizard.WizardAccountCredentialsStep;
 import org.mesh4j.meshes.ui.wizard.WizardChooseDataSourceTypeStep;
 import org.mesh4j.meshes.ui.wizard.WizardConfigureDataSourceStep;
 import org.mesh4j.meshes.ui.wizard.WizardConfigureSchedulingStep;
 import org.mesh4j.meshes.ui.wizard.WizardConfirmMeshStep;
 import org.mesh4j.meshes.ui.wizard.WizardMeshNameStep;
-import org.mesh4j.meshes.ui.wizard.WizardMeshPasswordStep;
 import org.mesh4j.meshes.ui.wizard.WizardView;
 import org.mesh4j.sync.adapters.epiinfo.EpiInfoSyncAdapterFactory;
 
@@ -37,8 +38,9 @@ public class CreateMeshWizardController extends WizardController {
 		current = 0;
 		BaseWizardPanel firstStep;
 		
-		registerWizardPanel(firstStep = new WizardMeshNameStep(this));
-		registerWizardPanel(new WizardMeshPasswordStep(this));
+		registerWizardPanel(firstStep = new WizardAccountCredentialsStep(this));
+		registerWizardPanel(new WizardMeshNameStep(this));
+		//registerWizardPanel(new WizardMeshPasswordStep(this));
 		registerWizardPanel(new WizardChooseDataSourceTypeStep(this));
 		registerWizardPanel(new WizardConfigureDataSourceStep(this));
 		registerWizardPanel(new WizardConfigureSchedulingStep(this));
@@ -113,6 +115,34 @@ public class CreateMeshWizardController extends WizardController {
 	public void nextButtonPressed() {
 		if (!wizardView.isNextButtonEnabled()) return;
 		
+		final BaseWizardPanel currentPanel = wizardPanels.get(current);
+		if (currentPanel.needsValidationBeforeLeave()) {
+			wizardView.setErrorMessage("Validating...");
+			wizardView.setNextButtonEnabled(false);
+			new Thread() {
+				public void run() {
+					final String errorMessage = currentPanel.getErrorMessageBeforeLeave();
+					if (errorMessage == null) {
+						wizardView.setErrorMessage(null);
+						moveToNextPage();
+					} else {
+						SwingUtilities.invokeLater(new Runnable() {
+							@Override
+							public void run() {
+								wizardView.setErrorMessage(errorMessage);
+								wizardView.setNextButtonEnabled(true);
+							}
+						});
+						return;
+					}
+				}
+			}.start();
+		} else {
+			moveToNextPage();
+		}
+	}
+	
+	private void moveToNextPage() {
 		BaseWizardPanel nextPanel = wizardPanels.get(++current);
 		setCurrentPanel(nextPanel);
 		setButtonsState();

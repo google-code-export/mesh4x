@@ -12,6 +12,16 @@ public abstract class BaseWizardPanel extends JPanel {
 	public abstract String getId();
 	
 	// Return null if there are no error messages
-	public abstract String getErrorMessage();
+	public String getErrorMessage() {
+		return null;
+	}
+
+	public boolean needsValidationBeforeLeave() {
+		return false;
+	}
+
+	public String getErrorMessageBeforeLeave() {
+		return null;
+	}
 
 }
