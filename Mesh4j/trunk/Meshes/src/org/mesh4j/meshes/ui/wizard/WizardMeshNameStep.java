@@ -4,7 +4,6 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.beans.PropertyChangeEvent;
 
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
@@ -84,10 +83,6 @@ public class WizardMeshNameStep extends BaseWizardPanel {
 	private void descTextAreaFocusLost(FocusEvent evt) {
 		String desc = descTextArea.getText();
 		controller.setValue("mesh.description", desc);
-	}
-
-	@Override
-	public void modelPropertyChange(PropertyChangeEvent evt) {
 	}
 
 	@Override

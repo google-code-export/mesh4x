@@ -2,7 +2,6 @@ package org.mesh4j.meshes.ui.wizard;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
 
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
@@ -71,10 +70,6 @@ public class WizardChooseDataSourceTypeStep extends BaseWizardPanel {
 		controller.nextButtonPressed();
 		// TODO fire a property change
 		//controller.setTableDataSetType();
-	}
-
-	@Override
-	public void modelPropertyChange(PropertyChangeEvent evt) {
 	}
 
 	@Override

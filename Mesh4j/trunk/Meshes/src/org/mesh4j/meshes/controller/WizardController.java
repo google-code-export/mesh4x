@@ -55,6 +55,10 @@ public abstract class WizardController extends AbstractController {
 		return (String) values.get(name);
 	}
 	
+	public abstract boolean isFirst();
+	
+	public abstract boolean isLast();
+	
 	public abstract void backButtonPressed();
 	
 	public abstract void nextButtonPressed();

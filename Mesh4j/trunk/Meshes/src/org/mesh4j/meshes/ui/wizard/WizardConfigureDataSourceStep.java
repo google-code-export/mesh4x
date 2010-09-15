@@ -1,7 +1,6 @@
 package org.mesh4j.meshes.ui.wizard;
 
 import java.awt.CardLayout;
-import java.beans.PropertyChangeEvent;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,11 +40,6 @@ public class WizardConfigureDataSourceStep extends BaseWizardPanel {
 	public void setCurrentConfig(String id) {
 		cardLayout.show(this, id);
 		currentConfigPanel = configPanels.get(id);
-	}
-
-	@Override
-	public void modelPropertyChange(PropertyChangeEvent evt) {
-		// TODO propagate event to currentConfigPanel
 	}
 
 	@Override

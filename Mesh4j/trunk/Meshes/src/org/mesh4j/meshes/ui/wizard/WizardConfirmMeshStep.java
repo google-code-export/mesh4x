@@ -1,20 +1,14 @@
 package org.mesh4j.meshes.ui.wizard;
 
-import java.awt.Desktop;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.io.File;
-import java.io.IOException;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -52,49 +46,16 @@ public class WizardConfirmMeshStep extends BaseWizardPanel {
 		JLabel trayIconLabel = new JLabel(trayIcon);
 		add(trayIconLabel, "span, align center");
 		
-		JLabel saveLabel = new JLabel();
-		saveLabel.setText("<html><h4>Save the configuration file of your mesh by clicking the button below and distribute to your colleagues " +
-							  "to have them sync to your mesh:</h4></html>");
-		add(saveLabel, "span");
+		final JCheckBox saveCheck = new JCheckBox();
+		saveCheck.setText("<html><h4>Save the configuration file of this new mesh to distribute to your colleages to have them sync to your mesh <b>after clicking Finish</b>.</h4></html>");
+		add(saveCheck, "span");
 		
-		JButton saveButton = new JButton();
-		saveButton.setText("<html><h4>Save configuration file ...</h4></html>");
-		add(saveButton, "span");
-		
-		saveButton.addActionListener(new ActionListener() {
+		saveCheck.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				saveButtonActionPerformed(e);
+				controller.setValue("saveConfigurationFile", saveCheck.isSelected());
 			}
 		});
-		
-		fileChooser = new JFileChooser();
-		fileChooser.setDialogType(JFileChooser.SAVE_DIALOG);
-		FileNameExtensionFilter filter = new FileNameExtensionFilter("Mesh Configuration File", "mesh");
-		fileChooser.setFileFilter(filter);
-		File file = new File("configuration.mesh");
-		fileChooser.setSelectedFile(file);
-	}
-	
-	private void saveButtonActionPerformed(ActionEvent e) {
-		int returnVal = fileChooser.showSaveDialog(this);
-		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			File selectedFile = fileChooser.getSelectedFile();
-			if (selectedFile != null) {
-				try {
-					controller.saveConfiguration(selectedFile);
-					if (Desktop.isDesktopSupported())
-						Desktop.getDesktop().open(selectedFile.getParentFile());
-				} catch (IOException ex) {
-					JOptionPane.showMessageDialog(this, ex.getMessage(), "The mesh configuration file could not be saved", JOptionPane.ERROR_MESSAGE);
-					ex.printStackTrace();
-				}
-			}
-		}
-	}
-		
-	@Override
-	public void modelPropertyChange(PropertyChangeEvent evt) {
 	}
 
 	@Override

@@ -2,7 +2,6 @@ package org.mesh4j.meshes.ui.wizard;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.beans.PropertyChangeEvent;
 
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
@@ -75,10 +74,6 @@ public class WizardAccountCredentialsStep extends BaseWizardPanel {
 	private void emailFieldKeyReleased(KeyEvent evt) {
 		String email = emailField.getText();
 		controller.setValue("account.email", email);
-	}
-
-	@Override
-	public void modelPropertyChange(PropertyChangeEvent evt) {
 	}
 
 	@Override

@@ -7,7 +7,8 @@ import javax.swing.JPanel;
 @SuppressWarnings("serial")
 public abstract class BaseWizardPanel extends JPanel {
 
-	public abstract void modelPropertyChange(PropertyChangeEvent evt);
+	public void modelPropertyChange(PropertyChangeEvent evt) {
+	}
 	
 	public abstract String getId();
 	

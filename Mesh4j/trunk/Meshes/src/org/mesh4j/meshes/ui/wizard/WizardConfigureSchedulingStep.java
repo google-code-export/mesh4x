@@ -2,7 +2,6 @@ package org.mesh4j.meshes.ui.wizard;
 
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.beans.PropertyChangeEvent;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
@@ -113,10 +112,6 @@ public class WizardConfigureSchedulingStep extends BaseWizardPanel {
 	
 	private void receiveSyncButtonItemStateChanged(ItemEvent e) {
 		controller.setValue("syncmode", SyncMode.RECEIVE);
-	}
-
-	@Override
-	public void modelPropertyChange(PropertyChangeEvent evt) {
 	}
 
 	@Override

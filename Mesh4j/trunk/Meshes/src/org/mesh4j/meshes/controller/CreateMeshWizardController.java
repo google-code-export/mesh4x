@@ -1,12 +1,15 @@
 package org.mesh4j.meshes.controller;
 
+import java.awt.Desktop;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.mesh4j.meshes.io.ConfigurationManager;
 import org.mesh4j.meshes.io.MeshMarshaller;
@@ -49,10 +52,6 @@ public class CreateMeshWizardController extends WizardController {
 		setCurrentPanel(firstStep);
 		setButtonsState();
 	}
-							
-	public void saveConfiguration(File file) throws IOException {
-		MeshMarshaller.toXml(buildMesh(), file); 
-	}
 	
 	public void finish() {
 		try {
@@ -62,14 +61,18 @@ public class CreateMeshWizardController extends WizardController {
 			
 			MeshServer.getInstance().createMesh(mesh, email, password);
 			ConfigurationManager.getInstance().saveMesh(mesh);
+			
+			Boolean saveConfigFile = (Boolean) getValue("saveConfigurationFile");
+			if (saveConfigFile != null && saveConfigFile.booleanValue()) {
+				saveConfiguration(mesh);
+			}
 		} catch (IOException ex) {
 			JOptionPane.showMessageDialog(wizardView, ex.getMessage(), "The mesh configuration file could not be saved", JOptionPane.ERROR_MESSAGE);
 			ex.printStackTrace();
 		}
 	}
 	
-	private Mesh buildMesh()
-	{
+	private Mesh buildMesh() {
 		Mesh mesh = new Mesh();
 		
 		// Basic properties
@@ -83,7 +86,6 @@ public class CreateMeshWizardController extends WizardController {
 			dataSet.setMesh(mesh);
 			dataSet.setType(DataSetType.TABLE);
 			dataSet.setName(tableName);
-			dataSet.setServerFeedUrl(tableName);
 			mesh.getDataSets().add(dataSet);
 			
 			// Schedule
@@ -101,6 +103,29 @@ public class CreateMeshWizardController extends WizardController {
 		}
 		
 		return mesh;
+	}
+	
+	private void saveConfiguration(Mesh mesh) {
+		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setDialogType(JFileChooser.SAVE_DIALOG);
+		FileNameExtensionFilter filter = new FileNameExtensionFilter("Mesh Configuration File", "mesh");
+		fileChooser.setFileFilter(filter);
+		fileChooser.setSelectedFile(new File("configuration.mesh"));
+		
+		int returnVal = fileChooser.showSaveDialog(wizardView);
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			File selectedFile = fileChooser.getSelectedFile();
+			if (selectedFile != null) {
+				try {
+					MeshMarshaller.toXml(mesh, selectedFile); 
+					if (Desktop.isDesktopSupported())
+						Desktop.getDesktop().open(selectedFile.getParentFile());
+				} catch (IOException ex) {
+					JOptionPane.showMessageDialog(wizardView, ex.getMessage(), "The mesh configuration file could not be saved", JOptionPane.ERROR_MESSAGE);
+					ex.printStackTrace();
+				}
+			}
+		}
 	}
 	
 	@Override
@@ -156,11 +181,11 @@ public class CreateMeshWizardController extends WizardController {
 		wizardView.setCancelVisible(!isLast());
 	}
 	
-	private boolean isFirst() {
+	public boolean isFirst() {
 		return current == 0;
 	}
 	
-	private boolean isLast() {
+	public boolean isLast() {
 		return current == (wizardPanels.size() - 1);
 	}
 	

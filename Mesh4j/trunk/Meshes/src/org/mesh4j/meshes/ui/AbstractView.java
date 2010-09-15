@@ -7,6 +7,8 @@ import javax.swing.JFrame;
 @SuppressWarnings("serial")
 public abstract class AbstractView extends JFrame {
 	
-    public abstract void modelPropertyChange(PropertyChangeEvent evt);
+    public void modelPropertyChange(PropertyChangeEvent evt) {
+    	
+    }
     
 }

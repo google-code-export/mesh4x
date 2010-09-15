@@ -20,8 +20,6 @@ import javax.swing.SwingWorker;
 
 import net.miginfocom.swing.MigLayout;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
 import org.mesh4j.meshes.controller.CreateMeshWizardController;
 import org.mesh4j.sync.adapters.googlespreadsheet.GoogleSpreadsheet;

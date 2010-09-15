@@ -6,7 +6,6 @@ import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -107,10 +106,6 @@ public class WizardView extends AbstractView {
 	    centerPanel.add(errorMessageLabel, BorderLayout.SOUTH);
 	    add(centerPanel, BorderLayout.CENTER);
 	}
-
-	@Override
-	public void modelPropertyChange(PropertyChangeEvent evt) {
-	}
 	
 	public void setController(WizardController controller) {
 		this.controller = controller;
@@ -134,11 +129,11 @@ public class WizardView extends AbstractView {
 	}
 
 	public void setBackButtonEnabled(boolean b) {
-	    backButton.setEnabled(b);
+	    backButton.setEnabled(b && !controller.isFirst());
 	}
 	
 	public void setNextButtonEnabled(boolean b) {
-	    nextButton.setEnabled(b);
+	    nextButton.setEnabled(b && !controller.isLast());
 	}
 	
 	public boolean isNextButtonEnabled() {

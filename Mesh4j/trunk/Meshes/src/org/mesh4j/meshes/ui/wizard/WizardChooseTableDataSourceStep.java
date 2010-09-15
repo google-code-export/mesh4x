@@ -2,7 +2,6 @@ package org.mesh4j.meshes.ui.wizard;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JLabel;
@@ -17,13 +16,10 @@ public class WizardChooseTableDataSourceStep extends BaseWizardPanel {
 	private static final long serialVersionUID = -5773369351266179486L;
 	private static String ID = "STEP_FOUR";
 	
-	private CreateMeshWizardController controller;
-	
 	private ButtonGroup buttonGroup;
 	
 	public WizardChooseTableDataSourceStep(CreateMeshWizardController controller) {
 		super();
-		this.controller = controller;
 		initComponents();
 	}
 
@@ -75,10 +71,6 @@ public class WizardChooseTableDataSourceStep extends BaseWizardPanel {
 		buttonGroup.add(msAccessButton);
 		buttonGroup.add(msExcelButton);
 		buttonGroup.add(googleSpreadsheetButton);
-	}
-
-	@Override
-	public void modelPropertyChange(PropertyChangeEvent evt) {
 	}
 	
 	private void msAccessButtonActionPerformed(ActionEvent e) {
