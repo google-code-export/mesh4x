@@ -39,4 +39,8 @@ public class HibernateDataSource extends DataSource {
 		}
 	}
 
+	@Override
+	public String toString() {
+		return String.format("Database: %s", connectionURL);
+	}
 }
