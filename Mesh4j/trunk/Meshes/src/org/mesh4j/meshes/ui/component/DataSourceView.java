@@ -46,6 +46,7 @@ public class DataSourceView extends EditableComponent {
 				}
 			});
 		}
+		tabbedPane.addTab("Conflicts", new ConflictsView(dataSource));
 	}
 
 	private JPanel createHistoryTab() {
