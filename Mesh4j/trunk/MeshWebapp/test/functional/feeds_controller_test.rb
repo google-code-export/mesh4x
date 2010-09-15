@@ -45,5 +45,7 @@ class FeedsControllerTest < ActionController::TestCase
     assert_equal 1, feeds.length
     assert_equal mesh.id, feeds[0].mesh_id
     assert_equal 'bar', feeds[0].name
+    
+    assert_equal feeds[0].guid, @response.body
   end
 end

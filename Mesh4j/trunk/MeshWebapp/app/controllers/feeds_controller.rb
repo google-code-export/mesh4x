@@ -48,8 +48,8 @@ class FeedsController < AccountAuthenticatedController
     mesh = Mesh.find_by_account_id_and_name @account.id, params[:mesh_name]
     return head :not_found unless mesh
     
-    Feed.create! :mesh_id => mesh.id, :name => params[:feed_name]
-    head :ok
+    feed = Feed.create! :mesh_id => mesh.id, :name => params[:feed_name]
+    render :text => feed.guid
   end
   
   private
