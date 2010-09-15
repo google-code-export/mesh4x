@@ -32,7 +32,7 @@ public class ItemView extends JPanel {
 		add(new JScrollPane(new JTable(model)), "grow");
 		
 		for (String key : properties.keySet()) {
-			model.addRow(new String[] { key, properties.get(key).toString() });
+			model.addRow(new String[] { key, String.valueOf(properties.get(key)) });
 		}
 	}
 
