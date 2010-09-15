@@ -19,7 +19,7 @@ public class FeedDataSource extends DataSource {
 	}
 	
 	@Override
-	public ISyncAdapter createSyncAdapter(DataSet dataSet, String baseDirectory) {
+	public ISyncAdapter createSyncAdapter(String baseDirectory) {
 		// TODO Auto-generated method stub
 		return null;
 	}

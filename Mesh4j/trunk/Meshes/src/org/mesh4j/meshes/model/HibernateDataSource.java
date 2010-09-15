@@ -30,10 +30,10 @@ public class HibernateDataSource extends DataSource {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public ISyncAdapter createSyncAdapter(DataSet dataSet, String baseDirectory) {
+	public ISyncAdapter createSyncAdapter(String baseDirectory) {
 		try {
 			return HibernateSyncAdapterFactory.createHibernateAdapter(connectionURL, user, password, (Class<Driver>)Class.forName(driverClass),
-					(Class<Dialect>)Class.forName(dialectClass), tableName, dataSet.getAbsoluteServerFeedUrl(), baseDirectory, new LoggedInIdentityProvider(), null);
+					(Class<Dialect>)Class.forName(dialectClass), tableName, getDataSet().getAbsoluteServerFeedUrl(), baseDirectory, new LoggedInIdentityProvider(), null);
 		} catch (ClassNotFoundException e) {
 			throw new MeshException(e);
 		}

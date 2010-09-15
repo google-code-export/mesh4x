@@ -40,8 +40,12 @@ public abstract class DataSource extends AbstractModel {
 	public String getId() {
 		return id;
 	}
+	
+	public ISyncAdapter createSyncAdapter() {
+		return createSyncAdapter(ConfigurationManager.getInstance().getRuntimeDirectory(this).getAbsolutePath());
+	}
 
-	public abstract ISyncAdapter createSyncAdapter(DataSet dataSet, String baseDirectory);
+	public abstract ISyncAdapter createSyncAdapter(String baseDirectory);
 
 	public void setLastSyncDate(Date lastSyncDate) {
 		Date oldValue = this.lastSyncDate;

@@ -38,9 +38,8 @@ public class SyncManager {
 			dataSet.setState(DataSetState.SYNC);
 			try {
 				for(DataSource dataSource : dataSet.getDataSources()) {
-					String baseDirectory = ConfigurationManager.getInstance().getRuntimeDirectory(dataSource).getAbsolutePath();
 					try {
-						synchronize(dataSet, dataSource, baseDirectory);
+						synchronize(dataSource);
 						dataSource.addLog(new SyncLog(true, "Synchronization succeeded"));
 					} catch (RuntimeException e) {
 						dataSource.addLog(new SyncLog(false, e.getMessage()));
@@ -66,14 +65,14 @@ public class SyncManager {
 		return currentSyncs.contains(getSyncName(dataSet));
 	}
 
-	private void synchronize(DataSet dataSet, DataSource dataSource, String baseDirectory) {
-		ISyncAdapter sourceAdapter = dataSource.createSyncAdapter(dataSet, baseDirectory);
-		ISyncAdapter targetAdapter = createTargetAdapter(dataSet);
+	private void synchronize(DataSource dataSource) {
+		ISyncAdapter sourceAdapter = dataSource.createSyncAdapter();
+		ISyncAdapter targetAdapter = createTargetAdapter(dataSource.getDataSet());
 		
 		System.out.println("Starting sync task for " + dataSource.toString() + "...");
 		Date syncStart = new Date();
 		SyncEngine engine = new SyncEngine(sourceAdapter, targetAdapter);
-		engine.synchronize(dataSource.getLastSyncDate(), getSyncDirection(dataSet.getSchedule().getSyncMode()));
+		engine.synchronize(dataSource.getLastSyncDate(), getSyncDirection(dataSource.getDataSet().getSchedule().getSyncMode()));
 
 		System.out.println("Sync task ended");
 		dataSource.setLastSyncDate(syncStart);

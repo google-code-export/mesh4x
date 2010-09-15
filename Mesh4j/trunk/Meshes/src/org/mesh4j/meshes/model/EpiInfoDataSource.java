@@ -15,8 +15,8 @@ import org.mesh4j.sync.security.LoggedInIdentityProvider;
 public class EpiInfoDataSource extends MsAccessDataSource {
 	
 	@Override
-	public ISyncAdapter createSyncAdapter(DataSet dataSet, String baseDirectory) {
-		return EpiInfoSyncAdapterFactory.createSyncAdapter(getFileName(), getTableName(), dataSet.getAbsoluteServerFeedUrl(), baseDirectory, new LoggedInIdentityProvider());
+	public ISyncAdapter createSyncAdapter(String baseDirectory) {
+		return EpiInfoSyncAdapterFactory.createSyncAdapter(getFileName(), getTableName(), getDataSet().getAbsoluteServerFeedUrl(), baseDirectory, new LoggedInIdentityProvider());
 	}
 	
 	@Override
