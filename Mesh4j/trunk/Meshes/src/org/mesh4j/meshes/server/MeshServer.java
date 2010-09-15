@@ -39,6 +39,16 @@ public class MeshServer implements IMeshServer {
 			return false;
 		}
 	}
+	
+	@Override
+	public boolean createAccount(String email, String password) {
+		try {
+			get("/accounts/create?email=" + encode(email) + "&password=" + encode(password));
+			return true;
+		} catch (MeshException e) {
+			return false;
+		}
+	}
 
 	public void createMesh(Mesh mesh, String email, String password) {
 		createMesh(mesh.getName(), email, password);
@@ -67,6 +77,10 @@ public class MeshServer implements IMeshServer {
 		}
 	}
 	
+	private String get(String urlString) {
+		return get(urlString, null, null);
+	}
+	
 	private String get(String urlString, String email, String password) {
 		return method("GET", urlString, email, password);
 	}
@@ -82,7 +96,9 @@ public class MeshServer implements IMeshServer {
 			try {
 				conn = (HttpURLConnection) url.openConnection();
 				conn.setRequestMethod(verb);
-				conn.setRequestProperty("Authorization", "Basic " + new BASE64Encoder().encode((email + ":" + password).getBytes()));
+				if (email != null && password != null) {
+					conn.setRequestProperty("Authorization", "Basic " + new BASE64Encoder().encode((email + ":" + password).getBytes()));
+				}
 
 				BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 				StringBuilder response = new StringBuilder();

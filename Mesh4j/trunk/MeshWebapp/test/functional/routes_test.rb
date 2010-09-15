@@ -36,4 +36,8 @@ class RoutesTest < ActionController::TestCase
   test "verify account" do
     assert_routing({:path => "/accounts/verify", :method => :get }, { :controller => "accounts", :action => "verify" })
   end
+  
+  test "create account" do
+    assert_routing({:path => "/accounts/create", :method => :get }, { :controller => "accounts", :action => "create" })
+  end
 end

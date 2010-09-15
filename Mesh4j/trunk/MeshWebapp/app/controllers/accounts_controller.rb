@@ -5,5 +5,10 @@ class AccountsController < AccountAuthenticatedController
   def verify
     head :ok
   end
+  
+  def create
+    Account.create! :email => params[:email], :password => params[:password]
+    head :ok
+  end
 
 end

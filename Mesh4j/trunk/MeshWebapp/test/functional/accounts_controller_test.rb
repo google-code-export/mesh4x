@@ -16,4 +16,14 @@ class AccountsControllerTest < ActionController::TestCase
     
     assert_response 401
   end
+  
+  test "create" do
+    plan = Account.plan
+    get :create, plan
+    
+    accounts = Account.all
+    assert_equal 1, accounts.length
+    assert_equal plan[:email], accounts[0].email
+    assert_true accounts[0].authenticate(plan[:password])
+  end
 end
