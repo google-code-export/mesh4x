@@ -129,7 +129,7 @@ public class DataSet extends AbstractModel {
 	{
 		URL url;
 		try {
-			url = new URL(new URL(mesh.getServerFeedUrl()), getServerFeedUrl());
+			url = new URL(getServerFeedUrl());
 		} catch (MalformedURLException e) {
 			throw new Error(e);
 		}

@@ -57,7 +57,10 @@ public class CreateMeshWizardController extends WizardController {
 	public void finish() {
 		try {
 			Mesh mesh = buildMesh();
-			MeshServer.getInstance().createMesh(mesh);
+			String email = getStringValue("account.email");
+			String password = getStringValue("account.password");
+			
+			MeshServer.getInstance().createMesh(mesh, email, password);
 			ConfigurationManager.getInstance().saveMesh(mesh);
 		} catch (IOException ex) {
 			JOptionPane.showMessageDialog(wizardView, ex.getMessage(), "The mesh configuration file could not be saved", JOptionPane.ERROR_MESSAGE);
@@ -72,8 +75,6 @@ public class CreateMeshWizardController extends WizardController {
 		// Basic properties
 		mesh.setName(getStringValue("mesh.name"));
 		mesh.setDescription(getStringValue("mesh.description"));
-		mesh.setPassword(getStringValue("mesh.password"));
-		mesh.setServerFeedUrl("https://mesh.instedd.org/feeds/" + getStringValue("mesh.name") + "/");
 		
 		List<String> tableNames = EpiInfoSyncAdapterFactory.getTableNames(getStringValue("epiinfo.location"));
 		for(String tableName : tableNames) {

@@ -45,7 +45,7 @@ public class WizardView extends AbstractView {
 	    
 	    errorMessageLabel = new JLabel();
 	    errorMessageLabel.setBorder(new EmptyBorder(new Insets(5, 20, 5, 10)));
-	    errorMessageLabel.setMinimumSize(new Dimension(550, 20));
+	    errorMessageLabel.setMinimumSize(new Dimension(550, 40));
 
 	    cardPanel = new JPanel();
 	    cardPanel.setBorder(new EmptyBorder(new Insets(5, 10, 5, 10))); 

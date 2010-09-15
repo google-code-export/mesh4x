@@ -102,9 +102,4 @@ public class WizardConfirmMeshStep extends BaseWizardPanel {
 		return ID;
 	}
 
-	@Override
-	public String getErrorMessage() {
-		return null;
-	}
-
 }

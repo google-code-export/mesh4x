@@ -11,6 +11,7 @@ import javax.swing.JTextField;
 import net.miginfocom.swing.MigLayout;
 
 import org.mesh4j.meshes.controller.CreateMeshWizardController;
+import org.mesh4j.meshes.server.MeshServer;
 
 public class WizardAccountCredentialsStep extends BaseWizardPanel {
 
@@ -61,6 +62,9 @@ public class WizardAccountCredentialsStep extends BaseWizardPanel {
 		});
 		add(passwordLabel, "gapright 20");
 		add(passwordField, "growx");
+		
+		WizardUtils.nextWhenEnterPressedOn(controller, emailField);
+		WizardUtils.nextWhenEnterPressedOn(controller, passwordField);
 	}
 
 	private void passwordFieldKeyReleased(KeyEvent evt) {
@@ -89,16 +93,12 @@ public class WizardAccountCredentialsStep extends BaseWizardPanel {
 	
 	@Override
 	public String getErrorMessageBeforeLeave() {
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		String email = emailField.getText();
 		String password = new String(passwordField.getPassword());
-		if (email.length() == 0 || password.length() == 0)
-			return "Invalid credentials";
-		return null;
+		if (MeshServer.getInstance().areValid(email, password)) {
+			return null;
+		} else {
+			return "Invalid email/password";
+		}
 	}
 }

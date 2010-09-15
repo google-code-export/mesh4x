@@ -46,6 +46,6 @@ class FeedsControllerTest < ActionController::TestCase
     assert_equal mesh.id, feeds[0].mesh_id
     assert_equal 'bar', feeds[0].name
     
-    assert_equal feeds[0].guid, @response.body
+    assert_equal url_for(:controller => :feeds, :action => :index, :guid => feeds[0].guid), @response.body
   end
 end

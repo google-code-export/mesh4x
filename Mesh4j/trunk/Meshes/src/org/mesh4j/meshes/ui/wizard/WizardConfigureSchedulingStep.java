@@ -123,10 +123,5 @@ public class WizardConfigureSchedulingStep extends BaseWizardPanel {
 	public String getId() {
 		return ID;
 	}
-	
-	@Override
-	public String getErrorMessage() {
-		return null;
-	}
 
 }

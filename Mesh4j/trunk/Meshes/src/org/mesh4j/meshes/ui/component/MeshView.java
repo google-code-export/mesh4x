@@ -62,14 +62,6 @@ public class MeshView extends EditableComponent {
 		add(new JScrollPane(descriptionField), c);
 		descriptionField.getDocument().addDocumentListener(new DocumentListenerImplementation());
 		
-		serverUrlField = new JTextField(mesh.getServerFeedUrl(), 50);
-		serverUrlField.setEnabled(false);
-		add(serverUrlField, c);
-		
-		passwordField = new JPasswordField(mesh.getPassword());
-		add(passwordField, c);
-		passwordField.getDocument().addDocumentListener(new DocumentListenerImplementation());
-		
 		// Fillers
 		c.gridx = 0; c.gridy = 4; c.weightx = 0; c.weighty = 10;
 		add(new JPanel(), c);
@@ -78,19 +70,16 @@ public class MeshView extends EditableComponent {
 	@Override
 	protected void loadModel() {
 		descriptionField.setText(mesh.getDescription());
-		passwordField.setText(mesh.getPassword());
 	}
 
 	@Override
 	public boolean isDirty() {
-		return !descriptionField.getText().equals(mesh.getDescription()) ||
-			!new String(passwordField.getPassword()).equals(mesh.getPassword());
+		return !descriptionField.getText().equals(mesh.getDescription());
 	}
 
 	@Override
 	public void saveChanges() {
 		mesh.setDescription(descriptionField.getText());
-		mesh.setPassword(new String(passwordField.getPassword()));
 		try {
 			ConfigurationManager.getInstance().saveMesh(mesh);
 			notifyEditableListener();

@@ -22,10 +22,6 @@ public class Mesh extends AbstractModel {
 	private String name;
 	@XmlElement(name = "description")
 	private String description;
-	@XmlElement(name = "password")
-	private String password;
-	@XmlElement
-	private String serverFeedUrl;
 	@XmlElementWrapper(name = "dataSets")
 	@XmlElement(name = "dataSet")
 	private List<DataSet> dataSets = new ArrayList<DataSet>(3);
@@ -51,17 +47,6 @@ public class Mesh extends AbstractModel {
 		
 		firePropertyChange(DESCRIPTION_PROPERTY, oldDescription, description);
 	}
-	
-	public String getPassword() {
-		return password;
-	}
-	
-	public void setPassword(String password) {
-		String oldPassword = this.password;
-		this.password = password;
-		
-		firePropertyChange(PASSWORD_PROPERTY, oldPassword, password);
-	}
 
 	public List<DataSet> getDataSets() {
 		return dataSets;
@@ -69,16 +54,6 @@ public class Mesh extends AbstractModel {
 
 	public void setDataSets(List<DataSet> dataSets) {
 		this.dataSets = dataSets;
-	}
-	
-	public void setServerFeedUrl(String serverFeedUrl) {
-		String oldUrl = this.serverFeedUrl;
-		this.serverFeedUrl = serverFeedUrl;
-		firePropertyChange(SERVER_FEED_URL_PROPERTY, oldUrl, serverFeedUrl);
-	}
-	
-	public String getServerFeedUrl() {
-		return serverFeedUrl;
 	}
 	
 	public void accept(MeshVisitor visitor) {
@@ -93,7 +68,6 @@ public class Mesh extends AbstractModel {
 		Mesh copy = new Mesh();
 		copy.name = name;
 		copy.description = description;
-		copy.serverFeedUrl = serverFeedUrl;
 		return copy;
 	}
 

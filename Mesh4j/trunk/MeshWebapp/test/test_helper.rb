@@ -46,4 +46,9 @@ class ActiveSupport::TestCase
   def http_auth(user, pass)
     @request.env['HTTP_AUTHORIZATION'] = 'Basic ' + Base64.encode64(user + ':' + pass)
   end
+  
+  def url_for(options)
+    url = ActionController::UrlRewriter.new(@request, nil)
+    url.rewrite(options)
+  end
 end

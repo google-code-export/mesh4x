@@ -81,11 +81,5 @@ public class WizardChooseDataSourceTypeStep extends BaseWizardPanel {
 	public String getId() {
 		return ID;
 	}
-	
-	@Override
-	public String getErrorMessage() {
-		return null;
-		//return epiInfoButton.isSelected();
-	}
 
 }

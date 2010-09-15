@@ -49,7 +49,7 @@ class FeedsController < AccountAuthenticatedController
     return head :not_found unless mesh
     
     feed = Feed.create! :mesh_id => mesh.id, :name => params[:feed_name]
-    render :text => feed.guid
+    render :text => sync_get_url(:guid => feed.guid)
   end
   
   private

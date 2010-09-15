@@ -5,7 +5,6 @@ import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
-import java.util.Arrays;
 
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
@@ -26,13 +25,11 @@ public class WizardMeshNameStep extends BaseWizardPanel {
 	
 	private JTextField nameTextField;
 	private JTextArea descTextArea;
-	private String[] existingMeshNames;
 	
 	public WizardMeshNameStep(CreateMeshWizardController controller) {
 		super();
 		this.controller = controller;
 		initComponents();
-		initExistingMeshNames();
 	}
 
 	private void initComponents() {
@@ -57,7 +54,7 @@ public class WizardMeshNameStep extends BaseWizardPanel {
 		descTextArea = new JTextArea();
 		JScrollPane descScrollPane = new JScrollPane();
 		descTextArea.setColumns(20);
-		descTextArea.setRows(5);
+		descTextArea.setRows(4);
 		descScrollPane.setViewportView(descTextArea);
 		add(descLabel, "gapright 20");
 		add(descScrollPane, "growx");
@@ -77,20 +74,6 @@ public class WizardMeshNameStep extends BaseWizardPanel {
 		});
 		
 		WizardUtils.nextWhenEnterPressedOn(controller, nameTextField);
-	}
-	
-	private void initExistingMeshNames() {
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				String[] names = MeshServer.getInstance().getMeshNames();
-				Arrays.sort(names);
-				existingMeshNames = names;
-				if (nameTextField.getText().length() > 0) {
-					controller.setValue("mesh.name", nameTextField.getText());
-				}
-			}
-		}).start();
 	}
 	
 	private void nameTextFieldKeyReleased(KeyEvent evt) {
@@ -113,14 +96,20 @@ public class WizardMeshNameStep extends BaseWizardPanel {
 	}
 	
 	@Override
-	public String getErrorMessage() {
-		if (nameTextField.getText().length() < 5) {
-			return "The name is too short: it must be at least 5 characters long";
-		} else if (existingMeshNames == null) {
-			return "Getting list of Mesh names on the server, please wait...";
-		} else if (Arrays.binarySearch(existingMeshNames, nameTextField.getText()) >= 0) {
-			return "A Mesh with that name already exists on the server";
+	public boolean needsValidationBeforeLeave() {
+		return true;
+	}
+	
+	@Override
+	public String getErrorMessageBeforeLeave() {
+		String meshName = nameTextField.getText();
+		String email = controller.getStringValue("account.email");
+		String password = controller.getStringValue("account.password");
+		
+		if (MeshServer.getInstance().meshExists(meshName, email, password)) {
+			return "A mesh with that name already exists";
 		}
+		
 		return null;
 	}
 }

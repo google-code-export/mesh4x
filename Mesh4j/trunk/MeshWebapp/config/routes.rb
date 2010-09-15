@@ -6,6 +6,7 @@ ActionController::Routing::Routes.draw do |map|
   map.sync_post '/feeds/:guid', :conditions => {:method => :post}, :controller => :feeds, :action => :sync
   map.schema '/feeds/:guid/schema', :controller => :feeds, :action => :schema
   map.create_mesh '/meshes/:name', :conditions => {:method => :post}, :controller => :meshes, :action => :create
+  map.show_mesh '/meshes/:name', :conditions => {:method => :get}, :controller => :meshes, :action => :show
   map.create_feed '/meshes/:mesh_name/feeds/:feed_name', :conditions => {:method => :post}, :controller => :feeds, :action => :create
 
   # Install the default routes as the lowest priority.
