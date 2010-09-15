@@ -34,8 +34,8 @@ class FeedsControllerTest < ActionController::TestCase
   end
   
   test "create" do
-    @account = Account.make :name => 'a', :password => 'b'
-    http_auth @account.name, 'b'
+    @account = Account.make :password => 'b'
+    http_auth @account.email, 'b'
     
     mesh = Mesh.make :account => @account
     

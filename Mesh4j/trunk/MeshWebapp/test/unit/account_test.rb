@@ -5,7 +5,7 @@ class AccountTest < ActiveSupport::TestCase
     @account = Account.make
   end
 
-  [:name, :password].each do |field|
+  [:email, :password].each do |field|
     test "should not save if #{field} is blank" do
       @account.send("#{field}=", nil)
       assert !@account.save
@@ -17,8 +17,8 @@ class AccountTest < ActiveSupport::TestCase
     assert_false account.save
   end
   
-  test "should not save if name is taken" do
-    account = Account.make_unsaved :name => @account.name
+  test "should not save if email is taken" do
+    account = Account.make_unsaved :email => @account.email
     assert_false account.save
   end
 end

@@ -1,4 +1,6 @@
-class FeedsController < ApplicationController
+class FeedsController < AccountAuthenticatedController
+
+  before_filter :authenticate, :only => [:create]
 
   IdentityProvider = Mesh4j::NullIdentityProvider.INSTANCE
   SyndicationFormat = Mesh4j::RssSyndicationFormat.INSTANCE
@@ -40,6 +42,14 @@ class FeedsController < ApplicationController
   
   def schema
     head :not_found
+  end
+  
+  def create
+    mesh = Mesh.find_by_account_id_and_name @account.id, params[:mesh_name]
+    return head :not_found unless mesh
+    
+    Feed.create! :mesh_id => mesh.id, :name => params[:feed_name]
+    head :ok
   end
   
   private

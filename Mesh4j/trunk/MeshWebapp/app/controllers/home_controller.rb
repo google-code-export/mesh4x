@@ -10,10 +10,10 @@ class HomeController < AccountAuthenticatedController
     account = params[:account]
     return redirect_to_home if account.nil?
     
-    @account = Account.find_by_name account[:name]
+    @account = Account.find_by_email account[:email]
     if @account.nil? || !@account.authenticate(account[:password])
-      @account = Account.new :name => account[:name]
-      flash[:notice] = 'Invalid name/password'
+      @account = Account.new :email => account[:email]
+      flash[:notice] = 'Invalid email/password'
       return render :index
     end
     

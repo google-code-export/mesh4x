@@ -20,7 +20,7 @@ class AccountAuthenticatedController < ApplicationController
   
   def authenticate
     authenticate_or_request_with_http_basic do |username, password|
-      @account = Account.find_by_name username
+      @account = Account.find_by_email username
       @account ? @account.authenticate(password) : false
     end
   end

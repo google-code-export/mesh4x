@@ -3,13 +3,14 @@ require 'sham'
 
 Sham.define do
   name { Faker::Name.name }
+  email { Faker::Internet.email }
   username { Faker::Internet.user_name }
   password { Faker::Name.name }
   guid { Guid.new.to_s }
 end
 
 Account.blueprint do
-  name { Sham.username }
+  email
   password
   password_confirmation { password }
 end

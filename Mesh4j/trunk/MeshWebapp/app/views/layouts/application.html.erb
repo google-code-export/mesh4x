@@ -1,6 +1,6 @@
 <html>
 <head>
-  <title>Mesh4x<%= ' - ' + @account.name if !@account.nil? && !@account.id.nil? %></title>
+  <title>Mesh4x<%= ' - ' + @account.email if !@account.nil? && !@account.id.nil? %></title>
   <link rel="stylesheet" href="/stylesheets/styles.css" type="text/css"/>
   <script src="/javascripts/application.js" type="text/javascript"></script>
   <%= yield :head%>
@@ -9,7 +9,7 @@
 <% if @hide_title.nil? %>
   <%= link_to 'Mesh4x', {:controller => :home, :action => :index}, :id => 'title' %>
   <% if !@account.nil? && !@account.id.nil? %>
-    <span id="toolbar"><%= @account.name %> | <%= link_to 'Help', 'http://code.google.com/p/mesh4x/', :target => '_blank' %> | <%= link_to 'Logoff', :controller => :home, :action => :logoff %></span>
+    <span id="toolbar"><%= @account.email %> | <%= link_to 'Help', 'http://code.google.com/p/mesh4x/', :target => '_blank' %> | <%= link_to 'Logoff', :controller => :home, :action => :logoff %></span>
   <% end %>
 <% end %>
 <%= yield %>

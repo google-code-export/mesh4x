@@ -2,8 +2,8 @@
 
 <% form_for :account, :url => { :controller => 'home', :action => :login }, :html => {:id => 'login'} do |f| %>
   <p>
-  <%= f.label :name %><br/>
-  <%= f.text_field :name %>
+  <%= f.label :email %><br/>
+  <%= f.text_field :email %>
   </p>
   <p>
   <%= f.label :password %><br/>
@@ -18,8 +18,8 @@
 <% form_for :new_account, :url => { :controller => 'home', :action => :create_account }, :html => {:id => 'new_account'} do |f| %>
   <%= f.error_messages %>
   <p>
-  <%= f.label :name %><br/>
-  <%= f.text_field :name, :autocomplete => :off %>
+  <%= f.label :email %><br/>
+  <%= f.text_field :email, :autocomplete => :off %>
   </p>
   <p>
   <%= f.label :password %><br/>

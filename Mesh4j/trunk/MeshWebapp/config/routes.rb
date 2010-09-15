@@ -6,6 +6,7 @@ ActionController::Routing::Routes.draw do |map|
   map.sync_post '/feeds/:guid', :conditions => {:method => :post}, :controller => :feeds, :action => :sync
   map.schema '/feeds/:guid/schema', :controller => :feeds, :action => :schema
   map.create_mesh '/meshes/:name', :conditions => {:method => :post}, :controller => :meshes, :action => :create
+  map.create_feed '/meshes/:mesh_name/feeds/:feed_name', :conditions => {:method => :post}, :controller => :feeds, :action => :create
 
   # Install the default routes as the lowest priority.
   # Note: These default routes make all actions in every controller accessible via GET requests. You should

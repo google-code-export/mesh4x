@@ -4,7 +4,7 @@ class HomeControllerTest < ActionController::TestCase
   test "login succeeds" do
     account = Account.make :password => 'account_pass'
     
-    get :login, :account => {:name => account.name, :password => 'account_pass'}
+    get :login, :account => {:email => account.email, :password => 'account_pass'}
     
     # Go to account home page
     assert_redirected_to(:controller => 'home', :action => 'index')
@@ -26,7 +26,7 @@ class HomeControllerTest < ActionController::TestCase
     assert_equal 1, accounts.length
     
     account = accounts[0]
-    assert_equal attrs[:name], accounts[0].name
+    assert_equal attrs[:email], accounts[0].email
     assert accounts[0].authenticate(attrs[:password]) 
     
     # Account was saved in session
@@ -43,21 +43,21 @@ class HomeControllerTest < ActionController::TestCase
   # Validations tests follow #
   # ------------------------ #
   
-  test "login fails wrong name" do
+  test "login fails wrong email" do
     account = Account.make
-    get :login, :account => {:name => 'wrong_account', :password => 'account_pass'}
+    get :login, :account => {:email => 'wrong_account', :password => 'account_pass'}
     assert_template 'index'
   end
   
   test "login fails wrong pass" do
     account = Account.make
-    get :login, :account => {:name => account.name, :password => 'wrong_pass'}
+    get :login, :account => {:email => account.email, :password => 'wrong_pass'}
     assert_template 'index'
   end
   
-  test "create account fails name is empty" do
+  test "create account fails email is empty" do
     account = Account.make
-    get :create_account, :new_account => {:name => '   ', :password=> 'foo'}
+    get :create_account, :new_account => {:email => '   ', :password=> 'foo'}
     assert_template 'index'
   end
   
