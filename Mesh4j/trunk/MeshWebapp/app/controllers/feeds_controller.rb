@@ -1,6 +1,7 @@
 class FeedsController < AccountAuthenticatedController
 
   before_filter :authenticate, :only => [:create]
+  before_filter :check_login, :only => [:delete]
 
   IdentityProvider = Mesh4j::NullIdentityProvider.INSTANCE
   SyndicationFormat = Mesh4j::RssSyndicationFormat.INSTANCE
@@ -50,6 +51,18 @@ class FeedsController < AccountAuthenticatedController
     
     feed = Feed.create! :mesh_id => mesh.id, :name => params[:feed_name]
     render :text => sync_get_url(:guid => feed.guid)
+  end
+  
+  def delete
+    mesh = Mesh.find_by_account_id_and_name @account.id, params[:mesh_name]
+    return redirect_to_home unless mesh
+    
+    feed = Feed.find_by_mesh_id_and_name mesh.id, params[:feed_name]
+    return redirect_to_home unless feed
+    
+    feed.destroy
+    
+    redirect_to_home "Feed '#{feed.name}' of mesh '#{mesh.name}' was deleted"
   end
   
   private

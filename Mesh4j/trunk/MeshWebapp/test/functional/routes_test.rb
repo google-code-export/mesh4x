@@ -21,8 +21,16 @@ class RoutesTest < ActionController::TestCase
     assert_routing({:path => "/meshes/foo", :method => :get }, { :controller => "meshes", :action => "show", :name => "foo" })
   end
   
+  test "delete mesh" do
+    assert_routing({:path => "/meshes/foo/delete", :method => :get }, { :controller => "meshes", :action => "delete", :name => "foo" })
+  end
+  
   test "create feed" do
     assert_routing({:path => "/meshes/foo/feeds/bar", :method => :post }, { :controller => "feeds", :action => "create", :mesh_name => "foo", :feed_name => "bar" })
+  end
+  
+  test "delete feed" do
+    assert_routing({:path => "/meshes/foo/feeds/bar/delete", :method => :get }, { :controller => "feeds", :action => "delete", :mesh_name => "foo", :feed_name => "bar" })
   end
   
   test "verify account" do

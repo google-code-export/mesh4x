@@ -1,11 +1,15 @@
+<% if !flash[:notice].nil? %>
+<div id="notice"><%= flash[:notice] %></div>
+<% end %>
+
 <h4>My meshes and feeds</h4>
 
 <ul>
 <% @meshes.each do |mesh| %>
-  <li><%= mesh.name %>
+  <li style="margin-bottom:10px"><%= mesh.name %> <%= link_to 'delete', delete_mesh_url(:name => mesh.name), :confirm => "Are you sure you want to delete the mesh '#{mesh.name}'?"  %>
     <ul>
       <% mesh.feeds.each do |feed| %>
-        <li><%= link_to feed.name, sync_get_url(feed.guid), :target => '_blank' %></li>
+        <li><%= link_to feed.name, sync_get_url(feed.guid), :target => '_blank' %> <%= link_to 'delete', delete_feed_url(:mesh_name => mesh.name, :feed_name => feed.name), :confirm => "Are you sure you want to delete the feed '#{feed.name}'?"  %></li>
       <% end %>
     </ul>
   </li>

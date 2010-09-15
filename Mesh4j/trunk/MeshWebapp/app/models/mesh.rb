@@ -1,6 +1,6 @@
 class Mesh < ActiveRecord::Base
   belongs_to :account
-  has_many :feeds, :order => :name
+  has_many :feeds, :order => :name, :dependent => :destroy
   
   validates_presence_of :account
   validates_presence_of :name
