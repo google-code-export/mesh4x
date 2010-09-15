@@ -1,3 +1,13 @@
-<div>
-Home!
-</div>
+<h4>My meshes and feeds</h4>
+
+<ul>
+<% @meshes.each do |mesh| %>
+  <li><%= mesh.name %>
+    <ul>
+      <% mesh.feeds.each do |feed| %>
+        <li><%= link_to feed.name, sync_get_url(feed.guid), :target => '_blank' %></li>
+      <% end %>
+    </ul>
+  </li>
+<% end %>
+</ul>

@@ -3,6 +3,7 @@ class HomeController < AccountAuthenticatedController
   before_filter :check_login, :except => [:login, :create_account]
 
   def index
+    @meshes = Mesh.all :conditions => ['account_id = ?', @account.id], :order => :name, :include => :feeds
     render :template => 'home/home'
   end
   
