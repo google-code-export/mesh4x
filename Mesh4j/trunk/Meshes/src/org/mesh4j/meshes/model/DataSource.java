@@ -41,6 +41,10 @@ public abstract class DataSource extends AbstractModel {
 		return id;
 	}
 	
+	public String getRdfSchemaBaseUri() {
+		return "urn:uuid:" + id;
+	}
+	
 	public ISyncAdapter createSyncAdapter() {
 		return createSyncAdapter(ConfigurationManager.getInstance().getRuntimeDirectory(this).getAbsolutePath());
 	}

@@ -16,7 +16,7 @@ public class EpiInfoDataSource extends MsAccessDataSource {
 	
 	@Override
 	public ISyncAdapter createSyncAdapter(String baseDirectory) {
-		return EpiInfoSyncAdapterFactory.createSyncAdapter(getFileName(), getTableName(), getDataSet().getName(), baseDirectory, new LoggedInIdentityProvider());
+		return EpiInfoSyncAdapterFactory.createSyncAdapter(getFileName(), getTableName(), getRdfSchemaBaseUri(), baseDirectory, new LoggedInIdentityProvider());
 	}
 	
 	@Override
