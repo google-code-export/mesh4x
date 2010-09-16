@@ -50,7 +50,7 @@ public class ConflictsView extends JPanel implements ListSelectionListener {
 		conflictTable.getSelectionModel().addListSelectionListener(this);
 		
 		add(new JLabel("Conflicting versions:"), "wrap");
-		add(new JScrollPane(versionsPanel = new JPanel(new MigLayout("insets 0")), JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS), "growx, height 50%!");
+		add(new JScrollPane(versionsPanel = new JPanel(new MigLayout("insets 0, fill")), JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS), "growx, height 50%!");
 	}
 	
 	private void loadConflicts() {
@@ -99,16 +99,23 @@ public class ConflictsView extends JPanel implements ListSelectionListener {
 		versionsPanel.removeAll();
 		
 		ItemView itemView;
-		versionsPanel.add(itemView = new ItemView(item, schema), "width 33%!, growy");
+		versionsPanel.add(itemView = new ItemView(this, item, schema), "growy, width 200px::");
 		versionsPanel.getParent().doLayout();
 		versionsPanel.doLayout();
 		itemView.doLayout();
 		
 		for (Item conflictItem : item.getSync().getConflicts()) {
-			versionsPanel.add(itemView = new ItemView(conflictItem, schema), "width 33%!, growy");
+			versionsPanel.add(itemView = new ItemView(this, conflictItem, schema), "growy, width 200px::");
 			versionsPanel.getParent().doLayout();
 			versionsPanel.doLayout();
 			itemView.doLayout();
 		}
+	}
+
+	public void chooseConflictWinner(Item winner) {
+		Item item = itemsWithConflicts.get(conflictTable.getSelectedRow());
+		Item resolvedItem = new Item(winner.getContent(), item.getSync());
+		
+		syncAdapter.update(resolvedItem, true);
 	}
 }
