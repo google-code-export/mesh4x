@@ -207,23 +207,27 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 		} catch(Exception e){
 			InputStream es = conn.getErrorStream();
 			
-			StringBuffer result = new StringBuffer();
-			Reader reader = new InputStreamReader(es, "UTF-8");
-			char[] cb = new char[2048];
-
-			int amtRead = reader.read(cb);
-			while (amtRead > 0) {
-				result.append(cb, 0, amtRead);
-				amtRead = reader.read(cb);
+			if (es != null) {
+				StringBuffer result = new StringBuffer();
+				Reader reader = new InputStreamReader(es, "UTF-8");
+				char[] cb = new char[2048];
+	
+				int amtRead = reader.read(cb);
+				while (amtRead > 0) {
+					result.append(cb, 0, amtRead);
+					amtRead = reader.read(cb);
+				}
+				reader.close();
+				es.close();
+				
+				if(is != null){
+					is.close();
+				}
+				
+				Logger.error(result.toString());
+			} else {
+				Logger.error(e.getMessage());
 			}
-			reader.close();
-			es.close();
-			
-			if(is != null){
-				is.close();
-			}
-			
-			Logger.error(result.toString());
 			throw e;
 		} 
 

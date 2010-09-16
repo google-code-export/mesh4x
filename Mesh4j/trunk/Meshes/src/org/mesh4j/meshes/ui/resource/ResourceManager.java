@@ -4,14 +4,21 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.net.URL;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+
 public class ResourceManager {
 	
 	private ResourceManager() {}
 	
-	private static Image getImage(String path) {
+	public static Image getImage(String path) {
 		URL url = ResourceManager.class.getResource(path);
-		Image image = Toolkit.getDefaultToolkit().getImage(url);
-		return image;
+		return Toolkit.getDefaultToolkit().getImage(url);
+	}
+	
+	public static Icon getIcon(String path) {
+		URL url = ResourceManager.class.getResource(path);
+		return new ImageIcon(url);
 	}
 	
 	public static Image getLogo() {

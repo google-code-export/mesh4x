@@ -26,7 +26,7 @@ public class MeshesTray {
 		showMainWindowItem.addActionListener(showMainWindowAction);
 		popup.add(showMainWindowItem);
 		
-		MenuItem showMeshWizardItem = new MenuItem("Mesh wizard...");
+		MenuItem showMeshWizardItem = new MenuItem("Create new Mesh...");
 		showMeshWizardItem.addActionListener(new ShowMeshWizard());
 		popup.add(showMeshWizardItem);
 		

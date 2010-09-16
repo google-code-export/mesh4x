@@ -35,6 +35,7 @@ public class WizardView extends AbstractView {
 	public WizardView() {
 		super();
 		
+		setTitle("Create new Mesh");
 		initComponents();
 	}
 

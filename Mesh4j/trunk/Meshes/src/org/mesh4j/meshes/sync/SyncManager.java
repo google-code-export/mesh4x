@@ -3,6 +3,7 @@ package org.mesh4j.meshes.sync;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.mesh4j.meshes.io.ConfigurationManager;
@@ -15,6 +16,7 @@ import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.SyncDirection;
 import org.mesh4j.sync.SyncEngine;
 import org.mesh4j.sync.adapters.http.HttpSyncAdapterFactory;
+import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.security.LoggedInIdentityProvider;
 
 public class SyncManager {
@@ -41,14 +43,14 @@ public class SyncManager {
 					try {
 						synchronize(dataSource);
 						dataSource.addLog(new SyncLog(true, "Synchronization succeeded"));
-					} catch (RuntimeException e) {
+					} catch (Exception e) {
 						dataSource.addLog(new SyncLog(false, e.getMessage()));
+						throw e;
 					}
 				}
 				dataSet.setState(DataSetState.NORMAL);
-			} catch (RuntimeException e) {
+			} catch (Exception e) {
 				dataSet.setState(DataSetState.FAILED);
-				throw e;
 			}
 			
 			try {
@@ -72,7 +74,10 @@ public class SyncManager {
 		System.out.println("Starting sync task for " + dataSource.toString() + "...");
 		Date syncStart = new Date();
 		SyncEngine engine = new SyncEngine(sourceAdapter, targetAdapter);
-		engine.synchronize(dataSource.getLastSyncDate(), getSyncDirection(dataSource.getDataSet().getSchedule().getSyncMode()));
+		List<Item> conflicts = engine.synchronize(dataSource.getLastSyncDate(), getSyncDirection(dataSource.getDataSet().getSchedule().getSyncMode()));
+		if (!conflicts.isEmpty()) {
+			dataSource.setHasConflicts(true);
+		}
 
 		System.out.println("Sync task ended");
 		dataSource.setLastSyncDate(syncStart);

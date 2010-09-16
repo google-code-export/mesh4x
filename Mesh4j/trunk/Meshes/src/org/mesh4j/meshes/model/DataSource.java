@@ -24,6 +24,8 @@ public abstract class DataSource extends AbstractModel {
 	private String id;
 	@XmlElement
 	private Date lastSyncDate;
+	@XmlElement
+	private boolean hasConflicts;
 	
 	public DataSource() {
 		id = UUID.randomUUID().toString();
@@ -59,6 +61,14 @@ public abstract class DataSource extends AbstractModel {
 
 	public Date getLastSyncDate() {
 		return lastSyncDate;
+	}
+	
+	public void setHasConflicts(boolean hasConflicts) {
+		this.hasConflicts = hasConflicts;
+	}
+	
+	public boolean hasConflicts() {
+		return hasConflicts;
 	}
 
 	public void afterUnmarshal(Unmarshaller u, Object parent) {
@@ -98,9 +108,12 @@ public abstract class DataSource extends AbstractModel {
 		try {
 			DataSource copy = getClass().newInstance();
 			copy.id = id;
+			copy.lastSyncDate = lastSyncDate;
+			copy.hasConflicts = hasConflicts;
 			return copy;
 		} catch (Exception e) {
 			throw new Error(e);
 		}
 	}
+	
 }
