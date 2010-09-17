@@ -1,5 +1,6 @@
 package org.mesh4j.meshes.ui.component;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -14,6 +15,7 @@ import javax.swing.table.DefaultTableModel;
 
 import net.miginfocom.swing.MigLayout;
 
+import org.mesh4j.meshes.io.ConfigurationManager;
 import org.mesh4j.meshes.model.DataSource;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.split.IContentAdapter;
@@ -95,7 +97,17 @@ public class ConflictsView extends JPanel implements ListSelectionListener {
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
 		if (e.getValueIsAdjusting()) return;
-		Item item = itemsWithConflicts.get(conflictTable.getSelectedRow());
+		
+		int selectedRow = conflictTable.getSelectedRow();
+		if (selectedRow < 0) {
+			versionsPanel.removeAll();
+			versionsPanel.getParent().doLayout();
+			versionsPanel.doLayout();
+			return;
+		}
+		
+		Item item = itemsWithConflicts.get(selectedRow);
+		
 		versionsPanel.removeAll();
 		
 		ItemView itemView;
@@ -113,9 +125,22 @@ public class ConflictsView extends JPanel implements ListSelectionListener {
 	}
 
 	public void chooseConflictWinner(Item winner) {
-		Item item = itemsWithConflicts.get(conflictTable.getSelectedRow());
+		int conflictRow = conflictTable.getSelectedRow();
+		
+		Item item = itemsWithConflicts.get(conflictRow);
 		Item resolvedItem = new Item(winner.getContent(), item.getSync());
 		
 		syncAdapter.update(resolvedItem, true);
+		
+		conflictsModel.removeRow(conflictRow);
+		
+		if (conflictsModel.getRowCount() == 0) {
+			try {
+				dataSource.setHasConflicts(false);
+				ConfigurationManager.getInstance().saveMesh(dataSource.getDataSet().getMesh());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }
