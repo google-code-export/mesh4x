@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -41,7 +42,10 @@ public class ItemView extends JPanel {
 		add(new JButton(new AbstractAction("Choose") {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				conflictsView.chooseConflictWinner(item);	
+				int result = JOptionPane.showConfirmDialog(conflictsView, "Are you sure you want to choose this revision?", "Choose revision", JOptionPane.YES_NO_OPTION);
+				if (result == JOptionPane.YES_OPTION) {
+					conflictsView.chooseConflictWinner(item);
+				}	
 			}
 		}));
 		
