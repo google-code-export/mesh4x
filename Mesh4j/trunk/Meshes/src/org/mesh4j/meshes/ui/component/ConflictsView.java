@@ -1,14 +1,20 @@
 package org.mesh4j.meshes.ui.component;
 
+import java.awt.Dimension;
+import java.awt.LayoutManager;
+import java.awt.Rectangle;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.Scrollable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
@@ -52,7 +58,41 @@ public class ConflictsView extends JPanel implements ListSelectionListener {
 		conflictTable.getSelectionModel().addListSelectionListener(this);
 		
 		add(new JLabel("Conflicting versions:"), "wrap");
-		add(new JScrollPane(versionsPanel = new JPanel(new MigLayout("insets 0, fill")), JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS), "growx, height 50%!");
+		add(new JScrollPane(versionsPanel = new LPMPanel(new MigLayout("insets 0, fill, nogrid")) { }, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS), "growx, height 60%!");
+	}
+	
+	private class LPMPanel extends JPanel implements Scrollable {
+
+		public LPMPanel(LayoutManager layout) {
+			super(layout);
+			setBackground(null);
+		}
+		
+		@Override
+		public Dimension getPreferredScrollableViewportSize() {
+			return new Dimension(1, 1);
+		}
+
+		@Override
+		public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
+			return 10;
+		}
+
+		@Override
+		public boolean getScrollableTracksViewportHeight() {
+			return true;
+		}
+
+		@Override
+		public boolean getScrollableTracksViewportWidth() {
+			return false;
+		}
+
+		@Override
+		public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
+			return 10;
+		}
+		
 	}
 	
 	private void loadConflicts() {
@@ -110,18 +150,41 @@ public class ConflictsView extends JPanel implements ListSelectionListener {
 		
 		versionsPanel.removeAll();
 		
+		Map<String, Set<Object>> propertyValues = new HashMap<String, Set<Object>>();
+		
 		ItemView itemView;
-		versionsPanel.add(itemView = new ItemView(this, item, schema), "growy, width 200px::");
+		Map<String, Object> values = collectPropertyValues(propertyValues, item);
+		versionsPanel.add(itemView = new ItemView(this, item, values, propertyValues, ItemView.ITEM_VIEW_MODE_CURRENT), "growy, width 200px!, align left");
 		versionsPanel.getParent().doLayout();
 		versionsPanel.doLayout();
 		itemView.doLayout();
 		
 		for (Item conflictItem : item.getSync().getConflicts()) {
-			versionsPanel.add(itemView = new ItemView(this, conflictItem, schema), "growy, width 200px::");
+			values = collectPropertyValues(propertyValues, conflictItem);
+			versionsPanel.add(itemView = new ItemView(this, conflictItem, values, propertyValues, ItemView.ITEM_VIEW_MODE_NORMAL), "growy, width 200px!, align left");
 			versionsPanel.getParent().doLayout();
 			versionsPanel.doLayout();
 			itemView.doLayout();
 		}
+		
+		versionsPanel.add(itemView = new ItemView(this, null, null, propertyValues, ItemView.ITEM_VIEW_MODE_CUSTOM), "growy, width 200px!, align left");
+		versionsPanel.getParent().doLayout();
+		versionsPanel.doLayout();
+		itemView.doLayout();
+	}
+	
+	private Map<String, Object> collectPropertyValues(Map<String, Set<Object>> propertyValues, Item item) {
+		Map<String, Object> properties = schema.getPropertiesAsMap(item.getContent().getPayload());
+		for (String key : properties.keySet()) {
+			Set<Object> values = propertyValues.get(key);
+			if (values == null) {
+				values = new HashSet<Object>();
+				propertyValues.put(key, values);
+			}
+			values.add(properties.get(key));
+		}
+		
+		return properties;
 	}
 
 	public void chooseConflictWinner(Item winner) {
@@ -142,5 +205,6 @@ public class ConflictsView extends JPanel implements ListSelectionListener {
 				e.printStackTrace();
 			}
 		}
+
 	}
 }
