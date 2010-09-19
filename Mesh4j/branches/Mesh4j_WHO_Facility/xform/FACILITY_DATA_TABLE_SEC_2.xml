@@ -136,42 +136,22 @@
       </item> 
     </select1>  
     
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/does_provide_routine_vitA_suppl"> 
-      <label>Routine Vitamin  A  supplementation?</label>  
-      <item>
-        <label>Yes</label>
-        <value>true</value>
-      </item>  
-      <item>
-        <label>No</label>
-        <value>false</value>
-      </item> 
-    </select1>
     
-    
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/does_provide_services_for_sick_children"> 
-      <label>Consultation or curative services for sick children?</label>  
-      <item>
-        <label>Yes</label>
-        <value>true</value>
-      </item>  
-      <item>
-        <label>No</label>
-        <value>false</value>
-      </item> 
-    </select1>
-    
-    <select1 ref="/FACILITY_DATA_TABLE_SEC_2/does_provide_imci"> 
-      <label>Integrated management of childhood illness (IMCI)?</label>  
-      <item>
-        <label>Yes</label>
-        <value>true</value>
-      </item>  
-      <item>
-        <label>No</label>
-        <value>false</value>
-      </item> 
-    </select1>
+    <select ref="/FACILITY_DATA_TABLE_SEC_2/does_provide_routine_vitA_suppl">
+		<label>Which of the following services for children under five does the facility provide here or on an outreach basis</label>
+		<item>
+			<label>Routine Vitamin  A  supplementation?</label>
+			<value>1</value>
+		</item>
+		<item>
+			<label>Consultation or curative services for sick children?</label>
+			<value>1</value>
+		</item>
+		<item>
+			<label>Integrated management of childhood illness (IMCI)?</label>
+			<value>1</value>
+		</item>
+	</select>
     
     
     <select1 ref="/FACILITY_DATA_TABLE_SEC_2/does_offer_vasectomy"> 

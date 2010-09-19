@@ -77,7 +77,6 @@
       </item>
     </select1>
     
-    
     <select1 ref="/FACILITY_DATA_TABLE_SEC_2b/gpe_stethoscope"> 
       <label>Stethoscope(s)?</label>  
       <item>
@@ -93,12 +92,10 @@
         <value>3</value>
       </item>
        <item>
-        <label>NEVER AVAILABLE </label>
+        <label>NEVER AVAILABLE</label>
         <value>4</value>
       </item>
     </select1>
-    
-    
     
     <select1 ref="/FACILITY_DATA_TABLE_SEC_2b/gpe_micronebulizer"> 
       <label>Micronebulizer?</label>  

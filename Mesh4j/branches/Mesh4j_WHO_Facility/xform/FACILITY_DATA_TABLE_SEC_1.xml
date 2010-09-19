@@ -72,13 +72,14 @@
         </FACILITY_DATA_TABLE_SEC_1> 
       </instance>  
       
+      <bind id="pq117_beds_count" nodeset="/FACILITY_DATA_TABLE_SEC_1/q117_beds_count" type="xsd:long"/>
       <bind id="pq101_interviewstart_time" nodeset="/FACILITY_DATA_TABLE_SEC_1/q101_interviewstart_time" type="xsd:date" jr:preload="date" jr:preloadParams="today"/>
       <bind id="pq121_deivery_count" nodeset="/FACILITY_DATA_TABLE_SEC_1/q121_deivery_count" type="xsd:long"/>  
       <bind id="pq112_src_of_water_for_hw_other" nodeset="/FACILITY_DATA_TABLE_SEC_1/q112_src_of_water_for_hw_other" type="xsd:string"/>  
       <bind id="pfacility_id" nodeset="/FACILITY_DATA_TABLE_SEC_1/facility_id" type="xsd:string"/>  
       <bind id="pq120_beds_count_for_db" nodeset="/FACILITY_DATA_TABLE_SEC_1/q120_beds_count_for_db" type="xsd:long"/>  
       <bind id="pq109_is_other_power_supply_available_other" nodeset="/FACILITY_DATA_TABLE_SEC_1/q109_is_other_power_supply_available_other" type="xsd:string"/>  
-      <bind id="pq117_beds_count" nodeset="/FACILITY_DATA_TABLE_SEC_1/q117_beds_count" type="xsd:long"/>  
+        
       <bind id="pq119_beds_count_for_oo" nodeset="/FACILITY_DATA_TABLE_SEC_1/q119_beds_count_for_oo" type="xsd:long"/>  
       <bind id="pq118_past_admission_count" nodeset="/FACILITY_DATA_TABLE_SEC_1/q118_past_admission_count" type="xsd:long"/>  
       <bind id="pq122_beds_count_for_maternity" nodeset="/FACILITY_DATA_TABLE_SEC_1/q122_beds_count_for_maternity" type="xsd:long"/>
@@ -86,6 +87,10 @@
     </model> 
   </h:head>  
   <h:body> 
+  
+  <input bind="pq117_beds_count">
+      <label>How many beds?</label>
+    </input>  
   
     <select1 ref="/FACILITY_DATA_TABLE_SEC_1/is_respondant_agrees"> 
       <label>Does Respondent Agrees to be Interviewed?</label>  
@@ -399,9 +404,7 @@
       </item> 
     </select1>
     
-    <input bind="pq117_beds_count">
-      <label>How many beds?</label>
-    </input>  
+    
     
     <input bind="pq118_past_admission_count">
       <label>How many in-patients(In last calendar month) were admitted to this facility?</label>
