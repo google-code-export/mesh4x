@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -20,15 +21,20 @@ import javax.swing.table.DefaultTableModel;
 
 import net.miginfocom.swing.MigLayout;
 
+import org.dom4j.Element;
+import org.mesh4j.sync.adapters.feed.XMLContent;
 import org.mesh4j.sync.model.History;
+import org.mesh4j.sync.model.IContent;
 import org.mesh4j.sync.model.Item;
+import org.mesh4j.sync.payload.schema.ISchema;
+import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
+import org.mesh4j.sync.payload.schema.rdf.RDFInstance;
 
 @SuppressWarnings("serial")
 public class ItemView extends JPanel {
 	
 	private final Item item;
 	private final ConflictsView conflictsView;
-	private AbstractAction chooseAction;
 	private static DateFormat dateFormat = SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.SHORT, SimpleDateFormat.SHORT);
 	
 	public static int ITEM_VIEW_MODE_NORMAL = 0;
@@ -37,10 +43,13 @@ public class ItemView extends JPanel {
 	private final int mode;
 	private final Map<String, Object> properties;
 	private final Map<String, Set<Object>> propertyValues;
-	
+	private final ISchema schema;
+	private final String id;	
 
-	public ItemView(ConflictsView conflictsView, Item item, Map<String, Object> properties, Map<String, Set<Object>> propertyValues, int mode) {
+	public ItemView(ConflictsView conflictsView, ISchema schema, String id, Item item, Map<String, Object> properties, Map<String, Set<Object>> propertyValues, int mode) {
 		this.conflictsView = conflictsView;
+		this.schema = schema;
+		this.id = id;
 		this.item = item;
 		this.properties = properties;
 		this.propertyValues = propertyValues;
@@ -60,17 +69,34 @@ public class ItemView extends JPanel {
 			add(new JLabel(" "), "wrap");
 		}
 		
-		DefaultTableModel model = new DefaultTableModel(new String[] { "Field", "Value" }, 0);
+		final DefaultTableModel model = new DefaultTableModel(new String[] { "Field", "Value" }, 0);
 		JTable table;
 		add(new JScrollPane(table = new JTable(model)), "push, wrap");
-		table.getColumnModel().getColumn(1).setCellEditor(new ValueEditor());
+		if (mode == ITEM_VIEW_MODE_CUSTOM) {
+			table.getColumnModel().getColumn(1).setCellEditor(new ValueEditor());
+		}
 		
-		add(new JButton(chooseAction = new AbstractAction(mode == ITEM_VIEW_MODE_CURRENT ? "Leave as winner" : "Choose as winner") {
+		add(new JButton(new AbstractAction(mode == ITEM_VIEW_MODE_CURRENT ? "Leave as winner" : "Choose as winner") {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				if (mode == ITEM_VIEW_MODE_CUSTOM) {
+					for(int row = 0; row < model.getRowCount(); row++) {
+						Object value = model.getValueAt(row, 1);
+						if (value == null) {
+							Object label = model.getValueAt(row, 0);
+							JOptionPane.showMessageDialog(conflictsView, "Click on the Value column for the '" + label + "' field and choose a value." , "Choose revision", JOptionPane.ERROR_MESSAGE);
+							return;
+						}
+					}
+				}
+				
 				int result = JOptionPane.showConfirmDialog(conflictsView, "Are you sure you want to choose this revision?", "Choose revision", JOptionPane.YES_NO_OPTION);
 				if (result == JOptionPane.YES_OPTION) {
-					conflictsView.chooseConflictWinner(item);
+					if (mode == ITEM_VIEW_MODE_CUSTOM) {
+						conflictsView.chooseConflictWinner(buildCustomContent(model));
+					} else {
+						conflictsView.chooseConflictWinner(item.getContent());
+					}
 				}	
 			}
 		}), "dock south");
@@ -88,12 +114,20 @@ public class ItemView extends JPanel {
 		}
 	}
 	
-	private Item getItem() {
-		if (item != null)
-			return item;
+	private IContent buildCustomContent(DefaultTableModel model) {
+		Map<String, Object> properties = new HashMap<String, Object>();
+		for (int row = 0; row < model.getRowCount(); row++) {
+			properties.put(model.getValueAt(row, 0).toString(), model.getValueAt(row, 1));
+		}
 		
-		Item item = new Item(null, null);
-		return item;
+		if (schema instanceof IRDFSchema) {
+			IRDFSchema rdfSchema = (IRDFSchema) schema;
+			RDFInstance instance = rdfSchema.createNewInstanceFromProperties(id, properties);
+			Element payload = instance.asElementRDFXML();
+			return new XMLContent(id, id, id, payload);
+		}
+		
+		return null;
 	}
 	
 	private class ValueEditor extends DefaultCellEditor {

@@ -27,6 +27,7 @@ import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.split.IContentAdapter;
 import org.mesh4j.sync.adapters.split.IIdentifiableContentAdapter;
 import org.mesh4j.sync.adapters.split.SplitAdapter;
+import org.mesh4j.sync.model.IContent;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.payload.schema.ISchema;
 
@@ -75,7 +76,10 @@ public class ConflictsView extends JPanel implements ListSelectionListener {
 
 		@Override
 		public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
-			return 10;
+			if (getComponentCount() > 0) {
+				return getComponent(0).getWidth();
+			}
+			return 100;
 		}
 
 		@Override
@@ -151,23 +155,20 @@ public class ConflictsView extends JPanel implements ListSelectionListener {
 		versionsPanel.removeAll();
 		
 		Map<String, Set<Object>> propertyValues = new HashMap<String, Set<Object>>();
-		
-		ItemView itemView;
-		Map<String, Object> values = collectPropertyValues(propertyValues, item);
-		versionsPanel.add(itemView = new ItemView(this, item, values, propertyValues, ItemView.ITEM_VIEW_MODE_CURRENT), "growy, width 200px!, align left");
-		versionsPanel.getParent().doLayout();
-		versionsPanel.doLayout();
-		itemView.doLayout();
-		
+		addItemView(propertyValues, item.getContent().getId(), item, ItemView.ITEM_VIEW_MODE_CURRENT);
 		for (Item conflictItem : item.getSync().getConflicts()) {
-			values = collectPropertyValues(propertyValues, conflictItem);
-			versionsPanel.add(itemView = new ItemView(this, conflictItem, values, propertyValues, ItemView.ITEM_VIEW_MODE_NORMAL), "growy, width 200px!, align left");
-			versionsPanel.getParent().doLayout();
-			versionsPanel.doLayout();
-			itemView.doLayout();
+			addItemView(propertyValues, item.getContent().getId(), conflictItem, ItemView.ITEM_VIEW_MODE_NORMAL);
 		}
-		
-		versionsPanel.add(itemView = new ItemView(this, null, null, propertyValues, ItemView.ITEM_VIEW_MODE_CUSTOM), "growy, width 200px!, align left");
+		addItemView(propertyValues, item.getContent().getId(), null, ItemView.ITEM_VIEW_MODE_CUSTOM);
+	}
+	
+	private void addItemView(Map<String, Set<Object>> propertyValues, String id, Item item, int mode) {
+		ItemView itemView;
+		Map<String, Object> values = null;
+		if (item != null) {
+			values = collectPropertyValues(propertyValues, item);
+		}
+		versionsPanel.add(itemView = new ItemView(this, schema, id, item, values, propertyValues, mode), "growy, width 200px!, align left");
 		versionsPanel.getParent().doLayout();
 		versionsPanel.doLayout();
 		itemView.doLayout();
@@ -187,11 +188,11 @@ public class ConflictsView extends JPanel implements ListSelectionListener {
 		return properties;
 	}
 
-	public void chooseConflictWinner(Item winner) {
+	public void chooseConflictWinner(IContent content) {
 		int conflictRow = conflictTable.getSelectedRow();
 		
 		Item item = itemsWithConflicts.get(conflictRow);
-		Item resolvedItem = new Item(winner.getContent(), item.getSync());
+		Item resolvedItem = new Item(content, item.getSync());
 		
 		syncAdapter.update(resolvedItem, true);
 		
@@ -205,6 +206,5 @@ public class ConflictsView extends JPanel implements ListSelectionListener {
 				e.printStackTrace();
 			}
 		}
-
 	}
 }
