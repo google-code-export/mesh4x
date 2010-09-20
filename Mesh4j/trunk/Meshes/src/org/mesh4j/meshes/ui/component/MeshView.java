@@ -7,7 +7,6 @@ import java.io.IOException;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -24,8 +23,6 @@ public class MeshView extends EditableComponent {
 	private final Mesh mesh;
 	private JTextField nameField;
 	private JTextArea descriptionField;
-	private JTextField serverUrlField;
-	private JPasswordField passwordField;
 
 	public MeshView(Mesh mesh) {
 		this.mesh = mesh;
@@ -47,8 +44,6 @@ public class MeshView extends EditableComponent {
 		
 		add(new JLabel("Name: "), c);
 		add(new JLabel("Description: "), c);
-		add(new JLabel("Server URL: "), c);
-		add(new JLabel("Password: "), c);
 		
 		// Controls
 		
