@@ -12,7 +12,7 @@ public class WizardUtils {
 		for(Component component : components) {
 			component.addKeyListener(new KeyAdapter() {
 				@Override
-				public void keyPressed(KeyEvent e) {
+				public void keyReleased(KeyEvent e) {
 					if (e.getKeyCode() == 10)
 						controller.nextButtonPressed();
 				}
