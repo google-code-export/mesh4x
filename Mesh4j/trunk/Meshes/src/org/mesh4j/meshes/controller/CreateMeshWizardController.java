@@ -18,12 +18,14 @@ import org.mesh4j.meshes.io.MeshMarshaller;
 import org.mesh4j.meshes.model.DataSet;
 import org.mesh4j.meshes.model.DataSetType;
 import org.mesh4j.meshes.model.EpiInfoDataSource;
+import org.mesh4j.meshes.model.HibernateDataSource;
 import org.mesh4j.meshes.model.Mesh;
 import org.mesh4j.meshes.model.Schedule;
 import org.mesh4j.meshes.model.SchedulingOption;
 import org.mesh4j.meshes.model.SyncMode;
 import org.mesh4j.meshes.server.MeshServer;
 import org.mesh4j.meshes.ui.wizard.BaseWizardPanel;
+import org.mesh4j.meshes.ui.wizard.DataSourceType;
 import org.mesh4j.meshes.ui.wizard.WizardAccountCredentialsStep;
 import org.mesh4j.meshes.ui.wizard.WizardChooseDataSourceTypeStep;
 import org.mesh4j.meshes.ui.wizard.WizardConfigureDataSourceStep;
@@ -32,7 +34,6 @@ import org.mesh4j.meshes.ui.wizard.WizardConfigureSchedulingStep;
 import org.mesh4j.meshes.ui.wizard.WizardConfirmMeshStep;
 import org.mesh4j.meshes.ui.wizard.WizardMeshNameStep;
 import org.mesh4j.meshes.ui.wizard.WizardView;
-import org.mesh4j.sync.adapters.epiinfo.EpiInfoSyncAdapterFactory;
 import org.mesh4j.sync.adapters.hibernate.msaccess.MsAccessHibernateSyncAdapterFactory;
 
 public class CreateMeshWizardController extends WizardController {
@@ -83,6 +84,22 @@ public class CreateMeshWizardController extends WizardController {
 		mesh.setName(getStringValue("mesh.name"));
 		mesh.setDescription(getStringValue("mesh.description"));
 		
+		DataSourceType dataSourceType = (DataSourceType) getValue("dataSourceType");
+		switch(dataSourceType) {
+		case EPI_INFO:
+			fillEpiInfoMesh(mesh);
+			break;
+		case DATABASE:
+			fillDatabaseMesh(mesh);
+			break;
+		default:
+			throw new IllegalStateException("Unhandled DataSourceType: " + dataSourceType.name());
+		}
+		
+		return mesh;
+	}
+	
+	private void fillEpiInfoMesh(Mesh mesh) throws IOException {
 		String epiInfoLocation = getStringValue("epiinfo.location");
 		@SuppressWarnings("unchecked")
 		List<String> dataTableNames = (List<String>) getValue("epiinfo.tableNames");
@@ -118,8 +135,43 @@ public class CreateMeshWizardController extends WizardController {
 			dataSource.setTableName(tableName);
 			dataSet.getDataSources().add(dataSource);
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void fillDatabaseMesh(Mesh mesh) {
+		String engine = getStringValue("datasource.engine");
+		String host = getStringValue("datasource.host");
+		String user = getStringValue("datasource.user");
+		String password = getStringValue("datasource.password");
+		String database = getStringValue("datasource.database");
+		String url = "jdbc:mysql://" + host + ":3306/" + database;
+		List<String> tableNames = (List<String>) getValue("datasource.tableNames");
 		
-		return mesh;
+		for(String tableName : tableNames) {
+			// DataSet
+			DataSet dataSet = new DataSet();
+			dataSet.setMesh(mesh);
+			dataSet.setType(DataSetType.TABLE);
+			dataSet.setName(tableName);
+			mesh.getDataSets().add(dataSet);
+			
+			// Schedule
+			Schedule schedule = new Schedule();
+			schedule.setSchedulingOption((SchedulingOption) getValue("scheduling"));
+			schedule.setSyncMode((SyncMode) getValue("syncmode"));
+			dataSet.setSchedule(schedule);
+			
+			// DataSource
+			HibernateDataSource dataSource = new HibernateDataSource();
+			dataSource.setDataSet(dataSet);
+			dataSource.setConnectionURL(url);
+			dataSource.setDialectClass("org.hibernate.dialect.MySQLDialect");
+			dataSource.setDriverClass("com.mysql.jdbc.Driver");
+			dataSource.setUser(user);
+			dataSource.setPassword(password);
+			dataSource.setTableName(tableName);
+			dataSet.getDataSources().add(dataSource);
+		}
 	}
 	
 	private void saveConfiguration(Mesh mesh) {
@@ -215,5 +267,14 @@ public class CreateMeshWizardController extends WizardController {
 			wizardView.setNextButtonEnabled(errorMessage == null);
 			wizardView.setErrorMessage(errorMessage);
 		}
+	}
+	
+	public void setErrorMessage(final String errorMessage) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				wizardView.setErrorMessage(errorMessage);
+			}
+		});
 	}
 }

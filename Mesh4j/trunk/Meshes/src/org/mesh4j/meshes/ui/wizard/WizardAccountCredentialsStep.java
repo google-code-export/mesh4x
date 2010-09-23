@@ -1,8 +1,6 @@
 package org.mesh4j.meshes.ui.wizard;
 
 import java.awt.Cursor;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -43,31 +41,15 @@ public class WizardAccountCredentialsStep extends BaseWizardPanel {
 		JLabel titleLabel = new JLabel("<html><h2>Enter your Mesh4x credentials</h2></html>");
 		add(titleLabel, "span");
 		
-		final JLabel subTitleLabel = new JLabel();
-		subTitleLabel.setText(LoginInstructions);
+		final JLabel subTitleLabel = new JLabel(LoginInstructions);
 		add(subTitleLabel, "span, wrap 10");
 		
-		JLabel emailLabel = new JLabel("Email");
-		emailField = new JTextField();
-		emailField.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyReleased(KeyEvent e) {
-				emailFieldKeyReleased(e);
-			}
-		});
-		add(emailLabel, "gapright 20");
-		add(emailField, "growx, wrap");
+		add(new JLabel("Email"), "gapright 20");
+		add(emailField = WizardUtils.newTextField(controller, "account.email"), "growx, wrap");
 		
 		JLabel passwordLabel = new JLabel("Password");
-		passwordField = new JPasswordField();
-		passwordField.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyReleased(KeyEvent e) {
-				passwordFieldKeyReleased(e);
-			}
-		});
 		add(passwordLabel, "gapright 20");
-		add(passwordField, "growx, wrap");
+		add(passwordField = WizardUtils.newPasswordField(controller, "account.password"), "growx, wrap");
 		
 		final JLabel passwordConfirmationLabel = new JLabel("Password confirmation");
 		passwordConfirmationLabel.setVisible(false);
@@ -99,19 +81,8 @@ public class WizardAccountCredentialsStep extends BaseWizardPanel {
 		});
 		add(newAccountLink, "alignright, span");
 		
-		WizardUtils.nextWhenEnterPressedOn(controller, emailField);
 		WizardUtils.nextWhenEnterPressedOn(controller, passwordField);
 		WizardUtils.nextWhenEnterPressedOn(controller, passwordConfirmationField);
-	}
-
-	private void passwordFieldKeyReleased(KeyEvent evt) {
-		String password = new String(passwordField.getPassword());
-		controller.setValue("account.password", password);	
-	}
-	
-	private void emailFieldKeyReleased(KeyEvent evt) {
-		String email = emailField.getText();
-		controller.setValue("account.email", email);
 	}
 
 	@Override

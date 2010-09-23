@@ -39,6 +39,7 @@ public abstract class WizardController extends AbstractController {
 	
 	protected void setCurrentPanel(BaseWizardPanel panel) {
 		wizardView.setCurrentPanel(panel.getId());
+		panel.showInWizard();
 	}
 	
 	public <T> void setValue(String name, T value) {

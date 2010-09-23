@@ -11,18 +11,16 @@ public class WizardConfigureDataSourceStep extends BaseWizardPanel {
 	private static final long serialVersionUID = -5773369351266179486L;
 	private static String ID = "STEP_DATA_SOURCE_CONFIG";
 	
-	public static String EPIINFO_PANEL = "epiinfo_panel";
-	
-	private CreateMeshWizardController controller;
+	protected CreateMeshWizardController controller;
 	
 	private CardLayout cardLayout;
-	private Map<String, ConfigPanel> configPanels;
+	private Map<DataSourceType, ConfigPanel> configPanels;
 	private ConfigPanel currentConfigPanel;
 	
 	public WizardConfigureDataSourceStep(CreateMeshWizardController controller) {
 		super();
 		this.controller = controller;
-		this.configPanels = new HashMap<String, ConfigPanel>();
+		this.configPanels = new HashMap<DataSourceType, ConfigPanel>();
 		initComponents();
 	}
 
@@ -30,16 +28,27 @@ public class WizardConfigureDataSourceStep extends BaseWizardPanel {
 		cardLayout = new CardLayout();
 		setLayout(cardLayout);
 		
-		ConfigPanel epiInfoConfigPanel = new EpiInfoConfigPanel(controller);
-		configPanels.put(EPIINFO_PANEL, epiInfoConfigPanel);
-		add(EPIINFO_PANEL, epiInfoConfigPanel);
-		
-		setCurrentConfig(EPIINFO_PANEL);
+		for(DataSourceType type : DataSourceType.values()) {
+			ConfigPanel epiInfoConfigPanel = newConfigPanel(type);
+			configPanels.put(type, epiInfoConfigPanel);
+			add(type.name(), epiInfoConfigPanel);
+		}
 	}
 	
-	public void setCurrentConfig(String id) {
-		cardLayout.show(this, id);
-		currentConfigPanel = configPanels.get(id);
+	protected ConfigPanel newConfigPanel(DataSourceType type) {
+		switch(type) {
+		case EPI_INFO:
+			return new EpiInfoConfigPanel(controller);
+		case DATABASE:
+			return new DatabaseConfigPanel(controller);
+		default:
+			throw new IllegalStateException("No ConfigPanel for DataSourceType " + type.name());
+		}
+	}
+	
+	private void setCurrentConfig(DataSourceType type) {
+		cardLayout.show(this, type.name());
+		currentConfigPanel = configPanels.get(type);
 	}
 
 	@Override
@@ -50,6 +59,23 @@ public class WizardConfigureDataSourceStep extends BaseWizardPanel {
 	@Override
 	public String getErrorMessage() {
 		return currentConfigPanel.getErrorMessage();
+	}
+	
+	@Override
+	public boolean needsValidationBeforeLeave() {
+		return currentConfigPanel.needsValidationBeforeLeave();
+	}
+	
+	@Override
+	public String getErrorMessageBeforeLeave() {
+		return currentConfigPanel.getErrorMessageBeforeLeave();
+	}
+	
+	@Override
+	public void showInWizard() {
+		DataSourceType type = (DataSourceType) controller.getValue("dataSourceType");
+		setCurrentConfig(type);
+		currentConfigPanel.showInWizard();
 	}
 	
 }

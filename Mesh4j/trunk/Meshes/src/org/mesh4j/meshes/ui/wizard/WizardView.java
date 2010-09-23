@@ -40,7 +40,7 @@ public class WizardView extends AbstractView {
 	}
 
 	private void initComponents() {
-		setSize(550, 380);
+		setSize(550, 410);
 		setResizable(false);
 	    
 	    errorMessageLabel = new JLabel();

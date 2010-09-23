@@ -20,9 +20,6 @@ public class WizardChooseDataSourceTypeStep extends BaseWizardPanel {
 	
 	private CreateMeshWizardController controller;
 	
-	private JToggleButton epiInfoButton;
-	private ButtonGroup buttonGroup;
-	
 	public WizardChooseDataSourceTypeStep(CreateMeshWizardController controller) {
 		super();
 		this.controller = controller;
@@ -33,43 +30,36 @@ public class WizardChooseDataSourceTypeStep extends BaseWizardPanel {
 		setLayout(new MigLayout("insets 10"));
 		setSize(550, 350);
 		
-		JLabel titleLabel = new JLabel("<html><h2>Create a new data source</h2></html>");
-		add(titleLabel, "span");
+		add(new JLabel("<html><h2>Create a new data source</h2></html>"), "span");
 		
-		JLabel subTitleLabel = new JLabel();
-		subTitleLabel.setText("<html><h4>When you add a data surce to your mesh, you can see it mobile devices, " +
-							  "maps, or applications. You can even allow other applications to update the data</h4></html>");
-		add(subTitleLabel, "span, wrap 10");
+		add(new JLabel("<html><h4>When you add a data surce to your mesh, you can see it mobile devices, " +
+		  "maps, or applications. You can even allow other applications to update the data</h4></html>"), "span, wrap 10");
 		
-		JLabel dataSourceQuestion = new JLabel();
-		dataSourceQuestion.setText("<html><h4>What data source would you like to add?</h4></html>");
+		JLabel dataSourceQuestion = new JLabel("<html><h4>What data source would you like to add?</h4></html>");
 		add(dataSourceQuestion, "span, wrap 5");
 		
-		epiInfoButton = new JToggleButton();
-		epiInfoButton.setText("Epi Info Data");
-		ImageIcon tableIcon = new ImageIcon(ResourceManager.getTableImage());
-		epiInfoButton.setIcon(tableIcon);
-		JLabel tableLabel = new JLabel();
-		tableLabel.setText("<html></html>");
-		add(epiInfoButton, "gapright 10");
-		add(tableLabel, "growx, wrap");
-		
+		JToggleButton epiInfoButton = new JToggleButton("Epi Info Data", new ImageIcon(ResourceManager.getTableImage()));
 		epiInfoButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				epiInfoButtonActionPerformed(e);
+				controller.setValue("dataSourceType", DataSourceType.EPI_INFO);
+				controller.nextButtonPressed();
 			}
 		});
+		add(epiInfoButton, "gapright 10");
 		
-		buttonGroup = new ButtonGroup();
+		JToggleButton databaseInfoButton = new JToggleButton("Database", new ImageIcon(ResourceManager.getTableImage()));
+		databaseInfoButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controller.setValue("dataSourceType", DataSourceType.DATABASE);
+				controller.nextButtonPressed();
+			}
+		});
+		add(databaseInfoButton, "gapright 10");
+		
+		ButtonGroup buttonGroup = new ButtonGroup();
 		buttonGroup.add(epiInfoButton);
-	}
-	
-
-	private void epiInfoButtonActionPerformed(ActionEvent e) {
-		controller.nextButtonPressed();
-		// TODO fire a property change
-		//controller.setTableDataSetType();
 	}
 
 	@Override

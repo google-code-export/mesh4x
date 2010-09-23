@@ -32,12 +32,8 @@ public class EpiInfoConfigPanel extends ConfigPanel {
 		setLayout(new MigLayout("insets 10"));
 		//setSize(550, 350);
 		
-		JLabel titleLabel = new JLabel("<html><h2>Confirm the location of your EpiInfo data</h2></html>");
-		add(titleLabel, "span");
-		
-		JLabel fileTitleLabel = new JLabel();
-		fileTitleLabel.setText("<html><h4>Tell us where you have your EpiInfo data:</h4></html>");
-		add(fileTitleLabel, "span, wrap 5");
+		add(new JLabel("<html><h2>Confirm the location of your EpiInfo data</h2></html>"), "span");
+		add(new JLabel("<html><h4>Tell us where you have your EpiInfo data:</h4></html>"), "span, wrap 5");
 		
 		JLabel fileLabel = new JLabel("EpiInfo mdb file:");
 		fileTextField = new JTextField();
