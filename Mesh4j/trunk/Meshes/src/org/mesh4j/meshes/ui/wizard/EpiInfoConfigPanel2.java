@@ -16,6 +16,7 @@ public class EpiInfoConfigPanel2 extends ChooseTablesConfigPanel {
 	
 	@Override
 	protected void initComponents() {
+		super.initComponents();
 		add(new JLabel("<html><table><tr><td valign=baseline><b>Note:</b></td><td>View tables for the selected tables will be automatically synchronized,<br/>as well as all code tables.</td></tr></table></html>"), "span, wrap");
 	}
 	
