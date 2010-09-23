@@ -100,9 +100,9 @@ public class CreateMeshWizardController extends WizardController {
 	}
 	
 	private void fillEpiInfoMesh(Mesh mesh) throws IOException {
-		String epiInfoLocation = getStringValue("epiinfo.location");
+		String epiInfoLocation = getStringValue("datasource.location");
 		@SuppressWarnings("unchecked")
-		List<String> dataTableNames = (List<String>) getValue("epiinfo.tableNames");
+		List<String> dataTableNames = (List<String>) getValue("datasource.tableNames");
 		Set<String> allTableNames = MsAccessHibernateSyncAdapterFactory.getTableNames(epiInfoLocation);
 		List<String> tableNames = new ArrayList<String>();
 		for(String tableName : allTableNames) {
