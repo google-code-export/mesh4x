@@ -59,7 +59,7 @@ public class ConflictsView extends JPanel implements ListSelectionListener {
 		conflictTable.getSelectionModel().addListSelectionListener(this);
 		
 		add(new JLabel("Conflicting versions:"), "wrap");
-		add(new JScrollPane(versionsPanel = new LPMPanel(new MigLayout("insets 0, fill, nogrid")) { }, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS), "growx, height 60%!");
+		add(new JScrollPane(versionsPanel = new LPMPanel(new MigLayout("insets 0, fill, nogrid")), JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS), "growx, height 60%!");
 	}
 	
 	private class LPMPanel extends JPanel implements Scrollable {
