@@ -18,11 +18,9 @@ import org.mesh4j.meshes.ui.resource.ResourceManager;
 public class WizardConfirmMeshStep extends BaseWizardPanel {
 
 	private static final long serialVersionUID = -5773369351266179486L;
-	private static String ID = "STEP_SEVEN";
+	private static String ID = "STEP_CONFIRM_MESH";
 	
 	private CreateMeshWizardController controller;
-	
-	private JFileChooser fileChooser;
 	
 	public WizardConfirmMeshStep(CreateMeshWizardController controller) {
 		super();

@@ -18,7 +18,7 @@ import org.mesh4j.meshes.server.MeshServer;
 public class WizardMeshNameStep extends BaseWizardPanel {
 
 	private static final long serialVersionUID = 1452642517775783582L;
-	private static String ID = "STEP_ONE";
+	private static String ID = "STEP_MESH_NAME";
 	
 	private CreateMeshWizardController controller;
 	

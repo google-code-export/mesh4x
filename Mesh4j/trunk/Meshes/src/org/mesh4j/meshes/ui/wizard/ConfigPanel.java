@@ -5,6 +5,8 @@ import javax.swing.JPanel;
 @SuppressWarnings("serial")
 public abstract class ConfigPanel extends JPanel {
 	
-	public abstract String getErrorMessage();
+	public String getErrorMessage() {
+		return null;
+	}
 
 }

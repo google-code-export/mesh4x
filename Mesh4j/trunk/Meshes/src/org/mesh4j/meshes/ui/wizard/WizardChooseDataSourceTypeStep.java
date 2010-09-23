@@ -16,7 +16,7 @@ import org.mesh4j.meshes.ui.resource.ResourceManager;
 public class WizardChooseDataSourceTypeStep extends BaseWizardPanel {
 
 	private static final long serialVersionUID = -5773369351266179486L;
-	private static String ID = "STEP_THREE";
+	private static String ID = "STEP_DATA_SOURCE";
 	
 	private CreateMeshWizardController controller;
 	

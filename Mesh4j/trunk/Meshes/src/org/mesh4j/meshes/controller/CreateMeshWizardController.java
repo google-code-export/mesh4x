@@ -25,6 +25,7 @@ import org.mesh4j.meshes.ui.wizard.BaseWizardPanel;
 import org.mesh4j.meshes.ui.wizard.WizardAccountCredentialsStep;
 import org.mesh4j.meshes.ui.wizard.WizardChooseDataSourceTypeStep;
 import org.mesh4j.meshes.ui.wizard.WizardConfigureDataSourceStep;
+import org.mesh4j.meshes.ui.wizard.WizardConfigureDataSourceStep2;
 import org.mesh4j.meshes.ui.wizard.WizardConfigureSchedulingStep;
 import org.mesh4j.meshes.ui.wizard.WizardConfirmMeshStep;
 import org.mesh4j.meshes.ui.wizard.WizardMeshNameStep;
@@ -43,9 +44,9 @@ public class CreateMeshWizardController extends WizardController {
 		
 		registerWizardPanel(firstStep = new WizardAccountCredentialsStep(this));
 		registerWizardPanel(new WizardMeshNameStep(this));
-		//registerWizardPanel(new WizardMeshPasswordStep(this));
 		registerWizardPanel(new WizardChooseDataSourceTypeStep(this));
 		registerWizardPanel(new WizardConfigureDataSourceStep(this));
+		registerWizardPanel(new WizardConfigureDataSourceStep2(this));
 		registerWizardPanel(new WizardConfigureSchedulingStep(this));
 		registerWizardPanel(new WizardConfirmMeshStep(this));
 		
