@@ -4,7 +4,9 @@ import java.awt.Desktop;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -31,6 +33,7 @@ import org.mesh4j.meshes.ui.wizard.WizardConfirmMeshStep;
 import org.mesh4j.meshes.ui.wizard.WizardMeshNameStep;
 import org.mesh4j.meshes.ui.wizard.WizardView;
 import org.mesh4j.sync.adapters.epiinfo.EpiInfoSyncAdapterFactory;
+import org.mesh4j.sync.adapters.hibernate.msaccess.MsAccessHibernateSyncAdapterFactory;
 
 public class CreateMeshWizardController extends WizardController {
 		
@@ -73,14 +76,27 @@ public class CreateMeshWizardController extends WizardController {
 		}
 	}
 	
-	private Mesh buildMesh() {
+	private Mesh buildMesh() throws IOException {
 		Mesh mesh = new Mesh();
 		
 		// Basic properties
 		mesh.setName(getStringValue("mesh.name"));
 		mesh.setDescription(getStringValue("mesh.description"));
 		
-		List<String> tableNames = EpiInfoSyncAdapterFactory.getTableNames(getStringValue("epiinfo.location"));
+		String epiInfoLocation = getStringValue("epiinfo.location");
+		@SuppressWarnings("unchecked")
+		List<String> dataTableNames = (List<String>) getValue("epiinfo.tableNames");
+		Set<String> allTableNames = MsAccessHibernateSyncAdapterFactory.getTableNames(epiInfoLocation);
+		List<String> tableNames = new ArrayList<String>();
+		for(String tableName : allTableNames) {
+			if (dataTableNames.contains(tableName)) {
+				tableNames.add(tableName);
+				tableNames.add("view" + tableName);
+			} else if (tableName.startsWith("code")) {
+				tableNames.add(tableName);
+			}
+		}
+		
 		for(String tableName : tableNames) {
 			// DataSet
 			DataSet dataSet = new DataSet();
@@ -98,7 +114,7 @@ public class CreateMeshWizardController extends WizardController {
 			// DataSource
 			EpiInfoDataSource dataSource = new EpiInfoDataSource();
 			dataSource.setDataSet(dataSet);
-			dataSource.setFileName(getStringValue("epiinfo.location"));
+			dataSource.setFileName(epiInfoLocation);
 			dataSource.setTableName(tableName);
 			dataSet.getDataSources().add(dataSource);
 		}

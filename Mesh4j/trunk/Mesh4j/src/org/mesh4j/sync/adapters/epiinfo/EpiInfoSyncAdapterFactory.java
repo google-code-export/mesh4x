@@ -26,6 +26,10 @@ public class EpiInfoSyncAdapterFactory {
 		return MsAccessHibernateSyncAdapterFactory.createHibernateAdapter(mdbFileName, tableName, uniqueKey(), rdfBaseUri, baseDirectory, identityProvider);
 	}
 	
+	/**
+	 * Returns a list of data table names for the given epi info file. Data table
+	 * names are those which have a corresponding view* table.
+	 */
 	public static List<String> getTableNames(String mdbFileName) {
 		try {
 			Set<String> tableNames = MsAccessHibernateSyncAdapterFactory.getTableNames(mdbFileName);
