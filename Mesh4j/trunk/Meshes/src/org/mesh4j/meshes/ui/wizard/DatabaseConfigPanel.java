@@ -28,6 +28,7 @@ public class DatabaseConfigPanel extends ConfigPanel {
 	
 	private JComboBox uiEngine;
 	private JTextField uiHost;
+	private JTextField uiPort;
 	private JTextField uiUser;
 	private JTextField uiPassword;
 	private JComboBox uiDatabase;
@@ -45,10 +46,13 @@ public class DatabaseConfigPanel extends ConfigPanel {
 		add(new JLabel("<html><h4>Tell us how to connect to the database:</h4></html>"), "span, wrap 5");
 		
 		add(new JLabel("Engine: "));
-		add(uiEngine = WizardUtils.newJComboBox(controller, "datasource.engine", "Mysql"), "span, wrap");
+		add(uiEngine = WizardUtils.newJComboBox(controller, "datasource.engine", (Object[])DatabaseEngine.values()), "span, wrap");
 		
 		add(new JLabel("Host: "));
 		add(uiHost = WizardUtils.newTextField(controller, "datasource.host", "localhost"), "growx, wrap");
+		
+		add(new JLabel("Port: "));
+		add(uiPort = WizardUtils.newTextField(controller, "datasource.port", "3306"), "growx, wrap");
 		
 		add(new JLabel("User: "));
 		add(uiUser = WizardUtils.newTextField(controller, "datasource.user"), "growx, wrap");
@@ -62,6 +66,7 @@ public class DatabaseConfigPanel extends ConfigPanel {
 		FocusListener focusListener = new FillDatabases();
 		uiEngine.addFocusListener(focusListener);
 		uiHost.addFocusListener(focusListener);
+		uiPort.addFocusListener(focusListener);
 		uiUser.addFocusListener(focusListener);
 		uiPassword.addFocusListener(focusListener);
 		
@@ -71,12 +76,15 @@ public class DatabaseConfigPanel extends ConfigPanel {
 	@Override
 	public String getErrorMessage() {
 		String host = controller.getStringValue("datasource.host");
+		String port = controller.getStringValue("datasource.port");
 		String user = controller.getStringValue("datasource.user");
 		String password = controller.getStringValue("datasource.password");
 		String database = controller.getStringValue("datasource.database");
 		
 		if (host == null || host.trim().length() == 0)
 			return "Host is required";
+		if (port == null || port.trim().length() == 0)
+			return "Port is required";
 		if (user == null || user.trim().length() == 0)
 			return "User is required";
 		if (password == null || password.trim().length() == 0)
@@ -88,23 +96,26 @@ public class DatabaseConfigPanel extends ConfigPanel {
 	
 	private class FillDatabases extends FocusAdapter {
 		
-		private String oldEngine;
+		private DatabaseEngine oldEngine;
 		private String oldHost;
+		private String oldPort;
 		private String oldUser;
 		private String oldPassword;
 		
 		@Override
 		public void focusLost(FocusEvent e) {
-			String engine = controller.getStringValue("datasource.engine");
+			DatabaseEngine engine = (DatabaseEngine) controller.getValue("datasource.engine");
 			String host = controller.getStringValue("datasource.host");
+			String port = controller.getStringValue("datasource.port");
 			String user = controller.getStringValue("datasource.user");
 			String password = controller.getStringValue("datasource.password");
 			
-			if (equals(engine, oldEngine) && equals(host, oldHost) && equals(user, oldUser) && equals(password, oldPassword))
+			if (engine == oldEngine && equals(host, oldHost) && equals(port, oldPort) && equals(user, oldUser) && equals(password, oldPassword))
 				return;
 			
 			oldEngine = engine;
 			oldHost = host;
+			oldPort = port;
 			oldUser = user;
 			oldPassword = password;
 			
@@ -112,16 +123,18 @@ public class DatabaseConfigPanel extends ConfigPanel {
 			
 			if (host == null || host.trim().length() == 0)
 				return;
+			if (port == null || port.trim().length() == 0)
+				return;
 			if (user == null || user.trim().length() == 0)
 				return;
 			if (password == null || password.trim().length() == 0)
 				return;
 			
-			String url = "jdbc:mysql://" + host + ":3306";
+			String url = engine.getConnectionUrl(host, port);
 			try {
-				Class.forName("com.mysql.jdbc.Driver");
+				Class.forName(engine.getDriverClass());
 				Connection conn = DriverManager.getConnection(url, user, password);
-				PreparedStatement ps = conn.prepareStatement("show databases");
+				PreparedStatement ps = conn.prepareStatement(engine.getShowDatabasesQuery());
 				ResultSet rs = ps.executeQuery();
 				
 				List<String> tableNames = new ArrayList<String>();

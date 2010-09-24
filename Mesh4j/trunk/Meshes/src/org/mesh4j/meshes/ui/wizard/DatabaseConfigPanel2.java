@@ -18,15 +18,16 @@ public class DatabaseConfigPanel2 extends ChooseTablesConfigPanel {
 	
 	@Override
 	protected List<String> getTableNames() throws Exception {
-		String engine = controller.getStringValue("datasource.engine");
+		DatabaseEngine engine = (DatabaseEngine) controller.getValue("datasource.engine");
 		String host = controller.getStringValue("datasource.host");
+		String port = controller.getStringValue("datasource.port");
 		String user = controller.getStringValue("datasource.user");
 		String password = controller.getStringValue("datasource.password");
 		String database = controller.getStringValue("datasource.database");
-		String url = "jdbc:mysql://" + host + ":3306/" + database;
+		String url = engine.getConnectionUrl(host, port, database);
 		
 		Connection conn = DriverManager.getConnection(url, user, password);
-		PreparedStatement ps = conn.prepareStatement("show tables");
+		PreparedStatement ps = conn.prepareStatement(engine.getShowTablesQuery());
 		ResultSet rs = ps.executeQuery();
 		
 		List<String> tableNames = new ArrayList<String>();

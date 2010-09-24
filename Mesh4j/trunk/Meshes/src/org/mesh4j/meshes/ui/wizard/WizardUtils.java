@@ -51,6 +51,8 @@ public class WizardUtils {
 				controller.setValue(name, combo.getSelectedItem());
 			}
 		});
+		if (items.length > 0)
+			controller.setValue(name, items[0]);
 		return combo;
 	}
 	

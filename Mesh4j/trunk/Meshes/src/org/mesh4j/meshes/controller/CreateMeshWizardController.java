@@ -26,6 +26,7 @@ import org.mesh4j.meshes.model.SyncMode;
 import org.mesh4j.meshes.server.MeshServer;
 import org.mesh4j.meshes.ui.wizard.BaseWizardPanel;
 import org.mesh4j.meshes.ui.wizard.DataSourceType;
+import org.mesh4j.meshes.ui.wizard.DatabaseEngine;
 import org.mesh4j.meshes.ui.wizard.WizardAccountCredentialsStep;
 import org.mesh4j.meshes.ui.wizard.WizardChooseDataSourceTypeStep;
 import org.mesh4j.meshes.ui.wizard.WizardConfigureDataSourceStep;
@@ -139,12 +140,13 @@ public class CreateMeshWizardController extends WizardController {
 	
 	@SuppressWarnings("unchecked")
 	private void fillDatabaseMesh(Mesh mesh) {
-		String engine = getStringValue("datasource.engine");
+		DatabaseEngine engine = (DatabaseEngine) getValue("datasource.engine");
 		String host = getStringValue("datasource.host");
+		String port = getStringValue("datasource.port");
 		String user = getStringValue("datasource.user");
 		String password = getStringValue("datasource.password");
 		String database = getStringValue("datasource.database");
-		String url = "jdbc:mysql://" + host + ":3306/" + database;
+		String url = engine.getConnectionUrl(host, port, database);
 		List<String> tableNames = (List<String>) getValue("datasource.tableNames");
 		
 		for(String tableName : tableNames) {
@@ -165,8 +167,8 @@ public class CreateMeshWizardController extends WizardController {
 			HibernateDataSource dataSource = new HibernateDataSource();
 			dataSource.setDataSet(dataSet);
 			dataSource.setConnectionURL(url);
-			dataSource.setDialectClass("org.hibernate.dialect.MySQLDialect");
-			dataSource.setDriverClass("com.mysql.jdbc.Driver");
+			dataSource.setDialectClass(engine.getDialectClass());
+			dataSource.setDriverClass(engine.getDriverClass());
 			dataSource.setUser(user);
 			dataSource.setPassword(password);
 			dataSource.setTableName(tableName);
