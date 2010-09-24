@@ -1,10 +1,5 @@
 package org.mesh4j.meshes.ui.wizard;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.mesh4j.meshes.controller.CreateMeshWizardController;
@@ -25,15 +20,6 @@ public class DatabaseConfigPanel2 extends ChooseTablesConfigPanel {
 		String password = controller.getStringValue("datasource.password");
 		String database = controller.getStringValue("datasource.database");
 		String url = engine.getConnectionUrl(host, port, database);
-		
-		Connection conn = DriverManager.getConnection(url, user, password);
-		PreparedStatement ps = conn.prepareStatement(engine.getShowTablesQuery());
-		ResultSet rs = ps.executeQuery();
-		
-		List<String> tableNames = new ArrayList<String>();
-		while(rs.next()) {
-			tableNames.add(rs.getString(1));
-		}
-		return tableNames;
+		return engine.getTableNames(url, user, password);
 	}
 }

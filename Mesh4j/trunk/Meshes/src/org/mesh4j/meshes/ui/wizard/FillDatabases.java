@@ -1,12 +1,5 @@
 package org.mesh4j.meshes.ui.wizard;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.JComboBox;
@@ -45,28 +38,10 @@ public class FillDatabases {
 			return;
 		
 		String url = engine.getConnectionUrl(host, port);
-		Class.forName(engine.getDriverClass());
-		Connection conn = DriverManager.getConnection(url, user, password);
-		PreparedStatement ps = conn.prepareStatement(engine.getShowDatabasesQuery());
-		ResultSet rs = ps.executeQuery();
 		
-		List<String> tableNames = new ArrayList<String>();
-		while(rs.next()) {
-			tableNames.add(rs.getString(1));
-		}
-		rs.close();
-		ps.close();
-		conn.close();
-		
-		Collections.sort(tableNames, new Comparator<String>() {
-			@Override
-			public int compare(String x, String y) {
-				return x.compareToIgnoreCase(y);
-			}
-		});
-		
-		for(String tableName : tableNames) {
-			uiDatabase.addItem(tableName);
+		List<String> databaseNames = engine.getDatabaseNames(url, user, password);
+		for(String databaseName : databaseNames) {
+			uiDatabase.addItem(databaseName);
 		}
 		
 		if (uiDatabase.hasFocus()) {

@@ -6,10 +6,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -154,15 +150,8 @@ public class ChooseDatabaseConnectionDialog extends JDialog {
 				String url = engine.getConnectionUrl(host, port, database);
 				
 				try {
-					Connection conn = DriverManager.getConnection(url, user, password);
-					PreparedStatement ps = conn.prepareStatement(engine.getShowTablesQuery());
-					ResultSet rs = ps.executeQuery();
-					
 					Set<String> foundTableNames = new HashSet<String>();
-					while(rs.next()) {
-						foundTableNames.add(rs.getString(1));
-					}
-					
+					engine.addTableNames(url, user, password, foundTableNames);
 					for(String tableName : tableNames) {
 						if (!(foundTableNames.contains(tableName))) {
 							setErrorMessage("Table '" + tableName + "' not found in '" + database + "' database");
