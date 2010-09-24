@@ -16,8 +16,10 @@ import org.apache.log4j.Logger;
 import org.mesh4j.meshes.filefilters.EpiInfoFileFilter;
 import org.mesh4j.meshes.model.DataSource;
 import org.mesh4j.meshes.model.EpiInfoDataSource;
+import org.mesh4j.meshes.model.HibernateDataSource;
 import org.mesh4j.meshes.model.Mesh;
 import org.mesh4j.meshes.model.MeshVisitor;
+import org.mesh4j.meshes.ui.component.ChooseDatabaseConnectionDialog;
 
 public class ConfigurationManager {
 	
@@ -90,6 +92,7 @@ public class ConfigurationManager {
 		try {
 			final Mesh mesh = MeshMarshaller.fromXml(new File(fileName));
 			final Map<String, String> resolvedFilenames = new HashMap<String, String>();
+			final Map<String, HibernateDataSource> resolvedDataSources = new HashMap<String, HibernateDataSource>();
 			final boolean[] canceled = { false };
 			
 			// Resolve external resources
@@ -118,6 +121,32 @@ public class ConfigurationManager {
 						canceled[0] = true;
 					} else {
 						dataSource.setFileName(resolvedFilename);
+					}
+					return false;
+				}
+				
+				@Override
+				public boolean visit(HibernateDataSource dataSource) {
+					if (canceled[0]) return false;
+					
+					HibernateDataSource resolved = resolvedDataSources.get(dataSource.getConnectionURL());
+					if (resolved == null) {
+						ChooseDatabaseConnectionDialog dialog = new ChooseDatabaseConnectionDialog(dataSource);
+						dialog.setModal(true);
+						dialog.pack();
+						dialog.setLocationRelativeTo(null);
+						dialog.setVisible(true);
+						
+						resolved = dialog.getResolved();
+					}
+					
+					if (resolved == null) {
+						canceled[0] = true;
+					} else {
+						resolvedDataSources.put(dataSource.getConnectionURL(), resolved);
+						dataSource.setConnectionURL(resolved.getConnectionURL());
+						dataSource.setUser(resolved.getUser());
+						dataSource.setPassword(resolved.getPassword());
 					}
 					return false;
 				}

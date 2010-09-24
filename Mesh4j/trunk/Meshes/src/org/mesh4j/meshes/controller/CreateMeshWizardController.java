@@ -13,6 +13,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.mesh4j.meshes.io.ConfigurationManager;
 import org.mesh4j.meshes.io.MeshMarshaller;
 import org.mesh4j.meshes.model.DataSet;
@@ -20,6 +21,7 @@ import org.mesh4j.meshes.model.DataSetType;
 import org.mesh4j.meshes.model.EpiInfoDataSource;
 import org.mesh4j.meshes.model.HibernateDataSource;
 import org.mesh4j.meshes.model.Mesh;
+import org.mesh4j.meshes.model.MeshVisitor;
 import org.mesh4j.meshes.model.Schedule;
 import org.mesh4j.meshes.model.SchedulingOption;
 import org.mesh4j.meshes.model.SyncMode;
@@ -72,7 +74,7 @@ public class CreateMeshWizardController extends WizardController {
 			if (saveConfigFile != null && saveConfigFile.booleanValue()) {
 				saveConfiguration(mesh);
 			}
-		} catch (IOException ex) {
+		} catch (Exception ex) {
 			JOptionPane.showMessageDialog(wizardView, ex.getMessage(), "The mesh configuration file could not be saved", JOptionPane.ERROR_MESSAGE);
 			ex.printStackTrace();
 		}
@@ -176,7 +178,31 @@ public class CreateMeshWizardController extends WizardController {
 		}
 	}
 	
-	private void saveConfiguration(Mesh mesh) {
+	private void saveConfiguration(Mesh mesh) throws Exception {
+		mesh.accept(new MeshVisitor() {
+			@Override
+			public boolean visit(HibernateDataSource ds) {
+				// Erase sensitive information from the mesh. Store the
+				// database name and a hash of the connection url so that when
+				// a user imports it we can ask just once for the data
+				try {
+					String url = ds.getConnectionURL();
+					String database = "";
+					int lastIndex = url.lastIndexOf('/');
+					if (lastIndex >= 0) {
+						database = url.substring(lastIndex + 1);
+					}
+					url = DigestUtils.md5Hex(url);
+					ds.setConnectionURL(database + "|" + url);
+					ds.setUser(null);
+					ds.setPassword(null);
+				} catch (Exception e) {
+					
+				}
+				return true;
+			}
+		});
+		
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.setDialogType(JFileChooser.SAVE_DIALOG);
 		FileNameExtensionFilter filter = new FileNameExtensionFilter("Mesh Configuration File", "mesh");
