@@ -19,7 +19,7 @@ class Item < ActiveRecord::Base
     sync = Mesh4j::Sync.new sync_id
     sync.setDeleted item[:sync][:deleted]
     item[:sync][:history].each do |history|
-      mesh_history = Mesh4j::History.new history[:by], Mesh4j::RjbHelper.newDate(history[:when].to_s), history[:sequence]
+      mesh_history = Mesh4j::History.new history[:by], Rjb::import('java.util.Date').new_with_sig('J', history[:when]), history[:sequence]
       sync.getUpdatesHistory.add mesh_history
     end
     sync.setUpdatesWithLastUpdateSequence

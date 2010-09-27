@@ -7,8 +7,6 @@ module Mesh4j
     self.class_eval "#{name} = Rjb::import('org.mesh4j.sync.#{string}')"
   end
   
-  RjbHelper = Rjb::import('RjbHelper')
-  
   import 'adapters.feed.Feed'
   import 'adapters.feed.ContentReader'
   import 'adapters.feed.ContentWriter'
