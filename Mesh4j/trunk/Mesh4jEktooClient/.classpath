@@ -49,5 +49,6 @@
 	<classpathentry kind="lib" path="lib/jcalendar-1.3.3.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Mesh4j"/>
 	<classpathentry kind="lib" path="lib/jackcess-1.1.19.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/PfifAdapter"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
