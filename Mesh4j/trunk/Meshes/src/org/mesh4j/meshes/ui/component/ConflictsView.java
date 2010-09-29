@@ -24,9 +24,6 @@ import net.miginfocom.swing.MigLayout;
 import org.mesh4j.meshes.io.ConfigurationManager;
 import org.mesh4j.meshes.model.DataSource;
 import org.mesh4j.sync.ISyncAdapter;
-import org.mesh4j.sync.adapters.split.IContentAdapter;
-import org.mesh4j.sync.adapters.split.IIdentifiableContentAdapter;
-import org.mesh4j.sync.adapters.split.SplitAdapter;
 import org.mesh4j.sync.model.IContent;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.payload.schema.ISchema;
@@ -105,14 +102,8 @@ public class ConflictsView extends JPanel implements ListSelectionListener {
 			@Override
 			public void run() {
 				syncAdapter = dataSource.createSyncAdapter();
-				
-				if (syncAdapter instanceof SplitAdapter) {
-					IContentAdapter contentAdapter = ((SplitAdapter)syncAdapter).getContentAdapter();
-					if (contentAdapter instanceof IIdentifiableContentAdapter) {
-						schema = ((IIdentifiableContentAdapter) contentAdapter).getSchema();
-					}
-				}
-				
+				schema = syncAdapter.getSchema();
+				System.err.println(schema.asXML());
 				itemsWithConflicts = syncAdapter.getConflicts();
 
 				for (Item item : itemsWithConflicts) {
