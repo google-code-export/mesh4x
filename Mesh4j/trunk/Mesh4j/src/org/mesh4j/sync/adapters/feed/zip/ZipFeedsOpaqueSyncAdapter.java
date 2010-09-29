@@ -9,6 +9,7 @@ import org.mesh4j.sync.IFilter;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.composite.IIdentifiableSyncAdapter;
 import org.mesh4j.sync.model.Item;
+import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.payload.schema.rdf.RDFSchema;
 import org.mesh4j.sync.validations.Guard;
 
@@ -104,4 +105,8 @@ public class ZipFeedsOpaqueSyncAdapter implements ISyncAdapter {
 		return this.zipFeedsSyncAdapter;
 	}
 
+	@Override
+	public ISchema getSchema() {
+		return zipFeedsSyncAdapter.getSchema();
+	}
 }

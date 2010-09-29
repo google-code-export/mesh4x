@@ -12,6 +12,7 @@ import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.ISyncAware;
 import org.mesh4j.sync.adapters.kml.KmlNames;
 import org.mesh4j.sync.model.Item;
+import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.utils.DateHelper;
 import org.mesh4j.sync.utils.XMLHelper;
 import org.mesh4j.sync.validations.MeshException;
@@ -186,5 +187,10 @@ public class KMLTimeSpanDecoratorSyncAdapter implements ISyncAdapter, ISyncAware
 
 	public File getKmlFile() {
 		return this.kmlFile;
+	}
+	
+	@Override
+	public ISchema getSchema() {
+		return syncAdapter.getSchema();
 	}
 }

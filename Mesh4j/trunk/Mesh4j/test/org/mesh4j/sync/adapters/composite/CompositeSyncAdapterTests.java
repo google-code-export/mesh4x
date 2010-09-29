@@ -16,6 +16,7 @@ import org.mesh4j.sync.adapters.feed.XMLContent;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.Sync;
+import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.security.NullIdentityProvider;
 import org.mesh4j.sync.test.utils.TestHelper;
 
@@ -551,7 +552,8 @@ public class CompositeSyncAdapterTests {
 		@Override public List<Item> getConflicts() {return null;}
 		@Override public String getFriendlyName() {return null;}
 		@Override public void update(Item item) {}
-		@Override public void update(Item item, boolean resolveConflicts) {}		
+		@Override public void update(Item item, boolean resolveConflicts) {}
+		@Override public ISchema getSchema() { return null; }
 	}
 	
 	private class MockSyncAdapter extends MockSyncAdapterWithoutSyncAware implements ISyncAware{

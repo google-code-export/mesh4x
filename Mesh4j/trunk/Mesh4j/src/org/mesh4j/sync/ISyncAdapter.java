@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.mesh4j.sync.model.Item;
+import org.mesh4j.sync.payload.schema.ISchema;
 
 
 /**
@@ -94,4 +95,6 @@ public interface ISyncAdapter {
 	/// in dialogs to identify a given repository.
 	/// </summary>
 	String getFriendlyName();
+	
+	ISchema getSchema();
 }

@@ -7,6 +7,7 @@ import org.mesh4j.sync.IFilter;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.ISyncAware;
 import org.mesh4j.sync.model.Item;
+import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.validations.Guard;
 
 public class IdentifiableSyncAdapter implements IIdentifiableSyncAdapter, ISyncAware{
@@ -103,4 +104,8 @@ public class IdentifiableSyncAdapter implements IIdentifiableSyncAdapter, ISyncA
 		return this.syncAdapter;
 	}
 
+	@Override
+	public ISchema getSchema() {
+		return syncAdapter.getSchema();
+	}
 }

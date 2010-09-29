@@ -16,6 +16,7 @@ import org.mesh4j.sync.adapters.composite.IdentifiableSyncAdapter;
 import org.mesh4j.sync.adapters.feed.FeedAdapter;
 import org.mesh4j.sync.adapters.feed.FeedSyncAdapterFactory;
 import org.mesh4j.sync.model.Item;
+import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.utils.FileUtils;
 import org.mesh4j.sync.utils.ZipUtils;
@@ -208,5 +209,9 @@ public class ZipFeedsSyncAdapter implements ISyncAdapter, ISyncAware{
 	public File getZipFile(){
 		return this.zipFile;
 	}
-
+	
+	@Override
+	public ISchema getSchema() {
+		return compositeSyncAdapter.getSchema();
+	}
 }

@@ -7,6 +7,7 @@ import java.util.List;
 import org.mesh4j.sync.IFilter;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.model.Item;
+import org.mesh4j.sync.payload.schema.ISchema;
 
 
 public class MockInMemoryMessageSyncAdapter implements IMessageSyncAdapter, ISyncAdapter{
@@ -111,5 +112,9 @@ public class MockInMemoryMessageSyncAdapter implements IMessageSyncAdapter, ISyn
 	public String getSourceType() {
 		return this.sourceId;
 	}
-
+	
+	@Override
+	public ISchema getSchema() {
+		return null;
+	}
 }

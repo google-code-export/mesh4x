@@ -7,6 +7,7 @@ import org.mesh4j.sync.IFilter;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.ISyncAware;
 import org.mesh4j.sync.model.Item;
+import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.validations.Guard;
 
 public class HistorySyncAdapter implements ISyncAdapter, ISyncAware {
@@ -110,5 +111,10 @@ public class HistorySyncAdapter implements ISyncAdapter, ISyncAware {
 	
 	public List<HistoryChange> getHistories(String syncId) {
 		return this.historyRepository.getHistories(syncId);
+	}
+	
+	@Override
+	public ISchema getSchema() {
+		return adapter.getSchema();
 	}
 }

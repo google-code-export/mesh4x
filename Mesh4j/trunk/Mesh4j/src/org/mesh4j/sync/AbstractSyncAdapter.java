@@ -7,6 +7,7 @@ import org.mesh4j.sync.filter.ConflictsFilter;
 import org.mesh4j.sync.filter.NullFilter;
 import org.mesh4j.sync.merge.MergeBehavior;
 import org.mesh4j.sync.model.Item;
+import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.utils.DateHelper;
 import org.mesh4j.sync.validations.Guard;
 
@@ -62,5 +63,10 @@ public abstract class AbstractSyncAdapter implements ISyncAdapter{
 		}
 		
 		update(item);
+	}
+	
+	public ISchema getSchema()
+	{
+		return null;
 	}
 }

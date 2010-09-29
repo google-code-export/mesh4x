@@ -14,6 +14,7 @@ import org.mesh4j.sync.adapters.feed.XMLContent;
 import org.mesh4j.sync.id.generator.IdGenerator;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.Sync;
+import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.test.utils.TestHelper;
 import org.mesh4j.sync.utils.XMLHelper;
 
@@ -195,6 +196,7 @@ public class IdentifiableSyncAdapterTests {
 		@Override public String getFriendlyName() {this.calls.put("getFriendlyName", new Object[0]); return "Mock";}
 		@Override public void update(Item item) {this.calls.put("update", new Object[]{item}); }
 		@Override public void update(Item item, boolean resolveConflicts) {this.calls.put("updateResolveConflicts", new Object[]{item, resolveConflicts}); }
+		@Override public ISchema getSchema() { return null; }
 
 		public boolean wasMethodCalled(String methodName, Object... parameters) {
 			Object[] params = this.calls.get(methodName);
@@ -230,3 +232,4 @@ public class IdentifiableSyncAdapterTests {
 		return item;
 	}
 }
+

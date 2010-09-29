@@ -15,6 +15,7 @@ import org.mesh4j.sync.model.IContent;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.NullContent;
 import org.mesh4j.sync.model.Sync;
+import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.translator.MessageTranslator;
 import org.mesh4j.sync.validations.Guard;
@@ -298,5 +299,12 @@ public class SplitAdapter extends AbstractSyncAdapter implements ISyncAware{
 	
 	public ISyncRepository getSyncRepository(){
 		return this.syncRepository;
+	}
+	
+	public ISchema getSchema()
+	{
+		if (contentAdapter instanceof IIdentifiableContentAdapter)
+			return ((IIdentifiableContentAdapter)contentAdapter).getSchema();
+		return null;
 	}
 }

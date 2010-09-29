@@ -14,6 +14,7 @@ import org.mesh4j.sync.merge.MergeResult;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.Sync;
 import org.mesh4j.sync.observer.IObserverSyncProcess;
+import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.test.utils.MockRepository;
 import org.mesh4j.sync.utils.XMLHelper;
 
@@ -242,6 +243,10 @@ public class SyncEngineTests extends AbstractSyncEngineTest {
 		public boolean mergeCalled() {
 			return mergeCalled;
 		}
+
+		public ISchema getSchema() {
+			return null;
+		}
 	}
 
 	@Override
@@ -342,6 +347,10 @@ public class SyncEngineTests extends AbstractSyncEngineTest {
 		public void endSync() {
 			endSyncCalled = true;			
 		}
+		
+		public ISchema getSchema() {
+			return null;
+		}
 	}
 	
 	private class MockNotSupportSyncAwareRepository implements ISyncAdapter{
@@ -393,7 +402,10 @@ public class SyncEngineTests extends AbstractSyncEngineTest {
 		public void endSync() {
 			throw new UnsupportedOperationException();		
 		}
-
+		
+		public ISchema getSchema() {
+			return null;
+		}
 	}
 
 	private class MockNotSupportMergeRepository implements ISyncAdapter {
@@ -440,6 +452,10 @@ public class SyncEngineTests extends AbstractSyncEngineTest {
 
 		public List<Item> getAllSince(Date since, IFilter<Item> filter) {
 			return new ArrayList<Item>();
+		}
+		
+		public ISchema getSchema() {
+			return null;
 		}
 	}
 

@@ -15,6 +15,7 @@ import org.mesh4j.sync.filter.NullFilter;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.model.NullContent;
 import org.mesh4j.sync.model.Sync;
+import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.security.NullIdentityProvider;
 
 public class HistorySyncAdapterTests {
@@ -394,6 +395,10 @@ public class HistorySyncAdapterTests {
 
 		public void endSync() {
 			endSyncWasCalled = true;			
+		}
+		
+		public ISchema getSchema() {
+			return null;
 		}
 	}
 
