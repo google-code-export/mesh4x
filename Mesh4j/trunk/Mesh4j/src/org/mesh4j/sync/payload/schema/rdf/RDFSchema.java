@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -24,8 +25,11 @@ import com.hp.hpl.jena.datatypes.TypeMapper;
 import com.hp.hpl.jena.ontology.DatatypeProperty;
 import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntModel;
+import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.ontology.OntResource;
+import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.shared.JenaException;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
@@ -430,6 +434,22 @@ public class RDFSchema implements IRDFSchema{
 	@Override
 	public RDFInstance createNewInstanceFromProperties(String id, Map<String, Object> propertyValues){
 		return RDFInstance.buildFromProperties(this, id, propertyValues);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void merge(RDFSchema rdfSchema) {
+		for (Iterator<OntProperty> propIt = rdfSchema.schema.listAllOntProperties(); propIt.hasNext();) {
+			OntProperty prop = propIt.next();
+			if (schema.getOntProperty(prop.getURI()) == null) {
+				OntProperty newProp = schema.createOntProperty(prop.getURI());
+				newProp.setDomain(prop.getDomain());
+				newProp.setRange(prop.getRange());
+				for (Iterator<RDFNode> labelIt = prop.listLabels(null); labelIt.hasNext();) {
+					Literal label = (Literal) labelIt.next();
+					newProp.addLabel(label);
+				}
+			}
+		}
 	}
 	
 	@Override
