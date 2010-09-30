@@ -444,6 +444,7 @@ public class RDFSchema implements IRDFSchema{
 				OntProperty newProp = schema.createOntProperty(prop.getURI());
 				newProp.setDomain(prop.getDomain());
 				newProp.setRange(prop.getRange());
+				newProp.setRDFType(prop.getRDFType());
 				for (Iterator<RDFNode> labelIt = prop.listLabels(null); labelIt.hasNext();) {
 					Literal label = (Literal) labelIt.next();
 					newProp.addLabel(label);
