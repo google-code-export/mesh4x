@@ -41,8 +41,28 @@ class FeedsController < AccountAuthenticatedController
     write_feed feed, conflicts, 'conflicts'
   end
   
+  def save_schema
+    feed = Feed.find_by_guid params[:guid]
+    return head :not_found unless feed
+    
+    if feed.schema.present?
+      schema1 = Mesh4j::RDFSchema.new(Rjb::import('java.io.StringReader').new(feed.schema))
+      schema2 = Mesh4j::RDFSchema.new(Rjb::import('java.io.StringReader').new(request.raw_post))
+      schema1.merge schema2
+      feed.schema = schema1.asXML
+    else
+      feed.schema = request.raw_post
+    end
+    
+    feed.save!
+    head :ok
+  end
+  
   def schema
-    head :not_found
+    feed = Feed.find_by_guid params[:guid]
+    return head :not_found unless feed
+    
+    render :text => feed.schema
   end
   
   def create

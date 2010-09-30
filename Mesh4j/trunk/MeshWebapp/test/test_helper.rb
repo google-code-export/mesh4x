@@ -51,4 +51,50 @@ class ActiveSupport::TestCase
     url = ActionController::UrlRewriter.new(@request, nil)
     url.rewrite(options)
   end
+  
+  def compare(e1, e2)
+   return false if e1.class != e2.class
+   if e1.class <= Hash
+     ret = _compare_hashes e1, e2
+     return false if not ret
+     ret = _compare_hashes e2, e1
+     return false if not ret
+   elsif e1.class <= Array
+     ret = _compare_arrays e1, e2
+     return false if not ret
+     ret = _compare_arrays e2, e1
+     return false if not ret
+   else
+     return e1 == e2
+   end
+   true
+  end
+
+  def _compare_hashes(h1, h2)
+   h1.each do |key, value|
+     ret = compare value, h2[key]
+     return false if not ret
+   end
+   true
+  end
+
+  def _compare_arrays(a1, a2)
+   a1.each do |v1|
+     ok = false
+     a2.each do |v2|
+       if compare v1, v2
+         ok = true
+         next
+       end  
+     end
+     return false if not ok
+   end
+   true
+  end
+  
+  def assert_xml_equal xml1, xml2
+    xml1 = Hash.from_xml xml1
+    xml2 = Hash.from_xml xml2
+    assert compare(xml1, xml2)
+  end
 end

@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:owl="http://www.w3.org/2002/07/owl#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:test="urn:uuid:28374d65-3514-477b-9b9b-9056ce1d112a/test#" xmlns:xsd="http://www.w3.org/2001/XMLSchema#">
+    <owl:Class rdf:about="urn:uuid:28374d65-3514-477b-9b9b-9056ce1d112a/test#mesh4xMetadata"/>
+    <owl:Class rdf:about="urn:uuid:28374d65-3514-477b-9b9b-9056ce1d112a/test#test"/>
+    <owl:DatatypeProperty rdf:about="urn:uuid:28374d65-3514-477b-9b9b-9056ce1d112a/test#name">
+        <rdfs:label xml:lang="en">name</rdfs:label>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:domain rdf:resource="urn:uuid:28374d65-3514-477b-9b9b-9056ce1d112a/test#test"/>
+    </owl:DatatypeProperty>
+    <owl:DatatypeProperty rdf:about="urn:uuid:28374d65-3514-477b-9b9b-9056ce1d112a/test#age">
+        <rdfs:label xml:lang="en">age</rdfs:label>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+        <rdfs:domain rdf:resource="urn:uuid:28374d65-3514-477b-9b9b-9056ce1d112a/test#test"/>
+    </owl:DatatypeProperty>
+    <owl:DatatypeProperty rdf:about="urn:uuid:28374d65-3514-477b-9b9b-9056ce1d112a/test/mesh4xMetadata#identifiableProperties">
+        <rdfs:comment xml:lang="en">id</rdfs:comment>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:domain rdf:resource="urn:uuid:28374d65-3514-477b-9b9b-9056ce1d112a/test#mesh4xMetadata"/>
+    </owl:DatatypeProperty>
+    <owl:DatatypeProperty rdf:about="urn:uuid:28374d65-3514-477b-9b9b-9056ce1d112a/test#id">
+        <rdfs:label xml:lang="en">id</rdfs:label>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+        <rdfs:domain rdf:resource="urn:uuid:28374d65-3514-477b-9b9b-9056ce1d112a/test#test"/>
+    </owl:DatatypeProperty>
+</rdf:RDF>

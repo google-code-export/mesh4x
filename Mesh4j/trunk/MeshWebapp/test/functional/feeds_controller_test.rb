@@ -28,8 +28,61 @@ class FeedsControllerTest < ActionController::TestCase
     assert_not_nil items[0].sync
   end
   
+  test "save schema" do
+    feed = Feed.make
+    schema = File.read("#{RAILS_ROOT}/test/fixtures/schema1.xml")
+    
+    @request.env['RAW_POST_DATA'] = schema
+    post :save_schema, :guid => feed.guid
+    
+    feed = Feed.find_by_guid(feed.guid)
+    assert_equal schema, feed.schema
+  end
+  
+  test "save schema returns not found with invalid feed id" do
+    post :save_schema, :guid => Guid.new.to_s
+    assert_response :not_found
+  end
+  
+  test "merge schema 1" do
+    feed = Feed.make
+    schema1 = File.read("#{RAILS_ROOT}/test/fixtures/schema1.xml")
+    schema2 = File.read("#{RAILS_ROOT}/test/fixtures/schema2.xml")
+    
+    @request.env['RAW_POST_DATA'] = schema1
+    post :save_schema, :guid => feed.guid
+
+    @request.env['RAW_POST_DATA'] = schema2
+    post :save_schema, :guid => feed.guid
+
+    feed = Feed.find_by_guid(feed.guid)
+    assert_xml_equal schema2, feed.schema
+  end
+
+  test "merge schema 2" do
+    feed = Feed.make
+    schema1 = File.read("#{RAILS_ROOT}/test/fixtures/schema1.xml")
+    schema2 = File.read("#{RAILS_ROOT}/test/fixtures/schema2.xml")
+    
+    @request.env['RAW_POST_DATA'] = schema2
+    post :save_schema, :guid => feed.guid
+
+    @request.env['RAW_POST_DATA'] = schema1
+    post :save_schema, :guid => feed.guid
+
+    feed = Feed.find_by_guid(feed.guid)
+    assert_xml_equal schema2, feed.schema
+  end
+  
   test "schema" do
-    get :schema, :guid => '123'
+    schema = File.read("#{RAILS_ROOT}/test/fixtures/schema1.xml")
+    feed = Feed.make :schema => schema
+    get :schema, :guid => feed.guid
+    assert_equal schema, @response.body
+  end
+  
+  test "schema not found" do
+    get :schema, :guid => Guid.new.to_s
     assert_response :not_found
   end
   

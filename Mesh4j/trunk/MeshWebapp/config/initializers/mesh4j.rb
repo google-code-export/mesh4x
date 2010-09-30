@@ -19,6 +19,7 @@ module Mesh4j
   import 'model.Item'
   import 'model.History'
   import 'model.Sync'
+  import 'payload.schema.rdf.RDFSchema'
   import 'security.NullIdentityProvider'
   import 'SyncDirection'
   import 'SyncEngine'
