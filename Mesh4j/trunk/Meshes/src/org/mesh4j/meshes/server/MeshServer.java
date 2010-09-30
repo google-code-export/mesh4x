@@ -21,6 +21,7 @@ public class MeshServer implements IMeshServer {
 
 	private MeshServer() {
 		this("https://mesh.instedd.org");
+		//this("http://localhost:3000");
 	}
 
 	private MeshServer(String baseUrl) {

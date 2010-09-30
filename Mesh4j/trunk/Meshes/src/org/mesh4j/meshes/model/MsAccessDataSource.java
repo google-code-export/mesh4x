@@ -3,6 +3,7 @@ package org.mesh4j.meshes.model;
 import javax.xml.bind.annotation.XmlElement;
 
 import org.mesh4j.sync.ISyncAdapter;
+import org.mesh4j.sync.payload.schema.ISchema;
 
 public class MsAccessDataSource extends DataSource {
 	
@@ -35,7 +36,7 @@ public class MsAccessDataSource extends DataSource {
 	}
 	
 	@Override
-	public ISyncAdapter createSyncAdapter(String baseDirectory) {
+	public ISyncAdapter createSyncAdapter(ISchema schema, String baseDirectory) {
 		// TODO Auto-generated method stub
 		return null;
 	}

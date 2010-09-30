@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.epiinfo.EpiInfoSyncAdapterFactory;
+import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.security.LoggedInIdentityProvider;
 
 @XmlRootElement(name = "epiInfoDataSource")
@@ -15,7 +16,7 @@ import org.mesh4j.sync.security.LoggedInIdentityProvider;
 public class EpiInfoDataSource extends MsAccessDataSource {
 	
 	@Override
-	public ISyncAdapter createSyncAdapter(String baseDirectory) {
+	public ISyncAdapter createSyncAdapter(ISchema schema, String baseDirectory) {
 		return EpiInfoSyncAdapterFactory.createSyncAdapter(getFileName(), getTableName(), getRdfSchemaBaseUri(), baseDirectory, new LoggedInIdentityProvider());
 	}
 	

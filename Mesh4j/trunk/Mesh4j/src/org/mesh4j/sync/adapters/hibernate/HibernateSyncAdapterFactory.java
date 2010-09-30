@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.hibernate.Hibernate;
+import org.hibernate.MappingException;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.JDBCMetaDataConfiguration;
 import org.hibernate.cfg.reveng.DefaultReverseEngineeringStrategy;
@@ -18,6 +19,8 @@ import org.hibernate.dialect.Dialect;
 import org.hibernate.mapping.Column;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.mapping.Property;
+import org.hibernate.mapping.SimpleValue;
+import org.hibernate.mapping.Table;
 import org.hibernate.tool.hbm2ddl.SchemaUpdate;
 import org.hibernate.tool.hbm2x.HibernateMappingExporter;
 import org.hibernate.tool.hbmlint.detector.TableSelectorStrategy;
@@ -256,9 +259,9 @@ public class HibernateSyncAdapterFactory implements ISyncAdapterFactory{
 			FileUtils.delete(syncFileMapping);
 		}
 		
-		autodiscoveryMappings(builder, baseDirectory, tables);
-
-		boolean mustCreateTables = false;
+		boolean mustCreateOrUpdateTables = 
+			autodiscoveryMappings(builder, baseDirectory, tables, schemas);
+		
 		String syncTableName;
 		for (String tableName : tables) {
 			File contentMapping = FileUtils.getFile(baseDirectory, tableName+".hbm.xml");
@@ -268,14 +271,14 @@ public class HibernateSyncAdapterFactory implements ISyncAdapterFactory{
 				}
 				IRDFSchema schema = schemas.get(tableName);
 				createMappingFromSchema(contentMapping, schema);
-				mustCreateTables = true;
+				mustCreateOrUpdateTables = true;
 			}
 			
 			syncTableName = getSyncTableName(tableName);
 			
 			File syncFileMapping = FileUtils.getFile(baseDirectory, syncTableName+".hbm.xml");
 			if(!syncFileMapping.exists()){
-				mustCreateTables = true;
+				mustCreateOrUpdateTables = true;
 				createSyncMapping(syncTableName, syncFileMapping);
 			}
 			
@@ -284,7 +287,7 @@ public class HibernateSyncAdapterFactory implements ISyncAdapterFactory{
 		}
 		
 		Configuration cfg = builder.buildConfiguration();
-		if(mustCreateTables){			
+		if(mustCreateOrUpdateTables){
 			SchemaUpdate schemaExport = new SchemaUpdate(cfg);
 			schemaExport.execute(true, true);
 			if (schemaExport.getExceptions().size() > 0) {
@@ -346,7 +349,8 @@ public class HibernateSyncAdapterFactory implements ISyncAdapterFactory{
 		}
 	}
 
-	private static void autodiscoveryMappings(HibernateSessionFactoryBuilder builder, String baseDirectory, Set<String> tables) {
+	@SuppressWarnings("unchecked")
+	private static boolean autodiscoveryMappings(HibernateSessionFactoryBuilder builder, String baseDirectory, Set<String> tables, Map<String, IRDFSchema> schemas) {
 		JDBCMetaDataConfiguration cfg = new JDBCMetaDataConfiguration();
 		builder.initializeConfiguration(cfg);		
 		
@@ -362,9 +366,40 @@ public class HibernateSyncAdapterFactory implements ISyncAdapterFactory{
 		cfg.setReverseEngineeringStrategy(reverseEngineeringStrategy);
 		cfg.readFromJDBC();		
 		cfg.buildMappings();
+		
+		// Add columns that are specified in the schema (if any)
+		// but are not in the database table
+		for (Iterator<PersistentClass> i = cfg.getClassMappings(); i.hasNext();) {
+			PersistentClass persistent = i.next();
+			Table table = persistent.getTable();
+			
+			IRDFSchema schema = schemas.get(table.getName());
+			if (schema == null) continue;
+			
+			for (int j = 0; j < schema.getPropertyCount(); j++) {
+				String propertyName = schema.getPropertyName(j);
+				try {
+					persistent.getProperty(propertyName);
+				} catch (MappingException e) {
+					Property prop = new Property();
+					prop.setName(propertyName);
+					prop.setNodeName(propertyName);
+					
+					SimpleValue value = new SimpleValue(table);
+					value.setTypeName(MappingGenerator.getHibernateTypeFromXSD(schema.getPropertyType(propertyName)));
+					value.addColumn(new Column(propertyName));
+					
+					prop.setValue(value);
+					
+					persistent.addProperty(prop);
+				}
+			}
+		}
 	
 		HibernateMappingExporter exporter = new HibernateDOMMappingExporter(cfg, new File(baseDirectory));
 		exporter.start();
+		
+		return true;
 	}
 
 	public static String getSyncTableName(String tableName) {

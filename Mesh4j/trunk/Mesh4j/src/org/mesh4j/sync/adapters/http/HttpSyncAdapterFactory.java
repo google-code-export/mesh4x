@@ -51,7 +51,7 @@ public class HttpSyncAdapterFactory implements ISyncAdapterFactory {
 		return createSyncAdapter(url, identityProvider, schema, null);
 	}
 
-	private static HttpSyncAdapter createSyncAdapter(String url, IIdentityProvider identityProvider, ISchema schema, IMapping mapping) {
+	public static HttpSyncAdapter createSyncAdapter(String url, IIdentityProvider identityProvider, ISchema schema, IMapping mapping) {
 		if(schema == null){
 			return new HttpSyncAdapter(url, RssSyndicationFormat.INSTANCE, identityProvider, IdGenerator.INSTANCE, ContentWriter.INSTANCE, ContentReader.INSTANCE);
 		} else {

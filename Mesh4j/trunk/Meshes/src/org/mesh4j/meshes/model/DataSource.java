@@ -14,6 +14,7 @@ import javax.xml.bind.annotation.XmlElement;
 import org.mesh4j.meshes.io.ConfigurationManager;
 import org.mesh4j.meshes.io.LogMarshaller;
 import org.mesh4j.sync.ISyncAdapter;
+import org.mesh4j.sync.payload.schema.ISchema;
 
 @XmlAccessorType(XmlAccessType.NONE)
 public abstract class DataSource extends AbstractModel {
@@ -48,10 +49,14 @@ public abstract class DataSource extends AbstractModel {
 	}
 	
 	public ISyncAdapter createSyncAdapter() {
-		return createSyncAdapter(ConfigurationManager.getInstance().getRuntimeDirectory(this).getAbsolutePath());
+		return createSyncAdapter(null);
+	}
+	
+	public ISyncAdapter createSyncAdapter(ISchema schema) {
+		return createSyncAdapter(schema, ConfigurationManager.getInstance().getRuntimeDirectory(this).getAbsolutePath());
 	}
 
-	public abstract ISyncAdapter createSyncAdapter(String baseDirectory);
+	public abstract ISyncAdapter createSyncAdapter(ISchema schema, String baseDirectory);
 
 	public void setLastSyncDate(Date lastSyncDate) {
 		Date oldValue = this.lastSyncDate;

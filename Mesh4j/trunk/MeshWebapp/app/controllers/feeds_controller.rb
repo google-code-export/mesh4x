@@ -60,7 +60,7 @@ class FeedsController < AccountAuthenticatedController
   
   def schema
     feed = Feed.find_by_guid params[:guid]
-    return head :not_found unless feed
+    return head :not_found unless feed && feed.schema.present?
     
     render :text => feed.schema
   end

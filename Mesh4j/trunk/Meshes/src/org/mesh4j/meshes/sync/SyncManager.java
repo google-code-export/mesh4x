@@ -1,6 +1,7 @@
 package org.mesh4j.meshes.sync;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -15,6 +16,7 @@ import org.mesh4j.meshes.model.SyncMode;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.SyncDirection;
 import org.mesh4j.sync.SyncEngine;
+import org.mesh4j.sync.adapters.http.HttpSyncAdapter;
 import org.mesh4j.sync.adapters.http.HttpSyncAdapterFactory;
 import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.security.LoggedInIdentityProvider;
@@ -68,10 +70,9 @@ public class SyncManager {
 	}
 
 	private void synchronize(DataSource dataSource) {
-		ISyncAdapter sourceAdapter = dataSource.createSyncAdapter();
-		ISyncAdapter targetAdapter = createTargetAdapter(dataSource.getDataSet());
+		HttpSyncAdapter targetAdapter = createTargetAdapter(dataSource.getDataSet());
+		ISyncAdapter sourceAdapter = dataSource.createSyncAdapter(targetAdapter.getSchema());
 		
-		System.out.println("Starting sync task for " + dataSource.toString() + "...");
 		Date syncStart = new Date();
 		SyncEngine engine = new SyncEngine(sourceAdapter, targetAdapter);
 		List<Item> conflicts = engine.synchronize(dataSource.getLastSyncDate(), getSyncDirection(dataSource.getDataSet().getSchedule().getSyncMode()));
@@ -79,13 +80,13 @@ public class SyncManager {
 			dataSource.setHasConflicts(true);
 		}
 
-		System.out.println("Sync task ended");
+		targetAdapter.setSchema(sourceAdapter.getSchema());
 		dataSource.setLastSyncDate(syncStart);
 	}
 	
-	private ISyncAdapter createTargetAdapter(DataSet dataSet) {
+	private HttpSyncAdapter createTargetAdapter(DataSet dataSet) {
 		return HttpSyncAdapterFactory.createSyncAdapter(dataSet.getAbsoluteServerFeedUrl(), 
-				new LoggedInIdentityProvider());
+				new LoggedInIdentityProvider(), null, null);
 	}
 	
 	private String getSyncName(DataSet dataSet) {

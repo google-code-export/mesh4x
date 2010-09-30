@@ -7,6 +7,9 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Namespace;
 import org.dom4j.QName;
+import org.mesh4j.sync.adapters.feed.ContentWriter;
+import org.mesh4j.sync.adapters.feed.ISyndicationFormat;
+import org.mesh4j.sync.model.Item;
 import org.mesh4j.sync.payload.mappings.IMapping;
 import org.mesh4j.sync.payload.schema.ISchema;
 import org.mesh4j.sync.payload.schema.SchemaInstanceContentReadWriter;
@@ -36,7 +39,6 @@ public class RDFSchemaInstanceContentReadWriter extends SchemaInstanceContentRea
 	protected IRDFSchema getRDFSchema() {
 		return (IRDFSchema) this.getSchema();
 	}
-
 
 	@SuppressWarnings("unchecked")
 	@Override

@@ -9,8 +9,12 @@ class RoutesTest < ActionController::TestCase
     assert_routing({:path => "/feeds/12345", :method => :post }, { :controller => "feeds", :action => "sync", :guid => "12345" })
   end
   
-  test "feeds schema" do
-    assert_routing({:path => "/feeds/12345/schema", :method => :post }, { :controller => "feeds", :action => "schema", :guid => "12345" })
+  test "get feed schema" do
+    assert_routing({:path => "/feeds/12345/schema", :method => :get }, { :controller => "feeds", :action => "schema", :guid => "12345" })
+  end
+  
+  test "save feed schema" do
+    assert_routing({:path => "/feeds/12345/schema", :method => :post }, { :controller => "feeds", :action => "save_schema", :guid => "12345" })
   end
   
   test "create mesh" do

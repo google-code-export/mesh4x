@@ -103,7 +103,6 @@ public class ConflictsView extends JPanel implements ListSelectionListener {
 			public void run() {
 				syncAdapter = dataSource.createSyncAdapter();
 				schema = syncAdapter.getSchema();
-				System.err.println(schema.asXML());
 				itemsWithConflicts = syncAdapter.getConflicts();
 
 				for (Item item : itemsWithConflicts) {

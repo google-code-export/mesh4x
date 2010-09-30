@@ -1,6 +1,7 @@
 package org.mesh4j.meshes.model;
 
 import org.mesh4j.sync.ISyncAdapter;
+import org.mesh4j.sync.payload.schema.ISchema;
 
 public class MsExcelDataSource extends DataSource {
 	
@@ -43,7 +44,7 @@ public class MsExcelDataSource extends DataSource {
 	}
 	
 	@Override
-	public ISyncAdapter createSyncAdapter(String baseDirectory) {
+	public ISyncAdapter createSyncAdapter(ISchema schema, String baseDirectory) {
 		// TODO Auto-generated method stub
 		return null;
 	}

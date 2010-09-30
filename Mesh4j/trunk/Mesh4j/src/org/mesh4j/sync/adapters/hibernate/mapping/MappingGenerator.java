@@ -67,7 +67,7 @@ public class MappingGenerator {
 		}
 	}
 	
-	private static String getHibernateTypeFromXSD(String propertyType) {
+	public static String getHibernateTypeFromXSD(String propertyType) {
 		if(IRDFSchema.XLS_STRING.equals(propertyType)){
 			return "string";
 		}else if(IRDFSchema.XLS_BOOLEAN.equals(propertyType)){

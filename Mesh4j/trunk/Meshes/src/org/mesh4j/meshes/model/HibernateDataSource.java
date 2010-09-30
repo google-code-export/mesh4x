@@ -9,6 +9,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.hibernate.dialect.Dialect;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.hibernate.HibernateSyncAdapterFactory;
+import org.mesh4j.sync.payload.schema.ISchema;
+import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.security.LoggedInIdentityProvider;
 import org.mesh4j.sync.validations.MeshException;
 
@@ -78,10 +80,13 @@ public class HibernateDataSource extends DataSource {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public ISyncAdapter createSyncAdapter(String baseDirectory) {
+	public ISyncAdapter createSyncAdapter(ISchema schema, String baseDirectory) {
 		try {
+			IRDFSchema rdfSchema = null;
+			if (schema instanceof IRDFSchema)
+				rdfSchema = (IRDFSchema) schema;
 			return HibernateSyncAdapterFactory.createHibernateAdapter(connectionURL, user, password, (Class<Driver>)Class.forName(driverClass),
-					(Class<Dialect>)Class.forName(dialectClass), tableName, getRdfSchemaBaseUri(), baseDirectory, new LoggedInIdentityProvider(), null);
+					(Class<Dialect>)Class.forName(dialectClass), tableName, rdfSchema, getRdfSchemaBaseUri(), baseDirectory, new LoggedInIdentityProvider(), null);
 		} catch (ClassNotFoundException e) {
 			throw new MeshException(e);
 		}

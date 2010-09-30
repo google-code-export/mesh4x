@@ -86,6 +86,12 @@ class FeedsControllerTest < ActionController::TestCase
     assert_response :not_found
   end
   
+  test "schema not found if empty" do
+    feed = Feed.make
+    get :schema, :guid => feed.guid
+    assert_response :not_found
+  end
+  
   test "create" do
     @account = Account.make :password => 'b'
     http_auth @account.email, 'b'

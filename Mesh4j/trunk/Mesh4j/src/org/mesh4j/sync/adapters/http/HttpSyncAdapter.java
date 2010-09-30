@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
@@ -315,12 +316,8 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 		String schemaXML = null;
 		HttpURLConnection conn = null;
 	    try{
-
-	    	String urlSchemaString = url.getProtocol() + "://"+ url.getHost() +":"+ url.getPort()+ url.getPath()+ "/" + "schema";
-
-	    	URL urlSchema = new URL(urlSchemaString);
-			conn = (HttpURLConnection) urlSchema.openConnection();
-			
+	    	url = new URL(url.toString() + "/schema");
+			conn = (HttpURLConnection) url.openConnection();
 			schemaXML = readData(conn);
 	    } catch(Exception e){
 			if(conn != null){
@@ -354,6 +351,26 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 			}
 		}
 		return schema;
+	}
+	
+	protected static void setSchema(URL url, final ISchema schema) {
+	    try {
+	    	url = new URL(url.toString() + "/schema");
+			doPOST(url, new IOutputStreamWriter() {
+				@Override
+				public void write(OutputStream out) throws IOException {
+					OutputStreamWriter writer = new OutputStreamWriter(out);
+					try {
+						writer.write(schema.asXML());
+					} finally {
+						writer.close();
+					}
+				}
+			}, "application/rdf+xml");
+	    } catch(Exception e){
+	    	Logger.error(e.getMessage(), e);
+			throw new MeshException(e);
+	    }
 	}
 
 	public static Mapping getMappings(String serverURL, String meshGroup, String dataset, IPropertyResolver... propertyResolvers) {
@@ -591,6 +608,10 @@ public class HttpSyncAdapter implements ISyncAdapter, ISupportMerge {
 
 	public ISchema getSchema() {
 		return getSchema(this.url);		
+	}
+	
+	public void setSchema(ISchema schema) {
+		setSchema(this.url, schema);
 	}
 	
 	public IMapping getMappings(IPropertyResolver... propertyResolvers) {
