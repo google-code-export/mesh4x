@@ -67,7 +67,7 @@ public class MeshesTree extends JTree {
 				List<Action> actions = new ArrayList<Action>();
 				
 				if (nodeObject instanceof Mesh) {
-					actions.add(new DeleteMeshAction((Mesh) nodeObject));
+					actions.add(new DeleteMeshAction((Mesh) nodeObject, this.getTopLevelAncestor()));
 				} else if (nodeObject instanceof DataSet) {					
 					actions.add(new SynchronizeNowAction((DataSet) nodeObject));
 				} else if (nodeObject instanceof DataSource) {
