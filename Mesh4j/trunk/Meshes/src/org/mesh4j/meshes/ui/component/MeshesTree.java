@@ -19,6 +19,7 @@ import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import org.mesh4j.meshes.action.CreateNewMeshAction;
 import org.mesh4j.meshes.action.DeleteMeshAction;
 import org.mesh4j.meshes.action.ExportDataSourceConfigurationAction;
 import org.mesh4j.meshes.action.SynchronizeNowAction;
@@ -53,18 +54,21 @@ public class MeshesTree extends JTree {
 	protected void processMouseEvent(MouseEvent e) {
 		super.processMouseEvent(e);
 		
-		if (e.isPopupTrigger()) {
-			TreePath path = getPathForLocation(e.getX(), e.getY());
-			if (path == null)
-				return;
-			
+		if (!e.isPopupTrigger()) return;
+		
+		List<Action> actions = new ArrayList<Action>();
+		
+		TreePath path = getPathForLocation(e.getX(), e.getY());
+		if (path == null) {
+			actions.add(new CreateNewMeshAction());
+		} else {
 			setSelectionPath(path);
 			
 			Object obj = path.getLastPathComponent();
 			if (obj instanceof DefaultMutableTreeNode) {
 				DefaultMutableTreeNode node = (DefaultMutableTreeNode) obj;
 				Object nodeObject = node.getUserObject();
-				List<Action> actions = new ArrayList<Action>();
+				
 				
 				if (nodeObject instanceof Mesh) {
 					actions.add(new DeleteMeshAction((Mesh) nodeObject, this.getTopLevelAncestor()));
@@ -73,16 +77,16 @@ public class MeshesTree extends JTree {
 				} else if (nodeObject instanceof DataSource) {
 					actions.add(new ExportDataSourceConfigurationAction((DataSource) nodeObject));					
 				}
-				
-				if (actions.size() > 0) {
-					JPopupMenu menu = new JPopupMenu();
-					for (Action action : actions) {
-						menu.add(action);
-					}
-					menu.show(this, e.getX(), e.getY());
-				}
 			}
 		}
+		
+		if (actions.isEmpty()) return;
+		
+		JPopupMenu menu = new JPopupMenu();
+		for (Action action : actions) {
+			menu.add(action);
+		}
+		menu.show(this, e.getX(), e.getY());
 	}
 	
 	private void createNodes(DefaultMutableTreeNode top) {

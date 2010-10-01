@@ -9,6 +9,7 @@ import java.awt.TrayIcon;
 
 import javax.swing.Action;
 
+import org.mesh4j.meshes.action.CreateNewMeshAction;
 import org.mesh4j.meshes.action.ExitAction;
 import org.mesh4j.meshes.ui.resource.ResourceManager;
 
@@ -27,7 +28,7 @@ public class MeshesTray {
 		popup.add(showMainWindowItem);
 		
 		MenuItem showMeshWizardItem = new MenuItem("Create new Mesh...");
-		showMeshWizardItem.addActionListener(new ShowMeshWizard());
+		showMeshWizardItem.addActionListener(new CreateNewMeshAction());
 		popup.add(showMeshWizardItem);
 		
 		popup.addSeparator();

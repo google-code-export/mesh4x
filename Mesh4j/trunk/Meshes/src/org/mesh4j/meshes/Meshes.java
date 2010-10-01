@@ -7,12 +7,12 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 import org.apache.log4j.Logger;
+import org.mesh4j.meshes.action.CreateNewMeshAction;
 import org.mesh4j.meshes.action.ToggleFrameAction;
 import org.mesh4j.meshes.io.ConfigurationManager;
 import org.mesh4j.meshes.scheduling.ScheduleManager;
 import org.mesh4j.meshes.ui.MainWindow;
 import org.mesh4j.meshes.ui.MeshesTray;
-import org.mesh4j.meshes.ui.ShowMeshWizard;
 
 public class Meshes {
 	
@@ -43,7 +43,7 @@ public class Meshes {
 					Action toggleMainWindow = new ToggleFrameAction(mainWindow);
 					new MeshesTray(toggleMainWindow);
 					if (fileToImport == null) {
-						new ShowMeshWizard().actionPerformed(null);
+						new CreateNewMeshAction().actionPerformed(null);
 					} else {
 						ConfigurationManager.getInstance().importFile(fileToImport);
 					}
