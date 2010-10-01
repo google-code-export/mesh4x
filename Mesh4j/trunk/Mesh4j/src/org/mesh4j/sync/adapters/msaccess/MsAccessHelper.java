@@ -129,5 +129,26 @@ public class MsAccessHelper {
 		}
 		return null;
 	}
+
+	public static void addColumn(String mdbFileName, String tableName, String propertyName) {
+		Connection conn = null;
+		try {
+			Class.forName(JdbcOdbcDriver.class.getName());
+			String dbURL = "jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=" + mdbFileName + ";DriverID=22;READONLY=false}";
+			conn = DriverManager.getConnection(dbURL, "","");
+			
+			Statement stmt = conn.createStatement();
+			stmt.execute(String.format("ALTER TABLE %s ADD COLUMN %s VARCHAR(255)", tableName, propertyName));
+		} catch (Exception e) {
+			throw new MeshException(e);
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+				}
+			}
+		}
+	}
 	
 }

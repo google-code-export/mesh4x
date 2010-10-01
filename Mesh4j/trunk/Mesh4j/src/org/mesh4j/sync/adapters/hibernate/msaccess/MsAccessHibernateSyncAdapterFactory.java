@@ -217,11 +217,30 @@ public class MsAccessHibernateSyncAdapterFactory implements ISyncAdapterFactory 
 	public static SplitAdapter createHibernateAdapter(String mdbFileName, String tableName, String rdfBaseUri, String baseDirectory, IIdentityProvider identityProvider) {
 		return createHibernateAdapter(mdbFileName, tableName, null, rdfBaseUri, baseDirectory, identityProvider);
 	}
-
+	
 	public static SplitAdapter createHibernateAdapter(String mdbFileName, String tableName, List<String> columnIds, String rdfBaseUri, String baseDirectory, IIdentityProvider identityProvider) {
+		return createHibernateAdapter(mdbFileName, tableName, columnIds, rdfBaseUri, baseDirectory, identityProvider, null);
+	}
+
+	public static SplitAdapter createHibernateAdapter(String mdbFileName, String tableName, List<String> columnIds, String rdfBaseUri, String baseDirectory, IIdentityProvider identityProvider, IRDFSchema schema) {
 		
 		if(mdbFileName == null || mdbFileName.length() == 0 || tableName == null || tableName.length() == 0){
 			return null;
+		}
+		
+		if (schema != null) {
+			try {
+				Set<String> columnNames = MsAccessHelper.getTableColumnNames(mdbFileName, tableName);
+				for (int j = 0; j < schema.getPropertyCount(); j++) {
+					String propertyName = schema.getPropertyName(j);
+					if (columnNames.contains(propertyName)) continue;
+					
+					MsAccessHelper.addColumn(mdbFileName, tableName, propertyName);
+				}
+				
+			} catch (IOException e) {
+				throw new MeshException(e);
+			}
 		}
 		
 		try{
