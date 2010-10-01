@@ -7,6 +7,10 @@ import javax.swing.AbstractAction;
 public class ExitAction extends AbstractAction {
 
 	private static final long serialVersionUID = -4854302601630372692L;
+	
+	public ExitAction() {
+		super("Exit");
+	}
 
 	public void actionPerformed(ActionEvent evt) {
 		System.exit(0);

@@ -9,13 +9,19 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import org.mesh4j.meshes.action.CreateNewMeshAction;
+import org.mesh4j.meshes.action.ExitAction;
 import org.mesh4j.meshes.model.DataSet;
 import org.mesh4j.meshes.model.DataSource;
 import org.mesh4j.meshes.model.Mesh;
@@ -45,6 +51,17 @@ public class MainWindow extends JFrame {
 		this.getContentPane().setLayout(new BorderLayout());
 		
 		this.setIconImage(ResourceManager.getLogo());
+		
+		// Menu
+		JMenuBar menuBar = new JMenuBar();
+		this.setJMenuBar(menuBar);
+			// File
+			JMenu fileMenu = new JMenu("File");
+			menuBar.add(fileMenu);
+				// Create new mesh...
+				fileMenu.add(new CreateNewMeshAction());
+				fileMenu.addSeparator();
+				fileMenu.add(new ExitAction());
 		
 		// Split panel
 		final JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
