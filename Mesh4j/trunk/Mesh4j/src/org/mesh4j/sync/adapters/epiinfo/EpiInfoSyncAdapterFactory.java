@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.adapters.hibernate.msaccess.MsAccessHibernateSyncAdapterFactory;
+import org.mesh4j.sync.adapters.msaccess.MsAccessHelper;
 import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.security.IIdentityProvider;
 import org.mesh4j.sync.validations.MeshException;
@@ -14,7 +15,7 @@ import org.mesh4j.sync.validations.MeshException;
 public class EpiInfoSyncAdapterFactory {
 		
 	public static ISyncAdapter createSyncAdapter(String mdbFileName, String tableName, String rdfBaseUri, String baseDirectory, IIdentityProvider identityProvider, IRDFSchema schema) {
-		return MsAccessHibernateSyncAdapterFactory.createHibernateAdapter(mdbFileName, tableName, uniqueKey(), rdfBaseUri, baseDirectory, identityProvider, schema);
+		return MsAccessHibernateSyncAdapterFactory.createHibernateAdapter(mdbFileName, tableName, uniqueKey(mdbFileName, tableName), rdfBaseUri, baseDirectory, identityProvider, schema);
 	}
 	
 	/**
@@ -37,9 +38,21 @@ public class EpiInfoSyncAdapterFactory {
 		}
 	}
 	
-	private static List<String> uniqueKey() {
+	private static List<String> uniqueKey(String mdbFileName, String tableName) {
+		String columnName;
+		if (tableName.startsWith("code"))
+			try {
+				columnName = MsAccessHelper.getTableColumnNames(mdbFileName, tableName).iterator().next();
+			} catch (IOException e) {
+				throw new MeshException(e);
+			}
+		else if (tableName.startsWith("view"))
+			columnName = "Name";
+		else
+			columnName = "UniqueKey";
+			
 		List<String> columnIds = new ArrayList<String>(1);
-		columnIds.add("UniqueKey");
+		columnIds.add(columnName);
 		return columnIds;
 	}
 
