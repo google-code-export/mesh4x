@@ -116,7 +116,7 @@ public class MsAccessHibernateMappingGenerator {
 					} 
 					//Issue#127:Sharif:08/09/09
 					else if(column.getType().name().equals("MEMO")){
-						MappingGenerator.writeProperty(writer, propertyName, msAccessColumnName, Hibernate.TEXT.getName(), "65535"); //column.getType().getMaxSize()
+						MappingGenerator.writeProperty(writer, propertyName, msAccessColumnName, Hibernate.STRING.getName()); //column.getType().getMaxSize()
 					}
 					//Issue#127
 					else {
@@ -143,10 +143,10 @@ public class MsAccessHibernateMappingGenerator {
 		return columnName.trim().replaceAll(" ", "_");
 	}
 	private static String getMsAccessColumnName(String column) {
-		return column.contains(" ") ? "["+column+"]" : column;
+		return "[" + column + "]";
 	}	
 	private static String getMsAccessTableName(String tableName) {
-		return tableName.contains(" ") ? "["+tableName+"]" : tableName;
+		return "[" + tableName + "]";
 	}	
 	private static String getHibernateType(Column column) throws HibernateException, SQLException {
 		return MsAccessDialect.INSTANCE.getHibernateTypeName(column.getSQLType());
