@@ -34,8 +34,6 @@ public class FillDatabases {
 			return;
 		if (user == null || user.trim().length() == 0)
 			return;
-		if (password == null || password.trim().length() == 0)
-			return;
 		
 		String url = engine.getConnectionUrl(host, port);
 		

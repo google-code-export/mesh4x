@@ -78,8 +78,6 @@ public class DatabaseConfigPanel extends ConfigPanel {
 			return "Port is required";
 		if (user == null || user.trim().length() == 0)
 			return "User is required";
-		if (password == null || password.trim().length() == 0)
-			return "Password is required";
 		if (database == null || database.trim().length() == 0)
 			return "Database is required";
 		return null;

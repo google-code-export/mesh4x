@@ -34,7 +34,7 @@ public abstract class ChooseTablesConfigPanel extends ConfigPanel {
 		add(new JLabel("<html><h2>Choose tables</h2></html>"), "span");
 		add(new JLabel("<html><h4>Choose the tables you want to synhcronize:</h4></html>"), "span, wrap");
 		
-		panel = new JPanel(new MigLayout("insets 0, fill"));
+		panel = new JPanel(new MigLayout("insets 0"));
 		add(new JScrollPane(panel), "width 90%!, height 35%!, wrap"); 
 		
 		JPanel panel2 = new JPanel(new MigLayout("insets 0"));

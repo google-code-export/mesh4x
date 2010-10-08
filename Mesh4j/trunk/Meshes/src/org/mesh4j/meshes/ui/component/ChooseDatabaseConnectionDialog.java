@@ -138,11 +138,6 @@ public class ChooseDatabaseConnectionDialog extends JDialog {
 					return;
 				}
 				
-				if (password == null || password.trim().length() == 0) {
-					setErrorMessage("Password is required");
-					return;
-				}
-				
 				if (database == null) {
 					return;
 				}
