@@ -95,6 +95,13 @@ public class ConfigurationManager {
 			final Map<String, HibernateDataSource> resolvedDataSources = new HashMap<String, HibernateDataSource>();
 			final boolean[] canceled = { false };
 			
+			if (existsMeshWithName(mesh.getName())) {
+				int i = 1;
+				while (existsMeshWithName(mesh.getName() + "_" + i))
+					i++;
+				mesh.setName(mesh.getName() + "_" + i);
+			}
+			
 			// Resolve external resources
 			mesh.accept(new MeshVisitor() {
 				@Override
@@ -158,6 +165,15 @@ public class ConfigurationManager {
 		} catch (IOException e) {
 			LOGGER.error("Failed to import file " + fileName, e);
 		}
+	}
+
+	private boolean existsMeshWithName(String name) {
+		for (Mesh mesh : meshes) {
+			if (mesh.getName().equals(name))
+				return true;
+		}
+		
+		return false;
 	}
 
 	private void initConfigurationPath() {
