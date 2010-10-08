@@ -20,7 +20,7 @@ public class FeedRef extends AbstractModel {
 	private String feedName;
 	private String localName;
 	private Date lastSyncDate;
-	private SyncState state;
+	private SyncState state = SyncState.NORMAL;
 	private boolean hasConflicts;
 	@XmlTransient
 	private DataSource dataSource;

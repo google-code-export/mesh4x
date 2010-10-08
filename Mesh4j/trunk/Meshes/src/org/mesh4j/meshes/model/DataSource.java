@@ -80,6 +80,14 @@ public abstract class DataSource extends AbstractModel {
 		}
 		return false;
 	}
+	
+	public boolean hasFailures() {
+		for (FeedRef feedRef : feeds) {
+			if (feedRef.getState() == SyncState.FAILED)
+				return true;
+		}
+		return false;
+	}
 
 	public void afterUnmarshal(Unmarshaller u, Object parent) {
 		if (parent instanceof Mesh)
@@ -106,7 +114,4 @@ public abstract class DataSource extends AbstractModel {
 			throw new Error(e);
 		}
 	}
-
-	
-	
 }

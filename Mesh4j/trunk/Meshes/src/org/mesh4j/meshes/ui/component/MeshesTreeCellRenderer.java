@@ -22,6 +22,7 @@ public class MeshesTreeCellRenderer extends DefaultTreeCellRenderer {
 	private static Icon dataSourceSynchronizingIcon = ResourceManager.getIcon("datasource_synchronizing.png");
 	private static Icon dataSourceFailedIcon = ResourceManager.getIcon("datasource_failed.png");
 	private static Icon feedIcon = ResourceManager.getIcon("feed.png");
+	private static Icon feedFailedIcon = ResourceManager.getIcon("feed_failed.png");
 	private static Icon feedSynchronizingIcon = ResourceManager.getIcon("feed_synchronizing.png");
 	private static Icon feedConflictsIcon = ResourceManager.getIcon("feed_conflicts.png");
 	
@@ -71,10 +72,12 @@ public class MeshesTreeCellRenderer extends DefaultTreeCellRenderer {
 	}
 	
 	private Icon getDataSourceIcon(DataSource dataSource) {
-		if (dataSource.hasConflicts()) {
-			return dataSourceFailedIcon;
-		} else if (dataSource.getState() == SyncState.SYNC) {
+		if (dataSource.getState() == SyncState.SYNC) {
 			return dataSourceSynchronizingIcon;
+		} else if (dataSource.hasFailures()) {
+			return dataSourceFailedIcon;
+		} else if (dataSource.hasConflicts()) {
+			return dataSourceFailedIcon;
 		} else {
 			return dataSourceIcon;
 		}
@@ -83,10 +86,15 @@ public class MeshesTreeCellRenderer extends DefaultTreeCellRenderer {
 	private Icon getFeedRefIcon(FeedRef feedRef) {
 		if (feedRef.hasConflicts()) {
 			return feedConflictsIcon;
-		} else if (feedRef.getState() == SyncState.SYNC) {
-			return feedSynchronizingIcon;
 		} else {
-			return feedIcon;
+			switch (feedRef.getState()) {
+				case SYNC:
+					return feedSynchronizingIcon;
+				case FAILED:
+					return feedFailedIcon;
+				default:
+					return feedIcon;
+			}
 		}
 	}
 	
