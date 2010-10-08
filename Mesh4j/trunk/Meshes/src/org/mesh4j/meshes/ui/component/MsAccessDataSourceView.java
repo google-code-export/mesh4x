@@ -21,7 +21,6 @@ public class MsAccessDataSourceView extends EditableComponent {
 
 	private final MsAccessDataSource dataSource;
 	private JTextField fileNameField;
-	private JTextField tableField;
 	private JButton fileBrowseButton;
 
 	public MsAccessDataSourceView(MsAccessDataSource dataSource) {
@@ -42,7 +41,6 @@ public class MsAccessDataSourceView extends EditableComponent {
 		
 		// Labels
 		add(new JLabel("MS Access File: "), c);
-		add(new JLabel("Data Table: "), c);
 		
 		// Controls
 		c.gridx = 1;
@@ -53,11 +51,7 @@ public class MsAccessDataSourceView extends EditableComponent {
 		filePanel.add(fileNameField, BorderLayout.CENTER);
 		filePanel.add(fileBrowseButton = new JButton("..."), BorderLayout.EAST);
 		add(filePanel, c);
-		
-		tableField = new JTextField(dataSource.getTableName());
-		tableField.setEnabled(false);
-		add(tableField, c);
-				
+						
 		// Fillers
 		c.gridx = 0; c.gridy = 4; c.weightx = 0; c.weighty = 10;
 		add(new JPanel(), c);

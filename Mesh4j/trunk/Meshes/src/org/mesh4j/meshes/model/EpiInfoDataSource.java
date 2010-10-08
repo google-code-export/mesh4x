@@ -17,13 +17,13 @@ import org.mesh4j.sync.security.LoggedInIdentityProvider;
 public class EpiInfoDataSource extends MsAccessDataSource {
 	
 	@Override
-	public ISyncAdapter createSyncAdapter(ISchema schema, String baseDirectory) {
-		return EpiInfoSyncAdapterFactory.createSyncAdapter(getFileName(), getTableName(), getRdfSchemaBaseUri(), baseDirectory, new LoggedInIdentityProvider(), (IRDFSchema) schema);
+	public ISyncAdapter createSyncAdapter(ISchema schema, String baseDirectory, FeedRef feedRef) {
+		return EpiInfoSyncAdapterFactory.createSyncAdapter(getFileName(), feedRef.getLocalName(), getRdfSchemaBaseUri(), baseDirectory, new LoggedInIdentityProvider(), (IRDFSchema) schema);
 	}
 	
 	@Override
 	public String toString() {
-		return String.format("EpiInfo: %s (%s)", new File(getFileName()).getName(), getTableName());
+		return String.format("EpiInfo: %s", new File(getFileName()).getName());
 	}
 	
 	@Override

@@ -6,10 +6,6 @@ public abstract class MeshVisitor {
 		return true;
 	}
 	
-	public boolean visit(DataSet dataSet) {
-		return true;
-	}
-	
 	public boolean visit(FeedDataSource dataSource) {
 		return true;
 	}

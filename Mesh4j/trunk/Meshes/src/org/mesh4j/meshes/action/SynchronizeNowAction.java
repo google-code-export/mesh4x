@@ -4,19 +4,18 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 
-import org.mesh4j.meshes.model.DataSet;
-import org.mesh4j.meshes.model.DataSetState;
+import org.mesh4j.meshes.model.DataSource;
 import org.mesh4j.meshes.sync.SyncManager;
 
 @SuppressWarnings("serial")
 public class SynchronizeNowAction extends AbstractAction {
 
-	private final DataSet dataSet;
+	private final DataSource dataSource;
 
-	public SynchronizeNowAction(DataSet dataSet) {
+	public SynchronizeNowAction(DataSource dataSource) {
 		super("Synchronize now");
-		this.dataSet = dataSet;
-		setEnabled(dataSet.getState() != DataSetState.SYNC);
+		this.dataSource = dataSource;
+		//setEnabled(dataSource.getState() != DataSetState.SYNC);
 	}
 	
 	@Override
@@ -24,7 +23,7 @@ public class SynchronizeNowAction extends AbstractAction {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				SyncManager.getInstance().synchronize(dataSet);		
+				SyncManager.getInstance().synchronize(dataSource);		
 			}
 		}).start();
 	}

@@ -1,6 +1,6 @@
 package org.mesh4j.meshes.model;
 
-public enum DataSetState {
+public enum SyncState {
 	NORMAL,
 	SYNC,
 	FAILED

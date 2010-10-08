@@ -1,18 +1,18 @@
 package org.mesh4j.meshes.sync;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.mesh4j.meshes.io.ConfigurationManager;
-import org.mesh4j.meshes.model.DataSet;
-import org.mesh4j.meshes.model.DataSetState;
 import org.mesh4j.meshes.model.DataSource;
+import org.mesh4j.meshes.model.Feed;
+import org.mesh4j.meshes.model.FeedRef;
 import org.mesh4j.meshes.model.SyncLog;
 import org.mesh4j.meshes.model.SyncMode;
+import org.mesh4j.meshes.model.SyncState;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.SyncDirection;
 import org.mesh4j.sync.SyncEngine;
@@ -33,64 +33,63 @@ public class SyncManager {
 		return instance;
 	}
 	
-	public void synchronize(DataSet dataSet) {
-		if (isSynchronizing(dataSet))
+	public void synchronize(DataSource dataSource) {
+		if (isSynchronizing(dataSource))
 			return;
 		
-		currentSyncs.add(getSyncName(dataSet));
+		currentSyncs.add(getSyncName(dataSource));
+		dataSource.setState(SyncState.SYNC);
 		try {
-			dataSet.setState(DataSetState.SYNC);
-			try {
-				for(DataSource dataSource : dataSet.getDataSources()) {
-					try {
-						synchronize(dataSource);
-						dataSource.addLog(new SyncLog(true, "Synchronization succeeded"));
-					} catch (Exception e) {
-						dataSource.addLog(new SyncLog(false, e.getMessage()));
-						throw e;
-					}
+			for (FeedRef feedRef : dataSource.getFeeds()) {
+				feedRef.setState(SyncState.SYNC);
+				try {
+					synchronize(feedRef);
+					feedRef.addLog(new SyncLog(true, "Synchronization succeeded"));
+					feedRef.setState(SyncState.NORMAL);
+				} catch (Exception e) {
+					feedRef.addLog(new SyncLog(false, e.getMessage()));
+					feedRef.setState(SyncState.FAILED);
 				}
-				dataSet.setState(DataSetState.NORMAL);
-			} catch (Exception e) {
-				dataSet.setState(DataSetState.FAILED);
 			}
+			dataSource.setState(SyncState.NORMAL);
+			
 			
 			try {
-				ConfigurationManager.getInstance().saveMesh(dataSet.getMesh());
+				ConfigurationManager.getInstance().saveMesh(dataSource.getMesh());
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
 		} finally {
-			currentSyncs.remove(getSyncName(dataSet));
+			currentSyncs.remove(getSyncName(dataSource));
 		}
 	}
 	
-	public boolean isSynchronizing(DataSet dataSet) {
-		return currentSyncs.contains(getSyncName(dataSet));
+	public boolean isSynchronizing(DataSource dataSource) {
+		return currentSyncs.contains(getSyncName(dataSource));
 	}
 
-	private void synchronize(DataSource dataSource) {
-		HttpSyncAdapter targetAdapter = createTargetAdapter(dataSource.getDataSet());
-		ISyncAdapter sourceAdapter = dataSource.createSyncAdapter(targetAdapter.getSchema());
+	private void synchronize(FeedRef feedRef) {
+		HttpSyncAdapter targetAdapter = createTargetAdapter(feedRef.getTargetFeed());
+		ISyncAdapter sourceAdapter = feedRef.getDataSource().createSyncAdapter(targetAdapter.getSchema(), feedRef);
 		
 		Date syncStart = new Date();
 		SyncEngine engine = new SyncEngine(sourceAdapter, targetAdapter);
-		List<Item> conflicts = engine.synchronize(dataSource.getLastSyncDate(), getSyncDirection(dataSource.getDataSet().getSchedule().getSyncMode()));
+		List<Item> conflicts = engine.synchronize(feedRef.getLastSyncDate(), getSyncDirection(feedRef.getDataSource().getSchedule().getSyncMode()));
 		if (!conflicts.isEmpty()) {
-			dataSource.setHasConflicts(true);
+			feedRef.setHasConflicts(true);
 		}
 
 		targetAdapter.setSchema(sourceAdapter.getSchema());
-		dataSource.setLastSyncDate(syncStart);
+		feedRef.setLastSyncDate(syncStart);
 	}
 	
-	private HttpSyncAdapter createTargetAdapter(DataSet dataSet) {
-		return HttpSyncAdapterFactory.createSyncAdapter(dataSet.getAbsoluteServerFeedUrl(), 
+	private HttpSyncAdapter createTargetAdapter(Feed feed) {
+		return HttpSyncAdapterFactory.createSyncAdapter(feed.getServerFeedUrl(), 
 				new LoggedInIdentityProvider(), null, null);
 	}
 	
-	private String getSyncName(DataSet dataSet) {
-		return dataSet.getMesh().getName() + "/" + dataSet.getName();
+	private String getSyncName(DataSource dataSource) {
+		return dataSource.getMesh().getName() + "/" + dataSource.getId();
 	}
 
 	private SyncDirection getSyncDirection(SyncMode mode) {

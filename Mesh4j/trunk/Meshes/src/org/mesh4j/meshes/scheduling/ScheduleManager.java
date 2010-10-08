@@ -12,7 +12,7 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
 import org.mesh4j.meshes.io.ConfigurationManager;
-import org.mesh4j.meshes.model.DataSet;
+import org.mesh4j.meshes.model.DataSource;
 import org.mesh4j.meshes.model.Mesh;
 import org.mesh4j.meshes.model.Schedule;
 import org.mesh4j.meshes.model.SchedulingOption;
@@ -52,9 +52,9 @@ public class ScheduleManager {
 		
 		// Schedule every data set in the mesh
 		List<String> taskIds = new ArrayList<String>();
-		for (DataSet dataSet : mesh.getDataSets()) {
-			Task task = new DataSetSyncTask(dataSet);
-			Schedule schedule = dataSet.getSchedule();
+		for (DataSource dataSource : mesh.getDataSources()) {
+			Task task = new DataSourceSyncTask(dataSource);
+			Schedule schedule = dataSource.getSchedule();
 			String pattern = getSchedulingPattern(schedule.getSchedulingOption());
 			if (pattern != null) {
 				String taskId = scheduler.schedule(pattern, task);

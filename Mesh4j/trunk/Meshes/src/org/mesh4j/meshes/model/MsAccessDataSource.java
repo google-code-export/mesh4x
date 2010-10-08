@@ -12,8 +12,6 @@ public class MsAccessDataSource extends DataSource {
 	
 	@XmlElement
 	private String fileName;
-	@XmlElement
-	private String tableName;
 	
 	public String getFileName() {
 		return fileName;
@@ -24,19 +22,9 @@ public class MsAccessDataSource extends DataSource {
 		this.fileName = fileName;
 		firePropertyChange(FILE_NAME_PROPERTY, oldFileName, fileName);
 	}
-	
-	public String getTableName() {
-		return tableName;
-	}
-	
-	public void setTableName(String tableName) {
-		String oldTableName = this.tableName;
-		this.tableName = tableName;
-		firePropertyChange(TABLE_NAME_PROPERTY, oldTableName, tableName);
-	}
-	
+		
 	@Override
-	public ISyncAdapter createSyncAdapter(ISchema schema, String baseDirectory) {
+	public ISyncAdapter createSyncAdapter(ISchema schema, String baseDirectory, FeedRef feedRef) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -50,7 +38,6 @@ public class MsAccessDataSource extends DataSource {
 	public DataSource copy() {
 		MsAccessDataSource copy = (MsAccessDataSource) super.copy();
 		copy.fileName = fileName;
-		copy.tableName = tableName;
 		return copy;
 	}
 }

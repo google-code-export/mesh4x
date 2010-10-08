@@ -24,8 +24,9 @@ import org.mesh4j.meshes.action.DeleteMeshAction;
 import org.mesh4j.meshes.action.ExportDataSourceConfigurationAction;
 import org.mesh4j.meshes.action.SynchronizeNowAction;
 import org.mesh4j.meshes.io.ConfigurationManager;
-import org.mesh4j.meshes.model.DataSet;
+import org.mesh4j.meshes.model.AbstractModel;
 import org.mesh4j.meshes.model.DataSource;
+import org.mesh4j.meshes.model.FeedRef;
 import org.mesh4j.meshes.model.Mesh;
 
 public class MeshesTree extends JTree {
@@ -72,10 +73,9 @@ public class MeshesTree extends JTree {
 				
 				if (nodeObject instanceof Mesh) {
 					actions.add(new DeleteMeshAction((Mesh) nodeObject, this.getTopLevelAncestor()));
-				} else if (nodeObject instanceof DataSet) {					
-					actions.add(new SynchronizeNowAction((DataSet) nodeObject));
-				} else if (nodeObject instanceof DataSource) {
-					actions.add(new ExportDataSourceConfigurationAction((DataSource) nodeObject));					
+				} else if (nodeObject instanceof DataSource) {					
+					actions.add(new SynchronizeNowAction((DataSource) nodeObject));
+					actions.add(new ExportDataSourceConfigurationAction((DataSource) nodeObject));
 				}
 			}
 		}
@@ -105,37 +105,38 @@ public class MeshesTree extends JTree {
 	private MutableTreeNode createNodeForMesh(Mesh mesh) {
 		DefaultMutableTreeNode node = new DefaultMutableTreeNode(mesh);
 		
-		for (DataSet dataSet : mesh.getDataSets()) {
-			node.add(createNodeForDataSet(dataSet));
-		}
-		
-		return node;
-	}
-
-	private MutableTreeNode createNodeForDataSet(final DataSet dataSet) {
-		final DefaultMutableTreeNode node = new DefaultMutableTreeNode(dataSet);
-		
-		for (DataSource dataSource : dataSet.getDataSources()) {
+		for (DataSource dataSource : mesh.getDataSources()) {
 			node.add(createNodeForDataSource(dataSource));
 		}
-		
-		dataSet.addPropertyChangeListener(new PropertyChangeListener() {
-			
-			@Override
-			public void propertyChange(PropertyChangeEvent e) {
-				if (e.getPropertyName() == DataSet.STATE_PROPERTY) {
-					((DefaultTreeModel) getModel()).nodeChanged(node);
-				}
-			}
-		});
 		
 		return node;
 	}
 
 	private MutableTreeNode createNodeForDataSource(DataSource dataSource) {
-		DefaultMutableTreeNode node = new DefaultMutableTreeNode(dataSource);
-		return node;
+		DefaultMutableTreeNode node = createNode(dataSource);
 		
+		for (FeedRef feedRef : dataSource.getFeeds()) {
+			node.add(createNodeForFeedRef(feedRef));
+		}
+		
+		return node;
+	}
+
+	private MutableTreeNode createNodeForFeedRef(FeedRef feedRef) {
+		return createNode(feedRef);
+	}
+	
+	private DefaultMutableTreeNode createNode(AbstractModel model) {
+		final DefaultMutableTreeNode node = new DefaultMutableTreeNode(model);
+		
+		model.addPropertyChangeListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent e) {
+				((DefaultTreeModel) getModel()).nodeChanged(node);
+			}
+		});
+		
+		return node;
 	}
 
 	private final class MeshListListener implements ListDataListener {

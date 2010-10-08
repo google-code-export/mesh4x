@@ -16,9 +16,9 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.mesh4j.meshes.io.ConfigurationManager;
 import org.mesh4j.meshes.io.MeshMarshaller;
-import org.mesh4j.meshes.model.DataSet;
-import org.mesh4j.meshes.model.DataSetType;
 import org.mesh4j.meshes.model.EpiInfoDataSource;
+import org.mesh4j.meshes.model.Feed;
+import org.mesh4j.meshes.model.FeedRef;
 import org.mesh4j.meshes.model.HibernateDataSource;
 import org.mesh4j.meshes.model.Mesh;
 import org.mesh4j.meshes.model.MeshVisitor;
@@ -117,26 +117,31 @@ public class CreateMeshWizardController extends WizardController {
 			}
 		}
 		
-		for(String tableName : tableNames) {
-			// DataSet
-			DataSet dataSet = new DataSet();
-			dataSet.setMesh(mesh);
-			dataSet.setType(DataSetType.TABLE);
-			dataSet.setName(tableName);
-			mesh.getDataSets().add(dataSet);
+		// DataSource
+		EpiInfoDataSource dataSource = new EpiInfoDataSource();
+		dataSource.setFileName(epiInfoLocation);
+		dataSource.setMesh(mesh);
+		mesh.getDataSources().add(dataSource);
+
+		// Schedule
+		Schedule schedule = new Schedule();
+		schedule.setSchedulingOption((SchedulingOption) getValue("scheduling"));
+		schedule.setSyncMode((SyncMode) getValue("syncmode"));
+		dataSource.setSchedule(schedule);
+		
+		for (String tableName : tableNames) {
+			// Feed
+			Feed feed = new Feed();
+			feed.setMesh(mesh);
+			feed.setName(tableName);
+			mesh.getFeeds().add(feed);
 			
-			// Schedule
-			Schedule schedule = new Schedule();
-			schedule.setSchedulingOption((SchedulingOption) getValue("scheduling"));
-			schedule.setSyncMode((SyncMode) getValue("syncmode"));
-			dataSet.setSchedule(schedule);
-			
-			// DataSource
-			EpiInfoDataSource dataSource = new EpiInfoDataSource();
-			dataSource.setDataSet(dataSet);
-			dataSource.setFileName(epiInfoLocation);
-			dataSource.setTableName(tableName);
-			dataSet.getDataSources().add(dataSource);
+			// FeedRef
+			FeedRef feedRef = new FeedRef();
+			feedRef.setFeedName(tableName);
+			feedRef.setLocalName(tableName);
+			feedRef.setDataSource(dataSource);
+			dataSource.getFeeds().add(feedRef);
 		}
 	}
 	
@@ -151,30 +156,36 @@ public class CreateMeshWizardController extends WizardController {
 		String url = engine.getConnectionUrl(host, port, database);
 		List<String> tableNames = (List<String>) getValue("datasource.tableNames");
 		
-		for(String tableName : tableNames) {
-			// DataSet
-			DataSet dataSet = new DataSet();
-			dataSet.setMesh(mesh);
-			dataSet.setType(DataSetType.TABLE);
-			dataSet.setName(tableName);
-			mesh.getDataSets().add(dataSet);
+		// DataSource
+		HibernateDataSource dataSource = new HibernateDataSource();
+		dataSource.setConnectionURL(url);
+		dataSource.setDialectClass(engine.getDialectClass());
+		dataSource.setDriverClass(engine.getDriverClass());
+		dataSource.setUser(user);
+		dataSource.setPassword(password);
+		dataSource.setMesh(mesh);
+		mesh.getDataSources().add(dataSource);
+
+		// Schedule
+		Schedule schedule = new Schedule();
+		schedule.setSchedulingOption((SchedulingOption) getValue("scheduling"));
+		schedule.setSyncMode((SyncMode) getValue("syncmode"));
+		dataSource.setSchedule(schedule);
+
+		
+		for (String tableName : tableNames) {			
+			// Feed
+			Feed feed = new Feed();
+			feed.setMesh(mesh);
+			feed.setName(tableName);
+			mesh.getFeeds().add(feed);
 			
-			// Schedule
-			Schedule schedule = new Schedule();
-			schedule.setSchedulingOption((SchedulingOption) getValue("scheduling"));
-			schedule.setSyncMode((SyncMode) getValue("syncmode"));
-			dataSet.setSchedule(schedule);
-			
-			// DataSource
-			HibernateDataSource dataSource = new HibernateDataSource();
-			dataSource.setDataSet(dataSet);
-			dataSource.setConnectionURL(url);
-			dataSource.setDialectClass(engine.getDialectClass());
-			dataSource.setDriverClass(engine.getDriverClass());
-			dataSource.setUser(user);
-			dataSource.setPassword(password);
-			dataSource.setTableName(tableName);
-			dataSet.getDataSources().add(dataSource);
+			// FeedRef
+			FeedRef feedRef = new FeedRef();
+			feedRef.setFeedName(tableName);
+			feedRef.setLocalName(tableName);
+			feedRef.setDataSource(dataSource);
+			dataSource.getFeeds().add(feedRef);
 		}
 	}
 	

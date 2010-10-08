@@ -23,7 +23,6 @@ public class HibernateDataSource extends DataSource {
 	private String password;
 	private String driverClass;
 	private String dialectClass;
-	private String tableName;
 	
 	public String getConnectionURL() {
 		return connectionURL;
@@ -64,14 +63,6 @@ public class HibernateDataSource extends DataSource {
 	public void setDialectClass(String dialectClass) {
 		this.dialectClass = dialectClass;
 	}
-
-	public String getTableName() {
-		return tableName;
-	}
-
-	public void setTableName(String tableName) {
-		this.tableName = tableName;
-	}
 	
 	@Override
 	public void accept(MeshVisitor visitor) {
@@ -80,13 +71,13 @@ public class HibernateDataSource extends DataSource {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public ISyncAdapter createSyncAdapter(ISchema schema, String baseDirectory) {
+	public ISyncAdapter createSyncAdapter(ISchema schema, String baseDirectory, FeedRef feedRef) {
 		try {
 			IRDFSchema rdfSchema = null;
 			if (schema instanceof IRDFSchema)
 				rdfSchema = (IRDFSchema) schema;
 			return HibernateSyncAdapterFactory.createHibernateAdapter(connectionURL, user, password, (Class<Driver>)Class.forName(driverClass),
-					(Class<Dialect>)Class.forName(dialectClass), tableName, rdfSchema, getRdfSchemaBaseUri(), baseDirectory, new LoggedInIdentityProvider(), null);
+					(Class<Dialect>)Class.forName(dialectClass), feedRef.getLocalName(), rdfSchema, getRdfSchemaBaseUri(), baseDirectory, new LoggedInIdentityProvider(), null);
 		} catch (ClassNotFoundException e) {
 			throw new MeshException(e);
 		}

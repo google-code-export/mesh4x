@@ -7,7 +7,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 
-import org.mesh4j.meshes.model.DataSet;
+import org.mesh4j.meshes.model.Feed;
 import org.mesh4j.meshes.model.Mesh;
 import org.mesh4j.sync.validations.MeshException;
 
@@ -54,9 +54,9 @@ public class MeshServer implements IMeshServer {
 	public void createMesh(Mesh mesh, String email, String password) {
 		createMesh(mesh.getName(), email, password);
 		
-		for(DataSet dataSet : mesh.getDataSets()) {
-			String secretUrl = createFeed(mesh.getName(), dataSet.getName(), email, password);
-			dataSet.setServerFeedUrl(secretUrl);
+		for(Feed feed : mesh.getFeeds()) {
+			String secretUrl = createFeed(mesh.getName(), feed.getName(), email, password);
+			feed.setServerFeedUrl(secretUrl);
 		}
 	}
 	

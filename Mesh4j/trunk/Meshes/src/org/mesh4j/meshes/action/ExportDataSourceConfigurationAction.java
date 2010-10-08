@@ -8,8 +8,8 @@ import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.mesh4j.meshes.io.MeshMarshaller;
-import org.mesh4j.meshes.model.DataSet;
 import org.mesh4j.meshes.model.DataSource;
+import org.mesh4j.meshes.model.FeedRef;
 import org.mesh4j.meshes.model.Mesh;
 
 @SuppressWarnings("serial")
@@ -27,7 +27,7 @@ public class ExportDataSourceConfigurationAction extends AbstractAction {
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.setDialogType(JFileChooser.SAVE_DIALOG);
 		fileChooser.setFileFilter(new FileNameExtensionFilter("Mesh Configuration File", "mesh"));
-		fileChooser.setSelectedFile(new File(dataSource.getDataSet().getName() + ".mesh"));
+		fileChooser.setSelectedFile(new File(dataSource.getMesh().getName() + ".mesh"));
 		
 		int returnVal = fileChooser.showSaveDialog(null);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -35,10 +35,13 @@ public class ExportDataSourceConfigurationAction extends AbstractAction {
 			if (selectedFile != null) {
 				
 				DataSource copy = dataSource.copy();
-				DataSet dataSet = dataSource.getDataSet().copy();
-				dataSet.getDataSources().add(copy);
-				Mesh mesh = dataSource.getDataSet().getMesh().copy();
-				mesh.getDataSets().add(dataSet);
+				Mesh mesh = dataSource.getMesh().copy();
+				mesh.getDataSources().add(copy);
+				
+				for (FeedRef feedRef : dataSource.getFeeds()) {
+					mesh.getFeeds().add(feedRef.getTargetFeed().copy());
+					copy.getFeeds().add(feedRef.copy());
+				}
 				
 				MeshMarshaller.toXml(mesh, selectedFile);
 			}

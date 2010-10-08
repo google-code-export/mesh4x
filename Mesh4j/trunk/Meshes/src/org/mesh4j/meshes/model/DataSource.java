@@ -1,8 +1,6 @@
 package org.mesh4j.meshes.model;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -10,34 +8,51 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.mesh4j.meshes.io.ConfigurationManager;
-import org.mesh4j.meshes.io.LogMarshaller;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.payload.schema.ISchema;
 
-@XmlAccessorType(XmlAccessType.NONE)
+@XmlAccessorType(XmlAccessType.FIELD)
 public abstract class DataSource extends AbstractModel {
 	
-	private static final String LASTSYNCDATE_PROPERTY = "lastSyncDate";
-	private DataSet dataSet;
-	@XmlElement
+	@XmlTransient
+	private Mesh mesh;
 	private String id;
-	@XmlElement
-	private Date lastSyncDate;
-	@XmlElement
-	private boolean hasConflicts;
+	private Schedule schedule;
+	private SyncState state;
+	@XmlElement(name = "feedRef")
+	private List<FeedRef> feeds = new ArrayList<FeedRef>();
 	
 	public DataSource() {
 		id = UUID.randomUUID().toString();
 	}
 
-	public DataSet getDataSet() {
-		return dataSet;
+	public Mesh getMesh() {
+		return mesh;
 	}
-
-	public void setDataSet(DataSet dataSet) {
-		this.dataSet = dataSet;
+	
+	public void setMesh(Mesh mesh) {
+		this.mesh = mesh;
+	}
+	
+	public List<FeedRef> getFeeds() {
+		return feeds;
+	}
+	
+	public void setFeeds(List<FeedRef> feeds) {
+		this.feeds = feeds;
+	}
+	
+	public SyncState getState() {
+		return state;
+	}
+	
+	public void setState(SyncState state) {
+		SyncState oldValue = this.state;
+		this.state = state;
+		firePropertyChange("state", oldValue, state);
 	}
 	
 	public String getId() {
@@ -48,63 +63,35 @@ public abstract class DataSource extends AbstractModel {
 		return "urn:uuid:" + id;
 	}
 	
-	public ISyncAdapter createSyncAdapter() {
-		return createSyncAdapter(null);
+	public ISyncAdapter createSyncAdapter(FeedRef feedRef) {
+		return createSyncAdapter(null, feedRef);
 	}
 	
-	public ISyncAdapter createSyncAdapter(ISchema schema) {
-		return createSyncAdapter(schema, ConfigurationManager.getInstance().getRuntimeDirectory(this).getAbsolutePath());
+	public ISyncAdapter createSyncAdapter(ISchema schema, FeedRef feedRef) {
+		return createSyncAdapter(schema, ConfigurationManager.getInstance().getRuntimeDirectory(feedRef).getAbsolutePath(), feedRef);
 	}
 
-	public abstract ISyncAdapter createSyncAdapter(ISchema schema, String baseDirectory);
-
-	public void setLastSyncDate(Date lastSyncDate) {
-		Date oldValue = this.lastSyncDate;
-		this.lastSyncDate = lastSyncDate;
-		firePropertyChange(LASTSYNCDATE_PROPERTY, oldValue, lastSyncDate);
-	}
-
-	public Date getLastSyncDate() {
-		return lastSyncDate;
-	}
-	
-	public void setHasConflicts(boolean hasConflicts) {
-		this.hasConflicts = hasConflicts;
-	}
-	
+	public abstract ISyncAdapter createSyncAdapter(ISchema schema, String baseDirectory, FeedRef feedRef);
+		
 	public boolean hasConflicts() {
-		return hasConflicts;
+		for (FeedRef feedRef : feeds) {
+			if (feedRef.hasConflicts())
+				return true;
+		}
+		return false;
 	}
 
 	public void afterUnmarshal(Unmarshaller u, Object parent) {
-		if (parent instanceof DataSet)
-			dataSet = (DataSet) parent;
+		if (parent instanceof Mesh)
+			mesh = (Mesh) parent;
 	}
 	
-	public void addLog(SyncLog log) {
-		File dir = ConfigurationManager.getInstance().getRuntimeDirectory(this);
-		File logFile = new File(dir, "synclog.xml");
-		
-		List<SyncLog> logItems;
-		if (logFile.exists()) {
-			logItems = LogMarshaller.load(logFile);
-		} else {
-			logItems = new ArrayList<SyncLog>();
-		}
-		
-		logItems.add(log);
-		LogMarshaller.save(logItems, logFile);
+	public Schedule getSchedule() {
+		return schedule;
 	}
 	
-	public SyncLog[] getLogEntries() {
-		File dir = ConfigurationManager.getInstance().getRuntimeDirectory(this);
-		File logFile = new File(dir, "synclog.xml");
-		
-		if (!logFile.exists())
-			return new SyncLog[0];
-		
-		List<SyncLog> logItems = LogMarshaller.load(logFile);
-		return (SyncLog[]) logItems.toArray(new SyncLog[logItems.size()]);
+	public void setSchedule(Schedule schedule) {
+		this.schedule = schedule;
 	}
 	
 	public abstract void accept(MeshVisitor visitor);
@@ -113,12 +100,13 @@ public abstract class DataSource extends AbstractModel {
 		try {
 			DataSource copy = getClass().newInstance();
 			copy.id = id;
-			copy.lastSyncDate = lastSyncDate;
-			copy.hasConflicts = hasConflicts;
+			copy.schedule = schedule;
 			return copy;
 		} catch (Exception e) {
 			throw new Error(e);
 		}
 	}
+
+	
 	
 }

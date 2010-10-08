@@ -14,8 +14,8 @@ import javax.swing.event.ListDataListener;
 
 import org.apache.log4j.Logger;
 import org.mesh4j.meshes.filefilters.EpiInfoFileFilter;
-import org.mesh4j.meshes.model.DataSource;
 import org.mesh4j.meshes.model.EpiInfoDataSource;
+import org.mesh4j.meshes.model.FeedRef;
 import org.mesh4j.meshes.model.HibernateDataSource;
 import org.mesh4j.meshes.model.Mesh;
 import org.mesh4j.meshes.model.MeshVisitor;
@@ -206,12 +206,13 @@ public class ConfigurationManager {
 		runtimeDirectory.mkdirs();
 	}
 
-	public File getRuntimeDirectory(DataSource dataSource) {
-		File meshDirectory = new File(runtimeDirectory, dataSource.getDataSet().getMesh().getName());
-		File feedDirectory = new File(meshDirectory, dataSource.getDataSet().getName());
-		File dataSourceFileDirectory = new File(feedDirectory, dataSource.getId());
-		dataSourceFileDirectory.mkdirs();
-		return dataSourceFileDirectory;
+	public File getRuntimeDirectory(FeedRef feedRef) {
+		File meshDirectory = new File(runtimeDirectory, feedRef.getDataSource().getMesh().getName());
+		File dataSourceFileDirectory = new File(meshDirectory, feedRef.getDataSource().getId());
+		File feedDirectory = new File(dataSourceFileDirectory, feedRef.getFeedName());
+		
+		feedDirectory.mkdirs();
+		return feedDirectory;
 	}
 	
 	public void addListDataListener(ListDataListener listener) {

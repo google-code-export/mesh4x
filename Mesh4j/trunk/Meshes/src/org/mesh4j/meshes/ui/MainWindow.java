@@ -11,9 +11,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.event.TreeSelectionEvent;
@@ -22,12 +20,12 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.mesh4j.meshes.action.CreateNewMeshAction;
 import org.mesh4j.meshes.action.ExitAction;
-import org.mesh4j.meshes.model.DataSet;
 import org.mesh4j.meshes.model.DataSource;
+import org.mesh4j.meshes.model.FeedRef;
 import org.mesh4j.meshes.model.Mesh;
 import org.mesh4j.meshes.ui.Editable.EditableListener;
-import org.mesh4j.meshes.ui.component.DataSetView;
 import org.mesh4j.meshes.ui.component.DataSourceView;
+import org.mesh4j.meshes.ui.component.FeedRefView;
 import org.mesh4j.meshes.ui.component.MeshView;
 import org.mesh4j.meshes.ui.component.MeshesTree;
 import org.mesh4j.meshes.ui.resource.ResourceManager;
@@ -87,10 +85,10 @@ public class MainWindow extends JFrame {
 				
 				if (userObject instanceof Mesh) {	
 					setView(new MeshView((Mesh) userObject));
-				} else if (userObject instanceof DataSet) {
-					setView(new DataSetView((DataSet) userObject));
 				} else if (userObject instanceof DataSource) {
 					setView(new DataSourceView((DataSource) userObject));
+				} else if (userObject instanceof FeedRef) {
+					setView(new FeedRefView((FeedRef) userObject));
 				} else {
 					setView(null);
 				}

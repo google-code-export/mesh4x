@@ -22,7 +22,7 @@ import javax.swing.table.DefaultTableModel;
 import net.miginfocom.swing.MigLayout;
 
 import org.mesh4j.meshes.io.ConfigurationManager;
-import org.mesh4j.meshes.model.DataSource;
+import org.mesh4j.meshes.model.FeedRef;
 import org.mesh4j.sync.ISyncAdapter;
 import org.mesh4j.sync.model.IContent;
 import org.mesh4j.sync.model.Item;
@@ -31,7 +31,7 @@ import org.mesh4j.sync.payload.schema.ISchema;
 @SuppressWarnings("serial")
 public class ConflictsView extends JPanel implements ListSelectionListener {
 
-	private DataSource dataSource;
+	private FeedRef feedRef;
 	private DefaultTableModel conflictsModel;
 	private JPanel versionsPanel;
 	private List<Item> itemsWithConflicts;
@@ -39,8 +39,8 @@ public class ConflictsView extends JPanel implements ListSelectionListener {
 	private ISchema schema;
 	private JTable conflictTable;
 
-	public ConflictsView(DataSource dataSource) {
-		this.dataSource = dataSource;
+	public ConflictsView(FeedRef feedRef) {
+		this.feedRef = feedRef;
 		initializeView();
 		loadConflicts();
 	}
@@ -101,7 +101,7 @@ public class ConflictsView extends JPanel implements ListSelectionListener {
 
 			@Override
 			public void run() {
-				syncAdapter = dataSource.createSyncAdapter();
+				syncAdapter = feedRef.createSyncAdapter();
 				schema = syncAdapter.getSchema();
 				itemsWithConflicts = syncAdapter.getConflicts();
 
@@ -190,8 +190,8 @@ public class ConflictsView extends JPanel implements ListSelectionListener {
 		
 		if (conflictsModel.getRowCount() == 0) {
 			try {
-				dataSource.setHasConflicts(false);
-				ConfigurationManager.getInstance().saveMesh(dataSource.getDataSet().getMesh());
+				feedRef.setHasConflicts(false);
+				ConfigurationManager.getInstance().saveMesh(feedRef.getDataSource().getMesh());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

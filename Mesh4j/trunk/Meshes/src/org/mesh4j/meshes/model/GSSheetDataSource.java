@@ -68,7 +68,7 @@ public class GSSheetDataSource extends DataSource {
 	}
 	
 	@Override
-	public ISyncAdapter createSyncAdapter(ISchema schema, String baseDirectory) {
+	public ISyncAdapter createSyncAdapter(ISchema schema, String baseDirectory, FeedRef feedRef) {
 		// TODO Auto-generated method stub
 		return null;
 	}

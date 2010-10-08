@@ -21,8 +21,8 @@ import javax.swing.JTextField;
 
 import net.miginfocom.swing.MigLayout;
 
+import org.mesh4j.meshes.model.FeedRef;
 import org.mesh4j.meshes.model.HibernateDataSource;
-import org.mesh4j.meshes.model.MeshVisitor;
 import org.mesh4j.meshes.ui.wizard.DatabaseEngine;
 import org.mesh4j.meshes.ui.wizard.FillDatabases;
 
@@ -61,15 +61,9 @@ public class ChooseDatabaseConnectionDialog extends JDialog {
 			this.databaseName = url.substring(0, index);
 			this.tableNames = new ArrayList<String>();
 			
-			dataSource.getDataSet().getMesh().accept(new MeshVisitor() {
-				@Override
-				public boolean visit(HibernateDataSource dataSource) {
-					if (url.equals(dataSource.getConnectionURL())) {
-						tableNames.add(dataSource.getTableName());
-					}
-					return true;
-				}
-			});
+			for (FeedRef feedRef : dataSource.getFeeds()) {
+				tableNames.add(feedRef.getLocalName());
+			}
 		}
 	}
 	
@@ -156,13 +150,10 @@ public class ChooseDatabaseConnectionDialog extends JDialog {
 					
 					resolved = new HibernateDataSource();
 					resolved.setConnectionURL(url);
-					resolved.setDataSet(dataSource.getDataSet());
+					resolved.setMesh(dataSource.getMesh());
 					resolved.setDialectClass(dataSource.getDialectClass());
 					resolved.setDriverClass(dataSource.getDriverClass());
-					resolved.setHasConflicts(dataSource.hasConflicts());
-					resolved.setLastSyncDate(dataSource.getLastSyncDate());
 					resolved.setPassword(password);
-					resolved.setTableName(dataSource.getTableName());
 					resolved.setUser(user);
 					
 					setVisible(false);
