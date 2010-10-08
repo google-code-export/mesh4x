@@ -118,10 +118,16 @@ public class ScheduleManager {
 				currentMeshesNames.add(mesh.getName());
 			}
 			
+			List<String> meshesToUnschedule = new ArrayList<String>(); 
+			
 			for (String meshName : scheduledTasksPerMesh.keySet()) {
 				if (!currentMeshesNames.contains(meshName)) {
-					unscheduleMesh(meshName);
+					meshesToUnschedule.add(meshName);
 				}
+			}
+			
+			for (String meshName : meshesToUnschedule) {
+				unscheduleMesh(meshName);
 			}
 		}
 
