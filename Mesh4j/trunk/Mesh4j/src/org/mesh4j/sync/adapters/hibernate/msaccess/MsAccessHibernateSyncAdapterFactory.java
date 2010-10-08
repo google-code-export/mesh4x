@@ -234,8 +234,9 @@ public class MsAccessHibernateSyncAdapterFactory implements ISyncAdapterFactory 
 				for (int j = 0; j < schema.getPropertyCount(); j++) {
 					String propertyName = schema.getPropertyName(j);
 					if (columnNames.contains(propertyName)) continue;
+					String propertyType = schema.getPropertyType(propertyName);
 					
-					MsAccessHelper.addColumn(mdbFileName, tableName, propertyName);
+					MsAccessHelper.addColumn(mdbFileName, tableName, propertyName, propertyType);
 				}
 				
 			} catch (IOException e) {

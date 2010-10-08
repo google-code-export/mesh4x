@@ -13,6 +13,7 @@ import java.util.TreeSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.mesh4j.sync.payload.schema.rdf.IRDFSchema;
 import org.mesh4j.sync.validations.MeshException;
 
 import sun.jdbc.odbc.JdbcOdbcDriver;
@@ -130,15 +131,16 @@ public class MsAccessHelper {
 		return null;
 	}
 
-	public static void addColumn(String mdbFileName, String tableName, String propertyName) {
+	public static void addColumn(String mdbFileName, String tableName, String propertyName, String rdfType) {
 		Connection conn = null;
 		try {
 			Class.forName(JdbcOdbcDriver.class.getName());
 			String dbURL = "jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=" + mdbFileName + ";DriverID=22;READONLY=false}";
 			conn = DriverManager.getConnection(dbURL, "","");
+			String accessType = getAccessTypeFromRdfType(rdfType);
 			
 			Statement stmt = conn.createStatement();
-			stmt.execute(String.format("ALTER TABLE %s ADD COLUMN %s VARCHAR(255)", tableName, propertyName));
+			stmt.execute(String.format("ALTER TABLE %s ADD COLUMN %s %s", tableName, propertyName, accessType));
 		} catch (Exception e) {
 			throw new MeshException(e);
 		} finally {
@@ -151,4 +153,23 @@ public class MsAccessHelper {
 		}
 	}
 	
+	private static String getAccessTypeFromRdfType(String rdfType)
+	{
+		if (rdfType == IRDFSchema.XLS_INTEGER)
+			return "INTEGER";
+		
+		if (rdfType == IRDFSchema.XLS_DOUBLE)
+			return "DOUBLE";
+		
+		if (rdfType == IRDFSchema.XLS_DATETIME)
+			return "DATETIME";
+		
+		if (rdfType == IRDFSchema.XLS_BOOLEAN)
+			return "BOOLEAN";
+		
+		if (rdfType == IRDFSchema.XLS_LONG)
+			return "LONG";
+		
+		return "VARCHAR(255)";	
+	}
 }
