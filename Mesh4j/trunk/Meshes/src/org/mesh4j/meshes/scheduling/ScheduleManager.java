@@ -90,8 +90,6 @@ public class ScheduleManager {
 			return null;
 		
 		switch (schedulingOption) {
-		case AUTOMATIC:
-			return null;
 		case FIVE_MINUTES:
 			return "*/5 * * * *"; // Every five minutes
 		case MANUALLY:

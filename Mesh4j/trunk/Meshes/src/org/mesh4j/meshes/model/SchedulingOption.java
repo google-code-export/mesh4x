@@ -4,7 +4,7 @@ public enum SchedulingOption {
 	
 	MANUALLY("On request only"),
 	
-	AUTOMATIC("Do one automatic try when connecting"),
+	//AUTOMATIC("Do one automatic try when connecting"),
 	
 	FIVE_MINUTES("Every 5 minutes"),
 	
